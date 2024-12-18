@@ -4,7 +4,8 @@ use function PHPUnit\Framework\returnValue;
 
 include_once('Manager.php');
 include_once('Person.php');
-include_once('Encryption.php');
+include_once('utilities/Encryption.php');
+include_once('utilities/GeneralUtil.php');
 @include_once 'Mail.php';
 
 class ProfileManager extends Manager{
@@ -259,7 +260,7 @@ class ProfileManager extends Manager{
 
 			if($uid){
 				$subject = 'RE: Password reset';
-				$serverPath = $this->getDomain().$GLOBALS['CLIENT_ROOT'];
+				$serverPath = GeneralUtil::getDomain().$GLOBALS['CLIENT_ROOT'];
 				$from = '';
 				if (array_key_exists("SYSTEM_EMAIL", $GLOBALS) && !empty($GLOBALS["SYSTEM_EMAIL"])){
 					$from = 'Reset Request <'.$GLOBALS["SYSTEM_EMAIL"].'>';
@@ -315,7 +316,7 @@ class ProfileManager extends Manager{
 		$lastName = strip_tags($postArr['lastname']);
 		$pwd = $postArr['pwd'];
 		$email = filter_var($postArr['email'], FILTER_VALIDATE_EMAIL);
-		
+
 		$title = array_key_exists('title', $postArr) ? strip_tags($postArr['title']) : '';
 		$institution = array_key_exists('institution', $postArr) ? strip_tags($postArr['institution']) : '';
 		$city = array_key_exists('city', $postArr) ? strip_tags($postArr['city']) : '';
@@ -368,7 +369,7 @@ class ProfileManager extends Manager{
 		$rs->free();
 		if($loginStr){
 			$subject = $GLOBALS['DEFAULT_TITLE'].' Login Name';
-			$serverPath = $this->getDomain().$GLOBALS['CLIENT_ROOT'];
+			$serverPath = GeneralUtil::getDomain().$GLOBALS['CLIENT_ROOT'];
 			$bodyStr = 'Your '.$GLOBALS['DEFAULT_TITLE'].' (<a href="' . htmlspecialchars($serverPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($serverPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>) login name is: '.
 				$loginStr.'<br/><br/>If you continue to have login issues, contact the System Administrator: '.$GLOBALS['ADMIN_EMAIL'];
 			$status = $this->sendEmail($emailAddr, $subject, $bodyStr, $from);
@@ -654,7 +655,7 @@ class ProfileManager extends Manager{
 						'INNER JOIN omcollections c ON o.collid = c.collid '.
 						'INNER JOIN taxa t ON o.tidinterpreted = t.tid '.
 						'INNER JOIN taxaenumtree e ON t.tid = e.tid ';
-					if($withImgOnly) $sql .= 'INNER JOIN images i ON o.occid = i.occid ';
+					if($withImgOnly) $sql .= 'INNER JOIN media i ON o.occid = i.occid ';
 					$sql .= 'WHERE v.category = "identification" AND v.ranking < 6 AND e.taxauthid = 1 '.
 						'AND (e.parenttid = '.$tid.' OR t.tid = '.$tid.') '.
 						'ORDER BY o.sciname,t.sciname,o.catalognumber ';
@@ -689,7 +690,7 @@ class ProfileManager extends Manager{
 			$sql = 'SELECT DISTINCT o.occid, o.catalognumber, o.stateprovince, '.
 				'CONCAT_WS("-",IFNULL(o.institutioncode,c.institutioncode),IFNULL(o.collectioncode,c.collectioncode)) AS collcode '.
 				'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
-			if($withImgOnly) $sql .= 'INNER JOIN images i ON o.occid = i.occid ';
+			if($withImgOnly) $sql .= 'INNER JOIN media i ON o.occid = i.occid ';
 			$sql .= 'WHERE (o.sciname IS NULL) '.
 				'ORDER BY c.institutioncode, o.catalognumber LIMIT 2000';
 			//echo '<div>'.$sql.'</div>';
@@ -1032,70 +1033,51 @@ class ProfileManager extends Manager{
 		return $tPath;
 	}
 
-	//setter and getters
-	public function setRememberMe($test){
-		$this->rememberMe = $test;
-	}
-
-	public function getRememberMe(){
-		return $this->rememberMe;
-	}
-
-	public function setToken($token){
-		$this->token = $token;
-	}
-
-	public function setUid($uid){
-		if(is_numeric($uid)){
-			$this->uid = $uid;
-		}
-	}
-
-	public function setAccessibilityPreference($pref, $uid){
+	//Accessubility functions
+	private function setAccessibilityPreference($pref, $uid){
 		$status = false;
-		$currentDynamicProperties = $this->getDynamicProperties($uid) ? $this->getDynamicProperties($uid) : array();
+		$currentDynamicProperties = $this->getDynamicProperties($uid);
+		if(!$currentDynamicProperties) $currentDynamicProperties = array();
 		$currentDynamicProperties['accessibilityPref'] = $pref;
 		$status = $this->setDynamicProperties($uid, $currentDynamicProperties);
 		return $status;
 	}
 
-	public function setDynamicProperties($uid, $dynPropArr){
+	private function setDynamicProperties($uid, $dynPropArr){
 		$status = false;
 		if(!$uid) return $status;
 
 		$jsonDynProps = json_encode($dynPropArr);
-
 
 		$this->resetConnection(); // @TODO decided whether this is necessary
 		$sql = 'UPDATE users SET dynamicProperties = ? WHERE (uid = ?)';
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('si', $jsonDynProps, $uid);
 			$stmt->execute();
-			if(!$stmt->error) $status = true; // note: removed $stmt->affected_rows && 
+			if(!$stmt->error) $status = true; // note: removed $stmt->affected_rows &&
 			$stmt->close();
 		}
 		return $status;
-
 	}
 
 	public function getAccessibilityPreference($uid){
+		if(!$uid){
+			return false;
+		}
 		$returnVal = false;
 		$dynPropArr = $this->getDynamicProperties($uid);
-		
+
 		if($dynPropArr && isset($dynPropArr['accessibilityPref'])){
-			$returnVal = ($dynPropArr['accessibilityPref'] === '1') ? true : false;
+			$returnVal = ($dynPropArr['accessibilityPref'] === true) ? true : false;
 		}
 		return $returnVal;
 	}
 
-	public function getDynamicProperties($uid){
-		if(! $uid){
-			return false;
-		}
+	private function getDynamicProperties($uid){
 		$returnVal = false;
 		$sql = 'SELECT dynamicProperties FROM users WHERE uid = ?';
 		$stmt = $this->conn->prepare($sql);
-		$stmt->bind_param("i", $uid);
+		$stmt->bind_param('i', $uid);
 		$stmt->execute();
 		$respns= $stmt->get_result();
 		if($fetchedObj = $respns->fetch_object()){
@@ -1131,6 +1113,25 @@ class ProfileManager extends Manager{
 	private function encodeArr(&$inArr,$cSet){
 		foreach($inArr as $k => $v){
 			$inArr[$k] = $this->encodeString($v,$cSet);
+		}
+	}
+
+	//setter and getters
+	public function setRememberMe($test){
+		$this->rememberMe = $test;
+	}
+
+	public function getRememberMe(){
+		return $this->rememberMe;
+	}
+
+	public function setToken($token){
+		$this->token = $token;
+	}
+
+	public function setUid($uid){
+		if(is_numeric($uid)){
+			$this->uid = $uid;
 		}
 	}
 }

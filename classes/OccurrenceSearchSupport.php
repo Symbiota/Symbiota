@@ -137,9 +137,9 @@ class OccurrenceSearchSupport {
 								$catSelected = false;
 								if(!$catSelArr && !$collSelArr) $catSelected = true;
 								elseif(in_array($catid, $catSelArr)) $catSelected = true;
-								$ariaLabel = $name . '(' . $collTypeLabel . ')' . '-' . $uniqGrouping;
+								$ariaLabel = $name . ' (' . $collTypeLabel . ')' . '-' . $uniqGrouping;
 								echo '<input aria-label="' . $ariaLabel . '" data-role="none" id="cat-' . $idStr . (empty($collTypeLabel) ? '' : '-' . $collTypeLabel) . (empty($uniqGrouping)? '': '-' . $uniqGrouping) . '-Input" name="cat[]" value="' . $catid.'" type="checkbox" onclick="selectAllCat(this,\'cat-' . $idStr . '\')" ' . ($catSelected || array_intersect(array_keys($catArr), $collSelArr) ? 'checked' : '') . ' />';
-								echo $name . "(" . $collTypeLabel . ")";
+								echo $name . " " . "(" . $collTypeLabel . ")";
 								?>
 							</div>
 						</div>
@@ -166,9 +166,9 @@ class OccurrenceSearchSupport {
 								<legend>
 									<?php
 									echo $name;
-									$specimenLegendTxt = isset($LANG['SPECIMEN']) ? $LANG['SPECIMEN'] : "Specimen";
-									$observationLegendTxt = isset($LANG['OBSERVATION']) ? $LANG['OBSERVATION'] : "Observation";
-									$isObservation = $collTypeLabel === "Observation";
+									$specimenLegendTxt = isset($LANG['SPECIMEN']) ? $LANG['SPECIMEN'] : "Specimens";
+									$observationLegendTxt = isset($LANG['OBSERVATION']) ? $LANG['OBSERVATION'] : "Observations";
+									$isObservation = $collTypeLabel === "Observations";
 									$outputTxt = $specimenLegendTxt;
 									if($isObservation) $outputTxt = $observationLegendTxt;
 									?>
@@ -340,17 +340,23 @@ class OccurrenceSearchSupport {
 	public static function getDbRequestVariable(){
 		$dbStr = '';
 		if(isset($_REQUEST['db'])){
-			$dbStr = $_REQUEST['db'];
-			if(is_array($dbStr)){
-				$dbArr = array_unique($dbStr);
-				$dbStr = '';
-				foreach($dbArr as $v){
-					if($v != 'all') $dbStr .= ','.$v;
+			$dbInput = $_REQUEST['db'];
+			if(is_array($dbInput)){
+				if(in_array('allspec', $dbInput)) $dbStr = 'allspec';
+				elseif(in_array('allobs', $dbInput)) $dbStr = 'allobs';
+				elseif(in_array('all', $dbInput)) $dbStr = 'all';
+				else{
+					$dbArr = array_unique($dbInput);
+					$dbStr = implode(',', $dbArr);
 				}
-				$dbStr = trim($dbStr, ',; ');
 			}
-			if(strpos($dbStr,'allspec') !== false) $dbStr = 'allspec';
-			elseif(strpos($dbStr,'allobs') !== false) $dbStr = 'allobs';
+			else{
+				//Input is a string
+				if(strpos($dbStr,'allspec') !== false) $dbStr = 'allspec';
+				elseif(strpos($dbStr,'allobs') !== false) $dbStr = 'allobs';
+				elseif(strpos($dbStr,'all') !== false) $dbStr = 'all';
+				else $dbStr = $dbInput;
+			}
 		}
 		if(($p = strpos($dbStr, ';')) !== false){
 			$dbStr = substr($dbStr, 0, $p);

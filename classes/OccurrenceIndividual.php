@@ -2,6 +2,8 @@
 include_once('Manager.php');
 include_once('OccurrenceAccessStats.php');
 include_once('ChecklistVoucherAdmin.php');
+include_once('utilities/GeneralUtil.php');
+include_once('utilities/QueryUtil.php');
 
 class OccurrenceIndividual extends Manager{
 
@@ -75,31 +77,31 @@ class OccurrenceIndividual extends Manager{
 		if(!$this->occid){
 			//Check occurrence recordID
 			$sql = 'SELECT occid FROM omoccurrences WHERE (occurrenceid = ?) OR (recordID = ?)';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('ss', $guid, $guid);
-				$stmt->execute();
-				$stmt->bind_result($this->occid);
-				$stmt->close();
+			if($result = QueryUtil::executeQuery($this->conn, $sql, [$guid, $guid])){
+				if($row = $result->fetch_assoc()) {
+					$this->occid = $row['occid'];
+				}
+				$result->free();
 			}
 		}
 		if(!$this->occid){
 			//Check image recordID
-			$sql = 'SELECT occid FROM images WHERE recordID = ?';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('s', $guid);
-				$stmt->execute();
-				$stmt->bind_result($this->occid);
-				$stmt->close();
+			$sql = 'SELECT occid FROM media WHERE recordID = ?';
+			if($result = QueryUtil::executeQuery($this->conn, $sql, [$guid])){
+				if($row = $result->fetch_assoc()) {
+					$this->occid = $row['occid'];
+				}
+				$result->free();
 			}
 		}
 		if(!$this->occid){
 			//Check identification recordID
 			$sql = 'SELECT occid FROM omoccurdeterminations WHERE recordID = ?';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('s', $guid);
-				$stmt->execute();
-				$stmt->bind_result($this->occid);
-				$stmt->close();
+			if($result = QueryUtil::executeQuery($this->conn, $sql, [$guid])){
+				if($row = $result->fetch_assoc()) {
+					$this->occid = $row['occid'];
+				}
+				$result->free();
 			}
 		}
 		return $this->occid;
@@ -258,37 +260,39 @@ class OccurrenceIndividual extends Manager{
 	}
 
 	private function setImages(){
-	    global $IMAGE_DOMAIN;
-		$sql = 'SELECT i.imgid, i.url, i.thumbnailurl, i.originalurl, i.sourceurl, i.notes, i.caption, 
-            CONCAT_WS(" ",u.firstname,u.lastname) as innerPhotographer, i.photographer, i.rights, i.accessRights, i.copyright
-			FROM images i LEFT JOIN users u ON i.photographeruid = u.uid
-			WHERE (i.occid = ?) ORDER BY i.sortoccurrence,i.sortsequence';
+		global $MEDIA_DOMAIN;
+		$sql = 'SELECT m.mediaID, m.url, m.thumbnailurl, m.originalurl, m.sourceurl, m.notes, m.caption, m.mediaType, m.format,
+			CONCAT_WS(" ",u.firstname,u.lastname) as innerCreator, m.creator, m.rights, m.accessRights, m.copyright
+			FROM media m LEFT JOIN users u ON m.creatorUid = u.uid
+			WHERE (m.occid = ?) ORDER BY m.sortoccurrence,m.sortsequence';
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('i', $this->occid);
 			$stmt->execute();
 			if($rs = $stmt->get_result()){
 				while($row = $rs->fetch_object()){
-					$imgId = $row->imgid;
+					$mediaID = $row->mediaID;
 					$url = $row->url;
 					$tnUrl = $row->thumbnailurl;
 					$lgUrl = $row->originalurl;
-					if($IMAGE_DOMAIN){
-					    if(substr($url,0,1)=='/') $url = $IMAGE_DOMAIN . $url;
-					    if($lgUrl && substr($lgUrl, 0, 1) == '/') $lgUrl = $IMAGE_DOMAIN . $lgUrl;
-						if($tnUrl && substr($tnUrl, 0, 1) == '/') $tnUrl = $imageDomain . $tnUrl;
+					if($MEDIA_DOMAIN){
+					    if(substr($url,0,1)=='/') $url = $MEDIA_DOMAIN . $url;
+					    if($lgUrl && substr($lgUrl, 0, 1) == '/') $lgUrl = $MEDIA_DOMAIN . $lgUrl;
+					    if($tnUrl && substr($tnUrl, 0, 1) == '/') $tnUrl = $MEDIA_DOMAIN . $tnUrl;
 					}
 					if((!$url || $url == 'empty') && $lgUrl) $url = $lgUrl;
 					if(!$tnUrl && $url) $tnUrl = $url;
-					$this->occArr['imgs'][$imgId]['url'] = $url;
-					$this->occArr['imgs'][$imgId]['tnurl'] = $tnUrl;
-					$this->occArr['imgs'][$imgId]['lgurl'] = $lgUrl;
-					$this->occArr['imgs'][$imgId]['sourceurl'] = $row->sourceurl;
-					$this->occArr['imgs'][$imgId]['caption'] = $row->caption;
-					$this->occArr['imgs'][$imgId]['photographer'] = $row->photographer;
-					$this->occArr['imgs'][$imgId]['rights'] = $row->rights;
-					$this->occArr['imgs'][$imgId]['accessrights'] = $row->accessRights;
-					$this->occArr['imgs'][$imgId]['copyright'] = $row->copyright;
-          if($row->innerPhotographer) $this->occArr['imgs'][$imgId]['photographer'] = $row->innerPhotographer;
+					$this->occArr['imgs'][$mediaID]['url'] = $url;
+					$this->occArr['imgs'][$mediaID]['tnurl'] = $tnUrl;
+					$this->occArr['imgs'][$mediaID]['lgurl'] = $lgUrl;
+					$this->occArr['imgs'][$mediaID]['sourceurl'] = $row->sourceurl;
+					$this->occArr['imgs'][$mediaID]['caption'] = $row->caption;
+					$this->occArr['imgs'][$mediaID]['creator'] = $row->creator;
+					$this->occArr['imgs'][$mediaID]['rights'] = $row->rights;
+					$this->occArr['imgs'][$mediaID]['accessrights'] = $row->accessRights;
+					$this->occArr['imgs'][$mediaID]['copyright'] = $row->copyright;
+					$this->occArr['imgs'][$mediaID]['mediaType'] = $row->mediaType;
+					$this->occArr['imgs'][$mediaID]['format'] = $row->format;
+					if($row->innerCreator) $this->occArr['imgs'][$mediaID]['creator'] = $row->innerCreator;
 				}
 				$rs->free();
 			}
@@ -413,14 +417,24 @@ class OccurrenceIndividual extends Manager{
 			}
 		}
 		if($relOccidArr){
-			$sql = 'SELECT o.occid, o.sciname,
-				CONCAT_WS("-",IFNULL(o.institutioncode, c.institutioncode), IFNULL(o.collectioncode, c.collectioncode)) as collcode, IFNULL(o.catalogNumber, o.otherCatalogNumbers) as catnum
+			$sql = 'SELECT o.occid, o.sciname, IFNULL(o.institutioncode, c.institutioncode) as instCode, IFNULL(o.collectioncode, c.collectioncode) as collCode, o.catalogNumber, o.occurrenceID, o.recordID
 				FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid
 				WHERE o.occid IN(' . implode(',', array_keys($relOccidArr)) . ')';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				foreach($relOccidArr[$r->occid] as $targetAssocID){
-					$this->occArr['relation'][$targetAssocID]['objectID'] = $r->collcode . ':' . $r->catnum;
+					$objectID = $r->catalogNumber;
+					if($objectID) {
+						if(strpos($objectID, $r->instCode) === false){
+							//Append institution and collection code to catalogNumber, but only if it is not already included
+							$collCode = $r->instCode;
+							if($r->collCode) $collCode .= '-' . $r->collCode;
+							$objectID = $collCode . ':' . $r->catalogNumber;
+						}
+					}
+					elseif($r->occurrenceID) $objectID = $r->occurrenceID;
+					else $objectID = $r->recordID;
+					$this->occArr['relation'][$targetAssocID]['objectID'] = $objectID;
 					$this->occArr['relation'][$targetAssocID]['sciname'] = $r->sciname;
 				}
 			}
@@ -545,25 +559,15 @@ class OccurrenceIndividual extends Manager{
 				$displayStr = $this->occArr['catalognumber'];
 			}
 			elseif(strpos($iUrl,'--OTHERCATALOGNUMBERS--') !== false && $this->occArr['othercatalognumbers']){
-				if(substr($this->occArr['othercatalognumbers'],0,1) == '{'){
-					if($this->occArr['othercatalognumbers']){
-						foreach($this->occArr['othercatalognumbers'] as $idKey => $idArr){
-							if(!$displayStr || $idKey == 'NEON sampleID' || $idKey == 'NEON sampleCode (barcode)'){
-								$displayStr = $idArr[0];
-								if($idKey == 'NEON sampleCode (barcode)') $iUrl = str_replace('sampleTag','barcode',$iUrl);
-								$indUrl = str_replace('--OTHERCATALOGNUMBERS--',$idArr[0],$iUrl);
-								if($idKey == 'NEON sampleCode (barcode)') break;
-							}
-						}
+				foreach($this->occArr['othercatalognumbers'] as $idArr){
+					$tagName = $idArr['name'];
+					$idValue = $idArr['value'];
+					if(!$displayStr || $tagName == 'NEON sampleID' || $tagName == 'NEON sampleCode (barcode)'){
+						$displayStr = $tagName;
+						if($tagName == 'NEON sampleCode (barcode)') $iUrl = str_replace('sampleTag','barcode',$iUrl);
+						$indUrl = str_replace('--OTHERCATALOGNUMBERS--', $idValue, $iUrl);
+						if($tagName == 'NEON sampleCode (barcode)') break;
 					}
-				}
-				else{
-					$ocn = str_replace($this->occArr['othercatalognumbers'], ',', ';');
-					$ocnArr = explode(';',$ocn);
-					$ocnValue = trim(array_pop($ocnArr));
-					if(stripos($ocnValue,':')) $ocnValue = trim(array_pop(explode(':',$ocnValue)));
-					$indUrl = str_replace('--OTHERCATALOGNUMBERS--',$ocnValue,$iUrl);
-					$displayStr = $ocnValue;
 				}
 			}
 			elseif(strpos($iUrl,'--OCCURRENCEID--') !== false && $this->occArr['occurrenceid']){
@@ -586,7 +590,7 @@ class OccurrenceIndividual extends Manager{
 			$sql = $sqlBase.'FROM omexsiccatiocclink l INNER JOIN omexsiccatiocclink l2 ON l.omenid = l2.omenid
 				INNER JOIN omoccurrences o ON l2.occid = o.occid
 				INNER JOIN omcollections c ON o.collid = c.collid
-				LEFT JOIN images i ON o.occid = i.occid
+				LEFT JOIN media i ON o.occid = i.occid
 				WHERE (o.occid != l.occid) AND (l.occid = ?)';
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param('i', $this->occid);
@@ -604,7 +608,7 @@ class OccurrenceIndividual extends Manager{
 		$sql = $sqlBase.'FROM omoccurduplicatelink d INNER JOIN omoccurduplicatelink d2 ON d.duplicateid = d2.duplicateid
 			INNER JOIN omoccurrences o ON d2.occid = o.occid
 			INNER JOIN omcollections c ON o.collid = c.collid
-			LEFT JOIN images i ON o.occid = i.occid
+			LEFT JOIN media i ON o.occid = i.occid
 			WHERE (d.occid = ?) AND (d.occid != d2.occid) ';
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('i', $this->occid);
@@ -779,7 +783,7 @@ class OccurrenceIndividual extends Manager{
 
 			//Email to portal admin
 			$emailAddr = $GLOBALS['ADMIN_EMAIL'];
-			$comUrl = $this->getDomain().$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid=' . $this->occid . '#commenttab';
+			$comUrl = GeneralUtil::getDomain().$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid=' . $this->occid . '#commenttab';
 			$subject = $GLOBALS['DEFAULT_TITLE'] . ' '. $LANG['INAPPROPRIATE'] . '<br/>';
 			$bodyStr = $LANG['REPORTED_AS_INAPPROPRIATE'] . ':<br/> <a href="' . $comUrl  . '">' . $comUrl . '</a>';
 			$headerStr = "MIME-Version: 1.0 \r\nContent-type: text/html \r\nTo: " . $emailAddr . " \r\nFrom: Admin <" . $emailAddr . "> \r\n";
@@ -1184,13 +1188,13 @@ class OccurrenceIndividual extends Manager{
 			//Restore images
 			if(isset($recArr['imgs']) && $recArr['imgs']){
 				$imgFieldArr = array();
-				$rsImg = $this->conn->query('SHOW COLUMNS FROM images');
+				$rsImg = $this->conn->query('SHOW COLUMNS FROM media ');
 				while($rImg= $rsImg->fetch_object()){
 					$imgFieldArr[] = strtolower($rImg->Field);
 				}
 				$rsImg->free();
 				foreach($recArr['imgs'] as $pk => $secArr){
-					$sql1 = 'INSERT INTO images(';
+					$sql1 = 'INSERT INTO media (';
 					$sql2 = 'VALUES(';
 					foreach($secArr as $f => $v){
 						if(in_array(strtolower($f),$imgFieldArr)){
@@ -1251,6 +1255,15 @@ class OccurrenceIndividual extends Manager{
 				}
 				$rsAssoc->free();
 				foreach($recArr['assoc'] as $pk => $secArr){
+					if(empty($secArr['associationType'])){
+						if(!empty($secArr['occidAssociate'])) $secArr['associationType'] = 'internalOccurrence';
+						elseif(!empty($secArr['resourceUrl'])){
+							if(!empty($secArr['verbatimSciname'])) $secArr['associationType'] = 'externalOccurrence';
+							else $secArr['associationType'] = 'resource';
+						}
+						elseif(!empty($secArr['verbatimSciname'])) $secArr['associationType'] = 'observational';
+						else $secArr['associationType'] = 'resource';
+					}
 					$sql1 = 'INSERT INTO omoccurassociations(';
 					$sql2 = 'VALUES(';
 					foreach($secArr as $f => $v){
@@ -1359,15 +1372,15 @@ class OccurrenceIndividual extends Manager{
 	}
 
 	public function activateOrcidID($inStr){
-		$retStr = $inStr;
+		$retStr = $this->cleanOutStr($inStr);
 		$m = array();
-		if(preg_match('#((https://orcid.org/)?\d{4}-\d{4}-\d{4}-\d{3}[0-9X])#', $inStr, $m)){
+		if(preg_match('#((https://orcid.org/)?\d{4}-\d{4}-\d{4}-\d{3}[0-9X])#', $retStr, $m)){
 			$orcidAnchor = $m[1];
 			if(substr($orcidAnchor,5) != 'https') $orcidAnchor = 'https://orcid.org/' . $orcidAnchor;
 			$orcidAnchor = '<a href="' . $orcidAnchor . '" target="_blank">' . $m[1] . '</a>';
 			$retStr = str_replace($m[1], $orcidAnchor, $retStr);
 		}
-		return $this->cleanOutStr($retStr);
+		return $retStr;
 	}
 
 	// Setters and getters

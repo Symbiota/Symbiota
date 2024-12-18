@@ -2,10 +2,9 @@
 $LANG = array();
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyEditorManager.php');
-include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydelete.'.$LANG_TAG.'.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydelete.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydelete.' . $LANG_TAG . '.php');
-	else include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydelete.en.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT . '/content/lang/taxa/taxonomy/taxonomydelete.' . $LANG_TAG . '.php'))
+	include_once($SERVER_ROOT . '/content/lang/taxa/taxonomy/taxonomydelete.en.php');
+else include_once($SERVER_ROOT . '/content/lang/taxa/taxonomy/taxonomydelete.' . $LANG_TAG . '.php');
 
 $tid = filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT) ?? '';
 $genusStr = $_REQUEST['genusstr'] ?? '';
@@ -109,7 +108,24 @@ $genusStr = $taxonEditorObj->cleanOutStr($genusStr);
 		</div>
 	</div>
 	<div style="margin:15px;">
-		<b><?php echo $LANG['VERNACULARS']; ?></b>
+		<b>Taxon Maps</b>
+		<div style="margin:10px">
+			<?php
+			if($verifyArr['map'] > 0){
+				?>
+				<span style="color:red;"><?= $LANG['WARNING'] . ': ' . $verifyArr['map'] . ' ' . $LANG['MAPS_LINKED'] ?></span>
+				<?php
+			}
+			else{
+				?>
+				<span style="color:green;"><?= $LANG['APPROVED'] ?>: </span> <?= $LANG['NO_MAPS'] ?>
+				<?php
+			}
+			?>
+		</div>
+	</div>
+	<div style="margin:15px;">
+		<b><?= $LANG['VERNACULARS'] ?></b>
 		<div style="margin:10px">
 			<?php
 			if(array_key_exists('vern',$verifyArr)){
@@ -228,7 +244,7 @@ $genusStr = $taxonEditorObj->cleanOutStr($genusStr);
 			<?php
 			if(array_key_exists('kmdecr',$verifyArr)){
 				echo '<span style="color:red;">';
-				echo $LANG['WARNING'] . ': ' . $verifyArr['kmdecr'] . $LANG['LINKED_MORPHO'];
+				echo $LANG['WARNING'] . ': ' . $verifyArr['kmdecr'] . ' ' . $LANG['LINKED_MORPHO'];
 				echo '</span>';
 			}
 			else{

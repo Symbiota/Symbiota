@@ -55,7 +55,7 @@ class OccurrenceMaintenance {
 		//Update NULL image tids with non-NULL occurrence tids
 		$occidArr = array();
 		$this->outputMsg('Updating and indexing occurrence images... ',1);
-		$sql = 'SELECT o.occid FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid WHERE (i.tid IS NULL) AND (o.tidinterpreted IS NOT NULL) ';
+		$sql = 'SELECT o.occid FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid WHERE (m.tid IS NULL) AND (o.tidinterpreted IS NOT NULL) ';
 		if($this->collidStr) $sql .= 'AND o.collid IN('.$this->collidStr.')';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
@@ -103,6 +103,52 @@ class OccurrenceMaintenance {
 		}
 		$rs->free();
 		if(isset($occidArr)) $this->batchUpdateAuthor($occidArr);
+
+		//Update date fields - first look for bad year
+		$occidArr = array();
+		$this->outputMsg('Updating individual date fields (e.g. day, month, year, startDayOfYear, endDayOfYear)... ',1);
+		$sql = 'SELECT occid FROM omoccurrences WHERE eventDate BETWEEN "1500-01-01" AND CURDATE() AND (year IS NULL OR year != YEAR(eventDate)) ';
+		if($this->collidStr) $sql .= 'AND collid IN('.$this->collidStr.')';
+		$rs = $this->conn->query($sql);
+		while($r = $rs->fetch_object()){
+			$occidArr[] = $r->occid;
+			if(count($occidArr) > 1000){
+				$this->batchUpdateDateFields($occidArr);
+				unset($occidArr);
+			}
+		}
+		$rs->free();
+		if(isset($occidArr)) $this->batchUpdateDateFields($occidArr);
+
+		//Then look for records with bad month
+		$occidArr = array();
+		$sql = 'SELECT occid FROM omoccurrences WHERE eventDate BETWEEN "1500-01-01" AND CURDATE() AND (month IS NULL OR month != MONTH(eventDate)) ';
+		if($this->collidStr) $sql .= 'AND collid IN('.$this->collidStr.')';
+		$rs = $this->conn->query($sql);
+		while($r = $rs->fetch_object()){
+			$occidArr[] = $r->occid;
+			if(count($occidArr) > 1000){
+				$this->batchUpdateDateFields($occidArr);
+				unset($occidArr);
+			}
+		}
+		$rs->free();
+		if(isset($occidArr)) $this->batchUpdateDateFields($occidArr);
+
+		//Then look for records with bad day
+		$occidArr = array();
+		$sql = 'SELECT occid FROM omoccurrences WHERE eventDate BETWEEN "1500-01-01" AND CURDATE() AND (day IS NULL OR day != DAY(eventDate)) ';
+		if($this->collidStr) $sql .= 'AND collid IN('.$this->collidStr.')';
+		$rs = $this->conn->query($sql);
+		while($r = $rs->fetch_object()){
+			$occidArr[] = $r->occid;
+			if(count($occidArr) > 1000){
+				$this->batchUpdateDateFields($occidArr);
+				unset($occidArr);
+			}
+		}
+		$rs->free();
+		if(isset($occidArr)) $this->batchUpdateDateFields($occidArr);
 
 		return $status;
 	}
@@ -215,7 +261,7 @@ class OccurrenceMaintenance {
 	private function batchUpdateImageTid($occidArr){
 		$status = false;
 		if($occidArr){
-			$sql = 'UPDATE omoccurrences o INNER JOIN images i ON o.occid = i.occid SET i.tid = o.tidinterpreted WHERE o.occid IN('.implode(',',$occidArr).')';
+			$sql = 'UPDATE omoccurrences o INNER JOIN media m ON o.occid = m.occid SET m.tid = o.tidinterpreted WHERE o.occid IN('.implode(',',$occidArr).')';
 			if($this->conn->query($sql)){
 				$status = true;
 			}
@@ -269,6 +315,25 @@ class OccurrenceMaintenance {
 			}
 			else{
 				$this->errorArr[] = 'WARNING: unable to update author; '.$this->conn->error;
+				$this->outputMsg($this->errorArr,2);
+				$status = false;
+			}
+		}
+		return $status;
+	}
+
+	private function batchUpdateDateFields($occidArr){
+		$status = false;
+		if($occidArr){
+			//Update all date fields, no matter which date field was tested as bad
+			$sql = 'UPDATE omoccurrences
+				SET year = YEAR(eventDate), month = MONTH(eventDate), day = day(eventDate), startDayOfYear = DAYOFYEAR(eventDate), endDayOfYear = DAYOFYEAR(IFNULL(eventDate2,eventDate))
+				WHERE occid IN(' . implode(',', $occidArr) . ')';
+			if($this->conn->query($sql)){
+				$status = true;
+			}
+			else{
+				$this->errorArr[] = 'WARNING: unable to update date fields; '.$this->conn->error;
 				$this->outputMsg($this->errorArr,2);
 				$status = false;
 			}
@@ -433,8 +498,8 @@ class OccurrenceMaintenance {
 					$rs->free();
 
 					$this->outputMsg('Calculating number of specimens imaged... ', 1);
-					$sql = 'SELECT count(DISTINCT o.occid) as imgspeccnt, count(DISTINCT i.imgid) AS imgcnt
-						FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid
+					$sql = 'SELECT count(DISTINCT o.occid) as imgspeccnt, count(DISTINCT m.mediaID) AS imgcnt
+						FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid
 						WHERE o.collid = '.$collid;
 					$rs = $this->conn->query($sql);
 					if($r = $rs->fetch_object()){

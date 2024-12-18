@@ -40,6 +40,7 @@ $router->group(['prefix' => 'v2'], function () use ($router) {
 	$router->get('occurrence/{id}/annotation', ['uses' => 'OccurrenceAnnotationController@showOccurrenceAnnotations']);
 	$router->get('occurrence/{id}/reharvest', ['uses' => 'OccurrenceController@oneOccurrenceReharvest']);
 	$router->get('occurrence/annotation/search', ['uses' => 'OccurrenceAnnotationController@showAllAnnotations']);
+	$router->post('occurrence/skeletal', ['uses' => 'OccurrenceController@skeletalImport']);
 
 	$router->get('installation',  ['uses' => 'InstallationController@showAllPortals']);
 	$router->get('installation/ping', ['uses' => 'InstallationController@pingPortal']);
@@ -57,6 +58,10 @@ $router->group(['prefix' => 'v2'], function () use ($router) {
 	$router->post('media', ['uses' => 'MediaController@insert']);
 	$router->patch('media/{id}', ['uses' => 'MediaController@update']);
 	$router->delete('media/{id}', ['uses' => 'MediaController@delete']);
+
+	$router->get('morphology', ['uses' => 'MorphologyController@showAllCharacters']);
+	$router->get('morphology/{id}', ['uses' => 'MorphologyController@showOneCharacter']);
+	$router->get('morphology/{id}/attribute', ['uses' => 'MorphologyController@showCharacterAttributes']);
 
 	$router->get('taxonomy', ['uses' => 'TaxonomyController@showAllTaxa']);
 	$router->get('taxonomy/search', ['uses' => 'TaxonomyController@showAllTaxaSearch']);

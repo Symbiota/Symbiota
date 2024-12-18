@@ -81,13 +81,6 @@ class TaxonomyController extends Controller{
 	 *		 @OA\Schema(type="string")
 	 *	 ),
 	 *	 @OA\Parameter(
-	 *		 name="taxon",
-	 *		 in="query",
-	 *		 description="Taxon searh term",
-	 *		 required=true,
-	 *		 @OA\Schema(type="string")
-	 *	 ),
-	 *	 @OA\Parameter(
 	 *		 name="type",
 	 *		 in="query",
 	 *		 description="Type of search",
@@ -134,31 +127,25 @@ class TaxonomyController extends Controller{
 
 		$type = $request->input('type', 'EXACT');
 
-		$fullCnt = 0;
-		$result = [];
+		$taxaModel = Taxonomy::query();
 		if($type == 'START'){
-			$fullCnt = Taxonomy::where('sciname', 'like', $request->taxon . '%')->count();
-			$result = Taxonomy::where('sciname', 'like', $request->taxon . '%')->skip($offset)->take($limit)->get();
+			$taxaModel->where('sciname', 'LIKE', $request->taxon . '%');
 		}
 		elseif($type == 'WILD'){
-			$fullCnt = Taxonomy::where('sciname', 'like', '%' . $request->taxon . '%')->count();
-			$result = Taxonomy::where('sciname', 'like', '%' . $request->taxon . '%')->skip($offset)->take($limit)->get();
+			$taxaModel->where('sciname', 'LIKE', '%' . $request->taxon . '%');
 		}
 		elseif($type == 'WHOLEWORD'){
-			$fullCnt = Taxonomy::where('unitname1', $request->taxon)
-				->orWhere('unitname2', $request->taxon)
-				->orWhere('unitname3', $request->taxon)
-				->count();
-			$result = Taxonomy::where('unitname1', $request->taxon)
-				->orWhere('unitname2', $request->taxon)
-				->orWhere('unitname3', $request->taxon)
-				->skip($offset)->take($limit)->get();
+			$taxaModel->where('unitname1', $request->taxon)
+			->orWhere('unitname2', $request->taxon)
+			->orWhere('unitname3', $request->taxon);
 		}
 		else{
 			//Exact match
-			$fullCnt = Taxonomy::where('sciname', $request->taxon)->count();
-			$result = Taxonomy::where('sciname', $request->taxon)->skip($offset)->take($limit)->get();
+			$taxaModel->where('sciname', $request->taxon);
 		}
+
+		$fullCnt = $taxaModel->count();
+		$result = $taxaModel->skip($offset)->take($limit)->get();
 
 		$eor = false;
 		$retObj = [
@@ -181,16 +168,16 @@ class TaxonomyController extends Controller{
 	 *		 in="path",
 	 *		 description="Identifier (PK = tid) associated with taxonomic target",
 	 *		 required=true,
-	 *		 @OA\Schema(type="string")
+	 *		 @OA\Schema(type="integer")
 	 *	 ),
 	 *	 @OA\Response(
 	 *		 response="200",
-	 *		 description="Returns metabase on inventory registered within system with matching ID",
+	 *		 description="Returns taxonomic record of matching ID",
 	 *		 @OA\JsonContent()
 	 *	 ),
 	 *	 @OA\Response(
 	 *		 response="400",
-	 *		 description="Error: Bad request. Inventory identifier is required.",
+	 *		 description="Error: Bad request. Taxonomy identifier is required.",
 	 *	 ),
 	 * )
 	 */

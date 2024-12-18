@@ -4,6 +4,8 @@
 Language: English
 ------------------
 */
+include_once($SERVER_ROOT . '/content/lang/collections/sharedterms.en.php');
+
 $LANG['SAMPLE_SEARCH'] = 'Record Search';
 $LANG['TAXONOMY'] = 'Taxonomy';
 $LANG['TAXON'] = 'Taxon';
@@ -20,7 +22,9 @@ $LANG['SAMPLE_PROPERTIES'] = 'Sample Properties';
 $LANG['INCLUDE_CATA_NUM_GUIDs'] = 'Include other catalog numbers and GUIDs';
 $LANG['CATALOG_NUMBER'] = 'Catalog Number';
 $LANG['SEPARATE_MULTIPLE_W_COMMA'] = 'Separate multiple with commas.';
+$LANG['SEPARATE_MULTIPLE_W_COMMA_DASH'] = 'Separate multiple with commas or provide ranges with a dash.';
 $LANG['LIMIT_TO_SPECIMENS_W_IMAGES'] = 'Limit to specimens with images';
+$LANG['LIMIT_TO_SPECIMENS_W_AUDIO'] = 'Limit to specimens with audio';
 $LANG['LIMIT_TO_SPECIMENS_W_GENETIC_DATA'] = 'Limit to specimens with genetic data';
 $LANG['LOCALITY'] = 'Locality';
 $LANG['COUNTRY'] = 'Country';
@@ -83,9 +87,10 @@ $LANG['TAXA'] = 'Taxa';
 $LANG['INCLUDE_OTHER_IDS'] = 'Include other IDs';
 $LANG['ONLY_TYPE_SPECIMENS'] = 'Only type specimens';
 $LANG['ONLY_WITH_IMAGES'] = 'Only with images';
+$LANG['ONLY_WITH_AUDIO'] = 'Only with audio';
 $LANG['ONLY_WITH_GENETIC'] = 'Only with genetic';
 $LANG['ONLY_WITH_COORDINATES'] = 'Only with coordinates';
-$LANG['INCLUDE_CULTIVATED'] = 'Include cultivated';
+$LANG['INCLUDE_CULTIVATED'] = 'Include cultivated/captive';
 $LANG['MIN_ELEVATION'] = 'Min Elevation';
 $LANG['MAX_ELEVATION'] = 'Max Elevation';
 $LANG['UPPER_LAT'] = 'Upper Lat';
@@ -110,5 +115,9 @@ $LANG['TRAIT_CRITERIA'] = 'Trait Criteria';
 $LANG['TRAIT'] = 'Trait';
 $LANG['EXPAND_ALL_SECTIONS'] = 'Expand all sections';
 $LANG['COLLAPSE_ALL_SECTIONS'] = 'Collapse all sections';
+$LANG['ASSOCIATIONS'] = 'Associations';
+$LANG['ASSOCIATION_DESCRIPTION'] = 'Find all occurrences of taxa that have the following association';
+$LANG['ASSOCIATION_DESCRIPTION_2'] = 'with the following taxon';
+$LANG['ASSOCIATION_TYPE'] = 'Association Type';
 
 ?>

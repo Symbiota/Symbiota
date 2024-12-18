@@ -33,8 +33,8 @@ if(isset($clArray['dynamicProperties']) && $clArray['dynamicProperties']){
 		width: "100%",
 		height: 300,
 		menubar: false,
-		plugins: "link,charmap,code,paste",
-		toolbar : "bold italic underline cut copy paste outdent indent undo redo subscript superscript removeformat link charmap code",
+		plugins: "link,charmap,code,paste,textcolor",
+		toolbar : "bold italic underline forecolor cut copy paste outdent indent undo redo subscript superscript removeformat link charmap code",
 		default_link_target: "_blank",
 		paste_as_text: true
 	});

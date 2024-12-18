@@ -17,6 +17,16 @@ $imageType = isset($_REQUEST['imagetype']) ? filter_var($_REQUEST['imagetype'], 
 $pageNumber = array_key_exists('page', $_REQUEST) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $cntPerPage = array_key_exists('cntperpage', $_REQUEST) && is_numeric($_REQUEST['cntperpage']) ? filter_var($_REQUEST['cntperpage'], FILTER_SANITIZE_NUMBER_INT) : 200;
 
+$mediaType = null;
+if(isset($_REQUEST['mediatype'])) {
+	if($_REQUEST['mediatype'] === 'image') {
+		$mediatype = 'image';
+	}
+	elseif($_REQUEST['mediatype'] === 'audio') {
+		$mediatype = 'audio';
+	}
+}
+
 $action = $_REQUEST['submitaction'] ?? '';
 
 if(!$useThes && !$action) $useThes = 1;
@@ -34,6 +44,8 @@ $imgLibManager->setTag($tag);
 $imgLibManager->setKeywords($keywords);
 $imgLibManager->setImageCount($imageCount);
 $imgLibManager->setImageType($imageType);
+//Setter only takes 'image' and 'audio' as valid values so no need to sanitize
+$imgLibManager->setMediaType($mediaType);
 if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
 
 $statusStr = '';
@@ -157,11 +169,12 @@ if($action == 'batchAssignTag'){
 								<input id="taxa" name="taxa" type="text" style="width:450px;" value="<?= $imgLibManager->getTaxaStr() ?>" title="<?= $LANG['SEPARATE_MULTIPLE'] ?>" autocomplete="off" >
 							</div>
 							<div style="float:left;margin-left:10px;" >
+								<input type="hidden" name="usethes" value="0">
 								<input id="usethes" name="usethes" type="checkbox" value="1" <?php if(!$action || $imgLibManager->getUseThes()) echo 'CHECKED'; ?> > <label for="usethes"><?= $LANG['INCLUDE_SYN'] ?></label>
 							</div>
 						</div>
 						<div class="row-div flex-form">
-							<label for="phuid"><?= $LANG['PHOTOGRAPHER'] ?></label>:
+							<label for="phuid"><?= $LANG['CREATOR'] ?></label>:
 							<select id="phuid" name="phuid">
 								<option value="">-----------------------------</option>
 								<?php
@@ -239,6 +252,30 @@ if($action == 'batchAssignTag'){
 								</span><br>
 								<input id="typeField" type="radio" name="imagetype" value="3" <?= ($imgLibManager->getImageType() == 3 ? 'CHECKED' : '') ?> onclick="deactivateCollectionControl()">
 								<label for="typeField"><?= $LANG['TYPE_FIELD'] ?></label>
+							</fieldset>
+						</div>
+						<div class="row-div flex-form">
+							<fieldset>
+								<?php
+									$is_image = false;
+									$is_audio = false;
+									$is_all = false;
+									$m_type = $imgLibManager->getMediaType();
+									if($m_type === 'image') {
+										$is_image = true;
+									} elseif($m_type === 'audio') {
+										$is_audio = true;
+									} else {
+										$is_all = true;
+									}
+								?>
+								<legend> <?= $LANG['MEDIA_TYPE'] ?> </legend>
+								<input id="m_image" type="radio" name="mediatype" value="image" <?= $is_image? 'CHECKED': ''?>>
+								<label for="m_image"> <?= $LANG['MEDIA_TYPE_IMAGE'] ?></label><br>
+								<input id="m_audio" type="radio" name="mediatype" value="audio" <?= $is_audio? 'CHECKED': ''?>>
+								<label for="m_audio"> <?= $LANG['MEDIA_TYPE_AUDIO']?></label><br>
+									<input id="m_all" type="radio" name="mediatype" value="" <?= $is_all? 'CHECKED': ''?>>
+								<label for="m_all"> <?= $LANG['MEDIA_TYPE_ALL'] ?></label><br>
 							</fieldset>
 						</div>
 						<div class="row-div flex-form">
@@ -365,11 +402,14 @@ if($action == 'batchAssignTag'){
 								$imgTn = $imgArr['thumbnailurl'];
 								if($imgTn){
 									$imgUrl = $imgTn;
-									if($IMAGE_DOMAIN && substr($imgTn,0,1) == '/') $imgUrl = $IMAGE_DOMAIN . $imgTn;
+									if($MEDIA_DOMAIN && substr($imgTn,0,1) == '/') $imgUrl = $MEDIA_DOMAIN . $imgTn;
+								} else if($imgArr['mediaType'] == 'audio') {
+									$imgUrl = $CLIENT_ROOT . '/images/speaker_thumbnail.png';
 								}
-								elseif($IMAGE_DOMAIN && substr($imgUrl,0,1) == '/'){
-									$imgUrl = $IMAGE_DOMAIN . $imgUrl;
+								elseif($MEDIA_DOMAIN && substr($imgUrl,0,1) == '/'){
+									$imgUrl = $MEDIA_DOMAIN . $imgUrl;
 								}
+
 								?>
 								<div class="tndiv" style="margin-bottom:15px;margin-top:15px;">
 									<div class="tnimg">
@@ -392,8 +432,12 @@ if($action == 'batchAssignTag'){
 											if($imgArr['occid']){
 												$collid = $occArr[$imgArr['occid']]['collid'];
 												if($collid){
-													if(isset($USER_RIGHTS['CollAdmin'][$collid])) $isEditorOfThisImage = true;
-													elseif(isset($USER_RIGHTS['CollEditor'][$collid])) $isEditorOfThisImage = true;
+													if(isset($USER_RIGHTS['CollAdmin']) && in_array($collid, $USER_RIGHTS['CollAdmin'])){
+														$isEditorOfThisImage = true;
+													}
+													elseif(isset($USER_RIGHTS['CollEditor']) && in_array($collid, $USER_RIGHTS['CollEditor'])){
+														$isEditorOfThisImage = true;
+													}
 												}
 											}
 											else{

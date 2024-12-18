@@ -11,6 +11,8 @@
    crossorigin="">
 </script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OverlappingMarkerSpiderfier-Leaflet/0.2.6/oms.min.js"></script>
+
 <!-- Importing Leaflet Draw Plugin --> 
 <link 
    rel="stylesheet" 

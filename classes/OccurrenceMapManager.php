@@ -55,15 +55,19 @@ class OccurrenceMapManager extends OccurrenceManager {
 		if($this->sqlWhere){
 			$statsManager = new OccurrenceAccessStats();
 			$sql = 'SELECT o.occid, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS identifier, '.
-				'o.sciname, o.family, o.tidinterpreted, o.DecimalLatitude, o.DecimalLongitude, o.collid, o.catalognumber, '.
+				'o.sciname, IF(ts.family IS NULL, o.family, ts.family) as family, o.tidinterpreted, o.DecimalLatitude, o.DecimalLongitude, o.collid, o.catalognumber, '.
 				'o.othercatalognumbers, c.institutioncode, c.collectioncode, c.CollectionName '.
 				'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
+
+			$this->sqlWhere .= 'AND (ts.taxauthid = 1 OR ts.taxauthid IS NULL) ';
+
 			$sql .= $this->getTableJoins($this->sqlWhere);
+
 			$sql .= $this->sqlWhere;
+
 			if(is_numeric($start) && $limit){
 				$sql .= "LIMIT ".$start.",".$limit;
 			}
-			//echo '//SQL: ' . $sql;
 			$result = $this->conn->query($sql);
 			$color = 'e69e67';
 			$occidArr = array();
@@ -158,23 +162,26 @@ class OccurrenceMapManager extends OccurrenceManager {
 			$sql .= $this->sqlWhere;
 			$bottomLimit = ($pageRequest - 1)*$cntPerPage;
 			$sql .= "ORDER BY o.sciname, o.eventdate ";
-			$sql .= "LIMIT ".$bottomLimit.",".$cntPerPage;
-			//echo "<div>Spec sql: ".$sql."</div>";
-			$result = $this->conn->query($sql);
-			while($r = $result->fetch_object()){
-				$occId = $r->occid;
-				$retArr[$occId]['i'] = $this->cleanOutStr($r->institutioncode);
-				$retArr[$occId]['cat'] = $this->cleanOutStr($r->catalognumber);
-				$retArr[$occId]['c'] = $this->cleanOutStr($r->collector);
-				$retArr[$occId]['e'] = $this->cleanOutStr($r->eventdate);
-				$retArr[$occId]['f'] = $this->cleanOutStr($r->family);
-				$retArr[$occId]['s'] = $this->cleanOutStr($r->sciname);
-				$retArr[$occId]['l'] = $this->cleanOutStr($r->locality);
-				$retArr[$occId]['lat'] = $this->cleanOutStr($r->DecimalLatitude);
-				$retArr[$occId]['lon'] = $this->cleanOutStr($r->DecimalLongitude);
-				$retArr[$occId]['l'] = str_replace('.,',',',$r->locality);
+			$sql .= "LIMIT ?,?";
+			$statement = $this->conn->prepare($sql);
+			$statement->bind_param('ii', $bottomLimit, $cntPerPage);
+			$statement->execute();
+			$statement->bind_result($occid, $institutioncode, $catalognumber, $collector, $eventdate, $family, $sciname, $locality, $DecimalLatitude, $DecimalLongitude, $LocalitySecurity, $localitysecurityreason);
+			while($statement->fetch()){
+				$occId = $occid;
+				$retArr[$occId]['i'] = $this->cleanOutStr($institutioncode);
+				$retArr[$occId]['cat'] = $this->cleanOutStr($catalognumber);
+				$retArr[$occId]['c'] = $this->cleanOutStr($collector);
+				$retArr[$occId]['e'] = $this->cleanOutStr($eventdate);
+				$retArr[$occId]['f'] = $this->cleanOutStr($family);
+				$retArr[$occId]['s'] = $this->cleanOutStr($sciname);
+				$retArr[$occId]['l'] = $this->cleanOutStr($locality);
+				$retArr[$occId]['lat'] = $this->cleanOutStr($DecimalLatitude);
+				$retArr[$occId]['lon'] = $this->cleanOutStr($DecimalLongitude);
+				$retArr[$occId]['l'] = str_replace('.,', ',', $locality);
+				// Do we also want to put LocalitySecurity and localitysecurityreason in this array?
 			}
-			$result->free();
+			$statement->close();
 			//Set access statistics
 			if($retArr){
 				$statsManager = new OccurrenceAccessStats();
@@ -347,7 +354,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 		$cnt = 0;
 		$coordArr = $this->getMappingData($recLimit, $extraFieldArr);
 		if($coordArr){
-			$this->googleIconArr = array('pushpin/ylw-pushpin','pushpin/blue-pushpin','pushpin/grn-pushpin','pushpin/ltblu-pushpin',
+			$googleIconArr = array('pushpin/ylw-pushpin','pushpin/blue-pushpin','pushpin/grn-pushpin','pushpin/ltblu-pushpin',
 				'pushpin/pink-pushpin','pushpin/purple-pushpin', 'pushpin/red-pushpin','pushpin/wht-pushpin','paddle/blu-blank',
 				'paddle/grn-blank','paddle/ltblu-blank','paddle/pink-blank','paddle/wht-blank','paddle/blu-diamond','paddle/grn-diamond',
 				'paddle/ltblu-diamond','paddle/pink-diamond','paddle/ylw-diamond','paddle/wht-diamond','paddle/red-diamond','paddle/purple-diamond',
@@ -359,7 +366,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 			foreach($coordArr as $sciname => $snArr){
 				unset($snArr['tid']);
 				$cnt++;
-				$iconStr = $this->googleIconArr[$cnt%44];
+				$iconStr = $googleIconArr[$cnt%44];
 				echo "<Style id='sn_".$iconStr."'>\n";
 				echo "<IconStyle><scale>1.1</scale><Icon>";
 				echo "<href>http://maps.google.com/mapfiles/kml/" . htmlspecialchars($iconStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ".png</href>";

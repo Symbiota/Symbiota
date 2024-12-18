@@ -1,8 +1,12 @@
 <?php
+
+use PHPUnit\Exception;
+
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TPEditorManager.php');
 include_once($SERVER_ROOT.'/classes/TPDescEditorManager.php');
 include_once($SERVER_ROOT.'/classes/TPImageEditorManager.php');
+include_once($SERVER_ROOT.'/classes/Media.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.' . $LANG_TAG . '.php'))
 include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.en.php');
@@ -108,11 +112,16 @@ if($isEditor && $action){
 		$statusStr = $tEditor->editImageSort($imgSortArr);
 	}
 	elseif($action == 'Upload Image'){
-		if($tEditor->loadImage($_POST)){
-			$statusStr = 'Image uploaded successful';
-		}
-		if($tEditor->getErrorMessage()){
-			$statusStr .= '<br/>'.$tEditor->getErrorMessage();
+		$family = $tEditor->getFamily();
+		$path = ($family? $family: '') . '/' . date('Ym') . '/';
+		try {
+			Media::add(
+				$_POST, 
+				new LocalStorage($path), 
+				$_FILES['imgfile'] ?? null
+			);
+		} catch(Exception $e) {
+			$statusStr .= '<br/>' . $e->getMessage();
 		}
 	}
 }
@@ -169,11 +178,11 @@ if($isEditor && $action){
 		#redirectedfrom{ font-size:1rem; margin-top:5px; margin-left:10px; font-weight:bold; }
 		#taxonDiv{ font-size:1.125rem; margin-top:15px; margin-left:10px; }
 		#taxonDiv a{ color:#990000; font-weight: bold; font-style: italic; }
-		#taxonDiv img{ border: 0px; margin: 0px; height: 15px; }
 		#familyDiv{ margin-left:20px; margin-top:0.25em; }
 		.tox-dialog{ min-height: 400px }
 		input{ margin:3px; border:inset; }
 		hr{ margin:30px 0px; }
+		.icon-img{ border: 0px; height: 1.2em; }
 	</style>
 </head>
 <body>
@@ -189,13 +198,21 @@ if($isEditor && $action){
 		?>
 	</div>
 	<div role="main" id="innertext">
-		<h1 class="page-heading"><?php echo $LANG['TAX_PROF_EDITOR'] .': ' . $tEditor->getSciName(); ?></h1>
+		<h1 class="page-heading"><?php
+		 $splitSciname = $tEditor->splitSciname();
+		 $author = !empty($splitSciname['author']) ? ($splitSciname['author'] . ' ') : '';
+		 $cultivarEpithet = !empty($splitSciname['cultivarEpithet']) ? ($tEditor->standardizeCultivarEpithet($splitSciname['cultivarEpithet'])) . ' ' : '';
+		 $tradeName = !empty($splitSciname['tradeName']) ? ($tEditor->standardizeTradeName($splitSciname['tradeName']) . ' ') : '';
+		 $nonItalicizedScinameComponent = $author . $cultivarEpithet . $tradeName;
+
+		 echo $LANG['TAX_PROF_EDITOR'] . ': <i>' . $splitSciname['base'] . '</i> ' . $nonItalicizedScinameComponent; 
+		 ?></h1>
 		<?php
 		if($tEditor->getTid()){
 			if($isEditor){
 				if($tEditor->isForwarded()) echo '<div id="redirectedfrom">' . $LANG['REDIRECTED_FROM'] . ': <i>' . $tEditor->getSubmittedValue('sciname') . '</i></div>';
 				echo '<div id="taxonDiv"><a href="../index.php?taxon=' . htmlspecialchars($tEditor->getTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . $LANG['VIEW_PUBLIC_TAXON'] . '</a> ';
-				if($tEditor->getRankId() > 140) echo "&nbsp;<a href='tpeditor.php?tid=" . htmlspecialchars($tEditor->getParentTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'><img src='../../images/toparent.png' style='width:1.3em' title='" . htmlspecialchars($LANG['GO_TO_PARENT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "' /></a>";
+				if($tEditor->getRankId() > 140) echo "&nbsp;<a href='tpeditor.php?tid=" . htmlspecialchars($tEditor->getParentTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'><img class='icon-img' src='../../images/toparent.png' title='" . htmlspecialchars($LANG['GO_TO_PARENT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "' /></a>";
 				echo "</div>\n";
 				if($tEditor->getFamily()) echo '<div id="familyDiv"><b>' . $LANG['FAMILY'] . ':</b> ' . $tEditor->getFamily() . '</div>' . "\n";
 				if($statusStr) echo '<div style="margin:15px;font-weight:bold;font-size:120%;color:' . (stripos($statusStr,'error') !== false?'red':'green') .';">' . $statusStr . '</div>';
@@ -218,7 +235,7 @@ if($isEditor && $action){
 							<div style="margin:10px 0px" title="<?php echo $LANG['ADD_COMMON_NAME']; ?>">
 								<b><?php echo ($vernacularList ? $LANG['COMMON_NAMES'] : $LANG['NO_COMMON_NAMES']); ?></b>
 								<a href="#" onclick="toggle('addvern');return false;">
-									<img style="border:0px;width:1.3em;" src="../../images/add.png"/>
+									<img class="icon-img" src="../../images/add.png"/>
 								</a>
 							</div>
 							<div id="addvern" class="addvern" style="display:<?php echo ($vernacularList?'none':'block'); ?>;">
@@ -271,7 +288,7 @@ if($isEditor && $action){
 											<div style="margin-left:10px;" title="<?php echo $LANG['EDIT_COMMON_NAME']; ?>">
 												<b><?php echo $vernArr['vernname']; ?></b>
 												<a href="#" onclick="toggle('vid-<?php echo $vid; ?>');return false;">
-													<img style="border:0px;width:1.2em;" src="../../images/edit.png" />
+													<img class="icon-img" src="../../images/edit.png" />
 												</a>
 											</div>
 											<form name="updatevern" action="tpeditor.php" method="post" style="margin:15px;clear:both">
@@ -348,7 +365,7 @@ if($isEditor && $action){
 							if($synonymArr = $tEditor->getSynonym()){
 								?>
 								<div style="float:right;" title="<?php echo $LANG['EDIT_SYN_ORDER']; ?>">
-									<a href="#"  onclick="toggle('synsort');return false;"><img style="border:0px;width:1.2em;" src="../../images/edit.png"/></a>
+									<a href="#"  onclick="toggle('synsort');return false;"><img class="icon-img" src="../../images/edit.png"/></a>
 								</div>
 								<div style="font-weight:bold;margin-left:15px;">
 									<ul>

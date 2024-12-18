@@ -5,6 +5,7 @@ Language: English
 ------------------
 */
 
+
 $LANG['GEOTHES_TITLE'] = 'Geographic Thesaurus Manager';
 $LANG['NAV_HOME'] = 'Home';
 $LANG['NAV_GEOTHES'] = 'Geographic Thesaurus Root Terms';
@@ -28,6 +29,7 @@ $LANG['NOTES'] = 'Notes';
 $LANG['PARENT_TERM'] = 'Parent term';
 $LANG['IS_ROOT_TERM'] = 'Is a Root Term (i.e. no parent)';
 $LANG['ACCEPTED_TERM'] = 'Preferred term';
+$LANG['SYNONYMS'] = 'Synonyms';
 $LANG['IS_ACCEPTED'] = 'Term is Preferred';
 $LANG['SAVE_EDITS'] = 'Save Edits';
 $LANG['DEL_GEO_UNIT'] = 'Delete Geographic Unit';

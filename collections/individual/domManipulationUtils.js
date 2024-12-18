@@ -1,3 +1,15 @@
+const addElemFirst = (parentDivId, targetChildDivId) => {
+  const parent = document.getElementById(parentDivId);
+  const targetChild = document.getElementById(targetChildDivId);
+  if (!parent || !targetChild) {
+    return;
+  }
+  if (!parent.contains(targetChild)) {
+    return;
+  }
+  parent.prepend(targetChild);
+};
+
 const reorderElements = (parentDivId, desiredDivIds, removeDivIds) => {
   const parent = document.getElementById(parentDivId);
   const allChildren = Array.from(parent.children);

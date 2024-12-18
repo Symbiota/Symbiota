@@ -1,8 +1,11 @@
 <?php
 include_once('../config/symbini.php');
-include_once ($SERVER_ROOT.'/classes/UtilityFunctions.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/includes/useagepolicy_template.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/includes/useagepolicy_template.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/includes/useagepolicy_template.en.php');
+include_once ($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+
 header("Content-Type: text/html; charset=" . $CHARSET);
-$serverHost = UtilityFunctions::getDomain();
+$serverHost = GeneralUtil::getDomain();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -10,7 +13,6 @@ $serverHost = UtilityFunctions::getDomain();
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Data Usage Guidelines</title>
 	<?php
-
 	include_once($SERVER_ROOT . '/includes/head.php');
 	?>
 </head>
@@ -69,6 +71,19 @@ $serverHost = UtilityFunctions::getDomain();
 			}
 			?>
 		</blockquote>
+		<h3>Glossary</h3>
+		<p>Please cite this portal's glossary as:</p>
+		<blockquote>
+			<?php
+				if ($DEFAULT_TITLE) {
+					echo $DEFAULT_TITLE;
+				}
+				else {
+					echo 'Name of people or institutional reponsible for maintaining the portal';
+				};
+				echo '. Glossary. ' . $serverHost . $CLIENT_ROOT . 'glossary/index.php. Accessed: ' . date('Y-m-d') . '.';
+			?>
+		</blockquote>
 
 		<h2>Occurrence Record Use Policy</h2>
 		<div>
@@ -119,5 +134,4 @@ $serverHost = UtilityFunctions::getDomain();
 	include($SERVER_ROOT . '/includes/footer.php');
 	?>
 </body>
-
 </html>

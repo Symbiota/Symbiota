@@ -1,6 +1,6 @@
 <?php
 $DEFAULT_LANG = 'en';			//Default language
-$DEFAULT_PROJ_ID = 1;
+$DEFAULT_PROJ_ID = 0;
 $DEFAULTCATID = 0;
 $DEFAULT_TITLE = '';
 $EXTENDED_LANG = 'en';		//Add all languages you want to support separated by commas (e.g. en,es); currently supported languages: en,es
@@ -18,22 +18,22 @@ $TEMP_DIR_ROOT = $SERVER_ROOT . '/temp';				//Must be writable by Apache; will u
 $LOG_PATH = $SERVER_ROOT . '/content/logs';					//Must be writable by Apache; will use <SYMBIOTA_ROOT>/temp/logs if not specified
 
 //Path to CSS files
-$CSS_VERSION_RELEASE = 'v202209';
-$CSS_BASE_PATH = $CLIENT_ROOT . '/css/' . $CSS_VERSION_RELEASE;
+$CSS_BASE_PATH = $CLIENT_ROOT . '/css';
 
 //Path to user uploaded images files.  Used by tinyMCE. This is NOT for collection images. See section immediatly below for collection image location
-$PUBLIC_IMAGE_UPLOAD_ROOT = '/content/imglib';
+$PUBLIC_MEDIA_UPLOAD_ROOT = '/content/imglib';
 
 //the root for the collection image directory
-$IMAGE_DOMAIN = '';				//Domain path to images, if different from portal
-$IMAGE_ROOT_URL = '';				//URL path to images
-$IMAGE_ROOT_PATH = '';			//Writable path to images, especially needed for downloading images
+$MEDIA_DOMAIN = '';				//Domain path to images, if different from portal
+$MEDIA_ROOT_URL = '';				//URL path to images
+$MEDIA_ROOT_PATH = '';			//Writable path to images, especially needed for downloading images
+
 
 //Pixel width of web images
 $IMG_WEB_WIDTH = 1400;
 $IMG_TN_WIDTH = 200;
 $IMG_LG_WIDTH = 3200;
-$IMG_FILE_SIZE_LIMIT = 300000;		//Files above this size limit and still within pixel width limits will still be resaved w/ some compression
+$MEDIA_FILE_SIZE_LIMIT = 300000;		//Files above this size limit and still within pixel width limits will still be resaved w/ some compression
 $IPLANT_IMAGE_IMPORT_PATH = '';		//Path used to map/import images uploaded to the iPlant image server (e.g. /home/shared/project-name/--INSTITUTION_CODE--/, the --INSTITUTION_CODE-- text will be replaced with collection's institution code)
 
 //$USE_IMAGE_MAGICK = 0;		//1 = ImageMagick resize images, given that it's installed (faster, less memory intensive)
@@ -54,7 +54,7 @@ $GBIF_ORG_KEY = '';                 //GBIF organization key for organization whi
 //Misc variables
 $DEFAULT_TAXON_SEARCH = 2;			//Default taxonomic search type: 1 = Any Name, 2 = Scientific Name, 3 = Family, 4 = Taxonomic Group, 5 = Common Name
 
-$GOOGLE_MAP_KEY = '';				//Needed for Google Map; get from Google
+$GOOGLE_MAP_KEY = '';				//Request from Google if Google Maps are desired. Leave empty for default Leaflet map.
 $MAPBOX_API_KEY = '';
 $MAP_THUMBNAILS = false;				//Display Static Map thumbnails within taxon profile, checklist, etc
 
@@ -87,28 +87,6 @@ $RIGHTS_TERMS = array(
 	'CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)' => 'https://creativecommons.org/licenses/by-nc-sa/4.0/',
 );
 
-/*
- //Default editor properties; properties defined in collection will override these values
- $EDITOR_PROPERTIES = array(
- 'modules-panel' => array(
- 'paleo' => array('status'=>0,'titleOverride'=>'Paleonotology Terms')
- ),
- 'features' => array('catalogDupeCheck'=>1,'otherCatNumDupeCheck'=>0,'dupeSearch'=>1),
- 'labelOverrides' => array(),
- 'cssTerms' => array(
- '#recordNumberDiv'=>array('float'=>'left','margin-right'=>'2px'),
- '#recordNumberDiv input'=>array('width'=>'60px'),
- '#eventDateDiv'=>array('float'=>'left'),
- '#eventDateDiv input'=>array('width'=>'110px')
- ),
- 'customCSS' => array(),
- 'customLookups' => array(
- 'processingStatus' => array('Unprocessed','Stage 1','Stage 2','Pending Review','Expert Required','Reviewed','Closed')
- )
- );
- // json: {"editorProps":{"modules-panel":{"paleo":{"status":1}}}}
- */
-
  // Should public users be able to create accounts?
 $SHOULD_BE_ABLE_TO_CREATE_PUBLIC_USER = true;
 // end Should public users be able to create accounts?
@@ -124,10 +102,10 @@ $SHOULD_USE_MINIMAL_MAP_HEADER = false;
 
 $COOKIE_SECURE = false;
 if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) {
-	header("strict-transport-security: max-age=600");
+	header('strict-transport-security: max-age=600');
 	$COOKIE_SECURE = true;
 }
 
 //Base code shared by all pages; leave as is
-include_once("symbbase.php");
+include_once('symbbase.php');
 /* --DO NOT ADD ANY EXTRA SPACES BELOW THIS LINE-- */

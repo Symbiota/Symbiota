@@ -86,7 +86,7 @@ if($collid){
 					</div>
  				</div>
 				<form id="defaultform" name="defaultform" action="skeletalsubmit.php" method="post" autocomplete="off" onsubmit="return submitDefaultForm(this)">
-					<div id="optiondiv" style="display:none;position:absolute;background-color:white;">
+					<div id="optiondiv" style="display:none;position:absolute;background-color:white; z-index: 1;">
 						<fieldset style="margin-top: -10px;padding-top:5px">
 							<legend><?php echo $LANG['OPTIONS']; ?></legend>
 							<div style="float:right;"><a href="#" onclick="hideOptions()" style="color:red" ><?php echo $LANG['X_CLOSE']; ?></a></div>
@@ -110,9 +110,17 @@ if($collid){
 							<input name="addaction" type="radio" value="2" /> <?php echo $LANG['APPEND_VALUES']; ?>
 						</fieldset>
 					</div>
-					<?php echo $LANG['SESSION']; ?>: <span id="minutes">00</span>:<span id="seconds">00</span><br/>
-					<?php echo $LANG['COUNT']; ?>: <span id="count">0</span><br/>
-					<?php echo $LANG['RATE']; ?>: <span id="rate">0</span> <?php echo $LANG['PER_HOUR']; ?>
+					<div style="display: flex; justify-content:right; gap: 0.5rem; margin-bottom: 1rem">
+						<div>
+							<?php echo $LANG['SESSION']; ?>: <span id="minutes">00</span>:<span id="seconds">00</span><br/>
+						</div>
+						<div>
+							<?php echo $LANG['COUNT']; ?>: <span id="count">0</span><br/>
+						</div>
+						<div>
+							<?php echo $LANG['RATE']; ?>: <span id="rate">0</span> <?php echo $LANG['PER_HOUR']; ?>
+						</div>
+					</div>
 
 					<div class="flex-form" style="float:right">
 							<div>

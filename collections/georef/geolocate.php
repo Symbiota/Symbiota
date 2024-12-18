@@ -1,5 +1,8 @@
 <?php
 include_once('../../config/symbini.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/georef/geolocate.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/georef/geolocate.'.$LANG_TAG.'.php');
+else include_once($SERVER_ROOT.'/content/lang/collections/georef/geolocate.en.php');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $locality = $_REQUEST['locality'];
@@ -29,20 +32,12 @@ if(preg_match('/\d{1,2}[NS]{1}T\s\d{1,2}[EW]{1}R\s\d{1,2}S/',$locality)){
 elseif(preg_match('/R\d{1,2}[EW]{1}\sS\d{1,2}/i',$locality)){
 	$locality = preg_replace('/\sS(\d{1,2})/', ' Sec$1', $locality);
 }
-//Convert latin1 character sets to utf-8
-if(strtolower($CHARSET) == "iso-8859-1"){
-	if(mb_detect_encoding($country,'UTF-8,ISO-8859-1') == "UTF-8"){
-		$country = utf8_encode($country);
-	}
-	if(mb_detect_encoding($state,'UTF-8,ISO-8859-1') == "UTF-8"){
-		$state = utf8_encode($state);
-	}
-	if(mb_detect_encoding($county,'UTF-8,ISO-8859-1') == "UTF-8"){
-		$county = utf8_encode($county);
-	}
-	if(mb_detect_encoding($locality,'UTF-8,ISO-8859-1') == "UTF-8"){
-		$locality = utf8_encode($locality);
-	}
+//Convert latin1 character sets to utf-8, though probably not needed because Symbiota no longer provides extended support for storing data as a latin1 datasets
+if(strtolower($CHARSET) == 'iso-8859-1'){
+	$country = mb_convert_encoding($country, 'UTF-8', mb_detect_encoding($country, 'UTF-8,ISO-8859-1,ISO-8859-15'));
+	$state = mb_convert_encoding($state, 'UTF-8', mb_detect_encoding($state, 'UTF-8,ISO-8859-1,ISO-8859-15'));
+	$county = mb_convert_encoding($county, 'UTF-8', mb_detect_encoding($county, 'UTF-8,ISO-8859-1,ISO-8859-15'));
+	$locality = mb_convert_encoding($locality, 'UTF-8', mb_detect_encoding($locality, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 }
 
 $country = removeAccents($country);
@@ -61,7 +56,7 @@ if(isset($PORTAL_GUID) && $PORTAL_GUID){
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
-	<title>GEOLocate Tool</title>
+	<title><?= $LANG['GEO_LOCATE_TOOL'] ?></title>
 	<?php
 
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -77,13 +72,13 @@ if(isset($PORTAL_GUID) && $PORTAL_GUID){
 	<script type="text/javascript">
 	    function transferCoord(evt) {
 	        if(evt.origin.indexOf('geo-locate.org') < 0) {
-				alert("iframe url does not have permision to interact with me");
+				alert("<?= $LANG['IFRAME_PERMISSION'] ?>");
 	        }
 	        else {//alert(evt.data);
 	            var breakdown = evt.data.split("|");
                 if(breakdown.length == 4){
                     if(breakdown[0] == ""){
-                    	alert("There are no data points to tranfer");
+                    	alert("<?= $LANG['NO_POINTS_TO_TRANSFER'] ?>");
                     }
                     else{
 	                	opener.geoLocateUpdateCoord(breakdown[0],breakdown[1],breakdown[2],breakdown[3]);
@@ -104,7 +99,7 @@ if(isset($PORTAL_GUID) && $PORTAL_GUID){
 
 <body>
 	<div id="container">
-		<h1 class="page-heading screen-reader-only">GEOLocate Tool</h1>
+		<h1 class="page-heading screen-reader-only"><?php echo $LANG['GEO_LOCATE_TOOL']; ?></h1>
 		<div>
 			<iframe id="Iframe1" src="//www.geo-locate.org/web/WebGeoreflight.aspx?v=1&georef=run|true|true|true|false|false|false|false|0&tab=locality&<?php echo $urlVariables; ?>"></iframe>
 		</div>
