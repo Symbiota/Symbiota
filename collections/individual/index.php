@@ -471,7 +471,6 @@ $traitArr = $indManager->getTraitArr();
 							$resolvableGuid = false;
 							if(substr($occArr['occurrenceid'],0,4) == 'http') $resolvableGuid = true;
 							if($resolvableGuid) echo '<a href="' . $occArr['occurrenceid'] . '" target="_blank">';
-							// var_dump($occArr);
 							if(isset($occArr['occurrenceid'])){
 								echo $occArr['occurrenceid'];
 							}
