@@ -204,14 +204,14 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 							<th><?php echo (isset($LANG['LOCALITY']) ? $LANG['LOCALITY'] : 'Locality'); ?></th>
 							<th><?php echo (isset($LANG['DEC_LAT']) ? $LANG['DEC_LAT'] : 'Decimal Lat.'); ?></th>
 							<th><?php echo (isset($LANG['DEC_LONG']) ? $LANG['DEC_LONG'] : 'Decimal Long.'); ?></th>
-							<th><?php echo (isset($LANG['HABITAT']) ? $LANG['HABITAT'] : 'Habitat'); ?></th>
-							<th><?php echo (isset($LANG['SUBSTRATE']) ? $LANG['SUBSTRATE'] : 'Substrate'); ?></th>
-							<th><?php echo (isset($LANG['ELEVATION']) ? $LANG['ELEVATION'] : 'Elevation'); ?></th>
 							<?php if (!empty($ACTIVATE_PALEO)): ?>
 								<th><?php echo isset($LANG['FORMATION']) ? $LANG['FORMATION'] : 'Formation'; ?></th>
 								<th><?php echo isset($LANG['EARLY_INT']) ? $LANG['EARLY_INT'] : 'Early Interval'; ?></th>
 								<th><?php echo isset($LANG['LATE_INT']) ? $LANG['LATE_INT'] : 'Late Interval'; ?></th>
 							<?php endif; ?>
+							<th><?php echo (isset($LANG['HABITAT']) ? $LANG['HABITAT'] : 'Habitat'); ?></th>
+							<th><?php echo (isset($LANG['SUBSTRATE']) ? $LANG['SUBSTRATE'] : 'Substrate'); ?></th>
+							<th><?php echo (isset($LANG['ELEVATION']) ? $LANG['ELEVATION'] : 'Elevation'); ?></th>
 						</tr>
 						<?php
 						$recCnt = 0;
@@ -259,14 +259,14 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 								?></td>
 								<td><?php if(isset($occArr['declat'])) echo $occArr['declat']; ?></td>
 								<td><?php if(isset($occArr['declong'])) echo $occArr['declong']; ?></td>
-								<td><?php if(isset($occArr['habitat'])) echo ((strlen($occArr['habitat'])>80) ? substr($occArr['habitat'],0,80).'...':$occArr['habitat']); ?></td>
-								<td><?php if(isset($occArr['substrate'])) echo ((strlen($occArr['substrate'])>80) ? substr($occArr['substrate'],0,80).'...':$occArr['substrate']); ?></td>
-								<td><?php echo (array_key_exists('elev',$occArr) ? $occArr['elev'] : ''); ?></td>
 								<?php if (!empty($ACTIVATE_PALEO)): ?>
 									<td><?php if(isset($occArr['formation'])) echo $occArr['formation']; ?></td>
 									<td><?php if(isset($occArr['earlyInterval'])) echo $occArr['earlyInterval']; ?></td>
 									<td><?php if(isset($occArr['lateInterval'])) echo $occArr['lateInterval']; ?></td>
 								<?php endif; ?>
+								<td><?php if(isset($occArr['habitat'])) echo ((strlen($occArr['habitat'])>80) ? substr($occArr['habitat'],0,80).'...':$occArr['habitat']); ?></td>
+								<td><?php if(isset($occArr['substrate'])) echo ((strlen($occArr['substrate'])>80) ? substr($occArr['substrate'],0,80).'...':$occArr['substrate']); ?></td>
+								<td><?php echo (array_key_exists('elev',$occArr) ? $occArr['elev'] : ''); ?></td>
 							</tr>
 							<?php
 							$recCnt++;
