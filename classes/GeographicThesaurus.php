@@ -779,7 +779,7 @@ class GeographicThesaurus extends Manager {
 		$sql = <<<SQL
 		SELECT g.geoThesID, g.geoterm, g.geoLevel, g.parentID, g2.geoterm AS parentterm, g2.geoLevel AS parentlevel FROM geographicthesaurus g 
 		LEFT JOIN geographicthesaurus g2 ON g2.geoThesID = g.parentID
-		WHERE g.geoterm LIKE ? 
+		WHERE g.geoterm LIKE ?
 		SQL;
 
 		$params = ['%' . $geoterm . '%'];
@@ -798,7 +798,8 @@ class GeographicThesaurus extends Manager {
 			$sql .= ' GROUP BY geoterm ';
 		}
 
-		$sql .= ' ORDER BY CHAR_LENGTH(g.geoterm), g.geoterm ';
+		$sql .= ' ORDER BY g.geoterm = ? DESC, g.geoterm LIKE ? DESC, g.geoterm, CHAR_LENGTH(g.geoterm)';
+		array_push($params, $geoterm, $geoterm . '%');
 
 		$result = QueryUtil::executeQuery($this->conn,$sql, $params);
 
