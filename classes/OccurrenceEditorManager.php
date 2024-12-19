@@ -879,7 +879,7 @@ class OccurrenceEditorManager {
 				}
 				//Get current paleo values to be saved within versioning tables
 				$editFieldArr['omoccurpaleo'] = array_intersect($editArr, $this->fieldArr['omoccurpaleo']);
-				if(isset($this->collMap['paleoActivated']) && $editFieldArr['omoccurpaleo']){
+				if(!empty($this->collMap['paleoActivated']) && $editFieldArr['omoccurpaleo']){
 					$sql = 'SELECT '.implode(',',$editFieldArr['omoccurpaleo']).' FROM omoccurpaleo WHERE occid = '.$this->occid;
 					$rs = $this->conn->query($sql);
 					if($rs->num_rows) $oldValueArr['omoccurpaleo'] = $rs->fetch_assoc();
@@ -1335,7 +1335,7 @@ class OccurrenceEditorManager {
 				}
 				//Deal with host data
 				if(array_key_exists('host',$postArr)){
-					$sql = 'INSERT INTO omoccurassociations(occid, associationType, relationship, verbatimsciname) 
+					$sql = 'INSERT INTO omoccurassociations(occid, associationType, relationship, verbatimsciname)
 						VALUES('.$this->occid.', "observational", "host", "'.$this->cleanInStr($postArr['host']).'")';
 					if(!$this->conn->query($sql)){
 						$status .= '(WARNING adding host: '.$this->conn->error.') ';
@@ -1761,14 +1761,19 @@ class OccurrenceEditorManager {
 			$stage = $LANG['ERROR_REMAPPING_IMAGES'];
 			QueryUtil::executeQuery($this->conn, $sql, [$targetOccid, $sourceOccid]);
 
+			//Remap material sample
+			$sql = <<<'SQL'
+			UPDATE IGNORE ommaterialsample SET occid = ? WHERE occid = ?;
+			SQL;
+			$stage = $LANG['ERROR_REMAPPING_MATSAMPLE'];
+			QueryUtil::executeQuery($this->conn, $sql, [$targetOccid, $sourceOccid]);
+
 			//Remap paleo
-			if(isset($this->collMap['paleoActivated'])){
-				$sql = <<<'SQL'
-				UPDATE IGNORE omoccurpaleo SET occid = ? WHERE occid = ?;
-				SQL;
-				$stage = $LANG['ERROR_REMAPPING_PALEOS'];
-				QueryUtil::executeQuery($this->conn, $sql, [$targetOccid, $sourceOccid]);
-			}
+			$sql = <<<'SQL'
+			UPDATE IGNORE omoccurpaleo SET occid = ? WHERE occid = ?;
+			SQL;
+			$stage = $LANG['ERROR_REMAPPING_PALEOS'];
+			QueryUtil::executeQuery($this->conn, $sql, [$targetOccid, $sourceOccid]);
 
 			//Delete source occurrence edits
 			$sql = <<<'SQL'

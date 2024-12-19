@@ -295,6 +295,7 @@ class RpcOccurrenceEditor extends RpcBase{
 		return $retArr;
 	}
 
+	//Paleo funcitons
 	//Used by /collections/editor/rpc/getPaleoGtsParents.php
 	public function getPaleoGtsParents($term){
 		$retArr = Array();
@@ -316,6 +317,120 @@ class RpcOccurrenceEditor extends RpcBase{
 			$sql = 'SELECT gtsid, gtsterm, rankid, rankname, parentgtsid FROM omoccurpaleogts WHERE rankid > 10 AND gtsid = '.$parentId;
 		}while($parentId);
 		return $retArr;
+	}
+
+	//Returns a simple table representation of parent terms
+	public function getPaleoGtsTable($earlyInterval, $lateInterval){
+		$retArr = Array();
+		$sql = 'SELECT gtsID, gtsTerm, rankID, rankName, parentGtsID FROM omoccurpaleogts WHERE rankID > 10 AND gtsTerm IN(?, ?)';
+		$parentId = '';
+		do{
+			$rs = $this->conn->query($sql);
+			if($r = $rs->fetch_object()){
+				if($parentId == $r->parentGtsID){
+					$parentId = 0;
+				}
+				else{
+					$retArr[$r->gtsID] = array('rankid' => $r->rankID, 'term' => $r->gtsTerm, '' => $r->parentGtsID);
+					$parentId = $r->parentGtsID;
+				}
+			}
+			else $parentId = 0;
+			$rs->free();
+			$sql = 'SELECT gtsID, gtsTerm, rankID, rankName, parentGtsID FROM omoccurpaleogts WHERE rankID > 10 AND gtsID = '.$parentId;
+		}while($parentId);
+
+		<table>
+		<tr>
+		<th><?= $LANG['EON_LABEL'] ?></th>
+				<th><?= $LANG['ERA_LABEL'] ?></th>
+				<th><?= $LANG['PERIOD_LABEL'] ?></th>
+				<th><?= $LANG['EPOCH_LABEL'] ?></th>
+				<th><?= $LANG['AGE_LABEL'] ?></th>
+			</tr>
+			<tr>
+				<td><div id="early-eon-div"></div></td>
+				<td><div id="early-era-div"></div></td>
+				<td><div id="early-period-div"></div></td>
+				<td><div id="early-epoch-div"></div></td>
+				<td><div id="early-age-div"></div></td>
+			</tr>
+			<tr>
+				<td><div id="late-eon-div"></div></td>
+				<td><div id="late-era-div"></div></td>
+				<td><div id="late-period-div"></div></td>
+				<td><div id="late-epoch-div"></div></td>
+				<td><div id="late-age-div"></div></td>
+			</tr>
+		</table>
+
+		return $retArr;
+	}
+
+	//Used by /collections/editor/rpc/getPaleoGtsParents.php
+	public function getPaleoGtsTableFull($earlyInterval, $lateInterval){
+		$tableStr = '';
+		if($earlyInterval){
+			$idArr = array();
+			if(!$lateInterval) $lateInterval= $earlyInterval;
+			//Get IDs of terms and their children
+			$sql = 'SELECT gtsID, parentGtsID
+				FROM omoccurpaleogts
+				WHERE myaStart <= (SELECT myaStart FROM omoccurpaleogts WHERE gtsTerm = ?)
+				AND myaEnd >= (SELECT myaEnd FROM omoccurpaleogts WHERE gtsTerm = ?)';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('ss', $earlyInterval, $lateInterval);
+				$rs = $stmt->get_result();
+				while($r = $rs->fetch_object()){
+					$idArr[$r->gtsID] = $r->parentGtsID;
+				}
+				$rs->free();
+				$stmt->close();
+			}
+			if($idArr){
+				//Get all parents
+				$parentArr = array_diff_key(array_flip($idArr), array_keys($idArr));
+				if($parentArr){
+					do{
+						$idArr = array_merge($idArr, $parentArr);
+						$sql = 'SELECT DISTINCT parentGtsID FROM omoccurpaleogts WHERE gtsID IN(' . implode(',', array_keys($parentArr)) . ') AND parentGtsID IS NOT NULL';
+						unset($parentArr);
+						$parentArr = array();
+						$rs = $this->conn->query($sql);
+						while($r = $rs->fetch_object()){
+							$parentArr[$r->parentGtsID] = 0;
+						}
+						$rs->free();
+					}while($parentArr);
+				}
+				//Populate table array with all the important data
+				$tableArr = array();
+				$sql = 'SELECT gtsID, gtsTerm, rankID, colorCode, parentGtsID
+					FROM omoccurpaleogts
+					WHERE gtsID IN(' . implode(',', array_keys($idArr)) . ')
+					ORDER BY rankid, myaStart';
+				$rs = $this->conn->query($sql);
+				while($r = $rs->fetch_object()){
+					$tableArr[$r->rankID][$r->gtsID] = '<td style="background-color:' . $r->colorCode . '">' . $r->gtsTerm . '</td>';
+					if($r->parentGtsID){
+						$parentRankID = $r->rankID - 10;
+						if(isset($tableArr[$parentRankID][$r->parentGtsID])){
+							$tableArr[$parentRankID][$r->parentGtsID]['c'][] = $r->gtsID;
+						}
+					}
+				}
+				$rs->free();
+				//Build table string
+				foreach($tableArr as $rankID => $rankArr){
+					$tableStr .= '<tr>';
+					foreach($rankArr as $gtsID => $gtsArr){
+						$tableStr .= '<tr></tr>';
+					}
+					$tableStr .= '</tr>';
+				}
+			}
+		}
+		return $tableStr;
 	}
 
 	//Setters and getters
