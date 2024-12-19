@@ -14,6 +14,7 @@ $LANG['MAP_OPTIONS'] = 'Map Options';
 $LANG['RESET'] = 'Reset';
 $LANG['SEARCH'] = 'Search';
 $LANG['TAXA'] = 'Taxa';
+$LANG['WITHIN'] = 'within';
 $LANG['SHAPE_TOOLS'] = 'Use the shape tools on the map to select occurrences within a given shape';
 $LANG['WITHIN_POLYGON'] = 'Within the selected polygon';
 $LANG['WITHIN_CIRCLE'] = 'Within the selected circle';
@@ -35,6 +36,7 @@ $LANG['MAX_DENSITY'] = 'Maximum Density';
 
 $LANG['RECORDS_TAXA'] = 'Records and Taxa';
 $LANG['RECORDS'] = 'Records';
+$LANG['INTERNAL_RECORDS'] = 'Internal Records';
 $LANG['EXTERNAL_RECORDS'] = 'External Records';
 $LANG['PORTAL_LIST'] = 'Portal List';
 $LANG['COLLECTIONS'] = 'Collections';

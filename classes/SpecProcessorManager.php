@@ -579,7 +579,7 @@ class SpecProcessorManager {
 	public function getLogListing(){
 		$retArr = array();
 		if($this->collid){
-			$dirArr = array('imgProccessing','cyverse','iplant','processing/imgmap');
+			$dirArr = array('imageprocessing','imgProccessing','cyverse','iplant','processing/imgmap');
 			foreach($dirArr as $dirPath){
 				if(file_exists($this->logPath.$dirPath)){
 					if($fh = opendir($this->logPath.$dirPath)){
