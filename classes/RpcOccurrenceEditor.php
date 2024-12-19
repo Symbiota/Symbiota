@@ -297,73 +297,86 @@ class RpcOccurrenceEditor extends RpcBase{
 
 	//Paleo funcitons
 	//Used by /collections/editor/rpc/getPaleoGtsParents.php
-	public function getPaleoGtsParents($term){
-		$retArr = Array();
-		$sql = 'SELECT gtsid, gtsterm, rankid, rankname, parentgtsid FROM omoccurpaleogts WHERE rankid > 10 AND gtsterm = "'.$this->cleanInStr($term).'"';
-		$parentId = '';
-		do{
-			$rs = $this->conn->query($sql);
-			if($r = $rs->fetch_object()){
-				if($parentId == $r->parentgtsid){
-					$parentId = 0;
-				}
-				else{
-					$retArr[] = array("rankid" => $r->rankid, "value" => $r->gtsterm);
-					$parentId = $r->parentgtsid;
-				}
-			}
-			else $parentId = 0;
-			$rs->free();
-			$sql = 'SELECT gtsid, gtsterm, rankid, rankname, parentgtsid FROM omoccurpaleogts WHERE rankid > 10 AND gtsid = '.$parentId;
-		}while($parentId);
-		return $retArr;
-	}
-
 	//Returns a simple table representation of parent terms
 	public function getPaleoGtsTable($earlyInterval, $lateInterval){
-		$retArr = Array();
-		$sql = 'SELECT gtsID, gtsTerm, rankID, rankName, parentGtsID FROM omoccurpaleogts WHERE rankID > 10 AND gtsTerm IN(?, ?)';
-		$parentId = '';
-		do{
-			$rs = $this->conn->query($sql);
-			if($r = $rs->fetch_object()){
-				if($parentId == $r->parentGtsID){
-					$parentId = 0;
-				}
-				else{
-					$retArr[$r->gtsID] = array('rankid' => $r->rankID, 'term' => $r->gtsTerm, '' => $r->parentGtsID);
-					$parentId = $r->parentGtsID;
-				}
+		global $LANG;
+		$retStr = false;
+		$termArr = $this->getPaleoGtsParents($earlyInterval, $lateInterval);
+		$earlyID = 0;
+		$lateID = 0;
+		foreach($termArr as $id => $gtsArr){
+			if($gtsArr['term'] == $earlyInterval) $earlyID = $id;
+			elseif($gtsArr['term'] == $lateInterval) $lateID = $id;
+		}
+		if($earlyID){
+			$retStr = '<table id="paelo-gts-table"><tr>';
+			$rankArr = array(20 => 'eon', 30 => 'era', 40 => 'period', 50 => 'epoch', 60 => 'age');
+			//Add header row
+			foreach($rankArr as $rankName){
+				$retStr .= '<th>' . $LANG[strtoupper($rankName) . '_LABEL'] . '</th>';
 			}
-			else $parentId = 0;
-			$rs->free();
-			$sql = 'SELECT gtsID, gtsTerm, rankID, rankName, parentGtsID FROM omoccurpaleogts WHERE rankID > 10 AND gtsID = '.$parentId;
-		}while($parentId);
+			$retStr .= '</tr>';
+			//Add early term row
+			$retStr .= $this->getTableGtsRow($termArr, $earlyID, $rankArr);
+			if($lateInterval && $earlyInterval != $lateInterval){
+				//Add late term row
+				$retStr .= $this->getTableGtsRow($termArr, $lateID, $rankArr);
+			}
+		}
+		$retStr = '</table>';
+		return $retStr;
+	}
 
-		<table>
-		<tr>
-		<th><?= $LANG['EON_LABEL'] ?></th>
-				<th><?= $LANG['ERA_LABEL'] ?></th>
-				<th><?= $LANG['PERIOD_LABEL'] ?></th>
-				<th><?= $LANG['EPOCH_LABEL'] ?></th>
-				<th><?= $LANG['AGE_LABEL'] ?></th>
-			</tr>
-			<tr>
-				<td><div id="early-eon-div"></div></td>
-				<td><div id="early-era-div"></div></td>
-				<td><div id="early-period-div"></div></td>
-				<td><div id="early-epoch-div"></div></td>
-				<td><div id="early-age-div"></div></td>
-			</tr>
-			<tr>
-				<td><div id="late-eon-div"></div></td>
-				<td><div id="late-era-div"></div></td>
-				<td><div id="late-period-div"></div></td>
-				<td><div id="late-epoch-div"></div></td>
-				<td><div id="late-age-div"></div></td>
-			</tr>
-		</table>
+	private function getTableGtsRow($termArr, $baseElementID, $rankArr){
+		$targetRankID = $termArr[$baseElementID]['rankID'];
+		$tdArr = array();
+		$targetID = 0;
+		foreach(array_reverse($rankArr, true) as $rankID => $rankName){
+			$termName = '';
+			$termColor = '';
+			if($targetRankID == $rankID){
+				$targetID = $baseElementID;
+			}
+			if($targetID){
+				$termName = $termArr[$targetID]['term'];
+				$targetID = $termArr[$targetID]['parentID'];
+				$termColor = $termArr[$targetID]['colorCode'];
+			}
+			$tdArr[$rankID] = '<td style="background-color: ' . $termColor . '">' . $termName . '</td>';
+		}
+		ksort($tdArr);
+		$retStr .= '<tr>' . implode('', $tdArr) . '</tr>';
+		return $retStr;
+	}
 
+	private function getPaleoGtsParents($earlyInterval, $lateInterval){
+		$retArr = Array();
+		if(!$lateInterval) $lateInterval = $earlyInterval;
+		$sqlTemplate = 'SELECT gtsID, gtsTerm, rankID, rankName, colorCode, parentGtsID FROM omoccurpaleogts WHERE rankID > 10 ';
+		$sql = $sqlTemplate . 'AND gtsTerm IN(?, ?)';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('ss', $earlyInterval, $lateInterval);
+			$stmt->execute();
+			$rs = $this->conn->get_result();
+			$parentId = false;
+			do{
+				if($r = $rs->fetch_object()){
+					if($parentId == $r->parentGtsID){
+						$parentId = 0;
+					}
+					else{
+						$retArr[$r->gtsID] = array('rankID' => $r->rankID, 'term' => $r->gtsTerm, 'colorCode' => $r->colorCode, 'parentID' => $r->parentGtsID);
+						$parentId = $r->parentGtsID;
+					}
+				}
+				else $parentId = 0;
+				$rs->free();
+				if($parentId){
+					$sql = $sqlTemplate . 'AND gtsID = '.$parentId;
+					$rs = $this->conn->query($sql);
+				}
+			}while($parentId);
+		}
 		return $retArr;
 	}
 
@@ -380,6 +393,7 @@ class RpcOccurrenceEditor extends RpcBase{
 				AND myaEnd >= (SELECT myaEnd FROM omoccurpaleogts WHERE gtsTerm = ?)';
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param('ss', $earlyInterval, $lateInterval);
+				$stmt->execute();
 				$rs = $stmt->get_result();
 				while($r = $rs->fetch_object()){
 					$idArr[$r->gtsID] = $r->parentGtsID;

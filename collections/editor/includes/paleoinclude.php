@@ -8,54 +8,42 @@ $gtsTermArr = $occManager->getPaleoGtsTerms();
 ?>
 <script>
 	var gtsArr = { <?php $d=''; foreach($gtsTermArr as $term => $rankid){ echo $d.'"'.$term.'":'.$rankid; $d=','; } ?> };
-	function earlyIntervalChanged(elemObj){
-		paloIntervalChanged(elemObj);
+	function earlyIntervalChanged(f){
+		paloIntervalChanged(f);
 		fieldChanged('earlyInterval');
 	}
 
-	function lateIntervalChanged(elemObj){
-		paloIntervalChanged(elemObj);
+	function lateIntervalChanged(f){
+		paloIntervalChanged(f);
 		fieldChanged('lateInterval');
 	}
 
-	function paloIntervalChanged(elemObj){
-		var term = elemObj.value;
-		var rankid = gtsArr[term];
-		if(rankid==10 || rankid==20){
-			if($("select[name=eon]").val() == '') $("select[name=eon]").val(term);
-		}
-		else if(rankid==30){
-			if($("select[name=era]").val() == '') $("select[name=era]").val(term);
-			setPaloParents("era");
-		}
-		else if(rankid==40){
-			if($("select[name=period]").val() == '') $("select[name=period]").val(term);
-			setPaloParents("period");
-		}
-		else if(rankid==50){
-			if($("select[name=epoch]").val() == '') $("select[name=epoch]").val(term);
-			setPaloParents("epoch");
-		}
-		else if(rankid==60){
-			if($("select[name=stage]").val() == '') $("select[name=stage]").val(term);
-			setPaloParents("stage");
-		}
+	function paloIntervalChanged(f){
+		let earlyTerm = f.earlyInterval.value;
+		let lateTerm = f.lateInterval.value;
+		const data = { earlyInterval: earlyTerm, lateInterval: lateTerm, format: "simple_map" };
+		tableHtml = async () => {
+			const settings = {
+				method: 'POST',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(data)
+			};
+			try {
+				const fetchResponse = await fetch('rpc/getPaleoGtsParents.php', settings);
+				const responce = await fetchResponse.json();
+				return responce;
+			} catch (e) {
+				return e;
+			}
+		};
+		alert(tableHtml);
 	}
 
 	function setPaloParents(timePeriod){
 		if(timePeriod){
-			/*
-			switch(timePeriod) {
-				case "eon":
-					$("select[name=era]").val("");
-				case "era":
-					$("select[name=period]").val("");
-				case "period":
-					$("select[name=epoch]").val("");
-				case "epoch":
-					$("select[name=stage]").val("");
-			}
-			*/
 			var childValue = $("select[name="+timePeriod+"]").val();
 			if(childValue){
 				if($("select[name=earlyInterval]").val() == "") $("select[name=earlyInterval]").val(childValue);
