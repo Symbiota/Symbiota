@@ -170,7 +170,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 			$sqlWhere .= 'AND (e.parenttid IN('.$this->tidFocus.')) AND (e.taxauthid = 1) ';
 		}
 		if($this->photographerUid){
-			$sqlWhere .= 'AND (m.creatoruid IN('.$this->photographerUid.')) ';
+			$sqlWhere .= 'AND (m.creatorUid IN('.$this->photographerUid.')) ';
 		}
 		if($this->tag){
 			$sqlWhere .= 'AND m.mediaID ';

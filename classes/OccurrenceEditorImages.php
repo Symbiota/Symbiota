@@ -137,7 +137,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 			$types .= 's';
 		}
 
-		$additionalFields= array('occid' => 'i', 'tidinterpreted' => 'i', 'caption' => 's', 'creator' => 's', 'creatoruid' => 'i', 'notes' => 's', 'copyright' => 's', 'sortoccurrence' => 'i', 'sourceurl' => 's');
+		$additionalFields= array('occid' => 'i', 'tidinterpreted' => 'i', 'caption' => 's', 'creator' => 's', 'creatorUid' => 'i', 'notes' => 's', 'copyright' => 's', 'sortoccurrence' => 'i', 'sourceurl' => 's');
 		foreach($additionalFields as $fieldName => $t){
 			if(array_key_exists($fieldName, $imgArr)){
 				if($imgArr[$fieldName]) $fieldArr[] = $imgArr[$fieldName];

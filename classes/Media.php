@@ -2,6 +2,7 @@
 include_once($SERVER_ROOT . "/classes//Database.php");
 include_once($SERVER_ROOT . "/classes/Sanitize.php");
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 if(file_exists($SERVER_ROOT.'/content/lang/classes/Media.'.$LANG_TAG.'.php')) {
 	include_once($SERVER_ROOT.'/content/lang/classes/Media.'.$LANG_TAG.'.php');
@@ -742,7 +743,7 @@ class Media {
 			"sourceUrl" => $clean_post_arr["sourceurl"] ?? null,// TPImageEditorManager / Occurrence import
 			"referenceUrl" => $clean_post_arr["referenceurl"] ?? null,// check keys again might not be one,
 			"creator" => $clean_post_arr["photographer"] ?? null,
-			"creatorUid" => OccurrenceUtilities::verifyUser($clean_post_arr["photographeruid"] ?? null, $conn),
+			"creatorUid" => OccurrenceUtil::verifyUser($clean_post_arr["photographeruid"] ?? null, $conn),
 			"format" =>  $file["type"] ?? $clean_post_arr['format'],
 			"caption" => $clean_post_arr["caption"] ?? null,
 			"owner" => $clean_post_arr["owner"] ?? null,

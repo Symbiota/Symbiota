@@ -17,7 +17,7 @@ $imgArr = Media::getMedia($mediaID);
 $creatorArray = Media::getCreatorArray();
 
 $isEditor = false;
-if($IS_ADMIN || ($imgArr && ($imgArr['username'] === $USERNAME || ($imgArr['creatoruid'] && $imgArr['creatoruid'] == $SYMB_UID)))){
+if($IS_ADMIN || ($imgArr && ($imgArr['username'] === $USERNAME || ($imgArr['creatorUid'] && $imgArr['creatorUid'] == $SYMB_UID)))){
     $isEditor = true;
 }
 
@@ -387,7 +387,7 @@ if($imgArr){
 					if($imgArr['creatorDisplay']){
 						echo '<div><b>' . $LANG['PHOTOGRAPHER'] . ':</b> ';
 						if(!$imgArr['creator']){
-							$phLink = 'search.php?imagetype=all&phuid='.$imgArr['creatoruid'].'&submitaction=search';
+							$phLink = 'search.php?imagetype=all&phuid='.$imgArr['creatorUid'].'&submitaction=search';
 							echo '<a href="' . htmlspecialchars($phLink, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 						}
 						echo $imgArr['creatorDisplay'];
