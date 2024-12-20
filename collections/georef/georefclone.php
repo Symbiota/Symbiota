@@ -150,48 +150,44 @@ if($coorArr && count($coorArr) == 4){
 	  }
 
 		function cloneCoord(data) {
+			const updateParentField	= (selector, value) => {
+				if(!value || !selector) return;
+				const input = opener.document.querySelector(selector);
+				if(input) {
+					input.style.backgroundColor = "lightblue";
+					input.value = value;
+					if(typeof input.onchange === 'function') {
+						input.onchange();
+					}
+				}
+			}
+
 			try{
-				if(data.err == 0) data.err = "";
-				opener.document.getElementById("decimallatitude").value = data.lat;
-				opener.document.getElementById("decimallongitude").value = data.lng;
-				opener.document.getElementById("coordinateuncertaintyinmeters").value = data.err;
-	
-				if(data.georeferencedBy) {
-					const input = opener.document.querySelector("#georeferencedByDiv input");
-					input.value = data.georeferencedBy;
-					input.onchange(); 
-				}
-				if(data.georeferenceRemarks) {
-					const input = opener.document.querySelector("#georeferenceRemarksDiv input");
-					input.value = data.georeferenceRemarks;
-					input.onchange(); 
-				}
-				if(data.georeferenceSources) {
-					const input = opener.document.querySelector("#georeferenceSourcesDiv input");
-					input.value = data.georeferenceSources;
-					input.onchange(); 
-				}
-				if(data.georeferenceProtocol) {
-					const input = opener.document.querySelector("#georeferenceProtocolDiv input");
-					input.value = data.georeferenceProtocol;
-					input.onchange();
-				}
-				if(data.georeferenceVerificationStatus) {
-					const input = opener.document.querySelector("#georeferenceVerificationStatusDiv input");
-					input.value = data.georeferenceVerificationStatus;
-					input.onchange();
-				}
-				if(data.footprintWKT) {
-					const input = opener.document.querySelector("#footprintWktDiv #footprintwkt");
-					input.value = data.footprintWKT;
-					input.onchange();
+				if(data.err == 0) data.err = "";	
+
+				const update_arr = [
+					["#decimallatitude", data.lat],
+					["#decimallongitude", data.lat],
+					["#coordinateuncertaintyinmeters", data.err],
+					["#georeferencedByDiv input", data.georeferencedBy],
+					["#georeferenceRemarksDiv input", data.georeferenceRemarks],
+					["#georeferenceSourcesDiv input", data.georeferenceSources],
+					["#georeferenceProtocolDiv input", data.georeferenceProtocol],
+					["#georeferenceVerificationStatusDiv input", data.georeferenceVerificationStatus],
+					["#footprintWktDiv #footprintwkt", data.footprintWKT],
+				]
+
+				for (let field of update_arr) {
+					updateParentField(field[0], field[1]);
 				}
 
-				opener.document.getElementById("decimallatitude").onchange();
-				opener.document.getElementById("decimallongitude").onchange();
-				opener.document.getElementById("coordinateuncertaintyinmeters").onchange();
 				opener.document.getElementById("coordinateWrapper").onchange();
 				opener.document.getElementById("saveEditsButton").disabled = false;
+
+				let toggle = opener.document.getElementById("georefExtraDiv");
+				if(toggle && toggle.style.display !== 'block') {
+					opener.toggle('georefExtraDiv');
+				}
 
 			}
 			catch(myErr){
