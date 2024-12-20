@@ -186,7 +186,7 @@ if($coorArr && count($coorArr) == 4){
 
 				let toggle = opener.document.getElementById("georefExtraDiv");
 				if(toggle && toggle.style.display !== 'block') {
-					opener.toggle('georefExtraDiv');
+					toggle.style.display = 'block';
 				}
 
 			}
