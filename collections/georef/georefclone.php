@@ -195,11 +195,10 @@ if($coorArr && count($coorArr) == 4){
 
 			}
 			catch(myErr){
-				console.log(myErr)
 			}
 			finally{
-				//self.close();
-				//return false;
+				self.close();
+				return false;
 			}
 		}
 
