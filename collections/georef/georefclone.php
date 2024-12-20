@@ -54,12 +54,13 @@ if($coorArr && count($coorArr) == 4){
 		let lat, lng = 0;
 		let clones = [];
 
-		function info_popup(pt) {
+		function info_popup(index) {
+			const pt = clones[index];
 			return `<div>${pt.lat}, ${pt.lng} (+- ${pt.err})</div>` +
-				(pt.georefby ?`<br/>Georeferenced by: ${pt.georefby}`: "")+
+				(pt.georeferencedBy ?`<br/>Georeferenced by: ${pt.georeferencedBy}`: "")+
 				`<div>${pt.cnt} matching records</div>` +
 				`<div>${pt.locality}<br/>` +
-				`<a href="#" title="Clone Coordinates" onClick="cloneCoord(${pt.lat}, ${pt.lng}, ${pt.err})"><b>Use Coordinates</b></a></div>`;
+				`<a href="#" title="Clone Coordinates" onClick="cloneCoord(clones[${index}])"><b>Use Coordinates</b></a></div>`;
 		}
 
 		function leafletInit() {
@@ -71,14 +72,15 @@ if($coorArr && count($coorArr) == 4){
 
 			const markers = [];
 
-			for(let point of clones) {
+			for(let i = 0; i < clones.length; i++) {
+				const point = clones[i];
 				const latlng = [
 					parseFloat(point.lat),
 					parseFloat(point.lng)
 				];
 
 				markers.push(L.marker(latlng)
-					.bindPopup(info_popup(point)));
+					.bindPopup(info_popup(i)));
 			}
 			let markerGroup = L.featureGroup(markers).addTo(map.mapLayer);
 			map.mapLayer.fitBounds(markerGroup.getBounds());
@@ -97,7 +99,8 @@ if($coorArr && count($coorArr) == 4){
 			let activeWindow;
 
 			let bounds = new google.maps.LatLngBounds();
-			for(let point of clones) {
+			for(let i = 0; i < clones.length; i++) {
+				let point = clones[i];
 				const pt_lat = parseFloat(point.lat);
 				const pt_lng = parseFloat(point.lng);
 
@@ -108,7 +111,7 @@ if($coorArr && count($coorArr) == 4){
 				});
 
 				const infowindow = new google.maps.InfoWindow({
-					content: info_popup(point),
+					content: info_popup(i),
 				});
 
 				marker.addListener("click", () => {
@@ -146,21 +149,57 @@ if($coorArr && count($coorArr) == 4){
 			<?php } ?>
 	  }
 
-		function cloneCoord(lat,lng,err){
+		function cloneCoord(data) {
 			try{
-				if(err == 0) err = "";
-				opener.document.getElementById("decimallatitude").value = lat;
-				opener.document.getElementById("decimallongitude").value = lng;
-				opener.document.getElementById("coordinateuncertaintyinmeters").value = err;
+				if(data.err == 0) data.err = "";
+				opener.document.getElementById("decimallatitude").value = data.lat;
+				opener.document.getElementById("decimallongitude").value = data.lng;
+				opener.document.getElementById("coordinateuncertaintyinmeters").value = data.err;
+	
+				if(data.georeferencedBy) {
+					const input = opener.document.querySelector("#georeferencedByDiv input");
+					input.value = data.georeferencedBy;
+					input.onchange(); 
+				}
+				if(data.georeferenceRemarks) {
+					const input = opener.document.querySelector("#georeferenceRemarksDiv input");
+					input.value = data.georeferenceRemarks;
+					input.onchange(); 
+				}
+				if(data.georeferenceSources) {
+					const input = opener.document.querySelector("#georeferenceSourcesDiv input");
+					input.value = data.georeferenceSources;
+					input.onchange(); 
+				}
+				if(data.georeferenceProtocol) {
+					const input = opener.document.querySelector("#georeferenceProtocolDiv input");
+					input.value = data.georeferenceProtocol;
+					input.onchange();
+				}
+				if(data.georeferenceVerificationStatus) {
+					const input = opener.document.querySelector("#georeferenceVerificationStatusDiv input");
+					input.value = data.georeferenceVerificationStatus;
+					input.onchange();
+				}
+				if(data.footprintWKT) {
+					const input = opener.document.querySelector("#footprintWktDiv #footprintwkt");
+					input.value = data.footprintWKT;
+					input.onchange();
+				}
+
 				opener.document.getElementById("decimallatitude").onchange();
 				opener.document.getElementById("decimallongitude").onchange();
 				opener.document.getElementById("coordinateuncertaintyinmeters").onchange();
+				opener.document.getElementById("coordinateWrapper").onchange();
+				opener.document.getElementById("saveEditsButton").disabled = false;
+
 			}
 			catch(myErr){
+				console.log(myErr)
 			}
 			finally{
-				self.close();
-				return false;
+				//self.close();
+				//return false;
 			}
 		}
 

@@ -404,12 +404,12 @@ function coordinatesChanged(f, client_root) {
 	fieldChanged('decimallongitude');
 }
 
-function decimalLatitudeChanged(f, client_root) {
+function decimalLatitudeChanged(f) {
 	verifyDecimalLatitude(f);
 	fieldChanged('decimallatitude');
 }
 
-function decimalLongitudeChanged(f, client_root) {
+function decimalLongitudeChanged(f) {
 	verifyDecimalLongitude(f);
 	fieldChanged('decimallongitude');
 }
