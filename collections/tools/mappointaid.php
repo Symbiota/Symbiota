@@ -72,12 +72,6 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 			document.getElementById("errRadius").value = "";
 		}
 
-		//Function For Submission
-		function SubmitCoordinates(lat, lng) {
-			opener.document.getElementById("decimallatitude").value = lat;
-			opener.document.getElementById("decimallongitude").value = lng;
-		}
-
 		function errRadiusChanged(e) {
 			try {
 				errRadius = parseFloat(e.value);
@@ -411,6 +405,7 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 		function updateParentForm(f) {
 			opener.document.getElementById("decimallatitude").value = f.latbox.value;
 			opener.document.getElementById("decimallongitude").value = f.lngbox.value;
+
 			try{
 				if(opener.document.getElementById("coordinateuncertaintyinmeters")){
 					opener.document.getElementById("coordinateuncertaintyinmeters").value = f.errRadius.value;
@@ -419,6 +414,10 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 				if(opener.document.getElementById("geodeticdatum")){
 					opener.document.getElementById("geodeticdatum").value = "WGS84";
 					opener.document.getElementById("geodeticdatum").onchange();
+				}
+				let coordinateWrapper = opener.document.getElementById("coordinateWrapper");
+				if(coordinateWrapper) {
+					coordinateWrapper.onchange();
 				}
 				opener.document.getElementById("decimallatitude").onchange();
 				opener.document.getElementById("decimallongitude").onchange();

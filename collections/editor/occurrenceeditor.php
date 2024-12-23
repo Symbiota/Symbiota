@@ -544,12 +544,12 @@ else{
             });
         }
 	</script>
-	<script src="../../js/symb/collections.coordinateValidation.js?ver=2" type="text/javascript"></script>
+	<script src="../../js/symb/collections.coordinateValidation.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/symb/wktpolygontools.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/collections.georef.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.main.js?ver=9" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.tools.js?ver=4" type="text/javascript"></script>
+	<script src="../../js/symb/collections.editor.main.js?ver=1" type="text/javascript"></script>
+	<script src="../../js/symb/collections.editor.tools.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.imgtools.js?ver=3" type="text/javascript"></script>
 	<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.query.js?ver=6" type="text/javascript"></script>
@@ -1139,6 +1139,7 @@ else{
 											</div>
 										</div>
 										<div style="clear:both;" class="fieldGroup-div">
+										<span id="coordinateWrapper" onchange="coordinatesChanged(document.getElementById('fullform'), '<?= $CLIENT_ROOT?>')">
 											<div id="decimalLatitudeDiv" class="field-div">
 												<?php echo $LANG['DECIMAL_LATITUDE']; ?>
 												<br/>
@@ -1148,7 +1149,7 @@ else{
 													$latValue = $occArr['decimallatitude'];
 												}
 												?>
-												<input type="text" id="decimallatitude" name="decimallatitude" maxlength="15" value="<?php echo $latValue; ?>" onchange="decimalLatitudeChanged(this.form)" />
+											<input type="text" id="decimallatitude" name="decimallatitude" maxlength="15" value="<?php echo $latValue; ?>" onchange="decimalLatitudeChanged(document.getElementById('fullform'))"/>
 											</div>
 											<div id="decimalLongitudeDiv" class="field-div">
 												<?php echo $LANG['DECIMAL_LONGITUDE']; ?>
@@ -1159,8 +1160,9 @@ else{
 													$longValue = $occArr["decimallongitude"];
 												}
 												?>
-												<input type="text" id="decimallongitude" name="decimallongitude" maxlength="15" value="<?php echo $longValue; ?>" onchange="decimalLongitudeChanged(this.form);" />
+												<input type="text" id="decimallongitude" name="decimallongitude" maxlength="15" value="<?php echo $longValue; ?>" onchange="decimalLongitudeChanged(document.getElementById('fullform'))" />
 											</div>
+										</span>
 											<div id="coordinateUncertaintyInMetersDiv" class="field-div">
 												<?php echo $LANG['COORDINATE_UNCERTAINITY_IN_METERS']; ?>
 												<a href="#" onclick="return dwcDoc('coordinateUncertaintyInMeters')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>

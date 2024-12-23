@@ -31,7 +31,7 @@ class TPImageEditorManager extends TPEditorManager{
 		if($this->acceptance){
 			$sql .= 'FROM media m INNER JOIN taxstatus ts ON m.tid = ts.tid
 				INNER JOIN taxa t ON m.tid = t.tid
-				LEFT JOIN users u ON m.creatoruid = u.uid
+				LEFT JOIN users u ON m.creatorUid = u.uid
 				WHERE ts.taxauthid = '.$this->taxAuthId.' AND (ts.tidaccepted IN('.implode(",",$tidArr).')) AND m.SortSequence < 500 ';
 		}
 		else{

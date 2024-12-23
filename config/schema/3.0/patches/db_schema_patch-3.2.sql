@@ -1,5 +1,23 @@
 INSERT INTO `schemaversion` (versionnumber) values ("3.2");
 
+# Add cultivar name and trade name columns to taxa table
+
+ALTER TABLE `taxa` ADD COLUMN `cultivarEpithet` VARCHAR(50) NULL AFTER unitName3;
+ALTER TABLE `taxa` ADD COLUMN `tradeName` VARCHAR(50) NULL AFTER cultivarEpithet;
+
+#Add cultivar and trade name to uploadspectemp
+
+ALTER TABLE `uploadspectemp` ADD COLUMN `cultivarEpithet` VARCHAR(50) NULL AFTER infraspecificEpithet;
+ALTER TABLE `uploadspectemp` ADD COLUMN `tradeName` VARCHAR(50) NULL AFTER cultivarEpithet;
+
+ALTER TABLE `uploadtaxa` ADD COLUMN `cultivarEpithet` VARCHAR(50) NULL AFTER `UnitName3`;
+ALTER TABLE `uploadtaxa` ADD COLUMN `tradeName` VARCHAR(50) NULL AFTER `cultivarEpithet`;
+
+# Rename cultivated to cultivar
+
+update taxonunits set rankname='Cultivar' where rankname='Cultivated';
+
+
 -- Drop deprecated_media foreign keys to avoid conflicts 
 ALTER TABLE `deprecated_media` 
   DROP FOREIGN KEY `FK_media_uid`,
@@ -198,9 +216,10 @@ FOR EACH ROW BEGIN
 END$$
 
 DELIMITER ;
-DROP TRIGGER specprocessorrawlabelsfulltext_insert
-DROP TRIGGER specprocessorrawlabelsfulltext_update
-DROP TRIGGER specprocessorrawlabelsfulltext_delete
+
+DROP TRIGGER specprocessorrawlabelsfulltext_insert;
+DROP TRIGGER specprocessorrawlabelsfulltext_update;
+DROP TRIGGER specprocessorrawlabelsfulltext_delete;
 DROP TABLE specprocessorawlabelsfulltext;
 
 
@@ -417,7 +436,7 @@ CREATE TABLE `uploadKeyValueTemp`(
   KEY `upload_key_temp_uid` (`upload_uid`),
   CONSTRAINT `uploadKeyValueTemp_ibfk_1` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `uploadKeyValueTemp_ibfk_2` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`collID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `upload_key_temp_uid` FOREIGN KEY (`upload_uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE)
+  CONSTRAINT `upload_key_temp_uid` FOREIGN KEY (`upload_uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE);
 
 # We need to relax this if we want inverse relationship entries in omoccurassociations for derivedFromSameIndividual
 ALTER TABLE omoccurassociations DROP INDEX UQ_omoccurassoc_sciname, ADD INDEX `UQ_omoccurassoc_sciname` (`occid`, `verbatimSciname`, `associationType`) USING BTREE;

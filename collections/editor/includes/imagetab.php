@@ -243,8 +243,8 @@ $creatorArray = Media::getCreatorArray();
 									if($imgArr["creator"]){
 										echo $imgArr["creator"];
 									}
-									else if($imgArr["creatoruid"]){
-										echo $creatorArray[$imgArr["creatoruid"]];
+									else if($imgArr["creatorUid"]){
+										echo $creatorArray[$imgArr["creatorUid"]];
 									}
 									?>
 								</div>
@@ -323,7 +323,7 @@ $creatorArray = Media::getCreatorArray();
 												<option value="">---------------------------------------</option>
 												<?php
 												foreach($creatorArray as $id => $uname){
-													echo "<option value='".$id."' ".($id == $imgArr["creatoruid"]?"SELECTED":"").">";
+													echo "<option value='".$id."' ".($id == $imgArr["creatorUid"]?"SELECTED":"").">";
 													echo $uname;
 													echo "</option>\n";
 												}
