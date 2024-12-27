@@ -72,7 +72,7 @@ $gtsTermArr = $occManager->getPaleoGtsTerms();
 				$earlyIntervalTerm = '';
 				if(isset($occArr['earlyInterval'])) $earlyIntervalTerm = $occArr['earlyInterval'];
 				if($earlyIntervalTerm && !array_key_exists($earlyIntervalTerm, $gtsTermArr)){
-					echo '<option value="'.$earlyIntervalTerm.'" SELECTED>'.$earlyIntervalTerm.' - mismatched term</option>';
+					echo '<option value="' . $earlyIntervalTerm . '" SELECTED>' . $earlyIntervalTerm . ' - ' . $LANG['MISMATCHED_TERM'] . '</option>';
 					echo '<option value="">---------------------------</option>';
 				}
 				foreach($gtsTermArr as $term => $rankid){
@@ -90,7 +90,7 @@ $gtsTermArr = $occManager->getPaleoGtsTerms();
 				$lateIntervalTerm = '';
 				if(isset($occArr['lateInterval'])) $lateIntervalTerm = $occArr['lateInterval'];
 				if($lateIntervalTerm && !array_key_exists($lateIntervalTerm, $gtsTermArr)){
-					echo '<option value="'.$lateIntervalTerm.'" SELECTED>'.$lateIntervalTerm.' - mismatched term</option>';
+					echo '<option value="'.$lateIntervalTerm.'" SELECTED>'.$lateIntervalTerm.' - ' . $LANG['MISMATCHED_TERM'] . '</option>';
 					echo '<option value="">---------------------------</option>';
 				}
 				foreach($gtsTermArr as $term => $rankid){
@@ -137,9 +137,9 @@ $gtsTermArr = $occManager->getPaleoGtsTerms();
 			?>
 			<select name="taxonEnvironment" onchange="fieldChanged('taxonEnvironment');">
 				<option value=""></option>
-				<option <?php if($taxonEnvir=='marine') echo 'SELECTED'; ?>>marine</option>
-				<option<?php if($taxonEnvir=='non-marine') echo 'SELECTED'; ?>>non-marine</option>
-				<option<?php if($taxonEnvir=='marine and non-marine') echo 'SELECTED'; ?>>marine and non-marine</option>
+				<option <?php if($taxonEnvir=='marine') echo 'SELECTED'; ?>><?= $LANG['MARINE'] ?></option>
+				<option<?php if($taxonEnvir=='non-marine') echo 'SELECTED'; ?>><?= $LANG['NON_MARINE'] ?></option>
+				<option<?php if($taxonEnvir=='marine and non-marine') echo 'SELECTED'; ?>><?= $LANG['NON_MARINE_MARINE'] ?></option>
 			</select>
 		</div>
 	</div>

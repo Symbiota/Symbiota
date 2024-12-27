@@ -296,7 +296,7 @@ class RpcOccurrenceEditor extends RpcBase{
 	}
 
 	//Paleo funcitons
-	//Used by /collections/editor/rpc/getPaleoGtsParents.php
+	//Used by /collections/editor/rpc/getPaleoGtsTable.php
 	//Returns a simple table representation of parent terms
 	public function getPaleoGtsTable($earlyInterval, $lateInterval){
 		global $LANG;
@@ -394,7 +394,7 @@ class RpcOccurrenceEditor extends RpcBase{
 		return $retArr;
 	}
 
-	//Used by /collections/editor/rpc/getPaleoGtsParents.php
+	//Not yet complete, but meant to return full gts table including internodes between Early and Late Interval settings
 	public function getPaleoGtsTableFull($earlyInterval, $lateInterval){
 		$tableStr = '';
 		if($earlyInterval){
