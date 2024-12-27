@@ -9,83 +9,58 @@ $gtsTermArr = $occManager->getPaleoGtsTerms();
 <script>
 	var gtsArr = { <?php $d=''; foreach($gtsTermArr as $term => $rankid){ echo $d.'"'.$term.'":'.$rankid; $d=','; } ?> };
 	function earlyIntervalChanged(f){
-		paloIntervalChanged(f);
+		let earlyTerm = f.earlyInterval.value;
+		let lateTerm = f.lateInterval.value;
+		setPaleoTable(earlyTerm, lateTerm);
 		fieldChanged('earlyInterval');
 	}
 
 	function lateIntervalChanged(f){
-		paloIntervalChanged(f);
+		let earlyTerm = f.earlyInterval.value;
+		let lateTerm = f.lateInterval.value;
+		setPaleoTable(earlyTerm, lateTerm);
 		fieldChanged('lateInterval');
 	}
 
-	function paloIntervalChanged(f){
-		let earlyTerm = f.earlyInterval.value;
-		let lateTerm = f.lateInterval.value;
-		const data = { earlyInterval: earlyTerm, lateInterval: lateTerm, format: "simple_map" };
-		tableHtml = async () => {
-			const settings = {
-				method: 'POST',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(data)
-			};
-			try {
-				const fetchResponse = await fetch('rpc/getPaleoGtsParents.php', settings);
-				const responce = await fetchResponse.json();
-				return responce;
-			} catch (e) {
-				return e;
-			}
+	async function setPaleoTable(earlyTerm, lateTerm) {
+		let postData = new FormData();
+		postData.append("earlyInterval", earlyTerm);
+		postData.append("lateInterval", lateTerm);
+		postData.append("format", "simple_map");
+		const settings = {
+			method: "POST",
+			mode: "no-cors",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: postData
 		};
-		alert(tableHtml);
-	}
-
-	function setPaloParents(timePeriod){
-		if(timePeriod){
-			var childValue = $("select[name="+timePeriod+"]").val();
-			if(childValue){
-				if($("select[name=earlyInterval]").val() == "") $("select[name=earlyInterval]").val(childValue);
-				if($("select[name=lateInterval]").val() == "") $("select[name=lateInterval]").val(childValue);
-				if(timePeriod != "eon"){
-					$.ajax({
-						type: "POST",
-						url: "rpc/getPaleoGtsParents.php",
-						dataType: "json",
-						data: { term: childValue }
-					}).done(function( gtsObj ) {
-					  	for (i = 0; i < gtsObj.length; i++) {
-					  		var rankid = gtsObj[i].rankid;
-							if(rankid == 10 || rankid == 20){
-								if($("select[name=eon]").val() == "") $("select[name=eon]").val(gtsObj[i].value);
-							}
-							else if(rankid == 30){
-								if($("select[name=era]").val() == "") $("select[name=era]").val(gtsObj[i].value);
-							}
-							else if(rankid == 40){
-								if($("select[name=period]").val() == "") $("select[name=period]").val(gtsObj[i].value);
-							}
-							else if(rankid == 50){
-								if($("select[name=epoch]").val() == "") $("select[name=epoch]").val(gtsObj[i].value);
-							}
-					  	}
-					});
-				}
+		try {
+			const fetchResponse = await fetch('rpc/getPaleoGtsTable.php', settings);
+			const responce = await fetchResponse.json();
+			if(responce.tableStr != "undefined"){
+				document.getElementById("table-div").innerHTML = responce.tableStr;
 			}
+		} catch (e) {
+			alert(e);
 		}
 	}
 </script>
+<style>
+	#paelo-gts-table{ border: 1px solid #ddd; padding: 8px; }
+	#paelo-gts-table th{ background-color: #04AA6D; color: white; padding: 8px; }
+	#paelo-gts-table td{ border: 1px solid; padding: 6px; }
+</style>
 <fieldset>
 	<legend>Paleontology</legend>
-	<div style="clear:both">
+	<div id="table-div" style="clear:both">
 
 	</div>
 	<div>
 		<div id="earlyIntervalDiv">
 			<?= $LANG['EARLY_INTERVAL_LABEL'] ?>
 			<a href="#" onclick="return dwcDoc('earlyInterval')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-			<select name="earlyInterval" onchange="earlyIntervalChanged(this)">
+			<select name="earlyInterval" onchange="earlyIntervalChanged(this.form)">
 				<option value=""></option>
 				<?php
 				$earlyIntervalTerm = '';
@@ -103,7 +78,7 @@ $gtsTermArr = $occManager->getPaleoGtsTerms();
 		<div id="lateIntervalDiv">
 			<?= $LANG['LATE_INTERVAL_LABEL'] ?>
 			<a href="#" onclick="return dwcDoc('lateInterval')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-			<select name="lateInterval" onchange="lateIntervalChanged(this)">
+			<select name="lateInterval" onchange="lateIntervalChanged(this.form)">
 				<option value=""></option>
 				<?php
 				$lateIntervalTerm = '';

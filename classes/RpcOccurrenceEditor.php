@@ -300,13 +300,13 @@ class RpcOccurrenceEditor extends RpcBase{
 	//Returns a simple table representation of parent terms
 	public function getPaleoGtsTable($earlyInterval, $lateInterval){
 		global $LANG;
-		$retStr = false;
+		$retStr = '';
 		$termArr = $this->getPaleoGtsParents($earlyInterval, $lateInterval);
 		$earlyID = 0;
 		$lateID = 0;
 		foreach($termArr as $id => $gtsArr){
-			if($gtsArr['term'] == $earlyInterval) $earlyID = $id;
-			elseif($gtsArr['term'] == $lateInterval) $lateID = $id;
+			if(strtolower($gtsArr['term']) == strtolower($earlyInterval)) $earlyID = $id;
+			elseif(strtolower($gtsArr['term']) == strtolower($lateInterval)) $lateID = $id;
 		}
 		if($earlyID){
 			$retStr = '<table id="paelo-gts-table"><tr>';
@@ -318,12 +318,12 @@ class RpcOccurrenceEditor extends RpcBase{
 			$retStr .= '</tr>';
 			//Add early term row
 			$retStr .= $this->getTableGtsRow($termArr, $earlyID, $rankArr);
-			if($lateInterval && $earlyInterval != $lateInterval){
+			if($lateID && $earlyID != $lateID){
 				//Add late term row
 				$retStr .= $this->getTableGtsRow($termArr, $lateID, $rankArr);
 			}
+			$retStr .= '</table>';
 		}
-		$retStr = '</table>';
 		return $retStr;
 	}
 
@@ -339,13 +339,13 @@ class RpcOccurrenceEditor extends RpcBase{
 			}
 			if($targetID){
 				$termName = $termArr[$targetID]['term'];
-				$targetID = $termArr[$targetID]['parentID'];
 				$termColor = $termArr[$targetID]['colorCode'];
+				$targetID = $termArr[$targetID]['parentID'];
 			}
 			$tdArr[$rankID] = '<td style="background-color: ' . $termColor . '">' . $termName . '</td>';
 		}
 		ksort($tdArr);
-		$retStr .= '<tr>' . implode('', $tdArr) . '</tr>';
+		$retStr = '<tr>' . implode('', $tdArr) . '</tr>';
 		return $retStr;
 	}
 
@@ -357,25 +357,22 @@ class RpcOccurrenceEditor extends RpcBase{
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('ss', $earlyInterval, $lateInterval);
 			$stmt->execute();
-			$rs = $this->conn->get_result();
-			$parentId = false;
+			$rs = $stmt->get_result();
 			do{
-				if($r = $rs->fetch_object()){
-					if($parentId == $r->parentGtsID){
-						$parentId = 0;
-					}
-					else{
+				$parentArr = array();
+				while($r = $rs->fetch_object()){
+					if(!isset($retArr[$r->gtsID])){
 						$retArr[$r->gtsID] = array('rankID' => $r->rankID, 'term' => $r->gtsTerm, 'colorCode' => $r->colorCode, 'parentID' => $r->parentGtsID);
-						$parentId = $r->parentGtsID;
+						$parentArr[$r->parentGtsID] = 0;
 					}
 				}
-				else $parentId = 0;
 				$rs->free();
-				if($parentId){
-					$sql = $sqlTemplate . 'AND gtsID = '.$parentId;
+				if($parentArr){
+					$sql = $sqlTemplate . 'AND gtsID IN("' . implode('","', array_keys($parentArr)) . '")';
 					$rs = $this->conn->query($sql);
 				}
-			}while($parentId);
+			}while($parentArr);
+			$stmt->close();
 		}
 		return $retArr;
 	}

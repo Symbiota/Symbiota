@@ -1259,7 +1259,7 @@ else{
 										</div>
 									</fieldset>
 									<?php
-									if(isset($collMap['paleoActivated'])) include('includes/paleoinclude.php');
+									if(!empty($collMap['paleoActivated'])) include('includes/paleoinclude.php');
 									?>
 									<fieldset>
 										<legend><?php echo $LANG['MISC']; ?></legend>
