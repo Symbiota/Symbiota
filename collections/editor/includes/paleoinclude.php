@@ -4,9 +4,19 @@ if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/edit
 else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/paleoinclude.en.php');
 
 $gtsTermArr = $occManager->getPaleoGtsTerms();
-//include_once($SERVER_ROOT.'/collections/editor/includes/config/paleoVars.php');
+
+$earlyIntervalTerm = '';
+if(isset($occArr['earlyInterval'])) $earlyIntervalTerm = $occArr['earlyInterval'];
+$lateIntervalTerm = '';
+if(isset($occArr['lateInterval'])) $lateIntervalTerm = $occArr['lateInterval'];
 ?>
 <script>
+	<?php
+	if($earlyIntervalTerm){
+		echo 'setPaleoTable("' . $earlyIntervalTerm . '", "' . ($lateIntervalTerm ? $lateIntervalTerm : '') . '");';
+	}
+	?>
+
 	function earlyIntervalChanged(f){
 		fullFormErrorMessage = '';
 		let earlyTerm = f.earlyInterval.value;
@@ -24,37 +34,40 @@ $gtsTermArr = $occManager->getPaleoGtsTerms();
 	}
 
 	async function setPaleoTable(earlyTerm, lateTerm) {
-		let postData = new FormData();
-		postData.append("earlyInterval", earlyTerm);
-		postData.append("lateInterval", lateTerm);
-		postData.append("format", "simple_map");
-		const settings = {
-			method: "POST",
-			mode: "no-cors",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: postData
-		};
-		try {
-			const fetchResponse = await fetch('rpc/getPaleoGtsTable.php', settings);
-			const responce = await fetchResponse.json();
-			if(responce.tableStr != "undefined"){
-				if(responce.error){
-					if(responce.error == 'ERR_BAD_TERM_ORDER') fullFormErrorMessage = "<?= $LANG['ERR_BAD_TERM_ORDER'] ?>";
-					alert(fullFormErrorMessage);
-					document.getElementById("table-div").innerHTML = "";
+		if(earlyTerm != ""){
+			let postData = new FormData();
+			postData.append("earlyInterval", earlyTerm);
+			postData.append("lateInterval", lateTerm);
+			postData.append("format", "simple_map");
+			const settings = {
+				method: "POST",
+				mode: "no-cors",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: postData
+			};
+			try {
+				const fetchResponse = await fetch('rpc/getPaleoGtsTable.php', settings);
+				const responce = await fetchResponse.json();
+				if(responce.tableStr != "undefined"){
+					if(responce.error){
+						if(responce.error == 'ERR_BAD_TERM_ORDER') fullFormErrorMessage = "<?= $LANG['ERR_BAD_TERM_ORDER'] ?>";
+						alert(fullFormErrorMessage);
+						document.getElementById("table-div").innerHTML = "";
+					}
+					else document.getElementById("table-div").innerHTML = responce.tableStr;
 				}
-				else document.getElementById("table-div").innerHTML = responce.tableStr;
+			} catch (e) {
+				alert(e);
 			}
-		} catch (e) {
-			alert(e);
 		}
+		else document.getElementById("table-div").innerHTML = "";
 	}
 </script>
 <style>
-	#paelo-gts-table{ border: 1px solid #ddd; padding: 8px; }
-	#paelo-gts-table th{ background-color: #04AA6D; color: white; padding: 8px; }
+	#paelo-gts-table{ margin: 15px; border: 1px solid #ddd; padding: 8px; border-collapse: collapse; }
+	#paelo-gts-table th{ border: 2px solid;  padding: 8px; }
 	#paelo-gts-table td{ border: 1px solid; padding: 6px; }
 </style>
 <fieldset>
@@ -69,8 +82,6 @@ $gtsTermArr = $occManager->getPaleoGtsTerms();
 			<select name="earlyInterval" onchange="earlyIntervalChanged(this.form)">
 				<option value=""></option>
 				<?php
-				$earlyIntervalTerm = '';
-				if(isset($occArr['earlyInterval'])) $earlyIntervalTerm = $occArr['earlyInterval'];
 				if($earlyIntervalTerm && !array_key_exists($earlyIntervalTerm, $gtsTermArr)){
 					echo '<option value="' . $earlyIntervalTerm . '" SELECTED>' . $earlyIntervalTerm . ' - ' . $LANG['MISMATCHED_TERM'] . '</option>';
 					echo '<option value="">---------------------------</option>';
