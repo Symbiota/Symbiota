@@ -302,6 +302,7 @@ class RpcOccurrenceEditor extends RpcBase{
 		global $LANG;
 		$retStr = '';
 		$termArr = $this->getPaleoGtsParents($earlyInterval, $lateInterval);
+		if($termArr === false) return false;
 		$earlyID = 0;
 		$lateID = 0;
 		foreach($termArr as $id => $gtsArr){
@@ -352,21 +353,37 @@ class RpcOccurrenceEditor extends RpcBase{
 	private function getPaleoGtsParents($earlyInterval, $lateInterval){
 		$retArr = Array();
 		if(!$lateInterval) $lateInterval = $earlyInterval;
-		$sqlTemplate = 'SELECT gtsID, gtsTerm, rankID, rankName, colorCode, parentGtsID FROM omoccurpaleogts WHERE rankID > 10 ';
+		$sqlTemplate = 'SELECT gtsID, gtsTerm, rankID, rankName, colorCode, myaStart, parentGtsID FROM omoccurpaleogts WHERE rankID > 10 ';
 		$sql = $sqlTemplate . 'AND gtsTerm IN(?, ?)';
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('ss', $earlyInterval, $lateInterval);
 			$stmt->execute();
 			$rs = $stmt->get_result();
+			$tartetTermsValid = false;
 			do{
 				$parentArr = array();
 				while($r = $rs->fetch_object()){
 					if(!isset($retArr[$r->gtsID])){
-						$retArr[$r->gtsID] = array('rankID' => $r->rankID, 'term' => $r->gtsTerm, 'colorCode' => $r->colorCode, 'parentID' => $r->parentGtsID);
+						$retArr[$r->gtsID] = array('rankID' => $r->rankID, 'term' => $r->gtsTerm, 'colorCode' => $r->colorCode, 'myaStart' => $r->myaStart, 'parentID' => $r->parentGtsID);
 						$parentArr[$r->parentGtsID] = 0;
 					}
 				}
 				$rs->free();
+				if(!$tartetTermsValid){
+					if($lateInterval && strtolower($earlyInterval) != strtolower($lateInterval)){
+						$earlyTime = false;
+						$lateTime = false;
+						foreach($retArr as $termArr){
+							if(strtolower($termArr['term']) == strtolower($earlyInterval)) $earlyTime = (float)$termArr['myaStart'];
+							elseif(strtolower($termArr['term']) == strtolower($lateInterval)) $lateTime = (float)$termArr['myaStart'];
+						}
+						if($earlyTime !== false && $lateTime !== false && $earlyTime < $lateTime){
+							$this->errorMessage = 'ERR_BAD_TERM_ORDER';
+							return false;
+						}
+					}
+					$tartetTermsValid = true;
+				}
 				if($parentArr){
 					$sql = $sqlTemplate . 'AND gtsID IN("' . implode('","', array_keys($parentArr)) . '")';
 					$rs = $this->conn->query($sql);

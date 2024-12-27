@@ -5,6 +5,7 @@ Language: English
 ------------------
 */
 
+$LANG['ERR_BAD_TERM_ORDER'] = 'Early Interval cannot be older than Late Interval';
 $LANG['EARLY_INTERVAL_LABEL'] = 'Early Interval';
 $LANG['LATE_INTERVAL_LABEL'] = 'Late Interval';
 $LANG['ABSOLUTE_AGE_LABEL'] = 'Absolute Age';

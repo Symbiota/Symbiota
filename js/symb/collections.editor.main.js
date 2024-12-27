@@ -690,8 +690,13 @@ function parseVerbatimCoordinates(f, verbose) {
 
 //Form verification code
 function verifyFullForm(f) {
-	var validformat1 = /^\d{4}-[0]{1}[0-9]{1}-\d{1,2}$/; //Format: yyyy-mm-dd
-	var validformat2 = /^\d{4}-[1]{1}[0-2]{1}-\d{1,2}$/; //Format: yyyy-mm-dd
+	if(fullFormErrorMessage != ""){
+		alert(fullFormErrorMessage);
+		return false;
+	}
+	
+	let validformat1 = /^\d{4}-[0]{1}[0-9]{1}-\d{1,2}$/; //Format: yyyy-mm-dd
+	let validformat2 = /^\d{4}-[1]{1}[0-2]{1}-\d{1,2}$/; //Format: yyyy-mm-dd
 	if (f.eventdate.value && !(validformat1.test(f.eventdate.value) || validformat2.test(f.eventdate.value))) {
 		alert("Event date is invalid");
 		return false;

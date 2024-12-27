@@ -18,7 +18,11 @@ if($earlyInterval){
 	}
 	else{
 		$tableStr = $paleoManager->getPaleoGtsTable($earlyInterval, $lateInterval);
-		$retArr['tableStr'] = $tableStr;
+		if($tableStr === false){
+			$retArr['tableStr'] = '';
+			$retArr['error'] = $paleoManager->getErrorMessage();
+		}
+		else $retArr['tableStr'] = $tableStr;
 	}
 }
 echo json_encode($retArr);

@@ -7,8 +7,8 @@ $gtsTermArr = $occManager->getPaleoGtsTerms();
 //include_once($SERVER_ROOT.'/collections/editor/includes/config/paleoVars.php');
 ?>
 <script>
-	var gtsArr = { <?php $d=''; foreach($gtsTermArr as $term => $rankid){ echo $d.'"'.$term.'":'.$rankid; $d=','; } ?> };
 	function earlyIntervalChanged(f){
+		fullFormErrorMessage = '';
 		let earlyTerm = f.earlyInterval.value;
 		let lateTerm = f.lateInterval.value;
 		setPaleoTable(earlyTerm, lateTerm);
@@ -16,6 +16,7 @@ $gtsTermArr = $occManager->getPaleoGtsTerms();
 	}
 
 	function lateIntervalChanged(f){
+		fullFormErrorMessage = '';
 		let earlyTerm = f.earlyInterval.value;
 		let lateTerm = f.lateInterval.value;
 		setPaleoTable(earlyTerm, lateTerm);
@@ -39,7 +40,12 @@ $gtsTermArr = $occManager->getPaleoGtsTerms();
 			const fetchResponse = await fetch('rpc/getPaleoGtsTable.php', settings);
 			const responce = await fetchResponse.json();
 			if(responce.tableStr != "undefined"){
-				document.getElementById("table-div").innerHTML = responce.tableStr;
+				if(responce.error){
+					if(responce.error == 'ERR_BAD_TERM_ORDER') fullFormErrorMessage = "<?= $LANG['ERR_BAD_TERM_ORDER'] ?>";
+					alert(fullFormErrorMessage);
+					document.getElementById("table-div").innerHTML = "";
+				}
+				else document.getElementById("table-div").innerHTML = responce.tableStr;
 			}
 		} catch (e) {
 			alert(e);
