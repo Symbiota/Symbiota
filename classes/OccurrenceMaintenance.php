@@ -103,6 +103,7 @@ class OccurrenceMaintenance {
 		}
 		$rs->free();
 		if(isset($occidArr)) $this->batchUpdateAuthor($occidArr);
+		unset($occidArr);
 
 		//Update date fields - first look for bad year
 		$occidArr = array();
@@ -119,6 +120,7 @@ class OccurrenceMaintenance {
 		}
 		$rs->free();
 		if(isset($occidArr)) $this->batchUpdateDateFields($occidArr);
+		unset($occidArr);
 
 		//Then look for records with bad month
 		$occidArr = array();
@@ -134,6 +136,7 @@ class OccurrenceMaintenance {
 		}
 		$rs->free();
 		if(isset($occidArr)) $this->batchUpdateDateFields($occidArr);
+		unset($occidArr);
 
 		//Then look for records with bad day
 		$occidArr = array();
@@ -149,6 +152,28 @@ class OccurrenceMaintenance {
 		}
 		$rs->free();
 		if(isset($occidArr)) $this->batchUpdateDateFields($occidArr);
+		unset($occidArr);
+
+		//Batch populate Geography data
+		$this->outputMsg('Populating null country codes... ',1);
+		$this->updateGeographicThesaurus();
+		$geoArr = array();
+		$sql = 'SELECT o.occid, g.iso2 FROM omoccurrences o INNER JOIN geographicThesaurus g ON o.country = g.geoterm WHERE o.countryCode IS NULL ';
+		//if($this->collidStr) $sql .= 'AND collid IN('.$this->collidStr.')';
+		$rs = $this->conn->query($sql);
+		$cnt = 0;
+		while($r = $rs->fetch_object()){
+			$geoArr[$r->iso2][] = $r->occid;
+			if($cnt > 5000){
+				$this->batchUpdateCountyCode($geoArr);
+				unset($geoArr);
+				$cnt = 0;
+			}
+			$cnt++;
+		}
+		$rs->free();
+		if(!empty($geoArr)) $this->batchUpdateCountyCode($geoArr);
+		unset($geoArr);
 
 		return $status;
 	}
@@ -337,6 +362,32 @@ class OccurrenceMaintenance {
 				$this->outputMsg($this->errorArr,2);
 				$status = false;
 			}
+		}
+		return $status;
+	}
+
+	private function batchUpdateCountyCode($geoArr){
+		$status = false;
+		foreach($geoArr as $countryCode => $occidArr){
+			$sql = 'UPDATE omoccurrences SET countryCode = "' . $countryCode . '" WHERE occid IN(' . implode(',', $occidArr) . ')';
+			if($this->conn->query($sql)){
+				$status = true;
+			}
+			else{
+				$this->errorArr[] = 'WARNING: unable to update countryCode; '.$this->conn->error;
+				$this->outputMsg($this->errorArr,2);
+				$status = false;
+			}
+		}
+		return $status;
+	}
+
+	private function updateGeographicThesaurus(){
+		$status = false;
+		//Make sure that non-accepted country terms have the correct countryCode
+		$sql = 'UPDATE geographicthesaurus g INNER JOIN geographicthesaurus a ON g.acceptedID = a.geoThesID SET g.iso2 = a.iso2	WHERE g.iso2 IS NULL AND a.iso2 IS NOT NULL';
+		if($this->conn->query($sql)){
+			$status = true;
 		}
 		return $status;
 	}
