@@ -440,8 +440,9 @@ $_SESSION['citationvar'] = $searchVar;
 							echo '<div style="margin: 40px 0px 200px 20px;font-weight:bold;">';
 							echo $LANG['PERHAPS_LOOKING_FOR'] . ' ';
 							$outStr = '';
+							$actionPage = $comingFrom === 'newsearch' ? 'search/index' : 'harvestparams';
 							foreach ($closeArr as $v) {
-								$outStr .= '<a href="harvestparams.php?taxa=' . htmlspecialchars($v, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($v, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>, ';
+								$outStr .= '<a href="' . $actionPage  . '.php?taxa=' . htmlspecialchars($v, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($v, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>, ';
 							}
 							echo trim($outStr, ' ,');
 							echo '</div>';
