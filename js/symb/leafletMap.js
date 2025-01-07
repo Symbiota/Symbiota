@@ -163,14 +163,35 @@ class LeafletMap {
 			const lon = e.latlng.lng;
 			const macro_strat_data = await getMacroStratData(lat, lon, zoom);
 
+			const loop_strat_names = (data) => {
+				let html_str = "";
+				for(let strat_name of data.macrostrat.strat_names) {
+					html_str += `<a href="https://macrostrat.org/sift/#/strat_name/${strat_name.strat_name_id}">${strat_name.rank_name}</a> `
+				}
+
+				return html_str;
+			}
+
 			if(macro_strat_data.mapData && macro_strat_data.mapData.length) {
-				var popup = L.popup()
+				L.popup()
 					.setLatLng([lat, lon])
 					.setContent(`
 						<div>
 							<div>
-								<span>Age:</span>
+								<span><b>Unit: </b></span>
+								<span>${macro_strat_data.mapData[0].name}</span>
+							</div>
+							<div>
+								<span><b>Age: </b></span>
 								<span>${macro_strat_data.mapData[0].age}</span>
+							</div>
+							<div>
+								<span><b>Source:</b></span>
+								${macro_strat_data.mapData[0].ref.authors}, ${macro_strat_data.mapData[0].ref.ref_title}: ${macro_strat_data.mapData[0].ref.ref_source}, ${macro_strat_data.mapData[0].ref.isbn_doi} ${macro_strat_data.mapData[0].ref.source_id} / ${macro_strat_data.mapData[0].map_id}
+							</div>
+							<div>
+								<span><b>Macrostrat ID: </b></span>
+								${loop_strat_names(macro_strat_data.mapData[0])}
 							</div>
 						</div>`)
 					.openOn(this.mapLayer);
