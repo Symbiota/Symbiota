@@ -197,16 +197,20 @@ END$$
 CREATE TRIGGER `omoccurrences_update` AFTER UPDATE ON `omoccurrences`
 FOR EACH ROW BEGIN
 	IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL THEN
-		IF EXISTS (SELECT `occid` FROM omoccurpoints WHERE `occid`=NEW.`occid`) THEN
-			UPDATE omoccurpoints 
-			SET `point` = Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`)
-			WHERE `occid` = NEW.`occid`;
-		ELSE 
-			INSERT INTO omoccurpoints (`occid`,`point`) 
-			VALUES (NEW.`occid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
+		IF OLD.`decimalLatitude` IS NULL OR (NEW.`decimalLatitude` != OLD.`decimalLatitude` AND NEW.`decimalLongitude` != OLD.`decimalLongitude`) THEN
+			IF EXISTS (SELECT `occid` FROM omoccurpoints WHERE `occid`=NEW.`occid`) THEN
+				UPDATE omoccurpoints 
+				SET `point` = Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`)
+				WHERE `occid` = NEW.`occid`;
+			ELSE 
+				INSERT INTO omoccurpoints (`occid`,`point`) 
+				VALUES (NEW.`occid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
+			END IF;
 		END IF;
 	ELSE
-		DELETE FROM omoccurpoints WHERE `occid` = NEW.`occid`;
+		IF OLD.`decimalLatitude` IS NOT NULL THEN
+			DELETE FROM omoccurpoints WHERE `occid` = NEW.`occid`;
+		END IF;
 	END IF;
 END$$
 
