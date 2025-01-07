@@ -14,6 +14,7 @@ let paramNames = [
   "catnum",
   "includeothercatnum",
   "hasimages",
+  "hasaudio",
   "typestatus",
   "hasgenetic",
   "hascoords",
@@ -949,6 +950,19 @@ function parseUrlVariables(varStr) {
     result[key] = val;
   });
   return result;
+}
+
+function toggleTheNonDefaultsClosed(defaultId) {
+  const categoryButtons = document.querySelectorAll('a[id^="condense-"]');
+  categoryButtons.forEach((categoryButton) => {
+    const regexPattern = new RegExp(`^condense-\\d+-${defaultId}$`);
+    if (!regexPattern.test(categoryButton.id)) {
+      const idToToggle = categoryButton.id
+        .replace("condense-", "")
+        .replace("-" + defaultId, "");
+      toggleCat(idToToggle);
+    }
+  });
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -50,6 +50,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT . '/js/jquery-ui.min.js'; ?>" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT . '/collections/individual/domManipulationUtils.js'; ?>" type="text/javascript"></script>
 	<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
 	<script>
 		const clientRoot = '<?php echo $CLIENT_ROOT; ?>';
@@ -415,8 +416,12 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 									<label for="typestatus"><?php echo $LANG['TYPE'] ?></label>
 								</div>
 								<div>
-									<input type="checkbox" name="hasimages" id="hasimages" value=1 data-chip="<?php echo $LANG['ONLY_WITH_IMAGES'] ?>" />
+									<input type="checkbox" name="hasimages" id="hasimages" value='1' data-chip="<?php echo $LANG['ONLY_WITH_IMAGES'] ?>" />
 									<label for="hasimages"><?php echo $LANG['LIMIT_TO_SPECIMENS_W_IMAGES'] ?></label>
+								</div>
+								<div>
+									<input type="checkbox" name="hasaudio" id="hasaudio" value='1' data-chip="<?php echo $LANG['ONLY_WITH_AUDIO'] ?>" />
+									<label for="hasaudio"><?php echo $LANG['LIMIT_TO_SPECIMENS_W_AUDIO'] ?></label>
 								</div>
 								<div>
 									<input type="checkbox" name="hasgenetic" id="hasgenetic" value=1 data-chip="<?php echo $LANG['ONLY_WITH_GENETIC'] ?>" />
@@ -630,6 +635,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 		}
 		?>
 		setSearchForm(document.getElementById("params-form"));
+		toggleTheNonDefaultsClosed(<?php echo $DEFAULTCATID ?>);
 	});
 </script>
 <script>

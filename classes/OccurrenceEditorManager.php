@@ -458,7 +458,7 @@ class OccurrenceEditorManager {
 		}
 		//Without images
 		if(array_key_exists('woi',$this->qryArr)){
-			$sqlWhere .= 'AND (i.imgid IS NULL) ';
+			$sqlWhere .= 'AND (m.mediaID IS NULL) ';
 		}
 		//OCR
 		if(array_key_exists('ocr',$this->qryArr)){
@@ -731,20 +731,20 @@ class OccurrenceEditorManager {
 
 		if(strpos($this->sqlWhere,'ocr.rawstr')){
 			if(strpos($this->sqlWhere,'ocr.rawstr IS NULL') && array_key_exists('io',$this->qryArr)){
-				$sql .= 'INNER JOIN images i ON o.occid = i.occid LEFT JOIN specprocessorrawlabels ocr ON i.imgid = ocr.imgid ';
+				$sql .= 'INNER JOIN media m ON o.occid = m.occid LEFT JOIN specprocessorrawlabels ocr ON m.mediaID = ocr.mediaID ';
 			}
 			elseif(strpos($this->sqlWhere,'ocr.rawstr IS NULL')){
-				$sql .= 'LEFT JOIN images i ON o.occid = i.occid LEFT JOIN specprocessorrawlabels ocr ON i.imgid = ocr.imgid ';
+				$sql .= 'LEFT JOIN media m ON o.occid = m.occid LEFT JOIN specprocessorrawlabels ocr ON m.mediaID = ocr.mediaID ';
 			}
 			else{
-				$sql .= 'INNER JOIN images i ON o.occid = i.occid INNER JOIN specprocessorrawlabels ocr ON i.imgid = ocr.imgid ';
+				$sql .= 'INNER JOIN media m ON o.occid = m.occid INNER JOIN specprocessorrawlabels ocr ON m.mediaID = ocr.mediaID ';
 			}
 		}
 		elseif(array_key_exists('io',$this->qryArr)){
-			$sql .= 'INNER JOIN images i ON o.occid = i.occid ';
+			$sql .= 'INNER JOIN media m ON o.occid = m.occid ';
 		}
 		elseif(array_key_exists('woi',$this->qryArr)){
-			$sql .= 'LEFT JOIN images i ON o.occid = i.occid ';
+			$sql .= 'LEFT JOIN media m ON o.occid = m.occid ';
 		}
 		if(strpos($this->sqlWhere,'id.identifierValue')){
 			$sql .= 'LEFT JOIN omoccuridentifiers id ON o.occid = id.occid ';
@@ -997,7 +997,7 @@ class OccurrenceEditorManager {
 					//If sciname was changed, update image tid link
 					if(in_array('tidinterpreted',$editArr)){
 						//Remap images
-						$sqlImgTid = 'UPDATE images SET tid = '.(is_numeric($postArr['tidinterpreted'])?$postArr['tidinterpreted']:'NULL').' WHERE occid = ('.$this->occid.')';
+						$sqlImgTid = 'UPDATE media SET tid = '.(is_numeric($postArr['tidinterpreted'])?$postArr['tidinterpreted']:'NULL').' WHERE occid = ('.$this->occid.')';
 						$this->conn->query($sqlImgTid);
 					}
 					//If host was entered in quickhost field, update record
@@ -1451,12 +1451,12 @@ class OccurrenceEditorManager {
 				$rs->free();
 
 				//Archive image history
-				$sql = 'SELECT * FROM images WHERE occid = '.$delOccid;
+				$sql = 'SELECT * FROM media WHERE mediaType = "image" AND occid = '.$delOccid;
 				$stage = $LANG['ERROR_ARCHIVING_IMG_HISTORY'];
 				if($rs = $this->conn->query($sql)){
 					$imgidStr = '';
 					while($r = $rs->fetch_assoc()){
-						$imgId = $r['imgid'];
+						$imgId = $r['mediaID'];
 						$imgidStr .= ','.$imgId;
 						foreach($r as $k => $v){
 							if($v) $archiveArr['imgs'][$imgId][$k] = $this->encodeStrTargeted($v,$CHARSET,'utf8');
@@ -1468,15 +1468,15 @@ class OccurrenceEditorManager {
 					if($imgidStr){
 						$imgidStr = trim($imgidStr, ', ');
 						//Remove any OCR text blocks linked to the image
-						if(!$this->conn->query('DELETE FROM specprocessorrawlabels WHERE (imgid IN('.$imgidStr.'))')){
+						if(!$this->conn->query('DELETE FROM specprocessorrawlabels WHERE (mediaID IN('.$imgidStr.'))')){
 							$this->errorArr[] = $LANG['ERROR_REMOVING_OCR'].': '.$this->conn->error;
 						}
 						//Remove image tags
-						if(!$this->conn->query('DELETE FROM imagetag WHERE (imgid IN('.$imgidStr.'))')){
+						if(!$this->conn->query('DELETE FROM imagetag WHERE (mediaID IN('.$imgidStr.'))')){
 							$this->errorArr[] = $LANG['ERROR_REMOVING_IMAGETAGS'].': '.$this->conn->error;
 						}
 						//Remove images
-						if(!$this->conn->query('DELETE FROM images WHERE (imgid IN('.$imgidStr.'))')){
+						if(!$this->conn->query('DELETE FROM media WHERE mediaType = "image" AND (mediaID IN('.$imgidStr.'))')){
 							$this->errorArr[] = $LANG['ERROR_REMOVING_LINKS'].': '.$this->conn->error;
 						}
 					}
@@ -1623,12 +1623,12 @@ class OccurrenceEditorManager {
 						}
 					}
 					if(isset($postArr['carryoverimages']) && $postArr['carryoverimages']){
-						$sql = 'INSERT INTO images(occid, tid, url, thumbnailurl, originalurl, archiveurl, photographer, photographeruid, imagetype, format, caption, owner,
+						$sql = 'INSERT INTO media (occid, tid, url, thumbnailurl, originalurl, archiveurl, creator, creatorUid, imagetype, format, caption, owner,
 							sourceurl, referenceUrl, copyright, rights, accessrights, locality, notes, anatomy, username, sourceIdentifier, mediaMD5, dynamicProperties,
 							defaultDisplay, sortsequence, sortOccurrence)
-							SELECT '.$this->occid.', tid, url, thumbnailurl, originalurl, archiveurl, photographer, photographeruid, imagetype, format, caption, owner, sourceurl, referenceUrl,
+							SELECT '.$this->occid.', tid, url, thumbnailurl, originalurl, archiveurl, creator, creatorUid, imagetype, format, caption, owner, sourceurl, referenceUrl,
 							copyright, rights, accessrights, locality, notes, anatomy, username, sourceIdentifier, mediaMD5, dynamicProperties, defaultDisplay, sortsequence, sortOccurrence
-							FROM images WHERE occid = '.$sourceOccid;
+							FROM media WHERE occid = '.$sourceOccid;
 						if(!$this->conn->query($sql)){
 							$this->errorArr[] = $LANG['ERROR_ADDING_IMAGES'].': '.$this->conn->error;
 						}
@@ -1752,7 +1752,7 @@ class OccurrenceEditorManager {
 
 			//Remap images
 			$sql = <<<'SQL'
-			UPDATE images SET occid = ? WHERE occid = ?;
+			UPDATE media SET occid = ? WHERE occid = ?;
 			SQL;
 			$stage = $LANG['ERROR_REMAPPING_IMAGES'];
 			QueryUtil::executeQuery($this->conn, $sql, [$targetOccid, $sourceOccid]);
@@ -2237,14 +2237,14 @@ class OccurrenceEditorManager {
 	public function getRawTextFragments(){
 		$retArr = array();
 		if($this->occid){
-			$sql = 'SELECT r.prlid, r.imgid, r.rawstr, r.notes, r.source '.
-				'FROM specprocessorrawlabels r INNER JOIN images i ON r.imgid = i.imgid '.
-				'WHERE i.occid = '.$this->occid;
+			$sql = 'SELECT r.prlid, r.mediaID, r.rawstr, r.notes, r.source '.
+				'FROM specprocessorrawlabels r INNER JOIN media m ON r.mediaID = m.mediaID '.
+				'WHERE m.occid = '.$this->occid;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$retArr[$r->imgid][$r->prlid]['raw'] = $this->cleanOutStr($r->rawstr);
-				$retArr[$r->imgid][$r->prlid]['notes'] = $this->cleanOutStr($r->notes);
-				$retArr[$r->imgid][$r->prlid]['source'] = $this->cleanOutStr($r->source);
+				$retArr[$r->mediaID][$r->prlid]['raw'] = $this->cleanOutStr($r->rawstr);
+				$retArr[$r->mediaID][$r->prlid]['notes'] = $this->cleanOutStr($r->notes);
+				$retArr[$r->mediaID][$r->prlid]['source'] = $this->cleanOutStr($r->source);
 			}
 			$rs->free();
 		}
@@ -2256,7 +2256,7 @@ class OccurrenceEditorManager {
 		if($imgId && $rawFrag){
 			$statusStr = '';
 			//$rawFrag = preg_replace('/[^(\x20-\x7F)]*/','', $rawFrag);
-			$sql = 'INSERT INTO specprocessorrawlabels(imgid,rawstr,notes,source) '.
+			$sql = 'INSERT INTO specprocessorrawlabels(mediaID,rawstr,notes,source) '.
 				'VALUES ('.$imgId.',"'.$this->cleanRawFragment($rawFrag).'",'.
 				($notes?'"'.$this->cleanInStr($notes).'"':'NULL').','.
 				($source?'"'.$this->cleanInStr($source).'"':'NULL').')';
@@ -2305,25 +2305,24 @@ class OccurrenceEditorManager {
 	public function getImageMap($imgId = 0){
 		$imageMap = Array();
 		if($this->occid){
-			$sql = 'SELECT imgid, url, thumbnailurl, originalurl, caption, photographer, photographeruid, sourceurl, copyright, notes, occid, username, sortoccurrence, initialtimestamp FROM images ';
-			if($imgId) $sql .= 'WHERE (imgid = '.$imgId.') ';
-			else $sql .= 'WHERE (occid = '.$this->occid.') ';
+			$sql = 'SELECT mediaID, url, thumbnailurl, originalurl, caption, creator, creatorUid, sourceurl, copyright, notes, occid, username, sortoccurrence, initialtimestamp FROM media '; if($imgId) $sql .= 'WHERE AND (mediaID = '.$imgId.') ';
+			else $sql .= 'WHERE mediaType = "image" AND (occid = '.$this->occid.') ';
 			$sql .= 'ORDER BY sortoccurrence';
 			//echo $sql;
 			$result = $this->conn->query($sql);
 			while($row = $result->fetch_object()){
-				$imageMap[$row->imgid]['url'] = $row->url;
-				$imageMap[$row->imgid]['tnurl'] = $row->thumbnailurl;
-				$imageMap[$row->imgid]['origurl'] = $row->originalurl;
-				$imageMap[$row->imgid]['caption'] = $row->caption;
-				$imageMap[$row->imgid]['photographer'] = $row->photographer;
-				$imageMap[$row->imgid]['photographeruid'] = $row->photographeruid;
-				$imageMap[$row->imgid]['sourceurl'] = $row->sourceurl;
-				$imageMap[$row->imgid]['copyright'] = $row->copyright;
-				$imageMap[$row->imgid]['notes'] = $row->notes;
-				$imageMap[$row->imgid]['occid'] = $row->occid;
-				$imageMap[$row->imgid]['username'] = $row->username;
-				$imageMap[$row->imgid]['sort'] = $row->sortoccurrence;
+				$imageMap[$row->mediaID]['url'] = $row->url;
+				$imageMap[$row->mediaID]['tnurl'] = $row->thumbnailurl;
+				$imageMap[$row->mediaID]['origurl'] = $row->originalurl;
+				$imageMap[$row->mediaID]['caption'] = $row->caption;
+				$imageMap[$row->mediaID]['creator'] = $row->creator;
+				$imageMap[$row->mediaID]['creatorUid'] = $row->creatorUid;
+				$imageMap[$row->mediaID]['sourceurl'] = $row->sourceurl;
+				$imageMap[$row->mediaID]['copyright'] = $row->copyright;
+				$imageMap[$row->mediaID]['notes'] = $row->notes;
+				$imageMap[$row->mediaID]['occid'] = $row->occid;
+				$imageMap[$row->mediaID]['username'] = $row->username;
+				$imageMap[$row->mediaID]['sort'] = $row->sortoccurrence;
 			}
 			$result->free();
 		}
@@ -2333,10 +2332,10 @@ class OccurrenceEditorManager {
 
 	protected function getImageTags($imgIdStr){
 		$retArr = array();
-		$sql = 'SELECT t.imgid, k.tagkey, k.shortlabel, k.description_en FROM imagetag t INNER JOIN imagetagkey k ON t.keyvalue = k.tagkey WHERE t.imgid IN('.$imgIdStr.')';
+		$sql = 'SELECT t.mediaID, k.tagkey, k.shortlabel, k.description_en FROM imagetag t INNER JOIN imagetagkey k ON t.keyvalue = k.tagkey WHERE t.mediaID IN('.$imgIdStr.')';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr[$r->imgid][$r->tagkey] = $r->shortlabel;
+			$retArr[$r->mediaID][$r->tagkey] = $r->shortlabel;
 		}
 		$rs->free();
 		return $retArr;

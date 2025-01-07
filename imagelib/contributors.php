@@ -10,7 +10,7 @@ $imgManager = new ImageLibraryBrowser();
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['PHOTOGRAPHER_LIST']; ?></title>
+	<title><?php echo $DEFAULT_TITLE; ?> <?=$LANG['CREATOR_LIST']?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
@@ -30,7 +30,7 @@ $imgManager = new ImageLibraryBrowser();
 
 	<!-- This is inner text! -->
 	<div role="main" id="innertext" style="height:100%">
-		<h1 class="page-heading"><?php echo $LANG['PHOTOGRAPHER_LIST']; ?></h1>
+			<h1 class="page-heading"><?=$LANG['CREATOR_LIST']?></h1>
 		<?php
 		$pList = $imgManager->getPhotographerList();
 		if($pList){
@@ -82,3 +82,4 @@ $imgManager = new ImageLibraryBrowser();
 	include($SERVER_ROOT.'/includes/footer.php');
 	?>
 </body>
+</html>
