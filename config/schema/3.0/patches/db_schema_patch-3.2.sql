@@ -57,7 +57,7 @@ END
 DELIMITER ;
 
 -- Add and update checklist footprints to be geoJson
-ALTER TABLE fmchecklists ADD COLUMN IF NOT EXISTS footprintGeoJson text;
+ALTER TABLE fmchecklists ADD COLUMN footprintGeoJson text;
 UPDATE fmchecklists set footprintGeoJson = ST_ASGEOJSON(ST_GEOMFROMTEXT(swap_wkt_coords(footprintWkt))) where footprintGeoJson is null;
 
 -- Remove wkt?
@@ -66,7 +66,7 @@ UPDATE fmchecklists set footprintGeoJson = ST_ASGEOJSON(ST_GEOMFROMTEXT(swap_wkt
 DELETE FROM omoccurpoints where occid in (SELECT o.occid from omoccurpoints o join omoccurrences o2 on o.occid = o2.occid where o2.decimalLatitude is null or o2.decimalLongitude is null); 
 
 -- Create and add lng lat points for occurrence data which is needed to do searching is spacial indexes that are lng lat
-ALTER TABLE omoccurpoints ADD COLUMN IF NOT EXISTS lngLatPoint POINT;
+ALTER TABLE omoccurpoints ADD COLUMN lngLatPoint POINT;
 UPDATE omoccurpoints p join omoccurrences o on o.occid = p.occid set lngLatPoint = ST_POINTFROMTEXT(CONCAT('POINT(',o.decimalLongitude, ' ', o.decimalLatitude, ')'));  
 ALTER TABLE omoccurpoints MODIFY IF EXISTS lngLatPoint POINT NOT NULL;
 ALTER TABLE omoccurpoints ADD SPATIAL INDEX(lngLatPoint);
