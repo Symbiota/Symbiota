@@ -166,7 +166,7 @@ class LeafletMap {
 			const loop_strat_names = (data) => {
 				let html_str = "";
 				for(let strat_name of data.macrostrat.strat_names) {
-					html_str += `<a href="https://macrostrat.org/sift/#/strat_name/${strat_name.strat_name_id}">${strat_name.rank_name}</a> `
+					html_str += `<a target="_blank" href="https://macrostrat.org/sift/#/strat_name/${strat_name.strat_name_id}">${strat_name.rank_name}</a> `
 				}
 
 				return html_str;
