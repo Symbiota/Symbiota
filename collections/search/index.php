@@ -636,6 +636,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 		?>
 		setSearchForm(document.getElementById("params-form"));
 		toggleTheNonDefaultsClosed(<?php echo $DEFAULTCATID ?>);
+		toggleAccordionsFromSessionStorage(sessionStorage?.accordionIds?.split(",") || []);
 	});
 </script>
 <script>
