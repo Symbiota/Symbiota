@@ -1055,7 +1055,7 @@ const accordions = document.querySelectorAll(
 );
 accordions.forEach((accordion) => {
   accordion.addEventListener("click", (event) => {
-    const currentAccordionIds = sessionStorage?.accordionIds?.split(",") || [];
+    const currentAccordionIds = localStorage?.accordionIds?.split(",") || [];
     const currentId = event.target.id;
     if (currentAccordionIds.includes(currentId)) {
       const targetIdx = currentAccordionIds.indexOf(currentId);
@@ -1063,6 +1063,6 @@ accordions.forEach((accordion) => {
     } else {
       currentAccordionIds.push(currentId);
     }
-    sessionStorage.setItem("accordionIds", currentAccordionIds);
+    localStorage.setItem("accordionIds", currentAccordionIds);
   });
 });
