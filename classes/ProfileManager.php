@@ -1033,15 +1033,6 @@ class ProfileManager extends Manager{
 		return $tPath;
 	}
 
-	private function setPreferredAccordionIds($pref, $uid){
-		$status = false;
-		$currentDynamicProperties = $this->getDynamicProperties($uid);
-		if(!$currentDynamicProperties) $currentDynamicProperties = array();
-		$currentDynamicProperties['preferredAccordionIds'] = $pref;
-		$status = $this->setDynamicProperties($uid, $currentDynamicProperties);
-		return $status;
-	}
-
 	//Accessubility functions
 	private function setAccessibilityPreference($pref, $uid){
 		$status = false;
