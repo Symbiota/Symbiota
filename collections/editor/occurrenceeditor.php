@@ -1,11 +1,9 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrenceeditor.'.$LANG_TAG.'.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/occurrenceeditor.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrenceeditor.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrenceeditor.en.php');
-
-
 header('Content-Type: text/html; charset=' . $CHARSET);
+
 $occId = array_key_exists('occid', $_REQUEST) ? filter_var($_REQUEST['occid'], FILTER_SANITIZE_NUMBER_INT) : '';
 $collId = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : false;
 $tabTarget = array_key_exists('tabtarget', $_REQUEST) ? filter_var($_REQUEST['tabtarget'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -444,10 +442,7 @@ else{
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<link href="<?= $CSS_BASE_PATH ?>/symbiota/variables.css" type="text/css" rel="stylesheet">
 	<?php
-	include_once($SERVER_ROOT.'/includes/head.php');
-	?>
-
-    <?php
+	//include_once($SERVER_ROOT.'/includes/head.php');
     if($crowdSourceMode == 1){
 		?>
 		<link href="includes/config/occureditorcrowdsource.css?ver=5" type="text/css" rel="stylesheet" id="editorCssLink" />
@@ -473,12 +468,13 @@ else{
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
-		var collId = "<?php echo (isset($collMap['collid'])?$collMap['collid']:(is_numeric($collId)?$collId:0)); ?>";
-		var csMode = "<?php echo $crowdSourceMode; ?>";
-		var tabTarget = <?php echo (is_numeric($tabTarget)?$tabTarget:'0'); ?>;
-		var imgArr = [];
-		var imgLgArr = [];
-		var localityAutoLookup = <?php echo $LOCALITY_AUTO_LOOKUP; ?>;
+		let collId = "<?php echo (isset($collMap['collid'])?$collMap['collid']:(is_numeric($collId)?$collId:0)); ?>";
+		let csMode = "<?php echo $crowdSourceMode; ?>";
+		let tabTarget = <?php echo (is_numeric($tabTarget)?$tabTarget:'0'); ?>;
+		let imgArr = [];
+		let imgLgArr = [];
+		let localityAutoLookup = <?php echo $LOCALITY_AUTO_LOOKUP; ?>;
+		let fullFormErrorMessage = '';
 
 		<?php
 		if($imgArr){
@@ -511,7 +507,7 @@ else{
 	<script src="../../js/symb/wktpolygontools.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/collections.georef.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.main.js?ver=9" type="text/javascript"></script>
+	<script src="../../js/symb/collections.editor.main.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.tools.js?ver=4" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.imgtools.js?ver=3" type="text/javascript"></script>
 	<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
@@ -1264,7 +1260,7 @@ else{
 										</div>
 									</fieldset>
 									<?php
-									if(isset($collMap['paleoActivated'])) include('includes/paleoinclude.php');
+									if(!empty($collMap['paleoActivated'])) include('includes/paleoinclude.php');
 									?>
 									<fieldset>
 										<legend><?php echo $LANG['MISC']; ?></legend>

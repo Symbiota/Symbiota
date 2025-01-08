@@ -169,6 +169,7 @@ $LANG['TARGET_SOURCE_EQUAL'] = 'ERROR: target and source are equal';
 $LANG['ABORT_DUE_TO_ERROR'] = 'ABORT due to error merging records';
 $LANG['ERROR_REMAPPING_DETS'] = 'ERROR remapping determinations';
 $LANG['ERROR_REMAPPING_IMAGES'] = 'ERROR remapping images';
+$LANG['ERROR_REMAPPING_MATSAMPLES'] = 'ERROR remapping material samples';
 $LANG['ERROR_REMAPPING_PALEOS'] = 'ERROR remapping paleos';
 $LANG['ERROR_REMAPPING_OCC_EDITS'] = 'ERROR remapping occurrence edits';
 $LANG['ERROR_REMAPPING_ASSOCS_1'] = 'ERROR remapping associations (1)';

@@ -690,13 +690,22 @@ function parseVerbatimCoordinates(f, verbose) {
 
 //Form verification code
 function verifyFullForm(f) {
-	var validformat1 = /^\d{4}-[0]{1}[0-9]{1}-\d{1,2}$/; //Format: yyyy-mm-dd
-	var validformat2 = /^\d{4}-[1]{1}[0-2]{1}-\d{1,2}$/; //Format: yyyy-mm-dd
-	if (f.eventdate.value && !(validformat1.test(f.eventdate.value) || validformat2.test(f.eventdate.value))) {
-		alert("Event date is invalid");
+	if(fullFormErrorMessage != ""){
+		alert(fullFormErrorMessage);
 		return false;
 	}
-	if (f.ometid && ((f.ometid.value != "" && f.exsnumber.value == "") || (f.ometid.value == "" && f.exsnumber.value != ""))) {
+	
+	let validformat1 = /^\d{4}-[0]{1}[0-9]{1}-\d{1,2}$/; 
+	let validformat2 = /^\d{4}-[1]{1}[0-2]{1}-\d{1,2}$/; 
+	
+	if (f.eventdate.value != "") {
+		if(!validformat1.test(f.eventdate.value) && !validformat2.test(f.eventdate.value)){
+			alert("Event date is invalid");
+			return false;
+		}
+	}
+
+	if (f.ometid !== undefined && ((f.ometid.value != "" && f.exsnumber.value == "") || (f.ometid.value == "" && f.exsnumber.value != ""))) {
 		alert("You must have both an exsiccati title and number, or neither. If there is no number, s.n. can be entered.");
 		return false;
 	}
@@ -731,6 +740,10 @@ function verifyFullForm(f) {
 		return false;
 	}
 	if (searchCatalogNumber(f, false)) return false;
+	
+	if (typeof verifyPaleoForm === "function") { 
+		if (!verifyPaleoForm(f)) return false;
+	}
 	return true;
 }
 

@@ -169,6 +169,7 @@ $LANG['TARGET_SOURCE_EQUAL'] = 'ERREUR: la cible et la source sont égales';
 $LANG['ABORT_DUE_TO_ERROR'] = "ABORT en raison d'une erreur lors de la fusion des enregistrements";
 $LANG['ERROR_REMAPPING_DETS'] = 'ERREUR remappage des déterminations';
 $LANG['ERROR_REMAPPING_IMAGES'] = 'ERREUR lors du remappage des images';
+$LANG['ERROR_REMAPPING_MATSAMPLES'] = 'ERREUR de remappage des material samples';
 $LANG['ERROR_REMAPPING_PALEOS'] = 'ERREUR de remappage des paléos';
 $LANG['ERROR_REMAPPING_OCC_EDITS'] = "ERREUR lors du remappage des modifications d'occurrence";
 $LANG['ERROR_REMAPPING_ASSOCS_1'] = 'ERREUR de remappage des associations (1)';
