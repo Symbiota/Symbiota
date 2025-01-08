@@ -222,7 +222,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 								<div class="input-text-container">
 										<label for="upperlat" class="input-text--outlined">
 											<span class="screen-reader-only"><?php echo $LANG['NORTHERN_LATITUDE'] ?></span>
-											<input type="number" step="any" min="-90" max="90" id="upperlat" name="upperlat" data-chip="<?php echo $LANG['UPPER_LAT'] ?>" />
+											<input type="number" step="any" min="0" max="90" id="upperlat" name="upperlat" data-chip="<?php echo $LANG['UPPER_LAT'] ?>" />
 											<span class="inset-input-label"><?php echo $LANG['NORTHERN_LATITUDE'] ?></span>
 											<span class="assistive-text"><?php echo $LANG['VALUE_BETWEEN_NUM'] ?></span>
 										</label>
@@ -239,7 +239,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 								<div class="input-text-container">
 									<label for="bottomlat" class="input-text--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['SOUTHERN_LATITUDE'] ?></span>
-										<input type="number" step="any" min="-90" max="90" id="bottomlat" name="bottomlat" data-chip="<?php echo $LANG['BOTTOM_LAT'] ?>" />
+										<input type="number" step="any" min="0" max="90" id="bottomlat" name="bottomlat" data-chip="<?php echo $LANG['BOTTOM_LAT'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['SOUTHERN_LATITUDE'] ?></span>
 									</label>
 									<label for="bottomlat_NS">
@@ -299,7 +299,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 								<div class="input-text-container">
 									<label for="pointlat" class="input-text--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['POINT_LATITUDE'] ?></span>
-										<input type="number" step="any" min="-90" max="90" id="pointlat" name="pointlat" data-chip="<?php echo $LANG['POINT_LAT'] ?>" />
+										<input type="number" step="any" min="0" max="90" id="pointlat" name="pointlat" data-chip="<?php echo $LANG['POINT_LAT'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['LATITUDE'] ?></span>
 									</label>
 									<label for="pointlat_NS" class="input-text--outlined">
