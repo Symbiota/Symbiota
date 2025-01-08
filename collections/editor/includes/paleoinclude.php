@@ -17,6 +17,14 @@ if(isset($occArr['lateInterval'])) $lateIntervalTerm = $occArr['lateInterval'];
 	}
 	?>
 
+	function verifyPaleoForm(f){
+		if((f.earlyInterval.value != "" && f.lateInterval.value == "") || (f.earlyInterval.value == "" && f.lateInterval.value != "")){
+			alert("<?= $LANG['ERR_ONE_INTERVALS_EMPTY'] ?>");
+			return false;
+		}
+		return true;
+	}
+
 	function earlyIntervalChanged(f){
 		fullFormErrorMessage = '';
 		let earlyTerm = f.earlyInterval.value;
@@ -34,7 +42,7 @@ if(isset($occArr['lateInterval'])) $lateIntervalTerm = $occArr['lateInterval'];
 	}
 
 	async function setPaleoTable(earlyTerm, lateTerm) {
-		if(earlyTerm != ""){
+		if(earlyTerm != "" || lateTerm != ""){
 			let postData = new FormData();
 			postData.append("earlyInterval", earlyTerm);
 			postData.append("lateInterval", lateTerm);
@@ -66,8 +74,9 @@ if(isset($occArr['lateInterval'])) $lateIntervalTerm = $occArr['lateInterval'];
 	}
 </script>
 <style>
-	#paelo-gts-table{ margin: 15px; border: 1px solid #ddd; padding: 8px; border-collapse: collapse; }
-	#paelo-gts-table th{ border: 2px solid;  padding: 8px; }
+	#paelo-gts-table{ margin-left: 10px; margin-bottom: 10px; padding: 8px; border-collapse: collapse; }
+	#paelo-gts-table th{ border: 2px solid;  padding: 8px; background-color: #d0d0d0; }
+	#paelo-gts-table th.blank-th{ border: 0px; background-color: transparent; }
 	#paelo-gts-table td{ border: 1px solid; padding: 6px; }
 </style>
 <fieldset>

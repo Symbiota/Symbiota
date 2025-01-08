@@ -11,7 +11,7 @@ $lateInterval = isset($_REQUEST['lateInterval']) ? $_REQUEST['lateInterval'] : '
 $format = isset($_REQUEST['format']) ? $_REQUEST['format'] : 'simple_map';
 
 $retArr = array();
-if($earlyInterval){
+if($earlyInterval || $lateInterval){
 	$paleoManager = new RpcOccurrenceEditor();
 	if($format == 'full_map'){
 

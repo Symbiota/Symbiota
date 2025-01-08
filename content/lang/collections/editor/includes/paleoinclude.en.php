@@ -5,6 +5,7 @@ Language: English
 ------------------
 */
 
+$LANG['ERR_ONE_INTERVALS_EMPTY'] = 'Both Paleo Early and Late Intervals need to have a value, even if they are the same';
 $LANG['ERR_BAD_TERM_ORDER'] = 'Early Interval cannot be older than Late Interval';
 $LANG['EARLY_INTERVAL_LABEL'] = 'Early Interval';
 $LANG['LATE_INTERVAL_LABEL'] = 'Late Interval';

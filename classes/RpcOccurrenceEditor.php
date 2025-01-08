@@ -307,21 +307,30 @@ class RpcOccurrenceEditor extends RpcBase{
 		$lateID = 0;
 		foreach($termArr as $id => $gtsArr){
 			if(strtolower($gtsArr['term']) == strtolower($earlyInterval)) $earlyID = $id;
-			elseif(strtolower($gtsArr['term']) == strtolower($lateInterval)) $lateID = $id;
+			if(strtolower($gtsArr['term']) == strtolower($lateInterval)) $lateID = $id;
 		}
-		if($earlyID){
-			$retStr = '<table id="paelo-gts-table"><tr>';
+		if($earlyID || $lateID){
+			$retStr = '<table id="paelo-gts-table"><tr><th class="blank-th"></th>';
 			$rankArr = array(20 => 'eon', 30 => 'era', 40 => 'period', 50 => 'epoch', 60 => 'age');
 			//Add header row
 			foreach($rankArr as $rankName){
 				$retStr .= '<th>' . $LANG[strtoupper($rankName) . '_LABEL'] . '</th>';
 			}
 			$retStr .= '</tr>';
-			//Add early term row
-			$retStr .= $this->getTableGtsRow($termArr, $earlyID, $rankArr);
-			if($lateID && $earlyID != $lateID){
+			$lateRow = '';
+			if($lateID){
 				//Add late term row
-				$retStr .= $this->getTableGtsRow($termArr, $lateID, $rankArr);
+				$lateRow = '</td>' . $this->getTableGtsRow($termArr, $lateID, $rankArr);
+				$retStr .= '<tr><td><b>' . $LANG['LATE_INTERVAL'] . '</b></td>' . $lateRow . '</tr>';
+			}
+			if($earlyID){
+				$retStr .= '<tr><td><b>' . $LANG['EARLY_INTERVAL'] . '</b></td>';
+				if($earlyID == $lateID){
+					$retStr .= $lateRow . '</tr>';
+				}
+				else{
+					$retStr .= $this->getTableGtsRow($termArr, $earlyID, $rankArr) . '</tr>';
+				}
 			}
 			$retStr .= '</table>';
 		}
@@ -334,19 +343,20 @@ class RpcOccurrenceEditor extends RpcBase{
 		$targetID = 0;
 		foreach(array_reverse($rankArr, true) as $rankID => $rankName){
 			$termName = '';
-			$termColor = '';
+			//$termColor = '';
 			if($targetRankID == $rankID){
 				$targetID = $baseElementID;
 			}
 			if($targetID){
 				$termName = $termArr[$targetID]['term'];
-				$termColor = $termArr[$targetID]['colorCode'];
+				//$termColor = $termArr[$targetID]['colorCode'];
 				$targetID = $termArr[$targetID]['parentID'];
 			}
-			$tdArr[$rankID] = '<td style="background-color: ' . $termColor . '">' . $termName . '</td>';
+			//$tdArr[$rankID] = '<td style="background-color: ' . $termColor . '">' . $termName . '</td>';
+			$tdArr[$rankID] = '<td>' . $termName . '</td>';
 		}
 		ksort($tdArr);
-		$retStr = '<tr>' . implode('', $tdArr) . '</tr>';
+		$retStr = implode('', $tdArr);
 		return $retStr;
 	}
 
