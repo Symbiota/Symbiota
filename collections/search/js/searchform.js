@@ -981,13 +981,12 @@ function toggleTheNonDefaultsClosed(defaultId) {
 }
 
 function toggleAccordionsFromSessionStorage(accordionIds) {
-  console.log("deleteMe accordionIds are: ");
-  console.log(accordionIds);
   const accordions = document.querySelectorAll(
     'input[class="accordion-selector"]'
   );
   accordions.forEach((accordion) => {
-    accordion.checked = false;
+    if(accordion.id !== "taxonomy") accordion.checked = false;
+    if(accordion.id === "taxonomy" && localStorage.getItem("taxonomyAccordionClosed")) accordion.checked = false;
   });
   accordions.forEach((accordion) => {
     const currentId = accordion.getAttribute("id");
@@ -1060,8 +1059,12 @@ accordions.forEach((accordion) => {
     if (currentAccordionIds.includes(currentId)) {
       const targetIdx = currentAccordionIds.indexOf(currentId);
       currentAccordionIds.splice(targetIdx, 1);
+      if(currentId==="taxonomy") {
+        localStorage.setItem("taxonomyAccordionClosed", true);
+      }
     } else {
       currentAccordionIds.push(currentId);
+      if(currentId==="taxonomy") localStorage.setItem("taxonomyAccordionClosed", false)
     }
     localStorage.setItem("accordionIds", currentAccordionIds);
   });
