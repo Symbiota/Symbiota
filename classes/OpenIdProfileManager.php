@@ -62,6 +62,7 @@ class OpenIdProfileManager extends ProfileManager{
 	}
 
 	public function linkThirdPartySid($thirdparty_sid, $local_sid){
+		error_log('tpsid: ' . $thirdparty_sid . ' lsid: ' . $local_sid);
 		$sql = 'INSERT INTO usersthirdpartysessions(thirdparty_id, localsession_id) VALUES (?, ?)';
 		if($stmt = $this->conn->prepare($sql)){
 			if($stmt->bind_param('ss', $thirdparty_sid, $local_sid)){
