@@ -180,10 +180,13 @@ class ProfileManager extends Manager{
 		$country = array_key_exists('country', $postArr) ? strip_tags($postArr['country']) : '';
 		$guid = array_key_exists('guid', $postArr) ? strip_tags($postArr['guid']) : '';
 		$isAccessiblePreferred = array_key_exists('accessibility-pref', $postArr) ? strip_tags($postArr['accessibility-pref']) : '0';
+		$preferredAccordionIds = array_key_exists('preferredAccordionIds', $postArr) ? strip_tags($postArr['preferredAccordionIds']) : [];
 
 		$status = false;
 
 		$accessibilityStatus = $this->setAccessibilityPreference($isAccessiblePreferred === '1' ? true : false, $this->uid);
+
+		$preferredAccordionIdsStatus = $this->setPreferredAccordionIds($isAccessiblePreferred === '1' ? true : false, $this->uid);
 
 		if($this->uid && $lastName && $email){
 			$this->resetConnection();
@@ -1031,6 +1034,15 @@ class ProfileManager extends Manager{
 			$tPath .= "downloads/";
 		}
 		return $tPath;
+	}
+
+	private function setPreferredAccordionIds($pref, $uid){
+		$status = false;
+		$currentDynamicProperties = $this->getDynamicProperties($uid);
+		if(!$currentDynamicProperties) $currentDynamicProperties = array();
+		$currentDynamicProperties['preferredAccordionIds'] = $pref;
+		$status = $this->setDynamicProperties($uid, $currentDynamicProperties);
+		return $status;
 	}
 
 	//Accessubility functions
