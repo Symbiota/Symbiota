@@ -61,6 +61,18 @@ class OpenIdProfileManager extends ProfileManager{
 		return $status;
 	}
 
+	public function linkThirdPartySid($thirdparty_sid, $local_sid){
+		$sql = 'INSERT INTO usersthirdpartysessions(thirdparty_id, localsession_id) VALUES (?, ?)';
+		if($stmt = $this->conn->prepare($sql)){
+			if($stmt->bind_param('ss', $thirdparty_sid, $local_sid)){
+				$stmt->execute();
+				//if($stmt->error){
+				//}
+				$stmt->close();
+			}
+		}
+	}
+
 	public function linkLocalUserOidSub($email, $sub, $provider){
 		if($email && $sub && $provider){
             $sql = 'SELECT u.uid, oid.subUuid, oid.provider from users u LEFT join usersthirdpartyauth oid ON u.uid = oid.uid 
