@@ -50,7 +50,7 @@ if (array_key_exists('code', $_REQUEST) && $_REQUEST['code']) {
         // Authprovider returned a subscriber; however, user was not authenticated to local user account
         try{
           $status = $profManager->linkLocalUserOidSub($email, $sub, $oidc->getProviderURL());
-          $profManager->linkThirdPartySid($sid);
+          $profManager->linkThirdPartySid($sid, session_id());
         }catch (Exception $ex){
           $_SESSION['last_message'] = $LANG['CAUGHT_EXCEPTION'] . ' '  . $ex->getMessage();
           header('Location:' . $CLIENT_ROOT . '/profile/index.php');
