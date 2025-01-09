@@ -498,15 +498,15 @@ class SpecUpload{
 	private function makeUploadTypeAdjustments(){
 		if($this->uploadType == $this->SKELETAL){
 			//Basically, this is now just a FILEUPLOAD with the edit action = skeletalUpdate
-			$this->editAction = 'skeletalUpdate';
+			$this->updateAction = 'skeletalUpdate';
 		}
 		elseif($this->uploadType == $this->NFNUPLOAD){
-			$this->editAction = 'skeletalUpdate';
+			$this->updateAction = 'skeletalUpdate';
 		}
 	}
 
-	public function setEditAction($a){
-		$this->editAction = $a;
+	public function setUpdateAction($a){
+		$this->updateAction = $a;
 		$this->makeUploadTypeAdjustments();
 	}
 

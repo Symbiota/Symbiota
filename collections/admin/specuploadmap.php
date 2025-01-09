@@ -19,13 +19,14 @@ $ulPath = !empty($_REQUEST['ulpath']) ? $_REQUEST['ulpath'] : '';
 $importIdent = array_key_exists('importident', $_REQUEST) ? true : false;
 $importImage = array_key_exists('importimage', $_REQUEST) ? true : false;
 $observerUid = !empty($_POST['observeruid']) ? filter_var($_POST['observeruid'], FILTER_SANITIZE_NUMBER_INT) : '';
+$updateAction = !empty($_REQUEST['updateaction']) ? $_REQUEST['updateaction'] : '';
 $matchCatNum = array_key_exists('matchcatnum', $_REQUEST) ? true : false;
 $matchOtherCatNum = !empty($_REQUEST['matchothercatnum']) ? true : false;
 $versionData = !empty($_REQUEST['versiondata']) ? true : false;
 $verifyImages = !empty($_REQUEST['verifyimages']) ? true : false;
 $processingStatus = !empty($_REQUEST['processingstatus']) ? $_REQUEST['processingstatus']: '';
 $dbpk = !empty($_REQUEST['dbpk']) ? $_REQUEST['dbpk']: '';
-$action = array_key_exists('action',$_REQUEST) ? $_REQUEST['action'] : '';
+$action = !empty($_REQUEST['action']) ? $_REQUEST['action'] : '';
 
 if(strpos($uspid,'-')){
 	$tok = explode('-',$uspid);
@@ -243,6 +244,7 @@ if($isEditor && $collid){
 		.unmapped{ background: yellow; }
 		fieldset{  padding: 15px; }
 		legend{ font-weight: bold; }
+		.field-div{ margin: 10px 0px; }
 	</style>
 </head>
 <body>
@@ -405,7 +407,7 @@ include($SERVER_ROOT.'/includes/header.php');
 										}
 										?>
 									</div>
-									<div style="margin:10px 0px;">
+									<div class="field-div">
 										<?php
 										if($uspid) echo '<button type="submit" name="action" value="Reset Field Mapping">' . $LANG['RESET_MAP'] . '</button>';
 										echo '<button name="action" type="submit" value="saveMapping" onclick="return verifySaveMapping(this.form)" style="margin-left:5px">' . $LANG['SAVE_MAP'] . '</button> ';
@@ -455,7 +457,7 @@ include($SERVER_ROOT.'/includes/header.php');
 											<input name="verifyimages" type="checkbox" value="1" />
 											<?= $LANG['VER_LINKS'] ?>
 										</div>
-										<div style="margin:10px 0px;">
+										<div class="field-div">
 											<?= $LANG['PROC_STATUS'] ?>:
 											<select name="processingstatus">
 												<option value=""><?= $LANG['NO_SETTING'] ?></option>
@@ -563,17 +565,18 @@ include($SERVER_ROOT.'/includes/header.php');
 					<div id="mdiv" style="display:<?= $displayStr; ?>">
 						<?php $duManager->echoFieldMapTable($autoMap,'spec'); ?>
 						<div>
-							<?php
-							echo '* '.$LANG['UNVER'].'<br/>';
-							echo '* '.$LANG['SKIPPED'].'<br/>';
-							echo '* '.$LANG['LEARN_MORE'].':';
-							?>
-							<div style="margin-left:15px;">
-								<a href="https://symbiota.org/wp-content/uploads/SymbiotaOccurrenceFields.pdf" target="_blank">SymbiotaOccurrenceFields.pdf</a><br/>
-								<a href="https://symbiota.org/symbiota-introduction/loading-specimen-data/" target="_blank"><?= $LANG['LOADING_DATA'] ?></a>
-							</div>
+							<ul>
+								<li><?= $LANG['UNVER'] ?></li>
+								<li><?= $LANG['SKIPPED'] ?></li>
+								<li><?= $LANG['LEARN_MORE'] ?>
+									<ul>
+									<li><a href="https://symbiota.org/wp-content/uploads/SymbiotaOccurrenceFields.pdf" target="_blank">SymbiotaOccurrenceFields.pdf</a></li>
+									<li><a href="https://symbiota.org/symbiota-introduction/loading-specimen-data/" target="_blank"><?= $LANG['LOADING_DATA'] ?></a></li>
+								</ul></li>
+							</ul>
+							<ul>
 						</div>
-						<div style="margin:10px;">
+						<div style="margin: 20px 5px;">
 							<?php
 							if($uspid){
 								?>
@@ -591,13 +594,13 @@ include($SERVER_ROOT.'/includes/header.php');
 						</div>
 						<hr />
 						<div id="uldiv" style="margin-top:30px;">
-							<div>
+							<div class="field-div">
 								<select name="updateaction" required>
 									<option value="">Select Update Type</option>
 									<option value="">-------------------</option>
-									<option value="updateTargetedFields">Update Only Fields in File</option>
-									<option value="skeletalUpdate">Skeletal Update (only empty fields)</option>
-									<option value="replaceFullRecord">Replace Full Record</option>
+									<option value="updateTargetedFields" <?php if($updateAction == 'updateTargetedFields') echo 'selected'; ?>>Update Only Fields in File</option>
+									<option value="skeletalUpdate" <?php if($updateAction == 'skeletalUpdate') echo 'selected'; ?>>Skeletal Update (only empty fields)</option>
+									<option value="replaceFullRecord" <?php if($updateAction == 'replaceFullRecord') echo 'selected'; ?>>Replace Full Record</option>
 								</select>
 							</div>
 							<?php
@@ -633,18 +636,18 @@ include($SERVER_ROOT.'/includes/header.php');
 							}
 							if($isLiveData){
 								?>
-								<div style="margin:10px 0px;">
+								<div class="field-div">
 									<input name="versiondata" type="checkbox" value="1">
 									<?= $LANG['VERSION_DATA_CHANGES'] ?>
 								</div>
 								<?php
 							}
 							?>
-							<div style="margin:10px 0px;">
+							<div class="field-div">
 								<input name="verifyimages" type="checkbox" value="1" />
 								<?= $LANG['VER_LINKS_MEDIA'] ?>
 							</div>
-							<div style="margin:10px 0px;">
+							<div class="field-div">
 								<?= $LANG['PROC_STATUS'] ?>:
 								<select name="processingstatus">
 									<option value=""><?= $LANG['NO_SETTING'] ?></option>
