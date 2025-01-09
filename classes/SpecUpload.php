@@ -23,6 +23,7 @@ class SpecUpload{
 	protected $storedProcedure = '';
 	protected $lastUploadDate;
 	protected $uploadType = '';
+	protected $updateAction; 					//Options: updateTargetedFields, replaceFullRecord, skeletalUpdate (only add values if field is null)
 	private $securityKey = '';
 	protected $paleoSupport = false;
 	protected $materialSampleSupport = false;
@@ -303,7 +304,7 @@ class SpecUpload{
 					}
 				}
 			}
-		} 
+		}
 		return $sql;
 	}
 
@@ -354,6 +355,7 @@ class SpecUpload{
 				$this->storedProcedure = $row->cleanupsp;
 				$this->lastUploadDate = $row->uploaddate;
 				$this->uploadType = $row->uploadtype;
+				$this->makeUploadTypeAdjustments();
 				if(!$this->lastUploadDate) $this->lastUploadDate = date('Y-m-d H:i:s');
 			}
 			$result->free();
@@ -489,7 +491,23 @@ class SpecUpload{
 	public function setUploadType($uploadType){
 		if(is_numeric($uploadType)){
 			$this->uploadType = $uploadType;
+			$this->makeUploadTypeAdjustments();
 		}
+	}
+
+	private function makeUploadTypeAdjustments(){
+		if($this->uploadType == $this->SKELETAL){
+			//Basically, this is now just a FILEUPLOAD with the edit action = skeletalUpdate
+			$this->editAction = 'skeletalUpdate';
+		}
+		elseif($this->uploadType == $this->NFNUPLOAD){
+			$this->editAction = 'skeletalUpdate';
+		}
+	}
+
+	public function setEditAction($a){
+		$this->editAction = $a;
+		$this->makeUploadTypeAdjustments();
 	}
 
 	public function getErrorStr(){

@@ -950,11 +950,13 @@ class SpecUploadBase extends SpecUpload{
 			if($v == 'processingstatus' && $this->processingStatus){
 				$sqlFragArr[$v] = 'o.processingStatus = u.processingStatus';
 			}
-			elseif($this->uploadType == $this->SKELETAL || $this->uploadType == $this->NFNUPLOAD){
-				$sqlFragArr[$v] = 'o.'.$v.' = IFNULL(o.'.$v.',u.'.$v.')';
-			}
 			else{
-				$sqlFragArr[$v] = 'o.'.$v.' = u.'.$v;
+				if($this->updateAction == 'skeletalUpdate'){
+					$sqlFragArr[$v] = 'o.'.$v.' = IFNULL(o.'.$v.',u.'.$v.')';
+				}
+				else{
+					$sqlFragArr[$v] = 'o.'.$v.' = u.'.$v;
+				}
 			}
 		}
 		$obsUidTarget = 'NULL';
@@ -1047,7 +1049,10 @@ class SpecUploadBase extends SpecUpload{
 					foreach($this->targetFieldArr as $field){
 						if(in_array($field, $excludedFieldArr)) continue;
 						if($r[$field] != $r['old_'.$field]){
-							if($this->uploadType == $this->SKELETAL && $r['old_'.$field]) continue;
+							if($this->updateAction == 'skeletalUpdate' && $r['old_'.$field]){
+								//Skip versioning because an old value exists, which skipped adding the edit
+								continue;
+							}
 							$this->insertOccurEdit($r['occid'], $field, $r[$field], $r['old_'.$field]);
 						}
 					}
@@ -1293,10 +1298,10 @@ class SpecUploadBase extends SpecUpload{
 	// }
 	private function setOtherCatalogNumbers(){
 		if($this->uploadType == $this->FILEUPLOAD || $this->uploadType == $this->SKELETAL){
-			$sql = 'INSERT IGNORE INTO omoccuridentifiers (occid, identifiername, identifiervalue, modifiedUid) 
-			SELECT o.occid, kv.key as identifiername, kv.value as identifiervalue, kv.upload_uid as modifiedUid 
-			FROM uploadKeyValueTemp kv 
-			INNER JOIN uploadspectemp u on u.dbpk = kv.dbpk 
+			$sql = 'INSERT IGNORE INTO omoccuridentifiers (occid, identifiername, identifiervalue, modifiedUid)
+			SELECT o.occid, kv.key as identifiername, kv.value as identifiervalue, kv.upload_uid as modifiedUid
+			FROM uploadKeyValueTemp kv
+			INNER JOIN uploadspectemp u on u.dbpk = kv.dbpk
 			INNER JOIN omoccurrences o on o.occid = u.occid
 			WHERE type = "omoccuridentifiers" AND kv.collid = ?';
 
@@ -1919,7 +1924,7 @@ class SpecUploadBase extends SpecUpload{
 					foreach ($parsedCatalogNumbers as $entry) {
 						QueryUtil::executeQuery($this->conn, $sql, [$entry['key'], $entry['value'], $recMap['dbpk'], $GLOBALS['SYMB_UID']]);
 					}
-				} 
+				}
 			}
 
 		}
@@ -1928,7 +1933,7 @@ class SpecUploadBase extends SpecUpload{
 		$catalogNumbers = explode(';', str_replace(['|',','], ';', $otherCatalogNumbers));
 		$parsedCatalogNumbers = [];
 
-		for ($i = 0; $i < count($catalogNumbers); $i++) { 
+		for ($i = 0; $i < count($catalogNumbers); $i++) {
 			$key_value = explode(':', $catalogNumbers[$i]);
 
 			if(count($key_value) == 2) {
