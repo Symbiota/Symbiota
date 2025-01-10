@@ -173,26 +173,42 @@ class LeafletMap {
 			}
 
 			if(macro_strat_data.mapData && macro_strat_data.mapData.length) {
+				let content = ""
+
+				if(macro_strat_data.mapData[0].name) {
+					content += `<div>
+						<span style="font-weight:bold">Unit: </span>
+						<span>${macro_strat_data.mapData[0].name}</span>
+					</div>`;
+				}
+
+				if(macro_strat_data.mapData[0].age) {
+					content+= `<div>
+						<span style="font-weight:bold">Age: </span>
+						<span>${macro_strat_data.mapData[0].age}</span>
+					</div>`;
+
+				}
+
+				if(macro_strat_data.mapData[0].ref) {
+					content += `<div style="font-size:0.8rem">
+						<span style="font-weight:bold">Source:</span>
+						${macro_strat_data.mapData[0].ref.authors}, ${macro_strat_data.mapData[0].ref.ref_title}: ${macro_strat_data.mapData[0].ref.ref_source}, ${macro_strat_data.mapData[0].ref.isbn_doi} ${macro_strat_data.mapData[0].ref.source_id} / ${macro_strat_data.mapData[0].map_id}
+					</div>`;
+				}
+
+				if(macro_strat_data.mapData[0].macrostrat && macro_strat_data.mapData[0].macrostrat.strat_names && macro_strat_data.mapData[0].macrostrat.strat_names.length) {
+					content += `<div style="margin-top:1rem">
+						<span style="font-weight:bold">Macrostrat matched names: </span>
+						${loop_strat_names(macro_strat_data.mapData[0])}
+					</div>`;
+				}
+
 				L.popup()
 					.setLatLng([lat, lon])
 					.setContent(`
 						<div style="font-size:1rem">
-							<div>
-								<span style="font-weight:bold">Unit: </span>
-								<span>${macro_strat_data.mapData[0].name}</span>
-							</div>
-							<div>
-								<span style="font-weight:bold">Age: </span>
-								<span>${macro_strat_data.mapData[0].age}</span>
-							</div>
-							<div style="font-size:0.8rem">
-								<span style="font-weight:bold">Source:</span>
-								${macro_strat_data.mapData[0].ref.authors}, ${macro_strat_data.mapData[0].ref.ref_title}: ${macro_strat_data.mapData[0].ref.ref_source}, ${macro_strat_data.mapData[0].ref.isbn_doi} ${macro_strat_data.mapData[0].ref.source_id} / ${macro_strat_data.mapData[0].map_id}
-							</div>
-							<div style="margin-top:1rem">
-								<span style="font-weight:bold">Macrostrat matched names: </span>
-								${loop_strat_names(macro_strat_data.mapData[0])}
-							</div>
+							${content}
 						</div>`)
 					.openOn(this.mapLayer);
 			}
