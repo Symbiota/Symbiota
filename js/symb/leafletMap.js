@@ -199,7 +199,7 @@ class LeafletMap {
 
 				if(macro_strat_data.mapData[0].macrostrat && macro_strat_data.mapData[0].macrostrat.strat_names && macro_strat_data.mapData[0].macrostrat.strat_names.length) {
 					content += `<div style="margin-top:1rem">
-						<span style="font-weight:bold">Macrostrat matched names: </span>
+						<span style="font-weight:bold">Macrostrat matched units: </span>
 						${loop_strat_names(macro_strat_data.mapData[0])}
 					</div>`;
 				}
