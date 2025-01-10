@@ -176,21 +176,21 @@ class LeafletMap {
 				L.popup()
 					.setLatLng([lat, lon])
 					.setContent(`
-						<div>
+						<div style="font-size:1rem">
 							<div>
-								<span><b>Unit: </b></span>
+								<span style="font-weight:bold">Unit: </span>
 								<span>${macro_strat_data.mapData[0].name}</span>
 							</div>
 							<div>
-								<span><b>Age: </b></span>
+								<span style="font-weight:bold">Age: </span>
 								<span>${macro_strat_data.mapData[0].age}</span>
 							</div>
-							<div>
-								<span><b>Source:</b></span>
+							<div style="font-size:0.8rem">
+								<span style="font-weight:bold">Source:</span>
 								${macro_strat_data.mapData[0].ref.authors}, ${macro_strat_data.mapData[0].ref.ref_title}: ${macro_strat_data.mapData[0].ref.ref_source}, ${macro_strat_data.mapData[0].ref.isbn_doi} ${macro_strat_data.mapData[0].ref.source_id} / ${macro_strat_data.mapData[0].map_id}
 							</div>
-							<div>
-								<span><b>Macrostrat ID: </b></span>
+							<div style="margin-top:1rem">
+								<span style="font-weight:bold">Macrostrat matched names: </span>
 								${loop_strat_names(macro_strat_data.mapData[0])}
 							</div>
 						</div>`)
@@ -248,7 +248,7 @@ class LeafletMap {
 				"Satellite": Esri_WorldImagery,
 			};
 			const overlays = {
-				"Macro Strat": L.layerGroup([macro_strat])
+				"Macrostrat": L.layerGroup([macro_strat])
 			}
          L.control.layers(layers, overlays).addTo(this.mapLayer);
       }
