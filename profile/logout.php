@@ -1,12 +1,26 @@
 <?php
 include_once('../config/symbini.php');
+include_once($SERVER_ROOT.'/classes/OpenIdProfileManager.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
-$action = array_key_exists('action', $_REQUEST) ? htmlspecialchars($_REQUEST['action'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
-$userId = array_key_exists('userid', $_REQUEST) ? filter_var($_REQUEST['userid'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$tabIndex = array_key_exists('tabindex',$_REQUEST) ? filter_var($_REQUEST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$sid = array_key_exists('sid', $_REQUEST) ? htmlspecialchars($_REQUEST['action'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
+
+$profManager = new OpenIdProfileManager();
+
+$localSessionID = $profManager->lookupLocalSessionIDWithThirdPartySid($sid);
+// close the current session.
+session_write_close();
+// load the specified target session 
+session_id($localSessionID );
+// start the target session.
+session_start();
+// clean all session data in target session.
+$_SESSION = [];
+// save and close that session.
+session_write_close();
 
 ?>
+
 
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">

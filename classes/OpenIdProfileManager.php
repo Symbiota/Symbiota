@@ -62,7 +62,6 @@ class OpenIdProfileManager extends ProfileManager{
 	}
 
 	public function linkThirdPartySid($thirdparty_sid, $local_sid){
-		error_log('tpsid: ' . $thirdparty_sid . ' lsid: ' . $local_sid);
 		$sql = 'INSERT INTO usersthirdpartysessions(thirdparty_id, localsession_id) VALUES (?, ?)';
 		if($stmt = $this->conn->prepare($sql)){
 			if($stmt->bind_param('ss', $thirdparty_sid, $local_sid)){
@@ -128,5 +127,19 @@ class OpenIdProfileManager extends ProfileManager{
 				}
 			}
 		}
+	}
+
+	public function lookupLocalSessionIDWithThirdPartySid($thirdparty_sid){
+		$sql = 'SELECT localsession_id FROM usersthirdpartysessions WHERE thirdparty_id = ?';
+		$localSessionID = '';
+		if($stmt = $this->conn->prepare($sql)){
+			if($stmt->bind_param('s', $thirdparty_sid)){
+				$stmt->execute();
+				$stmt->bind_result($localSessionID);
+				$stmt->fetch();
+				$stmt->close();
+			}
+		}
+		return $localSessionID;
 	}
 }
