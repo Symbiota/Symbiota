@@ -82,6 +82,8 @@ foreach ($coordArr as $collName => $coll) {
 		array_push($recordArr, [
 			'id' => $record['id'], 
 			'tid' => $record['tid'], 
+			'catalogNumber' => $record['catalogNumber'], 
+			'sciname' => $record['sn'], 
 			'collid' => $record['collid'], 
 			'family' => $record['fam'],
 			'occid' => $recordId,

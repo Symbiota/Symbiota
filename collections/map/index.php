@@ -1774,8 +1774,6 @@ if(isset($_REQUEST['llpoint'])) {
 
 			const totalPages = Math.ceil(totalRecords / viewLimit);
 
-			html += "<hr/>";
-
 			if(totalPages > 1) {
 				html += '<div style="display:flex; gap: 0.25rem">';
 				for(let i =0; i < totalPages; i++ ) {
@@ -1791,27 +1789,36 @@ if(isset($_REQUEST['llpoint'])) {
 			setElem("start-record", 1 + (page - 1) * viewLimit);
 			setElem("end-record", viewLimit + offset);
 			setElem("pagination-total-records", totalRecords);
-			setElem("record-pagination", html);
+			setElem("record-pagination-top", html);
+
+			setElem("record-pagination-bottom", html);
+				
+			const pagination_summary = document.getElementById('record-pagination-summary')
+			if(pagination_summary) {
+				setElem("record-pagination-summary-bottom", pagination_summary.innerHTML);
+			}
 
 			const tbody = document.querySelector("#rec-test tbody");
 
 			let count = 0;
 			for(let i = 0; i < viewLimit && i < totalRecords; i++) {
-				const { occid } = records.recordArr[i];
+				const { occid, catalogNumber, id, sciname } = records.recordArr[i];
 				let row = document.createElement("tr");
 				let cat = document.createElement("td");
-				cat.append('catnum');
+				cat.append(catalogNumber ? catalogNumber: '');
 				cat.id = "cat" + occid;
 
 				let collector = document.createElement("td");
 				collector.id = "label" + occid;
-				collector.append('label');
+				collector.append(id? id: '');
 
+				/*
 				let date = document.createElement("td");
 				date.append('date');
+				*/
 
-				let sciname = document.createElement("td");
-				sciname.append('sciname');
+				let taxa_name = document.createElement("td");
+				taxa_name.append(sciname? sciname: '');
 
 				let map_helper_container = document.createElement("td");
 				let map_helper = document.createElement("a");
@@ -1823,8 +1830,8 @@ if(isset($_REQUEST['llpoint'])) {
 
 				row.append(cat)
 				row.append(collector);
-				row.append(date);
-				row.append(sciname);
+				//row.append(date);
+				row.append(taxa_name);
 				row.append(map_helper_container);
 
 				tbody.append(row);
@@ -2417,10 +2424,10 @@ Record Limit:
 							<div id="rec-test" style="">
 								Buttons
 								<hr/>
-								<div id="record-pagination">
-
-								</div>	
 								<div>
+								<div id="record-pagination-top">
+								</div>	
+								<div id="record-pagination-summary">
 									<?= $LANG['PAGINATION_PAGE'] ?>
 									<span id="record-active-page"></span>
 									<?= $LANG['PAGINATION_RECORDS'] ?>
@@ -2428,12 +2435,12 @@ Record Limit:
 									<?= ' ' . $LANG['PAGINATION_OF'] . ' ' ?>
 									<span id="pagination-total-records"></span>
 								</div>
+								<div>
 								<hr/>
 								<table id="records-table" class="styledtable" style="font-size:.9rem;">
 									<thead>
 										<th><?=$LANG['CATALOG_NUMBER']?></th>
 										<th><?=$LANG['COLLECTOR']?></th>
-										<th><?=$LANG['EVENTDATE']?></th>
 										<th><?=$LANG['SCIENTIFIC_NAME']?></th>
 										<th><?=$LANG['MAP_LINK']?></th>
 									</thead>
@@ -2441,6 +2448,12 @@ Record Limit:
 
 									</tbody>
 								</table>
+								<hr/>
+								<div id="record-pagination-bottom">
+								</div>	
+								<div id="record-pagination-summary-bottom" style="margin-bottom:2rem">
+								</div>	
+								<div>
 							</div>
 							<div id="external_occurrencelist" style="">
 								loading...
