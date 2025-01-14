@@ -549,7 +549,7 @@ else{
 	<style type="text/css">
 		fieldset > legend{ font-weight:bold; }
 		select{ margin-bottom: 2px; }
-		.identifier-plus{ width:14px; margin-left: 5px; }
+		#identifierDiv .edit-icon{ width:14px; margin-left: 5px; }
 		#innertext{ background-color: white; margin: 0px 10px; }
 		.fieldGroupDiv {
 			display: flex;
@@ -819,7 +819,7 @@ else{
 																		<input class="idNameInput" name="idname[]" type="text" value="<?php echo $idArr['name']; ?>" onchange="fieldChanged('idname');" autocomplete="off" />
 																	</div>
 																	<div class="divTableCell">
-																		<input class="idValueInput" name="idvalue[]" type="text" value="<?php echo $idArr['value']; ?>" onchange="fieldChanged('idvalue');" autocomplete="off" /><a href="#" onclick="deleteIdentifier(<?php echo "'".$idKey."',".$occId; ?>);return false" tabindex="-1"><img src="../../images/del.png" /></a>
+																		<input class="idValueInput" name="idvalue[]" type="text" value="<?php echo $idArr['value']; ?>" onchange="fieldChanged('idvalue');" autocomplete="off" /><a href="#" onclick="deleteIdentifier(<?php echo "'".$idKey."',".$occId; ?>);return false" tabindex="-1"><img class="edit-icon" src="../../images/del.png" /></a>
 																	</div>
 																</div>
 																<?php
@@ -832,7 +832,7 @@ else{
 																<input class="idNameInput" name="idname[]" type="text" value="" onchange="fieldChanged('idname');" autocomplete="off" />
 															</div>
 															<div class="divTableCell">
-																<input class="idValueInput" name="idvalue[]" type="text" value="" onchange="fieldChanged('idvalue');" autocomplete="off" /><a href="#" onclick="addIdentifierField(this);return false" tabindex="-1"><img class="identifier-plus" src="../../images/plus.png" ></a>
+																<input class="idValueInput" name="idvalue[]" type="text" value="" onchange="fieldChanged('idvalue');" autocomplete="off" /><a href="#" onclick="addIdentifierField(this);return false" tabindex="-1"><img class="edit-icon" src="../../images/plus.png" ></a>
 															</div>
 														</div>
 													</div>
@@ -991,7 +991,7 @@ else{
 												<input type="text" name="dateidentified" maxlength="45" value="<?php echo array_key_exists('dateidentified',$occArr)?$occArr['dateidentified']:''; ?>" onchange="fieldChanged('dateidentified');" />
 											</div>
 											<div id="idrefToggleDiv" onclick="toggle('idrefdiv');" title="<?php echo $LANG['TOGG_ADD_FIELDS'] ?>">
-												<img class="seemore" src="../../images/tochild.png" style="width:1.3em;height:1.3em">
+												<img class="seemore-icon" src="../../images/tochild.png">
 											</div>
 										</div>
 										<div  id="idrefdiv">
@@ -1078,7 +1078,7 @@ else{
 												<br/>
 												<input type="text" id="locationid" name="locationid" value="<?php echo array_key_exists('locationid',$occArr)?$occArr['locationid']:''; ?>" onchange="fieldChanged('locationid');" autocomplete="off" />
 												<a id="geography1Toggle" onclick="toggle('geography1-div', 'flex');" title="<?php echo $LANG['TOGG_ADD_FIELDS'] ?>">
-													<img class="seemore" src="../../images/toparent.png" style="width:1.3em;height:1.3em">
+													<img class="seemore-icon" src="../../images/toparent.png">
 												</a>
 											</div>
 										</div>
@@ -1088,7 +1088,7 @@ else{
 											<br />
 											<textarea id="fflocality" name="locality" onchange="fieldChanged('locality');"><?php echo array_key_exists('locality',$occArr)?$occArr['locality']:''; ?></textarea>
 											<a id="localityExtraToggle" onclick="toggle('localityExtraDiv');" title="<?php echo $LANG['TOGG_ADD_FIELDS'] ?>">
-												<img class="seemore" src="../../images/tochild.png" style="width:1.3em" />
+												<img class="seemore-icon" src="../../images/tochild.png">
 											</a>
 										</div>
 										<?php
@@ -1225,7 +1225,7 @@ else{
 												</div>
 											</div>
 											<div id="georefExtraToggleDiv" onclick="toggle('georefExtraDiv');">
-												<img class="seemore" src="../../images/tochild.png" style="width:1.3em;height:1.3em" title="<?php echo $LANG['TOGG_ADD_FIELDS'] ?>" >
+												<img class="seemore-icon" src="../../images/tochild.png" title="<?php echo $LANG['TOGG_ADD_FIELDS'] ?>" >
 											</div>
 										</div>
 										<?php
@@ -1345,7 +1345,7 @@ else{
 											<br/>
 											<input type="text" name="occurrenceremarks" value="<?php echo array_key_exists('occurrenceremarks',$occArr)?$occArr['occurrenceremarks']:''; ?>" onchange="fieldChanged('occurrenceremarks');" title="<?php echo $LANG['OCC_REMARKS']; ?>" />
 											<span id="dynPropToggleSpan" onclick="toggle('dynamicPropertiesDiv');" title="<?php echo $LANG['TOGG_ADD_FIELDS'] ?>" >
-												<img class="seemore" src="../../images/tochild.png" style="width:1.3em;height:1.3em">
+												<img class="seemore-icon" src="../../images/tochild.png">
 											</span>
 										</div>
 										<div id="dynamicPropertiesDiv" class="field-div" style="display:<?= empty($occArr['dynamicproperties']) ? 'none' : '' ?>">

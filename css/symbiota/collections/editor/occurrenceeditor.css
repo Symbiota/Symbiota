@@ -72,6 +72,11 @@ fieldset{
 	clear:both;
 }
 
+.field-div{
+	margin-top: 2px;
+	margin-right: 2px;
+}
+
 /* Field entry divs and input objects */
 #catalogNumberDiv {
 	float:	left;
@@ -879,13 +884,17 @@ fieldset{
 /*Misc styling*/
 .docimg { 
 	border:			0px;
-	width:			12px;
+	width:			13px;
 	margin-bottom:	2px; 
 }
 
 .editimg { 
 	border:			0px;
 	width:			15px;
+}
+
+.seemore-icon{
+	width: 18px;
 }
 
 table { 
