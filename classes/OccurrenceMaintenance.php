@@ -157,8 +157,12 @@ class OccurrenceMaintenance {
 		//Batch populate Geography data
 		$this->outputMsg('Populating null country codes... ', 1);
 		$this->updateGeographicThesaurus();
+
+		//Set NULL or incorrectly set country codes
 		$geoArr = array();
-		$sql = 'SELECT o.occid, g.iso2 FROM omoccurrences o INNER JOIN geographicThesaurus g ON o.country = g.geoterm WHERE o.countryCode IS NULL ';
+		$sql = 'SELECT o.occid, g.iso2
+			FROM omoccurrences o INNER JOIN geographicThesaurus g ON o.country = g.geoterm
+			WHERE (o.countryCode IS NULL OR o.countryCode != g.iso2) AND g.acceptedID IS NULL ';
 		//if($this->collidStr) $sql .= 'AND collid IN('.$this->collidStr.')';
 		$rs = $this->conn->query($sql);
 		$cnt = 0;
@@ -175,13 +179,13 @@ class OccurrenceMaintenance {
 		if(!empty($geoArr)) $this->batchUpdateCountyCode($geoArr);
 		unset($geoArr);
 
-		//Batch populate continent data
+		//Batch populate NULL or incorrect continent values
 		$this->outputMsg('Populating null continent values... ', 1);
 		$geoArr = array();
 		$sql = 'SELECT o.occid, p.geoTerm
 			FROM omoccurrences o INNER JOIN geographicThesaurus g ON o.countryCode = g.iso2
 			INNER JOIN geographicThesaurus p ON g.parentID = p.geoThesID
-			WHERE o.continent IS NULL AND g.geoLevel = 50';
+			WHERE (o.continent IS NULL OR o.continent != p.geoTerm) AND g.geoLevel = 50 AND g.acceptedID IS NULL';
 		//if($this->collidStr) $sql .= 'AND collid IN('.$this->collidStr.')';
 		$rs = $this->conn->query($sql);
 		$cnt = 0;

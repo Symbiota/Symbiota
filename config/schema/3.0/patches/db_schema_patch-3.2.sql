@@ -442,23 +442,5 @@ CREATE TABLE `uploadKeyValueTemp`(
 ALTER TABLE omoccurassociations DROP INDEX UQ_omoccurassoc_sciname, ADD INDEX `UQ_omoccurassoc_sciname` (`occid`, `verbatimSciname`, `associationType`) USING BTREE;
 
 
-ALTER TABLE `omoccurrences` 
-  ADD INDEX `IX_occurrences_countryCode` (`countryCode` ASC),
-  ADD INDEX `IX_occurrences_continent` (`continent` ASC);
-
-UPDATE geographicthesaurus g INNER JOIN geographicthesaurus a ON g.acceptedID = a.geoThesID 
-  SET g.iso2 = a.iso2
-  WHERE g.iso2 IS NULL AND a.iso2 IS NOT NULL;
-
-UPDATE omoccurrences o INNER JOIN geographicthesaurus g ON o.country = g.geoterm
-  SET o.countryCode = g.iso2
-  WHERE g.geoLevel = 50 AND o.countryCode IS NULL AND g.iso2 IS NOT NULL;
-
-UPDATE omoccurrences o INNER JOIN geographicThesaurus g ON o.countryCode = g.iso2 
-  INNER JOIN geographicThesaurus p ON g.parentID = p.geoThesID
-  SET o.continent = p.geoTerm
-  WHERE o.continent IS NULL AND g.geoLevel = 50;
-
-
 ALTER TABLE `omoccuraccess` ENGINE=InnoDB;
 ALTER TABLE `omoccuraccesslink` ENGINE=InnoDB;
