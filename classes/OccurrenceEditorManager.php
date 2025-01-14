@@ -37,7 +37,7 @@ class OccurrenceEditorManager {
 		$this->fieldArr['omoccurrences'] = array('basisofrecord' => 's', 'catalognumber' => 's', 'othercatalognumbers' => 's', 'occurrenceid' => 's', 'ownerinstitutioncode' => 's',
 			'institutioncode' => 's', 'collectioncode' => 's', 'eventid' => 's',
 			'family' => 's', 'sciname' => 's', 'tidinterpreted' => 'n', 'scientificnameauthorship' => 's', 'identifiedby' => 's', 'dateidentified' => 's',
-				'identificationreferences' => 's', 'identificationremarks' => 's', 'taxonremarks' => 's', 'identificationqualifier' => 's', 'typestatus' => 's', 'recordedby' => 's', 'recordnumber' => 's',
+			'identificationreferences' => 's', 'identificationremarks' => 's', 'taxonremarks' => 's', 'identificationqualifier' => 's', 'typestatus' => 's', 'recordedby' => 's', 'recordnumber' => 's',
 			'associatedcollectors' => 's', 'eventdate' => 'd', 'eventdate2' => 'd', 'year' => 'n', 'month' => 'n', 'day' => 'n', 'startdayofyear' => 'n', 'enddayofyear' => 'n',
 			'verbatimeventdate' => 's', 'habitat' => 's', 'substrate' => 's', 'fieldnumber' => 's', 'occurrenceremarks' => 's', 'datageneralizations' => 's',
 			'associatedtaxa' => 's', 'verbatimattributes' => 's', 'behavior' => 's', 'vitality' => 's', 'dynamicproperties' => 's', 'reproductivecondition' => 's', 'cultivationstatus' => 's', 'establishmentmeans' => 's',
