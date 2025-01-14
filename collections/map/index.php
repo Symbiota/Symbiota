@@ -6,6 +6,7 @@ if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/map/
 	else include_once($SERVER_ROOT . '/content/lang/collections/map/index.en.php');
 if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/templates/header.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/templates/header.en.php');
     else include_once($SERVER_ROOT . '/content/lang/templates/header.' . $LANG_TAG . '.php');
+include_once($SERVER_ROOT . '/content/lang/collections/list.'.$LANG_TAG.'.php');
 
 header('Content-Type: text/html; charset='.$CHARSET);
 header("Accept-Encoding: gzip, deflate, br");
@@ -1743,12 +1744,90 @@ if(isset($_REQUEST['llpoint'])) {
             if(response) {
              const search = await response.json()
                sessionStorage.querystr = search.query;
+			    //build records table
+				buildRecordsPanel(search);
                return search;
             } else {
                return emptyResponse;
             }
 			} catch(e) {
 				return emptyResponse;
+			}
+		}
+
+		function buildRecordsPanel(records) {
+			const setElem = (id, innerHTML) => {
+				const elem = document.getElementById(id)
+				if(elem) {
+					elem.innerHTML = innerHTML;
+				}
+			}
+
+			let offset = 0;
+			const viewLimit = 100;
+			const totalRecords = records.recordArr.length;
+			let page = 1;
+
+			setElem("record-active-page", page);
+
+			let html = ""
+
+			const totalPages = Math.ceil(totalRecords / viewLimit);
+
+			html += "<hr/>";
+
+			if(totalPages > 1) {
+				html += '<div style="display:flex; gap: 0.25rem">';
+				for(let i =0; i < totalPages; i++ ) {
+					if (i === (page - 1)) {
+						html += `<span style="font-weight: bold">${i + 1}</span>`;
+					} else {
+						html += `<a href="#">${i + 1}</a>`;
+					}
+				}
+				html += '</div>';
+			}
+
+			setElem("start-record", 1 + (page - 1) * viewLimit);
+			setElem("end-record", viewLimit + offset);
+			setElem("pagination-total-records", totalRecords);
+			setElem("record-pagination", html);
+
+			const tbody = document.querySelector("#rec-test tbody");
+
+			let count = 0;
+			for(let i = 0; i < viewLimit && i < totalRecords; i++) {
+				const { occid } = records.recordArr[i];
+				let row = document.createElement("tr");
+				let cat = document.createElement("td");
+				cat.append('catnum');
+				cat.id = "cat" + occid;
+
+				let collector = document.createElement("td");
+				collector.id = "label" + occid;
+				collector.append('label');
+
+				let date = document.createElement("td");
+				date.append('date');
+
+				let sciname = document.createElement("td");
+				sciname.append('sciname');
+
+				let map_helper_container = document.createElement("td");
+				let map_helper = document.createElement("a");
+				map_helper.addEventListener('click', () => {
+					emit_occurrence_click(occid)
+				});
+				map_helper.append("See Map Point");
+				map_helper_container.append(map_helper);
+
+				row.append(cat)
+				row.append(collector);
+				row.append(date);
+				row.append(sciname);
+				row.append(map_helper_container);
+
+				tbody.append(row);
 			}
 		}
 
@@ -2326,6 +2405,7 @@ Record Limit:
 										<?= $LANG['INTERNAL_RECORDS'] ?>
 									</span></a>
 								</li>
+								<li><a href='#rec-test'>Rec Test</a></li>
 								<li id="cross_portal_results"><a href='#external_occurrencelist'><span><?= $LANG['EXTERNAL_RECORDS'] ?></span></a></li>
 								<li id="cross_portal_list"><a href='#portalsymbology'><span><?= $LANG['PORTAL_LIST'] ?></span></a></li>
 						   	<li><a href='#symbology'><span><?= $LANG['COLLECTIONS'] ?></span></a></li>
@@ -2333,6 +2413,34 @@ Record Limit:
 							</ul>
 							<div id="occurrencelist" style="">
 								loading...
+							</div>
+							<div id="rec-test" style="">
+								Buttons
+								<hr/>
+								<div id="record-pagination">
+
+								</div>	
+								<div>
+									<?= $LANG['PAGINATION_PAGE'] ?>
+									<span id="record-active-page"></span>
+									<?= $LANG['PAGINATION_RECORDS'] ?>
+									<span id="start-record"></span>-<span id="end-record"></span>
+									<?= ' ' . $LANG['PAGINATION_OF'] . ' ' ?>
+									<span id="pagination-total-records"></span>
+								</div>
+								<hr/>
+								<table id="records-table" class="styledtable" style="font-size:.9rem;">
+									<thead>
+										<th><?=$LANG['CATALOG_NUMBER']?></th>
+										<th><?=$LANG['COLLECTOR']?></th>
+										<th><?=$LANG['EVENTDATE']?></th>
+										<th><?=$LANG['SCIENTIFIC_NAME']?></th>
+										<th><?=$LANG['MAP_LINK']?></th>
+									</thead>
+									<tbody>
+
+									</tbody>
+								</table>
 							</div>
 							<div id="external_occurrencelist" style="">
 								loading...
