@@ -22,9 +22,6 @@ if(strpos($action,'Determination') || strpos($action,'Verification')){
 	include_once($SERVER_ROOT.'/classes/OccurrenceEditorDeterminations.php');
 	$occManager = new OccurrenceEditorDeterminations();
 } else{
-	if(strpos($action,'Image')) {
-		include_once($SERVER_ROOT . "/classes/Media.php");
-	}
 	include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 	$occManager = new OccurrenceEditorManager();
 }
@@ -444,22 +441,21 @@ if($SYMB_UID){
 	}
 
 	//Images and other things needed for OCR
-	$specImgArr = $occManager->getImageMap();
+	$specImgArr = Media::fetchOccurrenceMedia($occId, 'image');
 	if($specImgArr){
 		$imgUrlPrefix = (isset($MEDIA_DOMAIN)?$MEDIA_DOMAIN:'');
 		$imgCnt = 1;
 		foreach($specImgArr as $imgId => $i2){
 			$iUrl = $i2['url'];
-			if($iUrl == 'empty' && $i2['origurl']) $iUrl = $i2['origurl'];
+			if($iUrl == 'empty' && $i2['originalUrl']) $iUrl = $i2['originalUrl'];
 			if($imgUrlPrefix && substr($iUrl,0,4) != 'http') $iUrl = $imgUrlPrefix.$iUrl;
 			$imgArr[$imgCnt]['mediaid'] = $imgId;
 			$imgArr[$imgCnt]['web'] = $iUrl;
-			if($i2['origurl']){
-				$lgUrl = $i2['origurl'];
+			if($i2['originalUrl']){
+				$lgUrl = $i2['originalUrl'];
 				if($imgUrlPrefix && substr($lgUrl,0,4) != 'http') $lgUrl = $imgUrlPrefix.$lgUrl;
 				$imgArr[$imgCnt]['lg'] = $lgUrl;
 			}
-			if(isset($i2['error'])) $imgArr[$imgCnt]['error'] = $i2['error'];
 			$imgCnt++;
 		}
 		$fragArr = $occManager->getRawTextFragments();
@@ -479,12 +475,8 @@ else{
 	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET; ?>">
 	<title><?= $DEFAULT_TITLE . ' ' . $LANG['OCCEDITOR'] ?></title>
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
-	<link href="<?= $CSS_BASE_PATH ?>/symbiota/variables.css" type="text/css" rel="stylesheet">
 	<?php
-	include_once($SERVER_ROOT.'/includes/head.php');
-	?>
-
-    <?php
+	//include_once($SERVER_ROOT.'/includes/head.php');
     if($crowdSourceMode == 1){
 		?>
 		<link href="includes/config/occureditorcrowdsource.css?ver=5" type="text/css" rel="stylesheet" id="editorCssLink" />
@@ -492,7 +484,7 @@ else{
     }
     else{
 		?>
-		<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/editor/occurrenceeditor.css?ver=9" type="text/css" rel="stylesheet" id="editorCssLink" >
+		<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/editor/occurrenceeditor.css?ver=10" type="text/css" rel="stylesheet" id="editorCssLink" >
 		<?php
 		if(isset($CSSARR)){
 			foreach($CSSARR as $cssVal){
@@ -549,7 +541,7 @@ else{
 	<script src="../../js/symb/wktpolygontools.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/collections.georef.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.main.js?ver=1" type="text/javascript"></script>
+	<script src="../../js/symb/collections.editor.main.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.tools.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.imgtools.js?ver=3" type="text/javascript"></script>
 	<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
@@ -557,7 +549,7 @@ else{
 	<style type="text/css">
 		fieldset > legend{ font-weight:bold; }
 		select{ margin-bottom: 2px; }
-		#identifierDiv img{ width:10px; margin-left: 5px; }
+		.identifier-plus{ width:14px; margin-left: 5px; }
 		#innertext{ background-color: white; margin: 0px 10px; }
 		.fieldGroupDiv {
 			display: flex;
@@ -574,8 +566,6 @@ else{
 		.fieldDiv{
 			display: inline;
 		}
-
-		.editimg{ width: 15px; }
 
 		.button-toggle {
 			background-color: transparent;
@@ -781,7 +771,7 @@ else{
 										}
 
 										if($occId){
-											if($fragArr || $specImgArr){
+											if($specImgArr){
 												?>
 												<div style="float:right;margin:-7px -4px 0px 0px;font-weight:bold;">
 													<span id="imgProcOnSpan" style="display:block;">
@@ -842,7 +832,7 @@ else{
 																<input class="idNameInput" name="idname[]" type="text" value="" onchange="fieldChanged('idname');" autocomplete="off" />
 															</div>
 															<div class="divTableCell">
-																<input class="idValueInput" name="idvalue[]" type="text" value="" onchange="fieldChanged('idvalue');" autocomplete="off" /><a href="#" onclick="addIdentifierField(this);return false" tabindex="-1"><img src="../../images/plus.png" style="width:1em;" /></a>
+																<input class="idValueInput" name="idvalue[]" type="text" value="" onchange="fieldChanged('idvalue');" autocomplete="off" /><a href="#" onclick="addIdentifierField(this);return false" tabindex="-1"><img class="identifier-plus" src="../../images/plus.png" ></a>
 															</div>
 														</div>
 													</div>
@@ -1719,7 +1709,7 @@ else{
 					</td>
 					<td id="imgtd" style="display:none;width:430px;" valign="top">
 						<?php
-						if($occId && ($fragArr || $specImgArr )){
+						if($occId && ($specImgArr )){
 							include_once('includes/imgprocessor.php');
 						}
 						?>

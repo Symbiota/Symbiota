@@ -1,6 +1,7 @@
 <?php
 include_once($SERVER_ROOT.'/config/dbconnection.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceDuplicate.php');
+include_once($SERVER_ROOT. '/classes/Media.php');
 include_once($SERVER_ROOT.'/classes/utilities/UuidFactory.php');
 include_once($SERVER_ROOT. '/classes/utilities/QueryUtil.php');
 

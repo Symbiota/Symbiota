@@ -221,7 +221,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 	.field-div label{ display: block; }
 	.field-div button{ margin-top: 10px; }
 	.assoc-div{ margin-bottom: 10px; }
-	.icon-img{ width: 1.2em }
+	.icon-img{ width: 12px }
 	#subType-div select{ min-width: 130px; }
 	#taxonomy-fieldset{ display: none; }
 </style>
@@ -523,7 +523,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 	$userChecklists = $occManager->getUserChecklists();
 	$checklistArr = $occManager->getVoucherChecklists();
 	?>
-	<fieldset>
+	<fieldset style="max-width: 80%">
 		<legend><?php echo $LANG['CHECKLIST_LINKS']; ?></legend>
 		<?php
 		if(!$checklistArr){
@@ -536,7 +536,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 			</div>
 			<div id="voucheradddiv" style="display:<?= ($checklistArr ? 'none' : 'block') ?>;">
 				<form name="voucherAddForm" method="post" target="occurrenceeditor.php" onsubmit="return validateVoucherAddForm(this)">
-					<select name="clidvoucher">
+					<select name="clidvoucher" style="max-width: 80%">
 						<option value=""><?php echo $LANG['SEL_CHECKLIST']; ?></option>
 						<option value="">---------------------------------------------</option>
 						<?php

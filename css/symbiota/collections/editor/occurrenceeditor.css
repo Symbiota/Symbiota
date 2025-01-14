@@ -877,13 +877,13 @@ fieldset{
 }
 
 /*Misc styling*/
-img.docimg { 
+.docimg { 
 	border:			0px;
-	width:			11px;
+	width:			12px;
 	margin-bottom:	2px; 
 }
 
-img.editimg { 
+.editimg { 
 	border:			0px;
 	width:			15px;
 }
