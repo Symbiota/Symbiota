@@ -1976,7 +1976,6 @@ if(isset($_REQUEST['llpoint'])) {
 			autoColor("portal", v => v.portalid, portalLegendMap)
 		};
 
-		//This is used in occurrencelist.php which is submodule of this
 		function emit_occurrence_click(occid) {
 			document.dispatchEvent(new CustomEvent('occur_click', {
 				detail: {
