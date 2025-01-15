@@ -1,5 +1,6 @@
 <?php
 include_once('../config/symbini.php');
+include_once($SERVER_ROOT.'/classes/TaxonomyEditorManager.php');
 if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/list.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/list.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/list.en.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceListManager.php');
@@ -40,10 +41,10 @@ $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ??
 $SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
 
 $_SESSION['citationvar'] = $searchVar;
+
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
-
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['PAGE_TITLE']; ?></title>
@@ -59,20 +60,11 @@ $_SESSION['citationvar'] = $searchVar;
 		var urlQueryStr = "<?php if($searchVar) echo $searchVar . '&page=' . $pageNumber; ?>";
 
 		$(document).ready(function() {
-			<?php
-			if ($searchVar) {
-				?>
-				sessionStorage.querystr = "<?php echo $searchVar; ?>";
-				<?php
+			if(window.location.search)
+				sessionStorage.querystr = window.location.search.replace("?",'');
+			else if(sessionStorage.querystr) {
+				window.location = "list.php?" + sessionStorage.querystr + "&tabindex=<?= $tabIndex ?>";
 			}
-			else {
-				?>
-				if (sessionStorage.querystr) {
-					window.location = "list.php?" + sessionStorage.querystr + "&tabindex=<?php echo $tabIndex ?>";
-				}
-				<?php
-			}
-			?>
 
 			$('#tabs').tabs({
 				active: <?php echo $tabIndex; ?>,
@@ -323,6 +315,14 @@ $_SESSION['citationvar'] = $searchVar;
 								$prevCollid = 0;
 								foreach ($occurArr as $occid => $fieldArr) {
 									$collId = $fieldArr['collid'];
+									$taxonEditorObj = new TaxonomyEditorManager();
+									$taxonEditorObj->setTid($fieldArr['tid']);
+									$taxonEditorObj->setTaxon();
+									$splitSciname = $taxonEditorObj->splitSciname();
+									$author = !empty($splitSciname['author']) ? ($splitSciname['author'] . ' ') : '';
+									$cultivarEpithet = !empty($splitSciname['cultivarEpithet']) ? ($taxonEditorObj->standardizeCultivarEpithet($splitSciname['cultivarEpithet'])) . ' ' : '';
+									$tradeName = !empty($splitSciname['tradeName']) ? ($taxonEditorObj->standardizeTradeName($splitSciname['tradeName']) . ' ') : '';
+									$nonItalicizedScinameComponent = $author . $cultivarEpithet . $tradeName;
 									if ($collId != $prevCollid) {
 										$prevCollid = $collId;
 										$isEditor = false;
@@ -352,22 +352,35 @@ $_SESSION['citationvar'] = $searchVar;
 										echo '<a href="editor/occurrenceeditor.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">';
 										echo '<img src="../images/edit.png" style="width:1.3em" alt="' . (isset($LANG['IMG_EDIT_OCC']) ? $LANG['IMG_EDIT_OCC'] : 'Edit Occurence') . '" /></a></div>';
 									}
+									if (isset($fieldArr['has_audio']) && $fieldArr['has_audio']) {
+										echo '<div style="float:right; padding-right: 0.5rem"><img style="width:1.3rem; border: 0" src="' . $CLIENT_ROOT . '/images/speaker_thumbnail.png' . '"/></div>';
+									}
+									if (isset($fieldArr['has_image']) && $fieldArr['has_image']) {
+										echo '<div style="float:right; padding-right: 0.5rem;"><img style="width:1.3rem; border: 0" src="' . $CLIENT_ROOT . '/images/image.png' . '"/></div>';
+									}
+
 									$targetClid = $collManager->getSearchTerm("targetclid");
 									if ($collManager->getClName() && $targetTid && array_key_exists('mode', $_REQUEST)) {
 										echo '<div style="float:right;" >';
 										echo '<a href="#" onclick="addVoucherToCl(' . $occid . ',' . $targetClid . ',' . $targetTid . ');return false" title="' . $LANG['VOUCHER_LINK_TITLE'] . ' ' . $collManager->getClName() . ';">';
 										echo '<img src="../images/voucheradd.png" style="border:solid 1px gray;height:1.3em;margin-right:5px;" alt="' . (isset($LANG['IMG_ADD_VOUCHER']) ? $LANG['IMG_ADD_VOUCHER'] : 'Add Voucher') . '"/></a></div>';
 									}
-									if (isset($fieldArr['img'])) {
+									if (isset($fieldArr['media']) && isset($fieldArr['media']['thumbnailurl'])) {
 										echo '<div style="float:right;margin:5px 25px;">';
 										echo '<a href="#" onclick="return openIndPU(' . $occid . ',' . ($targetClid ? $targetClid : "0") . ');">';
-										echo '<img src="' . $fieldArr['img'] . '" style="height:70px" alt="' . (isset($LANG['IMG_OCC']) ? $LANG['IMG_OCC'] : 'Image Associated With the Occurence') . '"/></a></div>';
+										echo '<img src="' . $fieldArr['media']['thumbnailurl'] . '" style="height:70px" alt="' . (isset($LANG['IMG_OCC']) ? $LANG['IMG_OCC'] : 'Image Associated With the Occurence') . '"/></a></div>';
 									}
 									echo '<div style="margin:4px;">';
+									
+
 									if (isset($fieldArr['sciname'])) {
 										$sciStr = '<span style="font-style:italic;">' . $fieldArr['sciname'] . '</span>';
-										if (isset($fieldArr['tid']) && $fieldArr['tid']) $sciStr = '<i> <a target="_blank" href="../taxa/index.php?tid=' . strip_tags($fieldArr['tid']) . '">' . strip_tags($sciStr) . '</a> </i>' ;
 										if (isset($fieldArr['author']) && $fieldArr['author']) $sciStr .= ' ' . $fieldArr['author'];
+										if (isset($fieldArr['tid']) && $fieldArr['tid']){
+											$sciStr = '<a target="_blank" href="../taxa/index.php?tid=' . strip_tags($fieldArr['tid']) . '">'
+											. '<i> ' . strip_tags($splitSciname['base']) . '</i>'
+											. (!empty($nonItalicizedScinameComponent) ? (' ' . $nonItalicizedScinameComponent) : '') . '</a>' ;
+										} 
 										echo $sciStr;
 									} elseif ($fieldArr['localitysecurity'] > 1) {
 										echo (isset($LANG['ID_PROTECTED']) ? $LANG['ID_PROTECTED'] : 'Identification Protected');;
@@ -418,8 +431,9 @@ $_SESSION['citationvar'] = $searchVar;
 							echo '<div style="margin: 40px 0px 200px 20px;font-weight:bold;">';
 							echo $LANG['PERHAPS_LOOKING_FOR'] . ' ';
 							$outStr = '';
+							$actionPage = $comingFrom === 'newsearch' ? 'search/index' : 'harvestparams';
 							foreach ($closeArr as $v) {
-								$outStr .= '<a href="harvestparams.php?taxa=' . htmlspecialchars($v, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($v, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>, ';
+								$outStr .= '<a href="' . $actionPage  . '.php?taxa=' . htmlspecialchars($v, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($v, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>, ';
 							}
 							echo trim($outStr, ' ,');
 							echo '</div>';

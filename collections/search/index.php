@@ -48,15 +48,20 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 	<link href="<?= $CLIENT_ROOT ?>/collections/search/css/tables.css" type="text/css" rel="stylesheet">
 	<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet">
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT . '/js/jquery-ui.min.js'; ?>" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT . '/collections/individual/domManipulationUtils.js'; ?>" type="text/javascript"></script>
 	<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
 	<script>
 		const clientRoot = '<?php echo $CLIENT_ROOT; ?>';
 		const handleAccordionExpand = () => {
 			const accordions = document.querySelectorAll('input[class="accordion-selector"]');
+			const accordionIds = [];
 			accordions.forEach(accordion => {
 				accordion.checked = true;
+				accordionIds.push(accordion.id);
 			});
+			localStorage.setItem("accordionIds", accordionIds);
 
 			const expandButton = document.getElementById("expand-all-button");
 			expandButton.setAttribute('style', 'display: none;');
@@ -68,8 +73,8 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 			const accordions = document.querySelectorAll('input[class="accordion-selector"]');
 			accordions.forEach(accordion => {
 				accordion.checked=false;
-			})
-
+			});
+			localStorage.setItem("accordionIds", []);
 			const collapseButton = document.getElementById("collapse-all-button");
 			collapseButton.setAttribute('style', 'display: none;');
 			const expandButton = document.getElementById("expand-all-button");
@@ -196,7 +201,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 										<label for="elevhigh" class="input-text--outlined">
 											<span class="screen-reader-only"><?php echo $LANG['MAXIMUM_ELEVATION'] ?></span>
 											<input type="number" step="any" name="elevhigh" id="elevhigh" data-chip="<?php echo $LANG['MAX_ELEVATION'] ?>" />
-											<span class="inset-input-label"><?php echo $LANG['MINIMUM_ELEVATION'] ?></span>
+											<span class="inset-input-label"><?php echo $LANG['MAXIMUM_ELEVATION'] ?></span>
 										</label>
 									</div>
 								</div>
@@ -216,13 +221,13 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 						<div id="search-form-latlong">
 							<div id="bounding-box-form">
 								<h1 class="bounding-box-form__header"><?php echo $LANG['BOUNDING_BOX'] ?></h1>
-
-								<button type="button" onclick="openCoordAid('rectangle');"><?php echo $LANG['SELECT_IN_MAP'] ?></button>
+								<button onclick="openCoordAid({map_mode: MAP_MODES.RECTANGLE, client_root: '<?= $CLIENT_ROOT?>'});return false;"><?php echo $LANG['SELECT_IN_MAP'] ?></button>
 								<div class="input-text-container">
 										<label for="upperlat" class="input-text--outlined">
-											<span class="screen-reader-only"><?php echo $LANG['UPPER_LATITUDE'] ?></span>
+											<span class="screen-reader-only"><?php echo $LANG['NORTHERN_LATITUDE'] ?></span>
 											<input type="number" step="any" min="-90" max="90" id="upperlat" name="upperlat" data-chip="<?php echo $LANG['UPPER_LAT'] ?>" />
-											<span class="inset-input-label"><?php echo $LANG['MINIMUM_ELEVATION'] ?></span>
+											<span class="inset-input-label"><?php echo $LANG['NORTHERN_LATITUDE'] ?></span>
+											<span class="assistive-text"><?php echo $LANG['VALUE_BETWEEN_NUM'] ?></span>
 										</label>
 
 										<label for="upperlat_NS" class="input-text--outlined">
@@ -236,7 +241,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 								</div>
 								<div class="input-text-container">
 									<label for="bottomlat" class="input-text--outlined">
-										<span class="screen-reader-only"><?php echo $LANG['BOTTOM_LATITUDE'] ?></span>
+										<span class="screen-reader-only"><?php echo $LANG['SOUTHERN_LATITUDE'] ?></span>
 										<input type="number" step="any" min="-90" max="90" id="bottomlat" name="bottomlat" data-chip="<?php echo $LANG['BOTTOM_LAT'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['SOUTHERN_LATITUDE'] ?></span>
 									</label>
@@ -282,18 +287,18 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 							</div>
 							<div id="polygon-form">
 								<h1 class="bounding-box-form__header"><?php echo $LANG['POLYGON_WKT_FOOTPRINT'] ?></h1>
-								<button type="button" onclick="openCoordAid('polygon')"><?php echo $LANG['SELECT_MAP_POLYGON'] ?></button>
+									<button onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root: '<?= $CLIENT_ROOT?>'});return false;"><?php echo $LANG['SELECT_MAP_POLYGON'] ?></button>
 								<div class="text-area-container">
 									<label for="footprintwkt" class="text-area--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['POLYGON'] ?></span>
-										<textarea id="footprintwkt" name="footprintwkt" class="full-width-pcnt" rows="5"></textarea>
+										<textarea id="footprintwkt" name="footprintGeoJson" class="full-width-pcnt" rows="5"></textarea>
 										<span class="inset-input-label"><?php echo $LANG['POLYGON'] ?></span>
 									</label>
 								</div>
 							</div>
 							<div id="point-radius-form">
 								<h1 class="bounding-box-form__header"><?php echo $LANG['POINT_RADIUS'] ?></h1>
-								<button type="button" onclick="openCoordAid('circle');"><?php echo $LANG['SELECT_MAP_PR'] ?></button>
+								<button onclick="openCoordAid({map_mode: MAP_MODES.CIRCLE, client_root: '<?= $CLIENT_ROOT?>'});return false;"><?php echo $LANG['SELECT_MAP_PR'] ?></button>
 								<div class="input-text-container">
 									<label for="pointlat" class="input-text--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['POINT_LATITUDE'] ?></span>
@@ -414,8 +419,12 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 									<label for="typestatus"><?php echo $LANG['TYPE'] ?></label>
 								</div>
 								<div>
-									<input type="checkbox" name="hasimages" id="hasimages" value=1 data-chip="<?php echo $LANG['ONLY_WITH_IMAGES'] ?>" />
+									<input type="checkbox" name="hasimages" id="hasimages" value='1' data-chip="<?php echo $LANG['ONLY_WITH_IMAGES'] ?>" />
 									<label for="hasimages"><?php echo $LANG['LIMIT_TO_SPECIMENS_W_IMAGES'] ?></label>
+								</div>
+								<div>
+									<input type="checkbox" name="hasaudio" id="hasaudio" value='1' data-chip="<?php echo $LANG['ONLY_WITH_AUDIO'] ?>" />
+									<label for="hasaudio"><?php echo $LANG['LIMIT_TO_SPECIMENS_W_AUDIO'] ?></label>
 								</div>
 								<div>
 									<input type="checkbox" name="hasgenetic" id="hasgenetic" value=1 data-chip="<?php echo $LANG['ONLY_WITH_GENETIC'] ?>" />
@@ -629,6 +638,8 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 		}
 		?>
 		setSearchForm(document.getElementById("params-form"));
+		toggleTheNonDefaultsClosed(<?php echo $DEFAULTCATID ?>);
+		toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
 	});
 </script>
 <script>

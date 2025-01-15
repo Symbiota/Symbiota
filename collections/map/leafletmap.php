@@ -171,7 +171,7 @@ if(isset($MAPPING_BOUNDARIES)){
                for(let occid of Object.keys(taxaGroup)) {
                   const occur = taxaGroup[occid];
                   const latlng = [parseFloat(occur.lat), parseFloat(occur.lng)];
-                  let displayStr = `${occur.instcode}${occur.collcode}`;
+                  let displayStr = `${occur.instcode? occur.instcode: ''}${occur.collcode? occur.collcode: ''}`;
 
                   if(!checkLatLng(latlng)) continue;
 

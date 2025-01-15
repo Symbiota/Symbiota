@@ -776,10 +776,14 @@ class GeographicThesaurus extends Manager {
 	}
 
 	public function searchGeothesaurus(string $geoterm, int|null $geolevel = null, string|null $parent = null, bool $distict_geoterms = false): array {
+
+		if (!empty($parent))
+			$parent = $this->findAcceptedGeoTerm($parent);
+
 		$sql = <<<SQL
 		SELECT g.geoThesID, g.geoterm, g.geoLevel, g.parentID, g2.geoterm AS parentterm, g2.geoLevel AS parentlevel FROM geographicthesaurus g 
 		LEFT JOIN geographicthesaurus g2 ON g2.geoThesID = g.parentID
-		WHERE g.geoterm LIKE ? 
+		WHERE g.geoterm LIKE ?
 		SQL;
 
 		$params = ['%' . $geoterm . '%'];
@@ -798,7 +802,8 @@ class GeographicThesaurus extends Manager {
 			$sql .= ' GROUP BY geoterm ';
 		}
 
-		$sql .= ' ORDER BY CHAR_LENGTH(g.geoterm), g.geoterm ';
+		$sql .= ' ORDER BY g.geoterm = ? DESC, g.geoterm LIKE ? DESC, g.geoterm, CHAR_LENGTH(g.geoterm)';
+		array_push($params, $geoterm, $geoterm . '%');
 
 		$result = QueryUtil::executeQuery($this->conn,$sql, $params);
 
@@ -816,7 +821,23 @@ class GeographicThesaurus extends Manager {
 
 			$geoterms[$i]['label'] = $label;
 		}
+		// Check if parent is valid (exist in geographicthesaurus table)
+		$parentValid = true;
+		$parentCount = 0;
+		if ($parent !== null) {
+			$checkParentSql = 'SELECT COUNT(*) FROM geographicthesaurus WHERE geoterm = ?';
+			$stmt = $this->conn->prepare($checkParentSql);
+			$stmt->bind_param('s', $parent);
+			$stmt->execute();
+			$stmt->bind_result($parentCount);
+			$stmt->fetch();
+			$stmt->close();
 
+			if ($parentCount == 0)
+				$parentValid = false;
+		}
+		if (!$geoterms && !$parentValid)
+			return $this->searchGeothesaurus($geoterm, $geolevel, null, false);
 		return $geoterms;
 	}
 
@@ -833,6 +854,26 @@ class GeographicThesaurus extends Manager {
 		}
 	}
 
+	public function findAcceptedGeoTerm($geoterm) {
+		$acceptedSql = <<<SQL
+		SELECT g2.geoterm
+		FROM geographicthesaurus g
+		LEFT JOIN geographicthesaurus g2 ON g.acceptedID = g2.geoThesID
+		WHERE g.geoterm = ?
+		LIMIT 1;
+		SQL;
+
+		$newGeoterm = "";
+
+		$stmt = $this->conn->prepare($acceptedSql);
+		$stmt->bind_param("s", $geoterm);
+		$stmt->execute();
+		$stmt->bind_result($newGeoterm);
+		$stmt->fetch();
+		$stmt->close();
+
+		return $newGeoterm ?: $geoterm;
+	}
 	public function findParentGeometry($lat, $long, $parentGeoLevel = 50, $potentialParents = []) {
 		$sql = <<<'SQL'
 		SELECT g.geoThesID from geographicthesaurus g
@@ -950,6 +991,61 @@ class GeographicThesaurus extends Manager {
 		}
 		$rs->free();
 		return $bool;
+	}
+
+	public function geocode($lng, $lat) {
+		if(!$lng || !$lat) return [];
+
+		$result = QueryUtil::execute_query($this->conn ,"
+			SELECT g.geoThesID, g.geoterm, g.geoLevel, s.synonyms
+			FROM geographicthesaurus g 
+			JOIN geographicpolygon gp on gp.geoThesID = g.geoThesID 
+			LEFT JOIN (SELECT acceptedID, GROUP_CONCAT(geoterm) as `synonyms` FROM geographicthesaurus WHERE acceptedID IS NOT NULL GROUP BY acceptedID) s ON s.acceptedID = g.geoThesID where ST_Within(Point(?, ?), gp.footprintPolygon) ORDER BY geolevel
+			", [floatval($lng), floatval($lat)]);
+
+		$matches = [];
+		while($r = $result->fetch_assoc()) {
+			array_push($matches, $r);
+		}
+
+
+		return $matches;
+	}
+
+	function placeExists($geo_data = []) {
+
+		$form_conversion = [
+			'country' => 50,
+			'stateprovince' => 60,
+			'county' => 70,
+			'municipality' => 80,
+		];
+
+		$parameters = [];
+
+		$binds = [];
+		foreach ($form_conversion as $key => $geo_level) {
+			if(isset($geo_data[$key])) {
+				array_push($parameters, '(geoterm = ? and geolevel = ' . $geo_level . ')');
+				array_push($binds, $geo_data[$key]);
+			}
+		}
+
+		if(count($parameters) <= 0) {
+			return false;
+		}
+
+		$sql = "SELECT g.geoThesID FROM geographicthesaurus g 
+			JOIN geographicpolygon gp ON gp.geoThesID = g.geoThesID 
+			WHERE " . implode(" or ", $parameters );
+
+		$result = QueryUtil::execute_query(
+			$this->conn,
+			$sql, 
+			$binds
+		);
+
+		return $result->fetch_assoc() ? true: false;
 	}
 }
 ?>

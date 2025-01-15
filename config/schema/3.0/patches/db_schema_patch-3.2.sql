@@ -1,9 +1,251 @@
 INSERT INTO `schemaversion` (versionnumber) values ("3.2");
 
+# Add cultivar name and trade name columns to taxa table
+
+ALTER TABLE `taxa` ADD COLUMN `cultivarEpithet` VARCHAR(50) NULL AFTER unitName3;
+ALTER TABLE `taxa` ADD COLUMN `tradeName` VARCHAR(50) NULL AFTER cultivarEpithet;
+
+#Add cultivar and trade name to uploadspectemp
+
+ALTER TABLE `uploadspectemp` ADD COLUMN `cultivarEpithet` VARCHAR(50) NULL AFTER infraspecificEpithet;
+ALTER TABLE `uploadspectemp` ADD COLUMN `tradeName` VARCHAR(50) NULL AFTER cultivarEpithet;
+ALTER TABLE `uploadtaxa` ADD COLUMN `cultivarEpithet` VARCHAR(50) NULL AFTER `UnitName3`;
+ALTER TABLE `uploadtaxa` ADD COLUMN `tradeName` VARCHAR(50) NULL AFTER `cultivarEpithet`;
+
+# Rename cultivated to cultivar
+
+update taxonunits set rankname='Cultivar' where rankname='Cultivated';
+-- Drop deprecated_media foreign keys to avoid conflicts
+ALTER TABLE `deprecated_media`
+  DROP FOREIGN KEY `FK_media_uid`,
+  DROP FOREIGN KEY `FK_media_taxa`,
+  DROP FOREIGN KEY `FK_media_occid`;
+ALTER TABLE `deprecated_media`
+  DROP INDEX `FK_media_uid_idx` ,
+  DROP INDEX `FK_media_occid_idx` ,
+  DROP INDEX `FK_media_taxa_idx` ;
+-- Define media
+DROP TABLE IF EXISTS `media`;
+CREATE TABLE `media` (
+  `mediaID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `tid` int(10) unsigned DEFAULT NULL,
+  `occid` int(10) unsigned DEFAULT NULL,
+  `url` varchar(250) DEFAULT NULL,
+  `thumbnailUrl` varchar(255) DEFAULT NULL,
+  `originalUrl` varchar(255) DEFAULT NULL,
+  `archiveUrl` varchar(255) DEFAULT NULL,
+  `sourceUrl` varchar(250) DEFAULT NULL,
+  `referenceUrl` varchar(255) DEFAULT NULL,
+  `mediaType` varchar(45) DEFAULT NULL,
+  `imageType` varchar(50) DEFAULT NULL,
+  `format` varchar(45) DEFAULT NULL,
+  `caption` varchar(250) DEFAULT NULL,
+  `creatorUid` int(10) unsigned DEFAULT NULL,
+  `creator` varchar(45) DEFAULT NULL,
+  `owner` varchar(250) DEFAULT NULL,
+  `locality` varchar(250) DEFAULT NULL,
+  `description` varchar(1000) DEFAULT NULL,
+  `anatomy` varchar(100) DEFAULT NULL,
+  `notes` varchar(350) DEFAULT NULL,
+  `username` varchar(45) DEFAULT NULL,
+  `sourceIdentifier` varchar(150) DEFAULT NULL,
+  `mediaMD5` varchar(45) DEFAULT NULL,
+  `hashValue` varchar(45) DEFAULT NULL,
+  `hashFunction` varchar(45) DEFAULT NULL,
+  `pixelYDimension` int(11) DEFAULT NULL,
+  `pixelXDimension` int(11) DEFAULT NULL,
+  `dynamicProperties` text DEFAULT NULL,
+  `defaultDisplay` int(11) DEFAULT NULL,
+  `recordID` varchar(45) DEFAULT NULL,
+  `copyright` varchar(255) DEFAULT NULL,
+  `rights` varchar(255) DEFAULT NULL,
+  `accessRights` varchar(255) DEFAULT NULL,
+  `sortSequence` int(11) DEFAULT NULL,
+  `sortOccurrence` int(11) DEFAULT 5,
+  `initialTimestamp` timestamp NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`mediaID`),
+  CONSTRAINT `FK_media_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `FK_media_taxa` FOREIGN KEY (`tid`) REFERENCES `taxa` (`tid`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `FK_creator_uid` FOREIGN KEY (`creatorUid`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB;
+INSERT INTO
+	media(mediaID, tid, occid,
+	url, thumbnailUrl, archiveUrl, originalUrl, sourceurl, referenceUrl,
+	caption, creatoruid, creator, owner,
+	mediaMD5, format, imagetype,
+	locality, notes, anatomy,
+	username, sourceIdentifier,
+	hashFunction, hashValue,
+	pixelYDimension, pixelXDimension,
+	dynamicProperties, defaultDisplay, recordID,
+	copyright, rights, accessRights,
+	sortSequence, sortOccurrence,
+	initialTimestamp,
+	mediaType)
+	SELECT
+		imgid, tid, occid,
+		url, thumbnailUrl, archiveUrl, originalUrl, sourceurl, referenceUrl,
+		caption, photographerUid, photographer, owner,
+		mediaMD5, format,imagetype,
+		locality, notes, anatomy,
+		username, sourceIdentifier,
+		hashFunction, hashValue,
+		pixelYDimension, pixelXDimension,
+		dynamicProperties, defaultDisplay, recordID,
+		copyright, rights, accessRights,
+		sortSequence, sortOccurrence,
+		initialTimestamp,
+		"image" as mediaType
+	from images;
+-- Key names may very depending on database and history
+ALTER TABLE imagetag
+  DROP CONSTRAINT IF EXISTS FK_imagetag_imgid,
+  DROP CONSTRAINT IF EXISTS FK_imagetag_imgid_idx,
+  DROP FOREIGN KEY IF EXISTS `FK_imagetag_tagkey`;
+ALTER TABLE `imagetag`
+  CHANGE COLUMN `imagetagid` `imageTagID` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  CHANGE COLUMN `imgid` `mediaID` INT(10) UNSIGNED NOT NULL,
+  CHANGE COLUMN `keyvalue` `keyValue` VARCHAR(30) NOT NULL,
+  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP();
+ALTER TABLE `imagetag`
+  ADD CONSTRAINT `FK_imagetag_tagkey` FOREIGN KEY (`keyValue`) REFERENCES `imagetagkey` (`tagkey`)  ON DELETE NO ACTION  ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_imagetag_mediaID` FOREIGN KEY (`mediaID`) REFERENCES media(mediaID)  ON DELETE CASCADE  ON UPDATE CASCADE;
+ALTER TABLE `imagekeywords`
+  DROP FOREIGN KEY `FK_imagekeywords_imgid`,
+  DROP FOREIGN KEY `FK_imagekeyword_uid`,
+  DROP INDEX `FK_imagekeyword_uid_idx` ,
+  DROP INDEX `FK_imagekeywords_imgid_idx` ;
+ALTER TABLE `imagekeywords`
+  CHANGE COLUMN `imgkeywordid` `imgKeywordID` INT(11) NOT NULL AUTO_INCREMENT,
+  CHANGE COLUMN `imgid` `mediaID` INT(10) UNSIGNED NOT NULL,
+  CHANGE COLUMN `uidassignedby` `uidAssignedBy` INT(10) UNSIGNED NULL DEFAULT NULL,
+  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP();
+ALTER TABLE `imagekeywords`
+  ADD KEY `FK_imagekeywords_mediaID_idx` (`mediaID`),
+  ADD KEY `FK_imagekeyword_uid_idx` (`uidAssignedBy`),
+  ADD CONSTRAINT `FK_imagekeyword_uid` FOREIGN KEY (`uidAssignedBy`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_imagekeywords_mediaID` FOREIGN KEY (`mediaID`) REFERENCES `media` (`mediaID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- Define helper function to alter coordinates
+DROP FUNCTION IF EXISTS `swap_wkt_coords`;
+
+DELIMITER |
+CREATE FUNCTION IF NOT EXISTS `swap_wkt_coords`(str TEXT) RETURNS text CHARSET utf8 COLLATE utf8_general_ci
+BEGIN 
+ DECLARE latStart, latEnd, lngStart, lngEnd, i INT;
+ DECLARE cha CHAR;
+ DECLARE flipped TEXT;
+
+ SET i = 0;
+ SET flipped = '';
+
+ label1: LOOP
+	SET i = i + 1;
+    IF i <= LENGTH(str) THEN
+      SET cha = SUBSTRING(str, i, 1);
+     
+      IF cha REGEXP '^[A-Za-z(),]' THEN
+      	IF latStart is not null and latEnd is not null and lngStart is not null THEN
+      		SET lngEnd = i;
+      		SET flipped = CONCAT(flipped, 
+      		SUBSTRING(str, lngStart, CASE WHEN lngStart = lngEnd THEN 1 ELSE lngEnd - lngStart END),
+	      	" ", 
+	      	SUBSTRING(str, latStart, CASE WHEN latStart = latEnd THEN 1 ELSE latEnd - latStart END)
+	      );	     
+      	END IF;
+      	-- SET flipped = CONCAT(flipped, lngEnd);
+      	SET flipped = CONCAT(flipped, cha);
+      	SET latStart = null, latEnd = null, lngStart = null, lngEnd = null;
+      ELSEIF cha = " " THEN
+      	IF latStart is not null THEN
+      		SET latEnd = i;
+      	    -- SET flipped = CONCAT(flipped, latEnd);
+      	ELSE
+      		SET flipped = CONCAT(flipped, ' ');
+      	END IF;
+      ELSE
+      	if latStart is null THEN
+      		SET latStart = i;
+      	    -- SET flipped = CONCAT(flipped, latStart);
+      	ELSEIF latEnd is not null and lngStart is null THEN
+      		SET lngStart = i;
+      	    -- SET flipped = CONCAT(flipped, lngStart);
+      	END IF;
+      END IF;
+      ITERATE label1;
+    END IF;
+    LEAVE label1;
+  END LOOP label1;
+ 
+  RETURN flipped;
+END
+|
+DELIMITER ;
+
+-- Add and update checklist footprints to be geoJson
+ALTER TABLE fmchecklists ADD COLUMN footprintGeoJson text;
+UPDATE fmchecklists set footprintGeoJson = ST_ASGEOJSON(ST_GEOMFROMTEXT(swap_wkt_coords(footprintWkt))) where footprintGeoJson is null;
+
+ALTER TABLE `specprocessorrawlabels`
+  DROP FOREIGN KEY `FK_specproc_images`,
+  DROP INDEX `FK_specproc_images` ;
+
+ALTER TABLE `specprocessorrawlabels`
+  CHANGE COLUMN `imgid` `mediaID` INT(10) UNSIGNED NULL DEFAULT NULL,
+  CHANGE COLUMN `rawstr` `rawStr` TEXT NOT NULL,
+  CHANGE COLUMN `processingvariables` `processingVariables` VARCHAR(250) NULL DEFAULT NULL,
+  CHANGE COLUMN `sortsequence` `sortSequence` INT(11) NULL DEFAULT NULL,
+  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP();
+
+ALTER TABLE `specprocessorrawlabels`
+  ADD KEY `FK_specproc_media_idx` (`mediaID`),
+  ADD CONSTRAINT `FK_specproc_media` FOREIGN KEY (`mediaID`) REFERENCES `media` (`mediaID`)  ON UPDATE CASCADE  ON DELETE CASCADE;
+
+ALTER TABLE `tmattributes`
+  DROP FOREIGN KEY `FK_tmattr_imgid`;
+ALTER TABLE `tmattributes`
+  CHANGE COLUMN `imgid` `mediaID` INT(10) UNSIGNED NULL DEFAULT NULL,
+  DROP INDEX `FK_tmattr_imgid_idx`;
+ALTER TABLE `tmattributes`
+  ADD KEY `FK_tmattr_media_idx` (`mediaID`),
+  ADD CONSTRAINT `FK_tmattr_media` FOREIGN KEY (`mediaID`) REFERENCES `media` (`mediaID`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- Removes All omoccurpoints that have null lat or lng values in omocurrences which is needed to recalculate all omoccurpoints into lnglat points
+DELETE FROM omoccurpoints where occid in (SELECT o.occid from omoccurpoints o join omoccurrences o2 on o.occid = o2.occid where o2.decimalLatitude is null or o2.decimalLongitude is null); 
+
+-- Create and add lng lat points for occurrence data which is needed to do searching is spacial indexes that are lng lat
+ALTER TABLE omoccurpoints ADD COLUMN lngLatPoint POINT;
+UPDATE omoccurpoints p join omoccurrences o on o.occid = p.occid set lngLatPoint = ST_POINTFROMTEXT(CONCAT('POINT(',o.decimalLongitude, ' ', o.decimalLatitude, ')'));  
+ALTER TABLE omoccurpoints MODIFY IF EXISTS lngLatPoint POINT NOT NULL;
+ALTER TABLE omoccurpoints ADD SPATIAL INDEX(lngLatPoint);
+
+DROP FUNCTION IF EXISTS `swap_wkt_coords`;
+
+DROP TRIGGER IF EXISTS `omoccurrencesfulltext_insert`;
+DROP TRIGGER IF EXISTS `omoccurrencesfulltextpoint_insert`;
+DROP TRIGGER IF EXISTS `omoccurrences_insert`;
+
+DELIMITER //
+CREATE TRIGGER `omoccurrences_insert` AFTER INSERT ON `omoccurrences`
+FOR EACH ROW BEGIN
+	IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL THEN
+		INSERT INTO omoccurpoints (`occid`,`point`, `lngLatPoint`) 
+		VALUES (NEW.`occid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`), Point(NEW.`decimalLongitude`, NEW.`decimalLatitude`));
+	END IF;
+	INSERT INTO omoccurrencesfulltext (`occid`,`recordedby`,`locality`) 
+	VALUES (NEW.`occid`,NEW.`recordedby`,NEW.`locality`);
+END
+//
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS `omoccurrencesfulltext_update`;
+DROP TRIGGER IF EXISTS `omoccurrencesfulltextpoint_update`;
+DROP TRIGGER IF EXISTS `omoccurrences_update`;
+
 ALTER TABLE `omoccurrences` 
   ADD FULLTEXT INDEX `FT_omoccurrence_locality` (`locality`),
   ADD FULLTEXT INDEX `FT_omoccurrence_recordedBy` (`recordedBy`),
-  DROP INDEX `Index_locality` ;
+  DROP INDEX `Index_locality`;
   
 DROP TABLE `omoccurrencesfulltext`;
 
@@ -29,6 +271,20 @@ FOR EACH ROW BEGIN
 	IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL THEN
 		IF EXISTS (SELECT `occid` FROM omoccurpoints WHERE `occid`=NEW.`occid`) THEN
 			UPDATE omoccurpoints 
+			SET `point` = Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`),
+				`lngLatPoint` = Point(NEW.`decimalLongitude`, NEW.`decimalLatitude`)
+			WHERE `occid` = NEW.`occid`;
+		ELSE 
+			INSERT INTO omoccurpoints (`occid`,`point`, `lngLatPoint`) 
+			VALUES (NEW.`occid`, Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`), Point(NEW.`decimalLongitude`, NEW.`decimalLatitude`));
+		END IF;
+	END IF;
+	UPDATE omoccurrencesfulltext 
+	SET `recordedby` = NEW.`recordedby`,`locality` = NEW.`locality`
+	WHERE `occid` = NEW.`occid`;
+END $$
+
+ALTER TABLE omoccurpoints ENGINE InnoDB;
 			SET `point` = Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`)
 			WHERE `occid` = NEW.`occid`;
 		ELSE 
@@ -46,11 +302,11 @@ FOR EACH ROW BEGIN
 END$$
 
 DELIMITER ;
-DROP TRIGGER specprocessorrawlabelsfulltext_insert
-DROP TRIGGER specprocessorrawlabelsfulltext_update
-DROP TRIGGER specprocessorrawlabelsfulltext_delete
-DROP TABLE specprocessorawlabelsfulltext;
 
+DROP TRIGGER specprocessorrawlabelsfulltext_insert;
+DROP TRIGGER specprocessorrawlabelsfulltext_update;
+DROP TRIGGER specprocessorrawlabelsfulltext_delete;
+DROP TABLE specprocessorawlabelsfulltext;
 
 ALTER TABLE `omoccuridentifiers`
   CHANGE COLUMN `identifiervalue` `identifierValue` VARCHAR(75) NOT NULL AFTER `occid`,
@@ -69,6 +325,7 @@ ALTER TABLE `kmcharacters`
   DROP FOREIGN KEY `FK_kmchar_glossary`;
 
 ALTER TABLE `kmcharacters` 
+  ADD COLUMN `enteredUid` INT UNSIGNED NULL AFTER `enteredBy`,
   CHANGE COLUMN `charname` `charName` VARCHAR(150) NOT NULL ,
   CHANGE COLUMN `chartype` `charType` VARCHAR(2) NOT NULL DEFAULT 'UM' ,
   CHANGE COLUMN `defaultlang` `defaultLang` VARCHAR(45) NOT NULL DEFAULT 'English' ,
@@ -78,10 +335,18 @@ ALTER TABLE `kmcharacters`
   CHANGE COLUMN `helpurl` `helpUrl` VARCHAR(500) NULL DEFAULT NULL ,
   CHANGE COLUMN `sortsequence` `sortSequence` INT(10) UNSIGNED NULL DEFAULT NULL ,
   CHANGE COLUMN `enteredby` `enteredBy` VARCHAR(45) NULL DEFAULT NULL ,
-  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
+  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+  DROP INDEX `Index_charname` ,
+  DROP INDEX `Index_sort`;
 
 ALTER TABLE `kmcharacters` 
-  ADD CONSTRAINT `FK_kmchar_glossary`  FOREIGN KEY (`glossID`)  REFERENCES `glossary` (`glossid`)  ON DELETE SET NULL  ON UPDATE CASCADE;
+  ADD INDEX `IX_charname` (`charName` ASC),
+  ADD INDEX `IX_sort` (`sortSequence` ASC),
+  ADD INDEX `FK_kmchar_enteredUid_idx` (`enteredUid` ASC);
+
+ALTER TABLE `kmcharacters` 
+  ADD CONSTRAINT `FK_kmchar_glossary`  FOREIGN KEY (`glossID`)  REFERENCES `glossary` (`glossid`)  ON DELETE SET NULL  ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_kmchar_enteredUid`  FOREIGN KEY (`enteredUid`)  REFERENCES `users` (`uid`)  ON DELETE CASCADE  ON UPDATE CASCADE;
 
 ALTER TABLE `kmcharacterlang` 
   DROP FOREIGN KEY `FK_charlang_lang`;
@@ -109,6 +374,12 @@ ALTER TABLE `kmchardependance`
   ADD CONSTRAINT `FK_chardependance_cid`  FOREIGN KEY (`cid`)  REFERENCES `kmcharacters` (`cid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_chardependance_cs`  FOREIGN KEY (`cidDependance` , `csDependance`)  REFERENCES `kmcs` (`cid` , `cs`)  ON DELETE CASCADE  ON UPDATE CASCADE;
 
+ALTER TABLE `kmchardependance` 
+  ADD COLUMN `charDependID` INT NOT NULL AUTO_INCREMENT FIRST,
+  DROP PRIMARY KEY,
+  ADD PRIMARY KEY (`charDependID`),
+  ADD INDEX `UQ_charDependance_cid_cidDep_cs` (`cid` ASC, `cidDependance` ASC, `csDependance` ASC);
+
 
 ALTER TABLE `kmcharheading` 
   DROP FOREIGN KEY `FK_kmcharheading_lang`;
@@ -119,6 +390,16 @@ ALTER TABLE `kmcharheading`
   CHANGE COLUMN `sortsequence` `sortSequence` INT(11) NULL DEFAULT NULL ,
   CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
 
+ALTER TABLE `kmcharheading` 
+  DROP PRIMARY KEY,
+  ADD PRIMARY KEY (`hid`),
+  DROP INDEX `unique_kmcharheading`,
+  DROP INDEX `HeadingName`;
+  
+ALTER TABLE `kmcharheading` 
+  ADD INDEX `FK_kmcharheading_lang_idx` (`langID` ASC),
+  ADD INDEX `IX_kmcharheading_name` (`headingName` ASC);
+    
 ALTER TABLE `kmcharheading` 
   ADD CONSTRAINT `FK_kmcharheading_lang`  FOREIGN KEY (`langID`)  REFERENCES `adminlanguages` (`langid`);
 
@@ -146,6 +427,14 @@ ALTER TABLE `kmchartaxalink`
   CHANGE COLUMN `timestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
 
 ALTER TABLE `kmchartaxalink` 
+  ADD COLUMN `charTaxaLinkID` INT NOT NULL AUTO_INCREMENT FIRST,
+  DROP INDEX `FK_CharTaxaLink-TID` ,
+  ADD INDEX `FK_charTaxaLink_tid_idx` (`tid` ASC),
+  DROP PRIMARY KEY,
+  ADD PRIMARY KEY (`charTaxaLinkID`),
+  ADD UNIQUE INDEX `UQ_charTaxaLink_cid_tid` (`cid` ASC, `tid` ASC);
+
+ALTER TABLE `kmchartaxalink` 
   ADD CONSTRAINT `FK_chartaxalink_cid`  FOREIGN KEY (`cid`)  REFERENCES `kmcharacters` (`cid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_chartaxalink_tid`  FOREIGN KEY (`tid`)  REFERENCES `taxa` (`TID`)  ON DELETE CASCADE  ON UPDATE CASCADE;
 
@@ -162,9 +451,17 @@ ALTER TABLE `kmcs`
   CHANGE COLUMN `glossid` `glossID` INT(10) UNSIGNED NULL DEFAULT NULL ,
   CHANGE COLUMN `StateID` `stateID` INT(10) UNSIGNED NULL DEFAULT NULL ,
   CHANGE COLUMN `SortSequence` `sortSequence` INT(10) UNSIGNED NULL DEFAULT NULL ,
-  CHANGE COLUMN `InitialTimeStamp` `initialTimeStamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ,
+  CHANGE COLUMN `InitialTimeStamp` `initialTimeStamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
+
+ALTER TABLE `kmcs` 
+  CHANGE COLUMN `stateID` `stateID` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT FIRST,
   DROP PRIMARY KEY,
-  ADD PRIMARY KEY (`cid`, `cs`);
+  ADD PRIMARY KEY (`stateID`),
+  ADD UNIQUE INDEX `UQ_kmcs_cid_cs` (`cid` ASC, `cs` ASC);
+
+ALTER TABLE `kmcs` 
+  DROP INDEX `FK_cs_chars`,
+  ADD INDEX `FK_kmcs_cid_idx` (cid);
 
 ALTER TABLE `kmcs` 
   ADD CONSTRAINT `FK_kmcs_glossid`  FOREIGN KEY (`glossID`)  REFERENCES `glossary` (`glossid`)  ON DELETE SET NULL  ON UPDATE CASCADE;
@@ -208,6 +505,7 @@ ALTER TABLE `kmdescr`
   ADD CONSTRAINT `FK_descr_cs`  FOREIGN KEY (`cid` , `cs`)  REFERENCES `kmcs` (`cid` , `cs`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_descr_tid`  FOREIGN KEY (`tid`)  REFERENCES `taxa` (`TID`)  ON DELETE CASCADE  ON UPDATE CASCADE;
 
+
 CREATE TABLE `uploadKeyValueTemp`(
   `key_value_id` int(11) NOT NULL AUTO_INCREMENT,
   `key` varchar(255) DEFAULT NULL,
@@ -223,7 +521,7 @@ CREATE TABLE `uploadKeyValueTemp`(
   KEY `upload_key_temp_uid` (`upload_uid`),
   CONSTRAINT `uploadKeyValueTemp_ibfk_1` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `uploadKeyValueTemp_ibfk_2` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`collID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `upload_key_temp_uid` FOREIGN KEY (`upload_uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE)
+  CONSTRAINT `upload_key_temp_uid` FOREIGN KEY (`upload_uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE);
 
 # We need to relax this if we want inverse relationship entries in omoccurassociations for derivedFromSameIndividual
 ALTER TABLE omoccurassociations DROP INDEX UQ_omoccurassoc_sciname, ADD INDEX `UQ_omoccurassoc_sciname` (`occid`, `verbatimSciname`, `associationType`) USING BTREE;
