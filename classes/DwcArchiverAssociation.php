@@ -21,7 +21,7 @@ class DwcArchiverAssociation extends DwcArchiverBaseManager{
 	private function setFieldArr(){
 		$columnArr = array();
 		$termArr['resourceRelationshipID'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
-		$columnArr['resourceRelationshipID'] = 'IFNULL(oa.instanceID,oa.recordId)';
+		$columnArr['resourceRelationshipID'] = 'IFNULL(oa.instanceID,oa.recordID)';
 		$termArr['resourceID'] = 'https://dwc.tdwg.org/terms/#dwc:resourceID';
 		// $columnArr['resourceID'] = 'oa.occid'; // @TODO occurrence o o.occoccurrenceID
 		$columnArr['resourceID'] = 'o.occurrenceID'; // @TODO occurrence o o.occoccurrenceID
