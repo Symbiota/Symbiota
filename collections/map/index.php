@@ -162,9 +162,6 @@ if(isset($_REQUEST['llpoint'])) {
 		<style type="text/css">
 			.panel-content a{ outline-color: transparent; font-size: .9rem; font-weight: normal; }
 			.ui-front { z-index: 9999999 !important; }
-			#cross_portal_record_label {
-				display: none;
-			}
 		</style>
 		<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 		<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
@@ -347,29 +344,20 @@ if(isset($_REQUEST['llpoint'])) {
 		}
 
 		function buildPanels(cross_portal_enabled) {
-         const cross_portal_results = document.getElementById("cross_portal_results");
-         const cross_portal_list = document.getElementById("cross_portal_list");
-         const record_label = document.getElementById("standard_record_label");
-         const cross_portal_record_label = document.getElementById("cross_portal_record_label");
-         if(cross_portal_results) {
-            if(cross_portal_enabled) {
-               cross_portal_results.style.display = "block";
+			const cross_portal_list = document.getElementById("cross_portal_list");
+			const portal_symbology = document.getElementById("portalsymbology");
+
+			if(cross_portal_enabled) {
                cross_portal_list.style.display = "block";
-
-			   //Swap record table label for cross portal searches
-			   cross_portal_record_label.style.display = "block";
-			   standard_record_label.style.display = "none";
-            } else {
-               cross_portal_results.style.display = "none";
+               portal_symbology.style.display = "block";
+			} else {
                cross_portal_list.style.display = "none";
+               portal_symbology.style.display = "none";
+			}
 
-			   //Swap record table label for standard searches 
-			   cross_portal_record_label.style.display = "none";
-			   standard_record_label.style.display = "block";
-            }
-         }
 			setPanels(true);
 			$("#accordion").accordion("option",{active: 1});
+			$("#tabs2").tabs({ active: 0 });
 			buildPortalLegend();
 			buildTaxaLegend();
 			buildCollectionLegend();
@@ -945,10 +933,6 @@ if(isset($_REQUEST['llpoint'])) {
 
 				if(heatmapLayer) map.mapLayer.removeLayer(heatmapLayer);
 
-				getOccurenceRecords(formData).then(res => {
-					if (res) loadOccurenceRecords(res);
-				});
-
 				let searches = [
 					searchCollections(formData).then(res => {
 						res.label = "<?= $LANG['CURRENT_PORTAL']?>";
@@ -963,11 +947,6 @@ if(isset($_REQUEST['llpoint'])) {
 						res.label= formData.get('cross_portal_label');
 						return res;
 					}));
-
-					getOccurenceRecords(formData, formData.get('cross_portal')).then(res => {
-						if (res) loadOccurenceRecords(res, "external_occurrencelist");
-					});
-
 				}
 
 				//This is for handeling multiple portals
@@ -986,6 +965,9 @@ if(isset($_REQUEST['llpoint'])) {
 					}
 					count++;
 				}
+
+			    //build records table
+				buildRecordsPanel(recordArr);
 
 				//Need to generate colors for each group
 				buildPanels(formData.get('cross_portal_switch'));
@@ -1138,22 +1120,23 @@ if(isset($_REQUEST['llpoint'])) {
 				group.origin = "<?= $SERVER_HOST . $CLIENT_ROOT?>";
 				mapGroups = [group];
 
-				getOccurenceRecords(formData).then(res => {
-					if(res) loadOccurenceRecords(res);
-					buildPanels(formData.get('cross_portal_switch'));
+				// Build Records Panel
+				buildRecordsPanel(recordArr);
 
-					mapGroups.forEach(group => {
-						group.taxonMapGroup.genClusters();
-						group.collectionMapGroup.genClusters();
-						group.portalMapGroup.genClusters();
-					})
+				// Build Taxa | Portal | Collection Panels
+				buildPanels(formData.get('cross_portal_switch'));
 
-					autoColorTaxa();
+				mapGroups.forEach(group => {
+					group.taxonMapGroup.genClusters();
+					group.collectionMapGroup.genClusters();
+					group.portalMapGroup.genClusters();
+				})
 
-					drawPoints();
+				autoColorTaxa();
 
-					fitMap();
-				});
+				drawPoints();
+
+				fitMap();
 			}
 			fitMap();
 		}
@@ -1459,30 +1442,21 @@ if(isset($_REQUEST['llpoint'])) {
 
 				if(heatmapLayer) heatmapLayer.setData({data: []})
 
-				getOccurenceRecords(formData).then(res => {
-					if (res) loadOccurenceRecords(res);
-				});
-
 				let searches = [
-               searchCollections(formData).then(res=>{
-                  res.label = "<?= $LANG['CURRENT_PORTAL']?>";
-                  return res;
-               }),
-            ]
+					searchCollections(formData).then(res=>{
+						res.label = "<?= $LANG['CURRENT_PORTAL']?>";
+						return res;
+					}),
+				]
 
-            //If Cross Portal Checkbox Enabled add cross portal search
-            if(formData.get('cross_portal_switch') && formData.get('cross_portal')) {
-               formData.set("taxa", formData.get('external-taxa-input'))
-               searches.push(searchCollections(formData, formData.get('cross_portal')).then(res => {
-                  res.label= formData.get('cross_portal_label')
-                  return res;
-               }))
-
-               getOccurenceRecords(formData, formData.get('cross_portal')).then(res => {
-                  if (res) loadOccurenceRecords(res, "external_occurrencelist");
-               });
-            }
-
+				//If Cross Portal Checkbox Enabled add cross portal search
+				if(formData.get('cross_portal_switch') && formData.get('cross_portal')) {
+				   formData.set("taxa", formData.get('external-taxa-input'))
+				   searches.push(searchCollections(formData, formData.get('cross_portal')).then(res => {
+					  res.label= formData.get('cross_portal_label')
+					  return res;
+				   }))
+				}
 				//This is for handeling multiple portals
 				searches = await Promise.all(searches)
 
@@ -1492,6 +1466,9 @@ if(isset($_REQUEST['llpoint'])) {
 					group.origin = search.origin;
 					mapGroups.push(group);
 				}
+
+			    //build records table
+				buildRecordsPanel(recordArr);
 
 				buildPanels(formData.get('cross_portal_switch'));
 
@@ -1700,20 +1677,21 @@ if(isset($_REQUEST['llpoint'])) {
 					group
 				]
 
-				getOccurenceRecords(formData).then(res => {
-					if(res) loadOccurenceRecords(res);
-					buildPanels(formData.get('cross_portal_switch'));
+				//Build Records Panel
+				buildRecordsPanel(recordArr);
 
-					genClusters(taxaLegendMap, "taxa");
-					genClusters(collLegendMap, "coll");
-					genClusters(portalLegendMap, "portal");
+				// Build Taxa | Portal | Collection Panels
+				buildPanels(formData.get('cross_portal_switch'));
 
-					autoColorTaxa();
+				genClusters(taxaLegendMap, "taxa");
+				genClusters(collLegendMap, "coll");
+				genClusters(portalLegendMap, "portal");
 
-					drawPoints();
+				autoColorTaxa();
 
-					fitMap();
-				});
+				drawPoints();
+
+				fitMap();
 			}
 
 			fitMap();
@@ -1744,8 +1722,6 @@ if(isset($_REQUEST['llpoint'])) {
             if(response) {
              const search = await response.json()
                sessionStorage.querystr = search.query;
-			    //build records table
-				buildRecordsPanel(search);
                return search;
             } else {
                return emptyResponse;
@@ -1763,7 +1739,7 @@ if(isset($_REQUEST['llpoint'])) {
 				}
 			}
 
-			const totalRecords = records.recordArr.length;
+			const totalRecords = records.length;
 
 			setElem("record-active-page", page);
 
@@ -1864,12 +1840,12 @@ if(isset($_REQUEST['llpoint'])) {
 				setElem("record-pagination-summary-bottom", pagination_summary.innerHTML);
 			}
 
-			const tbody = document.querySelector("#rec-test tbody");
+			const tbody = document.querySelector("#occurrencelist tbody");
 			tbody.innerHTML = '';
 
 			let count = 0;
 			for(let i = start_record; i < end_record && i < totalRecords; i++) {
-				const { occid, catalogNumber, id, sciname } = records.recordArr[i];
+				const { occid, catalogNumber, id, sciname } = records[i];
 				let row = document.createElement("tr");
 				let cat = document.createElement("td");
 				cat.append(catalogNumber ? catalogNumber: '');
@@ -1903,30 +1879,6 @@ if(isset($_REQUEST['llpoint'])) {
 
 				tbody.append(row);
 			}
-		}
-
-		async function getOccurenceRecords(body, host) {
-			const url = host? `${host}/collections/map/occurrencelist.php`: 'occurrencelist.php'
-			let response = await fetch(url, {
-				method: "POST",
-				credentials: "same-origin",
-				body: body
-			});
-
-			return response? await response.text(): '';
-		}
-
-		function loadOccurenceRecords(html, id="occurrencelist") {
-			document.getElementById(id).innerHTML = html;
-			$('.pagination a').click(async function(e){
-				e.preventDefault();
-				let response = await fetch(e.target.href, {
-					method: "GET",
-					credentials: "same-origin",
-				})
-				loadOccurenceRecords(await response.text(), id)
-				return false;
-			});
 		}
 
 		function resetSymbology(keyMap, type, getId = v => v.id, fullreset) {
@@ -2471,25 +2423,27 @@ Record Limit:
 						<h3 id="recordstaxaheader" style="display:none;padding-left:30px;"><?php echo (isset($LANG['RECORDS_TAXA'])?$LANG['RECORDS_TAXA']:'Records and Taxa'); ?></h3>
 						<div id="tabs2" style="display:none;padding:0px;">
 							<ul>
-								<li><a href='#occurrencelist'>
-									<span id="standard_record_label">
-										<?= $LANG['RECORDS'] ?>
-									</span>
-									<span id="cross_portal_record_label">
-										<?= $LANG['INTERNAL_RECORDS'] ?>
-									</span></a>
-								</li>
-								<li><a href='#rec-test'>Rec Test</a></li>
-								<li id="cross_portal_results"><a href='#external_occurrencelist'><span><?= $LANG['EXTERNAL_RECORDS'] ?></span></a></li>
+								<li><a href='#occurrencelist'><?= $LANG['RECORDS'] ?></a></li>
 								<li id="cross_portal_list"><a href='#portalsymbology'><span><?= $LANG['PORTAL_LIST'] ?></span></a></li>
-						   	<li><a href='#symbology'><span><?= $LANG['COLLECTIONS'] ?></span></a></li>
+								<li><a href='#symbology'><span><?= $LANG['COLLECTIONS'] ?></span></a></li>
 								<li><a href='#maptaxalist'><span><?= $LANG['TAXA_LIST'] ?></span></a></li>
 							</ul>
-							<div id="occurrencelist" style="">
-								loading...
-							</div>
-							<div id="rec-test" style="">
-								Buttons
+							<div id="occurrencelist">
+								<div style="display: flex; gap: 1rem; margin-bottom: 0.5rem;">
+									<button class="icon-button" title="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>">
+										<svg style="width:1.3em" alt="<?php echo $LANG['IMG_DWNL_DATA']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
+									</button>
+
+									<button class="icon-button" name="submitaction" type="submit" class="button" title="Download KML file">
+											<svg style="width:1.3em" alt="<?php echo $LANG['IMG_DWNL_DATA']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
+											<span style="color: var(--light-color);">KML</span>
+									</button>
+
+									<button class="icon-button" onclick="copyUrl('<?= htmlspecialchars(GeneralUtil::getDomain() . $CLIENT_ROOT)?>')" title="<?php echo (isset($LANG['COPY_TO_CLIPBOARD'])?$LANG['COPY_TO_CLIPBOARD']:'Copy URL to Clipboard'); ?>">
+											<svg alt="Copy as a link." style="width:1.2em;" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg>
+									</button>
+								</div>
+
 								<hr/>
 								<div id="record-pagination-top">
 								</div>	
@@ -2516,15 +2470,12 @@ Record Limit:
 									</tbody>
 								</table>
 								<hr/>
+
 								<div id="record-pagination-bottom">
 								</div>	
+
 								<div id="record-pagination-summary-bottom" style="margin-bottom:2rem">
 								</div>	
-								<div>
-							</div>
-
-							<div id="external_occurrencelist" style="">
-								loading...
 							</div>
 							<div id="portalsymbology" style="">
 								<div style="height:40px;margin-bottom:15px;">
