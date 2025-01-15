@@ -8,16 +8,8 @@ $sid = array_key_exists('sid', $_REQUEST) ? htmlspecialchars($_REQUEST['action']
 $profManager = new OpenIdProfileManager();
 
 $localSessionID = $profManager->lookupLocalSessionIDWithThirdPartySid($sid);
-// close the current session.
-session_write_close();
-// load the specified target session 
-session_id($localSessionID );
-// start the target session.
-session_start();
-// clean all session data in target session.
-$_SESSION = [];
-// save and close that session.
-session_write_close();
+echo $localSessionID;
+$profManager->forceLogout($localSessionID);
 
 ?>
 
