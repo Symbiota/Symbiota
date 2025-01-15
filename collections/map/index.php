@@ -117,6 +117,8 @@ foreach ($coordArr as $collName => $coll) {
 		array_push($recordArr, [
 			'id' => $record['id'],
 			'tid' => $record['tid'],
+			'catalogNumber' => $record['catalogNumber'], 
+			'sciname' => $record['sn'], 
 			'collid' => $record['collid'],
 			'family' => $record['fam'],
 			'occid' => $recordId,
@@ -1120,23 +1122,26 @@ if(isset($_REQUEST['llpoint'])) {
 				group.origin = "<?= $SERVER_HOST . $CLIENT_ROOT?>";
 				mapGroups = [group];
 
-				// Build Records Panel
-				buildRecordsPanel(recordArr);
 
-				// Build Taxa | Portal | Collection Panels
-				buildPanels(formData.get('cross_portal_switch'));
+				$( document ).ready(function() {
+					// Build Records Panel
+					buildRecordsPanel(recordArr);
 
-				mapGroups.forEach(group => {
-					group.taxonMapGroup.genClusters();
-					group.collectionMapGroup.genClusters();
-					group.portalMapGroup.genClusters();
+					// Build Taxa | Portal | Collection Panels
+					buildPanels(formData.get('cross_portal_switch'));
+
+					mapGroups.forEach(group => {
+						group.taxonMapGroup.genClusters();
+						group.collectionMapGroup.genClusters();
+						group.portalMapGroup.genClusters();
+					})
+
+					autoColorTaxa();
+
+					drawPoints();
+
+					fitMap();
 				})
-
-				autoColorTaxa();
-
-				drawPoints();
-
-				fitMap();
 			}
 			fitMap();
 		}
@@ -1677,21 +1682,23 @@ if(isset($_REQUEST['llpoint'])) {
 					group
 				]
 
-				//Build Records Panel
-				buildRecordsPanel(recordArr);
+				$( document ).ready(function() {
+					//Build Records Panel
+					buildRecordsPanel(recordArr);
 
-				// Build Taxa | Portal | Collection Panels
-				buildPanels(formData.get('cross_portal_switch'));
+					// Build Taxa | Portal | Collection Panels
+					buildPanels(formData.get('cross_portal_switch'));
 
-				genClusters(taxaLegendMap, "taxa");
-				genClusters(collLegendMap, "coll");
-				genClusters(portalLegendMap, "portal");
+					genClusters(taxaLegendMap, "taxa");
+					genClusters(collLegendMap, "coll");
+					genClusters(portalLegendMap, "portal");
 
-				autoColorTaxa();
+					autoColorTaxa();
 
-				drawPoints();
+					drawPoints();
 
-				fitMap();
+					fitMap();
+				})
 			}
 
 			fitMap();
@@ -1709,8 +1716,8 @@ if(isset($_REQUEST['llpoint'])) {
 		}
 
 		async function searchCollections(body, host) {
-         const emptyResponse = { taxaArr: [], collArr: [], recordArr: [], origin: host? host: "host" };
-         sessionStorage.querystr = "";
+			const emptyResponse = { taxaArr: [], collArr: [], recordArr: [], origin: host? host: "host" };
+			sessionStorage.querystr = "";
 			try {
 				const url = host? `${host}/collections/map/rpc/searchCollections.php`: 'rpc/searchCollections.php'
 
@@ -1718,14 +1725,21 @@ if(isset($_REQUEST['llpoint'])) {
 					method: "POST",
 					mode: "cors",
 					body: body,
-			});
-            if(response) {
-             const search = await response.json()
-               sessionStorage.querystr = search.query;
-               return search;
-            } else {
-               return emptyResponse;
-            }
+				});
+				if(response) {
+					const search = await response.json()
+					sessionStorage.querystr = search.query;
+
+					//Update form actions with updated searchvar value
+					let searchVarInputs = document.querySelectorAll("input[name=searchvar]");
+					for(let input of searchVarInputs) {
+						input.value=search.query;
+					}
+
+					return search;
+				} else {
+					return emptyResponse;
+				}
 			} catch(e) {
 				return emptyResponse;
 			}
@@ -2429,14 +2443,23 @@ Record Limit:
 							</ul>
 							<div id="occurrencelist">
 								<div style="display: flex; gap: 1rem; margin-bottom: 0.5rem;">
-									<button class="icon-button" title="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>">
-										<svg style="width:1.3em" alt="<?php echo $LANG['IMG_DWNL_DATA']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
-									</button>
-
-									<button class="icon-button" name="submitaction" type="submit" class="button" title="Download KML file">
+									<form name="downloadForm" action="../download/index.php" method="post" onsubmit="targetPopup(this)">
+										<button class="icon-button" title="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>">
 											<svg style="width:1.3em" alt="<?php echo $LANG['IMG_DWNL_DATA']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
-											<span style="color: var(--light-color);">KML</span>
-									</button>
+										</button>
+										<input name="searchvar" type="hidden" value="<?= $searchVar ?> " />
+										<input name="reclimit" type="hidden" value="<?php echo $recLimit; ?>" />
+										<input name="sourcepage" type="hidden" value="map" />
+										<input name="dltype" type="hidden" value="specimen" />
+									</form>
+
+									<form name="fullquerykmlform" action="kmlhandler.php" method="post" target="_blank">
+										<button class="icon-button" name="submitaction" type="submit" class="button" title="Download KML file">
+												<svg style="width:1.3em" alt="<?php echo $LANG['IMG_DWNL_DATA']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
+												<span style="color: var(--light-color);">KML</span>
+										</button>
+										<input name="searchvar" type="hidden" value="<?= $searchVar ?> " />
+									</form>
 
 									<button class="icon-button" onclick="copyUrl('<?= htmlspecialchars(GeneralUtil::getDomain() . $CLIENT_ROOT)?>')" title="<?php echo (isset($LANG['COPY_TO_CLIPBOARD'])?$LANG['COPY_TO_CLIPBOARD']:'Copy URL to Clipboard'); ?>">
 											<svg alt="Copy as a link." style="width:1.2em;" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg>
