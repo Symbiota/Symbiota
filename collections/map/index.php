@@ -2444,9 +2444,9 @@ Record Limit:
 							<div id="rec-test" style="">
 								Buttons
 								<hr/>
-								<div>
 								<div id="record-pagination-top">
 								</div>	
+
 								<div id="record-pagination-summary">
 									<?= $LANG['PAGINATION_PAGE'] ?>
 									<span id="record-active-page"></span>
@@ -2455,7 +2455,7 @@ Record Limit:
 									<?= ' ' . $LANG['PAGINATION_OF'] . ' ' ?>
 									<span id="pagination-total-records"></span>
 								</div>
-								<div>
+
 								<hr/>
 								<table id="records-table" class="styledtable" style="font-size:.9rem;">
 									<thead>
@@ -2475,6 +2475,7 @@ Record Limit:
 								</div>	
 								<div>
 							</div>
+
 							<div id="external_occurrencelist" style="">
 								loading...
 							</div>
