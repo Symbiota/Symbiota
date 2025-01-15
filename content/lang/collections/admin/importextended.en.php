@@ -57,5 +57,6 @@ $LANG['MAT_SAMPLE_ADDED'] = 'Material Sample added';
 $LANG['DETERMINATION_ADDED'] = 'Determination added';
 $LANG['CHOOSE_FILE'] = 'Choose a file';
 $LANG['HOME'] = 'Home';
+$LANG['ASSOCIATION_UPLOAD_WARNING'] = 'We recommend using occurrenceID for subject and object identifiers whenever possible to ensure global uniqueness across collections.'
 
 ?>

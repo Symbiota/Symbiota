@@ -56,5 +56,6 @@ $LANG['MAT_SAMPLE_ADDED'] = 'Échantillon de matériau ajouté';
 $LANG['DETERMINATION_ADDED'] = 'Détermination ajoutée';
 $LANG['CHOOSE_FILE'] = 'Choisir un fichier';
 $LANG['HOME'] = 'Accueil';
+$LANG['ASSOCIATION_UPLOAD_WARNING'] = 'Nous vous recommandons d\'utiliser occurrenceID pour les identifiants de sujet et d\'objet chaque fois que possible afin de garantir l\'unicité globale des collections.'
 
 ?>

@@ -56,5 +56,6 @@ $LANG['MAT_SAMPLE_ADDED'] = 'Muestra de material agregada';
 $LANG['DETERMINATION_ADDED'] = 'Determinación agregada';
 $LANG['CHOOSE_FILE'] = 'Elegir un archivo';
 $LANG['HOME'] = 'Inicio';
+$LANG['ASSOCIATION_UPLOAD_WARNING'] = 'Recomendamos utilizar occurrenceID para identificadores de sujeto y objeto siempre que sea posible para garantizar la unicidad global en todas las colecciones.'
 
 ?>
