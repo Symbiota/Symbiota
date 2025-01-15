@@ -62,6 +62,9 @@ class LeafletMap {
    /* Reference Leaflet Feature Group for all drawn items*/
    drawLayer;
 
+   /* Save Markerclusterer taxa clusters for later manipulation */
+   taxaClusters = [];
+
    constructor(map_id, map_options={}) {
 
 	  map_options = {
@@ -107,7 +110,7 @@ class LeafletMap {
       });
 
       if(map_options.layer_control !== false) {
-         L.control.layers({
+         this.mapLayer.layerControl = L.control.layers({
             "Terrain": terrainLayer,
             "Basic": basicLayer,
             "Topo": openTopoLayer,
@@ -117,7 +120,7 @@ class LeafletMap {
       }
 
       if(map_options.scale !== false) {
-         L.control.scale({maxWidth: 200}).addTo(this.mapLayer);
+         this.mapLayer.scaleControl = L.control.scale({maxWidth: 200}).addTo(this.mapLayer);
       }
 
       this.setLang(map_options.lang);
