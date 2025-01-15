@@ -1773,7 +1773,7 @@ if(isset($_REQUEST['llpoint'])) {
 				let pagination_control = document.createElement('div')
 				pagination_control.style = "display:flex; gap: 0.25rem;"
 
-				if(page > 5){
+				if(page - 5 > 1){
 					let first = document.createElement('a');
 					first.append("First")
 					first.setAttribute('href', "#page=" + 1);
@@ -1793,8 +1793,10 @@ if(isset($_REQUEST['llpoint'])) {
 					pagination_control.append(left_arrow);
 				}
 
-				const start_page = page < 5? 1: page - 5;
-				const end_page = totalPages < (page + 5)? totalPages: page + 5;
+				const start_page = page - 5 > 0? page - 5: 1;
+				let end_page = totalPages < (page + 5)? totalPages: page + 5;
+
+				if(end_page < 11 && totalPages >= 11) end_page = 11;
 
 				if(totalPages > 1) {
 					for(let i = start_page; i <= end_page; i++ ) {
