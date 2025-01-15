@@ -1755,7 +1755,7 @@ if(isset($_REQUEST['llpoint'])) {
 			}
 		}
 
-		function buildRecordsPanel(records) {
+		function buildRecordsPanel(records, page = 1, viewLimit=100) {
 			const setElem = (id, innerHTML) => {
 				const elem = document.getElementById(id)
 				if(elem) {
@@ -1763,35 +1763,54 @@ if(isset($_REQUEST['llpoint'])) {
 				}
 			}
 
-			let offset = 0;
-			const viewLimit = 100;
 			const totalRecords = records.recordArr.length;
-			let page = 1;
 
 			setElem("record-active-page", page);
 
-			let html = ""
-
 			const totalPages = Math.ceil(totalRecords / viewLimit);
 
-			if(totalPages > 1) {
-				html += '<div style="display:flex; gap: 0.25rem">';
-				for(let i =0; i < totalPages; i++ ) {
-					if (i === (page - 1)) {
-						html += `<span style="font-weight: bold">${i + 1}</span>`;
-					} else {
-						html += `<a href="#">${i + 1}</a>`;
+			const createControl = () => {
+				let pagination_control = document.createElement('div')
+				pagination_control.style = "display:flex; gap: 0.25rem;"
+				if(totalPages > 1) {
+					for(let i =0; i < totalPages; i++ ) {
+						let page_control = null;
+						if(i === (page - 1)) {
+							page_control = document.createElement('span');
+							page_control.style = "font-weight: bold";
+						} else {
+							page_control = document.createElement('a');
+							page_control.setAttribute('href', "#page=" + (i + 1));
+							page_control.addEventListener('click', e => {
+								buildRecordsPanel(records, i + 1, viewLimit);
+							});
+						}
+						page_control.append(i + 1);
+						pagination_control.append(page_control);
 					}
 				}
-				html += '</div>';
+
+				return pagination_control;
 			}
 
-			setElem("start-record", 1 + (page - 1) * viewLimit);
-			setElem("end-record", viewLimit + offset);
-			setElem("pagination-total-records", totalRecords);
-			setElem("record-pagination-top", html);
+			let start_record = 1 + (page - 1) * viewLimit;
+			let end_record = (page * viewLimit) > totalRecords? totalRecords: page * viewLimit;
 
-			setElem("record-pagination-bottom", html);
+			setElem("start-record", start_record);
+			setElem("end-record", end_record);
+			setElem("pagination-total-records", totalRecords);
+
+			let pagination_control_top = document.getElementById('record-pagination-top')
+			if(pagination_control_top) {
+				pagination_control_top.innerHTML = "";
+				pagination_control_top.append(createControl());
+			}
+	
+			let pagination_control_bottom = document.getElementById('record-pagination-bottom')
+			if(pagination_control_bottom) {
+				pagination_control_bottom.innerHTML = "";
+				pagination_control_bottom.append(createControl());
+			}
 				
 			const pagination_summary = document.getElementById('record-pagination-summary')
 			if(pagination_summary) {
@@ -1799,9 +1818,10 @@ if(isset($_REQUEST['llpoint'])) {
 			}
 
 			const tbody = document.querySelector("#rec-test tbody");
+			tbody.innerHTML = '';
 
 			let count = 0;
-			for(let i = 0; i < viewLimit && i < totalRecords; i++) {
+			for(let i = start_record; i < end_record && i < totalRecords; i++) {
 				const { occid, catalogNumber, id, sciname } = records.recordArr[i];
 				let row = document.createElement("tr");
 				let cat = document.createElement("td");
