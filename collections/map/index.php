@@ -1843,8 +1843,7 @@ if(isset($_REQUEST['llpoint'])) {
 			const tbody = document.querySelector("#occurrencelist tbody");
 			tbody.innerHTML = '';
 
-			let count = 0;
-			for(let i = start_record; i < end_record && i < totalRecords; i++) {
+			for(let i = start_record - 1; i < end_record && i < totalRecords; i++) {
 				const { occid, catalogNumber, id, sciname } = records[i];
 				let row = document.createElement("tr");
 				let cat = document.createElement("td");
