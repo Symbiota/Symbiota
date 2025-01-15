@@ -142,4 +142,35 @@ class OpenIdProfileManager extends ProfileManager{
 		}
 		return $localSessionID;
 	}
+
+	public function forceLogout($localSessionId) {
+		$currentSessionId = session_id();
+		$currentSessionStatus = session_status();
+
+		if ($currentSessionStatus === PHP_SESSION_ACTIVE) {
+			session_write_close();
+		}
+
+		session_id($localSessionId);
+		session_start();
+
+		$_SESSION = [];
+		session_unset();
+
+		session_destroy();
+
+		$sessionFile = session_save_path() . '/sess_' . $localSessionId;
+		if (file_exists($sessionFile)) {
+			unlink($sessionFile);
+		}
+
+		if ($currentSessionId) {
+			session_id($currentSessionId);
+			if ($currentSessionStatus === PHP_SESSION_ACTIVE) {
+				session_start();
+			}
+		}
+	}
+
+
 }
