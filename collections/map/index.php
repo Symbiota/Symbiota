@@ -1772,22 +1772,67 @@ if(isset($_REQUEST['llpoint'])) {
 			const createControl = () => {
 				let pagination_control = document.createElement('div')
 				pagination_control.style = "display:flex; gap: 0.25rem;"
+
+				if(page > 5){
+					let first = document.createElement('a');
+					first.append("First")
+					first.setAttribute('href', "#page=" + 1);
+					first.addEventListener('click', e => {
+						buildRecordsPanel(records, 1, viewLimit);
+					});
+					pagination_control.append(first);
+				}
+
+				if((page - 10) > 0) {
+					let left_arrow = document.createElement('a');
+					left_arrow.append("<<")
+					left_arrow.setAttribute('href', "#page=" + (page - 10));
+					left_arrow.addEventListener('click', e => {
+						buildRecordsPanel(records, (page - 10), viewLimit);
+					});
+					pagination_control.append(left_arrow);
+				}
+
+				const start_page = page < 5? 1: page - 5;
+				const end_page = totalPages < (page + 5)? totalPages: page + 5;
+
 				if(totalPages > 1) {
-					for(let i =0; i < totalPages; i++ ) {
+					for(let i = start_page; i <= end_page; i++ ) {
 						let page_control = null;
-						if(i === (page - 1)) {
+						if(i === page) {
 							page_control = document.createElement('span');
 							page_control.style = "font-weight: bold";
 						} else {
 							page_control = document.createElement('a');
-							page_control.setAttribute('href', "#page=" + (i + 1));
+							page_control.setAttribute('href', "#page=" + i);
 							page_control.addEventListener('click', e => {
-								buildRecordsPanel(records, i + 1, viewLimit);
+								buildRecordsPanel(records, i, viewLimit);
 							});
 						}
-						page_control.append(i + 1);
+						page_control.append(i);
 						pagination_control.append(page_control);
 					}
+				}
+
+				if((totalPages - page) >= 10) {
+					let right_arrow = document.createElement('a');
+					right_arrow.append(">>")
+					right_arrow.setAttribute('href', "#page=" + (page + 10));
+					right_arrow.addEventListener('click', e => {
+						buildRecordsPanel(records, (page + 10), viewLimit);
+					});
+
+					pagination_control.append(right_arrow);
+				}
+
+				if((5 + page) < totalPages){
+					let last = document.createElement('a');
+					last.append("Last")
+					last.setAttribute('href', "#page=" + totalPages);
+					last.addEventListener('click', e => {
+						buildRecordsPanel(records, totalPages, viewLimit);
+					});
+					pagination_control.append(last);
 				}
 
 				return pagination_control;
