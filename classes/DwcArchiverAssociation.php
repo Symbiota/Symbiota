@@ -14,14 +14,19 @@ class DwcArchiverAssociation extends DwcArchiverBaseManager{
 		$this->setFieldArr();
 		$this->setSqlBase();
 
+
 		$this->setFileHandler($filePath);
 	}
 
     //Based on https://rs.gbif.org/extension/resource_relationship_2024-02-19.xml
 	private function setFieldArr(){
 		$columnArr = array();
+		$termArr['deleteMeOccid'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
+		$columnArr['deleteMeOccid'] = 'oa.occid';
+		$termArr['deleteMeOccidAssociate'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
+		$columnArr['deleteMeOccidAssociate'] = 'oa.occidAssociate';
 		$termArr['resourceRelationshipID'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
-		$columnArr['resourceRelationshipID'] = 'IFNULL(oa.instanceID,oa.recordID)';
+		$columnArr['resourceRelationshipID'] = 'IFNULL(oa.instanceID, oa.recordID)';
 		$termArr['resourceID'] = 'https://dwc.tdwg.org/terms/#dwc:resourceID';
 		// $columnArr['resourceID'] = 'oa.occid'; // @TODO occurrence o o.occoccurrenceID
 		$columnArr['resourceID'] = 'o.occurrenceID'; // @TODO occurrence o o.occoccurrenceID
