@@ -260,7 +260,9 @@ class GeographicThesaurus extends Manager {
 			$result = SymbUtil::execute_query($this->conn,$sql, $parentIDs);
 			$children = $result->fetch_all(MYSQLI_ASSOC);
 			$result->free();
-			$children_ids = array_map(fn($v) => $v["geoThesID"], $children);
+			$children_ids = array_map(function($v) {
+				return $v["geoThesID"];
+			}, $children);
 
 			return array_merge($children, $this->getChildren($children_ids));
 		} catch(Exception $e) {
@@ -517,7 +519,9 @@ class GeographicThesaurus extends Manager {
 					foreach ($retArr as $key => $value) {
 						if($key === 'ADM0') continue;
 						$geoLevel = $this->getGeoLevel($key);
-						$geoThesIDs = array_filter($children, fn($val) => $val['hasPolygon'] === 1 && $val['geoLevel'] === $geoLevel);
+						$geoThesIDs = array_filter($children, function($val) use ($geoLevel) {
+							return $val['hasPolygon'] === 1 && $val['geoLevel'] === $geoLevel;
+						});
 						if(count($geoThesIDs) > 0) {
 							$retArr[$key]['geoThesID'] = $geoThesIDs;
 							$retArr[$key]['polygon'] = 1;
@@ -697,13 +701,18 @@ class GeographicThesaurus extends Manager {
 			}
 			$geoThesIDs = array_filter(
 				$geoThesIDs,
-				fn($val) => $val['hasPolygon'] === 0
+				function($val) {
+					return $val['hasPolygon'] === 0;
+				}
 			);
 
 			if(is_array($geoThesIDs) && count($geoThesIDs) != 1) {
 				$testPoint = $this->getPointWithinPoly($feature->geometry->coordinates);
 				$parents = !empty($geoThesIDs)?
-				array_filter(array_map(fn($val) => $val['parentID'], $geoThesIDs), fn($val) => $val !== null):
+				array_filter(
+					array_map(function($val) { return $val['parentID']; }, $geoThesIDs),
+					function($val) { return $val !== null; }
+				) :
 				$potentialParents;
 
 				if($testPoint) {
@@ -716,7 +725,9 @@ class GeographicThesaurus extends Manager {
 					);
 					$geoThesIDs = array_filter(
 						$this->getGeoThesIDByName($properties->shapeName, $geoLevel, [$parentID]),
-						fn($val) => $val['hasPolygon'] === 0,
+						function($val) {
+							return $val['hasPolygon'] === 0;
+						}
 					);
 				}
 			}
@@ -775,7 +786,7 @@ class GeographicThesaurus extends Manager {
 		}
 	}
 
-	public function searchGeothesaurus(string $geoterm, int|null $geolevel = null, string|null $parent = null, bool $distict_geoterms = false): array {
+	public function searchGeothesaurus(string $geoterm, $geolevel = null, $parent = null, bool $distict_geoterms = false): array {
 		$sql = <<<SQL
 		SELECT g.geoThesID, g.geoterm, g.geoLevel, g.parentID, g2.geoterm AS parentterm, g2.geoLevel AS parentlevel FROM geographicthesaurus g 
 		LEFT JOIN geographicthesaurus g2 ON g2.geoThesID = g.parentID
