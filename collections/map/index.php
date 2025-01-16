@@ -1876,12 +1876,19 @@ if(isset($_REQUEST['llpoint'])) {
 				taxa_name.append(sciname? sciname: '');
 
 				let map_helper_container = document.createElement("td");
-				let map_helper = document.createElement("a");
-				map_helper.addEventListener('click', () => {
+				let map_helper = document.createElement("div");
+				let globe_img = document.createElement("img");
+
+				globe_img.src = '../../images/world.png';
+				globe_img.alt = 'See Map Point';
+				globe_img.style = 'cursor:pointer;';
+
+				globe_img.addEventListener('click', () => {
 					emit_occurrence_click(occid)
 				});
 
-				map_helper.append('See Map Point');
+				map_helper.append(globe_img);
+				map_helper.style="display:flex; justify-content:center;"
 				map_helper_container.append(map_helper);
 
 				row.append(cat)
