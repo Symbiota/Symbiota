@@ -305,7 +305,7 @@ function updateChip(e) {
   });
 
   // then go through remaining options and find selected items
-  const optionElements = document.querySeliectorAll(".content option");
+  const optionElements = document.querySelectorAll(".content option");
   optionElements.forEach((item) => {
     if (item.selected && item.value && item.hasAttribute("data-chip")) {
       addChip(item);
@@ -383,7 +383,7 @@ function getDomainsSitesChips() {
 /**
  * Toggles state of checkboxes in nested lists when clicking an "all-selector" element
  * Uses jQuery
- */i
+ */
 function toggleAllSelector() {
   $(this)
     .siblings()
@@ -776,8 +776,9 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
       if (candidateTargetElems.length > 0) {
         targetElem = candidateTargetElems[0]; // there should only be one match; get the first one
       }
+    } else{
+      targetElem.checked = true;
     }
-    targetElem.checked = true;
   });
 }
 
