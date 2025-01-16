@@ -118,6 +118,7 @@ foreach ($coordArr as $collName => $coll) {
 			'id' => $record['id'],
 			'tid' => $record['tid'],
 			'catalogNumber' => $record['catalogNumber'], 
+			'eventdate' => $record['eventdate'], 
 			'sciname' => $record['sn'], 
 			'collid' => $record['collid'],
 			'family' => $record['fam'],
@@ -1858,7 +1859,7 @@ if(isset($_REQUEST['llpoint'])) {
 			tbody.innerHTML = '';
 
 			for(let i = start_record - 1; i < end_record && i < totalRecords; i++) {
-				const { occid, catalogNumber, id, sciname } = records[i];
+				const { occid, catalogNumber, id, sciname, eventdate } = records[i];
 				let row = document.createElement("tr");
 				let cat = document.createElement("td");
 				cat.append(catalogNumber ? catalogNumber: '');
@@ -1868,10 +1869,8 @@ if(isset($_REQUEST['llpoint'])) {
 				collector.id = "label" + occid;
 				collector.append(id? id: '');
 
-				/*
 				let date = document.createElement("td");
-				date.append('date');
-				*/
+				date.append(eventdate);
 
 				let taxa_name = document.createElement("td");
 				taxa_name.append(sciname? sciname: '');
@@ -1881,12 +1880,13 @@ if(isset($_REQUEST['llpoint'])) {
 				map_helper.addEventListener('click', () => {
 					emit_occurrence_click(occid)
 				});
-				map_helper.append("See Map Point");
+
+				map_helper.append('See Map Point');
 				map_helper_container.append(map_helper);
 
 				row.append(cat)
 				row.append(collector);
-				//row.append(date);
+				row.append(date);
 				row.append(taxa_name);
 				row.append(map_helper_container);
 
@@ -2483,6 +2483,7 @@ Record Limit:
 									<thead>
 										<th><?=$LANG['CATALOG_NUMBER']?></th>
 										<th><?=$LANG['COLLECTOR']?></th>
+										<th><?=$LANG['EVENTDATE']?></th>
 										<th><?=$LANG['SCIENTIFIC_NAME']?></th>
 										<th><?=$LANG['MAP_LINK']?></th>
 									</thead>

@@ -83,6 +83,7 @@ foreach ($coordArr as $collName => $coll) {
 			'id' => $record['id'], 
 			'tid' => $record['tid'], 
 			'catalogNumber' => $record['catalogNumber'], 
+			'eventdate' => $record['eventdate'], 
 			'sciname' => $record['sn'], 
 			'collid' => $record['collid'], 
 			'family' => $record['fam'],
