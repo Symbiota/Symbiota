@@ -1859,21 +1859,38 @@ if(isset($_REQUEST['llpoint'])) {
 			tbody.innerHTML = '';
 
 			for(let i = start_record - 1; i < end_record && i < totalRecords; i++) {
-				const { occid, catalogNumber, id, sciname, eventdate } = records[i];
+				const { occid, catalogNumber, id, sciname, eventdate, host, tid} = records[i];
 				let row = document.createElement("tr");
 				let cat = document.createElement("td");
-				cat.append(catalogNumber ? catalogNumber: '');
-				cat.id = "cat" + occid;
+				let cat_link = document.createElement("a");
+				cat_link.setAttribute('href', '#occid=' + occid);
+				cat_link.addEventListener('click', () => {
+					openRecord(records[i]);
+				})
+				cat_link.id = "label" + occid;
+				cat_link.append(catalogNumber ? catalogNumber: '');
+				cat_link.id = "cat" + occid;
+				cat.append(cat_link);
 
 				let collector = document.createElement("td");
-				collector.id = "label" + occid;
-				collector.append(id? id: '');
+				let occurrence_link = document.createElement("a");
+				occurrence_link.setAttribute('href', '#occid=' + occid);
+				occurrence_link.addEventListener('click', () => {
+					openRecord(records[i]);
+				})
+				occurrence_link.id = "label" + occid;
+				occurrence_link.append(id? id: '')
+				collector.append(occurrence_link);
 
 				let date = document.createElement("td");
 				date.append(eventdate);
 
 				let taxa_name = document.createElement("td");
-				taxa_name.append(sciname? sciname: '');
+				let taxa_link = document.createElement("a");
+				taxa_link.setAttribute('href', host + '/taxa/index.php?tid=' + tid);
+				taxa_link.setAttribute('target', 'blank');
+				taxa_link.append(sciname? sciname: '');
+				taxa_name.append(taxa_link);
 
 				let map_helper_container = document.createElement("td");
 				map_helper_container.style = "vertical-align: middle";
