@@ -174,6 +174,8 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['island'] = 'o.island';
 		$this->occurDefArr['terms']['country'] = 'http://rs.tdwg.org/dwc/terms/country';
 		$this->occurDefArr['fields']['country'] = 'o.country';
+		$this->occurDefArr['terms']['countryCode'] = 'http://rs.tdwg.org/dwc/terms/countryCode';
+		$this->occurDefArr['fields']['countryCode'] = 'o.countryCode';
 		$this->occurDefArr['terms']['stateProvince'] = 'http://rs.tdwg.org/dwc/terms/stateProvince';
 		$this->occurDefArr['fields']['stateProvince'] = 'o.stateProvince';
 		$this->occurDefArr['terms']['county'] = 'http://rs.tdwg.org/dwc/terms/county';
@@ -505,8 +507,8 @@ class DwcArchiverOccurrence extends Manager{
 	private function getAssociationJSON($occid) {
 
 		// Build SQL to find any associations for the occurrence record passed with occid
-		$sql = 'SELECT occid, associationType, occidAssociate, relationship, subType, identifier, basisOfRecord, resourceUrl, verbatimSciname, locationOnHost 
-			FROM omoccurassociations 
+		$sql = 'SELECT occid, associationType, occidAssociate, relationship, subType, identifier, basisOfRecord, resourceUrl, verbatimSciname, locationOnHost
+			FROM omoccurassociations
 			WHERE (occid = ' . $occid . ' OR occidAssociate = ' . $occid . ') ';
 		if ($rs = $this->conn->query($sql)) {
 
