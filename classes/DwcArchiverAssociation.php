@@ -26,7 +26,7 @@ class DwcArchiverAssociation extends DwcArchiverBaseManager{
 		$termArr['deleteMeOccidAssociate'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
 		$columnArr['deleteMeOccidAssociate'] = 'oa.occidAssociate';
 		$termArr['resourceRelationshipID'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
-		$columnArr['resourceRelationshipID'] = 'IFNULL(oa.instanceID, oa.recordID)';
+		$columnArr['resourceRelationshipID'] = 'IFNULL(IFNULL(oa.objectID, oa.instanceID), oa.recordID)';
 		$termArr['resourceID'] = 'https://dwc.tdwg.org/terms/#dwc:resourceID';
 		// $columnArr['resourceID'] = 'oa.occid'; // @TODO occurrence o o.occoccurrenceID
 		$columnArr['resourceID'] = 'o.occurrenceID'; // @TODO occurrence o o.occoccurrenceID
@@ -93,10 +93,10 @@ class DwcArchiverAssociation extends DwcArchiverBaseManager{
 			//$trimArr = array();
 		}
 		elseif($this->schemaType == 'dwc'){
-			$trimArr = array('oa.associd', 'oa.associationType', 'oa.subType', 'oa.objectID', 'oa.identifier',
-			 'oa.basisOfRecord', 'oa.verbatimSciname', 'oa.tid', 'oa.locationOnHost', 'oa.conditionOfAssociate',
-			  'oa.imageMapJSON', 'oa.dynamicProperties', 'oa.sourceIdentifier', 'oa.recordID', 'oa.createdUid',
-			   'oa.modifiedTimestamp', 'oa.modifiedUid', 'oa.initialtimestamp');
+			$trimArr = array('associd', 'associationType', 'subType', 'objectID', 'identifier',
+			 'basisOfRecord', 'verbatimSciname', 'tid', 'locationOnHost', 'conditionOfAssociate',
+			  'imageMapJSON', 'dynamicProperties', 'sourceIdentifier', 'recordID', 'createdUid',
+			   'modifiedTimestamp', 'modifiedUid', 'initialtimestamp');
 		}
 		return array_diff_key($dataArr, array_flip($trimArr));
 	}
