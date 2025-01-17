@@ -49,7 +49,7 @@ $recordArr = [];
 $collArr = [];
 $defaultColor = "#B2BEB5";
 
-$host = GeneralUtil::getDomain();
+$host = GeneralUtil::getDomain() . $CLIENT_ROOT;
 
 foreach ($coordArr as $collName => $coll) {
 	//Collect all the collections
