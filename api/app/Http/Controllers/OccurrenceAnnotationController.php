@@ -112,7 +112,7 @@ class OccurrenceAnnotationController extends OccurrenceController{
 		$fullCnt = 0;
 		$result = null;
 		if($type == 'internal'){
-			$annotation = DB::table('omoccuredits as e')->select('e.*', 'o.occurrenceID')
+			$annotation = DB::table('omoccuredits as e')->select('e.*', 'o.occurrenceID', 'o.recordID')
 				->join('omoccurrences as o', 'e.occid', '=', 'o.occid')
 				->where('o.collid', $collid);
 			if($fieldName){
@@ -129,7 +129,7 @@ class OccurrenceAnnotationController extends OccurrenceController{
 			$result = $this->formatInternalResults($result);
 		}
 		elseif($type == 'external'){
-			$annotation = DB::table('omoccurrevisions as r')->select('r.*', 'o.occurrenceID')
+			$annotation = DB::table('omoccurrevisions as r')->select('r.*', 'o.occurrenceID', 'o.recordID')
 				->join('omoccurrences as o', 'o.occid', '=', 'r.occid')
 				->where('o.collid', $collid);
 			if($source){
