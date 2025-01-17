@@ -240,7 +240,7 @@ class OccurrenceEditorManager {
 			}
 		}
 
-		return http_build_query($queryArr, "&amp");
+		return http_build_query($retArr, "&amp");
 	}
 
 	//Query functions
