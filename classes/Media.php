@@ -13,24 +13,24 @@ if(file_exists($SERVER_ROOT.'/content/lang/classes/Media.'.$LANG_TAG.'.php')) {
 abstract class StorageStrategy {
 	/**
 	 * If a file is given then return the storage path for that resource otherwise just return the root path.
-	 * @param array $file {name: string, type: string, tmp_name: string, error: int, size: int}
+	 * @param string | array $file {name: string, type: string, tmp_name: string, error: int, size: int}
 	 * @return string
 	 */
-	abstract public function getDirPath(array|string $file): string;
+	abstract public function getDirPath($file): string;
 
 	/**
 	 * If a file is given then return the url path to that resource otherwise just return the root url path.
-	 * @param array $file {name: string, type: string, tmp_name: string, error: int, size: int}
+	 * @param string | array $file {name: string, type: string, tmp_name: string, error: int, size: int}
 	 * @return string
 	 */
-	abstract public function getUrlPath(array|string $file): string;
+	abstract public function getUrlPath($file): string;
 
 	/**
 	 * Function to check if a file exists for the storage location of the upload strategy.
-	 * @param array $file {name: string, type: string, tmp_name: string, error: int, size: int}
+	 * @param string | array $file {name: string, type: string, tmp_name: string, error: int, size: int}
 	 * @return bool
 	 */
-	abstract public function file_exists(array|string $file): bool;
+	abstract public function file_exists($file): bool;
 
 	/**
 	 * Function to handle how a file should be uploaded.
@@ -92,18 +92,18 @@ function get_occurrence_upload_path($institutioncode, $collectioncode, $catalogn
 class LocalStorage extends StorageStrategy {
 	private string $path;
 
-	public function __construct(string | null $path = '') {
+	public function __construct($path = '') {
 		$this->path = $path ?? '';
 	}
 
-	public function getDirPath(array | string $file = null): string {
+	public function getDirPath($file = null): string {
 		$file_name = is_array($file)? $file['name']: $file;
 		return $GLOBALS['MEDIA_ROOT_PATH'] .
 			(substr($GLOBALS['MEDIA_ROOT_PATH'],-1) != "/"? '/': '') .
 			$this->path . $file_name;
 	}
 
-	public function getUrlPath(array | string $file = null): string {
+	public function getUrlPath($file = null): string {
 		$file_name = is_array($file)? $file['name']: $file;
 		return $GLOBALS['MEDIA_ROOT_URL'] .
 		   	(substr($GLOBALS['MEDIA_ROOT_URL'],-1) != "/"? '/': '') .
@@ -115,7 +115,7 @@ class LocalStorage extends StorageStrategy {
 	 * @return string
 	 */
 
-	public function file_exists(array|string $file): bool {
+	public function file_exists($file): bool {
 		if(is_array($file)) {
 			return file_exists($this->getDirPath() . $file['name']);
 		} else {
@@ -377,7 +377,11 @@ class Media {
 		return '<a href="' . $clean_url . '">'. $clean_text . '</a>';
 	}
 
-	public static function mime2ext(string $mime): string | bool {
+	/**
+	 * @param string $mime
+	 * @return string | bool
+	 */
+	public static function mime2ext(string $mime) {
 		$mime_map = [
 			'video/3gpp2' => '3g2',
 			'video/3gp'=> '3gp',
@@ -573,7 +577,7 @@ class Media {
 	 * @param string $url
 	 * return array | bool
 	 */
-	public static function getRemoteFileInfo(string $url): array|bool {
+	public static function getRemoteFileInfo(string $url) {
 		if(!function_exists('curl_init')) throw new Exception('Curl is not installed');
 		$ch = curl_init($url);
 
@@ -675,7 +679,7 @@ class Media {
 		}
 	}
 
-	private static function isValidFile(array | null $file): bool {
+	private static function isValidFile($file): bool {
 		return $file && !empty($file) && isset($file['error']) && $file['error'] === 0;
 	}
 
@@ -685,7 +689,7 @@ class Media {
 	 * @param array $file {name: string, type: string, tmp_name: string, error: int, size: int} Post file data, if none given will assume remote resource
 	 * @return bool
 	**/
-	public static function add(array $post_arr, StorageStrategy|Null $storage = null, array|null $file = null): void {
+	public static function add(array $post_arr, $storage = null, $file = null): void {
 		$clean_post_arr = Sanitize::in($post_arr);
 
 		$copy_to_server = $clean_post_arr['copytoserver']?? false;

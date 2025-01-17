@@ -162,7 +162,10 @@ class ChecklistAdmin extends Manager{
 		return $retStr;
 	}
 
-	public function getFootprint(): array | bool {
+	/* 
+	 * @return array | bool 
+	 */
+	public function getFootprint() {
 		if(!$this->clid) return false;
 
 		$footPrintArray = [];
