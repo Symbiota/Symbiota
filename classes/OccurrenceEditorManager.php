@@ -205,30 +205,42 @@ class OccurrenceEditorManager {
 		}
 	}
 
-	function get_download_query($queryArr) {
-		$retArr = [];
+	function get_download_query(): string {
+		$queryArr = $this->getQueryVariables();
+		$retArr = [ 'db' => $this->collId ];
+
+		// orderby
+		// orderbydir
 
 		$map = [
-			'q_recordedBy' => 'recordedBy',
-			'q_recordnumber' => 'collNum',
-			'q_eventdate' => 'eventDate',
-			'q_catalognumber' => 'catalognumber',
-			'q_othercatalognumbers' => 'othercatalognumbers',
-			'q_recordenteredby' => 'recordenteredby',
-			'q_datelastmodified' => 'datelastmodified',
-			'q_processingstatus' => 'processingstatus',
-			'q_imgonly' => 'imgonly',
-			'q_withoutimg' => 'withoutimg',
-			'q_exsiccatiid' => 'exsiccatiid',
+			'rb' => 'recordedby',
+			'rn' => 'collnum',
+			'ed' => 'eventDate',
+			'cn' => 'catnum',
+			'ocn' => 'othercatalognumbers',
+			'eb' => 'recordenteredby',
+			'de' => 'dateentered',
+			'dm' => 'datelastmodified',
+			'ps' => 'processingstatus',
+			'exid' => 'exsiccatiid',
 		];
 
+		// Handle woi and io seperately since they distill into one variable
+		if(array_key_exists('io', $queryArr)) {
+			$retArr['hasimages'] = 1;
+		} else if(array_key_exists('woi', $queryArr)) {
+			$retArr['hasimages'] = 0;
+		}
+
 		foreach($queryArr as $name => $value) {
-			if(array_key_exists($map[$name])) {
+			if(array_key_exists($name, $map)) {
 				$retArr[$map[$name]] = $value;
-			} else if(contains($name, 'q_custom')) {
+			} else if(str_contains($name, 'q_custom')) {
 				$retArr[$name] = $value;
 			}
 		}
+
+		return http_build_query($queryArr, "&amp");
 	}
 
 	//Query functions
