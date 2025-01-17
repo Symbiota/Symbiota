@@ -6,7 +6,7 @@ include_once($SERVER_ROOT . '/classes/DwcArchiverImage.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverAttribute.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverMaterialSample.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverIdentifier.php');
-include_once($SERVER_ROOT . '/classes/DwcArchiverAssociation.php');
+include_once($SERVER_ROOT . '/classes/DwcArchiverResourceRelationship.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceTaxaManager.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceAccessStats.php');
 include_once($SERVER_ROOT . '/classes/PortalIndex.php');
@@ -2109,7 +2109,7 @@ class DwcArchiverCore extends Manager{
 
 	private function writeAssociationData($batchOccidArr){
 		if(!$this->associationHandler){
-			$this->associationHandler = new DwcArchiverAssociation($this->conn);
+			$this->associationHandler = new DwcArchiverResourceRelationship($this->conn);
 			$this->associationHandler->setSchemaType($this->schemaType);
 			$this->associationHandler->initiateProcess($this->targetPath . $this->ts . '-assoc' . $this->fileExt);
 			$this->fieldArrMap['associations'] = $this->associationHandler->getFieldArrTerms();
