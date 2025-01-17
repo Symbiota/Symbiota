@@ -1876,6 +1876,7 @@ if(isset($_REQUEST['llpoint'])) {
 				taxa_name.append(sciname? sciname: '');
 
 				let map_helper_container = document.createElement("td");
+				map_helper_container.style = "vertical-align: middle";
 				let map_helper = document.createElement("div");
 				let globe_img = document.createElement("img");
 
