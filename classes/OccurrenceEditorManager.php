@@ -205,6 +205,32 @@ class OccurrenceEditorManager {
 		}
 	}
 
+	function get_download_query($queryArr) {
+		$retArr = [];
+
+		$map = [
+			'q_recordedBy' => 'recordedBy',
+			'q_recordnumber' => 'collNum',
+			'q_eventdate' => 'eventDate',
+			'q_catalognumber' => 'catalognumber',
+			'q_othercatalognumbers' => 'othercatalognumbers',
+			'q_recordenteredby' => 'recordenteredby',
+			'q_datelastmodified' => 'datelastmodified',
+			'q_processingstatus' => 'processingstatus',
+			'q_imgonly' => 'imgonly',
+			'q_withoutimg' => 'withoutimg',
+			'q_exsiccatiid' => 'exsiccatiid',
+		];
+
+		foreach($queryArr as $name => $value) {
+			if(array_key_exists($map[$name])) {
+				$retArr[$map[$name]] = $value;
+			} else if(contains($name, 'q_custom')) {
+				$retArr[$name] = $value;
+			}
+		}
+	}
+
 	//Query functions
 	public function setQueryVariables($overrideQry = false) {
 		if ($overrideQry) {
