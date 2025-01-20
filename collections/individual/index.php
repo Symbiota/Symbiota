@@ -33,7 +33,6 @@ $indManager->setDisplayFormat($format);
 $indManager->setOccurData();
 if(!$occid) $occid = $indManager->getOccid();
 if(!$collid) $collid = $indManager->getCollid();
-$occArr = $indManager->getOccData();
 
 $isSecuredReader = false;
 $isEditor = false;
@@ -65,10 +64,11 @@ if($SYMB_UID){
 		$isSecuredReader = true;
 	}
 }
-if($indManager->applyProtections($isSecuredReader)){
-	//Protections applied, thus reset occurrence array
-	$occArr = $indManager->getOccData();
-}
+
+//Appy protections and build occurrence array
+$indManager->applyProtections($isSecuredReader);
+$occArr = $indManager->getOccData();
+
 $collMetadata = $indManager->getMetadata();
 $genticArr = $indManager->getGeneticArr();
 
