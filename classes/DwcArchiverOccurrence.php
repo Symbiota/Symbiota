@@ -471,7 +471,7 @@ class DwcArchiverOccurrence extends Manager{
 				$rs->free();
 			}
 			//Append associations of duplicate specimen
-			$this->appendSpecimenDuplicateAssociations($occid, $assocArr, $internalAssocOccidArr);
+			// $this->appendSpecimenDuplicateAssociations($occid, $assocArr, $internalAssocOccidArr);
 
 			//Append resource URLs to each output record
 			if($internalAssocOccidArr){
