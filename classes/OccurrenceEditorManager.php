@@ -205,24 +205,21 @@ class OccurrenceEditorManager {
 		}
 	}
 
-	function get_download_query(): string {
+	function getDownloadQuery(): string {
 		$queryArr = $this->getQueryVariables();
 		$retArr = [ 'db' => $this->collId ];
 
-		// orderby
-		// orderbydir
-
 		$map = [
-			'rb' => 'recordedby',
+			'rb' => 'collector',
 			'rn' => 'collnum',
-			'ed' => 'eventDate',
+			'ed' => 'eventdate1',
 			'cn' => 'catnum',
 			'ocn' => 'othercatalognumbers',
 			'eb' => 'recordenteredby',
 			'de' => 'dateentered',
 			'dm' => 'datelastmodified',
 			'ps' => 'processingstatus',
-			'exid' => 'exsiccatiid',
+			'exsid' => 'exsiccatiid',
 		];
 
 		// Handle woi and io seperately since they distill into one variable

@@ -176,6 +176,7 @@ if ($schema == 'backup') {
 				}
 			}
 		}
+
 		$outputFile = null;
 		if ($zip) {
 			//Ouput file is a zip file
