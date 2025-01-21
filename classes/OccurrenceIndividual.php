@@ -110,7 +110,7 @@ class OccurrenceIndividual extends Manager{
 		if($this->occid){
 			if(!$this->occArr) $this->setOccurData();
 			if($fieldKey){
-				if(array_key_exists($fieldKey,$this->occArr)) return $this->occArr($fieldKey);
+				if(array_key_exists($fieldKey,$this->occArr)) return $this->occArr[$fieldKey];
 				return false;
 			}
 		}
