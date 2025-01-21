@@ -1676,6 +1676,7 @@ class DwcArchiverCore extends Manager{
 			//$dwcOccurManager->setUpperTaxonomy();
 			$dwcOccurManager->setTaxonRank();
 		}
+
 		if ($rs = $this->dataConn->query($sql, MYSQLI_USE_RESULT)) {
 			$this->setServerDomain();
 			$urlPathPrefix = $this->serverDomain . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) == '/' ? '' : '/');

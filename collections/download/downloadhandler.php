@@ -150,6 +150,17 @@ if ($schema == 'backup') {
 
 			if (array_key_exists('publicsearch', $_POST) && $_POST['publicsearch']) {
 				$dwcaHandler->setCustomWhereSql($occurManager->getSqlWhere());
+
+				// Added for Occurrence Table Display Editor Download Functionality
+				for ($i = 1; $i  < 10; $i ++) {
+					if ($occurManager->getSearchTerm('customfield' . $i)) {
+						$dwcaHandler->addCondition(
+							$occurManager->getSearchTerm('customfield' . $i), 
+							$occurManager->getSearchTerm('customtype' . $i), 
+							$occurManager->getSearchTerm('customvalue' . $i)
+						);
+					}
+				}
 			} else {
 				//Request is coming from exporter.php for collection manager tools
 				if(isset($_POST['targetcollid'])) $dwcaHandler->setCollArr($_POST['targetcollid']);

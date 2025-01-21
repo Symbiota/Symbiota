@@ -229,11 +229,18 @@ class OccurrenceEditorManager {
 			$retArr['hasimages'] = 0;
 		}
 
+		$custom_fields = [];
+		for ($i=1; $i < 11; $i++) { 
+			$custom_fields['cf' . $i] = 'customfield' . $i;
+			$custom_fields['ct' . $i] = 'customtype' . $i;
+			$custom_fields['cv' . $i] = 'customvalue' . $i;
+		}
+
 		foreach($queryArr as $name => $value) {
 			if(array_key_exists($name, $map)) {
 				$retArr[$map[$name]] = $value;
-			} else if(str_contains($name, 'q_custom')) {
-				$retArr[$name] = $value;
+			} else if(array_key_exists($name, $custom_fields)) {
+				$retArr[$custom_fields[$name]] = $value;
 			}
 		}
 
