@@ -523,9 +523,5 @@ CREATE TABLE `uploadKeyValueTemp`(
   CONSTRAINT `uploadKeyValueTemp_ibfk_2` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`collID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `upload_key_temp_uid` FOREIGN KEY (`upload_uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE);
 
-# We need to relax this if we want inverse relationship entries in omoccurassociations for derivedFromSameIndividual
-ALTER TABLE omoccurassociations DROP INDEX UQ_omoccurassoc_sciname, ADD INDEX `UQ_omoccurassoc_sciname` (`occid`, `verbatimSciname`, `associationType`) USING BTREE;
-
-
 ALTER TABLE `omoccuraccess` ENGINE=InnoDB;
 ALTER TABLE `omoccuraccesslink` ENGINE=InnoDB;
