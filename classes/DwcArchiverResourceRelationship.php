@@ -26,7 +26,7 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 		$termArr['deleteMeOccidAssociate'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
 		$columnArr['deleteMeOccidAssociate'] = 'oa.occidAssociate';
 		$termArr['resourceRelationshipID'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
-		$columnArr['resourceRelationshipID'] = 'IFNULL(IFNULL(oa.objectID, oa.instanceID), oa.recordID)';
+		$columnArr['resourceRelationshipID'] = 'IFNULL(IFNULL(oa.objectID, oa.instanceID), o.recordID)';
 		$termArr['resourceID'] = 'https://dwc.tdwg.org/terms/#dwc:resourceID';
 		// $columnArr['resourceID'] = 'oa.occid'; // @TODO occurrence o o.occoccurrenceID
 		$columnArr['resourceID'] = 'o.occurrenceID'; // @TODO occurrence o o.occoccurrenceID
@@ -43,7 +43,7 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 		$termArr['relationshipRemarks'] = 'https://dwc.tdwg.org/terms/#dwc:relationshipRemarks';
 		$columnArr['relationshipRemarks'] = 'oa.notes';
 		$termArr['scientificName'] = 'https://symbiota.org/terms/scientificName';
-		$columnArr['scientificName'] = 'oa.verbatimSciname';
+		$columnArr['scientificName'] = 'o.sciname';
 
 		$termArr['associd'] = 'https://symbiota.org/terms/associd';
 		$columnArr['associd'] = 'oa.associd';
@@ -57,8 +57,8 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 		$columnArr['identifier'] = 'oa.identifier';
 		$termArr['basisOfRecord'] = 'https://symbiota.org/terms/basisOfRecord';
 		$columnArr['basisOfRecord'] = 'oa.basisOfRecord';
-		$termArr['verbatimSciname'] = 'https://symbiota.org/terms/verbatimSciname';
-		$columnArr['verbatimSciname'] = 'oa.verbatimSciname';
+		// $termArr['verbatimSciname'] = 'https://symbiota.org/terms/verbatimSciname';
+		// $columnArr['verbatimSciname'] = 'oa.verbatimSciname';
 		$termArr['tid'] = 'https://symbiota.org/terms/tid';
 		$columnArr['tid'] = 'oa.tid';
 		$termArr['locationOnHost'] = 'https://symbiota.org/terms/locationOnHost';
@@ -111,7 +111,7 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 					if($colName) $sqlFrag .= ', ' . $colName;
 				}
 				// $this->sqlBase = 'SELECT ' . trim($sqlFrag, ', ') . ' FROM omoccurassociations ';
-				$this->sqlBase = 'SELECT DISTINCT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate ';
+				$this->sqlBase = 'SELECT DISTINCT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid ';
 			}
 			else{
 				$this->fieldArr['fields']['relationship'] = 'terms.inverseRelationship AS relationship';
