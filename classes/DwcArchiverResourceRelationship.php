@@ -34,7 +34,7 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 		$columnArr['relationshipOfResourceID'] = 'oa.relationshipID';
 		$termArr['relatedResourceID'] = 'https://dwc.tdwg.org/terms/#dwc:relatedResourceID';
 		// $columnArr['relatedResourceID'] = 'IFNULL(oo.instanceID,oo.resourceUrl)'; // @TODO maybe add logic IF associationType='externalOccurrence' ? resourceUrl : IFNULL(instanceID,resourceUrl)
-		$columnArr['relatedResourceID'] = 'oa.identifier';
+		$columnArr['relatedResourceID'] = 'IFNULL(oo.occurrenceID, oo.recordID)';
         $termArr['relationshipOfResource'] = 'https://dwc.tdwg.org/terms/#dwc:relationshipOfResource';
 		$columnArr['relationshipOfResource'] = 'oa.relationship';
 		$termArr['relationshipAccordingTo'] = 'https://dwc.tdwg.org/terms/#dwc:relationshipAccordingTo';
