@@ -9,7 +9,8 @@ $profManager = new OpenIdProfileManager();
 
 $localSessionID = $profManager->lookupLocalSessionIDWithThirdPartySid($sid);
 echo $localSessionID;
-$profManager->forceLogout($localSessionID);
+//$profManager->forceLogout($localSessionID);
+$profManager->forceLogout(session_id());
 
 ?>
 
