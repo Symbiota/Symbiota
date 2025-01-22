@@ -44,6 +44,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 	<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet">
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT . '/js/jquery-ui.min.js'; ?>" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT . '/collections/individual/domManipulationUtils.js'; ?>" type="text/javascript"></script>
 	<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
 	<script>
 		const clientRoot = '<?php echo $CLIENT_ROOT; ?>';
@@ -196,7 +197,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										<label for="elevhigh" class="input-text--outlined">
 											<span class="screen-reader-only"><?php echo $LANG['MAXIMUM_ELEVATION'] ?></span>
 											<input type="number" step="any" name="elevhigh" id="elevhigh" data-chip="<?php echo $LANG['MAX_ELEVATION'] ?>" />
-											<span class="inset-input-label"><?php echo $LANG['MINIMUM_ELEVATION'] ?></span>
+											<span class="inset-input-label"><?php echo $LANG['MAXIMUM_ELEVATION'] ?></span>
 										</label>
 										<span class="assistive-text"><?php echo $LANG['NUMBER_IN_METERS'] ?></span>
 									</div>
@@ -221,9 +222,9 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								<button type="button" onclick="openCoordAid('rectangle');"><?php echo $LANG['SELECT_IN_MAP'] ?></button>
 								<div class="input-text-container">
 										<label for="upperlat" class="input-text--outlined">
-											<span class="screen-reader-only"><?php echo $LANG['UPPER_LATITUDE'] ?></span>
+											<span class="screen-reader-only"><?php echo $LANG['NORTHERN_LATITUDE'] ?></span>
 											<input type="number" step="any" min="-90" max="90" id="upperlat" name="upperlat" data-chip="<?php echo $LANG['UPPER_LAT'] ?>" />
-											<span class="inset-input-label"><?php echo $LANG['MINIMUM_ELEVATION'] ?></span>
+											<span class="inset-input-label"><?php echo $LANG['NORTHERN_LATITUDE'] ?></span>
 											<span class="assistive-text"><?php echo $LANG['VALUE_BETWEEN_NUM'] ?></span>
 										</label>
 
@@ -238,7 +239,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 								</div>
 								<div class="input-text-container">
 									<label for="bottomlat" class="input-text--outlined">
-										<span class="screen-reader-only"><?php echo $LANG['BOTTOM_LATITUDE'] ?></span>
+										<span class="screen-reader-only"><?php echo $LANG['SOUTHERN_LATITUDE'] ?></span>
 										<input type="number" step="any" min="-90" max="90" id="bottomlat" name="bottomlat" data-chip="<?php echo $LANG['BOTTOM_LAT'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['SOUTHERN_LATITUDE'] ?></span>
 										<span class="assistive-text"><?php echo $LANG['VALUE_BETWEEN_NUM'] ?></span>
@@ -416,7 +417,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 										<input type="text" name="catnum" id="catnum" data-chip="<?php echo $LANG['CATALOG_NUMBER'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['CATALOG_NUMBER'] ?></span>
 									</label>
-									<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA'] ?></span>
+									<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA_DASH'] ?></span>
 								</div>
 							</div>
 							<div>
@@ -557,7 +558,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 	include($SERVER_ROOT . '/includes/footer.php');
 	?>
 </body>
-<script src="js/searchform.js" type="text/javascript"></script>
+<script src="js/searchform.js?ver=1" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/collections/search/js/alerts.js?v=202107'; ?>" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/js/symb/api.taxonomy.taxasuggest.js'; ?>" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/js/symb/collections.index.js?ver=20171215' ?>" type="text/javascript"></script>
@@ -571,6 +572,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 		}
 		?>
 		setSearchForm(document.getElementById("params-form"));
+		toggleTheNonDefaultsClosed(<?php echo $DEFAULTCATID ?>);
 	});
 </script>
 <script>

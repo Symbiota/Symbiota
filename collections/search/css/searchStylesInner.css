@@ -264,6 +264,32 @@
   }
 }
 
+/* Small Screens ********************/
+
+@media (max-width: 650px) {
+  .inner-search #search-form-taxonomy {
+    display: block;
+  }
+  .inner-search #search-form-locality {
+    display: block;
+  }
+  .inner-search .grid--half {
+    display: block;
+  }
+  .inner-search #search-form-coll-event {
+    display: block;
+  }
+  .inner-search #search-form-sample {
+    display: block;
+  }
+  .inner-search #search-form-sample div {
+    margin: 1rem 0;
+  }
+  .inner-search #search-form-latlong {
+    display: block;
+  }
+}
+
 /* ==============================
    LAYOUT STYLES
    @mixin ============================= */
