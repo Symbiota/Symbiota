@@ -26,7 +26,7 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 		$termArr['deleteMeOccidAssociate'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
 		$columnArr['deleteMeOccidAssociate'] = 'oa.occidAssociate';
 		$termArr['resourceRelationshipID'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
-		$columnArr['resourceRelationshipID'] = 'IFNULL(IFNULL(oa.objectID, oa.instanceID), o.recordID)';
+		$columnArr['resourceRelationshipID'] = 'IFNULL(IFNULL(IFNULL(oa.objectID, o.occurrenceID), o.recordID), oa.resourceUrl)';
 		$termArr['resourceID'] = 'https://dwc.tdwg.org/terms/#dwc:resourceID';
 		// $columnArr['resourceID'] = 'oa.occid'; // @TODO occurrence o o.occoccurrenceID
 		$columnArr['resourceID'] = 'o.occurrenceID'; // @TODO occurrence o o.occoccurrenceID
@@ -34,7 +34,7 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 		$columnArr['relationshipOfResourceID'] = 'oa.relationshipID';
 		$termArr['relatedResourceID'] = 'https://dwc.tdwg.org/terms/#dwc:relatedResourceID';
 		// $columnArr['relatedResourceID'] = 'IFNULL(oo.instanceID,oo.resourceUrl)'; // @TODO maybe add logic IF associationType='externalOccurrence' ? resourceUrl : IFNULL(instanceID,resourceUrl)
-		$columnArr['relatedResourceID'] = 'oo.recordID';
+		$columnArr['relatedResourceID'] = 'oa.identifier';
         $termArr['relationshipOfResource'] = 'https://dwc.tdwg.org/terms/#dwc:relationshipOfResource';
 		$columnArr['relationshipOfResource'] = 'oa.relationship';
 		$termArr['relationshipAccordingTo'] = 'https://dwc.tdwg.org/terms/#dwc:relationshipAccordingTo';
