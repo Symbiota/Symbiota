@@ -33,7 +33,8 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
         $termArr['relationshipOfResourceID'] = 'https://dwc.tdwg.org/terms/#dwc:relationshipOfResourceID';
 		$columnArr['relationshipOfResourceID'] = 'oa.relationshipID';
 		$termArr['relatedResourceID'] = 'https://dwc.tdwg.org/terms/#dwc:relatedResourceID';
-		$columnArr['relatedResourceID'] = 'IFNULL(oa.instanceID,oa.resourceUrl)'; // @TODO maybe add logic IF associationType='externalOccurrence' ? resourceUrl : IFNULL(instanceID,resourceUrl)
+		// $columnArr['relatedResourceID'] = 'IFNULL(oo.instanceID,oo.resourceUrl)'; // @TODO maybe add logic IF associationType='externalOccurrence' ? resourceUrl : IFNULL(instanceID,resourceUrl)
+		$columnArr['relatedResourceID'] = 'oo.recordID';
         $termArr['relationshipOfResource'] = 'https://dwc.tdwg.org/terms/#dwc:relationshipOfResource';
 		$columnArr['relationshipOfResource'] = 'oa.relationship';
 		$termArr['relationshipAccordingTo'] = 'https://dwc.tdwg.org/terms/#dwc:relationshipAccordingTo';
@@ -111,7 +112,7 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 					if($colName) $sqlFrag .= ', ' . $colName;
 				}
 				// $this->sqlBase = 'SELECT ' . trim($sqlFrag, ', ') . ' FROM omoccurassociations ';
-				$this->sqlBase = 'SELECT DISTINCT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid ';
+				$this->sqlBase = 'SELECT DISTINCT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid LEFT JOIN omoccurrences oo ON oo.occid = oa.occidAssociate';
 			}
 			else{
 				$this->fieldArr['fields']['relationship'] = 'terms.inverseRelationship AS relationship';
@@ -119,7 +120,7 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 					if($colName) $sqlFrag .= ', ' . $colName;
 				}
 				// $this->sqlBase = 'SELECT ' . trim($sqlFrag, ', ') . ' FROM omoccurassociations ';
-				$this->sqlBase = 'SELECT DISTINCT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate
+				$this->sqlBase = 'SELECT DISTINCT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate LEFT JOIN omoccurrences oo ON oo.occid = oa.occid
 					LEFT JOIN (SELECT t.term, t.inverseRelationship
 					FROM ctcontrolvocabterm t INNER JOIN ctcontrolvocab v ON t.cvID = v.cvID
 					WHERE v.tablename = "omoccurassociations" AND fieldName = "relationship" AND t.inverseRelationship IS NOT NULL) terms ON oa.relationship = terms.term ';
