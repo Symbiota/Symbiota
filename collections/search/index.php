@@ -94,6 +94,10 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 <body>
 	<?php
 	include($SERVER_ROOT . '/includes/header.php');
+	$currentSessionId = session_id();
+	$currentSessionStatus = session_status();
+	error_log("(forceLogout) ((0.5 search page)) CurrentSession: " . $currentSessionId . "CurrentSessionStatus: " . $currentSessionStatus);
+	echo '$currentSessionId is' . $currentSessionId . ' and $currentSessionStatus is: ' . $currentSessionStatus;
 	?>
 	<!-- This is inner text! -->
 	<div role="main" id="innertext" class="inner-search" style="max-width: 1920px">
