@@ -193,11 +193,15 @@ class OpenIdProfileManager extends ProfileManager{
 		}
 
 		if ($originalSessionId !== $localSessionId) {
+			error_log("deleteMe got here in the re-activation of the session");
 			session_id($originalSessionId);
 			if ($originalSessionId === PHP_SESSION_ACTIVE) {
 				session_start();
 			}
 		}
+		$currentSessionId = session_id();
+		$currentSessionStatus = session_status();
+		error_log("(forceLogout) ((6)) CurrentSession: " . $currentSessionId . "CurrentSessionStatus: " . $currentSessionStatus .  "targetSession: " . $localSessionId);
 	}
 
 
