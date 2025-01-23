@@ -219,6 +219,8 @@ class OccurrenceEditorManager {
 			'de' => 'dateentered',
 			'dm' => 'datelastmodified',
 			'ps' => 'processingstatus',
+			'traitid' => 'traitid',
+			'stateid' => 'stateid',
 			'exsid' => 'exsiccatiid',
 		];
 

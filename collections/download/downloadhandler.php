@@ -161,6 +161,13 @@ if ($schema == 'backup') {
 						);
 					}
 				}
+
+				// Traits Support 
+				if ($occurManager->getSearchTerm('stateid')) {
+					$dwcaHandler->addCondition('stateid', 'EQUALS', $occurManager->getSearchTerm('stateid'));
+				} elseif ($occurManager->getSearchTerm('traitid')) {
+					$dwcaHandler->addCondition('traitid', 'EQUALS', $occurManager->getSearchTerm('traitid'));
+				}
 			} else {
 				//Request is coming from exporter.php for collection manager tools
 				if(isset($_POST['targetcollid'])) $dwcaHandler->setCollArr($_POST['targetcollid']);
