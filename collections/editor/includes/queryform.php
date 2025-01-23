@@ -29,6 +29,9 @@ $qWithoutImg = (array_key_exists('woi',$qryArr)?$qryArr['woi']:0);
 $qOcrFrag = (array_key_exists('ocr',$qryArr)?htmlentities($qryArr['ocr'], ENT_COMPAT, $CHARSET):'');
 $qOrderBy = (array_key_exists('orderby',$qryArr)?$qryArr['orderby']:'');
 $qOrderByDir = (array_key_exists('orderbydir',$qryArr)?$qryArr['orderbydir']:'');
+$qTraitIds = (array_key_exists('traitid',$qryArr)?$qryArr['traitid']: []);
+$qTraitStateIds = (array_key_exists('stateid',$qryArr)?$qryArr['stateid']: []);
+
 $qTraitArr = $occManager->getAttributeTraits($collId);
 
 $customFieldArr = array();
@@ -197,7 +200,7 @@ else{
 								<select name="q_traitid[]" multiple>
 									<?php
 										foreach($qTraitArr as $traitID => $tArr){
-											echo '<option value="'.$traitID.'">'.$tArr['name'].' [ID:'.$traitID.']</option>';
+											echo '<option '. (in_array($traitID, $qTraitIds)? 'selected':'') .' value="'.$traitID.'">'.$tArr['name'].' [ID:'.$traitID.']</option>';
 										}
 									?>
 								</select>
@@ -211,7 +214,7 @@ else{
 									foreach($qTraitArr as $traitID => $tArr){
 										$stateArr = $tArr['state'];
 										foreach($stateArr as $stateID => $stateName){
-											echo '<option value="'.$stateID.'">'.$tArr['name'].': '.$stateName.'</option>';
+											echo '<option ' . (in_array($stateID, $qTraitStateIds)? 'selected':'') . ' value="'.$stateID.'">'.$tArr['name'].': '.$stateName.'</option>';
 										}
 									}
 									?>
