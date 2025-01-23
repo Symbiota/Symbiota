@@ -11,18 +11,18 @@ error_log("Remote Session:" . $sid . "Local Session: " . $mysession . "IP: " . $
 
 //header('Content-Type: text/html; charset=' . $CHARSET);
 
-/*
+
 
 
 
 $profManager = new OpenIdProfileManager();
 
 $localSessionID = $profManager->lookupLocalSessionIDWithThirdPartySid($sid);
-echo $localSessionID;
+//echo $localSessionID;
 //$profManager->forceLogout($localSessionID);
 $profManager->forceLogout(session_id());
 
-?>
+/*
 
 
 <!DOCTYPE html>
