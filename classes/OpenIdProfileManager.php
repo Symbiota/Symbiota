@@ -192,7 +192,7 @@ class OpenIdProfileManager extends ProfileManager{
 			unlink($sessionFile);
 		}
 
-		if ($originalSessionId) {
+		if ($originalSessionId !== $localSessionId) {
 			session_id($originalSessionId);
 			if ($originalSessionId === PHP_SESSION_ACTIVE) {
 				session_start();
