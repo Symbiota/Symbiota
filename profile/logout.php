@@ -2,7 +2,7 @@
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OpenIdProfileManager.php');
 
-$sid = array_key_exists('sid', $_REQUEST) ? htmlspecialchars($_REQUEST['action'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
+$sid = array_key_exists('sid', $_REQUEST) ? htmlspecialchars($_REQUEST['sid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $mysession = session_id();
 
 error_log("Remote Session:" . $sid . "Local Session: " . $mysession);

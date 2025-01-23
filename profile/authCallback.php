@@ -40,7 +40,7 @@ if (array_key_exists('code', $_REQUEST) && $_REQUEST['code']) {
     $_SESSION['AUTH_CLIENT_ID'] = $oidc->getClientID();
 
     if($profManager->authenticate($sub, $providerUrls[$AUTH_PROVIDER])){
-      $profManager->linkThirdPartySid($sid, session_id());
+      $profManager->linkThirdPartySid($sid, session_id(), $_SERVER['REMOTE_ADDR']);
       if($_SESSION['refurl']){
         header("Location:" . $_SESSION['refurl']);
         unset($_SESSION['refurl']);
