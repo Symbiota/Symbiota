@@ -17,7 +17,7 @@ class OpenIdProfileManager extends ProfileManager{
             $this->reset();
             $this->setUserRights();
             $this->setUserParams();
-            if($this->rememberMe) $this->setTokenCookie();
+            // if($this->rememberMe) $this->setTokenCookie();
             if(!isset($GLOBALS['SYMB_UID']) || !$GLOBALS['SYMB_UID']){
                 $this->resetConnection();
                 $sql = 'UPDATE users SET lastLoginDate = NOW() WHERE (uid = ?)';
