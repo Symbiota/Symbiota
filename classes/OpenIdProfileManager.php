@@ -146,10 +146,17 @@ class OpenIdProfileManager extends ProfileManager{
 	public function forceLogout($localSessionId) {
 		$currentSessionId = session_id();
 		$currentSessionStatus = session_status();
+		error_log("(forceLogout) ((Before)) CurrentSession: " . $currentSessionId . "CurrentSessionStatus: " . $currentSessionStatus .  "targetSession: " . $localSessionId);
 
 		if ($currentSessionStatus === PHP_SESSION_ACTIVE) {
+			error_log("(forceLogout) ((entered if block))");	
 			session_write_close();
 		}
+
+		$currentSessionId = session_id();
+		$currentSessionStatus = session_status();
+
+		error_log("(forceLogout) ((after)) CurrentSession: " . $currentSessionId . "CurrentSessionStatus: " . $currentSessionStatus .  "targetSession: " . $localSessionId);
 
 		session_id($localSessionId);
 		session_start();
