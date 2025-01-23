@@ -144,9 +144,10 @@ class OpenIdProfileManager extends ProfileManager{
 	}
 
 	public function forceLogout($localSessionId) {
+		$originalSessionId = session_id();
 		$currentSessionId = session_id();
 		$currentSessionStatus = session_status();
-		error_log("(forceLogout) ((Before)) CurrentSession: " . $currentSessionId . "CurrentSessionStatus: " . $currentSessionStatus .  "targetSession: " . $localSessionId);
+		error_log("(forceLogout) ((1)) CurrentSession: " . $currentSessionId . "CurrentSessionStatus: " . $currentSessionStatus .  "targetSession: " . $localSessionId);
 
 		if ($currentSessionStatus === PHP_SESSION_ACTIVE) {
 			error_log("(forceLogout) ((entered if block))");	
@@ -155,16 +156,24 @@ class OpenIdProfileManager extends ProfileManager{
 
 		$currentSessionId = session_id();
 		$currentSessionStatus = session_status();
-
-		error_log("(forceLogout) ((after)) CurrentSession: " . $currentSessionId . "CurrentSessionStatus: " . $currentSessionStatus .  "targetSession: " . $localSessionId);
+		error_log("(forceLogout) ((2)) CurrentSession: " . $currentSessionId . "CurrentSessionStatus: " . $currentSessionStatus .  "targetSession: " . $localSessionId);
 
 		session_id($localSessionId);
 		session_start();
 
+		$currentSessionId = session_id();
+		$currentSessionStatus = session_status();
+		error_log("(forceLogout) ((3)) CurrentSession: " . $currentSessionId . "CurrentSessionStatus: " . $currentSessionStatus .  "targetSession: " . $localSessionId);
+
 		$_SESSION = [];
 		session_unset();
 
+		$currentSessionId = session_id();
+		$currentSessionStatus = session_status();
+		error_log("(forceLogout) ((4)) CurrentSession: " . $currentSessionId . "CurrentSessionStatus: " . $currentSessionStatus .  "targetSession: " . $localSessionId);
+
 		if (ini_get("session.use_cookies")) {
+			error_log("deleteMe got here session cookies");
 			$params = session_get_cookie_params();
 			setcookie(session_name(), '', time() - 42000,
 				$params["path"], $params["domain"],
@@ -173,15 +182,19 @@ class OpenIdProfileManager extends ProfileManager{
 		}
 
 		session_destroy();
+		$currentSessionId = session_id();
+		$currentSessionStatus = session_status();
+		error_log("(forceLogout) ((5)) CurrentSession: " . $currentSessionId . "CurrentSessionStatus: " . $currentSessionStatus .  "targetSession: " . $localSessionId);
 
 		$sessionFile = session_save_path() . '/sess_' . $localSessionId;
 		if (file_exists($sessionFile)) {
+			error_log("got here in the file exists");
 			unlink($sessionFile);
 		}
 
-		if ($currentSessionId) {
-			session_id($currentSessionId);
-			if ($currentSessionStatus === PHP_SESSION_ACTIVE) {
+		if ($originalSessionId) {
+			session_id($originalSessionId);
+			if ($originalSessionId === PHP_SESSION_ACTIVE) {
 				session_start();
 			}
 		}
