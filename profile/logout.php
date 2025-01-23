@@ -1,9 +1,19 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OpenIdProfileManager.php');
-header('Content-Type: text/html; charset=' . $CHARSET);
 
 $sid = array_key_exists('sid', $_REQUEST) ? htmlspecialchars($_REQUEST['action'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
+$mysession = session_id();
+
+error_log("Remote Session:" . $sid . "Local Session: " . $mysession);
+
+
+
+//header('Content-Type: text/html; charset=' . $CHARSET);
+
+/*
+
+
 
 $profManager = new OpenIdProfileManager();
 
@@ -42,3 +52,6 @@ $profManager->forceLogout(session_id());
 	?>
 </body>
 </html>
+*/
+
+?>
