@@ -89,7 +89,7 @@ class DwcArchiverCore extends Manager{
 		);
 
 		//ini_set('memory_limit','512M');
-		set_time_limit(600);
+		set_time_limit(1800);
 	}
 
 	public function __destruct(){
