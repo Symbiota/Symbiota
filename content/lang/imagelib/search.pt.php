@@ -6,9 +6,9 @@ Translated by: Google Translate (2024-09-05)
 ------------------
 */
 
-$LANG['ACTION_SUCCESS'] = 'Multimídia marcada com sucesso!';
-$LANG['ACTION_FAILED'] = 'Multimídia já estava marcada com alvo';
-$LANG['ACTION_ERROR'] = 'ERRO ao aplicar tag a multimídia';
+$LANG['ACTION_SUCCESS'] = 'recursos de mídia marcados com sucesso!';
+$LANG['ACTION_FAILED'] = 'recursos de mídia já foram marcados';
+$LANG['ACTION_ERROR'] = 'ERRO ao aplicar marcação a recurso(s) de mídia';
 $LANG['IMAGE_SEARCH'] = 'Pesquisa multimídia';
 $LANG['SELECT_TAG'] = 'Selecione uma tag multimídia';
 $LANG['SELECT_IMAGE'] = 'Selecione pelo menos um recurso multimídia para atribuir tag';
