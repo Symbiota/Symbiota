@@ -511,14 +511,14 @@ UPDATE omoccurrences o INNER JOIN geographicthesaurus g ON o.country = g.geoterm
   WHERE o.countryCode != g.iso2 AND g.geoLevel = 50 AND g.acceptedID IS NULL AND g.iso2 IS NOT NULL;
 
 #Populate NULL continent values
-UPDATE omoccurrences o INNER JOIN geographicThesaurus g ON o.countryCode = g.iso2 
-  INNER JOIN geographicThesaurus p ON g.parentID = p.geoThesID
+UPDATE omoccurrences o INNER JOIN geographicthesaurus g ON o.countryCode = g.iso2 
+  INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
   SET o.continent = p.geoTerm
   WHERE o.continent IS NULL AND g.geoLevel = 50 AND p.acceptedID IS NULL AND g.acceptedID IS NULL;
 
 #Fix bad continent values (likely bad improted values)
-UPDATE omoccurrences o INNER JOIN geographicThesaurus g ON o.countryCode = g.iso2
-  INNER JOIN geographicThesaurus p ON g.parentID = p.geoThesID
+UPDATE omoccurrences o INNER JOIN geographicthesaurus g ON o.countryCode = g.iso2
+  INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
   SET o.continent = p.geoTerm
   WHERE o.continent != p.geoTerm AND g.geoLevel = 50 AND g.acceptedID IS NULL;
 
