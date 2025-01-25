@@ -483,13 +483,13 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			}
 			$sqlWhere .= 'AND (o.occid IN(SELECT occid FROM tmattributes WHERE stateid IN(' . $this->searchTermArr['attr'] . '))) ';
 		}
-
+		$sqlWhere .= $this->appendFullProtectionsSQL();
 		if($sqlWhere) $this->sqlWhere = 'WHERE '.substr($sqlWhere,4);
 		else{
 			//Make the sql valid, but return nothing
 			//$this->sqlWhere = 'WHERE o.occid IS NULL ';
 		}
-		//echo $this->sqlWhere;
+		echo $this->sqlWhere;
 	}
 
 	private function getAdditionIdentifiers($identFrag){
@@ -531,6 +531,28 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 	protected function formatDate($inDate){
 		$retDate = OccurrenceUtil::formatDate($inDate);
 		return $retDate;
+	}
+
+	private function appendFullProtectionsSQL(){
+		$retStr = '';
+		//If supper admin, protect nothing
+		if(!empty($GLOBALS['IS_ADMIN'])) return '';
+		//If not logged in block all hidden specimens
+		print_r($GLOBALS['USER_RIGHTS']);
+		if(empty($GLOBALS['USER_RIGHTS'])){
+			$retStr = 'AND o.recordSecurity != 5 ';
+		}
+		else{
+			//Collections specific settings
+			if(array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS'])){
+				$collArr = array();
+				if(!empty($GLOBALS['USER_RIGHTS']['CollAdmin'])) $collArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
+				if(!empty($GLOBALS['USER_RIGHTS']['CollEditor'])) $collArr = array_merge($collArr, $GLOBALS['USER_RIGHTS']['CollEditor']);
+				$collArr = array_unique($collArr);
+				$retStr = 'AND (o.recordSecurity != 5 OR o.collid IN(' . implode(',', $collArr) . ')) ';
+			}
+		}
+		return $retStr;
 	}
 
 	protected function getTableJoins($sqlWhere){

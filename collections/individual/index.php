@@ -537,7 +537,7 @@ $traitArr = $indManager->getTraitArr();
 							</div>
 							<?php if($occArr['dateidentified']): ?>
 								<div id="identby-div" class="identby-div bottom-breathing-room-rel-sm">
-								<?php 
+								<?php
 									echo '<label>'.$LANG['DATE_DET']  . ': '. '</label>' . $occArr['dateidentified'];
 								?>
 							</div>
@@ -720,9 +720,9 @@ $traitArr = $indManager->getTraitArr();
 								$localityArr[] = $locStr;
 							}
 							echo implode(', ', $localityArr);
-							if($occArr['localitysecurity'] == 1){
-								echo '<div style="margin-left:10px"><span class="notice-span">'.$LANG['LOCALITY_PROTECTED'].':<span> ';
-								if($occArr['localitysecurityreason'] && substr($occArr['localitysecurityreason'],0,1) != '<') echo $occArr['localitysecurityreason'];
+							if($occArr['reordsecurity'] == 1){
+								echo '<div style="margin-left:10px"><span class="notice-span">'.$LANG['PROTECTED'].':<span> ';
+								if($occArr['securityreason'] && substr($occArr['securityreason'],0,1) != '<') echo $occArr['securityreason'];
 								else echo $LANG['PROTECTED_REASON'];
 								if(!isset($occArr['localsecure'])) echo '<br/>'.(isset($LANG['ACCESS_GRANTED'])?$LANG['ACCESS_GRANTED']:'Current user has been granted access');
 								echo '</div>';

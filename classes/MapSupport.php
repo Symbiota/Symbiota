@@ -62,7 +62,7 @@ class MapSupport extends Manager{
 			$sql = 'SELECT DISTINCT decimalLatitude, decimalLongitude
 				FROM omoccurrences
 				WHERE (decimalLatitude BETWEEN '.$latMin.' AND '.$latMax.') AND (decimalLongitude BETWEEN '.$lngMin.' AND '.$lngMax.')
-				AND (cultivationStatus IS NULL OR cultivationStatus = 0) AND (localitySecurity IS NULL OR localitySecurity = 0)
+				AND (cultivationStatus IS NULL OR cultivationStatus = 0) AND (recordSecurity = 0)
 				AND (coordinateUncertaintyInMeters IS NULL OR coordinateUncertaintyInMeters < 5000)
 				AND tidinterpreted IN('.implode(',', $tidArr).')';
 			if($rs = $this->conn->query($sql)){

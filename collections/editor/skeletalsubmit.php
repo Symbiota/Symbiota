@@ -94,7 +94,7 @@ if($collid){
 							<input type="checkbox" onclick="toggleFieldDiv('othercatalognumbersdiv')" /> <?php echo $LANG['OTHER_CAT_NUMS']; ?><br/>
 							<input type="checkbox" onclick="toggleFieldDiv('authordiv')" CHECKED /> <?php echo $LANG['AUTHOR']; ?><br/>
 							<input type="checkbox" onclick="toggleFieldDiv('familydiv')" CHECKED /> <?php echo $LANG['FAMILY']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('localitysecuritydiv')" CHECKED /> <?php echo $LANG['LOCALITY_SECURITY']; ?><br/>
+							<input type="checkbox" onclick="toggleFieldDiv('localitysecuritydiv')" CHECKED /> <?php echo $LANG['SECURITY']; ?><br/>
 							<input type="checkbox" onclick="toggleFieldDiv('countrydiv')" /> <?php echo $LANG['COUNTRY']; ?><br/>
 							<input type="checkbox" onclick="toggleFieldDiv('statediv')" CHECKED /> <?php echo $LANG['STATE_PROVINCE']; ?><br/>
 							<input type="checkbox" onclick="toggleFieldDiv('countydiv')" CHECKED /> <?php echo $LANG['COUNTY_PARISH']; ?><br/>
