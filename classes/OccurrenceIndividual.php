@@ -210,7 +210,7 @@ class OccurrenceIndividual extends Manager{
 			 }
 			 */
 			$protectLocality = false;
-			if($this->occArr['localitysecurity'] == 1 && !$isSecuredReader){
+			if($this->occArr['recordsecurity'] == 1 && !$isSecuredReader){
 				$protectLocality = true;
 				$retBool = true;
 				$this->occArr['localsecure'] = 1;
