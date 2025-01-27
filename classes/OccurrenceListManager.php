@@ -35,12 +35,10 @@ class OccurrenceListManager extends OccurrenceManager{
 		//Don't allow someone to query all occurrences if there are no conditions
 		if(!$sqlWhere) $sql .= 'WHERE o.occid IS NULL ';
 		if($this->sortArr) $sql .= 'ORDER BY '.implode(',', $this->sortArr);
-		/*
 		else{
-			$sql .= 'ORDER BY c.sortseq, c.collectionname ';
-			$pageRequest = ($pageRequest - 1)*$cntPerPage;
+			$sql .= 'ORDER BY o.collid ';
+			//$pageRequest = ($pageRequest - 1)*$cntPerPage;
 		}
-		*/
 		$sql .= ' LIMIT ' . $pageRequest . ',' . $cntPerPage;
 		//echo '<div>Spec sql: ' . $sql . '</div>';
 		$result = $this->conn->query($sql);
@@ -63,7 +61,6 @@ class OccurrenceListManager extends OccurrenceManager{
 					if(!$retArr[$row->occid]['collcode']) $retArr[$row->occid]['collcode'] = $row->collcodeoverride;
 					elseif($retArr[$row->occid]['collcode'] != $row->collcodeoverride) $retArr[$row->occid]['collcode'] .= '-'.$row->collcodeoverride;
 				}
-				$retArr[$row->occid]['collname'] = $row->collectionname;
 				$retArr[$row->occid]['icon'] = $row->icon;
 				$retArr[$row->occid]['catnum'] = $this->cleanOutStr($row->catalognumber);
 				$retArr[$row->occid]['family'] = $this->cleanOutStr($row->family);

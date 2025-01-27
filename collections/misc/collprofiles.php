@@ -906,6 +906,13 @@ if ($SYMB_UID) {
 			</div>
 			<?php
 			include('collprofilestats.php');
+			$actionPage = $CLIENT_ROOT . '/collections/';
+			if(!empty($SHOULD_USE_HARVESTPARAMS)){
+				$actionPage .= 'harvestparams.php';
+			}
+			else{
+				$actionPage .= 'search/index.php';
+			}
 			?>
 			<div style="margin-bottom: 2rem;">
 				<form name="coll-search-form" action="<?= $actionPage ?>" method="get">

@@ -1,10 +1,11 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyEditorManager.php');
-if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/list.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/list.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/list.en.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceListManager.php');
-include_once($SERVER_ROOT.'/classes/AssociationManager.php');
+if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/list.' . $LANG_TAG . '.php'))
+	include_once($SERVER_ROOT . '/content/lang/collections/list.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/list.en.php');
+
 header("Content-Type: text/html; charset=" . $CHARSET);
 
 $taxonFilter = array_key_exists('taxonfilter', $_REQUEST) ? filter_var($_REQUEST['taxonfilter'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -20,18 +21,6 @@ if($comingFrom != 'harvestparams' && $comingFrom != 'newsearch'){
 }
 
 $_SESSION['datasetid'] = filter_var($datasetid, FILTER_SANITIZE_NUMBER_INT);
-$associationManager = new AssociationManager();
-$shouldEstablishInverseRelationshipRecords = array_key_exists('establishInverseRelationshipRecords', $_REQUEST) ? true : false;
-if($shouldEstablishInverseRelationshipRecords){
-	echo '<div id="loading-div"><span>Establishing Inverse Relationship Records...</span></div>';
-	$associationManager->establishInverseRelationshipRecords();
-	if($comingFrom === 'search/index.php'){
-		header('Location: search/index.php');
-	} else{
-		header('Location: harvestparams.php');
-	}
-}
-
 
 $collManager = new OccurrenceListManager();
 $searchVar = $collManager->getQueryTermStr();
@@ -324,16 +313,6 @@ $_SESSION['citationvar'] = $searchVar;
 									$cultivarEpithet = !empty($splitSciname['cultivarEpithet']) ? ($taxonEditorObj->standardizeCultivarEpithet($splitSciname['cultivarEpithet'])) . ' ' : '';
 									$tradeName = !empty($splitSciname['tradeName']) ? ($taxonEditorObj->standardizeTradeName($splitSciname['tradeName']) . ' ') : '';
 									$nonItalicizedScinameComponent = $author . $cultivarEpithet . $tradeName;
-									if ($collId != $prevCollid) {
-										$prevCollid = $collId;
-										$isEditor = false;
-										if ($SYMB_UID && ($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'])) || (array_key_exists('CollEditor', $USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'])))) {
-											$isEditor = true;
-										}
-										echo '<tr><td colspan="2"><h2>';
-										echo '<a href="misc/collprofiles.php?collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($fieldArr["collname"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
-										echo '</h2><hr /></td></tr>';
-									}
 									echo '<tr><td width="60" valign="top" align="center">';
 									echo '<a href="misc/collprofiles.php?collid=' . $fieldArr['collid'] . '">';
 									if ($fieldArr["icon"]) {
@@ -372,7 +351,7 @@ $_SESSION['citationvar'] = $searchVar;
 										echo '<img src="' . $fieldArr['media']['thumbnailurl'] . '" style="height:70px" alt="' . (isset($LANG['IMG_OCC']) ? $LANG['IMG_OCC'] : 'Image Associated With the Occurence') . '"/></a></div>';
 									}
 									echo '<div style="margin:4px;">';
-									
+
 
 									if (isset($fieldArr['sciname'])) {
 										$sciStr = '<span style="font-style:italic;">' . $fieldArr['sciname'] . '</span>';
@@ -381,7 +360,7 @@ $_SESSION['citationvar'] = $searchVar;
 											$sciStr = '<a target="_blank" href="../taxa/index.php?tid=' . strip_tags($fieldArr['tid']) . '">'
 											. '<i> ' . strip_tags($splitSciname['base']) . '</i>'
 											. (!empty($nonItalicizedScinameComponent) ? (' ' . $nonItalicizedScinameComponent) : '') . '</a>' ;
-										} 
+										}
 										echo $sciStr;
 									} elseif ($fieldArr['localitysecurity'] > 1) {
 										echo (isset($LANG['ID_PROTECTED']) ? $LANG['ID_PROTECTED'] : 'Identification Protected');;
@@ -434,7 +413,6 @@ $_SESSION['citationvar'] = $searchVar;
 							$outStr = '';
 							$actionPage = $comingFrom === 'newsearch' ? 'search/index' : 'harvestparams';
 							foreach ($closeArr as $v) {
-                $v = htmlspecialchars($v, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 								$outStr .= '<a href="' . $actionPage  . '.php?taxa=' . $v . '">' . $v . '</a>, ';
 							}
 							echo trim($outStr, ' ,');

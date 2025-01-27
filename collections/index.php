@@ -14,7 +14,7 @@ if($catId == '' && isset($DEFAULTCATID)) $catId = $DEFAULTCATID;
 
 
 $collManager = new OccurrenceManager();
-//$collManager->reset();
+$collManager->reset();
 
 $collList = $collManager->getFullCollectionList($catId);
 $specArr = (isset($collList['spec'])?$collList['spec']:null);
