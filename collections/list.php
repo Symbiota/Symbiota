@@ -62,23 +62,6 @@ $_SESSION['citationvar'] = $searchVar;
 			});
 		});
 
-		// function establishInverseRelationshipRecords() {
-		// 	console.log('deleteMe got here in establishInverseRelationshipRecords');
-		// 	$.ajax({
-		// 		url: 'list.php',
-		// 		type: 'post',
-		// 		data: { action: 'establishInverseRelationshipRecords' },
-		// 		success: function(response) {
-		// 			console.log('deleteMe success');
-		// 			console.log(response);
-		// 		},
-		// 		error: function(xhr, status, error) {
-		// 			console.log('deleteMe failure');
-		// 			console.error(xhr.responseText);
-		// 		}
-		// 	});
-		// }
-
 		function validateOccurListForm(f) {
 			if (f.targetdatasetid.value == "") {
 				alert("<?php echo (isset($LANG['SELECT_DATASET']) ? $LANG['SELECT_DATASET'] : 'Please select a dataset to append occurrences, or select Create New Dataset'); ?>");
@@ -243,18 +226,6 @@ $_SESSION['citationvar'] = $searchVar;
 						if ($associationSearchStr = $collManager->getAssociationSearchStr()) {
 							if (strlen($associationSearchStr) > 300) $associationSearchStr = substr($associationSearchStr, 0, 300) . '<span class="taxa-span">... (<a href="#" onclick="$(\'.association-span\').toggle();return false;">' . htmlspecialchars($LANG['SHOW_ALL'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>)</span><span class="association-span" style="display:none;">' . substr($taxaSearchStr, 300) . '</span>'; // @TODO wouldn't this truncate in either case?
 							echo '<div><b>' . $LANG['ASSOCIATIONS'] . ':</b> ' . $associationSearchStr . '</div>';
-							// echo '<div><span>' . "Didn't find what you were looking for? Try " . '<form name="establish-inverse-relationships" id="establish-inverse-relationships" action="list.php" method="post" onsubmit="return establishInverseRelationshipRecords()"><button type="submit">populating your database with inverse relationships</button></form>' . ". Note that this may take serveral minutes." . '</span></div>';
-							?>
-							<!-- <div>
-								<span>Didn't find what you were looking for?</span>
-								<form name="establish-inverse-relationships" id="establish-inverse-relationships" action="list.php" method="post">
-									<input name="comingFrom" type="hidden" value="<?php echo $comingFrom; ?>" />
-									<input type="hidden" name="establishInverseRelationshipRecords" id="establishInverseRelationshipRecords" value="establishInverseRelationshipRecords" />
-									<button type="submit" class="top-breathing-room-rel bottom-breathing-room-rel">Populate your Database with Inverse Relationships</button>
-								</form>
-								<span>And try your search again. Note that this may take serveral minutes.</span>
-							</div> -->
-							<?php
 						}
 						if ($localSearchStr = $collManager->getLocalSearchStr()) {
 							echo '<div><b>' . $LANG['SEARCH_CRITERIA'] . ':</b> ' . $localSearchStr . '</div>';
