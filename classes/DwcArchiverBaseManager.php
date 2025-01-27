@@ -50,6 +50,24 @@ class DwcArchiverBaseManager extends Manager{
 		}
 	}
 
+	public function writeOutRecordBlockExternal($occidArr, $targetField='occid'){
+		if($occidArr){
+			$sql = $this->sqlBase.' WHERE oa.associationType="externalOccurrence" AND ' . $targetField . ' IN('.implode(',',$occidArr).') ';
+			if($rs = $this->conn->query($sql)){
+				while($r = $rs->fetch_assoc()){
+					$this->encodeArr($r);
+					$this->addcslashesArr($r);
+					$this->writeOutRecord($r);
+				}
+				$rs->free();
+			}
+			else{
+				$this->logOrEcho('ERROR writing out to extension file: '.$this->conn->error."\n");
+				$this->logOrEcho("\tSQL: ".$sql."\n");
+			}
+		}
+	}
+
 	private function writeOutRecord($outputArr){
 		if($this->fileHandler){
 			if($this->delimiter == ","){

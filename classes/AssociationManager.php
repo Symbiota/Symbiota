@@ -65,7 +65,7 @@ class AssociationManager extends OccurrenceTaxaManager{
         $relationshipType = (array_key_exists($relationshipAccessor, $associationArr) && $associationArr[$relationshipAccessor] !== 'any') ? $associationArr[$relationshipAccessor] : 'IS NOT NULL';
         $relationshipStr = (array_key_exists($relationshipAccessor, $associationArr) && $associationArr[$relationshipAccessor] !== 'any') ? ("='" . $relationshipType . "'") : ' IS NOT NULL';
 
-		$forwardSql = "SELECT oa.occid FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate  LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE oa.relationship " . $relationshipStr . " ";
+		$forwardSql = "SELECT oa.occid FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid  LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE oa.relationship " . $relationshipStr . " ";
 		$forwardSql .= $this->getAssociatedTaxonWhereFrag($associationArr);
 
         // "Reverse" association
@@ -73,7 +73,7 @@ class AssociationManager extends OccurrenceTaxaManager{
         $reverseRelationshipStr = (array_key_exists($relationshipAccessor, $associationArr) && $associationArr[$relationshipAccessor] !== 'any') ? ("='" . $reverseAssociationType . "'") : ' IS NOT NULL';
 
 
-		$reverseSql = "SELECT oa.occidAssociate FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE oa.relationship " . $reverseRelationshipStr . " ";
+		$reverseSql = "SELECT oa.occidAssociate FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE oa.relationship " . $reverseRelationshipStr . " ";
 
         $reverseSql .= $this->getAssociatedTaxonWhereFrag($associationArr);
 

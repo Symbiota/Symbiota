@@ -2114,10 +2114,15 @@ class DwcArchiverCore extends Manager{
 			$this->fieldArrMap['associations'] = $this->associationHandler->getFieldArrTerms();
 		}
 		if($this->associationHandler){
-			$this->associationHandler->writeOutRecordBlock($batchOccidArr, 'oa.occid');
-			//Now add inverse relationships
-			$this->associationHandler->setSqlBase(true);
-			$this->associationHandler->writeOutRecordBlock($batchOccidArr, 'oa.occidAssociate');
+			// $this->associationHandler->writeOutRecordBlock($batchOccidArr, 'oa.occid');
+			// //Now add inverse relationships
+			// $this->associationHandler->setSqlBase(true);
+			// $this->associationHandler->writeOutRecordBlock($batchOccidArr, 'oa.occidAssociate');
+
+			//Now to external records
+			$this->associationHandler->setSqlExternal();
+			$this->associationHandler->writeOutRecordBlockExternal($batchOccidArr, 'oa.occid');
+
 		}
 	}
 
