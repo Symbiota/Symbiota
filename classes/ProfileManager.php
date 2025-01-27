@@ -28,6 +28,13 @@ class ProfileManager extends Manager{
 		$this->conn = MySQLiConnectionFactory::getCon('write');
 	}
 
+	public function closeConnection(){
+		if($this->conn !== null){
+			$this->conn->close();
+			$this->conn = null;
+		}
+	}
+
 	public function reset(){
 		$domainName = filter_var($_SERVER['SERVER_NAME'], FILTER_SANITIZE_URL);
 		if($domainName == 'localhost') $domainName = false;
@@ -655,7 +662,7 @@ class ProfileManager extends Manager{
 						'INNER JOIN omcollections c ON o.collid = c.collid '.
 						'INNER JOIN taxa t ON o.tidinterpreted = t.tid '.
 						'INNER JOIN taxaenumtree e ON t.tid = e.tid ';
-					if($withImgOnly) $sql .= 'INNER JOIN images i ON o.occid = i.occid ';
+					if($withImgOnly) $sql .= 'INNER JOIN media i ON o.occid = i.occid ';
 					$sql .= 'WHERE v.category = "identification" AND v.ranking < 6 AND e.taxauthid = 1 '.
 						'AND (e.parenttid = '.$tid.' OR t.tid = '.$tid.') '.
 						'ORDER BY o.sciname,t.sciname,o.catalognumber ';
@@ -690,7 +697,7 @@ class ProfileManager extends Manager{
 			$sql = 'SELECT DISTINCT o.occid, o.catalognumber, o.stateprovince, '.
 				'CONCAT_WS("-",IFNULL(o.institutioncode,c.institutioncode),IFNULL(o.collectioncode,c.collectioncode)) AS collcode '.
 				'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
-			if($withImgOnly) $sql .= 'INNER JOIN images i ON o.occid = i.occid ';
+			if($withImgOnly) $sql .= 'INNER JOIN media i ON o.occid = i.occid ';
 			$sql .= 'WHERE (o.sciname IS NULL) '.
 				'ORDER BY c.institutioncode, o.catalognumber LIMIT 2000';
 			//echo '<div>'.$sql.'</div>';
@@ -1075,19 +1082,26 @@ class ProfileManager extends Manager{
 
 	private function getDynamicProperties($uid){
 		$returnVal = false;
-		$sql = 'SELECT dynamicProperties FROM users WHERE uid = ?';
-		$stmt = $this->conn->prepare($sql);
-		$stmt->bind_param('i', $uid);
-		$stmt->execute();
-		$respns= $stmt->get_result();
-		if($fetchedObj = $respns->fetch_object()){
-			$dynPropStr = $fetchedObj->dynamicProperties;
-		}
-		$respns->free();
-		if(isset($dynPropStr)){
-			if($dynPropArr = json_decode($dynPropStr, true)){
-				$returnVal = $dynPropArr;
+		try{
+			$sql = 'SELECT dynamicProperties FROM users WHERE uid = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $uid);
+				$stmt->execute();
+				$respns= $stmt->get_result();
+				if($fetchedObj = $respns->fetch_object()){
+					if(!empty($fetchedObj->dynamicProperties)){
+						if($dynPropArr = json_decode($fetchedObj->dynamicProperties, true)){
+							$returnVal = $dynPropArr;
+						}
+					}
+				}
+				$respns->free();
+				$stmt->close();
 			}
+		}
+		catch(Exception $e){
+			//Probably a new installation and schema does not yet exists, thus just catch error and let schema manager handle the issue
+			//echo $e->getMessage();
 		}
 		return $returnVal;
 	}

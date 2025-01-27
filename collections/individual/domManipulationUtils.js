@@ -1,3 +1,15 @@
+const addElemFirst = (parentDivId, targetChildDivId) => {
+  const parent = document.getElementById(parentDivId);
+  const targetChild = document.getElementById(targetChildDivId);
+  if (!parent || !targetChild) {
+    return;
+  }
+  if (!parent.contains(targetChild)) {
+    return;
+  }
+  parent.prepend(targetChild);
+};
+
 const reorderElements = (parentDivId, desiredDivIds, removeDivIds) => {
   const parent = document.getElementById(parentDivId);
   const allChildren = Array.from(parent.children);
@@ -24,7 +36,7 @@ const reorderElements = (parentDivId, desiredDivIds, removeDivIds) => {
 {
   /* <script type="text/javascript">
 		document.addEventListener('DOMContentLoaded', ()=>{
-			reorderElements("occur-div", ["cat-div", "hr", "sciname-div", "family-div","hr", "taxonremarks-div", "assoccatnum-div", "assoccatnum-div", "idqualifier-div","identref-div","identremarks-div", "determination-div", "hr", "identby-div", "identdate-div","verbeventid-div", "hr", "recordedby-div", "recordnumber-div", "record-id-div", "eventdate-div", "hr", "locality-div", "latlng-div", "verbcoord-div", "elev-div", "habitat-div", "assoctaxa-div", "attr-div", "notes-div", "hr", "rights-div", "contact-div", "openeditor-div"], ["occurrenceid-div", "disposition-div"]);
+			reorderElements("occur-div", ["cat-div", "hr", "sciname-div", "family-div","hr", "taxonremarks-div", "assoccatnum-div", "assoccatnum-div", "idqualifier-div","identref-div","identremarks-div", "determination-div", "hr", "identby-div", "identdate-div","verbeventid-div", "hr", "recordedby-div", "recordnumber-div", "eventdate-div", "hr", "locality-div", "latlng-div", "verbcoord-div", "elev-div", "habitat-div", "assoctaxa-div", "attr-div", "notes-div", "hr", "rights-div", "contact-div", "openeditor-div"], ["occurrenceid-div", "disposition-div"]);
 
 		});
 	</script> */

@@ -4,8 +4,9 @@ include_once($SERVER_ROOT.'/classes/OccurrenceMapManager.php');
 
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/map/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/map/index.' . $LANG_TAG . '.php');
 	else include_once($SERVER_ROOT . '/content/lang/collections/map/index.en.php');
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/header.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/header.en.php');
-    else include_once($SERVER_ROOT . '/content/lang/header.' . $LANG_TAG . '.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/templates/header.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/templates/header.en.php');
+    else include_once($SERVER_ROOT . '/content/lang/templates/header.' . $LANG_TAG . '.php');
+include_once($SERVER_ROOT . '/content/lang/collections/list.'.$LANG_TAG.'.php');
 
 header('Content-Type: text/html; charset='.$CHARSET);
 header("Accept-Encoding: gzip, deflate, br");
@@ -21,6 +22,7 @@ $recLimit = array_key_exists('recordlimit',$_REQUEST)?$_REQUEST['recordlimit']:1
 $catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
 $submitForm = array_key_exists('submitform',$_REQUEST)?$_REQUEST['submitform']:'';
+$geoJson = array_key_exists('footprintGeoJson', $_REQUEST)? $_REQUEST['footprintGeoJson']:'';
 
 $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 $topVal = $shouldUseMinimalMapHeader ? '6rem' : '0';
@@ -115,6 +117,9 @@ foreach ($coordArr as $collName => $coll) {
 		array_push($recordArr, [
 			'id' => $record['id'],
 			'tid' => $record['tid'],
+			'catalogNumber' => $record['catalogNumber'], 
+			'eventdate' => $record['eventdate'], 
+			'sciname' => $record['sn'], 
 			'collid' => $record['collid'],
 			'family' => $record['fam'],
 			'occid' => $recordId,
@@ -342,19 +347,20 @@ if(isset($_REQUEST['llpoint'])) {
 		}
 
 		function buildPanels(cross_portal_enabled) {
-         const cross_portal_results = document.getElementById("cross_portal_results");
-         const cross_portal_list = document.getElementById("cross_portal_list");
-         if(cross_portal_results) {
-            if(cross_portal_enabled) {
-               cross_portal_results.style.display = "block";
+			const cross_portal_list = document.getElementById("cross_portal_list");
+			const portal_symbology = document.getElementById("portalsymbology");
+
+			if(cross_portal_enabled) {
                cross_portal_list.style.display = "block";
-            } else {
-               cross_portal_results.style.display = "none";
+               portal_symbology.style.display = "block";
+			} else {
                cross_portal_list.style.display = "none";
-            }
-         }
+               portal_symbology.style.display = "none";
+			}
+
 			setPanels(true);
 			$("#accordion").accordion("option",{active: 1});
+			$("#tabs2").tabs({ active: 0 });
 			buildPortalLegend();
 			buildTaxaLegend();
 			buildCollectionLegend();
@@ -411,7 +417,15 @@ if(isset($_REQUEST['llpoint'])) {
 			}
 
 			let taxaArr = Object.values(taxaLegendMap).sort((a, b) => {
-				if(a.family === b.family) return 0;
+				if(a.family === b.family) {
+					if(a.sn === b.sn) {
+						return 0;
+					} else if(a.sn> b.sn) {
+						return 1;
+					} else {
+						return -1;
+					}
+				}
 				else if(a.family > b.family) return 1;
 				else return -1;			
 			})
@@ -497,7 +511,7 @@ if(isset($_REQUEST['llpoint'])) {
 			document.getElementById("leftlong").value = '';
 			document.getElementById("bottomlat").value = '';
 			document.getElementById("rightlong").value = '';
-			document.getElementById("polycoords").value = '';
+			document.getElementById("footprintGeoJson").value = '';
 			document.getElementById("distFromMe").value = '';
 			document.getElementById("noshapecriteria").style.display = "block";
 			document.getElementById("polygeocriteria").style.display = "none";
@@ -512,7 +526,15 @@ if(isset($_REQUEST['llpoint'])) {
 			} else if(shape.type === 'rectangle') {
 				setRectangleCoords(shape.upperLat, shape.lowerLat, shape.leftLng, shape.rightLng);
 			} else if (shape.type === 'polygon') {
-				setPolyCoords(shape.wkt);
+            //Doesn't support multiple polygons
+            setPolyCoords(JSON.stringify({
+               "type": "Feature",
+               "properties": {},
+               "geometry": {
+                  "type": "Polygon",
+                  "coordinates": [shape.latlngs.map(([lat, lng]) => [lng, lat])]
+               },
+            }));
 			}
 		}
 
@@ -525,7 +547,7 @@ if(isset($_REQUEST['llpoint'])) {
 			document.getElementById("leftlong").value = '';
 			document.getElementById("bottomlat").value = '';
 			document.getElementById("rightlong").value = '';
-			document.getElementById("polycoords").value = '';
+			document.getElementById("footprintGeoJson").value = '';
 			document.getElementById("distFromMe").value = '';
 			document.getElementById("noshapecriteria").style.display = "none";
 			document.getElementById("polygeocriteria").style.display = "none";
@@ -542,7 +564,7 @@ if(isset($_REQUEST['llpoint'])) {
 			document.getElementById("pointlat").value = '';
 			document.getElementById("pointlong").value = '';
 			document.getElementById("radius").value = '';
-			document.getElementById("polycoords").value = '';
+			document.getElementById("footprintGeoJson").value = '';
 			document.getElementById("distFromMe").value = '';
 			document.getElementById("noshapecriteria").style.display = "none";
 			document.getElementById("polygeocriteria").style.display = "none";
@@ -552,7 +574,7 @@ if(isset($_REQUEST['llpoint'])) {
 		}
 
 		function setPolyCoords(wkt) {
-			document.getElementById("polycoords").value = wkt;
+			document.getElementById("footprintGeoJson").value = wkt;
 			document.getElementById("pointlat").value = '';
 			document.getElementById("pointlong").value = '';
 			document.getElementById("radius").value = '';
@@ -922,10 +944,6 @@ if(isset($_REQUEST['llpoint'])) {
 
 				if(heatmapLayer) map.mapLayer.removeLayer(heatmapLayer);
 
-				getOccurenceRecords(formData).then(res => {
-					if (res) loadOccurenceRecords(res);
-				});
-
 				let searches = [
 					searchCollections(formData).then(res => {
 						res.label = "<?= $LANG['CURRENT_PORTAL']?>";
@@ -940,11 +958,6 @@ if(isset($_REQUEST['llpoint'])) {
 						res.label= formData.get('cross_portal_label');
 						return res;
 					}));
-
-					getOccurenceRecords(formData, formData.get('cross_portal')).then(res => {
-						if (res) loadOccurenceRecords(res, "external_occurrencelist");
-					});
-
 				}
 
 				//This is for handeling multiple portals
@@ -963,6 +976,9 @@ if(isset($_REQUEST['llpoint'])) {
 					}
 					count++;
 				}
+
+			    //build records table
+				buildRecordsPanel(recordArr);
 
 				//Need to generate colors for each group
 				buildPanels(formData.get('cross_portal_switch'));
@@ -1115,8 +1131,12 @@ if(isset($_REQUEST['llpoint'])) {
 				group.origin = "<?= $SERVER_HOST . $CLIENT_ROOT?>";
 				mapGroups = [group];
 
-				getOccurenceRecords(formData).then(res => {
-					if(res) loadOccurenceRecords(res);
+
+				$( document ).ready(function() {
+					// Build Records Panel
+					buildRecordsPanel(recordArr);
+
+					// Build Taxa | Portal | Collection Panels
 					buildPanels(formData.get('cross_portal_switch'));
 
 					mapGroups.forEach(group => {
@@ -1130,7 +1150,7 @@ if(isset($_REQUEST['llpoint'])) {
 					drawPoints();
 
 					fitMap();
-				});
+				})
 			}
 			fitMap();
 		}
@@ -1436,30 +1456,21 @@ if(isset($_REQUEST['llpoint'])) {
 
 				if(heatmapLayer) heatmapLayer.setData({data: []})
 
-				getOccurenceRecords(formData).then(res => {
-					if (res) loadOccurenceRecords(res);
-				});
-
 				let searches = [
-               searchCollections(formData).then(res=>{
-                  res.label = "<?= $LANG['CURRENT_PORTAL']?>";
-                  return res;
-               }),
-            ]
+					searchCollections(formData).then(res=>{
+						res.label = "<?= $LANG['CURRENT_PORTAL']?>";
+						return res;
+					}),
+				]
 
-            //If Cross Portal Checkbox Enabled add cross portal search
-            if(formData.get('cross_portal_switch') && formData.get('cross_portal')) {
-               formData.set("taxa", formData.get('external-taxa-input'))
-               searches.push(searchCollections(formData, formData.get('cross_portal')).then(res => {
-                  res.label= formData.get('cross_portal_label')
-                  return res;
-               }))
-
-               getOccurenceRecords(formData, formData.get('cross_portal')).then(res => {
-                  if (res) loadOccurenceRecords(res, "external_occurrencelist");
-               });
-            }
-
+				//If Cross Portal Checkbox Enabled add cross portal search
+				if(formData.get('cross_portal_switch') && formData.get('cross_portal')) {
+				   formData.set("taxa", formData.get('external-taxa-input'))
+				   searches.push(searchCollections(formData, formData.get('cross_portal')).then(res => {
+					  res.label= formData.get('cross_portal_label')
+					  return res;
+				   }))
+				}
 				//This is for handeling multiple portals
 				searches = await Promise.all(searches)
 
@@ -1469,6 +1480,9 @@ if(isset($_REQUEST['llpoint'])) {
 					group.origin = search.origin;
 					mapGroups.push(group);
 				}
+
+			    //build records table
+				buildRecordsPanel(recordArr);
 
 				buildPanels(formData.get('cross_portal_switch'));
 
@@ -1677,8 +1691,11 @@ if(isset($_REQUEST['llpoint'])) {
 					group
 				]
 
-				getOccurenceRecords(formData).then(res => {
-					if(res) loadOccurenceRecords(res);
+				$( document ).ready(function() {
+					//Build Records Panel
+					buildRecordsPanel(recordArr);
+
+					// Build Taxa | Portal | Collection Panels
 					buildPanels(formData.get('cross_portal_switch'));
 
 					genClusters(taxaLegendMap, "taxa");
@@ -1690,7 +1707,7 @@ if(isset($_REQUEST['llpoint'])) {
 					drawPoints();
 
 					fitMap();
-				});
+				})
 			}
 
 			fitMap();
@@ -1708,8 +1725,8 @@ if(isset($_REQUEST['llpoint'])) {
 		}
 
 		async function searchCollections(body, host) {
-         const emptyResponse = { taxaArr: [], collArr: [], recordArr: [], origin: host? host: "host" };
-         sessionStorage.querystr = "";
+			const emptyResponse = { taxaArr: [], collArr: [], recordArr: [], origin: host? host: "host" };
+			sessionStorage.querystr = "";
 			try {
 				const url = host? `${host}/collections/map/rpc/searchCollections.php`: 'rpc/searchCollections.php'
 
@@ -1717,41 +1734,197 @@ if(isset($_REQUEST['llpoint'])) {
 					method: "POST",
 					mode: "cors",
 					body: body,
-			});
-            if(response) {
-             const search = await response.json()
-               sessionStorage.querystr = search.query;
-               return search;
-            } else {
-               return emptyResponse;
-            }
+				});
+				if(response) {
+					const search = await response.json()
+					sessionStorage.querystr = search.query;
+
+					//Update form actions with updated searchvar value
+					let searchVarInputs = document.querySelectorAll("input[name=searchvar]");
+					for(let input of searchVarInputs) {
+						input.value=search.query;
+					}
+
+					return search;
+				} else {
+					return emptyResponse;
+				}
 			} catch(e) {
 				return emptyResponse;
 			}
 		}
 
-		async function getOccurenceRecords(body, host) {
-			const url = host? `${host}/collections/map/occurrencelist.php`: 'occurrencelist.php'
-			let response = await fetch(url, {
-				method: "POST",
-				credentials: "same-origin",
-				body: body
-			});
+		function buildRecordsPanel(records, page = 1, viewLimit=100) {
+			const setElem = (id, innerHTML) => {
+				const elem = document.getElementById(id)
+				if(elem) {
+					elem.innerHTML = innerHTML;
+				}
+			}
 
-			return response? await response.text(): '';
-		}
+			const totalRecords = records.length;
 
-		function loadOccurenceRecords(html, id="occurrencelist") {
-			document.getElementById(id).innerHTML = html;
-			$('.pagination a').click(async function(e){
-				e.preventDefault();
-				let response = await fetch(e.target.href, {
-					method: "GET",
-					credentials: "same-origin",
+			setElem("record-active-page", page);
+
+			const totalPages = Math.ceil(totalRecords / viewLimit);
+
+			const createControl = () => {
+				let pagination_control = document.createElement('div')
+				pagination_control.style = "display:flex; gap: 0.25rem;"
+
+				if(page - 5 > 1){
+					let first = document.createElement('a');
+					first.append("First")
+					first.setAttribute('href', "#page=" + 1);
+					first.addEventListener('click', e => {
+						buildRecordsPanel(records, 1, viewLimit);
+					});
+					pagination_control.append(first);
+				}
+
+				if((page - 10) > 0) {
+					let left_arrow = document.createElement('a');
+					left_arrow.append("<<")
+					left_arrow.setAttribute('href', "#page=" + (page - 10));
+					left_arrow.addEventListener('click', e => {
+						buildRecordsPanel(records, (page - 10), viewLimit);
+					});
+					pagination_control.append(left_arrow);
+				}
+
+				const start_page = page - 5 > 0? page - 5: 1;
+				let end_page = totalPages < (page + 5)? totalPages: page + 5;
+
+				if(end_page < 11 && totalPages >= 11) end_page = 11;
+
+				if(totalPages > 1) {
+					for(let i = start_page; i <= end_page; i++ ) {
+						let page_control = null;
+						if(i === page) {
+							page_control = document.createElement('span');
+							page_control.style = "font-weight: bold";
+						} else {
+							page_control = document.createElement('a');
+							page_control.setAttribute('href', "#page=" + i);
+							page_control.addEventListener('click', e => {
+								buildRecordsPanel(records, i, viewLimit);
+							});
+						}
+						page_control.append(i);
+						pagination_control.append(page_control);
+					}
+				}
+
+				if((totalPages - page) >= 10) {
+					let right_arrow = document.createElement('a');
+					right_arrow.append(">>")
+					right_arrow.setAttribute('href', "#page=" + (page + 10));
+					right_arrow.addEventListener('click', e => {
+						buildRecordsPanel(records, (page + 10), viewLimit);
+					});
+
+					pagination_control.append(right_arrow);
+				}
+
+				if((5 + page) < totalPages){
+					let last = document.createElement('a');
+					last.append("Last")
+					last.setAttribute('href', "#page=" + totalPages);
+					last.addEventListener('click', e => {
+						buildRecordsPanel(records, totalPages, viewLimit);
+					});
+					pagination_control.append(last);
+				}
+
+				return pagination_control;
+			}
+
+			let start_record = 1 + (page - 1) * viewLimit;
+			let end_record = (page * viewLimit) > totalRecords? totalRecords: page * viewLimit;
+
+			setElem("start-record", start_record);
+			setElem("end-record", end_record);
+			setElem("pagination-total-records", totalRecords);
+
+			let pagination_control_top = document.getElementById('record-pagination-top')
+			if(pagination_control_top) {
+				pagination_control_top.innerHTML = "";
+				pagination_control_top.append(createControl());
+			}
+	
+			let pagination_control_bottom = document.getElementById('record-pagination-bottom')
+			if(pagination_control_bottom) {
+				pagination_control_bottom.innerHTML = "";
+				pagination_control_bottom.append(createControl());
+			}
+				
+			const pagination_summary = document.getElementById('record-pagination-summary')
+			if(pagination_summary) {
+				setElem("record-pagination-summary-bottom", pagination_summary.innerHTML);
+			}
+
+			const tbody = document.querySelector("#occurrencelist tbody");
+			tbody.innerHTML = '';
+
+			for(let i = start_record - 1; i < end_record && i < totalRecords; i++) {
+				const { occid, catalogNumber, id, sciname, eventdate, host, tid} = records[i];
+				let row = document.createElement("tr");
+				let cat = document.createElement("td");
+				let cat_link = document.createElement("a");
+				cat_link.setAttribute('href', '#occid=' + occid);
+				cat_link.addEventListener('click', () => {
+					openRecord(records[i]);
 				})
-				loadOccurenceRecords(await response.text(), id)
-				return false;
-			});
+				cat_link.id = "label" + occid;
+				cat_link.append(catalogNumber ? catalogNumber: '');
+				cat_link.id = "cat" + occid;
+				cat.append(cat_link);
+
+				let collector = document.createElement("td");
+				let occurrence_link = document.createElement("a");
+				occurrence_link.setAttribute('href', '#occid=' + occid);
+				occurrence_link.addEventListener('click', () => {
+					openRecord(records[i]);
+				})
+				occurrence_link.id = "label" + occid;
+				occurrence_link.append(id? id: '')
+				collector.append(occurrence_link);
+
+				let date = document.createElement("td");
+				date.append(eventdate);
+
+				let taxa_name = document.createElement("td");
+				let taxa_link = document.createElement("a");
+				taxa_link.setAttribute('href', host + '/taxa/index.php?tid=' + tid);
+				taxa_link.setAttribute('target', 'blank');
+				taxa_link.append(sciname? sciname: '');
+				taxa_name.append(taxa_link);
+
+				let map_helper_container = document.createElement("td");
+				map_helper_container.style = "vertical-align: middle";
+				let map_helper = document.createElement("div");
+				let globe_img = document.createElement("img");
+
+				globe_img.src = '../../images/world.png';
+				globe_img.alt = 'See Map Point';
+				globe_img.style = 'cursor:pointer;';
+
+				globe_img.addEventListener('click', () => {
+					emit_occurrence_click(occid)
+				});
+
+				map_helper.append(globe_img);
+				map_helper.style="display:flex; justify-content:center;"
+				map_helper_container.append(map_helper);
+
+				row.append(cat)
+				row.append(collector);
+				row.append(date);
+				row.append(taxa_name);
+				row.append(map_helper_container);
+
+				tbody.append(row);
+			}
 		}
 
 		function resetSymbology(keyMap, type, getId = v => v.id, fullreset) {
@@ -1836,7 +2009,6 @@ if(isset($_REQUEST['llpoint'])) {
 			autoColor("portal", v => v.portalid, portalLegendMap)
 		};
 
-		//This is used in occurrencelist.php which is submodule of this
 		function emit_occurrence_click(occid) {
 			document.dispatchEvent(new CustomEvent('occur_click', {
 				detail: {
@@ -1872,7 +2044,7 @@ if(isset($_REQUEST['llpoint'])) {
 					shapeType = "circle"
 				} else if(document.getElementById("upperlat").value) {
 					shapeType = "rectangle"
-				} else if(document.getElementById("polycoords").value) {
+				} else if(document.getElementById("footprintGeoJson").value) {
 					shapeType = "polygon"
 				}
 
@@ -1883,9 +2055,9 @@ if(isset($_REQUEST['llpoint'])) {
 
 				if(shapeType) {
 					shape = loadMapShape(shapeType, {
-						polygonLoader: () => document.getElementById("polycoords").value.trim(),
+						polygonLoader: () => ({geoJSON: document.getElementById("footprintGeoJson").value.trim()}),
 						circleLoader: () => {
-                     const units = document.getElementById("pointunits").value;
+							const units = document.getElementById("pointunits").value;
 							return {
 								radius: parseFloat(document.getElementById("radius").value),
 								radUnits: units == "mi" || units == "km"? units: "km",
@@ -2019,17 +2191,17 @@ Record Limit:
 											<input type="hidden" id="gridSizeSetting" name="gridSizeSetting" value="<?php echo $gridSize; ?>" />
 											<input type="hidden" id="minClusterSetting" name="minClusterSetting" value="<?php echo $minClusterSize; ?>" />
 											<input type="hidden" id="clusterSwitch" name="clusterSwitch" value="<?php echo $clusterOff; ?>" />
-											<input type="hidden" id="pointlat" name="pointlat" value='<?php echo isset($pointLat)? $pointLat : "" ?>' />
-											<input type="hidden" id="pointlong" name="pointlong" value='<?php echo isset($pointLng)? $pointLng : "" ?>' />
-											<input type="hidden" id="pointunits" name="pointunits" value='<?php echo isset($pointUnit)? $pointUnit : "km" ?>' />
-											<input type="hidden" id="radius" name="radius" value='<?php echo isset($pointRad)? $pointRad : "" ?>' />
-											<input type="hidden" id="upperlat" name="upperlat" value='<?php echo isset($upperLat)? $upperLat : "" ?>' />
-											<input type="hidden" id="rightlong" name="rightlong" value='<?php echo isset($upperLng)? $upperLng : "" ?>' />
-											<input type="hidden" id="bottomlat" name="bottomlat" value='<?php echo isset($lowerLat)? $lowerLat : "" ?>' />
-											<input type="hidden" id="leftlong" name="leftlong" value='<?php echo isset($lowerLng)? $lowerLng : "" ?>' />
-											<input type="hidden" id="polycoords" name="polycoords" value='<?php echo $mapManager->getSearchTerm('polycoords'); ?>' />
-											<button data-role="none" type="button" name="resetbutton" onclick="resetQueryForm(this.form)"><?php echo $LANG['RESET']; ?></button>
-											<button data-role="none" name="submitform" type="submit" ><?php echo $LANG['SEARCH']; ?></button>
+											<input type="hidden" id="pointlat" name="pointlat" value='<?php echo isset($pointLat)? $pointLat:"" ?>' />
+											<input type="hidden" id="pointlong" name="pointlong" value='<?php echo isset($pointLng)? $pointLng:"" ?>' />
+											<input type="hidden" id="pointunits" name="pointunits" value='<?php echo isset($pointUnit)? $pointUnit:"km" ?>' />
+											<input type="hidden" id="radius" name="radius" value='<?php echo isset($pointRad)? $pointRad:"" ?>' />
+											<input type="hidden" id="upperlat" name="upperlat" value='<?php echo isset($upperLat)? $upperLat:"" ?>' />
+											<input type="hidden" id="rightlong" name="rightlong" value='<?php echo isset($upperLng)? $upperLng:"" ?>' />
+											<input type="hidden" id="bottomlat" name="bottomlat" value='<?php echo isset($lowerLat)? $lowerLat:"" ?>' />
+											<input type="hidden" id="leftlong" name="leftlong" value='<?php echo isset($lowerLng)? $lowerLng:"" ?>' />
+											<input type="hidden" id="footprintGeoJson" name="footprintGeoJson" value='<?php echo $mapManager->getSearchTerm('footprintGeoJson') ?>' />
+											<button data-role="none" type="button" name="resetbutton" onclick="resetQueryForm(this.form)"><?php echo (isset($LANG['RESET'])?$LANG['RESET']:'Reset'); ?></button>
+											<button data-role="none" name="submitform" type="submit" ><?php echo (isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search'); ?></button>
 										</div>
 									</div>
 									<div style="margin:5 0 5 0;"><hr /></div>
@@ -2105,8 +2277,8 @@ Record Limit:
 									</div>
 									<div style="margin:5 0 5 0;"><hr /></div>
 									<div id="shapecriteria">
-										<div id="noshapecriteria" style="display:<?php echo ((!$mapManager->getSearchTerm('polycoords') && !$mapManager->getSearchTerm('upperlat'))?'block':'none'); ?>;">
-											<div id="geocriteria" style="display:<?php echo ((!$mapManager->getSearchTerm('polycoords') && !$distFromMe && !$mapManager->getSearchTerm('pointlat') && !$mapManager->getSearchTerm('upperlat'))?'block':'none'); ?>;">
+										<div id="noshapecriteria" style="display:<?php echo ((!$mapManager->getSearchTerm('footprintGeoJson') && !$mapManager->getSearchTerm('upperlat'))?'block':'none'); ?>;">
+											<div id="geocriteria" style="display:<?php echo ((!$mapManager->getSearchTerm('footprintGeoJson') && !$distFromMe && !$mapManager->getSearchTerm('pointlat') && !$mapManager->getSearchTerm('upperlat'))?'block':'none'); ?>;">
 												<div>
 													<?php echo (isset($LANG['SHAPE_TOOLS'])?$LANG['SHAPE_TOOLS']:'Use the shape tools on the map to select occurrences within a given shape'); ?>.
 												</div>
@@ -2119,7 +2291,7 @@ Record Limit:
 												</div>
 											</div>
 										</div>
-										<div id="polygeocriteria" style="display:<?php echo (($mapManager->getSearchTerm('polycoords'))?'block':'none'); ?>;">
+										<div id="polygeocriteria" style="display:<?php echo (($mapManager->getSearchTerm('footprintGeoJson'))?'block':'none'); ?>;">
 											<div>
 												<?php echo (isset($LANG['WITHIN_POLYGON'])?$LANG['WITHIN_POLYGON']:'Within the selected polygon'); ?>.
 											</div>
@@ -2134,7 +2306,7 @@ Record Limit:
 												<?php echo (isset($LANG['WITHIN_RECTANGLE'])?$LANG['WITHIN_RECTANGLE']:'Within the selected rectangle'); ?>.
 											</div>
 										</div>
-										<div id="deleteshapediv" style="margin-top:5px;display:<?php echo (($mapManager->getSearchTerm('pointlat') || $mapManager->getSearchTerm('upperlat') || $mapManager->getSearchTerm('polycoords'))?'block':'none'); ?>;">
+										<div id="deleteshapediv" style="margin-top:5px;display:<?php echo (($mapManager->getSearchTerm('pointlat') || $mapManager->getSearchTerm('upperlat') || $mapManager->getSearchTerm('footprintGeoJson'))?'block':'none'); ?>;">
 											<button class="button-danger" data-role="none" type="button" onclick="deleteMapShape()"><?php echo (isset($LANG['DELETE_SHAPE'])?$LANG['DELETE_SHAPE']:'Delete Selected Shape'); ?></button>
 										</div>
 									</div>
@@ -2167,6 +2339,10 @@ Record Limit:
 									<div style="margin-top:5px;">
 										<input data-role="none" type='checkbox' name='hasimages' value='1' <?php if($mapManager->getSearchTerm('hasimages')) echo "CHECKED"; ?> >
 										<?php echo (isset($LANG['LIMIT_IMAGES'])?$LANG['LIMIT_IMAGES']:'Limit to Specimens with Images Only'); ?>
+									</div>
+									<div style="margin-top:5px;">
+										<input data-role="none" type='checkbox' name='hasaudio' value='1' <?php if($mapManager->getSearchTerm('hasaudio')) echo "CHECKED"; ?> >
+										<?php echo (isset($LANG['LIMIT_AUDIO'])?$LANG['LIMIT_AUDIO']:'Limit to Specimens with Images Only'); ?>
 									</div>
 									<div style="margin-top:5px;">
 										<input data-role="none" type='checkbox' name='hasgenetic' value='1' <?php if($mapManager->getSearchTerm('hasgenetic')) echo "CHECKED"; ?> >
@@ -2292,17 +2468,69 @@ Record Limit:
 						<h3 id="recordstaxaheader" style="display:none;padding-left:30px;"><?php echo (isset($LANG['RECORDS_TAXA'])?$LANG['RECORDS_TAXA']:'Records and Taxa'); ?></h3>
 						<div id="tabs2" style="display:none;padding:0px;">
 							<ul>
-								<li><a href='#occurrencelist'><span><?= $LANG['RECORDS'] ?></span></a></li>
-								<li id="cross_portal_results"><a href='#external_occurrencelist'><span><?= $LANG['EXTERNAL_RECORDS'] ?></span></a></li>
+								<li><a href='#occurrencelist'><?= $LANG['RECORDS'] ?></a></li>
 								<li id="cross_portal_list"><a href='#portalsymbology'><span><?= $LANG['PORTAL_LIST'] ?></span></a></li>
-						   	<li><a href='#symbology'><span><?= $LANG['COLLECTIONS'] ?></span></a></li>
+								<li><a href='#symbology'><span><?= $LANG['COLLECTIONS'] ?></span></a></li>
 								<li><a href='#maptaxalist'><span><?= $LANG['TAXA_LIST'] ?></span></a></li>
 							</ul>
-							<div id="occurrencelist" style="">
-								loading...
-							</div>
-							<div id="external_occurrencelist" style="">
-								loading...
+							<div id="occurrencelist">
+								<div style="display: flex; gap: 1rem; margin-bottom: 0.5rem;">
+									<form name="downloadForm" action="../download/index.php" method="post" onsubmit="targetPopup(this)">
+										<button class="icon-button" title="<?php echo $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>">
+											<svg style="width:1.3em" alt="<?php echo $LANG['IMG_DWNL_DATA']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
+										</button>
+										<input name="searchvar" type="hidden" value="<?= $searchVar ?> " />
+										<input name="reclimit" type="hidden" value="<?php echo $recLimit; ?>" />
+										<input name="sourcepage" type="hidden" value="map" />
+										<input name="dltype" type="hidden" value="specimen" />
+									</form>
+
+									<form name="fullquerykmlform" action="kmlhandler.php" method="post" target="_blank">
+										<button class="icon-button" name="submitaction" type="submit" class="button" title="Download KML file">
+												<svg style="width:1.3em" alt="<?php echo $LANG['IMG_DWNL_DATA']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
+												<span style="color: var(--light-color);">KML</span>
+										</button>
+										<input name="searchvar" type="hidden" value="<?= $searchVar ?> " />
+									</form>
+
+									<button class="icon-button" onclick="copyUrl('<?= htmlspecialchars(GeneralUtil::getDomain() . $CLIENT_ROOT)?>')" title="<?php echo (isset($LANG['COPY_TO_CLIPBOARD'])?$LANG['COPY_TO_CLIPBOARD']:'Copy URL to Clipboard'); ?>">
+											<svg alt="Copy as a link." style="width:1.2em;" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg>
+									</button>
+								</div>
+
+								<hr/>
+								<div id="record-pagination-top">
+								</div>	
+
+								<div id="record-pagination-summary">
+									<?= $LANG['PAGINATION_PAGE'] ?>
+									<span id="record-active-page"></span>
+									<?= $LANG['PAGINATION_RECORDS'] ?>
+									<span id="start-record"></span>-<span id="end-record"></span>
+									<?= ' ' . $LANG['PAGINATION_OF'] . ' ' ?>
+									<span id="pagination-total-records"></span>
+								</div>
+
+								<hr/>
+								<table id="records-table" class="styledtable" style="font-size:.9rem;">
+									<thead>
+										<th><?=$LANG['CATALOG_NUMBER']?></th>
+										<th><?=$LANG['COLLECTOR']?></th>
+										<th><?=$LANG['EVENTDATE']?></th>
+										<th><?=$LANG['SCIENTIFIC_NAME']?></th>
+										<th><?=$LANG['MAP_LINK']?></th>
+									</thead>
+									<tbody>
+
+									</tbody>
+								</table>
+								<hr/>
+
+								<div id="record-pagination-bottom">
+								</div>	
+
+								<div id="record-pagination-summary-bottom" style="margin-bottom:2rem">
+								</div>	
 							</div>
 							<div id="portalsymbology" style="">
 								<div style="height:40px;margin-bottom:15px;">

@@ -15,8 +15,7 @@ $schemaManager = new SchemaManager();
 $verHistory = $schemaManager->getVersionHistory();
 $curentVersion = $schemaManager->getCurrentVersion();
 
-//if(!$IS_ADMIN && $curentVersion) header('Location: ../profile/index.php?refurl=../admin/schemamanager.php');
-$IS_ADMIN = true;
+if(!$IS_ADMIN && $curentVersion) header('Location: ../profile/index.php?refurl=../admin/schemamanager.php');
 ?>
 <html lang="en">
 	<head>
@@ -63,7 +62,7 @@ $IS_ADMIN = true;
 				?>
 				<div style="margin:15px;">
 					<label>Current version: </label>
-					<?php echo $curentVersion ? $curentVersion : 'no schema detected'; ?>
+					<?= $curentVersion ? $curentVersion : 'no schema detected'; ?>
 				</div>
 				<?php
 				if($verHistory){
@@ -92,7 +91,7 @@ $IS_ADMIN = true;
 							We recommend creating a backup of the database before applying any database patches.
 						</div>
 						<?php
-						if($curentVersion != '3.1'){
+						if($curentVersion != '3.2'){
 							if(!is_writable($SERVER_ROOT . '/content/logs/install/')){
 								?>
 								<div class="info-div">
@@ -109,11 +108,11 @@ $IS_ADMIN = true;
 								<select name="schemaCode">
 									<?php
 									if($curentVersion){
-										$schemaPatchArr = array('1.1', '1.2', '3.0', '3.1');
+										$schemaPatchArr = array('1.1', '1.2', '3.0', '3.1', '3.2');
 										foreach($schemaPatchArr as $schemaOption){
 											if($schemaOption > $curentVersion) echo '<option value="' . $schemaOption . '">Schema Patch ' . $schemaOption . '</option>';
 										}
-										if($curentVersion == '3.1') echo '<option value="">Schema is Current - nothing to do</option>';
+										if($curentVersion == '3.2') echo '<option value="">Schema is Current - nothing to do</option>';
 									}
 									else{
 										echo '<option value="baseInstall">New Install (ver. 3.0)</option>';
@@ -131,15 +130,15 @@ $IS_ADMIN = true;
 							</div>
 							<div class="form-section">
 								<label>Host:</label>
-								<?php echo $host; ?>
+								<?= $host ?>
 							</div>
 							<div class="form-section">
 								<label>Database:</label>
-								<?php echo $database; ?>
+								<?= $database ?>
 							</div>
 							<div class="form-section">
 								<label>Port:</label>
-								<?php echo $port; ?>
+								<?= $port; ?>
 							</div>
 							<div class="form-section">
 								<button name="action" type="submit" value="installSchema">Install</button>

@@ -9,6 +9,7 @@ $LANG['HOME'] = 'Home';
 //Taxon Quick Search plugin variables
 $LANG['QSEARCH_SEARCH'] = 'Taxon Search';
 $LANG['QSEARCH_SEARCH_BUTTON'] = 'Search';
+$LANG['TAXON'] = 'Taxon';
 
 //Slideshow plugin variables
 $LANG['HIDE_CAPTION'] = 'HIDE CAPTION';

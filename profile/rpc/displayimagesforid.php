@@ -16,18 +16,18 @@ foreach($imgArr as $imgArr){
 	$imgTn = $imgArr['thumbnailurl'];
 	if($imgTn){
 		$imgUrl = $imgTn;
-		if($IMAGE_DOMAIN && substr($imgTn,0,1)=='/'){
-			$imgUrl = $IMAGE_DOMAIN . $imgTn;
+		if($MEDIA_DOMAIN && substr($imgTn,0,1)=='/'){
+			$imgUrl = $MEDIA_DOMAIN . $imgTn;
 		}
 	}
-	elseif($IMAGE_DOMAIN && substr($imgUrl,0,1)=='/'){
-		$imgUrl = $IMAGE_DOMAIN . $imgUrl;
+	elseif($MEDIA_DOMAIN && substr($imgUrl,0,1)=='/'){
+		$imgUrl = $MEDIA_DOMAIN . $imgUrl;
 	}
 	?>
 
 	<div class="tndiv" style="margin-top: 15px; margin-bottom: 15px">
 		<div class="tnimg">
-			<a href="imgdetails.php?imgid=<?php echo htmlspecialchars($imgId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+			<a href="imgdetails.php?mediaid=<?php echo htmlspecialchars($imgId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
 				<img src="<?php echo $imgUrl; ?>" />
 			</a>
 		</div>
