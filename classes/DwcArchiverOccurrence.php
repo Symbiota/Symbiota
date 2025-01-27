@@ -73,6 +73,10 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['verbatimTaxonRank'] = 't.unitind3 AS verbatimTaxonRank';
 		$this->occurDefArr['terms']['infraspecificEpithet'] = 'http://rs.tdwg.org/dwc/terms/infraspecificEpithet';
 		$this->occurDefArr['fields']['infraspecificEpithet'] = 't.unitname3 AS infraspecificEpithet';
+		$this->occurDefArr['terms']['cultivarEpithet'] = 'http://rs.tdwg.org/dwc/terms/cultivarEpithet';
+		$this->occurDefArr['fields']['cultivarEpithet'] = 't.cultivarEpithet AS cultivarEpithet';
+		$this->occurDefArr['terms']['tradeName'] = 'http://rs.tdwg.org/dwc/terms/tradeName';
+		$this->occurDefArr['fields']['tradeName'] = 't.tradeName AS tradeName';
 		$this->occurDefArr['terms']['taxonRank'] = 'http://rs.tdwg.org/dwc/terms/taxonRank';
 		$this->occurDefArr['fields']['taxonRank'] = '';
 		$this->occurDefArr['terms']['identifiedBy'] = 'http://rs.tdwg.org/dwc/terms/identifiedBy';
@@ -171,6 +175,8 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['island'] = 'o.island';
 		$this->occurDefArr['terms']['country'] = 'http://rs.tdwg.org/dwc/terms/country';
 		$this->occurDefArr['fields']['country'] = 'o.country';
+		$this->occurDefArr['terms']['countryCode'] = 'http://rs.tdwg.org/dwc/terms/countryCode';
+		$this->occurDefArr['fields']['countryCode'] = 'o.countryCode';
 		$this->occurDefArr['terms']['stateProvince'] = 'http://rs.tdwg.org/dwc/terms/stateProvince';
 		$this->occurDefArr['fields']['stateProvince'] = 'o.stateProvince';
 		$this->occurDefArr['terms']['county'] = 'http://rs.tdwg.org/dwc/terms/county';

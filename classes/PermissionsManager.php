@@ -383,7 +383,7 @@ class PermissionsManager {
 		//echo "<div>".$sql."</div>";
 		$rs = $this->conn->query($sql);
 		while ($r = $rs->fetch_object()) {
-			$retArr[$r->uid] = $this->cleanOutStr($r->uname . ($r->username ? ' (' . $r->username . ')' : ''));
+			$retArr[$r->uid] = $r->uname . ($r->username ? ' (' . $r->username . ')' : '');
 		}
 		$rs->free();
 		//asort($retArr);

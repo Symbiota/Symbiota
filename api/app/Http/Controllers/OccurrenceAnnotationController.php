@@ -73,7 +73,7 @@ class OccurrenceAnnotationController extends OccurrenceController{
 	 *	 @OA\Parameter(
 	 *		 name="offset",
 	 *		 in="query",
-	 *		 description="Determines the offset for the search results. A limit of 200 and offset of 100, will get the third page of 100 results.",
+	 *		 description="Determines the starting point for the search results. A limit of 100 and offset of 200, will display 100 records starting the 200th record.",
 	 *		 required=false,
 	 *		 @OA\Schema(type="integer", default=0)
 	 *	 ),
@@ -112,7 +112,7 @@ class OccurrenceAnnotationController extends OccurrenceController{
 		$fullCnt = 0;
 		$result = null;
 		if($type == 'internal'){
-			$annotation = DB::table('omoccuredits as e')->select('e.*', 'o.occurrenceID')
+			$annotation = DB::table('omoccuredits as e')->select('e.*', 'o.occurrenceID', 'o.recordID')
 				->join('omoccurrences as o', 'e.occid', '=', 'o.occid')
 				->where('o.collid', $collid);
 			if($fieldName){
@@ -129,7 +129,7 @@ class OccurrenceAnnotationController extends OccurrenceController{
 			$result = $this->formatInternalResults($result);
 		}
 		elseif($type == 'external'){
-			$annotation = DB::table('omoccurrevisions as r')->select('r.*', 'o.occurrenceID')
+			$annotation = DB::table('omoccurrevisions as r')->select('r.*', 'o.occurrenceID', 'o.recordID')
 				->join('omoccurrences as o', 'o.occid', '=', 'r.occid')
 				->where('o.collid', $collid);
 			if($source){

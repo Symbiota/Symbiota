@@ -16,7 +16,7 @@ $procManager->setProjVariables('OCR Harvest');
 ?>
 <script>
 	$(function() {
-		var dialogArr = new Array("speckeypattern","sourcepath","ocrfile","ocrsource");
+		var dialogArr = new Array("ocrspeckeypattern","sourcepath","ocrfile","ocrsource");
 		var dialogStr = "";
 		for(i=0;i<dialogArr.length;i++){
 			dialogStr = dialogArr[i]+"info";
@@ -177,10 +177,10 @@ $procManager->setProjVariables('OCR Harvest');
 						</td>
 						<td>
 							<input name="speckeypattern" type="text" style="width:300px;" value="<?php echo $procManager->getSpecKeyPattern(); ?>" />
-							<a id="speckeypatterninfo" href="#" onclick="return false" title="<?php echo $LANG['MORE_INFO']; ?>">
+							<a id="ocrspeckeypatterninfo" href="#" onclick="return false" title="<?php echo $LANG['MORE_INFO']; ?>">
 								<img src="../../images/info.png" style="width:1.3em;" />
 							</a>
-							<div id="speckeypatterninfodialog">
+							<div id="ocrspeckeypatterninfodialog">
 								<?php echo $LANG['REGEX_EXPLAIN']; ?>
 							</div>
 						</td>

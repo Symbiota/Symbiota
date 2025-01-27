@@ -194,7 +194,7 @@ ALTER TABLE `omoccurrences`
   ADD INDEX `IX_occurrences_stateProvince` (`stateProvince` ASC),
   ADD INDEX `IX_occurrences_county` (`county` ASC),
   ADD INDEX `IX_occurrences_municipality` (`municipality` ASC),
-  ADD INDEX `IX_occurrences_locality` (`locality` ASC),
+  ADD INDEX `IX_occurrences_locality` (`locality`(100) ASC),
   ADD INDEX `IX_occurrences_locationID` (`locationID` ASC),
   ADD INDEX `IX_occurrences_localitySecurity` (`localitySecurity` ASC),
   ADD INDEX `IX_occurrences_elevMin` (`minimumElevationInMeters` ASC),
@@ -269,8 +269,8 @@ CREATE TABLE `usersthirdpartyauth` (
 );
 
 
+# Skip if 1.0 install: Table does not exist within db_schema-3.0, thus statement is expected to fail if this was not originally a 1.0 install
 # Deprecate omoccurresource table in preference for omoccurassociations. 
-# Table does not exist within db_schema-3.0, thus statement is expected to fail if this is a new 3.0 install
 ALTER TABLE `omoccurresource` 
   RENAME TO  `deprecated_omoccurresource` ;
 

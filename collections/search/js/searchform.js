@@ -14,6 +14,7 @@ let paramNames = [
   "catnum",
   "includeothercatnum",
   "hasimages",
+  "hasaudio",
   "typestatus",
   "hasgenetic",
   "hascoords",
@@ -25,7 +26,7 @@ let paramNames = [
   "elevlow",
   "elevhigh",
   "llbound",
-  "footprintwkt",
+  "footprintGeoJson",
   "llpoint",
   "eventdate1",
   "eventdate2",
@@ -62,7 +63,7 @@ const pLngEw = document.getElementById("pointlong_EW") || null;
 const pRadius = document.getElementById("radius") || null;
 const pRadiusUn = document.getElementById("radiusunits") || null;
 
-let paramsArr = [];
+let paramsArr = {};
 //////////////////////////////////////////////////////////////////////////
 
 /**
@@ -97,21 +98,6 @@ function openModal(elementid) {
  */
 function closeModal(elementid) {
   $(elementid)?.css("display", "none");
-}
-
-/**
- * Opens map helper
- * @param {String} mapMode Option from select in form
- * Function from `../../js/symb/collections.harvestparams.js`
- */
-function openCoordAid(mapMode) {
-  mapWindow = open(
-    "../tools/mapcoordaid.php?mapmode=" + mapMode,
-    "polygon",
-    "resizable=0,width=900,height=630,left=20,top=20"
-  );
-  if (mapWindow.opener == null) mapWindow.opener = self;
-  mapWindow.focus();
 }
 
 /**
@@ -569,6 +555,10 @@ function getParam(paramName) {
       let pRadiusVal = pRadius.value + ";" + pRadiusUn.value;
       elementValues = `${pLatVal};${pLngVal};${pRadiusVal}`;
     }
+  } else if (paramName === "elevlow" || paramName === "elevhigh") {
+    firstEl.type === "number" && firstEl != ""
+      ? (elementValues = firstEl.value)
+      : "";
   } else if (elements[0] != undefined) {
     switch (firstEl.tagName) {
       case "INPUT":
@@ -604,7 +594,7 @@ function getSearchUrl() {
   const baseUrl = new URL(harvestUrl + urlSuffix);
 
   // Clears array temporarily to avoid redundancy
-  paramsArr = [];
+  paramsArr = {};
 
   // Grabs params from form for each param name
   paramNames.forEach((param, i) => {
@@ -613,7 +603,7 @@ function getSearchUrl() {
 
   // Appends each key value for each param in search url
   let queryString = Object.keys(paramsArr).map((key) => {
-    baseUrl.searchParams.append(key, paramsArr[key]);
+		baseUrl.searchParams.append(key, paramsArr[key]);
   });
 
   baseUrl.searchParams.append("comingFrom", "newsearch");
@@ -792,8 +782,10 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
       if (candidateTargetElems.length > 0) {
         targetElem = candidateTargetElems[0]; // there should only be one match; get the first one
       }
+    } 
+    if(targetElem){
+      targetElem.checked = true;
     }
-    targetElem.checked = true;
   });
 }
 
@@ -901,9 +893,16 @@ function setSearchForm(frm) {
     if (urlVar.llbound) {
       var coordArr = urlVar.llbound.split(";");
       frm.upperlat.value = Math.abs(parseFloat(coordArr[0]));
+      frm.upperlat_NS.value = parseFloat(coordArr[0]) > 0 ? "N" : "S";
+
       frm.bottomlat.value = Math.abs(parseFloat(coordArr[1]));
+      frm.bottomlat_NS.value = parseFloat(coordArr[1]) > 0 ? "N" : "S";
+
       frm.leftlong.value = Math.abs(parseFloat(coordArr[2]));
+      frm.leftlong_EW.value = parseFloat(coordArr[2]) > 0 ? "E" : "W";
+
       frm.rightlong.value = Math.abs(parseFloat(coordArr[3]));
+      frm.rightlong_EW.value = parseFloat(coordArr[3]) > 0 ? "E" : "W";
     }
     if (urlVar.footprintwkt) {
       frm.footprintwkt.value = urlVar.footprintwkt;
@@ -911,9 +910,14 @@ function setSearchForm(frm) {
     if (urlVar.llpoint) {
       var coordArr = urlVar.llpoint.split(";");
       frm.pointlat.value = Math.abs(parseFloat(coordArr[0]));
+      frm.pointlat_NS.value = parseFloat(coordArr[0]) > 0 ? "N" : "S";
+
       frm.pointlong.value = Math.abs(parseFloat(coordArr[1]));
+      frm.pointlong_EW.value = parseFloat(coordArr[1]) > 0 ? "E" : "W";
+
       frm.radius.value = Math.abs(parseFloat(coordArr[2]));
-      if (coordArr[4] == "mi") frm.radiusunits.value = "mi";
+      if (coordArr[3] === "mi") frm.radiusunits.value = "mi";
+      else if (coordArr[3] === "km") frm.radiusunits.value = "km";
     }
     if (urlVar.collector) {
       frm.collector.value = urlVar.collector;
@@ -987,6 +991,35 @@ function parseUrlVariables(varStr) {
   return result;
 }
 
+function toggleTheNonDefaultsClosed(defaultId) {
+  const categoryButtons = document.querySelectorAll('a[id^="condense-"]');
+  categoryButtons.forEach((categoryButton) => {
+    const regexPattern = new RegExp(`^condense-\\d+-${defaultId}$`);
+    if (!regexPattern.test(categoryButton.id)) {
+      const idToToggle = categoryButton.id
+        .replace("condense-", "")
+        .replace("-" + defaultId, "");
+      toggleCat(idToToggle);
+    }
+  });
+}
+
+function toggleAccordionsFromSessionStorage(accordionIds) {
+  const accordions = document.querySelectorAll(
+    'input[class="accordion-selector"]'
+  );
+  accordions.forEach((accordion) => {
+    if(accordion.id !== "taxonomy") accordion.checked = false;
+    if(accordion.id === "taxonomy" && localStorage.getItem("taxonomyAccordionClosed")) accordion.checked = false;
+  });
+  accordions.forEach((accordion) => {
+    const currentId = accordion.getAttribute("id");
+    if (accordionIds.includes(currentId)) {
+      accordion.checked = true;
+    }
+  });
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 /**
@@ -1039,3 +1072,24 @@ $(".expansion-icon").click(function () {
 });
 // Hides MOSC-BU checkboxes
 hideColCheckbox(58);
+
+const accordions = document.querySelectorAll(
+  'input[class="accordion-selector"]'
+);
+accordions.forEach((accordion) => {
+  accordion.addEventListener("click", (event) => {
+    const currentAccordionIds = localStorage?.accordionIds?.split(",") || [];
+    const currentId = event.target.id;
+    if (currentAccordionIds.includes(currentId)) {
+      const targetIdx = currentAccordionIds.indexOf(currentId);
+      currentAccordionIds.splice(targetIdx, 1);
+      if(currentId==="taxonomy") {
+        localStorage.setItem("taxonomyAccordionClosed", true);
+      }
+    } else {
+      currentAccordionIds.push(currentId);
+      if(currentId==="taxonomy") localStorage.setItem("taxonomyAccordionClosed", false)
+    }
+    localStorage.setItem("accordionIds", currentAccordionIds);
+  });
+});

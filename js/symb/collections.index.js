@@ -85,7 +85,9 @@ function selectAllCat(cb, target) {
 }
 
 function unselectCat(catTarget) {
-  var catObj = document.querySelector(`input[id^="${catTarget}"][name="cat[]"]`);
+  const catObj = document.querySelector(
+    `input[id^="${catTarget}"][name="cat[]"]`
+  );
   if (catObj) catObj.checked = false;
   uncheckAll();
 }

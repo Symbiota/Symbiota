@@ -89,7 +89,7 @@ class DwcArchiverCore extends Manager{
 		);
 
 		//ini_set('memory_limit','512M');
-		set_time_limit(600);
+		set_time_limit(1800);
 	}
 
 	public function __destruct(){
@@ -385,7 +385,7 @@ class DwcArchiverCore extends Manager{
 			if (stripos($this->conditionSql, 'ds.datasetid')) {
 				$sql .= 'INNER JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
 			}
-			if (stripos($this->conditionSql, 'p.point')) {
+			if (stripos($this->conditionSql, 'p.lngLatPoint')) {
 				//Search criteria came from map search page
 				$sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
 			}
@@ -802,7 +802,7 @@ class DwcArchiverCore extends Manager{
 
 	private function getAssociatedMedia(){
 		$retStr = '';
-		$sql = 'SELECT originalurl FROM images ' . str_replace('o.', '', $this->conditionSql);
+		$sql = 'SELECT originalurl FROM media ' . str_replace('o.', '', $this->conditionSql);
 		$rs = $this->conn->query($sql);
 		while ($r = $rs->fetch_object()) {
 			$retStr .= ';' . $r->originalurl;
@@ -1021,7 +1021,7 @@ class DwcArchiverCore extends Manager{
 			//List image fields
 			$imgCnt = 1;
 			$termArr = $this->imageFieldArr['terms'];
-			unset($termArr['imgID']);
+			unset($termArr['mediaID']);
 			foreach ($termArr as $v) {
 				$fieldElem = $newDoc->createElement('field');
 				$fieldElem->setAttribute('index', $imgCnt);
@@ -1954,17 +1954,17 @@ class DwcArchiverCore extends Manager{
 			$urlPathPrefix = $this->serverDomain . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) == '/' ? '' : '/');
 
 			$localDomain = '';
-			if (isset($GLOBALS['IMAGE_DOMAIN']) && $GLOBALS['IMAGE_DOMAIN']) {
-				$localDomain = $GLOBALS['IMAGE_DOMAIN'];
+			if (isset($GLOBALS['MEDIA_DOMAIN']) && $GLOBALS['MEDIA_DOMAIN']) {
+				$localDomain = $GLOBALS['MEDIA_DOMAIN'];
 			}
 			else {
 				$localDomain = $this->serverDomain;
 			}
-			$previousImgID = 0;
+			$previousMediaID = 0;
 			while ($r = $rs->fetch_assoc()) {
-				if ($previousImgID == $r['imgID']) continue;
-				$previousImgID = $r['imgID'];
-				unset($r['imgID']);
+				if ($previousMediaID == $r['mediaID']) continue;
+				$previousMediaID = $r['mediaID'];
+				unset($r['mediaID']);
 				if ($r['identifier'] && substr($r['identifier'], 0, 1) == '/') $r['identifier'] = $localDomain . $r['identifier'];
 				if ($r['accessURI'] && substr($r['accessURI'], 0, 1) == '/') $r['accessURI'] = $localDomain . $r['accessURI'];
 				if ($r['thumbnailAccessURI'] && substr($r['thumbnailAccessURI'], 0, 1) == '/') $r['thumbnailAccessURI'] = $localDomain . $r['thumbnailAccessURI'];
@@ -1998,8 +1998,15 @@ class DwcArchiverCore extends Manager{
 				}
 				$r['providermanagedid'] = 'urn:uuid:' . $r['providermanagedid'];
 				$r['associatedSpecimenReference'] = $urlPathPrefix . 'collections/individual/index.php?occid=' . $r['occid'];
-				$r['type'] = 'StillImage';
-				$r['subtype'] = 'Photograph';
+				/*
+				if($r['type'] '') {
+					$r['type'] = 'StillImage';
+					$r['subtype'] = 'Photograph';
+				} else {
+					$r['type'] = 'Sound';
+					$r['subtype'] = 'Recorded Organism';
+				}
+				*/
 				if($r['accessURI']){
 					$extStr = strtolower(substr($r['accessURI'], strrpos($r['accessURI'], '.') + 1));
 					if ($r['format'] == '') {
