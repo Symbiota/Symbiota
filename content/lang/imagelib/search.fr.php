@@ -6,9 +6,9 @@ Translated by: Google Translate (2024-09-05)
 ------------------
 */
 
-$LANG['ACTION_SUCCESS'] = 'Multimédia tagué avec succès !';
-$LANG['ACTION_FAILED'] = 'Le multimédia a déjà été étiqueté avec la cible';
-$LANG['ACTION_ERROR'] = 'ERREUR lors de l\'application de la balise au multimédia';
+$LANG['ACTION_SUCCESS'] = 'les ressources multimédias ont été correctement étiquetées!';
+$LANG['ACTION_FAILED'] = 'les ressources multimédias ont déjà été étiquetées';
+$LANG['ACTION_ERROR'] = 'ERREUR lors de l\'application de l\'étiquette aux ressources multimédias';
 $LANG['IMAGE_SEARCH'] = 'Recherche multimédia';
 $LANG['SELECT_TAG'] = 'Sélectionnez une balise multimédia';
 $LANG['SELECT_IMAGE'] = 'Veuillez sélectionner au moins une ressource multimédia à laquelle attribuer un tag';

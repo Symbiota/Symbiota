@@ -161,7 +161,7 @@ class OccurrenceMaintenance {
 		//Set NULL or incorrectly set country codes
 		$geoArr = array();
 		$sql = 'SELECT o.occid, g.iso2
-			FROM omoccurrences o INNER JOIN geographicThesaurus g ON o.country = g.geoterm
+			FROM omoccurrences o INNER JOIN geographicthesaurus g ON o.country = g.geoterm
 			WHERE (o.countryCode IS NULL OR o.countryCode != g.iso2) AND g.acceptedID IS NULL ';
 		//if($this->collidStr) $sql .= 'AND collid IN('.$this->collidStr.')';
 		$rs = $this->conn->query($sql);
@@ -183,8 +183,8 @@ class OccurrenceMaintenance {
 		$this->outputMsg('Populating null continent values... ', 1);
 		$geoArr = array();
 		$sql = 'SELECT o.occid, p.geoTerm
-			FROM omoccurrences o INNER JOIN geographicThesaurus g ON o.countryCode = g.iso2
-			INNER JOIN geographicThesaurus p ON g.parentID = p.geoThesID
+			FROM omoccurrences o INNER JOIN geographicthesaurus g ON o.countryCode = g.iso2
+			INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
 			WHERE (o.continent IS NULL OR o.continent != p.geoTerm) AND g.geoLevel = 50 AND g.acceptedID IS NULL';
 		//if($this->collidStr) $sql .= 'AND collid IN('.$this->collidStr.')';
 		$rs = $this->conn->query($sql);

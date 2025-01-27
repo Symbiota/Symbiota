@@ -40,8 +40,8 @@ class OccurrenceMapManager extends OccurrenceManager {
 		$coordArr = Array();
 		if($this->sqlWhere){
 			$statsManager = new OccurrenceAccessStats();
-			$sql = 'SELECT o.occid, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS identifier, '.
-				'o.sciname, IF(ts.family IS NULL, o.family, ts.family) as family, o.tidinterpreted, o.DecimalLatitude, o.DecimalLongitude, o.collid, o.catalognumber, '.
+			$sql = 'SELECT o.occid, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS identifier, o.eventdate, '.
+				'o.sciname, IF(ts.family IS NULL, o.family, ts.family) as family, o.tidinterpreted, o.DecimalLatitude, o.DecimalLongitude, o.collid, o.catalogNumber, '.
 				'o.othercatalognumbers, c.institutioncode, c.collectioncode, c.CollectionName '.
 				'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
 
@@ -70,6 +70,8 @@ class OccurrenceMapManager extends OccurrenceManager {
 				$coordArr[$collName][$row->occid]["tid"] = $tidInterpreted;
 				$coordArr[$collName][$row->occid]["fam"] = ($row->family?strtoupper($row->family):'undefined');
 				$coordArr[$collName][$row->occid]["sn"] = $row->sciname;
+				$coordArr[$collName][$row->occid]["catalogNumber"] = $row->catalogNumber;
+				$coordArr[$collName][$row->occid]["eventdate"] = $row->eventdate;
 				$coordArr[$collName][$row->occid]["id"] = $this->htmlEntities($row->identifier);
 				$coordArr[$collName]["c"] = $color;
 			}
