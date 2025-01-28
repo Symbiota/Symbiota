@@ -350,7 +350,7 @@ class LeafletMap {
                         tooltip: {
                            start: 'Click and drag to draw rectangle.'
                         }
-                     },he desired result of entering label:value
+                     },
                      simpleshape: {
                         tooltip: {
                            end: 'Release mouse to finish drawing.'
@@ -375,7 +375,7 @@ class LeafletMap {
                         }
                      },
                      buttons: {
-                        edit: 'Edit layers',he desired result of entering label:value
+                        edit: 'Edit layers',
                         editDisabled: 'No layers to edit',
                         remove: 'Delete layers',
                         removeDisabled: 'No layers to delete'
@@ -486,7 +486,7 @@ class LeafletMap {
                         edit: 'Editar capas',
                         editDisabled: 'No hay capas para editar',
                         remove: 'Eliminar capas',
-                        removeDisabled: 'No hay capas para eliminar'he desired result of entering label:value
+                        removeDisabled: 'No hay capas para eliminar'
                      }
                   },
                   handlers: {
@@ -578,7 +578,7 @@ class LeafletMap {
                   toolbar: {
                      actions: {
                         save: {
-                           title: 'Sauvegarder les modifications',he desired result of entering label:value
+                           title: 'Sauvegarder les modifications',
                            text: 'Sauver'
                         },
                         cancel: {
@@ -604,7 +604,7 @@ class LeafletMap {
                            subtext: 'Cliquez sur Annuler pour annuler les modifications.'
                         }
                      },
-                     remove: {he desired result of entering label:value
+                     remove: {
                         tooltip: {
                            text: 'Cliquez sur une fonctionnalité à supprimer.'
                         }
