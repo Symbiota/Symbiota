@@ -537,7 +537,7 @@ $traitArr = $indManager->getTraitArr();
 							</div>
 							<?php if($occArr['dateidentified']): ?>
 								<div id="identby-div" class="identby-div bottom-breathing-room-rel-sm">
-								<?php 
+								<?php
 									echo '<label>'.$LANG['DATE_DET']  . ': '. '</label>' . $occArr['dateidentified'];
 								?>
 							</div>
@@ -576,13 +576,13 @@ $traitArr = $indManager->getTraitArr();
 						if(array_key_exists('dets',$occArr) && (count($occArr['dets']) > 1 || $occArr['dets'][key($occArr['dets'])]['iscurrent'] == 0)){
 							?>
 							<div id="determination-div" class="bottom-breathing-room-rel-sm">
-								<div id="det-toogle-div" class="det-toogle-div">
-									<a href="#" onclick="toggle('det-toogle-div');return false"><img src="../../images/plus.png" style="width:1em" alt="image of a plus sign; click to show determination history"></a>
+								<div id="det-toggle-div" class="det-toggle-div">
+									<a href="#" onclick="toggle('det-toggle-div');return false"><img src="../../images/plus.png" style="width:1em" alt="image of a plus sign; click to show determination history"></a>
 									<?php echo $LANG['SHOW_DET_HISTORY']; ?>
 								</div>
-								<div id="det-toogle-div" class="det-toogle-div" style="display:none;">
+								<div id="det-toggle-div" class="det-toggle-div" style="display:none;">
 									<div>
-										<a href="#" onclick="toggle('det-toogle-div');return false"><img src="../../images/minus.png" style="width:1em" alt="image of a minus sign; click to hide determination history"></a>
+										<a href="#" onclick="toggle('det-toggle-div');return false"><img src="../../images/minus.png" style="width:1em" alt="image of a minus sign; click to hide determination history"></a>
 										<?php echo $LANG['HIDE_DET_HISTORY']; ?>
 									</div>
 									<fieldset>

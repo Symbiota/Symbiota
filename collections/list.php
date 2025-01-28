@@ -5,7 +5,6 @@ include_once($SERVER_ROOT . '/classes/OccurrenceListManager.php');
 if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/list.' . $LANG_TAG . '.php'))
 	include_once($SERVER_ROOT . '/content/lang/collections/list.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/list.en.php');
-
 header("Content-Type: text/html; charset=" . $CHARSET);
 
 $taxonFilter = array_key_exists('taxonfilter', $_REQUEST) ? filter_var($_REQUEST['taxonfilter'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -14,6 +13,8 @@ $tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabi
 $cntPerPage = array_key_exists('cntperpage', $_REQUEST) ? filter_var($_REQUEST['cntperpage'], FILTER_SANITIZE_NUMBER_INT) : 100;
 $pageNumber = array_key_exists('page', $_REQUEST) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $datasetid = array_key_exists('datasetid', $_REQUEST) ? filter_var($_REQUEST['datasetid'], FILTER_SANITIZE_NUMBER_INT) : '';
+$sortField1 = array_key_exists('sortfield1',$_REQUEST) ? $_REQUEST['sortfield1'] : '';
+$sortOrder = !empty($_REQUEST['sortorder']) ? 'desc' : '';
 $comingFrom =  (array_key_exists('comingFrom', $_REQUEST) ? $_REQUEST['comingFrom'] : '');
 if($comingFrom != 'harvestparams' && $comingFrom != 'newsearch'){
 	//If not set via a valid input variable, use setting set within symbini
@@ -26,6 +27,11 @@ $collManager = new OccurrenceListManager();
 $searchVar = $collManager->getQueryTermStr();
 if ($targetTid && array_key_exists('mode', $_REQUEST)) $searchVar .= '&mode=voucher&targettid=' . $targetTid;
 $searchVar .= '&comingFrom=' . $comingFrom;
+if($sortField1){
+	$searchVar .= '&sortfield1=' . htmlspecialchars($sortField1, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&sortorder=' . $sortOrder;
+	$collManager->addSort($sortField1, $sortOrder);
+}
+
 $occurArr = $collManager->getSpecimenMap($pageNumber, $cntPerPage);
 
 $_SESSION['citationvar'] = $searchVar;
@@ -48,14 +54,16 @@ $_SESSION['citationvar'] = $searchVar;
 		var urlQueryStr = "<?php if($searchVar) echo $searchVar . '&page=' . $pageNumber; ?>";
 
 		$(document).ready(function() {
-			if(window.location.search)
+			<?php
+			if ($searchVar) {
+				?>
 				sessionStorage.querystr = "<?php echo $searchVar; ?>";
-			else if(sessionStorage.querystr) {
-				window.location = "list.php?" + sessionStorage.querystr + "&tabindex=<?= $tabIndex ?>";
+				<?php
 			}
+			?>
 
 			$('#tabs').tabs({
-				active: <?php echo $tabIndex; ?>,
+				active: <?= $tabIndex; ?>,
 				beforeLoad: function(event, ui) {
 					$(ui.panel).html("<p>Loading...</p>");
 				}
@@ -64,7 +72,7 @@ $_SESSION['citationvar'] = $searchVar;
 
 		function validateOccurListForm(f) {
 			if (f.targetdatasetid.value == "") {
-				alert("<?php echo (isset($LANG['SELECT_DATASET']) ? $LANG['SELECT_DATASET'] : 'Please select a dataset to append occurrences, or select Create New Dataset'); ?>");
+				alert("<?= $LANG['SELECT_DATASET'] ?>");
 				return false;
 			}
 			return true;
@@ -79,7 +87,7 @@ $_SESSION['citationvar'] = $searchVar;
 				}
 			}
 			if (!isSelected) {
-				alert("<?php echo (isset($LANG['SELECT_OCCURRENCE']) ? $LANG['SELECT_OCCURRENCE'] : 'Please select at least one occurrence to be added to the dataset'); ?>");
+				alert("<?= $LANG['SELECT_OCCURRENCE'] ?>");
 				return false;
 			}
 			return true;
@@ -175,7 +183,7 @@ $_SESSION['citationvar'] = $searchVar;
 						if ($SYMB_UID) {
 						?>
 							<div style="float:left">
-								<button class="icon-button" onclick="displayDatasetTools()" aria-label="<?php echo (isset($LANG['DATASET_MANAGEMENT']) ? $LANG['DATASET_MANAGEMENT'] : 'Dataset Management'); ?>" title="<?php echo (isset($LANG['DATASET_MANAGEMENT']) ? $LANG['DATASET_MANAGEMENT'] : 'Dataset Management'); ?>">
+								<button class="icon-button" onclick="displayDatasetTools()" aria-label="<?= $LANG['DATASET_MANAGEMENT'] ?>" title="<?= $LANG['DATASET_MANAGEMENT'] ?>">
 									<svg style="width:1.3em;height:1.3em;" alt="<?php echo $LANG['IMG_DATASET_MANAGEMENT']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M280-280h160v-160H280v160Zm240 0h160v-160H520v160ZM280-520h160v-160H280v160Zm240 0h160v-160H520v160ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>
 								</button>
 							</div>
@@ -184,21 +192,21 @@ $_SESSION['citationvar'] = $searchVar;
 						?>
 						<form action="listtabledisplay.php" method="post" style="float:left">
 							<input name="comingFrom" type="hidden" value="<?= $comingFrom; ?>" />
-							<button class="icon-button" aria-label="<?php echo (isset($LANG['TABLE_DISPLAY']) ? $LANG['TABLE_DISPLAY'] : 'Table Display'); ?>" title="<?php echo (isset($LANG['TABLE_DISPLAY']) ? $LANG['TABLE_DISPLAY'] : 'Table Display'); ?>">
-								<svg style="width:1.3em;height:1.3em" alt="<?php echo $LANG['IMG_TABLE_DISPLAY']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200Zm80-400h560v-160H200v160Zm213 200h134v-120H413v120Zm0 200h134v-120H413v120ZM200-400h133v-120H200v120Zm427 0h133v-120H627v120ZM200-200h133v-120H200v120Zm427 0h133v-120H627v120Z"/></svg>
+							<button class="icon-button" aria-label="<?= $LANG['TABLE_DISPLAY'] ?>" title="<?= $LANG['TABLE_DISPLAY'] ?>">
+								<svg style="width:1.3em;height:1.3em" alt="<?= $LANG['IMG_TABLE_DISPLAY'] ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200Zm80-400h560v-160H200v160Zm213 200h134v-120H413v120Zm0 200h134v-120H413v120ZM200-400h133v-120H200v120Zm427 0h133v-120H627v120ZM200-200h133v-120H200v120Zm427 0h133v-120H627v120Z"/></svg>
 							</button>
 							<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 						</form>
 						<form action="download/index.php" method="post" style="float:left" onsubmit="targetPopup(this)">
-							<button class="icon-button" aria-label="<?php echo (isset($LANG['DOWNLOAD_SPECIMEN_DATA']) ? $LANG['DOWNLOAD_SPECIMEN_DATA'] : "Download Specimen Data"); ?>" title="<?php echo (isset($LANG['DOWNLOAD_SPECIMEN_DATA']) ? $LANG['DOWNLOAD_SPECIMEN_DATA'] : "Download Specimen Data"); ?>">
-								<svg style="width:1.3em;height:1.3em" alt="<?php echo $LANG['IMG_DWNL_DATA']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
+							<button class="icon-button" aria-label="<?= $LANG['DOWNLOAD_SPECIMEN_DATA'] ?>" title="<?= $LANG['DOWNLOAD_SPECIMEN_DATA'] ?>">
+								<svg style="width:1.3em;height:1.3em" alt="<?= $LANG['IMG_DWNL_DATA'] ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
 							</button>
-							<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
+							<input name="searchvar" type="hidden" value="<?= $searchVar; ?>" />
 							<input name="dltype" type="hidden" value="specimen" />
 						</form>
 						<div style="float:left">
-							<button class="icon-button" onclick="copyUrl()" aria-label="<?php echo (isset($LANG['COPY_TO_CLIPBOARD']) ? $LANG['COPY_TO_CLIPBOARD'] : 'Copy URL to Clipboard'); ?>" title="<?php echo (isset($LANG['COPY_TO_CLIPBOARD']) ? $LANG['COPY_TO_CLIPBOARD'] : 'Copy URL to Clipboard'); ?>">
-								<svg style="width:1.3em;height:1.3em" alt="<?php echo $LANG['IMG_COPY']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg>
+							<button class="icon-button" onclick="copyUrl()" aria-label="<?= $LANG['COPY_TO_CLIPBOARD'] ?>" title="<?= $LANG['COPY_TO_CLIPBOARD'] ?>">
+								<svg style="width:1.3em;height:1.3em" alt="<?= $LANG['IMG_COPY']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg>
 							</button>
 						</div>
 					</div>
@@ -224,7 +232,7 @@ $_SESSION['citationvar'] = $searchVar;
 							echo '<div><b>' . $LANG['TAXA'] . ':</b> ' . $taxaSearchStr . '</div>';
 						}
 						if ($associationSearchStr = $collManager->getAssociationSearchStr()) {
-							if (strlen($associationSearchStr) > 300) $associationSearchStr = substr($associationSearchStr, 0, 300) . '<span class="taxa-span">... (<a href="#" onclick="$(\'.association-span\').toggle();return false;">' . htmlspecialchars($LANG['SHOW_ALL'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>)</span><span class="association-span" style="display:none;">' . substr($taxaSearchStr, 300) . '</span>'; // @TODO wouldn't this truncate in either case?
+							if (strlen($associationSearchStr) > 300) $associationSearchStr = substr($associationSearchStr, 0, 300) . '<span class="taxa-span">... (<a href="#" onclick="$(\'.association-span\').toggle();return false;">' . $LANG['SHOW_ALL'] . '</a>)</span><span class="association-span" style="display:none;">' . substr($taxaSearchStr, 300) . '</span>'; // @TODO wouldn't this truncate in either case?
 							echo '<div><b>' . $LANG['ASSOCIATIONS'] . ':</b> ' . $associationSearchStr . '</div>';
 						}
 						if ($localSearchStr = $collManager->getLocalSearchStr()) {
@@ -233,6 +241,49 @@ $_SESSION['citationvar'] = $searchVar;
 						}
 						?>
 					</div>
+					<div id="sort-div" style="padding:5px;">
+						<section class="fieldset-like">
+							<h3><span><?= $LANG['SORT'] ?></span></h3>
+							<form name="sortform" action="listtabledisplay.php" method="post">
+								<span>
+									<label for="sortfield1"><?= $LANG['SORT_BY'] ?>:</label>
+									<select name="sortfield1" id="sortfield1">
+										<option value=""></option>
+										<?php
+										$sortFields = array('c.collectionname' => $LANG['COLLECTION'], 'o.catalogNumber' => $LANG['CATALOG_NUMBER'], 'o.family' => $LANG['FAMILY'], 'o.sciname' => $LANG['SCINAME'], 'o.recordedBy' => $LANG['COLLECTOR'],
+											'o.recordNumber' => $LANG['NUMBER'], 'o.eventDate' => $LANG['EVENT_DATE'], 'o.country' => $LANG['COUNTRY'], 'o.StateProvince' => $LANG['STATE_PROVINCE'], 'o.county' => $LANG['COUNTY'], 'o.minimumElevationInMeters' => $LANG['ELEVATION']);
+										foreach($sortFields as $k => $v){
+											echo '<option value="'.$k.'" '.($k==$sortField1?'SELECTED':'').'>'.$v.'</option>';
+										}
+										?>
+									</select>
+								</span>
+								<span>
+									<label for="sortfield2"><?= $LANG['SORT_THEN_BY'] ?>:</label>
+									<select name="sortfield2" id="sortfield2">
+										<option value=""></option>
+										<?php
+										foreach($sortFields as $k => $v){
+											echo '<option value="'.$k.'" '.($k==$sortField2?'SELECTED':'').'>'.$v.'</option>';
+										}
+										?>
+									</select>
+								</span>
+								<span>
+									<label for="sortorder"> <?= $LANG['SORT_ORDER'] ?>: </label>
+									<select id="sortorder" name="sortorder">
+										<option value=""><?= $LANG['SORT_ASCENDING'] ?></option>
+										<option value="desc" <?= ($sortOrder=="desc"?'SELECTED':''); ?>><?= $LANG['SORT_DESCENDING'] ?></option>
+									</select>
+								</span>
+								<span>
+									<input name="searchvar" type="hidden" value="<?= $searchVar ?>">
+									<button name="formsubmit" type="submit" ><?= $LANG['SORT'] ?></button>
+								</span>
+							</form>
+						</section>
+					</div>
+
 					<div style="clear:both;"></div>
 					<?php
 					$paginationStr = '<div><div style="clear:both;"><hr/></div><div style="float:left;margin:5px;">';
@@ -301,7 +352,7 @@ $_SESSION['citationvar'] = $searchVar;
 									if ($IS_ADMIN || in_array($fieldArr['collid'], $permissionArr) || ($SYMB_UID && $SYMB_UID == $fieldArr['obsuid'])) {
 										echo '<div style="float:right;" title="' . $LANG['OCCUR_EDIT_TITLE'] . '">';
 										echo '<a href="editor/occurrenceeditor.php?occid=' . $occid . '" target="_blank">';
-										echo '<img src="../images/edit.png" style="width:1.3em" alt="' . (isset($LANG['IMG_EDIT_OCC']) ? $LANG['IMG_EDIT_OCC'] : 'Edit Occurence') . '" /></a></div>';
+										echo '<img src="../images/edit.png" style="width:1.3em" alt="' . $LANG['IMG_EDIT_OCC'] . '" /></a></div>';
 									}
 									if (isset($fieldArr['has_audio']) && $fieldArr['has_audio']) {
 										echo '<div style="float:right; padding-right: 0.5rem"><img style="width:1.3rem; border: 0" src="' . $CLIENT_ROOT . '/images/speaker_thumbnail.png' . '"/></div>';
@@ -314,12 +365,12 @@ $_SESSION['citationvar'] = $searchVar;
 									if ($collManager->getClName() && $targetTid && array_key_exists('mode', $_REQUEST)) {
 										echo '<div style="float:right;" >';
 										echo '<a href="#" onclick="addVoucherToCl(' . $occid . ',' . $targetClid . ',' . $targetTid . ');return false" title="' . $LANG['VOUCHER_LINK_TITLE'] . ' ' . $collManager->getClName() . ';">';
-										echo '<img src="../images/voucheradd.png" style="border:solid 1px gray;height:1.3em;margin-right:5px;" alt="' . (isset($LANG['IMG_ADD_VOUCHER']) ? $LANG['IMG_ADD_VOUCHER'] : 'Add Voucher') . '"/></a></div>';
+										echo '<img src="../images/voucheradd.png" style="border:solid 1px gray;height:1.3em;margin-right:5px;" alt="' . $LANG['IMG_ADD_VOUCHER'] . '"/></a></div>';
 									}
 									if (isset($fieldArr['media']) && isset($fieldArr['media']['thumbnailurl'])) {
 										echo '<div style="float:right;margin:5px 25px;">';
 										echo '<a href="#" onclick="return openIndPU(' . $occid . ',' . ($targetClid ? $targetClid : "0") . ');">';
-										echo '<img src="' . $fieldArr['media']['thumbnailurl'] . '" style="height:70px" alt="' . (isset($LANG['IMG_OCC']) ? $LANG['IMG_OCC'] : 'Image Associated With the Occurence') . '"/></a></div>';
+										echo '<img src="' . $fieldArr['media']['thumbnailurl'] . '" style="height:70px" alt="' . $LANG['IMG_OCC'] . '"/></a></div>';
 									}
 									echo '<div style="margin:4px;">';
 
@@ -396,8 +447,8 @@ $_SESSION['citationvar'] = $searchVar;
 			</div>
 			<div id="maps" style="min-height:400px;margin-bottom:10px;">
 				<form action="download/index.php" method="post" style="float:right" onsubmit="targetPopup(this)">
-					<button class="icon-button" aria-label="<?php echo isset($LANG['DOWNLOAD_SPECIMEN_DATA']) ? $LANG['DOWNLOAD_SPECIMEN_DATA'] : "Download Specimen Data"; ?>" title="<?php echo isset($LANG['DOWNLOAD_SPECIMEN_DATA']) ? $LANG['DOWNLOAD_SPECIMEN_DATA'] : "Download Specimen Data"; ?>">
-						<svg style="width:1.3em" alt="<?php echo $LANG['IMG_DWNL_DATA']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
+					<button class="icon-button" aria-label="<?= $LANG['DOWNLOAD_SPECIMEN_DATA'] ?>" title="<?= $LANG['DOWNLOAD_SPECIMEN_DATA'] ?>">
+						<svg style="width:1.3em" alt="<?= $LANG['IMG_DWNL_DATA']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
 					</button>
 					<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 					<input name="dltype" type="hidden" value="georef" />

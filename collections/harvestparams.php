@@ -362,7 +362,6 @@ $searchVar = $collManager->getQueryTermStr();
 			</div>
 			<div>
 				<input name="comingFrom" type="hidden" value="harvestparams" >
-				<input type="hidden" name="reset" value="1" />
 				<input type="hidden" name="db" value="<?php echo $collManager->getSearchTerm('db'); ?>" />
 			</div>
 			<hr/>

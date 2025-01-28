@@ -18,6 +18,12 @@ $LANG['SHOW_ALL'] = 'mostrar tudo';
 $LANG['DATASET'] = 'Conjunto de Dados';
 $LANG['TAXA'] = 'Taxa';
 $LANG['SEARCH_CRITERIA'] = 'Critérios de Pesquisa';
+$LANG['SORT'] = 'Classificar';
+$LANG['SORT_BY'] = 'Classificar por';
+$LANG['SORT_THEN_BY'] = 'Então Classificar Por';
+$LANG['SORT_ORDER'] = 'Ordem de Classificação';
+$LANG['SORT_ASCENDING'] = 'Crescente';
+$LANG['SORT_DESCENDING'] = 'Descendente';
 $LANG['PAGINATION_FIRST'] = 'Primeiro';
 $LANG['ÚLTIMO'] = 'último';
 $LANG['PAGINATION_PAGE'] = 'Página';
@@ -43,10 +49,10 @@ $LANG['PERHAPS_LOOKING_FOR'] = 'Talvez você estivesse procurando por:';
 $LANG['MAP_DOWNLOAD'] = 'Baixar dados de coordenadas';
 $LANG['MAP_HEADER'] = 'Mapa';
 $LANG['MAP_DISPLAY'] = 'Exibir coordenadas no mapa';
-$LANG['MAP_DESCRIPTION'] = 'O recurso de mapas fornece aos usuários um mapa 
-        interativo que pode ser panorâmico (arrastando o mouse) e zoom (usando a roda do mouse). 
-        Os pontos de coleta são exibidos como marcadores coloridos que, quando clicados, exibem as 
-        informações completas daquela coleta. Quando múltiplas espécies são consultadas (separadas 
+$LANG['MAP_DESCRIPTION'] = 'O recurso de mapas fornece aos usuários um mapa
+        interativo que pode ser panorâmico (arrastando o mouse) e zoom (usando a roda do mouse).
+        Os pontos de coleta são exibidos como marcadores coloridos que, quando clicados, exibem as
+        informações completas daquela coleta. Quando múltiplas espécies são consultadas (separadas
         por ponto e vírgula), marcadores coloridos diferentes indicam cada espécie individual.';
 $LANG['KML_HEADER'] = 'KML';
 $LANG['KML_DESCRIPTION'] = 'Isso cria um arquivo KML para uso no Google Earth ou qualquer outro aplicativo que use arquivos KML.';
@@ -64,7 +70,7 @@ $LANG['IMG_OCC'] = 'Imagem Associada à Ocorrência';
 $LANG['CATALOG_NUMBER'] = 'Número de Catálogo';
 $LANG['COLLECTOR'] = 'Colecionador';
 $LANG['NUMBER'] = 'Número do Colecionador';
-$LANG['EVENTDATE'] = 'Data';
+$LANG['EVENT_DATE'] = 'Data';
 $LANG['SCIENTIFIC_NAME'] = 'Nome Científico';
 $LANG['ELEVATION'] = 'Elevação';
 $LANG['MAP_LINK'] = 'Link do Mapa';
