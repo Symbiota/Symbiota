@@ -132,11 +132,13 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		if($hasValidRelationship){
 			$sqlWhere = substr_replace($sqlWhere,'',-1);
 			$sqlWhere .= $this->associationManager->getAssociatedRecords($this->associationArr) . ')';
+			$this->associationManager->getAssociatedRecordsForExternal($sqlWhere, $this->associationArr);
 		}
 		$hasValidRelationshipFromSearchTermArr = isset(($this->searchTermArr['association-type'])) && $this->searchTermArr['association-type']!=='none' && !$hasValidRelationship;
 		if($hasValidRelationshipFromSearchTermArr){
 			$sqlWhere = substr_replace($sqlWhere,'',-1);
 			$sqlWhere .= $this->associationManager->getAssociatedRecords($this->searchTermArr, 'association-type') . ')';
+			$this->associationManager->getAssociatedRecordsForExternal($sqlWhere, $this->searchTermArr, 'association-type');
 		}
 		
 
