@@ -47,12 +47,13 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 	<script src="../js/symb/collections.list.js?ver=1" type="text/javascript"></script>
 	<script src="../js/symb/shared.js?ver=1" type="text/javascript"></script>
 	<style>
-		table.styledtable td {
-			white-space: nowrap;
-		}
-		.fieldset-like{
-			margin: 1rem;
-		}
+		table.styledtable td { white-space: nowrap; }
+		.fieldset-like { margin: 1rem; }
+		#sort-div { width: 750px; margin: 20px; margin-bottom:5px; }
+		#sort-inner-div { display: flex; }
+		#sort-inner-div div { margin-right: 10px; }
+		#sort-div label { display: block; }
+		#sort-div button { margin: 15px }
 	</style>
 </head>
 <body style="margin-left: 0px; margin-right: 0px;background-color:white;">
@@ -68,10 +69,13 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 					</div>
 					<form action="list.php" method="post" style="float:left">
 						<input name="comingFrom" type="hidden" value="<?= $comingFrom; ?>" />
+						<input name="sortfield1" type="hidden" value="<?= htmlspecialchars($sortField1, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" />
+						<input name="sortfield2" type="hidden" value="<?= htmlspecialchars($sortField2, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" />
+						<input name="sortorder" type="hidden" value="<?= $sortOrder ?>" />
+						<input name="searchvar" type="hidden" value="<?= $searchVar ?>" />
 						<button type="submit" class="icon-button" style="margin:5px;padding:5px;" title="<?= $LANG['LIST_DISPLAY'] ?>"  aria-label="<?= $LANG['LIST_DISPLAY'] ?>">
 							<svg xmlns="http://www.w3.org/2000/svg" style="width:1.3em;height:1.3em" alt="<?= $LANG['LIST_DISPLAY'] ?>" height="24" viewBox="0 -960 960 960" width="24"> <path d="M280-600v-80h560v80H280Zm0 160v-80h560v80H280Zm0 160v-80h560v80H280ZM160-600q-17 0-28.5-11.5T120-640q0-17 11.5-28.5T160-680q17 0 28.5 11.5T200-640q0 17-11.5 28.5T160-600Zm0 160q-17 0-28.5-11.5T120-480q0-17 11.5-28.5T160-520q17 0 28.5 11.5T200-480q0 17-11.5 28.5T160-440Zm0 160q-17 0-28.5-11.5T120-320q0-17 11.5-28.5T160-360q17 0 28.5 11.5T200-320q0 17-11.5 28.5T160-280Z"/></svg>
 						</button>
-						<input name="searchvar" type="hidden" value="<?= $searchVar ?>" />
 					</form>
 					<form action="download/index.php" method="post" style="float:left" onsubmit="targetPopup(this)">
 						<button class="icon-button" style="margin:5px;padding:5px;" title="<?= $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>" aria-label="<?= $LANG['DOWNLOAD_SPECIMEN_DATA']; ?>">
@@ -86,44 +90,46 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 						</button>
 					</div>
 				</div>
-				<div id="sort-div" style="display:<?= ($sortField1?'block':'none') ?>;margin: 20px;margin-bottom:5px;width:650px;">
+				<div id="sort-div" style="display:<?= ($sortField1?'block':'none') ?>">
 					<section class="fieldset-like" style="margin:0px">
 						<h2><span><?= $LANG['SORT'] ?></span></h2>
 						<form name="sortform" action="listtabledisplay.php" method="post">
-							<div>
-								<label for="sortfield1"><?= $LANG['SORT_BY'] ?>:</label>
-								<select name="sortfield1" id="sortfield1">
-									<option value=""></option>
-									<?php
-									$sortFields = array('c.collectionname' => $LANG['COLLECTION'], 'o.catalogNumber' => $LANG['CATALOG_NUMBER'], 'o.family' => $LANG['FAMILY'], 'o.sciname' => $LANG['SCINAME'], 'o.recordedBy' => $LANG['COLLECTOR'],
-										'o.recordNumber' => $LANG['NUMBER'], 'o.eventDate' => $LANG['EVENT_DATE'], 'o.country' => $LANG['COUNTRY'], 'o.StateProvince' => $LANG['STATE_PROVINCE'], 'o.county' => $LANG['COUNTY'], 'o.minimumElevationInMeters' => $LANG['ELEVATION']);
-									foreach($sortFields as $k => $v){
-										echo '<option value="'.$k.'" '.($k==$sortField1?'SELECTED':'').'>'.$v.'</option>';
-									}
-									?>
-								</select>
-							</div>
-							<div>
-								<label for="sortfield2"><?= $LANG['SORT_THEN_BY'] ?>:</label>
-								<select name="sortfield2" id="sortfield2">
-									<option value=""></option>
-									<?php
-									foreach($sortFields as $k => $v){
-										echo '<option value="'.$k.'" '.($k==$sortField2?'SELECTED':'').'>'.$v.'</option>';
-									}
-									?>
-								</select>
-							</div>
-							<div>
-								<label for="sortorder"> <?= $LANG['SORT_ORDER'] ?>: </label>
-								<select id="sortorder" name="sortorder">
-									<option value=""><?= $LANG['SORT_ASCENDING'] ?></option>
-									<option value="desc" <?= ($sortOrder=="desc"?'SELECTED':''); ?>><?= $LANG['SORT_DESCENDING'] ?></option>
-								</select>
-							</div>
-							<div>
-								<input name="searchvar" type="hidden" value="<?= $searchVar ?>" />
-								<button name="formsubmit" type="submit" ><?= $LANG['SORT'] ?></button>
+							<div id="sort-inner-div">
+								<div>
+									<label for="sortfield1"><?= $LANG['SORT_BY'] ?>:</label>
+									<select name="sortfield1" id="sortfield1">
+										<option value=""></option>
+										<?php
+										$sortFields = array('c.collectionname' => $LANG['COLLECTION'], 'o.catalogNumber' => $LANG['CATALOG_NUMBER'], 'o.family' => $LANG['FAMILY'], 'o.sciname' => $LANG['SCINAME'], 'o.recordedBy' => $LANG['COLLECTOR'],
+											'o.recordNumber' => $LANG['NUMBER'], 'o.eventDate' => $LANG['EVENT_DATE'], 'o.country' => $LANG['COUNTRY'], 'o.StateProvince' => $LANG['STATE_PROVINCE'], 'o.county' => $LANG['COUNTY'], 'o.minimumElevationInMeters' => $LANG['ELEVATION']);
+										foreach($sortFields as $k => $v){
+											echo '<option value="'.$k.'" '.($k==$sortField1?'SELECTED':'').'>'.$v.'</option>';
+										}
+										?>
+									</select>
+								</div>
+								<div>
+									<label for="sortfield2"><?= $LANG['SORT_THEN_BY'] ?>:</label>
+									<select name="sortfield2" id="sortfield2">
+										<option value=""></option>
+										<?php
+										foreach($sortFields as $k => $v){
+											echo '<option value="'.$k.'" '.($k==$sortField2?'SELECTED':'').'>'.$v.'</option>';
+										}
+										?>
+									</select>
+								</div>
+								<div>
+									<label for="sortorder"> <?= $LANG['SORT_ORDER'] ?>: </label>
+									<select id="sortorder" name="sortorder">
+										<option value=""><?= $LANG['SORT_ASCENDING'] ?></option>
+										<option value="desc" <?= ($sortOrder=="desc"?'SELECTED':''); ?>><?= $LANG['SORT_DESCENDING'] ?></option>
+									</select>
+								</div>
+								<div>
+									<input name="searchvar" type="hidden" value="<?= $searchVar ?>" />
+									<button name="formsubmit" type="submit" ><?= $LANG['SORT'] ?></button>
+								</div>
 							</div>
 						</form>
 					</section>

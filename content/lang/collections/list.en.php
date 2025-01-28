@@ -19,7 +19,7 @@ $LANG['SEARCH_CRITERIA'] = 'Search Criteria';
 
 $LANG['SORT'] = 'Sort Results';
 $LANG['SORT_BY'] = 'Sort by';
-$LANG['SORT_THEN_BY'] = 'then by';
+$LANG['SORT_THEN_BY'] = 'Then by';
 $LANG['SORT_ORDER'] = 'Order';
 $LANG['SORT_ASCENDING'] = 'Ascending';
 $LANG['SORT_DESCENDING'] = 'Descending';

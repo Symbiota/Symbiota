@@ -28,14 +28,27 @@
     padding: 5px;
 }
 
-#sort-div span{
-	margin-right: 15px;
-	margin-bottom: 2px;
+
+#sort-div {  
 }
 
-#sort-div button{
-	display: inline;
+#sort-inner-div { 
+	display: flex; 
+	flex-wrap: wrap;
 }
+
+#sort-inner-div div { 
+	margin-right: 10px; 
+}
+
+#sort-div label { 
+	display: block; 
+}
+
+#sort-div button { 
+	margin: 15px 
+}
+
 
 #omlisttable {
     width: 90%;
