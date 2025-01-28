@@ -1,0 +1,46 @@
+.checkbox-elem {
+	margin: 5px;
+	padding: 5px;
+	border: 1px dashed orange;
+}
+
+.ui-tabs .ui-tabs-nav li {
+	width: 32%;
+}
+
+.ui-tabs .ui-tabs-nav li a {
+	margin-left: 10px;
+}
+
+#tabs {
+	width:95%;
+}
+
+.button-form{
+	display: inline;
+	margin: 0px;
+	padding: 0px;
+}
+
+.icon-button{
+	display: inline;
+	margin: 5px;
+    padding: 5px;
+}
+
+#sort-div span{
+	margin-right: 15px;
+	margin-bottom: 2px;
+}
+
+#sort-div button{
+	display: inline;
+}
+
+#omlisttable {
+    width: 90%;
+}
+
+#omlisttable img {
+    border: medium double #990000;
+}

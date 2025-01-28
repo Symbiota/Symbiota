@@ -9,11 +9,6 @@ include_once($SERVER_ROOT.'/content/lang/collections/list.pt.php');
 
 $LANG['COL_RESULTS'] = 'Tabela de Resultados de Pesquisa';
 $LANG['SEARCH_RES_TABLE'] = 'Resultados da Pesquisa (tabela)';
-$LANG['COLLECTION'] = 'Coleção';
-$LANG['SCINAME'] = 'Nome Científico';
-$LANG['COUNTRY'] = 'País';
-$LANG['STATE_PROVINCE'] = 'Estado/Província';
-$LANG['COUNTY'] = 'Condado';
 $LANG['SPEC_REC_TAB'] = 'Tabela de Registros de Amostras';
 $LANG['SYMB_ID'] = 'ID da Symbiota';
 $LANG['DEC_LAT'] = 'Lat. Decimal';

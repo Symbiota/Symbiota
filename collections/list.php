@@ -14,6 +14,7 @@ $cntPerPage = array_key_exists('cntperpage', $_REQUEST) ? filter_var($_REQUEST['
 $pageNumber = array_key_exists('page', $_REQUEST) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $datasetid = array_key_exists('datasetid', $_REQUEST) ? filter_var($_REQUEST['datasetid'], FILTER_SANITIZE_NUMBER_INT) : '';
 $sortField1 = array_key_exists('sortfield1',$_REQUEST) ? $_REQUEST['sortfield1'] : '';
+$sortField2 = array_key_exists('sortfield2',$_REQUEST) ? $_REQUEST['sortfield2'] : '';
 $sortOrder = !empty($_REQUEST['sortorder']) ? 'desc' : '';
 $comingFrom =  (array_key_exists('comingFrom', $_REQUEST) ? $_REQUEST['comingFrom'] : '');
 if($comingFrom != 'harvestparams' && $comingFrom != 'newsearch'){
@@ -29,6 +30,10 @@ if ($targetTid && array_key_exists('mode', $_REQUEST)) $searchVar .= '&mode=vouc
 $searchVar .= '&comingFrom=' . $comingFrom;
 if($sortField1){
 	$searchVar .= '&sortfield1=' . htmlspecialchars($sortField1, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&sortorder=' . $sortOrder;
+	if($sortField2){
+		$searchVar .= '&sortfield2=' . htmlspecialchars($sortField2, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+		$collManager->addSort($sortField2, $sortOrder);
+	}
 	$collManager->addSort($sortField1, $sortOrder);
 }
 
@@ -46,12 +51,12 @@ $_SESSION['citationvar'] = $searchVar;
 	include_once($SERVER_ROOT . '/includes/head.php');
 	include_once($SERVER_ROOT . '/includes/googleanalytics.php');
 	?>
-	<link href="<?= $CSS_BASE_PATH; ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
+	<link href="<?= $CSS_BASE_PATH; ?>/symbiota/collections/list.css?ver=1" type="text/css" rel="stylesheet" />
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
-		var urlQueryStr = "<?php if($searchVar) echo $searchVar . '&page=' . $pageNumber; ?>";
+		let urlQueryStr = "<?php if($searchVar) echo $searchVar . '&page=' . $pageNumber; ?>";
 
 		$(document).ready(function() {
 			<?php
@@ -101,34 +106,8 @@ $_SESSION['citationvar'] = $searchVar;
 		}
 	</script>
 	<script src="../js/symb/collections.list.js?ver=4" type="text/javascript"></script>
-	<style type="text/css">
-		fieldset {
-			padding: 15px;
-		}
-
-		legend {
-			font-weight: bold;
-		}
-
-		.checkbox-elem {
-			margin: 5px;
-			padding: 5px;
-			border: 1px dashed orange;
-		}
-
-		.ui-tabs .ui-tabs-nav li {
-			width: 32%;
-		}
-
-		.ui-tabs .ui-tabs-nav li a {
-			margin-left: 10px;
-		}
-		#tabs {
-			width:95%;
-		}
-	</style>
+	<script src="../js/symb/shared.js?ver=1" type="text/javascript"></script>
 </head>
-
 <body>
 	<?php
 	$displayLeftMenu = (isset($collections_listMenu) ? $collections_listMenu : false);
@@ -161,7 +140,7 @@ $_SESSION['citationvar'] = $searchVar;
 		<div id="tabs" class="top-breathing-room-rel" style="margin-bottom: 1rem">
 			<ul>
 				<li>
-					<a id="taxatablink" href='<?= 'checklist.php?' . $searchVar . '&taxonfilter=' . $taxonFilter ?>'>
+					<a id="taxatablink" href="<?= 'checklist.php?' . $searchVar . '&taxonfilter=' . $taxonFilter ?>">
 						<span><?php echo $LANG['TAB_CHECKLIST']; ?></span>
 					</a>
 				</li>
@@ -181,34 +160,43 @@ $_SESSION['citationvar'] = $searchVar;
 					<div style="float:right;">
 						<?php
 						if ($SYMB_UID) {
-						?>
-							<div style="float:left">
+							?>
+							<span>
 								<button class="icon-button" onclick="displayDatasetTools()" aria-label="<?= $LANG['DATASET_MANAGEMENT'] ?>" title="<?= $LANG['DATASET_MANAGEMENT'] ?>">
 									<svg style="width:1.3em;height:1.3em;" alt="<?php echo $LANG['IMG_DATASET_MANAGEMENT']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M280-280h160v-160H280v160Zm240 0h160v-160H520v160ZM280-520h160v-160H280v160Zm240 0h160v-160H520v160ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>
 								</button>
-							</div>
-						<?php
+							</span>
+							<?php
 						}
 						?>
-						<form action="listtabledisplay.php" method="post" style="float:left">
-							<input name="comingFrom" type="hidden" value="<?= $comingFrom; ?>" />
-							<button class="icon-button" aria-label="<?= $LANG['TABLE_DISPLAY'] ?>" title="<?= $LANG['TABLE_DISPLAY'] ?>">
-								<svg style="width:1.3em;height:1.3em" alt="<?= $LANG['IMG_TABLE_DISPLAY'] ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200Zm80-400h560v-160H200v160Zm213 200h134v-120H413v120Zm0 200h134v-120H413v120ZM200-400h133v-120H200v120Zm427 0h133v-120H627v120ZM200-200h133v-120H200v120Zm427 0h133v-120H627v120Z"/></svg>
+						<span>
+							<button class="icon-button" onclick="toggleElement('#sort-div', 'block')" title="<?= $LANG['DISPLAY_SORT'] ?>" aria-label="<?= $LANG['DISPLAY_SORT'] ?>">
+								<img src="<?= $CLIENT_ROOT ?>/images/sort-cream.svg" style="width:1.3em;height:1.3em" alt="<?= $LANG['DISPLAY_SORT'] ?>" >
 							</button>
-							<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
-						</form>
-						<form action="download/index.php" method="post" style="float:left" onsubmit="targetPopup(this)">
-							<button class="icon-button" aria-label="<?= $LANG['DOWNLOAD_SPECIMEN_DATA'] ?>" title="<?= $LANG['DOWNLOAD_SPECIMEN_DATA'] ?>">
-								<svg style="width:1.3em;height:1.3em" alt="<?= $LANG['IMG_DWNL_DATA'] ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
-							</button>
-							<input name="searchvar" type="hidden" value="<?= $searchVar; ?>" />
-							<input name="dltype" type="hidden" value="specimen" />
-						</form>
-						<div style="float:left">
+						</span>
+						<span>
+							<form class="button-form" action="listtabledisplay.php" method="post">
+								<input name="comingFrom" type="hidden" value="<?= $comingFrom; ?>" />
+								<button class="icon-button" aria-label="<?= $LANG['TABLE_DISPLAY'] ?>" title="<?= $LANG['TABLE_DISPLAY'] ?>">
+									<svg style="width:1.3em;height:1.3em" alt="<?= $LANG['IMG_TABLE_DISPLAY'] ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200Zm80-400h560v-160H200v160Zm213 200h134v-120H413v120Zm0 200h134v-120H413v120ZM200-400h133v-120H200v120Zm427 0h133v-120H627v120ZM200-200h133v-120H200v120Zm427 0h133v-120H627v120Z"/></svg>
+								</button>
+								<input name="searchvar" type="hidden" value="<?php echo $searchVar ?>" />
+							</form>
+						</span>
+						<span>
+							<form class="button-form" action="download/index.php" method="post" onsubmit="targetPopup(this)">
+								<button class="icon-button" aria-label="<?= $LANG['DOWNLOAD_SPECIMEN_DATA'] ?>" title="<?= $LANG['DOWNLOAD_SPECIMEN_DATA'] ?>">
+									<svg style="width:1.3em;height:1.3em" alt="<?= $LANG['IMG_DWNL_DATA'] ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
+								</button>
+								<input name="searchvar" type="hidden" value="<?= $searchVar ?>" />
+								<input name="dltype" type="hidden" value="specimen" />
+							</form>
+						</span>
+						<span>
 							<button class="icon-button" onclick="copyUrl()" aria-label="<?= $LANG['COPY_TO_CLIPBOARD'] ?>" title="<?= $LANG['COPY_TO_CLIPBOARD'] ?>">
 								<svg style="width:1.3em;height:1.3em" alt="<?= $LANG['IMG_COPY']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg>
 							</button>
-						</div>
+						</span>
 					</div>
 					<div style="margin:5px;">
 						<?php
@@ -241,10 +229,10 @@ $_SESSION['citationvar'] = $searchVar;
 						}
 						?>
 					</div>
-					<div id="sort-div" style="padding:5px;">
+					<div id="sort-div" style="padding:5px;display:none;">
 						<section class="fieldset-like">
 							<h3><span><?= $LANG['SORT'] ?></span></h3>
-							<form name="sortform" action="listtabledisplay.php" method="post">
+							<form name="sortform" action="list.php" method="post">
 								<span>
 									<label for="sortfield1"><?= $LANG['SORT_BY'] ?>:</label>
 									<select name="sortfield1" id="sortfield1">
@@ -283,7 +271,6 @@ $_SESSION['citationvar'] = $searchVar;
 							</form>
 						</section>
 					</div>
-
 					<div style="clear:both;"></div>
 					<?php
 					$paginationStr = '<div><div style="clear:both;"><hr/></div><div style="float:left;margin:5px;">';

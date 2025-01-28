@@ -469,6 +469,12 @@ button.inverse-color {
   padding: 0.5rem 0.9rem;
 }
 
+.button-form{
+	display: inline;
+	margin: 0px;
+	padding: 0px;
+}
+
 /* image thumbnails */
 #img-container {
   width: 80%;

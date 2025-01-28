@@ -2517,7 +2517,7 @@ Record Limit:
 										<th><?=$LANG['CATALOG_NUMBER']?></th>
 										<th><?=$LANG['COLLECTOR']?></th>
 										<th><?=$LANG['EVENT_DATE']?></th>
-										<th><?=$LANG['SCIENTIFIC_NAME']?></th>
+										<th><?=$LANG['SCINAME']?></th>
 										<th><?=$LANG['MAP_LINK']?></th>
 									</thead>
 									<tbody>
