@@ -130,30 +130,6 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 		}
 	}
 
-	public function setSqlExternal($getInverse = false){
-		if($this->fieldArr){
-			$sqlFrag = '';
-			// if(!$getInverse){
-				foreach($this->fieldArr['fields'] as $colName){
-					if($colName) $sqlFrag .= ', ' . $colName;
-				}
-				// $this->sqlBase = 'SELECT ' . trim($sqlFrag, ', ') . ' FROM omoccurassociations ';
-				$this->sqlBase = 'SELECT DISTINCT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid LEFT JOIN omoccurrences oo ON oo.occid = oa.occid';
-			// }
-			// else{
-			// 	$this->fieldArr['fields']['relationship'] = 'terms.inverseRelationship AS relationship';
-			// 	foreach($this->fieldArr['fields'] as $colName){
-			// 		if($colName) $sqlFrag .= ', ' . $colName;
-			// 	}
-			// 	// $this->sqlBase = 'SELECT ' . trim($sqlFrag, ', ') . ' FROM omoccurassociations ';
-			// 	$this->sqlBase = 'SELECT DISTINCT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate LEFT JOIN omoccurrences oo ON oo.occid = oa.occid
-			// 		LEFT JOIN (SELECT t.term, t.inverseRelationship
-			// 		FROM ctcontrolvocabterm t INNER JOIN ctcontrolvocab v ON t.cvID = v.cvID
-			// 		WHERE v.tablename = "omoccurassociations" AND fieldName = "relationship" AND t.inverseRelationship IS NOT NULL) terms ON oa.relationship = terms.term ';
-			// }
-		}
-	}
-
 }
 
 ?>
