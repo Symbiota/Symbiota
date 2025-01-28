@@ -9,6 +9,7 @@ ini_set('display_errors', '1');
 include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/MediaResolutionTools.php');
 
+
 $collid = (array_key_exists('collid', $_POST)?$_POST['collid']:'');
 $imgIdStart = (array_key_exists('imgidstart', $_POST)?$_POST['imgidstart']:0);
 $limit = (array_key_exists('limit', $_POST)?$_POST['limit']:10000);
@@ -272,13 +273,13 @@ if($IS_ADMIN) $isEditor = true;
 							<div class="fieldRowDiv">
 								<div class="fieldDiv">
 									<span class="fieldLabel">Image Root URL (imgRootUrl):</span>
-									<input name="imgRootUrl" type="text" value="<?php echo ($imgRootUrl ? htmlspecialchars($imgRootUrl) : $IMAGE_ROOT_URL); ?>" style="width:400px" />
+									<input name="imgRootUrl" type="text" value="<?php echo ($imgRootUrl ? htmlspecialchars($imgRootUrl) : $MEDIA_ROOT_URL); ?>" style="width:400px" />
 								</div>
 							</div>
 							<div class="fieldRowDiv">
 								<div class="fieldDiv">
 									<span class="fieldLabel">Image Root Path (imgRootPath):</span>
-									<input name="imgRootPath" type="text" value="<?php echo ($imgRootPath ? htmlspecialchars($imgRootPath) : $IMAGE_ROOT_PATH); ?>" style="width:400px" />
+									<input name="imgRootPath" type="text" value="<?php echo ($imgRootPath ? htmlspecialchars($imgRootPath) : $MEDIA_ROOT_PATH); ?>" style="width:400px" />
 								</div>
 							</div>
 							<div class="fieldRowDiv">

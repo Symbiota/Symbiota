@@ -1,6 +1,8 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/content/lang/collections/listtabledisplay.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/listtabledisplay.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/listtabledisplay.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/listtabledisplay.en.php');
+
 include_once($SERVER_ROOT.'/classes/OccurrenceListManager.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
@@ -228,8 +230,11 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 										echo '<img src="../images/edit.png" style="height:1.3em;" title="'.(isset($LANG['EDIT_REC']) ? $LANG['EDIT_REC'] : 'Edit Record').'" />';
 										echo '</a>';
 									}
-									if(isset($occArr['img'])){
-										echo '<img src="../images/image.png" style="height:1.3em;margin-left:5px;" title="'.(isset($LANG['HAS_IMAGE']) ? $LANG['HAS_IMAGE'] : 'Has Image').'" />';
+									if(isset($occArr['has_image'])) {
+											echo '<img src="../images/image.png" style="height:1.3em;margin-left:5px;" title="'.(isset($LANG['HAS_IMAGE']) ? $LANG['HAS_IMAGE'] : 'Has Image').'" />';
+									}
+									if(isset($occArr['has_audio'])) {
+											echo '<img src="../images/speaker_thumbnail.png" style="height:1.3em;margin-left:5px;" title="'.(isset($LANG['HAS_AUDIO']) ? $LANG['HAS_AUDIO'] : 'Has Audio').'" />';
 									}
 									?>
 								</td>

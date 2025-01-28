@@ -15,7 +15,10 @@ if($SYMB_UID){
 }
 
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
-include_once($SERVER_ROOT.'/content/lang/profile/index.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/profile/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/profile/index.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/profile/index.en.php');
+
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $THIRD_PARTY_OID_AUTH_ENABLED = $THIRD_PARTY_OID_AUTH_ENABLED ?? false;
@@ -186,7 +189,7 @@ if (array_key_exists('last_message', $_SESSION)){
 		}
 		.flex-item-login {
 			width: 100%;
-			max-width: 350px;
+			max-width: 30rem;
 			margin-left: auto;
 			margin-right: auto;
 		}
@@ -200,7 +203,7 @@ include($SERVER_ROOT.'/includes/header.php');
 <div class="navpath"></div>
 <!-- inner text -->
 <div role="main" id="innertext" style="padding-left:0px;margin-left:0px;">
-	<h1 class="page-heading screen-reader-only">Login</h1>
+	<h1 class="page-heading screen-reader-only"><?php echo $LANG['LOGIN']; ?></h1>
 	<?php
 	if($statusStr){
 		$color = 'green';
@@ -221,8 +224,8 @@ include($SERVER_ROOT.'/includes/header.php');
 					<fieldset class="profile-fieldset">
 						<legend class="profile-legend"><?php echo (isset($LANG['PORTAL_LOGIN'])?$LANG['PORTAL_LOGIN']:'Portal Login'); ?></legend>
 						<div>
-							<label for="login"><?php echo (isset($LANG['LOGIN_NAME'])?$LANG['LOGIN_NAME']:'Login'); ?>:</label> 
-							<input id="login" name="login" value="<?php echo $login; ?>" style="border-style:inset;" />
+							<label for="portal-login"><?php echo (isset($LANG['LOGIN_NAME'])?$LANG['LOGIN_NAME']:'Login'); ?>:</label> 
+							<input id="portal-login" name="login" value="<?php echo $login; ?>" style="border-style:inset;" />
 						</div>
 						<div>
 							<label for="password"><?php echo (isset($LANG['PASSWORD'])?$LANG['PASSWORD']:"Password"); ?>:</label>

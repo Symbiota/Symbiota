@@ -193,7 +193,7 @@ class SpecProcessorManager {
 				$this->createTnImg = $row->createtnimg;
 				$this->createLgImg = $row->createlgimg;
 				$this->lastRunDate = $row->lastrundate;
-				if(!$this->lastRunDate && preg_match('/\d{4}-\d{2}-\d{2}/', $row->source)) $this->lastRunDate = $row->source;
+				if(!$this->lastRunDate && $row->source && preg_match('/\d{4}-\d{2}-\d{2}/', $row->source)) $this->lastRunDate = $row->source;
 				if(!$this->projectType){
 					if($this->title == 'iDigBio CSV upload'){
 						$this->projectType = 'idigbio';
@@ -219,8 +219,6 @@ class SpecProcessorManager {
 					$rs->free();
 				}
 			} catch (Exception $e) {}
-			//if(!$this->targetPath) $this->targetPath = $GLOBALS['IMAGE_ROOT_PATH'];
-			//if(!$this->imgUrlBase) $this->imgUrlBase = $GLOBALS['IMAGE_ROOT_URL'];
 			if($this->sourcePath && substr($this->sourcePath,-1) != '/' && substr($this->sourcePath,-1) != '\\') $this->sourcePath .= '/';
 			if($this->targetPath && substr($this->targetPath,-1) != '/' && substr($this->targetPath,-1) != '\\') $this->targetPath .= '/';
 			if($this->imgUrlBase && substr($this->imgUrlBase,-1) != '/') $this->imgUrlBase .= '/';
@@ -245,7 +243,7 @@ class SpecProcessorManager {
 		//Count of specimens with images but no OCR
 		$cnt = 0;
 		if($this->collid){
-			$sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid WHERE (o.collid = '.$this->collid.') ';
+			$sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid WHERE (o.collid = '.$this->collid.') ';
 			if($procStatus){
 				if($procStatus == 'null') $sql .= 'AND processingstatus IS NULL';
 				else $sql .= 'AND processingstatus = "'.$this->cleanInStr($procStatus).'"';
@@ -264,9 +262,9 @@ class SpecProcessorManager {
 		$cnt = 0;
 		if($this->collid){
 			$sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt '.
-				'FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
-				'LEFT JOIN specprocessorrawlabels r ON i.imgid = r.imgid '.
-				'WHERE o.collid = '.$this->collid.' AND r.imgid IS NULL ';
+				'FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid '.
+				'LEFT JOIN specprocessorrawlabels r ON m.mediaID = r.mediaID '.
+				'WHERE o.collid = '.$this->collid.' AND r.mediaID IS NULL ';
 			if($procStatus){
 				if($procStatus == 'null'){
 					$sql .= 'AND processingstatus IS NULL';
@@ -379,8 +377,8 @@ class SpecProcessorManager {
 		$cnt = 0;
 		if($this->collid){
 			$sql = 'SELECT count(o.occid) AS cnt '.
-				'FROM omoccurrences o LEFT JOIN images i ON o.occid = i.occid '.
-				'WHERE o.collid = '.$this->collid.' AND i.imgid IS NULL ';
+				'FROM omoccurrences o LEFT JOIN media m ON o.occid = m.occid AND m.mediaType = "image"'.
+				'WHERE o.collid = '.$this->collid.' AND m.mediaID IS NULL ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$cnt = $r->cnt;
@@ -395,8 +393,8 @@ class SpecProcessorManager {
 		$cnt = 0;
 		if($this->collid){
 			$sql = 'SELECT count(o.occid) AS cnt '.
-				'FROM omoccurrences o LEFT JOIN images i ON o.occid = i.occid '.
-				'WHERE (o.collid = '.$this->collid.') AND (i.imgid IS NULL) AND (o.processingstatus = "unprocessed") ';
+				'FROM omoccurrences o LEFT JOIN media m ON o.occid = m.occid AND m.mediaType = "image"'.
+				'WHERE (o.collid = '.$this->collid.') AND (m.mediaID IS NULL) AND (o.processingstatus = "unprocessed") ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$cnt = $r->cnt;
@@ -545,10 +543,10 @@ class SpecProcessorManager {
 		$headerArr = array('occid','catalogNumber','sciname','recordedBy','recordNumber','eventDate','country','stateProvince','county');
 		$sqlFrag = '';
 		if($target == 'dlnoimg'){
-			$sqlFrag .= 'FROM omoccurrences o LEFT JOIN images i ON o.occid = i.occid WHERE o.collid = '.$this->collid.' AND i.imgid IS NULL ';
+			$sqlFrag .= 'FROM omoccurrences o LEFT JOIN media m ON o.occid = m.occid WHERE o.collid = '.$this->collid.' AND m.mediaID IS NULL ';
 		}
 		elseif($target == 'unprocnoimg'){
-			$sqlFrag .= 'FROM omoccurrences o LEFT JOIN images i ON o.occid = i.occid WHERE (o.collid = '.$this->collid.') AND (i.imgid IS NULL) AND (o.processingstatus = "unprocessed") ';
+			$sqlFrag .= 'FROM omoccurrences o LEFT JOIN media m ON o.occid = m.occid WHERE (o.collid = '.$this->collid.') AND (m.mediaID IS NULL) AND (o.processingstatus = "unprocessed") ';
 		}
 		elseif($target == 'noskel'){
 			$sqlFrag .= 'FROM omoccurrences o WHERE (o.collid = '.$this->collid.') AND (o.processingstatus = "unprocessed") AND (o.sciname IS NULL) AND (o.stateprovince IS NULL)';

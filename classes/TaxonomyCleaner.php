@@ -1,8 +1,8 @@
 <?php
-include_once($SERVER_ROOT.'/classes/Manager.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyHarvester.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
+include_once($SERVER_ROOT . '/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/TaxonomyHarvester.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceMaintenance.php');
+include_once($SERVER_ROOT . '/classes/utilities/TaxonomyUtil.php');
 
 class TaxonomyCleaner extends Manager{
 
@@ -102,7 +102,7 @@ class TaxonomyCleaner extends Manager{
 						$this->logOrEcho('Taxon not fully resolved...',1);
 					}
 				}
-				$taxonArr = TaxonomyUtilities::parseScientificName($r->sciname,$this->conn,0,$this->targetKingdomName);
+				$taxonArr = TaxonomyUtil::parseScientificName($r->sciname,$this->conn,0,$this->targetKingdomName);
 				if(!$tid && $this->autoClean){
 					if(isset($taxonArr['sciname']) && $taxonArr['sciname']){
 						$sciname = $taxonArr['sciname'];
@@ -577,7 +577,7 @@ class TaxonomyCleaner extends Manager{
 		else{
 			//Test taxon does not exists, thus lets load it
 			//Prepare taxon for loading
-			$parsedArr = TaxonomyUtilities::parseScientificName($testObj['name'],$this->conn,0,$this->targetKingdomName);
+			$parsedArr = TaxonomyUtil::parseScientificName($testObj['name'],$this->conn,0,$this->targetKingdomName);
 			if(!array_key_exists('rank',$parsedArr)){
 				//Grab taxon object from EOL or Species2000
 

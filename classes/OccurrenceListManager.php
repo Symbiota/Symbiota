@@ -40,7 +40,7 @@ class OccurrenceListManager extends OccurrenceManager{
 			$pageRequest = ($pageRequest - 1)*$cntPerPage;
 		}
 		$sql .= ' LIMIT ' . $pageRequest . ',' . $cntPerPage;
-		//echo '<div>Spec sql: ' . $sql . '</div>'; exit;
+		// echo '<div>Spec sql: ' . $sql . '</div>'; exit; // @TODO HERE
 		$result = $this->conn->query($sql);
 		if($result){
 			$securityCollArr = array();
@@ -61,7 +61,7 @@ class OccurrenceListManager extends OccurrenceManager{
 					if(!$retArr[$row->occid]['collcode']) $retArr[$row->occid]['collcode'] = $row->collcodeoverride;
 					elseif($retArr[$row->occid]['collcode'] != $row->collcodeoverride) $retArr[$row->occid]['collcode'] .= '-'.$row->collcodeoverride;
 				}
-				$retArr[$row->occid]['collname'] = $this->cleanOutStr($row->collectionname);
+				$retArr[$row->occid]['collname'] = $row->collectionname;
 				$retArr[$row->occid]['icon'] = $row->icon;
 				$retArr[$row->occid]['catnum'] = $this->cleanOutStr($row->catalognumber);
 				$retArr[$row->occid]['family'] = $this->cleanOutStr($row->family);
@@ -111,12 +111,28 @@ class OccurrenceListManager extends OccurrenceManager{
 		return $retArr;
 	}
 
-	private function setImages($occArr,&$retArr){
-		$sql = 'SELECT occid, thumbnailurl FROM images WHERE occid IN('.implode(',',$occArr).') ORDER BY occid, sortOccurrence';
+	private function setImages($occArr,&$retArr): void {
+		$sql = 'SELECT occid, thumbnailurl, mediaType FROM media WHERE occid IN('.implode(',',$occArr).') ORDER BY occid, sortOccurrence';
 		$rs = $this->conn->query($sql);
 		$previousOccid = 0;
 		while($r = $rs->fetch_object()){
-			if($r->occid != $previousOccid) $retArr[$r->occid]['img'] = $r->thumbnailurl;
+			if($r->occid != $previousOccid) {
+				$thumbnail = $r->mediaType === 'audio'?
+				$GLOBALS['CLIENT_ROOT'] . '/images/speaker_thumbnail.png':
+				$r->thumbnailurl;
+
+				$retArr[$r->occid]['media'] = [
+					'thumbnail' => $thumbnail,
+					'mediaType' => $r->mediaType
+				];
+			}
+
+			if($r->mediaType === 'image' && !isset($retArr[$r->occid]['has_image'])) {
+				$retArr[$r->occid]['has_image'] = true;
+			} else if($r->mediaType === 'audio' && !isset($retArr[$r->occid]['has_audio'])) {
+				$retArr[$r->occid]['has_audio'] = true;
+			}
+
 			$previousOccid = $r->occid;
 		}
 		$rs->free();
@@ -125,7 +141,7 @@ class OccurrenceListManager extends OccurrenceManager{
 	private function setRecordCnt($sqlWhere){
 		if($sqlWhere){
 			$sql = "SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences o ".$this->getTableJoins($sqlWhere).$sqlWhere;
-			//echo "<div>Count sql: ".$sql."</div>";
+			// echo "<div>Count sql: ".$sql."</div>"; exit; // @TODO here
 			$result = $this->conn->query($sql);
 			if($result){
 				if($row = $result->fetch_object()){

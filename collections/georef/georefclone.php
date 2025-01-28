@@ -54,12 +54,13 @@ if($coorArr && count($coorArr) == 4){
 		let lat, lng = 0;
 		let clones = [];
 
-		function info_popup(pt) {
+		function info_popup(index) {
+			const pt = clones[index];
 			return `<div>${pt.lat}, ${pt.lng} (+- ${pt.err})</div>` +
-				(pt.georefby ?`<br/>Georeferenced by: ${pt.georefby}`: "")+
+				(pt.georeferencedBy ?`<br/>Georeferenced by: ${pt.georeferencedBy}`: "")+
 				`<div>${pt.cnt} matching records</div>` +
 				`<div>${pt.locality}<br/>` +
-				`<a href="#" title="Clone Coordinates" onClick="cloneCoord(${pt.lat}, ${pt.lng}, ${pt.err})"><b>Use Coordinates</b></a></div>`;
+				`<a href="#" title="Clone Coordinates" onClick="cloneCoord(clones[${index}])"><b>Use Coordinates</b></a></div>`;
 		}
 
 		function leafletInit() {
@@ -71,14 +72,15 @@ if($coorArr && count($coorArr) == 4){
 
 			const markers = [];
 
-			for(let point of clones) {
+			for(let i = 0; i < clones.length; i++) {
+				const point = clones[i];
 				const latlng = [
 					parseFloat(point.lat),
 					parseFloat(point.lng)
 				];
 
 				markers.push(L.marker(latlng)
-					.bindPopup(info_popup(point)));
+					.bindPopup(info_popup(i)));
 			}
 			let markerGroup = L.featureGroup(markers).addTo(map.mapLayer);
 			map.mapLayer.fitBounds(markerGroup.getBounds());
@@ -97,7 +99,8 @@ if($coorArr && count($coorArr) == 4){
 			let activeWindow;
 
 			let bounds = new google.maps.LatLngBounds();
-			for(let point of clones) {
+			for(let i = 0; i < clones.length; i++) {
+				let point = clones[i];
 				const pt_lat = parseFloat(point.lat);
 				const pt_lng = parseFloat(point.lng);
 
@@ -108,7 +111,7 @@ if($coorArr && count($coorArr) == 4){
 				});
 
 				const infowindow = new google.maps.InfoWindow({
-					content: info_popup(point),
+					content: info_popup(i),
 				});
 
 				marker.addListener("click", () => {
@@ -146,15 +149,46 @@ if($coorArr && count($coorArr) == 4){
 			<?php } ?>
 	  }
 
-		function cloneCoord(lat,lng,err){
+		function cloneCoord(data) {
+			const updateParentField	= (selector, value) => {
+				if(!value || !selector) return;
+				const input = opener.document.querySelector(selector);
+				if(input) {
+					input.style.backgroundColor = "lightblue";
+					input.value = value;
+					if(typeof input.onchange === 'function') {
+						input.onchange();
+					}
+				}
+			}
+
 			try{
-				if(err == 0) err = "";
-				opener.document.getElementById("decimallatitude").value = lat;
-				opener.document.getElementById("decimallongitude").value = lng;
-				opener.document.getElementById("coordinateuncertaintyinmeters").value = err;
-				opener.document.getElementById("decimallatitude").onchange();
-				opener.document.getElementById("decimallongitude").onchange();
-				opener.document.getElementById("coordinateuncertaintyinmeters").onchange();
+				if(data.err == 0) data.err = "";	
+
+				const update_arr = [
+					["#decimallatitude", data.lat],
+					["#decimallongitude", data.lat],
+					["#coordinateuncertaintyinmeters", data.err],
+					["#georeferencedByDiv input", data.georeferencedBy],
+					["#georeferenceRemarksDiv input", data.georeferenceRemarks],
+					["#georeferenceSourcesDiv input", data.georeferenceSources],
+					["#georeferenceProtocolDiv input", data.georeferenceProtocol],
+					["#georeferenceVerificationStatusDiv input", data.georeferenceVerificationStatus],
+					["#footprintWktDiv #footprintwkt", data.footprintWKT],
+				]
+
+				for (let field of update_arr) {
+					updateParentField(field[0], field[1]);
+				}
+
+				opener.document.getElementById("coordinateWrapper").onchange();
+				opener.document.getElementById("saveEditsButton").disabled = false;
+
+				let toggle = opener.document.getElementById("georefExtraDiv");
+				if(toggle && toggle.style.display !== 'block') {
+					toggle.style.display = 'block';
+				}
+
 			}
 			catch(myErr){
 			}
@@ -198,7 +232,7 @@ if($coorArr && count($coorArr) == 4){
 		></div>
 		<!-- This is inner text! -->
 		<div role="main" id="innertext" style="margin-top: <?php echo $topVal; ?>">
-			<h1 class="page-heading">Georeference Clone Tool</h1>
+			<h1 class="page-heading"><?php echo $LANG['GEOREFERENCE_CLONE']; ?></h1>
 			<fieldset style="padding:10px;">
             <legend><b>
                <?= $LANG['SEARCH_FORM'] ?>

@@ -5,8 +5,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Media extends Model{
 
-	protected $table = 'images';
-	protected $primaryKey = 'imgid';
+	protected $table = 'media';
+	protected $primaryKey = 'mediaID';
 
 	public $timestamps = false;
 
@@ -24,6 +24,10 @@ class Media extends Model{
 
 	public function occurrence() {
 		return $this->belongsTo(Occurrence::class, 'occid', 'occid');
+	}
+
+	public function Taxonomy() {
+		return $this->belongsTo(Taxonomy::class, 'tid', 'tid');
 	}
 
 	//Accessor functions

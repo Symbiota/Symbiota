@@ -1,8 +1,8 @@
 <?php
 include_once('../../config/symbini.php');
-header('Content-Type: text/html; charset=' . $CHARSET);
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/collections/tools/mapaids.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/tools/mapaids.en.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/tools/mapaids.' . $LANG_TAG . '.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/tools/mapaids.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/tools/mapaids.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/tools/mapaids.en.php');
+header("Content-Type: text/html; charset=".$CHARSET);
 
 if($MAPPING_BOUNDARIES){
 	$boundaryArr = explode(";",$MAPPING_BOUNDARIES);
@@ -26,7 +26,9 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 		include_once($SERVER_ROOT.'/includes/leafletMap.php');
 		include_once($SERVER_ROOT.'/includes/googleMap.php');
 		?>
-
+		<style>
+			html, body, #map_canvas { width:100%; height: 100%; padding:0; margin:0}
+		</style>
 		<script type="text/javascript">
 		var map;
 
@@ -70,12 +72,6 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 			document.getElementById("latbox").value = "";
 			document.getElementById("lngbox").value = "";
 			document.getElementById("errRadius").value = "";
-		}
-
-		//Function For Submission
-		function SubmitCoordinates(lat, lng) {
-			opener.document.getElementById("decimallatitude").value = lat;
-			opener.document.getElementById("decimallongitude").value = lng;
 		}
 
 		function errRadiusChanged(e) {
@@ -276,8 +272,7 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 					const lat = e.layer._latlng.lat;
 					const lng = e.layer._latlng.lng;
 					createMarker(lat, lng)
-
-				}
+				} 
 			})
 
 			//Draw marker if one exists
@@ -366,7 +361,7 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 			lngInput.addEventListener("change", onFormChange);
 
 			//Draw marker if one exists
-		if(latlng) {
+         if(latlng) {
 				createMarker(latlng[0], latlng[1]);
 				map.mapLayer.setCenter(marker.getPosition());
 			}
@@ -384,10 +379,7 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 			let lat = opener.document.getElementById("decimallatitude").value;
 			let lng = opener.document.getElementById("decimallongitude").value;
 
-			const data = document.getElementById('service-container');
-			latCenter = parseFloat(data.getAttribute('data-lat'));
-			lngCenter = parseFloat(data.getAttribute('data-lng'));
-
+         const data = document.getElementById('service-container');
 			radiusInput = document.getElementById("errRadius");
 			latInput = document.getElementById("latbox");
 			lngInput = document.getElementById("lngbox");
@@ -400,17 +392,24 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 				} else {
 					alert(`Error: Not Coordinates lat: ${lat}, lng: ${lng}`);
 				}
-			}
-			<?php if(empty($GOOGLE_MAP_KEY)) { ?>
+            latCenter = parseFloat(lat);
+            lngCenter = parseFloat(lng);
+         } else {
+            latCenter = parseFloat(data.getAttribute('data-lat'));
+            lngCenter = parseFloat(data.getAttribute('data-lng'));
+         } 
+
+			<?php if(empty($GOOGLE_MAP_KEY)): ?> 
 			leafletInit();
-			<?php } else { ?>
+			<?php else: ?>
 			googleInit();
-			<?php } ?>
+			<?php endif ?>
 		}
 
 		function updateParentForm(f) {
 			opener.document.getElementById("decimallatitude").value = f.latbox.value;
 			opener.document.getElementById("decimallongitude").value = f.lngbox.value;
+
 			try{
 				if(opener.document.getElementById("coordinateuncertaintyinmeters")){
 					opener.document.getElementById("coordinateuncertaintyinmeters").value = f.errRadius.value;
@@ -419,6 +418,10 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 				if(opener.document.getElementById("geodeticdatum")){
 					opener.document.getElementById("geodeticdatum").value = "WGS84";
 					opener.document.getElementById("geodeticdatum").onchange();
+				}
+				let coordinateWrapper = opener.document.getElementById("coordinateWrapper");
+				if(coordinateWrapper) {
+					coordinateWrapper.onchange();
 				}
 				opener.document.getElementById("decimallatitude").onchange();
 				opener.document.getElementById("decimallongitude").onchange();
@@ -451,7 +454,7 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 		<?php
 		if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimalheader.php');
 		?>
-		<h1 class="page-heading screen-reader-only">Point-Radius Aid</h1>
+		<h1 class="page-heading screen-reader-only"><?php echo $LANG['POINT_RADIUS_AID']; ?></h1>
 		<div
 			id="service-container"
 			class="service-container"
