@@ -8,7 +8,6 @@ include_once($SERVER_ROOT.'/classes/utilities/TaxonomyUtil.php');
 class AssociationManager extends OccurrenceTaxaManager{
 
 	private $isEditor = false;
-	private $externalOccurrenceAssociationSql = '';
 
 	function __construct(){
 		parent::__construct();
@@ -88,38 +87,6 @@ class AssociationManager extends OccurrenceTaxaManager{
         $sql .= "AND (o.occid IN (SELECT occid FROM ( " . $forwardSql . " UNION " . $reverseSql . " UNION " . $externalAndObservationalSql . " ) AS occids)";
     }
     return $sql;
-}
-
-public function getAssociatedRecordsForExternal($precedingSql, $associationArr, $relationshipAccessor='relationship') {
-    $sql = '';
-
-    if (array_key_exists($relationshipAccessor, $associationArr) && $associationArr[$relationshipAccessor] !== 'none') {
-        $familyJoinStr = '';
-        // $shouldUseFamily = array_key_exists('associated-taxa', $associationArr) && $associationArr['associated-taxa'] == '3';
-		$shouldUseFamily = true; // fixes bug that occurs when user selects "Scientific name" taxon type instead of family and then searches for a family. Silly user.
-        if ($shouldUseFamily) $familyJoinStr = 'LEFT JOIN taxstatus ts ON o.tidinterpreted = ts.tid';
-
-        // "Forward" association
-        $relationshipType = (array_key_exists($relationshipAccessor, $associationArr) && $associationArr[$relationshipAccessor] !== 'any') ? $associationArr[$relationshipAccessor] : 'IS NOT NULL';
-        $relationshipStr = (array_key_exists($relationshipAccessor, $associationArr) && $associationArr[$relationshipAccessor] !== 'any') ? ("='" . $relationshipType . "'") : ' IS NOT NULL';
-
-		$forwardSql = "SELECT oa.occid FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid  LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE oa.relationship " . $relationshipStr . " ";
-		$forwardSql .= $this->getAssociatedTaxonWhereFrag($associationArr);
-
-        // "Reverse" association
-        $reverseAssociationType = (array_key_exists($relationshipAccessor, $associationArr) && $associationArr[$relationshipAccessor] !== 'any') ? $this->getInverseRelationshipOf($relationshipType) : 'IS NOT NULL';
-        $reverseRelationshipStr = (array_key_exists($relationshipAccessor, $associationArr) && $associationArr[$relationshipAccessor] !== 'any') ? ("='" . $reverseAssociationType . "'") : ' IS NOT NULL';
-
-
-		$reverseSql = "SELECT oa.occidAssociate FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE oa.relationship " . $reverseRelationshipStr . " ";
-
-        $reverseSql .= $this->getAssociatedTaxonWhereFrag($associationArr);
-
-        $sql .= "AND (o.occid IN (SELECT occid FROM ( " . $forwardSql . " UNION " . $reverseSql . " ) AS occids)";
-    }
-    // $this->externalOccurrenceAssociationSql = $precedingSql . $sql;
-	$this->externalOccurrenceAssociationSql = $sql;
-	return $sql;
 }
 
 	public function getAssociatedTaxonWhereFrag($associationArr){
