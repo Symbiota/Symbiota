@@ -2119,15 +2119,6 @@ class DwcArchiverCore extends Manager{
 			$this->associationHandler->setSqlBase(true);
 			$this->associationHandler->writeOutRecordBlock($batchOccidArr, 'oa.occidAssociate');
 
-			// $externalAssociationQuery = 'SELECT o.occid from omoccurrences o ' . getAssociatedRecordsForExternal('', ) // @TODO LEFT OFF HERE
-
-			//@TODO get $batchOccidArr for external
-
-
-			//Now to external records
-			// $this->associationHandler->setSqlExternal();
-			// $this->associationHandler->writeOutRecordBlockExternal($batchOccidArr, 'oa.occid');
-
 		}
 	}
 
