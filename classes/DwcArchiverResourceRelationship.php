@@ -21,16 +21,16 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
     //Based on https://rs.gbif.org/extension/resource_relationship_2024-02-19.xml
 	private function setFieldArr(){
 		$columnArr = array();
-		$termArr['deleteMeOccid'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
-		$columnArr['deleteMeOccid'] = 'oa.occid';
-		$termArr['deleteMeOccidAssociate'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
-		$columnArr['deleteMeOccidAssociate'] = 'oa.occidAssociate';
+		// $termArr['deleteMeOccid'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
+		// $columnArr['deleteMeOccid'] = 'oa.occid';
+		// $termArr['deleteMeOccidAssociate'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
+		// $columnArr['deleteMeOccidAssociate'] = 'oa.occidAssociate';
 		$termArr['resourceRelationshipID'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
 		// $columnArr['resourceRelationshipID'] = 'IFNULL(IFNULL(IFNULL(oa.objectID, o.occurrenceID), o.recordID), oa.resourceUrl)';
 		$columnArr['resourceRelationshipID'] = 'IFNULL(oa.instanceID, oa.recordID)';
 		$termArr['resourceID'] = 'https://dwc.tdwg.org/terms/#dwc:resourceID';
 		// $columnArr['resourceID'] = 'oa.occid'; // @TODO occurrence o o.occoccurrenceID
-		$columnArr['resourceID'] = 'o.occurrenceID'; // @TODO occurrence o o.occoccurrenceID
+		$columnArr['resourceID'] = 'IFNULL(o.occurrenceID, o.recordID)'; // @TODO occurrence o o.occoccurrenceID
         $termArr['relationshipOfResourceID'] = 'https://dwc.tdwg.org/terms/#dwc:relationshipOfResourceID';
 		$columnArr['relationshipOfResourceID'] = 'oa.relationshipID';
 		$termArr['relatedResourceID'] = 'https://dwc.tdwg.org/terms/#dwc:relatedResourceID';
