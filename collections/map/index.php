@@ -1876,7 +1876,7 @@ if(isset($_REQUEST['llpoint'])) {
 					openRecord(records[i]);
 				})
 				cat_link.id = "label" + occid;
-				cat_link.append(catalogNumber ? catalogNumber: '');
+				cat_link.append(catalogNumber ? catalogNumber: 'N/A');
 				cat_link.id = "cat" + occid;
 				cat.append(cat_link);
 
@@ -1887,7 +1887,7 @@ if(isset($_REQUEST['llpoint'])) {
 					openRecord(records[i]);
 				})
 				occurrence_link.id = "label" + occid;
-				occurrence_link.append(id? id: '')
+				occurrence_link.append(id? id: 'N/A')
 				collector.append(occurrence_link);
 
 				let date = document.createElement("td");
