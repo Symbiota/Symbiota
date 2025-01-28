@@ -130,6 +130,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 							while($r = $rs->fetch_object()){
 								$famArr[] = $r->sciname;
 							}
+							$rs->free();
 						}
 						if($famArr){
 							$famArr = array_unique($famArr);
@@ -277,16 +278,16 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 	//Action editing functions
 	public function batchAssignImageTag($postArr){
 		$status = false;
-		$imageArr = $postArr['mediaid'];
+		$imageArr = $postArr['mediaId'];
 		$tagName = $postArr['imgTagAction'];
 		if($imageArr && $tagName){
 			$cnt = 0;
 			$fail = 0;
-			foreach($imageArr as $mediaID){
-				if(is_numeric($mediaID)){
-					$sql = 'INSERT IGNORE INTO imagetag(mediaid, keyValue) VALUE(?, ?)';
+			foreach($imageArr as $mediaId){
+				if(is_numeric($mediaId)){
+					$sql = 'INSERT IGNORE INTO imagetag(mediaId, keyValue) VALUE(?, ?)';
 					if($stmt = $this->conn->prepare($sql)){
-						$stmt->bind_param('is', $mediaID, $tagName);
+						$stmt->bind_param('is', $mediaId, $tagName);
 						$stmt->execute();
 						if($stmt->affected_rows) $cnt++;
 						elseif($stmt->error){
@@ -331,8 +332,8 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 			while($r = $rs->fetch_object()){
 				$retArr[$r->tagkey] = $r->displayText;
 			}
+			$rs->free();
 		}
-		$rs->free();
 		return $retArr;
 	}
 

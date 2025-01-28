@@ -94,7 +94,7 @@ if($action == 'batchAssignTag'){
 			}
 			var formVerified = false;
 			for(var h=0; h<f.length; h++){
-				if(f.elements[h].name == "imgid[]" && f.elements[h].checked){
+				if(f.elements[h].name == "mediaId[]" && f.elements[h].checked){
 					formVerified = true;
 					break;
 				}
@@ -113,7 +113,7 @@ if($action == 'batchAssignTag'){
 			}
 			var f = cb.form;
 			for(var i=0; i<f.length; i++){
-				if(f.elements[i].name == "imgid[]") f.elements[i].checked = boxesChecked;
+				if(f.elements[i].name == "mediaId[]") f.elements[i].checked = boxesChecked;
 			}
 		}
 	</script>
@@ -397,7 +397,7 @@ if($action == 'batchAssignTag'){
 								$collArr = $imageArr['coll'];
 								unset($imageArr['coll']);
 							}
-							foreach($imageArr as $imgId => $imgArr){
+							foreach($imageArr as $mediaId => $imgArr){
 								$imgUrl = $imgArr['url'];
 								$imgTn = $imgArr['thumbnailurl'];
 								if($imgTn){
@@ -419,7 +419,7 @@ if($action == 'batchAssignTag'){
 											$anchorLink = '<a href="#" onclick="openIndPU(' . $imgArr['occid'] . ');return false;">';
 										}
 										else{
-											$anchorLink = '<a href="#" onclick="openImagePopup(' . $imgId . ');return false;">';
+											$anchorLink = '<a href="#" onclick="openImagePopup(' . $mediaId . ');return false;">';
 										}
 										echo $anchorLink . '<img src="' . $imgUrl . '" /></a>';
 										?>
@@ -446,7 +446,7 @@ if($action == 'batchAssignTag'){
 										}
 										if($isEditorOfThisImage){
 											$isEditorOfAtLeastOne = true;
-											echo '<div class="editor-div" style="display:none;margin-top:3px;"><input name="imgid[]" type="checkbox" value="' . $imgId . '"></div>';
+											echo '<div class="editor-div" style="display:none;margin-top:3px;"><input name="mediaId[]" type="checkbox" value="' . $mediaId . '"></div>';
 										}
 										$sciname = $imgArr['sciname'];
 										if(!$sciname && $imgArr['occid'] && $occArr[$imgArr['occid']]['sciname']) $sciname = $occArr[$imgArr['occid']]['sciname'];

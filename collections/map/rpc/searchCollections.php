@@ -49,10 +49,7 @@ $recordArr = [];
 $collArr = [];
 $defaultColor = "#B2BEB5";
 
-$host = false;
-if (isset($SERVER_HOST)) {
-	$host = ((strpos($SERVER_HOST, '127.0.0.1') !== false || strpos($SERVER_HOST, 'localhost') !== false) ? "http://" : "https://") . $SERVER_HOST . $CLIENT_ROOT;
-}
+$host = GeneralUtil::getDomain() . $CLIENT_ROOT;
 
 foreach ($coordArr as $collName => $coll) {
 	//Collect all the collections
@@ -83,9 +80,12 @@ foreach ($coordArr as $collName => $coll) {
 
 		//Collect all records
 		array_push($recordArr, [
-			'id' => $record['id'],
-			'tid' => $record['tid'],
-			'collid' => $record['collid'],
+			'id' => $record['id'], 
+			'tid' => $record['tid'], 
+			'catalogNumber' => $record['catalogNumber'], 
+			'eventdate' => $record['eventdate'], 
+			'sciname' => $record['sn'], 
+			'collid' => $record['collid'], 
 			'family' => $record['fam'],
 			'occid' => $recordId,
 			'host' => $host,

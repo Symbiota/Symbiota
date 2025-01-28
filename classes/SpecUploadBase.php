@@ -552,7 +552,7 @@ class SpecUploadBase extends SpecUpload{
 		$this->conn->query($sqlDel2);
 		$sqlDel3 = 'DELETE FROM uploadimagetemp WHERE (collid IN('.$this->collId.'))';
 		$this->conn->query($sqlDel3);
-		$sqlDel4 = 'DELETE FROM uploadKeyValueTemp WHERE (collid IN('.$this->collId.'))';
+		$sqlDel4 = 'DELETE FROM uploadkeyvaluetemp WHERE (collid IN('.$this->collId.'))';
 		$this->conn->query($sqlDel4);
 	}
 
@@ -631,7 +631,7 @@ class SpecUploadBase extends SpecUpload{
 
 	private function linkTempKeyValueOccurrences() {
 		$this->outputMsg('<li>Linking key value data to occurrences...</li>');
-		$sql = 'UPDATE uploadKeyValueTemp kv JOIN uploadspectemp s ON s.dbpk = kv.dbpk SET kv.occid = s.occid, kv.collid = s.collid';
+		$sql = 'UPDATE uploadkeyvaluetemp kv JOIN uploadspectemp s ON s.dbpk = kv.dbpk SET kv.occid = s.occid, kv.collid = s.collid';
 		$this->conn->query($sql);
 	}
 
@@ -1293,10 +1293,10 @@ class SpecUploadBase extends SpecUpload{
 	// }
 	private function setOtherCatalogNumbers(){
 		if($this->uploadType == $this->FILEUPLOAD || $this->uploadType == $this->SKELETAL){
-			$sql = 'INSERT IGNORE INTO omoccuridentifiers (occid, identifiername, identifiervalue, modifiedUid) 
-			SELECT o.occid, kv.key as identifiername, kv.value as identifiervalue, kv.upload_uid as modifiedUid 
-			FROM uploadKeyValueTemp kv 
-			INNER JOIN uploadspectemp u on u.dbpk = kv.dbpk 
+			$sql = 'INSERT IGNORE INTO omoccuridentifiers (occid, identifiername, identifiervalue, modifiedUid)
+			SELECT o.occid, kv.key as identifiername, kv.value as identifiervalue, kv.uploadUid as modifiedUid
+			FROM uploadkeyvaluetemp kv
+			INNER JOIN uploadspectemp u on u.dbpk = kv.dbpk
 			INNER JOIN omoccurrences o on o.occid = u.occid
 			WHERE type = "omoccuridentifiers" AND kv.collid = ?';
 
@@ -1915,11 +1915,11 @@ class SpecUploadBase extends SpecUpload{
 
 				if(isset($recMap['othercatalognumbers']) && $recMap['othercatalognumbers']) {
 					$parsedCatalogNumbers = self::parseOtherCatalogNumbers($recMap['othercatalognumbers']);
-					$sql = 'INSERT INTO uploadKeyValueTemp (`key`, `value`, dbpk, upload_uid, type) VALUES (?, ?, ?, ?, "omoccuridentifiers")';
+					$sql = 'INSERT INTO uploadkeyvaluetemp (`key`, `value`, dbpk, uploadUid, type) VALUES (?, ?, ?, ?, "omoccuridentifiers")';
 					foreach ($parsedCatalogNumbers as $entry) {
 						QueryUtil::executeQuery($this->conn, $sql, [$entry['key'], $entry['value'], $recMap['dbpk'], $GLOBALS['SYMB_UID']]);
 					}
-				} 
+				}
 			}
 
 		}
@@ -1928,7 +1928,7 @@ class SpecUploadBase extends SpecUpload{
 		$catalogNumbers = explode(';', str_replace(['|',','], ';', $otherCatalogNumbers));
 		$parsedCatalogNumbers = [];
 
-		for ($i = 0; $i < count($catalogNumbers); $i++) { 
+		for ($i = 0; $i < count($catalogNumbers); $i++) {
 			$key_value = explode(':', $catalogNumbers[$i]);
 
 			if(count($key_value) == 2) {

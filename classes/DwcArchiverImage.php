@@ -11,6 +11,12 @@ class DwcArchiverImage{
 		$fieldArr['thumbnailAccessURI'] = 'm.thumbnailurl as thumbnailAccessURI';
 		$termArr['goodQualityAccessURI'] = 'http://rs.tdwg.org/ac/terms/goodQualityAccessURI';
 		$fieldArr['goodQualityAccessURI'] = 'm.url as goodQualityAccessURI';
+		$termArr['format'] = 'http://purl.org/dc/terms/format';		//jpg
+		$fieldArr['format'] = 'm.format';
+		$termArr['type'] = 'http://purl.org/dc/terms/type';		//StillImage or Sound
+		$fieldArr['type'] = 'CASE WHEN m.mediaType = "audio" THEN "Sound" ELSE "StillImage" END as type';
+		$termArr['subtype'] = 'http://rs.tdwg.org/ac/terms/subtype';		//Photograph or Recorded Organism
+		$fieldArr['subtype'] = 'CASE WHEN m.mediaType = "audio" THEN "Recorded Organism" ELSE "Photograph" END as subtype';
 		$termArr['rights'] = 'http://purl.org/dc/terms/rights';
 		$fieldArr['rights'] = 'c.rights';
 		$termArr['Owner'] = 'http://ns.adobe.com/xap/1.0/rights/Owner';	//Institution name
@@ -25,26 +31,14 @@ class DwcArchiverImage{
 		$fieldArr['caption'] = 'm.caption';
 		$termArr['comments'] = 'http://rs.tdwg.org/ac/terms/comments';
 		$fieldArr['comments'] = 'm.notes';
+		$termArr['tag'] = 'http://rs.tdwg.org/ac/terms/tag';
+		$fieldArr['tag'] = 'GROUP_CONCAT( tag.keyValue ) AS tag';
 		$termArr['providerManagedID'] = 'http://rs.tdwg.org/ac/terms/providerManagedID';	//GUID
 		$fieldArr['providerManagedID'] = 'm.recordID AS providermanagedid';
 		$termArr['MetadataDate'] = 'http://ns.adobe.com/xap/1.0/MetadataDate';	//timestamp
 		$fieldArr['MetadataDate'] = 'm.initialtimestamp AS metadatadate';
-		$termArr['format'] = 'http://purl.org/dc/terms/format';		//jpg
-		$fieldArr['format'] = 'm.format';
 		$termArr['associatedSpecimenReference'] = 'http://rs.tdwg.org/ac/terms/associatedSpecimenReference';	//reference url in portal
-
-		//This select statement must be here for the csv columns to be correct
 		$fieldArr['associatedSpecimenReference'] = 'null as associatedSpecimenReference';
-		$termArr['type'] = 'http://purl.org/dc/terms/type';		//StillImage or Sound
-		$fieldArr['type'] = 'CASE
-		WHEN m.mediaType = "audio" THEN "Sound"
-		ELSE "StillImage" END as type';
-
-		$termArr['subtype'] = 'http://rs.tdwg.org/ac/terms/subtype';		//Photograph or Recorded Organism
-		$fieldArr['subtype'] = 'CASE
-		WHEN m.mediaType = "audio" THEN "Recorded Organism"
-		ELSE "Photograph" END as subtype';
-
 		$termArr['metadataLanguage'] = 'http://rs.tdwg.org/ac/terms/metadataLanguage';	//en
 		$fieldArr['metadataLanguage'] = '';
 		$termArr['mediaID'] = 'https://symbiota.org/terms/mediaID';	//en
@@ -72,10 +66,10 @@ class DwcArchiverImage{
 			foreach($fieldArr as $fieldName => $colName){
 				if($colName) $sqlFrag .= ', '.$colName;
 			}
-			$sql = 'SELECT '.trim($sqlFrag,', ').
-				' FROM media m INNER JOIN omoccurrences o ON m.occid = o.occid '.
-				'INNER JOIN omcollections c ON o.collid = c.collid '.
-				'LEFT JOIN users u ON m.creatorUid = u.uid ';
+			$sql = 'SELECT '.trim($sqlFrag,', '). ' FROM media m INNER JOIN omoccurrences o ON m.occid = o.occid
+				INNER JOIN omcollections c ON o.collid = c.collid
+				LEFT JOIN imagetag tag ON m.mediaID = tag.mediaID
+				LEFT JOIN users u ON m.creatorUid = u.uid ';
 			if(strpos($conditionSql,'ts.taxauthid')){
 				$sql .= 'LEFT JOIN taxstatus ts ON o.tidinterpreted = ts.tid ';
 			}
@@ -111,6 +105,7 @@ class DwcArchiverImage{
 					$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL) ';
 				}
 			}
+			$sql .= 'GROUP BY m.mediaID';
 		}
 		return $sql;
 	}

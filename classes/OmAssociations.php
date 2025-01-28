@@ -159,10 +159,6 @@ class OmAssociations extends Manager{
 			else $this->errorMessage = 'ERROR preparing statement for omoccurassociations insert: '.$this->conn->error;
 		}
 
-		// if($status == true){
-		// 	$associationManager = new AssociationManager;
-		// 	$associationManager->createInverseRecord($insertedRecord);
-		// } //@TODO deleteMe remove upon approval
 		return $status;
 	}
 
