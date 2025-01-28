@@ -810,11 +810,14 @@ class OccurrenceEditorManager {
 						if ($identUnit) {
 							$tag = '';
 							$value = $identUnit;
-							if (preg_match('/^([A-Za-z\s]+[\s#:]+)(\d+)$/', $identUnit, $m)) {
-								$tag = trim($m[1], ': ');
-								$value = $m[2];
+
+							if($matches = explode(':', $identUnit)) {
+								if(count($matches) === 2) {
+									$otherCatNumArr[trim($matches[1])] = trim($matches[0]);
+								} else if(count($matches) > 0) {
+									$otherCatNumArr[trim($matches[0])] = '';
+								}
 							}
-							$otherCatNumArr[$value] = $tag;
 						}
 					}
 				}
