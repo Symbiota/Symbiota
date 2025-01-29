@@ -279,7 +279,7 @@ class OccurrenceImport extends UtilitiesFileImport{
 		$sqlConditionArr = array();
 		if(isset($identifierArr['occurrenceID'])){
 			$occurrenceID = $this->cleanInStr($identifierArr['occurrenceID']);
-			$sqlConditionArr[] = '(o.occurrenceID = "'.$occurrenceID.'" OR o.recordID = "'.$occurrenceID.'" OR o.occid = ' . $occurrenceID . ')';
+			$sqlConditionArr[] = '(o.occurrenceID = "'.$occurrenceID.'" OR o.recordID = "'.$occurrenceID.'" )';
 		}
 		if(isset($identifierArr['catalogNumber'])){
 			$sqlConditionArr[] = '(o.catalogNumber = "'.$this->cleanInStr($identifierArr['catalogNumber']).'")';
