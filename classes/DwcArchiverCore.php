@@ -2118,6 +2118,7 @@ class DwcArchiverCore extends Manager{
 			//Now add inverse relationships
 			$this->associationHandler->setSqlBase(true);
 			$this->associationHandler->writeOutRecordBlock($batchOccidArr, 'oa.occidAssociate');
+
 		}
 	}
 
