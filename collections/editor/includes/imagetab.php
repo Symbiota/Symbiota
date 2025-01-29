@@ -133,12 +133,12 @@ $creatorArray = Media::getCreatorArray();
 							}
 						?>
 					</select>
-					<a href="#" onclick="toggle('imgaddoverride');return false;" title="<?php echo $LANG['DISPLAY_PHOTOG_OVER']; ?>">
+					<a href="#" onclick="toggle('imgaddoverride');return false;" title="<?php echo $LANG['DISPLAY_CREATOR_OVER']; ?>">
 						<img src="../../images/editplus.png" style="border:0px;width:1.5em;" />
 					</a>
 				</div>
 				<div id="imgaddoverride" style="margin:0px 0px 5px 10px;display:none;">
-					<b><?php echo $LANG['PHOTOG_OVER']; ?>:</b>
+					<b><?php echo $LANG['CREATOR_OVER']; ?>:</b>
 					<input name='photographer' type='text' style="width:300px;" maxlength='100' />
 					* <?php echo $LANG['WILL_OVERRIDE']; ?>
 				</div>
