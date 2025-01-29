@@ -203,7 +203,6 @@ if($SYMB_UID){
 				}
 			}
 			elseif($action == 'cloneRecord'){
-				var_dump($_POST);
 				$cloneArr = $occManager->cloneOccurrence($_POST);
 				if($cloneArr){
 					$statusStr = (isset($LANG['CLONES_CREATED'])?$LANG['CLONES_CREATED']:'Success! The following new clone record(s) have been created').' ';
@@ -446,7 +445,6 @@ if($SYMB_UID){
 
 	//Images and other things needed for OCR
 	$specImgArr = $occManager->getImageMap();
-	var_dump($specImgArr);
 	if($specImgArr){
 		$imgUrlPrefix = (isset($MEDIA_DOMAIN)?$MEDIA_DOMAIN:'');
 		$imgCnt = 1;
@@ -465,7 +463,6 @@ if($SYMB_UID){
 			$imgCnt++;
 		}
 		$fragArr = $occManager->getRawTextFragments();
-		var_dump($fragArr);
 	}
 
 	$isLocked = false;
