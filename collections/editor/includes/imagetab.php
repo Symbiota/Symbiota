@@ -264,9 +264,9 @@ $creatorArray = Media::getCreatorArray();
 								</div>
 								<div>
 									<b><?php echo $LANG['SOURCE_WEBPAGE']; ?>:</b>
-									<a href="<?php echo $imgArr['sourceurl']; ?>" target="_blank">
+									<a href="<?php echo $imgArr['sourceUrl']; ?>" target="_blank">
 										<?php
-										$sourceUrlDisplay = $imgArr['sourceurl'];
+										$sourceUrlDisplay = $imgArr['sourceUrl'];
 										if($sourceUrlDisplay && strlen($sourceUrlDisplay) > 60) $sourceUrlDisplay = '...'.substr($sourceUrlDisplay,-60);
 										echo $sourceUrlDisplay;
 										?>
@@ -329,12 +329,12 @@ $creatorArray = Media::getCreatorArray();
 												}
 												?>
 											</select>
-											<a href="#" onclick="toggle('imgeditoverride<?php echo $imgId; ?>');return false;" title="<?php echo $LANG['DISPLAY_PHOTOG_OVER']; ?>">
+											<a href="#" onclick="toggle('imgeditoverride<?php echo $imgId; ?>');return false;" title="<?php echo $LANG['DISPLAY_CREATOR_OVER']; ?>">
 												<img src="../../images/editplus.png" style="border:0px;width:1.5em;" />
 											</a>
 										</div>
 										<div id="imgeditoverride<?php echo $imgId; ?>" style="display:<?php echo ($imgArr["creator"]?'block':'none'); ?>;">
-											<b><?php echo $LANG['PHOTOG_OVER']; ?>:</b><br/>
+											<b><?php echo $LANG['CREATOR_OVER']; ?>:</b><br/>
 											<input name='photographer' type='text' value="<?php echo $imgArr["creator"]; ?>" style="width:300px;" maxlength='100'>
 											* <?php echo $LANG['WILL_OVERRIDE']; ?>
 										</div>
@@ -348,7 +348,7 @@ $creatorArray = Media::getCreatorArray();
 										</div>
 										<div>
 											<b><?php echo $LANG['SOURCE_WEBPAGE']; ?>:</b><br/>
-											<input name="sourceurl" type="text" value="<?php echo $imgArr["sourceurl"]; ?>" style="width:95%;" />
+											<input name="sourceurl" type="text" value="<?php echo $imgArr["sourceUrl"]; ?>" style="width:95%;" />
 										</div>
 										<div>
 											<b><?php echo $LANG['WEB_URL']; ?>: </b><br/>
