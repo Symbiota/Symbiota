@@ -43,7 +43,6 @@ $LANG['DETERMINATIONS'] = 'Determinations';
 $LANG['IMAGE_FIELD_MAP'] = 'Media Field Map';
 $LANG['MATERIAL_SAMPLE'] = 'Material Sample';
 $LANG['PROCESSING_CATNUM'] = 'Processing Identifier';
-$LANG['VALUES_SET'] = 'Empty dateIdentified values have been set as ';
 $LANG['UPDATING_STATS'] = 'Updating statistics';
 $LANG['IMAGE_LOADED'] = 'Media loaded successfully';
 $LANG['ASSOC_DELETED'] = 'Association deleted';

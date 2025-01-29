@@ -58,7 +58,6 @@ class OccurrenceImport extends UtilitiesFileImport{
 						$cnt++;
 					}
 					$occurMain = new OccurrenceMaintenance($this->conn);
-					$this->logOrEcho($LANG['VALUES_SET']);
 					$this->logOrEcho($LANG['UPDATING_STATS'].'...');
 					if(!$occurMain->updateCollectionStatsBasic($this->collid)){
 						$errorArr = $occurMain->getErrorArr();

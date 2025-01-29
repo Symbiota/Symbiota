@@ -42,7 +42,6 @@ $LANG['DETERMINATIONS'] = 'Déterminations';
 $LANG['IMAGE_FIELD_MAP'] = 'Carte des champs multimédia';
 $LANG['MATERIAL_SAMPLE'] = 'Échantillon de matériau';
 $LANG['PROCESSING_CATNUM'] = 'Identifiant du traitement';
-$LANG['VALUES_SET'] = 'Les valeurs vides ';
 $LANG['UPDATING_STATS'] = 'Mise à jour des statistiques';
 $LANG['IMAGE_LOADED'] = 'Multimédia chargé avec succès';
 $LANG['ASSOC_DELETED'] = 'Association supprimée';
