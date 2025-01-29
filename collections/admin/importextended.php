@@ -77,6 +77,10 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 				}
 				elseif($associationType == 'observational'){
 					echo 'requiredFieldArr["verbatimSciname"] = 0; ';
+				// If it is a media upload
+				} elseif($importType == 3) {
+					echo 'requiredFieldArr["originalUrl"] = 0; ';
+					echo 'requiredFieldArr["format"] = 0; ';
 				}
 				?>
 				let subjectIdentifierIsMapped = false;

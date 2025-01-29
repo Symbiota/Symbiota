@@ -78,8 +78,17 @@ class OccurrenceImport extends UtilitiesFileImport{
 		$status = false;
 		if($this->importType == self::IMPORT_IMAGE_MAP){
 			$importManager = new ImageShared($this->conn);
+
+			/* originalurl is a required field */
 			if(!isset($this->fieldMap['originalurl']) || !$recordArr[$this->fieldMap['originalurl']]){
-				$this->errorMessage = 'large url (originalUrl) is null (required)';
+				//$this->errorMessage = 'large url (originalUrl) is null (required)';
+				$this->logOrEcho('ERROR `originalUrl` field mapping is required', 1);
+				return false;
+			}
+
+			/* format is a required field */
+			if(!isset($this->fieldMap['format']) || !$recordArr[$this->fieldMap['format']]){
+				$this->logOrEcho('ERROR `format` field mapping is required', 1);
 				return false;
 			}
 
@@ -117,7 +126,16 @@ class OccurrenceImport extends UtilitiesFileImport{
 					}
 				}
 
-				// Will Not store files on the server unless StorageStrategy is provided
+				if(!isset($data['format']) && !$data['format']) {
+					$this->logOrEcho('SKIPPING Record ' . $occid . ' missing `format` value');
+				}
+
+				if(!isset($data['originalUrl']) && !$data['originalUrl']) {
+					$this->logOrEcho('SKIPPING Record ' . $occid . ' missing `originalUrl` value');
+				}
+				
+
+				// Will Not store files on the server unless StorageStrategy is provided which is desired for this use case
 				Media::add($data);
 				if($errors = Media::getErrors()) {
 					$this->logOrEcho('ERROR: ' . array_pop($errors));
@@ -261,7 +279,7 @@ class OccurrenceImport extends UtilitiesFileImport{
 		$sqlConditionArr = array();
 		if(isset($identifierArr['occurrenceID'])){
 			$occurrenceID = $this->cleanInStr($identifierArr['occurrenceID']);
-			$sqlConditionArr[] = '(o.occurrenceID = "'.$occurrenceID.'" OR o.recordID = "'.$occurrenceID.'")';
+			$sqlConditionArr[] = '(o.occurrenceID = "'.$occurrenceID.'" OR o.recordID = "'.$occurrenceID.'" OR o.occid = ' . $occurrenceID . ')';
 		}
 		if(isset($identifierArr['catalogNumber'])){
 			$sqlConditionArr[] = '(o.catalogNumber = "'.$this->cleanInStr($identifierArr['catalogNumber']).'")';
@@ -273,6 +291,8 @@ class OccurrenceImport extends UtilitiesFileImport{
 		}
 		if($sqlConditionArr){
 			$sql .= 'WHERE (o.collid = '.$this->collid.') AND ('.implode(' OR ', $sqlConditionArr).') ';
+
+			var_dump($sql);
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$retArr[] = $r->occid;

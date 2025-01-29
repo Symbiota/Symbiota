@@ -683,6 +683,32 @@ class Media {
 		return $file && !empty($file) && isset($file['error']) && $file['error'] === 0;
 	}
 
+	/* Internal Function for creating a file array for media that doesn't need to be uploaded. Primarly used for media upload */
+	private static function parse_map_only_file(array $clean_post_arr): array {
+		// Map only files must have format and a url
+		if(!(isset($clean_post_arr['originalUrl']) || isset($clean_post_arr['url'])) || !isset($clean_post_arr['format'])) {
+			return [];
+		}
+
+		$url = $clean_post_arr['originalUrl'] ?? $clean_post_arr['url'];
+		$file_type_mime = $clean_post_arr['format'];
+
+		$parsed_file = self::parseFileName($url);
+		$parsed_file['name'] = self::cleanFileName($parsed_file['name']);
+
+		if(!$parsed_file['extension'] && $file_type_mime) {
+			$parsed_file['extension'] = self::mime2ext($file_type_mime);
+		}
+
+		return [
+			'name' => $parsed_file['name'] . ($parsed_file['extension'] ? '.' .$parsed_file['extension']: ''),
+			'tmp_name' => $url,
+			'error' => 0,
+			'type' => $file_type_mime,
+			'size' => null
+		];
+	}
+
 	/**
 	 * @param array<int,mixed> $post_arr
 	 * @param StorageStrategy $storage Class where and how to save files. If left empty will not store files
@@ -698,8 +724,12 @@ class Media {
 		$should_upload_file = (self::isValidFile($file) || $copy_to_server) && $storage;
 
 		//If no file is given and downloads from urls are enabled
-		if(!self::isValidFile($file) && $isRemoteMedia) {
-			$file = self::getRemoteFileInfo($clean_post_arr['originalUrl']);
+		if(!self::isValidFile($file)) {
+			if(!$should_upload_file) {
+				$file = self::parse_map_only_file($clean_post_arr);
+			} else if($isRemoteMedia) {
+				$file = self::getRemoteFileInfo($clean_post_arr['originalUrl']);
+			}
 		}
 
 		//If that didn't popluate then return;
