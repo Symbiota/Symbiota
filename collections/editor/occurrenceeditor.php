@@ -203,6 +203,7 @@ if($SYMB_UID){
 				}
 			}
 			elseif($action == 'cloneRecord'){
+				var_dump($_POST);
 				$cloneArr = $occManager->cloneOccurrence($_POST);
 				if($cloneArr){
 					$statusStr = (isset($LANG['CLONES_CREATED'])?$LANG['CLONES_CREATED']:'Success! The following new clone record(s) have been created').' ';

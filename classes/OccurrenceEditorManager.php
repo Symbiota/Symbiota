@@ -1660,10 +1660,10 @@ class OccurrenceEditorManager {
 						}
 					}
 					if (isset($postArr['carryoverimages']) && $postArr['carryoverimages']) {
-						$sql = 'INSERT INTO media (occid, tid, url, thumbnailurl, originalurl, archiveurl, creator, creatorUid, imagetype, format, caption, owner,
+						$sql = 'INSERT INTO media (occid, tid, url, thumbnailurl, originalurl, archiveurl, creator, creatorUid, mediaType, imagetype, format, caption, owner,
 							sourceurl, referenceUrl, copyright, rights, accessrights, locality, notes, anatomy, username, sourceIdentifier, mediaMD5, dynamicProperties,
 							defaultDisplay, sortsequence, sortOccurrence)
-							SELECT ' . $this->occid . ', tid, url, thumbnailurl, originalurl, archiveurl, creator, creatorUid, imagetype, format, caption, owner, sourceurl, referenceUrl,
+							SELECT ' . $this->occid . ', tid, url, thumbnailurl, originalurl, archiveurl, creator, creatorUid, mediaType, imagetype, format, caption, owner, sourceurl, referenceUrl,
 							copyright, rights, accessrights, locality, notes, anatomy, username, sourceIdentifier, mediaMD5, dynamicProperties, defaultDisplay, sortsequence, sortOccurrence
 							FROM media WHERE occid = ' . $sourceOccid;
 						if (!$this->conn->query($sql)) {
