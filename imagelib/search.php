@@ -63,10 +63,6 @@ if($action == 'batchAssignTag'){
 	}
 }
 
-function set_url( $url ) {
-    echo("<script>history.replaceState({},'','$url');</script>");
-}
-
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
@@ -509,7 +505,9 @@ function set_url( $url ) {
 			}
 			?>
 		</form>
-		<?php set_url('?' . $imgLibManager->getQueryTermStr()) ?>
+		<script type ="text/javascript">
+			history.replaceState({},'', "?<?= $imgLibManager->getQueryTermStr() ?>");
+		</script>
 	</div>
 	<?php
 	include($SERVER_ROOT . '/includes/footer.php');
