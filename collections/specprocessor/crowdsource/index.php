@@ -121,6 +121,7 @@ $statusStr = '';
 				unset($userStats['nonvolcnt']);
 				unset($userStats['apoints']);
 				unset($userStats['ppoints']);
+
 				foreach($userStats as $collId => $sArr){
 					$pointArr = $sArr['points'];
 					$cntArr = $sArr['cnt'];

@@ -176,6 +176,7 @@ class OccurrenceCrowdSource {
 		while($r = $rs->fetch_object()){
 			$retArr[$r->collid]['name'] = $r->collectionname.' ('.$r->collcode.')';
 			$retArr[$r->collid]['cnt'][$r->reviewstatus] = $r->cnt;
+			$retArr[$r->collid]['points'][$r->reviewstatus] = 0;
 			if($r->isvolunteer) $retArr[$r->collid]['points'][$r->reviewstatus] = $r->points;
 			if($r->reviewstatus >= 10){
 				if($r->isvolunteer){
