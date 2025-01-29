@@ -292,7 +292,6 @@ class OccurrenceImport extends UtilitiesFileImport{
 		if($sqlConditionArr){
 			$sql .= 'WHERE (o.collid = '.$this->collid.') AND ('.implode(' OR ', $sqlConditionArr).') ';
 
-			var_dump($sql);
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$retArr[] = $r->occid;
