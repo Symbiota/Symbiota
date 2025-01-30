@@ -5,8 +5,8 @@ Language: English
 ------------------
 */
 
-$LANG['ERR_ONE_INTERVALS_EMPTY'] = 'Both Paleo Early and Late Intervals need to have a value, even if they are the same';
-$LANG['ERR_BAD_TERM_ORDER'] = 'Early Interval cannot be older than Late Interval';
+$LANG['ERR_ONE_INTERVALS_EMPTY'] = 'Both Early Interval and Late Interval need to have a value, even if the values are the same';
+$LANG['ERR_BAD_TERM_ORDER'] = 'The Early Interval cannot be geologically younger than the Late Interval';
 $LANG['EARLY_INTERVAL_LABEL'] = 'Early Interval';
 $LANG['LATE_INTERVAL_LABEL'] = 'Late Interval';
 $LANG['MISMATCHED_TERM'] = 'mismatched term';
