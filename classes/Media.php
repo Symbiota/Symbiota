@@ -378,6 +378,54 @@ class Media {
 	}
 
 	/**
+	 * @param string $ext
+	 * @return string | bool
+	 */
+	public static function ext2Mime(string $ext, string $type) {
+		$image = [
+			'bmp' => ['image/bmp', 'image/x-bmp', 'image/x-bitmap', 'image/x-xbitmap', 'image/x-win-bitmap', 'image/x-windows-bmp', 'image/ms-bmp', 'image/x-ms-bmp'],
+			'cdr' => 'image/cdr',
+			'cdr' =>'image/x-cdr',
+			'gif' => 'image/gif',
+			'ico' => 'image/x-icon',
+			'ico' =>'image/x-ico',
+			'ico' =>'image/vnd.microsoft.icon',
+			'jp2' => ['image/jp2', 'image/jpx', 'image/jpm', 'image/jpeg', 'image/jpeg', 'image/pjpeg'],
+			'png' => ['image/png', 'image/x-png'],
+			'psd' => 'image/vnd.adobe.photoshop',
+			'svg' => 'image/svg+xml',
+			'tiff' => 'image/tiff',
+			'webp' => 'image/webp'
+		];
+
+		$audio = [
+			'aac' => 'audio/x-acc',
+			'ac3' => 'audio/ac3',
+			'aif' => ['audio/x-aiff', 'audio/aiff'],
+			'au' => 'audio/x-au',
+			'flac' => 'audio/x-flac',
+			'm4a' => ['audio/mp4', 'audio/x-m4a'],
+			'mp4' => 'audio/mp4',
+			'mid' => 'audio/midi',
+			'mp3' => [ 'audio/mp3', 'audio/mpeg', 'audio/mpg', 'audio/mpeg3' ],
+			'ogg' => 'audio/ogg',
+			'ra' => 'audio/x-realaudio',
+			'ram' => 'audio/x-pn-realaudio',
+			'rpm' => 'audio/x-pn-realaudio-plugin',
+			'wav' => ['audio/wav', 'audio/wave', 'audio/x-wav'],
+			'wma' => 'audio/x-ms-wma',
+		];
+
+		if($type === MediaType::Image) {
+			return $image[$ext] ?? false;
+		} else if ($type=== MediaType::Audio) {
+			return $audio[$ext] ?? false;
+		} else {
+			return false;
+		}
+	}
+
+	/**
 	 * @param string $mime
 	 * @return string | bool
 	 */

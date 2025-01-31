@@ -54,5 +54,8 @@ $LANG['MAT_SAMPLE_ADDED'] = 'Amostra de material adicionada';
 $LANG['DETERMINATION_ADDED'] = 'Determinação adicionada';
 $LANG['CHOOSE_FILE'] = 'Escolha um arquivo';
 $LANG['HOME'] = 'Lar';
+$LANG['AUDIO_UPLOAD'] = 'Upload de áudio';
+$LANG['IMAGE_UPLOAD'] = 'Upload de imagens';
+$LANG['MEDIA_UPLOAD_TYPE'] = 'Tipo de upload de mídia';
 
 ?>

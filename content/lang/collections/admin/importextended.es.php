@@ -55,5 +55,8 @@ $LANG['MAT_SAMPLE_ADDED'] = 'Muestra de material agregada';
 $LANG['DETERMINATION_ADDED'] = 'Determinación agregada';
 $LANG['CHOOSE_FILE'] = 'Elegir un archivo';
 $LANG['HOME'] = 'Inicio';
+$LANG['AUDIO_UPLOAD'] = 'Carga de audio';
+$LANG['IMAGE_UPLOAD'] = 'Carga de imágenes';
+$LANG['MEDIA_UPLOAD_TYPE'] = 'Tipo de carga de medios';
 
 ?>
