@@ -367,14 +367,12 @@ $_SESSION['citationvar'] = $searchVar;
 									if (!empty($fieldArr['earlyInterval']) || !empty($fieldArr['lateInterval']) || !empty($fieldArr['formation'])) {
 										echo '<div style="margin:4px;">';
 										echo $LANG['GEO_CONTEXT'] . ':' . ' ';
-										if (!empty($fieldArr['earlyInterval']) || !empty($fieldArr['lateInterval'])) {
-											echo '<span style="margin-right:20px;">'
-												. (!empty($fieldArr['earlyInterval']) ? $fieldArr['earlyInterval'] : '')
-												. (!empty($fieldArr['earlyInterval']) && !empty($fieldArr['lateInterval']) ? ' to ' : '')
-												. (!empty($fieldArr['lateInterval']) ? $fieldArr['lateInterval'] : '')
-												. '</span>';
-										}
-										if (!empty($fieldArr['formation'])) echo '<span>' . $fieldArr['formation'] . '</span>' ;
+										$earlyInt = $fieldArr['earlyInterval'] ?? '';
+										$lateInt = $fieldArr['lateInterval'] ?? '';
+										if ($earlyInt || $lateInt)
+											echo '<span style="margin-right:20px;">' . ($earlyInt === $lateInt ? $earlyInt : trim("$earlyInt to $lateInt")) . '</span>';
+										if (!empty($fieldArr['formation']))
+											echo '<span>' . $fieldArr['formation'] . '</span>';
 										echo '</div>';
 									}
 									echo '<div style="margin:4px">';

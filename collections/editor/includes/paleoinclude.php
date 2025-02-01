@@ -75,9 +75,9 @@ if(isset($occArr['lateInterval'])) $lateIntervalTerm = $occArr['lateInterval'];
 </script>
 <style>
 	#paelo-gts-table{ margin-left: 10px; margin-bottom: 10px; padding: 8px; border-collapse: collapse; }
-	#paelo-gts-table th{ border: 2px solid;  padding: 8px; background-color: #d0d0d0; }
+	#paelo-gts-table th{ border: 2px solid;  padding: 3.75px 8px; background-color: #d0d0d0; }
 	#paelo-gts-table th.blank-th{ border: 0px; background-color: transparent; }
-	#paelo-gts-table td{ border: 1px solid; padding: 6px; }
+	#paelo-gts-table td{ border: 1px solid; padding: 3.75px 6px; }
 </style>
 <fieldset>
 	<legend>Paleontology</legend>
