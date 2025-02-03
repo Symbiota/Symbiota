@@ -57,3 +57,4 @@ $LANG['DETERMINATION_ADDED'] = 'Determinación agregada';
 $LANG['CHOOSE_FILE'] = 'Elegir un archivo';
 $LANG['HOME'] = 'Inicio';
 $LANG['IDENTIFIERS'] = 'Identificadores';
+$LANG['IDENTIFIER_ADDED'] = 'Identificador añadido';

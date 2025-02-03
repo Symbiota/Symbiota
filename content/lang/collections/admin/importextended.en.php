@@ -58,3 +58,4 @@ $LANG['DETERMINATION_ADDED'] = 'Determination added';
 $LANG['CHOOSE_FILE'] = 'Choose a file';
 $LANG['HOME'] = 'Home';
 $LANG['IDENTIFIERS'] = 'Identifiers';
+$LANG['IDENTIFIER_ADDED'] = 'Identifier added';
