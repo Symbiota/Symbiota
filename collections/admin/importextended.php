@@ -70,7 +70,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 			function validateMappingForm(f){
 				let sourceArr = [];
 				let targetArr = [];
-				let requiredFieldArr = [];
+				let requiredFieldArr = {};
 				<?php
 				if($associationType == 'resource' || $associationType == 'externalOccurrence'){
 					echo 'requiredFieldArr["resourceUrl"] = 0; ';
@@ -80,7 +80,6 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 				// If it is a media upload
 				} elseif($importType == 3) {
 					echo 'requiredFieldArr["originalUrl"] = 0; ';
-					echo 'requiredFieldArr["format"] = 0; ';
 				}
 				?>
 				let subjectIdentifierIsMapped = false;

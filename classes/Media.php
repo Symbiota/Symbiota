@@ -739,13 +739,23 @@ class Media {
 		}
 
 		$url = $clean_post_arr['originalUrl'] ?? $clean_post_arr['url'];
-		$file_type_mime = $clean_post_arr['format'];
+		$file_type_mime = $clean_post_arr['format'] ?? '';
+		$media_upload_type = MediaType::tryFrom($clean_post_arr['mediaUploadType']);
 
 		$parsed_file = self::parseFileName($url);
 		$parsed_file['name'] = self::cleanFileName($parsed_file['name']);
 
 		if(!$parsed_file['extension'] && $file_type_mime) {
 			$parsed_file['extension'] = self::mime2ext($file_type_mime);
+		} else if (!$file_type_mime && $parsed_file['extension'] && $media_upload_type) {
+			$file_type_mime = self::ext2Mime($parsed_file['extension'], $media_upload_type);
+
+			// If There is a bunch of potential mime types just assume the first one
+			// this is not perfect and could result weird errors for fringe types 
+			// but for current use case should be an issue. Types are order by most likely.
+			if(is_array($file_type_mime) && count($file_type_mime) > 0) {
+				$file_type_mime = $file_type_mime[0];
+			}
 		}
 
 		return [

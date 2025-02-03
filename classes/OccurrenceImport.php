@@ -85,9 +85,9 @@ class OccurrenceImport extends UtilitiesFileImport{
 				return false;
 			}
 
-			/* format is a required field */
-			if(!isset($this->fieldMap['format']) || !$recordArr[$this->fieldMap['format']]){
-				$this->logOrEcho('ERROR `format` field mapping is required', 1);
+			/* Media uploads must only be of one type */
+			if(!isset($postArr['mediaUploadType']) || !$postArr['mediaUploadType']) {
+				$this->logOrEcho('ERROR `mediaUploadType` is required', 1);
 				return false;
 			}
 
@@ -117,6 +117,7 @@ class OccurrenceImport extends UtilitiesFileImport{
 				$data = [
 					"occid" => $occid,
 					"originalUrl" => $recordArr[$this->fieldMap['originalurl']],
+					"mediaUploadType" => $postArr['mediaUploadType']
 				];
 				foreach($fields as $key) {
 					$record_idx = $this->fieldMap[$key] ?? false;
@@ -125,15 +126,10 @@ class OccurrenceImport extends UtilitiesFileImport{
 					}
 				}
 
-				if(!isset($data['format']) && !$data['format']) {
-					$this->logOrEcho('SKIPPING Record ' . $occid . ' missing `format` value');
-				}
-
 				if(!isset($data['originalUrl']) && !$data['originalUrl']) {
 					$this->logOrEcho('SKIPPING Record ' . $occid . ' missing `originalUrl` value');
 				}
 				
-
 				// Will Not store files on the server unless StorageStrategy is provided which is desired for this use case
 				Media::add($data);
 				if($errors = Media::getErrors()) {
@@ -353,8 +349,10 @@ class OccurrenceImport extends UtilitiesFileImport{
 		$this->targetFieldMap[''] = '------------------------------------';
 		$fieldArr = array();
 		if($this->importType == self::IMPORT_IMAGE_MAP){
-			$fieldArr = array('url', 'originalUrl (required)', 'thumbnailUrl', 'archiveUrl', 'referenceUrl', 'photographer', 'photographerUid', 'caption', 'owner', 'anatomy', 'notes',
-				'format (required)', 'sourceIdentifier', 'hashFunction', 'hashValue', 'mediaMD5', 'copyright', 'rights', 'accessRights', 'sortOccurrence');
+			$fieldArr = array('url', 'thumbnailUrl', 'archiveUrl', 'referenceUrl', 'photographer', 'photographerUid', 'caption', 'owner', 'anatomy', 'notes',
+				'format', 'sourceIdentifier', 'hashFunction', 'hashValue', 'mediaMD5', 'copyright', 'rights', 'accessRights', 'sortOccurrence');
+
+			$this->targetFieldMap['originalurl'] = 'originalUrl (required)';
 		}
 		elseif($this->importType == self::IMPORT_ASSOCIATIONS){
 			$fieldArr = array('relationshipID', 'objectID', 'basisOfRecord', 'establishedDate', 'notes', 'accordingTo');
