@@ -56,5 +56,4 @@ $LANG['MAT_SAMPLE_ADDED'] = 'Échantillon de matériau ajouté';
 $LANG['DETERMINATION_ADDED'] = 'Détermination ajoutée';
 $LANG['CHOOSE_FILE'] = 'Choisir un fichier';
 $LANG['HOME'] = 'Accueil';
-
-?>
+$LANG['IDENTIFIERS'] = 'Identifiants';
