@@ -960,7 +960,7 @@ $traitArr = $indManager->getTraitArr();
 								$paleoStr1 = '';
 								if($occArr['earlyInterval']) $paleoStr1 .= '; '.$occArr['earlyInterval'];
 								if($occArr['lateInterval']) $paleoStr1 .= ' to '.$occArr['lateInterval'];
-								if($paleoStr1 || $occArr['stage'] || $occArr['age'])
+								if($paleoStr1 || $occArr['localStage'] || $occArr['absoluteAge']) {
 									echo '<div class="paleofield-div bottom-breathing-room-rel-sm"><label>' . $LANG['CHRONOSTRAT'] . ': </label>' . trim($paleoStr1,'; ');
 									if($occArr['lateInterval'] && $occArr['lateIntervalHieararchy'])
 										echo '<div class="paleofield-div top-breathing-room-rel-sm"><label>' . $LANG['LATE_INT'] . ': </label>' . trim($occArr["lateIntervalHieararchy"]) . '</div>';
@@ -971,6 +971,7 @@ $traitArr = $indManager->getTraitArr();
 									if($occArr['absoluteAge'])
 										echo '<div class="paleofield-div top-breathing-room-rel-sm"><label>' . $LANG['ABSOLUTE_AGE'] . ': </label>' . trim($occArr["absoluteAge"]) . '</div>';
 									echo '</div>';
+								}
 								?>
 								<?php
 								$paleoStr2 = '';
