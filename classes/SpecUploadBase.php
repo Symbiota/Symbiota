@@ -2163,7 +2163,7 @@ class SpecUploadBase extends SpecUpload{
 			if(substr($symbField,0,8) != 'unmapped' && $symbField != 'collid'){
 				$sqlFields .= ','.$symbField;
 				$valueStr = $this->encodeString($valueStr);
-				$valueStr = $this->cleanInStr($valueStr);
+				$valueStr = $this->cleanInStr($valueStr ?? '');
 				$valueStr = $this->removeEmoji($valueStr);
 				if($valueStr) $hasValue = true;
 				//Load data
