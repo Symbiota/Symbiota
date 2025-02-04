@@ -106,6 +106,8 @@ if ($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($colli
 						subjectIdentifierIsMapped = true;
 					} else if (value == "occurrenceid") {
 						subjectIdentifierIsMapped = true;
+					} else if (value == "occid") {
+						subjectIdentifierIsMapped = true;
 					}
 					<?php
 					if ($associationType == 'internalOccurrence') {

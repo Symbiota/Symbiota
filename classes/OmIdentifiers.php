@@ -41,10 +41,11 @@ class OmIdentifiers extends Manager
             if (!isset($inputArr['createdUid'])) $inputArr['createdUid'] = $GLOBALS['SYMB_UID'];
             // $sql = 'INSERT INTO omoccuridentifiers(occid, recordID';
             // @TODO create a uuid?
-            $sql = 'INSERT INTO omoccuridentifiers ';
-            $sqlValues = '';
+            $sql = 'INSERT INTO omoccuridentifiers (occid';
+            // $sqlValues = '';
             // $sqlValues = '?, ?, ';
-            // $paramArr = array($this->occid);
+            $sqlValues = '?, ';
+            $paramArr = array($this->occid); // @TODO LEFT OFF HERE FIGURING OUT HOW TO GET THE PARENTHESES AND COMMAS RIGHT
             // $paramArr[] = UuidFactory::getUuidV4();
             // $this->typeStr = 'is';
             $this->setParameterArr($inputArr);
@@ -151,7 +152,7 @@ class OmIdentifiers extends Manager
         $idomoccuridentifiers = null;
         // $identifier = trim($identifier);
         // if ($identifier) {
-        $sql = 'SELECT idomoccuridentifiers FROM omoccuridentifiers WHERE occid = ? OR identifierName = ?';
+        $sql = 'SELECT idomoccuridentifiers FROM omoccuridentifiers WHERE occid = ? AND identifierName = ?';
         // if ($target == 'catalogNumber') $sql = 'SELECT occid FROM omoccurrences WHERE catalogNumber = ?';
         if ($stmt = $this->conn->prepare($sql)) {
             // if ($target == 'catalogNumber') $stmt->bind_param('s', $identifier);

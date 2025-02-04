@@ -57,6 +57,9 @@ class OccurrenceImport extends UtilitiesFileImport
 						if (isset($this->fieldMap['othercatalognumbers'])) {
 							if ($recordArr[$this->fieldMap['othercatalognumbers']]) $identifierArr['otherCatalogNumbers'] = $recordArr[$this->fieldMap['othercatalognumbers']];
 						}
+						if (isset($this->fieldMap['occid'])) {
+							if ($recordArr[$this->fieldMap['occid']]) $identifierArr['occid'] = $recordArr[$this->fieldMap['occid']];
+						}
 						$this->logOrEcho('#' . $cnt . ': ' . $LANG['PROCESSING_CATNUM'] . ': ' . implode(', ', $identifierArr));
 						if ($occidArr = $this->getOccurrencePK($identifierArr)) {
 							$status = $this->insertRecord($recordArr, $occidArr, $postArr);
@@ -269,19 +272,19 @@ class OccurrenceImport extends UtilitiesFileImport
 					continue;
 				}
 				if ($identifierArr) {
-					if (!empty($postArr['occid']) && !empty($postArr['identifierName'])) {
-						$existingIdentifier = null;
-						$existingAssociation = $importManager->getIdentifier($postArr['occid'], $postArr['identifierName']);
-						if ($existingAssociation) {
-							// @TODO add update identifier logic?
-						}
-						if (!$existingAssociation && $importManager->insertIdentifier($identifierArr)) {
-							$this->logOrEcho($LANG['IDENTIFIER_ADDED'] . ': <a href="../editor/occurrenceeditor.php?occid=' . $occid . '" target="_blank">' . $occid . '</a>', 1);
-							$status = true;
-						} else {
-							$this->logOrEcho('ERROR loading identifier: ' . $importManager->getErrorMessage(), 1);
-						}
+					// if (!empty($postArr['occid']) && !empty($postArr['identifierName'])) {
+					$existingIdentifier = null;
+					$existingAssociation = $importManager->getIdentifier($identifierArr['occid'], $identifierArr['identifierName']);
+					if ($existingAssociation) {
+						// @TODO add update identifier logic?
 					}
+					if (!$existingAssociation && $importManager->insertIdentifier($identifierArr)) {
+						$this->logOrEcho($LANG['IDENTIFIER_ADDED'] . ': <a href="../editor/occurrenceeditor.php?occid=' . $occid . '" target="_blank">' . $occid . '</a>', 1);
+						$status = true;
+					} else {
+						$this->logOrEcho('ERROR loading identifier: ' . $importManager->getErrorMessage(), 1);
+					}
+					// }
 				}
 				// if($identifierArr){
 				// 	if(!empty())
@@ -308,6 +311,9 @@ class OccurrenceImport extends UtilitiesFileImport
 			$otherCatalogNumbers = $this->cleanInStr($identifierArr['otherCatalogNumbers']);
 			$sqlConditionArr[] = '(o.othercatalognumbers = "' . $otherCatalogNumbers . '" OR i.identifierValue = "' . $otherCatalogNumbers . '")';
 			$sql .= 'LEFT JOIN omoccuridentifiers i ON o.occid = i.occid ';
+		}
+		if (isset($identifierArr['occid'])) {
+			$sqlConditionArr[] = '(o.occid = "' . $this->cleanInStr($identifierArr['occid']) . '")';
 		}
 		if ($sqlConditionArr) {
 			$sql .= 'WHERE (o.collid = ' . $this->collid . ') AND (' . implode(' OR ', $sqlConditionArr) . ') ';
