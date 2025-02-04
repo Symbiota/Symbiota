@@ -433,6 +433,20 @@ class OccurrenceImport extends UtilitiesFileImport
 				'storageLocation',
 				'remarks'
 			);
+		} elseif ($this->importType == self::IMPORT_IDENTIFIERS) {
+			$fieldArr = array(
+				'idomoccuridentifiers',
+				'occid',
+				'identifierValue',
+				'identifierName',
+				'format',
+				'notes',
+				'sortBy',
+				'recordID',
+				'modifiedUid',
+				'modifiedTimestamp',
+				'initialTimestamp'
+			);
 		}
 		sort($fieldArr);
 		foreach ($fieldArr as $field) {
@@ -459,6 +473,8 @@ class OccurrenceImport extends UtilitiesFileImport
 			} elseif ($this->importType == self::IMPORT_DETERMINATIONS) {
 				$this->translationMap = array('identificationid' => 'sourceIdentifier');
 			} elseif ($this->importType == self::IMPORT_MATERIAL_SAMPLE) {
+				$this->translationMap = array();
+			} elseif ($this->importType == self::IMPORT_IDENTIFIERS) {
 				$this->translationMap = array();
 			}
 		}
