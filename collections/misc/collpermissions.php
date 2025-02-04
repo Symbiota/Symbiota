@@ -93,7 +93,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 	<script>
 		function verifyAddRights(f){
 			if(f.uid.value == ""){
-				alert("<?php echo (isset($LANG['PLS_SEL_USER'])?$LANG['PLS_SEL_USER']:'Please select a user from list'); ?>");
+				alert("<?php echo (isset($LANG['PLS_SEL_USER'])?$LANG['PLS_SEL_USER']:'Please select a user (begin typing last name to see dropdown list)'); ?>");
 				return false;
 			}
 			else if(f.righttype && f.righttype.value == ""){
@@ -259,8 +259,8 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 				<h2><span><b><?php echo (isset($LANG['ADD_NEW_USER'])?$LANG['ADD_NEW_USER']:'Add a New Admin/Editor/Reader'); ?></b></span></h2>
 				<form name="addrights" action="collpermissions.php" method="post" onsubmit="return verifyAddRights(this)">
 					<div>
-						<?php echo $LANG['SEL_USER']; ?>:
-						<input id="userinput" type="text" style="width:400px;" aria-label="<?php echo $LANG['SEL_USER'] ?>" />
+						<?php echo $LANG['ENTER_USER_NAME']; ?>:
+						<input id="userinput" type="text" style="width:400px;" aria-label="<?php echo $LANG['ENTER_USER_NAME'] ?>" />
 						<input id="uid-add" name="uid" type="hidden" value="" />
 					</div>
 					<div style="margin:5px 0px 5px 0px;">
