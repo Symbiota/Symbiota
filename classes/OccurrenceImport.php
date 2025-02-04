@@ -460,9 +460,9 @@ class OccurrenceImport extends UtilitiesFileImport
 				'notes',
 				'sortBy',
 				'recordID',
-				'modifiedUid',
-				'modifiedTimestamp',
-				'initialTimestamp'
+				// 'modifiedUid',
+				// 'modifiedTimestamp',
+				// 'initialTimestamp'
 			);
 		}
 		sort($fieldArr);

@@ -26,9 +26,9 @@ class OmIdentifiers extends Manager
             'notes' => 's',
             'sortBy' => 'i',
             'recordID' => 's',
-            'modifiedUid' => 'i',
-            'modifiedTimestamp' => 's', // @TODO make datetime
-            'initialTimestamp' => 's', // @TODO make timestamp
+            // 'modifiedUid' => 'i',
+            // 'modifiedTimestamp' => 's', // @TODO make datetime
+            // 'initialTimestamp' => 's', // @TODO make timestamp
         );
     }
 
@@ -43,23 +43,27 @@ class OmIdentifiers extends Manager
         if ($this->occid) {
             if (!isset($inputArr['createdUid'])) $inputArr['createdUid'] = $GLOBALS['SYMB_UID'];
             // $sql = 'INSERT INTO omoccuridentifiers(occid, recordID';
-            $sql = 'INSERT INTO omoccuridentifiers (occid';
+            $sql = 'INSERT INTO omoccuridentifiers (occid, modifiedUid';
             // $sqlValues = '';
             // $sqlValues = '?, ?, ';
-            $sqlValues = '?, ';
-            $paramArr = array($this->occid);
+            $sqlValues = '?, ?, ';
+            $paramArr = array($this->occid, $GLOBALS['SYMB_UID']);
+            // $paramArr = array();
             // $paramArr[] = UuidFactory::getUuidV4();
-            $this->typeStr = 'i';
+            $this->typeStr = 'is';
             if (array_key_exists('occid', $inputArr)) {
                 unset($inputArr['occid']);
+            }
+            if (array_key_exists('modifiedUid', $inputArr)) {
+                unset($inputArr['modifiedUid']);
             }
             $this->setParameterArr($inputArr);
             foreach ($this->parameterArr as $fieldName => $value) {
                 $sql .= ', ' . $fieldName;
                 $sqlValues .= '?, ';
-                if ($fieldName == 'modifiedUid' && empty($value)) {
-                    $value = $GLOBALS['SYMB_UID'];
-                }
+                // if ($fieldName == 'modifiedUid' && empty($value)) {
+                //     $value = $GLOBALS['SYMB_UID'];
+                // }
                 $paramArr[] = $value;
             }
             $sql .= ') VALUES(' . trim($sqlValues, ', ') . ') ';
@@ -156,11 +160,12 @@ class OmIdentifiers extends Manager
                     $paramArr[] = $value;
                 }
             }
+            $paramArr[] = $GLOBALS['SYMB_UID'];
             $paramArr[] = $occidPlaceholder;
             $paramArr[] = $identifierNamePlaceholder;
             // $paramArr[] = $this->identifierID; // @TODO why?
-            $this->typeStr .= 'is';
-            $sql = 'UPDATE IGNORE omoccuridentifiers SET ' . trim($sqlFrag, ', ') . ' WHERE (occid = ? AND identifierName = ?)';
+            $this->typeStr .= 'sis';
+            $sql = 'UPDATE IGNORE omoccuridentifiers SET modifiedTimestamp = now(), modifiedUid = ? , ' . trim($sqlFrag, ', ') . ' WHERE (occid = ? AND identifierName = ?)';
             if ($stmt = $this->conn->prepare($sql)) {
                 $stmt->bind_param($this->typeStr, ...$paramArr);
                 $stmt->execute();
