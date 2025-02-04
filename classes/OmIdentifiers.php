@@ -1,4 +1,7 @@
 <?php
+
+use function PHPUnit\Framework\isEmpty;
+
 include_once('Manager.php');
 include_once('utilities/OccurrenceUtil.php');
 include_once('utilities/UuidFactory.php');
@@ -15,7 +18,7 @@ class OmIdentifiers extends Manager
     {
         parent::__construct(null, 'write', $conn);
         $this->schemaMap = array(
-            'idomoccuridentifiers' => 'i',
+            // 'idomoccuridentifiers' => 'i',
             'occid' => 'i', // @TODO decide
             'identifierValue' => 's',
             'identifierName' => 's',
@@ -45,13 +48,19 @@ class OmIdentifiers extends Manager
             // $sqlValues = '';
             // $sqlValues = '?, ?, ';
             $sqlValues = '?, ';
-            $paramArr = array($this->occid); // @TODO LEFT OFF HERE FIGURING OUT HOW TO GET THE PARENTHESES AND COMMAS RIGHT
+            $paramArr = array($this->occid);
             // $paramArr[] = UuidFactory::getUuidV4();
-            // $this->typeStr = 'is';
-            $this->setParameterArr($inputArr);
+            $this->typeStr = 'i';
+            if (array_key_exists('occid', $inputArr)) {
+                unset($inputArr['occid']);
+            }
+            $this->setParameterArr($inputArr); // @TOOD exclude occid from inputArr?
             foreach ($this->parameterArr as $fieldName => $value) {
                 $sql .= ', ' . $fieldName;
                 $sqlValues .= '?, ';
+                if ($fieldName == 'modifiedUid' && empty($value)) {
+                    $value = $GLOBALS['SYMB_UID'];
+                }
                 $paramArr[] = $value;
             }
             $sql .= ') VALUES(' . trim($sqlValues, ', ') . ') ';

@@ -441,7 +441,7 @@ class OccurrenceImport extends UtilitiesFileImport
 			);
 		} elseif ($this->importType == self::IMPORT_IDENTIFIERS) {
 			$fieldArr = array(
-				'idomoccuridentifiers',
+				// 'idomoccuridentifiers',
 				'occid',
 				'identifierValue',
 				'identifierName',
