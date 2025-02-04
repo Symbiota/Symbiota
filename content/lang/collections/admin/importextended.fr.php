@@ -58,3 +58,5 @@ $LANG['CHOOSE_FILE'] = 'Choisir un fichier';
 $LANG['HOME'] = 'Accueil';
 $LANG['IDENTIFIERS'] = 'Identifiants';
 $LANG['IDENTIFIER_ADDED'] = 'Identifiant ajouté';
+$LANG['IDENTIFIER_UPDATE_OR_DELETE'] = 'Mettre à jour ou supprimer les identifiants existants avec occid et identifierName correspondants';
+$LANG['IDENTIFIER_UPDATED'] = 'Identifiant mis à jour';

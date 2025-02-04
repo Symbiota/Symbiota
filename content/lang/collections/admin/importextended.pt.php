@@ -57,3 +57,5 @@ $LANG['CHOOSE_FILE'] = 'Escolha um arquivo';
 $LANG['HOME'] = 'Lar';
 $LANG['IDENTIFIERS'] = 'Identificadores';
 $LANG['IDENTIFIER_ADDED'] = 'Identificador adicionado';
+$LANG['IDENTIFIER_UPDATE_OR_DELETE'] = 'Atualizar ou excluir identificadores existentes com occid e identifierName correspondentes';
+$LANG['IDENTIFIER_UPDATED'] = 'Identificador atualizado';

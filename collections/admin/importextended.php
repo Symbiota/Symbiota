@@ -305,6 +305,14 @@ if ($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($colli
 								</div>
 							<?php
 							}
+							if ($importType == 5) {
+							?>
+								<div class="formField-div">
+									<input name="replace-identifier" type="checkbox" value="1">
+									<label for="replace-identifier"><?= $LANG['IDENTIFIER_UPDATE_OR_DELETE'] ?></label>
+								</div>
+							<?php
+							}
 							?>
 							<div style="margin:15px;">
 								<input name="collid" type="hidden" value="<?= $collid; ?>">

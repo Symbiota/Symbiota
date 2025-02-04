@@ -59,3 +59,5 @@ $LANG['CHOOSE_FILE'] = 'Choose a file';
 $LANG['HOME'] = 'Home';
 $LANG['IDENTIFIERS'] = 'Identifiers';
 $LANG['IDENTIFIER_ADDED'] = 'Identifier added';
+$LANG['IDENTIFIER_UPDATE_OR_DELETE'] = 'Update or delete existing identifiers with matching occid and identifierName';
+$LANG['IDENTIFIER_UPDATED'] = 'Identifier updated';

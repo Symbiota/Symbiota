@@ -274,16 +274,27 @@ class OccurrenceImport extends UtilitiesFileImport
 				if ($identifierArr) {
 					// if (!empty($postArr['occid']) && !empty($postArr['identifierName'])) {
 					$existingIdentifier = null;
-					$existingAssociation = $importManager->getIdentifier($identifierArr['occid'], $identifierArr['identifierName']);
-					if ($existingAssociation) {
+					$existingIdentifier = $importManager->getIdentifier($identifierArr['occid'], $identifierArr['identifierName']);
+					if ($existingIdentifier && !empty($postArr['replace-identifier'])) {
 						// @TODO add update identifier logic?
-					}
-					if (!$existingAssociation && $importManager->insertIdentifier($identifierArr)) {
+						$status = $importManager->updateIdentifier($identifierArr);
 						$this->logOrEcho($LANG['IDENTIFIER_ADDED'] . ': <a href="../editor/occurrenceeditor.php?occid=' . $occid . '" target="_blank">' . $occid . '</a>', 1);
-						$status = true;
-					} else {
-						$this->logOrEcho('ERROR loading identifier: ' . $importManager->getErrorMessage(), 1);
 					}
+					if (!$existingIdentifier) {
+						$status = $importManager->insertIdentifier($identifierArr);
+						$this->logOrEcho($LANG['IDENTIFIER_ADDED'] . ': <a href="../editor/occurrenceeditor.php?occid=' . $occid . '" target="_blank">' . $occid . '</a>', 1);
+						// $status = true;
+					}
+					if (!$status) {
+						if ($existingIdentifier) {
+							$this->logOrEcho('ERROR loading identifier: existing identifier detected. ' . $importManager->getErrorMessage(), 1);
+						} else {
+							$this->logOrEcho('ERROR loading identifier. ' . $importManager->getErrorMessage(), 1);
+						}
+					}
+					// else {
+					// 	$this->logOrEcho('ERROR loading identifier: ' . $importManager->getErrorMessage(), 1);
+					// }
 					// }
 				}
 				// if($identifierArr){

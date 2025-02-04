@@ -43,7 +43,6 @@ class OmIdentifiers extends Manager
         if ($this->occid) {
             if (!isset($inputArr['createdUid'])) $inputArr['createdUid'] = $GLOBALS['SYMB_UID'];
             // $sql = 'INSERT INTO omoccuridentifiers(occid, recordID';
-            // @TODO create a uuid?
             $sql = 'INSERT INTO omoccuridentifiers (occid';
             // $sqlValues = '';
             // $sqlValues = '?, ?, ';
@@ -54,7 +53,7 @@ class OmIdentifiers extends Manager
             if (array_key_exists('occid', $inputArr)) {
                 unset($inputArr['occid']);
             }
-            $this->setParameterArr($inputArr); // @TOOD exclude occid from inputArr?
+            $this->setParameterArr($inputArr);
             foreach ($this->parameterArr as $fieldName => $value) {
                 $sql .= ', ' . $fieldName;
                 $sqlValues .= '?, ';
@@ -121,7 +120,7 @@ class OmIdentifiers extends Manager
     public function updateIdentifier($inputArr)
     {
         $status = false;
-        if ($this->identifierID && $this->conn) {
+        if ($this->occid && $this->conn) {
             // $occidAssociate = false;
             // if (isset($inputArr['identifierName']) && $inputArr['identifierName']) {
             //     $targetIdentifier = $this->getIdentifierOccid($inputArr['occid']); // @TODO global replace misspelled getOccidAsscoiate
@@ -135,15 +134,32 @@ class OmIdentifiers extends Manager
             //     $this->errorMessage = 'Unable to locate internal association record';
             //     return false;
             // }
+            $occidPlaceholder = null;
+            $identifierNamePlaceholder = null;
+            if (array_key_exists('occid', $inputArr)) {
+                $occidPlaceholder = $inputArr['occid'];
+                unset($inputArr['occid']);
+            }
+            if (array_key_exists('identifierName', $inputArr)) {
+                $identifierNamePlaceholder = $inputArr['identifierName'];
+                unset($inputArr['identifierName']);
+            }
             $this->setParameterArr($inputArr);
             $paramArr = array();
             $sqlFrag = '';
             foreach ($this->parameterArr as $fieldName => $value) {
-                $sqlFrag .= $fieldName . ' = ?, ';
-                $paramArr[] = $value;
+                if ($fieldName !== 'occid' || $fieldName !== 'identifierName') {
+                    $sqlFrag .= $fieldName . ' = ?, ';
+                    if ($fieldName == 'modifiedUid' && empty($value)) {
+                        $value = $GLOBALS['SYMB_UID'];
+                    }
+                    $paramArr[] = $value;
+                }
             }
-            $paramArr[] = $this->identifierID; // @TODO why?
-            $this->typeStr .= 'i';
+            $paramArr[] = $occidPlaceholder;
+            $paramArr[] = $identifierNamePlaceholder;
+            // $paramArr[] = $this->identifierID; // @TODO why?
+            $this->typeStr .= 'is';
             $sql = 'UPDATE IGNORE omoccuridentifiers SET ' . trim($sqlFrag, ', ') . ' WHERE (occid = ? AND identifierName = ?)';
             if ($stmt = $this->conn->prepare($sql)) {
                 $stmt->bind_param($this->typeStr, ...$paramArr);
