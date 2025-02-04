@@ -393,7 +393,7 @@ class Media {
 			}
 		} else {
 			if(in_array($mime, $GLOBALS['ALLOWED_MEDIA_MIME_TYPES'])) {
-				return $type;
+				return $mime;
 			}
 		}
 
@@ -407,13 +407,11 @@ class Media {
 	public static function ext2Mime(string $ext, string $type = '') {
 		$image = [
 			'bmp' => ['image/bmp', 'image/x-bmp', 'image/x-bitmap', 'image/x-xbitmap', 'image/x-win-bitmap', 'image/x-windows-bmp', 'image/ms-bmp', 'image/x-ms-bmp'],
-			'cdr' => 'image/cdr',
-			'cdr' =>'image/x-cdr',
+			'cdr' => ['image/cdr', 'image/x-cdr'],
 			'gif' => 'image/gif',
-			'ico' => 'image/x-icon',
-			'ico' =>'image/x-ico',
-			'ico' =>'image/vnd.microsoft.icon',
-			'jp2' => ['image/jp2', 'image/jpx', 'image/jpm', 'image/jpeg', 'image/jpeg', 'image/pjpeg'],
+			'ico' => ['image/x-icon', 'image/x-ico', 'image/vnd.microsoft.icon' ],
+			'jpg' => ['image/jpeg', 'image/jpeg', 'image/pjpeg'],
+			'jp2' => ['image/jp2', 'image/jpx', 'image/jpm'],
 			'png' => ['image/png', 'image/x-png'],
 			'psd' => 'image/vnd.adobe.photoshop',
 			'svg' => 'image/svg+xml',

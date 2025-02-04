@@ -2073,13 +2073,28 @@ class SpecUploadBase extends SpecUpload{
 			}
 
 			$file = Media::parseFileName($testUrl);
-			$mime = Media::ext2Mime($file['extension']);
-			$mime = Media::getAllowedMime($mime);
+			$parsed_mime = Media::ext2Mime($file['extension']);
+			if(!$parsed_mime) {
+				try {
+					$file = Media::getRemoteFileInfo($testUrl);
+					$parsed_mime = $file['type'];
+				} catch(Throwable $error) {
+					error_log('SpecUploadBase: Failed to Parse File: ' . $error->getMessage() . ' ' . $testUrl . ' ' . __LINE__ . ' ');
+					$this->outputMsg('<li style="margin-left:20px;">File format could not be parsed: ' . $testUrl . ' </li>');
+					return false;
+				}
+				
+			}
+			$mime = Media::getAllowedMime($parsed_mime);
 			if(!$mime) {
+				if($parsed_mime) {
+					$this->outputMsg('<li style="margin-left:20px;">Unsupported File Format: ' . $parsed_mime . ' from url ' . $testUrl . ' </li>');
+				} else {
+					$this->outputMsg('<li style="margin-left:20px;">Could Not Parse the File Format: ' . $testUrl . ' </li>');
+				}
 				// Not Supported extension
 				return false;
 			} else {
-				//TODO (Logan) change this to mediaFormatDefault
 				$recMap['format'] = $mime;
 			}
 
