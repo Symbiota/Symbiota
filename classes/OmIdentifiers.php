@@ -148,8 +148,10 @@ class OmIdentifiers extends Manager
                 $identifierNamePlaceholder = $inputArr['identifierName'];
                 unset($inputArr['identifierName']);
             }
-            $this->setParameterArr($inputArr);
             $paramArr = array();
+            $paramArr[] = $GLOBALS['SYMB_UID'];
+            $this->typeStr .= 's';
+            $this->setParameterArr($inputArr);
             $sqlFrag = '';
             foreach ($this->parameterArr as $fieldName => $value) {
                 if ($fieldName !== 'occid' || $fieldName !== 'identifierName') {
@@ -160,11 +162,11 @@ class OmIdentifiers extends Manager
                     $paramArr[] = $value;
                 }
             }
-            $paramArr[] = $GLOBALS['SYMB_UID'];
+            // $paramArr[] = $GLOBALS['SYMB_UID'];
             $paramArr[] = $occidPlaceholder;
             $paramArr[] = $identifierNamePlaceholder;
             // $paramArr[] = $this->identifierID; // @TODO why?
-            $this->typeStr .= 'sis';
+            $this->typeStr .= 'is';
             $sql = 'UPDATE IGNORE omoccuridentifiers SET modifiedTimestamp = now(), modifiedUid = ? , ' . trim($sqlFrag, ', ') . ' WHERE (occid = ? AND identifierName = ?)';
             if ($stmt = $this->conn->prepare($sql)) {
                 $stmt->bind_param($this->typeStr, ...$paramArr);
