@@ -280,10 +280,16 @@ class OccurrenceImport extends UtilitiesFileImport
 					$existingIdentifier = null;
 					// $existingIdentifier = $importManager->getIdentifier($identifierArr['occid'], $identifierArr['identifierName']);
 					$existingIdentifier = $importManager->getIdentifier($occid, $identifierArr['identifierName']);
-					if ($existingIdentifier && !empty($postArr['replace-identifier'])) {
-						// @TODO add update identifier logic?
-						$status = $importManager->updateIdentifier($identifierArr);
-						$this->logOrEcho($LANG['IDENTIFIER_ADDED'] . ': <a href="../editor/occurrenceeditor.php?occid=' . $occid . '" target="_blank">' . $occid . '</a>', 1);
+					if ($existingIdentifier) {
+						$importManager->setIdentifierID($existingIdentifier);
+						// @TODO handle delete
+						if ($postArr['action'] == 'delete') {
+							$status = $importManager->deleteIdentifier(); //$identifierArr
+						}
+						if (!empty($postArr['replace-identifier'])) {
+							$status = $importManager->updateIdentifier($identifierArr);
+							$this->logOrEcho($LANG['IDENTIFIER_ADDED'] . ': <a href="../editor/occurrenceeditor.php?occid=' . $occid . '" target="_blank">' . $occid . '</a>', 1);
+						}
 					}
 					if (!$existingIdentifier) {
 						$status = $importManager->insertIdentifier($identifierArr);
@@ -328,9 +334,6 @@ class OccurrenceImport extends UtilitiesFileImport
 			$sqlConditionArr[] = '(o.othercatalognumbers = "' . $otherCatalogNumbers . '" OR i.identifierValue = "' . $otherCatalogNumbers . '")';
 			$sql .= 'LEFT JOIN omoccuridentifiers i ON o.occid = i.occid ';
 		}
-		// if (isset($identifierArr['occid'])) {
-		// 	$sqlConditionArr[] = '(o.occid = "' . $this->cleanInStr($identifierArr['occid']) . '")';
-		// }
 		if ($sqlConditionArr) {
 			$sql .= 'WHERE (o.collid = ' . $this->collid . ') AND (' . implode(' OR ', $sqlConditionArr) . ') ';
 			$rs = $this->conn->query($sql);

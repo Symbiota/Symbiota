@@ -122,25 +122,25 @@ class OmIdentifiers extends Manager
     }
 
     // private function getIdentifierOccid($identifierVal, $identifierName)
-    private function getIdentifierOccid($identifierVal)
-    {
-        $occid = 0;
-        $identifierVal = trim($identifierVal);
-        if ($identifierVal) {
-            $sql = 'SELECT occid FROM omoccurrences WHERE occurrenceID = ? OR recordID = ? OR catalogNumber = ?';
-            // if ($identifierName == 'catalogNumber') $sql = 'SELECT occid FROM omoccurrences WHERE catalogNumber = ?'; // @TODO I'm not sure why catalogNumber was singled out in OmAssociations.php
-            if ($stmt = $this->conn->prepare($sql)) {
-                // if ($identifierName == 'catalogNumber') $stmt->bind_param('s', $identifierVal);
-                // else $stmt->bind_param('sss', $identifierVal, $identifierVal, $identifierVal);
-                $stmt->bind_param('sss', $identifierVal, $identifierVal, $identifierVal);
-                $stmt->execute();
-                $stmt->bind_result($occid);
-                $stmt->fetch();
-                $stmt->close();
-            }
-        }
-        return $occid;
-    }
+    // private function getIdentifierOccid($identifierVal)
+    // {
+    //     $occid = 0;
+    //     $identifierVal = trim($identifierVal);
+    //     if ($identifierVal) {
+    //         $sql = 'SELECT occid FROM omoccurrences WHERE occurrenceID = ? OR recordID = ? OR catalogNumber = ?';
+    //         // if ($identifierName == 'catalogNumber') $sql = 'SELECT occid FROM omoccurrences WHERE catalogNumber = ?'; // @TODO I'm not sure why catalogNumber was singled out in OmAssociations.php
+    //         if ($stmt = $this->conn->prepare($sql)) {
+    //             // if ($identifierName == 'catalogNumber') $stmt->bind_param('s', $identifierVal);
+    //             // else $stmt->bind_param('sss', $identifierVal, $identifierVal, $identifierVal);
+    //             $stmt->bind_param('sss', $identifierVal, $identifierVal, $identifierVal);
+    //             $stmt->execute();
+    //             $stmt->bind_result($occid);
+    //             $stmt->fetch();
+    //             $stmt->close();
+    //         }
+    //     }
+    //     return $occid;
+    // }
 
     public function updateIdentifier($inputArr)
     {
@@ -231,7 +231,19 @@ class OmIdentifiers extends Manager
 
     public function deleteIdentifier()
     {
-        // @TODO define
-        return null;
+        if ($this->identifierID) {
+            $sql = 'DELETE FROM omoccuridentifiers WHERE idomoccuridentifiers = ' . $this->identifierID;
+            if ($this->conn->query($sql)) {
+                return true;
+            } else {
+                $this->errorMessage = 'ERROR deleting omoccuridentifiers record: ' . $this->conn->error;
+                return false;
+            }
+        }
+    }
+
+    public function setIdentifierID($id)
+    {
+        if (is_numeric($id)) $this->identifierID = $id;
     }
 }

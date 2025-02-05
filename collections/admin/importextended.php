@@ -308,6 +308,13 @@ if ($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($colli
 							if ($importType == 5) {
 							?>
 								<div class="formField-div">
+									<label for='action'><?= $LANG['ACTION'] ?>:</label>
+									<select name="action" id='action'>
+										<option value="add-or-update"><?= $LANG['BATCH_ADD_OR_UPDATE'] ?></option>
+										<option value="delete"><?= $LANG['BATCH_DELETE'] ?></option>
+									</select>
+								</div>
+								<div class="formField-div">
 									<input name="replace-identifier" type="checkbox" value="1">
 									<label for="replace-identifier"><?= $LANG['IDENTIFIER_UPDATE_OR_DELETE'] ?></label>
 								</div>
