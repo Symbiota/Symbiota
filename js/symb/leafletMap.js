@@ -621,6 +621,8 @@ class LeafletMap {
       this.drawLayer = drawnItems;
       this.mapLayer.addLayer(drawnItems);
 
+	  L.Draw.Polygon.prototype.options.shapeOptions.draggable = true;
+
       //Jank workaround for leaflet-draw api
       const setDrawColor = (drawOption) => {
          if(drawOptions[drawOption] === false)
@@ -656,6 +658,9 @@ class LeafletMap {
             draw: drawOptions,
             edit: {
                featureGroup: drawnItems,
+			   edit: {
+			     moveMakers: false,
+			   }
             }
          });
 
