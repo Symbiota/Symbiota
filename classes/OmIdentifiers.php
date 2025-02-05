@@ -121,6 +121,27 @@ class OmIdentifiers extends Manager
         if (isset($inputArr['occid']) && $inputArr['occid'] && !$this->occid) $this->occid = $inputArr['occid'];
     }
 
+    // private function getIdentifierOccid($identifierVal, $identifierName)
+    private function getIdentifierOccid($identifierVal)
+    {
+        $occid = 0;
+        $identifierVal = trim($identifierVal);
+        if ($identifierVal) {
+            $sql = 'SELECT occid FROM omoccurrences WHERE occurrenceID = ? OR recordID = ? OR catalogNumber = ?';
+            // if ($identifierName == 'catalogNumber') $sql = 'SELECT occid FROM omoccurrences WHERE catalogNumber = ?'; // @TODO I'm not sure why catalogNumber was singled out in OmAssociations.php
+            if ($stmt = $this->conn->prepare($sql)) {
+                // if ($identifierName == 'catalogNumber') $stmt->bind_param('s', $identifierVal);
+                // else $stmt->bind_param('sss', $identifierVal, $identifierVal, $identifierVal);
+                $stmt->bind_param('sss', $identifierVal, $identifierVal, $identifierVal);
+                $stmt->execute();
+                $stmt->bind_result($occid);
+                $stmt->fetch();
+                $stmt->close();
+            }
+        }
+        return $occid;
+    }
+
     public function updateIdentifier($inputArr)
     {
         $status = false;
@@ -206,5 +227,11 @@ class OmIdentifiers extends Manager
     public function getSchemaMap()
     {
         return $this->schemaMap;
+    }
+
+    public function deleteIdentifier()
+    {
+        // @TODO define
+        return null;
     }
 }

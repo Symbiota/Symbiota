@@ -57,9 +57,9 @@ class OccurrenceImport extends UtilitiesFileImport
 						if (isset($this->fieldMap['othercatalognumbers'])) {
 							if ($recordArr[$this->fieldMap['othercatalognumbers']]) $identifierArr['otherCatalogNumbers'] = $recordArr[$this->fieldMap['othercatalognumbers']];
 						}
-						if (isset($this->fieldMap['occid'])) {
-							if ($recordArr[$this->fieldMap['occid']]) $identifierArr['occid'] = $recordArr[$this->fieldMap['occid']];
-						}
+						// if (isset($this->fieldMap['occid'])) {
+						// 	if ($recordArr[$this->fieldMap['occid']]) $identifierArr['occid'] = $recordArr[$this->fieldMap['occid']];
+						// }
 						$this->logOrEcho('#' . $cnt . ': ' . $LANG['PROCESSING_CATNUM'] . ': ' . implode(', ', $identifierArr));
 						if ($occidArr = $this->getOccurrencePK($identifierArr)) {
 							$status = $this->insertRecord($recordArr, $occidArr, $postArr);
@@ -257,10 +257,14 @@ class OccurrenceImport extends UtilitiesFileImport
 				$identifierArr = array();
 				foreach ($fieldArr as $field) {
 					$fieldLower = strtolower($field);
-					if (isset($this->fieldMap[$fieldLower])) $identifierArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
+					if ($fieldLower == 'occid') {
+						$identifierArr[$field] = $occid;
+					} else {
+						if (isset($this->fieldMap[$fieldLower])) $identifierArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
+					}
 				}
 				if (empty($identifierArr['occid'])) {
-					$this->logOrEcho('ERROR loading identifier: occid is empty.', 1);
+					$this->logOrEcho('ERROR loading identifier: occid could not be fetched from provided occurrence identifiers.', 1);
 					continue;
 				}
 				if (empty($identifierArr['identifierValue'])) {
@@ -274,7 +278,8 @@ class OccurrenceImport extends UtilitiesFileImport
 				if ($identifierArr) {
 					// if (!empty($postArr['occid']) && !empty($postArr['identifierName'])) {
 					$existingIdentifier = null;
-					$existingIdentifier = $importManager->getIdentifier($identifierArr['occid'], $identifierArr['identifierName']);
+					// $existingIdentifier = $importManager->getIdentifier($identifierArr['occid'], $identifierArr['identifierName']);
+					$existingIdentifier = $importManager->getIdentifier($occid, $identifierArr['identifierName']);
 					if ($existingIdentifier && !empty($postArr['replace-identifier'])) {
 						// @TODO add update identifier logic?
 						$status = $importManager->updateIdentifier($identifierArr);
@@ -323,9 +328,9 @@ class OccurrenceImport extends UtilitiesFileImport
 			$sqlConditionArr[] = '(o.othercatalognumbers = "' . $otherCatalogNumbers . '" OR i.identifierValue = "' . $otherCatalogNumbers . '")';
 			$sql .= 'LEFT JOIN omoccuridentifiers i ON o.occid = i.occid ';
 		}
-		if (isset($identifierArr['occid'])) {
-			$sqlConditionArr[] = '(o.occid = "' . $this->cleanInStr($identifierArr['occid']) . '")';
-		}
+		// if (isset($identifierArr['occid'])) {
+		// 	$sqlConditionArr[] = '(o.occid = "' . $this->cleanInStr($identifierArr['occid']) . '")';
+		// }
 		if ($sqlConditionArr) {
 			$sql .= 'WHERE (o.collid = ' . $this->collid . ') AND (' . implode(' OR ', $sqlConditionArr) . ') ';
 			$rs = $this->conn->query($sql);
@@ -338,7 +343,7 @@ class OccurrenceImport extends UtilitiesFileImport
 			if ($this->createNewRecord) {
 				$newOccid = $this->insertNewOccurrence($identifierArr);
 				if ($newOccid) $retArr[] = $newOccid;
-			} else $this->logOrEcho('SKIPPED: Unable to find record matching identifier: ' . implode(', ', $identifierArr), 1);
+			} else $this->logOrEcho('SKIPPED: Unable to find record matching any provided identifier(s): ' . implode(', ', $identifierArr), 1);
 		}
 
 		return $retArr;
