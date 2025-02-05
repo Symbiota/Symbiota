@@ -57,9 +57,6 @@ class OccurrenceImport extends UtilitiesFileImport
 						if (isset($this->fieldMap['othercatalognumbers'])) {
 							if ($recordArr[$this->fieldMap['othercatalognumbers']]) $identifierArr['otherCatalogNumbers'] = $recordArr[$this->fieldMap['othercatalognumbers']];
 						}
-						// if (isset($this->fieldMap['occid'])) {
-						// 	if ($recordArr[$this->fieldMap['occid']]) $identifierArr['occid'] = $recordArr[$this->fieldMap['occid']];
-						// }
 						$this->logOrEcho('#' . $cnt . ': ' . $LANG['PROCESSING_CATNUM'] . ': ' . implode(', ', $identifierArr));
 						if ($occidArr = $this->getOccurrencePK($identifierArr)) {
 							$status = $this->insertRecord($recordArr, $occidArr, $postArr);
