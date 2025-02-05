@@ -378,6 +378,54 @@ class Media {
 	}
 
 	/**
+	 * @param string $ext
+	 * @return string | bool
+	 */
+	public static function ext2Mime(string $ext, string $type) {
+		$image = [
+			'bmp' => ['image/bmp', 'image/x-bmp', 'image/x-bitmap', 'image/x-xbitmap', 'image/x-win-bitmap', 'image/x-windows-bmp', 'image/ms-bmp', 'image/x-ms-bmp'],
+			'cdr' => 'image/cdr',
+			'cdr' =>'image/x-cdr',
+			'gif' => 'image/gif',
+			'ico' => 'image/x-icon',
+			'ico' =>'image/x-ico',
+			'ico' =>'image/vnd.microsoft.icon',
+			'jp2' => ['image/jp2', 'image/jpx', 'image/jpm', 'image/jpeg', 'image/jpeg', 'image/pjpeg'],
+			'png' => ['image/png', 'image/x-png'],
+			'psd' => 'image/vnd.adobe.photoshop',
+			'svg' => 'image/svg+xml',
+			'tiff' => 'image/tiff',
+			'webp' => 'image/webp'
+		];
+
+		$audio = [
+			'aac' => 'audio/x-acc',
+			'ac3' => 'audio/ac3',
+			'aif' => ['audio/x-aiff', 'audio/aiff'],
+			'au' => 'audio/x-au',
+			'flac' => 'audio/x-flac',
+			'm4a' => ['audio/mp4', 'audio/x-m4a'],
+			'mp4' => 'audio/mp4',
+			'mid' => 'audio/midi',
+			'mp3' => [ 'audio/mp3', 'audio/mpeg', 'audio/mpg', 'audio/mpeg3' ],
+			'ogg' => 'audio/ogg',
+			'ra' => 'audio/x-realaudio',
+			'ram' => 'audio/x-pn-realaudio',
+			'rpm' => 'audio/x-pn-realaudio-plugin',
+			'wav' => ['audio/wav', 'audio/wave', 'audio/x-wav'],
+			'wma' => 'audio/x-ms-wma',
+		];
+
+		if($type === MediaType::Image) {
+			return $image[$ext] ?? false;
+		} else if ($type=== MediaType::Audio) {
+			return $audio[$ext] ?? false;
+		} else {
+			return false;
+		}
+	}
+
+	/**
 	 * @param string $mime
 	 * @return string | bool
 	 */
@@ -683,6 +731,42 @@ class Media {
 		return $file && !empty($file) && isset($file['error']) && $file['error'] === 0;
 	}
 
+	/* Internal Function for creating a file array for media that doesn't need to be uploaded. Primarly used for media upload */
+	private static function parse_map_only_file(array $clean_post_arr): array {
+		// Map only files must have format and a url
+		if(!(isset($clean_post_arr['originalUrl']) || isset($clean_post_arr['url'])) || !isset($clean_post_arr['format'])) {
+			return [];
+		}
+
+		$url = $clean_post_arr['originalUrl'] ?? $clean_post_arr['url'];
+		$file_type_mime = $clean_post_arr['format'] ?? '';
+		$media_upload_type = MediaType::tryFrom($clean_post_arr['mediaUploadType']);
+
+		$parsed_file = self::parseFileName($url);
+		$parsed_file['name'] = self::cleanFileName($parsed_file['name']);
+
+		if(!$parsed_file['extension'] && $file_type_mime) {
+			$parsed_file['extension'] = self::mime2ext($file_type_mime);
+		} else if (!$file_type_mime && $parsed_file['extension'] && $media_upload_type) {
+			$file_type_mime = self::ext2Mime($parsed_file['extension'], $media_upload_type);
+
+			// If There is a bunch of potential mime types just assume the first one
+			// this is not perfect and could result weird errors for fringe types 
+			// but for current use case should be an issue. Types are order by most likely.
+			if(is_array($file_type_mime) && count($file_type_mime) > 0) {
+				$file_type_mime = $file_type_mime[0];
+			}
+		}
+
+		return [
+			'name' => $parsed_file['name'] . ($parsed_file['extension'] ? '.' .$parsed_file['extension']: ''),
+			'tmp_name' => $url,
+			'error' => 0,
+			'type' => $file_type_mime,
+			'size' => null
+		];
+	}
+
 	/**
 	 * @param array<int,mixed> $post_arr
 	 * @param StorageStrategy $storage Class where and how to save files. If left empty will not store files
@@ -698,8 +782,12 @@ class Media {
 		$should_upload_file = (self::isValidFile($file) || $copy_to_server) && $storage;
 
 		//If no file is given and downloads from urls are enabled
-		if(!self::isValidFile($file) && $isRemoteMedia) {
-			$file = self::getRemoteFileInfo($clean_post_arr['originalUrl']);
+		if(!self::isValidFile($file)) {
+			if(!$should_upload_file) {
+				$file = self::parse_map_only_file($clean_post_arr);
+			} else if($isRemoteMedia) {
+				$file = self::getRemoteFileInfo($clean_post_arr['originalUrl']);
+			}
 		}
 
 		//If that didn't popluate then return;

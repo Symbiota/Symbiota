@@ -67,7 +67,6 @@ class OccurrenceImport extends UtilitiesFileImport
 						$cnt++;
 					}
 					$occurMain = new OccurrenceMaintenance($this->conn);
-					$this->logOrEcho($LANG['VALUES_SET']);
 					$this->logOrEcho($LANG['UPDATING_STATS'] . '...');
 					if (!$occurMain->updateCollectionStatsBasic($this->collid)) {
 						$errorArr = $occurMain->getErrorArr();
@@ -88,8 +87,17 @@ class OccurrenceImport extends UtilitiesFileImport
 		$status = false;
 		if ($this->importType == self::IMPORT_IMAGE_MAP) {
 			$importManager = new ImageShared($this->conn);
+
+			/* originalurl is a required field */
 			if (!isset($this->fieldMap['originalurl']) || !$recordArr[$this->fieldMap['originalurl']]) {
-				$this->errorMessage = 'large url (originalUrl) is null (required)';
+				//$this->errorMessage = 'large url (originalUrl) is null (required)';
+				$this->logOrEcho('ERROR `originalUrl` field mapping is required', 1);
+				return false;
+			}
+
+			/* Media uploads must only be of one type */
+			if (!isset($postArr['mediaUploadType']) || !$postArr['mediaUploadType']) {
+				$this->logOrEcho('ERROR `mediaUploadType` is required', 1);
 				return false;
 			}
 
@@ -119,6 +127,7 @@ class OccurrenceImport extends UtilitiesFileImport
 				$data = [
 					"occid" => $occid,
 					"originalUrl" => $recordArr[$this->fieldMap['originalurl']],
+					"mediaUploadType" => $postArr['mediaUploadType']
 				];
 				foreach ($fields as $key) {
 					$record_idx = $this->fieldMap[$key] ?? false;
@@ -127,7 +136,11 @@ class OccurrenceImport extends UtilitiesFileImport
 					}
 				}
 
-				// Will Not store files on the server unless StorageStrategy is provided
+				if (!isset($data['originalUrl']) && !$data['originalUrl']) {
+					$this->logOrEcho('SKIPPING Record ' . $occid . ' missing `originalUrl` value');
+				}
+
+				// Will Not store files on the server unless StorageStrategy is provided which is desired for this use case
 				Media::add($data);
 				if ($errors = Media::getErrors()) {
 					$this->logOrEcho('ERROR: ' . array_pop($errors));
@@ -390,7 +403,6 @@ class OccurrenceImport extends UtilitiesFileImport
 		if ($this->importType == self::IMPORT_IMAGE_MAP) {
 			$fieldArr = array(
 				'url',
-				'originalUrl',
 				'thumbnailUrl',
 				'archiveUrl',
 				'referenceUrl',
@@ -410,6 +422,8 @@ class OccurrenceImport extends UtilitiesFileImport
 				'accessRights',
 				'sortOccurrence'
 			);
+
+			$this->targetFieldMap['originalurl'] = 'originalUrl (required)';
 		} elseif ($this->importType == self::IMPORT_ASSOCIATIONS) {
 			$fieldArr = array('relationshipID', 'objectID', 'basisOfRecord', 'establishedDate', 'notes', 'accordingTo');
 			if ($associationType == 'resource') {

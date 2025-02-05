@@ -143,6 +143,7 @@ if ($isEditor) {
 				$("#" + dialogStr).click(function() {
 					$("#" + this.id + "dialog").dialog("open");
 				});
+
 			}
 
 			$('#tabs').tabs({
