@@ -1,7 +1,5 @@
 <?php
 
-use function PHPUnit\Framework\isEmpty;
-
 include_once('Manager.php');
 include_once('utilities/OccurrenceUtil.php');
 include_once('utilities/UuidFactory.php');
@@ -18,17 +16,13 @@ class OmIdentifiers extends Manager
     {
         parent::__construct(null, 'write', $conn);
         $this->schemaMap = array(
-            // 'idomoccuridentifiers' => 'i',
-            'occid' => 'i', // @TODO decide
+            'occid' => 'i',
             'identifierValue' => 's',
             'identifierName' => 's',
             'format' => 's',
             'notes' => 's',
             'sortBy' => 'i',
             'recordID' => 's',
-            // 'modifiedUid' => 'i',
-            // 'modifiedTimestamp' => 's', // @TODO make datetime
-            // 'initialTimestamp' => 's', // @TODO make timestamp
         );
     }
 
@@ -42,14 +36,9 @@ class OmIdentifiers extends Manager
         $status = false;
         if ($this->occid) {
             if (!isset($inputArr['createdUid'])) $inputArr['createdUid'] = $GLOBALS['SYMB_UID'];
-            // $sql = 'INSERT INTO omoccuridentifiers(occid, recordID';
             $sql = 'INSERT INTO omoccuridentifiers (occid, modifiedUid';
-            // $sqlValues = '';
-            // $sqlValues = '?, ?, ';
             $sqlValues = '?, ?, ';
             $paramArr = array($this->occid, $GLOBALS['SYMB_UID']);
-            // $paramArr = array();
-            // $paramArr[] = UuidFactory::getUuidV4();
             $this->typeStr = 'is';
             if (array_key_exists('occid', $inputArr)) {
                 unset($inputArr['occid']);
@@ -61,9 +50,6 @@ class OmIdentifiers extends Manager
             foreach ($this->parameterArr as $fieldName => $value) {
                 $sql .= ', ' . $fieldName;
                 $sqlValues .= '?, ';
-                // if ($fieldName == 'modifiedUid' && empty($value)) {
-                //     $value = $GLOBALS['SYMB_UID'];
-                // }
                 $paramArr[] = $value;
             }
             $sql .= ') VALUES(' . trim($sqlValues, ', ') . ') ';
@@ -101,15 +87,6 @@ class OmIdentifiers extends Manager
                     $postField = strtolower($postField);
                     if ($postField == 'modifiedTimestamp') $value = OccurrenceUtil::formatDate($value);
                     if ($postField == 'modifieduid') $value = OccurrenceUtil::verifyUser($value, $this->conn);
-                    // if ($postField == 'createduid') $value = OccurrenceUtil::verifyUser($value, $this->conn);
-                    // if ($postField == 'identificationuncertain' || $postField == 'iscurrent' || $postField == 'printqueue' || $postField == 'appliedstatus' || $postField == 'securitystatus') {
-                    // 	if (!is_numeric($value)) {
-                    // 		$value = strtolower($value);
-                    // 		if ($value == 'yes' || $value == 'true') $value = 1;
-                    // 		else $value = 0;
-                    // 	}
-                    // }
-                    // if ($postField == 'sortsequence') {
                     if ($postField == 'sortBy') { // @TODO ? sortBy same a sortsequence?
                         if (!is_numeric($value)) $value = 10;
                     }
@@ -121,44 +98,10 @@ class OmIdentifiers extends Manager
         if (isset($inputArr['occid']) && $inputArr['occid'] && !$this->occid) $this->occid = $inputArr['occid'];
     }
 
-    // private function getIdentifierOccid($identifierVal, $identifierName)
-    // private function getIdentifierOccid($identifierVal)
-    // {
-    //     $occid = 0;
-    //     $identifierVal = trim($identifierVal);
-    //     if ($identifierVal) {
-    //         $sql = 'SELECT occid FROM omoccurrences WHERE occurrenceID = ? OR recordID = ? OR catalogNumber = ?';
-    //         // if ($identifierName == 'catalogNumber') $sql = 'SELECT occid FROM omoccurrences WHERE catalogNumber = ?'; // @TODO I'm not sure why catalogNumber was singled out in OmAssociations.php
-    //         if ($stmt = $this->conn->prepare($sql)) {
-    //             // if ($identifierName == 'catalogNumber') $stmt->bind_param('s', $identifierVal);
-    //             // else $stmt->bind_param('sss', $identifierVal, $identifierVal, $identifierVal);
-    //             $stmt->bind_param('sss', $identifierVal, $identifierVal, $identifierVal);
-    //             $stmt->execute();
-    //             $stmt->bind_result($occid);
-    //             $stmt->fetch();
-    //             $stmt->close();
-    //         }
-    //     }
-    //     return $occid;
-    // }
-
     public function updateIdentifier($inputArr)
     {
         $status = false;
         if ($this->occid && $this->conn) {
-            // $occidAssociate = false;
-            // if (isset($inputArr['identifierName']) && $inputArr['identifierName']) {
-            //     $targetIdentifier = $this->getIdentifierOccid($inputArr['occid']); // @TODO global replace misspelled getOccidAsscoiate
-            // }
-            // elseif (isset($inputArr['object-occurrenceID']) && $inputArr['object-occurrenceID']) {
-            //     $targetIdentifier = $this->getOccidAsscoiate($inputArr['object-occurrenceID'], 'occurrenceID');
-            // }
-            // if ($targetIdentifier) {
-            //     $inputArr['targetIdentifier'] = $targetIdentifier;
-            // } elseif ($occidAssociate !== false) {
-            //     $this->errorMessage = 'Unable to locate internal association record';
-            //     return false;
-            // }
             $occidPlaceholder = null;
             $identifierNamePlaceholder = null;
             if (array_key_exists('occid', $inputArr)) {
@@ -183,10 +126,8 @@ class OmIdentifiers extends Manager
                     $paramArr[] = $value;
                 }
             }
-            // $paramArr[] = $GLOBALS['SYMB_UID'];
             $paramArr[] = $occidPlaceholder;
             $paramArr[] = $identifierNamePlaceholder;
-            // $paramArr[] = $this->identifierID; // @TODO why?
             $this->typeStr .= 'is';
             $sql = 'UPDATE IGNORE omoccuridentifiers SET modifiedTimestamp = now(), modifiedUid = ? , ' . trim($sqlFrag, ', ') . ' WHERE (occid = ? AND identifierName = ?)';
             if ($stmt = $this->conn->prepare($sql)) {
@@ -203,19 +144,14 @@ class OmIdentifiers extends Manager
     public function getIdentifier($occid, $identifierName)
     {
         $idomoccuridentifiers = null;
-        // $identifier = trim($identifier);
-        // if ($identifier) {
         $sql = 'SELECT idomoccuridentifiers FROM omoccuridentifiers WHERE occid = ? AND identifierName = ?';
-        // if ($target == 'catalogNumber') $sql = 'SELECT occid FROM omoccurrences WHERE catalogNumber = ?';
         if ($stmt = $this->conn->prepare($sql)) {
-            // if ($target == 'catalogNumber') $stmt->bind_param('s', $identifier);
             $stmt->bind_param('is', $occid, $identifierName);
             $stmt->execute();
             $stmt->bind_result($idomoccuridentifiers);
             $stmt->fetch();
             $stmt->close();
         }
-        // }
         return $idomoccuridentifiers;
     }
 

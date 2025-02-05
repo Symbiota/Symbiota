@@ -276,15 +276,12 @@ class OccurrenceImport extends UtilitiesFileImport
 					continue;
 				}
 				if ($identifierArr) {
-					// if (!empty($postArr['occid']) && !empty($postArr['identifierName'])) {
 					$existingIdentifier = null;
-					// $existingIdentifier = $importManager->getIdentifier($identifierArr['occid'], $identifierArr['identifierName']);
 					$existingIdentifier = $importManager->getIdentifier($occid, $identifierArr['identifierName']);
 					if ($existingIdentifier) {
 						$importManager->setIdentifierID($existingIdentifier);
-						// @TODO handle delete
 						if ($postArr['action'] == 'delete') {
-							$status = $importManager->deleteIdentifier(); //$identifierArr
+							$status = $importManager->deleteIdentifier();
 						}
 						if (!empty($postArr['replace-identifier'])) {
 							$status = $importManager->updateIdentifier($identifierArr);
@@ -294,7 +291,6 @@ class OccurrenceImport extends UtilitiesFileImport
 					if (!$existingIdentifier) {
 						$status = $importManager->insertIdentifier($identifierArr);
 						$this->logOrEcho($LANG['IDENTIFIER_ADDED'] . ': <a href="../editor/occurrenceeditor.php?occid=' . $occid . '" target="_blank">' . $occid . '</a>', 1);
-						// $status = true;
 					}
 					if (!$status) {
 						if ($existingIdentifier) {
@@ -303,14 +299,7 @@ class OccurrenceImport extends UtilitiesFileImport
 							$this->logOrEcho('ERROR loading identifier. ' . $importManager->getErrorMessage(), 1);
 						}
 					}
-					// else {
-					// 	$this->logOrEcho('ERROR loading identifier: ' . $importManager->getErrorMessage(), 1);
-					// }
-					// }
 				}
-				// if($identifierArr){
-				// 	if(!empty())
-				// }
 			}
 		}
 		return $status;
@@ -460,7 +449,6 @@ class OccurrenceImport extends UtilitiesFileImport
 			);
 		} elseif ($this->importType == self::IMPORT_IDENTIFIERS) {
 			$fieldArr = array(
-				// 'idomoccuridentifiers',
 				'occid',
 				'identifierValue',
 				'identifierName',
@@ -468,9 +456,6 @@ class OccurrenceImport extends UtilitiesFileImport
 				'notes',
 				'sortBy',
 				'recordID',
-				// 'modifiedUid',
-				// 'modifiedTimestamp',
-				// 'initialTimestamp'
 			);
 		}
 		sort($fieldArr);
