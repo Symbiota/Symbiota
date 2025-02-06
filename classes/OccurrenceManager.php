@@ -584,6 +584,8 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 					$sqlJoin .= 'JOIN omoccurpaleogts late ON paleo.lateInterval = late.gtsterm ';
 					$sqlJoin .= 'CROSS JOIN searchRange search ';
 				}
+				else
+					$sqlJoin .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
 			}
 			/*
 			if(array_key_exists('includeothercatnum',$this->searchTermArr)){
