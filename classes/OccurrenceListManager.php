@@ -38,8 +38,6 @@ class OccurrenceListManager extends OccurrenceManager{
 		if ($GLOBALS['ACTIVATE_PALEO'])
 			$sql .= ', paleo.formation, paleo.earlyInterval, paleo.lateInterval ';
 		$sql .= 'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
-		if ($GLOBALS['ACTIVATE_PALEO'])
-			$sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
 		$sql .= $this->getTableJoins($sqlWhere).$sqlWhere;
 		//Don't allow someone to query all occurrences if there are no conditions
 		if(!$sqlWhere) $sql .= 'WHERE o.occid IS NULL ';
