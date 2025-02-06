@@ -105,7 +105,7 @@ class OmIdentifiers extends Manager
             $occidPlaceholder = null;
             $identifierNamePlaceholder = null;
             if (array_key_exists('occid', $inputArr)) {
-                $occidPlaceholder = $inputArr['occid'];
+                $occidPlaceholder = (int)$inputArr['occid'];
                 unset($inputArr['occid']);
             }
             if (array_key_exists('identifierName', $inputArr)) {
@@ -114,7 +114,7 @@ class OmIdentifiers extends Manager
             }
             $paramArr = array();
             $paramArr[] = $GLOBALS['SYMB_UID'];
-            $this->typeStr .= 's';
+            $this->typeStr .= 'i';
             $this->setParameterArr($inputArr);
             $sqlFrag = '';
             foreach ($this->parameterArr as $fieldName => $value) {
@@ -136,6 +136,7 @@ class OmIdentifiers extends Manager
                 if ($stmt->affected_rows || !$stmt->error) $status = true;
                 else $this->errorMessage = 'ERROR updating omoccurassociations record: ' . $stmt->error;
                 $stmt->close();
+                $this->typeStr = '';
             } else $this->errorMessage = 'ERROR preparing statement for updating omoccurassociations: ' . $this->conn->error;
         }
         return $status;
