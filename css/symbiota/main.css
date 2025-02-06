@@ -173,6 +173,15 @@ span[class="link"]:hover {
   padding-top: 1.5rem;
 }
 
+.fieldset-like-box {
+  position: relative;
+  border: 0.2rem solid;
+  margin: 2rem 0 1rem 1rem;
+  padding: 0.8rem;
+  padding-top: 1.5rem;
+  background-color: var(--light-color);
+}
+
 .fieldset-like h1,
 .fieldset-like h2,
 .fieldset-like h3 {
@@ -447,6 +456,7 @@ button.inverse-color {
 
 .button-secondary {
   background-color: var(--bright-color);
+  color: var(--darkest-color);
 }
 
 .button-secondary > a {
@@ -454,9 +464,15 @@ button.inverse-color {
 }
 
 .button-tertiary {
-  background-color: none;
+  background-color: transparent;
   border: 1px solid var(--bright-color);
   padding: 0.5rem 0.9rem;
+}
+
+.button-form{
+	display: inline;
+	margin: 0px;
+	padding: 0px;
 }
 
 /* image thumbnails */
@@ -671,6 +687,24 @@ table.styledtable tr.alt td {
 
 .float-right {
   float: right;
+}
+
+/* Games styling  */
+
+.games-content {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.games-body {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.games-body div{
+  margin: 0.5rem;
 }
 
 /* JQUERY UI modifications */

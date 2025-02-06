@@ -136,15 +136,15 @@ $occManager->setOccId($occid);
 					<button class="button-danger" name="verifydelete" type="button" value="Evaluate record for deletion" onclick="verifyDeletion(this.form);" ><?php echo $LANG['EVALUATE_FOR_DEL']; ?></button>
 				</div>
 				<div id="delverimgdiv" style="margin:15px;">
-					<b><?php echo $LANG['IMG_LINKS']; ?>: </b>
-					<span id="delverimgspan" style="color:orange;display:none;"><?php echo $LANG['CHECKING_IMG_LINKS']; ?>...</span>
+					<b><?php echo $LANG['MEDIA_LINKS']; ?>: </b>
+					<span id="delverimgspan" style="color:orange;display:none;"><?php echo $LANG['CHECKING_MEDIA_LINKS']; ?>...</span>
 					<div id="delimgfailspan" style="display:none;style:0px 10px 10px 10px;">
 						<span style="color:red;"><?php echo $LANG['WARNING']; ?>:</span>
-						<?php echo $LANG['IMAGES_ARE_LINKED']; ?>
+						<?php echo $LANG['MEDIA_ARE_LINKED']; ?>
 					</div>
 					<div id="delimgappdiv" style="display:none;">
 						<span style="color:green;"><?php echo $LANG['APPROVED_FOR_DEL']; ?>.</span>
-						<?php echo $LANG['NO_IMGS']; ?>.
+						<?php echo $LANG['NO_MEDIA']; ?>.
 					</div>
 				</div>
 				<div id="delvervoucherdiv" style="margin:15px;">

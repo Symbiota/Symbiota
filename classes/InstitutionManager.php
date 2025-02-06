@@ -24,8 +24,22 @@ class InstitutionManager extends Manager{
 				$stmt->bind_param('i', $this->iid);
 				$stmt->execute();
 				$rs = $stmt->get_result();
-				while($r = $rs->fetch_assoc()){
-					$retArr = $r;
+				if($r = $rs->fetch_object()){
+					$retArr['iid'] = $r->iid;
+					$retArr['institutioncode'] = $this->cleanOutStr($r->institutioncode);
+					$retArr['institutionname'] = $this->cleanOutStr($r->institutionname);
+					$retArr['institutionname2'] = $this->cleanOutStr($r->institutionname2);
+					$retArr['address1'] = $this->cleanOutStr($r->address1);
+					$retArr['address2'] = $this->cleanOutStr($r->address2);
+					$retArr['city'] = $this->cleanOutStr($r->city);
+					$retArr['stateprovince'] = $this->cleanOutStr($r->stateprovince);
+					$retArr['postalcode'] = $this->cleanOutStr($r->postalcode);
+					$retArr['country'] = $this->cleanOutStr($r->country);
+					$retArr['phone'] = $this->cleanOutStr($r->phone);
+					$retArr['contact'] = $this->cleanOutStr($r->contact);
+					$retArr['email'] = $this->cleanOutStr($r->email);
+					$retArr['url'] = $this->cleanOutStr($r->url);
+					$retArr['notes'] = $r->notes;	//Do not sanitize at this time. Html tags are included when content is added from GBIF's GrSciColl. Wait until we have resolve the html sanitation issue.
 				}
 				$rs->free();
 				$stmt->close();

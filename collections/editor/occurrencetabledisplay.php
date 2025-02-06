@@ -24,7 +24,7 @@ $recArr = array();
 $headerMapBase = array('institutioncode'=>'Institution Code (override)','collectioncode'=>'Collection Code (override)',
 	'ownerinstitutioncode'=>'Owner Code (override)','catalognumber' => 'Catalog Number',
 	'othercatalognumbers' => 'Other Catalog #','family' => 'Family','identificationqualifier' => 'ID Qualifier',
-	'sciname' => 'Scientific Name','scientificnameauthorship'=>'Author','recordedby' => 'Collector','recordnumber' => 'Number',
+	'sciname' => 'Scientific Name','scientificnameauthorship'=>'Author','recordedby' => 'Collector','recordnumber' => 'Collector Number',
 	'associatedcollectors' => 'Associated Collectors','eventdate' => 'Event Date','verbatimeventdate' => 'Verbatim Date',
 	'identificationremarks' => 'Identification Remarks','taxonremarks' => 'Taxon Remarks','identifiedby' => 'Identified By',
 	'dateidentified' => 'Date Identified', 'identificationreferences' => 'Identification References',
@@ -41,7 +41,7 @@ $headerMapBase = array('institutioncode'=>'Institution Code (override)','collect
 	'typestatus' => 'Type Status','cultivationstatus' => 'Cultivation Status','establishmentmeans' => 'Establishment Means','datageneralizations' => 'Data Generalizations',
 	'disposition' => 'Disposition','duplicatequantity' => 'Duplicate Qty','datelastmodified' => 'Date Last Modified', 'labelproject' => 'Label Project',
 	'processingstatus' => 'Processing Status','recordenteredby' => 'Entered By','dbpk' => 'dbpk','basisofrecord' => 'Basis Of Record',
-	'language' => 'Language');
+	'language' => 'Language','continent' => 'Continent','islandgroup' => 'Island Group','island' => 'Island', 'waterbody' => 'Water Body');
 $headMap = array();
 
 $qryCnt = 0;

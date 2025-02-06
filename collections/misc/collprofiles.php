@@ -15,11 +15,6 @@ $collid = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid']
 $eMode = array_key_exists('emode', $_REQUEST) ? $collManager->sanitizeInt($_REQUEST['emode']) : 0;
 $action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
 
-$SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ?? false;
-$SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
-$actionPage = $SHOULD_USE_HARVESTPARAMS ? ($CLIENT_ROOT . "/collections/harvestparams.php") : ($CLIENT_ROOT . "/collections/search/index.php");
-
-
 if ($eMode && !$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/misc/collprofiles.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $collManager->setCollid($collid);
@@ -101,7 +96,7 @@ if ($SYMB_UID) {
 			if(e.submitter.value === "edit") {
 				return processEditQuickSearch('<?php echo $CLIENT_ROOT ?>')
 			} else if(e.submitter.value === "search") {
-				return submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? '1' : '0' ?> + '&includeothercatnum=1', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? '1' : '0' ?> + '&usethes=1&taxontype=2 ');
+				return submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includecult=' + <?= !empty($SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT) ? '1' : '0' ?> + '&includeothercatnum=1', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? '1' : '0' ?> + '&usethes=1&taxontype=2 ');
 			}
 
 			e.preventDefault();
@@ -246,7 +241,7 @@ if ($SYMB_UID) {
 			<section id="quicksearch-box" class="fieldset-like" >
 				<h3><span><?= $LANG['QUICK_SEARCH'] ?></span></h3>
 				<div id="dialogContainer" style="position: relative;">
-					<form name="quicksearch" style="display: flex; align-items:center; gap:0.5rem; flex-wrap: wrap" action="javascript:void(0);" onsubmit="directSubmitAction(event)">
+					<form id="quicksearch" name="quicksearch" style="display: flex; align-items:center; gap:0.5rem; flex-wrap: wrap" action="javascript:void(0);" onsubmit="directSubmitAction(event)">
 						<div class="quicksearch-input-container">
 								<label style="display:flex; align-items: center; position: relative; margin-right: 1.5rem" for="catalog-number"><?= $LANG['OCCURENCE_IDENTIFIER'] ?>
 						<a href="#" id="q_catalognumberinfo" style="text-decoration:none; position: absolute; right: -1.5rem">
@@ -259,7 +254,7 @@ if ($SYMB_UID) {
 						<input style="margin-bottom: 0" name="catalog-number" id="catalog-number" type="text" />
 						<dialog id="dialogEl" aria-live="polite" aria-label="Catalog number search dialog">
 							<?= $LANG['IDENTIFIER_PLACEHOLDER_LIST'] . ' ' ?>
-							<button id="closeDialog">Close</button>
+							<button id="closeDialog" value="search">Close</button>
 						</dialog>
 						</div>
 						<input name="collid" type="hidden" value="<?= $collid; ?>" />
@@ -307,18 +302,7 @@ if ($SYMB_UID) {
 			if ($datasetKey) {
 				echo '<div style="margin-left: 10px; margin-bottom: 20px;">';
 				echo '<iframe title="GBIF citation" src="https://www.gbif.org/api/widgets/literature/button?gbifDatasetKey=' . $datasetKey . '" frameborder="0" allowtransparency="true" style="width: 140px; height: 24px;"></iframe>';
-				// Check if the Bionomia badge has been created yet - typically lags ~2 weeks behind GBIF publication
-				$bionomiaUrl = 'https://api.bionomia.net/dataset/' . $datasetKey . '/badge.svg';
-				$ch = curl_init($bionomiaUrl);
-				curl_setopt($ch, CURLOPT_NOBODY, true);
-				curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-				curl_exec($ch);
-				$responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-				curl_close($ch);
-				// Check the response code - display image if exists
-				if ($responseCode === 200) {
-    				echo '<a href="https://bionomia.net/dataset/' . $datasetKey . '"><img src="' . $bionomiaUrl . '" alt="Bionomia dataset badge" style="width:262px; height:24px; padding-left:10px;"></a>';
-				}
+    			echo '<a href="https://bionomia.net/dataset/' . $datasetKey . '"><img src="https://api.bionomia.net/dataset/' . $datasetKey . '/badge.svg" onerror="this.style.display=\'none\'" alt="Bionomia dataset badge" style="width:262px; height:24px; padding-left:10px;"></a>';
 				echo '</div>';
 			}
 
@@ -832,10 +816,12 @@ if ($SYMB_UID) {
 							}
 							?>
 						</div>
+						<?php if($collData['managementtype'] != 'Live Data'): ?>
 						<div class="bottom-breathing-room-rel">
 							<span class="label"><?= $LANG['LAST_UPDATE'] ?>:</span>
 							<?= $collData['uploaddate'] ?>
 						</div>
+						<?php endif ?>
 						<?php
 						if($collData['managementtype'] == 'Live Data'){
 							?>
@@ -920,19 +906,30 @@ if ($SYMB_UID) {
 			</div>
 			<?php
 			include('collprofilestats.php');
+			$actionPage = $CLIENT_ROOT . '/collections/';
+			if(!empty($SHOULD_USE_HARVESTPARAMS)){
+				$actionPage .= 'harvestparams.php';
+			}
+			else{
+				$actionPage .= 'search/index.php';
+			}
 			?>
 			<div style="margin-bottom: 2rem;">
-			<form action="<?= $actionPage ?>">
-				<input hidden id="'<?= 'coll-' . $collid . '-' ?>'" name="db[]" class="specobs" value='<?= $collid ?>' type="checkbox" onclick="selectAll(this);" checked />
-				<button type="submit" class="button button-primary">
-					<?= $LANG['ADVANCED_SEARCH_THIS_COLLECTION'] ?>
-				</button>
-			</form>
+				<form name="coll-search-form" action="<?= $actionPage ?>" method="get">
+					<input name="db" value="<?= $collid ?>" type="hidden">
+					<button type="submit" class="button button-primary">
+						<?= $LANG['ADVANCED_SEARCH_THIS_COLLECTION'] ?>
+					</button>
+				</form>
 			</div>
 			<div>
-				<span class="button button-primary">
-					<a id="image-search" href="<?= $CLIENT_ROOT ?>/imagelib/search.php?submitaction=search&db[]=<?= $collid ?>" ><?= $LANG['IMAGE_SEARCH_THIS_COLLECTION'] ?></a>
-				</span>
+				<form name="image-search-form" action="<?= $CLIENT_ROOT ?>/imagelib/search.php" method="get">
+					<input name="db" value="<?= $collid ?>" type="hidden">
+					<input name="imagetype" value="1" type="hidden">
+					<button name="submitaction" type="submit" value="search" class="button button-primary">
+						<?= $LANG['IMAGE_SEARCH_THIS_COLLECTION'] ?>
+					</button>
+				</form>
 			</div>
 			<?php
 		} elseif($collectionData) {
@@ -980,7 +977,7 @@ if ($SYMB_UID) {
 								</a>
 							</h3>
 							<div style='margin:10px;'>
-								<div class="coll-description bottom-breathing-room-rel"><?= $collArr['fulldescription'] ?></div>
+								<div class="coll-description bottom-breathing-room-rel"><?= (!empty($collData) && array_key_exists('fulldescription', $collData)) ? $collData['fulldescription'] : '' ?></div>
 								<?php
 								if(isset($collArr['resourcejson'])){
 									if($resourceArr = json_decode($collArr['resourcejson'], true)){
@@ -1059,6 +1056,14 @@ if ($SYMB_UID) {
 			dialogContainer.style.position = 'relative';
 			dialogContainer.appendChild(dialogEl);
 
+		});
+		document.getElementById('quicksearch').addEventListener('keypress', e => {
+			if (e.key === 'Enter') {
+			e.preventDefault();
+			const editEnabled = <?php echo ($editCode == 1 || $editCode == 2 || $editCode == 3); ?>;
+			const newSubmitObj= {submitter:{value: editEnabled ? 'edit': 'search'}};
+			directSubmitAction(newSubmitObj);
+			}
 		});
 
 		closeDialogButton.addEventListener('click', (e) => {
