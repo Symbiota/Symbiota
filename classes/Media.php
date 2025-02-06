@@ -13,24 +13,24 @@ if(file_exists($SERVER_ROOT.'/content/lang/classes/Media.'.$LANG_TAG.'.php')) {
 abstract class StorageStrategy {
 	/**
 	 * If a file is given then return the storage path for that resource otherwise just return the root path.
-	 * @param array $file {name: string, type: string, tmp_name: string, error: int, size: int}
+	 * @param string | array $file {name: string, type: string, tmp_name: string, error: int, size: int}
 	 * @return string
 	 */
-	abstract public function getDirPath(array|string $file): string;
+	abstract public function getDirPath($file): string;
 
 	/**
 	 * If a file is given then return the url path to that resource otherwise just return the root url path.
-	 * @param array $file {name: string, type: string, tmp_name: string, error: int, size: int}
+	 * @param string | array $file {name: string, type: string, tmp_name: string, error: int, size: int}
 	 * @return string
 	 */
-	abstract public function getUrlPath(array|string $file): string;
+	abstract public function getUrlPath($file): string;
 
 	/**
 	 * Function to check if a file exists for the storage location of the upload strategy.
-	 * @param array $file {name: string, type: string, tmp_name: string, error: int, size: int}
+	 * @param string | array $file {name: string, type: string, tmp_name: string, error: int, size: int}
 	 * @return bool
 	 */
-	abstract public function file_exists(array|string $file): bool;
+	abstract public function file_exists($file): bool;
 
 	/**
 	 * Function to handle how a file should be uploaded.
@@ -92,18 +92,18 @@ function get_occurrence_upload_path($institutioncode, $collectioncode, $catalogn
 class LocalStorage extends StorageStrategy {
 	private string $path;
 
-	public function __construct(string | null $path = '') {
+	public function __construct($path = '') {
 		$this->path = $path ?? '';
 	}
 
-	public function getDirPath(array | string $file = null): string {
+	public function getDirPath($file = null): string {
 		$file_name = is_array($file)? $file['name']: $file;
 		return $GLOBALS['MEDIA_ROOT_PATH'] .
 			(substr($GLOBALS['MEDIA_ROOT_PATH'],-1) != "/"? '/': '') .
 			$this->path . $file_name;
 	}
 
-	public function getUrlPath(array | string $file = null): string {
+	public function getUrlPath($file = null): string {
 		$file_name = is_array($file)? $file['name']: $file;
 		return $GLOBALS['MEDIA_ROOT_URL'] .
 		   	(substr($GLOBALS['MEDIA_ROOT_URL'],-1) != "/"? '/': '') .
@@ -115,7 +115,7 @@ class LocalStorage extends StorageStrategy {
 	 * @return string
 	 */
 
-	public function file_exists(array|string $file): bool {
+	public function file_exists($file): bool {
 		if(is_array($file)) {
 			return file_exists($this->getDirPath() . $file['name']);
 		} else {
@@ -377,7 +377,59 @@ class Media {
 		return '<a href="' . $clean_url . '">'. $clean_text . '</a>';
 	}
 
-	public static function mime2ext(string $mime): string | bool {
+	/**
+	 * @param string $ext
+	 * @return string | bool
+	 */
+	public static function ext2Mime(string $ext, string $type) {
+		$image = [
+			'bmp' => ['image/bmp', 'image/x-bmp', 'image/x-bitmap', 'image/x-xbitmap', 'image/x-win-bitmap', 'image/x-windows-bmp', 'image/ms-bmp', 'image/x-ms-bmp'],
+			'cdr' => 'image/cdr',
+			'cdr' =>'image/x-cdr',
+			'gif' => 'image/gif',
+			'ico' => 'image/x-icon',
+			'ico' =>'image/x-ico',
+			'ico' =>'image/vnd.microsoft.icon',
+			'jp2' => ['image/jp2', 'image/jpx', 'image/jpm', 'image/jpeg', 'image/jpeg', 'image/pjpeg'],
+			'png' => ['image/png', 'image/x-png'],
+			'psd' => 'image/vnd.adobe.photoshop',
+			'svg' => 'image/svg+xml',
+			'tiff' => 'image/tiff',
+			'webp' => 'image/webp'
+		];
+
+		$audio = [
+			'aac' => 'audio/x-acc',
+			'ac3' => 'audio/ac3',
+			'aif' => ['audio/x-aiff', 'audio/aiff'],
+			'au' => 'audio/x-au',
+			'flac' => 'audio/x-flac',
+			'm4a' => ['audio/mp4', 'audio/x-m4a'],
+			'mp4' => 'audio/mp4',
+			'mid' => 'audio/midi',
+			'mp3' => [ 'audio/mp3', 'audio/mpeg', 'audio/mpg', 'audio/mpeg3' ],
+			'ogg' => 'audio/ogg',
+			'ra' => 'audio/x-realaudio',
+			'ram' => 'audio/x-pn-realaudio',
+			'rpm' => 'audio/x-pn-realaudio-plugin',
+			'wav' => ['audio/wav', 'audio/wave', 'audio/x-wav'],
+			'wma' => 'audio/x-ms-wma',
+		];
+
+		if($type === MediaType::Image) {
+			return $image[$ext] ?? false;
+		} else if ($type=== MediaType::Audio) {
+			return $audio[$ext] ?? false;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * @param string $mime
+	 * @return string | bool
+	 */
+	public static function mime2ext(string $mime) {
 		$mime_map = [
 			'video/3gpp2' => '3g2',
 			'video/3gp'=> '3gp',
@@ -573,7 +625,7 @@ class Media {
 	 * @param string $url
 	 * return array | bool
 	 */
-	public static function getRemoteFileInfo(string $url): array|bool {
+	public static function getRemoteFileInfo(string $url) {
 		if(!function_exists('curl_init')) throw new Exception('Curl is not installed');
 		$ch = curl_init($url);
 
@@ -675,8 +727,44 @@ class Media {
 		}
 	}
 
-	private static function isValidFile(array | null $file): bool {
+	private static function isValidFile($file): bool {
 		return $file && !empty($file) && isset($file['error']) && $file['error'] === 0;
+	}
+
+	/* Internal Function for creating a file array for media that doesn't need to be uploaded. Primarly used for media upload */
+	private static function parse_map_only_file(array $clean_post_arr): array {
+		// Map only files must have format and a url
+		if(!(isset($clean_post_arr['originalUrl']) || isset($clean_post_arr['url'])) || !isset($clean_post_arr['format'])) {
+			return [];
+		}
+
+		$url = $clean_post_arr['originalUrl'] ?? $clean_post_arr['url'];
+		$file_type_mime = $clean_post_arr['format'] ?? '';
+		$media_upload_type = MediaType::tryFrom($clean_post_arr['mediaUploadType']);
+
+		$parsed_file = self::parseFileName($url);
+		$parsed_file['name'] = self::cleanFileName($parsed_file['name']);
+
+		if(!$parsed_file['extension'] && $file_type_mime) {
+			$parsed_file['extension'] = self::mime2ext($file_type_mime);
+		} else if (!$file_type_mime && $parsed_file['extension'] && $media_upload_type) {
+			$file_type_mime = self::ext2Mime($parsed_file['extension'], $media_upload_type);
+
+			// If There is a bunch of potential mime types just assume the first one
+			// this is not perfect and could result weird errors for fringe types 
+			// but for current use case should be an issue. Types are order by most likely.
+			if(is_array($file_type_mime) && count($file_type_mime) > 0) {
+				$file_type_mime = $file_type_mime[0];
+			}
+		}
+
+		return [
+			'name' => $parsed_file['name'] . ($parsed_file['extension'] ? '.' .$parsed_file['extension']: ''),
+			'tmp_name' => $url,
+			'error' => 0,
+			'type' => $file_type_mime,
+			'size' => null
+		];
 	}
 
 	/**
@@ -685,7 +773,7 @@ class Media {
 	 * @param array $file {name: string, type: string, tmp_name: string, error: int, size: int} Post file data, if none given will assume remote resource
 	 * @return bool
 	**/
-	public static function add(array $post_arr, StorageStrategy|Null $storage = null, array|null $file = null): void {
+	public static function add(array $post_arr, $storage = null, $file = null): void {
 		$clean_post_arr = Sanitize::in($post_arr);
 
 		$copy_to_server = $clean_post_arr['copytoserver']?? false;
@@ -694,8 +782,12 @@ class Media {
 		$should_upload_file = (self::isValidFile($file) || $copy_to_server) && $storage;
 
 		//If no file is given and downloads from urls are enabled
-		if(!self::isValidFile($file) && $isRemoteMedia) {
-			$file = self::getRemoteFileInfo($clean_post_arr['originalUrl']);
+		if(!self::isValidFile($file)) {
+			if(!$should_upload_file) {
+				$file = self::parse_map_only_file($clean_post_arr);
+			} else if($isRemoteMedia) {
+				$file = self::getRemoteFileInfo($clean_post_arr['originalUrl']);
+			}
 		}
 
 		//If that didn't popluate then return;
@@ -753,7 +845,7 @@ class Media {
 			"username" => Sanitize::in($GLOBALS['USERNAME']),
 			"sortsequence" => array_key_exists('sortsequence', $clean_post_arr) && is_numeric($clean_post_arr['sortsequence']) ? $clean_post_arr['sortsequence'] : null,
 			// check if its is_numeric?
-			"sortOccurrence" => $clean_post_arr['sortoccurrence'] ?? null,
+			"sortOccurrence" => $clean_post_arr['sortOccurrence'] ?? null,
 			"sourceIdentifier" => $clean_post_arr['sourceIdentifier'] ?? ('filename: ' . $file['name']),
 			"rights" => $clean_post_arr['rights'] ?? null,
 			"accessrights" => $clean_post_arr['rights'] ?? null,
@@ -992,7 +1084,6 @@ class Media {
 	 * @param mixed $media_arr
 	 */
 	public static function update($media_id, $media_arr, StorageStrategy $storage) {
-		$clean_arr = Sanitize::in($media_arr);
 
 		$meta_data = [
 			"tid",
@@ -1029,8 +1120,8 @@ class Media {
 
 		//Map keys to values
 		foreach ($meta_data as $key) {
-			if(array_key_exists($key, $clean_arr)) {
-				$data[$key] = $clean_arr[$key];
+			if(array_key_exists($key, $media_arr)) {
+				$data[$key] = $media_arr[$key];
 			}
 		}
 
@@ -1038,18 +1129,18 @@ class Media {
 		mysqli_begin_transaction($conn);
 		try {
 			self::update_metadata($data, $media_id, $conn);
-			self::update_tags($media_id, $clean_arr, $conn);
+			self::update_tags($media_id, $media_arr, $conn);
 
-			if(array_key_exists("renameweburl", $clean_arr)) {
-				$storage->rename($clean_arr['old_url'], $data['url']);
+			if(array_key_exists("renameweburl", $media_arr)) {
+				$storage->rename($media_arr['old_url'], $data['url']);
 			}
 
-			if(array_key_exists("renametnurl", $clean_arr)) {
-				$storage->rename($clean_arr['old_thumbnailUrl'], $data['thumbnailUrl']);
+			if(array_key_exists("renametnurl", $media_arr)) {
+				$storage->rename($media_arr['old_thumbnailUrl'], $data['thumbnailUrl']);
 			}
 
-			if(array_key_exists("renameorigurl", $clean_arr)) {
-				$storage->rename($clean_arr['old_originalUrl'], $data['originalUrl']);
+			if(array_key_exists("renameorigurl", $media_arr)) {
+				$storage->rename($media_arr['old_originalUrl'], $data['originalUrl']);
 			}
 
 			mysqli_commit($conn);
@@ -1314,7 +1405,7 @@ class Media {
 			array_push($parameters, $media_type);
 		}
 
-		$sql .= ' ORDER BY sortoccurrence ASC';
+		$sql .= ' ORDER BY sortOccurrence ASC';
 		$results = QueryUtil::executeQuery(Database::connect('readonly'), $sql, $parameters);
 		$media = self::get_media_items($results);
 		if(count($media) <= 0) {
@@ -1381,7 +1472,7 @@ class Media {
 			array_push($parameters, $media_type);
 		}
 
-		$sql .= ' ORDER BY sortoccurrence IS NULL ASC, sortoccurrence ASC';
+		$sql .= ' ORDER BY sortOccurrence IS NULL ASC, sortOccurrence ASC';
 
 		$results = QueryUtil::executeQuery(Database::connect('readonly'), $sql, $parameters);
 

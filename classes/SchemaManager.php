@@ -7,7 +7,7 @@ class SchemaManager extends Manager{
 	private $database;
 	private $port;
 	private $username;
-	private $adminConn;
+	private $versionHistory = array();
 	private $currentVersion;
 	private $targetSchema;
 	private $activeTableArr;
@@ -53,8 +53,20 @@ class SchemaManager extends Manager{
 						$sql ='';
 						foreach($stmtArr as $fragment){
 							if(substr($fragment, 0, 1) == '#'){
-								//is comment
-								trim($fragment, '#');
+								//line is comment
+								if(strpos($fragment, 'Skip if 3.0 install') !== false){
+									if(!array_key_exists('1.0', $this->versionHistory)){
+										$this->logOrEcho('Statement skipped: issue only exists within older versions of database', 1);
+										continue 2;
+									}
+								}
+								elseif(strpos($fragment, 'Skip if 1.0 install') !== false){
+									if(array_key_exists('1.0', $this->versionHistory)){
+										$this->logOrEcho('Statement skipped: issue only exists within 3.0 original installations', 1);
+										continue 2;
+									}
+								}
+								trim($fragment, '# ');
 								$this->logOrEcho($fragment, 1);
 							}
 							elseif(!$stmtType){
@@ -155,14 +167,15 @@ class SchemaManager extends Manager{
 			$this->logOrEcho('Evaluating DB schema file: ' . $filename);
 			if($fileHandler = fopen($filename, 'r')){
 				$sqlArr = array();
-				$cnt = 1;
+				$cnt = 0;
 				$index = 0;
 				$delimiter = ';';
 				while(!feof($fileHandler)) {
 					$line = trim(fgets($fileHandler));
+					$cnt++;
 					if($line){
-						if(!$index) $index = $cnt;
 						if(substr($line, 0, 2) == '--') continue;
+						if(!$index) $index = $cnt;
 						if(substr($line, 0, 9) == 'DELIMITER'){
 							$delimiter = trim(substr($line, 9));
 						}
@@ -177,7 +190,6 @@ class SchemaManager extends Manager{
 							}
 						}
 					}
-					$cnt++;
 				}
 				fclose($fileHandler);
 			}
@@ -190,8 +202,9 @@ class SchemaManager extends Manager{
 	}
 
 	private function setActiveTable($targetTable){
-		unset($this->activeTableArr);
+
 		if($targetTable){
+			unset($this->activeTableArr);
 			$this->activeTableArr = array();
 			$sql = 'SHOW COLUMNS FROM ' . $targetTable;
 			try{
@@ -267,7 +280,6 @@ class SchemaManager extends Manager{
 
 	//Misc data retrival functions
 	public function getVersionHistory(){
-		$versionHistory = false;
 		$this->conn = MySQLiConnectionFactory::getCon('readonly');
 		if(!$this->conn && isset($_POST['password']) && $_POST['password']){
 			$password = $_POST['password'];
@@ -285,14 +297,13 @@ class SchemaManager extends Manager{
 		//Get version history
 		$sql = 'SELECT versionNumber, dateApplied FROM schemaversion ORDER BY id';
 		if($rs = $this->conn->query($sql)){
-			$versionHistory = array();
 			while($r = $rs->fetch_object()){
-				$versionHistory[$r->versionNumber] = $r->dateApplied;
+				$this->versionHistory[$r->versionNumber] = $r->dateApplied;
 				$this->currentVersion = $r->versionNumber;
 			}
 			$rs->free();
 		}
-		return $versionHistory;
+		return $this->versionHistory;
 	}
 
 	//Setters and getters

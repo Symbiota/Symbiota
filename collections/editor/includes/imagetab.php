@@ -122,7 +122,7 @@ $creatorArray = Media::getCreatorArray();
 				</div>
 				<div style='margin:0px 0px 5px 10px;'>
 					<b><?php echo $LANG['CREATOR']; ?>:</b>
-					<select name='photographeruid' name='photographeruid'>
+					<select name='creatorUid'>
 						<option value=""><?php echo $LANG['SELECT_CREATOR']; ?></option>
 						<option value="">---------------------------------------</option>
 						<?php
@@ -133,13 +133,13 @@ $creatorArray = Media::getCreatorArray();
 							}
 						?>
 					</select>
-					<a href="#" onclick="toggle('imgaddoverride');return false;" title="<?php echo $LANG['DISPLAY_PHOTOG_OVER']; ?>">
+					<a href="#" onclick="toggle('imgaddoverride');return false;" title="<?php echo $LANG['DISPLAY_CREATOR_OVER']; ?>">
 						<img src="../../images/editplus.png" style="border:0px;width:1.5em;" />
 					</a>
 				</div>
 				<div id="imgaddoverride" style="margin:0px 0px 5px 10px;display:none;">
-					<b><?php echo $LANG['PHOTOG_OVER']; ?>:</b>
-					<input name='photographer' type='text' style="width:300px;" maxlength='100' />
+          <b><?php echo $LANG['CREATOR_OVER']; ?>:</b>
+					<input name='creator' type='text' style="width:300px;" maxlength='100' />
 					* <?php echo $LANG['WILL_OVERRIDE']; ?>
 				</div>
 				<div style="margin:0px 0px 5px 10px;">
@@ -156,7 +156,7 @@ $creatorArray = Media::getCreatorArray();
 				</div>
 				<div style="margin:0px 0px 5px 10px;">
 					<b><?php echo $LANG['SORT']; ?>:</b>
-					<input name="sortoccurrence" type="text" size="10" value="" />
+					<input name="sortOccurrence" type="text" size="10" value="" />
 				</div>
 				<div style="margin:0px 0px 5px 10px;">
 					<b><?php echo $LANG['DESCRIBE_IMAGE']; ?></b>
@@ -318,7 +318,7 @@ $creatorArray = Media::getCreatorArray();
 										</div>
 										<div>
 											<b><?php echo $LANG['CREATOR']; ?>:</b><br/>
-											<select name='photographeruid' name='photographeruid'>
+											<select name='creatorUid'>
 												<option value=""><?php echo $LANG['SELECT_CREATOR']; ?></option>
 												<option value="">---------------------------------------</option>
 												<?php
@@ -329,13 +329,13 @@ $creatorArray = Media::getCreatorArray();
 												}
 												?>
 											</select>
-											<a href="#" onclick="toggle('imgeditoverride<?php echo $imgId; ?>');return false;" title="<?php echo $LANG['DISPLAY_PHOTOG_OVER']; ?>">
+											<a href="#" onclick="toggle('imgeditoverride<?php echo $imgId; ?>');return false;" title="<?php echo $LANG['DISPLAY_CREATOR_OVER']; ?>">
 												<img src="../../images/editplus.png" style="border:0px;width:1.5em;" />
 											</a>
 										</div>
 										<div id="imgeditoverride<?php echo $imgId; ?>" style="display:<?php echo ($imgArr["creator"]?'block':'none'); ?>;">
-											<b><?php echo $LANG['PHOTOG_OVER']; ?>:</b><br/>
-											<input name='photographer' type='text' value="<?php echo $imgArr["creator"]; ?>" style="width:300px;" maxlength='100'>
+											<b><?php echo $LANG['CREATOR_OVER']; ?>:</b><br/>
+											<input name='creator' type='text' value="<?php echo $imgArr["creator"]; ?>" style="width:300px;" maxlength='100'>
 											* <?php echo $LANG['WILL_OVERRIDE']; ?>
 										</div>
 										<div>
@@ -385,7 +385,7 @@ $creatorArray = Media::getCreatorArray();
 										</div>
 										<div>
 											<b><?php echo $LANG['SORT']; ?>:</b><br/>
-											<input name="sortoccurrence" type="text" value="<?php echo $imgArr['sortOccurrence']; ?>" style="width:10%;" />
+											<input name="sortOccurrence" type="text" value="<?php echo $imgArr['sortOccurrence']; ?>" style="width:10%;" />
 										</div>
 										<div>
 										   <b><?php echo $LANG['TAGS']; ?>:</b>

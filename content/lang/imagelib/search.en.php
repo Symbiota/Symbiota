@@ -6,9 +6,9 @@ Translated by: Google Translate (2024-09-05)
 ------------------
 */
 
-$LANG['ACTION_SUCCESS'] = 'Media successfully tagged!';
-$LANG['ACTION_FAILED'] = 'Media resource was already tagged with target';
-$LANG['ACTION_ERROR'] = 'ERROR applying tag to media resource';
+$LANG['ACTION_SUCCESS'] = 'media resources successfully tagged!';
+$LANG['ACTION_FAILED'] = 'media resources already had the selected tag';
+$LANG['ACTION_ERROR'] = 'ERROR applying tag to media resource(s)';
 $LANG['IMAGE_SEARCH'] = 'Media Search';
 $LANG['SELECT_TAG'] = 'Select a media tag';
 $LANG['SELECT_IMAGE'] = 'Please select at least one media resource to assign tag';

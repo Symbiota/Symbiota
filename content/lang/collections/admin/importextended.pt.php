@@ -41,7 +41,6 @@ $LANG['DETERMINATIONS'] = 'Determinações';
 $LANG['IMAGE_FIELD_MAP'] = 'Mapa de campo multimídia';
 $LANG['MATERIAL_SAMPLE'] = 'Amostra de Materiais';
 $LANG['PROCESSING_CATNUM'] = 'Identificador de Processamento';
-$LANG['VALUES_SET'] = 'Os valores dateIdentified vazios foram definidos como ';
 $LANG['UPDATING_STATS'] = 'Atualizando estatísticas';
 $LANG['IMAGE_LOADED'] = 'Multimídia carregada com sucesso';
 $LANG['ASSOC_DELETED'] = 'Associação excluída';
@@ -55,5 +54,8 @@ $LANG['MAT_SAMPLE_ADDED'] = 'Amostra de material adicionada';
 $LANG['DETERMINATION_ADDED'] = 'Determinação adicionada';
 $LANG['CHOOSE_FILE'] = 'Escolha um arquivo';
 $LANG['HOME'] = 'Lar';
+$LANG['AUDIO_UPLOAD'] = 'Upload de áudio';
+$LANG['IMAGE_UPLOAD'] = 'Upload de imagens';
+$LANG['MEDIA_UPLOAD_TYPE'] = 'Tipo de upload de mídia';
 
 ?>

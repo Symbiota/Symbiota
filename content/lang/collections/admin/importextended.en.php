@@ -43,7 +43,6 @@ $LANG['DETERMINATIONS'] = 'Determinations';
 $LANG['IMAGE_FIELD_MAP'] = 'Media Field Map';
 $LANG['MATERIAL_SAMPLE'] = 'Material Sample';
 $LANG['PROCESSING_CATNUM'] = 'Processing Identifier';
-$LANG['VALUES_SET'] = 'Empty dateIdentified values have been set as ';
 $LANG['UPDATING_STATS'] = 'Updating statistics';
 $LANG['IMAGE_LOADED'] = 'Media loaded successfully';
 $LANG['ASSOC_DELETED'] = 'Association deleted';
@@ -57,5 +56,7 @@ $LANG['MAT_SAMPLE_ADDED'] = 'Material Sample added';
 $LANG['DETERMINATION_ADDED'] = 'Determination added';
 $LANG['CHOOSE_FILE'] = 'Choose a file';
 $LANG['HOME'] = 'Home';
-
+$LANG['AUDIO_UPLOAD'] = 'Audio upload';
+$LANG['IMAGE_UPLOAD'] = 'Image upload';
+$LANG['MEDIA_UPLOAD_TYPE'] = 'Media Upload Type';
 ?>

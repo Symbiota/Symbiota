@@ -39,6 +39,14 @@ function toggle(target){
 	}
 }
 
+function toggleElement (target, defaultDisplay = "inline"){
+	const targetList = document.querySelectorAll(target);
+	for (let i = 0; i < targetList.length; i++) {
+		let targetDisplay = window.getComputedStyle(targetList[i]).getPropertyValue('display');
+		targetList[i].style.display = (targetDisplay == 'none') ? defaultDisplay : 'none';
+	}
+}
+
 function openIndividualPopup(clientRoot, occid,clid){
     var wWidth = 1000;
     if(document.body.offsetWidth) wWidth = document.body.offsetWidth*0.9;
