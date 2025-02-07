@@ -579,13 +579,12 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 				$sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
 			}
 			if ($GLOBALS['ACTIVATE_PALEO']) {
-				if (array_key_exists('earlyInterval',$this->searchTermArr) || array_key_exists('lateInterval',$this->searchTermArr)){
+				$sqlJoin .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
+				if (!empty($this->searchTermArr['earlyInterval']) || !empty($this->searchTermArr['lateInterval'])) {
 					$sqlJoin .= 'JOIN omoccurpaleogts early ON paleo.earlyInterval = early.gtsterm ';
 					$sqlJoin .= 'JOIN omoccurpaleogts late ON paleo.lateInterval = late.gtsterm ';
 					$sqlJoin .= 'CROSS JOIN searchRange search ';
 				}
-				else
-					$sqlJoin .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
 			}
 			/*
 			if(array_key_exists('includeothercatnum',$this->searchTermArr)){
@@ -1069,44 +1068,24 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$this->searchTermArr['footprintGeoJson'] = $this->cleanInputStr($_REQUEST['footprintGeoJson']);
 		}
 
-		if(array_key_exists('earlyInterval',$_REQUEST)){
+		if(!empty($_REQUEST['earlyInterval'])){
 			$this->searchTermArr['earlyInterval'] =  $this->cleanInputStr($_REQUEST['earlyInterval']);
 		}
-		if(array_key_exists('lateInterval',$_REQUEST)){
+		if(!empty($_REQUEST['lateInterval'])){
 			$this->searchTermArr['lateInterval'] =  $this->cleanInputStr($_REQUEST['lateInterval']);
 		}
-		if(array_key_exists('lithogroup',$_REQUEST)){
+		if(!empty($_REQUEST['lithogroup'])){
 			$this->searchTermArr['lithogroup'] =  $this->cleanInputStr($_REQUEST['lithogroup']);
 		}
-		if(array_key_exists('formation',$_REQUEST)){
+		if(!empty($_REQUEST['formation'])){
 			$this->searchTermArr['formation'] =  $this->cleanInputStr($_REQUEST['formation']);
 		}
-		if(array_key_exists('member',$_REQUEST)){
+		if(!empty($_REQUEST['member'])){
 			$this->searchTermArr['member'] =  $this->cleanInputStr($_REQUEST['member']);
 		}
-		if(array_key_exists('bed',$_REQUEST)){
+		if(!empty($_REQUEST['bed'])){
 			$this->searchTermArr['bed'] =  $this->cleanInputStr($_REQUEST['bed']);
 		}
-
-		if(array_key_exists('earlyInterval',$_REQUEST)){
-			$this->searchTermArr['earlyInterval'] =  $this->cleanInputStr($_REQUEST['earlyInterval']);
-		}
-		if(array_key_exists('lateInterval',$_REQUEST)){
-			$this->searchTermArr['lateInterval'] =  $this->cleanInputStr($_REQUEST['lateInterval']);
-		}
-		if(array_key_exists('lithogroup',$_REQUEST)){
-			$this->searchTermArr['lithogroup'] =  $this->cleanInputStr($_REQUEST['lithogroup']);
-		}
-		if(array_key_exists('formation',$_REQUEST)){
-			$this->searchTermArr['formation'] =  $this->cleanInputStr($_REQUEST['formation']);
-		}
-		if(array_key_exists('member',$_REQUEST)){
-			$this->searchTermArr['member'] =  $this->cleanInputStr($_REQUEST['member']);
-		}
-		if(array_key_exists('bed',$_REQUEST)){
-			$this->searchTermArr['bed'] =  $this->cleanInputStr($_REQUEST['bed']);
-		}
-
 	}
 
 	private function setChecklistVariables($clid){
