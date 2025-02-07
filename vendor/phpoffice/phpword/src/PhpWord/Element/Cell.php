@@ -11,7 +11,7 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
@@ -20,7 +20,7 @@ namespace PhpOffice\PhpWord\Element;
 use PhpOffice\PhpWord\Style\Cell as CellStyle;
 
 /**
- * Table cell element
+ * Table cell element.
  */
 class Cell extends AbstractContainer
 {
@@ -30,23 +30,23 @@ class Cell extends AbstractContainer
     protected $container = 'Cell';
 
     /**
-     * Cell width
+     * Cell width.
      *
-     * @var int
+     * @var ?int
      */
-    private $width = null;
+    private $width;
 
     /**
-     * Cell style
+     * Cell style.
      *
-     * @var \PhpOffice\PhpWord\Style\Cell
+     * @var ?\PhpOffice\PhpWord\Style\Cell
      */
     private $style;
 
     /**
-     * Create new instance
+     * Create new instance.
      *
-     * @param int $width
+     * @param null|int $width
      * @param array|\PhpOffice\PhpWord\Style\Cell $style
      */
     public function __construct($width = null, $style = null)
@@ -56,9 +56,9 @@ class Cell extends AbstractContainer
     }
 
     /**
-     * Get cell style
+     * Get cell style.
      *
-     * @return \PhpOffice\PhpWord\Style\Cell
+     * @return ?\PhpOffice\PhpWord\Style\Cell
      */
     public function getStyle()
     {
@@ -66,9 +66,9 @@ class Cell extends AbstractContainer
     }
 
     /**
-     * Get cell width
+     * Get cell width.
      *
-     * @return int
+     * @return ?int
      */
     public function getWidth()
     {

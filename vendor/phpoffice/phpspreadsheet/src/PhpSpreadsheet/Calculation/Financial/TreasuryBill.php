@@ -6,6 +6,7 @@ use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel;
 use PhpOffice\PhpSpreadsheet\Calculation\Exception;
 use PhpOffice\PhpSpreadsheet\Calculation\Financial\Constants as FinancialConstants;
 use PhpOffice\PhpSpreadsheet\Calculation\Functions;
+use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 
 class TreasuryBill
 {
@@ -23,7 +24,7 @@ class TreasuryBill
      *
      * @return float|string Result, or a string containing an error
      */
-    public static function bondEquivalentYield($settlement, $maturity, $discount)
+    public static function bondEquivalentYield(mixed $settlement, mixed $maturity, mixed $discount): string|float
     {
         $settlement = Functions::flattenSingleValue($settlement);
         $maturity = Functions::flattenSingleValue($maturity);
@@ -38,17 +39,17 @@ class TreasuryBill
         }
 
         if ($discount <= 0) {
-            return Functions::NAN();
+            return ExcelError::NAN();
         }
 
         $daysBetweenSettlementAndMaturity = $maturity - $settlement;
         $daysPerYear = Helpers::daysPerYear(
-            DateTimeExcel\DateParts::year($maturity),
+            Functions::scalar(DateTimeExcel\DateParts::year($maturity)),
             FinancialConstants::BASIS_DAYS_PER_YEAR_ACTUAL
         );
 
         if ($daysBetweenSettlementAndMaturity > $daysPerYear || $daysBetweenSettlementAndMaturity < 0) {
-            return Functions::NAN();
+            return ExcelError::NAN();
         }
 
         return (365 * $discount) / (360 - $discount * $daysBetweenSettlementAndMaturity);
@@ -68,7 +69,7 @@ class TreasuryBill
      *
      * @return float|string Result, or a string containing an error
      */
-    public static function price($settlement, $maturity, $discount)
+    public static function price(mixed $settlement, mixed $maturity, mixed $discount): string|float
     {
         $settlement = Functions::flattenSingleValue($settlement);
         $maturity = Functions::flattenSingleValue($maturity);
@@ -83,22 +84,22 @@ class TreasuryBill
         }
 
         if ($discount <= 0) {
-            return Functions::NAN();
+            return ExcelError::NAN();
         }
 
         $daysBetweenSettlementAndMaturity = $maturity - $settlement;
         $daysPerYear = Helpers::daysPerYear(
-            DateTimeExcel\DateParts::year($maturity),
+            Functions::scalar(DateTimeExcel\DateParts::year($maturity)),
             FinancialConstants::BASIS_DAYS_PER_YEAR_ACTUAL
         );
 
         if ($daysBetweenSettlementAndMaturity > $daysPerYear || $daysBetweenSettlementAndMaturity < 0) {
-            return Functions::NAN();
+            return ExcelError::NAN();
         }
 
         $price = 100 * (1 - (($discount * $daysBetweenSettlementAndMaturity) / 360));
         if ($price < 0.0) {
-            return Functions::NAN();
+            return ExcelError::NAN();
         }
 
         return $price;
@@ -114,11 +115,9 @@ class TreasuryBill
      *                                    the Treasury bill is traded to the buyer.
      * @param mixed $maturity The Treasury bill's maturity date.
      *                                The maturity date is the date when the Treasury bill expires.
-     * @param mixed $price The Treasury bill's price per $100 face value
-     *
-     * @return float|string
+     * @param float|string $price The Treasury bill's price per $100 face value
      */
-    public static function yield($settlement, $maturity, $price)
+    public static function yield(mixed $settlement, mixed $maturity, $price): string|float
     {
         $settlement = Functions::flattenSingleValue($settlement);
         $maturity = Functions::flattenSingleValue($maturity);
@@ -134,12 +133,12 @@ class TreasuryBill
 
         $daysBetweenSettlementAndMaturity = $maturity - $settlement;
         $daysPerYear = Helpers::daysPerYear(
-            DateTimeExcel\DateParts::year($maturity),
+            Functions::scalar(DateTimeExcel\DateParts::year($maturity)),
             FinancialConstants::BASIS_DAYS_PER_YEAR_ACTUAL
         );
 
         if ($daysBetweenSettlementAndMaturity > $daysPerYear || $daysBetweenSettlementAndMaturity < 0) {
-            return Functions::NAN();
+            return ExcelError::NAN();
         }
 
         return ((100 - $price) / $price) * (360 / $daysBetweenSettlementAndMaturity);

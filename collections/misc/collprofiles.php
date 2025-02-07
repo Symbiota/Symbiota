@@ -301,18 +301,7 @@ if ($SYMB_UID) {
 			if ($datasetKey) {
 				echo '<div style="margin-left: 10px; margin-bottom: 20px;">';
 				echo '<iframe title="GBIF citation" src="https://www.gbif.org/api/widgets/literature/button?gbifDatasetKey=' . $datasetKey . '" frameborder="0" allowtransparency="true" style="width: 140px; height: 24px;"></iframe>';
-				// Check if the Bionomia badge has been created yet - typically lags ~2 weeks behind GBIF publication
-				$bionomiaUrl = 'https://api.bionomia.net/dataset/' . $datasetKey . '/badge.svg';
-				$ch = curl_init($bionomiaUrl);
-				curl_setopt($ch, CURLOPT_NOBODY, true);
-				curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-				curl_exec($ch);
-				$responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-				curl_close($ch);
-				// Check the response code - display image if exists
-				if ($responseCode === 200) {
-    				echo '<a href="https://bionomia.net/dataset/' . $datasetKey . '"><img src="' . $bionomiaUrl . '" alt="Bionomia dataset badge" style="width:262px; height:24px; padding-left:10px;"></a>';
-				}
+    			echo '<a href="https://bionomia.net/dataset/' . $datasetKey . '"><img src="https://api.bionomia.net/dataset/' . $datasetKey . '/badge.svg" onerror="this.style.display=\'none\'" alt="Bionomia dataset badge" style="width:262px; height:24px; padding-left:10px;"></a>';
 				echo '</div>';
 			}
 
@@ -914,17 +903,21 @@ if ($SYMB_UID) {
 			include('collprofilestats.php');
 			?>
 			<div style="margin-bottom: 2rem;">
-			<form action="<?= $actionPage ?>">
-				<input hidden id="'<?= 'coll-' . $collid . '-' ?>'" name="db[]" class="specobs" value='<?= $collid ?>' type="checkbox" onclick="selectAll(this);" checked />
-				<button type="submit" class="button button-primary">
-					<?= $LANG['ADVANCED_SEARCH_THIS_COLLECTION'] ?>
-				</button>
-			</form>
+				<form name="coll-search-form" action="<?= $actionPage ?>" method="get">
+					<input name="db" value="<?= $collid ?>" type="hidden">
+					<button type="submit" class="button button-primary">
+						<?= $LANG['ADVANCED_SEARCH_THIS_COLLECTION'] ?>
+					</button>
+				</form>
 			</div>
 			<div>
-				<span class="button button-primary">
-					<a id="image-search" href="<?= $CLIENT_ROOT ?>/imagelib/search.php?submitaction=search&db[]=<?= $collid ?>" ><?= $LANG['IMAGE_SEARCH_THIS_COLLECTION'] ?></a>
-				</span>
+				<form name="image-search-form" action="<?= $CLIENT_ROOT ?>/imagelib/search.php" method="get">
+					<input name="db" value="<?= $collid ?>" type="hidden">
+					<input name="imagetype" value="1" type="hidden">
+					<button name="submitaction" type="submit" value="search" class="button button-primary">
+						<?= $LANG['IMAGE_SEARCH_THIS_COLLECTION'] ?>
+					</button>
+				</form>
 			</div>
 			<?php
 		} elseif($collectionData) {

@@ -2,6 +2,7 @@
 include_once('Manager.php');
 include_once('OccurrenceAccessStats.php');
 include_once('ChecklistVoucherAdmin.php');
+include_once($SERVER_ROOT . '/utilities/SymbUtil.php');
 
 class OccurrenceIndividual extends Manager{
 
@@ -75,31 +76,31 @@ class OccurrenceIndividual extends Manager{
 		if(!$this->occid){
 			//Check occurrence recordID
 			$sql = 'SELECT occid FROM omoccurrences WHERE (occurrenceid = ?) OR (recordID = ?)';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('ss', $guid, $guid);
-				$stmt->execute();
-				$stmt->bind_result($this->occid);
-				$stmt->close();
+			if($result = SymbUtil::execute_query($this->conn, $sql, [$guid, $guid])){
+				if($row = $result->fetch_assoc()) {
+					$this->occid = $row['occid'];
+				}
+				$result->free();
 			}
 		}
 		if(!$this->occid){
 			//Check image recordID
 			$sql = 'SELECT occid FROM images WHERE recordID = ?';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('s', $guid);
-				$stmt->execute();
-				$stmt->bind_result($this->occid);
-				$stmt->close();
+			if($result = SymbUtil::execute_query($this->conn, $sql, [$guid])){
+				if($row = $result->fetch_assoc()) {
+					$this->occid = $row['occid'];
+				}
+				$result->free();
 			}
 		}
 		if(!$this->occid){
 			//Check identification recordID
 			$sql = 'SELECT occid FROM omoccurdeterminations WHERE recordID = ?';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('s', $guid);
-				$stmt->execute();
-				$stmt->bind_result($this->occid);
-				$stmt->close();
+			if($result = SymbUtil::execute_query($this->conn, $sql, [$guid])){
+				if($row = $result->fetch_assoc()) {
+					$this->occid = $row['occid'];
+				}
+				$result->free();
 			}
 		}
 		return $this->occid;
@@ -109,7 +110,7 @@ class OccurrenceIndividual extends Manager{
 		if($this->occid){
 			if(!$this->occArr) $this->setOccurData();
 			if($fieldKey){
-				if(array_key_exists($fieldKey,$this->occArr)) return $this->occArr($fieldKey);
+				if(array_key_exists($fieldKey,$this->occArr)) return $this->occArr[$fieldKey];
 				return false;
 			}
 		}
@@ -193,11 +194,13 @@ class OccurrenceIndividual extends Manager{
 	}
 
 	public function applyProtections($isSecuredReader){
+		$retBool = false;
 		if($this->occArr){
 			$protectTaxon = false;
 			/*
 			 if(isset($this->occArr['scinameprotected']) && $this->occArr['scinameprotected'] && !$isSecuredReader){
 			 $protectTaxon = true;
+			 $retBool = true;
 			 $this->occArr['taxonsecure'] = 1;
 			 $this->occArr['sciname'] = $this->occArr['scinameprotected'];
 			 $this->occArr['family'] = $this->occArr['familyprotected'];
@@ -208,6 +211,7 @@ class OccurrenceIndividual extends Manager{
 			$protectLocality = false;
 			if($this->occArr['localitysecurity'] == 1 && !$isSecuredReader){
 				$protectLocality = true;
+				$retBool = true;
 				$this->occArr['localsecure'] = 1;
 				$redactArr = array('recordnumber','eventdate','verbatimeventdate','locality','locationid','decimallatitude','decimallongitude','verbatimcoordinates',
 					'locationremarks', 'georeferenceremarks', 'geodeticdatum', 'coordinateuncertaintyinmeters', 'minimumelevationinmeters', 'maximumelevationinmeters',
@@ -226,6 +230,7 @@ class OccurrenceIndividual extends Manager{
 			if(!$protectLocality && !$protectTaxon) $this->setImages();
 			if(!$protectLocality) $this->setExsiccati();
 		}
+		return $retBool;
 	}
 
 	private function setDeterminations(){
@@ -422,7 +427,7 @@ class OccurrenceIndividual extends Manager{
 					$objectID = $r->catalogNumber;
 					if($objectID) {
 						if(strpos($objectID, $r->instCode) === false){
-							//Append institution and collection code to catalogNumber, but only if it is not already included 
+							//Append institution and collection code to catalogNumber, but only if it is not already included
 							$collCode = $r->instCode;
 							if($r->collCode) $collCode .= '-' . $r->collCode;
 							$objectID = $collCode . ':' . $r->catalogNumber;
@@ -1368,7 +1373,7 @@ class OccurrenceIndividual extends Manager{
 	}
 
 	public function activateOrcidID($inStr){
-		$retStr = $this->cleanOutStr($inStr);
+		$retStr = $inStr;
 		$m = array();
 		if(preg_match('#((https://orcid.org/)?\d{4}-\d{4}-\d{4}-\d{3}[0-9X])#', $retStr, $m)){
 			$orcidAnchor = $m[1];
