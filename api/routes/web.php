@@ -19,7 +19,7 @@
 */
 
 $router->get('/', function () use ($router) {
-    return $router->app->version();
+	return $router->app->version();
 });
 
 $router->get('/v2', function () use ($router) {
@@ -31,7 +31,7 @@ $router->group(['prefix' => 'v2'], function () use ($router) {
 	$router->get('collection',  ['uses' => 'CollectionController@showAllCollections']);
 	$router->get('collection/{id}', ['uses' => 'CollectionController@showOneCollection']);
 
-	$router->get('occurrence/search',  ['uses' => 'OccurrenceController@showAllOccurrences']);
+	$router->get('occurrences',  ['uses' => 'OccurrenceController@showAllOccurrences']);
 	//Temporarily keep following route until new documentation is created. The one above will be keep so that I follows GBIF API layout
 	$router->get('occurrence',  ['uses' => 'OccurrenceController@showAllOccurrences']);
 	$router->get('occurrence/{id}', ['uses' => 'OccurrenceController@showOneOccurrence']);
