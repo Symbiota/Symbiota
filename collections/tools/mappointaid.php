@@ -279,6 +279,7 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 			//Draw marker if one exists
 			if(latlng) {
 				createMarker(latlng[0], latlng[1]);
+				map.mapLayer.setZoom(10);
 			} else if(markerControl) {
 				markerControl.click();
 			}
@@ -393,13 +394,13 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 				} else {
 					alert(`Error: Not Coordinates lat: ${lat}, lng: ${lng}`);
 				}
-            latCenter = parseFloat(lat);
-            lngCenter = parseFloat(lng);
-         } else {
-            latCenter = parseFloat(data.getAttribute('data-lat'));
-            lngCenter = parseFloat(data.getAttribute('data-lng'));
-            mapBounds = JSON.parse(data.getAttribute('data-map-bounds'));
-         } 
+				latCenter = parseFloat(lat);
+				lngCenter = parseFloat(lng);
+			} else {
+				latCenter = parseFloat(data.getAttribute('data-lat'));
+				lngCenter = parseFloat(data.getAttribute('data-lng'));
+				mapBounds = JSON.parse(data.getAttribute('data-map-bounds'));
+			}
 
 			<?php if(empty($GOOGLE_MAP_KEY)): ?> 
 			leafletInit();
