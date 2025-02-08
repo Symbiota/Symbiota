@@ -110,6 +110,8 @@ class LeafletMap {
    /* Save Markerclusterer taxa clusters for later manipulation */
    taxaClusters = [];
 
+   defaultBounds = [];
+
    constructor(map_id, map_options={}) {
 
 	  map_options = {
@@ -118,6 +120,11 @@ class LeafletMap {
 	  }
 
       this.mapLayer = L.map(map_id, map_options);
+
+	  if(map_options.defaultBounds) {
+	    this.defaultBounds = map_options.defaultBounds;
+		this.resetBounds();
+	  }
 
       const terrainLayer = L.tileLayer('https://{s}.google.com/vt?lyrs=p&x={x}&y={y}&z={z}', {
          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -285,6 +292,20 @@ class LeafletMap {
       this.drawLayer.clearLayers();
       this.activeShape = null;
       this.shapes = [];
+   }
+
+   resetBounds() {
+		if(!this.defaultBounds || this.defaultBounds.length !== 2) {
+			return false;
+		}
+
+		try {
+			this.mapLayer.fitBounds(this.defaultBounds);
+			return true;
+		} catch(e) {
+			console.log("ERROR: Failed to reset map bounds")
+			return false;
+		}
    }
 
    setLang(lang) {

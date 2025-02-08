@@ -648,6 +648,7 @@ if(isset($_REQUEST['llpoint'])) {
 
 			let map = new LeafletMap('map', {
 				lang: "<?php echo $LANG_TAG; ?>",
+				default_bounds: [],
 			})
 			var oms = new OverlappingMarkerSpiderfier(map.mapLayer, {
 				nearbyDistance: 5

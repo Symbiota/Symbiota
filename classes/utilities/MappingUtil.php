@@ -1,5 +1,6 @@
 <?php
 class MappingUtil  {
+	// This is [lat, lng] format
 	static $DEFAULT_BOUNDARY = [
 		['lat' => 42.3, 'lng' => -124.49],
 		['lat' => -124.49, 'lng' => -114.69]
@@ -15,7 +16,7 @@ class MappingUtil  {
 		if(!is_array($bounds) || count($bounds) != 2) return false;
 
 		foreach($bounds as $coord) {
-			if(isset($coord['lat']) || isset($coord['lng'])) {
+			if(!isset($coord['lat']) || !isset($coord['lng'])) {
 				return false;
 			}
 		}
@@ -50,9 +51,22 @@ class MappingUtil  {
 		//$latCen = ($boundLatMax + $boundLatMin)/2;
 		//$longCen = ($boundLngMax + $boundLngMin)/2;
 
+		// This is [lat, lng]
 		return [
-			['lat' => $coorArr[0], 'lat' => $coorArr[1]],
-			['lat' => $coorArr[2], 'lat' => $coorArr[3]]
+			['lat' => floatval($coorArr[0]), 'lng' => floatval($coorArr[1])],
+			['lat' => floatval($coorArr[2]), 'lng' => floatval($coorArr[3])]
 		];
+	}
+
+	public static function getBoundsCentroid($bounds) : array {	
+		$lat = ($bounds[0]['lat'] > $bounds[1]['lat']? 
+			$bounds[0]['lat'] - $bounds[1]['lat']:
+			$bounds[1]['lat'] - $bounds[0]['lat']) / 2;
+
+		$lng = ($bounds[0]['lng'] > $bounds[1]['lng']? 
+			$bounds[0]['lng'] - $bounds[1]['lng']:
+			$bounds[1]['lng'] - $bounds[0]['lng']) / 2;
+
+		return ['lat' => $lat, 'lng' => $lng];
 	}
 }
