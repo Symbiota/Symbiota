@@ -396,6 +396,7 @@ class SpecUploadBase extends SpecUpload{
 		foreach($symbFieldsRaw as $sValue){
 			$symbFields[$sValue] = strtolower($sValue);
 		}
+
 		//Build a Source => Symbiota field Map
 		$sourceSymbArr = Array();
 		foreach($fieldMap as $symbField => $fArr){
@@ -2603,7 +2604,12 @@ class SpecUploadBase extends SpecUpload{
 
 	protected function encodeString($inStr){
 		if($inStr){
-			$inStr = mb_convert_encoding($inStr, $this->targetCharset, mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
+			/*
+			 * Previously used 'UTF-8, ISO-8859-1, ISO-8859-15'
+			 * And UTF-8 strings were not being detected resulting
+			 * Double encoding issue. Proceed with caution when adding encoding params
+			 */
+			$inStr = mb_convert_encoding($inStr, $this->targetCharset, mb_detect_encoding($inStr));
 
 			//Get rid of UTF-8 curly smart quotes and dashes
 			$badwordchars=array(
