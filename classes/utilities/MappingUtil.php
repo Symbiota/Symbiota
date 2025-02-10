@@ -2,8 +2,8 @@
 class MappingUtil  {
 	// This is [lat, lng] format
 	static $DEFAULT_BOUNDARY = [
-		['lat' => 42.3, 'lng' => -124.49],
-		['lat' => -124.49, 'lng' => -114.69]
+		['lat' => 62.8, 'lng' => -132.9],
+		['lat' => -35.7, 'lng' => 142.6]
 	];
 
 	/**
