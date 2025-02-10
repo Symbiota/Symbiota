@@ -232,7 +232,7 @@ $creatorArray = Media::getCreatorArray();
 							<div style="float:right;cursor:pointer;" onclick="toggle('img<?php echo $imgId; ?>editdiv');" title="<?php echo $LANG['EDIT_METADATA']; ?>">
 								<img style="border:0px;width:1.2em;" src="../../images/edit.png" />
 							</div>
-							<div style="margin-top:30px">
+							<div style="margin-top:30px;overflow-wrap: anywhere;">
 								<div>
 									<b><?php echo $LANG['CAPTION']; ?>:</b>
 									<?php echo $imgArr["caption"]; ?>
