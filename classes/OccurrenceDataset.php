@@ -1,7 +1,5 @@
 <?php
 
-use function PHPUnit\Framework\returnValue;
-
 include_once($SERVER_ROOT . '/config/dbconnection.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverCore.php');
 
@@ -297,7 +295,6 @@ class OccurrenceDataset
 			$countResponse = $this->conn->query($countSql);
 			if ($countResponse) {
 				$row = $countResponse->fetch_array();
-				// $returnVal = $countResponse->fetch_object();
 				$returnVal = (int) $row[0];
 			}
 		}
