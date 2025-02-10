@@ -315,9 +315,7 @@ if ($isEditor) {
 								</div>
 								<div class="bottom-breathing-room-rel">
 									<?php
-									// $recordLimit = $retLimit : $datasetManager->getTaxaLimit());
-									$recordLimit = $retLimit;
-									$pageCount = ceil($datasetManager->getOccurrenceCount($datasetId) / $recordLimit);
+									$pageCount = ceil($datasetManager->getOccurrenceCount($datasetId) / $retLimit);
 									if (($pageNumber) > $pageCount) $pageNumber = 1;
 									echo $LANG['PAGE'] . '<b> ' . ($pageNumber) . '</b> ' . $LANG['OF'] . ' <b>' . $pageCount . '</b> : ';
 									for ($x = 1; $x <= $pageCount; $x++) {
