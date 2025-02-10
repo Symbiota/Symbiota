@@ -533,6 +533,9 @@
   .inner-search .hide-on-small {
     display: none;
   }
+  .inner-search .alerts {
+    width: max-content;
+  }
 }
 
 /******* 3. SPECIFIC SECTIONS ********/

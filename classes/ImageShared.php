@@ -765,8 +765,8 @@ class ImageShared{
 	}
 
 	public function setPhotographerUid($v){
-		$v = OccurrenceUtilities::verifyUser($v, $this->conn);
-		$this->photographerUid = $v;
+		//$v = OccurrenceUtilities::verifyUser($v, $this->conn);
+		if(is_numeric($v)) $this->photographerUid = $v;
 	}
 
 	public function setImgLgUrl($v){

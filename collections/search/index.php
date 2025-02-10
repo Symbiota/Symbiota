@@ -44,6 +44,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 	<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet">
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT . '/js/jquery-ui.min.js'; ?>" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT . '/collections/individual/domManipulationUtils.js'; ?>" type="text/javascript"></script>
 	<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
 	<script>
 		const clientRoot = '<?php echo $CLIENT_ROOT; ?>';
@@ -571,6 +572,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 		}
 		?>
 		setSearchForm(document.getElementById("params-form"));
+		toggleTheNonDefaultsClosed(<?php echo $DEFAULTCATID ?>);
 	});
 </script>
 <script>
