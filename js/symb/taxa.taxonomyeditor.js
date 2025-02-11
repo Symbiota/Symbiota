@@ -89,17 +89,19 @@ $(document).ready(async function () {
 });
 
 const toggleEditFields = () => {
+  console.log("deleteMe toggleEditFields toggled");
   toggle("editfield");
   toggle("kingdomdiv");
   const selectedValue = Number(document.getElementById("rankid").value);
   showOnlyRelevantFields(selectedValue);
 };
 
-function showOnlyRelevantFields(rankId, editMode=true) {
+function showOnlyRelevantFields(rankId) {
   const currentCultivarEpithet =
     document.getElementById("cultivarEpithet").value;
   const currentTradeName = document.getElementById("tradeName").value;
   const label = document.getElementById("unitind1label");
+  const errorField = document.getElementById("error-display");
   const unitind1Select = document.getElementById("unitind1-select");
   const div2Hide = document.getElementById("div2hide");
   const div3Hide = document.getElementById("div3hide");
@@ -128,9 +130,9 @@ function showOnlyRelevantFields(rankId, editMode=true) {
     const selectedOptionText = rankIdSelector.options[optionIdx].text.trim();
 
     // Set the label for "UnitName1" based on the selected option text
-    label.textContent = selectedOptionText + " Name " + (editMode ? "*" : "") + ": ";
+    label.textContent = selectedOptionText + " Name: ";
   } else {
-    label.textContent = "Genus Name " + (editMode ? "*" : "") + ": ";
+    label.textContent = "Genus Name: ";
   }
 
   if (Object.values(rankIdsToHideUnit2From).includes(rankId)) {
