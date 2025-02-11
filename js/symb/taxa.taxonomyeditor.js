@@ -89,7 +89,6 @@ $(document).ready(async function () {
 });
 
 const toggleEditFields = () => {
-  console.log("deleteMe toggleEditFields toggled");
   toggle("editfield");
   toggle("kingdomdiv");
   const selectedValue = Number(document.getElementById("rankid").value);
@@ -101,7 +100,6 @@ function showOnlyRelevantFields(rankId) {
     document.getElementById("cultivarEpithet").value;
   const currentTradeName = document.getElementById("tradeName").value;
   const label = document.getElementById("unitind1label");
-  const errorField = document.getElementById("error-display");
   const unitind1Select = document.getElementById("unitind1-select");
   const div2Hide = document.getElementById("div2hide");
   const div3Hide = document.getElementById("div3hide");
