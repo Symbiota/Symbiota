@@ -351,7 +351,7 @@ include($SERVER_ROOT.'/includes/header.php');
 	else{
 		?>
 		<div style="font-weight:bold;font-size:120%;">
-			<? $LANG['ERROR_AUTH'] ?>
+			<?= $LANG['ERROR_AUTH'] ?>
 		</div>
 		<?php
 	}

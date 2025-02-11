@@ -281,7 +281,8 @@ $genusStr = $taxonEditorObj->cleanOutStr($genusStr);
 		<fieldset style="padding:15px;">
 			<legend><b><?php echo $LANG['REMAP_RESOURCES']; ?></b></legend>
 			<form name="remaptaxonform" method="post" action="taxoneditor.php">
-				<div style="margin-bottom:5px;">
+				<span style="color:red;"><?= $LANG['WARNING_REMAP'] ?></span>
+				<div style="margin-top:5px;margin-bottom:5px;">
 					<?php echo $LANG['TARGET_TAXON']; ?>:
 					<input id="remapvalue" name="remapvalue" type="text" value="" style="width:550px;" /><br/>
 					<input name="remaptid" type="hidden" value="" />

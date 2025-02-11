@@ -42,7 +42,6 @@ $LANG['DETERMINATIONS'] = 'Determinaciones';
 $LANG['IMAGE_FIELD_MAP'] = 'Mapa de campo medios';
 $LANG['MATERIAL_SAMPLE'] = 'Muestra de material';
 $LANG['PROCESSING_CATNUM'] = 'Identificador de procesamiento';
-$LANG['VALUES_SET'] = 'Los valores vacíos ';
 $LANG['UPDATING_STATS'] = 'Actualizando estadísticas';
 $LANG['IMAGE_LOADED'] = 'Medios cargado exitosamente';
 $LANG['ASSOC_DELETED'] = 'Asociación eliminada';
@@ -56,5 +55,8 @@ $LANG['MAT_SAMPLE_ADDED'] = 'Muestra de material agregada';
 $LANG['DETERMINATION_ADDED'] = 'Determinación agregada';
 $LANG['CHOOSE_FILE'] = 'Elegir un archivo';
 $LANG['HOME'] = 'Inicio';
+$LANG['AUDIO_UPLOAD'] = 'Carga de audio';
+$LANG['IMAGE_UPLOAD'] = 'Carga de imágenes';
+$LANG['MEDIA_UPLOAD_TYPE'] = 'Tipo de carga de medios';
 
 ?>

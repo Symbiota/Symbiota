@@ -107,6 +107,11 @@ class LeafletMap {
    /* Reference Leaflet Feature Group for all drawn items*/
    drawLayer;
 
+   /* Save Markerclusterer taxa clusters for later manipulation */
+   taxaClusters = [];
+
+   defaultBounds = [];
+
    constructor(map_id, map_options={}) {
 
 	  map_options = {
@@ -115,6 +120,11 @@ class LeafletMap {
 	  }
 
       this.mapLayer = L.map(map_id, map_options);
+
+	  if(map_options.defaultBounds) {
+	    this.defaultBounds = map_options.defaultBounds;
+		this.resetBounds();
+	  }
 
       const terrainLayer = L.tileLayer('https://{s}.google.com/vt?lyrs=p&x={x}&y={y}&z={z}', {
          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -266,11 +276,11 @@ class LeafletMap {
 			const overlays = {
 				"Macrostrat": L.layerGroup([macro_strat])
 			}
-         L.control.layers(layers, overlays).addTo(this.mapLayer);
+      this.mapLayer.layerControl = L.control.layers(layers, overlays).addTo(this.mapLayer);
       }
 
       if(map_options.scale !== false) {
-         L.control.scale({maxWidth: 200}).addTo(this.mapLayer);
+         this.mapLayer.scaleControl = L.control.scale({maxWidth: 200}).addTo(this.mapLayer);
       }
 
       this.setLang(map_options.lang);
@@ -282,6 +292,20 @@ class LeafletMap {
       this.drawLayer.clearLayers();
       this.activeShape = null;
       this.shapes = [];
+   }
+
+   resetBounds() {
+		if(!this.defaultBounds || this.defaultBounds.length !== 2) {
+			return false;
+		}
+
+		try {
+			this.mapLayer.fitBounds(this.defaultBounds);
+			return true;
+		} catch(e) {
+			console.log("ERROR: Failed to reset map bounds")
+			return false;
+		}
    }
 
    setLang(lang) {
@@ -618,6 +642,8 @@ class LeafletMap {
       this.drawLayer = drawnItems;
       this.mapLayer.addLayer(drawnItems);
 
+	  L.Draw.Polygon.prototype.options.shapeOptions.draggable = true;
+
       //Jank workaround for leaflet-draw api
       const setDrawColor = (drawOption) => {
          if(drawOptions[drawOption] === false)
@@ -653,6 +679,9 @@ class LeafletMap {
             draw: drawOptions,
             edit: {
                featureGroup: drawnItems,
+			   edit: {
+			     moveMakers: false,
+			   }
             }
          });
 

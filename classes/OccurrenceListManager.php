@@ -15,7 +15,7 @@ class OccurrenceListManager extends OccurrenceManager{
  		parent::__destruct();
 	}
 
-	public function getSpecimenMap($pageRequest,$cntPerPage){
+	public function getSpecimenMap($pageRequest, $cntPerPage){
 		$retArr = Array();
 		$isSecuredReader = false;
 		if($GLOBALS['USER_RIGHTS']){
@@ -41,13 +41,15 @@ class OccurrenceListManager extends OccurrenceManager{
 		$sql .= $this->getTableJoins($sqlWhere).$sqlWhere;
 		//Don't allow someone to query all occurrences if there are no conditions
 		if(!$sqlWhere) $sql .= 'WHERE o.occid IS NULL ';
-		if($this->sortArr) $sql .= 'ORDER BY '.implode(',',$this->sortArr);
-		else{
-			$sql .= 'ORDER BY c.sortseq, c.collectionname ';
-			$pageRequest = ($pageRequest - 1)*$cntPerPage;
+		if($this->sortArr){
+			$sql .= 'ORDER BY ' . implode(',', $this->sortArr) . ', o.collid ';
 		}
+		else{
+			$sql .= 'ORDER BY o.collid ';
+		}
+		if($pageRequest > 0) $pageRequest = ($pageRequest - 1) * $cntPerPage;
 		$sql .= ' LIMIT ' . $pageRequest . ',' . $cntPerPage;
-		// echo '<div>Spec sql: ' . $sql . '</div>'; exit; // @TODO HERE
+		//echo '<div style="width: 1200px">' . $sql . '</div>';
 		$result = $this->conn->query($sql);
 		if($result){
 			$securityCollArr = array();
@@ -68,7 +70,6 @@ class OccurrenceListManager extends OccurrenceManager{
 					if(!$retArr[$row->occid]['collcode']) $retArr[$row->occid]['collcode'] = $row->collcodeoverride;
 					elseif($retArr[$row->occid]['collcode'] != $row->collcodeoverride) $retArr[$row->occid]['collcode'] .= '-'.$row->collcodeoverride;
 				}
-				$retArr[$row->occid]['collname'] = $row->collectionname;
 				$retArr[$row->occid]['icon'] = $row->icon;
 				$retArr[$row->occid]['catnum'] = $this->cleanOutStr($row->catalognumber);
 				$retArr[$row->occid]['family'] = $this->cleanOutStr($row->family);
@@ -171,8 +172,10 @@ class OccurrenceListManager extends OccurrenceManager{
 		return $this->recordCount;
 	}
 
-	public function addSort($field,$direction){
-		$this->sortArr[] = trim($field.' '.$direction);
+	public function addSort($field, $direction){
+		if($field){
+			$this->sortArr[] = $this->cleanInStr($field) . ($direction ? ' desc' : '');
+		}
 	}
 
 	//Misc support functions
@@ -193,14 +196,14 @@ class OccurrenceListManager extends OccurrenceManager{
 
 	public function getCloseTaxaMatch($name){
 		$retArr = array();
-		$searchName = $this->cleanInStr($name);
+		$searchName = trim($name);
 		$sql = 'SELECT tid, sciname FROM taxa WHERE soundex(sciname) = soundex(?)';
 		$stmt = $this->conn->prepare($sql);
 		$stmt->bind_param('s', $searchName);
 		$stmt->execute();
 		$stmt->bind_result($tid, $sciname);
 		while($stmt->fetch()){
-			if($searchName != $sciname) $retArr[$tid] = $sciname;
+			if($searchName != $sciname) $retArr[$tid] = $this->cleanOutStr($sciname);
 		}
 		$stmt->close();
 		return $retArr;

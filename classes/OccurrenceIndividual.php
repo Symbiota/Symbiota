@@ -268,7 +268,7 @@ class OccurrenceIndividual extends Manager{
 		$sql = 'SELECT m.mediaID, m.url, m.thumbnailurl, m.originalurl, m.sourceurl, m.notes, m.caption, m.mediaType, m.format,
 			CONCAT_WS(" ",u.firstname,u.lastname) as innerCreator, m.creator, m.rights, m.accessRights, m.copyright
 			FROM media m LEFT JOIN users u ON m.creatorUid = u.uid
-			WHERE (m.occid = ?) ORDER BY m.sortoccurrence,m.sortsequence';
+			WHERE (m.occid = ?) ORDER BY m.sortOccurrence,m.sortsequence';
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('i', $this->occid);
 			$stmt->execute();

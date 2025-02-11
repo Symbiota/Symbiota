@@ -123,7 +123,7 @@ UPDATE `omoccurassociations`
   WHERE associationType = "" AND occidAssociate IS NULL AND resourceUrl IS NULL AND verbatimSciname IS NOT NULL;
 
 
-# Corrects an issue with db_schema-3.0.sql. Will fail when udating 1.x schemas, thus ignore
+# Skip if 1.0 install: Corrects an issue with db_schema-3.0.sql. Will fail when udating 1.x schemas, thus ignore 
 ALTER TABLE `omoccurdeterminations` 
   CHANGE COLUMN `identificationID` `sourceIdentifier` VARCHAR(45) NULL DEFAULT NULL ;
 
@@ -269,7 +269,7 @@ CREATE TABLE `usersthirdpartyauth` (
 );
 
 
-# Skip if 1.0 install: Table does not exist within db_schema-3.0, thus statement is expected to fail if this was not originally a 1.0 install
+# Skip if 3.0 install: Table does not exist within db_schema-3.0, thus statement is expected to fail if this was not originally a 1.0 install
 # Deprecate omoccurresource table in preference for omoccurassociations. 
 ALTER TABLE `omoccurresource` 
   RENAME TO  `deprecated_omoccurresource` ;
