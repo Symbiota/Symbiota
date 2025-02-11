@@ -35,6 +35,9 @@ $LANG['COUNTRY'] = 'Pays';
 $LANG['STATE_PROVINCE'] = 'État/province';
 $LANG['COUNTY'] = 'Comté';
 $LANG['ELEVATION'] = 'Élévation';
+$LANG['FORMATION'] = 'Formation';
+$LANG['EARLY_INT'] = 'Intervalle Précoce';
+$LANG['LATE_INT'] = 'Intervalle Tardif';
 
 $LANG['PAGINATION_FIRST'] = 'Premiers';
 $LANG['LAST'] = 'dernier';
