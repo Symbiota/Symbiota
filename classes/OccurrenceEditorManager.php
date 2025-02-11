@@ -810,11 +810,14 @@ class OccurrenceEditorManager {
 						if ($identUnit) {
 							$tag = '';
 							$value = $identUnit;
-							if (preg_match('/^([A-Za-z\s]+[\s#:]+)(\d+)$/', $identUnit, $m)) {
-								$tag = trim($m[1], ': ');
-								$value = $m[2];
+
+							if($matches = explode(':', $identUnit)) {
+								if(count($matches) === 2) {
+									$otherCatNumArr[trim($matches[1])] = trim($matches[0]);
+								} else if(count($matches) > 0) {
+									$otherCatNumArr[trim($matches[0])] = '';
+								}
 							}
-							$otherCatNumArr[$value] = $tag;
 						}
 					}
 				}
@@ -1655,10 +1658,10 @@ class OccurrenceEditorManager {
 						}
 					}
 					if (isset($postArr['carryoverimages']) && $postArr['carryoverimages']) {
-						$sql = 'INSERT INTO media (occid, tid, url, thumbnailurl, originalurl, archiveurl, creator, creatorUid, imagetype, format, caption, owner,
+						$sql = 'INSERT INTO media (occid, tid, url, thumbnailurl, originalurl, archiveurl, creator, creatorUid, mediaType, imagetype, format, caption, owner,
 							sourceurl, referenceUrl, copyright, rights, accessrights, locality, notes, anatomy, username, sourceIdentifier, mediaMD5, dynamicProperties,
 							defaultDisplay, sortsequence, sortOccurrence)
-							SELECT ' . $this->occid . ', tid, url, thumbnailurl, originalurl, archiveurl, creator, creatorUid, imagetype, format, caption, owner, sourceurl, referenceUrl,
+							SELECT ' . $this->occid . ', tid, url, thumbnailurl, originalurl, archiveurl, creator, creatorUid, mediaType, imagetype, format, caption, owner, sourceurl, referenceUrl,
 							copyright, rights, accessrights, locality, notes, anatomy, username, sourceIdentifier, mediaMD5, dynamicProperties, defaultDisplay, sortsequence, sortOccurrence
 							FROM media WHERE occid = ' . $sourceOccid;
 						if (!$this->conn->query($sql)) {
@@ -2390,10 +2393,10 @@ class OccurrenceEditorManager {
 	public function getImageMap($imgId = 0) {
 		$imageMap = array();
 		if ($this->occid) {
-			$sql = 'SELECT mediaID, url, thumbnailurl, originalurl, caption, creator, creatorUid, sourceurl, copyright, notes, occid, username, sortoccurrence, initialtimestamp FROM media ';
+			$sql = 'SELECT mediaID, url, thumbnailurl, originalurl, caption, creator, creatorUid, sourceurl, copyright, notes, occid, username, sortOccurrence, initialtimestamp FROM media ';
 			if ($imgId) $sql .= 'WHERE AND (mediaID = ' . $imgId . ') ';
 			else $sql .= 'WHERE mediaType = "image" AND (occid = ' . $this->occid . ') ';
-			$sql .= 'ORDER BY sortoccurrence';
+			$sql .= 'ORDER BY sortOccurrence';
 			//echo $sql;
 			$result = $this->conn->query($sql);
 			while ($row = $result->fetch_object()) {
@@ -2408,7 +2411,7 @@ class OccurrenceEditorManager {
 				$imageMap[$row->mediaID]['notes'] = $row->notes;
 				$imageMap[$row->mediaID]['occid'] = $row->occid;
 				$imageMap[$row->mediaID]['username'] = $row->username;
-				$imageMap[$row->mediaID]['sort'] = $row->sortoccurrence;
+				$imageMap[$row->mediaID]['sort'] = $row->sortOccurrence;
 			}
 			$result->free();
 		}

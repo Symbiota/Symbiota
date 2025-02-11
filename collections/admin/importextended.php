@@ -70,13 +70,16 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 			function validateMappingForm(f){
 				let sourceArr = [];
 				let targetArr = [];
-				let requiredFieldArr = [];
+				let requiredFieldArr = {};
 				<?php
 				if($associationType == 'resource' || $associationType == 'externalOccurrence'){
 					echo 'requiredFieldArr["resourceUrl"] = 0; ';
 				}
 				elseif($associationType == 'observational'){
 					echo 'requiredFieldArr["verbatimSciname"] = 0; ';
+				// If it is a media upload
+				} elseif($importType == 3) {
+					echo 'requiredFieldArr["originalUrl"] = 0; ';
 				}
 				?>
 				let subjectIdentifierIsMapped = false;
@@ -284,6 +287,13 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 									<div class="formField-div">
 										<input name="createNew" type="checkbox" value ="1" <?= ($createNew?'checked':'') ?>>
 										<label for="createNew"><?= $LANG['NEW_BLANK_RECORD'] ?></label>
+									</div>
+									<div class="formField-div">
+										<label for="mediaUploadType"><?= $LANG['MEDIA_UPLOAD_TYPE'] ?>:</label>
+										<select id="mediaUploadType" name="mediaUploadType" required >
+											<option value="image"><?= $LANG['IMAGE_UPLOAD'] ?></option>
+											<option value="audio"><?= $LANG['AUDIO_UPLOAD'] ?></option>
+										</select>
 									</div>
 									<?php
 								}

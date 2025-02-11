@@ -164,7 +164,7 @@ if($isEditor){
 				});
 
 				$( "#userinput" ).autocomplete({
-					source: "rpc/getuserlist.php",
+					source: "../rpc/getuserlist.php",
 					minLength: 3,
 					autoFocus: true,
 					select: function( event, ui ) {

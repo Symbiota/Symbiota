@@ -7,7 +7,6 @@ class SchemaManager extends Manager{
 	private $database;
 	private $port;
 	private $username;
-	private $adminConn;
 	private $versionHistory = array();
 	private $currentVersion;
 	private $targetSchema;
@@ -54,10 +53,16 @@ class SchemaManager extends Manager{
 						$sql ='';
 						foreach($stmtArr as $fragment){
 							if(substr($fragment, 0, 1) == '#'){
-								//is comment
-								if(strpos($fragment, 'Skip if 1.0 install') !== false){
+								//line is comment
+								if(strpos($fragment, 'Skip if 3.0 install') !== false){
 									if(!array_key_exists('1.0', $this->versionHistory)){
-										$this->logOrEcho('Statement skipped: table only exists within older versions of database', 1);
+										$this->logOrEcho('Statement skipped: issue only exists within older versions of database', 1);
+										continue 2;
+									}
+								}
+								elseif(strpos($fragment, 'Skip if 1.0 install') !== false){
+									if(array_key_exists('1.0', $this->versionHistory)){
+										$this->logOrEcho('Statement skipped: issue only exists within 3.0 original installations', 1);
 										continue 2;
 									}
 								}
@@ -162,14 +167,15 @@ class SchemaManager extends Manager{
 			$this->logOrEcho('Evaluating DB schema file: ' . $filename);
 			if($fileHandler = fopen($filename, 'r')){
 				$sqlArr = array();
-				$cnt = 1;
+				$cnt = 0;
 				$index = 0;
 				$delimiter = ';';
 				while(!feof($fileHandler)) {
 					$line = trim(fgets($fileHandler));
+					$cnt++;
 					if($line){
-						if(!$index) $index = $cnt;
 						if(substr($line, 0, 2) == '--') continue;
+						if(!$index) $index = $cnt;
 						if(substr($line, 0, 9) == 'DELIMITER'){
 							$delimiter = trim(substr($line, 9));
 						}
@@ -184,7 +190,6 @@ class SchemaManager extends Manager{
 							}
 						}
 					}
-					$cnt++;
 				}
 				fclose($fileHandler);
 			}
@@ -197,7 +202,7 @@ class SchemaManager extends Manager{
 	}
 
 	private function setActiveTable($targetTable){
-		
+
 		if($targetTable){
 			unset($this->activeTableArr);
 			$this->activeTableArr = array();

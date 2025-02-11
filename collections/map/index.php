@@ -117,9 +117,9 @@ foreach ($coordArr as $collName => $coll) {
 		array_push($recordArr, [
 			'id' => $record['id'],
 			'tid' => $record['tid'],
-			'catalogNumber' => $record['catalogNumber'], 
-			'eventdate' => $record['eventdate'], 
-			'sciname' => $record['sn'], 
+			'catalogNumber' => $record['catalogNumber'],
+			'eventdate' => $record['eventdate'],
+			'sciname' => $record['sn'],
 			'collid' => $record['collid'],
 			'family' => $record['fam'],
 			'occid' => $recordId,
@@ -409,7 +409,7 @@ if(isset($_REQUEST['llpoint'])) {
 						taxaLegendMap[taxon.sn] = taxon
 						taxaLegendMap[taxon.sn].origin = origin;
 						taxaLegendMap[taxon.sn].id_map = [{tid: taxon.tid, index: i}];
-						
+
 					} else {
 						taxaLegendMap[taxon.sn].id_map.push({tid: taxon.tid, index: i});
 					}
@@ -427,7 +427,7 @@ if(isset($_REQUEST['llpoint'])) {
 					}
 				}
 				else if(a.family > b.family) return 1;
-				else return -1;			
+				else return -1;
 			})
 
 			let prev_family;
@@ -648,6 +648,7 @@ if(isset($_REQUEST['llpoint'])) {
 
 			let map = new LeafletMap('map', {
 				lang: "<?php echo $LANG_TAG; ?>",
+				default_bounds: [],
 			})
 			var oms = new OverlappingMarkerSpiderfier(map.mapLayer, {
 				nearbyDistance: 5
@@ -1851,13 +1852,13 @@ if(isset($_REQUEST['llpoint'])) {
 				pagination_control_top.innerHTML = "";
 				pagination_control_top.append(createControl());
 			}
-	
+
 			let pagination_control_bottom = document.getElementById('record-pagination-bottom')
 			if(pagination_control_bottom) {
 				pagination_control_bottom.innerHTML = "";
 				pagination_control_bottom.append(createControl());
 			}
-				
+
 			const pagination_summary = document.getElementById('record-pagination-summary')
 			if(pagination_summary) {
 				setElem("record-pagination-summary-bottom", pagination_summary.innerHTML);
@@ -1876,7 +1877,7 @@ if(isset($_REQUEST['llpoint'])) {
 					openRecord(records[i]);
 				})
 				cat_link.id = "label" + occid;
-				cat_link.append(catalogNumber ? catalogNumber: '');
+				cat_link.append(catalogNumber ? catalogNumber: 'N/A');
 				cat_link.id = "cat" + occid;
 				cat.append(cat_link);
 
@@ -1887,7 +1888,7 @@ if(isset($_REQUEST['llpoint'])) {
 					openRecord(records[i]);
 				})
 				occurrence_link.id = "label" + occid;
-				occurrence_link.append(id? id: '')
+				occurrence_link.append(id? id: 'N/A')
 				collector.append(occurrence_link);
 
 				let date = document.createElement("td");
@@ -2500,7 +2501,7 @@ Record Limit:
 
 								<hr/>
 								<div id="record-pagination-top">
-								</div>	
+								</div>
 
 								<div id="record-pagination-summary">
 									<?= $LANG['PAGINATION_PAGE'] ?>
@@ -2516,8 +2517,8 @@ Record Limit:
 									<thead>
 										<th><?=$LANG['CATALOG_NUMBER']?></th>
 										<th><?=$LANG['COLLECTOR']?></th>
-										<th><?=$LANG['EVENTDATE']?></th>
-										<th><?=$LANG['SCIENTIFIC_NAME']?></th>
+										<th><?=$LANG['EVENT_DATE']?></th>
+										<th><?=$LANG['SCINAME']?></th>
 										<th><?=$LANG['MAP_LINK']?></th>
 									</thead>
 									<tbody>
@@ -2527,10 +2528,10 @@ Record Limit:
 								<hr/>
 
 								<div id="record-pagination-bottom">
-								</div>	
+								</div>
 
 								<div id="record-pagination-summary-bottom" style="margin-bottom:2rem">
-								</div>	
+								</div>
 							</div>
 							<div id="portalsymbology" style="">
 								<div style="height:40px;margin-bottom:15px;">

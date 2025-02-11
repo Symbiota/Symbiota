@@ -401,7 +401,7 @@ if($isEditor){
 										?>
 										<div class="editDiv">
 											<div class="editLabel"><?php echo $LANG['FAMILY']; ?>: </div>
-											<div class="editField">
+											<div class="tsedit">
 												<?php echo $taxonEditorObj->getFamily();?>
 											</div>
 										</div>
