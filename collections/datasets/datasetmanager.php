@@ -258,6 +258,19 @@ if ($isEditor) {
 			font-weight: bold;
 			text-decoration: underline;
 		}
+
+		@media (max-width: 768px) {
+			.gridlike-form-row {
+				gap: 2px;
+				/* Reduce spacing */
+			}
+		}
+
+		@media (max-width: 750px) {
+			.gridlike-form-row {
+				flex-direction: column;
+			}
+		}
 	</style>
 </head>
 
@@ -314,8 +327,9 @@ if ($isEditor) {
 							<div style="float:right;margin-right:10px">
 								<?php echo '<b>' . $LANG['COUNT'] . ': ' . count($occArr) . ' ' . $LANG['RECORDS'] . '</b>'; ?>
 							</div>
-							<div class="gridlike-form" style="min-width: 67vw;">
-								<div class="gridlike-form-row">
+							<!-- <div class="gridlike-form" style="min-width: 67vw; margin-left:0; margin-right:0;"> -->
+							<div class="gridlike-form" style="width: max-content; margin-left:0; margin-right:0;">
+								<div class="gridlike-form-row" style="justify-content: center; flex-wrap: wrap; gap: 5px;">
 
 									<?php
 									$pageCount = ceil($datasetManager->getOccurrenceCount($datasetId) / $retLimit);
