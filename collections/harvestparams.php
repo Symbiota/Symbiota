@@ -318,6 +318,73 @@ $searchVar = $collManager->getQueryTermStr();
 				</div>
 			</div>
 			<?php
+			if(!empty($ACTIVATE_PALEO)) {
+				$gtsTermArr = $collManager->getPaleoGtsTerms();
+				?>
+				<hr/>
+				<div style="float:left">
+					<div>
+						<div class="catHeaderDiv bottom-breathing-room-rel-sm"><?php echo $LANG['GEO_CONTEXT']; ?></div>
+					</div>
+					<div>
+						<div>
+							<div>
+								<div>
+									<label for="lateInterval"><?php echo $LANG['LATE_INT'] ?>:</label>
+									<select name="lateInterval" type="text" id="lateInterval">
+										<option value=""></option>
+										<?php
+										$lateIntervalTerm = '';
+										if(isset($occArr['lateInterval'])) $lateIntervalTerm = $occArr['lateInterval'];
+										if($lateIntervalTerm && !array_key_exists($lateIntervalTerm, $gtsTermArr)){
+											echo '<option value="'.$lateIntervalTerm.'" SELECTED>'.$lateIntervalTerm.' - mismatched term</option>';
+											echo '<option value="">---------------------------</option>';
+										}
+										foreach($gtsTermArr as $term => $rankid){
+											echo '<option value="'.$term.'" '.($lateIntervalTerm==$term?'SELECTED':'').'>'.$term.'</option>';
+										}
+										?>
+									</select>
+								</div>
+								<label for="earlyInterval"><?php echo $LANG['EARLY_INT'] ?>:</label>
+									<select name="earlyInterval" type="text" id="earlyInterval">
+										<option value=""></option>
+										<?php
+										$earlyIntervalTerm = '';
+										if(isset($occArr['earlyInterval'])) $earlyIntervalTerm = $occArr['earlyInterval'];
+										if($earlyIntervalTerm && !array_key_exists($earlyIntervalTerm, $gtsTermArr)){
+											echo '<option value="'.$earlyIntervalTerm.'" SELECTED>'.$earlyIntervalTerm.' - mismatched term</option>';
+											echo '<option value="">---------------------------</option>';
+										}
+										foreach($gtsTermArr as $term => $rankid){
+											echo '<option value="'.$term.'" '.($earlyIntervalTerm==$term?'SELECTED':'').'>'.$term.'</option>';
+										}
+										?>
+									</select>
+								</div>
+						</div>
+						<div>
+							<div>
+								<label for="lithogroup"><?php echo $LANG['LITHOGROUP']?>:</label>
+									<input type="text" name="lithogroup" id="lithogroup"/>
+							</div>
+							<div>
+								<label for="formation"> <?php echo $LANG['FORMATION']?>:</label>
+									<input type="text" name="formation" id="formation"/>
+							</div>
+							<div>
+								<label for="member"><?php echo $LANG['MEMBER']?>:</label>
+									<input type="text" name="member" id="member"/>
+							</div>
+							<div>
+								<label for="bed"><?php echo $LANG['BED']?>:</label>
+									<input type="text" name="bed" id="bed"/>
+							</div>
+						</div>
+					</div>
+				</div>
+				<?php
+			}
 			if(!empty($SEARCH_BY_TRAITS)) {
 				$attribSearch = new OccurrenceAttributeSearch();
 				$traitArr = $attribSearch->getTraitSearchArr($SEARCH_BY_TRAITS);
@@ -353,76 +420,6 @@ $searchVar = $collManager->getQueryTermStr();
 					</div>
 					<?php
 				}
-			}
-			?>
-
-			<?php
-			if(!empty($ACTIVATE_PALEO)) {
-				$gtsTermArr = $collManager->getPaleoGtsTerms();
-				?>
-				<hr/>
-				<div style="float:left">
-					<div>
-						<div class="catHeaderDiv"><?php echo $LANG['GEO_CONTEXT']; ?></div>
-					</div>
-					<div>
-						<div>
-							<div>
-								<label for="earlyInterval"><?php echo $LANG['EARLY_INT'] ?>:</label>
-								<select name="earlyInterval" type="text" id="earlyInterval">
-									<option value=""></option>
-									<?php
-									$earlyIntervalTerm = '';
-									if(isset($occArr['earlyInterval'])) $earlyIntervalTerm = $occArr['earlyInterval'];
-									if($earlyIntervalTerm && !array_key_exists($earlyIntervalTerm, $gtsTermArr)){
-										echo '<option value="'.$earlyIntervalTerm.'" SELECTED>'.$earlyIntervalTerm.' - mismatched term</option>';
-										echo '<option value="">---------------------------</option>';
-									}
-									foreach($gtsTermArr as $term => $rankid){
-										echo '<option value="'.$term.'" '.($earlyIntervalTerm==$term?'SELECTED':'').'>'.$term.'</option>';
-									}
-									?>
-								</select>
-							</div>
-							<div>
-								<label for="lateInterval"><?php echo $LANG['LATE_INT'] ?>:</label>
-								<select name="lateInterval" type="text" id="lateInterval">
-									<option value=""></option>
-									<?php
-									$lateIntervalTerm = '';
-									if(isset($occArr['lateInterval'])) $lateIntervalTerm = $occArr['lateInterval'];
-									if($lateIntervalTerm && !array_key_exists($lateIntervalTerm, $gtsTermArr)){
-										echo '<option value="'.$lateIntervalTerm.'" SELECTED>'.$lateIntervalTerm.' - mismatched term</option>';
-										echo '<option value="">---------------------------</option>';
-									}
-									foreach($gtsTermArr as $term => $rankid){
-										echo '<option value="'.$term.'" '.($lateIntervalTerm==$term?'SELECTED':'').'>'.$term.'</option>';
-									}
-									?>
-								</select>
-							</div>
-						</div>
-						<div>
-							<div>
-								<label for="lithogroup"><?php echo $LANG['LITHOGROUP']?>:</label>
-									<input type="text" name="lithogroup" id="lithogroup"/>
-							</div>
-							<div>
-								<label for="formation"> <?php echo $LANG['FORMATION']?>:</label>
-									<input type="text" name="formation" id="formation"/>
-							</div>
-							<div>
-								<label for="member"><?php echo $LANG['MEMBER']?>:</label>
-									<input type="text" name="member" id="member"/>
-							</div>
-							<div>
-								<label for="bed"><?php echo $LANG['BED']?>:</label>
-									<input type="text" name="bed" id="bed"/>
-							</div>
-						</div>
-					</div>
-				</div>
-				<?php
 			}
 			?>
 
