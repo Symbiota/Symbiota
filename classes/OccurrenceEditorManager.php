@@ -53,6 +53,8 @@ class OccurrenceEditorManager {
 			'biostratigraphy','lithogroup','formation','taxonenvironment','member','bed','lithology','stratremarks','element','slideproperties','geologicalcontextid');
 		$this->fieldArr['omoccuridentifiers'] = array('idname','idvalue');
 		$this->fieldArr['omexsiccatiocclink'] = array('ometid','exstitle','exsnumber');
+		// A list of fields that would trigger an update of the determination in the determination history
+		$this->fieldArr['latestidfields'] = array('sciname', 'scientificnameauthorship', 'family', 'identificationqualifier', 'identifiedby', 'dateidentified', 'identificationreferences', 'identificationremarks', 'taxonremarks');
 	}
 
 	public function __destruct(){
@@ -1033,6 +1035,10 @@ class OccurrenceEditorManager {
 								$status = $LANG['ERROR_TAGGING_USER'].' (#'.$this->occid.'): '.$this->conn->error.' ';
 							}
 						}
+
+						// Update latest determination, or add if not present
+						if (array_intersect($editArr, $this->fieldArr['latestidfields'])) $this->updateLatestDetermination($this->occid);
+
 						//Deal with additional identifiers
 						if(isset($postArr['idvalue'])) $this->updateIdentifiers($postArr, $identArr);
 						//Deal with paleo fields
@@ -1176,6 +1182,34 @@ class OccurrenceEditorManager {
 		} catch (mysqli_sql_exception $e) {
 			echo 'Duplicate: '.$this->conn->error;
 			error_log('Error Duplicate determination from latest identification:' . $e->getMessage());
+		}
+	}
+
+	// When the latest identification is updated in the editor, this will update
+	// the corresponding determination in the determination history, so that they stay in sync.
+	private function updateLatestDetermination($occid) : void {
+		// First check to see if a current determination is present for this occid. If not, add it.
+		$sql = 'SELECT detid FROM omoccurdeterminations WHERE (occid = ' . $occid . ') AND isCurrent = 1';
+		$rs = $this->conn->query($sql);
+		if($r = $rs->fetch_object()){
+			// Current determination is present, so update it
+			$sql = 'UPDATE omoccurdeterminations d JOIN omoccurrences o ON d.occid = o.occid ' .
+				'SET d.identifiedBy = IFNULL(o.identifiedBy, IFNULL(o.recordedBy, "Unknown")), ' .
+				'd.dateIdentified = IFNULL(o.dateIdentified, IFNULL(o.eventDate, "0000-00-00")), ' .
+				'd.sciname = o.sciname, d.scientificNameAuthorship = o.scientificNameAuthorship, ' .
+				'd.identificationQualifier = o.identificationQualifier, ' .
+				'd.identificationReferences = o.identificationReferences, ' .
+				'd.identificationRemarks = o.identificationRemarks ' .
+				'WHERE d.detid = ' . $r->detid;
+			try {
+				$this->conn->query($sql);
+			} catch (mysqli_sql_exception $e) {
+				error_log('Failed to update latest determination:' . $e->getMessage());
+			}
+		} else {
+			// No current determination is present, so add this one
+			// This happens when a record is added without a latest identification, but one is subsequently added.
+			$this->addLatestIdentToDetermination($occid);
 		}
 	}
 
