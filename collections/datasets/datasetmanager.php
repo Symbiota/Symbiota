@@ -314,40 +314,47 @@ if ($isEditor) {
 							<div style="float:right;margin-right:10px">
 								<?php echo '<b>' . $LANG['COUNT'] . ': ' . count($occArr) . ' ' . $LANG['RECORDS'] . '</b>'; ?>
 							</div>
-							<div class="bottom-breathing-room-rel">
-								<?php
-								$pageCount = ceil($datasetManager->getOccurrenceCount($datasetId) / $retLimit);
-								// $shouldShowJumpToPage = $pageCount > $maxNumberOfPages;
-								if (($pageNumber) > $pageCount) $pageNumber = 1;
-								echo $LANG['PAGE'] . '<b> ' . ($pageNumber) . '</b> ' . $LANG['OF'] . ' <b>' . $pageCount . '</b> : ';
-								for ($x = 1; $x <= min($pageCount, $maxNumberOfPages / 2); $x++) {
-									if ($x > 1) echo " | ";
-									if (($pageNumber) == $x) echo '<b>';
-									else echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=' . $x . '">';
-									echo ($x);
-									if (($pageNumber) == $x) echo '</b>';
-									else echo '</a>';
-								}
-								?>
+							<div class="gridlike-form">
+								<div class="gridlike-form-row">
+
+									<div>
+										<?php
+										$pageCount = ceil($datasetManager->getOccurrenceCount($datasetId) / $retLimit);
+										// $shouldShowJumpToPage = $pageCount > $maxNumberOfPages;
+										if (($pageNumber) > $pageCount) $pageNumber = 1;
+										echo $LANG['PAGE'] . '<b> ' . ($pageNumber) . '</b> ' . $LANG['OF'] . ' <b>' . $pageCount . '</b> : ';
+										for ($x = max(1, $pageNumber - 5); $x <= min($pageCount + max(1, $pageNumber - 5), ($maxNumberOfPages / 2) + max(1, $pageNumber - 5)); $x++) {
+											if ($x > 1) echo " | ";
+											if (($pageNumber) == $x) echo '<b>';
+											else echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=' . $x . '">';
+											echo ($x);
+											if (($pageNumber) == $x) echo '</b>';
+											else echo '</a>';
+										}
+										?>
+									</div>
+									<div id="jump-to-page" name="jump-to-page">
+										<form action="datasetmanager.php" method="get" class="gridlike-form" style="margin:0;">
+											<div class="gridlike-form-row">
+												<input type="hidden" name="datasetid" value="<?php echo $datasetId; ?>">
+												<label class="screen-reader-only" for="jumpToPage">Jump to Page:</label>
+												<input placeholder="Jump to Page" type="number" id="jumpToPage" name="pagenumber" min="1" max="<?php echo $pageCount; ?>" required style="margin:0; min-width:9vw;">
+												<button type="submit">Go</button>
+											</div>
+										</form>
+									</div>
+									<?php
+									for ($x = max($pageCount - ($maxNumberOfPages / 2), $pageNumber) + 1; $x <= $pageCount; $x++) {
+										if ($x > 1) echo " | ";
+										if (($pageNumber) == $x) echo '<b>';
+										else echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=' . $x . '">';
+										echo ($x);
+										if (($pageNumber) == $x) echo '</b>';
+										else echo '</a>';
+									}
+									?>
+								</div>
 							</div>
-							<div id="jump-to-page" name="jump-to-page">
-								<form action="datasetmanager.php" method="get">
-									<input type="hidden" name="datasetid" value="<?php echo $datasetId; ?>">
-									<label for="jumpToPage">Jump to Page:</label>
-									<input type="number" id="jumpToPage" name="pagenumber" min="1" max="<?php echo $pageCount; ?>" required>
-									<button type="submit">Go</button>
-								</form>
-							</div>
-							<?php
-							for ($x = $pageCount - ($maxNumberOfPages / 2) + 1; $x <= $pageCount; $x++) {
-								if ($x > 1) echo " | ";
-								if (($pageNumber) == $x) echo '<b>';
-								else echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=' . $x . '">';
-								echo ($x);
-								if (($pageNumber) == $x) echo '</b>';
-								else echo '</a>';
-							}
-							?>
 							<form name="occurform" action="datasetmanager.php" method="post" onsubmit="return validateOccurForm(this)">
 								<table class="styledtable" style="font-size:12px;">
 									<tr>
