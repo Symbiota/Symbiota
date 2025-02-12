@@ -254,31 +254,16 @@ if ($isEditor) {
 
 		document.addEventListener("DOMContentLoaded", function() {
 			const adjustPagination = () => {
-				console.log("deleteMe adjustPagination called");
-				const links = document.querySelectorAll(".pagination-link");
-				const containerWidth = document.getElementById("pagination-links").clientWidth;
+				const paginationLinks = document.querySelectorAll(".pagination-link");
 				const screenWidth = window.innerWidth;
-				console.log("deleteMe screenWidth is: ");
-				console.log(screenWidth);
 				let shouldReduceLinks = false;
-				// let maxVisible = 7; // Default max links
 
-				// if (screenWidth < 800) {
-				// 	maxVisible = 5;
-				// }
 				if (screenWidth < 770) {
-					// maxVisible = 3;
 					shouldReduceLinks = true;
 				}
 
-				links.forEach((link, index) => {
+				paginationLinks.forEach(link => {
 					let shouldKeepLink = parseInt(link.getAttribute("data-keep-link"));
-					console.log("deleteMe shouldKeepLink is: ");
-					console.log(shouldKeepLink);
-
-					// if (index > 1 && index < links.length - 2) {
-					// link.style.display = (index < maxVisible) ? "inline-block" : "none";
-					// }
 					if (shouldReduceLinks) {
 						link.style.display = (shouldKeepLink) ? "inline-block" : "none";
 					} else {
@@ -353,9 +338,8 @@ if ($isEditor) {
 							<div style="float:right;margin-right:10px">
 								<?php echo '<b>' . $LANG['COUNT'] . ': ' . count($occArr) . ' ' . $LANG['RECORDS'] . '</b>'; ?>
 							</div>
-							<!-- <div class="gridlike-form" style="min-width: 67vw; margin-left:0; margin-right:0;"> -->
 							<div class="gridlike-form" style="width: max-content; margin-left:0; margin-right:0;">
-								<div id="pagination-links" class="gridlike-form-row" style="justify-content: center; flex-wrap: wrap; gap: 5px;">
+								<div class="gridlike-form-row" style="justify-content: center; flex-wrap: wrap; gap: 5px;">
 
 									<?php
 									$pageCount = ceil($datasetManager->getOccurrenceCount($datasetId) / $retLimit);
