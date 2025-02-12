@@ -310,7 +310,6 @@ if($isEditor){
 			<div>
 				<section class="fieldset-like">
 					<h2> <span> <?php echo $LANG['DEFINE_RECORDSET']; ?> </span> </h2>
-					<div>
 						<?php echo $LANG['RECORDSET_EXPLAIN']; ?>
 					</div>
 					<div style="margin-top:15px;">
