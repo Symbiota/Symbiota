@@ -251,25 +251,51 @@ if ($isEditor) {
 			window.open('', 'downloadpopup', 'left=100,top=50,width=900,height=700');
 			f.target = 'downloadpopup';
 		}
+
+		document.addEventListener("DOMContentLoaded", function() {
+			const adjustPagination = () => {
+				console.log("deleteMe adjustPagination called");
+				const links = document.querySelectorAll(".pagination-link");
+				const containerWidth = document.getElementById("pagination-links").clientWidth;
+				const screenWidth = window.innerWidth;
+				console.log("deleteMe screenWidth is: ");
+				console.log(screenWidth);
+				let shouldReduceLinks = false;
+				// let maxVisible = 7; // Default max links
+
+				// if (screenWidth < 800) {
+				// 	maxVisible = 5;
+				// }
+				if (screenWidth < 770) {
+					// maxVisible = 3;
+					shouldReduceLinks = true;
+				}
+
+				links.forEach((link, index) => {
+					let shouldKeepLink = parseInt(link.getAttribute("data-keep-link"));
+					console.log("deleteMe shouldKeepLink is: ");
+					console.log(shouldKeepLink);
+
+					// if (index > 1 && index < links.length - 2) {
+					// link.style.display = (index < maxVisible) ? "inline-block" : "none";
+					// }
+					if (shouldReduceLinks) {
+						link.style.display = (shouldKeepLink) ? "inline-block" : "none";
+					} else {
+						link.style.display = "inline-block";
+					}
+				});
+			}
+
+			window.addEventListener("resize", adjustPagination);
+			adjustPagination();
+		});
 	</script>
 	<style>
 		.section-title {
 			margin: 0px 15px;
 			font-weight: bold;
 			text-decoration: underline;
-		}
-
-		@media (max-width: 768px) {
-			.gridlike-form-row {
-				gap: 2px;
-				/* Reduce spacing */
-			}
-		}
-
-		@media (max-width: 750px) {
-			.gridlike-form-row {
-				flex-direction: column;
-			}
 		}
 	</style>
 </head>
@@ -329,25 +355,25 @@ if ($isEditor) {
 							</div>
 							<!-- <div class="gridlike-form" style="min-width: 67vw; margin-left:0; margin-right:0;"> -->
 							<div class="gridlike-form" style="width: max-content; margin-left:0; margin-right:0;">
-								<div class="gridlike-form-row" style="justify-content: center; flex-wrap: wrap; gap: 5px;">
+								<div id="pagination-links" class="gridlike-form-row" style="justify-content: center; flex-wrap: wrap; gap: 5px;">
 
 									<?php
 									$pageCount = ceil($datasetManager->getOccurrenceCount($datasetId) / $retLimit);
 									if (($pageNumber) > $pageCount) $pageNumber = 1;
 									echo $LANG['PAGE'] . '<b> ' . ($pageNumber) . '</b> ' . $LANG['OF'] . ' <b>' . $pageCount . '</b> : ';
 									//sliding window
-									echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=1">';
+									echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=1" class="pagination-link" data-keep-link="1">';
 									echo (1);
 									echo '</a>';
-									echo " ...";
+									echo '<span class="pagination-link"> ...</span>';
 									$beginning = max(2, $pageNumber - 5);
 									$end = min($pageNumber, min($pageCount + max(1, $pageNumber - 5), ($maxNumberOfPagesBeforeShowPageJump / 2) + max(1, $pageNumber - 5)));
 									for ($x = $beginning; $x < $end; $x++) {
 										//first x
 										// for ($x = 1; $x < min($pageNumber, $maxNumberOfPagesBeforeShowPageJump / 2); $x++) {
-										if ($x > 2) echo " | ";
+										if ($x > 2) echo '<span class="pagination-link"> | </span>';
 										if (($pageNumber) == $x) echo '<b>';
-										else echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=' . $x . '">';
+										else echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=' . $x . '" class="pagination-link" >';
 										echo ($x);
 										if (($pageNumber) == $x) echo '</b>';
 										else echo '</a>';
@@ -371,15 +397,15 @@ if ($isEditor) {
 									for ($x = $beginning; $x <= $end; $x++) {
 										// last x
 										// for ($x = max($pageCount - ($maxNumberOfPagesBeforeShowPageJump / 2), $pageNumber) + 1; $x <= $pageCount; $x++) {
-										if ($x > 1) echo " | ";
+										if ($x > 1) echo '<span class="pagination-link"> | </span>';
 										if (($pageNumber) == $x) echo '<b>';
-										else echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=' . $x . '">';
+										else echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=' . $x . '" class="pagination-link">';
 										echo ($x);
 										if (($pageNumber) == $x) echo '</b>';
 										else echo '</a>';
 									}
-									echo " | ...";
-									echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=' . $pageCount . '">';
+									echo '<span class="pagination-link"> | ...</span>';
+									echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=' . $pageCount . '" class="pagination-link" data-keep-link="' . $pageCount . '">';
 									echo ($pageCount);
 									echo '</a>';
 									?>
