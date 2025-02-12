@@ -186,7 +186,7 @@ if (array_key_exists('last_message', $_SESSION)){
 		}
 		.flex-item-login {
 			width: 100%;
-			max-width: 350px;
+			max-width: 30rem;
 			margin-left: auto;
 			margin-right: auto;
 		}
@@ -221,8 +221,8 @@ include($SERVER_ROOT.'/includes/header.php');
 					<fieldset class="profile-fieldset">
 						<legend class="profile-legend"><?php echo (isset($LANG['PORTAL_LOGIN'])?$LANG['PORTAL_LOGIN']:'Portal Login'); ?></legend>
 						<div>
-							<label for="login"><?php echo (isset($LANG['LOGIN_NAME'])?$LANG['LOGIN_NAME']:'Login'); ?>:</label> 
-							<input id="login" name="login" value="<?php echo $login; ?>" style="border-style:inset;" />
+							<label for="portal-login"><?php echo (isset($LANG['LOGIN_NAME'])?$LANG['LOGIN_NAME']:'Login'); ?>:</label> 
+							<input id="portal-login" name="login" value="<?php echo $login; ?>" style="border-style:inset;" />
 						</div>
 						<div>
 							<label for="password"><?php echo (isset($LANG['PASSWORD'])?$LANG['PASSWORD']:"Password"); ?>:</label>

@@ -77,7 +77,7 @@ if(isset($PORTAL_GUID) && $PORTAL_GUID){
 	<script type="text/javascript">
 	    function transferCoord(evt) {
 	        if(evt.origin.indexOf('geo-locate.org') < 0) {
-				alert("iframe url does not have permision to interact with me");
+				alert("iframe url does not have permision to interact with me; url: " + evt.origin);
 	        }
 	        else {//alert(evt.data);
 	            var breakdown = evt.data.split("|");

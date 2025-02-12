@@ -330,8 +330,8 @@ if($imgArr){
 								<input type="hidden" id="tid" name="targettid" value="" />
 								<input type="hidden" name="sourcetid" value="<?php echo $imgArr["tid"];?>" />
 								<input type="hidden" name="imgid" value="<?php echo $imgId; ?>" />
-								<button type="hidden" name="submitaction" value="Transfer Image" ><?php echo $LANG['TRANSFER_IMAGE'] ?></button>
-								<button type="submit" name="submitbutton" value="Transfer Image" ><?php echo $LANG['TRANSFER_IMAGE'] ?></button>
+								<input type="hidden" name="submitaction" value="Transfer Image" ><?php echo $LANG['TRANSFER_IMAGE'] ?></input>
+								<button type="submit"><?php echo $LANG['TRANSFER_IMAGE'] ?></button>
 							</div>
 					    </fieldset>
 					</form>
