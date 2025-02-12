@@ -1711,7 +1711,9 @@ class OccurrenceEditorManager {
 				SELECT detid FROM omoccurdeterminations where occid = ? and isCurrent = 1;
 				SQL;
 				$result = SymbUtil::execute_query($this->conn, $sql, [$occid]);
-				return array_map(fn($v) => $v[0], $result->fetch_all());
+				return array_map(function ($v) {
+					return $v[0];
+				}, $result->fetch_all());
 			};
 
 			//Fetch List of Old Current Determinations

@@ -110,7 +110,7 @@ class OccurrenceIndividual extends Manager{
 		if($this->occid){
 			if(!$this->occArr) $this->setOccurData();
 			if($fieldKey){
-				if(array_key_exists($fieldKey,$this->occArr)) return $this->occArr($fieldKey);
+				if(array_key_exists($fieldKey,$this->occArr)) return $this->occArr[$fieldKey];
 				return false;
 			}
 		}
@@ -194,11 +194,13 @@ class OccurrenceIndividual extends Manager{
 	}
 
 	public function applyProtections($isSecuredReader){
+		$retBool = false;
 		if($this->occArr){
 			$protectTaxon = false;
 			/*
 			 if(isset($this->occArr['scinameprotected']) && $this->occArr['scinameprotected'] && !$isSecuredReader){
 			 $protectTaxon = true;
+			 $retBool = true;
 			 $this->occArr['taxonsecure'] = 1;
 			 $this->occArr['sciname'] = $this->occArr['scinameprotected'];
 			 $this->occArr['family'] = $this->occArr['familyprotected'];
@@ -209,6 +211,7 @@ class OccurrenceIndividual extends Manager{
 			$protectLocality = false;
 			if($this->occArr['localitysecurity'] == 1 && !$isSecuredReader){
 				$protectLocality = true;
+				$retBool = true;
 				$this->occArr['localsecure'] = 1;
 				$redactArr = array('recordnumber','eventdate','verbatimeventdate','locality','locationid','decimallatitude','decimallongitude','verbatimcoordinates',
 					'locationremarks', 'georeferenceremarks', 'geodeticdatum', 'coordinateuncertaintyinmeters', 'minimumelevationinmeters', 'maximumelevationinmeters',
@@ -227,6 +230,7 @@ class OccurrenceIndividual extends Manager{
 			if(!$protectLocality && !$protectTaxon) $this->setImages();
 			if(!$protectLocality) $this->setExsiccati();
 		}
+		return $retBool;
 	}
 
 	private function setDeterminations(){
@@ -1369,7 +1373,7 @@ class OccurrenceIndividual extends Manager{
 	}
 
 	public function activateOrcidID($inStr){
-		$retStr = $this->cleanOutStr($inStr);
+		$retStr = $inStr;
 		$m = array();
 		if(preg_match('#((https://orcid.org/)?\d{4}-\d{4}-\d{4}-\d{3}[0-9X])#', $retStr, $m)){
 			$orcidAnchor = $m[1];
