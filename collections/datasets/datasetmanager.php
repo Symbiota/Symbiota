@@ -307,32 +307,38 @@ if ($isEditor) {
 					<div id="occurtab">
 						<?php
 						$retLimit = 200;
-						$maxNumberOfPages = 10;
+						$maxNumberOfPagesBeforeShowPageJump = 10;
 						if ($occArr = $datasetManager->getOccurrences($datasetId, $pageNumber, $retLimit)) {
 						?>
 
 							<div style="float:right;margin-right:10px">
 								<?php echo '<b>' . $LANG['COUNT'] . ': ' . count($occArr) . ' ' . $LANG['RECORDS'] . '</b>'; ?>
 							</div>
-							<div class="gridlike-form">
+							<div class="gridlike-form" style="min-width: 67vw;">
 								<div class="gridlike-form-row">
 
-									<div>
-										<?php
-										$pageCount = ceil($datasetManager->getOccurrenceCount($datasetId) / $retLimit);
-										// $shouldShowJumpToPage = $pageCount > $maxNumberOfPages;
-										if (($pageNumber) > $pageCount) $pageNumber = 1;
-										echo $LANG['PAGE'] . '<b> ' . ($pageNumber) . '</b> ' . $LANG['OF'] . ' <b>' . $pageCount . '</b> : ';
-										for ($x = max(1, $pageNumber - 5); $x <= min($pageCount + max(1, $pageNumber - 5), ($maxNumberOfPages / 2) + max(1, $pageNumber - 5)); $x++) {
-											if ($x > 1) echo " | ";
-											if (($pageNumber) == $x) echo '<b>';
-											else echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=' . $x . '">';
-											echo ($x);
-											if (($pageNumber) == $x) echo '</b>';
-											else echo '</a>';
-										}
-										?>
-									</div>
+									<?php
+									$pageCount = ceil($datasetManager->getOccurrenceCount($datasetId) / $retLimit);
+									if (($pageNumber) > $pageCount) $pageNumber = 1;
+									echo $LANG['PAGE'] . '<b> ' . ($pageNumber) . '</b> ' . $LANG['OF'] . ' <b>' . $pageCount . '</b> : ';
+									//sliding window
+									echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=1">';
+									echo (1);
+									echo '</a>';
+									echo " ...";
+									$beginning = max(2, $pageNumber - 5);
+									$end = min($pageNumber, min($pageCount + max(1, $pageNumber - 5), ($maxNumberOfPagesBeforeShowPageJump / 2) + max(1, $pageNumber - 5)));
+									for ($x = $beginning; $x < $end; $x++) {
+										//first x
+										// for ($x = 1; $x < min($pageNumber, $maxNumberOfPagesBeforeShowPageJump / 2); $x++) {
+										if ($x > 2) echo " | ";
+										if (($pageNumber) == $x) echo '<b>';
+										else echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=' . $x . '">';
+										echo ($x);
+										if (($pageNumber) == $x) echo '</b>';
+										else echo '</a>';
+									}
+									?>
 									<div id="jump-to-page" name="jump-to-page">
 										<form action="datasetmanager.php" method="get" class="gridlike-form" style="margin:0;">
 											<div class="gridlike-form-row">
@@ -344,7 +350,13 @@ if ($isEditor) {
 										</form>
 									</div>
 									<?php
-									for ($x = max($pageCount - ($maxNumberOfPages / 2), $pageNumber) + 1; $x <= $pageCount; $x++) {
+									// sliding window
+									$theLastX = $pageCount - ($maxNumberOfPagesBeforeShowPageJump / 2) + 1;
+									$beginning = max($pageNumber + 1, min($pageNumber + 1, $theLastX));
+									$end = min($pageNumber + 1 + ($maxNumberOfPagesBeforeShowPageJump / 2), $pageCount - 1);
+									for ($x = $beginning; $x <= $end; $x++) {
+										// last x
+										// for ($x = max($pageCount - ($maxNumberOfPagesBeforeShowPageJump / 2), $pageNumber) + 1; $x <= $pageCount; $x++) {
 										if ($x > 1) echo " | ";
 										if (($pageNumber) == $x) echo '<b>';
 										else echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=' . $x . '">';
@@ -352,6 +364,10 @@ if ($isEditor) {
 										if (($pageNumber) == $x) echo '</b>';
 										else echo '</a>';
 									}
+									echo " | ...";
+									echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=' . $pageCount . '">';
+									echo ($pageCount);
+									echo '</a>';
 									?>
 								</div>
 							</div>
