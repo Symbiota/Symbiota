@@ -257,16 +257,25 @@ if ($isEditor) {
 				const paginationLinks = document.querySelectorAll(".pagination-link");
 				const screenWidth = window.innerWidth;
 				let shouldReduceLinks = false;
+				let shouldReduceByHalf = false;
 
 				if (screenWidth < 770) {
 					shouldReduceLinks = true;
 				}
+				if (screenWidth < 1200) {
+					shouldReduceByHalf = true;
+				}
 
 				paginationLinks.forEach(link => {
-					let shouldKeepLink = parseInt(link.getAttribute("data-keep-link"));
+					const shouldKeepLink = parseInt(link.getAttribute("data-keep-link"));
+					const isEven = (parseInt(link.getAttribute("data-even-odd")) || 0) % 2;
+					if (shouldReduceByHalf) {
+						link.style.display = (isEven) ? "inline-block" : "none";
+					}
 					if (shouldReduceLinks) {
 						link.style.display = (shouldKeepLink) ? "inline-block" : "none";
-					} else {
+					}
+					if (!shouldReduceByHalf && !shouldReduceLinks) {
 						link.style.display = "inline-block";
 					}
 				});
@@ -357,7 +366,7 @@ if ($isEditor) {
 										// for ($x = 1; $x < min($pageNumber, $maxNumberOfPagesBeforeShowPageJump / 2); $x++) {
 										if ($x > 2) echo '<span class="pagination-link"> | </span>';
 										if (($pageNumber) == $x) echo '<b>';
-										else echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=' . $x . '" class="pagination-link" >';
+										else echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=' . $x . '" class="pagination-link" data-even-odd="' . $x . '">';
 										echo ($x);
 										if (($pageNumber) == $x) echo '</b>';
 										else echo '</a>';
@@ -383,7 +392,7 @@ if ($isEditor) {
 										// for ($x = max($pageCount - ($maxNumberOfPagesBeforeShowPageJump / 2), $pageNumber) + 1; $x <= $pageCount; $x++) {
 										if ($x > 1) echo '<span class="pagination-link"> | </span>';
 										if (($pageNumber) == $x) echo '<b>';
-										else echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=' . $x . '" class="pagination-link">';
+										else echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=' . $x . '" class="pagination-link" data-even-odd="' . $x . '">';
 										echo ($x);
 										if (($pageNumber) == $x) echo '</b>';
 										else echo '</a>';
