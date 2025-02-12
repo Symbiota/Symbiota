@@ -22,7 +22,7 @@ function checkHarvestParamsForm(frm){
 				break;
 			}
 		}
-		else if(traitInputs[i].name == "materialsampletype"){
+		else if(traitInputs[i].name == "materialsampletype" || traitInputs[i].name == "earlyInterval" || traitInputs[i].name == "lateInterval" ){
 			if(traitInputs[i].value.trim() != ""){
 				searchDefined = true;
 				break;
