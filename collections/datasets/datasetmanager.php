@@ -375,7 +375,7 @@ if ($isEditor) {
 									</div>
 									<?php
 									// sliding window
-									$theLastX = $pageCount - ($maxNumberOfPagesBeforeShowPageJump / 2) + 1;
+									$theLastX = $pageCount - ($maxNumberOfPagesBeforeShowPageJump / 2);
 									$beginning = max($pageNumber + 1, min($pageNumber + 1, $theLastX));
 									$end = min($pageNumber + 1 + ($maxNumberOfPagesBeforeShowPageJump / 2), $pageCount - 1);
 									for ($x = $beginning; $x <= $end; $x++) {
