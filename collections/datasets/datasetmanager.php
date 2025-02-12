@@ -268,7 +268,7 @@ if ($isEditor) {
 
 				paginationLinks.forEach(link => {
 					const shouldKeepLink = parseInt(link.getAttribute("data-keep-link"));
-					const isEven = (parseInt(link.getAttribute("data-even-odd")) || 0) % 2;
+					const isEven = (parseInt(link.getAttribute("data-even-odd")) || 1) % 2;
 					if (shouldReduceByHalf) {
 						link.style.display = (isEven) ? "inline-block" : "none";
 					}
@@ -364,7 +364,7 @@ if ($isEditor) {
 									for ($x = $beginning; $x < $end; $x++) {
 										//first x
 										// for ($x = 1; $x < min($pageNumber, $maxNumberOfPagesBeforeShowPageJump / 2); $x++) {
-										if ($x > 2) echo '<span class="pagination-link"> | </span>';
+										if ($x > 2) echo '<span class="pagination-link" data-even-odd="' . $x . '"> | </span>';
 										if (($pageNumber) == $x) echo '<b>';
 										else echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=' . $x . '" class="pagination-link" data-even-odd="' . $x . '">';
 										echo ($x);
@@ -390,7 +390,7 @@ if ($isEditor) {
 									for ($x = $beginning; $x <= $end; $x++) {
 										// last x
 										// for ($x = max($pageCount - ($maxNumberOfPagesBeforeShowPageJump / 2), $pageNumber) + 1; $x <= $pageCount; $x++) {
-										if ($x > 1) echo '<span class="pagination-link"> | </span>';
+										if ($x > 1) echo '<span class="pagination-link" data-even-odd="' . $x . '"> | </span>';
 										if (($pageNumber) == $x) echo '<b>';
 										else echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=' . $x . '" class="pagination-link" data-even-odd="' . $x . '">';
 										echo ($x);
