@@ -1102,7 +1102,7 @@ class ImageLocalProcessor {
 				}
 			}
 			if($paramArr){
-				$sql = 'INSERT INTO ('.trim($sql1,', ').', mediaType) VALUES ('.trim($sql2,', ').', "image")';
+				$sql = 'INSERT INTO media ('.trim($sql1,', ').', mediaType) VALUES ('.trim($sql2,', ').', "image")';
 				if($stmt = $this->conn->prepare($sql)){
 					$stmt->bind_param($paramType, ...$paramArr);
 					$stmt->execute();
