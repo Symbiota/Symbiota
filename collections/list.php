@@ -244,6 +244,16 @@ $_SESSION['citationvar'] = $searchVar;
 											<?php
 											$sortFields = array('c.collectionname' => $LANG['COLLECTION'], 'o.catalogNumber' => $LANG['CATALOG_NUMBER'], 'o.family' => $LANG['FAMILY'], 'o.sciname' => $LANG['SCINAME'], 'o.recordedBy' => $LANG['COLLECTOR'],
 												'o.recordNumber' => $LANG['NUMBER'], 'o.eventDate' => $LANG['EVENT_DATE'], 'o.country' => $LANG['COUNTRY'], 'o.StateProvince' => $LANG['STATE_PROVINCE'], 'o.county' => $LANG['COUNTY'], 'o.minimumElevationInMeters' => $LANG['ELEVATION']);
+												if (!empty($GLOBALS['ACTIVATE_PALEO'])) {
+													$sortFields = array_merge($sortFields, [
+														'paleo.formation' => $LANG['FORMATION'],
+														'paleo.bed' => $LANG['BED'],
+														'paleo.member' => $LANG['MEMBER'],
+														'paleo.lithogroup' => $LANG['LITHOGROUP'],
+														'paleo.earlyInterval' => $LANG['EARLY_INT'],
+														'paleo.lateInterval' => $LANG['LATE_INT']
+													]);
+												}
 											foreach($sortFields as $k => $v){
 												echo '<option value="'.$k.'" '.($k==$sortField1?'SELECTED':'').'>'.$v.'</option>';
 											}
