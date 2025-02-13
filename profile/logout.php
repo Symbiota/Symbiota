@@ -7,13 +7,7 @@ $mysession = session_id();
 
 error_log("Remote Session:" . $sid . "Local Session: " . $mysession . "IP: " . $_SERVER['REMOTE_ADDR']);
 
-
-
 //header('Content-Type: text/html; charset=' . $CHARSET);
-
-
-
-
 
 $profManager = new OpenIdProfileManager();
 

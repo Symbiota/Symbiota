@@ -13,6 +13,14 @@ include_once($SERVER_ROOT . '/classes/ProfileManager.php');
 
 $pHandler = new ProfileManager();
 //Check session data to see if signed in
+
+if (isset($_SESSION['force_logout'])){
+	$pHandler->reset();
+	unset($_SESSION['force_logout']);
+}
+
+
+
 $PARAMS_ARR = Array();				//params => 'un=egbot&dn=Edward&uid=301'
 $USER_RIGHTS = Array();
 if(isset($_SESSION['userparams'])) $PARAMS_ARR = $_SESSION['userparams'];
