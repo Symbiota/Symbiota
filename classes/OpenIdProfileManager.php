@@ -160,13 +160,13 @@ class OpenIdProfileManager extends ProfileManager
 		session_id($targetSessionId);
 		session_start();
 		$_SESSION['force_logout'] = true;
-
-		/**
-
+		
 		$currentSessionId = session_id();
 		$currentSessionStatus = session_status();
 		error_log("(forceLogout) ((3)) CurrentSession: " . $currentSessionId . "CurrentSessionStatus: " . $currentSessionStatus .  "targetSession: " . $targetSessionId);
 
+		
+		/**
 		$_SESSION = [];
 		session_unset();
 
