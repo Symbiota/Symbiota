@@ -1,8 +1,9 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT . '/config/dbconnection.php');
 include_once('OccurrenceAccessStats.php');
 
-class OccurrenceDownload{
+class OccurrenceDownload
+{
 
 	private $conn;
 	private $redactLocalities = true;
@@ -20,21 +21,38 @@ class OccurrenceDownload{
 	private $isPublicDownload = false;
 	private $errorArr = array();
 
-	public function __construct(){
+	public function __construct()
+	{
 		$this->conn = MySQLiConnectionFactory::getCon('readonly');
 
 		//Set rare species variables
-		$this->securityArr = Array('locality','locationRemarks','minimumElevationInMeters','maximumElevationInMeters','verbatimElevation',
-			'decimalLatitude','decimalLongitude','geodeticDatum','coordinateUncertaintyInMeters','footprintWKT','verbatimCoordinates',
-			'georeferenceRemarks','georeferencedBy','georeferenceProtocol','georeferenceSources','georeferenceVerificationStatus','habitat');
-		if($GLOBALS['IS_ADMIN'] || array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])){
+		$this->securityArr = array(
+			'locality',
+			'locationRemarks',
+			'minimumElevationInMeters',
+			'maximumElevationInMeters',
+			'verbatimElevation',
+			'decimalLatitude',
+			'decimalLongitude',
+			'geodeticDatum',
+			'coordinateUncertaintyInMeters',
+			'footprintWKT',
+			'verbatimCoordinates',
+			'georeferenceRemarks',
+			'georeferencedBy',
+			'georeferenceProtocol',
+			'georeferenceSources',
+			'georeferenceVerificationStatus',
+			'habitat'
+		);
+		if ($GLOBALS['IS_ADMIN'] || array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])) {
 			$this->redactLocalities = false;
 		}
-		if(array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS'])){
+		if (array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS'])) {
 			$this->rareReaderArr = $GLOBALS['USER_RIGHTS']['CollEditor'];
 		}
-		if(array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS'])){
-			$this->rareReaderArr = array_unique(array_merge($this->rareReaderArr,$GLOBALS['USER_RIGHTS']['RareSppReader']));
+		if (array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS'])) {
+			$this->rareReaderArr = array_unique(array_merge($this->rareReaderArr, $GLOBALS['USER_RIGHTS']['RareSppReader']));
 		}
 
 		//Character set
@@ -42,69 +60,64 @@ class OccurrenceDownload{
 		$this->charSetOut = $this->charSetSource;
 	}
 
-	public function __destruct(){
-		if(!($this->conn === false)) $this->conn->close();
+	public function __destruct()
+	{
+		if (!($this->conn === false)) $this->conn->close();
 		//if($this->zipArchive) $this->zipArchive->close();
 	}
 
-	public function downloadData(){
+	public function downloadData()
+	{
 		$contentDesc = '';
 		$filePath = $this->getOutputFilePath();
 		$fileName = $this->getOutputFileName();
-		if($this->schemaType == 'checklist'){
+		if ($this->schemaType == 'checklist') {
 			$contentDesc = 'Symbiota Checklist File';
-		}
-		elseif($this->schemaType == 'georef'){
+		} elseif ($this->schemaType == 'georef') {
 			$contentDesc = 'Symbiota Occurrence Georeference Data';
 		}
-		if($this->zipFile){
+		if ($this->zipFile) {
 			//Create zip file, load data, then stream to user
 			$zipArchive = null;
-			if(class_exists('ZipArchive')){
+			if (class_exists('ZipArchive')) {
 				$zipArchive = new ZipArchive;
-				$zipArchive->open($filePath.$fileName, ZipArchive::CREATE);
-			}
-			else{
+				$zipArchive->open($filePath . $fileName, ZipArchive::CREATE);
+			} else {
 				$this->errorArr[] = 'ERROR: Zip File creation not supported, see portal manager';
 				$contentDesc = 'Output file ERROR: Zip File creation not supported';
 			}
-			if($zipArchive){
+			if ($zipArchive) {
 				$tempName = '';
-				if($this->schemaType == 'checklist'){
+				if ($this->schemaType == 'checklist') {
 					$tempName = 'checklist';
-				}
-				elseif($this->schemaType == 'georef'){
+				} elseif ($this->schemaType == 'georef') {
 					$tempName = 'georef';
-				}
-				else{
+				} else {
 					$tempName = 'occurrence';
 				}
-				$tempPath = $filePath.$tempName.'_'.time();
-				if($this->delimiter=="\t"){
+				$tempPath = $filePath . $tempName . '_' . time();
+				if ($this->delimiter == "\t") {
 					$tempPath .= '.tab';
 					$tempName .= '.tab';
-				}
-				elseif($this->delimiter==','){
+				} elseif ($this->delimiter == ',') {
 					$tempPath .= '.csv';
 					$tempName .= '.csv';
-				}
-				else{
+				} else {
 					$tempPath .= '.txt';
 					$tempName .= '.txt';
 				}
 				$fh = fopen($tempPath, "w");
 				$this->writeOutData($fh);
 				fclose($fh);
-				if(file_exists($tempPath)){
-					$zipArchive->addFile($tempPath,$tempName);
+				if (file_exists($tempPath)) {
+					$zipArchive->addFile($tempPath, $tempName);
 					$zipArchive->close();
 					unlink($tempPath);
 				}
 			}
-		}
-		else{
+		} else {
 			//Create regular file and then streamed out to user
-			$fh = fopen($filePath.$fileName, "w");
+			$fh = fopen($filePath . $fileName, "w");
 			$this->writeOutData($fh);
 			fclose($fh);
 		}
@@ -112,60 +125,58 @@ class OccurrenceDownload{
 		ob_start();
 		ob_clean();
 		ob_end_flush();
-		header('Content-Description: '.$contentDesc);
-		header('Content-Type: '.$this->getContentType());
-		header('Content-Disposition: attachment; filename='.$fileName);
-		header('Content-Transfer-Encoding: '.$this->charSetOut);
+		header('Content-Description: ' . $contentDesc);
+		header('Content-Type: ' . $this->getContentType());
+		header('Content-Disposition: attachment; filename=' . $fileName);
+		header('Content-Transfer-Encoding: ' . $this->charSetOut);
 		header('Expires: 0');
 		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 		header('Pragma: public');
-		header('Content-Length: '.filesize($filePath.$fileName));
+		header('Content-Length: ' . filesize($filePath . $fileName));
 		ob_clean();
 		flush();
-		readfile($filePath.$fileName);
+		readfile($filePath . $fileName);
 		//Clean up
-		if(file_exists($filePath.$fileName)) unlink($filePath.$fileName);
+		if (file_exists($filePath . $fileName)) unlink($filePath . $fileName);
 	}
 
-	private function writeOutData($outstream){
+	private function writeOutData($outstream)
+	{
 		$recCnt = 0;
-		if($outstream){
+		if ($outstream) {
 			$sql = $this->getSql();
-			$result = $this->conn->query($sql,MYSQLI_USE_RESULT);
-			if($result){
+			$result = $this->conn->query($sql, MYSQLI_USE_RESULT);
+			if ($result) {
 				$statsManager = new OccurrenceAccessStats();
 				$occurAccessID = $statsManager->insertAccessEvent('download', substr($sql, strpos($sql, 'WHERE ')));
 				$outputHeader = true;
-				while($row = $result->fetch_assoc()){
-					if($outputHeader){
+				while ($row = $result->fetch_assoc()) {
+					if ($outputHeader) {
 						//Write column names out to file
-						if($this->delimiter == ","){
+						if ($this->delimiter == ",") {
 							fputcsv($outstream, array_keys($row));
-						}
-						else{
-							fwrite($outstream, implode($this->delimiter, array_keys($row))."\n");
+						} else {
+							fwrite($outstream, implode($this->delimiter, array_keys($row)) . "\n");
 						}
 						$outputHeader = false;
 					}
 					//$this->stripSensitiveFields($row);
 					$this->encodeArr($row);
-					if($this->delimiter == ","){
+					if ($this->delimiter == ",") {
 						fputcsv($outstream, $row);
-					}
-					else{
-						fwrite($outstream, implode($this->delimiter,$row)."\n");
+					} else {
+						fwrite($outstream, implode($this->delimiter, $row) . "\n");
 					}
 					//Set access statistics
-					if($this->isPublicDownload){
-						if($this->schemaType != 'checklist') if(array_key_exists('occid',$row)) $statsManager->insertAccessOccurrence($occurAccessID, $row['occid']);
+					if ($this->isPublicDownload) {
+						if ($this->schemaType != 'checklist') if (array_key_exists('occid', $row)) $statsManager->insertAccessOccurrence($occurAccessID, $row['occid']);
 					}
 					$recCnt++;
 				}
-			}
-			else{
+			} else {
 				echo "Recordset is empty.\n";
 			}
-			if($result) $result->close();
+			if ($result) $result->close();
 		}
 		return $recCnt;
 	}
@@ -249,21 +260,22 @@ class OccurrenceDownload{
 	 }*/
 
 	//Return latest activity
-	public function getDataEntryActivity($format='rss',$days=0, $limit=0){
+	public function getDataEntryActivity($format = 'rss', $days = 0, $limit = 0)
+	{
 		//format: rss, json
-		if($format == 'json'){
-			$xml = simplexml_load_string($this->getDataEntryXML($days,$limit));
+		if ($format == 'json') {
+			$xml = simplexml_load_string($this->getDataEntryXML($days, $limit));
 			return json_encode($xml);
-		}
-		else{
-			return $this->getDataEntryXML($days,$limit);
+		} else {
+			return $this->getDataEntryXML($days, $limit);
 		}
 	}
 
-	private function getDataEntryXML($days, $limit){
+	private function getDataEntryXML($days, $limit)
+	{
 
 		//Create new document and write out to target
-		$newDoc = new DOMDocument('1.0',$this->charSetOut);
+		$newDoc = new DOMDocument('1.0', $this->charSetOut);
 		//Add root element
 		$rootElem = $newDoc->createElement('rss');
 		$rootAttr = $newDoc->createAttribute('version');
@@ -276,60 +288,60 @@ class OccurrenceDownload{
 
 		//Add title, link, description, language
 		$titleElem = $newDoc->createElement('title');
-		$titleElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'].' New Occurrence Records'));
+		$titleElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'] . ' New Occurrence Records'));
 		$channelElem->appendChild($titleElem);
 
 		$serverDomain = "http://";
-		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $serverDomain = "https://";
+		if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $serverDomain = "https://";
 		$serverDomain .= $_SERVER["SERVER_NAME"];
-		if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80 && $_SERVER['SERVER_PORT'] != 443) $serverDomain .= ':'.$_SERVER["SERVER_PORT"];
+		if ($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80 && $_SERVER['SERVER_PORT'] != 443) $serverDomain .= ':' . $_SERVER["SERVER_PORT"];
 		$urlPathPrefix = '';
-		if($serverDomain){
-			$urlPathPrefix = $serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1)=='/'?'':'/');
+		if ($serverDomain) {
+			$urlPathPrefix = $serverDomain . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) == '/' ? '' : '/');
 		}
 
 		$linkElem = $newDoc->createElement('link');
 		$linkElem->appendChild($newDoc->createTextNode($urlPathPrefix));
 		$channelElem->appendChild($linkElem);
 		$descriptionElem = $newDoc->createElement('description');
-		$descriptionElem->appendChild($newDoc->createTextNode('An RSS feed that lists summary information for new occurrence records recently entered into the '.$GLOBALS['DEFAULT_TITLE'].' portal'));
+		$descriptionElem->appendChild($newDoc->createTextNode('An RSS feed that lists summary information for new occurrence records recently entered into the ' . $GLOBALS['DEFAULT_TITLE'] . ' portal'));
 		$channelElem->appendChild($descriptionElem);
-		$languageElem = $newDoc->createElement('language','en-us');
+		$languageElem = $newDoc->createElement('language', 'en-us');
 		$channelElem->appendChild($languageElem);
 		//Create new item for target archives and load into array
-		$sql = 'SELECT o.occid, CONCAT_WS("-",c.institutioncode, c.collectioncode) as instcode, c.collectionname, o.recordID, c.guidtarget, '.
-			'o.occurrenceid, o.catalognumber, o.sciname, o.recordedby, o.recordnumber, IFNULL(CAST(o.eventdate AS CHAR),o.verbatimeventdate) as eventdate, '.
-			'o.decimallatitude, o.decimallongitude, o.datelastmodified, o.recordenteredby, o.genericcolumn2, '.
-			'IFNULL(m.thumbnailurl,m.url) AS thumbnailurl, o.processingstatus '.
-			'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid '.
-			'INNER JOIN media m ON o.occid = m.occid '.
-			'WHERE c.colltype = "Preserved Specimens" '.
+		$sql = 'SELECT o.occid, CONCAT_WS("-",c.institutioncode, c.collectioncode) as instcode, c.collectionname, o.recordID, c.guidtarget, ' .
+			'o.occurrenceid, o.catalognumber, o.sciname, o.recordedby, o.recordnumber, IFNULL(CAST(o.eventdate AS CHAR),o.verbatimeventdate) as eventdate, ' .
+			'o.decimallatitude, o.decimallongitude, o.datelastmodified, o.recordenteredby, o.genericcolumn2, ' .
+			'IFNULL(m.thumbnailurl,m.url) AS thumbnailurl, o.processingstatus ' .
+			'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ' .
+			'INNER JOIN media m ON o.occid = m.occid ' .
+			'WHERE c.colltype = "Preserved Specimens" ' .
 			'AND o.processingstatus IN("pending review","reviewed", "closed") AND (o.localitysecurity IS NULL OR o.localitysecurity = 0) ';
-		if($days && is_numeric($days)) $sql .= 'AND (o.datelastmodified > DATE_SUB(NOW(), INTERVAL '.$days.' DAY)) ';
+		if ($days && is_numeric($days)) $sql .= 'AND (o.datelastmodified > DATE_SUB(NOW(), INTERVAL ' . $days . ' DAY)) ';
 		$sql .= 'ORDER BY o.datelastmodified DESC ';
-		if(!$days && !$limit) $limit = '100';
-		if($limit && is_numeric($limit)) $sql .= 'LIMIT '.$limit;
+		if (!$days && !$limit) $limit = '100';
+		if ($limit && is_numeric($limit)) $sql .= 'LIMIT ' . $limit;
 		$rs = $this->conn->query($sql);
 		//echo $sql;
-		while($r = $rs->fetch_object()){
+		while ($r = $rs->fetch_object()) {
 			$itemElem = $newDoc->createElement('item');
 			$channelElem->appendChild($itemElem);
 
 			$itemTitleElem = $newDoc->createElement('title');
-			$titleStr = $r->sciname.' - '.$r->recordedby.' '.($r->recordnumber?'#'.$r->recordnumber:'');
+			$titleStr = $r->sciname . ' - ' . $r->recordedby . ' ' . ($r->recordnumber ? '#' . $r->recordnumber : '');
 			$itemTitleElem->appendChild($newDoc->createTextNode($titleStr));
 			$itemElem->appendChild($itemTitleElem);
-			$collLinkElem = $newDoc->createElement('collectionName',$r->collectionname.' ('.$r->instcode.')');
+			$collLinkElem = $newDoc->createElement('collectionName', $r->collectionname . ' (' . $r->instcode . ')');
 			$itemElem->appendChild($collLinkElem);
 			$catalogLinkElem = $newDoc->createElement('catalogNumber', $r->catalognumber ?? '');
 			$itemElem->appendChild($catalogLinkElem);
 
-			if($r->guidtarget){
+			if ($r->guidtarget) {
 				$occID = $r->recordID;
-				if($r->guidtarget == 'occurrenceId'){
+				if ($r->guidtarget == 'occurrenceId') {
 					$occID = $r->occurrenceid;
 				}
-				if($r->guidtarget == 'catalogNumber'){
+				if ($r->guidtarget == 'catalogNumber') {
 					$occID = $r->catalognumber;
 				}
 				$guidLinkElem = $newDoc->createElement('occurrenceID', $occID ?? '');
@@ -337,36 +349,35 @@ class OccurrenceDownload{
 			}
 
 			$itemLinkElem = $newDoc->createElement('link');
-			$itemLinkElem->appendChild($newDoc->createTextNode($serverDomain.'/collections/individual/index.php?occid='.$r->occid));
+			$itemLinkElem->appendChild($newDoc->createTextNode($serverDomain . '/collections/individual/index.php?occid=' . $r->occid));
 			$itemElem->appendChild($itemLinkElem);
 
 			$tnUrl = $r->thumbnailurl;
-			if(substr($tnUrl,0,1) == '/'){
-				if(isset($GLOBALS['MEDIA_DOMAIN']) && $GLOBALS['MEDIA_DOMAIN']){
-					$tnUrl = $GLOBALS['MEDIA_DOMAIN'].$tnUrl;
-				}
-				else{
-					$tnUrl = $serverDomain.$tnUrl;
+			if (substr($tnUrl, 0, 1) == '/') {
+				if (isset($GLOBALS['MEDIA_DOMAIN']) && $GLOBALS['MEDIA_DOMAIN']) {
+					$tnUrl = $GLOBALS['MEDIA_DOMAIN'] . $tnUrl;
+				} else {
+					$tnUrl = $serverDomain . $tnUrl;
 				}
 			}
 			$tnLinkElem = $newDoc->createElement('thumbnailUri');
 			$tnLinkElem->appendChild($newDoc->createTextNode($tnUrl));
 			$itemElem->appendChild($tnLinkElem);
 
-			$latLinkElem = $newDoc->createElement('decimalLatitude',$r->decimallatitude ?? '');
+			$latLinkElem = $newDoc->createElement('decimalLatitude', $r->decimallatitude ?? '');
 			$itemElem->appendChild($latLinkElem);
-			$lngLinkElem = $newDoc->createElement('decimalLongitude',$r->decimallongitude ?? '');
+			$lngLinkElem = $newDoc->createElement('decimalLongitude', $r->decimallongitude ?? '');
 			$itemElem->appendChild($lngLinkElem);
 			$eventDateLinkElem = $newDoc->createElement('verbatimEventDate');
 			$eventDateLinkElem->appendChild($newDoc->createTextNode($r->eventdate ?? ''));
 			$itemElem->appendChild($eventDateLinkElem);
 			//$pubDateLinkElem = $newDoc->createElement('pubDate',$r->datelastmodified);
-			$pubDateLinkElem = $newDoc->createElement('pubDate',gmdate(DATE_RSS, strtotime($r->datelastmodified)));
+			$pubDateLinkElem = $newDoc->createElement('pubDate', gmdate(DATE_RSS, strtotime($r->datelastmodified)));
 			$itemElem->appendChild($pubDateLinkElem);
 			$creatorLinkElem = $newDoc->createElement('creator', $r->recordenteredby ?? '');
 			$itemElem->appendChild($creatorLinkElem);
 
-			if($r->genericcolumn2){
+			if ($r->genericcolumn2) {
 				$ipAddr = $newDoc->createElement('ipAddress', $r->genericcolumn2 ?? '');
 				$itemElem->appendChild($ipAddr);
 				//<decimalLatitudeTranscribing>Transcription Lat</decimalLatitudeTranscribing>
@@ -376,140 +387,129 @@ class OccurrenceDownload{
 		return $newDoc->saveXML();
 	}
 
-	public function setSqlWhere($sqlStr){
+	public function setSqlWhere($sqlStr)
+	{
 		$this->sqlWhere = $sqlStr;
 	}
 
-	public function addCondition($field, $cond, $value = ''){
-		if($field){
-			if(!trim($cond)) $cond = 'EQUALS';
-			if($value || ($cond == 'IS_NULL' || $cond == 'NOT_NULL')){
+	public function addCondition($field, $cond, $value = '')
+	{
+		if ($field) {
+			if (!trim($cond)) $cond = 'EQUALS';
+			if ($value || ($cond == 'IS_NULL' || $cond == 'NOT_NULL')) {
 				$this->conditionArr[$field][$cond][] = $this->cleanInStr($value);
 			}
 		}
 	}
 
-	private function applyConditions(){
+	private function applyConditions()
+	{
 		$sqlFrag = '';
-		if($this->conditionArr){
-			foreach($this->conditionArr as $field => $condArr){
+		if ($this->conditionArr) {
+			foreach ($this->conditionArr as $field => $condArr) {
 				$sqlFrag2 = '';
-				foreach($condArr as $cond => $valueArr){
+				foreach ($condArr as $cond => $valueArr) {
 					$sqlFrag2 .= $this->getSqlFragment($field, $cond, $valueArr);
 				}
-				$sqlFrag .= 'AND ('.substr($sqlFrag2,3).') ';
+				$sqlFrag .= 'AND (' . substr($sqlFrag2, 3) . ') ';
 			}
-
 		}
-		if($sqlFrag) $this->sqlWhere .= $sqlFrag;
-		if($this->sqlWhere){
+		if ($sqlFrag) $this->sqlWhere .= $sqlFrag;
+		if ($this->sqlWhere) {
 			//Make sure it starts with WHERE
-			if(substr($this->sqlWhere,0,4) == 'AND '){
-				$this->sqlWhere = 'WHERE'.substr($this->sqlWhere,3);
-			}
-			elseif(substr($this->sqlWhere,0,6) != 'WHERE '){
-				$this->sqlWhere = 'WHERE '.$this->sqlWhere;
+			if (substr($this->sqlWhere, 0, 4) == 'AND ') {
+				$this->sqlWhere = 'WHERE' . substr($this->sqlWhere, 3);
+			} elseif (substr($this->sqlWhere, 0, 6) != 'WHERE ') {
+				$this->sqlWhere = 'WHERE ' . $this->sqlWhere;
 			}
 		}
 	}
 
-	private function getSqlFragment($field, $cond, $valueArr){
+	private function getSqlFragment($field, $cond, $valueArr)
+	{
 		$sqlFrag = '';
-		if($cond == 'IS_NULL'){
-			$sqlFrag .= 'OR o.'.$field.' IS NULL ';
-		}
-		elseif($cond == 'NOT_NULL'){
-			$sqlFrag .= 'OR o.'.$field.' IS NOT NULL ';
-		}
-		elseif($cond == 'EQUALS'){
-			$sqlFrag .= 'OR o.'.$field.' IN("'.implode('","',$valueArr).'") ';
-		}
-		elseif($cond == 'NOT_EQUALS'){
-			$sqlFrag .= 'OR o.'.$field.' NOT IN("'.implode('","',$valueArr).'") OR o.'.$field.' IS NULL ';
-		}
-		else{
-			foreach($valueArr as $value){
-				if($cond == 'STARTS_WITH'){
-					$sqlFrag .= 'OR o.'.$field.' LIKE "'.$value.'%" ';
-				}
-				elseif($cond == 'LIKE'){
-					$sqlFrag .= 'OR o.'.$field.' LIKE "%'.$value.'%" ';
-				}
-				elseif($cond == 'NOT_LIKE'){
-					$sqlFrag .= 'OR o.'.$field.' NOT LIKE "%'.$value.'%" OR o.'.$field.' IS NULL ';
-				}
-				elseif($cond == 'LESS_THAN'){
-					$sqlFrag .= 'OR o.'.$field.' < "'.$value.'" ';
-				}
-				elseif($cond == 'GREATER_THAN'){
-					$sqlFrag .= 'OR o.'.$field.' > "'.$value.'" ';
+		if ($cond == 'IS_NULL') {
+			$sqlFrag .= 'OR o.' . $field . ' IS NULL ';
+		} elseif ($cond == 'NOT_NULL') {
+			$sqlFrag .= 'OR o.' . $field . ' IS NOT NULL ';
+		} elseif ($cond == 'EQUALS') {
+			$sqlFrag .= 'OR o.' . $field . ' IN("' . implode('","', $valueArr) . '") ';
+		} elseif ($cond == 'NOT_EQUALS') {
+			$sqlFrag .= 'OR o.' . $field . ' NOT IN("' . implode('","', $valueArr) . '") OR o.' . $field . ' IS NULL ';
+		} else {
+			foreach ($valueArr as $value) {
+				if ($cond == 'STARTS_WITH') {
+					$sqlFrag .= 'OR o.' . $field . ' LIKE "' . $value . '%" ';
+				} elseif ($cond == 'LIKE') {
+					$sqlFrag .= 'OR o.' . $field . ' LIKE "%' . $value . '%" ';
+				} elseif ($cond == 'NOT_LIKE') {
+					$sqlFrag .= 'OR o.' . $field . ' NOT LIKE "%' . $value . '%" OR o.' . $field . ' IS NULL ';
+				} elseif ($cond == 'LESS_THAN') {
+					$sqlFrag .= 'OR o.' . $field . ' < "' . $value . '" ';
+				} elseif ($cond == 'GREATER_THAN') {
+					$sqlFrag .= 'OR o.' . $field . ' > "' . $value . '" ';
 				}
 			}
 		}
 		return $sqlFrag;
 	}
 
-	private function getSql(){
+	private function getSql()
+	{
 		$sql = '';
-		if($this->schemaType == 'checklist'){
-			if($this->taxonFilter){
-				$sql = 'SELECT DISTINCT ts.family, t.sciname AS scientificName, CONCAT_WS(" ",t.unitind1,t.unitname1) AS genus, '.
-					'CONCAT_WS(" ",t.unitind2,t.unitname2) AS specificEpithet, t.unitind3 AS taxonRank, t.unitname3 AS infraSpecificEpithet, t.author AS scientificNameAuthorship '.
-					'FROM omoccurrences o INNER JOIN taxstatus ts ON o.TidInterpreted = ts.Tid '.
+		if ($this->schemaType == 'checklist') {
+			if ($this->taxonFilter) {
+				$sql = 'SELECT DISTINCT ts.family, t.sciname AS scientificName, CONCAT_WS(" ",t.unitind1,t.unitname1) AS genus, ' .
+					'CONCAT_WS(" ",t.unitind2,t.unitname2) AS specificEpithet, t.unitind3 AS taxonRank, t.unitname3 AS infraSpecificEpithet, t.author AS scientificNameAuthorship ' .
+					'FROM omoccurrences o INNER JOIN taxstatus ts ON o.TidInterpreted = ts.Tid ' .
 					'INNER JOIN taxa t ON ts.TidAccepted = t.Tid ';
 				$sql .= $this->setTableJoins($this->sqlWhere);
-				$sql .= $this->sqlWhere.'AND t.RankId > 140 AND (ts.taxauthid = '.$this->taxonFilter.') ';
-				if($this->redactLocalities){
-					if($this->rareReaderArr){
-						$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL OR c.collid IN('.implode(',',$this->rareReaderArr).')) ';
-					}
-					else{
+				$sql .= $this->sqlWhere . 'AND t.RankId > 140 AND (ts.taxauthid = ' . $this->taxonFilter . ') ';
+				if ($this->redactLocalities) {
+					if ($this->rareReaderArr) {
+						$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL OR c.collid IN(' . implode(',', $this->rareReaderArr) . ')) ';
+					} else {
 						$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL) ';
 					}
 				}
 				$sql .= 'ORDER BY ts.family, t.SciName ';
-			}
-			else{
-				$sql = 'SELECT DISTINCT IFNULL(o.family,"not entered") AS family, o.sciname, CONCAT_WS(" ",t.unitind1,t.unitname1) AS genus, '.
-					'CONCAT_WS(" ",t.unitind2,t.unitname2) AS specificEpithet, t.unitind3 AS taxonRank, t.unitname3 AS infraSpecificEpithet, t.author AS scientificNameAuthorship '.
+			} else {
+				$sql = 'SELECT DISTINCT IFNULL(o.family,"not entered") AS family, o.sciname, CONCAT_WS(" ",t.unitind1,t.unitname1) AS genus, ' .
+					'CONCAT_WS(" ",t.unitind2,t.unitname2) AS specificEpithet, t.unitind3 AS taxonRank, t.unitname3 AS infraSpecificEpithet, t.author AS scientificNameAuthorship ' .
 					'FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.tid LEFT JOIN taxstatus ts ON t.tid = ts.tid ';
 				$sql .= $this->setTableJoins($this->sqlWhere);
-				$sql .= $this->sqlWhere.'AND o.SciName NOT LIKE "%aceae" AND o.SciName NOT LIKE "%idea" AND o.SciName NOT IN ("Plantae","Polypodiophyta") ';
-				if($this->redactLocalities){
-					if($this->rareReaderArr){
-						$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL OR c.collid IN('.implode(',',$this->rareReaderArr).')) ';
-					}
-					else{
+				$sql .= $this->sqlWhere . 'AND o.SciName NOT LIKE "%aceae" AND o.SciName NOT LIKE "%idea" AND o.SciName NOT IN ("Plantae","Polypodiophyta") ';
+				if ($this->redactLocalities) {
+					if ($this->rareReaderArr) {
+						$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL OR c.collid IN(' . implode(',', $this->rareReaderArr) . ')) ';
+					} else {
 						$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL) ';
 					}
 				}
 				$sql .= 'ORDER BY IFNULL(IFNULL(ts.family, o.family),"not entered"), o.SciName ';
 			}
-		}
-		elseif($this->schemaType == 'georef'){
-			$sql = 'SELECT IFNULL(o.institutionCode,c.institutionCode) AS institutionCode, IFNULL(o.collectionCode,c.collectionCode) AS collectionCode, '.
-				'o.catalogNumber, o.occurrenceId, o.decimalLatitude, o.decimalLongitude, '.
+		} elseif ($this->schemaType == 'georef') {
+			$sql = 'SELECT IFNULL(o.institutionCode,c.institutionCode) AS institutionCode, IFNULL(o.collectionCode,c.collectionCode) AS collectionCode, ' .
+				'o.catalogNumber, o.occurrenceId, o.decimalLatitude, o.decimalLongitude, ' .
 				'o.geodeticDatum, o.coordinateUncertaintyInMeters, o.verbatimCoordinates, ';
-			if($this->extended){
-				$sql .= 'o.georeferencedBy, o.georeferenceProtocol, o.georeferenceSources, o.georeferenceVerificationStatus, '.
-					'o.georeferenceRemarks, o.minimumElevationInMeters, o.maximumElevationInMeters, o.verbatimElevation, '.
-					'o.localitySecurity, o.localitySecurityReason, IFNULL(o.modified,o.datelastmodified) AS modified, '.
+			if ($this->extended) {
+				$sql .= 'o.georeferencedBy, o.georeferenceProtocol, o.georeferenceSources, o.georeferenceVerificationStatus, ' .
+					'o.georeferenceRemarks, o.minimumElevationInMeters, o.maximumElevationInMeters, o.verbatimElevation, ' .
+					'o.localitySecurity, o.localitySecurityReason, IFNULL(o.modified,o.datelastmodified) AS modified, ' .
 					'o.processingStatus, o.collId, o.dbpk AS sourcePrimaryKey, o.occid, CONCAT("urn:uuid:", o.recordID) AS recordID ';
-			}
-			else{
-				$sql .= 'o.georeferenceProtocol, o.georeferenceSources, o.georeferenceVerificationStatus, '.
-					'o.georeferenceRemarks, o.minimumElevationInMeters, o.maximumElevationInMeters, o.verbatimElevation, '.
+			} else {
+				$sql .= 'o.georeferenceProtocol, o.georeferenceSources, o.georeferenceVerificationStatus, ' .
+					'o.georeferenceRemarks, o.minimumElevationInMeters, o.maximumElevationInMeters, o.verbatimElevation, ' .
 					'IFNULL(o.modified,o.datelastmodified) AS modified, o.occid, CONCAT("urn:uuid:", o.recordID) AS recordID ';
 			}
 			$sql .= 'FROM omcollections c INNER JOIN omoccurrences o ON c.collid = o.collid LEFT JOIN taxa t ON o.tidinterpreted = t.tid LEFT JOIN taxstatus ts ON t.tid = ts.tid ';
 			$sql .= $this->setTableJoins($this->sqlWhere);
 			$this->applyConditions();
 			$sql .= $this->sqlWhere;
-			if($this->redactLocalities){
-				if($this->rareReaderArr){
-					$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL OR c.collid IN('.implode(',',$this->rareReaderArr).')) ';
-				}
-				else{
+			if ($this->redactLocalities) {
+				if ($this->rareReaderArr) {
+					$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL OR c.collid IN(' . implode(',', $this->rareReaderArr) . ')) ';
+				} else {
 					$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL) ';
 				}
 			}
@@ -519,79 +519,78 @@ class OccurrenceDownload{
 		return $sql;
 	}
 
-	private function setTableJoins($sqlWhere){
+	private function setTableJoins($sqlWhere)
+	{
 		$sqlJoin = '';
-		if(strpos($sqlWhere,'e.taxauthid')) $sqlJoin .= 'INNER JOIN taxaenumtree e ON o.tidinterpreted = e.tid ';
-		if(strpos($sqlWhere,'ctl.clid')) $sqlJoin .= 'INNER JOIN fmvouchers v ON o.occid = v.occid INNER JOIN fmchklsttaxalink ctl ON v.clTaxaID = ctl.clTaxaID ';
-		if(strpos($sqlWhere,'p.lngLatPoint')) $sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
+		if (strpos($sqlWhere, 'e.taxauthid')) $sqlJoin .= 'INNER JOIN taxaenumtree e ON o.tidinterpreted = e.tid ';
+		if (strpos($sqlWhere, 'ctl.clid')) $sqlJoin .= 'INNER JOIN fmvouchers v ON o.occid = v.occid INNER JOIN fmchklsttaxalink ctl ON v.clTaxaID = ctl.clTaxaID ';
+		if (strpos($sqlWhere, 'p.lngLatPoint')) $sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
+		if (strpos($sqlWhere, 'ds.datasetid')) $sqlJoin .= 'INNER JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
 		return $sqlJoin;
 	}
 
-	private function getOutputFilePath(){
+	private function getOutputFilePath()
+	{
 		$retStr = $GLOBALS['TEMP_DIR_ROOT'];
-		if(!$retStr){
+		if (!$retStr) {
 			$retStr = $GLOBALS['SERVER_ROOT'];
-			if(substr($retStr,-1) != '/' && substr($retStr,-1) != "\\") $retStr .= '/';
+			if (substr($retStr, -1) != '/' && substr($retStr, -1) != "\\") $retStr .= '/';
 			$retStr .= 'temp/';
 		}
-		if(substr($retStr,-1) != '/' && substr($retStr,-1) != "\\") $retStr .= '/';
-		if(file_exists($retStr.'downloads/')){
+		if (substr($retStr, -1) != '/' && substr($retStr, -1) != "\\") $retStr .= '/';
+		if (file_exists($retStr . 'downloads/')) {
 			$retStr .= 'downloads/';
 		}
 		return $retStr;
 	}
 
-	private function getOutputFileName(){
+	private function getOutputFileName()
+	{
 		$retStr = '';
-		$fileName = str_replace(Array(".",":"),"",$GLOBALS['DEFAULT_TITLE']);
-		if(stripos($fileName,'the ') === 0) $fileName = substr($fileName,4);
-		if(strlen($fileName) > 15){
-			if($p = strpos($fileName,'(')) $fileName = substr($filename,0,$p);
-			if(strpos($fileName,' ')){
-				$nameArr = explode(" ",trim($fileName));
+		$fileName = str_replace(array(".", ":"), "", $GLOBALS['DEFAULT_TITLE']);
+		if (stripos($fileName, 'the ') === 0) $fileName = substr($fileName, 4);
+		if (strlen($fileName) > 15) {
+			if ($p = strpos($fileName, '(')) $fileName = substr($filename, 0, $p);
+			if (strpos($fileName, ' ')) {
+				$nameArr = explode(" ", trim($fileName));
 				$fileName = '';
-				foreach($nameArr as $v){
-					$fileName .= substr($v,0,1);
+				foreach ($nameArr as $v) {
+					$fileName .= substr($v, 0, 1);
 				}
-			}
-			else{
-				$fileName = substr($fileName,0,15);
+			} else {
+				$fileName = substr($fileName, 0, 15);
 			}
 		}
-		if($fileName){
-			$retStr = str_replace(" ","",$fileName).'_';
-		}
-		elseif($this->schemaType == 'georef'){
+		if ($fileName) {
+			$retStr = str_replace(" ", "", $fileName) . '_';
+		} elseif ($this->schemaType == 'georef') {
 			$retStr .= "Georef_";
-		}
-		elseif($this->schemaType == 'checklist'){
+		} elseif ($this->schemaType == 'checklist') {
 			$retStr .= "Checklist_";
 		}
-		$retStr .= '_'.time();
+		$retStr .= '_' . time();
 		//Set extension
-		if($this->zipFile){
+		if ($this->zipFile) {
 			$retStr .= ".zip";
-		}
-		elseif($this->delimiter=="\t"){
+		} elseif ($this->delimiter == "\t") {
 			$retStr .= ".tab";
-		}
-		elseif($this->delimiter==','){
+		} elseif ($this->delimiter == ',') {
 			$retStr .= ".csv";
-		}
-		else{
+		} else {
 			$retStr .= ".txt";
 		}
 		return $retStr;
 	}
 
-	public function getCollectionMetadata($collid){
+	public function getCollectionMetadata($collid)
+	{
 		$retArr = array();
-		if(is_numeric($collid)){
-			$sql = 'SELECT institutioncode, collectioncode, collectionname, managementtype '.
-					'FROM omcollections '.
-					'WHERE collid = '.$collid;
+		if (is_numeric($collid)) {
+			$sql = 'SELECT institutioncode, collectioncode, collectionname, managementtype ' .
+				'FROM omcollections ' .
+				'WHERE collid = ' . $collid;
 			$rs = $this->conn->query($sql);
-			if($r = $rs->fetch_object()){
+			if ($r = $rs->fetch_object()) {
 				$retArr['instcode'] = $r->institutioncode;
 				$retArr['collcode'] = $r->collectioncode;
 				$retArr['collname'] = $r->collectionname;
@@ -602,32 +601,34 @@ class OccurrenceDownload{
 		return $retArr;
 	}
 
-	public function getProcessingStatusList($collid = 0){
+	public function getProcessingStatusList($collid = 0)
+	{
 		$psArr = array();
 		$sql = 'SELECT DISTINCT processingstatus FROM omoccurrences ';
-		if($collid){
-			$sql .= 'WHERE collid = '.$collid;
+		if ($collid) {
+			$sql .= 'WHERE collid = ' . $collid;
 		}
 		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			if($r->processingstatus) $psArr[] = $r->processingstatus;
+		while ($r = $rs->fetch_object()) {
+			if ($r->processingstatus) $psArr[] = $r->processingstatus;
 		}
 		$rs->free();
 		//Special sort
-		$templateArr = array('unprocessed','unprocessed-nlp','pending duplicate','stage 1','stage 2','stage 3','pending review','reviewed');
+		$templateArr = array('unprocessed', 'unprocessed-nlp', 'pending duplicate', 'stage 1', 'stage 2', 'stage 3', 'pending review', 'reviewed');
 		//Get all active processing statuses and then merge all extra statuses that may exists for one reason or another
-		return array_merge(array_intersect($templateArr,$psArr),array_diff($psArr,$templateArr));
+		return array_merge(array_intersect($templateArr, $psArr), array_diff($psArr, $templateArr));
 	}
 
-	public function getAttributeTraits($collid = ''){
+	public function getAttributeTraits($collid = '')
+	{
 		$retArr = array();
-		$sql = 'SELECT DISTINCT t.traitid, t.traitname, s.stateid, s.statename '.
-			'FROM tmtraits t INNER JOIN tmstates s ON t.traitid = s.traitid '.
-			'INNER JOIN tmattributes a ON s.stateid = a.stateid '.
+		$sql = 'SELECT DISTINCT t.traitid, t.traitname, s.stateid, s.statename ' .
+			'FROM tmtraits t INNER JOIN tmstates s ON t.traitid = s.traitid ' .
+			'INNER JOIN tmattributes a ON s.stateid = a.stateid ' .
 			'INNER JOIN omoccurrences o ON a.occid = o.occid ';
-		if($collid) $sql .= 'WHERE o.collid = '.$collid;
+		if ($collid) $sql .= 'WHERE o.collid = ' . $collid;
 		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
+		while ($r = $rs->fetch_object()) {
 			$retArr[$r->traitid]['name'] = $r->traitname;
 			$retArr[$r->traitid]['state'][$r->stateid] = $r->statename;
 		}
@@ -635,115 +636,125 @@ class OccurrenceDownload{
 		return $retArr;
 	}
 
-	public function hasMaterialSamples($collid = 0){
+	public function hasMaterialSamples($collid = 0)
+	{
 		$bool = false;
 		$sql = 'SELECT occid FROM ommaterialsample LIMIT 1';
-		if($collid && is_numeric($collid)){
-			$sql .= 'SELECT o.occid FROM ommaterialsample m INNER JOIN omoccurrences o ON m.occid = o.occid WHERE (o.collid = '.$collid.') LIMIT 1';
+		if ($collid && is_numeric($collid)) {
+			$sql .= 'SELECT o.occid FROM ommaterialsample m INNER JOIN omoccurrences o ON m.occid = o.occid WHERE (o.collid = ' . $collid . ') LIMIT 1';
 		}
-		if($rs = $this->conn->query($sql)){
-			if($rs->num_rows) $bool = true;
+		if ($rs = $this->conn->query($sql)) {
+			if ($rs->num_rows) $bool = true;
 			$rs->free();
 		}
 		return $bool;
 	}
 
 	//General setter, getters, and other configurations
-	public function setSchemaType($t){
+	public function setSchemaType($t)
+	{
 		$this->schemaType = $t;
 	}
 
-	public function setExtended($e){
+	public function setExtended($e)
+	{
 		$this->extended = $e;
 	}
 
-	public function setDelimiter($d){
-		if($d == 'tab' || $d == "\t"){
+	public function setDelimiter($d)
+	{
+		if ($d == 'tab' || $d == "\t") {
 			$this->delimiter = "\t";
-		}
-		elseif($d == 'csv' || $d == 'comma' || $d == ','){
+		} elseif ($d == 'csv' || $d == 'comma' || $d == ',') {
 			$this->delimiter = ",";
-		}
-		else{
+		} else {
 			$this->delimiter = $d;
 		}
 	}
 
-	private function getContentType(){
-		if($this->zipFile){
-			return 'application/zip; charset='.$this->charSetOut;
-		}
-		elseif($this->delimiter == 'comma' || $this->delimiter == ','){
-			return 'text/csv; charset='.$this->charSetOut;
-		}
-		else{
-			return 'text/html; charset='.$this->charSetOut;
+	private function getContentType()
+	{
+		if ($this->zipFile) {
+			return 'application/zip; charset=' . $this->charSetOut;
+		} elseif ($this->delimiter == 'comma' || $this->delimiter == ',') {
+			return 'text/csv; charset=' . $this->charSetOut;
+		} else {
+			return 'text/html; charset=' . $this->charSetOut;
 		}
 	}
 
-	public function setCharSetOut($cs){
+	public function setCharSetOut($cs)
+	{
 		$cs = strtoupper($cs);
-		if($cs == 'ISO-8859-1' || $cs == 'UTF-8'){
+		if ($cs == 'ISO-8859-1' || $cs == 'UTF-8') {
 			$this->charSetOut = $cs;
 		}
 	}
 
-	public function setZipFile($c){
+	public function setZipFile($c)
+	{
 		$this->zipFile = $c;
 	}
 
-	public function getErrorArr(){
+	public function getErrorArr()
+	{
 		return $this->errorArr;
 	}
 
-	public function setRedactLocalities($cond){
-		if($cond == 0 || $cond === false){
+	public function setRedactLocalities($cond)
+	{
+		if ($cond == 0 || $cond === false) {
 			$this->redactLocalities = false;
 		}
 	}
 
-	public function setTaxonFilter($filter){
-		if(is_numeric($filter)){
+	public function setTaxonFilter($filter)
+	{
+		if (is_numeric($filter)) {
 			$this->taxonFilter = $filter;
 		}
 	}
 
-	public function setIsPublicDownload(){
+	public function setIsPublicDownload()
+	{
 		$this->isPublicDownload = true;
 	}
 
 	//Misc functions
-	private function stripSensitiveFields(&$row){
-		if($row["localitySecurity"] == 1 && $this->redactLocalities && !in_array($row["collid"],$this->rareReaderArr)){
-			foreach($this->securityArr as $fieldName){
+	private function stripSensitiveFields(&$row)
+	{
+		if ($row["localitySecurity"] == 1 && $this->redactLocalities && !in_array($row["collid"], $this->rareReaderArr)) {
+			foreach ($this->securityArr as $fieldName) {
 				$row[$fieldName] = '[redacted]';
 			}
 		}
 	}
 
-	private function encodeArr(&$inArr){
-		if($this->charSetSource && $this->charSetOut != $this->charSetSource){
-			foreach($inArr as $k => $v){
+	private function encodeArr(&$inArr)
+	{
+		if ($this->charSetSource && $this->charSetOut != $this->charSetSource) {
+			foreach ($inArr as $k => $v) {
 				$inArr[$k] = $this->encodeStr($v);
 			}
 		}
 	}
 
-	private function encodeStr($inStr){
+	private function encodeStr($inStr)
+	{
 		$retStr = $inStr;
-		if($retStr){
-			if($this->charSetOut && $this->charSetOut != $this->charSetSource){
+		if ($retStr) {
+			if ($this->charSetOut && $this->charSetOut != $this->charSetSource) {
 				$retStr = mb_convert_encoding($retStr, $this->charSetOut, mb_detect_encoding($retStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 			}
 		}
 		return $retStr;
 	}
 
-	private function cleanInStr($inStr){
+	private function cleanInStr($inStr)
+	{
 		$retStr = trim($inStr);
-		$retStr = preg_replace('/\s\s+/', ' ',$retStr);
+		$retStr = preg_replace('/\s\s+/', ' ', $retStr);
 		$retStr = $this->conn->real_escape_string($retStr);
 		return $retStr;
 	}
 }
-?>
