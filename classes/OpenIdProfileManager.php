@@ -143,6 +143,7 @@ class OpenIdProfileManager extends ProfileManager
 
 	public function forceLogout($targetSessionId)
 	{
+		session_write_close();
 		session_id($targetSessionId);
 		session_start();
 		$_SESSION['force_logout'] = true;
