@@ -60,6 +60,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 	<script src="../../js/symb/collections.imageoccursubmit.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.tools.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/symb/shared.js?ver=141119" type="text/javascript"></script>
+	<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
 	<script type="text/javascript">
 	function validateImgOccurForm(f){
 		if(f.imgfile.value == "" && f.imgurl.value == ""){
@@ -250,6 +251,19 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 		}
 		?>
 	</div>
+		<script>		
+			window.initLocalitySuggest({
+				country: {
+					id: 'country',
+				},
+				state_province: {
+					id: 'state',
+				},
+				county: {
+					id: 'county',
+				},
+			})
+		</script>
 	<?php
 	include($SERVER_ROOT.'/includes/footer.php');
 	?>

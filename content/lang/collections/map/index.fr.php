@@ -7,7 +7,9 @@ Translated by: Google Translate (2024-09-13)
 */
 include_once($SERVER_ROOT.'/content/lang/collections/harvestparams.fr.php');
 include_once('mapshared.fr.php');
+
 $LANG['MAP_INTERFACE'] = 'Interface Cartographique';
+$LANG['HOME'] = 'Accueil';
 $LANG['SEARCH_CRITERIA'] = 'Critères et Options de Recherche';
 $LANG['CRITERIA'] = 'Critères';
 $LANG['COLLECTIONS'] = 'Collections';
@@ -29,6 +31,7 @@ $LANG['CLUSTERING'] = 'Clustering';
 $LANG['GRID_SIZE'] = 'Taille de la grille';
 $LANG['CLUSTER_SIZE'] = 'Taille minimale du cluster';
 $LANG['TURN_OFF_CLUSTERING'] = 'Désactiver le Clustering';
+$LANG['CLUSTER_RADIUS'] = 'Rayon';
 $LANG['REFRESH_MAP'] = 'Actualiser la carte';
 $LANG['HEATMAP'] = 'Carte de chaleur';
 $LANG['TURN_ON_HEATMAP'] = 'Activer la carte thermique';
@@ -37,8 +40,6 @@ $LANG['MIN_DENSITY'] = 'Densité Minimale';
 $LANG['MAX_DENSITY'] = 'Densité Maximale';
 $LANG['RECORDS_TAXA'] = 'Registres et Taxons';
 $LANG['RECORDS'] = 'Registres';
-$LANG['INTERNAL_RECORDS'] = 'Registres Internes';
-$LANG['EXTERNAL_RECORDS'] = 'Registres Externes';
 $LANG['PORTAL_LIST'] = 'Liste des portails';
 $LANG['TAXA_LIST'] = 'Liste des taxons';
 $LANG['COLLECTION'] = 'Collection';
@@ -66,5 +67,4 @@ $LANG['SOUTH'] = 'S';
 $LANG['EAST'] = 'E';
 $LANG['WEST'] = 'W';
 $LANG['FAILED_TO_LOAD_OCCR_DATA'] = 'Échec du chargement des données d\'occurrence';
-
 ?>

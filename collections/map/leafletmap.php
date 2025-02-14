@@ -163,7 +163,8 @@ if(isset($MAPPING_BOUNDARIES)){
             }
 
             let taxaCluster = L.markerClusterGroup({
-               iconCreateFunction: colorCluster
+               iconCreateFunction: colorCluster,
+               tid: tid // Save the taxon ID to the cluster
             });
 
             for(let groupId of Object.keys(colorGroup.points)) {
@@ -171,7 +172,7 @@ if(isset($MAPPING_BOUNDARIES)){
                for(let occid of Object.keys(taxaGroup)) {
                   const occur = taxaGroup[occid];
                   const latlng = [parseFloat(occur.lat), parseFloat(occur.lng)];
-                  let displayStr = `${occur.instcode}${occur.collcode}`;
+                  let displayStr = `${occur.instcode? occur.instcode: ''}${occur.collcode? occur.collcode: ''}`;
 
                   if(!checkLatLng(latlng)) continue;
 
@@ -211,6 +212,8 @@ if(isset($MAPPING_BOUNDARIES)){
                }
             }
             map.mapLayer.addLayer(taxaCluster);
+
+            map.taxaClusters[tid] = taxaCluster;
          }
          map.mapLayer.fitBounds(bounds.getBounds());
       }

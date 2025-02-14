@@ -49,94 +49,6 @@ class AssociationManager extends OccurrenceTaxaManager{
 	}
 
 
-	public function establishInverseRelationshipRecords(){
-		$sql = "SELECT * FROM omoccurassociations where occid IS NOT NULL AND occidAssociate IS NOT NULL;";
-		if($statement = $this->conn->prepare($sql)){
-			$statement->execute();
-			$result = $statement->get_result();
-			while ($row = $result->fetch_assoc()) {
-				// $returnVal = $row['inverseRelationship'];
-				if(!$this->hasInverseRecord($row)){
-					$this->createInverseRecord($row);
-				}
-				// if that record has an inverse present, do nothing
-				// else, create an inverse record
-			}
-			$statement->close();
-			// return $returnVal;
-		}else{
-			return '';
-		}
-	}
-
-	private function hasInverseRecord($record){
-		// var_dump($record);
-		$sql = "SELECT * FROM omoccurassociations WHERE occidAssociate = ? AND occid = ? and relationship = ?;";
-		$recordOccid = array_key_exists('occid', $record) ? $record['occid'] : '';
-		$recordOccidAssociate = array_key_exists('occidAssociate', $record) ? $record['occidAssociate'] : '';
-		$relationship = array_key_exists('relationship', $record) ? $record['relationship'] : '';
-		$inverseRelationship = $this->getInverseRelationshipOf($relationship);
-		if($statement = $this->conn->prepare($sql)){
-			$statement->bind_param('iis', $recordOccid, $recordOccidAssociate, $inverseRelationship);
-			$statement->execute();
-			$result = $statement->get_result();
-			$returnVal = false;
-			if ($row = $result->fetch_assoc()) {
-				// $returnVal = $row['inverseRelationship'];
-				$returnVal = true;
-			}
-			$statement->close();
-			return $returnVal;
-		}else{
-			return '';
-		}
-	}
-	public function createInverseRecord($record){
-		$recordOccid = array_key_exists('occid', $record) ? $record['occid'] : '';
-		$recordOccidAssociate = array_key_exists('occidAssociate', $record) ? $record['occidAssociate'] : '';
-		$relationship = array_key_exists('relationship', $record) ? $record['relationship'] : '';
-		$inverseRelationship = $this->getInverseRelationshipOf($relationship);
-		$verbatimsciname = $this->getCorrespondingVerbatimsciname($recordOccid);
-		$createdUid = $GLOBALS['SYMB_UID'];
-		$basisOfRecord = 'scriptGenerated';
-		$sql = 'INSERT INTO omoccurassociations(occid, occidAssociate, relationship, basisOfRecord, createdUid, verbatimsciname)';
-		$sql .= ' VALUES(?,?,?,?,?,?);';
-		$returnVal = false;
-		// $this->resetConnection();
-		$shouldCreateInverseRecord = !empty($recordOccid) && !empty($recordOccidAssociate) && !empty($relationship) && !empty($inverseRelationship) && !empty($recordOccid);
-		if($shouldCreateInverseRecord && $statement = $this->conn->prepare($sql)){
-			$statement->bind_param('iissis', $recordOccidAssociate, $recordOccid, $inverseRelationship, $basisOfRecord, $createdUid, $verbatimsciname);
-			if($statement->execute()){
-				$returnVal = true;
-			}
-			$statement->close();
-		}
-		// $this->resetConnectionToRead();
-		return $returnVal;
-	}
-
-	private function getCorrespondingVerbatimsciname($targetOccid){
-		$sql = 'SELECT sciname from omoccurrences where occid=?';
-		$returnVal = '';
-		if($statement = $this->conn->prepare($sql)){
-			$statement->bind_param('s', $targetOccid);
-			$statement->execute();
-			$result = $statement->get_result();
-			if ($row = $result->fetch_assoc()) {
- 				$returnVal = array_key_exists('sciname', $row) ? $row['sciname'] : '';
-			}
-			$statement->close();
-		}
-		return $returnVal;
-	}
-
-	// protected function resetConnection(){
-	// 	$this->conn = MySQLiConnectionFactory::getCon('write');
-	// }
-
-	// protected function resetConnectionToRead(){
-	// 	$this->conn = MySQLiConnectionFactory::getCon('readonly');
-	// }
 
 	public function getAssociatedRecords($associationArr) {
     $sql = '';
@@ -151,7 +63,6 @@ class AssociationManager extends OccurrenceTaxaManager{
         $relationshipType = (array_key_exists('relationship', $associationArr) && $associationArr['relationship'] !== 'any') ? $associationArr['relationship'] : 'IS NOT NULL';
         $relationshipStr = (array_key_exists('relationship', $associationArr) && $associationArr['relationship'] !== 'any') ? ("='" . $relationshipType . "'") : ' IS NOT NULL';
 
-        // $forwardSql = "SELECT o.occid FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid " . $familyJoinStr . " WHERE oa.relationship " . $relationshipStr . " ";
 		$forwardSql = "SELECT oa.occid FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate  LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE oa.relationship " . $relationshipStr . " ";
 		$forwardSql .= $this->getAssociatedTaxonWhereFrag($associationArr);
 
@@ -159,22 +70,9 @@ class AssociationManager extends OccurrenceTaxaManager{
         $reverseAssociationType = (array_key_exists('relationship', $associationArr) && $associationArr['relationship'] !== 'any') ? $this->getInverseRelationshipOf($relationshipType) : 'IS NOT NULL';
         $reverseRelationshipStr = (array_key_exists('relationship', $associationArr) && $associationArr['relationship'] !== 'any') ? ("='" . $reverseAssociationType . "'") : ' IS NOT NULL';
 
-        // $reverseSql = "SELECT oa.occidAssociate FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid INNER JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE oa.relationship " . $reverseRelationshipStr . " ";
 
-		// Best so
 		$reverseSql = "SELECT oa.occidAssociate FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE oa.relationship " . $reverseRelationshipStr . " ";
 
-
-		// $occurencesJoinedWithOccidOrWithOccidAssociate = "SELECT o.*, oa.occid, oa.occidAssociate FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid UNION SELECT o.* FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate";
-		// $reverseSql = "SELECT oa.occidAssociate FROM (" . $occurencesJoinedWithOccidOrWithOccidAssociate. ") LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE oa.relationship " . $reverseRelationshipStr . " ";
-
-		// $occurencesJoinedWithOccidOrWithOccidAssociate = "SELECT o.*, oa.occid AS assoc_occid, oa.occidAssociate AS assoc_occidAssociate FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid UNION SELECT o.*, oa.occid AS assoc_occid, oa.occidAssociate AS assoc_occidAssociate FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate";
-		// $reverseSql = "SELECT assoc_occidAssociate FROM (" . $occurencesJoinedWithOccidOrWithOccidAssociate . ") AS occids LEFT JOIN omoccurdeterminations od ON occids.assoc_occid = od.occid " . $familyJoinStr . " WHERE occids.relationship " . $reverseRelationshipStr . "";
-
-		// IFNULL(d.sciname, o.sciname) as sciname // TODO look into this and note the left join in the above line
-		// @TODO make sure they're (isCurrent = 1 OR (detID IS NULL AND )) determinations ... let's punt until determination stuff is stabilized?
-		// (d.isCurrent = 1 || (d.detid IS NULL AND o.sciname = "Pinus longifolia")) ... let's punt until determination stuff is stabilized?
-		// specimens indexed to taxonomic thes.
         $reverseSql .= $this->getAssociatedTaxonWhereFrag($associationArr);
 
         $sql .= "AND (o.occid IN (SELECT occid FROM ( " . $forwardSql . " UNION " . $reverseSql . " ) AS occids)";

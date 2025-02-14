@@ -137,7 +137,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 			$types .= 's';
 		}
 
-		$additionalFields= array('occid' => 'i', 'tidinterpreted' => 'i', 'caption' => 's', 'creator' => 's', 'creatoruid' => 'i', 'notes' => 's', 'copyright' => 's', 'sortoccurrence' => 'i', 'sourceurl' => 's');
+		$additionalFields= array('occid' => 'i', 'tidinterpreted' => 'i', 'caption' => 's', 'creator' => 's', 'creatorUid' => 'i', 'notes' => 's', 'copyright' => 's', 'sortOccurrence' => 'i', 'sourceurl' => 's');
 		foreach($additionalFields as $fieldName => $t){
 			if(array_key_exists($fieldName, $imgArr)){
 				if($imgArr[$fieldName]) $fieldArr[] = $imgArr[$fieldName];
@@ -408,13 +408,13 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 		}
 
 		//Set image metadata variables
-		if(array_key_exists('caption',$postArr)) $imgManager->setCaption($postArr['caption']);
-		if(array_key_exists('photographeruid',$postArr)) $imgManager->setPhotographerUid($postArr['photographeruid']);
-		if(array_key_exists('photographer',$postArr)) $imgManager->setPhotographer($postArr['photographer']);
-		if(array_key_exists('sourceurl',$postArr)) $imgManager->setSourceUrl($postArr['sourceurl']);
-		if(array_key_exists('copyright',$postArr)) $imgManager->setCopyright($postArr['copyright']);
-		if(array_key_exists('notes',$postArr)) $imgManager->setNotes($postArr['notes']);
-		if(array_key_exists('sortoccurrence',$postArr)) $imgManager->setSortOccurrence($postArr['sortoccurrence']);
+		if(!empty($postArr['caption'])) $imgManager->setCaption($postArr['caption']);
+		if(!empty($postArr['photographeruid'])) $imgManager->setPhotographerUid($postArr['photographeruid']);
+		if(!empty($postArr['photographer'])) $imgManager->setPhotographer($postArr['photographer']);
+		if(!empty($postArr['sourceurl'])) $imgManager->setSourceUrl($postArr['sourceurl']);
+		if(!empty($postArr['copyright'])) $imgManager->setCopyright($postArr['copyright']);
+		if(!empty($postArr['notes'])) $imgManager->setNotes($postArr['notes']);
+		if(!empty($postArr['sortOccurrence'])) $imgManager->setSortOccurrence($postArr['sortOccurrence']);
 		if(strpos($this->collMap['colltype'], 'Observations') !== false)  $imgManager->setSortSeq(40);
 
 		$sourceImgUri = $postArr['imgurl'];

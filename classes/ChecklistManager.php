@@ -369,7 +369,7 @@ class ChecklistManager extends Manager{
 			}
 			if($missingArr = array_diff(array_keys($this->taxaList),$matchedArr)){
 				$sql = 'SELECT m2.tid, m.url, m.thumbnailurl FROM media m INNER JOIN '.
-					'(SELECT ts1.tid, SUBSTR(MIN(CONCAT(LPAD(m.sortsequence,6,"0"),m.mediaID)),7) AS mediaID'.
+					'(SELECT ts1.tid, SUBSTR(MIN(CONCAT(LPAD(m.sortsequence,6,"0"),m.mediaID)),7) AS mediaID '.
 					'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 					'INNER JOIN media m ON ts2.tid = m.tid '.
 					'WHERE m.sortsequence < 500 AND (m.thumbnailurl IS NOT NULL) AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.tid IN('.implode(',',$missingArr).')) '.
@@ -378,7 +378,7 @@ class ChecklistManager extends Manager{
 				if($missingArr = array_diff(array_keys($this->taxaList),$matchedArr)){
 					//Get children images
 					$sql = 'SELECT DISTINCT m2.tid, m.url, m.thumbnailurl FROM media m INNER JOIN '.
-						'(SELECT ts1.parenttid AS tid, SUBSTR(MIN(CONCAT(LPAD(m.sortsequence,6,"0"),m.mediaID)),7) AS mediaID'.
+						'(SELECT ts1.parenttid AS tid, SUBSTR(MIN(CONCAT(LPAD(m.sortsequence,6,"0"),m.mediaID)),7) AS mediaID '.
 						'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 						'INNER JOIN media m ON ts2.tid = m.tid '.
 						'WHERE m.sortsequence < 500 AND (m.thumbnailurl IS NOT NULL) AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.parenttid IN('.implode(',',$missingArr).')) '.
@@ -542,31 +542,6 @@ class ChecklistManager extends Manager{
 					$rs2->free();
 				}
 				//else echo 'ERROR getting voucher coordinates: '.$this->conn->error;
-			}
-		}
-		return $retArr;
-	}
-
-	public function getPolygonCoordinates(){
-		$retArr = array();
-		if($this->clid){
-			if($this->clMetadata['dynamicsql']){
-				$sql = 'SELECT o.decimallatitude, o.decimallongitude FROM omoccurrences o ';
-				if($this->clMetadata['footprintwkt'] && substr($this->clMetadata['footprintwkt'],0,7) == 'POLYGON'){
-					$sql .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid WHERE (ST_Within(p.point,GeomFromText("'.$this->clMetadata['footprintwkt'].'"))) ';
-				}
-				else{
-					$voucherManager = new ChecklistVoucherAdmin();
-					$voucherManager->setClid($this->clid);
-					$voucherManager->setCollectionVariables();
-					$sql .= 'WHERE ('.$voucherManager->getSqlFrag().') ';
-				}
-				$sql .= 'LIMIT 50';
-				$rs = $this->conn->query($sql);
-				while($r = $rs->fetch_object()){
-					$retArr[] = $r->decimallatitude.','.$r->decimallongitude;
-				}
-				$rs->free();
 			}
 		}
 		return $retArr;

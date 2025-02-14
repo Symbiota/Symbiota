@@ -9,6 +9,7 @@ include_once($SERVER_ROOT.'/content/lang/collections/harvestparams.en.php');
 include_once('mapshared.en.php');
 
 $LANG['MAP_INTERFACE'] = 'Map Interface';
+$LANG['HOME'] = 'Home';
 $LANG['SEARCH_CRITERIA'] = 'Search Criteria and Options';
 $LANG['CRITERIA'] = 'Criteria';
 $LANG['COLLECTIONS'] = 'Collections';
@@ -30,6 +31,7 @@ $LANG['CLUSTERING'] = 'Clustering';
 $LANG['GRID_SIZE'] = 'Grid Size';
 $LANG['CLUSTER_SIZE'] = 'Min. Cluster Size';
 $LANG['TURN_OFF_CLUSTERING'] = 'Turn Off Clustering';
+$LANG['CLUSTER_RADIUS'] = 'Radius';
 $LANG['REFRESH_MAP'] = 'Refresh Map';
 $LANG['HEATMAP'] = 'Heatmap';
 $LANG['TURN_ON_HEATMAP'] = 'Turn on heatmap';
@@ -38,8 +40,6 @@ $LANG['MIN_DENSITY'] = 'Minimum Density';
 $LANG['MAX_DENSITY'] = 'Maximum Density';
 $LANG['RECORDS_TAXA'] = 'Records and Taxa';
 $LANG['RECORDS'] = 'Records';
-$LANG['INTERNAL_RECORDS'] = 'Internal Records';
-$LANG['EXTERNAL_RECORDS'] = 'External Records';
 $LANG['PORTAL_LIST'] = 'Portal List';
 $LANG['TAXA_LIST'] = 'Taxa List';
 $LANG['COLLECTION'] = 'Collection';
@@ -67,5 +67,4 @@ $LANG['SOUTH'] = 'S';
 $LANG['EAST'] = 'E';
 $LANG['WEST'] = 'W';
 $LANG['FAILED_TO_LOAD_OCCR_DATA'] = 'Error loading occurrence data';
-
 ?>

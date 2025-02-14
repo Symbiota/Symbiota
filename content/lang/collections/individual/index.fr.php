@@ -162,7 +162,6 @@ $LANG['LAT_LNG'] = 'Latitude/Longitude';
 $LANG['INAPPROPRIATE'] = 'Commentaire inapproprié signalé';
 $LANG['REPORTED_AS_INAPPROPRIATE'] = 'Le commentaire suivant a été enregistré comme inapproprié';
 $LANG['EMAIL_NOT_DEFINED'] = 'ERREUR : adresse e-mail de l\'administrateur du portail non définie dans le fichier de configuration central';
-$LANG['PRIVATE_STATUS'] = 'statut privé';
 $LANG['UNABLE_TO_VERIFY_TARGET'] = 'ERREUR lors de la suppression du bon : impossible de vérifier la liste de contrôle cible pour le bon';
 $LANG['PERMISSION_ERROR'] = 'ERREUR lors de la suppression du bon : erreur d\'autorisation';
 

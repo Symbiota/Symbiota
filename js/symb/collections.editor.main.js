@@ -396,16 +396,22 @@ function stateProvinceChanged(stateVal) {
   }
 }
 
+function coordinatesChanged(f, client_root) {
+	verifyDecimalLatitude(f);
+	verifyDecimalLongitude(f);
+	verifyCoordinates(f, client_root);
+	fieldChanged('decimallatitude');
+	fieldChanged('decimallongitude');
+}
+
 function decimalLatitudeChanged(f) {
-  verifyDecimalLatitude(f);
-  //verifyCoordinates(f);
-  fieldChanged("decimallatitude");
+	verifyDecimalLatitude(f);
+	fieldChanged('decimallatitude');
 }
 
 function decimalLongitudeChanged(f) {
-  verifyDecimalLongitude(f);
-  //verifyCoordinates(f);
-  fieldChanged("decimallongitude");
+	verifyDecimalLongitude(f);
+	fieldChanged('decimallongitude');
 }
 
 function coordinateUncertaintyInMetersChanged(f) {
@@ -683,15 +689,16 @@ function parseVerbatimCoordinates(f, verbose) {
       }
     }
 
-    if (latDec && lngDec) {
-      f.decimallatitude.value = Math.round(latDec * 1000000) / 1000000;
-      f.decimallongitude.value = Math.round(lngDec * 1000000) / 1000000;
-      decimalLatitudeChanged(f);
-      decimalLongitudeChanged(f);
-    } else {
-      if (verbose) alert("Unable to parse coordinates");
-    }
-  }
+		if (latDec && lngDec) {
+			f.decimallatitude.value = Math.round(latDec * 1000000) / 1000000;
+			f.decimallongitude.value = Math.round(lngDec * 1000000) / 1000000;
+			decimalLatitudeChanged(f);
+			decimalLongitudeChanged(f);	
+		}
+		else {
+			if (verbose) alert("Unable to parse coordinates");
+		}
+	}
 }
 
 //Form verification code

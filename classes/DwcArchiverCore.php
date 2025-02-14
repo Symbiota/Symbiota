@@ -89,7 +89,7 @@ class DwcArchiverCore extends Manager{
 		);
 
 		//ini_set('memory_limit','512M');
-		set_time_limit(600);
+		set_time_limit(1800);
 	}
 
 	public function __destruct(){
@@ -386,7 +386,7 @@ class DwcArchiverCore extends Manager{
 			if (stripos($this->conditionSql, 'ds.datasetid')) {
 				$sql .= 'INNER JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
 			}
-			if (stripos($this->conditionSql, 'p.point')) {
+			if (stripos($this->conditionSql, 'p.lngLatPoint')) {
 				//Search criteria came from map search page
 				$sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
 			}

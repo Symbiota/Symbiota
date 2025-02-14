@@ -246,7 +246,7 @@ class OccurrenceDuplicate {
 				//Need to avoid FULLTEXT stopwords interfering with return
 				$sql .= 'WHERE (o.recordedby LIKE "%'.$lastName.'%") ';
 			}
-			else $sql .= 'WHERE (MATCH(o.recordedby) AGAINST("'.$lastName.'") IN BOOLEAN MODE) ';
+			else $sql .= 'WHERE MATCH(o.recordedby) AGAINST("'.$lastName.'" IN BOOLEAN MODE) ';
 			$sql .= 'AND (o.recordnumber = "'.$collNum.'") ';
 			if($skipOccid) $sql .= 'AND (o.occid != '.$skipOccid.') ';
 			//echo $sql;

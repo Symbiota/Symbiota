@@ -481,10 +481,7 @@ else{
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<link href="<?= $CSS_BASE_PATH ?>/symbiota/variables.css" type="text/css" rel="stylesheet">
 	<?php
-	include_once($SERVER_ROOT.'/includes/head.php');
-	?>
-
-    <?php
+	//include_once($SERVER_ROOT.'/includes/head.php');
     if($crowdSourceMode == 1){
 		?>
 		<link href="includes/config/occureditorcrowdsource.css?ver=5" type="text/css" rel="stylesheet" id="editorCssLink" />
@@ -509,6 +506,7 @@ else{
 	?>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		var collId = "<?php echo (isset($collMap['collid'])?$collMap['collid']:(is_numeric($collId)?$collId:0)); ?>";
 		var csMode = "<?php echo $crowdSourceMode; ?>";
@@ -544,12 +542,12 @@ else{
             });
         }
 	</script>
-	<script src="../../js/symb/collections.coordinateValidation.js?ver=2" type="text/javascript"></script>
+	<script src="../../js/symb/collections.coordinateValidation.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/symb/wktpolygontools.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/collections.georef.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.main.js?ver=9" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.tools.js?ver=4" type="text/javascript"></script>
+	<script src="../../js/symb/collections.editor.main.js?ver=1" type="text/javascript"></script>
+	<script src="../../js/symb/collections.editor.tools.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.imgtools.js?ver=3" type="text/javascript"></script>
 	<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.query.js?ver=6" type="text/javascript"></script>
@@ -1139,6 +1137,7 @@ else{
 											</div>
 										</div>
 										<div style="clear:both;" class="fieldGroup-div">
+										<span id="coordinateWrapper" onchange="coordinatesChanged(document.getElementById('fullform'), '<?= $CLIENT_ROOT?>')">
 											<div id="decimalLatitudeDiv" class="field-div">
 												<?php echo $LANG['DECIMAL_LATITUDE']; ?>
 												<br/>
@@ -1148,7 +1147,7 @@ else{
 													$latValue = $occArr['decimallatitude'];
 												}
 												?>
-												<input type="text" id="decimallatitude" name="decimallatitude" maxlength="15" value="<?php echo $latValue; ?>" onchange="decimalLatitudeChanged(this.form)" />
+											<input type="text" id="decimallatitude" name="decimallatitude" maxlength="15" value="<?php echo $latValue; ?>" onchange="decimalLatitudeChanged(document.getElementById('fullform'))"/>
 											</div>
 											<div id="decimalLongitudeDiv" class="field-div">
 												<?php echo $LANG['DECIMAL_LONGITUDE']; ?>
@@ -1159,8 +1158,9 @@ else{
 													$longValue = $occArr["decimallongitude"];
 												}
 												?>
-												<input type="text" id="decimallongitude" name="decimallongitude" maxlength="15" value="<?php echo $longValue; ?>" onchange="decimalLongitudeChanged(this.form);" />
+												<input type="text" id="decimallongitude" name="decimallongitude" maxlength="15" value="<?php echo $longValue; ?>" onchange="decimalLongitudeChanged(document.getElementById('fullform'))" />
 											</div>
+										</span>
 											<div id="coordinateUncertaintyInMetersDiv" class="field-div">
 												<?php echo $LANG['COORDINATE_UNCERTAINITY_IN_METERS']; ?>
 												<a href="#" onclick="return dwcDoc('coordinateUncertaintyInMeters')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
