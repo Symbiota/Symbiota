@@ -19,8 +19,6 @@ if (isset($_SESSION['force_logout'])){
 	unset($_SESSION['force_logout']);
 }
 
-
-
 $PARAMS_ARR = Array();				//params => 'un=egbot&dn=Edward&uid=301'
 $USER_RIGHTS = Array();
 if(isset($_SESSION['userparams'])) $PARAMS_ARR = $_SESSION['userparams'];

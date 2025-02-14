@@ -143,73 +143,8 @@ class OpenIdProfileManager extends ProfileManager
 
 	public function forceLogout($targetSessionId)
 	{
-		$originalSessionId = session_id();
-		$currentSessionId = session_id();
-		$currentSessionStatus = session_status();
-		error_log("(forceLogout) ((1)) CurrentSession: " . $currentSessionId . "CurrentSessionStatus: " . $currentSessionStatus .  "targetSession: " . $targetSessionId);
-
-		if ($currentSessionStatus === PHP_SESSION_ACTIVE) {
-			error_log("(forceLogout) ((entered if block))");
-			session_write_close();
-		}
-
-		$currentSessionId = session_id();
-		$currentSessionStatus = session_status();
-		error_log("(forceLogout) ((2)) CurrentSession: " . $currentSessionId . "CurrentSessionStatus: " . $currentSessionStatus .  "targetSession: " . $targetSessionId);
-
 		session_id($targetSessionId);
 		session_start();
 		$_SESSION['force_logout'] = true;
-		
-		$currentSessionId = session_id();
-		$currentSessionStatus = session_status();
-		error_log("(forceLogout) ((3)) CurrentSession: " . $currentSessionId . "CurrentSessionStatus: " . $currentSessionStatus .  "targetSession: " . $targetSessionId);
-
-		
-		/**
-		$_SESSION = [];
-		session_unset();
-
-		$currentSessionId = session_id();
-		$currentSessionStatus = session_status();
-		error_log("(forceLogout) ((4)) CurrentSession: " . $currentSessionId . "CurrentSessionStatus: " . $currentSessionStatus .  "targetSession: " . $targetSessionId);
-
-		if (ini_get("session.use_cookies")) {
-			error_log("deleteMe got here session cookies");
-			$params = session_get_cookie_params();
-			setcookie(
-				session_name(),
-				'',
-				time() - 42000,
-				$params["path"],
-				$params["domain"],
-				$params["secure"],
-				$params["httponly"]
-			);
-		}
-
-		session_destroy();
-		$currentSessionId = session_id();
-		$currentSessionStatus = session_status();
-		error_log("(forceLogout) ((5)) CurrentSession: " . $currentSessionId . "CurrentSessionStatus: " . $currentSessionStatus .  "targetSession: " . $targetSessionId);
-
-		$sessionFile = session_save_path() . '/sess_' . $targetSessionId;
-		if (file_exists($sessionFile)) {
-			error_log("got here in the file exists");
-			unlink($sessionFile);
-		}
-
-		if ($originalSessionId !== $targetSessionId) {
-			error_log("deleteMe got here in the re-activation of the session");
-			session_id($originalSessionId);
-			if ($originalSessionId === PHP_SESSION_ACTIVE) {
-				error_log("deleteMe got here $originalSessionId === PHP_SESSION_ACTIVE");
-				session_start();
-			}
-		}
-		$currentSessionId = session_id();
-		$currentSessionStatus = session_status();
-		error_log("(forceLogout) ((6)) CurrentSession: " . $currentSessionId . "CurrentSessionStatus: " . $currentSessionStatus .  "targetSession: " . $targetSessionId);
-		*/
 	}
 }
