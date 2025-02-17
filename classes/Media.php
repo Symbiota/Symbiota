@@ -924,7 +924,7 @@ class Media {
 				//Check if file exists
 				if($storage->file_exists($file)) {
 					//Add mediaID onto end of file name which should be unique within portal
-					$file['name'] = self::addToFilename($file['name'], '_' . $mediaID);
+					$file['name'] = self::addToFilename($file['name'], '_' . $media_id);
 
 					//Fail case the appended mediaID is taken stops after 10
 					$cnt = 1;
