@@ -848,7 +848,7 @@ class Media {
 			[$clean_post_arr['occid']]
 		);
 
-		if(!isset($clean_post_arr['tid']) && $clean_post_arr['tid'] && $row = $taxon_result->fetch_object()) {
+		if(!isset($clean_post_arr['tid']) && $row = $taxon_result->fetch_object()) {
 			$clean_post_arr['tid'] = $row->tidinterpreted;
 		}
 
@@ -893,6 +893,7 @@ class Media {
 		if(array_key_exists('sortsequence', $clean_post_arr) && is_numeric($clean_post_arr['sortsequence'])) {
 			$keyValuePairs["sortsequence"] = $clean_post_arr['sortsequence'];
 		}
+
 		//What is url for files
 		if($isRemoteMedia) {
 			//Required to exist
