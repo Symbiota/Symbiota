@@ -93,8 +93,8 @@ class OccurrenceEditorManager {
 			'municipality' => 's',
 			'locationid' => 's',
 			'locality' => 's',
-			'localitysecurity' => 'n',
-			'localitysecurityreason' => 's',
+			'recordsecurity' => 'n',
+			'securityreason' => 's',
 			'locationremarks' => 's',
 			'decimallatitude' => 'n',
 			'decimallongitude' => 'n',
@@ -727,7 +727,7 @@ class OccurrenceEditorManager {
 			$indexArr = array();
 			while ($row = $rs->fetch_assoc()) {
 				if ($previousOccid == $row['occid']) continue;
-				if ($row['localitysecurityreason'] == '<Security Setting Locked>') $row['localitysecurityreason'] = '[Security Setting Locked]';
+				if ($row['securityreason'] == '<Security Setting Locked>') $row['securityreason'] = '[Security Setting Locked]';
 				if ($limit) {
 					//Table request, thus load all within query
 					$retArr[$row['occid']] = $row;
@@ -1219,7 +1219,7 @@ class OccurrenceEditorManager {
 				o.taxonRemarks = d.taxonRemarks, o.genus = NULL, o.specificEpithet = NULL, o.taxonRank = NULL, o.infraspecificepithet = NULL, o.scientificname = NULL ';
 			if (isset($taxonArr['family']) && $taxonArr['family']) $sql .= ', o.family = "' . $this->cleanInStr($taxonArr['family']) . '"';
 			if (isset($taxonArr['tid']) && $taxonArr['tid']) $sql .= ', o.tidinterpreted = ' . $taxonArr['tid'];
-			if (isset($taxonArr['security']) && $taxonArr['security']) $sql .= ', o.localitysecurity = ' . $taxonArr['security'] . ', o.localitysecurityreason = "<Security Setting Locked>"';
+			if (isset($taxonArr['security']) && $taxonArr['security']) $sql .= ', o.recordsecurity = ' . $taxonArr['security'] . ', o.securityreason = "<Security Setting Locked>"';
 			$sql .= ' WHERE (d.iscurrent = 1) AND (d.detid = ' . $detId . ')';
 			$updated_base = $this->conn->query($sql);
 

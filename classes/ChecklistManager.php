@@ -527,7 +527,7 @@ class ChecklistManager extends Manager{
 					INNER JOIN fmchklsttaxalink cl ON v.clTaxaID = cl.clTaxaID
 					INNER JOIN ('.$this->basicSql.') t ON cl.tid = t.tid
 					WHERE cl.clid IN ('.$clidStr.') AND o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL
-					AND (o.localitysecurity = 0 OR o.localitysecurity IS NULL) ';
+					AND (o.recordSecurity = 0) ';
 				if($limit) $sql2 .= 'ORDER BY RAND() LIMIT '.$limit;
 				$rs2 = $this->conn->query($sql2);
 				if($rs2){

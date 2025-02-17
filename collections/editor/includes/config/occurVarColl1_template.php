@@ -43,8 +43,8 @@
 //define('COUNTYLABEL','');
 //define('MUNICIPALITYLABEL','');
 //define('LOCALITYLABEL','');
-//define('LOCALITYSECURITYLABEL','');
-//define('LOCALITYSECURITYREASONLABEL','');
+//define('RECORDSECURITYLABEL','');
+//define('SECURITYREASONLABEL','');
 //define('LOCATIONREMARKS','');
 //define('DECIMALLATITUDELABEL','');
 //define('DECIMALLONGITUDELABEL','');

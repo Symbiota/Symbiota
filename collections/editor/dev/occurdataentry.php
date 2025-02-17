@@ -152,13 +152,13 @@ if($SYMB_UID){
 								<input type="text" name="locality" tabindex="46" value="<?php echo array_key_exists('locality',$occArr)?$occArr['locality']:''; ?>" />
 							</div>
 							<div id="localSecurityDiv">
-								<?php $hasValue = array_key_exists("localitysecurity",$occArr)&&$occArr["localitysecurity"]?1:0; ?>
+								<?php $hasValue = array_key_exists("recordsecurity",$occArr)&&$occArr["recordsecurity"]?1:0; ?>
 								<input type="checkbox" name="localitysecurity" tabindex="0" value="1" <?php echo $hasValue?"CHECKED":""; ?> onchange="toggleLocSecReason(this.form);" title="Hide Locality Data from General Public" />
-								<?php echo (defined('LOCALITYSECURITYLABEL')?LOCALITYSECURITYLABEL:'Locality Security'); ?>
+								<?php echo (defined('RECORDSECURITYLABEL')?RECORDSECURITYLABEL:'Security'); ?>
 								<span id="locsecreason" style="margin-left:40px;display:<?php echo ($hasValue?'inline':'none') ?>">
-									<?php $lsrValue = array_key_exists('localitysecurityreason',$occArr)?$occArr['localitysecurityreason']:''; ?>
-									<?php echo (defined('LOCALITYSECURITYREASONLABEL')?LOCALITYSECURITYREASONLABEL:'Security Reason Override'); ?>:
-									<input type="text" name="localitysecurityreason" tabindex="0" value="<?php echo $lsrValue; ?>" title="Leave blank for default rare, threatened, or sensitive status" />
+									<?php $lsrValue = array_key_exists('securityreason',$occArr)?$occArr['securityreason']:''; ?>
+									<?php echo (defined('SECURITYREASONLABEL')?SECURITYREASONLABEL:'Security Reason Override'); ?>:
+									<input type="text" name="securityreason" tabindex="0" value="<?php echo $lsrValue; ?>" title="Leave blank for default rare, threatened, or sensitive status" />
 								</span>
 							</div>
 							<div style="clear:both;">
