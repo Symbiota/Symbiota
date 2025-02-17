@@ -1954,10 +1954,9 @@ class SpecUploadBase extends SpecUpload{
 			$paleoTermArr = $this->getPaleoTerms();
 			$paleoArr = array();
 			foreach($paleoTermArr as $fieldName){
-				$k = strtolower($fieldName);
-				if(isset($recMap[$k])){
-					if($recMap[$k] !== '') $paleoArr[substr($k,6)] = $recMap[$k];
-					unset($recMap[$k]);
+				if(isset($recMap[$fieldName])){
+					if($recMap[$fieldName] !== '') $paleoArr[substr($fieldName,6)] = $recMap[$fieldName];
+					unset($recMap[$fieldName]);
 				}
 			}
 			if($paleoArr){
