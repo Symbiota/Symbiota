@@ -877,7 +877,6 @@ class Media {
 			"anatomy" => $clean_post_arr["anatomy"] ?? null,
 			"notes" => $clean_post_arr["notes"] ?? null,
 			"username" => Sanitize::in($GLOBALS['USERNAME']),
-			"sortsequence" => array_key_exists('sortsequence', $clean_post_arr) && is_numeric($clean_post_arr['sortsequence']) ? $clean_post_arr['sortsequence'] : null,
 			// check if its is_numeric?
 			"sortOccurrence" => $clean_post_arr['sortOccurrence'] ?? null,
 			"sourceIdentifier" => $clean_post_arr['sourceIdentifier'] ?? ('filename: ' . $file['name']),
@@ -891,6 +890,9 @@ class Media {
 			"mediaType" => $media_type_str,
 		];
 
+		if(array_key_exists('sortsequence', $clean_post_arr) && is_numeric($clean_post_arr['sortsequence'])) {
+			$keyValuePairs["sortsequence"] = $clean_post_arr['sortsequence'];
+		}
 		//What is url for files
 		if($isRemoteMedia) {
 			//Required to exist
