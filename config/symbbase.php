@@ -11,7 +11,7 @@ session_start(array('gc_maxlifetime'=>3600,'cookie_path'=>$CLIENT_ROOT,'cookie_s
 include_once($SERVER_ROOT . '/classes/utilities/Encryption.php');
 include_once($SERVER_ROOT . '/classes/ProfileManager.php');
 
-$pHandler = new ProfileManager();
+$pHandler = null;
 //Check session data to see if signed in
 $PARAMS_ARR = Array();				//params => 'un=egbot&dn=Edward&uid=301'
 $USER_RIGHTS = Array();
@@ -20,6 +20,7 @@ if(isset($_SESSION['userrights'])) $USER_RIGHTS = $_SESSION['userrights'];
 if(isset($_COOKIE['SymbiotaCrumb']) && !$PARAMS_ARR){
 	$tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true);
 	if($tokenArr){
+		if($pHandler === null) $pHandler = new ProfileManager();
 		if((isset($_REQUEST['submit']) && $_REQUEST['submit'] == 'logout') || isset($_REQUEST['loginas'])){
 	        $pHandler->deleteToken($pHandler->getUid($tokenArr[0]),$tokenArr[1]);
 		}
@@ -61,11 +62,13 @@ alias($MEDIA_FILE_SIZE_LIMIT, $IMG_FILE_SIZE_LIMIT);
 //Set accessibilty variables
 $ACCESSIBILITY_ACTIVE = false;
 if($SYMB_UID){
+	if($pHandler === null) $pHandler = new ProfileManager();
 	$isAccessiblePreferred = $pHandler->getAccessibilityPreference($SYMB_UID);
 	if($isAccessiblePreferred){
 		$ACCESSIBILITY_ACTIVE = true;
 	}
 }
+if($pHandler !== null) $pHandler->closeConnection();
 
 //$AVAILABLE_LANGS = array('en','es','fr','pt','ab','aa','af','sq','am','ar','hy','as','ay','az','ba','eu','bn','dz','bh','bi','br','bg','my','be','km','ca','zh','co','hr','cs','da','nl','eo','et','fo','fj','fi','fy','gd','gl','ka','de','el','kl','gn','gu','ha','iw','hi','hu','is','in','ia','ie','ik','ga','it','ja','jw','kn','ks','kk','rw','ky','rn','ko','ku','lo','la','lv','ln','lt','mk','mg','ms','ml','mt','mi','mr','mo','mn','na','ne','no','oc','or','om','ps','fa','pl','pa','qu','rm','ro','ru','sm','sg','sa','sr','sh','st','tn','sn','sd','si','ss','sk','sl','so','su','sw','sv','tl','tg','ta','tt','te','th','bo','ti','to','ts','tr','tk','tw','uk','ur','uz','vi','vo','cy','wo','xh','ji','yo','zu');
 $AVAILABLE_LANGS = array('en','es','fr','pt');

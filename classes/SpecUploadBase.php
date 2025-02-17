@@ -5,6 +5,7 @@ include_once($SERVER_ROOT . '/classes/GuidManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/Encoding.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
+include_once($SERVER_ROOT . '/classes/Media.php');
 
 class SpecUploadBase extends SpecUpload{
 
@@ -36,7 +37,6 @@ class SpecUploadBase extends SpecUpload{
 
 	private $sourceCharset;
 	private $targetCharset = 'UTF-8';
-	private $imgFormatDefault = '';
 	private $sourceDatabaseType = '';
 	private $dbpkCnt = 0;
 	private $relationshipArr;
@@ -396,6 +396,7 @@ class SpecUploadBase extends SpecUpload{
 		foreach($symbFieldsRaw as $sValue){
 			$symbFields[$sValue] = strtolower($sValue);
 		}
+
 		//Build a Source => Symbiota field Map
 		$sourceSymbArr = Array();
 		foreach($fieldMap as $symbField => $fArr){
@@ -1414,7 +1415,7 @@ class SpecUploadBase extends SpecUpload{
 				foreach($mediaArr as $mediaUrl){
 					$mediaUrl = trim($mediaUrl);
 					if(strpos($mediaUrl,'"')) continue;
-					$this->loadImageRecord(array('occid'=>$r->occid,'collid'=>$this->collId,'dbpk'=>$r->dbpk,'tid'=>($r->tidinterpreted?$r->tidinterpreted:''),'originalurl'=>$mediaUrl));
+					$this->loadMediaRecord(array('occid'=>$r->occid,'collid'=>$this->collId,'dbpk'=>$r->dbpk,'tid'=>($r->tidinterpreted?$r->tidinterpreted:''),'originalurl'=>$mediaUrl));
 				}
 			}
 		}
@@ -1507,8 +1508,8 @@ class SpecUploadBase extends SpecUpload{
 				}
 
 				//Load images
-				$sql = 'INSERT INTO media ('.implode(',',array_keys($imageFieldArr)).', mediaType) '.
-					'SELECT '.implode(',',array_keys($imageFieldArr)).', "images" as mediaType FROM uploadimagetemp WHERE (occid IS NOT NULL) AND (collid = '.$this->collId.')';
+				$sql = 'INSERT INTO media ('.implode(',',array_keys($imageFieldArr)).') '.
+					'SELECT ' . implode(',',array_keys($imageFieldArr)) . ' FROM uploadimagetemp WHERE (occid IS NOT NULL) AND (collid = '.$this->collId.')';
 				if($this->conn->query($sql)){
 					$this->outputMsg('<li style="margin-left:10px;">'.$this->imageTransferCount.' images transferred</li> ');
 				}
@@ -2057,7 +2058,7 @@ class SpecUploadBase extends SpecUpload{
 		}
 	}
 
-	protected function loadImageRecord($recMap){
+	protected function loadMediaRecord($recMap){
 		if($recMap){
 			//Test images
 			$testUrl = '';
@@ -2071,33 +2072,42 @@ class SpecUploadBase extends SpecUpload{
 				//Abort, no images avaialble
 				return false;
 			}
-			//if(strtolower(substr($testUrl,0,4)) != 'http') return false;
-			if(stripos($testUrl,'.dng') || stripos($testUrl,'.tif')) return false;
-			$skipFormats = array('image/tiff','image/dng','image/bmp','text/html','application/xml','application/pdf','tif','tiff','dng','html','pdf');
-			$allowedFormats = array('image/jpeg','image/gif','image/png');
-			$imgFormat = $this->imgFormatDefault;
-			if(isset($recMap['format']) && $recMap['format']){
-				$imgFormat = strtolower($recMap['format']);
-				if(in_array($imgFormat, $skipFormats)) return false;
-			}
-			else{
-				$ext = strtolower(substr(strrchr($testUrl, '.'), 1));
-				if(strpos($testUrl,'?')) $ext = substr($ext, 0, strpos($ext,'?'));
-				if($ext== 'gif') $imgFormat = 'image/gif';
-				if($ext== 'png') $imgFormat = 'image/png';
-				if($ext== 'jpg') $imgFormat = 'image/jpeg';
-				elseif($ext== 'jpeg') $imgFormat = 'image/jpeg';
-				if($imgFormat === ''){
-					if($this->imgFormatDefault) $imgFormat = $this->imgFormatDefault;
-					else {
-						$imgFormat = $this->getMimeType($testUrl);
-						if($imgFormat) $this->imgFormatDefault = $imgFormat;
-						else $this->imgFormatDefault = false;
-					}
-					//if(!in_array(strtolower($imgFormat), $allowedFormats)) return false;
+
+			$file = Media::parseFileName($testUrl);
+			$parsed_mime = Media::ext2Mime($file['extension']);
+			if(!$parsed_mime) {
+				try {
+					$file = Media::getRemoteFileInfo($testUrl);
+					$parsed_mime = $file['type'];
+				} catch(Throwable $error) {
+					error_log('SpecUploadBase: Failed to Parse File: ' . $error->getMessage() . ' ' . $testUrl . ' ' . __LINE__ . ' ');
+					$this->outputMsg('<li style="margin-left:20px;">File format could not be parsed: ' . $testUrl . ' </li>');
+					return false;
 				}
+				
 			}
-			if($imgFormat) $recMap['format'] = $imgFormat;
+			$mime = Media::getAllowedMime($parsed_mime);
+			if(!$mime) {
+				if($parsed_mime) {
+					$this->outputMsg('<li style="margin-left:20px;">Unsupported File Format: ' . $parsed_mime . ' from url ' . $testUrl . ' </li>');
+				} else {
+					$this->outputMsg('<li style="margin-left:20px;">Could Not Parse the File Format: ' . $testUrl . ' </li>');
+				}
+				// Not Supported extension
+				return false;
+			} else {
+				$recMap['format'] = $mime;
+			}
+
+			$mediaTypeStr = explode('/', $mime)[0];
+			$mediaType = MediaType::tryFrom($mediaTypeStr);
+
+			if(!$mediaType) {
+				$this->outputMsg('<li style="margin-left:20px;">Invalid Media Type: ' . $mediaType . ' from url ' . $testUrl . ' </li>');
+				return false;
+			}
+
+			$recMap['mediaType'] = $mediaType; 
 
 			if($this->verifyImageUrls){
 				if(!$this->urlExists($testUrl)){
@@ -2154,7 +2164,7 @@ class SpecUploadBase extends SpecUpload{
 			if(substr($symbField,0,8) != 'unmapped' && $symbField != 'collid'){
 				$sqlFields .= ','.$symbField;
 				$valueStr = $this->encodeString($valueStr);
-				$valueStr = $this->cleanInStr($valueStr);
+				$valueStr = $this->cleanInStr($valueStr ?? '');
 				$valueStr = $this->removeEmoji($valueStr);
 				if($valueStr) $hasValue = true;
 				//Load data
@@ -2594,7 +2604,12 @@ class SpecUploadBase extends SpecUpload{
 
 	protected function encodeString($inStr){
 		if($inStr){
-			$inStr = mb_convert_encoding($inStr, $this->targetCharset, mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
+			/*
+			 * Previously used 'UTF-8, ISO-8859-1, ISO-8859-15'
+			 * And UTF-8 strings were not being detected resulting
+			 * Double encoding issue. Proceed with caution when adding encoding params
+			 */
+			$inStr = mb_convert_encoding($inStr, $this->targetCharset, mb_detect_encoding($inStr));
 
 			//Get rid of UTF-8 curly smart quotes and dashes
 			$badwordchars=array(

@@ -6,9 +6,9 @@ Translated by: Google Translate (2024-09-05)
 ------------------
 */
 
-$LANG['ACTION_SUCCESS'] = 'Medios etiquetado con éxito!';
-$LANG['ACTION_FAILED'] = 'Medios ya estaba etiquetado con destino';
-$LANG['ACTION_ERROR'] = 'ERROR al aplicar etiqueta a recurso de medios';
+$LANG['ACTION_SUCCESS'] = 'recursos multimedia etiquetados exitosamente.';
+$LANG['ACTION_FAILED'] = 'los recursos de medios ya estaban etiquetados';
+$LANG['ACTION_ERROR'] = 'ERROR al aplicar la etiqueta a los recursos multimedia';
 $LANG['IMAGE_SEARCH'] = 'Búsqueda medios';
 $LANG['SELECT_TAG'] = 'Seleccione una etiqueta medios';
 $LANG['SELECT_IMAGE'] = 'Seleccione al menos un recurso medios para asignarle una etiqueta';

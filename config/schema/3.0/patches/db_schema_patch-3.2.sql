@@ -22,7 +22,6 @@ ALTER TABLE `kmcharacters`
 ALTER TABLE `kmcharacters` 
   ADD INDEX `IX_kmchar_charname` (`charName` ASC),
   ADD INDEX `IX_kmchar_sort` (`sortSequence` ASC),
-  ADD INDEX `FK_kmchar_glossID_idx` (`glossID` ASC),
   ADD INDEX `FK_kmchar_enteredUid_idx` (`enteredUid` ASC);
 
 ALTER TABLE `kmcharacters` 
@@ -30,8 +29,10 @@ ALTER TABLE `kmcharacters`
   ADD CONSTRAINT `FK_kmchar_enteredUid`  FOREIGN KEY (`enteredUid`)  REFERENCES `users` (`uid`)  ON DELETE CASCADE  ON UPDATE CASCADE;
 
 ALTER TABLE `kmcharacterlang` 
+  DROP INDEX `FK_charlang_lang_idx`,
   DROP FOREIGN KEY `FK_charlang_lang`,
   DROP FOREIGN KEY `FK_characterlang_1`;
+
 
 ALTER TABLE `kmcharacterlang` 
   CHANGE COLUMN `charname` `charName` VARCHAR(150) NOT NULL ,
@@ -89,6 +90,7 @@ ALTER TABLE `kmcharheading`
   ADD CONSTRAINT `FK_kmcharheading_lang`  FOREIGN KEY (`langID`)  REFERENCES `adminlanguages` (`langid`);
 
 ALTER TABLE `kmcharheadinglang` 
+  DROP INDEX `FK_kmcharheadinglang_langid`,
   DROP FOREIGN KEY `FK_kmcharheadinglang_langid`;
 
 ALTER TABLE `kmcharheadinglang` 
@@ -96,6 +98,8 @@ ALTER TABLE `kmcharheadinglang`
   CHANGE COLUMN `headingname` `headingName` VARCHAR(100) NOT NULL ;
 
 ALTER TABLE `kmcharheadinglang`
+  ADD INDEX `FK_kmcharheadinglang_hid_idx` (hid ASC) ,
+  ADD INDEX `FK_kmcharheadinglang_langid_idx` (langID ASC) ,
   ADD CONSTRAINT `FK_kmcharheadinglang_langid`  FOREIGN KEY (`langID`)  REFERENCES `adminlanguages` (`langid`)  ON DELETE CASCADE  ON UPDATE CASCADE;
 
 ALTER TABLE `kmchartaxalink` 
@@ -115,6 +119,7 @@ ALTER TABLE `kmchartaxalink`
   ADD COLUMN `charTaxaLinkID` INT NOT NULL AUTO_INCREMENT FIRST,
   DROP INDEX `FK_CharTaxaLink-TID` ,
   ADD INDEX `FK_charTaxaLink_tid_idx` (`tid` ASC),
+  ADD INDEX `FK_charTaxaLink_cid_idx` (`cid` ASC),
   DROP PRIMARY KEY,
   ADD PRIMARY KEY (`charTaxaLinkID`),
   ADD UNIQUE INDEX `UQ_charTaxaLink_cid_tid` (`cid` ASC, `tid` ASC);
@@ -136,7 +141,7 @@ ALTER TABLE `kmcs`
   CHANGE COLUMN `glossid` `glossID` INT(10) UNSIGNED NULL DEFAULT NULL ,
   CHANGE COLUMN `StateID` `stateID` INT(10) UNSIGNED NULL DEFAULT NULL ,
   CHANGE COLUMN `SortSequence` `sortSequence` INT(10) UNSIGNED NULL DEFAULT NULL ,
-  CHANGE COLUMN `InitialTimeStamp` `initialTimeStamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
+  CHANGE COLUMN `InitialTimeStamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
 
 ALTER TABLE `kmcs` 
   CHANGE COLUMN `stateID` `stateID` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT FIRST,
@@ -157,19 +162,23 @@ ALTER TABLE `kmcsimages`
   CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP() ;
 
 ALTER TABLE `kmcslang` 
+  DROP FOREIGN KEY `FK_cslang_1`,
   DROP FOREIGN KEY `FK_cslang_lang`;
 
 ALTER TABLE `kmcslang` 
   CHANGE COLUMN `charstatename` `charStateName` VARCHAR(150) NOT NULL ,
   CHANGE COLUMN `langid` `langID` INT(11) NOT NULL ,
-  CHANGE COLUMN `intialtimestamp` `intialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
+  CHANGE COLUMN `intialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
 
 ALTER TABLE `kmcslang` 
+  ADD INDEX `FK_cslang_cid_cs_idx` (`cid` ASC, `cs` ASC),
+  ADD CONSTRAINT `FK_cslang_cid_cs`  FOREIGN KEY (`cid` , `cs`)  REFERENCES `kmcs` (`cid` , `cs`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_cslang_lang`  FOREIGN KEY (`langID`)  REFERENCES `adminlanguages` (`langid`)  ON DELETE NO ACTION  ON UPDATE NO ACTION;
 
 ALTER TABLE `kmdescr` 
   DROP FOREIGN KEY `FK_descr_cs`,
-  DROP FOREIGN KEY `FK_descr_tid`;
+  DROP FOREIGN KEY `FK_descr_tid`,
+  DROP INDEX CSDescr;
 
 ALTER TABLE `kmdescr` 
   CHANGE COLUMN `TID` `tid` INT(10) UNSIGNED NOT NULL DEFAULT 0 ,
@@ -187,83 +196,42 @@ ALTER TABLE `kmdescr`
   CHANGE COLUMN `DateEntered` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
 
 ALTER TABLE `kmdescr` 
-  ADD CONSTRAINT `FK_descr_cs`  FOREIGN KEY (`cid` , `cs`)  REFERENCES `kmcs` (`cid` , `cs`)  ON DELETE CASCADE  ON UPDATE CASCADE,
+  ADD INDEX `FK_descr_cid_cs_idx` (`cid` ASC, `cs` ASC),
+  ADD INDEX `FK_descr_tid_idx` (`tid` ASC),
+  ADD CONSTRAINT `FK_descr_cid_cs`  FOREIGN KEY (`cid` , `cs`)  REFERENCES `kmcs` (`cid` , `cs`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_descr_tid`  FOREIGN KEY (`tid`)  REFERENCES `taxa` (`TID`)  ON DELETE CASCADE  ON UPDATE CASCADE;
 
 
 #occurrence access tables
-ALTER TABLE `omoccuraccess` ENGINE=InnoDB;
-ALTER TABLE `omoccuraccesslink` ENGINE=InnoDB;
+ALTER TABLE `omoccuraccess`
+  ENGINE=InnoDB;
+
+ALTER TABLE `omoccuraccesslink`
+  ENGINE=InnoDB;
+
+# Drop old deprecated tables to save space, following statemetns will do if this was not originally a 1.0 install
+DROP TABLE IF EXISTS `deprecated_adminstats`;
+DROP TABLE IF EXISTS `deprecated_guidimages`; 
+DROP TABLE IF EXISTS `deprecated_guidoccurrences`;
+DROP TABLE IF EXISTS `deprecated_guidoccurdeterminations`;
+DROP TABLE IF EXISTS `deprecated_imageannotations`;
+DROP TABLE IF EXISTS `deprecated_kmdescrdeletions`;
+DROP TABLE IF EXISTS `deprecated_media`;
+DROP TABLE IF EXISTS `deprecated_omcollpuboccurlink`;
+DROP TABLE IF EXISTS `deprecated_omcollpublications`;
+DROP TABLE IF EXISTS `deprecated_omcollsecondary`;
+DROP TABLE IF EXISTS `deprecated_omoccurresource`;
+DROP TABLE IF EXISTS `deprecated_unknowncomments`;
+DROP TABLE IF EXISTS `deprecated_unknownimages`;
+DROP TABLE IF EXISTS `deprecated_unknowns`;
+DROP TABLE IF EXISTS `deprecated_userlogin`;
 
 
-# Skip if 1.0 install: Table does not exist within db_schema-3.0, thus statement is expected to fail if this was not originally a 1.0 install
-# Drop deprecated_media foreign keys to avoid conflicts. If table does not exist, ignore
-ALTER TABLE `deprecated_media`
-  DROP FOREIGN KEY `FK_media_uid`,
-  DROP FOREIGN KEY `FK_media_taxa`,
-  DROP FOREIGN KEY `FK_media_occid`,
-  DROP INDEX `FK_media_uid_idx`,
-  DROP INDEX `FK_media_occid_idx`,
-  DROP INDEX `FK_media_taxa_idx`;
-
-#Schema modifications due to deprecating image table in preference with media table
-DROP TABLE IF EXISTS `media`;
-CREATE TABLE `media` (
-  `mediaID` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `tid` int(10) unsigned DEFAULT NULL,
-  `occid` int(10) unsigned DEFAULT NULL,
-  `url` varchar(250) DEFAULT NULL,
-  `thumbnailUrl` varchar(255) DEFAULT NULL,
-  `originalUrl` varchar(255) DEFAULT NULL,
-  `archiveUrl` varchar(255) DEFAULT NULL,
-  `sourceUrl` varchar(250) DEFAULT NULL,
-  `referenceUrl` varchar(255) DEFAULT NULL,
-  `mediaType` varchar(45) DEFAULT NULL,
-  `imageType` varchar(50) DEFAULT NULL,
-  `format` varchar(45) DEFAULT NULL,
-  `caption` varchar(250) DEFAULT NULL,
-  `creatorUid` int(10) unsigned DEFAULT NULL,
-  `creator` varchar(45) DEFAULT NULL,
-  `owner` varchar(250) DEFAULT NULL,
-  `locality` varchar(250) DEFAULT NULL,
-  `description` varchar(1000) DEFAULT NULL,
-  `anatomy` varchar(100) DEFAULT NULL,
-  `notes` varchar(350) DEFAULT NULL,
-  `username` varchar(45) DEFAULT NULL,
-  `sourceIdentifier` varchar(150) DEFAULT NULL,
-  `mediaMD5` varchar(45) DEFAULT NULL,
-  `hashValue` varchar(45) DEFAULT NULL,
-  `hashFunction` varchar(45) DEFAULT NULL,
-  `pixelYDimension` int(11) DEFAULT NULL,
-  `pixelXDimension` int(11) DEFAULT NULL,
-  `dynamicProperties` text DEFAULT NULL,
-  `defaultDisplay` int(11) DEFAULT NULL,
-  `recordID` varchar(45) DEFAULT NULL,
-  `copyright` varchar(255) DEFAULT NULL,
-  `rights` varchar(255) DEFAULT NULL,
-  `accessRights` varchar(255) DEFAULT NULL,
-  `sortSequence` int(11) DEFAULT NULL,
-  `sortOccurrence` int(11) DEFAULT 5,
-  `initialTimestamp` timestamp NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`mediaID`),
-  CONSTRAINT `FK_media_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT `FK_media_taxa` FOREIGN KEY (`tid`) REFERENCES `taxa` (`tid`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT `FK_creator_uid` FOREIGN KEY (`creatorUid`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB;
-
-INSERT INTO media(mediaID, tid, occid, url, thumbnailUrl, archiveUrl, originalUrl, sourceurl, referenceUrl, caption, creatoruid, creator, owner,
-  mediaMD5, format, imagetype, locality, notes, anatomy, username, sourceIdentifier, hashFunction, hashValue, pixelYDimension, pixelXDimension,
-  dynamicProperties, defaultDisplay, recordID, copyright, rights, accessRights, sortSequence, sortOccurrence, initialTimestamp, mediaType)
-  SELECT imgid, tid, occid, url, thumbnailUrl, archiveUrl, originalUrl, sourceurl, referenceUrl, caption, photographerUid, photographer, owner,
-    mediaMD5, format,imagetype, locality, notes, anatomy, username, sourceIdentifier, hashFunction, hashValue, pixelYDimension, pixelXDimension,
-    dynamicProperties, defaultDisplay, recordID, copyright, rights, accessRights, sortSequence, sortOccurrence, initialTimestamp, "image" as mediaType
-  FROM images;
-  
-#Drop and reset INDEX and FK names for imagetag table
+#Drop Indexes and Foreign Keys for imagetag table in preparation for renaming image table
 ALTER TABLE `imagetag` 
   DROP FOREIGN KEY `FK_imagetag_imgid`,
   DROP FOREIGN KEY `FK_imagetag_tagkey`;
-  
+
 ALTER TABLE `imagetag` 
   DROP INDEX `imgid`,
   DROP INDEX `keyvalue`,
@@ -275,15 +243,7 @@ ALTER TABLE `imagetag`
   CHANGE COLUMN `keyvalue` `keyValue` VARCHAR(30) NOT NULL,
   CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP();
 
-ALTER TABLE `imagetag` 
-  ADD INDEX `FK_imagetag_mediaID_idx` (`mediaID` ASC),
-  ADD INDEX `FK_imagetag_tagkey_idx` (`keyValue` ASC);
-
-ALTER TABLE `imagetag`
-  ADD CONSTRAINT `FK_imagetag_tagkey` FOREIGN KEY (`keyValue`) REFERENCES `imagetagkey` (`tagkey`)  ON DELETE NO ACTION  ON UPDATE CASCADE,
-  ADD CONSTRAINT `FK_imagetag_mediaID` FOREIGN KEY (`mediaID`) REFERENCES `media`(`mediaID`)  ON DELETE CASCADE  ON UPDATE CASCADE;
-
-#Drop and reset INDEX and FK names for imagetag table
+#Drop Indexes and Foreign Keys for imagekeywords table in preparation for renaming image table
 ALTER TABLE `imagekeywords`
   DROP FOREIGN KEY `FK_imagekeywords_imgid`,
   DROP FOREIGN KEY `FK_imagekeyword_uid`,
@@ -297,17 +257,12 @@ ALTER TABLE `imagekeywords`
   CHANGE COLUMN `uidassignedby` `uidAssignedBy` INT(10) UNSIGNED NULL DEFAULT NULL,
   CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP();
 
-ALTER TABLE `imagekeywords`
-  ADD KEY `FK_imagekeyword_keyword` (`keyword`),
-  ADD KEY `FK_imagekeywords_mediaID_idx` (`mediaID`),
-  ADD KEY `FK_imagekeyword_uid_idx` (`uidAssignedBy`),
-  ADD CONSTRAINT `FK_imagekeyword_uid` FOREIGN KEY (`uidAssignedBy`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `FK_imagekeywords_mediaID` FOREIGN KEY (`mediaID`) REFERENCES `media` (`mediaID`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-
+#Drop Indexes and Foreign Keys for specprocessorrawlabels table in preparation for renaming image table
 ALTER TABLE `specprocessorrawlabels`
   DROP FOREIGN KEY `FK_specproc_images`,
-  DROP INDEX `FK_specproc_images` ;
+  DROP FOREIGN KEY `FK_specproc_occid`,
+  DROP INDEX `FK_specproc_images` ,
+  DROP INDEX `FK_specproc_occid` ;
 
 ALTER TABLE `specprocessorrawlabels`
   CHANGE COLUMN `imgid` `mediaID` INT(10) UNSIGNED NULL DEFAULT NULL,
@@ -316,10 +271,16 @@ ALTER TABLE `specprocessorrawlabels`
   CHANGE COLUMN `sortsequence` `sortSequence` INT(11) NULL DEFAULT NULL,
   CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP();
 
-ALTER TABLE `specprocessorrawlabels`
-  ADD KEY `FK_specproc_media_idx` (`mediaID`),
-  ADD CONSTRAINT `FK_specproc_media` FOREIGN KEY (`mediaID`) REFERENCES `media` (`mediaID`)  ON UPDATE CASCADE  ON DELETE CASCADE;
+# Skip if 3.0 install: Table does not exist within db_schema-3.0, thus statement is expected to fail if this was not originally a 1.0 install
+#Drop Foreign Key for taxaprofilepubimagelink table
+ALTER TABLE `taxaprofilepubimagelink` 
+  DROP FOREIGN KEY `FK_tppubimagelink_imgid`;
 
+# Skip if 3.0 install: Table does not exist within db_schema-3.0, thus statement is expected to fail if this was not originally a 1.0 install
+ALTER TABLE `imageprojectlink` 
+  DROP FOREIGN KEY `FK_imageprojectlink_imgid`;
+
+#Drop Indexes and Foreign Keys for tmattributes table in preparation for renaming image table
 ALTER TABLE `tmattributes`
   DROP FOREIGN KEY `FK_tmattr_imgid`;
 
@@ -327,9 +288,85 @@ ALTER TABLE `tmattributes`
   CHANGE COLUMN `imgid` `mediaID` INT(10) UNSIGNED NULL DEFAULT NULL,
   DROP INDEX `FK_tmattr_imgid_idx`;
 
+
+#Drop Indexes and Foreign Keys for images table in preparation for renaming table
+ALTER TABLE `images` 
+  DROP FOREIGN KEY `FK_taxaimagestid`,
+  DROP FOREIGN KEY `FK_photographeruid`,
+  DROP FOREIGN KEY `FK_images_occ`;
+
+ALTER TABLE `images` 
+  DROP INDEX `FK_photographeruid`,
+  DROP INDEX `FK_images_occ`,
+  DROP INDEX `Index_tid`,
+  DROP INDEX `IX_images_recordID`,
+  DROP INDEX `Index_images_datelastmod`;
+
+#Rename images to media table
+ALTER TABLE `images` 
+  RENAME TO `media` ;
+
+#Renaming primary key of media table
+ALTER TABLE `media` 
+  CHANGE COLUMN `imgid` `mediaID` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ;
+
+#Modify a few fields within media table
+ALTER TABLE `media` 
+  ADD COLUMN `mediaType` VARCHAR(45) NULL DEFAULT NULL AFTER `imageType`,
+  CHANGE COLUMN `occid` `occid` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `tid`,
+  CHANGE COLUMN `sourceUrl` `sourceUrl` VARCHAR(255) NULL DEFAULT NULL AFTER `archiveUrl`,
+  CHANGE COLUMN `referenceUrl` `referenceUrl` VARCHAR(255) NULL DEFAULT NULL AFTER `sourceUrl`,
+  CHANGE COLUMN `photographer` `creator` VARCHAR(100) NULL DEFAULT NULL AFTER `caption`,
+  CHANGE COLUMN `photographerUid` `creatorUid` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `creator`,
+  CHANGE COLUMN `locality` `locality` VARCHAR(250) NULL DEFAULT NULL AFTER `owner`,
+  CHANGE COLUMN `anatomy` `anatomy` VARCHAR(100) NULL DEFAULT NULL AFTER `locality`;
+
+ALTER TABLE `media` 
+  ADD INDEX `FK_media_occid_idx` (`occid` ASC),
+  ADD INDEX `FK_media_tid_idx` (`tid` ASC),
+  ADD INDEX `FK_media_creatorUid_idx` (`creatorUid` ASC),
+  ADD INDEX `IX_media_recordID` (`recordID` ASC),
+  ADD INDEX `IX_media_dateLastModified` (`initialTimestamp` ASC);
+
+ALTER TABLE `media` 
+  ADD CONSTRAINT `FK_media_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_media_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`tid`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_media_creatorUid` FOREIGN KEY (`creatorUid`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+UPDATE media
+  SET mediaType = "image"
+  WHERE mediaType IS NULL;
+
+
+# Recreate indexes and foreign keys to imagetag table
+ALTER TABLE `imagetag` 
+  ADD INDEX `FK_imagetag_mediaID_idx` (`mediaID` ASC),
+  ADD INDEX `FK_imagetag_keyValue_idx` (`keyValue` ASC),
+  ADD UNIQUE KEY `UQ_imagetag_mediaID_keyValue` (`mediaID`,`keyValue`);
+
+ALTER TABLE `imagetag`
+  ADD CONSTRAINT `FK_imagetag_keyValue` FOREIGN KEY (`keyValue`) REFERENCES `imagetagkey` (`tagkey`)  ON DELETE NO ACTION  ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_imagetag_mediaID` FOREIGN KEY (`mediaID`) REFERENCES `media`(`mediaID`)  ON DELETE CASCADE  ON UPDATE CASCADE;
+
+# Recreate indexes and foreign keys to imagekeywords table
+ALTER TABLE `imagekeywords`
+  ADD INDEX `FK_imagekeywords_keyword` (`keyword`),
+  ADD INDEX `FK_imagekeywords_mediaID_idx` (`mediaID`),
+  ADD INDEX `FK_imagekeywords_uid_idx` (`uidAssignedBy`),
+  ADD CONSTRAINT `FK_imagekeywords_uid` FOREIGN KEY (`uidAssignedBy`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_imagekeywords_mediaID` FOREIGN KEY (`mediaID`) REFERENCES `media` (`mediaID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+# Recreate indexes and foreign keys to specprocessorrawlabels table
+ALTER TABLE `specprocessorrawlabels`
+  ADD INDEX `FK_specproclabels_media_idx` (`mediaID`),
+  ADD INDEX `FK_specproclabels_occid_idx` (`occid`),
+  ADD CONSTRAINT `FK_specproclabels_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`)  ON UPDATE CASCADE  ON DELETE CASCADE,
+  ADD CONSTRAINT `FK_specproclabels_media` FOREIGN KEY (`mediaID`) REFERENCES `media` (`mediaID`)  ON UPDATE CASCADE  ON DELETE CASCADE;
+
+# Recreate indexes and foreign keys to tmattributes table
 ALTER TABLE `tmattributes`
-  ADD KEY `FK_tmattr_media_idx` (`mediaID`),
-  ADD CONSTRAINT `FK_tmattr_media` FOREIGN KEY (`mediaID`) REFERENCES `media` (`mediaID`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD INDEX `FK_tmattr_mediaID_idx` (`mediaID`),
+  ADD CONSTRAINT `FK_tmattr_mediaID` FOREIGN KEY (`mediaID`) REFERENCES `media` (`mediaID`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 
 #Following statements pertain to coordinate index modifications
@@ -390,12 +427,17 @@ DELIMITER ;
 
 #Add and update checklist footprints to be geoJson
 ALTER TABLE `fmchecklists` 
-  ADD COLUMN footprintGeoJson text DEFAULT NULL;
+  ADD COLUMN footprintGeoJson longtext DEFAULT NULL;
 
 UPDATE fmchecklists 
   SET footprintGeoJson = ST_ASGEOJSON(ST_GEOMFROMTEXT(swap_wkt_coords(footprintWkt))) 
   WHERE footprintGeoJson IS NULL;
 
+
+#Removes All omoccurpoints that do not have an omocurrences record
+DELETE p.* 
+  FROM omoccurpoints p LEFT JOIN omoccurrences o ON p.occid = o.occid
+  WHERE o.occid IS NULL;
 
 #Removes All omoccurpoints that have null lat or lng values in omocurrences which is needed to recalculate all omoccurpoints into lnglat points
 DELETE p.* 
@@ -404,7 +446,7 @@ DELETE p.*
 
 #Create and add lng lat points for occurrence data which is needed to do searching is spacial indexes that are lng lat
 ALTER TABLE `omoccurpoints` 
-  ADD COLUMN lngLatPoint POINT;
+  ADD COLUMN lngLatPoint POINT AFTER `point`;
 
 UPDATE omoccurpoints p INNER JOIN omoccurrences o ON o.occid = p.occid 
   SET lngLatPoint = ST_POINTFROMTEXT(CONCAT('POINT(',o.decimalLongitude, ' ', o.decimalLatitude, ')')); 
@@ -413,7 +455,8 @@ ALTER TABLE `omoccurpoints`
   MODIFY lngLatPoint POINT NOT NULL;
   
 ALTER TABLE `omoccurpoints`
-  ADD SPATIAL INDEX(lngLatPoint);
+  ADD SPATIAL INDEX `IX_omoccurpoints_latLngPoint` (`lngLatPoint`);
+  
 
 #Following statements pertain to fulltext indexing modifications
 DROP TABLE `omoccurrencesfulltext`;
@@ -470,6 +513,19 @@ DROP TRIGGER specprocessorrawlabelsfulltext_delete;
 
 DROP TABLE `specprocessorrawlabelsfulltext`;
 
+
+#Adjust FK to restrict deletion of record upon deletion of either internal occurrence or createdBy/modifiedBy users  
+ALTER TABLE `omoccurassociations`
+  DROP FOREIGN KEY `FK_occurassoc_occidassoc`,
+  DROP FOREIGN KEY `FK_occurassoc_uidcreated`,
+  DROP FOREIGN KEY `FK_occurassoc_uidmodified`;
+
+ALTER TABLE `omoccurassociations`
+  ADD CONSTRAINT `FK_occurassoc_occidassoc` FOREIGN KEY (`occidAssociate`) REFERENCES `omoccurrences` (`occid`) ON UPDATE CASCADE ON DELETE RESTRICT,
+  ADD CONSTRAINT `FK_occurassoc_uidcreated` FOREIGN KEY (`createdUid`) REFERENCES `users` (`uid`) ON UPDATE CASCADE ON DELETE RESTRICT,
+  ADD CONSTRAINT `FK_occurassoc_uidmodified` FOREIGN KEY (`modifiedUid`) REFERENCES `users` (`uid`) ON UPDATE CASCADE ON DELETE RESTRICT;
+  
+
 #Standardize occurrence identifier table
 ALTER TABLE `omoccuridentifiers`
   CHANGE COLUMN `identifiervalue` `identifierValue` VARCHAR(75) NOT NULL AFTER `occid`,
@@ -480,7 +536,9 @@ ALTER TABLE `omoccuridentifiers`
   CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT current_timestamp() AFTER `modifiedTimestamp`,
   DROP INDEX `UQ_omoccuridentifiers`,
   ADD UNIQUE INDEX `UQ_omoccuridentifiers` (`occid`, `identifierValue`, `identifierName`),
-  DROP INDEX `IX_omoccuridentifiers_value`,
+  DROP INDEX `IX_omoccuridentifiers_value`;
+
+ALTER TABLE `omoccuridentifiers`
   ADD INDEX `IX_omoccuridentifiers_value` (`identifierValue`);
 
 # Occurrence table adjustments
@@ -521,14 +579,14 @@ UPDATE omoccurrences o INNER JOIN geographicthesaurus g ON o.country = g.geoterm
   WHERE o.countryCode != g.iso2 AND g.geoLevel = 50 AND g.acceptedID IS NULL AND g.iso2 IS NOT NULL;
 
 #Populate NULL continent values
-UPDATE omoccurrences o INNER JOIN geographicThesaurus g ON o.countryCode = g.iso2 
-  INNER JOIN geographicThesaurus p ON g.parentID = p.geoThesID
+UPDATE omoccurrences o INNER JOIN geographicthesaurus g ON o.countryCode = g.iso2 
+  INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
   SET o.continent = p.geoTerm
   WHERE o.continent IS NULL AND g.geoLevel = 50 AND p.acceptedID IS NULL AND g.acceptedID IS NULL;
 
 #Fix bad continent values (likely bad improted values)
-UPDATE omoccurrences o INNER JOIN geographicThesaurus g ON o.countryCode = g.iso2
-  INNER JOIN geographicThesaurus p ON g.parentID = p.geoThesID
+UPDATE omoccurrences o INNER JOIN geographicthesaurus g ON o.countryCode = g.iso2
+  INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
   SET o.continent = p.geoTerm
   WHERE o.continent != p.geoTerm AND g.geoLevel = 50 AND g.acceptedID IS NULL;
 
@@ -570,3 +628,5 @@ CREATE TABLE `uploadkeyvaluetemp`(
   CONSTRAINT `FK_uploadKeyValue_collid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`collID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_uploadKeyValue_uid` FOREIGN KEY (`uploadUid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE);
 
+ALTER TABLE uploadimagetemp
+  ADD COLUMN mediaType varchar(45);

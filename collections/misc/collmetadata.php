@@ -79,7 +79,7 @@ $collManager->cleanOutArr($collData);
 	?>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="../../js/symb/common.js" type="text/javascript"></script>
+	<script src="../../js/symb/shared.js?ver=1" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/tinymce/tinymce.min.js"></script>
 	<script>
 		// Adds WYSIWYG editor to description field
@@ -614,10 +614,10 @@ $collManager->cleanOutArr($collData);
 									</span>
 								</span>
 								<span class="icon-elem" style="display:<?php echo (($collid && $collData["icon"]) ? 'none;' : 'inline'); ?>">
-									<a href="#" onclick="toggle('icon-elem');return false;"><?php echo $LANG['ENTER_URL'] ?></a>
+									<a href="#" onclick="toggleElement('.icon-elem');return false;"><?php echo $LANG['ENTER_URL'] ?></a>
 								</span>
 								<span class="icon-elem" style="display:<?php echo (($collid && $collData["icon"]) ? 'inline' : 'none;'); ?>">
-									<a href="#" onclick="toggle('icon-elem');return false;">
+									<a href="#" onclick="toggleElement('.icon-elem');return false;">
 										<?php echo $LANG['UPLOAD_LOCAL'] ?>
 									</a>
 								</span>

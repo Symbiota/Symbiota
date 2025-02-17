@@ -369,7 +369,7 @@ class ChecklistManager extends Manager{
 			}
 			if($missingArr = array_diff(array_keys($this->taxaList),$matchedArr)){
 				$sql = 'SELECT m2.tid, m.url, m.thumbnailurl FROM media m INNER JOIN '.
-					'(SELECT ts1.tid, SUBSTR(MIN(CONCAT(LPAD(m.sortsequence,6,"0"),m.mediaID)),7) AS mediaID'.
+					'(SELECT ts1.tid, SUBSTR(MIN(CONCAT(LPAD(m.sortsequence,6,"0"),m.mediaID)),7) AS mediaID '.
 					'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 					'INNER JOIN media m ON ts2.tid = m.tid '.
 					'WHERE m.sortsequence < 500 AND (m.thumbnailurl IS NOT NULL) AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.tid IN('.implode(',',$missingArr).')) '.
@@ -378,7 +378,7 @@ class ChecklistManager extends Manager{
 				if($missingArr = array_diff(array_keys($this->taxaList),$matchedArr)){
 					//Get children images
 					$sql = 'SELECT DISTINCT m2.tid, m.url, m.thumbnailurl FROM media m INNER JOIN '.
-						'(SELECT ts1.parenttid AS tid, SUBSTR(MIN(CONCAT(LPAD(m.sortsequence,6,"0"),m.mediaID)),7) AS mediaID'.
+						'(SELECT ts1.parenttid AS tid, SUBSTR(MIN(CONCAT(LPAD(m.sortsequence,6,"0"),m.mediaID)),7) AS mediaID '.
 						'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 						'INNER JOIN media m ON ts2.tid = m.tid '.
 						'WHERE m.sortsequence < 500 AND (m.thumbnailurl IS NOT NULL) AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.parenttid IN('.implode(',',$missingArr).')) '.

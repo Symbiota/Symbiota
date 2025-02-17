@@ -525,7 +525,7 @@ class ImageShared {
 			//Save currently loaded record
 			$guid = UuidFactory::getUuidV4();
 			$sql = 'INSERT INTO media (tid, url, thumbnailurl, originalurl, archiveUrl, sourceurl, referenceUrl, creator, creatorUid, format, caption, owner,
-				locality, occid, anatomy, notes, username, sortsequence, sortoccurrence, sourceIdentifier, rights, accessrights, copyright, hashFunction, hashValue, mediaMD5, recordID, mediaType)
+				locality, occid, anatomy, notes, username, sortsequence, sortOccurrence, sourceIdentifier, rights, accessrights, copyright, hashFunction, hashValue, mediaMD5, recordID, mediaType)
 				VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, "image")';
 			if ($stmt = $this->conn->prepare($sql)) {
 				$userName = $this->cleanInStr($GLOBALS['USERNAME']);

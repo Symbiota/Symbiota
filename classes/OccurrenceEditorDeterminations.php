@@ -52,7 +52,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 				}
 			}
 		}
-		if ($detId){
+		if (isset($detId)){
 			$scinameValues = [];
 			foreach ($retArr as $detData) {
 				if (!empty($detData['sciname'])) {

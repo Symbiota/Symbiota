@@ -62,6 +62,7 @@ if($action == 'batchAssignTag'){
 		$statusStr = '<span style="color:red">' . $LANG['ACTION_ERROR'] . ': ' . $imgLibManager->getErrorStr() . '</span>';
 	}
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
@@ -94,7 +95,7 @@ if($action == 'batchAssignTag'){
 			}
 			var formVerified = false;
 			for(var h=0; h<f.length; h++){
-				if(f.elements[h].name == "imgid[]" && f.elements[h].checked){
+				if(f.elements[h].name == "mediaId[]" && f.elements[h].checked){
 					formVerified = true;
 					break;
 				}
@@ -113,7 +114,7 @@ if($action == 'batchAssignTag'){
 			}
 			var f = cb.form;
 			for(var i=0; i<f.length; i++){
-				if(f.elements[i].name == "imgid[]") f.elements[i].checked = boxesChecked;
+				if(f.elements[i].name == "mediaId[]") f.elements[i].checked = boxesChecked;
 			}
 		}
 	</script>
@@ -132,7 +133,7 @@ if($action == 'batchAssignTag'){
 	<!-- This is inner text! -->
 	<div role="main" id="innertext">
 		<h1 class="page-heading"><?= $LANG['IMAGE_SEARCH']; ?></h1>
-		<form name="imagesearchform" id="imagesearchform" action="search.php?<?=$imgLibManager->getQueryTermStr()?>" method="post">
+		<form name="imagesearchform" id="imagesearchform" action="search.php" method="post">
 			<?php
 			if($statusStr){
 				echo '<div id="action-status-div">' . $statusStr . '</div>';
@@ -397,7 +398,7 @@ if($action == 'batchAssignTag'){
 								$collArr = $imageArr['coll'];
 								unset($imageArr['coll']);
 							}
-							foreach($imageArr as $imgId => $imgArr){
+							foreach($imageArr as $mediaId => $imgArr){
 								$imgUrl = $imgArr['url'];
 								$imgTn = $imgArr['thumbnailurl'];
 								if($imgTn){
@@ -419,7 +420,7 @@ if($action == 'batchAssignTag'){
 											$anchorLink = '<a href="#" onclick="openIndPU(' . $imgArr['occid'] . ');return false;">';
 										}
 										else{
-											$anchorLink = '<a href="#" onclick="openImagePopup(' . $imgId . ');return false;">';
+											$anchorLink = '<a href="#" onclick="openImagePopup(' . $mediaId . ');return false;">';
 										}
 										echo $anchorLink . '<img src="' . $imgUrl . '" /></a>';
 										?>
@@ -446,7 +447,7 @@ if($action == 'batchAssignTag'){
 										}
 										if($isEditorOfThisImage){
 											$isEditorOfAtLeastOne = true;
-											echo '<div class="editor-div" style="display:none;margin-top:3px;"><input name="imgid[]" type="checkbox" value="' . $imgId . '"></div>';
+											echo '<div class="editor-div" style="display:none;margin-top:3px;"><input name="mediaId[]" type="checkbox" value="' . $mediaId . '"></div>';
 										}
 										$sciname = $imgArr['sciname'];
 										if(!$sciname && $imgArr['occid'] && $occArr[$imgArr['occid']]['sciname']) $sciname = $occArr[$imgArr['occid']]['sciname'];
@@ -504,6 +505,9 @@ if($action == 'batchAssignTag'){
 			}
 			?>
 		</form>
+		<script type ="text/javascript">
+			history.replaceState({},'', "?<?= $imgLibManager->getQueryTermStr() ?>");
+		</script>
 	</div>
 	<?php
 	include($SERVER_ROOT . '/includes/footer.php');
