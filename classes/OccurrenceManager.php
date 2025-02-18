@@ -538,7 +538,6 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		//If supper admin, protect nothing
 		if(!empty($GLOBALS['IS_ADMIN'])) return '';
 		//If not logged in block all hidden specimens
-		print_r($GLOBALS['USER_RIGHTS']);
 		if(empty($GLOBALS['USER_RIGHTS'])){
 			$retStr = 'AND o.recordSecurity != 5 ';
 		}
