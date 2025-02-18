@@ -28,3 +28,5 @@ There are two methods for running a schema patch:
 ## Misc
 
 Some files (such as those generated from _template.* files) may need to be reviewed and modified to take advantage of updated Symbiota Code. It may be helpfull to review the current installation [INSTALL.md](INSTALL.md) file for changes in configuration.
+
+If you have previously installed a Google Map API Key in the symbini configuration file and wish to switch over to LeafLet as your base maps, you simply need to comment out the $GOOGLE_MAP_KEY variable within the symbini.php configuration file. As of Symbiota version 3.1, LeafLet is the default mapping interface. Installing a Google Map API indicates a preference of using Google over LeafLet. 

@@ -146,7 +146,7 @@ class MediaController extends Controller{
 	 * )
 	 */
 	public function showOneMedia($id){
-		$media = Media::find($this->getImgid($id));
+		$media = Media::find($this->getMediaID($id));
 		if(!$media){
 			return response()->json(['status' => 'failure', 'error' => 'Media resource not found'], 400);
 		}
@@ -511,7 +511,7 @@ class MediaController extends Controller{
 	 */
 	public function update($id, Request $request){
 		if($user = $this->authenticate($request)){
-			$media = Media::find($this->getImgid($id));
+			$media = Media::find($this->getMediaID($id));
 			if(!$media){
 				return response()->json(['status' => 'failure', 'error' => 'Media resource not found'], 400);
 			}
@@ -559,7 +559,7 @@ class MediaController extends Controller{
 	 */
 	public function delete($id, Request $request){
 		if($user = $this->authenticate($request)){
-			$media = Media::find($this->getImgid($id));
+			$media = Media::find($this->getMediaID($id));
 			if(!$media){
 				return response()->json(['status' => 'failure', 'error' => 'Media resource not found'], 400);
 			}
@@ -578,10 +578,10 @@ class MediaController extends Controller{
 		}
 	}
 
-	private function getImgid($id){
+	private function getMediaID($id){
 		if(!is_numeric($id)){
-			$imgId = Media::where('recordID', $id)->value('imgid');
-			if(is_numeric($imgId)) $id = $imgId;
+			$mediaID = Media::where('recordID', $id)->value('mediaID');
+			if(is_numeric($mediaID)) $id = $mediaID;
 		}
 		return $id;
 	}

@@ -195,10 +195,8 @@ if($isEditor){
 		<div style="margin:30px;">
 			<div style="margin-bottom:30px;">
 				<?php echo $LANG['TAX_UPLOAD_EXPLAIN1'] . ' '; ?>
-				<a href="https://biokic.github.io/symbiota-docs/portal_manager/taxonomy/batch_load/">
-					<?php echo htmlspecialchars($LANG['SYMB_DOC'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>
-				</a>
-				<?php echo ' ' . htmlspecialchars($LANG['TAX_UPLOAD_EXPLAIN2'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>
+				<a href="https://biokic.github.io/symbiota-docs/portal_manager/taxonomy/batch_load/"><?php echo $LANG['SYMB_DOC']; ?></a>
+				<?php echo $LANG['TAX_UPLOAD_EXPLAIN2'] ?>
 			</div>
 			<?php
 			if($action == 'mapInputFile' || $action == 'verifyMapping'){
@@ -221,7 +219,8 @@ if($isEditor){
 							$translationMap = array('phylum'=>'division', 'division'=>'phylum', 'subphylum'=>'subdivision', 'subdivision'=>'subphylum', 'sciname'=>'scinameinput',
 								'scientificname'=>'scinameinput', 'scientificnameauthorship'=>'author', 'vernacularname'=>'vernacular',
 								'taxonid'=>'sourceid', 'parenttaxonid'=>'sourceparentid', 'parentscientificname'=>'parentstr',
-								'acceptedtaxonid'=>'sourceacceptedid', 'acceptedscientificname'=>'acceptedstr', 'acceptedname'=>'acceptedstr'
+								'acceptedtaxonid'=>'sourceacceptedid', 'acceptedscientificname'=>'acceptedstr', 'acceptedname'=>'acceptedstr', 'cultivar' => 'cultivarepithet',
+								'genus' => 'unitname1', 'specificepithet' => 'unitname2', 'taxonrank' => 'unitind3', 'infraspecificepithet' => 'unitname3'
 							);
 							$sArr = $loaderManager->getSourceArr();
 							$tArr = $loaderManager->getTargetArr();

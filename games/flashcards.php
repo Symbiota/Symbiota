@@ -2,6 +2,7 @@
 //error_reporting(E_ALL);
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/GamesManager.php');
+
 header('Content-Type: text/html; charset='.$CHARSET);
 
 $clid = array_key_exists('clid', $_REQUEST) ? $_REQUEST['clid'] : 0;
