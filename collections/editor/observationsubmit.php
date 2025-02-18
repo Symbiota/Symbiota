@@ -269,8 +269,8 @@ $clArr = $obsManager->getChecklists();
 							<input type="text" name="locality" id="locality" style="width:95%;" value="" required />
 						</div>
 						<div style="clear:both;margin-bottom:5px;">
-							<input type="checkbox" name="localitysecurity" id="localitysecurity" style="" value="1" title="<?php echo $LANG['HIDE_LOC_SHORT']; ?>" />
-							<label for="localitysecurity"><?php echo $LANG['HIDE_LOC_LONG']; ?></label>
+							<input type="checkbox" name="recordsecurity" id="recordsecurity" style="" value="1" title="<?php echo $LANG['HIDE_LOC_SHORT']; ?>" />
+							<label for="recordsecurity"><?php echo $LANG['HIDE_LOC_LONG']; ?></label>
 						</div>
 						<div style="clear:both;" class="flex-form">
 							<div>

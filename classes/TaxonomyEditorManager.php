@@ -661,7 +661,7 @@ class TaxonomyEditorManager extends Manager{
 			if($dataArr['securitystatus'] == 1){
 				//Set locality security
 				$sqlUpdate2 = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname
-					SET o.localitysecurity = 1
+					SET o.recordSecurity = 1
 					WHERE (o.securityReason IS NULL) AND (cultivationStatus = 0 OR cultivationStatus IS NULL) AND (o.sciname = ?) ';
 				if($stmt = $this->conn->prepare($sqlUpdate2)){
 					$stmt->bind_param('s', $dataArr["sciname"]);

@@ -1124,7 +1124,7 @@ else{
 												$securityCode = array_key_exists('recordsecurity',$occArr)&&$occArr['recordsecurity']?$occArr['recordsecurity']:0;
 												$lsrValue = array_key_exists('securityreason',$occArr)?$occArr['securityreason']:'';
 												?>:
-												<select name="localitysecurity" onchange="securityChangedByUser(this.form);" title="<?php echo (isset($LANG['SECURITY_SETTINGS'])?$LANG['SECURITY_SETTINGS']:'Security Settings'); ?>" tabindex="-1">
+												<select name="recordsecurity" onchange="securityChangedByUser(this.form);" title="<?php echo (isset($LANG['SECURITY_SETTINGS'])?$LANG['SECURITY_SETTINGS']:'Security Settings'); ?>" tabindex="-1">
 													<option value="0"><?= $LANG['SECURITY_NOT_APPLIED'] ?></option>
 													<option value="1" ' <?= ($securityCode ? 'SELECTED' : '') ?>><?= $LANG['SECURITY_APPLIED'] ?></option>
 												</select>

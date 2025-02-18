@@ -552,16 +552,6 @@ ALTER TABLE `omoccurrences`
 ALTER TABLE `omoccurrences` 
   ADD INDEX `IX_occurrences_countryCode` (`countryCode` ASC),
   ADD INDEX `IX_occurrences_continent` (`continent` ASC);
-  
-  
-ALTER TABLE `omoccurrences` 
-  CHANGE COLUMN `localitySecurity` `recordSecurity` INT(10) NULL DEFAULT 0 COMMENT '0 = no security; 1 = hidden locality; 5 = hide full record' ,
-  CHANGE COLUMN `localitySecurityReason` `securityReason` VARCHAR(100) NULL DEFAULT NULL ;
-
-UPDATE omoccurrences
-  SET recordSecurity = 0 
-  WHERE recordSecurity IS NULL;
-
 
 # Make sure synonym countries have the same countryCode as the accepted country 
 UPDATE geographicthesaurus g INNER JOIN geographicthesaurus a ON g.acceptedID = a.geoThesID 

@@ -376,8 +376,6 @@ $_SESSION['citationvar'] = $searchVar;
 											. (!empty($nonItalicizedScinameComponent) ? (' ' . $nonItalicizedScinameComponent) : '') . '</a>' ;
 										}
 										echo $sciStr;
-									} elseif ($fieldArr['localitysecurity'] > 1) {
-										echo (isset($LANG['ID_PROTECTED']) ? $LANG['ID_PROTECTED'] : 'Identification Protected');;
 									}
 									echo '</div>';
 									echo '<div style="margin:4px">';

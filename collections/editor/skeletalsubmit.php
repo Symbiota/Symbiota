@@ -159,7 +159,7 @@ if($collid){
 								<label for="ffamily"><?php echo $LANG['FAMILY']; ?>:</label> <input id="ffamily" name="family" type="text" tabindex="0" value="" />
 							</div>
 							<div id="localitysecuritydiv">
-								<input id="flocalitysecurity" name="localitysecurity" type="checkbox" tabindex="0" value="1" />
+								<input id="flocalitysecurity" name="recordsecurity" type="checkbox" tabindex="0" value="1" />
 								<label for="flocalitysecurity">
 									<?php echo $LANG['PROTECT_LOCALITY']; ?>
 								</label>

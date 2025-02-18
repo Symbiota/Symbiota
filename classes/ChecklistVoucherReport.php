@@ -487,7 +487,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 			$out = fopen('php://output', 'w');
 			fputcsv($out, $headerArr);
 			while($row = $rs->fetch_assoc()){
-				$localSecurity = ($row["localitysecurity"]?$row["localitysecurity"]:0);
+				$localSecurity = ($row['recordSecurity']?$row['recordSecurity']:0);
 				if(!$rareSpeciesReader && $localSecurity != 1 && (!array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS']) || !in_array($row['collid'],$GLOBALS['USER_RIGHTS']['RareSppReader']))){
 					$redactStr = '';
 					foreach($localitySecurityFields as $fieldName){

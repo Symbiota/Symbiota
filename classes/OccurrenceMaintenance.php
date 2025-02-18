@@ -472,7 +472,7 @@ class OccurrenceMaintenance {
 
 		if($sensitiveArr){
 			$sql = 'UPDATE omoccurrences
-				SET localitySecurity = 1
+				SET recordSecurity = 1
 				WHERE (recordSecurity = 0) AND (securityReason IS NULL)
 				AND (cultivationStatus = 0 OR cultivationStatus IS NULL) AND (tidinterpreted IN(' . implode(',', $sensitiveArr) . ')) ';
 			if($this->collidStr) $sql .= 'AND collid IN('.$this->collidStr.')';
@@ -538,7 +538,7 @@ class OccurrenceMaintenance {
 		$rs->free();
 
 		if($occArr){
-			$sql2 = 'UPDATE omoccurrences SET localitysecurity = 1 WHERE occid IN('.implode(',',$occArr).')';
+			$sql2 = 'UPDATE omoccurrences SET recordSecurity = 1 WHERE occid IN('.implode(',',$occArr).')';
 			if($this->conn->query($sql2)){
 				$status = $this->conn->affected_rows;
 			}

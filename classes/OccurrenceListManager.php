@@ -83,8 +83,8 @@ class OccurrenceListManager extends OccurrenceManager{
 				$retArr[$row->occid]['state'] = $this->cleanOutStr($row->stateprovince);
 				$retArr[$row->occid]['county'] = $this->cleanOutStr($row->county);
 				$retArr[$row->occid]['obsuid'] = $row->observeruid;
-				$retArr[$row->occid]['localitysecurity'] = $row->localitysecurity;
-				if($securityClearance || $row->localitysecurity != 1){
+				$retArr[$row->occid]['recordsecurity'] = $row->recordsecurity;
+				if($securityClearance || $row->recordsecurity != 1){
 					$locStr = $row->locality ?? '';
 					$retArr[$row->occid]['locality'] = str_replace('.,',',',$this->cleanOutStr(trim($locStr,' ,;')));
 					$retArr[$row->occid]['declat'] = $row->decimallatitude;

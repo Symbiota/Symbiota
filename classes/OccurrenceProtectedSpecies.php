@@ -115,7 +115,7 @@ class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
 	public function getSpecimenCnt(){
 		$retCnt = 0;
 		//Get number of specimens protected
-		$sql = 'SELECT COUNT(*) AS cnt FROM omoccurrences WHERE (LocalitySecurity > 0)';
+		$sql = 'SELECT COUNT(*) AS cnt FROM omoccurrences WHERE (recordSecurity > 0)';
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){
 			$retCnt = $r->cnt;
