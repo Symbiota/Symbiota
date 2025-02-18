@@ -43,6 +43,7 @@ $LANG['LINKED_RESOURCES'] = 'Ressources liées';
 $LANG['LINKED_RESOURCES_EXIST'] = 'Attention: des ressources liées existent';
 $LANG['NO_RESOURCES'] = 'Aucune ressource liée à ce taxon';
 $LANG['REMAP_RESOURCES'] = 'Remapper les ressources vers un autre taxon';
+$LANG['WARNING_REMAP'] = 'Avertissement: le remappage supprimera le taxon actuel et déplacera toutes les ressources et tous les taxons répertoriés ci-dessus vers le Taxon Cible.';
 $LANG['TARGET_TAXON'] = 'Taxon cible';
 $LANG['REMAP_TAXON'] = 'Remapper le taxon';
 $LANG['DELETE_TAX_AND_RES'] = 'Supprimer le taxon et les ressources existantes';

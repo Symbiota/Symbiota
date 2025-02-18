@@ -601,7 +601,6 @@ function getSearchUrl() {
   });
 
   baseUrl.searchParams.append("comingFrom", "newsearch");
-
   return baseUrl.href;
 }
 

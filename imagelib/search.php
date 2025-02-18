@@ -62,6 +62,7 @@ if($action == 'batchAssignTag'){
 		$statusStr = '<span style="color:red">' . $LANG['ACTION_ERROR'] . ': ' . $imgLibManager->getErrorStr() . '</span>';
 	}
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
@@ -132,7 +133,7 @@ if($action == 'batchAssignTag'){
 	<!-- This is inner text! -->
 	<div role="main" id="innertext">
 		<h1 class="page-heading"><?= $LANG['IMAGE_SEARCH']; ?></h1>
-		<form name="imagesearchform" id="imagesearchform" action="search.php?<?=$imgLibManager->getQueryTermStr()?>" method="post">
+		<form name="imagesearchform" id="imagesearchform" action="search.php" method="post">
 			<?php
 			if($statusStr){
 				echo '<div id="action-status-div">' . $statusStr . '</div>';
@@ -504,6 +505,9 @@ if($action == 'batchAssignTag'){
 			}
 			?>
 		</form>
+		<script type ="text/javascript">
+			history.replaceState({},'', "?<?= $imgLibManager->getQueryTermStr() ?>");
+		</script>
 	</div>
 	<?php
 	include($SERVER_ROOT . '/includes/footer.php');

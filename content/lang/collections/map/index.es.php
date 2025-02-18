@@ -2,16 +2,14 @@
 /*
 ------------------
 Language: Español (Spanish)
-Translated by: Samanta Orellana
-Edited by: Katie Pearson
-Date Translated: 2021-06-23
-Date Edited: 2024-10-22
+Translated by: Samanta Orellana (2021-06-23)
+Edited by: Katie Pearson (2024-10-22)
 ------------------
 */
 include_once($SERVER_ROOT.'/content/lang/collections/harvestparams.es.php');
 include_once('mapshared.es.php');
 $LANG['MAP_INTERFACE'] = 'Interfaz del Mapa';
-
+$LANG['HOME'] = 'Inicio';
 $LANG['SEARCH_CRITERIA'] = 'Criterios de búsqueda';
 $LANG['CRITERIA'] = 'Criterios';
 $LANG['COLLECTIONS'] = 'Colecciones';
@@ -33,6 +31,7 @@ $LANG['CLUSTERING'] = 'Agrupar';
 $LANG['GRID_SIZE'] = 'Tamaño de Rejilla';
 $LANG['CLUSTER_SIZE'] = 'Cantidad Mínima de Agrupamiento';
 $LANG['TURN_OFF_CLUSTERING'] = 'Desactivar Agrupamiento';
+$LANG['CLUSTER_RADIUS'] = 'Radio';
 $LANG['REFRESH_MAP'] = 'Refrescar Mapa';
 $LANG['HEATMAP'] = 'Carte de chaleur';
 $LANG['TURN_ON_HEATMAP'] = 'Activar mapa de calor';
@@ -68,4 +67,4 @@ $LANG['SOUTH'] = 'S';
 $LANG['EAST'] = 'E';
 $LANG['WEST'] = 'W';
 $LANG['FAILED_TO_LOAD_OCCR_DATA'] = 'Error al cargar los datos de ocurrencia';
-
+?>

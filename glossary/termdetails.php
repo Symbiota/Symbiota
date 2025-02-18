@@ -229,7 +229,7 @@ if($glossId){
 									<b><?php echo (isset($LANG['DEFINITION'])?$LANG['DEFINITION']:'Definition'); ?>: </b>
 								</div>
 								<div style="float:left;margin-left:10px;width:95%;">
-									<textarea name="definition" id="definition" rows="10" maxlength="2000" style="width:100%;height:200px;" ><?php echo $termArr['definition']; ?></textarea>
+									<textarea name="definition" id="definition" rows="10" maxlength="5000" style="width:100%;height:200px;" ><?php echo $termArr['definition']; ?></textarea>
 								</div>
 							</div>
 							<div style="clear:both;padding-top:4px;float:left;">

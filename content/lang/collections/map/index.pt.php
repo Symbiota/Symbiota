@@ -8,6 +8,8 @@ Translated by: Google Translate (2024-09-13)
 include_once($SERVER_ROOT.'/content/lang/collections/harvestparams.pt.php');
 include_once('mapshared.pt.php');
 
+$LANG['MAP_INTERFACE'] = 'Interfaz del Mapa';
+$LANG['HOME'] = 'Início';
 $LANG['SEARCH_CRITERIA'] = 'Critérios de Pesquisa';
 $LANG['CRITERIA'] = 'Critérios';
 $LANG['COLLECTIONS'] = 'Coleções';
@@ -29,6 +31,7 @@ $LANG['CLUSTERING'] = 'Clustering';
 $LANG['GRID_SIZE'] = 'Tamanho da Grade';
 $LANG['CLUSTER_SIZE'] = 'Mín. Tamanho do Cluster';
 $LANG['TURN_OFF_CLUSTERING'] = 'Desativar Agrupamento';
+$LANG['CLUSTER_RADIUS'] = 'Raio';
 $LANG['REFRESH_MAP'] = 'Atualizar Mapa';
 $LANG['HEATMAP'] = 'Mapa de Calor';
 $LANG['TURN_ON_HEATMAP'] = 'Ativar Mapa de Calor';
@@ -64,5 +67,4 @@ $LANG['SOUTH'] = 'S';
 $LANG['EAST'] = 'E';
 $LANG['WEST'] = 'W';
 $LANG['FAILED_TO_LOAD_OCCR_DATA'] = 'Échec du chargement des données d\'occurrence';
-
 ?>

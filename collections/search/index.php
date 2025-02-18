@@ -23,7 +23,6 @@ $collIdsFromUrl = array_key_exists("db", $_GET) ? explode(",", $explodable) : ''
 $collManager = new OccurrenceManager();
 $collectionSource = $collManager->getQueryTermStr();
 
-$SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ?? false;
 $collData = new CollectionMetadata();
 $siteData = new DatasetsMetadata();
 
@@ -436,7 +435,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 									<label for="hascoords"><?php echo $LANG['HAS_COORDS'] ?></label>
 								</div>
 								<div>
-									<input type='checkbox' name='includecult' id='includecult' value='1' data-chip="<?php echo $LANG['INCLUDE_CULTIVATED'] ?>" <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? 'checked' : '' ?> />
+									<input type='checkbox' name='includecult' id='includecult' value='1' data-chip="<?php echo $LANG['INCLUDE_CULTIVATED'] ?>" <?= !empty($SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT) ? 'checked' : '' ?> />
 									<label for="includecult"><?php echo $LANG['INCLUDE_CULTIVATED'] ?></label>
 								</div>
 							</div>

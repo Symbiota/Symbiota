@@ -183,7 +183,7 @@ include($SERVER_ROOT.'/includes/header.php');
 						</div>
 						<div style="margin:10px 0px;">
 							<input name="includeidentificationhistory" type="checkbox" value="1" checked /> <?php echo (isset($LANG['RESTORE_DETS'])?$LANG['RESTORE_DETS']:'Restore Determination History'); ?><br/>
-							<input name="includeimages" type="checkbox" value="1" checked /> <?php echo (isset($LANG['RESTORE_IMGS'])?$LANG['RESTORE_IMGS']:'Restore Images'); ?><br/>
+							<input name="includeimages" type="checkbox" value="1" checked /> <?php echo (isset($LANG['RESTORE_MEDIA_LINKS'])?$LANG['RESTORE_MEDIA_LINKS']:'Restore Media/Image Links'); ?><br/>
 						</div>
 						<div style="margin:10px 0px;">
 							<button name="action" type="submit" value="AnalyzeFile"><?php echo (isset($LANG['ANALYZE'])?$LANG['ANALYZE']:'Analyze File'); ?></button>

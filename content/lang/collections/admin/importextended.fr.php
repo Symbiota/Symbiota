@@ -42,7 +42,6 @@ $LANG['DETERMINATIONS'] = 'Déterminations';
 $LANG['IMAGE_FIELD_MAP'] = 'Carte des champs multimédia';
 $LANG['MATERIAL_SAMPLE'] = 'Échantillon de matériau';
 $LANG['PROCESSING_CATNUM'] = 'Identifiant du traitement';
-$LANG['VALUES_SET'] = 'Les valeurs vides ';
 $LANG['UPDATING_STATS'] = 'Mise à jour des statistiques';
 $LANG['IMAGE_LOADED'] = 'Multimédia chargé avec succès';
 $LANG['ASSOC_DELETED'] = 'Association supprimée';
@@ -56,6 +55,9 @@ $LANG['MAT_SAMPLE_ADDED'] = 'Échantillon de matériau ajouté';
 $LANG['DETERMINATION_ADDED'] = 'Détermination ajoutée';
 $LANG['CHOOSE_FILE'] = 'Choisir un fichier';
 $LANG['HOME'] = 'Accueil';
-$LANG['ASSOCIATION_UPLOAD_WARNING'] = 'Nous vous recommandons d\'utiliser occurrenceID pour les identifiants de sujet et d\'objet chaque fois que possible afin de garantir l\'unicité globale des collections.'
+$LANG['ASSOCIATION_UPLOAD_WARNING'] = 'Nous vous recommandons d\'utiliser occurrenceID pour les identifiants de sujet et d\'objet chaque fois que possible afin de garantir l\'unicité globale des collections.';
+$LANG['AUDIO_UPLOAD'] = 'Téléchargement audio';
+$LANG['IMAGE_UPLOAD'] = 'Téléchargement d\'images';
+$LANG['MEDIA_UPLOAD_TYPE'] = 'Type de téléchargement multimédia';
 
 ?>

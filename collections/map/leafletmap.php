@@ -163,7 +163,8 @@ if(isset($MAPPING_BOUNDARIES)){
             }
 
             let taxaCluster = L.markerClusterGroup({
-               iconCreateFunction: colorCluster
+               iconCreateFunction: colorCluster,
+               tid: tid // Save the taxon ID to the cluster
             });
 
             for(let groupId of Object.keys(colorGroup.points)) {
@@ -211,6 +212,8 @@ if(isset($MAPPING_BOUNDARIES)){
                }
             }
             map.mapLayer.addLayer(taxaCluster);
+
+            map.taxaClusters[tid] = taxaCluster;
          }
          map.mapLayer.fitBounds(bounds.getBounds());
       }
