@@ -378,19 +378,40 @@ class Media {
 	}
 
 	/**
+	 * @param mixed $url
+	 * @param mixed $text
+	 */
+	public static function getAllowedMime($mime) {
+		// Fall back if ALLOWED_MEDIA_MIME_TYPES is not present
+		if(!isset($GLOBALS['ALLOWED_MEDIA_MIME_TYPES'])) {
+			return is_array($mime) && count($mime) > 0? $mime[0]: $mime;
+		} else if(is_array($mime)) {
+			foreach($mime as $type) {
+				if(in_array($type, $GLOBALS['ALLOWED_MEDIA_MIME_TYPES'])) {
+					return $type;
+				}
+			}
+		} else {
+			if(in_array($mime, $GLOBALS['ALLOWED_MEDIA_MIME_TYPES'])) {
+				return $mime;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * @param string $ext
 	 * @return string | bool
 	 */
-	public static function ext2Mime(string $ext, string $type) {
+	public static function ext2Mime(string $ext, string $type = '') {
 		$image = [
 			'bmp' => ['image/bmp', 'image/x-bmp', 'image/x-bitmap', 'image/x-xbitmap', 'image/x-win-bitmap', 'image/x-windows-bmp', 'image/ms-bmp', 'image/x-ms-bmp'],
-			'cdr' => 'image/cdr',
-			'cdr' =>'image/x-cdr',
+			'cdr' => ['image/cdr', 'image/x-cdr'],
 			'gif' => 'image/gif',
-			'ico' => 'image/x-icon',
-			'ico' =>'image/x-ico',
-			'ico' =>'image/vnd.microsoft.icon',
-			'jp2' => ['image/jp2', 'image/jpx', 'image/jpm', 'image/jpeg', 'image/jpeg', 'image/pjpeg'],
+			'ico' => ['image/x-icon', 'image/x-ico', 'image/vnd.microsoft.icon' ],
+			'jpg' => ['image/jpeg', 'image/jpeg', 'image/pjpeg'],
+			'jp2' => ['image/jp2', 'image/jpx', 'image/jpm'],
 			'png' => ['image/png', 'image/x-png'],
 			'psd' => 'image/vnd.adobe.photoshop',
 			'svg' => 'image/svg+xml',
@@ -421,7 +442,16 @@ class Media {
 		} else if ($type=== MediaType::Audio) {
 			return $audio[$ext] ?? false;
 		} else {
-			return false;
+			$audio_result = $audio[$ext] ?? false;
+			$image_result = $image[$ext] ?? false;
+			if($audio_result && !$image_result) {
+				return $audio_result;
+			} else if(!$audio_result && $image_result) {
+				return $image_result;
+			} else {
+				// There was some mime type ambiguity so return false
+				return false;
+			}
 		}
 	}
 
@@ -734,20 +764,24 @@ class Media {
 	/* Internal Function for creating a file array for media that doesn't need to be uploaded. Primarly used for media upload */
 	private static function parse_map_only_file(array $clean_post_arr): array {
 		// Map only files must have format and a url
-		if(!(isset($clean_post_arr['originalUrl']) || isset($clean_post_arr['url'])) || !isset($clean_post_arr['format'])) {
+		if(!(isset($clean_post_arr['originalUrl']) || isset($clean_post_arr['url']))) {
 			return [];
 		}
 
 		$url = $clean_post_arr['originalUrl'] ?? $clean_post_arr['url'];
 		$file_type_mime = $clean_post_arr['format'] ?? '';
-		$media_upload_type = MediaType::tryFrom($clean_post_arr['mediaUploadType']);
+		$media_upload_type = $clean_post_arr['mediaUploadType'] ?? '';
+
+		if($media_upload_type) {
+			$media_upload_type = MediaType::tryFrom($media_upload_type);
+		}
 
 		$parsed_file = self::parseFileName($url);
 		$parsed_file['name'] = self::cleanFileName($parsed_file['name']);
 
 		if(!$parsed_file['extension'] && $file_type_mime) {
 			$parsed_file['extension'] = self::mime2ext($file_type_mime);
-		} else if (!$file_type_mime && $parsed_file['extension'] && $media_upload_type) {
+		} else if (!$file_type_mime && $parsed_file['extension']) {
 			$file_type_mime = self::ext2Mime($parsed_file['extension'], $media_upload_type);
 
 			// If There is a bunch of potential mime types just assume the first one
@@ -762,7 +796,7 @@ class Media {
 			'name' => $parsed_file['name'] . ($parsed_file['extension'] ? '.' .$parsed_file['extension']: ''),
 			'tmp_name' => $url,
 			'error' => 0,
-			'type' => $file_type_mime,
+			'type' => $file_type_mime ?? '',
 			'size' => null
 		];
 	}
@@ -814,7 +848,7 @@ class Media {
 			[$clean_post_arr['occid']]
 		);
 
-		if($row = $taxon_result->fetch_object()) {
+		if(!isset($clean_post_arr['tid']) && $row = $taxon_result->fetch_object()) {
 			$clean_post_arr['tid'] = $row->tidinterpreted;
 		}
 
@@ -843,7 +877,6 @@ class Media {
 			"anatomy" => $clean_post_arr["anatomy"] ?? null,
 			"notes" => $clean_post_arr["notes"] ?? null,
 			"username" => Sanitize::in($GLOBALS['USERNAME']),
-			"sortsequence" => array_key_exists('sortsequence', $clean_post_arr) && is_numeric($clean_post_arr['sortsequence']) ? $clean_post_arr['sortsequence'] : null,
 			// check if its is_numeric?
 			"sortOccurrence" => $clean_post_arr['sortOccurrence'] ?? null,
 			"sourceIdentifier" => $clean_post_arr['sourceIdentifier'] ?? ('filename: ' . $file['name']),
@@ -856,6 +889,10 @@ class Media {
 			"recordID" => $clean_post_arr['recordID'] ?? UuidFactory::getUuidV4(),
 			"mediaType" => $media_type_str,
 		];
+
+		if(array_key_exists('sortsequence', $clean_post_arr) && is_numeric($clean_post_arr['sortsequence'])) {
+			$keyValuePairs["sortsequence"] = $clean_post_arr['sortsequence'];
+		}
 
 		//What is url for files
 		if($isRemoteMedia) {
@@ -888,7 +925,7 @@ class Media {
 				//Check if file exists
 				if($storage->file_exists($file)) {
 					//Add mediaID onto end of file name which should be unique within portal
-					$file['name'] = self::addToFilename($file['name'], '_' . $mediaID);
+					$file['name'] = self::addToFilename($file['name'], '_' . $media_id);
 
 					//Fail case the appended mediaID is taken stops after 10
 					$cnt = 1;

@@ -1,6 +1,6 @@
 $(document).ready(async function () {
   const currentRankId = Number(document.getElementById("rankid").value);
-  showOnlyRelevantFields(currentRankId);
+  showOnlyRelevantFields(currentRankId, false);
 
   const form = document.getElementById("taxoneditform");
   await updateFullname(form);
@@ -128,9 +128,9 @@ function showOnlyRelevantFields(rankId) {
     const selectedOptionText = rankIdSelector.options[optionIdx].text.trim();
 
     // Set the label for "UnitName1" based on the selected option text
-    label.textContent = selectedOptionText + " Name *: ";
+    label.textContent = selectedOptionText + " Name: ";
   } else {
-    label.textContent = "Genus Name *: ";
+    label.textContent = "Genus Name: ";
   }
 
   if (Object.values(rankIdsToHideUnit2From).includes(rankId)) {
