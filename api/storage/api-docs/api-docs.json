@@ -107,12 +107,12 @@
                 }
             }
         },
-        "/api/v2/exsiccati": {
+        "/api/v2/exsiccata": {
             "get": {
                 "tags": [
                     ""
                 ],
-                "operationId": "/api/v2/exsiccati",
+                "operationId": "/api/v2/exsiccata",
                 "parameters": [
                     {
                         "name": "limit",

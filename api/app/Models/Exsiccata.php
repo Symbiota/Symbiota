@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Exsiccati extends Model {
+class Exsiccata extends Model {
     protected $table = 'omexsiccatititles';
     protected $primaryKey = 'ometid';
     protected $hidden = ['lasteditedby'];

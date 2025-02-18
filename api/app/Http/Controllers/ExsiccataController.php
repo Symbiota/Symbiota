@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Exsiccati;
+use App\Models\Exsiccata;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class ExsiccatiController extends Controller {
+class ExsiccataController extends Controller {
 
     /**
-     * Exsiccati controller instance.
+     * Exsiccata controller instance.
      *
      * @return void
      */
@@ -19,8 +19,8 @@ class ExsiccatiController extends Controller {
 
     /**
      * @OA\Get(
-     *	 path="/api/v2/exsiccati",
-     *	 operationId="/api/v2/exsiccati",
+     *	 path="/api/v2/exsiccata",
+     *	 operationId="/api/v2/exsiccata",
      *	 tags={""},
      *	 @OA\Parameter(
      *		 name="limit",
@@ -47,7 +47,7 @@ class ExsiccatiController extends Controller {
      *	 ),
      * )
      */
-    public function showAllExsiccati(Request $request) {
+    public function showAllExsiccata(Request $request) {
         $this->validate($request, [
             'limit' => 'integer',
             'offset' => 'integer'
@@ -55,8 +55,8 @@ class ExsiccatiController extends Controller {
         $limit = $request->input('limit', 100);
         $offset = $request->input('offset', 0);
 
-        $fullCnt = Exsiccati::count();
-        $result = Exsiccati::skip($offset)->take($limit)->get();
+        $fullCnt = Exsiccata::count();
+        $result = Exsiccata::skip($offset)->take($limit)->get();
 
         $eor = false;
         $retObj = [
