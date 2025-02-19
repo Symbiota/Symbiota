@@ -848,7 +848,7 @@ class Media {
 			[$clean_post_arr['occid']]
 		);
 
-		if(!isset($clean_post_arr['tid']) && $clean_post_arr['tid'] && $row = $taxon_result->fetch_object()) {
+		if(!isset($clean_post_arr['tid']) && $row = $taxon_result->fetch_object()) {
 			$clean_post_arr['tid'] = $row->tidinterpreted;
 		}
 
@@ -877,7 +877,6 @@ class Media {
 			"anatomy" => $clean_post_arr["anatomy"] ?? null,
 			"notes" => $clean_post_arr["notes"] ?? null,
 			"username" => Sanitize::in($GLOBALS['USERNAME']),
-			"sortsequence" => array_key_exists('sortsequence', $clean_post_arr) && is_numeric($clean_post_arr['sortsequence']) ? $clean_post_arr['sortsequence'] : null,
 			// check if its is_numeric?
 			"sortOccurrence" => $clean_post_arr['sortOccurrence'] ?? null,
 			"sourceIdentifier" => $clean_post_arr['sourceIdentifier'] ?? ('filename: ' . $file['name']),
@@ -890,6 +889,10 @@ class Media {
 			"recordID" => $clean_post_arr['recordID'] ?? UuidFactory::getUuidV4(),
 			"mediaType" => $media_type_str,
 		];
+
+		if(array_key_exists('sortsequence', $clean_post_arr) && is_numeric($clean_post_arr['sortsequence'])) {
+			$keyValuePairs["sortsequence"] = $clean_post_arr['sortsequence'];
+		}
 
 		//What is url for files
 		if($isRemoteMedia) {
@@ -922,7 +925,7 @@ class Media {
 				//Check if file exists
 				if($storage->file_exists($file)) {
 					//Add mediaID onto end of file name which should be unique within portal
-					$file['name'] = self::addToFilename($file['name'], '_' . $mediaID);
+					$file['name'] = self::addToFilename($file['name'], '_' . $media_id);
 
 					//Fail case the appended mediaID is taken stops after 10
 					$cnt = 1;

@@ -259,7 +259,7 @@ $projArr = $csManager->getProjectDetails();
 										<?php
 										foreach($header as $v){
 											$displayStr = $rArr[$v];
-											if(strlen($displayStr) > 40){
+											if($displayStr && strlen($displayStr) > 40){
 												$displayStr = substr($displayStr,0,40).'...';
 											}
 											echo '<td>'.$displayStr.'</td>'."\n";
