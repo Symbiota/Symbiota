@@ -209,7 +209,7 @@ ALTER TABLE `omoccuraccess`
 ALTER TABLE `omoccuraccesslink`
   ENGINE=InnoDB;
 
-# Drop old deprecated tables to save space, following statemetns will do if this was not originally a 1.0 install
+# Drop old deprecated tables to save space, following statements will fail if portals was not an originally 1.0 install
 DROP TABLE IF EXISTS `deprecated_adminstats`;
 DROP TABLE IF EXISTS `deprecated_guidimages`; 
 DROP TABLE IF EXISTS `deprecated_guidoccurrences`;
@@ -533,12 +533,14 @@ ALTER TABLE `omoccuridentifiers`
   ADD COLUMN `format` VARCHAR(45) NULL DEFAULT NULL AFTER `identifierName`,
   ADD COLUMN `recordID` VARCHAR(45) NULL DEFAULT NULL AFTER `sortBy`,
   CHANGE COLUMN `modifiedtimestamp` `modifiedTimestamp` DATETIME NULL DEFAULT NULL AFTER `modifiedUid`,
-  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT current_timestamp() AFTER `modifiedTimestamp`,
+  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT current_timestamp() AFTER `modifiedTimestamp`;
+
+ALTER TABLE `omoccuridentifiers`
   DROP INDEX `UQ_omoccuridentifiers`,
-  ADD UNIQUE INDEX `UQ_omoccuridentifiers` (`occid`, `identifierValue`, `identifierName`),
   DROP INDEX `IX_omoccuridentifiers_value`;
 
 ALTER TABLE `omoccuridentifiers`
+  ADD UNIQUE INDEX `UQ_omoccuridentifiers` (`occid`, `identifierValue`, `identifierName`),
   ADD INDEX `IX_omoccuridentifiers_value` (`identifierValue`);
 
 # Occurrence table adjustments
