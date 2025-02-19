@@ -70,4 +70,5 @@ $router->group(['prefix' => 'v2'], function () use ($router) {
 	//$router->get('taxonomy/{id}/description/{id}',  ['uses' => 'TaxonomyDescriptionController@showOneDescription']);
 
 	$router->get('exsiccata', ['uses' => 'ExsiccataController@showAllExsiccata']);
+	$router->get('exsiccata/{identifer}/number', ['uses' => 'ExsiccataController@showOneExsiccataNumbers']);
 });
