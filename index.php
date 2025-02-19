@@ -91,7 +91,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 				<p>
 				The Guatemala Biodiversity Portal is hosted by the <a href="https://biokic.asu.edu" target="_blank">Biodiversity Knowledge Integration Center (BIOKIC)</a>
 				at Arizona State University, USA. For further information or to have a collection profile established, please contact
-				Samanta Orellana (<a href="mailto:sorellana@asu.edu">sorellana@asu.edu</a>) or Zabdi López (<a href="mailto:zabdi@alumni.uvg.edu.gt">zabdi@alumni.uvg.edu.gt</a>).
+				Samanta Orellana (<a href="mailto:ksorellana@ku.edu">ksorellana@ku.edu</a>) or Zabdi López (<a href="mailto:zabdi.lopez@unibe.ch">zabdi.lopez@unibe.ch</a>).
 				More information on our <a href="https://biodiversidadgt.github.io/docs/" target="_blank">documentation website</a>.
 				</p>
 			</div>
@@ -114,7 +114,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 				El portal está alojado en los servidores del Centro de
 				<a href="https://biokic.asu.edu" target="_blank">Integración del Conocimiento de la Biodiversidad (BIOKIC)</a> de la Universidad Estatal de Arizona (ASU),
 				en Estados Unidos. Para más información o para gestionar un perfil por favor comunicarse con
-				Samanta Orellana (<a href="mailto:sorellana@asu.edu">sorellana@asu.edu</a>) o Zabdi López (<a href="mailto:zabdi@alumni.uvg.edu.gt">zabdi@alumni.uvg.edu.gt</a>).
+				Samanta Orellana (<a href="mailto:ksorellana@ku.edu">ksorellana@ku.edu</a>) o Zabdi López (<a href="mailto:zabdi.lopez@unibe.ch">zabdi.lopez@unibe.ch</a>).
 				Más información en nuestra <a href="https://biodiversidadgt.github.io/docs/" target="_blank">página de documentación</a>.
 				</p>
 			<?php
