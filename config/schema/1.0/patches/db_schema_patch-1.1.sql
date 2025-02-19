@@ -23,7 +23,8 @@ CREATE TABLE `tmtraits` (
   INDEX `FK_traits_uidcreated_idx` (`createduid` ASC),
   INDEX `FK_traits_uidmodified_idx` (`modifieduid` ASC),
   CONSTRAINT `FK_traits_uidcreated`  FOREIGN KEY (`createduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE,
-  CONSTRAINT `FK_traits_uidmodified`  FOREIGN KEY (`modifieduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE);
+  CONSTRAINT `FK_traits_uidmodified`  FOREIGN KEY (`modifieduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE
+) ENGINE=InnoDB;
 
 CREATE TABLE `tmstates` (
   `stateid` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -44,7 +45,8 @@ CREATE TABLE `tmstates` (
   INDEX `FK_tmstate_uidmodified_idx` (`modifieduid` ASC),
   CONSTRAINT `FK_tmstates_uidcreated`  FOREIGN KEY (`createduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE,
   CONSTRAINT `FK_tmstates_uidmodified`  FOREIGN KEY (`modifieduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE,
-  CONSTRAINT `FK_tmstates_traits`  FOREIGN KEY (`traitid`)   REFERENCES `tmtraits` (`traitid`)   ON DELETE RESTRICT   ON UPDATE CASCADE);
+  CONSTRAINT `FK_tmstates_traits`  FOREIGN KEY (`traitid`)   REFERENCES `tmtraits` (`traitid`)   ON DELETE RESTRICT   ON UPDATE CASCADE
+) ENGINE=InnoDB;
 
 CREATE TABLE `tmattributes` (
   `stateid` INT UNSIGNED NOT NULL,
@@ -71,7 +73,7 @@ CREATE TABLE `tmattributes` (
   CONSTRAINT `FK_tmattr_imgid`  FOREIGN KEY (`imgid`)  REFERENCES `images` (`imgid`)  ON DELETE SET NULL  ON UPDATE CASCADE,
   CONSTRAINT `FK_tmattr_uidcreate`  FOREIGN KEY (`createduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE,
   CONSTRAINT `FK_tmattr_uidmodified`  FOREIGN KEY (`modifieduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE `tmtraittaxalink` (
   `traitid` INT UNSIGNED NOT NULL,
@@ -83,7 +85,7 @@ CREATE TABLE `tmtraittaxalink` (
   INDEX `FK_traittaxalink_tid_idx` (`tid` ASC),
   CONSTRAINT `FK_traittaxalink_traitid`  FOREIGN KEY (`traitid`)  REFERENCES `tmtraits` (`traitid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_traittaxalink_tid`  FOREIGN KEY (`tid`)  REFERENCES `taxa` (`TID`)  ON DELETE CASCADE  ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE `tmtraitdependencies` (
   `traitid` INT UNSIGNED NOT NULL,
@@ -94,7 +96,7 @@ CREATE TABLE `tmtraitdependencies` (
   INDEX `FK_tmdepend_stateid_idx` (`parentstateid` ASC),
   CONSTRAINT `FK_tmdepend_traitid`  FOREIGN KEY (`traitid`) REFERENCES `tmtraits` (`traitid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_tmdepend_stateid`  FOREIGN KEY (`parentstateid`)  REFERENCES `tmstates` (`stateid`)  ON DELETE CASCADE  ON UPDATE CASCADE  
-);
+) ENGINE=InnoDB;
 
 
 #Occurrence associations
@@ -270,7 +272,7 @@ CREATE TABLE `omoccurrevisions` (
   INDEX `Index_omrevisions_editor` (`externalEditor` ASC),
   CONSTRAINT `fk_omrevisions_occid`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`)   ON DELETE CASCADE   ON UPDATE CASCADE,
   CONSTRAINT `fk_omrevisions_uid`    FOREIGN KEY (`uid`)    REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
 ALTER TABLE `omoccurrevisions` 
   ADD COLUMN `guid` VARCHAR(45) NULL AFTER `externalEditor`,
@@ -294,7 +296,8 @@ CREATE TABLE `omcollpuboccurlink` (
   PRIMARY KEY (`pubid`, `occid`),
   INDEX `FK_ompuboccid_idx` (`occid` ASC),
   CONSTRAINT `FK_ompuboccid`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
-  CONSTRAINT `FK_ompubpubid`  FOREIGN KEY (`pubid`)  REFERENCES `omcollpublications` (`pubid`)  ON DELETE CASCADE  ON UPDATE CASCADE);
+  CONSTRAINT `FK_ompubpubid`  FOREIGN KEY (`pubid`)  REFERENCES `omcollpublications` (`pubid`)  ON DELETE CASCADE  ON UPDATE CASCADE
+) ENGINE=InnoDB;
 
 
 #Remove deprecated survey tables
@@ -494,7 +497,8 @@ CREATE TABLE `omoccuraccessstats` (
   `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp,
   PRIMARY KEY (`oasid`),
   UNIQUE INDEX `UNIQUE_occuraccess` (`occid` ASC, `accessdate` ASC, `ipaddress` ASC, `accesstype` ASC),
-  CONSTRAINT `FK_occuraccess_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE);
+  CONSTRAINT `FK_occuraccess_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE
+) ENGINE=InnoDB;
 
 
 # Establishes many-many relationship to be used in DwC eml.xml file
@@ -508,7 +512,8 @@ CREATE TABLE `omcollectioncontacts` (
   PRIMARY KEY (`collid`, `uid`),
   INDEX `FK_contact_uid_idx` (`uid` ASC),
   CONSTRAINT `FK_contact_collid`   FOREIGN KEY (`collid`)   REFERENCES `omcollections` (`CollID`)   ON DELETE CASCADE   ON UPDATE CASCADE,
-  CONSTRAINT `FK_contact_uid`   FOREIGN KEY (`uid`)   REFERENCES `users` (`uid`)   ON DELETE CASCADE   ON UPDATE CASCADE);
+  CONSTRAINT `FK_contact_uid`   FOREIGN KEY (`uid`)   REFERENCES `users` (`uid`)   ON DELETE CASCADE   ON UPDATE CASCADE
+) ENGINE=InnoDB;
 
 CREATE TABLE `omoccurrencetypes` (
   `occurtypeid` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -531,7 +536,8 @@ CREATE TABLE `omoccurrencetypes` (
   INDEX `FK_occurtype_tid_idx` (`tidinterpreted` ASC),
   CONSTRAINT `FK_occurtype_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_occurtype_refid` FOREIGN KEY (`refid`) REFERENCES `referenceobject` (`refid`)  ON DELETE SET NULL  ON UPDATE CASCADE,
-  CONSTRAINT `FK_occurtype_tid` FOREIGN KEY (`tidinterpreted`) REFERENCES `taxa` (`TID`)  ON DELETE SET NULL  ON UPDATE CASCADE);
+  CONSTRAINT `FK_occurtype_tid` FOREIGN KEY (`tidinterpreted`) REFERENCES `taxa` (`TID`)  ON DELETE SET NULL  ON UPDATE CASCADE
+) ENGINE=InnoDB;
 
 ALTER TABLE `omoccurrences` 
   ADD INDEX `Index_locality` (`locality`(100) ASC),
@@ -642,7 +648,7 @@ CREATE TABLE `glossarysources` (
   `additionalSources` varchar(1000) DEFAULT NULL,
   `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`tid`)
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE `uploadglossary` (
   `term` varchar(150) DEFAULT NULL,
@@ -660,7 +666,7 @@ CREATE TABLE `uploadglossary` (
   `InitialTimeStamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   KEY `term_index` (`term`),
   KEY `relatedterm_index` (`newGroupId`)
-);
+) ENGINE=InnoDB;
 
 ALTER TABLE `glossarytaxalink` 
   CHANGE COLUMN `glossgrpid` `glossid` INT(10) UNSIGNED NOT NULL ;
@@ -715,7 +721,7 @@ CREATE TABLE `paleochronostratigraphy` (
   INDEX `Period` (`Period`),
   INDEX `Epoch` (`Epoch`),
   INDEX `Stage` (`Stage`)
-);
+) ENGINE=InnoDB;
 
 INSERT INTO `paleochronostratigraphy` VALUES ('1', 'Hadean', null, null, null, null);
 INSERT INTO `paleochronostratigraphy` VALUES ('2', 'Archean', null, null, null, null);
@@ -889,7 +895,7 @@ CREATE TABLE `omoccurlithostratigraphy` (
   INDEX `Member` (`Member`),
   CONSTRAINT `FK_occurlitho_chronoid` FOREIGN KEY (`chronoId`) REFERENCES `paleochronostratigraphy` (`chronoId`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_occurlitho_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE  ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
 
 CREATE TABLE `useraccesstokens` (
@@ -901,5 +907,5 @@ CREATE TABLE `useraccesstokens` (
   PRIMARY KEY (`tokid`),
   KEY `FK_useraccesstokens_uid_idx` (`uid`),
   CONSTRAINT `FK_useraccess_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE  ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
