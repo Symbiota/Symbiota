@@ -13,6 +13,6 @@ class Exsiccata extends Model {
     protected $appends = [];
 
     public function numbers(){
-        return $this->hasMany(ExsiccataNumber::class, 'omenid', 'ometid');
+        return $this->hasMany(ExsiccataNumber::class, 'ometid', 'ometid');
     }
 }

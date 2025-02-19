@@ -109,8 +109,8 @@ class ExsiccataController extends Controller {
 	 * )
 	 */
     public function showOneExsiccataNumbers($identifier, Request $request){
+        error_log("deleteMe got here");
         $this->validate($request, [
-			'identifier' => 'required',
 			'limit' => 'integer',
 			'offset' => 'integer'
 		]);
@@ -119,34 +119,39 @@ class ExsiccataController extends Controller {
 
         $exsiccataQuery = Exsiccata::query();
 
+        // $exsiccata = null;
 		if(is_numeric($identifier)){
-
+            // $exsiccata = Exsiccata::find($identifier);
             // $exsiccataQuery = Exsiccata::find($identifier);
             $exsiccataQuery->where('ometid', $identifier);
         } else{
             $exsiccataQuery->where('recordID', $identifier);
             // $exsiccataQuery = Exsiccata::where('recordID',$identifier)->first();
+            $exsiccata = $exsiccataQuery->first();
         }
 
-        $exsiccata = $exsiccataQuery->first();
+        $result = $exsiccata;
 
 		if(!$exsiccata){
             return response()->json(["status"=>false, "error"=>"Unable to locate exsiccata based on identifier"], 404);
             // $exsiccataQuery = ["status"=>false,"error"=>"Unable to locate exsiccata based on identifier"];
         }
 
-        $numberQuery = ExsiccataNumber::where('omenid', $exsiccata->ometid)->select('omenid', 'exsnumber', 'notes', 'initialtimestamp')->skip($offset)->take($limit);
+        // $numberQuery = ExsiccataNumber::where('ometid', $exsiccata->ometid)->select('omenid', 'exsnumber', 'notes', 'initialtimestamp')->skip($offset)->take($limit);
 
-		$fullCnt = $numberQuery->count();
-		$result = $numberQuery->get();
+		// $fullCnt = $numberQuery->count();
+		// $result = $numberQuery->get();
 
-		$eor = ($offset + $limit) >= $fullCnt; // @TODO why
+		// $eor = ($offset + $limit) >= $fullCnt ? true : false;
+
 		$retObj = [
 			'offset' => (int)$offset,
 			'limit' => (int)$limit,
-			'endOfRecords' => $eor,
-			'count' => $fullCnt,
-			'results' => $result
+			// 'endOfRecords' => $eor,
+			// 'count' => $fullCnt,
+			'results' => $result,
+            'deleteMeIdentifier' => $identifier,
+            '$exsiccataQuery' => $exsiccataQuery
 		];
 		return response()->json($retObj);
     }
