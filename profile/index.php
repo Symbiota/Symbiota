@@ -81,7 +81,7 @@ if($remMe) $pHandler->setRememberMe(true);
 if($action == 'logout'){
 	//check if using third party auth
 	if(array_key_exists('AUTH_PROVIDER', $_SESSION)){
-		$oidc = new OpenIDConnectClient($providerUrls[$_SESSION['AUTH_PROVIDER']], $clientIds[$_SESSION['AUTH_PROVIDER']], $clientSecrets[$_SESSION['AUTH_PROVIDER']], $providerUrls[$_SESSION['AUTH_PROVIDER']]);
+		$oidc = new OpenIDConnectClient($PROVIDER_URLS[$_SESSION['AUTH_PROVIDER']], $CLIENT_IDS[$_SESSION['AUTH_PROVIDER']], $CLIENT_SECRETS[$_SESSION['AUTH_PROVIDER']], $PROVIDER_URLS[$_SESSION['AUTH_PROVIDER']]);
 		$pHandler->reset();
 		$oidc->signOut($_SESSION['AUTH_CLIENT_ID'], $redirect);
 
