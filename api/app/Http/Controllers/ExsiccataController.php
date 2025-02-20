@@ -109,6 +109,8 @@ class ExsiccataController extends Controller {
 	 * )
 	 */
     public function showOneExsiccataNumbers($identifier, Request $request){
+        // var_dump($identifier);
+        // error_log("deleteMe got here",3, '/opt/homebrew/var/log/httpd/deleteMe.txt');
         error_log("deleteMe got here");
         $this->validate($request, [
 			'limit' => 'integer',
@@ -127,20 +129,20 @@ class ExsiccataController extends Controller {
         } else{
             $exsiccataQuery->where('recordID', $identifier);
             // $exsiccataQuery = Exsiccata::where('recordID',$identifier)->first();
-            $exsiccata = $exsiccataQuery->first();
         }
+        $exsiccata = $exsiccataQuery->first();
 
-        $result = $exsiccata;
+        // $result = $exsiccata;
 
 		if(!$exsiccata){
             return response()->json(["status"=>false, "error"=>"Unable to locate exsiccata based on identifier"], 404);
             // $exsiccataQuery = ["status"=>false,"error"=>"Unable to locate exsiccata based on identifier"];
         }
 
-        // $numberQuery = ExsiccataNumber::where('ometid', $exsiccata->ometid)->select('omenid', 'exsnumber', 'notes', 'initialtimestamp')->skip($offset)->take($limit);
+        $numberQuery = ExsiccataNumber::where('ometid', $exsiccata->ometid)->select('omenid', 'exsnumber', 'notes', 'initialtimestamp')->skip($offset)->take($limit);
 
-		// $fullCnt = $numberQuery->count();
-		// $result = $numberQuery->get();
+		$fullCnt = $numberQuery->count();
+		$result = $numberQuery->get();
 
 		// $eor = ($offset + $limit) >= $fullCnt ? true : false;
 
@@ -148,10 +150,10 @@ class ExsiccataController extends Controller {
 			'offset' => (int)$offset,
 			'limit' => (int)$limit,
 			// 'endOfRecords' => $eor,
-			// 'count' => $fullCnt,
+			'count' => $fullCnt,
 			'results' => $result,
-            'deleteMeIdentifier' => $identifier,
-            '$exsiccataQuery' => $exsiccataQuery
+            // 'deleteMeIdentifier' => $identifier,
+            // '$exsiccataQuery' => $exsiccataQuery
 		];
 		return response()->json($retObj);
     }
