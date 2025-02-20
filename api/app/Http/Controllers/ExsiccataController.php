@@ -93,7 +93,7 @@ class ExsiccataController extends Controller {
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
-	 *		 description="Identifier (ometid (PK) or recordID) associated with target exsiccata title",
+	 *		 description="Identifier (ometid (PK) - currently does not accommodate recordID) associated with target exsiccata title",
 	 *		 required=true,
 	 *		 @OA\Schema(type="integer")
 	 *	 ),
@@ -109,9 +109,6 @@ class ExsiccataController extends Controller {
 	 * )
 	 */
     public function showOneExsiccataNumbers($identifier, Request $request){
-        // var_dump($identifier);
-        // error_log("deleteMe got here",3, '/opt/homebrew/var/log/httpd/deleteMe.txt');
-        error_log("deleteMe got here");
         $this->validate($request, [
 			'limit' => 'integer',
 			'offset' => 'integer'
@@ -121,22 +118,19 @@ class ExsiccataController extends Controller {
 
         $exsiccataQuery = Exsiccata::query();
 
-        // $exsiccata = null;
-		if(is_numeric($identifier)){
-            // $exsiccata = Exsiccata::find($identifier);
-            // $exsiccataQuery = Exsiccata::find($identifier);
-            $exsiccataQuery->where('ometid', $identifier);
-        } else{
-            $exsiccataQuery->where('recordID', $identifier);
-            // $exsiccataQuery = Exsiccata::where('recordID',$identifier)->first();
-        }
+		$exsiccataQuery->where('ometid', $identifier);
+
+        // @TODO When recordID is added replace the ->where() statement above with this logic block
+        // if(is_numeric($identifier)){
+        //     $exsiccataQuery->where('ometid', $identifier);
+        // } else{
+        //     $exsiccataQuery->where('recordID', $identifier);
+        // }
         $exsiccata = $exsiccataQuery->first();
 
-        // $result = $exsiccata;
 
 		if(!$exsiccata){
             return response()->json(["status"=>false, "error"=>"Unable to locate exsiccata based on identifier"], 404);
-            // $exsiccataQuery = ["status"=>false,"error"=>"Unable to locate exsiccata based on identifier"];
         }
 
         $numberQuery = ExsiccataNumber::where('ometid', $exsiccata->ometid)->select('omenid', 'exsnumber', 'notes', 'initialtimestamp')->skip($offset)->take($limit);
@@ -144,16 +138,11 @@ class ExsiccataController extends Controller {
 		$fullCnt = $numberQuery->count();
 		$result = $numberQuery->get();
 
-		// $eor = ($offset + $limit) >= $fullCnt ? true : false;
-
 		$retObj = [
 			'offset' => (int)$offset,
 			'limit' => (int)$limit,
-			// 'endOfRecords' => $eor,
 			'count' => $fullCnt,
 			'results' => $result,
-            // 'deleteMeIdentifier' => $identifier,
-            // '$exsiccataQuery' => $exsiccataQuery
 		];
 		return response()->json($retObj);
     }

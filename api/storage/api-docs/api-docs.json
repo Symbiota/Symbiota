@@ -180,7 +180,7 @@
                     {
                         "name": "identifier",
                         "in": "path",
-                        "description": "Identifier (ometid (PK) or recordID) associated with target exsiccata title",
+                        "description": "Identifier (ometid (PK) - currently does not accommodate recordID) associated with target exsiccata title",
                         "required": true,
                         "schema": {
                             "type": "integer"
