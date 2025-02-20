@@ -349,11 +349,13 @@ $_SESSION['citationvar'] = $searchVar;
 									if (isset($fieldArr['has_audio']) && $fieldArr['has_audio']) {
 										echo '<div style="float:right; padding-right: 0.5rem"><img style="width:1.3rem; border: 0" src="' . $CLIENT_ROOT . '/images/speaker_thumbnail.png' . '"/></div>';
 									}
-									if (isset($fieldArr['has_image']) && $fieldArr['has_image']) {
-										echo '<div style="float:right; padding-right: 0.5rem;"><img style="width:1.3rem; border: 0" src="' . $CLIENT_ROOT . '/images/image.png' . '"/></div>';
-									}
-
 									$targetClid = $collManager->getSearchTerm("targetclid");
+									if (isset($fieldArr['has_image']) && $fieldArr['has_image']) {
+										// echo '<div style="float:right; padding-right: 0.5rem;"><img style="width:1.3rem; border: 0" src="' . $CLIENT_ROOT . '/images/image.png' . '"/></div>';
+										echo '<div style="float:right;margin:5px 25px;">';
+										echo '<a href="#" onclick="return openIndPU(' . $occid . ',' . ($targetClid ? $targetClid : "0") . ');">';
+										echo '<img src="' . $fieldArr['media']['thumbnail'] . '" style="height:70px" alt="' . (isset($LANG['IMG_OCC']) ? $LANG['IMG_OCC'] : 'Image Associated With the Occurence') . '"/></a></div>';
+									}
 									if ($collManager->getClName() && $targetTid && array_key_exists('mode', $_REQUEST)) {
 										echo '<div style="float:right;" >';
 										echo '<a href="#" onclick="addVoucherToCl(' . $occid . ',' . $targetClid . ',' . $targetTid . ');return false" title="' . $LANG['VOUCHER_LINK_TITLE'] . ' ' . $collManager->getClName() . ';">';
