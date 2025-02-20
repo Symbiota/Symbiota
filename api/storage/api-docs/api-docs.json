@@ -150,6 +150,41 @@
                 }
             }
         },
+        "/api/v2/exsiccata/{identifier}": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/exsiccata/{identifier}",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "Exsiccata ID or record ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns exsiccata record with matching identifier",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. Valid Exsiccata identifier required"
+                    },
+                    "404": {
+                        "description": "Record not found"
+                    }
+                }
+            }
+        },
         "/api/v2/installation": {
             "get": {
                 "tags": [
@@ -1729,6 +1764,99 @@
                     },
                     "400": {
                         "description": "Error: Bad request. Taxonomy identifier is required."
+                    }
+                }
+            }
+        },
+        "/api/v2/taxonomy/{identifier}/description": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/taxonomy/identifier/description",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "PK, GUID, or recordID associated with target taxonomic unit",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Controls the number of results in the page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 100
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Determines the starting point for the search results. A limit of 100 and offset of 200, will display 100 records starting the 200th record.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns list of taxonomic descriptions for a given taxon",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. "
+                    }
+                }
+            }
+        },
+        "/api/v2/taxonomy/{identifier}/description/{identifier}": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/taxonomy/identifier/description/identifier",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "PK, GUID, or recordID associated with target taxonomic unit",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "Identifier (PK, tdbid) associated with taxonomic description",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns metabase on inventory registered within system with matching ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. Inventory identifier is required."
                     }
                 }
             }

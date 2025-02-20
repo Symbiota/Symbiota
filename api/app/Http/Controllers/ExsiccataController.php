@@ -68,4 +68,47 @@ class ExsiccataController extends Controller {
         ];
         return response()->json($retObj);
     }
+    /**
+     *     @OA\Get(
+     *	   path="/api/v2/exsiccata/{identifier}",
+     *	   operationId="/api/v2/exsiccata/{identifier}",
+     *	   tags={""},
+     *     @OA\Parameter(
+     *         name="identifier",
+     *         in="path",
+     *         required=true,
+     *         description="Exsiccata ID or record ID",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Returns exsiccata record with matching identifier",
+     *         @OA\JsonContent()
+     *     ),
+     *      @OA\Response(
+     *		response="400",
+    *		description="Error: Bad request. Valid Exsiccata identifier required",
+    *      ),
+    *     @OA\Response(
+    *         response=404,
+    *         description="Record not found"
+    *     )
+    * )
+    */
+
+    public function showExsiccata($identifier) {
+        $record = DB::table('omexsiccatititles')
+        ->where('ometid', $identifier)
+        ->orWhere('recordID', $identifier)
+        ->first();
+
+        if (!$record) {
+            return response()->json(['error' => 'Record not found'], 404);
+        }
+
+        $record = (array) $record;
+        unset($record['lasteditedby']);
+
+        return response()->json($record);
+    }
 }
