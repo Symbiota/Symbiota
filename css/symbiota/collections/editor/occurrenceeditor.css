@@ -866,6 +866,7 @@ fieldset{
 	border-radius: 5px;
 	padding: 0.5rem 1rem;
 	font-family: var(--body-font-family);
+	font-size: 100%;
 	letter-spacing: 1px;
 	text-align: center;
 	cursor: pointer;
@@ -881,10 +882,26 @@ fieldset{
 	border-width: 1px;
 	border-style: outset;
 	border-color: buttonborder;
+    color: #fff;
   }
-  
+
+  .button:disabled {
+	background-color: lightgray;
+    color: darkgray;
+    border-color: lightgray;
+  }
+
+  .button-danger {
+	background-color: var(--danger-color, var(--darkest-color));
+  }
+
   .button-primary {
 	background-color: var(--darkest-color);
+  }
+
+  .icon-button:hover 
+  {
+    background-color: var(--medium-color);
   }
 
 #bottomSubmitDiv{

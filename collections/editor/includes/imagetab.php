@@ -174,7 +174,7 @@ $creatorArray = Media::getCreatorArray();
 					<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
 					<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
 					<input type="hidden" name="tabindex" value="1" />
-					<button type="submit" name="submitaction" value="Submit New Image"><?php echo $LANG['SUBMIT_NEW']; ?></button>
+					<button type="submit" name="submitaction" class="button icon-button" value="Submit New Image"><?php echo $LANG['SUBMIT_NEW']; ?></button>
 				</div>
 			</fieldset>
 		</form>

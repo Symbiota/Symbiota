@@ -81,7 +81,7 @@ else{
 	<form name="queryform" action="<?php echo $_SERVER['SCRIPT_NAME']; ?>" method="post" onsubmit="return verifyQueryForm(this)">
 		<fieldset style="padding:0.5rem; position: relative">
 			<legend><?php echo $LANG['RECORD_SEARCH_FORM']; ?></legend>
-			<button style="position: absolute; margin:0; right:0.5rem; top:0;" type="button" class="icon-button" onclick="copyQueryLink(event)" title="<?php echo $LANG['COPY_SEARCH']; ?>" aria-label="<?php echo $LANG['COPY_LINK']; ?>">
+			<button style="position: absolute; margin:0; right:0.5rem; top:0;" type="button" class="button icon-button" onclick="copyQueryLink(event)" title="<?php echo $LANG['COPY_SEARCH']; ?>" aria-label="<?php echo $LANG['COPY_LINK']; ?>">
 				<span style="display:flex; align-content: center;">
 						<svg alt="Copies the search terms as a link." style="width:1.2em;margin-right:5px;" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg>
 						<span style="align-content: center;">
@@ -140,7 +140,7 @@ else{
 						<label for="q_recordenteredby"><?php echo $LANG['ENTERED_BY']; ?>:</label>
 						<input type="text" name="q_recordenteredby" id="q_recordenteredby" value="<?php echo $qRecordEnteredBy; ?>" style="max-width:70px;" onchange="setOrderBy(this)" />
 					</div>
-					<button type="button" onclick="enteredByCurrentUser()" style="font-size:70%" title="<?php echo $LANG['LIMIT_TO_CURRENT']; ?>"><?php echo $LANG['CU']; ?></button>
+					<button type="button" class="button icon-button" onclick="enteredByCurrentUser()" style="font-size:70%" title="<?php echo $LANG['LIMIT_TO_CURRENT']; ?>"><?php echo $LANG['CU']; ?></button>
 					<div class="fieldDiv">
 							<label title="<?php echo $LANG['ENTER_RANGES']; ?>" for="q_dateentered"><?php echo $LANG['DATE_ENTERED']; ?>:</label>
 							<input type="text" name="q_dateentered" id="q_dateentered" value="<?php echo $qDateEntered; ?>" style="width:160px" onchange="setOrderBy(this)" />
@@ -309,13 +309,13 @@ else{
 				<input type="hidden" name="direction" value="" />
 				<section class="fieldGroupDiv">
 					<div style="margin-left: 0;">
-						<button name="submitaction" type="submit" onclick="submitQueryEditor(this.form)" ><?php echo $LANG['DISPLAY_EDITOR']; ?></button>
+						<button name="submitaction" class="button icon-button" type="submit" onclick="submitQueryEditor(this.form)" ><?php echo $LANG['DISPLAY_EDITOR']; ?></button>
 					</div>
 					<div style="margin-left: 0;">
-						<button name="submitaction" type="submit" onclick="submitQueryTable(this.form)" ><?php echo $LANG['DISPLAY_TABLE']; ?></button>
+						<button name="submitaction" class="button icon-button" type="submit" onclick="submitQueryTable(this.form)" ><?php echo $LANG['DISPLAY_TABLE']; ?></button>
 					</div>
 					<div style="margin-left: 0;">
-						<button type="button" name="reset" value="Reset Form" onclick="resetQueryForm(this.form)">Reset Form</button>
+						<button type="button" name="reset" class="button icon-button" value="Reset Form" onclick="resetQueryForm(this.form)">Reset Form</button>
 					</div>
 				</section>
 				<section class="fieldGroupDiv">
