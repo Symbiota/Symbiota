@@ -479,7 +479,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 											<input name="collid" type="hidden" value="<?= $collid; ?>" >
 											<input name="occindex" type="hidden" value="<?= $occIndex ?>" >
 											<input name="assocID" type="hidden" value="<?= $assocID ?>" >
-											<button name="submitaction" type="submit" value="editAssociation"><?= $LANG['SAVE_EDITS']; ?></button>
+											<button name="submitaction" type="submit" class="button icon-button" value="editAssociation"><?= $LANG['SAVE_EDITS']; ?></button>
 										</div>
 									</div>
 								</fieldset>
@@ -536,7 +536,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 			</div>
 			<div id="voucheradddiv" style="display:<?= ($checklistArr ? 'none' : 'block') ?>;">
 				<form name="voucherAddForm" method="post" target="occurrenceeditor.php" onsubmit="return validateVoucherAddForm(this)">
-					<select name="clidvoucher">
+					<select name="clidvoucher" class="bottom-breathing-room-rel-sm">
 						<option value=""><?php echo $LANG['SEL_CHECKLIST']; ?></option>
 						<option value="">---------------------------------------------</option>
 						<?php
@@ -549,7 +549,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 					<input name="csmode" type="hidden" value="<?php echo $crowdSourceMode; ?>" />
 					<input name="occid" type="hidden" value="<?php echo $occid; ?>" />
 					<input name="tabtarget" type="hidden" value="3" />
-					<button name="submitaction" type="submit" value="linkChecklistVoucher"><?php echo $LANG['LINK_TO_CHECKLIST_2']; ?></button>
+					<button name="submitaction" type="submit" class="button icon-button" value="linkChecklistVoucher"><?php echo $LANG['LINK_TO_CHECKLIST_2']; ?></button>
 				</form>
 			</div>
 			<?php
@@ -590,7 +590,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 					echo '<div id="dupediv-'.$occid.'">';
 					echo '<div style="padding:15px;"><b>'.$LANG['CLUSTER_TITLE'].':</b> '.$dupArr['title'];
 					echo '<div style="float:right" title="'.$LANG['UNLINK_BUT_MAINTAIN'].'">';
-					echo '<button class="button-danger" name="unlinkthisdupebutton" onclick="deleteDuplicateLink('.$dupid.','.$occid.')">'.$LANG['REM_FROM_CLUSTER'].'</button>';
+					echo '<button class="button icon-button button-danger" name="unlinkthisdupebutton" onclick="deleteDuplicateLink('.$dupid.','.$occid.')">'.$LANG['REM_FROM_CLUSTER'].'</button>';
 					echo '</div>';
 					$note = trim($dupArr['description'].'; '.$dupArr['notes'],' ;');
 					if($note) echo ' - '.$notes;
@@ -605,7 +605,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 									<?php echo $dArr['collname'].' ('.$dArr['instcode'].($dArr['collcode']?':'.$dArr['collcode']:'').')'; ?>
 								</div>
 								<div style="float:right;">
-									<button name="unlinkdupebut" onclick="deleteDuplicateLink(<?php echo $dupid.','.$dupeOccid; ?>)"><?php echo $LANG['UNLINK']; ?></button>
+									<button name="unlinkdupebut" class="button icon-button button-danger" onclick="deleteDuplicateLink(<?php echo $dupid.','.$dupeOccid; ?>)"><?php echo $LANG['UNLINK']; ?></button>
 								</div>
 								<?php
 								echo '<div style="float:left;margin:5px 15px">';

@@ -72,7 +72,14 @@ fieldset{
 	clear:both;
 }
 
+
 /* Field entry divs and input objects */
+
+.fieldGroupDiv input,
+.fieldGroupDiv select{
+	font-size: 100%;
+}
+
 #catalogNumberDiv {
 	float:	left;
 	margin-top: 5px;
@@ -828,6 +835,10 @@ fieldset{
 
 .bottom-breathing-room-rel {
 	margin-bottom: 1rem;
+}
+
+.bottom-breathing-room-rel-sm {
+	margin-bottom: 0.5rem;
 }
 
 /* Paleo fields */
