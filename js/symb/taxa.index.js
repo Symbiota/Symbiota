@@ -100,7 +100,7 @@ function expandExtraImages(){
 function openMapPopup(taxonVar,clid, leaflet=false){
 	let url = '../collections/map/index.php';
 
-	url += `?usethes=1&taxa=${taxonVar}`;
+	url += `?menuClosed&usethes=1&taxa=${taxonVar}`;
 
 	var popupMap = window.open(url, 'Interactive Taxon Map','toolbar=0,scrollbars=1,width=950,height=700,left=20,top=20');
     if (popupMap.opener == null) popupMap.opener = self;
