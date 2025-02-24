@@ -150,6 +150,41 @@
                 }
             }
         },
+        "/api/v2/exsiccata/{identifier}": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/exsiccata/{identifier}",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "Exsiccata ID or record ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns exsiccata record with matching identifier",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. Valid Exsiccata identifier required"
+                    },
+                    "404": {
+                        "description": "Record not found"
+                    }
+                }
+            }
+        },
         "/api/v2/exsiccata/{identifier}/number": {
             "get": {
                 "tags": [
@@ -198,6 +233,9 @@
                     },
                     "400": {
                         "description": "Error: Bad request. Exsiccata identifier is required."
+                    },
+                    "404": {
+                        "description": "Record not found"
                     }
                 }
             }
