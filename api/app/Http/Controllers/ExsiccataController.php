@@ -82,7 +82,7 @@ class ExsiccataController extends Controller {
      *         @OA\Schema(type="string")
      *     ),
      *     @OA\Response(
-     *         response=200,
+     *         response="200",
      *         description="Returns exsiccata record with matching identifier",
      *         @OA\JsonContent()
      *     ),
@@ -91,7 +91,7 @@ class ExsiccataController extends Controller {
      *		description="Error: Bad request. Valid Exsiccata identifier required",
      *      ),
      *     @OA\Response(
-     *         response=404,
+     *         response="404",
      *         description="Record not found"
      *     )
      * )
@@ -149,7 +149,7 @@ class ExsiccataController extends Controller {
      *		 description="Error: Bad request. Exsiccata identifier is required.",
      *	 ),
      *   @OA\Response(
-     *      response=404,
+     *      response="404",
      *      description="Record not found"
      *   )
      * )
