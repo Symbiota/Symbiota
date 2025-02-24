@@ -222,9 +222,10 @@ class MediaType {
 	public const Image = 'image';
 	public const Audio = 'audio';
 	public const Video = 'video';
+	public const Text = 'text';
 
 	public static function tryFrom(string $value) {
-		if ($value === self::Image || $value === self::Audio || $value === self::Video) {
+		if ($value === self::Image || $value === self::Audio || $value === self::Video || $value === self::Text) {
 			return $value;
 		} else {
 			return null;
@@ -235,7 +236,8 @@ class MediaType {
 		return [
 			self::Image,
 			self::Audio,
-			self::Video
+			self::Video,
+			self::Text
 		];
 	}
 }
@@ -817,10 +819,10 @@ class Media {
 
 		//If no file is given and downloads from urls are enabled
 		if (!self::isValidFile($file)) {
-			if (!$should_upload_file) {
-				$file = self::parse_map_only_file($clean_post_arr);
-			} else if ($isRemoteMedia) {
+			if ($isRemoteMedia) {
 				$file = self::getRemoteFileInfo($clean_post_arr['originalUrl']);
+			} else if (!$should_upload_file) {
+				$file = self::parse_map_only_file($clean_post_arr);
 			}
 		}
 
