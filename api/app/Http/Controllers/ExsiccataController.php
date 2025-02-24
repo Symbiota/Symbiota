@@ -106,8 +106,7 @@ class ExsiccataController extends Controller {
             return response()->json(['error' => 'Record not found'], 404);
         }
 
-        $record = (array) $record;
-        unset($record['lasteditedby']);
+        unset($record->lasteditedby);
 
         return response()->json($record);
     }
