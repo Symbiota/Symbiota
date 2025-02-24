@@ -102,11 +102,11 @@ class ExsiccataController extends Controller {
             ->where('ometid', $identifier)
             ->orWhere('recordID', $identifier)
             ->first();
-
         if (!$record) {
             return response()->json(['error' => 'Record not found'], 404);
         }
 
+        $record = (array) $record;
         unset($record['lasteditedby']);
 
         return response()->json($record);
