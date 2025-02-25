@@ -542,7 +542,7 @@ if($glossId){
 									}
 									?>
 									<div style="float:right;margin:5px;" title="<?php echo (isset($LANG['EDIT_T_DAT'])?$LANG['EDIT_T_DAT']:'Edit Term Data'); ?>">
-										<a href="termdetails.php?glossid=<?php echo ≈; ?>">
+										<a href="termdetails.php?glossid=<?php echo $transGlossId; ?>">
 											<img style="border:0px;width:1.3em;" src="../images/edit.png" />
 										</a>
 									</div>
