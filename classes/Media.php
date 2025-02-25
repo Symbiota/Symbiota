@@ -1383,7 +1383,7 @@ class Media {
 		);
 	}
 
-	private static function castToNullIfNecessary($conn, $key, $value){
+	private static function castToNullIfNecessary($conn, $key, $value) {
 		$columnTypes = self::getColumnTypes($conn, 'media');
 		if (isset($columnTypes[$key]) && self::isIntegerType($columnTypes[$key]) && $value === "") {
 			$value = NULL;
@@ -1394,7 +1394,7 @@ class Media {
 	private static function getColumnTypes(mysqli $conn, string $table): array {
 		$columnTypes = [];
 		$query = "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?";
-	
+
 		if ($stmt = $conn->prepare($query)) {
 			$stmt->bind_param('s', $table);
 			$stmt->execute();
