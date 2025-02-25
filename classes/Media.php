@@ -1366,10 +1366,14 @@ class Media {
 	private static function update_metadata(array $metadata_arr, int $media_id, mysqli $conn = null): void {
 		$values = [];
 		$parameter_str = '';
+		$keysThatNeedIntVals = ['creatorUid', 'sortOccurrence'];
 
 		foreach ($metadata_arr as $key => $value) {
 			if ($parameter_str !== '') $parameter_str .= ', ';
 			$parameter_str .= $key . " = ?";
+			if(in_array($key, $keysThatNeedIntVals) && $value === ""){
+				$value = NULL;
+			}
 			array_push($values, $value);
 		}
 		array_push($values, $media_id);
