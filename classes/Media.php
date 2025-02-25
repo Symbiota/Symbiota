@@ -1366,14 +1366,11 @@ class Media {
 	private static function update_metadata(array $metadata_arr, int $media_id, mysqli $conn = null): void {
 		$values = [];
 		$parameter_str = '';
-		$keysThatNeedIntVals = ['creatorUid', 'sortOccurrence'];
 
 		foreach ($metadata_arr as $key => $value) {
 			if ($parameter_str !== '') $parameter_str .= ', ';
 			$parameter_str .= $key . " = ?";
-			if(in_array($key, $keysThatNeedIntVals) && $value === ""){
-				$value = NULL;
-			}
+			$value = self::castToNullIfNecessary($conn, $key, $value);
 			array_push($values, $value);
 		}
 		array_push($values, $media_id);
@@ -1384,6 +1381,35 @@ class Media {
 			$sql,
 			$values
 		);
+	}
+
+	private static function castToNullIfNecessary($conn, $key, $value){
+		$columnTypes = self::getColumnTypes($conn, 'media');
+		if (isset($columnTypes[$key]) && self::isIntegerType($columnTypes[$key]) && $value === "") {
+			$value = NULL;
+		}
+		return $value;
+	}
+
+	private static function getColumnTypes(mysqli $conn, string $table): array {
+		$columnTypes = [];
+		$query = "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?";
+	
+		if ($stmt = $conn->prepare($query)) {
+			$stmt->bind_param('s', $table);
+			$stmt->execute();
+			$result = $stmt->get_result();
+			while ($row = $result->fetch_assoc()) {
+				$columnTypes[$row['COLUMN_NAME']] = $row['DATA_TYPE'];
+			}
+			$stmt->close();
+		}
+		return $columnTypes;
+	}
+
+	private static function isIntegerType(string $type): bool {
+		$integerTypes = ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'];
+		return in_array(strtolower($type), $integerTypes, true);
 	}
 
 	/**
