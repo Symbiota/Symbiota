@@ -1363,9 +1363,9 @@ class Media {
 		foreach ($metadata_arr as $key => $value) {
 			if($parameter_str !== '') $parameter_str .= ', ';
 			$parameter_str .= $key . " = ?";
-			array_push($values, $value);
+			$values[] = ($value === '') ? null : $value;
 		}
-		array_push($values, $media_id);
+		$values[] = $media_id;
 
 		$sql = 'UPDATE media set '. $parameter_str . ' where mediaID = ?';
 		QueryUtil::executeQuery(
