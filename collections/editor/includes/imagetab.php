@@ -192,7 +192,7 @@ $creatorArray = Media::getCreatorArray();
 					$tnUrl = $imgArr["thumbnailUrl"];
 					?>
 					<tr>
-					<?php if($imgArr['mediaType'] === 'image'):?>
+					<?php if ($imgArr['mediaType'] === 'image' || $imgArr['mediaType'] === 'text'): ?>
 						<td style="width:300px;text-align:center;padding:20px;">
 							<?php
 							if((!$imgUrl || $imgUrl == 'empty') && $origUrl) $imgUrl = $origUrl;

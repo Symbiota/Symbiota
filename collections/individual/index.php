@@ -1029,7 +1029,7 @@ $traitArr = $indManager->getTraitArr();
 								foreach($iArr as $imgArr){
 									$thumbUrl = $imgArr['tnurl'];
 									echo '<div id="thumbnail-div" class="thumbnail-div">';
-									echo Media::render_media_item($imgArr);
+									echo Media::render_media_item($imgArr, (bool)$thumbUrl);
 										if($imgArr['caption']) echo '<div><i>'.$imgArr['caption'].'</i></div>';
 										if($imgArr['creator']) echo '<div>'.(isset($LANG['AUTHOR'])?$LANG['AUTHOR']:'Author').': '.$imgArr['creator'].'</div>';
 										if($imgArr['url'] && substr($thumbUrl,0,7)!='process' && $imgArr['url'] != $imgArr['lgurl']) echo '<div><a href="' . $imgArr['url'] . '" target="_blank">' . $LANG['OPEN_MEDIUM'] . '</a></div>';
