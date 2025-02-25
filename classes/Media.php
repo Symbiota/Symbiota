@@ -330,7 +330,7 @@ class Media {
 	 * @param mixed $thumbnail
 	 */
 	public static function render_media_item(array $media_arr, $thumbnail = false) {
-		if ($media_arr['mediaType'] !== 'image' && !$thumbnail) {
+		if (($media_arr['mediaType'] !== 'image' || $media_arr['mediaType'] !== 'text') && !$thumbnail) {
 			$src = $media_arr['url'];
 			$format = $media_arr['format'];
 			$html = <<< HTML
