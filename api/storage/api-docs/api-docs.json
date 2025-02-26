@@ -250,7 +250,7 @@
                     {
                         "name": "identifier",
                         "in": "path",
-                        "description": "Exsiccati ID or record ID",
+                        "description": "Exsiccata ID or record ID",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -259,7 +259,7 @@
                     {
                         "name": "numberIdentifier",
                         "in": "path",
-                        "description": "Unique primary key for omexsiccatinumbers (omenid)",
+                        "description": "Exsiccata number ID (omenid)",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -271,28 +271,12 @@
                         "description": "Returns list of occurrences associated with the given exsiccata number",
                         "content": {
                             "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "properties": {
-                                            "occid": {
-                                                "type": "integer"
-                                            },
-                                            "ranking": {
-                                                "type": "integer"
-                                            },
-                                            "notes": {
-                                                "type": "string"
-                                            }
-                                        },
-                                        "type": "object"
-                                    }
-                                }
+                                "schema": {}
                             }
                         }
                     },
                     "400": {
-                        "description": "Error: Bad request. Valid Exsiccata Identifier and Number Identifier required"
+                        "description": "Error: Bad request. Valid Exsiccata identifier and Number identifier required"
                     },
                     "404": {
                         "description": "Record not found"

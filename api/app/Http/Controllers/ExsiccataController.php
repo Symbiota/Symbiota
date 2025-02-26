@@ -214,14 +214,7 @@ class ExsiccataController extends Controller {
      *     @OA\Response(
      *         response="200",
      *         description="Returns list of occurrences associated with the given exsiccata number",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 @OA\Property(property="occid", type="integer"),
-     *                 @OA\Property(property="ranking", type="integer"),
-     *                 @OA\Property(property="notes", type="string")
-     *             )
-     *         )
+     *         @OA\JsonContent()
      *     ),
      *     @OA\Response(
      *         response="400",
