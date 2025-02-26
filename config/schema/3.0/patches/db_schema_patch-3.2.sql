@@ -203,10 +203,13 @@ ALTER TABLE `kmdescr`
 
 
 #occurrence access tables
-ALTER TABLE `omoccuraccess` ENGINE=InnoDB;
-ALTER TABLE `omoccuraccesslink` ENGINE=InnoDB;
+ALTER TABLE `omoccuraccess`
+  ENGINE=InnoDB;
 
-# Drop old deprecated tables to save space, following statemetns will do if this was not originally a 1.0 install
+ALTER TABLE `omoccuraccesslink`
+  ENGINE=InnoDB;
+
+# Drop old deprecated tables to save space, following statements will fail if portals was not an originally 1.0 install
 DROP TABLE IF EXISTS `deprecated_adminstats`;
 DROP TABLE IF EXISTS `deprecated_guidimages`; 
 DROP TABLE IF EXISTS `deprecated_guidoccurrences`;
@@ -323,7 +326,12 @@ ALTER TABLE `media`
   ADD INDEX `FK_media_tid_idx` (`tid` ASC),
   ADD INDEX `FK_media_creatorUid_idx` (`creatorUid` ASC),
   ADD INDEX `IX_media_recordID` (`recordID` ASC),
-  ADD INDEX `IX_media_dateLastModified` (`initialTimestamp` ASC);
+  ADD INDEX `IX_media_dateLastModified` (`initialTimestamp` ASC),
+  ADD INDEX `IX_media_sort` (`sortSequence` ASC),
+  ADD INDEX `IX_media_sortOccur` (`sortOccurrence` ASC),
+  ADD INDEX `IX_media_thumbnail` (`thumbnailUrl` ASC),
+  ADD INDEX `IX_media_mediaType` (`mediaType` ASC);
+
 
 ALTER TABLE `media` 
   ADD CONSTRAINT `FK_media_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -347,22 +355,22 @@ ALTER TABLE `imagetag`
 
 # Recreate indexes and foreign keys to imagekeywords table
 ALTER TABLE `imagekeywords`
-  ADD KEY `FK_imagekeywords_keyword` (`keyword`),
-  ADD KEY `FK_imagekeywords_mediaID_idx` (`mediaID`),
-  ADD KEY `FK_imagekeywords_uid_idx` (`uidAssignedBy`),
+  ADD INDEX `FK_imagekeywords_keyword` (`keyword`),
+  ADD INDEX `FK_imagekeywords_mediaID_idx` (`mediaID`),
+  ADD INDEX `FK_imagekeywords_uid_idx` (`uidAssignedBy`),
   ADD CONSTRAINT `FK_imagekeywords_uid` FOREIGN KEY (`uidAssignedBy`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_imagekeywords_mediaID` FOREIGN KEY (`mediaID`) REFERENCES `media` (`mediaID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 # Recreate indexes and foreign keys to specprocessorrawlabels table
 ALTER TABLE `specprocessorrawlabels`
-  ADD KEY `FK_specproclabels_media_idx` (`mediaID`),
-  ADD KEY `FK_specproclabels_occid_idx` (`occid`),
+  ADD INDEX `FK_specproclabels_media_idx` (`mediaID`),
+  ADD INDEX `FK_specproclabels_occid_idx` (`occid`),
   ADD CONSTRAINT `FK_specproclabels_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`)  ON UPDATE CASCADE  ON DELETE CASCADE,
   ADD CONSTRAINT `FK_specproclabels_media` FOREIGN KEY (`mediaID`) REFERENCES `media` (`mediaID`)  ON UPDATE CASCADE  ON DELETE CASCADE;
 
 # Recreate indexes and foreign keys to tmattributes table
 ALTER TABLE `tmattributes`
-  ADD KEY `FK_tmattr_mediaID_idx` (`mediaID`),
+  ADD INDEX `FK_tmattr_mediaID_idx` (`mediaID`),
   ADD CONSTRAINT `FK_tmattr_mediaID` FOREIGN KEY (`mediaID`) REFERENCES `media` (`mediaID`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 
@@ -424,7 +432,7 @@ DELIMITER ;
 
 #Add and update checklist footprints to be geoJson
 ALTER TABLE `fmchecklists` 
-  ADD COLUMN footprintGeoJson longtext DEFAULT NULL;
+  ADD COLUMN footprintGeoJson LONGTEXT DEFAULT NULL AFTER `footprintWkt`;
 
 UPDATE fmchecklists 
   SET footprintGeoJson = ST_ASGEOJSON(ST_GEOMFROMTEXT(swap_wkt_coords(footprintWkt))) 
@@ -510,6 +518,19 @@ DROP TRIGGER specprocessorrawlabelsfulltext_delete;
 
 DROP TABLE `specprocessorrawlabelsfulltext`;
 
+
+#Adjust FK to restrict deletion of record upon deletion of either internal occurrence or createdBy/modifiedBy users  
+ALTER TABLE `omoccurassociations`
+  DROP FOREIGN KEY `FK_occurassoc_occidassoc`,
+  DROP FOREIGN KEY `FK_occurassoc_uidcreated`,
+  DROP FOREIGN KEY `FK_occurassoc_uidmodified`;
+
+ALTER TABLE `omoccurassociations`
+  ADD CONSTRAINT `FK_occurassoc_occidassoc` FOREIGN KEY (`occidAssociate`) REFERENCES `omoccurrences` (`occid`) ON UPDATE CASCADE ON DELETE RESTRICT,
+  ADD CONSTRAINT `FK_occurassoc_uidcreated` FOREIGN KEY (`createdUid`) REFERENCES `users` (`uid`) ON UPDATE CASCADE ON DELETE RESTRICT,
+  ADD CONSTRAINT `FK_occurassoc_uidmodified` FOREIGN KEY (`modifiedUid`) REFERENCES `users` (`uid`) ON UPDATE CASCADE ON DELETE RESTRICT;
+  
+
 #Standardize occurrence identifier table
 ALTER TABLE `omoccuridentifiers`
   CHANGE COLUMN `identifiervalue` `identifierValue` VARCHAR(75) NOT NULL AFTER `occid`,
@@ -517,10 +538,14 @@ ALTER TABLE `omoccuridentifiers`
   ADD COLUMN `format` VARCHAR(45) NULL DEFAULT NULL AFTER `identifierName`,
   ADD COLUMN `recordID` VARCHAR(45) NULL DEFAULT NULL AFTER `sortBy`,
   CHANGE COLUMN `modifiedtimestamp` `modifiedTimestamp` DATETIME NULL DEFAULT NULL AFTER `modifiedUid`,
-  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT current_timestamp() AFTER `modifiedTimestamp`,
+  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT current_timestamp() AFTER `modifiedTimestamp`;
+
+ALTER TABLE `omoccuridentifiers`
   DROP INDEX `UQ_omoccuridentifiers`,
+  DROP INDEX `IX_omoccuridentifiers_value`;
+
+ALTER TABLE `omoccuridentifiers`
   ADD UNIQUE INDEX `UQ_omoccuridentifiers` (`occid`, `identifierValue`, `identifierName`),
-  DROP INDEX `IX_omoccuridentifiers_value`,
   ADD INDEX `IX_omoccuridentifiers_value` (`identifierValue`);
 
 # Occurrence table adjustments
@@ -598,6 +623,8 @@ CREATE TABLE `uploadkeyvaluetemp`(
   KEY `IX_uploadKeyValue_uploadUid` (`uploadUid`),
   CONSTRAINT `FK_uploadKeyValue_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_uploadKeyValue_collid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`collID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `FK_uploadKeyValue_uid` FOREIGN KEY (`uploadUid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE);
+  CONSTRAINT `FK_uploadKeyValue_uid` FOREIGN KEY (`uploadUid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
 
-ALTER TABLE uploadimagetemp ADD COLUMN mediaType varchar(45);
+ALTER TABLE uploadimagetemp
+  ADD COLUMN mediaType VARCHAR(45) NULL DEFAULT "image" AFTER `imageType`;
