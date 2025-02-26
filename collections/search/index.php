@@ -508,26 +508,6 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 				}
 				?>
 
-				<!-- Collections -->
-				<section>
-					<!-- Accordion selector -->
-					<input type="checkbox" id="collections" class="accordion-selector" />
-					<!-- Accordion header -->
-					<label for="collections" class="accordion-header"><?php echo $LANG['COLLECTIONS'] ?></label>
-					<!-- Accordion content -->
-					<div class="content">
-						<div id="search-form-colls">
-							<!-- Open Collections modal -->
-							<div id="specobsdiv">
-								<?php
-								include_once('./collectionContent.php');
-								?>
-							</div>
-						</div>
-					</div>
-				</section>
-
-
 				<!-- Associations -->
 				<section>
 					<!-- Accordion selector -->
@@ -589,6 +569,25 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 							<label for="usethes-associations">
 								<span class="ml-1"><?php echo $LANG['ASSOCIATIONS'] . '-' . $LANG['INCLUDE_SYNONYMS'] ?></span>
 							</label>
+						</div>
+					</div>
+				</section>
+
+				<!-- Collections -->
+				<section>
+					<!-- Accordion selector -->
+					<input type="checkbox" id="collections" class="accordion-selector" />
+					<!-- Accordion header -->
+					<label for="collections" class="accordion-header"><?php echo $LANG['COLLECTIONS'] ?></label>
+					<!-- Accordion content -->
+					<div class="content">
+						<div id="search-form-colls">
+							<!-- Open Collections modal -->
+							<div id="specobsdiv">
+								<?php
+								include_once('./collectionContent.php');
+								?>
+							</div>
 						</div>
 					</div>
 				</section>
