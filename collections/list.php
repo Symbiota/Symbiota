@@ -1,6 +1,6 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyEditorManager.php');
+include_once($SERVER_ROOT . '/classes/TaxonomyEditorManager.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceListManager.php');
 if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/list.' . $LANG_TAG . '.php'))
 	include_once($SERVER_ROOT . '/content/lang/collections/list.' . $LANG_TAG . '.php');
@@ -13,11 +13,11 @@ $tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabi
 $cntPerPage = array_key_exists('cntperpage', $_REQUEST) ? filter_var($_REQUEST['cntperpage'], FILTER_SANITIZE_NUMBER_INT) : 100;
 $pageNumber = array_key_exists('page', $_REQUEST) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $datasetid = array_key_exists('datasetid', $_REQUEST) ? filter_var($_REQUEST['datasetid'], FILTER_SANITIZE_NUMBER_INT) : '';
-$sortField1 = array_key_exists('sortfield1',$_REQUEST) ? $_REQUEST['sortfield1'] : '';
-$sortField2 = array_key_exists('sortfield2',$_REQUEST) ? $_REQUEST['sortfield2'] : '';
+$sortField1 = array_key_exists('sortfield1', $_REQUEST) ? $_REQUEST['sortfield1'] : '';
+$sortField2 = array_key_exists('sortfield2', $_REQUEST) ? $_REQUEST['sortfield2'] : '';
 $sortOrder = !empty($_REQUEST['sortorder']) ? 'desc' : '';
 $comingFrom =  (array_key_exists('comingFrom', $_REQUEST) ? $_REQUEST['comingFrom'] : '');
-if($comingFrom != 'harvestparams' && $comingFrom != 'newsearch'){
+if ($comingFrom != 'harvestparams' && $comingFrom != 'newsearch') {
 	//If not set via a valid input variable, use setting set within symbini
 	$comingFrom = !empty($SHOULD_USE_HARVESTPARAMS) ? 'harvestparams' : 'newsearch';
 }
@@ -28,9 +28,9 @@ $collManager = new OccurrenceListManager();
 $searchVar = $collManager->getQueryTermStr();
 if ($targetTid && array_key_exists('mode', $_REQUEST)) $searchVar .= '&mode=voucher&targettid=' . $targetTid;
 $searchVar .= '&comingFrom=' . $comingFrom;
-if($sortField1){
+if ($sortField1) {
 	$searchVar .= '&sortfield1=' . htmlspecialchars($sortField1, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&sortorder=' . $sortOrder;
-	if($sortField2){
+	if ($sortField2) {
 		$searchVar .= '&sortfield2=' . htmlspecialchars($sortField2, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 		$collManager->addSort($sortField2, $sortOrder);
 	}
@@ -44,6 +44,7 @@ $_SESSION['citationvar'] = $searchVar;
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
+
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['PAGE_TITLE']; ?></title>
@@ -56,14 +57,14 @@ $_SESSION['citationvar'] = $searchVar;
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
-		let urlQueryStr = "<?php if($searchVar) echo $searchVar . '&page=' . $pageNumber; ?>";
+		let urlQueryStr = "<?php if ($searchVar) echo $searchVar . '&page=' . $pageNumber; ?>";
 
 		$(document).ready(function() {
 			<?php
 			if ($searchVar) {
-				?>
+			?>
 				sessionStorage.querystr = "<?php echo $searchVar; ?>";
-				<?php
+			<?php
 			}
 			?>
 
@@ -108,6 +109,7 @@ $_SESSION['citationvar'] = $searchVar;
 	<script src="../js/symb/collections.list.js?ver=5" type="text/javascript"></script>
 	<script src="../js/symb/shared.js?ver=1" type="text/javascript"></script>
 </head>
+
 <body>
 	<?php
 	$displayLeftMenu = (isset($collections_listMenu) ? $collections_listMenu : false);
@@ -120,14 +122,13 @@ $_SESSION['citationvar'] = $searchVar;
 			echo '<b>' . $LANG['NAV_SPECIMEN_LIST'] . '</b>';
 			echo '</div>';
 		}
-	}
-	else {
+	} else {
 		echo '<div class="navpath">';
 		echo '<a href="../index.php">' . $LANG['NAV_HOME'] . '</a> &gt;&gt; ';
-		if($comingFrom == 'harvestparams'){
+		if ($comingFrom == 'harvestparams') {
 			echo '<a href="index.php">' . $LANG['NAV_COLLECTIONS'] . '</a> &gt;&gt; ';
 			echo '<a href="' . $CLIENT_ROOT . '/collections/harvestparams.php">' . $LANG['NAV_SEARCH'] . '</a> &gt;&gt; ';
-		} else{
+		} else {
 			echo '<a href="' . $CLIENT_ROOT . '/collections/search/index.php">' . $LANG['NAV_SEARCH'] . '</a> &gt;&gt; ';
 		}
 		echo '<b>' . $LANG['NAV_SPECIMEN_LIST'] . '</b>';
@@ -160,18 +161,20 @@ $_SESSION['citationvar'] = $searchVar;
 					<div style="float:right;">
 						<?php
 						if ($SYMB_UID) {
-							?>
+						?>
 							<span>
 								<button class="icon-button" onclick="displayDatasetTools()" aria-label="<?= $LANG['DATASET_MANAGEMENT'] ?>" title="<?= $LANG['DATASET_MANAGEMENT'] ?>">
-									<svg style="width:1.3em;height:1.3em;" alt="<?php echo $LANG['IMG_DATASET_MANAGEMENT']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M280-280h160v-160H280v160Zm240 0h160v-160H520v160ZM280-520h160v-160H280v160Zm240 0h160v-160H520v160ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>
+									<svg style="width:1.3em;height:1.3em;" alt="<?php echo $LANG['IMG_DATASET_MANAGEMENT']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+										<path d="M280-280h160v-160H280v160Zm240 0h160v-160H520v160ZM280-520h160v-160H280v160Zm240 0h160v-160H520v160ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z" />
+									</svg>
 								</button>
 							</span>
-							<?php
+						<?php
 						}
 						?>
 						<span>
 							<button class="icon-button" onclick="toggleElement('#sort-div', 'block')" title="<?= $LANG['DISPLAY_SORT'] ?>" aria-label="<?= $LANG['DISPLAY_SORT'] ?>">
-								<img src="<?= $CLIENT_ROOT ?>/images/sort-cream.svg" style="width:1.3em;height:1.3em" alt="<?= $LANG['DISPLAY_SORT'] ?>" >
+								<img src="<?= $CLIENT_ROOT ?>/images/sort-cream.svg" style="width:1.3em;height:1.3em" alt="<?= $LANG['DISPLAY_SORT'] ?>">
 							</button>
 						</span>
 						<span>
@@ -182,14 +185,18 @@ $_SESSION['citationvar'] = $searchVar;
 								<input name="sortorder" type="hidden" value="<?= $sortOrder ?>" />
 								<input name="searchvar" type="hidden" value="<?php echo $searchVar ?>" />
 								<button class="icon-button" aria-label="<?= $LANG['TABLE_DISPLAY'] ?>" title="<?= $LANG['TABLE_DISPLAY'] ?>">
-									<svg style="width:1.3em;height:1.3em" alt="<?= $LANG['IMG_TABLE_DISPLAY'] ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200Zm80-400h560v-160H200v160Zm213 200h134v-120H413v120Zm0 200h134v-120H413v120ZM200-400h133v-120H200v120Zm427 0h133v-120H627v120ZM200-200h133v-120H200v120Zm427 0h133v-120H627v120Z"/></svg>
+									<svg style="width:1.3em;height:1.3em" alt="<?= $LANG['IMG_TABLE_DISPLAY'] ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+										<path d="M120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200Zm80-400h560v-160H200v160Zm213 200h134v-120H413v120Zm0 200h134v-120H413v120ZM200-400h133v-120H200v120Zm427 0h133v-120H627v120ZM200-200h133v-120H200v120Zm427 0h133v-120H627v120Z" />
+									</svg>
 								</button>
 							</form>
 						</span>
 						<span>
 							<form class="button-form" action="download/index.php" method="post" onsubmit="targetPopup(this)">
 								<button class="icon-button" aria-label="<?= $LANG['DOWNLOAD_SPECIMEN_DATA'] ?>" title="<?= $LANG['DOWNLOAD_SPECIMEN_DATA'] ?>">
-									<svg style="width:1.3em;height:1.3em" alt="<?= $LANG['IMG_DWNL_DATA'] ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
+									<svg style="width:1.3em;height:1.3em" alt="<?= $LANG['IMG_DWNL_DATA'] ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+										<path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z" />
+									</svg>
 								</button>
 								<input name="searchvar" type="hidden" value="<?= $searchVar ?>" />
 								<input name="dltype" type="hidden" value="specimen" />
@@ -197,7 +204,9 @@ $_SESSION['citationvar'] = $searchVar;
 						</span>
 						<span>
 							<button class="icon-button" onclick="copyUrl()" aria-label="<?= $LANG['COPY_TO_CLIPBOARD'] ?>" title="<?= $LANG['COPY_TO_CLIPBOARD'] ?>">
-								<svg style="width:1.3em;height:1.3em" alt="<?= $LANG['IMG_COPY']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg>
+								<svg style="width:1.3em;height:1.3em" alt="<?= $LANG['IMG_COPY']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+									<path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z" />
+								</svg>
 							</button>
 						</span>
 					</div>
@@ -232,7 +241,7 @@ $_SESSION['citationvar'] = $searchVar;
 						}
 						?>
 					</div>
-					<div id="sort-div" style="display:<?= ($sortField1?'block':'none') ?>">
+					<div id="sort-div" style="display:<?= ($sortField1 ? 'block' : 'none') ?>">
 						<section class="fieldset-like">
 							<h3><span><?= $LANG['SORT'] ?></span></h3>
 							<form name="sortform" action="list.php" method="post">
@@ -242,10 +251,21 @@ $_SESSION['citationvar'] = $searchVar;
 										<select name="sortfield1" id="sortfield1">
 											<option value=""></option>
 											<?php
-											$sortFields = array('c.collectionname' => $LANG['COLLECTION'], 'o.catalogNumber' => $LANG['CATALOG_NUMBER'], 'o.family' => $LANG['FAMILY'], 'o.sciname' => $LANG['SCINAME'], 'o.recordedBy' => $LANG['COLLECTOR'],
-												'o.recordNumber' => $LANG['NUMBER'], 'o.eventDate' => $LANG['EVENT_DATE'], 'o.country' => $LANG['COUNTRY'], 'o.StateProvince' => $LANG['STATE_PROVINCE'], 'o.county' => $LANG['COUNTY'], 'o.minimumElevationInMeters' => $LANG['ELEVATION']);
-											foreach($sortFields as $k => $v){
-												echo '<option value="'.$k.'" '.($k==$sortField1?'SELECTED':'').'>'.$v.'</option>';
+											$sortFields = array(
+												'c.collectionname' => $LANG['COLLECTION'],
+												'o.catalogNumber' => $LANG['CATALOG_NUMBER'],
+												'o.family' => $LANG['FAMILY'],
+												'o.sciname' => $LANG['SCINAME'],
+												'o.recordedBy' => $LANG['COLLECTOR'],
+												'o.recordNumber' => $LANG['NUMBER'],
+												'o.eventDate' => $LANG['EVENT_DATE'],
+												'o.country' => $LANG['COUNTRY'],
+												'o.StateProvince' => $LANG['STATE_PROVINCE'],
+												'o.county' => $LANG['COUNTY'],
+												'o.minimumElevationInMeters' => $LANG['ELEVATION']
+											);
+											foreach ($sortFields as $k => $v) {
+												echo '<option value="' . $k . '" ' . ($k == $sortField1 ? 'SELECTED' : '') . '>' . $v . '</option>';
 											}
 											?>
 										</select>
@@ -255,8 +275,8 @@ $_SESSION['citationvar'] = $searchVar;
 										<select name="sortfield2" id="sortfield2">
 											<option value=""></option>
 											<?php
-											foreach($sortFields as $k => $v){
-												echo '<option value="'.$k.'" '.($k==$sortField2?'SELECTED':'').'>'.$v.'</option>';
+											foreach ($sortFields as $k => $v) {
+												echo '<option value="' . $k . '" ' . ($k == $sortField2 ? 'SELECTED' : '') . '>' . $v . '</option>';
 											}
 											?>
 										</select>
@@ -265,12 +285,12 @@ $_SESSION['citationvar'] = $searchVar;
 										<label for="sortorder"> <?= $LANG['SORT_ORDER'] ?>: </label>
 										<select id="sortorder" name="sortorder">
 											<option value=""><?= $LANG['SORT_ASCENDING'] ?></option>
-											<option value="desc" <?= ($sortOrder=="desc"?'SELECTED':''); ?>><?= $LANG['SORT_DESCENDING'] ?></option>
+											<option value="desc" <?= ($sortOrder == "desc" ? 'SELECTED' : ''); ?>><?= $LANG['SORT_DESCENDING'] ?></option>
 										</select>
 									</div>
 									<div>
 										<input name="searchvar" type="hidden" value="<?= $searchVar ?>">
-										<button name="formsubmit" type="submit" ><?= $LANG['SORT'] ?></button>
+										<button name="formsubmit" type="submit"><?= $LANG['SORT'] ?></button>
 									</div>
 								</div>
 							</form>
@@ -309,14 +329,14 @@ $_SESSION['citationvar'] = $searchVar;
 
 					//Add search return
 					if ($occurArr) {
-						?>
+					?>
 						<form name="occurListForm" method="post" action="datasets/datasetHandler.php" onsubmit="return validateOccurListForm(this)" target="_blank">
 							<?php include('datasetinclude.php'); ?>
 							<table id="omlisttable">
 								<?php
 								$permissionArr = array();
-								if(array_key_exists('CollAdmin', $USER_RIGHTS)) $permissionArr = $USER_RIGHTS['CollAdmin'];
-								if(array_key_exists('CollEditor', $USER_RIGHTS)) $permissionArr = array_merge($permissionArr, $USER_RIGHTS['CollEditor']);
+								if (array_key_exists('CollAdmin', $USER_RIGHTS)) $permissionArr = $USER_RIGHTS['CollAdmin'];
+								if (array_key_exists('CollEditor', $USER_RIGHTS)) $permissionArr = array_merge($permissionArr, $USER_RIGHTS['CollEditor']);
 								foreach ($occurArr as $occid => $fieldArr) {
 									$collId = $fieldArr['collid'];
 									$taxonEditorObj = new TaxonomyEditorManager();
@@ -349,11 +369,12 @@ $_SESSION['citationvar'] = $searchVar;
 									if (isset($fieldArr['has_audio']) && $fieldArr['has_audio']) {
 										echo '<div style="float:right; padding-right: 0.5rem"><img style="width:1.3rem; border: 0" src="' . $CLIENT_ROOT . '/images/speaker_thumbnail.png' . '"/></div>';
 									}
-									if (isset($fieldArr['has_image']) && $fieldArr['has_image']) {
-										echo '<div style="float:right; padding-right: 0.5rem;"><img style="width:1.3rem; border: 0" src="' . $CLIENT_ROOT . '/images/image.png' . '"/></div>';
-									}
-
 									$targetClid = $collManager->getSearchTerm("targetclid");
+									if (isset($fieldArr['has_image']) && $fieldArr['has_image']) {
+										echo '<div style="float:right;margin:5px 25px;">';
+										echo '<a href="#" onclick="return openIndPU(' . $occid . ',' . ($targetClid ? $targetClid : "0") . ');">';
+										echo '<img src="' . $fieldArr['media']['thumbnail'] . '" style="height:70px" alt="' . (isset($LANG['IMG_OCC']) ? $LANG['IMG_OCC'] : 'Image Associated With the Occurence') . '"/></a></div>';
+									}
 									if ($collManager->getClName() && $targetTid && array_key_exists('mode', $_REQUEST)) {
 										echo '<div style="float:right;" >';
 										echo '<a href="#" onclick="addVoucherToCl(' . $occid . ',' . $targetClid . ',' . $targetTid . ');return false" title="' . $LANG['VOUCHER_LINK_TITLE'] . ' ' . $collManager->getClName() . ';">';
@@ -370,10 +391,10 @@ $_SESSION['citationvar'] = $searchVar;
 									if (isset($fieldArr['sciname'])) {
 										$sciStr = '<span style="font-style:italic;">' . $fieldArr['sciname'] . '</span>';
 										if (isset($fieldArr['author']) && $fieldArr['author']) $sciStr .= ' ' . $fieldArr['author'];
-										if (isset($fieldArr['tid']) && $fieldArr['tid']){
+										if (isset($fieldArr['tid']) && $fieldArr['tid']) {
 											$sciStr = '<a target="_blank" href="../taxa/index.php?tid=' . strip_tags($fieldArr['tid']) . '">'
-											. '<i> ' . strip_tags($splitSciname['base']) . '</i>'
-											. (!empty($nonItalicizedScinameComponent) ? (' ' . $nonItalicizedScinameComponent) : '') . '</a>' ;
+												. '<i> ' . strip_tags($splitSciname['base']) . '</i>'
+												. (!empty($nonItalicizedScinameComponent) ? (' ' . $nonItalicizedScinameComponent) : '') . '</a>';
 										}
 										echo $sciStr;
 									} elseif ($fieldArr['localitysecurity'] > 1) {
@@ -405,11 +426,10 @@ $_SESSION['citationvar'] = $searchVar;
 								?>
 							</table>
 						</form>
-						<?php
+					<?php
 						echo $paginationStr;
 						echo '<hr/>';
-					}
-					else {
+					} else {
 						echo '<div><h3>' . $LANG['NO_RESULTS'] . '</h3>';
 						$tn = $collManager->getTaxaSearchStr();
 						if ($p = strpos($tn, ';')) {
@@ -440,7 +460,9 @@ $_SESSION['citationvar'] = $searchVar;
 			<div id="maps" style="min-height:400px;margin-bottom:10px;">
 				<form action="download/index.php" method="post" style="float:right" onsubmit="targetPopup(this)">
 					<button class="icon-button" aria-label="<?= $LANG['DOWNLOAD_SPECIMEN_DATA'] ?>" title="<?= $LANG['DOWNLOAD_SPECIMEN_DATA'] ?>">
-						<svg style="width:1.3em" alt="<?= $LANG['IMG_DWNL_DATA']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
+						<svg style="width:1.3em" alt="<?= $LANG['IMG_DWNL_DATA']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+							<path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z" />
+						</svg>
 					</button>
 					<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
 					<input name="dltype" type="hidden" value="georef" />
@@ -477,13 +499,49 @@ $_SESSION['citationvar'] = $searchVar;
 						<fieldset>
 							<?php
 							$occFieldArr = array(
-								'occurrenceid', 'identifiedby', 'dateidentified', 'identificationreferences',
-								'identificationremarks', 'taxonremarks', 'recordedby', 'recordnumber', 'associatedcollectors', 'eventdate', 'year', 'month', 'day',
-								'verbatimeventdate', 'habitat', 'substrate', 'occurrenceremarks', 'associatedtaxa', 'verbatimattributes',
-								'reproductivecondition', 'cultivationstatus', 'establishmentmeans', 'lifestage', 'sex', 'individualcount', 'samplingprotocol', 'preparations',
-								'country', 'stateprovince', 'county', 'municipality', 'locality', 'locationremarks', 'coordinateuncertaintyinmeters',
-								'verbatimcoordinates', 'georeferencedby', 'georeferenceprotocol', 'georeferencesources', 'georeferenceverificationstatus', 'georeferenceremarks',
-								'minimumelevationinmeters', 'maximumelevationinmeters', 'verbatimelevation'
+								'occurrenceid',
+								'identifiedby',
+								'dateidentified',
+								'identificationreferences',
+								'identificationremarks',
+								'taxonremarks',
+								'recordedby',
+								'recordnumber',
+								'associatedcollectors',
+								'eventdate',
+								'year',
+								'month',
+								'day',
+								'verbatimeventdate',
+								'habitat',
+								'substrate',
+								'occurrenceremarks',
+								'associatedtaxa',
+								'verbatimattributes',
+								'reproductivecondition',
+								'cultivationstatus',
+								'establishmentmeans',
+								'lifestage',
+								'sex',
+								'individualcount',
+								'samplingprotocol',
+								'preparations',
+								'country',
+								'stateprovince',
+								'county',
+								'municipality',
+								'locality',
+								'locationremarks',
+								'coordinateuncertaintyinmeters',
+								'verbatimcoordinates',
+								'georeferencedby',
+								'georeferenceprotocol',
+								'georeferencesources',
+								'georeferenceverificationstatus',
+								'georeferenceremarks',
+								'minimumelevationinmeters',
+								'maximumelevationinmeters',
+								'verbatimelevation'
 							);
 							foreach ($occFieldArr as $k => $v) {
 								echo '<div style="float:left;margin-right:5px;">';

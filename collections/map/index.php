@@ -801,9 +801,9 @@ $serverHost = GeneralUtil::getDomain();
 
 					for (let marker of this.markers[id]) {
 						if(marker.options.icon && marker.options.icon.options.observation) {
-							marker.setIcon(getObservationSvg({color: `#${color}`, size:30 }))
+							marker.setIcon(getObservationSvg({color: `#${color}`, size: 28 }))
 						} else {
-							marker.setIcon(getSpecimenSvg({color: `#${color}`, size:9 }))
+							marker.setIcon(getSpecimenSvg({color: `#${color}`, size: 7 }))
 						}
 					}
 				}
@@ -820,14 +820,14 @@ $serverHost = GeneralUtil::getDomain();
 							icon: getSpecimenSvg({
 								color: `#${tMap[record['tid']].color}`,
 								className: `coll-${record['collid']} taxa-${record['tid']}`,
-								size: 9
+								size: 7
 							})
 						}):
 						L.marker([record.lat, record.lng], {
 							icon: getObservationSvg({
 								color: `#${tMap[record['tid']].color}`,
 								className: `coll-${record['collid']} taxa-${record['tid']}`,
-								size: 30
+								size: 28
 							})
 						}))
 					.bindTooltip(`<div style="font-size:1rem">${record.id}</div>`)

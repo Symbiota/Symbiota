@@ -870,8 +870,8 @@ class Media {
 			// This is a very bad name that refers to source or downloaded url
 			"sourceUrl" => $clean_post_arr["sourceurl"] ?? null, // TPImageEditorManager / Occurrence import
 			"referenceUrl" => $clean_post_arr["referenceurl"] ?? null, // check keys again might not be one,
-			"creator" => $clean_post_arr["photographer"] ?? null,
-			"creatorUid" => OccurrenceUtil::verifyUser($clean_post_arr["photographeruid"] ?? null, $conn),
+			"creator" => $clean_post_arr["creator"] ?? null,
+			"creatorUid" => OccurrenceUtil::verifyUser($clean_post_arr["creatorUid"] ?? null, $conn),
 			"format" =>  $file["type"] ?? $clean_post_arr['format'],
 			"caption" => $clean_post_arr["caption"] ?? null,
 			"owner" => $clean_post_arr["owner"] ?? null,
@@ -1370,10 +1370,9 @@ class Media {
 		foreach ($metadata_arr as $key => $value) {
 			if ($parameter_str !== '') $parameter_str .= ', ';
 			$parameter_str .= $key . " = ?";
-			$value = self::castToNullIfNecessary($conn, $key, $value);
-			array_push($values, $value);
+			$values[] = ($value === '') ? null : $value;
 		}
-		array_push($values, $media_id);
+		$values[] = $media_id;
 
 		$sql = 'UPDATE media set ' . $parameter_str . ' where mediaID = ?';
 		QueryUtil::executeQuery(
@@ -1383,34 +1382,6 @@ class Media {
 		);
 	}
 
-	private static function castToNullIfNecessary($conn, $key, $value) {
-		$columnTypes = self::getColumnTypes($conn, 'media');
-		if (isset($columnTypes[$key]) && self::isIntegerType($columnTypes[$key]) && $value === "") {
-			$value = NULL;
-		}
-		return $value;
-	}
-
-	private static function getColumnTypes(mysqli $conn, string $table): array {
-		$columnTypes = [];
-		$query = "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?";
-
-		if ($stmt = $conn->prepare($query)) {
-			$stmt->bind_param('s', $table);
-			$stmt->execute();
-			$result = $stmt->get_result();
-			while ($row = $result->fetch_assoc()) {
-				$columnTypes[$row['COLUMN_NAME']] = $row['DATA_TYPE'];
-			}
-			$stmt->close();
-		}
-		return $columnTypes;
-	}
-
-	private static function isIntegerType(string $type): bool {
-		$integerTypes = ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'];
-		return in_array(strtolower($type), $integerTypes, true);
-	}
 
 	/**
 	 * @param int $media_id Media_id that will be deleted from Media table
