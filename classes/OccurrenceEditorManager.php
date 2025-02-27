@@ -448,7 +448,7 @@ class OccurrenceEditorManager {
 				$sqlWhere .= 'AND (o.recordedby IS NULL) ';
 			} elseif (substr($this->qryArr['rb'], 0, 1) == '%') {
 				$collStr = $this->cleanInStr(substr($this->qryArr['rb'], 1));
-				$sqlWhere .= 'AND (MATCH(o.recordedby) AGAINST("' . $collStr . '") IN BOOLEAN MODE) ';
+				$sqlWhere .= 'AND (MATCH(o.recordedby) AGAINST("' . $collStr . '" IN BOOLEAN MODE)) ';
 			} else {
 				$sqlWhere .= 'AND (o.recordedby LIKE "' . $this->cleanInStr($this->qryArr['rb']) . '%") ';
 			}
@@ -1225,11 +1225,7 @@ class OccurrenceEditorManager {
 
 			//Whenever occurrence is updated also update associated images
 			if ($updated_base && isset($taxonArr['tid']) && $taxonArr['tid']) {
-				$sql = <<<'SQL'
-				UPDATE images i
-				INNER JOIN omoccurdeterminations od on od.occid = i.occid
-				SET tid = ? WHERE detid = ?;
-				SQL;
+				$sql = 'UPDATE media m INNER JOIN omoccurdeterminations d on m.occid = d.occid SET m.tid = ? WHERE d.detid = ?';
 				QueryUtil::executeQuery($this->conn, $sql, [$taxonArr['tid'], $detId]);
 			}
 		}
@@ -1736,7 +1732,7 @@ class OccurrenceEditorManager {
 				$sql = <<<'SQL'
 				SELECT detid FROM omoccurdeterminations where occid = ? and isCurrent = 1;
 				SQL;
-				$result = SymbUtil::execute_query($this->conn, $sql, [$occid]);
+				$result = QueryUtil::executeQuery($this->conn, $sql, [$occid]);
 				return array_map(function ($v) {
 					return $v[0];
 				}, $result->fetch_all());

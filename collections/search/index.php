@@ -511,26 +511,6 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 				}
 				?>
 
-				<!-- Collections -->
-				<section>
-					<!-- Accordion selector -->
-					<input type="checkbox" id="collections" class="accordion-selector" />
-					<!-- Accordion header -->
-					<label for="collections" class="accordion-header"><?php echo $LANG['COLLECTIONS'] ?></label>
-					<!-- Accordion content -->
-					<div class="content">
-						<div id="search-form-colls">
-							<!-- Open Collections modal -->
-							<div id="specobsdiv">
-								<?php
-								include_once('./collectionContent.php');
-								?>
-							</div>
-						</div>
-					</div>
-				</section>
-
-
 				<!-- Associations -->
 				<section>
 					<!-- Accordion selector -->
@@ -672,6 +652,25 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 										<input type="text" name="bed" id="bed" data-chip="<?php echo $LANG['BED'] ?>" />
 									<span class="inset-input-label"><?php echo $LANG['BED'] ?></span>
 								</label>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- Collections -->
+				<section>
+					<!-- Accordion selector -->
+					<input type="checkbox" id="collections" class="accordion-selector" />
+					<!-- Accordion header -->
+					<label for="collections" class="accordion-header"><?php echo $LANG['COLLECTIONS'] ?></label>
+					<!-- Accordion content -->
+					<div class="content">
+						<div id="search-form-colls">
+							<!-- Open Collections modal -->
+							<div id="specobsdiv">
+								<?php
+								include_once('./collectionContent.php');
+								?>
 							</div>
 						</div>
 					</div>
