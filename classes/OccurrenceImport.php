@@ -94,6 +94,7 @@ class OccurrenceImport extends UtilitiesFileImport{
 			$fields = [
 				 //'tid',
 				'thumbnailurl',
+				'sourceurl',
 				'archiveurl',
 				'referenceurl',
 				'photographer',
@@ -349,7 +350,7 @@ class OccurrenceImport extends UtilitiesFileImport{
 		$this->targetFieldMap[''] = '------------------------------------';
 		$fieldArr = array();
 		if($this->importType == self::IMPORT_IMAGE_MAP){
-			$fieldArr = array('url', 'thumbnailUrl', 'archiveUrl', 'referenceUrl', 'photographer', 'photographerUid', 'caption', 'owner', 'anatomy', 'notes',
+			$fieldArr = array('url', 'thumbnailUrl', 'sourceUrl', 'archiveUrl', 'referenceUrl', 'photographer', 'photographerUid', 'caption', 'owner', 'anatomy', 'notes',
 				'format', 'sourceIdentifier', 'hashFunction', 'hashValue', 'mediaMD5', 'copyright', 'rights', 'accessRights', 'sortOccurrence');
 
 			$this->targetFieldMap['originalurl'] = 'originalUrl (required)';
