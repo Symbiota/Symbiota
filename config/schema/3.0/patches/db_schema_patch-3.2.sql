@@ -623,3 +623,12 @@ CREATE TABLE `uploadkeyvaluetemp`(
 
 ALTER TABLE uploadimagetemp
   ADD COLUMN mediaType varchar(45);
+
+#Add usersthirdpartysessions table
+CREATE TABLE `usersthirdpartysessions` (
+  `thirdparty_id` varchar(255) NOT NULL,
+  `localsession_id` varchar(255) NOT NULL,
+  `ipaddr` varchar(255) NOT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`thirdparty_id`,`localsession_id`) 
+) ENGINE=InnoDB;
