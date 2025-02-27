@@ -6,16 +6,14 @@ use App\Models\Taxonomy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class TaxonomyController extends Controller
-{
+class TaxonomyController extends Controller {
 
 	/**
 	 * Taxonomy controller instance.
 	 *
 	 * @return void
 	 */
-	public function __construct()
-	{
+	public function __construct() {
 		parent::__construct();
 	}
 
@@ -49,8 +47,7 @@ class TaxonomyController extends Controller
 	 *	 ),
 	 * )
 	 */
-	public function showAllTaxa(Request $request)
-	{
+	public function showAllTaxa(Request $request) {
 		$this->validate($request, [
 			'limit' => 'integer',
 			'offset' => 'integer'
@@ -120,8 +117,7 @@ class TaxonomyController extends Controller
 	 *	 ),
 	 * )
 	 */
-	public function showAllTaxaSearch(Request $request)
-	{
+	public function showAllTaxaSearch(Request $request) {
 		$this->validate($request, [
 			'taxon' => 'required',
 			'limit' => 'integer',
@@ -183,8 +179,7 @@ class TaxonomyController extends Controller
 	 *	 ),
 	 * )
 	 */
-	public function showOneTaxon($id, Request $request)
-	{
+	public function showOneTaxon($id, Request $request) {
 		$taxonObj = Taxonomy::find($id);
 
 		//Set status and parent (can't use Eloquent model due to table containing complex PKs)
@@ -224,16 +219,14 @@ class TaxonomyController extends Controller
 
 
 	//Support functions
-	public static function getSynonyms(Int $tid)
-	{
+	public static function getSynonyms(Int $tid) {
 		$synonymResult = DB::table('taxstatus as ts')
 			->join('taxstatus as s', 'ts.tidaccepted', '=', 's.tidaccepted')
 			->where('ts.tid', $tid)->where('ts.taxauthid', 1)->where('s.taxauthid', 1)->pluck('s.tid');
 		return $synonymResult->toArray();
 	}
 
-	public static function getChildren(Int $tid)
-	{
+	public static function getChildren(Int $tid) {
 		//Direct accepted children only
 		$childrenResult = DB::table('taxstatus as c')
 			->join('taxstatus as a', 'c.parenttid', '=', 'a.tidaccepted')

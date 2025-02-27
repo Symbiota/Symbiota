@@ -868,8 +868,8 @@ class Media {
 			// This is a very bad name that refers to source or downloaded url
 			"sourceUrl" => $clean_post_arr["sourceurl"] ?? null,// TPImageEditorManager / Occurrence import
 			"referenceUrl" => $clean_post_arr["referenceurl"] ?? null,// check keys again might not be one,
-			"creator" => $clean_post_arr["photographer"] ?? null,
-			"creatorUid" => OccurrenceUtil::verifyUser($clean_post_arr["photographeruid"] ?? null, $conn),
+			"creator" => $clean_post_arr["creator"] ?? null,
+			"creatorUid" => OccurrenceUtil::verifyUser($clean_post_arr["creatorUid"] ?? null, $conn),
 			"format" =>  $file["type"] ?? $clean_post_arr['format'],
 			"caption" => $clean_post_arr["caption"] ?? null,
 			"owner" => $clean_post_arr["owner"] ?? null,
@@ -1363,9 +1363,9 @@ class Media {
 		foreach ($metadata_arr as $key => $value) {
 			if($parameter_str !== '') $parameter_str .= ', ';
 			$parameter_str .= $key . " = ?";
-			array_push($values, $value);
+			$values[] = ($value === '') ? null : $value;
 		}
-		array_push($values, $media_id);
+		$values[] = $media_id;
 
 		$sql = 'UPDATE media set '. $parameter_str . ' where mediaID = ?';
 		QueryUtil::executeQuery(

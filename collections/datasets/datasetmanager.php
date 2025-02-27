@@ -10,6 +10,7 @@ if (!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/
 $datasetId = $_REQUEST['datasetid'];
 $tabIndex = array_key_exists('tabindex', $_REQUEST) ? $_REQUEST['tabindex'] : 0;
 $action = array_key_exists('submitaction', $_REQUEST) ? $_REQUEST['submitaction'] : '';
+$pageNumber = array_key_exists('pagenumber', $_REQUEST) ? filter_var($_REQUEST['pagenumber'], FILTER_SANITIZE_NUMBER_INT) : 1;
 
 //Sanitation
 if (!is_numeric($datasetId)) $datasetId = 0;
@@ -143,7 +144,6 @@ if ($isEditor) {
 				$("#" + dialogStr).click(function() {
 					$("#" + this.id + "dialog").dialog("open");
 				});
-
 			}
 
 			$('#tabs').tabs({
@@ -154,7 +154,7 @@ if ($isEditor) {
 			});
 
 			$("#userinput").autocomplete({
-				source: "rpc/getuserlist.php",
+				source: "../rpc/getuserlist.php",
 				minLength: 3,
 				autoFocus: true,
 				select: function(event, ui) {
@@ -251,6 +251,39 @@ if ($isEditor) {
 			window.open('', 'downloadpopup', 'left=100,top=50,width=900,height=700');
 			f.target = 'downloadpopup';
 		}
+
+		document.addEventListener("DOMContentLoaded", function() {
+			const adjustPagination = () => {
+				const paginationLinks = document.querySelectorAll(".pagination-link");
+				const screenWidth = window.innerWidth;
+				let shouldReduceLinks = false;
+				let shouldReduceByHalf = false;
+
+				if (screenWidth < 770) {
+					shouldReduceLinks = true;
+				}
+				if (screenWidth < 1200) {
+					shouldReduceByHalf = true;
+				}
+
+				paginationLinks.forEach(link => {
+					const shouldKeepLink = parseInt(link.getAttribute("data-keep-link"));
+					const isEven = (parseInt(link.getAttribute("data-even-odd")) || 1) % 2;
+					if (shouldReduceByHalf) {
+						link.style.display = (isEven) ? "inline-block" : "none";
+					}
+					if (shouldReduceLinks) {
+						link.style.display = (shouldKeepLink) ? "inline-block" : "none";
+					}
+					if (!shouldReduceByHalf && !shouldReduceLinks) {
+						link.style.display = "inline-block";
+					}
+				});
+			}
+
+			window.addEventListener("resize", adjustPagination);
+			adjustPagination();
+		});
 	</script>
 	<style>
 		.section-title {
@@ -306,12 +339,72 @@ if ($isEditor) {
 					</ul>
 					<div id="occurtab">
 						<?php
-						if ($occArr = $datasetManager->getOccurrences($datasetId)) {
+						$retLimit = 200;
+						$maxNumberOfPagesBeforeShowPageJump = 10;
+						if ($occArr = $datasetManager->getOccurrences($datasetId, $pageNumber, $retLimit)) {
 						?>
-							<form name="occurform" action="datasetmanager.php" method="post" onsubmit="return validateOccurForm(this)">
-								<div style="float:right;margin-right:10px">
-									<?php echo '<b>' . $LANG['COUNT'] . ': ' . count($occArr) . ' ' . $LANG['RECORDS'] . '</b>'; ?>
+
+							<div style="float:right;margin-right:10px">
+								<?php echo '<b>' . $LANG['COUNT'] . ': ' . count($occArr) . ' ' . $LANG['RECORDS'] . '</b>'; ?>
+							</div>
+							<div class="gridlike-form" style="width: max-content; margin-left:0; margin-right:0;">
+								<div class="gridlike-form-row" style="justify-content: center; flex-wrap: wrap; gap: 5px;">
+
+									<?php
+									$pageCount = ceil($datasetManager->getOccurrenceCount($datasetId) / $retLimit);
+									if (($pageNumber) > $pageCount) $pageNumber = 1;
+									echo $LANG['PAGE'] . '<b> ' . ($pageNumber) . '</b> ' . $LANG['OF'] . ' <b>' . $pageCount . '</b> : ';
+									//sliding window
+									echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=1" class="pagination-link" data-keep-link="1">';
+									echo (1);
+									echo '</a>';
+									echo '<span class="pagination-link"> ...</span>';
+									$beginning = max(2, $pageNumber - 5);
+									$end = min($pageNumber, min($pageCount + max(1, $pageNumber - 5), ($maxNumberOfPagesBeforeShowPageJump / 2) + max(1, $pageNumber - 5)));
+									for ($x = $beginning; $x < $end; $x++) {
+										//first x
+										// for ($x = 1; $x < min($pageNumber, $maxNumberOfPagesBeforeShowPageJump / 2); $x++) {
+										if ($x > 2) echo '<span class="pagination-link" data-even-odd="' . $x . '"> | </span>';
+										if (($pageNumber) == $x) echo '<b>';
+										else echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=' . $x . '" class="pagination-link" data-even-odd="' . $x . '">';
+										echo ($x);
+										if (($pageNumber) == $x) echo '</b>';
+										else echo '</a>';
+									}
+									?>
+									<div id="jump-to-page" name="jump-to-page">
+										<form action="datasetmanager.php" method="get" class="gridlike-form" style="margin:0;">
+											<div class="gridlike-form-row">
+												<input type="hidden" name="datasetid" value="<?php echo $datasetId; ?>">
+												<label class="screen-reader-only" for="jumpToPage">Jump to Page:</label>
+												<input placeholder="Jump to Page" type="number" id="jumpToPage" name="pagenumber" min="1" max="<?php echo $pageCount; ?>" required style="margin:0; min-width:9vw;">
+												<button type="submit">Go</button>
+											</div>
+										</form>
+									</div>
+									<?php
+									// sliding window
+									$theLastX = $pageCount - ($maxNumberOfPagesBeforeShowPageJump / 2);
+									$beginning = max($pageNumber + 1, min($pageNumber + 1, $theLastX));
+									$end = min($pageNumber + 1 + ($maxNumberOfPagesBeforeShowPageJump / 2), $pageCount - 1);
+									for ($x = $beginning; $x <= $end; $x++) {
+										// last x
+										// for ($x = max($pageCount - ($maxNumberOfPagesBeforeShowPageJump / 2), $pageNumber) + 1; $x <= $pageCount; $x++) {
+										if ($x > 1) echo '<span class="pagination-link" data-even-odd="' . $x . '"> | </span>';
+										if (($pageNumber) == $x) echo '<b>';
+										else echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=' . $x . '" class="pagination-link" data-even-odd="' . $x . '">';
+										echo ($x);
+										if (($pageNumber) == $x) echo '</b>';
+										else echo '</a>';
+									}
+									echo '<span class="pagination-link"> | ...</span>';
+									echo '<a href="datasetmanager.php?datasetid=' . $datasetId . '&pagenumber=' . $pageCount . '" class="pagination-link" data-keep-link="' . $pageCount . '">';
+									echo ($pageCount);
+									echo '</a>';
+									?>
 								</div>
+							</div>
+							<form name="occurform" action="datasetmanager.php" method="post" onsubmit="return validateOccurForm(this)">
 								<table class="styledtable" style="font-size:12px;">
 									<tr>
 										<th><input name="" value="" type="checkbox" onclick="selectAll(this);" title="<?php echo $LANG['SEL_DESEL_SPCS']; ?>" /></th>
