@@ -326,7 +326,12 @@ ALTER TABLE `media`
   ADD INDEX `FK_media_tid_idx` (`tid` ASC),
   ADD INDEX `FK_media_creatorUid_idx` (`creatorUid` ASC),
   ADD INDEX `IX_media_recordID` (`recordID` ASC),
-  ADD INDEX `IX_media_dateLastModified` (`initialTimestamp` ASC);
+  ADD INDEX `IX_media_dateLastModified` (`initialTimestamp` ASC),
+  ADD INDEX `IX_media_sort` (`sortSequence` ASC),
+  ADD INDEX `IX_media_sortOccur` (`sortOccurrence` ASC),
+  ADD INDEX `IX_media_thumbnail` (`thumbnailUrl` ASC),
+  ADD INDEX `IX_media_mediaType` (`mediaType` ASC);
+
 
 ALTER TABLE `media` 
   ADD CONSTRAINT `FK_media_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -427,7 +432,7 @@ DELIMITER ;
 
 #Add and update checklist footprints to be geoJson
 ALTER TABLE `fmchecklists` 
-  ADD COLUMN footprintGeoJson longtext DEFAULT NULL;
+  ADD COLUMN footprintGeoJson LONGTEXT DEFAULT NULL AFTER `footprintWkt`;
 
 UPDATE fmchecklists 
   SET footprintGeoJson = ST_ASGEOJSON(ST_GEOMFROMTEXT(swap_wkt_coords(footprintWkt))) 
@@ -622,7 +627,7 @@ CREATE TABLE `uploadkeyvaluetemp`(
 ) ENGINE=InnoDB;
 
 ALTER TABLE uploadimagetemp
-  ADD COLUMN mediaType varchar(45);
+  ADD COLUMN mediaType VARCHAR(45) NULL DEFAULT "image" AFTER `imageType`;
 
 #Add usersthirdpartysessions table
 CREATE TABLE `usersthirdpartysessions` (
