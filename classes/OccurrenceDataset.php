@@ -3,8 +3,7 @@
 include_once($SERVER_ROOT . '/config/dbconnection.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverCore.php');
 
-class OccurrenceDataset
-{
+class OccurrenceDataset {
 
 	private $conn;
 	private $collArr = array();
@@ -12,18 +11,15 @@ class OccurrenceDataset
 	private $errorArr = array();
 	private $occurrenceCount = null;
 
-	public function __construct($type = 'write')
-	{
+	public function __construct($type = 'write') {
 		$this->conn = MySQLiConnectionFactory::getCon($type);
 	}
 
-	public function __destruct()
-	{
+	public function __destruct() {
 		if (!($this->conn === null)) $this->conn->close();
 	}
 
-	public function getPublicDatasets()
-	{
+	public function getPublicDatasets() {
 		// Tests if field `category` exists in table
 		$sqlFields = 'SHOW COLUMNS FROM omoccurdatasets LIKE "category"';
 		$fields = $this->conn->query($sqlFields);
@@ -44,8 +40,7 @@ class OccurrenceDataset
 		return $retArr;
 	}
 
-	public function getPublicDatasetMetadata($dsid)
-	{
+	public function getPublicDatasetMetadata($dsid) {
 		$retArr = array();
 		if ($dsid) {
 			//Get and return individual dataset
@@ -64,8 +59,7 @@ class OccurrenceDataset
 		return $retArr;
 	}
 
-	public function getDatasetMetadata($dsid)
-	{
+	public function getDatasetMetadata($dsid) {
 		$retArr = array();
 		if ($GLOBALS['SYMB_UID'] && $dsid) {
 			//Get and return individual dataset
@@ -92,8 +86,7 @@ class OccurrenceDataset
 		return $retArr;
 	}
 
-	public function getDatasetArr()
-	{
+	public function getDatasetArr() {
 		$retArr = array();
 		if ($GLOBALS['SYMB_UID']) {
 			$sql = 'SELECT datasetid, name, notes, description, sortsequence, initialtimestamp, ispublic FROM omoccurdatasets WHERE (uid = ' . $GLOBALS['SYMB_UID'] . ') ORDER BY sortsequence,name';
@@ -129,8 +122,7 @@ class OccurrenceDataset
 		return $retArr;
 	}
 
-	public function editDataset($dsid, $name, $notes, $description, $ispublic)
-	{
+	public function editDataset($dsid, $name, $notes, $description, $ispublic) {
 		$sql = 'UPDATE omoccurdatasets SET name = "' . $this->cleanInStr($name) . '", notes = "' . $this->cleanInStr($notes) . '", description = "' . $this->cleanInStr($description) . '", ispublic = ' . $this->cleanInStr($ispublic) . ' WHERE datasetid = ' . $dsid;
 		if (!$this->conn->query($sql)) {
 			$this->errorArr[] = 'ERROR saving dataset edits: ' . $this->conn->error;
@@ -139,8 +131,7 @@ class OccurrenceDataset
 		return true;
 	}
 
-	public function createDataset($name, $notes, $description, $ispublic, $uid)
-	{
+	public function createDataset($name, $notes, $description, $ispublic, $uid) {
 		$sql = 'INSERT INTO omoccurdatasets (name,notes,description,ispublic,uid)
 			VALUES("' . $this->cleanInStr($name) . '",' . ($notes ? '"' . $this->cleanInStr($notes) . '"' : 'NULL') . ',' . ($description ? '"' . $this->cleanInStr($description) . '"' : 'NULL') . ',' . ($ispublic ? '"' . $this->cleanInStr($ispublic) . '"' : '"0"') . ',' . $uid . ') ';
 		if ($this->conn->query($sql)) {
@@ -152,8 +143,7 @@ class OccurrenceDataset
 		return true;
 	}
 
-	public function mergeDatasets($targetArr)
-	{
+	public function mergeDatasets($targetArr) {
 		$targetDsid = array_shift($targetArr);
 		//Rename target
 		$sql1 = 'UPDATE omoccurdatasets SET name = CONCAT(name," (merged)") WHERE datasetid = ' . $targetDsid;
@@ -178,8 +168,7 @@ class OccurrenceDataset
 		return true;
 	}
 
-	public function cloneDatasets($targetArr, $uid)
-	{
+	public function cloneDatasets($targetArr, $uid) {
 		$status = true;
 		$sql = 'SELECT datasetid, name, notes, description, sortsequence FROM omoccurdatasets WHERE datasetid IN(' . implode(',', $targetArr) . ')';
 		$rs = $this->conn->query($sql);
@@ -220,8 +209,7 @@ class OccurrenceDataset
 		return $status;
 	}
 
-	public function deleteDataset($dsid)
-	{
+	public function deleteDataset($dsid) {
 		//Delete users
 		$sql1 = 'DELETE FROM userroles WHERE (role IN("DatasetAdmin","DatasetEditor","DatasetReader")) AND (tablename = "omoccurdatasets") AND (tablepk = ' . $dsid . ') ';
 		//echo $sql;
@@ -247,8 +235,7 @@ class OccurrenceDataset
 		return true;
 	}
 
-	public function getUsers($datasetId)
-	{
+	public function getUsers($datasetId) {
 		$retArr = array();
 		$sql = 'SELECT u.uid, r.role, CONCAT_WS(", ",u.lastname,u.firstname) as username ' .
 			'FROM userroles r INNER JOIN users u ON r.uid = u.uid ' .
@@ -263,8 +250,7 @@ class OccurrenceDataset
 		return $retArr;
 	}
 
-	public function addUser($datasetID, $uid, $role)
-	{
+	public function addUser($datasetID, $uid, $role) {
 		if (is_numeric($uid)) {
 			$sql = 'INSERT INTO userroles(uid,role,tablename,tablepk,uidassignedby) VALUES(' . $uid . ',"' . $this->cleanInStr($role) . '","omoccurdatasets",' . $datasetID . ',' . $GLOBALS['SYMB_UID'] . ')';
 			if (!$this->conn->query($sql)) {
@@ -275,8 +261,7 @@ class OccurrenceDataset
 		return true;
 	}
 
-	public function deleteUser($datasetID, $uid, $role)
-	{
+	public function deleteUser($datasetID, $uid, $role) {
 		$status = true;
 		$sql = 'DELETE FROM userroles WHERE (uid = ' . $uid . ') AND (role = "' . $role . '") AND (tablename = "omoccurdatasets") AND (tablepk = ' . $datasetID . ') ';
 		if (!$this->conn->query($sql)) {
@@ -286,15 +271,14 @@ class OccurrenceDataset
 		return $status;
 	}
 
-	public function setOccurrenceCount($datasetId)
-	{
+	public function setOccurrenceCount($datasetId) {
 		$returnVal = 0;
 		if ($datasetId) {
 			$countSql = <<<SQL
 			SELECT COUNT(*) FROM omoccurrences o INNER JOIN omoccurdatasetlink dl ON o.occid = dl.occid
 			WHERE dl.datasetid = ? 
 			SQL;
-			$params[]=$datasetId;
+			$params[] = $datasetId;
 			try {
 				$result = QueryUtil::executeQuery($this->conn, $countSql, $params);
 				$countResponse = $result->fetch_array();
@@ -310,8 +294,7 @@ class OccurrenceDataset
 		return $returnVal;
 	}
 
-	public function getOccurrenceCount($datasetId)
-	{
+	public function getOccurrenceCount($datasetId) {
 		if (!$datasetId) {
 			return null;
 		}
@@ -322,8 +305,7 @@ class OccurrenceDataset
 		}
 	}
 
-	public function getOccurrences($datasetId, $pageNumber = 1, $retLimit = 500)
-	{
+	public function getOccurrences($datasetId, $pageNumber = 1, $retLimit = 500) {
 		$retArr = array();
 		if ($datasetId) {
 			$sql = <<<SQL
@@ -333,7 +315,7 @@ class OccurrenceDataset
 				FROM omoccurrences o INNER JOIN omoccurdatasetlink dl ON o.occid = dl.occid
 				WHERE dl.datasetid = ?
 			SQL;
-			$params[]=$datasetId;
+			$params[] = $datasetId;
 			try {
 				$result = QueryUtil::executeQuery($this->conn, $sql, $params);
 			} catch (\Throwable  $e) {
@@ -361,8 +343,7 @@ class OccurrenceDataset
 		return $retArr;
 	}
 
-	public function removeSelectedOccurrences($datasetId, $occArr)
-	{
+	public function removeSelectedOccurrences($datasetId, $occArr) {
 		$status = true;
 		if ($datasetId && $occArr) {
 			$sql = 'DELETE FROM omoccurdatasetlink WHERE (datasetid = ' . $datasetId . ') AND (occid IN(' . implode(',', $occArr) . '))';
@@ -374,8 +355,7 @@ class OccurrenceDataset
 		return $status;
 	}
 
-	public function addSelectedOccurrences($datasetId, $occArr)
-	{
+	public function addSelectedOccurrences($datasetId, $occArr) {
 		$status = false;
 		if (is_numeric($datasetId)) {
 			if (is_numeric($occArr)) $occArr = array($occArr);
@@ -394,8 +374,7 @@ class OccurrenceDataset
 	}
 
 	//General setters and getters
-	public function getUserList($term)
-	{
+	public function getUserList($term) {
 		$retArr = array();
 		$sql = 'SELECT uid, CONCAT(CONCAT_WS(", ", lastname, firstname)," - ", username," [#", uid,"]") AS username ' .
 			'FROM users WHERE lastname LIKE "%' . $this->cleanInStr($term) . '%" OR username LIKE "%' . $this->cleanInStr($term) . '%" ' .
@@ -408,8 +387,7 @@ class OccurrenceDataset
 		return $retArr;
 	}
 
-	public function getCollName($collId)
-	{
+	public function getCollName($collId) {
 		$collName = '';
 		if ($collId) {
 			if (!$this->collArr) $this->setCollMetadata($collId);
@@ -418,8 +396,7 @@ class OccurrenceDataset
 		return $collName;
 	}
 
-	private function setCollMetadata($collId)
-	{
+	private function setCollMetadata($collId) {
 		$sql = 'SELECT institutioncode, collectioncode, collectionname, colltype ' .
 			'FROM omcollections WHERE collid = ' . $collId;
 		if ($rs = $this->conn->query($sql)) {
@@ -433,24 +410,20 @@ class OccurrenceDataset
 		}
 	}
 
-	public function getErrorArr()
-	{
+	public function getErrorArr() {
 		return $this->errorArr;
 	}
 
-	public function getErrorMessage()
-	{
+	public function getErrorMessage() {
 		return implode('; ', $this->errorArr);
 	}
 
-	public function getDatasetId()
-	{
+	public function getDatasetId() {
 		return $this->datasetId;
 	}
 
 	//Misc functions
-	private function cleanInStr($str)
-	{
+	private function cleanInStr($str) {
 		$newStr = trim($str);
 		$newStr = preg_replace('/\s\s+/', ' ', $newStr);
 		$newStr = $this->conn->real_escape_string($newStr);
