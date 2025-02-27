@@ -360,8 +360,8 @@ class Media {
 
 			return $html;
 		} else {
-			return '<div style="width: 200px; height:242px; border: solid black 1px; display: flex; align-items: center; justify-content:center">
-				Unknown Media Type
+			global $LANG;
+			return '<div style="width: 200px; height:242px; border: solid black 1px; display: flex; align-items: center; justify-content:center">' . $LANG['UNKNOWN_MEDIA_TYPE_MSG'] . '
 			</div>';
 		}
 	}
