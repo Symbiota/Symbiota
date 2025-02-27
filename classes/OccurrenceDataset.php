@@ -290,12 +290,20 @@ class OccurrenceDataset
 	{
 		$returnVal = 0;
 		if ($datasetId) {
-			$countSql = 'SELECT COUNT(*) FROM omoccurrences o INNER JOIN omoccurdatasetlink dl ON o.occid = dl.occid ' .
-				'WHERE dl.datasetid = ' . $datasetId;
-			$countResponse = $this->conn->query($countSql);
+			$countSql = <<<SQL
+			SELECT COUNT(*) FROM omoccurrences o INNER JOIN omoccurdatasetlink dl ON o.occid = dl.occid
+			WHERE dl.datasetid = ? 
+			SQL;
+			$params[]=$datasetId;
+			try {
+				$result = QueryUtil::executeQuery($this->conn, $countSql, $params);
+				$countResponse = $result->fetch_array();
+				$result->free();
+			} catch (\Throwable  $e) {
+				error_log('ERROR fetching count for dataset: ' . $datasetId);
+			}
 			if ($countResponse) {
-				$row = $countResponse->fetch_array();
-				$returnVal = (int) $row[0];
+				$returnVal = (int) $countResponse[0];
 			}
 		}
 		$this->occurrenceCount = $returnVal;
@@ -318,14 +326,21 @@ class OccurrenceDataset
 	{
 		$retArr = array();
 		if ($datasetId) {
-			$sql = 'SELECT o.occid, o.catalognumber, o.occurrenceid ,o.othercatalognumbers, ' .
-				'o.sciname, o.family, o.recordedby, o.recordnumber, o.eventdate, ' .
-				'o.country, o.stateprovince, o.county, o.locality, o.decimallatitude, o.decimallongitude, dl.notes ' .
-				'FROM omoccurrences o INNER JOIN omoccurdatasetlink dl ON o.occid = dl.occid ' .
-				'WHERE dl.datasetid = ' . $datasetId;
-			$rs = $this->conn->query($sql);
+			$sql = <<<SQL
+			SELECT o.occid, o.catalognumber, o.occurrenceid ,o.othercatalognumbers,
+				o.sciname, o.family, o.recordedby, o.recordnumber, o.eventdate,
+				o.country, o.stateprovince, o.county, o.locality, o.decimallatitude, o.decimallongitude, dl.notes
+				FROM omoccurrences o INNER JOIN omoccurdatasetlink dl ON o.occid = dl.occid
+				WHERE dl.datasetid = ?
+			SQL;
+			$params[]=$datasetId;
+			try {
+				$result = QueryUtil::executeQuery($this->conn, $sql, $params);
+			} catch (\Throwable  $e) {
+				error_log('ERROR fetching count for dataset: ' . $datasetId);
+			}
 			$recordCount = 0;
-			while ($r = $rs->fetch_object()) {
+			while ($r = $result->fetch_object()) {
 				$recordCount++;
 				if (!$retLimit || ($recordCount >= (($pageNumber - 1) * $retLimit) && $recordCount <= ($pageNumber) * $retLimit)) {
 					if ($r->catalognumber) $retArr[$r->occid]['catnum'] = $r->catalognumber;
@@ -341,7 +356,7 @@ class OccurrenceDataset
 					$retArr[$r->occid]['loc'] = trim($r->country . ', ' . $r->stateprovince . ', ' . $r->county . ', ' . $r->locality, ', ');
 				}
 			}
-			$rs->free();
+			$result->free();
 		}
 		return $retArr;
 	}
