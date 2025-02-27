@@ -246,8 +246,14 @@ class MediaException extends Exception {
 	public const FileDoesNotExist = 'FILE_DOES_NOT_EXIST';
 	public const FileAlreadyExists = 'FILE_ALREADY_EXISTS';
 
-	function __construct(string $case){
-		parent::__construct($LANG[$case]);
+	function __construct(string $case, string $message = ''){
+		global $LANG;
+
+		if($message) {
+			parent::__construct($LANG[$case] . ': ' . $message);
+		} else {
+			parent::__construct($LANG[$case]);
+		}
 	}
 }
 
