@@ -864,7 +864,7 @@ class Media {
 		$media_type_str = explode('/', $file['type'])[0];
 		$media_type = MediaType::tryFrom($media_type_str);
 
-		if(!$media_type) throw new MediaException(MediaException::InvalidMediaType, ' ' . $media_type_str . ' is not supported');
+		if(!$media_type) throw new MediaException(MediaException::InvalidMediaType, ' ' . $media_type_str);
 
 		$keyValuePairs = [
 			"tid" => $clean_post_arr["tid"] ?? null,
