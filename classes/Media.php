@@ -334,7 +334,7 @@ class Media {
 	 * @param mixed $thumbnail
 	 */
 	public static function render_media_item(array $media_arr, $thumbnail=false) {
-		if($media_arr['mediaType'] !== 'image' && !$thumbnail) {
+		if($media_arr['mediaType'] == MediaType::Audio && !$thumbnail) {
 			$src = $media_arr['url'];
 			$format = $media_arr['format'];
 			$html = <<< HTML
@@ -345,7 +345,7 @@ class Media {
 			HTML;
 
 			return $html;
-		} else {
+		} else if($media_arr['mediaType'] == MediaType::Image || ($media_arr['tnurl']?? $media_arr['thumbnailUrl'])) {
 			$thumbnail = $media_arr['tnurl']?? $media_arr['thumbnailUrl'];
 			$url = $media_arr['url'];
 			$caption = $media_arr['caption'];
@@ -360,12 +360,15 @@ class Media {
 				border="1" 
 				src="$thumbnail" 
 				title="$caption" 
-				style="max-width:21.9rem;" 
 				alt="Thumbnail image of current specimen" 
 			/>
 			HTML;
 
 			return $html;
+		} else {
+			global $LANG;
+			return '<div style="width: 200px; height:242px; border: solid black 1px; display: flex; align-items: center; justify-content:center">' . $LANG['UNKNOWN_MEDIA_TYPE_MSG'] . '
+			</div>';
 		}
 	}
 	/**
