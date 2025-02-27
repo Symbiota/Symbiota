@@ -823,9 +823,12 @@ class Media {
 
 		//If no file is given and downloads from urls are enabled
 		if(!self::isValidFile($file)) {
+
 			if(!$should_upload_file) {
 				$file = self::parse_map_only_file($clean_post_arr);
-			} else if($isRemoteMedia) {
+			} 
+
+			if(!$file['type'] && $isRemoteMedia) {
 				$file = self::getRemoteFileInfo($clean_post_arr['originalUrl']);
 			}
 		}
