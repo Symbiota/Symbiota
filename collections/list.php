@@ -264,6 +264,13 @@ $_SESSION['citationvar'] = $searchVar;
 												'o.county' => $LANG['COUNTY'],
 												'o.minimumElevationInMeters' => $LANG['ELEVATION']
 											);
+												if (!empty($GLOBALS['ACTIVATE_PALEO'])) {
+													$sortFields = array_merge($sortFields, [
+														'paleo.lateInterval' => $LANG['LATE_INT'],
+														'paleo.earlyInterval' => $LANG['EARLY_INT'],
+														'paleo.formation' => $LANG['FORMATION']
+													]);
+												}
 											foreach ($sortFields as $k => $v) {
 												echo '<option value="' . $k . '" ' . ($k == $sortField1 ? 'SELECTED' : '') . '>' . $v . '</option>';
 											}

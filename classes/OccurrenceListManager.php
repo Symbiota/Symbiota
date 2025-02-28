@@ -35,7 +35,7 @@ class OccurrenceListManager extends OccurrenceManager{
 			'o.catalognumber, o.family, o.sciname, o.scientificnameauthorship, o.tidinterpreted, o.recordedby, o.recordnumber, o.eventdate, '.
 			'o.country, o.stateprovince, o.county, o.locality, o.decimallatitude, o.decimallongitude, o.localitysecurity, o.localitysecurityreason, '.
 			'o.habitat, o.substrate, o.minimumelevationinmeters, o.maximumelevationinmeters, o.observeruid, c.sortseq ';
-		if ($GLOBALS['ACTIVATE_PALEO'])
+		if ($GLOBALS['ACTIVATE_PALEO'] && $sqlWhere)
 			$sql .= ', paleo.formation, paleo.earlyInterval, paleo.lateInterval ';
 		$sql .= 'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
 		$sql .= $this->getTableJoins($sqlWhere).$sqlWhere;

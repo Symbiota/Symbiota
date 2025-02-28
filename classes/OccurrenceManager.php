@@ -458,19 +458,19 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		}
 		// Geological Context
 		if(array_key_exists('formation', $this->searchTermArr)){
-			$sqlWhere .= 'AND paleo.formation = "' . $this->cleanInStr($this->searchTermArr["formation"]) . '" ';
+			$sqlWhere .= 'AND paleo.formation LIKE "' . $this->cleanInStr($this->searchTermArr["formation"]) . '%" ';
 			$this->displaySearchArr[] = $this->searchTermArr["formation"];
 		}
 		if(array_key_exists('member', $this->searchTermArr)){
-			$sqlWhere .= 'AND paleo.member = "' . $this->cleanInStr($this->searchTermArr["member"]) . '" ';
+			$sqlWhere .= 'AND paleo.member LIKE "' . $this->cleanInStr($this->searchTermArr["member"]) . '%" ';
 			$this->displaySearchArr[] = $this->searchTermArr["member"];
 		}
 		if(array_key_exists('bed', $this->searchTermArr)){
-			$sqlWhere .= 'AND paleo.bed = "' . $this->cleanInStr($this->searchTermArr["bed"]) . '" ';
+			$sqlWhere .= 'AND paleo.bed LIKE "' . $this->cleanInStr($this->searchTermArr["bed"]) . '%" ';
 			$this->displaySearchArr[] = $this->searchTermArr["bed"];
 		}
 		if(array_key_exists('lithogroup', $this->searchTermArr)){
-			$sqlWhere .= 'AND paleo.lithogroup = "' . $this->cleanInStr($this->searchTermArr["lithogroup"]) . '" ';
+			$sqlWhere .= 'AND paleo.lithogroup LIKE "' . $this->cleanInStr($this->searchTermArr["lithogroup"]) . '%" ';
 			$this->displaySearchArr[] = $this->searchTermArr["lithogroup"];
 		}
 		if(array_key_exists('earlyInterval', $this->searchTermArr) || array_key_exists('lateInterval', $this->searchTermArr)) {
