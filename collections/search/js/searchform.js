@@ -307,8 +307,7 @@ function updateChip(e) {
       if (
         (item.type == "checkbox" && item.checked) |
         (item.type == "text" && item.value != "") |
-        (item.type == "number" && item.value != "") |
-        (item.type == "select" && item.value != "")
+        (item.type == "number" && item.value != "")
       ) {
         if (
           allCollectionsChecked &&
