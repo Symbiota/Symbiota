@@ -7,6 +7,8 @@ const form = document.getElementById("params-form") || null;
 const formColls = document.getElementById("search-form-colls") || null;
 const formSites = document.getElementById("site-list") || null;
 const searchFormColls = document.getElementById("search-form-colls") || null;
+const searchFormPaleo = document.getElementById("search-form-geocontext") || null;
+
 // list of parameters to be passed to url, modified by getSearchUrl method
 let paramNames = [
   "db",
@@ -141,7 +143,13 @@ function addChip(element) {
       uncheckAll(document.getElementById(element.name));
       removeChip(inputChip);
     };
-  } else {
+  }
+  else if (element.tagName === "OPTION") {
+    inputChip.id = "chip-" + element.dataset.chip;
+    inputChip.textContent = (element.dataset.chip ? element.dataset.chip + ": " : "") + element.textContent;
+    chipBtn.onclick = () => handleRemoval(element, inputChip);
+  }
+  else {
     inputChip.id = "chip-" + element.id;
     let isTextOrNum = (element.type == "text") | (element.type == "number");
     isTextOrNum
@@ -166,6 +174,12 @@ function handleRemoval(element, inputChip) {
   element.type === "checkbox"
     ? (element.checked = false)
     : (element.value = element.defaultValue);
+    if (element.tagName === "OPTION") {
+      const selectElement = element.closest('select');
+      if (selectElement) {
+        element.selected = false;
+      }
+    }
   if (element.getAttribute("id") === "dballcb") {
     const targetCategoryCheckboxes =
       document.querySelectorAll('input[id^="cat-"]');
@@ -293,7 +307,8 @@ function updateChip(e) {
       if (
         (item.type == "checkbox" && item.checked) |
         (item.type == "text" && item.value != "") |
-        (item.type == "number" && item.value != "")
+        (item.type == "number" && item.value != "") |
+        (item.type == "select" && item.value != "")
       ) {
         if (
           allCollectionsChecked &&
@@ -691,6 +706,29 @@ function validateForm() {
             "Your western longitude value is greater than your eastern longitude value. Note that western hemisphere longitudes in the decimal format are negative.",
         });
       }
+    }
+  }
+
+  // Geo Context
+  if (searchFormPaleo) {
+    let early = form.earlyInterval.value;
+    let late = form.lateInterval.value;
+    if ((early !== "" && late === "") || (early === "" && late !== "")) {
+      errors.push({
+        elId: "search-form-geocontext",
+        errorMsg:
+          "Both Early and Late Intervals must be selected.",
+      });
+        errors.push("Both Early and Late Intervals must be selected.");
+    }
+
+    if (early in paleoTimes && late in paleoTimes && paleoTimes[early] < paleoTimes[late]) {
+      errors.push({
+        elId: "search-form-geocontext",
+        errorMsg:
+          "Early Interval cannot be later than Late Interval.",
+      });
+        errors.push("Early Interval cannot be later than Late Interval.");
     }
   }
 
