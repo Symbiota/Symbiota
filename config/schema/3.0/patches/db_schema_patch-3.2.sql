@@ -439,6 +439,13 @@ UPDATE fmchecklists
   WHERE footprintGeoJson IS NULL;
 
 
+ALTER TABLE `omoccurloanslink` 
+  DROP FOREIGN KEY `FK_occurloanlink_occid`;
+
+ALTER TABLE `omoccurloanslink` 
+  ADD CONSTRAINT `FK_occurloanlink_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+
 #Removes All omoccurpoints that do not have an omocurrences record
 DELETE p.* 
   FROM omoccurpoints p LEFT JOIN omoccurrences o ON p.occid = o.occid
