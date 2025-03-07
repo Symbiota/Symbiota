@@ -43,9 +43,9 @@ $router->group(['prefix' => 'v2'], function () use ($router) {
 	$router->post('occurrence/skeletal', ['uses' => 'OccurrenceController@skeletalImport']);
 
 	$router->get('installation',  ['uses' => 'InstallationController@showAllPortals']);
-	$router->get('installation/ping', ['uses' => 'InstallationController@pingPortal']);
+	$router->get('installation/status', ['uses' => 'InstallationController@portalStatus']);
 	$router->get('installation/{id}', ['uses' => 'InstallationController@showOnePortal']);
-	$router->get('installation/{id}/touch',  ['uses' => 'InstallationController@portalHandshake']);
+	$router->get('installation/{id}/handshake',  ['uses' => 'InstallationController@portalHandshake']);
 	$router->get('installation/{id}/occurrence',  ['uses' => 'InstallationController@showOccurrences']);
 
 	$router->get('inventory',  ['uses' => 'InventoryController@showAllInventories']);

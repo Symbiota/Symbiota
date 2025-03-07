@@ -98,8 +98,8 @@ class InstallationController extends Controller{
 
 	/**
 	 * @OA\Get(
-	 *	 path="/api/v2/installation/ping",
-	 *	 operationId="/api/v2/installation/ping",
+	 *	 path="/api/v2/installation/status",
+	 *	 operationId="/api/v2/installation/status",
 	 *	 tags={""},
 	 *	 @OA\Response(
 	 *		 response="200",
@@ -112,7 +112,7 @@ class InstallationController extends Controller{
 	 *	 ),
 	 * )
 	 */
-	public function pingPortal(Request $request){
+	public function portalStatus(Request $request){
 		$portalObj = null;
 		if(isset($_ENV['DEFAULT_TITLE']) && isset($_ENV['PORTAL_GUID'])){
 			$portalObj['status'] = true;
@@ -133,8 +133,8 @@ class InstallationController extends Controller{
 
 	/**
 	 * @OA\Get(
-	 *	 path="/api/v2/installation/{identifier}/touch",
-	 *	 operationId="/api/v2/installation/identifier/touch",
+	 *	 path="/api/v2/installation/{identifier}/handshake",
+	 *	 operationId="/api/v2/installation/identifier/handshake",
 	 *	 tags={""},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",

@@ -315,12 +315,12 @@
                 }
             }
         },
-        "/api/v2/installation/ping": {
+        "/api/v2/installation/status": {
             "get": {
                 "tags": [
                     ""
                 ],
-                "operationId": "/api/v2/installation/ping",
+                "operationId": "/api/v2/installation/status",
                 "responses": {
                     "200": {
                         "description": "Returns installation metadata",
@@ -336,12 +336,12 @@
                 }
             }
         },
-        "/api/v2/installation/{identifier}/touch": {
+        "/api/v2/installation/{identifier}/handshake": {
             "get": {
                 "tags": [
                     ""
                 ],
-                "operationId": "/api/v2/installation/identifier/touch",
+                "operationId": "/api/v2/installation/identifier/handshake",
                 "parameters": [
                     {
                         "name": "identifier",
