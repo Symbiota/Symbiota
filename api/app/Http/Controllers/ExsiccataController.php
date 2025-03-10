@@ -98,15 +98,12 @@ class ExsiccataController extends Controller {
      */
 
     public function showExsiccata($identifier) {
-        $record = DB::table('omexsiccatititles')
-            ->where('ometid', $identifier)
+        $record = Exsiccata::where('ometid', $identifier)
             ->orWhere('recordID', $identifier)
             ->first();
         if (!$record) {
             return response()->json(['error' => 'Record not found'], 404);
         }
-
-        unset($record->lasteditedby);
 
         return response()->json($record);
     }

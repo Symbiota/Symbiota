@@ -193,6 +193,15 @@
                 "operationId": "/api/v2/exsiccata/identifier/number",
                 "parameters": [
                     {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "Identifier (ometid (PK) - currently does not accommodate recordID) associated with target exsiccata title",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
                         "name": "limit",
                         "in": "query",
                         "description": "Controls the number of results in the page.",
@@ -210,15 +219,6 @@
                         "schema": {
                             "type": "integer",
                             "default": 0
-                        }
-                    },
-                    {
-                        "name": "identifier",
-                        "in": "path",
-                        "description": "Identifier (ometid (PK) - currently does not accommodate recordID) associated with target exsiccata title",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
                         }
                     }
                 ],
