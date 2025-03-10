@@ -117,6 +117,13 @@ class ExsiccataController extends Controller {
      *	 path="/api/v2/exsiccata/{identifier}/number",
      *	 operationId="/api/v2/exsiccata/identifier/number",
      *	 tags={""},
+     *	 @OA\Parameter(
+     *		 name="identifier",
+     *		 in="path",
+     *		 description="Identifier (ometid (PK) - currently does not accommodate recordID) associated with target exsiccata title",
+     *		 required=true,
+     *		 @OA\Schema(type="integer")
+     *	 ),
      *   @OA\Parameter(
      *		 name="limit",
      *		 in="query",
@@ -130,13 +137,6 @@ class ExsiccataController extends Controller {
      *		 description="Determines the starting point for the search results. A limit of 100 and offset of 200, will display 100 records starting the 200th record.",
      *		 required=false,
      *		 @OA\Schema(type="integer", default=0)
-     *	 ),
-     *	 @OA\Parameter(
-     *		 name="identifier",
-     *		 in="path",
-     *		 description="Identifier (ometid (PK) - currently does not accommodate recordID) associated with target exsiccata title",
-     *		 required=true,
-     *		 @OA\Schema(type="integer")
      *	 ),
      *	 @OA\Response(
      *		 response="200",
