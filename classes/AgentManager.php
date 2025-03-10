@@ -1,5 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT . '/config/dbconnection.php');
+include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
 
 /**
  * AgentManager.php
@@ -2109,8 +2110,7 @@ class Agent {
             $sql .=  " ,  ? ";
             $sql .= ')';
             if (strlen($this->uuid)==0) {
-               $uf = new UuidFactory();
-               $this->setuuid($uf->getUuidV4());
+               $this->setuuid(UuidFactory::getUuidV4());
             }
         }
         if ($statement = $this->conn->prepare($sql)) {
@@ -2701,7 +2701,7 @@ class Agent {
        }
    }
    public function setuuid($uuid) {
-       if (!UuidFactory::is_valid(str_replace("urn:uuid:","",$uuid))) {
+       if (!UuidFactory::isValid(str_replace("urn:uuid:","",$uuid))) {
            throw new Exception("Not a valid uuid [$uuid].");
        }
        if (strlen($uuid) > Agent::UUID_SIZE) {

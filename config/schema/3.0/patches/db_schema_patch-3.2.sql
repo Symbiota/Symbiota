@@ -1,189 +1,630 @@
 INSERT INTO `schemaversion` (versionnumber) values ("3.2");
 
-ALTER TABLE `omoccurpaleogts`
-  ADD COLUMN `myaStart` FLOAT NULL DEFAULT NULL AFTER `rankname`,
-  ADD COLUMN `myaEnd` FLOAT NULL DEFAULT NULL AFTER `myaStart`,
-  ADD COLUMN `errorRange` FLOAT NULL DEFAULT NULL AFTER `myaEnd`,
-  ADD COLUMN `colorCode` VARCHAR(10) NULL DEFAULT NULL AFTER `errorRange`;
+#Standardize indentification key tables
+ALTER TABLE `kmcharacters` 
+  DROP FOREIGN KEY `FK_kmchar_glossary`;
 
-#reset the values within omoccurpaleogts table 
-TRUNCATE omoccurpaleogts;
+ALTER TABLE `kmcharacters` 
+  ADD COLUMN `enteredUid` INT UNSIGNED NULL AFTER `enteredBy`,
+  CHANGE COLUMN `charname` `charName` VARCHAR(150) NOT NULL ,
+  CHANGE COLUMN `chartype` `charType` VARCHAR(2) NOT NULL DEFAULT 'UM' ,
+  CHANGE COLUMN `defaultlang` `defaultLang` VARCHAR(45) NOT NULL DEFAULT 'English' ,
+  CHANGE COLUMN `difficultyrank` `difficultyRank` SMALLINT(5) UNSIGNED NOT NULL DEFAULT 1 ,
+  CHANGE COLUMN `description` `description` VARCHAR(1500) NULL DEFAULT NULL ,
+  CHANGE COLUMN `glossid` `glossID` INT(10) UNSIGNED NULL DEFAULT NULL ,
+  CHANGE COLUMN `helpurl` `helpUrl` VARCHAR(500) NULL DEFAULT NULL ,
+  CHANGE COLUMN `sortsequence` `sortSequence` INT(10) UNSIGNED NULL DEFAULT NULL ,
+  CHANGE COLUMN `enteredby` `enteredBy` VARCHAR(45) NULL DEFAULT NULL ,
+  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+  DROP INDEX `Index_charname` ,
+  DROP INDEX `Index_sort`;
 
-INSERT INTO `omoccurpaleogts` VALUES
-(1,'Precambrian',10,'superera',4567,538.8,NULL,'#F74370',NULL),
-(2,'Phanerozoic',20,'eon',538.8,0,NULL,'#9AD9DD',NULL),
-(3,'Proterozoic',20,'eon',2500,538.8,NULL,'#F73563',1),
-(4,'Archean',20,'eon',4031,2500,NULL,'#F0047F',1),
-(5,'Hadean',20,'eon',4567,4031,NULL,'#AE027E',1),
-(6,'Cenozoic',30,'era',66,0,NULL,'#F2F91D',2),
-(7,'Mesozoic',30,'era',251.902,66,NULL,'#67C5CA',2),
-(8,'Paleozoic',30,'era',538.8,251.902,NULL,'#99C08D',2),
-(9,'Neoproterozoic',30,'era',1000,538.8,NULL,'#FEB342',3),
-(10,'Mesoproterozoic',30,'era',1600,1000,NULL,'#FDB462',3),
-(11,'Paleoproterozoic',30,'era',2500,1600,NULL,'#F74370',3),
-(12,'Neoarchean',30,'era',2800,2500,NULL,'#F99BC1',4),
-(13,'Mesoarchean',30,'era',3200,2800,NULL,'#F768A9',4),
-(14,'Paleoarchean',30,'era',3600,3200,NULL,'#F4449F',4),
-(15,'Eoarchean',30,'era',4031,3600,NULL,'#DA037F',4),
-(16,'Quaternary',40,'period',2.58,0,NULL,'#F9F97F',6),
-(17,'Neogene',40,'period',23.03,2.58,NULL,'#FFE619',6),
-(18,'Paleogene',40,'period',66,23.03,NULL,'#FD9A52',6),
-(19,'Cretaceous',40,'period',145,66,NULL,'#7FC64E',7),
-(20,'Jurassic',40,'period',201.4,145,NULL,'#34B2C9',7),
-(21,'Triassic',40,'period',251.902,201.4,NULL,'#812B92',7),
-(22,'Permian',40,'period',298.9,251.902,NULL,'#F04028',8),
-(23,'Carboniferous',40,'period',358.9,298.9,NULL,'#67A599',8),
-(24,'Devonian',40,'period',419.2,358.9,NULL,'#CB8C37',8),
-(25,'Silurian',40,'period',443.8,419.2,NULL,'#B3E1B6',8),
-(26,'Ordovician',40,'period',485.4,443.8,NULL,'#009270',8),
-(27,'Cambrian',40,'period',538.8,485.4,NULL,'#7FA056',8),
-(28,'Ediacaran',40,'period',635,538.8,NULL,'#FED96A',9),
-(29,'Cryogenian',40,'period',720,635,NULL,'',9),
-(30,'Tonian',40,'period',1000,720,NULL,'#FEBF4E',9),
-(31,'Stenian',40,'period',1200,1000,NULL,'#FED99A',10),
-(32,'Ectasian',40,'period',1400,1200,NULL,'#FDCC8A',10),
-(33,'Calymmian',40,'period',1600,1400,NULL,'#FDC07A',10),
-(34,'Statherian',40,'period',1800,1600,NULL,'#F875A7',11),
-(35,'Orosirian',40,'period',2050,1800,NULL,'#F76898',11),
-(36,'Rhyacian',40,'period',2300,2050,NULL,'#F75B89',11),
-(37,'Siderian',40,'period',2500,2300,NULL,'#F74F7C',11),
-(38,'Holocene',50,'epoch',0.0117,0,NULL,'#FEEBD2',16),
-(39,'Pleistocene',50,'epoch',2.58,0.0117,NULL,'#FFEFAF',16),
-(40,'Pliocene',50,'epoch',5.333,2.58,NULL,'#FFFF99',17),
-(41,'Miocene',50,'epoch',23.03,5.333,NULL,'#FFFF00',17),
-(42,'Oligocene',50,'epoch',33.9,23.03,NULL,'#FEC07A',18),
-(43,'Eocene',50,'epoch',56,33.9,NULL,'#FDB46C',18),
-(44,'Paleocene',50,'epoch',66,56,NULL,'#FDA75F',18),
-(45,'Upper Cretaceous',50,'epoch',100.5,66,NULL,'',19),
-(46,'Lower Cretaceous',50,'epoch',145,100.5,NULL,'',19),
-(47,'Upper Jurassic',50,'epoch',161.5,145,NULL,'',20),
-(48,'Middle Jurassic',50,'epoch',174.7,161.5,NULL,'',20),
-(49,'Lower Jurassic',50,'epoch',201.4,174.7,NULL,'',20),
-(50,'Upper Triassic',50,'epoch',237,201.4,NULL,'',21),
-(51,'Middle Triassic',50,'epoch',247.2,237,NULL,'',21),
-(52,'Lower Triassic',50,'epoch',251.902,247.2,NULL,'',21),
-(53,'Lopingian',50,'epoch',259.51,251.902,NULL,'#FBA794',22),
-(54,'Guadalupian',50,'epoch',273.01,259.51,NULL,'#FB745C',22),
-(55,'Cisuralian',50,'epoch',298.9,273.01,NULL,'#EF5845',22),
-(56,'Upper Pennsylvanian',50,'epoch',307,298.9,NULL,'',23),
-(57,'Middle Pennsylvanian',50,'epoch',315.2,307,NULL,'',23),
-(58,'Lower Pennsylvanian',50,'epoch',323.2,315.2,NULL,'',23),
-(59,'Upper Mississippian',50,'epoch',330.9,323.2,NULL,'',23),
-(60,'Middle Mississippian',50,'epoch',346.7,330.9,NULL,'',23),
-(61,'Lower Mississippian',50,'epoch',358.9,346.7,NULL,'',23),
-(62,'Upper Devonian',50,'epoch',382.7,358.9,NULL,'',24),
-(63,'Middle Devonian',50,'epoch',393.3,382.7,NULL,'',24),
-(64,'Lower Devonian',50,'epoch',419.2,393.3,NULL,'',24),
-(65,'Pridoli',50,'epoch',423,419.2,NULL,'#E6F5E1',25),
-(66,'Ludlow',50,'epoch',427.4,423,NULL,'#BFE6CF',25),
-(67,'Wenlock',50,'epoch',433.4,427.4,NULL,'#B3E1C2',25),
-(68,'Llandovery',50,'epoch',443.8,433.4,NULL,'#99D7B3',25),
-(69,'Upper Ordovician',50,'epoch',458.4,443.8,NULL,'',26),
-(70,'Middle Ordovician',50,'epoch',470,458.4,NULL,'',26),
-(71,'Lower Ordovician',50,'epoch',485.4,470,NULL,'',26),
-(72,'Furongian',50,'epoch',497,485.4,NULL,'',27),
-(73,'Miaolingian',50,'epoch',509,497,NULL,'',27),
-(74,'Cambrian Series 2',50,'epoch',521,509,NULL,'',27),
-(75,'Terreneuvian',50,'epoch',538.8,521,NULL,'',27),
-(76,'Meghalayan',60,'age',0.0042,0,NULL,'',38),
-(77,'Northgrippian',60,'age',0.0082,0.0042,NULL,'',38),
-(78,'Greenlandian',60,'age',0.0117,0.0082,NULL,'',38),
-(79,'Upper Pleistocene',60,'age',0.129,0.0117,NULL,'',39),
-(80,'Chibanian',60,'age',0.774,0.129,NULL,'',39),
-(81,'Calabrian',60,'age',1.8,0.774,NULL,'#FFF2BA',39),
-(82,'Gelasian',60,'age',2.58,1.8,NULL,'#FFEDB3',39),
-(83,'Piacenzian',60,'age',3.6,2.58,NULL,'#FFFFBF',40),
-(84,'Zanclean',60,'age',5.333,3.6,NULL,'#FFFFB3',40),
-(85,'Messinian',60,'age',7.246,5.333,NULL,'#FFFF73',41),
-(86,'Tortonian',60,'age',11.63,7.246,NULL,'#FFFF66',41),
-(87,'Serravallian',60,'age',13.82,11.63,NULL,'#FFFF59',41),
-(88,'Langhian',60,'age',15.98,13.82,NULL,'#FFFF4D',41),
-(89,'Burdigalian',60,'age',20.44,15.98,NULL,'#FFFF41',41),
-(90,'Aquitanian',60,'age',23.03,20.44,NULL,'#FFFF33',41),
-(91,'Chattian',60,'age',27.82,23.03,NULL,'#FEE6AA',42),
-(92,'Rupelian',60,'age',33.9,27.82,NULL,'#FED99A',42),
-(93,'Priabonian',60,'age',37.71,33.9,NULL,'#FDCDA1',43),
-(94,'Bartonian',60,'age',41.2,37.71,NULL,'#FDC091',43),
-(95,'Lutetian',60,'age',47.8,41.2,NULL,'#FDB482',43),
-(96,'Ypresian',60,'age',56,47.8,NULL,'#FCA773',43),
-(97,'Thanetian',60,'age',59.2,56,NULL,'#FDBF6F',44),
-(98,'Selandian',60,'age',61.6,59.2,NULL,'#FEBF65',44),
-(99,'Danian',60,'age',66,61.6,NULL,'#FDB462',44),
-(100,'Maastrichtian',60,'age',72.1,66,NULL,'#F2FA8C',45),
-(101,'Campanian',60,'age',83.6,72.1,NULL,'#E6F47F',45),
-(102,'Santonian',60,'age',86.3,83.6,NULL,'#D9EF74',45),
-(103,'Coniacian',60,'age',89.8,86.3,NULL,'#CCE968',45),
-(104,'Turonian',60,'age',93.9,89.8,NULL,'#BFE35D',45),
-(105,'Cenomanian',60,'age',100.5,93.9,NULL,'#B3DE53',45),
-(106,'Albian',60,'age',113,100.5,NULL,'#CCEA97',46),
-(107,'Aptian',60,'age',121.4,113,NULL,'#BFE48A',46),
-(108,'Barremian',60,'age',125.77,121.4,NULL,'#B3DF7F',46),
-(109,'Hauterivian',60,'age',132.6,125.77,NULL,'#A6D975',46),
-(110,'Valanginian',60,'age',139.8,132.6,NULL,'#99D36A',46),
-(111,'Berriasian',60,'age',145,139.8,NULL,'#8CCD60',46),
-(112,'Tithonian',60,'age',149.2,145,NULL,'#D9F1F7',47),
-(113,'Kimmeridgian',60,'age',154.8,149.2,NULL,'#CCECF4',47),
-(114,'Oxfordian',60,'age',161.5,154.8,NULL,'#BFE7F1',47),
-(115,'Callovian',60,'age',165.3,161.5,NULL,'#BFE7E5',48),
-(116,'Bathonian',60,'age',168.2,165.3,NULL,'#B3E2E3',48),
-(117,'Bajocian',60,'age',170.9,168.2,NULL,'#A6DDE0',48),
-(118,'Aalenian',60,'age',174.7,170.9,NULL,'#9AD9DD',48),
-(119,'Toarcian',60,'age',184.2,174.7,NULL,'#99CEE3',49),
-(120,'Pliensbachian',60,'age',192.9,184.2,NULL,'#80C5DD',49),
-(121,'Sinemurian',60,'age',199.5,192.9,NULL,'#67BCD8',49),
-(122,'Hettangian',60,'age',201.4,199.5,NULL,'#4EB3D3',49),
-(123,'Rhaetian',60,'age',208.5,201.4,NULL,'#E3B9DB',50),
-(124,'Norian',60,'age',227,208.5,NULL,'#D6AAD3',50),
-(125,'Carnian',60,'age',237,227,NULL,'#C99BCB',50),
-(126,'Ladinian',60,'age',242,237,NULL,'#C983BF',51),
-(127,'Anisian',60,'age',247.2,242,NULL,'#BC75B7',51),
-(128,'Olenekian',60,'age',251.2,247.2,NULL,'#B051A5',52),
-(129,'Induan',60,'age',251.902,251.2,NULL,'#A4469F',52),
-(130,'Changhsingian',60,'age',254.14,251.902,NULL,'#FCC0B2',53),
-(131,'Wuchiapingian',60,'age',259.51,254.14,NULL,'#FCB4A2',53),
-(132,'Capitanian',60,'age',264.28,259.51,NULL,'#FB9A85',54),
-(133,'Wordian',60,'age',266.9,264.28,NULL,'#FB8D76',54),
-(134,'Roadian',60,'age',273.01,266.9,NULL,'#FB8069',54),
-(135,'Kungurian',60,'age',283.5,273.01,NULL,'#E38776',55),
-(136,'Artinskian',60,'age',290.1,283.5,NULL,'#E37B68',55),
-(137,'Sakmarian',60,'age',293.51,290.1,NULL,'#E36F5C',55),
-(138,'Asselian',60,'age',298.9,293.51,NULL,'#E36350',55),
-(139,'Gzhelian',60,'age',303.7,298.9,NULL,'',56),
-(140,'Kasimovian',60,'age',307,303.7,NULL,'',56),
-(141,'Moscovian',60,'age',315.2,307,NULL,'',57),
-(142,'Bashkirian',60,'age',323.2,315.2,NULL,'',58),
-(143,'Serpukhovian',60,'age',330.9,323.2,NULL,'',59),
-(144,'Visean',60,'age',346.7,330.9,NULL,'',60),
-(145,'Tournaisian',60,'age',358.9,346.7,NULL,'',61),
-(146,'Famennian',60,'age',372.2,358.9,NULL,'#F2EDB3',62),
-(147,'Frasnian',60,'age',382.7,372.2,NULL,'#F2EDAD',62),
-(148,'Givetian',60,'age',387.7,382.7,NULL,'#F1E185',63),
-(149,'Eifelian',60,'age',393.3,387.7,NULL,'#F1D576',63),
-(150,'Emsian',60,'age',407.6,393.3,NULL,'#E5D075',64),
-(151,'Pragian',60,'age',410.8,407.6,NULL,'#E5C468',64),
-(152,'Lochkovian',60,'age',419.2,410.8,NULL,'#E5B75A',64),
-(153,'Ludfordian',60,'age',425.6,423,NULL,'#D9F0DF',66),
-(154,'Gorstian',60,'age',427.4,425.6,NULL,'#CCECDD',66),
-(155,'Homerian',60,'age',430.5,427.4,NULL,'#CCEBD1',67),
-(156,'Sheinwoodian',60,'age',433.4,430.5,NULL,'#BFE6C3',67),
-(157,'Telychian',60,'age',438.5,433.4,NULL,'#BFE6CF',68),
-(158,'Aeronian',60,'age',440.8,438.5,NULL,'#B3E1C2',68),
-(159,'Rhuddanian',60,'age',443.8,440.8,NULL,'#A6DCB5',68),
-(160,'Hirnantian',60,'age',445.2,443.8,NULL,'#A6DBAB',69),
-(161,'Katian',60,'age',453,445.2,NULL,'#99D69F',69),
-(162,'Sandbian',60,'age',458.4,453,NULL,'#8CD094',69),
-(163,'Darriwilian',60,'age',467.3,458.4,NULL,'#74C69C',70),
-(164,'Dapingian',60,'age',470,467.3,NULL,'#66C092',70),
-(165,'Floian',60,'age',477.7,470,NULL,'#41B087',71),
-(166,'Tremadocian',60,'age',485.4,477.7,NULL,'#33A97E',71),
-(167,'Cambrian Stage 10',60,'age',489.5,485.4,NULL,'',72),
-(168,'Jiangshanian',60,'age',494,489.5,NULL,'',72),
-(169,'Paibian',60,'age',497,494,NULL,'',72),
-(170,'Guzhangian',60,'age',500.5,497,NULL,'',73),
-(171,'Drumian',60,'age',504.5,500.5,NULL,'',73),
-(172,'Wuliuan',60,'age',509,504.5,NULL,'',73),
-(173,'Cambrian Stage 4',60,'age',514,509,NULL,'',74),
-(174,'Cambrian Stage 3',60,'age',521,514,NULL,'',74),
-(175,'Cambrian Stage 2',60,'age',529,521,NULL,'',75),
-(176,'Fortunian',60,'age',538.8,529,NULL,'',75);
+ALTER TABLE `kmcharacters` 
+  ADD INDEX `IX_kmchar_charname` (`charName` ASC),
+  ADD INDEX `IX_kmchar_sort` (`sortSequence` ASC),
+  ADD INDEX `FK_kmchar_enteredUid_idx` (`enteredUid` ASC);
 
+ALTER TABLE `kmcharacters` 
+  ADD CONSTRAINT `FK_kmchar_glossary`  FOREIGN KEY (`glossID`)  REFERENCES `glossary` (`glossid`)  ON DELETE SET NULL  ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_kmchar_enteredUid`  FOREIGN KEY (`enteredUid`)  REFERENCES `users` (`uid`)  ON DELETE CASCADE  ON UPDATE CASCADE;
+
+ALTER TABLE `kmcharacterlang` 
+  DROP INDEX `FK_charlang_lang_idx`,
+  DROP FOREIGN KEY `FK_charlang_lang`,
+  DROP FOREIGN KEY `FK_characterlang_1`;
+
+
+ALTER TABLE `kmcharacterlang` 
+  CHANGE COLUMN `charname` `charName` VARCHAR(150) NOT NULL ,
+  CHANGE COLUMN `langid` `langID` INT(11) NOT NULL ,
+  CHANGE COLUMN `helpurl` `helpUrl` VARCHAR(500) NULL DEFAULT NULL ,
+  CHANGE COLUMN `InitialTimeStamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
+
+ALTER TABLE `kmcharacterlang` 
+  ADD INDEX `FK_kmcharlang_cid_idx` (`cid` ASC),
+  ADD INDEX `FK_kmcharlang_langID_idx` (`langID` ASC);
+  
+ALTER TABLE `kmcharacterlang` 
+  ADD CONSTRAINT `FK_charlang_cid`  FOREIGN KEY (`cid`)  REFERENCES `kmcharacters` (`cid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_charlang_lang`  FOREIGN KEY (`langID`)  REFERENCES `adminlanguages` (`langid`)  ON DELETE CASCADE  ON UPDATE CASCADE;
+
+ALTER TABLE `kmchardependance` 
+  DROP FOREIGN KEY `FK_chardependance_cid`,
+  DROP FOREIGN KEY `FK_chardependance_cs`;
+
+ALTER TABLE `kmchardependance` 
+  CHANGE COLUMN `CID` `cid` INT(10) UNSIGNED NOT NULL ,
+  CHANGE COLUMN `CIDDependance` `cidDependance` INT(10) UNSIGNED NOT NULL ,
+  CHANGE COLUMN `CSDependance` `csDependance` VARCHAR(16) NOT NULL ,
+  CHANGE COLUMN `InitialTimeStamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
+
+ALTER TABLE `kmchardependance` 
+  ADD CONSTRAINT `FK_chardependance_cid`  FOREIGN KEY (`cid`)  REFERENCES `kmcharacters` (`cid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_chardependance_cs`  FOREIGN KEY (`cidDependance` , `csDependance`)  REFERENCES `kmcs` (`cid` , `cs`)  ON DELETE CASCADE  ON UPDATE CASCADE;
+
+ALTER TABLE `kmchardependance` 
+  ADD COLUMN `charDependID` INT NOT NULL AUTO_INCREMENT FIRST,
+  DROP PRIMARY KEY,
+  ADD PRIMARY KEY (`charDependID`),
+  ADD INDEX `UQ_charDependance_cid_cidDep_cs` (`cid` ASC, `cidDependance` ASC, `csDependance` ASC);
+
+ALTER TABLE `kmcharheading` 
+  DROP FOREIGN KEY `FK_kmcharheading_lang`;
+
+ALTER TABLE `kmcharheading` 
+  CHANGE COLUMN `headingname` `headingName` VARCHAR(255) NOT NULL ,
+  CHANGE COLUMN `langid` `langID` INT(11) NOT NULL ,
+  CHANGE COLUMN `sortsequence` `sortSequence` INT(11) NULL DEFAULT NULL ,
+  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
+
+ALTER TABLE `kmcharheading` 
+  DROP PRIMARY KEY,
+  ADD PRIMARY KEY (`hid`),
+  DROP INDEX `unique_kmcharheading`,
+  DROP INDEX `HeadingName`;
+  
+ALTER TABLE `kmcharheading` 
+  ADD INDEX `IX_kmcharheading_name` (`headingName` ASC);
+    
+ALTER TABLE `kmcharheading` 
+  ADD CONSTRAINT `FK_kmcharheading_lang`  FOREIGN KEY (`langID`)  REFERENCES `adminlanguages` (`langid`);
+
+ALTER TABLE `kmcharheadinglang` 
+  DROP INDEX `FK_kmcharheadinglang_langid`,
+  DROP FOREIGN KEY `FK_kmcharheadinglang_langid`;
+
+ALTER TABLE `kmcharheadinglang` 
+  CHANGE COLUMN `langid` `langID` INT(11) NOT NULL ,
+  CHANGE COLUMN `headingname` `headingName` VARCHAR(100) NOT NULL ;
+
+ALTER TABLE `kmcharheadinglang`
+  ADD INDEX `FK_kmcharheadinglang_hid_idx` (hid ASC) ,
+  ADD INDEX `FK_kmcharheadinglang_langid_idx` (langID ASC) ,
+  ADD CONSTRAINT `FK_kmcharheadinglang_langid`  FOREIGN KEY (`langID`)  REFERENCES `adminlanguages` (`langid`)  ON DELETE CASCADE  ON UPDATE CASCADE;
+
+ALTER TABLE `kmchartaxalink` 
+  DROP FOREIGN KEY `FK_chartaxalink_cid`,
+  DROP FOREIGN KEY `FK_chartaxalink_tid`;
+
+ALTER TABLE `kmchartaxalink` 
+  CHANGE COLUMN `CID` `cid` INT(10) UNSIGNED NOT NULL DEFAULT 0 ,
+  CHANGE COLUMN `TID` `tid` INT(10) UNSIGNED NOT NULL DEFAULT 0 ,
+  CHANGE COLUMN `Status` `status` VARCHAR(50) NULL DEFAULT NULL ,
+  CHANGE COLUMN `Notes` `notes` VARCHAR(255) NULL DEFAULT NULL ,
+  CHANGE COLUMN `Relation` `relation` VARCHAR(45) NOT NULL DEFAULT 'include' ,
+  CHANGE COLUMN `EditabilityInherited` `editabilityInherited` BIT(1) NULL DEFAULT NULL ,
+  CHANGE COLUMN `timestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
+
+ALTER TABLE `kmchartaxalink` 
+  ADD COLUMN `charTaxaLinkID` INT NOT NULL AUTO_INCREMENT FIRST,
+  DROP INDEX `FK_CharTaxaLink-TID` ,
+  ADD INDEX `FK_charTaxaLink_tid_idx` (`tid` ASC),
+  ADD INDEX `FK_charTaxaLink_cid_idx` (`cid` ASC),
+  DROP PRIMARY KEY,
+  ADD PRIMARY KEY (`charTaxaLinkID`),
+  ADD UNIQUE INDEX `UQ_charTaxaLink_cid_tid` (`cid` ASC, `tid` ASC);
+
+ALTER TABLE `kmchartaxalink` 
+  ADD CONSTRAINT `FK_chartaxalink_cid`  FOREIGN KEY (`cid`)  REFERENCES `kmcharacters` (`cid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_chartaxalink_tid`  FOREIGN KEY (`tid`)  REFERENCES `taxa` (`TID`)  ON DELETE CASCADE  ON UPDATE CASCADE;
+
+ALTER TABLE `kmcs` 
+  DROP FOREIGN KEY `FK_kmcs_glossid`;
+
+ALTER TABLE `kmcs` 
+  CHANGE COLUMN `EnteredBy` `enteredBy` VARCHAR(45) NULL DEFAULT NULL AFTER `sortSequence`,
+  CHANGE COLUMN `CharStateName` `charStateName` VARCHAR(255) NULL DEFAULT NULL ,
+  CHANGE COLUMN `Implicit` `implicit` TINYINT(1) NOT NULL DEFAULT 0 ,
+  CHANGE COLUMN `Notes` `notes` LONGTEXT NULL DEFAULT NULL ,
+  CHANGE COLUMN `Description` `description` VARCHAR(255) NULL DEFAULT NULL ,
+  CHANGE COLUMN `IllustrationUrl` `illustrationUrl` VARCHAR(250) NULL DEFAULT NULL ,
+  CHANGE COLUMN `glossid` `glossID` INT(10) UNSIGNED NULL DEFAULT NULL ,
+  CHANGE COLUMN `StateID` `stateID` INT(10) UNSIGNED NULL DEFAULT NULL ,
+  CHANGE COLUMN `SortSequence` `sortSequence` INT(10) UNSIGNED NULL DEFAULT NULL ,
+  CHANGE COLUMN `InitialTimeStamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
+
+ALTER TABLE `kmcs` 
+  CHANGE COLUMN `stateID` `stateID` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT FIRST,
+  DROP PRIMARY KEY,
+  ADD PRIMARY KEY (`stateID`),
+  ADD UNIQUE INDEX `UQ_kmcs_cid_cs` (`cid` ASC, `cs` ASC);
+
+ALTER TABLE `kmcs` 
+  DROP INDEX `FK_cs_chars`,
+  ADD INDEX `FK_kmcs_cid_idx` (cid);
+
+ALTER TABLE `kmcs` 
+  ADD CONSTRAINT `FK_kmcs_glossid`  FOREIGN KEY (`glossID`)  REFERENCES `glossary` (`glossid`)  ON DELETE SET NULL  ON UPDATE CASCADE;
+
+ALTER TABLE `kmcsimages` 
+  CHANGE COLUMN `csimgid` `csImgID` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
+  CHANGE COLUMN `sortsequence` `sortSequence` VARCHAR(45) NOT NULL DEFAULT '50' ,
+  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP() ;
+
+ALTER TABLE `kmcslang` 
+  DROP FOREIGN KEY `FK_cslang_1`,
+  DROP FOREIGN KEY `FK_cslang_lang`;
+
+ALTER TABLE `kmcslang` 
+  CHANGE COLUMN `charstatename` `charStateName` VARCHAR(150) NOT NULL ,
+  CHANGE COLUMN `langid` `langID` INT(11) NOT NULL ,
+  CHANGE COLUMN `intialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
+
+ALTER TABLE `kmcslang` 
+  ADD INDEX `FK_cslang_cid_cs_idx` (`cid` ASC, `cs` ASC),
+  ADD CONSTRAINT `FK_cslang_cid_cs`  FOREIGN KEY (`cid` , `cs`)  REFERENCES `kmcs` (`cid` , `cs`)  ON DELETE CASCADE  ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_cslang_lang`  FOREIGN KEY (`langID`)  REFERENCES `adminlanguages` (`langid`)  ON DELETE NO ACTION  ON UPDATE NO ACTION;
+
+ALTER TABLE `kmdescr` 
+  DROP FOREIGN KEY `FK_descr_cs`,
+  DROP FOREIGN KEY `FK_descr_tid`,
+  DROP INDEX CSDescr;
+
+ALTER TABLE `kmdescr` 
+  CHANGE COLUMN `TID` `tid` INT(10) UNSIGNED NOT NULL DEFAULT 0 ,
+  CHANGE COLUMN `CID` `cid` INT(10) UNSIGNED NOT NULL DEFAULT 0 ,
+  CHANGE COLUMN `Modifier` `modifier` VARCHAR(255) NULL DEFAULT NULL ,
+  CHANGE COLUMN `CS` `cs` VARCHAR(16) NOT NULL ,
+  CHANGE COLUMN `X` `x` DOUBLE(15,5) NULL DEFAULT NULL ,
+  CHANGE COLUMN `TXT` `txt` LONGTEXT NULL DEFAULT NULL ,
+  CHANGE COLUMN `PseudoTrait` `pseudoTrait` INT(5) UNSIGNED NULL DEFAULT 0 ,
+  CHANGE COLUMN `Frequency` `frequency` INT(5) UNSIGNED NOT NULL DEFAULT 5 COMMENT 'Frequency of occurrence; 1 = rare... 5 = common' ,
+  CHANGE COLUMN `Inherited` `inherited` VARCHAR(50) NULL DEFAULT NULL ,
+  CHANGE COLUMN `Source` `source` VARCHAR(100) NULL DEFAULT NULL ,
+  CHANGE COLUMN `Seq` `seq` INT(10) NULL DEFAULT NULL ,
+  CHANGE COLUMN `Notes` `notes` LONGTEXT NULL DEFAULT NULL ,
+  CHANGE COLUMN `DateEntered` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
+
+ALTER TABLE `kmdescr` 
+  ADD INDEX `FK_descr_cid_cs_idx` (`cid` ASC, `cs` ASC),
+  ADD INDEX `FK_descr_tid_idx` (`tid` ASC),
+  ADD CONSTRAINT `FK_descr_cid_cs`  FOREIGN KEY (`cid` , `cs`)  REFERENCES `kmcs` (`cid` , `cs`)  ON DELETE CASCADE  ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_descr_tid`  FOREIGN KEY (`tid`)  REFERENCES `taxa` (`TID`)  ON DELETE CASCADE  ON UPDATE CASCADE;
+
+
+#occurrence access tables
+ALTER TABLE `omoccuraccess`
+  ENGINE=InnoDB;
+
+ALTER TABLE `omoccuraccesslink`
+  ENGINE=InnoDB;
+
+# Drop old deprecated tables to save space, following statements will fail if portals was not an originally 1.0 install
+DROP TABLE IF EXISTS `deprecated_adminstats`;
+DROP TABLE IF EXISTS `deprecated_guidimages`; 
+DROP TABLE IF EXISTS `deprecated_guidoccurrences`;
+DROP TABLE IF EXISTS `deprecated_guidoccurdeterminations`;
+DROP TABLE IF EXISTS `deprecated_imageannotations`;
+DROP TABLE IF EXISTS `deprecated_kmdescrdeletions`;
+DROP TABLE IF EXISTS `deprecated_media`;
+DROP TABLE IF EXISTS `deprecated_omcollpuboccurlink`;
+DROP TABLE IF EXISTS `deprecated_omcollpublications`;
+DROP TABLE IF EXISTS `deprecated_omcollsecondary`;
+DROP TABLE IF EXISTS `deprecated_omoccurresource`;
+DROP TABLE IF EXISTS `deprecated_unknowncomments`;
+DROP TABLE IF EXISTS `deprecated_unknownimages`;
+DROP TABLE IF EXISTS `deprecated_unknowns`;
+DROP TABLE IF EXISTS `deprecated_userlogin`;
+
+
+#Drop Indexes and Foreign Keys for imagetag table in preparation for renaming image table
+ALTER TABLE `imagetag` 
+  DROP FOREIGN KEY `FK_imagetag_imgid`,
+  DROP FOREIGN KEY `FK_imagetag_tagkey`;
+
+ALTER TABLE `imagetag` 
+  DROP INDEX `imgid`,
+  DROP INDEX `keyvalue`,
+  DROP INDEX `FK_imagetag_imgid_idx`;
+
+ALTER TABLE `imagetag`
+  CHANGE COLUMN `imagetagid` `imageTagID` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  CHANGE COLUMN `imgid` `mediaID` INT(10) UNSIGNED NOT NULL,
+  CHANGE COLUMN `keyvalue` `keyValue` VARCHAR(30) NOT NULL,
+  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP();
+
+#Drop Indexes and Foreign Keys for imagekeywords table in preparation for renaming image table
+ALTER TABLE `imagekeywords`
+  DROP FOREIGN KEY `FK_imagekeywords_imgid`,
+  DROP FOREIGN KEY `FK_imagekeyword_uid`,
+  DROP INDEX `FK_imagekeyword_uid_idx`,
+  DROP INDEX `FK_imagekeywords_imgid_idx`,
+  DROP INDEX `INDEX_imagekeyword` ;
+
+ALTER TABLE `imagekeywords`
+  CHANGE COLUMN `imgkeywordid` `imgKeywordID` INT(11) NOT NULL AUTO_INCREMENT,
+  CHANGE COLUMN `imgid` `mediaID` INT(10) UNSIGNED NOT NULL,
+  CHANGE COLUMN `uidassignedby` `uidAssignedBy` INT(10) UNSIGNED NULL DEFAULT NULL,
+  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP();
+
+#Drop Indexes and Foreign Keys for specprocessorrawlabels table in preparation for renaming image table
+ALTER TABLE `specprocessorrawlabels`
+  DROP FOREIGN KEY `FK_specproc_images`,
+  DROP FOREIGN KEY `FK_specproc_occid`,
+  DROP INDEX `FK_specproc_images` ,
+  DROP INDEX `FK_specproc_occid` ;
+
+ALTER TABLE `specprocessorrawlabels`
+  CHANGE COLUMN `imgid` `mediaID` INT(10) UNSIGNED NULL DEFAULT NULL,
+  CHANGE COLUMN `rawstr` `rawStr` TEXT NOT NULL,
+  CHANGE COLUMN `processingvariables` `processingVariables` VARCHAR(250) NULL DEFAULT NULL,
+  CHANGE COLUMN `sortsequence` `sortSequence` INT(11) NULL DEFAULT NULL,
+  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP();
+
+# Skip if 3.0 install: Table does not exist within db_schema-3.0, thus statement is expected to fail if this was not originally a 1.0 install
+#Drop Foreign Key for taxaprofilepubimagelink table
+ALTER TABLE `taxaprofilepubimagelink` 
+  DROP FOREIGN KEY `FK_tppubimagelink_imgid`;
+
+# Skip if 3.0 install: Table does not exist within db_schema-3.0, thus statement is expected to fail if this was not originally a 1.0 install
+ALTER TABLE `imageprojectlink` 
+  DROP FOREIGN KEY `FK_imageprojectlink_imgid`;
+
+#Drop Indexes and Foreign Keys for tmattributes table in preparation for renaming image table
+ALTER TABLE `tmattributes`
+  DROP FOREIGN KEY `FK_tmattr_imgid`;
+
+ALTER TABLE `tmattributes`
+  CHANGE COLUMN `imgid` `mediaID` INT(10) UNSIGNED NULL DEFAULT NULL,
+  DROP INDEX `FK_tmattr_imgid_idx`;
+
+
+#Drop Indexes and Foreign Keys for images table in preparation for renaming table
+ALTER TABLE `images` 
+  DROP FOREIGN KEY `FK_taxaimagestid`,
+  DROP FOREIGN KEY `FK_photographeruid`,
+  DROP FOREIGN KEY `FK_images_occ`;
+
+ALTER TABLE `images` 
+  DROP INDEX `FK_photographeruid`,
+  DROP INDEX `FK_images_occ`,
+  DROP INDEX `Index_tid`,
+  DROP INDEX `IX_images_recordID`,
+  DROP INDEX `Index_images_datelastmod`;
+
+#Rename images to media table
+ALTER TABLE `images` 
+  RENAME TO `media` ;
+
+#Renaming primary key of media table
+ALTER TABLE `media` 
+  CHANGE COLUMN `imgid` `mediaID` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ;
+
+#Modify a few fields within media table
+ALTER TABLE `media` 
+  ADD COLUMN `mediaType` VARCHAR(45) NULL DEFAULT NULL AFTER `imageType`,
+  CHANGE COLUMN `occid` `occid` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `tid`,
+  CHANGE COLUMN `sourceUrl` `sourceUrl` VARCHAR(255) NULL DEFAULT NULL AFTER `archiveUrl`,
+  CHANGE COLUMN `referenceUrl` `referenceUrl` VARCHAR(255) NULL DEFAULT NULL AFTER `sourceUrl`,
+  CHANGE COLUMN `photographer` `creator` VARCHAR(100) NULL DEFAULT NULL AFTER `caption`,
+  CHANGE COLUMN `photographerUid` `creatorUid` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `creator`,
+  CHANGE COLUMN `locality` `locality` VARCHAR(250) NULL DEFAULT NULL AFTER `owner`,
+  CHANGE COLUMN `anatomy` `anatomy` VARCHAR(100) NULL DEFAULT NULL AFTER `locality`;
+
+ALTER TABLE `media` 
+  ADD INDEX `FK_media_occid_idx` (`occid` ASC),
+  ADD INDEX `FK_media_tid_idx` (`tid` ASC),
+  ADD INDEX `FK_media_creatorUid_idx` (`creatorUid` ASC),
+  ADD INDEX `IX_media_recordID` (`recordID` ASC),
+  ADD INDEX `IX_media_dateLastModified` (`initialTimestamp` ASC),
+  ADD INDEX `IX_media_sort` (`sortSequence` ASC),
+  ADD INDEX `IX_media_sortOccur` (`sortOccurrence` ASC),
+  ADD INDEX `IX_media_thumbnail` (`thumbnailUrl` ASC),
+  ADD INDEX `IX_media_mediaType` (`mediaType` ASC);
+
+
+ALTER TABLE `media` 
+  ADD CONSTRAINT `FK_media_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_media_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`tid`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_media_creatorUid` FOREIGN KEY (`creatorUid`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+UPDATE media
+  SET mediaType = "image"
+  WHERE mediaType IS NULL;
+
+
+# Recreate indexes and foreign keys to imagetag table
+ALTER TABLE `imagetag` 
+  ADD INDEX `FK_imagetag_mediaID_idx` (`mediaID` ASC),
+  ADD INDEX `FK_imagetag_keyValue_idx` (`keyValue` ASC),
+  ADD UNIQUE KEY `UQ_imagetag_mediaID_keyValue` (`mediaID`,`keyValue`);
+
+ALTER TABLE `imagetag`
+  ADD CONSTRAINT `FK_imagetag_keyValue` FOREIGN KEY (`keyValue`) REFERENCES `imagetagkey` (`tagkey`)  ON DELETE NO ACTION  ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_imagetag_mediaID` FOREIGN KEY (`mediaID`) REFERENCES `media`(`mediaID`)  ON DELETE CASCADE  ON UPDATE CASCADE;
+
+# Recreate indexes and foreign keys to imagekeywords table
+ALTER TABLE `imagekeywords`
+  ADD INDEX `FK_imagekeywords_keyword` (`keyword`),
+  ADD INDEX `FK_imagekeywords_mediaID_idx` (`mediaID`),
+  ADD INDEX `FK_imagekeywords_uid_idx` (`uidAssignedBy`),
+  ADD CONSTRAINT `FK_imagekeywords_uid` FOREIGN KEY (`uidAssignedBy`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_imagekeywords_mediaID` FOREIGN KEY (`mediaID`) REFERENCES `media` (`mediaID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+# Recreate indexes and foreign keys to specprocessorrawlabels table
+ALTER TABLE `specprocessorrawlabels`
+  ADD INDEX `FK_specproclabels_media_idx` (`mediaID`),
+  ADD INDEX `FK_specproclabels_occid_idx` (`occid`),
+  ADD CONSTRAINT `FK_specproclabels_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`)  ON UPDATE CASCADE  ON DELETE CASCADE,
+  ADD CONSTRAINT `FK_specproclabels_media` FOREIGN KEY (`mediaID`) REFERENCES `media` (`mediaID`)  ON UPDATE CASCADE  ON DELETE CASCADE;
+
+# Recreate indexes and foreign keys to tmattributes table
+ALTER TABLE `tmattributes`
+  ADD INDEX `FK_tmattr_mediaID_idx` (`mediaID`),
+  ADD CONSTRAINT `FK_tmattr_mediaID` FOREIGN KEY (`mediaID`) REFERENCES `media` (`mediaID`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+
+#Following statements pertain to coordinate index modifications
+#Define helper function to alter coordinates
+DELIMITER |
+CREATE FUNCTION `swap_wkt_coords`(str TEXT) RETURNS text 
+  BEGIN 
+    DECLARE latStart, latEnd, lngStart, lngEnd, i INT;
+    DECLARE cha CHAR;
+    DECLARE flipped TEXT;
+
+    SET i = 0;
+    SET flipped = '';
+
+    label1: LOOP
+      SET i = i + 1;
+      IF i <= LENGTH(str) THEN
+        SET cha = SUBSTRING(str, i, 1);
+
+        IF cha REGEXP '^[A-Za-z(),]' THEN
+          IF latStart is not null and latEnd is not null and lngStart is not null THEN
+            SET lngEnd = i;
+            SET flipped = CONCAT(flipped, 
+              SUBSTRING(str, lngStart, CASE WHEN lngStart = lngEnd THEN 1 ELSE lngEnd - lngStart END),
+              " ", 
+              SUBSTRING(str, latStart, CASE WHEN latStart = latEnd THEN 1 ELSE latEnd - latStart END)
+            );
+          END IF;
+          -- SET flipped = CONCAT(flipped, lngEnd);
+          SET flipped = CONCAT(flipped, cha);
+          SET latStart = NULL, latEnd = null, lngStart = null, lngEnd = null;
+        ELSEIF cha = " " THEN
+          IF latStart is not null THEN
+            SET latEnd = i;
+            -- SET flipped = CONCAT(flipped, latEnd);
+          ELSE
+            SET flipped = CONCAT(flipped, ' ');
+          END IF;
+        ELSE
+          IF latStart IS NULL THEN
+            SET latStart = i;
+            -- SET flipped = CONCAT(flipped, latStart);
+          ELSEIF latEnd is not null and lngStart IS NULL THEN
+            SET lngStart = i;
+            -- SET flipped = CONCAT(flipped, lngStart);
+          END IF;
+        END IF;
+        ITERATE label1;
+      END IF;
+      LEAVE label1;
+    END LOOP label1;
+
+    RETURN flipped;
+  END |
+
+DELIMITER ;
+
+
+#Add and update checklist footprints to be geoJson
+ALTER TABLE `fmchecklists` 
+  ADD COLUMN footprintGeoJson LONGTEXT DEFAULT NULL AFTER `footprintWkt`;
+
+UPDATE fmchecklists 
+  SET footprintGeoJson = ST_ASGEOJSON(ST_GEOMFROMTEXT(swap_wkt_coords(footprintWkt))) 
+  WHERE footprintGeoJson IS NULL;
+
+
+#Removes All omoccurpoints that do not have an omocurrences record
+DELETE p.* 
+  FROM omoccurpoints p LEFT JOIN omoccurrences o ON p.occid = o.occid
+  WHERE o.occid IS NULL;
+
+#Removes All omoccurpoints that have null lat or lng values in omocurrences which is needed to recalculate all omoccurpoints into lnglat points
+DELETE p.* 
+  FROM omoccurpoints p INNER JOIN omoccurrences o ON p.occid = o.occid 
+  WHERE o.decimalLatitude IS NULL OR o.decimalLongitude IS NULL; 
+
+#Create and add lng lat points for occurrence data which is needed to do searching is spacial indexes that are lng lat
+ALTER TABLE `omoccurpoints` 
+  ADD COLUMN lngLatPoint POINT AFTER `point`;
+
+UPDATE omoccurpoints p INNER JOIN omoccurrences o ON o.occid = p.occid 
+  SET lngLatPoint = ST_POINTFROMTEXT(CONCAT('POINT(',o.decimalLongitude, ' ', o.decimalLatitude, ')')); 
+
+ALTER TABLE `omoccurpoints` 
+  MODIFY lngLatPoint POINT NOT NULL;
+  
+ALTER TABLE `omoccurpoints`
+  ADD SPATIAL INDEX `IX_omoccurpoints_latLngPoint` (`lngLatPoint`);
+  
+
+#Following statements pertain to fulltext indexing modifications
+DROP TABLE `omoccurrencesfulltext`;
+
+DROP TRIGGER IF EXISTS `omoccurrencesfulltext_insert`;
+DROP TRIGGER IF EXISTS `omoccurrencesfulltext_update`;
+DROP TRIGGER IF EXISTS `omoccurrencesfulltextpoint_update`;
+DROP TRIGGER IF EXISTS `omoccurrencesfulltextpoint_insert`;
+DROP TRIGGER IF EXISTS `omoccurrences_insert`;
+DROP TRIGGER IF EXISTS `omoccurrences_update`;
+DROP TRIGGER IF EXISTS `omoccurrences_delete`;
+
+DELIMITER //
+CREATE TRIGGER `omoccurrences_insert` AFTER INSERT ON `omoccurrences`
+FOR EACH ROW BEGIN
+  IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL THEN
+    INSERT INTO omoccurpoints (`occid`,`point`, `lngLatPoint`) 
+    VALUES (NEW.`occid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`), Point(NEW.`decimalLongitude`, NEW.`decimalLatitude`));
+  END IF;
+END
+//
+
+CREATE TRIGGER `omoccurrences_update` AFTER UPDATE ON `omoccurrences`
+FOR EACH ROW BEGIN
+  IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL THEN
+    IF OLD.`decimalLatitude` IS NULL OR (NEW.`decimalLatitude` != OLD.`decimalLatitude` AND NEW.`decimalLongitude` != OLD.`decimalLongitude`) THEN
+      IF EXISTS (SELECT `occid` FROM omoccurpoints WHERE `occid`=NEW.`occid`) THEN
+        UPDATE omoccurpoints 
+        SET `point` = Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`), `lngLatPoint` = Point(NEW.`decimalLongitude`, NEW.`decimalLatitude`)
+        WHERE `occid` = NEW.`occid`;
+      ELSE 
+        INSERT INTO omoccurpoints (`occid`,`point`,`lngLatPoint`) 
+        VALUES (NEW.`occid`, Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`), Point(NEW.`decimalLongitude`, NEW.`decimalLatitude`));
+      END IF;
+    END IF;
+  ELSE
+    IF OLD.`decimalLatitude` IS NOT NULL THEN
+      DELETE FROM omoccurpoints WHERE `occid` = NEW.`occid`;
+    END IF;
+  END IF;
+END //
+
+CREATE TRIGGER `omoccurrences_delete` BEFORE DELETE ON `omoccurrences`
+FOR EACH ROW BEGIN
+  DELETE FROM omoccurpoints WHERE `occid` = OLD.`occid`;
+END//
+
+DELIMITER ;
+
+
+DROP TRIGGER specprocessorrawlabelsfulltext_insert;
+DROP TRIGGER specprocessorrawlabelsfulltext_update;
+DROP TRIGGER specprocessorrawlabelsfulltext_delete;
+
+DROP TABLE `specprocessorrawlabelsfulltext`;
+
+
+#Adjust FK to restrict deletion of record upon deletion of either internal occurrence or createdBy/modifiedBy users  
+ALTER TABLE `omoccurassociations`
+  DROP FOREIGN KEY `FK_occurassoc_occidassoc`,
+  DROP FOREIGN KEY `FK_occurassoc_uidcreated`,
+  DROP FOREIGN KEY `FK_occurassoc_uidmodified`;
+
+ALTER TABLE `omoccurassociations`
+  ADD CONSTRAINT `FK_occurassoc_occidassoc` FOREIGN KEY (`occidAssociate`) REFERENCES `omoccurrences` (`occid`) ON UPDATE CASCADE ON DELETE RESTRICT,
+  ADD CONSTRAINT `FK_occurassoc_uidcreated` FOREIGN KEY (`createdUid`) REFERENCES `users` (`uid`) ON UPDATE CASCADE ON DELETE RESTRICT,
+  ADD CONSTRAINT `FK_occurassoc_uidmodified` FOREIGN KEY (`modifiedUid`) REFERENCES `users` (`uid`) ON UPDATE CASCADE ON DELETE RESTRICT;
+  
+
+#Standardize occurrence identifier table
+ALTER TABLE `omoccuridentifiers`
+  CHANGE COLUMN `identifiervalue` `identifierValue` VARCHAR(75) NOT NULL AFTER `occid`,
+  CHANGE COLUMN `identifiername` `identifierName` VARCHAR(45) NOT NULL DEFAULT '' AFTER `identifierValue`,
+  ADD COLUMN `format` VARCHAR(45) NULL DEFAULT NULL AFTER `identifierName`,
+  ADD COLUMN `recordID` VARCHAR(45) NULL DEFAULT NULL AFTER `sortBy`,
+  CHANGE COLUMN `modifiedtimestamp` `modifiedTimestamp` DATETIME NULL DEFAULT NULL AFTER `modifiedUid`,
+  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT current_timestamp() AFTER `modifiedTimestamp`;
+
+ALTER TABLE `omoccuridentifiers`
+  DROP INDEX `UQ_omoccuridentifiers`,
+  DROP INDEX `IX_omoccuridentifiers_value`;
+
+ALTER TABLE `omoccuridentifiers`
+  ADD UNIQUE INDEX `UQ_omoccuridentifiers` (`occid`, `identifierValue`, `identifierName`),
+  ADD INDEX `IX_omoccuridentifiers_value` (`identifierValue`);
+
+# Occurrence table adjustments
+# Add fulltext indexes 
+ALTER TABLE `omoccurrences` 
+  ADD FULLTEXT INDEX `FT_omoccurrence_locality` (`locality`),
+  ADD FULLTEXT INDEX `FT_omoccurrence_recordedBy` (`recordedBy`),
+  DROP INDEX `IX_occurrences_locality`;
+
+# Add indexes for countryCode and continent
+ALTER TABLE `omoccurrences` 
+  ADD INDEX `IX_occurrences_countryCode` (`countryCode` ASC),
+  ADD INDEX `IX_occurrences_continent` (`continent` ASC);
+
+# Make sure synonym countries have the same countryCode as the accepted country 
+UPDATE geographicthesaurus g INNER JOIN geographicthesaurus a ON g.acceptedID = a.geoThesID 
+  SET g.iso2 = a.iso2
+  WHERE g.iso2 IS NULL AND a.iso2 IS NOT NULL;
+
+#Populate NULL country codes
+UPDATE omoccurrences o INNER JOIN geographicthesaurus g ON o.country = g.geoterm
+  SET o.countryCode = g.iso2
+  WHERE o.countryCode IS NULL AND g.geoLevel = 50 AND g.acceptedID IS NULL AND g.iso2 IS NOT NULL;
+
+#Fix bad country code (likely bad imported values)
+UPDATE omoccurrences o INNER JOIN geographicthesaurus g ON o.country = g.geoterm
+  SET o.countryCode = g.iso2
+  WHERE o.countryCode != g.iso2 AND g.geoLevel = 50 AND g.acceptedID IS NULL AND g.iso2 IS NOT NULL;
+
+#Populate NULL continent values
+UPDATE omoccurrences o INNER JOIN geographicthesaurus g ON o.countryCode = g.iso2 
+  INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  SET o.continent = p.geoTerm
+  WHERE o.continent IS NULL AND g.geoLevel = 50 AND p.acceptedID IS NULL AND g.acceptedID IS NULL;
+
+#Fix bad continent values (likely bad improted values)
+UPDATE omoccurrences o INNER JOIN geographicthesaurus g ON o.countryCode = g.iso2
+  INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  SET o.continent = p.geoTerm
+  WHERE o.continent != p.geoTerm AND g.geoLevel = 50 AND g.acceptedID IS NULL;
+
+
+# Add cultivar name and trade name columns to taxa table
+ALTER TABLE `taxa`
+  ADD COLUMN `cultivarEpithet` VARCHAR(50) NULL AFTER unitName3,
+  ADD COLUMN `tradeName` VARCHAR(50) NULL AFTER cultivarEpithet;
+
+#Rename cultivated to cultivar
+UPDATE taxonunits SET rankname = "Cultivar" WHERE rankname = "Cultivated";
+
+
+#Add cultivar and trade name to uploadspectemp
+ALTER TABLE `uploadspectemp` 
+  ADD COLUMN `cultivarEpithet` VARCHAR(50) NULL AFTER infraspecificEpithet,
+  ADD COLUMN `tradeName` VARCHAR(50) NULL AFTER cultivarEpithet;
+
+#Add cultivar and trade name to uploadtaxa
+ALTER TABLE `uploadtaxa` 
+  ADD COLUMN `cultivarEpithet` VARCHAR(50) NULL AFTER `UnitName3`,
+  ADD COLUMN `tradeName` VARCHAR(50) NULL AFTER `cultivarEpithet`;
+
+
+CREATE TABLE `uploadkeyvaluetemp`(
+  `keyValueID` int(11) NOT NULL AUTO_INCREMENT,
+  `key` varchar(255) DEFAULT NULL,
+  `value` varchar(255) DEFAULT NULL,
+  `occid` int(10) unsigned DEFAULT NULL,
+  `collid` int(10) unsigned DEFAULT NULL,
+  `dbpk` varchar(255) NOT NULL,
+  `uploadUid` int(10) unsigned NOT NULL,
+  `type` varchar(255) NOT NULL,
+  PRIMARY KEY (`keyValueID`),
+  KEY `IX_uploadKeyValue_occid` (`occid`),
+  KEY `IX_uploadKeyValue_collid` (`collid`),
+  KEY `IX_uploadKeyValue_uploadUid` (`uploadUid`),
+  CONSTRAINT `FK_uploadKeyValue_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_uploadKeyValue_collid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`collID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_uploadKeyValue_uid` FOREIGN KEY (`uploadUid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+ALTER TABLE uploadimagetemp
+  ADD COLUMN mediaType VARCHAR(45) NULL DEFAULT "image" AFTER `imageType`;

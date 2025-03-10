@@ -7,6 +7,7 @@ Language: Español (Spanish)
 
 include_once('sharedterms.es.php');
 
+$LANG['SEARCH'] = 'Buscar';
 $LANG['PAGE_TITLE'] = 'Parámetros de Búsqueda de Colecciones';
 $LANG['TAXON_HEADER'] = 'Criterios Taxonomicos';
 $LANG['INCLUDE_SYNONYMS'] = 'Incluir Sinónimos';
@@ -68,4 +69,11 @@ $LANG['SELECT_TAXON_TYPE'] = 'Seleccionar tipo de taxón';
 $LANG['DIRECTION'] = 'Dirección';
 $LANG['DISTANCE_UNIT'] = 'Unidad de distancia';
 $LANG['MATERIAL_SAMPLE'] = 'Muestra de Materiales';
+$LANG['GEO_CONTEXT'] = 'Contexto geológico';
+$LANG['EARLY_INT'] = 'Intervalo temprano';
+$LANG['LATE_INT'] = 'Intervalo tardío';
+$LANG['LITHOGROUP'] = 'Grupo';
+$LANG['FORMATION'] = 'Formación';
+$LANG['MEMBER'] = 'Miembro';
+$LANG['BED'] = 'Estrato';
 ?>

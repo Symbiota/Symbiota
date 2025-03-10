@@ -126,16 +126,9 @@ class OccurrenceSupport {
 		if($collid) $sqlWhere .= "AND (o.collid = ".$collid.") ";
 		if($catalogNumber) $sqlWhere .= 'AND (o.catalognumber = "'.$catalogNumber.'") ';
 		if($otherCatalogNumbers) $sqlWhere .= 'AND (o.othercatalognumbers = "'.$otherCatalogNumbers.'" OR i.identifiervalue = "'.$otherCatalogNumbers.'") ';
-		if($recordedBy){
-			if(strlen($recordedBy) < 4 || in_array(strtolower($recordedBy),array('best','little'))){
-				//Need to avoid FULLTEXT stopwords interfering with return
-				$sqlWhere .= 'AND (o.recordedby LIKE "%'.$recordedBy.'%") ';
-			}
-			else $sqlWhere .= 'AND (MATCH(f.recordedby) AGAINST("'.$recordedBy.'")) ';
-		}
+		if($recordedBy) $sqlWhere .= 'AND (MATCH(o.recordedby) AGAINST("'.$recordedBy.'" IN BOOLEAN MODE)) ';
 		if($recordNumber) $sqlWhere .= 'AND (o.recordnumber = "'.$recordNumber.'") ';
-		$sql = 'SELECT o.occid, o.recordedby, o.recordnumber, o.eventdate, CONCAT_WS("; ",o.stateprovince, o.county, o.locality) AS locality
-			FROM omoccurrences o LEFT JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
+		$sql = 'SELECT o.occid, o.recordedby, o.recordnumber, o.eventdate, CONCAT_WS("; ",o.stateprovince, o.county, o.locality) AS locality FROM omoccurrences o ';
 		if($otherCatalogNumbers) $sql .= 'LEFT JOIN omoccuridentifiers i ON o.occid = i.occid ';
 		$sql .= 'WHERE '.substr($sqlWhere,4);
 		//echo $sql;

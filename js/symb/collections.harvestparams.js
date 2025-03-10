@@ -22,7 +22,7 @@ function checkHarvestParamsForm(frm){
 				break;
 			}
 		}
-		else if(traitInputs[i].name == "materialsampletype"){
+		else if(traitInputs[i].name == "materialsampletype" || traitInputs[i].name == "earlyInterval" || traitInputs[i].name == "lateInterval" ){
 			if(traitInputs[i].value.trim() != ""){
 				searchDefined = true;
 				break;
@@ -210,15 +210,4 @@ function parseUrlVariables(varStr) {
 
 function resetHarvestParamsForm(f) {
   sessionStorage.removeItem("querystr");
-}
-
-function openCoordAid(mapMode) {
-  mapWindow = open(
-	"tools/mapcoordaid.php?mapmode=" + mapMode,
-	"polygon",
-	"resizable=0,width=900,height=630,left=20,top=20"
-  );
-
-  if (mapWindow.opener == null) mapWindow.opener = self;
-  mapWindow.focus();
 }

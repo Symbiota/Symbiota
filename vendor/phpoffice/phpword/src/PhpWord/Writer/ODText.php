@@ -11,44 +11,51 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer;
 
+use PhpOffice\Math\Writer\MathML;
+use PhpOffice\PhpWord\Element\AbstractElement;
+use PhpOffice\PhpWord\Element\Formula;
 use PhpOffice\PhpWord\Media;
 use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Writer\ODText\Part\AbstractPart;
 
 /**
- * ODText writer
+ * ODText writer.
  *
  * @since 0.7.0
  */
 class ODText extends AbstractWriter implements WriterInterface
 {
     /**
-     * Create new ODText writer
-     *
-     * @param \PhpOffice\PhpWord\PhpWord $phpWord
+     * @var AbstractElement[]
      */
-    public function __construct(PhpWord $phpWord = null)
+    protected $objects = [];
+
+    /**
+     * Create new ODText writer.
+     */
+    public function __construct(?PhpWord $phpWord = null)
     {
         // Assign PhpWord
         $this->setPhpWord($phpWord);
 
         // Create parts
-        $this->parts = array(
-            'Mimetype'  => 'mimetype',
-            'Content'   => 'content.xml',
-            'Meta'      => 'meta.xml',
-            'Styles'    => 'styles.xml',
-            'Manifest'  => 'META-INF/manifest.xml',
-        );
+        $this->parts = [
+            'Mimetype' => 'mimetype',
+            'Content' => 'content.xml',
+            'Meta' => 'meta.xml',
+            'Styles' => 'styles.xml',
+            'Manifest' => 'META-INF/manifest.xml',
+        ];
         foreach (array_keys($this->parts) as $partName) {
-            $partClass = get_class($this) . '\\Part\\' . $partName;
+            $partClass = static::class . '\\Part\\' . $partName;
             if (class_exists($partClass)) {
-                /** @var $partObject \PhpOffice\PhpWord\Writer\ODText\Part\AbstractPart Type hint */
+                /** @var \PhpOffice\PhpWord\Writer\ODText\Part\AbstractPart $partObject Type hint */
                 $partObject = new $partClass();
                 $partObject->setParentWriter($this);
                 $this->writerParts[strtolower($partName)] = $partObject;
@@ -56,15 +63,13 @@ class ODText extends AbstractWriter implements WriterInterface
         }
 
         // Set package paths
-        $this->mediaPaths = array('image' => 'Pictures/');
+        $this->mediaPaths = ['image' => 'Pictures/'];
     }
 
     /**
      * Save PhpWord to file.
-     *
-     * @param string $filename
      */
-    public function save($filename = null)
+    public function save(string $filename): void
     {
         $filename = $this->getTempFile($filename);
         $zip = $this->getZipArchive($filename);
@@ -77,8 +82,28 @@ class ODText extends AbstractWriter implements WriterInterface
 
         // Write parts
         foreach ($this->parts as $partName => $fileName) {
-            if ($fileName != '') {
-                $zip->addFromString($fileName, $this->getWriterPart($partName)->write());
+            if ($fileName === '') {
+                continue;
+            }
+            $part = $this->getWriterPart($partName);
+            if (!$part instanceof AbstractPart) {
+                continue;
+            }
+
+            $part->setObjects($this->objects);
+
+            $zip->addFromString($fileName, $part->write());
+
+            $this->objects = $part->getObjects();
+        }
+
+        // Write objects charts
+        if (!empty($this->objects)) {
+            $writer = new MathML();
+            foreach ($this->objects as $idxObject => $object) {
+                if ($object instanceof Formula) {
+                    $zip->addFromString('Formula' . $idxObject . '/content.xml', $writer->write($object->getMath()));
+                }
             }
         }
 

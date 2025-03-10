@@ -4,6 +4,7 @@ include_once($SERVER_ROOT . '/classes/OccurrenceDownload.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceMapManager.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverCore.php');
 
+
 $sourcePage = array_key_exists("sourcepage", $_REQUEST) ? $_REQUEST["sourcepage"] : "specimen";
 $schema = array_key_exists("schema", $_REQUEST) ? $_REQUEST["schema"] : "symbiota";
 $cSet = array_key_exists("cset", $_POST) ? $_POST["cset"] : '';
@@ -21,6 +22,7 @@ if ($schema == 'backup') {
 			$dwcaHandler->setIncludeImgs(1);
 			$dwcaHandler->setIncludeAttributes(1);
 			if ($dwcaHandler->hasMaterialSamples()) $dwcaHandler->setIncludeMaterialSample(1);
+			if ($dwcaHandler->hasIdentifiers()) $dwcaHandler->setIncludeIdentifiers(1);
 			$dwcaHandler->setRedactLocalities(0);
 			$dwcaHandler->setCollArr($collid);
 
@@ -122,6 +124,8 @@ if ($schema == 'backup') {
 			$dwcaHandler->setIncludeDets(0);
 			$dwcaHandler->setIncludeImgs(0);
 			$dwcaHandler->setIncludeAttributes(0);
+			$dwcaHandler->setIncludeMaterialSample(0);
+			$dwcaHandler->setIncludeIdentifiers(0);
 			$dwcaHandler->setOverrideConditionLimit(true);
 			$dwcaHandler->addCondition('catalognumber', 'NOT_NULL');
 			$dwcaHandler->addCondition('locality', 'NOT_NULL');
@@ -183,6 +187,8 @@ if ($schema == 'backup') {
 			$dwcaHandler->setIncludeAttributes($includeAttributes);
 			$includeMaterialSample = (array_key_exists('materialsample', $_POST) ? 1 : 0);
 			$dwcaHandler->setIncludeMaterialSample($includeMaterialSample);
+			$includeIdentifiers = (array_key_exists('identifiers', $_POST) ? 1 : 0);
+			$dwcaHandler->setIncludeIdentifiers($includeIdentifiers);
 
 			$outputFile = $dwcaHandler->createDwcArchive();
 		} else {

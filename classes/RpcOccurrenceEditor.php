@@ -98,15 +98,18 @@ class RpcOccurrenceEditor extends RpcBase{
 	public function getDupesOtherCatalogNumbers($otherCatNum, $collid, $skipOccid){
 		$retArr = array();
 		if(is_numeric($collid) && is_numeric($skipOccid) && $otherCatNum){
-			$sql = 'SELECT o.occid FROM omoccurrences o LEFT JOIN omoccuridentifiers i ON o.occid = i.occid
-				WHERE (o.othercatalognumbers = ? OR i.identifierValue = ?) AND (o.collid = ?) AND (o.occid != ?) ';
+			$sql = 'SELECT o.occid FROM omoccurrences o INNER JOIN omoccuridentifiers i ON o.occid = i.occid
+				WHERE (i.identifierValue = ?) AND (o.collid = ?)
+				UNION
+				SELECT occid FROM omoccurrences
+				WHERE (othercatalognumbers = ?) AND (collid = ?) ';
 			if($stmt = $this->conn->prepare($sql)) {
-				$stmt->bind_param('ssii', $otherCatNum, $otherCatNum, $collid, $skipOccid);
+				$stmt->bind_param('sisi', $otherCatNum, $collid, $otherCatNum, $collid);
 				$stmt->execute();
 				$occid = 0;
 				$stmt->bind_result($occid);
 				while($stmt->fetch()){
-					$retArr[$occid] = $occid;
+					if($occid != $skipOccid) $retArr[$occid] = $occid;
 				}
 				$stmt->close();
 			}
@@ -139,7 +142,7 @@ class RpcOccurrenceEditor extends RpcBase{
 	public function getImageCount($occid){
 		$retCnt = 0;
 		if(is_numeric($occid)){
-			$sql = 'SELECT count(*) AS imgcnt FROM images WHERE occid = ?';
+			$sql = 'SELECT count(*) AS imgcnt FROM media WHERE occid = ?';
 			if($stmt = $this->conn->prepare($sql)){
 				if($stmt->bind_param('i', $occid)){
 					$stmt->execute();
@@ -188,8 +191,7 @@ class RpcOccurrenceEditor extends RpcBase{
 			$str3 = $strArr[2];
 		}
 
-		// Construct the SQL query
-		$sql = 'SELECT DISTINCT tid, sciname FROM taxa WHERE unitname1 LIKE "'.$str1.'%" ';
+		$sql = 'SELECT DISTINCT tid, sciname FROM taxa WHERE unitname1 LIKE "' . $str1 . '%" ';
 		if($str2){
 			$sql .= 'AND unitname2 LIKE "'.$str2.'%" ';
 		}
@@ -212,18 +214,20 @@ class RpcOccurrenceEditor extends RpcBase{
 	public function getTaxonArr($term){
 		$retArr = array();
 		if($term){
-			$sql = 'SELECT DISTINCT t.tid, t.author, ts.family, t.securitystatus FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid WHERE t.sciname = ? AND ts.taxauthid = 1 ';
+			$sql = 'SELECT DISTINCT t.tid, t.author, t.sciname, ts.family, t.securitystatus FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid WHERE t.sciname = ? AND ts.taxauthid = 1 ';
 			if($stmt = $this->conn->prepare($sql)){
 				if($stmt->bind_param('s', $term)){
 					$stmt->execute();
 					$tid = 0;
 					$family = null;
+					$sciname = null;
 					$author = null;
 					$status = null;
-					$stmt->bind_result($tid, $author, $family, $status);
+					$stmt->bind_result($tid, $author, $sciname, $family, $status);
 					while($stmt->fetch()){
 						$retArr['tid'] = $tid;
 						$retArr['family'] = $family;
+						$retArr['sciname'] = $sciname;
 						$retArr['author'] = $author;
 						$retArr['status'] = $status;
 					}
@@ -295,27 +299,180 @@ class RpcOccurrenceEditor extends RpcBase{
 		return $retArr;
 	}
 
-	//Used by /collections/editor/rpc/getPaleoGtsParents.php
-	public function getPaleoGtsParents($term){
-		$retArr = Array();
-		$sql = 'SELECT gtsid, gtsterm, rankid, rankname, parentgtsid FROM omoccurpaleogts WHERE rankid > 10 AND gtsterm = "'.$this->cleanInStr($term).'"';
-		$parentId = '';
-		do{
-			$rs = $this->conn->query($sql);
-			if($r = $rs->fetch_object()){
-				if($parentId == $r->parentgtsid){
-					$parentId = 0;
+	//Paleo funcitons
+	//Used by /collections/editor/rpc/getPaleoGtsTable.php
+	//Returns a simple table representation of parent terms
+	public function getPaleoGtsTable($earlyInterval, $lateInterval){
+		global $LANG;
+		$retStr = '';
+		$termArr = $this->getPaleoGtsParents($earlyInterval, $lateInterval);
+		if($termArr === false) return false;
+		$earlyID = 0;
+		$lateID = 0;
+		foreach($termArr as $id => $gtsArr){
+			if(strtolower($gtsArr['term']) == strtolower($earlyInterval)) $earlyID = $id;
+			if(strtolower($gtsArr['term']) == strtolower($lateInterval)) $lateID = $id;
+		}
+		if($earlyID || $lateID){
+			$retStr = '<table id="paelo-gts-table"><tr><th class="blank-th"></th>';
+			$rankArr = array(20 => 'eon', 30 => 'era', 40 => 'period', 50 => 'epoch', 60 => 'age');
+			//Add header row
+			foreach($rankArr as $rankName){
+				$retStr .= '<th>' . $LANG[strtoupper($rankName) . '_LABEL'] . '</th>';
+			}
+			$retStr .= '</tr>';
+			$lateRow = '';
+			if($lateID){
+				//Add late term row
+				$lateRow = '</td>' . $this->getTableGtsRow($termArr, $lateID, $rankArr);
+				$retStr .= '<tr><td><b>' . $LANG['LATE_INTERVAL'] . '</b></td>' . $lateRow . '</tr>';
+			}
+			if($earlyID){
+				$retStr .= '<tr><td><b>' . $LANG['EARLY_INTERVAL'] . '</b></td>';
+				if($earlyID == $lateID){
+					$retStr .= $lateRow . '</tr>';
 				}
 				else{
-					$retArr[] = array("rankid" => $r->rankid, "value" => $r->gtsterm);
-					$parentId = $r->parentgtsid;
+					$retStr .= $this->getTableGtsRow($termArr, $earlyID, $rankArr) . '</tr>';
 				}
 			}
-			else $parentId = 0;
-			$rs->free();
-			$sql = 'SELECT gtsid, gtsterm, rankid, rankname, parentgtsid FROM omoccurpaleogts WHERE rankid > 10 AND gtsid = '.$parentId;
-		}while($parentId);
+			$retStr .= '</table>';
+		}
+		return $retStr;
+	}
+
+	private function getTableGtsRow($termArr, $baseElementID, $rankArr){
+		$targetRankID = $termArr[$baseElementID]['rankID'];
+		$tdArr = array();
+		$targetID = 0;
+		foreach(array_reverse($rankArr, true) as $rankID => $rankName){
+			$termName = '';
+			//$termColor = '';
+			if($targetRankID == $rankID){
+				$targetID = $baseElementID;
+			}
+			if($targetID){
+				$termName = $termArr[$targetID]['term'];
+				//$termColor = $termArr[$targetID]['colorCode'];
+				$targetID = $termArr[$targetID]['parentID'];
+			}
+			//$tdArr[$rankID] = '<td style="background-color: ' . $termColor . '">' . $termName . '</td>';
+			$tdArr[$rankID] = '<td>' . $termName . '</td>';
+		}
+		ksort($tdArr);
+		$retStr = implode('', $tdArr);
+		return $retStr;
+	}
+
+	private function getPaleoGtsParents($earlyInterval, $lateInterval){
+		$retArr = Array();
+		if(!$lateInterval) $lateInterval = $earlyInterval;
+		$sqlTemplate = 'SELECT gtsID, gtsTerm, rankID, rankName, colorCode, myaStart, parentGtsID FROM omoccurpaleogts WHERE rankID > 10 ';
+		$sql = $sqlTemplate . 'AND gtsTerm IN(?, ?)';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('ss', $earlyInterval, $lateInterval);
+			$stmt->execute();
+			$rs = $stmt->get_result();
+			$tartetTermsValid = false;
+			do{
+				$parentArr = array();
+				while($r = $rs->fetch_object()){
+					if(!isset($retArr[$r->gtsID])){
+						$retArr[$r->gtsID] = array('rankID' => $r->rankID, 'term' => $r->gtsTerm, 'colorCode' => $r->colorCode, 'myaStart' => $r->myaStart, 'parentID' => $r->parentGtsID);
+						$parentArr[$r->parentGtsID] = 0;
+					}
+				}
+				$rs->free();
+				if(!$tartetTermsValid){
+					if($lateInterval && strtolower($earlyInterval) != strtolower($lateInterval)){
+						$earlyTime = false;
+						$lateTime = false;
+						foreach($retArr as $termArr){
+							if(strtolower($termArr['term']) == strtolower($earlyInterval)) $earlyTime = (float)$termArr['myaStart'];
+							elseif(strtolower($termArr['term']) == strtolower($lateInterval)) $lateTime = (float)$termArr['myaStart'];
+						}
+						if($earlyTime !== false && $lateTime !== false && $earlyTime < $lateTime){
+							$this->errorMessage = 'ERR_BAD_TERM_ORDER';
+							return false;
+						}
+					}
+					$tartetTermsValid = true;
+				}
+				if($parentArr){
+					$sql = $sqlTemplate . 'AND gtsID IN("' . implode('","', array_keys($parentArr)) . '")';
+					$rs = $this->conn->query($sql);
+				}
+			}while($parentArr);
+			$stmt->close();
+		}
 		return $retArr;
+	}
+
+	//Not yet complete, but meant to return full gts table including internodes between Early and Late Interval settings
+	public function getPaleoGtsTableFull($earlyInterval, $lateInterval){
+		$tableStr = '';
+		if($earlyInterval){
+			$idArr = array();
+			if(!$lateInterval) $lateInterval= $earlyInterval;
+			//Get IDs of terms and their children
+			$sql = 'SELECT gtsID, parentGtsID
+				FROM omoccurpaleogts
+				WHERE myaStart <= (SELECT myaStart FROM omoccurpaleogts WHERE gtsTerm = ?)
+				AND myaEnd >= (SELECT myaEnd FROM omoccurpaleogts WHERE gtsTerm = ?)';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('ss', $earlyInterval, $lateInterval);
+				$stmt->execute();
+				$rs = $stmt->get_result();
+				while($r = $rs->fetch_object()){
+					$idArr[$r->gtsID] = $r->parentGtsID;
+				}
+				$rs->free();
+				$stmt->close();
+			}
+			if($idArr){
+				//Get all parents
+				$parentArr = array_diff_key(array_flip($idArr), array_keys($idArr));
+				if($parentArr){
+					do{
+						$idArr = array_merge($idArr, $parentArr);
+						$sql = 'SELECT DISTINCT parentGtsID FROM omoccurpaleogts WHERE gtsID IN(' . implode(',', array_keys($parentArr)) . ') AND parentGtsID IS NOT NULL';
+						unset($parentArr);
+						$parentArr = array();
+						$rs = $this->conn->query($sql);
+						while($r = $rs->fetch_object()){
+							$parentArr[$r->parentGtsID] = 0;
+						}
+						$rs->free();
+					}while($parentArr);
+				}
+				//Populate table array with all the important data
+				$tableArr = array();
+				$sql = 'SELECT gtsID, gtsTerm, rankID, colorCode, parentGtsID
+					FROM omoccurpaleogts
+					WHERE gtsID IN(' . implode(',', array_keys($idArr)) . ')
+					ORDER BY rankid, myaStart';
+				$rs = $this->conn->query($sql);
+				while($r = $rs->fetch_object()){
+					$tableArr[$r->rankID][$r->gtsID] = '<td style="background-color:' . $r->colorCode . '">' . $r->gtsTerm . '</td>';
+					if($r->parentGtsID){
+						$parentRankID = $r->rankID - 10;
+						if(isset($tableArr[$parentRankID][$r->parentGtsID])){
+							$tableArr[$parentRankID][$r->parentGtsID]['c'][] = $r->gtsID;
+						}
+					}
+				}
+				$rs->free();
+				//Build table string
+				foreach($tableArr as $rankID => $rankArr){
+					$tableStr .= '<tr>';
+					foreach($rankArr as $gtsID => $gtsArr){
+						$tableStr .= '<tr></tr>';
+					}
+					$tableStr .= '</tr>';
+				}
+			}
+		}
+		return $tableStr;
 	}
 
 	//Setters and getters

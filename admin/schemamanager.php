@@ -1,7 +1,7 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SchemaManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' . $CHARSET);
 
 $username = isset($_POST['username']) ? $_POST['username'] : '';
 $schemaCode = isset($_POST['schemaCode']) ? $_POST['schemaCode'] : '';
@@ -14,9 +14,16 @@ $port = MySQLiConnectionFactory::$SERVERS[0]['port'];
 $schemaManager = new SchemaManager();
 $verHistory = $schemaManager->getVersionHistory();
 $curentVersion = $schemaManager->getCurrentVersion();
+$isNewInstall = false;
+if(!$curentVersion) $isNewInstall = true;
+elseif(isset($verHistory['3.0'])){
+	if(strpos($verHistory['3.0'], date('Y-m-d')) === 0) $isNewInstall = true;
+}
+elseif(isset($verHistory['1.0'])){
+	if(strpos($verHistory['1.0'], date('Y-m-d')) === 0) $isNewInstall = true;
+}
 
-//if(!$IS_ADMIN && $curentVersion) header('Location: ../profile/index.php?refurl=../admin/schemamanager.php');
-$IS_ADMIN = true;
+if(!$IS_ADMIN && !$isNewInstall) header('Location: ../profile/index.php?refurl=../admin/schemamanager.php');
 ?>
 <html lang="en">
 	<head>
@@ -40,7 +47,7 @@ $IS_ADMIN = true;
 		<div role="main" id="innertext">
 			<h1>Database Schema Manager</h1>
 			<?php
-			if($IS_ADMIN || !$curentVersion){
+			if($IS_ADMIN || $isNewInstall){
 				if($action){
 					?>
 					<fieldset>
@@ -63,7 +70,7 @@ $IS_ADMIN = true;
 				?>
 				<div style="margin:15px;">
 					<label>Current version: </label>
-					<?php echo $curentVersion ? $curentVersion : 'no schema detected'; ?>
+					<?= $curentVersion ? $curentVersion : 'no schema detected'; ?>
 				</div>
 				<?php
 				if($verHistory){
@@ -92,7 +99,7 @@ $IS_ADMIN = true;
 							We recommend creating a backup of the database before applying any database patches.
 						</div>
 						<?php
-						if($curentVersion != '3.1'){
+						if($curentVersion != '3.2'){
 							if(!is_writable($SERVER_ROOT . '/content/logs/install/')){
 								?>
 								<div class="info-div">
@@ -109,11 +116,11 @@ $IS_ADMIN = true;
 								<select name="schemaCode">
 									<?php
 									if($curentVersion){
-										$schemaPatchArr = array('1.1', '1.2', '3.0', '3.1');
+										$schemaPatchArr = array('1.1', '1.2', '3.0', '3.1', '3.2');
 										foreach($schemaPatchArr as $schemaOption){
 											if($schemaOption > $curentVersion) echo '<option value="' . $schemaOption . '">Schema Patch ' . $schemaOption . '</option>';
 										}
-										if($curentVersion == '3.1') echo '<option value="">Schema is Current - nothing to do</option>';
+										if($curentVersion == '3.2') echo '<option value="">Schema is Current - nothing to do</option>';
 									}
 									else{
 										echo '<option value="baseInstall">New Install (ver. 3.0)</option>';
@@ -131,15 +138,15 @@ $IS_ADMIN = true;
 							</div>
 							<div class="form-section">
 								<label>Host:</label>
-								<?php echo $host; ?>
+								<?= $host ?>
 							</div>
 							<div class="form-section">
 								<label>Database:</label>
-								<?php echo $database; ?>
+								<?= $database ?>
 							</div>
 							<div class="form-section">
 								<label>Port:</label>
-								<?php echo $port; ?>
+								<?= $port; ?>
 							</div>
 							<div class="form-section">
 								<button name="action" type="submit" value="installSchema">Install</button>

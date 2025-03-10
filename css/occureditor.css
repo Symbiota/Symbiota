@@ -789,7 +789,7 @@ body{
 #localStageDiv{ float:left; margin:3px; }
 #biotaDiv{ float:left; margin:3px; }
 #biostratigraphyDiv{ float:left; margin:3px; }
-#lithoGroupDiv{ float:left; margin:3px; }
+#lithogroupDiv{ float:left; margin:3px; }
 #formationDiv{ float:left; margin:3px; }
 #taxonEnvironmentDiv{ float:left; margin:3px; }
 #memberDiv{ float:left; margin:3px; }
@@ -801,8 +801,8 @@ body{
 #elementDiv{ float:left; margin:3px; }
 #slidePropertiesDiv{ float:left; margin:3px; }
 #slidePropertiesDiv input{ width:400px; }
-#geologicalContextIdDiv{ float:left; margin:3px; }
-#geologicalContextIdDiv input{ width:120px; }
+#geologicalContextIDDiv{ float:left; margin:3px; }
+#geologicalContextIDDiv input{ width:120px; }
 
 /* Button Controls */
 #bottomSubmitDiv{
@@ -812,7 +812,7 @@ body{
 #addButtonDiv{
 	width:		450px;
 	border:		1px solid black;
-	background-color:	lightyellow;
+	background-color:	var(--light-color);
 	padding:	10px;
 	margin:		20px;
 }

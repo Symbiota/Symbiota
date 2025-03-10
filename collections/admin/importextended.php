@@ -70,20 +70,24 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 			function validateMappingForm(f){
 				let sourceArr = [];
 				let targetArr = [];
-				let requiredFieldArr = [];
+				let requiredFieldArr = {};
 				<?php
 				if($associationType == 'resource' || $associationType == 'externalOccurrence'){
 					echo 'requiredFieldArr["resourceUrl"] = 0; ';
 				}
 				elseif($associationType == 'observational'){
 					echo 'requiredFieldArr["verbatimSciname"] = 0; ';
+				// If it is a media upload
+				} elseif($importType == 3) {
+					echo 'requiredFieldArr["originalUrl"] = 0; ';
 				}
 				?>
 				let subjectIdentifierIsMapped = false;
 				let objectIdentifierIsMapped = false;
-				const formElements = f.elements;
-				for (const key in formElements) {
-					const value = formElements[key].value;
+
+				const form_data = new FormData(f);
+
+				for (const [key, value] of form_data.entries()) {
 					if(key.substring(0, 3) == "sf["){
 						if(sourceArr.indexOf(value) > -1){
 							alert("<?= $LANG['ERR_DUPLICATE_SOURCE'] ?>" + value + ")");
@@ -194,7 +198,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 				<?= $LANG['INSTRUCTIONS'] ?>:
 				<ul>
 					<li><a href="https://biokic.github.io/symbiota-docs/coll_manager/upload/links" target="_blank"><?= $LANG['ASSOCIATIONS'] ?></a></li>
-					<?php if($IS_ADMIN) echo '<li><a href="https://biokic.github.io/symbiota-docs/coll_manager/upload/determinations" target="_blank">'.$LANG['DETERMINATIONS'].'</a></li>'; ?>
+					<?php if($IS_ADMIN) echo '<li><a href="https://biokic.github.io/symbiota-docs/portal_manager/determinations" target="_blank">'.$LANG['DETERMINATIONS'].'</a></li>'; ?>
 					<li><a href="https://biokic.github.io/symbiota-docs/coll_manager/images/url_upload" target="_blank"><?= $LANG['IMAGE_URLS'] ?></a></li>
 				</ul>
 			</div>
@@ -283,6 +287,13 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 									<div class="formField-div">
 										<input name="createNew" type="checkbox" value ="1" <?= ($createNew?'checked':'') ?>>
 										<label for="createNew"><?= $LANG['NEW_BLANK_RECORD'] ?></label>
+									</div>
+									<div class="formField-div">
+										<label for="mediaUploadType"><?= $LANG['MEDIA_UPLOAD_TYPE'] ?>:</label>
+										<select id="mediaUploadType" name="mediaUploadType" required >
+											<option value="image"><?= $LANG['IMAGE_UPLOAD'] ?></option>
+											<option value="audio"><?= $LANG['AUDIO_UPLOAD'] ?></option>
+										</select>
 									</div>
 									<?php
 								}

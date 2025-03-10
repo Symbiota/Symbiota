@@ -7,8 +7,8 @@ Date Translated: 2021-08-18
 ------------------
 */
 
-$LANG['COL_PERMISSIONS'] = 'Permisos de Colección';
-$LANG['PLS_SEL_USER'] = 'Por favor seleccionar un usuario de la lista';
+$LANG['COL_PERMISSIONS'] = 'Permisos de recopilación';
+$LANG['PLS_SEL_USER'] = 'Seleccione un usuario (comience a escribir el apellido para ver la lista desplegable)';
 $LANG['SEL_PERMISSIONS'] = 'Por favor seleccionar el permiso que desea asignar a este usuario';
 $LANG['SEL_OBS'] = 'Por favor seleccione un proyecto de Manejo de Observaciones Personales';
 $LANG['COL_PROFS'] = 'Perfiles de Colecciones';
@@ -48,7 +48,7 @@ $LANG['CHECKLIST_SPONSOR_EXPLAIN'] = 'Los administradores de colecciones enumera
 $LANG['SURE_DELETE'] = '¿Está seguro que quiere eliminar estos permisos?';
 $LANG['NONE_SPONSORED'] = 'Ningún usuario ha sido avalado aún';
 $LANG['NEW_SPONSOR'] = 'Nuevo Aval';
-$LANG['SEL_USER'] = 'Seleccionar Usuario';
+$LANG['ENTER_USER_NAME'] = 'Ingrese Nombre de Usuario (Apellido, Nombre)';
 $LANG['SEL_PERS_OBS'] = 'Seleccionar Proyecto Personal de Observaciones';
 $LANG['SPONSOR_USER'] = 'Avalar Usuario';
 $LANG['ID_EDITS'] = 'Editores de Identificaciones';
