@@ -191,4 +191,74 @@ class ExsiccataController extends Controller {
         ];
         return response()->json($retObj);
     }
+
+    /**
+     * @OA\Get(
+     *	 path="/api/v2/exsiccata/{identifier}/number/{numberIdentifier}/",
+     *	 operationId="/api/v2/exsiccata/identifier/number/{numberIdentifier}/",
+     *	 tags={""},
+     *	 @OA\Parameter(
+     *		 name="identifier",
+     *		 in="path",
+     *		 description="Identifier (omenid (PK) - currently does not accommodate recordID) associated with target entry",
+     *		 required=true,
+     *		 @OA\Schema(type="integer")
+     *	 ),
+     *	 @OA\Parameter(
+     *		 name="numberIdentifier",
+     *		 in="path",
+     *		 description="Number of exsicatta (exsnumber in the schema) associated with target exsiccata number",
+     *		 required=true,
+     *		 @OA\Schema(type="integer")
+     *	 ),
+     *   @OA\Parameter(
+     *		 name="limit",
+     *		 in="query",
+     *		 description="Controls the number of results in the page.",
+     *		 required=false,
+     *		 @OA\Schema(type="integer", default=100)
+     *	 ),
+     *	 @OA\Parameter(
+     *		 name="offset",
+     *		 in="query",
+     *		 description="Determines the starting point for the search results. A limit of 100 and offset of 200, will display 100 records starting the 200th record.",
+     *		 required=false,
+     *		 @OA\Schema(type="integer", default=0)
+     *	 ),
+     *	 @OA\Response(
+     *		 response="200",
+     *		 description="Returns all exsiccata numbers associated with a single exsiccati title corresponding to matching identifier",
+     *		 @OA\JsonContent()
+     *	 ),
+     *	 @OA\Response(
+     *		 response="400",
+     *		 description="Error: Bad request. Exsiccata identifier is required.",
+     *	 ),
+     *   @OA\Response(
+     *      response="404",
+     *      description="Record not found"
+     *   )
+     * )
+     */
+    public function showOneExsiccataNumbersIdentifier($identifier, $numberIdentifier, Request $request) {
+        $this->validate($request, [
+            'limit' => 'integer',
+            'offset' => 'integer'
+        ]);
+        $limit = $request->input('limit', 100);
+        $offset = $request->input('offset', 0);
+
+        $numbersResult = DB::table('omexsiccatinumbers')->where('omenid', $identifier)->where('exsNumber', $numberIdentifier)->first();
+
+        if (!$numbersResult) {
+            return response()->json(["status" => false, "error" => "Unable to locate exsiccata number based on identifier and numberIdentifier"], 404);
+        }
+
+        $retObj = [
+            'offset' => (int)$offset,
+            'limit' => (int)$limit,
+            'results' => $numbersResult,
+        ];
+        return response()->json($retObj);
+    }
 }

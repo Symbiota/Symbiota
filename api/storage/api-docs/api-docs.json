@@ -240,6 +240,70 @@
                 }
             }
         },
+        "/api/v2/exsiccata/{identifier}/number/{numberIdentifier}/": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/exsiccata/identifier/number/{numberIdentifier}/",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "Identifier (ometid (PK) - currently does not accommodate recordID) associated with target exsiccata title",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "numberIdentifier",
+                        "in": "path",
+                        "description": "Number of exsicatta (exsnumber in the schema) associated with target exsiccata number",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Controls the number of results in the page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 100
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Determines the starting point for the search results. A limit of 100 and offset of 200, will display 100 records starting the 200th record.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns all exsiccata numbers associated with a single exsiccati title corresponding to matching identifier",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. Exsiccata identifier is required."
+                    },
+                    "404": {
+                        "description": "Record not found"
+                    }
+                }
+            }
+        },
         "/api/v2/installation": {
             "get": {
                 "tags": [
