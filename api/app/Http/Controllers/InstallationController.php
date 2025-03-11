@@ -121,6 +121,7 @@ class InstallationController extends Controller{
 			$portalObj['managerEmail'] = $_ENV['ADMIN_EMAIL'];
 			$portalObj['urlRoot'] = $this->getServerDomain().$_ENV['CLIENT_ROOT'];
 			$portalObj['symbiotaVersion'] = $_ENV['SYMBIOTA_VERSION'];
+			$portalObj['apiVersion'] = $_ENV['API_VERSION'];
 		}
 		else{
 			$portalObj['status'] = false;
