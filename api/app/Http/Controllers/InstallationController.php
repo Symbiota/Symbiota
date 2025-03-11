@@ -140,7 +140,7 @@ class InstallationController extends Controller{
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
-	 *		 description="Identifier of the remote installation",
+	 *		 description="Identifier of the remote installation (GUID)",
 	 *		 required=true,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
