@@ -200,14 +200,14 @@ class ExsiccataController extends Controller {
      *	 @OA\Parameter(
      *		 name="identifier",
      *		 in="path",
-     *		 description="Identifier (omenid (PK) - currently does not accommodate recordID) associated with target entry",
+     *		 description="Identifier (ometid (PK)) associated with target exsiccata number",
      *		 required=true,
      *		 @OA\Schema(type="integer")
      *	 ),
      *	 @OA\Parameter(
      *		 name="numberIdentifier",
      *		 in="path",
-     *		 description="Number of exsicatta (exsnumber in the schema) associated with target exsiccata number",
+     *		 description="Identifier (omenid or recordID in the schema) associated with target exsiccata number",
      *		 required=true,
      *		 @OA\Schema(type="integer")
      *	 ),
@@ -248,7 +248,13 @@ class ExsiccataController extends Controller {
         $limit = $request->input('limit', 100);
         $offset = $request->input('offset', 0);
 
-        $numbersResult = DB::table('omexsiccatinumbers')->where('omenid', $identifier)->where('exsNumber', $numberIdentifier)->first();
+        $numbersQuery = DB::table('omexsiccatinumbers');
+        if (is_numeric($numberIdentifier)) {
+            $numbersQuery->where('omenid', $numberIdentifier);
+        } else {
+            $numbersQuery->where('recordID', $numberIdentifier);
+        }
+        $numbersResult = $numbersQuery->where('ometid', $identifier)->first();
 
         if (!$numbersResult) {
             return response()->json(["status" => false, "error" => "Unable to locate exsiccata number based on identifier and numberIdentifier"], 404);
