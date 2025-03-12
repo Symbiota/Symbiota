@@ -219,7 +219,7 @@ class OccurrenceController extends Controller{
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
-	 *		 description="occid or specimen GUID (occurrenceID) associated with target occurrence",
+	 *		 description="occid or specimen GUID (occurrenceID) or recordID associated with target occurrence",
 	 *		 required=true,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
@@ -258,12 +258,11 @@ class OccurrenceController extends Controller{
 			return response()->json(['error' => 'Occurrence not found'], 404);
 		}
 		if($occurrence){
-			return response()->json($occurrence); // @TODO remove
 			if(!$occurrence->occurrenceID) $occurrence->occurrenceID = $occurrence->recordID;
 			if($request->input('includeMedia')) $occurrence->media;
 			if($request->input('includeIdentifications')) $occurrence->identification;
 		}
-		// return response()->json($occurrence);
+		return response()->json($occurrence);
 	}
 
 
@@ -275,7 +274,7 @@ class OccurrenceController extends Controller{
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
-	 *		 description="occid or specimen GUID (occurrenceID) associated with target occurrence",
+	 *		 description="occid or specimen GUID (occurrenceID) or recordID associated with target occurrence",
 	 *		 required=true,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
@@ -307,7 +306,7 @@ class OccurrenceController extends Controller{
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
-	 *		 description="occid or specimen GUID (occurrenceID) associated with target occurrence",
+	 *		 description="occid or specimen GUID (occurrenceID) or recordID associated with target occurrence",
 	 *		 required=true,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
@@ -323,7 +322,6 @@ class OccurrenceController extends Controller{
 	 * )
 	 */
 	public function showOneOccurrenceMedia($id, Request $request){
-		// $id = $this->getOccid($id);
 		$occurrence = $this->getOccurrence($id);
 		if (!$occurrence) {
 			return response()->json(['error' => 'Occurrence not found'], 404);
@@ -335,9 +333,7 @@ class OccurrenceController extends Controller{
 		if (!$media) {
 			return response()->json(['error' => 'Occurrence found, but no media found'], 404);
 		}
-		
 		return response()->json($media);
-		// return response()->json($occurrence);
 	}
 
 	//Write funcitons
@@ -703,14 +699,6 @@ class OccurrenceController extends Controller{
 	}
 
 	//Helper functions
-	// protected function getOccid($id){
-	// 	if(!is_numeric($id)){
-	// 		$occid = Occurrence::where('occurrenceID', $id)->orWhere('recordID', $id)->value('occid');
-	// 		if(is_numeric($occid)) $id = $occid;
-	// 	}
-	// 	return $id;
-	// }
-
 	private function isAuthorized($user, $collid){
 		foreach($user['roles'] as $roles){
 			if($roles['role'] == 'SuperAdmin') return true;
@@ -741,13 +729,14 @@ class OccurrenceController extends Controller{
 
 	private function getOccurrence($id){
 		$decodedId = urldecode($id);
-		$occurrence = Occurrence::where('occid', $decodedId)
-			->orWhere('recordID', (string)$decodedId)
-			->orWhere('occurrenceID', (string)$decodedId)
-			// ->orWhere('recordID', (string)$id)
-			// ->orWhere('occurrenceID', (string)$id)
-			// ->orWhereRaw("LOWER(occurrenceID) = LOWER(?)", [$id])
-			->first();
+		$occurrence = null;
+		if(is_numeric($decodedId)){
+			$occurrence = Occurrence::find($decodedId);
+		} else{
+			$occurrence = Occurrence::where('recordID', (string)$decodedId)
+				->orWhere('occurrenceID', (string)$decodedId)
+				->first();
+		}
 		return $occurrence;
 	}
 }
