@@ -33,6 +33,9 @@ ALTER TABLE `omoccurpaleogts`
   ADD INDEX `IX_paleogts_myaStart` (`myaStart` ASC),
   ADD INDEX `IX_paleogts_myaEnd` (`myaEnd` ASC);
 
+#increase the character limit on  biostratigraphy
+ALTER TABLE `omoccurpaleo` MODIFY COLUMN `biostratigraphy` VARCHAR(100);
+
 
 
 #reset the values within omoccurpaleogts table 
