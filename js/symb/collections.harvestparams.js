@@ -1,6 +1,8 @@
 function displayTableView(f) {
-  f.action = "listtabledisplay.php";
-  f.submit();
+  if (checkHarvestParamsForm(f)) {
+	f.action = "listtabledisplay.php";
+	f.submit();
+  }
 }
 
 function cleanNumericInput(formElem) {
