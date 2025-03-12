@@ -716,18 +716,18 @@ function validateForm() {
       errors.push({
         elId: "search-form-geocontext",
         errorMsg:
-          "Both Early and Late Intervals must be selected.",
+          "Both Early Interval and Late Interval need to have a value selected, even if the values are the same.",
       });
-        errors.push("Both Early and Late Intervals must be selected.");
+        errors.push("Both Early Interval and Late Interval need to have a value selected, even if the values are the same.");
     }
 
     if (early in paleoTimes && late in paleoTimes && paleoTimes[early] < paleoTimes[late]) {
       errors.push({
         elId: "search-form-geocontext",
         errorMsg:
-          "Early Interval cannot be later than Late Interval.",
+          "The Early Interval must be geologically older than the Late Interval.",
       });
-        errors.push("Early Interval cannot be later than Late Interval.");
+        errors.push("The Early Interval must be geologically older than the Late Interval.");
     }
   }
 
