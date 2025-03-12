@@ -740,9 +740,13 @@ class OccurrenceController extends Controller{
 	}
 
 	private function getOccurrence($id){
-		$occurrence = Occurrence::where('occid', $id)
-			->orWhere('recordID', (string)$id)
-			->orWhere('occurrenceID', (string)$id)
+		$decodedId = urldecode($id);
+		$occurrence = Occurrence::where('occid', $decodedId)
+			->orWhere('recordID', (string)$decodedId)
+			->orWhere('occurrenceID', (string)$decodedId)
+			// ->orWhere('recordID', (string)$id)
+			// ->orWhere('occurrenceID', (string)$id)
+			// ->orWhereRaw("LOWER(occurrenceID) = LOWER(?)", [$id])
 			->first();
 		return $occurrence;
 	}
