@@ -721,7 +721,7 @@ function validateForm() {
         errors.push("Both Early Interval and Late Interval need to have a value selected, even if the values are the same.");
     }
 
-    if (early in paleoTimes && late in paleoTimes && paleoTimes[early] > paleoTimes[late]) {
+    if (early in paleoTimes && late in paleoTimes && paleoTimes[early].myaStart > paleoTimes[late].myaEnd) {
       errors.push({
         elId: "search-form-geocontext",
         errorMsg:

@@ -612,11 +612,14 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 
 	public function getPaleoTimes(){
 		$paleoTimes = []; 
-		if($GLOBALS['ACTIVATE_PALEO']){
-			$sql = "SELECT gtsterm, myaStart FROM omoccurpaleogts";
+		if ($GLOBALS['ACTIVATE_PALEO']) {
+			$sql = "SELECT gtsterm, myaStart, myaEnd FROM omoccurpaleogts";
 			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				$paleoTimes[$r->gtsterm] = $r->myaStart;
+			while ($r = $rs->fetch_object()) {
+				$paleoTimes[$r->gtsterm] = [
+					'myaStart' => $r->myaStart,
+					'myaEnd' => $r->myaEnd
+				];
 			}
 		}
 		return $paleoTimes;
