@@ -253,14 +253,17 @@ class OccurrenceController extends Controller{
 			'includeMedia' => 'integer',
 			'includeIdentifications' => 'integer'
 		]);
-		$id = $this->getOccid($id);
-		$occurrence = Occurrence::find($id);
+		$occurrence = $this->getOccurrence($id);
+		if (!$occurrence) {
+			return response()->json(['error' => 'Occurrence not found'], 404);
+		}
 		if($occurrence){
+			return response()->json($occurrence); // @TODO remove
 			if(!$occurrence->occurrenceID) $occurrence->occurrenceID = $occurrence->recordID;
 			if($request->input('includeMedia')) $occurrence->media;
 			if($request->input('includeIdentifications')) $occurrence->identification;
 		}
-		return response()->json($occurrence);
+		// return response()->json($occurrence);
 	}
 
 
@@ -288,8 +291,11 @@ class OccurrenceController extends Controller{
 	 * )
 	 */
 	public function showOneOccurrenceIdentifications($id, Request $request){
-		$id = $this->getOccid($id);
-		$identification = Occurrence::find($id)->identification;
+		$occurrence = $this->getOccurrence($id);
+		$identification = null;
+		if($occurrence){
+			$identification = $occurrence->identification;
+		}
 		return response()->json($identification);
 	}
 
@@ -317,9 +323,21 @@ class OccurrenceController extends Controller{
 	 * )
 	 */
 	public function showOneOccurrenceMedia($id, Request $request){
-		$id = $this->getOccid($id);
-		$media = Occurrence::find($id)->media;
+		// $id = $this->getOccid($id);
+		$occurrence = $this->getOccurrence($id);
+		if (!$occurrence) {
+			return response()->json(['error' => 'Occurrence not found'], 404);
+		}
+		$media = null;
+		if($occurrence){
+			$media = $occurrence->media;
+		}
+		if (!$media) {
+			return response()->json(['error' => 'Occurrence found, but no media found'], 404);
+		}
+		
 		return response()->json($media);
+		// return response()->json($occurrence);
 	}
 
 	//Write funcitons
@@ -345,8 +363,7 @@ class OccurrenceController extends Controller{
 
 	public function update($id, Request $request){
 		if($user = $this->authenticate($request)){
-			$id = $this->getOccid($id);
-			$occurrence = Occurrence::find($id);
+			$occurrence = $this->getOccurrence($id);
 			if(!$occurrence){
 				return response()->json(['status' => 'failure', 'error' => 'Occurrence resource not found'], 400);
 			}
@@ -361,8 +378,7 @@ class OccurrenceController extends Controller{
 
 	public function delete($id, Request $request){
 		if($user = $this->authenticate($request)){
-			$id = $this->getOccid($id);
-			$occurrence = Occurrence::find($id);
+			$occurrence = $this->getOccurrence($id);
 			if(!$occurrence){
 				return response()->json(['status' => 'failure', 'error' => 'Occurrence resource not found'], 400);
 			}
@@ -636,8 +652,7 @@ class OccurrenceController extends Controller{
 			$responseArr['error'] = 'At this time, API call can only be triggered locally';
 			return response()->json($responseArr);
 		}
-		$id = $this->getOccid($id);
-		$occurrence = Occurrence::find($id);
+		$occurrence = $this->getOccurrence($id);
 		if(!$occurrence){
 			$responseArr['status'] = 500;
 			$responseArr['error'] = 'Unable to locate occurrence record (occid = '.$id.')';
@@ -688,13 +703,13 @@ class OccurrenceController extends Controller{
 	}
 
 	//Helper functions
-	protected function getOccid($id){
-		if(!is_numeric($id)){
-			$occid = Occurrence::where('occurrenceID', $id)->orWhere('recordID', $id)->value('occid');
-			if(is_numeric($occid)) $id = $occid;
-		}
-		return $id;
-	}
+	// protected function getOccid($id){
+	// 	if(!is_numeric($id)){
+	// 		$occid = Occurrence::where('occurrenceID', $id)->orWhere('recordID', $id)->value('occid');
+	// 		if(is_numeric($occid)) $id = $occid;
+	// 	}
+	// 	return $id;
+	// }
 
 	private function isAuthorized($user, $collid){
 		foreach($user['roles'] as $roles){
@@ -722,5 +737,13 @@ class OccurrenceController extends Controller{
 		}
 		curl_close($ch);
 		return json_decode($resJson,true);
+	}
+
+	private function getOccurrence($id){
+		$occurrence = Occurrence::where('occid', $id)
+			->orWhere('recordID', (string)$id)
+			->orWhere('occurrenceID', (string)$id)
+			->first();
+		return $occurrence;
 	}
 }
