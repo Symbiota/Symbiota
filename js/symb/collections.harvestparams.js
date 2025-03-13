@@ -91,11 +91,12 @@ function checkHarvestParamsForm(frm){
 		let early = frm.earlyInterval.value;
 		let late = frm.lateInterval.value;
 		if ((early !== "" && late === "") || (early === "" && late !== "")) {
-			alert("Both Early Interval and Late Interval need to have a value selected, even if the values are the same.");
+			alert(translations.INTERVAL_MISSING);
 			return false;
 		}
-		if (early in paleoTimes && late in paleoTimes && paleoTimes[early].myaStart < paleoTimes[late].myaEnd) {
-			alert("The Early Interval must be geologically older than the Late Interval.");
+
+		if (early in paleoTimes && late in paleoTimes && paleoTimes[early].myaStart <= paleoTimes[late].myaEnd) {
+			alert(translations.INTERVALS_WRONG_ORDER);
 			return false;
 		}
 	}

@@ -617,8 +617,8 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$rs = $this->conn->query($sql);
 			while ($r = $rs->fetch_object()) {
 				$paleoTimes[$r->gtsterm] = [
-					'myaStart' => $r->myaStart,
-					'myaEnd' => $r->myaEnd
+					'myaStart' => floatval($r->myaStart),
+					'myaEnd' => floatval($r->myaEnd)
 				];
 			}
 		}
