@@ -80,7 +80,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 			if($LANG_TAG=='en'){
 			?>
 			<h1>Welcome to the Guatemala Biodiversity Portal</h1>
-			<div style="padding: 0px 10px;font-size:130%">
+			<div>
 				<p>
 				This portal represents an accessible option for the management and digitization of data from
 				biological collections or field observations gathered by entities and researchers dedicated to the study of biodiversity.
@@ -100,7 +100,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 			else{
 			?>
 			<h1>Bienvenidos al Portal de Biodiversidad de Guatemala</h1>
-			<div style="padding: 0px 10px;font-size:130%">
+			<div>
 				<p>
 				El portal ofrece una alternativa libre y gratuita para el manejo y digitalización de datos
 				provenientes de colecciones biológicas, así como de observaciones de campo de entidades o investigadores dedicados al estudio de la
