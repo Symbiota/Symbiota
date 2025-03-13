@@ -4,10 +4,6 @@ This stylesheet is defined last and will override all previously loaded sheets. 
 */
 
 /* Universal */
-
-html {
-    font-size: 12px; /* This is what 1 rem will be base off of */
-}
  
 /* quicksearch */
 
