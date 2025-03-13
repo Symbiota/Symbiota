@@ -240,6 +240,50 @@
                 }
             }
         },
+        "/api/v2/exsiccati/{identifier}/number/{numberIdentifier}/occurrence": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "showOccurrencesByExsiccataNumber",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "Exsiccata ID or record ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "numberIdentifier",
+                        "in": "path",
+                        "description": "Exsiccata number ID (omenid)",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns list of occurrences associated with the given exsiccata number",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. Valid Exsiccata identifier and Number identifier required"
+                    },
+                    "404": {
+                        "description": "Record not found"
+                    }
+                }
+            }
+        },
         "/api/v2/installation": {
             "get": {
                 "tags": [

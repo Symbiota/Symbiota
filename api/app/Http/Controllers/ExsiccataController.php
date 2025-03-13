@@ -188,4 +188,61 @@ class ExsiccataController extends Controller {
         ];
         return response()->json($retObj);
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/v2/exsiccati/{identifier}/number/{numberIdentifier}/occurrence",
+     *     operationId="showOccurrencesByExsiccataNumber",
+     *     tags={""},
+     *     @OA\Parameter(
+     *         name="identifier",
+     *         in="path",
+     *         required=true,
+     *         description="Exsiccata ID or record ID",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="numberIdentifier",
+     *         in="path",
+     *         required=true,
+     *         description="Exsiccata number ID (omenid)",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Returns list of occurrences associated with the given exsiccata number",
+     *         @OA\JsonContent()
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Error: Bad request. Valid Exsiccata identifier and Number identifier required"
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="Record not found"
+     *     )
+     * )
+     */
+    public function showOccurrencesByExsiccataNumber($identifier, $numberIdentifier)
+    {
+        $record = DB::table('omexsiccatititles')
+            ->where('ometid', $identifier)
+            ->orWhere('recordID', $identifier)
+            ->first();
+
+        if (!$record) {
+            return response()->json(['error' => 'Exsiccata record not found'], 404);
+        }
+
+        $occurrences = DB::table('omexsiccatiocclink')
+            ->where('omenid', $numberIdentifier)
+            ->select('occid', 'ranking', 'notes')
+            ->get();
+
+        if ($occurrences->isEmpty()) {
+            return response()->json(['error' => 'Unable to locate occurrences based on exsiccata number'], 404);
+        }
+
+        return response()->json($occurrences);
+    }
 }
