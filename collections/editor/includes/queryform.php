@@ -51,11 +51,12 @@ else{
 			'locationid'=>$LANG['LOCATION_ID'],'locality'=>$LANG['LOCALITY'],'localitySecurity'=>$LANG['LOC_SEC'],'localitySecurityReason'=>$LANG['LOC_SEC_REASON'],
 			'localStage'=>$LANG['LOCAL_STAGE'],'locationRemarks'=>$LANG['LOC_REMARKS'],'member'=>$LANG['MEMBER'], 'username'=>$LANG['MODIFIED_BY'],
 			'municipality'=>$LANG['MUNICIPALITY'],'occurrenceRemarks'=>$LANG['NOTES_REMARKS'],'ocrFragment'=>$LANG['OCR_FRAGMENT'],'otherCatalogNumbers'=>$LANG['OTHER_CAT_NUMS'],
-			'ownerInstitutionCode'=>$LANG['OWNER_CODE'],'preparations'=>$LANG['PREPARATIONS'],'stratRemarks'=>$LANG['STRAT_REMARKS'],
-			'reproductiveCondition'=>$LANG['REP_COND'],'samplingEffort'=>$LANG['SAMP_EFFORT'],'samplingProtocol'=>$LANG['SAMP_PROTOCOL'],
-			'sciname'=>$LANG['SCI_NAME'],'sex'=>$LANG['SEX'],'slideProperties'=>$LANG['SLIDE_PROP'],'stage'=>$LANG['STAGE'],'stateProvince'=>$LANG['STATE_PROVINCE'], 'storageAge'=>$LANG['STORAGE_AGE'],
-			'substrate'=>$LANG['SUBSTRATE'],'taxonRemarks'=>$LANG['TAXON_REMARKS'],'typeStatus'=>$LANG['TYPE_STATUS'],'verbatimCoordinates'=>$LANG['VERBAT_COORDS'],
-			'verbatimEventDate'=>$LANG['VERBATIM_DATE'],'verbatimDepth'=>$LANG['VERBATIM_DEPTH'],'verbatimElevation'=>$LANG['VERBATIM_ELE'],'waterbody'=> $LANG['WATER_BODY']);
+			'ownerInstitutionCode'=>$LANG['OWNER_CODE'],'preparations'=>$LANG['PREPARATIONS'],'reproductiveCondition'=>$LANG['REP_COND'],
+			'samplingEffort'=>$LANG['SAMP_EFFORT'],'samplingProtocol'=>$LANG['SAMP_PROTOCOL'],'sciname'=>$LANG['SCI_NAME'],'sex'=>$LANG['SEX'],
+			'slideProperties'=>$LANG['SLIDE_PROP'],'stage'=>$LANG['STAGE'],'stateProvince'=>$LANG['STATE_PROVINCE'], 'storageAge'=>$LANG['STORAGE_AGE'],
+			'stratRemarks'=>$LANG['STRAT_REMARKS'],'substrate'=>$LANG['SUBSTRATE'],'taxonEnvironment'=>$LANG['TAXON_ENVIRONMENT'], 'taxonRemarks'=>$LANG['TAXON_REMARKS'],
+			'typeStatus'=>$LANG['TYPE_STATUS'],'verbatimCoordinates'=>$LANG['VERBAT_COORDS'],'verbatimEventDate'=>$LANG['VERBATIM_DATE'],
+			'verbatimDepth'=>$LANG['VERBATIM_DEPTH'],'verbatimElevation'=>$LANG['VERBATIM_ELE'],'waterbody'=> $LANG['WATER_BODY']);
 }
 $customTermArr = array('EQUALS', 'NOT_EQUALS', 'STARTS_WITH', 'LIKE', 'NOT_LIKE', 'GREATER_THAN', 'LESS_THAN', 'IS_NULL', 'NOT_NULL');
 $customArr = array();
