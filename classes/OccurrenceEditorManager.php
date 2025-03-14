@@ -710,7 +710,7 @@ class OccurrenceEditorManager {
 		elseif($this->sqlWhere){
 			$this->addTableJoins($sqlFrag);
 			if (strpos($sqlFrag, 'LEFT JOIN omoccurpaleo') === false) {
-				$sqlFrag .= ' LEFT JOIN omoccurpaleo p ON o.occid = p.occid ';
+				$sqlFrag .= ' LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
 			}
 			$sqlFrag .= $this->sqlWhere;
 			if($limit){
@@ -799,7 +799,7 @@ class OccurrenceEditorManager {
 			$sql .= 'INNER JOIN omcrowdsourcequeue q ON q.occid = o.occid ';
 		}
 		if (strpos($this->sqlWhere, 'p.')) {
-			$sql .= 'LEFT JOIN omoccurpaleo p ON o.occid = p.occid ';
+			$sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
 		}
 	}
 
