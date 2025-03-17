@@ -228,7 +228,11 @@ class OccurrenceController extends Controller{
 	 *		 in="query",
 	 *		 description="Whether (1) or not (0) to include media within output",
 	 *		 required=false,
-	 *		 @OA\Schema(type="integer")
+	 *		 @OA\Schema(
+	 *			type="integer",
+	 *			default="0",
+	 *			enum={0, 1}
+	 *		)
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="includeIdentifications",
