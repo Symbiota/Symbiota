@@ -67,7 +67,6 @@ class TaxonomyController extends Controller {
 	 */
 	public function showAllTaxaSearch(Request $request) {
 		$this->validate($request, [
-			// 'taxon' => 'required',
 			'limit' => 'integer',
 			'offset' => 'integer'
 		]);
