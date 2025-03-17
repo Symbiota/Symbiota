@@ -98,15 +98,12 @@ class ExsiccataController extends Controller {
      */
 
     public function showExsiccata($identifier) {
-        $record = DB::table('omexsiccatititles')
-            ->where('ometid', $identifier)
+        $record = Exsiccata::where('ometid', $identifier)
             ->orWhere('recordID', $identifier)
             ->first();
         if (!$record) {
             return response()->json(['error' => 'Record not found'], 404);
         }
-
-        unset($record->lasteditedby);
 
         return response()->json($record);
     }
@@ -117,6 +114,13 @@ class ExsiccataController extends Controller {
      *	 path="/api/v2/exsiccata/{identifier}/number",
      *	 operationId="/api/v2/exsiccata/identifier/number",
      *	 tags={""},
+     *	 @OA\Parameter(
+     *		 name="identifier",
+     *		 in="path",
+     *		 description="Identifier (ometid (PK) - currently does not accommodate recordID) associated with target exsiccata title",
+     *		 required=true,
+     *		 @OA\Schema(type="integer")
+     *	 ),
      *   @OA\Parameter(
      *		 name="limit",
      *		 in="query",
@@ -130,13 +134,6 @@ class ExsiccataController extends Controller {
      *		 description="Determines the starting point for the search results. A limit of 100 and offset of 200, will display 100 records starting the 200th record.",
      *		 required=false,
      *		 @OA\Schema(type="integer", default=0)
-     *	 ),
-     *	 @OA\Parameter(
-     *		 name="identifier",
-     *		 in="path",
-     *		 description="Identifier (ometid (PK) - currently does not accommodate recordID) associated with target exsiccata title",
-     *		 required=true,
-     *		 @OA\Schema(type="integer")
      *	 ),
      *	 @OA\Response(
      *		 response="200",
@@ -266,5 +263,60 @@ class ExsiccataController extends Controller {
             'results' => $numbersResult,
         ];
         return response()->json($retObj);
+    }
+     /**
+     *     path="/api/v2/exsiccati/{identifier}/number/{numberIdentifier}/occurrence",
+     *     operationId="showOccurrencesByExsiccataNumber",
+     *     tags={""},
+     *     @OA\Parameter(
+     *         name="identifier",
+     *         in="path",
+     *         required=true,
+     *         description="Exsiccata ID or record ID",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="numberIdentifier",
+     *         in="path",
+     *         required=true,
+     *         description="Exsiccata number ID (omenid)",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Returns list of occurrences associated with the given exsiccata number",
+     *         @OA\JsonContent()
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Error: Bad request. Valid Exsiccata identifier and Number identifier required"
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="Record not found"
+     *     )
+     * )
+     */
+    public function showOccurrencesByExsiccataNumber($identifier, $numberIdentifier)
+    {
+        $record = DB::table('omexsiccatititles')
+            ->where('ometid', $identifier)
+            ->orWhere('recordID', $identifier)
+            ->first();
+
+        if (!$record) {
+            return response()->json(['error' => 'Exsiccata record not found'], 404);
+        }
+
+        $occurrences = DB::table('omexsiccatiocclink')
+            ->where('omenid', $numberIdentifier)
+            ->select('occid', 'ranking', 'notes')
+            ->get();
+
+        if ($occurrences->isEmpty()) {
+            return response()->json(['error' => 'Unable to locate occurrences based on exsiccata number'], 404);
+        }
+
+        return response()->json($occurrences);
     }
 }

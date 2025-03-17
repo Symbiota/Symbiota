@@ -193,6 +193,15 @@
                 "operationId": "/api/v2/exsiccata/identifier/number",
                 "parameters": [
                     {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "Identifier (ometid (PK) - currently does not accommodate recordID) associated with target exsiccata title",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
                         "name": "limit",
                         "in": "query",
                         "description": "Controls the number of results in the page.",
@@ -210,15 +219,6 @@
                         "schema": {
                             "type": "integer",
                             "default": 0
-                        }
-                    },
-                    {
-                        "name": "identifier",
-                        "in": "path",
-                        "description": "Identifier (ometid (PK) - currently does not accommodate recordID) associated with target exsiccata title",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
                         }
                     }
                 ],
@@ -1744,6 +1744,41 @@
                 }
             }
         },
+        "/api/v2/occurrence/{identifier}/reharvest": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/occurrence/identifier/reharvest",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "occid or specimen GUID (occurrenceID) associated with target occurrence",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Triggers a reharvest event of a snapshot record. If record is Live managed, request is ignored",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request: Occurrence identifier is required, API can only be triggered locally (at this time)."
+                    },
+                    "500": {
+                        "description": "Error: unable to locate record"
+                    }
+                }
+            }
+        },
         "/api/v2/taxonomy": {
             "get": {
                 "tags": [
@@ -1984,7 +2019,7 @@
     "components": {
         "responses": {
             "200": {
-                "description": "Triggers a reharvest event of a snapshot record. If record is Live managed, request is ignored",
+                "description": "Returns list of occurrences associated with the given exsiccata number",
                 "content": {
                     "application/json": {
                         "schema": {}
@@ -1992,20 +2027,29 @@
                 }
             },
             "400": {
-                "description": "Error: Bad request: Occurrence identifier is required, API can only be triggered locally (at this time)."
+                "description": "Error: Bad request. Valid Exsiccata identifier and Number identifier required"
             },
-            "500": {
-                "description": "Error: unable to locate record"
+            "404": {
+                "description": "Record not found"
             }
         },
         "parameters": {
             "identifier": {
                 "name": "identifier",
                 "in": "path",
-                "description": "occid or specimen GUID (occurrenceID) associated with target occurrence",
+                "description": "Exsiccata ID or record ID",
                 "required": true,
                 "schema": {
                     "type": "string"
+                }
+            },
+            "numberIdentifier": {
+                "name": "numberIdentifier",
+                "in": "path",
+                "description": "Exsiccata number ID (omenid)",
+                "required": true,
+                "schema": {
+                    "type": "integer"
                 }
             }
         }

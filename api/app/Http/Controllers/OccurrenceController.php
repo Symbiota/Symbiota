@@ -600,7 +600,7 @@ class OccurrenceController extends Controller{
 	}
 
 	/**
-	 * @off_OA\Get(
+	 * @OA\Get(
 	 *	 path="/api/v2/occurrence/{identifier}/reharvest",
 	 *	 operationId="/api/v2/occurrence/identifier/reharvest",
 	 *	 tags={""},
