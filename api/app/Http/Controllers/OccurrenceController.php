@@ -22,8 +22,8 @@ class OccurrenceController extends Controller{
 
 	/**
 	 * @OA\Get(
-	 *	 path="/api/v2/occurrence/search",
-	 *	 operationId="/api/v2/occurrence/search",
+	 *	 path="/api/v2/occurrence",
+	 *	 operationId="/api/v2/occurrence",
 	 *	 tags={""},
 	 *	 @OA\Parameter(
 	 *		 name="collid",
