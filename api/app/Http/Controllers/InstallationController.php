@@ -171,7 +171,7 @@ class InstallationController extends Controller{
 			unset($responseArr['error']);
 		}
 		elseif($id == $_ENV['PORTAL_GUID']){
-			//Make sure touch isn't referring to self
+			//Make sure handshake isn't referring to self; portals can't handshake with themselves
 			$responseArr['status'] = 400;
 			$responseArr['error'] = 'Registration failed: handshake is referencing self';
 		}
@@ -179,12 +179,12 @@ class InstallationController extends Controller{
 			//Remote installation not yet in system, thus add and then process list from remote
 			if($baseUrl = $request->input('endpoint')){
 				//Insert portal
-				$urlPing = $baseUrl.'/api/v2/installation/ping';
+				$urlPing = $baseUrl.'/api/v2/installation/status';
 				if($remote = $this->getAPIResponce($urlPing)){
 					if($id == $remote['guid']){
 						//Shake back just to makes sure remote knows about self
-						$remoteTouch = $baseUrl.'/api/v2/installation/'.$_ENV['PORTAL_GUID'].'/touch?endpoint='.htmlentities($this->getServerDomain().$_ENV['CLIENT_ROOT']);
-						$this->getAPIResponce($remoteTouch, true);
+						$remoteHandshake = $baseUrl.'/api/v2/installation/'.$_ENV['PORTAL_GUID'].'/handshake?endpoint='.htmlentities($this->getServerDomain().$_ENV['CLIENT_ROOT']);
+						$this->getAPIResponce($remoteHandshake, true);
 						try {
 							//Register remote
 							$portalObj = PortalIndex::create($remote);
@@ -200,12 +200,12 @@ class InstallationController extends Controller{
 									if(PortalIndex::where('guid',$portal['guid'])->count()) $currentRegistered++;
 									elseif($portal['guid'] != $_ENV['PORTAL_GUID']){
 										//If remote exists, add by retriving info directly from source
-										$remotePing = $portal['urlRoot'].'/api/v2/installation/ping';
+										$remotePing = $portal['urlRoot'].'/api/v2/installation/status';
 										if($newRemote = $this->getAPIResponce($remotePing)){
 											PortalIndex::create($newRemote);
-											//Touch remote installation but don't wait for a response because propagation across a large network can take awhile
-											$urlTouch = $portal['urlRoot'].'/api/v2/installation/'.$_ENV['PORTAL_GUID'].'/touch?endpoint='.htmlentities($this->getServerDomain().$_ENV['CLIENT_ROOT']);
-											$this->getAPIResponce($urlTouch, true);
+											//Handshake remote installation but don't wait for a response because propagation across a large network can take awhile
+											$urlHandshake = $portal['urlRoot'].'/api/v2/installation/'.$_ENV['PORTAL_GUID'].'/handshake?endpoint='.htmlentities($this->getServerDomain().$_ENV['CLIENT_ROOT']);
+											$this->getAPIResponce($urlHandshake, true);
 											$newRegistration++;
 										}
 									}
