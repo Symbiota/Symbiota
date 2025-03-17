@@ -216,7 +216,7 @@ class OccurrenceMaintenance {
 			FROM omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname AND o.scientificnameauthorship = t.author
 			WHERE (o.TidInterpreted IS NULL) ';
 		if($this->collidStr) $sql .= 'AND o.collid IN('.$this->collidStr.') ';
-		$sql .= 'ORDER BY t.tid';
+		//$sql .= 'ORDER BY t.tid';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			if($occidArr && $r->tid != $activeTid) $this->batchUpdateTidInterpreted($occidArr);
@@ -234,7 +234,7 @@ class OccurrenceMaintenance {
 			INNER JOIN taxa t2 ON e.parenttid = t2.tid
 			WHERE (o.TidInterpreted IS NULL) AND (t2.rankid = 140) AND (t2.sciname = o.family) ';
 		if($this->collidStr) $sql .= 'AND o.collid IN('.$this->collidStr.') ';
-		$sql .= 'ORDER BY t.tid';
+		//$sql .= 'ORDER BY t.tid';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			if($occidArr && $r->tid != $activeTid) $this->batchUpdateTidInterpreted($occidArr);
@@ -248,7 +248,7 @@ class OccurrenceMaintenance {
 		$activeTid = 0;
 		$sql = 'SELECT t.tid, o.occid FROM omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname WHERE o.TidInterpreted IS NULL ';
 		if($this->collidStr) $sql .= 'AND o.collid IN('.$this->collidStr.') ';
-		$sql .= 'ORDER BY t.tid';
+		//$sql .= 'ORDER BY t.tid';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			if($occidArr && $r->tid != $activeTid) $this->batchUpdateTidInterpreted($occidArr);
@@ -264,7 +264,7 @@ class OccurrenceMaintenance {
 			FROM omoccurrences o INNER JOIN taxa t ON CONCAT(SUBSTRING_INDEX(o.sciname, " (", 1), " ", SUBSTRING_INDEX(o.sciname, ") ", -1)) = t.sciname
 			WHERE o.tidinterpreted IS NULL AND o.sciname LIKE "% (%) %" ';
 		if($this->collidStr) $sql .= 'AND o.collid IN('.$this->collidStr.') ';
-		$sql .= 'ORDER BY t.tid';
+		//$sql .= 'ORDER BY t.tid';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			if($occidArr && $r->tid != $activeTid) $this->batchUpdateTidInterpreted($occidArr);
@@ -281,7 +281,7 @@ class OccurrenceMaintenance {
 			FROM taxa t INNER JOIN omoccurrences o ON t.sciname LIKE REPLACE(o.sciname, "× ", "%×%")
 			WHERE o.tidinterpreted IS NULL AND o.sciname LIKE "%× %" ';
 		if($this->collidStr) $sql .= 'AND o.collid IN('.$this->collidStr.') ';
-		$sql .= 'ORDER BY t.tid';
+		//$sql .= 'ORDER BY t.tid';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			if($occidArr && $r->tid != $activeTid) $this->batchUpdateTidInterpreted($occidArr);

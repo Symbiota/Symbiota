@@ -524,6 +524,7 @@ class OccurrenceDownload{
 		if(strpos($sqlWhere,'e.taxauthid')) $sqlJoin .= 'INNER JOIN taxaenumtree e ON o.tidinterpreted = e.tid ';
 		if(strpos($sqlWhere,'ctl.clid')) $sqlJoin .= 'INNER JOIN fmvouchers v ON o.occid = v.occid INNER JOIN fmchklsttaxalink ctl ON v.clTaxaID = ctl.clTaxaID ';
 		if(strpos($sqlWhere,'p.lngLatPoint')) $sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
+		if (strpos($sqlWhere, 'ds.datasetid')) $sqlJoin .= 'INNER JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
 		return $sqlJoin;
 	}
 

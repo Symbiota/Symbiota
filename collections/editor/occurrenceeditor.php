@@ -260,7 +260,7 @@ if($SYMB_UID){
 						$statusStr = $LANG['IMAGE_ADD_SUCCESS'];
 					}
 				} catch(Exception $e) {
-					$statusStr = $e->getMessage();
+					$statusStr = "ERROR: " . $e->getMessage();
 				} finally {
 					$tabTarget = 2;
 				}

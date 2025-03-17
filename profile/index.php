@@ -1,5 +1,8 @@
 <?php
 include_once('../config/symbini.php');
+include_once($SERVER_ROOT . '/config/auth_config.php');
+require_once($SERVER_ROOT . '/vendor/autoload.php');
+use Jumbojett\OpenIDConnectClient;
 
 if($SYMB_UID){
 	if($_SESSION['refurl']){
@@ -76,8 +79,17 @@ if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) $action = '';
 
 if($remMe) $pHandler->setRememberMe(true);
 if($action == 'logout'){
-	$pHandler->reset();
-	header('Location: ../index.php');
+	//check if using third party auth
+	if(array_key_exists('AUTH_PROVIDER', $_SESSION)){
+		$oidc = new OpenIDConnectClient($PROVIDER_URLS[$_SESSION['AUTH_PROVIDER']], $CLIENT_IDS[$_SESSION['AUTH_PROVIDER']], $CLIENT_SECRETS[$_SESSION['AUTH_PROVIDER']], $PROVIDER_URLS[$_SESSION['AUTH_PROVIDER']]);
+		$pHandler->reset();
+		$oidc->signOut($_SESSION['AUTH_CLIENT_ID'], $redirect);
+
+	}
+	else{
+		$pHandler->reset();
+		header('Location: ../index.php');
+	}
 }
 elseif($action == 'login'){
 	if($pHandler->authenticate($_POST['password'])){

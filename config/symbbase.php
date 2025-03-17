@@ -11,8 +11,15 @@ session_start(array('gc_maxlifetime'=>3600,'cookie_path'=>$CLIENT_ROOT,'cookie_s
 include_once($SERVER_ROOT . '/classes/utilities/Encryption.php');
 include_once($SERVER_ROOT . '/classes/ProfileManager.php');
 
-$pHandler = null;
 //Check session data to see if signed in
+
+if (isset($_SESSION['force_logout'])){
+	if(!isset($pHandler)) $pHandler = new ProfileManager();
+	$pHandler->reset();
+	unset($_SESSION['force_logout']);
+}
+$pHandler = null;
+
 $PARAMS_ARR = Array();				//params => 'un=egbot&dn=Edward&uid=301'
 $USER_RIGHTS = Array();
 if(isset($_SESSION['userparams'])) $PARAMS_ARR = $_SESSION['userparams'];

@@ -94,6 +94,7 @@ class OccurrenceImport extends UtilitiesFileImport{
 			$fields = [
 				 //'tid',
 				'thumbnailurl',
+				'sourceurl',
 				'archiveurl',
 				'referenceurl',
 				'photographer',
@@ -131,12 +132,24 @@ class OccurrenceImport extends UtilitiesFileImport{
 				}
 				
 				// Will Not store files on the server unless StorageStrategy is provided which is desired for this use case
-				Media::add($data);
-				if($errors = Media::getErrors()) {
-					$this->logOrEcho('ERROR: ' . array_pop($errors));
-				} else {
-					$this->logOrEcho($LANG['IMAGE_LOADED'].': <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$occid.'</a>', 1);
-					$status = true;
+				try {
+					Media::add($data);
+					if($errors = Media::getErrors()) {
+						$this->logOrEcho('ERROR: ' . array_pop($errors));
+					} else {
+						$this->logOrEcho($LANG['IMAGE_LOADED'].': <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$occid.'</a>', 1);
+						$status = true;
+					}
+				} catch(MediaException $th) {
+					$message = $th->getMessage();
+
+					$this->logOrEcho('ERROR: ' . $message);
+					$this->logOrEcho("Ensure mapping links point directly at the media file", 1, 'div');
+					if(strpos($message, ' text ')) {
+						$this->logOrEcho("Linking webpages is supported via the sourceUrl field", 1, 'div');
+					}
+				} catch(Throwable $th) {
+					$this->logOrEcho('ERROR: ' . $th->getMessage());
 				}
 			}
 		}
@@ -349,7 +362,7 @@ class OccurrenceImport extends UtilitiesFileImport{
 		$this->targetFieldMap[''] = '------------------------------------';
 		$fieldArr = array();
 		if($this->importType == self::IMPORT_IMAGE_MAP){
-			$fieldArr = array('url', 'thumbnailUrl', 'archiveUrl', 'referenceUrl', 'photographer', 'photographerUid', 'caption', 'owner', 'anatomy', 'notes',
+			$fieldArr = array('url', 'thumbnailUrl', 'sourceUrl', 'archiveUrl', 'referenceUrl', 'photographer', 'photographerUid', 'caption', 'owner', 'anatomy', 'notes',
 				'format', 'sourceIdentifier', 'hashFunction', 'hashValue', 'mediaMD5', 'copyright', 'rights', 'accessRights', 'sortOccurrence');
 
 			$this->targetFieldMap['originalurl'] = 'originalUrl (required)';
