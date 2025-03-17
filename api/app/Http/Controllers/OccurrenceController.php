@@ -226,7 +226,7 @@ class OccurrenceController extends Controller{
 	 *	 @OA\Parameter(
 	 *		 name="includeMedia",
 	 *		 in="query",
-	 *		 description="Whether to include media within output",
+	 *		 description="Whether (1) or not (0) to include media within output",
 	 *		 required=false,
 	 *		 @OA\Schema(type="integer")
 	 *	 ),

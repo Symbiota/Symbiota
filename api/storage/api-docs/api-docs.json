@@ -1434,7 +1434,7 @@
                     {
                         "name": "identifier",
                         "in": "path",
-                        "description": "occid or specimen GUID (occurrenceID) associated with target occurrence",
+                        "description": "occid or specimen GUID (occurrenceID) or recordID associated with target occurrence",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -1443,7 +1443,7 @@
                     {
                         "name": "includeMedia",
                         "in": "query",
-                        "description": "Whether to include media within output",
+                        "description": "Whether (1) or not (0) to include media within output",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -1484,7 +1484,7 @@
                     {
                         "name": "identifier",
                         "in": "path",
-                        "description": "occid or specimen GUID (occurrenceID) associated with target occurrence",
+                        "description": "occid or specimen GUID (occurrenceID) or recordID associated with target occurrence",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -1516,7 +1516,7 @@
                     {
                         "name": "identifier",
                         "in": "path",
-                        "description": "occid or specimen GUID (occurrenceID) associated with target occurrence",
+                        "description": "occid or specimen GUID (occurrenceID) or recordID associated with target occurrence",
                         "required": true,
                         "schema": {
                             "type": "string"
