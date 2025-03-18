@@ -2,10 +2,14 @@ function copyUrl(){
 	host = window.location.protocol + '//' + window.location.host;
 	var $temp = $("<input>");
 	$("body").append($temp);
-	var activeLink = host + window.location.pathname;
+	let activeLink = host + window.location.pathname;
 	if(sessionStorage.querystr){
 		activeLink = activeLink + "?" + encodedQueryStr(sessionStorage.querystr);
-   }
+	}
+	const verbatimUrl = sessionStorage.getItem('verbatimSearchUrl');
+	if(verbatimUrl){
+		activeLink = verbatimUrl;
+	}
 	$temp.val(activeLink).select();
 	document.execCommand("copy");
 	$temp.remove();
