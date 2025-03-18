@@ -31,7 +31,7 @@ class ObservationSubmitManager {
 			}
 			//Get tid for scientific name
 			$tid = 0;
-			$recordSecurity = (array_key_exists('recordSecurity', $postArr) ? 1 : 0);
+			$recordSecurity = (array_key_exists('recordsecurity', $postArr) ? 1 : 0);
 			if($postArr['sciname']){
 				$result = $this->conn->query('SELECT tid, securitystatus FROM taxa WHERE (sciname = "'.$postArr['sciname'].'")');
 				if($row = $result->fetch_object()){
@@ -52,6 +52,8 @@ class ObservationSubmitManager {
 					}
 				}
 			}
+			$securityReason = '';
+			if($recordSecurity) $securityReason = '[Security Setting Locked]';
 
 			$verbatimElevation = $postArr['verbatimelevation'];
 			if(is_numeric($verbatimElevation)) $verbatimElevation .= 'ft.';
@@ -60,7 +62,7 @@ class ObservationSubmitManager {
 				'identificationReferences, recordedBy, recordNumber, '.
 				'associatedCollectors, eventDate, year, month, day, startDayOfYear, habitat, substrate, occurrenceRemarks, associatedTaxa, '.
 				'verbatimattributes, reproductiveCondition, cultivationStatus, establishmentMeans, country, '.
-				'stateProvince, county, locality, recordSecurity, decimalLatitude, decimalLongitude, '.
+				'stateProvince, county, locality, recordSecurity, securityReason, decimalLatitude, decimalLongitude, '.
 				'geodeticDatum, coordinateUncertaintyInMeters, georeferenceRemarks, minimumElevationInMeters, verbatimElevation, observeruid, dateEntered) '.
 				'VALUES ('.$this->collId.',"HumanObservation",'.($postArr['family']?'"'.$this->cleanInStr($postArr['family']).'"':'NULL').','.
 				'"'.$this->cleanInStr($postArr['sciname']).'","'.
@@ -85,7 +87,7 @@ class ObservationSubmitManager {
 				'"'.$this->cleanInStr($postArr['country']).'",'.
 				($postArr['stateprovince']?'"'.$this->cleanInStr($postArr['stateprovince']).'"':'NULL').','.
 				($postArr['county']?'"'.$this->cleanInStr($postArr['county']).'"':'NULL').','.
-				'"' . $this->cleanInStr($postArr['locality']) . '",' . $recordSecurity . ','.
+				'"' . $this->cleanInStr($postArr['locality']) . '",' . $recordSecurity . ',' . ($securityReason ? '"' . $securityReason . '"' : 'NULL') . ',' .
 				$postArr['decimallatitude'].','.$postArr['decimallongitude'].','.
 				($postArr['geodeticdatum']?'"'.$this->cleanInStr($postArr['geodeticdatum']).'"':'NULL').','.
 				($postArr['coordinateuncertaintyinmeters']?'"'.$postArr['coordinateuncertaintyinmeters'].'"':'NULL').','.
