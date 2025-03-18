@@ -1226,12 +1226,12 @@
                 }
             }
         },
-        "/api/v2/occurrence/annotation/search": {
+        "/api/v2/occurrence/annotation": {
             "get": {
                 "tags": [
                     ""
                 ],
-                "operationId": "/api/v2/occurrence/annotation/search",
+                "operationId": "/api/v2/occurrence/annotation",
                 "parameters": [
                     {
                         "name": "collid",
@@ -1328,12 +1328,12 @@
                 }
             }
         },
-        "/api/v2/occurrence/search": {
+        "/api/v2/occurrence": {
             "get": {
                 "tags": [
                     ""
                 ],
-                "operationId": "/api/v2/occurrence/search",
+                "operationId": "/api/v2/occurrence",
                 "parameters": [
                     {
                         "name": "collid",
@@ -1792,53 +1792,10 @@
                 "operationId": "/api/v2/taxonomy",
                 "parameters": [
                     {
-                        "name": "limit",
-                        "in": "query",
-                        "description": "Controls the number of results in the page.",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 100
-                        }
-                    },
-                    {
-                        "name": "offset",
-                        "in": "query",
-                        "description": "Determines the starting point for the search results. A limit of 100 and offset of 200, will display 100 records starting the 200th record.",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 0
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Returns list of inventories registered within system",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Bad request. "
-                    }
-                }
-            }
-        },
-        "/api/v2/taxonomy/search": {
-            "get": {
-                "tags": [
-                    ""
-                ],
-                "operationId": "/api/v2/taxonomy/search",
-                "parameters": [
-                    {
                         "name": "taxon",
                         "in": "query",
                         "description": "Taxon search term",
-                        "required": true,
+                        "required": false,
                         "schema": {
                             "type": "string"
                         }
