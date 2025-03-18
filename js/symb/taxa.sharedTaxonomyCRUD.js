@@ -115,9 +115,9 @@ async function verifyLoadFormCore(f, silent = false, originalForm) {
   }
   var rankId = f.rankid.value;
   if (rankId == "") {
-    if (!silent) alert("Taxon rank field required.");
+    if (!silent) alert(translations.TAXON_RANK_REQUIRED);
     document.getElementById("error-display").textContent =
-      "Taxon rank field required.";
+      translations.TAXON_RANK_REQUIRED;
     return false;
   }
   return true;

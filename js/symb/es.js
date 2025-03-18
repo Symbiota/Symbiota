@@ -1,6 +1,8 @@
 const translations = {
   CLICK_TO_DISMISS: "Haga clic para descartar",
   // taxonomyloader:
+  TAXON: "Taxón",
+  PARENT_TAXON: "Taxón padre",
   FIELD_TOO_LONG: "El texto del campo es demasiado largo. El límite de caracteres para este campo es",
   PARENT_TAXON_REQUIRED: "Taxón principal requerido.",
   PARENT_ID_NOT_SET: "¡El identificador principal no está configurado! Asegúrese de seleccionar el taxón principal de la lista.",
