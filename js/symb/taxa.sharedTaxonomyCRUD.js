@@ -108,9 +108,9 @@ async function verifyLoadFormCore(f, silent = false, originalForm) {
     return false;
   }
   if (f.unitname1.value == "") {
-    if (!silent) alert("Unit Name 1 (genus or uninomial) field required.");
+    if (!silent) alert(translations.UNIT_NAME_REQUIRED);
     document.getElementById("error-display").textContent =
-      "Unit Name 1 (genus or uninomial) field required.";
+      translations.UNIT_NAME_REQUIRED;
     return false;
   }
   var rankId = f.rankid.value;
@@ -126,6 +126,7 @@ async function verifyLoadFormCore(f, silent = false, originalForm) {
 function checkNameExistence(f, silent = false) {
   return new Promise((resolve, reject) => {
     if (!f?.sciname?.value || !f?.rankid?.value) {
+      document.getElementById("error-display").textContent = translations.SCI_NAME_RANK_REQUIRED;
       resolve(false);
     } else {
       $.ajax({
@@ -140,23 +141,25 @@ function checkNameExistence(f, silent = false) {
           if (msg != "0") {
             if (!silent) {
               alert(
-                "Taxon " +
+                  translations.TAXON +
+                  " " +
                   f.sciname.value +
                   " " +
                   f.author.value +
                   " (" +
                   msg +
-                  ") already exists in database"
+                  ") " + translations.ALREADY_EXISTS
               );
             }
             document.getElementById("error-display").textContent =
-              "Taxon " +
+              translations.TAXON +
+              " " +
               f.sciname.value +
               " " +
               f.author.value +
               " (" +
               msg +
-              ") already exists in database";
+              ") " + translations.ALREADY_EXISTS;
             resolve(false);
           } else {
             resolve(true);

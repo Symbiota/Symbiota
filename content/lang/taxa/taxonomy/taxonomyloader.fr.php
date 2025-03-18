@@ -25,6 +25,7 @@ $LANG['EPITHET'] = 'Épithète';
 $LANG['SPECIF_EPITHET_FIELD'] = "Champ d'épithète spécifique";
 $LANG['INFRA_EPITHET_FIELD'] = "Champ d'épithète infraspécifique";
 $LANG['RANK_FIELD'] = 'Champ de rang';
+$LANG['RUN_QUICK_PARSE'] = 'Analyser';
 $LANG['REQUIRED'] = "* = Champ Obligatoire";
 
 ?>
