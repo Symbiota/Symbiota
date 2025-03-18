@@ -71,8 +71,6 @@ $(document).ready(function () {
 
 async function verifyLoadForm(f, silent = false) {
   const coreVerify = await verifyLoadFormCore(f, true);
-  console.log("silent is: " + silent);
-  
   if (coreVerify) {
     if (!validateFormInput(f, silent))
       return false;
