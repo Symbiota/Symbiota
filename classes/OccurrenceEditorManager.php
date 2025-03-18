@@ -552,7 +552,7 @@ class OccurrenceEditorManager {
 				}
 				elseif(in_array($customField,$this->fieldArr['omoccurpaleo'])){
 					//Used for paleo fields
-					$customField = 'p.'.$customField;
+					$customField = 'paleo.'.$customField;
 				}
 				else{
 					$customField = 'o.' . $customField;
@@ -798,7 +798,7 @@ class OccurrenceEditorManager {
 		if ($this->crowdSourceMode) {
 			$sql .= 'INNER JOIN omcrowdsourcequeue q ON q.occid = o.occid ';
 		}
-		if (strpos($this->sqlWhere, 'p.')) {
+		if (strpos($this->sqlWhere, 'paleo.')) {
 			$sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
 		}
 	}
@@ -2077,13 +2077,13 @@ class OccurrenceEditorManager {
 
 		if (!$buMatch || $ov === '') {
 			if (in_array($fn, $this->fieldArr['omoccurpaleo']))
-				$sql .= ' AND (p.'.$fn.' '.($ov===''?'IS NULL':'= "'.$ov.'"').') ';
+				$sql .= ' AND (paleo.'.$fn.' '.($ov===''?'IS NULL':'= "'.$ov.'"').') ';
 			else
 				$sql .= ' AND (o.' . $fn . ' ' . ($ov === '' ? 'IS NULL' : '= "' . $ov . '"') . ') ';
 		} else {
 			//Selected "Match any part of field"
 			if (in_array($fn, $this->fieldArr['omoccurpaleo']))
-			$sql .= ' AND (p.'.$fn.' LIKE "%'.$ov.'%") ';
+			$sql .= ' AND (paleo.'.$fn.' LIKE "%'.$ov.'%") ';
 			else
 				$sql .= ' AND (o.' . $fn . ' LIKE "%' . $ov . '%") ';
 		}
