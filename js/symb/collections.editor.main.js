@@ -1258,7 +1258,7 @@ function openOccurrenceSearch(target) {
 
 function securityChangedByUser(f) {
   securityChanged(f);
-  if (f.recordsecurity.value == 1) {
+  if (f.recordsecurity.value > 0) {
     f.lockSecurity.checked = true;
   } else {
     f.lockSecurity.checked = false;

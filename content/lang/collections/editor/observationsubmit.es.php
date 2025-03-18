@@ -2,11 +2,9 @@
 /*
 ------------------
 Language: Español (Spanish)
-Translated by: Samanta Orellana
-Date Translated: 2021-09-05
+Translated by: Samanta Orellana (2021-09-05)
 ------------------
 */
-
 include_once($SERVER_ROOT.'/content/lang/collections/editor/skeletalsubmit.es.php');
 
 $LANG['OBS_SUBMIT'] = 'Envío de Observación';
@@ -45,16 +43,13 @@ $LANG['DATUM'] = 'Datum';
 $LANG['ELEV_M'] = 'Elev. (metros)';
 $LANG['ELEV_FT'] = 'Elev. (pies)';
 $LANG['GEO_REMARKS'] = 'Comentarios de Georeferenciación';
-$LANG['LATITUDE_DEG'] = 'Grados (latitud)';
-$LANG['LATITUDE_MIN'] = 'Minutos (latitud)';
-$LANG['LATITUDE_SEC'] = 'Segundos (latitud)';
+$LANG['DEG'] = 'Grados';
+$LANG['MIN'] = 'Minutos';
+$LANG['SEC'] = 'Segundos';
 $LANG['N'] = 'N'; //Como en el Norte
 $LANG['S'] = 'S'; //Como en el sur
-$LANG['LONGITUDE_DEG'] = 'Grados (longitud)';
-$LANG['LONGITUDE_MIN'] = 'Minutos (longitud)';
-$LANG['LONGITUDE_SEC'] = 'Segundos (longitud)';
-$LANG['E'] = 'E'; //As in East
-$LANG['W'] = 'W'; //As in West
+$LANG['E'] = 'E'; //Como en Este
+$LANG['W'] = 'O'; //Como en Oeste
 $LANG['MISC'] = 'Misc';
 $LANG['HABITAT'] = 'Hábitat';
 $LANG['SUBSTRATE'] = 'Sustrato';
