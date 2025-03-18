@@ -1,7 +1,9 @@
 const translations = {
   CLICK_TO_DISMISS: "Click to dismiss",
   // taxonomyloader:
-  TAXON: "Taxon",
+  BUTTON_SUBMIT: "Submit New Name",
+  BUTTON_CHECKING: "Checking for errors...",
+  BUTTON_DISABLED: "Button Disabled",
   PARENT_TAXON: "Parent taxon",
   FIELD_TOO_LONG: "Field text is too long. Character limit for this field is",
   PARENT_TAXON_REQUIRED: "Parent taxon required.",

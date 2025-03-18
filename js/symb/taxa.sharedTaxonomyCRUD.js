@@ -86,10 +86,10 @@ async function handleFieldChange(
   document.getElementById("error-display").textContent = "";
   const submitButton = document.getElementById(submitButtonId);
   submitButton.disabled = true;
-  submitButton.textContent = "Checking for errors...";
+  submitButton.textContent = translations.BUTTON_CHECKING;
   const isOk = await verifyLoadForm(form, silent, originalForm);
   if (!isOk) {
-    submitButton.textContent = "Button Disabled";
+    submitButton.textContent = translations.BUTTON_DISABLED;
     submitButton.disabled = true;
   } else {
     await updateFullname(form, true);

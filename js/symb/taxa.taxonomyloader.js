@@ -7,7 +7,7 @@ $(document).ready(function () {
     const debouncedChange = debounce(async (event) => {
       event.stopPropagation();
       await updateFullname(form);
-      handleFieldChange(form, true, "submitaction", "Submit New Name");
+      handleFieldChange(form, true, "submitaction", translations.BUTTON_SUBMIT);
     }, 500);
     element.removeEventListener("change", debouncedChange);
     if (element.type !== "hidden") {
@@ -127,7 +127,7 @@ function validateFieldLength(field, maxLength, silent) {
 }
 
 function parseName(f) {
-  handleFieldChange(f, true, "submitaction", "Submit New Name");
+  handleFieldChange(f, true, "submitaction", translations.BUTTON_SUBMIT);
   if (!f.quickparser.value) {
     return;
   }
