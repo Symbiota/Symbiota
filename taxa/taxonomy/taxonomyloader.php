@@ -81,7 +81,7 @@ if($isEditor){
 			?>
 			<form id="loaderform" name="loaderform" action="taxonomyloader.php" onsubmit="return validateFormInput(this)" method="post">
 				<div>
-					<h2>Sciname will be saved as: <span id="scinamedisplay" name="scinamedisplay"></span></h2>
+					<h2><?php echo $LANG['SCINAME_SAVED_AS']; ?>: <span id="scinamedisplay" name="scinamedisplay"></span></h2>
 				</div>
 				<input type="hidden" id="sciname" name="sciname" class="search-bar-long" value="" />
 				<fieldset class="bottom-breathing-room-rel">
