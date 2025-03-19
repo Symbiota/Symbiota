@@ -475,7 +475,7 @@ $_SESSION['citationvar'] = $searchVar;
 					<?php echo $LANG['MAP_DESCRIPTION']; ?>
 				</div>
 				<div style='margin-top:10px;'>
-					<button onclick="openMapPU();">
+						<button onclick="openMapPU('<?= $searchVar ?>');">
 						<?php echo $LANG['MAP_DISPLAY']; ?>
 					</button>
 				</div>

@@ -59,8 +59,18 @@ function openIndPU(occId,clid){
 	return false;
 }
 
-function openMapPU() {
-	const searchParams = (window.location.search ? window.location.search + '&gridSizeSetting=60&minClusterSetting=10&clusterSwitch=y&menuClosed': '') 
+function openMapPU(searchParams = "") {
+	const map_params = 'gridSizeSetting=60&minClusterSetting=10&clusterSwitch=y&menuClosed';
+	if(!searchParams && window.location.search) {
+		if(window.location.search) {
+			searchParams = window.location.search + '&' + map_params;
+		} else {
+			searchParams = '?' + map_params;
+		}
+	} else {
+		searchParams = '?' + searchParams + '&' + map_params;
+	}
+
 	const baseUrl = location.href.slice(0, location.href.indexOf("list.php"));
 	let mapUrl = new URL(baseUrl + 'map/index.php' + searchParams);
 
