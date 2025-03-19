@@ -758,6 +758,7 @@ class SpecUploadBase extends SpecUpload{
 		$this->outputMsg('<li style="margin-left:10px;">Setting basisOfRecord for new records, if not designated within import file...</li>');
 		$borValue = 'PreservedSpecimen';
 		if(strpos($this->collMetadataArr['colltype'], 'Observations') !== false) $borValue = 'HumanObservation';
+
 		$sql = 'UPDATE uploadspectemp SET basisOfRecord = "'.$borValue.'" WHERE basisOfRecord IS NULL AND occid IS NULL';
 		$this->conn->query($sql);
 	}
@@ -2084,7 +2085,7 @@ class SpecUploadBase extends SpecUpload{
 					$this->outputMsg('<li style="margin-left:20px;">File format could not be parsed: ' . $testUrl . ' </li>');
 					return false;
 				}
-				
+
 			}
 			$mime = Media::getAllowedMime($parsed_mime);
 			if(!$mime) {
@@ -2107,7 +2108,7 @@ class SpecUploadBase extends SpecUpload{
 				return false;
 			}
 
-			$recMap['mediaType'] = $mediaType; 
+			$recMap['mediaType'] = $mediaType;
 
 			if($this->verifyImageUrls){
 				if(!$this->urlExists($testUrl)){

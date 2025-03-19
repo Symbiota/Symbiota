@@ -16,17 +16,17 @@ $oArr = array();
 $collArr = $specHandler->getCollectionArr();
 foreach($collArr as $id => $collectionArr){
 	if($collectionArr['colltype'] == 'General Observations') $genArr[$id] = $collectionArr;
-	elseif($collectionArr['colltype'] == 'Preserved Specimens') $cArr[$id] = $collectionArr;
+	elseif($collectionArr['colltype'] == 'Preserved Specimens' || $collectionArr['colltype'] == 'Fossil Specimens') $cArr[$id] = $collectionArr;
 	elseif($collectionArr['colltype'] == 'Observations') $oArr[$id] = $collectionArr;
 }
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
-		<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['OCCURRENCE_MENU'];?></title>	
+		<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['OCCURRENCE_MENU'];?></title>
 		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/symbiota/main.css" type="text/css" rel="stylesheet">
 		<style>
-         .screen-reader-only{ 
+         .screen-reader-only{
             position: absolute;
             left: -10000px;
          }

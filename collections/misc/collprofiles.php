@@ -340,7 +340,7 @@ if ($SYMB_UID) {
 								</a><?= $deactivateTag ?>
 							</li>
 							<?php
-							if ($collData['colltype'] == 'Preserved Specimens') {
+							if (strpos($collData['colltype'], 'Specimens')) {
 								?>
 								<li style="margin-left:10px">
 									<a href="../editor/imageoccursubmit.php?collid=<?= $collid ?>" <?= $deactivateStyle ?>>
@@ -402,7 +402,7 @@ if ($SYMB_UID) {
 								</a>
 							</li>
 							<?php
-							if ($collData['colltype'] == 'Preserved Specimens') {
+							if (strpos($collData['colltype'], 'Specimens')) {
 								?>
 								<li>
 									<a href="../loans/index.php?collid=<?= $collid ?>" <?= $deactivateStyle ?>>

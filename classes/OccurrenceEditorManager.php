@@ -194,7 +194,7 @@ class OccurrenceEditorManager {
 							else $this->collMap['paleoActivated'] = false;
 						}
 						if(isset($module['matSample']['status'])){
-							if($module['paleo']['status']) $this->collMap['matSampleActivated'] = true;
+							if($module['matSample']['status']) $this->collMap['matSampleActivated'] = true;
 							else $this->collMap['matSampleActivated'] = false;
 						}
 					}

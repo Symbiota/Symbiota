@@ -499,6 +499,7 @@ $collManager->cleanOutArr($collData);
 										<label for="collType"> <?php echo htmlspecialchars($LANG['DATASET_TYPE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>: </label>
 										<select id="collType" name="collType">
 											<option value="Preserved Specimens"><?php echo $LANG['PRES_SPECS']; ?></option>
+											<option value="Fossil Specimens"><?php echo $LANG['FOSSIL_SPECS']; ?></option>
 											<option value="Observations" <?php echo ($collid && $collData["colltype"] == 'Observations' ? 'SELECTED' : ''); ?>><?php echo $LANG['OBSERVATIONS']; ?></option>
 											<option value="General Observations" <?php echo ($collid && $collData["colltype"] == 'General Observations' ? 'SELECTED' : ''); ?>><?php echo $LANG['PERS_OBS_MAN']; ?></option>
 										</select>

@@ -64,6 +64,9 @@ if($SYMB_UID){
 		elseif($collMap['colltype']=='Observations'){
 			$collType = 'obs';
 		}
+		if(!empty($collMap['paleoActivated'])){
+			$collType = 'paleo';
+		}
 	}
 
 	//Set default option variables, will rework later

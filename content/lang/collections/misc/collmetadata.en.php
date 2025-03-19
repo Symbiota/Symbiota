@@ -57,6 +57,7 @@ $LANG['ACCESS_DEF'] = 'Information or a URL link to page with details explaining
 					how one can use the data. See';
 $LANG['DATASET_TYPE'] = 'Dataset Type';
 $LANG['PRES_SPECS'] = 'Preserved Specimens';
+$LANG['FOSSIL_SPECS'] = 'Fossil Specimens';
 $LANG['OBSERVATIONS'] = 'Observations';
 $LANG['PERS_OBS_MAN'] = 'Personal Observation Management';
 $LANG['MORE_COL_TYPE'] = 'More information about Collection Type';
@@ -125,7 +126,7 @@ $LANG['SECURITY_KEY'] = 'Security Key';
 $LANG['RECORDID'] = 'recordID';
 $LANG['SAVE_EDITS'] = 'Save Edits';
 $LANG['CREATE_COLL_2'] = 'Create New Collection';
-$LANG['TINYMCE_INFO'] = 'Collection description. You can access the text editing toolbar for this description 
+$LANG['TINYMCE_INFO'] = 'Collection description. You can access the text editing toolbar for this description
 						by pressing key combination ALT + F10 on Windows or OPTION + F10 on MacOS.';
 
 ?>
