@@ -198,7 +198,7 @@ $searchVar = $collManager->getQueryTermStr();
 						&nbsp;<a href="#" onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root: '<?= $CLIENT_ROOT?>'});return false;"><img src="../images/map.png" title="<?php echo htmlspecialchars((isset($LANG['MAP_AID'])?$LANG['MAP_AID']:'Mapping Aid'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" /></a>
 					</div>
 					<div class="elemDiv">
-						<textarea id="footprintwkt" name="footprintGeoJson" onchange="this.value = validatePolygon(this.value)" style="zIndex:999;width:100%;height:90px"></textarea>
+						<textarea id="footprintwkt" name="footprintGeoJson" style="zIndex:999;width:100%;height:90px"></textarea>
 					</div>
 				</div>
 				<div class="coordBoxDiv">
