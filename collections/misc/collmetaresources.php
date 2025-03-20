@@ -71,6 +71,7 @@ if($collid && $isEditor){
 						<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 						<input name="action" type="hidden" value="saveResourceLink" />
 						<input id="resourceJsonInput" name="resourcejson" type="hidden" value="<?php echo htmlspecialchars($collMetaArr['resourcejson']); ?>" />
+						<input id="contactJsonInput" name="contactjson" type="hidden" value="<?php echo htmlspecialchars($collMetaArr['contactjson']); ?>" />
 					</div>
 				</form>
 			</div>
@@ -254,19 +255,25 @@ if($collid && $isEditor){
 	<script type="text/javascript">
 		//var resourceJSON = [{"title":{"en":"link1","es":"enlace1"},"url":"https:\/\/swbiodiversity.org\/seinet\/"},{"title":{"en":"link2","es":"enlace2"},"url":"https:\/\/swbiodiversity.org\/seinet2\/"}];
 		var resourceJSON = [];
-		try {
-			resourceJSON = JSON.parse("<?= $collMetaArr['resourcejson'] ?? '[]' ?>");
-		} catch(e) {
-			console.log(e)
+		var contactJSON = [];
+		var langArr = [<?= '"'.implode('","', $langArr).'"';?>];
+		const resourceElem = document.getElementById('resourceJsonInput');
+		const contactElem = document.getElementById('contactJsonInput');
+
+		if(resourceElem.value) {
+			try {
+				resourceJSON = JSON.parse(resourceElem.value);
+			} catch(e) {
+				console.log(e)
+			}
 		}
 
-		var langArr = [<?= '"'.implode('","', $langArr).'"';?>];
-
-		var contactJSON = [];
-		try {
-			contactJSON = JSON.parse("<?= $collMetaArr['contactjson'] ?? '[]' ?>");
-		} catch(e) {
-			console.log(e)
+		if(contactElem.value) {
+			try {
+				contactJSON = JSON.parse(contactElem.value);
+			} catch(e) {
+				console.log(e)
+			}
 		}
 
 		function addLink(f){
