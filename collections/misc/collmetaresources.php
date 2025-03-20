@@ -65,13 +65,13 @@ if($collid && $isEditor){
 				else echo (isset($LANG['NO_LINKS'])?$LANG['NO_LINKS']:'No links have yet been defined');
 				?>
 			</div>
+			<div id="data-container" data-contact-json="<?php echo htmlspecialchars($collMetaArr['contactjson']); ?>"></div>
 			<div class="field-block">
 				<form name="resourceLinkForm" action="collmetadata.php" method="post" onsubmit="return verifyResourceLinkForm(this)">
 					<div class="form-button">
 						<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 						<input name="action" type="hidden" value="saveResourceLink" />
 						<input id="resourceJsonInput" name="resourcejson" type="hidden" value="<?php echo htmlspecialchars($collMetaArr['resourcejson']); ?>" />
-						<input id="contactJsonInput" name="contactjson" type="hidden" value="<?php echo htmlspecialchars($collMetaArr['contactjson']); ?>" />
 					</div>
 				</form>
 			</div>
@@ -256,11 +256,12 @@ if($collid && $isEditor){
 		//var resourceJSON = [{"title":{"en":"link1","es":"enlace1"},"url":"https:\/\/swbiodiversity.org\/seinet\/"},{"title":{"en":"link2","es":"enlace2"},"url":"https:\/\/swbiodiversity.org\/seinet2\/"}];
 		var resourceJSON = [];
 		var contactJSON = [];
+
 		var langArr = [<?= '"'.implode('","', $langArr).'"';?>];
 		const resourceElem = document.getElementById('resourceJsonInput');
-		const contactElem = document.getElementById('contactJsonInput');
+		const dataContainer= document.getElementById('data-container');
 
-		if(resourceElem.value) {
+		if(resourceElem && resourceElem.value) {
 			try {
 				resourceJSON = JSON.parse(resourceElem.value);
 			} catch(e) {
@@ -268,9 +269,9 @@ if($collid && $isEditor){
 			}
 		}
 
-		if(contactElem.value) {
+		if(dataContainer && dataContainer.getAttribute('data-contact-json')) {
 			try {
-				contactJSON = JSON.parse(contactElem.value);
+				contactJSON = JSON.parse(dataContainer.getAttribute('data-contact-json'));
 			} catch(e) {
 				console.log(e)
 			}
