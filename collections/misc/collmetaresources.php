@@ -259,7 +259,7 @@ if($collid && $isEditor){
 
 		var langArr = [<?= '"'.implode('","', $langArr).'"';?>];
 		const resourceElem = document.getElementById('resourceJsonInput');
-		const dataContainer= document.getElementById('data-container');
+		const dataContainer = document.getElementById('data-container');
 
 		if(resourceElem && resourceElem.value) {
 			try {
