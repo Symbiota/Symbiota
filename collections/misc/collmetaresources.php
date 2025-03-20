@@ -264,7 +264,7 @@ if($collid && $isEditor){
 
 		var contactJSON = [];
 		try {
-			contactJSON = JSON.parse("<?= $collMetaArr['resourcejson'] ?? '[]' ?>");
+			contactJSON = JSON.parse("<?= $collMetaArr['contactjson'] ?? '[]' ?>");
 		} catch(e) {
 			console.log(e)
 		}
