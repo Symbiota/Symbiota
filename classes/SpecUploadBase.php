@@ -2074,7 +2074,8 @@ class SpecUploadBase extends SpecUpload{
 			}
 
 			$file = Media::parseFileName($testUrl);
-			$parsed_mime = Media::ext2Mime($file['extension']);
+			$parsed_mime = $recMap['format'] ?? Media::ext2Mime($file['extension']);
+
 			if(!$parsed_mime) {
 				try {
 					$file = Media::getRemoteFileInfo($testUrl);

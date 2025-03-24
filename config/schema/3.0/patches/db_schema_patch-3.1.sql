@@ -275,7 +275,7 @@ CREATE TABLE `usersthirdpartyauth` (
   `provider` VARCHAR(200) NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_users_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
 
 # Skip if 3.0 install: Table does not exist within db_schema-3.0, thus statement is expected to fail if this was not originally a 1.0 install

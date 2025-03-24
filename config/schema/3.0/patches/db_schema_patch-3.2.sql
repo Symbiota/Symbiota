@@ -209,7 +209,7 @@ ALTER TABLE `omoccuraccess`
 ALTER TABLE `omoccuraccesslink`
   ENGINE=InnoDB;
 
-# Drop old deprecated tables to save space, following statemetns will do if this was not originally a 1.0 install
+# Drop old deprecated tables to save space, following statements will fail if portals was not an originally 1.0 install
 DROP TABLE IF EXISTS `deprecated_adminstats`;
 DROP TABLE IF EXISTS `deprecated_guidimages`; 
 DROP TABLE IF EXISTS `deprecated_guidoccurrences`;
@@ -326,7 +326,12 @@ ALTER TABLE `media`
   ADD INDEX `FK_media_tid_idx` (`tid` ASC),
   ADD INDEX `FK_media_creatorUid_idx` (`creatorUid` ASC),
   ADD INDEX `IX_media_recordID` (`recordID` ASC),
-  ADD INDEX `IX_media_dateLastModified` (`initialTimestamp` ASC);
+  ADD INDEX `IX_media_dateLastModified` (`initialTimestamp` ASC),
+  ADD INDEX `IX_media_sort` (`sortSequence` ASC),
+  ADD INDEX `IX_media_sortOccur` (`sortOccurrence` ASC),
+  ADD INDEX `IX_media_thumbnail` (`thumbnailUrl` ASC),
+  ADD INDEX `IX_media_mediaType` (`mediaType` ASC);
+
 
 ALTER TABLE `media` 
   ADD CONSTRAINT `FK_media_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -427,7 +432,7 @@ DELIMITER ;
 
 #Add and update checklist footprints to be geoJson
 ALTER TABLE `fmchecklists` 
-  ADD COLUMN footprintGeoJson longtext DEFAULT NULL;
+  ADD COLUMN footprintGeoJson LONGTEXT DEFAULT NULL AFTER `footprintWkt`;
 
 UPDATE fmchecklists 
   SET footprintGeoJson = ST_ASGEOJSON(ST_GEOMFROMTEXT(swap_wkt_coords(footprintWkt))) 
@@ -533,12 +538,14 @@ ALTER TABLE `omoccuridentifiers`
   ADD COLUMN `format` VARCHAR(45) NULL DEFAULT NULL AFTER `identifierName`,
   ADD COLUMN `recordID` VARCHAR(45) NULL DEFAULT NULL AFTER `sortBy`,
   CHANGE COLUMN `modifiedtimestamp` `modifiedTimestamp` DATETIME NULL DEFAULT NULL AFTER `modifiedUid`,
-  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT current_timestamp() AFTER `modifiedTimestamp`,
+  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT current_timestamp() AFTER `modifiedTimestamp`;
+
+ALTER TABLE `omoccuridentifiers`
   DROP INDEX `UQ_omoccuridentifiers`,
-  ADD UNIQUE INDEX `UQ_omoccuridentifiers` (`occid`, `identifierValue`, `identifierName`),
   DROP INDEX `IX_omoccuridentifiers_value`;
 
 ALTER TABLE `omoccuridentifiers`
+  ADD UNIQUE INDEX `UQ_omoccuridentifiers` (`occid`, `identifierValue`, `identifierName`),
   ADD INDEX `IX_omoccuridentifiers_value` (`identifierValue`);
 
 # Occurrence table adjustments
@@ -616,7 +623,17 @@ CREATE TABLE `uploadkeyvaluetemp`(
   KEY `IX_uploadKeyValue_uploadUid` (`uploadUid`),
   CONSTRAINT `FK_uploadKeyValue_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_uploadKeyValue_collid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`collID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `FK_uploadKeyValue_uid` FOREIGN KEY (`uploadUid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE);
+  CONSTRAINT `FK_uploadKeyValue_uid` FOREIGN KEY (`uploadUid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
 
 ALTER TABLE uploadimagetemp
-  ADD COLUMN mediaType varchar(45);
+  ADD COLUMN mediaType VARCHAR(45) NULL DEFAULT "image" AFTER `imageType`;
+
+#Add usersthirdpartysessions table
+CREATE TABLE `usersthirdpartysessions` (
+  `thirdparty_id` varchar(255) NOT NULL,
+  `localsession_id` varchar(255) NOT NULL,
+  `ipaddr` varchar(255) NOT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`thirdparty_id`,`localsession_id`) 
+) ENGINE=InnoDB;
