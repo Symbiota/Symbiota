@@ -258,8 +258,8 @@ class DwcArchiverOccurrence extends Manager{
 			$this->occurDefArr['fields']['lateInterval'] = 'paleo.lateInterval';
 			$this->occurDefArr['terms']['absoluteAge'] = 'https://symbiota.org/terms/paleo-absoluteAge';
 			$this->occurDefArr['fields']['absoluteAge'] = 'paleo.absoluteAge';
-			$this->occurDefArr['terms']['storageAge'] = 'https://symbiota.org/terms/paleo-storageAge';
-			$this->occurDefArr['fields']['storageAge'] = 'paleo.storageAge';
+			$this->occurDefArr['terms']['storageLoc'] = 'https://symbiota.org/terms/paleo-storageLoc';
+			$this->occurDefArr['fields']['storageLoc'] = 'paleo.storageLoc';
 			$this->occurDefArr['terms']['localStage'] = 'https://symbiota.org/terms/paleo-localStage';
 			$this->occurDefArr['fields']['localStage'] = 'paleo.localStage';
 			$this->occurDefArr['terms']['biota'] = 'https://symbiota.org/terms/paleo-biota';
@@ -333,7 +333,7 @@ class DwcArchiverOccurrence extends Manager{
 					'localitySecurityReason','genericcolumn1','genericcolumn2','storageLocation','observerUid','processingStatus',
 					'duplicateQuantity','labelProject','dateEntered','dateLastModified','sourcePrimaryKey-dbpk');
 				if($this->includePaleo){
-					$trimArr = array_merge($trimArr, array('absoluteAge','storageAge','stage','localStage','biostratigraphy','taxonEnvironment','stratRemarks','element','slideProperties'));
+					$trimArr = array_merge($trimArr, array('absoluteAge','storageLoc','stage','localStage','biostratigraphy','taxonEnvironment','stratRemarks','element','slideProperties'));
 				}
 				$this->occurDefArr[$k] = array_diff_key($vArr,array_flip($trimArr));
 			}
@@ -343,7 +343,7 @@ class DwcArchiverOccurrence extends Manager{
 					$trimArr = array('collectionID','rights','rightsHolder','accessRights','storageLocation','observerUid','processingStatus','duplicateQuantity','labelProject','dateEntered','dateLastModified');
 				}
 				if($this->includePaleo){
-					$trimArr = array_merge($trimArr, array('storageAge'));
+					$trimArr = array_merge($trimArr, array('storageLoc'));
 				}
 				$this->occurDefArr[$k] = array_diff_key($vArr,array_flip($trimArr));
 			}
