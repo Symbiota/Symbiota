@@ -2414,7 +2414,7 @@ class SpecUploadBase extends SpecUpload{
 
 	private function getPaleoSymbTerms(){
 		$paleoTermArr = array('paleo-eon','paleo-era','paleo-period','paleo-epoch',
-			'paleo-earlyInterval','paleo-lateInterval','paleo-absoluteAge','paleo-storageAge','paleo-stage','paleo-localStage','paleo-biota','paleo-biostratigraphy',
+			'paleo-earlyInterval','paleo-lateInterval','paleo-absoluteAge','paleo-storageLoc','paleo-stage','paleo-localStage','paleo-biota','paleo-biostratigraphy',
 			'paleo-taxonEnvironment','paleo-lithology','paleo-stratRemarks','paleo-element','paleo-slideProperties');
 		return $paleoTermArr;
 	}
