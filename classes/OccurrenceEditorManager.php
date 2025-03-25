@@ -2029,21 +2029,32 @@ class OccurrenceEditorManager {
 					$nvSqlFrag = 'REPLACE(' . $fn . ',"' . $ov . '","' . $nv . '")';
 				}
 
-				$sqlWhere = 'WHERE occid IN(' . implode(',', $occidArr) . ')';
-				if(in_array($fn, $this->fieldArr['omoccurpaleo'])){
-					$sql = 'UPDATE omoccurpaleo SET ' . $fn . ' = ' . $nvSqlFrag . ' ' . $sqlWhere;
-				}
-				else {
-					//Add edits to the omoccuredit table
-					$sql = 'INSERT INTO omoccuredits(occid,fieldName,fieldValueOld,fieldValueNew,appliedStatus,uid,editType) ' .
-						'SELECT occid, "' . $fn . '" AS fieldName, IFNULL(' . $fn . ',"") AS oldValue, IFNULL(' . $nvSqlFrag . ',"") AS newValue, ' .
-						'1 AS appliedStatus, ' . $GLOBALS['SYMB_UID'] . ' AS uid, 1 FROM omoccurrences ' . $sqlWhere;
-					if(!$this->conn->query($sql)){
-						$statusStr = $LANG['ERROR_ADDING_UPDATE'] . ': ' . $this->conn->error;
+				//Set default table and prefix
+				$targetTable = 'omoccurrences';
+				$fieldPrefix = '';
+
+				//Set the target table for omoccuredits
+				foreach ($this->fieldArr as $table => $fields) {
+					if (in_array($fn, $fields)) {
+						$targetTable = $table;
+						$fieldPrefix = ($table !== 'omoccurrences') ? $table . ':' : '';
+						break;
 					}
-					//Apply edits to core tables
-					$sql = 'UPDATE omoccurrences SET ' . $fn . ' = ' . $nvSqlFrag . ' ' . $sqlWhere;
 				}
+
+				//Insert data from target table into omoccuredits
+				$sqlWhere = 'WHERE occid IN(' . implode(',', $occidArr) . ')';
+				$sql = 'INSERT INTO omoccuredits(occid,fieldName,fieldValueOld,fieldValueNew,appliedStatus,uid,editType) ' .
+				'SELECT occid, "' . $fieldPrefix . $fn . '" AS fieldName, IFNULL(' . $fn . ',"") AS oldValue, IFNULL(' . $nvSqlFrag . ',"") AS newValue, ' .
+				'1 AS appliedStatus, ' . $GLOBALS['SYMB_UID'] . ' AS uid, 1 FROM ' . $targetTable . ' ' . $sqlWhere;
+
+				if (!$this->conn->query($sql)) {
+					$statusStr = $LANG['ERROR_ADDING_UPDATE'] . ': ' . $this->conn->error;
+				}
+
+				// Apply edits to the target table
+				$sql = 'UPDATE ' . $targetTable . ' SET ' . $fn . ' = ' . $nvSqlFrag . ' ' . $sqlWhere;
+
 				if (!$this->conn->query($sql)) {
 					$statusStr = $LANG['ERROR_APPLYING_BATCH_EDITS'] . ': ' . $this->conn->error;
 				}
