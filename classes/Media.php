@@ -354,7 +354,10 @@ class Media {
 			} else if(!$thumbnail &&  $media_arr['originalUrl']) {
 				$thumbnail = $media_arr['originalUrl'];
 			}
+			$nav_url = $media_arr['url'] ?? $media_arr['originalUrl'];
+
 			$html = <<< HTML
+			<a target="_blank" href="$nav_url">
 			<img 
 				style="max-width: 200px"
 				border="1" 
@@ -362,6 +365,7 @@ class Media {
 				title="$caption" 
 				alt="Thumbnail image of current specimen" 
 			/>
+			</a>
 			HTML;
 
 			return $html;
