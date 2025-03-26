@@ -3,6 +3,7 @@
 namespace PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx\Namespaces;
 use PhpOffice\PhpSpreadsheet\Shared\Drawing as SharedDrawing;
 use PhpOffice\PhpSpreadsheet\Shared\XMLWriter;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -19,7 +20,7 @@ class Drawing extends WriterPart
      *
      * @return string XML Output
      */
-    public function writeDrawings(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet, $includeCharts = false)
+    public function writeDrawings(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet, bool $includeCharts = false): string
     {
         // Create XML writer
         $objWriter = null;
@@ -34,8 +35,8 @@ class Drawing extends WriterPart
 
         // xdr:wsDr
         $objWriter->startElement('xdr:wsDr');
-        $objWriter->writeAttribute('xmlns:xdr', 'http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing');
-        $objWriter->writeAttribute('xmlns:a', 'http://schemas.openxmlformats.org/drawingml/2006/main');
+        $objWriter->writeAttribute('xmlns:xdr', Namespaces::SPREADSHEET_DRAWING);
+        $objWriter->writeAttribute('xmlns:a', Namespaces::DRAWINGML);
 
         // Loop through images and write drawings
         $i = 1;
@@ -66,7 +67,7 @@ class Drawing extends WriterPart
         }
 
         // unparsed AlternateContent
-        $unparsedLoadedData = $worksheet->getParent()->getUnparsedLoadedData();
+        $unparsedLoadedData = $worksheet->getParentOrThrow()->getUnparsedLoadedData();
         if (isset($unparsedLoadedData['sheets'][$worksheet->getCodeName()]['drawingAlternateContents'])) {
             foreach ($unparsedLoadedData['sheets'][$worksheet->getCodeName()]['drawingAlternateContents'] as $drawingAlternateContent) {
                 $objWriter->writeRaw($drawingAlternateContent);
@@ -81,10 +82,8 @@ class Drawing extends WriterPart
 
     /**
      * Write drawings to XML format.
-     *
-     * @param int $relationId
      */
-    public function writeChart(XMLWriter $objWriter, \PhpOffice\PhpSpreadsheet\Chart\Chart $chart, $relationId = -1): void
+    public function writeChart(XMLWriter $objWriter, \PhpOffice\PhpSpreadsheet\Chart\Chart $chart, int $relationId = -1): void
     {
         $tl = $chart->getTopLeftPosition();
         $tlColRow = Coordinate::indexesFromString($tl['cell']);
@@ -159,10 +158,10 @@ class Drawing extends WriterPart
 
         $objWriter->startElement('a:graphic');
         $objWriter->startElement('a:graphicData');
-        $objWriter->writeAttribute('uri', 'http://schemas.openxmlformats.org/drawingml/2006/chart');
+        $objWriter->writeAttribute('uri', Namespaces::CHART);
         $objWriter->startElement('c:chart');
-        $objWriter->writeAttribute('xmlns:c', 'http://schemas.openxmlformats.org/drawingml/2006/chart');
-        $objWriter->writeAttribute('xmlns:r', 'http://schemas.openxmlformats.org/officeDocument/2006/relationships');
+        $objWriter->writeAttribute('xmlns:c', Namespaces::CHART);
+        $objWriter->writeAttribute('xmlns:r', Namespaces::SCHEMA_OFFICE_DOCUMENT);
         $objWriter->writeAttribute('r:id', 'rId' . $relationId);
         $objWriter->endElement();
         $objWriter->endElement();
@@ -177,11 +176,8 @@ class Drawing extends WriterPart
 
     /**
      * Write drawings to XML format.
-     *
-     * @param int $relationId
-     * @param null|int $hlinkClickId
      */
-    public function writeDrawing(XMLWriter $objWriter, BaseDrawing $drawing, $relationId = -1, $hlinkClickId = null): void
+    public function writeDrawing(XMLWriter $objWriter, BaseDrawing $drawing, int $relationId = -1, ?int $hlinkClickId = null): void
     {
         if ($relationId >= 0) {
             $isTwoCellAnchor = $drawing->getCoordinates2() !== '';
@@ -265,14 +261,25 @@ class Drawing extends WriterPart
 
             // a:blip
             $objWriter->startElement('a:blip');
-            $objWriter->writeAttribute('xmlns:r', 'http://schemas.openxmlformats.org/officeDocument/2006/relationships');
+            $objWriter->writeAttribute('xmlns:r', Namespaces::SCHEMA_OFFICE_DOCUMENT);
             $objWriter->writeAttribute('r:embed', 'rId' . $relationId);
             $objWriter->endElement();
 
-            // a:stretch
-            $objWriter->startElement('a:stretch');
-            $objWriter->writeElement('a:fillRect', null);
-            $objWriter->endElement();
+            $srcRect = $drawing->getSrcRect();
+            if (!empty($srcRect)) {
+                $objWriter->startElement('a:srcRect');
+                foreach ($srcRect as $key => $value) {
+                    $objWriter->writeAttribute($key, (string) $value);
+                }
+                $objWriter->endElement(); // a:srcRect
+                $objWriter->startElement('a:stretch');
+                $objWriter->endElement(); // a:stretch
+            } else {
+                // a:stretch
+                $objWriter->startElement('a:stretch');
+                $objWriter->writeElement('a:fillRect', null);
+                $objWriter->endElement();
+            }
 
             $objWriter->endElement();
 
@@ -282,6 +289,8 @@ class Drawing extends WriterPart
             // a:xfrm
             $objWriter->startElement('a:xfrm');
             $objWriter->writeAttribute('rot', (string) SharedDrawing::degreesToAngle($drawing->getRotation()));
+            self::writeAttributeIf($objWriter, $drawing->getFlipVertical(), 'flipV', '1');
+            self::writeAttributeIf($objWriter, $drawing->getFlipHorizontal(), 'flipH', '1');
             if ($isTwoCellAnchor) {
                 $objWriter->startElement('a:ext');
                 $objWriter->writeAttribute('cx', self::stringEmu($drawing->getWidth()));
@@ -344,7 +353,7 @@ class Drawing extends WriterPart
      *
      * @return string XML Output
      */
-    public function writeVMLHeaderFooterImages(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet)
+    public function writeVMLHeaderFooterImages(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet): string
     {
         // Create XML writer
         $objWriter = null;
@@ -362,9 +371,9 @@ class Drawing extends WriterPart
 
         // xml
         $objWriter->startElement('xml');
-        $objWriter->writeAttribute('xmlns:v', 'urn:schemas-microsoft-com:vml');
-        $objWriter->writeAttribute('xmlns:o', 'urn:schemas-microsoft-com:office:office');
-        $objWriter->writeAttribute('xmlns:x', 'urn:schemas-microsoft-com:office:excel');
+        $objWriter->writeAttribute('xmlns:v', Namespaces::URN_VML);
+        $objWriter->writeAttribute('xmlns:o', Namespaces::URN_MSOFFICE);
+        $objWriter->writeAttribute('xmlns:x', Namespaces::URN_EXCEL);
 
         // o:shapelayout
         $objWriter->startElement('o:shapelayout');
@@ -489,7 +498,7 @@ class Drawing extends WriterPart
      *
      * @param string $reference Reference
      */
-    private function writeVMLHeaderFooterImage(XMLWriter $objWriter, $reference, HeaderFooterDrawing $image): void
+    private function writeVMLHeaderFooterImage(XMLWriter $objWriter, string $reference, HeaderFooterDrawing $image): void
     {
         // Calculate object id
         preg_match('{(\d+)}', md5($reference), $m);
@@ -528,7 +537,7 @@ class Drawing extends WriterPart
      *
      * @return BaseDrawing[] All drawings in PhpSpreadsheet
      */
-    public function allDrawings(Spreadsheet $spreadsheet)
+    public function allDrawings(Spreadsheet $spreadsheet): array
     {
         // Get an array of all drawings
         $aDrawings = [];
@@ -548,17 +557,14 @@ class Drawing extends WriterPart
         return $aDrawings;
     }
 
-    /**
-     * @param null|int $hlinkClickId
-     */
-    private function writeHyperLinkDrawing(XMLWriter $objWriter, $hlinkClickId): void
+    private function writeHyperLinkDrawing(XMLWriter $objWriter, ?int $hlinkClickId): void
     {
         if ($hlinkClickId === null) {
             return;
         }
 
         $objWriter->startElement('a:hlinkClick');
-        $objWriter->writeAttribute('xmlns:r', 'http://schemas.openxmlformats.org/officeDocument/2006/relationships');
+        $objWriter->writeAttribute('xmlns:r', Namespaces::SCHEMA_OFFICE_DOCUMENT);
         $objWriter->writeAttribute('r:id', 'rId' . $hlinkClickId);
         $objWriter->endElement();
     }
@@ -566,5 +572,12 @@ class Drawing extends WriterPart
     private static function stringEmu(int $pixelValue): string
     {
         return (string) SharedDrawing::pixelsToEMU($pixelValue);
+    }
+
+    private static function writeAttributeIf(XMLWriter $objWriter, ?bool $condition, string $attr, string $val): void
+    {
+        if ($condition) {
+            $objWriter->writeAttribute($attr, $val);
+        }
     }
 }

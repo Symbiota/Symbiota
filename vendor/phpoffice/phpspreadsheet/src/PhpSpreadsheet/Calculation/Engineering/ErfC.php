@@ -26,11 +26,10 @@ class ErfC
      * @param mixed $value The float lower bound for integrating ERFC
      *                      Or can be an array of values
      *
-     * @return array|float|string
-     *         If an array of numbers is passed as an argument, then the returned result will also be an array
+     * @return array|float|string If an array of numbers is passed as an argument, then the returned result will also be an array
      *            with the same dimensions
      */
-    public static function ERFC($value)
+    public static function ERFC(mixed $value)
     {
         if (is_array($value)) {
             return self::evaluateSingleArgumentArray([self::class, __FUNCTION__], $value);
@@ -43,13 +42,14 @@ class ErfC
         return ExcelError::VALUE();
     }
 
-    //
-    //    Private method to calculate the erfc value
-    //
-    private static $oneSqrtPi = 0.564189583547756287;
+    private const ONE_SQRT_PI = 0.564189583547756287;
 
-    private static function erfcValue($value)
+    /**
+     * Method to calculate the erfc value.
+     */
+    private static function erfcValue(float|int|string $value): float|int
     {
+        $value = (float) $value;
         if (abs($value) < 2.2) {
             return 1 - Erf::erfValue($value);
         }
@@ -59,7 +59,7 @@ class ErfC
         $a = $n = 1;
         $b = $c = $value;
         $d = ($value * $value) + 0.5;
-        $q1 = $q2 = $b / $d;
+        $q2 = $b / $d;
         do {
             $t = $a * $n + $b * $value;
             $a = $b;
@@ -72,6 +72,6 @@ class ErfC
             $q2 = $b / $d;
         } while ((abs($q1 - $q2) / $q2) > Functions::PRECISION);
 
-        return self::$oneSqrtPi * exp(-$value * $value) * $q2;
+        return self::ONE_SQRT_PI * exp(-$value * $value) * $q2;
     }
 }

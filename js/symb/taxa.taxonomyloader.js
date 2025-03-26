@@ -1,4 +1,20 @@
 $(document).ready(function () {
+  const currentRankId = Number(document.getElementById("rankid").value);
+  showOnlyRelevantFields(currentRankId);
+
+  const form = document.getElementById("loaderform");
+  form.querySelectorAll("input, select, textarea").forEach((element) => {
+    const debouncedChange = debounce(async (event) => {
+      event.stopPropagation();
+      await updateFullname(form);
+      handleFieldChange(form, true, "submitaction", "Submit New Name");
+    }, 500);
+    element.removeEventListener("change", debouncedChange);
+    if (element.type !== "hidden") {
+      element.addEventListener("change", debouncedChange);
+    }
+  });
+
   $("#acceptedstr").autocomplete({
     source: "rpc/getacceptedsuggest.php",
     focus: function (event, ui) {
@@ -9,9 +25,11 @@ $(document).ready(function () {
     },
     change: function (event, ui) {
       if (!$("#tidaccepted").val()) {
-        alert(
-          "You must select a name from the list. If accepted name is not in the list, it needs to be added or it is in the system as a non-accepted synonym"
-        );
+        // alert(
+        //   "You must select a name from the list. If accepted name is not in the list, it needs to be added or it is in the system as a non-accepted synonym"
+        // );
+        document.getElementById("error-display").textContent =
+          "You must select a name from the list. If accepted name is not in the list, it needs to be added or it is in the system as a non-accepted synonym";
       }
     },
     minLength: 2,
@@ -34,66 +52,73 @@ $(document).ready(function () {
     },
     change: function (event, ui) {
       if (!$("#parenttid").val()) {
-        alert(
-          "You must select a name from the list. If parent name is not in the list, it may need to be added"
-        );
+        // alert(
+        //   "You must select a name from the list. If parent name is not in the list, it may need to be added"
+        // );
+        document.getElementById("error-display").textContent =
+          "You must select a name from the list. If parent name is not in the list, it may need to be added";
       }
     },
     minLength: 2,
     autoFocus: true,
   });
+
+  document.getElementById("rankid").addEventListener("change", function () {
+    const selectedValue = Number(this.value);
+    showOnlyRelevantFields(selectedValue);
+  });
 });
 
-function verifyLoadForm(f) {
-  if (f.sciname.value == "") {
-    alert("Scientific Name field required.");
-    return false;
-  }
-  if (f.unitname1.value == "") {
-    alert("Unit Name 1 (genus or uninomial) field required.");
-    return false;
-  }
-  var rankId = f.rankid.value;
-  if (rankId == "") {
-    alert("Taxon rank field required.");
-    return false;
-  }
-  if (f.parentname.value == "" && rankId > "10") {
-    alert("Parent taxon required");
-    return false;
-  }
-  if (f.parenttid.value == "" && rankId > "10") {
-    alert(
-      "Parent identifier is not set! Make sure to select parent taxon from the list"
-    );
-    return false;
-  }
-
-  //If name is not accepted, verify accetped name
-  var accStatusObj = f.acceptstatus;
-  if (accStatusObj[0].checked == false) {
-    if (f.acceptedstr.value == "") {
-      alert("Accepted name needs to have a value");
+async function verifyLoadForm(f, silent = false) {
+  const rankId = f.rankid.value;
+  const coreVerify = await verifyLoadFormCore(f, true);
+  if (coreVerify) {
+    if (f.parentname.value == "" && rankId > "10") {
+      if (!silent) alert("Parent taxon required");
+      document.getElementById("error-display").textContent =
+        "Parent taxon required";
       return false;
     }
-  }
+    if (f.parenttid.value == "" && rankId > "10") {
+      if (!silent)
+        alert(
+          "Parent identifier is not set! Make sure to select parent taxon from the list"
+        );
+      document.getElementById("error-display").textContent =
+        "Parent identifier is not set! Make sure to select parent taxon from the list";
+      return false;
+    }
 
-  return true;
+    //If name is not accepted, verify accetped name
+    var accStatusObj = f.acceptstatus;
+    if (accStatusObj[0].checked == false) {
+      if (f.acceptedstr.value == "") {
+        if (!silent) alert("Accepted name needs to have a value");
+        document.getElementById("error-display").textContent =
+          "Accepted name needs to have a value";
+        return false;
+      }
+    }
+    return true;
+  } else {
+    return false;
+  }
 }
 
 function parseName(f) {
-  if (f.rankid.value === "300") {
+  handleFieldChange(f, true, "submitaction", "Submit New Name");
+  if (!f.quickparser.value) {
     return;
   }
-  let sciNameInput = f.sciname.value;
-  sciNameInput = sciNameInput.replace(/^\s+|\s+$/g, "");
+  let sciNameInput = f.quickparser.value;
+  sciNameInput = sciNameInput.trim();
   f.reset();
   let sciNameArr = new Array();
   sciNameArr = sciNameInput.split(" ");
   let activeIndex = 0;
   let rankId = "";
 
-  if (sciNameArr[activeIndex].length == 1) {
+  if (sciNameArr.length > 0 && sciNameArr[activeIndex].length == 1) {
     //Is a generic hybrid or extinct
     f.unitind1.value = sciNameArr[activeIndex];
     if (
@@ -120,8 +145,8 @@ function parseName(f) {
       activeIndex = activeIndex + 1;
     }
     if (
-      sciNameArr[activeIndex].substring(0, 1) == "(" &&
-      sciNameArr[activeIndex].substring(sciNameArr[activeIndex].length - 1) ==
+      sciNameArr[activeIndex]?.substring(0, 1) == "(" &&
+      sciNameArr[activeIndex]?.substring(sciNameArr[activeIndex].length - 1) ==
         ")"
     ) {
       //active unit is a subgeneric designation, append to unitname1
@@ -244,7 +269,9 @@ function parseName(f) {
     }
   }
   if (parentName != "") setParent(parentName, f.unitind1.value);
+  showOnlyRelevantFields(rankId);
   updateFullname(f);
+  f.quickparser.value = "";
 }
 
 function setParent(parentName, unitind1) {
@@ -256,11 +283,15 @@ function setParent(parentName, unitind1) {
   }).done(function (msg) {
     if (msg == 0) {
       if (!unitind1)
-        alert(
+        // alert(
+        //   "Parent taxon '" +
+        //     parentName +
+        //     "' does not exist. Please first add parent to system."
+        // );
+        document.getElementById("error-display").textContent =
           "Parent taxon '" +
-            parentName +
-            "' does not exist. Please first add parent to system."
-        );
+          parentName +
+          "' does not exist. Please first add parent to system.";
       else {
         setParent(unitind1 + " " + parentName, "");
       }
@@ -268,55 +299,25 @@ function setParent(parentName, unitind1) {
       if (msg.indexOf(",") == -1) {
         document.getElementById("parentname").value = parentName;
         document.getElementById("parenttid").value = msg;
-      } else
-        alert(
+      }
+      // alert(
+      //   "Parent taxon '" +
+      //     parentName +
+      //     "' is matching two different names in the thesaurus. Please select taxon with the correct author."
+      // );
+      else
+        document.getElementById("error-display").textContent =
           "Parent taxon '" +
-            parentName +
-            "' is matching two different names in the thesaurus. Please select taxon with the correct author."
-        );
+          parentName +
+          "' is matching two different names in the thesaurus. Please select taxon with the correct author.";
     }
   });
 }
 
-function updateFullname(f) {
-  let sciname =
-    f.unitind1.value +
-    f.unitname1.value +
-    " " +
-    f.unitind2.value +
-    f.unitname2.value +
-    " ";
-  if (f.unitname3.value) {
-    sciname = sciname + (f.unitind3.value + " " + f.unitname3.value).trim();
-  }
-  f.sciname.value = sciname.trim();
-  checkNameExistence(f);
-}
-
-function checkNameExistence(f) {
-  $.ajax({
-    type: "POST",
-    url: "rpc/gettid.php",
-    async: false,
-    data: {
-      sciname: f.sciname.value,
-      rankid: f.rankid.value,
-      author: f.author.value,
-    },
-  }).done(function (msg) {
-    if (msg != "0") {
-      alert(
-        "Taxon " +
-          f.sciname.value +
-          " " +
-          f.author.value +
-          " (" +
-          msg +
-          ") already exists in database"
-      );
-      return false;
-    }
-  });
+async function updateFullname(f) {
+  const coreSciname = await updateFullnameCore(f, true);
+  const scinameDisplay = document.getElementById("scinamedisplay");
+  scinameDisplay.textContent = coreSciname.trim();
 }
 
 function acceptanceChanged(f) {
@@ -326,44 +327,86 @@ function acceptanceChanged(f) {
   else document.getElementById("accdiv").style.display = "block";
 }
 
-// listener for taxon rank
-
-document.getElementById("rankid").addEventListener("change", function () {
-  const selectedValue = this.value; // Get the chosen value
-  $rankId = selectedValue;
-
-  const div1 = document.getElementById("div1hide");
-  const div2 = document.getElementById("div2hide");
-  const div3 = document.getElementById("div3hide");
-  const div4 = document.getElementById("div4hide");
+function showOnlyRelevantFields(rankId) {
+  const currentCultivarEpithet =
+    document.getElementById("cultivarEpithet").value;
+  const currentTradeName = document.getElementById("tradeName").value;
   const label = document.getElementById("unitind1label");
+  const unitind1Select = document.getElementById("unitind1");
+  const div2Hide = document.getElementById("div2hide");
+  const div3Hide = document.getElementById("div3hide");
+  const div4Hide = document.getElementById("div4hide");
+  const div5Hide = document.getElementById("div5hide");
+  const div4Display = document.getElementById("unit4Display");
+  const div5Display = document.getElementById("unit5Display");
+  const authorDiv = document.getElementById("author-div");
+  const parentNode = div5Hide.parentNode;
 
-  if (selectedValue > 150) {
-    div1.style.display = "block";
-    div2.style.display = "block";
+  if (Object.values(rankIdsToHideUnit2From).includes(rankId)) {
+    div2Hide.style.display = "none";
   } else {
-    div1.style.display = "none";
-    div2.style.display = "none";
-  }
-  if (selectedValue <= 180) {
-    // Get the name of selected option
-    const selectedOption = this.options[this.selectedIndex];
-    const selectedOptionText = selectedOption.textContent.trim();
-
-    // Set the label for "UnitName1" based on the selected option text
-    label.textContent = selectedOptionText + " Name";
-  } else {
-    label.textContent = "Genus Name";
+    div2Hide.style.display = "block";
   }
 
-  if (selectedValue == 300) {
-    div3.style.display = "block";
-    div4.style.display = "block";
-    
+  if (Object.values(rankIdsToHideUnit3From).includes(rankId)) {
+    div3Hide.style.display = "none";
   } else {
-    div3.style.display = "none";
-    div4.style.display = "none";
+    div3Hide.style.display = "block";
   }
 
+  const genusName = "Genus Name";
+  if (rankId <= allRankIds.subsection) {
+    const purelyAestheticRankNames = [
+      "--------------------------------",
+      "Select Taxon Rank",
+    ];
+    const rankIdSelector = document.getElementById("rankid");
+    const optionIdx = rankIdSelector.options.selectedIndex;
+    const selectedOptionText = rankIdSelector.options[optionIdx].text.trim();
+    if (!purelyAestheticRankNames.includes(selectedOptionText)) {
+      label.textContent = selectedOptionText + " Name *: ";
+    } else {
+      label.textContent = genusName + " *:";
+    }
+  } else {
+    label.textContent = genusName + " *:";
+  }
 
-});
+  if (Object.values(rankIdsToHideUnit2From).includes(rankId)) {
+    unitind1Select.style.display = "none";
+  } else {
+    unitind1Select.style.display = "inline-block";
+  }
+
+  if (Object.values(rankIdsToHideUnit2From).includes(rankId)) {
+    document.getElementById("unitname2").value = null;
+    document.getElementById("unitind2").value = null;
+  }
+
+  if (Object.values(rankIdsToHideUnit3From).includes(rankId)) {
+    document.getElementById("unitind3").value = null;
+    document.getElementById("unitname3").value = null;
+  }
+
+  if (Object.values(rankIdsToHideUnit4From).includes(rankId)) {
+    removeFromSciName(standardizeCultivarEpithet(currentCultivarEpithet));
+    document.getElementById("cultivarEpithet").value = null;
+  }
+  if (Object.values(rankIdsToHideUnit5From).includes(rankId)) {
+    removeFromSciName(standardizeTradeName(currentTradeName));
+    document.getElementById("tradeName").value = null;
+  }
+
+  if (rankId == allRankIds.cultivar) {
+    div4Display.style.display = "inline-block";
+    div5Display.style.display = "inline-block";
+    div4Hide.style.display = "block";
+    div5Hide.style.display = "block";
+    parentNode.insertBefore(authorDiv, div4Hide);
+  } else {
+    div4Hide.style.display = "none";
+    div5Hide.style.display = "none";
+    document.getElementById("cultivarEpithet").value = null;
+    document.getElementById("tradeName").value = null;
+  }
+}

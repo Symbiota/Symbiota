@@ -74,5 +74,6 @@ $LANG['EMPTY'] = 'Vacío';
 $LANG['TARGET_TAXON_MISSING'] = 'Falta el Taxón objetivo';
 $LANG['NOT_AUTH'] = 'No está autorizado para acceder a esta página';
 $LANG['GENUS_NAME'] = 'Nombre del Género';
+$LANG['QUICK_PARSER_LABEL'] = 'Análisis rápido del nombre científico';
 
 ?>

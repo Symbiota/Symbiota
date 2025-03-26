@@ -25,5 +25,6 @@ $LANG['CREATENEWREL'] = 'Crear una nueva Relación de Conjunto de Datos';
 $LANG['SELECTEXISTING'] = 'Seleccionar un Conjunto de Datos Existente';
 $LANG['CREATENEWDATASET'] = 'Crear un Nuevo Conjunto de Datos';
 $LANG['LINKTO'] = 'Enlazar a Conjunto de Datos';
+$LANG['PRIVATE_STATUS'] = 'estado privado';
 
 ?>

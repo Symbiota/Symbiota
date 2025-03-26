@@ -1,5 +1,6 @@
 <?php
 include_once ($SERVER_ROOT . '/classes/OmCollections.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 class PortalIndex extends OmCollections{
 
@@ -20,7 +21,7 @@ class PortalIndex extends OmCollections{
 		$retArr = null;
 		$retArr['portalName'] = $GLOBALS['DEFAULT_TITLE'];
 		$retArr['guid'] = $GLOBALS['PORTAL_GUID'];
-		$retArr['urlRoot'] = $this->getDomain().$GLOBALS['CLIENT_ROOT'];
+		$retArr['urlRoot'] = GeneralUtil::getDomain().$GLOBALS['CLIENT_ROOT'];
 		$retArr['managerEmail'] = $GLOBALS['ADMIN_EMAIL'];
 		$retArr['symbiotaVersion'] = $GLOBALS['CODE_VERSION'];
 		return $retArr;
@@ -151,7 +152,7 @@ class PortalIndex extends OmCollections{
 			$remoteArr = $this->getAPIResponce($pingUrl);
 			if($remoteArr){
 				if($remoteArr['guid']){
-					$handShakeUrl = $this->getDomain().$GLOBALS['CLIENT_ROOT'].'/api/v2/installation/'.$remoteArr['guid'].'/touch?endpoint='.$remoteArr['urlRoot'];
+					$handShakeUrl = GeneralUtil::getDomain().$GLOBALS['CLIENT_ROOT'].'/api/v2/installation/'.$remoteArr['guid'].'/touch?endpoint='.$remoteArr['urlRoot'];
 					//echo '<div>Handshake URL: '.$handShakeUrl.'</div>';
 					$respArr = $this->getAPIResponce($handShakeUrl);
 				}

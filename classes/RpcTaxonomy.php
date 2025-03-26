@@ -57,10 +57,10 @@ class RpcTaxonomy extends RpcBase{
 					$sciname = trim($sciname) . ' ' . $r->author;
 				}
 				if(!empty($r->cultivarEpithet)){
-					$sciname .= " '" . $r->cultivarEpithet . "'";
+					$sciname .= " " . $this->standardizeCultivarEpithet($r->cultivarEpithet);
 				}
 				if(!empty($r->tradeName)){
-					$sciname .= ' ' . $r->tradeName;
+					$sciname .= ' ' . $this->standardizeTradeName($r->tradeName);
 				}
 				$retArr[] = array('id' => $r->tid,'label' => $sciname);
 			}
@@ -90,10 +90,10 @@ class RpcTaxonomy extends RpcBase{
 				$sciname = trim($sciname) . ' ' . $r->author;
 			}
 			if(!empty($r->cultivarEpithet)){
-				$sciname .= " '" . $r->cultivarEpithet . "'";
+				$sciname .= " " . $this->standardizeCultivarEpithet($r->cultivarEpithet);
 			}
 			if(!empty($r->tradeName)){
-				$sciname .= ' ' . $r->tradeName;
+				$sciname .= ' ' . $this->standardizeTradeName($r->tradeName);
 			}
 			$retArr[] = array('id' => $r->tid,'label' => $sciname);
 		}
@@ -228,8 +228,8 @@ class RpcTaxonomy extends RpcBase{
                     $sciName = $sciNameParts['base'];
                     if($r->rankid >= 180) $sciName = '<i>' . $sciName . '</i>';
                     $sciName .= $displayAuthor ? " " . $r->author : "";
-                    if(isset($sciNameParts['cultivarEpithet'])) $sciName .= " '" . $sciNameParts['cultivarEpithet'] . "'";
-                    if(isset($sciNameParts['tradeName'])) $sciName .= " " . $sciNameParts['tradeName'];
+                    if(!empty($sciNameParts['cultivarEpithet'])) $sciName .= " '" . $sciNameParts['cultivarEpithet'] . "'";
+                    if(!empty($sciNameParts['tradeName'])) $sciName .= " " . $sciNameParts['tradeName'];
                     if($r->tid == $targetId) $sciName = '<b>' . $sciName . '</b>';
                     $sciName = "<span style='font-size:75%;'>" . $rankName . ":</span> " . $sciName;
 					if($r->tid == $objId){
@@ -295,8 +295,8 @@ class RpcTaxonomy extends RpcBase{
                     $sciName = $sciNameParts['base'];
                     if($row->rankid >= 180) $sciName = '[<i>' . $sciName . '</i>]';
                     $sciName .= $displayAuthor ? " " . $row->author : "";
-                    if(isset($sciNameParts['cultivarEpithet'])) $sciName .= " '" . $sciNameParts['cultivarEpithet'] . "'";
-                    if(isset($sciNameParts['tradeName'])) $sciName .= " " . $sciNameParts['tradeName'];
+                    if(!empty($sciNameParts['cultivarEpithet'])) $sciName .= " '" . $sciNameParts['cultivarEpithet'] . "'";
+                    if(!empty($sciNameParts['tradeName'])) $sciName .= " " . $sciNameParts['tradeName'];
                     if($row->tid == $targetId) $sciName = '<b>' . $sciName . '</b>';
 					$childArr[$i]['id'] = $row->tid;
 					$childArr[$i]['label'] = $label;

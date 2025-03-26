@@ -1,6 +1,7 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/glossary/individual.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/glossary/individual.en.php');
 else include_once($SERVER_ROOT.'/content/lang/glossary/individual.'.$LANG_TAG.'.php');
 header("Content-Type: text/html; charset=".$CHARSET);
@@ -214,11 +215,11 @@ if($glossId){
 							foreach($termImgArr as $imgId => $imgArr){
 								$imgUrl = $imgArr["url"];
 								if(substr($imgUrl,0,1)=="/"){
-									if(!empty($GLOBALS['IMAGE_DOMAIN'])){
-										$imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
+									if(!empty($GLOBALS['MEDIA_DOMAIN'])){
+										$imgUrl = $GLOBALS['MEDIA_DOMAIN'] . $imgUrl;
 									}
 									else{
-										$imgUrl = $glosManager->getDomain() . $imgUrl;
+										$imgUrl = GeneralUtil::getDomain() . $imgUrl;
 									}
 								}
 								?>

@@ -25,11 +25,10 @@ class Replace
      * @param mixed $newText String to replace in the defined position
      *                         Or can be an array of values
      *
-     * @return array|string
-     *         If an array of values is passed for either of the arguments, then the returned result
+     * @return array|string If an array of values is passed for either of the arguments, then the returned result
      *            will also be an array with matching dimensions
      */
-    public static function replace($oldText, $start, $chars, $newText)
+    public static function replace(mixed $oldText, mixed $start, mixed $chars, mixed $newText): array|string
     {
         if (is_array($oldText) || is_array($start) || is_array($chars) || is_array($newText)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $oldText, $start, $chars, $newText);
@@ -66,11 +65,10 @@ class Replace
      * @param mixed $instance Integer instance Number for the occurrence of frmText to change
      *                         Or can be an array of values
      *
-     * @return array|string
-     *         If an array of values is passed for either of the arguments, then the returned result
+     * @return array|string If an array of values is passed for either of the arguments, then the returned result
      *            will also be an array with matching dimensions
      */
-    public static function substitute($text = '', $fromText = '', $toText = '', $instance = null)
+    public static function substitute(mixed $text = '', mixed $fromText = '', mixed $toText = '', mixed $instance = null): array|string
     {
         if (is_array($text) || is_array($fromText) || is_array($toText) || is_array($instance)) {
             return self::evaluateArrayArguments([self::class, __FUNCTION__], $text, $fromText, $toText, $instance);
@@ -102,24 +100,17 @@ class Replace
         return $returnValue;
     }
 
-    /**
-     * @return string
-     */
-    private static function executeSubstitution(string $text, string $fromText, string $toText, int $instance)
+    private static function executeSubstitution(string $text, string $fromText, string $toText, int $instance): string
     {
         $pos = -1;
         while ($instance > 0) {
             $pos = mb_strpos($text, $fromText, $pos + 1, 'UTF-8');
             if ($pos === false) {
-                break;
+                return $text;
             }
             --$instance;
         }
 
-        if ($pos !== false) {
-            return Functions::scalar(self::REPLACE($text, ++$pos, StringHelper::countCharacters($fromText), $toText));
-        }
-
-        return $text;
+        return Functions::scalar(self::REPLACE($text, ++$pos, StringHelper::countCharacters($fromText), $toText));
     }
 }

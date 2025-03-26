@@ -7,9 +7,7 @@ namespace Composer\Autoload;
 class ComposerStaticInit61c5b8c463cdaa6cee3bdb4483ab7dbb
 {
     public static $files = array (
-        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
-        '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -21,10 +19,6 @@ class ComposerStaticInit61c5b8c463cdaa6cee3bdb4483ab7dbb
         array (
             'ZipStream\\' => 10,
         ),
-        'S' => 
-        array (
-            'Symfony\\Polyfill\\Mbstring\\' => 26,
-        ),
         'P' => 
         array (
             'Psr\\SimpleCache\\' => 16,
@@ -32,16 +26,12 @@ class ComposerStaticInit61c5b8c463cdaa6cee3bdb4483ab7dbb
             'Psr\\Http\\Client\\' => 16,
             'PhpOffice\\PhpWord\\' => 18,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
+            'PhpOffice\\Math\\' => 15,
             'ParagonIE\\ConstantTime\\' => 23,
         ),
         'M' => 
         array (
-            'MyCLabs\\Enum\\' => 13,
             'Matrix\\' => 7,
-        ),
-        'L' => 
-        array (
-            'Laminas\\Escaper\\' => 16,
         ),
         'C' => 
         array (
@@ -57,10 +47,6 @@ class ComposerStaticInit61c5b8c463cdaa6cee3bdb4483ab7dbb
         'ZipStream\\' => 
         array (
             0 => __DIR__ . '/..' . '/maennchen/zipstream-php/src',
-        ),
-        'Symfony\\Polyfill\\Mbstring\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
         ),
         'Psr\\SimpleCache\\' => 
         array (
@@ -83,21 +69,17 @@ class ComposerStaticInit61c5b8c463cdaa6cee3bdb4483ab7dbb
         array (
             0 => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet',
         ),
+        'PhpOffice\\Math\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpoffice/math/src/Math',
+        ),
         'ParagonIE\\ConstantTime\\' => 
         array (
             0 => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src',
         ),
-        'MyCLabs\\Enum\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/myclabs/php-enum/src',
-        ),
         'Matrix\\' => 
         array (
             0 => __DIR__ . '/..' . '/markbaker/matrix/classes/src',
-        ),
-        'Laminas\\Escaper\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/laminas/laminas-escaper/src',
         ),
         'Complex\\' => 
         array (
@@ -105,21 +87,10 @@ class ComposerStaticInit61c5b8c463cdaa6cee3bdb4483ab7dbb
         ),
     );
 
-    public static $prefixesPsr0 = array (
-        'H' => 
-        array (
-            'HTMLPurifier' => 
-            array (
-                0 => __DIR__ . '/..' . '/ezyang/htmlpurifier/library',
-            ),
-        ),
-    );
-
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Jumbojett\\OpenIDConnectClient' => __DIR__ . '/..' . '/jumbojett/openid-connect-php/src/OpenIDConnectClient.php',
         'Jumbojett\\OpenIDConnectClientException' => __DIR__ . '/..' . '/jumbojett/openid-connect-php/src/OpenIDConnectClient.php',
-        'Stringable' => __DIR__ . '/..' . '/myclabs/php-enum/stubs/Stringable.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -127,7 +98,6 @@ class ComposerStaticInit61c5b8c463cdaa6cee3bdb4483ab7dbb
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit61c5b8c463cdaa6cee3bdb4483ab7dbb::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit61c5b8c463cdaa6cee3bdb4483ab7dbb::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit61c5b8c463cdaa6cee3bdb4483ab7dbb::$prefixesPsr0;
             $loader->classMap = ComposerStaticInit61c5b8c463cdaa6cee3bdb4483ab7dbb::$classMap;
 
         }, null, ClassLoader::class);

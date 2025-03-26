@@ -1,41 +1,29 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/InstitutionManager.php');
+
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/misc/institutioneditor.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/misc/institutioneditor.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/misc/institutioneditor.en.php');
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/admin/institutioneditor.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-//since integers are sanizated here, we don't need to resanitize using htmlspecialchars
 $iid = array_key_exists('iid', $_REQUEST) ? filter_var($_REQUEST['iid'], FILTER_SANITIZE_NUMBER_INT) : '';
 $targetCollid = array_key_exists('targetcollid', $_REQUEST) ? filter_var($_REQUEST['targetcollid'], FILTER_SANITIZE_NUMBER_INT) : '';
-
-//emode is alway 0 or 1, thus we can explicit set to 1 whenever emode is true. No sanitation needed because value is not set as input value, which could be anything.
 $eMode = !empty($_REQUEST['emode']) ? 1 : 0;
-
-//$instCodeDefault this does need to be sanitized, but better to do further down where it is used as output. But OK to sanitize here, and maybe better if used numerous times as output.
-//But not if it is set within the class to be used within an SQL statement. Then it's needs to be sanitized beyond the statements that send it to the class
 $instCodeDefault = array_key_exists('instcode',$_REQUEST) ? $_REQUEST['instcode'] : '';
-
-// $formSubmit does not have to be sanitized because it's only used within condition statements and not output to page
 $formSubmit = array_key_exists('formsubmit', $_POST) ? $_POST['formsubmit'] : '';
 
 $instManager = new InstitutionManager();
-
-// text with $fullCollList is sanitized using cleanOutStr (including htmlspecialchars) within getCollectionList function.
-// The iid value does not have to be sanitized because it is defined as an int, but CheckMarx probably won't know this a might have a problem
 $fullCollList = $instManager->getCollectionList();
 $instManager->setInstitutionId($iid);
 
 //Create a list of collection that are linked to this institutions
 $collList = array();
 foreach($fullCollList as $k => $v){
-	//Values were already sanitized when $fullCollList was obtained from DB, thus we should not double sanitized here (e.g. &amp; becomes &amp;amp;
 	if($v['iid'] == $iid) $collList[$k] = $v['name'];
 }
 
 $editorCode = 0;
-$statusStr = '';
 if($IS_ADMIN){
 	$editorCode = 3;
 }
@@ -45,10 +33,10 @@ elseif(array_key_exists('CollAdmin', $USER_RIGHTS)){
 		$editorCode = 2;
 	}
 }
+$statusStr = '';
 if($editorCode){
 	if($formSubmit == 'Add Institution'){
 		if($instManager->insertInstitution($_POST)){
-			// Can only be set to int within class. Let's see if checkmarx knows this.
 			$iid = $instManager->getInstitutionId();
 			$statusStr = 'SUCCESS, institution added!';
 			if($targetCollid) header('Location: ../misc/collprofiles.php?collid=' . $targetCollid);
@@ -188,7 +176,6 @@ include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<hr />
 		<div style="margin:20px;color:<?php echo (substr($statusStr,0,5)=='ERROR'?'red':'green'); ?>;">
-			<?php //$statusStr is only output from db engine, thus not a big threat, but Checkmarx won't know that, and better safe than sorry ?>
 			<?= htmlspecialchars($statusStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>
 		</div>
 		<hr />
@@ -196,9 +183,6 @@ include($SERVER_ROOT.'/includes/header.php');
 	}
 	if($iid){
 		if($instArr = $instManager->getInstitutionData()){
-			//Cleaning this in function when data is harvested is fine, but only if data is used as output by all pages.
-			//If data from fuction is used by another class/page to be reinserted into data, than that would be a problem, but this is rare.
-			$instArr = $instManager->cleanOutArray($instArr);
 			?>
 			<div style="float:right;">
 				<a href="institutioneditor.php">
@@ -227,7 +211,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							</div>
 							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
 								<input name="institutioncode" type="text" value="<?php echo $instArr['institutioncode']; ?>" />
-								<button name="getgrscicoll" type="button" value="Update from GrSciColl" onClick="grscicoll('insteditform')"><?php echo $LANG['UPDATE_GRSCICOLL']; ?></button>
+								<button name="getgrscicoll" type="button" value="Update from GrSciColl" style="display:inline;" onClick="grscicoll('insteditform')"><?php echo $LANG['UPDATE_GRSCICOLL']; ?></button>
 							</div>
 						</div>
 						<div style="position:relative;clear:both;">
@@ -388,7 +372,6 @@ include($SERVER_ROOT.'/includes/header.php');
 						<div>
 							<?php
 							if($collList){
-								//$collName is cleaned within function that built data array
 								foreach($collList as $id => $collName){
 									echo '<div style="margin:5px;font-weight:bold;clear:both;height:15px;">';
 									echo '<div style="float:left;"><a href="../misc/collprofiles.php?collid=' . $id . '">' . $collName . '</a></div> ';
@@ -407,7 +390,6 @@ include($SERVER_ROOT.'/includes/header.php');
 							<?php
 							//Don't show collection that already linked and only show one that user can admin
 							$addList = array();
-							//$fullCollList cleaned when created
 							foreach($fullCollList as $collid => $collArr){
 								if($collArr['iid'] != $iid){
 									if($IS_ADMIN || (isset($USER_RIGHTS["CollAdmin"]) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
@@ -473,7 +455,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							</div>
 							<div>
 								<input name="institutioncode" type="text" value="<?= htmlspecialchars($instCodeDefault, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" />
-								<button name="getgrscicoll" type="button" value="Get data from GrSciColl" onClick="grscicoll('instaddform')"><?php echo $LANG['GET_DATA_FROM_GRSCICOLL']; ?></button>
+								<button name="getgrscicoll" type="button" value="Get data from GrSciColl" style="display:inline;" onClick="grscicoll('instaddform')"><?php echo $LANG['GET_DATA_FROM_GRSCICOLL']; ?></button>
 							</div>
 						</div>
 						<div style="position:relative;clear:both;">

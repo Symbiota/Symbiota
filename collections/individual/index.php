@@ -1,9 +1,12 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceIndividual.php');
-include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
-include_once($SERVER_ROOT.'/classes/RdfUtility.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyEditorManager.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceIndividual.php');
+include_once($SERVER_ROOT . '/classes/DwcArchiverCore.php');
+include_once($SERVER_ROOT . '/classes/utilities/RdfUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+include_once($SERVER_ROOT . '/classes/Media.php');
+include_once($SERVER_ROOT . '/classes/TaxonomyEditorManager.php');
+
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/individual/index.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/individual/index.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/individual/index.en.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php');
@@ -39,13 +42,14 @@ $isSecuredReader = false;
 $isEditor = false;
 if($SYMB_UID){
 	//Check editing status
+	$observerUid = $indManager->getOccData('observeruid');
 	if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin']))){
 		$isEditor = true;
 	}
 	elseif((array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollEditor']))){
 		$isEditor = true;
 	}
-	elseif(isset($occArr['observeruid']) && $occArr['observeruid'] == $SYMB_UID){
+	elseif($observerUid == $SYMB_UID){
 		$isEditor = true;
 	}
 	elseif($indManager->isTaxonomicEditor()){
@@ -65,15 +69,18 @@ if($SYMB_UID){
 		$isSecuredReader = true;
 	}
 }
+
+//Appy protections and build occurrence array
 $indManager->applyProtections($isSecuredReader);
 $occArr = $indManager->getOccData();
+
 $collMetadata = $indManager->getMetadata();
 $genticArr = $indManager->getGeneticArr();
 
 $statusStr = '';
 //  If other than HTML was requested, return just that content.
 if(isset($_SERVER['HTTP_ACCEPT'])){
-	$accept = RdfUtility::parseHTTPAcceptHeader($_SERVER['HTTP_ACCEPT']);
+	$accept = RdfUtil::parseHTTPAcceptHeader($_SERVER['HTTP_ACCEPT']);
 	foreach($accept as $key => $mediarange){
 		if($mediarange=='text/turtle' || $format == 'turtle') {
 			Header("Content-Type: text/turtle; charset=".$CHARSET);
@@ -464,20 +471,20 @@ $traitArr = $indManager->getTraitArr();
 							</div>
 							<?php
 						}
-						if($occArr['occurrenceid']){
-							?>
-							<div id="occurrenceid-div" class="bottom-breathing-room-rel-sm">
-								<?php
-								echo '<label>'.$LANG['OCCURRENCE_ID'].': </label>';
-								$resolvableGuid = false;
-								if(substr($occArr['occurrenceid'],0,4) == 'http') $resolvableGuid = true;
-								if($resolvableGuid) echo '<a href="' . $occArr['occurrenceid'] . '" target="_blank">';
-								echo $occArr['occurrenceid'];
-								if($resolvableGuid) echo '</a>';
-								?>
-							</div>
+						?>
+						<div id="occurrenceid-div" class="bottom-breathing-room-rel-sm">
 							<?php
-						}
+							echo '<label>'.$LANG['OCCURRENCE_ID'].': </label>';
+							$resolvableGuid = false;
+							if(substr($occArr['occurrenceid'],0,4) == 'http') $resolvableGuid = true;
+							if($resolvableGuid) echo '<a href="' . $occArr['occurrenceid'] . '" target="_blank">';
+							if(isset($occArr['occurrenceid'])){
+								echo $occArr['occurrenceid'];
+							}
+							if($resolvableGuid) echo '</a>';
+							?>
+						</div>
+						<?php
 						if($occArr['othercatalognumbers']){
 							?>
 							<div id="assoccatnum-div" class="assoccatnum-div bottom-breathing-room-rel-sm">
@@ -503,11 +510,15 @@ $traitArr = $indManager->getTraitArr();
 									$taxonEditorObj = new TaxonomyEditorManager();
 									$taxonEditorObj->setTid($occArr['tidinterpreted']);
 									$taxonEditorObj->setTaxon();
-									$splitSciname = $taxonEditorObj->splitSciname();
-									$nonItalicizedScinameComponent = trim((!empty($splitSciname['author']) ? ($splitSciname['author'] . ' ') : '') . (!empty($splitSciname['cultivarEpithet']) ? ("'" . $splitSciname['cultivarEpithet'] . "' ") : '') . (!empty($splitSciname['tradeName']) ? ($splitSciname['tradeName'] . ' ') : ''));
+									$splitSciname = $taxonEditorObj->splitSciname($occArr);
+									$author = !empty($splitSciname['author']) ? ($splitSciname['author'] . ' ') : '';
+									$cultivarEpithet = !empty($splitSciname['cultivarEpithet']) ? ($taxonEditorObj->standardizeCultivarEpithet($splitSciname['cultivarEpithet'])) . ' ' : '';
+									$tradeName = !empty($splitSciname['tradeName']) ? ($taxonEditorObj->standardizeTradeName($splitSciname['tradeName']) . ' ') : '';
+									$nonItalicizedScinameComponent = $author . $cultivarEpithet . $tradeName;
 									echo '<i>' . $splitSciname['base'] . '</i> ' . $nonItalicizedScinameComponent;
 									//echo ' <a href="../../taxa/index.php?taxon=' . $occArr['tidinterpreted'] . '" title="Open Species Profile Page"><img src="" /></a>';
 								} else{
+									// $splitSciname = $taxonEditorObj->splitScinameFromOccArr($occArr); // the misformatting herein is a good reminder to end users to attach entries from the taxonomy thesuarus to their occurrences https://github.com/BioKIC/Symbiota/issues/528#issuecomment-2384276915.
 									echo '<i>' . $occArr['sciname'] .  '</i>';
 								}
 								?>
@@ -523,9 +534,15 @@ $traitArr = $indManager->getTraitArr();
 							<div id="identby-div" class="identby-div bottom-breathing-room-rel-sm">
 								<?php
 								echo '<label>'.(isset($LANG['DETERMINER'])?$LANG['DETERMINER']:'Determiner').': </label>'.$indManager->activateOrcidID($occArr['identifiedby']);
-								if($occArr['dateidentified']) echo ' ('.$occArr['dateidentified'].')';
 								?>
 							</div>
+							<?php if($occArr['dateidentified']): ?>
+								<div id="identby-div" class="identby-div bottom-breathing-room-rel-sm">
+								<?php
+									echo '<label>'.$LANG['DATE_DET']  . ': '. '</label>' . $occArr['dateidentified'];
+								?>
+							</div>
+							<?php endif; ?>
 							<?php
 						}
 						if($occArr['taxonremarks']){
@@ -560,13 +577,13 @@ $traitArr = $indManager->getTraitArr();
 						if(array_key_exists('dets',$occArr) && (count($occArr['dets']) > 1 || $occArr['dets'][key($occArr['dets'])]['iscurrent'] == 0)){
 							?>
 							<div id="determination-div" class="bottom-breathing-room-rel-sm">
-								<div id="det-toogle-div" class="det-toogle-div">
-									<a href="#" onclick="toggle('det-toogle-div');return false"><img src="../../images/plus.png" style="width:1em" alt="image of a plus sign; click to show determination history"></a>
+								<div id="det-toggle-div" class="det-toggle-div">
+									<a href="#" onclick="toggle('det-toggle-div');return false"><img src="../../images/plus.png" style="width:1em" alt="image of a plus sign; click to show determination history"></a>
 									<?php echo $LANG['SHOW_DET_HISTORY']; ?>
 								</div>
-								<div id="det-toogle-div" class="det-toogle-div" style="display:none;">
+								<div id="det-toggle-div" class="det-toggle-div" style="display:none;">
 									<div>
-										<a href="#" onclick="toggle('det-toogle-div');return false"><img src="../../images/minus.png" style="width:1em" alt="image of a minus sign; click to hide determination history"></a>
+										<a href="#" onclick="toggle('det-toggle-div');return false"><img src="../../images/minus.png" style="width:1em" alt="image of a minus sign; click to hide determination history"></a>
 										<?php echo $LANG['HIDE_DET_HISTORY']; ?>
 									</div>
 									<fieldset>
@@ -1019,6 +1036,19 @@ $traitArr = $indManager->getTraitArr();
 								<?php
 								foreach($iArr as $imgArr){
 									$thumbUrl = $imgArr['tnurl'];
+									echo '<div id="thumbnail-div" class="thumbnail-div">';
+									echo Media::render_media_item($imgArr);
+										if($imgArr['caption']) echo '<div><i>'.$imgArr['caption'].'</i></div>';
+										if($imgArr['creator']) echo '<div>'.(isset($LANG['AUTHOR'])?$LANG['AUTHOR']:'Author').': '.$imgArr['creator'].'</div>';
+										if($imgArr['url'] && substr($thumbUrl,0,7)!='process' && $imgArr['url'] != $imgArr['lgurl']) echo '<div><a href="' . $imgArr['url'] . '" target="_blank">' . $LANG['OPEN_MEDIUM'] . '</a></div>';
+										if($imgArr['lgurl']) echo '<div><a href="' . $imgArr['lgurl'] . '" target="_blank">' . $LANG['OPEN_LARGE'] . '</a></div>';
+										if($imgArr['sourceurl']) echo '<div><a href="' . $imgArr['sourceurl'] . '" target="_blank">' . $LANG['OPEN_SOURCE'] . '</a></div>';
+										//Use image rights settings as the default for current record
+										if($imgArr['rights']) $collMetadata['rights'] = $imgArr['rights'];
+										if($imgArr['copyright']) $collMetadata['rightsholder'] = $imgArr['copyright'];
+										if($imgArr['accessrights']) $collMetadata['accessrights'] = $imgArr['accessrights'];
+									echo '</div>';
+									/*
 									if(!$thumbUrl || substr($thumbUrl, 0, 7) == 'process'){
 										if($imgArr['lgurl']){
 											if($image = exif_thumbnail($imgArr['lgurl'])){
@@ -1029,7 +1059,7 @@ $traitArr = $indManager->getTraitArr();
 											if($imgArr['url'] && substr($imgArr['url'], 0, 7) != 'process') $thumbUrl = $imgArr['url'];
 											else $thumbUrl = $imgArr['lgurl'];
 										}
-									}
+							}
 									?>
 									<div id="thumbnail-div" class="thumbnail-div">
 										<a href='<?= $imgArr['url'] ?>' target="_blank">
@@ -1037,7 +1067,7 @@ $traitArr = $indManager->getTraitArr();
 										</a>
 										<?php
 										if($imgArr['caption']) echo '<div><i>'.$imgArr['caption'].'</i></div>';
-										if($imgArr['photographer']) echo '<div>'.(isset($LANG['AUTHOR'])?$LANG['AUTHOR']:'Author').': '.$imgArr['photographer'].'</div>';
+										if($imgArr['creator']) echo '<div>'.(isset($LANG['AUTHOR'])?$LANG['AUTHOR']:'Author').': '.$imgArr['creator'].'</div>';
 										if($imgArr['url'] && substr($thumbUrl,0,7)!='process' && $imgArr['url'] != $imgArr['lgurl']) echo '<div><a href="' . $imgArr['url'] . '" target="_blank">' . $LANG['OPEN_MEDIUM'] . '</a></div>';
 										if($imgArr['lgurl']) echo '<div><a href="' . $imgArr['lgurl'] . '" target="_blank">' . $LANG['OPEN_LARGE'] . '</a></div>';
 										if($imgArr['sourceurl']) echo '<div><a href="' . $imgArr['sourceurl'] . '" target="_blank">' . $LANG['OPEN_SOURCE'] . '</a></div>';
@@ -1047,7 +1077,7 @@ $traitArr = $indManager->getTraitArr();
 										if($imgArr['accessrights']) $collMetadata['accessrights'] = $imgArr['accessrights'];
 										?>
 									</div>
-									<?php
+							<?php */
 								}
 								?>
 							</fieldset>
@@ -1073,9 +1103,6 @@ $traitArr = $indManager->getTraitArr();
 							if($rightsStr) echo $rightsStr;
 							else echo '<a href="../../includes/usagepolicy.php">' . $LANG['USAGE_POLICY'] . '</a>';
 							?>
-						</div>
-						<div id="record-id-div" style="margin:3px 0px;">
-							<?php echo '<label>'.$LANG['RECORD_ID'].': </label>'.$occArr['recordid']; ?>
 						</div>
 						<?php
 						if(isset($occArr['source'])){
@@ -1134,9 +1161,9 @@ $traitArr = $indManager->getTraitArr();
 										$otherCatNum = ' (' . trim($otherCatNum, ', ') . ')';
 									}
 									$emailSubject = $DEFAULT_TITLE . ' occurrence: ' . $occArr['catalognumber'] . $otherCatNum;
-									$refPath = $indManager->getDomain().$CLIENT_ROOT.'/collections/individual/index.php?occid='.$occArr['occid'];
+									$refPath = GeneralUtil::getDomain().$CLIENT_ROOT.'/collections/individual/index.php?occid='.$occArr['occid'];
 									$emailBody = $LANG['SPECIMEN_REFERENCED'].': '.$refPath;
-									$emailRef = 'subject=' . urlencode($emailSubject) . '&cc=' . urlencode($ADMIN_EMAIL) . '&body=' . urlencode($emailBody);
+									$emailRef = 'subject=' . rawurlencode($emailSubject) . '&cc=' . $ADMIN_EMAIL . '&body=' . rawurlencode($emailBody);
 									echo ' (<a href="mailto:' . $collMetadata['email'] . '?' . $emailRef . '">' . $collMetadata['email'] . '</a>)';
 								}
 							}
@@ -1252,7 +1279,7 @@ $traitArr = $indManager->getTraitArr();
 									if(!isset($occArr['taxonsecure']) && !isset($occArr['localsecure'])){
 										if($dupArr['url']){
 											$url = $dupArr['url'];
-											if($IMAGE_DOMAIN) if(substr($url,0,1) == '/') $url = $IMAGE_DOMAIN.$url;
+											if($MEDIA_DOMAIN) if(substr($url,0,1) == '/') $url = $MEDIA_DOMAIN.$url;
 											echo '<div style="float:right;margin:10px;"><img src="'.$url.'" style="width:70px;border:1px solid grey" /></div>';
 										}
 									}

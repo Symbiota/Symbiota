@@ -2,66 +2,56 @@
 
 namespace PhpOffice\PhpSpreadsheet\Worksheet\Table;
 
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\Shared\StringHelper;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Table;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class Column
 {
     /**
      * Table Column Index.
-     *
-     * @var string
      */
-    private $columnIndex = '';
+    private string $columnIndex;
 
     /**
      * Show Filter Button.
-     *
-     * @var bool
      */
-    private $showFilterButton = true;
+    private bool $showFilterButton = true;
 
     /**
      * Total Row Label.
-     *
-     * @var string
      */
-    private $totalsRowLabel;
+    private ?string $totalsRowLabel = null;
 
     /**
      * Total Row Function.
-     *
-     * @var string
      */
-    private $totalsRowFunction;
+    private ?string $totalsRowFunction = null;
 
     /**
      * Total Row Formula.
-     *
-     * @var string
      */
-    private $totalsRowFormula;
+    private ?string $totalsRowFormula = null;
 
     /**
      * Column Formula.
-     *
-     * @var string
      */
-    private $columnFormula;
+    private ?string $columnFormula = null;
 
     /**
      * Table.
-     *
-     * @var null|Table
      */
-    private $table;
+    private ?Table $table;
 
     /**
      * Create a new Column.
      *
      * @param string $column Column (e.g. A)
-     * @param Table $table Table for this column
+     * @param ?Table $table Table for this column
      */
-    public function __construct($column, ?Table $table = null)
+    public function __construct(string $column, ?Table $table = null)
     {
         $this->columnIndex = $column;
         $this->table = $table;
@@ -80,7 +70,7 @@ class Column
      *
      * @param string $column Column (e.g. A)
      */
-    public function setColumnIndex($column): self
+    public function setColumnIndex(string $column): self
     {
         // Uppercase coordinate
         $column = strtoupper($column);
@@ -199,5 +189,52 @@ class Column
         $this->table = $table;
 
         return $this;
+    }
+
+    public static function updateStructuredReferences(?Worksheet $workSheet, ?string $oldTitle, ?string $newTitle): void
+    {
+        if ($workSheet === null || $oldTitle === null || $oldTitle === '' || $newTitle === null) {
+            return;
+        }
+
+        // Remember that table headings are case-insensitive
+        if (StringHelper::strToLower($oldTitle) !== StringHelper::strToLower($newTitle)) {
+            // We need to check all formula cells that might contain Structured References that refer
+            //    to this column, and update those formulae to reference the new column text
+            $spreadsheet = $workSheet->getParentOrThrow();
+            foreach ($spreadsheet->getWorksheetIterator() as $sheet) {
+                self::updateStructuredReferencesInCells($sheet, $oldTitle, $newTitle);
+            }
+            self::updateStructuredReferencesInNamedFormulae($spreadsheet, $oldTitle, $newTitle);
+        }
+    }
+
+    private static function updateStructuredReferencesInCells(Worksheet $worksheet, string $oldTitle, string $newTitle): void
+    {
+        $pattern = '/\[(@?)' . preg_quote($oldTitle, '/') . '\]/mui';
+
+        foreach ($worksheet->getCoordinates(false) as $coordinate) {
+            $cell = $worksheet->getCell($coordinate);
+            if ($cell->getDataType() === DataType::TYPE_FORMULA) {
+                $formula = $cell->getValueString();
+                if (preg_match($pattern, $formula) === 1) {
+                    $formula = preg_replace($pattern, "[$1{$newTitle}]", $formula);
+                    $cell->setValueExplicit($formula, DataType::TYPE_FORMULA);
+                }
+            }
+        }
+    }
+
+    private static function updateStructuredReferencesInNamedFormulae(Spreadsheet $spreadsheet, string $oldTitle, string $newTitle): void
+    {
+        $pattern = '/\[(@?)' . preg_quote($oldTitle, '/') . '\]/mui';
+
+        foreach ($spreadsheet->getNamedFormulae() as $namedFormula) {
+            $formula = $namedFormula->getValue();
+            if (preg_match($pattern, $formula) === 1) {
+                $formula = preg_replace($pattern, "[$1{$newTitle}]", $formula) ?? '';
+                $namedFormula->setValue($formula);
+            }
+        }
     }
 }

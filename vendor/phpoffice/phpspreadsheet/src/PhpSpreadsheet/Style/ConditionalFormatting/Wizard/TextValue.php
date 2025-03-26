@@ -40,16 +40,11 @@ class TextValue extends WizardAbstract implements WizardInterface
         Conditional::OPERATOR_ENDSWITH => 'RIGHT(%s,LEN(%s))=%s',
     ];
 
-    /** @var string */
-    protected $operator;
+    protected string $operator;
 
-    /** @var string */
-    protected $operand;
+    protected string $operand;
 
-    /**
-     * @var string
-     */
-    protected $operandValueType;
+    protected string $operandValueType;
 
     public function __construct(string $cellRange)
     {
@@ -67,9 +62,7 @@ class TextValue extends WizardAbstract implements WizardInterface
 
     protected function operand(string $operand, string $operandValueType = Wizard::VALUE_TYPE_LITERAL): void
     {
-        if (is_string($operand)) {
-            $operand = $this->validateOperand($operand, $operandValueType);
-        }
+        $operand = $this->validateOperand($operand, $operandValueType);
 
         $this->operand = $operand;
         $this->operandValueType = $operandValueType;
@@ -87,8 +80,8 @@ class TextValue extends WizardAbstract implements WizardInterface
             : $this->cellConditionCheck($this->operand);
 
         if (
-            $this->operator === Conditional::OPERATOR_CONTAINSTEXT ||
-            $this->operator === Conditional::OPERATOR_NOTCONTAINS
+            $this->operator === Conditional::OPERATOR_CONTAINSTEXT
+            || $this->operator === Conditional::OPERATOR_NOTCONTAINS
         ) {
             $this->expression = sprintf(self::EXPRESSIONS[$this->operator], $operand, $this->referenceCell);
         } else {
@@ -129,14 +122,12 @@ class TextValue extends WizardAbstract implements WizardInterface
         // Best-guess to try and identify if the text is a string literal, a cell reference or a formula?
         $wizard->operandValueType = Wizard::VALUE_TYPE_LITERAL;
         $condition = $conditional->getText();
-        if (is_string($condition) && array_key_exists($condition, Calculation::$excelConstants)) {
-            $condition = Calculation::$excelConstants[$condition];
-        } elseif (preg_match('/^' . Calculation::CALCULATION_REGEXP_CELLREF_RELATIVE . '$/i', $condition)) {
+        if (preg_match('/^' . Calculation::CALCULATION_REGEXP_CELLREF_RELATIVE . '$/i', $condition)) {
             $wizard->operandValueType = Wizard::VALUE_TYPE_CELL;
             $condition = self::reverseAdjustCellRef($condition, $cellRange);
         } elseif (
-            preg_match('/\(\)/', $condition) ||
-            preg_match('/' . Calculation::CALCULATION_REGEXP_CELLREF_RELATIVE . '/i', $condition)
+            preg_match('/\(\)/', $condition)
+            || preg_match('/' . Calculation::CALCULATION_REGEXP_CELLREF_RELATIVE . '/i', $condition)
         ) {
             $wizard->operandValueType = Wizard::VALUE_TYPE_FORMULA;
         }
@@ -146,17 +137,27 @@ class TextValue extends WizardAbstract implements WizardInterface
     }
 
     /**
-     * @param string $methodName
      * @param mixed[] $arguments
      */
-    public function __call($methodName, $arguments): self
+    public function __call(string $methodName, array $arguments): self
     {
         if (!isset(self::MAGIC_OPERATIONS[$methodName])) {
             throw new Exception('Invalid Operation for Text Value CF Rule Wizard');
         }
 
         $this->operator(self::MAGIC_OPERATIONS[$methodName]);
-        $this->operand(...$arguments);
+        //$this->operand(...$arguments);
+        if (count($arguments) < 2) {
+            /** @var string */
+            $arg0 = $arguments[0];
+            $this->operand($arg0);
+        } else {
+            /** @var string */
+            $arg0 = $arguments[0];
+            /** @var string */
+            $arg1 = $arguments[1];
+            $this->operand($arg0, $arg1);
+        }
 
         return $this;
     }

@@ -46,7 +46,7 @@ class Conditional
      *
      * @return mixed The value of returnIfTrue or returnIfFalse determined by condition
      */
-    public static function statementIf($condition = true, $returnIfTrue = 0, $returnIfFalse = false)
+    public static function statementIf(mixed $condition = true, mixed $returnIfTrue = 0, mixed $returnIfFalse = false): mixed
     {
         $condition = ($condition === null) ? true : Functions::flattenSingleValue($condition);
 
@@ -86,7 +86,7 @@ class Conditional
      *
      * @return mixed The value of matched expression
      */
-    public static function statementSwitch(...$arguments)
+    public static function statementSwitch(mixed ...$arguments): mixed
     {
         $result = ExcelError::VALUE();
 
@@ -100,7 +100,7 @@ class Conditional
             $switchSatisfied = false;
             if ($switchCount > 0) {
                 for ($index = 0; $index < $switchCount; ++$index) {
-                    if ($targetValue == $arguments[$index * 2 + 1]) {
+                    if ($targetValue == Functions::flattenSingleValue($arguments[$index * 2 + 1])) {
                         $result = $arguments[$index * 2 + 2];
                         $switchSatisfied = true;
 
@@ -132,13 +132,14 @@ class Conditional
      *         If an array of values is passed as the $testValue argument, then the returned result will also be
      *            an array with the same dimensions
      */
-    public static function IFERROR($testValue = '', $errorpart = '')
+    public static function IFERROR(mixed $testValue = '', mixed $errorpart = ''): mixed
     {
         if (is_array($testValue)) {
             return self::evaluateArrayArgumentsSubset([self::class, __FUNCTION__], 1, $testValue, $errorpart);
         }
 
         $errorpart = $errorpart ?? '';
+        $testValue = $testValue ?? 0; // this is how Excel handles empty cell
 
         return self::statementIf(ErrorValue::isError($testValue), $errorpart, $testValue);
     }
@@ -158,13 +159,14 @@ class Conditional
      *         If an array of values is passed as the $testValue argument, then the returned result will also be
      *            an array with the same dimensions
      */
-    public static function IFNA($testValue = '', $napart = '')
+    public static function IFNA(mixed $testValue = '', mixed $napart = ''): mixed
     {
         if (is_array($testValue)) {
             return self::evaluateArrayArgumentsSubset([self::class, __FUNCTION__], 1, $testValue, $napart);
         }
 
         $napart = $napart ?? '';
+        $testValue = $testValue ?? 0; // this is how Excel handles empty cell
 
         return self::statementIf(ErrorValue::isNa($testValue), $napart, $testValue);
     }
@@ -185,7 +187,7 @@ class Conditional
      *
      * @return mixed|string The value of returnIfTrue_n, if testValue_n was true. #N/A if none of testValues was true
      */
-    public static function IFS(...$arguments)
+    public static function IFS(mixed ...$arguments)
     {
         $argumentCount = count($arguments);
 

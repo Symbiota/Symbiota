@@ -3,78 +3,67 @@
 namespace PhpOffice\PhpSpreadsheet\Writer;
 
 use PhpOffice\PhpSpreadsheet\Calculation\Calculation;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use Stringable;
 
 class Csv extends BaseWriter
 {
     /**
      * PhpSpreadsheet object.
-     *
-     * @var Spreadsheet
      */
-    private $spreadsheet;
+    private Spreadsheet $spreadsheet;
 
     /**
      * Delimiter.
-     *
-     * @var string
      */
-    private $delimiter = ',';
+    private string $delimiter = ',';
 
     /**
      * Enclosure.
-     *
-     * @var string
      */
-    private $enclosure = '"';
+    private string $enclosure = '"';
 
     /**
      * Line ending.
-     *
-     * @var string
      */
-    private $lineEnding = PHP_EOL;
+    private string $lineEnding = PHP_EOL;
 
     /**
      * Sheet index to write.
-     *
-     * @var int
      */
-    private $sheetIndex = 0;
+    private int $sheetIndex = 0;
 
     /**
-     * Whether to write a BOM (for UTF8).
-     *
-     * @var bool
+     * Whether to write a UTF8 BOM.
      */
-    private $useBOM = false;
+    private bool $useBOM = false;
 
     /**
      * Whether to write a Separator line as the first line of the file
      *     sep=x.
-     *
-     * @var bool
      */
-    private $includeSeparatorLine = false;
+    private bool $includeSeparatorLine = false;
 
     /**
      * Whether to write a fully Excel compatible CSV file.
-     *
-     * @var bool
      */
-    private $excelCompatibility = false;
+    private bool $excelCompatibility = false;
 
     /**
      * Output encoding.
-     *
-     * @var string
      */
-    private $outputEncoding = '';
+    private string $outputEncoding = '';
+
+    /**
+     * Whether number of columns should be allowed to vary
+     * between rows, or use a fixed range based on the max
+     * column overall.
+     */
+    private bool $variableColumns = false;
 
     /**
      * Create a new CSV.
-     *
-     * @param Spreadsheet $spreadsheet Spreadsheet object
      */
     public function __construct(Spreadsheet $spreadsheet)
     {
@@ -95,8 +84,7 @@ class Csv extends BaseWriter
 
         $saveDebugLog = Calculation::getInstance($this->spreadsheet)->getDebugLog()->getWriteDebugLog();
         Calculation::getInstance($this->spreadsheet)->getDebugLog()->setWriteDebugLog(false);
-        $saveArrayReturnType = Calculation::getArrayReturnType();
-        Calculation::setArrayReturnType(Calculation::RETURN_ARRAY_AS_VALUE);
+        $sheet->calculateArrays($this->preCalculateFormulas);
 
         // Open file
         $this->openFileHandle($filename);
@@ -124,84 +112,54 @@ class Csv extends BaseWriter
         $maxRow = $sheet->getHighestDataRow();
 
         // Write rows to file
-        for ($row = 1; $row <= $maxRow; ++$row) {
-            // Convert the row to an array...
-            $cellsArray = $sheet->rangeToArray('A' . $row . ':' . $maxCol . $row, '', $this->preCalculateFormulas);
-            // ... and write to the file
-            $this->writeLine($this->fileHandle, $cellsArray[0]);
+        $row = 0;
+        foreach ($sheet->rangeToArrayYieldRows("A1:$maxCol$maxRow", '', $this->preCalculateFormulas) as $cellsArray) {
+            ++$row;
+            if ($this->variableColumns) {
+                $column = $sheet->getHighestDataColumn($row);
+                if ($column === 'A' && !$sheet->cellExists("A$row")) {
+                    $cellsArray = [];
+                } else {
+                    array_splice($cellsArray, Coordinate::columnIndexFromString($column));
+                }
+            }
+            $this->writeLine($this->fileHandle, $cellsArray);
         }
 
         $this->maybeCloseFileHandle();
-        Calculation::setArrayReturnType($saveArrayReturnType);
         Calculation::getInstance($this->spreadsheet)->getDebugLog()->setWriteDebugLog($saveDebugLog);
     }
 
-    /**
-     * Get delimiter.
-     *
-     * @return string
-     */
-    public function getDelimiter()
+    public function getDelimiter(): string
     {
         return $this->delimiter;
     }
 
-    /**
-     * Set delimiter.
-     *
-     * @param string $delimiter Delimiter, defaults to ','
-     *
-     * @return $this
-     */
-    public function setDelimiter($delimiter)
+    public function setDelimiter(string $delimiter): self
     {
         $this->delimiter = $delimiter;
 
         return $this;
     }
 
-    /**
-     * Get enclosure.
-     *
-     * @return string
-     */
-    public function getEnclosure()
+    public function getEnclosure(): string
     {
         return $this->enclosure;
     }
 
-    /**
-     * Set enclosure.
-     *
-     * @param string $enclosure Enclosure, defaults to "
-     *
-     * @return $this
-     */
-    public function setEnclosure($enclosure = '"')
+    public function setEnclosure(string $enclosure = '"'): self
     {
         $this->enclosure = $enclosure;
 
         return $this;
     }
 
-    /**
-     * Get line ending.
-     *
-     * @return string
-     */
-    public function getLineEnding()
+    public function getLineEnding(): string
     {
         return $this->lineEnding;
     }
 
-    /**
-     * Set line ending.
-     *
-     * @param string $lineEnding Line ending, defaults to OS line ending (PHP_EOL)
-     *
-     * @return $this
-     */
-    public function setLineEnding($lineEnding)
+    public function setLineEnding(string $lineEnding): self
     {
         $this->lineEnding = $lineEnding;
 
@@ -210,22 +168,16 @@ class Csv extends BaseWriter
 
     /**
      * Get whether BOM should be used.
-     *
-     * @return bool
      */
-    public function getUseBOM()
+    public function getUseBOM(): bool
     {
         return $this->useBOM;
     }
 
     /**
-     * Set whether BOM should be used.
-     *
-     * @param bool $useBOM Use UTF-8 byte-order mark? Defaults to false
-     *
-     * @return $this
+     * Set whether BOM should be used, typically when non-ASCII characters are used.
      */
-    public function setUseBOM($useBOM)
+    public function setUseBOM(bool $useBOM): self
     {
         $this->useBOM = $useBOM;
 
@@ -234,22 +186,16 @@ class Csv extends BaseWriter
 
     /**
      * Get whether a separator line should be included.
-     *
-     * @return bool
      */
-    public function getIncludeSeparatorLine()
+    public function getIncludeSeparatorLine(): bool
     {
         return $this->includeSeparatorLine;
     }
 
     /**
      * Set whether a separator line should be included as the first line of the file.
-     *
-     * @param bool $includeSeparatorLine Use separator line? Defaults to false
-     *
-     * @return $this
      */
-    public function setIncludeSeparatorLine($includeSeparatorLine)
+    public function setIncludeSeparatorLine(bool $includeSeparatorLine): self
     {
         $this->includeSeparatorLine = $includeSeparatorLine;
 
@@ -258,10 +204,8 @@ class Csv extends BaseWriter
 
     /**
      * Get whether the file should be saved with full Excel Compatibility.
-     *
-     * @return bool
      */
-    public function getExcelCompatibility()
+    public function getExcelCompatibility(): bool
     {
         return $this->excelCompatibility;
     }
@@ -271,66 +215,39 @@ class Csv extends BaseWriter
      *
      * @param bool $excelCompatibility Set the file to be written as a fully Excel compatible csv file
      *                                Note that this overrides other settings such as useBOM, enclosure and delimiter
-     *
-     * @return $this
      */
-    public function setExcelCompatibility($excelCompatibility)
+    public function setExcelCompatibility(bool $excelCompatibility): self
     {
         $this->excelCompatibility = $excelCompatibility;
 
         return $this;
     }
 
-    /**
-     * Get sheet index.
-     *
-     * @return int
-     */
-    public function getSheetIndex()
+    public function getSheetIndex(): int
     {
         return $this->sheetIndex;
     }
 
-    /**
-     * Set sheet index.
-     *
-     * @param int $sheetIndex Sheet index
-     *
-     * @return $this
-     */
-    public function setSheetIndex($sheetIndex)
+    public function setSheetIndex(int $sheetIndex): self
     {
         $this->sheetIndex = $sheetIndex;
 
         return $this;
     }
 
-    /**
-     * Get output encoding.
-     *
-     * @return string
-     */
-    public function getOutputEncoding()
+    public function getOutputEncoding(): string
     {
         return $this->outputEncoding;
     }
 
-    /**
-     * Set output encoding.
-     *
-     * @param string $outputEnconding Output encoding
-     *
-     * @return $this
-     */
-    public function setOutputEncoding($outputEnconding)
+    public function setOutputEncoding(string $outputEnconding): self
     {
         $this->outputEncoding = $outputEnconding;
 
         return $this;
     }
 
-    /** @var bool */
-    private $enclosureRequired = true;
+    private bool $enclosureRequired = true;
 
     public function setEnclosureRequired(bool $value): self
     {
@@ -347,9 +264,9 @@ class Csv extends BaseWriter
     /**
      * Convert boolean to TRUE/FALSE; otherwise return element cast to string.
      *
-     * @param mixed $element
+     * @param null|bool|float|int|string|Stringable $element element to be converted
      */
-    private static function elementToString($element): string
+    private static function elementToString(mixed $element): string
     {
         if (is_bool($element)) {
             return $element ? 'TRUE' : 'FALSE';
@@ -372,6 +289,7 @@ class Csv extends BaseWriter
         // Build the line
         $line = '';
 
+        /** @var null|bool|float|int|string|Stringable $element */
         foreach ($values as $element) {
             $element = self::elementToString($element);
             // Add delimiter
@@ -400,5 +318,27 @@ class Csv extends BaseWriter
             $line = mb_convert_encoding($line, $this->outputEncoding);
         }
         fwrite($fileHandle, $line);
+    }
+
+    /**
+     * Get whether number of columns should be allowed to vary
+     * between rows, or use a fixed range based on the max
+     * column overall.
+     */
+    public function getVariableColumns(): bool
+    {
+        return $this->variableColumns;
+    }
+
+    /**
+     * Set whether number of columns should be allowed to vary
+     * between rows, or use a fixed range based on the max
+     * column overall.
+     */
+    public function setVariableColumns(bool $pValue): self
+    {
+        $this->variableColumns = $pValue;
+
+        return $this;
     }
 }

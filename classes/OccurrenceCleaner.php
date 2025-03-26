@@ -468,6 +468,10 @@ class OccurrenceCleaner extends Manager{
 				$retArr[$r->countryName][] = $r->stateName;
 			}
 			$rs->free();
+			foreach ($retArr as &$counties) {
+				sort($counties, SORT_STRING);
+			}
+			unset($counties);
 		}
 		ksort($retArr);
 		$retArr[] = 'unknown';

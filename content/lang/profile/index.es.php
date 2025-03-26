@@ -5,6 +5,7 @@ Language: Español (Spanish)
 ------------------
 */
 
+$LANG['LOGIN'] = 'Iniciar Sesión';
 $LANG['INVALID_LOGIN'] = 'Inicio de sesión inválido';
 $LANG['INVALID_EMAIL'] = 'Correo electrónico inválido';
 $LANG['INCORRECT'] = 'Su nombre de usuario o contraseña es incorrecto. Intente de nuevo por favor.<br/> Si no puede recordar sus credenciales de inicio de sesión, utilice los controles siguientes para recuperar su inicio de sesión o restablecer su contraseña.';
@@ -27,5 +28,5 @@ $LANG['REMEMBER_LOGIN'] = "No puede recordar su nombre de usuario?";
 $LANG['RETRIEVE'] = 'Recuperar inicio de sesión';
 $LANG['YOUR_EMAIL'] = 'Su correo electrónico';
 $LANG['OID_LOGIN'] = 'Iniciar sesión con OID';
-$LANG['THIRD_PARTY_LOGIN'] = 'Inicie sesión';
+$LANG['THIRD_PARTY_LOGIN'] = 'Inicie sesión utilizando autenticación de terceros';
 ?>

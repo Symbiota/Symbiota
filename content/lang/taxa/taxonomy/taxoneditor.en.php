@@ -74,5 +74,6 @@ $LANG['EMPTY'] = 'Empty';
 $LANG['TARGET_TAXON_MISSING'] = 'Target Taxon missing';
 $LANG['NOT_AUTH'] = 'You are not authorized to access this page';
 $LANG['GENUS_NAME'] = 'Genus Name';
+$LANG['QUICK_PARSER_LABEL'] = 'Optional Quick Parser';
 
 ?>
