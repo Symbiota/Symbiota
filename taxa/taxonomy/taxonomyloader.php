@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyEditorManager.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomyloader.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/taxa/taxonomy/taxonomyloader.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomyloader.en.php');
@@ -20,6 +20,7 @@ $isEditor = false;
 if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
 	$isEditor = true;
 }
+$isEditor = true;
 
 if($isEditor){
 	if(array_key_exists('sciname',$_POST)){

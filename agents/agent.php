@@ -1,6 +1,6 @@
 <?php
 
-include_once('../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/AgentManager.php');
 include_once($SERVER_ROOT.'/classes/utilities/RdfUtil.php');
 include_once($SERVER_ROOT.'/classes/utilities/UuidFactory.php');

@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceImport.php');
 if($LANG_TAG != 'en' && !file_exists($SERVER_ROOT.'/content/lang/collections/admin/importextended.'.$LANG_TAG.'.php')) $LANG_TAG = 'en';
 include_once($SERVER_ROOT.'/content/lang/collections/admin/importextended.'.$LANG_TAG.'.php');

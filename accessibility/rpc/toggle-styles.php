@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 $currentlyEnabledStylesheet = $_REQUEST['currentEnabledStylesheet'];
 //session_start();
 $accessiblePath = $CSS_BASE_PATH . '/symbiota/condensed.css?ver=14';

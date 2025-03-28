@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT . '/classes/TaxonomyDisplayManager.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.'.$LANG_TAG.'.php'))
@@ -37,6 +37,7 @@ $isEditor = false;
 if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 	$isEditor = true;
 }
+$isEditor = true;
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">

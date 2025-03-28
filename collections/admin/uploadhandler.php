@@ -8,7 +8,7 @@
  * post_max_size, upload_max_filesize, default_socket_timeout, max_execution_time, max_input_time, and allow_url_fopen
  */
 
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecUploadDwca.php');
 
 if($argc){

@@ -7,7 +7,7 @@ die;
 // TODO: Change to back bulkloads of uploaded list of agent name data.
 // TODO: Include ability to include GUIDs, remarks and other agent metadata beyond names and dates.
 
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 $filename = "agentnames.csv";
 $filename = preg_replace("[^A-Za-z_\.0-9\-]",'', array_key_exists("file",$_REQUEST) ? $_REQUEST["file"] : $filename );
 include_once($SERVER_ROOT . '/classes/AgentManager.php');
