@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceGeorefTools.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/collections/georef/georefclone.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/georef/georefclone.en.php');

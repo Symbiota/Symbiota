@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/KeyDataManager.php');
 if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/ident/key.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/ident/key.en.php');
 else include_once($SERVER_ROOT.'/content/lang/ident/key.'.$LANG_TAG.'.php');

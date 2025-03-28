@@ -1,5 +1,5 @@
 <?php
-include_once('../../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorDeterminations.php');
 
 $collid = array_key_exists('collid' ,$_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : '';

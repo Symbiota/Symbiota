@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TPImageEditorManager.php');
 include_once($SERVER_ROOT . '/classes/Media.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/profile/tpimageeditor.' . $LANG_TAG . '.php'))

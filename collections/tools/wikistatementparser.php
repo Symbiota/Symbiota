@@ -1,6 +1,6 @@
 <?php
 if(!file_exists('./config/symbini.php')) {
-	include_once('../../config/symbini.php');
+	include_once($SERVER_ROOT . '/config/symbini.php');
 
 	ob_start();
 	include_once('../../includes/head.php');

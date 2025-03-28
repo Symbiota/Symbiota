@@ -1,7 +1,7 @@
 <?php
 //error_reporting(E_ALL);
 //error_reporting(0);
-include_once('../../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT . '/classes/utilities/SpecProcNlpUtil.php');
 include_once($SERVER_ROOT . '/classes/SpecProcNlpSalix.php');
 header("Content-Type: text/html; charset=".$CHARSET);

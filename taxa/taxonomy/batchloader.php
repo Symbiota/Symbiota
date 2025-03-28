@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyUpload.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyHarvester.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/taxonomy/batchloader.' . $LANG_TAG . '.php'))

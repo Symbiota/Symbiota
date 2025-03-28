@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT . '/classes/TaxonomyEditorManager.php');
 header("Content-Type: text/html; charset=" . $CHARSET);
 if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/taxa/taxonomy/taxoneditor.' . $LANG_TAG . '.php'))

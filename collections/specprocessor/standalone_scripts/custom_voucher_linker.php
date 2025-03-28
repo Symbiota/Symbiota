@@ -6,7 +6,7 @@
  * Steps to use: 1) Modify checklist identifier (clid), 2) Customize criteria and code to match project specific needs, 3) Uncomment line 14, 4) Run from command line: php voucher_linker.php
  */
 
-include_once('../../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/config/dbconnection.php');
 
 $clid = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:0;

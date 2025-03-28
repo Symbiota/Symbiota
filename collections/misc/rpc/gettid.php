@@ -1,5 +1,5 @@
 <?php
-include_once('../../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/config/dbconnection.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 header("Cache-Control: no-cache, must-revalidate");

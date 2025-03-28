@@ -2,7 +2,7 @@
 
 use PHPUnit\Exception;
 
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TPEditorManager.php');
 include_once($SERVER_ROOT.'/classes/TPDescEditorManager.php');
 include_once($SERVER_ROOT.'/classes/TPImageEditorManager.php');

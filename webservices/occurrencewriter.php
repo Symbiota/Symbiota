@@ -14,7 +14,7 @@
  */
 
 date_default_timezone_set('America/Phoenix');
-include_once('../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 require_once($SERVER_ROOT.'/classes/APIOccurEditor.php');
 
 $occid = array_key_exists('occid',$_REQUEST)?$_REQUEST['occid']:0;

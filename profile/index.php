@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT . '/config/auth_config.php');
 require_once($SERVER_ROOT . '/vendor/autoload.php');
 use Jumbojett\OpenIDConnectClient;

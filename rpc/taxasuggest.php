@@ -3,7 +3,7 @@
  * Input: term = scientific name fragment, taxonType, $rankLow = rankid lower limit, $rankHigh = rankid upper limit
  * Return: autosuggest return list
  */
-include_once('../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonSearchSupport.php');
 header('Content-Type: application/json; charset='.$CHARSET);
 include_once($SERVER_ROOT . '/rpc/crossPortalHeaders.php');

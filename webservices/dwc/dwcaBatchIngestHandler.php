@@ -1,5 +1,5 @@
 <?php 
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 require_once($SERVER_ROOT.'/classes/SpecUploadBase.php');
 require_once($SERVER_ROOT.'/classes/SpecUploadDwca.php');
 

@@ -12,7 +12,7 @@
 
 //error_reporting(E_ALL);
 error_reporting(0);
-include_once('../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SalixHandler.php');
 header("Content-Type: text/html; charset=UTF-8");
 

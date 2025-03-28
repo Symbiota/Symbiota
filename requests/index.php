@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ActionManager.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceActionManager.php');
 header("Content-Type: text/html; charset=".$CHARSET);

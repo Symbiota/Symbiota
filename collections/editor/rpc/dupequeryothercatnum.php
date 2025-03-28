@@ -1,5 +1,5 @@
 <?php
-include_once('../../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/RpcOccurrenceEditor.php');
 
 $otherCatNum = array_key_exists('othercatnum',$_POST)?trim($_POST['othercatnum']):'';

@@ -1,6 +1,6 @@
 <?php
 //error_reporting(E_ALL);
-include_once('../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/GamesManager.php');
 
 header('Content-Type: text/html; charset='.$CHARSET);

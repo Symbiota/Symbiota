@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 header('Location: '.$CLIENT_ROOT.'/index.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/prohibit.'.$LANG_TAG.'.php'))

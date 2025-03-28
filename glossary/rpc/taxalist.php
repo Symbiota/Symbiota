@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
 
 $queryStr = array_key_exists('term',$_REQUEST)?$_REQUEST['term']:$_REQUEST['q'];

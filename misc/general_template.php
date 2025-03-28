@@ -6,7 +6,7 @@
  * and are only meant to force browsers to refresh the code sotred in their cache
  */
 
-include_once('../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/GeneralClassTemplate.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 

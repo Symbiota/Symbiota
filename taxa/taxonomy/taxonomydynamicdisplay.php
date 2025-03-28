@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyDisplayManager.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.' . $LANG_TAG . '.php'))
 	include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.' . $LANG_TAG . '.php');

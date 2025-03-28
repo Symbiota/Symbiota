@@ -1,6 +1,6 @@
 <?php
 error_reporting(0);
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 @include_once("Image/Barcode/Code39.php");
 header("Content-type: image/png");         
 $bcText = array_key_exists('bctext',$_REQUEST)?$_REQUEST["bctext"]:'';

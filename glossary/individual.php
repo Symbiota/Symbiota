@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/glossary/individual.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/glossary/individual.en.php');

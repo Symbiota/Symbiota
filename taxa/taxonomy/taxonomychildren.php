@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyEditorManager.php');
 include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomychildren.'.$LANG_TAG.'.php');
 

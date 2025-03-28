@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/KeyDataManager.php');
 include_once($SERVER_ROOT.'/content/lang/ident/key.'.$LANG_TAG.'.php');
 header("Content-Type: text/html; charset=".$CHARSET);

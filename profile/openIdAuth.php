@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT . '/vendor/autoload.php');
 include_once($SERVER_ROOT . '/config/auth_config.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');

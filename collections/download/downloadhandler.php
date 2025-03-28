@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceDownload.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceMapManager.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverCore.php');

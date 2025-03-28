@@ -1,5 +1,5 @@
 <?php
-include_once('../../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceDuplicate.php');
 header("Content-Type: application/json; charset=".$CHARSET);
 

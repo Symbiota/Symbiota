@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecProcessorManager.php');
 include_once($SERVER_ROOT.'/classes/SpecProcNlpBryophyte.php');
 include_once($SERVER_ROOT.'/classes/SpecProcNlpLichen.php');

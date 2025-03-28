@@ -1,6 +1,6 @@
 <?php
 $LANG = array();
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyEditorManager.php');
 if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT . '/content/lang/taxa/taxonomy/taxonomydelete.' . $LANG_TAG . '.php'))
 	include_once($SERVER_ROOT . '/content/lang/taxa/taxonomy/taxonomydelete.en.php');

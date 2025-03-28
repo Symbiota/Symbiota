@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLabel.php');
 @include_once("Image/Barcode.php");
 @include_once("Image/Barcode2.php");

@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 require_once $SERVER_ROOT.'/vendor/phpoffice/phpword/bootstrap.php';

@@ -14,7 +14,7 @@
  * ex: php dwcahandler.php 160 http://nansh.org
  */
 
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverPublisher.php');
 
 if($argc){

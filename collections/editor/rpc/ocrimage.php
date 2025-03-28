@@ -1,5 +1,5 @@
 <?php
-include_once('../../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecProcessorOcr.php');
 
 $imgid = filter_var($_REQUEST['imgid'], FILTER_SANITIZE_NUMBER_INT);

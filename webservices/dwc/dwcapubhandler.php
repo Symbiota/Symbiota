@@ -35,7 +35,7 @@
  *
  */
 
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverCore.php');
 
 $collid = array_key_exists('collid', $_REQUEST) ? $_REQUEST['collid'] : 0;

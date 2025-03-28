@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/InstitutionManager.php');
 include_once($SERVER_ROOT.'/content/lang/collections/misc/colladdress.'.$LANG_TAG.'.php');
 header("Content-Type: text/html; charset=".$CHARSET);

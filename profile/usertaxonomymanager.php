@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once($SERVER_ROOT . '/config/symbini.php');
 include_once($SERVER_ROOT.'/classes/UserTaxonomy.php');
 @include_once($SERVER_ROOT.'/content/lang/profile/usertaxonomymanager.'.$LANG_TAG.'.php');
 header("Content-Type: text/html; charset=".$CHARSET);
