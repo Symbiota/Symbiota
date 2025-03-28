@@ -85,7 +85,7 @@ if($tid){
 												}
 												?>
 												<div style='margin-top:2px;'>
-													<?php echo $LANG['SORT_SEQUENCE'] . ': ' . '<b>' . $imgArr["sortsequence"] . '</b>'; ?>
+													<?php echo $LANG['SORT_SEQUENCE'] . ': ' . '<b>' . $imgArr["sortSequence"] . '</b>'; ?>
 												</div>
 												<div>
 													<?php echo $LANG['NEW_VALUE']; ?>:
@@ -159,7 +159,7 @@ if($tid){
 									</div>
 									<div>
 										URL:
-										<input type='text' name='filepath' size='70'/>
+										<input type='text' name='originalUrl' size='70'/>
 									</div>
 									<div style="margin-left:10px;">
 										<input type="checkbox" name="importurl" value="1" /> <?php echo $LANG['IMPORT_IMG_LOCAL']; ?>
@@ -223,7 +223,7 @@ if($tid){
 							<input name="tid" type="hidden" value="<?php echo $imageEditor->getTid();?>">
 							<input type="hidden" name="tabindex" value="1" />
 							<div style='margin-top:2px;'>
-								<button type='submit' name='action' id='imgaddsubmit' value='Upload Image'><?php echo $LANG['UPLOAD_IMAGE']; ?></button>
+								<button type='submit' name='action' id='imgaddsubmit' value='Upload Image' onclick="return submitAddForm(this.form);"><?php echo $LANG['UPLOAD_IMAGE']; ?></button>
 							</div>
 						</fieldset>
 					</form>
@@ -292,7 +292,7 @@ if($tid){
 												</div>
 												<?php
 											}
-											if($imgArr["caption"]){
+											if(!empty($imgArr["caption"])){
 												?>
 												<div>
 													<b><?php echo $LANG['CAPTION']; ?>:</b>
@@ -303,10 +303,15 @@ if($tid){
 											?>
 											<div>
 												<b><?php echo $LANG['PHOTOGRAPHER']; ?>:</b>
-												<?php echo $imgArr["creatorDisplay"];?>
+												<?php
+													if (!empty($imgArr["creatorDisplay"]))
+														echo $imgArr["creatorDisplay"];
+													else
+														echo $LANG["NOT_SPECIFIED"]
+												?>
 											</div>
 											<?php
-											if($imgArr["owner"]){
+											if(!empty($imgArr["owner"])){
 												?>
 												<div>
 													<b><?php echo $LANG['MANAGER']; ?>:</b>
@@ -314,15 +319,15 @@ if($tid){
 												</div>
 												<?php
 											}
-											if($imgArr["sourceurl"]){
+											if(!empty($imgArr["sourceUrl"])){
 												?>
 												<div>
 													<b><?php echo $LANG['SOURCE_URL']; ?>:</b>
-													<a href="<?php echo htmlspecialchars($imgArr["sourceurl"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?>" target="_blank"><?php echo htmlspecialchars($imgArr["sourceurl"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
+													<a href="<?php echo htmlspecialchars($imgArr["sourceUrl"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);?>" target="_blank"><?php echo htmlspecialchars($imgArr["sourceUrl"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 												</div>
 												<?php
 											}
-											if($imgArr["copyright"]){
+											if(!empty($imgArr["copyright"])){
 												?>
 												<div>
 													<b><?php echo $LANG['COPYRIGHT']; ?>:</b>
@@ -330,7 +335,7 @@ if($tid){
 												</div>
 												<?php
 											}
-											if($imgArr["locality"]){
+											if(!empty($imgArr["locality"])){
 												?>
 												<div>
 													<b><?php echo $LANG['LOCALITY']; ?>:</b>
@@ -338,7 +343,7 @@ if($tid){
 												</div>
 												<?php
 											}
-											if($imgArr["occid"]){
+											if(!empty($imgArr["occid"])){
 												?>
 												<div>
 													<b><?php echo $LANG['OCC_REC_NUM']; ?>:</b>
@@ -348,7 +353,7 @@ if($tid){
 												</div>
 												<?php
 											}
-											if($imgArr["notes"]){
+											if(!empty($imgArr["notes"])){
 												?>
 												<div>
 													<b><?php echo $LANG['NOTES']; ?>:</b>
@@ -356,11 +361,15 @@ if($tid){
 												</div>
 												<?php
 											}
+											if(!empty($imgArr["sortSequence"])){
+												?>
+												<div>
+													<b><?php echo $LANG['SORT_SEQUENCE']; ?>:</b>
+													<?php echo $imgArr["sortSequence"];?>
+												</div>
+												<?php
+											}
 											?>
-											<div>
-												<b><?php echo $LANG['SORT_SEQUENCE']; ?>:</b>
-												<?php echo $imgArr["sortsequence"];?>
-											</div>
 										</div>
 									</div>
 								</section>

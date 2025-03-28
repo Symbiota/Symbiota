@@ -39,5 +39,6 @@ $LANG['MUST_HAVE_EDIT_PERM'] = 'Deve ter privilégios de edição para a coleç�
 $LANG['IMAGE_LINKED_FROM'] = 'Mídia vinculada de';
 $LANG['TP_IMAGE_EDITOR'] = 'Editor de mídia de perfil de táxon';
 $LANG['CREATOR'] = 'criador';
+$LANG['NOT_SPECIFIED'] = 'Não especificado';
 
 ?>

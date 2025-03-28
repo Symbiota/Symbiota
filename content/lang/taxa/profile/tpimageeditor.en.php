@@ -39,5 +39,6 @@ $LANG['MUST_HAVE_EDIT_PERM'] = 'Must have editing privileges for the collection 
 $LANG['IMAGE_LINKED_FROM'] = 'Media linked from';
 $LANG['TP_IMAGE_EDITOR'] = 'Taxon Profile Media Editor';
 $LANG['CREATOR'] = 'Creator';
+$LANG['NOT_SPECIFIED'] = 'Not Specified';
 
 ?>

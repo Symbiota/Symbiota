@@ -39,5 +39,6 @@ $LANG['MUST_HAVE_EDIT_PERM'] = 'Debe tener privilegios de edición para la colec
 $LANG['IMAGE_LINKED_FROM'] = 'Medios enlazada desde';
 $LANG['TP_IMAGE_EDITOR'] = 'Editor medios de perfiles de taxones';
 $LANG['CREATOR'] = 'Creador';
+$LANG['NOT_SPECIFIED'] = 'No especificado';
 
 ?>

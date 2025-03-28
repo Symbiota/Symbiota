@@ -39,5 +39,6 @@ $LANG['MUST_HAVE_EDIT_PERM'] = 'Doit disposer de privilèges d\'édition pour la
 $LANG['IMAGE_LINKED_FROM'] = 'Multimédia lié depuis';
 $LANG['TP_IMAGE_EDITOR'] = 'Éditeur multimédia de profil de taxon';
 $LANG['CREATOR'] = 'Créateur';
+$LANG['NOT_SPECIFIED'] = 'Non spécifié';
 
 ?>
