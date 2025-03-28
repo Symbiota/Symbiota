@@ -230,9 +230,9 @@ if ($imgArr) {
 								<input name="caption" type="text" value="<?php echo $imgArr["caption"]; ?>" style="width:250px;" />
 							</div>
 							<div style="margin-top:2px;">
-								<b><?php echo $LANG['PHOTOGRAPHER_USER_ID'] ?>:</b>
-								<select name="photographeruid" name="photographeruid">
-									<option value=""><?php echo $LANG['SELECT_PHOTOGRAPHER'] ?></option>
+								<b><?php echo $LANG['CREATOR_USER_ID'] ?>:</b>
+								<select name="creatorUid" name="creatorUid">
+									<option value=""><?php echo $LANG['SELECT_CREATOR'] ?></option>
 									<option value="">---------------------------------------</option>
 									<?php
 									foreach ($creatorArray as $id => $uname) {
@@ -243,13 +243,13 @@ if ($imgArr) {
 									?>
 								</select>
 								* <?php echo $LANG['USER_REGISTERED_SYSTEM'] ?>
-								<a href="#" onclick="toggle('iepor');return false;" title="<?php echo $LANG['DISPLAY_PHOTOGRAPHER_FIELD'] ?>">
+								<a href="#" onclick="toggle('iepor');return false;" title="<?php echo $LANG['DISPLAY_CREATOR_FIELD'] ?>">
 									<img src="../images/editplus.png" style="border:0px;width:1.5em;" />
 								</a>
 							</div>
 							<div id="iepor" style="margin-top:2px;display:<?php echo ($imgArr["creator"] ? 'block' : 'none'); ?>;">
-								<b><?php echo $LANG['PHOTOGRAPHER_OVERRIDE'] ?>:</b>
-								<input name="photographer" type="text" value="<?php echo $imgArr["creator"]; ?>" style="width:250px;" />
+								<b><?php echo $LANG['CREATOR_OVERRIDE'] ?>:</b>
+								<input name="CREATOR" type="text" value="<?php echo $imgArr["creator"]; ?>" style="width:250px;" />
 								* <?php echo $LANG['OVERRIDE_SELECTION'] ?>
 							</div>
 							<div style="margin-top:2px;">
@@ -397,7 +397,7 @@ if ($imgArr) {
 					<?php
 					if ($imgArr['caption']) echo '<div><b>' . $LANG['CAPTION'] . ':</b> ' . $imgArr['caption'] . '</div>';
 					if ($imgArr['creatorDisplay']) {
-						echo '<div><b>' . $LANG['PHOTOGRAPHER'] . ':</b> ';
+						echo '<div><b>' . $LANG['CREATOR'] . ':</b> ';
 						if (!$imgArr['creator']) {
 							$phLink = 'search.php?imagetype=all&phuid=' . $imgArr['creatorUid'] . '&submitaction=search';
 							echo '<a href="' . htmlspecialchars($phLink, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';

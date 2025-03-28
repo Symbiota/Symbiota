@@ -38,7 +38,7 @@ $imgLibManager = new ImageLibrarySearch($connType);
 $imgLibManager->setTaxonType($taxonType);
 $imgLibManager->setUseThes($useThes);
 $imgLibManager->setTaxaStr($taxaStr);
-$imgLibManager->setPhotographerUid($phUid);
+$imgLibManager->setCreatorUid($phUid);
 $imgLibManager->setTagExistance($tagExistance);
 $imgLibManager->setTag($tag);
 $imgLibManager->setKeywords($keywords);
@@ -179,9 +179,9 @@ if($action == 'batchAssignTag'){
 							<select id="phuid" name="phuid">
 								<option value="">-----------------------------</option>
 								<?php
-								$uidList = $imgLibManager->getPhotographerUidArr();
+								$uidList = $imgLibManager->getCreatorUidArr();
 								foreach($uidList as $uid => $name){
-									echo '<option value="' . $uid . '" ' . ($imgLibManager->getPhotographerUid() == $uid ? 'SELECTED' : '') . '>' . $name . '</option>';
+									echo '<option value="' . $uid . '" ' . ($imgLibManager->getCreatorUid() == $uid ? 'SELECTED' : '') . '>' . $name . '</option>';
 								}
 								?>
 							</select>

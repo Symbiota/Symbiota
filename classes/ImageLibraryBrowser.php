@@ -130,7 +130,7 @@ class ImageLibraryBrowser extends OccurrenceTaxaManager{
 		return $retArr;
 	}
 
-	public function getPhotographerList(){
+	public function getCreatorList(){
 		$retArr = array();
 		$sql = 'SELECT u.uid, CONCAT_WS(", ", u.lastname, u.firstname) as pname, CONCAT_WS(", ", u.firstname, u.lastname) as fullname, u.email, Count(m.mediaID) AS imgcnt '.
 			'FROM users u INNER JOIN media m ON u.uid = m.creatorUid ';

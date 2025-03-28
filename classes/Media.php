@@ -830,15 +830,13 @@ class Media {
 
 		//If no file is given and downloads from urls are enabled
 		if(!self::isValidFile($file)) {
-
 			if(!$should_upload_file) {
 				$file = self::parse_map_only_file($clean_post_arr);
-			} 
+			}
 
 			if(!$file['type'] && $isRemoteMedia) {
 				$file = self::getRemoteFileInfo($clean_post_arr['originalUrl']);
 			}
-			
 		}
 
 		//If that didn't popluate then return;
@@ -907,8 +905,11 @@ class Media {
 			"mediaType" => $media_type_str,
 		];
 
-		if(array_key_exists('sortsequence', $clean_post_arr) && is_numeric($clean_post_arr['sortsequence'])) {
-			$keyValuePairs["sortsequence"] = $clean_post_arr['sortsequence'];
+		if(array_key_exists('sortsequence', $clean_post_arr)){
+			if (is_numeric($clean_post_arr['sortsequence']))
+				$keyValuePairs["sortsequence"] = $clean_post_arr['sortsequence'];
+			else
+				$keyValuePairs["sortsequence"] = 50; //set the default sortSequence
 		}
 
 		//What is url for files
