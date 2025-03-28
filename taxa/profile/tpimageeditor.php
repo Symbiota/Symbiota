@@ -176,20 +176,20 @@ if($tid){
 								<input name='caption' type='text' value='' size='25' maxlength='100'>
 							</div>
 							<div style='margin-top:2px;'>
-								<b><?php echo $LANG['PHOTOGRAPHER']; ?>:</b>
-								<select name='photographeruid' name='photographeruid'>
-									<option value=""><?php echo $LANG['SEL_PHOTOGRAPHER']; ?></option>
+								<b><?php echo $LANG['CREATOR']; ?>:</b>
+								<select name='creatorUid' name='creatorUid'>
+									<option value=""><?php echo $LANG['SEL_CREATOR']; ?></option>
 									<option value="">---------------------------------------</option>
-									<?php $imageEditor->echoPhotographerSelect($PARAMS_ARR["uid"]); ?>
+									<?php $imageEditor->echoCreatorSelect($PARAMS_ARR["uid"]); ?>
 								</select>
-								<a href="#" onclick="toggle('photooveridediv');return false;" title="<?php echo $LANG['DISP_PHOTOGRAPHER_OVERRIDE']; ?>">
+								<a href="#" onclick="toggle('photooveridediv');return false;" title="<?php echo $LANG['DISP_CREATOR_OVERRIDE']; ?>">
 									<img src="../../images/editplus.png" style="border:0px;width:1.5em;" />
 								</a>
 							</div>
 							<div id="photooveridediv" style='margin:2px 0px 5px 10px;display:none;'>
-								<b><?php echo $LANG['PHOTOGRAPHER_OVERRIDE']; ?>:</b>
-								<input name='photographer' type='text' value='' size='37' maxlength='100'><br/>
-								* <?php echo $LANG['PHOTOGRAPHER_OVERRIDE_EXPLAIN']; ?>
+								<b><?php echo $LANG['CREATOR_OVERRIDE']; ?>:</b>
+								<input name='creator' type='text' value='' size='37' maxlength='100'><br/>
+								* <?php echo $LANG['CREATOR_OVERRIDE_EXPLAIN']; ?>
 							</div>
 							<div style="margin-top:2px;" title="Use if manager is different than creator">
 								<b><?php echo $LANG['MANAGER']; ?>:</b>
@@ -302,7 +302,7 @@ if($tid){
 											}
 											?>
 											<div>
-												<b><?php echo $LANG['PHOTOGRAPHER']; ?>:</b>
+												<b><?php echo $LANG['CREATOR']; ?>:</b>
 												<?php
 													if (!empty($imgArr["creatorDisplay"]))
 														echo $imgArr["creatorDisplay"];

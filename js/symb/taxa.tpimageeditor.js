@@ -64,12 +64,6 @@ function submitAddForm(f){
         return false;
     }
 
-    if(f.elements["photographeruid"].value.replace(/\s/g, "") == "" ){
-        if(f.elements["photographer"].value.replace(/\s/g, "") == ""){
-			alert(translations.SELECT_PHOTOGRAPHER);
-			return false;
-        }
-    }
     if(isNumeric(f.sortsequence.value) == false){
 		alert(translations.SORT_NOT_NUMBER);
 		return false;

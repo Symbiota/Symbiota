@@ -181,7 +181,7 @@ class TaxonProfile extends Manager {
 			//else echo '<img class="delayedimg" src="" delayedsrc="'.$imgUrl.'" />';
 			*/
 			echo '</a></div>';
-			echo '<div class="photographer">';
+			echo '<div class="creator">';
 			if($imgObj['creator']) echo $imgObj['creator'];
 			echo '</div>';
 			echo '</div>';
