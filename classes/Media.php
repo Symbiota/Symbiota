@@ -861,7 +861,7 @@ class Media {
 			throw new Exception('Error: File is to large to upload');
 		}
 
-		$conn = Database::connect('readonly');
+		$conn = Database::connect('write');
 
 		$sql = <<< SQL
 		SELECT tidinterpreted 
@@ -942,7 +942,6 @@ class Media {
 		INSERT INTO media($keys) VALUES ($parameters)
 		SQL;
 
-		$conn = Database::connect('write');
 		mysqli_begin_transaction($conn);
 		try {
 			//insert media
