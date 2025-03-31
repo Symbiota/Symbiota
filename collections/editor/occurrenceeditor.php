@@ -548,7 +548,7 @@ else{
 	<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.main.js?ver=3a" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.tools.js?ver=1" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.imgtools.js?ver=3" type="text/javascript"></script>
+	<script src="../../js/symb/collections.editor.imgtools.js?ver=4" type="text/javascript"></script>
 	<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.query.js?ver=6" type="text/javascript"></script>
 	<style type="text/css">
