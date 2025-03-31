@@ -266,7 +266,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 			$fileName = 'Missing_'.$this->getExportFileName().'.csv';
 
 			$fieldArr = $this->getOccurrenceFieldArr();
-			$exportSql = 'SELECT '.implode(',',$fieldArr).', o.localitysecurity, o.collid '.
+			$exportSql = 'SELECT '.implode(',',$fieldArr).', o.recordsecurity, o.collid '.
 				$this->getMissingTaxaBaseSql($sqlFrag);
 			//echo $exportSql;
 			$this->exportCsv($fileName, $exportSql);
@@ -322,7 +322,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 		$fileName = 'ProblemTaxa_'.$this->getExportFileName().'.csv';
 		if($sqlFrag = $this->getSqlFrag()){
 			$fieldArr = $this->getOccurrenceFieldArr();
-			$sql = 'SELECT DISTINCT '.implode(',',$fieldArr).', o.localitysecurity, o.collid '.$this->getProblemTaxaSql($sqlFrag);
+			$sql = 'SELECT DISTINCT '.implode(',',$fieldArr).', o.recordsecurity, o.collid '.$this->getProblemTaxaSql($sqlFrag);
 			$this->exportCsv($fileName, $sql);
 		}
 	}
@@ -430,7 +430,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 			$fieldArr = array_merge($fieldArr,$this->getOccurrenceFieldArr());
 
 			$clidStr = $this->getClidFullStr();
-			$sql = 'SELECT DISTINCT '.implode(',',$fieldArr).', o.localitysecurity, o.collid '.
+			$sql = 'SELECT DISTINCT '.implode(',',$fieldArr).', o.recordsecurity, o.collid '.
 				'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
 				'INNER JOIN fmchklsttaxalink ctl ON ctl.tid = t.tid '.
 				'LEFT JOIN fmvouchers v ON ctl.clTaxaID = v.clTaxaID '.
@@ -458,7 +458,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 				$fieldArr = array_merge($fieldArr,$this->getOccurrenceFieldArr());
 
 				$clidStr = $this->getClidFullStr();
-				$sql = 'SELECT DISTINCT '.implode(',',$fieldArr).', o.localitysecurity, o.collid '.
+				$sql = 'SELECT DISTINCT '.implode(',',$fieldArr).', o.recordsecurity, o.collid '.
 					'FROM fmchklsttaxalink ctl INNER JOIN taxa t ON ctl.tid = t.tid '.
 					'INNER JOIN taxstatus ts ON ctl.tid = ts.tid '.
 					'LEFT JOIN taxstatus ts2 ON ts.tidaccepted = ts2.tidaccepted '.
@@ -487,7 +487,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 			$out = fopen('php://output', 'w');
 			fputcsv($out, $headerArr);
 			while($row = $rs->fetch_assoc()){
-				$localSecurity = ($row["localitysecurity"]?$row["localitysecurity"]:0);
+				$localSecurity = ($row['recordSecurity']?$row['recordSecurity']:0);
 				if(!$rareSpeciesReader && $localSecurity != 1 && (!array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS']) || !in_array($row['collid'],$GLOBALS['USER_RIGHTS']['RareSppReader']))){
 					$redactStr = '';
 					foreach($localitySecurityFields as $fieldName){
