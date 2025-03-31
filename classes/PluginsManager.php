@@ -92,19 +92,19 @@ class PluginsManager extends Manager {
 				'LEFT JOIN omoccurrences o ON m.occid = o.occid '.
 				'LEFT JOIN taxa t ON m.tid = t.tid ';
 			if($clid){
-				$sql .= 'INNER JOIN fmchklsttaxalink cl ON i.tid = cl.tid WHERE cl.clid IN('.$clid.') ';
+				$sql .= 'INNER JOIN fmchklsttaxalink cl ON m.tid = cl.tid WHERE cl.clid IN('.$clid.') ';
 			}
 			else{
-				$sql .= 'WHERE i.InitialTimeStamp < "'.$sinceDate.'" AND i.tid IS NOT NULL ';
+				$sql .= 'WHERE m.InitialTimeStamp < "'.$sinceDate.'" AND m.tid IS NOT NULL ';
 			}
-			$sql .= 'AND i.sortsequence < 500 ';
+			$sql .= 'AND m.sortsequence < 500 ';
 			if($imageType == 'specimen'){
-				$sql .= 'AND i.occid IS NOT NULL ';
+				$sql .= 'AND m.occid IS NOT NULL ';
 			}
 			elseif($imageType == 'field'){
-				$sql .= 'AND i.occid IS NULL ';
+				$sql .= 'AND m.occid IS NULL ';
 			}
-			$sql .= 'ORDER BY i.sortsequence LIMIT 200 ';
+			$sql .= 'ORDER BY m.sortsequence LIMIT 200 ';
 			//echo '<div>'.$sql.'</div>';
 			//Set local domain
 			$localDomain = GeneralUtil::getDomain();
