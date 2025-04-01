@@ -185,7 +185,9 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 			$sqlBase = $this->getMissingTaxaBaseSql($sqlFrag);
 			$sql = 'SELECT DISTINCT o.occid, c.institutioncode ,c.collectioncode, o.catalognumber, o.tidinterpreted, t.sciname, o.sciname AS occur_sciname, '.
 				'o.recordedby, o.recordnumber, o.eventdate, CONCAT_WS("; ",o.country, o.stateprovince, o.county, o.locality) as locality '.
-				$sqlBase.' LIMIT '.($limitIndex?($limitIndex*1000).',':'').$limitRange;
+				$sqlBase.' ';
+			$sql .= $this->appendFullProtectionsSQL();
+			$sql .= 'LIMIT '.($limitIndex?($limitIndex*1000).',':'').$limitRange;
 			//echo '<div>'.$sql.'</div>';
 			$cnt = 0;
 			$rs = $this->conn->query($sql);
@@ -219,6 +221,21 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 			else $this->missingTaxaCount = '1000+';
 		}
 		return $retArr;
+	}
+
+	private function appendFullProtectionsSQL(){
+		//Protect by default
+		$retStr = 'AND (o.recordSecurity != 5 ';
+		//User needs Collection Admin or Collection Editor status to view full hidden records
+		$collArr = array();
+		if(!empty($GLOBALS['USER_RIGHTS']['CollAdmin'])) $collArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
+		if(!empty($GLOBALS['USER_RIGHTS']['CollEditor'])) $collArr = array_merge($collArr, $GLOBALS['USER_RIGHTS']['CollEditor']);
+		if($collArr){
+			$collArr = array_unique($collArr);
+			$retStr .= 'OR o.collid IN(' . implode(',', $collArr) . ')';
+		}
+		$retStr .= ') ';
+		return $retStr;
 	}
 
 	public function getConflictVouchers(){

@@ -535,21 +535,17 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 	}
 
 	private function appendFullProtectionsSQL(){
-		$retStr = '';
-		//If not logged in block all hidden specimens
-		if(empty($GLOBALS['USER_RIGHTS'])){
-			$retStr = 'AND o.recordSecurity != 5 ';
+		//Protect by default
+		$retStr = 'AND (o.recordSecurity != 5 ';
+		//User needs Collection Admin or Collection Editor status to view full hidden records
+		$collArr = array();
+		if(!empty($GLOBALS['USER_RIGHTS']['CollAdmin'])) $collArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
+		if(!empty($GLOBALS['USER_RIGHTS']['CollEditor'])) $collArr = array_merge($collArr, $GLOBALS['USER_RIGHTS']['CollEditor']);
+		if($collArr){
+			$collArr = array_unique($collArr);
+			$retStr .= 'OR o.collid IN(' . implode(',', $collArr) . ')';
 		}
-		else{
-			//User needs Collection Admin or Collection Editor status to view full hidden records
-			$collArr = array();
-			if(!empty($GLOBALS['USER_RIGHTS']['CollAdmin'])) $collArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
-			if(!empty($GLOBALS['USER_RIGHTS']['CollEditor'])) $collArr = array_merge($collArr, $GLOBALS['USER_RIGHTS']['CollEditor']);
-			if($collArr){
-				$collArr = array_unique($collArr);
-				$retStr = 'AND (o.recordSecurity != 5 OR o.collid IN(' . implode(',', $collArr) . ')) ';
-			}
-		}
+		$retStr .= ') ';
 		return $retStr;
 	}
 
