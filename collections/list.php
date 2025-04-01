@@ -348,7 +348,7 @@ $_SESSION['citationvar'] = $searchVar;
 									$tradeName = !empty($splitSciname['tradeName']) ? ($taxonEditorObj->standardizeTradeName($splitSciname['tradeName']) . ' ') : '';
 									$nonItalicizedScinameComponent = $author . $cultivarEpithet . $tradeName;
 									echo '<tr><td width="60" valign="top" align="center">';
-									echo '<a href="misc/collprofiles.php?collid=' . $fieldArr['collid'] . '">';
+									echo '<a href="misc/collprofiles.php?collid=' . $fieldArr['collid'] . '" target="_blank">';
 									if ($fieldArr["icon"]) {
 										$icon = (substr($fieldArr["icon"], 0, 6) == 'images' ? '../' : '') . $fieldArr["icon"];
 										echo '<img align="bottom" src="' . $icon . '" style="width:35px;border:0px;" />';
