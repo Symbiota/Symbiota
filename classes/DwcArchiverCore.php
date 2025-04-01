@@ -1697,6 +1697,13 @@ class DwcArchiverCore extends Manager{
 			$occurAccessID = $statsManager->insertAccessEvent('download', $sqlFrag);
 			$batchOccidArr = array();
 			while ($r = $rs->fetch_assoc()) {
+				if ($this->isPublicDownload || $this->limitToGuids) {
+					//Is a download from public interface OR DwC-A publishing event pushed to aggregators, thus skip record if Full Protections apply
+					if($r['recordSecurity'] == 5){
+						continue;
+					}
+				}
+
 				if(!isset($this->collArr[$r['collID']])){
 					$this->setCollArr($r['collID'], 'internalCall');
 				}
