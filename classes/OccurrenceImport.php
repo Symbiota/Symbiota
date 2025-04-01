@@ -9,8 +9,7 @@ include_once('OccurrenceMaintenance.php');
 include_once('Media.php');
 include_once('utilities/UuidFactory.php');
 
-class OccurrenceImport extends UtilitiesFileImport
-{
+class OccurrenceImport extends UtilitiesFileImport{
 
 	private $collid;
 	private $collMetaArr = array();
@@ -25,20 +24,17 @@ class OccurrenceImport extends UtilitiesFileImport
 	private const IMPORT_MATERIAL_SAMPLE = 4;
 	private const IMPORT_IDENTIFIERS = 5;
 
-	function __construct()
-	{
+	function __construct(){
 		parent::__construct(null, 'write');
 		$this->setVerboseMode(2);
 		set_time_limit(2000);
 	}
 
-	function __destruct()
-	{
+	function __destruct(){
 		parent::__destruct();
 	}
 
-	public function loadData($postArr)
-	{
+	public function loadData($postArr){
 		global $LANG;
 		$status = false;
 		if ($this->fileName && isset($postArr['tf'])) {
@@ -78,8 +74,7 @@ class OccurrenceImport extends UtilitiesFileImport
 		return $status;
 	}
 
-	private function insertRecord($recordArr, $occidArr, $postArr)
-	{
+	private function insertRecord($recordArr, $occidArr, $postArr){
 		global $LANG;
 		$status = false;
 		if ($this->importType == self::IMPORT_IMAGE_MAP) {
@@ -316,8 +311,7 @@ class OccurrenceImport extends UtilitiesFileImport
 	}
 
 	//Identifier and occid functions
-	protected function getOccurrencePK($identifierArr)
-	{
+	protected function getOccurrencePK($identifierArr){
 		$retArr = array();
 		$sql = 'SELECT DISTINCT o.occid FROM omoccurrences o ';
 		$sqlConditionArr = array();
@@ -351,8 +345,7 @@ class OccurrenceImport extends UtilitiesFileImport
 		return $retArr;
 	}
 
-	protected function insertNewOccurrence($identifierArr)
-	{
+	protected function insertNewOccurrence($identifierArr){
 		$newOccid = 0;
 		if (isset($identifierArr['occurrenceID'])) {
 			$this->logOrEcho('SKIPPED: Unable to create new record based on occurrenceID', 1);
@@ -375,8 +368,7 @@ class OccurrenceImport extends UtilitiesFileImport
 		return $newOccid;
 	}
 
-	protected function insertAdditionalIdentifier($occid, $identifierValue)
-	{
+	protected function insertAdditionalIdentifier($occid, $identifierValue){
 		$status = false;
 		$sql = 'INSERT INTO omoccuridentifiers(occid, identifierValue, modifiedUid) VALUES(?, ?, ?) ';
 		if ($stmt = $this->conn->prepare($sql)) {
@@ -390,8 +382,7 @@ class OccurrenceImport extends UtilitiesFileImport
 	}
 
 	//Mapping functions
-	public function setTargetFieldArr($associationType = null)
-	{
+	public function setTargetFieldArr($associationType = null){
 		$this->targetFieldMap['catalognumber'] = 'subject identifier: catalogNumber';
 		$this->targetFieldMap['othercatalognumbers'] = 'subject identifier: otherCatalogNumbers';
 		$this->targetFieldMap['occurrenceid'] = 'subject identifier: occurrenceID';
@@ -475,8 +466,7 @@ class OccurrenceImport extends UtilitiesFileImport
 		}
 	}
 
-	private function defineTranslationMap()
-	{
+	private function defineTranslationMap(){
 		if ($this->translationMap === null) {
 			if ($this->importType == self::IMPORT_IMAGE_MAP) {
 				$this->translationMap = array(
@@ -502,8 +492,7 @@ class OccurrenceImport extends UtilitiesFileImport
 	}
 
 	//Data set functions
-	private function setCollMetaArr()
-	{
+	private function setCollMetaArr(){
 		$sql = 'SELECT institutionCode, collectionCode, collectionName, dynamicProperties FROM omcollections WHERE collid = ' . $this->collid;
 		$rs = $this->conn->query($sql);
 		while ($r = $rs->fetch_object()) {
@@ -517,15 +506,13 @@ class OccurrenceImport extends UtilitiesFileImport
 		$rs->free();
 	}
 
-	public function materialSampleModuleActive()
-	{
+	public function materialSampleModuleActive(){
 		if (!$this->collMetaArr) $this->setCollMetaArr();
 		if (isset($this->collMetaArr['matsample'])) return true;
 		return false;
 	}
 
-	public function getControlledVocabulary($tableName, $fieldName, $filterVariable = '')
-	{
+	public function getControlledVocabulary($tableName, $fieldName, $filterVariable = ''){
 		$retArr = array();
 		$sql = 'SELECT t.term, t.termDisplay
 			FROM ctcontrolvocab v INNER JOIN ctcontrolvocabterm t ON v.cvID = t.cvID
@@ -547,32 +534,27 @@ class OccurrenceImport extends UtilitiesFileImport
 	}
 
 	//Basic setters and getters
-	public function setCollid($id)
-	{
+	public function setCollid($id){
 		if (is_numeric($id)) $this->collid = $id;
 	}
 
-	public function getCollid()
-	{
+	public function getCollid(){
 		return $this->collid;
 	}
 
-	public function getCollMeta($field)
-	{
+	public function getCollMeta($field){
 		$fieldValue = '';
 		if (!$this->collMetaArr) $this->setCollMetaArr();
 		if (isset($this->collMetaArr[$field])) return $this->collMetaArr[$field];
 		return $fieldValue;
 	}
 
-	public function setCreateNewRecord($b)
-	{
+	public function setCreateNewRecord($b){
 		if ($b) $this->createNewRecord = true;
 		else $this->createNewRecord = false;
 	}
 
-	public function setImportType($importType)
-	{
+	public function setImportType($importType){
 		if (is_numeric($importType)) $this->importType = $importType;
 		$this->defineTranslationMap();
 	}
