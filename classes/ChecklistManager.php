@@ -294,19 +294,17 @@ class ChecklistManager extends Manager{
 					FROM fmvouchers v INNER JOIN fmchklsttaxalink cl ON v.clTaxaID = cl.clTaxaID
 					INNER JOIN omoccurrences o ON v.occid = o.occid
 					INNER JOIN omcollections c ON o.collid = c.collid
-					WHERE (cl.clid IN ('.$clidStr.')) AND cl.tid IN('.implode(',',array_keys($this->taxaList)).')
-					ORDER BY o.collid';
+					WHERE (cl.clid IN ('.$clidStr.')) AND cl.tid IN('.implode(',',array_keys($this->taxaList)).') ';
 				if($this->thesFilter){
 					$vSql = 'SELECT DISTINCT ts.tidaccepted AS tid, v.occid, c.institutioncode, v.notes, o.catalognumber, o.othercatalognumbers, o.recordedby, o.recordnumber, o.eventdate, o.collid
 						FROM fmvouchers v INNER JOIN fmchklsttaxalink cl ON v.clTaxaID = cl.clTaxaID
 						INNER JOIN omoccurrences o ON v.occid = o.occid
 						INNER JOIN omcollections c ON o.collid = c.collid
 						INNER JOIN taxstatus ts ON cl.tid = ts.tid
-						WHERE (ts.taxauthid = '.$this->thesFilter.') AND (cl.clid IN ('.$clidStr.'))
-						AND (ts.tidaccepted IN('.implode(',',array_keys($this->taxaList)).'))
-						ORDER BY o.collid';
+						WHERE (ts.taxauthid = '.$this->thesFilter.') AND (cl.clid IN ('.$clidStr.')) AND (ts.tidaccepted IN('.implode(',',array_keys($this->taxaList)).')) ';
 				}
-				//echo $vSql; exit;
+				$vSql .= $this->appendFullProtectionsSQL();
+				$vSql .= 'ORDER BY o.collid';
 		 		$vResult = $this->conn->query($vSql);
 				while ($row = $vResult->fetch_object()){
 					$displayStr = '';
@@ -349,6 +347,25 @@ class ChecklistManager extends Manager{
 			}
 		}
 		return $this->taxaList;
+	}
+
+	private function appendFullProtectionsSQL(){
+		$retStr = '';
+		//If not logged in block all hidden specimens
+		if(empty($GLOBALS['USER_RIGHTS'])){
+			$retStr = 'AND (o.recordSecurity != 5) ';
+		}
+		else{
+			//User needs Collection Admin or Collection Editor status to view full hidden records
+			$collArr = array();
+			if(!empty($GLOBALS['USER_RIGHTS']['CollAdmin'])) $collArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
+			if(!empty($GLOBALS['USER_RIGHTS']['CollEditor'])) $collArr = array_merge($collArr, $GLOBALS['USER_RIGHTS']['CollEditor']);
+			if($collArr){
+				$collArr = array_unique($collArr);
+				$retStr = 'AND (o.recordSecurity != 5 OR o.collid IN(' . implode(',', $collArr) . ')) ';
+			}
+		}
+		return $retStr;
 	}
 
 	private function setImages(){

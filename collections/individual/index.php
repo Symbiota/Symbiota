@@ -78,6 +78,10 @@ $collMetadata = $indManager->getMetadata();
 $genticArr = $indManager->getGeneticArr();
 
 $statusStr = '';
+if(!empty($occArr['recordsecurity']) && $occArr['recordsecurity'] == 5 && !$isEditor){
+	$occArr = null;
+	$statusStr = 'ERROR: record has full protection';
+}
 //  If other than HTML was requested, return just that content.
 if(isset($_SERVER['HTTP_ACCEPT'])){
 	$accept = RdfUtil::parseHTTPAcceptHeader($_SERVER['HTTP_ACCEPT']);
@@ -365,7 +369,7 @@ $traitArr = $indManager->getTraitArr();
 		<?php
 		if($statusStr){
 			$statusColor = 'green';
-			if(strpos($statusStr, 'ERROR')) $statusColor = 'red';
+			if(strpos($statusStr, 'ERROR') !== false) $statusColor = 'red';
 			?>
 			<hr />
 			<div style="padding:15px;">
@@ -1508,7 +1512,7 @@ $traitArr = $indManager->getTraitArr();
 			</div>
 			<?php
 		}
-		else{
+		elseif($occArr !== null){
 			?>
 			<h2><?php echo (isset($LANG['UNABLETOLOCATE'])?$LANG['UNABLETOLOCATE']:'Unable to locate occurrence record'); ?></h2>
 			<div style="margin:20px">

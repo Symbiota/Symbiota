@@ -546,7 +546,7 @@ else{
 	<script src="../../js/symb/wktpolygontools.js?ver=2c" type="text/javascript"></script>
 	<script src="../../js/symb/collections.georef.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.main.js?ver=3a" type="text/javascript"></script>
+	<script src="../../js/symb/collections.editor.main.js?ver=3" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.tools.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.imgtools.js?ver=4" type="text/javascript"></script>
 	<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
@@ -1130,7 +1130,7 @@ else{
 												<select name="recordsecurity" onchange="securityChangedByUser(this.form);" title="<?= $LANG['SECURITY_SETTINGS'] ?>" tabindex="-1">
 													<option value="0"><?= $LANG['SECURITY_NOT_APPLIED'] ?></option>
 													<option value="1" ' <?= ($securityCode == 1 ? 'SELECTED' : '') ?>><?= $LANG['LOCALITY_SECURITY_APPLIED'] ?></option>
-													<option value="2" ' <?= ($securityCode == 2 ? 'SELECTED' : '') ?>><?= $LANG['FULL_SECURITY_APPLIED'] ?></option>
+													<option value="5" ' <?= ($securityCode == 5 ? 'SELECTED' : '') ?>><?= $LANG['FULL_SECURITY_APPLIED'] ?></option>
 												</select>
 												<a href="#" onclick="return dwcDoc('recordSecurity')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
 											</div>

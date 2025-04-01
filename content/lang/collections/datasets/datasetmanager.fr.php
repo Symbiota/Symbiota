@@ -70,3 +70,4 @@ $LANG['DS_NOT_IDENTIFIED'] = 'ERREUR : identifiant de l\'ensemble de données n
 $LANG['DROP_ICON'] = 'Déposer l\'icône';
 $LANG['PAGE'] = 'Page';
 $LANG['OF'] = 'sur';
+?>

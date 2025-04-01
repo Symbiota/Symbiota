@@ -534,18 +534,16 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 
 	private function appendFullProtectionsSQL(){
 		$retStr = '';
-		//If supper admin, protect nothing
-		if(!empty($GLOBALS['IS_ADMIN'])) return '';
 		//If not logged in block all hidden specimens
 		if(empty($GLOBALS['USER_RIGHTS'])){
 			$retStr = 'AND o.recordSecurity != 5 ';
 		}
 		else{
-			//Collections specific settings
-			if(array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS'])){
-				$collArr = array();
-				if(!empty($GLOBALS['USER_RIGHTS']['CollAdmin'])) $collArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
-				if(!empty($GLOBALS['USER_RIGHTS']['CollEditor'])) $collArr = array_merge($collArr, $GLOBALS['USER_RIGHTS']['CollEditor']);
+			//User needs Collection Admin or Collection Editor status to view full hidden records
+			$collArr = array();
+			if(!empty($GLOBALS['USER_RIGHTS']['CollAdmin'])) $collArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
+			if(!empty($GLOBALS['USER_RIGHTS']['CollEditor'])) $collArr = array_merge($collArr, $GLOBALS['USER_RIGHTS']['CollEditor']);
+			if($collArr){
 				$collArr = array_unique($collArr);
 				$retStr = 'AND (o.recordSecurity != 5 OR o.collid IN(' . implode(',', $collArr) . ')) ';
 			}

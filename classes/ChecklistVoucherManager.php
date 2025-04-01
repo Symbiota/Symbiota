@@ -111,7 +111,7 @@ class ChecklistVoucherManager extends ChecklistVoucherAdmin{
 				}
 			}
 			if($rareLocality){
-				$inventoryManager->removeStateSecurityByTid($rareLocality, $this->tid);
+				$inventoryManager->removeStateLocalitySecurityByTid($rareLocality, $this->tid);
 			}
 		}
 		return $statusStr;
@@ -131,7 +131,7 @@ class ChecklistVoucherManager extends ChecklistVoucherAdmin{
 			if(!$status) $this->errorMessage = $inventoryManager->getErrorMessage();
 		}
 		if($rareLocality){
-			$inventoryManager->removeStateSecurityByTid($rareLocality, $this->tid);
+			$inventoryManager->removeStateLocalitySecurityByTid($rareLocality, $this->tid);
 		}
 		return $status;
 	}

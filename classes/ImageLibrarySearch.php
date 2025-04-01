@@ -41,7 +41,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		$sqlWhere = $this->sqlWhere;
 		if($this->imageCount == 1) $sqlWhere .= 'GROUP BY sciname ';
 		elseif($this->imageCount == 2) $sqlWhere .= 'GROUP BY m.occid ';
-		if($this->sqlWhere) $sqlWhere .= 'ORDER BY o.sciname ';
+		if($this->sqlWhere) $sqlWhere .= 'ORDER BY t.sciname ';
 		$bottomLimit = ($pageRequest - 1)*$cntPerPage;
 		$sql .= $this->getSqlBase().$sqlWhere.'LIMIT '.$bottomLimit.','.$cntPerPage;
 		//echo '<div>Spec sql: '.$sql.'</div>';
@@ -204,8 +204,28 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 			//Note mediaType is cleaned to only be 'image' and 'audio' strings
 			$sqlWhere .= 'AND (m.mediaType = "' . $this->mediaType . '") ';
 		}
+		$sqlWhere .= $this->appendFullProtectionsSQL();
 		if(strpos($sqlWhere,'ts.taxauthid')) $sqlWhere = str_replace('m.tid', 'ts.tid', $sqlWhere);
 		if($sqlWhere) $this->sqlWhere = 'WHERE '.substr($sqlWhere,4);
+	}
+
+	private function appendFullProtectionsSQL(){
+		$retStr = '';
+		//If not logged in block all hidden specimens
+		if(empty($GLOBALS['USER_RIGHTS'])){
+			$retStr = 'AND (o.occid IS NULL OR o.recordSecurity != 5) ';
+		}
+		else{
+			//User needs Collection Admin or Collection Editor status to view full hidden records
+			$collArr = array();
+			if(!empty($GLOBALS['USER_RIGHTS']['CollAdmin'])) $collArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
+			if(!empty($GLOBALS['USER_RIGHTS']['CollEditor'])) $collArr = array_merge($collArr, $GLOBALS['USER_RIGHTS']['CollEditor']);
+			if($collArr){
+				$collArr = array_unique($collArr);
+				$retStr = 'AND (o.occid IS NULL OR o.recordSecurity != 5 OR o.collid IN(' . implode(',', $collArr) . ')) ';
+			}
+		}
+		return $retStr;
 	}
 
 	private function setRecordCnt(){

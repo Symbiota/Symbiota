@@ -56,7 +56,7 @@ class ImageLibraryBrowser extends OccurrenceTaxaManager{
 			}
 		}
 		if(!$taxon) $taxon = 'A';
-		$sql = 'SELECT DISTINCT t.tid, t.SciName '.$this->getListSql().' AND (i.sortsequence < 500) ';
+		$sql = 'SELECT DISTINCT t.tid, t.SciName '.$this->getListSql().' AND (m.sortsequence < 500) ';
 		if(strtolower(substr($taxon,-5)) == 'aceae' || strtolower(substr($taxon,-4)) == 'idae') $sql .= 'AND ((ts.family = "'.$taxon.'") ';
 		else{
 			$sql .= 'AND ((t.SciName LIKE "'.$taxon.'%") ';
@@ -94,8 +94,8 @@ class ImageLibraryBrowser extends OccurrenceTaxaManager{
 			}
 			$rs->free();
 			//Get image counts
-			$sql = 'SELECT o.collid, COUNT(m.mediaID) AS imgcnt FROM media m INNER JOIN omoccurrences o ON i.occid = o.occid ';
-			if($this->tidFocus) $sql .= 'INNER JOIN taxaenumtree e ON i.tid = e.tid WHERE (e.parenttid IN('.$this->tidFocus.')) AND (e.taxauthid = 1) ';
+			$sql = 'SELECT o.collid, COUNT(m.mediaID) AS imgcnt FROM media m INNER JOIN omoccurrences o ON m.occid = o.occid ';
+			if($this->tidFocus) $sql .= 'INNER JOIN taxaenumtree e ON m.tid = e.tid WHERE (e.parenttid IN('.$this->tidFocus.')) AND (e.taxauthid = 1) ';
 			$sql .= 'GROUP BY o.collid ';
 			$result = $this->conn->query($sql);
 			while($row = $result->fetch_object()){
