@@ -50,21 +50,21 @@ if($tid){
 									<?php
 									$imgCnt = 0;
 									foreach($images as $imgArr){
-										$tnUrl = $imgArr["thumbnailUrl"];
+										$displayUrl = !empty($imgArr["thumbnailUrl"]) ? $imgArr["thumbnailUrl"] : $imgArr["url"];
 										if($imgArr['mediaType'] === 'audio') {
-											$tnUrl = $CLIENT_ROOT . '/images/speaker_thumbnail.png';
+											$displayUrl = $CLIENT_ROOT . '/images/speaker_thumbnail.png';
 										}
-										if($tnUrl && substr($tnUrl,0,10) != 'processing'){
+										if($displayUrl && substr($displayUrl,0,10) != 'processing'){
 											$webUrl = $imgArr["url"];
 											if($GLOBALS['MEDIA_DOMAIN']){
 												if(substr($imgArr["url"],0,1)=="/") $webUrl = $GLOBALS['MEDIA_DOMAIN'] . $imgArr["url"];
-												if(substr($imgArr["thumbnailUrl"],0,1)=="/") $tnUrl = $GLOBALS['MEDIA_DOMAIN'] . $imgArr["thumbnailUrl"];
+												if(substr($imgArr["thumbnailUrl"],0,1)=="/") $displayUrl = $GLOBALS['MEDIA_DOMAIN'] . $imgArr["thumbnailUrl"];
 											}
 											?>
 											<td align='center' valign='bottom'>
 												<div style='margin:20px 0px 0px 0px;'>
 													<a href="<?php echo htmlspecialchars($webUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank">
-														<img width="150" src="<?php echo $tnUrl;?>" />
+														<img width="150" src="<?php echo $displayUrl;?>" />
 													</a>
 
 												</div>
@@ -85,7 +85,10 @@ if($tid){
 												}
 												?>
 												<div style='margin-top:2px;'>
-													<?php echo $LANG['SORT_SEQUENCE'] . ': ' . '<b>' . $imgArr["sortSequence"] . '</b>'; ?>
+												<?php
+													$sortSequence = !empty($imgArr["sortSequence"]) ? $imgArr["sortSequence"] : $LANG['NOT_SET'];
+													echo $LANG['SORT_SEQUENCE'] . ': <b>' . $sortSequence . '</b>'; 
+												?>
 												</div>
 												<div>
 													<?php echo $LANG['NEW_VALUE']; ?>:
