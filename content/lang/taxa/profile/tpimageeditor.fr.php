@@ -40,5 +40,6 @@ $LANG['IMAGE_LINKED_FROM'] = 'Multimédia lié depuis';
 $LANG['TP_IMAGE_EDITOR'] = 'Éditeur multimédia de profil de taxon';
 $LANG['CREATOR'] = 'Créateur';
 $LANG['NOT_SPECIFIED'] = 'Non spécifié';
+$LANG['NOT_SET'] = 'Non défini';
 
 ?>
