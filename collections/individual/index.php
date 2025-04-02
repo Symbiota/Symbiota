@@ -717,7 +717,8 @@ $traitArr = $indManager->getTraitArr();
 							if(!isset($occArr['localsecure'])){
 								$locStr = $occArr['locality'];
 								if($occArr['locationid']) $locStr .= ' ['.(isset($LANG['LOCATION_ID'])?$LANG['LOCATION_ID']:'Location ID').': '.$occArr['locationid'].']';
-								$localityArr[] = $locStr;
+								if (!empty($locStr))
+									$localityArr[] = $locStr;
 							}
 							echo implode(', ', $localityArr);
 							if($occArr['localitysecurity'] == 1){
