@@ -1,9 +1,9 @@
 <?php
-include_once($SERVER_ROOT.'/classes/OccurrenceSearchSupport.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceSearchSupport.php');
+include_once($SERVER_ROOT . '/classes/ChecklistVoucherAdmin.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceTaxaManager.php');
+include_once($SERVER_ROOT . '/classes/AssociationManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
-include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceTaxaManager.php');
-include_once($SERVER_ROOT.'/classes/AssociationManager.php');
 
 class OccurrenceManager extends OccurrenceTaxaManager {
 
@@ -484,7 +484,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$sqlWhere .= 'AND (o.occid IN(SELECT occid FROM tmattributes WHERE stateid IN(' . $this->searchTermArr['attr'] . '))) ';
 		}
 		if($sqlWhere){
-			$sqlWhere .= $this->appendFullProtectionsSQL();
+			$sqlWhere .= OccurrenceUtil::appendFullProtectionSQL();
 			$this->sqlWhere = 'WHERE '.substr($sqlWhere,4);
 		}
 		else{
@@ -532,21 +532,6 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 	protected function formatDate($inDate){
 		$retDate = OccurrenceUtil::formatDate($inDate);
 		return $retDate;
-	}
-
-	private function appendFullProtectionsSQL(){
-		//Protect by default
-		$retStr = 'AND (o.recordSecurity != 5 ';
-		//User needs Collection Admin or Collection Editor status to view full hidden records
-		$collArr = array();
-		if(!empty($GLOBALS['USER_RIGHTS']['CollAdmin'])) $collArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
-		if(!empty($GLOBALS['USER_RIGHTS']['CollEditor'])) $collArr = array_merge($collArr, $GLOBALS['USER_RIGHTS']['CollEditor']);
-		if($collArr){
-			$collArr = array_unique($collArr);
-			$retStr .= 'OR o.collid IN(' . implode(',', $collArr) . ')';
-		}
-		$retStr .= ') ';
-		return $retStr;
 	}
 
 	protected function getTableJoins($sqlWhere){

@@ -467,6 +467,7 @@ class OccurrenceDownload{
 						$sql .= 'AND (o.recordSecurity = 0) ';
 					}
 				}
+				$sql .= OccurrenceUtil::appendFullProtectionSQL();
 				$sql .= 'ORDER BY ts.family, t.SciName ';
 			}
 			else{
@@ -483,6 +484,7 @@ class OccurrenceDownload{
 						$sql .= 'AND (o.recordSecurity = 0) ';
 					}
 				}
+				$sql .= OccurrenceUtil::appendFullProtectionSQL();
 				$sql .= 'ORDER BY IFNULL(IFNULL(ts.family, o.family),"not entered"), o.SciName ';
 			}
 		}
@@ -513,6 +515,7 @@ class OccurrenceDownload{
 					$sql .= 'AND (o.recordSecurity = 0) ';
 				}
 			}
+			$sql .= OccurrenceUtil::appendFullProtectionSQL();
 			$sql .= 'ORDER BY o.collid';
 		}
 		//echo $sql; exit;

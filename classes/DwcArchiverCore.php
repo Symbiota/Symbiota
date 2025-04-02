@@ -1700,7 +1700,10 @@ class DwcArchiverCore extends Manager{
 				if ($this->isPublicDownload || $this->limitToGuids) {
 					//Is a download from public interface OR DwC-A publishing event pushed to aggregators, thus skip record if Full Protections apply
 					if($r['recordSecurity'] == 5){
-						continue;
+						if(!strpos($sql, 'recordSecurity != 5')){
+							//But only if protection is not already applied within the SQL string
+							continue;
+						}
 					}
 				}
 

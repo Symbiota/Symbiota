@@ -1,6 +1,7 @@
 <?php
 include_once($SERVER_ROOT.'/classes/OccurrenceTaxaManager.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceSearchSupport.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 class ImageLibrarySearch extends OccurrenceTaxaManager{
 
@@ -204,24 +205,9 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 			//Note mediaType is cleaned to only be 'image' and 'audio' strings
 			$sqlWhere .= 'AND (m.mediaType = "' . $this->mediaType . '") ';
 		}
-		$sqlWhere .= $this->appendFullProtectionsSQL();
+		$sqlWhere .= OccurrenceUtil::appendFullProtectionSQL();
 		if(strpos($sqlWhere,'ts.taxauthid')) $sqlWhere = str_replace('m.tid', 'ts.tid', $sqlWhere);
 		if($sqlWhere) $this->sqlWhere = 'WHERE '.substr($sqlWhere,4);
-	}
-
-	private function appendFullProtectionsSQL(){
-		//Protect by default
-		$retStr = 'AND (o.recordSecurity != 5 ';
-		//User needs Collection Admin or Collection Editor status to view full hidden records
-		$collArr = array();
-		if(!empty($GLOBALS['USER_RIGHTS']['CollAdmin'])) $collArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
-		if(!empty($GLOBALS['USER_RIGHTS']['CollEditor'])) $collArr = array_merge($collArr, $GLOBALS['USER_RIGHTS']['CollEditor']);
-		if($collArr){
-			$collArr = array_unique($collArr);
-			$retStr .= 'OR o.collid IN(' . implode(',', $collArr) . ')';
-		}
-		$retStr .= ') ';
-		return $retStr;
 	}
 
 	private function setRecordCnt(){

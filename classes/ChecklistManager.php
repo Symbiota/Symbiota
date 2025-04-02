@@ -2,6 +2,7 @@
 include_once($SERVER_ROOT.'/classes/Manager.php');
 include_once($SERVER_ROOT.'/classes/ImInventories.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 class ChecklistManager extends Manager{
 
@@ -303,7 +304,7 @@ class ChecklistManager extends Manager{
 						INNER JOIN taxstatus ts ON cl.tid = ts.tid
 						WHERE (ts.taxauthid = '.$this->thesFilter.') AND (cl.clid IN ('.$clidStr.')) AND (ts.tidaccepted IN('.implode(',',array_keys($this->taxaList)).')) ';
 				}
-				$vSql .= $this->appendFullProtectionsSQL();
+				$vSql .= OccurrenceUtil::appendFullProtectionSQL();
 				$vSql .= 'ORDER BY o.collid';
 		 		$vResult = $this->conn->query($vSql);
 				while ($row = $vResult->fetch_object()){
@@ -347,21 +348,6 @@ class ChecklistManager extends Manager{
 			}
 		}
 		return $this->taxaList;
-	}
-
-	private function appendFullProtectionsSQL(){
-		//Protect by default
-		$retStr = 'AND (o.recordSecurity != 5 ';
-		//User needs Collection Admin or Collection Editor status to view full hidden records
-		$collArr = array();
-		if(!empty($GLOBALS['USER_RIGHTS']['CollAdmin'])) $collArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
-		if(!empty($GLOBALS['USER_RIGHTS']['CollEditor'])) $collArr = array_merge($collArr, $GLOBALS['USER_RIGHTS']['CollEditor']);
-		if($collArr){
-			$collArr = array_unique($collArr);
-			$retStr .= 'OR o.collid IN(' . implode(',', $collArr) . ')';
-		}
-		$retStr .= ') ';
-		return $retStr;
 	}
 
 	private function setImages(){
