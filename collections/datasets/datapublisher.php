@@ -538,7 +538,7 @@ if ($isEditor) {
 									?>
 								</div>
 								<div style="margin-top:5px;">
-									<input type="checkbox" name="redact" value="1" <?php echo ($redactLocalities ? 'CHECKED' : ''); ?> /> <?php echo $LANG['REDACT_LOC']; ?><br />
+									<input type="checkbox" name="redact" value="1" <?php echo ($redactLocalities ? 'CHECKED' : ''); ?> /> <?php echo $LANG['REDACT_REC']; ?><br />
 								</div>
 							</fieldset>
 							<div style="clear:both;">
