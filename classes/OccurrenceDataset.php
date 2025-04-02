@@ -1,7 +1,7 @@
 <?php
-
 include_once($SERVER_ROOT . '/config/dbconnection.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverCore.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 class OccurrenceDataset {
 
@@ -274,13 +274,11 @@ class OccurrenceDataset {
 	public function setOccurrenceCount($datasetId) {
 		$returnVal = 0;
 		if ($datasetId) {
-			$countSql = <<<SQL
-			SELECT COUNT(*) FROM omoccurrences o INNER JOIN omoccurdatasetlink dl ON o.occid = dl.occid
-			WHERE dl.datasetid = ? 
-			SQL;
+			$sql = 'SELECT COUNT(o.occid) FROM omoccurrences o INNER JOIN omoccurdatasetlink dl ON o.occid = dl.occid WHERE dl.datasetid = ? ';
+			$sql .= OccurrenceUtil::appendFullProtectionSQL();
 			$params[] = $datasetId;
 			try {
-				$result = QueryUtil::executeQuery($this->conn, $countSql, $params);
+				$result = QueryUtil::executeQuery($this->conn, $sql, $params);
 				$countResponse = $result->fetch_array();
 				$result->free();
 			} catch (\Throwable  $e) {
@@ -308,13 +306,12 @@ class OccurrenceDataset {
 	public function getOccurrences($datasetId, $pageNumber = 1, $retLimit = 500) {
 		$retArr = array();
 		if ($datasetId) {
-			$sql = <<<SQL
-			SELECT o.occid, o.catalognumber, o.occurrenceid ,o.othercatalognumbers,
+			$sql = 'SELECT o.occid, o.catalognumber, o.occurrenceid ,o.othercatalognumbers,
 				o.sciname, o.family, o.recordedby, o.recordnumber, o.eventdate,
 				o.country, o.stateprovince, o.county, o.locality, o.decimallatitude, o.decimallongitude, dl.notes
 				FROM omoccurrences o INNER JOIN omoccurdatasetlink dl ON o.occid = dl.occid
-				WHERE dl.datasetid = ?
-			SQL;
+				WHERE dl.datasetid = ? ';
+			$sql .= OccurrenceUtil::appendFullProtectionSQL();
 			$params[] = $datasetId;
 			try {
 				$result = QueryUtil::executeQuery($this->conn, $sql, $params);
@@ -345,7 +342,7 @@ class OccurrenceDataset {
 
 	public function removeSelectedOccurrences($datasetId, $occArr) {
 		$status = true;
-		if ($datasetId && $occArr) {
+		if (is_numeric($datasetId) && $occArr) {
 			$sql = 'DELETE FROM omoccurdatasetlink WHERE (datasetid = ' . $datasetId . ') AND (occid IN(' . implode(',', $occArr) . '))';
 			if (!$this->conn->query($sql)) {
 				$this->errorArr[] = 'ERROR deleting selected occurrences: ' . $this->conn->error;

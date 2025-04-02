@@ -22,7 +22,7 @@ class APIOccurEditor extends APIBase{
 			'occurrenceremarks', 'associatedtaxa', 'verbatimattributes',
 			'dynamicproperties', 'reproductivecondition', 'cultivationstatus', 'establishmentmeans',
 			'lifestage', 'sex', 'individualcount', 'samplingprotocol', 'preparations',
-			'country', 'stateprovince', 'county', 'municipality', 'locality', 'localitysecurity', 'localitysecurityreason',
+			'country', 'stateprovince', 'county', 'municipality', 'locality', 'recordsecurity', 'securityreason',
 			'decimallatitude', 'decimallongitude','geodeticdatum', 'coordinateuncertaintyinmeters',
 			'locationremarks', 'verbatimcoordinates', 'georeferencedby', 'georeferenceprotocol', 'georeferencesources',
 			'georeferenceverificationstatus', 'georeferenceremarks', 'minimumelevationinmeters', 'maximumelevationinmeters',

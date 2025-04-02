@@ -1,6 +1,7 @@
 <?php
 include_once('Manager.php');
 include_once('ImInventories.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 class ChecklistVoucherAdmin extends Manager {
 

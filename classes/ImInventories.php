@@ -451,8 +451,8 @@ class ImInventories extends Manager{
 		if(!$tid){
 			$sql .= 'INNER JOIN fmchklsttaxalink cl ON ts2.tid = cl.tid ';
 		}
-		$sql .= 'SET o.localitysecurity = 1
-			WHERE (o.localitysecurity IS NULL OR o.localitysecurity = 0) AND (cultivationStatus = 0 OR cultivationStatus IS NULL) AND (o.localitySecurityReason IS NULL)
+		$sql .= 'SET o.recordSecurity = 1
+			WHERE (o.recordsecurity = 0) AND (cultivationStatus = 0 OR cultivationStatus IS NULL) AND (o.securityReason IS NULL)
 			AND (ts1.taxauthid = 1) AND (ts2.taxauthid = 1) AND (o.stateprovince = ?) ';
 		if($tid){
 			$sql .= ' AND (ts2.tid = ?) ';
@@ -479,8 +479,8 @@ class ImInventories extends Manager{
 			$sql = 'UPDATE omoccurrences o INNER JOIN taxstatus ts1 ON o.tidinterpreted = ts1.tid
 				INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted
 				INNER JOIN fmchklsttaxalink cl ON ts2.tid = cl.tid
-				SET o.localitysecurity = 0
-				WHERE (o.localitysecurity = 1) AND (o.localitySecurityReason IS NULL) AND (ts1.taxauthid = 1) AND (ts2.taxauthid = 1)
+				SET o.recordSecurity = 0
+				WHERE (o.recordsecurity = 1) AND (o.securityReason IS NULL) AND (ts1.taxauthid = 1) AND (ts2.taxauthid = 1)
 				AND (o.stateprovince = ?) AND (cl.clid = ?)
 				AND o.tidinterpreted NOT IN(SELECT s2.tid FROM taxstatus s2 INNER JOIN taxstatus s1 ON s2.tidaccepted = s1.tidaccepted INNER JOIN taxa t ON s1.tid = t.tid WHERE t.securityStatus > 0)';
 			if($stmt = $this->conn->prepare($sql)){
@@ -509,8 +509,8 @@ class ImInventories extends Manager{
 			if(!$globalStatus){
 				$sqlRare = 'UPDATE omoccurrences o INNER JOIN taxstatus ts1 ON o.tidinterpreted = ts1.tid
 					INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted
-					SET o.localitysecurity = 0
-					WHERE (o.localitysecurity = 1) AND (o.localitySecurityReason IS NULL) AND (ts1.taxauthid = 1) AND (ts2.taxauthid = 1)
+					SET o.recordSecurity = 0
+					WHERE (o.recordsecurity = 1) AND (o.securityReason IS NULL) AND (ts1.taxauthid = 1) AND (ts2.taxauthid = 1)
 					AND o.stateprovince = ? AND ts2.tid = ?';
 				if($stmt = $this->conn->prepare($sqlRare)){
 					$stmt->bind_param('si', $rareLocality, $tid);

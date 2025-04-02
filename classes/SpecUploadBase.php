@@ -737,8 +737,8 @@ class SpecUploadBase extends SpecUpload{
 
 		//Lock security setting if set so that local system can't override
 		$sql = 'UPDATE uploadspectemp '.
-			'SET localitySecurityReason = "Locked: set via import file" '.
-			'WHERE localitySecurity > 0 AND localitySecurityReason IS NULL AND collid IN('.$this->collId.')';
+			'SET securityReason = "Locked: set via import file" '.
+			'WHERE recordSecurity > 0 AND securityReason IS NULL AND collid IN('.$this->collId.')';
 		$this->conn->query($sql);
 
 		if($this->sourceDatabaseType == 'specify'){

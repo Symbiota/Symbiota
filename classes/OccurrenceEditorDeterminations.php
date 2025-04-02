@@ -319,7 +319,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 				o.taxonRemarks = d.taxonRemarks, o.genus = NULL, o.specificEpithet = NULL, o.taxonRank = NULL, o.infraspecificepithet = NULL, o.scientificname = NULL ';
 			if(isset($taxonArr['family']) && $taxonArr['family']) $sql .= ', o.family = "'.$this->cleanInStr($taxonArr['family']).'"';
 			if(isset($taxonArr['tid']) && $taxonArr['tid']) $sql .= ', o.tidinterpreted = '.$taxonArr['tid'];
-			if(isset($taxonArr['security']) && $taxonArr['security']) $sql .= ', o.localitysecurity = '.$taxonArr['security'].', o.localitysecurityreason = "<Security Setting Locked>"';
+			if(isset($taxonArr['security']) && $taxonArr['security']) $sql .= ', o.recordsecurity = '.$taxonArr['security'].', o.securityreason = "<Security Setting Locked>"';
 			$sql .= ' WHERE (d.iscurrent = 1) AND (d.detid = '.$detId.')';
 			$updated_base = $this->conn->query($sql);
 

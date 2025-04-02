@@ -1,6 +1,6 @@
 var imgAssocCleared = false;
 var voucherAssocCleared = false;
-var localitySecurityIsDefault = false;
+var securityIsDefault = false;
 
 $(document).ready(function () {
   var editForm = document.fullform;
@@ -93,14 +93,14 @@ $(document).ready(function () {
       $("#tidinterpreted").val("");
       $("input[name=scientificnameauthorship]").val("");
       $("input[name=family]").val("");
-      if ($("input[name=localitysecurityreason]").val() == "") {
-        $("select[name=localitysecurity]").val(0);
+      if ($("input[name=securityreason]").val() == "") {
+        $("select[name=recordsecurity]").val(0);
       }
       fieldChanged("sciname");
       fieldChanged("tidinterpreted");
       fieldChanged("scientificnameauthorship");
       fieldChanged("family");
-      fieldChanged("localitysecurity");
+      fieldChanged("recordsecurity");
       if ($("#ffsciname").val()) {
         verifyFullFormSciName();
       }
@@ -291,13 +291,13 @@ function verifyFullFormSciName() {
         data.status == 1 &&
         !$("input[name=cultivationstatus]").prop("checked")
       ) {
-        $("select[name=localitysecurity]").val(1);
+        $("select[name=recordsecurity]").val(1);
         securityChanged(document.fullform);
       } else {
         if (data.tid) {
           var stateVal = $("input[name=stateprovince]").val();
           if (stateVal != "") {
-            localitySecurityCheck();
+            securityCheck();
           }
         }
       }
@@ -333,18 +333,18 @@ function deleteIdentifier(identID, occid) {
   }
 }
 
-function localitySecurityCheck() {
+function securityCheck() {
   var tidIn = $("input[name=tidinterpreted]").val();
   var stateIn = $("input[name=stateprovince]").val();
   if (tidIn != "" && stateIn != "") {
     $.ajax({
       type: "POST",
-      url: "rpc/localitysecuritycheck.php",
+      url: "rpc/securitycheck.php",
       dataType: "json",
       data: { tid: tidIn, state: stateIn },
     }).done(function (data) {
       if (data == "1" && !$("input[name=cultivationstatus]").prop("checked")) {
-        $("select[name=localitysecurity]").val(1);
+        $("select[name=recordsecurity]").val(1);
         securityChanged(document.fullform);
       }
     });
@@ -371,14 +371,14 @@ function fieldChanged(fieldName) {
   if (fieldName == "cultivationstatus") {
     if ($("input[name=cultivationstatus]").prop("checked")) {
       if (
-        $("select[name=localitysecurity]").val() == 1 &&
-        $("input[name=localitysecurityreason]").val() == ""
+        $("select[name=recordsecurity]").val() == 1 &&
+        $("input[name=securityreason]").val() == ""
       ) {
-        localitySecurityIsDefault = true;
-        $("select[name=localitysecurity]").val(0);
+        securityIsDefault = true;
+        $("select[name=recordsecurity]").val(0);
       }
-    } else if (localitySecurityIsDefault) {
-      $("select[name=localitysecurity]").val(1);
+    } else if (securityIsDefault) {
+      $("select[name=recordsecurity]").val(1);
     }
   }
 }
@@ -392,7 +392,7 @@ function stateProvinceChanged(stateVal) {
   fieldChanged("stateprovince");
   var tidVal = $("#tidinterpreted").val();
   if (tidVal != "" && stateVal != "") {
-    localitySecurityCheck();
+    securityCheck();
   }
 }
 
@@ -1258,37 +1258,37 @@ function openOccurrenceSearch(target) {
 
 function securityChangedByUser(f) {
   securityChanged(f);
-  if (f.localitysecurity.value == 1) {
-    f.lockLocalitySecurity.checked = true;
+  if (f.recordsecurity.value > 0) {
+    f.lockSecurity.checked = true;
   } else {
-    f.lockLocalitySecurity.checked = false;
+    f.lockSecurity.checked = false;
   }
-  securityLockChanged(f.lockLocalitySecurity);
+  securityLockChanged(f.lockSecurity);
 }
 
 function securityChanged(f) {
-  fieldChanged("localitysecurity");
+  fieldChanged("recordsecurity");
   $("#locsecreason").show();
 }
 
-function localitySecurityReasonChanged() {
-  fieldChanged("localitysecurityreason");
-  if ($("input[name=localitysecurityreason]").val() == "") {
-    $("input[name=lockLocalitySecurity]").prop("checked", false);
+function securityReasonChanged() {
+  fieldChanged("securityreason");
+  if ($("input[name=securityreason]").val() == "") {
+    $("input[name=lockSecurity]").prop("checked", false);
   } else {
-    $("input[name=lockLocalitySecurity]").prop("checked", true);
+    $("input[name=lockSecurity]").prop("checked", true);
   }
 }
 
 function securityLockChanged(cb) {
   if (cb.checked == true) {
-    if ($("input[name=localitysecurityreason]").val() == "") {
-      $("input[name=localitysecurityreason]").val("[Security Setting Locked]");
-      fieldChanged("localitysecurityreason");
+    if ($("input[name=securityreason]").val() == "") {
+      $("input[name=securityreason]").val("[Security Setting Locked]");
+      fieldChanged("securityreason");
     }
   } else {
-    $("input[name=localitysecurityreason]").val("");
-    fieldChanged("localitysecurityreason");
+    $("input[name=securityreason]").val("");
+    fieldChanged("securityreason");
   }
 }
 

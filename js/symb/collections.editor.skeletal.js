@@ -132,7 +132,7 @@ function submitDefaultForm(f){
 	
 	if(continueSubmit){
 		/*
-		url = 'rpc/occurAddData.php?sciname='+$( "#fsciname" ).val()+'&scientificnameauthorship='+$( "#fscientificnameauthorship" ).val()+'&family='+$( "#ffamily" ).val()+'&localitysecurity='+($( "#flocalitysecurity" ).prop('checked')?"1":"0");
+		url = 'rpc/occurAddData.php?sciname='+$( "#fsciname" ).val()+'&scientificnameauthorship='+$( "#fscientificnameauthorship" ).val()+'&family='+$( "#ffamily" ).val()+'&recordsecurity='+($( "#flocalitysecurity" ).prop('checked')?"1":"0");
 		url = url + '&country='+$( "#fcountry" ).val()+'&stateprovince='+$( "#fstateprovince" ).val()+'&county='+$( "#fcounty" ).val();
 		url = url + '&processingstatus='+$( "#fprocessingstatus" ).val()+'&recordedby='+$( "#frecordedby" ).val()+'&recordnumber='+$( "#frecordnumber" ).val(); 
 		url = url + '&eventdate='+$( "#feventdate" ).val()+'&language='+$( "#flanguage" ).val()+'&ometid='+$( "#fometid" ).val()+'&exsnumber='+$( "#fexsnumber" ).val()+'&othercatalognumbers='+$( "#fothercatalognumbers" ).val();
@@ -149,7 +149,7 @@ function submitDefaultForm(f){
 				sciname: $( "#fsciname" ).val(), 
 				scientificnameauthorship: $( "#fscientificnameauthorship" ).val(), 
 				family: $( "#ffamily" ).val(), 
-				localitysecurity: ($( "#flocalitysecurity" ).prop('checked')?"1":"0"),
+				recordsecurity: ($( "#flocalitysecurity" ).prop('checked')?"1":"0"),
 				country: $( "#fcountry" ).val(), 
 				stateprovince: $( "#fstateprovince" ).val(), 
 				county: $( "#fcounty" ).val(), 

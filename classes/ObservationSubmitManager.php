@@ -31,27 +31,29 @@ class ObservationSubmitManager {
 			}
 			//Get tid for scientific name
 			$tid = 0;
-			$localitySecurity = (array_key_exists('localitysecurity', $postArr) ? 1 : 0);
+			$recordSecurity = (array_key_exists('recordsecurity', $postArr) ? 1 : 0);
 			if($postArr['sciname']){
 				$result = $this->conn->query('SELECT tid, securitystatus FROM taxa WHERE (sciname = "'.$postArr['sciname'].'")');
 				if($row = $result->fetch_object()){
 					$tid = $row->tid;
 					if(empty($postArr['cultivationstatus'])){
 						//Set localitySecurity based on global or state protection setting, but only if not cultivated
-						if($row->securitystatus > 0) $localitySecurity = $row->securitystatus;
-						if(!$localitySecurity){
+						if($row->securitystatus > 0) $recordSecurity = $row->securitystatus;
+						if(!$recordSecurity){
 							//Check to see if species is rare or sensitive within a state
 							$sql = 'SELECT cl.tid
 								FROM fmchecklists c INNER JOIN fmchklsttaxalink cl ON c.clid = cl.clid
 								WHERE c.type = "rarespp" AND c.locality = "'.$postArr['stateprovince'].'" AND cl.tid = '.$tid;
 							$rs = $this->conn->query($sql);
 							if($rs->num_rows){
-								$localitySecurity = 1;
+								$recordSecurity = 1;
 							}
 						}
 					}
 				}
 			}
+			$securityReason = '';
+			if($recordSecurity) $securityReason = '[Security Setting Locked]';
 
 			$verbatimElevation = $postArr['verbatimelevation'];
 			if(is_numeric($verbatimElevation)) $verbatimElevation .= 'ft.';
@@ -60,7 +62,7 @@ class ObservationSubmitManager {
 				'identificationReferences, recordedBy, recordNumber, '.
 				'associatedCollectors, eventDate, year, month, day, startDayOfYear, habitat, substrate, occurrenceRemarks, associatedTaxa, '.
 				'verbatimattributes, reproductiveCondition, cultivationStatus, establishmentMeans, country, '.
-				'stateProvince, county, locality, localitySecurity, decimalLatitude, decimalLongitude, '.
+				'stateProvince, county, locality, recordSecurity, securityReason, decimalLatitude, decimalLongitude, '.
 				'geodeticDatum, coordinateUncertaintyInMeters, georeferenceRemarks, minimumElevationInMeters, verbatimElevation, observeruid, dateEntered) '.
 				'VALUES ('.$this->collId.',"HumanObservation",'.($postArr['family']?'"'.$this->cleanInStr($postArr['family']).'"':'NULL').','.
 				'"'.$this->cleanInStr($postArr['sciname']).'","'.
@@ -85,7 +87,7 @@ class ObservationSubmitManager {
 				'"'.$this->cleanInStr($postArr['country']).'",'.
 				($postArr['stateprovince']?'"'.$this->cleanInStr($postArr['stateprovince']).'"':'NULL').','.
 				($postArr['county']?'"'.$this->cleanInStr($postArr['county']).'"':'NULL').','.
-				'"'.$this->cleanInStr($postArr['locality']).'",'.$localitySecurity.','.
+				'"' . $this->cleanInStr($postArr['locality']) . '",' . $recordSecurity . ',' . ($securityReason ? '"' . $securityReason . '"' : 'NULL') . ',' .
 				$postArr['decimallatitude'].','.$postArr['decimallongitude'].','.
 				($postArr['geodeticdatum']?'"'.$this->cleanInStr($postArr['geodeticdatum']).'"':'NULL').','.
 				($postArr['coordinateuncertaintyinmeters']?'"'.$postArr['coordinateuncertaintyinmeters'].'"':'NULL').','.
