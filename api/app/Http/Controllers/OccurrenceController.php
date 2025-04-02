@@ -150,7 +150,6 @@ class OccurrenceController extends Controller {
 		$limit = $request->input('limit', 100);
 		$offset = $request->input('offset', 0);
 
-		// $occurrenceModel = Occurrence::query();
 		$occurrenceModel = DB::table('omoccurrences as o')->select('o.*', 't.author')
 			->join('taxa as t', 'o.tidInterpreted', '=', 't.tid');
 		if ($request->has('collid')) {
