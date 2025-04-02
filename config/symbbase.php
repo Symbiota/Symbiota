@@ -54,6 +54,19 @@ $USERNAME = (array_key_exists('un',$PARAMS_ARR)?$PARAMS_ARR['un']:0);
 $SYMB_UID = (array_key_exists('uid',$PARAMS_ARR)?$PARAMS_ARR['uid']:0);
 $IS_ADMIN = (array_key_exists('SuperAdmin',$USER_RIGHTS)?1:0);
 
+
+$PORTAL_PRIVATE = $PRIVATE_VIEWING_ONLY ?? false;
+$public_pages = is_array($PRIVATE_VIEWING_OVERRIDES) ? $PRIVATE_VIEWING_OVERRIDES : [];
+$public_pages = [...$public_pages, ...['/profile/newprofile.php', '/profile/index.php']];
+if (!$SYMB_UID && $PORTAL_PRIVATE){
+	$requested_url = explode($CLIENT_ROOT, $_SERVER['PHP_SELF'])[1];
+	if (!in_array($requested_url, $public_pages)){
+		$referringUrl =  $_SERVER['PHP_SELF'] . (!empty($_SERVER['QUERY_STRING']) ? urlencode( '?' . $_SERVER['QUERY_STRING']) : '');
+		header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=' . $referringUrl);
+	}
+}
+
+
 function alias(&$new, &$old) {
 	if(!isset($new) && isset($old)) {
 		$new = $old;
