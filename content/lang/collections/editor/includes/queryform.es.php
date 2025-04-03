@@ -135,4 +135,5 @@ $LANG['CLOSE_PAREN_FIELD'] = 'Cerrar campo entre paréntesis';
 $LANG['NEW_CUSTOM_FIELD'] = 'Agregar otro campo personalizado';
 $LANG['ORDER_BY'] = 'Ordenar por';
 $LANG['ADD_CUSTOM_FIELD'] = 'Agregar Nuevo Filtro de Búsqueda Personalizado';
+$LANG['SEARCH_MISSING_TRAITS'] = 'Buscar registros sin rasgos seleccionados';
 ?>

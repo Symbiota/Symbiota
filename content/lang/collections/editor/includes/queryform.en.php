@@ -135,4 +135,5 @@ $LANG['CLOSE_PAREN_FIELD'] = 'Close Parentheses Field';
 $LANG['NEW_CUSTOM_FIELD'] = 'Add another custom field';
 $LANG['ORDER_BY'] = 'Order by';
 $LANG['ADD_CUSTOM_FIELD'] = 'Add New Custom Field';
+$LANG['SEARCH_MISSING_TRAITS'] = 'Search for records without selected traits';
 ?>
