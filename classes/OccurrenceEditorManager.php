@@ -271,6 +271,7 @@ class OccurrenceEditorManager {
 			if (array_key_exists('q_withoutimg', $_REQUEST) && $_REQUEST['q_withoutimg']) $this->qryArr['woi'] = 1;
 			if (array_key_exists('q_traitid', $_REQUEST)) $this->qryArr['traitid'] = $_REQUEST['q_traitid'];
 			if (array_key_exists('q_stateid', $_REQUEST)) $this->qryArr['stateid'] = $_REQUEST['q_stateid'];
+			if (array_key_exists('q_traitAbsence', $_REQUEST)) $this->qryArr['traitAbsence'] = $_REQUEST['q_traitAbsence'];
 			for ($x = 1; $x < 9; $x++) {
 				if (array_key_exists('q_customandor' . $x, $_REQUEST) && $_REQUEST['q_customandor' . $x]) $this->qryArr['cao' . $x] = $_REQUEST['q_customandor' . $x];
 				if (array_key_exists('q_customopenparen' . $x, $_REQUEST) && $_REQUEST['q_customopenparen' . $x]) $this->qryArr['cop' . $x] = $_REQUEST['q_customopenparen' . $x];
@@ -587,11 +588,19 @@ class OccurrenceEditorManager {
 			array_filter($this->qryArr['stateid'], fn($v) => is_numeric($v)): [];
 		if(count($traitids) > 0 || count($stateids) > 0) {
 			$trait_sql = '';
-
+			$traitAbsence = $this->qryArr['traitAbsence'] ?? false;
 			if(count($traitids) > 0) {
-				$sqlWhere .= ' AND tms.traitid IN (' . implode(',', $traitids) . ') ';
+				if($traitAbsence) {
+					$sqlWhere .= ' AND tms.traitid NOT IN (' . implode(',', $traitids) . ') ';
+				} else {
+					$sqlWhere .= ' AND tms.traitid IN (' . implode(',', $traitids) . ') ';
+				}
 			} else {
-				$sqlWhere .= ' AND tms.stateid IN (' . implode(',', $stateids) . ') ';
+				if($traitAbsence) {
+					$sqlWhere .= ' AND tms.stateid NOT IN (' . implode(',', $stateids) . ') ';
+				} else {
+					$sqlWhere .= ' AND tms.stateid IN (' . implode(',', $stateids) . ') ';
+				}
 			}
 		}
 

@@ -30,6 +30,7 @@ $qOcrFrag = (array_key_exists('ocr',$qryArr)?htmlentities($qryArr['ocr'], ENT_CO
 $qOrderBy = (array_key_exists('orderby',$qryArr)?$qryArr['orderby']:'');
 $qOrderByDir = (array_key_exists('orderbydir',$qryArr)?$qryArr['orderbydir']:'');
 $qTraitIds = (array_key_exists('traitid',$qryArr)?$qryArr['traitid']: []);
+$qTraitAbsence = (array_key_exists('traitAbsence',$qryArr)?$qryArr['traitAbsence']: false);
 $qTraitStateIds = (array_key_exists('stateid',$qryArr)?$qryArr['stateid']: []);
 
 $qTraitArr = $occManager->getAttributeTraits($collId);
@@ -221,6 +222,8 @@ else{
 								</select>
 							</div>
 						</div>
+						<input id="qTraitAbsence" name="q_traitAbsence" type="checkbox" <?= $qTraitAbsence? 'checked': '' ?> value="1" />
+						<label for="qTraitAbsence"><?= $LANG['SEARCH_MISSING_TRAITS'] ?? 'Search on missing traits' ?></label>
 						<div>
 							* <?php echo $LANG['HOLD_CTRL']; ?>
 						</div>
