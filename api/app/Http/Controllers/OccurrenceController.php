@@ -732,9 +732,15 @@ class OccurrenceController extends Controller {
 		$decodedId = urldecode($id);
 		$occurrence = null;
 		if (is_numeric($decodedId)) {
-			$occurrence = Occurrence::find($decodedId);
+			$occurrence = DB::table('omoccurrences as o')
+				->select('o.*', 't.author')
+				->join('taxa as t', 'o.tidInterpreted', '=', 't.tid')
+				->where('occid', $decodedId)
+				->first();
 		} else {
-			$occurrence = Occurrence::where('recordID', (string)$decodedId)
+			$occurrence = DB::table('omoccurrences as o')->select('o.*', 't.author')
+				->join('taxa as t', 'o.tidInterpreted', '=', 't.tid')
+				->where('recordID', (string)$decodedId)
 				->orWhere('occurrenceID', (string)$decodedId)
 				->first();
 		}
