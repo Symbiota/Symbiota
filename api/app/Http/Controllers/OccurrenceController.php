@@ -334,7 +334,10 @@ class OccurrenceController extends Controller {
 		}
 		$media = null;
 		if ($occurrence) {
-			$media = $occurrence->media;
+			$media = DB::table('media')
+				->select('*')
+				->where('occid', $occurrence->occid)
+				->first();
 		}
 		if (!$media) {
 			return response()->json(['error' => 'Occurrence found, but no media found'], 404);
