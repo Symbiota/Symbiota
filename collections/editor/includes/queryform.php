@@ -223,7 +223,7 @@ else{
 							</div>
 						</div>
 						<input id="qTraitAbsence" name="q_traitAbsence" type="checkbox" <?= $qTraitAbsence? 'checked': '' ?> value="1" />
-						<label for="qTraitAbsence"><?= $LANG['SEARCH_MISSING_TRAITS'] ?? 'Search on missing traits' ?></label>
+						<label for="qTraitAbsence"><?= $LANG['SEARCH_MISSING_TRAITS']?></label>
 						<div>
 							* <?php echo $LANG['HOLD_CTRL']; ?>
 						</div>
