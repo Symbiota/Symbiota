@@ -123,7 +123,7 @@ class OccurrenceLabel{
 				$sqlWhere .= 'AND (o.collid = '.$this->collid.') ';
 			}
 			$sql = 'SELECT DISTINCT o.occid, o.collid, IFNULL(o.duplicatequantity,1) AS q, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS collector, o.observeruid, '.
-				'o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county, o.locality) AS locality, IFNULL(o.localitySecurity,0) AS localitySecurity '.
+				'o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county, o.locality) AS locality, IFNULL(o.recordSecurity,0) AS recordSecurity '.
 				'FROM omoccurrences o LEFT JOIN omoccuridentifiers i ON o.occid = i.occid ';
 			if($sqlWhere) $sql .= 'WHERE '.substr($sqlWhere, 4);
 			if($sqlOrderBy) $sql .= ' ORDER BY '.substr($sqlOrderBy,1);
@@ -132,8 +132,8 @@ class OccurrenceLabel{
 			//echo '<div>'.$sql.'</div>';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$localitySecurity = $r->localitySecurity;
-				if(!$localitySecurity || $canReadRareSpp || ($r->observeruid == $GLOBALS['SYMB_UID'])){
+				$recordSecurity = $r->recordSecurity;
+				if(!$recordSecurity || $canReadRareSpp || ($r->observeruid == $GLOBALS['SYMB_UID'])){
 					$occId = $r->occid;
 					$retArr[$occId]['collid'] = $r->collid;
 					$retArr[$occId]['q'] = $r->q;

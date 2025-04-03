@@ -258,14 +258,14 @@ class EOLUtilities {
 								if($agentObj['full_name']){
 									if($agentCnt < 2) $agentArr[] = $agentObj['full_name'];
 									if($agentObj['role'] == 'photographer'){
-										$retArr['photographer'] = $agentObj['full_name'];
+										$retArr['creator'] = $agentObj['full_name'];
 										unset($agentArr);
 										break;
 									}
 									$agentCnt++;
 								}
 							}
-							if(isset($agentArr) && $agentArr) $retArr['photographer'] = implode('; ',array_unique($agentArr));
+							if(isset($agentArr) && $agentArr) $retArr['creator'] = implode('; ',array_unique($agentArr));
 						}
 						$noteStr = 'Harvest via EOL on '.date('Y-m-d');
 						if(array_key_exists('description',$objArr)) $noteStr .= '; '.$objArr['description'];

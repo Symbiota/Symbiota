@@ -34,8 +34,8 @@ class ImageShared {
 
 	//Image metadata
 	private $caption = null;
-	private $photographer = null;
-	private $photographerUid = null;
+	private $creator = null;
+	private $creatorUid = null;
 	private $format = null;
 	private $hashFunction = null;
 	private $hashValue = null;
@@ -128,8 +128,8 @@ class ImageShared {
 
 		//Image metadata
 		$this->caption = null;
-		$this->photographer = null;
-		$this->photographerUid = null;
+		$this->creator = null;
+		$this->creatorUid = null;
 		$this->format = null;
 		$this->hashFunction = null;
 		$this->hashValue = null;
@@ -538,8 +538,8 @@ class ImageShared {
 					$this->archiveUrl,
 					$this->sourceUrl,
 					$this->referenceUrl,
-					$this->photographer,
-					$this->photographerUid,
+					$this->creator,
+					$this->creatorUid,
 					$this->format,
 					$this->caption,
 					$this->owner,
@@ -763,13 +763,13 @@ class ImageShared {
 		$this->caption = $this->cleanInStr($v);
 	}
 
-	public function setPhotographer($v) {
-		$this->photographer = $this->cleanInStr($v);
+	public function setCreator($v) {
+		$this->creator = $this->cleanInStr($v);
 	}
 
-	public function setPhotographerUid($v) {
+	public function setCreatorUid($v) {
 		//$v = OccurrenceUtilities::verifyUser($v, $this->conn);
-		if (is_numeric($v)) $this->photographerUid = $v;
+		if (is_numeric($v)) $this->creatorUid = $v;
 	}
 
 	public function setImgLgUrl($v) {

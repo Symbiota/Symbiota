@@ -1,4 +1,8 @@
 <?php
+
+$PRIVATE_VIEWING_ONLY = true;
+$PRIVATE_VIEWING_OVERRIDES = ['/index.php', '/misc/contacts.php','/misc/aboutproject.php', '/profile/newprofile.php', '/profile/index.php'];  //These pages will always be accessible to public viewing.  Add to as needed. 
+
 $DEFAULT_LANG = 'en';			//Default language
 $DEFAULT_PROJ_ID = 0;
 $DEFAULTCATID = 0;

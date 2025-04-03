@@ -387,7 +387,7 @@ button.icon-button {
   border-color: buttonborder;
 }
 
-button.icon-button > svg {
+button.icon-button svg {
   fill: var(--light-color);
 }
 

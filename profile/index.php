@@ -160,7 +160,7 @@ if (array_key_exists('last_message', $_SESSION)){
 		}
 
 		function resetPassword(){
-			if(document.getElementById("login").value == ""){
+			if(document.getElementById("portal-login").value == ""){
 				<?php
 				$alertStr = 'Enter your login name in the Login field and leave the password blank';
 				if(isset($LANG['ENTER_LOGIN_NO_PWD'])) $alertStr = $LANG['ENTER_LOGIN_NO_PWD'];
