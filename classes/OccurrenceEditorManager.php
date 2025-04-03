@@ -271,7 +271,7 @@ class OccurrenceEditorManager {
 			if (array_key_exists('q_withoutimg', $_REQUEST) && $_REQUEST['q_withoutimg']) $this->qryArr['woi'] = 1;
 			if (array_key_exists('q_traitid', $_REQUEST)) $this->qryArr['traitid'] = $_REQUEST['q_traitid'];
 			if (array_key_exists('q_stateid', $_REQUEST)) $this->qryArr['stateid'] = $_REQUEST['q_stateid'];
-			if (array_key_exists('q_traitAbsence', $_REQUEST)) $this->qryArr['traitAbsence'] = $_REQUEST['q_traitAbsence'];
+			if (array_key_exists('q_traitAbsence', $_REQUEST)) $this->qryArr['traitAbsence'] = true;
 			for ($x = 1; $x < 9; $x++) {
 				if (array_key_exists('q_customandor' . $x, $_REQUEST) && $_REQUEST['q_customandor' . $x]) $this->qryArr['cao' . $x] = $_REQUEST['q_customandor' . $x];
 				if (array_key_exists('q_customopenparen' . $x, $_REQUEST) && $_REQUEST['q_customopenparen' . $x]) $this->qryArr['cop' . $x] = $_REQUEST['q_customopenparen' . $x];
@@ -591,13 +591,13 @@ class OccurrenceEditorManager {
 			$traitAbsence = $this->qryArr['traitAbsence'] ?? false;
 			if(count($traitids) > 0) {
 				if($traitAbsence) {
-					$sqlWhere .= ' AND tms.traitid NOT IN (' . implode(',', $traitids) . ') ';
+					$sqlWhere .= ' AND (tms.traitid NOT IN (' . implode(',', $traitids) . ') OR tms.traitid IS NULL)';
 				} else {
 					$sqlWhere .= ' AND tms.traitid IN (' . implode(',', $traitids) . ') ';
 				}
 			} else {
 				if($traitAbsence) {
-					$sqlWhere .= ' AND tms.stateid NOT IN (' . implode(',', $stateids) . ') ';
+					$sqlWhere .= ' AND (tms.stateid NOT IN (' . implode(',', $stateids) . ') OR tms.stateid IS NULL) ';
 				} else {
 					$sqlWhere .= ' AND tms.stateid IN (' . implode(',', $stateids) . ') ';
 				}
@@ -793,6 +793,7 @@ class OccurrenceEditorManager {
 		if ($sqlFrag) {
 			$sql = 'SELECT DISTINCT o.occid, o.collid, o.' . implode(',o.', array_keys($this->fieldArr['omoccurrences'])) . ', o.datelastmodified FROM omoccurrences o ' . $sqlFrag;
 			$previousOccid = 0;
+
 			$rs = $this->conn->query($sql);
 			$rsCnt = 0;
 			$indexArr = array();
@@ -850,8 +851,8 @@ class OccurrenceEditorManager {
 		}
 		//Traits 
 		if(strpos($this->sqlWhere, 'tms.stateid') || strpos($this->sqlWhere, 'tms.traitid')) {
-			$sql .= ' INNER JOIN tmattributes tma ON tma.occid = o.occid ' . 
-			'INNER JOIN tmstates tms ON tms.stateid = tma.stateid ';
+			$sql .= ' LEFT JOIN tmattributes tma ON tma.occid = o.occid ' . 
+			'LEFT JOIN tmstates tms ON tms.stateid = tma.stateid ';
 		}
 
 		if (strpos($this->sqlWhere, 'id.identifierValue')) {
