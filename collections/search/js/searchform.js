@@ -723,8 +723,13 @@ function simpleSearch() {
   errors = validateForm();
   let isValid = errors.length == 0;
   if (isValid) {
-    let searchUrl = getSearchUrl();
-    window.location = searchUrl;
+    const searchUrl = getSearchUrl();
+    sessionStorage.setItem('verbatimSearchUrl', searchUrl);
+    const shamForm = document.createElement('form');
+    shamForm.method = "POST"; // if GET is used instead, the URL is too short for complex polygon + many collections queries. Hence, the need for POST.
+    shamForm.action = searchUrl;
+    document.body.appendChild(shamForm);
+    shamForm.submit();
   } else {
     handleValErrors(errors);
   }
@@ -784,8 +789,7 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
 
 function setSearchForm(frm) {
   if (sessionStorage.querystr) {
-    var urlVar = parseUrlVariables(sessionStorage.querystr);
-
+    var urlVar = parseUrlVariables(sessionStorage.querystr.replaceAll('&quot;', '"'));
     if (
       typeof urlVar.usethes !== "undefined" &&
       (urlVar.usethes == "" || urlVar.usethes == "0")
@@ -866,8 +870,8 @@ function setSearchForm(frm) {
       frm.rightlong.value = Math.abs(parseFloat(coordArr[3]));
       frm.rightlong_EW.value = parseFloat(coordArr[3]) > 0 ? "E" : "W";
     }
-    if (urlVar.footprintwkt) {
-      frm.footprintwkt.value = urlVar.footprintwkt;
+    if (urlVar.footprintGeoJson) {
+      frm.footprintwkt.value = urlVar.footprintGeoJson;
     }
     if (urlVar.llpoint) {
       var coordArr = urlVar.llpoint.split(";");

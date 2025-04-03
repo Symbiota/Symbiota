@@ -97,7 +97,7 @@ else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imgpro
 							<input type="checkbox" id="ocrfull-tess" value="1" /> <?php echo $LANG['OCR_WHOLE_IMG']; ?><br/>
 							<input type="checkbox" id="ocrbest" value="1" /> <?php echo $LANG['OCR_ANALYSIS']; ?>
 							<div>
-								<button value="OCR Image" onclick="ocrImage(this,'tess', <?php echo $imgId.','.$imgCnt; ?>);" ><?php echo $LANG['OCR_IMAGE']; ?></button>
+								<button class="button icon-button" value="OCR Image" onclick="ocrImage(this,'tess', <?php echo $imgId.','.$imgCnt; ?>);" ><?php echo $LANG['OCR_IMAGE']; ?></button>
 								<img id="workingcircle-tess-<?php echo $imgCnt; ?>" src="../../images/workingcircle.gif" style="display:none;" />
 							</div>
 						</fieldset>
@@ -108,7 +108,7 @@ else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imgpro
 								<legend>DigiLeap OCR</legend>
 								<input type="checkbox" id="ocrfull-digi" value="1" /> <?php echo $LANG['OCR_WHOLE_IMG']; ?><br/>
 								<div>
-									<button value="OCR Image" onclick="ocrImage(this,'digi', <?php echo $imgId.','.$imgCnt; ?>);" ><?php echo $LANG['OCR_IMAGE']; ?></button>
+									<button class="button icon-button" value="OCR Image" onclick="ocrImage(this,'digi', <?php echo $imgId.','.$imgCnt; ?>);" ><?php echo $LANG['OCR_IMAGE']; ?></button>
 									<img id="workingcircle-digi-<?php echo $imgCnt; ?>" src="../../images/workingcircle.gif" style="display:none;" />
 								</div>
 							</fieldset>

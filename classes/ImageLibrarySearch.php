@@ -8,7 +8,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 	private $taxonType = 2;
 	private $taxaStr;
 	private $useThes = 1;
-	private $photographerUid;
+	private $creatorUid;
 	private $tagExistance = 0;
 	private $tag;
 	private $keywords;
@@ -170,8 +170,8 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		elseif($this->tidFocus){
 			$sqlWhere .= 'AND (e.parenttid IN('.$this->tidFocus.')) AND (e.taxauthid = 1) ';
 		}
-		if($this->photographerUid){
-			$sqlWhere .= 'AND (m.creatorUid IN('.$this->photographerUid.')) ';
+		if($this->creatorUid){
+			$sqlWhere .= 'AND (m.creatorUid IN('.$this->creatorUid.')) ';
 		}
 		if($this->tag){
 			$sqlWhere .= 'AND m.mediaID ';
@@ -266,7 +266,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		if($this->taxonType) $retStr .= '&taxontype='.$this->taxonType;
 		if($this->taxaStr) $retStr .= '&taxa='.$this->taxaStr;
 		if($this->useThes) $retStr .= '&usethes=1';
-		if($this->photographerUid) $retStr .= '&phuid='.$this->photographerUid;
+		if($this->creatorUid) $retStr .= '&phuid='.$this->creatorUid;
 		$retStr .= '&tagExistance='.$this->tagExistance;
 		if($this->tag) $retStr .= '&tag='.urlencode($this->tag);
 		if($this->keywords) $retStr .= '&keywords='.$this->keywords;
@@ -305,7 +305,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 	}
 
 	//Listing functions
-	public function getPhotographerUidArr(){
+	public function getCreatorUidArr(){
 		$retArr = array();
 		$sql1 = 'SELECT DISTINCT creatorUid FROM media WHERE creatorUid IS NOT NULL';
 		$rs1 = $this->conn->query($sql1);
@@ -399,12 +399,12 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		return $this->useThes;
 	}
 
-	public function setPhotographerUid($uid){
-		if(is_numeric($uid)) $this->photographerUid = $uid;
+	public function setCreatorUid($uid){
+		if(is_numeric($uid)) $this->creatorUid = $uid;
 	}
 
-	public function getPhotographerUid(){
-		return $this->photographerUid;
+	public function getCreatorUid(){
+		return $this->creatorUid;
 	}
 
 	public function setTagExistance($t){

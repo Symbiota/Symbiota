@@ -717,7 +717,8 @@ $traitArr = $indManager->getTraitArr();
 							if(!isset($occArr['localsecure'])){
 								$locStr = $occArr['locality'];
 								if($occArr['locationid']) $locStr .= ' ['.(isset($LANG['LOCATION_ID'])?$LANG['LOCATION_ID']:'Location ID').': '.$occArr['locationid'].']';
-								$localityArr[] = $locStr;
+								if (!empty($locStr))
+									$localityArr[] = $locStr;
 							}
 							echo implode(', ', $localityArr);
 							if($occArr['localitysecurity'] == 1){
@@ -1155,7 +1156,7 @@ $traitArr = $indManager->getTraitArr();
 									$emailSubject = $DEFAULT_TITLE . ' occurrence: ' . $occArr['catalognumber'] . $otherCatNum;
 									$refPath = GeneralUtil::getDomain().$CLIENT_ROOT.'/collections/individual/index.php?occid='.$occArr['occid'];
 									$emailBody = $LANG['SPECIMEN_REFERENCED'].': '.$refPath;
-									$emailRef = 'subject=' . urlencode($emailSubject) . '&cc=' . urlencode($ADMIN_EMAIL) . '&body=' . urlencode($emailBody);
+									$emailRef = 'subject=' . rawurlencode($emailSubject) . '&cc=' . $ADMIN_EMAIL . '&body=' . rawurlencode($emailBody);
 									echo ' (<a href="mailto:' . $collMetadata['email'] . '?' . $emailRef . '">' . $collMetadata['email'] . '</a>)';
 								}
 							}

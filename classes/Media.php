@@ -246,8 +246,14 @@ class MediaException extends Exception {
 	public const FileDoesNotExist = 'FILE_DOES_NOT_EXIST';
 	public const FileAlreadyExists = 'FILE_ALREADY_EXISTS';
 
-	function __construct(string $case){
-		parent::__construct($LANG[$case]);
+	function __construct(string $case, string $message = ''){
+		global $LANG;
+
+		if($message) {
+			parent::__construct($LANG[$case] . ': ' . $message);
+		} else {
+			parent::__construct($LANG[$case]);
+		}
 	}
 }
 
@@ -309,17 +315,12 @@ class Media {
 		$query_pos = strpos($file_name,'?');
 		if($query_pos) $file_name = substr($file_name, 0, $query_pos);
 
-		$file_type_pos = strrpos($file_name,'.');
-		$dir_path_pos = strrpos($file_name,'/');
+		$file_parts = pathinfo($file_name);
 
-		if($dir_path_pos !== false) $dir_path_pos += 1;
-		if($file_type_pos === false || $file_type_pos < $dir_path_pos) {
-			$file_type_pos = strlen($file_name);
-		}
 		return [
-			'name' => substr($file_name, $dir_path_pos, $file_type_pos - $dir_path_pos),
+			'name' => $file_parts['filename'],
 			'tmp_name' => $filepath,
-			'extension' => substr($file_name, $file_type_pos + 1),
+			'extension' => (!empty($file_parts['extension'])) ? strtolower($file_parts['extension']) : ''
 		];
 	}
 	/**
@@ -328,7 +329,7 @@ class Media {
 	 * @param mixed $thumbnail
 	 */
 	public static function render_media_item(array $media_arr, $thumbnail=false) {
-		if($media_arr['mediaType'] !== 'image' && !$thumbnail) {
+		if($media_arr['mediaType'] == MediaType::Audio && !$thumbnail) {
 			$src = $media_arr['url'];
 			$format = $media_arr['format'];
 			$html = <<< HTML
@@ -339,7 +340,7 @@ class Media {
 			HTML;
 
 			return $html;
-		} else {
+		} else if($media_arr['mediaType'] == MediaType::Image || ($media_arr['tnurl']?? $media_arr['thumbnailUrl'])) {
 			$thumbnail = $media_arr['tnurl']?? $media_arr['thumbnailUrl'];
 			$url = $media_arr['url'];
 			$caption = $media_arr['caption'];
@@ -348,18 +349,25 @@ class Media {
 			} else if(!$thumbnail &&  $media_arr['originalUrl']) {
 				$thumbnail = $media_arr['originalUrl'];
 			}
+			$nav_url = $media_arr['url'] ?? $media_arr['originalUrl'];
+
 			$html = <<< HTML
+			<a target="_blank" href="$nav_url">
 			<img 
 				style="max-width: 200px"
 				border="1" 
 				src="$thumbnail" 
 				title="$caption" 
-				style="max-width:21.9rem;" 
 				alt="Thumbnail image of current specimen" 
 			/>
+			</a>
 			HTML;
 
 			return $html;
+		} else {
+			global $LANG;
+			return '<div style="width: 200px; height:242px; border: solid black 1px; display: flex; align-items: center; justify-content:center">' . $LANG['UNKNOWN_MEDIA_TYPE_MSG'] . '
+			</div>';
 		}
 	}
 	/**
@@ -689,7 +697,24 @@ class Media {
 
 		curl_close($ch);
 
-		$parsed_file = self::parseFileName($url);
+		// Check response header for a provided filename in "Content-Disposition"
+		$headers = explode("\r\n", $data);
+		$response_file_name = '';
+		if ($found = preg_grep('/^Content-Disposition\: /', $headers)) {
+			preg_match("/.* filename[*]?=(?:utf-8[']{2})?(.*)/",current($found),$matches);
+			if (!empty($matches)){
+				$response_file_name = urldecode($matches[1]);
+			}
+		}
+
+		// Use filename sent in response header.  Otherwise fallback to contents of URL.
+		if(!empty($response_file_name)){
+			$parsed_file = self::parseFileName($response_file_name);
+		}
+		else {
+			$parsed_file = self::parseFileName($url);
+		}
+
 		$parsed_file['name'] = self::cleanFileName($parsed_file['name']);
 
 		if(!$parsed_file['extension'] && $file_type_mime) {
@@ -819,7 +844,9 @@ class Media {
 		if(!self::isValidFile($file)) {
 			if(!$should_upload_file) {
 				$file = self::parse_map_only_file($clean_post_arr);
-			} else if($isRemoteMedia) {
+			}
+
+			if(!$file['type'] && $isRemoteMedia) {
 				$file = self::getRemoteFileInfo($clean_post_arr['originalUrl']);
 			}
 		}
@@ -855,7 +882,7 @@ class Media {
 		$media_type_str = explode('/', $file['type'])[0];
 		$media_type = MediaType::tryFrom($media_type_str);
 
-		if(!$media_type) throw new MediaException(MediaException::InvalidMediaType);
+		if(!$media_type) throw new MediaException(MediaException::InvalidMediaType, ' ' . $media_type_str);
 
 		$keyValuePairs = [
 			"tid" => $clean_post_arr["tid"] ?? null,
@@ -890,8 +917,11 @@ class Media {
 			"mediaType" => $media_type_str,
 		];
 
-		if(array_key_exists('sortsequence', $clean_post_arr) && is_numeric($clean_post_arr['sortsequence'])) {
-			$keyValuePairs["sortsequence"] = $clean_post_arr['sortsequence'];
+		if(array_key_exists('sortsequence', $clean_post_arr)){
+			if (is_numeric($clean_post_arr['sortsequence']))
+				$keyValuePairs["sortsequence"] = $clean_post_arr['sortsequence'];
+			else
+				$keyValuePairs["sortsequence"] = 50; //set the default sortSequence
 		}
 
 		//What is url for files
@@ -912,7 +942,6 @@ class Media {
 		INSERT INTO media($keys) VALUES ($parameters)
 		SQL;
 
-		$conn = Database::connect('write');
 		mysqli_begin_transaction($conn);
 		try {
 			//insert media

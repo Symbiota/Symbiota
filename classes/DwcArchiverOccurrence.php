@@ -185,7 +185,7 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['terms']['locality'] = 'http://rs.tdwg.org/dwc/terms/locality';
 		$this->occurDefArr['fields']['locality'] = 'o.locality';
 		$this->occurDefArr['terms']['locationRemarks'] = 'http://rs.tdwg.org/dwc/terms/locationRemarks';
-		$this->occurDefArr['fields']['locationRemarks'] = 'o.locationremarks';
+		$this->occurDefArr['fields']['locationRemarks'] = 'o.locationRemarks';
 		$this->occurDefArr['terms']['localitySecurity'] = 'https://symbiota.org/terms/localitySecurity';
 		$this->occurDefArr['fields']['localitySecurity'] = 'o.localitySecurity';
 		$this->occurDefArr['terms']['localitySecurityReason'] = 'https://symbiota.org/terms/localitySecurityReason';
@@ -283,7 +283,7 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['terms']['observerUid'] = 'https://symbiota.org/terms/observerUid';
 		$this->occurDefArr['fields']['observerUid'] = 'o.observeruid';
 		$this->occurDefArr['terms']['processingStatus'] = 'https://symbiota.org/terms/processingStatus';
-		$this->occurDefArr['fields']['processingStatus'] = 'o.processingstatus';
+		$this->occurDefArr['fields']['processingStatus'] = 'o.processingStatus';
 		$this->occurDefArr['terms']['duplicateQuantity'] = 'https://symbiota.org/terms/duplicateQuantity';
 		$this->occurDefArr['fields']['duplicateQuantity'] = 'o.duplicateQuantity';
 		$this->occurDefArr['terms']['labelProject'] = 'https://symbiota.org/terms/labelProject';
@@ -293,7 +293,7 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['terms']['dateEntered'] = 'https://symbiota.org/terms/dateEntered';
 		$this->occurDefArr['fields']['dateEntered'] = 'o.dateEntered';
 		$this->occurDefArr['terms']['dateLastModified'] = 'http://rs.tdwg.org/dwc/terms/dateLastModified';
-		$this->occurDefArr['fields']['dateLastModified'] = 'o.datelastmodified';
+		$this->occurDefArr['fields']['dateLastModified'] = 'o.dateLastModified';
 		$this->occurDefArr['terms']['modified'] = 'http://purl.org/dc/terms/modified';
 		$this->occurDefArr['fields']['modified'] = 'IFNULL(o.modified,o.datelastmodified) AS modified';
 		$this->occurDefArr['terms']['rights'] = 'http://purl.org/dc/elements/1.1/rights';

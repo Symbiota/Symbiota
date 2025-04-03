@@ -2,7 +2,7 @@
 header('X-Frame-Options: DENY');
 header('Cache-control: private'); // IE 6 FIX
 date_default_timezone_set('America/Phoenix');
-$CODE_VERSION = '3.2';
+$CODE_VERSION = '3.2.1';
 
 set_include_path(get_include_path() . PATH_SEPARATOR . $SERVER_ROOT . PATH_SEPARATOR . $SERVER_ROOT.'/config/' . PATH_SEPARATOR . $SERVER_ROOT.'/classes/');
 
@@ -11,8 +11,15 @@ session_start(array('gc_maxlifetime'=>3600,'cookie_path'=>$CLIENT_ROOT,'cookie_s
 include_once($SERVER_ROOT . '/classes/utilities/Encryption.php');
 include_once($SERVER_ROOT . '/classes/ProfileManager.php');
 
-$pHandler = null;
 //Check session data to see if signed in
+
+if (isset($_SESSION['force_logout'])){
+	if(!isset($pHandler)) $pHandler = new ProfileManager();
+	$pHandler->reset();
+	unset($_SESSION['force_logout']);
+}
+$pHandler = null;
+
 $PARAMS_ARR = Array();				//params => 'un=egbot&dn=Edward&uid=301'
 $USER_RIGHTS = Array();
 if(isset($_SESSION['userparams'])) $PARAMS_ARR = $_SESSION['userparams'];

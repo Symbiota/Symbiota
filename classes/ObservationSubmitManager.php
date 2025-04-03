@@ -162,7 +162,7 @@ class ObservationSubmitManager {
 			$imgManager->reset();
 			$imgManager->setTargetPath($subTargetPath.'/'.date('Ym').'/');
 			//$imgManager->setMapLargeImg(false);
-			$imgManager->setPhotographerUid($GLOBALS['SYMB_UID']);
+			$imgManager->setCreatorUid($GLOBALS['SYMB_UID']);
 			$imgManager->setSortSeq(40);
 			$imgManager->setOccid($newOccId);
 			$imgManager->setTid($tid);
