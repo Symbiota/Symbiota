@@ -78,6 +78,10 @@ $collMetadata = $indManager->getMetadata();
 $genticArr = $indManager->getGeneticArr();
 
 $statusStr = '';
+if(!empty($occArr['recordsecurity']) && $occArr['recordsecurity'] == 5 && !$isEditor){
+	$occArr = null;
+	$statusStr = 'ERROR: record has full protection';
+}
 //  If other than HTML was requested, return just that content.
 if(isset($_SERVER['HTTP_ACCEPT'])){
 	$accept = RdfUtil::parseHTTPAcceptHeader($_SERVER['HTTP_ACCEPT']);
@@ -365,7 +369,7 @@ $traitArr = $indManager->getTraitArr();
 		<?php
 		if($statusStr){
 			$statusColor = 'green';
-			if(strpos($statusStr, 'ERROR')) $statusColor = 'red';
+			if(strpos($statusStr, 'ERROR') !== false) $statusColor = 'red';
 			?>
 			<hr />
 			<div style="padding:15px;">
@@ -721,9 +725,9 @@ $traitArr = $indManager->getTraitArr();
 									$localityArr[] = $locStr;
 							}
 							echo implode(', ', $localityArr);
-							if($occArr['localitysecurity'] == 1){
-								echo '<div style="margin-left:10px"><span class="notice-span">'.$LANG['LOCALITY_PROTECTED'].':<span> ';
-								if($occArr['localitysecurityreason'] && substr($occArr['localitysecurityreason'],0,1) != '<') echo $occArr['localitysecurityreason'];
+							if($occArr['recordsecurity'] == 1){
+								echo '<div style="margin-left:10px"><span class="notice-span">'.$LANG['PROTECTED'].':<span> ';
+								if($occArr['securityreason'] && substr($occArr['securityreason'],0,1) != '<') echo $occArr['securityreason'];
 								else echo $LANG['PROTECTED_REASON'];
 								if(!isset($occArr['localsecure'])) echo '<br/>'.(isset($LANG['ACCESS_GRANTED'])?$LANG['ACCESS_GRANTED']:'Current user has been granted access');
 								echo '</div>';
@@ -1149,11 +1153,11 @@ $traitArr = $indManager->getTraitArr();
 									$otherCatNum = '';
 									if($occArr['othercatalognumbers']){
 										foreach($occArr['othercatalognumbers'] as $identArr){
-											$otherCatNum .= $identArr['value'] . ', ';
+											$otherCatNum .= urlencode($identArr['value']) . ', ';
 										}
 										$otherCatNum = ' (' . trim($otherCatNum, ', ') . ')';
 									}
-									$emailSubject = $DEFAULT_TITLE . ' occurrence: ' . $occArr['catalognumber'] . $otherCatNum;
+									$emailSubject = $DEFAULT_TITLE . ' occurrence: ' . urlencode($occArr['catalognumber']) . $otherCatNum;
 									$refPath = GeneralUtil::getDomain().$CLIENT_ROOT.'/collections/individual/index.php?occid='.$occArr['occid'];
 									$emailBody = $LANG['SPECIMEN_REFERENCED'].': '.$refPath;
 									$emailRef = 'subject=' . rawurlencode($emailSubject) . '&cc=' . $ADMIN_EMAIL . '&body=' . rawurlencode($emailBody);
@@ -1509,7 +1513,7 @@ $traitArr = $indManager->getTraitArr();
 			</div>
 			<?php
 		}
-		else{
+		elseif($occArr !== null){
 			?>
 			<h2><?php echo (isset($LANG['UNABLETOLOCATE'])?$LANG['UNABLETOLOCATE']:'Unable to locate occurrence record'); ?></h2>
 			<div style="margin:20px">

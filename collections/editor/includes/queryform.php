@@ -48,7 +48,7 @@ else{
 			'identificationRemarks'=>$LANG['ID_REMARKS'],'identifiedBy'=>$LANG['IDED_BY'],'individualCount'=>$LANG['IND_COUNT'],
 			'informationWithheld'=>$LANG['INFO_WITHHELD'],'institutionCode'=>$LANG['INST_CODE'],'island'=>$LANG['ISLAND'],'islandgroup'=>$LANG['ISLAND_GROUP'],
 			'labelProject'=>$LANG['LAB_PROJECT'],'language'=>$LANG['LANGUAGE'],'lifeStage'=>$LANG['LIFE_STAGE'],'locationid'=>$LANG['LOCATION_ID'],'locality'=>$LANG['LOCALITY'],
-			'localitySecurity'=>$LANG['LOC_SEC'],'localitySecurityReason'=>$LANG['LOC_SEC_REASON'],'locationRemarks'=>$LANG['LOC_REMARKS'],
+			'recordSecurity'=>$LANG['SECURITY'],'securityReason'=>$LANG['SECURITY_REASON'],'locationRemarks'=>$LANG['LOC_REMARKS'],
 			'username'=>$LANG['MODIFIED_BY'],'municipality'=>$LANG['MUNICIPALITY'],'occurrenceRemarks'=>$LANG['NOTES_REMARKS'],'ocrFragment'=>$LANG['OCR_FRAGMENT'],
 			'otherCatalogNumbers'=>$LANG['OTHER_CAT_NUMS'],'ownerInstitutionCode'=>$LANG['OWNER_CODE'],'preparations'=>$LANG['PREPARATIONS'],
 			'reproductiveCondition'=>$LANG['REP_COND'],'samplingEffort'=>$LANG['SAMP_EFFORT'],'samplingProtocol'=>$LANG['SAMP_PROTOCOL'],
@@ -104,7 +104,7 @@ else{
 							<input type="text" name="q_eventdate" id="q_eventdate" value="<?php echo $qEventDate; ?>" style="width:160px" onchange="setOrderBy(this)" />
 						</div>
 					</div>
-					
+
 				<?php
 			}
 			?>
