@@ -476,7 +476,6 @@ class TaxonProfile extends Manager {
 			error_log("Wikipedia API request failed: " . $url);
 			return null;
 		}
-
 		$data = json_decode($response, true);
 		if (empty($data['parse']['sections'])) {
 			error_log("Wikipedia sections not found for: " . $sciName);
@@ -489,15 +488,23 @@ class TaxonProfile extends Manager {
 		//total char limit
 		$maxLength = 2000;
 
-		//get the summary section
-		$introContent = $this->getSectionContent($formattedName, 0);
-		if ($introContent) {
+		$summaryUrl = "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&titles={$formattedName}&exintro=true&explaintext=true";
+		$summaryResponse = @file_get_contents($summaryUrl);
+		if (!$summaryResponse) {
+			error_log("Wikipedia summary request failed: " . $summaryUrl);
+			return null;
+		}
+		$summaryData = json_decode($summaryResponse, true);
+		$page = reset($summaryData['query']['pages']);
+		$summary = $page['extract'] ?? '';
+
+		if ($summary) {
+			$totalCharCount += strlen($summary);
 			$sections[] = [
 				'title' => 'Summary',
-				'content' => $introContent
+				'content' => $summary
 			];
 		}
-		$totalCharCount += strlen($introContent);
 		foreach ($data['parse']['sections'] as $section) {
 			if ($totalCharCount >= $maxLength) {
 				break;
