@@ -488,7 +488,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			//Make the sql valid, but return nothing
 			//$this->sqlWhere = 'WHERE o.occid IS NULL ';
 		}
-		//echo '<br>'.$this->sqlWhere;
+		//echo $this->sqlWhere;
 	}
 
 	private function getAdditionIdentifiers($identFrag){
