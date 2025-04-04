@@ -116,6 +116,8 @@ class OmMaterialSample{
 			$postField = '';
 			if(isset($inputArr[$field])) $postField = $field;
 			elseif(isset($inputArr[strtolower($field)])) $postField = strtolower($field);
+			elseif(isset($inputArr['ms_' . $field])) $postField = 'ms_' . $field;
+
 			if($postField){
 				$value = trim($inputArr[$postField]);
 				if($value === '') $value = null;
