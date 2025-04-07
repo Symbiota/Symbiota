@@ -62,6 +62,7 @@ $LANG['IDENTIFIERS'] = 'Identifiers';
 $LANG['IDENTIFIER_ADDED'] = 'Identifier added';
 $LANG['IDENTIFIER_UPDATE_OR_DELETE'] = 'Update identifiers with matching occurrenceID, catalogNumber, or otherCatalogNumber plus identifierName';
 $LANG['IDENTIFIER_UPDATED'] = 'Identifier updated';
+$LANG['IDENTIFIER_DELETED'] = 'Identifier deleted';
 $LANG['ACTION'] = 'Action';
 $LANG['BATCH_ADD_OR_UPDATE'] = 'Batch Add or Update';
 $LANG['AUDIO_UPLOAD'] = 'Audio upload';

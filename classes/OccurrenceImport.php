@@ -9,7 +9,7 @@ include_once('OccurrenceMaintenance.php');
 include_once('Media.php');
 include_once('utilities/UuidFactory.php');
 
-class OccurrenceImport extends UtilitiesFileImport{
+class OccurrenceImport extends UtilitiesFileImport {
 
 	private $collid;
 	private $collMetaArr = array();
@@ -24,17 +24,17 @@ class OccurrenceImport extends UtilitiesFileImport{
 	private const IMPORT_MATERIAL_SAMPLE = 4;
 	private const IMPORT_IDENTIFIERS = 5;
 
-	function __construct(){
+	function __construct() {
 		parent::__construct(null, 'write');
 		$this->setVerboseMode(2);
 		set_time_limit(2000);
 	}
 
-	function __destruct(){
+	function __destruct() {
 		parent::__destruct();
 	}
 
-	public function loadData($postArr){
+	public function loadData($postArr) {
 		global $LANG;
 		$status = false;
 		if ($this->fileName && isset($postArr['tf'])) {
@@ -74,7 +74,7 @@ class OccurrenceImport extends UtilitiesFileImport{
 		return $status;
 	}
 
-	private function insertRecord($recordArr, $occidArr, $postArr){
+	private function insertRecord($recordArr, $occidArr, $postArr) {
 		global $LANG;
 		$status = false;
 		if ($this->importType == self::IMPORT_IMAGE_MAP) {
@@ -136,21 +136,21 @@ class OccurrenceImport extends UtilitiesFileImport{
 				// Will Not store files on the server unless StorageStrategy is provided which is desired for this use case
 				try {
 					Media::add($data);
-					if($errors = Media::getErrors()) {
+					if ($errors = Media::getErrors()) {
 						$this->logOrEcho('ERROR: ' . array_pop($errors));
 					} else {
-						$this->logOrEcho($LANG['IMAGE_LOADED'].': <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$occid.'</a>', 1);
+						$this->logOrEcho($LANG['IMAGE_LOADED'] . ': <a href="../editor/occurrenceeditor.php?occid=' . $occid . '" target="_blank">' . $occid . '</a>', 1);
 						$status = true;
 					}
-				} catch(MediaException $th) {
+				} catch (MediaException $th) {
 					$message = $th->getMessage();
 
 					$this->logOrEcho('ERROR: ' . $message);
 					$this->logOrEcho("Ensure mapping links point directly at the media file", 1, 'div');
-					if(strpos($message, ' text ')) {
+					if (strpos($message, ' text ')) {
 						$this->logOrEcho("Linking webpages is supported via the sourceUrl field", 1, 'div');
 					}
-				} catch(Throwable $th) {
+				} catch (Throwable $th) {
 					$this->logOrEcho('ERROR: ' . $th->getMessage());
 				}
 			}
@@ -300,10 +300,11 @@ class OccurrenceImport extends UtilitiesFileImport{
 						$importManager->setIdentifierID($existingIdentifier);
 						if ($postArr['action'] == 'delete') {
 							$status = $importManager->deleteIdentifier();
+							$this->logOrEcho($LANG['IDENTIFIER_DELETED'], 1);
 						}
 						if (!empty($postArr['replace-identifier'])) {
 							$status = $importManager->updateIdentifier($identifierArr);
-							$this->logOrEcho($LANG['IDENTIFIER_ADDED'] . ': <a href="../editor/occurrenceeditor.php?occid=' . $occid . '" target="_blank">' . $occid . '</a>', 1);
+							$this->logOrEcho($LANG['IDENTIFIER_UPDATED'] . ': <a href="../editor/occurrenceeditor.php?occid=' . $occid . '" target="_blank">' . $occid . '</a>', 1);
 						}
 					}
 					if (!$existingIdentifier) {
@@ -324,7 +325,7 @@ class OccurrenceImport extends UtilitiesFileImport{
 	}
 
 	//Identifier and occid functions
-	protected function getOccurrencePK($identifierArr){
+	protected function getOccurrencePK($identifierArr) {
 		$retArr = array();
 		$sql = 'SELECT DISTINCT o.occid FROM omoccurrences o ';
 		$sqlConditionArr = array();
@@ -358,7 +359,7 @@ class OccurrenceImport extends UtilitiesFileImport{
 		return $retArr;
 	}
 
-	protected function insertNewOccurrence($identifierArr){
+	protected function insertNewOccurrence($identifierArr) {
 		$newOccid = 0;
 		if (isset($identifierArr['occurrenceID'])) {
 			$this->logOrEcho('SKIPPED: Unable to create new record based on occurrenceID', 1);
@@ -381,7 +382,7 @@ class OccurrenceImport extends UtilitiesFileImport{
 		return $newOccid;
 	}
 
-	protected function insertAdditionalIdentifier($occid, $identifierValue){
+	protected function insertAdditionalIdentifier($occid, $identifierValue) {
 		$status = false;
 		$sql = 'INSERT INTO omoccuridentifiers(occid, identifierValue, modifiedUid) VALUES(?, ?, ?) ';
 		if ($stmt = $this->conn->prepare($sql)) {
@@ -395,15 +396,35 @@ class OccurrenceImport extends UtilitiesFileImport{
 	}
 
 	//Mapping functions
-	public function setTargetFieldArr($associationType = null){
+	public function setTargetFieldArr($associationType = null) {
 		$this->targetFieldMap['catalognumber'] = 'subject identifier: catalogNumber';
 		$this->targetFieldMap['othercatalognumbers'] = 'subject identifier: otherCatalogNumbers';
 		$this->targetFieldMap['occurrenceid'] = 'subject identifier: occurrenceID';
 		$this->targetFieldMap[''] = '------------------------------------';
 		$fieldArr = array();
-		if($this->importType == self::IMPORT_IMAGE_MAP){
-			$fieldArr = array('url', 'thumbnailUrl', 'sourceUrl', 'archiveUrl', 'referenceUrl', 'creator', 'creatorUid', 'caption', 'owner', 'anatomy', 'notes',
-				'format', 'sourceIdentifier', 'hashFunction', 'hashValue', 'mediaMD5', 'copyright', 'rights', 'accessRights', 'sortOccurrence');
+		if ($this->importType == self::IMPORT_IMAGE_MAP) {
+			$fieldArr = array(
+				'url',
+				'thumbnailUrl',
+				'sourceUrl',
+				'archiveUrl',
+				'referenceUrl',
+				'creator',
+				'creatorUid',
+				'caption',
+				'owner',
+				'anatomy',
+				'notes',
+				'format',
+				'sourceIdentifier',
+				'hashFunction',
+				'hashValue',
+				'mediaMD5',
+				'copyright',
+				'rights',
+				'accessRights',
+				'sortOccurrence'
+			);
 
 			$this->targetFieldMap['originalurl'] = 'originalUrl (required)';
 		} elseif ($this->importType == self::IMPORT_ASSOCIATIONS) {
@@ -460,7 +481,7 @@ class OccurrenceImport extends UtilitiesFileImport{
 		}
 	}
 
-	private function defineTranslationMap(){
+	private function defineTranslationMap() {
 		if ($this->translationMap === null) {
 			if ($this->importType == self::IMPORT_IMAGE_MAP) {
 				$this->translationMap = array(
@@ -486,7 +507,7 @@ class OccurrenceImport extends UtilitiesFileImport{
 	}
 
 	//Data set functions
-	private function setCollMetaArr(){
+	private function setCollMetaArr() {
 		$sql = 'SELECT institutionCode, collectionCode, collectionName, dynamicProperties FROM omcollections WHERE collid = ' . $this->collid;
 		$rs = $this->conn->query($sql);
 		while ($r = $rs->fetch_object()) {
@@ -500,13 +521,13 @@ class OccurrenceImport extends UtilitiesFileImport{
 		$rs->free();
 	}
 
-	public function materialSampleModuleActive(){
+	public function materialSampleModuleActive() {
 		if (!$this->collMetaArr) $this->setCollMetaArr();
 		if (isset($this->collMetaArr['matsample'])) return true;
 		return false;
 	}
 
-	public function getControlledVocabulary($tableName, $fieldName, $filterVariable = ''){
+	public function getControlledVocabulary($tableName, $fieldName, $filterVariable = '') {
 		$retArr = array();
 		$sql = 'SELECT t.term, t.termDisplay
 			FROM ctcontrolvocab v INNER JOIN ctcontrolvocabterm t ON v.cvID = t.cvID
@@ -528,27 +549,27 @@ class OccurrenceImport extends UtilitiesFileImport{
 	}
 
 	//Basic setters and getters
-	public function setCollid($id){
+	public function setCollid($id) {
 		if (is_numeric($id)) $this->collid = $id;
 	}
 
-	public function getCollid(){
+	public function getCollid() {
 		return $this->collid;
 	}
 
-	public function getCollMeta($field){
+	public function getCollMeta($field) {
 		$fieldValue = '';
 		if (!$this->collMetaArr) $this->setCollMetaArr();
 		if (isset($this->collMetaArr[$field])) return $this->collMetaArr[$field];
 		return $fieldValue;
 	}
 
-	public function setCreateNewRecord($b){
+	public function setCreateNewRecord($b) {
 		if ($b) $this->createNewRecord = true;
 		else $this->createNewRecord = false;
 	}
 
-	public function setImportType($importType){
+	public function setImportType($importType) {
 		if (is_numeric($importType)) $this->importType = $importType;
 		$this->defineTranslationMap();
 	}
