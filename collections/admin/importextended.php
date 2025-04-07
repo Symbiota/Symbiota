@@ -80,6 +80,8 @@ if ($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($colli
 			}
 			?>
 			let subjectIdentifierIsMapped = false;
+			let identifierNameIsMapped = false;
+			let identifierValueIsMapped = false;
 			let objectIdentifierIsMapped = false;
 
 			const form_data = new FormData(f);
@@ -110,6 +112,13 @@ if ($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($colli
 					} else if (value == "occid") {
 						subjectIdentifierIsMapped = true;
 					}
+					if (value == "identifiername") {
+						identifierNameIsMapped = true;
+					}
+
+					if (value == 'identifiervalue') {
+						identifierValueIsMapped = true;
+					}
 					<?php
 					if ($associationType == 'internalOccurrence') {
 					?>
@@ -130,6 +139,14 @@ if ($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($colli
 			}
 			if (!subjectIdentifierIsMapped) {
 				alert("<?= $LANG['SUBJECT_ID_REQUIRED'] ?>");
+				return false;
+			}
+			if (!identifierNameIsMapped) {
+				alert("<?= $LANG['IDENTIFIER_NAME_REQUIRED'] ?>");
+				return false;
+			}
+			if (!identifierValueIsMapped) {
+				alert("<?= $LANG['IDENTIFIER_ID_VALUE_REQUIRED'] ?>");
 				return false;
 			}
 			<?php
