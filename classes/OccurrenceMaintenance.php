@@ -202,6 +202,16 @@ class OccurrenceMaintenance {
 		if(!empty($geoArr)) $this->batchUpdateContinent($geoArr);
 		unset($geoArr);
 
+		//Batch convert state abbreviations to full state names
+		$this->outputMsg('Converting State abbreviation to full names... ', 1);
+		$sql = 'UPDATE geographicthesaurus g INNER JOIN omoccurrences o ON g.abbreviation = o.stateProvince
+			INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+			SET o.stateProvince = g.geoterm
+			WHERE p.geoterm = "United States" AND length(o.stateProvince) = 2';
+		if(!$this->conn->query($sql)){
+			$this->outputMsg('ERROR: ' . $this->error, 2);
+		}
+
 		return $status;
 	}
 
