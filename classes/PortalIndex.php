@@ -59,21 +59,22 @@ class PortalIndex extends OmCollections{
 		if(!isset($GLOBALS['ACTIVATE_PORTAL_INDEX'])) return false;
 		$retArr = array();
 		$url = $urlRoot.'/api/v2/collection/'.$collID;
-		$retArr = $this->getAPIResponce($url);
-		if(!$collID){
-			$retArr = $retArr['results'];
-			foreach($retArr as $id => $collArr){
-				if($collArr['managementType'] == 'Live Data' && !$collArr['collectionID']){
-					if(isset($collArr['recordID'])) $collArr['collectionID'] = $collArr['recordID'];
-					elseif(isset($collArr['collectionGuid'])) $collArr['collectionID'] = $collArr['collectionGuid'];
+		if($retArr = $this->getAPIResponce($url)){
+			if(!$collID){
+				$retArr = $retArr['results'];
+				foreach($retArr as $id => $collArr){
+					if($collArr['managementType'] == 'Live Data' && !$collArr['collectionID']){
+						if(isset($collArr['recordID'])) $collArr['collectionID'] = $collArr['recordID'];
+						elseif(isset($collArr['collectionGuid'])) $collArr['collectionID'] = $collArr['collectionGuid'];
+					}
+					$retArr[$id]['internal'] = $this->getInternalCollection($collArr['collectionID'],$collArr['collectionGuid']);
 				}
-				$retArr[$id]['internal'] = $this->getInternalCollection($collArr['collectionID'],$collArr['collectionGuid']);
+				usort($retArr, function($a, $b) {
+					return ($a['institutionCode'] < $b['institutionCode']) ? -1 : 1;
+				});
 			}
-			usort($retArr, function($a, $b) {
-				return ($a['institutionCode'] < $b['institutionCode']) ? -1 : 1;
-			});
+			else $retArr['internal'] = $this->getInternalCollection($retArr['collectionID'],$retArr['collectionGuid']);
 		}
-		else $retArr['internal'] = $this->getInternalCollection($retArr['collectionID'],$retArr['collectionGuid']);
 		return $retArr;
 	}
 
