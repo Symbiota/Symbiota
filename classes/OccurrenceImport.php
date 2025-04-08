@@ -44,6 +44,9 @@ class OccurrenceImport extends UtilitiesFileImport {
 					$cnt = 1;
 					while ($recordArr = $this->getRecordArr()) {
 						$identifierArr = array();
+						if (isset($this->fieldMap['occid'])) {
+							if ($recordArr[$this->fieldMap['occid']]) $identifierArr['occid'] = $recordArr[$this->fieldMap['occid']];
+						}
 						if (isset($this->fieldMap['occurrenceid'])) {
 							if ($recordArr[$this->fieldMap['occurrenceid']]) $identifierArr['occurrenceID'] = $recordArr[$this->fieldMap['occurrenceid']];
 						}
@@ -329,6 +332,10 @@ class OccurrenceImport extends UtilitiesFileImport {
 		$retArr = array();
 		$sql = 'SELECT DISTINCT o.occid FROM omoccurrences o ';
 		$sqlConditionArr = array();
+		if (isset($identifierArr['occid'])) {
+			$occid = $this->cleanInStr($identifierArr['occid']);
+			$sqlConditionArr[] = '(o.occid = "' . $occid . '" OR o.recordID = "' . $occid . '")';
+		}
 		if (isset($identifierArr['occurrenceID'])) {
 			$occurrenceID = $this->cleanInStr($identifierArr['occurrenceID']);
 			$sqlConditionArr[] = '(o.occurrenceID = "' . $occurrenceID . '" OR o.recordID = "' . $occurrenceID . '")';
@@ -400,6 +407,7 @@ class OccurrenceImport extends UtilitiesFileImport {
 		$this->targetFieldMap['catalognumber'] = 'subject identifier: catalogNumber';
 		$this->targetFieldMap['othercatalognumbers'] = 'subject identifier: otherCatalogNumbers';
 		$this->targetFieldMap['occurrenceid'] = 'subject identifier: occurrenceID';
+		$this->targetFieldMap['occid'] = 'subject identifier: occid';
 		$this->targetFieldMap[''] = '------------------------------------';
 		$fieldArr = array();
 		if ($this->importType == self::IMPORT_IMAGE_MAP) {
@@ -466,7 +474,7 @@ class OccurrenceImport extends UtilitiesFileImport {
 			);
 		} elseif ($this->importType == self::IMPORT_IDENTIFIERS) {
 			$fieldArr = array(
-				'occid',
+				// 'occid',
 				'identifierValue',
 				'identifierName',
 				// 'format',

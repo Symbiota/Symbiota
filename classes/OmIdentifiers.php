@@ -3,7 +3,7 @@ include_once('Manager.php');
 include_once('utilities/OccurrenceUtil.php');
 include_once('utilities/UuidFactory.php');
 
-class OmIdentifiers extends Manager{
+class OmIdentifiers extends Manager {
 
 	private $identifierID = null;
 	private $occid = null;
@@ -11,24 +11,24 @@ class OmIdentifiers extends Manager{
 	private $parameterArr = array();
 	private $typeStr = '';
 
-	public function __construct($conn){
+	public function __construct($conn) {
 		parent::__construct(null, 'write', $conn);
 		$this->schemaMap = array(
 			'occid' => 'i',
 			'identifierValue' => 's',
 			'identifierName' => 's',
-			'format' => 's',
-			'notes' => 's',
-			'sortBy' => 'i',
-			'recordID' => 's',
+			// 'format' => 's',
+			// 'notes' => 's',
+			// 'sortBy' => 'i',
+			// 'recordID' => 's',
 		);
 	}
 
-	public function __destruct(){
+	public function __destruct() {
 		parent::__destruct();
 	}
 
-	public function getIdentifier($occid, $identifierName){
+	public function getIdentifier($occid, $identifierName) {
 		$idomoccuridentifiers = null;
 		$sql = 'SELECT idomoccuridentifiers FROM omoccuridentifiers WHERE occid = ? AND identifierName = ?';
 		if ($stmt = $this->conn->prepare($sql)) {
@@ -41,7 +41,7 @@ class OmIdentifiers extends Manager{
 		return $idomoccuridentifiers;
 	}
 
-	public function insertIdentifier($inputArr){
+	public function insertIdentifier($inputArr) {
 		$status = false;
 		if ($this->occid) {
 			if (!isset($inputArr['createdUid'])) $inputArr['createdUid'] = $GLOBALS['SYMB_UID'];
@@ -84,7 +84,7 @@ class OmIdentifiers extends Manager{
 		return $status;
 	}
 
-	public function updateIdentifier($inputArr){
+	public function updateIdentifier($inputArr) {
 		$status = false;
 		if ($this->occid && $this->conn) {
 			$occidPlaceholder = null;
@@ -127,7 +127,7 @@ class OmIdentifiers extends Manager{
 		return $status;
 	}
 
-	public function deleteIdentifier(){
+	public function deleteIdentifier() {
 		if ($this->identifierID) {
 			$sql = 'DELETE FROM omoccuridentifiers WHERE idomoccuridentifiers = ' . $this->identifierID;
 			if ($this->conn->query($sql)) {
@@ -139,7 +139,7 @@ class OmIdentifiers extends Manager{
 		}
 	}
 
-	private function setParameterArr($inputArr){
+	private function setParameterArr($inputArr) {
 		foreach ($this->schemaMap as $field => $type) {
 			$postField = '';
 			if (isset($inputArr[$field])) $postField = $field;
@@ -162,15 +162,15 @@ class OmIdentifiers extends Manager{
 	}
 
 	//Setters and getters
-	public function getSchemaMap(){
+	public function getSchemaMap() {
 		return $this->schemaMap;
 	}
 
-	public function setOccid($id){
+	public function setOccid($id) {
 		if (is_numeric($id)) $this->occid = $id;
 	}
 
-	public function setIdentifierID($id){
+	public function setIdentifierID($id) {
 		if (is_numeric($id)) $this->identifierID = $id;
 	}
 }
