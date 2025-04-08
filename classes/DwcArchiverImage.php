@@ -96,6 +96,9 @@ class DwcArchiverImage{
 				$sql .= 'INNER JOIN tmattributes a ON o.occid = a.occid '.
 					'INNER JOIN tmstates s ON a.stateid = s.stateid ';
 			}
+			if(stripos($conditionSql,'paleo.')){
+				$sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
+			}
 			$sql .= $conditionSql;
 			if($redactLocalities){
 				if($rareReaderArr){

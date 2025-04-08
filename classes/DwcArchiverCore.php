@@ -408,6 +408,8 @@ class DwcArchiverCore extends Manager{
 			if (strpos($this->conditionSql, 'id.identifierValue')) {
 				$sql .= 'LEFT JOIN omoccuridentifiers id ON o.occid = id.occid ';
 			}
+			if(strpos($this->conditionSql, 'paleo.')) //check if include paleo is better
+				$sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
 		}
 		return $sql;
 	}
