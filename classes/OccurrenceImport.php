@@ -469,10 +469,9 @@ class OccurrenceImport extends UtilitiesFileImport {
 				'occid',
 				'identifierValue',
 				'identifierName',
-				'format',
-				'notes',
-				'sortBy',
-				'recordID',
+				// 'format',
+				// 'notes',
+				// 'sortBy',
 			);
 		}
 		sort($fieldArr);
