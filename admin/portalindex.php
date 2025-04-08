@@ -6,10 +6,14 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 
 if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../admin/portalindex.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$portalID = array_key_exists('portalid', $_REQUEST) ? filter_var($_REQUEST['portalid'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$remoteCollID = array_key_exists('remoteid', $_REQUEST) ? filter_var($_REQUEST['remoteid'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$remotePath = array_key_exists('remotePath', $_POST) ? filter_var($_POST['remotePath'], FILTER_SANITIZE_URL) : '';
-$formSubmit = array_key_exists('formsubmit', $_REQUEST) ? $_REQUEST['formsubmit'] : '';
+$portalID = !empty($_REQUEST['portalID']) ? filter_var($_REQUEST['portalID'], FILTER_SANITIZE_NUMBER_INT) : '';
+$remoteCollID = !empty($_REQUEST['remoteID']) ? filter_var($_REQUEST['remoteID'], FILTER_SANITIZE_NUMBER_INT) : '';
+$remotePath = !empty($_POST['remotePath']) ? filter_var($_POST['remotePath'], FILTER_SANITIZE_URL) : '';
+$sciname = !empty($_POST['sciname']) ? $_POST['sciname'] : '';
+$country = !empty($_POST['country']) ? $_POST['country'] : '';
+$stateProvince = !empty($_POST['stateProvince']) ? $_POST['stateProvince'] : '';
+$county = !empty($_POST['county']) ? $_POST['county'] : '';
+$formSubmit = !empty($_REQUEST['formsubmit']) ? $_REQUEST['formsubmit'] : '';
 
 $portalManager = new PortalIndex();
 $indexArr = $portalManager->getPortalIndexArr($portalID);
@@ -47,50 +51,88 @@ if($IS_ADMIN) $isEditor = 1;
 			}
 
 			function searchPortals(f){
-				$("[id^=occur-div-]").text("");
-				let searchObj = {};
-				if(f.sciname.value != "") searchObj.sciname = f.sciname.value;
-				if(f.country.value != "") searchObj.country = f.country.value;
-				if(f.stateProvince.value != "") searchObj.stateProvince = f.stateProvince.value;
-				if(f.county.value != "") searchObj.county = f.county.value;
-				Object.keys(portalObj).forEach(function(key, index) {
-					portalQuery(key, this[key].name, this[key].url, searchObj);
-				}, portalObj);
+				if(validateSearchForm(f)){
+					$("[id^=occur-div-]").text("");
+					let searchObj = {};
+					if(f.sciname.value != "") searchObj.sciname = f.sciname.value.trim();
+					if(f.country.value != "") searchObj.country = f.country.value.trim();
+					if(f.stateProvince.value != "") searchObj.stateProvince = f.stateProvince.value.trim();
+					if(f.county.value != "") searchObj.county = f.county.value.trim();
+					Object.keys(portalObj).forEach(function(key, index) {
+						portalQuery(key, this[key].name, this[key].url, searchObj);
+						<?php
+						if($portalID) echo 'appendAllCollectionCounts(this[key].url, searchObj);';
+						?>
+					}, portalObj);
+				}
 			}
 
 			function portalQuery(portalID, portalName, portalUrl, searchObj){
-				$("#occur-div-" + portalID).append('Searching... ');
 				let urlFrag = "";
+				let searchStr = "";
 				Object.keys(searchObj).forEach(function(key, index) {
 					let fieldName = key;
+					searchStr = searchStr + ", " + fieldName + ": " + searchObj[key];
 					if(fieldName == "sciname") fieldName = "taxa";
 					urlFrag = urlFrag + "&" + fieldName + "=" + searchObj[key];
 				});
-				searchObj.limit = 1;
-				searchObj.offset = 0;
-				$.ajax({
-					method: "GET",
-					data: searchObj,
-					dataType: "json",
-					url: portalUrl + "/api/v2/occurrence/search"
-				})
-				.done(function(jsonRes) {
-					$("#occur-div-"+portalID).append(jsonRes.count.toLocaleString() + " occurrences");
-					if(jsonRes.count > 0){
-						addLink(portalID, portalUrl + "/collections/list.php?usethes=1&taxontype=2" + urlFrag, "Query Results");
-						addLink(portalID, portalUrl + "/collections/map/index.php?usethes=1&taxontype=2" + urlFrag, "Simple Map");
-						addLink(portalID, portalUrl + "/collections/map/index.php?gridSizeSetting=60" + urlFrag, "Dynamic Map");
-						let downloadUrl = portalUrl + "/collections/download/index.php?searchvar=" + urlFrag.replace("=", "%3D");
-						$("#occur-div-"+portalID).append('<div class="occur-sub-div"><a href="#" onclick="openPopup(\''+downloadUrl+'\');return false;">Download Results</a></div>');
-					}
-				})
-				.fail(function( jqXHR, textStatus ) {
-					$("#occur-div-"+portalID).append(" ERROR ("+textStatus+")");
-				});
+				if(urlFrag != ""){
+					$("#occur-div-" + portalID).append("Applying search... ");
+					$("#occur-div-" + portalID).append('<div class="occur-sub-div">' + searchStr.substring(1) + "</div>");
+					let ajaxSearchObj = structuredClone(searchObj);
+					ajaxSearchObj.limit = 1;
+					ajaxSearchObj.offset = 0;
+					$.ajax({
+						method: "GET",
+						data: ajaxSearchObj,
+						dataType: "json",
+						url: portalUrl + "/api/v2/occurrence/search"
+					})
+					.done(function(jsonRes) {
+						$("#occur-div-"+portalID).append('<div class="occur-sub-div">' + jsonRes.count.toLocaleString() + " occurrences</div>");
+						if(jsonRes.count > 0){
+							addLink(portalID, portalUrl + "/collections/list.php?usethes=1&taxontype=2" + urlFrag, "Query Results");
+							addLink(portalID, portalUrl + "/collections/map/index.php?gridSizeSetting=60" + urlFrag, "Dynamic Map");
+							urlFrag = encodeURIComponent(urlFrag.substring(1));
+							let downloadUrl = portalUrl + "/collections/download/index.php?searchvar=" + urlFrag;
+							$("#occur-div-"+portalID).append('<div class="occur-sub-div"><a href="#" onclick="openPopup(\''+downloadUrl+'\');return false;">Download Results</a></div>');
+						}
+					})
+					.fail(function( jqXHR, textStatus ) {
+						$("#occur-div-"+portalID).append(" ERROR ("+textStatus+")");
+					});
+				}
 			}
 
 			function addLink(portalID, url, text){
 				$("#occur-div-"+portalID).append('<div class="occur-sub-div"><a href="'+url+'" target="_blank">'+text+'</a></div>');
+			}
+
+			function appendAllCollectionCounts(portalUrl, searchObj){
+				let ajaxSearchObj = structuredClone(searchObj);
+				ajaxSearchObj.limit = 1;
+				ajaxSearchObj.offset = 0;
+				const collElements = document.querySelectorAll(".occur-count");
+				for (var i = 0; i < collElements.length; i++) {
+					ajaxSearchObj.collid = collElements[i].textContent;
+					appendCollectionCount(portalUrl, ajaxSearchObj, collElements[i]);
+				}
+			}
+
+			function appendCollectionCount(portalUrl, ajaxSearchObj, collSpan){
+				$.ajax({
+					method: "GET",
+					data: ajaxSearchObj,
+					dataType: "json",
+					url: portalUrl + "/api/v2/occurrence/search"
+				})
+				.done(function(jsonRes) {
+					collSpan.textContent = jsonRes.count.toLocaleString();
+					collSpan.style.display = "inline";
+				})
+				.fail(function( jqXHR, textStatus ) {
+					collSpan.textContent = "?";
+				});
 			}
 
 			function openPopup(url){
@@ -139,18 +181,36 @@ if($IS_ADMIN) $isEditor = 1;
 				});
 			}
 
+			function displayFullPortalDetails(pid){
+				let f = document.searchPanelForm;
+				f.portalID.value = pid;
+				f.submit();
+			}
+
+			function displayCollectionDetails(collID){
+				let f = document.searchPanelForm;
+				f.remoteID.value = collID;
+				f.submit();
+			}
+
+			function createCollectionProfile(){
+				let f = document.searchPanelForm;
+				f.formsubmit.value = "importProfile";
+				f.submit();
+			}
+
 			function validateSearchForm(f){
-				formIsValid = false;
-				if(f.sciname.value == ""){
+				let formIsValid = false;
+				if(f.sciname.value != ""){
 					formIsValid = true;
 				}
-				else if(f.country.value == ""){
+				else if(f.country.value != ""){
 					formIsValid = true;
 				}
-				else if(f.stateProvince.value == ""){
+				else if(f.stateProvince.value != ""){
 					formIsValid = true;
 				}
-				else if(f.county.value == ""){
+				else if(f.county.value != ""){
 					formIsValid = true;
 				}
 				if(!formIsValid){
@@ -163,7 +223,7 @@ if($IS_ADMIN) $isEditor = 1;
 		<style type="text/css">
 			fieldset{ margin:20px; padding:15px; }
 			legend{ font-weight: bold; }
-			label{  }
+			label{ font-weight: bold; }
 			button{ margin: 20px; }
 			hr{ margin-top: 15px; margin-bottom: 15px; }
 			.from-section{  }
@@ -174,6 +234,7 @@ if($IS_ADMIN) $isEditor = 1;
 			.portalName-div{ margin-top: 10px; font-weight: bold; }
 			.portalName-div img{ width: 12px; }
 			#table-div{ margin: 15px; }
+			.occur-count{ display: none; }
 		</style>
 	</head>
 	<body>
@@ -195,7 +256,9 @@ if($IS_ADMIN) $isEditor = 1;
 						echo '<fieldset>';
 						echo '<legend>Action Panel</legend>';
 						if($formSubmit == 'importProfile'){
-							if($collid = $portalManager->importProfile($portalID, $remoteCollID)) echo '<div><a href="../collections/misc/collprofiles.php?collid='.$collid.'" target="_blank">New snapshot collection created</a></div>';
+							if($collid = $portalManager->importProfile($portalID, $remoteCollID, $_POST)){
+								echo '<div><a href="../collections/misc/collprofiles.php?collid='.$collid.'" target="_blank">New snapshot collection created</a></div>';
+							}
 							else echo '<div>failed to insert new collections: '.$portalManager->getErrorMessage().'</div>';
 						}
 						elseif($formSubmit == 'initiateHandshake'){
@@ -233,48 +296,46 @@ if($IS_ADMIN) $isEditor = 1;
 				?>
 				<fieldset>
 					<legend>Portal Index</legend>
-					<?php
-					if(!$portalID){
-						?>
+					<div>
 						<div>
-							<div>
-								<form id="searchPanelForm" name="searchPanelForm" onSubmit="return validateSearchForm(this)" >
-									<fieldset>
-										<legend>Portal Search</legend>
-										<div class="form-section">
-											<label for="sciname">Scientific Name:</label>
-											<input id="sciname" name="sciname" type="text" style="width: 250px" >
-										</div>
-										<div class="form-section">
-											<span>
-												<label for="country">Country:</label>
-												<input id="country" name="country" type="text" >
-											</span>
-											<span>
-												<label for="stateProvince">State/Province:</label>
-												<input id="stateProvince" name="stateProvince" type="text" >
-											</span>
-											<span>
-												<label for="county">County:</label>
-												<input id="county" name="county" type="text" >
-											</span>
-										</div>
-										<div class="form-section">
-											<button id="taxonSearchButton" name="taxonSearch" type="button" onclick="searchPortals(this.form)">Search Portals</button>
-										</div>
-									</fieldset>
-								</form>
-							</div>
-							<div>
-								<button name="displayAllDetails" type="button" onclick="setAllPortalDetails()">Display Details for All Portals</button>
-							</div>
+							<form id="searchPanelForm" name="searchPanelForm" method="post" action="portalindex.php">
+								<fieldset>
+									<legend>Portal Search</legend>
+									<div class="form-section">
+										<label for="sciname">Scientific Name:</label>
+										<input id="sciname" name="sciname" type="text" style="width: 250px" value="<?= $sciname ?>" >
+									</div>
+									<div class="form-section">
+										<span>
+											<label for="country">Country:</label>
+											<input id="country" name="country" type="text" value="<?= $country ?>">
+										</span>
+										<span>
+											<label for="stateProvince">State/Province:</label>
+											<input id="stateProvince" name="stateProvince" type="text" value="<?= $stateProvince ?>">
+										</span>
+										<span>
+											<label for="county">County:</label>
+											<input id="county" name="county" type="text" value="<?= $county ?>">
+										</span>
+									</div>
+									<div class="form-section">
+										<button id="taxonSearchButton" name="taxonSearch" type="button" onclick="searchPortals(this.form)">Apply Search</button>
+										<input name="portalID" type="hidden" value="<?= $portalID ?>">
+										<input name="remoteID" type="hidden" value="<?= $remoteCollID ?>">
+										<input name="formsubmit" type="hidden" value="">
+									</div>
+								</fieldset>
+							</form>
 						</div>
-						<?php
-					}
-					?>
+						<div>
+							<button name="displayAllDetails" type="button" onclick="setAllPortalDetails()">Display Details for All Portals</button>
+						</div>
+					</div>
 					<div class="portalList-div" style="clear: both;">
 						<?php
 						foreach($indexArr as $pid => $portalArr){
+							$collList = array();
 							?>
 							<div class="portalName-div"><?= $portalArr['portalName'] ?>
 								<a href="#" onclick="displayPortalDetails(<?= $pid ?>);return false;"><img src="../images/list.png"></a>
@@ -285,7 +346,16 @@ if($IS_ADMIN) $isEditor = 1;
 								</div>
 								<div id="status-div-<?= $pid ?>">
 									<label>Status</label>:
-									<span>grabbing details <img class="icon-img" src="../images/workingcircle.gif" ></span>
+									<?php
+									if($portalID){
+										$collList = $portalManager->getCollectionList($portalArr['urlRoot'], $remoteCollID);
+										if($collList) echo '<span style="color: green;">online!</span>';
+										else echo '<span style="color: red">offline</span>';
+									}
+									else{
+										echo '<span>grabbing details <img class="icon-img" src="../images/workingcircle.gif" ></span>';
+									}
+									?>
 								</div>
 								<div id="guid-div-<?= $pid ?>">
 									<label>GUID</label>:
@@ -308,119 +378,129 @@ if($IS_ADMIN) $isEditor = 1;
 									<span><?= $portalArr['initialTimestamp'] ?></span>
 								</div>
 								<?php
-								if($formSubmit != 'listCollections'){
-									if($portalID){
-										echo '<div><a href="portalindex.php?portalid='.$pid.'&formsubmit=listCollections">List Collections</a></div>';
-									}
-									else{
-										echo '<div><a href="portalindex.php?portalid='.$pid.'">Display Full Details</a></div>';
-									}
+								if(!$portalID){
+									?>
+									<button onclick="displayFullPortalDetails(<?= $pid ?>)">Display Full Details</button>
+									<?php
 								}
 								?>
 							</div>
 							<div id="occur-div-<?= $pid ?>" style="margin-left:15px"></div>
 							<?php
-							if($remoteCollID){
-								$collectArr = $portalManager->getCollectionList($portalArr['urlRoot'], $remoteCollID);
-								?>
-								<fieldset>
-									<legend>Remote Collection #<?=$remoteCollID ?></legend>
-									<?php
-									$remoteCollid = $collectArr['collID'];
-									unset($collectArr['collID']);
-									unset($collectArr['iid']);
-									$internalArr = $collectArr['internal'];
-									unset($collectArr['internal']);
-									foreach($collectArr as $fName => $fValue){
-										if($fValue){
-											if($fName == 'fullDescription') $fValue = htmlentities($fValue);
-											echo '<div><label>'.$fName.'</label>: '.$fValue.'</div>';
+							if($portalID){
+								if($remoteCollID){
+									?>
+									<fieldset>
+										<legend>Remote Collection #<?=$remoteCollID ?></legend>
+										<?php
+										$remoteUrl = $portalArr['urlRoot'] . '/collections/misc/collprofiles.php?collid=' . $collList['collID'];
+										unset($collList['collID']);
+										unset($collList['iid']);
+										$internalArr = $collList['internal'];
+										unset($collList['internal']);
+										foreach($collList as $fName => $fValue){
+											if($fValue){
+												if($fName == 'fullDescription') $fValue = htmlentities($fValue);
+												echo '<div><label>'.$fName.'</label>: '.$fValue.'</div>';
+											}
 										}
-									}
-									$remoteUrl = $portalArr['urlRoot'].'/collections/misc/collprofiles.php?collid='.$remoteCollid;
-									echo '<div><label>Remote collection</label>: <a href="'.$remoteUrl.'" target="_blank">'.$remoteUrl.'</a></div>';
-									if($internalArr){
-										?>
-										<fieldset>
-											<legend>Internally Mapped Snapshot Collection</legend>
-											<?php
-											foreach($internalArr as $collid => $intArr){
-												$internalUrl = $CLIENT_ROOT.'/collections/misc/collprofiles.php?collid='.$collid;
-												?>
-												<div><label>Management Type</label>: <?= $intArr['managementType'] ?></div>
-												<div><label>Specimen count</label>: <?= number_format($intArr['recordCnt']) ?></div>
-												<div><label>Refresh date</label>: <?= $intArr['uploadDate'] ?></div>
-												<div><label>Internal collection</label>: <a href="<?= $internalUrl ?>" target="_blank"><?= $internalUrl ?></a></div>
+										echo '<div><label>Remote collection</label>: <a href="'.$remoteUrl.'" target="_blank">'.$remoteUrl.'</a></div>';
+										if($internalArr){
+											?>
+											<fieldset>
+												<legend>Internally Mapped Snapshot Collection</legend>
 												<?php
-												if($importProfile = $portalManager->getDataImportProfile($collid)){
-													foreach($importProfile as $uspid => $profileArr){
-														?>
-														<hr/>
-														<div style="margin:10px 5px">
-															<div>
-																<label>Title</label>: <?= $profileArr['title'] ?>
+												foreach($internalArr as $collid => $intArr){
+													$internalUrl = $CLIENT_ROOT.'/collections/misc/collprofiles.php?collid='.$collid;
+													?>
+													<div><label>Management Type</label>: <?= $intArr['managementType'] ?></div>
+													<div><label>Specimen count</label>: <?= number_format($intArr['recordCnt']) ?></div>
+													<div><label>Refresh date</label>: <?= $intArr['uploadDate'] ?></div>
+													<div><label>Internal collection</label>: <a href="<?= $internalUrl ?>" target="_blank"><?= $internalUrl ?></a></div>
+													<?php
+													if($importProfile = $portalManager->getDataImportProfile($collid)){
+														foreach($importProfile as $uspid => $profileArr){
+															?>
+															<hr/>
+															<div style="margin:10px 5px">
+																<div>
+																	<label>Title</label>: <?= $profileArr['title'] ?>
+																</div>
+																<div>
+																	<label>Path</label>: <?= $profileArr['path'] ?>
+																</div>
+																<div>
+																	<label>Query string</label>: <?= $profileArr['queryStr'] ?>
+																</div>
+																<div>
+																	<label>Stored procedure (cleaning)</label>: <?= $profileArr['cleanUpSp'] ?>
+																</div>
+																<div>
+																	Display all <a href="../collections/admin/specuploadmanagement.php?collid=<?= $collid ?>" target="_blank">Import Profiles</a>
+																</div>
+																<div>
+																	Initiate <a href="../collections/admin/specuploadmap.php?uploadtype=13&uspid=<?= $uspid ?>&collid=<?= $collid ?>" target="_blank">Data Import</a>
+																</div>
 															</div>
-															<div>
-																<label>Path</label>: <?= $profileArr['path'] ?>
-															</div>
-															<div>
-																<label>Query string</label>: <?= $profileArr['queryStr'] ?>
-															</div>
-															<div>
-																<label>Stored procedure (cleaning)</label>: <?= $profileArr['cleanUpSp'] ?>
-															</div>
-															<div>
-																Display all <a href="../collections/admin/specuploadmanagement.php?collid=<?= $collid ?>" target="_blank">Import Profiles</a>
-															</div>
-															<div>
-																Initiate <a href="../collections/admin/specuploadmap.php?uploadtype=13&uspid=<?= $uspid ?>&collid=<?= $collid ?>" target="_blank">Data Import</a>
-															</div>
-														</div>
-														<?php
+															<?php
+														}
 													}
 												}
+												?>
+											</fieldset>
+											<?php
+										}
+										else{
+											?>
+											<div style="margin: 0px 30px">
+												<button name="createSnapshotBtn" type="button" onclick="createCollectionProfile()">Create Internal Snapshot Profile</button>
+											</div>
+											<?php
+										}
+										?>
+									</fieldset>
+									<?php
+								}
+								else{
+									?>
+									<div id="table-div">
+										<div><label>Collection Count</label>: <?= count($collList) ?></div>
+										<table class="styledtable">
+											<tr>
+												<th>ID</th>
+												<th>Institution Code</th>
+												<th>Collection Code</th>
+												<th>Collection Name</th>
+												<th>Dataset Type</th>
+												<th>Management</th>
+												<th>Mapped Internally</th>
+												<th>Occurrence Count</th>
+											</tr>
+											<?php
+											foreach($collList as $collArr){
+												?>
+												<tr>
+													<td><a href="#" onclick="displayCollectionDetails(<?= $collArr['collID'] ?>)"><?= $collArr['collID'] ?></a></td>
+													<td><?= $collArr['institutionCode'] ?></td>
+													<td><?= $collArr['collectionCode'] ?></td>
+													<td><?= $collArr['collectionName'] ?></td>
+													<td><?= $collArr['collType'] ?></td>
+													<td><?= $collArr['managementType'] ?></td>
+													<?php
+													$internal = 'No';
+													if(isset($collArr['internal']) && $collArr['internal']){
+														$internal = '<a href="'.$CLIENT_ROOT.'/collections/misc/collprofiles.php?collid='.key($collArr['internal']).'" target="_blank">Yes</a>';
+													}
+													?>
+													<td><?= $internal ?></td>
+													<td><span class="occur-count"><?= $collArr['collID'] ?></span></td>
+												</tr>
+												<?php
 											}
 											?>
-										</fieldset>
-										<?php
-									}
-									else{
-										?>
-										<div style="margin: 0px 30px">
-											<form name="collPubForm" method="post" action="portalindex.php">
-												<input name="portalid" type="hidden" value="<?= $pid; ?>" />
-												<input name="remoteid" type="hidden" value="<?= $remoteCollID; ?>" />
-												<button name="formsubmit" type="submit" value="importProfile">Create Internal Snapshot Profile</button>
-											</form>
-										</div>
-										<?php
-									}
-									?>
-								</fieldset>
-								<?php
-							}
-							elseif($formSubmit == 'listCollections'){
-								if($collList = $portalManager->getCollectionList($portalArr['urlRoot'])){
-									echo '<div id="table-div">';
-									echo '<div><label>Collection Count</label>: '.count($collList).'</div>';
-									echo '<table class="styledtable">';
-									echo '<tr><th>ID</th><th>Institution Code</th><th>Collection Code</th><th>Collection Name</th><th>Dataset Type</th><th>Management</th><th>Mapped Internally</th></tr>';
-									foreach($collList as $collArr){
-										echo '<tr>';
-										echo '<td><a href="portalindex.php?portalid='.$pid.'&remoteid='.$collArr['collID'].'">'.$collArr['collID'].'</a></td>';
-										echo '<td>'.$collArr['institutionCode'].'</td>';
-										echo '<td>'.$collArr['collectionCode'].'</td>';
-										echo '<td>'.$collArr['collectionName'].'</td>';
-										echo '<td>'.$collArr['collType'].'</td>';
-										echo '<td>'.$collArr['managementType'].'</td>';
-										if(isset($collArr['internal']) && $collArr['internal'])
-											$internal = '<a href="'.$CLIENT_ROOT.'/collections/misc/collprofiles.php?collid='.key($collArr['internal']).'" target="_blank">Yes</a>';
-										else $internal = 'No';
-										echo '<td>'.$internal.'</td>';
-										echo '</tr>';
-									}
-									echo '</table>';
-									echo '</div>';
+										</table>
+									</div>
+									<?php
 								}
 							}
 						}
