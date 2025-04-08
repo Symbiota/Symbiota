@@ -21,12 +21,10 @@ $occManager = null;
 if(strpos($action,'Determination') || strpos($action,'Verification')){
 	include_once($SERVER_ROOT.'/classes/OccurrenceEditorDeterminations.php');
 	$occManager = new OccurrenceEditorDeterminations();
-}
-elseif(strpos($action,'Image')){
-	include_once($SERVER_ROOT.'/classes/OccurrenceEditorImages.php');
-	$occManager = new OccurrenceEditorImages();
-}
-else{
+} else{
+	if(strpos($action,'Image')) {
+		include_once($SERVER_ROOT . "/classes/Media.php");
+	}
 	include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 	$occManager = new OccurrenceEditorManager();
 }
@@ -228,65 +226,104 @@ if($SYMB_UID){
 				}
 			}
 			elseif($action == 'Submit Image Edits'){
-				$occManager->editImage($_POST);
-				if($errArr = $occManager->getErrorArr()){
-					if(isset($errArr['web'])){
-						if(!$errArr['web']) $statusStr .= $LANG['ERROR_UPDATING_IMAGE'].': web image<br />';
-					}
-					if(isset($errArr['tn'])){
-						if(!$errArr['tn']) $statusStr .= $LANG['ERROR_UPDATING_IMAGE'].': thumbnail<br />';
-					}
-					if(isset($errArr['orig'])){
-						if(!$errArr['orig']) $statusStr .= $LANG['ERROR_UPDATING_IMAGE'].': large image<br />';
-					}
-					if(isset($errArr['error'])) $statusStr .= $LANG['ERROR_EDITING_IMAGE'].': '.$errArr['error'];
+				Media::update($_POST['imgid'], $_POST, new LocalStorage());
+
+				if($errors = Media::getErrors()) {
+					$statusStr = 'ERROR: ' . array_pop($errors);
 				}
 				$tabTarget = 2;
 			}
-			elseif($action == 'Submit New Image'){
-				if($occManager->addImage($_POST)){
-					$statusStr = (isset($LANG['IMAGE_ADD_SUCCESS'])?$LANG['IMAGE_ADD_SUCCESS']:'Image added successfully');
-					$tabTarget = 2;
+			elseif($action == 'Submit New Image') {
+
+				$collMap = $occManager->getCollMap();
+
+				//Ensures correct order on taxon profile page
+				if(strpos($collMap['colltype'], 'Observations') !== false) {
+					$_POST['sortsequence'] = 40;
 				}
-				if($occManager->getErrorStr()){
-					$statusStr .= $occManager->getErrorStr();
+
+				try {
+					$occur_map = $occManager->getOccurMap()[$occId];
+					$path = get_occurrence_upload_path(
+						$occur_map['institutioncode'],
+						$occur_map['collectioncode'],
+						$occur_map['catalognumber']
+					);
+					Media::add(
+						$_POST,
+						new LocalStorage($path),
+						$_FILES['imgfile'] ?? null
+					);
+					if($errors = Media::getErrors()) {
+						$statusStr = "ERROR: " . array_pop($errors);
+					} else {
+						$statusStr = $LANG['IMAGE_ADD_SUCCESS'];
+					}
+				} catch(Exception $e) {
+					$statusStr = "ERROR: " . $e->getMessage();
+				} finally {
+					$tabTarget = 2;
 				}
 			}
 			elseif($action == 'Delete Image'){
-				$removeImg = (array_key_exists('removeimg',$_POST)?$_POST['removeimg']:0);
-				if($occManager->deleteImage($_POST["imgid"], $removeImg)){
-					$statusStr = (isset($LANG['IMAGE_DEL_SUCCESS'])?$LANG['IMAGE_DEL_SUCCESS']:'Image deleted successfully');
+				try {
+					Media::delete($_POST['imgid'], $_POST['removeimg']?? false);
+
+					if($errors = Media::getErrors()) {
+						$statusStr = "ERROR: " . array_pop($errors);
+					} else {
+						$statusStr = $LANG['IMAGE_DEL_SUCCESS'];
+					}
+				} catch(Exception $e) {
+					$statusStr = $e->getMessage();
+				} finally {
 					$tabTarget = 2;
 				}
-				else{
-					$statusStr = $occManager->getErrorStr();
-				}
 			}
-			elseif($action == 'Remap Image'){
-				if($occManager->remapImage($_POST['imgid'], $_POST['targetoccid'])){
-					$statusStr = (isset($LANG['IMAGE_REMAP_SUCCESS'])?$LANG['IMAGE_REMAP_SUCCESS']:'SUCCESS: Image remapped to record').' <a href="occurrenceeditor.php?occid=' . htmlspecialchars($_POST["targetoccid"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($_POST["targetoccid"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
-				}
-				else{
-					$statusStr = (isset($LANG['IMAGE_REMAP_ERROR'])?$LANG['IMAGE_REMAP_ERROR']:'ERROR linking image to new specimen').': '.$occManager->getErrorStr();
-				}
-			}
-			elseif($action == 'remapImageToNewRecord'){
-				$newOccid = $occManager->remapImage($_POST['imgid'], 'new');
-				if($newOccid){
-					$statusStr = (isset($LANG['IMAGE_REMAP_SUCCESS'])?$LANG['IMAGE_REMAP_SUCCESS']:'SUCCESS: Image remapped to record').' <a href="occurrenceeditor.php?occid=' . htmlspecialchars($newOccid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($newOccid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
-				}
-				else{
-					$statusStr = (isset($LANG['NEW_IMAGE_ERROR'])?$LANG['NEW_IMAGE_ERROR']:'ERROR linking image to new blank specimen').': '.$occManager->getErrorStr();
+			elseif($action == 'Remap Image' || $action == 'remapImageToNewRecord'){
+				$target_occid = $action == 'remapImageToNewRecord' ?
+					$occManager->createOccurrenceFrom():
+					intval($_POST['targetoccid']);
+
+				try {
+					$target_occur_manager = new OccurrenceEditorManager();
+					$target_occur_manager->setOccId($target_occid);
+					$target_occur_map = $target_occur_manager->getOccurMap()[$target_occid];
+					$remap_path	= get_occurrence_upload_path(
+						$target_occur_map['institutioncode'],
+						$target_occur_map['collectioncode'],
+						$target_occur_map['catalognumber']
+					);
+
+					$occur_map = $occManager->getOccurMap()[$occId];
+					$current_path = get_occurrence_upload_path(
+						$occur_map['institutioncode'],
+						$occur_map['collectioncode'],
+						$occur_map['catalognumber']
+					);
+					Media::remap(
+						intval($_POST['imgid']),
+						$target_occid,
+						new LocalStorage($current_path),
+						new LocalStorage($remap_path)
+					);
+
+					$statusStr = $LANG['IMAGE_REMAP_SUCCESS'] .' <a href="occurrenceeditor.php?occid=' . htmlspecialchars($target_occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($target_occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
+				} catch(Exception $e) {
+					$statusStr = ($action == 'remapImageToNewRecord'?
+						$LANG['NEW_IMAGE_ERROR']: $LANG['IMAGE_REMAP_ERROR']) .
+						': '. $e->getMessage();
 				}
 			}
 			elseif($action == "Disassociate Image"){
-				if($occManager->remapImage($_POST["imgid"])){
-					$statusStr = (isset($LANG['DISASS_SUCCESS'])?$LANG['DISASS_SUCCESS']:'SUCCESS disassociating image').' <a href="../../imagelib/imgdetails.php?imgid=' . htmlspecialchars($_POST["imgid"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">#' . htmlspecialchars($_POST["imgid"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
-				}
-				else{
-					$statusStr = (isset($LANG['DISASS_ERORR'])?$LANG['DISASS_ERORR']:'ERROR disassociating image').': '.$occManager->getErrorStr();
-				}
+				try {
+					$mediaID = filter_var($_POST['imgid'], FILTER_SANITIZE_NUMBER_INT);
+					Media::disassociate($mediaID);
 
+					$statusStr = $LANG['DISASS_SUCCESS'] . ' <a href="../../imagelib/imgdetails.php?mediaid=' . $mediaID . '" target="_blank">#' . $mediaID . '</a>';
+				} catch(Exception $e) {
+					$statusStr = $LANG['DISASS_ERORR'] .': '.$e->getMessage();
+				}
 			}
 			elseif($action == "Apply Determination"){
 				$makeCurrent = 0;
@@ -409,13 +446,13 @@ if($SYMB_UID){
 	//Images and other things needed for OCR
 	$specImgArr = $occManager->getImageMap();
 	if($specImgArr){
-		$imgUrlPrefix = (isset($IMAGE_DOMAIN)?$IMAGE_DOMAIN:'');
+		$imgUrlPrefix = (isset($MEDIA_DOMAIN)?$MEDIA_DOMAIN:'');
 		$imgCnt = 1;
 		foreach($specImgArr as $imgId => $i2){
 			$iUrl = $i2['url'];
 			if($iUrl == 'empty' && $i2['origurl']) $iUrl = $i2['origurl'];
 			if($imgUrlPrefix && substr($iUrl,0,4) != 'http') $iUrl = $imgUrlPrefix.$iUrl;
-			$imgArr[$imgCnt]['imgid'] = $imgId;
+			$imgArr[$imgCnt]['mediaid'] = $imgId;
 			$imgArr[$imgCnt]['web'] = $iUrl;
 			if($i2['origurl']){
 				$lgUrl = $i2['origurl'];
@@ -469,6 +506,7 @@ else{
 	?>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		var collId = "<?php echo (isset($collMap['collid'])?$collMap['collid']:(is_numeric($collId)?$collId:0)); ?>";
 		var csMode = "<?php echo $crowdSourceMode; ?>";
@@ -504,13 +542,13 @@ else{
             });
         }
 	</script>
-	<script src="../../js/symb/collections.coordinateValidation.js?ver=2" type="text/javascript"></script>
-	<script src="../../js/symb/wktpolygontools.js?ver=2" type="text/javascript"></script>
+	<script src="../../js/symb/collections.coordinateValidation.js?ver=1" type="text/javascript"></script>
+	<script src="../../js/symb/wktpolygontools.js?ver=2c" type="text/javascript"></script>
 	<script src="../../js/symb/collections.georef.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.main.js?ver=9" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.tools.js?ver=4" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.imgtools.js?ver=3" type="text/javascript"></script>
+	<script src="../../js/symb/collections.editor.main.js?ver=1" type="text/javascript"></script>
+	<script src="../../js/symb/collections.editor.tools.js?ver=1" type="text/javascript"></script>
+	<script src="../../js/symb/collections.editor.imgtools.js?ver=4" type="text/javascript"></script>
 	<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.query.js?ver=6" type="text/javascript"></script>
 	<style type="text/css">
@@ -561,7 +599,7 @@ else{
 	<div role="main" id="innertext">
 		<div id="titleDiv">
 			<?php
-			if($collMap) echo '<h1 class="page-heading" style="font-size: 1.5rem;"> Occurrence Editor: ' . $collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').') </h1>';
+			if($collMap) echo '<h1 class="page-heading" style="font-size: 1.5rem;"> ' . $LANG['OCCEDITOR'] . ': ' . $collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').') </h1>';
 			?>
 		</div>
 		<?php
@@ -688,7 +726,7 @@ else{
 									if($isEditor == 1 || $isEditor == 2){
 										?>
 										<li id="imgTab">
-											<a href="includes/imagetab.php?<?= $anchorVars ?>" style=""><?= $LANG['IMAGES'] ?></a>
+											<a href="includes/imagetab.php?<?= $anchorVars ?>" style=""><?= $LANG['MEDIA'] ?></a>
 										</li>
 										<?php
 										if(isset($collMap['matSampleActivated'])){
@@ -837,7 +875,7 @@ else{
 											if($ACTIVATE_DUPLICATES){
 												?>
 												<div id="dupesDiv">
-													<button type="button" value="Duplicates" onclick="searchDupes(this.form);" ><?php echo $LANG['DUPLICATES']; ?></button><br/>
+													<button type="button" value="Duplicates" onclick="searchDupes(this.form, false);" ><?php echo $LANG['DUPLICATES']; ?></button><br/>
 													<input type="checkbox" name="autodupe" value="1" onchange="autoDupeChanged(this)" tabindex="-1" />
 													<?php echo (isset($LANG['AUTO_SEARCH'])?$LANG['AUTO_SEARCH']:'Auto search'); ?>
 												</div>
@@ -884,7 +922,7 @@ else{
 											<div id="exsDiv">
 												<div id="ometidDiv" class="field-div">
 													<?php echo (isset($LANG['EXS_TITLE'])?$LANG['EXS_TITLE']:'Exsiccati Title'); ?><br/>
-													<input id="exstitleinput" name="exstitle" value="<?php echo (isset($exsArr['exstitle'])?$exsArr['exstitle']:''); ?>" />
+													<input id="exstitleinput" name="exstitle" value="<?php echo (isset($exsArr['exstitle'])?htmlspecialchars($exsArr['exstitle']):''); ?>" />
 													<input id="ometidinput" name="ometid" type="text" style="display: none;" value="<?php echo (isset($exsArr['ometid'])?$exsArr['ometid']:''); ?>" onchange="fieldChanged('ometid')" />
 												</div>
 												<div id="exsnumberDiv" class="field-div">
@@ -1021,25 +1059,25 @@ else{
 												<?php echo $LANG['COUNTRY']; ?>
 												<a href="#" onclick="return dwcDoc('country')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 												<br/>
-												<input type="text" id="ffcountry" name="country" value="<?php echo array_key_exists('country',$occArr)?$occArr['country']:''; ?>" onchange="fieldChanged('country');" autocomplete="off" />
+												<input type="text" id="ffcountry" name="country" value="<?php echo array_key_exists('country',$occArr)?$occArr['country']:''; ?>" onchange="fieldChanged('country');" autocomplete="noaction" />
 											</div>
 											<div id="stateProvinceDiv" class="field-div">
 												<?php echo $LANG['STATEPROVINCE']; ?>
 												<a href="#" onclick="return dwcDoc('stateProvince')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 												<br/>
-												<input type="text" id="ffstate" name="stateprovince" value="<?php echo array_key_exists('stateprovince',$occArr)?$occArr['stateprovince']:''; ?>" onchange="stateProvinceChanged(this.value)" autocomplete="off" />
+												<input type="text" id="ffstate" name="stateprovince" value="<?php echo array_key_exists('stateprovince',$occArr)?$occArr['stateprovince']:''; ?>" onchange="stateProvinceChanged(this.value)" autocomplete="noaction" />
 											</div>
 											<div id="countyDiv" class="field-div">
 												<?php echo $LANG['COUNTY']; ?>
 												<a href="#" onclick="return dwcDoc('county')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 												<br/>
-												<input type="text" id="ffcounty" name="county" value="<?php echo array_key_exists('county',$occArr)?$occArr['county']:''; ?>" onchange="fieldChanged('county');" autocomplete="off" />
+												<input type="text" id="ffcounty" name="county" value="<?php echo array_key_exists('county',$occArr)?$occArr['county']:''; ?>" onchange="fieldChanged('county');" autocomplete="noaction" />
 											</div>
 											<div id="municipalityDiv" class="field-div">
 												<?php echo $LANG['MUNICIPALITY']; ?>
 												<a href="#" onclick="return dwcDoc('municipality')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 												<br/>
-												<input type="text" id="ffmunicipality" name="municipality" value="<?php echo array_key_exists('municipality',$occArr)?$occArr['municipality']:''; ?>" onchange="fieldChanged('municipality');" autocomplete="off" />
+												<input type="text" id="ffmunicipality" name="municipality" value="<?php echo array_key_exists('municipality',$occArr)?$occArr['municipality']:''; ?>" onchange="fieldChanged('municipality');" autocomplete="noaction" />
 											</div>
 											<div id="locationIdDiv" class="field-div">
 												<?php echo $LANG['LOCATION_ID']; ?>
@@ -1099,6 +1137,7 @@ else{
 											</div>
 										</div>
 										<div style="clear:both;" class="fieldGroup-div">
+										<span id="coordinateWrapper" onchange="coordinatesChanged(document.getElementById('fullform'), '<?= $CLIENT_ROOT?>')">
 											<div id="decimalLatitudeDiv" class="field-div">
 												<?php echo $LANG['DECIMAL_LATITUDE']; ?>
 												<br/>
@@ -1108,7 +1147,7 @@ else{
 													$latValue = $occArr['decimallatitude'];
 												}
 												?>
-												<input type="text" id="decimallatitude" name="decimallatitude" maxlength="15" value="<?php echo $latValue; ?>" onchange="decimalLatitudeChanged(this.form)" />
+											<input type="text" id="decimallatitude" name="decimallatitude" maxlength="15" value="<?php echo $latValue; ?>" onchange="decimalLatitudeChanged(document.getElementById('fullform'))"/>
 											</div>
 											<div id="decimalLongitudeDiv" class="field-div">
 												<?php echo $LANG['DECIMAL_LONGITUDE']; ?>
@@ -1119,8 +1158,9 @@ else{
 													$longValue = $occArr["decimallongitude"];
 												}
 												?>
-												<input type="text" id="decimallongitude" name="decimallongitude" maxlength="15" value="<?php echo $longValue; ?>" onchange="decimalLongitudeChanged(this.form);" />
+												<input type="text" id="decimallongitude" name="decimallongitude" maxlength="15" value="<?php echo $longValue; ?>" onchange="decimalLongitudeChanged(document.getElementById('fullform'))" />
 											</div>
+										</span>
 											<div id="coordinateUncertaintyInMetersDiv" class="field-div">
 												<?php echo $LANG['COORDINATE_UNCERTAINITY_IN_METERS']; ?>
 												<a href="#" onclick="return dwcDoc('coordinateUncertaintyInMeters')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>

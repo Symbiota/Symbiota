@@ -107,6 +107,49 @@
                 }
             }
         },
+        "/api/v2/exsiccata": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/exsiccata",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Controls the number of results in the page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 100
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Determines the starting point for the search results. A limit of 100 and offset of 200, will display 100 records starting the 200th record.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns list of inventories registered within system",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. "
+                    }
+                }
+            }
+        },
         "/api/v2/installation": {
             "get": {
                 "tags": [
@@ -874,6 +917,161 @@
                 }
             }
         },
+        "/api/v2/morphology": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/morphology",
+                "parameters": [
+                    {
+                        "name": "includeStates",
+                        "in": "query",
+                        "description": "Controls whether character traits are included within output: 0 [default] = do not include state, 1 = include states ",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Controls the number of results in the page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 100
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Determines the offset for the search results. A limit of 200 and offset of 100, will get the third page of 100 results.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns list of morphological characters within system",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. "
+                    }
+                }
+            }
+        },
+        "/api/v2/morphology/{identifier}": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/morphology/identifier",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "Identifier (PK = cid) associated with morphological character",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns metabase on inventory registered within system with matching ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. Inventory identifier is required."
+                    }
+                }
+            }
+        },
+        "/api/v2/morphology/{identifier}/attribute": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/morphology/identifier/attribute",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "Identifier (PK = cid) associated with morphological character",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "cs",
+                        "in": "query",
+                        "description": "Limit by character State ID (aka cs)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tid",
+                        "in": "query",
+                        "description": "Limit by taxon PK (aka tid)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Controls the number of results in the page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 100
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Determines the offset for the search results. A limit of 200 and offset of 100, will get the third page of 100 results.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns list of attribute codings for a given morphological character",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. "
+                    }
+                }
+            }
+        },
         "/api/v2/occurrence/annotation/search": {
             "get": {
                 "tags": [
@@ -1255,7 +1453,7 @@
                 "tags": [
                     ""
                 ],
-                "description": "If an existing record can be located within target collection based on matching the input identifier, empty (null) target fields will be updated with Skeletal Data.\r\n\t\t\tIf the target field contains data, it will remain unaltered.\r\n\t\t\tIf multiple records are returned matching the input identifier, data will be added only to the first record.\r\n\t\t\tIf an identifier is not provided or a matching record can not be found, a new Skeletal record will be created and primed with input data.\r\n\t\t\tNote that catalogNumber or otherCatalogNumber must be provided to create a new skeletal record. If processingStatus is not defined, new skeletal records will be set as 'unprocessed'",
+                "description": "If an existing record can be located within target collection based on matching the input identifier, empty (null) target fields will be updated with Skeletal Data.\n\t\t\tIf the target field contains data, it will remain unaltered.\n\t\t\tIf multiple records are returned matching the input identifier, data will be added only to the first record.\n\t\t\tIf an identifier is not provided or a matching record can not be found, a new Skeletal record will be created and primed with input data.\n\t\t\tNote that catalogNumber or otherCatalogNumber must be provided to create a new skeletal record. If processingStatus is not defined, new skeletal records will be set as 'unprocessed'",
                 "operationId": "skeletalImport",
                 "parameters": [
                     {
@@ -1516,13 +1714,13 @@
                         "description": "Identifier (PK = tid) associated with taxonomic target",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "integer"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Returns metabase on inventory registered within system with matching ID",
+                        "description": "Returns taxonomic record of matching ID",
                         "content": {
                             "application/json": {
                                 "schema": {}
@@ -1530,59 +1728,7 @@
                         }
                     },
                     "400": {
-                        "description": "Error: Bad request. Inventory identifier is required."
-                    }
-                }
-            }
-        },
-        "/api/v2/taxonomy/{identifier}/description": {
-            "get": {
-                "tags": [
-                    ""
-                ],
-                "operationId": "/api/v2/taxonomy/identifier/description",
-                "parameters": [
-                    {
-                        "name": "identifier",
-                        "in": "path",
-                        "description": "PK, GUID, or recordID associated with target taxonomic unit",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "limit",
-                        "in": "query",
-                        "description": "Controls the number of results in the page.",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 100
-                        }
-                    },
-                    {
-                        "name": "offset",
-                        "in": "query",
-                        "description": "Determines the starting point for the search results. A limit of 100 and offset of 200, will display 100 records starting the 200th record.",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 0
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Returns list of taxonomic descriptions for a given taxon",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Bad request. "
+                        "description": "Error: Bad request. Taxonomy identifier is required."
                     }
                 }
             }

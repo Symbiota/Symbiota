@@ -165,6 +165,13 @@
   padding: 0.5rem 1rem;
 }
 
+.criteria-panel {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y:scroll
+}
+
 .inner-search #search-form-taxonomy {
   display: -ms-grid;
   display: grid;
@@ -284,6 +291,17 @@
   }
   .inner-search #search-form-sample div {
     margin: 1rem 0;
+  }
+  #search-form-associations div {
+    display: block !important;
+  }
+  #search-form-associations .select-container {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+  #associated-taxa-text {
+    margin: 0 !important;
+    width: 100% !important;
   }
   .inner-search #search-form-latlong {
     display: block;

@@ -24,12 +24,12 @@ $isEditor = 0;
 if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin']))){
 	$isEditor = 1;
 }
-elseif($collMap['colltype'] == 'General Observations' && array_key_exists('CollEditor', $USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'])){
+elseif(isset($collMap['colltype']) && $collMap['colltype'] == 'General Observations' && array_key_exists('CollEditor', $USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'])){
 	$isEditor = 1;
 }
 
 //If collection is a general observation project, limit to User
-if($collMap['colltype'] == 'General Observations') $dupManager->setObsUid($SYMB_UID);
+if(isset($collMap['colltype']) && $collMap['colltype'] == 'General Observations') $dupManager->setObsUid($SYMB_UID);
 
 if($isEditor && $formSubmit){
 	if($formSubmit == 'clusteredit'){
@@ -104,7 +104,7 @@ if($isEditor && $formSubmit){
 	<div class='navpath'>
 		<a href="../../index.php"> <?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?> </a> &gt;&gt;
 		<?php
-		if($collMap['colltype'] == 'General Observations'){
+		if(isset($collMap['colltype']) && $collMap['colltype'] == 'General Observations'){
 			echo '<a href="../../profile/viewprofile.php?tabindex=1">' . htmlspecialchars($LANG['PERS_MANAGE_MENU'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
 		}
 		else{
@@ -122,7 +122,7 @@ if($isEditor && $formSubmit){
 
 	<!-- inner text -->
 	<div role="main" id="innertext">
-		<h1 class="page-heading">Duplicate Manager</h1>
+		<h1 class="page-heading"><?php echo $LANG['DUPLICATE_MANAGER']; ?></h1>
 		<?php
 		if($statusStr){
 			?>
@@ -186,7 +186,7 @@ if($isEditor && $formSubmit){
 				}
 				elseif($action == 'listdupes' || $action == 'listdupeconflicts'){
 					$clusterArr = $dupManager->getDuplicateClusterList($collId, $dupeDepth, $start, $limit);
-					$totalCnt = $clusterArr['cnt'];
+					$totalCnt = $clusterArr['cnt'] ?? 0;
 					unset($clusterArr['cnt']);
 					if($clusterArr){
 						$paginationStr = '<span>';

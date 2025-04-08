@@ -4,7 +4,7 @@
 Language:  Español (Spanish)
 ------------------
 */
-
+$LANG['VOUCHER_ADMIN'] = 'Administración des Vouchers';
 $LANG['NAV_HOME'] = 'Inicio';
 $LANG['EXT_VOUCHERS_LINKED'] = 'vales externos han sido vinculados a la lista';
 $LANG['CHECKLIST_ADMIN'] = 'Administración de Listados de Comprobación';
@@ -72,7 +72,6 @@ $LANG['FULLSPECLISTVOUCHER'] = 'Listado de especies completo con vouchers vincul
 $LANG['VOUCHERONLY'] = 'Vouchers vinculados solomente (DwC-A, CSV, Tab-delimited)';
 $LANG['FULLSPECLISTALLOCCUR'] = 'Listado de especies completo con todos ocurrencias (CSV)';
 $LANG['PENSOFT_XLSX_EXPORT'] = 'Listado de especies en el formato del Pensoft';
-$LANG['SPECMISSINGTITLE'] = 'Posibles adiciones de especies basadas en vales de muestra';
 $LANG['SPECMISSTAXA'] = 'Especímenes de taxa faltantes del listado de Comprobación (CSV)';
 $LANG['SPECMISSPELLED'] = 'Especímenes con nombres científicos mal escritos, ilegales, y problemáticos (CSV)';
 $LANG['CHECKIDNOTSET'] = 'Identificador de listado de Comprobación no establecido';

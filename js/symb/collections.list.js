@@ -1,11 +1,15 @@
 function copyUrl(){
-	host = window.location.host;
+	host = window.location.protocol + '//' + window.location.host;
 	var $temp = $("<input>");
 	$("body").append($temp);
-	var activeLink = host + window.location.pathname;
+	let activeLink = host + window.location.pathname;
 	if(sessionStorage.querystr){
 		activeLink = activeLink + "?" + encodedQueryStr(sessionStorage.querystr);
-   }
+	}
+	const verbatimUrl = sessionStorage.getItem('verbatimSearchUrl');
+	if(verbatimUrl){
+		activeLink = verbatimUrl;
+	}
 	$temp.val(activeLink).select();
 	document.execCommand("copy");
 	$temp.remove();
@@ -55,9 +59,22 @@ function openIndPU(occId,clid){
 	return false;
 }
 
-function openMapPU() {
-	let url = 'map/index.php?'+encodedQueryStr(sessionStorage.querystr)+'&gridSizeSetting=60&minClusterSetting=10&clusterSwitch=y&menuClosed';
-	window.open(url,'Map Search','toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=1,resizable=1,width=1150,height=900,left=20,top=20');
+function openMapPU(searchParams = "") {
+	const map_params = 'gridSizeSetting=60&minClusterSetting=10&clusterSwitch=y&menuClosed';
+	if(!searchParams && window.location.search) {
+		if(window.location.search) {
+			searchParams = window.location.search + '&' + map_params;
+		} else {
+			searchParams = '?' + map_params;
+		}
+	} else {
+		searchParams = '?' + searchParams + '&' + map_params;
+	}
+
+	const baseUrl = location.href.slice(0, location.href.indexOf("list.php"));
+	let mapUrl = new URL(baseUrl + 'map/index.php' + searchParams);
+
+	window.open(mapUrl.href,'Map Search','toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=1,resizable=1,width=1150,height=900,left=20,top=20');
 }
 
 function encodedQueryStr(querystr){

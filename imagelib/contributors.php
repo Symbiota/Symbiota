@@ -1,16 +1,16 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ImageLibraryBrowser.php');
-header('Content-Type: text/html; charset=' . $CHARSET);
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/imagelib/contributors.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/imagelib/contributors.en.php');
-else include_once($SERVER_ROOT.'/content/lang/imagelib/contributors.' . $LANG_TAG . '.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/imagelib/contributors.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/imagelib/contributors.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/imagelib/contributors.en.php');
+header("Content-Type: text/html; charset=".$CHARSET);
 
 $imgManager = new ImageLibraryBrowser();
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Photographer List</title>
+	<title><?php echo $DEFAULT_TITLE; ?> <?=$LANG['CREATOR_LIST']?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
@@ -19,7 +19,7 @@ $imgManager = new ImageLibraryBrowser();
 </head>
 <body>
 	<?php
-	$displayLeftMenu = (isset($imagelib_photographersMenu)?$imagelib_photographersMenu:false);
+	$displayLeftMenu = (isset($imagelib_creatorsMenu)?$imagelib_creatorsMenu:false);
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
@@ -30,9 +30,9 @@ $imgManager = new ImageLibraryBrowser();
 
 	<!-- This is inner text! -->
 	<div role="main" id="innertext" style="height:100%">
-		<h1 class="page-heading">Photographer List</h1>
+			<h1 class="page-heading"><?=$LANG['CREATOR_LIST']?></h1>
 		<?php
-		$pList = $imgManager->getPhotographerList();
+		$pList = $imgManager->getCreatorList();
 		if($pList){
 			echo '<div style="float:left; margin-right:40px;">';
 			echo '<h2>' . $LANG['IMG_CONTR'] . '</h2>';

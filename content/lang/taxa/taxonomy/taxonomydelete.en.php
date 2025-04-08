@@ -41,6 +41,7 @@ $LANG['LINKED_RESOURCES'] = 'Linked Resources';
 $LANG['LINKED_RESOURCES_EXIST'] = 'Warning: linked resources exists';
 $LANG['NO_RESOURCES'] = 'no resources linked to this taxon';
 $LANG['REMAP_RESOURCES'] = 'Remap Resources to Another Taxon';
+$LANG['WARNING_REMAP'] = 'Warning: remapping will delete the current taxon and move all resources and taxa listed above to the Target Taxon.';
 $LANG['TARGET_TAXON'] = 'Target taxon';
 $LANG['REMAP_TAXON'] = 'Remap Taxon';
 $LANG['DELETE_TAX_AND_RES'] = 'Delete Taxon and Existing Resources';
