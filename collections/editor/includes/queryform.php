@@ -477,6 +477,16 @@ else{
 		f.q_dateentered.value = "";
 		f.q_datelastmodified.value = "";
 		f.q_processingstatus.value = "";
+
+
+		if(f["q_traitid[]"]) {
+			f["q_traitid[]"].value = "";
+		}
+
+		if(f["q_stateid[]"]) {
+			f["q_stateid[]"].value = "";
+		}
+
 		if(f.q_exsiccatiid) f.q_exsiccatiid.value = "";
 
 		for(let x = 1; x < 9; x++){
