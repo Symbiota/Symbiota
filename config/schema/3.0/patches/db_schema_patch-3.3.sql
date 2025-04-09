@@ -37,6 +37,21 @@ ALTER TABLE `uploaddetermtemp`
   CHANGE COLUMN `identificationReferences` `identificationReferences` text,
   CHANGE COLUMN `identificationRemarks` `identificationRemarks` text;
 
+
+#Alterations to key-value upload staging table. Most important is addition of index to speed up linking to existing records
+ALTER TABLE `uploadkeyvaluetemp` 
+  ADD COLUMN `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp AFTER `type`,
+  ADD INDEX `IX_uploadKeyValue_dbpk` (`dbpk` ASC);
+
+ALTER TABLE `uploadkeyvaluetemp` 
+  DROP FOREIGN KEY `FK_uploadKeyValue_collid`;
+
+ALTER TABLE `uploadkeyvaluetemp` 
+  CHANGE COLUMN `collid` `collid` INT(10) UNSIGNED NOT NULL ;
+
+ALTER TABLE `uploadkeyvaluetemp` 
+  ADD CONSTRAINT `FK_uploadKeyValue_collid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`collID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
   
 //Portal Index field additions  
 ALTER TABLE `portalindex` 
