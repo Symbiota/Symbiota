@@ -193,13 +193,14 @@ $traitArr = $indManager->getTraitArr();
 		});
 
 		function refreshRecord(occid){
+			document.getElementById("working-span").style.display = "inline";
 			$.ajax({
 				method: "GET",
 				url: "<?= $CLIENT_ROOT; ?>/api/v2/occurrence/"+occid+"/reharvest"
 			})
 			.done(function( response ) {
 				if(response.status == 200){
-					$("#dataStatus").val(response.dataStatus);
+					$("#dataStatus").val(response.numberFieldChanged);
 					$("#fieldsModified").val(JSON.stringify(response.fieldsModified));
 					$("#sourceDateLastModified").val(response.sourceDateLastModified);
 					alert("Record reharvested. Page will reload to refresh contents...");
@@ -1031,46 +1032,16 @@ $traitArr = $indManager->getTraitArr();
 									$thumbUrl = $imgArr['tnurl'];
 									echo '<div id="thumbnail-div" class="thumbnail-div">';
 									echo Media::render_media_item($imgArr);
-										if($imgArr['caption']) echo '<div><i>'.$imgArr['caption'].'</i></div>';
-										if($imgArr['creator']) echo '<div>'.(isset($LANG['AUTHOR'])?$LANG['AUTHOR']:'Author').': '.$imgArr['creator'].'</div>';
-										if($imgArr['url'] && substr($thumbUrl,0,7)!='process' && $imgArr['url'] != $imgArr['lgurl']) echo '<div><a href="' . $imgArr['url'] . '" target="_blank">' . $LANG['OPEN_MEDIUM'] . '</a></div>';
-										if($imgArr['lgurl']) echo '<div><a href="' . $imgArr['lgurl'] . '" target="_blank">' . $LANG['OPEN_LARGE'] . '</a></div>';
-										if($imgArr['sourceurl']) echo '<div><a href="' . $imgArr['sourceurl'] . '" target="_blank">' . $LANG['OPEN_SOURCE'] . '</a></div>';
-										//Use image rights settings as the default for current record
-										if($imgArr['rights']) $collMetadata['rights'] = $imgArr['rights'];
-										if($imgArr['copyright']) $collMetadata['rightsholder'] = $imgArr['copyright'];
-										if($imgArr['accessrights']) $collMetadata['accessrights'] = $imgArr['accessrights'];
+									if($imgArr['caption']) echo '<div><i>'.$imgArr['caption'].'</i></div>';
+									if($imgArr['creator']) echo '<div>'.(isset($LANG['AUTHOR'])?$LANG['AUTHOR']:'Author').': '.$imgArr['creator'].'</div>';
+									if($imgArr['url'] && substr($thumbUrl,0,7)!='process' && $imgArr['url'] != $imgArr['lgurl']) echo '<div><a href="' . $imgArr['url'] . '" target="_blank">' . $LANG['OPEN_MEDIUM'] . '</a></div>';
+									if($imgArr['lgurl']) echo '<div><a href="' . $imgArr['lgurl'] . '" target="_blank">' . $LANG['OPEN_LARGE'] . '</a></div>';
+									if($imgArr['sourceurl']) echo '<div><a href="' . $imgArr['sourceurl'] . '" target="_blank">' . $LANG['OPEN_SOURCE'] . '</a></div>';
+									//Use image rights settings as the default for current record
+									if($imgArr['rights']) $collMetadata['rights'] = $imgArr['rights'];
+									if($imgArr['copyright']) $collMetadata['rightsholder'] = $imgArr['copyright'];
+									if($imgArr['accessrights']) $collMetadata['accessrights'] = $imgArr['accessrights'];
 									echo '</div>';
-									/*
-									if(!$thumbUrl || substr($thumbUrl, 0, 7) == 'process'){
-										if($imgArr['lgurl']){
-											if($image = exif_thumbnail($imgArr['lgurl'])){
-												$thumbUrl = 'data:image/jpeg;base64,' . base64_encode($image);
-											}
-										}
-										if(!$thumbUrl){
-											if($imgArr['url'] && substr($imgArr['url'], 0, 7) != 'process') $thumbUrl = $imgArr['url'];
-											else $thumbUrl = $imgArr['lgurl'];
-										}
-							}
-									?>
-									<div id="thumbnail-div" class="thumbnail-div">
-										<a href='<?= $imgArr['url'] ?>' target="_blank">
-											<img border="1" src="<?= $thumbUrl; ?>" title="<?= $imgArr['caption']; ?>" style="max-width:21.9rem;" alt="thumbnail image of current specimen" />
-										</a>
-										<?php
-										if($imgArr['caption']) echo '<div><i>'.$imgArr['caption'].'</i></div>';
-										if($imgArr['creator']) echo '<div>'.(isset($LANG['AUTHOR'])?$LANG['AUTHOR']:'Author').': '.$imgArr['creator'].'</div>';
-										if($imgArr['url'] && substr($thumbUrl,0,7)!='process' && $imgArr['url'] != $imgArr['lgurl']) echo '<div><a href="' . $imgArr['url'] . '" target="_blank">' . $LANG['OPEN_MEDIUM'] . '</a></div>';
-										if($imgArr['lgurl']) echo '<div><a href="' . $imgArr['lgurl'] . '" target="_blank">' . $LANG['OPEN_LARGE'] . '</a></div>';
-										if($imgArr['sourceurl']) echo '<div><a href="' . $imgArr['sourceurl'] . '" target="_blank">' . $LANG['OPEN_SOURCE'] . '</a></div>';
-										//Use image rights settings as the default for current record
-										if($imgArr['rights']) $collMetadata['rights'] = $imgArr['rights'];
-										if($imgArr['copyright']) $collMetadata['rightsholder'] = $imgArr['copyright'];
-										if($imgArr['accessrights']) $collMetadata['accessrights'] = $imgArr['accessrights'];
-										?>
-									</div>
-							<?php */
 								}
 								?>
 							</fieldset>
@@ -1099,46 +1070,78 @@ $traitArr = $indManager->getTraitArr();
 						</div>
 						<?php
 						if(isset($occArr['source'])){
-							$recordType = (isset($occArr['source']['type'])?$occArr['source']['type']:'');
-							$displayTitle = $LANG['SOURCE_RECORD'];
-							if(isset($occArr['source']['title'])) $displayTitle = $occArr['source']['title'];
-							$displayStr = $occArr['source']['url'];
-							if(isset($occArr['source']['displayStr'])) $displayStr = $occArr['source']['displayStr'];
-							elseif(isset($occArr['source']['sourceID'])) $displayStr = '#'.$occArr['source']['sourceID'];
-							if($recordType == 'symbiota') echo '<fieldset><legend>Externally Managed Snapshot Record</legend>';
-							echo '<div><label>'.$displayTitle.':</label> <a href="' . $occArr['source']['url'] . '" target="_blank">' . $displayStr . '</a></div>';
-							echo '<div style="float:left;">';
-							if(isset($occArr['source']['sourceName'])){
-								echo '<div><label>'.$LANG['DATA_SOURCE'].':</label> '.$occArr['source']['sourceName'].'</div>';
-								if($recordType == 'symbiota') echo '<div><label>Source management:</label> Live managed record within a Symbiota portal</div>';
+							$recordType = $occArr['source']['type'];
+							$sourceManagement = $LANG['MANAGED_EXTERNALLY'];
+							if($recordType == 'symbiota'){
+								$sourceManagement = $LANG['SYMBIOTA_LIVE_MANAGED'];
 							}
-							if(array_key_exists('fieldsModified',$_POST)){
-								echo '<div><label>'.$LANG['REFRESH_DATE'].':</label> '.(isset($occArr['source']['refreshTimestamp'])?$occArr['source']['refreshTimestamp']:'').'</div>';
-								//Input from refersh event
-								$dataStatus = $indManager->cleanOutStr($_POST['dataStatus']);
-								$fieldsModified = $indManager->cleanOutStr($_POST['fieldsModified']);
-								$sourceDateLastModified = $indManager->cleanOutStr($_POST['sourceDateLastModified']);
-								echo '<div><label>'.$LANG['UPDATE_STATUS'].':</label> '.$dataStatus.'</div>';
-								echo '<div><label>'.$LANG['FIELDS_MODIFIED'].':</label> '.$fieldsModified.'</div>';
-								echo '<div><label>'.$LANG['SOURCE_DATE_LAST_MODIFIED'].':</label> '.$sourceDateLastModified.'</div>';
-							}
-							echo '</div>';
-							if($SYMB_UID && $recordType == 'symbiota'){
-								?>
-								<div style="float:left;margin-left:30px;">
-									<button name="formsubmit" type="submit" onclick="refreshRecord(<?php echo $occid; ?>)"><?php echo $LANG['REFRESH_RECORD']; ?></button>
+							?>
+							<fieldset>
+								<legend><?= $LANG['SOURCE_RECORD'] ?></legend>
+								<div>
+									<?php
+									if(!empty($occArr['source']['sourceName'])){
+										?>
+										<div><label><?= $LANG['DATA_SOURCE'] ?>:</label> <?= $occArr['source']['sourceName'] ?></div>
+										<?php
+									}
+									if(!empty($occArr['source']['sourceID'])){
+										?>
+										<div><label><?= $LANG['SOURCE_ID'] ?>:</label> <?= $occArr['source']['sourceID'] ?></div>
+										<?php
+									}
+									?>
+									<div>
+										<label><?= $LANG['SOURCE_URL'] ?>:</label>
+										<a href="<?= $occArr['source']['url'] ?>" target="_blank"><?=  $occArr['source']['url'] ?></a>
+									</div>
+									<div><label><?= $LANG['SOURCE_MANAGEMENT'] ?>:</label> <?= $sourceManagement ?></div>
+									<?php
+									$dateLastModified = $occArr['source']['refreshTimestamp'];
+									if(array_key_exists('fieldsModified', $_POST)){
+										//Input from refersh event
+										$dataStatus = $indManager->cleanOutStr($_POST['dataStatus']);
+										$fieldsModified = $_POST['fieldsModified'];
+										$dateLastModified = $indManager->cleanOutStr($_POST['sourceDateLastModified']);
+										echo '<div><label>' . $LANG['UPDATE_STATUS'] . ':</label> '.$dataStatus . ' ' . strtolower($LANG['FIELDS_MODIFIED']) . '</div>';
+										if($fieldsModified){
+											echo '<div><label>'.$LANG['FIELDS_MODIFIED'].':</label> ';
+											echo '<div style="margin-left:25px">';
+											$fieldsModifiedArr = json_decode($fieldsModified, true);
+											foreach($fieldsModifiedArr as $name => $value){
+												echo '<div>' . $name . ': ' . $value . '</div>';
+											}
+											echo '</div></div>';
+										}
+										echo '<div><label>'.$LANG['REFRESH_DATE'].':</label> '.$occArr['source']['refreshTimestamp'].'</div>';
+									}
+									?>
+									<!--
+									<div><label><?= $LANG['DATE_LAST_MODIFIED'] ?>:</label> <?= $dateLastModified ?></div>
+									 -->
+									<div><label><?= $LANG['SOURCE_TIMESTAMP'] ?>:</label> <?= $occArr['source']['initialTimestamp'] ?></div>
 								</div>
-								<form id="refreshForm" action="index.php" method="post">
-									<input id="dataStatus" name="dataStatus" type="hidden" value="" >
-									<input id="fieldsModified" name="fieldsModified" type="hidden" value="" >
-									<input id="sourceDateLastModified" name="sourceDateLastModified" type="hidden" value="" >
-									<input name="occid" type="hidden" value="<?php echo $occid; ?>" >
-									<input name="clid" type="hidden" value="<?php echo $clid; ?>" >
-									<input name="collid" type="hidden" value="<?php echo $collid; ?>" >
-								</form>
 								<?php
-							}
-							if($recordType == 'symbiota') echo '</fieldset>';
+								if($SYMB_UID && $recordType == 'symbiota'){
+									?>
+									<div style="margin:15px;">
+										<form id="refreshForm" action="index.php" method="post">
+											<input id="dataStatus" name="dataStatus" type="hidden" value="" >
+											<input id="fieldsModified" name="fieldsModified" type="hidden" value="" >
+											<input id="sourceDateLastModified" name="sourceDateLastModified" type="hidden" value="" >
+											<input name="occid" type="hidden" value="<?= $occid ?>" >
+											<input name="clid" type="hidden" value="<?= $clid ?>" >
+											<input name="collid" type="hidden" value="<?= $collid ?>" >
+											<button name="formsubmit" type="button" onclick="refreshRecord(<?= $occid ?>)"><?= $LANG['REFRESH_RECORD'] ?>
+												<span id="working-span" style="display: none; margin-left: 10px"><img class="icon-img" style="width: 15px" src="../../images/ajax-loader_sm.gif" ></span>
+											</button>
+										</form>
+									</div>
+									<?php
+								}
+								?>
+							</fieldset>
+							<?php
 						}
 						?>
 						<div id="contact-div">
