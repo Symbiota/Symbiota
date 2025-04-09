@@ -1,6 +1,6 @@
 INSERT INTO `schemaversion` (versionnumber) values ("3.3");
 
-//Changes needed for full-record protections 
+#Changes needed for full-record protections 
 ALTER TABLE `omoccurrences` 
   CHANGE COLUMN `localitySecurity` `recordSecurity` INT(10) NULL DEFAULT 0 COMMENT '0 = no security; 1 = hidden locality; 5 = hide full record',
   CHANGE COLUMN `localitySecurityReason` `securityReason` VARCHAR(100) NULL DEFAULT NULL ;
@@ -16,12 +16,12 @@ UPDATE omoccurrences
   WHERE recordSecurity IS NULL;
 
 
-//Synchronizes column sizes between temporary upload and target tables
+#Synchronizes column sizes between temporary upload and target tables
 ALTER TABLE `omoccurdeterminations`
   CHANGE COLUMN `taxonRemarks` `taxonRemarks` text,
   CHANGE COLUMN `identificationReferences` `identificationReferences` text,
   CHANGE COLUMN `identificationRemarks` `identificationRemarks` text;
-  
+
 ALTER TABLE `uploadspectemp` 
   CHANGE COLUMN `labelProject` `labelProject` varchar(250) DEFAULT NULL,
   CHANGE COLUMN `taxonRemarks` `taxonRemarks` text,
@@ -52,10 +52,9 @@ ALTER TABLE `uploadkeyvaluetemp`
 ALTER TABLE `uploadkeyvaluetemp` 
   ADD CONSTRAINT `FK_uploadKeyValue_collid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`collID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-  
-//Portal Index field additions  
+
+#Portal Index field additions  
 ALTER TABLE `portalindex` 
   ADD COLUMN `lastContact` TIMESTAMP NULL AFTER `notes`,
   ADD COLUMN `modifiedTimestamp` TIMESTAMP NULL AFTER `lastContact`,
   ADD COLUMN `apiVersion` VARCHAR(45) NULL AFTER `symbiotaVersion`;
-  
