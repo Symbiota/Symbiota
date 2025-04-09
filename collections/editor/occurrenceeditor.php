@@ -249,11 +249,13 @@ if($SYMB_UID){
 						$occur_map['collectioncode'],
 						$occur_map['catalognumber']
 					);
+
 					Media::add(
 						$_POST,
 						new LocalStorage($path),
 						$_FILES['imgfile'] ?? null
 					);
+
 					if($errors = Media::getErrors()) {
 						$statusStr = "ERROR: " . array_pop($errors);
 					} else {
