@@ -92,12 +92,12 @@ $LANG['IMG_SOURCE_PATH'] = 'Ruta de origen de la imagen';
 $LANG['IMG_TARGET_PATH'] = 'Ruta de destino de la imagen';
 $LANG['TARGET_PATH_EXPLAIN'] = "Ruta del servidor web donde se depositarán los derivados de la imagen.
 			El servidor web (por ejemplo, el usuario de Apache) debe tener acceso de lectura/escritura a este directorio.
-			Si este campo se deja en blanco, se utilizará la imagen de destino predeterminada del portal (\$IMAGE_ROOT_PATH).";
+			Si este campo se deja en blanco, se utilizará la imagen de destino predeterminada del portal (\$MEDIA_ROOT_PATH).";
 $LANG['IMG_URL_BASE'] = 'Base de URL de imagen';
 $LANG['IMG_URL_EXPLAIN'] = "Prefijo de URL de imagen que accederá a la carpeta de destino desde el navegador.
 			Esto se utilizará para crear las URL de las imágenes que se almacenarán en la base de datos.
 			Si se proporciona la URL absoluta sin el nombre de dominio, se asumirá el dominio del portal.
-			Si este campo se deja en blanco, se utilizará la URL de la imagen predeterminada del portal (\$IMAGE_ROOT_URL).";
+			Si este campo se deja en blanco, se utilizará la URL de la imagen predeterminada del portal (\$MEDIA_ROOT_URL).";
 $LANG['WEB_IMG_WIDTH'] = 'Ancho de imagen de tamaño web';
 $LANG['WEB_IMG_EXPLAIN'] = 'Ancho de la imagen web estándar en píxeles. Si la imagen de origen es menor que este ancho, el archivo simplemente se copiará sin cambiar el tamaño.';
 $LANG['TN_IMG_WIDTH'] = 'Ancho de la imagen en miniatura';
@@ -171,6 +171,7 @@ $LANG['NO_UNPROCESSED'] = 'No hay registros sin procesar';
 $LANG['UNIDENTIFIED_ERROR'] = 'Error no identificado';
 
 // ocrprocessor.php
+$LANG['OP_CHARACTER_RECOGNITION'] = 'Reconocimiento óptico de Caracteres';
 $LANG['PLS_SEL_PROC_STATUS'] = 'Por favor seleccione un estado de procesamiento';
 $LANG['ENTER_PATT_MATCH'] = 'Ingrese una cadena que coincida con el patrón para extraer el número de catálogo';
 $LANG['SEL_OCR_INPUT'] = 'Seleccione/ingrese un archivo fuente de entrada OCR';
@@ -219,5 +220,17 @@ $LANG['SOURCE_PATH_EXPLAIN'] = 'Ruta del archivo o URL a la carpeta que contiene
 $LANG['OCR_SOURCE'] = 'Fuente de OCR';
 $LANG['OCR_SOURCE_EXPLAIN'] = 'Cadena corta que describe la fuente de OCR (por ejemplo, ABBYY, Tesseract, etc.). Este valor se coloca en el campo fuente con la fecha actual adjunta.';
 $LANG['LOAD_OCR_FILES'] = 'Cargar archivos OCR';
+
+//processor.php
+$LANG['SPEC_PROCESSOR_CONTROL_PANEL'] = 'Panel de Control del Procesador de Muestras';
+$LANG['HOME'] = 'Inicio';
+$LANG['COL_CONTROL_PANEL'] = 'Panel de control de recopilación';
+$LANG['SPEC_PROCESSOR'] = 'Procesador de muestras';
+$LANG['PROC_HANDLER'] = 'Controlador de procesamiento';
+$LANG['RETURN_SPEC_PROCESSOR'] = 'Regresar al procesador de muestras';
+
+//wordcloudhandler.php
+$LANG['WORD_CLOUD_HANDLER'] = 'Manejador de Nube de Palabras';
+$LANG['NO_COLLID'] = 'No se envió ninguna collid de destino';
 
 ?>

@@ -28,6 +28,7 @@ if($collid && is_numeric($collid)){
 		$dwcaHandler->setIncludeDets(0);
 		$dwcaHandler->setIncludeImgs(0);
 		$dwcaHandler->setIncludeAttributes(0);
+		$dwcaHandler->setIncludeIdentifiers(0);
 		$dwcaHandler->setOverrideConditionLimit(true);
 		$dwcaHandler->addCondition('catalognumber','NOT_NULL');
 		$dwcaHandler->addCondition('locality','NOT_NULL');

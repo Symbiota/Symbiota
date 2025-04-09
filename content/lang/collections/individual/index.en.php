@@ -1,10 +1,10 @@
 <?php
 /*
- ------------------
- Language: English
- ------------------
- */
-
+------------------
+Language: English
+Translated by: Google Translate (2024-09-13)
+------------------
+*/
 
 $LANG['FLAGGED_COMMENT'] = 'Comment reported as inappropriate. Comment will remain unavailable to public until reviewed by an administrator';
 $LANG['OCCURRENCE_PROFILE'] = 'Occurrence Profile';
@@ -36,6 +36,7 @@ $LANG['HIDE_DET_HISTORY'] = 'Hide Determination History';
 $LANG['DET_HISTORY'] = 'Determination History';
 $LANG['SPECIES_PROTECTED'] = 'Species identification protected';
 $LANG['DATE'] = 'Date';
+$LANG['DATE_DET'] = 'Date Determined';
 $LANG['TYPE_STATUS'] = 'Type Status';
 $LANG['OBSERVER'] = 'Observer';
 $LANG['COLLECTOR'] = 'Collector';
@@ -88,11 +89,11 @@ $LANG['CONTEXT_ID'] = 'Context ID';
 $LANG['EXCICCATI_SERIES'] = 'Exsiccati series';
 $LANG['MATERIAL_SAMPLES'] = 'Material Samples';
 $LANG['DISPLAY_ALL_MATERIAL_SAMPLES'] = 'Display all Material Sample units';
-$LANG['SPECIMEN_IMAGES'] = 'Specimen Images';
+$LANG['SPECIMEN_IMAGES'] = 'Specimen Media';
 $LANG['AUTHOR'] = 'Author';
-$LANG['OPEN_MEDIUM'] = 'Open Medium Image';
-$LANG['OPEN_LARGE'] = 'Open Large Image';
-$LANG['OPEN_SOURCE'] = 'Open Source Image';
+$LANG['OPEN_MEDIUM'] = 'Open Medium File';
+$LANG['OPEN_LARGE'] = 'Open Large File';
+$LANG['OPEN_SOURCE'] = 'Open Source File';
 $LANG['USAGE_RIGHTS'] = 'Usage Rights';
 $LANG['RIGHTS_HOLDER'] = 'Rights Holder';
 $LANG['ACCESS_RIGHTS'] = 'Access Rights';
@@ -122,7 +123,6 @@ $LANG['IDENTIFIED_BY'] = 'Identified by';
 $LANG['DUPES'] = 'Specimen Duplicates';
 $LANG['EXSICCATAE'] = 'Associated Exsiccatae';
 $LANG['SHOW_FULL_DETAILS'] = 'Show Full Details';
-$LANG['COMMENTS'] = 'Comments';
 $LANG['COMMENT_NOT_PUBLIC'] = 'Comment not public due to pending abuse report (viewable to administrators only)';
 $LANG['REPORT'] = 'Report as inappropriate or abusive';
 $LANG['MAKE_COMMENT_PUBLIC'] = 'Make comment public';
@@ -159,12 +159,10 @@ $LANG['RESTORE_RECORD'] = 'Restore Record';
 $LANG['RECORD_DELETED'] = 'Record deleted';
 $LANG['VALUE'] = 'Value';
 $LANG['LAT_LNG'] = 'Latitude/Longitude';
-
-//Used within OccurrenceIndividual class
 $LANG['INAPPROPRIATE'] = 'Inappropriate comment reported';
 $LANG['REPORTED_AS_INAPPROPRIATE'] = 'The following comment has been reported as inappropriate';
 $LANG['EMAIL_NOT_DEFINED'] = 'ERROR: Portal admin email not defined in central configuration file';
-$LANG['PRIVATE_STATUS'] = 'private status';
 $LANG['UNABLE_TO_VERIFY_TARGET'] = 'ERROR deleting voucher: unable to verify target checklist for voucher';
 $LANG['PERMISSION_ERROR'] = 'ERROR deleting voucher: permission error';
+
 ?>

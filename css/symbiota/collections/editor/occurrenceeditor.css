@@ -1,6 +1,5 @@
 body{
 	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
 }
 
 fieldset{
@@ -9,13 +8,12 @@ fieldset{
 
 #innertext{
 	padding:	10px;
-	font-size:	12px;
 	background-color: #ffffff;;
 }
 
 #titleDiv{
 	font-weight: bold;
-	font-size: 16px;
+	font-size: 2rem;
 	width: 900px;
 }
 
@@ -38,7 +36,6 @@ fieldset{
 
 #occedittabs{
 	font-family: Arial,Helvetica,sans-serif;
-	font-size: 12px;
 }
 
 #dupesDiv{
@@ -897,7 +894,7 @@ fieldset{
 #addButtonDiv{
 	width:		450px;
 	border:		1px solid black;
-	background-color:	lightyellow;
+	background-color:	var(--light-color);
 	padding:	10px;
 	margin:		20px;
 }
@@ -923,9 +920,12 @@ img.editimg {
 	width:			15px;
 }
 
+img[id^="activeimg-"] {
+	max-width: unset;
+}
+
 table { 
 	font-family: 	Arial, Helvetica, sans-serif; 
-	font-size: 		12px;
 }
 
 .divTable{ display: table; border: 1px solid #000000; border-collapse: collapse; margin-bottom: 2px }

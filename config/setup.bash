@@ -4,8 +4,10 @@
 # Global variables
 # Do not change these values unless you know what you are doing
 TEMPLATE_SUFFIX='_template'
-TEMPLATE_PATHS=('../config/' '../' '../includes/')
-WRITABLE_PATHS=('../temp' '../content' '../api/storage/framework' '../api/storage/logs')
+TEMPLATE_PATHS=('../config/' '../' '../includes/' '../content/collections/reports/')
+# Add an 'r' to the begining of the relative path (../&&&) to recursivly make all subdirectories writabe
+WRITABLE_PATHS=('../temp' 'r../content/collections' 'r../content/collicon' 'r../content/dwca' \
+'r../content/geolocate' 'r../content/imglib' 'r../content/logs' 'r../api/storage/framework' 'r../api/storage/logs')
 
 FORCEWRITE=0
 TESTMODE=0
@@ -179,9 +181,18 @@ do
       continue
     fi
 
-    if ! chmod 777 "$wDir"
+    if [[ ${wDir:0:3} == "r.." ]] ; 
     then
-      echo "Error setting permission on $wDir"
+      wDir="${wDir:1}" 
+      if ! chmod --recursive 777 "$wDir"
+      then
+        echo "Error setting permission recursively on $wDir"
+      fi
+    else
+      if ! chmod 777 "$wDir"
+      then
+        echo "Error setting permission on $wDir"
+      fi
     fi
   done
 done

@@ -1,6 +1,7 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/content/lang/collections/checklist.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/checklist.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/checklist.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/checklist.en.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceChecklistManager.php');
 
 $taxonFilter = array_key_exists('taxonfilter',$_REQUEST) ? filter_var($_REQUEST['taxonfilter'], FILTER_SANITIZE_NUMBER_INT) : '';
@@ -12,22 +13,22 @@ $searchVarEncoded = urlencode($searchVar);
 ?>
 <div>
 	<form action="download/index.php" method="post" style="float:right" onsubmit="targetPopup(this)">
-		<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;cursor: pointer" title="<?php echo $LANG['DOWNLOAD_TITLE']; ?>">
+		<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;cursor: pointer" title="<?= $LANG['DOWNLOAD_TITLE']; ?>">
 			<img src="../images/dl2.png" style="width:15px" />
 		</button>
-		<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
+		<input name="searchvar" type="hidden" value="<?=  $searchVar; ?>" />
 		<input name="dltype" type="hidden" value="checklist" />
-		<input name="taxonFilterCode" type="hidden" value="<?php echo $taxonFilter; ?>" />
+		<input name="taxonFilterCode" type="hidden" value="<?=  $taxonFilter; ?>" />
 	</form>
 	<?php
 	if($KEY_MOD_IS_ACTIVE){
 		?>
 		<form action="checklistsymbiota.php" method="post" style="float:right">
-			<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;cursor: pointer" title="<?php echo $LANG['OPEN_KEY']; ?>">
+			<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;cursor: pointer" title="<?= $LANG['OPEN_KEY']; ?>">
 				<img src="../images/key.png" style="width:1.3em" />
 			</button>
-			<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
-			<input name="taxonfilter" type="hidden" value="<?php echo $taxonFilter; ?>" />
+			<input name="searchvar" type="hidden" value="<?=  $searchVar; ?>" />
+			<input name="taxonfilter" type="hidden" value="<?=  $taxonFilter; ?>" />
 			<input name="interface" type="hidden" value="key" />
 		</form>
 		<?php
@@ -35,11 +36,11 @@ $searchVarEncoded = urlencode($searchVar);
 	if($FLORA_MOD_IS_ACTIVE){
 		?>
 		<form action="checklistsymbiota.php" method="post" style="float:right">
-			<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;cursor: pointer" title="<?php echo $LANG['OPEN_CHECKLIST_EXPLORER']; ?>">
+			<button class="ui-button ui-widget ui-corner-all" style="margin:5px;padding:5px;cursor: pointer" title="<?= $LANG['OPEN_CHECKLIST_EXPLORER']; ?>">
 				<img src="../images/list.png" style="width:1.3em" />
 			</button>
-			<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
-			<input name="taxonfilter" type="hidden" value="<?php echo $taxonFilter; ?>" />
+			<input name="searchvar" type="hidden" value="<?=  $searchVar; ?>" />
+			<input name="taxonfilter" type="hidden" value="<?=  $taxonFilter; ?>" />
 			<input name="interface" type="hidden" value="checklist" />
 		</form>
 		<?php
@@ -47,9 +48,9 @@ $searchVarEncoded = urlencode($searchVar);
 	?>
 	<div style='margin:10px;float:right;'>
 		<form name="changetaxonomy" id="changetaxonomy" action="list.php" method="post">
-			<?php echo $LANG['TAXONOMIC_FILTER']; ?>:
+			<?= $LANG['TAXONOMIC_FILTER']; ?>:
 			<select id="taxonfilter" name="taxonfilter" onchange="this.form.submit();">
-				<option value="0"><?php echo (isset($LANG['UNRESOLVED'])?$LANG['UNRESOLVED']:'Unresolved');?></option>
+				<option value="0"><?= $LANG['UNRESOLVED'];?></option>
 				<?php
 					$taxonAuthList = $checklistManager->getTaxonAuthorityList();
 					foreach($taxonAuthList as $taCode => $taValue){
@@ -58,7 +59,7 @@ $searchVarEncoded = urlencode($searchVar);
 					?>
 			</select>
 			<input name="tabindex" type="hidden" value="0" />
-			<input name="searchvar" type="hidden" value='<?php echo $searchVar; ?>' />
+			<input name="searchvar" type="hidden" value='<?=  $searchVar; ?>' />
 		</form>
 	</div>
 	<div style="clear:both;"><hr/></div>

@@ -4,7 +4,7 @@
 Language: Español (Spanish)
 ------------------
 */
-
+$LANG['RESTORE_COLLEC_FROM_LIST'] = 'Restaurar colección desde archivo de copia de seguridad';
 $LANG['RESTORE'] = 'Restaurar Respaldo';
 $LANG['PATH_EMPTY'] = 'La dirección al archivo está vacía. Por favor seleccione el archivo que va a ser restaurado.';
 $LANG['MUST_ZIP'] = 'El archivo debe ser un archivo ZIP (.zip) descargado como un archivo de respaldo Symbiota.';
@@ -15,7 +15,7 @@ $LANG['CAUTION'] = 'Precaución';
 $LANG['MATCH_REPLACE'] = 'Registros que coincidan serán reemplazados con los registros que sean cargados';
 $LANG['SEL_BACKUP'] = 'Seleccionar Archivo de Respaldo para Restaurar';
 $LANG['RESTORE_DETS'] = 'Restaurar Historia de Determinación';
-$LANG['RESTORE_IMGS'] = 'Restaurar Imágenes';
+$LANG['RESTORE_MEDIA_LINKS'] = 'Restaurar Enlaces de Medios/Imágenes';
 $LANG['ANALYZE'] = 'Analizar Archivo';
 $LANG['MANUAL'] = 'Opción de Carga Manual de Archivos';
 $LANG['WARNINGS'] = 'Existe advertencia';

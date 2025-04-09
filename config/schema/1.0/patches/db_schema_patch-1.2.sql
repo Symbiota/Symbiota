@@ -155,7 +155,8 @@ CREATE TABLE `geographicthesaurus` (
   INDEX `IX_geothes_termname` (`geoterm` ASC),
   INDEX `IX_geothes_abbreviation` (`abbreviation` ASC),
   INDEX `IX_geothes_iso2` (`iso2` ASC),
-  INDEX `IX_geothes_iso3` (`iso3` ASC));
+  INDEX `IX_geothes_iso3` (`iso3` ASC)
+) ENGINE=InnoDB;
 
 ALTER TABLE `geographicthesaurus` 
   ADD INDEX `FK_geothes_acceptedID_idx` (`acceptedID` ASC),
@@ -172,8 +173,8 @@ CREATE TABLE `geographicpolygon` (
   `geoJSON` LONGTEXT NULL,
   `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp,
   PRIMARY KEY (`geoThesID`),
-  SPATIAL INDEX `IX_geopoly_polygon` (`footprintPolygon` ASC))
-  ENGINE = MyISAM;
+  SPATIAL INDEX `IX_geopoly_polygon` (`footprintPolygon` ASC)
+) ENGINE = MyISAM;
 
 ALTER TABLE `lkupstateprovince` 
   CHANGE COLUMN `abbrev` `abbrev` VARCHAR(3) NULL DEFAULT NULL ;
@@ -222,7 +223,7 @@ CREATE TABLE `kmcharheadinglang` (
   PRIMARY KEY (`hid`, `langid`),
   CONSTRAINT `FK_kmcharheadinglang_hid`  FOREIGN KEY (`hid`)  REFERENCES `kmcharheading` (`hid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_kmcharheadinglang_langid`  FOREIGN KEY (`langid`)  REFERENCES `adminlanguages` (`langid`)  ON DELETE CASCADE  ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
 ALTER TABLE `kmcs` 
   ADD COLUMN `referenceUrl` VARCHAR(250) NULL AFTER `IllustrationUrl`;
@@ -257,7 +258,7 @@ CREATE TABLE `ctcontrolvocab` (
   KEY `FK_ctControlVocab_modUid_idx` (`modifiedUid`),
   CONSTRAINT `FK_ctControlVocab_createUid` FOREIGN KEY (`createdUid`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `FK_ctControlVocab_modUid` FOREIGN KEY (`modifiedUid`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE `ctcontrolvocabterm` (
   `cvTermID` INT NOT NULL AUTO_INCREMENT,
@@ -286,7 +287,7 @@ CREATE TABLE `ctcontrolvocabterm` (
   CONSTRAINT `FK_ctControlVocabTerm_createUid`  FOREIGN KEY (`createdUid`)  REFERENCES `users` (`uid`)  ON DELETE SET NULL  ON UPDATE CASCADE,
   CONSTRAINT `FK_ctControlVocabTerm_modUid`  FOREIGN KEY (`modifiedUid`)  REFERENCES `users` (`uid`)  ON DELETE SET NULL  ON UPDATE CASCADE,
   CONSTRAINT `FK_ctControlVocabTerm_cvTermID`  FOREIGN KEY (`parentCvTermID`)  REFERENCES `ctcontrolvocabterm` (`cvTermID`)  ON DELETE SET NULL  ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
 INSERT INTO `ctcontrolvocab` VALUES (1,'Occurrence Relationship Terms',NULL,NULL,'omoccurassociations','relationship',NULL,NULL,NULL,1,NULL,NULL,null,NULL,NULL,'2020-12-02 21:35:38'),(2,'Occurrence Relationship subTypes',NULL,NULL,'omoccurassociations','subType',NULL,NULL,NULL,0,NULL,NULL,null,NULL,NULL,'2020-12-02 22:56:13');
 
@@ -383,7 +384,9 @@ WHERE v.langid IS NULL;
 
 ALTER TABLE `taxavernaculars` 
   CHANGE COLUMN `Language` `Language` VARCHAR(15) NULL ,
-  DROP INDEX `unique-key` ,
+  DROP INDEX `unique-key`;
+
+ALTER TABLE `taxavernaculars` 
   ADD UNIQUE INDEX `unique-key` (`VernacularName` ASC, `TID` ASC, `langid` ASC);
 
 ALTER TABLE `taxaresourcelinks` 
@@ -436,7 +439,7 @@ CREATE TABLE `omoccurpaleo` (
   INDEX `FK_paleo_occid_idx` (`occid` ASC),
   UNIQUE INDEX `UNIQUE_occid` (`occid` ASC),
   CONSTRAINT `FK_paleo_occid`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE
-) COMMENT = 'Occurrence Paleo tables';
+) ENGINE=InnoDB COMMENT = 'Occurrence Paleo tables';
 
 
 #ALTER TABLE `omoccurpaleo` 
@@ -476,7 +479,7 @@ CREATE TABLE `omoccurpaleogts` (
   `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp,
   UNIQUE INDEX  `UNIQUE_gtsterm` (`gtsid` ASC),
   PRIMARY KEY (`gtsid`)
-);
+) ENGINE=InnoDB;
 
 ALTER TABLE `omoccurpaleogts` 
   ADD INDEX `FK_gtsparent_idx` (`parentgtsid` ASC);
@@ -556,7 +559,7 @@ CREATE TABLE `omoccurresource` (
   CONSTRAINT `FK_omoccurresource_occid`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_omoccurresource_modUid`  FOREIGN KEY (`modifiedUid`)  REFERENCES `users` (`uid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_omoccurresource_createdUid`  FOREIGN KEY (`createdUid`)  REFERENCES `users` (`uid`)  ON DELETE CASCADE  ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
 ALTER TABLE `omoccurdeterminations` 
   DROP FOREIGN KEY `FK_omoccurdets_tid`;
@@ -634,7 +637,9 @@ ALTER TABLE `uploadtaxa`
   CHANGE COLUMN `UnitInd3` `UnitInd3` VARCHAR(45) NULL DEFAULT NULL ;
 
 ALTER TABLE `uploadtaxa` 
-  DROP INDEX `UNIQUE_sciname` ,
+  DROP INDEX `UNIQUE_sciname`;
+
+ALTER TABLE `uploadtaxa` 
   ADD UNIQUE INDEX `UNIQUE_sciname` (`SciName` ASC, `RankId` ASC, `Author` ASC, `AcceptedStr` ASC);
 
 
@@ -727,7 +732,8 @@ CREATE TABLE `referencedatasetlink` (
   INDEX `FK_refdataset_uid_idx` (`createdUid` ASC),
   CONSTRAINT `FK_refdataset_refid`  FOREIGN KEY (`refid`)  REFERENCES `referenceobject` (`refid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_refdataset_datasetid`  FOREIGN KEY (`datasetid`)  REFERENCES `omoccurdatasets` (`datasetid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
-  CONSTRAINT `FK_refdataset_uid`  FOREIGN KEY (`createdUid`)  REFERENCES `users` (`uid`)  ON DELETE SET NULL  ON UPDATE CASCADE);
+  CONSTRAINT `FK_refdataset_uid`  FOREIGN KEY (`createdUid`)  REFERENCES `users` (`uid`)  ON DELETE SET NULL  ON UPDATE CASCADE
+) ENGINE=InnoDB;
 
 
 CREATE TABLE `igsnverification` (
@@ -737,7 +743,8 @@ CREATE TABLE `igsnverification` (
   `initialtimestamp` TIMESTAMP NOT NULL DEFAULT current_timestamp,
   INDEX `FK_igsn_occid_idx` (`occid` ASC),
   INDEX `INDEX_igsn` (`igsn` ASC),
-  CONSTRAINT `FK_igsn_occid`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE);
+  CONSTRAINT `FK_igsn_occid`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE
+) ENGINE=InnoDB;
 
 ALTER TABLE `igsnverification` 
   ADD COLUMN `catalogNumber` VARCHAR(45) NULL AFTER `occid`;
@@ -754,7 +761,8 @@ CREATE TABLE `omoccurloanuser` (
   INDEX `FK_occurloan_modifiedByUid_idx` (`modifiedByUid` ASC),
   CONSTRAINT `FK_occurloan_loanid`  FOREIGN KEY (`loanid`)  REFERENCES `omoccurloans` (`loanid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_occurloan_uid`  FOREIGN KEY (`uid`)  REFERENCES `users` (`uid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
-  CONSTRAINT `FK_occurloan_modifiedByUid`  FOREIGN KEY (`modifiedByUid`)  REFERENCES `users` (`uid`)  ON DELETE SET NULL  ON UPDATE CASCADE);
+  CONSTRAINT `FK_occurloan_modifiedByUid`  FOREIGN KEY (`modifiedByUid`)  REFERENCES `users` (`uid`)  ON DELETE SET NULL  ON UPDATE CASCADE
+) ENGINE=InnoDB;
 
 
 CREATE TABLE `specprocstatus` (
@@ -769,7 +777,8 @@ CREATE TABLE `specprocstatus` (
   INDEX `specprocstatus_occid_idx` (`occid` ASC),
   INDEX `specprocstatus_uid_idx` (`processorUid` ASC),
   CONSTRAINT `specprocstatus_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
-  CONSTRAINT `specprocstatus_uid` FOREIGN KEY (`processorUid`) REFERENCES `users` (`uid`)  ON DELETE SET NULL  ON UPDATE CASCADE);
+  CONSTRAINT `specprocstatus_uid` FOREIGN KEY (`processorUid`) REFERENCES `users` (`uid`)  ON DELETE SET NULL  ON UPDATE CASCADE
+) ENGINE=InnoDB;
 
 ALTER TABLE `omoccurrences` 
   CHANGE COLUMN `eventID` `eventID` VARCHAR(150) NULL DEFAULT NULL,

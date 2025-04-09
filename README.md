@@ -42,3 +42,7 @@ Please read the [INSTALL.md](docs/INSTALL.md) file for installation instructions
 ## UPDATES
 
 Please read the [UPDATE.md](docs/UPDATE.md) file for instructions on how to update Symbiota.
+
+## CONTRIBUTING
+
+Please visit the [CONTRIBUTING.md](docs/CONTRIBUTING.md) page for guidance on contributing to the main Symbiota codebase.

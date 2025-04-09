@@ -4,10 +4,8 @@ include_once($SERVER_ROOT.'/classes/ChecklistVoucherReport.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/vaconflicts.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/checklists/vaconflicts.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT.'/content/lang/checklists/vaconflicts.en.php');
 
-$action = array_key_exists("submitaction",$_REQUEST)?$_REQUEST["submitaction"]:"";
-$clid = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:0;
-$pid = array_key_exists("pid",$_REQUEST)?$_REQUEST["pid"]:"";
-$startPos = (array_key_exists('start',$_REQUEST)?(int)$_REQUEST['start']:0);
+$clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$pid = array_key_exists('pid', $_REQUEST) ? filter_var($_REQUEST['pid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 
 $vManager = new ChecklistVoucherReport();
 $vManager->setClid($clid);
@@ -70,7 +68,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 							<input name="occid[]" type="checkbox" value="<?php echo $vArr['occid']; ?>" />
 						</td>
 						<td>
-							<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo htmlspecialchars($vArr['tid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "&clid=" . htmlspecialchars($vArr['clid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>','editorwindow');">
+							<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?= $vArr['tid'] . "&clid=" . $vArr['clid'] ?>','editorwindow');">
 								<?php echo $vArr['listid']; ?>
 							</a>
 							<?php
@@ -78,7 +76,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 							?>
 						</td>
 						<td>
-							<a href="#" onclick="return openPopup('../collections/individual/index.php?occid=<?php echo htmlspecialchars($vArr['occid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>','occwindow');">
+							<a href="#" onclick="return openPopup('../collections/individual/index.php?occid=<?= $vArr['occid'] ?>','occwindow');">
 								<?php echo $vArr['recordnumber']; ?>
 							</a>
 						</td>

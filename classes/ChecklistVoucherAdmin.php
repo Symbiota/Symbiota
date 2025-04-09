@@ -8,7 +8,7 @@ class ChecklistVoucherAdmin extends Manager {
 	protected $clName;
 	protected $clMetadata;
 	private $childClidArr = array();
-	private $footprintWkt;
+	private $footprintGeoJson;
 	private $queryVariablesArr = array();
 
 	function __construct($con=null) {
@@ -45,7 +45,7 @@ class ChecklistVoucherAdmin extends Manager {
 	private function setMetaData(){
 		if($this->clid){
 			$sql = 'SELECT clid, name, locality, publication, abstract, authors, parentclid, notes, latcentroid, longcentroid, pointradiusmeters, '.
-				'footprintwkt, access, defaultSettings, dynamicsql, datelastmodified, dynamicProperties, uid, type, initialtimestamp '.
+				'footprintGeoJson, access, defaultSettings, dynamicsql, datelastmodified, dynamicProperties, uid, type, initialtimestamp '.
 				'FROM fmchecklists WHERE (clid = '.$this->clid.')';
 		 	$rs = $this->conn->query($sql);
 			if($rs){
@@ -62,7 +62,7 @@ class ChecklistVoucherAdmin extends Manager {
 					$this->clMetadata["latcentroid"] = $row->latcentroid;
 					$this->clMetadata["longcentroid"] = $row->longcentroid;
 					$this->clMetadata["pointradiusmeters"] = $row->pointradiusmeters;
-					$this->clMetadata['footprintwkt'] = $row->footprintwkt;
+					$this->clMetadata['footprintGeoJson'] = $row->footprintGeoJson;
 					$this->clMetadata["access"] = $row->access;
 					$this->clMetadata["defaultSettings"] = $row->defaultSettings;
 					$this->clMetadata["dynamicsql"] = $row->dynamicsql;
@@ -86,30 +86,6 @@ class ChecklistVoucherAdmin extends Manager {
 		}
 	}
 
-	public function getPolygonCoordinates(){
-		$retArr = array();
-		if($this->clid){
-			if($this->clMetadata['dynamicsql']){
-				$sql = 'SELECT o.decimallatitude, o.decimallongitude FROM omoccurrences o ';
-				if($this->clMetadata['footprintwkt'] && substr($this->clMetadata['footprintwkt'],0,7) == 'POLYGON'){
-					$sql .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid WHERE (ST_Within(p.point,GeomFromText("'.$this->clMetadata['footprintwkt'].'"))) ';
-				}
-				else{
-					$this->setCollectionVariables();
-					$sql .= 'WHERE ('.$this->getSqlFrag().') ';
-				}
-				$sql .= 'LIMIT 50';
-				//echo $sql; exit;
-				$rs = $this->conn->query($sql);
-				while($r = $rs->fetch_object()){
-					$retArr[] = $r->decimallatitude.','.$r->decimallongitude;
-				}
-				$rs->free();
-			}
-		}
-		return $retArr;
-	}
-
 	public function getAssociatedExternalService(){
 		$resp = false;
  		if($this->clMetadata['dynamicProperties']){
@@ -124,11 +100,11 @@ class ChecklistVoucherAdmin extends Manager {
 	//Dynamic query variable functions
 	public function setCollectionVariables(){
 		if($this->clid){
-			$sql = 'SELECT name, dynamicsql, footprintwkt FROM fmchecklists WHERE (clid = '.$this->clid.')';
+			$sql = 'SELECT name, dynamicsql, footprintGeoJson FROM fmchecklists WHERE (clid = '.$this->clid.')';
 			$result = $this->conn->query($sql);
 			if($row = $result->fetch_object()){
 				$this->clName = $this->cleanOutStr($row->name);
-				$this->footprintWkt = $row->footprintwkt;
+				$this->footprintGeoJson = $row->footprintGeoJson;
 				$sqlFrag = $row->dynamicsql ?? '';
 				$varArr = json_decode($sqlFrag, true);
 				if(json_last_error() != JSON_ERROR_NONE){
@@ -279,7 +255,8 @@ class ChecklistVoucherAdmin extends Manager {
 			$tStr = $this->cleanInStr($this->queryVariablesArr['taxon']);
 			$tidPar = $this->getTid($tStr);
 			if($tidPar){
-				$sqlFrag .= 'AND (o.tidinterpreted IN (SELECT ts.tid FROM taxaenumtree e INNER JOIN taxstatus ts ON e.tid = ts.tidaccepted WHERE ts.taxauthid = 1 AND e.taxauthid = 1 AND e.parenttid = '.$tidPar.')) ';
+				$sqlFrag .= 'AND (o.tidinterpreted IN (SELECT ts.tid FROM taxaenumtree e INNER JOIN taxstatus ts ON e.tid = ts.tidaccepted
+					WHERE ts.taxauthid = 1 AND e.taxauthid = 1 AND (e.parenttid = '.$tidPar.' OR e.tid = '.$tidPar.'))) ';
 			}
 		}
 		//Locality and Latitude and longitude
@@ -289,13 +266,7 @@ class ChecklistVoucherAdmin extends Manager {
 			$locArr = explode(',', $localityStr);
 			foreach($locArr as $str){
 				$str = $this->cleanInStr($str);
-				if(strlen($str) > 4){
-					$locStr .= 'OR (MATCH(f.locality) AGAINST(\'"'.$str.'"\' IN BOOLEAN MODE)) ';
-				}
-				else{
-					$locStr .= 'OR (o.locality LIKE "%'.$str.'%") ';
-				}
-				//$locStr .= 'OR (o.locality LIKE "%'.$this->cleanInStr($str).'%") ';
+				$locStr .= 'OR (MATCH(o.locality) AGAINST(\'"'.$str.'"\' IN BOOLEAN MODE)) ';
 			}
 		}
 		$llStr = '';
@@ -305,9 +276,9 @@ class ChecklistVoucherAdmin extends Manager {
 					'AND (o.decimallongitude BETWEEN '.$this->queryVariablesArr['lngwest'].' AND '.$this->queryVariablesArr['lngeast'].') ';
 			}
 		}
-		if(isset($this->queryVariablesArr['includewkt']) && $this->queryVariablesArr['includewkt'] && $this->footprintWkt){
-			//search based on polygon
-			$sqlFrag .= 'AND (ST_Within(p.point,GeomFromText("'.$this->footprintWkt.'"))) ';
+		if(isset($this->queryVariablesArr['includewkt']) && $this->queryVariablesArr['includewkt'] && $this->footprintGeoJson){
+			//Searh based on polygon
+			$sqlFrag .= "AND (ST_Within(p.lngLatPoint,ST_GeomFromGeoJson('" . $this->footprintGeoJson . "'))) ";
 			$llStr = false;
 		}
 		if(isset($this->queryVariablesArr['latlngor']) && $this->queryVariablesArr['latlngor'] && $locStr && $llStr){
@@ -336,12 +307,12 @@ class ChecklistVoucherAdmin extends Manager {
 			$collArr = explode(';',$collStr);
 			$tempArr = array();
 			foreach($collArr as $str){
-				if(strlen($str) < 4 || in_array($str,array('best','little'))){
+				if(strlen($str) < 4){
 					//Need to avoid FULLTEXT stopwords interfering with return
 					$tempArr[] = '(o.recordedby LIKE "%'.$this->cleanInStr($str).'%")';
 				}
 				else{
-					$tempArr[] = '(MATCH(f.recordedby) AGAINST("'.$this->cleanInStr($str).'"))';
+					$tempArr[] = '(MATCH(o.recordedby) AGAINST("'.$this->cleanInStr($str).'" IN BOOLEAN MODE))';
 				}
 			}
 			$sqlFrag .= 'AND ('.implode(' OR ', $tempArr).') ';
@@ -771,8 +742,8 @@ class ChecklistVoucherAdmin extends Manager {
 		return $this->clMetadata;
 	}
 
-	public function getClFootprintWkt(){
-		return $this->footprintWkt;
+	public function getClFootprint() {
+		return $this->footprintGeoJson;
 	}
 
 	//Misc functions
@@ -792,13 +763,13 @@ class ChecklistVoucherAdmin extends Manager {
 		$retStr = $inStr;
 		if($inStr && $charSetSource){
 			if($charSetOut == 'UTF-8'){
-				$retStr = mb_convert_encoding($inStr, 'UTF-8', mb_detect_encoding($inStr));
+				$retStr = mb_convert_encoding($inStr, 'UTF-8', mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 			}
 			elseif($charSetOut == 'ISO-8859-1'){
-				$retStr = mb_convert_encoding($inStr, 'ISO-8859-1', mb_detect_encoding($inStr));
+				$retStr = mb_convert_encoding($inStr, 'ISO-8859-1', mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 			}
 			else{
-				$retStr = mb_convert_encoding($inStr, $charSetOut, mb_detect_encoding($inStr));
+				$retStr = mb_convert_encoding($inStr, $charSetOut, mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 			}
 		}
 		return $retStr;

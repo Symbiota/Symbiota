@@ -5,7 +5,8 @@ include_once('OmMaterialSample.php');
 include_once('OmAssociations.php');
 include_once('OmDeterminations.php');
 include_once('OccurrenceMaintenance.php');
-include_once('UuidFactory.php');
+include_once('Media.php');
+include_once('utilities/UuidFactory.php');
 
 class OccurrenceImport extends UtilitiesFileImport{
 
@@ -57,7 +58,6 @@ class OccurrenceImport extends UtilitiesFileImport{
 						$cnt++;
 					}
 					$occurMain = new OccurrenceMaintenance($this->conn);
-					$this->logOrEcho($LANG['VALUES_SET']);
 					$this->logOrEcho($LANG['UPDATING_STATS'].'...');
 					if(!$occurMain->updateCollectionStatsBasic($this->collid)){
 						$errorArr = $occurMain->getErrorArr();
@@ -77,41 +77,80 @@ class OccurrenceImport extends UtilitiesFileImport{
 		$status = false;
 		if($this->importType == self::IMPORT_IMAGE_MAP){
 			$importManager = new ImageShared($this->conn);
+
+			/* originalurl is a required field */
 			if(!isset($this->fieldMap['originalurl']) || !$recordArr[$this->fieldMap['originalurl']]){
-				$this->errorMessage = 'large url (originalUrl) is null (required)';
+				//$this->errorMessage = 'large url (originalUrl) is null (required)';
+				$this->logOrEcho('ERROR `originalUrl` field mapping is required', 1);
 				return false;
 			}
+
+			/* Media uploads must only be of one type */
+			if(!isset($postArr['mediaUploadType']) || !$postArr['mediaUploadType']) {
+				$this->logOrEcho('ERROR `mediaUploadType` is required', 1);
+				return false;
+			}
+
+			$fields = [
+				 //'tid',
+				'thumbnailurl',
+				'sourceurl',
+				'archiveurl',
+				'referenceurl',
+				'creator',
+				'creatoruid',
+				'caption',
+				'owner',
+				'anatomy',
+				'notes',
+				'format',
+				'sourceidentifier',
+				'hashfunction',
+				'hashvalue',
+				'mediamd5',
+				'copyright',
+				'accessrights',
+				'rights',
+				'sortOccurrence'
+			];
+
 			foreach($occidArr as $occid){
-				$importManager->setOccid($occid);
-				//$importManager->setTid($tid);
-				$importManager->setImgLgUrl($recordArr[$this->fieldMap['originalurl']]);
-				if(isset($this->fieldMap['url']) && $recordArr[$this->fieldMap['url']]) $importManager->setImgWebUrl($recordArr[$this->fieldMap['url']]);
-				if(isset($this->fieldMap['thumbnailurl']) && $recordArr[$this->fieldMap['thumbnailurl']]) $importManager->setImgTnUrl($recordArr[$this->fieldMap['thumbnailurl']]);
-				if(isset($this->fieldMap['archiveurl']) && $recordArr[$this->fieldMap['archiveurl']]) $importManager->setArchiveUrl($recordArr[$this->fieldMap['archiveurl']]);
-				if(isset($this->fieldMap['referenceurl']) && $recordArr[$this->fieldMap['referenceurl']]) $importManager->setReferenceUrl($recordArr[$this->fieldMap['referenceurl']]);
-				if(isset($this->fieldMap['photographer']) && $recordArr[$this->fieldMap['photographer']]) $importManager->setPhotographer($recordArr[$this->fieldMap['photographer']]);
-				if(isset($this->fieldMap['photographeruid']) && $recordArr[$this->fieldMap['photographeruid']]) $importManager->setPhotographerUid($recordArr[$this->fieldMap['photographeruid']]);
-				if(isset($this->fieldMap['caption']) && $recordArr[$this->fieldMap['caption']]) $importManager->setCaption($recordArr[$this->fieldMap['caption']]);
-				if(isset($this->fieldMap['owner']) && $recordArr[$this->fieldMap['owner']]) $importManager->setOwner($recordArr[$this->fieldMap['owner']]);
-				if(isset($this->fieldMap['anatomy']) && $recordArr[$this->fieldMap['anatomy']]) $importManager->setAnatomy($recordArr[$this->fieldMap['anatomy']]);
-				if(isset($this->fieldMap['notes']) && $recordArr[$this->fieldMap['notes']]) $importManager->setNotes($recordArr[$this->fieldMap['notes']]);
-				if(isset($this->fieldMap['format']) && $recordArr[$this->fieldMap['format']]) $importManager->setFormat($recordArr[$this->fieldMap['format']]);
-				if(isset($this->fieldMap['sourceidentifier']) && $recordArr[$this->fieldMap['sourceidentifier']]) $importManager->setSourceIdentifier($recordArr[$this->fieldMap['sourceidentifier']]);
-				if(isset($this->fieldMap['hashfunction']) && $recordArr[$this->fieldMap['hashfunction']]) $importManager->setHashFunction($recordArr[$this->fieldMap['hashfunction']]);
-				if(isset($this->fieldMap['hashvalue']) && $recordArr[$this->fieldMap['hashvalue']]) $importManager->setHashValue($recordArr[$this->fieldMap['hashvalue']]);
-				if(isset($this->fieldMap['mediamd5']) && $recordArr[$this->fieldMap['mediamd5']]) $importManager->setMediaMD5($recordArr[$this->fieldMap['mediamd5']]);
-				if(isset($this->fieldMap['copyright']) && $recordArr[$this->fieldMap['copyright']]) $importManager->setCopyright($recordArr[$this->fieldMap['copyright']]);
-				if(isset($this->fieldMap['accessrights']) && $recordArr[$this->fieldMap['accessrights']]) $importManager->setAccessRights($recordArr[$this->fieldMap['accessrights']]);
-				if(isset($this->fieldMap['rights']) && $recordArr[$this->fieldMap['rights']]) $importManager->setRights($recordArr[$this->fieldMap['rights']]);
-				if(isset($this->fieldMap['sortoccurrence']) && $recordArr[$this->fieldMap['sortoccurrence']]) $importManager->setSortOccurrence($recordArr[$this->fieldMap['sortoccurrence']]);
-				if($importManager->insertImage()){
-					$this->logOrEcho($LANG['IMAGE_LOADED'].': <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$occid.'</a>', 1);
-					$status = true;
+				$data = [
+					"occid" => $occid,
+					"originalUrl" => $recordArr[$this->fieldMap['originalurl']],
+					"mediaUploadType" => $postArr['mediaUploadType']
+				];
+				foreach($fields as $key) {
+					$record_idx = $this->fieldMap[$key] ?? false;
+					if($record_idx && $recordArr[$record_idx]) {
+						$data[$key] = $recordArr[$record_idx];
+					}
 				}
-				else{
-					$this->logOrEcho('ERROR loading image: '.$importManager->getErrStr(), 1);
+
+				if(!isset($data['originalUrl']) && !$data['originalUrl']) {
+					$this->logOrEcho('SKIPPING Record ' . $occid . ' missing `originalUrl` value');
 				}
-				$importManager->reset();
+				
+				// Will Not store files on the server unless StorageStrategy is provided which is desired for this use case
+				try {
+					Media::add($data);
+					if($errors = Media::getErrors()) {
+						$this->logOrEcho('ERROR: ' . array_pop($errors));
+					} else {
+						$this->logOrEcho($LANG['IMAGE_LOADED'].': <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$occid.'</a>', 1);
+						$status = true;
+					}
+				} catch(MediaException $th) {
+					$message = $th->getMessage();
+
+					$this->logOrEcho('ERROR: ' . $message);
+					$this->logOrEcho("Ensure mapping links point directly at the media file", 1, 'div');
+					if(strpos($message, ' text ')) {
+						$this->logOrEcho("Linking webpages is supported via the sourceUrl field", 1, 'div');
+					}
+				} catch(Throwable $th) {
+					$this->logOrEcho('ERROR: ' . $th->getMessage());
+				}
 			}
 		}
 		elseif($this->importType == self::IMPORT_DETERMINATIONS){
@@ -248,7 +287,7 @@ class OccurrenceImport extends UtilitiesFileImport{
 		$sqlConditionArr = array();
 		if(isset($identifierArr['occurrenceID'])){
 			$occurrenceID = $this->cleanInStr($identifierArr['occurrenceID']);
-			$sqlConditionArr[] = '(o.occurrenceID = "'.$occurrenceID.'" OR o.recordID = "'.$occurrenceID.'")';
+			$sqlConditionArr[] = '(o.occurrenceID = "'.$occurrenceID.'" OR o.recordID = "'.$occurrenceID.'" )';
 		}
 		if(isset($identifierArr['catalogNumber'])){
 			$sqlConditionArr[] = '(o.catalogNumber = "'.$this->cleanInStr($identifierArr['catalogNumber']).'")';
@@ -260,6 +299,7 @@ class OccurrenceImport extends UtilitiesFileImport{
 		}
 		if($sqlConditionArr){
 			$sql .= 'WHERE (o.collid = '.$this->collid.') AND ('.implode(' OR ', $sqlConditionArr).') ';
+
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$retArr[] = $r->occid;
@@ -322,8 +362,10 @@ class OccurrenceImport extends UtilitiesFileImport{
 		$this->targetFieldMap[''] = '------------------------------------';
 		$fieldArr = array();
 		if($this->importType == self::IMPORT_IMAGE_MAP){
-			$fieldArr = array('url', 'originalUrl', 'thumbnailUrl', 'archiveUrl', 'referenceUrl', 'photographer', 'photographerUid', 'caption', 'owner', 'anatomy', 'notes',
+			$fieldArr = array('url', 'thumbnailUrl', 'sourceUrl', 'archiveUrl', 'referenceUrl', 'creator', 'creatorUid', 'caption', 'owner', 'anatomy', 'notes',
 				'format', 'sourceIdentifier', 'hashFunction', 'hashValue', 'mediaMD5', 'copyright', 'rights', 'accessRights', 'sortOccurrence');
+
+			$this->targetFieldMap['originalurl'] = 'originalUrl (required)';
 		}
 		elseif($this->importType == self::IMPORT_ASSOCIATIONS){
 			$fieldArr = array('relationshipID', 'objectID', 'basisOfRecord', 'establishedDate', 'notes', 'accordingTo');

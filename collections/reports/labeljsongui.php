@@ -1,11 +1,14 @@
 <?php
 include_once('../../config/symbini.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/reports/labeljsongui.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/reports/labeljsongui.'.$LANG_TAG.'.php');
+else include_once($SERVER_ROOT.'/content/lang/collections/reports/labeljsongui.en.php');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
-		<title>Label Content Format Visual Editor</title>
+		<title><?= $LANG['LABEL_FORMAT_EDITOR'] ?></title>
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
@@ -17,22 +20,22 @@ header("Content-Type: text/html; charset=".$CHARSET);
 	</head>
 	<body>
     <div class="top-breathing-room-rel bottom-breathing-room-rel" style="text-align: center;">
-      <h1 class="page-heading">Label Format Visual Editor</h1>
+      <h1 class="page-heading"><?= $LANG['LABEL_FORMAT_EDITOR'] ?></h1>
     </div>
     <main>
       <div>
         <div id="fields">
-          <h4>Fields Available</h4>
-          <p style="font-size:0.7em;line-height:1.4em">For field definitions please refer to the <a href="https://dwc.tdwg.org/terms/">Darwin Core Quick Reference Guide</a>.</p>
-          <label for="fields-filter">Filter fields by category:</label>
+          <h4><?= $LANG['FIELDS_AVAILABLE'] ?></h4>
+          <p style="font-size:0.7em;line-height:1.4em"><?= $LANG['FOR_FIELD_DEFINITIONS'] ?> <a href="https://dwc.tdwg.org/terms/"><?= $LANG['DWC_QUICK_REFERENCE'] ?></a>.</p>
+          <label for="fields-filter"><?= $LANG['FILTER_FIELDS_BY_CAT'] ?>:</label>
           <select name="fields-filter" id="fields-filter">
-            <option value="all">All</option>
-            <option value="specimen">Specimen</option>
+            <option value="all"><?= $LANG['ALL'] ?></option>
+            <option value="specimen"><?= $LANG['SPECIMEN'] ?></option>
             <!-- <option value="collection">Collection</option> -->
-            <option value="taxon">Taxon</option>
-            <option value="determination">Determination</option>
-            <option value="event">Event</option>
-            <option value="locality">Locality</option>
+            <option value="taxon"><?= $LANG['TAXON'] ?></option>
+            <option value="determination"><?= $LANG['DETERMINATION'] ?></option>
+            <option value="event"><?= $LANG['EVENT'] ?></option>
+            <option value="locality"><?= $LANG['LOCALITY'] ?></option>
           </select>
           <div id="fields-list" class="container"></div>
         </div>
@@ -40,47 +43,47 @@ header("Content-Type: text/html; charset=".$CHARSET);
       <div>
         <div id="build">
           <div id="build-label">
-            <h4 style="color: #212529">Label Content Area</h4>
-            <p style="font-size:0.7em;line-height:1.4em">drag, drop & reorder fields here; click to select fields or lines to apply formats (only one item formattable at a time); reorder lines clicking on arrows; remove lines/fields clicking on "x"</p>
+            <h4 style="color: #212529"><?= $LANG['LABEL_CONTENT_AREA'] ?></h4>
+            <p style="font-size:0.7em;line-height:1.4em"><?= $LANG['LABEL_CONTENT_INSTRUCTIONS'] ?></p>
             <div id="label-middle">
               <div class="field-block container" data-delimiter=" ">
                 <span class="material-icons">close</span><span class="material-icons">keyboard_arrow_up</span><span class="material-icons">keyboard_arrow_down</span>
               </div>
             </div>
-            <button class="btn top-breathing-room-rel" onClick="addLine()">Add line</button>
+            <button class="btn top-breathing-room-rel" onClick="addLine()"><?= $LANG['ADD_LINE'] ?></button>
           </div>
         </div>
         <div id="preview">
-          <h4>Label preview</h4>
-          <p style="font-size:0.7em;line-height:1.4em">content automatically displayed below</p>
+          <h4><?= $LANG['LABEL_PREVIEW'] ?></h4>
+          <p style="font-size:0.7em;line-height:1.4em"><?= $LANG['CONTENT_AUTO_DISPLAYED'] ?></p>
           <div id="preview-label"></div>
           <!-- <button class="btn" onclick="printJson()">Display JSON</button>
           <button class="btn" onclick="loadJson()">Load JSON</button> -->
           <!-- <button class="btn" id='copyBtn' onclick="copyJson()" style="display: none;">Copy JSON to clipboard</button> -->
-          <button class="btn top-breathing-room-rel" onclick="saveJson()">Save format & Close</button>
-          <button class="btn top-breathing-room-rel" onclick="cancelWindow()">Cancel & Close</button>
+          <button class="btn top-breathing-room-rel" onclick="saveJson()"><?= $LANG['SAVE_CLOSE'] ?></button>
+          <button class="btn top-breathing-room-rel" onclick="cancelWindow()"><?= $LANG['CANCEL_CLOSE'] ?></button>
           <textarea id="dummy" style="display: none; height: 300px; width: 100%;" data-format-id=""></textarea>
         </div>
       </div>
       <div>
         <div id="controls">
           <div id="field-options">
-            <h4>Field Options</h4>
+            <h4><?= $LANG['FIELD_OPTIONS'] ?></h4>
             <div>
               <div>
-                <label for="prefix">Prefix:</label>
+                <label for="prefix"><?= $LANG['PREFIX'] ?>:</label>
                 <input type="text" name="prefix" id="prefix" class="control" disabled="true" data-group="field">
               </div>
               <div>
-                <label for="suffix">Suffix:</label>
+                <label for="suffix"><?= $LANG['SUFFIX'] ?>:</label>
                 <input type="text" name="suffix" id="suffix" class="control" disabled="true" data-group="field">
               </div>
             </div>
           </div>
           <div id="field-block-options">
-            <h4>Line Options</h4>
+            <h4><?= $LANG['LINE_OPTIONS'] ?></h4>
             <div>
-              <label for="delimiter">Fields Delimiter:</label>
+              <label for="delimiter"><?= $LANG['FIELD_DELIMITER'] ?>:</label>
               <input type="text" name="delimiter" id="delimiter" class="control bottom-breathing-room-rel" disabled="true" data-group="field-block">
             </div>
           </div>

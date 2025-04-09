@@ -6,7 +6,6 @@ Translated by: Samanta Orellana
 Date Translated: 2021-08-05
 ------------------
 */
-
 $LANG['CHECKLIST_GENERATOR'] = 'Generador de Listados de Especies Dinámicos';
 $LANG['CLICK_MAP'] = 'Primero debe hacer click en el mapa para capturar las coordenadas';
 $LANG['HOME'] = 'Inicio';

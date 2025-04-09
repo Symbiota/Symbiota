@@ -66,13 +66,13 @@ our animation centered, and no-repeating */
     <script type="text/javascript">
         <?php
             $pList = array();
-            foreach($imgManager->getPhotographerList() as $uid => $pArr){
+            foreach($imgManager->getCreatorList() as $uid => $pArr){
                 $pList[] = (object)array(
                     'value' => (string)$uid,
                     'label' => $pArr['name']);
             }
 
-            echo("var photographers = ".json_encode($pList).";");
+            echo("var creators = ".json_encode($pList).";");
             echo("var collections = ".$imageExplorer->getCollections().";");
             echo("var countries = [");
 
@@ -119,9 +119,9 @@ our animation centered, and no-repeating */
                         name: 'taxa',
                         source: taxaSuggest
                     },
-                    { name: 'photographer',
+                    { name: 'creator',
                         source: function (searchTerm, callback) {
-                            callback(photographers);
+                            callback(creators);
                         }
                     },
                     { name: 'collection',

@@ -5,6 +5,7 @@ Language: English
 ------------------
 */
 
+
 $LANG['PROBLEMS'] = 'Problem Taxa';
 $LANG['POSS_MISSING'] = 'Possible Missing Taxa';
 $LANG['REFRESH'] = 'Refresh List';
@@ -32,5 +33,6 @@ $LANG['LINK_VOUCHER'] = 'Link Voucher';
 $LANG['NOT_IN_CHECKLIST'] = 'Listed below are taxon names not found in the checklist
                             but are represented by one or more specimens that have a locality matching the above search term.';
 $LANG['LINK_VOUCHERS'] = 'Link Voucher Specimens';
+$LANG['NOVOUCHERS'] = 'No vouchers found';
 
 ?>

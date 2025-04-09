@@ -81,7 +81,7 @@ if($isEditor){
 										foreach($occArr as $occid => $oArr){
 											echo '<tr>';
 											echo '<td><input name="occids[]" type="checkbox" value="'.$occid.'-'.$clTaxaID.'" /></td>';
-											echo '<td><a href="../taxa/index.php?taxon=' . $clManager->cleanOutStr($oArr['tid']) . '" target="_blank">' . $clManager->cleanOutStr($oArr['sciname']) . '</a></td>';
+											echo '<td><a href="../taxa/index.php?taxon=' . $oArr['tid'] . '" target="_blank">' . $oArr['sciname'] . '</a></td>';
 											echo '<td>';
 											echo $oArr['recordedby'].' '.$oArr['recordnumber'].'<br/>';
 											if($oArr['eventdate']) echo $oArr['eventdate'].'<br/>';

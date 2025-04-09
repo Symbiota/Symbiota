@@ -2,6 +2,7 @@
 /*
 ------------------
 Language: English
+Translated by: Google Translate (2024-10-04)
 ------------------
 */
 
@@ -17,6 +18,7 @@ $LANG['EVENT_DATE2'] = 'End Date';
 $LANG['YYYY_MM_DD'] = 'YYYY-MM-DD';
 $LANG['VERBATIM_EVENT_DATE'] = 'Verbatim Date';
 $LANG['FAMILY'] = 'Family';
+$LANG['TRADE_NAME'] = 'Trade Name';
 $LANG['SCIENTIFIC_NAME'] = 'Scientific Name';
 $LANG['SCINAME'] = 'Scientific Name';
 $LANG['SCIENTIFIC_NAME_AUTHORSHIP'] = 'Author';
@@ -39,7 +41,6 @@ $LANG['LOCATION_ID'] = 'Location ID';
 $LANG['LOCALITY'] = 'Locality';
 $LANG['LOCALITY_SECURITY'] = 'Security';
 $LANG['LOCALITY_SECURITY_REASON'] = 'Reason';
-$LANG['LOCATION_REMARKS'] = '';
 $LANG['DECIMAL_LATITUDE'] = 'Latitude';
 $LANG['DECIMAL_LONGITUDE'] = 'Longitude';
 $LANG['GEODETIC_DATUM'] = 'Datum';

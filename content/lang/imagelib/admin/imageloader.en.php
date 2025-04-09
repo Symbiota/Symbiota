@@ -14,9 +14,9 @@ $LANG['IMG_UPLOAD_EXPLAIN'] = 'This tool is designed to aid collection managers 
 					the image url. If scientific name is null, script will attempt to extract taxon name from image file name.
 					The image urls must represent the full path to the image, or consist of the file names with base path
 					defined within the ingestion form.
-					Other optional fields include: photographer, caption, locality, sourceUrl, anatomy,
+					Other optional fields include: creator, caption, locality, sourceUrl, anatomy,
 					notes, collection identifier, owner, copyright, sortSequence.
-					Internal fields can include photographerUid, occid, or tid.';
+					Internal fields can include creatorUid, occid, or tid.';
 $LANG['UPLOAD_FILE'] = 'Upload File';
 $LANG['ANALYZE_INPUT_FILE'] = 'Analyze Input File';
 $LANG['SOURCE_FIELD'] = 'Source Field';

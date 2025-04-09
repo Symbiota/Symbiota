@@ -1,6 +1,6 @@
 ﻿<?php
 include_once($SERVER_ROOT.'/classes/SalixUtilities.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceUtilities.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 /* This class extends the SpecProcNlp class and thus inherits all public and protected variables and functions
  * The general idea is to that the SpecProcNlp class will cover all shared Symbiota functions (e.g. batch processor, resolve state, resolve collector, test output, etc)
@@ -34,6 +34,7 @@ class SpecProcNlpSalix
 	private $StatScore = array(); //The wordstats score of each line
 	private $LineStart = array(); //One element for each line indicating if it starts with a start word.
 	private $Label = "";
+	private $LabelArray = array();
 
 	function __construct()
 		{
@@ -119,7 +120,7 @@ class SpecProcNlpSalix
 
 		//An attempt to convert to UTF-8, though it doesn't seem to work very well.  Hence the routines above.
 		setlocale(LC_ALL,"en_US");
-		if(mb_detect_encoding($this->Label,'UTF-8') == "UTF-8")
+		if(mb_detect_encoding($this->Label, 'UTF-8,ISO-8859-1,ISO-8859-15') == "UTF-8")
 			{
 			$this->Label = iconv("UTF-8","ISO-8859-1//TRANSLIT",$this->Label);
 			$this->Label = str_replace("í","i",$this->Label);
@@ -1114,8 +1115,7 @@ class SpecProcNlpSalix
 			$Verb = $match[0];
 			$UTM = preg_replace("(([0-9]{1,2})\s*([A-Z]\s+[0-9]{6,8})\s*([EN]\s+[0-9]{6,8})\s*([EN]))","$1$2$3$4$5",$TempString);
 			}
-		$OU = new OccurrenceUtilities;
-		$LL = $OU->parseVerbatimCoordinates($UTM,"UTM");
+		$LL = OccurrenceUtil::parseVerbatimCoordinates($UTM,"UTM");
 		if(count($LL) > 0)
 			{
 			$this->AddToResults('verbatimCoordinates',$Verb,$L);
@@ -1147,8 +1147,7 @@ class SpecProcNlpSalix
 			//Correct where the decimal was rendered a space by OCR
 			//Need to keep an eye on this
 			$VerbLatLong = preg_replace("((\d{1,3}) (\d{3,6}) ([NESW]))","$1.$2 $3",$VerbLatLong);
-			$OU = new OccurrenceUtilities;
-			$LL = $OU->parseVerbatimCoordinates($VerbLatLong);
+			$LL = OccurrenceUtil::parseVerbatimCoordinates($VerbLatLong);
 			if(count($LL) > 0)
 				{
 				$this->AddToResults('verbatimCoordinates',$VerbLatLong,$L);
@@ -1320,8 +1319,7 @@ class SpecProcNlpSalix
 		$TempString = trim(str_ireplace(array("altitude","elevation","about","ca"),"",$TempString));
 		//echo "Tempstring = $TempString<br>";
 		//$TempString = "1000 - 1200 m";
-		$OU = new OccurrenceUtilities();
-		$El = $OU->parseVerbatimElevation($TempString);
+		$El = OccurrenceUtil::parseVerbatimElevation($TempString);
 		$Found=false;
 		//$this->printr($El,"El");
 		if(isset($El['minelev']))
@@ -1908,8 +1906,7 @@ class SpecProcNlpSalix
 			{
 			$FrenchMonths = array("janvier","febrier","mars","avril","mai","juin","juillet","aout","septembre","octobre","novembre","decembre");
 			$VDate = str_replace($FrenchMonths,$RomanMonths,$VDate);//Converts french dates to English (Using the same Roman Numeral conversion array)
-			$OU = new OccurrenceUtilities;
-			$FormattedDate = $OU->formatDate($VDate);
+			$FormattedDate = OccurrenceUtil::formatDate($VDate);
 			if($FormattedDate != "")
 				{
 				$FoundYear = preg_match("((\d{4,4})\-)",$FormattedDate,$match);

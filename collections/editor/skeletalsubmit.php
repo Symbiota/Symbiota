@@ -110,9 +110,17 @@ if($collid){
 							<input name="addaction" type="radio" value="2" /> <?php echo $LANG['APPEND_VALUES']; ?>
 						</fieldset>
 					</div>
-					<?php echo $LANG['SESSION']; ?>: <span id="minutes">00</span>:<span id="seconds">00</span><br/>
-					<?php echo $LANG['COUNT']; ?>: <span id="count">0</span><br/>
-					<?php echo $LANG['RATE']; ?>: <span id="rate">0</span> <?php echo $LANG['PER_HOUR']; ?>
+					<div style="display: flex; justify-content:right; gap: 0.5rem; margin-bottom: 1rem">
+						<div>
+							<?php echo $LANG['SESSION']; ?>: <span id="minutes">00</span>:<span id="seconds">00</span><br/>
+						</div>
+						<div>
+							<?php echo $LANG['COUNT']; ?>: <span id="count">0</span><br/>
+						</div>
+						<div>
+							<?php echo $LANG['RATE']; ?>: <span id="rate">0</span> <?php echo $LANG['PER_HOUR']; ?>
+						</div>
+					</div>
 
 					<div class="flex-form" style="float:right">
 							<div>

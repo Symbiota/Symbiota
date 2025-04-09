@@ -2,11 +2,11 @@
 
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/AgentManager.php');
-include_once($SERVER_ROOT.'/classes/RdfUtility.php');
-include_once($SERVER_ROOT.'/classes/UuidFactory.php');
+include_once($SERVER_ROOT.'/classes/utilities/RdfUtil.php');
+include_once($SERVER_ROOT.'/classes/utilities/UuidFactory.php');
 
 // Find out what media types the client would like, in order.
-$accept = RdfUtility::parseHTTPAcceptHeader($_SERVER['HTTP_ACCEPT']);
+$accept = RdfUtil::parseHTTPAcceptHeader($_SERVER['HTTP_ACCEPT']);
 $force = array_key_exists("force",$_REQUEST)?$_REQUEST["force"]:"";
 $agentid = preg_replace('[^0-9]','',array_key_exists("agentid",$_REQUEST)?$_REQUEST["agentid"]:"");
 $uuid = array_key_exists("uuid",$_REQUEST)?$_REQUEST["uuid"]:"";
@@ -18,7 +18,7 @@ if (strlen($agentid) > 0 ) {
   $agent->load($agentid);
   $agentview->setModel($agent);
 } elseif (strlen($uuid)>0) {
-  if (UuidFactory::is_valid($uuid)) {
+  if (UuidFactory::isValid($uuid)) {
      $agent->loadByGUID($uuid);
      $agentview->setModel($agent);
   }

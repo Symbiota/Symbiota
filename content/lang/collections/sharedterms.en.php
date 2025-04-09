@@ -23,6 +23,7 @@ $LANG['ALL_COLLECTIONS_CAP'] = 'All Collections';
 $LANG['SELECT_DESELECT_ALL_SPECIMENS'] = 'Select/Deselect All Specimens';
 $LANG['SELECT_DESELECT_ALL_OBSERVATIONS'] = 'Select/Deselect All Observations';
 
+$LANG['DISPLAY_SORT'] = 'Display sort panel';
 $LANG['DOWNLOAD_SPECIMEN_DATA'] = 'Download Specimen Data';
 $LANG['COPY_TO_CLIPBOARD'] = 'Copy URL to Clipboard';
 
@@ -31,4 +32,5 @@ $LANG['SEARCH'] = 'Search';
 $LANG['DISPLAY_FORMAT'] = 'Results Display Format';
 $LANG['LIST'] = 'List';
 $LANG['TABLE'] = 'Table';
+$LANG['COLLECTION_LIST'] = 'Collections List';
 ?>

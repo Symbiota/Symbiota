@@ -1,6 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/classes/SpecUploadBase.php');
-include_once($SERVER_ROOT.'/classes/PortalIndex.php');
+include_once($SERVER_ROOT . '/classes/SpecUploadBase.php');
+include_once($SERVER_ROOT . '/classes/PortalIndex.php');
+include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
 
 class SpecUploadDwca extends SpecUploadBase{
 
@@ -843,7 +844,7 @@ class SpecUploadDwca extends SpecUploadBase{
 							$this->loadIdentificationRecord($recMap);
 						}
 						elseif($targetStr == 'image'){
-							$this->loadImageRecord($recMap);
+							$this->loadMediaRecord($recMap);
 						}
 						unset($recMap);
 					}
@@ -1002,7 +1003,7 @@ class SpecUploadDwca extends SpecUploadBase{
 	}
 
 	public function setPublicationGuid($guid){
-		if(UuidFactory::is_valid($guid)) $this->publicationGuid = $guid;
+		if(UuidFactory::isValid($guid)) $this->publicationGuid = $guid;
 	}
 
 	public function getPublicationGuid(){

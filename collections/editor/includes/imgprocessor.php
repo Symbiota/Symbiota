@@ -57,7 +57,7 @@ else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imgpro
 	.ocr-box button{ margin: 5px; }
 </style>
 <div id="labelProcDiv" style="width:100%;height:1050px;position:relative">
-	<fieldset id="labelProcFieldset" style="height:95%;background-color:white;">
+	<fieldset id="labelProcFieldset" style="background-color:white;">
 		<legend><b><?php echo $LANG['LABEL_PROCESSING']; ?></b></legend>
 		<div id="labelHeaderDiv" style="margin-top:-10px;height:15px;position:relative">
 			<div style="float:left;margin-top:3px;margin-right:15px"><a id="zoomInfoDiv" href="#"><?php echo $LANG['ZOOM']; ?></a></div>
@@ -70,15 +70,17 @@ else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imgpro
 				<div id="anchorImgDiv" style="float:left;margin-left:10px;display:none" title="<?php echo $LANG['ANCHOR_IMG']; ?>"><a href="#" onclick="anchorImgPanel()"><img src="../../images/anchor.png" style="width:1.3em" /></a></div>
 			</div>
 			<div style="float:left;;padding-right:10px;margin:2px 20px 0px 0px;"><?php echo $LANG['ROTATE']; ?>: <a href="#" onclick="rotateImage(-90)">&nbsp;L&nbsp;</a> &lt;&gt; <a href="#" onclick="rotateImage(90)">&nbsp;R&nbsp;</a></div>
-			<div style="float:right;padding:0px 3px;margin:0px 3px;"><input id="imgreslg" name="resradio" type="radio" onchange="changeImgRes('lg')" /><?php echo $LANG['HIGH_RES']; ?>.</div>
-			<div style="float:right;padding:0px 3px;margin:0px 3px;"><input id="imgresmed" name="resradio"  type="radio" checked onchange="changeImgRes('med')" /><?php echo $LANG['MED_RES']; ?>.</div>
+			<div style="float:right;margin:0px 3px;">
+				<div><input id="imgresmed" name="resradio"  type="radio" checked onchange="changeImgRes('med')" /><?php echo $LANG['MED_RES']; ?>.</div>
+				<div><input id="imgreslg" name="resradio" type="radio" onchange="changeImgRes('lg')" /><?php echo $LANG['HIGH_RES']; ?>.</div>
+			</div>
 		</div>
 		<div id="labelprocessingdiv" style="clear:both;">
 			<?php
 			$imgCnt = 1;
 			foreach($imgArr as $imgCnt => $iArr){
 				$iUrl = $iArr['web'];
-				$imgId = $iArr['imgid'];
+				$imgId = $iArr['mediaid'];
 				?>
 				<div id="labeldiv-<?php echo $imgCnt; ?>" style="display:<?php echo ($imgCnt==1?'block':'none'); ?>;">
 					<div>

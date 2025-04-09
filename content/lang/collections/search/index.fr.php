@@ -26,6 +26,7 @@ $LANG['CATALOG_NUMBER'] = 'Numéro de catalogue';
 $LANG['SEPARATE_MULTIPLE_W_COMMA'] = 'Séparez les multiples par des virgules.';
 $LANG['SEPARATE_MULTIPLE_W_COMMA_DASH'] = 'Séparez multiples par des virgules ou indiquez plages avec un tiret.';
 $LANG['LIMIT_TO_SPECIMENS_W_IMAGES'] = 'Limiter aux spécimens avec images';
+$LANG['LIMIT_TO_SPECIMENS_W_AUDIO'] = 'Limiter les musiques avec l\'audio.';
 $LANG['LIMIT_TO_SPECIMENS_W_GENETIC_DATA'] = 'Limiter aux spécimens possédant des données génétiques';
 $LANG['LOCALITY'] = 'Localité';
 $LANG['COUNTRY'] = 'Pays';
@@ -89,6 +90,7 @@ $LANG['TAXA'] = 'Taxons';
 $LANG['INCLUDE_OTHER_IDS'] = 'Inclure d\'autres identifiants';
 $LANG['ONLY_TYPE_SPECIMENS'] = 'Spécimens types uniquement';
 $LANG['ONLY_WITH_IMAGES'] = 'Uniquement avec des images';
+$LANG['ONLY_WITH_AUDIO'] = 'Solo avec audio';
 $LANG['ONLY_WITH_GENETIC'] = 'Uniquement avec génétique';
 $LANG['ONLY_WITH_COORDINATES'] = 'Uniquement avec coordonnées';
 $LANG['INCLUDE_CULTIVATED'] = 'Inclure les cultures';
@@ -117,5 +119,9 @@ $LANG['TRAIT_CRITERIA'] = 'Critères de Caractéristiques';
 $LANG['TRAIT'] = 'Trait';
 $LANG['EXPAND_ALL_SECTIONS'] = 'Développer toutes les sections';
 $LANG['COLLAPSE_ALL_SECTIONS'] = 'Réduire toutes les sections';
+$LANG['ASSOCIATIONS'] = 'Les associations';
+$LANG['ASSOCIATION_DESCRIPTION'] = 'Trouver toutes les occurrences de taxons qui ont l\'association suivante';
+$LANG['ASSOCIATION_DESCRIPTION_2'] = 'avec le taxon suivant';
+$LANG['ASSOCIATION_TYPE'] = 'Type d\'association';
 
 ?>

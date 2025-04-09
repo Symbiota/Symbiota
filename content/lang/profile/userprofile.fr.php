@@ -29,7 +29,6 @@ $LANG['MAKE_PUBLIC'] = 'Rendre les informations utilisateur affichables au publi
 $LANG['SUBMIT_EDITS'] = 'Soumettre Modifications';
 $LANG['SURE_DELETE'] = 'Êtes-vous sûr de vouloir supprimer Profil?';
 $LANG['DELETE_PROF'] = 'Supprimer Profil';
-$LANG['CHANGE_PWORD'] = 'Changer Mot de Passe';
 $LANG['CURRENT_PWORD'] = 'Mot de Passe Actuel';
 $LANG['PWORD_AGAIN'] = 'Mot de Passe Actuel à Nouveau';
 $LANG['CHANGE_USERNAME'] = "Changer de Nom d'Utilisateur";

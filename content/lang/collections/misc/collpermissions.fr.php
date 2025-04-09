@@ -6,7 +6,7 @@ Language: Français (French)
 */
 
 $LANG['COL_PERMISSIONS'] = 'Autorisations de Collecte';
-$LANG['PLS_SEL_USER'] = 'Veuillez sélectionner utilisateur dans liste';
+$LANG['PLS_SEL_USER'] = 'Veuillez sélectionner un utilisateur (commencez à saisir le nom de famille pour voir la liste déroulante)';
 $LANG['SEL_PERMISSIONS'] = 'Veuillez sélectionner les autorisations que vous souhaitez attribuer à cet utilisateur';
 $LANG['SEL_OBS'] = "Veuillez sélectionner un Projet de Gestion d'Observation Personnelle";
 $LANG['COL_PROFS'] = 'Profils de Collecte';
@@ -46,7 +46,7 @@ $LANG['CHECKLIST_SPONSOR_EXPLAIN'] = 'Les administrateurs de collections répert
 $LANG['SURE_DELETE'] = 'Êtes-vous sûr de vouloir supprimer ces autorisations?';
 $LANG['NONE_SPONSORED'] = "Aucun utilisateur n'a encore été parrainé";
 $LANG['NEW_SPONSOR'] = 'Nouveau Parrainage';
-$LANG['SEL_USER'] = 'Sélectionnez Utilisateur';
+$LANG['ENTER_USER_NAME'] = "Entrez Nom d'Utilisateur (Nom, Prénom)";
 $LANG['SEL_PERS_OBS'] = 'Sélectionnez Projet d\'Observation Personnelle';
 $LANG['SPONSOR_USER'] = 'Parrainer Utilisateur';
 $LANG['ID_EDITS'] = 'Éditeurs d\'Identification';

@@ -29,7 +29,6 @@ $LANG['MAKE_PUBLIC'] = 'Make user information displayable to public';
 $LANG['SUBMIT_EDITS'] = 'Submit Edits';
 $LANG['SURE_DELETE'] = 'Are you sure you want to delete profile?';
 $LANG['DELETE_PROF'] = 'Delete Profile';
-$LANG['CHANGE_PWORD'] = 'Change Password';
 $LANG['CURRENT_PWORD'] = 'Current Password';
 $LANG['PWORD_AGAIN'] = 'New Password Again';
 $LANG['CHANGE_USERNAME'] = 'Change Username';

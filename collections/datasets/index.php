@@ -66,7 +66,7 @@ elseif($action == 'addAllToDataset'){
 				}
 				if(f.adduser.value.indexOf(" [#") == -1){
 					$.ajax({
-						url: "rpc/getuserlist.php",
+						url: "../rpc/getuserlist.php",
 						dataType: "json",
 						data: {
 							term: f.adduser.value

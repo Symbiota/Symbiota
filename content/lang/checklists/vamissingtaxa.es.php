@@ -6,7 +6,6 @@ Translated by: Samanta Orellana
 Date Translated: 2021-08-05
 ------------------
 */
-
 $LANG['PROBLEMS'] = 'Taxa Problemáticos';
 $LANG['POSS_MISSING'] = 'Posibles Taxa Faltantes';
 $LANG['REFRESH'] = 'Refrescar Listado';
@@ -34,5 +33,6 @@ $LANG['LINK_VOUCHER'] = 'Enlazar Voucher';
 $LANG['NOT_IN_CHECKLIST'] = 'Listados abajo están los nombres de taxa no encontrados en el listado de especies
                             pero que están representados por uno o más especímenes que tienen una localidad que encaja con la búsqueda realizada.';
 $LANG['LINK_VOUCHERS'] = 'Enlazar Especímenes Voucher';
+$LANG['NOVOUCHERS'] = 'No se localizaron vouchers';
 
 ?>

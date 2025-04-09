@@ -1,6 +1,6 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/UuidFactory.php');
+include_once($SERVER_ROOT.'/classes/GuidManager.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/admin/guidmapper.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/admin/guidmapper.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/admin/guidmapper.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
@@ -16,7 +16,7 @@ if($IS_ADMIN || array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$
 	$isEditor = 1;
 }
 
-$uuidManager = new UuidFactory();
+$guidManager = new GuidManager();
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -84,21 +84,21 @@ include($SERVER_ROOT.'/includes/header.php');
 	if($isEditor){
 		if($action == 'populateCollectionGUIDs'){
 			echo '<ul>';
-			$uuidManager->populateGuids($collId);
+			$guidManager->populateGuids($collId);
 			echo '</ul>';
 		}
 		elseif($action == 'populateGUIDs'){
 			echo '<ul>';
-			$uuidManager->populateGuids();
+			$guidManager->populateGuids();
 			echo '</ul>';
 		}
 
-		//$collCnt = $uuidManager->getCollectionCount();
-		$occCnt = $uuidManager->getOccurrenceCount($collId);
-		$detCnt = $uuidManager->getDeterminationCount($collId);
-		$imgCnt = $uuidManager->getImageCount($collId);
+		//$collCnt = $guidManager->getCollectionCount();
+		$occCnt = $guidManager->getOccurrenceCount($collId);
+		$detCnt = $guidManager->getDeterminationCount($collId);
+		$imgCnt = $guidManager->getImageCount($collId);
 		?>
-		<?php if($collId) echo '<h3>'.$uuidManager->getCollectionName($collId).'</h3>'; ?>
+		<?php if($collId) echo '<h3>'.$guidManager->getCollectionName($collId).'</h3>'; ?>
 		<div style="font-weight:bold;"><?= $LANG['REC_WO_GUIDS']; ?></div>
 		<div style="margin:10px;">
 			<div><?php echo '<b>' . $LANG['OCCS'] . ': </b>' . $occCnt; ?></div>

@@ -4,7 +4,7 @@
 Language: English
 ------------------
 */
-
+$LANG['VOUCHER_ADMIN'] = 'Voucher Administration';
 $LANG['NAV_HOME'] = 'Home';
 $LANG['EXT_VOUCHERS_LINKED'] = 'external vouchers have been linked to checklist';
 $LANG['CHECKLIST_ADMIN'] = 'Checklist Administration';
@@ -75,7 +75,6 @@ $LANG['FULLSPECLISTVOUCHER'] = 'Full species list with linked vouchers (CSV)';
 $LANG['VOUCHERONLY'] = 'Linked occurrence vouchers only (DwC-A, CSV, Tab-delimited)';
 $LANG['FULLSPECLISTALLOCCUR'] = 'Full species list with all occurrences matching search terms (CSV)';
 $LANG['PENSOFT_XLSX_EXPORT'] = 'Pensoft Excel Export';
-$LANG['SPECMISSINGTITLE'] = 'Possible species additions based on specimen vouchers';
 $LANG['SPECMISSTAXA'] = 'Specimens of taxa missing from checklist (CSV)';
 $LANG['SPECMISSPELLED'] = 'Specimens with misspelled, illegal, and problematic scientific names (CSV)';
 $LANG['CHECKIDNOTSET'] = 'Checklist identifier not set';

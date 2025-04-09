@@ -15,6 +15,8 @@ class WordCloud{
 	private $cloudWidth;
 	private $wordColors;
 	private $supportUtf8 = true;
+	private $LANG;
+
 
 	public function __construct(){
 		$this->conn = MySQLiConnectionFactory::getCon('readonly');
@@ -40,6 +42,13 @@ class WordCloud{
 			'most,must,my,neither,no,nor,not,of,off,often,on,only,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,theres,these,they,this.'.
 			'to,too,us,wants,was,wasnt,we,were,werent,what,when,when,where,which,while,who,whom,why,will,with,wont,would,wouldve,wouldnt,yet,you,your';
 		$this->commonWordArr = explode(',', $commonWordStr);
+
+		$langTag = '';
+		if(!empty($GLOBALS['LANG_TAG'])) $langTag = $GLOBALS['LANG_TAG'];
+		if($langTag != 'en' && file_exists($GLOBALS['SERVER_ROOT'] . '/content/lang/classes/WordCloud.' . $langTag . '.php'))
+			include_once($GLOBALS['SERVER_ROOT'] . '/content/lang/classes/WordCloud.' . $langTag . '.php');
+		else include_once($GLOBALS['SERVER_ROOT'] . '/content/lang/classes/WordCloud.en.php');
+		$this->LANG = $LANG;
 	}
 
 	public function __destruct(){
@@ -48,7 +57,7 @@ class WordCloud{
 
 	public function batchBuildWordClouds($csMode = 0){
 		$processingArr = array();
-		$sql = 'SELECT DISTINCT c.collid FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid INNER JOIN specprocessorrawlabels r ON i.imgid = r.imgid ';
+		$sql = 'SELECT DISTINCT c.collid FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid INNER JOIN specprocessorrawlabels r ON m.mediaID = r.mediaID ';
 		if($csMode) $sql .= 'INNER JOIN omcrowdsourcequeue q ON o.occid = q.occid ';
 		$sql .= 'WHERE o.processingstatus = "unprocessed" AND o.locality IS NULL ';
 		$rs = $this->conn->query($sql);
@@ -67,7 +76,7 @@ class WordCloud{
 		unset($this->frequencyArr);
 		$this->frequencyArr = array();
 		$this->tagUrl .= '&collid='.$collid.'&q_customfield1=ocrFragment&q_customtype1=LIKE&q_customvalue1=';
-		$sql = 'SELECT DISTINCT r.rawstr FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid INNER JOIN specprocessorrawlabels r ON i.imgid = r.imgid ';
+		$sql = 'SELECT DISTINCT r.rawstr FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid INNER JOIN specprocessorrawlabels r ON m.mediaID = r.mediaID ';
 		if($csMode) $sql .= 'INNER JOIN omcrowdsourcequeue q ON o.occid = q.occid ';
 		$sql .= 'WHERE o.processingstatus = "unprocessed" AND o.locality IS NULL ';
 		if($collid) $sql .= 'AND o.collid = '.$collid;
@@ -186,7 +195,7 @@ class WordCloud{
 		$htmlStr = '<!DOCTYPE html><html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>'.$GLOBALS['DEFAULT_TITLE'].' - Word Cloud </title>';
+		<title>'.$GLOBALS['DEFAULT_TITLE'].' - ' . $this->LANG['WORD_CLOUD'] . ' </title>';
 		$htmlStr .= '<?php
 
 		include_once($SERVER_ROOT."/includes/head.php");
@@ -196,7 +205,7 @@ class WordCloud{
 	<body>
 	<!-- This is inner text! -->
 	<div role="main" id="innertext">
-		<h1 class="page-heading">Word Cloud</h1>';
+		<h1 class="page-heading">' . $this->LANG['WORD_CLOUD'] . '</h1>';
 		$htmlStr .= $cloudStr;
 		$htmlStr .= '		</div>
 	</body>

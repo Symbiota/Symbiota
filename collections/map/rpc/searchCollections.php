@@ -1,9 +1,10 @@
 <?php
 include_once('../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceMapManager.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceMapManager.php');
 
-header('Content-Type: application/json;charset='.$CHARSET);
+header('Content-Type: application/json;charset=' . $CHARSET);
 include_once($SERVER_ROOT . '/rpc/crossPortalHeaders.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 /*
 $distFromMe = array_key_exists('distFromMe', $_REQUEST)?$_REQUEST['distFromMe']:'';
@@ -31,65 +32,65 @@ if(!is_numeric($recLimit)) $recLimit = 15000;
 */
 
 ob_start();
-$recLimit = array_key_exists('recordlimit',$_REQUEST)?$_REQUEST['recordlimit']:15000;
-if(!is_numeric($recLimit)) $recLimit = 15000;
+$recLimit = array_key_exists('recordlimit', $_REQUEST) ? $_REQUEST['recordlimit'] : 15000;
+if (!is_numeric($recLimit)) $recLimit = 15000;
 
 $mapManager = new OccurrenceMapManager();
 $searchVar = $mapManager->getQueryTermStr();
 
 $obsIDs = $mapManager->getObservationIds();
 
-if($searchVar && $recLimit) $searchVar .= '&reclimit='.$recLimit;
+if ($searchVar && $recLimit) $searchVar .= '&reclimit=' . $recLimit;
 
 //Gets Coordinates
-$coordArr = $mapManager->getCoordinateMap(0,$recLimit);
+$coordArr = $mapManager->getCoordinateMap(0, $recLimit);
 $taxaArr = [];
 $recordArr = [];
 $collArr = [];
 $defaultColor = "#B2BEB5";
 
-$host = false;
-if(isset($SERVER_HOST)) {
-   $host = ((strpos($SERVER_HOST, '127.0.0.1') !== false || strpos($SERVER_HOST, 'localhost') !== false) ? "http://" : "https://") . $SERVER_HOST . $CLIENT_ROOT;
-}
+$host = GeneralUtil::getDomain() . $CLIENT_ROOT;
 
 foreach ($coordArr as $collName => $coll) {
 	//Collect all the collections
 	foreach ($coll as $recordId => $record) {
-		if($recordId == 'c') continue;
+		if ($recordId == 'c') continue;
 
 		//Collect all taxon
-		if(!array_key_exists($record['tid'], $taxaArr)) {
+		if (!array_key_exists($record['tid'], $taxaArr)) {
 			$taxaArr[$record['tid']] = [
-				'sn' => $record['sn'], 
-				'tid' => $record['tid'], 
+				'sn' => $record['sn'],
+				'tid' => $record['tid'],
 				'family' => $record['fam'],
 				'color' => $coll['c'],
 			];
 		}
 
 		//Collect all Collections
-		if(!array_key_exists($record['collid'], $collArr)) {
+		if (!array_key_exists($record['collid'], $collArr)) {
 			$collArr[$record['collid']] = [
 				'name' => $collName,
 				'collid' => $record['collid'],
 				'color' => $coll['c'],
 			];
-		} 
+		}
 
 		$llstrArr = explode(',', $record['llStr']);
-		if(count($llstrArr) != 2) continue;
+		if (count($llstrArr) != 2) continue;
 
 		//Collect all records
 		array_push($recordArr, [
 			'id' => $record['id'], 
 			'tid' => $record['tid'], 
+			'catalogNumber' => $record['catalogNumber'], 
+			'eventdate' => $record['eventdate'], 
+			'sciname' => $record['sn'], 
 			'collid' => $record['collid'], 
 			'family' => $record['fam'],
 			'occid' => $recordId,
 			'host' => $host,
-			'collname' => $collName, 
-			'type' => in_array($record['collid'], $obsIDs)? 'observation':'specimen', 
+			'collname' => $collName,
+			'type' => in_array($record['collid'], $obsIDs) ? 'observation' : 'specimen',
 			'lat' => floatval($llstrArr[0]),
 			'lng' => floatval($llstrArr[1]),
 		]);
@@ -98,4 +99,3 @@ foreach ($coordArr as $collName => $coll) {
 ob_get_clean();
 
 echo json_encode(['taxaArr' => $taxaArr, 'collArr' => $collArr, 'recordArr' => $recordArr, 'origin' => $host, 'query' => $searchVar]);
-?>

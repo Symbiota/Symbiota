@@ -16,6 +16,26 @@ $LANG['SHOW_ALL'] = 'mostrar todo';
 $LANG['DATASET'] = 'Conjunto de Datos';
 $LANG['TAXA'] = 'Taxa';
 $LANG['SEARCH_CRITERIA'] = 'Criterios de Búsqueda';
+
+$LANG['SORT'] = 'Ordenar';
+$LANG['SORT_BY'] = 'Ordenar por';
+$LANG['SORT_THEN_BY'] = 'Luego Ordenar Por';
+$LANG['SORT_ORDER'] = 'Orden';
+$LANG['SORT_ASCENDING'] = 'Ascendente';
+$LANG['SORT_DESCENDING'] = 'Descendente';
+
+$LANG['COLLECTION'] = 'Colección';
+$LANG['CATALOG_NUMBER'] = 'Número de Catálogo';
+$LANG['FAMILY'] = 'Familia';
+$LANG['SCINAME'] = 'Nombre Científico';
+$LANG['COLLECTOR'] = 'Colector';
+$LANG['EVENT_DATE'] = 'Fecha';
+$LANG['NUMBER'] = 'Número de Colecta';
+$LANG['COUNTRY'] = 'País';
+$LANG['STATE_PROVINCE'] = 'Estado/Provincia';
+$LANG['COUNTY'] = 'Condado';
+$LANG['ELEVATION'] = 'Elevación';
+
 $LANG['PAGINATION_FIRST'] = 'Primero';
 $LANG['LAST'] = 'último';
 $LANG['PAGINATION_PAGE'] = 'Página';
@@ -41,7 +61,9 @@ $LANG['PERHAPS_LOOKING_FOR'] = 'Tal vez estuviste buscando por:';
 $LANG['MAP_DOWNLOAD'] = 'Descargar Datos de Coordenada';
 $LANG['MAP_HEADER'] = 'Mapa';
 $LANG['MAP_DISPLAY'] = 'Mostrar coordenadas en Mapa';
-$LANG['MAP_DESCRIPTION'] = 'La función de mapas proporciona a los usuarios un mapa interactivo que puede desplazarse (arrastrando el mouse) y hacer zoom (usando la rueda del mouse). Los puntos de recopilación se muestran como marcadores de colores que, al hacer clic en ellos, muestran la información completa de esa colección. Cuando se consultan varias especies (separadas por punto y coma), marcadores de diferentes colores indican cada especie individual.';
+$LANG['MAP_DESCRIPTION'] = 'La función de mapas proporciona a los usuarios un mapa interactivo que puede desplazarse (arrastrando el mouse) y hacer zoom (usando la rueda del mouse).
+	Los puntos de recopilación se muestran como marcadores de colores que, al hacer clic en ellos, muestran la información completa de esa colección. Cuando se consultan varias especies
+	(separadas por punto y coma), marcadores de diferentes colores indican cada especie individual.';
 $LANG['KML_HEADER'] = 'KML';
 $LANG['KML_DESCRIPTION'] = 'Esto crea un archivo KML para usar en Google Earth o cualquier otra aplicación que utilice archivos KML.';
 $LANG['KML_EXTRA'] = 'Agregar Campos Adicionales';
@@ -55,16 +77,9 @@ $LANG['ID_PROTECTED'] = 'Identificación protegida';
 $LANG['IMG_ADD_VOUCHER'] = 'Agregar voucher';
 $LANG['IMG_EDIT_OCC'] = 'Editar ocurrencia';
 $LANG['IMG_OCC'] = 'Imagen asociada con el suceso';
-
-$LANG['CATALOG_NUMBER'] = 'Número de Catálogo';
-$LANG['COLLECTOR'] = 'Colector';
-$LANG['NUMBER'] = 'Número de Colecta';
-$LANG['EVENTDATE'] = 'Fecha';
-$LANG['SCIENTIFIC_NAME'] = 'Nombre Científico';
-$LANG['ELEVATION'] = 'Elevación';
 $LANG['MAP_LINK'] = 'Enlace al Mapa';
 $LANG['SEE_MAP_POINT'] = 'Ver punto del mapa';
 $LANG['RECORD_COUNT_EXCEEDS_LIMIT'] = 'El recuento de registros supera el límite';
 $LANG['NO_RECORDS'] = 'No se encontraron registros que coincidan con la consulta';
-
+$LANG['ASSOCIATIONS'] = 'Recursos Relacionados';
 ?>

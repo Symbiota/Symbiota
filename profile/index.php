@@ -1,5 +1,8 @@
 <?php
 include_once('../config/symbini.php');
+include_once($SERVER_ROOT . '/config/auth_config.php');
+require_once($SERVER_ROOT . '/vendor/autoload.php');
+use Jumbojett\OpenIDConnectClient;
 
 if($SYMB_UID){
 	if($_SESSION['refurl']){
@@ -15,7 +18,10 @@ if($SYMB_UID){
 }
 
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
-include_once($SERVER_ROOT.'/content/lang/profile/index.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/profile/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/profile/index.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/profile/index.en.php');
+
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $THIRD_PARTY_OID_AUTH_ENABLED = $THIRD_PARTY_OID_AUTH_ENABLED ?? false;
@@ -73,8 +79,17 @@ if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) $action = '';
 
 if($remMe) $pHandler->setRememberMe(true);
 if($action == 'logout'){
-	$pHandler->reset();
-	header('Location: ../index.php');
+	//check if using third party auth
+	if(array_key_exists('AUTH_PROVIDER', $_SESSION)){
+		$oidc = new OpenIDConnectClient($PROVIDER_URLS[$_SESSION['AUTH_PROVIDER']], $CLIENT_IDS[$_SESSION['AUTH_PROVIDER']], $CLIENT_SECRETS[$_SESSION['AUTH_PROVIDER']], $PROVIDER_URLS[$_SESSION['AUTH_PROVIDER']]);
+		$pHandler->reset();
+		$oidc->signOut($_SESSION['AUTH_CLIENT_ID'], $redirect);
+
+	}
+	else{
+		$pHandler->reset();
+		header('Location: ../index.php');
+	}
 }
 elseif($action == 'login'){
 	if($pHandler->authenticate($_POST['password'])){
@@ -145,7 +160,7 @@ if (array_key_exists('last_message', $_SESSION)){
 		}
 
 		function resetPassword(){
-			if(document.getElementById("login").value == ""){
+			if(document.getElementById("portal-login").value == ""){
 				<?php
 				$alertStr = 'Enter your login name in the Login field and leave the password blank';
 				if(isset($LANG['ENTER_LOGIN_NO_PWD'])) $alertStr = $LANG['ENTER_LOGIN_NO_PWD'];
@@ -200,7 +215,7 @@ include($SERVER_ROOT.'/includes/header.php');
 <div class="navpath"></div>
 <!-- inner text -->
 <div role="main" id="innertext" style="padding-left:0px;margin-left:0px;">
-	<h1 class="page-heading screen-reader-only">Login</h1>
+	<h1 class="page-heading screen-reader-only"><?php echo $LANG['LOGIN']; ?></h1>
 	<?php
 	if($statusStr){
 		$color = 'green';

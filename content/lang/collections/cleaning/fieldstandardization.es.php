@@ -6,7 +6,7 @@ Translated by: Google Translate
 Date Translated: 2024/03/17
 ------------------
 */
-$LANG['FIELD_STANDARDIZATION'] = 'Estandarización de campos';
+$LANG['FIELD_STANDARDIZATION'] = 'Estandarización de Campos';
 $LANG['HOME'] = 'Inicio';
 $LANG['COLLECTION_MANAGEMENT'] = 'Gestión de colecciones';
 $LANG['BATCH_FIELD_TOOLS'] = 'Herramientas de limpieza de campos por lotes';

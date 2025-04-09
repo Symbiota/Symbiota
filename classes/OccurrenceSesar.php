@@ -1,5 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 class OccurrenceSesar extends Manager {
 
@@ -387,7 +388,7 @@ class OccurrenceSesar extends Manager {
 		$this->addSampleElem($this->igsnDom, $sampleElem, 'current_archive', $this->collArr['collectionName']);
 		$this->addSampleElem($this->igsnDom, $sampleElem, 'current_archive_contact', $this->collArr['contact'].($this->collArr['email']?' ('.$this->collArr['email'].')':''));
 
-		$baseUrl = $this->getDomain().$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1)=='/'?'':'/');
+		$baseUrl = GeneralUtil::getDomain().$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1)=='/'?'':'/');
 		//$baseUrl = 'http://swbiodiversity.org/seinet/';
 		$url = $baseUrl.'collections/individual/index.php?occid='.$this->fieldMap['occid']['value'];
 		$externalUrlsElem = $this->igsnDom->createElement('external_urls');
@@ -464,7 +465,7 @@ class OccurrenceSesar extends Manager {
 
 	private function cleanCountryStr($countryStr){
 		if(!$countryStr) return $countryStr;
-		$countryStr = $this->mbStrtr($countryStr,'áéÉ','aeE');
+		$countryStr = mb_strtr($countryStr,'áéÉ','aeE');
 		$testStr = strtolower($countryStr);
 		$synonymArr = array('united states of america'=>'United States','usa'=>'United States','u.s.a.'=>'united states','us'=>'United States');
 		if(array_key_exists($testStr, $synonymArr)) $countryStr = $synonymArr[$testStr];
@@ -501,20 +502,6 @@ class OccurrenceSesar extends Manager {
 			}
 		}
 		return $countryStr;
-	}
-
-	function mbStrtr($str, $from, $to = null) {
-		if(function_exists('mb_strtr')) {
-			return mb_strtr($str, $from, $to);
-		}
-		else{
-			if(is_array($from)) {
-				$from = array_map('utf8_decode', $from);
-				$from = array_map('utf8_decode', array_flip ($from));
-				return utf8_encode (strtr (utf8_decode ($str), array_flip ($from)));
-			}
-			return utf8_encode (strtr (utf8_decode ($str), utf8_decode($from), utf8_decode ($to)));
-		}
 	}
 
 	//GUID verification functions

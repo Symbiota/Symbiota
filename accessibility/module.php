@@ -27,17 +27,4 @@ else include_once($SERVER_ROOT . '/content/lang/templates/accessibility.' . $LAN
 	const clientRootPath = "<?= $CLIENT_ROOT ?>";
 </script>
 <link href="<?= $CSS_BASE_PATH ?>/symbiota/accessibility-controls.css?ver=<?= $CSS_VERSION ?>" type="text/css" rel="stylesheet">
-<?php
-if($ACCESSIBILITY_ACTIVE){
-	?>
-	<link href="<?= $CSS_BASE_PATH ?>/symbiota/accessibility-compliant.css?ver=<?= $CSS_VERSION ?>" type="text/css" rel="stylesheet" data-accessibility-link="accessibility-css-link" >
-	<link href="<?= $CSS_BASE_PATH ?>/symbiota/condensed.css?ver=<?= $CSS_VERSION ?>" type="text/css" rel="stylesheet" data-accessibility-link="accessibility-css-link" disabled >
-	<?php
-} else{
-	?>
-	<link href="<?= $CSS_BASE_PATH ?>/symbiota/accessibility-compliant.css?ver=<?= $CSS_VERSION ?>" type="text/css" rel="stylesheet" data-accessibility-link="accessibility-css-link" disabled >
-	<link href="<?= $CSS_BASE_PATH ?>/symbiota/condensed.css?ver=<?= $CSS_VERSION ?>" type="text/css" rel="stylesheet" data-accessibility-link="accessibility-css-link" >
-	<?php
-}
-?>
 <script src="<?= $CLIENT_ROOT ?>/js/symb/accessibilityUtils.js?ver=1b" type="text/javascript"></script>

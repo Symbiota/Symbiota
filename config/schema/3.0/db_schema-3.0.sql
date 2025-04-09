@@ -18,7 +18,7 @@ CREATE TABLE `adminconfig` (
   INDEX `FK_adminConfig_uid_idx` (`modifiedUid` ASC),
   UNIQUE INDEX `UQ_adminconfig_name` (`attributeName` ASC),
   CONSTRAINT `FK_adminConfig_uid`  FOREIGN KEY (`modifiedUid`)  REFERENCES `users` (`uid`)  ON DELETE RESTRICT  ON UPDATE RESTRICT
-);
+) ENGINE=InnoDB;
 
     
 --
@@ -881,9 +881,9 @@ CREATE TABLE `images` (
   KEY `FK_photographeruid` (`photographerUid`),
   KEY `Index_images_datelastmod` (`initialTimestamp`),
   KEY `IX_images_recordID` (`recordID`),
-  CONSTRAINT `FK_images_occ` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`),
+  CONSTRAINT `FK_images_occ` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT `FK_photographeruid` FOREIGN KEY (`photographerUid`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `FK_taxaimagestid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`tid`)
+  CONSTRAINT `FK_taxaimagestid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`tid`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 

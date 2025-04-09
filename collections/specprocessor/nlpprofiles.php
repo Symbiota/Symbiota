@@ -1,6 +1,8 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecProcNlpProfiles.php');
+
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $action = array_key_exists('formsubmit',$_REQUEST) ? $_REQUEST['formsubmit'] : '';

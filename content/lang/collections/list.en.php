@@ -16,6 +16,26 @@ $LANG['SHOW_ALL'] = 'show all';
 $LANG['DATASET'] = 'Dataset';
 $LANG['TAXA'] = 'Taxa';
 $LANG['SEARCH_CRITERIA'] = 'Search Criteria';
+
+$LANG['SORT'] = 'Sort Results';
+$LANG['SORT_BY'] = 'Sort by';
+$LANG['SORT_THEN_BY'] = 'Then by';
+$LANG['SORT_ORDER'] = 'Order';
+$LANG['SORT_ASCENDING'] = 'Ascending';
+$LANG['SORT_DESCENDING'] = 'Descending';
+
+$LANG['COLLECTION'] = 'Collection';
+$LANG['CATALOG_NUMBER'] = 'Catalog Number';
+$LANG['FAMILY'] = 'Family';
+$LANG['SCINAME'] = 'Scientific Name';
+$LANG['COLLECTOR'] = 'Collector';
+$LANG['NUMBER'] = 'Collector Number';
+$LANG['EVENT_DATE'] = 'Date';
+$LANG['COUNTRY'] = 'Country';
+$LANG['STATE_PROVINCE'] = 'State/Province';
+$LANG['COUNTY'] = 'County';
+$LANG['ELEVATION'] = 'Elevation';
+
 $LANG['PAGINATION_FIRST'] = 'First';
 $LANG['LAST'] = 'last';
 $LANG['PAGINATION_PAGE'] = 'Page';
@@ -41,7 +61,9 @@ $LANG['PERHAPS_LOOKING_FOR'] = 'Perhaps you were looking for:';
 $LANG['MAP_DOWNLOAD'] = 'Download Coordinate Data';
 $LANG['MAP_HEADER'] = 'Map';
 $LANG['MAP_DISPLAY'] = 'Display coordinates in Map';
-$LANG['MAP_DESCRIPTION'] = 'The maps feature provides users an interactive map that can pan (by dragging the mouse) and zoom (by using the mouse wheel). Collection points are displayed as colored markers that when clicked on, displays the full information for that collection. When multiple species are queried (separated by semi-colons), different colored markers denote each individual species.';
+$LANG['MAP_DESCRIPTION'] = 'The maps feature provides users an interactive map that can pan (by dragging the mouse) and zoom (by using the mouse wheel).
+	Collection points are displayed as colored markers that when clicked on, displays the full information for that collection. When multiple species are queried
+	(separated by semi-colons), different colored markers denote each individual species.';
 $LANG['KML_HEADER'] = 'KML';
 $LANG['KML_DESCRIPTION'] = 'This creates an KML file for use in Google Earth or any other application using KML files.';
 $LANG['KML_EXTRA'] = 'Add Extra Fields';
@@ -50,20 +72,14 @@ $LANG['DATASET_MANAGEMENT'] = 'Dataset Management';
 $LANG['IMG_DATASET_MANAGEMENT'] = 'Open Dataset Management';
 $LANG['IMG_TABLE_DISPLAY'] = 'Open Table Display';
 $LANG['IMG_DWNL_DATA'] = 'Download Button';
-$LANG['IMG_COPY'] = 'Copy Button'; 
+$LANG['IMG_COPY'] = 'Copy Button';
 $LANG['ID_PROTECTED'] = 'Identification Protected';
 $LANG['IMG_ADD_VOUCHER'] = 'Add Voucher';
 $LANG['IMG_EDIT_OCC'] = 'Edit Occurrence';
 $LANG['IMG_OCC'] = 'Image Associated With the Occurence';
-$LANG['CATALOG_NUMBER'] = 'Catalog Number';
-$LANG['COLLECTOR'] = 'Collector';
-$LANG['NUMBER'] = 'Collector Number';
-$LANG['EVENTDATE'] = 'Date';
-$LANG['SCIENTIFIC_NAME'] = 'Scientific Name';
-$LANG['ELEVATION'] = 'Elevation';
 $LANG['MAP_LINK'] = 'Map Link';
 $LANG['SEE_MAP_POINT'] = 'See map point';
 $LANG['RECORD_COUNT_EXCEEDS_LIMIT'] = 'Record count exceeds limit';
 $LANG['NO_RECORDS'] = 'No records found matching the query';
-
+$LANG['ASSOCIATIONS'] = 'Associations';
 ?>

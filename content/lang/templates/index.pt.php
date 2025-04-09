@@ -8,6 +8,7 @@ Language: Português do Brasil (Brazilian Portuguese)
 //Various plugin variables
 $LANG['QSEARCH_SEARCH'] = 'Pesquisar táxons';
 $LANG['QSEARCH_SEARCH_BUTTON'] = 'Pesquisar';
+$LANG['TAXON'] = 'Táxon';
 
 //Slideshow plugin variables
 $LANG['HIDE_CAPTION'] = 'OCULTAR SUBTÍTULO';

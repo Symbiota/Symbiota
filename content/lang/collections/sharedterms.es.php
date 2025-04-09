@@ -23,6 +23,7 @@ $LANG['ALL_COLLECTIONS_CAP'] = 'Todas las Colecciones';
 $LANG['SELECT_DESELECT_ALL_SPECIMENS'] = 'Seleccionar/Deseleccionar Todas las Muestras';
 $LANG['SELECT_DESELECT_ALL_OBSERVATIONS'] = 'Seleccionar/Deseleccionar Todas las Observaciones';
 
+$LANG['DISPLAY_SORT'] = 'Mostrar panel de clasificación';
 $LANG['DOWNLOAD_SPECIMEN_DATA'] = 'Descargar Datos de Ejemplares';
 $LANG['COPY_TO_CLIPBOARD'] = 'Copia URL al Portapapeles';
 
