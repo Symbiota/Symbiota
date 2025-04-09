@@ -164,14 +164,17 @@ class TaxonProfile extends Manager {
 			}
 			$imgUrl = $imgObj['url'];
 			$imgAnchor = '../imagelib/imgdetails.php?mediaid='.$imgId;
-			$imgThumbnail = $imgObj['thumbnailurl'];
+			if ($imgObj['thumbnailurl'])
+				$displayUrl = $imgObj['thumbnailurl'];
+			else
+				$displayUrl = $imgObj['url'];
 			if(array_key_exists('MEDIA_DOMAIN',$GLOBALS)){
 				//Images with relative paths are on another server
 				if(substr($imgUrl,0,1)=="/") $imgUrl = $GLOBALS['MEDIA_DOMAIN'].$imgUrl;
-				if(substr($imgThumbnail,0,1)=="/") $imgThumbnail = $GLOBALS['MEDIA_DOMAIN'].$imgThumbnail;
+				if(substr($displayUrl,0,1)=="/") $displayUrl = $GLOBALS['MEDIA_DOMAIN'].$displayUrl;
 			}
 			if($imgObj['occid']) $imgAnchor = '../collections/individual/index.php?occid='.$imgObj['occid'];
-			if($useThumbnail) if($imgObj['thumbnailurl']) $imgUrl = $imgThumbnail;
+			if($useThumbnail) if($imgObj['thumbnailurl']) $imgUrl = $displayUrl;
 			echo '<div class="tptnimg"><a href="#" onclick="openPopup(\'' . htmlspecialchars($imgAnchor, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '\');return false;">';
 			$titleStr = $imgObj['caption'];
 			if($imgObj['sciname'] != $this->sciName) $titleStr .= ' (linked from '.$imgObj['sciname'].')';
