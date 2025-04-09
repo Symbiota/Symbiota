@@ -661,7 +661,11 @@ class OccurrenceController extends Controller{
 						$remoteOccurrence['occid'] = $occid;
 						$remoteCollid = $remoteOccurrence['collid'];
 						$sourceDateLastModified = $remoteOccurrence['dateLastModified'];
-						$clearFieldArr = array('collid', 'dbpk', 'tidInterpreted', 'dynamicProperties', 'processingStatus', 'recordID', 'modified', 'dateEntered' ,'dateLastModified');
+						$clearFieldArr = array(
+							'collid', 'dbpk', 'otherCatalogNumbers', 'tidInterpreted', 'dynamicProperties', 'processingStatus', 'recordID',
+							'modified', 'dateEntered' ,'dateLastModified', 'genus', 'specificEpithet', 'institutionCode', 'collectionCode',
+							'scientificNameAuthorship', 'identifiedBy', 'dateIdentified', 'verbatimEventDate', 'countryCode', 'localitySecurity'
+						);
 						foreach($clearFieldArr as $field){
 							unset($remoteOccurrence[$field]);
 						}
@@ -671,7 +675,7 @@ class OccurrenceController extends Controller{
 							$ts = date('Y-m-d H:i:s');
 							$changeArr = $occurrence->getChanges();
 							$responseArr['status'] = 200;
-							$responseArr['dataStatus'] = ($changeArr ? count($changeArr) . ' fields modified' : 'nothing modified');
+							$responseArr['numberFieldChanged'] = count($changeArr);
 							if($changeArr) $responseArr['fieldsModified'] = $changeArr;
 							$responseArr['sourceDateLastModified'] = $sourceDateLastModified;
 							$responseArr['dateLastModified'] = $ts;

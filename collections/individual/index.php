@@ -193,13 +193,14 @@ $traitArr = $indManager->getTraitArr();
 		});
 
 		function refreshRecord(occid){
+			document.getElementById("working-span").style.display = "inline";
 			$.ajax({
 				method: "GET",
 				url: "<?= $CLIENT_ROOT; ?>/api/v2/occurrence/"+occid+"/reharvest"
 			})
 			.done(function( response ) {
 				if(response.status == 200){
-					$("#dataStatus").val(response.dataStatus);
+					$("#dataStatus").val(response.numberFieldChanged);
 					$("#fieldsModified").val(JSON.stringify(response.fieldsModified));
 					$("#sourceDateLastModified").val(response.sourceDateLastModified);
 					alert("Record reharvested. Page will reload to refresh contents...");
@@ -1096,24 +1097,28 @@ $traitArr = $indManager->getTraitArr();
 									</div>
 									<div><label><?= $LANG['SOURCE_MANAGEMENT'] ?>:</label> <?= $sourceManagement ?></div>
 									<?php
-									if(array_key_exists('fieldsModified',$_POST)){
+									$dateLastModified = $occArr['source']['refreshTimestamp'];
+									if(array_key_exists('fieldsModified', $_POST)){
 										//Input from refersh event
 										$dataStatus = $indManager->cleanOutStr($_POST['dataStatus']);
-										$fieldsModified = $indManager->cleanOutStr($_POST['fieldsModified']);
-										$sourceDateLastModified = $indManager->cleanOutStr($_POST['sourceDateLastModified']);
-										?>
-										<div><label><?= $LANG['REFRESH_DATE'] ?>:</label> <?= $occArr['source']['refreshTimestamp'] ?></div>
-										<div><label><?= $LANG['UPDATE_STATUS'] ?>:</label> <?= $dataStatus ?></div>
-										<div><label><?= $LANG['FIELDS_MODIFIED'] ?>:</label> <?= $fieldsModified ?></div>
-										<div><label><?= $LANG['DATE_LAST_MODIFIED'] ?>:</label> <?= $sourceDateLastModified ?></div>
-										<?php
-									}
-									else {
-										?>
-										<div><label><?= $LANG['DATE_LAST_MODIFIED'] ?>:</label> <?= $occArr['source']['refreshTimestamp'] ?></div>
-										<?php
+										$fieldsModified = $_POST['fieldsModified'];
+										$dateLastModified = $indManager->cleanOutStr($_POST['sourceDateLastModified']);
+										echo '<div><label>' . $LANG['UPDATE_STATUS'] . ':</label> '.$dataStatus . ' ' . strtolower($LANG['FIELDS_MODIFIED']) . '</div>';
+										if($fieldsModified){
+											echo '<div><label>'.$LANG['FIELDS_MODIFIED'].':</label> ';
+											echo '<div style="margin-left:25px">';
+											$fieldsModifiedArr = json_decode($fieldsModified, true);
+											foreach($fieldsModifiedArr as $name => $value){
+												echo '<div>' . $name . ': ' . $value . '</div>';
+											}
+											echo '</div></div>';
+										}
+										echo '<div><label>'.$LANG['REFRESH_DATE'].':</label> '.$occArr['source']['refreshTimestamp'].'</div>';
 									}
 									?>
+									<!--
+									<div><label><?= $LANG['DATE_LAST_MODIFIED'] ?>:</label> <?= $dateLastModified ?></div>
+									 -->
 									<div><label><?= $LANG['SOURCE_TIMESTAMP'] ?>:</label> <?= $occArr['source']['initialTimestamp'] ?></div>
 								</div>
 								<?php
@@ -1127,7 +1132,9 @@ $traitArr = $indManager->getTraitArr();
 											<input name="occid" type="hidden" value="<?= $occid ?>" >
 											<input name="clid" type="hidden" value="<?= $clid ?>" >
 											<input name="collid" type="hidden" value="<?= $collid ?>" >
-											<button name="formsubmit" type="button" onclick="refreshRecord(<?= $occid ?>)"><?= $LANG['REFRESH_RECORD'] ?></button>
+											<button name="formsubmit" type="button" onclick="refreshRecord(<?= $occid ?>)"><?= $LANG['REFRESH_RECORD'] ?>
+												<span id="working-span" style="display: none; margin-left: 10px"><img class="icon-img" style="width: 15px" src="../../images/ajax-loader_sm.gif" ></span>
+											</button>
 										</form>
 									</div>
 									<?php
