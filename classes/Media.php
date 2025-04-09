@@ -976,8 +976,11 @@ class Media {
 
 				//Generate Deriatives if needed
 				if($media_type === MediaType::Image) {
-					// Update mem limit for image resizing
-					ini_set('memory_limit', '256M');
+					$start_mem_limit = ini_get('memory_limit');
+					// Update mem limit if not set to 256M already
+					if(self::size_2_bytes(ini_get('memory_limit')) < self::size_2_bytes('256M')) {
+						ini_set('memory_limit', '256M');
+					}
 
 					//Will download file if its remote.
 					//This is a naive solution assuming we are upload to our server
