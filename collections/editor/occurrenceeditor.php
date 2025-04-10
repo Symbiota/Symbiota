@@ -1362,7 +1362,7 @@ else{
 										<div id="dynamicPropertiesDiv" class="field-div" style="display:<?= empty($occArr['dynamicproperties']) ? 'none' : '' ?>">
 											<?php echo $LANG['DYNAMIC_PROPERTIES']; ?>
 											<a href="#" onclick="return dwcDoc('dynamicProperties')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-											<input type="text" name="dynamicproperties" value="<?php echo array_key_exists('dynamicproperties',$occArr)?$occArr['dynamicproperties']:''; ?>" onchange="fieldChanged('dynamicproperties');" />
+										<textarea type="text" name="dynamicproperties" onchange="fieldChanged('dynamicproperties');"><?php echo array_key_exists('dynamicproperties',$occArr)?$occArr['dynamicproperties']:''; ?></textarea>
 										</div>
 										<div style="padding:2px;">
 											<div id="lifeStageDiv" class="field-div">
