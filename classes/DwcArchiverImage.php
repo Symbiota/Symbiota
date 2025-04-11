@@ -98,6 +98,11 @@ class DwcArchiverImage{
 			}
 			if(stripos($conditionSql,'paleo.')){
 				$sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
+				if(strpos($conditionSql,'early.myaStart')){
+					$sql .= 'JOIN omoccurpaleogts early ON paleo.earlyInterval = early.gtsterm ';
+					$sql .= 'JOIN omoccurpaleogts late ON paleo.lateInterval = late.gtsterm ';
+					$sql .= 'CROSS JOIN searchRange search ';
+				}
 			}
 			$sql .= $conditionSql;
 			if($redactLocalities){

@@ -230,22 +230,22 @@ class DwcArchiverOccurrence extends Manager{
 			$this->occurDefArr['fields']['geologicalContextID'] = 'paleo.geologicalContextID';
 			$this->occurDefArr['terms']['earliestEonOrLowestEonothem'] = 'http://rs.tdwg.org/dwc/terms/earliestEonOrLowestEonothem';
 			$this->occurDefArr['fields']['earliestEonOrLowestEonothem'] = '';
-			$this->occurDefArr['terms']['latestEonOrHighestEonothem'] = 'http://rs.tdwg.org/dwc/terms/latestEonOrHighestEonothem';
-			$this->occurDefArr['fields']['latestEonOrHighestEonothem'] = '';
 			$this->occurDefArr['terms']['earliestEraOrLowestErathem'] = 'http://rs.tdwg.org/dwc/terms/earliestEraOrLowestErathem';
 			$this->occurDefArr['fields']['earliestEraOrLowestErathem'] = '';
-			$this->occurDefArr['terms']['latestEraOrHighestErathem'] = 'http://rs.tdwg.org/dwc/terms/latestEraOrHighestErathem';
-			$this->occurDefArr['fields']['latestEraOrHighestErathem'] = '';
 			$this->occurDefArr['terms']['earliestPeriodOrLowestSystem'] = 'http://rs.tdwg.org/dwc/terms/earliestPeriodOrLowestSystem';
 			$this->occurDefArr['fields']['earliestPeriodOrLowestSystem'] = '';
-			$this->occurDefArr['terms']['latestPeriodOrHighestSystem'] = 'http://rs.tdwg.org/dwc/terms/latestPeriodOrHighestSystem';
-			$this->occurDefArr['fields']['latestPeriodOrHighestSystem'] = '';
 			$this->occurDefArr['terms']['earliestEpochOrLowestSeries'] = 'http://rs.tdwg.org/dwc/terms/earliestEpochOrLowestSeries';
 			$this->occurDefArr['fields']['earliestEpochOrLowestSeries'] = '';
-			$this->occurDefArr['terms']['latestEpochOrHighestSeries'] = '	http://rs.tdwg.org/dwc/terms/latestEpochOrHighestSeries';
-			$this->occurDefArr['fields']['latestEpochOrHighestSeries'] = '';
 			$this->occurDefArr['terms']['earliestAgeOrLowestStage'] = 'http://rs.tdwg.org/dwc/terms/earliestAgeOrLowestStage';
 			$this->occurDefArr['fields']['earliestAgeOrLowestStage'] = '';
+			$this->occurDefArr['terms']['latestEonOrHighestEonothem'] = 'http://rs.tdwg.org/dwc/terms/latestEonOrHighestEonothem';
+			$this->occurDefArr['fields']['latestEonOrHighestEonothem'] = '';
+			$this->occurDefArr['terms']['latestEraOrHighestErathem'] = 'http://rs.tdwg.org/dwc/terms/latestEraOrHighestErathem';
+			$this->occurDefArr['fields']['latestEraOrHighestErathem'] = '';
+			$this->occurDefArr['terms']['latestPeriodOrHighestSystem'] = 'http://rs.tdwg.org/dwc/terms/latestPeriodOrHighestSystem';
+			$this->occurDefArr['fields']['latestPeriodOrHighestSystem'] = '';
+			$this->occurDefArr['terms']['latestEpochOrHighestSeries'] = '	http://rs.tdwg.org/dwc/terms/latestEpochOrHighestSeries';
+			$this->occurDefArr['fields']['latestEpochOrHighestSeries'] = '';
 			$this->occurDefArr['terms']['latestAgeOrHighestStage'] = 'http://rs.tdwg.org/dwc/terms/latestAgeOrHighestStage';
 			$this->occurDefArr['fields']['latestAgeOrHighestStage'] = '';
 			$this->occurDefArr['terms']['lowestBiostratigraphicZone'] = 'http://rs.tdwg.org/dwc/terms/lowestBiostratigraphicZone';
@@ -274,8 +274,8 @@ class DwcArchiverOccurrence extends Manager{
 			$this->occurDefArr['fields']['member'] = 'paleo.member';
 			$this->occurDefArr['terms']['bed'] = 'http://rs.tdwg.org/dwc/terms/bed';
 			$this->occurDefArr['fields']['bed'] = 'paleo.bed';
-			$this->occurDefArr['terms']['lithostratigraphicTerms'] = 'http://rs.tdwg.org/dwc/terms/lithostratigraphicTerms';
-			$this->occurDefArr['fields']['lithostratigraphicTerms'] = 'paleo.lithology';
+			$this->occurDefArr['terms']['lithology'] = 'http://rs.tdwg.org/dwc/terms/lithology';
+			$this->occurDefArr['fields']['lithology'] = 'paleo.lithology';
 			$this->occurDefArr['terms']['stratRemarks'] = 'https://symbiota.org/terms/paleo-stratRemarks';
 			$this->occurDefArr['fields']['stratRemarks'] = 'paleo.stratRemarks';
 			$this->occurDefArr['terms']['element'] = 'https://symbiota.org/terms/paleo-element';
@@ -333,7 +333,7 @@ class DwcArchiverOccurrence extends Manager{
 					'localitySecurityReason','genericcolumn1','genericcolumn2','storageLocation','observerUid','processingStatus',
 					'duplicateQuantity','labelProject','dateEntered','dateLastModified','sourcePrimaryKey-dbpk');
 				if($this->includePaleo){
-					$trimArr = array_merge($trimArr, array('absoluteAge','storageLoc','stage','localStage','biostratigraphy','taxonEnvironment','stratRemarks','element','slideProperties'));
+					$trimArr = array_merge($trimArr, array('absoluteAge','storageLoc','stage','localStage','biostratigraphy','taxonEnvironment','stratRemarks','element','slideProperties', 'lithology'));
 				}
 				$this->occurDefArr[$k] = array_diff_key($vArr,array_flip($trimArr));
 			}
@@ -896,7 +896,7 @@ class DwcArchiverOccurrence extends Manager{
 	}
 
 	public function setIncludePaleo($bool){
-		if($bool) $this->includePaleo = true;
+		$this->includePaleo = true;
 	}
 }
 ?>
