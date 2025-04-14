@@ -415,13 +415,14 @@ class DwcArchiverCore extends Manager{
 			if (strpos($this->conditionSql, 'id.identifierValue')) {
 				$sql .= 'LEFT JOIN omoccuridentifiers id ON o.occid = id.occid ';
 			}
-			if(strpos($this->conditionSql, 'paleo.')) //check if include paleo is better
+			if($GLOBALS["ACTIVATE_PALEO"]){
 				$sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
-				if(strpos($this->conditionSql, 'early.myaStart')){ //check if include paleo is better
+				if(strpos($this->conditionSql, 'early.myaStart')){
 					$sql .= 'JOIN omoccurpaleogts early ON paleo.earlyInterval = early.gtsterm ';
 					$sql .= 'JOIN omoccurpaleogts late ON paleo.lateInterval = late.gtsterm ';
 					$sql .= 'CROSS JOIN searchRange search ';
 				}
+			}
 		}
 		return $sql;
 	}
