@@ -35,7 +35,11 @@ if (file_exists($filename) && is_readable($filename)) {
       $bits = explode('","',$line);
       // if ($debug) { print_r($bits); } 
       if ($debug) { 
-         echo '<pre>' . htmlspecialchars(print_r($bits), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</pre>'; 
+         echo '<pre>';
+         foreach ($bits as $bit) {
+            echo htmlspecialchars($bit, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401) . "\n";
+         }
+         echo '</pre>';
       }
       $familyname = trim(str_replace('"','',$bits[0])); 
       $firstname = trim(str_replace('"','',$bits[1])); 
