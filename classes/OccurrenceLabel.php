@@ -310,7 +310,7 @@ class OccurrenceLabel{
 						$cnt++;
 					}
 				}
-				if($fieldDivStr) $outStr .= '<div class="field-block'.(isset($bArr['className'])?' '.$bArr['className']:'').'"'.(isset($bArr['style'])?' style="'.$bArr['style'].'"':'').'>'.$fieldDivStr.'</div>';
+				if($fieldDivStr) $outStr .= '<p class="field-block'.(isset($bArr['className'])?' '.$bArr['className']:'').'"'.(isset($bArr['style'])?' style="'.$bArr['style'].'"':'').'>'.$fieldDivStr.'</p>';
 			}
 		}
 		return $outStr;

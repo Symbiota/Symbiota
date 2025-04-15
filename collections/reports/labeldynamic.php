@@ -110,6 +110,7 @@ if($SYMB_UID){
 			.otherCatalogNumbers { clear:both; text-align:center; }
 			.symbBarcode { padding-top:10px; } */
 			.label-header { clear:both; text-align: center }
+			p.field-block{ margin: 0 }
 			.label-footer { clear:both; text-align: center; font-weight: bold; font-size: 12pt; }
 			@media print { .controls { display: none; } }
 		</style>

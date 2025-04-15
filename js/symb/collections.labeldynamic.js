@@ -33,8 +33,34 @@ printBtn.onclick = function () {
   window.print();
 };
 
+let DocXForm = document.createElement('form');
+DocXForm.style.marginLeft = '30px';
+DocXForm.style.width= 'fit-content';
+DocXForm.style.display= 'inline';
+DocXForm.method="POST"
+DocXForm.action="htmlToDocX.php"
+
+let pageHtmlInput=document.createElement('input');
+pageHtmlInput.type="hidden";
+pageHtmlInput.value="<span>Hello from post</span>";
+pageHtmlInput.name="targetHtml";
+pageHtmlInput.id ="targetHtml";
+
+let printDocXBtn = document.createElement('button');
+printDocXBtn.innerText = 'Print/Save Docx';
+printDocXBtn.id = 'print_docx';
+printDocXBtn.style.fontWeight = 'bold';
+
+printDocXBtn.onclick = function () {
+	document.getElementById('targetHtml').value = document.querySelector('.body.letter').innerHTML;
+};
+
+DocXForm.appendChild(pageHtmlInput);
+DocXForm.appendChild(printDocXBtn);
+
 controls.appendChild(editBtn);
 controls.appendChild(printBtn);
+controls.appendChild(DocXForm);
 document.body.prepend(controls);
 
 function toggleEdits() {
