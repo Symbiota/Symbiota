@@ -33,7 +33,6 @@ if (file_exists($filename) && is_readable($filename)) {
       $others  = "";
       // TODO: Use a CSV parser
       $bits = explode('","',$line);
-      // if ($debug) { print_r($bits); } 
       if ($debug) { 
          echo '<pre>';
          foreach ($bits as $bit) {
