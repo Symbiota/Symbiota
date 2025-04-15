@@ -15,10 +15,10 @@ if ($test) {
    $filter = preg_replace('/^file:/','irods:',$filter);
    echo "$file\n";
    $result = getiPlantID($file,$filter);
+   echo htmlspecialchars($result->statusok. "\n", ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
    echo htmlspecialchars($result->error. "\n", ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
    echo htmlspecialchars($result->uri. "\n", ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
    echo htmlspecialchars($result->resource_uniq. "\n", ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
-   echo htmlspecialchars($result->statusok. "\n", ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
    echo htmlspecialchars($result->value. "\n", ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 }
 
