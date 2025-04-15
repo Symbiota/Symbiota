@@ -1,8 +1,11 @@
 <?php
 include_once('../../config/symbini.php');
 require_once $SERVER_ROOT.'/vendor/phpoffice/phpword/bootstrap.php';
-
 $targetHtml = $_POST['targetHtml'];
+
+// This required or &amp; will corrupt the docx file
+ \PhpOffice\PhpWord\Settings::setOutputEscapingEnabled(true);
+
 $pw = new \PhpOffice\PhpWord\PhpWord();
 $section = $pw->addSection();
 
