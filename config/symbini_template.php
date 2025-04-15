@@ -77,6 +77,7 @@ $SEARCH_BY_TRAITS = 0;			//Activates search fields for searching by traits (if t
 $CALENDAR_TRAIT_PLOTS = 0;			//Activates polar plots, in taxon profile, of the trait states listed: 0 = no plot; any number of non-zeros separated by commas (e.g., '1,6') = plots appear for the trait states with these id numbers (in table tmstates).
 //$AUTH_PROVIDER = 'oid';           //Activate Third Party Authentication using openID Connect (Addiotnal paramters defined in auth_config.php).  Leave this commented out if not in use;
 $IGSN_ACTIVATION = 0;
+$WIKIPEDIA_TAXON_TAB = 1;		//Activates wikipedia tab on taxon profile page (wikiMedia API)
 
 //$SMTP_ARR = array('host'=>'','port'=>587,'username'=>'','password'=>'','timeout'=>60);  //Host is requiered, others are optional and can be removed
 

@@ -429,33 +429,180 @@ class TaxonProfile extends Manager {
 		if((isset($CALENDAR_TRAIT_PLOTS) && $CALENDAR_TRAIT_PLOTS > 0) && $this->rankId > 180) {
 			$retStr .= '<li><a href="plottab.php?tid=' . $this->tid . '">' . ($LANG['CALENDAR_TRAIT_PLOT']?$LANG['CALENDAR_TRAIT_PLOT']:'Traits Plots') . '</a></li>';
 		}
-		$retStr .= '<li><a href="resourcetab.php?tid=' . $this->tid . '">' . ($LANG['RESOURCES']?$LANG['RESOURCES']:'Resources') . '</a></li>';
+
+		//Fetch Wikipedia sections
+		if (!empty($GLOBALS['WIKIPEDIA_TAXON_TAB'])){
+			$wikiSections = $this->getWikipediaDescription($this->sciName);
+			if ($wikiSections) {
+				$retStr .= '<li><a href="#wikitab">Wikipedia</a></li>';
+			}
+		}
+
+		$retStr .= '<li><a href="resourcetab.php?tid=' . htmlspecialchars($this->tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars(($LANG['RESOURCES']?$LANG['RESOURCES']:'Resources'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></li>';
 		$retStr .= '</ul>';
+
 		foreach($descArr as $dArr){
 			foreach($dArr as $id => $vArr){
 				$retStr .= '<div id="tab'.$id.'" class="sptab">';
-				if($vArr['source']){
+				if (!empty($vArr['source'])){
 					$retStr .= '<div id="descsource" style="float:right;">';
-					if($vArr['url']){
-						$retStr .= '<a href="'.$vArr['url'].'" target="_blank">';
+					if (!empty($vArr['url'])){
+						$retStr .= '<a href="' . htmlspecialchars($vArr['url'], ENT_QUOTES, 'UTF-8') . '" target="_blank">';
 					}
-					$retStr .= $vArr['source'];
-					if($vArr['url']){
+					$retStr .= htmlspecialchars($vArr['source'], ENT_QUOTES, 'UTF-8');
+					if (!empty($vArr['url'])){
 						$retStr .= '</a>';
 					}
 					$retStr .= '</div>';
 				}
-				$descArr = $vArr['desc'];
-				$retStr .= '<div style="clear:both;">';
-				foreach($descArr as $tdsId => $stmt){
-					$retStr .= $stmt.' ';
+				$retStr .= '<div style="clear:both;">' . implode(' ', array_map('htmlspecialchars', $vArr['desc'])) . '</div>';
+				$retStr .= '</div>';
+			}
+		}
+
+		if (!empty($wikiSections)) {
+			$retStr .= '<div id="wikitab" class="sptab">';
+			foreach ($wikiSections as $section) {
+				if ($section["title"])
+					$retStr .= '<h3>' . htmlspecialchars($section['title'], ENT_QUOTES, 'UTF-8') . '</h3>';
+				if (strip_tags($section['content']) == $section['content']) {
+					//if plain text convert newlines to <br>
+					$retStr .= '<p>' . nl2br(htmlspecialchars($section['content'], ENT_QUOTES, 'UTF-8')) . '</p>';
+				} else {
+					//display as is
+					$retStr .= '<p>' . $section['content'] . '</p>';
 				}
-				$retStr .= '</div>';
-				$retStr .= '</div>';
 			}
 			$retStr .= '</div>';
 		}
+		$retStr .= '</div>';
 		return $retStr;
+	}
+
+
+	private function getWikipediaDescription($sciName) {
+		$formattedName = urlencode($sciName);
+		$url = "https://en.wikipedia.org/w/api.php?action=parse&page={$formattedName}&redirects=1&format=json&prop=sections";
+		$wikiUrl = "https://en.wikipedia.org/wiki/" . urlencode(str_replace(' ', '_', $sciName));
+
+		$response = @file_get_contents($url);
+		if (!$response) {
+			error_log("Wikipedia API request failed: " . $url);
+			return null;
+		}
+		$data = json_decode($response, true);
+		if (empty($data['parse']['sections'])) {
+			error_log("Wikipedia sections not found for: " . $sciName);
+			return null;
+		}
+
+		$sections = [];
+		$totalCharCount = 0;
+
+		//total char limit
+		$maxLength = 2000;
+
+		$summaryUrl = "https://en.wikipedia.org/w/api.php?action=query&redirects=1&format=json&prop=extracts&titles={$formattedName}&exintro=true&explaintext=true";
+		$summaryResponse = @file_get_contents($summaryUrl);
+		if (!$summaryResponse) {
+			error_log("Wikipedia summary request failed: " . $summaryUrl);
+			return null;
+		}
+		$summaryData = json_decode($summaryResponse, true);
+		$page = reset($summaryData['query']['pages']);
+		$summary = $page['extract'] ?? '';
+
+		if ($summary) {
+			$totalCharCount += strlen($summary);
+			$sections[] = [
+				'title' => 'Summary',
+				'content' => $summary
+			];
+		}
+		foreach ($data['parse']['sections'] as $section) {
+			if ($totalCharCount >= $maxLength) {
+				break;
+			}
+
+			//skip sections with references/links
+			$skipSections = ['References', 'External links', 'See also', 'Further reading', 'Notes'];
+			if (in_array($section['line'], $skipSections)) {
+				continue;
+			}
+
+			$sectionContent = $this->getSectionContent($formattedName, $section['index']);
+			if ($sectionContent) {
+				$remainingChars = $maxLength - $totalCharCount;
+				if (strlen($sectionContent) > $remainingChars) {
+					$sectionContent = preg_replace('/\s+?(\S+)?$/', '', substr($sectionContent, 0, $remainingChars)) . '';
+					$sectionContent .= '<a href="' . $wikiUrl . '" target="_blank" class="more-info-btn">...</a>';
+				}
+
+				$totalCharCount += strlen($sectionContent);
+				$sections[] = [
+					'title' => $section['line'],
+					'content' => $sectionContent
+				];
+			}
+		}
+
+		//link to wikipedia after char limit reached
+
+		if (!empty($sections)) {
+			array_unshift($sections, [
+				'title' => '',
+				'content' => '<a href="' . $wikiUrl . '" style="float:right; margin-right: 1rem" target="_blank" class="more-info-btn">Wikipedia Source Page</a>'
+			]);
+		}
+
+		return $sections;
+	}
+
+	private function getSectionContent($page, $section) {
+		$url = "https://en.wikipedia.org/w/api.php?action=parse&page={$page}&redirects=1&format=json&prop=text&section={$section}";
+		$response = @file_get_contents($url);
+		if (!$response) {
+			error_log("Wikipedia section request failed: " . $url);
+			return '';
+		}
+		$data = json_decode($response, true);
+		if (empty($data['parse']['text']['*'])) {
+			error_log("Wikipedia returned empty section content for: " . $page . " (Section: " . $section . ")");
+			return '';
+		}
+
+		$cleanText = $this->cleanWikipediaText($data['parse']['text']['*']);
+
+		return $cleanText;
+	}
+
+	private function cleanWikipediaText($html) {
+
+		//remove section titles
+		$html = preg_replace('/<h[1-6][^>]*>.*?<\/h[1-6]>/s', '', $html);
+
+		//remove wiki references
+		$cleanText = preg_replace('/<sup.*?>.*?<\/sup>/s', '', $html);
+
+		//remove all tags except <p>
+		$cleanText = strip_tags($cleanText, '<p><br>');
+
+		//remove wiki errors and wiki css and js code
+		$cleanText = preg_replace('/Cite error:.*?<\/p>/s', '', $cleanText);
+		$cleanText = preg_replace('/\.mw-parser-output[^\n]*/', '', $cleanText);
+		$cleanText = preg_replace('/<style.*?<\/style>/s', '', $cleanText);
+		$cleanText = preg_replace('/<script.*?<\/script>/s', '', $cleanText);
+
+		//remove reference lists
+		$cleanText = preg_replace('/<ol class="references".*?<\/ol>/s', '', $cleanText);
+		$cleanText = preg_replace('/<li id="cite_note-.*?<\/li>/s', '', $cleanText);
+		$cleanText = preg_replace('/<span class="reference-text">.*?<\/span>/s', '', $cleanText);
+		$cleanText = preg_replace('/^\s*\^.*$/m', '', $cleanText);
+
+		//remove the square brackets content
+		$cleanText = preg_replace('/\[[^\[\]]*\]/', '', $cleanText);
+
+		return trim($cleanText);
 	}
 
 	//Taxon Link functions
