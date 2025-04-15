@@ -107,7 +107,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 			<button onClick="handleAccordionExpand()" class="inner-search button" id="expand-all-button" type="button" style="font-size: 1rem;"><?= $LANG['EXPAND_ALL_SECTIONS']; ?></button>
 			<button onClick="handleAccordionCollapse()" class="inner-search button" id="collapse-all-button" type="button" style="display: none; font-size: 1rem;"><?= $LANG['COLLAPSE_ALL_SECTIONS']; ?></button>
 		</div>
-		<form id="params-form" action="javascript:void(0);">
+		<form id="params-form">
 			<!-- Criteria forms -->
 			<div class="accordions">
 				<!-- Taxonomy -->
@@ -609,7 +609,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 						<label for="table-button"><?php echo $LANG['TABLE'] ?></label>
 					</div>
 				</fieldset>
-				<button id="search-btn" onclick="simpleSearch()"><?php echo $LANG['SEARCH'] ?></button>
+				<button id="search-btn" type="submit"><?php echo $LANG['SEARCH'] ?></button>
 				<button id="reset-btn"><?php echo $LANG['RESET'] ?></button>
 				<h2><?php echo $LANG['CRITERIA'] ?></h2>
 				<div class="criteria-panel">

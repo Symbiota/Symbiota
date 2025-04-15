@@ -723,16 +723,26 @@ function simpleSearch() {
   errors = validateForm();
   let isValid = errors.length == 0;
   if (isValid) {
-    const searchUrl = getSearchUrl();
+    const searchUrl = shortenSearchUrlIfAllCollectionsAreSearched();
     sessionStorage.setItem('verbatimSearchUrl', searchUrl);
-    const shamForm = document.createElement('form');
-    shamForm.method = "POST"; // if GET is used instead, the URL is too short for complex polygon + many collections queries. Hence, the need for POST.
-    shamForm.action = searchUrl;
-    document.body.appendChild(shamForm);
-    shamForm.submit();
+
+    const submitForm = document.getElementById("params-form");
+    submitForm.method = "POST"; // if GET is used instead, the URL is too short for complex polygon + many collections queries. Hence, the need for POST.
+    submitForm.action = searchUrl;
+    document.body.appendChild(submitForm);
+    submitForm.submit();
   } else {
     handleValErrors(errors);
   }
+}
+
+function shortenSearchUrlIfAllCollectionsAreSearched(){
+  const searchUrlOriginal = getSearchUrl();
+    let searchUrl = searchUrlOriginal;
+    if(searchUrlOriginal.includes("db=all")){
+      searchUrl = searchUrlOriginal.replace(/db=all(?:%[^&?]*)*/, "db=all");
+    }
+    return searchUrl;
 }
 
 /**
@@ -991,6 +1001,11 @@ function toggleAccordionsFromSessionStorage(accordionIds) {
 /**
  * EVENT LISTENERS/INITIALIZERS
  */
+
+document.getElementById("params-form").addEventListener("submit", function(event) {
+  event.preventDefault();
+  simpleSearch();
+});
 
 // Reset button
 document
