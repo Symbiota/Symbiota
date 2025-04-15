@@ -134,28 +134,27 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$sqlWhere .= $this->associationManager->getAssociatedRecords($this->associationArr) . ')';
 		}
 
-		if(array_key_exists('countryCode',$this->searchTermArr)){
-			$countryArr = explode(';', $this->searchTermArr['countryCode']);
-			if($countryArr){
-				$sqlWhere .= 'AND o.countrycode IN("' . implode('","', $countryArr) . '") ';
-				//$this->displaySearchArr[] = implode('; ', $countryArr);				//this is set in readRequestVariables function
-			}
+		//Country term
+		//Note: $this->displaySearchArr is set within the readRequestVariables function
+		$countryTermArr = array();
+		if(!empty($this->searchTermArr['countryCode'])){
+			$countryTermArr[] = '(o.countryCode IN("' . implode('","', $this->searchTermArr['countryCode']) . '"))';
 		}
-		if(array_key_exists('country',$this->searchTermArr)){
-			$countryArr = explode(";",$this->searchTermArr["country"]);
-			$tempArr = Array();
+		if(array_key_exists('countryRaw', $this->searchTermArr)){
+			$countryArr = explode(";", $this->searchTermArr['countryRaw']);
 			foreach($countryArr as $k => $value){
 				if($value == 'NULL'){
-					$countryArr[$k] = 'Country IS NULL';
-					$tempArr[] = '(o.Country IS NULL)';
+					$countryArr[$k] = 'country IS NULL';
+					$countryTermArr[] = '(o.country IS NULL)';
 				}
 				else{
-					$tempArr[] = '(o.Country = "'.$this->cleanInStr($value).'")';
+					$countryTermArr[] = '(o.country = "'.$this->cleanInStr($value).'")';
 				}
 			}
-			$sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
-			$this->displaySearchArr[] = implode(' ' .  $this->LANG['OR'] . ' ', $countryArr);
 		}
+		if($countryTermArr) $sqlWhere .= 'AND ('.implode(' OR ',$countryTermArr).') ';
+
+		//State term
 		if(array_key_exists("state",$this->searchTermArr)){
 			$stateAr = explode(";",$this->searchTermArr["state"]);
 			$tempArr = Array();
@@ -648,6 +647,8 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		//Returns a search variable string
 		$retStr = '';
 		foreach($this->searchTermArr as $k => $v){
+			if($k == 'countryCode') continue;
+			if($k == 'countryRaw') continue;
 			if(is_array($v)) $v = implode(',', $v);
 			if($v) $retStr .= '&'. $this->cleanOutStr($k) . '=' . $this->cleanOutStr($v);
 		}
@@ -771,9 +772,14 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$country = $this->cleanInputStr($_REQUEST['country']);
 			if($country){
 				$str = str_replace(',', ';', $country);
-				$countryCode = '';
-				$countryFull = '';
+				$countryRaw = '';					//Terms that were not found within geo thesaurus
+				$countryCodeArr = array();			//Terms convered to valid Country Codes
+				$countryInputArr = array();			//Verbatim terms with duplicates removed
 				foreach(explode(';', $str) as $term){
+					$term = trim($term);
+					if(!$term) continue;
+					if(isset($countryInputArr[strtolower($term)])) continue;
+					$countryInputArr[strtolower($term)] = $term;
 					$code = '';
 					$sql = 'SELECT iso2 FROM geographicthesaurus WHERE geoTerm = ? AND iso2 IS NOT NULL';
 					if($stmt = $this->conn->prepare($sql)){
@@ -784,20 +790,22 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 						$stmt->close();
 					}
 					if($code){
-						$countryCode .= ';' . $code;
+						$countryCodeArr[$code] = $code;
 						$this->displaySearchArr[] = $term . ' (' . $code . ')';
 					}
 					else{
-						$countryFull .= ';' . $term;
+						$countryRaw .= ';' . $term;
 						$this->displaySearchArr[] = $term;
 					}
 				}
-				if(!$countryFull && !$countryCode) $countryFull = $str;
-				if($countryCode) $this->searchTermArr['countryCode'] = trim($countryCode, '; ');
-				if($countryFull) $this->searchTermArr['country'] = trim($countryFull, '; ');
+				if(!$countryRaw && !$countryCodeArr) $countryRaw = $str;
+				if($countryCodeArr) $this->searchTermArr['countryCode'] = $countryCodeArr;
+				if($countryRaw) $this->searchTermArr['countryRaw'] = trim($countryRaw, '; ');
+				if($countryInputArr) $this->searchTermArr['country'] = implode('; ', $countryInputArr);
 			}
 			else{
 				unset($this->searchTermArr['countryCode']);
+				unset($this->searchTermArr['countryRaw']);
 				unset($this->searchTermArr['country']);
 			}
 		}
@@ -1018,7 +1026,6 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			//$this->searchTermArr['footprintwkt'] = $this->cleanInputStr($_REQUEST['footprintwkt']);
 			$this->searchTermArr['footprintGeoJson'] = $this->cleanInputStr($_REQUEST['footprintGeoJson']);
 		}
-
 	}
 
 	private function setChecklistVariables($clid){

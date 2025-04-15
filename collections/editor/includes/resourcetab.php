@@ -213,17 +213,17 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 	}
 </script>
 <style type="text/css">
-	fieldset{ clear:both; margin:10px; padding:10px; }
-	legend{ font-weight: bold }
-	label{ font-weight: bold; }
-	.formRow-div{ clear:both; margin: 2px 10px; }
-	.field-div{ float:left; margin: 2px 10px 2px 0px; }
-	.field-div label{ display: block; }
-	.field-div button{ margin-top: 10px; }
-	.assoc-div{ margin-bottom: 10px; }
-	.icon-img{ width: 1.2em }
-	#subType-div select{ min-width: 130px; }
-	#taxonomy-fieldset{ display: none; }
+	.resourceTab fieldset{ clear:both; margin:10px; padding:10px; }
+	.resourceTab legend{ font-weight: bold }
+	.resourceTab label{ font-weight: bold; }
+	.resourceTab .formRow-div{ clear:both; margin: 2px 10px; }
+	.resourceTab .field-div{ float:left; margin: 2px 10px 2px 0px; }
+	.resourceTab .field-div label{ display: block; }
+	.resourceTab .field-div button{ margin-top: 10px; }
+	.resourceTab .assoc-div{ margin-bottom: 10px; }
+	.resourceTab .icon-img{ width: 1.2em }
+	.resourceTab #subType-div select{ min-width: 130px; }
+	.resourceTab #taxonomy-fieldset{ display: none; }
 </style>
 <div id="voucherdiv" style="width:795px;">
 	<?php
@@ -231,7 +231,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 	$basisOfRecordArr = array('HumanObservation' => $LANG['HUMAN_OBS'], 'LivingSpecimen' => $LANG['LIVING_SPEC'], 'MachineObservation' => $LANG['MACHINE_OBS'],
 		'MaterialSample' => $LANG['MAT_SAMPLE'], 'PreservedSpecimen' => $LANG['PRES_SAMPLE'], 'ReferenceCitation' => $LANG['REF_CITATION']);
 	?>
-	<fieldset>
+	<fieldset class="resourceTab">
 		<legend><?php echo $LANG['ASSOC_OCC']; ?></legend>
 		<div style="float:right;margin-right:10px;">
 			<a href="#" onclick="toggle('new-association');return false;" title="<?php echo $LANG['CREATE_NEW_ASSOC']; ?>" ><img class="icon-img" src="../../images/add.png" /></a>
