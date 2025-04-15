@@ -21,8 +21,8 @@ $rotateManager->setTestMode($testMode);
 $rotateManager->setRotateMode($rotateMode);
 $rotateManager->setMsgOutMode($msgMode);
 
-$targetPath = realpath($PUBLIC_IMAGE_UPLOAD_ROOT . $reqPath);
-if($targetPath && str_starts_with($targetPath, $PUBLIC_IMAGE_UPLOAD_ROOT)) $rotateManager->batchRotateImages($targetPath);
+$targetPath = realpath($MEDIA_ROOT_PATH . $reqPath);
+if($targetPath && str_starts_with($targetPath, $MEDIA_ROOT_PATH)) $rotateManager->batchRotateImages($targetPath);
 else echo 'ERROR: target path is invalid or empty';
 
 class ImageRotator{
