@@ -478,7 +478,7 @@ class OccurrenceTaxaManager {
 					}
 					else{
 						$term = $this->cleanInStr(trim($searchTaxon,'%'));
-						$term = preg_replace(array('/\s{1}x\s{1}/','/\s{1}X\s{1}/','/\s{1}\x{00D7}\s{1}/u'), ' _ ', $term);
+						//$term = preg_replace(array('/\s{1}x\s{1}/','/\s{1}X\s{1}/','/\s{1}\x{00D7}\s{1}/u'), ' _ ', $term);
 						if(array_key_exists('tid',$searchArr)){
 							$rankid = current($searchArr['tid']);
 							$tidArr = array_keys($searchArr['tid']);
@@ -508,8 +508,8 @@ class OccurrenceTaxaManager {
 								$sqlWhereTaxa .= 'OR (o.sciname LIKE "' . $term . '%") ';
 								if(!strpos($term,' _ ')){
 									//Accommodate for formats of hybrid designations within input and target data (e.g. x, multiplication sign, etc)
-									$term2 = preg_replace('/^([^\s]+\s{1})/', '$1 _ ', $term);
-									$sqlWhereTaxa .= 'OR (o.sciname LIKE "' . $term2 . '%") ';
+									//$term2 = preg_replace('/^([^\s]+\s{1})/', '$1 _ ', $term);
+									//$sqlWhereTaxa .= 'OR (o.sciname LIKE "' . $term2 . '%") ';
 								}
 							}
 						}
