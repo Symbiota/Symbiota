@@ -107,7 +107,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 			<button onClick="handleAccordionExpand()" class="inner-search button" id="expand-all-button" type="button" style="font-size: 1rem;"><?= $LANG['EXPAND_ALL_SECTIONS']; ?></button>
 			<button onClick="handleAccordionCollapse()" class="inner-search button" id="collapse-all-button" type="button" style="display: none; font-size: 1rem;"><?= $LANG['COLLAPSE_ALL_SECTIONS']; ?></button>
 		</div>
-		<form id="params-form">
+		<form id="params-form" action="<?php echo $CLIENT_ROOT . "/collections/list.php"; ?>">
 			<!-- Criteria forms -->
 			<div class="accordions">
 				<!-- Taxonomy -->

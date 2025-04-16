@@ -728,7 +728,7 @@ function simpleSearch() {
 
     const submitForm = document.getElementById("params-form");
     submitForm.method = "POST"; // if GET is used instead, the URL is too short for complex polygon + many collections queries. Hence, the need for POST.
-    submitForm.action = searchUrl;
+    // submitForm.action = $CLIENT_ROOT . "list.php";
     document.body.appendChild(submitForm);
     submitForm.submit();
   } else {
