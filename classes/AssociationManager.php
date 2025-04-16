@@ -67,7 +67,7 @@ class AssociationManager extends OccurrenceTaxaManager{
 		$forwardSql .= $this->getAssociatedTaxonWhereFrag($associationArr);
 
 		// Capture observational associations
-		$obsSql = "SELECT oa.occid FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid  LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE oa.relationship " . $relationshipStr . " ";
+		$obsSql = "SELECT oa.occid FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid " . $familyJoinStr . " WHERE oa.relationship " . $relationshipStr . " ";
 		$obsSql .= "AND oa.associationType='observational' AND oa.verbatimSciname LIKE '" . $associationArr['search'] . "%' ";
 
         // "Reverse" association
