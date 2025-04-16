@@ -1,9 +1,9 @@
 <?php
-include_once($SERVER_ROOT.'/classes/OccurrenceSearchSupport.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceSearchSupport.php');
+include_once($SERVER_ROOT . '/classes/ChecklistVoucherAdmin.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceTaxaManager.php');
+include_once($SERVER_ROOT . '/classes/AssociationManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
-include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceTaxaManager.php');
-include_once($SERVER_ROOT.'/classes/AssociationManager.php');
 
 class OccurrenceManager extends OccurrenceTaxaManager {
 
@@ -134,28 +134,27 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$sqlWhere .= $this->associationManager->getAssociatedRecords($this->associationArr) . ')';
 		}
 
-		if(array_key_exists('countryCode',$this->searchTermArr)){
-			$countryArr = explode(';', $this->searchTermArr['countryCode']);
-			if($countryArr){
-				$sqlWhere .= 'AND o.countrycode IN("' . implode('","', $countryArr) . '") ';
-				//$this->displaySearchArr[] = implode('; ', $countryArr);				//this is set in readRequestVariables function
-			}
+		//Country term
+		//Note: $this->displaySearchArr is set within the readRequestVariables function
+		$countryTermArr = array();
+		if(!empty($this->searchTermArr['countryCode'])){
+			$countryTermArr[] = '(o.countryCode IN("' . implode('","', $this->searchTermArr['countryCode']) . '"))';
 		}
-		if(array_key_exists('country',$this->searchTermArr)){
-			$countryArr = explode(";",$this->searchTermArr["country"]);
-			$tempArr = Array();
+		if(array_key_exists('countryRaw', $this->searchTermArr)){
+			$countryArr = explode(";", $this->searchTermArr['countryRaw']);
 			foreach($countryArr as $k => $value){
 				if($value == 'NULL'){
-					$countryArr[$k] = 'Country IS NULL';
-					$tempArr[] = '(o.Country IS NULL)';
+					$countryArr[$k] = 'country IS NULL';
+					$countryTermArr[] = '(o.country IS NULL)';
 				}
 				else{
-					$tempArr[] = '(o.Country = "'.$this->cleanInStr($value).'")';
+					$countryTermArr[] = '(o.country = "'.$this->cleanInStr($value).'")';
 				}
 			}
-			$sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
-			$this->displaySearchArr[] = implode(' ' .  $this->LANG['OR'] . ' ', $countryArr);
 		}
+		if($countryTermArr) $sqlWhere .= 'AND ('.implode(' OR ',$countryTermArr).') ';
+
+		//State term
 		if(array_key_exists("state",$this->searchTermArr)){
 			$stateAr = explode(";",$this->searchTermArr["state"]);
 			$tempArr = Array();
@@ -366,6 +365,37 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 				$this->displaySearchArr[] = $this->searchTermArr['eventdate1'].(isset($this->searchTermArr['eventdate2'])?' - '.$this->searchTermArr['eventdate2']:'');
 			}
 		}
+		if(array_key_exists('recordenteredby', $this->searchTermArr)) {
+			$enterBy = $this->cleanInStr($this->searchTermArr['recordenteredby']);
+			if($enterBy) {
+				$sqlWhere .= ' AND (o.recordEnteredBy LIKE "%' . $enterBy . '%") ';
+			}
+		}
+		if(array_key_exists('dateentered', $this->searchTermArr)) {
+			$dateEntered = $this->cleanInStr($this->searchTermArr['dateentered']);
+			if($dateEntered) {
+				$sqlWhere .= ' AND (DATE(o.dateentered) ="' . $dateEntered . '") ';
+			}
+		}
+		if(array_key_exists('datelastmodified', $this->searchTermArr)) {
+			$dateLastModified = $this->cleanInStr($this->searchTermArr['datelastmodified']);
+			if($dateLastModified) {
+				$sqlWhere .= ' AND (DATE(o.datelastmodified) ="' . $dateLastModified . '") ';
+			}
+		}
+		if(array_key_exists('processingstatus', $this->searchTermArr)) {
+			$processingstatus = $this->cleanInStr($this->searchTermArr['processingstatus']);
+			if($processingstatus) {
+				$sqlWhere .= ' AND (o.processingStatus = "' . $processingstatus . '") ';
+			}
+		}
+		if(array_key_exists('exsiccatiid', $this->searchTermArr)) {
+			$exsiccatiId = $this->cleanInStr($this->searchTermArr['exsiccatiid']);
+			if($exsiccatiId) {
+				$sqlWhere .= ' AND (o.occid IN( SELECT occid FROM omexsiccatiocclink exlink JOIN omexsiccatinumbers exnums ON exnums.omenid = exlink.omenid JOIN omexsiccatititles extitles ON extitles.ometid = exnums.ometid WHERE extitles.ometid = ' . $exsiccatiId . ')) ';
+			}
+		}
+
 		if(array_key_exists('catnum',$this->searchTermArr)){
 			$catStr = $this->cleanInStr($this->searchTermArr['catnum']);
 			$includeOtherCatNum = array_key_exists('includeothercatnum',$this->searchTermArr)?true:false;
@@ -441,7 +471,12 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$this->displaySearchArr[] = $this->LANG['IS_TYPE'];
 		}
 		if(array_key_exists('hasimages', $this->searchTermArr)){
-			$sqlWhere .= 'AND (o.occid IN(SELECT occid FROM media where mediaType = "image")) ';
+			if($this->searchTermArr['hasimages']) {
+				$sqlWhere .= 'AND (o.occid IN(SELECT occid FROM media where mediaType = "image")) ';
+
+			} else {
+				$sqlWhere .= 'AND (o.occid NOT IN(SELECT occid FROM media where mediaType = "image" and occid IS NOT NULL)) ';
+			}
 			$this->displaySearchArr[] = $this->LANG['HAS_IMAGES'];
 		}
 		if(array_key_exists('hasaudio', $this->searchTermArr)){
@@ -483,13 +518,14 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			}
 			$sqlWhere .= 'AND (o.occid IN(SELECT occid FROM tmattributes WHERE stateid IN(' . $this->searchTermArr['attr'] . '))) ';
 		}
-
-		if($sqlWhere) $this->sqlWhere = 'WHERE '.substr($sqlWhere,4);
+		if($sqlWhere){
+			$sqlWhere .= OccurrenceUtil::appendFullProtectionSQL();
+			$this->sqlWhere = 'WHERE '.substr($sqlWhere,4);
+		}
 		else{
 			//Make the sql valid, but return nothing
 			//$this->sqlWhere = 'WHERE o.occid IS NULL ';
 		}
-		//echo $this->sqlWhere;
 	}
 
 	private function getAdditionIdentifiers($identFrag){
@@ -639,7 +675,11 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 
 	public function getSearchTerm($k){
 		if($k && isset($this->searchTermArr[$k])){
-			return $this->cleanOutStr(trim($this->searchTermArr[$k],' ;'));
+			if(is_array($this->searchTermArr[$k])) {
+				return $this->cleanOutArray($this->searchTermArr[$k]);
+			} else {
+				return $this->cleanOutStr(trim($this->searchTermArr[$k],' ;'));
+			}
 		}
 		return '';
 	}
@@ -648,6 +688,8 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		//Returns a search variable string
 		$retStr = '';
 		foreach($this->searchTermArr as $k => $v){
+			if($k == 'countryCode') continue;
+			if($k == 'countryRaw') continue;
 			if(is_array($v)) $v = implode(',', $v);
 			if($v) $retStr .= '&'. $this->cleanOutStr($k) . '=' . $this->cleanOutStr($v);
 		}
@@ -730,7 +772,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			}
 			foreach($parsedArr as $k => $v){
 				$k = $this->cleanInputStr($k);
-				$v = $this->cleanInputStr($v);
+				$v = is_array($v)? array_map(fn($av) => $this->cleanInputStr($av), $v): $this->cleanInputStr($v);
 				if($k) $this->searchTermArr[$k] = $v;
 			}
 		}
@@ -771,9 +813,14 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$country = $this->cleanInputStr($_REQUEST['country']);
 			if($country){
 				$str = str_replace(',', ';', $country);
-				$countryCode = '';
-				$countryFull = '';
+				$countryRaw = '';					//Terms that were not found within geo thesaurus
+				$countryCodeArr = array();			//Terms convered to valid Country Codes
+				$countryInputArr = array();			//Verbatim terms with duplicates removed
 				foreach(explode(';', $str) as $term){
+					$term = trim($term);
+					if(!$term) continue;
+					if(isset($countryInputArr[strtolower($term)])) continue;
+					$countryInputArr[strtolower($term)] = $term;
 					$code = '';
 					$sql = 'SELECT iso2 FROM geographicthesaurus WHERE geoTerm = ? AND iso2 IS NOT NULL';
 					if($stmt = $this->conn->prepare($sql)){
@@ -784,20 +831,22 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 						$stmt->close();
 					}
 					if($code){
-						$countryCode .= ';' . $code;
+						$countryCodeArr[$code] = $code;
 						$this->displaySearchArr[] = $term . ' (' . $code . ')';
 					}
 					else{
-						$countryFull .= ';' . $term;
+						$countryRaw .= ';' . $term;
 						$this->displaySearchArr[] = $term;
 					}
 				}
-				if(!$countryFull && !$countryCode) $countryFull = $str;
-				if($countryCode) $this->searchTermArr['countryCode'] = trim($countryCode, '; ');
-				if($countryFull) $this->searchTermArr['country'] = trim($countryFull, '; ');
+				if(!$countryRaw && !$countryCodeArr) $countryRaw = $str;
+				if($countryCodeArr) $this->searchTermArr['countryCode'] = $countryCodeArr;
+				if($countryRaw) $this->searchTermArr['countryRaw'] = trim($countryRaw, '; ');
+				if($countryInputArr) $this->searchTermArr['country'] = implode('; ', $countryInputArr);
 			}
 			else{
 				unset($this->searchTermArr['countryCode']);
+				unset($this->searchTermArr['countryRaw']);
 				unset($this->searchTermArr['country']);
 			}
 		}
@@ -1018,7 +1067,6 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			//$this->searchTermArr['footprintwkt'] = $this->cleanInputStr($_REQUEST['footprintwkt']);
 			$this->searchTermArr['footprintGeoJson'] = $this->cleanInputStr($_REQUEST['footprintGeoJson']);
 		}
-
 	}
 
 	private function setChecklistVariables($clid){

@@ -3,6 +3,12 @@ if(!$displayQuery && array_key_exists('displayquery',$_REQUEST)) $displayQuery =
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/includes/queryform.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/queryform.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/queryform.en.php');
 
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/specprocessor/exporter.' . $LANG_TAG . '.php')){
+	include_once($SERVER_ROOT . '/content/lang/collections/specprocessor/exporter.' . $LANG_TAG . '.php');
+} else{
+	include_once($SERVER_ROOT . '/content/lang/collections/specprocessor/exporter.en.php');
+}
+
 $qryArr = $occManager->getQueryVariables();
 // Construct a link containing the queryform search parameters
 $queryLink = '?displayquery=1&collid='.$collId.'&'.http_build_query($qryArr, '', '&amp;');
@@ -23,6 +29,11 @@ $qWithoutImg = (array_key_exists('woi',$qryArr)?$qryArr['woi']:0);
 $qOcrFrag = (array_key_exists('ocr',$qryArr)?htmlentities($qryArr['ocr'], ENT_COMPAT, $CHARSET):'');
 $qOrderBy = (array_key_exists('orderby',$qryArr)?$qryArr['orderby']:'');
 $qOrderByDir = (array_key_exists('orderbydir',$qryArr)?$qryArr['orderbydir']:'');
+$qTraitIds = (array_key_exists('traitid',$qryArr)?$qryArr['traitid']: []);
+$qTraitAbsence = (array_key_exists('traitAbsence',$qryArr)?$qryArr['traitAbsence']: false);
+$qTraitStateIds = (array_key_exists('stateid',$qryArr)?$qryArr['stateid']: []);
+
+$qTraitArr = $occManager->getAttributeTraits($collId);
 
 $customFieldArr = array();
 if($crowdSourceMode){
@@ -48,7 +59,7 @@ else{
 			'identificationRemarks'=>$LANG['ID_REMARKS'],'identifiedBy'=>$LANG['IDED_BY'],'individualCount'=>$LANG['IND_COUNT'],
 			'informationWithheld'=>$LANG['INFO_WITHHELD'],'institutionCode'=>$LANG['INST_CODE'],'island'=>$LANG['ISLAND'],'islandgroup'=>$LANG['ISLAND_GROUP'],
 			'labelProject'=>$LANG['LAB_PROJECT'],'language'=>$LANG['LANGUAGE'],'lifeStage'=>$LANG['LIFE_STAGE'],'locationid'=>$LANG['LOCATION_ID'],'locality'=>$LANG['LOCALITY'],
-			'localitySecurity'=>$LANG['LOC_SEC'],'localitySecurityReason'=>$LANG['LOC_SEC_REASON'],'locationRemarks'=>$LANG['LOC_REMARKS'],
+			'recordSecurity'=>$LANG['SECURITY'],'securityReason'=>$LANG['SECURITY_REASON'],'locationRemarks'=>$LANG['LOC_REMARKS'],
 			'username'=>$LANG['MODIFIED_BY'],'municipality'=>$LANG['MUNICIPALITY'],'occurrenceRemarks'=>$LANG['NOTES_REMARKS'],'ocrFragment'=>$LANG['OCR_FRAGMENT'],
 			'otherCatalogNumbers'=>$LANG['OTHER_CAT_NUMS'],'ownerInstitutionCode'=>$LANG['OWNER_CODE'],'preparations'=>$LANG['PREPARATIONS'],
 			'reproductiveCondition'=>$LANG['REP_COND'],'samplingEffort'=>$LANG['SAMP_EFFORT'],'samplingProtocol'=>$LANG['SAMP_PROTOCOL'],
@@ -104,7 +115,7 @@ else{
 							<input type="text" name="q_eventdate" id="q_eventdate" value="<?php echo $qEventDate; ?>" style="width:160px" onchange="setOrderBy(this)" />
 						</div>
 					</div>
-					
+
 				<?php
 			}
 			?>
@@ -178,6 +189,46 @@ else{
 						<label for="q_withoutimg"><?php echo $LANG['WITHOUT_IMAGES']; ?></label>
 					</div>
 				</div>
+				<?php if($qTraitArr): ?>
+					<div style="margin-bottom: 10px">
+						<div class="fieldGroupDiv">
+							<div>
+								<div>
+									<?php echo $LANG['TRAIT_FILTER']; ?>:
+								</div>
+							</div>
+							<div>
+								<select name="q_traitid[]" multiple>
+									<?php
+										foreach($qTraitArr as $traitID => $tArr){
+											echo '<option '. (in_array($traitID, $qTraitIds)? 'selected':'') .' value="'.$traitID.'">'.$tArr['name'].' [ID:'.$traitID.']</option>';
+										}
+									?>
+								</select>
+							</div>
+							<div>
+							-- <?php echo $LANG['OR_SPEC_ATTRIBUTE']; ?> --
+							</div>
+							<div>
+								<select name="q_stateid[]" multiple>
+									<?php
+									foreach($qTraitArr as $traitID => $tArr){
+										$stateArr = $tArr['state'];
+										foreach($stateArr as $stateID => $stateName){
+											echo '<option ' . (in_array($stateID, $qTraitStateIds)? 'selected':'') . ' value="'.$stateID.'">'.$tArr['name'].': '.$stateName.'</option>';
+										}
+									}
+									?>
+								</select>
+							</div>
+						</div>
+						<input id="qTraitAbsence" name="q_traitAbsence" type="checkbox" <?= $qTraitAbsence? 'checked': '' ?> value="1" />
+						<label for="qTraitAbsence"><?= $LANG['SEARCH_MISSING_TRAITS']?></label>
+						<div>
+							* <?php echo $LANG['HOLD_CTRL']; ?>
+						</div>
+					</div>
+				<?php endif ?>
 				<?php
 				if($ACTIVATE_EXSICCATI){
 					if($exsList = $occManager->getExsiccatiList()){
@@ -426,6 +477,16 @@ else{
 		f.q_dateentered.value = "";
 		f.q_datelastmodified.value = "";
 		f.q_processingstatus.value = "";
+
+
+		if(f["q_traitid[]"]) {
+			f["q_traitid[]"].value = "";
+		}
+
+		if(f["q_stateid[]"]) {
+			f["q_stateid[]"].value = "";
+		}
+
 		if(f.q_exsiccatiid) f.q_exsiccatiid.value = "";
 
 		for(let x = 1; x < 9; x++){

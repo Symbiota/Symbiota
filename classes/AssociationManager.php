@@ -51,20 +51,20 @@ class AssociationManager extends OccurrenceTaxaManager{
 
 
 	public function getAssociatedRecords($associationArr) {
-    $sql = '';
+		$sql = '';
 
-    if (array_key_exists('relationship', $associationArr) && $associationArr['relationship'] !== 'none') {
-        $familyJoinStr = '';
-        // $shouldUseFamily = array_key_exists('associated-taxa', $associationArr) && $associationArr['associated-taxa'] == '3';
-		$shouldUseFamily = true; // fixes bug that occurs when user selects "Scientific name" taxon type instead of family and then searches for a family. Silly user.
-        if ($shouldUseFamily) $familyJoinStr = 'LEFT JOIN taxstatus ts ON o.tidinterpreted = ts.tid';
+		if (array_key_exists('relationship', $associationArr) && $associationArr['relationship'] !== 'none') {
+			$familyJoinStr = '';
+			// $shouldUseFamily = array_key_exists('associated-taxa', $associationArr) && $associationArr['associated-taxa'] == '3';
+			$shouldUseFamily = true; // fixes bug that occurs when user selects "Scientific name" taxon type instead of family and then searches for a family. Silly user.
+			if ($shouldUseFamily) $familyJoinStr = 'LEFT JOIN taxstatus ts ON o.tidinterpreted = ts.tid';
 
-        // "Forward" association
-        $relationshipType = (array_key_exists('relationship', $associationArr) && $associationArr['relationship'] !== 'any') ? $associationArr['relationship'] : 'IS NOT NULL';
-        $relationshipStr = (array_key_exists('relationship', $associationArr) && $associationArr['relationship'] !== 'any') ? ("='" . $relationshipType . "'") : ' IS NOT NULL';
+			// "Forward" association
+			$relationshipType = (array_key_exists('relationship', $associationArr) && $associationArr['relationship'] !== 'any') ? $associationArr['relationship'] : 'IS NOT NULL';
+			$relationshipStr = (array_key_exists('relationship', $associationArr) && $associationArr['relationship'] !== 'any') ? ("='" . $relationshipType . "'") : ' IS NOT NULL';
 
-		$forwardSql = "SELECT oa.occid FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate  LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE oa.relationship " . $relationshipStr . " ";
-		$forwardSql .= $this->getAssociatedTaxonWhereFrag($associationArr);
+			$forwardSql = "SELECT oa.occid FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate  LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE oa.relationship " . $relationshipStr . " ";
+			$forwardSql .= $this->getAssociatedTaxonWhereFrag($associationArr);
 
 		// Capture observational associations
 		$obsSql = "SELECT oa.occid FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid " . $familyJoinStr . " WHERE oa.relationship " . $relationshipStr . " ";
@@ -76,15 +76,14 @@ class AssociationManager extends OccurrenceTaxaManager{
 
 		$reverseSql = "SELECT oa.occidAssociate FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE oa.relationship " . $reverseRelationshipStr . " ";
 
-        $reverseSql .= $this->getAssociatedTaxonWhereFrag($associationArr);
+			$reverseSql .= $this->getAssociatedTaxonWhereFrag($associationArr);
 
-        // $sql .= "AND (o.occid IN (SELECT occid FROM ( " . $forwardSql . " UNION " . $reverseSql . " ) AS occids)";
 		$sql .= "AND (o.occid IN (SELECT occid FROM ( " . $forwardSql . " UNION " . $obsSql . " UNION " . $reverseSql . " ) AS occids)";
     }
     return $sql;
 }
 
-	public function getAssociatedTaxonWhereFrag($associationArr){
+	private function getAssociatedTaxonWhereFrag($associationArr){
 		$sqlWhereTaxa = '';
 		if(isset($associationArr['taxa'])){
 			$tidInArr = array();
@@ -182,7 +181,6 @@ class AssociationManager extends OccurrenceTaxaManager{
 		return $sqlWhereTaxa;
 	}
 
-
 	public function getInverseRelationshipOf($relationship){
 		$sql = "SELECT inverseRelationship FROM ctcontrolvocabterm where cvID='1' AND term = ?";
 		if($statement = $this->conn->prepare($sql)){
@@ -199,6 +197,5 @@ class AssociationManager extends OccurrenceTaxaManager{
 			return '';
 		}
 	}
-
 }
 ?>
