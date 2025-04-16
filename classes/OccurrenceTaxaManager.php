@@ -52,19 +52,19 @@ class OccurrenceTaxaManager {
 
 	public function setAssociationRequestVariable($inputArr = null, $exactMatchOnly = false){
 		if($exactMatchOnly) $this->exactMatchOnly = true;
-		
+
 		//sanitize
 		$associationTypeStr = $this->cleanAndAssignGeneric('association-type', $inputArr);
 		$associatedTaxonStr = $this->cleanAndAssignGeneric('associated-taxa', $inputArr);
 		if($associationTypeStr){
 			$this->associationArr['relationship'] = $associationTypeStr;
 		}
-		
+
 		if($associatedTaxonStr){
 			$this->associationArr['search'] = $associatedTaxonStr;
 			$this->setAssociationUseThes($inputArr, 'usethes-associations');
 			$defaultTaxaType = $this->setAndGetAssociationDefaultTaxaType($inputArr);
-			
+
 			$this->associationTaxaSearchTerms = explode(',',$associatedTaxonStr);
 			foreach($this->associationTaxaSearchTerms as $searchTermkey => $term){
 				$searchTerm = $this->cleanInputStr($term);
@@ -94,7 +94,7 @@ class OccurrenceTaxaManager {
 				$taxaType = TaxaSearchType::SCIENTIFIC_NAME;
 			}
 		}
-		$this->setSciNamesByVerns($searchTerm, $this->associationArr);
+		if($taxaType == TaxaSearchType::COMMON_NAME) $this->setSciNamesByVerns($searchTerm, $this->associationArr);
 		$this->setTaxonRankAndType($searchTerm, $taxaType, 'usethes-associations');
 	}
 
@@ -298,7 +298,7 @@ class OccurrenceTaxaManager {
 						$taxaType = TaxaSearchType::SCIENTIFIC_NAME;
 					}
 				}
-				$this->setSciNamesByVerns($searchTerm);
+				if($taxaType == TaxaSearchType::COMMON_NAME) $this->setSciNamesByVerns($searchTerm);
 				$sql = 'SELECT t.sciname, t.tid, t.rankid FROM taxa t ';
 				if(is_numeric($searchTerm)){
 					$searchTerm = filter_var($searchTerm, FILTER_SANITIZE_NUMBER_INT);
