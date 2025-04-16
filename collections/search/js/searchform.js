@@ -7,6 +7,7 @@ const form = document.getElementById("params-form") || null;
 const formColls = document.getElementById("search-form-colls") || null;
 const formSites = document.getElementById("site-list") || null;
 const searchFormColls = document.getElementById("search-form-colls") || null;
+
 // list of parameters to be passed to url, modified by getSearchUrl method
 let paramNames = [
   "db",
@@ -725,11 +726,8 @@ function simpleSearch() {
   if (isValid) {
     const searchUrl = shortenSearchUrlIfAllCollectionsAreSearched();
     sessionStorage.setItem('verbatimSearchUrl', searchUrl);
-
     const submitForm = document.getElementById("params-form");
     submitForm.method = "POST"; // if GET is used instead, the URL is too short for complex polygon + many collections queries. Hence, the need for POST.
-    // submitForm.action = $CLIENT_ROOT . "list.php";
-    document.body.appendChild(submitForm);
     submitForm.submit();
   } else {
     handleValErrors(errors);
@@ -1006,6 +1004,7 @@ document.getElementById("params-form").addEventListener("submit", function(event
   event.preventDefault();
   simpleSearch();
 });
+
 
 // Reset button
 document

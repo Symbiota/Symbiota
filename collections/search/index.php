@@ -610,7 +610,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 					</div>
 				</fieldset>
 				<button id="search-btn" type="submit"><?php echo $LANG['SEARCH'] ?></button>
-				<button id="reset-btn"><?php echo $LANG['RESET'] ?></button>
+				<button id="reset-btn" type="button"><?php echo $LANG['RESET'] ?></button>
 				<h2><?php echo $LANG['CRITERIA'] ?></h2>
 				<div class="criteria-panel">
 					<div id="chips"></div>
