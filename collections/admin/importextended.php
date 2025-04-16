@@ -137,15 +137,15 @@ if ($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($colli
 					}
 				}
 			}
-			if (!subjectIdentifierIsMapped) {
+			if (!subjectIdentifierIsMapped && $importType==="5") {
 				alert("<?= $LANG['SUBJECT_ID_REQUIRED'] ?>");
 				return false;
 			}
-			if (!identifierNameIsMapped) {
+			if (!identifierNameIsMapped && $importType==="5") {
 				alert("<?= $LANG['IDENTIFIER_NAME_REQUIRED'] ?>");
 				return false;
 			}
-			if (!identifierValueIsMapped) {
+			if (!identifierValueIsMapped && $importType==="5") {
 				alert("<?= $LANG['IDENTIFIER_ID_VALUE_REQUIRED'] ?>");
 				return false;
 			}
