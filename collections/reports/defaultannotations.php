@@ -9,7 +9,7 @@ $lHeader = $_POST['lheading'];
 $lFooter = $_POST['lfooter'];
 $detIdArr = $_POST['detid'];
 $action = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
-$rowsPerPage = array_key_exists('rowcount',$_POST)?$_POST['rowcount']:3;;
+$rowsPerPage = array_key_exists('columncount',$_POST)?$_POST['columncount']:3;;
 
 $labelManager = new OccurrenceLabel();
 $labelManager->setCollid($collid);
