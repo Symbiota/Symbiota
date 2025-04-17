@@ -41,8 +41,8 @@ if($isEditor){
 	?>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/taxa.sharedTaxonomyCRUD.js?ver=4"></script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/taxa.taxonomyloader.js?ver=4"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/taxa.sharedTaxonomyCRUD.js?ver=5"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/taxa.taxonomyloader.js?ver=5"></script>
 	<style>
 		.search-bar-long {
 			width: 35rem;
@@ -61,6 +61,12 @@ if($isEditor){
 </head>
 <body>
 <script src="<?php echo $filename ?>" type="text/javascript"></script>
+<script type="text/javascript">
+	document.addEventListener("DOMContentLoaded", function() {
+		const form = document.getElementById("loaderform");
+		handleFieldChange(form, true, "submitaction", translations.BUTTON_SUBMIT, form);
+	});
+</script>
 <?php
 	$displayLeftMenu = false;
 	include($SERVER_ROOT.'/includes/header.php');
@@ -204,7 +210,7 @@ if($isEditor){
 								<?php echo $LANG['PARENT_TAXON'] . ' *'; ?>:
 							</label>
 						</div>
-						<input type="text" id="parentname" name="parentname" class='search-bar' />
+						<input required type="text" id="parentname" name="parentname" class='search-bar' />
 						<span id="addparentspan" style="display:none;">
 							<a id="addparentanchor" href="taxonomyloader.php?target=" target="_blank">
 								<?php echo htmlspecialchars($LANG['ADD_PARENT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE	); ?>
@@ -268,7 +274,7 @@ if($isEditor){
 							<span id="required-display" ><?= $LANG['REQUIRED']; ?></span>
 						</div>
 						<div class="gridlike-form-row">
-							<button type="submit" id="submitaction" name="submitaction" value="submitNewName" ><?php echo $LANG['SUBMIT_NEW_NAME']; ?></button>
+							<button type="button" id="submitaction" name="submitaction" value="submitNewName" ><?php echo $LANG['SUBMIT_NEW_NAME']; ?></button>
 							<span id="error-display" style="color: var(--danger-color)"></span>
 						</div>
 					</div>

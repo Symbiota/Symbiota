@@ -251,7 +251,13 @@ class TaxonomyEditorManager extends Manager{
 			'modifiedTimeStamp = "'.date('Y-m-d H:i:s').'", ' ;
 			$sql .= 'sciname = "' . $this->cleanInStr($sciname) . '" ';
 			$sql .= 'WHERE (tid = '.$this->tid.')';
-		if(!$this->conn->query($sql)){
+		$updateStatus = false;
+		try{
+			$updateStatus = $this->conn->query($sql);
+		} catch(Exception $e){
+			error_log("Error updating taxon: " . $sql);
+		}
+		if(!$updateStatus){
 			$statusStr = (isset($this->langArr['ERROR_EDITING_TAXON'])?$this->langArr['ERROR_EDITING_TAXON']:'ERROR editing taxon').': '.$this->conn->error;
 		}
 
@@ -572,9 +578,28 @@ class TaxonomyEditorManager extends Manager{
 			$processedTradeName = $this->standardizeTradeName($dataArr['tradeName']);
 			$processedSciname .= ' ' . $processedTradeName;
 		}
-		$sqlTaxa = 'INSERT INTO taxa(sciname, author, rankid, unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, cultivarEpithet, tradeName, '.
+
+		$parentTid = array_key_exists('parenttid', $dataArr) && is_numeric($dataArr['parenttid']) ? (int)$dataArr['parenttid'] : null;
+
+		$parentKingdomNameSql = 'SELECT k.sciname
+			FROM taxa k INNER JOIN taxaenumtree e ON k.tid = e.parenttid
+			WHERE e.taxauthid = 1 AND k.rankid = 10 AND e.tid = ?;';
+		$stmnt = $this->conn->prepare($parentKingdomNameSql);
+		$kingdomName = '';
+		if($stmnt){
+			$stmnt->bind_param('i', $parentTid);
+			if($stmnt->execute()){
+				$stmnt->bind_result($kingdomName);
+				$stmnt->store_result();
+				$stmnt->fetch();
+			}
+		}
+		
+
+		$sqlTaxa = 'INSERT INTO taxa(kingdomName, sciname, author, rankid, unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, cultivarEpithet, tradeName, '.
 			'source, notes, securitystatus, modifiedUid, modifiedTimeStamp) '.
-			'VALUES ("'.$this->cleanInStr($processedSciname).'","'.
+			'VALUES (' . ($kingdomName ? ('"' . $this->cleanInStr($kingdomName) . '"') : '""') . ', 
+			"'.$this->cleanInStr($processedSciname).'","'.
 			($dataArr['author']? ($this->cleanInStr($dataArr['author'])) : '').'",'.
 			(isset($dataArr['rankid'])?$dataArr['rankid']:0).','.
 			($dataArr['unitind1']?'"'.$this->cleanInStr($dataArr['unitind1']).'"':'NULL').',"'.
@@ -590,7 +615,14 @@ class TaxonomyEditorManager extends Manager{
 			$this->cleanInStr($dataArr['securitystatus']).','.
 			$GLOBALS['SYMB_UID'].',"'.
 			date('Y-m-d H:i:s').'")';
-		if($this->conn->query($sqlTaxa)){
+		$insertStatus = false;
+		try{
+			$insertStatus = $this->conn->query($sqlTaxa);
+		} catch (Exception $e){
+			error_log("Error inserting new taxon: " . $sqlTaxa);
+		}
+
+		if($insertStatus){
 			$tid = $this->conn->insert_id;
 		 	//Load accepteance status into taxstatus table
 			$tidAccepted = ($dataArr['acceptstatus']?$tid:$dataArr['tidaccepted']);
