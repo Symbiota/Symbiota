@@ -1,15 +1,49 @@
 <?php
 include_once('../../config/symbini.php');
 require_once $SERVER_ROOT.'/vendor/phpoffice/phpword/bootstrap.php';
-$targetHtml = $_POST['targetHtml'];
+$htmlLabels = $_POST['htmlLabels'] ?? [];
+
+$columnCount = $_POST['labeltype'] ?? 2;
+if(!is_numeric($columnCount) && $columnCount != 'packet') $columnCount = 2;
+
+$sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>360,'marginRight'=>360,'marginTop'=>360,'marginBottom'=>360,'headerHeight'=>0,'footerHeight'=>0);
+if($columnCount == 1){
+	$lineWidth = 740;
+}
+elseif($columnCount == 2){
+	$lineWidth = 350;
+	$sectionStyle['colsNum'] = 2;
+	$sectionStyle['colsSpace'] = 690;
+	$sectionStyle['breakType'] = 'continuous';
+}
+elseif($columnCount == 3){
+	$lineWidth = 220;
+	$sectionStyle['colsNum'] = 3;
+	$sectionStyle['colsSpace'] = 690;
+	$sectionStyle['breakType'] = 'continuous';
+}
 
 // This required or &amp; will corrupt the docx file
  \PhpOffice\PhpWord\Settings::setOutputEscapingEnabled(true);
 
 $pw = new \PhpOffice\PhpWord\PhpWord();
-$section = $pw->addSection();
+$pw->setDefaultParagraphStyle(
+    array(
+		'align'=>'both','keepNext'=>false,'keepLines'=>false
+    )
+);
+$pw->addFontStyle('dividerFont', array('size'=>1));
+$pw->addParagraphStyle('firstLine', array('lineHeight'=>.1,'spaceAfter'=>0,'keepNext'=>true,'keepLines'=>true));
+$pw->addParagraphStyle('label', array('keepNext'=>true,'keepLines'=>true));
+$pw->addParagraphStyle('lastLine', array('spaceAfter'=>300,'lineHeight'=>.1));
 
-\PhpOffice\PhpWord\Shared\Html::addHtml($section, $targetHtml);
+$section = $pw->addSection($sectionStyle);
+
+foreach($htmlLabels as $label) {
+	$section->addText(' ', 'dividerFont', 'firstLine');
+	\PhpOffice\PhpWord\Shared\Html::addHtml($section, $label);
+	$section->addText(' ', 'dividerFont', 'lastLine');
+}
 
 $ses_id = time();
 $target = $SERVER_ROOT.'/temp/report/'.'labels'.'_'.date('Ymd').'_labels_'.$ses_id.'.docx';
