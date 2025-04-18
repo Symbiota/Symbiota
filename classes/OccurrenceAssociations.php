@@ -164,9 +164,9 @@ class OccurrenceAssociations extends Manager {
 
 	private function databaseAssocSpecies($assocArr, $occid){
 		if($assocArr){
-			$sql = 'INSERT INTO omoccurassociations(occid, verbatimsciname, relationship) VALUES';
+			$sql = 'INSERT INTO omoccurassociations(occid, associationType, verbatimsciname, relationship) VALUES';
 			foreach($assocArr as $aStr){
-				$sql .= '('.$occid.',"'.$this->conn->real_escape_string($aStr).'","associatedSpecies"), ';
+				$sql .= '('.$occid.', "observational", "'.$this->conn->real_escape_string($aStr).'","associatedSpecies"), ';
 			}
 			$sql = trim($sql,', ');
 			//echo $sql; exit;

@@ -11,7 +11,7 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
@@ -20,14 +20,14 @@ namespace PhpOffice\PhpWord\Writer\HTML\Style;
 use PhpOffice\PhpWord\Style\Font as FontStyle;
 
 /**
- * Font style HTML writer
+ * Font style HTML writer.
  *
  * @since 0.10.0
  */
 class Font extends AbstractStyle
 {
     /**
-     * Write style
+     * Write style.
      *
      * @return string
      */
@@ -37,16 +37,16 @@ class Font extends AbstractStyle
         if (!$style instanceof FontStyle) {
             return '';
         }
-        $css = array();
+        $css = [];
 
-        $font = $style->getName();
+        $font = $this->getFontFamily($style->getName(), $style->getFallbackFont());
         $size = $style->getSize();
         $color = $style->getColor();
         $fgColor = $style->getFgColor();
         $underline = $style->getUnderline() != FontStyle::UNDERLINE_NONE;
         $lineThrough = $style->isStrikethrough() || $style->isDoubleStrikethrough();
 
-        $css['font-family'] = $this->getValueIf($font !== null, "'{$font}'");
+        $css['font-family'] = $this->getValueIf(!empty($font), $font);
         $css['font-size'] = $this->getValueIf($size !== null, "{$size}pt");
         $css['color'] = $this->getValueIf($color !== null, "#{$color}");
         $css['background'] = $this->getValueIf($fgColor != '', $fgColor);
@@ -61,10 +61,35 @@ class Font extends AbstractStyle
         $css['text-transform'] = $this->getValueIf($style->isAllCaps(), 'uppercase');
         $css['font-variant'] = $this->getValueIf($style->isSmallCaps(), 'small-caps');
         $css['display'] = $this->getValueIf($style->isHidden(), 'none');
+        $whitespace = $style->getWhiteSpace();
+        if ($whitespace) {
+            $css['white-space'] = $whitespace;
+        }
 
         $spacing = $style->getSpacing();
-        $css['letter-spacing'] = $this->getValueIf(!is_null($spacing), ($spacing / 20) . 'pt');
+        $css['letter-spacing'] = $this->getValueIf(null !== $spacing, ($spacing / 20) . 'pt');
+        if ($style->isRTL()) {
+            $css['direction'] = 'rtl';
+        } elseif ($style->isRTL() === false) {
+            $css['direction'] = 'ltr';
+        }
 
         return $this->assembleCss($css);
+    }
+
+    /**
+     * Set font and alternates for css font-family.
+     */
+    private function getFontFamily(?string $font, string $genericFont): string
+    {
+        if (empty($font)) {
+            return '';
+        }
+        $fontfamily = "'" . htmlspecialchars($font, ENT_QUOTES, 'UTF-8') . "'";
+        if (!empty($genericFont)) {
+            $fontfamily .= ", $genericFont";
+        }
+
+        return $fontfamily;
     }
 }

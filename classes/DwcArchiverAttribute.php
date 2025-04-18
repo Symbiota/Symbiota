@@ -61,7 +61,7 @@ class DwcArchiverAttribute extends DwcArchiverBaseManager{
 		if($this->fieldArr){
 			$sqlFrag = '';
 			foreach($this->fieldArr['fields'] as $colName){
-				if($colName && $colName != 'msDynamicField') $sqlFrag .= ', '.$colName;
+				if($colName) $sqlFrag .= ', '.$colName;
 			}
 			$this->sqlBase = 'SELECT '.trim($sqlFrag,', ').'
 				FROM tmtraits m INNER JOIN tmstates s ON m.traitid = s.traitid

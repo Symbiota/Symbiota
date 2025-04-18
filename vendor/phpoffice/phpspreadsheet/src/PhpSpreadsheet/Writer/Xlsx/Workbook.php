@@ -2,6 +2,7 @@
 
 namespace PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx\Namespaces;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Shared\XMLWriter;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -13,11 +14,11 @@ class Workbook extends WriterPart
     /**
      * Write workbook to XML format.
      *
-     * @param bool $recalcRequired Indicate whether formulas should be recalculated before writing
+     * @param bool $preCalculateFormulas If true, formulas will be calculated before writing
      *
      * @return string XML Output
      */
-    public function writeWorkbook(Spreadsheet $spreadsheet, $recalcRequired = false)
+    public function writeWorkbook(Spreadsheet $spreadsheet, bool $preCalculateFormulas = false): string
     {
         // Create XML writer
         if ($this->getParentWriter()->getUseDiskCaching()) {
@@ -32,14 +33,14 @@ class Workbook extends WriterPart
         // workbook
         $objWriter->startElement('workbook');
         $objWriter->writeAttribute('xml:space', 'preserve');
-        $objWriter->writeAttribute('xmlns', 'http://schemas.openxmlformats.org/spreadsheetml/2006/main');
-        $objWriter->writeAttribute('xmlns:r', 'http://schemas.openxmlformats.org/officeDocument/2006/relationships');
+        $objWriter->writeAttribute('xmlns', Namespaces::MAIN);
+        $objWriter->writeAttribute('xmlns:r', Namespaces::SCHEMA_OFFICE_DOCUMENT);
 
         // fileVersion
         $this->writeFileVersion($objWriter);
 
         // workbookPr
-        $this->writeWorkbookPr($objWriter);
+        $this->writeWorkbookPr($objWriter, $spreadsheet);
 
         // workbookProtection
         $this->writeWorkbookProtection($objWriter, $spreadsheet);
@@ -56,7 +57,7 @@ class Workbook extends WriterPart
         (new DefinedNamesWriter($objWriter, $spreadsheet))->write();
 
         // calcPr
-        $this->writeCalcPr($objWriter, $recalcRequired);
+        $this->writeCalcPr($objWriter, $preCalculateFormulas);
 
         $objWriter->endElement();
 
@@ -66,8 +67,6 @@ class Workbook extends WriterPart
 
     /**
      * Write file version.
-     *
-     * @param XMLWriter $objWriter XML Writer
      */
     private function writeFileVersion(XMLWriter $objWriter): void
     {
@@ -81,14 +80,12 @@ class Workbook extends WriterPart
 
     /**
      * Write WorkbookPr.
-     *
-     * @param XMLWriter $objWriter XML Writer
      */
-    private function writeWorkbookPr(XMLWriter $objWriter): void
+    private function writeWorkbookPr(XMLWriter $objWriter, Spreadsheet $spreadsheet): void
     {
         $objWriter->startElement('workbookPr');
 
-        if (Date::getExcelCalendar() === Date::CALENDAR_MAC_1904) {
+        if ($spreadsheet->getExcelCalendar() === Date::CALENDAR_MAC_1904) {
             $objWriter->writeAttribute('date1904', '1');
         }
 
@@ -99,8 +96,6 @@ class Workbook extends WriterPart
 
     /**
      * Write BookViews.
-     *
-     * @param XMLWriter $objWriter XML Writer
      */
     private function writeBookViews(XMLWriter $objWriter, Spreadsheet $spreadsheet): void
     {
@@ -110,14 +105,14 @@ class Workbook extends WriterPart
         // workbookView
         $objWriter->startElement('workbookView');
 
-        $objWriter->writeAttribute('activeTab', $spreadsheet->getActiveSheetIndex());
+        $objWriter->writeAttribute('activeTab', (string) $spreadsheet->getActiveSheetIndex());
         $objWriter->writeAttribute('autoFilterDateGrouping', ($spreadsheet->getAutoFilterDateGrouping() ? 'true' : 'false'));
-        $objWriter->writeAttribute('firstSheet', $spreadsheet->getFirstSheetIndex());
+        $objWriter->writeAttribute('firstSheet', (string) $spreadsheet->getFirstSheetIndex());
         $objWriter->writeAttribute('minimized', ($spreadsheet->getMinimized() ? 'true' : 'false'));
         $objWriter->writeAttribute('showHorizontalScroll', ($spreadsheet->getShowHorizontalScroll() ? 'true' : 'false'));
         $objWriter->writeAttribute('showSheetTabs', ($spreadsheet->getShowSheetTabs() ? 'true' : 'false'));
         $objWriter->writeAttribute('showVerticalScroll', ($spreadsheet->getShowVerticalScroll() ? 'true' : 'false'));
-        $objWriter->writeAttribute('tabRatio', $spreadsheet->getTabRatio());
+        $objWriter->writeAttribute('tabRatio', (string) $spreadsheet->getTabRatio());
         $objWriter->writeAttribute('visibility', $spreadsheet->getVisibility());
 
         $objWriter->endElement();
@@ -127,8 +122,6 @@ class Workbook extends WriterPart
 
     /**
      * Write WorkbookProtection.
-     *
-     * @param XMLWriter $objWriter XML Writer
      */
     private function writeWorkbookProtection(XMLWriter $objWriter, Spreadsheet $spreadsheet): void
     {
@@ -153,10 +146,9 @@ class Workbook extends WriterPart
     /**
      * Write calcPr.
      *
-     * @param XMLWriter $objWriter XML Writer
-     * @param bool $recalcRequired Indicate whether formulas should be recalculated before writing
+     * @param bool $preCalculateFormulas If true, formulas will be calculated before writing
      */
-    private function writeCalcPr(XMLWriter $objWriter, $recalcRequired = true): void
+    private function writeCalcPr(XMLWriter $objWriter, bool $preCalculateFormulas = true): void
     {
         $objWriter->startElement('calcPr');
 
@@ -165,18 +157,16 @@ class Workbook extends WriterPart
         //     because the file has changed
         $objWriter->writeAttribute('calcId', '999999');
         $objWriter->writeAttribute('calcMode', 'auto');
-        //    fullCalcOnLoad isn't needed if we've recalculating for the save
-        $objWriter->writeAttribute('calcCompleted', ($recalcRequired) ? 1 : 0);
-        $objWriter->writeAttribute('fullCalcOnLoad', ($recalcRequired) ? 0 : 1);
-        $objWriter->writeAttribute('forceFullCalc', ($recalcRequired) ? 0 : 1);
+        //    fullCalcOnLoad isn't needed if we will calculate before writing
+        $objWriter->writeAttribute('calcCompleted', ($preCalculateFormulas) ? '1' : '0');
+        $objWriter->writeAttribute('fullCalcOnLoad', ($preCalculateFormulas) ? '0' : '1');
+        $objWriter->writeAttribute('forceFullCalc', ($preCalculateFormulas) ? '0' : '1');
 
         $objWriter->endElement();
     }
 
     /**
      * Write sheets.
-     *
-     * @param XMLWriter $objWriter XML Writer
      */
     private function writeSheets(XMLWriter $objWriter, Spreadsheet $spreadsheet): void
     {
@@ -200,23 +190,22 @@ class Workbook extends WriterPart
     /**
      * Write sheet.
      *
-     * @param XMLWriter $objWriter XML Writer
-     * @param string $pSheetname Sheet name
-     * @param int $pSheetId Sheet id
-     * @param int $pRelId Relationship ID
+     * @param string $worksheetName Sheet name
+     * @param int $worksheetId Sheet id
+     * @param int $relId Relationship ID
      * @param string $sheetState Sheet state (visible, hidden, veryHidden)
      */
-    private function writeSheet(XMLWriter $objWriter, $pSheetname, $pSheetId = 1, $pRelId = 1, $sheetState = 'visible'): void
+    private function writeSheet(XMLWriter $objWriter, string $worksheetName, int $worksheetId = 1, int $relId = 1, string $sheetState = 'visible'): void
     {
-        if ($pSheetname != '') {
+        if ($worksheetName != '') {
             // Write sheet
             $objWriter->startElement('sheet');
-            $objWriter->writeAttribute('name', $pSheetname);
-            $objWriter->writeAttribute('sheetId', $pSheetId);
+            $objWriter->writeAttribute('name', $worksheetName);
+            $objWriter->writeAttribute('sheetId', (string) $worksheetId);
             if ($sheetState !== 'visible' && $sheetState != '') {
                 $objWriter->writeAttribute('state', $sheetState);
             }
-            $objWriter->writeAttribute('r:id', 'rId' . $pRelId);
+            $objWriter->writeAttribute('r:id', 'rId' . $relId);
             $objWriter->endElement();
         } else {
             throw new WriterException('Invalid parameters passed.');

@@ -232,7 +232,7 @@ class OccurrenceGeorefTools {
 
 	public function getGeorefClones($locality, $country, $state, $county, $searchType, $collStr){
 		$occArr = array();
-		$sql = 'SELECT count(o.occid) AS cnt, o.decimallatitude, o.decimallongitude, o.coordinateUncertaintyInMeters, o.georeferencedby, o.locality '.
+		$sql = 'SELECT count(o.occid) AS cnt, o.decimallatitude, o.decimallongitude, o.coordinateUncertaintyInMeters, o.georeferencedBy, o.georeferenceProtocol, o.georeferenceSources, o.georeferenceRemarks, o.georeferenceVerificationStatus, o.locality, o.footprintWKT '.
 			'FROM omoccurrences o ';
 		$sqlWhere = 'WHERE (o.decimallatitude IS NOT NULL) AND (o.decimallongitude IS NOT NULL) ';
 		if($collStr){
@@ -240,15 +240,13 @@ class OccurrenceGeorefTools {
 		}
 		if($searchType == 2){
 			//Wildcard search
-			$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
-			$sqlWhere .= 'AND (MATCH(f.locality) AGAINST(\'"'.$locality.'"\' IN BOOLEAN MODE)) ';
+			$sqlWhere .= 'AND (MATCH(o.locality) AGAINST(\'"'.$locality.'"\' IN BOOLEAN MODE)) ';
 		}
 		elseif($searchType == 3){
 			//Deep search
-			$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
 			$localArr = explode(' ', $locality);
 			foreach($localArr as $str){
-				$sqlWhere .= 'AND (MATCH(f.locality) AGAINST("'.$str.'")) ';
+				$sqlWhere .= 'AND (MATCH(o.locality) AGAINST("'.$str.'" IN BOOLEAN MODE)) ';
 			}
 		}
 		else{
@@ -283,7 +281,12 @@ class OccurrenceGeorefTools {
 			//$occArr[$cnt]['country'] = $r->country;
 			//$occArr[$cnt]['state'] = $r->stateprovince;
 			//$occArr[$cnt]['county'] = $r->county;
-			$occArr[$cnt]['georefby'] = $r->georeferencedby;
+			$occArr[$cnt]['georeferencedBy'] = $r->georeferencedBy;
+			$occArr[$cnt]['georeferenceProtocol'] = $r->georeferenceProtocol;
+			$occArr[$cnt]['georeferenceSources'] = $r->georeferenceSources;
+			$occArr[$cnt]['georeferenceRemarks'] = $r->georeferenceRemarks;
+			$occArr[$cnt]['georeferenceVerificationStatus'] = $r->georeferenceVerificationStatus;
+			$occArr[$cnt]['footprintWKT'] = $r->footprintWKT;
 			$occArr[$cnt]['locality'] = $r->locality;
 			$cnt++;
 		}

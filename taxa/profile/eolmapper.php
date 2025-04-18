@@ -41,7 +41,7 @@ include($SERVER_ROOT.'/includes/header.php');
 </div>
 	<!-- This is inner text! -->
 	<div role="main" id="innertext">
-		<h1 class="page-heading">Encyclopedia of Life Linkage Manager</h1>
+		<h1 class="page-heading">Encyclopedia of Life Linkage Mapper</h1>
 		<?php
 		if($statusStr){
 			?>

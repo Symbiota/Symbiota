@@ -11,7 +11,7 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
@@ -21,9 +21,10 @@ use PhpOffice\PhpWord\Settings;
 use PhpOffice\PhpWord\Shared\Converter;
 use PhpOffice\PhpWord\Style;
 use PhpOffice\PhpWord\Style\Font;
+use PhpOffice\PhpWord\Style\Table;
 
 /**
- * RTF header part writer
+ * RTF header part writer.
  *
  * - Character set
  * - Font table
@@ -38,18 +39,18 @@ use PhpOffice\PhpWord\Style\Font;
 class Header extends AbstractPart
 {
     /**
-     * Font table
+     * Font table.
      *
      * @var array
      */
-    private $fontTable = array();
+    private $fontTable = [];
 
     /**
-     * Color table
+     * Color table.
      *
      * @var array
      */
-    private $colorTable = array();
+    private $colorTable = [];
 
     /**
      * Get font table.
@@ -72,7 +73,7 @@ class Header extends AbstractPart
     }
 
     /**
-     * Write part
+     * Write part.
      *
      * @return string
      */
@@ -93,7 +94,7 @@ class Header extends AbstractPart
     }
 
     /**
-     * Write character set
+     * Write character set.
      *
      * @return string
      */
@@ -109,7 +110,7 @@ class Header extends AbstractPart
     }
 
     /**
-     * Write header defaults
+     * Write header defaults.
      *
      * @return string
      */
@@ -124,7 +125,7 @@ class Header extends AbstractPart
     }
 
     /**
-     * Write font table
+     * Write font table.
      *
      * @return string
      */
@@ -144,7 +145,7 @@ class Header extends AbstractPart
     }
 
     /**
-     * Write color table
+     * Write color table.
      *
      * @return string
      */
@@ -155,7 +156,7 @@ class Header extends AbstractPart
         $content .= '{';
         $content .= '\colortbl;';
         foreach ($this->colorTable as $color) {
-            list($red, $green, $blue) = Converter::htmlToRgb($color);
+            [$red, $green, $blue] = Converter::htmlToRgb($color);
             $content .= "\\red{$red}\\green{$green}\\blue{$blue};";
         }
         $content .= '}';
@@ -165,7 +166,7 @@ class Header extends AbstractPart
     }
 
     /**
-     * Write
+     * Write.
      *
      * @return string
      */
@@ -182,7 +183,7 @@ class Header extends AbstractPart
     /**
      * Register all fonts and colors in both named and inline styles to appropriate header table.
      */
-    private function registerFont()
+    private function registerFont(): void
     {
         $phpWord = $this->getParentWriter()->getPhpWord();
         $this->fontTable[] = Settings::getDefaultFontName();
@@ -212,7 +213,7 @@ class Header extends AbstractPart
      *
      * @param \PhpOffice\PhpWord\Style\Border $style
      */
-    private function registerBorderColor($style)
+    private function registerBorderColor($style): void
     {
         $colors = $style->getBorderColor();
         foreach ($colors as $color) {
@@ -227,7 +228,7 @@ class Header extends AbstractPart
      *
      * @param \PhpOffice\PhpWord\Style\AbstractStyle $style
      */
-    private function registerFontItems($style)
+    private function registerFontItems($style): void
     {
         $defaultFont = Settings::getDefaultFontName();
         $defaultColor = Settings::DEFAULT_FONT_COLOR;
@@ -236,6 +237,14 @@ class Header extends AbstractPart
             $this->registerTableItem($this->fontTable, $style->getName(), $defaultFont);
             $this->registerTableItem($this->colorTable, $style->getColor(), $defaultColor);
             $this->registerTableItem($this->colorTable, $style->getFgColor(), $defaultColor);
+
+            return;
+        }
+        if ($style instanceof Table) {
+            $this->registerTableItem($this->colorTable, $style->getBorderTopColor(), $defaultColor);
+            $this->registerTableItem($this->colorTable, $style->getBorderRightColor(), $defaultColor);
+            $this->registerTableItem($this->colorTable, $style->getBorderLeftColor(), $defaultColor);
+            $this->registerTableItem($this->colorTable, $style->getBorderBottomColor(), $defaultColor);
         }
     }
 
@@ -246,7 +255,7 @@ class Header extends AbstractPart
      * @param string $value
      * @param string $default
      */
-    private function registerTableItem(&$table, $value, $default = null)
+    private function registerTableItem(&$table, $value, $default = null): void
     {
         if (in_array($value, $table) === false && $value !== null && $value != $default) {
             $table[] = $value;

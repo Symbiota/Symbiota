@@ -53,6 +53,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		$successArr = array();
 		$includeAttributes = $this->includeAttributes;
 		$includeMatSample = $this->includeMaterialSample;
+		$includeIdentifiers = $this->includeIdentifiers;
 		foreach($collIdArr as $id){
 			//Create a separate DWCA object for each collection
 			if($includeAttributes){
@@ -62,6 +63,10 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 			if($includeMatSample){
 				if($this->hasMaterialSamples($id)) $this->includeMaterialSample = true;
 				else $this->includeMaterialSample = false;
+			}
+			if($includeIdentifiers){
+				if($this->hasIdentifiers($id)) $this->includeIdentifiers = true;
+				else $this->includeIdentifiers = false;
 			}
 			$this->resetCollArr($id);
 			$this->conditionArr['collid'] = $id;
@@ -73,6 +78,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		}
 		$this->includeAttributes = $includeAttributes;
 		$this->includeMaterialSample = $includeMatSample;
+		$this->includeIdentifiers = $includeIdentifiers;
 		//Reset $this->collArr with all the collections ran successfully and then rebuild the RSS feed
 		$this->resetCollArr(implode(',',$successArr));
 		$this->writeRssFile();
@@ -118,7 +124,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		//Create new item for target archives and load into array
 		$itemArr = array();
 		foreach($this->collArr as $collID => $cArr){
-			$cArr = $this->utf8EncodeArr($cArr);
+			$this->encodeArr($cArr);
 			$itemElem = $newDoc->createElement('item');
 			$itemAttr = $newDoc->createAttribute('collid');
 			$itemAttr->value = $collID;
@@ -210,7 +216,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 
 		if($sourcePath == $deprecatedPath || !file_exists($deprecatedPath)){
 			$redirectDoc = new DOMDocument();
-			$redirectDoc->loadXML('<redirect><newLocation>'.$this->getDomain().$GLOBALS['CLIENT_ROOT'].'/content/dwca/rss.xml</newLocation></redirect>');
+			$redirectDoc->loadXML('<redirect><newLocation>' . GeneralUtil::getDomain() . $GLOBALS['CLIENT_ROOT'] . '/content/dwca/rss.xml</newLocation></redirect>');
 			$redirectDoc->save($deprecatedPath);
 		}
 
@@ -253,7 +259,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 
 	public function getCollectionList($catID){
 		$retArr = array();
-		$serverName = $this->getDomain();
+		$serverName = GeneralUtil::getDomain();
 		$sql = 'SELECT c.collid, c.collectionname, CONCAT_WS("-",c.institutioncode,c.collectioncode) as instcode, c.guidtarget, c.dwcaurl, c.managementtype, c.dynamicProperties '.
 			'FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid '.
 			'LEFT JOIN omcollcatlink l ON c.collid = l.collid '.

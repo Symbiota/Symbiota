@@ -119,6 +119,10 @@ a:hover.slidesjs-stop {
   background-position: 0 -26px
 }
 
+.slidesjs-control {
+  z-index: 0;
+}
+
 .slidesjs-control div {
         background-color: white;
 }

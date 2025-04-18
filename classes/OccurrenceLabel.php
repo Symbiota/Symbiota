@@ -85,13 +85,7 @@ class OccurrenceLabel{
 			}
 			if($postArr['recordedby']){
 				$recordedBy = $this->cleanInStr($postArr['recordedby']);
-				if(strlen($recordedBy) < 4 || in_array(strtolower($recordedBy),array('best','little'))){
-					//Need to avoid FULLTEXT stopwords interfering with return
-					$sqlWhere .= 'AND (o.recordedby LIKE "%'.$recordedBy.'%") ';
-				}
-				else{
-					$sqlWhere .= 'AND (MATCH(f.recordedby) AGAINST("'.$recordedBy.'")) ';
-				}
+				$sqlWhere .= 'AND (MATCH(o.recordedby) AGAINST("'.$recordedBy.'" IN BOOLEAN MODE)) ';
 			}
 			if($postArr['identifier']){
 				$iArr = explode(',',$this->cleanInStr($postArr['identifier']));
@@ -131,9 +125,6 @@ class OccurrenceLabel{
 			$sql = 'SELECT DISTINCT o.occid, o.collid, IFNULL(o.duplicatequantity,1) AS q, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS collector, o.observeruid, '.
 				'o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county, o.locality) AS locality, IFNULL(o.localitySecurity,0) AS localitySecurity '.
 				'FROM omoccurrences o LEFT JOIN omoccuridentifiers i ON o.occid = i.occid ';
-			if(strpos($sqlWhere,'MATCH(f.recordedby)') || strpos($sqlWhere,'MATCH(f.locality)')){
-				$sql.= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
-			}
 			if($sqlWhere) $sql .= 'WHERE '.substr($sqlWhere, 4);
 			if($sqlOrderBy) $sql .= ' ORDER BY '.substr($sqlOrderBy,1);
 			else $sql .= ' ORDER BY (o.recordnumber+1)';
@@ -172,7 +163,6 @@ class OccurrenceLabel{
 				'INNER JOIN taxa t2 ON ts.parenttid = t2.tid '.
 				$sqlWhere.' AND t.rankid > 220 AND ts.taxauthid = 1 ';
 			if(!$speciesAuthors) $sql1 .= 'AND t.unitname2 = t.unitname3 ';
-			//echo $sql1; exit;
 			if($rs1 = $this->conn->query($sql1)){
 				while($row1 = $rs1->fetch_object()){
 					$authorArr[$row1->occid] = $row1->author ?? '';
@@ -182,12 +172,15 @@ class OccurrenceLabel{
 			//Get occurrence records
 			$this->setLabelFieldArr();
 			$sql2 = 'SELECT '.implode(',',$this->labelFieldArr).' FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.tid '.$sqlWhere;
-			//echo 'SQL: '.$sql2;
 			if($rs2 = $this->conn->query($sql2)){
 				while($row2 = $rs2->fetch_assoc()){
-					$row2 = array_change_key_case($row2);
-					if(array_key_exists($row2['occid'],$authorArr)) $row2['parentauthor'] = $authorArr[$row2['occid']];
-					$retArr[$row2['occid']] = $row2;
+					$occid = $row2['occid'];
+					foreach($row2 as $fieldName => $fieldValue){
+						$retArr[$occid][strtolower($fieldName)] = $fieldValue ?? '';
+					}
+					if(array_key_exists($occid, $authorArr)){
+						$retArr[$occid]['parentauthor'] = $authorArr[$occid];
+					}
 				}
 				$rs2->free();
 			}

@@ -11,16 +11,19 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Collection;
 
+use PhpOffice\PhpWord\Element\Comment;
+
 /**
- * Comments collection
+ * Comments collection.
  *
  * @since 0.12.0
+ * @extends AbstractCollection<Comment>
  */
 class Comments extends AbstractCollection
 {

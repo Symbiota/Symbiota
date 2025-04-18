@@ -238,10 +238,18 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 		<h1 class="page-heading"><?php echo (isset($LANG['SEARCH_GL'])?$LANG['SEARCH_GL']:'Search/Browse Glossary'); ?></h1>
 		<div style="float:left;">
 			<form id="searchform" name="searchform" action="index.php" method="post" onsubmit="return verifySearchForm(this);">
-				<div style="height:25px;">
-					<div style="float:left;">
+				<div class="bottom-breathing-room-rel" style="float:left;">
 						<b><?= (isset($LANG['PLEASE'])?$LANG['PLEASE']:'Please') . ' ' . "<a href=" . $CLIENT_ROOT . "/includes/usagepolicy.php" . ">" . (isset($LANG['CITE_GLOSSARY'])?$LANG['CITE_GLOSSARY']:'cite this glossary') . "</a>"; ?></b>
-					</div>
+				</div>
+				<div style="clear:both;">
+					<b><?php echo (isset($LANG['SEARCH_TERM'])?$LANG['SEARCH_TERM']:'Search Term'); ?>:</b>
+					<input type="text" autocomplete="off" name="searchterm" size="25" value="<?php echo htmlspecialchars($searchTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" />
+				</div>
+				<div style="margin-left:40px">
+					<input id="deepsearch" name="deepsearch" type="checkbox" value="1" <?php echo $deepSearch?'checked':''; ?> />
+					<label for="deepsearch"> <?php echo (isset($LANG['SEARCH_DEF'])?$LANG['SEARCH_DEF']:'Search within definitions'); ?> </label>
+				</div>
+				<div style="height:25px;">
 					<?php
 					if($taxaArr){
 						?>
@@ -273,14 +281,6 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 						<?php
 					}
 					?>
-				</div>
-				<div style="clear:both;">
-					<b><?php echo (isset($LANG['SEARCH_TERM'])?$LANG['SEARCH_TERM']:'Search Term'); ?>:</b>
-					<input type="text" autocomplete="off" name="searchterm" size="25" value="<?php echo htmlspecialchars($searchTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" />
-				</div>
-				<div style="margin-left:40px">
-					<input id="deepsearch" name="deepsearch" type="checkbox" value="1" <?php echo $deepSearch?'checked':''; ?> />
-					<label for="deepsearch"> <?php echo (isset($LANG['SEARCH_DEF'])?$LANG['SEARCH_DEF']:'Search within definitions'); ?> </label>
 				</div>
 				<div style="margin:20px">
 					<button name="formsubmit" type="submit" value="Search Terms"><?php echo (isset($LANG['SEARCH_TERMS'])?$LANG['SEARCH_TERMS']:'Search/Browse Terms'); ?></button>

@@ -1,7 +1,8 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
-include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrencetabledisplay.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/occurrencetabledisplay.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrencetabledisplay.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/editor/occurrencetabledisplay.en.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 
 $collId = array_key_exists('collid',$_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : false;
@@ -23,7 +24,7 @@ $recArr = array();
 $headerMapBase = array('institutioncode'=>'Institution Code (override)','collectioncode'=>'Collection Code (override)',
 	'ownerinstitutioncode'=>'Owner Code (override)','catalognumber' => 'Catalog Number',
 	'othercatalognumbers' => 'Other Catalog #','family' => 'Family','identificationqualifier' => 'ID Qualifier',
-	'sciname' => 'Scientific Name','scientificnameauthorship'=>'Author','recordedby' => 'Collector','recordnumber' => 'Number',
+	'sciname' => 'Scientific Name','scientificnameauthorship'=>'Author','recordedby' => 'Collector','recordnumber' => 'Collector Number',
 	'associatedcollectors' => 'Associated Collectors','eventdate' => 'Event Date','verbatimeventdate' => 'Verbatim Date',
 	'identificationremarks' => 'Identification Remarks','taxonremarks' => 'Taxon Remarks','identifiedby' => 'Identified By',
 	'dateidentified' => 'Date Identified', 'identificationreferences' => 'Identification References',
@@ -40,7 +41,7 @@ $headerMapBase = array('institutioncode'=>'Institution Code (override)','collect
 	'typestatus' => 'Type Status','cultivationstatus' => 'Cultivation Status','establishmentmeans' => 'Establishment Means','datageneralizations' => 'Data Generalizations',
 	'disposition' => 'Disposition','duplicatequantity' => 'Duplicate Qty','datelastmodified' => 'Date Last Modified', 'labelproject' => 'Label Project',
 	'processingstatus' => 'Processing Status','recordenteredby' => 'Entered By','dbpk' => 'dbpk','basisofrecord' => 'Basis Of Record',
-	'language' => 'Language');
+	'language' => 'Language','continent' => 'Continent','islandgroup' => 'Island Group','island' => 'Island', 'waterbody' => 'Water Body');
 $headMap = array();
 
 $qryCnt = 0;
@@ -199,7 +200,7 @@ else{
 <body style="margin-left: 0px; margin-right: 0px;background-color:white;">
 	<a class="screen-reader-only" href="#skip-search"><?php echo $LANG['SKIP_SEARCH'] ?></a>
 	<div id="record-viewer-innertext">
-		<h1 class="page-heading screen-reader-only">Occurrence Table Display</h1>
+		<h1 class="page-heading screen-reader-only"><?php echo $LANG['TABLE_DISPLAY']; ?></h1>
 		<?php
 		if(($isEditor || $crowdSourceMode)){
 			?>

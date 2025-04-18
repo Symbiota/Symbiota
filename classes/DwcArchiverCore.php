@@ -5,10 +5,12 @@ include_once($SERVER_ROOT . '/classes/DwcArchiverDetermination.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverImage.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverAttribute.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverMaterialSample.php');
-include_once($SERVER_ROOT . '/classes/UuidFactory.php');
+include_once($SERVER_ROOT . '/classes/DwcArchiverIdentifier.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceTaxaManager.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceAccessStats.php');
 include_once($SERVER_ROOT . '/classes/PortalIndex.php');
+include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 class DwcArchiverCore extends Manager{
 
@@ -43,6 +45,7 @@ class DwcArchiverCore extends Manager{
 	private $includeImgs = 1;
 	protected $includeAttributes = 0;
 	protected $includeMaterialSample = 0;
+	protected $includeIdentifiers = 0;
 	private $hasPaleo = false;
 	private $redactLocalities = 1;
 	private $rareReaderArr = array();
@@ -51,6 +54,7 @@ class DwcArchiverCore extends Manager{
 
 	private $attributeHandler = null;
 	private $materialSampleHandler = null;
+	private $identierHandler = null;
 
 	private $geolocateVariables = array();
 
@@ -85,7 +89,7 @@ class DwcArchiverCore extends Manager{
 		);
 
 		//ini_set('memory_limit','512M');
-		set_time_limit(600);
+		set_time_limit(1800);
 	}
 
 	public function __destruct(){
@@ -382,12 +386,9 @@ class DwcArchiverCore extends Manager{
 			if (stripos($this->conditionSql, 'ds.datasetid')) {
 				$sql .= 'INNER JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
 			}
-			if (stripos($this->conditionSql, 'p.point')) {
+			if (stripos($this->conditionSql, 'p.lngLatPoint')) {
 				//Search criteria came from map search page
 				$sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
-			}
-			if (strpos($this->conditionSql, 'MATCH(f.recordedby)') || strpos($this->conditionSql, 'MATCH(f.locality)')) {
-				$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
 			}
 			if (stripos($this->conditionSql, 'a.stateid')) {
 				//Search is limited by occurrence attribute
@@ -436,7 +437,7 @@ class DwcArchiverCore extends Manager{
 			}
 			if (isset($dwcArray['occurrenceID']) || (isset($dwcArray['catalogNumber']) && isset($dwcArray['collectionCode']))) {
 				$occurrenceid = $dwcArray['occurrenceID'];
-				if (UuidFactory::is_valid($occurrenceid)) {
+				if (UuidFactory::isValid($occurrenceid)) {
 					$occurrenceid = "urn:uuid:$occurrenceid";
 				} else {
 					$catalogNumber = $dwcArray['catalogNumber'];
@@ -461,7 +462,7 @@ class DwcArchiverCore extends Manager{
 								break;
 							case "collectionID":
 								// RDF Guide Section 2.3.3 owl:sameAs for urn:lsid and resolvable IRI.
-								if (stripos("urn:uuid:", $value) === false && UuidFactory::is_valid($value)) {
+								if (stripos("urn:uuid:", $value) === false && UuidFactory::isValid($value)) {
 									$lsid = "urn:uuid:$value";
 								} elseif (stripos("urn:lsid:biocol.org", $value) === 0) {
 									$lsid = "http://biocol.org/$value";
@@ -512,7 +513,7 @@ class DwcArchiverCore extends Manager{
 								break;
 							default:
 								if (isset($occurTermArr[$key])) {
-									//$ns = RdfUtility::namespaceAbbrev($occurTermArr[$key]);
+									//$ns = RdfUtil::namespaceAbbrev($occurTermArr[$key]);
 									//$returnvalue .= $separator . "   " . $ns . " \"$value\"";
 								}
 						}
@@ -560,7 +561,7 @@ class DwcArchiverCore extends Manager{
 			}
 			if (isset($dwcArray['occurrenceID']) || (isset($dwcArray['catalogNumber']) && isset($dwcArray['collectionCode']))) {
 				$occurrenceid = $dwcArray['occurrenceID'];
-				if (UuidFactory::is_valid($occurrenceid)) {
+				if (UuidFactory::isValid($occurrenceid)) {
 					$occurrenceid = "urn:uuid:$occurrenceid";
 				} else {
 					$catalogNumber = $dwcArray['catalogNumber'];
@@ -591,7 +592,7 @@ class DwcArchiverCore extends Manager{
 								break;
 							case "collectionID":
 								// RDF Guide Section 2.3.3 owl:sameAs for urn:lsid and resolvable IRI.
-								if (stripos("urn:uuid:", $value) === false && UuidFactory::is_valid($value)) {
+								if (stripos("urn:uuid:", $value) === false && UuidFactory::isValid($value)) {
 									$lsid = "urn:uuid:$value";
 								} elseif (stripos("urn:lsid:biocol.org", $value) === 0) {
 									$lsid = "http://biocol.org/$value";
@@ -649,7 +650,7 @@ class DwcArchiverCore extends Manager{
 								break;
 							default:
 								if (isset($occurTermArr[$key])) {
-									//$ns = RdfUtility::namespaceAbbrev($occurTermArr[$key]);
+									//$ns = RdfUtil::namespaceAbbrev($occurTermArr[$key]);
 									//$elem = $newDoc->createElement($ns);
 									//$elem->appendChild($newDoc->createTextNode($value));
 								}
@@ -802,7 +803,7 @@ class DwcArchiverCore extends Manager{
 
 	private function getAssociatedMedia(){
 		$retStr = '';
-		$sql = 'SELECT originalurl FROM images ' . str_replace('o.', '', $this->conditionSql);
+		$sql = 'SELECT originalurl FROM media ' . str_replace('o.', '', $this->conditionSql);
 		$rs = $this->conn->query($sql);
 		while ($r = $rs->fetch_object()) {
 			$retStr .= ';' . $r->originalurl;
@@ -870,6 +871,10 @@ class DwcArchiverCore extends Manager{
 				$zipArchive->addFile($this->targetPath . $this->ts . '-matSample' . $this->fileExt);
 				$zipArchive->renameName($this->targetPath . $this->ts . '-matSample' . $this->fileExt, 'materialSample' . $this->fileExt);
 			}
+			if ($this->includeIdentifiers && file_exists($this->targetPath . $this->ts . '-ident' . $this->fileExt)) {
+				$zipArchive->addFile($this->targetPath . $this->ts . '-ident' . $this->fileExt);
+				$zipArchive->renameName($this->targetPath . $this->ts . '-ident' . $this->fileExt, 'identifiers' . $this->fileExt);
+			}
 			//Meta file
 			$this->writeMetaFile();
 			$zipArchive->addFile($this->targetPath . $this->ts . '-meta.xml');
@@ -889,6 +894,7 @@ class DwcArchiverCore extends Manager{
 			if ($this->includeImgs) unlink($this->targetPath . $this->ts . '-multimedia' . $this->fileExt);
 			if ($this->includeAttributes && file_exists($this->targetPath . $this->ts . '-attr' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-attr' . $this->fileExt);
 			if ($this->includeMaterialSample && file_exists($this->targetPath . $this->ts . '-matSample' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-matSample' . $this->fileExt);
+			if ($this->includeIdentifiers && file_exists($this->targetPath . $this->ts . '-ident' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-ident' . $this->fileExt);
 			unlink($this->targetPath . $this->ts . '-meta.xml');
 			if ($this->schemaType == 'dwc') rename($this->targetPath . $this->ts . '-eml.xml', $this->targetPath . str_replace('.zip', '.eml', $fileName));
 			else unlink($this->targetPath . $this->ts . '-eml.xml');
@@ -1016,7 +1022,7 @@ class DwcArchiverCore extends Manager{
 			//List image fields
 			$imgCnt = 1;
 			$termArr = $this->imageFieldArr['terms'];
-			unset($termArr['imgID']);
+			unset($termArr['mediaID']);
 			foreach ($termArr as $v) {
 				$fieldElem = $newDoc->createElement('field');
 				$fieldElem->setAttribute('index', $imgCnt);
@@ -1084,6 +1090,36 @@ class DwcArchiverCore extends Manager{
 			}
 			$rootElem->appendChild($extElem3);
 		}
+
+		//Identifier extension  https://rs.gbif.org/extension/gbif/1.0/identifier.xml
+		if ($this->includeIdentifiers && isset($this->fieldArrMap['identifier'])) {
+			$extElem3 = $newDoc->createElement('extension');
+			$extElem3->setAttribute('encoding', $this->charSetOut);
+			$extElem3->setAttribute('fieldsTerminatedBy', $this->delimiter);
+			$extElem3->setAttribute('linesTerminatedBy', '\n');
+			$extElem3->setAttribute('fieldsEnclosedBy', '"');
+			$extElem3->setAttribute('ignoreHeaderLines', '1');
+			$extElem3->setAttribute('rowType', 'http://rs.gbif.org/terms/1.0/Identifier');
+
+			$filesElem3 = $newDoc->createElement('files');
+			$filesElem3->appendChild($newDoc->createElement('location', 'identifiers' . $this->fileExt));
+			$extElem3->appendChild($filesElem3);
+
+			$coreIdElem3 = $newDoc->createElement('coreid');
+			$coreIdElem3->setAttribute('index', '0');
+			$extElem3->appendChild($coreIdElem3);
+
+			$mofCnt = 1;
+			foreach ($this->fieldArrMap['identifier'] as $term) {
+				$fieldElem = $newDoc->createElement('field');
+				$fieldElem->setAttribute('index', $mofCnt);
+				$fieldElem->setAttribute('term', $term);
+				$extElem3->appendChild($fieldElem);
+				$mofCnt++;
+			}
+			$rootElem->appendChild($extElem3);
+		}
+
 		$newDoc->save($this->targetPath . $this->ts . '-meta.xml');
 
 		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 1);
@@ -1197,7 +1233,7 @@ class DwcArchiverCore extends Manager{
 				}
 			}
 		}
-		$emlArr = $this->utf8EncodeArr($emlArr);
+		$this->encodeArr($emlArr);
 		return $emlArr;
 	}
 
@@ -1395,7 +1431,7 @@ class DwcArchiverCore extends Manager{
 		//Collection data
 		if (array_key_exists('collMetadata', $emlArr)) {
 			foreach ($emlArr['collMetadata'] as $k => $collArr) {
-				$collArr = $this->utf8EncodeArr($collArr);
+				$this->encodeArr($collArr);
 				$collElem = $newDoc->createElement('collection');
 				if (isset($collArr['attr']) && $collArr['attr']) {
 					$attrArr = $collArr['attr'];
@@ -1520,7 +1556,8 @@ class DwcArchiverCore extends Manager{
 			'ORDER BY c.SortSeq, c.CollectionName';
 		$rs = $this->conn->query($sql);
 		while ($r = $rs->fetch_assoc()) {
-			$cArr = $this->utf8EncodeArr($r);
+			$cArr = $r;
+			$this->encodeArr($cArr);
 			$itemElem = $newDoc->createElement('item');
 			$itemAttr = $newDoc->createAttribute('collid');
 			$itemAttr->value = $cArr['collid'];
@@ -1750,11 +1787,19 @@ class DwcArchiverCore extends Manager{
 				if ($this->schemaType != 'coge') {
 					if ($exsArr = $dwcOccurManager->getExsiccateArr($r['occid'])) {
 						$exsStr = $exsArr['exsStr'];
-						if (isset($r['occurrenceRemarks']) && $r['occurrenceRemarks']) $exsStr = $r['occurrenceRemarks'] . '; ' . $exsStr;
+						if (isset($r['occurrenceRemarks']) && $r['occurrenceRemarks']) {
+							$exsStr = $r['occurrenceRemarks'] . '; ' . $exsStr;
+						}
 						$r['occurrenceRemarks'] = $exsStr;
-						$dynProp = 'exsiccatae: ' . $exsArr['exsJson'];
-						if (isset($r['dynamicProperties']) && $r['dynamicProperties']) $dynProp = $r['dynamicProperties'] . '; ' . $dynProp;
-						$r['dynamicProperties'] = $dynProp;
+
+						//$dynProp = 'exsiccatae: ' . $exsArr['exsJson'];
+						if (!isset($r['dynamicProperties']) || !is_array($r['dynamicProperties'])) {
+							$r['dynamicProperties'] = [];
+						}
+						$r['dynamicProperties']['exsiccatae'] = $exsArr['exsProps'];
+
+						//$dynProp = $r['dynamicProperties'] . '; ' . $dynProp;
+						//$r['dynamicProperties'] = $dynProp;
 					}
 					if ($assocOccurStr = $dwcOccurManager->getAssociationStr($r['occid'])) $r['t_associatedOccurrences'] = $assocOccurStr;
 					if ($assocSeqStr = $dwcOccurManager->getAssociatedSequencesStr($r['occid'])) $r['t_associatedSequences'] = $assocSeqStr;
@@ -1764,6 +1809,10 @@ class DwcArchiverCore extends Manager{
 				$dwcOccurManager->appendUpperTaxonomy2($r);
 				if ($rankStr = $dwcOccurManager->getTaxonRank($r['rankid'])) $r['t_taxonRank'] = $rankStr;
 				unset($r['rankid']);
+
+				if(isset($r['dynamicProperties'])) {
+					$r['dynamicProperties'] = json_encode($r['dynamicProperties']);
+				}
 				$this->encodeArr($r);
 				$this->addcslashesArr($r);
 				$this->writeOutRecord($fh, $r);
@@ -1772,6 +1821,7 @@ class DwcArchiverCore extends Manager{
 				if (count($batchOccidArr) > 10000) {
 					if ($this->includeAttributes) $this->writeAttributeData($batchOccidArr);
 					if ($this->includeMaterialSample) $this->writeMaterialSampleData($batchOccidArr);
+					if ($this->includeIdentifiers) $this->writeIdentifierData($batchOccidArr);
 					if ($pubID && $portalManager) $portalManager->insertPortalOccurrences($pubID, $batchOccidArr);
 					unset($batchOccidArr);
 					$batchOccidArr = array();
@@ -1790,11 +1840,15 @@ class DwcArchiverCore extends Manager{
 			}
 			if ($this->includeAttributes){
 				$this->writeAttributeData($batchOccidArr);
-				unset($this->attributeHandler);
+				$this->attributeHandler = null;
 			}
 			if ($this->includeMaterialSample){
 				$this->writeMaterialSampleData($batchOccidArr);
-				unset($this->materialSampleHandler);
+				$this->materialSampleHandler = null;
+			}
+			if ($this->includeIdentifiers){
+				$this->writeIdentifierData($batchOccidArr);
+				$this->identierHandler = null;
 			}
 		}
 		else {
@@ -1813,6 +1867,7 @@ class DwcArchiverCore extends Manager{
 		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 1);
 		if ($this->includeAttributes) $this->logOrEcho('Occurrence Attributes exported as a MeasurementsOrFact extension file... ');
 		if ($this->includeMaterialSample) $this->logOrEcho('Material Samples exported within a MaterialSample extension file... ');
+		if ($this->includeIdentifiers) $this->logOrEcho('Occurrence Alternative Identifiers exported as a Identifier extension file... ');
 		return $filePath;
 	}
 
@@ -1888,17 +1943,17 @@ class DwcArchiverCore extends Manager{
 			$urlPathPrefix = $this->serverDomain . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) == '/' ? '' : '/');
 
 			$localDomain = '';
-			if (isset($GLOBALS['IMAGE_DOMAIN']) && $GLOBALS['IMAGE_DOMAIN']) {
-				$localDomain = $GLOBALS['IMAGE_DOMAIN'];
+			if (isset($GLOBALS['MEDIA_DOMAIN']) && $GLOBALS['MEDIA_DOMAIN']) {
+				$localDomain = $GLOBALS['MEDIA_DOMAIN'];
 			}
 			else {
 				$localDomain = $this->serverDomain;
 			}
-			$previousImgID = 0;
+			$previousMediaID = 0;
 			while ($r = $rs->fetch_assoc()) {
-				if ($previousImgID == $r['imgID']) continue;
-				$previousImgID = $r['imgID'];
-				unset($r['imgID']);
+				if ($previousMediaID == $r['mediaID']) continue;
+				$previousMediaID = $r['mediaID'];
+				unset($r['mediaID']);
 				if ($r['identifier'] && substr($r['identifier'], 0, 1) == '/') $r['identifier'] = $localDomain . $r['identifier'];
 				if ($r['accessURI'] && substr($r['accessURI'], 0, 1) == '/') $r['accessURI'] = $localDomain . $r['accessURI'];
 				if ($r['thumbnailAccessURI'] && substr($r['thumbnailAccessURI'], 0, 1) == '/') $r['thumbnailAccessURI'] = $localDomain . $r['thumbnailAccessURI'];
@@ -1932,8 +1987,15 @@ class DwcArchiverCore extends Manager{
 				}
 				$r['providermanagedid'] = 'urn:uuid:' . $r['providermanagedid'];
 				$r['associatedSpecimenReference'] = $urlPathPrefix . 'collections/individual/index.php?occid=' . $r['occid'];
-				$r['type'] = 'StillImage';
-				$r['subtype'] = 'Photograph';
+				/*
+				if($r['type'] '') {
+					$r['type'] = 'StillImage';
+					$r['subtype'] = 'Photograph';
+				} else {
+					$r['type'] = 'Sound';
+					$r['subtype'] = 'Recorded Organism';
+				}
+				*/
 				if($r['accessURI']){
 					$extStr = strtolower(substr($r['accessURI'], strrpos($r['accessURI'], '.') + 1));
 					if ($r['format'] == '') {
@@ -1974,8 +2036,8 @@ class DwcArchiverCore extends Manager{
 	private function writeAttributeData($batchOccidArr){
 		if(!$this->attributeHandler){
 			$this->attributeHandler = new DwcArchiverAttribute($this->conn);
-			$this->attributeHandler->initiateProcess($this->targetPath . $this->ts . '-attr' . $this->fileExt);
 			$this->attributeHandler->setSchemaType($this->schemaType);
+			$this->attributeHandler->initiateProcess($this->targetPath . $this->ts . '-attr' . $this->fileExt);
 			$this->fieldArrMap['attribute'] = $this->attributeHandler->getFieldArrTerms();
 		}
 		if($this->attributeHandler) $this->attributeHandler->writeOutRecordBlock($batchOccidArr);
@@ -1984,11 +2046,21 @@ class DwcArchiverCore extends Manager{
 	private function writeMaterialSampleData($batchOccidArr){
 		if(!$this->materialSampleHandler){
 			$this->materialSampleHandler = new DwcArchiverMaterialSample($this->conn);
-			$this->materialSampleHandler->initiateProcess($this->targetPath . $this->ts . '-matSample' . $this->fileExt);
 			$this->materialSampleHandler->setSchemaType($this->schemaType);
+			$this->materialSampleHandler->initiateProcess($this->targetPath . $this->ts . '-matSample' . $this->fileExt);
 			$this->fieldArrMap['materialSample'] = $this->materialSampleHandler->getFieldArrTerms();
 		}
 		if($this->materialSampleHandler) $this->materialSampleHandler->writeOutRecordBlock($batchOccidArr);
+	}
+
+	private function writeIdentifierData($batchOccidArr){
+		if(!$this->identierHandler){
+			$this->identierHandler = new DwcArchiverIdentifier($this->conn);
+			$this->identierHandler->setSchemaType($this->schemaType);
+			$this->identierHandler->initiateProcess($this->targetPath . $this->ts . '-ident' . $this->fileExt);
+			$this->fieldArrMap['identifier'] = $this->identierHandler->getFieldArrTerms();
+		}
+		if($this->identierHandler) $this->identierHandler->writeOutRecordBlock($batchOccidArr);
 	}
 
 	private function writeCitationFile(){
@@ -2011,7 +2083,7 @@ class DwcArchiverCore extends Manager{
 		}
 
 		$DEFAULT_TITLE = $GLOBALS['DEFAULT_TITLE'];
-		$SERVER_HOST = $this->getDomain();
+		$SERVER_HOST = GeneralUtil::getDomain();
 		$CLIENT_ROOT = $GLOBALS['CLIENT_ROOT'];
 
 		// Decides which citation format to use according to $citationVarArr
@@ -2058,7 +2130,7 @@ class DwcArchiverCore extends Manager{
 			include $GLOBALS['SERVER_ROOT'] . '/includes/citation' . $citationFormat . '_template.php';
 		}
 		$output .= ob_get_clean();
-		$output .= "\n\nFor more information on citation formats, please see the following page: " . $this->getDomain() . $GLOBALS['CLIENT_ROOT'] . "/includes/usagepolicy.php";
+		$output .= "\n\nFor more information on citation formats, please see the following page: " . GeneralUtil::getDomain() . $GLOBALS['CLIENT_ROOT'] . "/includes/usagepolicy.php";
 
 		fwrite($fh, $output);
 
@@ -2069,7 +2141,7 @@ class DwcArchiverCore extends Manager{
 
 	private function writeOutRecord($fh, $outputArr){
 		if ($this->delimiter == ",") {
-			fputcsv($fh, $outputArr);
+			fputcsv($fh, $outputArr, $this->delimiter, "\"", "");
 		} else {
 			foreach ($outputArr as $k => $v) {
 				$outputArr[$k] = str_replace($this->delimiter, '', ($v ?? ''));
@@ -2170,11 +2242,16 @@ class DwcArchiverCore extends Manager{
 		else $this->includeMaterialSample = false;
 	}
 
+	public function setIncludeIdentifiers($include){
+		if($include) $this->includeIdentifiers = true;
+		else $this->includeIdentifiers = false;
+	}
+
 	public function hasAttributes($collid = false){
 		$bool = false;
 		$sql = 'SELECT occid FROM tmattributes LIMIT 1';
 		if(is_numeric($collid)){
-			$sql = 'SELECT a.occid FROM omoccurrences o INNER JOIN tmattributes a ON o.occid = a.occid WHERE o.collid = '.$collid.' LIMIT 1';
+			$sql = 'SELECT o.occid FROM omoccurrences o INNER JOIN tmattributes a ON o.occid = a.occid WHERE o.collid = '.$collid.' LIMIT 1';
 		}
 		$rs = $this->conn->query($sql);
 		if ($rs->num_rows) $bool = true;
@@ -2186,12 +2263,24 @@ class DwcArchiverCore extends Manager{
 		$bool = false;
 		$sql = 'SELECT occid FROM ommaterialsample LIMIT 1';
 		if(is_numeric($collid)){
-			$sql = 'SELECT m.occid FROM omoccurrences o INNER JOIN ommaterialsample m ON o.occid = m.occid WHERE o.collid = '.$collid.' LIMIT 1';
+			$sql = 'SELECT o.occid FROM omoccurrences o INNER JOIN ommaterialsample m ON o.occid = m.occid WHERE o.collid = '.$collid.' LIMIT 1';
 		}
 		if ($rs = $this->conn->query($sql)) {
 			if ($rs->num_rows) $bool = true;
 			$rs->free();
 		}
+		return $bool;
+	}
+
+	public function hasIdentifiers($collid = false){
+		$bool = false;
+		$sql = 'SELECT occid FROM omoccuridentifiers LIMIT 1';
+		if(is_numeric($collid)){
+			$sql = 'SELECT o.occid FROM omoccurrences o INNER JOIN omoccuridentifiers i ON o.occid = i.occid WHERE o.collid = ' . $collid . ' LIMIT 1';
+		}
+		$rs = $this->conn->query($sql);
+		if ($rs->num_rows) $bool = true;
+		$rs->free();
 		return $bool;
 	}
 
@@ -2212,11 +2301,11 @@ class DwcArchiverCore extends Manager{
 	}
 
 	public function setPublicationGuid($guid){
-		if(UuidFactory::is_valid($guid)) $this->publicationGuid = $guid;
+		if(UuidFactory::isValid($guid)) $this->publicationGuid = $guid;
 	}
 
 	public function setRequestPortalGuid($guid){
-		if(UuidFactory::is_valid($guid)) $this->requestPortalGuid = $guid;
+		if(UuidFactory::isValid($guid)) $this->requestPortalGuid = $guid;
 	}
 
 	public function setCharSetOut($cs){
@@ -2235,7 +2324,7 @@ class DwcArchiverCore extends Manager{
 		if ($domain) {
 			$this->serverDomain = $domain;
 		} elseif (!$this->serverDomain) {
-			$this->serverDomain = $this->getDomain();
+			$this->serverDomain = GeneralUtil::getDomain();
 		}
 	}
 
@@ -2244,28 +2333,16 @@ class DwcArchiverCore extends Manager{
 		return $this->serverDomain;
 	}
 
-	protected function utf8EncodeArr($inArr){
-		$retArr = $inArr;
-		if ($this->charSetSource == 'ISO-8859-1') {
-			foreach ($retArr as $k => $v) {
-				if (is_array($v)) {
-					$retArr[$k] = $this->utf8EncodeArr($v);
-				} elseif (is_string($v)) {
-					if (mb_detect_encoding($v, 'UTF-8,ISO-8859-1', true) == "ISO-8859-1") {
-						$retArr[$k] = utf8_encode($v);
-					}
-				} else {
-					$retArr[$k] = $v;
-				}
-			}
-		}
-		return $retArr;
-	}
-
-	private function encodeArr(&$inArr){
+	protected function encodeArr(&$inArr){
 		if ($this->charSetSource && $this->charSetOut != $this->charSetSource) {
 			foreach ($inArr as $k => $v) {
-				$inArr[$k] = $this->encodeStr($v);
+				if (is_array($v)) {
+					$this->encodeArr($v);
+					$inArr[$k] = $v;
+				}
+				else{
+					$inArr[$k] = $this->encodeStr($v);
+				}
 			}
 		}
 	}
@@ -2278,12 +2355,12 @@ class DwcArchiverCore extends Manager{
 					$retStr = mb_convert_encoding($inStr, 'UTF-8', 'ISO-8859-1');
 				}
 			} elseif ($this->charSetOut == 'ISO-8859-1' && $this->charSetSource == 'UTF-8') {
-				if (mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1') == 'UTF-8') {
+				if (mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15') == 'UTF-8') {
 					$retStr = mb_convert_encoding($inStr, 'ISO-8859-1', 'UTF-8');
 				}
 			}
 			else{
-				$retStr = mb_convert_encoding($inStr, $this->charSetOut, mb_detect_encoding($inStr));
+				$retStr = mb_convert_encoding($inStr, $this->charSetOut, mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 			}
 		}
 		return $retStr;

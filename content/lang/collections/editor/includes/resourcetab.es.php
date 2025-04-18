@@ -2,15 +2,14 @@
 /*
 ------------------
 Language: Español (Spanish)
-Translated by: Samanta Orellana
-Date Translated: 2021-10-29
+Translated by: Samanta Orellana (2021-10-29)
 ------------------
 */
-
 $LANG['NO_RESULTS'] = 'Sin resultados';
 $LANG['ERROR_UNABLE_RESULTS'] = 'ERROR: No fue posible obtener resultados';
-$LANG['DEFINE_REL'] = 'Relaciones necesitan ser definidas';
-$LANG['REL_NOT_DEFINED'] = '¡Ocurrencia relacionada no está definida!';
+$LANG['SELECT_INTERNAL_REL'] = 'Debe buscar y seleccionar una instancia de ocurrencia interna';
+$LANG['VERB_SCINAME_EMPTY'] = 'Nombre Científico Literal necesita un valor';
+$LANG['RESOURCE_EMPTY'] = 'URL del Recurso necesita un valor';
 $LANG['SELECT_CHECKLIST'] = 'Seleccionar un listado de especies al que quiera enlazar el voucher';
 $LANG['VOUCHER_CANNOT_LINK'] = 'El voucher no puede ser vinculado a un listado de especies hasta que el nombre taxonómico haya sido resuelto (e.g. nombre no vinculado al tesauro taxonómico';
 $LANG['SURE_UNLINK'] = '¿Está seguro que quiere desvincular el registro como duplicado?';
@@ -29,7 +28,7 @@ $LANG['SPEC_DUPES'] = 'Duplicados de Especímenes';
 $LANG['SEARCH_RECS'] = 'Buscar Registros para enlazar';
 $LANG['CLUSTER_TITLE'] = 'Título del Grupo';
 $LANG['UNLINK_BUT_MAINTAIN'] = 'Desenlazar estas ocurrencias de grupos duplicados pero mantener otros especímenes como un grupo duplicado válido';
-$LANG['REM_FROM_CLUSTER'] = 'Remover esta Ocurrencia del Grupo';
+$LANG['REM_FROM_CLUSTER'] = 'Remover del Grupo';
 $LANG['UNLINK'] = 'Desenlazar';
 $LANG['CAT_NUM'] = 'Número de Catálogo';
 $LANG['GUID'] = 'GUID';
