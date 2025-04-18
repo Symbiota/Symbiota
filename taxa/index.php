@@ -18,14 +18,10 @@ $page = array_key_exists('page', $_REQUEST) ? $_REQUEST['page'] : 0;
 $taxonManager = new TaxonProfile();
 
 //Sanitation
-if(!is_string($taxonValue)) $taxonValue = '';
-$taxonValue = preg_replace('/[^a-zA-Z0-9\-\s.†×]/', '', $taxonValue);
-$taxonValue = htmlspecialchars($taxonValue, ENT_QUOTES, 'UTF-8');
 $tid = $taxonManager->sanitizeInt($tid);
 $taxAuthId = $taxonManager->sanitizeInt($taxAuthId);
 $clid = $taxonManager->sanitizeInt($clid);
 $pid = $taxonManager->sanitizeInt($pid);
-$lang = htmlspecialchars($lang, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 $taxaLimit = $taxonManager->sanitizeInt($taxaLimit);
 $page = $taxonManager->sanitizeInt($page);
 
@@ -57,9 +53,9 @@ if($SYMB_UID){
 <head>
 	<title><?php echo $DEFAULT_TITLE . " - " . $taxonManager->getTaxonName(); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/symbiota/taxa/index.css" type="text/css" rel="stylesheet" />
-	<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/symbiota/taxa/traitplot.css" type="text/css" rel="stylesheet" >
+	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?= $CSS_BASE_PATH ?>/symbiota/taxa/index.css" type="text/css" rel="stylesheet" />
+	<link href="<?= $CSS_BASE_PATH ?>/symbiota/taxa/traitplot.css" type="text/css" rel="stylesheet" >
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
@@ -98,7 +94,7 @@ $nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 							?>
 							<div id="editorDiv">
 								<?php
-								echo '<a href="profile/tpeditor.php?tid=' . htmlspecialchars($taxonManager->getTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" title="' . htmlspecialchars($LANG['EDIT_TAXON_DATA'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
+								echo '<a href="profile/tpeditor.php?tid=' . $taxonManager->getTid() . '" title="' . $LANG['EDIT_TAXON_DATA'] . '">';
 								echo '<img class="navIcon" src="../images/edit.png">';
 								echo '</a>';
 								?>
@@ -107,7 +103,7 @@ $nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 						}
 						?>
 						<div id="scinameDiv">
-							<?php 
+							<?php
 								$splitSciname = $taxonManager->splitSciname();
 								$sciName = $splitSciname['base'];
 								$taxonRankId = $taxonManager->getRankId();
@@ -117,11 +113,11 @@ $nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 								$nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 								$sciName .= $nonItalicizedScinameComponent;
 								$taxonToDisplay = $taxonRankId > 179 ? $sciName : $taxonManager->getTaxonName();
-								echo '<span id="'.($taxonRankId > 179 ? 'sciname':'taxon').'">' . $taxonToDisplay . '</span>'; 
+								echo '<span id="'.($taxonRankId > 179 ? 'sciname':'taxon').'">' . $taxonToDisplay . '</span>';
 							?>
 							<span id="author"><?php echo $taxonManager->getTaxonAuthor(); ?></span>
 							<?php
-							$parentLink = 'index.php?tid='.$taxonManager->getParentTid().'&clid=' . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&taxauthid='.$taxAuthId;
+							$parentLink = 'index.php?tid='.$taxonManager->getParentTid().'&clid=' . $clid . '&pid=' . $pid . '&taxauthid='.$taxAuthId;
 							echo '&nbsp;<a href="' . htmlspecialchars($parentLink, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><img class="navIcon" src="../images/toparent.png" title="' . $LANG['GO_TO_PARENT'] . '"></a>';
 							if($taxonManager->isForwarded()){
 						 		echo '<span id="redirectedfrom"> (' . $LANG['REDIRECT'] . ': <i>' . $taxonManager->getSubmittedValue('sciname') . '</i> ' . $taxonManager->getSubmittedValue('author') . ')</span>';
@@ -149,7 +145,7 @@ $nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 						<?php
 						if($vernArr = $taxonManager->getVernaculars()){
 							$primerArr = array();
-							$targetLang = $lang;
+							$targetLang = htmlspecialchars($lang, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 							if(!array_key_exists($targetLang, $vernArr)) $targetLang = 'en';
 							if(array_key_exists($targetLang, $vernArr)){
 								$primerArr = $vernArr[$targetLang];
@@ -191,7 +187,7 @@ $nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 						if(!$taxonManager->echoImages(0,1,0)){
 							echo '<div class="image" style="width:260px;height:260px;border-style:solid;margin-top:5px;margin-left:20px;text-align:center;">';
 							if($isEditor){
-								echo '<a href="profile/tpeditor.php?category=imageadd&tid=' . htmlspecialchars($taxonManager->getTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><b>' . htmlspecialchars($LANG['ADD_IMAGE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</b></a>';
+								echo '<a href="profile/tpeditor.php?category=imageadd&tid=' . $taxonManager->getTid() . '"><b>' . $LANG['ADD_IMAGE'] . '</b></a>';
 							}
 							else{
 								echo $LANG['IMAGE_NOT_AVAILABLE'];
@@ -243,7 +239,7 @@ $nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 						$tabText = $LANG['TOTAL_IMAGES'];
 						if($imgCnt == 100){
 							$tabText = $LANG['INITIAL_IMAGES'] . '<br/>- - - - -<br/>';
-							$tabText .= '<a href="' . htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/imagelib/search.php?submitaction=search&taxa=' . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($LANG['VIEW_ALL_IMAGES'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
+							$tabText .= '<a href="' . $CLIENT_ROOT . '/imagelib/search.php?submitaction=search&taxa=' . $tid . '">' . $LANG['VIEW_ALL_IMAGES'] . '</a>';
 						}
 						?>
 						<div id="img-tab-div" style="display:<?php echo $imgCnt > 6?'block':'none';?>;border-top:2px solid gray;margin-top:2px;">
@@ -267,7 +263,7 @@ $nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 						if($isEditor){
 							?>
 							<div id="editorDiv">
-								<a href="profile/tpeditor.php?tid=<?php echo htmlspecialchars($taxonManager->getTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" title="<?php echo htmlspecialchars($LANG['EDIT_TAXON_DATA'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+								<a href="profile/tpeditor.php?tid=<?php echo $taxonManager->getTid(); ?>" title="<?= $LANG['EDIT_TAXON_DATA'] ?>">
 									<img class="navIcon" src='../images/edit.png'>
 								</a>
 							</div>
@@ -278,7 +274,7 @@ $nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 							<?php
 							$displayName = $taxonManager->getTaxonName();
 							if($taxonRank > 140){
-								$parentLink = "index.php?tid=" . $taxonManager->getParentTid() . "&clid=" . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "&pid=".$pid."&taxauthid=".$taxAuthId;
+								$parentLink = "index.php?tid=" . $taxonManager->getParentTid() . "&clid=" . $clid . "&pid=".$pid."&taxauthid=".$taxAuthId;
 								$displayName .= ' <a href="' . htmlspecialchars($parentLink, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 								$displayName .= '<img class="navIcon" src="../images/toparent.png" title="' . $LANG['GO_TO_PARENT'] . '">';
 								$displayName .= '</a>';
@@ -295,7 +291,7 @@ $nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 						if(!$taxonManager->echoImages(0,1,0)){
 							echo "<div class='image' style='width:260px;height:260px;border-style:solid;margin-top:5px;margin-left:20px;text-align:center;'>";
 							if($isEditor){
-								echo '<a href="profile/tpeditor.php?category=imageadd&tid=' . htmlspecialchars($taxonManager->getTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><b>' . htmlspecialchars($LANG['ADD_IMAGE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</b></a>';
+								echo '<a href="profile/tpeditor.php?category=imageadd&tid=' . $taxonManager->getTid() . '"><b>' . $LANG['ADD_IMAGE'] . '</b></a>';
 							}
 							else{
 								echo $LANG['IMAGE_NOT_AVAILABLE'];
@@ -324,7 +320,7 @@ $nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 									}
 									if($parentChecklistArr = $taxonManager->getParentChecklist($clid)){
 										$titleStr = $LANG['GO_TO'] . ': ' . current($parentChecklistArr);
-										$legendStr .= ' <a href="index.php?tid=' . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&clid='. htmlspecialchars(key($parentChecklistArr), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&taxauthid=' . htmlspecialchars($taxAuthId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" title="' . htmlspecialchars($titleStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
+										$legendStr .= ' <a href="index.php?tid=' . $tid . '&clid='. htmlspecialchars(key($parentChecklistArr), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pid=' . $pid . '&taxauthid=' . $taxAuthId . '" title="' . htmlspecialchars($titleStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 										$legendStr .= '<img style="border:0px;width:1.3em;" src="../images/toparent.png"/>';
 										$legendStr .= '</a>';
 									}
@@ -332,7 +328,7 @@ $nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 										$projName = $taxonManager->getProjName($pid);
 										if($projName) $titleStr = $LANG['WITHIN_INVENTORY'] . ': ' . $projName;
 										else $titleStr = $LANG['SHOW_ALL_TAXA'];
-										$legendStr .= ' <a href="index.php?tid=' . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&clid=0&pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&taxauthid=' . htmlspecialchars($taxAuthId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" title="' . htmlspecialchars($titleStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
+										$legendStr .= ' <a href="index.php?tid=' . $tid . '&clid=0&pid=' . $pid . '&taxauthid=' . $taxAuthId . '" title="' . htmlspecialchars($titleStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 										$legendStr .= '<img style="border:0px;width:1.3em;" src="../images/toparent.png"/>';
 										$legendStr .= '</a>';
 									}
@@ -342,7 +338,7 @@ $nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 									if($projName) $legendStr .= $LANG['WITHIN_INVENTORY'] . ': <b>' . $projName . '</b>';
 									else $legendStr = $LANG['SHOW_ALL_TAXA'];
 									$titleStr = $LANG['SHOW_ALL_TAXA'];
-									$legendStr .= ' <a href="index.php?tid=' . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&clid=0&pid=0&taxauthid=' . htmlspecialchars($taxAuthId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" title="' . htmlspecialchars($titleStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
+									$legendStr .= ' <a href="index.php?tid=' . $tid . '&clid=0&pid=0&taxauthid=' . $taxAuthId . '" title="' . htmlspecialchars($titleStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
 									$legendStr .= '<img style="border:0px;width:1.3em;" src="../images/toparent.png"/>';
 									$legendStr .= '</a>';
 								}
@@ -353,13 +349,13 @@ $nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 								$taxonCnt = count($sppArr);
 								if($taxonCnt > $taxaLimit || $page){
 									$navStr = '<span style="margin:0px 10px">';
-									$dynLink = 'tid='.$tid.'&taxauthid=' . htmlspecialchars($taxAuthId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&clid=' . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&lang='.$lang.'&taxalimit='.$taxaLimit;
-									if($page) $navStr .= '<a href="index.php?' . htmlspecialchars($dynLink, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&page=' . htmlspecialchars(($page-1), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">&lt;&lt;</a>';
+									$dynLink = 'tid='.$tid.'&taxauthid=' . $taxAuthId . '&clid=' . $clid . '&pid=' . $pid . '&lang='.htmlspecialchars($lang, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE).'&taxalimit='.$taxaLimit;
+									if($page) $navStr .= '<a href="index.php?' . $dynLink . '&page=' . ($page-1) . '">&lt;&lt;</a>';
 									else $navStr .= '&lt;&lt;';
 									$upperCnt = ($page+1)*$taxaLimit;
 									if($taxonCnt < $taxaLimit) $upperCnt = ($page*$taxaLimit)+$taxonCnt;
 									$navStr .= ' ' . (($page*$taxaLimit)+1) . ' - ' . $upperCnt . ' taxa ';
-									if($taxonCnt > $taxaLimit) $navStr .= '<a href="index.php?' . htmlspecialchars($dynLink, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&page=' . htmlspecialchars(($page+1), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">&gt;&gt;</a>';
+									if($taxonCnt > $taxaLimit) $navStr .= '<a href="index.php?' . $dynLink . '&page=' . ($page+1) . '">&gt;&gt;</a>';
 									else $navStr .= '&gt;&gt;';
 									$navStr .= '</span>';
 									if($legendStr) $legendStr .= ' || ';
@@ -372,9 +368,10 @@ $nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 								<?php
 									$cnt = 1;
 									foreach($sppArr as $sciNameKey => $subArr){
+										$tidSub = htmlspecialchars($subArr["tid"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 										echo "<div class='spptaxon'>";
 										echo "<div style='margin-top:10px;'>";
-										echo "<a href='index.php?tid=" . htmlspecialchars($subArr["tid"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "&taxauthid=" . htmlspecialchars($taxAuthId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "&clid=" . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'>";
+										echo "<a href='index.php?tid=" . $tidSub . "&taxauthid=" . $taxAuthId . "&clid=" . $clid . "'>";
 										echo "<i>" . $sciNameKey . "</i>";
 										echo "</a></div>\n";
 										echo "<div class='sppimg' style='overflow:hidden;'>";
@@ -384,7 +381,7 @@ $nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 											if(array_key_exists('MEDIA_DOMAIN', $GLOBALS) && substr($imgUrl, 0, 1) == '/'){
 												$imgUrl = $GLOBALS['MEDIA_DOMAIN'] . $imgUrl;
 											}
-											echo "<a href='index.php?tid=" . htmlspecialchars($subArr["tid"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "&taxauthid=" . htmlspecialchars($taxAuthId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "&clid=" . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'>";
+											echo "<a href='index.php?tid=" . $tidSub . "&taxauthid=" . $taxAuthId . "&clid=" . $clid . "'>";
 
 											if($subArr["thumbnailurl"]){
 												$imgUrl = $subArr["thumbnailurl"];
@@ -401,7 +398,7 @@ $nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 											echo '</div>';
 										}
 										elseif($isEditor){
-											echo '<div class="spptext"><a href="profile/tpeditor.php?category=imageadd&tid=' . htmlspecialchars($subArr['tid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($LANG['ADD_IMAGE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '!</a></div>';
+											echo '<div class="spptext"><a href="profile/tpeditor.php?category=imageadd&tid=' . $tidSub . '">' . $LANG['ADD_IMAGE'] . '!</a></div>';
 										}
 										else{
 											echo '<div class="spptext">' . $LANG['IMAGE_NOT_AVAILABLE'] . '</div>';
@@ -444,7 +441,7 @@ $nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 					?>
 					<div id="editorDiv">
 						<?php
-						echo '<a href="profile/tpeditor.php?tid=' . htmlspecialchars($taxonManager->getTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" title="' . htmlspecialchars($LANG['EDIT_TAXON_DATA'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
+						echo '<a href="profile/tpeditor.php?tid=' . $taxonManager->getTid() . '" title="' . $LANG['EDIT_TAXON_DATA'] . '">';
 						echo '<img class="navIcon" src="../images/edit.png">';
 						echo '</a>';
 						?>

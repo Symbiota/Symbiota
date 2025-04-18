@@ -39,7 +39,7 @@ class TaxonProfile extends Manager {
 
 	public function setTid($tid){
 		if(is_numeric($tid)){
-			$this->tid = $tid;
+			$this->tid = filter_var($tid, FILTER_SANITIZE_NUMBER_INT);
 			if($this->setTaxon()) if(count($this->acceptedArr) == 1) $this->setSynonyms();
 		}
 	}
@@ -438,7 +438,7 @@ class TaxonProfile extends Manager {
 			}
 		}
 
-		$retStr .= '<li><a href="resourcetab.php?tid=' . htmlspecialchars($this->tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars(($LANG['RESOURCES']?$LANG['RESOURCES']:'Resources'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></li>';
+		$retStr .= '<li><a href="resourcetab.php?tid=' . $this->tid . '">' . $LANG['RESOURCES'] . '</a></li>';
 		$retStr .= '</ul>';
 
 		foreach($descArr as $dArr){
