@@ -411,7 +411,7 @@ $traitArr = $indManager->getTraitArr();
 						if(array_key_exists('relation',$occArr)){
 							?>
 								<fieldset id="association-div" class="top-light-margin">
-									<legend><?php echo (isset($LANG['RELATED_OCCUR'])?$LANG['RELATED_OCCUR']:'Related Occurrences'); ?></legend>
+									<legend><?= $LANG['ASSOCIATIONS']; ?></legend>
 									<?php
 									$displayLimit = 5;
 									$cnt = 0;
