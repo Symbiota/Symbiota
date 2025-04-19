@@ -396,10 +396,10 @@ class OccurrenceController extends Controller{
 	 *	 path="/api/v2/occurrence/skeletal",
 	 *	 operationId="skeletalImport",
 	 *	 description="If an existing record can be located within target collection based on matching the input identifier, empty (null) target fields will be updated with Skeletal Data.
-			If the target field contains data, it will remain unaltered.
-			If multiple records are returned matching the input identifier, data will be added only to the first record.
-			If an identifier is not provided or a matching record can not be found, a new Skeletal record will be created and primed with input data.
-			Note that catalogNumber or otherCatalogNumber must be provided to create a new skeletal record. If processingStatus is not defined, new skeletal records will be set as 'unprocessed'",
+	 *		If the target field contains data, it will remain unaltered.
+	 *		If multiple records are returned matching the input identifier, data will be added only to the first record.
+	 *		If an identifier is not provided or a matching record can not be found, a new Skeletal record will be created and primed with input data.
+	 *		Note that catalogNumber or otherCatalogNumber must be provided to create a new skeletal record. If processingStatus is not defined, new skeletal records will be set as 'unprocessed'",
 	 *	 tags={""},
 	 *	 @OA\Parameter(
 	 *		name="apiToken",

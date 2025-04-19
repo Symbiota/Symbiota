@@ -33,8 +33,8 @@ $router->group(['prefix' => 'v2'], function () use ($router) {
 
 	$router->get('occurrence',  ['uses' => 'OccurrenceController@showAllOccurrences']);
 	$router->get('occurrence/annotation', ['uses' => 'OccurrenceAnnotationController@showAllAnnotations']);
-	$router->get('occurrence/{id}', ['uses' => 'OccurrenceController@showOneOccurrence']);
 	$router->get('occurrence/duplicate', ['uses' => 'OccurrenceDuplicateController@showDuplicateMatches']);
+	$router->get('occurrence/{id}', ['uses' => 'OccurrenceController@showOneOccurrence']);
 	$router->get('occurrence/{id}/media', ['uses' => 'OccurrenceController@showOneOccurrenceMedia']);
 	$router->get('occurrence/{id}/identification', ['uses' => 'OccurrenceController@showOneOccurrenceIdentifications']);
 	$router->get('occurrence/{id}/annotation', ['uses' => 'OccurrenceAnnotationController@showOccurrenceAnnotations']);

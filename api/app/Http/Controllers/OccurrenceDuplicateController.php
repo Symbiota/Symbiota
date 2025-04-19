@@ -7,11 +7,11 @@ use App\Models\Occurrence;
 use App\Models\OccurrenceOcr;
 use App\Helpers\OccurrenceHelper;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
-use App\Models\OccurrenceExsiccatiNumber;
+use App\Models\ExsiccataNumber;
 
 class OccurrenceDuplicateController extends Controller{
+
 	private $taxaFields = array('family', 'sciname', 'scientificNameAuthorship');
 	private $siteFields = array('associatedCollectors', 'eventDate', 'verbatimEventDate', 'country', 'stateProvince', 'county', 'municipality', 'locality',
 		'decimalLatitude', 'decimalLongitude', 'geodeticDatum', 'coordinateUncertaintyInMeters', 'verbatimCoordinates', 'minimumElevationInMeters', 'maximumElevationInMeters', 'verbatimElevation',
@@ -121,7 +121,7 @@ class OccurrenceDuplicateController extends Controller{
 		$occidArr = array();
 		if($ometid && $exsiccatiNumber){
 			//First check for exsiccati dupliplicates
-			$exsiccatiResult = OccurrenceExsiccatiNumber::where('ometid', $ometid)->where('exsnumber', $exsiccatiNumber)->first();
+			$exsiccatiResult = ExsiccataNumber::where('ometid', $ometid)->where('exsnumber', $exsiccatiNumber)->first();
 			if($exsiccatiResult){
 				$occidArr = $exsiccatiResult->occurrenceLinks->pluck('occid')->toArray();
 				$matchType = 'exsiccati';
@@ -135,18 +135,9 @@ class OccurrenceDuplicateController extends Controller{
 			}
 			if($recordNumber && $recordedByLastName){
 				//Check for exact duplicates
-				$sql = 'SELECT o.occid FROM omoccurrences o ';
+				$sql = 'SELECT occid FROM omoccurrences WHERE (MATCH(recordedby) AGAINST(?)) AND (recordnumber = ?)';
 				$termArr = array();
-				if(strlen($recordedByLastName) < 4 || in_array(strtolower($recordedByLastName), array('best', 'little'))){
-					//Need to avoid FULLTEXT stopwords interfering with return
-					$sql .= 'WHERE (o.recordedby LIKE ?) ';
-					$termArr[] = '%' . $recordedByLastName . '%';
-				}
-				else{
-					$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid WHERE (MATCH(f.recordedby) AGAINST(?)) ';
-					$termArr[] = $recordedByLastName;
-				}
-				$sql .= 'AND (o.recordnumber = ?)';
+				$termArr[] = $recordedByLastName;
 				$termArr[] = $recordNumber;
 
 				$occidResults = DB::select($sql, $termArr);
@@ -157,18 +148,9 @@ class OccurrenceDuplicateController extends Controller{
 
 			if(!$occidArr && $recordedByLastName){
 				//Check for duplicate events
-				$sql = 'SELECT o.occid FROM omoccurrences o ';
+				$sql = 'SELECT occid FROM omoccurrences WHERE (MATCH(recordedby) AGAINST(?)) AND (processingstatus IS NULL OR processingstatus != "unprocessed" OR locality IS NOT NULL) ';
 				$termArr = array();
-				if(strlen($recordedByLastName) < 4 || in_array(strtolower($recordedByLastName), array('best', 'little'))){
-					//Need to avoid FULLTEXT stopwords interfering with return
-					$sql .= 'WHERE (o.recordedby LIKE ?) ';
-					$termArr[] = $recordedByLastName;
-				}
-				else{
-					$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid WHERE (MATCH(f.recordedby) AGAINST(?)) ';
-					$termArr[] = $recordedByLastName;
-				}
-				$sql .= 'AND (o.processingstatus IS NULL OR o.processingstatus != "unprocessed" OR o.locality IS NOT NULL) ';
+				$termArr[] = $recordedByLastName;
 
 				$termsMatched = 'recordedByLastName: ' . $recordedByLastName;
 				$runQry = true;
@@ -177,7 +159,7 @@ class OccurrenceDuplicateController extends Controller{
 						$nStart = $recordNumber - 4;
 						if($nStart < 1) $nStart = 1;
 						$nEnd = $recordNumber + 4;
-						$sql .= 'AND (o.recordnumber BETWEEN ? AND ?) ';
+						$sql .= 'AND (recordnumber BETWEEN ? AND ?) ';
 						$termArr[] = $nStart;
 						$termArr[] = $nEnd;
 						$termsMatched .= ', recordNumber: ' . $nStart . '-' . $nEnd;
@@ -188,7 +170,7 @@ class OccurrenceDuplicateController extends Controller{
 						$nStart = $cNum - 4;
 						if($nStart < 1) $nStart = 1;
 						$nEnd = $cNum + 4;
-						$sql .= 'AND (CAST(o.recordnumber AS SIGNED) BETWEEN ? AND ?) ';
+						$sql .= 'AND (CAST(recordnumber AS SIGNED) BETWEEN ? AND ?) ';
 						$termArr[] = $nStart;
 						$termArr[] = $nEnd;
 						$termsMatched .= ', recordNumber: ' . $nStart . '-' . $nEnd;
@@ -209,7 +191,7 @@ class OccurrenceDuplicateController extends Controller{
 							$termsMatched .= $del . $term;
 							$del = ', ';
 						}
-						$sql .= 'AND o.recordnumber IN(' . trim(str_repeat(',?', $repeatCnt), ',') . ') ';
+						$sql .= 'AND recordnumber IN(' . trim(str_repeat(',?', $repeatCnt), ',') . ') ';
 					}
 					elseif(preg_match('/^(\d{2,4}-{1})(\d+)-{0,1}[a-zA-Z]{0,2}$/', $recordNumber, $m)){
 						//95-123, 1995-123
@@ -227,19 +209,19 @@ class OccurrenceDuplicateController extends Controller{
 							$termsMatched .= $del . $term;
 							$del = ', ';
 						}
-						$sql .= 'AND o.recordnumber IN(' . trim(str_repeat(',?', $repeatCnt), ',') . ') ';
+						$sql .= 'AND recordnumber IN(' . trim(str_repeat(',?', $repeatCnt), ',') . ') ';
 					}
 					else{
 						$runQry = false;
 					}
 					if($eventDate){
-						$sql .= 'AND (o.eventdate = ?) ';
+						$sql .= 'AND (eventdate = ?) ';
 						$termArr[] = $eventDate;
 						$termsMatched .= ', eventDate: ' . $eventDate;
 					}
 				}
 				elseif($eventDate){
-					$sql .= 'AND (o.eventdate = ?) LIMIT 10';
+					$sql .= 'AND (eventdate = ?) LIMIT 10';
 					$termArr[] = $eventDate;
 					$termsMatched .= ', eventDate: ' . $eventDate;
 				}
@@ -264,6 +246,7 @@ class OccurrenceDuplicateController extends Controller{
 
 		$cnt = 0;
 		$occurResult = null;
+		$analyzedResult = null;
 		$consensusResult = null;
 		if($occidArr){
 			$cnt = count($occidArr);
