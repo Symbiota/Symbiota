@@ -1,4 +1,5 @@
 <?php
+
 include_once('../../config/symbini.php');
 require_once $SERVER_ROOT.'/vendor/phpoffice/phpword/bootstrap.php';
 $htmlLabels = $_POST['htmlLabels'] ?? [];
@@ -27,22 +28,27 @@ elseif($columnCount == 3){
  \PhpOffice\PhpWord\Settings::setOutputEscapingEnabled(true);
 
 $pw = new \PhpOffice\PhpWord\PhpWord();
-$pw->setDefaultParagraphStyle(
-    array(
-		'align'=>'both','keepNext'=>false,'keepLines'=>false
-    )
-);
+
 $pw->addFontStyle('dividerFont', array('size'=>1));
-$pw->addParagraphStyle('firstLine', array('lineHeight'=>.1,'spaceAfter'=>0,'keepNext'=>true,'keepLines'=>true));
-$pw->addParagraphStyle('label', array('keepNext'=>true,'keepLines'=>true));
-$pw->addParagraphStyle('lastLine', array('spaceAfter'=>300,'lineHeight'=>.1));
+$pw->addParagraphStyle('lastLine', array('spaceAfter'=>300,'lineHeight'=>.1, 'keepNext' => false, 'keepLines' => false));
 
 $section = $pw->addSection($sectionStyle);
 
+//echo $htmlLabels[0];
+//return;
 foreach($htmlLabels as $label) {
-	$section->addText(' ', 'dividerFont', 'firstLine');
-	\PhpOffice\PhpWord\Shared\Html::addHtml($section, $label);
+	\PhpOffice\PhpWord\Shared\Html::addHtml($section, $label);	
 	$section->addText(' ', 'dividerFont', 'lastLine');
+}
+
+foreach($section->getElements() as $element) {
+	try {
+		$style = $element->getParagraphStyle();
+		if($style != 'lastLine') {
+			$style->setKeepNext(true);
+			$style->setKeepLines(true);
+		}
+	} finally {}
 }
 
 $ses_id = time();

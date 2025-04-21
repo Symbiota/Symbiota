@@ -91,8 +91,6 @@ printDocXBtn.onclick = function () {
 		pageHtmlInput.name="htmlLabels[]";
 		DocXForm.appendChild(pageHtmlInput);
 	}
-
-	document.getElementById('targetHtml').value = document.querySelector('.body.letter').innerHTML;
 };
 
 DocXForm.appendChild(printDocXBtn);
