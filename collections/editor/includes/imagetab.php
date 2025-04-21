@@ -348,7 +348,7 @@ $creatorArray = Media::getCreatorArray();
 										</div>
 										<div>
 											<b><?php echo $LANG['SOURCE_WEBPAGE']; ?>:</b><br/>
-											<input name="sourceurl" type="text" value="<?php echo $imgArr["sourceUrl"]; ?>" style="width:95%;" />
+											<input name="sourceUrl" type="text" value="<?php echo $imgArr["sourceUrl"]; ?>" style="width:95%;" />
 										</div>
 										<div>
 											<b><?php echo $LANG['WEB_URL']; ?>: </b><br/>
