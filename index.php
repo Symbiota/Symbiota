@@ -162,6 +162,34 @@ $actionPage = $SHOULD_USE_HARVESTPARAMS ? "harvestparams.php" : "./search/index.
 										</div>
 									</div>
 								</div>
+
+								<div  class="layout__region layout__region--second">
+									<div class="block block-layout-builder block-inline-blockcard usa-card clearfix">
+										<div class="usa-card__container top-breathing-room-rel">
+											<header class="usa-card__header">
+												<h3 class="usa-card__heading">U.S. National Pollinating Insect Collection (BBSL)</h3>
+											</header>
+											<div class="usa-card__media">
+												<div class="usa-card__img">
+													<img style="height:235px;" loading="lazy" src="<?php echo $CLIENT_ROOT ?>/assets/uswds/img/BBSL_tile.jpg" width="330" height="220" alt="One black and yellow bumble bee on a blue flower" class="img-responsive" />
+												</div>
+											</div>
+											<div class="usa-card__body">
+												<div class="field field--name-card-body field--type-text-long field--label-hidden field--item">
+													<p>World class collection of bees and related wasps.</p>
+												</div>
+											</div>
+											<div class="usa-card__footer">
+												<div class="field field--name-card-link field--type-link field--label-hidden field--item">
+													<a aria-label="About BARC Collection" href="<?php echo $CLIENT_ROOT?>/collections/misc/collprofiles.php?collid=<?php echo  $BBSL_COLLID?>" class="usa-button card-button" style="margin-bottom: 1rem;">About Collection</a>
+												</div>
+												<div class="field field--name-card-link field--type-link field--label-hidden field--item">
+													<a aria-label="Search BARC Collection" href="<?php echo $CLIENT_ROOT?>/collections/<?php echo $actionPage ?>?db=<?php echo  $BBSL_COLLID?>" class="usa-button card-button">Search Collection</a>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>

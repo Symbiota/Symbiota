@@ -220,6 +220,9 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
                         <li>
                           <a href="<?php echo $CLIENT_ROOT?>/collections/<?php echo $actionPage ?>?db=<?php echo  $ARSEF_SNAPSHOT_COLLID?>">Search Entomopathogenic Fungal Cultures Collection</a>
                         </li>
+                        <li>
+                          <a href="<?php echo $CLIENT_ROOT?>/collections/<?php echo $actionPage ?>?db=<?php echo  $BBSL_COLLID?>">Search National Pollinating Insect Collection</a>
+                        </li>
                       </ul>
                     </li>
                     <li class="expanded dropdown">
@@ -243,6 +246,9 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
                         <li>
                           <a href="<?php echo $CLIENT_ROOT?>/collections/map/index.php?db=<?php echo  $ARSEF_SNAPSHOT_COLLID?>">Map Entomopathogenic Fungal Cultures Collection</a>
                         </li>
+                        <li>
+                          <a href="<?php echo $CLIENT_ROOT?>/collections/map/index.php?db=<?php echo  $BBSL_COLLID?>">Map National Pollinating Insect Collection</a>
+                        </li>
                       </ul>
                     </li>
                     <li class="expanded dropdown">
@@ -261,6 +267,9 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
                         </li>
                         <li>
                           <a href="<?php echo $CLIENT_ROOT?>/collections/misc/collprofiles.php?collid=<?php echo  $ARSEF_SNAPSHOT_COLLID?>">About Entomopathogenic Fungal Cultures Collection</a>
+                        </li>
+                        <li>
+                          <a href="<?php echo $CLIENT_ROOT?>/collections/misc/collprofiles.php?collid=<?php echo  $BBSL_COLLID?>">About National Pollinating Insect Collection</a>
                         </li>
                       </ul>
                     </li>
