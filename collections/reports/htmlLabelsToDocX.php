@@ -34,8 +34,6 @@ $pw->addParagraphStyle('lastLine', array('spaceAfter'=>300,'lineHeight'=>.1, 'ke
 
 $section = $pw->addSection($sectionStyle);
 
-//echo $htmlLabels[0];
-//return;
 foreach($htmlLabels as $label) {
 	\PhpOffice\PhpWord\Shared\Html::addHtml($section, $label);	
 	$section->addText(' ', 'dividerFont', 'lastLine');
@@ -52,7 +50,7 @@ foreach($section->getElements() as $element) {
 }
 
 $ses_id = time();
-$target = $SERVER_ROOT.'/temp/report/'.'labels'.'_'.date('Ymd').'_labels_'.$ses_id.'.docx';
+$target = $SERVER_ROOT.'/temp/report/' . $PARAMS_ARR['un'] . '_' . date('Ymd') . '_labels_' . $ses_id . '.docx';
 
 $pw->save($target, 'Word2007');
 

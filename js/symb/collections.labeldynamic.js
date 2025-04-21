@@ -38,7 +38,7 @@ DocXForm.style.marginLeft = '30px';
 DocXForm.style.width= 'fit-content';
 DocXForm.style.display= 'inline';
 DocXForm.method="POST"
-DocXForm.action="htmlToDocX.php"
+DocXForm.action="htmlLabelsToDocX.php"
 
 let printDocXBtn = document.createElement('button');
 printDocXBtn.innerText = 'Print/Save Docx';
