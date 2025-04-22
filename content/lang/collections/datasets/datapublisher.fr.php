@@ -62,7 +62,9 @@ $LANG['GBIF_DATASET'] = 'Page du Jeu de Données GBIF';
 $LANG['YOU_SELECTED_GBIF_1'] = 'Vous avez sélectionné le paquet de données d\'archives DwC de cette collection à publier dans le GBIF. Veuillez vous rendre au';
 $LANG['GBIF_ENDORSE'] = 'Page de Demande d\'Approbation du GBIF';
 $LANG['TO'] = 'a';
-$LANG['YOU_SELECTED_GBIF_2'] = 'enregistrez votre institution auprès du GBIF et entrez la clé d\'éditeur fournie par le GBIF ci-dessous. Si votre institution existe déjà dans la recherche d\'organisation GBIF, une clé d\'éditeur GBIF a déjà été attribuée. La clé est la partie restante de URL après la dernière barre oblique inverse de la page du fournisseur de données GBIF de votre institution. Si vos données sont déjà publiées dans le GBIF, NE REPUBLIER PAS sans contacter au préalable le GBIF (<a href=';
+$LANG['YOU_SELECTED_GBIF_2'] = 'enregistrez votre institution auprès du GBIF et entrez la clé d\'éditeur fournie par le GBIF ci-dessous. Si votre institution existe déjà dans la recherche
+	d\'organisation GBIF, une clé d\'éditeur GBIF a déjà été attribuée. La clé est la partie restante de URL après la dernière barre oblique inverse de la page du fournisseur de données
+	GBIF de votre institution. Si vos données sont déjà publiées dans le GBIF, NE REPUBLIER PAS sans contacter au préalable le GBIF (<a href="mailto:helpdesk@gbif.org">helpdesk@gbif.org</a>) pour coordonner les versions des données.';
 $LANG['GBIF_KEY'] = 'Clé GBIF';
 $LANG['VALIDATE_KEY'] = 'Valider Clé';
 $LANG['BEFORE_SUBMITTING'] = 'Avant de soumettre vos données au GBIF, vous devrez contacter le service d\'assistance du GBIF';
