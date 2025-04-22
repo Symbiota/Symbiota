@@ -137,9 +137,9 @@ class OccurrenceSearchSupport {
 								$catSelected = false;
 								if(!$catSelArr && !$collSelArr) $catSelected = true;
 								elseif(in_array($catid, $catSelArr)) $catSelected = true;
-								$ariaLabel = $name . '(' . $collTypeLabel . ')' . '-' . $uniqGrouping;
+								$ariaLabel = $name . ' (' . $collTypeLabel . ')' . '-' . $uniqGrouping;
 								echo '<input aria-label="' . $ariaLabel . '" data-role="none" id="cat-' . $idStr . (empty($collTypeLabel) ? '' : '-' . $collTypeLabel) . (empty($uniqGrouping)? '': '-' . $uniqGrouping) . '-Input" name="cat[]" value="' . $catid.'" type="checkbox" onclick="selectAllCat(this,\'cat-' . $idStr . '\')" ' . ($catSelected || array_intersect(array_keys($catArr), $collSelArr) ? 'checked' : '') . ' />';
-								echo $name . "(" . $collTypeLabel . ")";
+								echo $name . " " . "(" . $collTypeLabel . ")";
 								?>
 							</div>
 						</div>
@@ -166,9 +166,9 @@ class OccurrenceSearchSupport {
 								<legend>
 									<?php
 									echo $name;
-									$specimenLegendTxt = isset($LANG['SPECIMEN']) ? $LANG['SPECIMEN'] : "Specimen";
-									$observationLegendTxt = isset($LANG['OBSERVATION']) ? $LANG['OBSERVATION'] : "Observation";
-									$isObservation = $collTypeLabel === "Observation";
+									$specimenLegendTxt = isset($LANG['SPECIMEN']) ? $LANG['SPECIMEN'] : "Specimens";
+									$observationLegendTxt = isset($LANG['OBSERVATION']) ? $LANG['OBSERVATION'] : "Observations";
+									$isObservation = $collTypeLabel === "Observations";
 									$outputTxt = $specimenLegendTxt;
 									if($isObservation) $outputTxt = $observationLegendTxt;
 									?>

@@ -1,10 +1,13 @@
 <?php
 include_once($SERVER_ROOT.'/config/dbconnection.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
+include_once($SERVER_ROOT.'/classes/utilities/TaxonomyUtil.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyHarvester.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
+include_once($SERVER_ROOT.'/traits/TaxonomyTrait.php');
 
 class TaxonomyUpload{
+
+	use TaxonomyTrait;
 
 	private $conn;
 	private $uploadFileName = '';
@@ -170,7 +173,7 @@ class TaxonomyUpload{
 									$inputArr['rankid'] = $id;
 								}
 							}
-							if($infraArr = TaxonomyUtilities::cleanInfra($inputArr['unitind3'])){
+							if($infraArr = TaxonomyUtil::cleanInfra($inputArr['unitind3'])){
 								$inputArr['unitind3'] = $infraArr['infra'];
 								$inputArr['rankid'] = $infraArr['rankid'];
 							}
@@ -183,6 +186,7 @@ class TaxonomyUpload{
 						}
 						//Insert record into uploadtaxa table
 						if(array_key_exists('scinameinput', $inputArr)){
+							
 							if(!isset($inputArr['sciname']) && isset($inputArr['unitname1']) && $inputArr['unitname1']){
 								//Build sciname
 								$sciname = $inputArr['unitname1'];
@@ -193,6 +197,12 @@ class TaxonomyUpload{
 										$sciname .= ' '.$inputArr['unitname3'];
 									}
 								}
+								if(!empty($inputArr['cultivarepithet'])){
+									$sciname .= " " . self::standardizeCultivarEpithet($inputArr['cultivarepithet']);
+								}
+								if(!empty($inputArr['tradename'])){
+									$sciname .= ' ' . self::standardizeTradeName($inputArr['tradename']);
+								}
 								$inputArr['sciname'] = trim($sciname);
 							}
 							if(isset($inputArr['rankid']) && $inputArr['rankid'] < 220 && isset($inputArr['sciname']) && !isset($inputArr['unitname1'])){
@@ -201,7 +211,7 @@ class TaxonomyUpload{
 							if(isset($inputArr['acceptedstr'])){
 								if($this->kingdomName == 'Animalia') $inputArr['acceptedstr'] = str_replace(array(' subsp. ',' ssp. ',' var. ',' f. ',' fo. '), ' ', $inputArr['acceptedstr']);
 							}
-							$sciArr = TaxonomyUtilities::parseScientificName($inputArr['scinameinput'],$this->conn,(isset($inputArr['rankid'])?$inputArr['rankid']:0),$this->kingdomName);
+							$sciArr = TaxonomyUtil::parseScientificName($inputArr['scinameinput'],$this->conn,(isset($inputArr['rankid'])?$inputArr['rankid']:0),$this->kingdomName);
 							foreach($sciArr as $sciKey => $sciValue){
 								if(!array_key_exists($sciKey, $inputArr) && $sciValue) $inputArr[$sciKey] = $sciValue;
 							}
@@ -547,8 +557,15 @@ class TaxonomyUpload{
 		if(!$this->conn->query($sql)){
 			$this->outputMsg('ERROR (3): '.$this->conn->error,1);
 		}
-
 		$this->outputMsg('Populating and mapping parent taxon... ');
+		//Set parents of cultivar taxa
+		$sql = 'UPDATE uploadtaxa 
+			SET parentstr = CONCAT_WS(" ", unitname1, unitname2, CONCAT_WS(" ", unitind3, unitname3)) 
+			WHERE ((parentstr IS NULL) OR (parentstr LIKE "PENDING:%")) AND (rankid = 300)';
+		if(!$this->conn->query($sql)){
+			$this->outputMsg('ERROR: '.$this->conn->error,1);
+		}
+		//Set parent of infraspecific taxa
 		$sql = 'UPDATE uploadtaxa '.
 			'SET parentstr = CONCAT_WS(" ", unitname1, unitname2) '.
 			'WHERE ((parentstr IS NULL) OR (parentstr LIKE "PENDING:%")) AND (rankid > 220)';
@@ -726,8 +743,8 @@ class TaxonomyUpload{
 			return false;
 		}
 		//Prime table with kingdoms that are not yet in table
-		$sql = 'INSERT INTO taxa(kingdomName, SciName, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes, modifiedUid, modifiedTimeStamp) '.
-			'SELECT DISTINCT "'.$this->kingdomName.'", SciName, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, IFNULL(Author,"") AS author, Source, Notes, '.$GLOBALS['SYMB_UID'].' as uid, now() '.
+		$sql = 'INSERT INTO taxa(kingdomName, SciName, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, cultivarEpithet, tradeName, Author, Source, Notes, modifiedUid, modifiedTimeStamp) '.
+			'SELECT DISTINCT "'.$this->kingdomName.'", SciName, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, cultivarEpithet, tradeName, IFNULL(Author,"") AS author, Source, Notes, '.$GLOBALS['SYMB_UID'].' as uid, now() '.
 			'FROM uploadtaxa '.
 			'WHERE (TID IS NULL) AND (rankid = 10)';
 		if($this->conn->query($sql)){
@@ -744,8 +761,8 @@ class TaxonomyUpload{
 		do{
 			$this->outputMsg('Starting loop '.$loopCnt);
 			$this->outputMsg('Transferring taxa to taxon table... ',1);
-			$sql = 'INSERT IGNORE INTO taxa(kingdomName, SciName, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes) '.
-				'SELECT DISTINCT "'.$this->kingdomName.'", SciName, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes '.
+			$sql = 'INSERT IGNORE INTO taxa(kingdomName, SciName, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, cultivarEpithet, tradeName, Author, Source, Notes) '.
+				'SELECT DISTINCT "'.$this->kingdomName.'", SciName, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, cultivarEpithet, tradeName, Author, Source, Notes '.
 				'FROM uploadtaxa '.
 				'WHERE (tid IS NULL) AND (parenttid IS NOT NULL) AND (rankid IS NOT NULL) AND (ErrorStatus IS NULL) '.
 				'ORDER BY RankId ASC ';
@@ -817,7 +834,10 @@ class TaxonomyUpload{
 		}while($loopCnt < 30);
 
 		$this->outputMsg('House cleaning... ');
-		TaxonomyUtilities::buildHierarchyEnumTree($this->conn, $this->taxAuthId);
+		$enumTreeStatus = TaxonomyUtil::buildHierarchyEnumTree($this->conn, $this->taxAuthId);
+		if (is_string($enumTreeStatus)) {
+			$this->outputMsg($enumTreeStatus);
+		}
 
 		//Update occurrences with new tids
 		$occurMaintenance = new OccurrenceMaintenance($this->conn);
@@ -863,7 +883,7 @@ class TaxonomyUpload{
 
 	public function exportUploadTaxa(){
 		$fieldArr = array('tid','family','scinameInput','sciname','author','rankId','unitInd1','unitName1','unitInd2','unitName2',
-			'unitInd3','unitName3,parentTid','parentStr','acceptance','tidAccepted','acceptedStr','unacceptabilityReason',
+			'unitInd3','unitName3','cultivarEpithet','tradeName','parentTid','parentStr','acceptance','tidAccepted','acceptedStr','unacceptabilityReason',
 			'securityStatus','source','notes','vernacular','vernlang','sourceId','sourceAcceptedId','sourceParentId','errorStatus');
 		$fileName = 'taxaUpload_'.time().'.csv';
 		header ('Cache-Control: must-revalidate, post-check=0, pre-check=0');
@@ -1147,34 +1167,22 @@ class TaxonomyUpload{
 
 	private function encodeString($inStr){
 		global $CHARSET;
-		$retStr = $inStr;
 		//Get rid of UTF-8 curly smart quotes and dashes
-		$badwordchars=array("\xe2\x80\x98", // left single quote
-							"\xe2\x80\x99", // right single quote
-							"\xe2\x80\x9c", // left double quote
-							"\xe2\x80\x9d", // right double quote
-							"\xe2\x80\x94", // em dash
-							"\xe2\x80\xa6" // elipses
+		$badwordchars=array(
+			"\xe2\x80\x98", // left single quote
+			"\xe2\x80\x99", // right single quote
+			"\xe2\x80\x9c", // left double quote
+			"\xe2\x80\x9d", // right double quote
+			"\xe2\x80\x94", // em dash
+			"\xe2\x80\xa6" // elipses
 		);
 		$fixedwordchars=array("'", "'", '"', '"', '-', '...');
-		$inStr = str_REPLACE($badwordchars, $fixedwordchars, $inStr);
+		$inStr = str_replace($badwordchars, $fixedwordchars, $inStr);
 
 		if($inStr){
-			if(strtolower($CHARSET) == "utf-8" || strtolower($CHARSET) == "utf8"){
-				//$this->outputMsg($inStr.': '.mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true);
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) == "ISO-8859-1"){
-					$retStr = utf8_encode($inStr);
-					//$retStr = iconv("ISO-8859-1//TRANSLIT","UTF-8",$inStr);
-				}
-			}
-			elseif(strtolower($CHARSET) == "iso-8859-1"){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') == "UTF-8"){
-					$retStr = utf8_decode($inStr);
-					//$retStr = iconv("UTF-8","ISO-8859-1//TRANSLIT",$inStr);
-				}
-			}
+			$inStr = mb_convert_encoding($inStr, $CHARSET, mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
  		}
-		return $retStr;
+ 		return $inStr;
 	}
 }
 ?>

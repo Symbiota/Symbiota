@@ -1,8 +1,12 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceIndividual.php');
-include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
-include_once($SERVER_ROOT.'/classes/RdfUtility.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceIndividual.php');
+include_once($SERVER_ROOT . '/classes/DwcArchiverCore.php');
+include_once($SERVER_ROOT . '/classes/utilities/RdfUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+include_once($SERVER_ROOT . '/classes/Media.php');
+include_once($SERVER_ROOT . '/classes/TaxonomyEditorManager.php');
+
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/individual/index.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/individual/index.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/individual/index.en.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php');
@@ -76,7 +80,7 @@ $genticArr = $indManager->getGeneticArr();
 $statusStr = '';
 //  If other than HTML was requested, return just that content.
 if(isset($_SERVER['HTTP_ACCEPT'])){
-	$accept = RdfUtility::parseHTTPAcceptHeader($_SERVER['HTTP_ACCEPT']);
+	$accept = RdfUtil::parseHTTPAcceptHeader($_SERVER['HTTP_ACCEPT']);
 	foreach($accept as $key => $mediarange){
 		if($mediarange=='text/turtle' || $format == 'turtle') {
 			Header("Content-Type: text/turtle; charset=".$CHARSET);
@@ -189,13 +193,14 @@ $traitArr = $indManager->getTraitArr();
 		});
 
 		function refreshRecord(occid){
+			document.getElementById("working-span").style.display = "inline";
 			$.ajax({
 				method: "GET",
 				url: "<?= $CLIENT_ROOT; ?>/api/v2/occurrence/"+occid+"/reharvest"
 			})
 			.done(function( response ) {
 				if(response.status == 200){
-					$("#dataStatus").val(response.dataStatus);
+					$("#dataStatus").val(response.numberFieldChanged);
 					$("#fieldsModified").val(JSON.stringify(response.fieldsModified));
 					$("#sourceDateLastModified").val(response.sourceDateLastModified);
 					alert("Record reharvested. Page will reload to refresh contents...");
@@ -466,20 +471,20 @@ $traitArr = $indManager->getTraitArr();
 							</div>
 							<?php
 						}
-						if($occArr['occurrenceid']){
-							?>
-							<div id="occurrenceid-div" class="bottom-breathing-room-rel-sm">
-								<?php
-								echo '<label>'.$LANG['OCCURRENCE_ID'].': </label>';
-								$resolvableGuid = false;
-								if(substr($occArr['occurrenceid'],0,4) == 'http') $resolvableGuid = true;
-								if($resolvableGuid) echo '<a href="' . $occArr['occurrenceid'] . '" target="_blank">';
-								echo $occArr['occurrenceid'];
-								if($resolvableGuid) echo '</a>';
-								?>
-							</div>
+						?>
+						<div id="occurrenceid-div" class="bottom-breathing-room-rel-sm">
 							<?php
-						}
+							echo '<label>'.$LANG['OCCURRENCE_ID'].': </label>';
+							$resolvableGuid = false;
+							if(substr($occArr['occurrenceid'],0,4) == 'http') $resolvableGuid = true;
+							if($resolvableGuid) echo '<a href="' . $occArr['occurrenceid'] . '" target="_blank">';
+							if(isset($occArr['occurrenceid'])){
+								echo $occArr['occurrenceid'];
+							}
+							if($resolvableGuid) echo '</a>';
+							?>
+						</div>
+						<?php
 						if($occArr['othercatalognumbers']){
 							?>
 							<div id="assoccatnum-div" class="assoccatnum-div bottom-breathing-room-rel-sm">
@@ -498,12 +503,23 @@ $traitArr = $indManager->getTraitArr();
 							<div id="sciname-div" class="sciname-div bottom-breathing-room-rel-sm">
 								<?php
 								echo '<label>'.$LANG['TAXON'].':</label> ';
-								echo '<i>'.$occArr['sciname'].'</i> '.$occArr['scientificnameauthorship'];
 								if(isset($occArr['taxonsecure'])){
 									echo '<span class="notice-span"> '.$LANG['ID_PROTECTED'].'</span>';
 								}
 								if($occArr['tidinterpreted']){
+									$taxonEditorObj = new TaxonomyEditorManager();
+									$taxonEditorObj->setTid($occArr['tidinterpreted']);
+									$taxonEditorObj->setTaxon();
+									$splitSciname = $taxonEditorObj->splitSciname($occArr);
+									$author = !empty($splitSciname['author']) ? ($splitSciname['author'] . ' ') : '';
+									$cultivarEpithet = !empty($splitSciname['cultivarEpithet']) ? ($taxonEditorObj->standardizeCultivarEpithet($splitSciname['cultivarEpithet'])) . ' ' : '';
+									$tradeName = !empty($splitSciname['tradeName']) ? ($taxonEditorObj->standardizeTradeName($splitSciname['tradeName']) . ' ') : '';
+									$nonItalicizedScinameComponent = $author . $cultivarEpithet . $tradeName;
+									echo '<i>' . $splitSciname['base'] . '</i> ' . $nonItalicizedScinameComponent;
 									//echo ' <a href="../../taxa/index.php?taxon=' . $occArr['tidinterpreted'] . '" title="Open Species Profile Page"><img src="" /></a>';
+								} else{
+									// $splitSciname = $taxonEditorObj->splitScinameFromOccArr($occArr); // the misformatting herein is a good reminder to end users to attach entries from the taxonomy thesuarus to their occurrences https://github.com/BioKIC/Symbiota/issues/528#issuecomment-2384276915.
+									echo '<i>' . $occArr['sciname'] .  '</i>';
 								}
 								?>
 							</div>
@@ -518,9 +534,15 @@ $traitArr = $indManager->getTraitArr();
 							<div id="identby-div" class="identby-div bottom-breathing-room-rel-sm">
 								<?php
 								echo '<label>'.(isset($LANG['DETERMINER'])?$LANG['DETERMINER']:'Determiner').': </label>'.$indManager->activateOrcidID($occArr['identifiedby']);
-								if($occArr['dateidentified']) echo ' ('.$occArr['dateidentified'].')';
 								?>
 							</div>
+							<?php if($occArr['dateidentified']): ?>
+								<div id="identby-div" class="identby-div bottom-breathing-room-rel-sm">
+								<?php
+									echo '<label>'.$LANG['DATE_DET']  . ': '. '</label>' . $occArr['dateidentified'];
+								?>
+							</div>
+							<?php endif; ?>
 							<?php
 						}
 						if($occArr['taxonremarks']){
@@ -555,13 +577,13 @@ $traitArr = $indManager->getTraitArr();
 						if(array_key_exists('dets',$occArr) && (count($occArr['dets']) > 1 || $occArr['dets'][key($occArr['dets'])]['iscurrent'] == 0)){
 							?>
 							<div id="determination-div" class="bottom-breathing-room-rel-sm">
-								<div id="det-toogle-div" class="det-toogle-div">
-									<a href="#" onclick="toggle('det-toogle-div');return false"><img src="../../images/plus.png" style="width:1em" alt="image of a plus sign; click to show determination history"></a>
+								<div id="det-toggle-div" class="det-toggle-div">
+									<a href="#" onclick="toggle('det-toggle-div');return false"><img src="../../images/plus.png" style="width:1em" alt="image of a plus sign; click to show determination history"></a>
 									<?php echo $LANG['SHOW_DET_HISTORY']; ?>
 								</div>
-								<div id="det-toogle-div" class="det-toogle-div" style="display:none;">
+								<div id="det-toggle-div" class="det-toggle-div" style="display:none;">
 									<div>
-										<a href="#" onclick="toggle('det-toogle-div');return false"><img src="../../images/minus.png" style="width:1em" alt="image of a minus sign; click to hide determination history"></a>
+										<a href="#" onclick="toggle('det-toggle-div');return false"><img src="../../images/minus.png" style="width:1em" alt="image of a minus sign; click to hide determination history"></a>
 										<?php echo $LANG['HIDE_DET_HISTORY']; ?>
 									</div>
 									<fieldset>
@@ -696,7 +718,8 @@ $traitArr = $indManager->getTraitArr();
 							if(!isset($occArr['localsecure'])){
 								$locStr = $occArr['locality'];
 								if($occArr['locationid']) $locStr .= ' ['.(isset($LANG['LOCATION_ID'])?$LANG['LOCATION_ID']:'Location ID').': '.$occArr['locationid'].']';
-								$localityArr[] = $locStr;
+								if (!empty($locStr))
+									$localityArr[] = $locStr;
 							}
 							echo implode(', ', $localityArr);
 							if($occArr['localitysecurity'] == 1){
@@ -1007,35 +1030,18 @@ $traitArr = $indManager->getTraitArr();
 								<?php
 								foreach($iArr as $imgArr){
 									$thumbUrl = $imgArr['tnurl'];
-									if(!$thumbUrl || substr($thumbUrl, 0, 7) == 'process'){
-										if($imgArr['lgurl']){
-											if($image = exif_thumbnail($imgArr['lgurl'])){
-												$thumbUrl = 'data:image/jpeg;base64,' . base64_encode($image);
-											}
-										}
-										if(!$thumbUrl){
-											if($imgArr['url'] && substr($imgArr['url'], 0, 7) != 'process') $thumbUrl = $imgArr['url'];
-											else $thumbUrl = $imgArr['lgurl'];
-										}
-									}
-									?>
-									<div id="thumbnail-div" class="thumbnail-div">
-										<a href='<?= $imgArr['url'] ?>' target="_blank">
-											<img border="1" src="<?= $thumbUrl; ?>" title="<?= $imgArr['caption']; ?>" style="max-width:21.9rem;" alt="thumbnail image of current specimen" />
-										</a>
-										<?php
-										if($imgArr['caption']) echo '<div><i>'.$imgArr['caption'].'</i></div>';
-										if($imgArr['photographer']) echo '<div>'.(isset($LANG['AUTHOR'])?$LANG['AUTHOR']:'Author').': '.$imgArr['photographer'].'</div>';
-										if($imgArr['url'] && substr($thumbUrl,0,7)!='process' && $imgArr['url'] != $imgArr['lgurl']) echo '<div><a href="' . $imgArr['url'] . '" target="_blank">' . $LANG['OPEN_MEDIUM'] . '</a></div>';
-										if($imgArr['lgurl']) echo '<div><a href="' . $imgArr['lgurl'] . '" target="_blank">' . $LANG['OPEN_LARGE'] . '</a></div>';
-										if($imgArr['sourceurl']) echo '<div><a href="' . $imgArr['sourceurl'] . '" target="_blank">' . $LANG['OPEN_SOURCE'] . '</a></div>';
-										//Use image rights settings as the default for current record
-										if($imgArr['rights']) $collMetadata['rights'] = $imgArr['rights'];
-										if($imgArr['copyright']) $collMetadata['rightsholder'] = $imgArr['copyright'];
-										if($imgArr['accessrights']) $collMetadata['accessrights'] = $imgArr['accessrights'];
-										?>
-									</div>
-									<?php
+									echo '<div id="thumbnail-div" class="thumbnail-div">';
+									echo Media::render_media_item($imgArr);
+									if($imgArr['caption']) echo '<div><i>'.$imgArr['caption'].'</i></div>';
+									if($imgArr['creator']) echo '<div>'.(isset($LANG['AUTHOR'])?$LANG['AUTHOR']:'Author').': '.$imgArr['creator'].'</div>';
+									if($imgArr['url'] && substr($thumbUrl,0,7)!='process' && $imgArr['url'] != $imgArr['lgurl']) echo '<div><a href="' . $imgArr['url'] . '" target="_blank">' . $LANG['OPEN_MEDIUM'] . '</a></div>';
+									if($imgArr['lgurl']) echo '<div><a href="' . $imgArr['lgurl'] . '" target="_blank">' . $LANG['OPEN_LARGE'] . '</a></div>';
+									if($imgArr['sourceurl']) echo '<div><a href="' . $imgArr['sourceurl'] . '" target="_blank">' . $LANG['OPEN_SOURCE'] . '</a></div>';
+									//Use image rights settings as the default for current record
+									if($imgArr['rights']) $collMetadata['rights'] = $imgArr['rights'];
+									if($imgArr['copyright']) $collMetadata['rightsholder'] = $imgArr['copyright'];
+									if($imgArr['accessrights']) $collMetadata['accessrights'] = $imgArr['accessrights'];
+									echo '</div>';
 								}
 								?>
 							</fieldset>
@@ -1062,51 +1068,80 @@ $traitArr = $indManager->getTraitArr();
 							else echo '<a href="../../includes/usagepolicy.php">' . $LANG['USAGE_POLICY'] . '</a>';
 							?>
 						</div>
-						<div id="record-id-div" style="margin:3px 0px;">
-							<?php echo '<label>'.$LANG['RECORD_ID'].': </label>'.$occArr['recordid']; ?>
-						</div>
 						<?php
 						if(isset($occArr['source'])){
-							$recordType = (isset($occArr['source']['type'])?$occArr['source']['type']:'');
-							$displayTitle = $LANG['SOURCE_RECORD'];
-							if(isset($occArr['source']['title'])) $displayTitle = $occArr['source']['title'];
-							$displayStr = $occArr['source']['url'];
-							if(isset($occArr['source']['displayStr'])) $displayStr = $occArr['source']['displayStr'];
-							elseif(isset($occArr['source']['sourceID'])) $displayStr = '#'.$occArr['source']['sourceID'];
-							if($recordType == 'symbiota') echo '<fieldset><legend>Externally Managed Snapshot Record</legend>';
-							echo '<div><label>'.$displayTitle.':</label> <a href="' . $occArr['source']['url'] . '" target="_blank">' . $displayStr . '</a></div>';
-							echo '<div style="float:left;">';
-							if(isset($occArr['source']['sourceName'])){
-								echo '<div><label>'.$LANG['DATA_SOURCE'].':</label> '.$occArr['source']['sourceName'].'</div>';
-								if($recordType == 'symbiota') echo '<div><label>Source management:</label> Live managed record within a Symbiota portal</div>';
+							$recordType = $occArr['source']['type'];
+							$sourceManagement = $LANG['MANAGED_EXTERNALLY'];
+							if($recordType == 'symbiota'){
+								$sourceManagement = $LANG['SYMBIOTA_LIVE_MANAGED'];
 							}
-							if(array_key_exists('fieldsModified',$_POST)){
-								echo '<div><label>'.$LANG['REFRESH_DATE'].':</label> '.(isset($occArr['source']['refreshTimestamp'])?$occArr['source']['refreshTimestamp']:'').'</div>';
-								//Input from refersh event
-								$dataStatus = $indManager->cleanOutStr($_POST['dataStatus']);
-								$fieldsModified = $indManager->cleanOutStr($_POST['fieldsModified']);
-								$sourceDateLastModified = $indManager->cleanOutStr($_POST['sourceDateLastModified']);
-								echo '<div><label>'.$LANG['UPDATE_STATUS'].':</label> '.$dataStatus.'</div>';
-								echo '<div><label>'.$LANG['FIELDS_MODIFIED'].':</label> '.$fieldsModified.'</div>';
-								echo '<div><label>'.$LANG['SOURCE_DATE_LAST_MODIFIED'].':</label> '.$sourceDateLastModified.'</div>';
-							}
-							echo '</div>';
-							if($SYMB_UID && $recordType == 'symbiota'){
-								?>
-								<div style="float:left;margin-left:30px;">
-									<button name="formsubmit" type="submit" onclick="refreshRecord(<?php echo $occid; ?>)"><?php echo $LANG['REFRESH_RECORD']; ?></button>
+							?>
+							<fieldset>
+								<legend><?= $LANG['SOURCE_RECORD'] ?></legend>
+								<div>
+									<?php
+									if(!empty($occArr['source']['sourceName'])){
+										?>
+										<div><label><?= $LANG['DATA_SOURCE'] ?>:</label> <?= $occArr['source']['sourceName'] ?></div>
+										<?php
+									}
+									if(!empty($occArr['source']['sourceID'])){
+										?>
+										<div><label><?= $LANG['SOURCE_ID'] ?>:</label> <?= $occArr['source']['sourceID'] ?></div>
+										<?php
+									}
+									?>
+									<div>
+										<label><?= $LANG['SOURCE_URL'] ?>:</label>
+										<a href="<?= $occArr['source']['url'] ?>" target="_blank"><?=  $occArr['source']['url'] ?></a>
+									</div>
+									<div><label><?= $LANG['SOURCE_MANAGEMENT'] ?>:</label> <?= $sourceManagement ?></div>
+									<?php
+									$dateLastModified = $occArr['source']['refreshTimestamp'];
+									if(array_key_exists('fieldsModified', $_POST)){
+										//Input from refersh event
+										$dataStatus = $indManager->cleanOutStr($_POST['dataStatus']);
+										$fieldsModified = $_POST['fieldsModified'];
+										$dateLastModified = $indManager->cleanOutStr($_POST['sourceDateLastModified']);
+										echo '<div><label>' . $LANG['UPDATE_STATUS'] . ':</label> '.$dataStatus . ' ' . strtolower($LANG['FIELDS_MODIFIED']) . '</div>';
+										if($fieldsModified){
+											echo '<div><label>'.$LANG['FIELDS_MODIFIED'].':</label> ';
+											echo '<div style="margin-left:25px">';
+											$fieldsModifiedArr = json_decode($fieldsModified, true);
+											foreach($fieldsModifiedArr as $name => $value){
+												echo '<div>' . $name . ': ' . $value . '</div>';
+											}
+											echo '</div></div>';
+										}
+										echo '<div><label>'.$LANG['REFRESH_DATE'].':</label> '.$occArr['source']['refreshTimestamp'].'</div>';
+									}
+									?>
+									<!--
+									<div><label><?= $LANG['DATE_LAST_MODIFIED'] ?>:</label> <?= $dateLastModified ?></div>
+									 -->
+									<div><label><?= $LANG['SOURCE_TIMESTAMP'] ?>:</label> <?= $occArr['source']['initialTimestamp'] ?></div>
 								</div>
-								<form id="refreshForm" action="index.php" method="post">
-									<input id="dataStatus" name="dataStatus" type="hidden" value="" >
-									<input id="fieldsModified" name="fieldsModified" type="hidden" value="" >
-									<input id="sourceDateLastModified" name="sourceDateLastModified" type="hidden" value="" >
-									<input name="occid" type="hidden" value="<?php echo $occid; ?>" >
-									<input name="clid" type="hidden" value="<?php echo $clid; ?>" >
-									<input name="collid" type="hidden" value="<?php echo $collid; ?>" >
-								</form>
 								<?php
-							}
-							if($recordType == 'symbiota') echo '</fieldset>';
+								if($SYMB_UID && $recordType == 'symbiota'){
+									?>
+									<div style="margin:15px;">
+										<form id="refreshForm" action="index.php" method="post">
+											<input id="dataStatus" name="dataStatus" type="hidden" value="" >
+											<input id="fieldsModified" name="fieldsModified" type="hidden" value="" >
+											<input id="sourceDateLastModified" name="sourceDateLastModified" type="hidden" value="" >
+											<input name="occid" type="hidden" value="<?= $occid ?>" >
+											<input name="clid" type="hidden" value="<?= $clid ?>" >
+											<input name="collid" type="hidden" value="<?= $collid ?>" >
+											<button name="formsubmit" type="button" onclick="refreshRecord(<?= $occid ?>)"><?= $LANG['REFRESH_RECORD'] ?>
+												<span id="working-span" style="display: none; margin-left: 10px"><img class="icon-img" style="width: 15px" src="../../images/ajax-loader_sm.gif" ></span>
+											</button>
+										</form>
+									</div>
+									<?php
+								}
+								?>
+							</fieldset>
+							<?php
 						}
 						?>
 						<div id="contact-div">
@@ -1122,9 +1157,9 @@ $traitArr = $indManager->getTraitArr();
 										$otherCatNum = ' (' . trim($otherCatNum, ', ') . ')';
 									}
 									$emailSubject = $DEFAULT_TITLE . ' occurrence: ' . $occArr['catalognumber'] . $otherCatNum;
-									$refPath = $indManager->getDomain().$CLIENT_ROOT.'/collections/individual/index.php?occid='.$occArr['occid'];
+									$refPath = GeneralUtil::getDomain().$CLIENT_ROOT.'/collections/individual/index.php?occid='.$occArr['occid'];
 									$emailBody = $LANG['SPECIMEN_REFERENCED'].': '.$refPath;
-									$emailRef = 'subject=' . urlencode($emailSubject) . '&cc=' . urlencode($ADMIN_EMAIL) . '&body=' . urlencode($emailBody);
+									$emailRef = 'subject=' . rawurlencode($emailSubject) . '&cc=' . $ADMIN_EMAIL . '&body=' . rawurlencode($emailBody);
 									echo ' (<a href="mailto:' . $collMetadata['email'] . '?' . $emailRef . '">' . $collMetadata['email'] . '</a>)';
 								}
 							}
@@ -1240,7 +1275,7 @@ $traitArr = $indManager->getTraitArr();
 									if(!isset($occArr['taxonsecure']) && !isset($occArr['localsecure'])){
 										if($dupArr['url']){
 											$url = $dupArr['url'];
-											if($IMAGE_DOMAIN) if(substr($url,0,1) == '/') $url = $IMAGE_DOMAIN.$url;
+											if($MEDIA_DOMAIN) if(substr($url,0,1) == '/') $url = $MEDIA_DOMAIN.$url;
 											echo '<div style="float:right;margin:10px;"><img src="'.$url.'" style="width:70px;border:1px solid grey" /></div>';
 										}
 									}

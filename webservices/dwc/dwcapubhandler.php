@@ -19,6 +19,7 @@
  *   imgs (0, 1 [default]): Output image URLs within an media extension file
  *   dets (0, 1 [default]): Output determination history within an identification extension file
  *   attr (0 [default], 1): Output occurrence attribute values within a MeasurementOrFact extension file
+ *   ident (0 [default], 1): Output occurrence identifiers values within an Alternative Identifiers extension file
  *
  * Return: Darwin Core Archive of matching occurrences, associated images, identification history, and other associated data extensions
  *   Occurrence record return limited to 1,000,000 records
@@ -41,11 +42,12 @@ $collid = array_key_exists('collid', $_REQUEST) ? $_REQUEST['collid'] : 0;
 $cond = array_key_exists('cond', $_REQUEST) ? $_REQUEST['cond'] : '';
 $collType = array_key_exists('colltype', $_REQUEST) ? $_REQUEST['colltype'] : '';
 $schemaType = array_key_exists('schema', $_REQUEST) ? $_REQUEST['schema'] : 'dwc';
-$extended = array_key_exists('extended', $_REQUEST) ? $_REQUEST['extended'] : 0;
-$includeDets = array_key_exists('dets', $_REQUEST) ? $_REQUEST['dets'] : 1;
-$includeImgs = array_key_exists('imgs', $_REQUEST) ? $_REQUEST['imgs'] : 1;
-$includeAttributes = array_key_exists('attr', $_REQUEST) ? $_REQUEST['attr'] : 0;
-$includeMaterialSample = array_key_exists('matsample', $_REQUEST) ? $_REQUEST['matsample'] : 0;
+$extended = !empty($_REQUEST['extended']) ? 1 : 0;
+$includeDets = isset($_REQUEST['dets']) && !$_REQUEST['dets'] ? 0 : 1;
+$includeImgs = isset($_REQUEST['imgs']) && !$_REQUEST['imgs'] ? 0 : 1;
+$includeAttributes = !empty($_REQUEST['attr']) ? 1 : 0;
+$includeMaterialSample = !empty($_REQUEST['matsample']) ? 1 : 0;
+$includeIdentifiers = !empty($_REQUEST['ident']) ? 1 : 0;
 $pubGuid = array_key_exists('publicationguid', $_REQUEST) ? $_REQUEST['publicationguid'] : 0;
 $requestPortalGuid = array_key_exists('portalguid', $_REQUEST) ? $_REQUEST['portalguid'] : 0;
 
@@ -100,6 +102,7 @@ $dwcaHandler->setIncludeDets($includeDets);
 $dwcaHandler->setIncludeImgs($includeImgs);
 $dwcaHandler->setIncludeAttributes($includeAttributes);
 $dwcaHandler->setIncludeMaterialSample($includeMaterialSample);
+$dwcaHandler->setIncludeIdentifiers($includeIdentifiers);
 $dwcaHandler->setPublicationGuid($pubGuid);
 $dwcaHandler->setRequestPortalGuid($requestPortalGuid);
 

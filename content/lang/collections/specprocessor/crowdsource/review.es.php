@@ -4,6 +4,7 @@
 Language: Español
 ------------------
 */
+$LANG['REVIEW_CROWDSOURCING_RECORDS'] = 'Revisar Registros Colaborativos';
 
 $LANG['CROWDSOURCING_REVIEW'] = 'Revisión del Crowdsourcing';
 $LANG['HOME'] = 'Inicio';

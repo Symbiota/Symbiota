@@ -2,7 +2,9 @@ INSERT INTO `schemaversion` (versionnumber) values ("3.1");
 
 ALTER TABLE `ctcontrolvocab` 
   ADD COLUMN `filterVariable` VARCHAR(150) NOT NULL DEFAULT '' AFTER `fieldName`,
-  DROP INDEX `UQ_ctControlVocab` ,
+  DROP INDEX `UQ_ctControlVocab`;
+
+ALTER TABLE `ctcontrolvocab` 
   ADD UNIQUE INDEX `UQ_ctControlVocab` (`title` ASC, `tableName` ASC, `fieldName` ASC, `filterVariable` ASC);
 
 INSERT INTO `ctcontrolvocab`(title, tableName, fieldName, filterVariable)
@@ -39,12 +41,17 @@ ALTER TABLE `fmchklstcoordinates`
 
 
 -- Ensure these older tables are innoDB
-ALTER TABLE `geographicpolygon` ENGINE = InnoDB;
-ALTER TABLE `geographicthesaurus`  ENGINE = InnoDB;
+ALTER TABLE `geographicpolygon` 
+  ENGINE = InnoDB;
 
-ALTER TABLE `geographicpolygon` MODIFY COLUMN footprintPolygon geometry NOT NULL;
+ALTER TABLE `geographicthesaurus` 
+  ENGINE = InnoDB;
+
+ALTER TABLE `geographicpolygon` 
+  MODIFY COLUMN footprintPolygon geometry NOT NULL;
 
 DROP PROCEDURE IF EXISTS `insertGeographicPolygon`;
+
 DROP PROCEDURE IF EXISTS `updateGeographicPolygon`;
 
 DELIMITER |
@@ -87,7 +94,9 @@ UPDATE `omoccurassociations`
   WHERE instanceID IS NULL AND sourceIdentifier IS NOT NULL;
 
 ALTER TABLE `omoccurassociations` 
-  DROP INDEX `UQ_omoccurassoc_sciname` ,
+  DROP INDEX `UQ_omoccurassoc_sciname`;
+  
+ALTER TABLE `omoccurassociations` 
   ADD UNIQUE INDEX `UQ_omoccurassoc_sciname` (`occid` ASC, `verbatimSciname` ASC, `associationType` ASC);
 
 ALTER TABLE `omoccurassociations` 
@@ -123,7 +132,7 @@ UPDATE `omoccurassociations`
   WHERE associationType = "" AND occidAssociate IS NULL AND resourceUrl IS NULL AND verbatimSciname IS NOT NULL;
 
 
-# Corrects an issue with db_schema-3.0.sql. Will fail when udating 1.x schemas, thus ignore
+# Skip if 1.0 install: Corrects an issue with db_schema-3.0.sql. Will fail when udating 1.x schemas, thus ignore 
 ALTER TABLE `omoccurdeterminations` 
   CHANGE COLUMN `identificationID` `sourceIdentifier` VARCHAR(45) NULL DEFAULT NULL ;
 
@@ -266,10 +275,11 @@ CREATE TABLE `usersthirdpartyauth` (
   `provider` VARCHAR(200) NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_users_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
 
+# Skip if 3.0 install: Table does not exist within db_schema-3.0, thus statement is expected to fail if this was not originally a 1.0 install
 # Deprecate omoccurresource table in preference for omoccurassociations. 
-# Table does not exist within db_schema-3.0, thus statement is expected to fail if this is a new 3.0 install
 ALTER TABLE `omoccurresource` 
   RENAME TO  `deprecated_omoccurresource` ;
+

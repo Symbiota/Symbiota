@@ -1,6 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
-include_once('OccurrenceUtilities.php');
+include_once($SERVER_ROOT . '/config/dbconnection.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
 
 class OmMaterialSample{
 
@@ -115,12 +116,14 @@ class OmMaterialSample{
 			$postField = '';
 			if(isset($inputArr[$field])) $postField = $field;
 			elseif(isset($inputArr[strtolower($field)])) $postField = strtolower($field);
+			elseif(isset($inputArr['ms_' . $field])) $postField = 'ms_' . $field;
+
 			if($postField){
 				$value = trim($inputArr[$postField]);
 				if($value === '') $value = null;
 				elseif($value){
-					if(strtolower($postField) == 'preparationdate') $value = OccurrenceUtilities::formatDate($value);
-					if(strtolower($postField) == 'preparedbyuid') $value = OccurrenceUtilities::verifyUser($value, $this->conn);
+					if(strtolower($postField) == 'preparationdate') $value = OccurrenceUtil::formatDate($value);
+					if(strtolower($postField) == 'preparedbyuid') $value = OccurrenceUtil::verifyUser($value, $this->conn);
 				}
 				$this->parameterArr[$field] = $value;
 				$this->typeStr .= $type;

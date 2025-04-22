@@ -4,6 +4,8 @@ include_once($SERVER_ROOT.'/classes/SpecProcessorManager.php');
 include_once($SERVER_ROOT.'/classes/ImageLocalProcessor.php');
 include_once($SERVER_ROOT.'/classes/ImageProcessor.php');
 include_once($SERVER_ROOT.'/classes/SpecProcessorOcr.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/specprocessor/specprocessor_tools.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/specprocessor/specprocessor_tools.'.$LANG_TAG.'.php');
+else include_once($SERVER_ROOT.'/content/lang/collections/specprocessor/specprocessor_tools.en.php');
 
 header("Content-Type: text/html; charset=".$CHARSET);
 
@@ -38,7 +40,7 @@ $statusStr = "";
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
-		<title>Specimen Processor Control Panel</title>
+		<title><?php echo $LANG['SPEC_PROCESSOR_CONTROL_PANEL']; ?></title>
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
@@ -48,15 +50,15 @@ $statusStr = "";
 		$displayLeftMenu = false;
 		include($SERVER_ROOT.'/includes/header.php');
 		echo '<div class="navpath">';
-		echo '<a href="../../index.php">Home</a> &gt;&gt; ';
-		echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">Collection Control Panel</a> &gt;&gt; ';
-		echo '<a href="index.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) .'&tabindex=' . htmlspecialchars($tabIndex, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><b>Specimen Processor</b></a> &gt;&gt ; ';
-		echo '<b>Processing Handler</b>';
+		echo '<a href="../../index.php">' . $LANG['HOME'] . '</a> &gt;&gt; ';
+		echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">' . $LANG['COL_CONTROL_PANEL'] . '</a> &gt;&gt; ';
+		echo '<a href="index.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) .'&tabindex=' . htmlspecialchars($tabIndex, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><b>' . $LANG['SPEC_PROCESSOR'] . '</b></a> &gt;&gt ';
+		echo '<b>' . $LANG['PROC_HANDLER'] . '</b>';
 		echo '</div>';
 		?>
 		<!-- This is inner text! -->
 		<div role="main" id="innertext">
-			<h1 class="page-heading">Specimen Processor Control Panel</h1>
+			<h1 class="page-heading"><?php echo $LANG['SPEC_PROCESSOR_CONTROL_PANEL']; ?></h1>
 			<h2><?php echo $specManager->getCollectionName(); ?></h2>
 			<?php
 			if($isEditor){
@@ -151,7 +153,7 @@ $statusStr = "";
 				}
 			}
 			?>
-			<div style="font-weight:bold;font-size:120%;"><a href="index.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&tabindex=' . htmlspecialchars($tabIndex, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><b>Return to Specimen Processor</b></a></div>
+			<div style="font-weight:bold;font-size:120%;"><a href="index.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&tabindex=' . htmlspecialchars($tabIndex, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><b><?= $LANG['RETURN_SPEC_PROCESSOR'] ?></b></a></div>
 		</div>
 		<?php
 		include($SERVER_ROOT.'/includes/footer.php');

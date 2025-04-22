@@ -1,8 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
-include_once($SERVER_ROOT.'/classes/Manager.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
+include_once($SERVER_ROOT . '/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceMaintenance.php');
+include_once($SERVER_ROOT . '/classes/utilities/TaxonomyUtil.php');
 
 class ChecklistLoaderManager extends Manager {
 
@@ -46,7 +45,7 @@ class ChecklistLoaderManager extends Manager {
 					$tid = 0;
 					$rankId = 0;
 					$family = "";
-					$sciNameArr = TaxonomyUtilities::parseScientificName($sciNameStr,$this->conn);
+					$sciNameArr = TaxonomyUtil::parseScientificName($sciNameStr,$this->conn);
 					//Check name is in taxa table and grab tid if it is
 					$sql = "";
 					if($thesId && is_numeric($thesId)){

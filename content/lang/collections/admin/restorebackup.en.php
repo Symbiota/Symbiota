@@ -4,7 +4,7 @@
 Language: English
 ------------------
 */
-
+$LANG['RESTORE_COLLEC_FROM_LIST'] = 'Restore Collection from Backup File';
 $LANG['RESTORE'] = 'Restore Backup';
 $LANG['PATH_EMPTY'] = 'File path is empty. Please select the file that is to be restored.';
 $LANG['MUST_ZIP'] = 'File must be a ZIP file (.zip) downloaded as a Symbiota backup.';
@@ -15,7 +15,7 @@ $LANG['CAUTION'] = 'Caution';
 $LANG['MATCH_REPLACE'] = 'Matching records will be replaced with incoming records';
 $LANG['SEL_BACKUP'] = 'Select Backup File to Restore';
 $LANG['RESTORE_DETS'] = 'Restore Determination History';
-$LANG['RESTORE_IMGS'] = 'Restore Images';
+$LANG['RESTORE_MEDIA_LINKS'] = 'Restore Media/Image Links';
 $LANG['ANALYZE'] = 'Analyze File';
 $LANG['MANUAL'] = 'Manual File Upload Option';
 $LANG['WARNINGS'] = 'Warnings exist';

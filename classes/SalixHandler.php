@@ -128,10 +128,8 @@ class SalixHandler{
 			foreach($dwcArr as $k => $v){
 				if($v){
 					//If is a latin character set, convert to UTF-8
-					if(mb_detect_encoding($v,'UTF-8,ISO-8859-1',true) == "ISO-8859-1"){
-						$dwcArr[$k] = utf8_encode($v);
-						//$dwcArr[$k] = iconv("ISO-8859-1//TRANSLIT","UTF-8",$v);
-					}
+					if(mb_detect_encoding($v,'UTF-8,ISO-8859-1',true) == 'ISO-8859-1'){
+						$dwcArr[$k] = mb_convert_encoding($v, 'UTF-8');
 				}
 				else{
 					unset($dwcArr[$k]);

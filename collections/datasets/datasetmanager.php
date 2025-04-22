@@ -164,7 +164,7 @@ if($isEditor){
 				});
 
 				$( "#userinput" ).autocomplete({
-					source: "rpc/getuserlist.php",
+					source: "../rpc/getuserlist.php",
 					minLength: 3,
 					autoFocus: true,
 					select: function( event, ui ) {
@@ -376,7 +376,7 @@ if($isEditor){
 						else{
 							?>
 							<div style="font-weight:bold; margin:15px"><?php echo $LANG['NO_OCCS_DS']; ?></div>
-							<div style="margin:15px"><?php echo $LANG['LINK_OCCS_VIA'].' <a href="../index.php">' . htmlspecialchars($LANG['OCC_SEARCH'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ' . htmlspecialchars($LANG['OR_VIA_OCC_PROF'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></div>
+							<div style="margin:15px"><?php echo $LANG['LINK_OCCS_VIA'].' <a href="../search/index.php">' . htmlspecialchars($LANG['OCC_SEARCH'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ' . htmlspecialchars($LANG['OR_VIA_OCC_PROF'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></div>
 							<?php
 						}
 						?>

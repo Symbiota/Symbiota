@@ -49,7 +49,7 @@ class MediaResolutionTools extends Manager {
 			$this->logOrEcho('ABORTED: Image ids (imgid) not supplied');
 			return false;
 		}
-		$this->archiveDir = $GLOBALS['IMAGE_ROOT_PATH'].'/archive_'.date('Y-m-d');
+		$this->archiveDir = $GLOBALS['MEDIA_ROOT_PATH'].'/archive_'.date('Y-m-d');
 		if(!file_exists($this->archiveDir)){
 			if(!mkdir($this->archiveDir)) {
 				$this->logOrEcho('ABORTED: unalbe to create archive directory ('.$this->archiveDir.')');
@@ -67,16 +67,16 @@ class MediaResolutionTools extends Manager {
 		//Remove images
 		$imgidFinal = $imgidStart;
 		$cnt = 0;
-		$sql = 'SELECT i.* FROM images i ';
-		if($this->collid) $sql .= 'INNER JOIN omoccurrences o ON i.occid = o.occid ';
-		$sql .= 'WHERE (i.imgid IN('.trim(implode(',',$this->imgidArr),', ').')) AND (i.imgid > '.$imgidStart.') ';
+		$sql = 'SELECT m.* FROM media m ';
+		if($this->collid) $sql .= 'INNER JOIN omoccurrences o ON m.occid = o.occid ';
+		$sql .= 'WHERE (m.mediaID IN('.trim(implode(',',$this->imgidArr),', ').')) AND m.mediaType = "image" AND (m.mediaID > '.$imgidStart.') ';
 		if($this->collid) $sql .= 'AND (o.collid = '.$this->collid.') ';
-		$sql .= 'ORDER BY i.imgid LIMIT '.$limit;
+		$sql .= 'ORDER BY m.mediaID LIMIT '.$limit;
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		echo '<ul>';
 		while($r = $rs->fetch_assoc()){
-			$imgId = $r['imgid'];
+			$imgId = $r['mediaID'];
 			$derivArr = array('tn'=>1,'web'=>1,'lg'=>1);
 			$delArr = array();
 			if(!$r['thumbnailurl']) unset($derivArr['tn']);
@@ -103,14 +103,14 @@ class MediaResolutionTools extends Manager {
 			}
 			//Place INSERT sql into file in case record needs to be reintalled
 			$insertArr = $r;
-			unset($insertArr['imgid']);
+			unset($insertArr['mediaID']);
 			unset($insertArr['initialtimestamp']);
 			$insertStr = '';
 			foreach($insertArr as $v){
 				if($v) $insertStr .= ', "'.$v.'"';
 				else $insertStr .= ', NULL';
 			}
-			$insSql = 'INSERT INTO images('.implode(',', array_keys($insertArr)).') VALUES('.substr($insertStr,1).');';
+			$insSql = 'INSERT INTO media ('.implode(',', array_keys($insertArr)).') VALUES('.substr($insertStr,1).');';
 			fputcsv($csvReportFH,array($imgId,'record deleted',$insSql));
 			//Adjust database record
 			$sqlImg = '';
@@ -118,10 +118,10 @@ class MediaResolutionTools extends Manager {
 				if(isset($delArr['tn'])) $sqlImg .= ', thumbnailurl = NULL';
 				if(isset($delArr['web'])) $sqlImg .= ', url = "empty"';
 				if(isset($delArr['lg'])) $sqlImg .= ', originalurl = NULL';
-				if($sqlImg) $sqlImg = 'UPDATE images SET '.substr($sqlImg,1).' WHERE imgid = '.$imgId;
+				if($sqlImg) $sqlImg = 'UPDATE media SET '.substr($sqlImg,1).' WHERE mediaID = '.$imgId;
 			}
 			else{
-				$sqlImg = 'DELETE FROM images WHERE imgid = '.$imgId;
+				$sqlImg = 'DELETE FROM media WHERE mediaID = '.$imgId;
 			}
 			if($sqlImg){
 				if(!$this->conn->query($sqlImg)){
@@ -130,7 +130,7 @@ class MediaResolutionTools extends Manager {
 				}
 			}
 			if($cnt && $cnt%100 == 0){
-				$this->logOrEcho($cnt.' images checked');
+				$this->logOrEcho($cnt.' media checked');
 				ob_flush();
 				flush();
 			}
@@ -140,7 +140,7 @@ class MediaResolutionTools extends Manager {
 		echo '</ul>';
 		$rs->free();
 		fclose($csvReportFH);
-		$this->logOrEcho('Done! '.$cnt.' images handled');
+		$this->logOrEcho('Done! '.$cnt.' media handled');
 		return $imgidFinal;
 	}
 
@@ -150,7 +150,7 @@ class MediaResolutionTools extends Manager {
 			if(substr($imgFilePath,0,4) == 'http') {
 				$imgFilePath = substr($imgFilePath,strpos($imgFilePath,"/",9));
 			}
-			$path = str_replace($GLOBALS['IMAGE_ROOT_URL'], $GLOBALS['IMAGE_ROOT_PATH'], $imgFilePath);
+			$path = str_replace($GLOBALS['MEDIA_ROOT_URL'], $GLOBALS['MEDIA_ROOT_PATH'], $imgFilePath);
 			if(is_writable($path)){
 				if($this->archiveImages){
 					$fileName = substr($path, strrpos($path, '/'));
@@ -161,7 +161,7 @@ class MediaResolutionTools extends Manager {
 				}
 			}
 			else{
-				$this->logOrEcho('ERROR: image unwritable (imgid: <a href="' . htmlspecialchars($GLOBALS['CLIENT_ROOT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/imagelib/imgdetails.php?imgid=' . htmlspecialchars($imgid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($imgid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>, path: ' . htmlspecialchars($path, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ')');
+				$this->logOrEcho('ERROR: image unwritable (imgid: <a href="' . $GLOBALS['CLIENT_ROOT'] . '/imagelib/imgdetails.php?mediaid=' . $imgid . '" target="_blank">' . $imgid . '</a>, path: ' . htmlspecialchars($path, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ')');
 			}
 		}
 		return $status;
@@ -195,50 +195,32 @@ class MediaResolutionTools extends Manager {
 						}
 						$pathFrag .= '/'.$subDir;
 						$dirCnt ++;
-						$sql = 'SELECT imgid, thumbnailurl, url, originalurl FROM images WHERE occid IS NULL ';
-						if($this->collid) $sql = 'SELECT i.thumbnailurl, i.url, i.originalurl FROM images i INNER JOIN omoccurrences o ON i.occid = o.occid WHERE o.collid = '.$this->collid;
+						$sql = 'SELECT mediaID, thumbnailurl, url, originalurl FROM media WHERE occid IS NULL ';
+						if($this->collid) $sql = 'SELECT m.thumbnailurl, m.url, m.originalurl FROM media m INNER JOIN omoccurrences o ON m.occid = o.occid WHERE o.collid = '.$this->collid;
 						if($this->matchTermThumbnail) $sql .= ' AND thumbnailurl LIKE "'.$this->matchTermThumbnail.'%" ';
 						if($this->matchTermWeb) $sql .= ' AND url LIKE "'.$this->matchTermWeb.'%" ';
 						if($this->matchTermLarge) $sql .= ' AND originalurl LIKE "'.$this->matchTermLarge.'%" ';
-						if($imgIdStart && is_numeric($imgIdStart)) $sql .= 'AND imgid > '.$imgIdStart.' ';
-						$sql .= 'ORDER BY imgid ';
+						if($imgIdStart && is_numeric($imgIdStart)) $sql .= 'AND mediaID > '.$imgIdStart.' ';
+						$sql .= 'ORDER BY mediaID ';
 						$sql .= 'LIMIT 1000';
 						echo $sql.'<br/>';
 						$rs = $this->conn->query($sql);
 						while($r = $rs->fetch_object()){
-							$imgId = $r->imgid;
+							$imgId = $r->mediaID;
 							if($this->transferThumbnail){
 								$filePath = $pathFrag;
 								if(substr($r->thumbnailurl,-1) != '/') $filePath .= '/';
 								echo $r->thumbnailurl.' => '.$this->imgRootPath.$filePath.'<br/>';
-/*
-								if(copy($r->thumbnailurl,$this->imgRootPath.$filePath)){
-									$imgArr[$r->imgid]['tn'] = $filePath;
-									$this->logOrEcho('Copied: '.$r->thumbnailurl);
-								}
-*/
 							}
 							if($this->transferWeb){
 								$filePath = $pathFrag;
 								if(substr($r->url,-1) != '/') $filePath .= '/';
 								echo $r->url.' => '.$this->imgRootPath.$filePath.'<br/>';
-								/*
-								 if(copy($r->url,$this->imgRootPath.$filePath)){
-									$imgArr[$r->imgid]['web'] = $filePath;
-									$this->logOrEcho('Copied: '.$r->url);
-								}
-*/
 							}
 							if($this->transferLarge){
 								$filePath = $pathFrag;
 								if(substr($r->originalurl,-1) != '/') $filePath .= '/';
 								echo $r->originalurl.' => '.$this->imgRootPath.$filePath.'<br/>';
-/*
-								if(copy($r->originalurl,$this->imgRootPath.$filePath)){
-									$imgArr[$r->imgid]['lg'] = $filePath;
-									$this->logOrEcho('Copied: '.$r->originalurl);
-								}
-*/
 							}
 							$limit--;
 							if($limit < 1) break;
@@ -270,28 +252,28 @@ class MediaResolutionTools extends Manager {
 					echo '<ul>';
 					$this->setTargetPaths();
 					$processingCnt = 0;
-					$sqlBase = 'FROM images i INNER JOIN omoccurrences o ON i.occid = o.occid WHERE o.collid = '.$this->collid.' ';
+					$sqlBase = 'FROM media m INNER JOIN omoccurrences o ON m.occid = o.occid WHERE o.collid = ' . $this->collid . ' AND m.mediaType = "image" ';
 					if($this->matchTermThumbnail) $sqlBase .= 'AND thumbnailurl LIKE "'.$this->matchTermThumbnail.'%" ';
 					if($this->matchTermWeb) $sqlBase .= 'AND url LIKE "'.$this->matchTermWeb.'%" ';
 					if($this->matchTermLarge) $sqlBase .= 'AND originalurl LIKE "'.$this->matchTermLarge.'%" ';
 					$targetCount = 0;
-					$sqlCount = 'SELECT COUNT(i.imgid) as cnt '.$sqlBase.' ';
-					if($imgIdStart && is_numeric($imgIdStart)) $sqlCount .= 'AND imgid > '.$imgIdStart.' ';
+					$sqlCount = 'SELECT COUNT(m.mediaID) as cnt '.$sqlBase.' ';
+					if($imgIdStart && is_numeric($imgIdStart)) $sqlCount .= 'AND mediaID > '.$imgIdStart.' ';
 					$rsCount = $this->conn->query($sqlCount);
 					while($rCount = $rsCount->fetch_object()){
 						$targetCount = $rCount->cnt;
 					}
 					$rsCount->free();
-					$this->logOrEcho('Starting remapping of '.$limit.' out of '.$targetCount.' possible target images');
+					$this->logOrEcho('Starting remapping of '.$limit.' out of '.$targetCount.' possible target media ');
 					do{
 						$imgArr = array();
-						$sql = 'SELECT i.imgid, i.thumbnailurl, i.url, i.originalurl, o.catalognumber, o.occid '.$sqlBase;
-						if($imgIdStart && is_numeric($imgIdStart)) $sql .= 'AND imgid > '.$imgIdStart.' ';
-						$sql .= 'ORDER BY imgid LIMIT 100';
+						$sql = 'SELECT m.mediaID, m.thumbnailurl, m.url, m.originalurl, o.catalognumber, o.occid '.$sqlBase;
+						if($imgIdStart && is_numeric($imgIdStart)) $sql .= 'AND mediaID > '.$imgIdStart.' ';
+						$sql .= 'ORDER BY mediaID LIMIT 100';
 						//$this->logOrEcho('sql used: '. $sql);
 						$rs = $this->conn->query($sql);
 						while($r = $rs->fetch_object()){
-							$imgIdStart = $r->imgid;
+							$imgIdStart = $r->mediaID;
 							$pathFrag = '';
 							if(preg_match('/^(\D*).*(\d{4,})/', $r->catalognumber, $m)){
 								$catNum = $m[2];
@@ -311,7 +293,7 @@ class MediaResolutionTools extends Manager {
 								if(file_exists($thumbPath)){
 									if($this->copyOverExistingImages || !file_exists($targetPath)){
 										if(copy($thumbPath, $targetPath)){
-											$imgArr[$r->imgid]['tn'] = $targetUrl;
+											$imgArr[$r->mediaID]['tn'] = $targetUrl;
 											$this->logOrEcho('Copied: '.$thumbPath.' => '.$targetPath,1);
 											if($this->deleteSource){
 												if(unlink($thumbPath)){
@@ -339,7 +321,7 @@ class MediaResolutionTools extends Manager {
 								if(file_exists($urlPath)){
 									if($this->copyOverExistingImages || !file_exists($targetPath)){
 										if(copy($urlPath, $targetPath)){
-											$imgArr[$r->imgid]['web'] = $targetUrl;
+											$imgArr[$r->mediaID]['web'] = $targetUrl;
 											$this->logOrEcho('Copied: '.$urlPath.' => '.$targetPath,1);
 											if($this->deleteSource){
 												if(unlink($urlPath)){
@@ -367,7 +349,7 @@ class MediaResolutionTools extends Manager {
 								if(file_exists($origPath)){
 									if($this->copyOverExistingImages || !file_exists($targetPath)){
 										if(copy($origPath, $targetPath)){
-											$imgArr[$r->imgid]['lg'] = $targetUrl;
+											$imgArr[$r->mediaID]['lg'] = $targetUrl;
 											$this->logOrEcho('Copied: '.$origPath.' => '.$targetPath,1);
 											if($this->deleteSource){
 												if(unlink($origPath)){
@@ -406,17 +388,17 @@ class MediaResolutionTools extends Manager {
 
 	private function getLocalPath($imageUrl){
 		if($this->sourcePathPrefix){
-			$adjustedUrl = str_replace($this->sourcePathPrefix, $GLOBALS['IMAGE_ROOT_PATH'], $imageUrl);
+			$adjustedUrl = str_replace($this->sourcePathPrefix, $GLOBALS['MEDIA_ROOT_PATH'], $imageUrl);
 			if(file_exists($adjustedUrl)) return $adjustedUrl;
 		}
 		if(file_exists($imageUrl)){
 			return $imageUrl;
 		}
-		if(strpos($imageUrl, $GLOBALS['IMAGE_ROOT_URL']) !== false){
-			$adjustedUrl = str_replace($GLOBALS['IMAGE_ROOT_URL'], $GLOBALS['IMAGE_ROOT_PATH'], $imageUrl);
+		if(strpos($imageUrl, $GLOBALS['MEDIA_ROOT_URL']) !== false){
+			$adjustedUrl = str_replace($GLOBALS['MEDIA_ROOT_URL'], $GLOBALS['MEDIA_ROOT_PATH'], $imageUrl);
 			if(file_exists($adjustedUrl)) return $adjustedUrl;
 		}
-		$prefix = substr($GLOBALS['IMAGE_ROOT_PATH'], 0, strlen($GLOBALS['IMAGE_ROOT_PATH']) - strlen($GLOBALS['IMAGE_ROOT_URL']));
+		$prefix = substr($GLOBALS['MEDIA_ROOT_PATH'], 0, strlen($GLOBALS['MEDIA_ROOT_PATH']) - strlen($GLOBALS['MEDIA_ROOT_URL']));
 		if(file_exists($prefix.$imageUrl)){
 			$this->sourcePathPrefix = $prefix;
 			return $prefix.$imageUrl;
@@ -431,7 +413,7 @@ class MediaResolutionTools extends Manager {
 			if(isset($iArr['web'])) $sqlFrag .= ',url = "'.$iArr['web'].'"';
 			if(isset($iArr['lg'])) $sqlFrag .= ',originalurl = "'.$iArr['lg'].'"';
 			if($sqlFrag){
-				$sql = 'UPDATE images SET '.trim($sqlFrag,' ,').' WHERE imgid = '.$imgID;
+				$sql = 'UPDATE media SET '.trim($sqlFrag,' ,').' WHERE mediaType = "image" AND mediaID = '.$imgID;
 				if($this->debugMode) $this->logOrEcho($sql);
 				if(!$this->conn->query($sql)) $this->logOrEcho('ERROR saving new paths: '.$this->conn->error,1);
 			}
@@ -456,33 +438,32 @@ class MediaResolutionTools extends Manager {
 	public function checkImageLinks($imgidStart, $limit, $collid){
 		$imgidFinal = $imgidStart;
 		$cnt = 1;
-		$sql = 'SELECT i.imgid, i.originalurl FROM images i ';
-		if($collid) $sql .= 'INNER JOIN omoccurrences o ON i.occid = o.occid ';
-		$sql .= 'WHERE (i.originalurl LIKE "https://api.idigbio.org/v2/media/%size=fullsize") AND (i.imgid > '.$imgidStart.') ';
+		$sql = 'SELECT m.mediaID, m.originalurl FROM media m ';
+		if($collid) $sql .= 'INNER JOIN omoccurrences o ON m.occid = o.occid ';
+		$sql .= 'WHERE (m.originalurl LIKE "https://apm.idigbio.org/v2/media/%size=fullsize") AND (m.mediaID > '.$imgidStart.') ';
 		if($collid) $sql .= 'AND (o.collid = '.$collid.') ';
-		$sql .= 'ORDER BY i.imgid LIMIT '.$limit;
+		$sql .= 'ORDER BY m.mediaID LIMIT '.$limit;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$url = $r->originalurl;
 			if($this->isBrokenUrl($url)){
 				if($newUrl = substr($url,0,-14)){
 					if(!$this->isBrokenUrl($newUrl)){
-						$sql2 = 'UPDATE images SET originalurl = "'.$newUrl.'" WHERE imgid = '.$r->imgid;
+						$sql2 = 'UPDATE media SET originalurl = "'.$newUrl.'" WHERE mediaID = '.$r->mediaID;
 						$this->conn->query($sql2);
-						echo '<li>'.$cnt.': Remapping image #'.$r->imgid.' to: '.$newUrl.'</li>';
+						echo '<li>'.$cnt.': Remapping image #'.$r->mediaID.' to: '.$newUrl.'</li>';
 						ob_flush();
 						flush();
 					}
 				}
 			}
-			//echo '<li>Image is good (imgid: '.$r->imgid.'): '.$url.'</li>';
 			if($cnt%500 == 0){
-				echo '<li>'.$cnt.' image checked (imgid: '.$r->imgid.')</li>';
+				echo '<li>'.$cnt.' image checked (mediaID: '.$r->mediaID.')</li>';
 				ob_flush();
 				flush();
 			}
 			$cnt++;
-			$imgidFinal = $r->imgid;
+			$imgidFinal = $r->mediaID;
 		}
 		$rs->free();
 		return $imgidFinal;

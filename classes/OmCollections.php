@@ -1,8 +1,9 @@
 <?php
 
-include_once($SERVER_ROOT.'/classes/Manager.php');
-include_once($SERVER_ROOT.'/classes/UuidFactory.php');
-include_once($SERVER_ROOT.'/utilities/SymbUtil.php');
+include_once($SERVER_ROOT . '/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
 
 class OmCollections extends Manager{
 
@@ -24,7 +25,7 @@ class OmCollections extends Manager{
 			SELECT collectionName, collid FROM omcollections 
 			WHERE collid != ? AND collectionCode = ? AND institutionCode = ?
 			SQL;
-			$result = SymbUtil::execute_query($this->conn, $sql, [$this->collid, $collectionCode, $institutionCode]);
+			$result = QueryUtil::executeQuery($this->conn, $sql, [$this->collid, $collectionCode, $institutionCode]);
 			if($col = $result->fetch_object()) {
 				$this->errorMessage = 'Error: Duplicate collection + institution code found in ' 
 					. '<a target="_blank" href="'
@@ -179,7 +180,7 @@ class OmCollections extends Manager{
 
 	private function addIconImageFile($postArr){
 		$targetPath = $GLOBALS['SERVER_ROOT'].'/content/collicon/';
-		$urlBase = $this->getDomain().$GLOBALS['CLIENT_ROOT'].'/content/collicon/';
+		$urlBase = GeneralUtil::getDomain() . $GLOBALS['CLIENT_ROOT'] . '/content/collicon/';
 
 		//Clean file name
 		$fileName = basename($_FILES['iconFile']['name']);

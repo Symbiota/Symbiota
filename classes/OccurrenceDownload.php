@@ -300,9 +300,9 @@ class OccurrenceDownload{
 		$sql = 'SELECT o.occid, CONCAT_WS("-",c.institutioncode, c.collectioncode) as instcode, c.collectionname, o.recordID, c.guidtarget, '.
 			'o.occurrenceid, o.catalognumber, o.sciname, o.recordedby, o.recordnumber, IFNULL(CAST(o.eventdate AS CHAR),o.verbatimeventdate) as eventdate, '.
 			'o.decimallatitude, o.decimallongitude, o.datelastmodified, o.recordenteredby, o.genericcolumn2, '.
-			'IFNULL(i.thumbnailurl,i.url) AS thumbnailurl, o.processingstatus '.
+			'IFNULL(m.thumbnailurl,m.url) AS thumbnailurl, o.processingstatus '.
 			'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid '.
-			'INNER JOIN images i ON o.occid = i.occid '.
+			'INNER JOIN media m ON o.occid = m.occid '.
 			'WHERE c.colltype = "Preserved Specimens" '.
 			'AND o.processingstatus IN("pending review","reviewed", "closed") AND (o.localitysecurity IS NULL OR o.localitysecurity = 0) ';
 		if($days && is_numeric($days)) $sql .= 'AND (o.datelastmodified > DATE_SUB(NOW(), INTERVAL '.$days.' DAY)) ';
@@ -342,8 +342,8 @@ class OccurrenceDownload{
 
 			$tnUrl = $r->thumbnailurl;
 			if(substr($tnUrl,0,1) == '/'){
-				if(isset($GLOBALS['IMAGE_DOMAIN']) && $GLOBALS['IMAGE_DOMAIN']){
-					$tnUrl = $GLOBALS['IMAGE_DOMAIN'].$tnUrl;
+				if(isset($GLOBALS['MEDIA_DOMAIN']) && $GLOBALS['MEDIA_DOMAIN']){
+					$tnUrl = $GLOBALS['MEDIA_DOMAIN'].$tnUrl;
 				}
 				else{
 					$tnUrl = $serverDomain.$tnUrl;
@@ -523,10 +523,8 @@ class OccurrenceDownload{
 		$sqlJoin = '';
 		if(strpos($sqlWhere,'e.taxauthid')) $sqlJoin .= 'INNER JOIN taxaenumtree e ON o.tidinterpreted = e.tid ';
 		if(strpos($sqlWhere,'ctl.clid')) $sqlJoin .= 'INNER JOIN fmvouchers v ON o.occid = v.occid INNER JOIN fmchklsttaxalink ctl ON v.clTaxaID = ctl.clTaxaID ';
-		if(strpos($sqlWhere,'p.point')) $sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
-		if(strpos($sqlWhere,'MATCH(f.recordedby)') || strpos($sqlWhere,'MATCH(f.locality)')){
-			$sqlJoin .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
-		}
+		if(strpos($sqlWhere,'p.lngLatPoint')) $sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
+		if (strpos($sqlWhere, 'ds.datasetid')) $sqlJoin .= 'INNER JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
 		return $sqlJoin;
 	}
 
@@ -736,7 +734,7 @@ class OccurrenceDownload{
 		$retStr = $inStr;
 		if($retStr){
 			if($this->charSetOut && $this->charSetOut != $this->charSetSource){
-				$retStr = mb_convert_encoding($retStr, $this->charSetOut, mb_detect_encoding($retStr));
+				$retStr = mb_convert_encoding($retStr, $this->charSetOut, mb_detect_encoding($retStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 			}
 		}
 		return $retStr;

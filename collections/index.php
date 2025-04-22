@@ -2,6 +2,9 @@
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/content/lang/collections/sharedterms.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/index.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/index.en.php');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 
@@ -11,8 +14,7 @@ if($catId == '' && isset($DEFAULTCATID)) $catId = $DEFAULTCATID;
 
 
 $collManager = new OccurrenceManager();
-$SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
-//$collManager->reset();
+$collManager->reset();
 
 $collList = $collManager->getFullCollectionList($catId);
 $specArr = (isset($collList['spec'])?$collList['spec']:null);
@@ -72,7 +74,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 	?>
 	<!-- This is inner text! -->
 	<div role="main" id="innertext" class="inntertext-tab pin-things-here">
-		<h1 class="page-heading screen-reader-only">Collections List</h1>
+		<h1 class="page-heading screen-reader-only"><?php echo $LANG['COLLECTION_LIST']; ?></h1>
         <div id="tabs">
 			<ul>
 				<?php
@@ -91,14 +93,13 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 				?>
 			</ul>
 			<?php
-			$actionPage = "harvestparams.php";
 			if($specArr && $obsArr){
 				?>
 				<div id="specobsdiv">
 					<div class="specimen-header-margin">
 						<h2><?php echo $LANG['SPECIMEN_COLLECTIONS'] ?></h2>
 					</div>
-					<form name="collform1" action="<?php echo $actionPage ?>" method="post" onsubmit="return verifyCollForm(this)">
+					<form name="collform1" action="harvestparams.php" method="post" onsubmit="return verifyCollForm(this)">
 						<div class="select-deselect-input">
 							<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" checked />
 							<label for="dballcb">
@@ -109,10 +110,10 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 							$buttonTxt = isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search;';
 							$buttonStr = '<button aria-label="' . $buttonTxt . '" type="submit" value="search">' . $buttonTxt . '</button>';
 							echo '<div id="sticky-button-for-joint-specimens-observations" class="search-button-div sticky-buttons">'.$buttonStr.'</div>';
-							$collManager->outputFullCollArr($specArr, $catId, true, false, 'Specimen', '');
+							$collManager->outputFullCollArr($specArr, $catId, true, false, 'Specimens', '');
 							$hrAndHeaderText = '<div class="specimen-header-margin"><hr/><h2>' . $LANG['OBSERVATION_COLLECTIONS'] . '</h2></div>';
 							if($specArr && $obsArr) echo $hrAndHeaderText;
-							$collManager->outputFullCollArr($obsArr, $catId, true, false, 'Observation', 'Observations');
+							$collManager->outputFullCollArr($obsArr, $catId, true, false, 'Observations', 'Observations');
 						?>
 					</form>
 				</div>
@@ -121,7 +122,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 			if($specArr){
 				?>
 				<div id="specimendiv">
-					<form name="collform2" action="<?php echo $actionPage ?>" method="post" onsubmit="return verifyCollForm(this)">
+					<form name="collform2" action="harvestparams.php" method="post" onsubmit="return verifyCollForm(this)">
 						<div class="specimen-obs-div-select-deselect-input">
 							<input id="dballspeccb" name="db[]" class="spec" value='allspec' type="checkbox" onclick="selectAll(this);" checked />
 							<label for="dballspeccb">
@@ -129,7 +130,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 							</label>
 						</div>
 						<?php
-						$collManager->outputFullCollArr($specArr, $catId, true, true, 'Specimen', 'Specimens-Only');
+						$collManager->outputFullCollArr($specArr, $catId, true, true, 'Specimens', 'Specimens-Only');
 						?>
 					</form>
 				</div>
@@ -138,7 +139,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 			if($obsArr){
 				?>
 				<div id="observationdiv">
-					<form name="collform3" action="<?php echo $actionPage ?>" method="post" onsubmit="return verifyCollForm(this)">
+					<form name="collform3" action="harvestparams.php" method="post" onsubmit="return verifyCollForm(this)">
 						<div class="specimen-obs-div-select-deselect-input">
 							<input id="dballobscb" name="db[]" class="obs" value='allobs' type="checkbox" onclick="selectAll(this);" checked />
 							<label for="dballobscb">
@@ -146,7 +147,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 							</label>
 						</div>
 						<?php
-						$collManager->outputFullCollArr($obsArr, $catId, true, true, 'Observation', 'Observations-Only');
+						$collManager->outputFullCollArr($obsArr, $catId, true, true, 'Observations', 'Observations-Only');
 						?>
 						<div class="obs-div-sp">&nbsp;</div>
 					</form>
