@@ -596,7 +596,7 @@ else{
 
 		.ui-widget {
 			font-size: 1em;
-		} 
+		}
 	</style>
 </head>
 <body>
