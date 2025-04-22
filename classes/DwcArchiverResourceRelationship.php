@@ -21,10 +21,10 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
     //Based on https://rs.gbif.org/extension/resource_relationship_2024-02-19.xml
 	private function setFieldArr(){
 		$columnArr = array();
-		// $termArr['deleteMeOccid'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
-		// $columnArr['deleteMeOccid'] = 'oa.occid';
-		// $termArr['deleteMeOccidAssociate'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
-		// $columnArr['deleteMeOccidAssociate'] = 'oa.occidAssociate';
+		$termArr['deleteMeOccid'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
+		$columnArr['deleteMeOccid'] = 'oa.occid';
+		$termArr['deleteMeOccidAssociate'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
+		$columnArr['deleteMeOccidAssociate'] = 'oa.occidAssociate';
 		$termArr['resourceRelationshipID'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
 		// $columnArr['resourceRelationshipID'] = 'IFNULL(IFNULL(IFNULL(oa.objectID, o.occurrenceID), o.recordID), oa.resourceUrl)';
 		$columnArr['resourceRelationshipID'] = 'IFNULL(oa.instanceID, oa.recordID)';
@@ -46,7 +46,9 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 		$termArr['relationshipRemarks'] = 'https://dwc.tdwg.org/terms/#dwc:relationshipRemarks';
 		$columnArr['relationshipRemarks'] = 'oa.notes';
 		$termArr['scientificName'] = 'https://symbiota.org/terms/scientificName';
-		$columnArr['scientificName'] = 'o.sciname';
+		// $columnArr['scientificName'] = 'o.sciname'; // fails for observed taxa
+		// $columnArr['scientificName'] = 'IFNULL(oa.verbatimSciName, o.sciname)'; //?
+		$columnArr['scientificName'] = 'IFNULL(t.sciname, oa.verbatimSciName)';
 
 		$termArr['associd'] = 'https://symbiota.org/terms/associd';
 		$columnArr['associd'] = 'oa.associd';
@@ -114,7 +116,10 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 					if($colName) $sqlFrag .= ', ' . $colName;
 				}
 				// $this->sqlBase = 'SELECT ' . trim($sqlFrag, ', ') . ' FROM omoccurassociations ';
-				$this->sqlBase = 'SELECT DISTINCT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid LEFT JOIN omoccurrences oo ON oo.occid = oa.occidAssociate';
+				$this->sqlBase = 'SELECT DISTINCT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o 
+					INNER JOIN omoccurassociations oa ON o.occid = oa.occid 
+					LEFT JOIN omoccurrences oo ON oo.occid = oa.occidAssociate 
+					LEFT JOIN taxa t on t.tid = oo.tidInterpreted';
 			}
 			else{
 				$this->fieldArr['fields']['relationship'] = 'terms.inverseRelationship AS relationship';
@@ -122,7 +127,10 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 					if($colName) $sqlFrag .= ', ' . $colName;
 				}
 				// $this->sqlBase = 'SELECT ' . trim($sqlFrag, ', ') . ' FROM omoccurassociations ';
-				$this->sqlBase = 'SELECT DISTINCT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate LEFT JOIN omoccurrences oo ON oo.occid = oa.occid
+				$this->sqlBase = 'SELECT DISTINCT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o 
+					INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate 
+					LEFT JOIN omoccurrences oo ON oo.occid = oa.occid
+					LEFT JOIN taxa t on t.tid = o.tidInterpreted 
 					LEFT JOIN (SELECT t.term, t.inverseRelationship
 					FROM ctcontrolvocabterm t INNER JOIN ctcontrolvocab v ON t.cvID = v.cvID
 					WHERE v.tablename = "omoccurassociations" AND fieldName = "relationship" AND t.inverseRelationship IS NOT NULL) terms ON oa.relationship = terms.term ';
