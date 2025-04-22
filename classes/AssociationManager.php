@@ -67,8 +67,10 @@ class AssociationManager extends OccurrenceTaxaManager{
 			$forwardSql .= $this->getAssociatedTaxonWhereFrag($associationArr);
 
 			// Capture observational associations
-			$obsSql = "SELECT oa.occid FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid " . $familyJoinStr . " WHERE oa.relationship " . $relationshipStr . " ";
-			$obsSql .= "AND oa.associationType='observational' AND oa.verbatimSciname LIKE '" . $associationArr['search'] . "%' ";
+			if(array_key_exists('search', $associationArr)){
+				$obsSql = "SELECT oa.occid FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid " . $familyJoinStr . " WHERE oa.relationship " . $relationshipStr . " ";
+				$obsSql .= "AND oa.associationType='observational' AND oa.verbatimSciname LIKE '" . $associationArr['search'] . "%' ";
+			}
 
 			// "Reverse" association
 			$reverseAssociationType = (array_key_exists('relationship', $associationArr) && $associationArr['relationship'] !== 'any') ? $this->getInverseRelationshipOf($relationshipType) : 'IS NOT NULL';
@@ -81,7 +83,11 @@ class AssociationManager extends OccurrenceTaxaManager{
 			$externalAndObservationalSql = "SELECT oa.occid FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid  LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE (oa.associationType='observational' OR oa.associationType='externalOccurrence') AND oa.relationship " . $relationshipStr . " ";
 			$externalAndObservationalSql .= $this->getAssociatedTaxonWhereFrag($associationArr);
 
-			$sql .= "AND (o.occid IN (SELECT occid FROM ( " . $forwardSql . " UNION " . $obsSql . " UNION " . $reverseSql . " UNION " . $externalAndObservationalSql . " ) AS occids)";
+			if(array_key_exists('search', $associationArr)){
+				$sql .= "AND (o.occid IN (SELECT occid FROM ( " . $forwardSql . " UNION " . $obsSql . " UNION " . $reverseSql . " UNION " . $externalAndObservationalSql . " ) AS occids)";
+			}else{
+				$sql .= "AND (o.occid IN (SELECT occid FROM ( " . $forwardSql . " UNION " . $reverseSql . " UNION " . $externalAndObservationalSql . " ) AS occids)";
+			}
     }
     return $sql;
 }
