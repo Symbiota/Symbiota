@@ -6,6 +6,7 @@ use App\Models\Occurrence;
 use App\Models\PortalIndex;
 use App\Models\PortalOccurrence;
 use App\Helpers\OccurrenceHelper;
+use App\Helpers\GeoThesaurusHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -91,21 +92,21 @@ class OccurrenceController extends Controller{
 	 *	 @OA\Parameter(
 	 *		 name="country",
 	 *		 in="query",
-	 *		 description="country",
+	 *		 description="country(s), separated by comma",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="stateProvince",
 	 *		 in="query",
-	 *		 description="State, Province, or second level political unit",
+	 *		 description="State(s), Province(s), or second level political unit(s), separated by comma",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="county",
 	 *		 in="query",
-	 *		 description="County, parish, or third level political unit",
+	 *		 description="County(s), parish(s), or third level political unit(s), separated by comma",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
@@ -188,13 +189,19 @@ class OccurrenceController extends Controller{
 		}
 		//Locality place names
 		if($request->has('country')){
-			$occurrenceModel->where('country', $request->country);
+			$inputCountries = array_map('trim', explode(',', $request->country));
+			$geoCountries = GeoThesaurusHelper::getGeoterms($inputCountries);
+			$occurrenceModel->whereIn('country', $geoCountries);
 		}
 		if($request->has('stateProvince')){
-			$occurrenceModel->where('stateProvince', $request->stateProvince);
+			$inputProvinces = array_map('trim', explode(',', $request->stateProvince));
+			$geoProvinces = GeoThesaurusHelper::getGeoterms($inputProvinces);
+			$occurrenceModel->whereIn('stateProvince', $geoProvinces);
 		}
 		if($request->has('county')){
-			$occurrenceModel->where('county', $request->county);
+			$inputCounties = array_map('trim', explode(',', $request->county));
+			$geoCounties = GeoThesaurusHelper::getGeoterms($inputCounties);
+			$occurrenceModel->whereIn('county', $geoCounties);
 		}
 
 		$fullCnt = $occurrenceModel->count();
