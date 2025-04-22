@@ -1,4 +1,6 @@
 <?php
+error_reporting(-1);
+error_log('Greg debugging barcodes.php');
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLabel.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/reports/barcodes.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/reports/barcodes.'.$LANG_TAG.'.php');

@@ -1,5 +1,4 @@
 <?php
-error_reporting(0);
 include_once('../../config/symbini.php');
 @include_once("Image/Barcode.php");
 @include_once("Image/Barcode2.php");
