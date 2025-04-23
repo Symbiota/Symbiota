@@ -3,3 +3,22 @@ Place your CSS customizations here.
 This stylesheet is defined last and will override all previously loaded sheets. You may reference variables defined in variables.css 
  */
  
+h1 {
+  font-size: 1.5rem;
+}
+
+#innertext {
+  width: 130%;
+}
+
+#innertext.inner-search {
+  width: 90%;
+}
+.page-heading {
+    font-size: 2rem;
+}
+/*
+.top-wrapper {
+  padding: 0rem;
+}
+*/

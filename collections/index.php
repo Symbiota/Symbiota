@@ -12,6 +12,9 @@ $catId = array_key_exists("catid",$_REQUEST)?$_REQUEST["catid"]:'';
 if(!preg_match('/^[,\d]+$/',$catId)) $catId = '';
 if($catId == '' && isset($DEFAULTCATID)) $catId = $DEFAULTCATID;
 
+if($LANG_TAG == 'es'){
+	$catId = '2,1,4,5,6,3,7,8';
+}
 
 $collManager = new OccurrenceManager();
 $collManager->reset();
