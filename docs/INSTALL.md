@@ -93,7 +93,7 @@ While user interfaces have been developed for web management for most of these d
          then from the Collection Data Management menu, select Data Cleaning Tools => Analyze taxonomic names...
       3. Batch Loader - Multiple names can be loaded from a flat, tab-delimited text file. See instructions on the batch loader for loading multiple names from a flat file.
       4. Look in /config/schema/data/ folder to find taxonomic thesaurus data that may serve as a base for your taxonomic thesaurus.
-   4. See https:symbiota.org for tutorials and more information on how load and manage data 
+   4. See <https://symbiota.org> for tutorials and more information on how load and manage data 
 
 ## UPDATES
 

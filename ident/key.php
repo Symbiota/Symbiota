@@ -17,11 +17,11 @@ if(!$clValue && array_key_exists('clid',$_REQUEST)) $clValue = $_REQUEST['clid']
 $dynClid = array_key_exists('dynclid', $_REQUEST) ? filter_var($_REQUEST['dynclid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $taxonValue = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']:'';
 $rv = array_key_exists('rv',$_REQUEST)?$_REQUEST['rv']:'';
-$pid = array_key_exists('pid', $_REQUEST) ? FILTER_VAR($_REQUEST['pid'], FILTER_SANITIZE_NUMBER_INT) : '';
+$pid = array_key_exists('pid', $_REQUEST) ? filter_var($_REQUEST['pid'], FILTER_SANITIZE_NUMBER_INT) : '';
 $langValue = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']:'';
-$sortBy = array_key_exists('sortby', $_REQUEST) ? FILTER_VAR($_REQUEST['sortby'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$displayCommon = array_key_exists('displaycommon', $_REQUEST) ? FILTER_VAR($_REQUEST['displaycommon'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$displayImages = array_key_exists('displayimages', $_REQUEST) ? FILTER_VAR($_REQUEST['displayimages'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$sortBy = array_key_exists('sortby', $_REQUEST) ? filter_var($_REQUEST['sortby'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$displayCommon = array_key_exists('displaycommon', $_REQUEST) ? filter_var($_REQUEST['displaycommon'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$displayImages = array_key_exists('displayimages', $_REQUEST) ? filter_var($_REQUEST['displayimages'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $action = array_key_exists('submitbutton',$_REQUEST)?$_REQUEST['submitbutton']:'';
 if(!$action && array_key_exists('attr',$_REQUEST) && is_array($_REQUEST['attr'])){
 	$attrsValues = $_REQUEST['attr'];	//Array of: cid + '-' + cs (ie: 2-3)
@@ -58,7 +58,7 @@ if($chars){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo htmlspecialchars($DEFAULT_TITLE . ' ' . $LANG['WEBKEY'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' '. htmlspecialchars(preg_replace('/\<[^\>]+\>/','',$dataManager->getClName()), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></title>
+	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['WEBKEY'] . ' '. htmlspecialchars(preg_replace('/\<[^\>]+\>/','',$dataManager->getClName()), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -165,27 +165,27 @@ echo '<div class="navpath">';
 echo '<a href="../index.php">' . $LANG['HOME'] . '</a> &gt;&gt; ';
 if($dynClid){
 	if($dataManager->getClType() == 'Specimen Checklist'){
-		echo '<a href="' . htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/collections/list.php?tabindex=0">';
+		echo '<a href="' . $CLIENT_ROOT . '/collections/list.php?tabindex=0">';
 		echo $LANG['OCC_CHECKLIST'];
 		echo '</a> &gt;&gt; ';
 	}
 }
 elseif($clid){
-	echo '<a href="' . htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/checklists/checklist.php?clid=' . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
+	echo '<a href="' . $CLIENT_ROOT . '/checklists/checklist.php?clid=' . $clid . '&pid=' . $pid . '">';
 	echo $LANG['CHECKLIST'] . ': ' . htmlspecialchars($dataManager->getClName(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 	echo '</a> &gt;&gt; ';
 }
 elseif($pid){
-	echo '<a href="' . htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/projects/index.php?pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
+	echo '<a href="' . $CLIENT_ROOT . '/projects/index.php?pid=' . $pid . '">';
 	echo $LANG['PROJ_CHECKLISTS'];
 	echo '</a> &gt;&gt; ';
 }
-echo '<a href="key-v1.php?clid=' . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&taxon=All+Species" alt="' . htmlspecialchars($LANG['TRAD_KEY'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($LANG['PREV_KEY'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
-echo '<b>' . htmlspecialchars($LANG['NEW_ID_KEY'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ': ' . htmlspecialchars($dataManager->getClName(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</b>';
+echo '<a href="key-v1.php?clid=' . $clid . '&pid=' . $pid . '&taxon=All+Species" alt="' . $LANG['TRAD_KEY'] . '">' . $LANG['PREV_KEY'] . '</a> &gt;&gt; ';
+echo '<b>' . $LANG['NEW_ID_KEY'] . ': ' . htmlspecialchars($dataManager->getClName(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</b>';
 echo '</div>';
 ?>
 <div role="main" id="innertext">
-	<h1 class="page-heading screen-reader-only">Key</h1>
+	<h1 class="page-heading screen-reader-only"><?php echo $LANG['KEY']; ?></h1>
 	<?php
 	if($clid || $dynClid){
 		?>
@@ -195,7 +195,7 @@ echo '</div>';
 				<form name="keyform" id="keyform" action="key.php" method="post">
 					<div>
 						<div class="float-right bottom-breathing-room-rel-sm"><button type="button" onclick="resetForm(this.form)">Reset</button></div>
-						<div><span><?php echo (isset($LANG['TAXON_SEARCH'])?$LANG['TAXON_SEARCH']:'Family/Genus Filter');?>:</span></div>
+						<div><span><?= $LANG['TAXON_SEARCH'] ?>:</span></div>
 						<select name="taxon" onchange="this.form.submit();">
 							<?php
 							echo '<option value="All Species">' . $LANG['SELECTTAX'] . '</option>';
@@ -220,11 +220,11 @@ echo '</div>';
 					}
 					?>
 					<div style="margin:5px">
-						<?php echo (isset($LANG['SORT'])?$LANG['SORT']:'Sort by') . ': '; ?>
+						<?php echo $LANG['SORT'] . ': '; ?>
 						<select name="sortby" onchange="this.form.submit();">
 							<?php
-							echo '<option value="0">' . (isset($LANG['SORT_SCINAME_FAMILY'])?$LANG['SORT_SCINAME_FAMILY']:'Family/Scientific Name') . '</option>';
-							echo '<option value="1" ' . ($sortBy?'SELECTED':'') . '>' . (isset($LANG['SORT_SCINAME'])?$LANG['SORT_SCINAME']:'Scientific Name') . '</option>';
+							echo '<option value="0">' . $LANG['SORT_SCINAME_FAMILY'] . '</option>';
+							echo '<option value="1" ' . ($sortBy?'SELECTED':'') . '>' . $LANG['SORT_SCINAME'] . '</option>';
 							?>
 						</select>
 					</div>
@@ -233,14 +233,14 @@ echo '</div>';
 						?>
 						<div style="margin:5px">
 							<input name="displaycommon" type="checkbox" value="1" onchange="this.form.submit();" <?php if($displayCommon) echo 'checked'; ?> />
-							<?php echo (isset($LANG['DISPLAY_COMMON'])?$LANG['DISPLAY_COMMON']:'Display Common Names'); ?>
+							<?= $LANG['DISPLAY_COMMON'] ?>
 						</div>
 						<?php
 					}
 					?>
 					<div style="margin:5px">
 						<input name="displayimages" type="checkbox" value="1" onchange="this.form.submit();" <?php if($displayImages) echo 'checked'; ?> />
-						<?php echo (isset($LANG['DISPLAY_IMAGES'])?$LANG['DISPLAY_IMAGES']:'Display images'); ?>
+						<?= $LANG['DISPLAY_IMAGES'] ?>
 					</div>
 					<?php
 					if($chars){
@@ -263,15 +263,15 @@ echo '</div>';
 		<?php
 		if($clid && $isEditor){
 			?>
-			<div style="float:right;margin:15px;" title="<?php echo htmlspecialchars($LANG['EDIT_CHAR_MATRIX'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
-				<a href="tools/matrixeditor.php?clid=<?php echo htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><img class="editimg" src="../images/edit.png" style="width:1.2em" /><span style="font-size:70%;"><?= $LANG['EDIT_CHAR_MATRIX'] ?></span></a>
+			<div style="float:right;margin:15px;" title="<?php echo $LANG['EDIT_CHAR_MATRIX']; ?>">
+				<a href="tools/matrixeditor.php?clid=<?php echo $clid; ?>"><img class="editimg" src="../images/edit.png" style="width:1.2em" /><span style="font-size:70%;"><?= $LANG['EDIT_CHAR_MATRIX'] ?></span></a>
 			</div>
 			<?php
 		}
 		?>
 		<div id="title-div">
 			<?php
-			if($FLORA_MOD_IS_ACTIVE) echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&dynclid=' . htmlspecialchars($dynClid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pid=' . htmlspecialchars($pid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
+			if($FLORA_MOD_IS_ACTIVE) echo '<a href="../checklists/checklist.php?clid=' . $clid . '&dynclid=' . $dynClid . '&pid=' . $pid . '">';
 			echo htmlspecialchars($dataManager->getClName(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' ';
 			if($FLORA_MOD_IS_ACTIVE) echo '</a>';
 			?>
@@ -291,14 +291,14 @@ echo '</div>';
 					echo '<div class="taxon-div">';
 					if($displayImages){
 						echo '<div class="img-div">';
-						echo '<a href="../taxa/index.php?taxon=' . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "&clid=" . htmlspecialchars(($clType=="static"?$clid:""), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">';
+						echo '<a href="../taxa/index.php?taxon=' . $tid . "&clid=" . ($clType == 'static' ? $clid : '') . '" target="_blank">';
 						if(isset($taxonArr['i'])) echo '<img src="' . $taxonArr['i'] . '" />';
-						else echo '<div>' . htmlspecialchars($LANG['IMG_NOT_AVAILABLE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</div>';
+						else echo '<div>' . $LANG['IMG_NOT_AVAILABLE'] . '</div>';
 						echo '</a>';
 						echo '</div>';
 					}
 					echo '<div class="sciname-div">';
-					echo '<a href="../taxa/index.php?taxon=' . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "&clid=" . htmlspecialchars(($clType=="static"?$clid:""), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank"><i>' . htmlspecialchars($taxonArr['s'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</i></a>';
+					echo '<a href="../taxa/index.php?taxon=' . $tid . "&clid=" . ($clType == 'static' ? $clid : '') . '" target="_blank"><i>' . htmlspecialchars($taxonArr['s'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</i></a>';
 					if($displayCommon) echo ($displayImages?'<br/>':(isset($taxonArr['v'])?' - ':'')) . '<span class="vern-span">' . (isset($taxonArr['v'])?$taxonArr['v']:'&nbsp;') . '</span>';
 					if($isEditor && !$displayImages){
 						echo '<a href="#" onclick="openEditorPopup('.$tid.')">';

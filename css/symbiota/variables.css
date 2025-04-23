@@ -5,14 +5,13 @@
   --header-bg-color: #3e3b40; /** Transparent color if adding header bg-image **/
   --header-font-color: #fff;
   --brand-font-size: 2.5rem;
-  --title-font-family: "Times New Roman", serif;
   --logo-width: 180px;
   --menu-top-bg-color: #8C93A8;
   --menu-font-size: 1rem;
   --body-bg-color: #fafafa;
   --body-text-color: #000000;
   --body-font-size: 1rem;
-  --body-font-family: "Arial", sans-serif;
+  --body-font-family: "Open Sans", sans-serif;
   --footer-bg-color: #f2f0e9;
   --heading-font-family: "Arial", sans-serif;
   --link-color: #C46330;

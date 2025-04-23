@@ -375,7 +375,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 									<?php
 									$spUrl = "../taxa/index.php?taxauthid=1&taxon=$tid&clid=".$clid;
 									if($imgSrc){
-										$imgSrc = (array_key_exists('IMAGE_DOMAIN', $GLOBALS) && substr($imgSrc, 0, 4) != 'http' ? $GLOBALS['IMAGE_DOMAIN'] : "") . $imgSrc;
+										$imgSrc = (array_key_exists('MEDIA_DOMAIN', $GLOBALS) && substr($imgSrc, 0, 4) != 'http' ? $GLOBALS['MEDIA_DOMAIN'] : "") . $imgSrc;
 										echo "<a href='" . $spUrl . "' target='_blank'>";
 										echo "<img src='" . $imgSrc . "' />";
 										echo "</a>";
@@ -609,7 +609,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 										<div class="printoff" style="padding:5px;">
 											<a href="../ident/key.php?clid=<?php echo $clid . "&pid=" . $pid . "&dynclid=" . $dynClid; ?>&taxon=All+Species">
 												<div style="display: flex; align-items: center;">
-														Open Symbiota Key
+													<?= $LANG['OPEN_KEY']; ?>
 													<img src='../images/key.png' style="margin-left: 0.5rem; width:1.3em;" aria-label="<?php echo $LANG['IMG_OPEN_KEY']; ?>" alt="<?php echo $LANG['IMG_OPEN_KEY']; ?>" title='<?php echo $LANG['OPEN_KEY']; ?>' />
 												</div>
 											</a>
@@ -622,7 +622,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 											<ul id="game-dropdown">
 												<li>
 													<span style="display: flex; align-items: center;" onmouseover="mopen('m1')" onmouseout="mclosetime()" onfocus="mopen('m1')" onblur="mclosetime()" tabindex="0">
-														<span style=" color: var(--link-color); font-size:1rem; text-decoration: underline;">Games</span> <img src="../images/games/games.png" style="width:2em" alt="<?php echo $LANG['GAMES']; ?>"/>
+														<span style=" color: var(--link-color); font-size:1rem; text-decoration: underline;"><?= $LANG['GAMES'] ?></span> <img src="../images/games/games.png" style="width:2em" alt="<?php echo $LANG['GAMES']; ?>"/>
 													</span>
 													<div id="m1" onmouseover="mcancelclosetime()" onmouseout="mclosetime()">
 														<?php
@@ -733,7 +733,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 						?>
 						<div class="editspp" style="width:250px;display:none;">
 							<form id='addspeciesform' action='checklist.php' method='post' name='addspeciesform' onsubmit="return validateAddSpecies(this);">
-								<fieldset style='margin:5px 0px 5px 5px;background-color:#FFFFCC;'>
+								<fieldset class="fieldset-like-box">
 									<legend><b><?php echo $LANG['NEWSPECIES']; ?></b></legend>
 									<div>
 										<?php echo $LANG['TAXON']; ?>:<br/>
@@ -821,25 +821,6 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 										</a>
 									</div>
 								</div>
-								<?php
-							}
-							if(false && $clArray['dynamicsql']){
-								//Temporarily turned off
-								?>
-								<span style="margin:5px">
-									<a href="../collections/map/index.php?clid=<?php echo $clid . '&cltype=all&taxonfilter=' . $taxonFilter; ?>&db=all&type=1&reset=1">
-										<?php
-										if($coordArr){
-											echo '<img src="../images/world.png" style="width:30px" title="' . $LANG['OCCUR_DYNAMIC_MAP'] . '" alt="' . $LANG['IMG_OCCUR_DYNAMIC_MAP'] . '" />';
-										}
-										else{
-											$polygonCoordArr = $clManager->getPolygonCoordinates();
-											$googleUrl .= '&markers=size:tiny|'.implode('|',$polygonCoordArr);
-											echo '<img src="'.$googleUrl.'" style="border:0px;" /><br/>';
-										}
-										?>
-									</a>
-								</span>
 								<?php
 							}
 							?>

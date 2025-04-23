@@ -170,12 +170,12 @@ class TaxonomyController extends Controller {
 	 *	 ),
 	 *	 @OA\Response(
 	 *		 response="200",
-	 *		 description="Returns taxonomic record of matching identifier",
+	 *		 description="Returns taxonomic record of matching ID",
 	 *		 @OA\JsonContent()
 	 *	 ),
 	 *	 @OA\Response(
 	 *		 response="400",
-	 *		 description="Error: Bad request. Taxon identifier is required.",
+	 *		 description="Error: Bad request. Taxonomy identifier is required.",
 	 *	 ),
 	 * )
 	 */
@@ -213,7 +213,7 @@ class TaxonomyController extends Controller {
 		$parStatusResult = $parStatus->get();
 		$taxonObj->classification = $parStatusResult;
 
-		if(!$taxonObj->count()) $taxonObj = ['status' =>false, 'error' => 'Unable to locate taxon based on identifier'];
+		if (!$taxonObj->count()) $taxonObj = ['status' => false, 'error' => 'Unable to locate inventory based on identifier'];
 		return response()->json($taxonObj);
 	}
 

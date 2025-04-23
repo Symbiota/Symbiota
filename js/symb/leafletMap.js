@@ -5,21 +5,66 @@ function getObservationSvg(opts = {color: "#7A8BE7", size: 24, className:""}) {
 
    return L.divIcon({
       html: `
-<svg
-width="${opts.size}"
-height="${opts.size}"
-viewBox="-10 -10 ${opts.size + 20} ${opts.size + 20}"
-version="1.1"
-preserveAspectRatio="none"
-xmlns="http://www.w3.org/2000/svg"
->
-<polygon class="${opts.className}" points="${half},0 0,${opts.size} ${opts.size},${opts.size}" style="fill:${opts.color};stroke:black;stroke-width:3" />
-</svg>`,
+		<svg
+		width="${opts.size}"
+		height="${opts.size}"
+		viewBox="-10 -10 ${opts.size + 20} ${opts.size + 20}"
+		version="1.1"
+		preserveAspectRatio="none"
+		xmlns="http://www.w3.org/2000/svg"
+		>
+			<polygon 
+				class="${opts.className}" 
+				points="${half},0 0,${opts.size} ${opts.size},${opts.size}" 
+				style="fill:${opts.color};stroke:black;stroke-width:3" 
+			/>
+		</svg>`,
       className: "",
       observation: true,
       iconSize: [opts.size, opts.size],
       iconAnchor: [half, half],
    });
+}
+
+async function getMacroStratData(lat, lng, zoom) {
+	return fetch(`https://macrostrat.org/api/v2/mobile/map_query_v2?lng=${lng}&lat=${lat}&z=${zoom}`)
+		.then(async response => {
+		if(!response.ok) {
+			return {};
+		}
+		const json_data = await response.json()
+
+		if(!json_data.success) {
+			return {};
+		}
+		return json_data.success.data;
+	})
+}
+
+function getSpecimenSvg(opts = {color: "#7A8BE7", size: 24, className:""}) {
+	const default_ops = {color: "#7A8BE7", size: 24};
+	opts = {...default_ops, ...opts};
+	const stroke_width = 2;
+	const size_with_stroke = stroke_width * 2 + opts.size;
+	return L.divIcon({
+		html: `
+			<svg 
+			height="${size_with_stroke * 2}"
+			width="${size_with_stroke * 2}"
+			version="1.1"
+			preserveAspectRatio="none"
+			xmlns="http://www.w3.org/2000/svg"
+			>
+				<circle 
+					r="${opts.size}" 
+					cx="${size_with_stroke}" cy="${size_with_stroke}" 
+					fill="${opts.color}" stroke="black" stroke-width="${stroke_width}"
+				/>
+			</svg>`,
+		className: "",
+		iconSize: [size_with_stroke, size_with_stroke],
+		iconAnchor: [size_with_stroke, size_with_stroke],
+	});
 }
 
 class LeafletMap {
@@ -62,6 +107,11 @@ class LeafletMap {
    /* Reference Leaflet Feature Group for all drawn items*/
    drawLayer;
 
+   /* Save Markerclusterer taxa clusters for later manipulation */
+   taxaClusters = [];
+
+   defaultBounds = [];
+
    constructor(map_id, map_options={}) {
 
 	  map_options = {
@@ -70,6 +120,11 @@ class LeafletMap {
 	  }
 
       this.mapLayer = L.map(map_id, map_options);
+
+	  if(map_options.defaultBounds) {
+	    this.defaultBounds = map_options.defaultBounds;
+		this.resetBounds();
+	  }
 
       const terrainLayer = L.tileLayer('https://{s}.google.com/vt?lyrs=p&x={x}&y={y}&z={z}', {
          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -100,24 +155,132 @@ class LeafletMap {
          attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
       });
 
+      var macro_strat = L.tileLayer('https://macrostrat.org/api/v2/maps/burwell/emphasized/{z}/{x}/{y}/tile.png', {
+         displayRetina:true,
+		 opacity: .50,
+         attribution: 'Map data: &copy; <a href="https://macrostrat.org/#about">Macrostrat</a> (<a href="http://creativecommons.org/licenses/by/4.0/">CC-BY-4.0</a>)',
+      });
+
       const openTopoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
          maxZoom: 17,
          displayRetina:true,
          attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
       });
 
+		const macro_strat_info = async e => {
+			const zoom = e.target._zoom;
+			const lat = e.latlng.lat;
+			const lon = e.latlng.lng;
+			const macro_strat_data = await getMacroStratData(lat, lon, zoom);
+
+			const loop_strat_names = (data) => {
+				let html_str = "";
+				for(let strat_name of data.macrostrat.strat_names) {
+					html_str += `<a target="_blank" href="https://macrostrat.org/sift/#/strat_name/${strat_name.strat_name_id}">${strat_name.rank_name}</a> `
+				}
+
+				return html_str;
+			}
+
+			if(macro_strat_data.mapData && macro_strat_data.mapData.length) {
+				let content = ""
+
+				if(macro_strat_data.mapData[0].name) {
+					content += `<div>
+						<span style="font-weight:bold">Unit: </span>
+						<span>${macro_strat_data.mapData[0].name}</span>
+					</div>`;
+				}
+
+				if(macro_strat_data.mapData[0].age) {
+					content+= `<div>
+						<span style="font-weight:bold">Age: </span>
+						<span>${macro_strat_data.mapData[0].age}</span>
+					</div>`;
+
+				}
+
+				if(macro_strat_data.mapData[0].ref) {
+					content += `<div style="font-size:0.8rem">
+						<span style="font-weight:bold">Source:</span>
+						${macro_strat_data.mapData[0].ref.authors}, ${macro_strat_data.mapData[0].ref.ref_title}: ${macro_strat_data.mapData[0].ref.ref_source}, ${macro_strat_data.mapData[0].ref.isbn_doi} ${macro_strat_data.mapData[0].ref.source_id} / ${macro_strat_data.mapData[0].map_id}
+					</div>`;
+				}
+
+				if(macro_strat_data.mapData[0].macrostrat && macro_strat_data.mapData[0].macrostrat.strat_names && macro_strat_data.mapData[0].macrostrat.strat_names.length) {
+					content += `<div style="margin-top:1rem">
+						<span style="font-weight:bold">Macrostrat matched units: </span>
+						${loop_strat_names(macro_strat_data.mapData[0])}
+					</div>`;
+				}
+
+				L.popup()
+					.setLatLng([lat, lon])
+					.setContent(`
+						<div style="font-size:1rem">
+							${content}
+						</div>`)
+					.openOn(this.mapLayer);
+			}
+		}
+
+
+		/* Alternative to using the api. Uses color inference. Back if we don't want to use macrostrat api*/
+		const macro_strat_color = (e) => {
+			const zoom = e.target._zoom;
+
+			let coords = this.mapLayer.project(e.latlng, zoom).floor();
+
+			let pX = coords.x / 256;
+			let pY = coords.y / 256;
+
+			coords.x = Math.floor(pX);
+			coords.y = Math.floor(pY);
+			coords.z = zoom
+
+			const tile = new Image();
+			tile.crossOrigin = "anonymous";
+			tile.src = `https://macrostrat.org/api/v2/maps/burwell/emphasized/${coords.z}/${coords.x}/${coords.y}/tile.png`;
+
+			const canvas = document.createElement("canvas");
+			const ctx = canvas.getContext("2d");
+
+			tile.addEventListener('load', function() {
+				ctx.drawImage(tile, 0, 0);
+				const dX = Math.floor((pX - coords.x) * 512);
+				const dY = Math.floor((pY - coords.y) * 512);
+				const pixel = ctx.getImageData(dX, dY, 1, 1);	
+
+				ctx.fillRect(dX, dY, 10, 10);
+
+				const data = pixel.data;
+				console.log(`rgb(${data[0]} ${data[1]} ${data[2]} / ${data[3] / 255})`);
+			});
+		}
+
+		macro_strat.on('add', (e) => {
+			this.mapLayer.on('click', macro_strat_info)
+		})
+
+		macro_strat.on('remove', (e) => {
+			this.mapLayer.off('click', macro_strat_info)
+		})
+
       if(map_options.layer_control !== false) {
-         L.control.layers({
-            "Terrain": terrainLayer,
-            "Basic": basicLayer,
-            "Topo": openTopoLayer,
-            "Satellite": Esri_WorldImagery,
-            //"Satellite": satelliteLayer,
-         }).addTo(this.mapLayer);
+			const layers = {
+				"Terrain": terrainLayer,
+				"Basic": basicLayer,
+				"Topo": openTopoLayer,
+				"Satellite": Esri_WorldImagery,
+			};
+			const overlays = {
+				"Macrostrat": L.layerGroup([macro_strat])
+			}
+      this.mapLayer.layerControl = L.control.layers(layers, overlays).addTo(this.mapLayer);
       }
 
       if(map_options.scale !== false) {
-         L.control.scale({maxWidth: 200}).addTo(this.mapLayer);
+         this.mapLayer.scaleControl = L.control.scale({maxWidth: 200}).addTo(this.mapLayer);
       }
 
       this.setLang(map_options.lang);
@@ -129,6 +292,20 @@ class LeafletMap {
       this.drawLayer.clearLayers();
       this.activeShape = null;
       this.shapes = [];
+   }
+
+   resetBounds() {
+		if(!this.defaultBounds || this.defaultBounds.length !== 2) {
+			return false;
+		}
+
+		try {
+			this.mapLayer.fitBounds(this.defaultBounds);
+			return true;
+		} catch(e) {
+			console.log("ERROR: Failed to reset map bounds")
+			return false;
+		}
    }
 
    setLang(lang) {
@@ -263,7 +440,7 @@ class LeafletMap {
                         rectangle: 'Dibujar un rectángulo',
                         circle: 'Dibuja un circulo',
                         marker: 'Dibujar un marcador',
-                        circlemarker: 'Dibuja un marcador circular'
+                        circlemarker: 'Dibuja un marcadgeojsonor circular'
                      }
                   },
                   handlers: {
@@ -465,6 +642,8 @@ class LeafletMap {
       this.drawLayer = drawnItems;
       this.mapLayer.addLayer(drawnItems);
 
+	  L.Draw.Polygon.prototype.options.shapeOptions.draggable = true;
+
       //Jank workaround for leaflet-draw api
       const setDrawColor = (drawOption) => {
          if(drawOptions[drawOption] === false)
@@ -485,10 +664,12 @@ class LeafletMap {
          setDrawColor("rectangle");
          setDrawColor("circle");
       }
+
       if(drawOptions.map_mode_strict) {
          if(drawOptions.mode !== "polygon") drawOptions.polygon = false;
          if(drawOptions.mode !== "circle") drawOptions.circle = false;
-         if(drawOptions.mode !== "rectangle") drawOptions.rectangle= false;
+         if(drawOptions.mode !== "rectangle") drawOptions.rectangle = false;
+         if(drawOptions.mode !== "marker") drawOptions.marker = false;
          if(drawOptions.mode !== "polyline") drawOptions.polyline = false;
       }
 
@@ -498,6 +679,9 @@ class LeafletMap {
             draw: drawOptions,
             edit: {
                featureGroup: drawnItems,
+			   edit: {
+			     moveMakers: false,
+			   }
             }
          });
 
@@ -565,6 +749,11 @@ class LeafletMap {
 
    drawShape(shape, fitbounds=true) {
       const id = this.shapes.length;
+
+      const fitShape = () => {
+         this.mapLayer.fitBounds(this.activeShape.layer.getBounds());
+      }
+
       switch(shape.type) {
          case "geoJSON":
             const geoJSON = L.geoJSON(shape.geoJSON);
@@ -581,6 +770,7 @@ class LeafletMap {
             const poly = L.polygon(shape.latlngs);
             this.activeShape = getShapeCoords(shape.type, poly);
             poly.addTo(this.drawLayer);
+            if(fitbounds) fitShape();
             break;
          case "rectangle":
             const rec = L.rectangle([
@@ -589,24 +779,23 @@ class LeafletMap {
             ]);
             this.activeShape = getShapeCoords(shape.type, rec);
             rec.addTo(this.drawLayer)
+            if(fitbounds) fitShape();
             break;
          case "circle":
             const circ = L.circle(shape.latlng, shape.radius);
             this.activeShape = getShapeCoords(shape.type, circ);
             circ.addTo(this.drawLayer);
+            if(fitbounds) fitShape();
             break;
          default:
             throw Error(`Can't draw ${shape.type}`)
       }
 
-      this.activeShape.id = id;
-      this.shapes.push(this.activeShape);
-
-      if(fitbounds) {
-         this.mapLayer.fitBounds(this.activeShape.layer.getBounds());
+      if(this.activeShape) {
+         this.activeShape.id = id;
+         this.shapes.push(this.activeShape);
       }
    }
-
 }
 
 function getShapeCoords(layerType, layer) {
@@ -649,7 +838,7 @@ function getShapeCoords(layerType, layer) {
          };
          break;
       default:
-         throw Error("Couldn't parse this shape type");
+         throw Error(`Couldn't parse "${layerType}" as a shape type`);
    }
 
    return shape;

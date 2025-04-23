@@ -917,81 +917,6 @@
                 }
             }
         },
-        "/api/v2/metabolite": {
-            "get": {
-                "tags": [
-                    ""
-                ],
-                "operationId": "/api/v2/metabolite",
-                "parameters": [
-                    {
-                        "name": "limit",
-                        "in": "query",
-                        "description": "Controls the number of results in the page.",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 100
-                        }
-                    },
-                    {
-                        "name": "offset",
-                        "in": "query",
-                        "description": "Determines the offset for the search results. A limit of 200 and offset of 100, will get the third page of 100 results.",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 0
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Returns list of metabolites registered within system",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Bad request. "
-                    }
-                }
-            }
-        },
-        "/api/v2/metabolite/{identifier}": {
-            "get": {
-                "tags": [
-                    ""
-                ],
-                "operationId": "/api/v2/metabolite/identifier",
-                "parameters": [
-                    {
-                        "name": "identifier",
-                        "in": "path",
-                        "description": "PK or metabolites record",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Returns metabase on metabolites registered within system with matching ID",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Bad request. Metabolites identifier is required."
-                    }
-                }
-            }
-        },
         "/api/v2/morphology": {
             "get": {
                 "tags": [
@@ -1064,7 +989,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Returns character and states asscoiated with matching identifier",
+                        "description": "Returns metabase on inventory registered within system with matching ID",
                         "content": {
                             "application/json": {
                                 "schema": {}
@@ -1072,7 +997,7 @@
                         }
                     },
                     "400": {
-                        "description": "Error: Bad request. Morphological identifier is required."
+                        "description": "Error: Bad request. Inventory identifier is required."
                     }
                 }
             }
@@ -1789,59 +1714,7 @@
                         "description": "Identifier (PK = tid) associated with taxonomic target",
                         "required": true,
                         "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Returns taxonomic record of matching identifier",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Bad request. Taxon identifier is required."
-                    }
-                }
-            }
-        },
-        "/api/v2/taxonomy/{identifier}/description": {
-            "get": {
-                "tags": [
-                    ""
-                ],
-                "operationId": "/api/v2/taxonomy/identifier/description",
-                "parameters": [
-                    {
-                        "name": "identifier",
-                        "in": "path",
-                        "description": "PK, GUID, or recordID associated with target taxonomic unit",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "limit",
-                        "in": "query",
-                        "description": "Controls the number of results in the page.",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 100
-                        }
-                    },
-                    {
-                        "name": "offset",
-                        "in": "query",
-                        "description": "Determines the starting point for the search results. A limit of 100 and offset of 200, will display 100 records starting the 200th record.",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 0
+                            "type": "integer"
                         }
                     }
                 ],
@@ -1856,47 +1729,6 @@
                     },
                     "400": {
                         "description": "Error: Bad request. Taxonomy identifier is required."
-                    }
-                }
-            }
-        },
-        "/api/v2/taxonomy/{identifier}/description/{identifier}": {
-            "get": {
-                "tags": [
-                    ""
-                ],
-                "operationId": "/api/v2/taxonomy/identifier/description/identifier",
-                "parameters": [
-                    {
-                        "name": "identifier",
-                        "in": "path",
-                        "description": "PK, GUID, or recordID associated with target taxonomic unit",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "identifier",
-                        "in": "path",
-                        "description": "Identifier (PK, tdbid) associated with taxonomic description",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Returns metabase on inventory registered within system with matching ID",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Bad request. Inventory identifier is required."
                     }
                 }
             }
