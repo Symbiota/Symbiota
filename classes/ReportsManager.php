@@ -16,7 +16,7 @@ class ReportsManager{
 	/*
 	 * Input: JSON array
 	 * Input criteria: taxa (INT: tid), country (string), state (string), tag (string),
-	 *	 idNeeded (INT: 0,1), collid (INT), photographer (INT: photographerUid),
+	 *	 idNeeded (INT: 0,1), collid (INT), creator (INT: creatorUid),
 	 *	 cntPerCategory (INT: 0-2), start (INT), limit (INT)
 	 *	 e.g. {"state": {"Arizona", "New Mexico"},"taxa":{"Pinus"}}
 	 * Output: Array of images

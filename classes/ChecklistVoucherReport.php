@@ -1,5 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
+include_once($SERVER_ROOT . '/classes/ChecklistVoucherAdmin.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 
@@ -63,9 +64,11 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 		return $retArr;
 	}
 
-	public function getNewVouchers($startLimit = 500, $includeAll = 1){
+	public function getNewVouchers($startLimit = 0, $includeAll = 1){
 		$retArr = Array();
 		if($this->clid){
+			$limit = 1000;
+			if($limit > (ini_get('max_input_vars') - 10)) $limit = (ini_get('max_input_vars') - 10);
 			if($sqlFrag = $this->getSqlFrag()){
 				if($includeAll == 1 || $includeAll == 2){
 					$sql = 'SELECT DISTINCT cl.clTaxaID, TRIM(CONCAT_WS(" ",t.sciname,cl.morphoSpecies)) AS clsciname, o.occid, c.institutioncode, c.collectioncode, o.catalognumber,
@@ -84,23 +87,23 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 						$inStr = $this->getVoucherOccidStr();
 						if($inStr) $sql .= 'AND o.occid NOT IN(' . $inStr . ') ';
 					}
-					$sql .= 'ORDER BY ts.family, o.sciname LIMIT '.$startLimit.', 1000';
+					$sql .= 'ORDER BY ts.family, o.sciname LIMIT '.$startLimit.', ' . $limit;
 					$rs = $this->conn->query($sql);
 					while($r = $rs->fetch_object()){
 						$retArr[$r->clTaxaID][$r->occid]['tid'] = $r->tidinterpreted;
-						$sciName = $r->clsciname;
-						if($r->clsciname <> $r->sciname) $sciName .= '<br/>[specimen id: '.$r->sciname.']';
+						$sciName = $this->cleanOutStr($r->clsciname);
+						if($r->clsciname <> $r->sciname) $sciName .= '<br/>[specimen id: ' . $this->cleanOutStr($r->sciname) . ']';
 						$retArr[$r->clTaxaID][$r->occid]['sciname'] = $sciName;
 						$collCode = '';
 						if(!$r->catalognumber || strpos($r->catalognumber, $r->institutioncode) === false){
-							$collCode = $r->institutioncode.($r->collectioncode?'-'.$r->collectioncode:'');
+							$collCode = $this->cleanOutStr($r->institutioncode . ($r->collectioncode ? '-' . $r->collectioncode : ''));
 						}
-						$collCode .= ($collCode?'-':'').($r->catalognumber?$r->catalognumber:'[catalog number null]');
+						$collCode .= ($collCode ? '-' : '') . $this->cleanOutStr($r->catalognumber ? $r->catalognumber : '[catalog number null]');
 						$retArr[$r->clTaxaID][$r->occid]['collcode'] = $collCode;
-						$retArr[$r->clTaxaID][$r->occid]['recordedby'] = $r->recordedby;
-						$retArr[$r->clTaxaID][$r->occid]['recordnumber'] = $r->recordnumber;
+						$retArr[$r->clTaxaID][$r->occid]['recordedby'] = $this->cleanOutStr($r->recordedby);
+						$retArr[$r->clTaxaID][$r->occid]['recordnumber'] = $this->cleanOutStr($r->recordnumber);
 						$retArr[$r->clTaxaID][$r->occid]['eventdate'] = $r->eventdate;
-						$retArr[$r->clTaxaID][$r->occid]['locality'] = $r->locality;
+						$retArr[$r->clTaxaID][$r->occid]['locality'] = $this->cleanOutStr($r->locality);
 					}
 				}
 				elseif($includeAll == 3){
@@ -115,23 +118,23 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 					$sql .= 'WHERE ('.$sqlFrag.') AND ((t.RankId < 220)) ';
 					$idStr = $this->getVoucherOccidStr();
 					if($idStr) $sql .= 'AND (o.occid NOT IN('.$idStr.')) ';
-					$sql .= 'ORDER BY o.family, o.sciname LIMIT '.$startLimit.', 500';
+					$sql .= 'ORDER BY o.family, o.sciname LIMIT '.$startLimit.', ' . $limit;
 					$rs = $this->conn->query($sql);
 					while($r = $rs->fetch_object()){
 						$retArr[$r->clTaxaID][$r->occid]['tid'] = $r->tidinterpreted;
-						$sciName = $r->clsciname;
-						if($r->clsciname <> $r->sciname) $sciName .= '<br/>specimen id: '.$r->sciname;
+						$sciName = $this->cleanOutStr($r->clsciname);
+						if($r->clsciname <> $r->sciname) $sciName .= '<br/>specimen id: ' . $this->cleanOutStr($r->sciname);
 						$retArr[$r->clTaxaID][$r->occid]['sciname'] = $sciName;
 						$collCode = '';
 						if(!$r->catalognumber || strpos($r->catalognumber, $r->institutioncode) === false){
-							$collCode = $r->institutioncode.($r->collectioncode?'-'.$r->collectioncode:'');
+							$collCode = $this->cleanOutStr($r->institutioncode . ($r->collectioncode ? '-' . $r->collectioncode : ''));
 						}
-						$collCode .= ($collCode?'-':'').($r->catalognumber?$r->catalognumber:'[catalog number null]');
+						$collCode .= ($collCode ? '-' : '') . $this->cleanOutStr($r->catalognumber ? $r->catalognumber : '[catalog number null]');
 						$retArr[$r->clTaxaID][$r->occid]['collcode'] = $collCode;
-						$retArr[$r->clTaxaID][$r->occid]['recordedby'] = $r->recordedby;
-						$retArr[$r->clTaxaID][$r->occid]['recordnumber'] = $r->recordnumber;
+						$retArr[$r->clTaxaID][$r->occid]['recordedby'] = $this->cleanOutStr($r->recordedby);
+						$retArr[$r->clTaxaID][$r->occid]['recordnumber'] = $this->cleanOutStr($r->recordnumber);
 						$retArr[$r->clTaxaID][$r->occid]['eventdate'] = $r->eventdate;
-						$retArr[$r->clTaxaID][$r->occid]['locality'] = $r->locality;
+						$retArr[$r->clTaxaID][$r->occid]['locality'] = $this->cleanOutStr($r->locality);
 					}
 				}
 				$rs->free();
@@ -158,8 +161,10 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 
 	public function getMissingTaxa(){
 		$retArr = Array();
+		$limit = 1000;
+		if($limit > (ini_get('max_input_vars') - 10)) $limit = (ini_get('max_input_vars') - 10);
 		if($sqlFrag = $this->getSqlFrag()){
-			$sql = 'SELECT DISTINCT t.tid, t.sciname, o.sciname AS occur_sciname '.$this->getMissingTaxaBaseSql($sqlFrag).' LIMIT 1000 ';
+			$sql = 'SELECT DISTINCT t.tid, t.sciname, o.sciname AS occur_sciname '.$this->getMissingTaxaBaseSql($sqlFrag).' LIMIT ' . $limit;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$sciStr = $r->sciname;
@@ -175,6 +180,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 
 	public function getMissingTaxaSpecimens($limitIndex, $limitRange = 1000){
 		$retArr = Array();
+		if($limitRange > (ini_get('max_input_vars') - 10)) $limitRange = (ini_get('max_input_vars') - 10);
 		if($sqlFrag = $this->getSqlFrag()){
 			$sqlBase = $this->getMissingTaxaBaseSql($sqlFrag);
 			$sql = 'SELECT DISTINCT o.occid, c.institutioncode ,c.collectioncode, o.catalognumber, o.tidinterpreted, t.sciname, o.sciname AS occur_sciname, '.
@@ -184,18 +190,18 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 			$cnt = 0;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$retArr[$r->sciname][$r->occid]['o_sn'] = $r->occur_sciname;
+				$retArr[$r->sciname][$r->occid]['o_sn'] = $this->cleanOutStr($r->occur_sciname);
 				$retArr[$r->sciname][$r->occid]['tid'] = $r->tidinterpreted;
 				$collCode = '';
 				if(!$r->catalognumber || strpos($r->catalognumber, $r->institutioncode) === false){
-					$collCode = $r->institutioncode.($r->collectioncode?'-'.$r->collectioncode:'');
+					$collCode = $this->cleanOutStr($r->institutioncode . ($r->collectioncode ? '-' . $r->collectioncode : ''));
 				}
-				$collCode .= ($collCode?'-':'').($r->catalognumber?$r->catalognumber:'[catalog number null]');
+				$collCode .= ($collCode ? '-' : '') . $this->cleanOutStr($r->catalognumber ? $r->catalognumber : '[catalog number null]');
 				$retArr[$r->sciname][$r->occid]['collcode'] = $collCode;
-				$retArr[$r->sciname][$r->occid]['recordedby'] = $r->recordedby;
-				$retArr[$r->sciname][$r->occid]['recordnumber'] = $r->recordnumber;
+				$retArr[$r->sciname][$r->occid]['recordedby'] = $this->cleanOutStr($r->recordedby);
+				$retArr[$r->sciname][$r->occid]['recordnumber'] = $this->cleanOutStr($r->recordnumber);
 				$retArr[$r->sciname][$r->occid]['eventdate'] = $r->eventdate;
-				$retArr[$r->sciname][$r->occid]['locality'] = $r->locality;
+				$retArr[$r->sciname][$r->occid]['locality'] = $this->cleanOutStr($r->locality);
 				$cnt++;
 			}
 			$rs->free();
@@ -233,20 +239,20 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 			$rs = $this->conn->query($sql);
 			$cnt = 0;
 			while($row = $rs->fetch_object()){
-				$clSciname = $row->listid;
-				$voucherSciname = $row->sciname;
+				$clSciname = $this->cleanOutStr($row->listid);
+				$voucherSciname = $this->cleanOutStr($row->sciname);
 				//if(str_replace($voucherSciname)) continue;
 				$retArr[$cnt]['tid'] = $row->tid;
 				$retArr[$cnt]['clid'] = $row->clid;
 				$retArr[$cnt]['occid'] = $row->occid;
 				$retArr[$cnt]['listid'] = $clSciname;
-				$collStr = $row->recordedby;
-				if($row->recordnumber) $collStr .= ' ('.$row->recordnumber.')';
-				$retArr[$cnt]['recordnumber'] = $this->cleanOutStr($collStr);
-				$retArr[$cnt]['specid'] = $this->cleanOutStr($voucherSciname);
-				$idBy = $row->identifiedby;
+				$collStr = $this->cleanOutStr($row->recordedby);
+				if($row->recordnumber) $collStr .= ' (' . $this->cleanOutStr($row->recordnumber) . ')';
+				$retArr[$cnt]['recordnumber'] = $collStr;
+				$retArr[$cnt]['specid'] = $voucherSciname;
+				$idBy = $this->cleanOutStr($row->identifiedby);
 				if($row->dateidentified) $idBy .= ' ('.$this->cleanOutStr($row->dateidentified).')';
-				$retArr[$cnt]['identifiedby'] = $this->cleanOutStr($idBy);
+				$retArr[$cnt]['identifiedby'] = $idBy;
 				$cnt++;
 			}
 			$rs->free();
@@ -296,14 +302,14 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 				if($sciname){
 					$collCode = '';
 					if(!$r->catalognumber || strpos($r->catalognumber, $r->institutioncode) === false){
-						$collCode = $r->institutioncode.($r->collectioncode?'-'.$r->collectioncode:'');
+						$collCode = $this->cleanOutStr($r->institutioncode . ($r->collectioncode ? '-' . $r->collectioncode : ''));
 					}
-					$collCode .= ($collCode?'-':'').($r->catalognumber?$r->catalognumber:'[catalog number null]');
+					$collCode .= ($collCode ? '-' : '') . $this->cleanOutStr($r->catalognumber ? $r->catalognumber : '[catalog number null]');
 					$retArr[$sciname][$r->occid]['collcode'] = $collCode;
-					$retArr[$sciname][$r->occid]['recordedby'] = $r->recordedby;
-					$retArr[$sciname][$r->occid]['recordnumber'] = $r->recordnumber;
+					$retArr[$sciname][$r->occid]['recordedby'] = $this->cleanOutStr($r->recordedby);
+					$retArr[$sciname][$r->occid]['recordnumber'] = $this->cleanOutStr($r->recordnumber);
 					$retArr[$sciname][$r->occid]['eventdate'] = $r->eventdate;
-					$retArr[$sciname][$r->occid]['locality'] = $r->locality;
+					$retArr[$sciname][$r->occid]['locality'] = $this->cleanOutStr($r->locality);
 				}
 			}
 			$rs->free();
@@ -347,10 +353,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 
 	private function getTableJoinFrag($sqlFrag){
 		$retSql = '';
-		if(strpos($sqlFrag,'MATCH(f.recordedby)') || strpos($sqlFrag,'MATCH(f.locality)')){
-			$retSql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
-		}
-		if(strpos($sqlFrag,'p.point')){
+		if(strpos($sqlFrag,'p.lngLatPoint')){
 			$retSql .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
 		}
 		return $retSql;
@@ -530,7 +533,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
  			'o.decimalLatitude', 'o.decimalLongitude', 'o.coordinateUncertaintyInMeters', 'o.minimumElevationInMeters', 'o.maximumelevationinmeters',
 			'o.verbatimelevation', 'o.habitat', 'o.occurrenceRemarks', 'o.associatedTaxa', 'o.reproductivecondition', 'o.informationWithheld', 'o.occid');
 		$retArr[] = 'o.recordID AS recordID';
-		$retArr[] = 'CONCAT("' . $this->getDomain() . $GLOBALS['CLIENT_ROOT'] . '/collections/individual/index.php?occid=",o.occid) as `references`';
+		$retArr[] = 'CONCAT("' . GeneralUtil::getDomain() . $GLOBALS['CLIENT_ROOT'] . '/collections/individual/index.php?occid=",o.occid) as `references`';
 		return $retArr;
 
 		/*

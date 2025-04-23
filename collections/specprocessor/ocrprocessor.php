@@ -3,6 +3,7 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecProcessorManager.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/specprocessor/specprocessor_tools.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/specprocessor/specprocessor_tools.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/specprocessor/specprocessor_tools.en.php');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
@@ -15,7 +16,7 @@ $procManager->setProjVariables('OCR Harvest');
 ?>
 <script>
 	$(function() {
-		var dialogArr = new Array("speckeypattern","sourcepath","ocrfile","ocrsource");
+		var dialogArr = new Array("ocrspeckeypattern","sourcepath","ocrfile","ocrsource");
 		var dialogStr = "";
 		for(i=0;i<dialogArr.length;i++){
 			dialogStr = dialogArr[i]+"info";
@@ -70,7 +71,7 @@ $procManager->setProjVariables('OCR Harvest');
 	}
 </script>
 <div style="margin:15px;">
-	<h1 class="page-heading screen-reader-only">Optical Character Recognition</h1>
+	<h1 class="page-heading screen-reader-only"><?php echo $LANG['OP_CHARACTER_RECOGNITION']; ?></h1>
 	<?php
 	$cntTotal = $procManager->getSpecWithImage();
 	$cntUnproc = $procManager->getSpecWithImage($procStatus);
@@ -176,10 +177,10 @@ $procManager->setProjVariables('OCR Harvest');
 						</td>
 						<td>
 							<input name="speckeypattern" type="text" style="width:300px;" value="<?php echo $procManager->getSpecKeyPattern(); ?>" />
-							<a id="speckeypatterninfo" href="#" onclick="return false" title="<?php echo $LANG['MORE_INFO']; ?>">
+							<a id="ocrspeckeypatterninfo" href="#" onclick="return false" title="<?php echo $LANG['MORE_INFO']; ?>">
 								<img src="../../images/info.png" style="width:1.3em;" />
 							</a>
-							<div id="speckeypatterninfodialog">
+							<div id="ocrspeckeypatterninfodialog">
 								<?php echo $LANG['REGEX_EXPLAIN']; ?>
 							</div>
 						</td>

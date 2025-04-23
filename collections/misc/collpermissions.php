@@ -1,7 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/PermissionsManager.php');
-include_once($SERVER_ROOT.'/content/lang/collections/misc/collpermissions.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/misc/collpermissions.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/misc/collpermissions.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/misc/collpermissions.en.php');
+
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 //Sanitization
@@ -81,13 +84,16 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $collMetadata['collectionname'] . $LANG['COL_PERMISSIONS']; ?></title>
+	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script>
 		function verifyAddRights(f){
 			if(f.uid.value == ""){
-				alert("<?php echo (isset($LANG['PLS_SEL_USER'])?$LANG['PLS_SEL_USER']:'Please select a user from list'); ?>");
+				alert("<?php echo (isset($LANG['PLS_SEL_USER'])?$LANG['PLS_SEL_USER']:'Please select a user (begin typing last name to see dropdown list)'); ?>");
 				return false;
 			}
 			else if(f.righttype && f.righttype.value == ""){
@@ -100,6 +106,17 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 			}
 			return true;
 		}
+		$(document).ready(function() {
+			$( "#userinput" ).autocomplete({
+				source: "../rpc/getuserlist.php",
+				minLength: 3,
+				autoFocus: true,
+				select: function( event, ui ) {
+					$('#uid-add').val(ui.item.id);
+				}
+			});
+
+		});
 	</script>
 	<script type="text/javascript" src="../../js/symb/shared.js"></script>
 </head>
@@ -129,7 +146,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 
 	<!-- This is inner text! -->
 	<div role="main" id="innertext">
-		<h1 class="page-heading"><?php echo $LANG['COL_PERMISSIONS'] . ' for: ' . $collMetadata['collectionname']; ?></h1>
+		<h1 class="page-heading"><?php echo $LANG['COL_PERMISSIONS'] . ': ' . $collMetadata['collectionname']; ?></h1>
 		<?php
 		if($isEditor){
 			$collPerms = $permManager->getCollectionEditors($collId);
@@ -242,16 +259,9 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 				<h2><span><b><?php echo (isset($LANG['ADD_NEW_USER'])?$LANG['ADD_NEW_USER']:'Add a New Admin/Editor/Reader'); ?></b></span></h2>
 				<form name="addrights" action="collpermissions.php" method="post" onsubmit="return verifyAddRights(this)">
 					<div>
-					    <label for="uid"><?php echo $LANG['SEL_USER'] ?></label>
-						<select id="uid" name="uid">
-							<option value=""><?php echo (isset($LANG['SEL_USER'])?$LANG['SEL_USER']:'Select User'); ?></option>
-							<option value="">-----------------------------------</option>
-							<?php
-							foreach($userArr as $uid => $uName){
-								echo '<option value="'.$uid.'">'.$uName.'</option>';
-							}
-							?>
-						</select>
+						<?php echo $LANG['ENTER_USER_NAME']; ?>:
+						<input id="userinput" type="text" style="width:400px;" aria-label="<?php echo $LANG['ENTER_USER_NAME'] ?>" />
+						<input id="uid-add" name="uid" type="hidden" value="" />
 					</div>
 					<div style="margin:5px 0px 5px 0px;">
 						<?php

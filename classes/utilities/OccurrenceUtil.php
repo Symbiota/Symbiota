@@ -1,22 +1,17 @@
 <?php
-include_once($SERVER_ROOT.'/classes/GPoint.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
+include_once($SERVER_ROOT . '/classes/GPoint.php');
+include_once($SERVER_ROOT . '/classes/utilities/TaxonomyUtil.php');
+include_once($SERVER_ROOT.'/traits/TaxonomyTrait.php');
 
-class OccurrenceUtilities {
-
-	static $monthRoman = array('I'=>'01','II'=>'02','III'=>'03','IV'=>'04','V'=>'05','VI'=>'06','VII'=>'07','VIII'=>'08','IX'=>'09','X'=>'10','XI'=>'11','XII'=>'12');
-	static $monthNames = array('jan'=>'01','ene'=>'01','feb'=>'02','mar'=>'03','abr'=>'04','apr'=>'04','may'=>'05','jun'=>'06','jul'=>'07','ago'=>'08',
+class OccurrenceUtil {
+	use TaxonomyTrait;
+	private static $monthRoman = array('I'=>'01','II'=>'02','III'=>'03','IV'=>'04','V'=>'05','VI'=>'06','VII'=>'07','VIII'=>'08','IX'=>'09','X'=>'10','XI'=>'11','XII'=>'12');
+	public static $monthNames = array('jan'=>'01','ene'=>'01','feb'=>'02','mar'=>'03','abr'=>'04','apr'=>'04','may'=>'05','jun'=>'06','jul'=>'07','ago'=>'08',
 		'aug'=>'08','sep'=>'09','oct'=>'10','nov'=>'11','dec'=>'12','dic'=>'12');
 
 	// Current version for associatedOccurrences JSON
 	// TODO: is this the best place for it? No other obvious landing spot.
 	public static $assocOccurVersion = '1.0';
-
- 	public function __construct(){
- 	}
-
- 	public function __destruct(){
- 	}
 
 	/*
 	 * INPUT: String representing a verbatim date
@@ -167,7 +162,7 @@ class OccurrenceUtilities {
 	 *         Keys: unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, author, identificationqualifier
 	 */
 	public static function parseScientificName($inStr, $conn = null, $rankId = 0){
-		$taxonArr = TaxonomyUtilities::parseScientificName($inStr, $conn, $rankId);
+		$taxonArr = TaxonomyUtil::parseScientificName($inStr, $conn, $rankId);
 		if(array_key_exists('unitind1',$taxonArr)){
 			$taxonArr['unitname1'] = $taxonArr['unitind1'].' '.$taxonArr['unitname1'];
 			unset($taxonArr['unitind1']);
@@ -186,41 +181,48 @@ class OccurrenceUtilities {
 	 *         Keys: minelev, maxelev
 	 */
 	public static function parseVerbatimElevation($inStr){
-		$retArr = array();
-		//Start parsing
-		if(preg_match('/([\.\d]+)\s*-\s*([\.\d]+)\s*meter/i',$inStr,$m)){
-			$retArr['minelev'] = $m[1];
-			$retArr['maxelev'] = $m[2];
-		}
-		elseif(preg_match('/([\.\d]+)\s*-\s*([\.\d]+)\s*m./i',$inStr,$m)){
-			$retArr['minelev'] = $m[1];
-			$retArr['maxelev'] = $m[2];
-		}
-		elseif(preg_match('/([\.\d]+)\s*-\s*([\.\d]+)\s*m$/i',$inStr,$m)){
-			$retArr['minelev'] = $m[1];
-			$retArr['maxelev'] = $m[2];
-		}
-		elseif(preg_match('/([\.\d]+)\s*meter/i',$inStr,$m)){
-			$retArr['minelev'] = $m[1];
-		}
-		elseif(preg_match('/([\.\d]+)\s*m./i',$inStr,$m)){
-			$retArr['minelev'] = $m[1];
-		}
-		elseif(preg_match('/([\.\d]+)\s*m$/i',$inStr,$m)){
-			$retArr['minelev'] = $m[1];
-		}
-		elseif(preg_match('/([\.\d]+)[fet\']{,4}\s*-\s*([\.\d]+)\s{,1}[f\']{1}/i',$inStr,$m)){
-			if(is_numeric($m[1])) $retArr['minelev'] = (round($m[1]*.3048));
-			if(is_numeric($m[2])) $retArr['maxelev'] = (round($m[2]*.3048));
-		}
-		elseif(preg_match('/([\.\d]+)\s*[f\']{1}/i',$inStr,$m)){
-			if(is_numeric($m[1])) $retArr['minelev'] = (round($m[1]*.3048));
-		}
-		//Clean
-		if($retArr){
-			if(array_key_exists('minelev',$retArr) && ($retArr['minelev'] > 8000 || $retArr['minelev'] < 0)) unset($retArr['minelev']);
-			if(array_key_exists('maxelev',$retArr) && ($retArr['maxelev'] > 8000 || $retArr['maxelev'] < 0)) unset($retArr['maxelev']);
-		}
+		$retArr = [];
+
+		/*
+		 *	Supported Formats
+		 *	Space must exist between units and numbers. 
+		 *	No units assumes meters.
+		 *
+		 *	Numbers: 100, 100-200, 1,000-2,000
+		 *	Feet: ft, ft., feet, '
+		 */
+		if(preg_match('/([\.,\d]+)(\s*-\s*([\.,\d]+))?\s?(\D+)/i', $inStr, $m)) {
+			$min_elev = $m[1];
+			$max_elev = $m[3];
+			$unit = $m[4];
+
+			$feet = ['ft', 'ft.', 'feet', 'foot' ,"'"];
+			$meter = ['meter', 'meters', 'm', 'm.'];
+
+			$meter_conversion = 0;
+
+			if(in_array($unit, $feet)) {
+				$meter_conversion = 0.3048;
+			} else if (in_array($unit, $meter)) {
+				$meter_conversion = 1;
+			} else {
+				return $retArr;
+			}
+
+			$min_elev = str_replace(',', '', $min_elev);
+			$max_elev = str_replace(',', '', $max_elev);
+
+			if(is_numeric($min_elev)) {
+				$retArr['minelev'] = round($min_elev * $meter_conversion); 
+			}
+			if(is_numeric($max_elev)) {
+				$retArr['maxelev'] = round($max_elev * $meter_conversion); 
+			}
+		} 
+
+		if(array_key_exists('minelev',$retArr) && ($retArr['minelev'] > 8000 || $retArr['minelev'] < 0)) unset($retArr['minelev']);
+		if(array_key_exists('maxelev',$retArr) && ($retArr['maxelev'] > 8000 || $retArr['maxelev'] < 0)) unset($retArr['maxelev']);
+	
 		return $retArr;
 	}
 
@@ -712,14 +714,20 @@ class OccurrenceUtilities {
 				//Build sciname from individual units supplied by source
 				$sciName = trim($recMap['genus'].' '.$recMap['specificepithet']);
 				if(array_key_exists('infraspecificepithet',$recMap)){
-					if(array_key_exists('taxonrank',$recMap)) $sciName .= ' '.$recMap['taxonrank'];
+					if(array_key_exists('taxonrank',$recMap) && strtolower($recMap['taxonrank'])!== 'cultivar') $sciName .= ' '.$recMap['taxonrank'];
 					$sciName .= ' '.$recMap['infraspecificepithet'];
+				}
+				if(array_key_exists('cultivarepithet',$recMap) && !empty($recMap['cultivarepithet']) ){
+					$sciName .= " " . self::standardizeCultivarEpithet($recMap['cultivarepithet']);
+				}
+				if(array_key_exists('tradename',$recMap) && !empty($recMap['tradename'])){
+					$sciName .= ' ' . self::standardizeTradeName($recMap['tradename']);
 				}
 				$recMap['sciname'] = trim($sciName);
 			}
 			elseif(array_key_exists('scientificname',$recMap)){
 				//Clean and parse scientific name
-				$parsedArr = TaxonomyUtilities::parseScientificName($recMap['scientificname']);
+				$parsedArr = TaxonomyUtil::parseScientificName($recMap['scientificname']);
 				$scinameStr = '';
 				if(array_key_exists('unitind1', $parsedArr)){
 					$scinameStr .= $parsedArr['unitind1'];

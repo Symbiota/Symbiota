@@ -1,6 +1,8 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceGeoLocate.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/georef/geolocatetools.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/georef/geolocatetools.'.$LANG_TAG.'.php');
+else include_once($SERVER_ROOT.'/content/lang/collections/georef/geolocatetools.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../misc/generaltemplate.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
@@ -55,7 +57,7 @@ if($isEditor){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
-		<title>GeoLocate Batch Processes</title>
+		<title><?= $LANG['GEOLOCATE_PROCESSES'] ?></title>
 		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
@@ -69,45 +71,45 @@ if($isEditor){
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div class="navpath">
-			<a href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php">Home</a> &gt;&gt;
-			<a href="../misc/collprofiles.php?emode=1&collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">Collection Management Menu</a> &gt;&gt;
+			<a href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php"><?= $LANG['HOME'] ?></a> &gt;&gt;
+			<a href="../misc/collprofiles.php?emode=1&collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?= $LANG['COLL_MANAGE_MENU'] ?></a> &gt;&gt;
 			<b>Batch GeoLocate Tools</b>
 		</div>
 		<!-- This is inner text! -->
 		<div role="main" id="innertext">
-			<h1 class="page-heading">GeoLocate Batch Processes</h1>
+			<h1 class="page-heading"><?= $LANG['GEOLOCATE_PROCESSES']; ?></h1>
 		<?php
 		if($collId){
 			if($isEditor){
 				?>
 				<fieldset>
-					<legend>Main Menu</legend>
+					<legend><?= $LANG['MAIN_MENU']; ?></legend>
 					<div>
-						Records available for TRS conversion: <?php echo $classManager->getTrsOccurrenceCount(); ?>
+						<?= $LANG['RECORDS_AVAIL_TRS']; ?>: <?php echo $classManager->getTrsOccurrenceCount(); ?>
 					</div>
 					<div>
-						Records available for batch GeoReferencing: <?php echo $classManager->getOccurrenceCount(); ?>
+						<?= $LANG['RECORDS_AVAIL_BATCH_GEOREF']; ?>: <?php echo $classManager->getOccurrenceCount(); ?>
 					</div>
 					<form method="post" action="geolocatetools">
 						<div>
-							<b><u>Filter Terms</u></b>
+							<b><u><?= $LANG['FILTER_TERMS']; ?></u></b>
 							<div style="margin:0px 10px;">
-								<b>Country:</b> <input name="country" type="text" value="<?php echo $qCountry; ?>" /><br/>
-								<b>State / Province:</b> <input name="stateProvince" type="text" value="<?php echo $qStateProvince; ?>" /><br/>
-								<b>County / Parish:</b> <input name="county" type="text" value="<?php echo $qCounty; ?>" /><br/>
-								<b>Locality:</b> <input name="locality" type="text" value="<?php echo $qLocality; ?>" /><br/>
+								<b><?= $LANG['COUNTRY']; ?>:</b> <input name="country" type="text" value="<?php echo $qCountry; ?>" /><br/>
+								<b><?= $LANG['STATE_PROVINCE']; ?>:</b> <input name="stateProvince" type="text" value="<?php echo $qStateProvince; ?>" /><br/>
+								<b><?= $LANG['COUNTY_PARISH']; ?>:</b> <input name="county" type="text" value="<?php echo $qCounty; ?>" /><br/>
+								<b><?= $LANG['LOCALITY']; ?>:</b> <input name="locality" type="text" value="<?php echo $qLocality; ?>" /><br/>
 							</div>
 						</div>
 						<div>
-							<b><u>Action</u></b>
+							<b><u><?= $LANG['ACTION']; ?></u></b>
 							<div style="margin:0px 10px;">
-								<input name="action" type="radio" value="1" /> Batch process TRS records<br/>
-								<input name="action" type="radio" value="2" /> Batch process locality reocrds<br/>
-								<input name="action" type="radio" value="0" checked /> Refresh counts
+								<input name="action" type="radio" value="1" /> <?= $LANG['BATCH_PROCESS_TRS_RECS']; ?><br/>
+								<input name="action" type="radio" value="2" /> <?= $LANG['BATCH_PROCESS_LOC_RECS']; ?><br/>
+								<input name="action" type="radio" value="0" checked /> <?= $LANG['REFRESH_COUNTS']; ?>
 							</div>
 						</div>
 						<div>
-							<input name="formsubmit" type="submit" value="Perform Action" />
+							<button name="formsubmit" type="submit" value="Perform Action" ><?= $LANG['PERFORM_ACTION']; ?></button>
 							<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 						</div>
 					</form>
@@ -123,11 +125,11 @@ if($isEditor){
 						<table class="styledtable" style="font-size:12px;">
 							<tr>
 								<th>occid</th>
-								<th>Map Tool</th>
-								<th>Locality</th>
-								<th>Decimal Lat.</th>
-								<th>Decimal Long.</th>
-								<th>Coord. Error in meters</th>
+								<th><?= $LANG['MAP_TOOL']; ?></th>
+								<th><?= $LANG['LOCALITY']; ?></th>
+								<th><?= $LANG['DEC_LAT']; ?></th>
+								<th><?= $LANG['DEC_LONG']; ?></th>
+								<th><?= $LANG['COORD_ERROR_METERS']; ?></th>
 							</tr>
 							<?php
 							foreach($occRecArr as $occid => $occArr){
@@ -144,7 +146,7 @@ if($isEditor){
 						</table>
 						<div>
 							<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
-							<input name="formsubmit" type="submit" value="Submit Batch Coordinates" />
+							<button name="formsubmit" type="submit" value="Submit Batch Coordinates" ><?= $LANG['SUBMIT_BATCH_COORDS']; ?></button>
 						</div>
 					</form>
 					<?php
@@ -153,7 +155,7 @@ if($isEditor){
 			else{
 				?>
 				<div style='font-weight:bold;font-size:120%;'>
-					ERROR: You do not have permission to edit this collection
+					<?= $LANG['NO_PERMISSION_TO_EDIT']; ?>
 				</div>
 				<?php
 			}
@@ -161,7 +163,7 @@ if($isEditor){
 		else{
 			?>
 			<div style='font-weight:bold;font-size:120%;'>
-				ERROR: Collection identifier is null
+				<?= $LANG['COLLID_IS_NULL']; ?>
 			</div>
 			<?php
 		}

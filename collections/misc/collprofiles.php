@@ -1,11 +1,11 @@
 <?php
 include_once('../../config/symbini.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.en.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCollectionProfile.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
-include_once($SERVER_ROOT.'/classes/UtilityFunctions.php');
-if($LANG_TAG == 'en' ||!file_exists($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.en.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 unset($_SESSION['editorquery']);
 
@@ -14,11 +14,6 @@ $collManager = new OccurrenceCollectionProfile();
 $collid = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $eMode = array_key_exists('emode', $_REQUEST) ? $collManager->sanitizeInt($_REQUEST['emode']) : 0;
 $action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
-
-$SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ?? false;
-$SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
-$actionPage = $SHOULD_USE_HARVESTPARAMS ? ($CLIENT_ROOT . "/collections/harvestparams.php") : ($CLIENT_ROOT . "/collections/search/index.php");
-
 
 if ($eMode && !$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/misc/collprofiles.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
@@ -101,7 +96,7 @@ if ($SYMB_UID) {
 			if(e.submitter.value === "edit") {
 				return processEditQuickSearch('<?php echo $CLIENT_ROOT ?>')
 			} else if(e.submitter.value === "search") {
-				return submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? '1' : '0' ?> + '&includeothercatnum=1', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? '1' : '0' ?> + '&usethes=1&taxontype=2 ');
+				return submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includecult=' + <?= !empty($SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT) ? '1' : '0' ?> + '&includeothercatnum=1', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? '1' : '0' ?> + '&usethes=1&taxontype=2 ');
 			}
 
 			e.preventDefault();
@@ -151,6 +146,7 @@ if ($SYMB_UID) {
 			position:sticky;
 			width: 100vw;
 			margin-left: calc(50% - 50vw);
+			z-index: 1;
 		}
 
 		@media (max-width: 1424px) {
@@ -189,6 +185,7 @@ if ($SYMB_UID) {
 				width: 12vw;
 				right: 1rem;
 				float: right;
+				background-color: var(--body-bg-color);
 			}
 		}
 		@media (min-width: 1500px) {
@@ -196,6 +193,7 @@ if ($SYMB_UID) {
 				width: 14vw;
 				right: 1rem;
 				float: right;
+				background-color: var(--body-bg-color);
 			}
 		}
 		@media (min-width: 1550px) {
@@ -203,6 +201,7 @@ if ($SYMB_UID) {
 				width: 15vw;
 				right: 1rem;
 				float: right;
+				background-color: var(--body-bg-color);
 			}
 		}
 		@media (min-width: 1700px) {
@@ -210,6 +209,7 @@ if ($SYMB_UID) {
 				width: 18vw;
 				right: 1rem;
 				float: right;
+				background-color: var(--body-bg-color);
 			}
 		}
 		@media (min-width: 1880px) {
@@ -217,6 +217,7 @@ if ($SYMB_UID) {
 				width: 21vw;
 				right: 1rem;
 				float: right;
+				background-color: var(--body-bg-color);
 			}
 		}
 	</style>
@@ -240,7 +241,7 @@ if ($SYMB_UID) {
 			<section id="quicksearch-box" class="fieldset-like" >
 				<h3><span><?= $LANG['QUICK_SEARCH'] ?></span></h3>
 				<div id="dialogContainer" style="position: relative;">
-					<form name="quicksearch" style="display: flex; align-items:center; gap:0.5rem; flex-wrap: wrap" action="javascript:void(0);" onsubmit="directSubmitAction(event)">
+					<form id="quicksearch" name="quicksearch" style="display: flex; align-items:center; gap:0.5rem; flex-wrap: wrap" action="javascript:void(0);" onsubmit="directSubmitAction(event)">
 						<div class="quicksearch-input-container">
 								<label style="display:flex; align-items: center; position: relative; margin-right: 1.5rem" for="catalog-number"><?= $LANG['OCCURENCE_IDENTIFIER'] ?>
 						<a href="#" id="q_catalognumberinfo" style="text-decoration:none; position: absolute; right: -1.5rem">
@@ -253,7 +254,7 @@ if ($SYMB_UID) {
 						<input style="margin-bottom: 0" name="catalog-number" id="catalog-number" type="text" />
 						<dialog id="dialogEl" aria-live="polite" aria-label="Catalog number search dialog">
 							<?= $LANG['IDENTIFIER_PLACEHOLDER_LIST'] . ' ' ?>
-							<button id="closeDialog">Close</button>
+							<button id="closeDialog" value="search">Close</button>
 						</dialog>
 						</div>
 						<input name="collid" type="hidden" value="<?= $collid; ?>" />
@@ -310,10 +311,9 @@ if ($SYMB_UID) {
 				$deactivateTag = '';
 				$deactivateMsg = '';
 				if ($collData['managementtype'] != 'Live Data'){
-					//Deactivated until these changes can be better reviewed - shooting to re-activate for 3.2
-					//$deactivateStyle = 'style="pointer-events: none"';
-					//$deactivateTag = '&nbsp;(*' . $LANG['DEACTIVATED'] . ')';
-					//$deactivateMsg = '<div>* ' . $LANG['DEACTIVATED_MESSAGE'] . '</div>';
+					$deactivateStyle = 'style="pointer-events: none"';
+					$deactivateTag = '&nbsp;(*' . $LANG['DEACTIVATED'] . ')';
+					$deactivateMsg = '<div>* ' . $LANG['DEACTIVATED_MESSAGE'] . '</div>';
 				}
 				?>
 				<button style="margin-bottom: 0.5rem" type="button" onclick="toggleById('controlpanel');" >
@@ -463,6 +463,9 @@ if ($SYMB_UID) {
 									<a href="#" onclick="$('li.importItem').show(); return false;">
 										<?= $LANG['IMPORT_SPECIMEN'] ?>
 									</a>
+									<a id="importinfo" href="https://biokic.github.io/symbiota-docs/coll_manager/upload/" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>">
+											<img src="../../images/info.png" style="width:13px;" alt="<?= $LANG['INFO_ALT'] ?>" />
+									</a><br/>
 								</li>
 								<li class="importItem">
 									<a href="../admin/specupload.php?uploadtype=7&collid=<?php echo $collid; ?>">
@@ -578,6 +581,9 @@ if ($SYMB_UID) {
 											<?= $LANG['RESTORE_BACKUP'] ?>
 										</a>
 									</li>
+									<?php
+								}
+								?>
 								<!--
 								<li style="margin-left:10px;">
 									<a href="../../imagelib/admin/igsnmapper.php?collid=<?= $collid ?>">
@@ -585,9 +591,6 @@ if ($SYMB_UID) {
 									</a>
 								</li>
 								 -->
-									<?php
-								}
-								?>
 								<li style="margin-left:10px;">
 									<a href="../../imagelib/admin/thumbnailbuilder.php?collid=<?= $collid ?>">
 										<?= $LANG['THUMBNAIL_MAINTENANCE'] ?>
@@ -813,10 +816,12 @@ if ($SYMB_UID) {
 							}
 							?>
 						</div>
+						<?php if($collData['managementtype'] != 'Live Data'): ?>
 						<div class="bottom-breathing-room-rel">
 							<span class="label"><?= $LANG['LAST_UPDATE'] ?>:</span>
 							<?= $collData['uploaddate'] ?>
 						</div>
+						<?php endif ?>
 						<?php
 						if($collData['managementtype'] == 'Live Data'){
 							?>
@@ -865,7 +870,7 @@ if ($SYMB_UID) {
 							}
 						}
 						if($collData['rights']){
-							$rightsHtml = UtilityFunctions::getRightsHtml($collData['rights']);
+							$rightsHtml = GeneralUtil::getRightsHtml($collData['rights']);
 							?>
 							<div class="bottom-breathing-room-rel">
 								<span class="label"><?= $LANG['USAGE_RIGHTS'] ?>:</span>
@@ -901,6 +906,13 @@ if ($SYMB_UID) {
 			</div>
 			<?php
 			include('collprofilestats.php');
+			$actionPage = $CLIENT_ROOT . '/collections/';
+			if(!empty($SHOULD_USE_HARVESTPARAMS)){
+				$actionPage .= 'harvestparams.php';
+			}
+			else{
+				$actionPage .= 'search/index.php';
+			}
 			?>
 			<div style="margin-bottom: 2rem;">
 				<form name="coll-search-form" action="<?= $actionPage ?>" method="get">
@@ -965,10 +977,10 @@ if ($SYMB_UID) {
 								</a>
 							</h3>
 							<div style='margin:10px;'>
-								<div class="coll-description bottom-breathing-room-rel"><?= $collData['fulldescription'] ?></div>
+								<div class="coll-description bottom-breathing-room-rel"><?= (!empty($collData) && array_key_exists('fulldescription', $collData)) ? $collData['fulldescription'] : '' ?></div>
 								<?php
-								if(isset($collData['resourcejson'])){
-									if($resourceArr = json_decode($collData['resourcejson'], true)){
+								if(isset($collArr['resourcejson'])){
+									if($resourceArr = json_decode($collArr['resourcejson'], true)){
 										$title = $LANG['HOMEPAGE'];
 										foreach($resourceArr as $rArr){
 											if(!empty($rArr['title'][$LANG_TAG])) $title = $rArr['title'][$LANG_TAG];
@@ -980,8 +992,8 @@ if ($SYMB_UID) {
 										}
 									}
 								}
-								if(!empty($collData['contactjson'])){
-									if($contactArr = json_decode($collData['contactjson'], true)){
+								if(!empty($collArr['contactjson'])){
+									if($contactArr = json_decode($collArr['contactjson'], true)){
 										if(!empty($contactArr)){
 											?>
 											<section style="margin-left: 0;">
@@ -1044,6 +1056,14 @@ if ($SYMB_UID) {
 			dialogContainer.style.position = 'relative';
 			dialogContainer.appendChild(dialogEl);
 
+		});
+		document.getElementById('quicksearch').addEventListener('keypress', e => {
+			if (e.key === 'Enter') {
+			e.preventDefault();
+			const editEnabled = <?php echo ($editCode == 1 || $editCode == 2 || $editCode == 3); ?>;
+			const newSubmitObj= {submitter:{value: editEnabled ? 'edit': 'search'}};
+			directSubmitAction(newSubmitObj);
+			}
 		});
 
 		closeDialogButton.addEventListener('click', (e) => {

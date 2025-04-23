@@ -1,7 +1,8 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCollectionProfile.php');
-include_once($SERVER_ROOT.'/content/lang/collections/misc/collmetaresources.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/misc/collmetaresources.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/misc/collmetaresources.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/misc/collmetaresources.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
@@ -39,7 +40,7 @@ if($collid && $isEditor){
 		hr{ margin:10px 0px; }
 	</style>
 	<div id="contacts_resources">
-		<h1 class="page-heading screen-reader-only">Contacts and Resources Tab</h1>
+		<h1 class="page-heading screen-reader-only"><?php echo $LANG['CONTACTS_RESOURCE_TAB']; ?></h1>
 		<fieldset>
 			<legend><?php echo (isset($LANG['LINK_RESOURCE'])?$LANG['LINK_RESOURCE']:'Link Resource Listing'); ?></legend>
 			<div id="link-listing">
@@ -64,6 +65,7 @@ if($collid && $isEditor){
 				else echo (isset($LANG['NO_LINKS'])?$LANG['NO_LINKS']:'No links have yet been defined');
 				?>
 			</div>
+			<div id="data-container" data-contact-json="<?php echo htmlspecialchars($collMetaArr['contactjson']); ?>"></div>
 			<div class="field-block">
 				<form name="resourceLinkForm" action="collmetadata.php" method="post" onsubmit="return verifyResourceLinkForm(this)">
 					<div class="form-button">
@@ -252,9 +254,28 @@ if($collid && $isEditor){
 	</div>
 	<script type="text/javascript">
 		//var resourceJSON = [{"title":{"en":"link1","es":"enlace1"},"url":"https:\/\/swbiodiversity.org\/seinet\/"},{"title":{"en":"link2","es":"enlace2"},"url":"https:\/\/swbiodiversity.org\/seinet2\/"}];
-		var resourceJSON = <?php echo (isset($collMetaArr['resourcejson'])?$collMetaArr['resourcejson']:'[]'); ?>;
-		var langArr = [<?php echo '"'.implode('","', $langArr).'"';?>];
-		var contactJSON = <?php echo (isset($collMetaArr['contactjson'])?$collMetaArr['contactjson']:'[]'); ?>;
+		var resourceJSON = [];
+		var contactJSON = [];
+
+		var langArr = [<?= '"'.implode('","', $langArr).'"';?>];
+		const resourceElem = document.getElementById('resourceJsonInput');
+		const dataContainer = document.getElementById('data-container');
+
+		if(resourceElem && resourceElem.value) {
+			try {
+				resourceJSON = JSON.parse(resourceElem.value);
+			} catch(e) {
+				console.log(e)
+			}
+		}
+
+		if(dataContainer && dataContainer.getAttribute('data-contact-json')) {
+			try {
+				contactJSON = JSON.parse(dataContainer.getAttribute('data-contact-json'));
+			} catch(e) {
+				console.log(e)
+			}
+		}
 
 		function addLink(f){
 			var jsonObj = getFormObj(f);
