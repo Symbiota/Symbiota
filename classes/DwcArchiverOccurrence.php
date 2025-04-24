@@ -238,6 +238,8 @@ class DwcArchiverOccurrence extends Manager{
 			$this->occurDefArr['fields']['earliestEpochOrLowestSeries'] = '';
 			$this->occurDefArr['terms']['earliestAgeOrLowestStage'] = 'http://rs.tdwg.org/dwc/terms/earliestAgeOrLowestStage';
 			$this->occurDefArr['fields']['earliestAgeOrLowestStage'] = '';
+			$this->occurDefArr['terms']['earlyInterval'] = 'https://symbiota.org/terms/paleo-earlyInterval';
+			$this->occurDefArr['fields']['earlyInterval'] = 'paleo.earlyInterval';
 			$this->occurDefArr['terms']['latestEonOrHighestEonothem'] = 'http://rs.tdwg.org/dwc/terms/latestEonOrHighestEonothem';
 			$this->occurDefArr['fields']['latestEonOrHighestEonothem'] = '';
 			$this->occurDefArr['terms']['latestEraOrHighestErathem'] = 'http://rs.tdwg.org/dwc/terms/latestEraOrHighestErathem';
@@ -248,14 +250,12 @@ class DwcArchiverOccurrence extends Manager{
 			$this->occurDefArr['fields']['latestEpochOrHighestSeries'] = '';
 			$this->occurDefArr['terms']['latestAgeOrHighestStage'] = 'http://rs.tdwg.org/dwc/terms/latestAgeOrHighestStage';
 			$this->occurDefArr['fields']['latestAgeOrHighestStage'] = '';
+			$this->occurDefArr['terms']['lateInterval'] = 'https://symbiota.org/terms/paleo-lateInterval';
+			$this->occurDefArr['fields']['lateInterval'] = 'paleo.lateInterval';
 			$this->occurDefArr['terms']['lowestBiostratigraphicZone'] = 'http://rs.tdwg.org/dwc/terms/lowestBiostratigraphicZone';
 			$this->occurDefArr['fields']['lowestBiostratigraphicZone'] = 'paleo.biostratigraphy AS lowestBiostratigraphicZone';
 			$this->occurDefArr['terms']['highestBiostratigraphicZone'] = 'http://rs.tdwg.org/dwc/terms/highestBiostratigraphicZone';
 			$this->occurDefArr['fields']['highestBiostratigraphicZone'] = 'paleo.biostratigraphy AS highestBiostratigraphicZone';
-			$this->occurDefArr['terms']['earlyInterval'] = 'https://symbiota.org/terms/paleo-earlyInterval';
-			$this->occurDefArr['fields']['earlyInterval'] = 'paleo.earlyInterval';
-			$this->occurDefArr['terms']['lateInterval'] = 'https://symbiota.org/terms/paleo-lateInterval';
-			$this->occurDefArr['fields']['lateInterval'] = 'paleo.lateInterval';
 			$this->occurDefArr['terms']['absoluteAge'] = 'https://symbiota.org/terms/paleo-absoluteAge';
 			$this->occurDefArr['fields']['absoluteAge'] = 'paleo.absoluteAge';
 			$this->occurDefArr['terms']['storageLoc'] = 'https://symbiota.org/terms/paleo-storageLoc';
@@ -848,8 +848,10 @@ class DwcArchiverOccurrence extends Manager{
 	private function setPaleoTerm(&$r, $term, $targetArr){
 		if($term && !empty($this->paleoGtsArr[$term])){
 			$rankid = $this->paleoGtsArr[$term]['r'];
-			$r[$targetArr[$rankid]] = $term;
-			$this->setPaleoTerm($r, $this->paleoGtsArr[$term]['p'], $targetArr);
+			if ($rankid > 10){
+				$r[$targetArr[$rankid]] = $term;
+				$this->setPaleoTerm($r, $this->paleoGtsArr[$term]['p'], $targetArr);
+			}
 		}
 	}
 
