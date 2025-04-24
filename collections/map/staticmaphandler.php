@@ -6,7 +6,6 @@ else include_once($SERVER_ROOT . '/content/lang/collections/map/staticmaphandler
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $mapManager = new MapSupport();
-$taxaList = $mapManager->getTaxaList();
 
 //Set default bounding box for portal
 $boundLatMin = -90;
@@ -361,7 +360,7 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
                }
             });
 
-			   map.mapLayer.addControl(drawControl);
+			map.mapLayer.addControl(drawControl);
 
             map.mapLayer.on('draw:created', function(e) {
                if(e.layerType === "rectangle") {
@@ -430,7 +429,6 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
    <body onload="initialize()">
       <?php include($SERVER_ROOT . '/includes/header.php');?>
       <div id="service-container"
-         data-taxa-list="<?= htmlspecialchars(json_encode($taxaList))?>"
          data-bounds="<?= htmlspecialchars(json_encode($bounds))?>"
          data-lat="<?= htmlspecialchars($latCen)?>"
          data-lng="<?= htmlspecialchars($longCen)?>"
@@ -448,7 +446,7 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
             <div style="text-align: center; padding-top:0.5rem">
                <?php echo $LANG['MAPS_GENERATED'] ?>
                <span id="loading-bar-count">0</span>
-               <span id="loading-bar-max">/ <?php echo count($taxaList)?></span>
+               <span id="loading-bar-max">/1</span>
             </div>
          </div>
          <form id="thumbnailBuilder" name="thumbnailBuilder" method="post" action="">
