@@ -478,15 +478,16 @@ class OccurrenceTaxaManager {
 					}
 					else{
 						$term = $this->cleanInStr(trim($searchTaxon,'%'));
-						$term = preg_replace(array('/\s{1}x\s{1}/','/\s{1}X\s{1}/','/\s{1}\x{00D7}\s{1}/u'), ' _ ', $term);
+						//$term = preg_replace(array('/\s{1}x\s{1}/','/\s{1}X\s{1}/','/\s{1}\x{00D7}\s{1}/u'), ' _ ', $term);
 						if(array_key_exists('tid',$searchArr)){
+							//Term was located within the taxonomic thesaurus
 							$rankid = current($searchArr['tid']);
 							$tidArr = array_keys($searchArr['tid']);
 							$tidInArr = array_merge($tidInArr, $tidArr);
-							//Return matches that are not linked to thesaurus
 							if($rankid > 179){
-								if($this->exactMatchOnly) $sqlWhereTaxa .= 'OR (o.sciname = "' . $term . '") ';
-								else $sqlWhereTaxa .= 'OR (o.sciname LIKE "' . $term . '%") ';
+								//Return matches that are not linked to thesaurus
+								//if($this->exactMatchOnly) $sqlWhereTaxa .= 'OR (o.sciname = "' . $term . '") ';
+								//else $sqlWhereTaxa .= 'OR (o.sciname LIKE "' . $term . '%") ';
 							}
 						}
 						else{
@@ -506,11 +507,13 @@ class OccurrenceTaxaManager {
 							}
 							else{
 								$sqlWhereTaxa .= 'OR (o.sciname LIKE "' . $term . '%") ';
+								/*
 								if(!strpos($term,' _ ')){
 									//Accommodate for formats of hybrid designations within input and target data (e.g. x, multiplication sign, etc)
 									$term2 = preg_replace('/^([^\s]+\s{1})/', '$1 _ ', $term);
 									$sqlWhereTaxa .= 'OR (o.sciname LIKE "' . $term2 . '%") ';
 								}
+								*/
 							}
 						}
 					}
