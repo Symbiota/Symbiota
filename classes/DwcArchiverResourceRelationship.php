@@ -21,10 +21,10 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
     //Based on https://rs.gbif.org/extension/resource_relationship_2024-02-19.xml
 	private function setFieldArr(){
 		$columnArr = array();
-		$termArr['deleteMeOccid'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
-		$columnArr['deleteMeOccid'] = 'oa.occid';
-		$termArr['deleteMeOccidAssociate'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
-		$columnArr['deleteMeOccidAssociate'] = 'oa.occidAssociate';
+		// $termArr['deleteMeOccid'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
+		// $columnArr['deleteMeOccid'] = 'oa.occid';
+		// $termArr['deleteMeOccidAssociate'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
+		// $columnArr['deleteMeOccidAssociate'] = 'oa.occidAssociate';
 		$termArr['resourceRelationshipID'] = 'https://dwc.tdwg.org/terms/#dwc:resourceRelationshipID';
 		// $columnArr['resourceRelationshipID'] = 'IFNULL(IFNULL(IFNULL(oa.objectID, o.occurrenceID), o.recordID), oa.resourceUrl)';
 		$columnArr['resourceRelationshipID'] = 'IFNULL(oa.instanceID, oa.recordID)';
@@ -46,8 +46,6 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 		$termArr['relationshipRemarks'] = 'https://dwc.tdwg.org/terms/#dwc:relationshipRemarks';
 		$columnArr['relationshipRemarks'] = 'oa.notes';
 		$termArr['scientificName'] = 'https://symbiota.org/terms/scientificName';
-		// $columnArr['scientificName'] = 'o.sciname'; // fails for observed taxa
-		// $columnArr['scientificName'] = 'IFNULL(oa.verbatimSciName, o.sciname)'; //?
 		$columnArr['scientificName'] = 'IFNULL(t.sciname, oa.verbatimSciName)';
 
 		$termArr['associd'] = 'https://symbiota.org/terms/associd';
