@@ -200,9 +200,9 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 					$tempTermArr[] = 'Locality IS NULL';
 				}
 				else{
-					$tempSqlArr[] = '(o.municipality LIKE "'.$value.'%")';
+					//$tempSqlArr[] = '(o.municipality LIKE "'.$value.'%")';
 					if(strpos($value, ' ')){
-						$tempSqlArr[] = '(MATCH(o.locality) AGAINST("'.str_replace(' ', ' +', $value).'" IN BOOLEAN MODE) AND o.locality LIKE "%'.$value.'%")';
+						$tempSqlArr[] = '(MATCH(o.locality) AGAINST("+'.str_replace(' ', ' +', $value).'" IN BOOLEAN MODE) AND o.locality LIKE "%'.$value.'%")';
 					}
 					else{
 						$singleWords[] = $value;
@@ -257,7 +257,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			}
 			$this->displaySearchArr[] = $pointArr[0] . ' ' . $pointArr[1] . ' +- ' . $pointArr[2] . $pointArr[3];
 		}
-		elseif(array_key_exists('footprintGeoJson',$this->searchTermArr)){
+		elseif(!empty($this->searchTermArr['footprintGeoJson'])){
 			$sqlWhere .= "AND (ST_Within(p.lngLatPoint,ST_GeomFromGeoJSON('".$this->searchTermArr['footprintGeoJson']."'))) ";
 			$this->displaySearchArr[] = $this->LANG['POLYGON_SEARCH'];
 		}

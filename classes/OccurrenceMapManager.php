@@ -58,7 +58,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 			$color = 'e69e67';
 			$occidArr = array();
 			while($row = $result->fetch_object()){
-				if(!($row->DecimalLongitude <= 180 && $row->DecimalLongitude >= -180) || !($row->DecimalLatitude <= 90 && $row->DecimalLatitude >= -90)) { 
+				if(!($row->DecimalLongitude <= 180 && $row->DecimalLongitude >= -180) || !($row->DecimalLatitude <= 90 && $row->DecimalLatitude >= -90)) {
 					continue;
 				}
 				$occidArr[] = $row->occid;
@@ -195,18 +195,17 @@ class OccurrenceMapManager extends OccurrenceManager {
 	//SQL where functions
 	private function setGeoSqlWhere(){
 		global $USER_RIGHTS;
-		$sqlWhere = $this->getSqlWhere();
 		if($this->searchTermArr) {
 			$sqlWhere = $this->getSqlWhere();
 			$sqlWhere .= ($sqlWhere?' AND ':' WHERE ').'(o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) ';
-			if(array_key_exists('clid',$this->searchTermArr) && $this->searchTermArr['clid']) {
-				//Set Footprint for map to load
-				$this->setSearchTerm('footprintGeoJson', $this->voucherManager->getClFootprint());
-				if(isset($this->searchTermArr['cltype']) && $this->searchTermArr['cltype'] == 'all') {
-					$sqlWhere .= "AND (ST_Within(p.lngLatPoint,ST_GeomFromGeoJSON('". $this->voucherManager->getClFootprint()." '))) ";
-
+			if(!empty($this->searchTermArr['clid'])) {
+				if($this->voucherManager->getClFootprint()){
+					//Set Footprint for map to load
+					$this->setSearchTerm('footprintGeoJson', $this->voucherManager->getClFootprint());
+					if(isset($this->searchTermArr['cltype']) && $this->searchTermArr['cltype'] == 'all') {
+						$sqlWhere .= "AND (ST_Within(p.lngLatPoint,ST_GeomFromGeoJSON('". $this->voucherManager->getClFootprint()." '))) ";
+					}
 				}
-
 			}
 		}
 
