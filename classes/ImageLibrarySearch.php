@@ -1,6 +1,7 @@
 <?php
 include_once($SERVER_ROOT.'/classes/OccurrenceTaxaManager.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceSearchSupport.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 class ImageLibrarySearch extends OccurrenceTaxaManager{
 
@@ -41,7 +42,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		$sqlWhere = $this->sqlWhere;
 		if($this->imageCount == 1) $sqlWhere .= 'GROUP BY sciname ';
 		elseif($this->imageCount == 2) $sqlWhere .= 'GROUP BY m.occid ';
-		if($this->sqlWhere) $sqlWhere .= 'ORDER BY o.sciname ';
+		if($this->sqlWhere) $sqlWhere .= 'ORDER BY t.sciname ';
 		$bottomLimit = ($pageRequest - 1)*$cntPerPage;
 		$sql .= $this->getSqlBase().$sqlWhere.'LIMIT '.$bottomLimit.','.$cntPerPage;
 		//echo '<div>Spec sql: '.$sql.'</div>';
@@ -204,6 +205,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 			//Note mediaType is cleaned to only be 'image' and 'audio' strings
 			$sqlWhere .= 'AND (m.mediaType = "' . $this->mediaType . '") ';
 		}
+		$sqlWhere .= OccurrenceUtil::appendFullProtectionSQL();
 		if(strpos($sqlWhere,'ts.taxauthid')) $sqlWhere = str_replace('m.tid', 'ts.tid', $sqlWhere);
 		if($sqlWhere) $this->sqlWhere = 'WHERE '.substr($sqlWhere,4);
 	}

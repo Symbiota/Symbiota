@@ -99,10 +99,10 @@ class DwcArchiverImage{
 			$sql .= $conditionSql;
 			if($redactLocalities){
 				if($rareReaderArr){
-					$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL OR c.collid IN('.implode(',',$rareReaderArr).')) ';
+					$sql .= 'AND (o.recordSecurity = 0 OR c.collid IN('.implode(',',$rareReaderArr).')) ';
 				}
 				else{
-					$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL) ';
+					$sql .= 'AND (o.recordSecurity = 0) ';
 				}
 			}
 			$sql .= 'GROUP BY m.mediaID';
