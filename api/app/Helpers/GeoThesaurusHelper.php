@@ -7,21 +7,32 @@ class GeoThesaurusHelper
 {
     public static function getGeoterms($geoTerms)
     {
+        if (is_string($geoTerms))
+            $geoTerms = collect(explode(',', $geoTerms))->map(fn($item) => trim($item));
+        else
+            $geoTerms = collect($geoTerms);
+
         $entries = DB::table('geographicthesaurus')
-        ->whereIn('geoterm', $geoTerms)
-        ->get();
+            ->whereIn('geoterm', $geoTerms)
+            ->get();
 
-    $numcodes = $entries->pluck('numcode')->unique()->filter()->values();
-    if ($numcodes->isEmpty()) {
-        return $geoTerms;
-    }
+        $foundGeoterms = $entries->pluck('geoterm');
+        $iso2Codes = $entries->pluck('iso2')->filter()->unique();
 
-    $allGeoterms = DB::table('geographicthesaurus')
-        ->whereIn('numcode', $numcodes)
-        ->pluck('geoterm')
-        ->unique()
-        ->toArray();
+        $isoGeoterms = collect();
+        if ($iso2Codes->isNotEmpty()) {
+            $isoGeoterms = DB::table('geographicthesaurus')
+                ->whereIn('iso2', $iso2Codes)
+                ->pluck('geoterm');
+        }
 
-    return $allGeoterms;
+        $notFoundGeoterms = $geoTerms->diff($foundGeoterms);
+
+        return $isoGeoterms
+            ->merge($entries->whereNull('iso2')->pluck('geoterm'))
+            ->merge($notFoundGeoterms)
+            ->unique()
+            ->values()
+            ->toArray();
     }
 }
