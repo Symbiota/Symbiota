@@ -16,6 +16,7 @@ $imageCount = isset($_REQUEST['imagecount']) ? $_REQUEST['imagecount'] : 'all';
 $imageType = isset($_REQUEST['imagetype']) ? filter_var($_REQUEST['imagetype'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $pageNumber = array_key_exists('page', $_REQUEST) && is_numeric($_REQUEST['page']) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $cntPerPage = array_key_exists('cntperpage', $_REQUEST) && is_numeric($_REQUEST['cntperpage']) ? filter_var($_REQUEST['cntperpage'], FILTER_SANITIZE_NUMBER_INT) : 200;
+$sortBy = !empty($_REQUEST['sortby']) ? $_REQUEST['sortby'] : '';
 
 $mediaType = null;
 if(isset($_REQUEST['mediatype'])) {
@@ -38,7 +39,7 @@ $imgLibManager = new ImageLibrarySearch($connType);
 $imgLibManager->setTaxonType($taxonType);
 $imgLibManager->setUseThes($useThes);
 $imgLibManager->setTaxaStr($taxaStr);
-$imgLibManager->setPhotographerUid($phUid);
+$imgLibManager->setCreatorUid($phUid);
 $imgLibManager->setTagExistance($tagExistance);
 $imgLibManager->setTag($tag);
 $imgLibManager->setKeywords($keywords);
@@ -179,9 +180,9 @@ if($action == 'batchAssignTag'){
 							<select id="phuid" name="phuid">
 								<option value="">-----------------------------</option>
 								<?php
-								$uidList = $imgLibManager->getPhotographerUidArr();
+								$uidList = $imgLibManager->getCreatorUidArr();
 								foreach($uidList as $uid => $name){
-									echo '<option value="' . $uid . '" ' . ($imgLibManager->getPhotographerUid() == $uid ? 'SELECTED' : '') . '>' . $name . '</option>';
+									echo '<option value="' . $uid . '" ' . ($imgLibManager->getCreatorUid() == $uid ? 'SELECTED' : '') . '>' . $name . '</option>';
 								}
 								?>
 							</select>
@@ -281,14 +282,23 @@ if($action == 'batchAssignTag'){
 						</div>
 						<div class="row-div flex-form">
 							<div style="margin-bottom:5px;float:left;">
-								<label for="cntPerPage"><?= $LANG['COUNT_PER_PAGE'] ?></label>:
-								<select id="cntPerPage" name="cntperpage">
-									<option <?= ($cntPerPage==200 ? 'selected' : '') ?>>200</option>
-									<option <?= ($cntPerPage==400 ? 'selected' : '') ?>>400</option>
-									<option <?= ($cntPerPage==600 ? 'selected' : '') ?>>600</option>
-									<option <?= ($cntPerPage==800 ? 'selected' : '') ?>>800</option>
-									<option <?= ($cntPerPage==1000 ? 'selected' : '') ?>>1000</option>
-								</select>
+								<span style="margin-right: 15px">
+									<label for="cntPerPage"><?= $LANG['COUNT_PER_PAGE'] ?></label>:
+									<select id="cntPerPage" name="cntperpage">
+										<option <?= ($cntPerPage==200 ? 'selected' : '') ?>>200</option>
+										<option <?= ($cntPerPage==400 ? 'selected' : '') ?>>400</option>
+										<option <?= ($cntPerPage==600 ? 'selected' : '') ?>>600</option>
+										<option <?= ($cntPerPage==800 ? 'selected' : '') ?>>800</option>
+										<option <?= ($cntPerPage==1000 ? 'selected' : '') ?>>1000</option>
+									</select>
+								</span>
+								<span>
+									<label for="sortBy"><?= $LANG['SORT_BY'] ?></label>:
+									<select id="sortBy" name="sortby">
+										<option value="">---------------------</option>
+										<option value="sciname" <?= ($sortBy == 'sciname' ? 'selected' : '') ?>><?= $LANG['SCINAME'] ?></option>
+									</select>
+								</span>
 							</div>
 						</div>
 						<div class="row-div flex-form" style="padding-top:10px">
@@ -356,7 +366,7 @@ if($action == 'batchAssignTag'){
 				<div id="imagesdiv">
 					<div id="imagebox">
 						<?php
-						$imageArr = $imgLibManager->getImageArr($pageNumber, $cntPerPage);
+						$imageArr = $imgLibManager->getImageArr($pageNumber, $cntPerPage, $sortBy);
 						$imageArr = $imgLibManager->cleanOutArray($imageArr);
 						$recordCnt = $imgLibManager->getRecordCnt();
 						if($imageArr){

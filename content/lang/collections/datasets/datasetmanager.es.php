@@ -70,3 +70,4 @@ $LANG['DS_NOT_IDENTIFIED'] = 'ERROR: ID del conjunto de datos no identificado';
 $LANG['DROP_ICON'] = 'Icono de Colocación';
 $LANG['PAGE'] = 'Pagina';
 $LANG['OF'] = 'de';
+?>

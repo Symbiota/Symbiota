@@ -20,11 +20,11 @@ $LANG['ENTER_URL_IMG'] = 'Saisissez une URL vers un fichier multimédia déjà s
 $LANG['IMPORT_IMG_LOCAL'] = 'Importer du multimédia sur le serveur local';
 $LANG['UPLOAD_LOCAL'] = 'Télécharger du multimédia local';
 $LANG['CAPTION'] = 'Légende';
-$LANG['PHOTOGRAPHER'] = 'Photographe';
-$LANG['SEL_PHOTOGRAPHER'] = 'Sélectionner Photographe';
-$LANG['DISP_PHOTOGRAPHER_OVERRIDE'] = 'Afficher le champ de remplacement du photographe';
-$LANG['PHOTOGRAPHER_OVERRIDE'] = 'Remplacement du Photographe';
-$LANG['PHOTOGRAPHER_OVERRIDE_EXPLAIN'] = 'À utiliser uniquement lorsque le photographe n\'est pas trouvé dans le menu déroulant ci-dessus';
+$LANG['CREATOR'] = 'Créateur';
+$LANG['SEL_CREATOR'] = 'Sélectionner le créateur';
+$LANG['DISP_CREATOR_OVERRIDE'] = 'Afficher le champ de remplacement du créateur';
+$LANG['CREATOR_OVERRIDE'] = 'Remplacement du créateur';
+$LANG['CREATOR_OVERRIDE_EXPLAIN'] = 'Utiliser uniquement lorsque le créateur n\'est pas trouvé dans la liste déroulante ci-dessus';
 $LANG['MANAGER'] = 'Gestionnaire';
 $LANG['URL_TO_SOURCE'] = 'URL vers le projet source. À utiliser lors de la création d\'un lien vers un média externe.';
 $LANG['SOURCE_URL'] = 'URL source';
@@ -39,5 +39,7 @@ $LANG['MUST_HAVE_EDIT_PERM'] = 'Doit disposer de privilèges d\'édition pour la
 $LANG['IMAGE_LINKED_FROM'] = 'Multimédia lié depuis';
 $LANG['TP_IMAGE_EDITOR'] = 'Éditeur multimédia de profil de taxon';
 $LANG['CREATOR'] = 'Créateur';
+$LANG['NOT_SPECIFIED'] = 'Non spécifié';
+$LANG['NOT_SET'] = 'Non défini';
 
 ?>
