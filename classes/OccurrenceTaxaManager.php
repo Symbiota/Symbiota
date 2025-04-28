@@ -52,19 +52,19 @@ class OccurrenceTaxaManager {
 
 	public function setAssociationRequestVariable($inputArr = null, $exactMatchOnly = false){
 		if($exactMatchOnly) $this->exactMatchOnly = true;
-		
+
 		//sanitize
 		$associationTypeStr = $this->cleanAndAssignGeneric('association-type', $inputArr);
 		$associatedTaxonStr = $this->cleanAndAssignGeneric('associated-taxa', $inputArr);
 		if($associationTypeStr){
 			$this->associationArr['relationship'] = $associationTypeStr;
 		}
-		
+
 		if($associatedTaxonStr){
 			$this->associationArr['search'] = $associatedTaxonStr;
 			$this->setAssociationUseThes($inputArr, 'usethes-associations');
 			$defaultTaxaType = $this->setAndGetAssociationDefaultTaxaType($inputArr);
-			
+
 			$this->associationTaxaSearchTerms = explode(',',$associatedTaxonStr);
 			foreach($this->associationTaxaSearchTerms as $searchTermkey => $term){
 				$searchTerm = $this->cleanInputStr($term);
@@ -94,7 +94,7 @@ class OccurrenceTaxaManager {
 				$taxaType = TaxaSearchType::SCIENTIFIC_NAME;
 			}
 		}
-		$this->setSciNamesByVerns($searchTerm, $this->associationArr);
+		if($taxaType == TaxaSearchType::COMMON_NAME) $this->setSciNamesByVerns($searchTerm, $this->associationArr);
 		$this->setTaxonRankAndType($searchTerm, $taxaType, 'usethes-associations');
 	}
 
@@ -298,7 +298,7 @@ class OccurrenceTaxaManager {
 						$taxaType = TaxaSearchType::SCIENTIFIC_NAME;
 					}
 				}
-				$this->setSciNamesByVerns($searchTerm);
+				if($taxaType == TaxaSearchType::COMMON_NAME) $this->setSciNamesByVerns($searchTerm);
 				$sql = 'SELECT t.sciname, t.tid, t.rankid FROM taxa t ';
 				if(is_numeric($searchTerm)){
 					$searchTerm = filter_var($searchTerm, FILTER_SANITIZE_NUMBER_INT);
@@ -478,15 +478,16 @@ class OccurrenceTaxaManager {
 					}
 					else{
 						$term = $this->cleanInStr(trim($searchTaxon,'%'));
-						$term = preg_replace(array('/\s{1}x\s{1}/','/\s{1}X\s{1}/','/\s{1}\x{00D7}\s{1}/u'), ' _ ', $term);
+						//$term = preg_replace(array('/\s{1}x\s{1}/','/\s{1}X\s{1}/','/\s{1}\x{00D7}\s{1}/u'), ' _ ', $term);
 						if(array_key_exists('tid',$searchArr)){
+							//Term was located within the taxonomic thesaurus
 							$rankid = current($searchArr['tid']);
 							$tidArr = array_keys($searchArr['tid']);
 							$tidInArr = array_merge($tidInArr, $tidArr);
-							//Return matches that are not linked to thesaurus
 							if($rankid > 179){
-								if($this->exactMatchOnly) $sqlWhereTaxa .= 'OR (o.sciname = "' . $term . '") ';
-								else $sqlWhereTaxa .= 'OR (o.sciname LIKE "' . $term . '%") ';
+								//Return matches that are not linked to thesaurus
+								//if($this->exactMatchOnly) $sqlWhereTaxa .= 'OR (o.sciname = "' . $term . '") ';
+								//else $sqlWhereTaxa .= 'OR (o.sciname LIKE "' . $term . '%") ';
 							}
 						}
 						else{
@@ -506,11 +507,13 @@ class OccurrenceTaxaManager {
 							}
 							else{
 								$sqlWhereTaxa .= 'OR (o.sciname LIKE "' . $term . '%") ';
+								/*
 								if(!strpos($term,' _ ')){
 									//Accommodate for formats of hybrid designations within input and target data (e.g. x, multiplication sign, etc)
 									$term2 = preg_replace('/^([^\s]+\s{1})/', '$1 _ ', $term);
 									$sqlWhereTaxa .= 'OR (o.sciname LIKE "' . $term2 . '%") ';
 								}
+								*/
 							}
 						}
 					}

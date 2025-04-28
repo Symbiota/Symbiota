@@ -651,7 +651,7 @@ fieldset{
 	clear: both;
 }
 
-#dynamicPropertiesDiv input{
+#dynamicPropertiesDiv textarea {
 	width: 95%;
 }
 

@@ -442,8 +442,8 @@ class ActionRequest {
             $caption .= $imArr['sciname'];
          } elseif (isset($imArr['caption'])) {
             $caption .= $imArr['caption'];
-         } elseif (isset($imArr['photographer'])) {
-            $caption .= $imArr['photographer'];
+         } elseif (isset($imArr['creator'])) {
+            $caption .= $imArr['creator'];
          } else {
             $caption = $imArr['imagetype'];
          }

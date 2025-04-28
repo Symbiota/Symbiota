@@ -150,9 +150,9 @@ class OccurrenceController extends Controller {
 		$limit = $request->input('limit', 100);
 		$offset = $request->input('offset', 0);
 
-		$occurrenceModel = DB::table('omoccurrences as o')->select('o.*', 't.author')
-			->join('taxa as t', 'o.tidInterpreted', '=', 't.tid');
-		if ($request->has('collid')) {
+		$occurrenceModel = Occurrence::query();
+		$occurrenceModel->where('recordSecurity', '=', 0);
+		if($request->has('collid')){
 			$occurrenceModel->whereIn('collid', explode(',', $request->collid));
 		}
 		if ($request->has('catalogNumber')) {
@@ -384,8 +384,8 @@ class OccurrenceController extends Controller {
 			if (!$this->isAuthorized($user, $occurrence['collid'])) {
 				return response()->json(['error' => 'Unauthorized to edit target collection (collid = ' . $occurrence['collid'] . ')'], 401);
 			}
-			//$occurrence->update($request->all());
-			//return response()->json($occurrence, 200);
+			$occurrence->update($request->all());
+			return response()->json($occurrence, 200);
 		}
 		return response()->json(['error' => 'Unauthorized'], 401);
 	}
@@ -410,10 +410,10 @@ class OccurrenceController extends Controller {
 	 *	 path="/api/v2/occurrence/skeletal",
 	 *	 operationId="skeletalImport",
 	 *	 description="If an existing record can be located within target collection based on matching the input identifier, empty (null) target fields will be updated with Skeletal Data.
-			If the target field contains data, it will remain unaltered.
-			If multiple records are returned matching the input identifier, data will be added only to the first record.
-			If an identifier is not provided or a matching record can not be found, a new Skeletal record will be created and primed with input data.
-			Note that catalogNumber or otherCatalogNumber must be provided to create a new skeletal record. If processingStatus is not defined, new skeletal records will be set as 'unprocessed'",
+	 *		If the target field contains data, it will remain unaltered.
+	 *		If multiple records are returned matching the input identifier, data will be added only to the first record.
+	 *		If an identifier is not provided or a matching record can not be found, a new Skeletal record will be created and primed with input data.
+	 *		Note that catalogNumber or otherCatalogNumber must be provided to create a new skeletal record. If processingStatus is not defined, new skeletal records will be set as 'unprocessed'",
 	 *	 tags={""},
 	 *	 @OA\Parameter(
 	 *		name="apiToken",
@@ -662,10 +662,11 @@ class OccurrenceController extends Controller {
 			$responseArr['error'] = 'At this time, API call can only be triggered locally';
 			return response()->json($responseArr);
 		}
-		$occurrence = $this->getOccurrence($id);
+		$occid = $this->getOccid($id);
+		$occurrence = Occurrence::find($occid);
 		if (!$occurrence) {
 			$responseArr['status'] = 500;
-			$responseArr['error'] = 'Unable to locate occurrence record (occid = ' . $id . ')';
+			$responseArr['error'] = 'Unable to locate occurrence record (occid = '.$occid.')';
 			return response()->json($responseArr);
 		}
 		if ($occurrence->collection->managementType == 'Live Data') {
@@ -681,28 +682,43 @@ class OccurrenceController extends Controller {
 				if ($sourcePortalID && $remoteOccid) {
 					//Get remote occurrence data
 					$urlRoot = PortalIndex::where('portalID', $sourcePortalID)->value('urlRoot');
-					$url = $urlRoot . '/api/v2/occurrence/' . $remoteOccid;
-					if ($remoteOccurrence = $this->getAPIResponce($url)) {
-						unset($remoteOccurrence['modified']);
-						if (!$remoteOccurrence['occurrenceRemarks']) unset($remoteOccurrence['occurrenceRemarks']);
-						unset($remoteOccurrence['dynamicProperties']);
-						$updateObj = $this->update($id, new Request($remoteOccurrence));
-						$ts = date('Y-m-d H:i:s');
-						$changeArr = $updateObj->getOriginalContent()->getChanges();
-						$responseArr['status'] = $updateObj->status();
-						$responseArr['dataStatus'] = ($changeArr ? count($changeArr) . ' fields modified' : 'nothing modified');
-						$responseArr['fieldsModified'] = $changeArr;
-						$responseArr['sourceDateLastModified'] = $remoteOccurrence['dateLastModified'];
-						$responseArr['dateLastModified'] = $ts;
-						$responseArr['sourceCollectionUrl'] = $urlRoot . '/collections/misc/collprofiles.php?collid=' . $remoteOccurrence['collid'];
-						$responseArr['sourceRecordUrl'] = $urlRoot . '/collections/individual/index.php?occid=' . $remoteOccid;
-						//Reset Portal Occurrence refreshDate
-						$portalOccur = PortalOccurrence::where('occid', $id)->where('pubid', $pub->pubid)->first();
-						$portalOccur->refreshTimestamp = $ts;
-						$portalOccur->save();
-					} else {
+					$url = $urlRoot.'/api/v2/occurrence/'.$remoteOccid;
+					if($remoteOccurrence = $this->getAPIResponce($url)){
+						$remoteOccurrence['occid'] = $occid;
+						$remoteCollid = $remoteOccurrence['collid'];
+						$sourceDateLastModified = $remoteOccurrence['dateLastModified'];
+						$clearFieldArr = array(
+							'collid', 'dbpk', 'otherCatalogNumbers', 'tidInterpreted', 'dynamicProperties', 'processingStatus', 'recordID',
+							'modified', 'dateEntered' ,'dateLastModified', 'genus', 'specificEpithet', 'institutionCode', 'collectionCode',
+							'scientificNameAuthorship', 'identifiedBy', 'dateIdentified', 'verbatimEventDate', 'countryCode', 'localitySecurity'
+						);
+						foreach($clearFieldArr as $field){
+							unset($remoteOccurrence[$field]);
+						}
+						//Update local occurrence record with remote data
+						if($occurrence->update($remoteOccurrence)){
+							//print_r($occurrence); exit;
+							$ts = date('Y-m-d H:i:s');
+							$changeArr = $occurrence->getChanges();
+							$responseArr['status'] = 200;
+							$responseArr['numberFieldChanged'] = count($changeArr);
+							if($changeArr) $responseArr['fieldsModified'] = $changeArr;
+							$responseArr['sourceDateLastModified'] = $sourceDateLastModified;
+							$responseArr['dateLastModified'] = $ts;
+							$responseArr['sourceCollectionUrl'] = $urlRoot . '/collections/misc/collprofiles.php?collid=' . $remoteCollid;
+							$responseArr['sourceRecordUrl'] = $urlRoot . '/collections/individual/index.php?occid=' . $remoteOccid;
+							//Reset Portal Occurrence refreshDate
+							$portalOccur = PortalOccurrence::where('occid', $occid)->where('pubid', $pub->pubid)->first();
+							$portalOccur->refreshTimestamp = $ts;
+							$portalOccur->save();
+						}
+						else{
+							return response()->json(['error' => 'Unspecified Error'], 501);
+						}
+					}
+					else {
 						$responseArr['status'] = 400;
-						$responseArr['error'] = 'Unable to locate remote/source occurrence (sourceID = ' . $id . ')';
+						$responseArr['error'] = 'Unable to locate remote/source occurrence (sourceID = '.$occid.')';
 						$responseArr['sourceUrl'] = $url;
 					}
 				}
@@ -712,6 +728,14 @@ class OccurrenceController extends Controller {
 	}
 
 	//Helper functions
+	protected function getOccid($id){
+		if(!is_numeric($id)){
+			$occid = Occurrence::where('occurrenceID', $id)->orWhere('recordID', $id)->value('occid');
+			if(is_numeric($occid)) $id = $occid;
+		}
+		return $id;
+	}
+	
 	private function isAuthorized($user, $collid) {
 		foreach ($user['roles'] as $roles) {
 			if ($roles['role'] == 'SuperAdmin') return true;
