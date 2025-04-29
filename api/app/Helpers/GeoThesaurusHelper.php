@@ -16,23 +16,16 @@ class GeoThesaurusHelper
             ->whereIn('geoterm', $geoTerms)
             ->get();
 
-        $foundGeoterms = $entries->pluck('geoterm');
-        $iso2Codes = $entries->pluck('iso2')->filter()->unique();
+        $withIso2 = $entries->whereNotNull('iso2');
+        $withoutIso2 = $entries->whereNull('iso2');
 
-        $isoGeoterms = collect();
-        if ($iso2Codes->isNotEmpty()) {
-            $isoGeoterms = DB::table('geographicthesaurus')
-                ->whereIn('iso2', $iso2Codes)
-                ->pluck('geoterm');
-        }
+        $countryCodes = $withIso2->pluck('iso2')->unique()->values();
+        $matchedGeo = $entries->pluck('geoterm');
+        $unmatchedGeo = $geoTerms->diff($matchedGeo)->values();
 
-        $notFoundGeoterms = $geoTerms->diff($foundGeoterms);
-
-        return $isoGeoterms
-            ->merge($entries->whereNull('iso2')->pluck('geoterm'))
-            ->merge($notFoundGeoterms)
-            ->unique()
-            ->values()
-            ->toArray();
+        return [
+            'countryCode' => $countryCodes->toArray(),
+            'country' => $withoutIso2->pluck('geoterm')->merge($unmatchedGeo)->unique()->values()->toArray(),
+        ];
     }
 }
