@@ -150,53 +150,56 @@ class OccurrenceController extends Controller {
 		$limit = $request->input('limit', 100);
 		$offset = $request->input('offset', 0);
 
-		$occurrenceModel = Occurrence::query();
-		$occurrenceModel->where('recordSecurity', '=', 0);
+		$occurrenceModel = DB::table('omoccurrences as o')
+			->select('o.*', 't.author', 't.sciName as trueSciName')
+			->join('taxa as t', 'o.tidInterpreted', '=', 't.tid');
+		$occurrenceModel->where('o.recordSecurity', '=', 0);
 		if($request->has('collid')){
-			$occurrenceModel->whereIn('collid', explode(',', $request->collid));
+			$occurrenceModel->whereIn('o.collid', explode(',', $request->collid));
 		}
 		if ($request->has('catalogNumber')) {
-			$occurrenceModel->where('catalogNumber', $request->catalogNumber);
+			$occurrenceModel->where('o.catalogNumber', $request->catalogNumber);
 		}
 		if ($request->has('occurrenceID')) {
-			//$occurrenceModel->where('occurrenceID', $request->occurrenceID);
 			$occurrenceID = $request->occurrenceID;
 			$occurrenceModel->where(function ($query) use ($occurrenceID) {
-				$query->where('occurrenceID', $occurrenceID)->orWhere('recordID', $occurrenceID);
+				$query->where('o.occurrenceID', $occurrenceID)
+					->orWhere('o.recordID', $occurrenceID);
 			});
 		}
 		//Taxonomy
 		if ($request->has('family')) {
-			$occurrenceModel->where('family', $request->family);
+			$occurrenceModel->where('o.family', $request->family);
 		}
 		if ($request->has('sciname')) {
-			$occurrenceModel->where('sciname', $request->sciname);
+			$occurrenceModel->where('o.sciname', $request->sciname)
+				->orWhere('t.sciName', $request->sciname);
 		}
 		//Collector units
 		if ($request->has('recordedBy')) {
-			$occurrenceModel->where('recordedBy', $request->recordedBy);
+			$occurrenceModel->where('o.recordedBy', $request->recordedBy);
 		}
 		if ($request->has('recordedByLastName')) {
-			$occurrenceModel->where('recordedBy', 'LIKE', '%' . $request->recordedByLastName . '%');
+			$occurrenceModel->where('o.recordedBy', 'LIKE', '%' . $request->recordedByLastName . '%');
 		}
 		if ($request->has('recordNumber')) {
-			$occurrenceModel->where('recordNumber', $request->recordNumber);
+			$occurrenceModel->where('o.recordNumber', $request->recordNumber);
 		}
 		if ($request->has('eventDate')) {
-			$occurrenceModel->where('eventDate', $request->eventDate);
+			$occurrenceModel->where('o.eventDate', $request->eventDate);
 		}
 		if ($request->has('datasetID')) {
-			$occurrenceModel->where('datasetID', $request->datasetID);
+			$occurrenceModel->where('o.datasetID', $request->datasetID);
 		}
 		//Locality place names
 		if ($request->has('country')) {
-			$occurrenceModel->where('country', $request->country);
+			$occurrenceModel->where('o.country', $request->country);
 		}
 		if ($request->has('stateProvince')) {
-			$occurrenceModel->where('stateProvince', $request->stateProvince);
+			$occurrenceModel->where('o.stateProvince', $request->stateProvince);
 		}
 		if ($request->has('county')) {
-			$occurrenceModel->where('county', $request->county);
+			$occurrenceModel->where('o.county', $request->county);
 		}
 
 		$fullCnt = $occurrenceModel->count();
@@ -296,15 +299,12 @@ class OccurrenceController extends Controller {
 	 * )
 	 */
 	public function showOneOccurrenceIdentifications($id, Request $request) {
-		$occurrence = $this->getOccurrence($id);
+		$occurrence = Occurrence::find($id);
 		if (!$occurrence) {
 			return response()->json(['error' => 'Occurrence not found'], 404);
 		}
 		$identification = null;
-		$identification = DB::table('omoccurdeterminations')
-			->select('*')
-			->where('occid', $occurrence->occid)
-			->first();
+		$identification = $occurrence->identification;
 		if (!$identification) {
 			return response()->json(['error' => 'Occurrence found, but no identification found'], 404);
 		}
@@ -335,16 +335,13 @@ class OccurrenceController extends Controller {
 	 * )
 	 */
 	public function showOneOccurrenceMedia($id, Request $request) {
-		$occurrence = $this->getOccurrence($id);
+		$occurrence = Occurrence::find($id);
 		if (!$occurrence) {
 			return response()->json(['error' => 'Occurrence not found'], 404);
 		}
 		$media = null;
 		if ($occurrence) {
-			$media = DB::table('media')
-				->select('*')
-				->where('occid', $occurrence->occid)
-				->first();
+			$media=$occurrence->media;
 		}
 		if (!$media) {
 			return response()->json(['error' => 'Occurrence found, but no media found'], 404);
@@ -375,7 +372,7 @@ class OccurrenceController extends Controller {
 
 	public function update($id, Request $request) {
 		if ($user = $this->authenticate($request)) {
-			$occurrence = $this->getOccurrence($id);
+			$occurrence = Occurrence::find($id);
 			if (!$occurrence) {
 				return response()->json(['status' => 'failure', 'error' => 'Occurrence resource not found'], 400);
 			}
@@ -390,14 +387,14 @@ class OccurrenceController extends Controller {
 
 	public function delete($id, Request $request) {
 		if ($user = $this->authenticate($request)) {
-			$occurrence = $this->getOccurrence($id);
+			$occurrence = Occurrence::find($id);
 			if (!$occurrence) {
 				return response()->json(['status' => 'failure', 'error' => 'Occurrence resource not found'], 400);
 			}
 			if (!$this->isAuthorized($user, $occurrence['collid'])) {
 				return response()->json(['error' => 'Unauthorized to delete target collection (collid = ' . $occurrence['collid'] . ')'], 401);
 			}
-			//$occurrence->delete();
+			//$occurrence->delete(); // @TODO why is this disabled?
 			//return response('Occurrence Deleted Successfully', 200);
 		}
 		return response()->json(['error' => 'Unauthorized'], 401);
