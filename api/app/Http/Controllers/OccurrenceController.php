@@ -300,16 +300,15 @@ class OccurrenceController extends Controller {
 		if (!$occurrence) {
 			return response()->json(['error' => 'Occurrence not found'], 404);
 		}
-		return response()->json($occurrence->occid);
-		// $identification = null;
-		// $identification = DB::table('omoccurdeterminations')
-		// 	->select('*')
-		// 	->where('occid', $occurrence->occid)
-		// 	->first();
-		// if (!$identification) {
-		// 	return response()->json(['error' => 'Occurrence found, but no identification found'], 404);
-		// }
-		// return response()->json($identification);
+		$identification = null;
+		$identification = DB::table('omoccurdeterminations')
+			->select('*')
+			->where('occid', $occurrence->occid)
+			->first();
+		if (!$identification) {
+			return response()->json(['error' => 'Occurrence found, but no identification found'], 404);
+		}
+		return response()->json($identification);
 	}
 
 	/**
