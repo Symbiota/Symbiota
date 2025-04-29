@@ -735,7 +735,7 @@ class OccurrenceController extends Controller {
 		}
 		return $id;
 	}
-	
+
 	private function isAuthorized($user, $collid) {
 		foreach ($user['roles'] as $roles) {
 			if ($roles['role'] == 'SuperAdmin') return true;
@@ -769,12 +769,12 @@ class OccurrenceController extends Controller {
 		$occurrence = null;
 		if (is_numeric($decodedId)) {
 			$occurrence = DB::table('omoccurrences as o')
-				->select('o.*', 't.author')
+				->select('o.*', 't.author', 't.sciName as trueSciName')
 				->join('taxa as t', 'o.tidInterpreted', '=', 't.tid')
 				->where('occid', $decodedId)
 				->first();
 		} else {
-			$occurrence = DB::table('omoccurrences as o')->select('o.*', 't.author')
+			$occurrence = DB::table('omoccurrences as o')->select('o.*', 't.author', 't.sciName as trueSciName')
 				->join('taxa as t', 'o.tidInterpreted', '=', 't.tid')
 				->where('recordID', (string)$decodedId)
 				->orWhere('occurrenceID', (string)$decodedId)
