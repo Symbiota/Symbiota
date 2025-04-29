@@ -150,6 +150,7 @@ if ($schema == 'backup') {
 
 			if (array_key_exists('publicsearch', $_POST) && $_POST['publicsearch']) {
 				$dwcaHandler->setCustomWhereSql($occurManager->getSqlWhere());
+				$dwcaHandler->setPaleoWithSql($occurManager->getPaleoSqlWith());
 			} else {
 				//Request is coming from exporter.php for collection manager tools
 				if(isset($_POST['targetcollid'])) $dwcaHandler->setCollArr($_POST['targetcollid']);

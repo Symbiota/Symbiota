@@ -9,6 +9,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 
 	protected $searchTermArr = Array();
 	protected $sqlWhere;
+	protected $paleoSqlWith;
 	protected $displaySearchArr = Array();
 	protected $reset = 0;
 	protected $voucherManager;
@@ -56,6 +57,11 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 	public function getSqlWhere(){
 		if(!$this->sqlWhere) $this->setSqlWhere();
 		return $this->sqlWhere;
+	}
+
+	public function getPaleoSqlWith(){
+		if(!$this->paleoSqlWith) $this->setPaleoSqlWith();
+		return $this->paleoSqlWith;
 	}
 
 	protected function setSqlWhere(){
@@ -513,6 +519,15 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			//$this->sqlWhere = 'WHERE o.occid IS NULL ';
 		}
 		//echo $this->sqlWhere;
+	}
+
+	protected function setPaleoSqlWith() {
+		$paleoSqlWith = '';
+		if (array_key_exists("earlyInterval",$this->searchTermArr) || array_key_exists("lateInterval",$this->searchTermArr)) {
+			$paleoSqlWith .= "WITH searchRange AS (SELECT COALESCE((SELECT myaStart FROM omoccurpaleogts WHERE gtsterm = '"  . ($this->searchTermArr["earlyInterval"] ?? '') . "'), 5000) AS searchStart, ";
+			$paleoSqlWith .= "COALESCE((SELECT myaEnd FROM omoccurpaleogts WHERE gtsterm = '" . ($this->searchTermArr["lateInterval"] ?? '') ."'), 0) AS searchEnd) ";
+			$this->paleoSqlWith = $paleoSqlWith;
+		}
 	}
 
 	private function getAdditionIdentifiers($identFrag){

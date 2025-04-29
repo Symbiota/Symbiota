@@ -19,6 +19,9 @@ class DwcArchiverCore extends Manager{
 
 	protected $collArr;
 	private $customWhereSql;
+
+	private $paleoWithSql;
+
 	protected $conditionSql = '';
 	protected $conditionArr = array();
 	private $condAllowArr;
@@ -263,6 +266,10 @@ class DwcArchiverCore extends Manager{
 		$this->customWhereSql = $sql;
 	}
 
+	public function setPaleoWithSql($sql){
+		$this->paleoWithSql = $sql;
+	}
+
 	public function addCondition($field, $cond, $value = ''){
 		$cond = strtoupper(trim($cond));
 		if (!preg_match('/^[A-Za-z]+$/', $field)) return false;
@@ -407,6 +414,14 @@ class DwcArchiverCore extends Manager{
 			}
 			if (strpos($this->conditionSql, 'id.identifierValue')) {
 				$sql .= 'LEFT JOIN omoccuridentifiers id ON o.occid = id.occid ';
+			}
+			if($GLOBALS["ACTIVATE_PALEO"]){
+				$sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
+				if(strpos($this->conditionSql, 'early.myaStart')){
+					$sql .= 'JOIN omoccurpaleogts early ON paleo.earlyInterval = early.gtsterm ';
+					$sql .= 'JOIN omoccurpaleogts late ON paleo.lateInterval = late.gtsterm ';
+					$sql .= 'CROSS JOIN searchRange search ';
+				}
 			}
 		}
 		return $sql;
@@ -1656,6 +1671,8 @@ class DwcArchiverCore extends Manager{
 		if (!$this->conditionSql) return false;
 		$sql = $dwcOccurManager->getSqlOccurrences($this->occurrenceFieldArr['fields']);
 		$sql .= $this->getTableJoins() . $this->conditionSql;
+		if ($this->paleoWithSql)
+			$sql = $this->paleoWithSql . $sql;
 		if ($this->schemaType != 'backup') $sql .= ' LIMIT 1000000';
 		//Output header
 		$fieldArr = $this->occurrenceFieldArr['fields'];
@@ -1746,6 +1763,8 @@ class DwcArchiverCore extends Manager{
 				if ($this->schemaType == 'dwc') {
 					unset($r['localitySecurity']);
 					unset($r['collID']);
+					unset($r['biota']);
+
 					//Format dates
 					if($r['eventDate']){
 						if($r['eventDate'] == '0000-00-00') $r['eventDate'] = '';
@@ -1915,6 +1934,8 @@ class DwcArchiverCore extends Manager{
 
 		//Output records
 		$sql = DwcArchiverDetermination::getSql($this->determinationFieldArr['fields'], $this->getTableJoins(), $this->conditionSql);
+		if ($this->paleoWithSql)
+			$sql = $this->paleoWithSql . $sql;
 		if ($rs = $this->dataConn->query($sql, MYSQLI_USE_RESULT)) {
 			$previousDetID = 0;
 			while ($r = $rs->fetch_assoc()) {
@@ -1955,6 +1976,8 @@ class DwcArchiverCore extends Manager{
 
 		//Output records
 		$sql = DwcArchiverImage::getSqlImages($this->imageFieldArr['fields'], $this->conditionSql, $this->redactLocalities, $this->rareReaderArr);
+		if ($this->paleoWithSql)
+			$sql = $this->paleoWithSql . $sql;
 		if ($rs = $this->dataConn->query($sql, MYSQLI_USE_RESULT)) {
 			$this->setServerDomain();
 			$urlPathPrefix = $this->serverDomain . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) == '/' ? '' : '/');
