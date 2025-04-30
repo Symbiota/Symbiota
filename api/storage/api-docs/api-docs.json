@@ -1460,7 +1460,88 @@
                     {
                         "name": "eventDate",
                         "in": "query",
-                        "description": "Date as YYYY, YYYY-MM or YYYY-MM-DD",
+                        "description": "Date as YYYY, YYYY-MM or YYYY-MM-DD that the occurrence was collected or observed, or earliest date if a range was provided",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "eventDate2",
+                        "in": "query",
+                        "description": "Last date as YYYY, YYYY-MM or YYYY-MM-DD that the occurrence was collected or observed. Used when a date range is provided",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "decimalLatitude",
+                        "in": "query",
+                        "description": "Latitude as a decimal",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "decimalLongitude",
+                        "in": "query",
+                        "description": "Longitude as a decimal",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "minimumElevationInMeters",
+                        "in": "query",
+                        "description": "Minimum elevation in meters to nearest integer",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "maximumElevationInMeters",
+                        "in": "query",
+                        "description": "Maximum elevation in meters to nearest integer",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "verbatimElevation",
+                        "in": "query",
+                        "description": "Elevation expressed as a string (e.g., '1000 ft')",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "minimumDepthInMeters",
+                        "in": "query",
+                        "description": "Minimum depth in meters to nearest integer",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "maximumDepthInMeters",
+                        "in": "query",
+                        "description": "Maximum depth in meters to nearest integer",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "verbatimDepth",
+                        "in": "query",
+                        "description": "Depth expressed as a string (e.g., '200 ft')",
                         "required": false,
                         "schema": {
                             "type": "string"

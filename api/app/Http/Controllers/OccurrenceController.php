@@ -84,7 +84,70 @@ class OccurrenceController extends Controller {
 	 *	 @OA\Parameter(
 	 *		 name="eventDate",
 	 *		 in="query",
-	 *		 description="Date as YYYY, YYYY-MM or YYYY-MM-DD",
+	 *		 description="Date as YYYY, YYYY-MM or YYYY-MM-DD that the occurrence was collected or observed, or earliest date if a range was provided",
+	 *		 required=false,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="eventDate2",
+	 *		 in="query",
+	 *		 description="Last date as YYYY, YYYY-MM or YYYY-MM-DD that the occurrence was collected or observed. Used when a date range is provided",
+	 *		 required=false,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="decimalLatitude",
+	 *		 in="query",
+	 *		 description="Latitude as a decimal",
+	 *		 required=false,
+	 *		 @OA\Schema(type="number")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="decimalLongitude",
+	 *		 in="query",
+	 *		 description="Longitude as a decimal",
+	 *		 required=false,
+	 *		 @OA\Schema(type="number")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="minimumElevationInMeters",
+	 *		 in="query",
+	 *		 description="Minimum elevation in meters to nearest integer",
+	 *		 required=false,
+	 *		 @OA\Schema(type="integer")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="maximumElevationInMeters",
+	 *		 in="query",
+	 *		 description="Maximum elevation in meters to nearest integer",
+	 *		 required=false,
+	 *		 @OA\Schema(type="integer")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="verbatimElevation",
+	 *		 in="query",
+	 *		 description="Elevation expressed as a string (e.g., '1000 ft')",
+	 *		 required=false,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="minimumDepthInMeters",
+	 *		 in="query",
+	 *		 description="Minimum depth in meters to nearest integer",
+	 *		 required=false,
+	 *		 @OA\Schema(type="integer")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="maximumDepthInMeters",
+	 *		 in="query",
+	 *		 description="Maximum depth in meters to nearest integer",
+	 *		 required=false,
+	 *		 @OA\Schema(type="integer")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="verbatimDepth",
+	 *		 in="query",
+	 *		 description="Depth expressed as a string (e.g., '200 ft')",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
@@ -187,6 +250,33 @@ class OccurrenceController extends Controller {
 		}
 		if ($request->has('eventDate')) {
 			$occurrenceModel->where('o.eventDate', $request->eventDate);
+		}
+		if ($request->has('eventDate2')) {
+			$occurrenceModel->where('o.eventDate2', $request->eventDate2);
+		}
+		if ($request->has('decimalLatitude')) {
+			$occurrenceModel->where('o.decimalLatitude', $request->decimalLatitude);
+		}
+		if ($request->has('decimalLongitude')) {
+			$occurrenceModel->where('o.decimalLongitude', $request->decimalLongitude);
+		}
+		if ($request->has('minimumElevationInMeters')) {
+			$occurrenceModel->where('o.minimumElevationInMeters', $request->minimumElevationInMeters);
+		}
+		if ($request->has('maximumElevationInMeters')) {
+			$occurrenceModel->where('o.maximumElevationInMeters', $request->maximumElevationInMeters);
+		}
+		if ($request->has('verbatimElevation')) {
+			$occurrenceModel->where('o.verbatimElevation', $request->verbatimElevation);
+		}
+		if ($request->has('minimumDepthInMeters')) {
+			$occurrenceModel->where('o.minimumDepthInMeters', $request->minimumDepthInMeters);
+		}
+		if ($request->has('maximumDepthInMeters')) {
+			$occurrenceModel->where('o.maximumDepthInMeters', $request->maximumDepthInMeters);
+		}
+		if ($request->has('verbatimDepth')) {
+			$occurrenceModel->where('o.verbatimDepth', $request->verbatimDepth);
 		}
 		if ($request->has('datasetID')) {
 			$occurrenceModel->where('o.datasetID', $request->datasetID);
