@@ -62,7 +62,9 @@ $LANG['GBIF_DATASET'] = 'Página de Conjuntos de Datos GBIF';
 $LANG['YOU_SELECTED_GBIF_1'] = 'Ha seleccionado que el paquete de datos como Archivo Darwin Core para esta colección sea publicado en GBIF. Por favor diríjase a';
 $LANG['GBIF_ENDORSE'] = 'la página de Solicitud de Aval de GBIF';
 $LANG['TO'] = 'para';
-$LANG['YOU_SELECTED_GBIF_2'] = 'registrar su institución con GBIF y poder introducir abajo la Llave de Publicador provista por GBIF. Si su institución ya aparece en el buscador de Organizaciones de GBIF, ya ha sido asignada una Llave de Publicador GBIF. La llave es la parte restante de la URL luego de la última diagonal inversa (\) en la página de GBIF de su Institución. Si sus datos ya están publicados en GBIF, NO VUELVA A PUBLICARLOS sin antes contactar a GBIF (<a href=';
+$LANG['YOU_SELECTED_GBIF_2'] = 'registrar su institución con GBIF y poder introducir abajo la Llave de Publicador provista por GBIF. Si su institución ya aparece en el buscador de
+	Organizaciones de GBIF, ya ha sido asignada una Llave de Publicador GBIF. La llave es la parte restante de la URL luego de la última diagonal inversa (\) en la página de GBIF de su Institución.
+	Si sus datos ya están publicados en GBIF, NO VUELVA A PUBLICARLOS sin antes contactar a GBIF (<a href="mailto:helpdesk@gbif.org">helpdesk@gbif.org</a>) para coordinar las versiones de los datos.';
 $LANG['GBIF_KEY'] = 'Llave de GBIF';
 $LANG['VALIDATE_KEY'] = 'Validar Llave';
 $LANG['BEFORE_SUBMITTING'] = 'Antes de enviar los datos a GBIF, necesita contactar al escritorio de ayuda de GBIF';

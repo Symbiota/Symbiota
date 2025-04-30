@@ -4,6 +4,7 @@ include_once($SERVER_ROOT.'/classes/TaxonomyEditorManager.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomyloader.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/taxa/taxonomy/taxonomyloader.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomyloader.en.php');
 header('Content-Type: text/html; charset='.$CHARSET);
+$filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
 
 if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../taxa/taxonomy/taxonomyloader.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
@@ -40,8 +41,8 @@ if($isEditor){
 	?>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/taxa.sharedTaxonomyCRUD.js?ver=4"></script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/taxa.taxonomyloader.js?ver=4"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/taxa.sharedTaxonomyCRUD.js?ver=5"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/taxa.taxonomyloader.js?ver=5"></script>
 	<style>
 		.search-bar-long {
 			width: 35rem;
@@ -59,6 +60,13 @@ if($isEditor){
 	</style>
 </head>
 <body>
+<script src="<?php echo $filename ?>" type="text/javascript"></script>
+<script type="text/javascript">
+	document.addEventListener("DOMContentLoaded", function() {
+		const form = document.getElementById("loaderform");
+		handleFieldChange(form, true, "submitaction", translations.BUTTON_SUBMIT, form);
+	});
+</script>
 <?php
 	$displayLeftMenu = false;
 	include($SERVER_ROOT.'/includes/header.php');
@@ -266,7 +274,7 @@ if($isEditor){
 							<span id="required-display" ><?= $LANG['REQUIRED']; ?></span>
 						</div>
 						<div class="gridlike-form-row">
-							<button type="submit" id="submitaction" name="submitaction" value="submitNewName" ><?php echo $LANG['SUBMIT_NEW_NAME']; ?></button>
+							<button type="button" id="submitaction" name="submitaction" value="submitNewName" ><?php echo $LANG['SUBMIT_NEW_NAME']; ?></button>
 							<span id="error-display" style="color: var(--danger-color)"></span>
 						</div>
 					</div>

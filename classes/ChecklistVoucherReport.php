@@ -509,7 +509,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 	protected function getExportFileName(){
 		$fileName = $this->clName;
 		if($fileName){
-			$fileName = str_replace(Array('.',' ',':','&','"',"'",'(',')','[',']'),'',$fileName);
+			$fileName = str_replace(Array('.', ' ', ':', '&', '"', "'" ,'(' ,')' ,'[', ']', ','), '', $fileName);
 			if(strlen($fileName) > 20){
 				$nameArr = explode(' ',$fileName);
 				foreach($nameArr as $k => $w){

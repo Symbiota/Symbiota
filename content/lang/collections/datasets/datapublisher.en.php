@@ -62,12 +62,14 @@ $LANG['GBIF_DATASET'] = 'GBIF Dataset page';
 $LANG['YOU_SELECTED_GBIF_1'] = 'You have selected for this collection\'s DwC archive data package to be published to GBIF. Please go to the';
 $LANG['GBIF_ENDORSE'] = 'GBIF Endorsement Request page';
 $LANG['TO'] = 'to';
-$LANG['YOU_SELECTED_GBIF_2'] = 'register your institution with GBIF and enter the Publisher Key provided by GBIF below. If your institution already exists within the GBIF Organization lookup, a GBIF Publisher Key has already been assigned. The key is the remaining part of the URL after the last backslash of your institution\'s GBIF Data Provider page. If your data is already published in GBIF, DO NOT REPUBLISH without first contacting GBIF (<a href=';
+$LANG['YOU_SELECTED_GBIF_2'] = 'register your institution with GBIF and enter the Publisher Key provided by GBIF below. If your institution already exists within the GBIF Organization lookup,
+	a GBIF Publisher Key has already been assigned. The key is the remaining part of the URL after the last backslash of your institution\'s GBIF Data Provider page.
+	If your data is already published in GBIF, DO NOT REPUBLISH without first contacting GBIF (<a href="mailto:helpdesk@gbif.org">helpdesk@gbif.org</a>) to coordinate data versions.';
 $LANG['GBIF_KEY'] = 'GBIF Key';
 $LANG['VALIDATE_KEY'] = 'Validate Key';
 $LANG['BEFORE_SUBMITTING'] = 'Before submitting your data to GBIF, you will need to contact GBIF helpdesk';
 $LANG['WITH_REQUEST_1'] = 'with a request for the GBIF account user';
-$LANG['WITH_REQUEST_2'] = 'that is associated with this Symbiota portal installation									to be provided permission to create datasets within your GBIF publishing instance.									Click the email address in the previous sentence to automatically generate an email message within your email client,									or click';
+$LANG['WITH_REQUEST_2'] = 'that is associated with this Symbiota portal installation to be provided permission to create datasets within your GBIF publishing instance.									Click the email address in the previous sentence to automatically generate an email message within your email client,									or click';
 $LANG['HERE'] = 'here';
 $LANG['WITH_REQUEST_3'] = 'to display a recommended draft email message.';
 $LANG['EMAIL_DRAFT'] = 'Email Draft';

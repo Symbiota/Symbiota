@@ -33,7 +33,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		parent::__destruct();
 	}
 
-	public function getImageArr($pageRequest, $cntPerPage){
+	public function getImageArr($pageRequest, $cntPerPage, $sortBy = ''){
 		$retArr = Array();
 		$this->setSqlWhere();
 		$this->setRecordCnt();
@@ -41,7 +41,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		$sqlWhere = $this->sqlWhere;
 		if($this->imageCount == 1) $sqlWhere .= 'GROUP BY sciname ';
 		elseif($this->imageCount == 2) $sqlWhere .= 'GROUP BY m.occid ';
-		if($this->sqlWhere) $sqlWhere .= 'ORDER BY o.sciname ';
+		if($this->sqlWhere && $sortBy == 'sciname') $sqlWhere .= 'ORDER BY t.sciname, o.sciname ';
 		$bottomLimit = ($pageRequest - 1)*$cntPerPage;
 		$sql .= $this->getSqlBase().$sqlWhere.'LIMIT '.$bottomLimit.','.$cntPerPage;
 		//echo '<div>Spec sql: '.$sql.'</div>';

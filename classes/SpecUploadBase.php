@@ -632,7 +632,7 @@ class SpecUploadBase extends SpecUpload{
 
 	private function linkTempKeyValueOccurrences() {
 		$this->outputMsg('<li>Linking key value data to occurrences...</li>');
-		$sql = 'UPDATE uploadkeyvaluetemp kv JOIN uploadspectemp s ON s.dbpk = kv.dbpk SET kv.occid = s.occid, kv.collid = s.collid';
+		$sql = 'UPDATE uploadkeyvaluetemp kv JOIN uploadspectemp s ON s.dbpk = kv.dbpk AND kv.collid = s.collid SET kv.occid = s.occid ';
 		$this->conn->query($sql);
 	}
 
@@ -1295,11 +1295,9 @@ class SpecUploadBase extends SpecUpload{
 	private function setOtherCatalogNumbers(){
 		if($this->uploadType == $this->FILEUPLOAD || $this->uploadType == $this->SKELETAL){
 			$sql = 'INSERT IGNORE INTO omoccuridentifiers (occid, identifiername, identifiervalue, modifiedUid)
-			SELECT o.occid, kv.key as identifiername, kv.value as identifiervalue, kv.uploadUid as modifiedUid
-			FROM uploadkeyvaluetemp kv
-			INNER JOIN uploadspectemp u on u.dbpk = kv.dbpk
-			INNER JOIN omoccurrences o on o.occid = u.occid
-			WHERE type = "omoccuridentifiers" AND kv.collid = ?';
+			SELECT u.occid, kv.key as identifiername, kv.value as identifiervalue, kv.uploadUid as modifiedUid
+			FROM uploadkeyvaluetemp kv INNER JOIN uploadspectemp u ON kv.dbpk = u.dbpk AND kv.collid = u.collid
+			WHERE kv.type = "omoccuridentifiers" AND kv.collid = ?';
 
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param('i', $this->collId);
@@ -1797,6 +1795,12 @@ class SpecUploadBase extends SpecUpload{
 		//Optimize table to reset indexes
 		$this->conn->query('OPTIMIZE TABLE uploadimagetemp');
 
+		//Remove records from keyvalue temp table (uploadimagetemp)
+		$sql = 'DELETE FROM uploadkeyvaluetemp WHERE (collid IN('.$this->collId.'))';
+		$this->conn->query($sql);
+		//Optimize table to reset indexes
+		$this->conn->query('OPTIMIZE TABLE uploadkeyvaluetemp');
+
 		//Remove temporary dbpk values
 		if($this->collMetadataArr['managementtype'] == 'Live Data' || $this->uploadType == $this->SKELETAL){
 			$sql = 'UPDATE omoccurrences SET dbpk = NULL WHERE (collid IN('.$this->collId.')) AND (dbpk LIKE "SYMBDBPK-%")';
@@ -1914,15 +1918,16 @@ class SpecUploadBase extends SpecUpload{
 					}
 				}
 
-				if(isset($recMap['othercatalognumbers']) && $recMap['othercatalognumbers']) {
-					$parsedCatalogNumbers = self::parseOtherCatalogNumbers($recMap['othercatalognumbers']);
-					$sql = 'INSERT INTO uploadkeyvaluetemp (`key`, `value`, dbpk, uploadUid, type) VALUES (?, ?, ?, ?, "omoccuridentifiers")';
-					foreach ($parsedCatalogNumbers as $entry) {
-						QueryUtil::executeQuery($this->conn, $sql, [$entry['key'], $entry['value'], $recMap['dbpk'], $GLOBALS['SYMB_UID']]);
+				if($this->uploadType == $this->FILEUPLOAD || $this->uploadType == $this->SKELETAL){
+					if(isset($recMap['othercatalognumbers']) && $recMap['othercatalognumbers']) {
+						$parsedCatalogNumbers = self::parseOtherCatalogNumbers($recMap['othercatalognumbers']);
+						$sql = 'INSERT INTO uploadkeyvaluetemp (`key`, `value`, collid, dbpk, uploadUid, type) VALUES (?, ?, ?, ?, ?, "omoccuridentifiers")';
+						foreach ($parsedCatalogNumbers as $entry) {
+							QueryUtil::executeQuery($this->conn, $sql, [$entry['key'], $entry['value'], $this->collId, $recMap['dbpk'], $GLOBALS['SYMB_UID']]);
+						}
 					}
 				}
 			}
-
 		}
 	}
 	private static function parseOtherCatalogNumbers($otherCatalogNumbers): Array {
@@ -2085,7 +2090,7 @@ class SpecUploadBase extends SpecUpload{
 					$this->outputMsg('<li style="margin-left:20px;">File format could not be parsed: ' . $testUrl . ' </li>');
 					return false;
 				}
-				
+
 			}
 			$mime = Media::getAllowedMime($parsed_mime);
 			if(!$mime) {
@@ -2108,7 +2113,7 @@ class SpecUploadBase extends SpecUpload{
 				return false;
 			}
 
-			$recMap['mediaType'] = $mediaType; 
+			$recMap['mediaType'] = $mediaType;
 
 			if($this->verifyImageUrls){
 				if(!$this->urlExists($testUrl)){
@@ -2605,12 +2610,7 @@ class SpecUploadBase extends SpecUpload{
 
 	protected function encodeString($inStr){
 		if($inStr){
-			/*
-			 * Previously used 'UTF-8, ISO-8859-1, ISO-8859-15'
-			 * And UTF-8 strings were not being detected resulting
-			 * Double encoding issue. Proceed with caution when adding encoding params
-			 */
-			$inStr = mb_convert_encoding($inStr, $this->targetCharset, mb_detect_encoding($inStr));
+			$inStr = mb_convert_encoding($inStr, $this->targetCharset, mb_detect_encoding($inStr, ['ASCII', 'UTF-8', 'ISO-8859-1', 'ISO-8859-15']));
 
 			//Get rid of UTF-8 curly smart quotes and dashes
 			$badwordchars=array(

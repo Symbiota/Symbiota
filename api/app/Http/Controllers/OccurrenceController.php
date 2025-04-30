@@ -353,8 +353,8 @@ class OccurrenceController extends Controller{
 			if(!$this->isAuthorized($user, $occurrence['collid'])){
 				return response()->json(['error' => 'Unauthorized to edit target collection (collid = ' . $occurrence['collid'] . ')'], 401);
 			}
-			//$occurrence->update($request->all());
-			//return response()->json($occurrence, 200);
+			$occurrence->update($request->all());
+			return response()->json($occurrence, 200);
 		}
 		return response()->json(['error' => 'Unauthorized'], 401);
 	}
@@ -636,11 +636,11 @@ class OccurrenceController extends Controller{
 			$responseArr['error'] = 'At this time, API call can only be triggered locally';
 			return response()->json($responseArr);
 		}
-		$id = $this->getOccid($id);
-		$occurrence = Occurrence::find($id);
+		$occid = $this->getOccid($id);
+		$occurrence = Occurrence::find($occid);
 		if(!$occurrence){
 			$responseArr['status'] = 500;
-			$responseArr['error'] = 'Unable to locate occurrence record (occid = '.$id.')';
+			$responseArr['error'] = 'Unable to locate occurrence record (occid = '.$occid.')';
 			return response()->json($responseArr);
 		}
 		if($occurrence->collection->managementType == 'Live Data'){
@@ -658,27 +658,41 @@ class OccurrenceController extends Controller{
 					$urlRoot = PortalIndex::where('portalID', $sourcePortalID)->value('urlRoot');
 					$url = $urlRoot.'/api/v2/occurrence/'.$remoteOccid;
 					if($remoteOccurrence = $this->getAPIResponce($url)){
-						unset($remoteOccurrence['modified']);
-						if(!$remoteOccurrence['occurrenceRemarks']) unset($remoteOccurrence['occurrenceRemarks']);
-						unset($remoteOccurrence['dynamicProperties']);
-						$updateObj = $this->update($id, new Request($remoteOccurrence));
-						$ts = date('Y-m-d H:i:s');
-						$changeArr = $updateObj->getOriginalContent()->getChanges();
-						$responseArr['status'] = $updateObj->status();
-						$responseArr['dataStatus'] = ($changeArr?count($changeArr).' fields modified':'nothing modified');
-						$responseArr['fieldsModified'] = $changeArr;
-						$responseArr['sourceDateLastModified'] = $remoteOccurrence['dateLastModified'];
-						$responseArr['dateLastModified'] = $ts;
-						$responseArr['sourceCollectionUrl'] = $urlRoot.'/collections/misc/collprofiles.php?collid='.$remoteOccurrence['collid'];
-						$responseArr['sourceRecordUrl'] = $urlRoot.'/collections/individual/index.php?occid='.$remoteOccid;
-						//Reset Portal Occurrence refreshDate
-						$portalOccur = PortalOccurrence::where('occid', $id)->where('pubid', $pub->pubid)->first();
-						$portalOccur->refreshTimestamp = $ts;
-						$portalOccur->save();
+						$remoteOccurrence['occid'] = $occid;
+						$remoteCollid = $remoteOccurrence['collid'];
+						$sourceDateLastModified = $remoteOccurrence['dateLastModified'];
+						$clearFieldArr = array(
+							'collid', 'dbpk', 'otherCatalogNumbers', 'tidInterpreted', 'dynamicProperties', 'processingStatus', 'recordID',
+							'modified', 'dateEntered' ,'dateLastModified', 'genus', 'specificEpithet', 'institutionCode', 'collectionCode',
+							'scientificNameAuthorship', 'identifiedBy', 'dateIdentified', 'verbatimEventDate', 'countryCode', 'localitySecurity'
+						);
+						foreach($clearFieldArr as $field){
+							unset($remoteOccurrence[$field]);
+						}
+						//Update local occurrence record with remote data
+						if($occurrence->update($remoteOccurrence)){
+							//print_r($occurrence); exit;
+							$ts = date('Y-m-d H:i:s');
+							$changeArr = $occurrence->getChanges();
+							$responseArr['status'] = 200;
+							$responseArr['numberFieldChanged'] = count($changeArr);
+							if($changeArr) $responseArr['fieldsModified'] = $changeArr;
+							$responseArr['sourceDateLastModified'] = $sourceDateLastModified;
+							$responseArr['dateLastModified'] = $ts;
+							$responseArr['sourceCollectionUrl'] = $urlRoot . '/collections/misc/collprofiles.php?collid=' . $remoteCollid;
+							$responseArr['sourceRecordUrl'] = $urlRoot . '/collections/individual/index.php?occid=' . $remoteOccid;
+							//Reset Portal Occurrence refreshDate
+							$portalOccur = PortalOccurrence::where('occid', $occid)->where('pubid', $pub->pubid)->first();
+							$portalOccur->refreshTimestamp = $ts;
+							$portalOccur->save();
+						}
+						else{
+							return response()->json(['error' => 'Unspecified Error'], 501);
+						}
 					}
 					else {
 						$responseArr['status'] = 400;
-						$responseArr['error'] = 'Unable to locate remote/source occurrence (sourceID = '.$id.')';
+						$responseArr['error'] = 'Unable to locate remote/source occurrence (sourceID = '.$occid.')';
 						$responseArr['sourceUrl'] = $url;
 					}
 				}

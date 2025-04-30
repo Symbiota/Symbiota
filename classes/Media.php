@@ -949,6 +949,7 @@ class Media {
 			//Insert to other tables as needed like imagetags...
 
 			$media_id = $conn->insert_id;
+			self::update_tags($media_id, $clean_post_arr, $conn);
 
 			if($should_upload_file) {
 				//Check if file exists

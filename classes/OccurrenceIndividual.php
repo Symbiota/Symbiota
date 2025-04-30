@@ -508,7 +508,7 @@ class OccurrenceIndividual extends Manager{
 
 	private function setSource(){
 		if(isset($GLOBALS['ACTIVATE_PORTAL_INDEX']) && $GLOBALS['ACTIVATE_PORTAL_INDEX']){
-			$sql = 'SELECT o.remoteOccid, o.refreshTimestamp, o.verification, i.urlRoot, i.portalName
+			$sql = 'SELECT o.remoteOccid, o.refreshTimestamp, o.initialTimestamp, o.verification, i.urlRoot, i.portalName
 				FROM portaloccurrences o INNER JOIN portalpublications p ON o.pubid = p.pubid
 				INNER JOIN portalindex i ON p.portalID = i.portalID
 				WHERE (o.occid = ?) AND (p.direction = "import")';
@@ -520,14 +520,16 @@ class OccurrenceIndividual extends Manager{
 						$this->occArr['source']['type'] = 'symbiota';
 						$this->occArr['source']['url'] = $r->urlRoot.'/collections/individual/index.php?occid='.$r->remoteOccid;
 						$this->occArr['source']['sourceName'] = $r->portalName;
-						$this->occArr['source']['refreshTimestamp'] = $r->refreshTimestamp;
 						$this->occArr['source']['sourceID'] = $r->remoteOccid;
+						$this->occArr['source']['refreshTimestamp'] = $r->refreshTimestamp;
+						$this->occArr['source']['initialTimestamp'] = $r->initialTimestamp;
 					}
 					$rs->free();
 				}
 				$stmt->close();
 			}
 			if(isset($this->occArr['source'])){
+				//If there is a more recent batch upload event, than us that date as the refresh timestamp
 				$sql2 = 'SELECT uploadDate FROM omcollectionstats WHERE collid = ?';
 				if($stmt = $this->conn->prepare($sql2)){
 					$stmt->bind_param('i', $this->collid);
@@ -545,29 +547,29 @@ class OccurrenceIndividual extends Manager{
 
 		//Format link out to source
 		if(!isset($this->occArr['source']) && $this->metadataArr['individualurl']){
+			$sourceName = '';
 			$iUrl = trim($this->metadataArr['individualurl']);
 			if(substr($iUrl, 0, 4) != 'http'){
 				if($pos = strpos($iUrl, ':')){
-					$this->occArr['source']['title'] = substr($iUrl, 0, $pos);
+					$sourceName = substr($iUrl, 0, $pos);
 					$iUrl = trim(substr($iUrl, $pos+1));
 				}
 			}
-			$displayStr = '';
+			$sourceID = '';
 			$indUrl = '';
 			if(strpos($iUrl,'--DBPK--') !== false && $this->occArr['dbpk']){
 				$indUrl = str_replace('--DBPK--',$this->occArr['dbpk'],$iUrl);
-				$displayStr = $indUrl;
 			}
 			elseif(strpos($iUrl,'--CATALOGNUMBER--') !== false && $this->occArr['catalognumber']){
 				$indUrl = str_replace('--CATALOGNUMBER--',$this->occArr['catalognumber'],$iUrl);
-				$displayStr = $this->occArr['catalognumber'];
+				$sourceID = $this->occArr['catalognumber'];
 			}
 			elseif(strpos($iUrl,'--OTHERCATALOGNUMBERS--') !== false && $this->occArr['othercatalognumbers']){
 				foreach($this->occArr['othercatalognumbers'] as $idArr){
 					$tagName = $idArr['name'];
 					$idValue = $idArr['value'];
-					if(!$displayStr || $tagName == 'NEON sampleID' || $tagName == 'NEON sampleCode (barcode)'){
-						$displayStr = $tagName;
+					if(!$sourceID || $tagName == 'NEON sampleID' || $tagName == 'NEON sampleCode (barcode)'){
+						$sourceID = $idValue;
 						if($tagName == 'NEON sampleCode (barcode)') $iUrl = str_replace('sampleTag','barcode',$iUrl);
 						$indUrl = str_replace('--OTHERCATALOGNUMBERS--', $idValue, $iUrl);
 						if($tagName == 'NEON sampleCode (barcode)') break;
@@ -576,12 +578,14 @@ class OccurrenceIndividual extends Manager{
 			}
 			elseif(strpos($iUrl,'--OCCURRENCEID--') !== false && $this->occArr['occurrenceid']){
 				$indUrl = str_replace('--OCCURRENCEID--',$this->occArr['occurrenceid'],$iUrl);
-				$displayStr = $this->occArr['occurrenceid'];
+				$sourceID = $this->occArr['occurrenceid'];
 			}
 			$this->occArr['source']['type'] = 'external';
 			$this->occArr['source']['url'] = $indUrl;
-			$this->occArr['source']['displayStr'] = $displayStr;
+			$this->occArr['source']['sourceName'] = $sourceName;
+			$this->occArr['source']['sourceID'] = $sourceID;
 			$this->occArr['source']['refreshTimestamp'] = $this->metadataArr['uploaddate'];
+			$this->occArr['source']['initialTimestamp'] = $this->occArr['dateentered'];
 		}
 	}
 

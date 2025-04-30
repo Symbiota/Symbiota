@@ -43,6 +43,24 @@ $(document).ready(async function () {
     showOnlyRelevantFields(selectedValue);
   });
 
+  document.getElementById("taxoneditsubmit").addEventListener("click", async ()=>{
+    const formForSubmission = document.getElementById("taxoneditform");
+    const taxoneditsubmitElem = document.createElement("input", )
+    taxoneditsubmitElem.setAttribute("type", "hidden");
+    taxoneditsubmitElem.setAttribute("id", "taxonedits");
+    taxoneditsubmitElem.setAttribute("name", "taxonedits");
+    taxoneditsubmitElem.setAttribute("value", "submitEdits");
+    formForSubmission.appendChild(taxoneditsubmitElem);
+    const isUniqueEntry = await checkNameExistence(formForSubmission, true);
+    if(!isUniqueEntry){
+      if(confirm(translations.TAXON_NAME_MATCH_WARNING)){
+        formForSubmission.submit();  
+      }
+    }else{
+      formForSubmission.submit();
+    }
+  });
+
   $("#aefacceptedstr").autocomplete({
     source: "rpc/getacceptedsuggest.php",
     dataType: "json",

@@ -164,14 +164,17 @@ class TaxonProfile extends Manager {
 			}
 			$imgUrl = $imgObj['url'];
 			$imgAnchor = '../imagelib/imgdetails.php?mediaid='.$imgId;
-			$imgThumbnail = $imgObj['thumbnailurl'];
+			if ($imgObj['thumbnailurl'])
+				$displayUrl = $imgObj['thumbnailurl'];
+			else
+				$displayUrl = $imgObj['url'];
 			if(array_key_exists('MEDIA_DOMAIN',$GLOBALS)){
 				//Images with relative paths are on another server
 				if(substr($imgUrl,0,1)=="/") $imgUrl = $GLOBALS['MEDIA_DOMAIN'].$imgUrl;
-				if(substr($imgThumbnail,0,1)=="/") $imgThumbnail = $GLOBALS['MEDIA_DOMAIN'].$imgThumbnail;
+				if(substr($displayUrl,0,1)=="/") $displayUrl = $GLOBALS['MEDIA_DOMAIN'].$displayUrl;
 			}
 			if($imgObj['occid']) $imgAnchor = '../collections/individual/index.php?occid='.$imgObj['occid'];
-			if($useThumbnail) if($imgObj['thumbnailurl']) $imgUrl = $imgThumbnail;
+			if($useThumbnail) if($imgObj['thumbnailurl']) $imgUrl = $displayUrl;
 			echo '<div class="tptnimg"><a href="#" onclick="openPopup(\'' . htmlspecialchars($imgAnchor, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '\');return false;">';
 			$titleStr = $imgObj['caption'];
 			if($imgObj['sciname'] != $this->sciName) $titleStr .= ' (linked from '.$imgObj['sciname'].')';
@@ -204,14 +207,21 @@ class TaxonProfile extends Manager {
 			$rs1->free();
 
 			$tidStr = implode(",",$tidArr);
-			$sql = 'SELECT t.sciname, m.mediaID, m.mediaType, m.format, m.url, m.thumbnailurl, m.originalurl, m.caption, m.occid, m.creator, CONCAT_WS(" ",u.firstname,u.lastname) AS creatorLinked '.
-				'FROM media m LEFT JOIN users u ON m.creatorUid = u.uid '.
-				'INNER JOIN taxstatus ts ON m.tid = ts.tid '.
-				'INNER JOIN taxa t ON m.tid = t.tid '.
-				'WHERE (ts.taxauthid = 1 AND ts.tidaccepted IN ('.$tidStr.')) AND m.SortSequence < 500 AND (m.mediaType != "image" || m.thumbnailurl IS NOT NULL)';
+			$sortSequnceLimit = 500;
+			if($this->rankId < 220 && count($tidArr) > 50) $sortSequnceLimit = 20;
+			$sql = 'SELECT t.sciname, m.mediaID, m.mediaType, m.format, m.url, m.thumbnailurl, m.originalurl, m.caption, m.occid, m.creator, CONCAT_WS(" ",u.firstname,u.lastname) AS creatorLinked
+				FROM media m LEFT JOIN users u ON m.creatorUid = u.uid
+				INNER JOIN taxstatus ts ON m.tid = ts.tid
+				INNER JOIN taxa t ON m.tid = t.tid
+				WHERE (ts.taxauthid = 1) AND ts.tidaccepted IN ('.$tidStr.') AND m.SortSequence < ' . $sortSequnceLimit . ' AND (m.mediaType != "image" || m.thumbnailurl IS NOT NULL) ';
 			if(!$this->displayLocality) $sql .= 'AND m.occid IS NULL ';
-			$sql .= 'ORDER BY m.sortsequence, m.sortOccurrence LIMIT 100';
-
+			if($this->rankId < 220){
+				$sql .= 'ORDER BY m.sortsequence ';
+			}
+			else{
+				$sql .= 'ORDER BY m.sortsequence, m.sortOccurrence ';
+			}
+			$sql .= 'LIMIT 100';
 			$result = $this->conn->query($sql);
 			while($row = $result->fetch_object()){
 				$imgUrl = $row->url;
