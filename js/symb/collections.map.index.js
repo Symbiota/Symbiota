@@ -406,3 +406,157 @@ function openPopup(urlStr) {
   if (newWindow.opener == null) newWindow.opener = self;
   return false;
 }
+
+class LeafletMapGroup {
+  map;
+  markers = {};
+  layer_groups = {};
+  group_name;
+  group_map;
+  cluster;
+  tooltipText;
+  getIsHeatmapEnabled;
+
+  constructor(group_name, group_map, map, tooltipText, getIsHeatmapEnabled) {
+    this.group_name = group_name;
+    this.group_map = group_map;
+    this.map = map;
+    this.tooltipText = tooltipText;
+    this.getIsHeatmapEnabled = getIsHeatmapEnabled;
+  }
+
+  addMarker(id, marker) {
+    if (!this.markers[id]) {
+      this.markers[id] = [marker];
+    } else {
+      this.markers[id].push(marker);
+    }
+  }
+
+  drawGroup() {
+    if (clusteroff) {
+      for (let id in this.group_map) {
+        this.layer_groups[id].addTo(this.map.mapLayer);
+      }
+    } else if (!this.map.mapLayer.hasLayer(this.cluster)) {
+      for (let id in this.layer_groups) {
+        this.cluster.addLayer(this.layer_groups[id]);
+      }
+      this.cluster.addTo(this.map.mapLayer);
+    }
+  }
+
+  removeGroup() {
+    if (clusteroff) {
+      for (let id in this.group_map) {
+        this.map.mapLayer.removeLayer(this.layer_groups[id]);
+      }
+    } else {
+      this.map.mapLayer.removeLayer(this.cluster);
+      this.cluster.clearLayers();
+    }
+  }
+
+  resetGroup() {
+    this.cluster.clearLayers();
+    for (let id of Object.keys(this.group_map)) {
+      this.layer_groups[id].clearLayers();
+      this.markers[id] = [];
+    }
+  }
+
+  removeLayer(id) {
+    this.cluster.removeLayer(this.layer_groups[id]);
+    this.map.mapLayer.removeLayer(this.cluster);
+  }
+
+  addLayer(id) {
+    // First, add layer as both regular layer group and to cluster
+    this.layer_groups[id] = L.layerGroup(this.markers[id]);
+    this.cluster.addLayer(this.layer_groups[id]);
+
+    // Then, decide which is visible
+    if (!this.getIsHeatmapEnabled()) {
+      if (clusteroff) {
+        this.map.mapLayer.addLayer(this.layer_groups[id]);
+      } else if (!this.map.mapLayer.hasLayer(this.cluster)) {
+        this.cluster.addTo(this.map.mapLayer);
+      }
+    }
+  }
+
+  toggleClustering() {
+    if (clusteroff) {
+      if (this.map.mapLayer.hasLayer(this.cluster)) {
+        this.map.mapLayer.removeLayer(this.cluster);
+      }
+      for (let id in this.group_map) {
+        this.map.mapLayer.addLayer(this.layer_groups[id]);
+      }
+    } else {
+      for (let id in this.group_map) {
+        this.map.mapLayer.removeLayer(this.layer_groups[id]);
+      }
+      if (!this.map.mapLayer.hasLayer(this.cluster)) {
+        this.cluster.addTo(this.map.mapLayer);
+      }
+    }
+  }
+
+  genClusters() {
+    const clusterRendered =
+      this.cluster && this.map.mapLayer.hasLayer(this.cluster);
+    if (clusterRendered) {
+      this.map.mapLayer.removeLayer(this.cluster);
+    }
+
+    const firstId = Object.keys(this.group_map)[0]; // just use first taxon color
+    this.cluster = L.markerClusterGroup({
+      iconCreateFunction: (cluster) => {
+        const clusterColor = this.group_map[firstId].color;
+        let childCount = cluster.getChildCount();
+        cluster.bindTooltip(
+          `<div style="font-size:1rem">${this.tooltipText}</div>`
+        );
+        cluster.on('click', (e) => e.target.spiderfy());
+        return new L.DivIcon.CustomColor({
+          html:
+            `<div class="symbiota-cluster" style="background-color: #${clusterColor};"><span>` +
+            childCount +
+            '</span></div>',
+          className: `symbiota-cluster-div`,
+          iconSize: new L.Point(20, 20),
+          color: `#${clusterColor}77`,
+          mainColor: `#${clusterColor}`,
+        });
+      },
+      // cluster_radius is a global
+      maxClusterRadius: cluster_radius,
+      zoomToBoundsOnClick: false,
+      chunkedLoading: true,
+    });
+
+    for (let id in this.group_map) {
+      if (!this.layer_groups[id]) {
+        this.layer_groups[id] = L.layerGroup(this.markers[id]);
+      }
+      this.cluster.addLayer(this.layer_groups[id]);
+    }
+
+    if (!clusteroff && clusterRendered) {
+      this.cluster.addTo(this.map.mapLayer);
+    }
+  }
+
+  updateColor(id, color) {
+    this.group_map[id].color = color;
+
+    for (let marker of this.markers[id]) {
+      if (marker.options.icon && marker.options.icon.options.observation) {
+        marker.setIcon(getObservationSvg({ color: `#${color}`, size: 28 }));
+      } else {
+        marker.setStyle(getSpecimenSvg({ color: `#${color}`, size: 7 }));
+      }
+    }
+  }
+}
