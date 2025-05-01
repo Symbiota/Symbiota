@@ -190,10 +190,16 @@ class OccurrenceController extends Controller{
 		//Locality place names
 		if($request->has('country')){
 			$geoCountries = GeoThesaurusHelper::getGeoterms($request->country);
-			if (!empty($geoCountries['country']))
-				$occurrenceModel->whereIn('country', $geoCountries['country']);
-			if (!empty($geoCountries['countryCode'])) 
-				$occurrenceModel->orWhereIn('countryCode', $geoCountries['countryCode']);
+			if (!empty($geoCountries['country']) || !empty($geoCountries['countryCode'])) {
+				$occurrenceModel->where(function ($query) use ($geoCountries) {
+					if (!empty($geoCountries['countryCode'])) {
+						$query->whereIn('countryCode', $geoCountries['countryCode']);
+					}
+					if (!empty($geoCountries['country'])) {
+						$query->whereIn('country', $geoCountries['country'], "or");
+					}
+				});
+			}
 		}
 		if($request->has('stateProvince')){
 			$inputProvinces = array_map('trim', explode(',', $request->stateProvince));
