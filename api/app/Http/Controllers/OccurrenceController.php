@@ -216,7 +216,7 @@ class OccurrenceController extends Controller {
 
 		$occurrenceModel = DB::table('omoccurrences as o')
 			->select('o.*', 't.author', 't.sciName as trueSciName')
-			->join('taxa as t', 'o.tidInterpreted', '=', 't.tid');
+			->leftJoin('taxa as t', 'o.tidInterpreted', '=', 't.tid');
 		$occurrenceModel->where('o.recordSecurity', '=', 0);
 		if($request->has('collid')){
 			$occurrenceModel->whereIn('o.collid', explode(',', $request->collid));
@@ -860,12 +860,12 @@ class OccurrenceController extends Controller {
 		if (is_numeric($decodedId)) {
 			$occurrence = DB::table('omoccurrences as o')
 				->select('o.*', 't.author', 't.sciName as trueSciName')
-				->join('taxa as t', 'o.tidInterpreted', '=', 't.tid')
+				->leftJoin('taxa as t', 'o.tidInterpreted', '=', 't.tid')
 				->where('occid', $decodedId)
 				->first();
 		} else {
 			$occurrence = DB::table('omoccurrences as o')->select('o.*', 't.author', 't.sciName as trueSciName')
-				->join('taxa as t', 'o.tidInterpreted', '=', 't.tid')
+				->leftJoin('taxa as t', 'o.tidInterpreted', '=', 't.tid')
 				->where('recordID', (string)$decodedId)
 				->orWhere('occurrenceID', (string)$decodedId)
 				->first();
