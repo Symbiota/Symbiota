@@ -137,6 +137,7 @@ class CollectionController extends Controller{
 	 * 		@OA\MediaType(
 	 * 			mediaType="application/json",
 	 * 			@OA\Schema(
+	 * 				required={"institutionCode", "collectionName", "collType", "managementType", "publicEdits"},
 	 * 				@OA\Property(
 	 * 					property="institutionCode",
 	 * 					type="string",
@@ -188,18 +189,21 @@ class CollectionController extends Controller{
 	 *  				@OA\Property(
 	 * 					property="collType",
 	 * 					type="string",
+	 * 					enum={"Preserved Specimens", "General Observations", "Observations"},
 	 * 					description="'Preserved Specimens', 'General Observations', or 'Observations'. Preserved Specimens signify a collection type that contains physical samples that are available for inspection by researchers and taxonomic experts. Use Observations when the record is not based on a physical specimen. Personal Observation Management is a dataset where registered users can independently manage their own subset of records. Records entered into this dataset are explicitly linked to the user’s profile and can only be edited by them. This type of collection is typically used by field researchers to manage their collection data and print labels prior to depositing the physical material within a collection. Even though personal collections are represented by a physical sample, they are classified as “observations” until the physical material is publicly available within a collection",
 	 * 					maxLength=45
 	 * 				),
 	 *  				@OA\Property(
 	 * 					property="managementType",
 	 * 					type="string",
+	 * 					enum={"Snapshot", "Live Data"},
 	 * 					description="Use 'Snapshot' when there is a separate in-house database maintained in the collection and the dataset within the Symbiota portal is only a periodically updated snapshot of the central database. A 'Live Data' dataset is when the data is managed directly within the portal and the central database is the portal data",
 	 * 					maxLength=45
 	 * 				),
 	 *  				@OA\Property(
 	 * 					property="publicEdits",
 	 * 					type="integer",
+	 * 					enum={0,1},
 	 * 					description="The option to enable public edits (1 for yes, 0 for no)",
 	 * 					maxLength=1
 	 * 				),

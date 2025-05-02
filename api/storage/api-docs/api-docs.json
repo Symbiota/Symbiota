@@ -86,6 +86,13 @@
                     "content": {
                         "application/json": {
                             "schema": {
+                                "required": [
+                                    "institutionCode",
+                                    "collectionName",
+                                    "collType",
+                                    "managementType",
+                                    "publicEdits"
+                                ],
                                 "properties": {
                                     "institutionCode": {
                                         "description": "The name (or acronym) in use by the institution having custody of the occurrence records",
@@ -130,17 +137,30 @@
                                     "collType": {
                                         "description": "'Preserved Specimens', 'General Observations', or 'Observations'. Preserved Specimens signify a collection type that contains physical samples that are available for inspection by researchers and taxonomic experts. Use Observations when the record is not based on a physical specimen. Personal Observation Management is a dataset where registered users can independently manage their own subset of records. Records entered into this dataset are explicitly linked to the user’s profile and can only be edited by them. This type of collection is typically used by field researchers to manage their collection data and print labels prior to depositing the physical material within a collection. Even though personal collections are represented by a physical sample, they are classified as “observations” until the physical material is publicly available within a collection",
                                         "type": "string",
-                                        "maxLength": 45
+                                        "maxLength": 45,
+                                        "enum": [
+                                            "Preserved Specimens",
+                                            "General Observations",
+                                            "Observations"
+                                        ]
                                     },
                                     "managementType": {
                                         "description": "Use 'Snapshot' when there is a separate in-house database maintained in the collection and the dataset within the Symbiota portal is only a periodically updated snapshot of the central database. A 'Live Data' dataset is when the data is managed directly within the portal and the central database is the portal data",
                                         "type": "string",
-                                        "maxLength": 45
+                                        "maxLength": 45,
+                                        "enum": [
+                                            "Snapshot",
+                                            "Live Data"
+                                        ]
                                     },
                                     "publicEdits": {
                                         "description": "The option to enable public edits (1 for yes, 0 for no)",
                                         "type": "integer",
-                                        "maxLength": 1
+                                        "maxLength": 1,
+                                        "enum": [
+                                            0,
+                                            1
+                                        ]
                                     },
                                     "rightsHolder": {
                                         "description": "The organization or person managing or owning the rights of the resource. For more details, see Darwin Core definition",
