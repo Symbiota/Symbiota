@@ -6,6 +6,7 @@ use App\Models\Occurrence;
 use App\Models\PortalIndex;
 use App\Models\PortalOccurrence;
 use App\Helpers\OccurrenceHelper;
+use App\Helpers\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -240,10 +241,14 @@ class OccurrenceController extends Controller {
 		}
 		//Collector units
 		if ($request->has('recordedBy')) {
-			$occurrenceModel->where('o.recordedBy', $request->recordedBy);
+			// $occurrenceModel->where('o.recordedBy', $request->recordedBy);
+			// $occurrenceModel->whereRaw("MATCH(o.recordedBy) AGAINST (? IN BOOLEAN MODE)", [Helper::readyPhraseForBooleanModeFulltextSearch($request->recordedBy)]);
+			$occurrenceModel->whereRaw("MATCH(o.recordedBy) AGAINST (? IN NATURAL LANGUAGE MODE)", [$request->recordedBy]);
 		}
 		if ($request->has('recordedByLastName')) {
-			$occurrenceModel->where('o.recordedBy', 'LIKE', '%' . $request->recordedByLastName . '%');
+			// $occurrenceModel->where('o.recordedBy', 'LIKE', '%' . $request->recordedByLastName . '%');
+			// $occurrenceModel->whereRaw("MATCH(o.recordedBy) AGAINST (? IN BOOLEAN MODE)", [Helper::readyPhraseForBooleanModeFulltextSearch($request->recordedByLastName)]);
+			$occurrenceModel->whereRaw("MATCH(o.recordedBy) AGAINST (? IN NATURAL LANGUAGE MODE)", [$request->recordedByLastName]);
 		}
 		if ($request->has('recordNumber')) {
 			$occurrenceModel->where('o.recordNumber', $request->recordNumber);
