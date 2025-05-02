@@ -137,7 +137,7 @@ class TaxonomyController extends Controller {
 		//Set status and parent (can't use Eloquent model due to table containing complex PKs)
 		$taxStatus = DB::table('taxstatus as s')
 			->select('s.parentTid', 's.taxonomicSource', 's.unacceptabilityReason', 's.notes', 'a.tid', 'a.sciname', 'a.author')
-			->join('taxa as a', 's.tidAccepted', '=', 'a.tid')
+			->leftJoin('taxa as a', 's.tidAccepted', '=', 'a.tid')
 			->where('s.tid', $id)->where('s.taxauthid', 1);
 		$taxStatusResult = $taxStatus->get();
 		$taxonObj->parentTid = $taxStatusResult[0]->parentTid;
@@ -160,7 +160,7 @@ class TaxonomyController extends Controller {
 		//Set parent
 		$parStatus = DB::table('taxaenumtree as e')
 			->select('p.tid', 'p.sciname as scientificName', 'p.author', 'p.rankid')
-			->join('taxa as p', 'e.parentTid', '=', 'p.tid')
+			->leftJoin('taxa as p', 'e.parentTid', '=', 'p.tid')
 			->where('e.tid', $id)->where('e.taxauthid', 1);
 		$parStatusResult = $parStatus->get();
 		$taxonObj->classification = $parStatusResult;
