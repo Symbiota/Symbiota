@@ -29,6 +29,7 @@ $router->get('/v2', function () use ($router) {
 $router->group(['prefix' => 'v2'], function () use ($router) {
 
 	$router->get('collection',  ['uses' => 'CollectionController@showAllCollections']);
+	$router->post('collection',  ['uses' => 'CollectionController@create']);
 	$router->get('collection/{id}', ['uses' => 'CollectionController@showOneCollection']);
 
 	$router->get('occurrence',  ['uses' => 'OccurrenceController@showAllOccurrences']);
