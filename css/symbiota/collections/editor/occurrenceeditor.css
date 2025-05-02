@@ -34,6 +34,10 @@ fieldset{
 	width: 795px;
 }
 
+#admindiv select{
+	width: 100%;
+}
+
 #occedittabs{
 	font-family: Arial,Helvetica,sans-serif;
 }
