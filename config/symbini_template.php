@@ -101,7 +101,7 @@ $THIRD_PARTY_OID_AUTH_ENABLED = false;
 
 $SHOULD_USE_MINIMAL_MAP_HEADER = false;
 
-$DATE_DEFAULT_TIMEZONE = 'America/Phoenix'; // This should be set to match server default timezone
+$DATE_DEFAULT_TIMEZONE = NULL; // This should be set if server default timezone isn't populated correctly by deafult (e.g., $DATE_DEFAULT_TIMEZONE = 'America/Phoenix';)
 
 $COOKIE_SECURE = false;
 if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) {
