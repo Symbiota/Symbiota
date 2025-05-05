@@ -187,10 +187,10 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['locality'] = 'o.locality';
 		$this->occurDefArr['terms']['locationRemarks'] = 'http://rs.tdwg.org/dwc/terms/locationRemarks';
 		$this->occurDefArr['fields']['locationRemarks'] = 'o.locationremarks';
-		$this->occurDefArr['terms']['localitySecurity'] = 'https://symbiota.org/terms/localitySecurity';
-		$this->occurDefArr['fields']['localitySecurity'] = 'o.localitySecurity';
-		$this->occurDefArr['terms']['localitySecurityReason'] = 'https://symbiota.org/terms/localitySecurityReason';
-		$this->occurDefArr['fields']['localitySecurityReason'] = 'o.localitySecurityReason';
+		$this->occurDefArr['terms']['recordSecurity'] = 'https://symbiota.org/terms/recordSecurity';
+		$this->occurDefArr['fields']['recordSecurity'] = 'o.recordSecurity';
+		$this->occurDefArr['terms']['securityReason'] = 'https://symbiota.org/terms/securityReason';
+		$this->occurDefArr['fields']['securityReason'] = 'o.securityReason';
 		$this->occurDefArr['terms']['decimalLatitude'] = 'http://rs.tdwg.org/dwc/terms/decimalLatitude';
 		$this->occurDefArr['fields']['decimalLatitude'] = 'o.decimalLatitude';
 		$this->occurDefArr['terms']['decimalLongitude'] = 'http://rs.tdwg.org/dwc/terms/decimalLongitude';
@@ -230,36 +230,36 @@ class DwcArchiverOccurrence extends Manager{
 			$this->occurDefArr['fields']['geologicalContextID'] = 'paleo.geologicalContextID';
 			$this->occurDefArr['terms']['earliestEonOrLowestEonothem'] = 'http://rs.tdwg.org/dwc/terms/earliestEonOrLowestEonothem';
 			$this->occurDefArr['fields']['earliestEonOrLowestEonothem'] = '';
-			$this->occurDefArr['terms']['latestEonOrHighestEonothem'] = 'http://rs.tdwg.org/dwc/terms/latestEonOrHighestEonothem';
-			$this->occurDefArr['fields']['latestEonOrHighestEonothem'] = '';
 			$this->occurDefArr['terms']['earliestEraOrLowestErathem'] = 'http://rs.tdwg.org/dwc/terms/earliestEraOrLowestErathem';
 			$this->occurDefArr['fields']['earliestEraOrLowestErathem'] = '';
-			$this->occurDefArr['terms']['latestEraOrHighestErathem'] = 'http://rs.tdwg.org/dwc/terms/latestEraOrHighestErathem';
-			$this->occurDefArr['fields']['latestEraOrHighestErathem'] = '';
 			$this->occurDefArr['terms']['earliestPeriodOrLowestSystem'] = 'http://rs.tdwg.org/dwc/terms/earliestPeriodOrLowestSystem';
 			$this->occurDefArr['fields']['earliestPeriodOrLowestSystem'] = '';
-			$this->occurDefArr['terms']['latestPeriodOrHighestSystem'] = 'http://rs.tdwg.org/dwc/terms/latestPeriodOrHighestSystem';
-			$this->occurDefArr['fields']['latestPeriodOrHighestSystem'] = '';
 			$this->occurDefArr['terms']['earliestEpochOrLowestSeries'] = 'http://rs.tdwg.org/dwc/terms/earliestEpochOrLowestSeries';
 			$this->occurDefArr['fields']['earliestEpochOrLowestSeries'] = '';
-			$this->occurDefArr['terms']['latestEpochOrHighestSeries'] = '	http://rs.tdwg.org/dwc/terms/latestEpochOrHighestSeries';
-			$this->occurDefArr['fields']['latestEpochOrHighestSeries'] = '';
 			$this->occurDefArr['terms']['earliestAgeOrLowestStage'] = 'http://rs.tdwg.org/dwc/terms/earliestAgeOrLowestStage';
 			$this->occurDefArr['fields']['earliestAgeOrLowestStage'] = '';
+			$this->occurDefArr['terms']['earlyInterval'] = 'https://symbiota.org/terms/paleo-earlyInterval';
+			$this->occurDefArr['fields']['earlyInterval'] = 'paleo.earlyInterval';
+			$this->occurDefArr['terms']['latestEonOrHighestEonothem'] = 'http://rs.tdwg.org/dwc/terms/latestEonOrHighestEonothem';
+			$this->occurDefArr['fields']['latestEonOrHighestEonothem'] = '';
+			$this->occurDefArr['terms']['latestEraOrHighestErathem'] = 'http://rs.tdwg.org/dwc/terms/latestEraOrHighestErathem';
+			$this->occurDefArr['fields']['latestEraOrHighestErathem'] = '';
+			$this->occurDefArr['terms']['latestPeriodOrHighestSystem'] = 'http://rs.tdwg.org/dwc/terms/latestPeriodOrHighestSystem';
+			$this->occurDefArr['fields']['latestPeriodOrHighestSystem'] = '';
+			$this->occurDefArr['terms']['latestEpochOrHighestSeries'] = '	http://rs.tdwg.org/dwc/terms/latestEpochOrHighestSeries';
+			$this->occurDefArr['fields']['latestEpochOrHighestSeries'] = '';
 			$this->occurDefArr['terms']['latestAgeOrHighestStage'] = 'http://rs.tdwg.org/dwc/terms/latestAgeOrHighestStage';
 			$this->occurDefArr['fields']['latestAgeOrHighestStage'] = '';
+			$this->occurDefArr['terms']['lateInterval'] = 'https://symbiota.org/terms/paleo-lateInterval';
+			$this->occurDefArr['fields']['lateInterval'] = 'paleo.lateInterval';
 			$this->occurDefArr['terms']['lowestBiostratigraphicZone'] = 'http://rs.tdwg.org/dwc/terms/lowestBiostratigraphicZone';
 			$this->occurDefArr['fields']['lowestBiostratigraphicZone'] = 'paleo.biostratigraphy AS lowestBiostratigraphicZone';
 			$this->occurDefArr['terms']['highestBiostratigraphicZone'] = 'http://rs.tdwg.org/dwc/terms/highestBiostratigraphicZone';
 			$this->occurDefArr['fields']['highestBiostratigraphicZone'] = 'paleo.biostratigraphy AS highestBiostratigraphicZone';
-			$this->occurDefArr['terms']['earlyInterval'] = 'https://symbiota.org/terms/paleo-earlyInterval';
-			$this->occurDefArr['fields']['earlyInterval'] = 'paleo.earlyInterval';
-			$this->occurDefArr['terms']['lateInterval'] = 'https://symbiota.org/terms/paleo-lateInterval';
-			$this->occurDefArr['fields']['lateInterval'] = 'paleo.lateInterval';
 			$this->occurDefArr['terms']['absoluteAge'] = 'https://symbiota.org/terms/paleo-absoluteAge';
 			$this->occurDefArr['fields']['absoluteAge'] = 'paleo.absoluteAge';
-			$this->occurDefArr['terms']['storageAge'] = 'https://symbiota.org/terms/paleo-storageAge';
-			$this->occurDefArr['fields']['storageAge'] = 'paleo.storageAge';
+			$this->occurDefArr['terms']['storageLoc'] = 'https://symbiota.org/terms/paleo-storageLoc';
+			$this->occurDefArr['fields']['storageLoc'] = 'paleo.storageLoc';
 			$this->occurDefArr['terms']['localStage'] = 'https://symbiota.org/terms/paleo-localStage';
 			$this->occurDefArr['fields']['localStage'] = 'paleo.localStage';
 			$this->occurDefArr['terms']['biota'] = 'https://symbiota.org/terms/paleo-biota';
@@ -274,8 +274,8 @@ class DwcArchiverOccurrence extends Manager{
 			$this->occurDefArr['fields']['member'] = 'paleo.member';
 			$this->occurDefArr['terms']['bed'] = 'http://rs.tdwg.org/dwc/terms/bed';
 			$this->occurDefArr['fields']['bed'] = 'paleo.bed';
-			$this->occurDefArr['terms']['lithostratigraphicTerms'] = 'http://rs.tdwg.org/dwc/terms/lithostratigraphicTerms';
-			$this->occurDefArr['fields']['lithostratigraphicTerms'] = 'paleo.lithology';
+			$this->occurDefArr['terms']['lithology'] = 'http://rs.tdwg.org/dwc/terms/lithology';
+			$this->occurDefArr['fields']['lithology'] = 'paleo.lithology';
 			$this->occurDefArr['terms']['stratRemarks'] = 'https://symbiota.org/terms/paleo-stratRemarks';
 			$this->occurDefArr['fields']['stratRemarks'] = 'paleo.stratRemarks';
 			$this->occurDefArr['terms']['element'] = 'https://symbiota.org/terms/paleo-element';
@@ -296,7 +296,7 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['terms']['observerUid'] = 'https://symbiota.org/terms/observerUid';
 		$this->occurDefArr['fields']['observerUid'] = 'o.observeruid';
 		$this->occurDefArr['terms']['processingStatus'] = 'https://symbiota.org/terms/processingStatus';
-		$this->occurDefArr['fields']['processingStatus'] = 'o.processingstatus';
+		$this->occurDefArr['fields']['processingStatus'] = 'o.processingStatus';
 		$this->occurDefArr['terms']['duplicateQuantity'] = 'https://symbiota.org/terms/duplicateQuantity';
 		$this->occurDefArr['fields']['duplicateQuantity'] = 'o.duplicateQuantity';
 		$this->occurDefArr['terms']['labelProject'] = 'https://symbiota.org/terms/labelProject';
@@ -306,7 +306,7 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['terms']['dateEntered'] = 'https://symbiota.org/terms/dateEntered';
 		$this->occurDefArr['fields']['dateEntered'] = 'o.dateEntered';
 		$this->occurDefArr['terms']['dateLastModified'] = 'http://rs.tdwg.org/dwc/terms/dateLastModified';
-		$this->occurDefArr['fields']['dateLastModified'] = 'o.datelastmodified';
+		$this->occurDefArr['fields']['dateLastModified'] = 'o.dateLastModified';
 		$this->occurDefArr['terms']['modified'] = 'http://purl.org/dc/terms/modified';
 		$this->occurDefArr['fields']['modified'] = 'IFNULL(o.modified,o.datelastmodified) AS modified';
 		$this->occurDefArr['terms']['rights'] = 'http://purl.org/dc/elements/1.1/rights';
@@ -330,10 +330,10 @@ class DwcArchiverOccurrence extends Manager{
 		foreach($this->occurDefArr as $k => $vArr){
 			if($this->schemaType == 'dwc' || $this->schemaType == 'pensoft'){
 				$trimArr = array('recordedByID','associatedCollectors','substrate','verbatimAttributes','cultivationStatus',
-					'localitySecurityReason','genericcolumn1','genericcolumn2','storageLocation','observerUid','processingStatus',
+					'securityReason','genericcolumn1','genericcolumn2','storageLocation','observerUid','processingStatus',
 					'duplicateQuantity','labelProject','dateEntered','dateLastModified','sourcePrimaryKey-dbpk');
 				if($this->includePaleo){
-					$trimArr = array_merge($trimArr, array('absoluteAge','storageAge','stage','localStage','biostratigraphy','taxonEnvironment','stratRemarks','element','slideProperties'));
+					$trimArr = array_merge($trimArr, array('absoluteAge','storageLoc','stage','localStage','biostratigraphy','taxonEnvironment','stratRemarks','element','slideProperties', 'lithology'));
 				}
 				$this->occurDefArr[$k] = array_diff_key($vArr,array_flip($trimArr));
 			}
@@ -343,7 +343,7 @@ class DwcArchiverOccurrence extends Manager{
 					$trimArr = array('collectionID','rights','rightsHolder','accessRights','storageLocation','observerUid','processingStatus','duplicateQuantity','labelProject','dateEntered','dateLastModified');
 				}
 				if($this->includePaleo){
-					$trimArr = array_merge($trimArr, array('storageAge'));
+					$trimArr = array_merge($trimArr, array('storageLoc'));
 				}
 				$this->occurDefArr[$k] = array_diff_key($vArr,array_flip($trimArr));
 			}
@@ -355,7 +355,7 @@ class DwcArchiverOccurrence extends Manager{
 				$targetArr = array('id','basisOfRecord','institutionCode','collectionCode','catalogNumber','occurrenceID','family','scientificName','scientificNameAuthorship',
 					'kingdom','phylum','class','order','genus','specificEpithet','infraSpecificEpithet','recordedBy','recordNumber','eventDate','year','month','day','fieldNumber',
 					'eventID', 'locationID','continent','waterBody','islandGroup','island','country','stateProvince','county','municipality',
-					'locality','localitySecurity','geodeticDatum','decimalLatitude','decimalLongitude','verbatimCoordinates',
+					'locality','recordSecurity','geodeticDatum','decimalLatitude','decimalLongitude','verbatimCoordinates',
 					'minimumElevationInMeters','maximumElevationInMeters','verbatimElevation','maximumDepthInMeters','minimumDepthInMeters','establishmentMeans',
 					'occurrenceRemarks','dateEntered','dateLastModified','recordID','references','collID');
 				$this->occurDefArr[$k] = array_intersect_key($vArr,array_flip($targetArr));
@@ -387,7 +387,6 @@ class DwcArchiverOccurrence extends Manager{
 		}
 		$sql .= ' FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid '.
 			'LEFT JOIN taxa t ON o.tidinterpreted = t.TID ';
-		if($this->includePaleo) $sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
 		//if($fullSql) $sql .= ' ORDER BY c.collid ';
 		//echo '<div>'.$sql.'</div>'; exit;
 		return $sql;
@@ -849,8 +848,10 @@ class DwcArchiverOccurrence extends Manager{
 	private function setPaleoTerm(&$r, $term, $targetArr){
 		if($term && !empty($this->paleoGtsArr[$term])){
 			$rankid = $this->paleoGtsArr[$term]['r'];
-			$r[$targetArr[$rankid]] = $term;
-			$this->setPaleoTerm($r, $this->paleoGtsArr[$term]['p'], $targetArr);
+			if ($rankid > 10){
+				$r[$targetArr[$rankid]] = $term;
+				$this->setPaleoTerm($r, $this->paleoGtsArr[$term]['p'], $targetArr);
+			}
 		}
 	}
 
@@ -898,6 +899,7 @@ class DwcArchiverOccurrence extends Manager{
 
 	public function setIncludePaleo($bool){
 		if($bool) $this->includePaleo = true;
+		else if($GLOBALS['ACTIVATE_PALEO']) $this->includePaleo = true;
 	}
 }
 ?>

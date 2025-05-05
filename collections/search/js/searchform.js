@@ -7,6 +7,8 @@ const form = document.getElementById("params-form") || null;
 const formColls = document.getElementById("search-form-colls") || null;
 const formSites = document.getElementById("site-list") || null;
 const searchFormColls = document.getElementById("search-form-colls") || null;
+const searchFormPaleo = document.getElementById("search-form-geocontext") || null;
+
 // list of parameters to be passed to url, modified by getSearchUrl method
 let paramNames = [
   "db",
@@ -141,7 +143,13 @@ function addChip(element) {
       uncheckAll(document.getElementById(element.name));
       removeChip(inputChip);
     };
-  } else {
+  }
+  else if (element.tagName === "OPTION") {
+    inputChip.id = "chip-" + element.dataset.chip;
+    inputChip.textContent = (element.dataset.chip ? element.dataset.chip + ": " : "") + element.textContent;
+    chipBtn.onclick = () => handleRemoval(element, inputChip);
+  }
+  else {
     inputChip.id = "chip-" + element.id;
     let isTextOrNum = (element.type == "text") | (element.type == "number");
     isTextOrNum
@@ -166,6 +174,12 @@ function handleRemoval(element, inputChip) {
   element.type === "checkbox"
     ? (element.checked = false)
     : (element.value = element.defaultValue);
+    if (element.tagName === "OPTION") {
+      const selectElement = element.closest('select');
+      if (selectElement) {
+        element.selected = false;
+      }
+    }
   if (element.getAttribute("id") === "dballcb") {
     const targetCategoryCheckboxes =
       document.querySelectorAll('input[id^="cat-"]');
@@ -583,7 +597,7 @@ function getParam(paramName) {
  * Creates search URL with parameters
  * Define parameters to be looked for in `paramNames` array
  */
-function getSearchUrl() {
+function getSearchUrl(appendParams = false) {
   const formatPreference = document.getElementById("list-button").checked
     ? "list"
     : "table";
@@ -593,20 +607,23 @@ function getSearchUrl() {
 
   const baseUrl = new URL(harvestUrl + urlSuffix);
 
-  // Clears array temporarily to avoid redundancy
-  paramsArr = {};
+  if(appendParams){
+    // Clears array temporarily to avoid redundancy
+    paramsArr = {};
+  
+    // Grabs params from form for each param name
+    paramNames.forEach((param, i) => {
+      return getParam(paramNames[i]);
+    });
+  
+    // Appends each key value for each param in search url
+    let queryString = Object.keys(paramsArr).map((key) => {
+      baseUrl.searchParams.append(key, paramsArr[key]);
+    });
+  
+    baseUrl.searchParams.append("comingFrom", "newsearch");
+  }
 
-  // Grabs params from form for each param name
-  paramNames.forEach((param, i) => {
-    return getParam(paramNames[i]);
-  });
-
-  // Appends each key value for each param in search url
-  let queryString = Object.keys(paramsArr).map((key) => {
-		baseUrl.searchParams.append(key, paramsArr[key]);
-  });
-
-  baseUrl.searchParams.append("comingFrom", "newsearch");
   return baseUrl.href;
 }
 
@@ -694,6 +711,27 @@ function validateForm() {
     }
   }
 
+  // Geo Context
+  if (searchFormPaleo) {
+    let early = form.earlyInterval.value;
+    let late = form.lateInterval.value;
+    if ((early !== "" && late === "") || (early === "" && late !== "")) {
+      errors.push({
+        elId: "search-form-geocontext",
+        errorMsg:
+          translations.INTERVAL_MISSING,
+      });
+    }
+
+    if (early in paleoTimes && late in paleoTimes && paleoTimes[early].myaStart <= paleoTimes[late].myaEnd) {
+      errors.push({
+        elId: "search-form-geocontext",
+        errorMsg:
+          translations.INTERVALS_WRONG_ORDER,
+      });
+    }
+  }
+
   return errors;
 }
 
@@ -729,11 +767,24 @@ function simpleSearch() {
   errors = validateForm();
   let isValid = errors.length == 0;
   if (isValid) {
-    let searchUrl = getSearchUrl();
-    window.location = searchUrl;
+    const searchUrl = shortenSearchUrlIfAllCollectionsAreSearched();
+    sessionStorage.setItem('verbatimSearchUrl', searchUrl);
+    const submitForm = document.getElementById("params-form");
+    submitForm.method = "POST"; // if GET is used instead, the URL is too short for complex polygon + many collections queries. Hence, the need for POST.
+    submitForm.action = getSearchUrl();
+    submitForm.submit();
   } else {
     handleValErrors(errors);
   }
+}
+
+function shortenSearchUrlIfAllCollectionsAreSearched(){
+  const searchUrlOriginal = getSearchUrl(true);
+    let searchUrl = searchUrlOriginal;
+    if(searchUrlOriginal.includes("db=all")){
+      searchUrl = searchUrlOriginal.replace(/db=all(?:%[^&?]*)*/, "db=all");
+    }
+    return searchUrl;
 }
 
 /**
@@ -790,8 +841,7 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
 
 function setSearchForm(frm) {
   if (sessionStorage.querystr) {
-    var urlVar = parseUrlVariables(sessionStorage.querystr);
-
+    var urlVar = parseUrlVariables(sessionStorage.querystr.replaceAll('&quot;', '"'));
     if (
       typeof urlVar.usethes !== "undefined" &&
       (urlVar.usethes == "" || urlVar.usethes == "0")
@@ -903,8 +953,8 @@ function setSearchForm(frm) {
       frm.rightlong.value = Math.abs(parseFloat(coordArr[3]));
       frm.rightlong_EW.value = parseFloat(coordArr[3]) > 0 ? "E" : "W";
     }
-    if (urlVar.footprintwkt) {
-      frm.footprintwkt.value = urlVar.footprintwkt;
+    if (urlVar.footprintGeoJson) {
+      frm.footprintwkt.value = urlVar.footprintGeoJson;
     }
     if (urlVar.llpoint) {
       var coordArr = urlVar.llpoint.split(";");
@@ -1024,6 +1074,12 @@ function toggleAccordionsFromSessionStorage(accordionIds) {
 /**
  * EVENT LISTENERS/INITIALIZERS
  */
+
+document.getElementById("params-form").addEventListener("submit", function(event) {
+  event.preventDefault();
+  simpleSearch();
+});
+
 
 // Reset button
 document

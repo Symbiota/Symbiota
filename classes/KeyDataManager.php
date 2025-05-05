@@ -321,12 +321,11 @@ class KeyDataManager extends Manager {
 				}
 				if($this->displayImages){
 					$sql = 'SELECT m2.tid, m.url, m.thumbnailurl FROM media m INNER JOIN '.
-						'(SELECT ts1.tid, SUBSTR(MIN(CONCAT(LPAD(m.sortsequence,6,"0"),m.mediaID)),7) AS mediaID'.
+						'(SELECT ts1.tid, SUBSTR(MIN(CONCAT(LPAD(m.sortsequence,6,"0"),m.mediaID)),7) AS mediaID '.
 						'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 						'INNER JOIN media m ON ts2.tid = m.tid '.
 						'WHERE m.sortsequence < 500 AND (m.thumbnailurl IS NOT NULL) AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.tid IN('.implode(',',array_keys($taxaArr)).')) '.
 						'GROUP BY ts1.tid) m2 ON m.mediaID = m2.mediaID';
-					//echo $sql;
 					$rs = $this->conn->query($sql);
 					$matchedArr = array();
 					while($r = $rs->fetch_object()){
@@ -340,7 +339,7 @@ class KeyDataManager extends Manager {
 					$missingArr = array_diff(array_keys($taxaArr),$matchedArr);
 					if($missingArr){
 						//Get children images
-						$sql2 = 'SELECT m2.tid, m.url, m.thumbnailurl FROM media 2 INNER JOIN '.
+						$sql2 = 'SELECT m2.tid, m.url, m.thumbnailurl FROM media m INNER JOIN '.
 							'(SELECT ts1.parenttid AS tid, SUBSTR(MIN(CONCAT(LPAD(m.sortsequence,6,"0"),m.mediaID)),7) AS mediaID '.
 							'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 							'INNER JOIN media m ON ts2.tid = m.tid '.

@@ -96,13 +96,21 @@ class DwcArchiverImage{
 				$sql .= 'INNER JOIN tmattributes a ON o.occid = a.occid '.
 					'INNER JOIN tmstates s ON a.stateid = s.stateid ';
 			}
+			if($GLOBALS['ACTIVATE_PALEO']){
+				$sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
+				if(strpos($conditionSql,'early.myaStart')){
+					$sql .= 'JOIN omoccurpaleogts early ON paleo.earlyInterval = early.gtsterm ';
+					$sql .= 'JOIN omoccurpaleogts late ON paleo.lateInterval = late.gtsterm ';
+					$sql .= 'CROSS JOIN searchRange search ';
+				}
+			}
 			$sql .= $conditionSql;
 			if($redactLocalities){
 				if($rareReaderArr){
-					$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL OR c.collid IN('.implode(',',$rareReaderArr).')) ';
+					$sql .= 'AND (o.recordSecurity = 0 OR c.collid IN('.implode(',',$rareReaderArr).')) ';
 				}
 				else{
-					$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL) ';
+					$sql .= 'AND (o.recordSecurity = 0) ';
 				}
 			}
 			$sql .= 'GROUP BY m.mediaID';

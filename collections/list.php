@@ -355,7 +355,7 @@ $_SESSION['citationvar'] = $searchVar;
 									$tradeName = !empty($splitSciname['tradeName']) ? ($taxonEditorObj->standardizeTradeName($splitSciname['tradeName']) . ' ') : '';
 									$nonItalicizedScinameComponent = $author . $cultivarEpithet . $tradeName;
 									echo '<tr><td width="60" valign="top" align="center">';
-									echo '<a href="misc/collprofiles.php?collid=' . $fieldArr['collid'] . '">';
+									echo '<a href="misc/collprofiles.php?collid=' . $fieldArr['collid'] . '" target="_blank">';
 									if ($fieldArr["icon"]) {
 										$icon = (substr($fieldArr["icon"], 0, 6) == 'images' ? '../' : '') . $fieldArr["icon"];
 										echo '<img align="bottom" src="' . $icon . '" style="width:35px;border:0px;" />';
@@ -404,8 +404,6 @@ $_SESSION['citationvar'] = $searchVar;
 												. (!empty($nonItalicizedScinameComponent) ? (' ' . $nonItalicizedScinameComponent) : '') . '</a>';
 										}
 										echo $sciStr;
-									} elseif ($fieldArr['localitysecurity'] > 1) {
-										echo (isset($LANG['ID_PROTECTED']) ? $LANG['ID_PROTECTED'] : 'Identification Protected');;
 									}
 									echo '</div>';
 									echo '<div style="margin:4px">';
@@ -493,7 +491,7 @@ $_SESSION['citationvar'] = $searchVar;
 					<?php echo $LANG['MAP_DESCRIPTION']; ?>
 				</div>
 				<div style='margin-top:10px;'>
-					<button onclick="openMapPU();">
+						<button onclick="openMapPU('<?= $searchVar ?>');">
 						<?php echo $LANG['MAP_DISPLAY']; ?>
 					</button>
 				</div>
