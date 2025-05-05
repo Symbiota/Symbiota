@@ -7,9 +7,8 @@ class CollectionStats extends Model{
 
 	protected $table = 'omcollectionstats';
 	protected $primaryKey = 'collid';
-    const CREATED_AT = 'initialtimestamp';
-    const UPDATED_AT = 'datelastmodified';
-	public $timestamps = true;
+    // const UPDATED_AT = 'datelastmodified';
+	public $timestamps = false;
 
 	protected $fillable = [
 		'collid', 'recordcnt', 'uploadedby'

@@ -120,7 +120,7 @@
                                         "maxLength": 2000
                                     },
                                     "individualUrl": {
-                                        "description": "TODO",
+                                        "description": "A dynamic link back to the source record if available",
                                         "type": "string",
                                         "maxLength": 500
                                     },

@@ -171,7 +171,7 @@ class CollectionController extends Controller{
 	 *  				@OA\Property(
 	 * 					property="individualUrl",
 	 * 					type="string",
-	 * 					description="TODO",
+	 * 					description="A dynamic link back to the source record if available",
 	 * 					maxLength=500
 	 * 				),
 	 *  				@OA\Property(
