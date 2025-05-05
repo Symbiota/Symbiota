@@ -9,6 +9,7 @@ include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxoneditor.'.$LANG_TAG.'
 
 $LANG['TAXON_LOADER'] = 'Add New Taxon';
 $LANG['TAXONOMY_LOADER'] = 'Taxonomy Loader';
+$LANG['SCINAME_SAVED_AS'] = 'Sciname will be saved as';
 $LANG['TAXON_NAME'] = 'Paste name here for parsing';
 $LANG['TAXON_RANK'] = 'Taxon Rank';
 $LANG['SEL_TAX_RANK'] = 'Select Taxon Rank';

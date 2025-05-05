@@ -4,6 +4,7 @@ include_once('OccurrenceAccessStats.php');
 include_once('ChecklistVoucherAdmin.php');
 include_once('utilities/GeneralUtil.php');
 include_once('utilities/QueryUtil.php');
+include_once('utilities/OccurrenceUtil.php');
 
 class OccurrenceIndividual extends Manager{
 
@@ -125,7 +126,7 @@ class OccurrenceIndividual extends Manager{
 			o.occurrenceid, o.catalognumber, o.occurrenceremarks, o.tidinterpreted, o.family, o.sciname,
 			o.scientificnameauthorship, o.identificationqualifier, o.identificationremarks, o.identificationreferences, o.taxonremarks,
 			o.identifiedby, o.dateidentified, o.eventid, o.recordedby, o.associatedcollectors, o.recordnumber, o.eventdate, o.eventdate2, MAKEDATE(YEAR(o.eventDate),o.enddayofyear) AS eventdateend,
-			o.verbatimeventdate, o.country, o.stateprovince, o.locationid, o.county, o.municipality, o.locality, o.localitysecurity, o.localitysecurityreason,
+			o.verbatimeventdate, o.country, o.stateprovince, o.locationid, o.county, o.municipality, o.locality, o.recordsecurity, o.securityreason,
 			o.decimallatitude, o.decimallongitude, o.geodeticdatum, o.coordinateuncertaintyinmeters, o.verbatimcoordinates, o.georeferenceremarks,
 			o.minimumelevationinmeters, o.maximumelevationinmeters, o.verbatimelevation, o.minimumdepthinmeters, o.maximumdepthinmeters, o.verbatimdepth,
 			o.verbatimattributes, o.locationremarks, o.lifestage, o.sex, o.individualcount, o.samplingprotocol, o.preparations, o.typestatus, o.dbpk, o.habitat,
@@ -210,7 +211,7 @@ class OccurrenceIndividual extends Manager{
 			 }
 			 */
 			$protectLocality = false;
-			if($this->occArr['localitysecurity'] == 1 && !$isSecuredReader){
+			if($this->occArr['recordsecurity'] == 1 && !$isSecuredReader){
 				$protectLocality = true;
 				$retBool = true;
 				$this->occArr['localsecure'] = 1;
@@ -421,9 +422,10 @@ class OccurrenceIndividual extends Manager{
 
 	private function setOccurrenceRelationships(){
 		$relOccidArr = array();
-		$sql = 'SELECT assocID, occid, occidAssociate, relationship, subType, resourceUrl, objectID, dynamicProperties, verbatimSciname, tid
-			FROM omoccurassociations
-			WHERE occid = ? OR occidAssociate = ?';
+		$sql = 'SELECT a.assocID, a.occid, a.occidAssociate, a.relationship, a.subType, a.resourceUrl, a.objectID, a.dynamicProperties, a.verbatimSciname, a.tid
+			FROM omoccurassociations a INNER JOIN omoccurrences o ON a.occidAssociate = o.occid
+			WHERE a.occid = ? OR a.occidAssociate = ? ';
+		$sql .= OccurrenceUtil::appendFullProtectionSQL();
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('ii', $this->occid, $this->occid);
 			$stmt->execute();
@@ -534,7 +536,7 @@ class OccurrenceIndividual extends Manager{
 
 	private function setSource(){
 		if(isset($GLOBALS['ACTIVATE_PORTAL_INDEX']) && $GLOBALS['ACTIVATE_PORTAL_INDEX']){
-			$sql = 'SELECT o.remoteOccid, o.refreshTimestamp, o.verification, i.urlRoot, i.portalName
+			$sql = 'SELECT o.remoteOccid, o.refreshTimestamp, o.initialTimestamp, o.verification, i.urlRoot, i.portalName
 				FROM portaloccurrences o INNER JOIN portalpublications p ON o.pubid = p.pubid
 				INNER JOIN portalindex i ON p.portalID = i.portalID
 				WHERE (o.occid = ?) AND (p.direction = "import")';
@@ -546,14 +548,16 @@ class OccurrenceIndividual extends Manager{
 						$this->occArr['source']['type'] = 'symbiota';
 						$this->occArr['source']['url'] = $r->urlRoot.'/collections/individual/index.php?occid='.$r->remoteOccid;
 						$this->occArr['source']['sourceName'] = $r->portalName;
-						$this->occArr['source']['refreshTimestamp'] = $r->refreshTimestamp;
 						$this->occArr['source']['sourceID'] = $r->remoteOccid;
+						$this->occArr['source']['refreshTimestamp'] = $r->refreshTimestamp;
+						$this->occArr['source']['initialTimestamp'] = $r->initialTimestamp;
 					}
 					$rs->free();
 				}
 				$stmt->close();
 			}
 			if(isset($this->occArr['source'])){
+				//If there is a more recent batch upload event, than us that date as the refresh timestamp
 				$sql2 = 'SELECT uploadDate FROM omcollectionstats WHERE collid = ?';
 				if($stmt = $this->conn->prepare($sql2)){
 					$stmt->bind_param('i', $this->collid);
@@ -571,29 +575,29 @@ class OccurrenceIndividual extends Manager{
 
 		//Format link out to source
 		if(!isset($this->occArr['source']) && $this->metadataArr['individualurl']){
+			$sourceName = '';
 			$iUrl = trim($this->metadataArr['individualurl']);
 			if(substr($iUrl, 0, 4) != 'http'){
 				if($pos = strpos($iUrl, ':')){
-					$this->occArr['source']['title'] = substr($iUrl, 0, $pos);
+					$sourceName = substr($iUrl, 0, $pos);
 					$iUrl = trim(substr($iUrl, $pos+1));
 				}
 			}
-			$displayStr = '';
+			$sourceID = '';
 			$indUrl = '';
 			if(strpos($iUrl,'--DBPK--') !== false && $this->occArr['dbpk']){
 				$indUrl = str_replace('--DBPK--',$this->occArr['dbpk'],$iUrl);
-				$displayStr = $indUrl;
 			}
 			elseif(strpos($iUrl,'--CATALOGNUMBER--') !== false && $this->occArr['catalognumber']){
 				$indUrl = str_replace('--CATALOGNUMBER--',$this->occArr['catalognumber'],$iUrl);
-				$displayStr = $this->occArr['catalognumber'];
+				$sourceID = $this->occArr['catalognumber'];
 			}
 			elseif(strpos($iUrl,'--OTHERCATALOGNUMBERS--') !== false && $this->occArr['othercatalognumbers']){
 				foreach($this->occArr['othercatalognumbers'] as $idArr){
 					$tagName = $idArr['name'];
 					$idValue = $idArr['value'];
-					if(!$displayStr || $tagName == 'NEON sampleID' || $tagName == 'NEON sampleCode (barcode)'){
-						$displayStr = $tagName;
+					if(!$sourceID || $tagName == 'NEON sampleID' || $tagName == 'NEON sampleCode (barcode)'){
+						$sourceID = $idValue;
 						if($tagName == 'NEON sampleCode (barcode)') $iUrl = str_replace('sampleTag','barcode',$iUrl);
 						$indUrl = str_replace('--OTHERCATALOGNUMBERS--', $idValue, $iUrl);
 						if($tagName == 'NEON sampleCode (barcode)') break;
@@ -602,12 +606,14 @@ class OccurrenceIndividual extends Manager{
 			}
 			elseif(strpos($iUrl,'--OCCURRENCEID--') !== false && $this->occArr['occurrenceid']){
 				$indUrl = str_replace('--OCCURRENCEID--',$this->occArr['occurrenceid'],$iUrl);
-				$displayStr = $this->occArr['occurrenceid'];
+				$sourceID = $this->occArr['occurrenceid'];
 			}
 			$this->occArr['source']['type'] = 'external';
 			$this->occArr['source']['url'] = $indUrl;
-			$this->occArr['source']['displayStr'] = $displayStr;
+			$this->occArr['source']['sourceName'] = $sourceName;
+			$this->occArr['source']['sourceID'] = $sourceID;
 			$this->occArr['source']['refreshTimestamp'] = $this->metadataArr['uploaddate'];
+			$this->occArr['source']['initialTimestamp'] = $this->occArr['dateentered'];
 		}
 	}
 
@@ -640,6 +646,7 @@ class OccurrenceIndividual extends Manager{
 			INNER JOIN omcollections c ON o.collid = c.collid
 			LEFT JOIN media i ON o.occid = i.occid
 			WHERE (d.occid = ?) AND (d.occid != d2.occid) ';
+		$sql .= OccurrenceUtil::appendFullProtectionSQL();
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('i', $this->occid);
 			$stmt->execute();
@@ -1149,6 +1156,10 @@ class OccurrenceIndividual extends Manager{
 		if($archiveObject){
 			$retArr['obj'] = json_decode($archiveObject, true);
 			$retArr['notes'] = $notes;
+		}
+		if(isset($retArr['recordSecurity']) && $retArr['recordSecurity'] == 5 && OccurrenceUtil::getFullProtectionPermission()){
+			unset($retArr);
+			$retArr = array();
 		}
 		return $this->cleanOutArray($retArr);
 	}

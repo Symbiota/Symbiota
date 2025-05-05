@@ -187,10 +187,10 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['locality'] = 'o.locality';
 		$this->occurDefArr['terms']['locationRemarks'] = 'http://rs.tdwg.org/dwc/terms/locationRemarks';
 		$this->occurDefArr['fields']['locationRemarks'] = 'o.locationremarks';
-		$this->occurDefArr['terms']['localitySecurity'] = 'https://symbiota.org/terms/localitySecurity';
-		$this->occurDefArr['fields']['localitySecurity'] = 'o.localitySecurity';
-		$this->occurDefArr['terms']['localitySecurityReason'] = 'https://symbiota.org/terms/localitySecurityReason';
-		$this->occurDefArr['fields']['localitySecurityReason'] = 'o.localitySecurityReason';
+		$this->occurDefArr['terms']['recordSecurity'] = 'https://symbiota.org/terms/recordSecurity';
+		$this->occurDefArr['fields']['recordSecurity'] = 'o.recordSecurity';
+		$this->occurDefArr['terms']['securityReason'] = 'https://symbiota.org/terms/securityReason';
+		$this->occurDefArr['fields']['securityReason'] = 'o.securityReason';
 		$this->occurDefArr['terms']['decimalLatitude'] = 'http://rs.tdwg.org/dwc/terms/decimalLatitude';
 		$this->occurDefArr['fields']['decimalLatitude'] = 'o.decimalLatitude';
 		$this->occurDefArr['terms']['decimalLongitude'] = 'http://rs.tdwg.org/dwc/terms/decimalLongitude';
@@ -296,7 +296,7 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['terms']['observerUid'] = 'https://symbiota.org/terms/observerUid';
 		$this->occurDefArr['fields']['observerUid'] = 'o.observeruid';
 		$this->occurDefArr['terms']['processingStatus'] = 'https://symbiota.org/terms/processingStatus';
-		$this->occurDefArr['fields']['processingStatus'] = 'o.processingstatus';
+		$this->occurDefArr['fields']['processingStatus'] = 'o.processingStatus';
 		$this->occurDefArr['terms']['duplicateQuantity'] = 'https://symbiota.org/terms/duplicateQuantity';
 		$this->occurDefArr['fields']['duplicateQuantity'] = 'o.duplicateQuantity';
 		$this->occurDefArr['terms']['labelProject'] = 'https://symbiota.org/terms/labelProject';
@@ -306,7 +306,7 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['terms']['dateEntered'] = 'https://symbiota.org/terms/dateEntered';
 		$this->occurDefArr['fields']['dateEntered'] = 'o.dateEntered';
 		$this->occurDefArr['terms']['dateLastModified'] = 'http://rs.tdwg.org/dwc/terms/dateLastModified';
-		$this->occurDefArr['fields']['dateLastModified'] = 'o.datelastmodified';
+		$this->occurDefArr['fields']['dateLastModified'] = 'o.dateLastModified';
 		$this->occurDefArr['terms']['modified'] = 'http://purl.org/dc/terms/modified';
 		$this->occurDefArr['fields']['modified'] = 'IFNULL(o.modified,o.datelastmodified) AS modified';
 		$this->occurDefArr['terms']['rights'] = 'http://purl.org/dc/elements/1.1/rights';
@@ -330,7 +330,7 @@ class DwcArchiverOccurrence extends Manager{
 		foreach($this->occurDefArr as $k => $vArr){
 			if($this->schemaType == 'dwc' || $this->schemaType == 'pensoft'){
 				$trimArr = array('recordedByID','associatedCollectors','substrate','verbatimAttributes','cultivationStatus',
-					'localitySecurityReason','genericcolumn1','genericcolumn2','storageLocation','observerUid','processingStatus',
+					'securityReason','genericcolumn1','genericcolumn2','storageLocation','observerUid','processingStatus',
 					'duplicateQuantity','labelProject','dateEntered','dateLastModified','sourcePrimaryKey-dbpk');
 				if($this->includePaleo){
 					$trimArr = array_merge($trimArr, array('absoluteAge','storageLoc','stage','localStage','biostratigraphy','taxonEnvironment','stratRemarks','element','slideProperties', 'lithology'));
@@ -355,7 +355,7 @@ class DwcArchiverOccurrence extends Manager{
 				$targetArr = array('id','basisOfRecord','institutionCode','collectionCode','catalogNumber','occurrenceID','family','scientificName','scientificNameAuthorship',
 					'kingdom','phylum','class','order','genus','specificEpithet','infraSpecificEpithet','recordedBy','recordNumber','eventDate','year','month','day','fieldNumber',
 					'eventID', 'locationID','continent','waterBody','islandGroup','island','country','stateProvince','county','municipality',
-					'locality','localitySecurity','geodeticDatum','decimalLatitude','decimalLongitude','verbatimCoordinates',
+					'locality','recordSecurity','geodeticDatum','decimalLatitude','decimalLongitude','verbatimCoordinates',
 					'minimumElevationInMeters','maximumElevationInMeters','verbatimElevation','maximumDepthInMeters','minimumDepthInMeters','establishmentMeans',
 					'occurrenceRemarks','dateEntered','dateLastModified','recordID','references','collID');
 				$this->occurDefArr[$k] = array_intersect_key($vArr,array_flip($targetArr));

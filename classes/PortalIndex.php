@@ -30,7 +30,9 @@ class PortalIndex extends OmCollections{
 	public function getPortalIndexArr($portalIdentifier){
 		if(!isset($GLOBALS['ACTIVATE_PORTAL_INDEX'])) return false;
 		$retArr = array();
-		$sql = 'SELECT portalID, portalName, acronym, portalDescription, urlRoot, securityKey, symbiotaVersion, guid, manager, managerEmail, primaryLead, primaryLeadEmail, notes, initialTimestamp FROM portalindex ';
+		$sql = 'SELECT portalID, portalName, acronym, portalDescription, urlRoot, securityKey, symbiotaVersion,
+			guid, manager, managerEmail, primaryLead, primaryLeadEmail, notes, initialTimestamp
+			FROM portalindex ';
 		if($portalIdentifier){
 			if(is_numeric($portalIdentifier)) $sql .= 'WHERE portalID = '.$portalIdentifier;
 			else $sql .= 'WHERE guid = "'.$portalIdentifier.'" ';
@@ -59,21 +61,22 @@ class PortalIndex extends OmCollections{
 		if(!isset($GLOBALS['ACTIVATE_PORTAL_INDEX'])) return false;
 		$retArr = array();
 		$url = $urlRoot.'/api/v2/collection/'.$collID;
-		$retArr = $this->getAPIResponce($url);
-		if(!$collID){
-			$retArr = $retArr['results'];
-			foreach($retArr as $id => $collArr){
-				if($collArr['managementType'] == 'Live Data' && !$collArr['collectionID']){
-					if(isset($collArr['recordID'])) $collArr['collectionID'] = $collArr['recordID'];
-					elseif(isset($collArr['collectionGuid'])) $collArr['collectionID'] = $collArr['collectionGuid'];
+		if($retArr = $this->getAPIResponce($url)){
+			if(!$collID){
+				$retArr = $retArr['results'];
+				foreach($retArr as $id => $collArr){
+					if($collArr['managementType'] == 'Live Data' && !$collArr['collectionID']){
+						if(isset($collArr['recordID'])) $collArr['collectionID'] = $collArr['recordID'];
+						elseif(isset($collArr['collectionGuid'])) $collArr['collectionID'] = $collArr['collectionGuid'];
+					}
+					$retArr[$id]['internal'] = $this->getInternalCollection($collArr['collectionID'],$collArr['collectionGuid']);
 				}
-				$retArr[$id]['internal'] = $this->getInternalCollection($collArr['collectionID'],$collArr['collectionGuid']);
+				usort($retArr, function($a, $b) {
+					return ($a['institutionCode'] < $b['institutionCode']) ? -1 : 1;
+				});
 			}
-			usort($retArr, function($a, $b) {
-				return ($a['institutionCode'] < $b['institutionCode']) ? -1 : 1;
-			});
+			else $retArr['internal'] = $this->getInternalCollection($retArr['collectionID'],$retArr['collectionGuid']);
 		}
-		else $retArr['internal'] = $this->getInternalCollection($retArr['collectionID'],$retArr['collectionGuid']);
 		return $retArr;
 	}
 
@@ -167,7 +170,7 @@ class PortalIndex extends OmCollections{
 		return $respArr;
 	}
 
-	public function importProfile($portalID, $remoteID){
+	public function importProfile($portalID, $remoteID, $postArr){
 		if(!isset($GLOBALS['ACTIVATE_PORTAL_INDEX'])) return false;
 		$portal = $this->getPortalIndexArr($portalID);
 		$url = $portal[$portalID]['urlRoot'].'/api/v2/collection/'.$remoteID;
@@ -192,6 +195,16 @@ class PortalIndex extends OmCollections{
 		$title = 'Symbiota Import';
 		if($collid = $this->collectionInsert($collArr)){
 			$dwcaPath = $portal[$portalID]['urlRoot'].'/webservices/dwc/dwcapubhandler.php?collid='.$targetCollid.'&schema=symbiota&extended=1';
+			$conditionStr = '';
+			$conditionArr = array('sciname', 'country', 'stateProvince' ,'county');
+			foreach($conditionArr as $condTerm){
+				if(!empty($postArr[$condTerm])){
+					$conditionStr .= ';' . $condTerm . ':' . urlencode($postArr[$condTerm]);
+				}
+			}
+			if($conditionStr){
+				$dwcaPath .= '&cond=' . trim($conditionStr, '; ');
+			}
 			$sql = 'INSERT INTO uploadspecparameters(collid, uploadType, title, path, queryStr, endpointPublic, createdUid) VALUES(?,?,?,?,?,?,?)';
 			if($stmt = $this->conn->prepare($sql)) {
 				$stmt->bind_param('iisssii', $collid, $uploadType, $title, $dwcaPath, $queryStr, $endpointPublic, $GLOBALS['SYMB_UID']);

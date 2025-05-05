@@ -150,6 +150,24 @@ if ($schema == 'backup') {
 
 			if (array_key_exists('publicsearch', $_POST) && $_POST['publicsearch']) {
 				$dwcaHandler->setCustomWhereSql($occurManager->getSqlWhere());
+
+				// Added for Occurrence Table Display Editor Download Functionality
+				for ($i = 1; $i  < 10; $i ++) {
+					if ($occurManager->getSearchTerm('customfield' . $i)) {
+						$dwcaHandler->addCondition(
+							$occurManager->getSearchTerm('customfield' . $i), 
+							$occurManager->getSearchTerm('customtype' . $i), 
+							$occurManager->getSearchTerm('customvalue' . $i)
+						);
+					}
+				}
+
+				// Traits Support 
+				if ($occurManager->getSearchTerm('stateid')) {
+					$dwcaHandler->addCondition('stateid', 'EQUALS', $occurManager->getSearchTerm('stateid'));
+				} elseif ($occurManager->getSearchTerm('traitid')) {
+					$dwcaHandler->addCondition('traitid', 'EQUALS', $occurManager->getSearchTerm('traitid'));
+				}
 				$dwcaHandler->setPaleoWithSql($occurManager->getPaleoSqlWith());
 			} else {
 				//Request is coming from exporter.php for collection manager tools
@@ -177,6 +195,7 @@ if ($schema == 'backup') {
 				}
 			}
 		}
+
 		$outputFile = null;
 		if ($zip) {
 			//Ouput file is a zip file

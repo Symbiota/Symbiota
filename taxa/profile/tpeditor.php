@@ -16,6 +16,7 @@ $tid = array_key_exists("tid",$_REQUEST)?$_REQUEST["tid"]:0;
 $taxon = array_key_exists("taxon",$_REQUEST)?$_REQUEST["taxon"]:"";
 $action = array_key_exists("action",$_REQUEST)?$_REQUEST["action"]:"";
 $tabIndex = array_key_exists("tabindex",$_REQUEST)?$_REQUEST["tabindex"]:0;
+$filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
 
 if(!is_numeric($tid)) $tid = 0;
 if(!is_numeric($tabIndex)) $tabIndex = 0;
@@ -135,9 +136,11 @@ if($isEditor && $action){
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
+	<script src="<?php echo $filename ?>" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/symb/shared.js"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/taxa.tpimageeditor.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		var clientRoot = "<?php echo $CLIENT_ROOT; ?>";
 

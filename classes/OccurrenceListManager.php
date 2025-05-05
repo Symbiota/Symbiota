@@ -33,7 +33,7 @@ class OccurrenceListManager extends OccurrenceManager{
 		}
 		$sql .= 'SELECT o.occid, c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, o.institutioncode AS instcodeoverride, o.collectioncode AS collcodeoverride, '.
 			'o.catalognumber, o.family, o.sciname, o.scientificnameauthorship, o.tidinterpreted, o.recordedby, o.recordnumber, o.eventdate, '.
-			'o.country, o.stateprovince, o.county, o.locality, o.decimallatitude, o.decimallongitude, o.localitysecurity, o.localitysecurityreason, '.
+			'o.country, o.stateprovince, o.county, o.locality, o.decimallatitude, o.decimallongitude, o.recordsecurity, o.securityreason, '.
 			'o.habitat, o.substrate, o.minimumelevationinmeters, o.maximumelevationinmeters, o.observeruid, c.sortseq ';
 		if ($GLOBALS['ACTIVATE_PALEO'] && $sqlWhere)
 			$sql .= ', paleo.formation, paleo.earlyInterval, paleo.lateInterval ';
@@ -50,6 +50,7 @@ class OccurrenceListManager extends OccurrenceManager{
 		if($pageRequest > 0) $pageRequest = ($pageRequest - 1) * $cntPerPage;
 		$sql .= ' LIMIT ' . $pageRequest . ',' . $cntPerPage;
 		//echo '<div style="width: 1200px">' . $sql . '</div>';
+		// echo $sql; exit; // @TODO here
 		$result = $this->conn->query($sql);
 		if($result){
 			$securityCollArr = array();
@@ -95,8 +96,8 @@ class OccurrenceListManager extends OccurrenceManager{
 				$retArr[$row->occid]['state'] = $this->cleanOutStr($row->stateprovince);
 				$retArr[$row->occid]['county'] = $this->cleanOutStr($row->county);
 				$retArr[$row->occid]['obsuid'] = $row->observeruid;
-				$retArr[$row->occid]['localitysecurity'] = $row->localitysecurity;
-				if($securityClearance || $row->localitysecurity != 1){
+				$retArr[$row->occid]['recordsecurity'] = $row->recordsecurity;
+				if($securityClearance || $row->recordsecurity != 1){
 					$locStr = $row->locality ?? '';
 					$retArr[$row->occid]['locality'] = str_replace('.,',',',$this->cleanOutStr(trim($locStr,' ,;')));
 					$retArr[$row->occid]['declat'] = $row->decimallatitude;
