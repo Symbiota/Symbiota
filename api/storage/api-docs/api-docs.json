@@ -1245,7 +1245,7 @@
                     {
                         "name": "type",
                         "in": "query",
-                        "description": "Annoration type (internal, external) ",
+                        "description": "Annotation type (internal, external) ",
                         "required": true,
                         "schema": {
                             "type": "string",
@@ -1259,7 +1259,7 @@
                     {
                         "name": "source",
                         "in": "query",
-                        "description": "External source of Annoration (e.g. geolocate) ",
+                        "description": "External source of Annotation (e.g. geolocate) ",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -1324,6 +1324,56 @@
                     },
                     "400": {
                         "description": "Error: Bad request. "
+                    }
+                }
+            }
+        },
+        "/api/v2/occurrence/{identifier}/annotation": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "summary": "Edits made to target occurrence",
+                "operationId": "/api/v2/occurrence/{identifier}/annotation",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "occid or specimen GUID (occurrenceID) or recordID associated with target occurrence",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Annotation type (internal, external) ",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "internal",
+                            "enum": [
+                                "internal",
+                                "external"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns list of occurrence edits",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. "
+                    },
+                    "404": {
+                        "description": "Record not found"
                     }
                 }
             }
@@ -1410,7 +1460,88 @@
                     {
                         "name": "eventDate",
                         "in": "query",
-                        "description": "Date as YYYY, YYYY-MM or YYYY-MM-DD",
+                        "description": "Date as YYYY, YYYY-MM or YYYY-MM-DD that the occurrence was collected or observed, or earliest date if a range was provided",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "eventDate2",
+                        "in": "query",
+                        "description": "Last date as YYYY, YYYY-MM or YYYY-MM-DD that the occurrence was collected or observed. Used when a date range is provided",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "decimalLatitude",
+                        "in": "query",
+                        "description": "Latitude as a decimal",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "decimalLongitude",
+                        "in": "query",
+                        "description": "Longitude as a decimal",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "minimumElevationInMeters",
+                        "in": "query",
+                        "description": "Minimum elevation in meters to nearest integer",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "maximumElevationInMeters",
+                        "in": "query",
+                        "description": "Maximum elevation in meters to nearest integer",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "verbatimElevation",
+                        "in": "query",
+                        "description": "Elevation expressed as a string (e.g., '1000 ft')",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "minimumDepthInMeters",
+                        "in": "query",
+                        "description": "Minimum depth in meters to nearest integer",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "maximumDepthInMeters",
+                        "in": "query",
+                        "description": "Maximum depth in meters to nearest integer",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "verbatimDepth",
+                        "in": "query",
+                        "description": "Depth expressed as a string (e.g., '200 ft')",
                         "required": false,
                         "schema": {
                             "type": "string"
