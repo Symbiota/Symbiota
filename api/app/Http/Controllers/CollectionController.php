@@ -131,6 +131,13 @@ class CollectionController extends Controller{
 	 * 	operationId="createCollection",
 	 * 	description="Create a new biocollection entity",
 	 * 	tags={"Collections"},
+	 * 	@OA\Parameter(
+	 *		name="apiToken",
+	 *		in="query",
+	 *		description="API security token to authenticate post action",
+	 *		required=true,
+	 *		@OA\Schema(type="string")
+	 *	 ),
 	 * 	@OA\RequestBody(
 	 * 		required=true,
 	 * 		description="Collection data to be inserted",
@@ -251,15 +258,15 @@ class CollectionController extends Controller{
 	 * )
 	 */
 	public function create(Request $request){
-		// if($user = $this->authenticate($request)){
+		// if($user = $this->authenticate($request)){ // @TODO this needs to only allow for super admin (or whatever it is for the UI)
 			// @TODO make colleciton GUID?
 			try {
 				$collection = Collection::create($request->all());
 				$collectionStats = CollectionStats::create([
 					'collid' => $collection->collID,
 					'recordcnt' => 0,
-					// 'uploadedby' => $GLOBALS['USERNAME']
-					'uploadedby' => 'TODO'
+					'uploadedby' => $GLOBALS['USERNAME']
+					// 'uploadedby' => 'TODO'
 				]);
 			} catch (\Exception $e) {
 				return response()->json(['error' => 'Failed to create collection stats' . $e->getMessage()], 500);
