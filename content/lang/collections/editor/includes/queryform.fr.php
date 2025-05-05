@@ -81,8 +81,8 @@ $LANG['INST_CODE'] = "Code de Institution (remplacement)";
 $LANG['LAB_PROJECT'] = "Projet d'Étiquette";
 $LANG['LANGUAGE'] = 'Langue';
 $LANG['LIFE_STAGE'] = 'Étape de Vie';
-$LANG['LOC_SEC'] = 'Sécurité de Localité';
-$LANG['LOC_SEC_REASON'] = 'Localité Sécurité Raison';
+$LANG['SECURITY'] = 'Sécurité';
+$LANG['SECURITY_REASON'] = 'Sécurité Raison';
 $LANG['LOC_REMARKS'] = 'Emplacement Remarques';
 $LANG['MODIFIED_BY'] = 'Modifié Par';
 $LANG['NOTES_REMARKS'] = 'Remarques (Occurrence Remarques)';
@@ -135,4 +135,5 @@ $LANG['CLOSE_PAREN_FIELD'] = 'Fermer le champ des parenthèses';
 $LANG['NEW_CUSTOM_FIELD'] = 'Ajouter un autre champ personnalisé';
 $LANG['ORDER_BY'] = 'Trier par';
 $LANG['ADD_CUSTOM_FIELD'] = 'Ajouter un Nouveau Filtre de Recherche Personnalisé';
+$LANG['SEARCH_MISSING_TRAITS'] = 'Rechercher des enregistrements sans traits sélectionnés';
 ?>

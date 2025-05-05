@@ -19,7 +19,7 @@ $imgManager = new ImageLibraryBrowser();
 </head>
 <body>
 	<?php
-	$displayLeftMenu = (isset($imagelib_photographersMenu)?$imagelib_photographersMenu:false);
+	$displayLeftMenu = (isset($imagelib_creatorsMenu)?$imagelib_creatorsMenu:false);
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
@@ -32,7 +32,7 @@ $imgManager = new ImageLibraryBrowser();
 	<div role="main" id="innertext" style="height:100%">
 			<h1 class="page-heading"><?=$LANG['CREATOR_LIST']?></h1>
 		<?php
-		$pList = $imgManager->getPhotographerList();
+		$pList = $imgManager->getCreatorList();
 		if($pList){
 			echo '<div style="float:left; margin-right:40px;">';
 			echo '<h2>' . $LANG['IMG_CONTR'] . '</h2>';

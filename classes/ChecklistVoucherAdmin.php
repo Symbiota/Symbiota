@@ -1,6 +1,7 @@
 <?php
 include_once('Manager.php');
 include_once('ImInventories.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 class ChecklistVoucherAdmin extends Manager {
 
@@ -255,7 +256,8 @@ class ChecklistVoucherAdmin extends Manager {
 			$tStr = $this->cleanInStr($this->queryVariablesArr['taxon']);
 			$tidPar = $this->getTid($tStr);
 			if($tidPar){
-				$sqlFrag .= 'AND (o.tidinterpreted IN (SELECT ts.tid FROM taxaenumtree e INNER JOIN taxstatus ts ON e.tid = ts.tidaccepted WHERE ts.taxauthid = 1 AND e.taxauthid = 1 AND e.parenttid = '.$tidPar.')) ';
+				$sqlFrag .= 'AND (o.tidinterpreted IN (SELECT ts.tid FROM taxaenumtree e INNER JOIN taxstatus ts ON e.tid = ts.tidaccepted
+					WHERE ts.taxauthid = 1 AND e.taxauthid = 1 AND (e.parenttid = '.$tidPar.' OR e.tid = '.$tidPar.'))) ';
 			}
 		}
 		//Locality and Latitude and longitude
