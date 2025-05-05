@@ -370,7 +370,7 @@ class OccurrenceCollectionProfile extends OmCollections{
 	public function getBasicStats(){
 		$retArr = array();
 		if($this->collid){
-			$sql = 'SELECT uploaddate, recordcnt, georefcnt, familycnt, genuscnt, speciescnt, dynamicProperties FROM omcollectionstats WHERE collid = '.$this->collid;
+			$sql = 'SELECT uploaddate, recordcnt, georefcnt, familycnt, genuscnt, speciescnt, dynamicProperties, datelastmodified FROM omcollectionstats WHERE collid = '.$this->collid;
 			$rs = $this->conn->query($sql);
 			if($row = $rs->fetch_object()){
 				$uDate = "";
@@ -388,6 +388,15 @@ class OccurrenceCollectionProfile extends OmCollections{
 				$retArr['genuscnt'] = $row->genuscnt;
 				$retArr['speciescnt'] = $row->speciescnt;
 				$retArr['dynamicProperties'] = $row->dynamicProperties;
+				$mDate = "";
+				if($row->datelastmodified){
+					$mDate = $row->datelastmodified;
+					$month = substr($mDate,5,2);
+					$day = substr($mDate,8,2);
+					$year = substr($mDate,0,4);
+					$mDate = date("j F Y",mktime(0,0,0,$month,$day,$year));
+				}
+				$retArr['datelastmodified'] = $mDate;
 			}
 			$rs->free();
 		}
