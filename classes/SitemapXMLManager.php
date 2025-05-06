@@ -6,6 +6,8 @@ class SitemapXMLManager extends Manager {
     private $database;
     private $port;
     private $username;
+    private $protocol = 'https';
+    private $sitemapMessage = '';
 
     public function __construct() {
 
@@ -14,46 +16,74 @@ class SitemapXMLManager extends Manager {
         $this->port = MySQLiConnectionFactory::$SERVERS[0]['port'];
     }
 
-    public function generateSitemap() {
-        global $CLIENT_ROOT, $SERVER_ROOT;
-
-    $conn = MySQLiConnectionFactory::getCon("readonly");
-    $baseUrl = rtrim($CLIENT_ROOT, '/');
-
-    $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-    $xml .= "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
-
-    $xml .= $this->generateCollectionsSitemap($conn, $baseUrl);
-    $xml .= $this->generateChecklistsSitemap($baseUrl);
-    $xml .= $this->generateProjectsSitemap($baseUrl);
-    $xml .= $this->generateExsiccataSitemap($conn, $baseUrl);
-    $xml .= $this->generateTaxaSitemap($conn, $baseUrl);
-
-    $xml .= "</urlset>\n";
-
-    $conn->close();
-
-    $outputDir = $SERVER_ROOT . '/content/sitemaps';
-    $timestamp = date('Y-m-d_H-i-s');
-    $outputFile = "{$outputDir}/sitemap-{$timestamp}.xml";
-
-    if (!is_dir($outputDir)) {
-        mkdir($outputDir, 0755, true);
+    public function __destruct() {
+        parent::__destruct();
     }
 
-    file_put_contents($outputFile, $xml);
+    public function generateSitemap() {
+        global $CLIENT_ROOT, $SERVER_ROOT, $SERVER_HOST;
 
-    return true;
+        $baseUrl = "{$this->protocol}://{$SERVER_HOST}" . $CLIENT_ROOT;
+
+        $conn = MySQLiConnectionFactory::getCon("readonly");
+
+        if (!$conn) {
+            $this->sitemapMessage = "Failed to connect to the database.";
+            return false;
+        }
+
+        $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+        $xml .= "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
+
+        $xml .= $this->generateCollectionsSitemap($conn, $baseUrl);
+        $xml .= $this->generateChecklistsSitemap($baseUrl);
+        $xml .= $this->generateProjectsSitemap($baseUrl);
+        $xml .= $this->generateExsiccataSitemap($conn, $baseUrl);
+        $xml .= $this->generateTaxaSitemap($conn, $baseUrl);
+
+        $xml .= "</urlset>\n";
+
+        $conn->close();
+
+        $outputDir = $SERVER_ROOT . '/content/sitemaps';
+
+        if (!is_writable($outputDir)) {
+            $this->sitemapMessage = "The log directory (e.g. /content/sitemaps/) is not writable by web user.
+                We strongly recommend that you adjust directory permissions as defined within the installation
+                before running installation/update scripts.";
+            return false;
+        }
+        $outputFile = "{$outputDir}/sitemap.xml";
+
+        if (!is_dir($outputDir)) {
+            if (!mkdir($outputDir, 0777, true)) {
+                $this->sitemapMessage = "Failed to create sitemap directory: $outputDir";
+                return false;
+            }
+        }
+
+        if (file_put_contents("{$outputDir}/sitemap.xml", $xml) === false) {
+            $this->sitemapMessage = "Failed to write sitemap file.";
+            return false;
+        }
+
+        return true;
     }
 
     private function generateCollectionsSitemap($conn, $baseUrl) {
-        $xml = '';
-        $sql = "SELECT collid, initialtimestamp AS timestamp FROM omcollections";
+        $sql = "SELECT c.collid, c.initialtimestamp, s.datelastmodified
+                FROM omcollections c
+                LEFT JOIN omcollectionstats s ON c.collid = s.collid";
         $rs = $conn->query($sql);
+        $xml = '';
         while ($row = $rs->fetch_assoc()) {
             $xml .= "  <url>\n";
             $xml .= "    <loc>{$baseUrl}/collections/misc/collprofiles.php?collid={$row['collid']}</loc>\n";
-            $xml .= "    <lastmod>" . date("Y-m-d", strtotime($row['timestamp'])) . "</lastmod>\n";
+
+            $timestamp = !empty($row['datelastmodified']) ? $row['datelastmodified'] : $row['initialtimestamp'];
+            if (!empty($timestamp)) {
+                $xml .= "    <lastmod>" . date("Y-m-d", strtotime($timestamp)) . "</lastmod>\n";
+            }
             $xml .= "  </url>\n";
         }
         return $xml;
@@ -92,15 +122,22 @@ class SitemapXMLManager extends Manager {
             $xml .= "  <url>\n";
             $xml .= "    <loc>{$baseUrl}/taxa/index.php?tid={$row['tid']}</loc>\n";
             $timestamp = !empty($row['modifiedtimestamp']) ? $row['modifiedtimestamp'] : $row['initialtimestamp'];
-            if (!empty($timestamp)) {
+
+            if (!empty($timestamp))
                 $xml .= "    <lastmod>" . date("Y-m-d", strtotime($timestamp)) . "</lastmod>\n";
-            }
             $xml .= "  </url>\n";
         }
         return $xml;
     }
 
-    public function __destruct() {
-        parent::__destruct();
+    public function setProtocol($protocol) {
+        if (in_array($protocol, ['http', 'https'])) {
+            $this->protocol = $protocol;
+        }
+    }
+
+    public function getSitemapMessage() {
+        return $this->sitemapMessage;
     }
 }
+
