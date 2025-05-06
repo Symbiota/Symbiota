@@ -21,7 +21,7 @@ class SitemapXMLManager extends Manager {
     }
 
     public function generateSitemap() {
-        global $CLIENT_ROOT, $SERVER_ROOT, $SERVER_HOST;
+        global $CLIENT_ROOT, $SERVER_ROOT, $SERVER_HOST, $PRIVATE_VIEWING_ONLY;
 
         $baseUrl = "{$this->protocol}://{$SERVER_HOST}" . $CLIENT_ROOT;
 
@@ -35,11 +35,24 @@ class SitemapXMLManager extends Manager {
         $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         $xml .= "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
 
+        //add main landing page
+        $landingPagePath = '/index.php';
+        if ($this->isPathAllowed($landingPagePath)) {
+            $xml .= "  <url>\n";
+            $xml .= "    <loc>{$baseUrl}{$landingPagePath}</loc>\n";
+            $xml .= "  </url>\n";
+        }
+
+        //add pages
         $xml .= $this->generateCollectionsSitemap($conn, $baseUrl);
         $xml .= $this->generateChecklistsSitemap($baseUrl);
         $xml .= $this->generateProjectsSitemap($baseUrl);
         $xml .= $this->generateExsiccataSitemap($conn, $baseUrl);
         $xml .= $this->generateTaxaSitemap($conn, $baseUrl);
+
+        //add the public pages if private turned on
+        if ($PRIVATE_VIEWING_ONLY)
+            $xml .= $this->generateOverrideSitemap($baseUrl);
 
         $xml .= "</urlset>\n";
 
@@ -77,8 +90,11 @@ class SitemapXMLManager extends Manager {
         $rs = $conn->query($sql);
         $xml = '';
         while ($row = $rs->fetch_assoc()) {
+            $path = "/collections/misc/collprofiles.php?collid={$row['collid']}";
+            if (!$this->isPathAllowed($path)) continue;
+
             $xml .= "  <url>\n";
-            $xml .= "    <loc>{$baseUrl}/collections/misc/collprofiles.php?collid={$row['collid']}</loc>\n";
+            $xml .= "    <loc>{$baseUrl}{$path}</loc>\n";
 
             $timestamp = !empty($row['datelastmodified']) ? $row['datelastmodified'] : $row['initialtimestamp'];
             if (!empty($timestamp)) {
@@ -90,14 +106,20 @@ class SitemapXMLManager extends Manager {
     }
 
     private function generateChecklistsSitemap($baseUrl) {
+        $path = "/checklists/index.php";
+        if (!$this->isPathAllowed($path)) return '';
+
         return "  <url>\n" .
-               "    <loc>{$baseUrl}/checklists/index.php</loc>\n" .
+               "    <loc>{$baseUrl}{$path}</loc>\n" .
                "  </url>\n";
     }
 
     private function generateProjectsSitemap($baseUrl) {
+        $path = "/projects/index.php";
+        if (!$this->isPathAllowed($path)) return '';
+
         return "  <url>\n" .
-               "    <loc>{$baseUrl}/projects/index.php</loc>\n" .
+               "    <loc>{$baseUrl}{$path}</loc>\n" .
                "  </url>\n";
     }
 
@@ -106,8 +128,11 @@ class SitemapXMLManager extends Manager {
         $sql = "SELECT ometid, initialtimestamp FROM omexsiccatititles";
         $rs = $conn->query($sql);
         while ($row = $rs->fetch_assoc()) {
+            $path = "/collections/exsiccati/index.php?ometid={$row['ometid']}";
+            if (!$this->isPathAllowed($path)) continue;
+
             $xml .= "  <url>\n";
-            $xml .= "    <loc>{$baseUrl}/collections/exsiccati/index.php?ometid={$row['ometid']}</loc>\n";
+            $xml .= "    <loc>{$baseUrl}{$path}</loc>\n";
             $xml .= "    <lastmod>" . date("Y-m-d", strtotime($row['initialtimestamp'])) . "</lastmod>\n";
             $xml .= "  </url>\n";
         }
@@ -119,12 +144,15 @@ class SitemapXMLManager extends Manager {
         $sql = "SELECT tid, modifiedtimestamp, initialtimestamp FROM taxa WHERE rankid <= 180";
         $rs = $conn->query($sql);
         while ($row = $rs->fetch_assoc()) {
-            $xml .= "  <url>\n";
-            $xml .= "    <loc>{$baseUrl}/taxa/index.php?tid={$row['tid']}</loc>\n";
-            $timestamp = !empty($row['modifiedtimestamp']) ? $row['modifiedtimestamp'] : $row['initialtimestamp'];
+            $path = "/taxa/index.php?tid={$row['tid']}";
+            if (!$this->isPathAllowed($path)) continue;
 
-            if (!empty($timestamp))
+            $xml .= "  <url>\n";
+            $xml .= "    <loc>{$baseUrl}{$path}</loc>\n";
+            $timestamp = !empty($row['modifiedtimestamp']) ? $row['modifiedtimestamp'] : $row['initialtimestamp'];
+            if (!empty($timestamp)) {
                 $xml .= "    <lastmod>" . date("Y-m-d", strtotime($timestamp)) . "</lastmod>\n";
+            }
             $xml .= "  </url>\n";
         }
         return $xml;
@@ -138,6 +166,34 @@ class SitemapXMLManager extends Manager {
 
     public function getSitemapMessage() {
         return $this->sitemapMessage;
+    }
+
+    private function isPathAllowed($path) {
+        global $PRIVATE_VIEWING_ONLY, $PRIVATE_VIEWING_OVERRIDES;
+        if (!$PRIVATE_VIEWING_ONLY) return true;
+        foreach ($PRIVATE_VIEWING_OVERRIDES as $allowedPath) {
+            if (strpos($path, $allowedPath) === 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function generateOverrideSitemap($baseUrl) {
+        global $PRIVATE_VIEWING_OVERRIDES;
+
+        $xml = '';
+        if (is_array($PRIVATE_VIEWING_OVERRIDES)) {
+            foreach ($PRIVATE_VIEWING_OVERRIDES as $path) {
+
+                if ($path === '/index.php' || $path === '/projects/index.php' || $path === '/checklists/index.php') continue;
+
+                $xml .= "  <url>\n";
+                $xml .= "    <loc>{$baseUrl}{$path}</loc>\n";
+                $xml .= "  </url>\n";
+            }
+        }
+        return $xml;
     }
 }
 
