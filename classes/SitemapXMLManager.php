@@ -73,7 +73,7 @@ class SitemapXMLManager extends Manager {
     private function generateCollectionsSitemap($conn, $baseUrl) {
         $sql = "SELECT c.collid, c.initialtimestamp, s.datelastmodified
                 FROM omcollections c
-                LEFT JOIN omcollectionstats s ON c.collid = s.collid";
+                INNER JOIN omcollectionstats s ON c.collid = s.collid";
         $rs = $conn->query($sql);
         $xml = '';
         while ($row = $rs->fetch_assoc()) {
