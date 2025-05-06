@@ -5,14 +5,13 @@ require_once($SERVER_ROOT . '/vendor/autoload.php');
 use Jumbojett\OpenIDConnectClient;
 
 if($SYMB_UID){
-	if($_SESSION['refurl']){
+
+	if ($_SESSION['refurl'] ?? false){
 		header("Location:" . $_SESSION['refurl']);
 		unset($_SESSION['refurl']);
-	}
-	if ($_REQUEST['refurl']){
+	} else if($_REQUEST['refurl'] ?? false){
 		header("Location:" . $_REQUEST['refurl']);	
-	}
-	else{
+	} else{
 		header("Location:" . $CLIENT_ROOT . '/profile/viewprofile.php');
 	}
 }
