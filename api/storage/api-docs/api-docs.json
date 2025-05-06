@@ -80,6 +80,17 @@
                 ],
                 "description": "Create a new biocollection entity",
                 "operationId": "createCollection",
+                "parameters": [
+                    {
+                        "name": "apiToken",
+                        "in": "query",
+                        "description": "API security token to authenticate post action",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "description": "Collection data to be inserted",
                     "required": true,

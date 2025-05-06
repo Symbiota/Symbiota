@@ -258,23 +258,30 @@ class CollectionController extends Controller{
 	 * )
 	 */
 	public function create(Request $request){
-		// if($user = $this->authenticate($request)){ // @TODO this needs to only allow for super admin (or whatever it is for the UI)
+		$authenticatedRoles = $this->authenticate($request)['roles'] ?? [];
+		$extractedRoles = array_map(function($elem){
+			return $elem['role'];
+		}, $authenticatedRoles);
+		$rolesPermittedToCreateCollections = array('CollAdmin', 'SuperAdmin');
+		$qualifyingRoles = array_intersect($extractedRoles, $rolesPermittedToCreateCollections);
+
+		if(count($qualifyingRoles)>0){
 			// @TODO make colleciton GUID?
 			try {
 				$collection = Collection::create($request->all());
 				$collectionStats = CollectionStats::create([
 					'collid' => $collection->collID,
 					'recordcnt' => 0,
-					'uploadedby' => $GLOBALS['USERNAME']
-					// 'uploadedby' => 'TODO'
+					// 'uploadedby' => $GLOBALS['USERNAME']
+					'uploadedby' => 'TODO'
 				]);
 			} catch (\Exception $e) {
 				return response()->json(['error' => 'Failed to create collection stats' . $e->getMessage()], 500);
 			}
 
 			return response()->json($collection, 200);
-		// }
-		// return response()->json(['error' => 'Unauthorized'], 401);
+		}
+		return response()->json(['error' => 'Unauthorized'], 401);
 	}	
 
 	public function update($id, Request $request){
