@@ -248,7 +248,7 @@ if ($imgArr) {
 							</div>
 							<div style="margin-top:2px;">
 								<b><?php echo $LANG['SORT_SEQUENCE'] ?>:</b>
-								<input name="sortsequence" type="text" value="<?php echo $imgArr["sortSequence"]; ?>" size="5" />
+								<input name="sortsequence" type="text" value="<?php echo $imgArr["sortSequence"] ?? ''; ?>" size="5" />
 							</div>
 							<div style="margin-top:2px;">
 								<b><?php echo $LANG['WEB_IMAGE'] ?>:</b><br />
