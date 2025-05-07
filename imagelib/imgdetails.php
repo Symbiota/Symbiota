@@ -33,9 +33,15 @@ if ($isEditor) {
 		$remove_files = $_REQUEST['removeimg'] ?? false;
 		try {
 			Media::delete(intval($mediaID), boolval($remove_files));
-			header('location: ' . $_SERVER['HTTP_REFERER']);
+			if($errors = Media::getErrors()) {
+				$status = 'Errors:<br/>' . implode('<br/>', $errors);
+			} else if($_REQUEST['tid'] ?? false) {
+				header('Location: ../taxa/profile/tpeditor.php?tid=' . $_REQUEST['tid'] . '&tabindex=1');
+			} else {
+				header('Location: index.php');
+			}
 		} catch(Throwable $th) {
-			//TODO (Logan) handle errors
+			$status = "ERROR: " . $th->getMessage();
 		}
 
 	}
@@ -330,6 +336,7 @@ if ($imgArr) {
 							<div style="margin-top:2px;">
 								<button class="button-danger" type="submit" name="submitaction" id="submit" value="Delete Image"><?php echo $LANG['DELETE_IMAGE'] ?></button>
 							</div>
+							<input type="hidden" name="tid" value="<?php echo $imgArr["tid"]; ?>" />
 							<input name="removeimg" type="checkbox" value="1" /> <?php echo $LANG['REMOVE_IMG_FROM_SERVER'] ?>
 							<div style="margin-left:20px;color:red;">
 								<?php echo $LANG['BOX_CHECKED_IMG_DELETED'] ?>
