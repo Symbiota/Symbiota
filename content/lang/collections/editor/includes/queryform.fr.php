@@ -16,6 +16,7 @@ $LANG['SEPARATE_RANGES'] = "Séparez plusieurs termes par une virgule et plages 
 $LANG['NUMBER'] = 'Nombre';
 $LANG['ENTER_RANGES'] = "Entrer des plages séparées par ' - ' (espace avant et après tiret requis), par exemple: 2002-01-01 - 2003-01-01";
 $LANG['DATE'] = 'Date';
+$LANG['DATE2'] = 'Date 2';
 $LANG['CAT_NUM'] = 'Numéro de Catalogue';
 $LANG['OCR_FRAGMENT'] = 'Fragment OCR';
 $LANG['OTHER_CAT_NUMS'] = 'Autres Numéros de Catalogue';

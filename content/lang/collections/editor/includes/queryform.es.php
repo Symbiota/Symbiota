@@ -16,6 +16,7 @@ $LANG['SEPARATE_RANGES'] = "Separar términos múltiples con comas, y rangos con
 $LANG['NUMBER'] = 'Número';
 $LANG['ENTER_RANGES'] = "Entrar rangos separdos por ' - ' (espacio antes y después del apóstrofe requerido), e.g.: 2002-01-01 - 2003-01-01";
 $LANG['DATE'] = 'Fecha';
+$LANG['DATE2'] = 'Date 2';
 $LANG['CAT_NUM'] = 'Número de Catálogo';
 $LANG['OCR_FRAGMENT'] = 'Fragmento de OCR';
 $LANG['OTHER_CAT_NUMS'] = 'Otros Números de Catálogo';

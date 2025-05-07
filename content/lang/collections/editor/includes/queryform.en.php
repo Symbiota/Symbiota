@@ -16,6 +16,7 @@ $LANG['SEPARATE_RANGES'] = "Separate multiple terms by comma and ranges by ' - '
 $LANG['NUMBER'] = 'Number';
 $LANG['ENTER_RANGES'] = "Enter ranges separated by ' - ' (space before and after dash required), e.g.: 2002-01-01 - 2003-01-01";
 $LANG['DATE'] = 'Date';
+$LANG['DATE2'] = 'Date 2';
 $LANG['CAT_NUM'] = 'Catalog Number';
 $LANG['OCR_FRAGMENT'] = 'OCR Fragment';
 $LANG['OTHER_CAT_NUMS'] = 'Other Catalog Numbers';
