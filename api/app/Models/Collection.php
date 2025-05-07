@@ -10,9 +10,9 @@ class Collection extends Model{
 	public $timestamps = false;
 
 	protected $fillable = [
-		'institutionCode', 'collectionCode', 'collectionName', 'collectionID', 'datasetID', 'datasetName', 'fullDescription', 'resourceJson', 'IndividualUrl', 'contactJson',
-		'latitudeDecimal', 'longitudeDecimal', 'icon', 'collType', 'managementType', 'publicEdits', 'collectionGuid', 'rightsHolder', 'rights', 'usageTerm', 'dwcaUrl',
-		'bibliographicCitation', 'accessRights', 'sortSeq'
+		'institutionCode', 'collectionCode', 'collectionName', 'collectionID', 'fullDescription', 'individualUrl',
+		'latitudeDecimal', 'longitudeDecimal', 'collType', 'managementType', 'publicEdits', 'collectionGuid', 'rightsHolder', 'rights',
+		 'accessRights', 'sortSeq', 'icon'
 	];
 
 	protected $hidden = ['securityKey', 'guidTarget', 'aggKeysStr', 'dwcTermJson', 'publishToGbif', 'publishToIdigbio', 'dynamicProperties'];
