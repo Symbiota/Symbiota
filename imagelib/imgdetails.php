@@ -31,7 +31,13 @@ if ($isEditor) {
 		header('Location: ../taxa/profile/tpeditor.php?tid=' . $_REQUEST['targettid'] . '&tabindex=1');
 	} elseif ($action == 'Delete Image') {
 		$remove_files = $_REQUEST['removeimg'] ?? false;
-		Media::delete(intval($mediaID), boolval($remove_files));
+		try {
+			Media::delete(intval($mediaID), boolval($remove_files));
+			header('location: ' . $_SERVER['HTTP_REFERER']);
+		} catch(Throwable $th) {
+			//TODO (Logan) handle errors
+		}
+
 	}
 	$imgArr = Media::getMedia($mediaID);
 }
@@ -53,6 +59,7 @@ if ($imgArr) {
 		$metaUrl = $serverPath . $metaUrl;
 	}
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
