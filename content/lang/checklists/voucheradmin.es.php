@@ -15,7 +15,7 @@ $LANG['COUNTRY'] = 'País';
 $LANG['ENTER_MULT_COUNTRIES'] = 'Ingrese varios países separados por punto y coma';
 $LANG['STATE'] = 'Estado';
 $LANG['ENTER_MULT_STATES'] = 'Ingrese múltiples estados separados por punto y coma';
-$LANG['CONDADO'] = 'Condado';
+$LANG['COUNTY'] = 'Condado';
 $LANG['ENTER_MULT_COUNTIES'] = 'Ingrese varios condados separados por punto y coma';
 $LANG['LOCALITY'] = 'Localidad';
 $LANG['TAXON'] = 'Taxón';
@@ -83,5 +83,5 @@ $LANG['PREVIOUS'] = 'Anterior';
 $LANG['RECORDS'] = ' Registros';
 $LANG['NEXT'] = 'Siguiente';
 $LANG['IMG_EDIT'] = 'Editar imagen';
-
+$LANG['GEOJSON_FOOTPRINT'] = 'Huella GeoJson';
 ?>

@@ -83,4 +83,5 @@ $LANG['PREVIOUS'] = 'Précédente';
 $LANG['RECORDS'] = 'Occurrences';
 $LANG['NEXT'] = 'Suivante';
 $LANG['IMG_EDIT'] = 'Modifier l\'image';
+$LANG['GEOJSON_FOOTPRINT'] = 'Empreinte GeoJson';
 ?>
