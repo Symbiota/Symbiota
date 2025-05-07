@@ -2,11 +2,9 @@
 /*
 ------------------
 Language: Español (Spanish)
-Translated by: Samanta Orellana
-Date Translated: 2021-09-05
+Translated by: Samanta Orellana (2021-09-05)
 ------------------
 */
-
 include_once($SERVER_ROOT.'/content/lang/collections/editor/skeletalsubmit.es.php');
 
 $LANG['OBS_SUBMIT'] = 'Envío de Observación';
@@ -45,16 +43,13 @@ $LANG['DATUM'] = 'Datum';
 $LANG['ELEV_M'] = 'Elev. (metros)';
 $LANG['ELEV_FT'] = 'Elev. (pies)';
 $LANG['GEO_REMARKS'] = 'Comentarios de Georeferenciación';
-$LANG['LATITUDE_DEG'] = 'Grados (latitud)';
-$LANG['LATITUDE_MIN'] = 'Minutos (latitud)';
-$LANG['LATITUDE_SEC'] = 'Segundos (latitud)';
+$LANG['DEG'] = 'Grados';
+$LANG['MIN'] = 'Minutos';
+$LANG['SEC'] = 'Segundos';
 $LANG['N'] = 'N'; //Como en el Norte
 $LANG['S'] = 'S'; //Como en el sur
-$LANG['LONGITUDE_DEG'] = 'Grados (longitud)';
-$LANG['LONGITUDE_MIN'] = 'Minutos (longitud)';
-$LANG['LONGITUDE_SEC'] = 'Segundos (longitud)';
-$LANG['E'] = 'E'; //As in East
-$LANG['W'] = 'W'; //As in West
+$LANG['E'] = 'E'; //Como en Este
+$LANG['W'] = 'O'; //Como en Oeste
 $LANG['MISC'] = 'Misc';
 $LANG['HABITAT'] = 'Hábitat';
 $LANG['SUBSTRATE'] = 'Sustrato';
@@ -67,14 +62,11 @@ $LANG['CULT_CAPT'] = 'Cultivado/Cautivo';
 $LANG['LINK_CHECK'] = 'Vincular a Listado como Voucher';
 $LANG['SP_LIST'] = 'Listado de Especies';
 $LANG['SEL_CHECKLIST'] = 'Seleccionar Listado de Especies';
-$LANG['SUBMIT_OBS'] = 'Enviar Observación';
 $LANG['SUBMIT'] = 'Enviar';
 $LANG['NOT_AUTH'] = 'No está autorizado para enviar observaciones.';
 $LANG['LONGDIRECTION'] = 'Dirección (longitud)';
 $LANG['LATDIRECTION'] = 'Dirección (latitud)';
 $LANG['EDIT_BTN'] = 'Mostrar campos adicionales';
-$LANG['REP_COND_EG'] = 'p.ej. estéril, flw, frt, flw/frt';
-$LANG['EST_MEANS_EG'] = 'p.ej. plantado, sembrado, escape del jardín, etc.';
 $LANG['CULT_CAPT_EG'] = 'Haga clic si el espécimen fue cultivado o cautivo';
 $LANG['IMG_GLOBE'] = 'Una pequeña imagen del globo terráqueo';
 $LANG['IMG_EDIT'] = 'Botón Mostrar campos adicionales';

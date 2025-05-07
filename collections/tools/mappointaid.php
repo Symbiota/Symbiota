@@ -2,16 +2,11 @@
 include_once('../../config/symbini.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/tools/mapaids.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/tools/mapaids.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/tools/mapaids.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/MappingUtil.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
-if($MAPPING_BOUNDARIES){
-	$boundaryArr = explode(";",$MAPPING_BOUNDARIES);
-	$latCenter = ($boundaryArr[0]>$boundaryArr[2]?((($boundaryArr[0]-$boundaryArr[2])/2)+$boundaryArr[2]):((($boundaryArr[2]-$boundaryArr[0])/2)+$boundaryArr[0]));
-	$lngCenter = ($boundaryArr[1]>$boundaryArr[3]?((($boundaryArr[1]-$boundaryArr[3])/2)+$boundaryArr[3]):((($boundaryArr[3]-$boundaryArr[1])/2)+$boundaryArr[1]));
-} else{
-	$latCenter = 42.877742;
-	$lngCenter = -97.380979;
-}
+$bounds = MappingUtil::getMappingBoundary();
+$centerPoint = MappingUtil::getBoundsCentroid($bounds); 
 
 $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
@@ -39,6 +34,7 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 		//Map Center
 		let latCenter;
 		let lngCenter;
+		let mapBounds;
 
 		//Inputs
 		let radiusInput;
@@ -91,11 +87,16 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 
 		function leafletInit() {
 			//Setup Map Canvas
-			map = new LeafletMap('map_canvas', {
+			let map_options = {
 				center: [latCenter, lngCenter],
-				zoom: 15,
-				lang: "<?php echo $LANG_TAG; ?>"
-			});
+				lang: "<?php echo $LANG_TAG; ?>",
+			}
+
+			if(mapBounds) {
+				map_options.defaultBounds = mapBounds;
+			}
+
+			map = new LeafletMap('map_canvas', map_options);
 
 			var drawnItems = new L.FeatureGroup();
 			map.mapLayer.addLayer(drawnItems);
@@ -278,6 +279,7 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 			//Draw marker if one exists
 			if(latlng) {
 				createMarker(latlng[0], latlng[1]);
+				map.mapLayer.setZoom(10);
 			} else if(markerControl) {
 				markerControl.click();
 			}
@@ -392,12 +394,13 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 				} else {
 					alert(`Error: Not Coordinates lat: ${lat}, lng: ${lng}`);
 				}
-            latCenter = parseFloat(lat);
-            lngCenter = parseFloat(lng);
-         } else {
-            latCenter = parseFloat(data.getAttribute('data-lat'));
-            lngCenter = parseFloat(data.getAttribute('data-lng'));
-         } 
+				latCenter = parseFloat(lat);
+				lngCenter = parseFloat(lng);
+			} else {
+				latCenter = parseFloat(data.getAttribute('data-lat'));
+				lngCenter = parseFloat(data.getAttribute('data-lng'));
+				mapBounds = JSON.parse(data.getAttribute('data-map-bounds'));
+			}
 
 			<?php if(empty($GOOGLE_MAP_KEY)): ?> 
 			leafletInit();
@@ -458,8 +461,9 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 		<div
 			id="service-container"
 			class="service-container"
-			data-lat="<?= htmlspecialchars($latCenter)?>"
-			data-lng="<?= htmlspecialchars($lngCenter)?>"
+			data-map-bounds="<?=htmlspecialchars(json_encode(MappingUtil::getMappingBoundary()))?>"
+			data-lat="<?= htmlspecialchars($centerPoint['lat'])?>"
+			data-lng="<?= htmlspecialchars($centerPoint['lng'])?>"
 			>
 		</div>
 		<form class="minimal-header-margin" style="padding:0.5rem" name="coordform" action="" method="post" onsubmit="return false">

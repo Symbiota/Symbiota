@@ -2733,7 +2733,7 @@ class SpecProcNlpLbcc {
 						 && strcasecmp($word1, "acre") != 0 && strcasecmp($word1, "sterile") != 0
 						 && strcasecmp($word1, "montana") != 0 && strcasecmp($word1, "louisiana") != 0 && strcasecmp($word1, "california") != 0) {
 						$sql = "SELECT * FROM taxa t WHERE t.unitName2 = '".$word1."'";
-						if($r2s = $this->conn->query($sql)) if($r2s->num_row) return true;
+						if($r2s = $this->conn->query($sql)) if($r2s->num_rows) return true;
 					}
 				}
 				if($wordCount > 3) {

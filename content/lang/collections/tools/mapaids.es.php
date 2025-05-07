@@ -29,20 +29,6 @@ $LANG['MPR_LNG'] = 'Longitud';
 $LANG['SUBMIT'] = 'Enviar';
 $LANG['UNCERTAINTY_METERS'] = 'Incertidumbre en Metros';
 
-//Following used in mappolyaid.php
-$LANG['COOR_POLYGON_AID'] = 'Coordinar Ayuda del Polígono';
-$LANG['MAP_POLYGON_HELPER'] = 'Ayudante de polígono de mapa';
-$LANG['POLYGON_FORMATTING'] = 'Formato de polígono';
-$LANG['REDRAW'] = 'Redibujar';
-$LANG['TRIM_DIGITS'] = 'Recortar a 6 dígitos significativos';
-$LANG['SWAP_COORDS'] = 'Cambiar coordenadas de latitud/longitud';
-$LANG['INSTRUCTION'] = 'Haga clic en el símbolo de polígono para activar la herramienta de polígono y crear una forma que represente el área de investigación.
-                        Haga clic en el botón Guardar para vincular el polígono a la lista de verificación.
-                        La huella del polígono WKT dentro del cuadro de texto se puede modificar manualmente y reconstruir en el mapa usando el botón Redibujar polígono.
-                        Una definición de polígono WKT se puede copiar en el área de texto desde otra aplicación.
-                        Utilice el botón Cambiar orden de coordenadas para convertir pares de coordenadas Long-Lat al formato Lat-Long.';
-$LANG['COORDINATE'] = 'Coordinar ayuda';
-
 //Google Map Only
 $LANG['DELETE_SELECTED'] = 'Eliminar polígono seleccionado';
 $LANG['MPA_INSTRUCTIONS'] = "Haga clic en el símbolo de polígono para activar la herramienta de polígono. Haga clic en el botón Enviar para transferir el polígono al editor.";
