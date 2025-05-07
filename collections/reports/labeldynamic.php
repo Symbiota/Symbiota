@@ -68,6 +68,9 @@ if($SYMB_UID){
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['LABELS']; ?></title>
+
+		<link rel="stylesheet" type="text/css" href="<?= $CSS_BASE_PATH ?>/symbiota/collections/reports/labelhelpers.css">
+
 		<style type="text/css">
 			.row { display: flex; flex-wrap: nowrap; margin-left: auto; margin-right: auto;}
 			.label { page-break-before: auto; page-break-inside: avoid; }
