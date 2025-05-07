@@ -110,14 +110,19 @@ if($SYMB_UID){
 			.otherCatalogNumbers { clear:both; text-align:center; }
 			.symbBarcode { padding-top:10px; } */
 			.label-header { clear:both; text-align: center }
+			p.field-block{ margin: 0 }
 			.label-footer { clear:both; text-align: center; font-weight: bold; font-size: 12pt; }
 			@media print { .controls { display: none; } }
 		</style>
 		<?php
 		if(isset($targetLabelFormatArr['defaultCss']) && $targetLabelFormatArr['defaultCss']){
 			$cssPath = $targetLabelFormatArr['defaultCss'];
-			if(substr($cssPath,0,1) == '/' && !file_exists($cssPath)){
-				if(file_exists($SERVER_ROOT.$targetLabelFormatArr['defaultCss'])) $cssPath = $CLIENT_ROOT.$targetLabelFormatArr['defaultCss'];
+			if(!file_exists($cssPath)) {
+				if(substr($cssPath,0,1) == '/' && file_exists($SERVER_ROOT.$targetLabelFormatArr['defaultCss'])) {
+					$cssPath = $CLIENT_ROOT.$targetLabelFormatArr['defaultCss'];
+				} else {
+					$cssPath = $CLIENT_ROOT . '/css/symbiota/collections/reports/labelhelpers.css';
+				}
 			}
 			echo '<link href="' . htmlspecialchars($cssPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" type="text/css" rel="stylesheet" />'."\n";
 		}

@@ -296,6 +296,16 @@ class OccurrenceLabel{
 				foreach($bArr['fieldBlock'] as $fieldArr){
 					$fieldName = strtolower($fieldArr['field']);
 					$fieldValue = trim($occArr[$fieldName] ?? '');
+
+					// Need for Docx Import Support for upper and lower case styling
+					if($className = $fieldArr['className'] ?? false) {
+						if(str_contains($className, 'uppercase')) {
+							$fieldValue = strtoupper($fieldValue);
+						} else if(str_contains($className, 'lowercase')) {
+							$fieldValue = strtolower($fieldValue);
+						}
+					}
+
 					if($fieldValue){
 						if($delimiter && $cnt) $fieldDivStr .= $delimiter;
 						$fieldDivStr .= '<span class="'.$fieldName.(isset($fieldArr['className'])?' '.$fieldArr['className']:'').'" '.(isset($fieldArr['style'])?'style="'.$fieldArr['style'].'"':'').'>';
@@ -310,7 +320,7 @@ class OccurrenceLabel{
 						$cnt++;
 					}
 				}
-				if($fieldDivStr) $outStr .= '<div class="field-block'.(isset($bArr['className'])?' '.$bArr['className']:'').'"'.(isset($bArr['style'])?' style="'.$bArr['style'].'"':'').'>'.$fieldDivStr.'</div>';
+				if($fieldDivStr) $outStr .= '<p class="field-block'.(isset($bArr['className'])?' '.$bArr['className']:'').'"'.(isset($bArr['style'])?' style="'.$bArr['style'].'"':'').'>'.$fieldDivStr.'</p>';
 			}
 		}
 		return $outStr;
