@@ -231,51 +231,7 @@ class OccurrenceEditorManager {
 		}
 
 		$custom_fields = [];
-		for ($i=1; $i < 11; $i++) { 
-			$custom_fields['cf' . $i] = 'customfield' . $i;
-			$custom_fields['ct' . $i] = 'customtype' . $i;
-			$custom_fields['cv' . $i] = 'customvalue' . $i;
-		}
-
-		foreach($queryArr as $name => $value) {
-			if(array_key_exists($name, $map)) {
-				$retArr[$map[$name]] = $value;
-			} else if(array_key_exists($name, $custom_fields)) {
-				$retArr[$custom_fields[$name]] = $value;
-			}
-		}
-
-		return http_build_query($retArr, "&amp");
-	}
-
-	function getDownloadQuery(): string {
-		$queryArr = $this->getQueryVariables();
-		$retArr = [ 'db' => $this->collId ];
-
-		$map = [
-			'rb' => 'collector',
-			'rn' => 'collnum',
-			'ed' => 'eventdate1',
-			'cn' => 'catnum',
-			'ocn' => 'othercatalognumbers',
-			'eb' => 'recordenteredby',
-			'de' => 'dateentered',
-			'dm' => 'datelastmodified',
-			'ps' => 'processingstatus',
-			'traitid' => 'traitid',
-			'stateid' => 'stateid',
-			'exsid' => 'exsiccatiid',
-		];
-
-		// Handle woi and io seperately since they distill into one variable
-		if(array_key_exists('io', $queryArr)) {
-			$retArr['hasimages'] = 1;
-		} else if(array_key_exists('woi', $queryArr)) {
-			$retArr['hasimages'] = 0;
-		}
-
-		$custom_fields = [];
-		for ($i=1; $i < 11; $i++) { 
+		for ($i=1; $i < 11; $i++) {
 			$custom_fields['cf' . $i] = 'customfield' . $i;
 			$custom_fields['ct' . $i] = 'customtype' . $i;
 			$custom_fields['cv' . $i] = 'customvalue' . $i;
@@ -623,7 +579,7 @@ class OccurrenceEditorManager {
 			//Used to find records linked to a specific exsiccati
 			$sqlWhere .= 'AND (exn.ometid = ' . $this->qryArr['exsid'] . ') ';
 		}
-			
+
 		// Traits
 		$traitids = array_key_exists('traitid', $this->qryArr) && is_array($this->qryArr['traitid'])?
 			array_filter($this->qryArr['traitid'], fn($v) => is_numeric($v)): [];
@@ -901,9 +857,9 @@ class OccurrenceEditorManager {
 		} elseif (array_key_exists('woi', $this->qryArr)) {
 			$sql .= 'LEFT JOIN media m ON o.occid = m.occid ';
 		}
-		//Traits 
+		//Traits
 		if(strpos($this->sqlWhere, 'tms.stateid') || strpos($this->sqlWhere, 'tms.traitid')) {
-			$sql .= ' LEFT JOIN tmattributes tma ON tma.occid = o.occid ' . 
+			$sql .= ' LEFT JOIN tmattributes tma ON tma.occid = o.occid ' .
 			'LEFT JOIN tmstates tms ON tms.stateid = tma.stateid ';
 		}
 

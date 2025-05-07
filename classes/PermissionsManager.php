@@ -330,7 +330,7 @@ class PermissionsManager {
 			if (is_numeric($collType)) $sql .= 'WHERE (collid = ' . $collType . ') ';
 			else{
 				$collTypeArr = explode(',', $this->cleanInStr($collType));
-				$sql .= 'WHERE (colltype IN("' . implode('","', $this->cleanInStr($collTypeArr)) . '")) ';
+				$sql .= 'WHERE (colltype IN("' . implode('","', $collTypeArr) . '")) ';
 			}
 		}
 		$sql .= 'ORDER BY collectionname';
