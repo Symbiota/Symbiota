@@ -2,11 +2,9 @@
 /*
 ------------------
 Language: Español (Spanish)
-Translated by: Samanta Orellana
-Date Translated: 2021-10-29
+Translated by: Samanta Orellana (2021-10-29)
 ------------------
 */
-
 $LANG['LABEL_PROCESSING'] = 'Procesamiento de Etiquetas';
 $LANG['ZOOM'] = 'Zoom?';
 $LANG['ZOOM_DIRECTIONS'] = 'Presione la tecla Control y haga click en la imagen para aumentar el tamaño de la imagen en una ubicación específica
@@ -28,6 +26,8 @@ $LANG['SOURCE'] = 'Fuente';
 $LANG['SAVE_OCR'] = 'Guardar OCR';
 $LANG['NEW'] = 'Nuevo';
 $LANG['SAVE_OCR_EDITS'] = 'Guardar Ediciones de OCR';
+$LANG['SALIX_PARSER'] = 'SALIX Parser';
+$LANG['LBCC_PARSER'] = 'LBCC Parser';
 $LANG['DELETE_OCR'] = 'Eliminar OCR';
 
 ?>

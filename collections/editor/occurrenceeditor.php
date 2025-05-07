@@ -22,9 +22,6 @@ if(strpos($action,'Determination') || strpos($action,'Verification')){
 	include_once($SERVER_ROOT.'/classes/OccurrenceEditorDeterminations.php');
 	$occManager = new OccurrenceEditorDeterminations();
 } else{
-	if(strpos($action,'Image')) {
-		include_once($SERVER_ROOT . "/classes/Media.php");
-	}
 	include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 	$occManager = new OccurrenceEditorManager();
 }
@@ -444,22 +441,21 @@ if($SYMB_UID){
 	}
 
 	//Images and other things needed for OCR
-	$specImgArr = $occManager->getImageMap();
+	$specImgArr = Media::fetchOccurrenceMedia($occId, 'image');
 	if($specImgArr){
 		$imgUrlPrefix = (isset($MEDIA_DOMAIN)?$MEDIA_DOMAIN:'');
 		$imgCnt = 1;
 		foreach($specImgArr as $imgId => $i2){
 			$iUrl = $i2['url'];
-			if($iUrl == 'empty' && $i2['origurl']) $iUrl = $i2['origurl'];
+			if($iUrl == 'empty' && $i2['originalUrl']) $iUrl = $i2['originalUrl'];
 			if($imgUrlPrefix && substr($iUrl,0,4) != 'http') $iUrl = $imgUrlPrefix.$iUrl;
 			$imgArr[$imgCnt]['mediaid'] = $imgId;
 			$imgArr[$imgCnt]['web'] = $iUrl;
-			if($i2['origurl']){
-				$lgUrl = $i2['origurl'];
+			if($i2['originalUrl']){
+				$lgUrl = $i2['originalUrl'];
 				if($imgUrlPrefix && substr($lgUrl,0,4) != 'http') $lgUrl = $imgUrlPrefix.$lgUrl;
 				$imgArr[$imgCnt]['lg'] = $lgUrl;
 			}
-			if(isset($i2['error'])) $imgArr[$imgCnt]['error'] = $i2['error'];
 			$imgCnt++;
 		}
 		$fragArr = $occManager->getRawTextFragments();
@@ -479,7 +475,6 @@ else{
 	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET; ?>">
 	<title><?= $DEFAULT_TITLE . ' ' . $LANG['OCCEDITOR'] ?></title>
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
-	<link href="<?= $CSS_BASE_PATH ?>/symbiota/variables.css" type="text/css" rel="stylesheet">
 	<?php
 	//include_once($SERVER_ROOT.'/includes/head.php');
     if($crowdSourceMode == 1){
@@ -489,7 +484,7 @@ else{
     }
     else{
 		?>
-		<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/editor/occurrenceeditor.css?ver=9" type="text/css" rel="stylesheet" id="editorCssLink" >
+		<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/editor/occurrenceeditor.css?ver=10" type="text/css" rel="stylesheet" id="editorCssLink" >
 		<?php
 		if(isset($CSSARR)){
 			foreach($CSSARR as $cssVal){
@@ -554,7 +549,7 @@ else{
 	<style type="text/css">
 		fieldset > legend{ font-weight:bold; }
 		select{ margin-bottom: 2px; }
-		#identifierDiv img{ width:10px; margin-left: 5px; }
+		#identifierDiv .edit-icon{ width:14px; margin-left: 5px; }
 		#innertext{ background-color: white; margin: 0px 10px; }
 		.fieldGroupDiv {
 			display: flex;
@@ -571,8 +566,6 @@ else{
 		.fieldDiv{
 			display: inline;
 		}
-
-		.editimg{ width: 15px; }
 
 		.button-toggle {
 			background-color: transparent;
@@ -782,7 +775,7 @@ else{
 										}
 
 										if($occId){
-											if($fragArr || $specImgArr){
+											if($specImgArr){
 												?>
 												<div style="float:right;margin:-7px -4px 0px 0px;font-weight:bold;">
 													<span id="imgProcOnSpan" style="display:block;">
@@ -830,7 +823,7 @@ else{
 																		<input class="idNameInput" name="idname[]" type="text" value="<?php echo $idArr['name']; ?>" onchange="fieldChanged('idname');" autocomplete="off" />
 																	</div>
 																	<div class="divTableCell">
-																		<input class="idValueInput" name="idvalue[]" type="text" value="<?php echo $idArr['value']; ?>" onchange="fieldChanged('idvalue');" autocomplete="off" /><a href="#" onclick="deleteIdentifier(<?php echo "'".$idKey."',".$occId; ?>);return false" tabindex="-1"><img src="../../images/del.png" /></a>
+																		<input class="idValueInput" name="idvalue[]" type="text" value="<?php echo $idArr['value']; ?>" onchange="fieldChanged('idvalue');" autocomplete="off" /><a href="#" onclick="deleteIdentifier(<?php echo "'".$idKey."',".$occId; ?>);return false" tabindex="-1"><img class="edit-icon" src="../../images/del.png" /></a>
 																	</div>
 																</div>
 																<?php
@@ -843,7 +836,7 @@ else{
 																<input class="idNameInput" name="idname[]" type="text" value="" onchange="fieldChanged('idname');" autocomplete="off" />
 															</div>
 															<div class="divTableCell">
-																<input class="idValueInput" name="idvalue[]" type="text" value="" onchange="fieldChanged('idvalue');" autocomplete="off" /><a href="#" onclick="addIdentifierField(this);return false" tabindex="-1"><img src="../../images/plus.png" style="width:1em;" /></a>
+																<input class="idValueInput" name="idvalue[]" type="text" value="" onchange="fieldChanged('idvalue');" autocomplete="off" /><a href="#" onclick="addIdentifierField(this);return false" tabindex="-1"><img class="edit-icon" src="../../images/plus.png" ></a>
 															</div>
 														</div>
 													</div>
@@ -1002,7 +995,7 @@ else{
 												<input type="text" name="dateidentified" maxlength="45" value="<?php echo array_key_exists('dateidentified',$occArr)?$occArr['dateidentified']:''; ?>" onchange="fieldChanged('dateidentified');" />
 											</div>
 											<div id="idrefToggleDiv" onclick="toggle('idrefdiv');" title="<?php echo $LANG['TOGG_ADD_FIELDS'] ?>">
-												<img class="seemore" src="../../images/tochild.png" style="width:1.3em;height:1.3em">
+												<img class="seemore-icon" src="../../images/tochild.png">
 											</div>
 										</div>
 										<div  id="idrefdiv">
@@ -1089,7 +1082,7 @@ else{
 												<br/>
 												<input type="text" id="locationid" name="locationid" value="<?php echo array_key_exists('locationid',$occArr)?$occArr['locationid']:''; ?>" onchange="fieldChanged('locationid');" autocomplete="off" />
 												<a id="geography1Toggle" onclick="toggle('geography1-div', 'flex');" title="<?php echo $LANG['TOGG_ADD_FIELDS'] ?>">
-													<img class="seemore" src="../../images/toparent.png" style="width:1.3em;height:1.3em">
+													<img class="seemore-icon" src="../../images/toparent.png">
 												</a>
 											</div>
 										</div>
@@ -1099,7 +1092,7 @@ else{
 											<br />
 											<textarea id="fflocality" name="locality" onchange="fieldChanged('locality');"><?php echo array_key_exists('locality',$occArr)?$occArr['locality']:''; ?></textarea>
 											<a id="localityExtraToggle" onclick="toggle('localityExtraDiv');" title="<?php echo $LANG['TOGG_ADD_FIELDS'] ?>">
-												<img class="seemore" src="../../images/tochild.png" style="width:1.3em" />
+												<img class="seemore-icon" src="../../images/tochild.png">
 											</a>
 										</div>
 										<?php
@@ -1240,7 +1233,7 @@ else{
 												</div>
 											</div>
 											<div id="georefExtraToggleDiv" onclick="toggle('georefExtraDiv');">
-												<img class="seemore" src="../../images/tochild.png" style="width:1.3em;height:1.3em" title="<?php echo $LANG['TOGG_ADD_FIELDS'] ?>" >
+												<img class="seemore-icon" src="../../images/tochild.png" title="<?php echo $LANG['TOGG_ADD_FIELDS'] ?>" >
 											</div>
 										</div>
 										<?php
@@ -1360,7 +1353,7 @@ else{
 											<br/>
 											<input type="text" name="occurrenceremarks" value="<?php echo array_key_exists('occurrenceremarks',$occArr)?$occArr['occurrenceremarks']:''; ?>" onchange="fieldChanged('occurrenceremarks');" title="<?php echo $LANG['OCC_REMARKS']; ?>" />
 											<span id="dynPropToggleSpan" onclick="toggle('dynamicPropertiesDiv');" title="<?php echo $LANG['TOGG_ADD_FIELDS'] ?>" >
-												<img class="seemore" src="../../images/tochild.png" style="width:1.3em;height:1.3em">
+												<img class="seemore-icon" src="../../images/tochild.png">
 											</span>
 										</div>
 										<div id="dynamicPropertiesDiv" class="field-div" style="display:<?= empty($occArr['dynamicproperties']) ? 'none' : '' ?>">
@@ -1724,7 +1717,7 @@ else{
 					</td>
 					<td id="imgtd" style="display:none;width:430px;" valign="top">
 						<?php
-						if($occId && ($fragArr || $specImgArr )){
+						if($occId && ($specImgArr )){
 							include_once('includes/imgprocessor.php');
 						}
 						?>

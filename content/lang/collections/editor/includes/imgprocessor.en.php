@@ -26,6 +26,8 @@ $LANG['SOURCE'] = 'Source';
 $LANG['SAVE_OCR'] = 'Save OCR';
 $LANG['NEW'] = 'New';
 $LANG['SAVE_OCR_EDITS'] = 'Save OCR Edits';
+$LANG['SALIX_PARSER'] = 'SALIX Parser';
+$LANG['LBCC_PARSER'] = 'LBCC Parser';
 $LANG['DELETE_OCR'] = 'Delete OCR';
 
 ?>
