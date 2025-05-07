@@ -46,7 +46,8 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 		$termArr['relationshipRemarks'] = 'https://dwc.tdwg.org/terms/#dwc:relationshipRemarks';
 		$columnArr['relationshipRemarks'] = 'oa.notes';
 		$termArr['scientificName'] = 'https://symbiota.org/terms/scientificName';
-		$columnArr['scientificName'] = "CASE WHEN oa.associationType = 'observational' THEN oa.verbatimSciName ELSE o.sciname END AS sciname"; // Note that t.sciname delivers the subject sciname; hence, o.sciname
+		// $columnArr['scientificName'] = "CASE WHEN oa.associationType = 'observational' THEN oa.verbatimSciName ELSE o.sciname END AS sciname"; // Note that t.sciname delivers the subject sciname; hence, o.sciname
+		$columnArr['scientificName'] = "CASE WHEN oa.associationType = 'observational' THEN oa.verbatimSciName ELSE ot.sciname END AS sciname"; // Note that t.sciname delivers the subject sciname; hence, o.sciname
 
 		$termArr['associd'] = 'https://symbiota.org/terms/associd';
 		$columnArr['associd'] = 'oa.associd';
@@ -117,7 +118,8 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 				$this->sqlBase = 'SELECT DISTINCT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o 
 					INNER JOIN omoccurassociations oa ON o.occid = oa.occid 
 					LEFT JOIN omoccurrences oo ON oo.occid = oa.occidAssociate 
-					LEFT JOIN taxa t on t.tid = oo.tidInterpreted';
+					LEFT JOIN taxa t on t.tid = oo.tidInterpreted
+					LEFT JOIN taxa ot on ot.tid = o.tidInterpreted';
 			}
 			else{
 				$this->fieldArr['fields']['relationship'] = 'terms.inverseRelationship AS relationship';
@@ -125,10 +127,19 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 					if($colName) $sqlFrag .= ', ' . $colName;
 				}
 				// $this->sqlBase = 'SELECT ' . trim($sqlFrag, ', ') . ' FROM omoccurassociations ';
+				// $this->sqlBase = 'SELECT DISTINCT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o 
+				// 	INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate 
+				// 	LEFT JOIN omoccurrences oo ON oo.occid = oa.occid
+				// 	LEFT JOIN taxa t on t.tid = o.tidInterpreted
+				// 	LEFT JOIN taxa ot on ot.tid = oo.tidInterpreted 
+				// 	LEFT JOIN (SELECT t.term, t.inverseRelationship
+				// 	FROM ctcontrolvocabterm t INNER JOIN ctcontrolvocab v ON t.cvID = v.cvID
+				// 	WHERE v.tablename = "omoccurassociations" AND fieldName = "relationship" AND t.inverseRelationship IS NOT NULL) terms ON oa.relationship = terms.term ';
 				$this->sqlBase = 'SELECT DISTINCT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o 
 					INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate 
 					LEFT JOIN omoccurrences oo ON oo.occid = oa.occid
-					LEFT JOIN taxa t on t.tid = o.tidInterpreted 
+					LEFT JOIN taxa t on t.tid = oo.tidInterpreted
+					LEFT JOIN taxa ot on ot.tid = o.tidInterpreted 
 					LEFT JOIN (SELECT t.term, t.inverseRelationship
 					FROM ctcontrolvocabterm t INNER JOIN ctcontrolvocab v ON t.cvID = v.cvID
 					WHERE v.tablename = "omoccurassociations" AND fieldName = "relationship" AND t.inverseRelationship IS NOT NULL) terms ON oa.relationship = terms.term ';
