@@ -630,7 +630,7 @@ if ($SYMB_UID) {
 					if(!empty($contactArr)){
 						?>
 						<section style="margin-left: 0;">
-							<h1><span><?= $LANG['CONTACT'] ?>: </span></h1>
+							<h2><span><?= $LANG['CONTACT'] ?>: </span></h2>
 							<ul>
 								<?php
 								foreach($contactArr as $cArr){
@@ -997,7 +997,7 @@ if ($SYMB_UID) {
 										if(!empty($contactArr)){
 											?>
 											<section style="margin-left: 0;">
-												<h1 style="font: 1.5rem normal;"><span><?= $LANG['CONTACT'] ?>: </span></h1>
+												<h4><span><?= $LANG['CONTACT'] ?>: </span></h4>
 												<ul>
 													<?php
 													foreach($contactArr as $cArr){
