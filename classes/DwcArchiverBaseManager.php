@@ -34,7 +34,7 @@ class DwcArchiverBaseManager extends Manager{
 
 	public function writeOutRecordBlock($occidArr, $targetField='occid'){
 		if($occidArr){
-			$sql = $this->sqlBase.' WHERE ' . $targetField . ' IN('.implode(',',$occidArr).') ';
+			$sql = $this->sqlBase.' WHERE ' . $targetField . ' IN('.implode(',',$occidArr).') '; // @TODO here for association download
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_assoc()){
 					$this->encodeArr($r);

@@ -46,7 +46,7 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 		$termArr['relationshipRemarks'] = 'https://dwc.tdwg.org/terms/#dwc:relationshipRemarks';
 		$columnArr['relationshipRemarks'] = 'oa.notes';
 		$termArr['scientificName'] = 'https://symbiota.org/terms/scientificName';
-		$columnArr['scientificName'] = 'IFNULL(t.sciname, oa.verbatimSciName)';
+		$columnArr['scientificName'] = "CASE WHEN oa.associationType = 'observational' THEN oa.verbatimSciName ELSE o.sciname END AS sciname"; // Note that t.sciname delivers the subject sciname; hence, o.sciname
 
 		$termArr['associd'] = 'https://symbiota.org/terms/associd';
 		$columnArr['associd'] = 'oa.associd';
