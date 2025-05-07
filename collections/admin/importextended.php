@@ -314,6 +314,13 @@ if ($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($colli
 									<input name="createNew" type="checkbox" value="1" <?= ($createNew ? 'checked' : '') ?>>
 									<label for="createNew"><?= $LANG['NEW_BLANK_RECORD'] ?></label>
 								</div>
+								<div class="formField-div">
+									<label for="mediaUploadType"><?= $LANG['MEDIA_UPLOAD_TYPE'] ?>:</label>
+									<select id="mediaUploadType" name="mediaUploadType" required >
+										<option value="image"><?= $LANG['IMAGE_UPLOAD'] ?></option>
+										<option value="audio"><?= $LANG['AUDIO_UPLOAD'] ?></option>
+									</select>
+								</div>
 							<?php
 							} elseif ($importType == 1) {
 							?>
