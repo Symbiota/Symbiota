@@ -213,7 +213,9 @@ class TaxonProfile extends Manager {
 				FROM media m LEFT JOIN users u ON m.creatorUid = u.uid
 				INNER JOIN taxstatus ts ON m.tid = ts.tid
 				INNER JOIN taxa t ON m.tid = t.tid
-				WHERE (ts.taxauthid = 1) AND ts.tidaccepted IN ('.$tidStr.') AND m.SortSequence < ' . $sortSequnceLimit . ' AND (m.mediaType != "image" || m.thumbnailurl IS NOT NULL) ';
+				LEFT JOIN omoccurrences o ON m.occid = o.occid
+				WHERE (ts.taxauthid = 1) AND ts.tidaccepted IN ('.$tidStr.') AND m.SortSequence < ' . $sortSequnceLimit . ' AND (m.mediaType != "image" || m.thumbnailurl IS NOT NULL)
+				AND (o.recordSecurity != 5 OR o.occid IS NULL) ';
 			if(!$this->displayLocality) $sql .= 'AND m.occid IS NULL ';
 			if($this->rankId < 220){
 				$sql .= 'ORDER BY m.sortsequence ';
@@ -433,9 +435,9 @@ class TaxonProfile extends Manager {
 			}
 		}
 		if((isset($CALENDAR_TRAIT_PLOTS) && $CALENDAR_TRAIT_PLOTS > 0) && $this->rankId > 180) {
-			$retStr .= '<li><a href="plottab.php?tid=' . htmlspecialchars($this->tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars(($LANG['CALENDAR_TRAIT_PLOT']?$LANG['CALENDAR_TRAIT_PLOT']:'Traits Plots'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></li>';
+			$retStr .= '<li><a href="plottab.php?tid=' . $this->tid . '">' . ($LANG['CALENDAR_TRAIT_PLOT']?$LANG['CALENDAR_TRAIT_PLOT']:'Traits Plots') . '</a></li>';
 		}
-		$retStr .= '<li><a href="resourcetab.php?tid=' . htmlspecialchars($this->tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars(($LANG['RESOURCES']?$LANG['RESOURCES']:'Resources'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></li>';
+		$retStr .= '<li><a href="resourcetab.php?tid=' . $this->tid . '">' . ($LANG['RESOURCES']?$LANG['RESOURCES']:'Resources') . '</a></li>';
 		$retStr .= '</ul>';
 		foreach($descArr as $dArr){
 			foreach($dArr as $id => $vArr){

@@ -61,15 +61,11 @@ if ($imgArr) {
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>" />
 	<?php
 	if ($imgArr) {
-	?>
+		?>
 		<meta property="og:title" content="<?php echo $imgArr["sciname"]; ?>" />
 		<meta property="og:site_name" content="<?php echo $DEFAULT_TITLE; ?>" />
 		<meta property="og:image" content="<?php echo $metaUrl; ?>" />
-		<meta name="twitter:card" content="photo" data-dynamic="true" />
-		<meta name="twitter:title" content="<?php echo $imgArr["sciname"]; ?>" />
-		<meta name="twitter:image" content="<?php echo $metaUrl; ?>" />
-		<meta name="twitter:url" content="<?php echo $serverPath . $CLIENT_ROOT . '/imagelib/imgdetails.php?mediaid=' . $mediaID; ?>" />
-	<?php
+		<?php
 	}
 	?>
 	<title><?php echo $DEFAULT_TITLE . " Image Details: #" . $mediaID; ?></title>
@@ -83,15 +79,6 @@ if ($imgArr) {
 	<script src="../js/symb/shared.js" type="text/javascript"></script>
 	<script>
 		var clientRoot = "<?php echo $CLIENT_ROOT; ?>";
-
-		(function(d, s, id) {
-			var js, fjs = d.getElementsByTagName(s)[0];
-			if (d.getElementById(id)) return;
-			js = d.createElement(s);
-			js.id = id;
-			js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
-			fjs.parentNode.insertBefore(js, fjs);
-		}(document, 'script', 'facebook-jssdk'));
 
 		function verifyEditForm(f) {
 			if (f.url.value.replace(/\s/g, "") == "") {
@@ -131,7 +118,6 @@ if ($imgArr) {
 </head>
 
 <body>
-	<div id="fb-root"></div>
 	<?php
 	//$displayLeftMenu = (isset($taxa_imgdetailsMenu)?$taxa_imgdetailsMenu:false);
 	//include($SERVER_ROOT.'/includes/header.php');
@@ -184,28 +170,6 @@ if ($imgArr) {
 					}
 				}
 				?>
-				<div style="float:right;margin-right:10px;">
-					<a class="twitter-share-button" data-text="<?php echo $imgArr["sciname"]; ?>" href="https://twitter.com/share" data-url="<?php echo htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . $CLIENT_ROOT . '/imagelib/imgdetails.php?mediaid=' . $mediaID; ?>"><?php echo $LANG['TWEET'] ?></a>
-					<script>
-						window.twttr = (function(d, s, id) {
-							var js, fjs = d.getElementsByTagName(s)[0],
-								t = window.twttr || {};
-							if (d.getElementById(id)) return;
-							js = d.createElement(s);
-							js.id = id;
-							js.src = "https://platform.twitter.com/widgets.js";
-							fjs.parentNode.insertBefore(js, fjs);
-							t._e = [];
-							t.ready = function(f) {
-								t._e.push(f);
-							};
-							return t;
-						}(document, "script", "twitter-wjs"));
-					</script>
-				</div>
-				<div style="float:right;margin-right:10px;">
-					<div class="fb-share-button" data-href="" data-layout="button_count"></div>
-				</div>
 			</div>
 		<?php
 		}

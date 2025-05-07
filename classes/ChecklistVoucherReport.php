@@ -87,6 +87,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 						$inStr = $this->getVoucherOccidStr();
 						if($inStr) $sql .= 'AND o.occid NOT IN(' . $inStr . ') ';
 					}
+					$sql .= OccurrenceUtil::appendFullProtectionSQL();
 					$sql .= 'ORDER BY ts.family, o.sciname LIMIT '.$startLimit.', ' . $limit;
 					$rs = $this->conn->query($sql);
 					while($r = $rs->fetch_object()){
@@ -118,6 +119,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 					$sql .= 'WHERE ('.$sqlFrag.') AND ((t.RankId < 220)) ';
 					$idStr = $this->getVoucherOccidStr();
 					if($idStr) $sql .= 'AND (o.occid NOT IN('.$idStr.')) ';
+					$sql .= OccurrenceUtil::appendFullProtectionSQL();
 					$sql .= 'ORDER BY o.family, o.sciname LIMIT '.$startLimit.', ' . $limit;
 					$rs = $this->conn->query($sql);
 					while($r = $rs->fetch_object()){
@@ -164,7 +166,8 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 		$limit = 1000;
 		if($limit > (ini_get('max_input_vars') - 10)) $limit = (ini_get('max_input_vars') - 10);
 		if($sqlFrag = $this->getSqlFrag()){
-			$sql = 'SELECT DISTINCT t.tid, t.sciname, o.sciname AS occur_sciname '.$this->getMissingTaxaBaseSql($sqlFrag).' LIMIT ' . $limit;
+			$sql = 'SELECT DISTINCT t.tid, t.sciname, o.sciname AS occur_sciname '.$this->getMissingTaxaBaseSql($sqlFrag).' ';
+			$sql .= 'LIMIT ' . $limit;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$sciStr = $r->sciname;
@@ -185,7 +188,8 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 			$sqlBase = $this->getMissingTaxaBaseSql($sqlFrag);
 			$sql = 'SELECT DISTINCT o.occid, c.institutioncode ,c.collectioncode, o.catalognumber, o.tidinterpreted, t.sciname, o.sciname AS occur_sciname, '.
 				'o.recordedby, o.recordnumber, o.eventdate, CONCAT_WS("; ",o.country, o.stateprovince, o.county, o.locality) as locality '.
-				$sqlBase.' LIMIT '.($limitIndex?($limitIndex*1000).',':'').$limitRange;
+				$sqlBase.' ';
+			$sql .= 'LIMIT '.($limitIndex?($limitIndex*1000).',':'').$limitRange;
 			//echo '<div>'.$sql.'</div>';
 			$cnt = 0;
 			$rs = $this->conn->query($sql);
@@ -233,8 +237,9 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 				'INNER JOIN taxa t ON cl.tid = t.tid '.
 				'INNER JOIN taxstatus ts3 ON ts1.tidaccepted = ts3.tid '.
 				'WHERE (cl.clid IN('.$clidStr.')) AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND ts1.tidaccepted <> ts2.tidaccepted '.
-				'AND ts1.parenttid <> ts2.tidaccepted AND cl.tid <> o.tidinterpreted AND ts3.parenttid <> cl.tid '.
-				'ORDER BY t.sciname ';
+				'AND ts1.parenttid <> ts2.tidaccepted AND cl.tid <> o.tidinterpreted AND ts3.parenttid <> cl.tid ';
+			$sql .= OccurrenceUtil::appendFullProtectionSQL();
+			$sql .= 'ORDER BY t.sciname ';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			$cnt = 0;
@@ -266,7 +271,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 			$fileName = 'Missing_'.$this->getExportFileName().'.csv';
 
 			$fieldArr = $this->getOccurrenceFieldArr();
-			$exportSql = 'SELECT '.implode(',',$fieldArr).', o.localitysecurity, o.collid '.
+			$exportSql = 'SELECT '.implode(',',$fieldArr).', o.recordSecurity, o.collid '.
 				$this->getMissingTaxaBaseSql($sqlFrag);
 			//echo $exportSql;
 			$this->exportCsv($fileName, $exportSql);
@@ -284,6 +289,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 			$idStr = $this->getVoucherOccidStr();
 			if($idStr) $retSql .= 'AND (o.occid NOT IN('.$idStr.')) ';
 			$retSql .= 'AND (ts.tidaccepted NOT IN(SELECT ts.tidaccepted FROM fmchklsttaxalink cl INNER JOIN taxstatus ts ON cl.tid = ts.tid WHERE ts.taxauthid = 1 AND cl.clid IN('.$clidStr.'))) ';
+			$retSql .= OccurrenceUtil::appendFullProtectionSQL();
 		}
 		return $retSql;
 	}
@@ -322,7 +328,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 		$fileName = 'ProblemTaxa_'.$this->getExportFileName().'.csv';
 		if($sqlFrag = $this->getSqlFrag()){
 			$fieldArr = $this->getOccurrenceFieldArr();
-			$sql = 'SELECT DISTINCT '.implode(',',$fieldArr).', o.localitysecurity, o.collid '.$this->getProblemTaxaSql($sqlFrag);
+			$sql = 'SELECT DISTINCT '.implode(',',$fieldArr).', o.recordSecurity, o.collid '.$this->getProblemTaxaSql($sqlFrag);
 			$this->exportCsv($fileName, $sql);
 		}
 	}
@@ -332,6 +338,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 		$retSql = 'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.CollID '.
 			$this->getTableJoinFrag($sqlFrag).
 			'WHERE ('.$sqlFrag.') AND (o.tidinterpreted IS NULL) AND (o.sciname IS NOT NULL) ';
+		$retSql .= OccurrenceUtil::appendFullProtectionSQL();
 		$idStr = $this->getVoucherOccidStr();
 		if($idStr) $retSql .= 'AND (o.occid NOT IN('.$idStr.')) ';
 		return $retSql;
@@ -386,7 +393,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 					$rowOut = null;
 					while($row = $rs->fetch_assoc()){
 						foreach($row as $k => $v){
-							$row[$k] = strip_tags($v);
+							if($v) $row[$k] = strip_tags($v);
 						}
 						if($rowOut){
 							if($rowOut['taxonID'] == $row['taxonID']){
@@ -430,13 +437,14 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 			$fieldArr = array_merge($fieldArr,$this->getOccurrenceFieldArr());
 
 			$clidStr = $this->getClidFullStr();
-			$sql = 'SELECT DISTINCT '.implode(',',$fieldArr).', o.localitysecurity, o.collid '.
+			$sql = 'SELECT DISTINCT '.implode(',',$fieldArr).', o.recordSecurity, o.collid '.
 				'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
 				'INNER JOIN fmchklsttaxalink ctl ON ctl.tid = t.tid '.
 				'LEFT JOIN fmvouchers v ON ctl.clTaxaID = v.clTaxaID '.
 				'LEFT JOIN omoccurrences o ON v.occid = o.occid '.
 				'LEFT JOIN omcollections c ON o.collid = c.collid '.
 				'WHERE (ts.taxauthid = 1) AND (ctl.clid IN('.$clidStr.')) ';
+			$sql .= OccurrenceUtil::appendFullProtectionSQL();
 			$this->exportCsv($fileName, $sql);
 		}
 	}
@@ -458,7 +466,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 				$fieldArr = array_merge($fieldArr,$this->getOccurrenceFieldArr());
 
 				$clidStr = $this->getClidFullStr();
-				$sql = 'SELECT DISTINCT '.implode(',',$fieldArr).', o.localitysecurity, o.collid '.
+				$sql = 'SELECT DISTINCT '.implode(',',$fieldArr).', o.recordSecurity, o.collid '.
 					'FROM fmchklsttaxalink ctl INNER JOIN taxa t ON ctl.tid = t.tid '.
 					'INNER JOIN taxstatus ts ON ctl.tid = ts.tid '.
 					'LEFT JOIN taxstatus ts2 ON ts.tidaccepted = ts2.tidaccepted '.
@@ -466,6 +474,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 					'LEFT JOIN omcollections c ON o.collid = c.collid '.
 					$this->getTableJoinFrag($sqlFrag).
 					'WHERE ('.$sqlFrag.') AND (ts.taxauthid = 1) AND (ts2.taxauthid = 1) AND (ctl.clid IN('.$clidStr.')) ';
+				$sql .= OccurrenceUtil::appendFullProtectionSQL();
 				$this->exportCsv($fileName, $sql);
 			}
 		}
@@ -487,7 +496,7 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 			$out = fopen('php://output', 'w');
 			fputcsv($out, $headerArr);
 			while($row = $rs->fetch_assoc()){
-				$localSecurity = ($row["localitysecurity"]?$row["localitysecurity"]:0);
+				$localSecurity = ($row['recordSecurity']?$row['recordSecurity']:0);
 				if(!$rareSpeciesReader && $localSecurity != 1 && (!array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS']) || !in_array($row['collid'],$GLOBALS['USER_RIGHTS']['RareSppReader']))){
 					$redactStr = '';
 					foreach($localitySecurityFields as $fieldName){

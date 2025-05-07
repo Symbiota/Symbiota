@@ -10,6 +10,7 @@ if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../ta
 
 $tid = array_key_exists('tid',$_REQUEST) ? $_REQUEST['tid'] : '';
 $status = '';
+$filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
 
 //Sanitation
 if(!is_numeric($tid)) $tid = 0;
@@ -85,9 +86,9 @@ if($isEditor){
 		}
 		if($isEditor){
 			?>
-			<form id="loaderform" name="loaderform" action="taxonomyloader.php" method="post">
+			<form id="loaderform" name="loaderform" action="taxonomyloader.php" onsubmit="return validateFormInput(this)" method="post">
 				<div>
-					<h2>Sciname will be saved as: <span id="scinamedisplay" name="scinamedisplay"></span></h2>
+					<h2><?php echo $LANG['SCINAME_SAVED_AS']; ?>: <span id="scinamedisplay" name="scinamedisplay"></span></h2>
 				</div>
 				<input type="hidden" id="sciname" name="sciname" class="search-bar-long" value="" />
 				<fieldset class="bottom-breathing-room-rel">
@@ -210,7 +211,7 @@ if($isEditor){
 								<?php echo $LANG['PARENT_TAXON'] . ' *'; ?>:
 							</label>
 						</div>
-						<input required type="text" id="parentname" name="parentname" class='search-bar' />
+						<input type="text" id="parentname" name="parentname" class='search-bar' />
 						<span id="addparentspan" style="display:none;">
 							<a id="addparentanchor" href="taxonomyloader.php?target=" target="_blank">
 								<?php echo htmlspecialchars($LANG['ADD_PARENT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE	); ?>

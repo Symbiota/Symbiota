@@ -764,7 +764,7 @@ class Media {
 	public static function getMaximumFileUploadSize(): int {
 		return min(
 			self::size_2_bytes(ini_get('post_max_size')),
-			self::size_2_bytes(ini_get('upload_max_filesize'))
+			self::size_2_bytes(ini_get('upload_max_filesize')),
 		);
 	}
 
@@ -834,6 +834,7 @@ class Media {
 	**/
 	public static function add(array $post_arr, $storage = null, $file = null): void {
 		$clean_post_arr = Sanitize::in($post_arr);
+		unset($post_arr);
 
 		$copy_to_server = $clean_post_arr['copytoserver']?? false;
 		$mapLargeImg = !($clean_post_arr['nolgimage']?? true);
@@ -857,7 +858,7 @@ class Media {
 		}
 
 		//If file being uploaded is too big throw error
-		else if($should_upload_file && self::getMaximumFileUploadSize() < intval($file['size'])) {
+		else if($should_upload_file && self::getMaximumFileUploadSize() - memory_get_usage() < intval($file['size'])) {
 			throw new Exception('Error: File is to large to upload');
 		}
 
@@ -976,6 +977,12 @@ class Media {
 
 				//Generate Deriatives if needed
 				if($media_type === MediaType::Image) {
+					$start_mem_limit = ini_get('memory_limit');
+					// Update mem limit if not set to 256M already
+					if(self::size_2_bytes(ini_get('memory_limit')) < self::size_2_bytes('256M')) {
+						ini_set('memory_limit', '256M');
+					}
+
 					//Will download file if its remote.
 					//This is a naive solution assuming we are upload to our server
 					$size = getimagesize($storage->getDirPath($file));
@@ -992,7 +999,7 @@ class Media {
 						$thumb_name = self::addToFilename($file['name'], '_tn');
 						self::create_image(
 							$file['name'],
-							self::addToFilename($file['name'], '_tn'),
+							$thumb_name,
 							$storage,
 							$GLOBALS['IMG_TN_WIDTH']?? 200,
 							0
@@ -1038,6 +1045,7 @@ class Media {
 			0
 		);
 	}
+
 	/**
 	 * @return void
 	 */
@@ -1330,9 +1338,14 @@ class Media {
 		}
 
 		$size = getimagesize($src_path);
+
 		$width = $size[0];
 		$height = $size[1];
 		$mime_type = $size['mime'];
+
+		if(!self::enough_memory_gd($size[0], $size[1])) {
+			throw new Exception('Not enough memory to create image: ' . $new_file);
+		}
 
 		$orig_width = $width;
 		$orig_height = $height;
@@ -1347,9 +1360,6 @@ class Media {
 			$width = $new_width;
 		}
 
-
-		$new_image = imagecreatetruecolor($width, $height);
-
 		$image = match($mime_type) {
 			'image/jpeg' => imagecreatefromjpeg($src_path),
 			'image/png' => imagecreatefrompng($src_path),
@@ -1358,6 +1368,8 @@ class Media {
 				'Mime Type: ' . $mime_type . ' not supported for creation'
 			)
 		};
+
+		$new_image = imagecreatetruecolor($width, $height);
 
 		//This is need to maintain transparency if this is here
 		if($mime_type === 'image/png') {
@@ -1375,6 +1387,11 @@ class Media {
 		}
 
 		imagedestroy($image);
+	}
+
+	private static function enough_memory_gd($x, $y, $rgb = 3) {
+		// 1.7 is some coef related to gd or overhead not entirely sure
+		return  ($x * $y * 1.7 * $rgb) < (self::size_2_bytes(ini_get('memory_limit')) - memory_get_usage());
 	}
 
 	/**

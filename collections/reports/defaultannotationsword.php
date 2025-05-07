@@ -13,18 +13,18 @@ $lHeader = $_POST['lheading'];
 $lFooter = $_POST['lfooter'];
 $detIdArr = $_POST['detid'];
 $action = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
-$rowsPerPage = array_key_exists('rowcount',$_POST)?$_POST['rowcount']:3;
+$columnsPerPage = array_key_exists('columncount',$_POST)?$_POST['columncount']:3;
 
 $sectionStyle = array();
-if($rowsPerPage==1){
+if($columnsPerPage==1){
 	$lineWidth = 740;
 	$sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>360,'marginRight'=>360,'marginTop'=>360,'marginBottom'=>360,'headerHeight'=>0,'footerHeight'=>0);
 }
-if($rowsPerPage==2){
+if($columnsPerPage==2){
 	$lineWidth = 350;
 	$sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>360,'marginRight'=>360,'marginTop'=>360,'marginBottom'=>360,'headerHeight'=>0,'footerHeight'=>0,'colsNum'=>2,'colsSpace'=>180,'breakType'=>'continuous');
 }
-if($rowsPerPage==3){
+if($columnsPerPage==3){
 	$lineWidth = 220;
 	$sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>360,'marginRight'=>360,'marginTop'=>360,'marginBottom'=>360,'headerHeight'=>0,'footerHeight'=>0,'colsNum'=>3,'colsSpace'=>180,'breakType'=>'continuous');
 }

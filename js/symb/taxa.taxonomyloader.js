@@ -7,7 +7,7 @@ $(document).ready(function () {
     const debouncedChange = debounce(async (event) => {
       event.stopPropagation();
       await updateFullname(form);
-      handleFieldChange(form, true, "submitaction", "Submit New Name");
+      handleFieldChange(form, true, "submitaction", translations.BUTTON_SUBMIT);
     }, 500);
     element.removeEventListener("change", debouncedChange);
     if (element.type !== "hidden") {
@@ -82,35 +82,10 @@ $(document).ready(function () {
 });
 
 async function verifyLoadForm(f, silent = false) {
-  const rankId = f.rankid.value;
   const coreVerify = await verifyLoadFormCore(f, true);
   if (coreVerify) {
-    if (f.parentname.value == "" && rankId > "10") {
-      if (!silent) alert("Parent taxon required");
-      document.getElementById("error-display").textContent =
-        "Parent taxon required";
+    if (!validateFormInput(f, silent))
       return false;
-    }
-    if (f.parenttid.value == "" && rankId > "10") {
-      if (!silent)
-        alert(
-          "Parent identifier is not set! Make sure to select parent taxon from the list"
-        );
-      document.getElementById("error-display").textContent =
-        "Parent identifier is not set! Make sure to select parent taxon from the list";
-      return false;
-    }
-
-    //If name is not accepted, verify accetped name
-    var accStatusObj = f.acceptstatus;
-    if (accStatusObj[0].checked == false) {
-      if (f.acceptedstr.value == "") {
-        if (!silent) alert("Accepted name needs to have a value");
-        document.getElementById("error-display").textContent =
-          "Accepted name needs to have a value";
-        return false;
-      }
-    }
     return true;
   } else {
     return false;
@@ -164,7 +139,7 @@ function validateFieldLength(field, maxLength, silent) {
 }
 
 function parseName(f) {
-  handleFieldChange(f, true, "submitaction", "Submit New Name");
+  handleFieldChange(f, true, "submitaction", translations.BUTTON_SUBMIT);
   if (!f.quickparser.value) {
     return;
   }

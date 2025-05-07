@@ -86,7 +86,7 @@ async function handleFieldChange(
   document.getElementById("error-display").textContent = processTextContent("");
   const submitButton = document.getElementById(submitButtonId);
   submitButton.disabled = true;
-  submitButton.textContent = "Checking for errors...";
+  submitButton.textContent = translations.BUTTON_CHECKING;
   const isOk = await verifyLoadForm(form, silent, originalForm);
   const shouldDisableButton = true;
   if (!isOk && shouldDisableButton) {
@@ -106,14 +106,14 @@ async function verifyLoadFormCore(f, silent = false, originalForm) {
     return true;
   }
   if (f.unitname1.value == "") {
-    if (!silent) alert("Unit Name 1 (genus or uninomial) field required.");
+    if (!silent) alert(translations.UNIT_NAME_REQUIRED);
     document.getElementById("error-display").textContent =
       processTextContent(translations.UNIT_NAME_REQUIRED);
     return false;
   }
   var rankId = f.rankid.value;
   if (rankId == "") {
-    if (!silent) alert("Taxon rank field required.");
+    if (!silent) alert(translations.TAXON_RANK_REQUIRED);
     document.getElementById("error-display").textContent =
       processTextContent(translations.TAXON_RANK_REQUIRED);
     return false;
@@ -143,13 +143,14 @@ function checkNameExistence(f, silent = false) {
           if (msg != "0") {
             if (!silent) {
               alert(
-                "Taxon " +
+                  translations.TAXON +
+                  " " +
                   f.sciname.value +
                   " " +
                   f.author.value +
                   " (" +
                   msg +
-                  ") already exists in database"
+                  ") " + translations.ALREADY_EXISTS
               );
             }
             document.getElementById("error-display").textContent =
@@ -217,6 +218,8 @@ function hasChanged(f, originalForm) {
     "securitystatus",
     "securitystatusstart",
     "author",
+    "taxoneditsubmit",
+    "taxonedits"
   ]);
   return returnVal;
 }
@@ -245,8 +248,9 @@ function shallowEqual(obj1, obj2, exceptionFields = []) {
   const keys1 = Object.keys(obj1);
   const keys2 = Object.keys(obj2);
   const filteredKeys1 = keys1.filter((k) => !exceptionFields.includes(k));
+  const filteredKeys2 = keys2.filter((k) => !exceptionFields.includes(k));
 
-  if (keys1.length !== keys2.length) {
+  if (filteredKeys1.length !== filteredKeys2.length) {
     return false;
   }
 
