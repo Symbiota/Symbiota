@@ -83,5 +83,5 @@ $LANG['PREVIOUS'] = 'Anterior';
 $LANG['RECORDS'] = ' Registros';
 $LANG['NEXT'] = 'Siguiente';
 $LANG['IMG_EDIT'] = 'Editar imagen';
-$LANG['GEOJSON_FOOTPRINT'] = 'Huella GeoJson';
+$LANG['GEOJSON_FOOTPRINT'] = 'Polígono (formato GeoJSON)';
 ?>
