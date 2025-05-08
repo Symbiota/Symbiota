@@ -233,8 +233,8 @@ if($clid && $isEditor){
 									<a href="#"  onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root:'<?=$CLIENT_ROOT?>', map_mode_strict: true, latdef: '<?= $latDef ?>', lngdef: '<?= $lngDef ?>' });return false;" title="<?php echo $LANG['EDIT_META_POLYGON'] ?>"><img src="../images/edit.png" style="width:1.2em" /></a>
 								</div>
 								<div>
-											<label style="display:block; margin-bottom:0.25rem" for="footprintwkt"><b><?= $LANG['GEOJSON_FOOTPRINT'] ?>:</b></label>
-									<textarea id="footprintwkt" name='footprint' style="width:100%"><?= htmlspecialchars($clManager->getClFootprint()); ?></textarea>
+									<label style="display:block; margin-bottom:0.25rem" for="footprintwkt"><b><?= $LANG['GEOJSON_FOOTPRINT'] ?>:</b></label>
+									<textarea id="footprintwkt" name='footprint' style="width:100%"><?= htmlspecialchars($clManager->getClFootprint() ?? ''); ?></textarea>
 								</div>
 								<div>
 									<input name="excludecult" value="1" type="checkbox" <?php if(isset($termArr['excludecult'])) echo 'CHECKED'; ?> />
