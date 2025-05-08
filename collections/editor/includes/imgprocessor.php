@@ -114,6 +114,34 @@ else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imgpro
 							</fieldset>
 							<?php
 						}
+						if(!empty($VOUCHERVISION_OCR_ACTIVATED)){
+						?>
+						<fieldset class="ocr-box">
+							<legend>VoucherVision OCR</legend>
+
+							<input type="checkbox" id="ocrOnly" value="1" /> <?php echo $LANG['VV_OCR_ONLY']; ?><br/>
+							<div style="font-weight: bold; position: relative; left: -6px; margin-bottom: 4px;"> <?php echo $LANG['VV_OCR_ENGINES']; ?></div>
+							<input type="checkbox" name="engines" id="gemini-1.5-pro" value="1" /> Gemini 1.5 Pro<br/>
+							<input type="checkbox" name="engines" id="gemini-2.0-flash" value="1" checked/> Gemini 2.0 Flash<br/>
+							<div style="font-weight: bold; position: relative; left: -6px; margin-bottom: 4px;"> <?php echo $LANG['VV_TRANSCRIPTION_MODEL']; ?></div>
+							<select id="llm-model">
+								<option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+								<option value="gemini-2.0-pro">Gemini 1.5 Pro</option>
+								<option value="gemini-2.5-pro">Gemini 2.5 Flash</option>
+								<option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+							</select><br/>
+							<div style="font-weight: bold; position: relative; left: -6px; margin-bottom: 4px;"> <?php echo $LANG['VV_TRANSCRIPTION_PROMPT']; ?></div>
+							<select id="prompt">
+								<option value="OSC_Symbiota">OSC_Symbiota</option>
+								<option value="SLTPvM_default">SLTPvM_default</option>
+							</select><br/>
+							<div>
+									<button value="OCR Image" onclick="ocrVV(this, '<?php echo $imgCnt; ?>');" ><?php echo $LANG['OCR_IMAGE']; ?></button>
+									<img id="workingcircle-vv-<?php echo $imgCnt; ?>" src="../../images/workingcircle.gif" style="display:none;" />
+								</div>
+						</fieldset>
+						<?php
+						}
 						?>
 						<div style="float:right;margin-right:20px;font-weight:bold;">
 							<?php echo $LANG['IMAGE'].' '.$imgCnt.' '.$LANG['OF'].' ';
