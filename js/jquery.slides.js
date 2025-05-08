@@ -110,7 +110,7 @@
       }
       $(".slidesjs-control", $element).children(":eq(" + this.data.current + ")").eq(0).fadeIn(0, function() {
         return $(this).css({
-          zIndex: 10
+          zIndex: 9
         });
       });
       if (this.options.navigation.active) {
@@ -463,7 +463,7 @@
         slidesControl.children(":eq(" + next + ")").css({
           display: "block",
           left: value * this.options.width,
-          zIndex: 10
+          zIndex: 9
         });
         this.options.callback.start(currentSlide + 1);
         if (this.data.vendorPrefix) {
@@ -543,7 +543,7 @@
         slidesControl.children(":eq(" + next + ")").css({
           display: "none",
           left: 0,
-          zIndex: 10
+          zIndex: 9
         });
         this.options.callback.start(currentSlide + 1);
         if (this.options.effect.fade.crossfade) {
@@ -560,7 +560,7 @@
           return slidesControl.children(":eq(" + currentSlide + ")").stop().fadeOut(this.options.effect.fade.speed, (function() {
             slidesControl.children(":eq(" + next + ")").stop().fadeIn(_this.options.effect.fade.speed, (function() {
               return slidesControl.children(":eq(" + next + ")").css({
-                zIndex: 10
+                zIndex: 9
               });
             }));
             $.data(_this, "animating", false);
