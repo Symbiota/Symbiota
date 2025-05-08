@@ -1111,15 +1111,17 @@ class OccurrenceUtil {
 		return $retStr;
 	}
 
-	public static function appendFullProtectionSQL(){
+	public static function appendFullProtectionSQL($relaxForObservational=false){
 		//Protect by default
-		$retStr = 'AND (o.recordSecurity != 5 ';
+		$observationalClause = "AND (a.associationType = 'observational' OR (o.recordSecurity != 5 ";
+		$retStr = $relaxForObservational ? $observationalClause : 'AND (o.recordSecurity != 5 ';
 		//User needs Collection Admin or Collection Editor status to view full hidden records
 		$collStr = self::getFullProtectionPermission();
 		if($collStr){
 			$retStr .= 'OR o.collid IN(' . $collStr . ')';
 		}
 		$retStr .= ') ';
+		if($relaxForObservational) $retStr .= ') ';
 		return $retStr;
 	}
 
