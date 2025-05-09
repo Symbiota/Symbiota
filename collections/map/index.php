@@ -640,7 +640,10 @@ $serverHost = GeneralUtil::getDomain();
 			let map = new LeafletMap('map', {
 				lang: "<?= $LANG_TAG ?>",
 				default_bounds: [],
-			})
+			}, 
+				JSON.parse(`<?= json_encode($GEO_JSON_LAYERS ?? []) ?>`)
+			);
+
 			var oms = new OverlappingMarkerSpiderfier(map.mapLayer, {
 				nearbyDistance: 5
 			});
