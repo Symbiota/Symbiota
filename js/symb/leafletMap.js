@@ -335,7 +335,6 @@ class LeafletMap {
 
 		if(!json_data.type) return false;
 
-			console.log(layerObj.template_properties)
 		function onEachFeature(feature, layer) {
 			// does this feature have a property named popupContent?
 			if (feature.properties && layerObj.popup_template) {
