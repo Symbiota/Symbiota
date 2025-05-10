@@ -667,7 +667,7 @@ $traitArr = $indManager->getTraitArr();
 						}
 						if($occArr['recordedby']){
 							$recByLabel = (isset($LANG['OBSERVER'])?$LANG['OBSERVER']:'Observer');
-							if($collMetadata['colltype'] == 'Preserved Specimens') $recByLabel = (isset($LANG['COLLECTOR'])?$LANG['COLLECTOR']:'Collector');
+							if(strpos($collMetadata['colltype'], 'Specimens')) $recByLabel = (isset($LANG['COLLECTOR'])?$LANG['COLLECTOR']:'Collector');
 							?>
 							<div id="recordedby-div" class="bottom-breathing-room-rel-sm">
 								<label><?php echo $recByLabel; ?>: </label>
@@ -997,7 +997,7 @@ $traitArr = $indManager->getTraitArr();
 								if($occArr['taxonEnvironment']) echo '<div class="paleofield-div bottom-breathing-room-rel-sm"><label>'.$LANG['TAXON_ENVIR'].':</label> '.$occArr['taxonEnvironment'].'</div>';
 								if($occArr['geologicalContextID']) echo '<div class="paleofield-div bottom-breathing-room-rel-sm"><label>'.$LANG['CONTEXT_ID'].':</label> '.$occArr['geologicalContextID'].'</div>';
 								?>
-							
+
 							<?php
 						}
 						if(isset($occArr['exs'])){

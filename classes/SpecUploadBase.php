@@ -758,6 +758,8 @@ class SpecUploadBase extends SpecUpload{
 		$this->outputMsg('<li style="margin-left:10px;">Setting basisOfRecord for new records, if not designated within import file...</li>');
 		$borValue = 'PreservedSpecimen';
 		if(strpos($this->collMetadataArr['colltype'], 'Observations') !== false) $borValue = 'HumanObservation';
+		elseif($this->paleoSupport) $borValue = 'FossilSpecimen';
+
 		$sql = 'UPDATE uploadspectemp SET basisOfRecord = "'.$borValue.'" WHERE basisOfRecord IS NULL AND occid IS NULL';
 		$this->conn->query($sql);
 	}

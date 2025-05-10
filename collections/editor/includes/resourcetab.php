@@ -228,7 +228,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 <div id="voucherdiv" style="width:795px;">
 	<?php
 	$assocArr = $occManager->getOccurrenceRelationships();
-	$basisOfRecordArr = array('HumanObservation' => $LANG['HUMAN_OBS'], 'LivingSpecimen' => $LANG['LIVING_SPEC'], 'MachineObservation' => $LANG['MACHINE_OBS'],
+	$basisOfRecordArr = array('HumanObservation' => $LANG['HUMAN_OBS'], 'LivingSpecimen' => $LANG['LIVING_SPEC'], 'MachineObservation' => $LANG['MACHINE_OBS'], 'FossilSpecimen' => $LANG['FOSSIL_SPEC'],
 		'MaterialSample' => $LANG['MAT_SAMPLE'], 'PreservedSpecimen' => $LANG['PRES_SAMPLE'], 'ReferenceCitation' => $LANG['REF_CITATION']);
 	?>
 	<fieldset class="resourceTab">

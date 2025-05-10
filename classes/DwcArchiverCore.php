@@ -150,7 +150,7 @@ class DwcArchiverCore extends Manager{
 	public function setCollArr($collTarget, $collType = ''){
 		$sqlWhere = '';
 		if ($collType == 'specimens') {
-			$sqlWhere = '(c.colltype = "Preserved Specimens") ';
+			$sqlWhere = '(c.colltype IN("Preserved Specimens","Fossil Specimens")) ';
 		}
 		elseif ($collType == 'observations') {
 			$sqlWhere = '(c.colltype IN("Observations", "General Observations")) ';
