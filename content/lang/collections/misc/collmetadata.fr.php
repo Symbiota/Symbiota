@@ -56,6 +56,7 @@ $LANG['MORE_INFO_ACCESS_RIGHTS'] = "Plus d'informations sur Droits d'Accès";
 $LANG['ACCESS_DEF'] = 'Des informations ou un lien URL vers une page avec des détails expliquant comment utiliser les données. Voir';
 $LANG['DATASET_TYPE'] = 'Type de Jeu de Données';
 $LANG['PRES_SPECS'] = 'Spécimens Conservés';
+$LANG['FOSSIL_SPECS'] = 'Spécimens fossiles';
 $LANG['OBSERVATIONS'] = 'Observations';
 $LANG['PERS_OBS_MAN'] = 'Gestion des Observations Personnelles';
 $LANG['MORE_COL_TYPE'] = "Plus d'informations sur Type de Collection";

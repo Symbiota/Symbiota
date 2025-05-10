@@ -326,10 +326,14 @@ class PermissionsManager {
 	public function getCollectionMetadata($collType = '') {
 		$retArr = array();
 		$sql = 'SELECT collid, collectionname, institutioncode, collectioncode, colltype FROM omcollections ';
-		if (is_numeric($collType)) $sql .= 'WHERE (collid = ' . $collType . ') ';
-		else $sql .= 'WHERE (colltype = "' . $this->cleanInStr($collType) . '") ';
+		if($collType){
+			if (is_numeric($collType)) $sql .= 'WHERE (collid = ' . $collType . ') ';
+			else{
+				$collTypeArr = explode(',', $this->cleanInStr($collType));
+				$sql .= 'WHERE (colltype IN("' . implode('","', $collTypeArr) . '")) ';
+			}
+		}
 		$sql .= 'ORDER BY collectionname';
-		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while ($r = $rs->fetch_object()) {
 			$retArr[$r->collid]['collectionname'] = $this->cleanOutStr($r->collectionname);

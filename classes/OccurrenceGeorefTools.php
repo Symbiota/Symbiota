@@ -308,7 +308,7 @@ class OccurrenceGeorefTools {
 		if(isset($USER_RIGHTS['CollEditor'])) $rightArr = array_merge($rightArr, $USER_RIGHTS['CollEditor']);
 		if($rightArr || $IS_ADMIN){
 			$sql = 'SELECT collid, CONCAT_WS("-",institutioncode, collectioncode) AS code, collectionname, icon, colltype, managementtype FROM omcollections '.
-				'WHERE ((colltype IN("Preserved Specimens","Observations")) ';
+				'WHERE ((colltype IN("Preserved Specimens","Fossil Specimens","Observations")) ';
 			if($rightArr) $sql .= 'AND (collid IN('.implode(',', $rightArr).')) ';
 			$sql .= ') ';
 			if($IS_ADMIN && $this->collStr) $sql .= 'OR (collid IN('.$this->collStr.')) ';

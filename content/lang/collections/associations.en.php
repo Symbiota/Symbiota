@@ -19,6 +19,7 @@ $LANG['BASIS_OF_RECORD'] = 'Basis of Record';
 $LANG['HUMAN_OBS'] = 'Human Observation';
 $LANG['LIVING_SPEC'] = 'Living Specimen';
 $LANG['MACHINE_OBS'] = 'Machine Observation';
+$LANG['FOSSIL_SPEC'] = 'Fossil Specimen';
 $LANG['MAT_SAMPLE'] = 'Material Sample';
 $LANG['PRES_SAMPLE'] = 'Preserved Specimen';
 $LANG['REF_CITATION'] = 'Reference Citation';

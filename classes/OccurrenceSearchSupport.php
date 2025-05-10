@@ -371,7 +371,7 @@ class OccurrenceSearchSupport {
 		//Do nothing if db = all
 		if($dbSearchTerm != 'all'){
 			if($dbSearchTerm == 'allspec'){
-				$sqlRet .= 'AND (o.collid IN(SELECT collid FROM omcollections WHERE colltype = "Preserved Specimens")) ';
+				$sqlRet .= 'AND (o.collid IN(SELECT collid FROM omcollections WHERE colltype IN("Preserved Specimens","Fossil Specimens"))) ';
 			}
 			elseif($dbSearchTerm == 'allobs'){
 				$sqlRet .= 'AND (o.collid IN(SELECT collid FROM omcollections WHERE colltype IN("General Observations","Observations"))) ';

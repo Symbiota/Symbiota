@@ -354,8 +354,9 @@ class SpecUploadBase extends SpecUpload{
 			'generalnotes'=>'occurrenceremarks','plantdescription'=>'verbatimattributes','description'=>'verbatimattributes','specimendescription'=>'verbatimattributes',
 			'phenology'=>'reproductivecondition','field:habitat'=>'habitat','habitatdescription'=>'habitat','sitedeschabitat'=>'habitat','captivecultivated'=>'cultivationstatus',
 			'ometid'=>'exsiccatiidentifier','exsiccataeidentifier'=>'exsiccatiidentifier','exsnumber'=>'exsiccatinumber','exsiccataenumber'=>'exsiccatinumber',
-			'group'=>'paleo-lithogroup',//'materialsample-materialsampleid'=>'materialsample-guid','preparationdetails'=>'materialsample-preparationprocess','materialsampletype'=>'materialsample-sampletype',
-			'lithostratigraphic'=>'paleo-lithology','imageurl'=>'associatedmedia','subject_references'=>'tempfield01',
+			'group'=>'paleo-lithogroup','lithostratigraphic'=>'paleo-lithology','lithostratigraphicterms'=>'paleo-lithology',
+			//'materialsample-materialsampleid'=>'materialsample-guid','preparationdetails'=>'materialsample-preparationprocess','materialsampletype'=>'materialsample-sampletype',
+			'imageurl'=>'associatedmedia','subject_references'=>'tempfield01',
 			'subject_recordid'=>'tempfield02'
 		);
 		$autoMapExclude = array('institutioncode','collectioncode');
@@ -757,6 +758,8 @@ class SpecUploadBase extends SpecUpload{
 		$this->outputMsg('<li style="margin-left:10px;">Setting basisOfRecord for new records, if not designated within import file...</li>');
 		$borValue = 'PreservedSpecimen';
 		if(strpos($this->collMetadataArr['colltype'], 'Observations') !== false) $borValue = 'HumanObservation';
+		elseif($this->paleoSupport) $borValue = 'FossilSpecimen';
+
 		$sql = 'UPDATE uploadspectemp SET basisOfRecord = "'.$borValue.'" WHERE basisOfRecord IS NULL AND occid IS NULL';
 		$this->conn->query($sql);
 	}
@@ -1958,10 +1961,9 @@ class SpecUploadBase extends SpecUpload{
 			$paleoTermArr = $this->getPaleoTerms();
 			$paleoArr = array();
 			foreach($paleoTermArr as $fieldName){
-				$k = strtolower($fieldName);
-				if(isset($recMap[$k])){
-					if($recMap[$k] !== '') $paleoArr[substr($k,6)] = $recMap[$k];
-					unset($recMap[$k]);
+				if(isset($recMap[$fieldName])){
+					if($recMap[$fieldName] !== '') $paleoArr[substr($fieldName,6)] = $recMap[$fieldName];
+					unset($recMap[$fieldName]);
 				}
 			}
 			if($paleoArr){
@@ -2412,14 +2414,16 @@ class SpecUploadBase extends SpecUpload{
 	private function getPaleoDwcTerms(){
 		$paleoTermArr = array('paleo-earliesteonorlowesteonothem','paleo-latesteonorhighesteonothem','paleo-earliesteraorlowesterathem',
 			'paleo-latesteraorhighesterathem','paleo-earliestperiodorlowestsystem','paleo-latestperiodorhighestsystem','paleo-earliestepochorlowestseries',
-			'paleo-latestepochorhighestseries','paleo-earliestageorloweststage','paleo-latestageorhigheststage','paleo-lowestbiostratigraphiczone','paleo-highestbiostratigraphiczone');
+			'paleo-latestepochorhighestseries','paleo-earliestageorloweststage','paleo-latestageorhigheststage','paleo-lowestbiostratigraphiczone','paleo-highestbiostratigraphiczone',
+			'paleo-geologicalcontextid','paleo-formation','paleo-member','paleo-bed','paleo-lithogroup'
+		);
 		return $paleoTermArr;
 	}
 
 	private function getPaleoSymbTerms(){
-		$paleoTermArr = array('paleo-geologicalcontextid','paleo-lithogroup','paleo-formation','paleo-member','paleo-bed','paleo-eon','paleo-era','paleo-period','paleo-epoch',
-			'paleo-earlyinterval','paleo-lateinterval','paleo-absoluteage','paleo-storageage','paleo-stage','paleo-localstage','paleo-biota','paleo-biostratigraphy',
-			'paleo-taxonenvironment','paleo-lithology','paleo-stratremarks','paleo-element','paleo-slideproperties');
+		$paleoTermArr = array('paleo-eon','paleo-era','paleo-period','paleo-epoch',
+			'paleo-earlyInterval','paleo-lateInterval','paleo-absoluteAge','paleo-storageLoc','paleo-stage','paleo-localStage','paleo-biota','paleo-biostratigraphy',
+			'paleo-taxonEnvironment','paleo-lithology','paleo-stratRemarks','paleo-element','paleo-slideProperties');
 		return $paleoTermArr;
 	}
 

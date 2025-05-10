@@ -19,6 +19,7 @@ $LANG['BASIS_OF_RECORD'] = "Base d'Enregistrement";
 $LANG['HUMAN_OBS'] = 'Observation Jumaine';
 $LANG['LIVING_SPEC'] = 'Spécimen Vivant';
 $LANG['MACHINE_OBS'] = 'Observation des Machines';
+$LANG['FOSSIL_SPEC'] = 'Spécimen fossile';
 $LANG['MAT_SAMPLE'] = 'Échantillon de Matériau';
 $LANG['PRES_SAMPLE'] = 'Spécimen Conservé';
 $LANG['REF_CITATION'] = 'Citation de Référence';
