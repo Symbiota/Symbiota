@@ -114,7 +114,7 @@ if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERV
 // Creates Togglable Overlay for GeoJSON file
 // Only Support with Leaflet Map
 // Supports of an area with the following properties:
-// filename : String - should be the name of the GeoJSON located in the GeoJSON Directory in the project root.
+// filename : String - should be the name of the geoJSON located in the `content/geoJSON` directory.
 // label : String - Short text label to describe the overlay toggle
 // popup_template: String - Html string for what label should be generated on a GeoJSON feature. Will replace text like `[Property_name]` with a features property value if present
 // template_properties: Array[String] - List of property names to used in popup generation
