@@ -352,7 +352,20 @@ class LeafletMap {
 			}
 		}
 
-        L.geoJSON(json_data, {onEachFeature}).addTo(layerObj.layer);
+		function featureStyle(feature) {
+			let style = {}
+			const supported_styles = ['fillColor', 'opacity', 'color', 'weight'];
+
+			for(let style_prop of supported_styles) {
+				if(feature.properties && feature.properties[style_prop]) {
+					style[style_prop] = feature.properties[style_prop];
+				}
+			}
+
+			return style;
+		}
+
+        L.geoJSON(json_data, {onEachFeature, style: featureStyle}).addTo(layerObj.layer);
 
 		return true;
 	}
