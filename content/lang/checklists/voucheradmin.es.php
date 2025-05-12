@@ -84,4 +84,5 @@ $LANG['RECORDS'] = ' Registros';
 $LANG['NEXT'] = 'Siguiente';
 $LANG['IMG_EDIT'] = 'Editar imagen';
 $LANG['GEOJSON_FOOTPRINT'] = 'Polígono (formato GeoJSON)';
+$LANG['ERROR_INVALID_JSON'] = 'ERROR: El polígono no tiene un formato JSON válido';
 ?>

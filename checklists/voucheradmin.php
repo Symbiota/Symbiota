@@ -98,7 +98,7 @@ $clMetaArr = $clManager->getClMetadata();
 					footprint_json = JSON.parse(footprint_json);
 				} catch(err) {
 					footprint_json = false;
-					error_msg_box.innerHTML = "<?= 'Polygon is not valid json format' ?>"; 
+					error_msg_box.innerHTML = "<?= $LANG['ERROR_INVALID_JSON'] ?>"; 
 					error_msg_box.style.display="block";
 				}
 			}
