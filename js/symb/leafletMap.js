@@ -112,7 +112,7 @@ class LeafletMap {
 
    defaultBounds = [];
 
-   /* List of GeoJson Files desired as overlays */
+   /* Map of GeoJson Files desired as overlays with layer name as keys */
    geoJSONLayers = {};
 
    constructor(map_id, map_options={}, geoJSONLayers = []) {
