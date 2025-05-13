@@ -136,4 +136,6 @@ $LANG['CLOSE_PAREN_FIELD'] = 'Fermer le champ des parenthèses';
 $LANG['NEW_CUSTOM_FIELD'] = 'Ajouter un autre champ personnalisé';
 $LANG['ORDER_BY'] = 'Trier par';
 $LANG['ADD_CUSTOM_FIELD'] = 'Ajouter un Nouveau Filtre de Recherche Personnalisé';
+$LANG['IDENTIFIER_TAG_NAME'] = 'Identificateur Nom de l\'étiquette';
+$LANG['IDENTIFIER_TAG_VALUE'] = 'Identificateur Valeur de l\'étiquette';
 ?>
