@@ -841,6 +841,7 @@ class OccurrenceEditorManager {
 					$newCnt++;
 				}
 			}
+
 			foreach ($occurrenceArr as $occid => $occurArr) {
 				if (isset($occurArr['identifiers'])) {
 					$idStr = '';
@@ -1165,7 +1166,7 @@ class OccurrenceEditorManager {
 	private function getIdentifiers($occidStr) {
 		$retArr = array();
 		if ($occidStr) {
-			$sql = 'SELECT occid, idomoccuridentifiers, identifierName, identifierValue FROM omoccuridentifiers WHERE occid IN(' . $occidStr . ')';
+			$sql = 'SELECT occid, idomoccuridentifiers, identifierName, identifierValue FROM omoccuridentifiers WHERE occid IN(' . $occidStr . ') ORDER BY initialTimestamp';
 			$rs = $this->conn->query($sql);
 			while ($r = $rs->fetch_object()) {
 				$retArr[$r->occid][$r->idomoccuridentifiers]['name'] = $r->identifierName;
@@ -1173,6 +1174,7 @@ class OccurrenceEditorManager {
 			}
 			$rs->free();
 		}
+
 		return $retArr;
 	}
 
