@@ -1998,9 +1998,10 @@ class OccurrenceEditorManager {
 			//Get occids (where statement can't be part of UPDATE query without error being thrown)
 			$occidArr = array();
 			$sqlOccid = 'SELECT DISTINCT o.occid FROM omoccurrences o ';
+			$this->sqlWhere = $this->getBatchUpdateWhere($fn, $ov, $buMatch);
 			$this->addTableJoins($sqlOccid);
-			$sqlOccid .= $this->getBatchUpdateWhere($fn, $ov, $buMatch);
-			//echo $sqlOccid.'<br/>';
+			$sqlOccid .= $this->sqlWhere;
+			// echo $sqlOccid.'<br/>';
 			$rs = $this->conn->query($sqlOccid);
 			while ($r = $rs->fetch_object()) {
 				$occidArr[] = $r->occid;
@@ -2018,16 +2019,27 @@ class OccurrenceEditorManager {
 				}
 
 				$sqlWhere = 'WHERE occid IN(' . implode(',', $occidArr) . ')';
+
 				//Add edits to the omoccuredit table
 				$sql = 'INSERT INTO omoccuredits(occid,fieldName,fieldValueOld,fieldValueNew,appliedStatus,uid,editType) ' .
-					'SELECT occid, "' . $fn . '" AS fieldName, IFNULL(' . $fn . ',"") AS oldValue, IFNULL(' . $nvSqlFrag . ',"") AS newValue, ' .
-					'1 AS appliedStatus, ' . $GLOBALS['SYMB_UID'] . ' AS uid, 1 FROM omoccurrences ' . $sqlWhere;
+					'SELECT o.occid, "' . $fn . '" AS fieldName, IFNULL(' . $fn . ',"") AS oldValue, IFNULL(' . $nvSqlFrag . ',"") AS newValue, ' .
+					'1 AS appliedStatus, ' . $GLOBALS['SYMB_UID'] . ' AS uid, 1 FROM omoccurrences as o ';
+
+				if ($fn === 'identifierValue' || $fn === 'identifierName') {
+					$sql .= ' JOIN omoccuridentifiers AS id ON id.occid = o.occid ';
+					$sqlWhere = 'WHERE id.occid IN(' . implode(',', $occidArr) . ')' . ' AND ' . $fn . ' = ' . '"' . $ov . '" ';
+				}
+
+				$sql .= $sqlWhere;
+
 				if (!$this->conn->query($sql)) {
 					$statusStr = $LANG['ERROR_ADDING_UPDATE'] . ': ' . $this->conn->error;
 				}
 				//Apply edits to core tables
 				if (isset($this->collMap['paleoActivated']) && array_key_exists($fn, $this->fieldArr['omoccurpaleo'])) {
 					$sql = 'UPDATE omoccurpaleo SET ' . $fn . ' = ' . $nvSqlFrag . ' ' . $sqlWhere;
+				} else if ($fn === 'identifierValue' || $fn === 'identifierName') {
+					$sql = 'UPDATE omoccuridentifiers as id SET ' . $fn . ' = ' . $nvSqlFrag . ' ' . $sqlWhere;
 				} else {
 					$sql = 'UPDATE omoccurrences SET ' . $fn . ' = ' . $nvSqlFrag . ' ' . $sqlWhere;
 				}
@@ -2048,8 +2060,11 @@ class OccurrenceEditorManager {
 		$ov = $this->conn->real_escape_string($oldValue);
 
 		$sql = 'SELECT COUNT(DISTINCT o.occid) AS retcnt FROM omoccurrences o ';
+
+		$this->sqlWhere = $this->getBatchUpdateWhere($fn, $ov, $buMatch);
 		$this->addTableJoins($sql);
-		$sql .= $this->getBatchUpdateWhere($fn, $ov, $buMatch);
+
+		$sql .= $this->sqlWhere;
 
 		$result = $this->conn->query($sql);
 		while ($row = $result->fetch_object()) {
@@ -2062,11 +2077,16 @@ class OccurrenceEditorManager {
 	private function getBatchUpdateWhere($fn, $ov, $buMatch) {
 		$sql = $this->sqlWhere;
 
+		$tablePrefix = 'o.';
+		if($fn == 'identifierValue' || 'identifierName') {
+			$tablePrefix = 'id.';
+		}
+
 		if (!$buMatch || $ov === '') {
-			$sql .= ' AND (o.' . $fn . ' ' . ($ov === '' ? 'IS NULL' : '= "' . $ov . '"') . ') ';
+			$sql .= ' AND (' . $tablePrefix . $fn . ' ' . ($ov === '' ? 'IS NULL' : '= "' . $ov . '"') . ') ';
 		} else {
 			//Selected "Match any part of field"
-			$sql .= ' AND (o.' . $fn . ' LIKE "%' . $ov . '%") ';
+			$sql .= ' AND ('. $tablePrefix . $fn . ' LIKE "%' . $ov . '%") ';
 		}
 		return $sql;
 	}
