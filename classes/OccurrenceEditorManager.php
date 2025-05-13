@@ -2025,6 +2025,8 @@ class OccurrenceEditorManager {
 					'SELECT o.occid, "' . $fn . '" AS fieldName, IFNULL(' . $fn . ',"") AS oldValue, IFNULL(' . $nvSqlFrag . ',"") AS newValue, ' .
 					'1 AS appliedStatus, ' . $GLOBALS['SYMB_UID'] . ' AS uid, 1 FROM omoccurrences as o ';
 
+				// This Solution is a bit scuffed their isn't a nice way of getting many to one 
+				// tables in the batch update system without rebuilding most of it
 				if ($fn === 'identifierValue' || $fn === 'identifierName') {
 					$sql .= ' JOIN omoccuridentifiers AS id ON id.occid = o.occid ';
 					$sqlWhere = 'WHERE id.occid IN(' . implode(',', $occidArr) . ')' . ' AND ' . $fn . ' = ' . '"' . $ov . '" ';
