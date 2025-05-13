@@ -373,7 +373,7 @@ if($action == 'batchAssignTag'){
 							$lastPage = ceil($recordCnt / $cntPerPage);
 							$startPage = ($pageNumber > 4?$pageNumber - 4:1);
 							$endPage = ($lastPage > $startPage + 9 ? $startPage + 9 : $lastPage);
-							$url = 'search.php?' . $imgLibManager->getQueryTermStr() . '&cntperpage=' . $cntPerPage . '&submitaction=search';
+							$url = 'search.php?' . $imgLibManager->getQueryTermStr() . ($sortBy ? '&sortby=sciname' : '') . '&cntperpage=' . $cntPerPage . '&submitaction=search';
 							$pageBar = '<div style="float:left" >';
 							if($startPage > 1){
 								$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="' . $url . '&page=1">' . $LANG['FIRST'] . '</a></span>';

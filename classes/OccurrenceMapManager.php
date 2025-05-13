@@ -195,8 +195,8 @@ class OccurrenceMapManager extends OccurrenceManager {
 	//SQL where functions
 	private function setGeoSqlWhere(){
 		global $USER_RIGHTS;
+		$sqlWhere = $this->getSqlWhere();
 		if($this->searchTermArr) {
-			$sqlWhere = $this->getSqlWhere();
 			$sqlWhere .= ($sqlWhere?' AND ':' WHERE ').'(o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) ';
 			if(!empty($this->searchTermArr['clid'])) {
 				if($this->voucherManager->getClFootprint()){
