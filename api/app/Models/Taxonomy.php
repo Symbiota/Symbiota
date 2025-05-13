@@ -24,4 +24,7 @@ class Taxonomy extends Model{
 	public function media(){
 		return $this->hasMany(media::class, 'tid', 'tid');
 	}
+
+	//@TODO for create, cultivarEpithet needs to have single quotes purged during entry
+	//@TODO for create, tradeName needs to be capitalized during entry
 }

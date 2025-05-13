@@ -193,9 +193,9 @@ class TaxonomyController extends Controller {
 
 	/**
 	 * @OA\Post(
-	 * 	path="/api/v2/collection",
-	 * 	operationId="createCollection",
-	 * 	description="Create a new biocollection entity",
+	 * 	path="/api/v2/taxonomy",
+	 * 	operationId="createTaxon",
+	 * 	description="Create a new taxon",
 	 * 	tags={"Collections"},
 	 * 	@OA\Parameter(
 	 *		name="apiToken",
@@ -206,109 +206,103 @@ class TaxonomyController extends Controller {
 	 *	 ),
 	 * 	@OA\RequestBody(
 	 * 		required=true,
-	 * 		description="Collection data to be inserted",
+	 * 		description="Taxon data to be inserted",
 	 * 		@OA\MediaType(
 	 * 			mediaType="application/json",
 	 * 			@OA\Schema(
-	 * 				required={"institutionCode", "collectionName", "collType", "managementType", "publicEdits"},
+	 * 				required={"kingdomName", "rankID", "sciName", "unitName1", "author", "securityStatus"},
 	 * 				@OA\Property(
-	 * 					property="institutionCode",
+	 * 					property="kingdomName",
 	 * 					type="string",
-	 * 					description="The name (or acronym) in use by the institution having custody of the occurrence records",
+	 * 					enum={"Plantae", "Fungi", "Animalia", "Chromista", "Protista", "Bacteria"},
+	 * 					description="The name of the kingdom",
 	 * 					maxLength=45
 	 * 				),
 	 *  				@OA\Property(
-	 * 					property="collectionCode",
+	 * 					property="sciName",
 	 * 					type="string",
-	 * 					description="The name, acronym, or code identifying the collection or data set from which the record was derived",
-	 * 					maxLength=45
+	 * 					description="The name of the taxon excluding authorship. E.g., 'Abutilon guineense var. forrestii'",
+	 * 					maxLength=250
 	 * 				),
 	 *  				@OA\Property(
-	 * 					property="collectionName",
+	 * 					property="author",
 	 * 					type="string",
-	 * 					description="What you want the collection to be called",
+	 * 					description="The authorship associated with the taxon",
 	 * 					maxLength=150
 	 * 				),
 	 *  				@OA\Property(
-	 * 					property="collectionID",
-	 * 					type="string",
-	 * 					description="Global Unique Identifier for this collection (see dwc:collectionID): If your collection already has a previously assigned GUID, that identifier should be represented here. For physical specimens, the recommended best practice is to use an identifier from a collections registry such as the Global Registry of Biodiversity Repositories",
-	 * 					maxLength=45
-	 * 				),
-	 *  				@OA\Property(
-	 * 					property="fullDescription",
-	 * 					type="string",
-	 * 					description="Description of the collection in <2000 characters",
-	 * 					maxLength=2000
-	 * 				),
-	 *  				@OA\Property(
-	 * 					property="individualUrl",
-	 * 					type="string",
-	 * 					description="A dynamic link back to the source record if available",
-	 * 					maxLength=500
-	 * 				),
-	 *  				@OA\Property(
-	 * 					property="latitudeDecimal",
-	 * 					type="number",
-	 * 					description="Latitude as a decimal",
-	 * 					maxLength=15
-	 * 				),
-	 *  				@OA\Property(
-	 * 					property="longitudeDecimal",
-	 * 					type="number",
-	 * 					description="Longitude as a decimal",
-	 * 					maxLength=15
-	 * 				),
-	 *  				@OA\Property(
-	 * 					property="collType",
-	 * 					type="string",
-	 * 					enum={"Preserved Specimens", "General Observations", "Observations"},
-	 * 					description="'Preserved Specimens', 'General Observations', or 'Observations'. Preserved Specimens signify a collection type that contains physical samples that are available for inspection by researchers and taxonomic experts. Use Observations when the record is not based on a physical specimen. Personal Observation Management is a dataset where registered users can independently manage their own subset of records. Records entered into this dataset are explicitly linked to the user’s profile and can only be edited by them. This type of collection is typically used by field researchers to manage their collection data and print labels prior to depositing the physical material within a collection. Even though personal collections are represented by a physical sample, they are classified as “observations” until the physical material is publicly available within a collection",
-	 * 					maxLength=45
-	 * 				),
-	 *  				@OA\Property(
-	 * 					property="managementType",
-	 * 					type="string",
-	 * 					enum={"Snapshot", "Live Data"},
-	 * 					description="Use 'Snapshot' when there is a separate in-house database maintained in the collection and the dataset within the Symbiota portal is only a periodically updated snapshot of the central database. A 'Live Data' dataset is when the data is managed directly within the portal and the central database is the portal data",
-	 * 					maxLength=45
-	 * 				),
-	 *  				@OA\Property(
-	 * 					property="publicEdits",
+	 * 					property="rankid",
+	 * 					enum={0, 1, 10, 15, 20, 25, 27, 30, 40, 60, 70, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 220, 230, 240, 250, 260, 300},
 	 * 					type="integer",
-	 * 					enum={0,1},
-	 * 					description="The option to enable public edits (1 for yes, 0 for no)",
+	 * 					description="Rank id associated with the rank of the target taxon: class= 60, cultivar= 300, division= 30, family= 140, form= 260, genus= 180, kingdom= 10, non-ranked node= 0, order= 100, organism= 1, section= 200, species= 220, subclass= 70, subdivision= 40, subfamily= 150, subform= 270, subgenus= 190, subkingdom= 20, suborder= 110, subsection= 210, subspecies= 230, subtribe= 170, subvariety= 250, superclass= 50, tribe= 160, variety= 240",
+	 * 					maxLength=45
+	 * 				),
+	 *  				@OA\Property(
+	 * 					property="unitind1",
+	 * 					type="string",
+	 * 					description="An optional character to indicate hybrid (×) or extinct (†) status",
 	 * 					maxLength=1
 	 * 				),
 	 *  				@OA\Property(
-	 * 					property="rightsHolder",
+	 * 					property="unitname1",
 	 * 					type="string",
-	 * 					description="The organization or person managing or owning the rights of the resource. For more details, see Darwin Core definition",
+	 * 					description="First name of the new taxon. If there is only one name (e.g., if the taxon is question is a genus), enter that name. If the taxon is binomial or more (e.g., 'Acer rubrum'), just enter the first taxonomic unit (e.g., 'Acer' in the previous example)",
+	 * 					maxLength=50
+	 * 				),
+	 *  				@OA\Property(
+	 * 					property="unitind2",
+	 * 					type="string",
+	 * 					description="An optional character to indicate hybrid (×) status",
+	 * 					maxLength=1
+	 * 				),
+	 *  				@OA\Property(
+	 * 					property="unitname2",
+	 * 					type="number",
+	 * 					description="Optional second name of the new taxon. If there is only one name (e.g., if the taxon is question is a genus), leave this empty. If the taxon is binomial or more (e.g., 'Acer rubrum'), just enter the second taxonomic unit (e.g., 'rubrum' in the previous example)",
+	 * 					maxLength=50
+	 * 				),
+	 *  				@OA\Property(
+	 * 					property="unitind3",
+	 * 					type="string",
+	 * 					description="An optional string to indicate the nature of the optional third name of the taxon (e.g., 'f.', 'var.', 'subvar.', 'spp.')",
+	 * 					maxLength=45
+	 * 				),
+	 *  				@OA\Property(
+	 * 					property="unitname3",
+	 * 					type="string",
+	 * 					description="Optional third name of the new taxon. If there are only two names (e.g., if the taxon is question is a species), leave this empty. If the taxon is trinomial or more (e.g., 'Trichomanes rigidum var. elongatum'), enter the third taxonomic unit (e.g., 'elongatum' in the previous example)",
+	 * 					maxLength=35
+	 * 				),
+	 *  				@OA\Property(
+	 * 					property="cultivarEpithet",
+	 * 					type="string",
+	 * 					description="Optional cultivar epithet if the taxon is a cultivar. Although single quotations will be appended to the full sciName of this taxon, single quotations should NOT be used here",
+	 * 					maxLength=50
+	 * 				),
+	 *  				@OA\Property(
+	 * 					property="tradeName",
+	 * 					type="string",
+	 * 					description="Optional trade name if the taxon has a trade name. By convention, trade names should be entered completely capitalized (e.g., 'EMPRESS')",
+	 * 					maxLength=50
+	 * 				),
+	 *  				@OA\Property(
+	 * 					property="source",
+	 * 					type="string",
+	 * 					description="Optional. Add a link or citation for the source of the scientific name you are adding, for example, a Plants of the World Online entry, a literature citation with DOI, etc.",
 	 * 					maxLength=250
 	 * 				),
 	 *  				@OA\Property(
-	 * 					property="rights",
+	 * 					property="notes",
 	 * 					type="string",
-	 * 					description="Information or a URL link to page with details explaining how one can use the data. See Darwin Core definition",
+	 * 					description="Optional. Any notes about the taxon that might be important to communicate",
 	 * 					maxLength=250
 	 * 				),
 	 *  				@OA\Property(
-	 * 					property="accessRights",
-	 * 					type="string",
-	 * 					description="Information or a URL link to page with details explaining how one can use the data. See Darwin Core definition",
-	 * 					maxLength=1000
-	 * 				),
-	 *  				@OA\Property(
-	 * 					property="sortSeq",
-	 * 					type="string",
-	 * 					description="Leave this field empty if you want the collections to sort alphabetically (default)",
+	 * 					property="securitystatus",
+	 * 					type="integer",
+	 * 					enum={0, 1, 5},
+	 * 					description="Enter 0 if no security filter is required. Enter 1 if TODO. Enter 5 if TODO.",
 	 * 					maxLength=10
-	 * 				),
-	 *  				@OA\Property(
-	 * 					property="icon",
-	 * 					type="string",
-	 * 					description="URL of an image icon representing the collection. The URL path can be absolute or relative. The use of icons are optional",
-	 * 					maxLength=250
 	 * 				),
 	 * 			)
 	 * 		)
@@ -332,21 +326,20 @@ class TaxonomyController extends Controller {
 		$qualifyingRoles = array_intersect($extractedRoles, $rolesPermittedToCreateCollections);
 
 		if(count($qualifyingRoles)>0){
-			// @TODO make colleciton GUID?
 			try {
-				$collection = Taxonomy::create($request->all());
+				$taxon = Taxonomy::create($request->all());
 				// @TODO add to taxstatus
-				$collectionStats = CollectionStats::create([
-					'collid' => $collection->collID,
-					'recordcnt' => 0,
-					// 'uploadedby' => $GLOBALS['USERNAME']
-					'uploadedby' => 'TODO'
-				]);
+				// $collectionStats = CollectionStats::create([
+				// 	'collid' => $collection->collID,
+				// 	'recordcnt' => 0,
+				// 	// 'uploadedby' => $GLOBALS['USERNAME']
+				// 	'uploadedby' => 'TODO'
+				// ]);
 			} catch (\Exception $e) {
-				return response()->json(['error' => 'Failed to create collection stats' . $e->getMessage()], 500);
+				return response()->json(['error' => 'Failed to create new taxon' . $e->getMessage()], 500);
 			}
 
-			return response()->json($collection, 200);
+			return response()->json($taxon, 200);
 		}
 		return response()->json(['error' => 'Unauthorized'], 401);
 	}	
