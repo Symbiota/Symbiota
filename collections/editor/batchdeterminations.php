@@ -97,15 +97,17 @@ if($isEditor){
 					}
 				}).done(function( retStr ) {
 					if(retStr != ""){
-						for (var occid in retStr) {
-							var occObj = retStr[occid];
+						for (let occid in retStr) {
+							const occObj = retStr[occid];
 							if(f.catalognumber.value && checkCatalogNumber(occid, occObj["cn"])){
 								alert("<?php echo $LANG['RECORD_EXISTS']; ?>");
 							}
 							else{
-								var trNode = createNewTableRow(occid, occObj);
-								var tableBody = document.getElementById("catrecordstbody");
-								tableBody.insertBefore(trNode, tableBody.firstElementChild);
+								if(<?php echo $IS_ADMIN; ?> || !occObj.observerUid || occObj.observerUid === <?php echo $GLOBALS["SYMB_UID"];?>){
+									const trNode = createNewTableRow(occid, occObj);
+									const tableBody = document.getElementById("catrecordstbody");
+									tableBody.insertBefore(trNode, tableBody.firstElementChild);
+								}
 							}
 						}
 						document.getElementById("accrecordlistdviv").style.display = "block";

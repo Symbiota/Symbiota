@@ -380,7 +380,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 	public function getNewDetItem($catNum, $sciName, $allCatNum = 0){
 		$retArr = array();
 		if($catNum || $sciName){
-			$sql = 'SELECT o.occid, o.catalogNumber, o.otherCatalogNumbers, o.sciname, CONCAT_WS(" ", o.recordedby, IFNULL(o.recordnumber, o.eventdate)) AS collector, '.
+			$sql = 'SELECT o.occid, o.catalogNumber, o.otherCatalogNumbers, o.sciname, o.observerUid, CONCAT_WS(" ", o.recordedby, IFNULL(o.recordnumber, o.eventdate)) AS collector, '.
 				'CONCAT_WS(", ", o.country, o.stateprovince, o.county, o.locality) AS locality ';
 			$catNumArr = explode(',',$catNum);
 			if($catNum){
@@ -411,6 +411,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 				if(!array_key_exists($r->occid, $retArr)){
 					$retArr[$r->occid]['sn'] = $r->sciname;
 					$retArr[$r->occid]['coll'] = $r->collector;
+					$retArr[$r->occid]['observerUid'] = $r->observerUid;
 					$loc = $r->locality;
 					if(strlen($loc) > 500) $loc = substr($loc,400);
 					$retArr[$r->occid]['loc'] = $loc;
