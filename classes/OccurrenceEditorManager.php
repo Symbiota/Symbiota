@@ -550,6 +550,8 @@ class OccurrenceEditorManager {
 				} elseif ($customField == 'username') {
 					//Used when Modified By comes from custom field search within basic query form
 					$customField = 'u.username';
+				} elseif ($customField == 'identifierName' || $customField == 'identifierValue') {
+					$customField = 'id.' . $customField;
 				} else {
 					$customField = 'o.' . $customField;
 				}
@@ -778,7 +780,7 @@ class OccurrenceEditorManager {
 		} elseif (array_key_exists('woi', $this->qryArr)) {
 			$sql .= 'LEFT JOIN media m ON o.occid = m.occid ';
 		}
-		if (strpos($this->sqlWhere, 'id.identifierValue')) {
+		if (strpos($this->sqlWhere, 'id.identifierValue') || strpos($this->sqlWhere, 'id.identifierName')) {
 			$sql .= 'LEFT JOIN omoccuridentifiers id ON o.occid = id.occid ';
 		}
 		if (strpos($this->sqlWhere, 'u.username')) {
