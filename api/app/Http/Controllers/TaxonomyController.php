@@ -335,6 +335,7 @@ class TaxonomyController extends Controller {
 			// @TODO make colleciton GUID?
 			try {
 				$collection = Taxonomy::create($request->all());
+				// @TODO add to taxstatus
 				$collectionStats = CollectionStats::create([
 					'collid' => $collection->collID,
 					'recordcnt' => 0,
