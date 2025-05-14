@@ -103,7 +103,7 @@ if($isEditor){
 								alert("<?php echo $LANG['RECORD_EXISTS']; ?>");
 							}
 							else{
-								if(<?php echo $IS_ADMIN; ?> || !occObj.observerUid || occObj.observerUid === <?php echo $GLOBALS["SYMB_UID"];?>){
+								if(<?php echo $IS_ADMIN; ?> || !occObj.observerUid || Number(occObj.observerUid) === <?php echo $GLOBALS["SYMB_UID"];?>){
 									const trNode = createNewTableRow(occid, occObj);
 									const tableBody = document.getElementById("catrecordstbody");
 									tableBody.insertBefore(trNode, tableBody.firstElementChild);
