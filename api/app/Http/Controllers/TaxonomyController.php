@@ -238,37 +238,37 @@ class TaxonomyController extends Controller {
 	 * 					maxLength=45
 	 * 				),
 	 *  				@OA\Property(
-	 * 					property="unitind1",
+	 * 					property="unitInd1",
 	 * 					type="string",
 	 * 					description="An optional character to indicate hybrid (×) or extinct (†) status",
 	 * 					maxLength=1
 	 * 				),
 	 *  				@OA\Property(
-	 * 					property="unitname1",
+	 * 					property="unitName1",
 	 * 					type="string",
 	 * 					description="First name of the new taxon. If there is only one name (e.g., if the taxon is question is a genus), enter that name. If the taxon is binomial or more (e.g., 'Acer rubrum'), just enter the first taxonomic unit (e.g., 'Acer' in the previous example)",
 	 * 					maxLength=50
 	 * 				),
 	 *  				@OA\Property(
-	 * 					property="unitind2",
+	 * 					property="unitInd2",
 	 * 					type="string",
 	 * 					description="An optional character to indicate hybrid (×) status",
 	 * 					maxLength=1
 	 * 				),
 	 *  				@OA\Property(
-	 * 					property="unitname2",
+	 * 					property="unitName2",
 	 * 					type="string",
 	 * 					description="Optional second name of the new taxon. If there is only one name (e.g., if the taxon is question is a genus), leave this empty. If the taxon is binomial or more (e.g., 'Acer rubrum'), just enter the second taxonomic unit (e.g., 'rubrum' in the previous example)",
 	 * 					maxLength=50
 	 * 				),
 	 *  				@OA\Property(
-	 * 					property="unitind3",
+	 * 					property="unitInd3",
 	 * 					type="string",
 	 * 					description="An optional string to indicate the nature of the optional third name of the taxon (e.g., 'f.', 'var.', 'subvar.', 'spp.')",
 	 * 					maxLength=45
 	 * 				),
 	 *  				@OA\Property(
-	 * 					property="unitname3",
+	 * 					property="unitName3",
 	 * 					type="string",
 	 * 					description="Optional third name of the new taxon. If there are only two names (e.g., if the taxon is question is a species), leave this empty. If the taxon is trinomial or more (e.g., 'Trichomanes rigidum var. elongatum'), enter the third taxonomic unit (e.g., 'elongatum' in the previous example)",
 	 * 					maxLength=35
