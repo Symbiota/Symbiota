@@ -196,7 +196,7 @@ class TaxonomyController extends Controller {
 	 * 	path="/api/v2/taxonomy",
 	 * 	operationId="createTaxon",
 	 * 	description="Create a new taxon",
-	 * 	tags={"Collections"},
+	 * 	tags={"Taxonomy"},
 	 * 	@OA\Parameter(
 	 *		name="apiToken",
 	 *		in="query",
@@ -257,7 +257,7 @@ class TaxonomyController extends Controller {
 	 * 				),
 	 *  				@OA\Property(
 	 * 					property="unitname2",
-	 * 					type="number",
+	 * 					type="string",
 	 * 					description="Optional second name of the new taxon. If there is only one name (e.g., if the taxon is question is a genus), leave this empty. If the taxon is binomial or more (e.g., 'Acer rubrum'), just enter the second taxonomic unit (e.g., 'rubrum' in the previous example)",
 	 * 					maxLength=50
 	 * 				),
@@ -298,7 +298,7 @@ class TaxonomyController extends Controller {
 	 * 					maxLength=250
 	 * 				),
 	 *  				@OA\Property(
-	 * 					property="securitystatus",
+	 * 					property="securityStatus",
 	 * 					type="integer",
 	 * 					enum={0, 1, 5},
 	 * 					description="Enter 0 if no security filter is required. Enter 1 if TODO. Enter 5 if TODO.",
