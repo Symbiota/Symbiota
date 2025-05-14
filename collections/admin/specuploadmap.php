@@ -307,9 +307,9 @@ include($SERVER_ROOT.'/includes/header.php');
 										<fieldset>
 											<legend><?= $LANG['CUSTOM_FILT'] ?></legend>
 											<?php
-											$qArr = json_decode($duManager->getQueryStr(),true);
 											$queryArr = array();
-											if($qArr){
+											if($queryJson = $duManager->getQueryStr()){
+												$qArr = json_decode($queryJson, true);
 												foreach($qArr as $column => $aArr){
 													foreach($aArr as $cond => $bArr){
 														foreach($bArr as $v){

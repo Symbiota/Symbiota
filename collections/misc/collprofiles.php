@@ -15,11 +15,6 @@ $collid = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid']
 $eMode = array_key_exists('emode', $_REQUEST) ? $collManager->sanitizeInt($_REQUEST['emode']) : 0;
 $action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
 
-$SHOULD_INCLUDE_CULTIVATED_FOR_QUICKSEARCH = true;
-$SHOULD_USE_HARVESTPARAMS = $SHOULD_USE_HARVESTPARAMS ?? false;
-$actionPage = $SHOULD_USE_HARVESTPARAMS ? ($CLIENT_ROOT . "/collections/harvestparams.php") : ($CLIENT_ROOT . "/collections/search/index.php");
-
-
 if ($eMode && !$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/misc/collprofiles.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $collManager->setCollid($collid);
@@ -101,7 +96,7 @@ if ($SYMB_UID) {
 			if(e.submitter.value === "edit") {
 				return processEditQuickSearch('<?php echo $CLIENT_ROOT ?>')
 			} else if(e.submitter.value === "search") {
-				return submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_FOR_QUICKSEARCH ? '1' : '0' ?> + '&includeothercatnum=1', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_FOR_QUICKSEARCH ? '1' : '0' ?> + '&usethes=1&taxontype=2 ');
+				return submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includecult=' + <?= !empty($SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT) ? '1' : '0' ?> + '&includeothercatnum=1', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? '1' : '0' ?> + '&usethes=1&taxontype=2 ');
 			}
 
 			e.preventDefault();
@@ -307,18 +302,7 @@ if ($SYMB_UID) {
 			if ($datasetKey) {
 				echo '<div style="margin-left: 10px; margin-bottom: 20px;">';
 				echo '<iframe title="GBIF citation" src="https://www.gbif.org/api/widgets/literature/button?gbifDatasetKey=' . $datasetKey . '" frameborder="0" allowtransparency="true" style="width: 140px; height: 24px;"></iframe>';
-				// Check if the Bionomia badge has been created yet - typically lags ~2 weeks behind GBIF publication
-				$bionomiaUrl = 'https://api.bionomia.net/dataset/' . $datasetKey . '/badge.svg';
-				$ch = curl_init($bionomiaUrl);
-				curl_setopt($ch, CURLOPT_NOBODY, true);
-				curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-				curl_exec($ch);
-				$responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-				curl_close($ch);
-				// Check the response code - display image if exists
-				if ($responseCode === 200) {
-    				echo '<a href="https://bionomia.net/dataset/' . $datasetKey . '"><img src="' . $bionomiaUrl . '" alt="Bionomia dataset badge" style="width:262px; height:24px; padding-left:10px;"></a>';
-				}
+    			echo '<a href="https://bionomia.net/dataset/' . $datasetKey . '"><img src="https://api.bionomia.net/dataset/' . $datasetKey . '/badge.svg" onerror="this.style.display=\'none\'" alt="Bionomia dataset badge" style="width:262px; height:24px; padding-left:10px;"></a>';
 				echo '</div>';
 			}
 
@@ -832,10 +816,12 @@ if ($SYMB_UID) {
 							}
 							?>
 						</div>
+						<?php if($collData['managementtype'] != 'Live Data'): ?>
 						<div class="bottom-breathing-room-rel">
 							<span class="label"><?= $LANG['LAST_UPDATE'] ?>:</span>
 							<?= $collData['uploaddate'] ?>
 						</div>
+						<?php endif ?>
 						<?php
 						if($collData['managementtype'] == 'Live Data'){
 							?>
@@ -920,6 +906,13 @@ if ($SYMB_UID) {
 			</div>
 			<?php
 			include('collprofilestats.php');
+			$actionPage = $CLIENT_ROOT . '/collections/';
+			if(!empty($SHOULD_USE_HARVESTPARAMS)){
+				$actionPage .= 'harvestparams.php';
+			}
+			else{
+				$actionPage .= 'search/index.php';
+			}
 			?>
 			<div style="margin-bottom: 2rem;">
 				<form name="coll-search-form" action="<?= $actionPage ?>" method="get">

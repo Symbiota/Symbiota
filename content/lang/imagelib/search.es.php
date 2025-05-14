@@ -6,9 +6,9 @@ Translated by: Google Translate (2024-09-05)
 ------------------
 */
 
-$LANG['ACTION_SUCCESS'] = 'Medios etiquetado con éxito!';
-$LANG['ACTION_FAILED'] = 'Medios ya estaba etiquetado con destino';
-$LANG['ACTION_ERROR'] = 'ERROR al aplicar etiqueta a recurso de medios';
+$LANG['ACTION_SUCCESS'] = 'recursos multimedia etiquetados exitosamente.';
+$LANG['ACTION_FAILED'] = 'los recursos de medios ya estaban etiquetados';
+$LANG['ACTION_ERROR'] = 'ERROR al aplicar la etiqueta a los recursos multimedia';
 $LANG['IMAGE_SEARCH'] = 'Búsqueda medios';
 $LANG['SELECT_TAG'] = 'Seleccione una etiqueta medios';
 $LANG['SELECT_IMAGE'] = 'Seleccione al menos un recurso medios para asignarle una etiqueta';
@@ -42,6 +42,8 @@ $LANG['TYPE_FIELD'] = 'Campo Medios (falta detalles específicos de localidad)';
 $LANG['DISPLAY_COLLECTIONS'] = 'Panel de colecciones';
 $LANG['HIDE_COLLECTIONS'] = 'Ocultar panel de colección';
 $LANG['COUNT_PER_PAGE'] = 'Contar por página';
+$LANG['SORT_BY'] = 'Ordenar por';
+$LANG['SCINAME'] = 'Nombre Cientifico';
 $LANG['LOAD_IMAGES'] = 'Cargar medios';
 $LANG['COLLECTIONS'] = 'Colecciones';
 $LANG['SELECT_ALL'] = 'Seleccionar/Deseleccionar todo';

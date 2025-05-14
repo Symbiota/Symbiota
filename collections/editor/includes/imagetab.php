@@ -122,7 +122,7 @@ $creatorArray = Media::getCreatorArray();
 				</div>
 				<div style='margin:0px 0px 5px 10px;'>
 					<b><?php echo $LANG['CREATOR']; ?>:</b>
-					<select name='photographeruid' name='photographeruid'>
+					<select name='creatorUid'>
 						<option value=""><?php echo $LANG['SELECT_CREATOR']; ?></option>
 						<option value="">---------------------------------------</option>
 						<?php
@@ -133,13 +133,13 @@ $creatorArray = Media::getCreatorArray();
 							}
 						?>
 					</select>
-					<a href="#" onclick="toggle('imgaddoverride');return false;" title="<?php echo $LANG['DISPLAY_PHOTOG_OVER']; ?>">
+					<a href="#" onclick="toggle('imgaddoverride');return false;" title="<?php echo $LANG['DISPLAY_CREATOR_OVER']; ?>">
 						<img src="../../images/editplus.png" style="border:0px;width:1.5em;" />
 					</a>
 				</div>
 				<div id="imgaddoverride" style="margin:0px 0px 5px 10px;display:none;">
-					<b><?php echo $LANG['PHOTOG_OVER']; ?>:</b>
-					<input name='photographer' type='text' style="width:300px;" maxlength='100' />
+          <b><?php echo $LANG['CREATOR_OVER']; ?>:</b>
+					<input name='creator' type='text' style="width:300px;" maxlength='100' />
 					* <?php echo $LANG['WILL_OVERRIDE']; ?>
 				</div>
 				<div style="margin:0px 0px 5px 10px;">
@@ -156,7 +156,7 @@ $creatorArray = Media::getCreatorArray();
 				</div>
 				<div style="margin:0px 0px 5px 10px;">
 					<b><?php echo $LANG['SORT']; ?>:</b>
-					<input name="sortoccurrence" type="text" size="10" value="" />
+					<input name="sortOccurrence" type="text" size="10" value="" />
 				</div>
 				<div style="margin:0px 0px 5px 10px;">
 					<b><?php echo $LANG['DESCRIBE_IMAGE']; ?></b>
@@ -174,7 +174,7 @@ $creatorArray = Media::getCreatorArray();
 					<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
 					<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
 					<input type="hidden" name="tabindex" value="1" />
-					<button type="submit" name="submitaction" value="Submit New Image"><?php echo $LANG['SUBMIT_NEW']; ?></button>
+					<button type="submit" name="submitaction" class="button icon-button" value="Submit New Image"><?php echo $LANG['SUBMIT_NEW']; ?></button>
 				</div>
 			</fieldset>
 		</form>
@@ -232,7 +232,7 @@ $creatorArray = Media::getCreatorArray();
 							<div style="float:right;cursor:pointer;" onclick="toggle('img<?php echo $imgId; ?>editdiv');" title="<?php echo $LANG['EDIT_METADATA']; ?>">
 								<img style="border:0px;width:1.2em;" src="../../images/edit.png" />
 							</div>
-							<div style="margin-top:30px">
+							<div style="margin-top:30px;overflow-wrap: anywhere;">
 								<div>
 									<b><?php echo $LANG['CAPTION']; ?>:</b>
 									<?php echo $imgArr["caption"]; ?>
@@ -264,9 +264,9 @@ $creatorArray = Media::getCreatorArray();
 								</div>
 								<div>
 									<b><?php echo $LANG['SOURCE_WEBPAGE']; ?>:</b>
-									<a href="<?php echo $imgArr['sourceurl']; ?>" target="_blank">
+									<a href="<?php echo $imgArr['sourceUrl']; ?>" target="_blank">
 										<?php
-										$sourceUrlDisplay = $imgArr['sourceurl'];
+										$sourceUrlDisplay = $imgArr['sourceUrl'];
 										if($sourceUrlDisplay && strlen($sourceUrlDisplay) > 60) $sourceUrlDisplay = '...'.substr($sourceUrlDisplay,-60);
 										echo $sourceUrlDisplay;
 										?>
@@ -318,7 +318,7 @@ $creatorArray = Media::getCreatorArray();
 										</div>
 										<div>
 											<b><?php echo $LANG['CREATOR']; ?>:</b><br/>
-											<select name='photographeruid' name='photographeruid'>
+											<select name='creatorUid'>
 												<option value=""><?php echo $LANG['SELECT_CREATOR']; ?></option>
 												<option value="">---------------------------------------</option>
 												<?php
@@ -329,13 +329,13 @@ $creatorArray = Media::getCreatorArray();
 												}
 												?>
 											</select>
-											<a href="#" onclick="toggle('imgeditoverride<?php echo $imgId; ?>');return false;" title="<?php echo $LANG['DISPLAY_PHOTOG_OVER']; ?>">
+											<a href="#" onclick="toggle('imgeditoverride<?php echo $imgId; ?>');return false;" title="<?php echo $LANG['DISPLAY_CREATOR_OVER']; ?>">
 												<img src="../../images/editplus.png" style="border:0px;width:1.5em;" />
 											</a>
 										</div>
 										<div id="imgeditoverride<?php echo $imgId; ?>" style="display:<?php echo ($imgArr["creator"]?'block':'none'); ?>;">
-											<b><?php echo $LANG['PHOTOG_OVER']; ?>:</b><br/>
-											<input name='photographer' type='text' value="<?php echo $imgArr["creator"]; ?>" style="width:300px;" maxlength='100'>
+											<b><?php echo $LANG['CREATOR_OVER']; ?>:</b><br/>
+											<input name='creator' type='text' value="<?php echo $imgArr["creator"]; ?>" style="width:300px;" maxlength='100'>
 											* <?php echo $LANG['WILL_OVERRIDE']; ?>
 										</div>
 										<div>
@@ -348,7 +348,7 @@ $creatorArray = Media::getCreatorArray();
 										</div>
 										<div>
 											<b><?php echo $LANG['SOURCE_WEBPAGE']; ?>:</b><br/>
-											<input name="sourceurl" type="text" value="<?php echo $imgArr["sourceurl"]; ?>" style="width:95%;" />
+											<input name="sourceUrl" type="text" value="<?php echo $imgArr["sourceUrl"]; ?>" style="width:95%;" />
 										</div>
 										<div>
 											<b><?php echo $LANG['WEB_URL']; ?>: </b><br/>
@@ -385,7 +385,7 @@ $creatorArray = Media::getCreatorArray();
 										</div>
 										<div>
 											<b><?php echo $LANG['SORT']; ?>:</b><br/>
-											<input name="sortoccurrence" type="text" value="<?php echo $imgArr['sortOccurrence']; ?>" style="width:10%;" />
+											<input name="sortOccurrence" type="text" value="<?php echo $imgArr['sortOccurrence']; ?>" style="width:10%;" />
 										</div>
 										<div>
 										   <b><?php echo $LANG['TAGS']; ?>:</b>
@@ -405,7 +405,7 @@ $creatorArray = Media::getCreatorArray();
 											<input type="hidden" name="imgid" value="<?php echo $imgId; ?>" />
 											<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
 											<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
-											<button type="submit" name="submitaction" value="Submit Image Edits"><?php echo $LANG['SUBMIT_IMG_EDITS']; ?></button>
+											<button type="submit" class="button icon-button" name="submitaction" value="Submit Image Edits"><?php echo $LANG['SUBMIT_IMG_EDITS']; ?></button>
 										</div>
 									</fieldset>
 								</form>
@@ -421,7 +421,7 @@ $creatorArray = Media::getCreatorArray();
 											<?php echo $LANG['RM_DB_NOT_SERVER']; ?>
 										</div>
 										<div style="margin:10px 20px;">
-											<button class="button-danger" type="submit" name="submitaction" value="Delete Image"><?php echo $LANG['DEL_IMG']; ?></button>
+											<button class="button-danger button icon-button" type="submit" name="submitaction" value="Delete Image"><?php echo $LANG['DEL_IMG']; ?></button>
 										</div>
 									</fieldset>
 								</form>
@@ -442,7 +442,7 @@ $creatorArray = Media::getCreatorArray();
 												<input type="hidden" name="imgid" value="<?php echo $imgId; ?>" />
 												<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
 												<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
-												<button type="submit" name="submitaction" value="Remap Image"><?php echo $LANG['REMAP_IMG']; ?></button>
+												<button type="submit" name="submitaction" class="button icon-button" value="Remap Image"><?php echo $LANG['REMAP_IMG']; ?></button>
 											</div>
 										</fieldset>
 									</form>
@@ -455,7 +455,7 @@ $creatorArray = Media::getCreatorArray();
 										<div style="margin:10px 20px;">
 											<input name="occid" type="hidden" value="<?php echo $occId; ?>" />
 											<input name="imgid" type="hidden" value="<?php echo $imgId; ?>" />
-											<button name="submitaction" type="submit" value="remapImageToNewRecord"><?php echo $LANG['LINK_TO_NEW']; ?></button>
+											<button name="submitaction" type="submit" class="button icon-button" value="remapImageToNewRecord"><?php echo $LANG['LINK_TO_NEW']; ?></button>
 										</div>
 									</fieldset>
 								</form>
@@ -467,7 +467,7 @@ $creatorArray = Media::getCreatorArray();
 											<input name="imgid" type="hidden" value="<?php echo $imgId; ?>" />
 											<input name="occindex" type="hidden" value="<?php echo $occIndex; ?>" />
 											<input name="csmode" type="hidden" value="<?php echo $crowdSourceMode; ?>" />
-											<button name="submitaction" type="submit" value="Disassociate Image"><?php echo $LANG['DISASSOCIATE_IMG']; ?></button>
+											<button name="submitaction" type="submit" class="button icon-button" value="Disassociate Image"><?php echo $LANG['DISASSOCIATE_IMG']; ?></button>
 										</div>
 										<div>
 											* <?php echo $LANG['IMG_FROM_TAXON']; ?>

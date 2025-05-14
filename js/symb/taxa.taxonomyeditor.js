@@ -1,6 +1,6 @@
 $(document).ready(async function () {
   const currentRankId = Number(document.getElementById("rankid").value);
-  showOnlyRelevantFields(currentRankId);
+  showOnlyRelevantFields(currentRankId, false);
 
   const form = document.getElementById("taxoneditform");
   await updateFullname(form);
@@ -41,6 +41,24 @@ $(document).ready(async function () {
   document.getElementById("rankid").addEventListener("change", function () {
     const selectedValue = Number(this.value);
     showOnlyRelevantFields(selectedValue);
+  });
+
+  document.getElementById("taxoneditsubmit").addEventListener("click", async ()=>{
+    const formForSubmission = document.getElementById("taxoneditform");
+    const taxoneditsubmitElem = document.createElement("input", )
+    taxoneditsubmitElem.setAttribute("type", "hidden");
+    taxoneditsubmitElem.setAttribute("id", "taxonedits");
+    taxoneditsubmitElem.setAttribute("name", "taxonedits");
+    taxoneditsubmitElem.setAttribute("value", "submitEdits");
+    formForSubmission.appendChild(taxoneditsubmitElem);
+    const isUniqueEntry = await checkNameExistence(formForSubmission, true);
+    if(!isUniqueEntry){
+      if(confirm(translations.TAXON_NAME_MATCH_WARNING)){
+        formForSubmission.submit();  
+      }
+    }else{
+      formForSubmission.submit();
+    }
   });
 
   $("#aefacceptedstr").autocomplete({
@@ -128,9 +146,9 @@ function showOnlyRelevantFields(rankId) {
     const selectedOptionText = rankIdSelector.options[optionIdx].text.trim();
 
     // Set the label for "UnitName1" based on the selected option text
-    label.textContent = selectedOptionText + " Name *: ";
+    label.textContent = selectedOptionText + " Name: ";
   } else {
-    label.textContent = "Genus Name *: ";
+    label.textContent = "Genus Name: ";
   }
 
   if (Object.values(rankIdsToHideUnit2From).includes(rankId)) {

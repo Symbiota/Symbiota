@@ -4,33 +4,32 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/CollectionMetadata.php');
 include_once($SERVER_ROOT . '/classes/DatasetsMetadata.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceAttributeSearch.php');
-include_once($SERVER_ROOT.'/classes/AssociationManager.php');
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT . '/content/lang/collections/search/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/search/index.en.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceManager.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceAttributeSearch.php');
+include_once($SERVER_ROOT . '/classes/AssociationManager.php');
+if ($LANG_TAG == 'en' || !file_exists($SERVER_ROOT . '/content/lang/collections/search/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/search/index.en.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/search/index.' . $LANG_TAG . '.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
-$filename = file_exists($SERVER_ROOT . '/js/symb/'. $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/'. $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
+$filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
 
-$dbsWithBracketsRemoved = array_key_exists("db",$_GET) ?  str_replace(array('[',']'), '', $_GET["db"]) : '';
+$dbsWithBracketsRemoved = array_key_exists("db", $_GET) ?  str_replace(array('[', ']'), '', $_GET["db"]) : '';
 $explodable = $dbsWithBracketsRemoved;
-if(is_array($dbsWithBracketsRemoved)){
+if (is_array($dbsWithBracketsRemoved)) {
 	$explodable = $dbsWithBracketsRemoved[0];
 }
-$collIdsFromUrl = array_key_exists("db",$_GET) ? explode(",", $explodable) : '';
+$collIdsFromUrl = array_key_exists("db", $_GET) ? explode(",", $explodable) : '';
 
 $collManager = new OccurrenceManager();
 $collectionSource = $collManager->getQueryTermStr();
 
-$SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT = $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ?? false;
 $collData = new CollectionMetadata();
 $siteData = new DatasetsMetadata();
 
-$catId = array_key_exists("catid",$_REQUEST)?$_REQUEST["catid"]:'';
+$catId = array_key_exists("catid", $_REQUEST) ? $_REQUEST["catid"] : '';
 $collList = $collManager->getFullCollectionList($catId);
-$specArr = (isset($collList['spec'])?$collList['spec']:null);
-$obsArr = (isset($collList['obs'])?$collList['obs']:null);
+$specArr = (isset($collList['spec']) ? $collList['spec'] : null);
+$obsArr = (isset($collList['obs']) ? $collList['obs'] : null);
 $associationManager = new AssociationManager();
 $relationshipTypes = $associationManager->getRelationshipTypes();
 ?>
@@ -69,10 +68,10 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 			collapseButton.removeAttribute('style', 'display: none;');
 		};
 
-		const handleAccordionCollapse = ()=>{
+		const handleAccordionCollapse = () => {
 			const accordions = document.querySelectorAll('input[class="accordion-selector"]');
 			accordions.forEach(accordion => {
-				accordion.checked=false;
+				accordion.checked = false;
 			});
 			localStorage.setItem("accordionIds", []);
 			const collapseButton = document.getElementById("collapse-all-button");
@@ -89,6 +88,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 		.bounding-box-form__header {
 			font-size: 1.3rem;
 		}
+
 		.full-width-pcnt {
 			width: 100%;
 		}
@@ -107,7 +107,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 			<button onClick="handleAccordionExpand()" class="inner-search button" id="expand-all-button" type="button" style="font-size: 1rem;"><?= $LANG['EXPAND_ALL_SECTIONS']; ?></button>
 			<button onClick="handleAccordionCollapse()" class="inner-search button" id="collapse-all-button" type="button" style="display: none; font-size: 1rem;"><?= $LANG['COLLAPSE_ALL_SECTIONS']; ?></button>
 		</div>
-		<form id="params-form" action="javascript:void(0);">
+		<form id="params-form" action="<?php echo $CLIENT_ROOT . "/collections/list.php"; ?>">
 			<!-- Criteria forms -->
 			<div class="accordions">
 				<!-- Taxonomy -->
@@ -181,11 +181,11 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 									</label>
 								</div>
 							</div>
-<div>
+							<div>
 								<div class="input-text-container">
 									<label for="local" class="input-text--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['LOCALITY_LOCALITIES'] ?></span>
-										 <input type="text" name="local" id="local" data-chip="<?php echo $LANG['LOCALITY'] ?>" />
+										<input type="text" name="local" id="local" data-chip="<?php echo $LANG['LOCALITY'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['LOCALITY_LOCALITIES'] ?></span>
 									</label>
 								</div>
@@ -221,23 +221,23 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 						<div id="search-form-latlong">
 							<div id="bounding-box-form">
 								<h1 class="bounding-box-form__header"><?php echo $LANG['BOUNDING_BOX'] ?></h1>
-								<button onclick="openCoordAid({map_mode: MAP_MODES.RECTANGLE, client_root: '<?= $CLIENT_ROOT?>'});return false;"><?php echo $LANG['SELECT_IN_MAP'] ?></button>
+								<button onclick="openCoordAid({map_mode: MAP_MODES.RECTANGLE, client_root: '<?= $CLIENT_ROOT ?>'});return false;"><?php echo $LANG['SELECT_IN_MAP'] ?></button>
 								<div class="input-text-container">
-										<label for="upperlat" class="input-text--outlined">
-											<span class="screen-reader-only"><?php echo $LANG['NORTHERN_LATITUDE'] ?></span>
-											<input type="number" step="any" min="-90" max="90" id="upperlat" name="upperlat" data-chip="<?php echo $LANG['UPPER_LAT'] ?>" />
-											<span class="inset-input-label"><?php echo $LANG['NORTHERN_LATITUDE'] ?></span>
-											<span class="assistive-text"><?php echo $LANG['VALUE_BETWEEN_NUM'] ?></span>
-										</label>
+									<label for="upperlat" class="input-text--outlined">
+										<span class="screen-reader-only"><?php echo $LANG['NORTHERN_LATITUDE'] ?></span>
+										<input type="number" step="any" min="-90" max="90" id="upperlat" name="upperlat" data-chip="<?php echo $LANG['UPPER_LAT'] ?>" />
+										<span class="inset-input-label"><?php echo $LANG['NORTHERN_LATITUDE'] ?></span>
+										<span class="assistive-text"><?php echo $LANG['VALUE_BETWEEN_NUM'] ?></span>
+									</label>
 
-										<label for="upperlat_NS" class="input-text--outlined">
-											<span class="screen-reader-only"><?php echo $LANG['SELECT_UPPER_LAT_DIRECTION_NORTH_SOUTH'] ?></span>
-											<select class="mt-1" id="upperlat_NS" name="upperlat_NS">
-												<option value=""><?php echo $LANG['SELECT_NORTH_SOUTH'] ?></option>
-												<option id="ulN" value="N"><?php echo $LANG['NORTH'] ?></option>
-												<option id="ulS" value="S"><?php echo $LANG['SOUTH'] ?></option>
-											</select>
-										</label>
+									<label for="upperlat_NS" class="input-text--outlined">
+										<span class="screen-reader-only"><?php echo $LANG['SELECT_UPPER_LAT_DIRECTION_NORTH_SOUTH'] ?></span>
+										<select class="mt-1" id="upperlat_NS" name="upperlat_NS">
+											<option value=""><?php echo $LANG['SELECT_NORTH_SOUTH'] ?></option>
+											<option id="ulN" value="N"><?php echo $LANG['NORTH'] ?></option>
+											<option id="ulS" value="S"><?php echo $LANG['SOUTH'] ?></option>
+										</select>
+									</label>
 								</div>
 								<div class="input-text-container">
 									<label for="bottomlat" class="input-text--outlined">
@@ -275,19 +275,19 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 										<input type="number" step="any" min="-180" max="180" id="rightlong" name="rightlong" data-chip="<?php echo $LANG['RIGHT_LONG'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['EASTERN_LONGITUDE'] ?></span>
 									</label>
-										<label for="rightlong_EW" class="input-text--outlined">
-											<span class="screen-reader-only"><?php echo $LANG['SELECT_RIGHT_LONG_DIREC_WEST_EAST'] ?></span>
-											<select class="mt-1" id="rightlong_EW" name="rightlong_EW">
-												<option value=""><?php echo $LANG['SELECT_WEST_EAST'] ?></option>
-												<option id="rlW" value="W"><?php echo $LANG['WEST'] ?></option>
-												<option id="rlE" value="E"><?php echo $LANG['EAST'] ?></option>
-											</select>
-										</label>
+									<label for="rightlong_EW" class="input-text--outlined">
+										<span class="screen-reader-only"><?php echo $LANG['SELECT_RIGHT_LONG_DIREC_WEST_EAST'] ?></span>
+										<select class="mt-1" id="rightlong_EW" name="rightlong_EW">
+											<option value=""><?php echo $LANG['SELECT_WEST_EAST'] ?></option>
+											<option id="rlW" value="W"><?php echo $LANG['WEST'] ?></option>
+											<option id="rlE" value="E"><?php echo $LANG['EAST'] ?></option>
+										</select>
+									</label>
 								</div>
 							</div>
 							<div id="polygon-form">
 								<h1 class="bounding-box-form__header"><?php echo $LANG['POLYGON_WKT_FOOTPRINT'] ?></h1>
-									<button onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root: '<?= $CLIENT_ROOT?>'});return false;"><?php echo $LANG['SELECT_MAP_POLYGON'] ?></button>
+								<button onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root: '<?= $CLIENT_ROOT ?>'});return false;"><?php echo $LANG['SELECT_MAP_POLYGON'] ?></button>
 								<div class="text-area-container">
 									<label for="footprintwkt" class="text-area--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['POLYGON'] ?></span>
@@ -298,7 +298,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 							</div>
 							<div id="point-radius-form">
 								<h1 class="bounding-box-form__header"><?php echo $LANG['POINT_RADIUS'] ?></h1>
-								<button onclick="openCoordAid({map_mode: MAP_MODES.CIRCLE, client_root: '<?= $CLIENT_ROOT?>'});return false;"><?php echo $LANG['SELECT_MAP_PR'] ?></button>
+								<button onclick="openCoordAid({map_mode: MAP_MODES.CIRCLE, client_root: '<?= $CLIENT_ROOT ?>'});return false;"><?php echo $LANG['SELECT_MAP_PR'] ?></button>
 								<div class="input-text-container">
 									<label for="pointlat" class="input-text--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['POINT_LATITUDE'] ?></span>
@@ -435,26 +435,26 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 									<label for="hascoords"><?php echo $LANG['HAS_COORDS'] ?></label>
 								</div>
 								<div>
-									<input type='checkbox' name='includecult' id='includecult' value='1' data-chip="<?php echo $LANG['INCLUDE_CULTIVATED'] ?>" <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? 'checked' : '' ?> />
+									<input type='checkbox' name='includecult' id='includecult' value='1' data-chip="<?php echo $LANG['INCLUDE_CULTIVATED'] ?>" <?= !empty($SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT) ? 'checked' : '' ?> />
 									<label for="includecult"><?php echo $LANG['INCLUDE_CULTIVATED'] ?></label>
 								</div>
 							</div>
 							<?php
-								if($matSampleTypeArr = $collManager->getMaterialSampleTypeArr()){
-								?>
+							if ($matSampleTypeArr = $collManager->getMaterialSampleTypeArr()) {
+							?>
 								<div class="select-container">
 									<label for="materialsampletype"><?= $LANG['MATERIAL_SAMPLE_TYPE'] ?></label>
 									<select name="materialsampletype" id="materialsampletype">
 										<option id="materialsampletype-none" data-chip="<?php echo $LANG['MATERIAL_SAMPLE'] . ': ---' ?>" value="">---------------</option>
 										<option id="materialsampletype-all-ms" data-chip="<?php echo $LANG['MATERIAL_SAMPLE'] . ': ' . $LANG['ALL_MATERIAL_SAMPLE'] ?>" value="all-ms"><?= $LANG['ALL_MATERIAL_SAMPLE'] ?></option>
 										<?php
-										foreach($matSampleTypeArr as $matSampeType){
+										foreach ($matSampleTypeArr as $matSampeType) {
 											echo '<option id="materialsampletype-' . $matSampeType . '" data-chip="' . $LANG['MATERIAL_SAMPLE'] . ': ' . $matSampeType . '" value="' . $matSampeType . '">' . $matSampeType . '</option>';
 										}
 										?>
 									</select>
 								</div>
-								<?php
+							<?php
 							}
 							?>
 						</div>
@@ -463,70 +463,50 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 
 				<!-- Traits -->
 				<?php
-					if(!empty($SEARCH_BY_TRAITS)) {
-						$attribSearch = new OccurrenceAttributeSearch();
-						$traitArr = $attribSearch->getTraitSearchArr($SEARCH_BY_TRAITS);
-						if($traitArr){
-							?>
-							<section>
-								<!-- Accordion selector -->
-								<input type="checkbox" id="trait" class="accordion-selector" />
-								<!-- Accordion header -->
-								<label for="trait" class="accordion-header"><?php echo $LANG['TRAIT_CRITERIA'] ?></label>
-								<!-- Accordion content -->
-								<div class="content">
-									<div id="search-form-trait">
+				if (!empty($SEARCH_BY_TRAITS)) {
+					$attribSearch = new OccurrenceAttributeSearch();
+					$traitArr = $attribSearch->getTraitSearchArr($SEARCH_BY_TRAITS);
+					if ($traitArr) {
+				?>
+						<section>
+							<!-- Accordion selector -->
+							<input type="checkbox" id="trait" class="accordion-selector" />
+							<!-- Accordion header -->
+							<label for="trait" class="accordion-header"><?php echo $LANG['TRAIT_CRITERIA'] ?></label>
+							<!-- Accordion content -->
+							<div class="content">
+								<div id="search-form-trait">
+									<div>
 										<div>
 											<div>
-												<div>
-													<div class="bottom-breathing-room-rel"><?php echo $LANG['TRAIT_DESCRIPTION']; ?></div>
-													<input type="hidden" id="SearchByTraits" value="true" />
-												</div>
-												<?php
-												foreach($traitArr as $traitID => $traitData){
-													if(!isset($traitData['dependentTrait'])) {
-														?>
-														<fieldset class="bottom-breathing-room-rel">
-															<legend><?= $LANG['TRAIT']; ?>: <?php echo $traitData['name']; ?></legend>
-															<div>
-															</div>
-															<div class="traitDiv">
-																<?php $attribSearch->echoTraitSearchForm($traitID); ?>
-															</div>
-														</fieldset>
-														<?php
-														}
-													}
-												?>
+												<div class="bottom-breathing-room-rel"><?php echo $LANG['TRAIT_DESCRIPTION']; ?></div>
+												<input type="hidden" id="SearchByTraits" value="true" />
 											</div>
+											<?php
+											foreach ($traitArr as $traitID => $traitData) {
+												if (!isset($traitData['dependentTrait'])) {
+											?>
+													<fieldset class="bottom-breathing-room-rel">
+														<legend><?= $LANG['TRAIT']; ?>: <?php echo $traitData['name']; ?></legend>
+														<div>
+														</div>
+														<div class="traitDiv">
+															<?php $attribSearch->echoTraitSearchForm($traitID); ?>
+														</div>
+													</fieldset>
+											<?php
+												}
+											}
+											?>
 										</div>
 									</div>
 								</div>
-							</section>
-							<?php
-						}
-					}
-				?>
-
-				<!-- Collections -->
-				<section>
-					<!-- Accordion selector -->
-					<input type="checkbox" id="collections" class="accordion-selector" />
-					<!-- Accordion header -->
-					<label for="collections" class="accordion-header"><?php echo $LANG['COLLECTIONS'] ?></label>
-					<!-- Accordion content -->
-					<div class="content">
-						<div id="search-form-colls">
-							<!-- Open Collections modal -->
-							<div id="specobsdiv">
-								<?php
-								include_once('./collectionContent.php');
-								?>
 							</div>
-						</div>
-					</div>
-				</section>
-
+						</section>
+				<?php
+					}
+				}
+				?>
 
 				<!-- Associations -->
 				<section>
@@ -545,15 +525,15 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 							<div class="select-container" style="margin-left: 1rem; position: relative; width: 40vw;">
 								<label for="association-type" class="screen-reader-only"><?php echo $LANG['ASSOCIATION_TYPE'] ?></label>
 								<select name="association-type" id="association-type" style="margin-top:0;padding-top:0; margin-bottom: 0.5rem">
-									<option id="association-type-none" value="none" data-chip="<?php echo $LANG['ASSOCIATIONS'] . '- Not Specified'?>">Not Specified</option>
-									<option id="association-type-any" value="any" data-chip="<?php echo $LANG['ASSOCIATIONS'] . '-any'?>">Any</option>
+									<option id="association-type-none" value="none" data-chip="<?php echo $LANG['ASSOCIATIONS'] . '- Not Specified' ?>">Not Specified</option>
+									<option id="association-type-any" value="any" data-chip="<?php echo $LANG['ASSOCIATIONS'] . '-any' ?>">Any</option>
 									<?php
-										$relationshipTypes = $associationManager->getRelationshipTypes();
-										foreach($relationshipTypes as $relationshipKey => $relationshipType){
-											?>
-											<option id="association-type-<?php echo $relationshipKey . '-' . $relationshipType ?>" value="<?php echo $relationshipType ?>" data-chip="<?php echo $LANG['ASSOCIATIONS'] . '-' . $relationshipType ?>"><?php echo $relationshipType; ?></option>
-											<?php
-										}
+									$relationshipTypes = $associationManager->getRelationshipTypes();
+									foreach ($relationshipTypes as $relationshipKey => $relationshipType) {
+									?>
+										<option id="association-type-<?php echo $relationshipKey . '-' . $relationshipType ?>" value="<?php echo $relationshipType ?>" data-chip="<?php echo $LANG['ASSOCIATIONS'] . '-' . $relationshipType ?>"><?php echo $relationshipType; ?></option>
+									<?php
+									}
 									?>
 								</select>
 								<span class="inset-input-label"><?php echo $LANG['ASSOCIATION_TYPE'] ?></span>
@@ -583,7 +563,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 								</div>
 							</div>
 						</div>
-							
+
 						<div>
 							<input type="checkbox" name="usethes-associations" id="usethes-associations" data-chip="<?php echo $LANG['ASSOCIATIONS'] . '-' . $LANG['INCLUDE_SYNONYMS'] ?>" value="1" checked />
 							<label for="usethes-associations">
@@ -593,25 +573,44 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 					</div>
 				</section>
 
+				<!-- Collections -->
+				<section>
+					<!-- Accordion selector -->
+					<input type="checkbox" id="collections" class="accordion-selector" />
+					<!-- Accordion header -->
+					<label for="collections" class="accordion-header"><?php echo $LANG['COLLECTIONS'] ?></label>
+					<!-- Accordion content -->
+					<div class="content">
+						<div id="search-form-colls">
+							<!-- Open Collections modal -->
+							<div id="specobsdiv">
+								<?php
+								include_once('./collectionContent.php');
+								?>
+							</div>
+						</div>
+					</div>
+				</section>
+
 			</div>
 
 			<!-- Criteria panel -->
 			<div id="criteria-panel" class="criteria-panel" style="overflow-y:clip">
-			<fieldset class="bottom-breathing-room-rel">
-				<legend>
-					<?php echo $LANG['DISPLAY_FORMAT']; ?>
-				</legend>
-				<div style="display: flex; align-items: center;" class="bottom-breathing-room-rel">
-					<input style="margin-bottom:0; margin-right: 0.5rem;" name="display-format-pref" id="list-button" type="radio" value="list" checked />
-					<label for="list-button"><?php echo $LANG['LIST'] ?></label>
-				</div>
-				<div style="display: flex; align-items: center;">
-					<input style="margin-bottom:0; margin-right: 0.5rem;" name="display-format-pref" id="table-button" type="radio" value="table" />
-					<label for="table-button"><?php echo $LANG['TABLE'] ?></label>
-				</div>
-			</fieldset>
-				<button id="search-btn" onclick="simpleSearch()"><?php echo $LANG['SEARCH'] ?></button>
-				<button id="reset-btn"><?php echo $LANG['RESET'] ?></button>
+				<fieldset class="bottom-breathing-room-rel">
+					<legend>
+						<?php echo $LANG['DISPLAY_FORMAT']; ?>
+					</legend>
+					<div style="display: flex; align-items: center;" class="bottom-breathing-room-rel">
+						<input style="margin-bottom:0; margin-right: 0.5rem;" name="display-format-pref" id="list-button" type="radio" value="list" checked />
+						<label for="list-button"><?php echo $LANG['LIST'] ?></label>
+					</div>
+					<div style="display: flex; align-items: center;">
+						<input style="margin-bottom:0; margin-right: 0.5rem;" name="display-format-pref" id="table-button" type="radio" value="table" />
+						<label for="table-button"><?php echo $LANG['TABLE'] ?></label>
+					</div>
+				</fieldset>
+				<button id="search-btn" type="submit"><?php echo $LANG['SEARCH'] ?></button>
+				<button id="reset-btn" type="button"><?php echo $LANG['RESET'] ?></button>
 				<h2><?php echo $LANG['CRITERIA'] ?></h2>
 				<div class="criteria-panel">
 					<div id="chips"></div>
@@ -624,17 +623,17 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 	?>
 </body>
 <script src="<?php echo $filename ?>" type="text/javascript"></script>
-<script src="js/searchform.js?ver=1" type="text/javascript"></script>
+<script src="js/searchform.js?ver=2" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/collections/search/js/alerts.js?v=202107'; ?>" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/js/symb/api.taxonomy.taxasuggest.js'; ?>" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/js/symb/collections.index.js?ver=20171215' ?>" type="text/javascript"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
 		<?php
-		if($collectionSource){
-			?>
+		if ($collectionSource) {
+		?>
 			sessionStorage.querystr = "<?php echo $collectionSource; ?>";
-			<?php
+		<?php
 		}
 		?>
 		setSearchForm(document.getElementById("params-form"));
@@ -649,7 +648,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 	handleAlerts(alerts, 3000);
 
 	// resize the autocomplete window width to match the input width (from https://stackoverflow.com/questions/5643767/jquery-ui-autocomplete-width-not-set-correctly)
-	jQuery.ui.autocomplete.prototype._resizeMenu = function () {
+	jQuery.ui.autocomplete.prototype._resizeMenu = function() {
 		var ul = this.menu.element;
 		ul.outerWidth(this.element.outerWidth());
 	}
@@ -659,7 +658,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 		uncheckEverything();
 		checkTheCollectionsThatShouldBeChecked(collIdsFromUrl);
 	}
-	const sanitizedCollectionSource = collectionSource.replace('db=','');
+	const sanitizedCollectionSource = collectionSource.replace('db=', '');
 	if (collectionSource) {
 		uncheckEverything();
 		checkTheCollectionsThatShouldBeChecked(sanitizedCollectionSource);

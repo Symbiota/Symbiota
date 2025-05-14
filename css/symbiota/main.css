@@ -384,7 +384,7 @@ button.icon-button {
   border-color: buttonborder;
 }
 
-button.icon-button > svg {
+button.icon-button svg {
   fill: var(--light-color);
 }
 
@@ -464,6 +464,12 @@ button.inverse-color {
   background-color: transparent;
   border: 1px solid var(--bright-color);
   padding: 0.5rem 0.9rem;
+}
+
+.button-form{
+	display: inline;
+	margin: 0px;
+	padding: 0px;
 }
 
 /* image thumbnails */

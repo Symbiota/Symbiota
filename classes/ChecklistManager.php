@@ -2,6 +2,7 @@
 include_once($SERVER_ROOT.'/classes/Manager.php');
 include_once($SERVER_ROOT.'/classes/ImInventories.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 class ChecklistManager extends Manager{
 
@@ -294,19 +295,17 @@ class ChecklistManager extends Manager{
 					FROM fmvouchers v INNER JOIN fmchklsttaxalink cl ON v.clTaxaID = cl.clTaxaID
 					INNER JOIN omoccurrences o ON v.occid = o.occid
 					INNER JOIN omcollections c ON o.collid = c.collid
-					WHERE (cl.clid IN ('.$clidStr.')) AND cl.tid IN('.implode(',',array_keys($this->taxaList)).')
-					ORDER BY o.collid';
+					WHERE (cl.clid IN ('.$clidStr.')) AND cl.tid IN('.implode(',',array_keys($this->taxaList)).') ';
 				if($this->thesFilter){
 					$vSql = 'SELECT DISTINCT ts.tidaccepted AS tid, v.occid, c.institutioncode, v.notes, o.catalognumber, o.othercatalognumbers, o.recordedby, o.recordnumber, o.eventdate, o.collid
 						FROM fmvouchers v INNER JOIN fmchklsttaxalink cl ON v.clTaxaID = cl.clTaxaID
 						INNER JOIN omoccurrences o ON v.occid = o.occid
 						INNER JOIN omcollections c ON o.collid = c.collid
 						INNER JOIN taxstatus ts ON cl.tid = ts.tid
-						WHERE (ts.taxauthid = '.$this->thesFilter.') AND (cl.clid IN ('.$clidStr.'))
-						AND (ts.tidaccepted IN('.implode(',',array_keys($this->taxaList)).'))
-						ORDER BY o.collid';
+						WHERE (ts.taxauthid = '.$this->thesFilter.') AND (cl.clid IN ('.$clidStr.')) AND (ts.tidaccepted IN('.implode(',',array_keys($this->taxaList)).')) ';
 				}
-				//echo $vSql; exit;
+				$vSql .= OccurrenceUtil::appendFullProtectionSQL();
+				$vSql .= 'ORDER BY o.collid';
 		 		$vResult = $this->conn->query($vSql);
 				while ($row = $vResult->fetch_object()){
 					$displayStr = '';
@@ -369,7 +368,7 @@ class ChecklistManager extends Manager{
 			}
 			if($missingArr = array_diff(array_keys($this->taxaList),$matchedArr)){
 				$sql = 'SELECT m2.tid, m.url, m.thumbnailurl FROM media m INNER JOIN '.
-					'(SELECT ts1.tid, SUBSTR(MIN(CONCAT(LPAD(m.sortsequence,6,"0"),m.mediaID)),7) AS mediaID'.
+					'(SELECT ts1.tid, SUBSTR(MIN(CONCAT(LPAD(m.sortsequence,6,"0"),m.mediaID)),7) AS mediaID '.
 					'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 					'INNER JOIN media m ON ts2.tid = m.tid '.
 					'WHERE m.sortsequence < 500 AND (m.thumbnailurl IS NOT NULL) AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.tid IN('.implode(',',$missingArr).')) '.
@@ -378,7 +377,7 @@ class ChecklistManager extends Manager{
 				if($missingArr = array_diff(array_keys($this->taxaList),$matchedArr)){
 					//Get children images
 					$sql = 'SELECT DISTINCT m2.tid, m.url, m.thumbnailurl FROM media m INNER JOIN '.
-						'(SELECT ts1.parenttid AS tid, SUBSTR(MIN(CONCAT(LPAD(m.sortsequence,6,"0"),m.mediaID)),7) AS mediaID'.
+						'(SELECT ts1.parenttid AS tid, SUBSTR(MIN(CONCAT(LPAD(m.sortsequence,6,"0"),m.mediaID)),7) AS mediaID '.
 						'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 						'INNER JOIN media m ON ts2.tid = m.tid '.
 						'WHERE m.sortsequence < 500 AND (m.thumbnailurl IS NOT NULL) AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.parenttid IN('.implode(',',$missingArr).')) '.
@@ -527,7 +526,7 @@ class ChecklistManager extends Manager{
 					INNER JOIN fmchklsttaxalink cl ON v.clTaxaID = cl.clTaxaID
 					INNER JOIN ('.$this->basicSql.') t ON cl.tid = t.tid
 					WHERE cl.clid IN ('.$clidStr.') AND o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL
-					AND (o.localitysecurity = 0 OR o.localitysecurity IS NULL) ';
+					AND (o.recordSecurity = 0) ';
 				if($limit) $sql2 .= 'ORDER BY RAND() LIMIT '.$limit;
 				$rs2 = $this->conn->query($sql2);
 				if($rs2){

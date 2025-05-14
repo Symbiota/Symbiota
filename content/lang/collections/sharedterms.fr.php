@@ -23,6 +23,7 @@ $LANG['ALL_COLLECTIONS_CAP'] = 'Toutes les Collections';
 $LANG['SELECT_DESELECT_ALL_SPECIMENS'] = 'Sélectionner/Désélectionner Tous les Spécimens';
 $LANG['SELECT_DESELECT_ALL_OBSERVATIONS'] = 'Sélectionner/Désélectionner Toutes les Observations';
 
+$LANG['DISPLAY_SORT'] = 'Afficher le panneau de tri';
 $LANG['DOWNLOAD_SPECIMEN_DATA'] = "Télécharger les données de l'échantillon";
 $LANG['COPY_TO_CLIPBOARD'] = "Copier l'URL dans le presse-papiers";
 

@@ -1,6 +1,7 @@
 <?php
 include_once('Manager.php');
 include_once('ImInventories.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 class ChecklistVoucherAdmin extends Manager {
 
@@ -255,7 +256,8 @@ class ChecklistVoucherAdmin extends Manager {
 			$tStr = $this->cleanInStr($this->queryVariablesArr['taxon']);
 			$tidPar = $this->getTid($tStr);
 			if($tidPar){
-				$sqlFrag .= 'AND (o.tidinterpreted IN (SELECT ts.tid FROM taxaenumtree e INNER JOIN taxstatus ts ON e.tid = ts.tidaccepted WHERE ts.taxauthid = 1 AND e.taxauthid = 1 AND e.parenttid = '.$tidPar.')) ';
+				$sqlFrag .= 'AND (o.tidinterpreted IN (SELECT ts.tid FROM taxaenumtree e INNER JOIN taxstatus ts ON e.tid = ts.tidaccepted
+					WHERE ts.taxauthid = 1 AND e.taxauthid = 1 AND (e.parenttid = '.$tidPar.' OR e.tid = '.$tidPar.'))) ';
 			}
 		}
 		//Locality and Latitude and longitude
@@ -277,7 +279,7 @@ class ChecklistVoucherAdmin extends Manager {
 		}
 		if(isset($this->queryVariablesArr['includewkt']) && $this->queryVariablesArr['includewkt'] && $this->footprintGeoJson){
 			//Searh based on polygon
-			$sqlFrag .= 'AND (ST_Within(p.lngLatPoint,ST_GeomFromGeoJson(\''.$this->footprintGeoJson.'\'))) ';
+			$sqlFrag .= "AND (ST_Within(p.lngLatPoint,ST_GeomFromGeoJson('" . $this->footprintGeoJson . "'))) ";
 			$llStr = false;
 		}
 		if(isset($this->queryVariablesArr['latlngor']) && $this->queryVariablesArr['latlngor'] && $locStr && $llStr){

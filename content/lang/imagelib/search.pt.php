@@ -6,9 +6,9 @@ Translated by: Google Translate (2024-09-05)
 ------------------
 */
 
-$LANG['ACTION_SUCCESS'] = 'Multimídia marcada com sucesso!';
-$LANG['ACTION_FAILED'] = 'Multimídia já estava marcada com alvo';
-$LANG['ACTION_ERROR'] = 'ERRO ao aplicar tag a multimídia';
+$LANG['ACTION_SUCCESS'] = 'recursos de mídia marcados com sucesso!';
+$LANG['ACTION_FAILED'] = 'recursos de mídia já foram marcados';
+$LANG['ACTION_ERROR'] = 'ERRO ao aplicar marcação a recurso(s) de mídia';
 $LANG['IMAGE_SEARCH'] = 'Pesquisa multimídia';
 $LANG['SELECT_TAG'] = 'Selecione uma tag multimídia';
 $LANG['SELECT_IMAGE'] = 'Selecione pelo menos um recurso multimídia para atribuir tag';
@@ -42,6 +42,8 @@ $LANG['TYPE_FIELD'] = 'Multimídia de campo (sem detalhes específicos da locali
 $LANG['DISPLAY_COLLECTIONS'] = 'Exibir painel de coleção';
 $LANG['HIDE_COLLECTIONS'] = 'Ocultar painel de coleção';
 $LANG['COUNT_PER_PAGE'] = 'Contagem por página';
+$LANG['SORT_BY'] = 'Ordenar por';
+$LANG['SCINAME'] = 'Nome Científico';
 $LANG['LOAD_IMAGES'] = 'Carregar multimídia';
 $LANG['COLLECTIONS'] = 'Coleções';
 $LANG['SELECT_ALL'] = 'Selecionar/desmarcar tudo';

@@ -267,6 +267,11 @@ fieldset legend {
   font-size: 75%;
 }
 
+.creator {
+  float: right;
+  margin-right: 1rem;
+}
+
 /*Text Description*/
 .ui-tabs .ui-tabs-panel {
   padding-right: 0em;

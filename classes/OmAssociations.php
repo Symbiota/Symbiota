@@ -1,8 +1,8 @@
 <?php
 include_once('Manager.php');
+include_once('AssociationManager.php');
 include_once('utilities/OccurrenceUtil.php');
 include_once('utilities/UuidFactory.php');
-include_once('AssociationManager.php');
 
 class OmAssociations extends Manager{
 
@@ -159,10 +159,6 @@ class OmAssociations extends Manager{
 			else $this->errorMessage = 'ERROR preparing statement for omoccurassociations insert: '.$this->conn->error;
 		}
 
-		// if($status == true){
-		// 	$associationManager = new AssociationManager;
-		// 	$associationManager->createInverseRecord($insertedRecord);
-		// } //@TODO deleteMe remove upon approval
 		return $status;
 	}
 

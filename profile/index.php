@@ -1,15 +1,17 @@
 <?php
 include_once('../config/symbini.php');
+include_once($SERVER_ROOT . '/config/auth_config.php');
+require_once($SERVER_ROOT . '/vendor/autoload.php');
+use Jumbojett\OpenIDConnectClient;
 
 if($SYMB_UID){
-	if($_SESSION['refurl']){
+
+	if ($_SESSION['refurl'] ?? false){
 		header("Location:" . $_SESSION['refurl']);
 		unset($_SESSION['refurl']);
-	}
-	if ($_REQUEST['refurl']){
+	} else if($_REQUEST['refurl'] ?? false){
 		header("Location:" . $_REQUEST['refurl']);	
-	}
-	else{
+	} else{
 		header("Location:" . $CLIENT_ROOT . '/profile/viewprofile.php');
 	}
 }
@@ -76,8 +78,17 @@ if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) $action = '';
 
 if($remMe) $pHandler->setRememberMe(true);
 if($action == 'logout'){
-	$pHandler->reset();
-	header('Location: ../index.php');
+	//check if using third party auth
+	if(array_key_exists('AUTH_PROVIDER', $_SESSION)){
+		$oidc = new OpenIDConnectClient($PROVIDER_URLS[$_SESSION['AUTH_PROVIDER']], $CLIENT_IDS[$_SESSION['AUTH_PROVIDER']], $CLIENT_SECRETS[$_SESSION['AUTH_PROVIDER']], $PROVIDER_URLS[$_SESSION['AUTH_PROVIDER']]);
+		$pHandler->reset();
+		$oidc->signOut($_SESSION['AUTH_CLIENT_ID'], $redirect);
+
+	}
+	else{
+		$pHandler->reset();
+		header('Location: ../index.php');
+	}
 }
 elseif($action == 'login'){
 	if($pHandler->authenticate($_POST['password'])){
@@ -148,7 +159,7 @@ if (array_key_exists('last_message', $_SESSION)){
 		}
 
 		function resetPassword(){
-			if(document.getElementById("login").value == ""){
+			if(document.getElementById("portal-login").value == ""){
 				<?php
 				$alertStr = 'Enter your login name in the Login field and leave the password blank';
 				if(isset($LANG['ENTER_LOGIN_NO_PWD'])) $alertStr = $LANG['ENTER_LOGIN_NO_PWD'];
@@ -189,7 +200,7 @@ if (array_key_exists('last_message', $_SESSION)){
 		}
 		.flex-item-login {
 			width: 100%;
-			max-width: 350px;
+			max-width: 30rem;
 			margin-left: auto;
 			margin-right: auto;
 		}
@@ -224,8 +235,8 @@ include($SERVER_ROOT.'/includes/header.php');
 					<fieldset class="profile-fieldset">
 						<legend class="profile-legend"><?php echo (isset($LANG['PORTAL_LOGIN'])?$LANG['PORTAL_LOGIN']:'Portal Login'); ?></legend>
 						<div>
-							<label for="login"><?php echo (isset($LANG['LOGIN_NAME'])?$LANG['LOGIN_NAME']:'Login'); ?>:</label> 
-							<input id="login" name="login" value="<?php echo $login; ?>" style="border-style:inset;" />
+							<label for="portal-login"><?php echo (isset($LANG['LOGIN_NAME'])?$LANG['LOGIN_NAME']:'Login'); ?>:</label> 
+							<input id="portal-login" name="login" value="<?php echo $login; ?>" style="border-style:inset;" />
 						</div>
 						<div>
 							<label for="password"><?php echo (isset($LANG['PASSWORD'])?$LANG['PASSWORD']:"Password"); ?>:</label>

@@ -7,6 +7,7 @@ const form = document.getElementById("params-form") || null;
 const formColls = document.getElementById("search-form-colls") || null;
 const formSites = document.getElementById("site-list") || null;
 const searchFormColls = document.getElementById("search-form-colls") || null;
+
 // list of parameters to be passed to url, modified by getSearchUrl method
 let paramNames = [
   "db",
@@ -305,7 +306,7 @@ function updateChip(e) {
   });
 
   // then go through remaining options and find selected items
-  const optionElements = document.querySeliectorAll(".content option");
+  const optionElements = document.querySelectorAll(".content option");
   optionElements.forEach((item) => {
     if (item.selected && item.value && item.hasAttribute("data-chip")) {
       addChip(item);
@@ -383,7 +384,7 @@ function getDomainsSitesChips() {
 /**
  * Toggles state of checkboxes in nested lists when clicking an "all-selector" element
  * Uses jQuery
- */i
+ */
 function toggleAllSelector() {
   $(this)
     .siblings()
@@ -577,7 +578,7 @@ function getParam(paramName) {
  * Creates search URL with parameters
  * Define parameters to be looked for in `paramNames` array
  */
-function getSearchUrl() {
+function getSearchUrl(appendParams = false) {
   const formatPreference = document.getElementById("list-button").checked
     ? "list"
     : "table";
@@ -587,20 +588,22 @@ function getSearchUrl() {
 
   const baseUrl = new URL(harvestUrl + urlSuffix);
 
-  // Clears array temporarily to avoid redundancy
-  paramsArr = {};
-
-  // Grabs params from form for each param name
-  paramNames.forEach((param, i) => {
-    return getParam(paramNames[i]);
-  });
-
-  // Appends each key value for each param in search url
-  let queryString = Object.keys(paramsArr).map((key) => {
-		baseUrl.searchParams.append(key, paramsArr[key]);
-  });
-
-  baseUrl.searchParams.append("comingFrom", "newsearch");
+  if(appendParams){
+    // Clears array temporarily to avoid redundancy
+    paramsArr = {};
+  
+    // Grabs params from form for each param name
+    paramNames.forEach((param, i) => {
+      return getParam(paramNames[i]);
+    });
+  
+    // Appends each key value for each param in search url
+    let queryString = Object.keys(paramsArr).map((key) => {
+      baseUrl.searchParams.append(key, paramsArr[key]);
+    });
+  
+    baseUrl.searchParams.append("comingFrom", "newsearch");
+  }
 
   return baseUrl.href;
 }
@@ -724,11 +727,24 @@ function simpleSearch() {
   errors = validateForm();
   let isValid = errors.length == 0;
   if (isValid) {
-    let searchUrl = getSearchUrl();
-    window.location = searchUrl;
+    const searchUrl = shortenSearchUrlIfAllCollectionsAreSearched();
+    sessionStorage.setItem('verbatimSearchUrl', searchUrl);
+    const submitForm = document.getElementById("params-form");
+    submitForm.method = "POST"; // if GET is used instead, the URL is too short for complex polygon + many collections queries. Hence, the need for POST.
+    submitForm.action = getSearchUrl();
+    submitForm.submit();
   } else {
     handleValErrors(errors);
   }
+}
+
+function shortenSearchUrlIfAllCollectionsAreSearched(){
+  const searchUrlOriginal = getSearchUrl(true);
+    let searchUrl = searchUrlOriginal;
+    if(searchUrlOriginal.includes("db=all")){
+      searchUrl = searchUrlOriginal.replace(/db=all(?:%[^&?]*)*/, "db=all");
+    }
+    return searchUrl;
 }
 
 /**
@@ -776,15 +792,16 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
       if (candidateTargetElems.length > 0) {
         targetElem = candidateTargetElems[0]; // there should only be one match; get the first one
       }
+    } 
+    if(targetElem){
+      targetElem.checked = true;
     }
-    targetElem.checked = true;
   });
 }
 
 function setSearchForm(frm) {
   if (sessionStorage.querystr) {
-    var urlVar = parseUrlVariables(sessionStorage.querystr);
-
+    var urlVar = parseUrlVariables(sessionStorage.querystr.replaceAll('&quot;', '"'));
     if (
       typeof urlVar.usethes !== "undefined" &&
       (urlVar.usethes == "" || urlVar.usethes == "0")
@@ -865,8 +882,8 @@ function setSearchForm(frm) {
       frm.rightlong.value = Math.abs(parseFloat(coordArr[3]));
       frm.rightlong_EW.value = parseFloat(coordArr[3]) > 0 ? "E" : "W";
     }
-    if (urlVar.footprintwkt) {
-      frm.footprintwkt.value = urlVar.footprintwkt;
+    if (urlVar.footprintGeoJson) {
+      frm.footprintwkt.value = urlVar.footprintGeoJson;
     }
     if (urlVar.llpoint) {
       var coordArr = urlVar.llpoint.split(";");
@@ -986,6 +1003,12 @@ function toggleAccordionsFromSessionStorage(accordionIds) {
 /**
  * EVENT LISTENERS/INITIALIZERS
  */
+
+document.getElementById("params-form").addEventListener("submit", function(event) {
+  event.preventDefault();
+  simpleSearch();
+});
+
 
 // Reset button
 document

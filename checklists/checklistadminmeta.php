@@ -116,12 +116,6 @@ if(isset($clArray['dynamicProperties']) && $clArray['dynamicProperties']){
 		mapWindow=open("<?php echo $CLIENT_ROOT; ?>/collections/tools/mappointaid.php","mapaid","resizable=0,width=1000,height=800,left=20,top=20");
 	    if(mapWindow.opener == null) mapWindow.opener = self;
 	}
-	function openMappingShapeAid(mode, type) {
-		var latDec = document.getElementById("decimallatitude").value;
-		var lngDec = document.getElementById("decimallongitude").value;
-		mapWindow=open("<?php echo $CLIENT_ROOT; ?>/checklists/tools/mappolyaid.php?clid=<?php echo $clid; ?>&formname=editclmatadata&latname=latcentroid&longname=longcentroid&latdef="+latDec+"&lngdef="+lngDec,"mapaid","resizable=0,width=1000,height=800,left=20,top=20");
-	    if(mapWindow.opener == null) mapWindow.opener = self;
-	}
 
 	function enableDisableExtServiceFields() {
 		let xsrv = document.getElementById('externalservice');

@@ -68,7 +68,7 @@ class TPImageEditorManager extends TPEditorManager{
 		return $imageArr;
 	}
 
-	public function echoPhotographerSelect($userId = 0){
+	public function echoCreatorSelect($userId = 0){
 		$sql = 'SELECT u.uid, CONCAT_WS(", ",u.lastname,u.firstname) AS fullname FROM users u ORDER BY u.lastname, u.firstname ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
@@ -97,10 +97,10 @@ class TPImageEditorManager extends TPEditorManager{
 		$imgManager = new ImageShared();
 		$imgManager->setTid($this->tid);
 		$imgManager->setCaption($postArr['caption']);
-		if($postArr['photographer']){
-			$imgManager->setPhotographer($postArr['photographer']);
+		if($postArr['creator']){
+			$imgManager->setCreator($postArr['creator']);
 		} else {
-			$imgManager->setPhotographerUid($postArr['photographeruid']);
+			$imgManager->setCreatorUid($postArr['creatoruid']);
 		}
 		$imgManager->setSourceUrl($postArr['sourceurl']);
 		$imgManager->setCopyright($postArr['copyright']);

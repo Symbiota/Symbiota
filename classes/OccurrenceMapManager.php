@@ -40,8 +40,8 @@ class OccurrenceMapManager extends OccurrenceManager {
 		$coordArr = Array();
 		if($this->sqlWhere){
 			$statsManager = new OccurrenceAccessStats();
-			$sql = 'SELECT o.occid, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS identifier, '.
-				'o.sciname, IF(ts.family IS NULL, o.family, ts.family) as family, o.tidinterpreted, o.DecimalLatitude, o.DecimalLongitude, o.collid, o.catalognumber, '.
+			$sql = 'SELECT o.occid, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS identifier, o.eventdate, '.
+				'o.sciname, IF(ts.family IS NULL, o.family, ts.family) as family, o.tidinterpreted, o.DecimalLatitude, o.DecimalLongitude, o.collid, o.catalogNumber, '.
 				'o.othercatalognumbers, c.institutioncode, c.collectioncode, c.CollectionName '.
 				'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
 
@@ -58,7 +58,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 			$color = 'e69e67';
 			$occidArr = array();
 			while($row = $result->fetch_object()){
-				if(!($row->DecimalLongitude <= 180 && $row->DecimalLongitude >= -180) || !($row->DecimalLatitude <= 90 && $row->DecimalLatitude >= -90)) { 
+				if(!($row->DecimalLongitude <= 180 && $row->DecimalLongitude >= -180) || !($row->DecimalLatitude <= 90 && $row->DecimalLatitude >= -90)) {
 					continue;
 				}
 				$occidArr[] = $row->occid;
@@ -70,6 +70,8 @@ class OccurrenceMapManager extends OccurrenceManager {
 				$coordArr[$collName][$row->occid]["tid"] = $tidInterpreted;
 				$coordArr[$collName][$row->occid]["fam"] = ($row->family?strtoupper($row->family):'undefined');
 				$coordArr[$collName][$row->occid]["sn"] = $row->sciname;
+				$coordArr[$collName][$row->occid]["catalogNumber"] = $row->catalogNumber;
+				$coordArr[$collName][$row->occid]["eventdate"] = $row->eventdate;
 				$coordArr[$collName][$row->occid]["id"] = $this->htmlEntities($row->identifier);
 				$coordArr[$collName]["c"] = $color;
 			}
@@ -136,9 +138,9 @@ class OccurrenceMapManager extends OccurrenceManager {
 		//Used in occurrence listing tab within dynamic map
 		$retArr = Array();
 		if($this->sqlWhere){
-			$sql = 'SELECT o.occid, c.institutioncode, o.catalognumber, CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector, '.
-				'o.eventdate, o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county) AS locality, o.DecimalLatitude, o.DecimalLongitude, '.
-				'IFNULL(o.LocalitySecurity,0) AS LocalitySecurity, o.localitysecurityreason '.
+			$sql = 'SELECT o.occid, c.institutionCode, o.catalogNumber, CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector, '.
+				'o.eventDate, o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county) AS locality, o.decimalLatitude, o.decimalLongitude, '.
+				'IFNULL(o.recordSecurity,0) AS recordSecurity, o.securityReason '.
 				'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
 			$sql .= $this->getTableJoins($this->sqlWhere);
 			$sql .= $this->sqlWhere;
@@ -148,20 +150,20 @@ class OccurrenceMapManager extends OccurrenceManager {
 			$statement = $this->conn->prepare($sql);
 			$statement->bind_param('ii', $bottomLimit, $cntPerPage);
 			$statement->execute();
-			$statement->bind_result($occid, $institutioncode, $catalognumber, $collector, $eventdate, $family, $sciname, $locality, $DecimalLatitude, $DecimalLongitude, $LocalitySecurity, $localitysecurityreason);
+			$statement->bind_result($occid, $institutionCode, $catalogNumber, $collector, $eventDate, $family, $sciname, $locality, $decimalLatitude, $decimalLongitude, $recordSecurity, $securityReason);
 			while($statement->fetch()){
 				$occId = $occid;
-				$retArr[$occId]['i'] = $this->cleanOutStr($institutioncode);
-				$retArr[$occId]['cat'] = $this->cleanOutStr($catalognumber);
+				$retArr[$occId]['i'] = $this->cleanOutStr($institutionCode);
+				$retArr[$occId]['cat'] = $this->cleanOutStr($catalogNumber);
 				$retArr[$occId]['c'] = $this->cleanOutStr($collector);
-				$retArr[$occId]['e'] = $this->cleanOutStr($eventdate);
+				$retArr[$occId]['e'] = $this->cleanOutStr($eventDate);
 				$retArr[$occId]['f'] = $this->cleanOutStr($family);
 				$retArr[$occId]['s'] = $this->cleanOutStr($sciname);
 				$retArr[$occId]['l'] = $this->cleanOutStr($locality);
-				$retArr[$occId]['lat'] = $this->cleanOutStr($DecimalLatitude);
-				$retArr[$occId]['lon'] = $this->cleanOutStr($DecimalLongitude);
+				$retArr[$occId]['lat'] = $this->cleanOutStr($decimalLatitude);
+				$retArr[$occId]['lon'] = $this->cleanOutStr($decimalLongitude);
 				$retArr[$occId]['l'] = str_replace('.,', ',', $locality);
-				// Do we also want to put LocalitySecurity and localitysecurityreason in this array?
+				// Do we also want to put recordSecurity and securityReason in this array?
 			}
 			$statement->close();
 			//Set access statistics
@@ -195,16 +197,15 @@ class OccurrenceMapManager extends OccurrenceManager {
 		global $USER_RIGHTS;
 		$sqlWhere = $this->getSqlWhere();
 		if($this->searchTermArr) {
-			$sqlWhere = $this->getSqlWhere();
 			$sqlWhere .= ($sqlWhere?' AND ':' WHERE ').'(o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) ';
-			if(array_key_exists('clid',$this->searchTermArr) && $this->searchTermArr['clid']) {
-				//Set Footprint for map to load
-				$this->setSearchTerm('footprintGeoJson', $this->voucherManager->getClFootprint());
-				if(isset($this->searchTermArr['cltype']) && $this->searchTermArr['cltype'] == 'all') {
-					$sqlWhere .= "AND (ST_Within(p.lngLatPoint,ST_GeomFromGeoJSON('". $this->voucherManager->getClFootprint()." '))) ";
-
+			if(!empty($this->searchTermArr['clid'])) {
+				if($this->voucherManager->getClFootprint()){
+					//Set Footprint for map to load
+					$this->setSearchTerm('footprintGeoJson', $this->voucherManager->getClFootprint());
+					if(isset($this->searchTermArr['cltype']) && $this->searchTermArr['cltype'] == 'all') {
+						$sqlWhere .= "AND (ST_Within(p.lngLatPoint,ST_GeomFromGeoJSON('". $this->voucherManager->getClFootprint()." '))) ";
+					}
 				}
-
 			}
 		}
 
@@ -218,10 +219,10 @@ class OccurrenceMapManager extends OccurrenceManager {
 				$securityCollArr = array();
 				if(isset($USER_RIGHTS['CollEditor'])) $securityCollArr = $USER_RIGHTS['CollEditor'];
 				if(isset($USER_RIGHTS['RareSppReader'])) $securityCollArr = array_unique(array_merge($securityCollArr, $USER_RIGHTS['RareSppReader']));
-				$sqlWhere .= ($sqlWhere ? ' AND' : ' WHERE' ) . ' (o.CollId IN ('.implode(',',$securityCollArr).') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
+				$sqlWhere .= ($sqlWhere ? ' AND' : ' WHERE' ) . ' (o.CollId IN ('.implode(',',$securityCollArr).') OR (o.recordSecurity = 0)) ';
 			}
 			elseif(!empty($sqlWhere)){
-				$sqlWhere .= ($sqlWhere ? ' AND' : ' WHERE' ) . ' (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL) ';
+				$sqlWhere .= ($sqlWhere ? ' AND' : ' WHERE' ) . ' (o.recordSecurity = 0) ';
 			}
 
 			$sqlWhere .=  ' AND ((o.decimallatitude BETWEEN -90 AND 90) AND (o.decimallongitude BETWEEN -180 AND 180)) ';

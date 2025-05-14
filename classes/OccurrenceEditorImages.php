@@ -9,7 +9,7 @@ else include_once($SERVER_ROOT.'/content/lang/classes/OccurrenceEditorImages.en.
 
 class OccurrenceEditorImages extends OccurrenceEditorManager {
 
-	private $photographerArr = Array();
+	private $creatorArr = Array();
 	private $imageRootPath = "";
 	private $imageRootUrl = "";
 	private $activeImgId = 0;
@@ -137,7 +137,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 			$types .= 's';
 		}
 
-		$additionalFields= array('occid' => 'i', 'tidinterpreted' => 'i', 'caption' => 's', 'creator' => 's', 'creatorUid' => 'i', 'notes' => 's', 'copyright' => 's', 'sortoccurrence' => 'i', 'sourceurl' => 's');
+		$additionalFields= array('occid' => 'i', 'tidinterpreted' => 'i', 'caption' => 's', 'creator' => 's', 'creatorUid' => 'i', 'notes' => 's', 'copyright' => 's', 'sortOccurrence' => 'i', 'sourceurl' => 's');
 		foreach($additionalFields as $fieldName => $t){
 			if(array_key_exists($fieldName, $imgArr)){
 				if($imgArr[$fieldName]) $fieldArr[] = $imgArr[$fieldName];
@@ -408,13 +408,13 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 		}
 
 		//Set image metadata variables
-		if(array_key_exists('caption',$postArr)) $imgManager->setCaption($postArr['caption']);
-		if(array_key_exists('photographeruid',$postArr)) $imgManager->setPhotographerUid($postArr['photographeruid']);
-		if(array_key_exists('photographer',$postArr)) $imgManager->setPhotographer($postArr['photographer']);
-		if(array_key_exists('sourceurl',$postArr)) $imgManager->setSourceUrl($postArr['sourceurl']);
-		if(array_key_exists('copyright',$postArr)) $imgManager->setCopyright($postArr['copyright']);
-		if(array_key_exists('notes',$postArr)) $imgManager->setNotes($postArr['notes']);
-		if(array_key_exists('sortoccurrence',$postArr)) $imgManager->setSortOccurrence($postArr['sortoccurrence']);
+		if(!empty($postArr['caption'])) $imgManager->setCaption($postArr['caption']);
+		if(!empty($postArr['creatoruid'])) $imgManager->setCreatorUid($postArr['creatoruid']);
+		if(!empty($postArr['creator'])) $imgManager->setCreator($postArr['creator']);
+		if(!empty($postArr['sourceurl'])) $imgManager->setSourceUrl($postArr['sourceurl']);
+		if(!empty($postArr['copyright'])) $imgManager->setCopyright($postArr['copyright']);
+		if(!empty($postArr['notes'])) $imgManager->setNotes($postArr['notes']);
+		if(!empty($postArr['sortOccurrence'])) $imgManager->setSortOccurrence($postArr['sortOccurrence']);
 		if(strpos($this->collMap['colltype'], 'Observations') !== false)  $imgManager->setSortSeq(40);
 
 		$sourceImgUri = $postArr['imgurl'];
@@ -452,17 +452,17 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 		return $status;
 	}
 
-	public function getPhotographerArr(){
-		if(!$this->photographerArr){
+	public function getCreatorArr(){
+		if(!$this->creatorArr){
 			$sql = "SELECT u.uid, CONCAT_WS(', ',u.lastname,u.firstname) AS fullname ".
 				"FROM users u ORDER BY u.lastname, u.firstname ";
 			$result = $this->conn->query($sql);
 			while($row = $result->fetch_object()){
-				$this->photographerArr[$row->uid] = $this->cleanOutStr($row->fullname);
+				$this->creatorArr[$row->uid] = $this->cleanOutStr($row->fullname);
 			}
 			$result->free();
 		}
-		return $this->photographerArr;
+		return $this->creatorArr;
 	}
 
 	public function getImageTagArr(){
