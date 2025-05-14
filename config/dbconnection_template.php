@@ -21,7 +21,18 @@ class MySQLiConnectionFactory {
 		)
 	);
 
+	/**
+	 * Symbiota assumes the following, which differ from the default in modern MySQL versions:
+	 * - NO_ZERO_IN_DATE disabled, Symbiota relies on zero month/day semantics: https://github.com/Symbiota/Symbiota/issues/130
+	 * - ONLY_FULL_GROUP_BY disabled, Symbiota has many queries which don't conform to this requirement.
+	 */
+	static $SQL_MODE = 'STRICT_TRANS_TABLES,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
 	public static function getCon($type) {
+		// Disable MYSQLI_REPORT_STRICT, which is the default in PHP 8.1+.
+		// Symbiota checks boolean result status instead of catching exceptions, so it's not compatible with the new default
+		mysqli_report(MYSQLI_REPORT_ERROR);
+
 		// Figure out which connections are open, automatically opening any connections
 		// which are failed or not yet opened but can be (re)established.
 		for ($i = 0, $n = count(MySQLiConnectionFactory::$SERVERS); $i < $n; $i++) {
@@ -34,6 +45,8 @@ class MySQLiConnectionFactory {
 							throw new Exception('Error loading character set '.$server['charset'].': '.$connection->error);
 						}
 					}
+
+					$connection->query("SET SESSION sql_mode = '" . MySQLiConnectionFactory::$SQL_MODE . "'");
 					return $connection;
 				}
 				catch(Exception $e){
