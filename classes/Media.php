@@ -918,12 +918,8 @@ class Media {
 			"mediaType" => $media_type_str,
 		];
 
-		if(array_key_exists('sortsequence', $clean_post_arr)){
-			if (is_numeric($clean_post_arr['sortsequence']))
-				$keyValuePairs["sortsequence"] = $clean_post_arr['sortsequence'];
-			else
-				$keyValuePairs["sortsequence"] = 50; //set the default sortSequence
-		}
+		$sort_sequence = $clean_post_arr['sortsequence'] ?? $clean_post_arr['sortSequence'] ?? false;
+		$keyValuePairs["sortsequence"] = is_numeric($sort_sequence)? $sort_sequence: 50;
 
 		//What is url for files
 		if($isRemoteMedia) {
