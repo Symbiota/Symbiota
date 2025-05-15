@@ -480,16 +480,17 @@ else{
 	<title><?= $DEFAULT_TITLE . ' ' . $LANG['OCCEDITOR'] ?></title>
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<link href="<?= $CSS_BASE_PATH ?>/symbiota/variables.css" type="text/css" rel="stylesheet">
+	<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/editor/editormain.css?ver=1c" type="text/css" rel="stylesheet" id="editorCssLink" />
 	<?php
 	//include_once($SERVER_ROOT.'/includes/head.php');
     if($crowdSourceMode == 1){
 		?>
-		<link href="includes/config/occureditorcrowdsource.css?ver=5" type="text/css" rel="stylesheet" id="editorCssLink" />
+		<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/editor/editorcrowdsource.css?ver=1" type="text/css" rel="stylesheet" id="editorCssLink" />
 		<?php
     }
     else{
 		?>
-		<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/editor/occurrenceeditor.css?ver=9" type="text/css" rel="stylesheet" id="editorCssLink" >
+		<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/editor/editorfulldisplay.css?ver=1" type="text/css" rel="stylesheet" id="editorCssLink" >
 		<?php
 		if(isset($CSSARR)){
 			foreach($CSSARR as $cssVal){
@@ -551,53 +552,6 @@ else{
 	<script src="../../js/symb/collections.editor.imgtools.js?ver=4" type="text/javascript"></script>
 	<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.query.js?ver=6" type="text/javascript"></script>
-	<style type="text/css">
-		fieldset > legend{ font-weight:bold; }
-		select{ margin-bottom: 2px; }
-		#identifierDiv img{ width:10px; margin-left: 5px; }
-		#innertext{ background-color: white; margin: 0px 10px; }
-		.fieldGroupDiv {
-			display: flex;
-			align-items: center;
-			gap: 0.75rem;
-			margin-bottom: 1rem;
-			input {
-				margin: 0
-			}
-			a {
-				display: flex;
-			}
-		}
-		.fieldDiv{
-			display: inline;
-		}
-
-		.editimg{ width: 15px; }
-
-		.button-toggle {
-			background-color: transparent;
-			color: var(--body-text-color);
-			border-radius: 5px;
-			border: 2px solid var(--darkest-color);
-
-			&.active {
-				background-color: var(--darkest-color);
-				color: white;
-			}
-			&:hover {
-				background-color: var(--medium-color);
-				border: 2px solid var(--medium-color);
-				color: var(--light-color);
-			}
-		}
-		#labelProcFieldset{
-			padding:15px;
-		}
-
-		.ui-widget {
-			font-size: 1em;
-		}
-	</style>
 </head>
 <body>
 	<div role="main" id="innertext">
@@ -1628,7 +1582,7 @@ else{
 													?>
 												</select>
 												<div id="editButtonDiv">
-													<button class="button" type="submit" id="saveEditsButton" name="submitaction" value="saveOccurEdits" style="width:150px;" onclick="return verifyFullFormEdits(this.form)" disabled><?php echo $LANG['SAVE_EDITS']; ?></button>
+													<button class="button icon-button" type="submit" id="saveEditsButton" name="submitaction" value="saveOccurEdits" style="width:150px;" onclick="return verifyFullFormEdits(this.form)" disabled><?php echo $LANG['SAVE_EDITS']; ?></button>
 													<input type="hidden" name="occindex" value="<?php echo is_numeric($occIndex)?$occIndex:''; ?>" />
 													<input type="hidden" name="editedfields" value="" />
 												</div>
@@ -1702,7 +1656,7 @@ else{
 											?>
 											<div id="addButtonDiv">
 												<input name="recordenteredby" type="hidden" value="<?php echo $PARAMS_ARR['un']; ?>" />
-												<button name="submitaction" type="submit" value="addOccurRecord" style="width:150px;font-weight:bold;margin:10px;"><?php echo $LANG['ADD_RECORD']; ?></button>
+												<button name="submitaction" type="submit" class="button icon-button" value="addOccurRecord" style="width:150px;font-weight:bold;margin:10px;"><?php echo $LANG['ADD_RECORD']; ?></button>
 												<input name="qrycnt" type="hidden" value="<?php echo $qryCnt?$qryCnt:''; ?>" />
 												<div style="margin-left:15px;font-weight:bold;">
 													<?php echo $LANG['FOLLOW_UP']; ?>:
