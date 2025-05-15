@@ -27,8 +27,17 @@ if ($isEditor) {
 	if ($action == 'Submit Image Edits') {
 		Media::update($mediaID, $_POST, new LocalStorage());
 	} elseif ($action == 'Transfer Image') {
-		Media::update($mediaID, ['tid' => $_REQUEST['targettid']]);
-		header('Location: ../taxa/profile/tpeditor.php?tid=' . $_REQUEST['targettid'] . '&tabindex=1');
+		if($targettid = $_REQUEST['targettid'] ?? false) {
+			Media::update($mediaID, ['tid' => $targettid ], new LocalStorage());
+
+			if($errors = Media::getErrors()) {
+				$status = 'Errors:<br/>' . implode('<br/>', $errors);
+			} else {
+				header('Location: ../taxa/profile/tpeditor.php?tid=' . $_REQUEST['targettid'] . '&tabindex=1');
+			}
+		} else {
+			$status = "ERROR: " . $LANG['MEDIA_TRANSFER_REQUIRES_TAXON_ID'];
+		}
 	} elseif ($action == 'Delete Image') {
 		$remove_files = $_REQUEST['removeimg'] ?? false;
 		try {
@@ -106,7 +115,7 @@ if ($imgArr) {
 			if (sciName == "") {
 				window.alert("<?php echo $LANG['ENTER_TAXON_NAME'] ?>");
 			} else {
-				validateTaxon(f, true);
+				validateTaxon(f, true, form => form.targettid.value = form.tid.value);
 			}
 			return false; //Submit takes place in the validateTaxon method
 		}
