@@ -1174,7 +1174,12 @@ class Media {
 			"anatomy",
 			"notes",
 			"username",
+			// Theses values both used in different forms
+			// due to some history of how it was named in 
+			// database in the past while not ideal 
+			// it just is what it is
 			"sortsequence",
+			"sortSequence",
 			"sortOccurrence",
 			"sourceIdentifier",
 			"rights",
@@ -1186,6 +1191,7 @@ class Media {
 			"recordID",
 			"mediaType",
 		];
+
 
 		$data = [];
 
