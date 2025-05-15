@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Taxonomy;
+use App\Models\TaxonomyStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -210,13 +211,19 @@ class TaxonomyController extends Controller {
 	 * 		@OA\MediaType(
 	 * 			mediaType="application/json",
 	 * 			@OA\Schema(
-	 * 				required={"kingdomName", "rankID", "sciName", "unitName1", "author", "securityStatus"},
+	 * 				required={"kingdomName", "parenttid", "rankID", "sciName", "unitName1", "author", "securityStatus"},
 	 * 				@OA\Property(
 	 * 					property="kingdomName",
 	 * 					type="string",
 	 * 					enum={"Plantae", "Fungi", "Animalia", "Chromista", "Protista", "Bacteria"},
 	 * 					description="The name of the kingdom",
 	 * 					maxLength=45
+	 * 				),
+	 *  				@OA\Property(
+	 * 					property="parenttid",
+	 * 					type="integer",
+	 * 					description="The tid of the parent taxon. This is visible in the URL of the target taxon profile page, and it's also displayed in the taxonomy editor page.",
+	 * 					maxLength=10
 	 * 				),
 	 *  				@OA\Property(
 	 * 					property="sciName",
@@ -231,7 +238,7 @@ class TaxonomyController extends Controller {
 	 * 					maxLength=150
 	 * 				),
 	 *  				@OA\Property(
-	 * 					property="rankid",
+	 * 					property="rankID",
 	 * 					enum={0, 1, 10, 15, 20, 25, 27, 30, 40, 60, 70, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 220, 230, 240, 250, 260, 300},
 	 * 					type="integer",
 	 * 					description="Rank id associated with the rank of the target taxon: class= 60, cultivar= 300, division= 30, family= 140, form= 260, genus= 180, kingdom= 10, non-ranked node= 0, order= 100, organism= 1, section= 200, species= 220, subclass= 70, subdivision= 40, subfamily= 150, subform= 270, subgenus= 190, subkingdom= 20, suborder= 110, subsection= 210, subspecies= 230, subtribe= 170, subvariety= 250, superclass= 50, tribe= 160, variety= 240",
@@ -304,6 +311,12 @@ class TaxonomyController extends Controller {
 	 * 					description="Enter 0 if no security filter is required. Enter 1 if TODO. Enter 5 if TODO.",
 	 * 					maxLength=10
 	 * 				),
+	 * *  				@OA\Property(
+	 * 					property="UnacceptabilityReason",
+	 * 					type="string",
+	 * 					description="Reasons why the taxon may not be widely accepted",
+	 * 					maxLength=250
+	 * 				),
 	 * 			)
 	 * 		)
 	 * 	),
@@ -328,13 +341,19 @@ class TaxonomyController extends Controller {
 		if(count($qualifyingRoles)>0){
 			try {
 				$taxon = Taxonomy::create($request->all());
+				return response()->json($taxon, 200);
+				$family = $this->getFamily($taxon, $request->parenttid);
+
 				// @TODO add to taxstatus
-				// $collectionStats = CollectionStats::create([
-				// 	'collid' => $collection->collID,
-				// 	'recordcnt' => 0,
-				// 	// 'uploadedby' => $GLOBALS['USERNAME']
-				// 	'uploadedby' => 'TODO'
-				// ]);
+				$taxstatus = TaxonomyStatus::create([
+					'tid' => $taxon->tid,
+					'tidaccepted' => $taxon->tid,
+					'taxauthid' => 1, // @TODO is this sufficient?
+					'family' => $family,
+					'parenttid' => $taxon->parenttid,
+					'UnacceptabilityReason' => $taxon->UnacceptabilityReason,
+					// 'modifiedUid' => '@TODO'
+				]);
 			} catch (\Exception $e) {
 				return response()->json(['error' => 'Failed to create new taxon' . $e->getMessage()], 500);
 			}
@@ -342,5 +361,34 @@ class TaxonomyController extends Controller {
 			return response()->json($taxon, 200);
 		}
 		return response()->json(['error' => 'Unauthorized'], 401);
-	}	
+	}
+	
+	public function getFamily($taxon, $parenttid){
+		$family = '';
+		if($taxon->rankID > 140){
+			$family = DB::table('taxa as t')
+				->select('t.sciname')
+				->join('taxaenumtree as e', 't.tid', '=', 'e.parenttid')
+				->where('t.tid', $parenttid)
+				->orWhere('e.tid', $parenttid)
+				->first();
+		}
+		if($taxon->rankID == 140){
+			$family = $taxon->sciName;
+		}
+		return $family;
+
+		// $family = '';
+		// if($dataArr['rankid'] > 140){
+		// 	$sqlFam = 'SELECT t.sciname '.
+		// 		'FROM taxa t INNER JOIN taxaenumtree e ON t.tid = e.parenttid '.
+		// 		'WHERE (t.tid = '.$parTid.' OR e.tid = '.$parTid.') AND t.rankid = 140 ';
+		// 	//echo $sqlFam; exit;
+		// 	$rsFam = $this->conn->query($sqlFam);
+		// 	if($r = $rsFam->fetch_object()){
+		// 		$family = $r->sciname;
+		// 	}
+		// 	$rsFam->free();
+		// }
+	}
 }

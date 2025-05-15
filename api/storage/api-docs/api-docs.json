@@ -2232,6 +2232,7 @@
                             "schema": {
                                 "required": [
                                     "kingdomName",
+                                    "parenttid",
                                     "rankID",
                                     "sciName",
                                     "unitName1",
@@ -2252,6 +2253,11 @@
                                             "Bacteria"
                                         ]
                                     },
+                                    "parenttid": {
+                                        "description": "The tid of the parent taxon. This is visible in the URL of the target taxon profile page, and it's also displayed in the taxonomy editor page.",
+                                        "type": "integer",
+                                        "maxLength": 10
+                                    },
                                     "sciName": {
                                         "description": "The name of the taxon excluding authorship. E.g., 'Abutilon guineense var. forrestii'",
                                         "type": "string",
@@ -2262,7 +2268,7 @@
                                         "type": "string",
                                         "maxLength": 150
                                     },
-                                    "rankid": {
+                                    "rankID": {
                                         "description": "Rank id associated with the rank of the target taxon: class= 60, cultivar= 300, division= 30, family= 140, form= 260, genus= 180, kingdom= 10, non-ranked node= 0, order= 100, organism= 1, section= 200, species= 220, subclass= 70, subdivision= 40, subfamily= 150, subform= 270, subgenus= 190, subkingdom= 20, suborder= 110, subsection= 210, subspecies= 230, subtribe= 170, subvariety= 250, superclass= 50, tribe= 160, variety= 240",
                                         "type": "integer",
                                         "maxLength": 45,
@@ -2357,6 +2363,11 @@
                                             1,
                                             5
                                         ]
+                                    },
+                                    "UnacceptabilityReason": {
+                                        "description": "Reasons why the taxon may not be widely accepted",
+                                        "type": "string",
+                                        "maxLength": 250
                                     }
                                 },
                                 "type": "object"
