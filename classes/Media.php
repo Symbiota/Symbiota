@@ -1475,6 +1475,9 @@ class Media {
 		$parameters = [$media_id];
 		$select = [
 			'm.*',
+			// Usage is not consistent across codebase so both versions are included
+			'm.sortSequence',
+			'm.sortsequence',
 			"IFNULL(m.creator,CONCAT_WS(' ',u.firstname,u.lastname)) AS creatorDisplay",
 			't.sciname',
 			't.author',
