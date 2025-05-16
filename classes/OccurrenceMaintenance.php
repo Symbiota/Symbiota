@@ -162,7 +162,7 @@ class OccurrenceMaintenance {
 		$geoArr = array();
 		$sql = 'SELECT o.occid, g.iso2
 			FROM omoccurrences o INNER JOIN geographicthesaurus g ON o.country = g.geoterm
-			WHERE (o.countryCode IS NULL OR o.countryCode != g.iso2) AND g.acceptedID IS NULL ';
+			WHERE (o.countryCode IS NULL OR o.countryCode != g.iso2) ';
 		//if($this->collidStr) $sql .= 'AND collid IN('.$this->collidStr.')';
 		$rs = $this->conn->query($sql);
 		$cnt = 0;

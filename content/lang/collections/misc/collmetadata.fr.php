@@ -89,7 +89,7 @@ $LANG['OCCID_DEF_2'] = "champ. L'utilisation de l'ID d'Occurrence comme GUID n'e
 						L'option GUID (UUID) Généré par Symbiota déclenchera le portail de données Symbiota pour générer automatiquement
 						des UUID GUID pour chaque enregistrement. Cette option est recommandée pour beaucoup pour les Jeux de Données en Direct
 						mais non autorisé pour les collections d'instantanés gérées dans le système de gestion local.";
-$LANG['PUBLISH_TO_AGGS'] = 'Publier sur Agrégateurs';
+$LANG['PUBLISH_TO_AGGS'] = 'Activer Publication auprès Agrégateurs';
 $LANG['MORE_INFO_AGGREGATORS'] = 'Plus d\'informations sur la publication sur des agrégateurs';
 $LANG['ACTIVATE_GBIF'] = "Active les outils de publication GBIF disponibles dans l'option de menu Publier Archive Darwin Core";
 $LANG['SOURCE_REC_URL'] = "URL de l'Enregistrement Source";

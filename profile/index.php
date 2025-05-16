@@ -10,7 +10,7 @@ if($SYMB_UID){
 		header("Location:" . $_SESSION['refurl']);
 		unset($_SESSION['refurl']);
 	} else if($_REQUEST['refurl'] ?? false){
-		header("Location:" . $_REQUEST['refurl']);
+		header("Location:" . $_REQUEST['refurl']);	
 	} else{
 		header("Location:" . $CLIENT_ROOT . '/profile/viewprofile.php');
 	}

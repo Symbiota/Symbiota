@@ -2610,12 +2610,7 @@ class SpecUploadBase extends SpecUpload{
 
 	protected function encodeString($inStr){
 		if($inStr){
-			/*
-			 * Previously used 'UTF-8, ISO-8859-1, ISO-8859-15'
-			 * And UTF-8 strings were not being detected resulting
-			 * Double encoding issue. Proceed with caution when adding encoding params
-			 */
-			$inStr = mb_convert_encoding($inStr, $this->targetCharset, mb_detect_encoding($inStr));
+			$inStr = mb_convert_encoding($inStr, $this->targetCharset, mb_detect_encoding($inStr, ['ASCII', 'UTF-8', 'ISO-8859-1', 'ISO-8859-15']));
 
 			//Get rid of UTF-8 curly smart quotes and dashes
 			$badwordchars=array(

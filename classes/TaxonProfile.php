@@ -207,15 +207,22 @@ class TaxonProfile extends Manager {
 			$rs1->free();
 
 			$tidStr = implode(",",$tidArr);
+			$sortSequnceLimit = 500;
+			if($this->rankId < 220 && count($tidArr) > 50) $sortSequnceLimit = 20;
 			$sql = 'SELECT t.sciname, m.mediaID, m.mediaType, m.format, m.url, m.thumbnailurl, m.originalurl, m.caption, m.occid, m.creator, CONCAT_WS(" ",u.firstname,u.lastname) AS creatorLinked
 				FROM media m LEFT JOIN users u ON m.creatorUid = u.uid
 				INNER JOIN taxstatus ts ON m.tid = ts.tid
 				INNER JOIN taxa t ON m.tid = t.tid
-				LEFT JOIN omoccurrences o ON m.occid = o.occid
-				WHERE (ts.taxauthid = 1) AND ts.tidaccepted IN ('.$tidStr.') AND m.SortSequence < 500 AND (m.mediaType != "image" || m.thumbnailurl IS NOT NULL)
+				WHERE (ts.taxauthid = 1) AND ts.tidaccepted IN ('.$tidStr.') AND m.SortSequence < ' . $sortSequnceLimit . ' AND (m.mediaType != "image" || m.thumbnailurl IS NOT NULL)
 				AND (o.recordSecurity != 5 OR o.occid IS NULL) ';
 			if(!$this->displayLocality) $sql .= 'AND m.occid IS NULL ';
-			$sql .= 'ORDER BY m.sortsequence, m.sortOccurrence LIMIT 100';
+			if($this->rankId < 220){
+				$sql .= 'ORDER BY m.sortsequence ';
+			}
+			else{
+				$sql .= 'ORDER BY m.sortsequence, m.sortOccurrence ';
+			}
+			$sql .= 'LIMIT 100';
 			$result = $this->conn->query($sql);
 			while($row = $result->fetch_object()){
 				$imgUrl = $row->url;
