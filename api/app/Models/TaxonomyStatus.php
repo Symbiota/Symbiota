@@ -9,5 +9,5 @@ class TaxonomyStatus extends Model{
 	protected $primaryKey = 'tid';
 	public $timestamps = false;
 	protected $hidden = [ 'initialtimestamp', 'modifiedUid' ];
-	protected $fillable = [ 'tidaccepted', 'taxauthid', 'family', 'parenttid', 'Unacceptabilityreason', 'modifiedUid'];
+	protected $fillable = [ 'tid','tidaccepted', 'taxauthid', 'family', 'parenttid', 'Unacceptabilityreason', 'modifiedUid'];
 }

@@ -2233,8 +2233,8 @@
                                 "required": [
                                     "kingdomName",
                                     "parenttid",
-                                    "rankID",
                                     "sciName",
+                                    "rankID",
                                     "unitName1",
                                     "author",
                                     "securityStatus"
@@ -2256,6 +2256,7 @@
                                     "parenttid": {
                                         "description": "The tid of the parent taxon. This is visible in the URL of the target taxon profile page, and it's also displayed in the taxonomy editor page.",
                                         "type": "integer",
+                                        "default": null,
                                         "maxLength": 10
                                     },
                                     "sciName": {

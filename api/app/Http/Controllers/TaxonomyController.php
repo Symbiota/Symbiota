@@ -211,7 +211,7 @@ class TaxonomyController extends Controller {
 	 * 		@OA\MediaType(
 	 * 			mediaType="application/json",
 	 * 			@OA\Schema(
-	 * 				required={"kingdomName", "parenttid", "rankID", "sciName", "unitName1", "author", "securityStatus"},
+	 * 				required={"kingdomName", "parenttid", "sciName", "rankID", "unitName1", "author", "securityStatus"},
 	 * 				@OA\Property(
 	 * 					property="kingdomName",
 	 * 					type="string",
@@ -223,6 +223,7 @@ class TaxonomyController extends Controller {
 	 * 					property="parenttid",
 	 * 					type="integer",
 	 * 					description="The tid of the parent taxon. This is visible in the URL of the target taxon profile page, and it's also displayed in the taxonomy editor page.",
+	 * 					default=NULL,
 	 * 					maxLength=10
 	 * 				),
 	 *  				@OA\Property(
@@ -341,24 +342,22 @@ class TaxonomyController extends Controller {
 		if(count($qualifyingRoles)>0){
 			try {
 				$taxon = Taxonomy::create($request->all());
-				return response()->json($taxon, 200);
 				$family = $this->getFamily($taxon, $request->parenttid);
 
-				// @TODO add to taxstatus
 				$taxstatus = TaxonomyStatus::create([
 					'tid' => $taxon->tid,
 					'tidaccepted' => $taxon->tid,
 					'taxauthid' => 1, // @TODO is this sufficient?
-					'family' => $family,
-					'parenttid' => $taxon->parenttid,
-					'UnacceptabilityReason' => $taxon->UnacceptabilityReason,
+					'family' => $family->sciname,
+					'parenttid' => $request->parenttid,
+					'UnacceptabilityReason' => $request->UnacceptabilityReason
 					// 'modifiedUid' => '@TODO'
 				]);
 			} catch (\Exception $e) {
 				return response()->json(['error' => 'Failed to create new taxon' . $e->getMessage()], 500);
 			}
 
-			return response()->json($taxon, 200);
+			return response()->json(['taxon'=>$taxon, 'taxstatus'=>$taxstatus], 200);
 		}
 		return response()->json(['error' => 'Unauthorized'], 401);
 	}
@@ -371,24 +370,12 @@ class TaxonomyController extends Controller {
 				->join('taxaenumtree as e', 't.tid', '=', 'e.parenttid')
 				->where('t.tid', $parenttid)
 				->orWhere('e.tid', $parenttid)
+				->where('t.rankid', 140)
 				->first();
 		}
 		if($taxon->rankID == 140){
 			$family = $taxon->sciName;
 		}
 		return $family;
-
-		// $family = '';
-		// if($dataArr['rankid'] > 140){
-		// 	$sqlFam = 'SELECT t.sciname '.
-		// 		'FROM taxa t INNER JOIN taxaenumtree e ON t.tid = e.parenttid '.
-		// 		'WHERE (t.tid = '.$parTid.' OR e.tid = '.$parTid.') AND t.rankid = 140 ';
-		// 	//echo $sqlFam; exit;
-		// 	$rsFam = $this->conn->query($sqlFam);
-		// 	if($r = $rsFam->fetch_object()){
-		// 		$family = $r->sciname;
-		// 	}
-		// 	$rsFam->free();
-		// }
 	}
 }
