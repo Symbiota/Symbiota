@@ -351,7 +351,6 @@ class TaxonomyController extends Controller {
 					'family' => $family->sciname,
 					'parenttid' => $request->parenttid,
 					'UnacceptabilityReason' => $request->UnacceptabilityReason
-					// 'modifiedUid' => '@TODO'
 				]);
 			} catch (\Exception $e) {
 				return response()->json(['error' => 'Failed to create new taxon' . $e->getMessage()], 500);
