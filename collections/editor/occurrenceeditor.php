@@ -1453,7 +1453,7 @@ else{
 											<div id="storageLocationDiv" class="field-div" title="<?php echo $LANG['STORAGELOCATION_EXPLAIN']; ?>">
 												<?php echo $LANG['STORAGELOCATION_CODE']; ?>
 												<a href="#" onclick="return dwcDoc('storageLocation')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-												<input type="text" name="storageLocation" maxlength="32" value="<?php echo array_key_exists('storageLocation',$occArr)?$occArr['storageLocation']:''; ?>" onchange="fieldChanged('storageLocation');" />
+												<input type="text" name="storagelocation" maxlength="32" value="<?php echo array_key_exists('storagelocation',$occArr)?$occArr['storagelocation']:''; ?>" onchange="fieldChanged('storagelocation');" />
 											</div>
 											<div id="basisOfRecordDiv" class="field-div">
 												<?php echo $LANG['BASIS_OF_RECORD']; ?>
