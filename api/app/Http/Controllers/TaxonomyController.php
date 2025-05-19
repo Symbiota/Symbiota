@@ -341,7 +341,10 @@ class TaxonomyController extends Controller {
 
 		if(count($qualifyingRoles)>0){
 			try {
-				$taxon = Taxonomy::create($request->all());
+				$inputData = $request->all();
+				$inputData['cultivarEpithet'] = preg_replace('/(^[\'"“”]+)|([\'"“”]+$)/u', '', $inputData['cultivarEpithet']);
+				$inputData['tradeName'] = strtoupper($inputData['tradeName']);
+				$taxon = Taxonomy::create($inputData);
 				$family = $this->getFamily($taxon, $request->parenttid);
 
 				$taxstatus = TaxonomyStatus::create([
