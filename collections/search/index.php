@@ -476,7 +476,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 							<!-- Accordion selector -->
 							<input type="checkbox" id="trait" class="accordion-selector" />
 							<!-- Accordion header -->
-							<label for="trait" class="accordion-header"><?php echo $LANG['TRAIT_CRITERIA'] ?> <a href="https://symbiota.github.io/Symbiota-Documentation/User_Guide/traits" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
+							<label for="trait" class="accordion-header"><?php echo $LANG['TRAIT_CRITERIA'] ?> <a href="https://symbiota.github.io/Symbiota-Documentation/docs/User_Guide/traits" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
 							<!-- Accordion content -->
 							<div class="content">
 								<div id="search-form-trait">
@@ -518,7 +518,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 					<input type="checkbox" id="associations" class="accordion-selector" />
 
 					<!-- Accordion header -->
-					<label for="associations" class="accordion-header"><?php echo $LANG['ASSOCIATIONS'] ?> <a href="https://symbiota.github.io/Symbiota-Documentation/User_Guide/associations" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
+					<label for="associations" class="accordion-header"><?php echo $LANG['ASSOCIATIONS'] ?> <a href="https://symbiota.github.io/Symbiota-Documentation/docs/User_Guide/associations" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
 
 					<!-- Taxonomy -->
 					<div id="search-form-associations" class="content">
