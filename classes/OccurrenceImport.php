@@ -100,7 +100,7 @@ class OccurrenceImport extends UtilitiesFileImport {
 				 //'tid',
 				'thumbnailUrl',
 				'sourceUrl',
-				'archiveurl',
+				'archiveUrl',
 				'referenceurl',
 				'creator',
 				'creatoruid',
