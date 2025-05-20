@@ -2,7 +2,7 @@
 	<h2><?php echo $LANG['SPECIMEN_COLLECTIONS'] ?></h2>
 </div>
 	<div class="select-deselect-input">
-		<?php 
+		<?php
 			$checkedStatus = $collectionSource == '' ? 'checked' : '';
 		?>
 		<input data-chip="<?php echo $LANG['ALL_COLLECTIONS'] ?>" id="dballcb" name="db[]" class="specobs all-neon-colls" value='all' type="checkbox" onclick="selectAll(this);" <?php echo $checkedStatus ?> />
@@ -34,7 +34,7 @@
 						<?php
 						foreach($categoryArr as $catid => $catEl){
 							$_SESSION[$catEl['name']] = strval($catid);
-							include('./singleCollectionGroupDetails.php');
+							include(__DIR__ . '/singleCollectionGroupDetails.php');
 							$collCnt++;
 						}
 						?>
@@ -47,7 +47,7 @@
 					<table style="float:left;width:80%;">
 						<?php
 						foreach($collArr as $collid => $cArr){
-							include('./singleCollectionWithoutCategoryDetails.php');
+							include(__DIR__ . '/singleCollectionWithoutCategoryDetails.php');
 							$collCnt++;
 						}
 						?>
@@ -64,7 +64,7 @@
 					<section class="gridlike-form">
 						<?php
 						foreach($categoryArr as $catid => $catEl){
-							include('./singleCollectionGroupDetails.php');
+							include(__DIR__ . '/singleCollectionGroupDetails.php');
 							$collCnt++;
 						}
 						?>
@@ -77,7 +77,7 @@
 					<table style="float:left;width:80%;">
 						<?php
 						foreach($collArr as $collid => $cArr){
-							include('./singleCollectionWithoutCategoryDetails.php');
+							include(__DIR__ . '/singleCollectionWithoutCategoryDetails.php');
 							$collCnt++;
 						}
 						?>
