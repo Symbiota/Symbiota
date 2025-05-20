@@ -1178,9 +1178,12 @@ class Media {
 	}
 
 	/**
+	 * Function used for pulling media meta_data out of input array and updating
+	 * the corresponding mediaID.
 	 * @return bool
-	 * @param mixed $media_id
-	 * @param mixed $media_arr
+	 * @param mixed $media_id MediaID associated from database
+	 * @param mixed $media_arr Expects keys to be camel case. Keys that do not
+	 * match $meta_data keys will be not be used.
 	 */
 	public static function update($media_id, $media_arr, StorageStrategy $storage) {
 
@@ -1202,11 +1205,6 @@ class Media {
 			"anatomy",
 			"notes",
 			"username",
-			// Theses values both used in different forms
-			// due to some history of how it was named in 
-			// database in the past while not ideal 
-			// it just is what it is
-			"sortsequence",
 			"sortSequence",
 			"sortOccurrence",
 			"sourceIdentifier",
