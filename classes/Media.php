@@ -810,7 +810,7 @@ class Media {
 			$file_type_mime = self::ext2Mime($parsed_file['extension'], $media_upload_type);
 
 			// If There is a bunch of potential mime types just assume the first one
-			// this is not perfect and could result weird errors for fringe types 
+			// this is not perfect and could result weird errors for fringe types
 			// but for current use case should be an issue. Types are order by most likely.
 			if(is_array($file_type_mime) && count($file_type_mime) > 0) {
 				$file_type_mime = $file_type_mime[0];
@@ -834,11 +834,12 @@ class Media {
 	**/
 	public static function add(array $post_arr, $storage = null, $file = null): void {
 		$clean_post_arr = Sanitize::in($post_arr);
+		$clean_post_arr = array_change_key_case($clean_post_arr);
 		unset($post_arr);
 
 		$copy_to_server = $clean_post_arr['copytoserver']?? false;
 		$mapLargeImg = !($clean_post_arr['nolgimage']?? true);
-		$isRemoteMedia = isset($clean_post_arr['originalUrl']) && $clean_post_arr['originalUrl'];
+		$isRemoteMedia = isset($clean_post_arr['originalurl']) && $clean_post_arr['originalurl'];
 		$should_upload_file = (self::isValidFile($file) || $copy_to_server) && $storage;
 
 		//If no file is given and downloads from urls are enabled
@@ -848,7 +849,7 @@ class Media {
 			}
 
 			if(!$file['type'] && $isRemoteMedia) {
-				$file = self::getRemoteFileInfo($clean_post_arr['originalUrl']);
+				$file = self::getRemoteFileInfo($clean_post_arr['originalurl']);
 			}
 		}
 
@@ -889,15 +890,15 @@ class Media {
 			"tid" => $clean_post_arr["tid"] ?? null,
 			"occid" => $clean_post_arr["occid"] ?? null,
 			"url" => null,
-			"thumbnailUrl" => $clean_post_arr["thumbnailUrl"] ?? null,
+			"thumbnailUrl" => $clean_post_arr["thumbnailurl"] ?? null,
 			// Will get popluated below
 			"originalUrl" => null,
 			"archiveUrl" => $clean_post_arr["archiverurl"] ?? null,// Only Occurrence import
 			// This is a very bad name that refers to source or downloaded url
-			"sourceUrl" => $clean_post_arr["sourceUrl"] ?? null,// TPImageEditorManager / Occurrence import
+			"sourceUrl" => $clean_post_arr["sourceurl"] ?? null,// TPImageEditorManager / Occurrence import
 			"referenceUrl" => $clean_post_arr["referenceurl"] ?? null,// check keys again might not be one,
 			"creator" => $clean_post_arr["creator"] ?? null,
-			"creatorUid" => OccurrenceUtil::verifyUser($clean_post_arr["creatorUid"] ?? null, $conn),
+			"creatorUid" => OccurrenceUtil::verifyUser($clean_post_arr["creatoruid"] ?? null, $conn),
 			"format" =>  $file["type"] ?? $clean_post_arr['format'],
 			"caption" => $clean_post_arr["caption"] ?? null,
 			"owner" => $clean_post_arr["owner"] ?? null,
@@ -906,15 +907,15 @@ class Media {
 			"notes" => $clean_post_arr["notes"] ?? null,
 			"username" => Sanitize::in($GLOBALS['USERNAME']),
 			// check if its is_numeric?
-			"sortOccurrence" => $clean_post_arr['sortOccurrence'] ?? null,
-			"sourceIdentifier" => $clean_post_arr['sourceIdentifier'] ?? ('filename: ' . $file['name']),
+			"sortOccurrence" => $clean_post_arr['sortoccurrence'] ?? null,
+			"sourceIdentifier" => $clean_post_arr['sourceidentifier'] ?? ('filename: ' . $file['name']),
 			"rights" => $clean_post_arr['rights'] ?? null,
 			"accessrights" => $clean_post_arr['rights'] ?? null,
 			"copyright" => $clean_post_arr['copyright'] ?? null,
 			"hashFunction" => $clean_post_arr['hashfunction'] ?? null,
-			"hashValue" => $clean_post_arr['hashValue'] ?? null,
+			"hashValue" => $clean_post_arr['hashvalue'] ?? null,
 			"mediaMD5" => $clean_post_arr['mediamd5'] ?? null,
-			"recordID" => $clean_post_arr['recordID'] ?? UuidFactory::getUuidV4(),
+			"recordID" => UuidFactory::getUuidV4(),
 			"mediaType" => $media_type_str,
 		];
 
@@ -928,7 +929,7 @@ class Media {
 		//What is url for files
 		if($isRemoteMedia) {
 			//Required to exist
-			$source_url = $clean_post_arr['originalUrl'];
+			$source_url = $clean_post_arr['originalurl'];
 			$keyValuePairs['originalUrl'] =  $source_url;
 			$keyValuePairs['url'] = $clean_post_arr['weburl']?? $source_url;
 		} else {
@@ -994,7 +995,7 @@ class Media {
 					$width = $size[0];
 					$height = $size[1];
 
-					$thumb_url = $clean_post_arr['thumbnailUrl'] ?? null;
+					$thumb_url = $clean_post_arr['thumbnailurl'] ?? null;
 					if(!$thumb_url) {
 						$thumb_name = self::addToFilename($file['name'], '_tn');
 						self::create_image(
@@ -1107,6 +1108,7 @@ class Media {
 	 * @param mixed $conn
 	 */
 	private static function update_tags($media_id, $tag_arr, $conn = null): void {
+		$tag_arr = array_change_key_case($tag_arr);
 		$tags =	[
 			"HasOrganism",
 			"HasLabel",
@@ -1123,8 +1125,8 @@ class Media {
 		$remove_tags = [];
 		$add_tags = [];
 		foreach ($tags as $tag) {
-			$new_value = $tag_arr['ch_' . $tag] ?? false;
-			$old_value = $tag_arr['hidden_' . $tag] ?? false;
+			$new_value = $tag_arr['ch_' . strtolower($tag)] ?? false;
+			$old_value = $tag_arr['hidden_' . strtolower($tag)] ?? false;
 			if($new_value !== $old_value) {
 				if($new_value === '1') {
 					array_push($add_tags, $tag);
