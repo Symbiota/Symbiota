@@ -99,7 +99,7 @@ class OccurrenceImport extends UtilitiesFileImport {
 			$fields = [
 				 //'tid',
 				'thumbnailUrl',
-				'sourceurl',
+				'sourceUrl',
 				'archiveurl',
 				'referenceurl',
 				'creator',
