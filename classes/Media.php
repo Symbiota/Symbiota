@@ -923,7 +923,7 @@ class Media {
 			"archiveUrl" => $clean_post_arr["archiverurl"] ?? null,// Only Occurrence import
 			// This is a very bad name that refers to source or downloaded url
 			"sourceUrl" => $clean_post_arr["sourceUrl"] ?? null,// TPImageEditorManager / Occurrence import
-			"referenceUrl" => $clean_post_arr["referenceurl"] ?? null,// check keys again might not be one,
+			"referenceUrl" => $clean_post_arr["referenceUrl"] ?? null,// check keys again might not be one,
 			"creator" => $clean_post_arr["creator"] ?? null,
 			"creatorUid" => OccurrenceUtil::verifyUser($clean_post_arr["creatorUid"] ?? null, $conn),
 			"format" =>  $file["type"] ?? $clean_post_arr['format'],
@@ -939,9 +939,9 @@ class Media {
 			"rights" => $clean_post_arr['rights'] ?? null,
 			"accessrights" => $clean_post_arr['rights'] ?? null,
 			"copyright" => $clean_post_arr['copyright'] ?? null,
-			"hashFunction" => $clean_post_arr['hashfunction'] ?? null,
+			"hashFunction" => $clean_post_arr['hashFunction'] ?? null,
 			"hashValue" => $clean_post_arr['hashValue'] ?? null,
-			"mediaMD5" => $clean_post_arr['mediamd5'] ?? null,
+			"mediaMD5" => $clean_post_arr['mediaMD5'] ?? null,
 			"recordID" => $clean_post_arr['recordID'] ?? UuidFactory::getUuidV4(),
 			"mediaType" => $media_type_str,
 		];
