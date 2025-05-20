@@ -1107,24 +1107,18 @@ class Media {
 	 * @param mixed $conn
 	 */
 	private static function update_tags($media_id, $tag_arr, $conn = null): void {
-		$tags =	[
-			"HasOrganism",
-			"HasLabel",
-			"HasIDLabel",
-			"TypedText",
-			"Handwriting",
-			"ShowsHabitat",
-			"HasProblem",
-			"Diagnostic",
-			"ImageOfAdult",
-			"ImageOfImmature",
-		];
+		if(!$conn) {
+			$conn = Database::connect('write');
+		}
+
+		$tags = QueryUtil::executeQuery($conn, 'SELECT tagkey FROM imagetagkey');
 
 		$remove_tags = [];
 		$add_tags = [];
-		foreach ($tags as $tag) {
-			$new_value = $tag_arr['ch_' . $tag] ?? false;
-			$old_value = $tag_arr['hidden_' . $tag] ?? false;
+		foreach ($tags as $tagRow) {
+			$tag = $tagRow['tagkey'];
+			$new_value = $tag_arr['ch_' . $tag] ?? $tag_arr['ch_' . strtolower($tag)] ?? false;
+			$old_value = $tag_arr['hidden_' . $tag] ?? $tag_arr['hidden_' . strtolower($tag)] ?? false;
 			if($new_value !== $old_value) {
 				if($new_value === '1') {
 					array_push($add_tags, $tag);
@@ -1132,10 +1126,6 @@ class Media {
 					array_push($remove_tags, $tag);
 				}
 			}
-		}
-
-		if(!$conn) {
-			$conn = Database::connect('write');
 		}
 
 		foreach($add_tags as $add) {
