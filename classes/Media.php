@@ -275,6 +275,34 @@ class Media {
 	private const DEFAULT_GEN_WEB_IMG = true;
 	private const DEFAULT_GEN_THUMBNAIL_IMG = true;
 
+	// Used to maintain the same select between getMedia and fetchOccurrenceMedia
+	const MEDIA_ITEM_SELECT_SCHEMA = [
+		'm.mediaID',
+		'm.url',
+		'm.originalUrl',
+		'm.thumbnailUrl',
+		'm.sourceUrl',
+		'm.mediaType',
+		'm.format',
+		'm.occid',
+		'm.tid',
+		'm.caption',
+		'm.locality',
+		'm.notes',
+		'm.creatorUid',
+		'm.creator',
+		'm.username',
+		'm.owner',
+		'm.copyright',
+		'm.rights',
+		'm.sortSequence',
+		'm.sortOccurrence',
+		"IFNULL(m.creator,CONCAT_WS(' ',u.firstname,u.lastname)) AS creatorDisplay",
+		't.sciname',
+		't.author',
+		't.rankid'
+	];
+
 	public static function setStorageDriver(StorageStrategy $storage_driver): void {
 		$this->storage_driver = $storage_driver::class;
 	}
@@ -1473,18 +1501,7 @@ class Media {
 	public static function getMedia(int $media_id, string $media_type = null): Array {
 		if(!$media_id) return [];
 		$parameters = [$media_id];
-		$select = [
-			'm.*',
-			// Usage is not consistent across codebase so both versions are included
-			'm.sortSequence',
-			'm.sortsequence',
-			"IFNULL(m.creator,CONCAT_WS(' ',u.firstname,u.lastname)) AS creatorDisplay",
-			't.sciname',
-			't.author',
-			't.rankid'
-		];
-
-		$sql ='SELECT ' . implode(', ', $select) .' FROM media m ' .
+		$sql ='SELECT ' . implode(', ', self::MEDIA_ITEM_SELECT_SCHEMA) .' FROM media m ' .
 		'LEFT JOIN taxa t ON t.tid = m.tid ' .
 		'LEFT JOIN users u on u.uid = m.creatorUid ' .
 		'WHERE mediaID = ?';
@@ -1512,15 +1529,7 @@ class Media {
 		if(!$tid) return [];
 		$parameters = [$tid];
 
-		$select = [
-			'm.*',
-			"IFNULL(m.creator,CONCAT_WS(' ',u.firstname,u.lastname)) AS creatorDisplay",
-			't.sciname',
-			't.author',
-			't.rankid'
-		];
-
-		$sql ='SELECT ' . implode(',', $select) . ' FROM media m '.
+		$sql ='SELECT ' . implode(',', self::MEDIA_ITEM_SELECT_SCHEMA) . ' FROM media m '.
 			'LEFT JOIN taxa t ON t.tid = m.tid ' .
 			'LEFT JOIN users u on u.uid = m.creatorUid ' .
 			'WHERE m.tid = ?';
@@ -1542,16 +1551,9 @@ class Media {
 	 */
 	public static function fetchOccurrenceMedia(int $occid, string $media_type = null): Array {
 		if(!$occid) return [];
-		$select = [
-			'm.*',
-			"IFNULL(m.creator,CONCAT_WS(' ',u.firstname,u.lastname)) AS creatorDisplay",
-			't.sciname',
-			't.author',
-			't.rankid'
-		];
 
 		$parameters = [$occid];
-		$sql = 'SELECT '. implode(',', $select).' FROM media m ' .
+		$sql = 'SELECT '. implode(',', self::MEDIA_ITEM_SELECT_SCHEMA).' FROM media m ' .
 			'LEFT JOIN taxa t ON t.tid = m.tid ' .
 			'LEFT JOIN users u on u.uid = m.creatorUid ' .
 			'WHERE m.occid = ?';
