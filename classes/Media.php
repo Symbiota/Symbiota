@@ -892,7 +892,7 @@ class Media {
 			"thumbnailUrl" => $clean_post_arr["thumbnailUrl"] ?? null,
 			// Will get popluated below
 			"originalUrl" => null,
-			"archiveUrl" => $clean_post_arr["archiverurl"] ?? null,// Only Occurrence import
+			"archiveUrl" => $clean_post_arr["archiveurl"] ?? null,// Only Occurrence import
 			// This is a very bad name that refers to source or downloaded url
 			"sourceUrl" => $clean_post_arr["sourceUrl"] ?? null,// TPImageEditorManager / Occurrence import
 			"referenceUrl" => $clean_post_arr["referenceurl"] ?? null,// check keys again might not be one,
