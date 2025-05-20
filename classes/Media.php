@@ -847,7 +847,7 @@ class Media {
 				$file = self::parse_map_only_file($clean_post_arr);
 			}
 
-			if(!$file['type'] && $isRemoteMedia) {
+			if((!self::isValidFile($file) || !$file['type']) && $isRemoteMedia) {
 				$file = self::getRemoteFileInfo($clean_post_arr['originalUrl']);
 			}
 		}
