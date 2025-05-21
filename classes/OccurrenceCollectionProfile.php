@@ -390,11 +390,7 @@ class OccurrenceCollectionProfile extends OmCollections{
 				$retArr['dynamicProperties'] = $row->dynamicProperties;
 				$mDate = "";
 				if($row->datelastmodified){
-					$mDate = $row->datelastmodified;
-					$month = substr($mDate,5,2);
-					$day = substr($mDate,8,2);
-					$year = substr($mDate,0,4);
-					$mDate = date("j F Y",mktime(0,0,0,$month,$day,$year));
+					$mDate = date("j F Y", strtotime($row->datelastmodified));
 				}
 				$retArr['datelastmodified'] = $mDate;
 			}
