@@ -81,8 +81,8 @@ $LANG['INST_CODE'] = 'Código de Institución (sobreescribir)';
 $LANG['LAB_PROJECT'] = 'Etiqueta de Proyecto';
 $LANG['LANGUAGE'] = 'Idioma';
 $LANG['LIFE_STAGE'] = 'Etapa de Vida';
-$LANG['LOC_SEC'] = 'Seguridad de Localidad';
-$LANG['LOC_SEC_REASON'] = 'Razón de Seguridad de Localidad';
+$LANG['SECURITY'] = 'Seguridad';
+$LANG['SECURITY_REASON'] = 'Razón de Seguridad';
 $LANG['LOC_REMARKS'] = 'Comentarios de Localidad';
 $LANG['MODIFIED_BY'] = 'Modificado Por';
 $LANG['NOTES_REMARKS'] = 'Notas (Comentarios de Occurrencia)';
@@ -135,4 +135,5 @@ $LANG['CLOSE_PAREN_FIELD'] = 'Cerrar campo entre paréntesis';
 $LANG['NEW_CUSTOM_FIELD'] = 'Agregar otro campo personalizado';
 $LANG['ORDER_BY'] = 'Ordenar por';
 $LANG['ADD_CUSTOM_FIELD'] = 'Agregar Nuevo Filtro de Búsqueda Personalizado';
+$LANG['SEARCH_MISSING_TRAITS'] = 'Buscar registros sin rasgos seleccionados';
 ?>

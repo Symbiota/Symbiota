@@ -5,14 +5,13 @@ require_once($SERVER_ROOT . '/vendor/autoload.php');
 use Jumbojett\OpenIDConnectClient;
 
 if($SYMB_UID){
-	if($_SESSION['refurl']){
+
+	if ($_SESSION['refurl'] ?? false){
 		header("Location:" . $_SESSION['refurl']);
 		unset($_SESSION['refurl']);
-	}
-	if ($_REQUEST['refurl']){
+	} else if($_REQUEST['refurl'] ?? false){
 		header("Location:" . $_REQUEST['refurl']);	
-	}
-	else{
+	} else{
 		header("Location:" . $CLIENT_ROOT . '/profile/viewprofile.php');
 	}
 }
@@ -160,7 +159,7 @@ if (array_key_exists('last_message', $_SESSION)){
 		}
 
 		function resetPassword(){
-			if(document.getElementById("login").value == ""){
+			if(document.getElementById("portal-login").value == ""){
 				<?php
 				$alertStr = 'Enter your login name in the Login field and leave the password blank';
 				if(isset($LANG['ENTER_LOGIN_NO_PWD'])) $alertStr = $LANG['ENTER_LOGIN_NO_PWD'];

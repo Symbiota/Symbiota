@@ -7,18 +7,19 @@ use App\Models\PortalIndex;
 use App\Models\PortalOccurrence;
 use App\Helpers\OccurrenceHelper;
 use App\Helpers\GeoThesaurusHelper;
+use App\Helpers\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
-class OccurrenceController extends Controller{
+class OccurrenceController extends Controller {
 
 	/**
 	 * Occurrence controller instance.
 	 *
 	 * @return void
 	 */
-	public function __construct(){
+	public function __construct() {
 	}
 
 	/**
@@ -85,7 +86,70 @@ class OccurrenceController extends Controller{
 	 *	 @OA\Parameter(
 	 *		 name="eventDate",
 	 *		 in="query",
-	 *		 description="Date as YYYY, YYYY-MM or YYYY-MM-DD",
+	 *		 description="Date as YYYY, YYYY-MM or YYYY-MM-DD that the occurrence was collected or observed, or earliest date if a range was provided",
+	 *		 required=false,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="eventDate2",
+	 *		 in="query",
+	 *		 description="Last date as YYYY, YYYY-MM or YYYY-MM-DD that the occurrence was collected or observed. Used when a date range is provided",
+	 *		 required=false,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="decimalLatitude",
+	 *		 in="query",
+	 *		 description="Latitude as a decimal",
+	 *		 required=false,
+	 *		 @OA\Schema(type="number")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="decimalLongitude",
+	 *		 in="query",
+	 *		 description="Longitude as a decimal",
+	 *		 required=false,
+	 *		 @OA\Schema(type="number")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="minimumElevationInMeters",
+	 *		 in="query",
+	 *		 description="Minimum elevation in meters to nearest integer",
+	 *		 required=false,
+	 *		 @OA\Schema(type="integer")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="maximumElevationInMeters",
+	 *		 in="query",
+	 *		 description="Maximum elevation in meters to nearest integer",
+	 *		 required=false,
+	 *		 @OA\Schema(type="integer")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="verbatimElevation",
+	 *		 in="query",
+	 *		 description="Elevation expressed as a string (e.g., '1000 ft')",
+	 *		 required=false,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="minimumDepthInMeters",
+	 *		 in="query",
+	 *		 description="Minimum depth in meters to nearest integer",
+	 *		 required=false,
+	 *		 @OA\Schema(type="integer")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="maximumDepthInMeters",
+	 *		 in="query",
+	 *		 description="Maximum depth in meters to nearest integer",
+	 *		 required=false,
+	 *		 @OA\Schema(type="integer")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="verbatimDepth",
+	 *		 in="query",
+	 *		 description="Depth expressed as a string (e.g., '200 ft')",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
@@ -142,50 +206,86 @@ class OccurrenceController extends Controller{
 	 *	 ),
 	 * )
 	 */
-	public function showAllOccurrences(Request $request){
+	public function showAllOccurrences(Request $request) {
 		$this->validate($request, [
 			'collid' => 'regex:/^[\d,]+?$/',
 			'limit' => ['integer', 'max:300'],
 			'offset' => 'integer'
 		]);
-		$limit = $request->input('limit',100);
-		$offset = $request->input('offset',0);
+		$limit = $request->input('limit', 100);
+		$offset = $request->input('offset', 0);
 
-		$occurrenceModel = Occurrence::query();
+		$occurrenceModel = DB::table('omoccurrences as o')
+			->select('o.*', 't.author', 't.sciName as trueSciName')
+			->leftJoin('taxa as t', 'o.tidInterpreted', '=', 't.tid');
+		$occurrenceModel->where('o.recordSecurity', '=', 0);
 		if($request->has('collid')){
-			$occurrenceModel->whereIn('collid', explode(',', $request->collid));
+			$occurrenceModel->whereIn('o.collid', explode(',', $request->collid));
 		}
-		if($request->has('catalogNumber')){
-			$occurrenceModel->where('catalogNumber', $request->catalogNumber);
+		if ($request->has('catalogNumber')) {
+			$occurrenceModel->where('o.catalogNumber', $request->catalogNumber);
 		}
-		if($request->has('occurrenceID')){
-			//$occurrenceModel->where('occurrenceID', $request->occurrenceID);
+		if ($request->has('occurrenceID')) {
 			$occurrenceID = $request->occurrenceID;
-			$occurrenceModel->where(function ($query) use ($occurrenceID) {$query->where('occurrenceID', $occurrenceID)->orWhere('recordID', $occurrenceID);});
-
+			$occurrenceModel->where(function ($query) use ($occurrenceID) {
+				$query->where('o.occurrenceID', $occurrenceID)
+					->orWhere('o.recordID', $occurrenceID);
+			});
 		}
 		//Taxonomy
-		if($request->has('family')){
-			$occurrenceModel->where('family', $request->family);
+		if ($request->has('family')) {
+			$occurrenceModel->where('o.family', $request->family);
 		}
-		if($request->has('sciname')){
-			$occurrenceModel->where('sciname', $request->sciname);
+		if ($request->has('sciname')) {
+			$occurrenceModel->where('o.sciname', $request->sciname)
+				->orWhere('t.sciName', $request->sciname);
 		}
 		//Collector units
-		if($request->has('recordedBy')){
-			$occurrenceModel->where('recordedBy', $request->recordedBy);
+		if ($request->has('recordedBy')) {
+			// $occurrenceModel->where('o.recordedBy', $request->recordedBy);
+			// $occurrenceModel->whereRaw("MATCH(o.recordedBy) AGAINST (? IN BOOLEAN MODE)", [Helper::readyPhraseForBooleanModeFulltextSearch($request->recordedBy)]);
+			$occurrenceModel->whereRaw("MATCH(o.recordedBy) AGAINST (? IN NATURAL LANGUAGE MODE)", [$request->recordedBy]);
 		}
-		if($request->has('recordedByLastName')){
-			$occurrenceModel->where('recordedBy', 'LIKE', '%' . $request->recordedByLastName . '%');
+		if ($request->has('recordedByLastName')) {
+			// $occurrenceModel->where('o.recordedBy', 'LIKE', '%' . $request->recordedByLastName . '%');
+			// $occurrenceModel->whereRaw("MATCH(o.recordedBy) AGAINST (? IN BOOLEAN MODE)", [Helper::readyPhraseForBooleanModeFulltextSearch($request->recordedByLastName)]);
+			$occurrenceModel->whereRaw("MATCH(o.recordedBy) AGAINST (? IN NATURAL LANGUAGE MODE)", [$request->recordedByLastName]);
 		}
-		if($request->has('recordNumber')){
-			$occurrenceModel->where('recordNumber', $request->recordNumber);
+		if ($request->has('recordNumber')) {
+			$occurrenceModel->where('o.recordNumber', $request->recordNumber);
 		}
-		if($request->has('eventDate')){
-			$occurrenceModel->where('eventDate', $request->eventDate);
+		if ($request->has('eventDate')) {
+			$occurrenceModel->where('o.eventDate', $request->eventDate);
 		}
-		if($request->has('datasetID')){
-			$occurrenceModel->where('datasetID', $request->datasetID);
+		if ($request->has('eventDate2')) {
+			$occurrenceModel->where('o.eventDate2', $request->eventDate2);
+		}
+		if ($request->has('decimalLatitude')) {
+			$occurrenceModel->where('o.decimalLatitude', $request->decimalLatitude);
+		}
+		if ($request->has('decimalLongitude')) {
+			$occurrenceModel->where('o.decimalLongitude', $request->decimalLongitude);
+		}
+		if ($request->has('minimumElevationInMeters')) {
+			$occurrenceModel->where('o.minimumElevationInMeters', $request->minimumElevationInMeters);
+		}
+		if ($request->has('maximumElevationInMeters')) {
+			$occurrenceModel->where('o.maximumElevationInMeters', $request->maximumElevationInMeters);
+		}
+		if ($request->has('verbatimElevation')) {
+			$occurrenceModel->where('o.verbatimElevation', $request->verbatimElevation);
+		}
+		if ($request->has('minimumDepthInMeters')) {
+			$occurrenceModel->where('o.minimumDepthInMeters', $request->minimumDepthInMeters);
+		}
+		if ($request->has('maximumDepthInMeters')) {
+			$occurrenceModel->where('o.maximumDepthInMeters', $request->maximumDepthInMeters);
+		}
+		if ($request->has('verbatimDepth')) {
+			$occurrenceModel->where('o.verbatimDepth', $request->verbatimDepth);
+		}
+		if ($request->has('datasetID')) {
+			$occurrenceModel->where('o.datasetID', $request->datasetID);
 		}
 		//Locality place names
 		if($request->has('country')){
@@ -265,7 +365,7 @@ class OccurrenceController extends Controller{
 	 *	 ),
 	 * )
 	 */
-	public function showOneOccurrence($id, Request $request){
+	public function showOneOccurrence($id, Request $request) {
 		$this->validate($request, [
 			'includeMedia' => 'integer',
 			'includeIdentifications' => 'integer'
@@ -274,10 +374,10 @@ class OccurrenceController extends Controller{
 		if (!$occurrence) {
 			return response()->json(['error' => 'Occurrence not found'], 404);
 		}
-		if($occurrence){
-			if(!$occurrence->occurrenceID) $occurrence->occurrenceID = $occurrence->recordID;
-			if($request->input('includeMedia')) $occurrence->media;
-			if($request->input('includeIdentifications')) $occurrence->identification;
+		if ($occurrence) {
+			if (!$occurrence->occurrenceID) $occurrence->occurrenceID = $occurrence->recordID;
+			if ($request->input('includeMedia')) $occurrence->media;
+			if ($request->input('includeIdentifications')) $occurrence->identification;
 		}
 		return response()->json($occurrence);
 	}
@@ -306,11 +406,15 @@ class OccurrenceController extends Controller{
 	 *	 ),
 	 * )
 	 */
-	public function showOneOccurrenceIdentifications($id, Request $request){
-		$occurrence = $this->getOccurrence($id);
+	public function showOneOccurrenceIdentifications($id, Request $request) {
+		$occurrence = Occurrence::find($id);
+		if (!$occurrence) {
+			return response()->json(['error' => 'Occurrence not found'], 404);
+		}
 		$identification = null;
-		if($occurrence){
-			$identification = $occurrence->identification;
+		$identification = $occurrence->identification;
+		if (!$identification) {
+			return response()->json(['error' => 'Occurrence found, but no identification found'], 404);
 		}
 		return response()->json($identification);
 	}
@@ -338,14 +442,14 @@ class OccurrenceController extends Controller{
 	 *	 ),
 	 * )
 	 */
-	public function showOneOccurrenceMedia($id, Request $request){
-		$occurrence = $this->getOccurrence($id);
+	public function showOneOccurrenceMedia($id, Request $request) {
+		$occurrence = Occurrence::find($id);
 		if (!$occurrence) {
 			return response()->json(['error' => 'Occurrence not found'], 404);
 		}
 		$media = null;
-		if($occurrence){
-			$media = $occurrence->media;
+		if ($occurrence) {
+			$media=$occurrence->media;
 		}
 		if (!$media) {
 			return response()->json(['error' => 'Occurrence found, but no media found'], 404);
@@ -354,14 +458,14 @@ class OccurrenceController extends Controller{
 	}
 
 	//Write funcitons
-	public function insert(Request $request){
-		if($user = $this->authenticate($request)){
+	public function insert(Request $request) {
+		if ($user = $this->authenticate($request)) {
 			$this->validate($request, [
 				'collid' => 'required|integer'
 			]);
 			$collid = $request->input('collid');
 			//Check to see if user has the necessary permission edit/add occurrences for target collection
-			if(!$this->isAuthorized($user, $collid)){
+			if (!$this->isAuthorized($user, $collid)) {
 				return response()->json(['error' => 'Unauthorized to add new records to target collection (collid = ' . $collid . ')'], 401);
 			}
 			$inputArr = $request->all();
@@ -374,31 +478,31 @@ class OccurrenceController extends Controller{
 		return response()->json(['error' => 'Unauthorized'], 401);
 	}
 
-	public function update($id, Request $request){
-		if($user = $this->authenticate($request)){
-			$occurrence = $this->getOccurrence($id);
-			if(!$occurrence){
+	public function update($id, Request $request) {
+		if ($user = $this->authenticate($request)) {
+			$occurrence = Occurrence::find($id);
+			if (!$occurrence) {
 				return response()->json(['status' => 'failure', 'error' => 'Occurrence resource not found'], 400);
 			}
-			if(!$this->isAuthorized($user, $occurrence['collid'])){
+			if (!$this->isAuthorized($user, $occurrence['collid'])) {
 				return response()->json(['error' => 'Unauthorized to edit target collection (collid = ' . $occurrence['collid'] . ')'], 401);
 			}
-			//$occurrence->update($request->all());
-			//return response()->json($occurrence, 200);
+			$occurrence->update($request->all());
+			return response()->json($occurrence, 200);
 		}
 		return response()->json(['error' => 'Unauthorized'], 401);
 	}
 
-	public function delete($id, Request $request){
-		if($user = $this->authenticate($request)){
-			$occurrence = $this->getOccurrence($id);
-			if(!$occurrence){
+	public function delete($id, Request $request) {
+		if ($user = $this->authenticate($request)) {
+			$occurrence = Occurrence::find($id);
+			if (!$occurrence) {
 				return response()->json(['status' => 'failure', 'error' => 'Occurrence resource not found'], 400);
 			}
-			if(!$this->isAuthorized($user, $occurrence['collid'])){
+			if (!$this->isAuthorized($user, $occurrence['collid'])) {
 				return response()->json(['error' => 'Unauthorized to delete target collection (collid = ' . $occurrence['collid'] . ')'], 401);
 			}
-			//$occurrence->delete();
+			//$occurrence->delete(); // @TODO why is this disabled?
 			//return response('Occurrence Deleted Successfully', 200);
 		}
 		return response()->json(['error' => 'Unauthorized'], 401);
@@ -545,80 +649,76 @@ class OccurrenceController extends Controller{
 	 *	 ),
 	 * )
 	 */
-	public function skeletalImport(Request $request){
+	public function skeletalImport(Request $request) {
 		$this->validate($request, [
 			'collid' => 'required|integer',
 			'eventDate' => 'date',
 			'eventDate2' => 'date',
 			'identifierTarget' => 'in:CATALOGNUMBER,IDENTIFIERS,GUID,OCCID,NONE',
 		]);
-		if($user = $this->authenticate($request)){
+		if ($user = $this->authenticate($request)) {
 			$collid = $request->input('collid');
 			$identifier = $request->input('identifier');
 			$identifierTarget = $request->input('identifierTarget', 'CATALOGNUMBER');
 
 			//Check to see if user has the necessary permission edit/add occurrences for target collection
-			if(!$this->isAuthorized($user, $collid)){
+			if (!$this->isAuthorized($user, $collid)) {
 				return response()->json(['error' => 'Unauthorized to edit target collection (collid = ' . $collid . ')'], 401);
 			}
 
 			//Remove fields with empty values and non-approved target fields
 			$updateArr = $request->all();
 			$skeletalFieldsAllowed = array('catalogNumber', 'otherCatalogNumbers', 'sciname', 'scientificNameAuthorship', 'family', 'recordedBy', 'recordNumber', 'eventDate', 'eventDate2', 'country', 'stateProvince', 'county', 'processingStatus');
-			foreach($updateArr as $fieldName => $fieldValue){
-				if(!$fieldValue) unset($updateArr[$fieldName]);
-				elseif(!in_array($fieldName, $skeletalFieldsAllowed)) unset($updateArr[$fieldName]);
+			foreach ($updateArr as $fieldName => $fieldValue) {
+				if (!$fieldValue) unset($updateArr[$fieldName]);
+				elseif (!in_array($fieldName, $skeletalFieldsAllowed)) unset($updateArr[$fieldName]);
 			}
-			if(!$updateArr){
+			if (!$updateArr) {
 				return response()->json(['error' => 'Bad request: input data empty or does not contains allowed fields'], 400);
 			}
 
 			//Get target record, if exists
 			$targetOccurrence = null;
-			if($identifier){
+			if ($identifier) {
 				$occurrenceModel = null;
-				if($identifierTarget == 'OCCID'){
+				if ($identifierTarget == 'OCCID') {
 					$occurrenceModel = Occurrence::where('occid', $identifier);
-				}
-				elseif($identifierTarget == 'GUID'){
+				} elseif ($identifierTarget == 'GUID') {
 					$occurrenceModel = Occurrence::where('occurrenceID', $identifier)->orWhere('recordID', $identifier);
-				}
-				elseif($identifierTarget == 'CATALOGNUMBER'){
+				} elseif ($identifierTarget == 'CATALOGNUMBER') {
 					$occurrenceModel = Occurrence::where('catalogNumber', $identifier);
-				}
-				elseif($identifierTarget == 'IDENTIFIERS'){
+				} elseif ($identifierTarget == 'IDENTIFIERS') {
 					$occurrenceModel = Occurrence::where('otherCatalogNumbers', $identifier);
 				}
-				if($occurrenceModel){
+				if ($occurrenceModel) {
 					$targetOccurrence = $occurrenceModel->where('collid', $collid)->first();
 				}
 			}
-			if($targetOccurrence){
-				foreach($updateArr as $fieldName => $fieldValue){
+			if ($targetOccurrence) {
+				foreach ($updateArr as $fieldName => $fieldValue) {
 					//Remove input if target field already contains data
-					if($targetOccurrence[$fieldName]){
+					if ($targetOccurrence[$fieldName]) {
 						unset($updateArr[$fieldName]);
 					}
 				}
-				if(!empty($updateArr['eventDate'])){
+				if (!empty($updateArr['eventDate'])) {
 					$updateArr['eventDate'] = OccurrenceHelper::formatDate($updateArr['eventDate']);
 				}
-				if(!empty($updateArr['eventDate2'])){
+				if (!empty($updateArr['eventDate2'])) {
 					$updateArr['eventDate2'] = OccurrenceHelper::formatDate($updateArr['eventDate2']);
 				}
 				$responseObj = ['number of fields affected' => count($updateArr), 'fields affected' => $updateArr];
-				if($updateArr){
+				if ($updateArr) {
 					$targetOccurrence->update($updateArr);
 				}
 				return response()->json($responseObj, 200);
-			}
-			else{
+			} else {
 				//Record doesn't exist, thus create a new skeletal records, given that a catalog number exists
 				$updateArr['collid'] = $collid;
-				if(empty($updateArr['catalogNumber']) && empty($updateArr['otherCatalogNumbers'])){
+				if (empty($updateArr['catalogNumber']) && empty($updateArr['otherCatalogNumbers'])) {
 					return response()->json(['error' => 'Bad request: catalogNumber or otherCatalogNumbers required when creating a new record'], 400);
 				}
-				if(empty($updateArr['processingStatus'])) $updateArr['processingStatus'] = 'unprocessed';
+				if (empty($updateArr['processingStatus'])) $updateArr['processingStatus'] = 'unprocessed';
 				$updateArr['recordID'] = (string) Str::uuid();
 				$updateArr['dateEntered'] = date('Y-m-d H:i:s');
 				$newOccurrence = Occurrence::create($updateArr);
@@ -655,58 +755,73 @@ class OccurrenceController extends Controller{
 	 *	 ),
 	 * )
 	 */
-	public function oneOccurrenceReharvest($id, Request $request){
+	public function oneOccurrenceReharvest($id, Request $request) {
 		$responseArr = array();
 		$host = '';
-		if(!empty($GLOBALS['SERVER_HOST'])) $host = $GLOBALS['SERVER_HOST'];
+		if (!empty($GLOBALS['SERVER_HOST'])) $host = $GLOBALS['SERVER_HOST'];
 		else $host = $_SERVER['SERVER_NAME'];
-		if($host && $request->getHttpHost() != $host){
+		if ($host && $request->getHttpHost() != $host) {
 			$responseArr['status'] = 400;
 			$responseArr['error'] = 'At this time, API call can only be triggered locally';
 			return response()->json($responseArr);
 		}
-		$occurrence = $this->getOccurrence($id);
-		if(!$occurrence){
+		$occid = $this->getOccid($id);
+		$occurrence = Occurrence::find($occid);
+		if (!$occurrence) {
 			$responseArr['status'] = 500;
-			$responseArr['error'] = 'Unable to locate occurrence record (occid = '.$id.')';
+			$responseArr['error'] = 'Unable to locate occurrence record (occid = '.$occid.')';
 			return response()->json($responseArr);
 		}
-		if($occurrence->collection->managementType == 'Live Data'){
+		if ($occurrence->collection->managementType == 'Live Data') {
 			$responseArr['status'] = 400;
 			$responseArr['error'] = 'Updating a Live Managed record is not allowed ';
 			return response()->json($responseArr);
 		}
 		$publications = $occurrence->portalPublications;
-		foreach($publications as $pub){
-			if($pub->direction == 'import'){
+		foreach ($publications as $pub) {
+			if ($pub->direction == 'import') {
 				$sourcePortalID = $pub->portalID;
 				$remoteOccid = $pub->pivot->remoteOccid;
-				if($sourcePortalID && $remoteOccid){
+				if ($sourcePortalID && $remoteOccid) {
 					//Get remote occurrence data
 					$urlRoot = PortalIndex::where('portalID', $sourcePortalID)->value('urlRoot');
 					$url = $urlRoot.'/api/v2/occurrence/'.$remoteOccid;
 					if($remoteOccurrence = $this->getAPIResponce($url)){
-						unset($remoteOccurrence['modified']);
-						if(!$remoteOccurrence['occurrenceRemarks']) unset($remoteOccurrence['occurrenceRemarks']);
-						unset($remoteOccurrence['dynamicProperties']);
-						$updateObj = $this->update($id, new Request($remoteOccurrence));
-						$ts = date('Y-m-d H:i:s');
-						$changeArr = $updateObj->getOriginalContent()->getChanges();
-						$responseArr['status'] = $updateObj->status();
-						$responseArr['dataStatus'] = ($changeArr?count($changeArr).' fields modified':'nothing modified');
-						$responseArr['fieldsModified'] = $changeArr;
-						$responseArr['sourceDateLastModified'] = $remoteOccurrence['dateLastModified'];
-						$responseArr['dateLastModified'] = $ts;
-						$responseArr['sourceCollectionUrl'] = $urlRoot.'/collections/misc/collprofiles.php?collid='.$remoteOccurrence['collid'];
-						$responseArr['sourceRecordUrl'] = $urlRoot.'/collections/individual/index.php?occid='.$remoteOccid;
-						//Reset Portal Occurrence refreshDate
-						$portalOccur = PortalOccurrence::where('occid', $id)->where('pubid', $pub->pubid)->first();
-						$portalOccur->refreshTimestamp = $ts;
-						$portalOccur->save();
+						$remoteOccurrence['occid'] = $occid;
+						$remoteCollid = $remoteOccurrence['collid'];
+						$sourceDateLastModified = $remoteOccurrence['dateLastModified'];
+						$clearFieldArr = array(
+							'collid', 'dbpk', 'otherCatalogNumbers', 'tidInterpreted', 'dynamicProperties', 'processingStatus', 'recordID',
+							'modified', 'dateEntered' ,'dateLastModified', 'genus', 'specificEpithet', 'institutionCode', 'collectionCode',
+							'scientificNameAuthorship', 'identifiedBy', 'dateIdentified', 'verbatimEventDate', 'countryCode', 'localitySecurity'
+						);
+						foreach($clearFieldArr as $field){
+							unset($remoteOccurrence[$field]);
+						}
+						//Update local occurrence record with remote data
+						if($occurrence->update($remoteOccurrence)){
+							//print_r($occurrence); exit;
+							$ts = date('Y-m-d H:i:s');
+							$changeArr = $occurrence->getChanges();
+							$responseArr['status'] = 200;
+							$responseArr['numberFieldChanged'] = count($changeArr);
+							if($changeArr) $responseArr['fieldsModified'] = $changeArr;
+							$responseArr['sourceDateLastModified'] = $sourceDateLastModified;
+							$responseArr['dateLastModified'] = $ts;
+							$responseArr['sourceCollectionUrl'] = $urlRoot . '/collections/misc/collprofiles.php?collid=' . $remoteCollid;
+							$responseArr['sourceRecordUrl'] = $urlRoot . '/collections/individual/index.php?occid=' . $remoteOccid;
+							//Reset Portal Occurrence refreshDate
+							$portalOccur = PortalOccurrence::where('occid', $occid)->where('pubid', $pub->pubid)->first();
+							$portalOccur->refreshTimestamp = $ts;
+							$portalOccur->save();
+						}
+						else{
+							return response()->json(['error' => 'Unspecified Error'], 501);
+						}
 					}
 					else {
 						$responseArr['status'] = 400;
-						$responseArr['error'] = 'Unable to locate remote/source occurrence (sourceID = '.$id.')';
+						$responseArr['error'] = 'Unable to locate remote/source occurrence (sourceID = '.$occid.')';
 						$responseArr['sourceUrl'] = $url;
 					}
 				}
@@ -716,16 +831,24 @@ class OccurrenceController extends Controller{
 	}
 
 	//Helper functions
-	private function isAuthorized($user, $collid){
-		foreach($user['roles'] as $roles){
-			if($roles['role'] == 'SuperAdmin') return true;
-			elseif($roles['role'] == 'CollAdmin' && $roles['tablePK'] == $collid) return true;
-			elseif($roles['role'] == 'CollEditor' && $roles['tablePK'] == $collid) return true;
+	protected function getOccid($id){
+		if(!is_numeric($id)){
+			$occid = Occurrence::where('occurrenceID', $id)->orWhere('recordID', $id)->value('occid');
+			if(is_numeric($occid)) $id = $occid;
+		}
+		return $id;
+	}
+
+	private function isAuthorized($user, $collid) {
+		foreach ($user['roles'] as $roles) {
+			if ($roles['role'] == 'SuperAdmin') return true;
+			elseif ($roles['role'] == 'CollAdmin' && $roles['tablePK'] == $collid) return true;
+			elseif ($roles['role'] == 'CollEditor' && $roles['tablePK'] == $collid) return true;
 		}
 		return false;
 	}
 
-	protected function getAPIResponce($url, $asyc = false){
+	protected function getAPIResponce($url, $asyc = false) {
 		$resJson = false;
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -733,24 +856,30 @@ class OccurrenceController extends Controller{
 		//curl_setopt($ch, CURLOPT_HTTPGET, true);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-		if($asyc) curl_setopt($ch, CURLOPT_TIMEOUT_MS, 500);
+		if ($asyc) curl_setopt($ch, CURLOPT_TIMEOUT_MS, 500);
 		$resJson = curl_exec($ch);
-		if(!$resJson){
-			$this->errorMessage = 'FATAL CURL ERROR: '.curl_error($ch).' (#'.curl_errno($ch).')';
+		if (!$resJson) {
+			$this->errorMessage = 'FATAL CURL ERROR: ' . curl_error($ch) . ' (#' . curl_errno($ch) . ')';
 			return false;
 			//$header = curl_getinfo($ch);
 		}
 		curl_close($ch);
-		return json_decode($resJson,true);
+		return json_decode($resJson, true);
 	}
 
-	private function getOccurrence($id){
+	private function getOccurrence($id) {
 		$decodedId = urldecode($id);
 		$occurrence = null;
-		if(is_numeric($decodedId)){
-			$occurrence = Occurrence::find($decodedId);
-		} else{
-			$occurrence = Occurrence::where('recordID', (string)$decodedId)
+		if (is_numeric($decodedId)) {
+			$occurrence = DB::table('omoccurrences as o')
+				->select('o.*', 't.author', 't.sciName as trueSciName')
+				->leftJoin('taxa as t', 'o.tidInterpreted', '=', 't.tid')
+				->where('occid', $decodedId)
+				->first();
+		} else {
+			$occurrence = DB::table('omoccurrences as o')->select('o.*', 't.author', 't.sciName as trueSciName')
+				->leftJoin('taxa as t', 'o.tidInterpreted', '=', 't.tid')
+				->where('recordID', (string)$decodedId)
 				->orWhere('occurrenceID', (string)$decodedId)
 				->first();
 		}

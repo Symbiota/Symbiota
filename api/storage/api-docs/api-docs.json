@@ -73,6 +73,145 @@
                         "description": "Error: Bad request. "
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "Collections"
+                ],
+                "description": "Create a new biocollection entity",
+                "operationId": "createCollection",
+                "parameters": [
+                    {
+                        "name": "apiToken",
+                        "in": "query",
+                        "description": "API security token to authenticate post action",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Collection data to be inserted",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "institutionCode",
+                                    "collectionName",
+                                    "collType",
+                                    "managementType",
+                                    "publicEdits"
+                                ],
+                                "properties": {
+                                    "institutionCode": {
+                                        "description": "The name (or acronym) in use by the institution having custody of the occurrence records",
+                                        "type": "string",
+                                        "maxLength": 45
+                                    },
+                                    "collectionCode": {
+                                        "description": "The name, acronym, or code identifying the collection or data set from which the record was derived",
+                                        "type": "string",
+                                        "maxLength": 45
+                                    },
+                                    "collectionName": {
+                                        "description": "What you want the collection to be called",
+                                        "type": "string",
+                                        "maxLength": 150
+                                    },
+                                    "collectionID": {
+                                        "description": "Global Unique Identifier for this collection (see dwc:collectionID): If your collection already has a previously assigned GUID, that identifier should be represented here. For physical specimens, the recommended best practice is to use an identifier from a collections registry such as the Global Registry of Biodiversity Repositories",
+                                        "type": "string",
+                                        "maxLength": 45
+                                    },
+                                    "fullDescription": {
+                                        "description": "Description of the collection in <2000 characters",
+                                        "type": "string",
+                                        "maxLength": 2000
+                                    },
+                                    "individualUrl": {
+                                        "description": "A dynamic link back to the source record if available",
+                                        "type": "string",
+                                        "maxLength": 500
+                                    },
+                                    "latitudeDecimal": {
+                                        "description": "Latitude as a decimal",
+                                        "type": "number",
+                                        "maxLength": 15
+                                    },
+                                    "longitudeDecimal": {
+                                        "description": "Longitude as a decimal",
+                                        "type": "number",
+                                        "maxLength": 15
+                                    },
+                                    "collType": {
+                                        "description": "'Preserved Specimens', 'General Observations', or 'Observations'. Preserved Specimens signify a collection type that contains physical samples that are available for inspection by researchers and taxonomic experts. Use Observations when the record is not based on a physical specimen. Personal Observation Management is a dataset where registered users can independently manage their own subset of records. Records entered into this dataset are explicitly linked to the user’s profile and can only be edited by them. This type of collection is typically used by field researchers to manage their collection data and print labels prior to depositing the physical material within a collection. Even though personal collections are represented by a physical sample, they are classified as “observations” until the physical material is publicly available within a collection",
+                                        "type": "string",
+                                        "maxLength": 45,
+                                        "enum": [
+                                            "Preserved Specimens",
+                                            "General Observations",
+                                            "Observations"
+                                        ]
+                                    },
+                                    "managementType": {
+                                        "description": "Use 'Snapshot' when there is a separate in-house database maintained in the collection and the dataset within the Symbiota portal is only a periodically updated snapshot of the central database. A 'Live Data' dataset is when the data is managed directly within the portal and the central database is the portal data",
+                                        "type": "string",
+                                        "maxLength": 45,
+                                        "enum": [
+                                            "Snapshot",
+                                            "Live Data"
+                                        ]
+                                    },
+                                    "publicEdits": {
+                                        "description": "The option to enable public edits (1 for yes, 0 for no)",
+                                        "type": "integer",
+                                        "maxLength": 1,
+                                        "enum": [
+                                            0,
+                                            1
+                                        ]
+                                    },
+                                    "rightsHolder": {
+                                        "description": "The organization or person managing or owning the rights of the resource. For more details, see Darwin Core definition",
+                                        "type": "string",
+                                        "maxLength": 250
+                                    },
+                                    "rights": {
+                                        "description": "Information or a URL link to page with details explaining how one can use the data. See Darwin Core definition",
+                                        "type": "string",
+                                        "maxLength": 250
+                                    },
+                                    "accessRights": {
+                                        "description": "Information or a URL link to page with details explaining how one can use the data. See Darwin Core definition",
+                                        "type": "string",
+                                        "maxLength": 1000
+                                    },
+                                    "sortSeq": {
+                                        "description": "Leave this field empty if you want the collections to sort alphabetically (default)",
+                                        "type": "string",
+                                        "maxLength": 10
+                                    },
+                                    "icon": {
+                                        "description": "URL of an image icon representing the collection. The URL path can be absolute or relative. The use of icons are optional",
+                                        "type": "string",
+                                        "maxLength": 250
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Returns full JSON object of the of collection that was created"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
             }
         },
         "/api/v2/collection/{identifier}": {
@@ -1245,7 +1384,7 @@
                     {
                         "name": "type",
                         "in": "query",
-                        "description": "Annoration type (internal, external) ",
+                        "description": "Annotation type (internal, external) ",
                         "required": true,
                         "schema": {
                             "type": "string",
@@ -1259,7 +1398,7 @@
                     {
                         "name": "source",
                         "in": "query",
-                        "description": "External source of Annoration (e.g. geolocate) ",
+                        "description": "External source of Annotation (e.g. geolocate) ",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -1324,6 +1463,56 @@
                     },
                     "400": {
                         "description": "Error: Bad request. "
+                    }
+                }
+            }
+        },
+        "/api/v2/occurrence/{identifier}/annotation": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "summary": "Edits made to target occurrence",
+                "operationId": "/api/v2/occurrence/{identifier}/annotation",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "occid or specimen GUID (occurrenceID) or recordID associated with target occurrence",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Annotation type (internal, external) ",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "internal",
+                            "enum": [
+                                "internal",
+                                "external"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns list of occurrence edits",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. "
+                    },
+                    "404": {
+                        "description": "Record not found"
                     }
                 }
             }
@@ -1410,7 +1599,88 @@
                     {
                         "name": "eventDate",
                         "in": "query",
-                        "description": "Date as YYYY, YYYY-MM or YYYY-MM-DD",
+                        "description": "Date as YYYY, YYYY-MM or YYYY-MM-DD that the occurrence was collected or observed, or earliest date if a range was provided",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "eventDate2",
+                        "in": "query",
+                        "description": "Last date as YYYY, YYYY-MM or YYYY-MM-DD that the occurrence was collected or observed. Used when a date range is provided",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "decimalLatitude",
+                        "in": "query",
+                        "description": "Latitude as a decimal",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "decimalLongitude",
+                        "in": "query",
+                        "description": "Longitude as a decimal",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "minimumElevationInMeters",
+                        "in": "query",
+                        "description": "Minimum elevation in meters to nearest integer",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "maximumElevationInMeters",
+                        "in": "query",
+                        "description": "Maximum elevation in meters to nearest integer",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "verbatimElevation",
+                        "in": "query",
+                        "description": "Elevation expressed as a string (e.g., '1000 ft')",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "minimumDepthInMeters",
+                        "in": "query",
+                        "description": "Minimum depth in meters to nearest integer",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "maximumDepthInMeters",
+                        "in": "query",
+                        "description": "Maximum depth in meters to nearest integer",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "verbatimDepth",
+                        "in": "query",
+                        "description": "Depth expressed as a string (e.g., '200 ft')",
                         "required": false,
                         "schema": {
                             "type": "string"
