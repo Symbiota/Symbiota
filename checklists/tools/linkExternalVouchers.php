@@ -1,7 +1,14 @@
 <?php
 include_once('../../config/symbini.php');
-?>
+include_once($SERVER_ROOT . '/classes/ChecklistVoucherAdmin.php');
 
+
+$clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+
+$voucherManager = new ChecklistVoucherAdmin();
+$voucherManager->setClid($clid);
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -14,37 +21,29 @@ include_once('../../config/symbini.php');
 			const params = new URL(window.location.href).searchParams;
 
 			async function runWithLoading(asyncCallback) {
-				const external_vouchers = document.getElementById('external_vouchers')
+				const external_vouchers_container = document.getElementById('external_vouchers_container')
 				const voucher_loader = document.getElementById('voucher_loader')
 				const voucher_error = document.getElementById('voucher_error')
 				const voucher_submit_button = document.getElementById('voucher_submit_button')
 
-				external_vouchers.style.display = 'none';
+				external_vouchers_container.style.display = 'none';
 				voucher_error.style.display = 'none';
 				voucher_error.textContent =	"";
 				voucher_loader.style.display = 'block';
-				voucher_submit_button.disabled="true";
+				if(voucher_submit_button) voucher_submit_button.disabled="true";
 
 				try {
 					await asyncCallback();
 
 					voucher_loader.style.display = 'none';
-					external_vouchers.style.display = '';
+					external_vouchers_container.style.display = '';
 				} catch(e) {
 					voucher_loader.style.display = 'none';
 					voucher_error.style.display = '';
 					voucher_error.textContent = e;	
 				} finally {
-					voucher_submit_button.disabled = null;
+					if(voucher_submit_button) voucher_submit_button.disabled = null;
 				}
-			}
-
-			function endLoading() {
-				const external_vouchers = document.getElementById('external_vouchers')
-				const voucher_loader = document.getElementById('voucher_loader')
-
-				voucher_loader.style.display = 'none';
-				external_vouchers.style.display = '';
 			}
 
 			async function fetchObservations(taxon_name, external_id, page=1) {
@@ -66,6 +65,8 @@ include_once('../../config/symbini.php');
 					voucher_clone.querySelector('.coordinates').textContent = voucher.location;
 					voucher_clone.querySelector('.voucher_container').id = voucher.id;
 					voucher_clone.querySelector('.link_checkbox').value = voucher.id;
+
+					voucher_clone.querySelector('.external_source').href= voucher.uri;
 					//voucher_clone.querySelector('.voucher_link_button').onclick = () => console.log('link ' + voucher.id);
 
 					if(voucher.photos && voucher.photos.length) {
@@ -81,9 +82,14 @@ include_once('../../config/symbini.php');
 
 			function initExternalVouchers() {
 				const taxon_name = params.get('taxon_name');
+				const checklist_id = params.get('clid');
 				const external_id = params.get('external_id');
 
-				runWithLoading(async () => await fetchObservations(taxon_name, external_id) );
+				runWithLoading(async () => {
+					if(!checklist_id) throw Error('A checklist id is required for this tool to function');
+
+					await fetchObservations(taxon_name, external_id) 
+				});
 			}
 
 			function external_vouchers_sumbit(e) {
@@ -100,51 +106,59 @@ include_once('../../config/symbini.php');
 	</head>
 	<body onload="initExternalVouchers()">	
 		<div id="innertext" style="height:100vh; position:relative">
-		<template id="external_voucher_template_old">
-			<div class="voucher_container" style="display:flex; gap: 1rem; align-items:center">
-				<div>
-					<img class="display_img"  height="75px" width="75px"/>
-				</div>
-				<div>
-					<h3 class="taxon_name" style="margin: 0"></h3>
-					<div class="coordinates"></div>
-					<div class="locality"></div>
-				</div>
-
-				<div style="flex-grow: 1; display:flex; justify-content:end">
+			<template id="external_voucher_template_old">
+				<div class="voucher_container" style="display:flex; gap: 1rem; align-items:center">
 					<div>
-						<button class="button voucher_link_button">Link Voucher</button>
+						<img class="display_img"  height="75px" width="75px"/>
+					</div>
+					<div>
+						<h3 class="taxon_name" style="margin: 0"></h3>
+						<div class="coordinates"></div>
+						<div class="locality"></div>
+					</div>
+
+					<div style="flex-grow: 1; display:flex; justify-content:end">
+						<div>
+							<button class="button voucher_link_button">Link Voucher</button>
+						</div>
 					</div>
 				</div>
+			</template>
+
+			<template id="external_voucher_template">
+				<tr class="voucher_container">
+					<td>
+						<input class="link_checkbox" type="checkbox" name="link" value=""/>
+					</td>
+					<td class="taxon_name"></td>
+					<td class="coordinates"></td>
+					<td class="locality"></td>
+					<td><a class="external_source" href="" target="_blank">Source Link</a></td>
+				</tr>
+			</template>
+
+			<div id="external_vouchers_container">
+			<?php if(!empty($clid)): ?>
+				<form id="external_voucher_form" onsubmit="external_vouchers_sumbit(event)">
+					<h1>External Voucher Linking - iNaturalist</h1>
+					<table class="styledtable">
+						<thead>
+							<th><input type="checkbox" name="link-all"></th>
+							<th>Taxon Name</th>
+							<th>Coordinates</th>
+							<th>Locality</th>
+							<th>Source</th>
+						</thead>
+						<tbody id="external_vouchers">
+						</tbody>
+					</table>
+
+					<button id="voucher_submit_button" class="button" style="margin-top:1rem">Submit</button>
+				</form>
+			<?php else: ?>
+				You must provide a checklist id
+			<?php endif ?>
 			</div>
-		</template>
-
-		<template id="external_voucher_template">
-			<tr class="voucher_container">
-				<td>
-					<input class="link_checkbox" type="checkbox" name="link" value=""/>
-				</td>
-				<td class="taxon_name"></td>
-				<td class="coordinates"></td>
-				<td class="locality"></td>
-			</tr>
-		</template>
-
-			<form id="external_voucher_form" onsubmit="external_vouchers_sumbit(event)">
-			<h1>External Voucher Linking</h1>
-			<table class="styledtable">
-				<thead>
-					<th><input type="checkbox" name="link-all"></th>
-					<th>Taxon Name</th>
-					<th>Coordinates</th>
-					<th>Locality</th>
-				</thead>
-				<tbody id="external_vouchers">
-				</tbody>
-			</table>
-
-			<button id="voucher_submit_button" class="button" style="margin-top:1rem">Submit</button>
-			</form>
 
 			<div id="voucher_loader" style="position:absolute; top:50%; width:100%; text-align:center">
 				...Loading External Vouchers
