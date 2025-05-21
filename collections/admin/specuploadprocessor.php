@@ -9,6 +9,8 @@ else include_once($SERVER_ROOT.'/content/lang/collections/admin/specupload.en.ph
 header('Content-Type: text/html; charset=' . $CHARSET);
 ini_set('max_execution_time', 3600);
 
+print_r($_REQUEST);
+
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/admin/specupload.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $collid = !empty($_REQUEST['collid']) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -18,7 +20,6 @@ $ulPath = !empty($_REQUEST['ulpath']) ? $_REQUEST['ulpath'] : '';
 $importIdent = array_key_exists('importident', $_REQUEST) ? true : false;
 $importImage = array_key_exists('importimage', $_REQUEST) ? true : false;
 $observerUid = !empty($_POST['observeruid']) ? filter_var($_POST['observeruid'], FILTER_SANITIZE_NUMBER_INT) : '';
-$updateAction = !empty($_REQUEST['updateaction']) ? $_REQUEST['updateaction'] : '';
 $matchCatNum = array_key_exists('matchcatnum', $_REQUEST) ? true : false;
 $matchOtherCatNum = !empty($_REQUEST['matchothercatnum']) ? true : false;
 $versionData = !empty($_REQUEST['versiondata']) ? 1 : 0;
@@ -40,13 +41,13 @@ $uspid = filter_var($uspid, FILTER_SANITIZE_NUMBER_INT);
 $uploadType = filter_var($uploadType, FILTER_SANITIZE_NUMBER_INT);
 if(!preg_match('/^[a-zA-Z0-9\s_-]+$/',$processingStatus)) $processingStatus = '';
 
-$DIRECTUPLOAD = 1; $FILEUPLOAD = 3; $STOREDPROCEDURE = 4; $SCRIPTUPLOAD = 5; $DWCAUPLOAD = 6; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9; $SYMBIOTA = 13;
+$DIRECTUPLOAD = 1; $FILEUPLOAD_SELECT = 2; $FILEUPLOAD_FULL = 3; $STOREDPROCEDURE = 4; $SCRIPTUPLOAD = 5; $DWCAUPLOAD = 6; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9; $SYMBIOTA = 13;
 
 $duManager = new SpecUploadBase();
 if($uploadType == $DIRECTUPLOAD){
 	$duManager = new SpecUploadDirect();
 }
-elseif($uploadType == $FILEUPLOAD || $uploadType == $NFNUPLOAD){
+elseif($uploadType == $FILEUPLOAD_SELECT || $uploadType == $FILEUPLOAD_FULL || $uploadType == $NFNUPLOAD){
 	$duManager = new SpecUploadFile();
 	$duManager->setUploadFileName($ulPath);
 }
@@ -73,7 +74,6 @@ $duManager->setCollId($collid);
 $duManager->setUspid($uspid);
 $duManager->setUploadType($uploadType);
 $duManager->setObserverUid($observerUid);
-$duManager->setUpdateAction($updateAction);
 $duManager->setMatchCatalogNumber($matchCatNum);
 $duManager->setMatchOtherCatalogNumbers($matchOtherCatNum);
 $duManager->setVersionDataEdits($versionData);
@@ -122,7 +122,6 @@ include($SERVER_ROOT.'/includes/header.php');
 		echo '<div style="margin:0px 0px 15px 15px;"><b>Last Upload Date:</b> '.($duManager->getCollInfo('uploaddate') ? $duManager->getCollInfo('uploaddate') : $LANG['NOT_REC']).'</div>';
 		if(($action == 'Start Upload') || (!$action && ($uploadType == $STOREDPROCEDURE || $uploadType == $SCRIPTUPLOAD))){
 			//Upload records
-			echo '<div style="font-weight:bold;font-size:120%">' . $LANG['UP_STATUS'] . ':</div>';
 			echo '<ul style="margin:10px;font-weight:bold;">';
 			$duManager->uploadData($finalTransfer);
 			echo '</ul>';
@@ -228,7 +227,6 @@ include($SERVER_ROOT.'/includes/header.php');
 						<input type="hidden" name="collid" value="<?= $collid ?>" >
 						<input type="hidden" name="uploadtype" value="<?= $uploadType ?>" >
 						<input type="hidden" name="observeruid" value="<?= $observerUid ?>" >
-						<input type="hidden" name="updateaction" value="<?= htmlspecialchars($updateAction) ?>" >
 						<input type="hidden" name="versiondata" value="<?= $versionData ?>" >
 						<input type="hidden" name="verifyimages" value="<?= $verifyImages ?>" >
 						<input type="hidden" name="processingstatus" value="<?= htmlspecialchars($processingStatus) ?>" >

@@ -13,13 +13,12 @@ if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/a
 
 $collid = !empty($_REQUEST['collid']) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $uploadType = !empty($_REQUEST['uploadtype']) ? $_REQUEST['uploadtype'] : '';		//Sanitized after uspid parsing
-$uspid = !empty($_REQUEST['uspid']) ? $_REQUEST['uspid'] : '';					//Sanitized after uspid parsing
+$uspid = !empty($_REQUEST['uspid']) ? $_REQUEST['uspid'] : '';						//Sanitized after uspid parsing
 $autoMap = array_key_exists('automap', $_POST) ? true : false;
 $ulPath = !empty($_REQUEST['ulpath']) ? $_REQUEST['ulpath'] : '';
 $importIdent = array_key_exists('importident', $_REQUEST) ? true : false;
 $importImage = array_key_exists('importimage', $_REQUEST) ? true : false;
 $observerUid = !empty($_POST['observeruid']) ? filter_var($_POST['observeruid'], FILTER_SANITIZE_NUMBER_INT) : '';
-$updateAction = !empty($_REQUEST['updateaction']) ? $_REQUEST['updateaction'] : '';
 $matchCatNum = array_key_exists('matchcatnum', $_REQUEST) ? true : false;
 $matchOtherCatNum = !empty($_REQUEST['matchothercatnum']) ? true : false;
 $versionData = !empty($_REQUEST['versiondata']) ? true : false;
@@ -39,10 +38,10 @@ $uspid = filter_var($uspid, FILTER_SANITIZE_NUMBER_INT);
 $uploadType = filter_var($uploadType, FILTER_SANITIZE_NUMBER_INT);
 if(!preg_match('/^[a-zA-Z0-9\s_-]+$/', $processingStatus)) $processingStatus = '';
 
-$FILEUPLOAD = 3; $DWCAUPLOAD = 6; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9; $SYMBIOTA = 13;
+$FILEUPLOAD_SELECT = 2; $FILEUPLOAD_FULL = 3; $DWCAUPLOAD = 6; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9; $SYMBIOTA = 13;
 
 $duManager = new SpecUploadBase();
-if($uploadType == $FILEUPLOAD || $uploadType == $NFNUPLOAD){
+if($uploadType == $FILEUPLOAD_SELECT || $uploadType == $FILEUPLOAD_FULL || $uploadType == $NFNUPLOAD){
 	$duManager = new SpecUploadFile();
 	$duManager->setUploadFileName($ulPath);
 }
@@ -248,7 +247,7 @@ if($isEditor && $collid){
 	</style>
 </head>
 <body>
-	<?php
+<?php
 $displayLeftMenu = (isset($collections_admin_specuploadMenu) ? $collections_admin_specuploadMenu:false);
 include($SERVER_ROOT.'/includes/header.php');
 ?>
@@ -282,7 +281,12 @@ include($SERVER_ROOT.'/includes/header.php');
 					?>
 					<form name="dwcauploadform" action="specuploadmap.php" method="post" onsubmit="return verifyMappingForm(this)">
 						<fieldset style="width:95%;">
-							<legend><?= $duManager->getTitle() ?></legend>
+							<legend><?= $LANG['FIELD_MAPPING'] ?></legend>
+							<?php
+							if($duManager->getTitle()){
+								echo '<div><b>' . $LANG['MAPPING_PROFILE'] . ':</b> ' . $duManager->getTitle() . '</div>';
+							}
+							?>
 							<div style="margin:10px;">
 								<b><?= $LANG['SOURCE_ID'] ?> (<span style="color:red"><?= $LANG['REQ'] ?></span>): </b>
 								<?php
@@ -410,10 +414,10 @@ include($SERVER_ROOT.'/includes/header.php');
 									<div class="field-div">
 										<?php
 										if($uspid) echo '<button type="submit" name="action" value="Reset Field Mapping">' . $LANG['RESET_MAP'] . '</button>';
-										echo '<button name="action" type="submit" value="saveMapping" onclick="return verifySaveMapping(this.form)" style="margin-left:5px">' . $LANG['SAVE_MAP'] . '</button> ';
+										echo '<button name="action" type="submit" value="saveMapping" onclick="return verifySaveMapping(this.form)">' . $LANG['SAVE_MAP'] . '</button> ';
 										if(!$uspid){
 											echo '<span id="newProfileNameDiv" style="margin-left:15px;color:orange;display:none">';
-											echo $LANG['NEW_PROF_TITLE'].': <input type="text" name="profiletitle" style="width:300px" value="'.$duManager->getTitle().'-'.date('Y-m-d').'" />';
+											echo $LANG['NEW_PROF_TITLE'].': <input type="text" name="profiletitle" style="width:300px" value="" />';
 											echo '</span>';
 										}
 										?>
@@ -529,13 +533,16 @@ include($SERVER_ROOT.'/includes/header.php');
 			</form>
 			<?php
 		}
-		elseif(($uploadType == $FILEUPLOAD || $uploadType == $SKELETAL) && $ulPath){
+		elseif(($uploadType == $FILEUPLOAD_SELECT || $uploadType == $FILEUPLOAD_FULL || $uploadType == $SKELETAL) && $ulPath){
 			$duManager->analyzeUpload();
 			?>
 			<form name="filemappingform" action="specuploadmap.php" method="post" onsubmit="return verifyMappingForm(this)">
 				<fieldset style="width:95%;">
-					<legend style="<?php if($uploadType == $SKELETAL) echo 'background-color:lightgreen'; ?>"><?= $duManager->getTitle(); ?></legend>
+					<legend><?= $LANG['FIELD_MAPPING'] ?></legend>
 					<?php
+					if($duManager->getTitle()){
+						echo '<div><b>' . $LANG['MAPPING_PROFILE'] . ':</b> ' . $duManager->getTitle() . '</div>';
+					}
 					if(!$isLiveData && $uploadType != $SKELETAL){
 						//Primary key field is required and must be mapped
 						?>
@@ -580,7 +587,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							<?php
 							if($uspid){
 								?>
-								<button type="submit" name="action" value="Reset Field Mapping" ><?= $LANG['RESET_MAP'] ?></button>
+								<button class="bottom-breathing-room-rel-sm" type="submit" name="action" value="Reset Field Mapping" ><?= $LANG['RESET_MAP'] ?></button>
 								<?php
 							}
 							?>
@@ -589,18 +596,18 @@ include($SERVER_ROOT.'/includes/header.php');
 							<button class="bottom-breathing-room-rel-sm" type="submit" name="action" value="saveMapping" onclick="return verifySaveMapping(this.form)" ><?= $LANG['SAVE_MAP'] ?></button>
 							<span id="newProfileNameDiv" style="margin-left:15px;color:red;display:none">
 								<?= $LANG['NEW_PROF_TITLE'] ?>:
-								<input type="text" name="profiletitle" style="width:300px" value="<?= $duManager->getTitle().'-'.date('Y-m-d'); ?>" />
+								<input type="text" name="profiletitle" style="width:300px" value="" />
 							</span>
 						</div>
 						<hr />
 						<div id="uldiv" style="margin-top:30px;">
 							<div class="field-div">
-								<select name="updateaction" required>
-									<option value="">Select Update Type</option>
+								<label><?= $LANG['SELECT_ACTION'] ?>:</label>
+								<select name="uploadtype" required>
 									<option value="">-------------------</option>
-									<option value="updateTargetedFields" <?php if($updateAction == 'updateTargetedFields') echo 'selected'; ?>>Update Only Fields in File</option>
-									<option value="skeletalUpdate" <?php if($updateAction == 'skeletalUpdate') echo 'selected'; ?>>Skeletal Update (only empty fields)</option>
-									<option value="replaceFullRecord" <?php if($updateAction == 'replaceFullRecord') echo 'selected'; ?>>Replace Full Record</option>
+									<option value="2" <?php if($uploadType == 2) echo 'selected'; ?>><?= $LANG['LIMIT_FIELDS'] ?></option>
+									<option value="7" <?php if($uploadType == 7) echo 'selected'; ?>><?= $LANG['SKELETAL_UPDATE'] ?></option>
+									<option value="3" <?php if($uploadType == 3) echo 'selected'; ?>><?= $LANG['REPLACE_FULL'] ?></option>
 								</select>
 							</div>
 							<?php
@@ -619,11 +626,11 @@ include($SERVER_ROOT.'/includes/header.php');
 								?>
 								<div>
 									<input name="matchcatnum" type="checkbox" value="1" checked />
-									<?= $LANG['MATCH_CAT'] ?>
+									<label><?= $LANG['MATCH_CAT'] ?></label>
 								</div>
 								<div>
 									<input name="matchothercatnum" type="checkbox" value="1" <?= ($matchOtherCatNum ? 'checked' : '') ?> />
-									<?= $LANG['MATCH_ON_CAT'] ?>
+									<label><?= $LANG['MATCH_ON_CAT'] ?></label>
 								</div>
 								<ul style="margin-top:2px">
 									<?php
@@ -638,17 +645,17 @@ include($SERVER_ROOT.'/includes/header.php');
 								?>
 								<div class="field-div">
 									<input name="versiondata" type="checkbox" value="1">
-									<?= $LANG['VERSION_DATA_CHANGES'] ?>
+									<label><?= $LANG['VERSION_DATA_CHANGES'] ?></label>
 								</div>
 								<?php
 							}
 							?>
 							<div class="field-div">
 								<input name="verifyimages" type="checkbox" value="1" />
-								<?= $LANG['VER_LINKS_MEDIA'] ?>
+								<label><?= $LANG['VER_LINKS_MEDIA'] ?></label>
 							</div>
 							<div class="field-div">
-								<?= $LANG['PROC_STATUS'] ?>:
+								<label><?= $LANG['PROC_STATUS'] ?></label>:
 								<select name="processingstatus">
 									<option value=""><?= $LANG['NO_SETTING'] ?></option>
 									<option value="">--------------------------</option>
@@ -682,7 +689,6 @@ include($SERVER_ROOT.'/includes/header.php');
 				</fieldset>
 				<input type="hidden" name="uspid" value="<?= $uspid ?>" />
 				<input type="hidden" name="collid" value="<?= $collid ?>" />
-				<input type="hidden" name="uploadtype" value="<?= $uploadType ?>" />
 				<input type="hidden" name="ulpath" value="<?= htmlspecialchars($ulPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" />
 			</form>
 			<?php

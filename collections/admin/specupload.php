@@ -95,9 +95,12 @@ elseif($uploadType == $DIRECTUPLOAD || $uploadType == $STOREDPROCEDURE || $uploa
 			}
 		}
 	</script>
+	<style>
+		legend{ font-weight:bold }
+	</style>
 </head>
 <body>
-	<?php
+<?php
 $displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');
 ?>
@@ -111,13 +114,21 @@ include($SERVER_ROOT.'/includes/header.php');
 	<h1 class="page-heading"><?= $LANG['UP_MODULE']; ?></h1>
 	<?php
 	if($isEditor && $collid){
-		//Grab collection name and last upload date and display for all
-		echo '<div style="font-weight:bold;font-size:130%;">'.$duManager->getCollInfo('name').'</div>';
-		echo '<div style="margin:0px 0px 15px 15px;"><b>' . $LANG['LAST_UPLOAD_DATE'] . ':</b> ' . ($duManager->getCollInfo('uploaddate')?$duManager->getCollInfo('uploaddate'):$LANG['NOT_REC']) . '</div>';
 		?>
+		<h2><?= $duManager->getCollInfo('name') ?></h2>
+		<div style="margin-left: 15px; margin-bottom: 20px">
+			<?php
+			if($duManager->getTitle()){
+				echo '<div style="margin:5px"><b>' . $LANG['MAPPING_PROFILE'] . ':</b> ' . $duManager->getTitle() . '</div>';
+			}
+			$uploadDate = $duManager->getCollInfo('uploaddate');
+			if(!$uploadDate) $uploadDate = $LANG['NOT_REC'];
+			?>
+			<div style="margin:5px"><b><?= $LANG['LAST_UPLOAD_DATE'] ?>:</b> <?= $uploadDate ?></div>
+		</div>
 		<form name="fileuploadform" action="specuploadmap.php" method="post" enctype="multipart/form-data" onsubmit="return verifyFileUploadForm(this)">
-			<fieldset style="width:95%;">
-				<legend style="font-weight:bold;font-size:120%;<?php if($uploadType == $SKELETAL) echo 'background-color:lightgreen'; ?>"><?= $duManager->getTitle() . ': ' . $LANG['ID_SOURCE'] ?></legend>
+			<fieldset style="width:95%;margin-bottom: 40px">
+				<legend><?= $LANG['ID_SOURCE'] ?></legend>
 				<div>
 					<div style="margin:10px">
 						<?php

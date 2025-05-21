@@ -4,6 +4,7 @@
 Language: English
 ------------------
 */
+
 include_once($SERVER_ROOT . '/content/lang/collections/customsearchtype.en.php');
 
 $LANG['HOME'] = 'Home';
@@ -32,7 +33,6 @@ $LANG['CAUTION'] = 'Caution';
 $LANG['REC_REPLACE'] = 'Matching records will be replaced with incoming records';
 $LANG['LAST_UPLOAD_DATE'] = 'Last Upload Date';
 $LANG['NOT_REC'] = 'not recorded';
-$LANG['UP_STATUS'] = 'Upload Status';
 $LANG['PENDING_REPORT'] = 'Pending Data Transfer Report';
 $LANG['OCCS_TRANSFERING'] = 'Occurrences pending transfer';
 $LANG['PREVIEW'] = 'Preview 1st 1000 Records';
@@ -77,6 +77,8 @@ $LANG['STAGE_3'] = 'Stage 3';
 $LANG['PEND_REV'] = 'Pending Review';
 $LANG['EXP_REQ'] = 'Expert Required';
 $LANG['PEND_NFN'] = 'Pending Review-NfN';
+$LANG['FIELD_MAPPING'] = 'Field Mapping';
+$LANG['MAPPING_PROFILE'] = 'Mapping Profile';
 $LANG['SOURCE_ID'] = 'Source Unique Identifier / Primary Key';
 $LANG['REQ'] = 'required';
 $LANG['IMPORT_OCCS'] = 'Import Occurrence Records';
@@ -94,6 +96,10 @@ $LANG['NOT_IN_DWC'] = 'not present in DwC-Archive';
 $LANG['IMP_IMG'] = 'Import Images';
 $LANG['RESET_MAP'] = 'Reset Field Mapping';
 $LANG['NEW_PROF_TITLE'] = 'New profile title';
+$LANG['SELECT_ACTION'] = 'Upload action';
+$LANG['LIMIT_FIELDS'] = 'Update Only Fields in File';
+$LANG['SKELETAL_UPDATE'] = 'Skeletal Update (only empty fields)';
+$LANG['REPLACE_FULL'] = 'Replace Full Record';
 $LANG['TARGET_USER'] = 'Target User';
 $LANG['SEL_TAR_USER'] = 'Select Target User';
 $LANG['VER_LINKS'] = 'Verify image links';

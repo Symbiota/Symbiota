@@ -6,7 +6,7 @@
  *
  * ****  Input Variables  ********************************************
  *
- * uploadtype (required): $FILEUPLOAD = 3; $DWCAUPLOAD = 6
+ * uploadtype (required): $FILEUPLOAD_SELECT = 3; $FILEUPLOAD_FULL = 3; $DWCAUPLOAD = 6
  * key (required): security key used to authorize
  * filepath: URI path to locality where DWCA file was placed for retrieval (file must be read accessible to portal)
  * uploadfile: file streamed in for upload; POST protocol must be used when streaming file
@@ -30,8 +30,8 @@ $sourceType = array_key_exists('sourcetype', $_REQUEST) ? $_REQUEST['sourcetype'
 if(!$uploadType) exit('ERROR: uploadtype is required and is null ');
 
 $duManager = null;
-$FILEUPLOAD = 3; $DWCAUPLOAD = 6;
-if($uploadType == $FILEUPLOAD){
+$FILEUPLOAD_SELECT = 2; $FILEUPLOAD_FULL = 3; $DWCAUPLOAD = 6;
+if($uploadType == $FILEUPLOAD_SELECT || $uploadType == $FILEUPLOAD_FULL){
 	$duManager = new SpecUploadFile();
 	//if($filePath) ;
 }
@@ -44,7 +44,7 @@ elseif($uploadType == $DWCAUPLOAD){
 	//For now, assume DWCA import is a specfy database
 	if(!$sourceType) $sourceType = 'specify';
 }
-else exit('ERROR: illegal upload type = '.$uploadType.' (should be 3 = File Upload, 6 = DWCA upload)');
+else exit('ERROR: illegal upload type = '.$uploadType.' (should be 2 = File Upload - selected field replace, 3 = File Upload - full replace, 6 = DWCA upload)');
 
 $duManager->setVerboseMode(2);
 if(!$securityKey){
