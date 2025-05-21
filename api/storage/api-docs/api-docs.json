@@ -1689,7 +1689,7 @@
                     {
                         "name": "country",
                         "in": "query",
-                        "description": "country",
+                        "description": "country(s), separated by comma",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -1698,7 +1698,7 @@
                     {
                         "name": "stateProvince",
                         "in": "query",
-                        "description": "State, Province, or second level political unit",
+                        "description": "State(s), Province(s), or second level political unit(s), separated by comma",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -1707,7 +1707,7 @@
                     {
                         "name": "county",
                         "in": "query",
-                        "description": "County, parish, or third level political unit",
+                        "description": "County(s), parish(s), or third level political unit(s), separated by comma",
                         "required": false,
                         "schema": {
                             "type": "string"

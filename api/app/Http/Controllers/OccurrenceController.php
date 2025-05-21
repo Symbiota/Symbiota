@@ -6,6 +6,7 @@ use App\Models\Occurrence;
 use App\Models\PortalIndex;
 use App\Models\PortalOccurrence;
 use App\Helpers\OccurrenceHelper;
+use App\Helpers\GeoThesaurusHelper;
 use App\Helpers\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -155,21 +156,21 @@ class OccurrenceController extends Controller {
 	 *	 @OA\Parameter(
 	 *		 name="country",
 	 *		 in="query",
-	 *		 description="country",
+	 *		 description="country(s), separated by comma",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="stateProvince",
 	 *		 in="query",
-	 *		 description="State, Province, or second level political unit",
+	 *		 description="State(s), Province(s), or second level political unit(s), separated by comma",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="county",
 	 *		 in="query",
-	 *		 description="County, parish, or third level political unit",
+	 *		 description="County(s), parish(s), or third level political unit(s), separated by comma",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
@@ -287,14 +288,26 @@ class OccurrenceController extends Controller {
 			$occurrenceModel->where('o.datasetID', $request->datasetID);
 		}
 		//Locality place names
-		if ($request->has('country')) {
-			$occurrenceModel->where('o.country', $request->country);
+		if($request->has('country')){
+			$geoCountries = GeoThesaurusHelper::getGeoterms($request->country);
+			if (!empty($geoCountries['country']) || !empty($geoCountries['countryCode'])) {
+				$occurrenceModel->where(function ($query) use ($geoCountries) {
+					if (!empty($geoCountries['countryCode'])) {
+						$query->whereIn('countryCode', $geoCountries['countryCode']);
+					}
+					if (!empty($geoCountries['country'])) {
+						$query->whereIn('country', $geoCountries['country'], "or");
+					}
+				});
+			}
 		}
-		if ($request->has('stateProvince')) {
-			$occurrenceModel->where('o.stateProvince', $request->stateProvince);
+		if($request->has('stateProvince')){
+			$inputProvinces = array_map('trim', explode(',', $request->stateProvince));
+			$occurrenceModel->whereIn('stateProvince', $inputProvinces);
 		}
-		if ($request->has('county')) {
-			$occurrenceModel->where('o.county', $request->county);
+		if($request->has('county')){
+			$inputCounties = array_map('trim', explode(',', $request->county));
+			$occurrenceModel->whereIn('county', $inputCounties);
 		}
 
 		$fullCnt = $occurrenceModel->count();
