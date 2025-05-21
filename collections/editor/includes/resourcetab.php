@@ -232,7 +232,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 		'MaterialSample' => $LANG['MAT_SAMPLE'], 'PreservedSpecimen' => $LANG['PRES_SAMPLE'], 'ReferenceCitation' => $LANG['REF_CITATION']);
 	?>
 	<fieldset class="resourceTab">
-		<legend><?php echo $LANG['ASSOC_OCC']; ?></legend>
+		<legend><?php echo $LANG['ASSOCIATIONS']; ?></legend>
 		<div style="float:right;margin-right:10px;">
 			<a href="#" onclick="toggle('new-association');return false;" title="<?php echo $LANG['CREATE_NEW_ASSOC']; ?>" ><img class="icon-img" src="../../images/add.png" /></a>
 		</div>

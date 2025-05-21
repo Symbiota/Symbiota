@@ -312,12 +312,16 @@ if($spprid) $specManager->setProjVariables($spprid);
 									else{
 										?>
 										<div>
+											<div>
+												<?= $LANG['IMG_PROC_CHANGE_EXPLAIN'] ?>
+											</div>
+											<br>
 											<label><?php echo $LANG['PROC_TYPE']; ?>:</label>
 											<div style="float:left;">
 												<select name="projecttype" id="projecttype" onchange="uploadTypeChanged(this.form)" <?php echo ($spprid?'DISABLED':'');?>>
 													<option value="">----------------------</option>
 													<option value="local"><?php echo $LANG['MAP_FROM_SERVER']; ?></option>
-													<option value="file"><?php echo $LANG['URL_MAP_FILE']; ?></option>
+													<!--<option value="file"><?php echo $LANG['URL_MAP_FILE']; ?></option>-->
 													<!-- <option value="iplant">iPlant Image Harvest</option> -->
 												</select>
 											</div>

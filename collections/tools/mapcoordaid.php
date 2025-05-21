@@ -201,17 +201,23 @@ else{
 		*/
 		function setShapeToSearchForm(activeShape) {
 			//Clear Form
-			setField("pointlat", "");
-			setField("pointlong", "");
-			setField("radius", "");
-			setField("radiusunits", "");
+			if(!mapModeStrict || mapMode === 'circle') {
+				setField("pointlat", "");
+				setField("pointlong", "");
+				setField("radius", "");
+				setField("radiusunits", "");
+			}
 
-			setField(footprintId, "");
+			if(!mapModeStrict || mapMode === 'polygon') {
+				setField(footprintId, "");
+			}
 
-			setField("upperlat", "");
-			setField("bottomlat", "");
-			setField("leftlong", "");
-			setField("rightlong", "");
+			if(!mapModeStrict || mapMode === 'rectangle') {
+				setField("upperlat", "");
+				setField("bottomlat", "");
+				setField("leftlong", "");
+				setField("rightlong", "");
+			}
 
 			//If Active Shape is null bail
 			if(!activeShape)

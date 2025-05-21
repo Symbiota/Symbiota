@@ -152,7 +152,7 @@ $creatorArray = Media::getCreatorArray();
 				</div>
 				<div style="margin:0px 0px 5px 10px;">
 					<b><?php echo $LANG['SOURCE_WEBPAGE']; ?>:</b>
-					<input name="sourceurl" type="text" size="40" value="" />
+					<input name="sourceUrl" type="text" size="40" value="" />
 				</div>
 				<div style="margin:0px 0px 5px 10px;">
 					<b><?php echo $LANG['SORT']; ?>:</b>
@@ -196,7 +196,8 @@ $creatorArray = Media::getCreatorArray();
 						<td style="width:300px;text-align:center;padding:20px;">
 							<?php
 							if((!$imgUrl || $imgUrl == 'empty') && $origUrl) $imgUrl = $origUrl;
-							if(!$tnUrl && $imgUrl) $tnUrl = $imgUrl;
+							$displayUrl = $imgArr["thumbnailUrl"] ?? $imgUrl;
+
 							if(array_key_exists('MEDIA_DOMAIN', $GLOBALS)){
 								if(substr($imgUrl, 0, 1) == '/'){
 									$imgUrl = $GLOBALS['MEDIA_DOMAIN'] . $imgUrl;
@@ -213,7 +214,7 @@ $creatorArray = Media::getCreatorArray();
 								echo '<div style="font-weight:bold;font-size:140%">'.$imgArr['error'].'</div>';
 							}
 							else{
-								echo '<img src="'.$imgUrl.'" style="width:250px;" title="'.$imgArr["caption"].'" />';
+								echo '<img src="' . $displayUrl . '" style="width:250px;" title="'.$imgArr["caption"].'" />';
 							}
 							echo '</a>';
 							if($imgUrl != $origUrl) echo '<div><a href="' . $imgUrl .'" target="_blank">' . $LANG['OPEN_MED'] . '</a></div>';

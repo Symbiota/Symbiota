@@ -70,6 +70,8 @@ $LANG['EDIT'] = 'Edit';
 $LANG['NEW'] = 'New';
 $LANG['PROFILE'] = 'Profile';
 $LANG['CLOSE_EDITOR'] = 'Close Editor';
+$LANG['IMG_PROC_CHANGE_EXPLAIN'] = '<b>Tools to upload image URL files have moved!</b> You can now upload files of media URLs through the Extended Data Importer 
+	(Administration Control Panel > Import/Update Specimen Records > Extended Data Import';
 $LANG['PROC_TYPE'] = 'Processing Type';
 $LANG['MAP_FROM_SERVER'] = 'Map Images from a Local or Remote Server';
 $LANG['URL_MAP_FILE'] = 'Image URL Mapping File';

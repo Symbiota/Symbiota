@@ -73,6 +73,7 @@ $LANG['NEW'] = 'Nuevo';
 $LANG['PROFILE'] = 'Perfil';
 $LANG['CLOSE_EDITOR'] = 'Cerrar editor';
 $LANG['PROC_TYPE'] = 'Tipo de procesamiento';
+$LANG['IMG_PROC_CHANGE_EXPLAIN'] = '<b>¡Las herramientas para cargar archivos URL de imágenes se han movido!</b> Ahora puede cargar archivos URL de medios a través del Importador de Datos Extendido (Panel de Control de Administración > Importar/Actualizar Registros de Especímenes > Datos Extendidos Importación)';
 $LANG['MAP_FROM_SERVER'] = 'Imágenes de mapa desde un servidor local o remoto';
 $LANG['URL_MAP_FILE'] = 'Archivo de mapeo de URL de imagen';
 $LANG['TITLE'] = 'Título';

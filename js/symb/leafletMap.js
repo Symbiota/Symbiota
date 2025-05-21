@@ -112,7 +112,10 @@ class LeafletMap {
 
    defaultBounds = [];
 
-   constructor(map_id, map_options={}) {
+   /* Map of GeoJson Files desired as overlays with layer name as keys */
+   geoJSONLayers = {};
+
+   constructor(map_id, map_options={}, geoJSONLayers = []) {
 
 	  map_options = {
 		 ...this.DEFAULT_MAP_OPTIONS,
@@ -224,7 +227,6 @@ class LeafletMap {
 			}
 		}
 
-
 		/* Alternative to using the api. Uses color inference. Back if we don't want to use macrostrat api*/
 		const macro_strat_color = (e) => {
 			const zoom = e.target._zoom;
@@ -276,6 +278,18 @@ class LeafletMap {
 			const overlays = {
 				"Macrostrat": L.layerGroup([macro_strat])
 			}
+
+			for(let layer of geoJSONLayers) {
+				const layerGroup = L.layerGroup();
+				overlays[layer.label] = layerGroup;
+				this.geoJSONLayers[layer.label] = {
+					...layer,
+					layer: layerGroup
+				};
+
+				this.loadGeoJSONLayer(layer.label);
+			}
+
       this.mapLayer.layerControl = L.control.layers(layers, overlays).addTo(this.mapLayer);
       }
 
@@ -307,6 +321,54 @@ class LeafletMap {
 			return false;
 		}
    }
+
+	async loadGeoJSONLayer(layerName) {
+		const layerObj = this.geoJSONLayers[layerName];
+
+		if(!layerObj || !layerObj.filepath) return false;
+
+		const res = await fetch(window.location.origin + '/' + layerObj.filepath);
+
+		if(!res.ok) return false;
+
+		const json_data = await res.json()
+
+		if(!json_data.type) return false;
+
+		function onEachFeature(feature, layer) {
+			// does this feature have a property named popupContent?
+			if (feature.properties && layerObj.popup_template) {
+				let popup = layerObj.popup_template;
+				if(layerObj.template_properties) {
+					for(let property of layerObj.template_properties) {
+						const value = feature.properties[property];
+						popup = popup.replaceAll(
+							"[" + property + "]", 
+							value? value: 'Unknown'
+						);
+					}
+				}
+				layer.bindPopup(popup);
+			}
+		}
+
+		function featureStyle(feature) {
+			let style = {}
+			const supported_styles = ['fillColor', 'opacity', 'color', 'weight'];
+
+			for(let style_prop of supported_styles) {
+				if(feature.properties && feature.properties[style_prop]) {
+					style[style_prop] = feature.properties[style_prop];
+				}
+			}
+
+			return style;
+		}
+
+        L.geoJSON(json_data, {onEachFeature, style: featureStyle}).addTo(layerObj.layer);
+
+		return true;
+	}
 
    setLang(lang) {
       switch(lang) {

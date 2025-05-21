@@ -6,7 +6,6 @@ Translated by: Google Translate (2024-09-16)
 ------------------
 */
 
-$LANG['LINKED_FROM'] = 'Vinculado desde';
 $LANG['SORT_SEQUENCE'] = 'Ordenar secuencia';
 $LANG['NEW_VALUE'] = 'Nuevo Valor';
 $LANG['SUBMIT_SORT_EDITS'] = 'Enviar ediciones de clasificación medios';
@@ -36,7 +35,7 @@ $LANG['NOTES'] = 'Notas';
 $LANG['UPLOAD_IMAGE'] = 'Subir medios';
 $LANG['OPEN_LARGE_IMAGE'] = 'Abrir archivo grande';
 $LANG['MUST_HAVE_EDIT_PERM'] = 'Debe tener privilegios de edición para la colección que administra este archivo medios.';
-$LANG['IMAGE_LINKED_FROM'] = 'Medios enlazada desde';
+$LANG['IMAGE_LINKED_TO'] = 'Medios enlazada a';
 $LANG['TP_IMAGE_EDITOR'] = 'Editor medios de perfiles de taxones';
 $LANG['CREATOR'] = 'Creador';
 $LANG['NOT_SPECIFIED'] = 'No especificado';

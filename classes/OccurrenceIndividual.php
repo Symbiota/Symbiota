@@ -397,9 +397,9 @@ class OccurrenceIndividual extends Manager{
 	private function setOccurrenceRelationships(){
 		$relOccidArr = array();
 		$sql = 'SELECT a.assocID, a.occid, a.occidAssociate, a.relationship, a.subType, a.resourceUrl, a.objectID, a.dynamicProperties, a.verbatimSciname, a.tid
-			FROM omoccurassociations a INNER JOIN omoccurrences o ON a.occidAssociate = o.occid
-			WHERE a.occid = ? OR a.occidAssociate = ? ';
-		$sql .= OccurrenceUtil::appendFullProtectionSQL();
+			FROM omoccurassociations a LEFT JOIN omoccurrences o ON a.occidAssociate = o.occid
+			WHERE (a.occid = ? OR a.occidAssociate = ?) ';
+		$sql .= OccurrenceUtil::appendFullProtectionSQL(true);
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('ii', $this->occid, $this->occid);
 			$stmt->execute();

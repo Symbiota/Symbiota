@@ -510,8 +510,8 @@ class OccurrenceTaxaManager {
 								/*
 								if(!strpos($term,' _ ')){
 									//Accommodate for formats of hybrid designations within input and target data (e.g. x, multiplication sign, etc)
-									$term2 = preg_replace('/^([^\s]+\s{1})/', '$1 _ ', $term);
-									$sqlWhereTaxa .= 'OR (o.sciname LIKE "' . $term2 . '%") ';
+									//$term2 = preg_replace('/^([^\s]+\s{1})/', '$1 _ ', $term);
+									//$sqlWhereTaxa .= 'OR (o.sciname LIKE "' . $term2 . '%") ';
 								}
 								*/
 							}
