@@ -114,7 +114,7 @@ class OccurrenceImport extends UtilitiesFileImport {
 				'hashvalue',
 				'mediamd5',
 				'copyright',
-				'accessrights',
+				'accessRights',
 				'rights',
 				'sortOccurrence'
 			];
