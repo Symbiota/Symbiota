@@ -220,7 +220,7 @@ if($tid){
 							</div>
 							<div style='margin-top:2px;'>
 								<b><?php echo $LANG['SORT_SEQUENCE']; ?>:</b>
-								<input name='sortsequence' type='text' value='' size='5' maxlength='5'>
+								<input name='sortSequence' type='text' value='' size='5' maxlength='5'>
 							</div>
 							<input name="tid" type="hidden" value="<?php echo $imageEditor->getTid();?>">
 							<input type="hidden" name="tabindex" value="1" />
