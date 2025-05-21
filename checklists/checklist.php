@@ -487,9 +487,10 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 						*/
 										$url = 'tools/linkExternalVouchers.php?' . http_build_query([
 											'taxon_name' => $sppArr['sciname'],
+											'target_tid' => $tid,
+											'clid' => $clid,
 											'external_id' => $dynamPropsArr['externalserviceid'] ?? null,
 											'external_service' => $dynamPropsArr['externalservice'] ?? null,
-											'clid' => $clid ?? null
 										]);
 
 										echo '<a href="#" onclick="openPopup(`' . $url . '`, `External iNaturalist Vouchers`)" >';

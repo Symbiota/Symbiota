@@ -4,9 +4,16 @@ include_once($SERVER_ROOT . '/classes/ChecklistVoucherAdmin.php');
 
 
 $clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$target_tid = array_key_exists('target_tid', $_REQUEST) ? filter_var($_REQUEST['target_tid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$taxon_name = array_key_exists('taxon_name', $_REQUEST) ? htmlspecialchars($_REQUEST['taxon_name']): '';
+
 
 $voucherManager = new ChecklistVoucherAdmin();
 $voucherManager->setClid($clid);
+
+if(!empty($_POST)) {
+	var_dump($_POST);
+}
 
 ?>
 <!DOCTYPE html>
@@ -48,6 +55,7 @@ $voucherManager->setClid($clid);
 
 			async function fetchObservations(taxon_name, external_id, page=1) {
 				const url = `${iNaturalistApi}/observations?project_id=${external_id}&taxon_name=${taxon_name}&page=1`
+				//not_id could be used to filter out values
 
 				let response = await fetch(url, {
 					method: "GET",
@@ -62,7 +70,9 @@ $voucherManager->setClid($clid);
 					let voucher_clone = template.content.cloneNode(true);
 					voucher_clone.querySelector('.taxon_name').textContent = voucher.taxon.name;
 					voucher_clone.querySelector('.locality').textContent = voucher.place_guess;
-					voucher_clone.querySelector('.coordinates').textContent = voucher.location;
+					voucher_clone.querySelector('.date_observed').textContent = voucher.observed_on;
+					voucher_clone.querySelector('.observer').textContent = voucher.user.name? voucher.user.name: voucher.user.login;
+					voucher_clone.querySelector('.uuid').textContent = voucher.uuid;
 					voucher_clone.querySelector('.voucher_container').id = voucher.id;
 					voucher_clone.querySelector('.link_checkbox').value = voucher.id;
 
@@ -77,16 +87,15 @@ $voucherManager->setClid($clid);
 				}
 			}
 
-			function create_voucher_html() {
-			}
-
 			function initExternalVouchers() {
 				const taxon_name = params.get('taxon_name');
 				const checklist_id = params.get('clid');
+				const target_tid = params.get('target_tid');
 				const external_id = params.get('external_id');
 
 				runWithLoading(async () => {
 					if(!checklist_id) throw Error('A checklist id is required for this tool to function');
+					if(!target_tid) throw Error('A target taxon id is required for this tool to function');
 
 					await fetchObservations(taxon_name, external_id) 
 				});
@@ -131,22 +140,31 @@ $voucherManager->setClid($clid);
 						<input class="link_checkbox" type="checkbox" name="link" value=""/>
 					</td>
 					<td class="taxon_name"></td>
-					<td class="coordinates"></td>
 					<td class="locality"></td>
+					<td class="observer"></td>
+					<td class="date_observed"></td>
+					<td class="uuid"></td>
 					<td><a class="external_source" href="" target="_blank">Source Link</a></td>
 				</tr>
 			</template>
 
-			<div id="external_vouchers_container">
+			<div id="external_vouchers_container" style="display:none">
 			<?php if(!empty($clid)): ?>
 				<form id="external_voucher_form" onsubmit="external_vouchers_sumbit(event)">
 					<h1>External Voucher Linking - iNaturalist</h1>
+
+					<input type="hidden" name="clid" value="<?= htmlspecialchars($clid) ?>">
+					<input type="hidden" name="target_tid" value="<?= htmlspecialchars($target_tid) ?>">
+
+					<div style="margin-bottom:1rem"><b>Vouchers for: </b><?= $taxon_name ?></div>
 					<table class="styledtable">
 						<thead>
 							<th><input type="checkbox" name="link-all"></th>
 							<th>Taxon Name</th>
-							<th>Coordinates</th>
 							<th>Locality</th>
+							<th>Observer</th>
+							<th>Date Observed</th>
+							<th>Uuid</th>
 							<th>Source</th>
 						</thead>
 						<tbody id="external_vouchers">
