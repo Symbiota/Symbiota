@@ -909,7 +909,7 @@ class Media {
 			"sortOccurrence" => $clean_post_arr['sortOccurrence'] ?? null,
 			"sourceIdentifier" => $clean_post_arr['sourceIdentifier'] ?? ('filename: ' . $file['name']),
 			"rights" => $clean_post_arr['rights'] ?? null,
-			"accessrights" => $clean_post_arr['rights'] ?? null,
+			"accessrights" => $clean_post_arr['accessRights'] ?? null,
 			"copyright" => $clean_post_arr['copyright'] ?? null,
 			"hashFunction" => $clean_post_arr['hashfunction'] ?? null,
 			"hashValue" => $clean_post_arr['hashValue'] ?? null,
