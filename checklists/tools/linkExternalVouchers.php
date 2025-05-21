@@ -7,12 +7,12 @@ $clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILT
 $target_tid = array_key_exists('target_tid', $_REQUEST) ? filter_var($_REQUEST['target_tid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $taxon_name = array_key_exists('taxon_name', $_REQUEST) ? htmlspecialchars($_REQUEST['taxon_name']): '';
 
-
 $voucherManager = new ChecklistVoucherAdmin();
 $voucherManager->setClid($clid);
 
 if(!empty($_POST)) {
 	var_dump($_POST);
+	$voucherManager->addExternalVouchers($target_tid, );
 }
 
 ?>
@@ -72,8 +72,8 @@ if(!empty($_POST)) {
 					voucher_clone.querySelector('.locality').textContent = voucher.place_guess;
 					voucher_clone.querySelector('.date_observed').textContent = voucher.observed_on;
 					voucher_clone.querySelector('.observer').textContent = voucher.user.name? voucher.user.name: voucher.user.login;
-					voucher_clone.querySelector('.uuid').textContent = voucher.uuid;
 					voucher_clone.querySelector('.voucher_container').id = voucher.id;
+					voucher_clone.querySelector('.external_id').textContent = voucher.id;
 					voucher_clone.querySelector('.link_checkbox').value = voucher.id;
 
 					voucher_clone.querySelector('.external_source').href= voucher.uri;
@@ -143,7 +143,7 @@ if(!empty($_POST)) {
 					<td class="locality"></td>
 					<td class="observer"></td>
 					<td class="date_observed"></td>
-					<td class="uuid"></td>
+					<td class="external_id"></td>
 					<td><a class="external_source" href="" target="_blank">Source Link</a></td>
 				</tr>
 			</template>
@@ -164,7 +164,7 @@ if(!empty($_POST)) {
 							<th>Locality</th>
 							<th>Observer</th>
 							<th>Date Observed</th>
-							<th>Uuid</th>
+							<th>External ID</th>
 							<th>Source</th>
 						</thead>
 						<tbody id="external_vouchers">
@@ -182,9 +182,7 @@ if(!empty($_POST)) {
 				...Loading External Vouchers
 			</div>
 
-			<div id="voucher_error" style="display:none;position:absolute; top:50%; width:100%; text-align:center">
-				...Loading External Vouchers
-			</div>
+			<div id="voucher_error" style="display:none;position:absolute; top:50%; width:100%; text-align:center"></div>
 		</div>
 	</body>
 </html>

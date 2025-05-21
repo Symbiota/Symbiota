@@ -436,7 +436,7 @@ class ChecklistVoucherAdmin extends Manager {
 
 	/* Checklist Coordinate functions
 	*  @param Int $tid Internal taxonomic id
-	*  @param Array $dataAsJson Array of arrays expects structure [ [ lat, lng, id, user, date, repository ]... ]
+	*  @param String $dataAsJson Json structure expected [ { lat, lng, id, user, date, repository }... ]
 	*/
 	public function addExternalVouchers($tid, $dataAsJson){
 		// EG suggested storing external (e.g., iNaturalist) voucher records in the `fmchklstcoordinates` table as this table
