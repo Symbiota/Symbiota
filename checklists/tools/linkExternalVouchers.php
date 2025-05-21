@@ -11,8 +11,14 @@ $voucherManager = new ChecklistVoucherAdmin();
 $voucherManager->setClid($clid);
 
 if(!empty($_POST)) {
-	var_dump($_POST);
-	$voucherManager->addExternalVouchers($target_tid, );
+	$taxon_name = array_key_exists('external_vouchers', $_REQUEST) ? htmlspecialchars(): '';
+	
+	//This needs to be cleaned
+	$voucher_data = $_POST['external_vouchers'] ?? false;
+
+	if($voucher_data) {
+		$voucherManager->addExternalVouchers($target_tid, $voucher_data);
+	}
 }
 
 ?>
