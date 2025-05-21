@@ -21,10 +21,10 @@ $sortBy = !empty($_REQUEST['sortby']) ? $_REQUEST['sortby'] : '';
 $mediaType = null;
 if(isset($_REQUEST['mediatype'])) {
 	if($_REQUEST['mediatype'] === 'image') {
-		$mediatype = 'image';
+		$mediaType = 'image';
 	}
 	elseif($_REQUEST['mediatype'] === 'audio') {
-		$mediatype = 'audio';
+		$mediaType = 'audio';
 	}
 }
 
