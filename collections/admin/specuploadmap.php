@@ -605,9 +605,9 @@ include($SERVER_ROOT.'/includes/header.php');
 								<label><?= $LANG['SELECT_ACTION'] ?>:</label>
 								<select name="uploadtype" required>
 									<option value="">-------------------</option>
-									<option value="2" <?php if($uploadType == 2) echo 'selected'; ?>><?= $LANG['LIMIT_FIELDS'] ?></option>
-									<option value="7" <?php if($uploadType == 7) echo 'selected'; ?>><?= $LANG['SKELETAL_UPDATE'] ?></option>
-									<option value="3" <?php if($uploadType == 3) echo 'selected'; ?>><?= $LANG['REPLACE_FULL'] ?></option>
+									<option value="2" <?php if($uploadType == 2) echo 'selected'; ?>><?= $LANG['FILE_SELECT'] ?></option>
+									<option value="3" <?php if($uploadType == 3) echo 'selected'; ?>><?= $LANG['FILE_FULL'] ?></option>
+									<option value="7" <?php if($uploadType == 7) echo 'selected'; ?>><?= $LANG['FILE_SKELETAL'] ?></option>
 								</select>
 							</div>
 							<?php

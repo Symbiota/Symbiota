@@ -979,7 +979,6 @@ class SpecUploadBase extends SpecUpload{
 			$previousInterval = $intValue;
 		}
 		$sql = $sqlBase.'AND (o.occid >= '.$previousInterval.')';
-		echo $sql; exit;
 		if($this->conn->query($sql)) $this->outputMsg('<li style="margin-left:10px">'.$cnt.': '.$this->conn->affected_rows.' updated</li>');
 		else $this->outputMsg('<li style="margin-left:10px">ERROR updating records: '.$this->conn->error.'</li> ');
 
@@ -1127,11 +1126,6 @@ class SpecUploadBase extends SpecUpload{
 		}
 		$rs1->free();
 
-		if($this->uploadType == ''){
-
-		}
-		//
-
 		//Get omoccurrences supported fields
 		$specArr = array();
 		$sql2 = 'SHOW COLUMNS FROM omoccurrences';
@@ -1141,8 +1135,13 @@ class SpecUploadBase extends SpecUpload{
 		}
 		$rs2->free();
 
+		if($this->uploadType == $this->FILEUPLOAD_SELECT){
+			//Limit transfer fields to only those included within the import file
+			$specArr = array_intersect_key($specArr, array_flip($this->targetFieldArr));
+		}
+
 		//Get union of both tables
-		$fieldArr = array_intersect_assoc($uploadArr,$specArr);
+		$fieldArr = array_intersect_assoc($uploadArr, $specArr);
 		unset($fieldArr['occid']);
 		unset($fieldArr['collid']);
 		if($this->uploadType != $this->RESTOREBACKUP){

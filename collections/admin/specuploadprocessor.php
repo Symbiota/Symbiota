@@ -9,8 +9,6 @@ else include_once($SERVER_ROOT.'/content/lang/collections/admin/specupload.en.ph
 header('Content-Type: text/html; charset=' . $CHARSET);
 ini_set('max_execution_time', 3600);
 
-print_r($_REQUEST);
-
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/admin/specupload.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $collid = !empty($_REQUEST['collid']) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -117,9 +115,23 @@ include($SERVER_ROOT.'/includes/header.php');
 	<h1 class="page-heading"><?= $LANG['UP_MODULE']; ?></h1>
 	<?php
 	if($isEditor && $collid){
-		//Grab collection name and last upload date and display for all
-		echo '<div style="font-weight:bold;font-size:130%;">'.$duManager->getCollInfo('name').'</div>';
-		echo '<div style="margin:0px 0px 15px 15px;"><b>Last Upload Date:</b> '.($duManager->getCollInfo('uploaddate') ? $duManager->getCollInfo('uploaddate') : $LANG['NOT_REC']).'</div>';
+		$lastUpload = $duManager->getCollInfo('uploaddate');
+		if(!$lastUpload) $lastUpload = $LANG['NOT_REC'];
+		$uploadMethodStr = $LANG['DIRECT_DB'];
+		if($uploadType == $FILEUPLOAD_SELECT) $uploadMethodStr = $LANG['FILE_SELECT'];
+		elseif($uploadType == $FILEUPLOAD_FULL) $uploadMethodStr = $LANG['FILE_FULL'];
+		elseif($uploadType == $DWCAUPLOAD) $uploadMethodStr = $LANG['MANUAL_DWCA'];
+		elseif($uploadType == $SKELETAL) $uploadMethodStr = $LANG['FILE_SKELETAL'];
+		elseif($uploadType == $IPTUPLOAD) $uploadMethodStr = $LANG['IPT_DWCA'];
+		elseif($uploadType == $NFNUPLOAD) $uploadMethodStr = $LANG['NFN_UPLOAD'];
+		elseif($uploadType == $SYMBIOTA) $uploadMethodStr = $LANG['SYMBIOTA_DWCA'];
+		?>
+		<h2><?= $duManager->getCollInfo('name') ?></h2>
+		<div style="15px">
+			<div style="margin: 5px;"><b><?= $LANG['LAST_UPLOAD_DATE'] ?>:</b> <?= $lastUpload ?></div>
+			<div style="margin: 5px;"><b><?= $LANG['UPLOAD_METHOD'] ?>:</b> <?= $uploadMethodStr ?></div>
+		</div>
+		<?php
 		if(($action == 'Start Upload') || (!$action && ($uploadType == $STOREDPROCEDURE || $uploadType == $SCRIPTUPLOAD))){
 			//Upload records
 			echo '<ul style="margin:10px;font-weight:bold;">';
@@ -128,7 +140,7 @@ include($SERVER_ROOT.'/includes/header.php');
 			if(!$finalTransfer){
 				?>
 				<fieldset style="margin:15px;">
-					<legend style="<?php if($uploadType == $SKELETAL) echo 'background-color:lightgreen'; ?>"><b><?= $LANG['PENDING_REPORT'] ?></b></legend>
+					<legend><b><?= $LANG['PENDING_REPORT'] ?></b></legend>
 					<div style="margin:5px;">
 						<?php
 						$reportArr = $duManager->getTransferReport();
