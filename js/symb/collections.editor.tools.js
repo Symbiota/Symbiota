@@ -41,12 +41,12 @@ function toggleCoordDiv(){
 
 function toggleCsMode(modeId){ 
 	if(modeId == 1){
-		document.getElementById("editorCssLink").href = "includes/config/occureditorcrowdsource.css?ver=4";
+		document.getElementById("editorCssLink").href = "../../css/collections/editor/editorcrowdsource.css?ver=1";
 		document.getElementById("longtagspan").style.display = "block";
 		document.getElementById("shorttagspan").style.display = "none";
 	}
 	else{
-		document.getElementById("editorCssLink").href = "../../css/occureditor.css?ver=9";
+		document.getElementById("editorCssLink").href = "../../css/collections/editor/editorfulldisplay.css?ver=1";
 		document.getElementById("longtagspan").style.display = "none";
 		document.getElementById("shorttagspan").style.display = "block";
 	}

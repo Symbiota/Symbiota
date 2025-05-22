@@ -99,6 +99,7 @@ $LANG['NON_SANCTIONED'] = 'Valor No Permitido';
 $LANG['INST_CODE_EXPLAIN'] = 'Sobreescribe el código de la institución establecido en el formulario de metadatos';
 $LANG['COLL_CODE_EXPLAIN'] = 'Sobreescribe el código de la colección establecido en el formulario de metadatos';
 $LANG['OWNER_CODE_EXPLAIN'] = 'Si es diferente al código de la institución';
+$LANG['STORAGELOCATION_EXPLAIN'] = 'Ubicación dentro de la ubicación donde se almacena la muestra';
 $LANG['NO_SET_STATUS'] = 'Sin Estatus Establecido';
 $LANG['AKA_GENERAL'] = 'también conocido como generalizaciones de datos';
 $LANG['PRIMARY_KEY'] = 'Clave Primaria de registro de ocurrencias interno (occid)';

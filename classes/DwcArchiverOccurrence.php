@@ -278,8 +278,8 @@ class DwcArchiverOccurrence extends Manager{
 		//$this->occurDefArr['fields']['genericcolumn1'] = 'o.genericcolumn1';
 		//$this->occurDefArr['terms']['genericcolumn2'] = 'https://symbiota.org/terms/genericcolumn2';
 		//$this->occurDefArr['fields']['genericcolumn2'] = 'o.genericcolumn2';
-		//$this->occurDefArr['terms']['storageLocation'] = 'https://symbiota.org/terms/storageLocation';
-		//$this->occurDefArr['fields']['storageLocation'] = 'o.storageLocation';
+		$this->occurDefArr['terms']['storageLocation'] = 'https://symbiota.org/terms/storageLocation';
+		$this->occurDefArr['fields']['storageLocation'] = 'o.storageLocation';
 		$this->occurDefArr['terms']['observerUid'] = 'https://symbiota.org/terms/observerUid';
 		$this->occurDefArr['fields']['observerUid'] = 'o.observeruid';
 		$this->occurDefArr['terms']['processingStatus'] = 'https://symbiota.org/terms/processingStatus';
@@ -325,7 +325,7 @@ class DwcArchiverOccurrence extends Manager{
 			elseif($this->schemaType == 'symbiota'){
 				$trimArr = array();
 				if(!$this->extended){
-					$trimArr = array('collectionID','rights','rightsHolder','accessRights','storageLocation','observerUid','processingStatus','duplicateQuantity','labelProject','dateEntered','dateLastModified');
+					$trimArr = array('collectionID','rights','rightsHolder','accessRights','observerUid','processingStatus','duplicateQuantity','labelProject','dateEntered','dateLastModified');
 				}
 				$this->occurDefArr[$k] = array_diff_key($vArr,array_flip($trimArr));
 			}
