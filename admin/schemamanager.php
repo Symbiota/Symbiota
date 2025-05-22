@@ -1,6 +1,8 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SchemaManager.php');
+ini_set('max_execution_time', 7200);
+ini_set('default_socket_timeout', 7200);
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $username = isset($_POST['username']) ? $_POST['username'] : '';

@@ -160,8 +160,8 @@ class SchemaManager extends Manager{
 						//Reset for next statement
 						unset($this->warningArr);
 						$this->warningArr = array();
-						flush();
-						ob_flush();
+						//flush();
+						//ob_flush();
 					}
 					$this->logOrEcho('Finished: schema applied');
 					$logUrl = str_replace($GLOBALS['SERVER_ROOT'], $GLOBALS['CLIENT_ROOT'], $this->logPath);
