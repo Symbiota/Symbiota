@@ -454,16 +454,27 @@ class ChecklistManager extends Manager{
 		}
 	}
 
-  public function getExternalVoucherArr(){
+  /**
+   * Gets all external vouchers, currently only supports iNaturalist. 
+   * If given a $tid param then only get vouchers associated to that tid. 
+   * Requires $taxaList be set or a $tid to be passed in.
+   *
+   * @param int|null $tid Optional Taxonomic id that will give only vouchers of the associated id
+   * @return array with the key structure of [ (tid) => [[ (clCoordID) => [ display => string, url => string] ]]]
+   **/
+  public function getExternalVoucherArr($tid = null) {
 		$externalVoucherArr = array();
-		if($this->taxaList){
+
+		if(is_numeric($tid) || $this->taxaList) {
+			$taxaList = is_numeric($tid)? [ $tid ]: array_keys($this->taxaList);
 			$clidStr = $this->clid;
 			if($this->childClidArr){
 				$clidStr .= ','.implode(',',array_keys($this->childClidArr));
 			}
 			$sql = 'SELECT clCoordID, clid, tid, sourceIdentifier, referenceUrl, dynamicProperties
 				FROM fmchklstcoordinates
-				WHERE (clid IN ('.$clidStr.')) AND (tid IN('.implode(',',array_keys($this->taxaList)).')) AND sourceName = "EXTERNAL_VOUCHER"';
+				WHERE (clid IN (' . $clidStr . ')) AND (tid IN(' . implode(',', $taxaList) . ')) AND sourceName = "EXTERNAL_VOUCHER"';
+
 			$rs = $this->conn->query($sql);
 			while ($r = $rs->fetch_object()){
 				$dynPropArr = json_decode($r->dynamicProperties);
