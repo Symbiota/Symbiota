@@ -402,6 +402,33 @@ function coordinatesChanged(f, client_root) {
 	verifyCoordinates(f, client_root);
 	fieldChanged('decimallatitude');
 	fieldChanged('decimallongitude');
+	trySyncingVerbatimCoordinates(f);
+}
+
+function trySyncingVerbatimCoordinates(f) {
+	try {
+		if(f.verbatimcoordinates && f.decimallatitude && f.decimallatitude.value && f.decimallongitude && f.decimallongitude.value) {
+
+			if(f.verbatimcoordinates.value && !f.verbatimcoordinates.getAttribute('data-lat-lng-sync')) {
+				const parts = f.verbatimcoordinates.value.split(',');
+				if(parts.length == 2) {
+					const lat = parseFloat(f.decimallatitude);
+					const lng = parseFloat(f.decimallongitude);
+
+					if(lat === parseFloat(parts[0]) && lng === parseFloat(parse[1])) {
+						f.verbatimcoordinates.setAttribute('data-lat-lng-sync', true);
+					}
+				}
+			}
+
+			if(!f.verbatimcoordinates.value || f.verbatimcoordinates.getAttribute('data-lat-lng-sync')) {
+				f.verbatimcoordinates.setAttribute('data-lat-lng-sync', true);
+				f.verbatimcoordinates.value = f.decimallatitude.value.trim() +	',' + f.decimallongitude.value.trim();
+			}
+		}
+	} catch(e) {
+		console.error('Error occured while trying to sync decimallatitude and decimallongitude with verbatimcoordinates')
+	}
 }
 
 function decimalLatitudeChanged(f) {

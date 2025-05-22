@@ -1203,7 +1203,7 @@ else{
 													<?php echo $LANG['VERBATIM_COORDINATES']; ?>
 													<a href="#" onclick="return dwcDoc('verbatimCoordinates')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 													<br/>
-													<input type="text" name="verbatimcoordinates" maxlength="255" value="<?php echo array_key_exists('verbatimcoordinates',$occArr)?$occArr['verbatimcoordinates']:''; ?>" onchange="verbatimCoordinatesChanged(this.form);" title="" />
+												<input type="text" data-lat-lng-sync="" name="verbatimcoordinates" maxlength="255" value="<?= $occArr['verbatimcoordinates'] ?? '' ?>" onchange="verbatimCoordinatesChanged(this.form);" title="" />
 												</div>
 											</div>
 										</div>
