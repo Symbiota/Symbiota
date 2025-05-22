@@ -325,9 +325,10 @@ class RpcOccurrenceEditor extends RpcBase{
 	// Autocomplete for otherCatalogNumbers tagNames
 	public function getTagName($collid, $term){
 		$retArr = array();
-		$sql = 'SELECT DISTINCT id.identifiername FROM omoccuridentifiers id ' .
-			'LEFT JOIN omoccurrences occ ON id.occid = occ.occid ' .
-			'WHERE occ.collid = ? AND id.identifiername LIKE CONCAT( ?, "%")';
+		$sql = 'SELECT DISTINCT id.identifiername
+			FROM omoccuridentifiers id INNER JOIN omoccurrences occ ON id.occid = occ.occid
+			WHERE occ.collid = ? AND id.identifiername LIKE CONCAT( ?, "%")
+			ORDER BY id.identifiername';
 		if($stmt = $this->conn->prepare($sql)){
 			if($stmt->bind_param('is', $collid, $term)){
 				$stmt->execute();
