@@ -138,4 +138,5 @@ $LANG['ORDER_BY'] = 'Trier par';
 $LANG['ADD_CUSTOM_FIELD'] = 'Ajouter un Nouveau Filtre de Recherche Personnalisé';
 $LANG['IDENTIFIER_TAG_NAME'] = 'Identificateur Nom de l\'étiquette';
 $LANG['IDENTIFIER_TAG_VALUE'] = 'Identificateur Valeur de l\'étiquette';
+$LANG['SEARCH_MISSING_TRAITS'] = 'Rechercher des enregistrements sans traits sélectionnés';
 ?>

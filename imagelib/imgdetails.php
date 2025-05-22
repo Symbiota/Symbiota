@@ -27,8 +27,17 @@ if ($isEditor) {
 	if ($action == 'Submit Image Edits') {
 		Media::update($mediaID, $_POST, new LocalStorage());
 	} elseif ($action == 'Transfer Image') {
-		Media::update($mediaID, ['tid' => $_REQUEST['targettid']]);
-		header('Location: ../taxa/profile/tpeditor.php?tid=' . $_REQUEST['targettid'] . '&tabindex=1');
+		if($targettid = $_REQUEST['targettid'] ?? false) {
+			Media::update($mediaID, ['tid' => $targettid ], new LocalStorage());
+
+			if($errors = Media::getErrors()) {
+				$status = 'Errors:<br/>' . implode('<br/>', $errors);
+			} else {
+				header('Location: ../taxa/profile/tpeditor.php?tid=' . $_REQUEST['targettid'] . '&tabindex=1');
+			}
+		} else {
+			$status = "ERROR: " . $LANG['MEDIA_TRANSFER_REQUIRES_TAXON_ID'];
+		}
 	} elseif ($action == 'Delete Image') {
 		$remove_files = $_REQUEST['removeimg'] ?? false;
 		try {
@@ -106,7 +115,7 @@ if ($imgArr) {
 			if (sciName == "") {
 				window.alert("<?php echo $LANG['ENTER_TAXON_NAME'] ?>");
 			} else {
-				validateTaxon(f, true);
+				validateTaxon(f, true, form => form.targettid.value = form.tid.value);
 			}
 			return false; //Submit takes place in the validateTaxon method
 		}
@@ -226,7 +235,7 @@ if ($imgArr) {
 							</div>
 							<div id="iepor" style="margin-top:2px;display:<?php echo ($imgArr["creator"] ? 'block' : 'none'); ?>;">
 								<b><?php echo $LANG['CREATOR_OVERRIDE'] ?>:</b>
-								<input name="CREATOR" type="text" value="<?php echo $imgArr["creator"]; ?>" style="width:250px;" />
+								<input name="creator" type="text" value="<?php echo $imgArr["creator"]; ?>" style="width:250px;" />
 								* <?php echo $LANG['OVERRIDE_SELECTION'] ?>
 							</div>
 							<div style="margin-top:2px;">
@@ -235,7 +244,7 @@ if ($imgArr) {
 							</div>
 							<div style="margin-top:2px;">
 								<b><?php echo $LANG['SOURCE_URL'] ?>:</b>
-								<input name="sourceurl" type="text" value="<?php echo $imgArr["sourceUrl"]; ?>" style="width:450px;" />
+								<input name="sourceUrl" type="text" value="<?php echo $imgArr["sourceUrl"]; ?>" style="width:450px;" />
 							</div>
 							<div style="margin-top:2px;">
 								<b><?php echo $LANG['COPYRIGHT'] ?>:</b>
@@ -261,7 +270,7 @@ if ($imgArr) {
 							</div>
 							<div style="margin-top:2px;">
 								<b><?php echo $LANG['SORT_SEQUENCE'] ?>:</b>
-								<input name="sortsequence" type="text" value="<?php echo $imgArr["sortSequence"] ?? ''; ?>" size="5" />
+								<input name="sortSequence" type="text" value="<?php echo $imgArr["sortSequence"] ?? ''; ?>" size="5" />
 							</div>
 							<div style="margin-top:2px;">
 								<b><?php echo $LANG['WEB_IMAGE'] ?>:</b><br />
@@ -273,14 +282,14 @@ if ($imgArr) {
 										<input type="checkbox" name="renameweburl" value="1" />
 										<?php echo $LANG['RENAME_WEB_IMAGE_FILE'] ?>
 									</div>
-									<input name="oldurl" type="hidden" value="<?php echo $imgArr["url"]; ?>" />
+									<input name="old_url" type="hidden" value="<?php echo $imgArr["url"]; ?>" />
 								<?php
 								}
 								?>
 							</div>
 							<div style="margin-top:2px;">
 								<b><?php echo $LANG['THUMBNAIL'] ?>:</b><br />
-								<input name="thumbnailurl" type="text" value="<?php echo $imgArr["thumbnailUrl"]; ?>" style="width:90%;" />
+								<input name="thumbnailUrl" type="text" value="<?php echo $imgArr["thumbnailUrl"]; ?>" style="width:90%;" />
 								<?php
 								if ($imgArr["thumbnailUrl"] && stripos($imgArr["thumbnailUrl"], $MEDIA_ROOT_URL) === 0) {
 								?>
@@ -288,7 +297,7 @@ if ($imgArr) {
 										<input type="checkbox" name="renametnurl" value="1" />
 										<?php echo $LANG['RENAME_THUMBNAIL_IMAGE_FILE'] ?>
 									</div>
-									<input name="oldthumbnailurl" type="hidden" value="<?php echo $imgArr["thumbnailUrl"]; ?>" />
+									<input name="old_thumbnailurl" type="hidden" value="<?php echo $imgArr["thumbnailUrl"]; ?>" />
 								<?php
 								}
 								?>
@@ -303,7 +312,7 @@ if ($imgArr) {
 										<input type="checkbox" name="renameorigurl" value="1" />
 										<?php echo $LANG['RENAME_LARGE_IMAGE_FILE'] ?>
 									</div>
-									<input name="oldoriginalurl" type="hidden" value="<?php echo $imgArr["originalUrl"]; ?>" />
+									<input name="old_originalurl" type="hidden" value="<?php echo $imgArr["originalUrl"]; ?>" />
 								<?php
 								}
 								?>
@@ -385,7 +394,7 @@ if ($imgArr) {
 						echo '</div>';
 					}
 					if ($imgArr['owner']) echo '<div><b>' . $LANG['MANAGER'] . ':</b> ' . $imgArr['owner'] . '</div>';
-					if ($imgArr['sourceUrl']) echo '<div><b>' . $LANG['IMAGE_SOURCE'] . ':</b> <a href="' . htmlspecialchars($imgArr['sourceurl'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($imgArr['sourceurl'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></div>';
+					if ($imgArr['sourceUrl']) echo '<div><b>' . $LANG['IMAGE_SOURCE'] . ':</b> <a href="' . htmlspecialchars($imgArr['sourceUrl'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($imgArr['sourceUrl'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></div>';
 					if ($imgArr['locality']) echo '<div><b>' . $LANG['LOCALITY'] . ':</b> ' . $imgArr['locality'] . '</div>';
 					if ($imgArr['notes']) echo '<div><b>' . $LANG['NOTES'] . ':</b> ' . $imgArr['notes'] . '</div>';
 					if ($imgArr['rights']) echo '<div><b>' . $LANG['RIGHTS'] . ':</b> ' . $imgArr['rights'] . '</div>';

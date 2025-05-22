@@ -138,4 +138,5 @@ $LANG['ORDER_BY'] = 'Order by';
 $LANG['ADD_CUSTOM_FIELD'] = 'Add New Custom Field';
 $LANG['IDENTIFIER_TAG_NAME'] = 'Identifier Tag Name';
 $LANG['IDENTIFIER_TAG_VALUE'] = 'Identifier Tag Value';
+$LANG['SEARCH_MISSING_TRAITS'] = 'Search for records without selected traits';
 ?>

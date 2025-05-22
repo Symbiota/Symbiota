@@ -138,4 +138,5 @@ $LANG['ORDER_BY'] = 'Ordenar por';
 $LANG['ADD_CUSTOM_FIELD'] = 'Agregar Nuevo Filtro de Búsqueda Personalizado';
 $LANG['IDENTIFIER_TAG_NAME'] = 'Identificador Etiqueta Nombre';
 $LANG['IDENTIFIER_TAG_VALUE'] = 'Identificador Etiqueta Valor';
+$LANG['SEARCH_MISSING_TRAITS'] = 'Buscar registros sin rasgos seleccionados';
 ?>

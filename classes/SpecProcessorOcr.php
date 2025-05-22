@@ -535,10 +535,10 @@ class SpecProcessorOcr extends Manager{
 					$imgH = imagesy($img);
 					if(($this->cropX + $this->cropW) > 1) $this->cropW = 1 - $this->cropX;
 					if(($this->cropY + $this->cropH) > 1) $this->cropH = 1 - $this->cropY;
-					$pX = $imgW*$this->cropX;
-					$pY = $imgH*$this->cropY;
-					$pW = $imgW*$this->cropW;
-					$pH = $imgH*$this->cropH;
+					$pX = (int)($imgW*$this->cropX);
+					$pY = (int)($imgH*$this->cropY);
+					$pW = (int)($imgW*$this->cropW);
+					$pH = (int)($imgH*$this->cropH);
 					$dest = imagecreatetruecolor($pW,$pH);
 
 					// Copy image

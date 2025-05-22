@@ -59,5 +59,6 @@ $LANG['IMAGE_SOURCE'] = 'Media Source';
 $LANG['OPEN_MEDIUM_SIZED_IMAGE'] = 'Open Medium Sized Image';
 $LANG['OPEN_LARGE_IMAGE'] = 'Open Large Image';
 $LANG['UNABLE_TO_LOCATE'] = 'Unable to locate media resource';
+$LANG['MEDIA_TRANSFER_REQUIRES_TAXON_ID'] = 'Media transfer requires a taxonomic id';
 
 ?>
