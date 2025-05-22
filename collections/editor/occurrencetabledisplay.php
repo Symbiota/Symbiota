@@ -32,6 +32,7 @@ $headerMapBase = array('institutioncode'=>'Institution Code (override)','collect
 	'dateidentified' => 'Date Identified', 'identificationreferences' => 'Identification References',
 	'country' => 'Country','stateprovince' => 'State/Province','county' => 'County','municipality' => 'Municipality',
 	'locality' => 'Locality','decimallatitude' => 'Latitude', 'decimallongitude' => 'Longitude',
+	'identifierName' => 'Identifier Tag Name','identifierValue' => 'Identifier Tag Value',
 	'coordinateuncertaintyinmeters' => 'Uncertainty In Meters', 'verbatimcoordinates' => 'Verbatim Coordinates','geodeticdatum' => 'Datum',
 	'georeferencedby' => 'Georeferenced By','georeferenceprotocol' => 'Georeference Protocol','georeferencesources' => 'Georeference Sources',
 	'georeferenceverificationstatus' => 'Georef Verification Status','georeferenceremarks' => 'Georef Remarks',

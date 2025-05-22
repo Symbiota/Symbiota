@@ -57,6 +57,7 @@ else{
 			'georeferenceVerificationStatus'=>$LANG['GEO_VERIF_STATUS'],'georeferencedBy'=>$LANG['GEO_BY'],'habitat'=>$LANG['HABITAT'],
 			'identificationQualifier'=>$LANG['ID_QUALIFIER'],'identificationReferences'=>$LANG['ID_REFERENCES'],
 			'identificationRemarks'=>$LANG['ID_REMARKS'],'identifiedBy'=>$LANG['IDED_BY'],'individualCount'=>$LANG['IND_COUNT'],
+			'identifierName' => $LANG['IDENTIFIER_TAG_NAME'], 'identifierValue' => $LANG['IDENTIFIER_TAG_VALUE'],
 			'informationWithheld'=>$LANG['INFO_WITHHELD'],'institutionCode'=>$LANG['INST_CODE'],'island'=>$LANG['ISLAND'],'islandgroup'=>$LANG['ISLAND_GROUP'],
 			'labelProject'=>$LANG['LAB_PROJECT'],'language'=>$LANG['LANGUAGE'],'lifeStage'=>$LANG['LIFE_STAGE'],'locationid'=>$LANG['LOCATION_ID'],'locality'=>$LANG['LOCALITY'],
 			'recordSecurity'=>$LANG['SECURITY'],'securityReason'=>$LANG['SECURITY_REASON'],'locationRemarks'=>$LANG['LOC_REMARKS'],
