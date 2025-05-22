@@ -879,6 +879,7 @@ fieldset{
 
 .button {
 	background-color: var(--darkest-color);
+	color: #fff;
 	border: none;
 	border-radius: 5px;
 	padding: 0.5rem 1rem;
