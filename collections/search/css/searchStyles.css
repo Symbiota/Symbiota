@@ -625,6 +625,20 @@
   line-height: 14px;
 }
 
+/* Characters and states */
+
+.inner-search .charHeadings {
+  font-size: 1.3rem;
+}
+
+.inner-search .charNames {
+  margin: 0.75rem;
+}
+
+.inner-search .charStates {
+  margin: 0.75rem;
+}
+
 /* SYMBIOTA NAVIGATION */
 
 /* Admin bar */

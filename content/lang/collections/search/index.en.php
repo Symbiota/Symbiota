@@ -119,5 +119,7 @@ $LANG['ASSOCIATIONS'] = 'Associations';
 $LANG['ASSOCIATION_DESCRIPTION'] = 'Find all occurrences of taxa that have the following association';
 $LANG['ASSOCIATION_DESCRIPTION_2'] = 'with the following taxon';
 $LANG['ASSOCIATION_TYPE'] = 'Association Type';
+$LANG['CHARACTERS'] = 'Characters';
+$LANG['NOCHARFOUND'] = 'No characters found';
 
 ?>

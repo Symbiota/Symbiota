@@ -31,6 +31,7 @@ $collList = $collManager->getFullCollectionList($catId);
 $specArr = (isset($collList['spec']) ? $collList['spec'] : null);
 $obsArr = (isset($collList['obs']) ? $collList['obs'] : null);
 $associationManager = new AssociationManager();
+$characters = $collManager->getCharacters();
 $relationshipTypes = $associationManager->getRelationshipTypes();
 ?>
 <!DOCTYPE html>
@@ -570,6 +571,52 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 								<span class="ml-1"><?php echo $LANG['ASSOCIATIONS'] . '-' . $LANG['INCLUDE_SYNONYMS'] ?></span>
 							</label>
 						</div>
+					</div>
+				</section>
+
+				<!-- Character Search -->
+				<section>
+					<!-- Character selector -->
+					<input type="checkbox" id="characters" class="accordion-selector" />
+
+					<!-- character header -->
+					<label for="characters" class="accordion-header"><?php echo $LANG['CHARACTERS'] ?></label>
+
+					<div id="search-form-characters" class="content">
+						<div>
+						<?php if (!empty($characters)): ?>
+							<?php
+							$grouped = [];
+							foreach ($characters as $cid => $char) {
+								$heading = $char['heading'] ?: 'Other';
+								$grouped[$heading][$cid] = $char;
+							}
+							?>
+
+							<?php foreach ($grouped as $heading => $charGroup): ?>
+								<div class="charHeadings"><h4><?php echo htmlspecialchars($heading); ?></h4></div>
+
+								<?php foreach ($charGroup as $cid => $char): ?>
+									<div class="character-block">
+										<div class="charNames"><?php echo htmlspecialchars($char['charName']); ?></div>
+										<div class="charStates">
+											<?php foreach ($char['states'] as $state): ?>
+												<label>
+													<input type="checkbox" 
+														name="characters[<?php echo $cid; ?>][]" 
+														value="<?php echo htmlspecialchars($state['cs']); ?>">
+													<?php echo htmlspecialchars($state['charStateName']); ?>
+												</label><br>
+											<?php endforeach; ?>
+										</div>
+									</div>
+								<?php endforeach; ?>
+							<?php endforeach; ?>
+						<?php else: ?>
+							<p><?php echo $LANG['NOCHARFOUND'] ?></p>
+						<?php endif; ?>
+						</div>
+
 					</div>
 				</section>
 
