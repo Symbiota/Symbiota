@@ -644,7 +644,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							if($isLiveData){
 								?>
 								<div class="field-div">
-									<input name="versiondata" type="checkbox" value="1">
+									<input name="versiondata" type="checkbox" value="1" checked>
 									<label><?= $LANG['VERSION_DATA_CHANGES'] ?></label>
 								</div>
 								<?php
