@@ -92,10 +92,14 @@ class TaxonomyController extends Controller {
 			}
 	
 			$fullCnt = $taxaModel->count();
-			$result = $taxaModel->skip($offset)->take($limit)->get();
+			$result = $taxaModel->skip($offset)->take($limit)->get()->transform(function($taxon){
+				return $taxon->makeHidden('sciName');
+			});
 		}else{
 			$fullCnt = Taxonomy::count();
-			$result = Taxonomy::skip($offset)->take($limit)->get();
+			$result = Taxonomy::skip($offset)->take($limit)->get()->transform(function($taxon){
+				return $taxon->makeHidden('sciName');
+			});
 		}
 
 		$eor = false;
@@ -134,6 +138,9 @@ class TaxonomyController extends Controller {
 	 */
 	public function showOneTaxon($id, Request $request) {
 		$taxonObj = Taxonomy::find($id);
+		if($taxonObj){
+			$taxonObj->makeHidden('sciName');
+		};
 
 		//Set status and parent (can't use Eloquent model due to table containing complex PKs)
 		$taxStatus = DB::table('taxstatus as s')
