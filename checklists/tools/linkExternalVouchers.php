@@ -141,6 +141,14 @@ if($clManager->getAssociatedExternalService()) {
 					if(!target_tid) throw Error('A target taxon id is required for this tool to function');
 
 					await fetchObservations(taxon_name, external_id, linked_external_vouchers); 
+
+				}).then( () => {
+					if(app_state.vouchers.length <= 0) {
+						const external_vouchers_container = document.getElementById('external_vouchers_container')
+						const all_vouchers_linked = document.getElementById('all_vouchers_linked')
+						external_vouchers_container.style.display = 'none';
+						all_vouchers_linked.style.display = null;
+					}
 				});
 			}
 
@@ -182,8 +190,23 @@ if($clManager->getAssociatedExternalService()) {
 					}
 				}
 
-				const checkboxes = e.target.querySelectorAll('input.link-checkbox').forEach(c => c.checked = null);
+				const checkboxes = e.target.querySelectorAll('input.link_checkbox').forEach(c => c.checked = null);
 				e.target.querySelector('input[name="external_voucher_link_json_data"]').value = JSON.stringify(json_data);
+			}
+
+			function toggleChecked(toggle = false) {
+				const checkboxes = document.querySelectorAll('input.link_checkbox');
+				for(let checkbox of checkboxes) {
+					checkbox.checked = toggle? true: null;
+				}
+			}
+
+			function uncheck_all_if_needed(e) {
+				const checked = e.target.checked;
+
+				if(!checked) {
+					document.getElementById('link-all').checked = null;
+				}
 			}
 		</script>
 	</head>
@@ -212,7 +235,7 @@ if($clManager->getAssociatedExternalService()) {
 			<template id="external_voucher_template">
 				<tr class="voucher_container">
 					<td>
-						<input class="link_checkbox" type="checkbox" name="external_voucher_link[]" value=""/>
+						<input onchange="uncheck_all_if_needed(event)" class="link_checkbox" type="checkbox" name="external_voucher_link[]" value=""/>
 					</td>
 					<td class="taxon_name"></td>
 					<td class="locality"></td>
@@ -238,7 +261,7 @@ if($clManager->getAssociatedExternalService()) {
 					<div style="margin-bottom:1rem"><b>Vouchers for: </b><?= $taxon_name ?></div>
 					<table class="styledtable">
 						<thead>
-							<th><input type="checkbox" name="link-all"></th>
+							<th><input id="link-all" onchange="toggleChecked(this.checked)" type="checkbox" name="link-all"></th>
 							<th>Taxon Name</th>
 							<th>Locality</th>
 							<th>Observer</th>
@@ -262,6 +285,12 @@ if($clManager->getAssociatedExternalService()) {
 			</div>
 
 			<div id="voucher_error" style="display:none;position:absolute; top:50%; width:100%; text-align:center"></div>
+			<div id="all_vouchers_linked" style="display:none;position:absolute; top:50%; width:100%; text-align:center">
+				All vouchers associated 
+				<i><?= $taxon_name ?></i> in
+				<a href="https://www.inaturalist.org/projects/<?= $external_id ?>" target="_blank">iNaturalist Project</a>
+				have already been linked
+			</div>
 		</div>
 	</body>
 </html>
