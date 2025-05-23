@@ -460,7 +460,7 @@ class ChecklistManager extends Manager{
    * Requires $taxaList be set or a $tid to be passed in.
    *
    * @param int|null $tid Optional Taxonomic id that will give only vouchers of the associated id
-   * @return array with the key structure of [ (tid) => [[ (clCoordID) => [ display => string, url => string] ]]]
+   * @return array with the key structure of [ (tid) => [[ (clCoordID) => [ display => string, url => string, id => int|string] ]]]
    **/
   public function getExternalVoucherArr($tid = null) {
 		$externalVoucherArr = array();
@@ -494,6 +494,7 @@ class ChecklistManager extends Manager{
 					$externalVoucherArr[$r->tid][$r->clCoordID]['display'] = trim($displayStr);
 					$url = 'https://www.inaturalist.org/observations/'.$r->sourceIdentifier;
 					$externalVoucherArr[$r->tid][$r->clCoordID]['url'] = $url;
+					$externalVoucherArr[$r->tid][$r->clCoordID]['id'] = $vouch->id;
 				}
 			}
 			$rs->free();

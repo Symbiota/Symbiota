@@ -1,24 +1,47 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/ChecklistVoucherAdmin.php');
-
+include_once($SERVER_ROOT . '/classes/ChecklistManager.php');
+include_once($SERVER_ROOT . "/classes/Sanitize.php");
 
 $clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $target_tid = array_key_exists('target_tid', $_REQUEST) ? filter_var($_REQUEST['target_tid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $taxon_name = array_key_exists('taxon_name', $_REQUEST) ? htmlspecialchars($_REQUEST['taxon_name']): '';
 
-$voucherManager = new ChecklistVoucherAdmin();
-$voucherManager->setClid($clid);
+if($_SERVER['REQUEST_METHOD'] === 'POST') {
+	header('Content-Type: application/json;charset=' . $CHARSET);
+	$voucherManager = new ChecklistVoucherAdmin();
+	$voucherManager->setClid($clid);
 
-if(!empty($_POST)) {
-	$taxon_name = array_key_exists('external_vouchers', $_REQUEST) ? htmlspecialchars(): '';
+	//$taxon_name = array_key_exists('external_vouchers', $_REQUEST) ? htmlspecialchars(): '';
 	
 	//This needs to be cleaned
-	$voucher_data = $_POST['external_vouchers'] ?? false;
+	$voucher_json_data = json_decode($_POST['external_voucher_link_json_data'], true) ?? [];
 
-	if($voucher_data) {
-		$voucherManager->addExternalVouchers($target_tid, $voucher_data);
+	if($voucher_json_data) {
+		$clean_data = Sanitize::in($voucher_json_data);
+
+		foreach($clean_data as $voucher_json) {
+			$voucherManager->addExternalVouchers($target_tid, $voucher_json);
+		}
 	}
+
+	try {
+		echo json_encode(['post' => $_POST]);
+	} catch(Throwable $th) {
+		echo json_encode(['error' => $th->getMessage()]);
+	}
+	return;
+}
+
+
+$clManager = new ChecklistManager();
+$clManager->setClid($clid);
+$clArray = $clManager->getClMetaData();
+
+$linked_external_vouchers = [];
+if($clManager->getAssociatedExternalService()) {
+	$linked_external_vouchers = $clManager->getExternalVoucherArr($target_tid);
 }
 
 ?>
@@ -32,6 +55,9 @@ if(!empty($_POST)) {
 		<script type="text/javascript">
 			const iNaturalistApi = 'https://api.inaturalist.org/v1'
 			const params = new URL(window.location.href).searchParams;
+			let app_state = {
+				vouchers: [],
+			};
 
 			async function runWithLoading(asyncCallback) {
 				const external_vouchers_container = document.getElementById('external_vouchers_container')
@@ -59,9 +85,17 @@ if(!empty($_POST)) {
 				}
 			}
 
-			async function fetchObservations(taxon_name, external_id, page=1) {
-				const url = `${iNaturalistApi}/observations?project_id=${external_id}&taxon_name=${taxon_name}&page=1`
-				//not_id could be used to filter out values
+			async function fetchObservations(taxon_name, external_id, linked_external_vouchers = [], page=1) {
+				const searchParams = new URLSearchParams();
+				searchParams.set('project_id', external_id);
+				searchParams.set('taxon_name', taxon_name);
+				searchParams.set('page', page);
+
+				for(let external_voucher_id of linked_external_vouchers) {
+					searchParams.append('not_id', external_voucher_id);
+				}
+
+				const url = `${iNaturalistApi}/observations?${searchParams}`;
 
 				let response = await fetch(url, {
 					method: "GET",
@@ -69,6 +103,12 @@ if(!empty($_POST)) {
 				});
 
 				let vouchers = await response.json();
+
+				//Save state for other operations
+				app_state.vouchers = vouchers.results;
+				app_state.vouchers_cnt = vouchers.total_results;
+				app_state.voucher_page = vouchers.total_results;
+				app_state.voucher_per_page = vouchers.per_page;
 
 				const template = document.getElementById('external_voucher_template')
 
@@ -81,14 +121,7 @@ if(!empty($_POST)) {
 					voucher_clone.querySelector('.voucher_container').id = voucher.id;
 					voucher_clone.querySelector('.external_id').textContent = voucher.id;
 					voucher_clone.querySelector('.link_checkbox').value = voucher.id;
-
 					voucher_clone.querySelector('.external_source').href= voucher.uri;
-					//voucher_clone.querySelector('.voucher_link_button').onclick = () => console.log('link ' + voucher.id);
-
-					if(voucher.photos && voucher.photos.length) {
-						//voucher_clone.querySelector('.display_img').src = voucher.photos[0].url;
-					}
-
 					external_vouchers.appendChild(voucher_clone);
 				}
 			}
@@ -99,27 +132,84 @@ if(!empty($_POST)) {
 				const target_tid = params.get('target_tid');
 				const external_id = params.get('external_id');
 
+				const data_store = document.getElementById('data-store');
+
+				let linked_external_vouchers = [];
+
+				try {
+					let voucher_json = JSON.parse(data_store.getAttribute('data-linked_external_vouchers'));
+					if(voucher_json[target_tid]) {
+						for(let clCoordID in voucher_json[target_tid]) {
+							const voucher = voucher_json[target_tid][clCoordID];
+							linked_external_vouchers.push(voucher.id);
+						}
+					}
+				} catch(err) {
+					console.error(err);
+				}
+
 				runWithLoading(async () => {
 					if(!checklist_id) throw Error('A checklist id is required for this tool to function');
 					if(!target_tid) throw Error('A target taxon id is required for this tool to function');
 
-					await fetchObservations(taxon_name, external_id) 
+					await fetchObservations(taxon_name, external_id, linked_external_vouchers); 
 				});
 			}
 
-			function external_vouchers_sumbit(e) {
+			async function external_vouchers_sumbit(e) {
 				e.preventDefault();
 				e.stopPropagation();
 
-				const tid = params.get('target_tid');
+				const target_tid = params.get('target_tid');
 				const clid = params.get('clid');
-
 				const form_data = new FormData(e.target);
-				console.log(form_data)
+				const new_links = form_data.getAll('external_voucher_link[]')
+
+				let json_data = [];
+
+				for(let voucher of app_state.vouchers) {
+					if(new_links.includes(`${voucher.id}`)) {
+						let new_voucher = {
+							// Casting as string to keep consistent with old storage type
+							id: `${voucher.id}`,
+							repository: 'iNat',
+							date: voucher.observed_on,
+							lat: 0,
+							lng: 0,
+						}
+
+						if(voucher.user) {
+							new_voucher.user = voucher.user.name? voucher.user.name: voucher.user.login
+						} else {
+							new_voucher.user = 'Unknown'
+						}
+
+						if(voucher.location) {
+							const location_parts = voucher.location.split(',');
+
+							if(location_parts.length === 2) {
+								new_voucher.lat = location_parts[0];
+								new_voucher.lng = location_parts[1];
+							}
+						}
+
+						json_data.push(new_voucher)
+					}
+				}
+
+				form_data.set('external_voucher_link_json_data', JSON.stringify(json_data));
+				form_data.delete('external_voucher_link');
+
+				let response = await fetch(window.location.pathname, {
+					method: "POST",
+					mode: "cors",
+					body: form_data
+				});
 			}
 		</script>
 	</head>
 	<body onload="initExternalVouchers()">	
+		<div id="data-store" data-linked_external_vouchers="<?= htmlspecialchars(json_encode($linked_external_vouchers))?>"></div>
 		<div id="innertext" style="height:100vh; position:relative">
 			<template id="external_voucher_template_old">
 				<div class="voucher_container" style="display:flex; gap: 1rem; align-items:center">
@@ -143,7 +233,7 @@ if(!empty($_POST)) {
 			<template id="external_voucher_template">
 				<tr class="voucher_container">
 					<td>
-						<input class="link_checkbox" type="checkbox" name="link" value=""/>
+						<input class="link_checkbox" type="checkbox" name="external_voucher_link[]" value=""/>
 					</td>
 					<td class="taxon_name"></td>
 					<td class="locality"></td>

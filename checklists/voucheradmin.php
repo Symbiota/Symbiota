@@ -54,7 +54,7 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USE
 			if(substr($key, 0, 2) == 'i-') {
 				$tid = substr($key, 2);
 				if(is_numeric($tid) && !empty($_POST[$tid])) {
-					if($clManager->addExternalVouchers($tid, urldecode($_POST[$tid]))){
+					if($clManager->addExternalVouchers($tid, json_decode($_POST[$tid], true))){
 						$cnt++;
 					}
 					else{

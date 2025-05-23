@@ -117,17 +117,22 @@ function retrieveVoucherInfo(taxonID) {
             let storeJsonStr = '';
             let retrievedVouch = '';
             for (const obs of resp.results) {
-                if(storeJsonStr == '') {
-                    storeJsonStr = encodeURIComponent('[');
-                } else {
-                    storeJsonStr += encodeURIComponent(',');
-                }
-                storeJsonStr += encodeURIComponent('{"id":"'+obs.id+'","taxon":"'+obs.taxon.name+'","user":"'+obs.user.login+'","date":"'+obs.observed_on_details.date+'","repository":"iNat","lng":'+obs.geojson.coordinates[0]+',"lat":'+obs.geojson.coordinates[1]+'}');
+				let voucher_json = {
+					id: `${obs.id}`,
+					taxon: obs.taxon.name,
+					taxon: obs.user.login,
+					date: obs.observed_on_details.date,
+					repository: 'iNat',
+					lng: obs.geojson.coordinates[0],
+					lat: obs.geojson.coordinates[1]
+				};
+
+				storeJsonStr = JSON.stringify(voucher_json);
+
                 retrievedVouch += '<a href="https://www.inaturalist.org/observations/'+obs.id+'" target="_blank">' + obs.user.login + ' ' + obs.observed_on_details.date + ' [iNat]</a>; ';
             }
-            storeJsonStr += encodeURIComponent(']');
             reportingSpan.innerHTML = retrievedVouch;
-            hiddenVoucherField.setAttribute("value", hiddenVoucherField.value + storeJsonStr);
+			hiddenVoucherField.value = storeJsonStr; 
         })
         .catch(error => {
             error.message;
