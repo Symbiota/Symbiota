@@ -1141,7 +1141,15 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 
 	public function getCharacters(){
 		$characters = [];
-		$allowedCharacters = isset($GLOBALS['ALLOWEDCHARACTERS']) ? $GLOBALS['ALLOWEDCHARACTERS'] : null;
+		$allowedCharacters = isset($GLOBALS['ALLOWEDCHARACTERS']) ? $GLOBALS['ALLOWEDCHARACTERS'] : '';
+
+		//convert string to array
+		if (!empty($allowedCharacters)) {
+			$allowedCharacters = array_filter(
+				array_map('intval', array_map('trim', explode(',', $allowedCharacters)))
+			);
+		} else
+			$allowedCharacters = [];
 
 		$sql = "SELECT h.hid, h.headingName, c.cid, c.charName, c.charType, c.sortSequence, cs.cs, cs.charStateName, cs.stateID
 				FROM kmcharacters c
