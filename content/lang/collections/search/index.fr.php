@@ -124,6 +124,7 @@ $LANG['ASSOCIATION_DESCRIPTION'] = 'Trouver toutes les occurrences de taxons qui
 $LANG['ASSOCIATION_DESCRIPTION_2'] = 'avec le taxon suivant';
 $LANG['ASSOCIATION_TYPE'] = 'Type d\'association';
 $LANG['CHARACTERS'] = 'Caractères';
+$LANG['CHARACTER_NOTE'] = "<b>Remarque</b>: les états de caractères dépendent des valeurs attribuées par la communauté de ce portail. Certains taxons peuvent ne pas avoir d'états de caractères attribués et peuvent donc ne pas apparaître dans vos résultats de recherche.";
 $LANG['NOCHARFOUND'] = 'Aucun caractère trouvé';
 
 ?>

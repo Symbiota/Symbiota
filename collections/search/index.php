@@ -586,6 +586,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 					<div id="search-form-characters" class="content">
 						<div>
 							<?php if (!empty($characters)): ?>
+								<div><?= $LANG['CHARACTER_NOTE'] ?><br></br></div>
 								<?php
 								$grouped = [];
 								foreach ($characters as $cid => $char) {
