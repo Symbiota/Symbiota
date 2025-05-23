@@ -1156,7 +1156,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$charStateName = $row['charStateName'];
 
 			//check if the character is allowed
-			if (is_array($allowedCharacters) && !in_array($charName, $allowedCharacters))
+			if (is_array($allowedCharacters) && !empty($allowedCharacters) && !in_array($charName, $allowedCharacters))
 				continue;
 
 			$cid = $row['cid'];
