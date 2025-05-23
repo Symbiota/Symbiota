@@ -123,5 +123,7 @@ $LANG['ASSOCIATIONS'] = 'Les associations';
 $LANG['ASSOCIATION_DESCRIPTION'] = 'Trouver toutes les occurrences de taxons qui ont l\'association suivante';
 $LANG['ASSOCIATION_DESCRIPTION_2'] = 'avec le taxon suivant';
 $LANG['ASSOCIATION_TYPE'] = 'Type d\'association';
+$LANG['CHARACTERS'] = 'Caractères';
+$LANG['NOCHARFOUND'] = 'Aucun caractère trouvé';
 
 ?>

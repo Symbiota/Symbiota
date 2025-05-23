@@ -579,44 +579,60 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 					<!-- Character selector -->
 					<input type="checkbox" id="characters" class="accordion-selector" />
 
-					<!-- character header -->
+					<!-- Character header -->
 					<label for="characters" class="accordion-header"><?php echo $LANG['CHARACTERS'] ?></label>
 
 					<div id="search-form-characters" class="content">
 						<div>
-						<?php if (!empty($characters)): ?>
-							<?php
-							$grouped = [];
-							foreach ($characters as $cid => $char) {
-								$heading = $char['heading'] ?: 'Other';
-								$grouped[$heading][$cid] = $char;
-							}
-							?>
+							<?php if (!empty($characters)): ?>
+								<?php
+								$grouped = [];
+								foreach ($characters as $cid => $char) {
+									$heading = $char['heading'] ?: 'Other';
+									$grouped[$heading][$cid] = $char;
+								}
+								?>
 
-							<?php foreach ($grouped as $heading => $charGroup): ?>
-								<div class="charHeadings"><h4><?php echo htmlspecialchars($heading); ?></h4></div>
+								<?php foreach ($grouped as $heading => $charGroup): ?>
+									<?php
+										$idStr = preg_replace('/[^a-zA-Z0-9]+/', '-', strtolower($heading));
+									?>
 
-								<?php foreach ($charGroup as $cid => $char): ?>
-									<div class="character-block">
-										<div class="charNames"><?php echo htmlspecialchars($char['charName']); ?></div>
-										<div class="charStates">
-											<?php foreach ($char['states'] as $state): ?>
-												<label>
-													<input type="checkbox" 
-														name="characters[<?php echo $cid; ?>][]" 
-														value="<?php echo htmlspecialchars($state['cs']); ?>">
-													<?php echo htmlspecialchars($state['charStateName']); ?>
-												</label><br>
-											<?php endforeach; ?>
-										</div>
+									<div class="char-headings">
+										<a href="#" onclick="toggleCharacterGroup('<?php echo $idStr; ?>'); return false;" class="condense-expand">
+											<span class="heading-text"><?php echo htmlspecialchars($heading); ?></span>
+											<span class="icon-wrapper">
+												<img id="plus-<?php echo $idStr; ?>" src="../../images/plus.png" alt="Expand" style="display:inline; width:1em;">
+												<img id="minus-<?php echo $idStr; ?>" src="../../images/minus.png" alt="Collapse" style="display:none; width:1em;">
+											</span>
+										</a>
+									</div>
+
+									<div id="char-block-<?php echo $idStr; ?>" style="display:none;">
+										<?php foreach ($charGroup as $cid => $char): ?>
+											<div class="character-block">
+												<div class="char-names"><?php echo htmlspecialchars($char['charName']); ?></div>
+												<div class="char-states">
+													<?php foreach ($char['states'] as $state): ?>
+														<?php
+														$charChip = htmlspecialchars($char['heading']) . " [" .
+																	htmlspecialchars($char['charName']) . "]: " .
+																	htmlspecialchars($state['charStateName']);
+														?>
+														<label>
+															<input type="checkbox" name="characters[<?php echo $cid; ?>][]" data-chip="<?php echo $charChip; ?>" value="<?php echo htmlspecialchars($state['cs']); ?>">
+															<?php echo htmlspecialchars($state['charStateName']); ?>
+														</label><br>
+													<?php endforeach; ?>
+												</div>
+											</div>
+										<?php endforeach; ?>
 									</div>
 								<?php endforeach; ?>
-							<?php endforeach; ?>
-						<?php else: ?>
-							<p><?php echo $LANG['NOCHARFOUND'] ?></p>
-						<?php endif; ?>
+							<?php else: ?>
+								<p><?php echo $LANG['NOCHARFOUND'] ?></p>
+							<?php endif; ?>
 						</div>
-
 					</div>
 				</section>
 
