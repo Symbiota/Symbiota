@@ -2206,6 +2206,184 @@
                         "description": "Error: Bad request. "
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "Taxonomy"
+                ],
+                "description": "Create a new taxon",
+                "operationId": "createTaxon",
+                "parameters": [
+                    {
+                        "name": "apiToken",
+                        "in": "query",
+                        "description": "API security token to authenticate post action",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Taxon data to be inserted",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "kingdomName",
+                                    "parenttid",
+                                    "sciName",
+                                    "rankID",
+                                    "unitName1",
+                                    "author",
+                                    "securityStatus"
+                                ],
+                                "properties": {
+                                    "kingdomName": {
+                                        "description": "The name of the kingdom",
+                                        "type": "string",
+                                        "maxLength": 45,
+                                        "enum": [
+                                            "Plantae",
+                                            "Fungi",
+                                            "Animalia",
+                                            "Chromista",
+                                            "Protista",
+                                            "Bacteria"
+                                        ]
+                                    },
+                                    "parenttid": {
+                                        "description": "The tid of the parent taxon. This is visible in the URL of the target taxon profile page, and it's also displayed in the taxonomy editor page.",
+                                        "type": "integer",
+                                        "default": null,
+                                        "maxLength": 10
+                                    },
+                                    "sciName": {
+                                        "description": "The name of the taxon excluding authorship. E.g., 'Abutilon guineense var. forrestii'",
+                                        "type": "string",
+                                        "maxLength": 250
+                                    },
+                                    "author": {
+                                        "description": "The authorship associated with the taxon",
+                                        "type": "string",
+                                        "maxLength": 150
+                                    },
+                                    "rankID": {
+                                        "description": "Rank id associated with the rank of the target taxon: class= 60, cultivar= 300, division= 30, family= 140, form= 260, genus= 180, kingdom= 10, non-ranked node= 0, order= 100, organism= 1, section= 200, species= 220, subclass= 70, subdivision= 40, subfamily= 150, subform= 270, subgenus= 190, subkingdom= 20, suborder= 110, subsection= 210, subspecies= 230, subtribe= 170, subvariety= 250, superclass= 50, tribe= 160, variety= 240",
+                                        "type": "integer",
+                                        "maxLength": 45,
+                                        "enum": [
+                                            0,
+                                            1,
+                                            10,
+                                            15,
+                                            20,
+                                            25,
+                                            27,
+                                            30,
+                                            40,
+                                            60,
+                                            70,
+                                            90,
+                                            100,
+                                            110,
+                                            120,
+                                            130,
+                                            140,
+                                            150,
+                                            160,
+                                            170,
+                                            180,
+                                            190,
+                                            200,
+                                            220,
+                                            230,
+                                            240,
+                                            250,
+                                            260,
+                                            300
+                                        ]
+                                    },
+                                    "unitInd1": {
+                                        "description": "An optional character to indicate hybrid (×) or extinct (†) status",
+                                        "type": "string",
+                                        "maxLength": 1
+                                    },
+                                    "unitName1": {
+                                        "description": "First name of the new taxon. If there is only one name (e.g., if the taxon is question is a genus), enter that name. If the taxon is binomial or more (e.g., 'Acer rubrum'), just enter the first taxonomic unit (e.g., 'Acer' in the previous example)",
+                                        "type": "string",
+                                        "maxLength": 50
+                                    },
+                                    "unitInd2": {
+                                        "description": "An optional character to indicate hybrid (×) status",
+                                        "type": "string",
+                                        "maxLength": 1
+                                    },
+                                    "unitName2": {
+                                        "description": "Optional second name of the new taxon. If there is only one name (e.g., if the taxon is question is a genus), leave this empty. If the taxon is binomial or more (e.g., 'Acer rubrum'), just enter the second taxonomic unit (e.g., 'rubrum' in the previous example)",
+                                        "type": "string",
+                                        "maxLength": 50
+                                    },
+                                    "unitInd3": {
+                                        "description": "An optional string to indicate the nature of the optional third name of the taxon (e.g., 'f.', 'var.', 'subvar.', 'spp.')",
+                                        "type": "string",
+                                        "maxLength": 45
+                                    },
+                                    "unitName3": {
+                                        "description": "Optional third name of the new taxon. If there are only two names (e.g., if the taxon is question is a species), leave this empty. If the taxon is trinomial or more (e.g., 'Trichomanes rigidum var. elongatum'), enter the third taxonomic unit (e.g., 'elongatum' in the previous example)",
+                                        "type": "string",
+                                        "maxLength": 35
+                                    },
+                                    "cultivarEpithet": {
+                                        "description": "Optional cultivar epithet if the taxon is a cultivar. Although single quotations will be appended to the full sciName of this taxon, single quotations should NOT be used here",
+                                        "type": "string",
+                                        "maxLength": 50
+                                    },
+                                    "tradeName": {
+                                        "description": "Optional trade name if the taxon has a trade name. By convention, trade names should be entered completely capitalized (e.g., 'EMPRESS')",
+                                        "type": "string",
+                                        "maxLength": 50
+                                    },
+                                    "source": {
+                                        "description": "Optional. Add a link or citation for the source of the scientific name you are adding, for example, a Plants of the World Online entry, a literature citation with DOI, etc.",
+                                        "type": "string",
+                                        "maxLength": 250
+                                    },
+                                    "notes": {
+                                        "description": "Optional. Any notes about the taxon that might be important to communicate",
+                                        "type": "string",
+                                        "maxLength": 250
+                                    },
+                                    "securityStatus": {
+                                        "description": "Enter 0 if no security filter is required. Enter 1 if TODO. Enter 5 if TODO.",
+                                        "type": "integer",
+                                        "maxLength": 10,
+                                        "enum": [
+                                            0,
+                                            1,
+                                            5
+                                        ]
+                                    },
+                                    "UnacceptabilityReason": {
+                                        "description": "Reasons why the taxon may not be widely accepted",
+                                        "type": "string",
+                                        "maxLength": 250
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Returns full JSON object of the of collection that was created"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
             }
         },
         "/api/v2/taxonomy/{identifier}": {

@@ -65,6 +65,7 @@ $router->group(['prefix' => 'v2'], function () use ($router) {
 
 	$router->get('taxonomy', ['uses' => 'TaxonomyController@showAllTaxaSearch']);
 	$router->get('taxonomy/{id}', ['uses' => 'TaxonomyController@showOneTaxon']);
+	$router->post('taxonomy',  ['uses' => 'TaxonomyController@create']);
 	//$router->get('taxonomy/{id}/description',  ['uses' => 'TaxonomyController@showAllDescriptions']);
 	//$router->get('taxonomy/{id}/description/{id}',  ['uses' => 'TaxonomyDescriptionController@showOneDescription']);
 
@@ -73,4 +74,6 @@ $router->group(['prefix' => 'v2'], function () use ($router) {
 	$router->get('exsiccata/{identifier}/number', ['uses' => 'ExsiccataController@showOneExsiccataNumbers']);
 	$router->get('exsiccata/{identifier}/number/{numberIdentifier}', ['uses' => 'ExsiccataController@showOneExsiccataNumbersIdentifier']);
 	$router->get('exsiccati/{identifier}/number/{numberIdentifier}/occurrence', ['uses' => 'ExsiccataController@showOccurrencesByExsiccataNumber']);
+
+	
 });
