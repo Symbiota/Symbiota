@@ -453,7 +453,7 @@ class ChecklistVoucherAdmin extends Manager {
 			// we could try averaging ll for multiples, but then the software would be introducing non-real data, which is bad.
 			// not that zero/zero is real data either... CDT 8/2023
 			
-			if(is_numeric($dataAsJson['lat']) || is_numeric($dataAsJson['lng'])) {
+			if(!is_numeric($dataAsJson['lat']) || !is_numeric($dataAsJson['lng'])) {
 				continue;
 			}
 

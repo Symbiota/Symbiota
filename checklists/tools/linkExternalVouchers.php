@@ -6,32 +6,21 @@ include_once($SERVER_ROOT . "/classes/Sanitize.php");
 
 $clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $target_tid = array_key_exists('target_tid', $_REQUEST) ? filter_var($_REQUEST['target_tid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$external_id = array_key_exists('external_id', $_REQUEST) ? filter_var($_REQUEST['external_id'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $taxon_name = array_key_exists('taxon_name', $_REQUEST) ? htmlspecialchars($_REQUEST['taxon_name']): '';
+$external_service = array_key_exists('external_service', $_REQUEST) ? htmlspecialchars($_REQUEST['external_service']): '';
 
 if($_SERVER['REQUEST_METHOD'] === 'POST') {
-	header('Content-Type: application/json;charset=' . $CHARSET);
 	$voucherManager = new ChecklistVoucherAdmin();
 	$voucherManager->setClid($clid);
-
-	//$taxon_name = array_key_exists('external_vouchers', $_REQUEST) ? htmlspecialchars(): '';
 	
-	//This needs to be cleaned
-	$voucher_json_data = json_decode($_POST['external_voucher_link_json_data'], true) ?? [];
-
-	if($voucher_json_data) {
-		$clean_data = Sanitize::in($voucher_json_data);
-
-		foreach($clean_data as $voucher_json) {
-			$voucherManager->addExternalVouchers($target_tid, $voucher_json);
+	if($_POST['external_voucher_link_json_data'] ?? false) {
+		$voucher_json_data = json_decode($_POST['external_voucher_link_json_data'], true) ?? [];
+		if($voucher_json_data) {
+			$clean_data = Sanitize::in($voucher_json_data);
+			$status = $voucherManager->addExternalVouchers($target_tid, $clean_data);
 		}
 	}
-
-	try {
-		echo json_encode(['post' => $_POST]);
-	} catch(Throwable $th) {
-		echo json_encode(['error' => $th->getMessage()]);
-	}
-	return;
 }
 
 
@@ -133,7 +122,6 @@ if($clManager->getAssociatedExternalService()) {
 				const external_id = params.get('external_id');
 
 				const data_store = document.getElementById('data-store');
-
 				let linked_external_vouchers = [];
 
 				try {
@@ -157,9 +145,6 @@ if($clManager->getAssociatedExternalService()) {
 			}
 
 			async function external_vouchers_sumbit(e) {
-				e.preventDefault();
-				e.stopPropagation();
-
 				const target_tid = params.get('target_tid');
 				const clid = params.get('clid');
 				const form_data = new FormData(e.target);
@@ -197,14 +182,8 @@ if($clManager->getAssociatedExternalService()) {
 					}
 				}
 
-				form_data.set('external_voucher_link_json_data', JSON.stringify(json_data));
-				form_data.delete('external_voucher_link');
-
-				let response = await fetch(window.location.pathname, {
-					method: "POST",
-					mode: "cors",
-					body: form_data
-				});
+				const checkboxes = e.target.querySelectorAll('input.link-checkbox').forEach(c => c.checked = null);
+				e.target.querySelector('input[name="external_voucher_link_json_data"]').value = JSON.stringify(json_data);
 			}
 		</script>
 	</head>
@@ -246,11 +225,15 @@ if($clManager->getAssociatedExternalService()) {
 
 			<div id="external_vouchers_container" style="display:none">
 			<?php if(!empty($clid)): ?>
-				<form id="external_voucher_form" onsubmit="external_vouchers_sumbit(event)">
+				<form method="POST" id="external_voucher_form" onsubmit="external_vouchers_sumbit(event)">
 					<h1>External Voucher Linking - iNaturalist</h1>
 
 					<input type="hidden" name="clid" value="<?= htmlspecialchars($clid) ?>">
 					<input type="hidden" name="target_tid" value="<?= htmlspecialchars($target_tid) ?>">
+					<input type="hidden" name="external_id" value="<?= htmlspecialchars($external_id) ?>">
+					<input type="hidden" name="taxon_name" value="<?= $taxon_name ?>">
+					<input type="hidden" name="external_service" value="<?= $external_service ?>">
+					<input type="hidden" name="external_voucher_link_json_data" value="">
 
 					<div style="margin-bottom:1rem"><b>Vouchers for: </b><?= $taxon_name ?></div>
 					<table class="styledtable">
