@@ -122,5 +122,8 @@ $LANG['ASSOCIATIONS'] = 'Associations';
 $LANG['ASSOCIATION_DESCRIPTION'] = 'Find all occurrences of taxa that have the following association';
 $LANG['ASSOCIATION_DESCRIPTION_2'] = 'with the following taxon';
 $LANG['ASSOCIATION_TYPE'] = 'Association Type';
+$LANG['CHARACTERS'] = 'Characters';
+$LANG['CHARACTER_NOTE'] = '<b>Note</b>: character states depend on values assigned by this portal community. Some taxa may not have character states assigned and may therefore not be returned in your search results.';
+$LANG['NOCHARFOUND'] = 'No characters found';
 
 ?>
