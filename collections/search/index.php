@@ -575,6 +575,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 				</section>
 
 				<!-- Character Search -->
+				<?php if (!empty($characters)): ?>
 				<section>
 					<!-- Character selector -->
 					<input type="checkbox" id="characters" class="accordion-selector" />
@@ -635,6 +636,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 						</div>
 					</div>
 				</section>
+				<?php endif; ?>
 
 				<!-- Collections -->
 				<section>

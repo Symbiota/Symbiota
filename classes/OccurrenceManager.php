@@ -1154,9 +1154,10 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		while ($row = $rs->fetch_assoc()) {
 			$charName = $row['charName'];
 			$charStateName = $row['charStateName'];
+			$cid = $row['cid'];
 
 			//check if the character is allowed
-			if (empty($allowedCharacters) || !is_array($allowedCharacters) || !in_array($charName, $allowedCharacters))
+			if (empty($allowedCharacters) || !in_array($cid, $allowedCharacters))
 				continue;
 
 			$cid = $row['cid'];
