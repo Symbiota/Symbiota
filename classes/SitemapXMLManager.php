@@ -44,6 +44,7 @@ class SitemapXMLManager extends Manager {
         }
 
         //add pages
+        $xml .= $this->generateOccurrencesSitemap($conn, $baseUrl);
         $xml .= $this->generateCollectionsSitemap($conn, $baseUrl);
         $xml .= $this->generateChecklistsSitemap($baseUrl);
         $xml .= $this->generateProjectsSitemap($baseUrl);
@@ -190,6 +191,27 @@ class SitemapXMLManager extends Manager {
 
                 $xml .= "  <url>\n";
                 $xml .= "    <loc>{$baseUrl}{$path}</loc>\n";
+                $xml .= "  </url>\n";
+            }
+        }
+        return $xml;
+    }
+
+    private function generateOccurrencesSitemap($conn, $baseUrl) {
+        $xml = '';
+        $sql = "SELECT occid, datelastmodified FROM omoccurrences ORDER BY occid LIMIT 500";
+        $rs = $conn->query($sql);
+
+        if ($rs) {
+            while ($row = $rs->fetch_assoc()) {
+                $path = "/collections/individual/index.php?occid={$row['occid']}";
+                if (!$this->isPathAllowed($path)) continue;
+
+                $xml .= "  <url>\n";
+                $xml .= "    <loc>{$baseUrl}{$path}</loc>\n";
+                if (!empty($row['datelastmodified'])) {
+                    $xml .= "    <lastmod>" . date("Y-m-d", strtotime($row['datelastmodified'])) . "</lastmod>\n";
+                }
                 $xml .= "  </url>\n";
             }
         }
