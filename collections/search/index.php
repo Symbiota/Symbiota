@@ -611,25 +611,25 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 									</div>
 
 									<div id="char-block-<?php echo $idStr; ?>" style="display:none;">
-										<?php foreach ($charGroup as $cid => $char): ?>
-											<div class="character-block">
-												<div class="char-names"><?php echo htmlspecialchars($char['charName']); ?></div>
-												<div class="char-states">
-													<?php foreach ($char['states'] as $state): ?>
-														<?php
-														$charChip = htmlspecialchars($char['heading']) . " [" .
-																	htmlspecialchars($char['charName']) . "]: " .
-																	htmlspecialchars($state['charStateName']);
-														?>
-														<label>
-															<input type="checkbox" name="characters[<?php echo $cid; ?>][]" data-chip="<?php echo $charChip; ?>" value="<?php echo htmlspecialchars($state['cs']); ?>">
-															<?php echo htmlspecialchars($state['charStateName']); ?>
-														</label><br>
-													<?php endforeach; ?>
-												</div>
+									<?php foreach ($charGroup as $cid => $char): ?>
+										<div class="character-block">
+											<div class="char-names"><?php echo htmlspecialchars($char['charName']); ?></div>
+											<div class="char-states">
+												<?php foreach ($char['states'] as $state): ?>
+													<?php
+													$charChip = htmlspecialchars($char['heading']) . " [" .
+																htmlspecialchars($char['charName']) . "]: " .
+																htmlspecialchars($state['charStateName']);
+													?>
+													<label>
+														<input type="checkbox" name="characters[]" data-chip="<?php echo $charChip; ?>" value="<?php echo $cid . ':' . htmlspecialchars($state['cs']); ?>">
+														<?php echo htmlspecialchars($state['charStateName']); ?>
+													</label><br>
+												<?php endforeach; ?>
 											</div>
-										<?php endforeach; ?>
-									</div>
+										</div>
+									<?php endforeach; ?>
+								</div>
 								<?php endforeach; ?>
 							<?php else: ?>
 								<p><?php echo $LANG['NOCHARFOUND'] ?></p>

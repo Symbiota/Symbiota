@@ -525,16 +525,26 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$andClauses = [];
 			$i = 1;
 
-			foreach ($characters as $cid => $stateList) {
-				if (!is_array($stateList) || empty($stateList)) continue;
+			$charPairs = [];
+
+			foreach ($characters as $pair) {
+				if (strpos($pair, ':') === false) continue;
+
+				list($cid, $cs) = explode(':', $pair, 2);
+				$cid = intval($cid);
+				$cs = $this->conn->real_escape_string($cs);
+
+				$charPairs[$cid][] = $cs;
+			}
+
+			foreach ($charPairs as $cid => $csArray) {
+				if (empty($csArray)) continue;
 
 				$alias = "d{$i}";
 				$joins[] = "INNER JOIN kmdescr $alias ON t.tid = $alias.tid";
 
-				$escapeStates = array_map([$this->conn, 'real_escape_string'], array_values($stateList));
-				$csList = "'" . implode("','", $escapeStates) . "'";
-
-				$andClauses[] = "$alias.cid = " . intval($cid) . " AND $alias.cs IN ($csList)";
+				$csList = "'" . implode("','", $csArray) . "'";
+				$andClauses[] = "$alias.cid = $cid AND $alias.cs IN ($csList)";
 				$i++;
 			}
 
@@ -724,20 +734,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		foreach($this->searchTermArr as $k => $v){
 			if($k == 'countryCode') continue;
 			if($k == 'countryRaw') continue;
-			if(is_array($v)){ 
-				if ($k === 'characters') {
-					foreach ($v as $cid => $states) {
-						if (is_array($states)) {
-							foreach ($states as $index => $cs) {
-								$retStr .= '&characters[' . $this->cleanOutStr($cid) . '][' . $index . ']=' . $this->cleanOutStr($cs);
-							}
-						}
-					}
-					continue;
-				} else {
-					$v = implode(',', $v);
-				}
-			}
+			if(is_array($v)) $v = implode(',', $v);
 			if($v) $retStr .= '&'. $this->cleanOutStr($k) . '=' . $this->cleanOutStr($v);
 		}
 		if(isset($this->taxaArr['search'])){
