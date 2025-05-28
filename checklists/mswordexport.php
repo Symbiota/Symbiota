@@ -226,7 +226,7 @@ else{
 			$textrun->addText(']','textFont');
 		}
 		if($showVouchers){
-			if(array_key_exists('notes',$sppArr) || array_key_exists($tid,$voucherArr)){
+			if(array_key_exists('notes',$sppArr) || array_key_exists($tid,$voucherArr) || array_key_exists($tid, $externalVouchers)){
 				$textrun = $section->addTextRun('notesvouchersPara');
 			}
 			if(array_key_exists('notes',$sppArr)){
