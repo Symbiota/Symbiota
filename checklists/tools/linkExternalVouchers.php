@@ -10,7 +10,7 @@ $external_id = array_key_exists('external_id', $_REQUEST) ? filter_var($_REQUEST
 $taxon_name = array_key_exists('taxon_name', $_REQUEST) ? htmlspecialchars($_REQUEST['taxon_name']): '';
 $external_service = array_key_exists('external_service', $_REQUEST) ? htmlspecialchars($_REQUEST['external_service']): '';
 
-if(!$IS_ADMIN || !(array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $USER_RIGHTS['ClAdmin']))){
+if(!($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $USER_RIGHTS['ClAdmin']))) ){
 	header('location: ' . $CLIENT_ROOT . '/index.php');
 	return;
 }
