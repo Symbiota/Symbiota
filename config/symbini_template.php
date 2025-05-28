@@ -1,8 +1,4 @@
 <?php
-
-$PRIVATE_VIEWING_ONLY = true;
-$PRIVATE_VIEWING_OVERRIDES = ['/index.php', '/misc/contacts.php','/misc/aboutproject.php', '/profile/newprofile.php', '/profile/index.php'];  //These pages will always be accessible to public viewing.  Add to as needed. 
-
 $DEFAULT_LANG = 'en';			//Default language
 $DEFAULT_PROJ_ID = 0;
 $DEFAULTCATID = 0;
@@ -108,6 +104,9 @@ $THIRD_PARTY_OID_AUTH_ENABLED = false;
 $SHOULD_USE_MINIMAL_MAP_HEADER = false;
 
 $DATE_DEFAULT_TIMEZONE = NULL; // This should be set if server default timezone isn't populated correctly by deafult (e.g., $DATE_DEFAULT_TIMEZONE = 'America/Phoenix';)
+
+$PRIVATE_VIEWING_ONLY = false; // Setting to true sets all content to be password protected besides below pages
+$PRIVATE_VIEWING_OVERRIDES = ['/index.php', '/misc/contacts.php','/misc/aboutproject.php', '/profile/newprofile.php', '/profile/index.php'];  //These pages will always be accessible to public viewing.  Add to as needed. 
 
 $COOKIE_SECURE = false;
 if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) {
