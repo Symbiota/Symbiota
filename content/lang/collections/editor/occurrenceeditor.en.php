@@ -100,6 +100,7 @@ $LANG['NON_SANCTIONED'] = 'Non Sanctioned Value';
 $LANG['INST_CODE_EXPLAIN'] = 'Overrides institution code set within collection\'s metadata form';
 $LANG['COLL_CODE_EXPLAIN'] = 'Overrides collection code set within collection\'s metadata form';
 $LANG['OWNER_CODE_EXPLAIN'] = 'If different than institution code';
+$LANG['STORAGELOCATION_EXPLAIN'] = 'Location where specimen is stored';
 $LANG['NO_SET_STATUS'] = 'No Set Status';
 $LANG['AKA_GENERAL'] = 'aka data generalizations';
 $LANG['PRIMARY_KEY'] = 'Internal occurrence record Primary Key (occid)';

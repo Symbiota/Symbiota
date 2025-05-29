@@ -303,14 +303,14 @@ class SpecUpload{
 					}
 				}
 			}
-		} 
+		}
 		return $sql;
 	}
 
 	protected function setSkipOccurFieldArr(){
 		$this->skipOccurFieldArr = array('dbpk','initialtimestamp','occid','collid','tidinterpreted','fieldnotes','coordinateprecision',
 			'verbatimcoordinatesystem','institutionid','collectionid','associatedoccurrences','datasetid','associatedreferences',
-			'previousidentifications','storagelocation','genericcolumn1','genericcolumn2');
+			'previousidentifications','genericcolumn1','genericcolumn2');
 		if($this->collMetadataArr['managementtype'] == 'Live Data' && $this->collMetadataArr['guidtarget'] != 'occurrenceId'){
 			//Do not import occurrenceID if dataset is a live dataset, unless occurrenceID is explicitly defined as the guidSource.
 			//This avoids the situtation where folks are exporting data from one collection and importing into their collection along with the other collection's occurrenceID GUID, which is very bad

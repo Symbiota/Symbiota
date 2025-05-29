@@ -93,14 +93,33 @@ else{
 	<form name="queryform" action="<?php echo $_SERVER['SCRIPT_NAME']; ?>" method="post" onsubmit="return verifyQueryForm(this)">
 		<fieldset style="padding:0.5rem; position: relative">
 			<legend><?php echo $LANG['RECORD_SEARCH_FORM']; ?></legend>
-			<button style="position: absolute; margin:0; right:0.5rem; top:0;" type="button" class="icon-button" onclick="copyQueryLink(event)" title="<?php echo $LANG['COPY_SEARCH']; ?>" aria-label="<?php echo $LANG['COPY_LINK']; ?>">
-				<span style="display:flex; align-content: center;">
+			<div style="float: right">
+				<button type="button" class="icon-button" onclick="copyQueryLink(event)" title="<?php echo $LANG['COPY_SEARCH']; ?>" aria-label="<?php echo $LANG['COPY_LINK']; ?>">
+					<span style="display:flex; align-content: center;">
 						<svg alt="Copies the search terms as a link." style="width:1.2em;margin-right:5px;" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg>
-						<span style="align-content: center;">
-							<?php echo $LANG['COPY_LINK']; ?>
-						</span>
-				</span>
-			</button>
+					</span>
+				</button>
+				<?php
+				if(!$crowdSourceMode){
+					$qryStr = '';
+					if($qRecordedBy) $qryStr .= '&recordedby='.$qRecordedBy;
+					if($qRecordNumber) $qryStr .= '&recordnumber='.$qRecordNumber;
+					if($qEventDate) $qryStr .= '&eventdate='.$qEventDate;
+					if($qCatalogNumber) $qryStr .= '&catalognumber='.$qCatalogNumber;
+					if($qOtherCatalogNumbers) $qryStr .= '&othercatalognumbers='.$qOtherCatalogNumbers;
+					if($qRecordEnteredBy) $qryStr .= '&recordenteredby='.$qRecordEnteredBy;
+					if($qDateEntered) $qryStr .= '&dateentered='.$qDateEntered;
+					if($qDateLastModified) $qryStr .= '&datelastmodified='.$qDateLastModified;
+					if($qryStr){
+						?>
+						<a class="button button-primary icon-button" style="display: inline-flex; padding: 7px" title="<?php echo $LANG['GO_LABEL_PRINT']; ?>" href="../reports/labelmanager.php?collid=<?= $collId . htmlspecialchars($qryStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank">
+							<img src="../../images/list.png" style="width:1.3em" />
+						</a>
+						<?php
+					}
+				}
+				?>
+			</div>
 			<?php
 			if(!$crowdSourceMode){
 				?>
@@ -315,44 +334,17 @@ else{
 				</div>
 				<?php
 			}
-			?>
-				<?php
-				if($isGenObs && ($IS_ADMIN || ($collId && array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"])))){
-					?>
-					<div class="fieldGroupDiv">
-						<div>
-							<input type="checkbox" name="q_returnall" value="1" <?php echo ($qReturnAll?'CHECKED':''); ?> /> <?php echo $LANG['SHOW_RECS_ALL']; ?>
-						</div>
-					</div>
-					<?php
-				}
+			if($isGenObs && ($IS_ADMIN || ($collId && array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"])))){
 				?>
-				<div>
+				<div class="fieldGroupDiv">
 					<div>
-
-					<?php
-					if(!$crowdSourceMode){
-						$qryStr = '';
-						if($qRecordedBy) $qryStr .= '&recordedby='.$qRecordedBy;
-						if($qRecordNumber) $qryStr .= '&recordnumber='.$qRecordNumber;
-						if($qEventDate) $qryStr .= '&eventdate='.$qEventDate;
-						if($qCatalogNumber) $qryStr .= '&catalognumber='.$qCatalogNumber;
-						if($qOtherCatalogNumbers) $qryStr .= '&othercatalognumbers='.$qOtherCatalogNumbers;
-						if($qRecordEnteredBy) $qryStr .= '&recordenteredby='.$qRecordEnteredBy;
-						if($qDateEntered) $qryStr .= '&dateentered='.$qDateEntered;
-						if($qDateLastModified) $qryStr .= '&datelastmodified='.$qDateLastModified;
-						if($qryStr){
-					?>
-						<a class="button button-primary icon-button bottom-breathing-room-rel" title="<?php echo $LANG['GO_LABEL_PRINT']; ?>" href="../reports/labelmanager.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . htmlspecialchars($qryStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank">
-							<img src="../../images/list.png" style="width:1.3em" />
-						</a>	
-					<?php
-						}
-					}
-					?>
+						<input type="checkbox" name="q_returnall" value="1" <?php echo ($qReturnAll?'CHECKED':''); ?> /> <?php echo $LANG['SHOW_RECS_ALL']; ?>
 					</div>
 				</div>
-				<div>
+				<?php
+			}
+			?>
+			<div>
 				<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
 				<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
 				<input type="hidden" name="occid" value="<?php echo $occManager->getOccId(); ?>" />

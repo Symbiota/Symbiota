@@ -4,7 +4,8 @@ include_once($SERVER_ROOT . '/classes/OccurrenceDuplicate.php');
 include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 
-if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/editor/occurrenceeditor.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/editor/occurrenceeditor.' . $LANG_TAG . '.php');
+if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/editor/occurrenceeditor.' . $LANG_TAG . '.php'))
+	include_once($SERVER_ROOT . '/content/lang/collections/editor/occurrenceeditor.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/editor/occurrenceeditor.en.php');
 
 class OccurrenceEditorManager {
@@ -33,119 +34,21 @@ class OccurrenceEditorManager {
 			$this->conn = $conn;
 			$this->isShareConn = true;
 		} else $this->conn = MySQLiConnectionFactory::getCon("write");
-		$this->fieldArr['omoccurrences'] = array(
-			'basisofrecord' => 's',
-			'catalognumber' => 's',
-			'othercatalognumbers' => 's',
-			'occurrenceid' => 's',
-			'ownerinstitutioncode' => 's',
-			'institutioncode' => 's',
-			'collectioncode' => 's',
-			'eventid' => 's',
-			'family' => 's',
-			'sciname' => 's',
-			'tidinterpreted' => 'n',
-			'scientificnameauthorship' => 's',
-			'identifiedby' => 's',
-			'dateidentified' => 's',
-			'identificationreferences' => 's',
-			'identificationremarks' => 's',
-			'taxonremarks' => 's',
-			'identificationqualifier' => 's',
-			'typestatus' => 's',
-			'recordedby' => 's',
-			'recordnumber' => 's',
-			'associatedcollectors' => 's',
-			'eventdate' => 'd',
-			'eventdate2' => 'd',
-			'year' => 'n',
-			'month' => 'n',
-			'day' => 'n',
-			'startdayofyear' => 'n',
-			'enddayofyear' => 'n',
-			'verbatimeventdate' => 's',
-			'habitat' => 's',
-			'substrate' => 's',
-			'fieldnumber' => 's',
-			'occurrenceremarks' => 's',
-			'datageneralizations' => 's',
-			'associatedtaxa' => 's',
-			'verbatimattributes' => 's',
-			'behavior' => 's',
-			'vitality' => 's',
-			'dynamicproperties' => 's',
-			'reproductivecondition' => 's',
-			'cultivationstatus' => 's',
-			'establishmentmeans' => 's',
-			'lifestage' => 's',
-			'sex' => 's',
-			'individualcount' => 's',
-			'samplingprotocol' => 's',
-			'preparations' => 's',
-			'continent' => 's',
-			'waterbody' => 's',
-			'islandgroup' => 's',
-			'island' => 's',
-			'countrycode' => 's',
-			'country' => 's',
-			'stateprovince' => 's',
-			'county' => 's',
-			'municipality' => 's',
-			'locationid' => 's',
-			'locality' => 's',
-			'recordsecurity' => 'n',
-			'securityreason' => 's',
-			'locationremarks' => 's',
-			'decimallatitude' => 'n',
-			'decimallongitude' => 'n',
-			'geodeticdatum' => 's',
-			'coordinateuncertaintyinmeters' => 'n',
-			'verbatimcoordinates' => 's',
-			'footprintwkt' => 's',
-			'georeferencedby' => 's',
-			'georeferenceprotocol' => 's',
-			'georeferencesources' => 's',
-			'georeferenceverificationstatus' => 's',
-			'georeferenceremarks' => 's',
-			'minimumelevationinmeters' => 'n',
-			'maximumelevationinmeters' => 'n',
-			'verbatimelevation' => 's',
-			'minimumdepthinmeters' => 'n',
-			'maximumdepthinmeters' => 'n',
-			'verbatimdepth' => 's',
-			'disposition' => 's',
-			'language' => 's',
-			'duplicatequantity' => 'n',
-			'labelproject' => 's',
-			'processingstatus' => 's',
-			'recordenteredby' => 's',
-			'observeruid' => 'n',
-			'dateentered' => 'd'
-		);
-		$this->fieldArr['omoccurpaleo'] = array(
-			'eon',
-			'era',
-			'period',
-			'epoch',
-			'earlyinterval',
-			'lateinterval',
-			'absoluteage',
-			'storageage',
-			'stage',
-			'localstage',
-			'biota',
-			'biostratigraphy',
-			'lithogroup',
-			'formation',
-			'taxonenvironment',
-			'member',
-			'bed',
-			'lithology',
-			'stratremarks',
-			'element',
-			'slideproperties',
-			'geologicalcontextid'
-		);
+		$this->fieldArr['omoccurrences'] = array('basisofrecord' => 's','catalognumber' => 's','othercatalognumbers' => 's','occurrenceid' => 's','ownerinstitutioncode' => 's',
+			'institutioncode' => 's','collectioncode' => 's','eventid' => 's','family' => 's','sciname' => 's','tidinterpreted' => 'n','scientificnameauthorship' => 's','identifiedby' => 's',
+			'dateidentified' => 's','identificationreferences' => 's','identificationremarks' => 's','taxonremarks' => 's','identificationqualifier' => 's','typestatus' => 's',
+			'recordedby' => 's','recordnumber' => 's','associatedcollectors' => 's','eventdate' => 'd','eventdate2' => 'd','year' => 'n','month' => 'n','day' => 'n','startdayofyear' => 'n',
+			'enddayofyear' => 'n','verbatimeventdate' => 's','habitat' => 's','substrate' => 's','fieldnumber' => 's','occurrenceremarks' => 's','datageneralizations' => 's','associatedtaxa' => 's',
+			'verbatimattributes' => 's','behavior' => 's','vitality' => 's','dynamicproperties' => 's','reproductivecondition' => 's','cultivationstatus' => 's','establishmentmeans' => 's',
+			'lifestage' => 's','sex' => 's','individualcount' => 's','samplingprotocol' => 's','preparations' => 's','continent' => 's','waterbody' => 's','islandgroup' => 's',
+			'island' => 's','countrycode' => 's','country' => 's','stateprovince' => 's','county' => 's','municipality' => 's','locationid' => 's','locality' => 's','recordsecurity' => 'n',
+			'securityreason' => 's','locationremarks' => 's','decimallatitude' => 'n','decimallongitude' => 'n','geodeticdatum' => 's','coordinateuncertaintyinmeters' => 'n',
+			'verbatimcoordinates' => 's','footprintwkt' => 's','georeferencedby' => 's','georeferenceprotocol' => 's','georeferencesources' => 's','georeferenceverificationstatus' => 's',
+			'georeferenceremarks' => 's','minimumelevationinmeters' => 'n','maximumelevationinmeters' => 'n','verbatimelevation' => 's','minimumdepthinmeters' => 'n','maximumdepthinmeters' => 'n',
+			'verbatimdepth' => 's','storagelocation' => 's','disposition' => 's','language' => 's','duplicatequantity' => 'n','labelproject' => 's','processingstatus' => 's',
+			'recordenteredby' => 's','observeruid' => 'n','dateentered' => 'd');
+		$this->fieldArr['omoccurpaleo'] = array('eon','era','period','epoch','earlyinterval','lateinterval','absoluteage','storageage','stage','localstage','biota','biostratigraphy',
+			'lithogroup','formation','taxonenvironment','member','bed','lithology','stratremarks','element','slideproperties','geologicalcontextid');
 		$this->fieldArr['omoccuridentifiers'] = array('idname', 'idvalue');
 		$this->fieldArr['omexsiccatiocclink'] = array('ometid', 'exstitle', 'exsnumber');
 	}
@@ -205,24 +108,12 @@ class OccurrenceEditorManager {
 		}
 	}
 
-	function getDownloadQuery(): string {
+	public function getDownloadQuery(): string {
 		$queryArr = $this->getQueryVariables();
 		$retArr = [ 'db' => $this->collId ];
 
-		$map = [
-			'rb' => 'collector',
-			'rn' => 'collnum',
-			'ed' => 'eventdate1',
-			'cn' => 'catnum',
-			'ocn' => 'othercatalognumbers',
-			'eb' => 'recordenteredby',
-			'de' => 'dateentered',
-			'dm' => 'datelastmodified',
-			'ps' => 'processingstatus',
-			'traitid' => 'traitid',
-			'stateid' => 'stateid',
-			'exsid' => 'exsiccatiid',
-		];
+		$map = 	['rb' => 'collector','rn' => 'collnum','ed' => 'eventdate1','cn' => 'catnum','ocn' => 'othercatalognumbers','eb' => 'recordenteredby','de' => 'dateentered',
+				'dm' => 'datelastmodified','ps' => 'processingstatus','traitid' => 'traitid','stateid' => 'stateid','exsid' => 'exsiccatiid'];
 
 		// Handle woi and io seperately since they distill into one variable
 		if(array_key_exists('io', $queryArr)) {
@@ -232,7 +123,7 @@ class OccurrenceEditorManager {
 		}
 
 		$custom_fields = [];
-		for ($i=1; $i < 11; $i++) { 
+		for ($i=1; $i < 11; $i++) {
 			$custom_fields['cf' . $i] = 'customfield' . $i;
 			$custom_fields['ct' . $i] = 'customtype' . $i;
 			$custom_fields['cv' . $i] = 'customvalue' . $i;
@@ -580,7 +471,7 @@ class OccurrenceEditorManager {
 			//Used to find records linked to a specific exsiccati
 			$sqlWhere .= 'AND (exn.ometid = ' . $this->qryArr['exsid'] . ') ';
 		}
-			
+
 		// Traits
 		$traitids = array_key_exists('traitid', $this->qryArr) && is_array($this->qryArr['traitid'])?
 			array_filter($this->qryArr['traitid'], fn($v) => is_numeric($v)): [];
@@ -851,9 +742,9 @@ class OccurrenceEditorManager {
 		} elseif (array_key_exists('woi', $this->qryArr)) {
 			$sql .= 'LEFT JOIN media m ON o.occid = m.occid ';
 		}
-		//Traits 
+		//Traits
 		if(strpos($this->sqlWhere, 'tms.stateid') || strpos($this->sqlWhere, 'tms.traitid')) {
-			$sql .= ' LEFT JOIN tmattributes tma ON tma.occid = o.occid ' . 
+			$sql .= ' LEFT JOIN tmattributes tma ON tma.occid = o.occid ' .
 			'LEFT JOIN tmstates tms ON tms.stateid = tma.stateid ';
 		}
 		if (strpos($this->sqlWhere, 'id.identifierValue') || strpos($this->sqlWhere, 'id.identifierName')) {
@@ -2172,67 +2063,12 @@ class OccurrenceEditorManager {
 	}
 
 	public function carryOverValues($fArr) {
-		$locArr = array(
-			'recordedby',
-			'associatedcollectors',
-			'eventdate',
-			'eventdate2',
-			'verbatimeventdate',
-			'country',
-			'stateprovince',
-			'county',
-			'municipality',
-			'locationid',
-			'locality',
-			'decimallatitude',
-			'decimallongitude',
-			'verbatimcoordinates',
-			'coordinateuncertaintyinmeters',
-			'footprintwkt',
-			'geodeticdatum',
-			'georeferencedby',
-			'georeferenceprotocol',
-			'georeferencesources',
-			'georeferenceverificationstatus',
-			'georeferenceremarks',
-			'minimumelevationinmeters',
-			'maximumelevationinmeters',
-			'verbatimelevation',
-			'minimumdepthinmeters',
-			'maximumdepthinmeters',
-			'verbatimdepth',
-			'habitat',
-			'substrate',
-			'lifestage',
-			'sex',
-			'individualcount',
-			'samplingprotocol',
-			'preparations',
-			'associatedtaxa',
-			'basisofrecord',
-			'language',
-			'labelproject',
-			'eon',
-			'era',
-			'period',
-			'epoch',
-			'earlyinterval',
-			'lateinterval',
-			'absoluteage',
-			'storageage',
-			'stage',
-			'localstage',
-			'biota',
-			'biostratigraphy',
-			'lithogroup',
-			'formation',
-			'taxonenvironment',
-			'member',
-			'bed',
-			'lithology',
-			'stratremarks',
-			'element'
-		);
+		$locArr = array('recordedby','associatedcollectors','eventdate','eventdate2','verbatimeventdate','country','stateprovince','county','municipality','locationid','locality',
+			'decimallatitude','decimallongitude','verbatimcoordinates','coordinateuncertaintyinmeters','footprintwkt','geodeticdatum','georeferencedby','georeferenceprotocol','georeferencesources',
+			'georeferenceverificationstatus','georeferenceremarks','minimumelevationinmeters','maximumelevationinmeters','verbatimelevation','minimumdepthinmeters','maximumdepthinmeters',
+			'verbatimdepth','habitat','substrate','lifestage','sex','individualcount','samplingprotocol','preparations','associatedtaxa','basisofrecord','language','labelproject',
+			'eon','era','period','epoch','earlyinterval','lateinterval','absoluteage','storageage','stage','localstage','biota','biostratigraphy','lithogroup','formation','taxonenvironment',
+			'member','bed','lithology','stratremarks','element');
 		$retArr = array_intersect_key($fArr, array_flip($locArr));
 		$this->cleanOutArr($retArr);
 		return $retArr;
