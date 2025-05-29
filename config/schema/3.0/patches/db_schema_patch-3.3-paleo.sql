@@ -1,11 +1,14 @@
 
 
 
-ALTER TABLE `omoccurpaleo` 
+ALTER TABLE `omoccurpaleo`
   CHANGE COLUMN `biota` `biota` VARCHAR(100) NULL DEFAULT NULL COMMENT 'Flora or Fanua' ,
   CHANGE COLUMN `lithology` `lithology` VARCHAR(700) NULL DEFAULT NULL ,
   CHANGE COLUMN `stratRemarks` `stratRemarks` VARCHAR(1000) NULL DEFAULT NULL ,
   CHANGE COLUMN `geologicalContextID` `geologicalContextID` VARCHAR(100) NULL DEFAULT NULL ;
+
+ALTER TABLE omoccurrencepaleo
+  DROP COLUMN 'storageAge';
 
 ALTER TABLE `omoccurpaleogts`
   ADD COLUMN `myaStart` FLOAT NULL DEFAULT NULL AFTER `rankname`,
@@ -15,7 +18,7 @@ ALTER TABLE `omoccurpaleogts`
   ADD COLUMN `geoTimeID` INT NULL DEFAULT NULL AFTER `parentgtsid`;
 
 #Add paleo indexes
-ALTER TABLE `omoccurpaleo` 
+ALTER TABLE `omoccurpaleo`
   ADD INDEX `IX_paleo_earlyInterval` (`earlyInterval` ASC),
   ADD INDEX `IX_paleo_lateInterval` (`lateInterval` ASC),
   ADD INDEX `IX_paleo_formation` (`formation` ASC),
@@ -23,11 +26,11 @@ ALTER TABLE `omoccurpaleo`
   ADD INDEX `IX_paleo_member` (`member` ASC),
   ADD INDEX `IX_paleo_bed` (`bed` ASC);
 
-ALTER TABLE `omoccurpaleogts` 
+ALTER TABLE `omoccurpaleogts`
   DROP INDEX `UNIQUE_gtsterm`,
   DROP INDEX `FK_gtsparent_idx`;
 
-ALTER TABLE `omoccurpaleogts` 
+ALTER TABLE `omoccurpaleogts`
   ADD UNIQUE INDEX `UQ_paleogts_gtsterm` (`gtsterm` ASC),
   ADD INDEX `FK_paleogts_parent_idx` (`parentGtsID` ASC),
   ADD INDEX `IX_paleogts_myaStart` (`myaStart` ASC),
@@ -38,7 +41,7 @@ ALTER TABLE `omoccurpaleo` MODIFY COLUMN `biostratigraphy` VARCHAR(100);
 
 
 
-#reset the values within omoccurpaleogts table 
+#reset the values within omoccurpaleogts table
 TRUNCATE omoccurpaleogts;
 
 INSERT INTO `omoccurpaleogts` VALUES

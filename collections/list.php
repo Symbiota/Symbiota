@@ -429,8 +429,12 @@ $_SESSION['citationvar'] = $searchVar;
 										echo $LANG['GEO_CONTEXT'] . ':' . ' ';
 										$earlyInt = $fieldArr['earlyInterval'] ?? '';
 										$lateInt = $fieldArr['lateInterval'] ?? '';
-										if ($earlyInt || $lateInt)
-											echo '<span style="margin-right:20px;">' . ($earlyInt === $lateInt ? $earlyInt : trim("$earlyInt to $lateInt")) . '</span>';
+										if ($earlyInt || $lateInt) {
+											if ($lateInt === '' || $earlyInt === $lateInt)
+												echo '<span style="margin-right:20px;">' . $earlyInt . '</span>';
+											else
+												echo '<span style="margin-right:20px;">' . trim("$earlyInt to $lateInt") . '</span>';
+										}
 										if (!empty($fieldArr['formation']))
 											echo '<span>' . $fieldArr['formation'] . '</span>';
 										echo '</div>';

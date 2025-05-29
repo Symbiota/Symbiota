@@ -126,11 +126,6 @@ if(isset($occArr['lateInterval'])) $lateIntervalTerm = $occArr['lateInterval'];
 			<a href="#" onclick="return dwcDoc('absoluteAge')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
 			<input type="text" name="absoluteAge" value="<?php echo isset($occArr['absoluteAge'])?$occArr['absoluteAge']:''; ?>" onchange="fieldChanged('absoluteAge');" />
 		</div>
-		<div id="storageLocDiv">
-			<?= $LANG['STORAGE_LOC_LABEL'] ?>
-			<a href="#" onclick="return dwcDoc('storageLoc')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-			<input type="text" name="storageLoc" value="<?php echo isset($occArr['storageLoc'])?$occArr['storageLoc']:''; ?>" onchange="fieldChanged('storageLoc');" />
-		</div>
 		<div id="localStageDiv">
 			<?= $LANG['LOCAL_STAGE_LABEL'] ?>
 			<a href="#" onclick="return dwcDoc('localStage')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
