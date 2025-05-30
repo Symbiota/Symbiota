@@ -26,7 +26,8 @@
 
 #collicon-div img {
   height: 50px;
-  width: 50ps;
+  max-width: 100%;
+  padding-right: 0.5rem;
 }
 
 #occur-div {
