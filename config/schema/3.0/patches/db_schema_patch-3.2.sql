@@ -436,7 +436,7 @@ ALTER TABLE `fmchecklists`
 
 UPDATE fmchecklists 
   SET footprintGeoJson = ST_ASGEOJSON(ST_GEOMFROMTEXT(swap_wkt_coords(footprintWkt))) 
-  WHERE footprintGeoJson IS NULL;
+  WHERE footprintGeoJson IS NULL AND footprintWkt IS NOT NULL;
 
 
 #Removes All omoccurpoints that do not have an omocurrences record
@@ -552,8 +552,10 @@ ALTER TABLE `omoccuridentifiers`
 # Add fulltext indexes 
 ALTER TABLE `omoccurrences` 
   ADD FULLTEXT INDEX `FT_omoccurrence_locality` (`locality`),
-  ADD FULLTEXT INDEX `FT_omoccurrence_recordedBy` (`recordedBy`),
   DROP INDEX `IX_occurrences_locality`;
+
+ALTER TABLE `omoccurrences` 
+  ADD FULLTEXT INDEX `FT_omoccurrence_recordedBy` (`recordedBy`);
 
 # Add indexes for countryCode and continent
 ALTER TABLE `omoccurrences` 
