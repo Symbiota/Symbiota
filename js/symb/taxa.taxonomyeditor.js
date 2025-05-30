@@ -52,7 +52,8 @@ $(document).ready(async function () {
     taxoneditsubmitElem.setAttribute("value", "submitEdits");
     formForSubmission.appendChild(taxoneditsubmitElem);
     const isUniqueEntry = await checkNameExistence(formForSubmission, true);
-    if(!isUniqueEntry){
+    const taxonomyFieldsIntact = await isTheSameEntryAsItStarted(formForSubmission, originalForm);
+    if(!isUniqueEntry && !taxonomyFieldsIntact){
       if(confirm(translations.TAXON_NAME_MATCH_WARNING)){
         formForSubmission.submit();  
       }

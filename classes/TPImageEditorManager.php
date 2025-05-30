@@ -18,6 +18,7 @@ class TPImageEditorManager extends TPEditorManager{
 		$imageArr = array();
 		$tidArr = array($this->tid);
 		if($this->rankid == 220){
+			//Get accepted children
 			$sql1 = 'SELECT DISTINCT tid FROM taxstatus WHERE (taxauthid = '.$this->taxAuthId.') AND (tid = tidaccepted) AND (parenttid = '.$this->tid.')';
 			$rs1 = $this->conn->query($sql1);
 			while($r1 = $rs1->fetch_object()){
@@ -26,43 +27,43 @@ class TPImageEditorManager extends TPEditorManager{
 			$rs1->free();
 		}
 
-		$sql = 'SELECT m.mediaID, m.url, m.thumbnailurl, m.originalurl, m.caption, m.creator, m.creatorUid, CONCAT_WS(" ",u.firstname,u.lastname) AS creatorDisplay,
-			m.owner, m.locality, m.occid, m.notes, m.sortsequence, m.sourceurl, m.copyright, t.tid, t.sciname ';
+		$sql = 'SELECT m.mediaID, m.url, m.thumbnailUrl, m.originalUrl, m.mediaType, m.imageType, m.format, m.caption, m.creator, m.creatorUid,
+			CONCAT_WS(" ",u.firstname,u.lastname) AS creatorDisplay, m.owner, m.locality, m.occid, m.notes, m.sortSequence, m.sourceUrl, m.copyright, t.tid, t.sciname ';
 		if($this->acceptance){
+			//Query with all synonyms included
 			$sql .= 'FROM media m INNER JOIN taxstatus ts ON m.tid = ts.tid
 				INNER JOIN taxa t ON m.tid = t.tid
 				LEFT JOIN users u ON m.creatorUid = u.uid
-				WHERE ts.taxauthid = '.$this->taxAuthId.' AND (ts.tidaccepted IN('.implode(",",$tidArr).')) AND m.SortSequence < 500 ';
+				WHERE ts.taxauthid = ' . $this->taxAuthId . ' AND (ts.tidaccepted IN(' . implode(',', $tidArr) . ')) AND m.SortSequence < 500 ';
 		}
 		else{
-			$sql .= 'FROM media i INNER JOIN taxa t ON m.tid = t.tid
+			$sql .= 'FROM media m INNER JOIN taxa t ON m.tid = t.tid
 				LEFT JOIN users u ON m.creatorUid = u.uid
-				WHERE (t.tid IN('.implode(",",$tidArr).')) AND m.SortSequence < 500 ';
+				WHERE (m.tid IN(' . implode(',', $tidArr) . ')) AND m.SortSequence < 500 ';
 		}
 		$sql .= 'ORDER BY m.sortsequence';
-		//echo $sql; exit;
 		$rs = $this->conn->query($sql);
-		$imgCnt = 0;
 		while($r = $rs->fetch_object()){
-			$imageArr[$imgCnt]['mediaid'] = $r->mediaID;
-			$imageArr[$imgCnt]['url'] = $r->url;
-			$imageArr[$imgCnt]['thumbnailurl'] = $r->thumbnailurl;
-			$imageArr[$imgCnt]['originalurl'] = $r->originalurl;
-			$imageArr[$imgCnt]['creator'] = $r->creator;
-			$imageArr[$imgCnt]['creatorUid'] = $r->creatorUid;
-			if($r->creatorDisplay) $imageArr[$imgCnt]['creatorDisplay'] = $r->creatorDisplay;
-			else $imageArr[$imgCnt]['creatorDisplay'] = $r->creator;
-			$imageArr[$imgCnt]['caption'] = $r->caption;
-			$imageArr[$imgCnt]['owner'] = $r->owner;
-			$imageArr[$imgCnt]['locality'] = $r->locality;
-			$imageArr[$imgCnt]['sourceurl'] = $r->sourceurl;
-			$imageArr[$imgCnt]['copyright'] = $r->copyright;
-			$imageArr[$imgCnt]['occid'] = $r->occid;
-			$imageArr[$imgCnt]['notes'] = $r->notes;
-			$imageArr[$imgCnt]['tid'] = $r->tid;
-			$imageArr[$imgCnt]['sciname'] = $r->sciname;
-			$imageArr[$imgCnt]['sortsequence'] = $r->sortsequence;
-			$imgCnt++;
+			$imageArr[$r->mediaID]['url'] = $r->url;
+			$imageArr[$r->mediaID]['thumbnailUrl'] = $r->thumbnailUrl;
+			$imageArr[$r->mediaID]['originalUrl'] = $r->originalUrl;
+			$imageArr[$r->mediaID]['mediaType'] = $r->mediaType;
+			$imageArr[$r->mediaID]['imageType'] = $r->imageType;
+			$imageArr[$r->mediaID]['format'] = $r->format;
+			$imageArr[$r->mediaID]['caption'] = $r->caption;
+			$imageArr[$r->mediaID]['creator'] = $r->creator;
+			$imageArr[$r->mediaID]['creatorUid'] = $r->creatorUid;
+			if($r->creatorDisplay) $imageArr[$r->mediaID]['creatorDisplay'] = $r->creatorDisplay;
+			else $imageArr[$r->mediaID]['creatorDisplay'] = $r->creator;
+			$imageArr[$r->mediaID]['owner'] = $r->owner;
+			$imageArr[$r->mediaID]['locality'] = $r->locality;
+			$imageArr[$r->mediaID]['sourceUrl'] = $r->sourceUrl;
+			$imageArr[$r->mediaID]['copyright'] = $r->copyright;
+			$imageArr[$r->mediaID]['occid'] = $r->occid;
+			$imageArr[$r->mediaID]['notes'] = $r->notes;
+			$imageArr[$r->mediaID]['tid'] = $r->tid;
+			$imageArr[$r->mediaID]['sciname'] = $r->sciname;
+			$imageArr[$r->mediaID]['sortSequence'] = $r->sortSequence;
 		}
 		$rs->free();
 		return $imageArr;

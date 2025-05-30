@@ -86,4 +86,6 @@ $LANG['PREVIOUS'] = 'Previous';
 $LANG['RECORDS'] = ' Records';
 $LANG['NEXT'] = 'Next';
 $LANG['IMG_EDIT'] = 'Edit Image';
+$LANG['GEOJSON_FOOTPRINT'] = 'Polygon (GeoJSON format)';
+$LANG['ERROR_INVALID_JSON'] = 'ERROR: Polygon is not valid JSON format';
 ?>

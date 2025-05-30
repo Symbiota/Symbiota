@@ -128,7 +128,7 @@ function verifyQuickSearch(f) {
   return true;
 }
 
-function validateTaxon(f, submitForm) {
+function validateTaxon(f, submitForm, callback = f => {}) {
   if (f.taxa.value == "") {
     //alert("Enter a scientific name");
     return false;
@@ -149,13 +149,13 @@ function validateTaxon(f, submitForm) {
       } else {
         if (retCnt == 1) {
           f.tid.value = Object.keys(taxaObj)[0];
-          if (submitForm) f.submit();
         } else {
           f.tid.value = Object.keys(taxaObj)[0];
-          if (submitForm) f.submit();
           //alert(Object.keys(taxaObj)[0]);
           //alert(Object.keys(taxaObj)[1]);
         }
+		if(callback) callback(f)
+		if (submitForm) f.submit();
       }
     });
     return false;

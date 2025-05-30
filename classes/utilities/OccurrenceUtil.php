@@ -1111,9 +1111,10 @@ class OccurrenceUtil {
 		return $retStr;
 	}
 
-	public static function appendFullProtectionSQL(){
+	public static function appendFullProtectionSQL($allowNull=false){
 		//Protect by default
 		$retStr = 'AND (o.recordSecurity != 5 ';
+		if($allowNull) $retStr .= 'OR o.recordSecurity IS NULL ';
 		//User needs Collection Admin or Collection Editor status to view full hidden records
 		$collStr = self::getFullProtectionPermission();
 		if($collStr){

@@ -6,7 +6,6 @@ Translated by: Google Translate (2024-09-16)
 ------------------
 */
 
-$LANG['LINKED_FROM'] = 'Lié depuis';
 $LANG['SORT_SEQUENCE'] = 'Séquence de tri';
 $LANG['NEW_VALUE'] = 'Nouvelle Valeur';
 $LANG['SUBMIT_SORT_EDITS'] = 'Soumettre des modifications de tri multimédia';
@@ -36,10 +35,9 @@ $LANG['NOTES'] = 'Notes';
 $LANG['UPLOAD_IMAGE'] = 'Télécharger du multimédia';
 $LANG['OPEN_LARGE_IMAGE'] = 'Ouvrir un fichier volumineux';
 $LANG['MUST_HAVE_EDIT_PERM'] = 'Doit disposer de privilèges d\'édition pour la collection gérant ce fichier multimédia';
-$LANG['IMAGE_LINKED_FROM'] = 'Multimédia lié depuis';
+$LANG['IMAGE_LINKED_TO'] = 'Multimédia lié à';
 $LANG['TP_IMAGE_EDITOR'] = 'Éditeur multimédia de profil de taxon';
 $LANG['CREATOR'] = 'Créateur';
 $LANG['NOT_SPECIFIED'] = 'Non spécifié';
 $LANG['NOT_SET'] = 'Non défini';
-
 ?>

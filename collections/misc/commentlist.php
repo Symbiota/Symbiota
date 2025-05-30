@@ -16,13 +16,8 @@ $rs = array_key_exists('rs',$_POST) ? filter_var($_POST['rs'], FILTER_SANITIZE_N
 $showAllGeneralObservations = (array_key_exists('showallgenobs', $_POST) && $_POST['showallgenobs'] === 1) ? true : false;
 
 //Sanition
-if(!is_numeric($collid)) $collid = 0;
-if(!is_numeric($start)) $start = 0;
-if(!is_numeric($limit)) $limit = 100;
 if(!preg_match('/^[\d-]+$/', $tsStart)) $tsStart = '';
 if(!preg_match('/^[\d-]+$/', $tsEnd)) $tsEnd = '';
-if(!is_numeric($uid)) $uid = 0;
-if(!is_numeric($rs)) $rs = 1;
 
 $commentManager = new OccurrenceSupport();
 $commentManager->setCollid($collid);
@@ -51,30 +46,32 @@ $commentArr = null;
 if($isEditor){
 	$formSubmit = array_key_exists('formsubmit',$_REQUEST) ? $_REQUEST['formsubmit'] : '';
 	if($formSubmit){
-		$comId = htmlspecialchars($_POST['comid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?? '';
-		if($formSubmit == 'Delete Comment'){
-			if(!$commentManager->deleteComment($comId)){
-				$statusStr = $commentManager->getErrorStr();
+		$comId = filter_var($_POST['comid'], FILTER_SANITIZE_NUMBER_INT) ?? '';
+		if($comId){
+			if($formSubmit == 'Delete Comment'){
+				if(!$commentManager->deleteComment($comId)){
+					$statusStr = $commentManager->getErrorStr();
+				}
 			}
-		}
-		elseif($formSubmit == 'Make Comment Public'){
-			if(!$commentManager->setReviewStatus($comId,1)){
-				$statusStr = $commentManager->getErrorStr();
+			elseif($formSubmit == 'Make Comment Public'){
+				if(!$commentManager->setReviewStatus($comId,1)){
+					$statusStr = $commentManager->getErrorStr();
+				}
 			}
-		}
-		elseif($formSubmit == 'Hide Comment from Public'){
-			if(!$commentManager->setReviewStatus($comId,2)){
-				$statusStr = $commentManager->getErrorStr();
+			elseif($formSubmit == 'Hide Comment from Public'){
+				if(!$commentManager->setReviewStatus($comId,2)){
+					$statusStr = $commentManager->getErrorStr();
+				}
 			}
-		}
-		elseif($formSubmit == 'Mark as Reviewed'){
-			if(!$commentManager->setReviewStatus($comId,3)){
-				$statusStr = $commentManager->getErrorStr();
+			elseif($formSubmit == 'Mark as Reviewed'){
+				if(!$commentManager->setReviewStatus($comId,3)){
+					$statusStr = $commentManager->getErrorStr();
+				}
 			}
-		}
-		elseif($formSubmit == 'Mark as Unreviewed'){
-			if(!$commentManager->setReviewStatus($comId,1)){
-				$statusStr = $commentManager->getErrorStr();
+			elseif($formSubmit == 'Mark as Unreviewed'){
+				if(!$commentManager->setReviewStatus($comId,1)){
+					$statusStr = $commentManager->getErrorStr();
+				}
 			}
 		}
 	}
@@ -101,13 +98,13 @@ if($isEditor){
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div class="navpath">
-			<a href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php"><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+			<a href="<?= $CLIENT_ROOT; ?>/index.php"><?= $LANG['HOME'] ?></a> &gt;&gt;
 			<?php
 			if($collMeta['colltype'] == 'General Observations'){
-				echo '<a href="../../profile/viewprofile.php?tabindex=1">' . htmlspecialchars($LANG['COL_MANAGE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt;';
+				echo '<a href="../../profile/viewprofile.php?tabindex=1">' . $LANG['COL_MANAGE'] . '</a> &gt;&gt;';
 			}
 			else{
-				echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">Collection Management</a> &gt;&gt;';
+				echo '<a href="../misc/collprofiles.php?collid=' . $collid . '&emode=1">Collection Management</a> &gt;&gt;';
 			}
 			?>
 			<b><?php echo $LANG['OCC_COMMENTS_LISTING']; ?></b>
@@ -177,25 +174,21 @@ if($isEditor){
 						unset($commentArr['cnt']);
 					}
 					$urlVars = 'collid='.$collid.'&limit='.$limit.'&tsstart='.$tsStart.'&tsend='.$tsEnd.'&uid='.$uid.'&rs='.$rs;
-					try {
-						$currentPage = ($limit != 0) ? ($start / $limit) + 1 : 1;
-					} catch (Exception $e) {
-						$currentPage = 1;
-					}
-					try {
-						$currentPage = ($limit != 0) ? ($start / $limit) + 1 : 1;
-					} catch (Exception $e) {
-						$lastPage = 1;
+					$currentPage = 1;
+					$lastPage = 1;
+					if($limit > 0){
+						$currentPage = ($start / $limit) + 1;
+						$lastPage = ceil($recCnt / $limit);
 					}
 					$startPage = $currentPage > 4 ? $currentPage - 4 : 1;
 					$endPage = ($lastPage > $startPage + 9?$startPage + 9:$lastPage);
 					$hrefPrefix = 'commentlist.php?' . $urlVars . "&start=";
 					$pageBar .= "<span style='margin:5px;'>\n";
 					if($endPage > 1){
-					    $pageBar .= "<span style='margin-right:5px;'><a href='" . htmlspecialchars($hrefPrefix, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "0'>" . htmlspecialchars($LANG['FIRST_PAGE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a> &lt;&lt;</span>";
+					    $pageBar .= "<span style='margin-right:5px;'><a href='" . $hrefPrefix . "0'>" . $LANG['FIRST_PAGE'] . "</a> &lt;&lt;</span>";
 						for($x = $startPage; $x <= $endPage; $x++){
 						    if($currentPage != $x){
-						        $pageBar .= "<span style='margin-right:3px;margin-right:3px;'><a href='" . htmlspecialchars($hrefPrefix, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . htmlspecialchars((($x-1)*$limit), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'>" . htmlspecialchars($x, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a></span>";
+						        $pageBar .= "<span style='margin-right:3px;margin-right:3px;'><a href='" . $hrefPrefix . (($x-1)*$limit) . "'>" . $x . "</a></span>";
 						    }
 						    else{
 						        $pageBar .= "<span style='margin-right:3px;margin-right:3px;font-weight:bold;'>".$x."</span>";
@@ -203,7 +196,7 @@ if($isEditor){
 						}
 					}
 					if($lastPage > $endPage){
-					    $pageBar .= "<span style='margin-left:5px;'>&gt;&gt; <a href='" . htmlspecialchars($hrefPrefix, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . htmlspecialchars((($lastPage-1)*$limit), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'>Last Page</a></span>";
+					    $pageBar .= "<span style='margin-left:5px;'>&gt;&gt; <a href='" . $hrefPrefix . (($lastPage-1)*$limit) . "'>Last Page</a></span>";
 					}
 					$pageBar .= "</span>";
 					$endNum = $start + $limit;
@@ -220,7 +213,7 @@ if($isEditor){
 				if($commentArr){
 					foreach($commentArr as $comid => $cArr){
 						echo '<div style="margin:15px;">';
-						echo '<div style="margin-bottom:10px;"><a href="../individual/index.php?occid=' . htmlspecialchars($cArr['occid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank" rel="noopener"><b>' . strip_tags($cArr['occurstr']) . '</b></a></div>';
+						echo '<div style="margin-bottom:10px;"><a href="../individual/index.php?occid=' . $cArr['occid'] . '" target="_blank" rel="noopener"><b>' . strip_tags($cArr['occurstr']) . '</b></a></div>';
 						echo '<div>';
 						echo '<b>'.$userArr[$cArr['uid']].'</b> <span style="color:gray;">'.$LANG['POSTED_ON'].' '.$cArr['ts'].'</span>';
 						if($cArr['rs'] == 2 || $cArr['rs'] === '0'){

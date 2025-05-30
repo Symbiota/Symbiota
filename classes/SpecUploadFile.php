@@ -102,7 +102,7 @@ class SpecUploadFile extends SpecUploadBase{
 			set_time_limit(7200);
 		 	ini_set("max_input_time",240);
 
-			$this->outputMsg('<li>Initiating import from: '.$this->ulFileName.'</li>');
+			$this->outputMsg('<li>Initiating import from: ' . htmlspecialchars($this->ulFileName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</li>');
 		 	//First, delete all records in uploadspectemp table associated with this collection
 			$this->prepUploadData();
 

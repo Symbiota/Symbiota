@@ -262,7 +262,7 @@ function verifyCollForm(f) {
     f.locality.value == "" &&
     f.upperlat.value == "" &&
     f.pointlat.value == "" &&
-    f.polycoords.value == "" &&
+    f.footprintGeoJson.value == "" &&
     f.collector.value == "" &&
     f.collnum.value == "" &&
     f.eventdate1.value == "" &&

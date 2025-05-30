@@ -218,6 +218,8 @@ function hasChanged(f, originalForm) {
     "securitystatus",
     "securitystatusstart",
     "author",
+    "taxoneditsubmit",
+    "taxonedits"
   ]);
   return returnVal;
 }
@@ -246,8 +248,9 @@ function shallowEqual(obj1, obj2, exceptionFields = []) {
   const keys1 = Object.keys(obj1);
   const keys2 = Object.keys(obj2);
   const filteredKeys1 = keys1.filter((k) => !exceptionFields.includes(k));
+  const filteredKeys2 = keys2.filter((k) => !exceptionFields.includes(k));
 
-  if (keys1.length !== keys2.length) {
+  if (filteredKeys1.length !== filteredKeys2.length) {
     return false;
   }
 

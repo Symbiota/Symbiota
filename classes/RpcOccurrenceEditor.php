@@ -473,6 +473,25 @@ class RpcOccurrenceEditor extends RpcBase{
 			}
 		}
 		return $tableStr;
+
+	// Autocomplete for otherCatalogNumbers tagNames
+	public function getTagName($collid, $term){
+		$retArr = array();
+		$sql = 'SELECT DISTINCT id.identifiername FROM omoccuridentifiers id ' .
+			'LEFT JOIN omoccurrences occ ON id.occid = occ.occid ' .
+			'WHERE occ.collid = ? AND id.identifiername LIKE CONCAT( ?, "%")';
+		if($stmt = $this->conn->prepare($sql)){
+			if($stmt->bind_param('is', $collid, $term)){
+				$stmt->execute();
+				$stmt->bind_result($name);
+				while($stmt->fetch()){
+					array_push($retArr, $name);
+				}
+				$stmt->close();
+			}
+		}
+		return $retArr;
+
 	}
 
 	//Setters and getters

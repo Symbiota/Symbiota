@@ -97,11 +97,11 @@ class OccurrenceImport extends UtilitiesFileImport {
 			}
 
 			$fields = [
-				//'tid',
-				'thumbnailurl',
-				'sourceurl',
-				'archiveurl',
-				'referenceurl',
+				 //'tid',
+				'thumbnailUrl',
+				'sourceUrl',
+				'archiveUrl',
+				'referenceUrl',
 				'creator',
 				'creatoruid',
 				'caption',
@@ -109,12 +109,12 @@ class OccurrenceImport extends UtilitiesFileImport {
 				'anatomy',
 				'notes',
 				'format',
-				'sourceidentifier',
-				'hashfunction',
-				'hashvalue',
-				'mediamd5',
+				'sourceIdentifier',
+				'hashFunction',
+				'hashValue',
+				'mediaMD5',
 				'copyright',
-				'accessrights',
+				'accessRights',
 				'rights',
 				'sortOccurrence'
 			];
@@ -125,9 +125,9 @@ class OccurrenceImport extends UtilitiesFileImport {
 					"originalUrl" => $recordArr[$this->fieldMap['originalurl']],
 					"mediaUploadType" => $postArr['mediaUploadType']
 				];
-				foreach ($fields as $key) {
-					$record_idx = $this->fieldMap[$key] ?? false;
-					if ($record_idx && $recordArr[$record_idx]) {
+				foreach($fields as $key) {
+					$record_idx = $this->fieldMap[$key] ?? $this->fieldMap[strtolower($key)] ?? false;
+					if($record_idx && $recordArr[$record_idx]) {
 						$data[$key] = $recordArr[$record_idx];
 					}
 				}

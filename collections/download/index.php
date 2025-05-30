@@ -1,10 +1,14 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/download/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/download/index.' . $LANG_TAG . '.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/download/index.' . $LANG_TAG . '.php'))
+	include_once($SERVER_ROOT.'/content/lang/collections/download/index.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/download/index.en.php');
+header('Content-Type: text/html; charset=' . $CHARSET);
 
-header("Content-Type: text/html; charset=".$CHARSET);
+if(empty($OVERRIDE_DOWNLOAD_LOGIN_REQUIREMENT) && !$SYMB_UID){
+	header('Location: ../../profile/index.php?refurl=../collections/download/index.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+}
 
 $sourcePage = array_key_exists('sourcepage', $_REQUEST) ? $_REQUEST['sourcepage'] : 'specimen';
 $downloadType = array_key_exists('dltype', $_REQUEST) ? $_REQUEST['dltype'] : 'specimen';
@@ -47,7 +51,7 @@ $dwcManager = new DwcArchiverCore();
 			if(!$searchVar){
 				?>
 				if(sessionStorage.querystr){
-					window.location = "index.php?"+sessionStorage.querystr;
+					window.location = "index.php?searchvar="+encodeURIComponent(sessionStorage.querystr);
 				}
 				<?php
 			}

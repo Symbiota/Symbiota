@@ -184,6 +184,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 			}
 			$sqlWhere .= 'IN(SELECT mediaid FROM imagetag '.$tagFrag.')';
 		}
+		/*
 		if($this->keywords){
 			$keywordArr = explode(";",$this->keywords);
 			$tempArr = Array();
@@ -192,6 +193,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 			}
 			$sqlWhere .= "AND (".implode(" OR ",$tempArr).") ";
 		}
+		*/
 		if($this->imageType){
 			if($this->imageType == 1){
 				//Specimen or Vouchered Observations Images
@@ -240,7 +242,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 			$sql .= 'INNER JOIN taxaenumtree e ON m.tid = e.tid ';
 		}
 		if($this->keywords){
-			$sql .= 'INNER JOIN imagekeywords ik ON m.mediaID = ik.mediaid ';
+			//$sql .= 'INNER JOIN imagekeywords ik ON m.mediaID = ik.mediaid ';
 		}
 		if($this->dbStr && $this->dbStr != 'all'){
 			$sql .= 'INNER JOIN omoccurrences o ON m.occid = o.occid ';
@@ -265,16 +267,16 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 	//Misc support functions
 	public function getQueryTermStr(){
 		$retStr = '';
-		if($this->dbStr) $retStr .= '&db='.$this->dbStr;
-		if($this->taxonType) $retStr .= '&taxontype='.$this->taxonType;
-		if($this->taxaStr) $retStr .= '&taxa='.$this->taxaStr;
+		if($this->dbStr) $retStr .= '&db=' . $this->dbStr;
+		if($this->taxonType) $retStr .= '&taxontype=' . $this->taxonType;
+		if($this->taxaStr) $retStr .= '&taxa=' . urlencode($this->taxaStr);
 		if($this->useThes) $retStr .= '&usethes=1';
-		if($this->creatorUid) $retStr .= '&phuid='.$this->creatorUid;
-		$retStr .= '&tagExistance='.$this->tagExistance;
+		if($this->creatorUid) $retStr .= '&phuid=' . $this->creatorUid;
+		$retStr .= '&tagExistance=' . $this->tagExistance;
 		if($this->tag) $retStr .= '&tag='.urlencode($this->tag);
-		if($this->keywords) $retStr .= '&keywords='.$this->keywords;
-		if($this->imageCount) $retStr .= '&imagecount='.$this->imageCount;
-		if($this->imageType) $retStr .= '&imagetype='.$this->imageType;
+		//if($this->keywords) $retStr .= '&keywords=' . urlencode($this->keywords);
+		if($this->imageCount) $retStr .= '&imagecount=' . $this->imageCount;
+		if($this->imageType) $retStr .= '&imagetype=' . $this->imageType;
 		return trim($retStr,' &');
 	}
 
@@ -368,7 +370,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		return $this->dbStr;
 	}
 
-	public function setCollectionVariables($reqArr){
+	public function setCollectionVariables(){
 		$this->dbStr = trim(OccurrenceSearchSupport::getDbRequestVariable(), ',; ');
 	}
 
@@ -423,7 +425,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 	}
 
 	public function setKeywords($k){
-		$this->keywords = $k;
+		//$this->keywords = $k;
 	}
 
 	public function getKeywords(){

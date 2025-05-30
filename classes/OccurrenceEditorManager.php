@@ -625,6 +625,9 @@ class OccurrenceEditorManager {
 					$customField = 'paleo.'.$customField;
 				}
 				else{
+				} elseif ($customField == 'identifierName' || $customField == 'identifierValue') {
+					$customField = 'id.' . $customField;
+				} else {
 					$customField = 'o.' . $customField;
 				}
 				if ($customField == 'o.otherCatalogNumbers') {
@@ -861,8 +864,7 @@ class OccurrenceEditorManager {
 			$sql .= ' LEFT JOIN tmattributes tma ON tma.occid = o.occid ' .
 			'LEFT JOIN tmstates tms ON tms.stateid = tma.stateid ';
 		}
-
-		if (strpos($this->sqlWhere, 'id.identifierValue')) {
+		if (strpos($this->sqlWhere, 'id.identifierValue') || strpos($this->sqlWhere, 'id.identifierName')) {
 			$sql .= 'LEFT JOIN omoccuridentifiers id ON o.occid = id.occid ';
 		}
 		if (strpos($this->sqlWhere, 'u.username')) {
@@ -928,6 +930,7 @@ class OccurrenceEditorManager {
 					$newCnt++;
 				}
 			}
+
 			foreach ($occurrenceArr as $occid => $occurArr) {
 				if (isset($occurArr['identifiers'])) {
 					$idStr = '';
@@ -1252,7 +1255,7 @@ class OccurrenceEditorManager {
 	private function getIdentifiers($occidStr) {
 		$retArr = array();
 		if ($occidStr) {
-			$sql = 'SELECT occid, idomoccuridentifiers, identifierName, identifierValue FROM omoccuridentifiers WHERE occid IN(' . $occidStr . ')';
+			$sql = 'SELECT occid, idomoccuridentifiers, identifierName, identifierValue FROM omoccuridentifiers WHERE occid IN(' . $occidStr . ') ORDER BY initialTimestamp';
 			$rs = $this->conn->query($sql);
 			while ($r = $rs->fetch_object()) {
 				$retArr[$r->occid][$r->idomoccuridentifiers]['name'] = $r->identifierName;
@@ -1260,6 +1263,7 @@ class OccurrenceEditorManager {
 			}
 			$rs->free();
 		}
+
 		return $retArr;
 	}
 
@@ -2086,9 +2090,10 @@ class OccurrenceEditorManager {
 			//Get occids (where statement can't be part of UPDATE query without error being thrown)
 			$occidArr = array();
 			$sqlOccid = 'SELECT DISTINCT o.occid FROM omoccurrences o ';
+			$this->sqlWhere = $this->getBatchUpdateWhere($fn, $ov, $buMatch);
 			$this->addTableJoins($sqlOccid);
-			$sqlOccid .= $this->getBatchUpdateWhere($fn, $ov, $buMatch);
-			//echo $sqlOccid.'<br/>';
+			$sqlOccid .= $this->sqlWhere;
+			// echo $sqlOccid.'<br/>';
 			$rs = $this->conn->query($sqlOccid);
 			while ($r = $rs->fetch_object()) {
 				$occidArr[] = $r->occid;
@@ -2107,7 +2112,9 @@ class OccurrenceEditorManager {
 
 				//Set default table and prefix
 				$targetTable = 'omoccurrences';
-				$fieldPrefix = '';
+				
+        
+        = '';
 
 				//Set the target table for omoccuredits
 				foreach ($this->fieldArr as $table => $fields) {
@@ -2120,17 +2127,33 @@ class OccurrenceEditorManager {
 
 				//Insert data from target table into omoccuredits
 				$sqlWhere = 'WHERE occid IN(' . implode(',', $occidArr) . ')';
+
+				//Add edits to the omoccuredit table
 				$sql = 'INSERT INTO omoccuredits(occid,fieldName,fieldValueOld,fieldValueNew,appliedStatus,uid,editType) ' .
-				'SELECT occid, "' . $fieldPrefix . $fn . '" AS fieldName, IFNULL(' . $fn . ',"") AS oldValue, IFNULL(' . $nvSqlFrag . ',"") AS newValue, ' .
-				'1 AS appliedStatus, ' . $GLOBALS['SYMB_UID'] . ' AS uid, 1 FROM ' . $targetTable . ' ' . $sqlWhere;
+					'SELECT o.occid, "' . $fn . '" AS fieldName, IFNULL(' . $fn . ',"") AS oldValue, IFNULL(' . $nvSqlFrag . ',"") AS newValue, ' .
+					'1 AS appliedStatus, ' . $GLOBALS['SYMB_UID'] . ' AS uid, 1 FROM omoccurrences as o ';
+
+				// This Solution is a bit scuffed their isn't a nice way of getting many to one 
+				// tables in the batch update system without rebuilding most of it
+				if ($fn === 'identifierValue' || $fn === 'identifierName') {
+					$sql .= ' JOIN omoccuridentifiers AS id ON id.occid = o.occid ';
+					$sqlWhere = 'WHERE id.occid IN(' . implode(',', $occidArr) . ')' . ' AND ' . $fn . ' = ' . '"' . $ov . '" ';
+				}
+
+				$sql .= $sqlWhere;
 
 				if (!$this->conn->query($sql)) {
 					$statusStr = $LANG['ERROR_ADDING_UPDATE'] . ': ' . $this->conn->error;
 				}
 
-				// Apply edits to the target table
-				$sql = 'UPDATE ' . $targetTable . ' SET ' . $fn . ' = ' . $nvSqlFrag . ' ' . $sqlWhere;
-
+				//Apply edits to core tables
+				if (isset($this->collMap['paleoActivated']) && array_key_exists($fn, $this->fieldArr['omoccurpaleo'])) {
+					$sql = 'UPDATE omoccurpaleo SET ' . $fn . ' = ' . $nvSqlFrag . ' ' . $sqlWhere;
+				} else if ($fn === 'identifierValue' || $fn === 'identifierName') {
+					$sql = 'UPDATE omoccuridentifiers as id SET ' . $fn . ' = ' . $nvSqlFrag . ' ' . $sqlWhere;
+				} else {
+					$sql = 'UPDATE omoccurrences SET ' . $fn . ' = ' . $nvSqlFrag . ' ' . $sqlWhere;
+				}
 				if (!$this->conn->query($sql)) {
 					$statusStr = $LANG['ERROR_APPLYING_BATCH_EDITS'] . ': ' . $this->conn->error;
 				}
@@ -2148,8 +2171,11 @@ class OccurrenceEditorManager {
 		$ov = $this->conn->real_escape_string($oldValue);
 
 		$sql = 'SELECT COUNT(DISTINCT o.occid) AS retcnt FROM omoccurrences o ';
+
+		$this->sqlWhere = $this->getBatchUpdateWhere($fn, $ov, $buMatch);
 		$this->addTableJoins($sql);
-		$sql .= $this->getBatchUpdateWhere($fn, $ov, $buMatch);
+
+		$sql .= $this->sqlWhere;
 
 		$result = $this->conn->query($sql);
 		while ($row = $result->fetch_object()) {
@@ -2162,17 +2188,22 @@ class OccurrenceEditorManager {
 	private function getBatchUpdateWhere($fn, $ov, $buMatch) {
 		$sql = $this->sqlWhere;
 
+		$tablePrefix = 'o.';
+		if($fn == 'identifierValue' || 'identifierName') {
+			$tablePrefix = 'id.';
+		}
+
 		if (!$buMatch || $ov === '') {
 			if (in_array($fn, $this->fieldArr['omoccurpaleo']))
-				$sql .= ' AND (paleo.'.$fn.' '.($ov===''?'IS NULL':'= "'.$ov.'"').') ';
+				$sql .= ' AND (paleo.' . $fn . ' ' . ($ov === '' ? 'IS NULL' : '= "' . $ov . '"') . ') ';
 			else
-				$sql .= ' AND (o.' . $fn . ' ' . ($ov === '' ? 'IS NULL' : '= "' . $ov . '"') . ') ';
+        $sql .= ' AND (' . $tablePrefix . $fn . ' ' . ($ov === '' ? 'IS NULL' : '= "' . $ov . '"') . ') ';
 		} else {
 			//Selected "Match any part of field"
 			if (in_array($fn, $this->fieldArr['omoccurpaleo']))
 			$sql .= ' AND (paleo.'.$fn.' LIKE "%'.$ov.'%") ';
 			else
-				$sql .= ' AND (o.' . $fn . ' LIKE "%' . $ov . '%") ';
+			$sql .= ' AND ('. $tablePrefix . $fn . ' LIKE "%' . $ov . '%") ';
 		}
 		return $sql;
 	}
