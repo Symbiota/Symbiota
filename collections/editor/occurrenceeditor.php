@@ -1,11 +1,9 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrenceeditor.'.$LANG_TAG.'.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/occurrenceeditor.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrenceeditor.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrenceeditor.en.php');
-
-
 header('Content-Type: text/html; charset=' . $CHARSET);
+
 $occId = array_key_exists('occid', $_REQUEST) ? filter_var($_REQUEST['occid'], FILTER_SANITIZE_NUMBER_INT) : '';
 $collId = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : false;
 $tabTarget = array_key_exists('tabtarget', $_REQUEST) ? filter_var($_REQUEST['tabtarget'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -65,6 +63,9 @@ if($SYMB_UID){
 		}
 		elseif($collMap['colltype']=='Observations'){
 			$collType = 'obs';
+		}
+		if(!empty($collMap['paleoActivated'])){
+			$collType = 'paleo';
 		}
 	}
 
@@ -510,12 +511,13 @@ else{
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js" type="text/javascript"></script>
 	<script type="text/javascript">
-		var collId = "<?php echo (isset($collMap['collid'])?$collMap['collid']:(is_numeric($collId)?$collId:0)); ?>";
-		var csMode = "<?php echo $crowdSourceMode; ?>";
-		var tabTarget = <?php echo (is_numeric($tabTarget)?$tabTarget:'0'); ?>;
-		var imgArr = [];
-		var imgLgArr = [];
-		var localityAutoLookup = <?php echo $LOCALITY_AUTO_LOOKUP; ?>;
+		let collId = "<?php echo (isset($collMap['collid'])?$collMap['collid']:(is_numeric($collId)?$collId:0)); ?>";
+		let csMode = "<?php echo $crowdSourceMode; ?>";
+		let tabTarget = <?php echo (is_numeric($tabTarget)?$tabTarget:'0'); ?>;
+		let imgArr = [];
+		let imgLgArr = [];
+		let localityAutoLookup = <?php echo $LOCALITY_AUTO_LOOKUP; ?>;
+		let fullFormErrorMessage = '';
 
 		<?php
 		if($imgArr){
@@ -1311,7 +1313,7 @@ else{
 										</div>
 									</fieldset>
 									<?php
-									if(isset($collMap['paleoActivated'])) include('includes/paleoinclude.php');
+									if(!empty($collMap['paleoActivated'])) include('includes/paleoinclude.php');
 									?>
 									<fieldset>
 										<legend><?php echo $LANG['MISC']; ?></legend>

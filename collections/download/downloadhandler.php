@@ -168,6 +168,7 @@ if ($schema == 'backup') {
 				} elseif ($occurManager->getSearchTerm('traitid')) {
 					$dwcaHandler->addCondition('traitid', 'EQUALS', $occurManager->getSearchTerm('traitid'));
 				}
+				$dwcaHandler->setPaleoWithSql($occurManager->getPaleoSqlWith());
 			} else {
 				//Request is coming from exporter.php for collection manager tools
 				if(isset($_POST['targetcollid'])) $dwcaHandler->setCollArr($_POST['targetcollid']);

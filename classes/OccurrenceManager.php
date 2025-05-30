@@ -9,6 +9,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 
 	protected $searchTermArr = Array();
 	protected $sqlWhere;
+	protected $paleoSqlWith;
 	protected $displaySearchArr = Array();
 	protected $reset = 0;
 	protected $voucherManager;
@@ -56,6 +57,11 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 	public function getSqlWhere(){
 		if(!$this->sqlWhere) $this->setSqlWhere();
 		return $this->sqlWhere;
+	}
+
+	public function getPaleoSqlWith(){
+		if(!$this->paleoSqlWith) $this->setPaleoSqlWith();
+		return $this->paleoSqlWith;
 	}
 
 	protected function setSqlWhere(){
@@ -491,6 +497,29 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$sqlWhere .= 'AND (o.decimalLatitude IS NOT NULL) ';
 			$this->displaySearchArr[] = $this->LANG['HAS_COORDINATES'];
 		}
+		// Geological Context
+		if(array_key_exists('formation', $this->searchTermArr)){
+			$sqlWhere .= 'AND paleo.formation LIKE "' . $this->cleanInStr($this->searchTermArr["formation"]) . '%" ';
+			$this->displaySearchArr[] = $this->searchTermArr["formation"];
+		}
+		if(array_key_exists('member', $this->searchTermArr)){
+			$sqlWhere .= 'AND paleo.member LIKE "' . $this->cleanInStr($this->searchTermArr["member"]) . '%" ';
+			$this->displaySearchArr[] = $this->searchTermArr["member"];
+		}
+		if(array_key_exists('bed', $this->searchTermArr)){
+			$sqlWhere .= 'AND paleo.bed LIKE "' . $this->cleanInStr($this->searchTermArr["bed"]) . '%" ';
+			$this->displaySearchArr[] = $this->searchTermArr["bed"];
+		}
+		if(array_key_exists('lithogroup', $this->searchTermArr)){
+			$sqlWhere .= 'AND paleo.lithogroup LIKE "' . $this->cleanInStr($this->searchTermArr["lithogroup"]) . '%" ';
+			$this->displaySearchArr[] = $this->searchTermArr["lithogroup"];
+		}
+		if(array_key_exists('earlyInterval', $this->searchTermArr) || array_key_exists('lateInterval', $this->searchTermArr)) {
+			$sqlWhere .= 'AND ((early.myaStart > search.searchEnd AND early.myaStart <= search.searchStart AND late.myaEnd >= search.searchEnd AND late.myaEnd < search.searchStart) ';
+			$sqlWhere .= 'OR (early.myaStart > search.searchStart AND late.myaEnd >= search.searchEnd AND late.myaEnd < search.searchStart) ';
+			$sqlWhere .= 'OR (early.myaStart <= search.searchStart AND early.myaStart > search.searchEnd AND late.myaEnd < search.searchEnd) OR (early.myaStart > search.searchStart AND late.myaEnd < search.searchEnd)) ';
+		}
+
 		if($sqlWhere){
 			if(!array_key_exists('includecult', $this->searchTermArr)){
 				$sqlWhere .= 'AND (o.cultivationStatus IS NULL OR o.cultivationStatus = 0) ';
@@ -525,6 +554,15 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		else{
 			//Make the sql valid, but return nothing
 			//$this->sqlWhere = 'WHERE o.occid IS NULL ';
+		}
+	}
+
+	protected function setPaleoSqlWith() {
+		$paleoSqlWith = '';
+		if (array_key_exists("earlyInterval",$this->searchTermArr) || array_key_exists("lateInterval",$this->searchTermArr)) {
+			$paleoSqlWith .= "WITH searchRange AS (SELECT COALESCE((SELECT myaStart FROM omoccurpaleogts WHERE gtsterm = '"  . ($this->searchTermArr["earlyInterval"] ?? '') . "'), 5000) AS searchStart, ";
+			$paleoSqlWith .= "COALESCE((SELECT myaEnd FROM omoccurpaleogts WHERE gtsterm = '" . ($this->searchTermArr["lateInterval"] ?? '') ."'), 0) AS searchEnd) ";
+			$this->paleoSqlWith = $paleoSqlWith;
 		}
 	}
 
@@ -592,8 +630,50 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			if(array_key_exists('footprintGeoJson',$this->searchTermArr) || strpos($sqlWhere,'p.lngLatPoint')){
 				$sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
 			}
+			if ($GLOBALS['ACTIVATE_PALEO']) {
+				$sqlJoin .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
+				if (!empty($this->searchTermArr['earlyInterval']) || !empty($this->searchTermArr['lateInterval'])) {
+					$sqlJoin .= 'JOIN omoccurpaleogts early ON paleo.earlyInterval = early.gtsterm ';
+					$sqlJoin .= 'JOIN omoccurpaleogts late ON paleo.lateInterval = late.gtsterm ';
+					$sqlJoin .= 'CROSS JOIN searchRange search ';
+				}
+			}
+			/*
+			if(array_key_exists('includeothercatnum',$this->searchTermArr)){
+				$sqlJoin .= 'LEFT JOIN omoccuridentifiers oi ON o.occid = oi.occid ';
+			}
+			*/
 		}
 		return $sqlJoin;
+	}
+
+	public function getPaleoGtsTerms(){
+		$retArr = array();
+		if($GLOBALS['ACTIVATE_PALEO']){
+			$sql = 'SELECT gtsterm, rankid FROM omoccurpaleogts ';
+			$rs = $this->conn->query($sql);
+			while($r = $rs->fetch_object()){
+				$retArr[$r->gtsterm] = $r->rankid;
+			}
+			$rs->free();
+			ksort($retArr);
+		}
+		return $retArr;
+	}
+
+	public function getPaleoTimes(){
+		$paleoTimes = []; 
+		if ($GLOBALS['ACTIVATE_PALEO']) {
+			$sql = "SELECT gtsterm, myaStart, myaEnd FROM omoccurpaleogts";
+			$rs = $this->conn->query($sql);
+			while ($r = $rs->fetch_object()) {
+				$paleoTimes[$r->gtsterm] = [
+					'myaStart' => floatval($r->myaStart),
+					'myaEnd' => floatval($r->myaEnd)
+				];
+			}
+		}
+		return $paleoTimes;
 	}
 
 	public function getFullCollectionList($catId = ''){
@@ -1070,6 +1150,24 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		if(array_key_exists('footprintGeoJson',$_REQUEST) && $_REQUEST['footprintGeoJson']){
 			//$this->searchTermArr['footprintwkt'] = $this->cleanInputStr($_REQUEST['footprintwkt']);
 			$this->searchTermArr['footprintGeoJson'] = $this->cleanInputStr($_REQUEST['footprintGeoJson']);
+		}
+		if(!empty($_REQUEST['earlyInterval'])){
+			$this->searchTermArr['earlyInterval'] =  $this->cleanInputStr($_REQUEST['earlyInterval']);
+		}
+		if(!empty($_REQUEST['lateInterval'])){
+			$this->searchTermArr['lateInterval'] =  $this->cleanInputStr($_REQUEST['lateInterval']);
+		}
+		if(!empty($_REQUEST['lithogroup'])){
+			$this->searchTermArr['lithogroup'] =  $this->cleanInputStr($_REQUEST['lithogroup']);
+		}
+		if(!empty($_REQUEST['formation'])){
+			$this->searchTermArr['formation'] =  $this->cleanInputStr($_REQUEST['formation']);
+		}
+		if(!empty($_REQUEST['member'])){
+			$this->searchTermArr['member'] =  $this->cleanInputStr($_REQUEST['member']);
+		}
+		if(!empty($_REQUEST['bed'])){
+			$this->searchTermArr['bed'] =  $this->cleanInputStr($_REQUEST['bed']);
 		}
 	}
 

@@ -74,9 +74,10 @@ class CollectionController extends Controller{
 			elseif($request->managementType == 'aggregate') $conditions[] = ['managementType','Aggregate'];
 		}
 		if($request->has('collectionType')){
-			if($request->collectionType == 'specimens') $conditions[] = ['collType','Preserved Specimens'];
+			if($request->collectionType == 'PreservedSpecimen') $conditions[] = ['collType','Preserved Specimens'];
+			elseif($request->collectionType == 'FossilSpecimen') $conditions[] = ['collType','Fossil Specimens'];
 			elseif($request->collectionType == 'observations') $conditions[] = ['collType','Observations'];
-			elseif($request->collectionType == 'researchObservations') $conditions[] = ['collType','General Observations'];
+			elseif($request->collectionType == 'ResearchObservations') $conditions[] = ['collType','General Observations'];
 		}
 
 		$fullCnt = Collection::where($conditions)->count();

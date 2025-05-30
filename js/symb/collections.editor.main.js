@@ -704,66 +704,61 @@ function parseVerbatimCoordinates(f, verbose) {
 
 //Form verification code
 function verifyFullForm(f) {
-  var validformat1 = /^\d{4}-[0]{1}[0-9]{1}-\d{1,2}$/; //Format: yyyy-mm-dd
-  var validformat2 = /^\d{4}-[1]{1}[0-2]{1}-\d{1,2}$/; //Format: yyyy-mm-dd
-  if (
-    f.eventdate.value &&
-    !(
-      validformat1.test(f.eventdate.value) ||
-      validformat2.test(f.eventdate.value)
-    )
-  ) {
-    alert("Event date is invalid");
-    return false;
-  }
-  if (
-    f.ometid &&
-    ((f.ometid.value != "" && f.exsnumber.value == "") ||
-      (f.ometid.value == "" && f.exsnumber.value != ""))
-  ) {
-    alert(
-      "You must have both an exsiccati title and number, or neither. If there is no number, s.n. can be entered."
-    );
-    return false;
-  }
-  if (!verifyDecimalLatitude(f)) {
-    return false;
-  }
-  if (!verifyDecimalLongitude(f)) {
-    return false;
-  }
-  if (!isNumeric(f.coordinateuncertaintyinmeters.value)) {
-    alert("Coordinate uncertainty field must be numeric only");
-    return false;
-  }
-  if (!verifyMinimumElevationInMeters(f)) {
-    return false;
-  }
-  if (!verifyMaximumElevationInMeters(f)) {
-    return false;
-  }
-  if (f.maximumelevationinmeters.value) {
-    if (!f.minimumelevationinmeters.value) {
-      alert(
-        "Maximun elevation field contains a value yet minumum does not. If elevation consists of a single value rather than a range, enter the value in the minimun field."
-      );
-      return false;
-    } else if (
-      parseInt(f.minimumelevationinmeters.value) >
-      parseInt(f.maximumelevationinmeters.value)
-    ) {
-      alert(
-        "Maximun elevation value can not be greater than the minumum value."
-      );
-      return false;
-    }
-  }
-  if (!isNumeric(f.duplicatequantity.value)) {
-    alert("Duplicate Quantity field must be numeric only");
-    return false;
-  }
-  if (searchCatalogNumber(f, false)) return false;
-  return true;
+	if(fullFormErrorMessage != ""){
+		alert(fullFormErrorMessage);
+		return false;
+	}
+	
+	let validformat1 = /^\d{4}-[0]{1}[0-9]{1}-\d{1,2}$/; 
+	let validformat2 = /^\d{4}-[1]{1}[0-2]{1}-\d{1,2}$/; 
+	
+	if (f.eventdate.value != "") {
+		if(!validformat1.test(f.eventdate.value) && !validformat2.test(f.eventdate.value)){
+			alert("Event date is invalid");
+			return false;
+		}
+	}
+
+	if (f.ometid !== undefined && ((f.ometid.value != "" && f.exsnumber.value == "") || (f.ometid.value == "" && f.exsnumber.value != ""))) {
+		alert("You must have both an exsiccati title and number, or neither. If there is no number, s.n. can be entered.");
+		return false;
+	}
+	if (!verifyDecimalLatitude(f)) {
+		return false;
+	}
+	if (!verifyDecimalLongitude(f)) {
+		return false;
+	}
+	if (!isNumeric(f.coordinateuncertaintyinmeters.value)) {
+		alert("Coordinate uncertainty field must be numeric only");
+		return false;
+	}
+	if (!verifyMinimumElevationInMeters(f)) {
+		return false;
+	}
+	if (!verifyMaximumElevationInMeters(f)) {
+		return false;
+	}
+	if (f.maximumelevationinmeters.value) {
+		if (!f.minimumelevationinmeters.value) {
+			alert("Maximun elevation field contains a value yet minumum does not. If elevation consists of a single value rather than a range, enter the value in the minimun field.");
+			return false;
+		}
+		else if (parseInt(f.minimumelevationinmeters.value) > parseInt(f.maximumelevationinmeters.value)) {
+			alert("Maximun elevation value can not be greater than the minumum value.");
+			return false;
+		}
+	}
+	if (!isNumeric(f.duplicatequantity.value)) {
+		alert("Duplicate Quantity field must be numeric only");
+		return false;
+	}
+	if (searchCatalogNumber(f, false)) return false;
+	
+	if (typeof verifyPaleoForm === "function") { 
+		if (!verifyPaleoForm(f)) return false;
+	}
+	return true;
 }
 
 function verifyFullFormEdits(f) {
