@@ -16,7 +16,7 @@
  *   usethes (0 [default] or 1): when searching on a taxonomic name, setting usethes to 1 will run search term through the taxonomic thesaurus to include synonym within the search
  *   schema (dwc [default], symbiota): schema type
  *   extended (0 [default], 1): true outputs extended data fields such as: collectionID,rights fields, storageLocation, observerUid, processingStatus, duplicateQuantity, dateEntered, dateLastModified
- *   imgs (0, 1 [default]): Output image URLs within an media extension file
+ *   imgs (0, 1 [default]): Output image URLs within a media extension file
  *   dets (0, 1 [default]): Output determination history within an identification extension file
  *   attr (0 [default], 1): Output occurrence attribute values within a MeasurementOrFact extension file
  *   ident (0 [default], 1): Output occurrence identifiers values within an Alternative Identifiers extension file
