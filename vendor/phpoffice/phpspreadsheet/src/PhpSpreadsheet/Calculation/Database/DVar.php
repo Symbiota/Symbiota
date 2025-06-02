@@ -2,6 +2,7 @@
 
 namespace PhpOffice\PhpSpreadsheet\Calculation\Database;
 
+use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Variances;
 
 class DVar extends DatabaseAbstract
@@ -19,7 +20,7 @@ class DVar extends DatabaseAbstract
      *                                        A database is a list of related data in which rows of related
      *                                        information are records, and columns of data are fields. The
      *                                        first row of the list contains labels for each column.
-     * @param int|string $field Indicates which column is used in the function. Enter the
+     * @param null|array|int|string $field Indicates which column is used in the function. Enter the
      *                                        column label enclosed between double quotation marks, such as
      *                                        "Age" or "Yield," or a number (without quotation marks) that
      *                                        represents the position of the column within the list: 1 for
@@ -30,13 +31,13 @@ class DVar extends DatabaseAbstract
      *                                        the column label in which you specify a condition for the
      *                                        column.
      *
-     * @return null|float|string (string if result is an error)
+     * @return float|string (string if result is an error)
      */
-    public static function evaluate($database, $field, $criteria)
+    public static function evaluate(array $database, array|null|int|string $field, array $criteria): string|float
     {
         $field = self::fieldExtract($database, $field);
         if ($field === null) {
-            return null;
+            return ExcelError::VALUE();
         }
 
         return Variances::VAR(

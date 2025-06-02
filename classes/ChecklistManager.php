@@ -2,6 +2,7 @@
 include_once($SERVER_ROOT.'/classes/Manager.php');
 include_once($SERVER_ROOT.'/classes/ImInventories.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 class ChecklistManager extends Manager{
 
@@ -294,19 +295,17 @@ class ChecklistManager extends Manager{
 					FROM fmvouchers v INNER JOIN fmchklsttaxalink cl ON v.clTaxaID = cl.clTaxaID
 					INNER JOIN omoccurrences o ON v.occid = o.occid
 					INNER JOIN omcollections c ON o.collid = c.collid
-					WHERE (cl.clid IN ('.$clidStr.')) AND cl.tid IN('.implode(',',array_keys($this->taxaList)).')
-					ORDER BY o.collid';
+					WHERE (cl.clid IN ('.$clidStr.')) AND cl.tid IN('.implode(',',array_keys($this->taxaList)).') ';
 				if($this->thesFilter){
 					$vSql = 'SELECT DISTINCT ts.tidaccepted AS tid, v.occid, c.institutioncode, v.notes, o.catalognumber, o.othercatalognumbers, o.recordedby, o.recordnumber, o.eventdate, o.collid
 						FROM fmvouchers v INNER JOIN fmchklsttaxalink cl ON v.clTaxaID = cl.clTaxaID
 						INNER JOIN omoccurrences o ON v.occid = o.occid
 						INNER JOIN omcollections c ON o.collid = c.collid
 						INNER JOIN taxstatus ts ON cl.tid = ts.tid
-						WHERE (ts.taxauthid = '.$this->thesFilter.') AND (cl.clid IN ('.$clidStr.'))
-						AND (ts.tidaccepted IN('.implode(',',array_keys($this->taxaList)).'))
-						ORDER BY o.collid';
+						WHERE (ts.taxauthid = '.$this->thesFilter.') AND (cl.clid IN ('.$clidStr.')) AND (ts.tidaccepted IN('.implode(',',array_keys($this->taxaList)).')) ';
 				}
-				//echo $vSql; exit;
+				$vSql .= OccurrenceUtil::appendFullProtectionSQL();
+				$vSql .= 'ORDER BY o.collid';
 		 		$vResult = $this->conn->query($vSql);
 				while ($row = $vResult->fetch_object()){
 					$displayStr = '';
@@ -359,30 +358,30 @@ class ChecklistManager extends Manager{
 				if($this->childClidArr){
 					$clidStr .= ','.implode(',',array_keys($this->childClidArr));
 				}
-				$sql = 'SELECT i.tid, i.url, i.thumbnailurl, i.originalurl
-					FROM images i INNER JOIN omoccurrences o ON i.occid = o.occid
+				$sql = 'SELECT m.tid, m.url, m.thumbnailurl, m.originalurl
+					FROM media m INNER JOIN omoccurrences o ON m.occid = o.occid
 					INNER JOIN fmvouchers v ON o.occid = v.occid
 					INNER JOIN fmchklsttaxalink cl ON v.clTaxaID = cl.clTaxaID
-					WHERE (cl.clid = '.$clidStr.') AND (i.tid IN('.implode(',',array_keys($this->taxaList)).'))
-					ORDER BY i.sortOccurrence, i.sortSequence';
+					WHERE (cl.clid = '.$clidStr.') AND (m.tid IN('.implode(',',array_keys($this->taxaList)).'))
+					ORDER BY m.sortOccurrence, m.sortSequence';
 				$matchedArr = $this->setImageSubset($sql);
 			}
 			if($missingArr = array_diff(array_keys($this->taxaList),$matchedArr)){
-				$sql = 'SELECT i2.tid, i.url, i.thumbnailurl FROM images i INNER JOIN '.
-					'(SELECT ts1.tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
+				$sql = 'SELECT m2.tid, m.url, m.thumbnailurl FROM media m INNER JOIN '.
+					'(SELECT ts1.tid, SUBSTR(MIN(CONCAT(LPAD(m.sortsequence,6,"0"),m.mediaID)),7) AS mediaID '.
 					'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-					'INNER JOIN images i ON ts2.tid = i.tid '.
-					'WHERE i.sortsequence < 500 AND (i.thumbnailurl IS NOT NULL) AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.tid IN('.implode(',',$missingArr).')) '.
-					'GROUP BY ts1.tid) i2 ON i.imgid = i2.imgid';
+					'INNER JOIN media m ON ts2.tid = m.tid '.
+					'WHERE m.sortsequence < 500 AND (m.thumbnailurl IS NOT NULL) AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.tid IN('.implode(',',$missingArr).')) '.
+					'GROUP BY ts1.tid) m2 ON m.mediaID	= m2.mediaID';
 				$matchedArr = $this->setImageSubset($sql);
 				if($missingArr = array_diff(array_keys($this->taxaList),$matchedArr)){
 					//Get children images
-					$sql = 'SELECT DISTINCT i2.tid, i.url, i.thumbnailurl FROM images i INNER JOIN '.
-						'(SELECT ts1.parenttid AS tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
+					$sql = 'SELECT DISTINCT m2.tid, m.url, m.thumbnailurl FROM media m INNER JOIN '.
+						'(SELECT ts1.parenttid AS tid, SUBSTR(MIN(CONCAT(LPAD(m.sortsequence,6,"0"),m.mediaID)),7) AS mediaID '.
 						'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-						'INNER JOIN images i ON ts2.tid = i.tid '.
-						'WHERE i.sortsequence < 500 AND (i.thumbnailurl IS NOT NULL) AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.parenttid IN('.implode(',',$missingArr).')) '.
-						'GROUP BY ts1.tid) i2 ON i.imgid = i2.imgid';
+						'INNER JOIN media m ON ts2.tid = m.tid '.
+						'WHERE m.sortsequence < 500 AND (m.thumbnailurl IS NOT NULL) AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.parenttid IN('.implode(',',$missingArr).')) '.
+						'GROUP BY ts1.tid) m2 ON m.mediaID = m2.mediaID';
 					$this->setImageSubset($sql);
 				}
 			}
@@ -455,39 +454,50 @@ class ChecklistManager extends Manager{
 		}
 	}
 
-  public function getExternalVoucherArr(){
+  /**
+   * Gets all external vouchers, currently only supports iNaturalist. 
+   * If given a $tid param then only get vouchers associated to that tid. 
+   * Requires $taxaList be set or a $tid to be passed in.
+   *
+   * @param int|null $tid Optional Taxonomic id that will give only vouchers of the associated id
+   * @return array with the key structure of [ (tid) => [[ (clCoordID) => [ display => string, url => string, id => int|string] ]]]
+   **/
+  public function getExternalVoucherArr($tid = null) {
 		$externalVoucherArr = array();
-		if($this->taxaList){
+
+		if(is_numeric($tid) || $this->taxaList) {
+			$taxaList = is_numeric($tid)? [ $tid ]: array_keys($this->taxaList);
 			$clidStr = $this->clid;
 			if($this->childClidArr){
 				$clidStr .= ','.implode(',',array_keys($this->childClidArr));
 			}
 			$sql = 'SELECT clCoordID, clid, tid, sourceIdentifier, referenceUrl, dynamicProperties
 				FROM fmchklstcoordinates
-				WHERE (clid IN ('.$clidStr.')) AND (tid IN('.implode(',',array_keys($this->taxaList)).')) AND sourceName = "EXTERNAL_VOUCHER"';
+				WHERE (clid IN (' . $clidStr . ')) AND (tid IN(' . implode(',', $taxaList) . ')) AND sourceName = "EXTERNAL_VOUCHER"';
+
 			$rs = $this->conn->query($sql);
 			while ($r = $rs->fetch_object()){
-				$dynPropArr = json_decode($r->dynamicProperties);
-				foreach($dynPropArr as $vouch) {
-					$displayStr = '';
-					if(!empty($vouch->user)) $displayStr = $vouch->user;
-					if(strlen($displayStr) > 25){
-						//Collector string is too big, thus reduce
-						$strPos = strpos($displayStr,';');
-						if(!$strPos) $strPos = strpos($displayStr,',');
-						if(!$strPos) $strPos = strpos($displayStr,' ',10);
-						if($strPos) $displayStr = substr($displayStr,0,$strPos).'...';
-					}
-					if($vouch->date) $displayStr .= ' '.$vouch->date;
-					if(!trim($displayStr)) $displayStr = 'undefined voucher';
-					$displayStr .= ' ['.$vouch->repository.($vouch->id?'-'.$vouch->id:'').']';
-					$externalVoucherArr[$r->tid][$r->clCoordID]['display'] = trim($displayStr);
-					$url = 'https://www.inaturalist.org/observations/'.$r->sourceIdentifier;
-					$externalVoucherArr[$r->tid][$r->clCoordID]['url'] = $url;
+				$dynVoucher = json_decode($r->dynamicProperties);
+				$displayStr = '';
+				if(!empty($dynVoucher->user)) $displayStr = $dynVoucher->user;
+				if(strlen($displayStr) > 25){
+					//Collector string is too big, thus reduce
+					$strPos = strpos($displayStr,';');
+					if(!$strPos) $strPos = strpos($displayStr,',');
+					if(!$strPos) $strPos = strpos($displayStr,' ',10);
+					if($strPos) $displayStr = substr($displayStr,0,$strPos).'...';
 				}
+				if($dynVoucher->date) $displayStr .= ' '.$dynVoucher->date;
+				if(!trim($displayStr)) $displayStr = 'undefined voucher';
+				$displayStr .= ' ['.$dynVoucher->repository.($dynVoucher->id?'-'.$dynVoucher->id:'').']';
+				$externalVoucherArr[$r->tid][$r->clCoordID]['display'] = trim($displayStr);
+				$url = 'https://www.inaturalist.org/observations/'.$r->sourceIdentifier;
+				$externalVoucherArr[$r->tid][$r->clCoordID]['url'] = $url;
+				$externalVoucherArr[$r->tid][$r->clCoordID]['id'] = $dynVoucher->id;
 			}
 			$rs->free();
 		}
+
 		return $externalVoucherArr;
 	}
 
@@ -527,7 +537,7 @@ class ChecklistManager extends Manager{
 					INNER JOIN fmchklsttaxalink cl ON v.clTaxaID = cl.clTaxaID
 					INNER JOIN ('.$this->basicSql.') t ON cl.tid = t.tid
 					WHERE cl.clid IN ('.$clidStr.') AND o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL
-					AND (o.localitysecurity = 0 OR o.localitysecurity IS NULL) ';
+					AND (o.recordSecurity = 0) ';
 				if($limit) $sql2 .= 'ORDER BY RAND() LIMIT '.$limit;
 				$rs2 = $this->conn->query($sql2);
 				if($rs2){
@@ -542,31 +552,6 @@ class ChecklistManager extends Manager{
 					$rs2->free();
 				}
 				//else echo 'ERROR getting voucher coordinates: '.$this->conn->error;
-			}
-		}
-		return $retArr;
-	}
-
-	public function getPolygonCoordinates(){
-		$retArr = array();
-		if($this->clid){
-			if($this->clMetadata['dynamicsql']){
-				$sql = 'SELECT o.decimallatitude, o.decimallongitude FROM omoccurrences o ';
-				if($this->clMetadata['footprintwkt'] && substr($this->clMetadata['footprintwkt'],0,7) == 'POLYGON'){
-					$sql .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid WHERE (ST_Within(p.point,GeomFromText("'.$this->clMetadata['footprintwkt'].'"))) ';
-				}
-				else{
-					$voucherManager = new ChecklistVoucherAdmin();
-					$voucherManager->setClid($this->clid);
-					$voucherManager->setCollectionVariables();
-					$sql .= 'WHERE ('.$voucherManager->getSqlFrag().') ';
-				}
-				$sql .= 'LIMIT 50';
-				$rs = $this->conn->query($sql);
-				while($r = $rs->fetch_object()){
-					$retArr[] = $r->decimallatitude.','.$r->decimallongitude;
-				}
-				$rs->free();
 			}
 		}
 		return $retArr;
@@ -780,9 +765,9 @@ class ChecklistManager extends Manager{
 		$term = preg_replace('/[^a-zA-Z\-\. ]+/', '', $term);
 		$term = preg_replace('/\s{1}x{1}\s{0,1}$/i', ' _ ', $term);
 		$term = preg_replace('/\s{1}[\D]{1}\s{1}/i', ' _ ', $term);
-		
+
 		if($term){
-			
+
 			$sql = 'SELECT tid, sciname, author FROM taxa WHERE (rankid > 179) AND (sciname LIKE "'.$term.'%")';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){

@@ -26,6 +26,9 @@ $LANG['DELETE'] = 'Supprimer';
 $LANG['UNITNAME1'] = "Nom de l'unité";
 $LANG['UNITNAME2'] = 'Épithète spécifique';
 $LANG['UNITNAME3'] = 'Épithète infraspécifique';
+$LANG['UNITNAME4'] = 'Épithète du cultivar';
+$LANG['UNITNAME4_DESCRIPTION'] = 'N\'incluez pas de guillemets simples pour l\'épithète du cultivar lors de la saisie des données';
+$LANG['UNITNAME5'] = 'Nom commercial';
 $LANG['AUTHOR'] = 'Auteur';
 $LANG['KINGDOM'] = 'Royaume';
 $LANG['RANK_NAME'] = 'Nom du rang';
@@ -73,5 +76,6 @@ $LANG['EMPTY'] = 'Vide';
 $LANG['TARGET_TAXON_MISSING'] = 'Taxon cible manquant';
 $LANG['NOT_AUTH'] = "Vous n'êtes pas autorisé à accéder à cette page";
 $LANG['GENUS_NAME'] = 'Nom du genre';
+$LANG['QUICK_PARSER_LABEL'] = 'Analyseur rapide facultatif';
 
 ?>

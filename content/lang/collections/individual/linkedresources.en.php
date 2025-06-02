@@ -25,5 +25,6 @@ $LANG['CREATENEWREL'] = 'Create New Dataset Relationship';
 $LANG['SELECTEXISTING'] = 'Select an Existing Dataset';
 $LANG['CREATENEWDATASET'] = 'Create New Dataset';
 $LANG['LINKTO'] = 'Link to Dataset';
+$LANG['PRIVATE_STATUS'] = 'private status';
 
 ?>

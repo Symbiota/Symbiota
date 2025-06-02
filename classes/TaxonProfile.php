@@ -1,14 +1,19 @@
 <?php
 include_once('Manager.php');
+include_once($SERVER_ROOT . '/traits/TaxonomyTrait.php');
 
 class TaxonProfile extends Manager {
+	use TaxonomyTrait;
 
 	protected $tid;
 	protected $rankId;
 	private $parentTid;
 	private $taxAuthId = 1;
-	private $taxonName;
-	private $taxonAuthor;
+	private $sciName;
+
+	private $cultivarEpithet;
+	private $tradeName;
+	private $author;
 	private $taxonFamily;
 	private $acceptance = true;
 	private $forwarded = false;
@@ -42,16 +47,20 @@ class TaxonProfile extends Manager {
 	private function setTaxon(){
 		$status = false;
 		if($this->tid){
-			$sql = 'SELECT tid, sciname, author, rankid FROM taxa WHERE (tid = '.$this->tid.') ';
+			$sql = 'SELECT tid, sciname, cultivarEpithet, tradeName, author, rankid FROM taxa WHERE (tid = '.$this->tid.') ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$this->submittedArr['tid'] = $r->tid;
 				$this->submittedArr['sciname'] = $r->sciname;
+				$this->submittedArr['cultivarEpithet'] = $r->cultivarEpithet;
+				$this->submittedArr['tradeName'] = $r->tradeName;
 				$this->submittedArr['author'] = $r->author;
 				$this->submittedArr['rankid'] = $r->rankid;
 				$this->tid = $r->tid;
-				$this->taxonName = $r->sciname;
-				$this->taxonAuthor = $r->author;
+				$this->sciName = $r->sciname;
+				$this->cultivarEpithet = $r->cultivarEpithet;
+				$this->tradeName = $r->tradeName;
+				$this->author = $r->author;
 				$this->rankId = $r->rankid;
 			}
 			$rs->free();
@@ -79,8 +88,8 @@ class TaxonProfile extends Manager {
 				if(count($this->acceptedArr) == 1){
 					$this->forwarded = true;
 					$this->tid = key($this->acceptedArr);
-					$this->taxonName = $this->acceptedArr[$this->tid]['sciname'];
-					$this->taxonAuthor = $this->acceptedArr[$this->tid]['author'];
+					$this->sciName = $this->acceptedArr[$this->tid]['sciname'];
+					$this->author = $this->acceptedArr[$this->tid]['author'];
 					$this->rankId = $this->acceptedArr[$this->tid]['rankid'];
 					$this->taxonFamily = $this->acceptedArr[$this->tid]['family'];
 					$this->parentTid = $this->acceptedArr[$this->tid]['parenttid'];
@@ -149,27 +158,34 @@ class TaxonProfile extends Manager {
 		foreach($iArr as $imgId => $imgObj){
 			if($start == 0 && $trueLength == 1) echo '<div id="centralimage">';
 			else echo '<div class="imgthumb">';
+
+			if($imgObj["mediaType"] === 'audio') {
+				$imgObj["thumbnailurl"] = $GLOBALS['CLIENT_ROOT'] . '/images/speaker_thumbnail.png';
+			}
 			$imgUrl = $imgObj['url'];
-			$imgAnchor = '../imagelib/imgdetails.php?imgid='.$imgId;
-			$imgThumbnail = $imgObj['thumbnailurl'];
-			if(array_key_exists('IMAGE_DOMAIN',$GLOBALS)){
+			$imgAnchor = '../imagelib/imgdetails.php?mediaid='.$imgId;
+			if ($imgObj['thumbnailurl'])
+				$displayUrl = $imgObj['thumbnailurl'];
+			else
+				$displayUrl = $imgObj['url'];
+			if(array_key_exists('MEDIA_DOMAIN',$GLOBALS)){
 				//Images with relative paths are on another server
-				if(substr($imgUrl,0,1)=="/") $imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
-				if(substr($imgThumbnail,0,1)=="/") $imgThumbnail = $GLOBALS['IMAGE_DOMAIN'].$imgThumbnail;
+				if(substr($imgUrl,0,1)=="/") $imgUrl = $GLOBALS['MEDIA_DOMAIN'].$imgUrl;
+				if(substr($displayUrl,0,1)=="/") $displayUrl = $GLOBALS['MEDIA_DOMAIN'].$displayUrl;
 			}
 			if($imgObj['occid']) $imgAnchor = '../collections/individual/index.php?occid='.$imgObj['occid'];
-			if($useThumbnail) if($imgObj['thumbnailurl']) $imgUrl = $imgThumbnail;
+			if($useThumbnail) if($imgObj['thumbnailurl']) $imgUrl = $displayUrl;
 			echo '<div class="tptnimg"><a href="#" onclick="openPopup(\'' . htmlspecialchars($imgAnchor, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '\');return false;">';
 			$titleStr = $imgObj['caption'];
-			if($imgObj['sciname'] != $this->taxonName) $titleStr .= ' (linked from '.$imgObj['sciname'].')';
-			echo '<img src="'.$imgUrl.'" title="'.$titleStr.'" alt="'.$this->taxonName.' image" />';
+			if($imgObj['sciname'] != $this->sciName) $titleStr .= ' (linked from '.$imgObj['sciname'].')';
+			echo '<img src="'.$imgUrl.'" title="'.$titleStr.'" alt="'.$this->sciName.' image" />';
 			/*
 			if($length) echo '<img src="'.$imgUrl.'" title="'.$imgObj['caption'].'" alt="'.$spDisplay.' image" />';
 			//else echo '<img class="delayedimg" src="" delayedsrc="'.$imgUrl.'" />';
 			*/
 			echo '</a></div>';
-			echo '<div class="photographer">';
-			if($imgObj['photographer']) echo $imgObj['photographer'];
+			echo '<div class="creator">';
+			if($imgObj['creator']) echo $imgObj['creator'];
 			echo '</div>';
 			echo '</div>';
 			$status = true;
@@ -191,38 +207,38 @@ class TaxonProfile extends Manager {
 			$rs1->free();
 
 			$tidStr = implode(",",$tidArr);
-			$sql = 'SELECT t.sciname, i.imgid, i.url, i.thumbnailurl, i.originalurl, i.caption, i.occid, i.photographer, CONCAT_WS(" ",u.firstname,u.lastname) AS photographerLinked '.
-				'FROM images i LEFT JOIN users u ON i.photographeruid = u.uid '.
-				'INNER JOIN taxstatus ts ON i.tid = ts.tid '.
-				'INNER JOIN taxa t ON i.tid = t.tid '.
-				'WHERE (ts.taxauthid = 1 AND ts.tidaccepted IN ('.$tidStr.')) AND i.SortSequence < 500 AND i.thumbnailurl IS NOT NULL ';
-			if(!$this->displayLocality) $sql .= 'AND i.occid IS NULL ';
-			$sql .= 'ORDER BY i.sortsequence, i.sortOccurrence LIMIT 100';
-			/*
-			$sql = 'SELECT t.sciname, i.imgid, i.url, i.thumbnailurl, i.originalurl, i.caption, i.occid, IFNULL(i.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer '.
-				'FROM images i LEFT JOIN users u ON i.photographeruid = u.uid '.
-				'INNER JOIN taxa t ON i.tid = t.tid '.
-				'INNER JOIN taxstatus ts ON i.tid = ts.tid '.
-				'INNER JOIN taxstatus ts2 ON ts.tidaccepted = ts2.tid '.
-				'INNER JOIN taxaenumtree e ON ts2.tid = e.tid '.
-				'WHERE ts.taxauthid = 1 AND ts2.taxauthid = 1 AND e.taxauthid = 1 AND ts2.tid = ts2.tidaccepted AND e.parenttid = '.$this->tid.' AND i.SortSequence < 500 AND i.thumbnailurl IS NOT NULL ';
-			if(!$this->displayLocality) $sql .= 'AND i.occid IS NULL ';
-			$sql .= 'ORDER BY i.sortsequence LIMIT 100';
-			*/
-			//echo $sql;
+			$sortSequnceLimit = 500;
+			if($this->rankId < 220 && count($tidArr) > 50) $sortSequnceLimit = 20;
+			$sql = 'SELECT t.sciname, m.mediaID, m.mediaType, m.format, m.url, m.thumbnailurl, m.originalurl, m.caption, m.occid, m.creator, CONCAT_WS(" ",u.firstname,u.lastname) AS creatorLinked
+				FROM media m LEFT JOIN users u ON m.creatorUid = u.uid
+				INNER JOIN taxstatus ts ON m.tid = ts.tid
+				INNER JOIN taxa t ON m.tid = t.tid
+				LEFT JOIN omoccurrences o ON m.occid = o.occid
+				WHERE (ts.taxauthid = 1) AND ts.tidaccepted IN ('.$tidStr.') AND m.SortSequence < ' . $sortSequnceLimit . ' AND (m.mediaType != "image" || m.thumbnailurl IS NOT NULL)
+				AND (o.recordSecurity != 5 OR o.occid IS NULL) ';
+			if(!$this->displayLocality) $sql .= 'AND m.occid IS NULL ';
+			if($this->rankId < 220){
+				$sql .= 'ORDER BY m.sortsequence ';
+			}
+			else{
+				$sql .= 'ORDER BY m.sortsequence, m.sortOccurrence ';
+			}
+			$sql .= 'LIMIT 100';
 			$result = $this->conn->query($sql);
 			while($row = $result->fetch_object()){
 				$imgUrl = $row->url;
 				if($imgUrl == 'empty') $imgUrl = '';
 				if(!$imgUrl && $row->originalurl) $imgUrl = $row->originalurl;
 				if(!$imgUrl) continue;
-				$this->imageArr[$row->imgid]['url'] = $imgUrl;
-				$this->imageArr[$row->imgid]['thumbnailurl'] = $row->thumbnailurl;
-				if($row->photographerLinked) $this->imageArr[$row->imgid]['photographer'] = $row->photographerLinked;
-				else $this->imageArr[$row->imgid]['photographer'] = $row->photographer;
-				$this->imageArr[$row->imgid]['caption'] = $row->caption;
-				$this->imageArr[$row->imgid]['occid'] = $row->occid;
-				$this->imageArr[$row->imgid]['sciname'] = $row->sciname;
+				$this->imageArr[$row->mediaID]['url'] = $imgUrl;
+				$this->imageArr[$row->mediaID]['thumbnailurl'] = $row->thumbnailurl;
+				if($row->creatorLinked) $this->imageArr[$row->mediaID]['creator'] = $row->creatorLinked;
+				else $this->imageArr[$row->mediaID]['creator'] = $row->creator;
+				$this->imageArr[$row->mediaID]['caption'] = $row->caption;
+				$this->imageArr[$row->mediaID]['occid'] = $row->occid;
+				$this->imageArr[$row->mediaID]['sciname'] = $row->sciname;
+				$this->imageArr[$row->mediaID]['mediaType'] = $row->mediaType;
+				$this->imageArr[$row->mediaID]['format'] = $row->format;
 			}
 			$result->free();
 		}
@@ -249,8 +265,8 @@ class TaxonProfile extends Manager {
 			$result = $this->conn->query($sql);
 			if($row = $result->fetch_object()){
 				$imgUrl = $row->url;
-				if(array_key_exists("IMAGE_DOMAIN",$GLOBALS) && substr($imgUrl,0,1)=="/"){
-					$imgUrl = $GLOBALS["IMAGE_DOMAIN"].$imgUrl;
+				if(array_key_exists("MEDIA_DOMAIN",$GLOBALS) && substr($imgUrl,0,1)=="/"){
+					$imgUrl = $GLOBALS["MEDIA_DOMAIN"].$imgUrl;
 				}
 				$maps[] = $imgUrl;
 			}
@@ -368,11 +384,13 @@ class TaxonProfile extends Manager {
 						$indexKey = 1;
 					}
 					if(!isset($retArr[$indexKey]) || !array_key_exists($rowArr['tdbid'],$retArr[$indexKey])){
-						$retArr[$indexKey][$rowArr['tdbid']]['caption'] = $rowArr['caption'];
-						$retArr[$indexKey][$rowArr['tdbid']]['source'] = $rowArr['source'];
-						$retArr[$indexKey][$rowArr['tdbid']]['url'] = $rowArr['sourceurl'];
+						$retArr[$indexKey][$rowArr['tdbid']]['caption'] = htmlspecialchars($rowArr['caption'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+						$retArr[$indexKey][$rowArr['tdbid']]['source'] = htmlspecialchars($rowArr['source'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+						$retArr[$indexKey][$rowArr['tdbid']]['url'] = htmlspecialchars($rowArr['sourceurl'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 					}
-					$retArr[$indexKey][$rowArr['tdbid']]['desc'][$rowArr['tdsid']] = ($rowArr['displayheader'] && $rowArr['heading']?'<b>'.$rowArr['heading'].'</b>: ':'').$rowArr['statement'];
+					$stmtStr = $rowArr['statement'];
+					if($rowArr['displayheader'] && $rowArr['heading']) $stmtStr = '<b>' . htmlspecialchars($rowArr['heading'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</b>: ' . $stmtStr;
+					$retArr[$indexKey][$rowArr['tdbid']]['desc'][$rowArr['tdsid']] = $stmtStr;
 					$usedCaptionArr[$rowArr['caption']] = $rowArr['tdbid'];
 				}
 			}
@@ -419,48 +437,200 @@ class TaxonProfile extends Manager {
 			}
 		}
 		if((isset($CALENDAR_TRAIT_PLOTS) && $CALENDAR_TRAIT_PLOTS > 0) && $this->rankId > 180) {
-			$retStr .= '<li><a href="plottab.php?tid=' . htmlspecialchars($this->tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars(($LANG['CALENDAR_TRAIT_PLOT']?$LANG['CALENDAR_TRAIT_PLOT']:'Traits Plots'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></li>';
+			$retStr .= '<li><a href="plottab.php?tid=' . $this->tid . '">' . $LANG['CALENDAR_TRAIT_PLOT'] . '</a></li>';
 		}
-		$retStr .= '<li><a href="resourcetab.php?tid=' . htmlspecialchars($this->tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars(($LANG['RESOURCES']?$LANG['RESOURCES']:'Resources'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></li>';
+
+		//Fetch Wikipedia sections
+		if (!empty($GLOBALS['WIKIPEDIA_TAXON_TAB'])){
+			$wikiSections = $this->getWikipediaDescription($this->sciName);
+			if ($wikiSections) {
+				$retStr .= '<li><a href="#wikitab">Wikipedia</a></li>';
+			}
+		}
+
+		$retStr .= '<li><a href="resourcetab.php?tid=' . $this->tid . '">' . $LANG['RESOURCES'] . '</a></li>';
 		$retStr .= '</ul>';
+
 		foreach($descArr as $dArr){
 			foreach($dArr as $id => $vArr){
 				$retStr .= '<div id="tab'.$id.'" class="sptab">';
-				if($vArr['source']){
+				if (!empty($vArr['source'])){
 					$retStr .= '<div id="descsource" style="float:right;">';
-					if($vArr['url']){
-						$retStr .= '<a href="'.$vArr['url'].'" target="_blank">';
+					if (!empty($vArr['url'])){
+						$retStr .= '<a href="' . $vArr['url'] . '" target="_blank">';
 					}
 					$retStr .= $vArr['source'];
-					if($vArr['url']){
+					if (!empty($vArr['url'])){
 						$retStr .= '</a>';
 					}
 					$retStr .= '</div>';
 				}
-				$descArr = $vArr['desc'];
-				$retStr .= '<div style="clear:both;">';
-				foreach($descArr as $tdsId => $stmt){
-					$retStr .= $stmt.' ';
+				$retStr .= '<div style="clear:both;">' . implode(' ', $vArr['desc']) . '</div>';
+				$retStr .= '</div>';
+			}
+		}
+
+		if (!empty($wikiSections)) {
+			$retStr .= '<div id="wikitab" class="sptab">';
+			foreach ($wikiSections as $section) {
+				if ($section["title"])
+					$retStr .= '<h3>' . htmlspecialchars($section['title'], ENT_QUOTES, 'UTF-8') . '</h3>';
+				if (strip_tags($section['content']) == $section['content']) {
+					//if plain text convert newlines to <br>
+					$retStr .= '<p>' . nl2br(htmlspecialchars($section['content'], ENT_QUOTES, 'UTF-8')) . '</p>';
+				} else {
+					//display as is
+					$retStr .= '<p>' . $section['content'] . '</p>';
 				}
-				$retStr .= '</div>';
-				$retStr .= '</div>';
 			}
 			$retStr .= '</div>';
 		}
+		$retStr .= '</div>';
 		return $retStr;
+	}
+
+
+	private function getWikipediaDescription($sciName) {
+		$formattedName = urlencode($sciName);
+		$url = "https://en.wikipedia.org/w/api.php?action=parse&page={$formattedName}&redirects=1&format=json&prop=sections";
+		$wikiUrl = "https://en.wikipedia.org/wiki/" . urlencode(str_replace(' ', '_', $sciName));
+
+		$response = @file_get_contents($url);
+		if (!$response) {
+			error_log("Wikipedia API request failed: " . $url);
+			return null;
+		}
+		$data = json_decode($response, true);
+		if (empty($data['parse']['sections'])) {
+			error_log("Wikipedia sections not found for: " . $sciName);
+			return null;
+		}
+
+		$sections = [];
+		$totalCharCount = 0;
+
+		//total char limit
+		$maxLength = 2000;
+
+		$summaryUrl = "https://en.wikipedia.org/w/api.php?action=query&redirects=1&format=json&prop=extracts&titles={$formattedName}&exintro=true&explaintext=true";
+		$summaryResponse = @file_get_contents($summaryUrl);
+		if (!$summaryResponse) {
+			error_log("Wikipedia summary request failed: " . $summaryUrl);
+			return null;
+		}
+		$summaryData = json_decode($summaryResponse, true);
+		$page = reset($summaryData['query']['pages']);
+		$summary = $page['extract'] ?? '';
+
+		if ($summary) {
+			$totalCharCount += strlen($summary);
+			$sections[] = [
+				'title' => 'Summary',
+				'content' => $summary
+			];
+		}
+		foreach ($data['parse']['sections'] as $section) {
+			if ($totalCharCount >= $maxLength) {
+				break;
+			}
+
+			//skip sections with references/links
+			$skipSections = ['References', 'External links', 'See also', 'Further reading', 'Notes'];
+			if (in_array($section['line'], $skipSections)) {
+				continue;
+			}
+
+			$sectionContent = $this->getSectionContent($formattedName, $section['index']);
+			if ($sectionContent) {
+				$remainingChars = $maxLength - $totalCharCount;
+				if (strlen($sectionContent) > $remainingChars) {
+					$sectionContent = preg_replace('/\s+?(\S+)?$/', '', substr($sectionContent, 0, $remainingChars)) . '';
+					$sectionContent .= '<a href="' . $wikiUrl . '" target="_blank" class="more-info-btn">...</a>';
+				}
+
+				$totalCharCount += strlen($sectionContent);
+				$sections[] = [
+					'title' => $section['line'],
+					'content' => $sectionContent
+				];
+			}
+		}
+
+		//link to wikipedia after char limit reached
+
+		if (!empty($sections)) {
+			array_unshift($sections, [
+				'title' => '',
+				'content' => '<a href="' . $wikiUrl . '" style="float:right; margin-right: 1rem" target="_blank" class="more-info-btn">Wikipedia Source Page</a>'
+			]);
+		}
+
+		return $sections;
+	}
+
+	private function getSectionContent($page, $section) {
+		$url = "https://en.wikipedia.org/w/api.php?action=parse&page={$page}&redirects=1&format=json&prop=text&section={$section}";
+		$response = @file_get_contents($url);
+		if (!$response) {
+			error_log("Wikipedia section request failed: " . $url);
+			return '';
+		}
+		$data = json_decode($response, true);
+		if (empty($data['parse']['text']['*'])) {
+			error_log("Wikipedia returned empty section content for: " . $page . " (Section: " . $section . ")");
+			return '';
+		}
+
+		$cleanText = $this->cleanWikipediaText($data['parse']['text']['*']);
+
+		return $cleanText;
+	}
+
+	private function cleanWikipediaText($html) {
+
+		//remove section titles
+		$html = preg_replace('/<h[1-6][^>]*>.*?<\/h[1-6]>/s', '', $html);
+
+		//remove wiki references
+		$cleanText = preg_replace('/<sup.*?>.*?<\/sup>/s', '', $html);
+
+		//remove all tags except <p>
+		$cleanText = strip_tags($cleanText, '<p><br>');
+
+		//remove wiki errors and wiki css and js code
+		$cleanText = preg_replace('/Cite error:.*?<\/p>/s', '', $cleanText);
+		$cleanText = preg_replace('/\.mw-parser-output[^\n]*/', '', $cleanText);
+		$cleanText = preg_replace('/<style.*?<\/style>/s', '', $cleanText);
+		$cleanText = preg_replace('/<script.*?<\/script>/s', '', $cleanText);
+
+		//remove reference lists
+		$cleanText = preg_replace('/<ol class="references".*?<\/ol>/s', '', $cleanText);
+		$cleanText = preg_replace('/<li id="cite_note-.*?<\/li>/s', '', $cleanText);
+		$cleanText = preg_replace('/<span class="reference-text">.*?<\/span>/s', '', $cleanText);
+		$cleanText = preg_replace('/^\s*\^.*$/m', '', $cleanText);
+
+		//remove the square brackets content
+		$cleanText = preg_replace('/\[[^\[\]]*\]/', '', $cleanText);
+
+		return trim($cleanText);
 	}
 
 	//Taxon Link functions
 	private function setLinkArr(){
 		if($this->linkArr === false && $this->tid){
 			$this->linkArr = array();
-			$sql = 'SELECT DISTINCT l.tlid, l.url, l.icon, l.title, l.notes
-				FROM taxalinks l LEFT JOIN taxaenumtree e ON l.tid = e.parenttid
-				WHERE (e.tid IN('.$this->tid.') OR l.tid IN('.$this->tid.')) ORDER BY l.sortsequence, l.title';
+			$sql = '(SELECT tlid, url, icon, title, notes, sortsequence
+				FROM taxalinks l
+				WHERE (l.tid = ' . $this->tid . ')
+				UNION
+				SELECT l.tlid, l.url, l.icon, l.title, l.notes, l.sortsequence
+				FROM taxalinks l INNER JOIN taxaenumtree e ON l.tid = e.parenttid
+				WHERE (e.tid = ' . $this->tid . '))
+				ORDER BY sortsequence, title';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$this->linkArr[$r->tlid]['title'] = $r->title;
-				$this->linkArr[$r->tlid]['url'] = str_replace('--SCINAME--',rawurlencode($this->taxonName),$r->url);
+				$this->linkArr[$r->tlid]['url'] = str_replace('--SCINAME--',rawurlencode($this->sciName),$r->url);
 				$this->linkArr[$r->tlid]['icon'] = $r->icon;
 				$this->linkArr[$r->tlid]['notes'] = $r->notes;
 			}
@@ -561,14 +731,14 @@ class TaxonProfile extends Manager {
 
 			if($tids){
 				//Get Images
-				$sql = 'SELECT t.sciname, t.tid, i.imgid, i.url, i.thumbnailurl, i.caption, i.photographer, CONCAT_WS(" ",u.firstname,u.lastname) AS photographerLinked '.
-					'FROM images i INNER JOIN (SELECT ts1.tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
+				$sql = 'SELECT t.sciname, t.tid, m.mediaID, m.url, m.thumbnailurl, m.caption, m.creator, CONCAT_WS(" ",u.firstname,u.lastname) AS creatorLinked '.
+					'FROM media m INNER JOIN (SELECT ts1.tid, SUBSTR(MIN(CONCAT(LPAD(m.sortsequence,6,"0"),m.mediaID)),7) AS mediaID '.
 					'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-					'INNER JOIN images i ON ts2.tid = i.tid '.
-					'WHERE ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.tid IN('.implode(',',$tids).')) AND (i.thumbnailurl IS NOT NULL) AND (i.url != "empty") '.
-					'GROUP BY ts1.tid) i2 ON i.imgid = i2.imgid '.
-					'INNER JOIN taxa t ON i2.tid = t.tid '.
-					'LEFT JOIN users u ON i.photographeruid = u.uid ';
+					'INNER JOIN media m ON ts2.tid = m.tid '.
+					'WHERE ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.tid IN('.implode(',',$tids).')) AND (m.thumbnailurl IS NOT NULL) AND (m.url != "empty") '.
+					'GROUP BY ts1.tid) m2 ON m.mediaID = m2.mediaID '.
+					'INNER JOIN taxa t ON m2.tid = t.tid '.
+					'LEFT JOIN users u ON m.creatorUid = u.uid ';
 				//echo $sql;
 				$rs = $this->conn->query($sql);
 				while($r = $rs->fetch_object()){
@@ -577,11 +747,11 @@ class TaxonProfile extends Manager {
 						$firstPos = strpos($sciName," ",2)+2;
 						$sciName = substr($sciName,0,strpos($sciName," ",$firstPos));
 					}
-					$this->sppArray[$sciName]['imgid'] = $r->imgid;
+					$this->sppArray[$sciName]['mediaID'] = $r->mediaID;
 					$this->sppArray[$sciName]['url'] = $r->url;
 					$this->sppArray[$sciName]['thumbnailurl'] = $r->thumbnailurl;
-					if($r->photographerLinked) $this->sppArray[$sciName]['photographer'] = $r->photographerLinked;
-					else $this->sppArray[$sciName]['photographer'] = $r->photographer;
+					if($r->creatorLinked) $this->sppArray[$sciName]['creator'] = $r->creatorLinked;
+					else $this->sppArray[$sciName]['creator'] = $r->creator;
 					$this->sppArray[$sciName]['caption'] = $r->caption;
 				}
 				$rs->free();
@@ -617,6 +787,7 @@ class TaxonProfile extends Manager {
 				$clidArr[] = $r->clidchild;
 				$childStr .= ','.$r->clidchild;
 			}
+			$rs->free();
 			$sql = $sqlBase.substr($childStr,1).')';
 		}while($childStr);
 		return implode(',',$clidArr);
@@ -757,11 +928,11 @@ class TaxonProfile extends Manager {
 	}
 
 	public function getTaxonName(){
-		return $this->taxonName;
+		return $this->sciName;
 	}
 
 	public function getTaxonAuthor(){
-		return $this->taxonAuthor;
+		return $this->author;
 	}
 
 	public function getTaxonFamily(){

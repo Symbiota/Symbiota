@@ -1,6 +1,7 @@
 /* Style and Font imports
   ========================================================================== */
 @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
 @import "normalize.slim.css";
 @import "variables.css";
 
@@ -172,6 +173,15 @@ span[class="link"]:hover {
   padding-top: 1.5rem;
 }
 
+.fieldset-like-box {
+  position: relative;
+  border: 0.2rem solid;
+  margin: 2rem 0 1rem 1rem;
+  padding: 0.8rem;
+  padding-top: 1.5rem;
+  background-color: var(--light-color);
+}
+
 .fieldset-like h1,
 .fieldset-like h2,
 .fieldset-like h3 {
@@ -261,6 +271,10 @@ ul {
   margin-inline-start: 0px;
   margin-inline-end: 0px;
   padding-inline-start: 40px;
+}
+
+main ul li {
+  margin-bottom: 0.5em;
 }
 
 p {
@@ -373,7 +387,7 @@ button.icon-button {
   border-color: buttonborder;
 }
 
-button.icon-button > svg {
+button.icon-button svg {
   fill: var(--light-color);
 }
 
@@ -442,6 +456,7 @@ button.inverse-color {
 
 .button-secondary {
   background-color: var(--bright-color);
+  color: var(--darkest-color);
 }
 
 .button-secondary > a {
@@ -449,9 +464,15 @@ button.inverse-color {
 }
 
 .button-tertiary {
-  background-color: none;
+  background-color: transparent;
   border: 1px solid var(--bright-color);
   padding: 0.5rem 0.9rem;
+}
+
+.button-form{
+	display: inline;
+	margin: 0px;
+	padding: 0px;
 }
 
 /* image thumbnails */
@@ -521,7 +542,7 @@ table.styledtable tr.alt td {
 ========================================================================== */
 .text-huge {
   font-size: 4rem;
-  font-family: var(--title-font-family);
+  font-family: var(--heading-font-family);
   margin: 0;
 }
 
@@ -604,7 +625,7 @@ table.styledtable tr.alt td {
 @media screen and (min-width: 2560px) {
   .text-huge {
     font-size: 5rem;
-    font-family: var(--title-font-family);
+    font-family: var(--heading-font-family);
     margin: 0;
   }
 
@@ -666,6 +687,24 @@ table.styledtable tr.alt td {
 
 .float-right {
   float: right;
+}
+
+/* Games styling  */
+
+.games-content {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.games-body {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.games-body div{
+  margin: 0.5rem;
 }
 
 /* JQUERY UI modifications */

@@ -7,15 +7,26 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 
 $taxonType = isset($_REQUEST['taxontype']) ? filter_var($_REQUEST['taxontype'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $useThes = array_key_exists('usethes',$_REQUEST) ? filter_var($_REQUEST['usethes'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$taxaStr = isset($_REQUEST['taxa']) ? htmlspecialchars($_REQUEST['taxa'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
+$taxaStr = isset($_REQUEST['taxa']) ? $_REQUEST['taxa'] : '';
 $phUid = array_key_exists('phuid',$_REQUEST) ? filter_var($_REQUEST['phuid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $tagExistance = array_key_exists('tagExistance',$_REQUEST) ? filter_var($_REQUEST['tagExistance'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $tag = array_key_exists('tag',$_REQUEST) ? $_REQUEST['tag'] : '';
-$keywords = array_key_exists('keywords',$_REQUEST) ? $_REQUEST['keywords'] : '';
+//$keywords = array_key_exists('keywords',$_REQUEST) ? $_REQUEST['keywords'] : '';
 $imageCount = isset($_REQUEST['imagecount']) ? $_REQUEST['imagecount'] : 'all';
 $imageType = isset($_REQUEST['imagetype']) ? filter_var($_REQUEST['imagetype'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$pageNumber = array_key_exists('page', $_REQUEST) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
+$pageNumber = array_key_exists('page', $_REQUEST) && is_numeric($_REQUEST['page']) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $cntPerPage = array_key_exists('cntperpage', $_REQUEST) && is_numeric($_REQUEST['cntperpage']) ? filter_var($_REQUEST['cntperpage'], FILTER_SANITIZE_NUMBER_INT) : 200;
+$sortBy = !empty($_REQUEST['sortby']) ? $_REQUEST['sortby'] : '';
+
+$mediaType = null;
+if(isset($_REQUEST['mediatype'])) {
+	if($_REQUEST['mediatype'] === 'image') {
+		$mediatype = 'image';
+	}
+	elseif($_REQUEST['mediatype'] === 'audio') {
+		$mediatype = 'audio';
+	}
+}
 
 $action = $_REQUEST['submitaction'] ?? '';
 
@@ -28,13 +39,15 @@ $imgLibManager = new ImageLibrarySearch($connType);
 $imgLibManager->setTaxonType($taxonType);
 $imgLibManager->setUseThes($useThes);
 $imgLibManager->setTaxaStr($taxaStr);
-$imgLibManager->setPhotographerUid($phUid);
+$imgLibManager->setCreatorUid($phUid);
 $imgLibManager->setTagExistance($tagExistance);
 $imgLibManager->setTag($tag);
-$imgLibManager->setKeywords($keywords);
+//$imgLibManager->setKeywords($keywords);
 $imgLibManager->setImageCount($imageCount);
 $imgLibManager->setImageType($imageType);
-if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
+//Setter only takes 'image' and 'audio' as valid values so no need to sanitize
+$imgLibManager->setMediaType($mediaType);
+if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables();
 
 $statusStr = '';
 if($action == 'batchAssignTag'){
@@ -50,6 +63,7 @@ if($action == 'batchAssignTag'){
 		$statusStr = '<span style="color:red">' . $LANG['ACTION_ERROR'] . ': ' . $imgLibManager->getErrorStr() . '</span>';
 	}
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
@@ -82,7 +96,7 @@ if($action == 'batchAssignTag'){
 			}
 			var formVerified = false;
 			for(var h=0; h<f.length; h++){
-				if(f.elements[h].name == "imgid[]" && f.elements[h].checked){
+				if(f.elements[h].name == "mediaId[]" && f.elements[h].checked){
 					formVerified = true;
 					break;
 				}
@@ -101,7 +115,7 @@ if($action == 'batchAssignTag'){
 			}
 			var f = cb.form;
 			for(var i=0; i<f.length; i++){
-				if(f.elements[i].name == "imgid[]") f.elements[i].checked = boxesChecked;
+				if(f.elements[i].name == "mediaId[]") f.elements[i].checked = boxesChecked;
 			}
 		}
 	</script>
@@ -120,7 +134,7 @@ if($action == 'batchAssignTag'){
 	<!-- This is inner text! -->
 	<div role="main" id="innertext">
 		<h1 class="page-heading"><?= $LANG['IMAGE_SEARCH']; ?></h1>
-		<form name="imagesearchform" id="imagesearchform" action="search.php?<?=$imgLibManager->getQueryTermStr()?>" method="post">
+		<form name="imagesearchform" id="imagesearchform" action="search.php" method="post">
 			<?php
 			if($statusStr){
 				echo '<div id="action-status-div">' . $statusStr . '</div>';
@@ -162,13 +176,13 @@ if($action == 'batchAssignTag'){
 							</div>
 						</div>
 						<div class="row-div flex-form">
-							<label for="phuid"><?= $LANG['PHOTOGRAPHER'] ?></label>:
+							<label for="phuid"><?= $LANG['CREATOR'] ?></label>:
 							<select id="phuid" name="phuid">
 								<option value="">-----------------------------</option>
 								<?php
-								$uidList = $imgLibManager->getPhotographerUidArr();
+								$uidList = $imgLibManager->getCreatorUidArr();
 								foreach($uidList as $uid => $name){
-									echo '<option value="' . $uid . '" ' . ($imgLibManager->getPhotographerUid() == $uid ? 'SELECTED' : '') . '>' . $name . '</option>';
+									echo '<option value="' . $uid . '" ' . ($imgLibManager->getCreatorUid() == $uid ? 'SELECTED' : '') . '>' . $name . '</option>';
 								}
 								?>
 							</select>
@@ -243,15 +257,48 @@ if($action == 'batchAssignTag'){
 							</fieldset>
 						</div>
 						<div class="row-div flex-form">
+							<fieldset>
+								<?php
+									$is_image = false;
+									$is_audio = false;
+									$is_all = false;
+									$m_type = $imgLibManager->getMediaType();
+									if($m_type === 'image') {
+										$is_image = true;
+									} elseif($m_type === 'audio') {
+										$is_audio = true;
+									} else {
+										$is_all = true;
+									}
+								?>
+								<legend> <?= $LANG['MEDIA_TYPE'] ?> </legend>
+								<input id="m_image" type="radio" name="mediatype" value="image" <?= $is_image? 'CHECKED': ''?>>
+								<label for="m_image"> <?= $LANG['MEDIA_TYPE_IMAGE'] ?></label><br>
+								<input id="m_audio" type="radio" name="mediatype" value="audio" <?= $is_audio? 'CHECKED': ''?>>
+								<label for="m_audio"> <?= $LANG['MEDIA_TYPE_AUDIO']?></label><br>
+									<input id="m_all" type="radio" name="mediatype" value="" <?= $is_all? 'CHECKED': ''?>>
+								<label for="m_all"> <?= $LANG['MEDIA_TYPE_ALL'] ?></label><br>
+							</fieldset>
+						</div>
+						<div class="row-div flex-form">
 							<div style="margin-bottom:5px;float:left;">
-								<label for="cntPerPage"><?= $LANG['COUNT_PER_PAGE'] ?></label>:
-								<select id="cntPerPage" name="cntperpage">
-									<option <?= ($cntPerPage==200 ? 'selected' : '') ?>>200</option>
-									<option <?= ($cntPerPage==400 ? 'selected' : '') ?>>400</option>
-									<option <?= ($cntPerPage==600 ? 'selected' : '') ?>>600</option>
-									<option <?= ($cntPerPage==800 ? 'selected' : '') ?>>800</option>
-									<option <?= ($cntPerPage==1000 ? 'selected' : '') ?>>1000</option>
-								</select>
+								<span style="margin-right: 15px">
+									<label for="cntPerPage"><?= $LANG['COUNT_PER_PAGE'] ?></label>:
+									<select id="cntPerPage" name="cntperpage">
+										<option <?= ($cntPerPage==200 ? 'selected' : '') ?>>200</option>
+										<option <?= ($cntPerPage==400 ? 'selected' : '') ?>>400</option>
+										<option <?= ($cntPerPage==600 ? 'selected' : '') ?>>600</option>
+										<option <?= ($cntPerPage==800 ? 'selected' : '') ?>>800</option>
+										<option <?= ($cntPerPage==1000 ? 'selected' : '') ?>>1000</option>
+									</select>
+								</span>
+								<span>
+									<label for="sortBy"><?= $LANG['SORT_BY'] ?></label>:
+									<select id="sortBy" name="sortby">
+										<option value="">---------------------</option>
+										<option value="sciname" <?= ($sortBy == 'sciname' ? 'selected' : '') ?>><?= $LANG['SCINAME'] ?></option>
+									</select>
+								</span>
 							</div>
 						</div>
 						<div class="row-div flex-form" style="padding-top:10px">
@@ -319,14 +366,14 @@ if($action == 'batchAssignTag'){
 				<div id="imagesdiv">
 					<div id="imagebox">
 						<?php
-						$imageArr = $imgLibManager->getImageArr($pageNumber, $cntPerPage);
+						$imageArr = $imgLibManager->getImageArr($pageNumber, $cntPerPage, $sortBy);
 						$imageArr = $imgLibManager->cleanOutArray($imageArr);
 						$recordCnt = $imgLibManager->getRecordCnt();
 						if($imageArr){
 							$lastPage = ceil($recordCnt / $cntPerPage);
 							$startPage = ($pageNumber > 4?$pageNumber - 4:1);
 							$endPage = ($lastPage > $startPage + 9 ? $startPage + 9 : $lastPage);
-							$url = 'search.php?' . $imgLibManager->getQueryTermStr() . '&cntperpage=' . $cntPerPage . '&submitaction=search';
+							$url = 'search.php?' . $imgLibManager->getQueryTermStr() . ($sortBy ? '&sortby=sciname' : '') . '&cntperpage=' . $cntPerPage . '&submitaction=search';
 							$pageBar = '<div style="float:left" >';
 							if($startPage > 1){
 								$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="' . $url . '&page=1">' . $LANG['FIRST'] . '</a></span>';
@@ -361,16 +408,19 @@ if($action == 'batchAssignTag'){
 								$collArr = $imageArr['coll'];
 								unset($imageArr['coll']);
 							}
-							foreach($imageArr as $imgId => $imgArr){
+							foreach($imageArr as $mediaId => $imgArr){
 								$imgUrl = $imgArr['url'];
 								$imgTn = $imgArr['thumbnailurl'];
 								if($imgTn){
 									$imgUrl = $imgTn;
-									if($IMAGE_DOMAIN && substr($imgTn,0,1) == '/') $imgUrl = $IMAGE_DOMAIN . $imgTn;
+									if($MEDIA_DOMAIN && substr($imgTn,0,1) == '/') $imgUrl = $MEDIA_DOMAIN . $imgTn;
+								} else if($imgArr['mediaType'] == 'audio') {
+									$imgUrl = $CLIENT_ROOT . '/images/speaker_thumbnail.png';
 								}
-								elseif($IMAGE_DOMAIN && substr($imgUrl,0,1) == '/'){
-									$imgUrl = $IMAGE_DOMAIN . $imgUrl;
+								elseif($MEDIA_DOMAIN && substr($imgUrl,0,1) == '/'){
+									$imgUrl = $MEDIA_DOMAIN . $imgUrl;
 								}
+
 								?>
 								<div class="tndiv" style="margin-bottom:15px;margin-top:15px;">
 									<div class="tnimg">
@@ -380,7 +430,7 @@ if($action == 'batchAssignTag'){
 											$anchorLink = '<a href="#" onclick="openIndPU(' . $imgArr['occid'] . ');return false;">';
 										}
 										else{
-											$anchorLink = '<a href="#" onclick="openImagePopup(' . $imgId . ');return false;">';
+											$anchorLink = '<a href="#" onclick="openImagePopup(' . $mediaId . ');return false;">';
 										}
 										echo $anchorLink . '<img src="' . $imgUrl . '" /></a>';
 										?>
@@ -407,7 +457,7 @@ if($action == 'batchAssignTag'){
 										}
 										if($isEditorOfThisImage){
 											$isEditorOfAtLeastOne = true;
-											echo '<div class="editor-div" style="display:none;margin-top:3px;"><input name="imgid[]" type="checkbox" value="' . $imgId . '"></div>';
+											echo '<div class="editor-div" style="display:none;margin-top:3px;"><input name="mediaId[]" type="checkbox" value="' . $mediaId . '"></div>';
 										}
 										$sciname = $imgArr['sciname'];
 										if(!$sciname && $imgArr['occid'] && $occArr[$imgArr['occid']]['sciname']) $sciname = $occArr[$imgArr['occid']]['sciname'];

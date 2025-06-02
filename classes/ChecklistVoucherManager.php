@@ -143,7 +143,8 @@ class ChecklistVoucherManager extends ChecklistVoucherAdmin{
 			if($clTaxaID = $this->getClTaxaID($this->tid)){
 				$sql = 'SELECT v.voucherID, o.occid, CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector, o.catalognumber, o.sciname, o.eventdate, v.notes, v.editornotes
 					FROM fmvouchers v INNER JOIN omoccurrences o ON v.occid = o.occid
-					WHERE (v.clTaxaID = '.$clTaxaID.')';
+					WHERE (v.clTaxaID = '.$clTaxaID.') ';
+				$sql .= OccurrenceUtil::appendFullProtectionSQL();
 				$rs = $this->conn->query($sql);
 				while($r = $rs->fetch_object()){
 					$voucherData[$r->voucherID]['occid'] = $r->occid;

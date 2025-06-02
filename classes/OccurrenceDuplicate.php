@@ -1,6 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
+include_once($SERVER_ROOT . '/config/dbconnection.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 class OccurrenceDuplicate {
 
@@ -39,11 +40,12 @@ class OccurrenceDuplicate {
 		if($retArr){
 			$sql = 'SELECT d.duplicateid, d.occid, c.institutioncode, c.collectioncode, c.collectionname, o.catalognumber, '.
 				'o.occurrenceid, o.sciname, o.scientificnameauthorship, o.identifiedby, o.dateidentified, '.
-				'o.recordedby, o.recordnumber, o.eventdate, d.notes, i.url, i.thumbnailurl '.
+				'o.recordedby, o.recordnumber, o.eventdate, d.notes, m.url, m.thumbnailurl '.
 				'FROM omoccurduplicatelink d INNER JOIN omoccurrences o ON d.occid = o.occid '.
 				'INNER JOIN omcollections c ON o.collid = c.collid '.
-			 	'LEFT JOIN images i ON o.occid = i.occid '.
-				'WHERE (d.duplicateid IN('.implode(',',array_keys($retArr)).'))';
+			 	'LEFT JOIN media m ON o.occid = m.occid '.
+			 	'WHERE (d.duplicateid IN('.implode(',',array_keys($retArr)).')) AND (o.occid != ' . $occid . ') ';
+			$sql .= OccurrenceUtil::appendFullProtectionSQL();
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
 					$retArr[$r->duplicateid]['o'][$r->occid] = array('instcode' => $r->institutioncode, 'collcode' => $r->collectioncode,
@@ -57,6 +59,12 @@ class OccurrenceDuplicate {
 			else{
 				$this->errorStr = 'ERROR getting list of duplicate records [2]: '.$this->conn->error;
 				$retArr = false;
+			}
+		}
+		foreach($retArr as $dupID => $dupArr){
+			//Remove any duplicates clusters that don't have occurrences (e.g occurrences have full-hide protection)
+			if(!array_key_exists('o', $dupArr)){
+				unset($retArr[$dupID]);
 			}
 		}
 		return $retArr;
@@ -223,11 +231,12 @@ class OccurrenceDuplicate {
 
 	private function getDupesExsiccati($ometid, $exsNumber, $currentOccid){
 		$retArr = array();
-		$sql = 'SELECT el.occid '.
-			'FROM omexsiccatiocclink el INNER JOIN omexsiccatinumbers en ON el.omenid = en.omenid '.
-			'WHERE (en.ometid = '.$ometid.') AND (en.exsnumber = "'.$exsNumber.'") ';
-		if($currentOccid) $sql .= 'AND (occid != '.$currentOccid.') ';
-		//echo $sql;
+		$sql = 'SELECT el.occid
+				FROM omexsiccatiocclink el INNER JOIN omexsiccatinumbers en ON el.omenid = en.omenid
+				INNER JOIN omoccurrences o ON el.occid = o.occid
+				WHERE (en.ometid = '.$ometid.') AND (en.exsnumber = "'.$exsNumber.'") ';
+		if($currentOccid) $sql .= 'AND (el.occid != '.$currentOccid.') ';
+		$sql .= OccurrenceUtil::appendFullProtectionSQL();
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr[$r->occid] = $r->occid;
@@ -242,14 +251,14 @@ class OccurrenceDuplicate {
 		$lastName = $this->parseLastName($collName);
 		if($lastName && $collNum){
 			$sql = 'SELECT o.occid FROM omoccurrences o ';
-			if(strlen($lastName) < 4 || in_array(strtolower($lastName),array('best','little'))){
+			if(strlen($lastName) < 4){
 				//Need to avoid FULLTEXT stopwords interfering with return
 				$sql .= 'WHERE (o.recordedby LIKE "%'.$lastName.'%") ';
 			}
-			else $sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid WHERE (MATCH(f.recordedby) AGAINST("'.$lastName.'")) ';
+			else $sql .= 'WHERE MATCH(o.recordedby) AGAINST("'.$lastName.'" IN BOOLEAN MODE) ';
 			$sql .= 'AND (o.recordnumber = "'.$collNum.'") ';
 			if($skipOccid) $sql .= 'AND (o.occid != '.$skipOccid.') ';
-			//echo $sql;
+			$sql .= OccurrenceUtil::appendFullProtectionSQL();
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$retArr[$r->occid] = $r->occid;
@@ -264,13 +273,14 @@ class OccurrenceDuplicate {
 		$lastName = $this->parseLastName($collName);
 		if($lastName){
 			$sql = 'SELECT o.occid FROM omoccurrences o ';
-			if(strlen($lastName) < 4 || in_array(strtolower($lastName),array('best','little'))){
+			if(strlen($lastName) < 4){
 				//Need to avoid FULLTEXT stopwords interfering with return
 				$sql .= 'WHERE (o.recordedby LIKE "%'.$lastName.'%") ';
 			}
-			else $sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid WHERE (MATCH(f.recordedby) AGAINST("'.$lastName.'")) ';
+			else $sql .= 'WHERE (MATCH(o.recordedby) AGAINST("'.$lastName.'" IN BOOLEAN MODE)) ';
 			$sql .= 'AND (o.processingstatus IS NULL OR o.processingstatus != "unprocessed" OR o.locality IS NOT NULL) ';
 			if($skipOccid) $sql .= 'AND (o.occid != '.$skipOccid.') ';
+			$sql .= OccurrenceUtil::appendFullProtectionSQL();
 
 			$runQry = true;
 			if($collNum){
@@ -324,7 +334,6 @@ class OccurrenceDuplicate {
 				$runQry = false;
 			}
 			if($runQry){
-				//echo $sql;
 				$result = $this->conn->query($sql);
 				while ($r = $result->fetch_object()) {
 					$retArr[$r->occid] = $r->occid;
@@ -350,9 +359,9 @@ class OccurrenceDuplicate {
 			$relArr = array();
 			$sql = 'SELECT c.collectionName, c.institutionCode, c.collectionCode, o.occid, o.collid, o.tidinterpreted, o.catalogNumber, o.otherCatalogNumbers, o.'.implode(',o.',$targetFields).
 				' FROM omcollections c INNER JOIN omoccurrences o ON c.collid = o.collid '.
-				'WHERE (o.occid IN('.$occidQuery.')) '.
-				'ORDER BY recordnumber LIMIT 20';
-			//echo $sql;
+				'WHERE (o.occid IN('.$occidQuery.')) ';
+			$sql .= OccurrenceUtil::appendFullProtectionSQL();
+			$sql .= 'ORDER BY recordnumber LIMIT 20';
 			$result = $this->conn->query($sql);
 			while($row = $result->fetch_assoc()) {
 				foreach($row as $k => $v){
@@ -378,28 +387,18 @@ class OccurrenceDuplicate {
 
 		$queryTerms = array();
 		$recordedBy = $this->cleanInStr($recordedBy);
-		if($recordedBy){
-			if(strlen($recordedBy) < 4 || in_array(strtolower($recordedBy),array('best','little'))){
-				//Need to avoid FULLTEXT stopwords interfering with return
-				$queryTerms[] = '(o.recordedby LIKE "%'.$recordedBy.'%")';
-			}
-			else{
-				$queryTerms[] = 'MATCH(f.recordedby) AGAINST("'.$recordedBy.'")';
-			}
-		}
-		//if($recordedBy) $queryTerms[] = 'recordedby LIKE "%'.$this->cleanInStr($recordedBy).'%"';
+		if($recordedBy) $queryTerms[] = 'MATCH(o.recordedby) AGAINST("'.$recordedBy.'" IN BOOLEAN MODE)';
 		if($recordNumber) $queryTerms[] = 'o.recordnumber = "'.$this->cleanInStr($recordNumber).'"';
 		if($eventDate) $queryTerms[] = 'o.eventdate = "'.$this->cleanInStr($eventDate).'"';
 		if($catNum) $queryTerms[] = 'o.catalognumber = "'.$this->cleanInStr($catNum).'"';
 		if(is_numeric($occid)) $queryTerms[] = 'o.occid = '.$occid;
-		$sql = 'SELECT c.institutioncode, c.collectioncode, c.collectionname, o.occid, o.catalognumber, '.
-			'o.recordedby, o.recordnumber, o.eventdate, o.verbatimeventdate, o.country, o.stateprovince, o.county, o.locality '.
-			'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
-		if($recordedBy) $sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
-		$sql .= 'WHERE o.occid != '.$currentOccid;
+		$sql = 'SELECT c.institutioncode, c.collectioncode, c.collectionname, o.occid, o.catalognumber,
+			o.recordedby, o.recordnumber, o.eventdate, o.verbatimeventdate, o.country, o.stateprovince, o.county, o.locality
+			FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid
+			WHERE o.occid != ' . $currentOccid;
 		if($queryTerms){
 			$sql .= ' AND ('.implode(') AND (', $queryTerms).') ';
-			//echo $sql;
+			$sql .= OccurrenceUtil::appendFullProtectionSQL();
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$retArr[$r->occid]['collname'] = $r->collectionname.' ('.$r->institutioncode.($r->collectioncode?'-'.$r->collectioncode:'').')';
@@ -423,13 +422,7 @@ class OccurrenceDuplicate {
 		$sqlFrag = '';
 		if($recordedBy && $collDate && $localFrag){
 			$collStr = $this->cleanInStr($recordedBy);
-			if(strlen($collStr) < 4 || in_array(strtolower($collStr),array('best','little'))){
-				//Need to avoid FULLTEXT stopwords interfering with return
-				$sqlFrag = 'WHERE (o.recordedby LIKE "%'.$collStr.'%") ';
-			}
-			else{
-				$sqlFrag = 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid WHERE (MATCH(f.recordedby) AGAINST("'.$collStr.'")) ';
-			}
+			$sqlFrag = 'WHERE (MATCH(o.recordedby) AGAINST("'.$collStr.'" IN BOOLEAN MODE)) ';
 			$sqlFrag .= 'AND (o.eventdate = "'.$this->cleanInStr($collDate).'") AND (o.locality LIKE "'.$this->cleanInStr($localFrag).'%") ';
 		}
 		return $this->getDupeLocality($sqlFrag);
@@ -569,7 +562,7 @@ class OccurrenceDuplicate {
 					'FROM omoccurduplicatelink dl INNER JOIN omoccurrences o ON dl.occid = o.occid '.
 					'INNER JOIN omcollections c ON o.collid = c.collid '.
 					'WHERE dl.duplicateid IN ('.implode(',',array_keys($retArr)).')';
-				//echo $sql;
+				$sql .= OccurrenceUtil::appendFullProtectionSQL();
 				$rs = $this->conn->query($sql);
 				while($r = $rs->fetch_object()){
 					$idStr = $r->identifier;
@@ -743,11 +736,7 @@ class OccurrenceDuplicate {
 	public function getCollMap($collid){
 		$returnArr = Array();
 		if($collid){
-			$sql = 'SELECT c.institutioncode, c.collectioncode, c.collectionname, '.
-				'c.icon, c.colltype, c.managementtype '.
-				'FROM omcollections c '.
-				'WHERE (c.collid = '.$collid.') ';
-			//echo $sql;
+			$sql = 'SELECT institutioncode, collectioncode, collectionname, icon, colltype, managementtype FROM omcollections WHERE (collid = '.$collid.') ';
 			$rs = $this->conn->query($sql);
 			while($row = $rs->fetch_object()){
 				$returnArr['institutioncode'] = $row->institutioncode;

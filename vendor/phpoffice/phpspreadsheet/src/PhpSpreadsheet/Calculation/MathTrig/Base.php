@@ -2,11 +2,14 @@
 
 namespace PhpOffice\PhpSpreadsheet\Calculation\MathTrig;
 
+use PhpOffice\PhpSpreadsheet\Calculation\ArrayEnabled;
 use PhpOffice\PhpSpreadsheet\Calculation\Exception;
-use PhpOffice\PhpSpreadsheet\Calculation\Functions;
+use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 
 class Base
 {
+    use ArrayEnabled;
+
     /**
      * BASE.
      *
@@ -16,24 +19,37 @@ class Base
      *        BASE(Number, Radix [Min_length])
      *
      * @param mixed $number expect float
+     *                      Or can be an array of values
      * @param mixed $radix expect float
+     *                      Or can be an array of values
      * @param mixed $minLength expect int or null
+     *                      Or can be an array of values
      *
-     * @return string the text representation with the given radix (base)
+     * @return array|string the text representation with the given radix (base)
+     *         If an array of numbers is passed as an argument, then the returned result will also be an array
+     *            with the same dimensions
      */
-    public static function evaluate($number, $radix, $minLength = null)
+    public static function evaluate(mixed $number, mixed $radix, mixed $minLength = null): array|string
     {
+        if (is_array($number) || is_array($radix) || is_array($minLength)) {
+            return self::evaluateArrayArguments([self::class, __FUNCTION__], $number, $radix, $minLength);
+        }
+
         try {
             $number = (float) floor(Helpers::validateNumericNullBool($number));
             $radix = (int) Helpers::validateNumericNullBool($radix);
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        $minLength = Functions::flattenSingleValue($minLength);
 
+        return self::calculate($number, $radix, $minLength);
+    }
+
+    private static function calculate(float $number, int $radix, mixed $minLength): string
+    {
         if ($minLength === null || is_numeric($minLength)) {
             if ($number < 0 || $number >= 2 ** 53 || $radix < 2 || $radix > 36) {
-                return Functions::NAN(); // Numeric range constraints
+                return ExcelError::NAN(); // Numeric range constraints
             }
 
             $outcome = strtoupper((string) base_convert("$number", 10, $radix));
@@ -44,6 +60,6 @@ class Base
             return $outcome;
         }
 
-        return Functions::VALUE();
+        return ExcelError::VALUE();
     }
 }

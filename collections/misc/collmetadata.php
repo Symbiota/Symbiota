@@ -79,7 +79,7 @@ $collManager->cleanOutArr($collData);
 	?>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="../../js/symb/common.js" type="text/javascript"></script>
+	<script src="../../js/symb/shared.js?ver=1" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/tinymce/tinymce.min.js"></script>
 	<script>
 		// Adds WYSIWYG editor to description field
@@ -284,7 +284,7 @@ $collManager->cleanOutArr($collData);
 		<div id="tabs" style="margin:0px;">
 			<?php
 			if ($isEditor) {
-				if ($collid) echo '<h1 class="page-heading">Edit Collection Metadata & Contacts: ' . $collData['collectionname'] . (array_key_exists('institutioncode', $collData) ? ' (' . $collData['institutioncode'] . ')' : '') . '</h1>';
+				if ($collid) echo '<h1 class="page-heading">' . $LANG['EDIT_METADATA'] . ': ' . $collData['collectionname'] . (array_key_exists('institutioncode', $collData) ? ' (' . $collData['institutioncode'] . ')' : '') . '</h1>';
 				?>
 				<ul>
 					<li><a href="#colleditor"><?php echo htmlspecialchars($LANG['COL_META_EDIT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></li>
@@ -293,7 +293,7 @@ $collManager->cleanOutArr($collData);
 					?>
 				</ul>
 				<div id="colleditor">
-					<h1 class="page-heading screen-reader-only">Collection Metadata Editor Tab</h1>
+					<h1 class="page-heading screen-reader-only"><?php echo $LANG['COLLECTION_METADATA_EDITOR']; ?></h1>
 					<section class="fieldset-like">
 						<h2> <span> <?php echo ($collid ? 'Edit' : 'Add New') . ' ' . $LANG['COL_INFO'] ?> </span> </h2>
 						<form id="colleditform" name="colleditform" action="collmetadata.php" method="post" enctype="multipart/form-data" onsubmit="return verifyCollEditForm(this)">
@@ -614,10 +614,10 @@ $collManager->cleanOutArr($collData);
 									</span>
 								</span>
 								<span class="icon-elem" style="display:<?php echo (($collid && $collData["icon"]) ? 'none;' : 'inline'); ?>">
-									<a href="#" onclick="toggle('icon-elem');return false;"><?php echo $LANG['ENTER_URL'] ?></a>
+									<a href="#" onclick="toggleElement('.icon-elem');return false;"><?php echo $LANG['ENTER_URL'] ?></a>
 								</span>
 								<span class="icon-elem" style="display:<?php echo (($collid && $collData["icon"]) ? 'inline' : 'none;'); ?>">
-									<a href="#" onclick="toggle('icon-elem');return false;">
+									<a href="#" onclick="toggleElement('.icon-elem');return false;">
 										<?php echo $LANG['UPLOAD_LOCAL'] ?>
 									</a>
 								</span>

@@ -166,7 +166,7 @@ if($showImages){
 		$imgSrc = ($tu?$tu:$u);
 		if($imageCnt%4 == 1) $table->addRow();
 		if($imgSrc){
-			$imgSrc = (array_key_exists('IMAGE_DOMAIN', $GLOBALS) && substr($imgSrc, 0, 4) != 'http' ? $GLOBALS['IMAGE_DOMAIN'] : '') . $imgSrc;
+			$imgSrc = (array_key_exists('MEDIA_DOMAIN', $GLOBALS) && substr($imgSrc, 0, 4) != 'http' ? $GLOBALS['MEDIA_DOMAIN'] : '') . $imgSrc;
 			$cell = $table->addCell(null,$imageCellStyle);
 			$textrun = $cell->addTextRun('imagePara');
 			$textrun->addImage($imgSrc,array('width'=>160,'height'=>160));
@@ -198,6 +198,8 @@ if($showImages){
 }
 else{
 	$voucherArr = $clManager->getVoucherArr();
+	$externalVouchers = $clManager->getExternalVoucherArr();
+
 	foreach($taxaArray as $tid => $sppArr){
 		if(!$showAlphaTaxa){
 			$family = $sppArr['family'];
@@ -224,7 +226,7 @@ else{
 			$textrun->addText(']','textFont');
 		}
 		if($showVouchers){
-			if(array_key_exists('notes',$sppArr) || array_key_exists($tid,$voucherArr)){
+			if(array_key_exists('notes',$sppArr) || array_key_exists($tid,$voucherArr) || array_key_exists($tid, $externalVouchers)){
 				$textrun = $section->addTextRun('notesvouchersPara');
 			}
 			if(array_key_exists('notes',$sppArr)){
@@ -237,6 +239,17 @@ else{
 					if($i > 0) $textrun->addText(', ', 'textFont');
 					$voucStr = $clManager->cleanOutText($collName);
 					$textrun->addLink($domainRoot.'/collections/individual/index.php?occid='.$occid, $voucStr, 'textFont');
+					$i++;
+				}
+			}
+
+			if(array_key_exists($tid, $externalVouchers)) {
+				$i = 0;
+				foreach($externalVouchers[$tid] as $clCoordID => $externalVoucher){
+					if($i > 0 || array_key_exists($tid, $voucherArr)) $textrun->addText(', ', 'textFont');
+					$voucStr = $clManager->cleanOutText($externalVoucher['display']);
+					// Only current external vouchers are iNaturalist
+					$textrun->addLink('https://www.inaturalist.org/observations/' . $externalVoucher['id'], $voucStr, 'textFont');
 					$i++;
 				}
 			}

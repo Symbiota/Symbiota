@@ -1,11 +1,14 @@
 <?php
 include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
+include_once($SERVER_ROOT . '/traits/TaxonomyTrait.php');
 
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/classes/OccurrenceEditorDeterminations.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/classes/OccurrenceEditorDeterminations.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/classes/OccurrenceEditorDeterminations.en.php');
 
 class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
+
+	use TaxonomyTrait;
 
 	public function __construct(){
  		parent::__construct();
@@ -49,7 +52,65 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 				}
 			}
 		}
+		if (isset($detId)){
+			$scinameValues = [];
+			foreach ($retArr as $detData) {
+				if (!empty($detData['sciname'])) {
+					$scinameValues[] = $detData['sciname'];
+				}
+			}
+			$placeholders = implode(',', array_fill(0, count($scinameValues), '?'));
 
+			$sql3 = 'SELECT tid, rankid, sciname, unitind1, unitname1, '.
+				'unitind2, unitname2, unitind3, unitname3, cultivarEpithet, tradeName '.
+				'FROM taxa '.
+				'WHERE sciname IN (' .$placeholders. ')';
+			$statement = $this->conn->prepare($sql3);
+
+			if ($statement = $this->conn->prepare($sql3)) {
+				$types = str_repeat('s', count($scinameValues));
+				$statement->bind_param($types, ...$scinameValues);
+				$statement->execute();
+				$result3 = $statement->get_result();
+				while($row3 = $result3->fetch_assoc()){
+					foreach ($retArr as $detId => &$detData) {
+						if ($detData['sciname'] == $row3['sciname'] && !isset($detData['nonItalicized'])) {
+							$detData['sciname'] = '';
+							$sciNameFull = [];
+							$nonItalicized = '';
+							if (!empty($row3['unitind1']))
+								$sciNameFull[] = $row3['unitind1'];
+							if (!empty($row3['unitname1']))
+								$sciNameFull[] = $row3['unitname1'];
+							if (!empty($row3['unitind2']))
+								$sciNameFull[] = $row3['unitind2'];
+							if (!empty($row3['unitname2']))
+								$sciNameFull[] = $row3['unitname2'];
+							if (!empty($row3['unitind3']))
+								$sciNameFull[] = $row3['unitind3'];
+							if (!empty($row3['unitname3']))
+								$sciNameFull[] = $row3['unitname3'];
+							if (!empty($sciNameFull))
+								$detData['sciname'] .= implode(' ', $sciNameFull);
+
+							$detData['nonItalicized'] = '';
+							if (!empty($row3['cultivarEpithet']))
+								$nonItalicized = $this->standardizeCultivarEpithet($row3['cultivarEpithet']);
+								if (!empty($row3['tradeName'])) {
+								if (!empty($nonItalicized))
+									$nonItalicized .= ' '  . $this->standardizeTradeName($row3['tradeName']);
+							}
+							if (!empty($nonItalicized)) {
+								if (empty($detData['nonItalicized']))
+									$detData['nonItalicized'] .= ' ' . $nonItalicized;
+							}
+						}
+					}
+				}
+				$result3->free();
+				$statement->close();
+			}
+		}
 		return $retArr;
 	}
 
@@ -199,9 +260,11 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		$rscr = $this->conn->query($sqlcr);
 		if($rcr = $rscr->fetch_object()){
 			$iqStr = $rcr->identificationremarks;
-			if(preg_match('/ConfidenceRanking: (\d{1,2})/',$iqStr,$m)){
-				if($makeCurrent) $this->editIdentificationRanking($m[1],'');
-				$iqStr = trim(str_replace('ConfidenceRanking: '.$m[1],'',$iqStr),' ;');
+			if($iqStr){
+				if(preg_match('/ConfidenceRanking: (\d{1,2})/',$iqStr,$m)){
+					if($makeCurrent) $this->editIdentificationRanking($m[1],'');
+					$iqStr = trim(str_replace('ConfidenceRanking: '.$m[1],'',$iqStr),' ;');
+				}
 			}
 		}
 		$rscr->free();
@@ -255,18 +318,18 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			$sql = 'UPDATE omoccurrences o INNER JOIN omoccurdeterminations d ON o.occid = d.occid
 				SET o.identifiedBy = d.identifiedBy, o.dateIdentified = d.dateIdentified, o.sciname = d.sciname, o.scientificNameAuthorship = d.scientificnameauthorship,
 				o.identificationQualifier = d.identificationqualifier, o.identificationReferences = d.identificationReferences, o.identificationRemarks = d.identificationRemarks,
-				o.taxonRemarks = d.taxonRemarks, o.genus = NULL, o.specificEpithet = NULL, o.taxonRank = NULL, o.infraspecificepithet = NULL, o.scientificname = NULL ';
-			if(isset($taxonArr['family']) && $taxonArr['family']) $sql .= ', o.family = "'.$this->cleanInStr($taxonArr['family']).'"';
-			if(isset($taxonArr['tid']) && $taxonArr['tid']) $sql .= ', o.tidinterpreted = '.$taxonArr['tid'];
-			if(isset($taxonArr['security']) && $taxonArr['security']) $sql .= ', o.localitysecurity = '.$taxonArr['security'].', o.localitysecurityreason = "<Security Setting Locked>"';
+				o.taxonRemarks = d.taxonRemarks, o.genus = NULL, o.specificEpithet = NULL, o.taxonRank = NULL, o.infraspecificepithet = NULL, o.scientificname = NULL,
+				o.family = ' . (!empty($taxonArr['family']) ? '"' . $this->cleanInStr($taxonArr['family']) . '"' : 'NULL') . ',
+				o.tidinterpreted = ' . (!empty($taxonArr['tid']) ? $taxonArr['tid'] : 'NULL') ;
+			if(!empty($taxonArr['security'])) $sql .= ', o.recordsecurity = '.$taxonArr['security'].', o.securityreason = "<Security Setting Locked>"';
 			$sql .= ' WHERE (d.iscurrent = 1) AND (d.detid = '.$detId.')';
 			$updated_base = $this->conn->query($sql);
 
 			//Whenever occurrence is updated also update associated images
 			if($updated_base && isset($taxonArr['tid']) && $taxonArr['tid']) {
 				$sql = <<<'SQL'
-				UPDATE images i
-				INNER JOIN omoccurdeterminations od on od.occid = i.occid
+				UPDATE media m
+				INNER JOIN omoccurdeterminations od on od.occid = m.occid
 				SET tid = ? WHERE detid = ?;
 				SQL;
 				QueryUtil::executeQuery($this->conn,$sql, [$taxonArr['tid'], $detId]);

@@ -312,12 +312,16 @@ if($spprid) $specManager->setProjVariables($spprid);
 									else{
 										?>
 										<div>
+											<div>
+												<?= $LANG['IMG_PROC_CHANGE_EXPLAIN'] ?>
+											</div>
+											<br>
 											<label><?php echo $LANG['PROC_TYPE']; ?>:</label>
 											<div style="float:left;">
 												<select name="projecttype" id="projecttype" onchange="uploadTypeChanged(this.form)" <?php echo ($spprid?'DISABLED':'');?>>
 													<option value="">----------------------</option>
 													<option value="local"><?php echo $LANG['MAP_FROM_SERVER']; ?></option>
-													<option value="file"><?php echo $LANG['URL_MAP_FILE']; ?></option>
+													<!--<option value="file"><?php echo $LANG['URL_MAP_FILE']; ?></option>-->
 													<!-- <option value="iplant">iPlant Image Harvest</option> -->
 												</select>
 											</div>
@@ -399,7 +403,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 									<div id="targetPathDiv" class="profileDiv" style="display:<?php echo ($projectType=='local'?'block':'none'); ?>">
 										<label><?php echo $LANG['IMG_TARGET_PATH']; ?>:</label>
 										<div style="float:left;">
-											<input name="targetpath" type="text" style="width:600px;" value="<?php echo ($specManager->getTargetPath()?$specManager->getTargetPath():$IMAGE_ROOT_PATH); ?>" />
+											<input name="targetpath" type="text" style="width:600px;" value="<?php echo ($specManager->getTargetPath()?$specManager->getTargetPath():$MEDIA_ROOT_PATH); ?>" />
 											<a id="targetpathinfo" href="#" onclick="return false" title="<?php echo $LANG['MORE_INFO']; ?>">
 												<img src="../../images/info.png" style="width:1.2em;" />
 											</a>
@@ -411,7 +415,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 									<div id="urlBaseDiv" class="profileDiv" style="display:<?php echo ($projectType=='local'?'block':'none'); ?>">
 										<label><?php echo $LANG['IMG_URL_BASE']; ?>:</label>
 										<div style="float:left;">
-											<input name="imgurl" type="text" style="width:600px;" value="<?php echo ($specManager->getImgUrlBase()?$specManager->getImgUrlBase():$IMAGE_ROOT_URL); ?>" />
+											<input name="imgurl" type="text" style="width:600px;" value="<?php echo ($specManager->getImgUrlBase()?$specManager->getImgUrlBase():$MEDIA_ROOT_URL); ?>" />
 											<a id="imgurlinfo" href="#" onclick="return false" title="<?php echo $LANG['MORE_INFO']; ?>">
 												<img src="../../images/info.png" style="width:1.2em;" />
 
@@ -607,13 +611,13 @@ if($spprid) $specManager->setProjVariables($spprid);
 											<div style="clear:both;">
 												<label><?php echo $LANG['TARGET_FOLDER']; ?>:</label>
 												<div style="float:left;">
-													<?php echo ($specManager->getTargetPath()?$specManager->getTargetPath():$IMAGE_ROOT_PATH); ?>
+													<?php echo ($specManager->getTargetPath()?$specManager->getTargetPath():$MEDIA_ROOT_PATH); ?>
 												</div>
 											</div>
 											<div style="clear:both;">
 												<label><?php echo $LANG['URL_PREFIX']; ?>:</label>
 												<div style="float:left;">
-													<?php echo ($specManager->getImgUrlBase()?$specManager->getImgUrlBase():$IMAGE_ROOT_URL); ?>
+													<?php echo ($specManager->getImgUrlBase()?$specManager->getImgUrlBase():$MEDIA_ROOT_URL); ?>
 												</div>
 											</div>
 											<div style="clear:both;">
@@ -738,7 +742,8 @@ if($spprid) $specManager->setProjVariables($spprid);
 							$logPath = '../../content/logs/';
 							foreach($logArr as $logCat => $logList){
 								echo '<div style="font-weight:bold;margin: 10px 0px 5px 0px">';
-								if($logCat=='imgProccessing') echo $LANG['GEN_PROCESSING'];
+								if($logCat=='imageprocessing') echo $LANG['GEN_PROCESSING'];
+								elseif($logCat=='imgProccessing') echo $LANG['GEN_PROCESSING'];
 								elseif($logCat=='iplant') echo $LANG['IPLANT'];
 								elseif($logCat=='cyverse') echo $LANG['CYVERSE'];
 								elseif($logCat=='processing/imgmap') echo $LANG['IMG_MAP_FILE'];

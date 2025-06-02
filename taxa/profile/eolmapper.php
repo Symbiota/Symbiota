@@ -41,7 +41,7 @@ include($SERVER_ROOT.'/includes/header.php');
 </div>
 	<!-- This is inner text! -->
 	<div role="main" id="innertext">
-		<h1 class="page-heading">Encyclopedia of Life Linkage Manager</h1>
+		<h1 class="page-heading">Encyclopedia of Life Linkage Mapper</h1>
 		<?php
 		if($statusStr){
 			?>
@@ -115,7 +115,7 @@ include($SERVER_ROOT.'/includes/header.php');
 						Up to 5 images will be automatically linked in the mapping procedure.
 					</div>
 					<div style="margin:10px;">
-						Number of accpeted taxa without images:
+						Number of accepted taxa without images:
 						<b><?php echo $eolManager->getImageDeficiencyCount(); ?></b>
 						<div style="margin:10px;">
 							<form name="imagemappingform" action="eolmapper.php" method="post">

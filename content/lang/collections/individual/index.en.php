@@ -1,10 +1,10 @@
 <?php
 /*
- ------------------
- Language: English
- ------------------
- */
-
+------------------
+Language: English
+Translated by: Google Translate (2024-09-13)
+------------------
+*/
 
 $LANG['FLAGGED_COMMENT'] = 'Comment reported as inappropriate. Comment will remain unavailable to public until reviewed by an administrator';
 $LANG['OCCURRENCE_PROFILE'] = 'Occurrence Profile';
@@ -19,7 +19,7 @@ $LANG['LINKED_RESOURCES'] = 'Linked Resources';
 $LANG['TRAITS'] = 'Traits';
 $LANG['EDIT_HISTORY'] = 'Edit History';
 $LANG['ON_LOAN'] = 'On Loan To';
-$LANG['RELATED_OCCUR'] = 'Related Occurrences';
+$LANG['ASSOCIATIONS'] = 'Associations';
 $LANG['CATALOG_NUMBER'] = 'Catalog #';
 $LANG['OCCURRENCE_ID'] = 'Occurrence ID';
 $LANG['OTHER_CATALOG_NUMBERS'] = 'Secondary Catalog #';
@@ -44,7 +44,7 @@ $LANG['NUMBER'] = 'Number';
 $LANG['VERBATIM_DATE'] = 'Verbatim Date';
 $LANG['ADDITIONAL_COLLECTORS'] = 'Additional Collectors';
 $LANG['LOCALITY'] = 'Locality';
-$LANG['LOCALITY_PROTECTED'] = 'Locality details protected';
+$LANG['PROTECTED'] = 'details protected';
 $LANG['ACCESS_GRANTED'] = 'Current user has been granted access';
 $LANG['PROTECTED_REASON'] = 'protection typically due to rare or threatened status';
 $LANG['VERBATIM_COORDINATES'] = 'Verbatim Coordinates';
@@ -89,11 +89,11 @@ $LANG['CONTEXT_ID'] = 'Context ID';
 $LANG['EXCICCATI_SERIES'] = 'Exsiccati series';
 $LANG['MATERIAL_SAMPLES'] = 'Material Samples';
 $LANG['DISPLAY_ALL_MATERIAL_SAMPLES'] = 'Display all Material Sample units';
-$LANG['SPECIMEN_IMAGES'] = 'Specimen Images';
+$LANG['SPECIMEN_IMAGES'] = 'Specimen Media';
 $LANG['AUTHOR'] = 'Author';
-$LANG['OPEN_MEDIUM'] = 'Open Medium Image';
-$LANG['OPEN_LARGE'] = 'Open Large Image';
-$LANG['OPEN_SOURCE'] = 'Open Source Image';
+$LANG['OPEN_MEDIUM'] = 'Open Medium File';
+$LANG['OPEN_LARGE'] = 'Open Large File';
+$LANG['OPEN_SOURCE'] = 'Open Source File';
 $LANG['USAGE_RIGHTS'] = 'Usage Rights';
 $LANG['RIGHTS_HOLDER'] = 'Rights Holder';
 $LANG['ACCESS_RIGHTS'] = 'Access Rights';
@@ -101,10 +101,16 @@ $LANG['USAGE_POLICY'] = 'General Data Usage Policy';
 $LANG['RECORD_ID'] = 'Record ID';
 $LANG['SOURCE_RECORD'] = 'Source Record';
 $LANG['DATA_SOURCE'] = 'Data source';
+$LANG['SOURCE_ID'] = 'Source ID';
+$LANG['SOURCE_URL'] = 'URL';
+$LANG['SOURCE_MANAGEMENT'] = 'Source management';
+$LANG['MANAGED_EXTERNALLY'] = 'Managed externally';
+$LANG['SYMBIOTA_LIVE_MANAGED'] = 'Live managed record within an external Symbiota portal';
 $LANG['REFRESH_DATE'] = 'Last refresh date';
 $LANG['UPDATE_STATUS'] = 'Update status';
-$LANG['FIELDS_MODIFIED'] = 'Fields modified';
-$LANG['SOURCE_DATE_LAST_MODIFIED'] = 'Source date last modified';
+$LANG['FIELDS_MODIFIED'] = 'Field(s) modified';
+$LANG['DATE_LAST_MODIFIED'] = 'Last modified date';
+$LANG['SOURCE_TIMESTAMP'] = 'Record create date';
 $LANG['REFRESH_RECORD'] = 'Refresh Record';
 $LANG['ADDITIONAL_INFO'] = 'For additional information about this specimen, please contact';
 $LANG['SPECIMEN_REFERENCED'] = 'Specimen being referenced';
@@ -123,7 +129,6 @@ $LANG['IDENTIFIED_BY'] = 'Identified by';
 $LANG['DUPES'] = 'Specimen Duplicates';
 $LANG['EXSICCATAE'] = 'Associated Exsiccatae';
 $LANG['SHOW_FULL_DETAILS'] = 'Show Full Details';
-$LANG['COMMENTS'] = 'Comments';
 $LANG['COMMENT_NOT_PUBLIC'] = 'Comment not public due to pending abuse report (viewable to administrators only)';
 $LANG['REPORT'] = 'Report as inappropriate or abusive';
 $LANG['MAKE_COMMENT_PUBLIC'] = 'Make comment public';
@@ -160,12 +165,10 @@ $LANG['RESTORE_RECORD'] = 'Restore Record';
 $LANG['RECORD_DELETED'] = 'Record deleted';
 $LANG['VALUE'] = 'Value';
 $LANG['LAT_LNG'] = 'Latitude/Longitude';
-
-//Used within OccurrenceIndividual class
 $LANG['INAPPROPRIATE'] = 'Inappropriate comment reported';
 $LANG['REPORTED_AS_INAPPROPRIATE'] = 'The following comment has been reported as inappropriate';
 $LANG['EMAIL_NOT_DEFINED'] = 'ERROR: Portal admin email not defined in central configuration file';
-$LANG['PRIVATE_STATUS'] = 'private status';
 $LANG['UNABLE_TO_VERIFY_TARGET'] = 'ERROR deleting voucher: unable to verify target checklist for voucher';
 $LANG['PERMISSION_ERROR'] = 'ERROR deleting voucher: permission error';
+
 ?>

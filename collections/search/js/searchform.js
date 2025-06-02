@@ -7,6 +7,7 @@ const form = document.getElementById("params-form") || null;
 const formColls = document.getElementById("search-form-colls") || null;
 const formSites = document.getElementById("site-list") || null;
 const searchFormColls = document.getElementById("search-form-colls") || null;
+
 // list of parameters to be passed to url, modified by getSearchUrl method
 let paramNames = [
   "db",
@@ -14,6 +15,7 @@ let paramNames = [
   "catnum",
   "includeothercatnum",
   "hasimages",
+  "hasaudio",
   "typestatus",
   "hasgenetic",
   "hascoords",
@@ -25,7 +27,7 @@ let paramNames = [
   "elevlow",
   "elevhigh",
   "llbound",
-  "footprintwkt",
+  "footprintGeoJson",
   "llpoint",
   "eventdate1",
   "eventdate2",
@@ -36,6 +38,10 @@ let paramNames = [
   "collector",
   "attr[]",
   "materialsampletype",
+  "association-type",
+  "associated-taxa",
+  "taxontype-association",
+  "usethes-associations",
 ];
 const uLat = document.getElementById("upperlat") || null;
 const uLatNs = document.getElementById("upperlat_NS") || null;
@@ -52,7 +58,7 @@ const pLngEw = document.getElementById("pointlong_EW") || null;
 const pRadius = document.getElementById("radius") || null;
 const pRadiusUn = document.getElementById("radiusunits") || null;
 
-let paramsArr = [];
+let paramsArr = {};
 //////////////////////////////////////////////////////////////////////////
 
 /**
@@ -87,21 +93,6 @@ function openModal(elementid) {
  */
 function closeModal(elementid) {
   $(elementid)?.css("display", "none");
-}
-
-/**
- * Opens map helper
- * @param {String} mapMode Option from select in form
- * Function from `../../js/symb/collections.harvestparams.js`
- */
-function openCoordAid(mapMode) {
-  mapWindow = open(
-    "../tools/mapcoordaid.php?mapmode=" + mapMode,
-    "polygon",
-    "resizable=0,width=900,height=630,left=20,top=20"
-  );
-  if (mapWindow.opener == null) mapWindow.opener = self;
-  mapWindow.focus();
 }
 
 /**
@@ -151,46 +142,7 @@ function addChip(element) {
     isTextOrNum
       ? (inputChip.textContent = `${element.dataset.chip}: ${element.value}`)
       : (inputChip.textContent = element.dataset.chip);
-    chipBtn.onclick = function () {
-      element.type === "checkbox"
-        ? (element.checked = false)
-        : (element.value = element.defaultValue);
-      if (element.getAttribute("id") === "dballcb") {
-        const targetCategoryCheckboxes =
-          document.querySelectorAll('input[id^="cat-"]');
-        targetCategoryCheckboxes.forEach((collection) => {
-          collection.checked = false;
-        });
-        const targetCheckboxes =
-          document.querySelectorAll('input[id^="coll-"]');
-        targetCheckboxes.forEach((collection) => {
-          collection.checked = false;
-        });
-        //do the same for collections with slightly different format
-        const targetCheckboxAlts = document.querySelectorAll(
-          'input[id^="collection-"]'
-        );
-        targetCheckboxAlts.forEach((collection) => {
-          collection.checked = false;
-        });
-      }
-      if (element?.getAttribute("id")?.startsWith("materialsampletype")) {
-        // if they close a materialsampletype chip, revert to the none option selected
-        const targetIndex = document.getElementById(
-          "materialsampletype-none"
-        ).selectedIndex;
-        document.getElementById("materialsampletype").selectedIndex =
-          targetIndex;
-      }
-      if (element?.getAttribute("id")?.startsWith("taxontype")) {
-        // if they close a taxontype chip, revert to the any option selected
-        const targetIndex =
-          document.getElementById("taxontype-any").selectedIndex;
-        document.getElementById("taxontype").selectedIndex = targetIndex;
-      }
-      element.dataset.formId ? uncheckAll(element) : "";
-      removeChip(inputChip);
-    };
+    chipBtn.onclick = () => handleRemoval(element, inputChip);
   }
   let screenReaderSpan = document.createElement("span");
   const dataChipText = element.getAttribute("data-chip");
@@ -203,6 +155,72 @@ function addChip(element) {
   chipBtn.appendChild(screenReaderSpan);
   inputChip.appendChild(chipBtn);
   document.getElementById("chips").appendChild(inputChip);
+}
+
+function handleRemoval(element, inputChip) {
+  element.type === "checkbox"
+    ? (element.checked = false)
+    : (element.value = element.defaultValue);
+  if (element.getAttribute("id") === "dballcb") {
+    const targetCategoryCheckboxes =
+      document.querySelectorAll('input[id^="cat-"]');
+    targetCategoryCheckboxes.forEach((collection) => {
+      collection.checked = false;
+    });
+    const targetCheckboxes = document.querySelectorAll('input[id^="coll-"]');
+    targetCheckboxes.forEach((collection) => {
+      collection.checked = false;
+    });
+    //do the same for collections with slightly different format
+    const targetCheckboxAlts = document.querySelectorAll(
+      'input[id^="collection-"]'
+    );
+    targetCheckboxAlts.forEach((collection) => {
+      collection.checked = false;
+    });
+  }
+  setAssociationRelationshipTypeToDefault(element);
+  setMaterialSampleToDefault(element);
+  setTaxonTypeToDefault(element);
+  setAssociationTaxonTypeToDefault(element);
+  // uncheckAllChip(element); // @TODO test this out
+  element.dataset.formId ? uncheckAll(element) : "";
+  removeChip(inputChip);
+}
+
+function setMaterialSampleToDefault(element) {
+  if (element?.getAttribute("id")?.startsWith("materialsampletype")) {
+    const targetIndex = document.getElementById(
+      "materialsampletype-none"
+    ).selectedIndex;
+    document.getElementById("materialsampletype").selectedIndex = targetIndex;
+  }
+}
+
+function setTaxonTypeToDefault(element) {
+  if (element?.getAttribute("id")?.startsWith("taxontype")) {
+    const targetIndex = document.getElementById("taxontype-any")?.selectedIndex;
+    document.getElementById("taxontype").selectedIndex = targetIndex;
+  }
+}
+
+function setAssociationTaxonTypeToDefault(element) {
+  if (element?.getAttribute("id")?.startsWith("taxontype-association-")) {
+    const targetIndex = document.getElementById(
+      "taxontype-association-scientific"
+    )?.selectedIndex;
+    document.getElementById("taxontype-association").selectedIndex =
+      targetIndex;
+  }
+}
+
+function setAssociationRelationshipTypeToDefault(element) {
+  if (element?.getAttribute("id")?.startsWith("association-type-")) {
+    const targetIndex = document.getElementById(
+      "association-type-none"
+    )?.selectedIndex;
+    document.getElementById("association-type").selectedIndex = targetIndex;
+  }
 }
 
 /**
@@ -422,8 +440,8 @@ function autoToggleSelector(e) {
  * Uses 'data-form-id' property in .php
  * @param {Object} element HTML Node Object
  */
-function uncheckAll(element) {
-  let isAllSel = element.classList.contains("all-selector");
+function uncheckAllChip(element) {
+  let isAllSel = element.classList.contains("specobs");
   if (isAllSel) {
     let selChildren = document.querySelectorAll(
       `#${element.dataset.formId} input[type=checkbox]:checked`
@@ -432,12 +450,10 @@ function uncheckAll(element) {
       item.checked = false;
     });
   } else {
-    let items = document.querySelectorAll(
-      `#${element.id} input[type=checkbox]:checked`
+    let item = document.querySelector(
+      `input[id^="${element.className}"][name="cat[]"]`
     );
-    items.forEach((item) => {
-      item.checked = false;
-    });
+    if (item) item.checked = false;
   }
 }
 
@@ -450,8 +466,7 @@ function getCollsSelected() {
   let selectedInForm = Array.from(
     document.querySelectorAll(
       '#search-form-colls input[name="db"]:checked, ' +
-        '#search-form-colls input[name="db[]"]:checked, ' +
-        '#search-form-colls input[name="cat[]"]:checked'
+        '#search-form-colls input[name="db[]"]:checked'
     )
   );
   let collsArr = selectedInForm;
@@ -535,6 +550,10 @@ function getParam(paramName) {
       let pRadiusVal = pRadius.value + ";" + pRadiusUn.value;
       elementValues = `${pLatVal};${pLngVal};${pRadiusVal}`;
     }
+  } else if (paramName === "elevlow" || paramName === "elevhigh") {
+    firstEl.type === "number" && firstEl != ""
+      ? (elementValues = firstEl.value)
+      : "";
   } else if (elements[0] != undefined) {
     switch (firstEl.tagName) {
       case "INPUT":
@@ -559,7 +578,7 @@ function getParam(paramName) {
  * Creates search URL with parameters
  * Define parameters to be looked for in `paramNames` array
  */
-function getSearchUrl() {
+function getSearchUrl(appendParams = false) {
   const formatPreference = document.getElementById("list-button").checked
     ? "list"
     : "table";
@@ -569,20 +588,22 @@ function getSearchUrl() {
 
   const baseUrl = new URL(harvestUrl + urlSuffix);
 
-  // Clears array temporarily to avoid redundancy
-  paramsArr = [];
-
-  // Grabs params from form for each param name
-  paramNames.forEach((param, i) => {
-    return getParam(paramNames[i]);
-  });
-
-  // Appends each key value for each param in search url
-  let queryString = Object.keys(paramsArr).map((key) => {
-    baseUrl.searchParams.append(key, paramsArr[key]);
-  });
-
-  baseUrl.searchParams.append("comingFrom", "search/index.php");
+  if(appendParams){
+    // Clears array temporarily to avoid redundancy
+    paramsArr = {};
+  
+    // Grabs params from form for each param name
+    paramNames.forEach((param, i) => {
+      return getParam(paramNames[i]);
+    });
+  
+    // Appends each key value for each param in search url
+    let queryString = Object.keys(paramsArr).map((key) => {
+      baseUrl.searchParams.append(key, paramsArr[key]);
+    });
+  
+    baseUrl.searchParams.append("comingFrom", "newsearch");
+  }
 
   return baseUrl.href;
 }
@@ -706,11 +727,24 @@ function simpleSearch() {
   errors = validateForm();
   let isValid = errors.length == 0;
   if (isValid) {
-    let searchUrl = getSearchUrl();
-    window.location = searchUrl;
+    const searchUrl = shortenSearchUrlIfAllCollectionsAreSearched();
+    sessionStorage.setItem('verbatimSearchUrl', searchUrl);
+    const submitForm = document.getElementById("params-form");
+    submitForm.method = "POST"; // if GET is used instead, the URL is too short for complex polygon + many collections queries. Hence, the need for POST.
+    submitForm.action = getSearchUrl();
+    submitForm.submit();
   } else {
     handleValErrors(errors);
   }
+}
+
+function shortenSearchUrlIfAllCollectionsAreSearched(){
+  const searchUrlOriginal = getSearchUrl(true);
+    let searchUrl = searchUrlOriginal;
+    if(searchUrlOriginal.includes("db=all")){
+      searchUrl = searchUrlOriginal.replace(/db=all(?:%[^&?]*)*/, "db=all");
+    }
+    return searchUrl;
 }
 
 /**
@@ -758,20 +792,28 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
       if (candidateTargetElems.length > 0) {
         targetElem = candidateTargetElems[0]; // there should only be one match; get the first one
       }
+    } 
+    if(targetElem){
+      targetElem.checked = true;
     }
-    targetElem.checked = true;
   });
 }
 
 function setSearchForm(frm) {
   if (sessionStorage.querystr) {
-    var urlVar = parseUrlVariables(sessionStorage.querystr);
-
+    var urlVar = parseUrlVariables(sessionStorage.querystr.replaceAll('&quot;', '"'));
     if (
       typeof urlVar.usethes !== "undefined" &&
       (urlVar.usethes == "" || urlVar.usethes == "0")
     ) {
       frm.usethes.checked = false;
+    }
+    if (
+      typeof urlVar["usethes-associations"] !== "undefined" &&
+      (urlVar["usethes-associations"] == "" ||
+        urlVar["usethes-associations"] == "0")
+    ) {
+      frm["usethes-associations"].checked = false;
     }
     if (urlVar.taxontype) {
       if (frm?.taxontype) {
@@ -783,6 +825,24 @@ function setSearchForm(frm) {
         frm.taxa.value = urlVar.taxa;
       }
     }
+
+    if (urlVar["associated-taxa"]) {
+      if (frm["associated-taxa"]) {
+        frm["associated-taxa"].value = urlVar["associated-taxa"];
+      }
+    }
+    if (urlVar["association-type"]) {
+      if (frm["association-type"]) {
+        frm["association-type"].value = urlVar["association-type"];
+      }
+    }
+
+    if (urlVar["associated-taxon-type"]) {
+      if (frm["taxontype-association"]) {
+        frm["taxontype-association"].value = urlVar["associated-taxon-type"];
+      }
+    }
+
     if (urlVar.country) {
       countryStr = urlVar.country;
       countryArr = countryStr.split(";");
@@ -811,19 +871,31 @@ function setSearchForm(frm) {
     if (urlVar.llbound) {
       var coordArr = urlVar.llbound.split(";");
       frm.upperlat.value = Math.abs(parseFloat(coordArr[0]));
+      frm.upperlat_NS.value = parseFloat(coordArr[0]) > 0 ? "N" : "S";
+
       frm.bottomlat.value = Math.abs(parseFloat(coordArr[1]));
+      frm.bottomlat_NS.value = parseFloat(coordArr[1]) > 0 ? "N" : "S";
+
       frm.leftlong.value = Math.abs(parseFloat(coordArr[2]));
+      frm.leftlong_EW.value = parseFloat(coordArr[2]) > 0 ? "E" : "W";
+
       frm.rightlong.value = Math.abs(parseFloat(coordArr[3]));
+      frm.rightlong_EW.value = parseFloat(coordArr[3]) > 0 ? "E" : "W";
     }
-    if (urlVar.footprintwkt) {
-      frm.footprintwkt.value = urlVar.footprintwkt;
+    if (urlVar.footprintGeoJson) {
+      frm.footprintwkt.value = urlVar.footprintGeoJson;
     }
     if (urlVar.llpoint) {
       var coordArr = urlVar.llpoint.split(";");
       frm.pointlat.value = Math.abs(parseFloat(coordArr[0]));
+      frm.pointlat_NS.value = parseFloat(coordArr[0]) > 0 ? "N" : "S";
+
       frm.pointlong.value = Math.abs(parseFloat(coordArr[1]));
+      frm.pointlong_EW.value = parseFloat(coordArr[1]) > 0 ? "E" : "W";
+
       frm.radius.value = Math.abs(parseFloat(coordArr[2]));
-      if (coordArr[4] == "mi") frm.radiusunits.value = "mi";
+      if (coordArr[3] === "mi") frm.radiusunits.value = "mi";
+      else if (coordArr[3] === "km") frm.radiusunits.value = "km";
     }
     if (urlVar.collector) {
       frm.collector.value = urlVar.collector;
@@ -897,11 +969,46 @@ function parseUrlVariables(varStr) {
   return result;
 }
 
+function toggleTheNonDefaultsClosed(defaultId) {
+  const categoryButtons = document.querySelectorAll('a[id^="condense-"]');
+  categoryButtons.forEach((categoryButton) => {
+    const regexPattern = new RegExp(`^condense-\\d+-${defaultId}$`);
+    if (!regexPattern.test(categoryButton.id)) {
+      const idToToggle = categoryButton.id
+        .replace("condense-", "")
+        .replace("-" + defaultId, "");
+      toggleCat(idToToggle);
+    }
+  });
+}
+
+function toggleAccordionsFromSessionStorage(accordionIds) {
+  const accordions = document.querySelectorAll(
+    'input[class="accordion-selector"]'
+  );
+  accordions.forEach((accordion) => {
+    if(accordion.id !== "taxonomy") accordion.checked = false;
+    if(accordion.id === "taxonomy" && localStorage.getItem("taxonomyAccordionClosed")) accordion.checked = false;
+  });
+  accordions.forEach((accordion) => {
+    const currentId = accordion.getAttribute("id");
+    if (accordionIds.includes(currentId)) {
+      accordion.checked = true;
+    }
+  });
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 /**
  * EVENT LISTENERS/INITIALIZERS
  */
+
+document.getElementById("params-form").addEventListener("submit", function(event) {
+  event.preventDefault();
+  simpleSearch();
+});
+
 
 // Reset button
 document
@@ -949,3 +1056,24 @@ $(".expansion-icon").click(function () {
 });
 // Hides MOSC-BU checkboxes
 hideColCheckbox(58);
+
+const accordions = document.querySelectorAll(
+  'input[class="accordion-selector"]'
+);
+accordions.forEach((accordion) => {
+  accordion.addEventListener("click", (event) => {
+    const currentAccordionIds = localStorage?.accordionIds?.split(",") || [];
+    const currentId = event.target.id;
+    if (currentAccordionIds.includes(currentId)) {
+      const targetIdx = currentAccordionIds.indexOf(currentId);
+      currentAccordionIds.splice(targetIdx, 1);
+      if(currentId==="taxonomy") {
+        localStorage.setItem("taxonomyAccordionClosed", true);
+      }
+    } else {
+      currentAccordionIds.push(currentId);
+      if(currentId==="taxonomy") localStorage.setItem("taxonomyAccordionClosed", false)
+    }
+    localStorage.setItem("accordionIds", currentAccordionIds);
+  });
+});

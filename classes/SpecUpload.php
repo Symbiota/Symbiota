@@ -237,13 +237,20 @@ class SpecUpload{
 		while($schemaRow = $schemaRS->fetch_object()){
 			$fieldName = strtolower($schemaRow->Field);
 			if(!in_array($fieldName,$this->skipOccurFieldArr)){
-				$occFieldArr[] = $fieldName;
+				if($fieldName === 'othercatalognumbers' && !$searchVariables) {
+					$occFieldArr[] = 'CASE WHEN u.otherCatalogNumbers IS NULL THEN i.identifiers WHEN i.identifiers IS NULL THEN u.otherCatalogNumbers ELSE CONCAT(u.otherCatalogNumbers, "; ", i.identifiers) END as otherCatalogNumbers';
+				} else {
+					$occFieldArr[] = $fieldName;
+				}
 			}
 		}
 		$schemaRS->free();
 
-		$sql = 'SELECT occid, dbpk, '.implode(',',$occFieldArr).' FROM uploadspectemp WHERE collid IN('.$this->collId.') ';
-		if($searchVariables){
+		$identifiers_subquery_join = ' LEFT JOIN (SELECT occid as id_occid, GROUP_CONCAT(CONCAT(identifiername,": " , identifiervalue) SEPARATOR ";") as identifiers from omoccuridentifiers as oi group by oi.occid) as i on i.id_occid = u.occid ';
+
+		$sql = 'SELECT occid, dbpk, '.implode(',',$occFieldArr).' FROM uploadspectemp u ' . $identifiers_subquery_join . ' WHERE collid IN('.$this->collId.') ';
+
+		if($searchVariables) {
 			if($searchVariables == 'matchappend'){
 				$sql = 'SELECT DISTINCT u.occid, u.dbpk, u.'.implode(',u.',$occFieldArr).' '.
 					'FROM uploadspectemp u INNER JOIN omoccurrences o ON u.collid = o.collid '.
@@ -303,7 +310,7 @@ class SpecUpload{
 	protected function setSkipOccurFieldArr(){
 		$this->skipOccurFieldArr = array('dbpk','initialtimestamp','occid','collid','tidinterpreted','fieldnotes','coordinateprecision',
 			'verbatimcoordinatesystem','institutionid','collectionid','associatedoccurrences','datasetid','associatedreferences',
-			'previousidentifications','storagelocation','genericcolumn1','genericcolumn2');
+			'previousidentifications','genericcolumn1','genericcolumn2');
 		if($this->collMetadataArr['managementtype'] == 'Live Data' && $this->collMetadataArr['guidtarget'] != 'occurrenceId'){
 			//Do not import occurrenceID if dataset is a live dataset, unless occurrenceID is explicitly defined as the guidSource.
 			//This avoids the situtation where folks are exporting data from one collection and importing into their collection along with the other collection's occurrenceID GUID, which is very bad

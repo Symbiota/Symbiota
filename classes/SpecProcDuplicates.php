@@ -16,7 +16,7 @@ class SpecProcDuplicates extends Manager {
 		$this->occurFieldArr = array('recordedBy','recordNumber','associatedCollectors','eventDate','verbatimEventDate','habitat','substrate','fieldNotes','fieldnumber',
 			'occurrenceRemarks','informationWithheld','associatedOccurrences','dataGeneralizations','associatedTaxa','dynamicProperties','verbatimAttributes','behavior',
 			'reproductiveCondition','cultivationStatus','establishmentMeans','lifeStage','sex','individualCount','samplingProtocol','samplingEffort','preparations',
-			'locationID','country','stateProvince','county','municipality','waterBody','locality','localitySecurity','localitySecurityReason','locationRemarks',
+			'locationID','country','stateProvince','county','municipality','waterBody','locality','recordSecurity','securityReason','locationRemarks',
 			'minimumElevationInMeters','maximumElevationInMeters','verbatimElevation','minimumDepthInMeters','maximumDepthInMeters','verbatimDepth',
 			'disposition','storageLocation','language','verbatimCoordinates');
 		$this->geoFieldArr = array('decimalLatitude','decimalLongitude','verbatimCoordinates','geodeticDatum','coordinateUncertaintyInMeters','footprintWKT','georeferencedBy','georeferenceProtocol',

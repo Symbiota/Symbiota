@@ -298,4 +298,3 @@ if($isEditor && $formSubmit){
 	include($SERVER_ROOT.'/includes/footer.php');
 	?>
 </body>
-</html>

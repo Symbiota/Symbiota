@@ -34,6 +34,7 @@ class SpecProcNlpSalix
 	private $StatScore = array(); //The wordstats score of each line
 	private $LineStart = array(); //One element for each line indicating if it starts with a start word.
 	private $Label = "";
+	private $LabelArray = array();
 
 	function __construct()
 		{

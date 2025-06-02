@@ -73,6 +73,7 @@ $LANG['NEW'] = 'Nouveau';
 $LANG['PROFILE'] = 'Profil';
 $LANG['CLOSE_EDITOR'] = 'Fermer l\'éditeur';
 $LANG['PROC_TYPE'] = 'Type de traitement';
+$LANG['IMG_PROC_CHANGE_EXPLAIN'] = "<b>Les outils de téléchargement des fichiers URL d'images ont été déplacés!</b> Vous pouvez désormais télécharger des fichiers d'URL de médias via l'importateur de données étendues (Panneau de Configuration d'Administration > Importer/Mettre à Jour Enregistrements de Spécimens > Importation Données Etendues)";
 $LANG['MAP_FROM_SERVER'] = 'Mapper des images à partir d\'un serveur local ou distant';
 $LANG['URL_MAP_FILE'] = 'Fichier de mappage d\'URL d\'image';
 $LANG['TITLE'] = 'Titre';
@@ -92,12 +93,12 @@ $LANG['IMG_SOURCE_PATH'] = 'Chemin source de l\'image';
 $LANG['IMG_TARGET_PATH'] = 'Chemin cible de l\'image';
 $LANG['TARGET_PATH_EXPLAIN'] = "Chemin du serveur Web où seront déposés les dérivés d'images.
 			Le serveur Web (par exemple l'utilisateur Apache) doit avoir un accès en lecture/écriture à ce répertoire.
-			Si ce champ reste vide, l'image cible par défaut du portail (\$IMAGE_ROOT_PATH) sera utilisée.";
+			Si ce champ reste vide, l'image cible par défaut du portail (\$MEDIA_ROOT_PATH) sera utilisée.";
 $LANG['IMG_URL_BASE'] = 'Base d\'URL des images';
 $LANG['IMG_URL_EXPLAIN'] = "Préfixe de l'URL de l'image qui accédera au dossier cible depuis le navigateur.
 			Ceci sera utilisé pour créer les URL des images qui seront stockées dans la base de données.
 			Si l'URL absolue est fournie sans le nom de domaine, le domaine du portail sera pris en compte.
-			Si ce champ reste vide, l'URL de l'image par défaut du portail sera utilisée (\$IMAGE_ROOT_URL).";
+			Si ce champ reste vide, l'URL de l'image par défaut du portail sera utilisée (\$MEDIA_ROOT_URL).";
 $LANG['WEB_IMG_WIDTH'] = 'Largeur de l\'image au format Web';
 $LANG['WEB_IMG_EXPLAIN'] = 'Largeur de l\'image web standard en pixels. Si l\'image source est plus petite que cette largeur, le fichier sera simplement copié sans redimensionnement.';
 $LANG['TN_IMG_WIDTH'] = 'Largeur de l\'image miniature';
@@ -171,6 +172,7 @@ $LANG['NO_UNPROCESSED'] = 'Il n\'y a aucun enregistrement non traité vers';
 $LANG['UNIDENTIFIED_ERROR'] = 'Erreur non identifiée';
 
 // ocrprocessor.php
+$LANG['OP_CHARACTER_RECOGNITION'] = 'Reconnaissance optique de Caractères';
 $LANG['PLS_SEL_PROC_STATUS'] = 'Veuillez sélectionner un statut de traitement';
 $LANG['ENTER_PATT_MATCH'] = 'Veuillez saisir une chaîne de correspondance de modèle pour extraire le numéro de catalogue';
 $LANG['SEL_OCR_INPUT'] = 'Veuillez sélectionner/saisir un fichier source d\'entrée OCR';
@@ -220,5 +222,15 @@ $LANG['OCR_SOURCE'] = 'Source OCR';
 $LANG['OCR_SOURCE_EXPLAIN'] = 'Chaîne courte décrivant la source OCR (par exemple ABBYY, Tesseract, etc.). Cette valeur est placée dans le champ source avec la date actuelle ajoutée.';
 $LANG['LOAD_OCR_FILES'] = 'Charger les fichiers OCR';
 
+//processor.php
+$LANG['SPEC_PROCESSOR_CONTROL_PANEL'] = 'Panneau de Configuration du Processeur d\'échantillon';
+$LANG['HOME'] = 'Accueil';
+$LANG['COL_CONTROL_PANEL'] = 'Panneau de configuration de la collection';
+$LANG['SPEC_PROCESSOR'] = "Processeur d'échantillons";
+$LANG['PROC_HANDLER'] = "Gestionnaire de traitement";
+$LANG['RETURN_SPEC_PROCESSOR'] = "Retour au processeur d'échantillons";
 
+//wordcloudhandler.php
+$LANG['WORD_CLOUD_HANDLER'] = 'Gestionnaire de Nuage de Mots';
+$LANG['NO_COLLID'] = 'Aucune collid cible soumise';
 ?>

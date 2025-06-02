@@ -7,8 +7,9 @@ Language: English
 
 $LANG['NO_RESULTS'] = 'No results returned';
 $LANG['ERROR_UNABLE_RESULTS'] = 'ERROR: Unable to get results';
-$LANG['DEFINE_REL'] = 'Relationship needs to be defined';
-$LANG['REL_NOT_DEFINED'] = 'Related occurrence is not defined!';
+$LANG['SELECT_INTERNAL_REL'] = 'You need to search for an select an internal occurrence instance';
+$LANG['VERB_SCINAME_EMPTY'] = 'Verbatim Scientific Name needs a value';
+$LANG['RESOURCE_EMPTY'] = 'Resource URL needs needs a value';
 $LANG['SELECT_CHECKLIST'] = 'Select a checklist to which you want to link the voucher';
 $LANG['VOUCHER_CANNOT_LINK'] = 'Voucher cannot be linked to a checklist until the taxonomic name has been resolved (e.g. name not linked to taxonomic thesaurus';
 $LANG['SURE_UNLINK'] = 'Are you sure you want to unlink the record as a duplicate?';
@@ -27,7 +28,7 @@ $LANG['SPEC_DUPES'] = 'Specimen Duplicates';
 $LANG['SEARCH_RECS'] = 'Search for Records to Link';
 $LANG['CLUSTER_TITLE'] = 'Cluster Title';
 $LANG['UNLINK_BUT_MAINTAIN'] = 'Unlink this occurrences from duplicate cluster but maintain other specimens as a valid duplicate cluster';
-$LANG['REM_FROM_CLUSTER'] = 'Remove this Occurrence from Cluster';
+$LANG['REM_FROM_CLUSTER'] = 'Remove from Cluster';
 $LANG['UNLINK'] = 'Unlink';
 $LANG['CAT_NUM'] = 'Catalog Number';
 $LANG['GUID'] = 'GUID';

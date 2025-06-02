@@ -4,7 +4,7 @@
 Language:  Español (Spanish)
 ------------------
 */
-
+$LANG['VOUCHER_ADMIN'] = 'Administración des Vouchers';
 $LANG['NAV_HOME'] = 'Inicio';
 $LANG['EXT_VOUCHERS_LINKED'] = 'vales externos han sido vinculados a la lista';
 $LANG['CHECKLIST_ADMIN'] = 'Administración de Listados de Comprobación';
@@ -15,7 +15,7 @@ $LANG['COUNTRY'] = 'País';
 $LANG['ENTER_MULT_COUNTRIES'] = 'Ingrese varios países separados por punto y coma';
 $LANG['STATE'] = 'Estado';
 $LANG['ENTER_MULT_STATES'] = 'Ingrese múltiples estados separados por punto y coma';
-$LANG['CONDADO'] = 'Condado';
+$LANG['COUNTY'] = 'Condado';
 $LANG['ENTER_MULT_COUNTIES'] = 'Ingrese varios condados separados por punto y coma';
 $LANG['LOCALITY'] = 'Localidad';
 $LANG['TAXON'] = 'Taxón';
@@ -72,7 +72,6 @@ $LANG['FULLSPECLISTVOUCHER'] = 'Listado de especies completo con vouchers vincul
 $LANG['VOUCHERONLY'] = 'Vouchers vinculados solomente (DwC-A, CSV, Tab-delimited)';
 $LANG['FULLSPECLISTALLOCCUR'] = 'Listado de especies completo con todos ocurrencias (CSV)';
 $LANG['PENSOFT_XLSX_EXPORT'] = 'Listado de especies en el formato del Pensoft';
-$LANG['SPECMISSINGTITLE'] = 'Posibles adiciones de especies basadas en vales de muestra';
 $LANG['SPECMISSTAXA'] = 'Especímenes de taxa faltantes del listado de Comprobación (CSV)';
 $LANG['SPECMISSPELLED'] = 'Especímenes con nombres científicos mal escritos, ilegales, y problemáticos (CSV)';
 $LANG['CHECKIDNOTSET'] = 'Identificador de listado de Comprobación no establecido';
@@ -84,5 +83,6 @@ $LANG['PREVIOUS'] = 'Anterior';
 $LANG['RECORDS'] = ' Registros';
 $LANG['NEXT'] = 'Siguiente';
 $LANG['IMG_EDIT'] = 'Editar imagen';
-
+$LANG['GEOJSON_FOOTPRINT'] = 'Polígono (formato GeoJSON)';
+$LANG['ERROR_INVALID_JSON'] = 'ERROR: El polígono no tiene un formato JSON válido';
 ?>

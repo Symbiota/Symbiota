@@ -72,6 +72,10 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['verbatimTaxonRank'] = 't.unitind3 AS verbatimTaxonRank';
 		$this->occurDefArr['terms']['infraspecificEpithet'] = 'http://rs.tdwg.org/dwc/terms/infraspecificEpithet';
 		$this->occurDefArr['fields']['infraspecificEpithet'] = 't.unitname3 AS infraspecificEpithet';
+		$this->occurDefArr['terms']['cultivarEpithet'] = 'http://rs.tdwg.org/dwc/terms/cultivarEpithet';
+		$this->occurDefArr['fields']['cultivarEpithet'] = 't.cultivarEpithet AS cultivarEpithet';
+		$this->occurDefArr['terms']['tradeName'] = 'http://rs.tdwg.org/dwc/terms/tradeName';
+		$this->occurDefArr['fields']['tradeName'] = 't.tradeName AS tradeName';
 		$this->occurDefArr['terms']['taxonRank'] = 'http://rs.tdwg.org/dwc/terms/taxonRank';
 		$this->occurDefArr['fields']['taxonRank'] = '';
 		$this->occurDefArr['terms']['identifiedBy'] = 'http://rs.tdwg.org/dwc/terms/identifiedBy';
@@ -170,6 +174,8 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['island'] = 'o.island';
 		$this->occurDefArr['terms']['country'] = 'http://rs.tdwg.org/dwc/terms/country';
 		$this->occurDefArr['fields']['country'] = 'o.country';
+		$this->occurDefArr['terms']['countryCode'] = 'http://rs.tdwg.org/dwc/terms/countryCode';
+		$this->occurDefArr['fields']['countryCode'] = 'o.countryCode';
 		$this->occurDefArr['terms']['stateProvince'] = 'http://rs.tdwg.org/dwc/terms/stateProvince';
 		$this->occurDefArr['fields']['stateProvince'] = 'o.stateProvince';
 		$this->occurDefArr['terms']['county'] = 'http://rs.tdwg.org/dwc/terms/county';
@@ -180,10 +186,10 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['locality'] = 'o.locality';
 		$this->occurDefArr['terms']['locationRemarks'] = 'http://rs.tdwg.org/dwc/terms/locationRemarks';
 		$this->occurDefArr['fields']['locationRemarks'] = 'o.locationremarks';
-		$this->occurDefArr['terms']['localitySecurity'] = 'https://symbiota.org/terms/localitySecurity';
-		$this->occurDefArr['fields']['localitySecurity'] = 'o.localitySecurity';
-		$this->occurDefArr['terms']['localitySecurityReason'] = 'https://symbiota.org/terms/localitySecurityReason';
-		$this->occurDefArr['fields']['localitySecurityReason'] = 'o.localitySecurityReason';
+		$this->occurDefArr['terms']['recordSecurity'] = 'https://symbiota.org/terms/recordSecurity';
+		$this->occurDefArr['fields']['recordSecurity'] = 'o.recordSecurity';
+		$this->occurDefArr['terms']['securityReason'] = 'https://symbiota.org/terms/securityReason';
+		$this->occurDefArr['fields']['securityReason'] = 'o.securityReason';
 		$this->occurDefArr['terms']['decimalLatitude'] = 'http://rs.tdwg.org/dwc/terms/decimalLatitude';
 		$this->occurDefArr['fields']['decimalLatitude'] = 'o.decimalLatitude';
 		$this->occurDefArr['terms']['decimalLongitude'] = 'http://rs.tdwg.org/dwc/terms/decimalLongitude';
@@ -272,12 +278,12 @@ class DwcArchiverOccurrence extends Manager{
 		//$this->occurDefArr['fields']['genericcolumn1'] = 'o.genericcolumn1';
 		//$this->occurDefArr['terms']['genericcolumn2'] = 'https://symbiota.org/terms/genericcolumn2';
 		//$this->occurDefArr['fields']['genericcolumn2'] = 'o.genericcolumn2';
-		//$this->occurDefArr['terms']['storageLocation'] = 'https://symbiota.org/terms/storageLocation';
-		//$this->occurDefArr['fields']['storageLocation'] = 'o.storageLocation';
+		$this->occurDefArr['terms']['storageLocation'] = 'https://symbiota.org/terms/storageLocation';
+		$this->occurDefArr['fields']['storageLocation'] = 'o.storageLocation';
 		$this->occurDefArr['terms']['observerUid'] = 'https://symbiota.org/terms/observerUid';
 		$this->occurDefArr['fields']['observerUid'] = 'o.observeruid';
 		$this->occurDefArr['terms']['processingStatus'] = 'https://symbiota.org/terms/processingStatus';
-		$this->occurDefArr['fields']['processingStatus'] = 'o.processingstatus';
+		$this->occurDefArr['fields']['processingStatus'] = 'o.processingStatus';
 		$this->occurDefArr['terms']['duplicateQuantity'] = 'https://symbiota.org/terms/duplicateQuantity';
 		$this->occurDefArr['fields']['duplicateQuantity'] = 'o.duplicateQuantity';
 		$this->occurDefArr['terms']['labelProject'] = 'https://symbiota.org/terms/labelProject';
@@ -287,7 +293,7 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['terms']['dateEntered'] = 'https://symbiota.org/terms/dateEntered';
 		$this->occurDefArr['fields']['dateEntered'] = 'o.dateEntered';
 		$this->occurDefArr['terms']['dateLastModified'] = 'http://rs.tdwg.org/dwc/terms/dateLastModified';
-		$this->occurDefArr['fields']['dateLastModified'] = 'o.datelastmodified';
+		$this->occurDefArr['fields']['dateLastModified'] = 'o.dateLastModified';
 		$this->occurDefArr['terms']['modified'] = 'http://purl.org/dc/terms/modified';
 		$this->occurDefArr['fields']['modified'] = 'IFNULL(o.modified,o.datelastmodified) AS modified';
 		$this->occurDefArr['terms']['rights'] = 'http://purl.org/dc/elements/1.1/rights';
@@ -311,14 +317,15 @@ class DwcArchiverOccurrence extends Manager{
 		foreach($this->occurDefArr as $k => $vArr){
 			if($this->schemaType == 'dwc' || $this->schemaType == 'pensoft'){
 				$trimArr = array('recordedByID','associatedCollectors','substrate','verbatimAttributes','cultivationStatus',
-					'localitySecurityReason','genericcolumn1','genericcolumn2','storageLocation','observerUid','processingStatus',
-					'duplicateQuantity','labelProject','dateEntered','dateLastModified','sourcePrimaryKey-dbpk');
+					'securityReason','genericcolumn1','genericcolumn2','storageLocation','observerUid','processingStatus',
+					'duplicateQuantity','labelProject','dateEntered','dateLastModified','sourcePrimaryKey-dbpk', 'tradeName');
+				// TODO add confirm dialog and look for a notes section in the DWC export to alert end user of loss of the trimmed fields during export.
 				$this->occurDefArr[$k] = array_diff_key($vArr,array_flip($trimArr));
 			}
 			elseif($this->schemaType == 'symbiota'){
 				$trimArr = array();
 				if(!$this->extended){
-					$trimArr = array('collectionID','rights','rightsHolder','accessRights','storageLocation','observerUid','processingStatus','duplicateQuantity','labelProject','dateEntered','dateLastModified');
+					$trimArr = array('collectionID','rights','rightsHolder','accessRights','observerUid','processingStatus','duplicateQuantity','labelProject','dateEntered','dateLastModified');
 				}
 				$this->occurDefArr[$k] = array_diff_key($vArr,array_flip($trimArr));
 			}
@@ -330,7 +337,7 @@ class DwcArchiverOccurrence extends Manager{
 				$targetArr = array('id','basisOfRecord','institutionCode','collectionCode','catalogNumber','occurrenceID','family','scientificName','scientificNameAuthorship',
 					'kingdom','phylum','class','order','genus','specificEpithet','infraSpecificEpithet','recordedBy','recordNumber','eventDate','year','month','day','fieldNumber',
 					'eventID', 'locationID','continent','waterBody','islandGroup','island','country','stateProvince','county','municipality',
-					'locality','localitySecurity','geodeticDatum','decimalLatitude','decimalLongitude','verbatimCoordinates',
+					'locality','recordSecurity','geodeticDatum','decimalLatitude','decimalLongitude','verbatimCoordinates',
 					'minimumElevationInMeters','maximumElevationInMeters','verbatimElevation','maximumDepthInMeters','minimumDepthInMeters','establishmentMeans',
 					'occurrenceRemarks','dateEntered','dateLastModified','recordID','references','collID');
 				$this->occurDefArr[$k] = array_intersect_key($vArr,array_flip($targetArr));
@@ -413,7 +420,7 @@ class DwcArchiverOccurrence extends Manager{
 				if($r->editor) $dynProp['exsEditor'] = $r->editor;
 				$dynProp['exsNumber'] = $r->exsnumber;
 				if($r->notes) $dynProp['exsNotes'] = $r->notes;
-				$retArr['exsJson'] = json_encode($dynProp);
+				$retArr['exsProps'] = $dynProp;
 			}
 			$rs->free();
 		}
@@ -500,8 +507,8 @@ class DwcArchiverOccurrence extends Manager{
 	private function getAssociationJSON($occid) {
 
 		// Build SQL to find any associations for the occurrence record passed with occid
-		$sql = 'SELECT occid, associationType, occidAssociate, relationship, subType, identifier, basisOfRecord, resourceUrl, verbatimSciname, locationOnHost 
-			FROM omoccurassociations 
+		$sql = 'SELECT occid, associationType, occidAssociate, relationship, subType, identifier, basisOfRecord, resourceUrl, verbatimSciname, locationOnHost
+			FROM omoccurassociations
 			WHERE (occid = ' . $occid . ' OR occidAssociate = ' . $occid . ') ';
 		if ($rs = $this->conn->query($sql)) {
 

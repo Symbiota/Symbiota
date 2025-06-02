@@ -2,21 +2,23 @@
 
 namespace PhpOffice\PhpSpreadsheet\Writer\Ods;
 
+use Composer\Pcre\Preg;
 use PhpOffice\PhpSpreadsheet\Calculation\Calculation;
 use PhpOffice\PhpSpreadsheet\DefinedName;
+use PhpOffice\PhpSpreadsheet\Shared\StringHelper;
 use PhpOffice\PhpSpreadsheet\Shared\XMLWriter;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class NamedExpressions
 {
-    private $objWriter;
+    private XMLWriter $objWriter;
 
-    private $spreadsheet;
+    private Spreadsheet $spreadsheet;
 
-    private $formulaConvertor;
+    private Formula $formulaConvertor;
 
-    public function __construct(XMLWriter $objWriter, Spreadsheet $spreadsheet, $formulaConvertor)
+    public function __construct(XMLWriter $objWriter, Spreadsheet $spreadsheet, Formula $formulaConvertor)
     {
         $this->objWriter = $objWriter;
         $this->spreadsheet = $spreadsheet;
@@ -51,37 +53,42 @@ class NamedExpressions
 
     private function writeNamedFormula(DefinedName $definedName, Worksheet $defaultWorksheet): void
     {
+        $title = ($definedName->getWorksheet() !== null) ? $definedName->getWorksheet()->getTitle() : $defaultWorksheet->getTitle();
         $this->objWriter->writeAttribute('table:name', $definedName->getName());
         $this->objWriter->writeAttribute(
             'table:expression',
-            $this->formulaConvertor->convertFormula($definedName->getValue(), $definedName->getWorksheet()->getTitle())
+            $this->formulaConvertor->convertFormula($definedName->getValue(), $title)
         );
         $this->objWriter->writeAttribute('table:base-cell-address', $this->convertAddress(
             $definedName,
-            "'" . (($definedName->getWorksheet() !== null) ? $definedName->getWorksheet()->getTitle() : $defaultWorksheet->getTitle()) . "'!\$A\$1"
+            "'" . $title . "'!\$A\$1"
         ));
     }
 
     private function writeNamedRange(DefinedName $definedName): void
     {
+        $baseCell = '$A$1';
+        $ws = $definedName->getWorksheet();
+        if ($ws !== null) {
+            $baseCell = "'" . $ws->getTitle() . "'!$baseCell";
+        }
         $this->objWriter->writeAttribute('table:name', $definedName->getName());
         $this->objWriter->writeAttribute('table:base-cell-address', $this->convertAddress(
             $definedName,
-            "'" . $definedName->getWorksheet()->getTitle() . "'!\$A\$1"
+            $baseCell
         ));
         $this->objWriter->writeAttribute('table:cell-range-address', $this->convertAddress($definedName, $definedName->getValue()));
     }
 
     private function convertAddress(DefinedName $definedName, string $address): string
     {
-        $splitCount = preg_match_all(
+        $splitCount = Preg::matchAllWithOffsets(
             '/' . Calculation::CALCULATION_REGEXP_CELLREF_RELATIVE . '/mui',
             $address,
-            $splitRanges,
-            PREG_OFFSET_CAPTURE
+            $splitRanges
         );
 
-        $lengths = array_map('strlen', array_column($splitRanges[0], 0));
+        $lengths = array_map([StringHelper::class, 'strlenAllowNull'], array_column($splitRanges[0], 0));
         $offsets = array_column($splitRanges[0], 1);
 
         $worksheets = $splitRanges[2];
@@ -100,7 +107,10 @@ class NamedExpressions
             if (empty($worksheet)) {
                 if (($offset === 0) || ($address[$offset - 1] !== ':')) {
                     // We need a worksheet
-                    $worksheet = $definedName->getWorksheet()->getTitle();
+                    $ws = $definedName->getWorksheet();
+                    if ($ws !== null) {
+                        $worksheet = $ws->getTitle();
+                    }
                 }
             } else {
                 $worksheet = str_replace("''", "'", trim($worksheet, "'"));
@@ -109,9 +119,9 @@ class NamedExpressions
                 $newRange = "'" . str_replace("'", "''", $worksheet) . "'.";
             }
 
-            if (!empty($column)) {
-                $newRange .= $column;
-            }
+            //if (!empty($column)) { // phpstan says always true
+            $newRange .= $column;
+            //}
             if (!empty($row)) {
                 $newRange .= $row;
             }
@@ -119,7 +129,7 @@ class NamedExpressions
             $address = substr($address, 0, $offset) . $newRange . substr($address, $offset + $length);
         }
 
-        if (substr($address, 0, 1) === '=') {
+        if (str_starts_with($address, '=')) {
             $address = substr($address, 1);
         }
 

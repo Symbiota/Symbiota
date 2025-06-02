@@ -6,7 +6,8 @@ Language: English
 */
 
 include_once($SERVER_ROOT.'/content/lang/collections/misc/sharedterms.en.php');
-
+$LANG['EDIT_METADATA'] = 'Edit Collection Metadata & Contacts';
+$LANG['COLLECTION_METADATA_EDITOR'] = 'Collection Metadata Editor Tab';
 $LANG['ADD_SUCCESS'] = 'New collection added successfully';
 $LANG['ADD_STUFF'] = 'Add contacts, resource links, or institution address below';
 $LANG['COL_PROFS'] = 'Collection Profiles';
@@ -90,7 +91,7 @@ $LANG['OCCID_DEF_2'] = 'field. The use of the Occurrence Id as the GUID is not r
 						The Symbiota Generated GUID (UUID) option will trigger the Symbiota data portal to automatically
 						generate UUID GUIDs for each record. This option is recommended for many for Live Datasets
 						but not allowed for Snapshot collections that are managed in local management system.';
-$LANG['PUBLISH_TO_AGGS'] = 'Publish to Aggregators';
+$LANG['PUBLISH_TO_AGGS'] = 'Enable Publishing to Aggregators';
 $LANG['MORE_INFO_AGGREGATORS'] = 'More information about Publishing to Aggregators';
 $LANG['ACTIVATE_GBIF'] = 'Activates GBIF publishing tools available within Darwin Core Archive Publishing menu option';
 $LANG['SOURCE_REC_URL'] = 'Source Record URL';

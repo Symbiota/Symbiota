@@ -1,5 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT . '/config/dbconnection.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 class OccurrenceCrowdSource {
 
@@ -88,9 +89,10 @@ class OccurrenceCrowdSource {
 
 			//Get record count for those available for adding to queue
 			$sql = 'SELECT count(DISTINCT o.occid) as cnt
-				FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid
+				FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid
 				LEFT JOIN omcrowdsourcequeue q ON o.occid = q.occid
 				WHERE o.collid = '.$this->collid.' AND (o.processingstatus = "unprocessed") AND q.occid IS NULL ';
+			$sql .= OccurrenceUtil::appendFullProtectionSQL();
 			$toAddCnt = 0;
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
@@ -176,6 +178,7 @@ class OccurrenceCrowdSource {
 		while($r = $rs->fetch_object()){
 			$retArr[$r->collid]['name'] = $r->collectionname.' ('.$r->collcode.')';
 			$retArr[$r->collid]['cnt'][$r->reviewstatus] = $r->cnt;
+			$retArr[$r->collid]['points'][$r->reviewstatus] = 0;
 			if($r->isvolunteer) $retArr[$r->collid]['points'][$r->reviewstatus] = $r->points;
 			if($r->reviewstatus >= 10){
 				if($r->isvolunteer){
@@ -204,12 +207,12 @@ class OccurrenceCrowdSource {
 		return $retArr;
 	}
 
-	public function addToQueue($omcsid,$family,$taxon,$country,$stateProvince,$limit){
+	public function addToQueue($omcsid, $family, $taxon, $country, $stateProvince, $limit){
 		$statusStr = 'SUCCESS: specimens added to queue';
 		if(!$this->omcsid) return 'ERROR adding to queue, omcsid is null';
 		if(!$this->collid) return 'ERROR adding to queue, collid is null';
 		$con = MySQLiConnectionFactory::getCon("write");
-		$sqlFrag = 'FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
+		$sqlFrag = 'FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid '.
 			'LEFT JOIN omcrowdsourcequeue q ON o.occid = q.occid '.
 			'WHERE o.collid = '.$this->collid.' AND q.occid IS NULL AND (o.processingstatus = "unprocessed") ';
 		if($family){
@@ -224,6 +227,7 @@ class OccurrenceCrowdSource {
 		if($stateProvince){
 			$sqlFrag .= 'AND (o.stateprovince = "'.$this->cleanInStr($stateProvince).'") ';
 		}
+		$sqlFrag .= OccurrenceUtil::appendFullProtectionSQL();
 		//Get count
 		$sqlCnt = 'SELECT COUNT(DISTINCT o.occid) AS cnt '.$sqlFrag;
 		$rs = $con->query($sqlCnt);
@@ -264,7 +268,7 @@ class OccurrenceCrowdSource {
 		$country = array();
 		$state = array();
 		$sql = 'SELECT DISTINCT o.country, o.stateprovince '.
-			'FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
+			'FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid '.
 			'LEFT JOIN omcrowdsourcequeue q ON o.occid = q.occid '.
 			'WHERE o.collid = '.$this->collid.' AND (o.processingstatus = "unprocessed") AND q.occid IS NULL ';
 		$rs = $this->conn->query($sql);
@@ -280,7 +284,7 @@ class OccurrenceCrowdSource {
 		$family = array();
 		$sciname = array();
 		$sql = 'SELECT DISTINCT o.family, o.sciname, t.unitname1 '.
-			'FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
+			'FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid '.
 			'LEFT JOIN omcrowdsourcequeue q ON o.occid = q.occid '.
 			'LEFT JOIN taxa t ON o.tidinterpreted = t.tid '.
 			'WHERE o.collid = '.$this->collid.' AND (o.processingstatus = "unprocessed") AND q.occid IS NULL ';

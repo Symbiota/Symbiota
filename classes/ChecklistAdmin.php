@@ -162,10 +162,41 @@ class ChecklistAdmin extends Manager{
 		return $retStr;
 	}
 
+	/*
+	 * @return array | bool
+	 */
+	public function getFootprint() {
+		if(!$this->clid) return false;
+		$sql = <<<'SQL'
+		SELECT footprintWkt, footprintGeoJson FROM fmchecklists WHERE clid = ?;
+		SQL;
+
+		$rs = null;
+		try {
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->clid);
+				$stmt->execute();
+				if($rs = $stmt->get_result()){
+					$row = $rs->fetch_object();
+					if($row->footprintGeoJson) {
+						return ["type" => "geoJson", "footprint" => $row->footprintGeoJson];
+					} else {
+						return ["type" => "wkt", "footprint" => $row->footprintWkt];
+					}
+					$rs->free();
+				}
+				$stmt->close();
+			}
+		} catch (Exception $e) {
+			error_log('ChecklistAdmin->getFootprint on clid ' . $this->clid . ' :' . $e->getMessage(), 0);
+			return false;
+		}
+	}
+
 	public function savePolygon($polygonStr){
 		$status = true;
 		if($this->clid){
-			$sql = 'UPDATE fmchecklists SET footprintwkt = '.($polygonStr?'"'.$this->cleanInStr($polygonStr).'"':'NULL').' WHERE (clid = '.$this->clid.')';
+			$sql = 'UPDATE fmchecklists SET footprintGeoJson = '.($polygonStr?'"'.$this->cleanInStr($polygonStr).'"':'NULL').' WHERE (clid = '.$this->clid.')';
 			if(!$this->conn->query($sql)){
 				echo 'ERROR saving polygon to checklist: '.$this->conn->error;
 				$status = false;

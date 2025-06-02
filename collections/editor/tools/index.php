@@ -32,4 +32,3 @@ header("Content-Type: text/html; charset=".$CHARSET);
 		include($SERVER_ROOT.'/includes/footer.php');
 		?>
 	</body>
-</html>

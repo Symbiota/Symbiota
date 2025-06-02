@@ -4,9 +4,12 @@ namespace PhpOffice\PhpSpreadsheet\Calculation\Financial;
 
 use PhpOffice\PhpSpreadsheet\Calculation\Exception;
 use PhpOffice\PhpSpreadsheet\Calculation\Functions;
+use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 
 class Depreciation
 {
+    private static float $zeroPointZero = 0.0;
+
     /**
      * DB.
      *
@@ -29,10 +32,8 @@ class Depreciation
      *                          depreciation. Period must use the same units as life.
      * @param mixed $month Number of months in the first year. If month is omitted,
      *                         it defaults to 12.
-     *
-     * @return float|string
      */
-    public static function DB($cost, $salvage, $life, $period, $month = 12)
+    public static function DB(mixed $cost, mixed $salvage, mixed $life, mixed $period, mixed $month = 12): string|float|int
     {
         $cost = Functions::flattenSingleValue($cost);
         $salvage = Functions::flattenSingleValue($salvage);
@@ -50,7 +51,7 @@ class Depreciation
             return $e->getMessage();
         }
 
-        if ($cost === 0.0) {
+        if ($cost === self::$zeroPointZero) {
             return 0.0;
         }
 
@@ -95,10 +96,8 @@ class Depreciation
      * @param mixed $factor The rate at which the balance declines.
      *                                If factor is omitted, it is assumed to be 2 (the
      *                                double-declining balance method).
-     *
-     * @return float|string
      */
-    public static function DDB($cost, $salvage, $life, $period, $factor = 2.0)
+    public static function DDB(mixed $cost, mixed $salvage, mixed $life, mixed $period, mixed $factor = 2.0): float|string
     {
         $cost = Functions::flattenSingleValue($cost);
         $salvage = Functions::flattenSingleValue($salvage);
@@ -117,7 +116,7 @@ class Depreciation
         }
 
         if ($period > $life) {
-            return Functions::NAN();
+            return ExcelError::NAN();
         }
 
         // Loop through each period calculating the depreciation
@@ -146,7 +145,7 @@ class Depreciation
      *
      * @return float|string Result, or a string containing an error
      */
-    public static function SLN($cost, $salvage, $life)
+    public static function SLN(mixed $cost, mixed $salvage, mixed $life): string|float
     {
         $cost = Functions::flattenSingleValue($cost);
         $salvage = Functions::flattenSingleValue($salvage);
@@ -160,8 +159,8 @@ class Depreciation
             return $e->getMessage();
         }
 
-        if ($life === 0.0) {
-            return Functions::DIV0();
+        if ($life === self::$zeroPointZero) {
+            return ExcelError::DIV0();
         }
 
         return ($cost - $salvage) / $life;
@@ -179,7 +178,7 @@ class Depreciation
      *
      * @return float|string Result, or a string containing an error
      */
-    public static function SYD($cost, $salvage, $life, $period)
+    public static function SYD(mixed $cost, mixed $salvage, mixed $life, mixed $period): string|float
     {
         $cost = Functions::flattenSingleValue($cost);
         $salvage = Functions::flattenSingleValue($salvage);
@@ -196,7 +195,7 @@ class Depreciation
         }
 
         if ($period > $life) {
-            return Functions::NAN();
+            return ExcelError::NAN();
         }
 
         $syd = (($cost - $salvage) * ($life - $period + 1) * 2) / ($life * ($life + 1));
@@ -204,61 +203,61 @@ class Depreciation
         return $syd;
     }
 
-    private static function validateCost($cost, bool $negativeValueAllowed = false): float
+    private static function validateCost(mixed $cost, bool $negativeValueAllowed = false): float
     {
         $cost = FinancialValidations::validateFloat($cost);
         if ($cost < 0.0 && $negativeValueAllowed === false) {
-            throw new Exception(Functions::NAN());
+            throw new Exception(ExcelError::NAN());
         }
 
         return $cost;
     }
 
-    private static function validateSalvage($salvage, bool $negativeValueAllowed = false): float
+    private static function validateSalvage(mixed $salvage, bool $negativeValueAllowed = false): float
     {
         $salvage = FinancialValidations::validateFloat($salvage);
         if ($salvage < 0.0 && $negativeValueAllowed === false) {
-            throw new Exception(Functions::NAN());
+            throw new Exception(ExcelError::NAN());
         }
 
         return $salvage;
     }
 
-    private static function validateLife($life, bool $negativeValueAllowed = false): float
+    private static function validateLife(mixed $life, bool $negativeValueAllowed = false): float
     {
         $life = FinancialValidations::validateFloat($life);
         if ($life < 0.0 && $negativeValueAllowed === false) {
-            throw new Exception(Functions::NAN());
+            throw new Exception(ExcelError::NAN());
         }
 
         return $life;
     }
 
-    private static function validatePeriod($period, bool $negativeValueAllowed = false): float
+    private static function validatePeriod(mixed $period, bool $negativeValueAllowed = false): float
     {
         $period = FinancialValidations::validateFloat($period);
         if ($period <= 0.0 && $negativeValueAllowed === false) {
-            throw new Exception(Functions::NAN());
+            throw new Exception(ExcelError::NAN());
         }
 
         return $period;
     }
 
-    private static function validateMonth($month): int
+    private static function validateMonth(mixed $month): int
     {
         $month = FinancialValidations::validateInt($month);
         if ($month < 1) {
-            throw new Exception(Functions::NAN());
+            throw new Exception(ExcelError::NAN());
         }
 
         return $month;
     }
 
-    private static function validateFactor($factor): float
+    private static function validateFactor(mixed $factor): float
     {
         $factor = FinancialValidations::validateFloat($factor);
         if ($factor <= 0.0) {
-            throw new Exception(Functions::NAN());
+            throw new Exception(ExcelError::NAN());
         }
 
         return $factor;

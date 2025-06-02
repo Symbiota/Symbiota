@@ -97,7 +97,7 @@ $navStr .= '</div>';
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
-		<title><?php echo $LANG['EDIT_REVIEWER']; ?></title>
+		<title><?php echo $LANG['OCCUR_EDIT_REVIEWER']; ?></title>
 		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
@@ -203,7 +203,7 @@ $navStr .= '</div>';
 		?>
 		<!-- This is inner text! -->
 		<div role="main" id="innertext" style="min-width:1100px">
-			<h1 class="page-heading">Occurrence Edit Reviewer</h1>
+			<h1 class="page-heading"><?php echo $LANG['OCCUR_EDIT_REVIEWER']; ?></h1>
 			<?php
 			if($collid && $isEditor){
 				?>
@@ -333,7 +333,7 @@ $navStr .= '</div>';
 							</div>
 							<div style="clear:both;margin:15px 0px;">
 								<hr/>
-								<a href="#" onclick="toggle('additional')"><b><?php echo $LANG['ADDITIONAL_ACTIONS']; ?></b></a>
+								<a href="#" onclick="toggle('additional');return false;"><b><?php echo $LANG['ADDITIONAL_ACTIONS']; ?></b></a>
 							</div>
 							<div id="additional" style="display:none">
 								<div style="margin:10px 15px;">

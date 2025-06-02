@@ -844,7 +844,7 @@ class SpecUploadDwca extends SpecUploadBase{
 							$this->loadIdentificationRecord($recMap);
 						}
 						elseif($targetStr == 'image'){
-							$this->loadImageRecord($recMap);
+							$this->loadMediaRecord($recMap);
 						}
 						unset($recMap);
 					}

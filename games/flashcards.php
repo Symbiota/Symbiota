@@ -2,18 +2,14 @@
 //error_reporting(E_ALL);
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/GamesManager.php');
+
 header('Content-Type: text/html; charset='.$CHARSET);
 
-$clid = array_key_exists('clid', $_REQUEST) ? $_REQUEST['clid'] : 0;
-$dynClid = array_key_exists('dynclid', $_REQUEST) ? $_REQUEST['dynclid'] : 0;
-$taxonFilter = array_key_exists('taxonfilter', $_REQUEST) ? htmlspecialchars($_REQUEST['taxonfilter'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
-$showCommon = array_key_exists('showcommon', $_REQUEST) ? $_REQUEST['showcommon'] : 0;
-$lang = array_key_exists('lang', $_REQUEST) ? htmlspecialchars($_REQUEST['lang'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : $DEFAULT_LANG;
-
-//Sanitation
-if(!is_numeric($clid)) $clid = 0;
-if(!is_numeric($dynClid)) $dynClid = 0;
-if(!is_numeric($showCommon)) $showCommon = 0;
+$clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$dynClid = array_key_exists('dynclid', $_REQUEST) ? filter_var($_REQUEST['dynclid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$taxonFilter = array_key_exists('taxonfilter', $_REQUEST) ? $_REQUEST['taxonfilter'] : '';
+$showCommon = array_key_exists('showcommon', $_REQUEST) ? filter_var($_REQUEST['showcommon'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$lang = array_key_exists('lang', $_REQUEST) ? $_REQUEST['lang'] : $DEFAULT_LANG;
 
 $fcManager = new GamesManager();
 $fcManager->setClid($clid);
@@ -32,6 +28,18 @@ $sciArr = array();
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
+	<style>
+		.flashcard-img {
+			height: 97%;
+			max-width: 450px;
+		}
+
+        .flashcard-nav {
+			justify-content: space-between;
+			display: flex;
+			width: 450px;
+		}
+    </style>
 	<script type="text/javascript">
 		var imageArr = new Array();
 		var sciNameArr = new Array();
@@ -99,11 +107,11 @@ $sciArr = array();
 			document.getElementById("scinameselect").options[0].selected = "1";
 		}
 
-		function checkId(idSelect){
-			var idIndexSelected = idSelect.value;
+		function checkId(){
+			let idIndexSelected = document.getElementById('scinameselect').value;
 			if(idIndexSelected > 0){
-				totalTried++;
 				if(idIndexSelected == activeIndex){
+					totalTried++;
 					alert("Correct! Try another");
 					document.getElementById("numcomplete").innerHTML = sciNameArr.length - toBeIdentified.length;
 					if(firstTry){
@@ -121,6 +129,7 @@ $sciArr = array();
 				}
 				else{
 					alert("Sorry, incorrect. Try Again.");
+					if(firstTry) totalTried++;
 					firstTry = false;
 				}
 			}
@@ -147,7 +156,7 @@ $sciArr = array();
 		echo $checklists_flashcardsCrumbs;
 	}
 	else{
-		echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($clid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&dynclid=' . htmlspecialchars($dynClid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
+		echo '<a href="../checklists/checklist.php?clid=' . $clid . '&dynclid=' . $dynClid . '">';
 		echo $fcManager->getClName();
 		echo '</a> &gt;&gt; ';
 	}
@@ -157,41 +166,36 @@ $sciArr = array();
 	<!-- This is inner text! -->
 	<div id='innertext'>
 		<h1 class="page-heading screen-reader-only">Flash Cards</h1>
-		<div style="width:420px;margin-left:auto;margin-right:auto;">
-			<div style="width:420px;height:420px;text-align:center;">
-				<div>
-					<a id="imageanchor" href="" target="_blank">
-						<img src="#" id="activeimage" style="height:97%;max-width:450px" alt="Image to guess"/>
-					</a>
-				</div>
+		<div class="games-content">
+			<div>
+				<a id="imageanchor" href="" target="_blank">
+					<img src="#" id="activeimage" class="flashcard-img" alt="Image to guess"/>
+				</a>
 			</div>
-			<div style="width:450px;text-align:center;">
-				<div style="width:100%;">
-					<div style="float:left;cursor:pointer;text-align:center;" onclick="insertNewImage()">
-						<img src="../images/skipthisone.png" title="Skip to Next Species" aria-label="Skip to Next Species"/>
+			<div class="games-body">
+					<div>
+						<div class="flashcard-nav">
+							<a href="#" onclick="insertNewImage(); return false;"><img src="../images/skipthisone.png" title="Skip to Next Species" aria-label="Skip to Next Species" ></a>
+							<span>Image <span id="imageindex">1</span> of <span id="imagecount">?</span></span>
+							<a href="#" onclick="nextImage(); return false;"><img id="rightarrow" src="../images/rightarrow.png" title="Show Next Image" aria-label="Show Next Image" ></a>
+						</div>
 					</div>
-					<div id="rightarrow" style="float:right;cursor:pointer;text-align:center;" onclick="nextImage()">
-						<img src="../images/rightarrow.png" title="Show Next Image" aria-label="Show Next Image"/>
-					</div>
-					<div style="width:200px;margin-left:auto;margin-right:auto;">
-						Image <span id="imageindex">1</span> of <span id="imagecount">?</span>
+				<div class="games-body">
+						<label for="scinameselect">Name of Above Organism:</label>
+						<select id="scinameselect">
+							<option value="0">-------------------------</option>
+							<?php
+							asort($sciArr);
+							foreach($sciArr as $t => $s){
+								echo "<option value='".$t."'>".$s."</option>";
+							}
+							?>
+						</select>
+					<div>
+						<button type="submit" onclick="checkId()">Check Name</button>
 					</div>
 				</div>
-				<div style="clear:both;margin-top:10px;">
-					<label for="scinameselect">Name of Above Organism:</label>
-					<select id="scinameselect">
-						<option value="0">-------------------------</option>
-						<?php
-						asort($sciArr);
-						foreach($sciArr as $t => $s){
-							echo "<option value='".$t."'>".$s."</option>";
-						}
-
-						?>
-					</select>
-					<button type="submit" onclick="checkId(document.getElementById('scinameselect'))">Check Image</button>
-				</div>
-				<div style="clear:both;margin-top:10px;">
+				<div>
 					<div>
 						<b><span id="numcomplete">0</span></b> out of <b><span id="numtotal">0</span></b> Species Identified
 					</div>
@@ -199,22 +203,23 @@ $sciArr = array();
 						<b><span id="numcorrect">0</span></b> Identified Correctly on First Try
 					</div>
 				</div>
-				<div style="cursor:pointer;margin-top:10px;color:green;" onclick="tellMe()"><b>Tell Me What It Is!</b></div>
-				<div style="margin-left:auto;margin-right:auto;margin-top:10px;width:300px;">
+				<div style="cursor:pointer;color:green;" onclick="tellMe()"><b>Tell Me What It Is!</b></div>
+				<div>
 					<form id="taxonfilterform" name="taxonfilterform" action="flashcards.php" method="post">
-						<fieldset>
+						<fieldset class="games-body">
 							<legend>Options</legend>
-							<input type="hidden" name="clid" value="<?php echo $clid; ?>" />
-							<input type="hidden" name="lang" value="<?php echo $lang; ?>" />
+							<input type="hidden" name="clid" value="<?= $clid ?>" />
+							<input type="hidden" name="lang" value="<?= htmlspecialchars($lang, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" />
 							<div>
 								<select name="taxonfilter" aria-label="Filter Quiz by Taxonomic Group">
-									<option value="0">Filter Quiz by Taxonomic Group</option>
+									<option value="0">All Taxa</option>
+									<option value="0">---------------------------</option>
 									<?php
-										$fcManager->echoFlashcardTaxonFilterList();
+									$fcManager->echoFlashcardTaxonFilterList();
 									?>
 								</select>
 							</div>
-							<div style='margin-top:3px;'>
+							<div>
 								<?php
 								//Display Common Names: 0 = false, 1 = true
 								if($DISPLAY_COMMON_NAMES){
@@ -222,11 +227,11 @@ $sciArr = array();
 								}
 								?>
 							</div>
-							<button type="submit" onclick="document.getElementById('taxonfilterform').submit();">Show Image</button>
+							<button type="submit" >Apply</button>
 						</fieldset>
 					</form>
 				</div>
-				<div style="cursor:pointer;color:red;" onclick="reset()"><b>Reset Game</b></div>
+				<div style="color:red;font-weight: bold"><a href="#" onclick="reset()">Reset Game</a></div>
 			</div>
 		</div>
 	</div>

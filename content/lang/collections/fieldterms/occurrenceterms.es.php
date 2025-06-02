@@ -1,9 +1,10 @@
 <?php
 /*
- ------------------
- Language: Español
- ------------------
- */
+------------------
+Language: Español (Spanish)
+Translated by: Google Translate (2024-10-04)
+------------------
+*/
 
 $LANG['CATALOG_NUMBER'] = 'Catalog Number';
 $LANG['OCCURRENCE_ID'] = 'Occurrence ID';
@@ -17,6 +18,7 @@ $LANG['EVENT_DATE2'] = 'End Date';
 $LANG['YYYY_MM_DD'] = 'YYYY-MM-DD';
 $LANG['VERBATIM_EVENT_DATE'] = 'Verbatim Date';
 $LANG['FAMILY'] = 'Family';
+$LANG['TRADE_NAME'] = 'Trade Name';
 $LANG['SCIENTIFIC_NAME'] = 'Scientific Name';
 $LANG['SCINAME'] = 'Scientific Name';
 $LANG['SCIENTIFIC_NAME_AUTHORSHIP'] = 'Author';
@@ -37,9 +39,8 @@ $LANG['COUNTY'] = 'County';
 $LANG['MUNICIPALITY'] = 'Municipality';
 $LANG['LOCATION_ID'] = 'Location ID';
 $LANG['LOCALITY'] = 'Locality';
-$LANG['LOCALITY_SECURITY'] = 'Security';
-$LANG['LOCALITY_SECURITY_REASON'] = 'Reason';
-$LANG['LOCATION_REMARKS'] = '';
+$LANG['SECURITY'] = 'Security';
+$LANG['SECURITY_REASON'] = 'Reason';
 $LANG['DECIMAL_LATITUDE'] = 'Latitude';
 $LANG['DECIMAL_LONGITUDE'] = 'Longitude';
 $LANG['GEODETIC_DATUM'] = 'Datum';
@@ -72,9 +73,9 @@ $LANG['INDIVIDUAL_COUNT'] = 'Individual Count';
 $LANG['SAMPLING_PROTOCOL'] = 'Sampling Protocol';
 $LANG['PREPARATIONS'] = 'Preparations';
 $LANG['REPRODUCTIVE_CONDITION'] = 'Phenology';
-$LANG['ESTABLISHMENT_MEANS'] = 'Establishment Means';
 $LANG['BEHAVIOR'] = 'Comportamiento';
 $LANG['VITALITY'] = 'Vitalidad';
+$LANG['ESTABLISHMENT_MEANS'] = 'Establishment Means';
 $LANG['CULTIVATION_STATUS'] = 'Cultivated/Captive';
 $LANG['TYPE_STATUS'] = 'Type Status';
 $LANG['DISPOSITION'] = 'Disposition';
@@ -87,6 +88,7 @@ $LANG['DATA_GENERALIZATIONS'] = 'Data Generalizations';
 $LANG['INSTITUTION_CODE'] = 'Institution Code (override)';
 $LANG['COLLECTION_CODE'] = 'Collection Code (override)';
 $LANG['OWNER_INSTITUTION_CODE'] = 'Owner Code (override)';
+$LANG['STORAGELOCATION_CODE'] = 'Storage Location';
 $LANG['PROCESSING_STATUS'] = 'Processing Status';
 
 ?>

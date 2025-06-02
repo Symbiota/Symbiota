@@ -93,16 +93,16 @@ class GuidManager {
 
 		//Populate image GUIDs
 		$this->echoStr("Populating image GUIDs\n");
-		$sql = 'SELECT i.imgid FROM images i ';
-		if($collId) $sql .= 'INNER JOIN omoccurrences o ON i.occid = o.occid ';
-		$sql .= 'WHERE i.recordID IS NULL ';
+		$sql = 'SELECT m.mediaID FROM media m ';
+		if($collId) $sql .= 'INNER JOIN omoccurrences o ON m.occid = o.occid ';
+		$sql .= 'WHERE m.recordID IS NULL ';
 		if($collId) $sql .= 'AND o.collid = '.$collId;
 		$rs = $this->conn->query($sql);
 		$recCnt = 0;
 		if($rs->num_rows){
 			while($r = $rs->fetch_object()){
 				$guid = UuidFactory::getUuidV4();
-				$insSql = 'UPDATE images SET recordID = "'.$guid.'" WHERE (recordID IS NULL) AND (imgid = '.$r->imgid.')';
+				$insSql = 'UPDATE media SET recordID = "'.$guid.'" WHERE (recordID IS NULL) AND (mediaID = ' . $r->mediaID .')';
 				if(!$this->conn->query($insSql)){
 					$this->echoStr('ERROR: image guids; '.$this->conn->error);
 				}
@@ -155,9 +155,9 @@ class GuidManager {
 
 	public function getImageCount($collId = 0){
 		$retCnt = 0;
-		$sql = 'SELECT COUNT(i.imgid) as reccnt FROM images i ';
-		if($collId) $sql .= 'INNER JOIN omoccurrences o ON i.occid = o.occid ';
-		$sql .= 'WHERE i.recordID IS NULL ';
+		$sql = 'SELECT COUNT(m.mediaID) as reccnt FROM media m ';
+		if($collId) $sql .= 'INNER JOIN omoccurrences o ON m.occid = o.occid ';
+		$sql .= 'WHERE m.recordID IS NULL and m.mediaType = "image"';
 		if($collId) $sql .= 'AND o.collid = '.$collId;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){

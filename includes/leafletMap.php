@@ -24,8 +24,13 @@
 </script>
 
 <!-- Importing Leaflet Draw Drag --> 
+<script src="https://cdn.jsdelivr.net/npm/leaflet-path-drag@1.9.5/dist/index.min.js"></script>
 <script 
-   src= "<?php echo $CLIENT_ROOT?>/js/leaflet-draw-drag/dist/Leaflet.draw.drag.js" 
+   src="<?php echo $CLIENT_ROOT?>/js/leaflet-draw-drag/src/Edit.SimpleShape.Drag.js"
+   type="text/javascript">
+</script>
+<script 
+   src="<?php echo $CLIENT_ROOT?>/js/leaflet-draw-drag/src/Edit.Poly.Drag.js"
    type="text/javascript">
 </script>
 

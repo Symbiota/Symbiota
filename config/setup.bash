@@ -4,8 +4,10 @@
 # Global variables
 # Do not change these values unless you know what you are doing
 TEMPLATE_SUFFIX='_template'
-TEMPLATE_PATHS=('../config/' '../' '../includes/')
-WRITABLE_PATHS=('../temp' '../content' '../api/storage/framework' '../api/storage/logs')
+TEMPLATE_PATHS=('../config/' '../' '../includes/' '../content/collections/reports/')
+# Add an 'r' to the begining of the relative path (../&&&) to recursivly make all subdirectories writabe
+WRITABLE_PATHS=('../temp' 'r../content/collections' 'r../content/collicon' 'r../content/dwca' \
+'r../content/geolocate' 'r../content/imglib' 'r../content/logs' 'r../api/storage/framework' 'r../api/storage/logs')
 
 FORCEWRITE=0
 TESTMODE=0
@@ -162,16 +164,35 @@ echo "** Adjusting file permissions"
 
 for wPath in "${WRITABLE_PATHS[@]}"
 do
-  echo
-  echo "Setting subdirectories of ${wPath} to be writable"
+  prefix=""
+  prefix=${wPath:0:3}
+  if [[ "$prefix" == "r.." ]]
+  then
+    wPath="${wPath:1}"
+    readarray -d '' writableDirs < <(find "${wPath}" -type d -print0)
+    for wDir in ${writableDirs[@]}
+    do
+           echo "Setting ${wDir} to be writable (recursive)"
 
-  readarray -d '' writableDirs < <(find "${wPath}" -type d -print0)
+      if [[ "$VERBOSE" == "1" ]]
+      then
+        echo "chmod 777 $wDir"
+      fi
 
-  for wDir in ${writableDirs[@]}
-  do
+      if [[ "$TESTMODE" == "1" ]]
+      then
+        continue
+      fi
+
+      if ! chmod 777 "$wDir"
+      then
+        echo "Error setting permission recursively on $wDir"
+      fi
+    done
+  else
     if [[ "$VERBOSE" == "1" ]]
     then
-      echo "chmod 777 $wDir"
+      echo "chmod 777 $wPath"
     fi
 
     if [[ "$TESTMODE" == "1" ]]
@@ -179,13 +200,11 @@ do
       continue
     fi
 
-    if ! chmod 777 "$wDir"
+    echo "Setting ${wPath} to be writable"
+    if ! chmod 777 "$wPath"
     then
-      echo "Error setting permission on $wDir"
+      echo "Error setting permission on $wPath"
     fi
-  done
+  fi
 done
-
-
 exit 0
-

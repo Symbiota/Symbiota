@@ -110,9 +110,9 @@ if($isEditor && $submitAction){
 		<a class="screen-reader-only" href="#queryform-section"><?php echo $LANG['SKIP_NAV'] ?></a>
 		<!-- This is inner text! -->
 		<div  id='innertext'>
-			<h1 class="page-heading">Batch Georeferencing Tool</h1>
+			<h1 class="page-heading"><?php echo $LANG['BATCH_GEO_TOOLS']; ?></h1>
 			<?php
-			if($collid){
+			if(!empty($collMap[$collid])){
 				?>
 				<div id="breadcrumbs-section" style="float:left;">
 					<div style="font-weight: bold; font-size:140%;float:left">
@@ -188,13 +188,11 @@ if($isEditor && $submitAction){
 					?>
 				</div>
 				<?php
-			}
-			if($collid){
 				if($isEditor){
 					?>
 					<div id="queryform-section" style="float:right;">
 						<form name="queryform" method="post" action="batchgeoreftool.php" onsubmit="return verifyQueryForm(this)">
-							<fieldset style="padding:5px;width:600px;background-color:lightyellow;">
+							<fieldset class="fieldset-like-box" style="width:600px">
 								<legend><b><?php echo $LANG['QUERY_FORM']; ?></b></legend>
 								<div style="height:20px;">
 									<div style="clear:both;">
@@ -261,8 +259,8 @@ if($isEditor && $submitAction){
 												<?php
 												$municipalityStr = array_key_exists('municipalitystr',$_POST)?strip_tags($_POST['municipalitystr']):'';
 												$municipalityArr = array();
-												if($municipalityStr) { 
-													$municipalityArr = explode('|',$municipalityStr); 
+												if($municipalityStr) {
+													$municipalityArr = explode('|',$municipalityStr);
 												} else {
 													$municipalityArr = $geoManager->getMunicipalityArr();
 												}
@@ -470,7 +468,7 @@ if($isEditor && $submitAction){
 									</section>
 									<section class="gridlike-form-row bottom-breathing-room-rel">
 										<div>
-											<div id="utmdiv" style="display:none;padding:15px 10px;background-color:lightyellow;border:1px solid yellow;width:400px;height:75px;margin-bottom:10px;">
+											<div id="utmdiv" class="fieldset-like-box">
 												<div>
 													<div style="margin:3px;float:left;">
 														<?php echo $LANG['EAST']; ?>: <input name="utmeast" type="text" style="width:100px;" aria-label="<?php echo $LANG['EAST'] ?>" />
@@ -482,15 +480,15 @@ if($isEditor && $submitAction){
 														<?php echo $LANG['ZONE']; ?>: <input name="utmzone" style="width:40px;" aria-label="<?php echo $LANG['ZONE'] ?>" />
 													</div>
 												</div>
-												<div style="clear:both;margin:3px;">
-													<div style="float:left;">
+												<div>
+													<div>
 														<?php echo $LANG['HEMISPHERE']; ?>:
 														<select name="hemisphere" title="Use hemisphere designator (e.g. 12N) rather than grid zone "aria-label="<?php echo $LANG['HEMISPHERE'] ?>">
 															<option value="Northern"><?php echo $LANG['NORTH']; ?></option>
 															<option value="Southern"><?php echo $LANG['SOUTH']; ?></option>
 														</select>
 													</div>
-													<div style="margin:5px 0px 0px 15px;float:left;">
+													<div style="padding-top:1em">
 														<button value="Convert UTM values to lat/long " onclick="insertUtm(this.form)" ><?php echo $LANG['CONVERT_UTMS']; ?></button>
 													</div>
 												</div>

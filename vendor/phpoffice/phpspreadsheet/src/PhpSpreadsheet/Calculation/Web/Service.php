@@ -2,7 +2,7 @@
 
 namespace PhpOffice\PhpSpreadsheet\Calculation\Web;
 
-use PhpOffice\PhpSpreadsheet\Calculation\Functions;
+use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 use PhpOffice\PhpSpreadsheet\Settings;
 use Psr\Http\Client\ClientExceptionInterface;
 
@@ -18,35 +18,35 @@ class Service
      *
      * @return string the output resulting from a call to the webservice
      */
-    public static function webService(string $url)
+    public static function webService(string $url): string
     {
         $url = trim($url);
         if (strlen($url) > 2048) {
-            return Functions::VALUE(); // Invalid URL length
+            return ExcelError::VALUE(); // Invalid URL length
         }
 
         if (!preg_match('/^http[s]?:\/\//', $url)) {
-            return Functions::VALUE(); // Invalid protocol
+            return ExcelError::VALUE(); // Invalid protocol
         }
 
-        // Get results from the the webservice
+        // Get results from the webservice
         $client = Settings::getHttpClient();
         $requestFactory = Settings::getRequestFactory();
         $request = $requestFactory->createRequest('GET', $url);
 
         try {
             $response = $client->sendRequest($request);
-        } catch (ClientExceptionInterface $e) {
-            return Functions::VALUE(); // cURL error
+        } catch (ClientExceptionInterface) {
+            return ExcelError::VALUE(); // cURL error
         }
 
         if ($response->getStatusCode() != 200) {
-            return Functions::VALUE(); // cURL error
+            return ExcelError::VALUE(); // cURL error
         }
 
         $output = $response->getBody()->getContents();
         if (strlen($output) > 32767) {
-            return Functions::VALUE(); // Output not a string or too long
+            return ExcelError::VALUE(); // Output not a string or too long
         }
 
         return $output;
@@ -60,14 +60,12 @@ class Service
      * Excel Function:
      *        urlEncode(text)
      *
-     * @param mixed $text
-     *
      * @return string the url encoded output
      */
-    public static function urlEncode($text)
+    public static function urlEncode(mixed $text): string
     {
         if (!is_string($text)) {
-            return Functions::VALUE();
+            return ExcelError::VALUE();
         }
 
         return str_replace('+', '%20', urlencode($text));

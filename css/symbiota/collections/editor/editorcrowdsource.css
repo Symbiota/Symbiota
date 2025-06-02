@@ -1,0 +1,587 @@
+#navDiv{
+	width: 600px;
+	clear: both;	
+}
+
+#occdiv{
+	position: relative;
+}
+
+#admindiv{
+	width: 595px;
+}
+
+#innertext {
+	max-width: 70%;
+	width: fit-content;
+}
+
+#fullform fieldset{
+	border: 0px;
+}
+
+#fullform fieldset legend {
+	display: none;
+}
+
+img.docimg { 
+	border:			0px;
+	width:			9px;
+	margin-bottom:	2px; 
+}
+
+img.editimg { 
+	border:			0px;
+	width:			15px;
+}
+
+table { 
+	font-family: 	Arial, Helvetica, sans-serif; 
+	/*font-size: 		12px;*/
+}
+
+/* Field entry divs and input objects */
+#catalogNumberDiv {
+	display: none;
+}
+
+#otherCatalogNumbersDiv {
+	float: left;
+	margin-right: 2px;
+}
+
+#otherCatalogNumbersDiv input {
+	width: 95px;
+}
+
+#identifierDiv{
+	display: none;
+}
+
+#recordedByDiv {
+	float:left;
+	margin-right: 2px;
+}
+
+#recordedByDiv input{
+	width:	200px;
+}
+
+#recordNumberDiv {
+	float:left;
+	margin-right: 2px;
+}
+
+#recordNumberDiv input{
+	width:	60px;
+}
+
+#eventDateDiv {
+	float:left;
+}
+
+#eventDateDiv input{
+	width:	110px;
+}
+
+#eventDate2Div {
+	float:left;
+}
+
+#eventDate2Div input{
+	width:	110px;
+}
+
+#associatedCollectorsDiv {
+	float:left;
+	margin-right: 2px;
+	margin-top:2px;
+}
+
+#associatedCollectorsDiv input {
+	width: 300px;
+}
+
+#dupesDiv{
+	float: right;
+	margin-top: 10px; 
+}
+
+#dupeMsgDiv{
+	position: absolute;
+	top: 67px;
+	left: 350px;
+	display:none;
+	width:220px;
+	background-color:#FFFFFF;
+	z-index: 10; 
+	padding:25px;
+	font-weight:bold;
+}
+
+#dupeMsgDiv div{
+	width:170px;
+	border:2px outset blue;
+	padding:3px;
+}
+
+#idrefToggleDiv{
+	display:none;
+}
+
+#idrefdiv{
+	display:none;
+	clear:both;
+}
+
+#verbatimEventDateDiv {
+	float:left;
+	margin: 2px
+}
+
+#verbatimEventDateDiv input{
+	width:	200px;
+	display: block;
+}
+
+#endDateDiv {
+	display:none;
+}
+
+#exsDiv {
+	float:left;
+	margin: 2px
+}
+
+#ometidDiv{
+	float: left;
+}
+
+#exstitleinput {
+	width: 400px;
+}
+
+#exsnumberDiv {
+	float:left;
+	margin-left:5px;
+}
+
+#exsnumberDiv input{
+	width:50px;
+}
+
+#scinameDiv {
+	float:left;
+}
+
+#scinameDiv input{
+	width:390px;
+}
+
+#scientificNameAuthorshipDiv {
+	display:none;
+}
+
+#identificationQualifierDiv {
+	display:none;
+}
+
+#familyDiv {
+	display:none;
+}
+
+#identifiedByDiv {
+	display:none;
+}
+
+#dateIdentifiedDiv{
+	display:none;
+}
+
+#identificationReferencesDiv{
+	display:none;
+}
+
+#identificationRemarksDiv{
+	display:none;
+}
+
+#countryDiv{
+	float:left;
+	margin-right: 2px;
+}
+
+#countryDiv input{
+	width:	150px;
+}
+
+#stateProvinceDiv{
+	float:left;
+	margin-right: 2px;
+}
+
+#stateProvinceDiv input{
+	width:	150px;
+}
+
+#countyDiv{
+	float:left;
+	margin-right: 2px;
+}
+
+#countyDiv input{
+	width:	150px;
+}
+
+#municipalityDiv{
+	display:none;
+}
+
+#locationIdDiv{
+	display: none;
+}
+
+#localityDiv{
+	float:left;
+	margin-top:2px;
+}
+
+#localityDiv textarea{
+	width:	500px;
+}
+
+#localSecurityDiv{
+	display:none;
+}
+
+#localAutoDeactivatedDiv{
+	display:none;
+}
+
+#localityExtraToggle{
+	display:none;
+}
+
+#decimalLatitudeDiv{
+	float:left;
+	margin-right: 2px;
+	margin-top:2px;
+}
+
+#decimalLatitudeDiv input{
+	width:	76px;
+}
+
+#decimalLongitudeDiv{
+	float:left;
+	margin-right: 2px;
+	margin-top:2px;
+}
+
+#decimalLongitudeDiv input{
+	width:	88px;
+}
+
+#coordinateUncertaintyInMetersDiv{
+	float:left;
+	margin-right: 2px;
+}
+
+#coordinateUncertaintyInMetersDiv input{
+	width:	70px;
+}
+
+#coordCloningDiv{
+	display:	none;
+}
+
+#dmsAidDiv{
+	float:	left;
+	margin-top: 10px;
+	margin-left: 20px;
+	padding:	15px 10px;
+	width:	260px;
+}
+
+#utmAidDiv{
+	float:	left;
+	margin-top: 10px;
+	margin-left: 20px;
+	padding:	15px 10px;
+	width:150px;
+	margin-bottom:10px;
+}
+
+#trsAidDiv{
+	display: none;
+}
+
+#geodeticDatumDiv{
+	display:none;
+}
+
+#elevationDiv{
+	float: left;
+	margin-right: 2px;
+	margin-top:2px;
+}
+
+#elevationDiv input{
+	width:55px;
+}
+
+#verbatimElevationDiv{
+	float: left;
+	margin-right: 2px;
+	margin-top:2px;
+}
+
+#verbatimElevationDiv input{
+	width:	150px;
+}
+
+#depthDiv{
+	display: none;
+}
+
+#verbatimDepthDiv{
+	display: none;
+}
+
+#georefExtraToggleDiv{
+	display:none;
+}
+
+#georefExtraDiv{
+	display:block;
+}
+
+#verbatimCoordinatesDiv{
+	float: left;
+	margin-top: 2px;
+}
+
+#verbatimCoordinatesDiv input{
+	width:	200px;
+}
+
+#georeferencedByDiv{
+	display:none;
+}
+
+#footprintWktDiv{
+	display:none;
+}
+
+#georeferenceProtocolDiv{
+	display:none;
+}
+
+#georeferenceSourcesDiv{
+	display:none;
+}
+
+#georeferenceVerificationStatusDiv{
+	display:none;
+}
+
+#georeferenceRemarksDiv{
+	display:none;
+}
+
+#habitatDiv{
+	float: left;
+	margin-top:2px;
+	z-index: 1; 
+}
+
+#habitatDiv input{
+	width: 550px;
+}
+
+#substrateDiv{
+	float: left;
+	margin-top:2px;
+}
+
+#substrateDiv input{
+	width: 550px;
+}
+
+#associatedTaxaDiv{
+	display:none;
+}
+
+#verbatimAttributesDiv{
+	float: left;
+	margin-top:2px;
+}
+
+#verbatimAttributesDiv input{
+	width: 550px;
+}
+
+#occurrenceRemarksDiv{
+	float: left;
+	margin-top:2px;
+}
+
+#occurrenceRemarksDiv input{
+	width: 550px;
+}
+
+#occurrenceRemarksDiv span{
+	margin-left: 5px;
+	cursor: pointer;
+}
+
+#dynPropToggleSpan{
+	display:none;
+}
+
+#dynamicPropertiesDiv{
+	display:none;
+}
+
+#lifeStageDiv{
+	display:none;
+}
+
+#sexDiv{
+	display:none;
+}
+
+#individualCountDiv{
+	display:none;
+}
+
+#samplingProtocolDiv{
+	display:none;
+}
+
+#preparationsDiv{
+	display:none;
+}
+
+#reproductiveConditionDiv{
+	display:none;
+}
+
+#behaviorDiv{
+	display:none;
+}
+
+#vitalityDiv{
+	display:none;
+}
+
+#establishmentMeansDiv{
+	display:none;
+}
+
+#cultivationStatusDiv{
+	width:100%;
+	float: left;
+	margin-top:2px;
+}
+
+#typeStatusDiv{
+	display:none;
+}
+
+#dispositionDiv{
+	display:none;
+}
+
+#occurrenceIdDiv{
+	display:none;
+}
+
+#fieldNumberDiv{
+	display:none;
+}
+
+#institutionCodeDiv{
+	display:none;
+}
+
+#collectionCodeDiv{
+	display:none;
+}
+
+#ownerInstitutionCodeDiv{
+	display:none;
+}
+
+#basisOfRecordDiv{
+	display:none;
+}
+
+#languageDiv{
+	display:none;
+}
+
+#labelProjectDiv{
+	display:none;
+}
+
+#duplicateQuantityDiv{
+	display:none;
+}
+
+#dataGeneralizationsDiv{
+	display:none;
+}
+
+#processingStatusDiv{
+	display:none;
+}
+
+#pkDiv{
+	display:none;
+}
+
+/* Option Panels */
+#cloneDiv{
+	display: none;
+}
+
+/* Button Controls */
+#bottomSubmitDiv{
+	margin-top: -20px;
+	padding:10px;
+}
+
+#addButtonDiv{
+	display:none;
+}
+
+#editButtonDiv{
+	margin:	0px 25px;
+	float: left;
+}
+
+/*Tabs */
+#detTab{
+	display: none;
+}
+
+#imgTab{
+	display: none;
+}
+
+#resourceTab{
+	display: none;
+}
+
+#traitTab{
+	display: none;
+}
+
+#genTab{
+	display: none;
+}
+
+#adminTab{
+	display: none;
+}

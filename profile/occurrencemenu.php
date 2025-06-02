@@ -1,8 +1,9 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
-if($LANG_TAG != 'en' && !file_exists($SERVER_ROOT . '/content/lang/profile/occurrencemenu.' . $LANG_TAG . '.php')) $LANG_TAG = 'en';
-include_once($SERVER_ROOT . '/content/lang/profile/occurrencemenu.' . $LANG_TAG . '.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/profile/occurrencemenu.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/profile/occurrencemenu.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/profile/occurrencemenu.en.php');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 unset($_SESSION['editorquery']);
 
@@ -22,8 +23,7 @@ foreach($collArr as $id => $collectionArr){
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
-		<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['OCCURRENCE_MENU'];?></title>	
-		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/symbiota/main.css" type="text/css" rel="stylesheet">
+		<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['OCCURRENCE_MENU'];?></title>
 		<style>
          .screen-reader-only{ 
             position: absolute;
@@ -32,7 +32,7 @@ foreach($collArr as $id => $collectionArr){
       </style>
 </head>
 	<div style="margin:10px;">
-		<h1 class="page-heading screen-reader-only">Occurrence Menu</h1>
+		<h1 class="page-heading screen-reader-only"><?php echo $LANG['OCCURRENCE_MENU']; ?></h1>
 	<?php
 	if($SYMB_UID){
 		if(!$collArr) echo '<div style="margin:40px 15px;font-weight:bold">' . $LANG['NO_PROJECTS'] . '</div>';

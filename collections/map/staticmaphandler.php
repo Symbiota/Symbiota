@@ -1,11 +1,11 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/MapSupport.php');
-include_once($SERVER_ROOT.'/content/lang/collections/map/staticmaphandler.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/map/staticmaphandler.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/map/staticmaphandler.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/map/staticmaphandler.en.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $mapManager = new MapSupport();
-$taxaList = $mapManager->getTaxaList();
 
 //Set default bounding box for portal
 $boundLatMin = -90;
@@ -360,7 +360,7 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
                }
             });
 
-			   map.mapLayer.addControl(drawControl);
+			map.mapLayer.addControl(drawControl);
 
             map.mapLayer.on('draw:created', function(e) {
                if(e.layerType === "rectangle") {
@@ -429,13 +429,12 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
    <body onload="initialize()">
       <?php include($SERVER_ROOT . '/includes/header.php');?>
       <div id="service-container"
-         data-taxa-list="<?= htmlspecialchars(json_encode($taxaList))?>"
          data-bounds="<?= htmlspecialchars(json_encode($bounds))?>"
          data-lat="<?= htmlspecialchars($latCen)?>"
          data-lng="<?= htmlspecialchars($longCen)?>"
       ></div>
       <div role="main" id="innertext">
-         <h1 class="page-heading">Static distribution map generator</h1>
+         <h1 class="page-heading"><?php echo $LANG['STATIC_DIST_MAP_GENERATOR']; ?></h1>
          <div style="display:flex; justify-content:center">
             <div id="map" style="width:50rem;height:50rem;"></div>
          </div>
@@ -447,7 +446,7 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
             <div style="text-align: center; padding-top:0.5rem">
                <?php echo $LANG['MAPS_GENERATED'] ?>
                <span id="loading-bar-count">0</span>
-               <span id="loading-bar-max">/ <?php echo count($taxaList)?></span>
+               <span id="loading-bar-max">/1</span>
             </div>
          </div>
          <form id="thumbnailBuilder" name="thumbnailBuilder" method="post" action="">

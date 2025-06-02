@@ -73,4 +73,3 @@ $LANG['ADD_CHECKLIST'] = 'Ajouter une liste de contrôle';
 $LANG['DELETE_A_CHECKLIST'] = 'Supprimer une liste de contrôle';
 $LANG['SELECT_CHECKLIST_TO_DELETE'] = 'Supprimer la liste de contrôle';
 $LANG['DELETE_CHECKLIST'] = 'Supprimer la liste de contrôle';
-?>

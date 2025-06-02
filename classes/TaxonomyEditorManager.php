@@ -1,10 +1,14 @@
 <?php
+
+include_once($SERVER_ROOT.'/traits/TaxonomyTrait.php');
 include_once($SERVER_ROOT.'/classes/Manager.php');
 if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT . '/content/lang/classes/TaxonomyEditorManager.' . $LANG_TAG . '.php'))
 	include_once($SERVER_ROOT . '/content/lang/classes/TaxonomyEditorManager.en.php');
 else include_once($SERVER_ROOT . '/content/lang/classes/TaxonomyEditorManager.' . $LANG_TAG . '.php');
 
 class TaxonomyEditorManager extends Manager{
+
+	use TaxonomyTrait;
 
 	private $taxAuthId = 1;
 	private $tid = 0;
@@ -19,6 +23,8 @@ class TaxonomyEditorManager extends Manager{
 	private $unitName2;
 	private $unitInd3;
 	private $unitName3;
+	private $cultivarEpithet;
+	private $tradeName;
 	private $author;
 	private $parentTid = 0;
 	private $parentName;
@@ -43,7 +49,7 @@ class TaxonomyEditorManager extends Manager{
 
 	public function setTaxon(){
 		$sqlTaxon = 'SELECT tid, rankid, sciname, unitind1, unitname1, '.
-			'unitind2, unitname2, unitind3, unitname3, author, source, notes, securitystatus, initialtimestamp '.
+			'unitind2, unitname2, unitind3, unitname3, cultivarEpithet, tradeName, author, source, notes, securitystatus, initialtimestamp '.
 			'FROM taxa '.
 			'WHERE (tid = '.$this->tid.')';
 		//echo $sqlTaxon;
@@ -57,6 +63,8 @@ class TaxonomyEditorManager extends Manager{
 			$this->unitName2 = $r->unitname2;
 			$this->unitInd3 = $r->unitind3;
 			$this->unitName3 = $r->unitname3;
+			$this->cultivarEpithet = $r->cultivarEpithet;
+			$this->tradeName = $r->tradeName;
 			$this->author = $r->author;
 			$this->source = $r->source;
 			$this->notes = $r->notes;
@@ -213,34 +221,52 @@ class TaxonomyEditorManager extends Manager{
 	//Edit Functions
 	public function submitTaxonEdits($postArr){
 		$statusStr = '';
-		$sciname = trim($postArr['unitind1'].$postArr['unitname1'].' '.$postArr['unitind2'].$postArr['unitname2'].' '.trim($postArr['unitind3'].' '.$postArr['unitname3']));
+		$sciname = trim($postArr['unitind1'] . $postArr['unitname1'] . ' ' . (array_key_exists('unitind2', $postArr) ? $postArr['unitind2'] : '') . $postArr['unitname2'] . ' ' . trim($postArr['unitind3'] . ' ' . $postArr['unitname3']));
+		$processedCultivarEpithet = '';
+		$processedTradeName = '';
+		if(array_key_exists('cultivarEpithet', $postArr) && !empty($postArr['cultivarEpithet'])){
+			$processedCultivarEpithet = $this->standardizeCultivarEpithet($postArr['cultivarEpithet']);
+			$sciname .= " ". $processedCultivarEpithet;
+		}
+		$cultivarEpithetForSaving = $this->standardizeCultivarEpithet($postArr['cultivarEpithet'], true);
+		if(array_key_exists('tradeName', $postArr) && !empty($postArr['tradeName'])){
+			$processedTradeName = $this->standardizeTradeName($postArr['tradeName']);
+			$sciname .= ' ' . $processedTradeName;
+		}
 		$sql = 'UPDATE taxa SET '.
 			'unitind1 = '.($postArr['unitind1']?'"'.$this->cleanInStr($postArr['unitind1']).'"':'NULL').', '.
 			'unitname1 = "'.$this->cleanInStr($postArr['unitname1']).'",'.
-			'unitind2 = '.($postArr['unitind2']?'"'.$this->cleanInStr($postArr['unitind2']).'"':'NULL').', '.
+			'unitind2 = '.((array_key_exists('unitind2', $postArr) && $postArr['unitind2']) ? '"' . $this->cleanInStr($postArr['unitind2']) . '"' : 'NULL').', '.
 			'unitname2 = '.($postArr['unitname2']?'"'.$this->cleanInStr($postArr['unitname2']).'"':'NULL').', '.
 			'unitind3 = '.($postArr['unitind3']?'"'.$this->cleanInStr($postArr['unitind3']).'"':'NULL').', '.
 			'unitname3 = '.($postArr['unitname3']?'"'.$this->cleanInStr($postArr['unitname3']).'"':'NULL').', '.
+			'cultivarEpithet = ' . ((array_key_exists('cultivarEpithet', $postArr) && $postArr['cultivarEpithet']) ? '"'.($this->cleanInStr($cultivarEpithetForSaving)).'"' : 'NULL') . ', ' . // @TODO won't this set this value as blank quotes if empty?
+			'tradeName = ' . ((array_key_exists('tradeName', $postArr) && $postArr['tradeName']) ? '"'.$this->cleanInStr($processedTradeName).'"' : 'NULL') . ', ' .
 			'author = "'.($postArr['author']?$this->cleanInStr($postArr['author']):'').'", '.
 			'rankid = '.(is_numeric($postArr['rankid'])?$postArr['rankid']:'NULL').', '.
 			'source = '.($postArr['source']?'"'.$this->cleanInStr($postArr['source']).'"':'NULL').', '.
 			'notes = '.($postArr['notes']?'"'.$this->cleanInStr($postArr['notes']).'"':'NULL').', '.
 			'securitystatus = '.(is_numeric($postArr['securitystatus'])?$postArr['securitystatus']:'0').', '.
 			'modifiedUid = '.$GLOBALS['SYMB_UID'].', '.
-			'modifiedTimeStamp = "'.date('Y-m-d H:i:s').'",'.
-			'sciname = "'.$this->cleanInStr($sciname).'" '.
-			'WHERE (tid = '.$this->tid.')';
-		//echo $sql;
-		if(!$this->conn->query($sql)){
+			'modifiedTimeStamp = "'.date('Y-m-d H:i:s').'", ' ;
+			$sql .= 'sciname = "' . $this->cleanInStr($sciname) . '" ';
+			$sql .= 'WHERE (tid = '.$this->tid.')';
+		$updateStatus = false;
+		try{
+			$updateStatus = $this->conn->query($sql);
+		} catch(Exception $e){
+			error_log("Error updating taxon: " . $sql);
+		}
+		if(!$updateStatus){
 			$statusStr = (isset($this->langArr['ERROR_EDITING_TAXON'])?$this->langArr['ERROR_EDITING_TAXON']:'ERROR editing taxon').': '.$this->conn->error;
 		}
 
 		//If SecurityStatus was changed, set security status within omoccurrence table
 		if($postArr['securitystatus'] != $_REQUEST['securitystatusstart']){
 			if(is_numeric($postArr['securitystatus'])){
-				$sql2 = 'UPDATE omoccurrences SET localitysecurity = 0 WHERE (tidinterpreted = ?) AND (localitySecurityReason IS NULL)';
+				$sql2 = 'UPDATE omoccurrences SET recordSecurity = 0 WHERE (tidinterpreted = ?) AND (securityReason IS NULL)';
 				if($postArr['securitystatus']){
-					$sql2 = 'UPDATE omoccurrences SET localitysecurity = 1 WHERE (tidinterpreted = ?) AND (localitySecurityReason IS NULL) AND (cultivationStatus = 0 OR cultivationStatus IS NULL)';
+					$sql2 = 'UPDATE omoccurrences SET recordSecurity = 1 WHERE (tidinterpreted = ?) AND (securityReason IS NULL) AND (cultivationStatus = 0 OR cultivationStatus IS NULL)';
 				}
 				if($stmt = $this->conn->prepare($sql2)){
 					$stmt->bind_param('i', $this->tid);
@@ -535,10 +561,46 @@ class TaxonomyEditorManager extends Manager{
 	public function loadNewName($dataArr){
 		//Load new name into taxa table
 		$tid = 0;
-		$sqlTaxa = 'INSERT INTO taxa(sciname, author, rankid, unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, '.
+		$unitind1 = array_key_exists('unitind1', $dataArr) ? $dataArr['unitind1'] : '';
+		$unitname1 = array_key_exists('unitname1', $dataArr) ? $dataArr['unitname1'] : '';
+		$unitind2 = array_key_exists('unitind2', $dataArr) ? $dataArr['unitind2'] : '';
+		$unitname2 = array_key_exists('unitname2', $dataArr) ? $dataArr['unitname2'] : '';
+		$unitind3 = array_key_exists('unitind3', $dataArr) ? $dataArr['unitind3'] : '';
+		$unitname3 = array_key_exists('unitname3', $dataArr) ? $dataArr['unitname3'] : '';
+		$processedSciname = trim( $unitind1 . $unitname1 . ' ' . $unitind2 . $unitname2 . ' ' . trim($unitind3 . ' ' . $unitname3));
+		$processedTradeName = '';
+		$processedCultivarEpithet = '';
+		if(array_key_exists('cultivarEpithet', $dataArr) && !empty($dataArr['cultivarEpithet'])){
+			$processedCultivarEpithet = $this->standardizeCultivarEpithet($dataArr['cultivarEpithet']);
+			$processedSciname .= " ". $processedCultivarEpithet;
+		}
+		if(array_key_exists('tradeName', $dataArr) && !empty($dataArr['tradeName'])){
+			$processedTradeName = $this->standardizeTradeName($dataArr['tradeName']);
+			$processedSciname .= ' ' . $processedTradeName;
+		}
+
+		$parentTid = array_key_exists('parenttid', $dataArr) && is_numeric($dataArr['parenttid']) ? (int)$dataArr['parenttid'] : null;
+
+		$parentKingdomNameSql = 'SELECT k.sciname
+			FROM taxa k INNER JOIN taxaenumtree e ON k.tid = e.parenttid
+			WHERE e.taxauthid = 1 AND k.rankid = 10 AND e.tid = ?;';
+		$stmnt = $this->conn->prepare($parentKingdomNameSql);
+		$kingdomName = '';
+		if($stmnt){
+			$stmnt->bind_param('i', $parentTid);
+			if($stmnt->execute()){
+				$stmnt->bind_result($kingdomName);
+				$stmnt->store_result();
+				$stmnt->fetch();
+			}
+		}
+		
+
+		$sqlTaxa = 'INSERT INTO taxa(kingdomName, sciname, author, rankid, unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, cultivarEpithet, tradeName, '.
 			'source, notes, securitystatus, modifiedUid, modifiedTimeStamp) '.
-			'VALUES ("'.$this->cleanInStr($dataArr['sciname']).'","'.
-			($dataArr['author']?$this->cleanInStr($dataArr['author']):'').'",'.
+			'VALUES (' . ($kingdomName ? ('"' . $this->cleanInStr($kingdomName) . '"') : '""') . ', 
+			"'.$this->cleanInStr($processedSciname).'","'.
+			($dataArr['author']? ($this->cleanInStr($dataArr['author'])) : '').'",'.
 			(isset($dataArr['rankid'])?$dataArr['rankid']:0).','.
 			($dataArr['unitind1']?'"'.$this->cleanInStr($dataArr['unitind1']).'"':'NULL').',"'.
 			$this->cleanInStr($dataArr['unitname1']).'",'.
@@ -546,11 +608,21 @@ class TaxonomyEditorManager extends Manager{
 			($dataArr['unitname2']?'"'.$this->cleanInStr($dataArr['unitname2']).'"':'NULL').','.
 			($dataArr['unitind3']?'"'.$this->cleanInStr($dataArr['unitind3']).'"':'NULL').','.
 			($dataArr['unitname3']?'"'.$this->cleanInStr($dataArr['unitname3']).'"':'NULL').','.
-			($dataArr['source']?'"'.$this->cleanInStr($dataArr['source']).'"':'NULL').','.
+			((array_key_exists('cultivarEpithet', $dataArr) && $dataArr['cultivarEpithet']) ? ('"' . $this->cleanInStr(preg_replace('/(^["\'“]+)|(["\'”]+$)/', '', $processedCultivarEpithet)) . '"') : '""') . ',' .
+			((array_key_exists('tradeName', $dataArr) && $dataArr['tradeName']) ? ('"' . $this->cleanInStr($processedTradeName) . '"') : '""') . ',' .
+			($dataArr['source']? '"'.$this->cleanInStr($dataArr['source']).'"':'NULL').','.
 			($dataArr['notes']?'"'.$this->cleanInStr($dataArr['notes']).'"':'NULL').','.
 			$this->cleanInStr($dataArr['securitystatus']).','.
-			$GLOBALS['SYMB_UID'].',"'.date('Y-m-d H:i:s').'")';
-		if($this->conn->query($sqlTaxa)){
+			$GLOBALS['SYMB_UID'].',"'.
+			date('Y-m-d H:i:s').'")';
+		$insertStatus = false;
+		try{
+			$insertStatus = $this->conn->query($sqlTaxa);
+		} catch (Exception $e){
+			error_log("Error inserting new taxon: " . $sqlTaxa);
+		}
+
+		if($insertStatus){
 			$tid = $this->conn->insert_id;
 		 	//Load accepteance status into taxstatus table
 			$tidAccepted = ($dataArr['acceptstatus']?$tid:$dataArr['tidaccepted']);
@@ -621,8 +693,8 @@ class TaxonomyEditorManager extends Manager{
 			if($dataArr['securitystatus'] == 1){
 				//Set locality security
 				$sqlUpdate2 = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname
-					SET o.localitysecurity = 1
-					WHERE (o.localitySecurityReason IS NULL) AND (cultivationStatus = 0 OR cultivationStatus IS NULL) AND (o.sciname = ?) ';
+					SET o.recordSecurity = 1
+					WHERE (o.securityReason IS NULL) AND (cultivationStatus = 0 OR cultivationStatus IS NULL) AND (o.sciname = ?) ';
 				if($stmt = $this->conn->prepare($sqlUpdate2)){
 					$stmt->bind_param('s', $dataArr["sciname"]);
 					$stmt->execute();
@@ -640,7 +712,7 @@ class TaxonomyEditorManager extends Manager{
 			$rs2a->free();
 
 			if($occidArr){
-				$sql2 = 'UPDATE images SET tid = '.$tid.' WHERE tid IS NULL AND occid IN('.implode(',',$occidArr).')';
+				$sql2 = 'UPDATE media SET tid = '.$tid.' WHERE tid IS NULL AND occid IN('.implode(',',$occidArr).')';
 				$this->conn->query($sql2);
 				if(!$this->conn->query($sql2)){
 					echo (isset($this->langArr['WARNING_UPDATE_IMAGES'])?$this->langArr['WARNING_UPDATE_IMAGES']:'WARNING: Taxon loaded into taxa, but occurrence images must be updated with matching name').': '.$this->conn->error;
@@ -696,7 +768,7 @@ class TaxonomyEditorManager extends Manager{
 		$rs->free();
 
 		//Field images
-		$sql ='SELECT COUNT(imgid) AS cnt FROM images WHERE tid = '.$this->tid;
+		$sql ='SELECT COUNT(mediaID) AS cnt FROM media WHERE tid = '.$this->tid;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr['img'] = $r->cnt;
@@ -778,7 +850,7 @@ class TaxonomyEditorManager extends Manager{
 			//Set occurrence and determination tids to NULL within delete function function below
 
 			//Field images; specimen images set to null within delete function
-			$sql ='UPDATE IGNORE images SET tid = '.$targetTid.' WHERE occid IS NULL AND tid = '.$this->tid;
+			$sql ='UPDATE IGNORE media SET tid = '.$targetTid.' WHERE occid IS NULL AND tid = '.$this->tid;
 			if(!$this->conn->query($sql)) $this->warningArr[] = (isset($this->langArr['ERROR_TRANSFER_IMGS'])?$this->langArr['ERROR_TRANSFER_IMGS']:'ERROR transferring image links').' ('.$this->conn->error.')';
 
 			//Taxon maps
@@ -827,11 +899,11 @@ class TaxonomyEditorManager extends Manager{
 
 	public function deleteTaxon(){
 		//Specimen images
-		$sql ='UPDATE images SET tid = NULL WHERE occid IS NOT NULL AND tid = '.$this->tid;
+		$sql ='UPDATE media SET tid = NULL WHERE occid IS NOT NULL AND tid = '.$this->tid;
 		if(!$this->conn->query($sql)) $this->warningArr[] = (isset($this->langArr['ERROR_SETTING_NULL'])?$this->langArr['ERROR_SETTING_NULL']:'ERROR setting tid to NULL for occurrence images in deleteTaxon method').' ('.$this->conn->error.')';
 
 		/*
-		$sql ='DELETE FROM images WHERE tid = '.$this->tid;
+		$sql ='DELETE FROM media WHERE tid = '.$this->tid;
 		if(!$this->conn->query($sql)) $this->warningArr[] = 'ERROR deleting remaining links in deleteTaxon method ('.$this->conn->error.')';
 		*/
 
@@ -938,6 +1010,7 @@ class TaxonomyEditorManager extends Manager{
 		return $this->sciName;
 	}
 
+
 	public function getKingdomName(){
 		return $this->kingdomName;
 	}
@@ -972,6 +1045,14 @@ class TaxonomyEditorManager extends Manager{
 
 	public function getUnitName3(){
 		return $this->unitName3;
+	}
+
+	public function getCultivarEpithet(){
+		return $this->cultivarEpithet;
+	}
+
+	public function getTradeName(){
+		return $this->tradeName;
 	}
 
 	public function getAuthor(){

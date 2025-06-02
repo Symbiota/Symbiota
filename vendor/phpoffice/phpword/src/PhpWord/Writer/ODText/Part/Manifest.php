@@ -11,27 +11,28 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\ODText\Part;
 
+use PhpOffice\PhpWord\Element\Formula;
 use PhpOffice\PhpWord\Media;
+use PhpOffice\PhpWord\Writer\ODText;
 
 /**
- * ODText manifest part writer: META-INF/manifest.xml
+ * ODText manifest part writer: META-INF/manifest.xml.
  */
 class Manifest extends AbstractPart
 {
     /**
-     * Write part
+     * Write part.
      *
      * @return string
      */
     public function write()
     {
-        $parts = array('content.xml', 'meta.xml', 'styles.xml');
         $xmlWriter = $this->getXmlWriter();
 
         $xmlWriter->startDocument('1.0', 'UTF-8');
@@ -46,7 +47,7 @@ class Manifest extends AbstractPart
         $xmlWriter->endElement();
 
         // Parts
-        foreach ($parts as $part) {
+        foreach (['content.xml', 'meta.xml', 'styles.xml'] as $part) {
             $xmlWriter->startElement('manifest:file-entry');
             $xmlWriter->writeAttribute('manifest:media-type', 'text/xml');
             $xmlWriter->writeAttribute('manifest:full-path', $part);
@@ -60,6 +61,20 @@ class Manifest extends AbstractPart
                 $xmlWriter->startElement('manifest:file-entry');
                 $xmlWriter->writeAttribute('manifest:media-type', $medium['imageType']);
                 $xmlWriter->writeAttribute('manifest:full-path', 'Pictures/' . $medium['target']);
+                $xmlWriter->endElement();
+            }
+        }
+
+        foreach ($this->getObjects() as $idxObject => $object) {
+            if ($object instanceof Formula) {
+                $xmlWriter->startElement('manifest:file-entry');
+                $xmlWriter->writeAttribute('manifest:full-path', 'Formula' . $idxObject . '/content.xml');
+                $xmlWriter->writeAttribute('manifest:media-type', 'text/xml');
+                $xmlWriter->endElement();
+                $xmlWriter->startElement('manifest:file-entry');
+                $xmlWriter->writeAttribute('manifest:full-path', 'Formula' . $idxObject . '/');
+                $xmlWriter->writeAttribute('manifest:version', '1.2');
+                $xmlWriter->writeAttribute('manifest:media-type', 'application/vnd.oasis.opendocument.formula');
                 $xmlWriter->endElement();
             }
         }
