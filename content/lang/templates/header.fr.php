@@ -15,9 +15,9 @@ $LANG['H_MAP'] = 'Carte';
 $LANG['H_MAP_SEARCH'] = 'Rechercher Carte';
 $LANG['H_TAXONOMIC_EXPLORER'] = 'Explorateur Taxonomique';
 
-$LANG['H_IMAGES'] = 'Images';
-$LANG['H_IMAGE_BROWSER'] = "Vavigateur d'Images";
-$LANG['H_IMAGE_SEARCH'] = "Rechercher d'Images";
+$LANG['H_IMAGES'] = 'Multimédia';
+$LANG['H_IMAGE_BROWSER'] = "Navigateur Multimédia";
+$LANG['H_IMAGE_SEARCH'] = "Recherche Multimédia";
 
 $LANG['H_INVENTORIES'] = 'liste des Espèces';
 $LANG['H_PROJECT_1'] = 'Projet 1';
