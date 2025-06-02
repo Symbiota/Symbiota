@@ -12,7 +12,7 @@ $collid = array_key_exists('collid',$_REQUEST) ? filter_var($_REQUEST['collid'],
 $uspid = array_key_exists('uspid',$_REQUEST) ? filter_var($_REQUEST['uspid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $action = array_key_exists('action',$_REQUEST) ? $_REQUEST['action'] : '';
 
-$DIRECTUPLOAD = 1; $FILEUPLOAD = 3; $STOREDPROCEDURE = 4; $SCRIPTUPLOAD = 5; $DWCAUPLOAD = 6; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9; $SYMBIOTA = 13;
+$DIRECTUPLOAD = 1; $FILEUPLOAD_SELECT = 2; $FILEUPLOAD_FULL = 3; $STOREDPROCEDURE = 4; $SCRIPTUPLOAD = 5; $DWCAUPLOAD = 6; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9; $SYMBIOTA = 13;
 
 $duManager = new SpecUpload();
 
@@ -243,8 +243,9 @@ include($SERVER_ROOT.'/includes/header.php');
 									echo '<option value="' . $DWCAUPLOAD . '" '.($uploadType==$DWCAUPLOAD ? 'SELECTED':'') . '>' . $LANG['MANUAL_DWCA']  . '</option>';
 									echo '<option value="' . $IPTUPLOAD . '" '.($uploadType==$IPTUPLOAD ? 'SELECTED':'') . '>' . $LANG['IPT_DWCA'] . '</option>';
 									echo '<option value="' . $SYMBIOTA . '" ' . ($uploadType==$SYMBIOTA ? 'SELECTED':'') . '>' . $LANG['SYMBIOTA_DWCA'] . '</option>';
-									echo '<option value="' . $FILEUPLOAD . '" ' . ($uploadType==$FILEUPLOAD ? 'SELECTED' : '') . '>' . $LANG['FILE'] . '</option>';
-									echo '<option value="' . $SKELETAL . '" ' . ($uploadType==$SKELETAL ? 'SELECTED':'') . '>' . $LANG['SKELETAL_FILE'] . '</option>';
+									echo '<option value="' . $FILEUPLOAD_SELECT . '" ' . ($uploadType==$FILEUPLOAD_SELECT ? 'SELECTED' : '') . '>' . $LANG['FILE_SELECT'] . '</option>';
+									echo '<option value="' . $FILEUPLOAD_FULL . '" ' . ($uploadType==$FILEUPLOAD_FULL ? 'SELECTED' : '') . '>' . $LANG['FILE_FULL'] . '</option>';
+									echo '<option value="' . $SKELETAL . '" ' . ($uploadType==$SKELETAL ? 'SELECTED':'') . '>' . $LANG['FILE_SKELETAL'] . '</option>';
 									echo '<option value="' . $NFNUPLOAD . '" ' . ($uploadType==$NFNUPLOAD ? 'SELECTED':'') . '>' . $LANG['NFN_UPLOAD'] . '</option>';
 									echo '<option value="">......................................</option>';
 									echo '<option value="' . $DIRECTUPLOAD . '" ' . ($uploadType==$DIRECTUPLOAD ? 'SELECTED':'') . '>' . $LANG['DIRECT_DB'] . '</option>';
