@@ -88,9 +88,9 @@ class AssociationManager extends OccurrenceTaxaManager{
 			}else{
 				$sql .= "AND (o.occid IN (SELECT occid FROM ( " . $forwardSql . " UNION " . $reverseSql . " UNION " . $externalAndObservationalSql . " ) AS occids)";
 			}
-    }
-    return $sql;
-}
+		}
+		return $sql;
+	}
 
 	private function getAssociatedTaxonWhereFrag($associationArr){
 		$sqlWhereTaxa = '';

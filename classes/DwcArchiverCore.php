@@ -2369,8 +2369,8 @@ class DwcArchiverCore extends Manager{
 		}
 		$stmt = $this->conn->stmt_init();
 		if (!$stmt->prepare($sql)) {
-        	throw new Exception("SQL Error: " . $stmt->error);
-    	}
+			throw new Exception("SQL Error: " . $stmt->error);
+		}
 		if (is_numeric($collid)) {
 			$stmt->bind_param('ii',$collid,$collid);
 		}
@@ -2380,7 +2380,7 @@ class DwcArchiverCore extends Manager{
 			$bool = true;
 		}
 		$result->free();
-    	$stmt->close();
+		$stmt->close();
 
 		return $bool;
 	}
