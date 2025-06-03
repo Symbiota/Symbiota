@@ -1348,7 +1348,7 @@ else{
 											<div id="preparationsDiv" class="field-div">
 												<?php echo $LANG['PREPARATIONS']; ?>
 												<a href="#" onclick="return dwcDoc('preparations')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-												<input type="text" name="preparations" maxlength="100" value="<?php echo array_key_exists('preparations',$occArr)?$occArr['preparations']:''; ?>" onchange="fieldChanged('preparations');" />
+												<textarea type="text" name="preparations" maxlength="100" onchange="fieldChanged('preparations');" ><?= array_key_exists('preparations',$occArr)?$occArr['preparations']:''; ?></textarea>
 											</div>
 											<div id="reproductiveConditionDiv" class="field-div">
 												<?php echo $LANG['REPRODUCTIVE_CONDITION']; ?>
