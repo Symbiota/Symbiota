@@ -99,6 +99,7 @@ $LANG['NON_SANCTIONED'] = 'Valeur non Sanctionnée';
 $LANG['INST_CODE_EXPLAIN'] = 'Remplace code d\'institution défini dans le formulaire de métadonnées de collection';
 $LANG['COLL_CODE_EXPLAIN'] = 'Remplace code de collection défini dans le formulaire de métadonnées de collection';
 $LANG['OWNER_CODE_EXPLAIN'] = 'Si différent du code de l\'établissement';
+$LANG['STORAGELOCATION_EXPLAIN'] = "Emplacement dans le lieu où l'échantillon est stocké";
 $LANG['NO_SET_STATUS'] = 'Aucun état défini';
 $LANG['AKA_GENERAL'] = 'aka généralisations de données';
 $LANG['PRIMARY_KEY'] = 'Enregistrement d\'occurrence interne Clé Primaire (occid)';

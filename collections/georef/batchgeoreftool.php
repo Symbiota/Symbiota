@@ -112,7 +112,7 @@ if($isEditor && $submitAction){
 		<div  id='innertext'>
 			<h1 class="page-heading"><?php echo $LANG['BATCH_GEO_TOOLS']; ?></h1>
 			<?php
-			if($collid){
+			if(!empty($collMap[$collid])){
 				?>
 				<div id="breadcrumbs-section" style="float:left;">
 					<div style="font-weight: bold; font-size:140%;float:left">
@@ -188,8 +188,6 @@ if($isEditor && $submitAction){
 					?>
 				</div>
 				<?php
-			}
-			if($collid){
 				if($isEditor){
 					?>
 					<div id="queryform-section" style="float:right;">
@@ -261,8 +259,8 @@ if($isEditor && $submitAction){
 												<?php
 												$municipalityStr = array_key_exists('municipalitystr',$_POST)?strip_tags($_POST['municipalitystr']):'';
 												$municipalityArr = array();
-												if($municipalityStr) { 
-													$municipalityArr = explode('|',$municipalityStr); 
+												if($municipalityStr) {
+													$municipalityArr = explode('|',$municipalityStr);
 												} else {
 													$municipalityArr = $geoManager->getMunicipalityArr();
 												}

@@ -250,11 +250,13 @@ if($SYMB_UID){
 						$occur_map['collectioncode'],
 						$occur_map['catalognumber']
 					);
+
 					Media::add(
 						$_POST,
 						new LocalStorage($path),
 						$_FILES['imgfile'] ?? null
 					);
+
 					if($errors = Media::getErrors()) {
 						$statusStr = "ERROR: " . array_pop($errors);
 					} else {
@@ -481,16 +483,17 @@ else{
 	<title><?= $DEFAULT_TITLE . ' ' . $LANG['OCCEDITOR'] ?></title>
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<link href="<?= $CSS_BASE_PATH ?>/symbiota/variables.css" type="text/css" rel="stylesheet">
+	<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/editor/editormain.css?ver=1c" type="text/css" rel="stylesheet" id="editorCssLink" />
 	<?php
 	//include_once($SERVER_ROOT.'/includes/head.php');
     if($crowdSourceMode == 1){
 		?>
-		<link href="includes/config/occureditorcrowdsource.css?ver=5" type="text/css" rel="stylesheet" id="editorCssLink" />
+		<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/editor/editorcrowdsource.css?ver=1" type="text/css" rel="stylesheet" id="editorCssLink" />
 		<?php
     }
     else{
 		?>
-		<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/editor/occurrenceeditor.css?ver=9" type="text/css" rel="stylesheet" id="editorCssLink" >
+		<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/editor/editorfulldisplay.css?ver=1" type="text/css" rel="stylesheet" id="editorCssLink" >
 		<?php
 		if(isset($CSSARR)){
 			foreach($CSSARR as $cssVal){
@@ -548,58 +551,11 @@ else{
 	<script src="../../js/symb/wktpolygontools.js?ver=2c" type="text/javascript"></script>
 	<script src="../../js/symb/collections.georef.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.main.js?ver=3" type="text/javascript"></script>
+	<script src="../../js/symb/collections.editor.main.js?ver=4" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.tools.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.imgtools.js?ver=4" type="text/javascript"></script>
 	<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.query.js?ver=6" type="text/javascript"></script>
-	<style type="text/css">
-		fieldset > legend{ font-weight:bold; }
-		select{ margin-bottom: 2px; }
-		#identifierDiv img{ width:10px; margin-left: 5px; }
-		#innertext{ background-color: white; margin: 0px 10px; }
-		.fieldGroupDiv {
-			display: flex;
-			align-items: center;
-			gap: 0.75rem;
-			margin-bottom: 1rem;
-			input {
-				margin: 0
-			}
-			a {
-				display: flex;
-			}
-		}
-		.fieldDiv{
-			display: inline;
-		}
-
-		.editimg{ width: 15px; }
-
-		.button-toggle {
-			background-color: transparent;
-			color: var(--body-text-color);
-			border-radius: 5px;
-			border: 2px solid var(--darkest-color);
-
-			&.active {
-				background-color: var(--darkest-color);
-				color: white;
-			}
-			&:hover {
-				background-color: var(--medium-color);
-				border: 2px solid var(--medium-color);
-				color: var(--light-color);
-			}
-		}
-		#labelProcFieldset{
-			padding:15px;
-		}
-
-		.ui-widget {
-			font-size: 1em;
-		}
-	</style>
 </head>
 <body>
 	<div role="main" id="innertext">
@@ -1394,7 +1350,7 @@ else{
 											<div id="preparationsDiv" class="field-div">
 												<?php echo $LANG['PREPARATIONS']; ?>
 												<a href="#" onclick="return dwcDoc('preparations')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-												<input type="text" name="preparations" maxlength="100" value="<?php echo array_key_exists('preparations',$occArr)?$occArr['preparations']:''; ?>" onchange="fieldChanged('preparations');" />
+												<textarea type="text" name="preparations" maxlength="100" onchange="fieldChanged('preparations');" ><?= array_key_exists('preparations',$occArr)?$occArr['preparations']:''; ?></textarea>
 											</div>
 											<div id="reproductiveConditionDiv" class="field-div">
 												<?php echo $LANG['REPRODUCTIVE_CONDITION']; ?>
@@ -1495,6 +1451,13 @@ else{
 												<?php echo $LANG['OWNER_INSTITUTION_CODE']; ?>
 												<a href="#" onclick="return dwcDoc('ownerInstitutionCode')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
 												<input type="text" name="ownerinstitutioncode" maxlength="32" value="<?php echo array_key_exists('ownerinstitutioncode',$occArr)?$occArr['ownerinstitutioncode']:''; ?>" onchange="fieldChanged('ownerinstitutioncode');" />
+											</div>
+										</div>
+										<div style="padding:3px;clear:both;">
+											<div id="storageLocationDiv" class="field-div" title="<?php echo $LANG['STORAGELOCATION_EXPLAIN']; ?>">
+												<?php echo $LANG['STORAGELOCATION_CODE']; ?>
+												<a href="#" onclick="return dwcDoc('storageLocation')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+												<input type="text" name="storagelocation" maxlength="32" value="<?php echo array_key_exists('storagelocation',$occArr)?$occArr['storagelocation']:''; ?>" onchange="fieldChanged('storagelocation');" />
 											</div>
 											<div id="basisOfRecordDiv" class="field-div">
 												<?php echo $LANG['BASIS_OF_RECORD']; ?>
@@ -1623,7 +1586,7 @@ else{
 													?>
 												</select>
 												<div id="editButtonDiv">
-													<button class="button" type="submit" id="saveEditsButton" name="submitaction" value="saveOccurEdits" style="width:150px;" onclick="return verifyFullFormEdits(this.form)" disabled><?php echo $LANG['SAVE_EDITS']; ?></button>
+													<button class="button icon-button" type="submit" id="saveEditsButton" name="submitaction" value="saveOccurEdits" style="width:150px;" onclick="return verifyFullFormEdits(this.form)" disabled><?php echo $LANG['SAVE_EDITS']; ?></button>
 													<input type="hidden" name="occindex" value="<?php echo is_numeric($occIndex)?$occIndex:''; ?>" />
 													<input type="hidden" name="editedfields" value="" />
 												</div>
@@ -1697,7 +1660,7 @@ else{
 											?>
 											<div id="addButtonDiv">
 												<input name="recordenteredby" type="hidden" value="<?php echo $PARAMS_ARR['un']; ?>" />
-												<button name="submitaction" type="submit" value="addOccurRecord" style="width:150px;font-weight:bold;margin:10px;"><?php echo $LANG['ADD_RECORD']; ?></button>
+												<button name="submitaction" type="submit" class="button icon-button" value="addOccurRecord" style="width:150px;font-weight:bold;margin:10px;"><?php echo $LANG['ADD_RECORD']; ?></button>
 												<input name="qrycnt" type="hidden" value="<?php echo $qryCnt?$qryCnt:''; ?>" />
 												<div style="margin-left:15px;font-weight:bold;">
 													<?php echo $LANG['FOLLOW_UP']; ?>:

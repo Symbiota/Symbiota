@@ -660,7 +660,7 @@ class ImageProcessor {
 			}
 		}
 		if($this->logMode == 1 || $this->logMode == 3){
-			echo '<li '.($indent?'style="margin-left:'.($indent*15).'px"':'').'>'.$str."</li>\n";
+			echo '<li '.($indent?'style="margin-left:'.($indent*15).'px"':'').'>'. htmlspecialchars($str, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ."</li>\n";
 			ob_flush();
 			flush();
 		}
