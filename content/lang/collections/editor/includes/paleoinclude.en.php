@@ -5,7 +5,7 @@ Language: English
 ------------------
 */
 
-$LANG['ERR_ONE_INTERVALS_EMPTY'] = 'Missing value: Both Early Interval and Late Interval need to have a value selected, even if these values are the same, e.g. "Cretaceous" and "Cretaceous".';
+$LANG['ERR_ONE_INTERVALS_EMPTY'] = 'Missing value: Both Early Interval and Late Interval need to have a value selected, even if these values are the same, e.g. \"Cretaceous\" and \"Cretaceous\".';
 $LANG['ERR_BAD_TERM_ORDER'] = 'Illogical value selected! The Early Interval value must be geologically older than the Late Interval value.';
 $LANG['EARLY_INTERVAL_LABEL'] = 'Early Interval';
 $LANG['LATE_INTERVAL_LABEL'] = 'Late Interval';
