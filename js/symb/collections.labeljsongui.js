@@ -11,431 +11,444 @@
 // Defines formattable items in label (also used to create preview elements)
 const fieldProps = [
   {
-    block: 'labelBlock',
-    name: 'Occurrence ID',
-    id: 'occid',
-    group: 'specimen',
+    block: "labelBlock",
+    name: "Occurrence ID",
+    id: "occid",
+    group: "specimen",
   },
   {
-    block: 'labelBlock',
-    name: 'Catalog Number',
-    id: 'catalognumber',
-    group: 'specimen',
+    block: "labelBlock",
+    name: "Catalog Number",
+    id: "catalognumber",
+    group: "specimen",
   },
   {
-    block: 'labelBlock',
-    name: 'Other Catalog Numbers',
-    id: 'othercatalognumbers',
-    group: 'specimen',
+    block: "labelBlock",
+    name: "Other Catalog Numbers",
+    id: "othercatalognumbers",
+    group: "specimen",
   },
-  { block: 'labelBlock', name: 'Family', id: 'family', group: 'taxon' },
+  { block: "labelBlock", name: "Family", id: "family", group: "taxon" },
   {
-    block: 'labelBlock',
-    name: 'Scientific Name',
-    id: 'scientificname',
-    group: 'taxon',
+    block: "labelBlock",
+    name: "Scientific Name",
+    id: "scientificname",
+    group: "taxon",
   },
-  { block: 'labelBlock', name: 'Taxon Rank', id: 'taxonrank', group: 'taxon' },
+  { block: "labelBlock", name: "Taxon Rank", id: "taxonrank", group: "taxon" },
+  { block: "labelBlock", name: "Genus", id: "genus", group: "taxon" },
   {
-    block: 'labelBlock',
-    name: 'Infraspecific Epithet',
-    id: 'infraspecificepithet',
-    group: 'taxon',
-  },
-  {
-    block: 'labelBlock',
-    name: 'Scientific Name Authorship',
-    id: 'scientificnameauthorship',
-    group: 'taxon',
+    block: "labelBlock",
+    name: "Specific Epithet",
+    id: "specificepithet",
+    group: "taxon",
   },
   {
-    block: 'labelBlock',
-    name: 'Parent Author',
-    id: 'parentauthor',
-    group: 'taxon',
+    block: "labelBlock",
+    name: "Field Number",
+    id: "fieldnumber",
+    group: "taxon",
   },
   {
-    block: 'labelBlock',
-    name: 'Identified By',
-    id: 'identifiedby',
-    group: 'determination',
+    block: "labelBlock",
+    name: "Infraspecific Epithet",
+    id: "infraspecificepithet",
+    group: "taxon",
   },
   {
-    block: 'labelBlock',
-    name: 'Date Identified',
-    id: 'dateidentified',
-    group: 'determination',
+    block: "labelBlock",
+    name: "Scientific Name Authorship",
+    id: "scientificnameauthorship",
+    group: "taxon",
   },
   {
-    block: 'labelBlock',
-    name: 'Identification References',
-    id: 'identificationreferences',
-    group: 'determination',
+    block: "labelBlock",
+    name: "Parent Author",
+    id: "parentauthor",
+    group: "taxon",
   },
   {
-    block: 'labelBlock',
-    name: 'Identification Remarks',
-    id: 'identificationremarks',
-    group: 'determination',
+    block: "labelBlock",
+    name: "Identified By",
+    id: "identifiedby",
+    group: "determination",
   },
   {
-    block: 'labelBlock',
-    name: 'Taxon Remarks',
-    id: 'taxonremarks',
-    group: 'determination',
+    block: "labelBlock",
+    name: "Date Identified",
+    id: "dateidentified",
+    group: "determination",
   },
   {
-    block: 'labelBlock',
-    name: 'Identification Qualifier',
-    id: 'identificationqualifier',
-    group: 'determination',
+    block: "labelBlock",
+    name: "Identification References",
+    id: "identificationreferences",
+    group: "determination",
   },
   {
-    block: 'labelBlock',
-    name: 'Type Status',
-    id: 'typestatus',
-    group: 'specimen',
+    block: "labelBlock",
+    name: "Identification Remarks",
+    id: "identificationremarks",
+    group: "determination",
   },
   {
-    block: 'labelBlock',
-    name: 'Recorded By',
-    id: 'recordedby',
-    group: 'event',
+    block: "labelBlock",
+    name: "Taxon Remarks",
+    id: "taxonremarks",
+    group: "determination",
   },
   {
-    block: 'labelBlock',
-    name: 'Record Number',
-    id: 'recordnumber',
-    group: 'event',
+    block: "labelBlock",
+    name: "Identification Qualifier",
+    id: "identificationqualifier",
+    group: "determination",
   },
   {
-    block: 'labelBlock',
-    name: 'Associated Collectors',
-    id: 'associatedcollectors',
-    group: 'event',
-  },
-  { block: 'labelBlock', name: 'Event Date', id: 'eventdate', group: 'event' },
-  { block: 'labelBlock', name: 'Year', id: 'year', group: 'event' },
-  { block: 'labelBlock', name: 'Month', id: 'month', group: 'event' },
-  { block: 'labelBlock', name: 'Month Name', id: 'monthname', group: 'event' },
-  { block: 'labelBlock', name: 'Day', id: 'day', group: 'event' },
-  {
-    block: 'labelBlock',
-    name: 'Verbatim Event Date',
-    id: 'verbatimeventdate',
-    group: 'event',
-  },
-  { block: 'labelBlock', name: 'Habitat', id: 'habitat', group: 'event' },
-  { block: 'labelBlock', name: 'Substrate', id: 'substrate', group: 'event' },
-  {
-    block: 'labelBlock',
-    name: 'Occurrence Remarks',
-    id: 'occurrenceremarks',
-    group: 'specimen',
+    block: "labelBlock",
+    name: "Type Status",
+    id: "typestatus",
+    group: "specimen",
   },
   {
-    block: 'labelBlock',
-    name: 'Associated Taxa',
-    id: 'associatedtaxa',
-    group: 'taxon',
+    block: "labelBlock",
+    name: "Collected By",
+    id: "collectedby",
+    group: "event",
+  },
+  {
+    block: "labelBlock",
+    name: "Collector Number",
+    id: "collectornumber",
+    group: "event",
+  },
+  {
+    block: "labelBlock",
+    name: "Associated Collectors",
+    id: "associatedcollectors",
+    group: "event",
+  },
+  { block: "labelBlock", name: "Event Date", id: "eventdate", group: "event" },
+  { block: "labelBlock", name: "Year", id: "year", group: "event" },
+  { block: "labelBlock", name: "Month", id: "month", group: "event" },
+  { block: "labelBlock", name: "Month Name", id: "monthname", group: "event" },
+  { block: "labelBlock", name: "Day", id: "day", group: "event" },
+  {
+    block: "labelBlock",
+    name: "Verbatim Event Date",
+    id: "verbatimeventdate",
+    group: "event",
+  },
+  { block: "labelBlock", name: "Habitat", id: "habitat", group: "event" },
+  { block: "labelBlock", name: "Substrate", id: "substrate", group: "event" },
+  {
+    block: "labelBlock",
+    name: "Occurrence Remarks",
+    id: "occurrenceremarks",
+    group: "specimen",
+  },
+  {
+    block: "labelBlock",
+    name: "Associated Taxa",
+    id: "associatedtaxa",
+    group: "taxon",
   },
   // { block: 'labelBlock', name: 'Dynamic Properties', id: 'dynamicProperties' },
   {
-    block: 'labelBlock',
-    name: 'Verbatim Attributes',
-    id: 'verbatimattributes',
-    group: 'event',
+    block: "labelBlock",
+    name: "Description",
+    id: "description",
+    group: "event",
   },
-  { block: 'labelBlock', name: 'Behavior', id: 'behavior', group: 'specimen' },
+  { block: "labelBlock", name: "Behavior", id: "behavior", group: "specimen" },
   {
-    block: 'labelBlock',
-    name: 'Reproductive Condition',
-    id: 'reproductivecondition',
-    group: 'specimen',
-  },
-  {
-    block: 'labelBlock',
-    name: 'Cultivation Status',
-    id: 'cultivationstatus',
-    group: 'specimen',
+    block: "labelBlock",
+    name: "Reproductive Condition",
+    id: "reproductivecondition",
+    group: "specimen",
   },
   {
-    block: 'labelBlock',
-    name: 'Establishment Means',
-    id: 'establishmentmeans',
-    group: 'specimen',
+    block: "labelBlock",
+    name: "Cultivation Status",
+    id: "cultivationstatus",
+    group: "specimen",
   },
   {
-    block: 'labelBlock',
-    name: 'Life Stage',
-    id: 'lifeStage',
-    group: 'specimen',
-  },
-  { block: 'labelBlock', name: 'Sex', id: 'sex', group: 'specimen' },
-  {
-    block: 'labelBlock',
-    name: 'Individual Count',
-    id: 'individualcount',
-    group: 'specimen',
+    block: "labelBlock",
+    name: "Establishment Means",
+    id: "establishmentmeans",
+    group: "specimen",
   },
   {
-    block: 'labelBlock',
-    name: 'Sampling Protocol',
-    id: 'samplingprotocol',
-    group: 'specimen',
+    block: "labelBlock",
+    name: "Life Stage",
+    id: "lifeStage",
+    group: "specimen",
+  },
+  { block: "labelBlock", name: "Sex", id: "sex", group: "specimen" },
+  {
+    block: "labelBlock",
+    name: "Individual Count",
+    id: "individualcount",
+    group: "specimen",
   },
   {
-    block: 'labelBlock',
-    name: 'Preparations',
-    id: 'preparations',
-    group: 'specimen',
-  },
-  { block: 'labelBlock', name: 'Country', id: 'country', group: 'locality' },
-  {
-    block: 'labelBlock',
-    name: 'State/Province',
-    id: 'stateprovince',
-    group: 'locality',
-  },
-  { block: 'labelBlock', name: 'County', id: 'county', group: 'locality' },
-  {
-    block: 'labelBlock',
-    name: 'Municipality',
-    id: 'municipality',
-    group: 'locality',
-  },
-  { block: 'labelBlock', name: 'Locality', id: 'locality', group: 'locality' },
-  {
-    block: 'labelBlock',
-    name: 'Decimal Latitude',
-    id: 'decimallatitude',
-    group: 'locality',
+    block: "labelBlock",
+    name: "Sampling Protocol",
+    id: "samplingprotocol",
+    group: "specimen",
   },
   {
-    block: 'labelBlock',
-    name: 'Decimal Longitude',
-    id: 'decimallongitude',
-    group: 'locality',
+    block: "labelBlock",
+    name: "Preparations",
+    id: "preparations",
+    group: "specimen",
+  },
+  { block: "labelBlock", name: "Country", id: "country", group: "locality" },
+  {
+    block: "labelBlock",
+    name: "State/Province",
+    id: "stateprovince",
+    group: "locality",
+  },
+  { block: "labelBlock", name: "County", id: "county", group: "locality" },
+  {
+    block: "labelBlock",
+    name: "Municipality",
+    id: "municipality",
+    group: "locality",
+  },
+  { block: "labelBlock", name: "Locality", id: "locality", group: "locality" },
+  {
+    block: "labelBlock",
+    name: "Decimal Latitude",
+    id: "decimallatitude",
+    group: "locality",
   },
   {
-    block: 'labelBlock',
-    name: 'Geodetic Datum',
-    id: 'geodeticdatum',
-    group: 'locality',
+    block: "labelBlock",
+    name: "Decimal Longitude",
+    id: "decimallongitude",
+    group: "locality",
   },
   {
-    block: 'labelBlock',
-    name: 'Coordinate Uncertainty In Meters',
-    id: 'coordinateuncertaintyinmeters',
-    group: 'locality',
+    block: "labelBlock",
+    name: "Geodetic Datum",
+    id: "geodeticdatum",
+    group: "locality",
   },
   {
-    block: 'labelBlock',
-    name: 'Verbatim Coordinates',
-    id: 'verbatimcoordinates',
-    group: 'locality',
+    block: "labelBlock",
+    name: "Coordinate Uncertainty In Meters",
+    id: "coordinateuncertaintyinmeters",
+    group: "locality",
   },
   {
-    block: 'labelBlock',
-    name: 'Elevation In Meters',
-    id: 'elevationinmeters',
-    group: 'locality',
+    block: "labelBlock",
+    name: "Verbatim Coordinates",
+    id: "verbatimcoordinates",
+    group: "locality",
   },
   {
-    block: 'labelBlock',
-    name: 'Verbatim Elevation',
-    id: 'verbatimelevation',
-    group: 'locality',
+    block: "labelBlock",
+    name: "Elevation In Meters",
+    id: "elevationinmeters",
+    group: "locality",
   },
   {
-    block: 'labelBlock',
-    name: 'Minimum Depth In Meters',
-    id: 'minimumdepthinmeters',
-    group: 'locality',
+    block: "labelBlock",
+    name: "Verbatim Elevation",
+    id: "verbatimelevation",
+    group: "locality",
   },
   {
-    block: 'labelBlock',
-    name: 'Maximum Depth In Meters',
-    id: 'maximumdepthinmeters',
-    group: 'locality',
+    block: "labelBlock",
+    name: "Minimum Depth In Meters",
+    id: "minimumdepthinmeters",
+    group: "locality",
   },
   {
-    block: 'labelBlock',
-    name: 'Verbatim Depth',
-    id: 'verbatimdepth',
-    group: 'locality',
+    block: "labelBlock",
+    name: "Maximum Depth In Meters",
+    id: "maximumdepthinmeters",
+    group: "locality",
   },
   {
-    block: 'labelBlock',
-    name: 'Disposition',
-    id: 'disposition',
-    group: 'locality',
+    block: "labelBlock",
+    name: "Verbatim Depth",
+    id: "verbatimdepth",
+    group: "locality",
   },
   {
-    block: 'labelBlock',
-    name: 'Storage Location',
-    id: 'storagelocation',
-    group: 'locality',
+    block: "labelBlock",
+    name: "Disposition",
+    id: "disposition",
+    group: "locality",
   },
   {
-    block: 'labelBlock',
-    name: 'Duplicate Quantity',
-    id: 'duplicatequantity',
-    group: 'locality',
+    block: "labelBlock",
+    name: "Storage Location",
+    id: "storagelocation",
+    group: "locality",
   },
   {
-    block: 'labelBlock',
-    name: 'Date Last Modified',
-    id: 'datelastmodified',
-    group: 'event',
+    block: "labelBlock",
+    name: "Duplicate Quantity",
+    id: "duplicatequantity",
+    group: "locality",
+  },
+  {
+    block: "labelBlock",
+    name: "Date Last Modified",
+    id: "datelastmodified",
+    group: "event",
   },
 ];
 
 // Defines formatting buttons
 const formatsArr = [
-  { group: 'field', func: 'font-bold', icon: 'format_bold', title: 'Bold' },
-  { group: 'field', func: 'italic', icon: 'format_italic', title: 'Italic' },
+  { group: "field", func: "font-bold", icon: "format_bold", title: "Bold" },
+  { group: "field", func: "italic", icon: "format_italic", title: "Italic" },
   {
-    group: 'field',
-    func: 'underline',
-    icon: 'format_underlined',
-    title: 'Underline',
+    group: "field",
+    func: "underline",
+    icon: "format_underlined",
+    title: "Underline",
   },
   {
-    group: 'field',
-    func: 'uppercase',
-    icon: 'format_size',
-    title: 'Uppercase',
+    group: "field",
+    func: "uppercase",
+    icon: "format_size",
+    title: "Uppercase",
   },
   {
-    group: 'field-block',
-    func: 'bar',
-    icon: '',
-    name: 'Bar Below',
-    title: 'Add bar below line',
+    group: "field-block",
+    func: "bar",
+    icon: "",
+    name: "Bar Below",
+    title: "Add bar below line",
   },
   {
-    group: 'field-block',
-    func: 'bar-top',
-    icon: '',
-    name: 'Bar Above',
-    title: 'Add bar above line',
+    group: "field-block",
+    func: "bar-top",
+    icon: "",
+    name: "Bar Above",
+    title: "Add bar above line",
   },
 ];
 
 // Defines dropdown style groups
 const dropdownsArr = [
   {
-    id: 'text',
-    name: 'font-size',
-    group: 'field',
+    id: "text",
+    name: "font-size",
+    group: "field",
     options: [
-      { value: '', text: 'Font Size' },
-      { value: 'text-xs', text: 'X-Small' },
-      { value: 'text-sm', text: 'Small' },
-      { value: 'text-base', text: 'Normal' },
-      { value: 'text-lg', text: 'Large' },
-      { value: 'text-xl', text: 'X-Large' },
-      { value: 'text-2xl', text: '2X-Large' },
-      { value: 'text-3xl', text: '3X-Large' },
-      { value: 'text-4xl', text: '4X-Large' },
-      { value: 'text-5xl', text: '5X-Large' },
-      { value: 'text-6xl', text: '6X-Large' },
+      { value: "", text: "Font Size" },
+      { value: "text-xs", text: "X-Small" },
+      { value: "text-sm", text: "Small" },
+      { value: "text-base", text: "Normal" },
+      { value: "text-lg", text: "Large" },
+      { value: "text-xl", text: "X-Large" },
+      { value: "text-2xl", text: "2X-Large" },
+      { value: "text-3xl", text: "3X-Large" },
+      { value: "text-4xl", text: "4X-Large" },
+      { value: "text-5xl", text: "5X-Large" },
+      { value: "text-6xl", text: "6X-Large" },
     ],
   },
   {
-    id: 'float',
-    name: 'float',
-    group: 'field',
+    id: "float",
+    name: "float",
+    group: "field",
     options: [
-      { value: '', text: 'Position in Line' },
+      { value: "", text: "Position in Line" },
       // { value: 'float-none', text: 'None' },
-      { value: 'float-left', text: 'Left' },
-      { value: 'float-right', text: 'Right' },
+      { value: "float-left", text: "Left" },
+      { value: "float-right", text: "Right" },
     ],
   },
   {
-    id: 'font-family',
-    name: 'font-family',
-    group: 'field',
+    id: "font-family",
+    name: "font-family",
+    group: "field",
     options: [
-      { value: '', text: 'Font Family' },
-      { value: 'font-family-arial', text: 'Arial (sans-serif)' },
-      { value: 'font-family-verdana', text: 'Verdana (sans-serif)' },
-      { value: 'font-family-helvetica', text: 'Helvetica (sans-serif)' },
-      { value: 'font-family-tahoma', text: 'Tahoma (sans-serif)' },
-      { value: 'font-family-trebuchet', text: 'Trebuchet (sans-serif)' },
-      { value: 'font-family-times', text: 'Times New Roman (serif)' },
-      { value: 'font-family-georgia', text: 'Georgia (serif)' },
-      { value: 'font-family-garamond', text: 'Garamond (serif)' },
-      { value: 'font-family-courier', text: 'Courier New (monospace)' },
-      { value: 'font-family-brush', text: 'Brush Script MT (cursive)' },
+      { value: "", text: "Font Family" },
+      { value: "font-family-arial", text: "Arial (sans-serif)" },
+      { value: "font-family-verdana", text: "Verdana (sans-serif)" },
+      { value: "font-family-helvetica", text: "Helvetica (sans-serif)" },
+      { value: "font-family-tahoma", text: "Tahoma (sans-serif)" },
+      { value: "font-family-trebuchet", text: "Trebuchet (sans-serif)" },
+      { value: "font-family-times", text: "Times New Roman (serif)" },
+      { value: "font-family-georgia", text: "Georgia (serif)" },
+      { value: "font-family-garamond", text: "Garamond (serif)" },
+      { value: "font-family-courier", text: "Courier New (monospace)" },
+      { value: "font-family-brush", text: "Brush Script MT (cursive)" },
     ],
   },
   {
-    id: 'text-align',
-    name: 'text-align',
-    group: 'field-block',
+    id: "text-align",
+    name: "text-align",
+    group: "field-block",
     options: [
-      { value: '', text: 'Text Align' },
-      { value: 'text-align-center', text: 'Center' },
-      { value: 'text-align-right', text: 'Right' },
+      { value: "", text: "Text Align" },
+      { value: "text-align-center", text: "Center" },
+      { value: "text-align-right", text: "Right" },
       // { value: 'text-align-justify', text: 'Justify' },
-      { value: 'text-align-left', text: 'Left' },
+      { value: "text-align-left", text: "Left" },
     ],
   },
   {
-    id: 'mt',
-    name: 'spacing-top',
-    group: 'field-block',
+    id: "mt",
+    name: "spacing-top",
+    group: "field-block",
     options: [
-      { value: '', text: 'Line Spacing Top' },
-      { value: 'mt-0', text: '0' },
-      { value: 'mt-1', text: '1' },
-      { value: 'mt-2', text: '2' },
-      { value: 'mt-3', text: '3' },
-      { value: 'mt-4', text: '4' },
-      { value: 'mt-5', text: '5' },
-      { value: 'mt-6', text: '6' },
-      { value: 'mt-8', text: '8' },
-      { value: 'mt-10', text: '10' },
-      { value: 'mt-12', text: '12' },
+      { value: "", text: "Line Spacing Top" },
+      { value: "mt-0", text: "0" },
+      { value: "mt-1", text: "1" },
+      { value: "mt-2", text: "2" },
+      { value: "mt-3", text: "3" },
+      { value: "mt-4", text: "4" },
+      { value: "mt-5", text: "5" },
+      { value: "mt-6", text: "6" },
+      { value: "mt-8", text: "8" },
+      { value: "mt-10", text: "10" },
+      { value: "mt-12", text: "12" },
     ],
   },
   {
-    id: 'mb',
-    name: 'spacing-bottom',
-    group: 'field-block',
+    id: "mb",
+    name: "spacing-bottom",
+    group: "field-block",
     options: [
-      { value: '', text: 'Line Spacing Bottom' },
-      { value: 'mb-0', text: '0' },
-      { value: 'mb-1', text: '1' },
-      { value: 'mb-2', text: '2' },
-      { value: 'mb-3', text: '3' },
-      { value: 'mb-4', text: '4' },
-      { value: 'mb-5', text: '5' },
-      { value: 'mb-6', text: '6' },
-      { value: 'mb-8', text: '8' },
-      { value: 'mb-10', text: '10' },
-      { value: 'mb-12', text: '12' },
+      { value: "", text: "Line Spacing Bottom" },
+      { value: "mb-0", text: "0" },
+      { value: "mb-1", text: "1" },
+      { value: "mb-2", text: "2" },
+      { value: "mb-3", text: "3" },
+      { value: "mb-4", text: "4" },
+      { value: "mb-5", text: "5" },
+      { value: "mb-6", text: "6" },
+      { value: "mb-8", text: "8" },
+      { value: "mb-10", text: "10" },
+      { value: "mb-12", text: "12" },
     ],
   },
   {
-    id: 'ml',
-    name: 'spacing-left',
-    group: 'field-block',
+    id: "ml",
+    name: "spacing-left",
+    group: "field-block",
     options: [
-      { value: '', text: 'Line Spacing Left' },
-      { value: 'ml-0', text: '0' },
-      { value: 'ml-1', text: '1' },
-      { value: 'ml-2', text: '2' },
-      { value: 'ml-3', text: '3' },
-      { value: 'ml-4', text: '4' },
-      { value: 'ml-5', text: '5' },
-      { value: 'ml-6', text: '6' },
-      { value: 'ml-8', text: '8' },
-      { value: 'ml-10', text: '10' },
-      { value: 'ml-12', text: '12' },
+      { value: "", text: "Line Spacing Left" },
+      { value: "ml-0", text: "0" },
+      { value: "ml-1", text: "1" },
+      { value: "ml-2", text: "2" },
+      { value: "ml-3", text: "3" },
+      { value: "ml-4", text: "4" },
+      { value: "ml-5", text: "5" },
+      { value: "ml-6", text: "6" },
+      { value: "ml-8", text: "8" },
+      { value: "ml-10", text: "10" },
+      { value: "ml-12", text: "12" },
     ],
   },
   // {
@@ -457,12 +470,12 @@ const dropdownsArr = [
   //   ],
   // },
 ];
-const dummy = document.getElementById('dummy');
-const fieldDiv = document.getElementById('fields');
-const fieldListDiv = document.getElementById('fields-list');
-const controlDiv = document.getElementById('controls');
-const fieldsFilter = document.getElementById('fields-filter');
-const labelMid = document.getElementById('label-middle');
+const dummy = document.getElementById("dummy");
+const fieldDiv = document.getElementById("fields");
+const fieldListDiv = document.getElementById("fields-list");
+const controlDiv = document.getElementById("controls");
+const fieldsFilter = document.getElementById("fields-filter");
+const labelMid = document.getElementById("label-middle");
 
 // Initially creates all fields
 createFields(fieldProps, fieldListDiv);
@@ -470,15 +483,15 @@ createFields(fieldProps, fieldListDiv);
 // Creates formatting (button) controls in page
 formatsArr.forEach((format) => {
   let targetDiv = document.getElementById(`${format.group}-options`);
-  let btn = document.createElement('button');
-  btn.classList.add('control');
+  let btn = document.createElement("button");
+  btn.classList.add("control");
   btn.disabled = true;
   btn.dataset.func = format.func;
   btn.dataset.group = format.group;
   btn.title = format.title;
-  if (format.icon !== '') {
-    let icon = document.createElement('span');
-    icon.classList.add('material-icons');
+  if (format.icon !== "") {
+    let icon = document.createElement("span");
+    icon.classList.add("material-icons");
     icon.innerText = format.icon;
     btn.appendChild(icon);
   } else {
@@ -490,18 +503,18 @@ formatsArr.forEach((format) => {
 // Creates formatting (dropdown) controls in page
 dropdownsArr.forEach((dropObj) => {
   let targetDiv = document.getElementById(`${dropObj.group}-options`);
-  let lbl = document.createElement('label');
+  let lbl = document.createElement("label");
   lbl.htmlFor = dropObj.id;
-  lbl.innerText = dropObj.options[0].text + ':';
-  lbl.style = 'display: block;';
-  let slct = document.createElement('select');
+  lbl.innerText = dropObj.options[0].text + ":";
+  lbl.style = "display: block;";
+  let slct = document.createElement("select");
   slct.dataset.group = dropObj.group;
-  slct.classList.add('control');
+  slct.classList.add("control");
   slct.name = dropObj.name;
   slct.id = dropObj.id;
   slct.disabled = true;
   dropObj.options.forEach((choice) => {
-    let opt = document.createElement('option');
+    let opt = document.createElement("option");
     opt.value = choice.value;
     opt.innerText = choice.text;
     slct.appendChild(opt);
@@ -511,37 +524,37 @@ dropdownsArr.forEach((dropObj) => {
 });
 
 // Grabs elements
-const containers = document.querySelectorAll('.container');
-const draggables = document.querySelectorAll('.draggable');
-const build = document.getElementById('build-label');
-const preview = document.getElementById('preview-label');
-const controls = document.querySelectorAll('.control');
-const inputs = document.querySelectorAll('input');
+const containers = document.querySelectorAll(".container");
+const draggables = document.querySelectorAll(".draggable");
+const build = document.getElementById("build-label");
+const preview = document.getElementById("preview-label");
+const controls = document.querySelectorAll(".control");
+const inputs = document.querySelectorAll("input");
 
 // JSON TRANSLATION
 function translateJson(source) {
   // Source has to be "simple", as in: following structure output by generateJson()
   let srcLines = source[0].divBlock.blocks;
   srcLines
-    ? ''
+    ? ""
     : (preview.innerText =
-        '<h1>ERROR</h1><p>Your label format is not translatable at this time. Please adjust your JSON definition and try again, or create a new format from scratch using this visual builder.</p>');
+        "<h1>ERROR</h1><p>Your label format is not translatable at this time. Please adjust your JSON definition and try again, or create a new format from scratch using this visual builder.</p>");
   let lineCount = srcLines.length;
   // Create additional blocks in label builder
   for (i = 0; i < lineCount - 1; i++) {
     addLine();
   }
-  let lbBlocks = labelMid.querySelectorAll('.field-block');
+  let lbBlocks = labelMid.querySelectorAll(".field-block");
   // Add field(s) inside line[i]
   srcLines.forEach((srcLine, i) => {
     // Style fieldblocks
     let lbBlock = lbBlocks[i];
     srcLine.delimiter !== undefined
       ? (lbBlock.dataset.delimiter = srcLine.delimiter)
-      : '';
+      : "";
     srcLine.className !== undefined
-      ? (lbBlock.className = lbBlock.className + ' ' + srcLine.className)
-      : '';
+      ? (lbBlock.className = lbBlock.className + " " + srcLine.className)
+      : "";
     // Array of fields based on fieldProps filtered by current fields in json format
     let fieldsArr = srcLine.fieldBlock;
     if (fieldsArr !== undefined) {
@@ -552,10 +565,10 @@ function translateJson(source) {
       });
       createFields(propsArr, lbBlocks[i]);
     } else {
-      preview.innerText = 'Error';
+      preview.innerText = "Error";
     }
     // Select created item in label build (have to limit to one line at a time)
-    let createdLis = lbBlocks[i].querySelectorAll('.draggable');
+    let createdLis = lbBlocks[i].querySelectorAll(".draggable");
     // Add classes from json to item
     createdLis.forEach((li, j) => {
       let srcFieldsArr = srcLines[i].fieldBlock;
@@ -565,15 +578,15 @@ function translateJson(source) {
       let prefix = srcPropsArr.prefix;
       let suffix = srcPropsArr.suffix;
       if (li.id === fieldId) {
-        classes !== undefined ? (li.className = 'draggable ' + classes) : '';
-        prefix !== undefined ? (li.dataset.prefix = prefix) : '';
-        suffix !== undefined ? (li.dataset.suffix = suffix) : '';
+        classes !== undefined ? (li.className = "draggable " + classes) : "";
+        prefix !== undefined ? (li.dataset.prefix = prefix) : "";
+        suffix !== undefined ? (li.dataset.suffix = suffix) : "";
       }
     });
   });
   refreshAvailFields();
   refreshPreview();
-  console.log('inside translator');
+  console.log("inside translator");
 }
 // Initially sets state of lines
 refreshLineState();
@@ -585,16 +598,16 @@ refreshLineState();
 /**
  * Displays user instructions overlay
  */
-const overlay = document.getElementById('instructions');
+const overlay = document.getElementById("instructions");
 function openOverlay() {
-  overlay.classList.remove('hidden');
+  overlay.classList.remove("hidden");
 }
 
 /**
  * Hides user instructions overlay
  */
 function closeOverlay() {
-  overlay.classList.add('hidden');
+  overlay.classList.add("hidden");
 }
 
 /**
@@ -628,7 +641,7 @@ function removeObject(arr, criteria) {
  */
 function getCurrFields() {
   let currFields = fieldProps;
-  let usedFields = document.querySelectorAll('#label-middle .draggable');
+  let usedFields = document.querySelectorAll("#label-middle .draggable");
   if (usedFields.length > 0) {
     usedFields.forEach((usedField) => {
       currFields = removeObject(currFields, { id: usedField.id });
@@ -642,19 +655,19 @@ function getCurrFields() {
  */
 function filterFields(value) {
   // let value = this.value;
-  let filteredFields = '';
-  value === 'all'
+  let filteredFields = "";
+  value === "all"
     ? (filteredFields = getCurrFields())
     : (filteredFields = filterObject(getCurrFields(), { group: value }));
-  fieldListDiv.innerHTML = '';
+  fieldListDiv.innerHTML = "";
   createFields(filteredFields, fieldListDiv);
 }
 
 function refreshAvailFields() {
   let available = getCurrFields();
-  fieldListDiv.innerHTML = '';
+  fieldListDiv.innerHTML = "";
   let selectedFilter = fieldsFilter.value;
-  selectedFilter != 'all'
+  selectedFilter != "all"
     ? filterFields(selectedFilter)
     : createFields(available, fieldListDiv);
 }
@@ -665,22 +678,22 @@ function refreshAvailFields() {
  */
 function createFields(arr, target) {
   arr.forEach((field) => {
-    let li = document.createElement('li');
+    let li = document.createElement("li");
     li.innerHTML = field.name;
     li.id = field.id;
-    if (field.block === 'labelBlock') {
-      let closeBtn = document.createElement('span');
-      closeBtn.classList.add('material-icons');
-      closeBtn.innerText = 'cancel';
-      closeBtn.addEventListener('click', removeField, false);
+    if (field.block === "labelBlock") {
+      let closeBtn = document.createElement("span");
+      closeBtn.classList.add("material-icons");
+      closeBtn.innerText = "cancel";
+      closeBtn.addEventListener("click", removeField, false);
       li.appendChild(closeBtn);
-      li.draggable = 'true';
-      li.classList.add('draggable');
+      li.draggable = "true";
+      li.classList.add("draggable");
       li.dataset.category = field.group;
-      li.addEventListener('dragstart', handleDragStart, false);
-      li.addEventListener('dragover', handleDragOver, false);
-      li.addEventListener('drop', handleDrop, false);
-      li.addEventListener('dragend', handleDragEnd, false);
+      li.addEventListener("dragstart", handleDragStart, false);
+      li.addEventListener("dragover", handleDragOver, false);
+      li.addEventListener("drop", handleDrop, false);
+      li.addEventListener("dragend", handleDragEnd, false);
       target.appendChild(li);
     }
   });
@@ -691,28 +704,28 @@ function createFields(arr, target) {
  * Binded to button, adds editable div
  */
 function addLine() {
-  let line = document.createElement('div');
-  line.classList.add('field-block', 'container');
-  let midBlocks = document.querySelectorAll('#label-middle > .field-block');
-  let close = document.createElement('span');
-  close.classList.add('material-icons');
-  close.innerText = 'close';
+  let line = document.createElement("div");
+  line.classList.add("field-block", "container");
+  let midBlocks = document.querySelectorAll("#label-middle > .field-block");
+  let close = document.createElement("span");
+  close.classList.add("material-icons");
+  close.innerText = "close";
   line.appendChild(close);
-  let up = document.createElement('span');
-  up.classList.add('material-icons');
-  up.innerText = 'keyboard_arrow_up';
+  let up = document.createElement("span");
+  up.classList.add("material-icons");
+  up.innerText = "keyboard_arrow_up";
   line.appendChild(up);
-  let down = document.createElement('span');
-  down.classList.add('material-icons');
-  down.innerText = 'keyboard_arrow_down';
+  let down = document.createElement("span");
+  down.classList.add("material-icons");
+  down.innerText = "keyboard_arrow_down";
   line.appendChild(down);
   let lastBlock = midBlocks[midBlocks.length - 1];
   lastBlock.parentNode.insertBefore(line, lastBlock.nextSibling);
   // Allows items to be added/reordered inside fieldBlock
-  line.addEventListener('dragover', (e) => {
+  line.addEventListener("dragover", (e) => {
     e.preventDefault();
-    const dragging = document.querySelector('.dragging');
-    dragging !== null ? line.appendChild(dragging) : '';
+    const dragging = document.querySelector(".dragging");
+    dragging !== null ? line.appendChild(dragging) : "";
   });
   refreshLineState();
 }
@@ -722,13 +735,13 @@ function addLine() {
  * If there is only one line, disables line controls
  */
 function refreshLineState() {
-  let lines = labelMid.querySelectorAll('.field-block');
-  let icons = lines[0].querySelectorAll('.material-icons');
+  let lines = labelMid.querySelectorAll(".field-block");
+  let icons = lines[0].querySelectorAll(".material-icons");
   let isSingleLine = lines.length == 1;
   icons.forEach((icon) => {
     isSingleLine
-      ? icon.classList.add('disabled')
-      : icon.classList.remove('disabled');
+      ? icon.classList.add("disabled")
+      : icon.classList.remove("disabled");
   });
 }
 
@@ -737,7 +750,7 @@ function refreshLineState() {
  * @param {Object} line node to be removed
  */
 function removeLine(line) {
-  let lineCount = labelMid.querySelectorAll('.field-block').length;
+  let lineCount = labelMid.querySelectorAll(".field-block").length;
   lineCount > 1 ? line.remove() : false;
   refreshLineState();
   refreshAvailFields();
@@ -759,11 +772,11 @@ function removeField(field) {
  */
 function refreshPreview() {
   let labelList = [];
-  let fieldBlocks = document.querySelectorAll('#build-label .field-block');
+  let fieldBlocks = document.querySelectorAll("#build-label .field-block");
   // Builds array with directives (labelList)
   fieldBlocks.forEach((block) => {
     let itemsArr = [];
-    let items = block.querySelectorAll('li');
+    let items = block.querySelectorAll("li");
     items.forEach((item) => {
       let itemObj = {};
       let className = Array.from(item.classList).filter(isPrintStyle);
@@ -775,19 +788,19 @@ function refreshPreview() {
     });
     labelList.push(itemsArr);
     let fieldBlockStyles = Array.from(block.classList).filter(isPrintStyle);
-    fieldBlockStyles ? (itemsArr.className = fieldBlockStyles) : '';
+    fieldBlockStyles ? (itemsArr.className = fieldBlockStyles) : "";
     let fieldBlockDelim = block.dataset.delimiter;
     fieldBlockDelim == undefined
-      ? (itemsArr.delimiter = ' ')
+      ? (itemsArr.delimiter = " ")
       : (itemsArr.delimiter = fieldBlockDelim);
   });
   // Clears preview div before appending elements
-  preview.innerHTML = '';
+  preview.innerHTML = "";
   // Creates HTML elements and appends to preview div
   labelList.forEach((labelItem, blockIdx) => {
     let blockLen = labelItem.length;
-    let fieldBlock = document.createElement('div');
-    fieldBlock.classList.add('field-block');
+    let fieldBlock = document.createElement("div");
+    fieldBlock.classList.add("field-block");
     let labelItemStyles = labelItem.className;
     labelItemStyles.forEach((style) => {
       fieldBlock.classList.add(style);
@@ -799,7 +812,7 @@ function refreshPreview() {
       // Adds delimiter if existing up to last element
       if (!isLast) {
         let preview = document.getElementsByClassName(field.field);
-        let delim = document.createElement('span');
+        let delim = document.createElement("span");
         delim.innerText = labelItem.delimiter;
         preview[0].after(delim);
       }
@@ -818,8 +831,8 @@ function createPreviewEl(element, parent) {
   // Grabs information from fieldProps array to create elements matching on id
   let fieldInfo =
     fieldProps[fieldProps.findIndex((x) => x.id === element.field)];
-  let div = document.createElement('div');
-  div.innerHTML = fieldInfo.name.split(' ').join('');
+  let div = document.createElement("div");
+  div.innerHTML = fieldInfo.name.split(" ").join("");
   div.classList.add(fieldInfo.id);
   div.classList.add(...element.className);
   parent.appendChild(div);
@@ -831,7 +844,7 @@ function createPreviewEl(element, parent) {
     div.innerHTML = prefSpan + currText;
   }
   if (hasSuffix) {
-    let sufSpan = document.createElement('span');
+    let sufSpan = document.createElement("span");
     sufSpan.innerText = element.suffix;
     div.appendChild(sufSpan);
   }
@@ -843,8 +856,8 @@ function createPreviewEl(element, parent) {
  */
 function isFormattable(element) {
   if (
-    element.classList.contains('field-block') ||
-    element.classList.contains('draggable')
+    element.classList.contains("field-block") ||
+    element.classList.contains("draggable")
   ) {
     return true;
   } else {
@@ -858,10 +871,10 @@ function isFormattable(element) {
  */
 function isPrintStyle(className) {
   const functionalStyles = [
-    'draggable',
-    'selected',
-    'field-block',
-    'container',
+    "draggable",
+    "selected",
+    "field-block",
+    "container",
   ];
   return !functionalStyles.includes(className);
 }
@@ -874,8 +887,8 @@ function generateJson(list) {
   let wrapper = [
     {
       divBlock: {
-        className: 'label-blocks',
-        style: '',
+        className: "label-blocks",
+        style: "",
         blocks: [],
       },
     },
@@ -889,17 +902,17 @@ function generateJson(list) {
     let fieldItem = list[index];
     fieldItem.map((prop) => {
       prop.className.length > 0
-        ? (prop.className = prop.className.join(' '))
+        ? (prop.className = prop.className.join(" "))
         : delete prop.className;
     });
     fieldBlockObj.fieldBlock = fieldItem;
     let fieldBlockDelim = fieldItem.delimiter;
     fieldBlockDelim !== undefined
       ? (fieldBlockObj.delimiter = fieldBlockDelim)
-      : '';
+      : "";
     let fieldBlockStyles = fieldItem.className;
     fieldBlockStyles.length > 0
-      ? (fieldBlockObj.className = fieldItem.className.join(' '))
+      ? (fieldBlockObj.className = fieldItem.className.join(" "))
       : delete fieldBlockObj.className;
     labelBlocks.push(fieldBlockObj);
   });
@@ -917,17 +930,17 @@ function generateJson(list) {
  */
 function printJson() {
   let list = refreshPreview();
-  let copyBtn = document.getElementById('copyBtn');
+  let copyBtn = document.getElementById("copyBtn");
   let isEmpty = list[0].length == 0;
-  let message = '';
+  let message = "";
   if (isEmpty) {
-    copyBtn.style.display = 'none';
+    copyBtn.style.display = "none";
     alert(
-      'Label format is empty! Please drag some items to the build area before trying again'
+      "Label format is empty! Please drag some items to the build area before trying again"
     );
   } else {
     let json = generateJson(refreshPreview());
-    copyBtn.style.display = 'inline-block';
+    copyBtn.style.display = "inline-block";
     dummy.value = json;
   }
 }
@@ -935,7 +948,7 @@ function printJson() {
  * Provides textarea where users can paste JSON format for validation
  */
 function loadJson() {
-  let currBlocks = labelMid.querySelectorAll('.field-block');
+  let currBlocks = labelMid.querySelectorAll(".field-block");
   let numBlocks = currBlocks.length;
   // Clears lines & fields if already used
   if (numBlocks > 1) {
@@ -944,7 +957,7 @@ function loadJson() {
     }
   }
   let firstBlock = currBlocks[0];
-  let currFields = firstBlock.querySelectorAll('.draggable');
+  let currFields = firstBlock.querySelectorAll(".draggable");
   currFields.forEach((currField) => {
     currField.remove();
   });
@@ -956,14 +969,14 @@ function loadJson() {
   } catch (error) {
     console.log(error);
     window.alert(
-      'There is an issue with your JSON format. If your label format is very customized, that could interfere with its correct display.'
+      "There is an issue with your JSON format. If your label format is very customized, that could interfere with its correct display."
     );
   }
   if (sourceJson) {
     translateJson(sourceJson);
     refreshLineState();
   } else {
-    preview.innerText = '';
+    preview.innerText = "";
   }
 }
 
@@ -973,9 +986,9 @@ function loadJson() {
 function copyJson() {
   dummy.select();
   dummy.setSelectionRange(0, 99999); /* For mobile devices */
-  document.execCommand('copy');
+  document.execCommand("copy");
   /* Alert the copied text */
-  alert('Copied JSON to clipboard');
+  alert("Copied JSON to clipboard");
 }
 
 /**
@@ -983,8 +996,8 @@ function copyJson() {
  * @param {DOM Node} element
  */
 function toggleSelect(element) {
-  element.classList.toggle('selected');
-  let isSelected = element.classList.contains('selected');
+  element.classList.toggle("selected");
+  let isSelected = element.classList.contains("selected");
   return isSelected;
 }
 
@@ -1017,7 +1030,7 @@ function getState(item) {
   // console.log(item);
   let delimiter = item.dataset.delimiter;
   if (delimiter) {
-    let delimiterInput = document.getElementById('delimiter');
+    let delimiterInput = document.getElementById("delimiter");
     delimiterInput.value = delimiter;
   }
   let formatList = Array.from(item.classList);
@@ -1028,10 +1041,10 @@ function getState(item) {
     // Render state of each formatting button
     printableList.forEach((formatItem) => {
       // Check if class is a choice in a dropdown by matching first part of class
-      let strArr = formatItem.split('-');
-      let str = '';
+      let strArr = formatItem.split("-");
+      let str = "";
       strArr.length == 3
-        ? (str = strArr[0] + '-' + strArr[1])
+        ? (str = strArr[0] + "-" + strArr[1])
         : (str = strArr[0]);
       // console.log(str);
       // Loop through each item in array
@@ -1045,7 +1058,7 @@ function getState(item) {
       controls.forEach((control) => {
         // Select that format and activate it
         if (formatItem === control.dataset.func) {
-          control.classList.add('selected');
+          control.classList.add("selected");
         }
       });
     });
@@ -1053,11 +1066,11 @@ function getState(item) {
 
   // Get state of prefix/suffix for fields
   let hasPrefix = item.dataset.prefix != null;
-  let prefixInput = document.getElementById('prefix');
-  hasPrefix ? (prefixInput.value = item.dataset.prefix) : '';
+  let prefixInput = document.getElementById("prefix");
+  hasPrefix ? (prefixInput.value = item.dataset.prefix) : "";
   let hasSuffix = item.dataset.suffix != null;
-  let suffixInput = document.getElementById('suffix');
-  hasSuffix ? (suffixInput.value = item.dataset.suffix) : '';
+  let suffixInput = document.getElementById("suffix");
+  hasSuffix ? (suffixInput.value = item.dataset.suffix) : "";
 }
 
 /**
@@ -1069,7 +1082,7 @@ function getState(item) {
 function toggleStyle(control, selectedItems, bool) {
   selectedItems.forEach((item) => {
     // Double-checking if item is selected
-    if (item.classList.contains('selected')) {
+    if (item.classList.contains("selected")) {
       // Deals with buttons
       // if formatting button is selected, add class, else remove
       bool
@@ -1090,16 +1103,16 @@ function toggleStyle(control, selectedItems, bool) {
  */
 function addReplaceStyle(dropdown, selectedItems) {
   // Deals with selection
-  dropdown.addEventListener('input', function () {
+  dropdown.addEventListener("input", function () {
     selectedItems.forEach((item) => {
       let option = dropdown.value;
-      if (option !== '') {
+      if (option !== "") {
         // Check if item already has styles in this group
         let group = new RegExp(`${dropdown.id}-*`);
-        let hasGroup = item.className.split(' ').some(function (c) {
+        let hasGroup = item.className.split(" ").some(function (c) {
           return group.test(c);
         });
-        if (item.classList.contains('selected')) {
+        if (item.classList.contains("selected")) {
           if (!hasGroup) {
             // If not, add it
             item.classList.add(option);
@@ -1126,11 +1139,11 @@ function addReplaceStyle(dropdown, selectedItems) {
 function resetControls() {
   controls.forEach((control) => {
     // Deal with select input
-    let isDropdown = control.tagName === 'SELECT';
-    isDropdown ? (control.value = '') : '';
-    control.classList.remove('selected');
-    let isInput = control.tagName === 'INPUT';
-    isInput ? (control.value = '') : '';
+    let isDropdown = control.tagName === "SELECT";
+    isDropdown ? (control.value = "") : "";
+    control.classList.remove("selected");
+    let isInput = control.tagName === "INPUT";
+    isInput ? (control.value = "") : "";
   });
 }
 
@@ -1141,7 +1154,7 @@ function resetControls() {
  */
 function updateFieldContent(content, item) {
   let option = content.id;
-  item.setAttribute('data-' + option, content.value);
+  item.setAttribute("data-" + option, content.value);
   console.log(content, item);
 }
 
@@ -1151,8 +1164,8 @@ function updateFieldContent(content, item) {
  */
 function handleDragStart(e) {
   dragSrcEl = this;
-  this.classList.add('dragging');
-  e.dataTransfer.effectAllowed = 'move';
+  this.classList.add("dragging");
+  e.dataTransfer.effectAllowed = "move";
 }
 
 /**
@@ -1163,7 +1176,7 @@ function handleDragOver(e) {
   if (e.preventDefault) {
     e.preventDefault();
   }
-  e.dataTransfer.dropEffect = 'move';
+  e.dataTransfer.dropEffect = "move";
   return false;
 }
 
@@ -1187,7 +1200,7 @@ function handleDrop(e) {
  * @param {Event} e
  */
 function handleDragEnd(e) {
-  this.classList.remove('dragging');
+  this.classList.remove("dragging");
   refreshPreview();
   return false;
 }
@@ -1197,10 +1210,10 @@ function saveJson() {
   let formatTextArea = window.opener.document.querySelector(formatId);
   let list = refreshPreview();
   let isEmpty = list[0].length == 0;
-  let message = '';
+  let message = "";
   if (isEmpty) {
     alert(
-      'Label format is empty! Please drag some items to the build area before trying again'
+      "Label format is empty! Please drag some items to the build area before trying again"
     );
   } else {
     let json = generateJson(refreshPreview());
@@ -1216,30 +1229,30 @@ function cancelWindow() {
 /** Event Listeners
  ******************************
  */
-fieldsFilter.addEventListener('change', function (e) {
+fieldsFilter.addEventListener("change", function (e) {
   filterFields(e.target.value);
 });
 
 draggables.forEach((draggable) => {
-  draggable.addEventListener('dragstart', handleDragStart, false);
-  draggable.addEventListener('dragover', handleDragOver, false);
-  draggable.addEventListener('drop', handleDrop, false);
-  draggable.addEventListener('dragend', handleDragEnd, false);
+  draggable.addEventListener("dragstart", handleDragStart, false);
+  draggable.addEventListener("dragover", handleDragOver, false);
+  draggable.addEventListener("drop", handleDrop, false);
+  draggable.addEventListener("dragend", handleDragEnd, false);
 });
 
 containers.forEach((container) => {
-  container.addEventListener('dragover', (e) => {
+  container.addEventListener("dragover", (e) => {
     e.preventDefault();
-    const dragging = document.querySelector('.dragging');
-    dragging !== null ? container.appendChild(dragging) : '';
+    const dragging = document.querySelector(".dragging");
+    dragging !== null ? container.appendChild(dragging) : "";
   });
 });
 
 // Elements in '#label-middle'
-labelMid.addEventListener('click', (e) => {
-  if (e.target.matches('.material-icons')) {
-    if (e.target.innerText === 'keyboard_arrow_up') {
-      let first = labelMid.getElementsByClassName('field-block')[0];
+labelMid.addEventListener("click", (e) => {
+  if (e.target.matches(".material-icons")) {
+    if (e.target.innerText === "keyboard_arrow_up") {
+      let first = labelMid.getElementsByClassName("field-block")[0];
       let curr = e.target.parentNode;
       // reorder only if item is not first in list already
       if (curr !== first) {
@@ -1249,7 +1262,7 @@ labelMid.addEventListener('click', (e) => {
         // insert current after prev
         curr.parentNode.insertBefore(prev, curr.nextSibling);
       }
-    } else if (e.target.innerText === 'keyboard_arrow_down') {
+    } else if (e.target.innerText === "keyboard_arrow_down") {
       let next = e.target.parentNode.nextSibling;
       let curr = e.target.parentNode;
       if (next) {
@@ -1258,7 +1271,7 @@ labelMid.addEventListener('click', (e) => {
         // insert current after next
         next.parentNode.insertBefore(curr, next.nextSibling);
       }
-    } else if (e.target.innerText === 'close') {
+    } else if (e.target.innerText === "close") {
       let line = e.target.parentNode;
       removeLine(line);
     }
@@ -1266,30 +1279,30 @@ labelMid.addEventListener('click', (e) => {
   } else {
     if (isFormattable(e.target)) {
       // Add ".selected" to clicked item, removing it from others
-      let lines = labelMid.querySelectorAll('.field-block');
+      let lines = labelMid.querySelectorAll(".field-block");
       lines.forEach((line) => {
-        line.classList.remove('selected');
+        line.classList.remove("selected");
       });
-      let fields = labelMid.querySelectorAll('.draggable');
+      let fields = labelMid.querySelectorAll(".draggable");
       fields.forEach((field) => {
-        field.classList.remove('selected');
+        field.classList.remove("selected");
       });
-      e.target.classList.add('selected');
+      e.target.classList.add("selected");
     }
     // Everytime item is clicked, display list of selected items:
-    let selectedItems = build.querySelectorAll('.selected');
+    let selectedItems = build.querySelectorAll(".selected");
     if (selectedItems.length == 1) {
-      let itemType = '';
+      let itemType = "";
       // Refreshes buttons according to applied styles in selected item
-      let item = build.querySelector('.selected');
-      if (item.matches('.draggable')) {
-        itemType = 'field';
+      let item = build.querySelector(".selected");
+      if (item.matches(".draggable")) {
+        itemType = "field";
         // deactivate 'field-block' items
-        activateControls('field-block', false);
-      } else if (item.matches('.field-block')) {
-        itemType = 'field-block';
+        activateControls("field-block", false);
+      } else if (item.matches(".field-block")) {
+        itemType = "field-block";
         // deactivate 'field' items
-        activateControls('field', false);
+        activateControls("field", false);
       }
       resetControls();
       activateControls(itemType, true);
@@ -1301,13 +1314,13 @@ labelMid.addEventListener('click', (e) => {
 });
 
 // Formatting controls
-controlDiv.addEventListener('click', (e) => {
+controlDiv.addEventListener("click", (e) => {
   // Gets selected items to format
-  let formatItems = build.querySelectorAll('.selected');
+  let formatItems = build.querySelectorAll(".selected");
   let isFormatSelected = toggleSelect(e.target);
   console.log(isFormatSelected);
-  let isButton = e.target.tagName === 'BUTTON';
-  let isDropdown = e.target.tagName === 'SELECT';
+  let isButton = e.target.tagName === "BUTTON";
+  let isDropdown = e.target.tagName === "SELECT";
   // Buttons
   if (isButton) {
     toggleStyle(e.target, formatItems, isFormatSelected);
@@ -1319,8 +1332,8 @@ controlDiv.addEventListener('click', (e) => {
 // Field and Block options (prefix/suffix, delimiters)
 // Listen to input changes
 inputs.forEach((input) => {
-  input.addEventListener('input', (e) => {
-    let formatItem = build.querySelector('.selected');
+  input.addEventListener("input", (e) => {
+    let formatItem = build.querySelector(".selected");
     updateFieldContent(e.target, formatItem);
     console.log(e.target, formatItem);
     refreshPreview();
