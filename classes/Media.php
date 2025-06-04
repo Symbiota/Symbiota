@@ -954,7 +954,7 @@ class Media {
 			//Required to exist
 			$source_url = $clean_post_arr['originalUrl'];
 			$keyValuePairs['originalUrl'] =  $source_url;
-			$keyValuePairs['url'] = $clean_post_arr['weburl']?? $source_url;
+			$keyValuePairs['url'] = $clean_post_arr['weburl'] ?? $clean_post_arr['url'] ?? $source_url;
 		} else {
 			$keyValuePairs['url'] = $storage->getUrlPath() . $file['name'];
 			$keyValuePairs['originalUrl'] = $storage->getUrlPath() . $file['name'];
