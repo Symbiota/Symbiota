@@ -1034,9 +1034,9 @@ class Media {
 						}
 					}
 
-					$med_url = $clean_post_arr['weburl'] ?? null;
+					$med_url = $clean_post_arr['weburl'] ?? $clean_post_arr['url'] ?? null;
 					if(!$med_url) {
-						$med_name =	self::addToFilename($file['name'], '_lg');
+						$med_name =	self::addToFilename($file['name'], '_web');
 						self::create_image(
 							$file['name'],
 							$med_name,
