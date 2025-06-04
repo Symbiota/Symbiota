@@ -904,7 +904,7 @@ class DwcArchiverCore extends Manager{
 			}
 			if ($this->includeAssociations && file_exists($this->targetPath . $this->ts . '-assoc' . $this->fileExt)) {
 				$zipArchive->addFile($this->targetPath . $this->ts . '-assoc' . $this->fileExt);
-				$zipArchive->renameName($this->targetPath . $this->ts . '-assoc' . $this->fileExt, 'associations' . $this->fileExt);
+				$zipArchive->renameName($this->targetPath . $this->ts . '-assoc' . $this->fileExt, 'resourceRelationships' . $this->fileExt);
 			}
 			//Meta file
 			$this->writeMetaFile();
@@ -1163,7 +1163,7 @@ class DwcArchiverCore extends Manager{
 			$extElem3->setAttribute('rowType', 'http://rs.tdwg.org/dwc/terms/ResourceRelationship');
 
 			$filesElem3 = $newDoc->createElement('files');
-			$filesElem3->appendChild($newDoc->createElement('location', 'associations' . $this->fileExt));
+			$filesElem3->appendChild($newDoc->createElement('location', 'resourceRelationships' . $this->fileExt));
 			$extElem3->appendChild($filesElem3);
 
 			$coreIdElem3 = $newDoc->createElement('coreid');
