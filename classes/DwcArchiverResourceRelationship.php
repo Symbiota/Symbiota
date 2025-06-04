@@ -129,7 +129,7 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 				// $this->sqlBase = 'SELECT ' . trim($sqlFrag, ', ') . ' FROM omoccurassociations ';
 				$this->sqlBase = 'SELECT DISTINCT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o
 					INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate
-					LEFT JOIN omoccurrences oo ON oo.occid = oa.occid
+					INNER JOIN omoccurrences oo ON oo.occid = oa.occid
 					LEFT JOIN taxa t on t.tid = o.tidInterpreted
 					LEFT JOIN taxa ot on ot.tid = oo.tidInterpreted
 					LEFT JOIN (SELECT t.term, t.inverseRelationship
