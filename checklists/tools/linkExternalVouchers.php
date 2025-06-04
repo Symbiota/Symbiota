@@ -271,7 +271,7 @@ if($clManager->getAssociatedExternalService()) {
 
 			<div id="voucher_error" style="display:none;position:absolute; top:50%; width:100%; text-align:center"></div>
 			<div id="all_vouchers_linked" style="display:none;position:absolute; top:50%; width:100%; text-align:center">
-				<?= $LANG['LOADING_EXTERNAL_VOUCHERS']?>: <a href="https://www.inaturalist.org/projects/<?= $external_id ?>" target="_blank">iNaturalist <i><?= $taxon_name ?></i></a>
+				<?= $LANG['ALL_VOUCHERS_ASSOCIATED']?>: <a href="https://www.inaturalist.org/projects/<?= $external_id ?>" target="_blank">iNaturalist <i><?= $taxon_name ?></i></a>
 			</div>
 		</div>
 	</body>
