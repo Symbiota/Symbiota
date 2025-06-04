@@ -2068,6 +2068,11 @@ class SpecUploadBase extends SpecUpload{
 		}
 	}
 
+  /*
+	* Parses media import rows into a valid media record and insert it into database
+	* @param Array $recMap
+	* @return Bool
+	*/
 	protected function loadMediaRecord($recMap){
 		if($recMap){
 			//Test images
@@ -2084,7 +2089,16 @@ class SpecUploadBase extends SpecUpload{
 			}
 
 			$file = Media::parseFileName($testUrl);
-			$parsed_mime = $recMap['format'] ?? Media::ext2Mime($file['extension']);
+
+			$parsed_mime = false;
+			// If provided format is not supported try to parse it from filename.
+			// Sometimes this happens when wrong formats are spread around
+			// example audio/jpg
+			if(isset($recMap['format']) && Media::getAllowedMime($recMap['format'])) {
+				$parsed_mime = $recMap['format'];
+			} else if(isset($file['extension'])) {
+				$parsed_mime = Media::ext2Mime($file['extension']);
+			}
 
 			if(!$parsed_mime) {
 				try {
