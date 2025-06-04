@@ -3,10 +3,6 @@ include_once('Manager.php');
 
 class SiteMapManager extends Manager{
 
-	private $collArr = array();
-	private $obsArr = array();
-	private $genObsArr = array();
-
 	function __construct() {
 		parent::__construct();
 	}
@@ -15,102 +11,85 @@ class SiteMapManager extends Manager{
  		parent::__destruct();
 	}
 
-	public function setCollectionList(){
+	public function getCollectionList(){
 		global $USER_RIGHTS, $IS_ADMIN;
+		$retArr = array();
 		$adminArr = array();
 		$editorArr = array();
 		$sql = 'SELECT collid, CONCAT_WS(":", institutioncode, collectioncode) AS ccode, collectionname, colltype FROM omcollections ';
 		if(!$IS_ADMIN){
-			if(array_key_exists("CollAdmin",$USER_RIGHTS)){
+			if(array_key_exists('CollAdmin', $USER_RIGHTS)){
 				$adminArr = $USER_RIGHTS['CollAdmin'];
 			}
-			if(array_key_exists("CollEditor",$USER_RIGHTS)){
+			if(array_key_exists('CollEditor', $USER_RIGHTS)){
 				$editorArr = $USER_RIGHTS['CollEditor'];
 			}
 			if($adminArr || $editorArr){
-				$sql .= 'WHERE (collid IN('.implode(',',array_merge($adminArr,$editorArr)).')) ';
+				$sql .= 'WHERE colltype != "General Observations" AND (collid IN('.implode(',',array_merge($adminArr,$editorArr)).')) ';
 			}
 			else{
 				$sql = '';
 			}
 		}
 		if($sql){
-			$sql .= "ORDER BY collectionname";
-			//echo "<div>".$sql."</div>";
+			$sql .= 'ORDER BY collectionname';
 			$rs = $this->conn->query($sql);
 			if($rs){
 				while($row = $rs->fetch_object()){
-					$name = $row->collectionname.($row->ccode?" (".$row->ccode.")":"");
-					$isCollAdmin = ($IS_ADMIN||in_array($row->collid,$adminArr)?1:0);
+					$name = $row->collectionname;
+					if($row->ccode) $name .= ' (' . $row->ccode . ')';
+					$isCollAdmin = 0;
+					if($IS_ADMIN || in_array($row->collid, $adminArr)) $isCollAdmin = 0;
 					if($row->colltype == 'Observations'){
-						$this->obsArr[$row->collid]['name'] = $name;
-						$this->obsArr[$row->collid]['isadmin'] = $isCollAdmin;
-					}
-					elseif($row->colltype == 'General Observations'){
-						$this->genObsArr[$row->collid]['name'] = $name;
-						$this->genObsArr[$row->collid]['isadmin'] = $isCollAdmin;
+						$retArr['o'][$row->collid]['name'] = $name;
+						$retArr['o'][$row->collid]['isadmin'] = $isCollAdmin;
 					}
 					else{
-						$this->collArr[$row->collid]['name'] = $name;
-						$this->collArr[$row->collid]['isadmin'] = $isCollAdmin;
+						$retArr['s'][$row->collid]['name'] = $name;
+						$retArr['s'][$row->collid]['isadmin'] = $isCollAdmin;
 					}
 				}
-				$rs->close();
+				$rs->free();
 			}
 		}
+		return $retArr;
 	}
 
-	public function getCollArr(){
-		return $this->collArr;
-	}
-
-	public function getObsArr(){
-		return $this->obsArr;
-	}
-
-	public function getGenObsArr(){
-		return $this->genObsArr;
-	}
-
-	public function getChecklistList($clArr){
+	public function getChecklistList(){
+		global $USER_RIGHTS;
 		$returnArr = Array();
 		$sql = 'SELECT clid, name, access FROM fmchecklists ';
 		if($GLOBALS['IS_ADMIN']){
 			//Show all without restrictions
 		}
-		elseif($clArr){
-			$sql .= 'WHERE (access LIKE "public%" OR clid IN('.implode(',',$clArr).')) ';
+		elseif(!empty($USER_RIGHTS['ClAdmin'])){
+			$clStr = implode(',', $USER_RIGHTS['ClAdmin']);
+			$sql .= 'WHERE (access LIKE "public%" OR clid IN(' . $clStr . ')) ';
 		}
 		else{
 			//Show only public lists
 			$sql .= 'WHERE (access LIKE "public%") ';
 		}
 		$sql .= 'ORDER BY name';
-		//echo "<div>".$sql."</div>";
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
 			$clName = $row->name.($row->access=='private'?' (limited access)':'');
 			$returnArr[$row->clid] = $clName;
 		}
-		$rs->close();
+		$rs->free();
 		return $returnArr;
 	}
 
-	public function getProjectList($projArr = ""){
+	public function getProjectList(){
 		$returnArr = Array();
-		$sql = 'SELECT pid, projname, managers FROM fmprojects WHERE ispublic = 1 ';
-		if($projArr){
-			$sql .= 'AND (pid IN('.implode(',',$projArr).')) ';
-		}
-		$sql .= 'ORDER BY projname';
-		//echo '<div>'.$sql.'</div>';
+		$sql = 'SELECT pid, projname, managers FROM fmprojects WHERE ispublic = 1 ORDER BY projname';
 		$rs = $this->conn->query($sql);
 		if($rs){
 			while($row = $rs->fetch_object()){
 				$returnArr[$row->pid]['name'] = $row->projname;
 				$returnArr[$row->pid]['managers'] = $row->managers;
 			}
-			$rs->close();
+			$rs->free();
 		}
 		return $returnArr;
 	}

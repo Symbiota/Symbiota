@@ -553,13 +553,13 @@ class Calculation
             'argumentCount' => '2+',
         ],
         'CHOOSECOLS' => [
-            'category' => Category::CATEGORY_MATH_AND_TRIG,
-            'functionCall' => [Functions::class, 'DUMMY'],
+            'category' => Category::CATEGORY_LOOKUP_AND_REFERENCE,
+            'functionCall' => [LookupRef\ChooseRowsEtc::class, 'chooseCols'],
             'argumentCount' => '2+',
         ],
         'CHOOSEROWS' => [
-            'category' => Category::CATEGORY_MATH_AND_TRIG,
-            'functionCall' => [Functions::class, 'DUMMY'],
+            'category' => Category::CATEGORY_LOOKUP_AND_REFERENCE,
+            'functionCall' => [LookupRef\ChooseRowsEtc::class, 'chooseRows'],
             'argumentCount' => '2+',
         ],
         'CLEAN' => [
@@ -925,8 +925,8 @@ class Calculation
             'argumentCount' => '3',
         ],
         'DROP' => [
-            'category' => Category::CATEGORY_MATH_AND_TRIG,
-            'functionCall' => [Functions::class, 'DUMMY'],
+            'category' => Category::CATEGORY_LOOKUP_AND_REFERENCE,
+            'functionCall' => [LookupRef\ChooseRowsEtc::class, 'drop'],
             'argumentCount' => '2-3',
         ],
         'DSTDEV' => [
@@ -1025,8 +1025,8 @@ class Calculation
             'argumentCount' => '1',
         ],
         'EXPAND' => [
-            'category' => Category::CATEGORY_MATH_AND_TRIG,
-            'functionCall' => [Functions::class, 'DUMMY'],
+            'category' => Category::CATEGORY_LOOKUP_AND_REFERENCE,
+            'functionCall' => [LookupRef\ChooseRowsEtc::class, 'expand'],
             'argumentCount' => '2-4',
         ],
         'EXPONDIST' => [
@@ -1255,6 +1255,11 @@ class Calculation
             'category' => Category::CATEGORY_LOOKUP_AND_REFERENCE,
             'functionCall' => [Functions::class, 'DUMMY'],
             'argumentCount' => '2+',
+        ],
+        'GROUPBY' => [
+            'category' => Category::CATEGORY_LOOKUP_AND_REFERENCE,
+            'functionCall' => [Functions::class, 'DUMMY'],
+            'argumentCount' => '3-7',
         ],
         'GROWTH' => [
             'category' => Category::CATEGORY_STATISTICAL,
@@ -2485,8 +2490,8 @@ class Calculation
             'argumentCount' => '1',
         ],
         'TAKE' => [
-            'category' => Category::CATEGORY_MATH_AND_TRIG,
-            'functionCall' => [Functions::class, 'DUMMY'],
+            'category' => Category::CATEGORY_LOOKUP_AND_REFERENCE,
+            'functionCall' => [LookupRef\ChooseRowsEtc::class, 'take'],
             'argumentCount' => '2-3',
         ],
         'TAN' => [
@@ -3139,6 +3144,53 @@ class Calculation
         }
 
         return $localeFileName;
+    }
+
+    /** @var array<int, array<int, string>> */
+    private static array $falseTrueArray = [];
+
+    /** @return array<int, array<int, string>> */
+    public function getFalseTrueArray(): array
+    {
+        if (!empty(self::$falseTrueArray)) {
+            return self::$falseTrueArray;
+        }
+        if (count(self::$validLocaleLanguages) == 1) {
+            self::loadLocales();
+        }
+        $falseTrueArray = [['FALSE'], ['TRUE']];
+        foreach (self::$validLocaleLanguages as $language) {
+            if (str_starts_with($language, 'en')) {
+                continue;
+            }
+            $locale = $language;
+            if (str_contains($locale, '_')) {
+                [$language] = explode('_', $locale);
+            }
+            $localeDir = implode(DIRECTORY_SEPARATOR, [__DIR__, 'locale', null]);
+
+            try {
+                $functionNamesFile = $this->getLocaleFile($localeDir, $locale, $language, 'functions');
+            } catch (Exception $e) {
+                continue;
+            }
+            //    Retrieve the list of locale or language specific function names
+            $localeFunctions = file($functionNamesFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
+            foreach ($localeFunctions as $localeFunction) {
+                [$localeFunction] = explode('##', $localeFunction); //    Strip out comments
+                if (str_contains($localeFunction, '=')) {
+                    [$fName, $lfName] = array_map('trim', explode('=', $localeFunction));
+                    if ($fName === 'FALSE') {
+                        $falseTrueArray[0][] = $lfName;
+                    } elseif ($fName === 'TRUE') {
+                        $falseTrueArray[1][] = $lfName;
+                    }
+                }
+            }
+        }
+        self::$falseTrueArray = $falseTrueArray;
+
+        return $falseTrueArray;
     }
 
     /**
@@ -4149,9 +4201,9 @@ class Calculation
                     $expectedArgumentCountString = null;
                     if (is_numeric($expectedArgumentCount)) {
                         if ($expectedArgumentCount < 0) {
-                            if ($argumentCount > abs($expectedArgumentCount)) {
+                            if ($argumentCount > abs($expectedArgumentCount + 0)) {
                                 $argumentCountError = true;
-                                $expectedArgumentCountString = 'no more than ' . abs($expectedArgumentCount);
+                                $expectedArgumentCountString = 'no more than ' . abs($expectedArgumentCount + 0);
                             }
                         } else {
                             if ($argumentCount != $expectedArgumentCount) {
@@ -4160,8 +4212,10 @@ class Calculation
                             }
                         }
                     } elseif ($expectedArgumentCount != '*') {
-                        preg_match('/(\d*)([-+,])(\d*)/', $expectedArgumentCount, $argMatch);
-                        switch ($argMatch[2] ?? '') {
+                        if (1 !== preg_match('/(\d*)([-+,])(\d*)/', $expectedArgumentCount, $argMatch)) {
+                            $argMatch = ['', '', '', ''];
+                        }
+                        switch ($argMatch[2]) {
                             case '+':
                                 if ($argumentCount < $argMatch[1]) {
                                     $argumentCountError = true;
@@ -4234,7 +4288,7 @@ class Calculation
                 // do we now have a function/variable/number?
                 $expectingOperator = true;
                 $expectingOperand = false;
-                $val = $match[1];
+                $val = $match[1] ?? ''; //* @phpstan-ignore-line
                 $length = strlen($val);
 
                 if (preg_match('/^' . self::CALCULATION_REGEXP_FUNCTION . '$/miu', $val, $matches)) {
@@ -4290,7 +4344,7 @@ class Calculation
                                 $rangeStartCellRef = $output[count($output) - 2]['value'] ?? '';
                             }
                             preg_match('/^' . self::CALCULATION_REGEXP_CELLREF . '$/miu', $rangeStartCellRef, $rangeStartMatches);
-                            if ($rangeStartMatches[2] !== $matches[2]) {
+                            if (isset($rangeStartMatches[2]) && $rangeStartMatches[2] !== $matches[2]) {
                                 return $this->raiseFormulaError('3D Range references are not yet supported');
                             }
                         }
@@ -4380,7 +4434,7 @@ class Calculation
                                 $valx = $val;
                                 $endRowColRef = ($refSheet !== null) ? $refSheet->getHighestDataColumn($valx) : AddressRange::MAX_COLUMN; //    Max 16,384 columns for Excel2007
                                 $val = "{$rangeWS2}{$endRowColRef}{$val}";
-                            } elseif (ctype_alpha($val) && strlen($val ?? '') <= 3) {
+                            } elseif (ctype_alpha($val) && is_string($val) && strlen($val) <= 3) {
                                 //    Column range
                                 $stackItemType = 'Column Reference';
                                 $endRowColRef = ($refSheet !== null) ? $refSheet->getHighestDataRow($val) : AddressRange::MAX_ROW; //    Max 1,048,576 rows for Excel2007
@@ -4545,8 +4599,14 @@ class Calculation
         return $operand;
     }
 
+    private static int $matchIndex8 = 8;
+
+    private static int $matchIndex9 = 9;
+
+    private static int $matchIndex10 = 10;
+
     /**
-     * @return array<int, mixed>|false
+     * @return array<int, mixed>|false|string
      */
     private function processTokenStack(mixed $tokens, ?string $cellID = null, ?Cell $cell = null)
     {
@@ -4908,12 +4968,17 @@ class Calculation
             } elseif (preg_match('/^' . self::CALCULATION_REGEXP_CELLREF . '$/i', $token ?? '', $matches)) {
                 $cellRef = null;
 
-                if (isset($matches[8])) {
+                /* Phpstan says matches[8/9/10] is never set,
+                   and code coverage report seems to confirm.
+                   Appease PhpStan for now;
+                   probably delete this block later.
+                */
+                if (isset($matches[self::$matchIndex8])) {
                     if ($cell === null) {
                         // We can't access the range, so return a REF error
                         $cellValue = ExcelError::REF();
                     } else {
-                        $cellRef = $matches[6] . $matches[7] . ':' . $matches[9] . $matches[10];
+                        $cellRef = $matches[6] . $matches[7] . ':' . $matches[self::$matchIndex9] . $matches[self::$matchIndex10];
                         if ($matches[2] > '') {
                             $matches[2] = trim($matches[2], "\"'");
                             if ((str_contains($matches[2], '[')) || (str_contains($matches[2], ']'))) {
@@ -5122,6 +5187,9 @@ class Calculation
                 } elseif (preg_match('/^' . self::CALCULATION_REGEXP_DEFINEDNAME . '$/miu', $token, $matches)) {
                     // if the token is a named range or formula, evaluate it and push the result onto the stack
                     $definedName = $matches[6];
+                    if (str_starts_with($definedName, '_xleta')) {
+                        return Functions::NOT_YET_IMPLEMENTED;
+                    }
                     if ($cell === null || $pCellWorksheet === null) {
                         return $this->raiseFormulaError("undefined name '$token'");
                     }
@@ -5154,6 +5222,7 @@ class Calculation
                     }
 
                     $result = $this->evaluateDefinedName($cell, $namedRange, $pCellWorksheet, $stack, $specifiedWorksheet !== '');
+
                     if (isset($storeKey)) {
                         $branchStore[$storeKey] = $result;
                     }

@@ -96,6 +96,7 @@ $LANG['GENERA'] = 'genres';
 $LANG['SPECIES'] = 'espèce';
 $LANG['TOTAL_TAXA'] = 'taxons totaux (y compris subsp. et var.)';
 $LANG['TYPE_SPECIMENS'] = 'spécimens types';
+$LANG['LAST_UPDATED'] = 'dernière mise à jour';
 $LANG['EXTRA_STATS'] = 'Statistiques Supplémentaires';
 $LANG['SHOW_FAMILY_DIST'] = 'Afficher Distribution Familiale';
 $LANG['HIDE_FAMILY_DIST'] = 'Masquer Distribution Familiale';

@@ -346,25 +346,6 @@ $traitArr = $indManager->getTraitArr();
 		</h1>
 		<div id="end-nav"></div>
 	</header>
-	<div id="fb-root"></div>
-	<script>
-		(function(d, s, id) {
-			var js, fjs = d.getElementsByTagName(s)[0];
-			if (d.getElementById(id)) return;
-			js = d.createElement(s); js.id = id;
-			js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
-			fjs.parentNode.insertBefore(js, fjs);
-		}(document, 'script', 'facebook-jssdk'));
-
-		window.twttr=(function(d,s,id){
-			var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};
-			if(d.getElementById(id))return;js=d.createElement(s);
-			js.id=id;js.src="https://platform.twitter.com/widgets.js";
-			fjs.parentNode.insertBefore(js,fjs);t._e=[];
-			t.ready=function(f){t._e.push(f);};
-			return t;
-		}(document,"script","twitter-wjs"));
-	</script>
 	<!-- This is inner text! -->
 	<div id="popup-innertext">
 		<?php
@@ -401,14 +382,6 @@ $traitArr = $indManager->getTraitArr();
 					?>
 				</ul>
 				<div id="occurtab">
-					<div id="media-div">
-						<div>
-							<a class="twitter-share-button" href="https://twitter.com/share" data-url="<?= $indManager->cleanOutStr($_SERVER['HTTP_HOST']) . $CLIENT_ROOT . '/collections/individual/index.php?occid=' . $occid . '&clid=' . $clid; ?>"><?= (isset($LANG['TWEET']) ? $LANG['TWEET'] : 'Tweet') ?></a>
-						</div>
-						<div>
-							<div class="fb-share-button" data-href="" data-layout="button_count"></div>
-						</div>
-					</div>
 					<?php
 					$iconUrl = '';
 					if($collMetadata['icon']) $iconUrl = (substr($collMetadata['icon'], 0, 6) == 'images' ? '../../' : '') . $collMetadata['icon'];
@@ -438,7 +411,7 @@ $traitArr = $indManager->getTraitArr();
 						if(array_key_exists('relation',$occArr)){
 							?>
 								<fieldset id="association-div" class="top-light-margin">
-									<legend><?php echo (isset($LANG['RELATED_OCCUR'])?$LANG['RELATED_OCCUR']:'Related Occurrences'); ?></legend>
+									<legend><?= $LANG['ASSOCIATIONS']; ?></legend>
 									<?php
 									$displayLimit = 5;
 									$cnt = 0;
@@ -667,7 +640,7 @@ $traitArr = $indManager->getTraitArr();
 						}
 						if($occArr['recordedby']){
 							$recByLabel = (isset($LANG['OBSERVER'])?$LANG['OBSERVER']:'Observer');
-							if($collMetadata['colltype'] == 'Preserved Specimens') $recByLabel = (isset($LANG['COLLECTOR'])?$LANG['COLLECTOR']:'Collector');
+							if(strpos($collMetadata['colltype'], 'Specimens')) $recByLabel = (isset($LANG['COLLECTOR'])?$LANG['COLLECTOR']:'Collector');
 							?>
 							<div id="recordedby-div" class="bottom-breathing-room-rel-sm">
 								<label><?php echo $recByLabel; ?>: </label>
@@ -955,39 +928,49 @@ $traitArr = $indManager->getTraitArr();
 						}
 						if(isset($occArr['paleoid'])){
 							?>
-							<div id="paleo-div" class="bottom-breathing-room-rel-sm">
-								<label><?php echo $LANG['PALEO_TERMS']; ?>: </label>
-								<?php
-								$paleoStr1 = '';
-								if($occArr['eon']) $paleoStr1 .= '; '.$occArr['eon'];
-								if($occArr['era']) $paleoStr1 .= '; '.$occArr['era'];
-								if($occArr['period']) $paleoStr1 .= '; '.$occArr['period'];
-								if($occArr['epoch']) $paleoStr1 .= '; '.$occArr['epoch'];
-								if($occArr['stage']) $paleoStr1 .= '; '.$occArr['stage'];
-								if($occArr['earlyinterval']) $paleoStr1 .= '; '.$occArr['earlyinterval'];
-								if($occArr['lateinterval']) $paleoStr1 .= ' to '.$occArr['lateinterval'];
-								if($paleoStr1) echo trim($paleoStr1,'; ');
-								?>
-								<div style="margin-left:10px">
+								<div>
 									<?php
-									if($occArr['absoluteage']) echo '<div class="paleofield-div"><label>'.$LANG['ABSOLUTE_AGE'].':</label> '.$occArr['absoluteage'].'</div>';
-									if($occArr['storageage']) echo '<div class="paleofield-div"><label>'.$LANG['STORAGE_AGE'].':</label> '.$occArr['storageage'].'</div>';
-									if($occArr['localstage']) echo '<div class="paleofield-div"><label>'.$LANG['LOCAL_STAGE'].':</label> '.$occArr['localstage'].'</div>';
-									if($occArr['biota']) echo '<div class="paleofield-div"><label>'.$LANG['BIOTA'].':</label> '.$occArr['biota'].'</div>';
-									if($occArr['biostratigraphy']) echo '<div class="paleofield-div"><label>'.$LANG['BIO_STRAT'].':</label> '.$occArr['biostratigraphy'].'</div>';
-									if($occArr['lithogroup']) echo '<div class="paleofield-div"><label>'.(isset($LANG['GROUP'])?$LANG['GROUP']:'Group').':</label> '.$occArr['lithogroup'].'</div>';
-									if($occArr['formation']) echo '<div class="paleofield-div"><label>'.$LANG['FORMATION'].':</label> '.$occArr['formation'].'</div>';
-									if($occArr['taxonenvironment']) echo '<div class="paleofield-div"><label>'.$LANG['TAXON_ENVIR'].':</label> '.$occArr['taxonenvironment'].'</div>';
-									if($occArr['member']) echo '<div class="paleofield-div"><label>'.$LANG['MEMBER'].':</label> '.$occArr['member'].'</div>';
-									if($occArr['bed']) echo '<div class="paleofield-div"><label>'.$LANG['BED'].':</label> '.$occArr['bed'].'</div>';
-									if($occArr['lithology']) echo '<div class="paleofield-div"><label>'.$LANG['LITHOLOGY'].':</label> '.$occArr['lithology'].'</div>';
-									if($occArr['stratremarks']) echo '<div class="paleofield-div"><label>'.$LANG['STRAT_REMARKS'].':</label> '.$occArr['stratremarks'].'</div>';
-									if($occArr['element']) echo '<div class="paleofield-div"><label>'.$LANG['ELEMENT'].':</label> '.$occArr['element'].'</div>';
-									if($occArr['slideproperties']) echo '<div class="paleofield-div"><label>'.$LANG['SLIDE_PROPS'].':</label> '.$occArr['slideproperties'].'</div>';
-									if($occArr['geologicalcontextid']) echo '<div class="paleofield-div"><label>'.$LANG['CONTEXT_ID'].':</label> '.$occArr['geologicalcontextid'].'</div>';
+									if($occArr['slideProperties']) echo '<div class="bottom-breathing-room-rel-sm"><label>'.$LANG['SLIDE_PROPS'].':</label> '.$occArr['slideProperties'].'</div>';
+									if($occArr['element']) echo '<div class="bottom-breathing-room-rel-sm"><label>'.$LANG['ELEMENT'].':</label> '.$occArr['element'].'</div>';
 									?>
 								</div>
-							</div>
+								<div class=" bottom-breathing-room-rel-sm"><label><?php echo $LANG['GEO_CONTEXT']; ?>: </label></div>
+								<?php
+								$paleoStr1 = '';
+								if($occArr['earlyInterval']) $paleoStr1 .= '; '.$occArr['earlyInterval'];
+								if($occArr['lateInterval']) $paleoStr1 .= ' to '.$occArr['lateInterval'];
+								if($paleoStr1 || $occArr['localStage'] || $occArr['absoluteAge']) {
+									echo '<div class="paleofield-div bottom-breathing-room-rel-sm"><label>' . $LANG['CHRONOSTRAT'] . ': </label>' . trim($paleoStr1,'; ');
+									if($occArr['lateInterval'] && $occArr['lateIntervalHieararchy'])
+										echo '<div class="paleofield-div top-breathing-room-rel-sm"><label>' . $LANG['LATE_INT'] . ': </label>' . trim($occArr["lateIntervalHieararchy"]) . '</div>';
+									if($occArr['earlyInterval'] && $occArr['earlyIntervalHieararchy'])
+										echo '<div class="paleofield-div top-breathing-room-rel-sm"><label>' . $LANG['EARLY_INT'] . ': </label>' . trim($occArr["earlyIntervalHieararchy"]) . '</div>';
+									if($occArr['localStage'])
+										echo '<div class="paleofield-div top-breathing-room-rel-sm"><label>' . $LANG['LOCAL_STAGE'] . ': </label>' . trim($occArr["localStage"]) . '</div>';
+									if($occArr['absoluteAge'])
+										echo '<div class="paleofield-div top-breathing-room-rel-sm"><label>' . $LANG['ABSOLUTE_AGE'] . ': </label>' . trim($occArr["absoluteAge"]) . '</div>';
+									echo '</div>';
+								}
+								?>
+								<?php
+								$paleoStr2 = '';
+								if($occArr['lithogroup']) $paleoStr2 .= ' <label>'.$LANG['GROUP'] . ': </label>' . $occArr['lithogroup'];
+								if($occArr['formation'])$paleoStr2 .= ' <label>'.$LANG['FORMATION'] . ': </label>' . $occArr['formation'];
+								if($occArr['member']) $paleoStr2 .= ' <label>'.$LANG['MEMBER'] . ': </label>' . $occArr['member'];
+								if($occArr['bed']) $paleoStr2 .= ' <label>'.$LANG['BED'] . ': </label>' . $occArr['bed'];
+								if($paleoStr2)
+									echo '<div class="paleofield-div bottom-breathing-room-rel-sm"><label>' . $LANG['LITHOSTRAT'] . ': </label>' . trim($paleoStr2,'; ') . '</div>';
+								if($occArr['biostratigraphy']) echo '<div class="paleofield-div bottom-breathing-room-rel-sm"><label>'.$LANG['BIO_STRAT'].':</label> '.$occArr['biostratigraphy'].'</div>';
+								$paleoStr3 = '';
+								if($paleoStr3)
+									echo '<div class="paleofield-div bottom-breathing-room-rel-sm">' . trim($paleoStr3,'; ') . '</div>';
+								if($occArr['stratRemarks']) echo '<div class="paleofield-div bottom-breathing-room-rel-sm"><label>'.$LANG['STRAT_REMARKS'].':</label> '.$occArr['stratRemarks'].'</div>';
+								if($occArr['lithology']) echo '<div class="paleofield-div bottom-breathing-room-rel-sm"><label>'.$LANG['LITHOLOGY'].':</label> '.$occArr['lithology'].'</div>';
+								if($occArr['biota']) echo '<div class="paleofield-div bottom-breathing-room-rel-sm"><label>'.$LANG['BIOTA'].':</label> '.$occArr['biota'].'</div>';
+								if($occArr['taxonEnvironment']) echo '<div class="paleofield-div bottom-breathing-room-rel-sm"><label>'.$LANG['TAXON_ENVIR'].':</label> '.$occArr['taxonEnvironment'].'</div>';
+								if($occArr['geologicalContextID']) echo '<div class="paleofield-div bottom-breathing-room-rel-sm"><label>'.$LANG['CONTEXT_ID'].':</label> '.$occArr['geologicalContextID'].'</div>';
+								?>
+
 							<?php
 						}
 						if(isset($occArr['exs'])){

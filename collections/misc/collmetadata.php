@@ -493,21 +493,31 @@ $collManager->cleanOutArr($collData);
 							</div>
 							<?php
 							if ($IS_ADMIN) {
+								$collTypeValue = '';
+								if($collid){
+									if($collData['colltype'] == 'Observations') $collTypeValue = 'obs';
+									elseif($collData['colltype'] == 'General Observations') $collTypeValue = 'go';
+									elseif($collData['colltype'] == 'Fossil Specimens') $collTypeValue = 'fs';
+								}
+								else{
+									//Is a new collection, thus set to Fossil Specimen is that is the default for the portal
+									if($ACTIVATE_PALEO) $collTypeValue = 'fs';
+								}
 								?>
 								<div class="field-block">
 									<span class="field-elem">
-										<label for="collType"> <?php echo htmlspecialchars($LANG['DATASET_TYPE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>: </label>
+										<label for="collType"> <?= $LANG['DATASET_TYPE'] ?>: </label>
 										<select id="collType" name="collType">
-											<option value="Preserved Specimens"><?php echo $LANG['PRES_SPECS']; ?></option>
-											<option value="Observations" <?php echo ($collid && $collData["colltype"] == 'Observations' ? 'SELECTED' : ''); ?>><?php echo $LANG['OBSERVATIONS']; ?></option>
-											<option value="General Observations" <?php echo ($collid && $collData["colltype"] == 'General Observations' ? 'SELECTED' : ''); ?>><?php echo $LANG['PERS_OBS_MAN']; ?></option>
+											<option value="Preserved Specimens"><?= $LANG['PRES_SPECS']; ?></option>
+											<option value="Fossil Specimens" <?= ($collTypeValue == 'fs' ? 'SELECTED' : '') ?>><?= $LANG['FOSSIL_SPECS'] ?></option>
+											<option value="Observations" <?= ($collTypeValue == 'obs' ? 'SELECTED' : '') ?>><?= $LANG['OBSERVATIONS'] ?></option>
+											<option value="General Observations" <?= ($collTypeValue == 'go' ? 'SELECTED' : '') ?>><?= $LANG['PERS_OBS_MAN'] ?></option>
 										</select>
-
 										<a id="colltypeinfo" href="#" onclick="return false" tabindex="0">
-											<img src="../../images/info.png" style="width:1.2em;" alt="<?php echo $LANG['MORE_INFO'] ?>" title="<?php echo $LANG['MORE_COL_TYPE']; ?>"/>
+											<img src="../../images/info.png" style="width:1.2em;" alt="<?= $LANG['MORE_INFO'] ?>" title="<?= $LANG['MORE_COL_TYPE'] ?>"/>
 										</a>
 										<span id="colltypeinfodialog" aria-live="polite">
-											<?php echo $LANG['COL_TYPE_DEF'] ?>
+											<?= $LANG['COL_TYPE_DEF'] ?>
 										</span>
 									</span>
 								</div>

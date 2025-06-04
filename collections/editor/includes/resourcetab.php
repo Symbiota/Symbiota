@@ -228,11 +228,11 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 <div id="voucherdiv" style="width:795px;">
 	<?php
 	$assocArr = $occManager->getOccurrenceRelationships();
-	$basisOfRecordArr = array('HumanObservation' => $LANG['HUMAN_OBS'], 'LivingSpecimen' => $LANG['LIVING_SPEC'], 'MachineObservation' => $LANG['MACHINE_OBS'],
+	$basisOfRecordArr = array('HumanObservation' => $LANG['HUMAN_OBS'], 'LivingSpecimen' => $LANG['LIVING_SPEC'], 'MachineObservation' => $LANG['MACHINE_OBS'], 'FossilSpecimen' => $LANG['FOSSIL_SPEC'],
 		'MaterialSample' => $LANG['MAT_SAMPLE'], 'PreservedSpecimen' => $LANG['PRES_SAMPLE'], 'ReferenceCitation' => $LANG['REF_CITATION']);
 	?>
 	<fieldset class="resourceTab">
-		<legend><?php echo $LANG['ASSOC_OCC']; ?></legend>
+		<legend><?php echo $LANG['ASSOCIATIONS']; ?></legend>
 		<div style="float:right;margin-right:10px;">
 			<a href="#" onclick="toggle('new-association');return false;" title="<?php echo $LANG['CREATE_NEW_ASSOC']; ?>" ><img class="icon-img" src="../../images/add.png" /></a>
 		</div>

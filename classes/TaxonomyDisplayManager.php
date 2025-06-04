@@ -339,15 +339,15 @@ class TaxonomyDisplayManager extends Manager{
 		//Get target taxa (we don't want children and parents of non-accepted taxa, so we'll get those later)
 		$acceptedTid = '';
 		if($this->targetStr){
-			$sql1 = 'SELECT DISTINCT t.tid, ts.tidaccepted '.
-				'FROM taxa t LEFT JOIN taxstatus ts ON t.tid = ts.tid '.
-				'LEFT JOIN taxstatus ts1 ON t.tid = ts1.tidaccepted '.
-				'LEFT JOIN taxa t1 ON ts1.tid = t1.tid '.
-				'WHERE (ts.taxauthid = '.$this->taxAuthId.' OR ts.taxauthid IS NULL) AND (ts1.taxauthid = '.$this->taxAuthId.' OR ts1.taxauthid IS NULL) ';
+			$sql1 = 'SELECT DISTINCT t.tid, ts.tidaccepted
+				FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
+				INNER JOIN taxstatus ts1 ON t.tid = ts1.tidaccepted
+				INNER JOIN taxa t1 ON ts1.tid = t1.tid
+				WHERE (ts.taxauthid = '.$this->taxAuthId.') AND (ts1.taxauthid = '.$this->taxAuthId.') ';
 			if($this->targetTid) $sql1 .= 'AND (t.tid IN('.$this->targetTid.') OR (ts1.tid = '.$this->targetTid.'))';
 			else{
-				$sql1 .= 'AND ((t.sciname = "'.$this->cleanInStr($this->targetStr).'") OR (t1.sciname = "'.$this->cleanInStr($this->targetStr).'") '.
-					'OR (CONCAT(t.sciname," ",t.author) = "'.$this->cleanInStr($this->targetStr).'") OR (CONCAT(t1.sciname," ",t1.author) = "'.$this->cleanInStr($this->targetStr).'")) ';
+				$sql1 .= 'AND ((t.sciname = "'.$this->cleanInStr($this->targetStr).'") OR (t1.sciname = "'.$this->cleanInStr($this->targetStr).'")
+					OR (CONCAT(t.sciname," ",t.author) = "'.$this->cleanInStr($this->targetStr).'") OR (CONCAT(t1.sciname," ",t1.author) = "'.$this->cleanInStr($this->targetStr).'")) ';
 			}
 			//echo "<div>".$sql1."</div>";
 			$rs1 = $this->conn->query($sql1);

@@ -303,8 +303,8 @@ class OccurrenceDownload{
 			'IFNULL(m.thumbnailurl,m.url) AS thumbnailurl, o.processingstatus '.
 			'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid '.
 			'INNER JOIN media m ON o.occid = m.occid '.
-			'WHERE c.colltype = "Preserved Specimens" '.
-			'AND o.processingstatus IN("pending review","reviewed", "closed") AND (o.recordSecurity = 0) ';
+			'WHERE c.colltype IN("Preserved Specimens","Fossil Specimens") '.
+			'AND o.processingstatus IN("pending review","reviewed","closed") AND (o.recordSecurity = 0) ';
 		if($days && is_numeric($days)) $sql .= 'AND (o.datelastmodified > DATE_SUB(NOW(), INTERVAL '.$days.' DAY)) ';
 		$sql .= 'ORDER BY o.datelastmodified DESC ';
 		if(!$days && !$limit) $limit = '100';

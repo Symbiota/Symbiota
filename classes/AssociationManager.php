@@ -82,15 +82,15 @@ class AssociationManager extends OccurrenceTaxaManager{
 			// External associations
 			$externalAndObservationalSql = "SELECT oa.occid FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid  LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE (oa.associationType='observational' OR oa.associationType='externalOccurrence') AND oa.relationship " . $relationshipStr . " ";
 			$externalAndObservationalSql .= $this->getAssociatedTaxonWhereFrag($associationArr);
-
+	
 			if(array_key_exists('search', $associationArr)){
 				$sql .= "AND (o.occid IN (SELECT occid FROM ( " . $forwardSql . " UNION " . $obsSql . " UNION " . $reverseSql . " UNION " . $externalAndObservationalSql . " ) AS occids)";
 			}else{
 				$sql .= "AND (o.occid IN (SELECT occid FROM ( " . $forwardSql . " UNION " . $reverseSql . " UNION " . $externalAndObservationalSql . " ) AS occids)";
 			}
-		}
-		return $sql;
-	}
+    	}
+    	return $sql;
+    }
 
 	private function getAssociatedTaxonWhereFrag($associationArr){
 		$sqlWhereTaxa = '';

@@ -294,7 +294,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 					$recUrl = 'http://';
 					if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $recUrl = 'https://';
 					$recUrl .= $_SERVER['SERVER_NAME'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$occid;
-					echo '<Data name="RecordURL">'.$recUrl.'</Data>';
+					echo '<Data name="RecordURL">' . htmlspecialchars($recUrl, ENT_QUOTES) . '</Data>';
 					if(isset($extraFieldArr) && is_array($extraFieldArr)){
 						reset($extraFieldArr);
 						foreach($extraFieldArr as $fieldName){
