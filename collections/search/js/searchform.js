@@ -7,6 +7,7 @@ const form = document.getElementById("params-form") || null;
 const formColls = document.getElementById("search-form-colls") || null;
 const formSites = document.getElementById("site-list") || null;
 const searchFormColls = document.getElementById("search-form-colls") || null;
+const searchFormPaleo = document.getElementById("search-form-geocontext") || null;
 
 // list of parameters to be passed to url, modified by getSearchUrl method
 let paramNames = [
@@ -42,6 +43,12 @@ let paramNames = [
   "associated-taxa",
   "taxontype-association",
   "usethes-associations",
+  "earlyInterval",
+  "lateInterval",
+  "lithogroup",
+  "formation",
+  "member",
+  "bed",
 ];
 const uLat = document.getElementById("upperlat") || null;
 const uLatNs = document.getElementById("upperlat_NS") || null;
@@ -136,7 +143,13 @@ function addChip(element) {
       uncheckAll(document.getElementById(element.name));
       removeChip(inputChip);
     };
-  } else {
+  }
+  else if (element.tagName === "OPTION") {
+    inputChip.id = "chip-" + element.dataset.chip;
+    inputChip.textContent = (element.dataset.chip ? element.dataset.chip + ": " : "") + element.textContent;
+    chipBtn.onclick = () => handleRemoval(element, inputChip);
+  }
+  else {
     inputChip.id = "chip-" + element.id;
     let isTextOrNum = (element.type == "text") | (element.type == "number");
     isTextOrNum
@@ -161,6 +174,12 @@ function handleRemoval(element, inputChip) {
   element.type === "checkbox"
     ? (element.checked = false)
     : (element.value = element.defaultValue);
+    if (element.tagName === "OPTION") {
+      const selectElement = element.closest('select');
+      if (selectElement) {
+        element.selected = false;
+      }
+    }
   if (element.getAttribute("id") === "dballcb") {
     const targetCategoryCheckboxes =
       document.querySelectorAll('input[id^="cat-"]');
@@ -692,6 +711,27 @@ function validateForm() {
     }
   }
 
+  // Geo Context
+  if (searchFormPaleo) {
+    let early = form.earlyInterval.value;
+    let late = form.lateInterval.value;
+    if ((early !== "" && late === "") || (early === "" && late !== "")) {
+      errors.push({
+        elId: "search-form-geocontext",
+        errorMsg:
+          translations.INTERVAL_MISSING,
+      });
+    }
+
+    if (early in paleoTimes && late in paleoTimes && paleoTimes[early].myaStart <= paleoTimes[late].myaEnd) {
+      errors.push({
+        elId: "search-form-geocontext",
+        errorMsg:
+          translations.INTERVALS_WRONG_ORDER,
+      });
+    }
+  }
+
   return errors;
 }
 
@@ -840,6 +880,37 @@ function setSearchForm(frm) {
     if (urlVar["associated-taxon-type"]) {
       if (frm["taxontype-association"]) {
         frm["taxontype-association"].value = urlVar["associated-taxon-type"];
+      }
+    }
+
+    if (urlVar["earlyInterval"]) {
+      if (frm["earlyInterval"]) {
+        frm["earlyInterval"].value = urlVar["earlyInterval"];
+      }
+    }
+    if (urlVar["lateInterval"]) {
+      if (frm["lateInterval"]) {
+        frm["lateInterval"].value = urlVar["lateInterval"];
+      }
+    }
+    if (urlVar["lithogroup"]) {
+      if (frm["lithogroup"]) {
+        frm["lithogroup"].value = urlVar["lithogroup"];
+      }
+    }
+    if (urlVar["formation"]) {
+      if (frm["formation"]) {
+        frm["formation"].value = urlVar["formation"];
+      }
+    }
+    if (urlVar["member"]) {
+      if (frm["member"]) {
+        frm["member"].value = urlVar["member"];
+      }
+    }
+    if (urlVar["bed"]) {
+      if (frm["bed"]) {
+        frm["bed"].value = urlVar["bed"];
       }
     }
 

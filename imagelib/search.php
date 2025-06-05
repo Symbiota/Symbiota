@@ -19,12 +19,12 @@ $cntPerPage = array_key_exists('cntperpage', $_REQUEST) && is_numeric($_REQUEST[
 $sortBy = !empty($_REQUEST['sortby']) ? $_REQUEST['sortby'] : '';
 
 $mediaType = null;
-if(isset($_REQUEST['mediatype'])) {
-	if($_REQUEST['mediatype'] === 'image') {
-		$mediatype = 'image';
+if(isset($_REQUEST['mediaType'])) {
+	if($_REQUEST['mediaType'] === 'image') {
+		$mediaType = 'image';
 	}
-	elseif($_REQUEST['mediatype'] === 'audio') {
-		$mediatype = 'audio';
+	elseif($_REQUEST['mediaType'] === 'audio') {
+		$mediaType = 'audio';
 	}
 }
 
@@ -272,11 +272,11 @@ if($action == 'batchAssignTag'){
 									}
 								?>
 								<legend> <?= $LANG['MEDIA_TYPE'] ?> </legend>
-								<input id="m_image" type="radio" name="mediatype" value="image" <?= $is_image? 'CHECKED': ''?>>
+								<input id="m_image" type="radio" name="mediaType" value="image" <?= $is_image? 'CHECKED': ''?>>
 								<label for="m_image"> <?= $LANG['MEDIA_TYPE_IMAGE'] ?></label><br>
-								<input id="m_audio" type="radio" name="mediatype" value="audio" <?= $is_audio? 'CHECKED': ''?>>
+								<input id="m_audio" type="radio" name="mediaType" value="audio" <?= $is_audio? 'CHECKED': ''?>>
 								<label for="m_audio"> <?= $LANG['MEDIA_TYPE_AUDIO']?></label><br>
-									<input id="m_all" type="radio" name="mediatype" value="" <?= $is_all? 'CHECKED': ''?>>
+									<input id="m_all" type="radio" name="mediaType" value="" <?= $is_all? 'CHECKED': ''?>>
 								<label for="m_all"> <?= $LANG['MEDIA_TYPE_ALL'] ?></label><br>
 							</fieldset>
 						</div>

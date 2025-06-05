@@ -26,7 +26,8 @@
 
 #collicon-div img {
   height: 50px;
-  width: 50ps;
+  max-width: 100%;
+  padding-right: 0.5rem;
 }
 
 #occur-div {
@@ -86,8 +87,7 @@
 }
 
 .paleofield-div {
-  float: left;
-  margin-right: 25px;
+  margin-left: 10px;
 }
 
 #rights-div {

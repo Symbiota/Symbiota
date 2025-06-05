@@ -126,5 +126,11 @@ $LANG['ASSOCIATIONS'] = 'Les associations';
 $LANG['ASSOCIATION_DESCRIPTION'] = 'Trouver toutes les occurrences de taxons qui ont l\'association suivante';
 $LANG['ASSOCIATION_DESCRIPTION_2'] = 'avec le taxon suivant';
 $LANG['ASSOCIATION_TYPE'] = 'Type d\'association';
-
+$LANG['GEO_CONTEXT'] = 'Contexte géologique';
+$LANG['EARLY_INT'] = 'Intervalle précoce';
+$LANG['LATE_INT'] = 'Intervalle tardif';
+$LANG['LITHOGROUP'] = 'Groupe';
+$LANG['FORMATION'] = 'Formation';
+$LANG['MEMBER'] = 'Membre';
+$LANG['BED'] = 'Lit';
 ?>

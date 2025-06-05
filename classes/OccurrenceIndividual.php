@@ -331,22 +331,48 @@ class OccurrenceIndividual extends Manager{
 	}
 
 	private function setPaleo(){
-		if(isset($this->activeModules['paleo']) && $this->activeModules['paleo']){
-			$sql = 'SELECT paleoid, eon, era, period, epoch, earlyinterval, lateinterval, absoluteage, storageage, stage, localstage, biota,
-				biostratigraphy, lithogroup, formation, taxonenvironment, member, bed, lithology, stratremarks, element, slideproperties, geologicalcontextid
-				FROM omoccurpaleo WHERE occid = ?';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('i', $this->occid);
-				$stmt->execute();
-				if($rs = $stmt->get_result()){
-					while($r = $rs->fetch_assoc()){
-						$this->occArr = array_merge($this->occArr, $r);
-					}
-					$rs->free();
+		$sql = 'SELECT paleoid, eon, era, period, epoch, earlyInterval, lateInterval, absoluteAge, stage, localStage, biota,
+			biostratigraphy, lithogroup, formation, taxonEnvironment, member, bed, lithology, stratRemarks, element, slideProperties, geologicalContextID
+			FROM omoccurpaleo WHERE occid = ?';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $this->occid);
+			$stmt->execute();
+			if($rs = $stmt->get_result()){
+				while($r = $rs->fetch_assoc()){
+					$this->occArr = array_merge($this->occArr, $r);
 				}
-				$stmt->close();
+				$rs->free();
 			}
+			$stmt->close();
 		}
+		if (isset($this->occArr['earlyInterval']))
+			$this->occArr['earlyIntervalHieararchy'] = $this->getPaleoGtsParents($this->occArr['earlyInterval']);
+		if (isset($this->occArr['lateInterval']))
+			$this->occArr['lateIntervalHieararchy'] = $this->getPaleoGtsParents($this->occArr['lateInterval']);
+	}
+
+	public function getPaleoGtsParents($term){
+		$retArr = [];
+		$sql = 'SELECT gtsid, gtsterm, rankid, rankname, parentgtsid FROM omoccurpaleogts WHERE rankid > 10 AND gtsterm = "'.$this->cleanInStr($term).'"';
+		$parentId = '';
+		do{
+			$rs = $this->conn->query($sql);
+			if($r = $rs->fetch_object()){
+				if($parentId == $r->parentgtsid){
+					$parentId = 0;
+				}
+				else{
+					$retArr[] = $r->gtsterm	;
+					$parentId = $r->parentgtsid;
+				}
+			}
+			else $parentId = 0;
+			$rs->free();
+			$sql = 'SELECT gtsid, gtsterm, rankid, rankname, parentgtsid FROM omoccurpaleogts WHERE rankid > 10 AND gtsid = '.$parentId;
+		}while($parentId);
+		$retArr = array_reverse($retArr);
+		$retStr = implode(' | ', $retArr);
+		return trim($retStr);
 	}
 
 	private function setLoan(){

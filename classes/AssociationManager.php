@@ -77,11 +77,10 @@ class AssociationManager extends OccurrenceTaxaManager{
 			$reverseRelationshipStr = (array_key_exists('relationship', $associationArr) && $associationArr['relationship'] !== 'any') ? ("='" . $reverseAssociationType . "'") : ' IS NOT NULL';
 
 			$reverseSql = "SELECT oa.occidAssociate FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE oa.relationship " . $reverseRelationshipStr . " ";
-
 			$reverseSql .= $this->getAssociatedTaxonWhereFrag($associationArr);
 
-			// External associations
-			$externalAndObservationalSql = "SELECT oa.occid FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid  LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE (oa.associationType='observational' OR oa.associationType='externalOccurrence') AND oa.relationship " . $relationshipStr . " ";
+			// External, observational, or resource associations
+			$externalAndObservationalSql = "SELECT oa.occid FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid  LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE (oa.associationType='observational' OR oa.associationType='externalOccurrence' OR oa.associationType='resource') AND oa.relationship " . $relationshipStr . " ";
 			$externalAndObservationalSql .= $this->getAssociatedTaxonWhereFrag($associationArr);
 	
 			if(array_key_exists('search', $associationArr)){
