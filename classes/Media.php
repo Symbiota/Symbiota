@@ -452,6 +452,7 @@ class Media {
 			'png' => ['image/png', 'image/x-png'],
 			'psd' => 'image/vnd.adobe.photoshop',
 			'svg' => 'image/svg+xml',
+			'tif' => 'image/tiff',
 			'tiff' => 'image/tiff',
 			'webp' => 'image/webp'
 		];
