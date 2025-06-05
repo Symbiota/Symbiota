@@ -27,6 +27,8 @@ if(strpos($action,'Determination') || strpos($action,'Verification')){
 	}
 	include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 	$occManager = new OccurrenceEditorManager();
+	include_once($SERVER_ROOT.'/classes/OccurrenceEditorImages.php');
+	$occImgManager = new OccurrenceEditorImages();
 }
 
 if($crowdSourceMode){
@@ -284,7 +286,7 @@ if($SYMB_UID){
 			}
 			elseif($action == 'Remap Image' || $action == 'remapImageToNewRecord'){
 				$target_occid = $action == 'remapImageToNewRecord' ?
-					$occManager->createOccurrenceFrom():
+					$occImgManager->createOccurrenceFrom():
 					intval($_POST['targetoccid']);
 
 				try {
