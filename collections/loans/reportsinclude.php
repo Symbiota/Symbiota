@@ -31,6 +31,6 @@ else include_once($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.en.
 		}
 		?>
 		<button class="bottom-breathing-room-rel-sm" name="formsubmit" type="submit" onclick="this.form.action ='reports/defaultmailinglabel.php'" value="label"><?php echo $LANG['MAILING_LABEL']; ?></button>
-		<button class="bottom-breathing-room-rel-sm" name="formsubmit" type="submit" onclick="this.form.action ='reports/defaultenvelope.php'" value="envelope"><?php echo $LANG['ENVELOPE']; ?></button>
+		<button name="formsubmit" type="submit" onclick="this.form.action ='reports/defaultenvelope.php'" value="envelope"><?php echo $LANG['ENVELOPE']; ?></button>
 	</fieldset>
 </form>
