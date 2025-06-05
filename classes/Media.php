@@ -447,10 +447,12 @@ class Media {
 			'gif' => 'image/gif',
 			'ico' => ['image/x-icon', 'image/x-ico', 'image/vnd.microsoft.icon' ],
 			'jpg' => ['image/jpeg', 'image/jpeg', 'image/pjpeg'],
+			'jpeg' => ['image/jpeg', 'image/jpeg', 'image/pjpeg'],
 			'jp2' => ['image/jp2', 'image/jpx', 'image/jpm'],
 			'png' => ['image/png', 'image/x-png'],
 			'psd' => 'image/vnd.adobe.photoshop',
 			'svg' => 'image/svg+xml',
+			'tif' => 'image/tiff',
 			'tiff' => 'image/tiff',
 			'webp' => 'image/webp'
 		];

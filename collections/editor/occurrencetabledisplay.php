@@ -25,7 +25,7 @@ $collMap = array();
 $recArr = array();
 $headerMapBase = array('institutioncode'=>'Institution Code (override)','collectioncode'=>'Collection Code (override)',
 	'ownerinstitutioncode'=>'Owner Code (override)','catalognumber' => 'Catalog Number',
-	'othercatalognumbers' => 'Other Catalog #','family' => 'Family','identificationqualifier' => 'ID Qualifier',
+	'family' => 'Family','identificationqualifier' => 'ID Qualifier',
 	'sciname' => 'Scientific Name','scientificnameauthorship'=>'Author','recordedby' => 'Collector','recordnumber' => 'Collector Number',
 	'associatedcollectors' => 'Associated Collectors','eventdate' => 'Event Date','verbatimeventdate' => 'Verbatim Date',
 	'identificationremarks' => 'Identification Remarks','taxonremarks' => 'Taxon Remarks','identifiedby' => 'Identified By',

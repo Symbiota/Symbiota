@@ -1928,20 +1928,25 @@ class SpecUploadBase extends SpecUpload{
 			$sqlFragments = $this->getSqlFragments($recMap,$this->occurFieldMap);
 			if($sqlFragments){
 				$sql = 'INSERT INTO uploadspectemp(collid'.$sqlFragments['fieldstr'].') VALUES('.$this->collId.$sqlFragments['valuestr'].')';
-				if($this->conn->query($sql)){
-					$this->transferCount++;
-					if($this->transferCount%1000 == 0) $this->outputMsg('<li style="margin-left:10px;">Count: '.$this->transferCount.'</li>');
-					//$this->outputMsg("<li>");
-					//$this->outputMsg("Appending/Replacing observation #".$this->transferCount.": SUCCESS");
-					//$this->outputMsg("</li>");
-				}
-				else{
-					$sql = Encoding::fixUTF8($sql);
-					if(!$this->conn->query($sql)){
-						$this->outputMsg('<li>FAILED adding record #'.$this->transferCount.'</li>');
-						$this->outputMsg('<li style="margin-left:10px;">Error: '.$this->conn->error.'</li>');
-						$this->outputMsg('<li style="margin:0px 0px 10px 10px;">SQL: '.$sql.'</li>');
+				try {
+					if($this->conn->query($sql)){
+						$this->transferCount++;
+						if($this->transferCount%1000 == 0) $this->outputMsg('<li style="margin-left:10px;">Count: '.$this->transferCount.'</li>');
+						//$this->outputMsg("<li>");
+						//$this->outputMsg("Appending/Replacing observation #".$this->transferCount.": SUCCESS");
+						//$this->outputMsg("</li>");
 					}
+					else{
+						$sql = Encoding::fixUTF8($sql);
+						if(!$this->conn->query($sql)){
+							$this->outputMsg('<li>FAILED adding record #'.$this->transferCount.'</li>');
+							$this->outputMsg('<li style="margin-left:10px;">Error: '.$this->conn->error.'</li>');
+							$this->outputMsg('<li style="margin:0px 0px 10px 10px;">SQL: '.$sql.'</li>');
+						}
+					}
+				}
+				catch(mysqli_sql_exception $e){
+					$this->outputMsg('<li>FAILED adding record #' . $this->transferCount . ' Error: ' . $e->getMessage() . '</li>');
 				}
 
 				if($this->uploadType == $this->FILEUPLOAD || $this->uploadType == $this->SKELETAL){
@@ -2088,6 +2093,11 @@ class SpecUploadBase extends SpecUpload{
 		}
 	}
 
+  /*
+	* Parses media import rows into a valid media record and insert it into database
+	* @param Array $recMap
+	* @return Bool
+	*/
 	protected function loadMediaRecord($recMap){
 		if($recMap){
 			//Test images
@@ -2104,7 +2114,16 @@ class SpecUploadBase extends SpecUpload{
 			}
 
 			$file = Media::parseFileName($testUrl);
-			$parsed_mime = $recMap['format'] ?? Media::ext2Mime($file['extension']);
+
+			$parsed_mime = false;
+			// If provided format is not supported try to parse it from filename.
+			// Sometimes this happens when wrong formats are spread around
+			// example audio/jpg
+			if(isset($recMap['format']) && Media::getAllowedMime($recMap['format'])) {
+				$parsed_mime = $recMap['format'];
+			} else if(isset($file['extension'])) {
+				$parsed_mime = Media::ext2Mime($file['extension']);
+			}
 
 			if(!$parsed_mime) {
 				try {
@@ -2138,7 +2157,7 @@ class SpecUploadBase extends SpecUpload{
 				return false;
 			}
 
-			$recMap['mediaType'] = $mediaType;
+			$recMap['mediatype'] = $mediaType;
 
 			if($this->verifyImageUrls){
 				if(!$this->urlExists($testUrl)){

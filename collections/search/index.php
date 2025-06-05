@@ -226,7 +226,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 						<div id="search-form-latlong">
 							<div id="bounding-box-form">
 								<h1 class="bounding-box-form__header"><?php echo $LANG['BOUNDING_BOX'] ?></h1>
-								<button onclick="openCoordAid({map_mode: MAP_MODES.RECTANGLE, client_root: '<?= $CLIENT_ROOT ?>'});return false;"><?php echo $LANG['SELECT_IN_MAP'] ?></button>
+								<button type="button" onclick="openCoordAid({map_mode: MAP_MODES.RECTANGLE, client_root: '<?= $CLIENT_ROOT ?>'});return false;"><?php echo $LANG['SELECT_IN_MAP'] ?></button>
 								<div class="input-text-container">
 									<label for="upperlat" class="input-text--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['NORTHERN_LATITUDE'] ?></span>
@@ -292,7 +292,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 							</div>
 							<div id="polygon-form">
 								<h1 class="bounding-box-form__header"><?php echo $LANG['POLYGON'] ?></h1>
-								<button onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root: '<?= $CLIENT_ROOT ?>'});return false;"><?php echo $LANG['SELECT_MAP_POLYGON'] ?></button>
+								<button type="button" onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root: '<?= $CLIENT_ROOT ?>'});return false;"><?php echo $LANG['SELECT_MAP_POLYGON'] ?></button>
 								<div class="text-area-container">
 									<label for="footprintwkt" class="text-area--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['POLYGON'] ?></span>
@@ -304,7 +304,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 							</div>
 							<div id="point-radius-form">
 								<h1 class="bounding-box-form__header"><?php echo $LANG['POINT_RADIUS'] ?></h1>
-								<button onclick="openCoordAid({map_mode: MAP_MODES.CIRCLE, client_root: '<?= $CLIENT_ROOT ?>'});return false;"><?php echo $LANG['SELECT_MAP_PR'] ?></button>
+								<button type="button" onclick="openCoordAid({map_mode: MAP_MODES.CIRCLE, client_root: '<?= $CLIENT_ROOT ?>'});return false;"><?php echo $LANG['SELECT_MAP_PR'] ?></button>
 								<div class="input-text-container">
 									<label for="pointlat" class="input-text--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['POINT_LATITUDE'] ?></span>

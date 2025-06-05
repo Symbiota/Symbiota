@@ -139,6 +139,12 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$sqlWhere = substr_replace($sqlWhere,'',-1);
 			$sqlWhere .= $this->associationManager->getAssociatedRecords($this->associationArr) . ')';
 		}
+		$hasValidRelationshipFromSearchTermArr = isset(($this->searchTermArr['association-type'])) && $this->searchTermArr['association-type']!=='none' && !$hasValidRelationship;
+		if($hasValidRelationshipFromSearchTermArr){
+			$sqlWhere = substr_replace($sqlWhere,'',-1);
+			$sqlWhere .= $this->associationManager->getAssociatedRecords($this->searchTermArr, 'association-type') . ')';
+		}
+		
 
 		//Country term
 		//Note: $this->displaySearchArr is set within the readRequestVariables function

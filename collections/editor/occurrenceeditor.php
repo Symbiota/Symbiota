@@ -837,7 +837,7 @@ else{
 											if($ACTIVATE_DUPLICATES){
 												?>
 												<div id="dupesDiv">
-													<button type="button" class="button icon-button" value="Duplicates" onclick="searchDupes(this.form, false);" ><?php echo $LANG['DUPLICATES']; ?></button><br/>
+													<button type="button" class="button" value="Duplicates" onclick="searchDupes(this.form, false);" ><?php echo $LANG['DUPLICATES']; ?></button><br/>
 													<input type="checkbox" name="autodupe" value="1" onchange="autoDupeChanged(this)" tabindex="-1" />
 													<?php echo (isset($LANG['AUTO_SEARCH'])?$LANG['AUTO_SEARCH']:'Auto search'); ?>
 												</div>
@@ -1649,7 +1649,7 @@ else{
 															<div id="cloneCatalogNumberDiv" class="fieldGroup-div"></div>
 														</fieldset>
 														<div style="margin:10px">
-															<button name="submitaction" class="button icon-button" type="submit" value="cloneRecord"><?php echo $LANG['CREATE_RECORD']; ?></button>
+															<button name="submitaction" class="button" type="submit" value="cloneRecord"><?php echo $LANG['CREATE_RECORD']; ?></button>
 														</div>
 													</fieldset>
 												</div>
