@@ -7,7 +7,7 @@ Language: English
 
 $LANG['NO_RESULTS'] = 'No results returned';
 $LANG['ERROR_UNABLE_RESULTS'] = 'ERROR: Unable to get results';
-$LANG['SELECT_INTERNAL_REL'] = 'You need to search for an select an internal occurrence instance';
+$LANG['SELECT_INTERNAL_REL'] = 'You need to search for and select an internal occurrence instance';
 $LANG['VERB_SCINAME_EMPTY'] = 'Verbatim Scientific Name needs a value';
 $LANG['RESOURCE_EMPTY'] = 'Resource URL needs needs a value';
 $LANG['SELECT_CHECKLIST'] = 'Select a checklist to which you want to link the voucher';
