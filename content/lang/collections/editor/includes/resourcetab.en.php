@@ -16,6 +16,7 @@ $LANG['SURE_UNLINK'] = 'Are you sure you want to unlink the record as a duplicat
 $LANG['ERROR_DELETING'] = 'ERROR deleting duplicate';
 $LANG['GEN_RES_NOT_BLANK'] = 'Genetic resource name must not be blank';
 $LANG['PERM_REMOVE_RES'] = 'Are you sure you want to permanently remove this resource?';
+$LANG['DELETE_ASSOC'] = 'Are you sure you want to delete this association?';
 
 $LANG['CHECKLIST_LINKS'] = 'Checklist Voucher Linkages';
 $LANG['LINK_TO_CHECKLIST'] = 'Link Specimen to Checklist as Voucher';

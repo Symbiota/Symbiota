@@ -213,7 +213,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 	}
 
 	function checkDeleteAssociation(f){
-		if(confirm("<?php echo "Delete Association?"; ?>")){
+		if(confirm("<?php echo $LANG['DELETE_ASSOC']; ?>")){
 			f.submit();
 		}
 	}
