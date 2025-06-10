@@ -202,7 +202,6 @@ function handleRemoval(element, inputChip) {
   setMaterialSampleToDefault(element);
   setTaxonTypeToDefault(element);
   setAssociationTaxonTypeToDefault(element);
-  // uncheckAllChip(element); // @TODO test this out
   element.dataset.formId ? uncheckAll(element) : "";
   removeChip(inputChip);
 }
