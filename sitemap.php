@@ -89,7 +89,7 @@ if(!$schemaVersion){
 			</ul>
 
 			<?php
-			$clList = $smManager->getChecklistList((array_key_exists('ClAdmin',$USER_RIGHTS)?$USER_RIGHTS['ClAdmin']:0));
+			$clList = $smManager->getChecklistList();
 			$clAdmin = array();
 			if($clList && isset($USER_RIGHTS['ClAdmin'])){
 				$clAdmin = array_intersect_key($clList,array_flip($USER_RIGHTS['ClAdmin']));
@@ -416,9 +416,9 @@ if(!$schemaVersion){
 					<div>
 						<ul>
 						<?php
-						$smManager->setCollectionList();
-						if($collList = $smManager->getCollArr()){
-							foreach($collList as $k => $cArr){
+						$collArr = $smManager->getCollectionList();
+						if(isset($collArr['s'])){
+							foreach($collArr['s'] as $k => $cArr){
 								echo '<li>';
 								echo '<a href="' . $CLIENT_ROOT . '/collections/misc/collprofiles.php?collid=' . $k . '&emode=1">';
 								echo $cArr['name'];
@@ -450,22 +450,9 @@ if(!$schemaVersion){
 					<div>
 						<ul>
 							<?php
-							$obsList = $smManager->getObsArr();
-							$genObsList = $smManager->getGenObsArr();
 							$obsManagementStr = '';
-
-							if($obsList){
-								foreach($genObsList as $k => $oArr){
-									?>
-									<li>
-										<a href="collections/editor/observationsubmit.php?collid=<?= $k ?>">
-											<?= $oArr['name'] ?>
-										</a>
-									</li>
-									<?php
-									if($oArr['isadmin']) $obsManagementStr .= '<li><a href="collections/misc/collprofiles.php?collid=' . $k . '&emode=1">' . htmlspecialchars($oArr['name'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a></li>\n";
-								}
-								foreach($obsList as $k => $oArr){
+							if(isset($collArr['o'])){
+								foreach($collArr['o'] as $k => $oArr){
 									?>
 									<li>
 										<a href="collections/editor/observationsubmit.php?collid=<?= $k ?>">
@@ -482,27 +469,6 @@ if(!$schemaVersion){
 							?>
 						</ul>
 						<?php
-						if($genObsList){
-							?>
-							<h3 class="subheader"><span>
-									<?= $LANG['PERSONAL'] ?>
-								</span>
-							</h3>
-							<ul>
-								<?php
-								foreach($genObsList as $k => $oArr){
-									?>
-									<li>
-										<a href="collections/misc/collprofiles.php?collid=<?= $k ?>&emode=1">
-											<?= $oArr['name'] ?>
-										</a>
-									</li>
-									<?php
-								}
-								?>
-							</ul>
-							<?php
-						}
 						if($obsManagementStr){
 							?>
 							<h3 class="subheader">

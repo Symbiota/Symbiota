@@ -11,6 +11,7 @@ include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxoneditor.'.$LANG_TAG.'
 
 $LANG['TAXON_LOADER'] = 'Chargeur de taxons';
 $LANG['TAXONOMY_LOADER'] = 'Chargeur de taxons';
+$LANG['SCINAME_SAVED_AS'] = 'Sciname sera enregistré sous';
 $LANG['TAXON_NAME'] = 'Nom du taxon';
 $LANG['TAXON_RANK'] = 'Rang du taxon';
 $LANG['SEL_TAX_RANK'] = 'Sélectionner le rang du taxon';
@@ -25,6 +26,7 @@ $LANG['EPITHET'] = 'Épithète';
 $LANG['SPECIF_EPITHET_FIELD'] = "Champ d'épithète spécifique";
 $LANG['INFRA_EPITHET_FIELD'] = "Champ d'épithète infraspécifique";
 $LANG['RANK_FIELD'] = 'Champ de rang';
+$LANG['RUN_QUICK_PARSE'] = 'Analyser';
 $LANG['REQUIRED'] = "* = Champ Obligatoire";
 
 ?>

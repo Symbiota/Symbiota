@@ -249,11 +249,13 @@ if($SYMB_UID){
 						$occur_map['collectioncode'],
 						$occur_map['catalognumber']
 					);
+
 					Media::add(
 						$_POST,
 						new LocalStorage($path),
 						$_FILES['imgfile'] ?? null
 					);
+
 					if($errors = Media::getErrors()) {
 						$statusStr = "ERROR: " . array_pop($errors);
 					} else {
@@ -546,7 +548,7 @@ else{
 	<script src="../../js/symb/wktpolygontools.js?ver=2c" type="text/javascript"></script>
 	<script src="../../js/symb/collections.georef.js?ver=2" type="text/javascript"></script>
 	<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.main.js?ver=1" type="text/javascript"></script>
+	<script src="../../js/symb/collections.editor.main.js?ver=3" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.tools.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.imgtools.js?ver=4" type="text/javascript"></script>
 	<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
@@ -879,7 +881,7 @@ else{
 											if($ACTIVATE_DUPLICATES){
 												?>
 												<div id="dupesDiv">
-													<button type="button" value="Duplicates" onclick="searchDupes(this.form, false);" ><?php echo $LANG['DUPLICATES']; ?></button><br/>
+													<button type="button" class="button" value="Duplicates" onclick="searchDupes(this.form, false);" ><?php echo $LANG['DUPLICATES']; ?></button><br/>
 													<input type="checkbox" name="autodupe" value="1" onchange="autoDupeChanged(this)" tabindex="-1" />
 													<?php echo (isset($LANG['AUTO_SEARCH'])?$LANG['AUTO_SEARCH']:'Auto search'); ?>
 												</div>
@@ -1116,55 +1118,59 @@ else{
 										</div>
 										<?php
 										if($LOCALITY_AUTO_LOOKUP){
-											echo '<div id="localAutoDeactivatedDiv">';
-											echo '<input name="localautodeactivated" type="checkbox" value="1" onchange="localAutoChanged(this)" ' . ($LOCALITY_AUTO_LOOKUP == 2? 'checked' : '') . ' tabindex="-1" > ';
-											echo (isset($LANG['DEACTIVATE_LOOKUP'])?$LANG['DEACTIVATE_LOOKUP']:'Deactivate Locality Lookup').'</div>';
+											?>
+											<div id="localAutoDeactivatedDiv">
+												<input name="localautodeactivated" type="checkbox" value="1" onchange="localAutoChanged(this)" <?= ($LOCALITY_AUTO_LOOKUP == 2 ? 'checked' : '')  ?> tabindex="-1" >
+												<?= $LANG['DEACTIVATE_LOOKUP'] ?>
+											</div>
+											<?php
 										}
 										?>
 										<div id="localSecurityDiv">
 											<div style="float:left;">
 												<?php
-												echo $LANG['LOCALITY_SECURITY'];
-												$securityCode = array_key_exists('localitysecurity',$occArr)&&$occArr['localitysecurity']?$occArr['localitysecurity']:0;
-												$lsrValue = array_key_exists('localitysecurityreason',$occArr)?$occArr['localitysecurityreason']:'';
+												echo $LANG['SECURITY'];
+												$securityCode = array_key_exists('recordsecurity',$occArr)&&$occArr['recordsecurity']?$occArr['recordsecurity']:0;
+												$lsrValue = array_key_exists('securityreason',$occArr)?$occArr['securityreason']:'';
 												?>:
-												<select name="localitysecurity" onchange="securityChangedByUser(this.form);" title="<?php echo (isset($LANG['SECURITY_SETTINGS'])?$LANG['SECURITY_SETTINGS']:'Security Settings'); ?>" tabindex="-1">
+												<select name="recordsecurity" onchange="securityChangedByUser(this.form);" title="<?= $LANG['SECURITY_SETTINGS'] ?>" tabindex="-1">
 													<option value="0"><?= $LANG['SECURITY_NOT_APPLIED'] ?></option>
-													<option value="1" ' <?= ($securityCode ? 'SELECTED' : '') ?>><?= $LANG['SECURITY_APPLIED'] ?></option>
+													<option value="1" ' <?= ($securityCode == 1 ? 'SELECTED' : '') ?>><?= $LANG['LOCALITY_SECURITY_APPLIED'] ?></option>
+													<option value="5" ' <?= ($securityCode == 5 ? 'SELECTED' : '') ?>><?= $LANG['FULL_SECURITY_APPLIED'] ?></option>
 												</select>
-												<a href="#" onclick="return dwcDoc('localitySecurity')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+												<a href="#" onclick="return dwcDoc('recordSecurity')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
 											</div>
-											<div id="locsecreason" style="margin-left:5px;border:2px solid gray;float:left;display:<?php echo ($lsrValue||$securityCode?'inline':'none') ?>;padding:3px">
-												<div ><input name="lockLocalitySecurity" type="checkbox" onchange="securityLockChanged(this)" tabindex="-1" <?php echo ($lsrValue?'checked':'') ?> /> <?php echo (isset($LANG['LOCK_SEC_SETTING'])?$LANG['LOCK_SEC_SETTING']:'Lock Security Setting'); ?></div>
-												<?= $LANG['LOCALITY_SECURITY_REASON'] ?>:
-												<input type="text" name="localitysecurityreason" tabindex="-1" onchange="localitySecurityReasonChanged();" value="<?php echo $lsrValue; ?>" title="<?php echo (isset($LANG['EXPLAIN_SEC_STATUS'])?$LANG['EXPLAIN_SEC_STATUS']:'Entering any text will lock security status on or off; leave blank to accept default security status'); ?>" />
+											<div id="locsecreason" style="margin-left:5px;border:2px solid gray;float:left;display:<?= ($lsrValue||$securityCode?'inline':'none') ?>;padding:3px">
+												<div ><input name="lockSecurity" type="checkbox" onchange="securityLockChanged(this)" tabindex="-1" <?= ($lsrValue?'checked':'') ?> /> <?= $LANG['LOCK_SEC_SETTING'] ?></div>
+												<?= $LANG['SECURITY_REASON'] ?>:
+												<input type="text" name="securityreason" tabindex="-1" onchange="securityReasonChanged();" value="<?= $lsrValue ?>" title="<?= $LANG['EXPLAIN_SEC_STATUS'] ?>" />
 											</div>
 										</div>
 										<div style="clear:both;" class="fieldGroup-div">
-										<span id="coordinateWrapper" onchange="coordinatesChanged(document.getElementById('fullform'), '<?= $CLIENT_ROOT?>')">
-											<div id="decimalLatitudeDiv" class="field-div">
-												<?php echo $LANG['DECIMAL_LATITUDE']; ?>
-												<br/>
-												<?php
-												$latValue = '';
-												if(array_key_exists('decimallatitude', $occArr) && $occArr['decimallatitude'] != '') {
-													$latValue = $occArr['decimallatitude'];
-												}
-												?>
-											<input type="text" id="decimallatitude" name="decimallatitude" maxlength="15" value="<?php echo $latValue; ?>" onchange="decimalLatitudeChanged(document.getElementById('fullform'))"/>
-											</div>
-											<div id="decimalLongitudeDiv" class="field-div">
-												<?php echo $LANG['DECIMAL_LONGITUDE']; ?>
-												<br/>
-												<?php
-												$longValue = "";
-												if(array_key_exists("decimallongitude",$occArr) && $occArr["decimallongitude"] != "") {
-													$longValue = $occArr["decimallongitude"];
-												}
-												?>
-												<input type="text" id="decimallongitude" name="decimallongitude" maxlength="15" value="<?php echo $longValue; ?>" onchange="decimalLongitudeChanged(document.getElementById('fullform'))" />
-											</div>
-										</span>
+											<span id="coordinateWrapper" onchange="coordinatesChanged(document.getElementById('fullform'), '<?= $CLIENT_ROOT?>')">
+												<div id="decimalLatitudeDiv" class="field-div">
+													<?= $LANG['DECIMAL_LATITUDE'] ?>
+													<br/>
+													<?php
+													$latValue = '';
+													if(array_key_exists('decimallatitude', $occArr) && $occArr['decimallatitude'] != '') {
+														$latValue = $occArr['decimallatitude'];
+													}
+													?>
+													<input type="text" id="decimallatitude" name="decimallatitude" maxlength="15" value="<?= $latValue; ?>" onchange="decimalLatitudeChanged(document.getElementById('fullform'))"/>
+												</div>
+												<div id="decimalLongitudeDiv" class="field-div">
+													<?= $LANG['DECIMAL_LONGITUDE'] ?>
+													<br/>
+													<?php
+													$longValue = "";
+													if(array_key_exists("decimallongitude",$occArr) && $occArr["decimallongitude"] != "") {
+														$longValue = $occArr["decimallongitude"];
+													}
+													?>
+													<input type="text" id="decimallongitude" name="decimallongitude" maxlength="15" value="<?= $longValue ?>" onchange="decimalLongitudeChanged(document.getElementById('fullform'))" />
+												</div>
+											</span>
 											<div id="coordinateUncertaintyInMetersDiv" class="field-div">
 												<?php echo $LANG['COORDINATE_UNCERTAINITY_IN_METERS']; ?>
 												<a href="#" onclick="return dwcDoc('coordinateUncertaintyInMeters')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
@@ -1178,10 +1184,10 @@ else{
 												<a href="#" onclick="geoLocateLocality();" tabindex="-1"><img src="../../images/geolocate.png" style="width:1.2em;" /></a>
 											</div>
 											<div id="coordCloningDiv" title="<?php echo (isset($LANG['COORD_CLONE_TOOL'])?$LANG['COORD_CLONE_TOOL']:'Coordinate Cloning Tool'); ?>" >
-												<button type="button" value="C" tabindex="-1" onclick="geoCloneTool()" ><?php echo (isset($LANG['C'])?$LANG['C']:'C') ?></button>
+												<button type="button" class="button icon-button" value="C" tabindex="-1" onclick="geoCloneTool()" ><?php echo (isset($LANG['C'])?$LANG['C']:'C') ?></button>
 											</div>
 											<div id="geoToolsDiv" title="<?php echo (isset($LANG['CONVERSION_TOOLS'])?$LANG['CONVERSION_TOOLS']:'Tools for converting additional formats'); ?>" >
-												<button type="button" value="F" tabindex="-1" onclick="toggleCoordDiv()" ><?php echo (isset($LANG['F'])?$LANG['F']:'F') ?></button>
+												<button type="button" class="button icon-button" value="F" tabindex="-1" onclick="toggleCoordDiv()" ><?php echo (isset($LANG['F'])?$LANG['F']:'F') ?></button>
 											</div>
 											<div id="geodeticDatumDiv" class="field-div">
 												<?php echo $LANG['GEODETIC_DATUM']; ?>
@@ -1617,7 +1623,7 @@ else{
 													?>
 												</select>
 												<div id="editButtonDiv">
-													<button type="submit" id="saveEditsButton" name="submitaction" value="saveOccurEdits" style="width:150px;" onclick="return verifyFullFormEdits(this.form)" disabled><?php echo $LANG['SAVE_EDITS']; ?></button>
+													<button class="button" type="submit" id="saveEditsButton" name="submitaction" value="saveOccurEdits" style="width:150px;" onclick="return verifyFullFormEdits(this.form)" disabled><?php echo $LANG['SAVE_EDITS']; ?></button>
 													<input type="hidden" name="occindex" value="<?php echo is_numeric($occIndex)?$occIndex:''; ?>" />
 													<input type="hidden" name="editedfields" value="" />
 												</div>
@@ -1680,7 +1686,7 @@ else{
 															<div id="cloneCatalogNumberDiv" class="fieldGroup-div"></div>
 														</fieldset>
 														<div style="margin:10px">
-															<button name="submitaction" type="submit" value="cloneRecord"><?php echo $LANG['CREATE_RECORD']; ?></button>
+															<button name="submitaction" class="button" type="submit" value="cloneRecord"><?php echo $LANG['CREATE_RECORD']; ?></button>
 														</div>
 													</fieldset>
 												</div>

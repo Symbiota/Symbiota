@@ -6,8 +6,8 @@
  Used by: editor/includes/resourcetab.es.php, admin/importextended.es.php
  */
 
-$LANG['ASSOC_OCC'] = 'Ocurrencias Asociadas';
-$LANG['CREATE_NEW_ASSOC'] = 'Crear Nueva Asociación';
+ $LANG['ASOCIACIONES'] = 'Asociaciones';
+ $LANG['CREATE_NEW_ASSOC'] = 'Crear Nueva Asociación';
 $LANG['ASSOCIATION_TYPE'] = 'Typo de Asociación (requerido)';
 $LANG['RESOURCE_LINK'] = 'Enlace de recursos';
 $LANG['INTERNAL_OCCURRENCE'] = 'Ocurrencia - Interna (este portal)';

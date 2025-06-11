@@ -170,11 +170,11 @@ if($isEditor){
 								<input name="occindex" type="hidden" value="<?php echo $occIndex; ?>" />
 								<input name="traitid" type="hidden" value="<?php echo $traitID; ?>" />
 								<input name="tabtarget" type="hidden" value="4" />
-								<button type="button" value="editTraitCoding" onclick="submitEditForm(this); return false"><?php echo $LANG['SAVE_EDITS'];?></button>
+								<button type="button" class="button" value="editTraitCoding" onclick="submitEditForm(this); return false"><?php echo $LANG['SAVE_EDITS'];?></button>
 								<span id="msgDiv-<?php echo $traitID; ?>"></span>
 							</div>
 							<div style="margin:20px;float:right;">
-								<button class="button-danger" type="button" value="deleteTraitCoding" style="border:1px solid red;"  onclick="submitEditForm(this); return false"><?php echo $LANG['DEL_CODING'];?></button>
+								<button class="button button-danger" type="button" value="deleteTraitCoding" onclick="submitEditForm(this); return false"><?php echo $LANG['DEL_CODING'];?></button>
 							</div>
 						</div>
 					</form>

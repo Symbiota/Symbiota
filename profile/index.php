@@ -1,7 +1,9 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT . '/config/auth_config.php');
-require_once($SERVER_ROOT . '/vendor/autoload.php');
+if(!empty($THIRD_PARTY_OID_AUTH_ENABLED)){
+	include_once($SERVER_ROOT . '/config/auth_config.php');
+	require_once($SERVER_ROOT . '/vendor/autoload.php');
+}
 use Jumbojett\OpenIDConnectClient;
 
 if($SYMB_UID){
@@ -10,7 +12,7 @@ if($SYMB_UID){
 		unset($_SESSION['refurl']);
 	}
 	if ($_REQUEST['refurl']){
-		header("Location:" . $_REQUEST['refurl']);	
+		header("Location:" . $_REQUEST['refurl']);
 	}
 	else{
 		header("Location:" . $CLIENT_ROOT . '/profile/viewprofile.php');
@@ -236,7 +238,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					<fieldset class="profile-fieldset">
 						<legend class="profile-legend"><?php echo (isset($LANG['PORTAL_LOGIN'])?$LANG['PORTAL_LOGIN']:'Portal Login'); ?></legend>
 						<div>
-							<label for="portal-login"><?php echo (isset($LANG['LOGIN_NAME'])?$LANG['LOGIN_NAME']:'Login'); ?>:</label> 
+							<label for="portal-login"><?php echo (isset($LANG['LOGIN_NAME'])?$LANG['LOGIN_NAME']:'Login'); ?>:</label>
 							<input id="portal-login" name="login" value="<?php echo $login; ?>" style="border-style:inset;" />
 						</div>
 						<div>
@@ -258,7 +260,7 @@ include($SERVER_ROOT.'/includes/header.php');
 				<?php }?>
 			</form>
 		</div>
-		<?php 
+		<?php
 			if($THIRD_PARTY_OID_AUTH_ENABLED){
 				$_SESSION['refurl'] = array_key_exists('refurl', $_REQUEST) ? $_REQUEST['refurl'] : '';
 
@@ -273,13 +275,13 @@ include($SERVER_ROOT.'/includes/header.php');
 					</fieldset>
 				</form>
 			</div>
-		<?php 
+		<?php
 			}
 		?>
 		<div class="flex-item-login" style="text-align:center">
-			<?php 
+			<?php
 				$shouldBeAbleToCreatePublicUser = $SHOULD_BE_ABLE_TO_CREATE_PUBLIC_USER ?? true;
-				if($shouldBeAbleToCreatePublicUser){ 
+				if($shouldBeAbleToCreatePublicUser){
 			?>
 				<div style="font-weight:bold;">
 					<?php echo (isset($LANG['NO_ACCOUNT'])?$LANG['NO_ACCOUNT']:"Don't have an Account?"); ?>
@@ -288,13 +290,13 @@ include($SERVER_ROOT.'/includes/header.php');
 					<a href="newprofile.php?refurl=<?php echo htmlspecialchars($refUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars((isset($LANG['CREATE_ACCOUNT'])?$LANG['CREATE_ACCOUNT']:'Create an account'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 				</div>
 			<?php
-		 		} 
+		 		}
 			?>
 			<?php if($SYMBIOTA_LOGIN_ENABLED){ ?>
 				<div style="font-weight:bold;margin-top:5px">
 					<?php echo (isset($LANG['REMEMBER_PWD'])?$LANG['REMEMBER_PWD']:"Can't Remember your password?"); ?>
 				</div>
-				<a href="#" style="color:blue;cursor:pointer;" onclick="resetPassword();"><?php echo (isset($LANG['REST_PWD'])?$LANG['REST_PWD']:'Reset Password'); ?></a>
+				<a href="#" onclick="resetPassword();"><?php echo (isset($LANG['REST_PWD'])?$LANG['REST_PWD']:'Reset Password'); ?></a>
 				<div style="font-weight:bold;margin-top:5px">
 					<?php echo (isset($LANG['REMEMBER_LOGIN'])?$LANG['REMEMBER_LOGIN']:"Can't Remember Login Name?"); ?>
 				</div>

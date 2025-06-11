@@ -114,7 +114,7 @@ class OccurrenceAnnotationController extends OccurrenceController{
 		if($type == 'internal'){
 			$annotation = DB::table('omoccuredits as e')->select('e.*', 'o.occurrenceID', 'o.recordID')
 				->join('omoccurrences as o', 'e.occid', '=', 'o.occid')
-				->where('o.collid', $collid);
+				->where('o.collid', $collid)->where('o.recordSecurity', '=', 0);
 			if($fieldName){
 				$annotation = $annotation->where('e.fieldname', $fieldName);
 			}
@@ -131,7 +131,7 @@ class OccurrenceAnnotationController extends OccurrenceController{
 		elseif($type == 'external'){
 			$annotation = DB::table('omoccurrevisions as r')->select('r.*', 'o.occurrenceID', 'o.recordID')
 				->join('omoccurrences as o', 'o.occid', '=', 'r.occid')
-				->where('o.collid', $collid);
+				->where('o.collid', $collid)->where('o.recordSecurity', '=', 0);
 			if($source){
 				$annotation = $annotation->where('r.externalSource', $source);
 			}

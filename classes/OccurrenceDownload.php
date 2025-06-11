@@ -218,7 +218,7 @@ class OccurrenceDownload{
 	 th.startElement("","","SpecimenRecord",ai);
 	 for(int x = 1;x <= columnCnt;++x){
 	 String columnName = rsmd.getColumnName(x);
-	 if(this.isAdmin || rs.getInt("LocalitySecurity") == 1 || !this.securityColumns.contains(columnName) || (this.userRights != null && this.userRights.contains(rs.getString("CollectionCode")))){
+	 if(this.isAdmin || rs.getInt("recordSecurity") == 1 || !this.securityColumns.contains(columnName) || (this.userRights != null && this.userRights.contains(rs.getString("CollectionCode")))){
 	 String outStr = rs.getString(x);
 	 if(outStr != null && !outStr.equals("")){
 	 char[] charArr = outStr.toCharArray();
@@ -304,7 +304,7 @@ class OccurrenceDownload{
 			'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid '.
 			'INNER JOIN media m ON o.occid = m.occid '.
 			'WHERE c.colltype = "Preserved Specimens" '.
-			'AND o.processingstatus IN("pending review","reviewed", "closed") AND (o.localitysecurity IS NULL OR o.localitysecurity = 0) ';
+			'AND o.processingstatus IN("pending review","reviewed", "closed") AND (o.recordSecurity = 0) ';
 		if($days && is_numeric($days)) $sql .= 'AND (o.datelastmodified > DATE_SUB(NOW(), INTERVAL '.$days.' DAY)) ';
 		$sql .= 'ORDER BY o.datelastmodified DESC ';
 		if(!$days && !$limit) $limit = '100';
@@ -461,12 +461,13 @@ class OccurrenceDownload{
 				$sql .= $this->sqlWhere.'AND t.RankId > 140 AND (ts.taxauthid = '.$this->taxonFilter.') ';
 				if($this->redactLocalities){
 					if($this->rareReaderArr){
-						$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL OR c.collid IN('.implode(',',$this->rareReaderArr).')) ';
+						$sql .= 'AND (o.recordSecurity = 0 OR c.collid IN('.implode(',',$this->rareReaderArr).')) ';
 					}
 					else{
-						$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL) ';
+						$sql .= 'AND (o.recordSecurity = 0) ';
 					}
 				}
+				$sql .= OccurrenceUtil::appendFullProtectionSQL();
 				$sql .= 'ORDER BY ts.family, t.SciName ';
 			}
 			else{
@@ -477,12 +478,13 @@ class OccurrenceDownload{
 				$sql .= $this->sqlWhere.'AND o.SciName NOT LIKE "%aceae" AND o.SciName NOT LIKE "%idea" AND o.SciName NOT IN ("Plantae","Polypodiophyta") ';
 				if($this->redactLocalities){
 					if($this->rareReaderArr){
-						$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL OR c.collid IN('.implode(',',$this->rareReaderArr).')) ';
+						$sql .= 'AND (o.recordSecurity = 0 OR c.collid IN('.implode(',',$this->rareReaderArr).')) ';
 					}
 					else{
-						$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL) ';
+						$sql .= 'AND (o.recordSecurity = 0) ';
 					}
 				}
+				$sql .= OccurrenceUtil::appendFullProtectionSQL();
 				$sql .= 'ORDER BY IFNULL(IFNULL(ts.family, o.family),"not entered"), o.SciName ';
 			}
 		}
@@ -493,7 +495,7 @@ class OccurrenceDownload{
 			if($this->extended){
 				$sql .= 'o.georeferencedBy, o.georeferenceProtocol, o.georeferenceSources, o.georeferenceVerificationStatus, '.
 					'o.georeferenceRemarks, o.minimumElevationInMeters, o.maximumElevationInMeters, o.verbatimElevation, '.
-					'o.localitySecurity, o.localitySecurityReason, IFNULL(o.modified,o.datelastmodified) AS modified, '.
+					'o.recordSecurity, o.securityReason, IFNULL(o.modified,o.datelastmodified) AS modified, '.
 					'o.processingStatus, o.collId, o.dbpk AS sourcePrimaryKey, o.occid, CONCAT("urn:uuid:", o.recordID) AS recordID ';
 			}
 			else{
@@ -507,12 +509,13 @@ class OccurrenceDownload{
 			$sql .= $this->sqlWhere;
 			if($this->redactLocalities){
 				if($this->rareReaderArr){
-					$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL OR c.collid IN('.implode(',',$this->rareReaderArr).')) ';
+					$sql .= 'AND (o.recordSecurity = 0 OR c.collid IN('.implode(',',$this->rareReaderArr).')) ';
 				}
 				else{
-					$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL) ';
+					$sql .= 'AND (o.recordSecurity = 0) ';
 				}
 			}
+			$sql .= OccurrenceUtil::appendFullProtectionSQL();
 			$sql .= 'ORDER BY o.collid';
 		}
 		//echo $sql; exit;
@@ -715,7 +718,7 @@ class OccurrenceDownload{
 
 	//Misc functions
 	private function stripSensitiveFields(&$row){
-		if($row["localitySecurity"] == 1 && $this->redactLocalities && !in_array($row["collid"],$this->rareReaderArr)){
+		if($row['recordSecurity'] == 1 && $this->redactLocalities && !in_array($row["collid"],$this->rareReaderArr)){
 			foreach($this->securityArr as $fieldName){
 				$row[$fieldName] = '[redacted]';
 			}

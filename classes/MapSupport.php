@@ -1,5 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 class MapSupport extends Manager{
 
@@ -75,9 +76,10 @@ class MapSupport extends Manager{
 			$sql = 'SELECT DISTINCT decimalLatitude, decimalLongitude
 				FROM omoccurrences
 				WHERE (decimalLatitude BETWEEN '.$latMin.' AND '.$latMax.') AND (decimalLongitude BETWEEN '.$lngMin.' AND '.$lngMax.')
-				AND (cultivationStatus IS NULL OR cultivationStatus = 0) AND (localitySecurity IS NULL OR localitySecurity = 0)
+				AND (cultivationStatus IS NULL OR cultivationStatus = 0) AND (recordSecurity = 0)
 				AND (coordinateUncertaintyInMeters IS NULL OR coordinateUncertaintyInMeters < 5000)
 				AND tidinterpreted IN('.implode(',', $tidArr).')';
+			$sql .= str_replace('o.', '', OccurrenceUtil::appendFullProtectionSQL());
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
 					//$retArr[] = $r->decimalLongitude.','.$r->decimalLatitude;

@@ -689,7 +689,7 @@ class DwcArchiverCore extends Manager{
 		$sql .= ' LIMIT 1000000';
 		$fieldArr = $this->occurrenceFieldArr['fields'];
 		if ($this->schemaType == 'dwc' || $this->schemaType == 'pensoft') {
-			unset($fieldArr['localitySecurity']);
+			unset($fieldArr['recordSecurity']);
 		}
 		if ($this->schemaType == 'dwc' || $this->schemaType == 'pensoft' || $this->schemaType == 'backup') {
 			unset($fieldArr['collID']);
@@ -710,7 +710,7 @@ class DwcArchiverCore extends Manager{
 			while ($r = $rs->fetch_assoc()) {
 				if(!$this->collArr) $this->setCollArr($r['collID']);
 				//Protect sensitive records
-				if ($this->redactLocalities && $r["localitySecurity"] == 1 && !in_array($r['collID'], $this->rareReaderArr)) {
+				if ($this->redactLocalities && $r["recordSecurity"] == 1 && !in_array($r['collID'], $this->rareReaderArr)) {
 					$protectedFields = array();
 					foreach ($this->securityArr as $v) {
 						if (array_key_exists($v, $r) && $r[$v]) {
@@ -743,13 +743,13 @@ class DwcArchiverCore extends Manager{
 					}
 				}
 				if ($this->schemaType == 'dwc') {
-					unset($r['localitySecurity']);
+					unset($r['recordSecurity']);
 				}
 				if ($this->schemaType == 'dwc' || $this->schemaType == 'backup') {
 					unset($r['collID']);
 				}
 				if ($this->schemaType == 'pensoft') {
-					unset($r['localitySecurity']);
+					unset($r['recordSecurity']);
 					unset($r['collID']);
 					if ($r['typeStatus']) {
 						$typeValue = strtolower($r['typeStatus']);
@@ -954,7 +954,7 @@ class DwcArchiverCore extends Manager{
 		$termArr = $this->occurrenceFieldArr['terms'];
 		if ($this->schemaType == 'dwc' || $this->schemaType == 'pensoft') {
 			unset($termArr['eventDate2']);
-			unset($termArr['localitySecurity']);
+			unset($termArr['recordSecurity']);
 		}
 		if ($this->schemaType == 'dwc' || $this->schemaType == 'pensoft' || $this->schemaType == 'backup') {
 			unset($termArr['collID']);
@@ -1652,7 +1652,7 @@ class DwcArchiverCore extends Manager{
 		//Output header
 		$fieldArr = $this->occurrenceFieldArr['fields'];
 		if ($this->schemaType == 'dwc' || $this->schemaType == 'pensoft') {
-			unset($fieldArr['localitySecurity']);
+			unset($fieldArr['recordSecurity']);
 			unset($fieldArr['collID']);
 		} elseif ($this->schemaType == 'backup') unset($fieldArr['collID']);
 		$fieldOutArr = array();
@@ -1697,6 +1697,16 @@ class DwcArchiverCore extends Manager{
 			$occurAccessID = $statsManager->insertAccessEvent('download', $sqlFrag);
 			$batchOccidArr = array();
 			while ($r = $rs->fetch_assoc()) {
+				if ($this->isPublicDownload || $this->limitToGuids) {
+					//Is a download from public interface OR DwC-A publishing event pushed to aggregators, thus skip record if Full Protections apply
+					if($r['recordSecurity'] == 5){
+						if(!strpos($sql, 'recordSecurity != 5')){
+							//But only if protection is not already applied within the SQL string
+							continue;
+						}
+					}
+				}
+
 				if(!isset($this->collArr[$r['collID']])){
 					$this->setCollArr($r['collID'], 'internalCall');
 				}
@@ -1713,7 +1723,7 @@ class DwcArchiverCore extends Manager{
 				}
 				$hasRecords = true;
 				//Protect sensitive records
-				if ($this->redactLocalities && $r['localitySecurity'] == 1 && !in_array($r['collID'], $this->rareReaderArr)) {
+				if ($this->redactLocalities && $r['recordSecurity'] == 1 && !in_array($r['collID'], $this->rareReaderArr)) {
 					$protectedFields = array();
 					foreach ($this->securityArr as $v) {
 						if (array_key_exists($v, $r) && $r[$v]) {
@@ -1735,7 +1745,7 @@ class DwcArchiverCore extends Manager{
 					}
 				}
 				if ($this->schemaType == 'dwc') {
-					unset($r['localitySecurity']);
+					unset($r['recordSecurity']);
 					unset($r['collID']);
 					//Format dates
 					if($r['eventDate']){
@@ -1753,7 +1763,7 @@ class DwcArchiverCore extends Manager{
 					unset($r['eventDate2']);
 				}
 				elseif ($this->schemaType == 'pensoft') {
-					unset($r['localitySecurity']);
+					unset($r['recordSecurity']);
 					unset($r['collID']);
 					if ($r['typeStatus']) {
 						$typeValue = strtolower($r['typeStatus']);

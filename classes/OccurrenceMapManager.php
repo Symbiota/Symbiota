@@ -138,9 +138,9 @@ class OccurrenceMapManager extends OccurrenceManager {
 		//Used in occurrence listing tab within dynamic map
 		$retArr = Array();
 		if($this->sqlWhere){
-			$sql = 'SELECT o.occid, c.institutioncode, o.catalognumber, CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector, '.
-				'o.eventdate, o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county) AS locality, o.DecimalLatitude, o.DecimalLongitude, '.
-				'IFNULL(o.LocalitySecurity,0) AS LocalitySecurity, o.localitysecurityreason '.
+			$sql = 'SELECT o.occid, c.institutionCode, o.catalogNumber, CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector, '.
+				'o.eventDate, o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county) AS locality, o.decimalLatitude, o.decimalLongitude, '.
+				'IFNULL(o.recordSecurity,0) AS recordSecurity, o.securityReason '.
 				'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
 			$sql .= $this->getTableJoins($this->sqlWhere);
 			$sql .= $this->sqlWhere;
@@ -150,20 +150,20 @@ class OccurrenceMapManager extends OccurrenceManager {
 			$statement = $this->conn->prepare($sql);
 			$statement->bind_param('ii', $bottomLimit, $cntPerPage);
 			$statement->execute();
-			$statement->bind_result($occid, $institutioncode, $catalognumber, $collector, $eventdate, $family, $sciname, $locality, $DecimalLatitude, $DecimalLongitude, $LocalitySecurity, $localitysecurityreason);
+			$statement->bind_result($occid, $institutionCode, $catalogNumber, $collector, $eventDate, $family, $sciname, $locality, $decimalLatitude, $decimalLongitude, $recordSecurity, $securityReason);
 			while($statement->fetch()){
 				$occId = $occid;
-				$retArr[$occId]['i'] = $this->cleanOutStr($institutioncode);
-				$retArr[$occId]['cat'] = $this->cleanOutStr($catalognumber);
+				$retArr[$occId]['i'] = $this->cleanOutStr($institutionCode);
+				$retArr[$occId]['cat'] = $this->cleanOutStr($catalogNumber);
 				$retArr[$occId]['c'] = $this->cleanOutStr($collector);
-				$retArr[$occId]['e'] = $this->cleanOutStr($eventdate);
+				$retArr[$occId]['e'] = $this->cleanOutStr($eventDate);
 				$retArr[$occId]['f'] = $this->cleanOutStr($family);
 				$retArr[$occId]['s'] = $this->cleanOutStr($sciname);
 				$retArr[$occId]['l'] = $this->cleanOutStr($locality);
-				$retArr[$occId]['lat'] = $this->cleanOutStr($DecimalLatitude);
-				$retArr[$occId]['lon'] = $this->cleanOutStr($DecimalLongitude);
+				$retArr[$occId]['lat'] = $this->cleanOutStr($decimalLatitude);
+				$retArr[$occId]['lon'] = $this->cleanOutStr($decimalLongitude);
 				$retArr[$occId]['l'] = str_replace('.,', ',', $locality);
-				// Do we also want to put LocalitySecurity and localitysecurityreason in this array?
+				// Do we also want to put recordSecurity and securityReason in this array?
 			}
 			$statement->close();
 			//Set access statistics
@@ -219,10 +219,10 @@ class OccurrenceMapManager extends OccurrenceManager {
 				$securityCollArr = array();
 				if(isset($USER_RIGHTS['CollEditor'])) $securityCollArr = $USER_RIGHTS['CollEditor'];
 				if(isset($USER_RIGHTS['RareSppReader'])) $securityCollArr = array_unique(array_merge($securityCollArr, $USER_RIGHTS['RareSppReader']));
-				$sqlWhere .= ($sqlWhere ? ' AND' : ' WHERE' ) . ' (o.CollId IN ('.implode(',',$securityCollArr).') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
+				$sqlWhere .= ($sqlWhere ? ' AND' : ' WHERE' ) . ' (o.CollId IN ('.implode(',',$securityCollArr).') OR (o.recordSecurity = 0)) ';
 			}
 			elseif(!empty($sqlWhere)){
-				$sqlWhere .= ($sqlWhere ? ' AND' : ' WHERE' ) . ' (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL) ';
+				$sqlWhere .= ($sqlWhere ? ' AND' : ' WHERE' ) . ' (o.recordSecurity = 0) ';
 			}
 
 			$sqlWhere .=  ' AND ((o.decimallatitude BETWEEN -90 AND 90) AND (o.decimallongitude BETWEEN -180 AND 180)) ';
@@ -294,7 +294,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 					$recUrl = 'http://';
 					if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $recUrl = 'https://';
 					$recUrl .= $_SERVER['SERVER_NAME'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$occid;
-					echo '<Data name="RecordURL">'.$recUrl.'</Data>';
+					echo '<Data name="RecordURL">' . htmlspecialchars($recUrl, ENT_QUOTES) . '</Data>';
 					if(isset($extraFieldArr) && is_array($extraFieldArr)){
 						reset($extraFieldArr);
 						foreach($extraFieldArr as $fieldName){

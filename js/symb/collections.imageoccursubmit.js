@@ -7,7 +7,7 @@ $(document).ready(function() {
 			$( "#tidinterpreted" ).val("");
 			$( 'input[name=scientificnameauthorship]' ).val("");
 			$( 'input[name=family]' ).val("");
-			$( 'input[name=localitysecurity]' ).prop('checked', false);
+			$( 'input[name=recordsecurity]' ).prop('checked', false);
 			if($( "#sciname" ).val()){
 				verifySciName();
 			}
@@ -15,7 +15,7 @@ $(document).ready(function() {
 				$( "#tidinterpreted" ).val("");
 				$( 'input[name=scientificnameauthorship]' ).val("");
 				$( 'input[name=family]' ).val("");
-				$( 'input[name=localitysecurity]' ).prop('checked', false);
+				$( 'input[name=recordsecurity]' ).prop('checked', false);
 			}
 		}
 	});
@@ -39,7 +39,7 @@ function verifySciName(){
 			$( 'input[name=family]' ).val(data.family);
 			$( 'input[name=scientificnameauthorship]' ).val(data.author);
 			if(data.status == 1){ 
-				$( 'input[name=localitysecurity]' ).prop('checked', true);
+				$( 'input[name=recordsecurity]' ).prop('checked', true);
 			}
 			else{
 				if(data.tid){
@@ -67,7 +67,7 @@ function localitySecurityCheck(f){
 			data: { tid: tidIn, state: stateIn }
 		}).done(function( data ) {
 			if(data == "1"){
-				$( 'input[name=localitysecurity]' ).prop('checked', true);
+				$( 'input[name=recordsecurity]' ).prop('checked', true);
 			}
 		});
 	}
