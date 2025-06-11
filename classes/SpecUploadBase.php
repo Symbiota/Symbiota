@@ -632,7 +632,7 @@ class SpecUploadBase extends SpecUpload{
 
 	private function linkTempKeyValueOccurrences() {
 		$this->outputMsg('<li>Linking key value data to occurrences...</li>');
-		$sql = 'UPDATE uploadkeyvaluetemp kv JOIN uploadspectemp s ON s.dbpk = kv.dbpk AND kv.collid = s.collid SET kv.occid = s.occid ';
+		$sql = 'UPDATE uploadkeyvaluetemp kv INNER JOIN uploadspectemp u ON kv.dbpk = u.dbpk SET kv.occid = u.occid WHERE kv.collid = ' . $this->collId . ' AND u.collid = ' . $this->collId;
 		$this->conn->query($sql);
 	}
 
