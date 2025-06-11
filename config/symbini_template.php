@@ -1,4 +1,8 @@
 <?php
+
+$PRIVATE_VIEWING_ONLY = true;
+$PRIVATE_VIEWING_OVERRIDES = ['/index.php', '/misc/contacts.php','/misc/aboutproject.php', '/profile/newprofile.php', '/profile/index.php'];  //These pages will always be accessible to public viewing.  Add to as needed. 
+
 $DEFAULT_LANG = 'en';			//Default language
 $DEFAULT_PROJ_ID = 0;
 $DEFAULTCATID = 0;
@@ -106,6 +110,15 @@ if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERV
 	header('strict-transport-security: max-age=600');
 	$COOKIE_SECURE = true;
 }
+
+// Creates Togglable Overlay for GeoJSON file
+// Only Support with Leaflet Map
+// Supports of an area with the following properties:
+// filename : String - should be the name of the geoJSON located in the `content/geoJSON` directory.
+// label : String - Short text label to describe the overlay toggle
+// popup_template: String - Html string for what label should be generated on a GeoJSON feature. Will replace text like `[Property_name]` with a features property value if present
+// template_properties: Array[String] - List of property names to used in popup generation
+$GEO_JSON_LAYERS = [];
 
 //Base code shared by all pages; leave as is
 include_once('symbbase.php');

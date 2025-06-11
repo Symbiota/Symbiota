@@ -7,7 +7,8 @@
  */
 
 include_once('../../../config/symbini.php');
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT . '/config/dbconnection.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 $clid = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:0;
 
@@ -83,7 +84,8 @@ class VoucherLinker {
 		$sql .= 'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
 		if($this->footprintGeoJson) $sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
 		$sql .= 'WHERE (o.stateprovince = "New York") AND (o.county LIKE "Bronx%" OR o.county LIKE "Kings%" OR o.county LIKE "New York%" OR o.county LIKE "Queens%" OR o.county LIKE "Richmond%") '.
-			'AND (o.tidinterpreted IN('.implode(',',$tidArr).')) AND (cultivationStatus IS NULL OR cultivationStatus = 0) AND (c.colltype IN("'.implode('","', $collTypeArr).'"))';
+			'AND (o.tidinterpreted IN('.implode(',',$tidArr).')) AND (cultivationStatus IS NULL OR cultivationStatus = 0) AND (c.colltype IN("'.implode('","', $collTypeArr).'")) ';
+		$sql .= OccurrenceUtil::appendFullProtectionSQL();
 		//echo $sql.'<br/>'; exit;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){

@@ -75,7 +75,7 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 						<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
 						<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
 						<input type="hidden" name="ovsid" value="<?php echo ($idRanking?$idRanking['ovsid']:''); ?>" />
-						<button type="submit" name="submitaction" value="Submit Verification Edits"><?php echo $LANG['SUBMIT_VERIFY_EDITS']; ?></button>
+						<button type="submit" name="submitaction" class="button" value="Submit Verification Edits"><?php echo $LANG['SUBMIT_VERIFY_EDITS']; ?></button>
 					</div>
 				</form>
 			</div>
@@ -207,7 +207,7 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 							<input type="hidden" name="institutioncode" value="<?php echo $institutioncode; ?>" />
 							<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
 							<div style="float:left;">
-								<button type="submit" name="submitaction" value="submitDetermination" ><?php echo $LANG['SUBMIT_DET']; ?></button>
+								<button type="submit" name="submitaction" class="button" value="submitDetermination" ><?php echo $LANG['SUBMIT_DET']; ?></button>
 							</div>
 						</div>
 					</fieldset>
@@ -324,13 +324,13 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 									<input type="hidden" name="detid" value="<?php echo $detId; ?>" />
 									<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
 									<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
-									<button type="submit" name="submitaction" value="submitDeterminationEdit"><?php echo $LANG['SUBMIT_DET_EDITS']; ?></button>
+									<button type="submit" name="submitaction" class="button" value="submitDeterminationEdit"><?php echo $LANG['SUBMIT_DET_EDITS']; ?></button>
 								</div>
 							</form>
 							<?php
 							if($editMode < 3 && !$detRec['iscurrent']){
 								?>
-								<div style="padding:15px;background-color:lightgreen;width:280px;margin:15px;">
+								<div>
 									<form name="detremapform" action="occurrenceeditor.php" method="post">
 										<input type="hidden" name="occid" value="<?php echo $occId; ?>" />
 										<input type="hidden" name="detid" value="<?php echo $detId; ?>" />
@@ -339,7 +339,7 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 										<?php
 										if($detRec['appliedstatus']){
 											?>
-											<button type="submit" name="submitaction" value="Make Determination Current" ><?php echo $LANG['MAKE_DET_CURRENT']; ?></button>
+											<button type="submit" name="submitaction" class="button" value="Make Determination Current" ><?php echo $LANG['MAKE_DET_CURRENT']; ?></button>
 											<?php
 										}
 										else{
@@ -360,7 +360,7 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 									<input type="hidden" name="detid" value="<?php echo $detId; ?>" />
 									<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
 									<input type="hidden" name=" <?php echo $crowdSourceMode; ?>" />
-									<button class="button-danger" type="submit" name="submitaction" value="Delete Determination" ><?php echo $LANG['DELETE_DET']; ?></button>
+									<button class="button button-danger" type="submit" name="submitaction" value="Delete Determination" ><?php echo $LANG['DELETE_DET']; ?></button>
 								</form>
 							</div>
 						</fieldset>

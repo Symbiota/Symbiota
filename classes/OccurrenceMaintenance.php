@@ -162,7 +162,7 @@ class OccurrenceMaintenance {
 		$geoArr = array();
 		$sql = 'SELECT o.occid, g.iso2
 			FROM omoccurrences o INNER JOIN geographicthesaurus g ON o.country = g.geoterm
-			WHERE (o.countryCode IS NULL OR o.countryCode != g.iso2) AND g.acceptedID IS NULL ';
+			WHERE (o.countryCode IS NULL OR o.countryCode != g.iso2) ';
 		//if($this->collidStr) $sql .= 'AND collid IN('.$this->collidStr.')';
 		$rs = $this->conn->query($sql);
 		$cnt = 0;
@@ -482,8 +482,8 @@ class OccurrenceMaintenance {
 
 		if($sensitiveArr){
 			$sql = 'UPDATE omoccurrences
-				SET localitySecurity = 1
-				WHERE (localitySecurity IS NULL OR localitySecurity = 0) AND (localitySecurityReason IS NULL)
+				SET recordSecurity = 1
+				WHERE (recordSecurity = 0) AND (securityReason IS NULL)
 				AND (cultivationStatus = 0 OR cultivationStatus IS NULL) AND (tidinterpreted IN(' . implode(',', $sensitiveArr) . ')) ';
 			if($this->collidStr) $sql .= 'AND collid IN('.$this->collidStr.')';
 			if($this->conn->query($sql)){
@@ -539,7 +539,7 @@ class OccurrenceMaintenance {
 		$sql = 'SELECT o.occid FROM omoccurrences o INNER JOIN taxstatus ts1 ON o.tidinterpreted = ts1.tid '.
 			'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 			'INNER JOIN fmchklsttaxalink cl ON  ts2.tid = cl.tid '.
-			'WHERE (o.localitysecurity IS NULL OR o.localitysecurity = 0) AND (o.localitySecurityReason IS NULL) AND (o.cultivationStatus = 0 OR o.cultivationStatus IS NULL) '.
+			'WHERE (o.recordsecurity = 0) AND (o.securityReason IS NULL) AND (o.cultivationStatus = 0 OR o.cultivationStatus IS NULL) '.
 			'AND (o.stateprovince = "'.$locality.'") AND (cl.clid = '.$clid.') AND (ts1.taxauthid = 1) AND (ts2.taxauthid = 1) ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
@@ -548,7 +548,7 @@ class OccurrenceMaintenance {
 		$rs->free();
 
 		if($occArr){
-			$sql2 = 'UPDATE omoccurrences SET localitysecurity = 1 WHERE occid IN('.implode(',',$occArr).')';
+			$sql2 = 'UPDATE omoccurrences SET recordSecurity = 1 WHERE occid IN('.implode(',',$occArr).')';
 			if($this->conn->query($sql2)){
 				$status = $this->conn->affected_rows;
 			}
@@ -569,7 +569,7 @@ class OccurrenceMaintenance {
 				'FROM omoccurrences o INNER JOIN taxstatus ts1 ON o.tidinterpreted = ts1.tid '.
 				'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 				'INNER JOIN fmchklsttaxalink cl ON  ts2.tid = cl.tid '.
-				'WHERE (o.localitysecurity IS NULL OR o.localitysecurity = 0) AND (o.localitySecurityReason IS NULL) AND (o.cultivationStatus = 0 OR o.cultivationStatus IS NULL) '.
+				'WHERE (o.recordsecurity = 0) AND (o.securityReason IS NULL) AND (o.cultivationStatus = 0 OR o.cultivationStatus IS NULL) '.
 				'AND (o.stateprovince = "'.$state.'") AND (cl.clid = '.$clid.') AND (ts1.taxauthid = 1) AND (ts2.taxauthid = 1) ';
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){

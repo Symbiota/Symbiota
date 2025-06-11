@@ -260,9 +260,11 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		$rscr = $this->conn->query($sqlcr);
 		if($rcr = $rscr->fetch_object()){
 			$iqStr = $rcr->identificationremarks;
-			if(preg_match('/ConfidenceRanking: (\d{1,2})/',$iqStr,$m)){
-				if($makeCurrent) $this->editIdentificationRanking($m[1],'');
-				$iqStr = trim(str_replace('ConfidenceRanking: '.$m[1],'',$iqStr),' ;');
+			if($iqStr){
+				if(preg_match('/ConfidenceRanking: (\d{1,2})/',$iqStr,$m)){
+					if($makeCurrent) $this->editIdentificationRanking($m[1],'');
+					$iqStr = trim(str_replace('ConfidenceRanking: '.$m[1],'',$iqStr),' ;');
+				}
 			}
 		}
 		$rscr->free();
@@ -316,10 +318,10 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			$sql = 'UPDATE omoccurrences o INNER JOIN omoccurdeterminations d ON o.occid = d.occid
 				SET o.identifiedBy = d.identifiedBy, o.dateIdentified = d.dateIdentified, o.sciname = d.sciname, o.scientificNameAuthorship = d.scientificnameauthorship,
 				o.identificationQualifier = d.identificationqualifier, o.identificationReferences = d.identificationReferences, o.identificationRemarks = d.identificationRemarks,
-				o.taxonRemarks = d.taxonRemarks, o.genus = NULL, o.specificEpithet = NULL, o.taxonRank = NULL, o.infraspecificepithet = NULL, o.scientificname = NULL ';
-			if(isset($taxonArr['family']) && $taxonArr['family']) $sql .= ', o.family = "'.$this->cleanInStr($taxonArr['family']).'"';
-			if(isset($taxonArr['tid']) && $taxonArr['tid']) $sql .= ', o.tidinterpreted = '.$taxonArr['tid'];
-			if(isset($taxonArr['security']) && $taxonArr['security']) $sql .= ', o.localitysecurity = '.$taxonArr['security'].', o.localitysecurityreason = "<Security Setting Locked>"';
+				o.taxonRemarks = d.taxonRemarks, o.genus = NULL, o.specificEpithet = NULL, o.taxonRank = NULL, o.infraspecificepithet = NULL, o.scientificname = NULL,
+				o.family = ' . (!empty($taxonArr['family']) ? '"' . $this->cleanInStr($taxonArr['family']) . '"' : 'NULL') . ',
+				o.tidinterpreted = ' . (!empty($taxonArr['tid']) ? $taxonArr['tid'] : 'NULL') ;
+			if(!empty($taxonArr['security'])) $sql .= ', o.recordsecurity = '.$taxonArr['security'].', o.securityreason = "<Security Setting Locked>"';
 			$sql .= ' WHERE (d.iscurrent = 1) AND (d.detid = '.$detId.')';
 			$updated_base = $this->conn->query($sql);
 

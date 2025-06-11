@@ -133,7 +133,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 		var lang_SELECT_TAXON = '<?= $LANG['SELECT_TAXON'] ?>';
 	</script>
 	<script type="text/javascript" src="../js/symb/checklists.checklist.js"></script>
-	
+
 	<style>
 		<?php
 		if($printMode){
@@ -470,7 +470,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 							if(array_key_exists('vern',$sppArr)){
 								echo ' - <span class="vern-span">'.$sppArr['vern'] . '</span>';
 							}
-							if($clid && $clArray['dynamicsql']){
+							if($clid && $clArray['dynamicsql'] && $SYMB_UID){
 								?>
 								<span class="view-specimen-span printoff">
 									<a href="../collections/list.php?usethes=1&taxontype=2&taxa=<?php echo $tid . "&targetclid=" . $clid . "&targettid=" . $tid;?>" target="_blank" style="text-decoration:none;">

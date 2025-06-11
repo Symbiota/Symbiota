@@ -93,8 +93,8 @@ class OccurrenceEditorManager {
 			'municipality' => 's',
 			'locationid' => 's',
 			'locality' => 's',
-			'localitysecurity' => 'n',
-			'localitysecurityreason' => 's',
+			'recordsecurity' => 'n',
+			'securityreason' => 's',
 			'locationremarks' => 's',
 			'decimallatitude' => 'n',
 			'decimallongitude' => 'n',
@@ -727,7 +727,7 @@ class OccurrenceEditorManager {
 			$indexArr = array();
 			while ($row = $rs->fetch_assoc()) {
 				if ($previousOccid == $row['occid']) continue;
-				if ($row['localitysecurityreason'] == '<Security Setting Locked>') $row['localitysecurityreason'] = '[Security Setting Locked]';
+				if ($row['securityreason'] == '<Security Setting Locked>') $row['securityreason'] = '[Security Setting Locked]';
 				if ($limit) {
 					//Table request, thus load all within query
 					$retArr[$row['occid']] = $row;
@@ -841,6 +841,7 @@ class OccurrenceEditorManager {
 					$newCnt++;
 				}
 			}
+
 			foreach ($occurrenceArr as $occid => $occurArr) {
 				if (isset($occurArr['identifiers'])) {
 					$idStr = '';
@@ -1165,7 +1166,7 @@ class OccurrenceEditorManager {
 	private function getIdentifiers($occidStr) {
 		$retArr = array();
 		if ($occidStr) {
-			$sql = 'SELECT occid, idomoccuridentifiers, identifierName, identifierValue FROM omoccuridentifiers WHERE occid IN(' . $occidStr . ')';
+			$sql = 'SELECT occid, idomoccuridentifiers, identifierName, identifierValue FROM omoccuridentifiers WHERE occid IN(' . $occidStr . ') ORDER BY initialTimestamp';
 			$rs = $this->conn->query($sql);
 			while ($r = $rs->fetch_object()) {
 				$retArr[$r->occid][$r->idomoccuridentifiers]['name'] = $r->identifierName;
@@ -1173,6 +1174,7 @@ class OccurrenceEditorManager {
 			}
 			$rs->free();
 		}
+
 		return $retArr;
 	}
 
@@ -1219,7 +1221,7 @@ class OccurrenceEditorManager {
 				o.taxonRemarks = d.taxonRemarks, o.genus = NULL, o.specificEpithet = NULL, o.taxonRank = NULL, o.infraspecificepithet = NULL, o.scientificname = NULL ';
 			if (isset($taxonArr['family']) && $taxonArr['family']) $sql .= ', o.family = "' . $this->cleanInStr($taxonArr['family']) . '"';
 			if (isset($taxonArr['tid']) && $taxonArr['tid']) $sql .= ', o.tidinterpreted = ' . $taxonArr['tid'];
-			if (isset($taxonArr['security']) && $taxonArr['security']) $sql .= ', o.localitysecurity = ' . $taxonArr['security'] . ', o.localitysecurityreason = "<Security Setting Locked>"';
+			if (isset($taxonArr['security']) && $taxonArr['security']) $sql .= ', o.recordsecurity = ' . $taxonArr['security'] . ', o.securityreason = "<Security Setting Locked>"';
 			$sql .= ' WHERE (d.iscurrent = 1) AND (d.detid = ' . $detId . ')';
 			$updated_base = $this->conn->query($sql);
 
@@ -1271,7 +1273,7 @@ class OccurrenceEditorManager {
 			$guid = UuidFactory::getUuidV4();
 			$sql = 'INSERT IGNORE INTO omoccurrences(collid, recordID, ' . implode(',', array_keys($this->fieldArr['omoccurrences'])) . ') VALUES (' . $postArr['collid'] . ', "' . $guid . '"';
 			//if(array_key_exists('cultivationstatus',$postArr) && $postArr['cultivationstatus']) $postArr['cultivationstatus'] = $postArr['cultivationstatus'];
-			//if(array_key_exists('localitysecurity',$postArr) && $postArr['localitysecurity']) $postArr['localitysecurity'] = $postArr['localitysecurity'];
+			//if(array_key_exists('recordsecurity',$postArr) && $postArr['recordsecurity']) $postArr['recordsecurity'] = $postArr['recordsecurity'];
 			if (!isset($postArr['dateentered']) || !$postArr['dateentered']) $postArr['dateentered'] = date('Y-m-d H:i:s');
 			if (!isset($postArr['basisofrecord']) || !$postArr['basisofrecord']) $postArr['basisofrecord'] = (strpos($this->collMap['colltype'], 'Observations') !== false ? 'HumanObservation' : 'PreservedSpecimen');
 			if (isset($postArr['institutioncode']) && $postArr['institutioncode'] == $this->collMap['institutioncode']) $postArr['institutionCode'] = '';

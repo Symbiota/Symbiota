@@ -151,6 +151,7 @@ class OccurrenceController extends Controller{
 		$offset = $request->input('offset',0);
 
 		$occurrenceModel = Occurrence::query();
+		$occurrenceModel->where('recordSecurity', '=', 0);
 		if($request->has('collid')){
 			$occurrenceModel->whereIn('collid', explode(',', $request->collid));
 		}

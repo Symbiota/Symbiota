@@ -11,6 +11,6 @@ $LANG['LONGITUDE'] = 'Longitud';
 $LANG['COLLECTION'] = 'Colección';
 $LANG['OBSERVATION'] = 'Observación';
 
-$LANG['DECIMAL'] = 'Decmial';
+$LANG['DECIMAL'] = 'Decimal';
 $LANG['DEGREE'] = 'Grado';
 ?>

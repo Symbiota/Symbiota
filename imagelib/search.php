@@ -7,23 +7,24 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 
 $taxonType = isset($_REQUEST['taxontype']) ? filter_var($_REQUEST['taxontype'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $useThes = array_key_exists('usethes',$_REQUEST) ? filter_var($_REQUEST['usethes'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$taxaStr = isset($_REQUEST['taxa']) ? htmlspecialchars($_REQUEST['taxa'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
+$taxaStr = isset($_REQUEST['taxa']) ? $_REQUEST['taxa'] : '';
 $phUid = array_key_exists('phuid',$_REQUEST) ? filter_var($_REQUEST['phuid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $tagExistance = array_key_exists('tagExistance',$_REQUEST) ? filter_var($_REQUEST['tagExistance'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $tag = array_key_exists('tag',$_REQUEST) ? $_REQUEST['tag'] : '';
-$keywords = array_key_exists('keywords',$_REQUEST) ? $_REQUEST['keywords'] : '';
+//$keywords = array_key_exists('keywords',$_REQUEST) ? $_REQUEST['keywords'] : '';
 $imageCount = isset($_REQUEST['imagecount']) ? $_REQUEST['imagecount'] : 'all';
 $imageType = isset($_REQUEST['imagetype']) ? filter_var($_REQUEST['imagetype'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $pageNumber = array_key_exists('page', $_REQUEST) && is_numeric($_REQUEST['page']) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $cntPerPage = array_key_exists('cntperpage', $_REQUEST) && is_numeric($_REQUEST['cntperpage']) ? filter_var($_REQUEST['cntperpage'], FILTER_SANITIZE_NUMBER_INT) : 200;
+$sortBy = !empty($_REQUEST['sortby']) ? $_REQUEST['sortby'] : '';
 
 $mediaType = null;
-if(isset($_REQUEST['mediatype'])) {
-	if($_REQUEST['mediatype'] === 'image') {
-		$mediatype = 'image';
+if(isset($_REQUEST['mediaType'])) {
+	if($_REQUEST['mediaType'] === 'image') {
+		$mediaType = 'image';
 	}
-	elseif($_REQUEST['mediatype'] === 'audio') {
-		$mediatype = 'audio';
+	elseif($_REQUEST['mediaType'] === 'audio') {
+		$mediaType = 'audio';
 	}
 }
 
@@ -41,12 +42,12 @@ $imgLibManager->setTaxaStr($taxaStr);
 $imgLibManager->setCreatorUid($phUid);
 $imgLibManager->setTagExistance($tagExistance);
 $imgLibManager->setTag($tag);
-$imgLibManager->setKeywords($keywords);
+//$imgLibManager->setKeywords($keywords);
 $imgLibManager->setImageCount($imageCount);
 $imgLibManager->setImageType($imageType);
 //Setter only takes 'image' and 'audio' as valid values so no need to sanitize
 $imgLibManager->setMediaType($mediaType);
-if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables($_REQUEST);
+if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables();
 
 $statusStr = '';
 if($action == 'batchAssignTag'){
@@ -271,24 +272,33 @@ if($action == 'batchAssignTag'){
 									}
 								?>
 								<legend> <?= $LANG['MEDIA_TYPE'] ?> </legend>
-								<input id="m_image" type="radio" name="mediatype" value="image" <?= $is_image? 'CHECKED': ''?>>
+								<input id="m_image" type="radio" name="mediaType" value="image" <?= $is_image? 'CHECKED': ''?>>
 								<label for="m_image"> <?= $LANG['MEDIA_TYPE_IMAGE'] ?></label><br>
-								<input id="m_audio" type="radio" name="mediatype" value="audio" <?= $is_audio? 'CHECKED': ''?>>
+								<input id="m_audio" type="radio" name="mediaType" value="audio" <?= $is_audio? 'CHECKED': ''?>>
 								<label for="m_audio"> <?= $LANG['MEDIA_TYPE_AUDIO']?></label><br>
-									<input id="m_all" type="radio" name="mediatype" value="" <?= $is_all? 'CHECKED': ''?>>
+									<input id="m_all" type="radio" name="mediaType" value="" <?= $is_all? 'CHECKED': ''?>>
 								<label for="m_all"> <?= $LANG['MEDIA_TYPE_ALL'] ?></label><br>
 							</fieldset>
 						</div>
 						<div class="row-div flex-form">
 							<div style="margin-bottom:5px;float:left;">
-								<label for="cntPerPage"><?= $LANG['COUNT_PER_PAGE'] ?></label>:
-								<select id="cntPerPage" name="cntperpage">
-									<option <?= ($cntPerPage==200 ? 'selected' : '') ?>>200</option>
-									<option <?= ($cntPerPage==400 ? 'selected' : '') ?>>400</option>
-									<option <?= ($cntPerPage==600 ? 'selected' : '') ?>>600</option>
-									<option <?= ($cntPerPage==800 ? 'selected' : '') ?>>800</option>
-									<option <?= ($cntPerPage==1000 ? 'selected' : '') ?>>1000</option>
-								</select>
+								<span style="margin-right: 15px">
+									<label for="cntPerPage"><?= $LANG['COUNT_PER_PAGE'] ?></label>:
+									<select id="cntPerPage" name="cntperpage">
+										<option <?= ($cntPerPage==200 ? 'selected' : '') ?>>200</option>
+										<option <?= ($cntPerPage==400 ? 'selected' : '') ?>>400</option>
+										<option <?= ($cntPerPage==600 ? 'selected' : '') ?>>600</option>
+										<option <?= ($cntPerPage==800 ? 'selected' : '') ?>>800</option>
+										<option <?= ($cntPerPage==1000 ? 'selected' : '') ?>>1000</option>
+									</select>
+								</span>
+								<span>
+									<label for="sortBy"><?= $LANG['SORT_BY'] ?></label>:
+									<select id="sortBy" name="sortby">
+										<option value="">---------------------</option>
+										<option value="sciname" <?= ($sortBy == 'sciname' ? 'selected' : '') ?>><?= $LANG['SCINAME'] ?></option>
+									</select>
+								</span>
 							</div>
 						</div>
 						<div class="row-div flex-form" style="padding-top:10px">
@@ -356,14 +366,14 @@ if($action == 'batchAssignTag'){
 				<div id="imagesdiv">
 					<div id="imagebox">
 						<?php
-						$imageArr = $imgLibManager->getImageArr($pageNumber, $cntPerPage);
+						$imageArr = $imgLibManager->getImageArr($pageNumber, $cntPerPage, $sortBy);
 						$imageArr = $imgLibManager->cleanOutArray($imageArr);
 						$recordCnt = $imgLibManager->getRecordCnt();
 						if($imageArr){
 							$lastPage = ceil($recordCnt / $cntPerPage);
 							$startPage = ($pageNumber > 4?$pageNumber - 4:1);
 							$endPage = ($lastPage > $startPage + 9 ? $startPage + 9 : $lastPage);
-							$url = 'search.php?' . $imgLibManager->getQueryTermStr() . '&cntperpage=' . $cntPerPage . '&submitaction=search';
+							$url = 'search.php?' . $imgLibManager->getQueryTermStr() . ($sortBy ? '&sortby=sciname' : '') . '&cntperpage=' . $cntPerPage . '&submitaction=search';
 							$pageBar = '<div style="float:left" >';
 							if($startPage > 1){
 								$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="' . $url . '&page=1">' . $LANG['FIRST'] . '</a></span>';
@@ -505,9 +515,6 @@ if($action == 'batchAssignTag'){
 			}
 			?>
 		</form>
-		<script type ="text/javascript">
-			history.replaceState({},'', "?<?= $imgLibManager->getQueryTermStr() ?>");
-		</script>
 	</div>
 	<?php
 	include($SERVER_ROOT . '/includes/footer.php');
