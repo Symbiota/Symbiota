@@ -146,6 +146,7 @@ $LANG['SUCCESS_NEW_OCC_SUBMITTED'] = 'SUCCESS: new occurrence record submitted s
 $LANG['WARNING_ADD_EXS_NO'] = 'WARNING adding exsiccati number';
 $LANG['WARNING_ADD_EXS'] = 'WARNING adding exsiccati';
 $LANG['FAILED_ADD_OCC'] = 'ERROR - failed to add occurrence record';
+$LANG['UNABLE_RELINK_BLANK'] = 'Unable to link image to new empty instance record';
 $LANG['ERROR_REMOVING_OCR'] = 'ERROR removing OCR blocks linked to mutlimedia';
 $LANG['ERROR_REMOVING_IMAGETAGS'] = 'ERROR removing imageTags linked to media';
 $LANG['ERROR_REMOVING_LINKS'] = 'ERROR removing media links';
