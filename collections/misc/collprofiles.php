@@ -389,6 +389,9 @@ if ($SYMB_UID) {
 										<a href="#" onclick="$('li.traitItem').show(); return false;">
 											<?= $LANG['TRAIT_CODING_TOOLS'] ?>
 										</a>
+										<a href="#" onclick="$('li.traitItem').show(); return false;"> 
+											<img class="seemore" src="../../images/tochild.png" style="width:13px;height:13px;">
+										</a>
 									</li>
 									<li class="traitItem" style="margin-left:10px;display:none;">
 										<a href="../traitattr/occurattributes.php?collid=<?= $collid ?>">
@@ -445,6 +448,9 @@ if ($SYMB_UID) {
 									<a href="" onclick="$('li.metadataItem').show(); return false;"  >
 										<?= $LANG['OPEN_META'] ?>
 									</a>
+									<a href="#" onclick="$('li.metadataItem').show(); return false;"> 
+										<img class="seemore" src="../../images/tochild.png" style="width:13px;height:13px;">
+									</a>
 								</li>
 								<li class="metadataItem" style="margin-left:10px;display:none;">
 									<a href="collmetadata.php?collid=<?= $collid ?>">
@@ -471,9 +477,14 @@ if ($SYMB_UID) {
 									<a href="#" onclick="$('li.importItem').show(); return false;">
 										<?= $LANG['IMPORT_SPECIMEN'] ?>
 									</a>
-									<a id="importinfo" href="https://biokic.github.io/symbiota-docs/coll_manager/upload/" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>">
+									<a id="importinfo" style="text-decoration:none;" href="https://biokic.github.io/symbiota-docs/coll_manager/upload/" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>">
 											<img src="../../images/info.png" style="width:13px;" alt="<?= $LANG['INFO_ALT'] ?>" />
-									</a><br/>
+									</a>
+									<a href="#" onclick="$('li.importItem').show(); return false;"> 
+										<img class="seemore" src="../../images/tochild.png" style="width:13px;height:13px;">
+									</a>
+									
+									<br/>
 								</li>
 								<li class="importItem">
 									<a href="../admin/specupload.php?uploadtype=7&collid=<?php echo $collid; ?>">
