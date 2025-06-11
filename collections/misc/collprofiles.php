@@ -483,8 +483,6 @@ if ($SYMB_UID) {
 									<a href="#" onclick="$('li.importItem').show(); return false;"> 
 										<img class="seemore" src="../../images/tochild.png" style="width:13px;height:13px;">
 									</a>
-									
-									<br/>
 								</li>
 								<li class="importItem">
 									<a href="../admin/specupload.php?uploadtype=7&collid=<?php echo $collid; ?>">
