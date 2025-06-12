@@ -211,6 +211,13 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 			f.submit();
 		}
 	}
+
+	function checkDeleteAssociation(f){
+		if(confirm("<?php echo $LANG['DELETE_ASSOC']; ?>")){
+			f.submit();
+		}
+	}
+
 </script>
 <style type="text/css">
 	.resourceTab fieldset{ clear:both; margin:10px; padding:10px; }
@@ -228,7 +235,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 <div id="voucherdiv" style="width:795px;">
 	<?php
 	$assocArr = $occManager->getOccurrenceRelationships();
-	$basisOfRecordArr = array('HumanObservation' => $LANG['HUMAN_OBS'], 'LivingSpecimen' => $LANG['LIVING_SPEC'], 'MachineObservation' => $LANG['MACHINE_OBS'],
+	$basisOfRecordArr = array('HumanObservation' => $LANG['HUMAN_OBS'], 'LivingSpecimen' => $LANG['LIVING_SPEC'], 'MachineObservation' => $LANG['MACHINE_OBS'], 'FossilSpecimen' => $LANG['FOSSIL_SPEC'],
 		'MaterialSample' => $LANG['MAT_SAMPLE'], 'PreservedSpecimen' => $LANG['PRES_SAMPLE'], 'ReferenceCitation' => $LANG['REF_CITATION']);
 	?>
 	<fieldset class="resourceTab">
@@ -380,11 +387,12 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 						<div><label><?= $LANG['ASSOCIATION_TYPE'] ?>:</label>
 							<?= $assocUnit['associationType'] ?>
 							<form action="resourcehandler.php" method="post" style="display:inline; margin: 0px; padding: 0px">
+								<input name="submitaction" type="hidden" value="submitDeleteAssociation">
+								<input class="icon-img" type="image" src="../../images/del.png" style="margin: 0px" onclick="checkDeleteAssociation(this.form); return false;">
 								<input name="occid" type="hidden" value="<?php echo $occid; ?>">
 								<input name="collid" type="hidden" value="<?php echo $collid; ?>">
 								<input name="occindex" type="hidden" value="<?php echo $occIndex; ?>">
 								<input name="delassocid" type="hidden" value="<?php echo $assocID; ?>">
-								<input class="icon-img" type="image" src="../../images/del.png" style="margin: 0px">
 							</form>
 							<a href="#" onclick="toggle('edit-assoc-div-<?= $assocID ?>')"><img class="icon-img" src="../../images/edit.png"></a>
 						</div>

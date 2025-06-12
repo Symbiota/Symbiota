@@ -1,10 +1,14 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/download/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/download/index.' . $LANG_TAG . '.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/download/index.' . $LANG_TAG . '.php'))
+	include_once($SERVER_ROOT.'/content/lang/collections/download/index.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/download/index.en.php');
+header('Content-Type: text/html; charset=' . $CHARSET);
 
-header("Content-Type: text/html; charset=".$CHARSET);
+if(empty($OVERRIDE_DOWNLOAD_LOGIN_REQUIREMENT) && !$SYMB_UID){
+	header('Location: ../../profile/index.php?refurl=../collections/download/index.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+}
 
 $sourcePage = array_key_exists('sourcepage', $_REQUEST) ? $_REQUEST['sourcepage'] : 'specimen';
 $downloadType = array_key_exists('dltype', $_REQUEST) ? $_REQUEST['dltype'] : 'specimen';
@@ -47,7 +51,7 @@ $dwcManager = new DwcArchiverCore();
 			if(!$searchVar){
 				?>
 				if(sessionStorage.querystr){
-					window.location = "index.php?"+sessionStorage.querystr;
+					window.location = "index.php?searchvar="+encodeURIComponent(sessionStorage.querystr);
 				}
 				<?php
 			}
@@ -67,6 +71,7 @@ $dwcManager = new DwcArchiverCore();
 				if(obj.form.attributes) obj.form.attributes.checked = false;
 				if(obj.form.materialsample) obj.form.materialsample.checked = false;
 				if(obj.form.identifiers) obj.form.identifiers.checked = false;
+				if(obj.form.associations) obj.form.associations.checked = false;
 			}
 		}
 
@@ -159,6 +164,7 @@ $dwcManager = new DwcArchiverCore();
 								if($dwcManager->hasAttributes()) echo '<input type="checkbox" name="attributes" id="attributes" value="1" onchange="extensionSelected(this)" checked /> <label for="attributes">' . $LANG['INCLUDE_ATTR'] . '</label><br/>';
 								if($dwcManager->hasMaterialSamples()) echo '<input type="checkbox" name="materialsample" id="materialsample" value="1" onchange="extensionSelected(this)" checked /><label for="materialsample">' . $LANG['IMCLUDE_MAT'] . '</label><br/>';
 								if($dwcManager->hasIdentifiers()) echo '<input type="checkbox" name="identifiers" id="identifiers" value="1" onchange="extensionSelected(this)" checked /> <label for="identifiers">' . $LANG['INCLUDE_IDENT'] . '</label><br/>';
+								if($dwcManager->hasAssociations()) echo '<input type="checkbox" name="associations" id="associations" value="1" onchange="extensionSelected(this)" checked /> <label for="associations">' . $LANG['INCLUDE_ASSOCIATIONS'] . '</label><br/>';
 								?>
 								*<?= $LANG['DATA_EXT_NOTE'] ?>
 							</div>

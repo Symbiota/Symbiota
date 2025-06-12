@@ -7,7 +7,7 @@ Language: English
 
 $LANG['NO_RESULTS'] = 'No results returned';
 $LANG['ERROR_UNABLE_RESULTS'] = 'ERROR: Unable to get results';
-$LANG['SELECT_INTERNAL_REL'] = 'You need to search for an select an internal occurrence instance';
+$LANG['SELECT_INTERNAL_REL'] = 'You need to search for and select an internal occurrence instance';
 $LANG['VERB_SCINAME_EMPTY'] = 'Verbatim Scientific Name needs a value';
 $LANG['RESOURCE_EMPTY'] = 'Resource URL needs needs a value';
 $LANG['SELECT_CHECKLIST'] = 'Select a checklist to which you want to link the voucher';
@@ -16,6 +16,7 @@ $LANG['SURE_UNLINK'] = 'Are you sure you want to unlink the record as a duplicat
 $LANG['ERROR_DELETING'] = 'ERROR deleting duplicate';
 $LANG['GEN_RES_NOT_BLANK'] = 'Genetic resource name must not be blank';
 $LANG['PERM_REMOVE_RES'] = 'Are you sure you want to permanently remove this resource?';
+$LANG['DELETE_ASSOC'] = 'Are you sure you want to delete this association?';
 
 $LANG['CHECKLIST_LINKS'] = 'Checklist Voucher Linkages';
 $LANG['LINK_TO_CHECKLIST'] = 'Link Specimen to Checklist as Voucher';

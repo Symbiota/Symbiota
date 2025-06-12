@@ -3,6 +3,12 @@ if(!$displayQuery && array_key_exists('displayquery',$_REQUEST)) $displayQuery =
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/includes/queryform.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/queryform.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/queryform.en.php');
 
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/specprocessor/exporter.' . $LANG_TAG . '.php')){
+	include_once($SERVER_ROOT . '/content/lang/collections/specprocessor/exporter.' . $LANG_TAG . '.php');
+} else{
+	include_once($SERVER_ROOT . '/content/lang/collections/specprocessor/exporter.en.php');
+}
+
 $qryArr = $occManager->getQueryVariables();
 // Construct a link containing the queryform search parameters
 $queryLink = '?displayquery=1&collid='.$collId.'&'.http_build_query($qryArr, '', '&amp;');
@@ -23,6 +29,11 @@ $qWithoutImg = (array_key_exists('woi',$qryArr)?$qryArr['woi']:0);
 $qOcrFrag = (array_key_exists('ocr',$qryArr)?htmlentities($qryArr['ocr'], ENT_COMPAT, $CHARSET):'');
 $qOrderBy = (array_key_exists('orderby',$qryArr)?$qryArr['orderby']:'');
 $qOrderByDir = (array_key_exists('orderbydir',$qryArr)?$qryArr['orderbydir']:'');
+$qTraitIds = (array_key_exists('traitid',$qryArr)?$qryArr['traitid']: []);
+$qTraitAbsence = (array_key_exists('traitAbsence',$qryArr)?$qryArr['traitAbsence']: false);
+$qTraitStateIds = (array_key_exists('stateid',$qryArr)?$qryArr['stateid']: []);
+
+$qTraitArr = $occManager->getAttributeTraits($collId);
 
 $customFieldArr = array();
 if($crowdSourceMode){
@@ -31,30 +42,33 @@ if($crowdSourceMode){
 			'recordedby'=>$LANG['COLLECTOR'],'recordnumber'=>$LANG['COL_NUMBER'],'eventdate'=>$LANG['COL_DATE']);
 }
 else{
-	$customFieldArr = array('associatedCollectors'=>$LANG['ASSOC_COLLECTORS'],'associatedOccurrences'=>$LANG['ASSOC_OCCS'],
+	$customFieldArr = array('absoluteAge'=>$LANG['ABS_AGE'],'associatedCollectors'=>$LANG['ASSOC_COLLECTORS'],'associatedOccurrences'=>$LANG['ASSOC_OCCS'],
 			'associatedTaxa'=>$LANG['ASSOC_TAXA'],'attributes'=>$LANG['ATTRIBUTES'],'scientificNameAuthorship'=>$LANG['AUTHOR'],
-			'basisOfRecord'=>$LANG['BASIS_OF_RECORD'],'behavior'=>$LANG['BEHAVIOR'],'catalogNumber'=>$LANG['CAT_NUM'],'collectionCode'=>$LANG['COL_CODE'],'recordNumber'=>$LANG['COL_NUMBER'],
-			'recordedBy'=>$LANG['COL_OBS'],'continent'=>$LANG['CONTINENT'],'coordinateUncertaintyInMeters'=>$LANG['COORD_UNCERT_M'],'country'=>$LANG['COUNTRY'],
+			'basisOfRecord'=>$LANG['BASIS_OF_RECORD'], 'bed'=>$LANG['BED'], 'behavior'=>$LANG['BEHAVIOR'],'biostratigraphy'=>$LANG['BIOSTRAT'],'biota'=>$LANG['BIOTA'],'catalogNumber'=>$LANG['CAT_NUM'],'collectionCode'=>$LANG['COL_CODE'],
+			'recordNumber'=>$LANG['COL_NUMBER'],'recordedBy'=>$LANG['COL_OBS'],'continent'=>$LANG['CONTINENT'],'coordinateUncertaintyInMeters'=>$LANG['COORD_UNCERT_M'],'country'=>$LANG['COUNTRY'],
 			'county'=>$LANG['COUNTY'],'cultivationStatus'=>$LANG['CULT_STATUS'],'dataGeneralizations'=>$LANG['DATA_GEN'],'eventDate'=>$LANG['DATE'], 'eventDate2'=> $LANG['DATE2'],
 			'dateEntered'=>$LANG['DATE_ENTERED'],'dateLastModified'=>$LANG['DATE_LAST_MODIFIED'],'dbpk'=>$LANG['DBPK'],'decimalLatitude'=>$LANG['DEC_LAT'],
 			'decimalLongitude'=>$LANG['DEC_LONG'],'maximumDepthInMeters'=>$LANG['DEPTH_MAX'],'minimumDepthInMeters'=>$LANG['DEPTH_MIN'],
 			'verbatimAttributes'=>$LANG['DESCRIPTION'],'disposition'=>$LANG['DISPOSITION'],'dynamicProperties'=>$LANG['DYNAMIC_PROPS'],
-			'maximumElevationInMeters'=>$LANG['ELEV_MAX_M'],'minimumElevationInMeters'=>$LANG['ELEV_MIN_M'],
+			'earlyInterval'=>$LANG['EARLY_INT'],'element'=>$LANG['ELEMENT'],'maximumElevationInMeters'=>$LANG['ELEV_MAX_M'],'minimumElevationInMeters'=>$LANG['ELEV_MIN_M'],
 			'establishmentMeans'=>$LANG['ESTAB_MEANS'],'family'=>$LANG['FAMILY'],'fieldNotes'=>$LANG['FIELD_NOTES'],'fieldnumber'=>$LANG['FIELD_NUMBER'],
-			'geodeticDatum'=>$LANG['GEO_DATUM'],'georeferenceProtocol'=>$LANG['GEO_PROTOCOL'],
-			'georeferenceRemarks'=>$LANG['GEO_REMARKS'],'georeferenceSources'=>$LANG['GEO_SOURCES'],
-			'georeferenceVerificationStatus'=>$LANG['GEO_VERIF_STATUS'],'georeferencedBy'=>$LANG['GEO_BY'],'habitat'=>$LANG['HABITAT'],
+			'formation'=>$LANG['FORMATION'],'geodeticDatum'=>$LANG['GEO_DATUM'],'georeferenceProtocol'=>$LANG['GEO_PROTOCOL'],
+			'geologicalContextID'=>$LANG['GEO_CONTEXT_ID'],'georeferenceRemarks'=>$LANG['GEO_REMARKS'],'georeferenceSources'=>$LANG['GEO_SOURCES'],
+			'georeferenceVerificationStatus'=>$LANG['GEO_VERIF_STATUS'],'georeferencedBy'=>$LANG['GEO_BY'],'lithogroup'=>$LANG['GROUP'],'habitat'=>$LANG['HABITAT'],
 			'identificationQualifier'=>$LANG['ID_QUALIFIER'],'identificationReferences'=>$LANG['ID_REFERENCES'],
 			'identificationRemarks'=>$LANG['ID_REMARKS'],'identifiedBy'=>$LANG['IDED_BY'],'individualCount'=>$LANG['IND_COUNT'],
+			'identifierName' => $LANG['IDENTIFIER_TAG_NAME'], 'identifierValue' => $LANG['IDENTIFIER_TAG_VALUE'],
 			'informationWithheld'=>$LANG['INFO_WITHHELD'],'institutionCode'=>$LANG['INST_CODE'],'island'=>$LANG['ISLAND'],'islandgroup'=>$LANG['ISLAND_GROUP'],
-			'labelProject'=>$LANG['LAB_PROJECT'],'language'=>$LANG['LANGUAGE'],'lifeStage'=>$LANG['LIFE_STAGE'],'locationid'=>$LANG['LOCATION_ID'],'locality'=>$LANG['LOCALITY'],
-			'recordSecurity'=>$LANG['SECURITY'],'securityReason'=>$LANG['SECURITY_REASON'],'locationRemarks'=>$LANG['LOC_REMARKS'],
-			'username'=>$LANG['MODIFIED_BY'],'municipality'=>$LANG['MUNICIPALITY'],'occurrenceRemarks'=>$LANG['NOTES_REMARKS'],'ocrFragment'=>$LANG['OCR_FRAGMENT'],
-			'otherCatalogNumbers'=>$LANG['OTHER_CAT_NUMS'],'ownerInstitutionCode'=>$LANG['OWNER_CODE'],'preparations'=>$LANG['PREPARATIONS'],
-			'reproductiveCondition'=>$LANG['REP_COND'],'samplingEffort'=>$LANG['SAMP_EFFORT'],'samplingProtocol'=>$LANG['SAMP_PROTOCOL'],
-			'sciname'=>$LANG['SCI_NAME'],'sex'=>$LANG['SEX'],'stateProvince'=>$LANG['STATE_PROVINCE'],
-			'substrate'=>$LANG['SUBSTRATE'],'taxonRemarks'=>$LANG['TAXON_REMARKS'],'typeStatus'=>$LANG['TYPE_STATUS'],'verbatimCoordinates'=>$LANG['VERBAT_COORDS'],
-			'verbatimEventDate'=>$LANG['VERBATIM_DATE'],'verbatimDepth'=>$LANG['VERBATIM_DEPTH'],'verbatimElevation'=>$LANG['VERBATIM_ELE'],'waterbody'=> $LANG['WATER_BODY']);
+			'labelProject'=>$LANG['LAB_PROJECT'],'language'=>$LANG['LANGUAGE'],'lateInterval'=>$LANG['LATE_INT'],'lifeStage'=>$LANG['LIFE_STAGE'],'lithology'=>$LANG['LITHOLOGY'],
+			'locationid'=>$LANG['LOCATION_ID'],'locality'=>$LANG['LOCALITY'],'recordSecurity'=>$LANG['SECURITY'],'securityReason'=>$LANG['SECURITY_REASON'],
+			'localStage'=>$LANG['LOCAL_STAGE'],'locationRemarks'=>$LANG['LOC_REMARKS'],'member'=>$LANG['MEMBER'], 'username'=>$LANG['MODIFIED_BY'],
+			'municipality'=>$LANG['MUNICIPALITY'],'occurrenceRemarks'=>$LANG['NOTES_REMARKS'],'ocrFragment'=>$LANG['OCR_FRAGMENT'],'otherCatalogNumbers'=>$LANG['OTHER_CAT_NUMS'],
+			'ownerInstitutionCode'=>$LANG['OWNER_CODE'],'preparations'=>$LANG['PREPARATIONS'],'reproductiveCondition'=>$LANG['REP_COND'],
+			'samplingEffort'=>$LANG['SAMP_EFFORT'],'samplingProtocol'=>$LANG['SAMP_PROTOCOL'],'sciname'=>$LANG['SCI_NAME'],'sex'=>$LANG['SEX'],
+			'slideProperties'=>$LANG['SLIDE_PROP'],'stage'=>$LANG['STAGE'],'stateProvince'=>$LANG['STATE_PROVINCE'],
+			'stratRemarks'=>$LANG['STRAT_REMARKS'],'substrate'=>$LANG['SUBSTRATE'],'taxonEnvironment'=>$LANG['TAXON_ENVIRONMENT'], 'taxonRemarks'=>$LANG['TAXON_REMARKS'],
+			'typeStatus'=>$LANG['TYPE_STATUS'],'verbatimCoordinates'=>$LANG['VERBAT_COORDS'],'verbatimEventDate'=>$LANG['VERBATIM_DATE'],
+			'verbatimDepth'=>$LANG['VERBATIM_DEPTH'],'verbatimElevation'=>$LANG['VERBATIM_ELE'],'waterbody'=> $LANG['WATER_BODY']);
 }
 $customTermArr = array('EQUALS', 'NOT_EQUALS', 'STARTS_WITH', 'LIKE', 'NOT_LIKE', 'GREATER_THAN', 'LESS_THAN', 'IS_NULL', 'NOT_NULL');
 $customArr = array();
@@ -81,14 +95,33 @@ else{
 	<form name="queryform" action="<?php echo $_SERVER['SCRIPT_NAME']; ?>" method="post" onsubmit="return verifyQueryForm(this)">
 		<fieldset style="padding:0.5rem; position: relative">
 			<legend><?php echo $LANG['RECORD_SEARCH_FORM']; ?></legend>
-			<button style="position: absolute; margin:0; right:0.5rem; top:0;" type="button" class="icon-button" onclick="copyQueryLink(event)" title="<?php echo $LANG['COPY_SEARCH']; ?>" aria-label="<?php echo $LANG['COPY_LINK']; ?>">
-				<span style="display:flex; align-content: center;">
+			<div style="float: right">
+				<button type="button" class="icon-button" onclick="copyQueryLink(event)" title="<?php echo $LANG['COPY_SEARCH']; ?>" aria-label="<?php echo $LANG['COPY_LINK']; ?>">
+					<span style="display:flex; align-content: center;">
 						<svg alt="Copies the search terms as a link." style="width:1.2em;margin-right:5px;" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg>
-						<span style="align-content: center;">
-							<?php echo $LANG['COPY_LINK']; ?>
-						</span>
-				</span>
-			</button>
+					</span>
+				</button>
+				<?php
+				if(!$crowdSourceMode){
+					$qryStr = '';
+					if($qRecordedBy) $qryStr .= '&recordedby='.$qRecordedBy;
+					if($qRecordNumber) $qryStr .= '&recordnumber='.$qRecordNumber;
+					if($qEventDate) $qryStr .= '&eventdate='.$qEventDate;
+					if($qCatalogNumber) $qryStr .= '&catalognumber='.$qCatalogNumber;
+					if($qOtherCatalogNumbers) $qryStr .= '&othercatalognumbers='.$qOtherCatalogNumbers;
+					if($qRecordEnteredBy) $qryStr .= '&recordenteredby='.$qRecordEnteredBy;
+					if($qDateEntered) $qryStr .= '&dateentered='.$qDateEntered;
+					if($qDateLastModified) $qryStr .= '&datelastmodified='.$qDateLastModified;
+					if($qryStr){
+						?>
+						<a class="button button-primary icon-button" style="display: inline-flex; padding: 7px" title="<?php echo $LANG['GO_LABEL_PRINT']; ?>" href="../reports/labelmanager.php?collid=<?= $collId . htmlspecialchars($qryStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank">
+							<img src="../../images/list.png" style="width:1.3em" />
+						</a>
+						<?php
+					}
+				}
+				?>
+			</div>
 			<?php
 			if(!$crowdSourceMode){
 				?>
@@ -178,6 +211,46 @@ else{
 						<label for="q_withoutimg"><?php echo $LANG['WITHOUT_IMAGES']; ?></label>
 					</div>
 				</div>
+				<?php if($qTraitArr): ?>
+					<div style="margin-bottom: 10px">
+						<div class="fieldGroupDiv">
+							<div>
+								<div>
+									<?php echo $LANG['TRAIT_FILTER']; ?>:
+								</div>
+							</div>
+							<div>
+								<select name="q_traitid[]" multiple>
+									<?php
+										foreach($qTraitArr as $traitID => $tArr){
+											echo '<option '. (in_array($traitID, $qTraitIds)? 'selected':'') .' value="'.$traitID.'">'.$tArr['name'].' [ID:'.$traitID.']</option>';
+										}
+									?>
+								</select>
+							</div>
+							<div>
+							-- <?php echo $LANG['OR_SPEC_ATTRIBUTE']; ?> --
+							</div>
+							<div>
+								<select name="q_stateid[]" multiple>
+									<?php
+									foreach($qTraitArr as $traitID => $tArr){
+										$stateArr = $tArr['state'];
+										foreach($stateArr as $stateID => $stateName){
+											echo '<option ' . (in_array($stateID, $qTraitStateIds)? 'selected':'') . ' value="'.$stateID.'">'.$tArr['name'].': '.$stateName.'</option>';
+										}
+									}
+									?>
+								</select>
+							</div>
+						</div>
+						<input id="qTraitAbsence" name="q_traitAbsence" type="checkbox" <?= $qTraitAbsence? 'checked': '' ?> value="1" />
+						<label for="qTraitAbsence"><?= $LANG['SEARCH_MISSING_TRAITS']?></label>
+						<div>
+							* <?php echo $LANG['HOLD_CTRL']; ?>
+						</div>
+					</div>
+				<?php endif ?>
 				<?php
 				if($ACTIVATE_EXSICCATI){
 					if($exsList = $occManager->getExsiccatiList()){
@@ -263,44 +336,17 @@ else{
 				</div>
 				<?php
 			}
-			?>
-				<?php
-				if($isGenObs && ($IS_ADMIN || ($collId && array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"])))){
-					?>
-					<div class="fieldGroupDiv">
-						<div>
-							<input type="checkbox" name="q_returnall" value="1" <?php echo ($qReturnAll?'CHECKED':''); ?> /> <?php echo $LANG['SHOW_RECS_ALL']; ?>
-						</div>
-					</div>
-					<?php
-				}
+			if($isGenObs && ($IS_ADMIN || ($collId && array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"])))){
 				?>
-				<div>
+				<div class="fieldGroupDiv">
 					<div>
-
-					<?php
-					if(!$crowdSourceMode){
-						$qryStr = '';
-						if($qRecordedBy) $qryStr .= '&recordedby='.$qRecordedBy;
-						if($qRecordNumber) $qryStr .= '&recordnumber='.$qRecordNumber;
-						if($qEventDate) $qryStr .= '&eventdate='.$qEventDate;
-						if($qCatalogNumber) $qryStr .= '&catalognumber='.$qCatalogNumber;
-						if($qOtherCatalogNumbers) $qryStr .= '&othercatalognumbers='.$qOtherCatalogNumbers;
-						if($qRecordEnteredBy) $qryStr .= '&recordenteredby='.$qRecordEnteredBy;
-						if($qDateEntered) $qryStr .= '&dateentered='.$qDateEntered;
-						if($qDateLastModified) $qryStr .= '&datelastmodified='.$qDateLastModified;
-						if($qryStr){
-					?>
-						<a class="button button-primary icon-button bottom-breathing-room-rel" title="<?php echo $LANG['GO_LABEL_PRINT']; ?>" href="../reports/labelmanager.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . htmlspecialchars($qryStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank">
-							<img src="../../images/list.png" style="width:1.3em" />
-						</a>	
-					<?php
-						}
-					}
-					?>
+						<input type="checkbox" name="q_returnall" value="1" <?php echo ($qReturnAll?'CHECKED':''); ?> /> <?php echo $LANG['SHOW_RECS_ALL']; ?>
 					</div>
 				</div>
-				<div>
+				<?php
+			}
+			?>
+			<div>
 				<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
 				<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
 				<input type="hidden" name="occid" value="<?php echo $occManager->getOccId(); ?>" />
@@ -426,6 +472,16 @@ else{
 		f.q_dateentered.value = "";
 		f.q_datelastmodified.value = "";
 		f.q_processingstatus.value = "";
+
+
+		if(f["q_traitid[]"]) {
+			f["q_traitid[]"].value = "";
+		}
+
+		if(f["q_stateid[]"]) {
+			f["q_stateid[]"].value = "";
+		}
+
 		if(f.q_exsiccatiid) f.q_exsiccatiid.value = "";
 
 		for(let x = 1; x < 9; x++){

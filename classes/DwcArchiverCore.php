@@ -6,6 +6,7 @@ include_once($SERVER_ROOT . '/classes/DwcArchiverImage.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverAttribute.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverMaterialSample.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverIdentifier.php');
+include_once($SERVER_ROOT . '/classes/DwcArchiverResourceRelationship.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceTaxaManager.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceAccessStats.php');
 include_once($SERVER_ROOT . '/classes/PortalIndex.php');
@@ -19,6 +20,9 @@ class DwcArchiverCore extends Manager{
 
 	protected $collArr;
 	private $customWhereSql;
+
+	private $paleoWithSql;
+
 	protected $conditionSql = '';
 	protected $conditionArr = array();
 	private $condAllowArr;
@@ -46,7 +50,9 @@ class DwcArchiverCore extends Manager{
 	protected $includeAttributes = 0;
 	protected $includeMaterialSample = 0;
 	protected $includeIdentifiers = 0;
+	protected $includeAssociations = 0;
 	private $hasPaleo = false;
+	private $includePaleo = null;
 	private $redactLocalities = 1;
 	private $rareReaderArr = array();
 	private $charSetSource = '';
@@ -55,6 +61,7 @@ class DwcArchiverCore extends Manager{
 	private $attributeHandler = null;
 	private $materialSampleHandler = null;
 	private $identierHandler = null;
+	private $associationHandler = null;
 
 	private $geolocateVariables = array();
 
@@ -77,7 +84,7 @@ class DwcArchiverCore extends Manager{
 		$this->condAllowArr = array(
 			'catalognumber', 'othercatalognumbers', 'occurrenceid', 'family', 'sciname', 'country', 'stateprovince', 'county', 'municipality',
 			'recordedby', 'recordnumber', 'eventdate', 'decimallatitude', 'decimallongitude', 'minimumelevationinmeters', 'maximumelevationinmeters', 'cultivationstatus',
-			'datelastmodified', 'dateentered', 'processingstatus', 'dbpk'
+			'datelastmodified', 'dateentered', 'processingstatus', 'dbpk', 'traitid', 'stateid'
 		);
 
 		$this->securityArr = array(
@@ -103,7 +110,6 @@ class DwcArchiverCore extends Manager{
 		$dwcOccurManager = new DwcArchiverOccurrence($this->conn);
 		$dwcOccurManager->setSchemaType($this->schemaType);
 		$dwcOccurManager->setExtended($this->extended);
-		//$dwcOccurManager->setIncludePaleo($this->hasPaleo);
 		if (!$this->occurrenceFieldArr) $this->occurrenceFieldArr = $dwcOccurManager->getOccurrenceArr();
 		$sql = $dwcOccurManager->getSqlOccurrences($this->occurrenceFieldArr['fields'], false);
 		$sql .= $this->getTableJoins() . $this->conditionSql;
@@ -148,7 +154,7 @@ class DwcArchiverCore extends Manager{
 	public function setCollArr($collTarget, $collType = ''){
 		$sqlWhere = '';
 		if ($collType == 'specimens') {
-			$sqlWhere = '(c.colltype = "Preserved Specimens") ';
+			$sqlWhere = '(c.colltype IN("Preserved Specimens","Fossil Specimens")) ';
 		}
 		elseif ($collType == 'observations') {
 			$sqlWhere = '(c.colltype IN("Observations", "General Observations")) ';
@@ -190,11 +196,16 @@ class DwcArchiverCore extends Manager{
 					$this->collArr[$r->collid]['postalcode'] = $r->postalcode ?? '';
 					$this->collArr[$r->collid]['country'] = $r->country ?? '';
 					$this->collArr[$r->collid]['phone'] = $r->phone ?? '';
+					if(!$this->includePaleo) $this->includePaleo = null;
 					if ($r->dynamicproperties) {
 						if ($propArr = json_decode($r->dynamicproperties, true)) {
 							if (isset($propArr['editorProps']['modules-panel'])) {
 								foreach ($propArr['editorProps']['modules-panel'] as $k => $modArr) {
-									if (isset($modArr['paleo']['status'])) $this->hasPaleo = true;
+									if (isset($modArr['paleo']['status'])){
+										//includePaleo = true if module is activated for any of the collections, and only false if all collections explicitly have module deactivated
+										if($modArr['paleo']['status']) $this->includePaleo = true;
+										elseif($this->includePaleo === null) $this->includePaleo = false;
+									}
 									elseif (isset($modArr['matSample']['status'])){
 										$this->collArr[$r->collid]['matSample'] = 1;
 									}
@@ -215,6 +226,10 @@ class DwcArchiverCore extends Manager{
 			else{
 				echo 'error: '.$this->conn->error.'<br>';
 			}
+		}
+		if(!empty($GLOBALS['ACTIVATE_PALEO']) && $this->includePaleo === null){
+			//Paleo module is globally set as true AND all target portals have not explicitly set the paleo module to false
+			$this->includePaleo = 1;
 		}
 	}
 
@@ -253,6 +268,10 @@ class DwcArchiverCore extends Manager{
 
 	public function setCustomWhereSql($sql){
 		$this->customWhereSql = $sql;
+	}
+
+	public function setPaleoWithSql($sql){
+		$this->paleoWithSql = $sql;
 	}
 
 	public function addCondition($field, $cond, $value = ''){
@@ -399,6 +418,14 @@ class DwcArchiverCore extends Manager{
 			}
 			if (strpos($this->conditionSql, 'id.identifierValue')) {
 				$sql .= 'LEFT JOIN omoccuridentifiers id ON o.occid = id.occid ';
+			}
+			if($GLOBALS["ACTIVATE_PALEO"]){
+				$sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
+				if(strpos($this->conditionSql, 'early.myaStart')){
+					$sql .= 'JOIN omoccurpaleogts early ON paleo.earlyInterval = early.gtsterm ';
+					$sql .= 'JOIN omoccurpaleogts late ON paleo.lateInterval = late.gtsterm ';
+					$sql .= 'CROSS JOIN searchRange search ';
+				}
 			}
 		}
 		return $sql;
@@ -679,7 +706,7 @@ class DwcArchiverCore extends Manager{
 		$dwcOccurManager = new DwcArchiverOccurrence($this->conn);
 		$dwcOccurManager->setSchemaType($this->schemaType);
 		$dwcOccurManager->setExtended($this->extended);
-		$dwcOccurManager->setIncludePaleo($this->hasPaleo);
+		$dwcOccurManager->setIncludePaleo($this->includePaleo);
 		if (!$this->occurrenceFieldArr) $this->occurrenceFieldArr = $dwcOccurManager->getOccurrenceArr($this->schemaType, $this->extended);
 		$this->applyConditions();
 		if (!$this->conditionSql) return false;
@@ -875,6 +902,10 @@ class DwcArchiverCore extends Manager{
 				$zipArchive->addFile($this->targetPath . $this->ts . '-ident' . $this->fileExt);
 				$zipArchive->renameName($this->targetPath . $this->ts . '-ident' . $this->fileExt, 'identifiers' . $this->fileExt);
 			}
+			if ($this->includeAssociations && file_exists($this->targetPath . $this->ts . '-assoc' . $this->fileExt)) {
+				$zipArchive->addFile($this->targetPath . $this->ts . '-assoc' . $this->fileExt);
+				$zipArchive->renameName($this->targetPath . $this->ts . '-assoc' . $this->fileExt, 'resourceRelationships' . $this->fileExt);
+			}
 			//Meta file
 			$this->writeMetaFile();
 			$zipArchive->addFile($this->targetPath . $this->ts . '-meta.xml');
@@ -895,6 +926,7 @@ class DwcArchiverCore extends Manager{
 			if ($this->includeAttributes && file_exists($this->targetPath . $this->ts . '-attr' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-attr' . $this->fileExt);
 			if ($this->includeMaterialSample && file_exists($this->targetPath . $this->ts . '-matSample' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-matSample' . $this->fileExt);
 			if ($this->includeIdentifiers && file_exists($this->targetPath . $this->ts . '-ident' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-ident' . $this->fileExt);
+			if ($this->includeAssociations && file_exists($this->targetPath . $this->ts . '-assoc' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-assoc' . $this->fileExt);
 			unlink($this->targetPath . $this->ts . '-meta.xml');
 			if ($this->schemaType == 'dwc') rename($this->targetPath . $this->ts . '-eml.xml', $this->targetPath . str_replace('.zip', '.eml', $fileName));
 			else unlink($this->targetPath . $this->ts . '-eml.xml');
@@ -1111,6 +1143,35 @@ class DwcArchiverCore extends Manager{
 
 			$mofCnt = 1;
 			foreach ($this->fieldArrMap['identifier'] as $term) {
+				$fieldElem = $newDoc->createElement('field');
+				$fieldElem->setAttribute('index', $mofCnt);
+				$fieldElem->setAttribute('term', $term);
+				$extElem3->appendChild($fieldElem);
+				$mofCnt++;
+			}
+			$rootElem->appendChild($extElem3);
+		}
+
+		//Association/Resource relationship extension  https://rs.gbif.org/extension/resource_relationship_2024-02-19.xml
+		if ($this->includeAssociations && isset($this->fieldArrMap['associations'])) {
+			$extElem3 = $newDoc->createElement('extension');
+			$extElem3->setAttribute('encoding', $this->charSetOut);
+			$extElem3->setAttribute('fieldsTerminatedBy', $this->delimiter);
+			$extElem3->setAttribute('linesTerminatedBy', '\n');
+			$extElem3->setAttribute('fieldsEnclosedBy', '"');
+			$extElem3->setAttribute('ignoreHeaderLines', '1');
+			$extElem3->setAttribute('rowType', 'http://rs.tdwg.org/dwc/terms/ResourceRelationship');
+
+			$filesElem3 = $newDoc->createElement('files');
+			$filesElem3->appendChild($newDoc->createElement('location', 'resourceRelationships' . $this->fileExt));
+			$extElem3->appendChild($filesElem3);
+
+			$coreIdElem3 = $newDoc->createElement('coreid');
+			$coreIdElem3->setAttribute('index', '0');
+			$extElem3->appendChild($coreIdElem3);
+
+			$mofCnt = 1;
+			foreach ($this->fieldArrMap['associations'] as $term) {
 				$fieldElem = $newDoc->createElement('field');
 				$fieldElem->setAttribute('index', $mofCnt);
 				$fieldElem->setAttribute('term', $term);
@@ -1641,19 +1702,22 @@ class DwcArchiverCore extends Manager{
 		$dwcOccurManager->setExtended($this->extended);
 		$dwcOccurManager->setIncludeExsiccatae();
 		$dwcOccurManager->setIncludeAssociatedSequences();
-		$dwcOccurManager->setIncludePaleo($this->hasPaleo);
+		$dwcOccurManager->setIncludePaleo($this->includePaleo);
 		if (!$this->occurrenceFieldArr) $this->occurrenceFieldArr = $dwcOccurManager->getOccurrenceArr($this->schemaType, $this->extended);
 		//Output records
 		$this->applyConditions();
 		if (!$this->conditionSql) return false;
 		$sql = $dwcOccurManager->getSqlOccurrences($this->occurrenceFieldArr['fields']);
 		$sql .= $this->getTableJoins() . $this->conditionSql;
+		if ($this->paleoWithSql)
+			$sql = $this->paleoWithSql . $sql;
 		if ($this->schemaType != 'backup') $sql .= ' LIMIT 1000000';
 		//Output header
 		$fieldArr = $this->occurrenceFieldArr['fields'];
 		if ($this->schemaType == 'dwc' || $this->schemaType == 'pensoft') {
 			unset($fieldArr['recordSecurity']);
 			unset($fieldArr['collID']);
+			unset($fieldArr['biota']);
 		} elseif ($this->schemaType == 'backup') unset($fieldArr['collID']);
 		$fieldOutArr = array();
 		if ($this->schemaType == 'coge') {
@@ -1676,6 +1740,7 @@ class DwcArchiverCore extends Manager{
 			//$dwcOccurManager->setUpperTaxonomy();
 			$dwcOccurManager->setTaxonRank();
 		}
+
 		if ($rs = $this->dataConn->query($sql, MYSQLI_USE_RESULT)) {
 			$this->setServerDomain();
 			$urlPathPrefix = $this->serverDomain . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) == '/' ? '' : '/');
@@ -1747,6 +1812,8 @@ class DwcArchiverCore extends Manager{
 				if ($this->schemaType == 'dwc') {
 					unset($r['recordSecurity']);
 					unset($r['collID']);
+					unset($r['biota']);
+
 					//Format dates
 					if($r['eventDate']){
 						if($r['eventDate'] == '0000-00-00') $r['eventDate'] = '';
@@ -1811,12 +1878,18 @@ class DwcArchiverCore extends Manager{
 						//$dynProp = $r['dynamicProperties'] . '; ' . $dynProp;
 						//$r['dynamicProperties'] = $dynProp;
 					}
-					if ($assocOccurStr = $dwcOccurManager->getAssociationStr($r['occid'])) $r['t_associatedOccurrences'] = $assocOccurStr;
 					if ($assocSeqStr = $dwcOccurManager->getAssociatedSequencesStr($r['occid'])) $r['t_associatedSequences'] = $assocSeqStr;
-					if ($assocTaxa = $dwcOccurManager->getAssociationStr($r['occid'], 'observational')) $r['associatedTaxa'] = $assocTaxa;
 				}
 				//$dwcOccurManager->appendUpperTaxonomy($r);
 				$dwcOccurManager->appendUpperTaxonomy2($r);
+				if($this->includePaleo){
+					$dwcOccurManager->appendPaleoTerms($r);
+					if($this->schemaType == 'dwc'){
+						if(!empty($r['biota'])){
+							$r['locality'] .= ($r['locality'] ? '; ' : '') . 'Biota: ' . $r['biota'];
+						}
+					}
+				}
 				if ($rankStr = $dwcOccurManager->getTaxonRank($r['rankid'])) $r['t_taxonRank'] = $rankStr;
 				unset($r['rankid']);
 
@@ -1832,6 +1905,7 @@ class DwcArchiverCore extends Manager{
 					if ($this->includeAttributes) $this->writeAttributeData($batchOccidArr);
 					if ($this->includeMaterialSample) $this->writeMaterialSampleData($batchOccidArr);
 					if ($this->includeIdentifiers) $this->writeIdentifierData($batchOccidArr);
+					if ($this->includeAssociations) $this->writeAssociationData($batchOccidArr);
 					if ($pubID && $portalManager) $portalManager->insertPortalOccurrences($pubID, $batchOccidArr);
 					unset($batchOccidArr);
 					$batchOccidArr = array();
@@ -1860,6 +1934,10 @@ class DwcArchiverCore extends Manager{
 				$this->writeIdentifierData($batchOccidArr);
 				$this->identierHandler = null;
 			}
+			if ($this->includeAssociations){
+				$this->writeAssociationData($batchOccidArr);
+				$this->associationHandler = null;
+			}
 		}
 		else {
 			$this->errorMessage = 'ERROR creating occurrence file: ' . $this->conn->error;
@@ -1878,6 +1956,7 @@ class DwcArchiverCore extends Manager{
 		if ($this->includeAttributes) $this->logOrEcho('Occurrence Attributes exported as a MeasurementsOrFact extension file... ');
 		if ($this->includeMaterialSample) $this->logOrEcho('Material Samples exported within a MaterialSample extension file... ');
 		if ($this->includeIdentifiers) $this->logOrEcho('Occurrence Alternative Identifiers exported as a Identifier extension file... ');
+		if ($this->includeAssociations) $this->logOrEcho('Occurrence Associations exported as a Resource Relationship extension file... ');
 		return $filePath;
 	}
 
@@ -1908,6 +1987,8 @@ class DwcArchiverCore extends Manager{
 
 		//Output records
 		$sql = DwcArchiverDetermination::getSql($this->determinationFieldArr['fields'], $this->getTableJoins(), $this->conditionSql);
+		if ($this->paleoWithSql)
+			$sql = $this->paleoWithSql . $sql;
 		if ($rs = $this->dataConn->query($sql, MYSQLI_USE_RESULT)) {
 			$previousDetID = 0;
 			while ($r = $rs->fetch_assoc()) {
@@ -1948,6 +2029,8 @@ class DwcArchiverCore extends Manager{
 
 		//Output records
 		$sql = DwcArchiverImage::getSqlImages($this->imageFieldArr['fields'], $this->conditionSql, $this->redactLocalities, $this->rareReaderArr);
+		if ($this->paleoWithSql)
+			$sql = $this->paleoWithSql . $sql;
 		if ($rs = $this->dataConn->query($sql, MYSQLI_USE_RESULT)) {
 			$this->setServerDomain();
 			$urlPathPrefix = $this->serverDomain . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) == '/' ? '' : '/');
@@ -2071,6 +2154,22 @@ class DwcArchiverCore extends Manager{
 			$this->fieldArrMap['identifier'] = $this->identierHandler->getFieldArrTerms();
 		}
 		if($this->identierHandler) $this->identierHandler->writeOutRecordBlock($batchOccidArr);
+	}
+
+	private function writeAssociationData($batchOccidArr){
+		if(!$this->associationHandler){
+			$this->associationHandler = new DwcArchiverResourceRelationship($this->conn);
+			$this->associationHandler->setSchemaType($this->schemaType);
+			$this->associationHandler->initiateProcess($this->targetPath . $this->ts . '-assoc' . $this->fileExt);
+			$this->fieldArrMap['associations'] = $this->associationHandler->getFieldArrTerms();
+		}
+		if($this->associationHandler){
+			$this->associationHandler->writeOutRecordBlock($batchOccidArr, 'oa.occid');
+			//Now add inverse relationships
+			$this->associationHandler->setSqlBase(true);
+			$this->associationHandler->writeOutRecordBlock($batchOccidArr, 'oa.occidAssociate');
+
+		}
 	}
 
 	private function writeCitationFile(){
@@ -2257,6 +2356,11 @@ class DwcArchiverCore extends Manager{
 		else $this->includeIdentifiers = false;
 	}
 
+	public function setIncludeAssociations($include){
+		if($include) $this->includeAssociations = true;
+		else $this->includeAssociations = false;
+	}
+
 	public function hasAttributes($collid = false){
 		$bool = false;
 		$sql = 'SELECT occid FROM tmattributes LIMIT 1';
@@ -2291,6 +2395,30 @@ class DwcArchiverCore extends Manager{
 		$rs = $this->conn->query($sql);
 		if ($rs->num_rows) $bool = true;
 		$rs->free();
+		return $bool;
+	}
+
+	public function hasAssociations($collid = false){
+		$bool = false;
+		$sql = 'SELECT occid FROM omoccurassociations LIMIT 1';
+		if(is_numeric($collid)){
+			$sql = "(SELECT o.occid FROM omoccurrences o INNER JOIN omoccurassociations a ON o.occid = a.occid WHERE o.collid = ?) UNION (SELECT o.occid FROM omoccurrences o INNER JOIN omoccurassociations a ON o.occid = a.occidAssociate WHERE o.collid = ?) LIMIT 1;";
+		}
+		$stmt = $this->conn->stmt_init();
+		if (!$stmt->prepare($sql)) {
+			throw new Exception("SQL Error: " . $stmt->error);
+		}
+		if (is_numeric($collid)) {
+			$stmt->bind_param('ii',$collid,$collid);
+		}
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result && $result->num_rows > 0) {
+			$bool = true;
+		}
+		$result->free();
+		$stmt->close();
+
 		return $bool;
 	}
 

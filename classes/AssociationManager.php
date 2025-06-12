@@ -77,7 +77,6 @@ class AssociationManager extends OccurrenceTaxaManager{
 			$reverseRelationshipStr = (array_key_exists('relationship', $associationArr) && $associationArr['relationship'] !== 'any') ? ("='" . $reverseAssociationType . "'") : ' IS NOT NULL';
 
 			$reverseSql = "SELECT oa.occidAssociate FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE oa.relationship " . $reverseRelationshipStr . " ";
-
 			$reverseSql .= $this->getAssociatedTaxonWhereFrag($associationArr);
 
 			// External, observational, or resource associations

@@ -7,14 +7,13 @@ if(!empty($THIRD_PARTY_OID_AUTH_ENABLED)){
 use Jumbojett\OpenIDConnectClient;
 
 if($SYMB_UID){
-	if($_SESSION['refurl']){
+
+	if ($_SESSION['refurl'] ?? false){
 		header("Location:" . $_SESSION['refurl']);
 		unset($_SESSION['refurl']);
-	}
-	if ($_REQUEST['refurl']){
-		header("Location:" . $_REQUEST['refurl']);
-	}
-	else{
+	} else if($_REQUEST['refurl'] ?? false){
+		header("Location:" . $_REQUEST['refurl']);	
+	} else{
 		header("Location:" . $CLIENT_ROOT . '/profile/viewprofile.php');
 	}
 }

@@ -215,7 +215,7 @@ if($IS_ADMIN) $isEditor = 1;
 						foreach($collMap as $id => $collArr){
 							echo '<div>';
 							$classStr = '';
-							if($collArr['colltype'] == 'Preserved Specimens') $classStr = 'specimen';
+							if($collArr['colltype'] == 'Preserved Specimens' || $collArr['colltype'] == 'Fossil Specimens') $classStr = 'specimen';
 							else $classStr = 'observation';
 							if($collArr['managementtype'] == 'Live Data') $classStr .= ' live';
 							elseif($collArr['managementtype'] == 'Snapshot') $classStr .= ' snapshot';

@@ -333,7 +333,7 @@ $navStr .= '</div>';
 							</div>
 							<div style="clear:both;margin:15px 0px;">
 								<hr/>
-								<a href="#" onclick="toggle('additional')"><b><?php echo $LANG['ADDITIONAL_ACTIONS']; ?></b></a>
+								<a href="#" onclick="toggle('additional');return false;"><b><?php echo $LANG['ADDITIONAL_ACTIONS']; ?></b></a>
 							</div>
 							<div id="additional" style="display:none">
 								<div style="margin:10px 15px;">

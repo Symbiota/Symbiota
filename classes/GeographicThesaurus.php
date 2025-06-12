@@ -414,7 +414,8 @@ class GeographicThesaurus extends Manager {
 		$sqlArr[] = 'INSERT INTO geographicthesaurus(geoterm,iso2,iso3,numcode,category,geoLevel,termstatus)
 		SELECT countryName, iso, iso3, numcode, "Country", 50 as geoLevel, 1 as termStatus FROM lkupcountry WHERE iso IS NOT NULL';
 
-		$sqlArr[] = 'UPDATE geographicthesaurus SET acceptedID = (SELECT geoThesID FROM geographicthesaurus WHERE geoTerm = "United States") WHERE geoterm IN("USA","U.S.A.","United States of America")';
+		$sqlArr[] = 'UPDATE geographicthesaurus gt LEFT JOIN geographicthesaurus gtaccept ON gtaccept.geoTerm = "United States" 
+		SET gt.acceptedID = gtaccept.geoThesID WHERE gt.geoterm IN("USA","U.S.A.","United States of America")';
 
 		$sqlArr[] = 'INSERT INTO geographicthesaurus(geoterm,abbreviation,parentID,category,geoLevel,termStatus)
 		SELECT DISTINCT s.stateName, s.abbrev, t.geoThesID, "State", 60 as geoLevel, 1 as termStatus

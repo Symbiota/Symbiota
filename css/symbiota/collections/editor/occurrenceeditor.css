@@ -655,7 +655,7 @@ fieldset{
 	clear: both;
 }
 
-#dynamicPropertiesDiv input{
+#dynamicPropertiesDiv textarea {
 	width: 95%;
 }
 
@@ -855,12 +855,12 @@ fieldset{
 #earlyIntervalDiv{ float:left; margin:3px; }
 #lateIntervalDiv{ float:left; margin:3px; }
 #absoluteAgeDiv{ float:left; margin:3px; }
-#storageAgeDiv{ float:left; margin:3px; }
+#storageLocDiv{ float:left; margin:3px; }
 #stageDiv{ float:left; margin:3px; }
 #localStageDiv{ float:left; margin:3px; }
 #biotaDiv{ float:left; margin:3px; }
 #biostratigraphyDiv{ float:left; margin:3px; }
-#lithoGroupDiv{ float:left; margin:3px; }
+#lithogroupDiv{ float:left; margin:3px; }
 #formationDiv{ float:left; margin:3px; }
 #taxonEnvironmentDiv{ float:left; margin:3px; }
 #memberDiv{ float:left; margin:3px; }
@@ -872,8 +872,8 @@ fieldset{
 #elementDiv{ float:left; margin:3px; }
 #slidePropertiesDiv{ float:left; margin:3px; }
 #slidePropertiesDiv input{ width:400px; }
-#geologicalContextIdDiv{ float:left; margin:3px; }
-#geologicalContextIdDiv input{ width:120px; }
+#geologicalContextIDDiv{ float:left; margin:3px; }
+#geologicalContextIDDiv input{ width:120px; }
 
 /* Button Controls */
 

@@ -39,6 +39,8 @@ function initLocalitySuggest(opts = { country, state_province, county, municipal
 				autoFocus: true,
 				change: opts[locale]['change'],
 			});
+			//Chrome ignores autocomplete="off"
+			$(`#${opts[locale]['id']}`).attr("autocomplete", "noaction");
 		}
 	}
 }

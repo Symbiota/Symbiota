@@ -23,6 +23,7 @@ if ($schema == 'backup') {
 			$dwcaHandler->setIncludeAttributes(1);
 			if ($dwcaHandler->hasMaterialSamples()) $dwcaHandler->setIncludeMaterialSample(1);
 			if ($dwcaHandler->hasIdentifiers()) $dwcaHandler->setIncludeIdentifiers(1);
+			if ($dwcaHandler->hasAssociations()) $dwcaHandler->setIncludeAssociations(1);
 			$dwcaHandler->setRedactLocalities(0);
 			$dwcaHandler->setCollArr($collid);
 
@@ -126,6 +127,7 @@ if ($schema == 'backup') {
 			$dwcaHandler->setIncludeAttributes(0);
 			$dwcaHandler->setIncludeMaterialSample(0);
 			$dwcaHandler->setIncludeIdentifiers(0);
+			$dwcaHandler->setIncludeAssociations(0);
 			$dwcaHandler->setOverrideConditionLimit(true);
 			$dwcaHandler->addCondition('catalognumber', 'NOT_NULL');
 			$dwcaHandler->addCondition('locality', 'NOT_NULL');
@@ -150,6 +152,25 @@ if ($schema == 'backup') {
 
 			if (array_key_exists('publicsearch', $_POST) && $_POST['publicsearch']) {
 				$dwcaHandler->setCustomWhereSql($occurManager->getSqlWhere());
+
+				// Added for Occurrence Table Display Editor Download Functionality
+				for ($i = 1; $i  < 10; $i ++) {
+					if ($occurManager->getSearchTerm('customfield' . $i)) {
+						$dwcaHandler->addCondition(
+							$occurManager->getSearchTerm('customfield' . $i), 
+							$occurManager->getSearchTerm('customtype' . $i), 
+							$occurManager->getSearchTerm('customvalue' . $i)
+						);
+					}
+				}
+
+				// Traits Support 
+				if ($occurManager->getSearchTerm('stateid')) {
+					$dwcaHandler->addCondition('stateid', 'EQUALS', $occurManager->getSearchTerm('stateid'));
+				} elseif ($occurManager->getSearchTerm('traitid')) {
+					$dwcaHandler->addCondition('traitid', 'EQUALS', $occurManager->getSearchTerm('traitid'));
+				}
+				$dwcaHandler->setPaleoWithSql($occurManager->getPaleoSqlWith());
 			} else {
 				//Request is coming from exporter.php for collection manager tools
 				if(isset($_POST['targetcollid'])) $dwcaHandler->setCollArr($_POST['targetcollid']);
@@ -176,6 +197,7 @@ if ($schema == 'backup') {
 				}
 			}
 		}
+
 		$outputFile = null;
 		if ($zip) {
 			//Ouput file is a zip file
@@ -189,6 +211,8 @@ if ($schema == 'backup') {
 			$dwcaHandler->setIncludeMaterialSample($includeMaterialSample);
 			$includeIdentifiers = (array_key_exists('identifiers', $_POST) ? 1 : 0);
 			$dwcaHandler->setIncludeIdentifiers($includeIdentifiers);
+			$includeAssociations = (array_key_exists('associations', $_POST) ? 1 : 0);
+			$dwcaHandler->setIncludeAssociations($includeAssociations);
 
 			$outputFile = $dwcaHandler->createDwcArchive();
 		} else {

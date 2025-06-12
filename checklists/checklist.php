@@ -480,8 +480,16 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 									if(isset($dynamPropsArr)){
 										$scinameasid = str_replace(" ", "-", $sppArr['sciname']);
 										$arrForExternalServiceApi .= ($arrForExternalServiceApi?',' : '') . "'" . $scinameasid . "'";
-										echo '<a href="#" target="_blank" id="a-'.$scinameasid.'">';
-										echo '<img src="../images/icons/inaturalist.png" style="width:1.2em;display:none;" title="'. $LANG['LINKTOINAT'] . '" id="i-' . $scinameasid . '" />';
+										$url = 'tools/linkExternalVouchers.php?' . http_build_query([
+											'taxon_name' => $sppArr['sciname'],
+											'target_tid' => $tid,
+											'clid' => $clid,
+											'external_id' => $dynamPropsArr['externalserviceid'] ?? null,
+											'external_service' => $dynamPropsArr['externalservice'] ?? null,
+										]);
+
+										echo '<a class="editspp" style="display: none" href="#" onclick="openPopup(`' . $url . '`, `External iNaturalist Vouchers`)" >';
+										echo '<img src="../images/icons/inaturalist.png" style="width:1.2em;" title="'. $LANG['LINKTOINAT'] . '" />';
 										echo '</a>';
 									}
 									?>
