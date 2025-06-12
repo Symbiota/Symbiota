@@ -26,7 +26,7 @@ $recArr = array();
 $headerMapBase = array( 'institutioncode' => $LANG['INSTITUTION_CODE'], 'collectioncode' => $LANG['COLLEC_CODE'],
 	'ownerinstitutioncode' => $LANG['OWNER_CODE'], 'catalognumber' => $LANG['CATALOG_NUM'],
 	'family' => $LANG['FAMILY'], 'identificationqualifier' => $LANG['ID_QUALIFIER'],
-	'sciname' => $LANG['SCI_NAME'], 'scientificnameauthorship' => $LANG['SCI_NAME_AUTHOR'], 'recordedby' => $LANG['RECORD_BY'], 'recordnumber' => $LANG['RECORD_NUM'],
+	'sciname' => $LANG['SCI_NAME'], 'scientificnameauthorship' => $LANG['SCI_NAME_AUTHOR'], 'recordedby' => $LANG['RECORD_COLLEC'], 'recordnumber' => $LANG['RECORD_NUM'],
 	'associatedcollectors' => $LANG['ASSOC_COLLEC'], 'eventdate' => $LANG['EVENT_DATE'], 'verbatimeventdate' => $LANG['VERB_EVENT_DATE'],
 	'identificationremarks' => $LANG['ID_REMARKS'], 'taxonremarks' => $LANG['TAXON_REMARKS'], 'identifiedby' => $LANG['ID_BY'],
 	'dateidentified' => $LANG['DATE_IDENTIFIED'], 'identificationreferences' => $LANG['ID_REF'],
