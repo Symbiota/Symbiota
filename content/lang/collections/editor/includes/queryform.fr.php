@@ -94,6 +94,7 @@ $LANG['SAMP_EFFORT'] = "Effort d'Échantillonnage";
 $LANG['SAMP_PROTOCOL'] = "Protocole d'Échantillonnage";
 $LANG['SEX'] = 'Sexe';
 $LANG['SUBSTRATE'] = 'Substrat';
+$LANG['TAXON_ENVIRONMENT'] = 'Environnement taxon';
 $LANG['TAXON_REMARKS'] = 'Remarques sur Taxons';
 $LANG['TYPE_STATUS'] = 'Type Statut';
 $LANG['VERBAT_COORDS'] = 'Coordonnées Textuelles';
