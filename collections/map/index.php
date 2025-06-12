@@ -2348,6 +2348,29 @@ $serverHost = GeneralUtil::getDomain();
 										<?= $LANG['INCLUDE_CULTIVATED'] ?>
 									</div>
 									<div><hr></div>
+									<?php
+									if($GLOBALS['ACTIVATE_PALEO']){
+										?>
+											<div style="margin-top:5px;">
+											<?= $LANG['LITHOGROUP'] ?>:
+											<input data-role="none" type="text" id="lithogroup" style="width:125px;" name="lithogroup" value="<?php echo $mapManager->getSearchTerm('lithogroup'); ?>" />
+										</div>
+										<div style="margin-top:5px;">
+											<?= $LANG['FORMATION'] ?>:
+											<input data-role="none" type="text" id="formation" style="width:125px;" name="formation" value="<?php echo $mapManager->getSearchTerm('formation'); ?>" />
+										</div>
+										<div style="margin-top:5px;">
+											<?= $LANG['MEMBER'] ?>:
+											<input data-role="none" type="text" id="member" style="width:125px;" name="member" value="<?php echo $mapManager->getSearchTerm('member'); ?>" />
+										</div>
+										<div style="margin-top:5px;">
+											<?= $LANG['BED'] ?>:
+											<input data-role="none" type="text" id="bed" style="width:125px;" name="bed" value="<?php echo $mapManager->getSearchTerm('bed'); ?>" />
+										</div>
+										<div><hr></div>
+										<?php
+									}
+									?>
 									<input type="hidden" name="reset" value="1" />
 								</div>
 							</form>
