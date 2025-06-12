@@ -4,6 +4,7 @@
 Language: English
 ------------------
 */
+
 include_once($SERVER_ROOT . '/content/lang/collections/customsearchtype.en.php');
 
 $LANG['HOME'] = 'Home';
@@ -30,9 +31,9 @@ $LANG['LIST_UPLOAD'] = 'List of Upload Profiles';
 $LANG['UP_MODULE'] = 'Data Upload Module';
 $LANG['CAUTION'] = 'Caution';
 $LANG['REC_REPLACE'] = 'Matching records will be replaced with incoming records';
-$LANG['LAST_UPLOAD_DATE'] = 'Last Upload Date';
 $LANG['NOT_REC'] = 'not recorded';
-$LANG['UP_STATUS'] = 'Upload Status';
+$LANG['LAST_UPLOAD_DATE'] = 'Last Upload Date';
+$LANG['UPLOAD_METHOD'] = 'Upload Method';
 $LANG['PENDING_REPORT'] = 'Pending Data Transfer Report';
 $LANG['OCCS_TRANSFERING'] = 'Occurrences pending transfer';
 $LANG['PREVIEW'] = 'Preview 1st 1000 Records';
@@ -77,6 +78,8 @@ $LANG['STAGE_3'] = 'Stage 3';
 $LANG['PEND_REV'] = 'Pending Review';
 $LANG['EXP_REQ'] = 'Expert Required';
 $LANG['PEND_NFN'] = 'Pending Review-NfN';
+$LANG['FIELD_MAPPING'] = 'Field Mapping';
+$LANG['MAPPING_PROFILE'] = 'Mapping Profile';
 $LANG['SOURCE_ID'] = 'Source Unique Identifier / Primary Key';
 $LANG['REQ'] = 'required';
 $LANG['IMPORT_OCCS'] = 'Import Occurrence Records';
@@ -94,6 +97,15 @@ $LANG['NOT_IN_DWC'] = 'not present in DwC-Archive';
 $LANG['IMP_IMG'] = 'Import Images';
 $LANG['RESET_MAP'] = 'Reset Field Mapping';
 $LANG['NEW_PROF_TITLE'] = 'New profile title';
+$LANG['SELECT_ACTION'] = 'Upload action';
+$LANG['FILE_SELECT'] = 'File Import - update only fields in file';
+$LANG['FILE_FULL'] = 'File Import - replace full record';
+$LANG['MANUAL_DWCA'] = 'Darwin Core Archive Manual Import';
+$LANG['FILE_SKELETAL'] = 'Skeletal File Import (only empty fields)';
+$LANG['IPT_DWCA'] = 'IPT Resource / Darwin Core Archive Provider';
+$LANG['NFN_UPLOAD'] = 'Note from Nature (NfN) File Import Import';
+$LANG['SYMBIOTA_DWCA'] = 'Symbiota Import';
+$LANG['DIRECT_DB'] = 'Direct Database Transfer';
 $LANG['TARGET_USER'] = 'Target User';
 $LANG['SEL_TAR_USER'] = 'Select Target User';
 $LANG['VER_LINKS'] = 'Verify image links';
