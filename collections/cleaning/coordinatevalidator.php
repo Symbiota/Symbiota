@@ -84,53 +84,72 @@ if($IS_ADMIN) $isEditor = 1;
 	<!-- inner text -->
 	<div role="main" id="innertext">
 		<h1 class="page-heading"><?php echo $LANG['COOR_VALIDATOR']; ?></h1>
-		<?php
-		if($statusStr){
-			?>
+		<?php if($statusStr) { ?>
 			<hr/>
 			<div style="margin:20px;color:<?php echo (substr($statusStr,0,5)=='ERROR'?'red':'green');?>">
 				<?php echo $statusStr; ?>
 			</div>
 			<hr/>
-			<?php
-		}
-		if($isEditor){
-			if($collidStr){
-				?>
+		<?php } if($isEditor) {
+			if($collidStr) { ?>
 				<div style="margin:15px">
 					Click "Validate Coordinates" button to loop through all unvalidated georeferenced specimens and verify that the coordinates actually fall within the defined political units.
 					Click on the list symbol to display specimens of that ranking.
 					If there was a mismatch between coordinates and county, this could be due to 1) cordinates fall outside of county limits, 2) wrong county was entered, or 3) county is misspelled.
 				</div>
 				<div style="margin:15px">
-					<?php
-					if($action){
-						echo '<fieldset style="padding:20px">';
-						if($action == 'Validate Coordinates'){
-							echo '<legend><b>Validating Coordinates</b></legend>';
-							$cleanManager->verifyCoordAgainstPolitical($queryCountry);
-						}
-						elseif($action == 'displayranklist'){
-							echo '<legend><b>Specimen with rank of '.$ranking.'</b></legend>';
-							$occurList = array();
-							if($action == 'displayranklist'){
-								$occurList = $cleanManager->getOccurrenceRankingArr('coordinate', $ranking);
-							}
-							if($occurList){
-								foreach($occurList as $occid => $inArr){
-									echo '<div>';
-									echo '<a href="../editor/occurrenceeditor.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
-									echo ' - checked by '.$inArr['username'].' on '.$inArr['ts'];
-									echo '</div>';
-								}
-							}
-							else{
-								echo '<div style="margin:30xp;font-weight:bold;font-size:150%">Nothing to be displayed</div>';
-							}
-						}
-						echo '</fieldset>';
+				<?php if($action) {
+					echo '<fieldset style="padding:20px">';
+					if($action == 'Validate Coordinates'){?>
+					<legend><b>Validating Coordinates</b></legend>
+					<table class="styledtable" style="width:100%">
+						<thead>
+							<th>occid</th> 
+							<th>Country</th>
+							<th>Country Found</th>
+							<th>State/Province</th>
+							<th>State/Province Found</th>
+							<th>County</th>
+							<th>County Found</th>
+						</thead>
+						<tbody>
+							<?php foreach($cleanManager->verifyCoordAgainstPoliticalV2() as $occid => $occurrence): ?>
+							<tr>
+								<td><?= $occid ?></td>
+
+								<td><?= $occurrence['country'] ?></td>
+								<td><?= $occurrence['resolvedCountry'] ?? '' ?></td>
+
+								<td><?= $occurrence['stateProvince'] ?></td>
+								<td><?= $occurrence['resolvedStateProvince'] ?? '' ?></td>
+
+								<td><?= $occurrence['county'] ?></td>
+								<td><?= $occurrence['resolvedCounty'] ?? '' ?></td>
+							</tr>
+							<?php endforeach ?>
+						</tbody>
+					</table><?php
 					}
-					?>
+					elseif($action == 'displayranklist'){
+						echo '<legend><b>Specimen with rank of '.$ranking.'</b></legend>';
+						$occurList = array();
+						if($action == 'displayranklist'){
+							$occurList = $cleanManager->getOccurrenceRankingArr('coordinate', $ranking);
+						}
+						if($occurList){
+							foreach($occurList as $occid => $inArr){
+								echo '<div>';
+								echo '<a href="../editor/occurrenceeditor.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
+								echo ' - checked by '.$inArr['username'].' on '.$inArr['ts'];
+								echo '</div>';
+							}
+						}
+						else{
+							echo '<div style="margin:30xp;font-weight:bold;font-size:150%">Nothing to be displayed</div>';
+						}
+					}
+					echo '</fieldset>';
+				}?>
 				</div>
 				<div style="margin:10px">
 					<div style="font-weight:bold">Ranking Statistics</div>
@@ -183,10 +202,7 @@ if($IS_ADMIN) $isEditor = 1;
 					echo '</table>';
 					?>
 				</div>
-	 			<?php
-			}
-			else{
-				?>
+	 			<?php } else { ?>
 				<fieldset style="padding: 15px;margin:20px;">
 					<legend><b>Collection Selector</b></legend>
 					<form name="selectcollidform" action="coordinatevalidator.php" method="post" onsubmit="return checkSelectCollidForm(this)">

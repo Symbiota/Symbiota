@@ -648,6 +648,59 @@ class OccurrenceCleaner extends Manager{
 		return $retArr;
 	}
 
+	public function verifyCoordAgainstPoliticalV2($offset = 0) {
+		$coord_query = 'SELECT o.occid, country, stateProvince, county FROM omoccurrences o
+			LEFT JOIN omoccurverification ov ON ov.occid = o.occid AND category="coordinate"
+			JOIN omoccurpoints pts ON pts.occid = o.occid
+			WHERE ov.occid IS NULL AND collid = ? AND country IS NOT NULL
+			LIMIT 100 OFFSET ?';
+
+		$result = QueryUtil::executeQuery($this->conn, $coord_query, [$this->collid, $offset]);
+		$occid_arr = [];
+
+		while(($row = $result->fetch_object())) {
+			$occid_arr[$row->occid] = [];
+			$occid_arr[$row->occid]['country'] = $row->country;
+			$occid_arr[$row->occid]['stateProvince'] = $row->stateProvince;
+			$occid_arr[$row->occid]['county'] = $row->county;
+		}
+
+		QueryUtil::executeQuery($this->conn, 'SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ');
+
+		$this->conn->begin_transaction();
+
+		$build_query = fn($field) =>'SELECT pts.occid, geoTerm, geoLevel from omoccurpoints pts
+			join geographicpolygon gp on ST_CONTAINS(gp.footprintPolygon, pts.lngLatPoint)
+			join geographicthesaurus g on g.geoThesID = gp.geoThesID
+			join omoccurrences o on o.occid = pts.occid
+			where geoterm = '. $field . ' and pts.occid in (' . implode(',', array_keys($occid_arr)) . ')';
+
+		$geo_check_query_union = '(' .
+			$build_query('country') .
+			') UNION (' .
+			$build_query('stateProvince') .
+			') UNION (' .
+			$build_query('county') . ')';
+
+		$geo_check_result = QueryUtil::executeQuery($this->conn, $geo_check_query_union);
+
+		$this->conn->commit();
+
+		while(($row = $geo_check_result->fetch_object())) {
+			if($row->geoLevel === 50) {
+				$occid_arr[$row->occid]['resolvedCountry'] = $row->geoTerm;
+			} else if($row->geoLevel === 60) {
+				$occid_arr[$row->occid]['resolvedStateProvince'] = $row->geoTerm;
+			} else if($row->geoLevel === 70){
+				$occid_arr[$row->occid]['resolvedCounty'] = $row->geoTerm;
+			} else if($row->geoLevel === 80){
+				$occid_arr[$row->occid]['resolvedMunicipality'] = $row->geoTerm;
+			}
+		}
+
+		return $occid_arr;
+	}
+
 	public function verifyCoordAgainstPolitical($queryCountry){
 		set_time_limit(3600);
 		$recCnt = 0;
