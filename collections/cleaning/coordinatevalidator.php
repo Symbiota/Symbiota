@@ -111,6 +111,7 @@ if($IS_ADMIN) $isEditor = 1;
 							<th>State/Province Found</th>
 							<th>County</th>
 							<th>County Found</th>
+							<th>Rank</th>
 						</thead>
 						<tbody>
 							<?php foreach($cleanManager->verifyCoordAgainstPoliticalV2() as $occid => $occurrence): ?>
@@ -125,6 +126,7 @@ if($IS_ADMIN) $isEditor = 1;
 
 								<td><?= $occurrence['county'] ?></td>
 								<td><?= $occurrence['resolvedCounty'] ?? '' ?></td>
+								<td><?= $occurrence['rank'] ?? '' ?></td>
 							</tr>
 							<?php endforeach ?>
 						</tbody>

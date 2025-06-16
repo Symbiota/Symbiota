@@ -11,6 +11,11 @@ class OccurrenceCleaner extends Manager{
 	private $featureCount = 0;
 	private $googleApi;
 
+	const COORDINATE_LOCALITY_MISMATCH = 0;
+	const COUNTRY_VERIFIED = 2;
+	const STATE_PROVINCE_VERIFIED = 5;
+	const COUNTY_VERIFIED = 7;
+
 	public function __construct(){
 		parent::__construct(null,'write');
 		$urlPrefix = 'http://';
@@ -652,7 +657,7 @@ class OccurrenceCleaner extends Manager{
 		$coord_query = 'SELECT o.occid, country, stateProvince, county FROM omoccurrences o
 			LEFT JOIN omoccurverification ov ON ov.occid = o.occid AND category="coordinate"
 			JOIN omoccurpoints pts ON pts.occid = o.occid
-			WHERE ov.occid IS NULL AND collid = ? AND country IS NOT NULL
+			WHERE ov.occid IS NULL AND collid = ?
 			LIMIT 100 OFFSET ?';
 
 		$result = QueryUtil::executeQuery($this->conn, $coord_query, [$this->collid, $offset]);
@@ -669,32 +674,36 @@ class OccurrenceCleaner extends Manager{
 
 		$this->conn->begin_transaction();
 
-		$build_query = fn($field) =>'SELECT pts.occid, geoTerm, geoLevel from omoccurpoints pts
-			join geographicpolygon gp on ST_CONTAINS(gp.footprintPolygon, pts.lngLatPoint)
-			join geographicthesaurus g on g.geoThesID = gp.geoThesID
+		$resolve_geo_thesaurus = 'SELECT pts.occid, g70.geoterm as county, g60.geoterm as stateProvince, g50.geoterm as country from omoccurpoints pts
+			join geographicpolygon gp on ST_CONTAINS(gp.footprintPolygon, pts.lngLatPoint) 
+			join geographicthesaurus as g70 on gp.geoThesID = g70.geoThesID
+			join geographicthesaurus as g60 on g60.geoThesID = g70.parentID
+			join geographicthesaurus as g50 on g50.geoThesID = g60.parentID
 			join omoccurrences o on o.occid = pts.occid
-			where geoterm = '. $field . ' and pts.occid in (' . implode(',', array_keys($occid_arr)) . ')';
+			where g50.geoterm = "United states" and pts.occid in (' . implode(',', array_keys($occid_arr)) . ')';
 
-		$geo_check_query_union = '(' .
-			$build_query('country') .
-			') UNION (' .
-			$build_query('stateProvince') .
-			') UNION (' .
-			$build_query('county') . ')';
-
-		$geo_check_result = QueryUtil::executeQuery($this->conn, $geo_check_query_union);
+		$geo_check_result = QueryUtil::executeQuery($this->conn, $resolve_geo_thesaurus);
 
 		$this->conn->commit();
 
 		while(($row = $geo_check_result->fetch_object())) {
-			if($row->geoLevel === 50) {
-				$occid_arr[$row->occid]['resolvedCountry'] = $row->geoTerm;
-			} else if($row->geoLevel === 60) {
-				$occid_arr[$row->occid]['resolvedStateProvince'] = $row->geoTerm;
-			} else if($row->geoLevel === 70){
-				$occid_arr[$row->occid]['resolvedCounty'] = $row->geoTerm;
-			} else if($row->geoLevel === 80){
-				$occid_arr[$row->occid]['resolvedMunicipality'] = $row->geoTerm;
+			$occid_arr[$row->occid]['resolvedCountry'] = $row->country;
+			$occid_arr[$row->occid]['resolvedStateProvince'] = $row->stateProvince;
+			$occid_arr[$row->occid]['resolvedCounty'] = $row->county;
+
+			if($occid_arr[$row->occid]['county'] === $row->county) {
+				$occid_arr[$row->occid]['rank'] = self::COUNTY_VERIFIED;
+			} else if($occid_arr[$row->occid]['stateProvince'] === $row->stateProvince) {
+				$occid_arr[$row->occid]['rank'] = self::STATE_PROVINCE_VERIFIED;
+			} else if($matching_country = $occid_arr[$row->occid]['country'] === $row->country) {
+				$occid_arr[$row->occid]['rank'] = self::COUNTRY_VERIFIED;
+			} else {
+				$occid_arr[$row->occid]['rank'] = self::COORDINATE_LOCALITY_MISMATCH;
+			}
+
+			if($occid_arr[$row->occid]['rank']) {
+				//What Should protocol argument be? Currnetly Placing geographicthesaurus in as placeholder
+				$this->setVerification($row->occid, 'coordinate', $occid_arr[$row->occid]['rank'], 'geographicthesaurus');
 			}
 		}
 
