@@ -670,6 +670,8 @@ class OccurrenceCleaner extends Manager{
 			$occid_arr[$row->occid]['county'] = $row->county;
 		}
 
+		if(count($occid_arr) === 0) return $occid_arr;
+
 		QueryUtil::executeQuery($this->conn, 'SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ');
 
 		$this->conn->begin_transaction();
@@ -701,7 +703,7 @@ class OccurrenceCleaner extends Manager{
 				$occid_arr[$row->occid]['rank'] = self::COORDINATE_LOCALITY_MISMATCH;
 			}
 
-			if($occid_arr[$row->occid]['rank']) {
+			if(isset($occid_arr[$row->occid]['rank'])) {
 				//What Should protocol argument be? Currnetly Placing geographicthesaurus in as placeholder
 				$this->setVerification($row->occid, 'coordinate', $occid_arr[$row->occid]['rank'], 'geographicthesaurus');
 			}
