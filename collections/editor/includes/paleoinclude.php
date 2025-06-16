@@ -153,8 +153,8 @@ if(isset($occArr['lateInterval'])) $lateIntervalTerm = $occArr['lateInterval'];
 			<select name="taxonEnvironment" onchange="fieldChanged('taxonEnvironment');">
 				<option value=""></option>
 				<option <?php if($taxonEnvir=='marine') echo 'SELECTED'; ?>><?= $LANG['MARINE'] ?></option>
-				<option<?php if($taxonEnvir=='non-marine') echo 'SELECTED'; ?>><?= $LANG['NON_MARINE'] ?></option>
-				<option<?php if($taxonEnvir=='marine and non-marine') echo 'SELECTED'; ?>><?= $LANG['NON_MARINE_MARINE'] ?></option>
+				<option <?php if($taxonEnvir=='non-marine') echo 'SELECTED'; ?>><?= $LANG['NON_MARINE'] ?></option>
+				<option <?php if($taxonEnvir=='marine and non-marine') echo 'SELECTED'; ?>><?= $LANG['NON_MARINE_MARINE'] ?></option>
 			</select>
 		</div>
 	</div>

@@ -48,7 +48,7 @@ class OccurrenceEditorManager {
 			'verbatimdepth' => 's','storagelocation' => 's','disposition' => 's','language' => 's','duplicatequantity' => 'n','labelproject' => 's','processingstatus' => 's',
 			'recordenteredby' => 's','observeruid' => 'n','dateentered' => 'd');
 		$this->fieldArr['omoccurpaleo'] = array('eon','era','period','epoch','earlyInterval','lateInterval','absoluteAge','stage','localStage','biota','biostratigraphy',
-			'lithogroup','formation','taxonEnvironment','member','bed','lithology','stratremarks','element','slideProperties','geologicalContextID');
+			'lithogroup','formation','taxonEnvironment','member','bed','lithology','stratRemarks','element','slideProperties','geologicalContextID');
 		$this->fieldArr['omoccuridentifiers'] = array('idname', 'idvalue');
 		$this->fieldArr['omexsiccatiocclink'] = array('ometid', 'exstitle', 'exsnumber');
 	}
@@ -1040,7 +1040,7 @@ class OccurrenceEditorManager {
 						//Deal with additional identifiers
 						if (isset($postArr['idvalue'])) $this->updateIdentifiers($postArr, $identArr);
 						//Deal with paleo fields
-						if(isset($this->collMap['paleoActivated']) && array_key_exists('eon',$postArr)){
+						if(isset($this->collMap['paleoActivated']) && array_key_exists('earlyInterval',$postArr)){
 							//Check to see if paleo record already exists
 							$paleoRecordExist = false;
 							$paleoSql = 'SELECT paleoid FROM omoccurpaleo WHERE occid = ' . $this->occid;
@@ -1281,7 +1281,7 @@ class OccurrenceEditorManager {
 				//Deal with identifiers
 				if (isset($postArr['idvalue'])) $this->updateIdentifiers($postArr);
 				//Deal with paleo
-				if(isset($this->collMap['paleoActivated']) && array_key_exists('eon',$postArr)){
+				if(isset($this->collMap['paleoActivated']) && array_key_exists('earlyInterval',$postArr)){
 					//Add new record
 					$paleoFrag1 = '';
 					$paleoFrag2 = '';
