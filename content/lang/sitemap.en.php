@@ -88,7 +88,6 @@ $LANG['SYMBDOCU'] = 'Symbiota Documentation';
 $LANG['FORMOREINFO'] = 'for more information on specimen processing capabilities. Note that observation projects are not activated on all Symbiota data portals';
 $LANG['OIVS'] = 'Observation Media Voucher Submission';
 $LANG['NOOBSPROJ'] = 'There are no Observation Projects to which you have permissions';
-$LANG['PERSONAL'] = 'Personal Specimen Management and Label Printing Features';
 $LANG['OPM'] = 'Observation Project Management';
 $LANG['PLEASE'] = 'Please';
 $LANG['LOGIN'] = 'login';

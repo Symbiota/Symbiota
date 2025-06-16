@@ -62,7 +62,9 @@ $LANG['GBIF_DATASET'] = 'Página do conjunto de dados GBIF';
 $LANG['YOU_SELECTED_GBIF_1'] = 'Você selecionou o pacote de dados de arquivo DwC desta coleção para ser publicado no GBIF. Por favor, vá para o';
 $LANG['GBIF_ENDORSE'] = 'Página de solicitação de endosso do GBIF';
 $LANG['TO'] = 'para';
-$LANG['YOU_SELECTED_GBIF_2'] = 'registe a sua instituição no GBIF e insira a Chave de Publicador fornecida pelo GBIF abaixo. Se a sua instituição já existir na pesquisa da Organização GBIF, uma Chave de Publicador GBIF já foi atribuída. A chave é a parte restante do URL após a última barra invertida da página do Provedor de Dados GBIF da sua instituição. Se os seus dados já estiverem publicados no GBIF, NÃO REPUBLIZE sem primeiro contactar o GBIF (<a href=';
+$LANG['YOU_SELECTED_GBIF_2'] = 'registe a sua instituição no GBIF e insira a Chave de Publicador fornecida pelo GBIF abaixo. Se a sua instituição já existir na pesquisa da Organização GBIF,
+	uma Chave de Publicador GBIF já foi atribuída. A chave é a parte restante do URL após a última barra invertida da página do Provedor de Dados GBIF da sua instituição. Se os seus dados
+	já estiverem publicados no GBIF, NÃO REPUBLIZE sem primeiro contactar o GBIF (<a href="mailto:helpdesk@gbif.org">helpdesk@gbif.org</a>) para coordenar versões de dados.';
 $LANG['GBIF_KEY'] = 'Chave GBIF';
 $LANG['VALIDATE_KEY'] = 'Validar chave';
 $LANG['BEFORE_SUBMITTING'] = 'Antes de enviar os seus dados para o GBIF, você precisará entrar em contato com o helpdesk do GBIF';

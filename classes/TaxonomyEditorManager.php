@@ -251,16 +251,22 @@ class TaxonomyEditorManager extends Manager{
 			'modifiedTimeStamp = "'.date('Y-m-d H:i:s').'", ' ;
 			$sql .= 'sciname = "' . $this->cleanInStr($sciname) . '" ';
 			$sql .= 'WHERE (tid = '.$this->tid.')';
-		if(!$this->conn->query($sql)){
+		$updateStatus = false;
+		try{
+			$updateStatus = $this->conn->query($sql);
+		} catch(Exception $e){
+			error_log("Error updating taxon: " . $sql);
+		}
+		if(!$updateStatus){
 			$statusStr = (isset($this->langArr['ERROR_EDITING_TAXON'])?$this->langArr['ERROR_EDITING_TAXON']:'ERROR editing taxon').': '.$this->conn->error;
 		}
 
 		//If SecurityStatus was changed, set security status within omoccurrence table
 		if($postArr['securitystatus'] != $_REQUEST['securitystatusstart']){
 			if(is_numeric($postArr['securitystatus'])){
-				$sql2 = 'UPDATE omoccurrences SET localitysecurity = 0 WHERE (tidinterpreted = ?) AND (localitySecurityReason IS NULL)';
+				$sql2 = 'UPDATE omoccurrences SET recordSecurity = 0 WHERE (tidinterpreted = ?) AND (securityReason IS NULL)';
 				if($postArr['securitystatus']){
-					$sql2 = 'UPDATE omoccurrences SET localitysecurity = 1 WHERE (tidinterpreted = ?) AND (localitySecurityReason IS NULL) AND (cultivationStatus = 0 OR cultivationStatus IS NULL)';
+					$sql2 = 'UPDATE omoccurrences SET recordSecurity = 1 WHERE (tidinterpreted = ?) AND (securityReason IS NULL) AND (cultivationStatus = 0 OR cultivationStatus IS NULL)';
 				}
 				if($stmt = $this->conn->prepare($sql2)){
 					$stmt->bind_param('i', $this->tid);
@@ -572,9 +578,28 @@ class TaxonomyEditorManager extends Manager{
 			$processedTradeName = $this->standardizeTradeName($dataArr['tradeName']);
 			$processedSciname .= ' ' . $processedTradeName;
 		}
-		$sqlTaxa = 'INSERT INTO taxa(sciname, author, rankid, unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, cultivarEpithet, tradeName, '.
+
+		$parentTid = array_key_exists('parenttid', $dataArr) && is_numeric($dataArr['parenttid']) ? (int)$dataArr['parenttid'] : null;
+
+		$parentKingdomNameSql = 'SELECT k.sciname
+			FROM taxa k INNER JOIN taxaenumtree e ON k.tid = e.parenttid
+			WHERE e.taxauthid = 1 AND k.rankid = 10 AND e.tid = ?;';
+		$stmnt = $this->conn->prepare($parentKingdomNameSql);
+		$kingdomName = '';
+		if($stmnt){
+			$stmnt->bind_param('i', $parentTid);
+			if($stmnt->execute()){
+				$stmnt->bind_result($kingdomName);
+				$stmnt->store_result();
+				$stmnt->fetch();
+			}
+		}
+		
+
+		$sqlTaxa = 'INSERT INTO taxa(kingdomName, sciname, author, rankid, unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, cultivarEpithet, tradeName, '.
 			'source, notes, securitystatus, modifiedUid, modifiedTimeStamp) '.
-			'VALUES ("'.$this->cleanInStr($processedSciname).'","'.
+			'VALUES (' . ($kingdomName ? ('"' . $this->cleanInStr($kingdomName) . '"') : '""') . ', 
+			"'.$this->cleanInStr($processedSciname).'","'.
 			($dataArr['author']? ($this->cleanInStr($dataArr['author'])) : '').'",'.
 			(isset($dataArr['rankid'])?$dataArr['rankid']:0).','.
 			($dataArr['unitind1']?'"'.$this->cleanInStr($dataArr['unitind1']).'"':'NULL').',"'.
@@ -590,7 +615,14 @@ class TaxonomyEditorManager extends Manager{
 			$this->cleanInStr($dataArr['securitystatus']).','.
 			$GLOBALS['SYMB_UID'].',"'.
 			date('Y-m-d H:i:s').'")';
-		if($this->conn->query($sqlTaxa)){
+		$insertStatus = false;
+		try{
+			$insertStatus = $this->conn->query($sqlTaxa);
+		} catch (Exception $e){
+			error_log("Error inserting new taxon: " . $sqlTaxa);
+		}
+
+		if($insertStatus){
 			$tid = $this->conn->insert_id;
 		 	//Load accepteance status into taxstatus table
 			$tidAccepted = ($dataArr['acceptstatus']?$tid:$dataArr['tidaccepted']);
@@ -661,8 +693,8 @@ class TaxonomyEditorManager extends Manager{
 			if($dataArr['securitystatus'] == 1){
 				//Set locality security
 				$sqlUpdate2 = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname
-					SET o.localitysecurity = 1
-					WHERE (o.localitySecurityReason IS NULL) AND (cultivationStatus = 0 OR cultivationStatus IS NULL) AND (o.sciname = ?) ';
+					SET o.recordSecurity = 1
+					WHERE (o.securityReason IS NULL) AND (cultivationStatus = 0 OR cultivationStatus IS NULL) AND (o.sciname = ?) ';
 				if($stmt = $this->conn->prepare($sqlUpdate2)){
 					$stmt->bind_param('s', $dataArr["sciname"]);
 					$stmt->execute();

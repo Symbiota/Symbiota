@@ -6,7 +6,7 @@ Translated by: Google Translate (2024-10-04)
 ------------------
 */
 
-$LANG['ASSOC_OCC'] = 'Ocorrências Associadas';
+$LANG['ASSOCIATIONS'] = 'Associações';
 $LANG['CREATE_NEW_ASSOC'] = 'Criar nova associação';
 $LANG['ASSOCIATION_TYPE'] = 'Tipo de associação';
 $LANG['RESOURCE_LINK'] = 'Link de recurso de não ocorrência';

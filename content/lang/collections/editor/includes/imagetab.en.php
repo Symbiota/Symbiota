@@ -6,12 +6,12 @@ Translated by: Google Translate (2024-09-13)
 ------------------
 */
 
-$LANG['SELECT_FILE'] = 'Select an media file or enter a URL to an existing resource';
+$LANG['SELECT_FILE'] = 'Select a media file or enter a URL to an existing resource';
 $LANG['NOT_WEB_OPTIMIZED'] = 'Input file must be a web-optimized image (e.g. jpg). File appears to be an archival image (e.g. tif, png, dng, etc)';
 $LANG['CONFIRM_IMAGE_DELETE'] = 'Are you sure you want to delete this resource? Note that the physical resource will be deleted from the server if checkbox is selected';
 $LANG['SELECT_TARGET'] = 'Select target record';
 $LANG['ADD_IMG'] = 'Add a New Resource';
-$LANG['SELECT_IMG'] = 'Select an media file located on your computer that you want to upload';
+$LANG['SELECT_IMG'] = 'Select a media file located on your computer that you want to upload';
 $LANG['ENTER_URL'] = 'Enter URL';
 $LANG['ENTER_URL_EXPLAIN'] = 'Enter a URL to a resource already located on a web server.							If there is only on version of the resource available, enter into top field and leave other fields empty.							If thumbnail and medium versions are not available, local image derivative will be created.';
 $LANG['IMG_URL'] = 'Media URL (required)';

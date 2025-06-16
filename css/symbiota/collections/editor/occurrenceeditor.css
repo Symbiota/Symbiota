@@ -1,5 +1,7 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
+
 body{
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: Arial,sans-serif;
 }
 
 fieldset{
@@ -32,6 +34,10 @@ fieldset{
 
 #admindiv{
 	width: 795px;
+}
+
+#admindiv select{
+	width: 100%;
 }
 
 #occedittabs{
@@ -72,7 +78,14 @@ fieldset{
 	clear:both;
 }
 
+
 /* Field entry divs and input objects */
+
+.fieldGroupDiv input,
+.fieldGroupDiv select{
+	font-size: 100%;
+}
+
 #catalogNumberDiv {
 	float:	left;
 	margin-top: 5px;
@@ -830,6 +843,10 @@ fieldset{
 	margin-bottom: 1rem;
 }
 
+.bottom-breathing-room-rel-sm {
+	margin-bottom: 0.5rem;
+}
+
 /* Paleo fields */
 #eonDiv{ float:left; margin:3px; }
 #eraDiv{ float:left; margin:3px; }
@@ -862,10 +879,12 @@ fieldset{
 
 .button {
 	background-color: var(--darkest-color);
+	color: #fff;
 	border: none;
 	border-radius: 5px;
 	padding: 0.5rem 1rem;
 	font-family: var(--body-font-family);
+	font-size: 100%;
 	letter-spacing: 1px;
 	text-align: center;
 	cursor: pointer;
@@ -874,6 +893,13 @@ fieldset{
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	font-weight: 600;
+  }
+
+  .button-toggle {
+	font-family: var(--body-font-family);
+	font-size: 100%;
+	font-weight: 600;
   }
 
   .icon-button {
@@ -881,10 +907,26 @@ fieldset{
 	border-width: 1px;
 	border-style: outset;
 	border-color: buttonborder;
+    color: #fff;
   }
-  
+
+  .button:disabled {
+	background-color: lightgray;
+    color: darkgray;
+    border-color: lightgray;
+  }
+
+  .button-danger {
+	background-color: var(--danger-color, var(--darkest-color));
+  }
+
   .button-primary {
 	background-color: var(--darkest-color);
+  }
+
+  .icon-button:hover 
+  {
+    background-color: var(--medium-color);
   }
 
 #bottomSubmitDiv{
@@ -924,10 +966,6 @@ img[id^="activeimg-"] {
 	max-width: unset;
 }
 
-table { 
-	font-family: 	Arial, Helvetica, sans-serif; 
-}
-
 .divTable{ display: table; border: 1px solid #000000; border-collapse: collapse; margin-bottom: 2px }
 .divTableRow { display: table-row; }
 .divTableHeading { display: table-header-group; background: #f2f2f2; border-bottom: 2px solid #444444; }
@@ -939,3 +977,59 @@ table {
 .imgInfo {
 	vertical-align: top;
 }
+
+ /* Record Search Form */
+
+#querydiv fieldset {
+	display: block;
+    margin-inline-start: 2px;
+    margin-inline-end: 2px;
+    padding-block-start: 0.35em;
+    padding-inline-start: 0.75em;
+    padding-inline-end: 0.75em;
+    padding-block-end: 0.625em;
+    min-inline-size: min-content;
+    border-width: 2px;
+    border-style: groove;
+    border-color: rgb(192, 192, 192);
+    border-image: initial;
+}
+
+#querydiv {
+    font-family: var(--body-font-family);
+	line-height: 1.15;
+}
+#querydiv input{
+	font-family: inherit;
+    font-size: 100%;
+    line-height: 1.15rem;
+}
+
+#querydiv button.icon-button {
+    padding: 6px;
+    border-width: 1px;
+}
+#querydiv button:hover {
+	background-color: var(--medium-color);
+	color: var(--light-color);
+}
+
+#querydiv button {
+	background-color: var(--darkest-color);
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-family: var(--body-font-family);
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+	font-size: 100%;
+	border-width: 2px;
+    border-style: outset;
+    border-color: buttonborder;
+}
+
+button.icon-button svg {
+	fill: var(--light-color);
+  }

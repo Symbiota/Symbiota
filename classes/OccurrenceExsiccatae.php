@@ -1,5 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT . '/config/dbconnection.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 class OccurrenceExsiccatae {
 
@@ -162,12 +163,13 @@ class OccurrenceExsiccatae {
 			'INNER JOIN omexsiccatinumbers en ON ol.omenid = en.omenid '.
 			'LEFT JOIN media m ON o.occid = m.occid ';
 		if($target == 'omenid'){
-			$sql .= 'WHERE ol.omenid = '.$id;
+			$sql .= 'WHERE ol.omenid = '.$id.' ';
 		}
 		else{
-			$sql .= 'WHERE en.ometid = '.$id;
+			$sql .= 'WHERE en.ometid = '.$id.' ';
 		}
-		$sql .= ' ORDER BY en.exsnumber+1, ol.ranking, o.recordedby, o.recordnumber';
+		$sql .= OccurrenceUtil::appendFullProtectionSQL();
+		$sql .= 'ORDER BY en.exsnumber+1, ol.ranking, o.recordedby, o.recordnumber';
 		//echo $sql;
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){

@@ -10,6 +10,7 @@ if (!$SYMB_UID) header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=
 
 
 $tid = $_REQUEST['tid'] ?? 0;
+$filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
 $taxAuthId = array_key_exists('taxauthid', $_REQUEST) ? $_REQUEST['taxauthid'] : 1;
 $tabIndex = array_key_exists('tabindex', $_REQUEST) ? $_REQUEST['tabindex'] : 0;
 $submitAction = array_key_exists('submitaction', $_REQUEST) ? $_REQUEST['submitaction'] : '';
@@ -82,8 +83,8 @@ if ($isEditor) {
 		var tid = <?php echo $taxonEditorObj->getTid(); ?>;
 		var tabIndex = <?php echo $tabIndex; ?>;
 	</script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/taxa.sharedTaxonomyCRUD.js?ver=4"></script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/taxa.taxonomyeditor.js?ver=2"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/taxa.sharedTaxonomyCRUD.js?ver=5"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/taxa.taxonomyeditor.js?ver=3"></script>
 	<style type="text/css">
 		.editDiv {
 			clear: both;
@@ -131,6 +132,7 @@ if ($isEditor) {
 </head>
 
 <body>
+	<script src="<?php echo $filename ?>" type="text/javascript"></script>
 	<?php
 	$displayLeftMenu = (isset($taxa_admin_taxonomyeditorMenu) ? $taxa_admin_taxonomyeditorMenu : "true");
 	include($SERVER_ROOT . '/includes/header.php');
@@ -371,7 +373,7 @@ if ($isEditor) {
 							<input type="hidden" name="tid" value="<?php echo $taxonEditorObj->getTid(); ?>" />
 							<input type="hidden" name="taxauthid" value="<?php echo $taxAuthId; ?>">
 							<div class="gridlike-form-row">
-								<button type="submit" id="taxoneditsubmit" name="taxonedits" value="submitEdits"><?php echo $LANG['SUBMIT_EDITS']; ?></button>
+								<button type="button" id="taxoneditsubmit" name="taxonedits" value="submitEdits"><?php echo $LANG['SUBMIT_EDITS']; ?></button>
 								<span id="required-display" style="color: var(--danger-color)">Fields marked with * are required</span>
 								<span id="error-display" style="color: var(--danger-color)"></span>
 							</div>

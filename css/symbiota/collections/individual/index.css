@@ -16,15 +16,6 @@
   clear: both;
 }
 
-#media-div {
-  float: right;
-}
-
-#media-div div {
-  float: right;
-  margin-right: 10px;
-}
-
 #collicon-div {
   float: left;
   margin: 15px 0px;
@@ -35,7 +26,8 @@
 
 #collicon-div img {
   height: 50px;
-  width: 50ps;
+  max-width: 100%;
+  padding-right: 0.5rem;
 }
 
 #occur-div {

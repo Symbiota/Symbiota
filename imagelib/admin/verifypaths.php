@@ -135,7 +135,7 @@ class VerifyPaths{
 							}
 							else{
 								$this->orphanedImgCnt++;
-								echo "<div>Orphaned #$this->orphanedImgCnt: $urlPath$file</div>";
+								echo '<div>Orphaned #' . htmlspecialchars($this->orphanedImgCnt, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ':' . htmlspecialchars($urlPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . htmlspecialchars($file, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</div>';
 								fwrite($this->absentDbRecordsFH, "Orphaned #$this->orphanedImgCnt: ".$urlPath.$file."\n");
 							}
 						}

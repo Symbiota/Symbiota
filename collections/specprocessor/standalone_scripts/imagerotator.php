@@ -6,7 +6,7 @@ $testMode = 1;
 $rotateMode = 1;
 $msgMode = 1;
 
-if(isset($_REQUEST['path']) && $_REQUEST['path']) $targetPath = $_REQUEST['path'];
+if(isset($_REQUEST['path']) && $_REQUEST['path']) $reqPath = $_REQUEST['path'];
 if(isset($_REQUEST['recursive']) && !$_REQUEST['recursive']) $recursive = false;
 if(isset($_REQUEST['degree'])) $degree = $_REQUEST['degree'];
 if(isset($_REQUEST['testmode'])) $testMode = $_REQUEST['testmode'];
@@ -21,8 +21,9 @@ $rotateManager->setTestMode($testMode);
 $rotateManager->setRotateMode($rotateMode);
 $rotateManager->setMsgOutMode($msgMode);
 
-if($targetPath) $rotateManager->batchRotateImages($targetPath);
-else echo 'ERROR: target path is empty';
+$targetPath = realpath($MEDIA_ROOT_PATH . $reqPath);
+if($targetPath && str_starts_with($targetPath, $MEDIA_ROOT_PATH)) $rotateManager->batchRotateImages($targetPath);
+else echo 'ERROR: target path is invalid or empty';
 
 class ImageRotator{
 	private $targetPath = '';
