@@ -79,7 +79,7 @@ if($IS_ADMIN) $isEditor = 1;
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
 		<a href="../../sitemap.php">Sitemap</a> &gt;&gt;
-			<b><a href="coordinatevalidator.php?collid=<?= htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?> . '">Coordinate Validator</a></b>
+			<b><a href="coordinatevalidator.php?collid=<?= htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>">Coordinate Validator</a></b>
 	</div>
 	<!-- inner text -->
 	<div role="main" id="innertext">
