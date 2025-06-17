@@ -2082,7 +2082,7 @@ class OccurrenceEditorManager {
 		$sql = $this->sqlWhere;
 
 		$tablePrefix = 'o.';
-		if($fn == 'identifierValue' || 'identifierName') {
+		if($fn == 'identifierValue' || $fn == 'identifierName') {
 			$tablePrefix = 'id.';
 		}
 
