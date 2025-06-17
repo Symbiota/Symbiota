@@ -102,6 +102,14 @@ if ($SYMB_UID) {
 			e.preventDefault();
 			return false;
 		}
+
+		function showItemsList(className) {
+  			const elements = document.getElementsByClassName(className);
+  			for (let i = 0; i < elements.length; i++) {
+				elements[i].style.display = 'list-item';
+			}
+		}
+
 	</script>
 	<style>
 		.importItem { margin-left:10px; display:none; }
@@ -130,6 +138,14 @@ if ($SYMB_UID) {
 		}
 		.bigger-left-margin-rel {
 			margin-left: 3rem;
+		}
+
+		.seemore-icon {
+			width: 13px;
+			height: 13px;
+		}
+		.link-icon {
+			text-decoration: none;
 		}
 
 		#quicksearch-box input {
@@ -386,11 +402,11 @@ if ($SYMB_UID) {
 								if ($collManager->traitCodingActivated()) {
 									?>
 									<li>
-										<a href="#" onclick="$('li.traitItem').show(); return false;">
+										<a href="javascript:void(0)" onclick="showItemsList('traitItem')">
 											<?= $LANG['TRAIT_CODING_TOOLS'] ?>
 										</a>
-										<a href="#" onclick="$('li.traitItem').show(); return false;"> 
-											<img class="seemore" src="../../images/tochild.png" style="width:13px;height:13px;">
+										<a onclick="showItemsList('traitItem')"> 
+											<img class = seemore-icon src="../../images/tochild.png">
 										</a>
 									</li>
 									<li class="traitItem" style="margin-left:10px;display:none;">
@@ -445,11 +461,11 @@ if ($SYMB_UID) {
 								</li>
 								<!--
 								<li>
-									<a href="" onclick="$('li.metadataItem').show(); return false;"  >
+									<a href="javascript:void(0)" onclick="showItemsList('metadataItem')"  >
 										<?= $LANG['OPEN_META'] ?>
 									</a>
-									<a href="#" onclick="$('li.metadataItem').show(); return false;"> 
-										<img class="seemore" src="../../images/tochild.png" style="width:13px;height:13px;">
+									<a onclick="showItemsList('metadataItem')"> 
+										<img class="seemore-icon" src="../../images/tochild.png">
 									</a>
 								</li>
 								<li class="metadataItem" style="margin-left:10px;display:none;">
@@ -474,14 +490,14 @@ if ($SYMB_UID) {
 									</a>
 								</li>
 								<li>
-									<a href="#" onclick="$('li.importItem').show(); return false;">
+									<a href="javascript:void(0)" onclick="showItemsList('importItem')">
 										<?= $LANG['IMPORT_SPECIMEN'] ?>
 									</a>
-									<a id="importinfo" style="text-decoration:none;" href="https://biokic.github.io/symbiota-docs/coll_manager/upload/" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>">
+									<a id="importinfo" class="link-icon" href="https://biokic.github.io/symbiota-docs/coll_manager/upload/" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>">
 											<img src="../../images/info.png" style="width:13px;" alt="<?= $LANG['INFO_ALT'] ?>" />
 									</a>
-									<a href="#" onclick="$('li.importItem').show(); return false;"> 
-										<img class="seemore" src="../../images/tochild.png" style="width:13px;height:13px;">
+									<a onclick="showItemsList('importItem')"> 
+										<img class="seemore-icon" src="../../images/tochild.png"">
 									</a>
 								</li>
 								<li class="importItem">
