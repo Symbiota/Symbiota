@@ -1060,7 +1060,7 @@ class ImageLocalProcessor {
 					$stmt->execute();
 					if($stmt->affected_rows && !$stmt->error){
 						$msg = 'SUCCESS: Image record loaded into database ';
-						if($occid) $msg .= 'and linked to occurrence record <a href="../individual/index.php?occid='.$occid.'" target="_blank">'.$occid.'</a>';
+						if($occid) $msg .= 'and linked to occurrence record <a href="../individual/index.php?occid='.htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE).'" target="_blank">'.htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE).'</a>';
 						$this->logOrEcho($msg,1, false	);
 					}
 					else{
