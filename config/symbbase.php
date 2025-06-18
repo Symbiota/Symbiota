@@ -2,7 +2,7 @@
 header('X-Frame-Options: DENY');
 header('Cache-control: private'); // IE 6 FIX
 date_default_timezone_set('America/Phoenix');
-$CODE_VERSION = '3.2.2';
+$CODE_VERSION = '3.3.1';
 
 set_include_path(get_include_path() . PATH_SEPARATOR . $SERVER_ROOT . PATH_SEPARATOR . $SERVER_ROOT.'/config/' . PATH_SEPARATOR . $SERVER_ROOT.'/classes/');
 
@@ -116,5 +116,12 @@ $ALLOWED_MEDIA_MIME_TYPES = [
 	"image/jpeg", "image/png",
 	"audio/mpeg", "audio/wav", "audio/ogg"
 ];
+
+if(!empty($GEO_JSON_LAYERS)) {
+	/* Load GeoJSON Paths */
+	for($i = 0; $i < count($GEO_JSON_LAYERS); $i++) {
+		$GEO_JSON_LAYERS[$i]['filepath'] = $CLIENT_ROOT . '/content/geoJSON/' . $GEO_JSON_LAYERS[$i]['filename'];
+	}
+}
 
 ?>

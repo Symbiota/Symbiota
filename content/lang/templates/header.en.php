@@ -33,6 +33,9 @@ $LANG['H_MAMMALIA'] = 'Mammals';
 $LANG['H_PLANTA'] = 'Plants';
 $LANG['H_REPTILIA'] = 'Reptiles';
 
+$LANG['H_GLOSSARY'] = 'Glossary';
+$LANG['H_GLOSSARY_SEARCH'] = 'Search Glossary';
+
 $LANG['H_MORE_INFO'] = 'More Information';
 $LANG['H_ABOUT_PROJECT'] = 'About Project';
 $LANG['H_PARTNERS'] = 'Partners';

@@ -40,10 +40,13 @@ const POLYGON_TEXT_TYPES = Object.freeze({
  */
 function openCoordAid(options) {
 	const default_options = {
-		polygon_output_id: "footprintwkt",
 		title: "Map Coodinate Helper",
 	}
 	const exclude_params = ["client_root", "title"]
+
+	if(!options.map_mode || options.map_mode === MAP_MODES.POLYGON) {
+		default_options.polygon_output_id = 'footprintwkt';
+	}
 
 	options = {
 		...default_options,

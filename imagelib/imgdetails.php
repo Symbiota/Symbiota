@@ -27,11 +27,32 @@ if ($isEditor) {
 	if ($action == 'Submit Image Edits') {
 		Media::update($mediaID, $_POST, new LocalStorage());
 	} elseif ($action == 'Transfer Image') {
-		Media::update($mediaID, ['tid' => $_REQUEST['targettid']]);
-		header('Location: ../taxa/profile/tpeditor.php?tid=' . $_REQUEST['targettid'] . '&tabindex=1');
+		if($targettid = $_REQUEST['targettid'] ?? false) {
+			Media::update($mediaID, ['tid' => $targettid ], new LocalStorage());
+
+			if($errors = Media::getErrors()) {
+				$status = 'Errors:<br/>' . implode('<br/>', $errors);
+			} else {
+				header('Location: ../taxa/profile/tpeditor.php?tid=' . $_REQUEST['targettid'] . '&tabindex=1');
+			}
+		} else {
+			$status = "ERROR: " . $LANG['MEDIA_TRANSFER_REQUIRES_TAXON_ID'];
+		}
 	} elseif ($action == 'Delete Image') {
 		$remove_files = $_REQUEST['removeimg'] ?? false;
-		Media::delete(intval($mediaID), boolval($remove_files));
+		try {
+			Media::delete(intval($mediaID), boolval($remove_files));
+			if($errors = Media::getErrors()) {
+				$status = 'Errors:<br/>' . implode('<br/>', $errors);
+			} else if($_REQUEST['tid'] ?? false) {
+				header('Location: ../taxa/profile/tpeditor.php?tid=' . $_REQUEST['tid'] . '&tabindex=1');
+			} else {
+				header('Location: index.php');
+			}
+		} catch(Throwable $th) {
+			$status = "ERROR: " . $th->getMessage();
+		}
+
 	}
 	$imgArr = Media::getMedia($mediaID);
 }
@@ -53,6 +74,7 @@ if ($imgArr) {
 		$metaUrl = $serverPath . $metaUrl;
 	}
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -61,15 +83,11 @@ if ($imgArr) {
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>" />
 	<?php
 	if ($imgArr) {
-	?>
+		?>
 		<meta property="og:title" content="<?php echo $imgArr["sciname"]; ?>" />
 		<meta property="og:site_name" content="<?php echo $DEFAULT_TITLE; ?>" />
 		<meta property="og:image" content="<?php echo $metaUrl; ?>" />
-		<meta name="twitter:card" content="photo" data-dynamic="true" />
-		<meta name="twitter:title" content="<?php echo $imgArr["sciname"]; ?>" />
-		<meta name="twitter:image" content="<?php echo $metaUrl; ?>" />
-		<meta name="twitter:url" content="<?php echo $serverPath . $CLIENT_ROOT . '/imagelib/imgdetails.php?mediaid=' . $mediaID; ?>" />
-	<?php
+		<?php
 	}
 	?>
 	<title><?php echo $DEFAULT_TITLE . " Image Details: #" . $mediaID; ?></title>
@@ -84,15 +102,6 @@ if ($imgArr) {
 	<script>
 		var clientRoot = "<?php echo $CLIENT_ROOT; ?>";
 
-		(function(d, s, id) {
-			var js, fjs = d.getElementsByTagName(s)[0];
-			if (d.getElementById(id)) return;
-			js = d.createElement(s);
-			js.id = id;
-			js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
-			fjs.parentNode.insertBefore(js, fjs);
-		}(document, 'script', 'facebook-jssdk'));
-
 		function verifyEditForm(f) {
 			if (f.url.value.replace(/\s/g, "") == "") {
 				window.alert("<?php echo $LANG['ERROR_FILE_PATH'] ?>");
@@ -106,7 +115,7 @@ if ($imgArr) {
 			if (sciName == "") {
 				window.alert("<?php echo $LANG['ENTER_TAXON_NAME'] ?>");
 			} else {
-				validateTaxon(f, true);
+				validateTaxon(f, true, form => form.targettid.value = form.tid.value);
 			}
 			return false; //Submit takes place in the validateTaxon method
 		}
@@ -131,7 +140,6 @@ if ($imgArr) {
 </head>
 
 <body>
-	<div id="fb-root"></div>
 	<?php
 	//$displayLeftMenu = (isset($taxa_imgdetailsMenu)?$taxa_imgdetailsMenu:false);
 	//include($SERVER_ROOT.'/includes/header.php');
@@ -184,28 +192,6 @@ if ($imgArr) {
 					}
 				}
 				?>
-				<div style="float:right;margin-right:10px;">
-					<a class="twitter-share-button" data-text="<?php echo $imgArr["sciname"]; ?>" href="https://twitter.com/share" data-url="<?php echo htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . $CLIENT_ROOT . '/imagelib/imgdetails.php?mediaid=' . $mediaID; ?>"><?php echo $LANG['TWEET'] ?></a>
-					<script>
-						window.twttr = (function(d, s, id) {
-							var js, fjs = d.getElementsByTagName(s)[0],
-								t = window.twttr || {};
-							if (d.getElementById(id)) return;
-							js = d.createElement(s);
-							js.id = id;
-							js.src = "https://platform.twitter.com/widgets.js";
-							fjs.parentNode.insertBefore(js, fjs);
-							t._e = [];
-							t.ready = function(f) {
-								t._e.push(f);
-							};
-							return t;
-						}(document, "script", "twitter-wjs"));
-					</script>
-				</div>
-				<div style="float:right;margin-right:10px;">
-					<div class="fb-share-button" data-href="" data-layout="button_count"></div>
-				</div>
 			</div>
 		<?php
 		}
@@ -249,7 +235,7 @@ if ($imgArr) {
 							</div>
 							<div id="iepor" style="margin-top:2px;display:<?php echo ($imgArr["creator"] ? 'block' : 'none'); ?>;">
 								<b><?php echo $LANG['CREATOR_OVERRIDE'] ?>:</b>
-								<input name="CREATOR" type="text" value="<?php echo $imgArr["creator"]; ?>" style="width:250px;" />
+								<input name="creator" type="text" value="<?php echo $imgArr["creator"]; ?>" style="width:250px;" />
 								* <?php echo $LANG['OVERRIDE_SELECTION'] ?>
 							</div>
 							<div style="margin-top:2px;">
@@ -258,7 +244,7 @@ if ($imgArr) {
 							</div>
 							<div style="margin-top:2px;">
 								<b><?php echo $LANG['SOURCE_URL'] ?>:</b>
-								<input name="sourceurl" type="text" value="<?php echo $imgArr["sourceUrl"]; ?>" style="width:450px;" />
+								<input name="sourceUrl" type="text" value="<?php echo $imgArr["sourceUrl"]; ?>" style="width:450px;" />
 							</div>
 							<div style="margin-top:2px;">
 								<b><?php echo $LANG['COPYRIGHT'] ?>:</b>
@@ -284,7 +270,7 @@ if ($imgArr) {
 							</div>
 							<div style="margin-top:2px;">
 								<b><?php echo $LANG['SORT_SEQUENCE'] ?>:</b>
-								<input name="sortsequence" type="text" value="<?php echo $imgArr["sortSequence"]; ?>" size="5" />
+								<input name="sortSequence" type="text" value="<?php echo $imgArr["sortSequence"] ?? ''; ?>" size="5" />
 							</div>
 							<div style="margin-top:2px;">
 								<b><?php echo $LANG['WEB_IMAGE'] ?>:</b><br />
@@ -296,14 +282,14 @@ if ($imgArr) {
 										<input type="checkbox" name="renameweburl" value="1" />
 										<?php echo $LANG['RENAME_WEB_IMAGE_FILE'] ?>
 									</div>
-									<input name="oldurl" type="hidden" value="<?php echo $imgArr["url"]; ?>" />
+									<input name="old_url" type="hidden" value="<?php echo $imgArr["url"]; ?>" />
 								<?php
 								}
 								?>
 							</div>
 							<div style="margin-top:2px;">
 								<b><?php echo $LANG['THUMBNAIL'] ?>:</b><br />
-								<input name="thumbnailurl" type="text" value="<?php echo $imgArr["thumbnailUrl"]; ?>" style="width:90%;" />
+								<input name="thumbnailUrl" type="text" value="<?php echo $imgArr["thumbnailUrl"]; ?>" style="width:90%;" />
 								<?php
 								if ($imgArr["thumbnailUrl"] && stripos($imgArr["thumbnailUrl"], $MEDIA_ROOT_URL) === 0) {
 								?>
@@ -311,7 +297,7 @@ if ($imgArr) {
 										<input type="checkbox" name="renametnurl" value="1" />
 										<?php echo $LANG['RENAME_THUMBNAIL_IMAGE_FILE'] ?>
 									</div>
-									<input name="oldthumbnailurl" type="hidden" value="<?php echo $imgArr["thumbnailUrl"]; ?>" />
+									<input name="old_thumbnailurl" type="hidden" value="<?php echo $imgArr["thumbnailUrl"]; ?>" />
 								<?php
 								}
 								?>
@@ -326,7 +312,7 @@ if ($imgArr) {
 										<input type="checkbox" name="renameorigurl" value="1" />
 										<?php echo $LANG['RENAME_LARGE_IMAGE_FILE'] ?>
 									</div>
-									<input name="oldoriginalurl" type="hidden" value="<?php echo $imgArr["originalUrl"]; ?>" />
+									<input name="old_originalurl" type="hidden" value="<?php echo $imgArr["originalUrl"]; ?>" />
 								<?php
 								}
 								?>
@@ -359,6 +345,7 @@ if ($imgArr) {
 							<div style="margin-top:2px;">
 								<button class="button-danger" type="submit" name="submitaction" id="submit" value="Delete Image"><?php echo $LANG['DELETE_IMAGE'] ?></button>
 							</div>
+							<input type="hidden" name="tid" value="<?php echo $imgArr["tid"]; ?>" />
 							<input name="removeimg" type="checkbox" value="1" /> <?php echo $LANG['REMOVE_IMG_FROM_SERVER'] ?>
 							<div style="margin-left:20px;color:red;">
 								<?php echo $LANG['BOX_CHECKED_IMG_DELETED'] ?>
@@ -407,7 +394,7 @@ if ($imgArr) {
 						echo '</div>';
 					}
 					if ($imgArr['owner']) echo '<div><b>' . $LANG['MANAGER'] . ':</b> ' . $imgArr['owner'] . '</div>';
-					if ($imgArr['sourceUrl']) echo '<div><b>' . $LANG['IMAGE_SOURCE'] . ':</b> <a href="' . htmlspecialchars($imgArr['sourceurl'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($imgArr['sourceurl'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></div>';
+					if ($imgArr['sourceUrl']) echo '<div><b>' . $LANG['IMAGE_SOURCE'] . ':</b> <a href="' . htmlspecialchars($imgArr['sourceUrl'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($imgArr['sourceUrl'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></div>';
 					if ($imgArr['locality']) echo '<div><b>' . $LANG['LOCALITY'] . ':</b> ' . $imgArr['locality'] . '</div>';
 					if ($imgArr['notes']) echo '<div><b>' . $LANG['NOTES'] . ':</b> ' . $imgArr['notes'] . '</div>';
 					if ($imgArr['rights']) echo '<div><b>' . $LANG['RIGHTS'] . ':</b> ' . $imgArr['rights'] . '</div>';

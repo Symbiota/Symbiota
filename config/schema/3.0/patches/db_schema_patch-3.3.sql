@@ -30,7 +30,9 @@ ALTER TABLE `uploadspectemp`
   CHANGE COLUMN `eventID` `eventID` varchar(150) DEFAULT NULL,
   CHANGE COLUMN `georeferenceRemarks` `georeferenceRemarks` varchar(500) DEFAULT NULL,
   CHANGE COLUMN `recordNumber` `recordNumber` varchar(45) DEFAULT NULL COMMENT 'Collector Number',
-  CHANGE COLUMN `waterBody` `waterBody` varchar(75) DEFAULT NULL;
+  CHANGE COLUMN `waterBody` `waterBody` varchar(75) DEFAULT NULL,
+  CHANGE COLUMN `localitySecurity` `recordSecurity` INT(10) NULL DEFAULT 0 COMMENT '0 = no security; 1 = hidden locality; 5 = hide full record',
+  CHANGE COLUMN `localitySecurityReason` `securityReason` VARCHAR(100) NULL DEFAULT NULL ;
 
 ALTER TABLE `uploaddetermtemp`
   CHANGE COLUMN `taxonRemarks` `taxonRemarks` text,

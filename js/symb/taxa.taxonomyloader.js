@@ -29,7 +29,7 @@ $(document).ready(function () {
         //   "You must select a name from the list. If accepted name is not in the list, it needs to be added or it is in the system as a non-accepted synonym"
         // );
         document.getElementById("error-display").textContent =
-          translations.SELECT_ACCEPTED_NAME;
+        processTextContent(translations.SELECT_ACCEPTED_NAME);
       }
     },
     minLength: 2,
@@ -56,7 +56,7 @@ $(document).ready(function () {
         //   "You must select a name from the list. If parent name is not in the list, it may need to be added"
         // );
         document.getElementById("error-display").textContent =
-          translations.SELECT_PARENT_NAME;
+          processTextContent(translations.SELECT_PARENT_NAME);
       }
     },
     minLength: 2,
@@ -66,6 +66,18 @@ $(document).ready(function () {
   document.getElementById("rankid").addEventListener("change", function () {
     const selectedValue = Number(this.value);
     showOnlyRelevantFields(selectedValue);
+  });
+
+  document.getElementById("submitaction").addEventListener("click", async ()=>{
+    const formForSubmission = document.getElementById("loaderform");
+    const isUniqueEntry = await checkNameExistence(formForSubmission, true);
+    if(!isUniqueEntry){
+      if(confirm(translations.TAXON_NAME_MATCH_WARNING)){
+        formForSubmission.submit();  
+      }
+    }else{
+      formForSubmission.submit();
+    }
   });
 });
 
@@ -84,18 +96,18 @@ function validateFormInput (f, silent = false){
   const rankId = f.rankid.value;
   if (f.unitname1.value == "") {
     if (!silent) alert(translations.SCI_NAME_RANK_REQUIRED);
-    document.getElementById("error-display").textContent = translations.SCI_NAME_RANK_REQUIRED;
+    document.getElementById("error-display").textContent = processTextContent(translations.SCI_NAME_RANK_REQUIRED);
     return false;
   }
   if (f.parentname.value == "" && rankId > "10") {
     if (!silent) alert(translations.PARENT_TAXON_REQUIRED);
-    document.getElementById("error-display").textContent = translations.PARENT_TAXON_REQUIRED;
+    document.getElementById("error-display").textContent = processTextContent(translations.PARENT_TAXON_REQUIRED);
     return false;
   }
   if (f.parenttid.value == "" && rankId > "10") {
     if (!silent)
       alert(translations.PARENT_ID_NOT_SET);
-    document.getElementById("error-display").textContent = translations.PARENT_ID_NOT_SET;
+    document.getElementById("error-display").textContent = processTextContent(translations.PARENT_ID_NOT_SET);
     return false;
   }
   if (!validateFieldLength(f.notes, 250, silent) || !validateFieldLength(f.source, 250, silent))
@@ -106,7 +118,7 @@ function validateFormInput (f, silent = false){
   if (accStatusObj[0].checked == false) {
     if (f.acceptedstr.value == "") {
       if (!silent) alert(translations.ACC_NAME_NEEDS_VALUE);
-      document.getElementById("error-display").textContent = translations.ACC_NAME_NEEDS_VALUE;
+      document.getElementById("error-display").textContent = processTextContent(translations.ACC_NAME_NEEDS_VALUE);
       return false;
     }
   }
@@ -120,7 +132,7 @@ function validateFieldLength(field, maxLength, silent) {
       alert(fieldLabel + " " + translations.FIELD_TOO_LONG + " " + maxLength + ".");
     }
     document.getElementById("error-display").textContent =
-      fieldLabel + translations.FIELD_TOO_LONG + " " + maxLength + ".";
+      processTextContent(fieldLabel + translations.FIELD_TOO_LONG + " " + maxLength + ".");
     return false;
   }
   return true;
@@ -310,11 +322,11 @@ function setParent(parentName, unitind1) {
         //     "' does not exist. Please first add parent to system."
         // );
         document.getElementById("error-display").textContent =
-          translations.PARENT_TAXON +
-          " '" +
-          parentName +
-          "' " +
-          translations.TAXON_NOT_EXISTS;
+          processTextContent(translations.PARENT_TAXON +
+            " '" +
+            parentName +
+            "' " +
+            translations.TAXON_NOT_EXISTS);
       else {
         setParent(unitind1 + " " + parentName, "");
       }
@@ -330,11 +342,11 @@ function setParent(parentName, unitind1) {
       // );
       else
         document.getElementById("error-display").textContent =
-          translations.PARENT_TAXON +
-          " '" +
-          parentName +
-          "' " +
-          translations.MATCHES_TWO;
+          processTextContent(translations.PARENT_TAXON +
+            " '" +
+            parentName +
+            "' " +
+            translations.MATCHES_TWO);
     }
   });
 }

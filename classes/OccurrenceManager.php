@@ -200,9 +200,9 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 					$tempTermArr[] = 'Locality IS NULL';
 				}
 				else{
-					$tempSqlArr[] = '(o.municipality LIKE "'.$value.'%")';
+					//$tempSqlArr[] = '(o.municipality LIKE "'.$value.'%")';
 					if(strpos($value, ' ')){
-						$tempSqlArr[] = '(MATCH(o.locality) AGAINST("'.str_replace(' ', ' +', $value).'" IN BOOLEAN MODE) AND o.locality LIKE "%'.$value.'%")';
+						$tempSqlArr[] = '(MATCH(o.locality) AGAINST("+'.str_replace(' ', ' +', $value).'" IN BOOLEAN MODE) AND o.locality LIKE "%'.$value.'%")';
 					}
 					else{
 						$singleWords[] = $value;
@@ -257,7 +257,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			}
 			$this->displaySearchArr[] = $pointArr[0] . ' ' . $pointArr[1] . ' +- ' . $pointArr[2] . $pointArr[3];
 		}
-		elseif(array_key_exists('footprintGeoJson',$this->searchTermArr)){
+		elseif(!empty($this->searchTermArr['footprintGeoJson'])){
 			$sqlWhere .= "AND (ST_Within(p.lngLatPoint,ST_GeomFromGeoJSON('".$this->searchTermArr['footprintGeoJson']."'))) ";
 			$this->displaySearchArr[] = $this->LANG['POLYGON_SEARCH'];
 		}
@@ -768,6 +768,10 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		$hasEverythingRequiredForAssociationSearch = (array_key_exists('association-type',$_REQUEST) && $_REQUEST['association-type'] || array_key_exists('associated-taxa',$_REQUEST) && $_REQUEST['associated-taxa']) && array_key_exists('taxontype-association',$_REQUEST) && $_REQUEST['taxontype-association'];
 		if($hasEverythingRequiredForAssociationSearch){
 			$this->setAssociationRequestVariable();
+		}
+		$hasEverythingRequiredForAssociationSearchForDownload = (array_key_exists('association-type', $this->searchTermArr) && $this->searchTermArr['association-type'] || (array_key_exists('associated-taxa', $this->searchTermArr) &&  $this->searchTermArr['associated-taxa']) && array_key_exists('associated-taxon-type',$this->searchTermArr) && $this->searchTermArr['associated-taxon-type']);
+		if($hasEverythingRequiredForAssociationSearchForDownload){
+			$this->setAssociationRequestVariable($this->searchTermArr);
 		}
 		if(array_key_exists('country',$_REQUEST)){
 			$country = $this->cleanInputStr($_REQUEST['country']);

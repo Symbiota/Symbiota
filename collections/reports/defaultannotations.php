@@ -9,7 +9,7 @@ $lHeader = $_POST['lheading'];
 $lFooter = $_POST['lfooter'];
 $detIdArr = $_POST['detid'];
 $action = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
-$rowsPerPage = array_key_exists('rowcount',$_POST)?$_POST['rowcount']:3;;
+$columnsPerPage = array_key_exists('columncount',$_POST)?$_POST['columncount']:3;;
 
 $labelManager = new OccurrenceLabel();
 $labelManager->setCollid($collid);
@@ -33,7 +33,7 @@ if($SYMB_UID){
 			if(array_key_exists('marginsize',$_POST) && $_POST['marginsize']) $marginSize = $_POST['marginsize'];
 			echo 'table.labels {border-spacing:'.$marginSize.'px;}';
 			$widthStr = '600px';
-			if($rowsPerPage > 1) $widthStr = 100/$rowsPerPage.'%';
+			if($columnsPerPage > 1) $widthStr = 100/$columnsPerPage.'%';
 			$borderWidth = 1;
 			if(array_key_exists('borderwidth',$_POST)) $borderWidth = $_POST['borderwidth'];
 			?>
@@ -68,7 +68,7 @@ if($SYMB_UID){
 						$dupCnt = $_POST['q-'.$occid];
 						for($i = 0;$i < $dupCnt;$i++){
 							$labelCnt++;
-							if($rowsPerPage == 1 || $labelCnt%$rowsPerPage == 1) echo '<tr>'."\n";
+							if($columnsPerPage == 1 || $labelCnt%$columnsPerPage == 1) echo '<tr>'."\n";
 							?>
 							<td class="" valign="top">
 								<?php
@@ -149,14 +149,14 @@ if($SYMB_UID){
 								?>
 							</td>
 							<?php
-							if($labelCnt%$rowsPerPage == 0){
+							if($labelCnt%$columnsPerPage == 0){
 								echo '</tr>'."\n";
 							}
 						}
 					}
 					echo '</table>';
-					if($labelCnt%$rowsPerPage){
-						$remaining = $rowsPerPage-($labelCnt%$rowsPerPage);
+					if($labelCnt%$columnsPerPage){
+						$remaining = $columnsPerPage-($labelCnt%$columnsPerPage);
 						for($i = 0;$i < $remaining;$i++){
 							echo '<td></td>';
 						}
