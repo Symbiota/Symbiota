@@ -483,7 +483,7 @@ else{
 	<title><?= $DEFAULT_TITLE . ' ' . $LANG['OCCEDITOR'] ?></title>
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<link href="<?= $CSS_BASE_PATH ?>/symbiota/variables.css" type="text/css" rel="stylesheet">
-	<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/editor/editormain.css?ver=1c" type="text/css" rel="stylesheet" id="editorCssLink" />
+	<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/editor/editormain.css?ver=3" type="text/css" rel="stylesheet" />
 	<?php
 	//include_once($SERVER_ROOT.'/includes/head.php');
     if($crowdSourceMode == 1){
