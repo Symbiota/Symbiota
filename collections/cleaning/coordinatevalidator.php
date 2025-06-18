@@ -216,7 +216,6 @@ if($IS_ADMIN) $isEditor = 1;
 							echo '<td>'.$rank.'</td>';
 							echo '<td>'.$protocolStr.'</td>';
 							echo '<td>'.number_format($cnt);
-							//if(is_numeric($cnt)) echo ' <a href="coordinatevalidator.php?ranking=' . htmlspecialchars($rank, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&action=displayranklist" title="List specimens"><img src="'.$CLIENT_ROOT.'/images/list.png" style="width:12px" /></a>';
 							echo '</td>';
 							echo '</tr>';
 						}
