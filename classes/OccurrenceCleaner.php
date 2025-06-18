@@ -653,6 +653,16 @@ class OccurrenceCleaner extends Manager{
 		return $retArr;
 	}
 
+	public function coordinateRankingToText(int $rank): string {
+		switch($rank) {
+			case self::COORDINATE_LOCALITY_MISMATCH: return 'No Matching Locality Fields';
+			case self::COUNTRY_VERIFIED: return 'Country was verified';
+			case self::STATE_PROVINCE_VERIFIED: return 'State was verified';
+			case self::COUNTY_VERIFIED: return 'County was verified';
+			default: return 'Not valid rank';
+		}
+	}
+
 	public function verifyCoordAgainstPoliticalV2($countries = []) {
 		// Does no need offset because occurrences that get pulled out will get saved to 
 		// omoccurverification table which this query is doing a not in select of so it can 

@@ -214,7 +214,7 @@ if($IS_ADMIN) $isEditor = 1;
 							if(array_key_exists($protocolStr, $protocolMap)) $protocolStr = $protocolMap[$protocolStr];
 							echo '<tr>';
 							echo '<td>'.$rank.'</td>';
-							echo '<td>'.$protocolStr.'</td>';
+							echo '<td>' . $cleanManager->coordinateRankingToText($rank) . '</td>';
 							echo '<td>'.number_format($cnt);
 							echo '</td>';
 							echo '</tr>';
