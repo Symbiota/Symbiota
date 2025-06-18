@@ -653,14 +653,16 @@ class OccurrenceCleaner extends Manager{
 		return $retArr;
 	}
 
-	public function verifyCoordAgainstPoliticalV2($offset = 0) {
+	public function verifyCoordAgainstPoliticalV2($countries = []) {
+		// Does no need offset because occurrences that get pulled out will get saved to 
+		// omoccurverification table which this query is doing a not in select of so it can 
+		// be iterated through with just a function call
 		$coord_query = 'SELECT o.occid, country, stateProvince, county FROM omoccurrences o
 			LEFT JOIN omoccurverification ov ON ov.occid = o.occid AND category="coordinate"
 			JOIN omoccurpoints pts ON pts.occid = o.occid
-			WHERE ov.occid IS NULL AND collid = ?
-			LIMIT 100 OFFSET ?';
+			WHERE ov.occid IS NULL AND collid = ? LIMIT 1000';
 
-		$result = QueryUtil::executeQuery($this->conn, $coord_query, [$this->collid, $offset]);
+		$result = QueryUtil::executeQuery($this->conn, $coord_query, [ $this->collid ]);
 		$occid_arr = [];
 
 		while(($row = $result->fetch_object())) {
@@ -681,8 +683,14 @@ class OccurrenceCleaner extends Manager{
 			join geographicthesaurus as g70 on gp.geoThesID = g70.geoThesID
 			join geographicthesaurus as g60 on g60.geoThesID = g70.parentID
 			join geographicthesaurus as g50 on g50.geoThesID = g60.parentID
-			join omoccurrences o on o.occid = pts.occid
-			where g50.geoterm = "United states" and pts.occid in (' . implode(',', array_keys($occid_arr)) . ')';
+			join omoccurrences o on o.occid = pts.occid where ';
+
+		if(count($countries)) {
+			$country_parameters = str_repeat('?,', count($countries) - 1) . '?';
+			$resolve_geo_thesaurus .= 'country in (' . $country_parameters . ') AND ';
+		}
+
+		$resolve_geo_thesaurus .= 'pts.occid in (' . implode(',', array_keys($occid_arr)) . ')';
 
 		$geo_check_result = QueryUtil::executeQuery($this->conn, $resolve_geo_thesaurus);
 
@@ -699,14 +707,11 @@ class OccurrenceCleaner extends Manager{
 				$occid_arr[$row->occid]['rank'] = self::STATE_PROVINCE_VERIFIED;
 			} else if($matching_country = $occid_arr[$row->occid]['country'] === $row->country) {
 				$occid_arr[$row->occid]['rank'] = self::COUNTRY_VERIFIED;
-			} else {
-				$occid_arr[$row->occid]['rank'] = self::COORDINATE_LOCALITY_MISMATCH;
 			}
+		}
 
-			if(isset($occid_arr[$row->occid]['rank'])) {
-				//What Should protocol argument be? Currnetly Placing geographicthesaurus in as placeholder
-				$this->setVerification($row->occid, 'coordinate', $occid_arr[$row->occid]['rank'], 'geographicthesaurus');
-			}
+		foreach($occid_arr as $occid => $occurrence) {
+			$this->setVerification($occid, 'coordinate', $occurrence['rank'] ?? self::COORDINATE_LOCALITY_MISMATCH, 'geographicthesaurus');
 		}
 
 		return $occid_arr;

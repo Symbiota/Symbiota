@@ -100,7 +100,23 @@ if($IS_ADMIN) $isEditor = 1;
 				<div style="margin:15px">
 				<?php if($action) {
 					echo '<fieldset style="padding:20px">';
-					if($action == 'Validate Coordinates'){?>
+				if($action == 'Validate Coordinates'){
+					// Loop Until max or finished results
+					$total_proccessed = 0;
+					$start = time();
+					$TARGET_OFFSET = 1000;
+					$MAX_VALIDATION_BATCH = 1000;
+					for($offset = 0; $offset < $MAX_VALIDATION_BATCH; $offset += $TARGET_OFFSET) {
+						$count = count($cleanManager->verifyCoordAgainstPoliticalV2());
+						$total_proccessed += $count;
+
+						if($count != $TARGET_OFFSET) {
+							break;
+						}
+					}
+
+					echo $total_proccessed . ' took ' . time() - $start. ' seconds';
+				?>
 					<legend><b>Validating Coordinates</b></legend>
 					<table class="styledtable" style="width:100%">
 						<thead>
@@ -114,7 +130,7 @@ if($IS_ADMIN) $isEditor = 1;
 							<th>Rank</th>
 						</thead>
 						<tbody>
-							<?php foreach($cleanManager->verifyCoordAgainstPoliticalV2() as $occid => $occurrence): ?>
+							<?php foreach([] as $occid => $occurrence): ?>
 							<tr>
 								<td><?= $occid ?></td>
 
