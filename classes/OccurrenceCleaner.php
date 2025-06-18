@@ -710,9 +710,27 @@ class OccurrenceCleaner extends Manager{
 			}
 		}
 
+		$batch_verification = 'INSERT INTO omoccurverification(occid, category, ranking, protocol, uid) VALUES ';
+
+		$last_occid = array_key_last($occid_arr);
 		foreach($occid_arr as $occid => $occurrence) {
-			$this->setVerification($occid, 'coordinate', $occurrence['rank'] ?? self::COORDINATE_LOCALITY_MISMATCH, 'geographicthesaurus');
+			$values = [
+				$occid, 
+				'"Coordinate"', 
+				$occurrence['rank'] ?? self::COORDINATE_LOCALITY_MISMATCH, 
+				'"geographicthesaurus"', 
+				$GLOBALS['SYMB_UID']
+			];
+
+			$batch_verification .= '(' . implode(',', $values) . ')';
+
+			if($occid != $last_occid) {
+				$batch_verification .= ', ';
+			}
+			//$this->setVerification($occid, 'coordinate', $occurrence['rank'] ?? self::COORDINATE_LOCALITY_MISMATCH, 'geographicthesaurus');
 		}
+
+		QueryUtil::executeQuery($this->conn, $batch_verification);
 
 		return $occid_arr;
 	}
