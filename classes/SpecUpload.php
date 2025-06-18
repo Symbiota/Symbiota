@@ -519,7 +519,7 @@ class SpecUpload{
 	public function outputMsg($str, $indent = 0){
 		if($this->verboseMode == 1){
 			if($indent) $str = str_replace('<li>', '<li style="margin-left:'.($indent*10).'px">', $str);
-			echo htmlspecialchars($str, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+			echo $str;
 			ob_flush();
 			flush();
 		}

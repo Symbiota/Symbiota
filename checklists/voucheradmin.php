@@ -84,6 +84,31 @@ $clMetaArr = $clManager->getClMetadata();
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js" type="text/javascript"></script>
 	<script type="text/javascript">
+		function checkSearchFootprint(e) {
+			const checkbox = document.getElementById('search_footprint');
+			const error_msg_box = document.getElementById('footprintwkt-error');
+
+			error_msg_box.innerHTML = "";
+			error_msg_box.style.display="none";
+
+			let footprint_json = e.target.value;
+
+			if(footprint_json) {
+				try {
+					footprint_json = JSON.parse(footprint_json);
+				} catch(err) {
+					footprint_json = false;
+					error_msg_box.innerHTML = "<?= $LANG['ERROR_INVALID_JSON'] ?>"; 
+					error_msg_box.style.display="block";
+				}
+			}
+
+			if(footprint_json && !checkbox.checked) {
+				checkbox.checked = true;
+			} else if(!footprint_json && checkbox.checked) {
+				checkbox.checked = false;
+			}
+		}
 		var clid = <?php echo $clid; ?>;
 		var tabIndex = <?php echo $tabIndex; ?>;
 		var footprintExists = <?php echo ($clManager->getClFootprint()?'true':'false') ?>;
@@ -228,9 +253,14 @@ if($clid && $isEditor){
 									<?php echo $LANG['ONLYCOORD'];?>
 								</div>
 								<div>
-									<input name="includewkt" value="1" type="checkbox" <?php if(isset($termArr['includewkt'])) echo 'CHECKED'; ?> onclick="coordInputSelected(this)" />
+									<input id="search_footprint" name="includewkt" value="1" type="checkbox" <?php if(isset($termArr['includewkt'])) echo 'CHECKED'; ?> onclick="coordInputSelected(this)" />
 									<?php echo $LANG['POLYGON_SEARCH']; ?>
 									<a href="#"  onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root:'<?=$CLIENT_ROOT?>', map_mode_strict: true, latdef: '<?= $latDef ?>', lngdef: '<?= $lngDef ?>' });return false;" title="<?php echo $LANG['EDIT_META_POLYGON'] ?>"><img src="../images/edit.png" style="width:1.2em" /></a>
+								</div>
+								<div>
+									<label style="display:block; margin-bottom:0.25rem" for="footprintwkt"><b><?= $LANG['GEOJSON_FOOTPRINT'] ?>:</b></label>
+									<textarea onchange="checkSearchFootprint(event)" id="footprintwkt" name='footprint' style="width:100%"><?= htmlspecialchars($clManager->getClFootprint() ?? ''); ?></textarea>
+									<div id="footprintwkt-error" style="display:none; color: var(--danger-color); margin-bottom: 0.25rem"></div>
 								</div>
 								<div>
 									<input name="excludecult" value="1" type="checkbox" <?php if(isset($termArr['excludecult'])) echo 'CHECKED'; ?> />
@@ -248,7 +278,6 @@ if($clid && $isEditor){
 								<input type="hidden" name="submitaction" value="SaveSearch" />
 								<input type='hidden' name='clid' value='<?php echo $clid; ?>' />
 								<input type='hidden' name='pid' value='<?php echo $pid; ?>' />
-								<input type='hidden' id="footprintwkt" name='footprint' value='<?php echo htmlspecialchars($clManager->getClFootprint()); ?>' />
 							</div>
 						</td>
 					</tr>

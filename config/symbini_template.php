@@ -111,6 +111,15 @@ if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERV
 	$COOKIE_SECURE = true;
 }
 
+// Creates Togglable Overlay for GeoJSON file
+// Only Support with Leaflet Map
+// Supports of an area with the following properties:
+// filename : String - should be the name of the geoJSON located in the `content/geoJSON` directory.
+// label : String - Short text label to describe the overlay toggle
+// popup_template: String - Html string for what label should be generated on a GeoJSON feature. Will replace text like `[Property_name]` with a features property value if present
+// template_properties: Array[String] - List of property names to used in popup generation
+$GEO_JSON_LAYERS = [];
+
 //Base code shared by all pages; leave as is
 include_once('symbbase.php');
 /* --DO NOT ADD ANY EXTRA SPACES BELOW THIS LINE-- */

@@ -73,6 +73,7 @@ $LANG['NEW'] = 'Nouveau';
 $LANG['PROFILE'] = 'Profil';
 $LANG['CLOSE_EDITOR'] = 'Fermer l\'éditeur';
 $LANG['PROC_TYPE'] = 'Type de traitement';
+$LANG['IMG_PROC_CHANGE_EXPLAIN'] = "<b>Les outils de téléchargement des fichiers URL d'images ont été déplacés!</b> Vous pouvez désormais télécharger des fichiers d'URL de médias via l'importateur de données étendues (Panneau de Configuration d'Administration > Importer/Mettre à Jour Enregistrements de Spécimens > Importation Données Etendues)";
 $LANG['MAP_FROM_SERVER'] = 'Mapper des images à partir d\'un serveur local ou distant';
 $LANG['URL_MAP_FILE'] = 'Fichier de mappage d\'URL d\'image';
 $LANG['TITLE'] = 'Titre';

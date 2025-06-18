@@ -88,7 +88,6 @@ $LANG['SYMBDOCU'] = 'documentación de Symbiota ';
 $LANG['FORMOREINFO'] = 'para más información detallada como manejar la información de muestras. Aviso importante: la funcionalidad de manejar proyectos de observaciones no es necesariamente activado para cada portal de Symbiota';
 $LANG['OIVS'] = 'Envío de vale medios de observación';
 $LANG['NOOBSPROJ'] = 'No hay proyectos de observación para los que usted posea permisos de manejo';
-$LANG['PERSONAL'] = 'Gestión del manejo personal de especimenes y imprimir etiquetas';
 $LANG['OPM'] = 'Manejo de proyectos de observaciones';
 $LANG['PLEASE'] = 'Por favor';
 $LANG['LOGIN'] = 'Inicie Sesión';
