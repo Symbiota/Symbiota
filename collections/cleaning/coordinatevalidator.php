@@ -82,8 +82,8 @@ if($IS_ADMIN) $isEditor = 1;
 			<b><a href="coordinatevalidator.php?collid=<?= htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>">Coordinate Validator</a></b>
 	</div>
 	<!-- inner text -->
-	<div role="main" id="innertext">
-		<h1 class="page-heading"><?php echo $LANG['COOR_VALIDATOR']; ?></h1>
+	<div role="main" id="innertext" style="display: flex; gap: 1rem; flex-direction: column; margin-bottom: 1rem">
+		<h1 class="page-heading" style="margin-bottom: 0"><?php echo $LANG['COOR_VALIDATOR']; ?></h1>
 		<?php if($statusStr) { ?>
 			<hr/>
 			<div style="margin:20px;color:<?php echo (substr($statusStr,0,5)=='ERROR'?'red':'green');?>">
@@ -92,12 +92,21 @@ if($IS_ADMIN) $isEditor = 1;
 			<hr/>
 		<?php } if($isEditor) {
 			if($collidStr) { ?>
-				<div style="margin:15px">
-					Click "Validate Coordinates" button to loop through all unvalidated georeferenced specimens and verify that the coordinates actually fall within the defined political units.
-					Click on the list symbol to display specimens of that ranking.
-					If there was a mismatch between coordinates and county, this could be due to 1) cordinates fall outside of county limits, 2) wrong county was entered, or 3) county is misspelled.
+				<div>
+					<p style="margin: 0">
+						Click "Validate All Coordinates" button to loop through all unvalidated georeferenced specimens and verify that the coordinates actually fall within the defined political units.
+						Click on the list symbol to display specimens of that ranking. If there was a mismatch between coordinates and county, this could be due to:
+					</p>
+					<ul>
+						<li>Coordinates fall outside of county limits</li>
+						<li>Wrong county was entered</li>
+						<li>County is misspelled</li>
+					</ul>
+					<p style="margin: 0">
+						* Note coordinate validation is limited to 50000 records at a time, but can be ran mutliple times
+					</p>
 				</div>
-				<div style="margin:15px">
+
 				<?php if($action) {
 					echo '<fieldset style="padding:20px">';
 				if($action == 'Validate Coordinates'){
@@ -105,7 +114,7 @@ if($IS_ADMIN) $isEditor = 1;
 					$total_proccessed = 0;
 					$start = time();
 					$TARGET_OFFSET = 1000;
-					$MAX_VALIDATION_BATCH = 1000;
+					$MAX_VALIDATION_BATCH = 50000;
 					for($offset = 0; $offset < $MAX_VALIDATION_BATCH; $offset += $TARGET_OFFSET) {
 						$count = count($cleanManager->verifyCoordAgainstPoliticalV2());
 						$total_proccessed += $count;
@@ -163,13 +172,36 @@ if($IS_ADMIN) $isEditor = 1;
 							}
 						}
 						else{
-							echo '<div style="margin:30xp;font-weight:bold;font-size:150%">Nothing to be displayed</div>';
+							echo '<div style="margin:30px;font-weight:bold;font-size:150%">Nothing to be displayed</div>';
 						}
 					}
 					echo '</fieldset>';
 				}?>
-				</div>
-				<div style="margin:10px">
+
+				<form action="coordinatevalidator.php" method="post">
+					<input name="q_country" type="hidden" value="<?= $country; ?>" />
+					<input name="collid" type="hidden" value="<?= $collidStr; ?>" />
+					<input name="action" type="hidden" value="Validate Coordinates" />
+
+					<div>
+						<input type="checkbox" id="populate_country" name="populate_country" checked />
+						<label for="populate_country">Populate country if missing and validated</label>
+					</div>
+
+					<div>
+						<input type="checkbox" id="populate_stateProvince" name="populate_stateProvince" checked />
+						<label for="populate_stateProvince">Populate State/Province if missing and validated</label>
+					</div>
+
+					<div>
+						<input type="checkbox" id="populate_county" name="populate_county" checked />
+						<label for="populate_county">Populate county if missing and validated</label>
+					</div>
+
+					<button type="submit">Validate All Coordinates</button>
+				</form>
+
+				<div>
 					<div style="font-weight:bold">Ranking Statistics</div>
 					<?php
 					$coordRankingArr = $cleanManager->getRankingStats('coordinate');
@@ -192,33 +224,27 @@ if($IS_ADMIN) $isEditor = 1;
 					echo '</table>';
 					?>
 				</div>
-				<div style="margin:10px">
+				<div>
 					<div style="font-weight:bold">Non-verified listed by Country</div>
+					<table class="styledtable">
+					<tr><th>Country</th><th>Count</th>
 					<?php
 					$countryArr = $cleanManager->getUnverifiedByCountry();
 					arsort($countryArr);
-					echo '<table class="styledtable">';
-					echo '<tr><th>Country</th><th>Count</th><th>Action</th></tr>';
-					foreach($countryArr as $country => $cnt){
-						echo '<tr>';
-						echo '<td>';
-						echo $country;
-						echo ' <a href="../list.php?db=all&country=' . htmlspecialchars($country, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank"><img src="../../images/list.png" style="width:1.2em" /></a>';
-						echo '</td>';
-						echo '<td>'.number_format($cnt).'</td>';
-						echo '<td>';
-						?>
-						<form action="coordinatevalidator.php" method="post" style="margin:10px">
-							<input name="q_country" type="hidden" value="<?php echo $country; ?>" />
-							<input name="collid" type="hidden" value="<?php echo $collidStr; ?>" />
-							<input name="action" type="submit" value="Validate Coordinates" />
-						</form>
-						<?php
-						echo '</td>';
-						echo '</tr>';
-					}
-					echo '</table>';
-					?>
+					foreach($countryArr as $country => $cnt) {?>
+						<tr>
+						<td>
+							<div style="display: flex; align-items: center; gap: 0.5rem">
+							<?= $country ?>
+							<a style="display: flex; flex-grow: 1; justify-content: end"href="../list.php?db=<?= $collidStr ?? 'all' ?>&country=<?= htmlspecialchars($country, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE)?>" target="_blank">
+								<img src="../../images/list.png"/>
+							</a>
+							</div>
+						</td>
+						<td><?= number_format($cnt)?></td>
+						</tr>
+					<?php } ?>
+					</table>
 				</div>
 	 			<?php } else { ?>
 				<fieldset style="padding: 15px;margin:20px;">
