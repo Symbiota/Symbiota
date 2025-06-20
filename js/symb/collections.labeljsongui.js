@@ -157,7 +157,7 @@ const fieldProps = [
     block: "labelBlock",
     name: "Description",
     id: "description",
-    group: "event",
+    group: "specimen",
   },
   { block: "labelBlock", name: "Behavior", id: "behavior", group: "specimen" },
   {
