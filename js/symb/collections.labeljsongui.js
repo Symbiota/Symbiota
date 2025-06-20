@@ -112,7 +112,7 @@ const fieldProps = [
   {
     block: "labelBlock",
     name: "Collector",
-    id: "collectedby",
+    id: "collector",
     group: "event",
   },
   {
