@@ -376,9 +376,9 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 							</div>
 							<div class="input-text-container">
 								<label for="collector" class="input-text--outlined">
-									<span class="screen-reader-only"><?php echo $LANG['COLLECTOR_LAST_NAME'] ?></span>
-									<input type="text" id="collector" size="32" name="collector" value="" data-chip="<?php echo $LANG['COLLECTOR_LAST'] ?>" />
-									<span class="inset-input-label"><?php echo $LANG['COLLECTOR_LASTNAME']; ?></span>
+									<span class="screen-reader-only"><?php echo $LANG['COLLECTOR_NAME'] ?></span>
+									<input type="text" id="collector" size="32" name="collector" value="" data-chip="<?php echo $LANG['COLLECTOR_NAME'] ?>" />
+									<span class="inset-input-label"><?php echo $LANG['COLLECTOR_NAME']; ?></span>
 									<span class="assistive-text"><?= $LANG['SEPARATE_MULTIPLE'] ?></span>
 								</label>
 							</div>
