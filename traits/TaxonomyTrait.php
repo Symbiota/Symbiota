@@ -17,7 +17,7 @@ trait TaxonomyTrait {
 		$returnObj['base'] = trim($scinameBase ?? '');
 		$returnObj['cultivarEpithet'] = $this->cultivarEpithet; // assumes quotes not stored in db
 		$returnObj['tradeName'] = $this->tradeName;
-		$returnObj['author'] = $this->author;
+		$returnObj['author'] = $occArr['scientificnameauthorship'] ?? $this->author;
 		// @TODO decide whether we want to add a ['nonItal'] element to this array.
 
 
