@@ -34,6 +34,7 @@ $collList = $collManager->getFullCollectionList($catId);
 $specArr = (isset($collList['spec']) ? $collList['spec'] : null);
 $obsArr = (isset($collList['obs']) ? $collList['obs'] : null);
 $associationManager = new AssociationManager();
+$characters = $collManager->getCharacters();
 $relationshipTypes = $associationManager->getRelationshipTypes();
 ?>
 <!DOCTYPE html>
@@ -580,6 +581,71 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 						</div>
 					</div>
 				</section>
+
+				<!-- Character Search -->
+				<?php if (!empty($characters)): ?>
+				<section>
+					<!-- Character selector -->
+					<input type="checkbox" id="characters" class="accordion-selector" />
+
+					<!-- Character header -->
+					<label for="characters" class="accordion-header"><?php echo $LANG['CHARACTERS'] ?></label>
+
+					<div id="search-form-characters" class="content">
+						<div>
+							<?php if (!empty($characters)): ?>
+								<div><?= $LANG['CHARACTER_NOTE'] ?><br></br></div>
+								<?php
+								$grouped = [];
+								foreach ($characters as $cid => $char) {
+									$heading = $char['heading'] ?: 'Other';
+									$grouped[$heading][$cid] = $char;
+								}
+								?>
+
+								<?php foreach ($grouped as $heading => $charGroup): ?>
+									<?php
+										$idStr = preg_replace('/[^a-zA-Z0-9]+/', '-', strtolower($heading));
+									?>
+
+									<div class="char-headings">
+										<a href="#" onclick="toggleCharacterGroup('<?php echo $idStr; ?>'); return false;" class="condense-expand">
+											<span class="heading-text"><?php echo htmlspecialchars($heading); ?></span>
+											<span class="icon-wrapper">
+												<img id="plus-<?php echo $idStr; ?>" src="../../images/plus.png" alt="Expand" style="display:inline; width:1em;">
+												<img id="minus-<?php echo $idStr; ?>" src="../../images/minus.png" alt="Collapse" style="display:none; width:1em;">
+											</span>
+										</a>
+									</div>
+
+									<div id="char-block-<?php echo $idStr; ?>" style="display:none;">
+									<?php foreach ($charGroup as $cid => $char): ?>
+										<div class="character-block">
+											<div class="char-names"><?php echo htmlspecialchars($char['charName']); ?></div>
+											<div class="char-states">
+												<?php foreach ($char['states'] as $state): ?>
+													<?php
+													$charChip = htmlspecialchars($char['heading']) . " [" .
+																htmlspecialchars($char['charName']) . "]: " .
+																htmlspecialchars($state['charStateName']);
+													?>
+													<label>
+														<input type="checkbox" name="characters[]" data-chip="<?php echo $charChip; ?>" value="<?php echo $cid . ':' . htmlspecialchars($state['cs']); ?>">
+														<?php echo htmlspecialchars($state['charStateName']); ?>
+													</label><br>
+												<?php endforeach; ?>
+											</div>
+										</div>
+									<?php endforeach; ?>
+								</div>
+								<?php endforeach; ?>
+							<?php else: ?>
+								<p><?php echo $LANG['NOCHARFOUND'] ?></p>
+							<?php endif; ?>
+						</div>
+					</div>
+				</section>
+				<?php endif; ?>
 
 				<!-- Geological Context -->
 				<?php

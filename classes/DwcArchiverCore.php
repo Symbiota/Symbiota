@@ -1878,9 +1878,7 @@ class DwcArchiverCore extends Manager{
 						//$dynProp = $r['dynamicProperties'] . '; ' . $dynProp;
 						//$r['dynamicProperties'] = $dynProp;
 					}
-					// if ($assocOccurStr = $dwcOccurManager->getAssociationStr($r['occid'])) $r['t_associatedOccurrences'] = $assocOccurStr;
 					if ($assocSeqStr = $dwcOccurManager->getAssociatedSequencesStr($r['occid'])) $r['t_associatedSequences'] = $assocSeqStr;
-					// if ($assocTaxa = $dwcOccurManager->getAssociationStr($r['occid'], 'observational')) $r['associatedTaxa'] = $assocTaxa;
 				}
 				//$dwcOccurManager->appendUpperTaxonomy($r);
 				$dwcOccurManager->appendUpperTaxonomy2($r);
@@ -2166,12 +2164,10 @@ class DwcArchiverCore extends Manager{
 			$this->fieldArrMap['associations'] = $this->associationHandler->getFieldArrTerms();
 		}
 		if($this->associationHandler){
-			// $this->associationHandler->writeOutRecordBlock($batchOccidArr, 'o.occid');
 			$this->associationHandler->writeOutRecordBlock($batchOccidArr, 'oa.occid');
 			//Now add inverse relationships
 			$this->associationHandler->setSqlBase(true);
 			$this->associationHandler->writeOutRecordBlock($batchOccidArr, 'oa.occidAssociate');
-			// $this->associationHandler->writeOutRecordBlock($batchOccidArr, 'o.occid');
 
 		}
 	}

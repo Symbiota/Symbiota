@@ -21,21 +21,13 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 	//Based on https://rs.gbif.org/extension/resource_relationship_2024-02-19.xml
 	private function setFieldArr(){
 		$columnArr = array();
-		// $termArr['deleteMeOccid'] = 'http://rs.tdwg.org/dwc/terms/resourceRelationshipID';
-		// $columnArr['deleteMeOccid'] = 'oa.occid';
-		// $termArr['deleteMeOccidAssociate'] = 'http://rs.tdwg.org/dwc/terms/resourceRelationshipID';
-		// $columnArr['deleteMeOccidAssociate'] = 'oa.occidAssociate';
 		$termArr['resourceRelationshipID'] = 'http://rs.tdwg.org/dwc/terms/resourceRelationshipID';
-		// $columnArr['resourceRelationshipID'] = 'IFNULL(IFNULL(IFNULL(oa.objectID, o.occurrenceID), o.recordID), oa.resourceUrl)';
 		$columnArr['resourceRelationshipID'] = 'IFNULL(oa.instanceID, oa.recordID)';
 		$termArr['resourceID'] = 'http://rs.tdwg.org/dwc/terms/resourceID';
-		// $columnArr['resourceID'] = 'oa.occid'; // @TODO occurrence o o.occoccurrenceID
-		$columnArr['resourceID'] = 'IFNULL(o.occurrenceID, o.recordID)'; // @TODO occurrence o o.occoccurrenceID
+		$columnArr['resourceID'] = 'IFNULL(o.occurrenceID, o.recordID)';
 		$termArr['relationshipOfResourceID'] = 'http://rs.tdwg.org/dwc/terms/relationshipOfResourceID';
 		$columnArr['relationshipOfResourceID'] = 'oa.relationshipID';
 		$termArr['relatedResourceID'] = 'http://rs.tdwg.org/dwc/terms/relatedResourceID';
-		// $columnArr['relatedResourceID'] = 'IFNULL(oo.instanceID,oo.resourceUrl)'; // @TODO maybe add logic IF associationType='externalOccurrence' ? resourceUrl : IFNULL(instanceID,resourceUrl)
-		// $columnArr['relatedResourceID'] = 'IFNULL(oo.occurrenceID, oo.recordID)';
 		$columnArr['relatedResourceID'] = 'IFNULL(IFNULL(IFNULL(oa.objectID, oo.occurrenceID), oo.recordID), oa.resourceUrl)';
 		$termArr['relationshipOfResource'] = 'http://rs.tdwg.org/dwc/terms/relationshipOfResource';
 		$columnArr['relationshipOfResource'] = 'oa.relationship';
@@ -46,7 +38,6 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 		$termArr['relationshipRemarks'] = 'http://rs.tdwg.org/dwc/terms/relationshipRemarks';
 		$columnArr['relationshipRemarks'] = 'oa.notes';
 		$termArr['scientificName'] = 'http://rs.tdwg.org/dwc/terms/scientificName';
-		// $columnArr['scientificName'] = "CASE WHEN oa.associationType = 'observational' THEN oa.verbatimSciName ELSE o.sciname END AS sciname"; // Note that t.sciname delivers the subject sciname; hence, o.sciname
 		$columnArr['scientificName'] = "CASE WHEN oa.associationType = 'observational' THEN oa.verbatimSciName ELSE ot.sciname END AS sciname"; // Note that t.sciname delivers the subject sciname; hence, o.sciname
 
 		$termArr['associd'] = 'https://symbiota.org/terms/associd';
@@ -61,8 +52,6 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 		$columnArr['identifier'] = 'oa.identifier';
 		$termArr['basisOfRecord'] = 'http://rs.tdwg.org/dwc/terms/basisOfRecord';
 		$columnArr['basisOfRecord'] = 'oa.basisOfRecord';
-		// $termArr['verbatimSciname'] = 'https://symbiota.org/terms/verbatimSciname';
-		// $columnArr['verbatimSciname'] = 'oa.verbatimSciname';
 		$termArr['tid'] = 'https://symbiota.org/terms/tid';
 		$columnArr['tid'] = 'oa.tid';
 		$termArr['locationOnHost'] = 'https://symbiota.org/terms/locationOnHost';
@@ -93,10 +82,7 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 
 	private function trimBySchemaType($dataArr){
 		$trimArr = array();
-		if($this->schemaType == 'backup'){
-			//$trimArr = array();
-		}
-		elseif($this->schemaType == 'dwc'){
+		if($this->schemaType == 'dwc'){
 			$trimArr = array('associd', 'associationType', 'subType', 'objectID', 'identifier',
 			 'verbatimSciname', 'tid', 'locationOnHost', 'conditionOfAssociate',
 			  'imageMapJSON', 'sourceIdentifier', 'recordID', 'createdUid',
@@ -105,7 +91,6 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 		return array_diff_key($dataArr, array_flip($trimArr));
 	}
 
-	// @TODO decide if setDynamicFields is needed
 
 	public function setSqlBase($getInverse = false){
 		if($this->fieldArr){
@@ -114,7 +99,6 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 				foreach($this->fieldArr['fields'] as $colName){
 					if($colName) $sqlFrag .= ', ' . $colName;
 				}
-				// $this->sqlBase = 'SELECT ' . trim($sqlFrag, ', ') . ' FROM omoccurassociations ';
 				$this->sqlBase = 'SELECT DISTINCT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o
 					INNER JOIN omoccurassociations oa ON o.occid = oa.occid
 					LEFT JOIN omoccurrences oo ON oo.occid = oa.occidAssociate
@@ -126,7 +110,6 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 				foreach($this->fieldArr['fields'] as $colName){
 					if($colName) $sqlFrag .= ', ' . $colName;
 				}
-				// $this->sqlBase = 'SELECT ' . trim($sqlFrag, ', ') . ' FROM omoccurassociations ';
 				$this->sqlBase = 'SELECT DISTINCT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o
 					INNER JOIN omoccurassociations oa ON o.occid = oa.occidAssociate
 					INNER JOIN omoccurrences oo ON oo.occid = oa.occid

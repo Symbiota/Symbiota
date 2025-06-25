@@ -57,8 +57,6 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['family'] = 'o.family';
 		$this->occurDefArr['terms']['scientificName'] = 'http://rs.tdwg.org/dwc/terms/scientificName';
 		$this->occurDefArr['fields']['scientificName'] = 'o.sciname AS scientificName';
-		//$this->occurDefArr['terms']['verbatimScientificName'] = 'https://symbiota.org/terms/verbatimScientificName';
-		//$this->occurDefArr['fields']['verbatimScientificName'] = 'o.scientificname AS verbatimScientificName';
 		$this->occurDefArr['terms']['taxonID'] = 'http://rs.tdwg.org/dwc/terms/taxonID';
 		$this->occurDefArr['fields']['taxonID'] = 'o.tidinterpreted as taxonID';
 		$this->occurDefArr['terms']['scientificNameAuthorship'] = 'http://rs.tdwg.org/dwc/terms/scientificNameAuthorship';
@@ -95,8 +93,6 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['typeStatus'] = 'o.typeStatus';
 		$this->occurDefArr['terms']['recordedBy'] = 'http://rs.tdwg.org/dwc/terms/recordedBy';
 		$this->occurDefArr['fields']['recordedBy'] = 'o.recordedBy';
-		//$this->occurDefArr['terms']['recordedByID'] = 'https://symbiota.org/terms/recordedByID';
-		//$this->occurDefArr['fields']['recordedByID'] = 'o.recordedById';
 		$this->occurDefArr['terms']['associatedCollectors'] = 'https://symbiota.org/terms/associatedCollectors';
 		$this->occurDefArr['fields']['associatedCollectors'] = 'o.associatedCollectors';
 		$this->occurDefArr['terms']['recordNumber'] = 'http://rs.tdwg.org/dwc/terms/recordNumber';
@@ -139,8 +135,6 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['dataGeneralizations'] = 'o.dataGeneralizations';
 		$this->occurDefArr['terms']['dynamicProperties'] = 'http://rs.tdwg.org/dwc/terms/dynamicProperties';
 		$this->occurDefArr['fields']['dynamicProperties'] = 'o.dynamicProperties';
-		// $this->occurDefArr['terms']['associatedOccurrences'] = 'http://rs.tdwg.org/dwc/terms/associatedOccurrences';
-		// $this->occurDefArr['fields']['associatedOccurrences'] = '';
 		$this->occurDefArr['terms']['associatedSequences'] = 'http://rs.tdwg.org/dwc/terms/associatedSequences';
 		$this->occurDefArr['fields']['associatedSequences'] = '';
 		$this->occurDefArr['terms']['associatedTaxa'] = 'http://rs.tdwg.org/dwc/terms/associatedTaxa';
@@ -482,8 +476,6 @@ class DwcArchiverOccurrence extends Manager{
 				}
 				$rs->free();
 			}
-			//Append associations of duplicate specimen
-			// $this->appendSpecimenDuplicateAssociations($occid, $assocArr, $internalAssocOccidArr);
 
 			//Append resource URLs to each output record
 			if($internalAssocOccidArr){

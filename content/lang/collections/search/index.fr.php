@@ -126,6 +126,9 @@ $LANG['ASSOCIATIONS'] = 'Les associations';
 $LANG['ASSOCIATION_DESCRIPTION'] = 'Trouver toutes les occurrences de taxons qui ont l\'association suivante';
 $LANG['ASSOCIATION_DESCRIPTION_2'] = 'avec le taxon suivant';
 $LANG['ASSOCIATION_TYPE'] = 'Type d\'association';
+$LANG['CHARACTERS'] = 'Caractères';
+$LANG['CHARACTER_NOTE'] = "<b>Remarque</b>: les états de caractères dépendent des valeurs attribuées par la communauté de ce portail. Certains taxons peuvent ne pas avoir d'états de caractères attribués et peuvent donc ne pas apparaître dans vos résultats de recherche.";
+$LANG['NOCHARFOUND'] = 'Aucun caractère trouvé';
 $LANG['GEO_CONTEXT'] = 'Contexte géologique';
 $LANG['EARLY_INT'] = 'Intervalle précoce';
 $LANG['LATE_INT'] = 'Intervalle tardif';
@@ -133,4 +136,5 @@ $LANG['LITHOGROUP'] = 'Groupe';
 $LANG['FORMATION'] = 'Formation';
 $LANG['MEMBER'] = 'Membre';
 $LANG['BED'] = 'Lit';
+
 ?>

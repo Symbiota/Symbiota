@@ -1,14 +1,12 @@
 
-
-
 ALTER TABLE `omoccurpaleo`
   CHANGE COLUMN `biota` `biota` VARCHAR(100) NULL DEFAULT NULL COMMENT 'Flora or Fanua' ,
   CHANGE COLUMN `lithology` `lithology` VARCHAR(700) NULL DEFAULT NULL ,
   CHANGE COLUMN `stratRemarks` `stratRemarks` VARCHAR(1000) NULL DEFAULT NULL ,
   CHANGE COLUMN `geologicalContextID` `geologicalContextID` VARCHAR(100) NULL DEFAULT NULL ;
 
-ALTER TABLE omoccurrencepaleo
-  DROP COLUMN 'storageAge';
+ALTER TABLE `omoccurpaleo`
+  DROP COLUMN `storageAge`;
 
 ALTER TABLE `omoccurpaleogts`
   ADD COLUMN `myaStart` FLOAT NULL DEFAULT NULL AFTER `rankname`,

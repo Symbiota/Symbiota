@@ -783,3 +783,59 @@
 #geologicalContextIDDiv{ float:left; margin:3px; }
 #geologicalContextIDDiv input{ width:120px; }
 
+/*From old occurrenceeditor.css that were missing in this version*/
+#catalogNumberDiv {
+	margin-top: 5px;
+}
+#otherCatalogNumbersDiv {
+	margin-left: 10px;
+}
+#geography1-div{
+	display: none;
+}
+#continentDiv{
+	float:	left;
+}
+
+#continentDiv input{
+	width:	150px;
+}
+#waterBodyDiv{
+	float:	left;
+}
+
+#waterBodyDiv input{
+	width:	150px;
+}
+
+#islandGroupDiv{
+	float:	left;
+}
+
+#islandGroupDiv input{
+	width:	150px;
+}
+
+#islandDiv{
+	float:	left;
+}
+
+#islandDiv input{
+	width:	150px;
+}
+#behaviorDiv{
+	float: left;
+}
+
+#behaviorDiv input{
+	width: 140px;
+}
+
+#vitalityDiv{
+	float: left;
+}
+
+#vitalityDiv input{
+	width: 140px;
+}
+/*End old occurrenceeditor.css*/

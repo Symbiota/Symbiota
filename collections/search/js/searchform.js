@@ -202,7 +202,6 @@ function handleRemoval(element, inputChip) {
   setMaterialSampleToDefault(element);
   setTaxonTypeToDefault(element);
   setAssociationTaxonTypeToDefault(element);
-  // uncheckAllChip(element); // @TODO test this out
   element.dataset.formId ? uncheckAll(element) : "";
   removeChip(inputChip);
 }
@@ -1067,6 +1066,20 @@ function toggleAccordionsFromSessionStorage(accordionIds) {
       accordion.checked = true;
     }
   });
+}
+
+function toggleCharacterGroup(charID) {
+  const plus = document.getElementById('plus-' + charID);
+  const minus = document.getElementById('minus-' + charID);
+  const block = document.getElementById('char-block-' + charID);
+
+  if (!plus || !minus || !block) return;
+
+  const isVisible = block.style.display === 'block';
+
+  block.style.display = isVisible ? 'none' : 'block';
+  plus.style.display = isVisible ? 'inline' : 'none';
+  minus.style.display = isVisible ? 'none' : 'inline';
 }
 
 //////////////////////////////////////////////////////////////////////////

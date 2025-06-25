@@ -45,7 +45,28 @@ table {
 	display: none;
 }
 
-#otherCatalogNumbersDiv {
+#otherCatalogNumbersDiv,
+#eonDiv, 
+#eraDiv,
+#periodDiv,
+#epochDiv,
+#stageDiv,
+#earlyIntervalDiv,
+#absoluteAgeDiv,
+#storageAgeDiv,
+#localStageDiv,
+#biotaDiv,
+#biostratigraphyDiv,
+#taxonEnvironmentDiv,
+#lithoGroupDiv,
+#formationDiv,
+#memberDiv,
+#bedDiv,
+#lithologyDiv,
+#stratRemarksDiv,
+#elementDiv,
+#slidePropertiesDiv,
+#geologicalContextIdDiv {
 	float: left;
 	margin-right: 2px;
 }
@@ -356,12 +377,56 @@ table {
 	display:block;
 }
 
-#verbatimCoordinatesDiv{
+#verbatimCoordinatesDiv,
+#eonDiv, 
+#eraDiv,
+#periodDiv,
+#epochDiv,
+#stageDiv,
+#earlyIntervalDiv,
+#lateIntervalDiv,
+#absoluteAgeDiv,
+#storageAgeDiv,
+#localStageDiv,
+#biotaDiv,
+#biostratigraphyDiv,
+#taxonEnvironmentDiv,
+#lithoGroupDiv,
+#formationDiv,
+#memberDiv,
+#bedDiv,
+#lithologyDiv,
+#stratRemarksDiv,
+#elementDiv,
+#slidePropertiesDiv,
+#geologicalContextIdDiv{
 	float: left;
 	margin-top: 2px;
 }
 
-#verbatimCoordinatesDiv input{
+#verbatimCoordinatesDiv input,
+#eonDiv input, 
+#eraDiv input,
+#periodDiv input,
+#epochDiv input,
+#stageDiv input,
+#earlyIntervalDiv input,
+#lateIntervalDiv input,
+#absoluteAgeDiv input,
+#storageAgeDiv input,
+#localStageDiv input,
+#biotaDiv input,
+#biostratigraphyDiv input,
+#taxonEnvironmentDiv input,
+#lithoGroupDiv input,
+#formationDiv input,
+#memberDiv input,
+#bedDiv input,
+#lithologyDiv input,
+#stratRemarksDiv input,
+#elementDiv input,
+#slidePropertiesDiv input,
+#geologicalContextIdDiv input{
 	width:	200px;
 }
 
