@@ -2050,7 +2050,7 @@ CREATE TABLE `omoccurpaleo` (
   `earlyInterval` varchar(65) DEFAULT NULL,
   `lateInterval` varchar(65) DEFAULT NULL,
   `absoluteAge` varchar(65) DEFAULT NULL,
-  `storageAge` varchar(65) DEFAULT NULL,
+  `storageLoc` varchar(65) DEFAULT NULL,
   `stage` varchar(65) DEFAULT NULL,
   `localStage` varchar(65) DEFAULT NULL,
   `biota` varchar(65) DEFAULT NULL COMMENT 'Flora or Fanua',

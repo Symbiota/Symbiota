@@ -354,8 +354,9 @@ class SpecUploadBase extends SpecUpload{
 			'generalnotes'=>'occurrenceremarks','plantdescription'=>'verbatimattributes','description'=>'verbatimattributes','specimendescription'=>'verbatimattributes',
 			'phenology'=>'reproductivecondition','field:habitat'=>'habitat','habitatdescription'=>'habitat','sitedeschabitat'=>'habitat','captivecultivated'=>'cultivationstatus',
 			'ometid'=>'exsiccatiidentifier','exsiccataeidentifier'=>'exsiccatiidentifier','exsnumber'=>'exsiccatinumber','exsiccataenumber'=>'exsiccatinumber',
-			'group'=>'paleo-lithogroup',//'materialsample-materialsampleid'=>'materialsample-guid','preparationdetails'=>'materialsample-preparationprocess','materialsampletype'=>'materialsample-sampletype',
-			'lithostratigraphic'=>'paleo-lithology','imageurl'=>'associatedmedia','subject_references'=>'tempfield01',
+			'group'=>'paleo-lithogroup','lithostratigraphic'=>'paleo-lithology',
+			//'materialsample-materialsampleid'=>'materialsample-guid','preparationdetails'=>'materialsample-preparationprocess','materialsampletype'=>'materialsample-sampletype',
+			'imageurl'=>'associatedmedia','subject_references'=>'tempfield01',
 			'subject_recordid'=>'tempfield02'
 		);
 		$autoMapExclude = array('institutioncode','collectioncode');
@@ -409,7 +410,7 @@ class SpecUploadBase extends SpecUpload{
 		}
 		//Output table rows for source data
 		echo '<table class="styledtable" style="width:600px;font-size:12px;">';
-		echo '<tr><th>Source Field</th><th>Target Field</th></tr>'."\n";
+		echo '<tr><th>Source Field</th><th>Target Field ' . '<a href="https://biokic.github.io/symbiota-docs/coll_manager/upload/fields/" target="_blank"><img src="../../images/info.png" style="width:1.2em;" alt="More about Symbiota Data Fields" title="More about Symbiota Data Fields" aria-label="more info"/></a></th></tr>'."\n";
 		foreach($sourceArr as $fieldName){
 			if($fieldName == 'coreid') continue;
 			$diplayFieldName = $fieldName;
@@ -757,6 +758,8 @@ class SpecUploadBase extends SpecUpload{
 		$this->outputMsg('<li style="margin-left:10px;">Setting basisOfRecord for new records, if not designated within import file...</li>');
 		$borValue = 'PreservedSpecimen';
 		if(strpos($this->collMetadataArr['colltype'], 'Observations') !== false) $borValue = 'HumanObservation';
+		elseif($this->paleoSupport) $borValue = 'FossilSpecimen';
+
 		$sql = 'UPDATE uploadspectemp SET basisOfRecord = "'.$borValue.'" WHERE basisOfRecord IS NULL AND occid IS NULL';
 		$this->conn->query($sql);
 	}
@@ -1201,54 +1204,75 @@ class SpecUploadBase extends SpecUpload{
 			$this->outputMsg('<li>Linking Paleo data...</li>');
 			$sql = 'SELECT occid, catalogNumber, paleoJSON FROM uploadspectemp WHERE (occid IS NOT NULL) AND (paleoJSON IS NOT NULL) AND (collid = '.$this->collId.')';
 			$rs = $this->conn->query($sql);
+			$paleogtsTerms = $this->getPaleoGtsTerms();
+			$lcaseGtsMap = [];
+			foreach ($paleogtsTerms as $key => $val) {
+				$lcaseGtsMap[strtolower($key)] = $key;
+			}
 			while($r = $rs->fetch_object()){
 				try{
 					$paleoArr = json_decode($r->paleoJSON,true);
 					//Deal with DwC terms
-					$eonTerm = '';
-					if(isset($paleoArr['earliesteonorlowesteonothem']) && $paleoArr['earliesteonorlowesteonothem']) $eonTerm = $paleoArr['earliesteonorlowesteonothem'];
-					if(isset($paleoArr['latesteonorhighesteonothem']) && $paleoArr['latesteonorhighesteonothem'] != $eonTerm) $eonTerm .= ' - '.$paleoArr['latesteonorhighesteonothem'];
-					if($eonTerm && !isset($paleoArr['eon'])) $paleoArr['eon'] = $eonTerm;
-					unset($paleoArr['earliesteonorlowesteonothem']);
-					unset($paleoArr['latesteonorhighesteonothem']);
 
-					$eraTerm = '';
-					if(isset($paleoArr['earliesteraorlowesterathem']) && $paleoArr['earliesteraorlowesterathem']) $eraTerm = $paleoArr['earliesteraorlowesterathem'];
-					if(isset($paleoArr['latesteraorhighesterathem']) && $paleoArr['latesteraorhighesterathem'] != $eraTerm) $eraTerm .= ' - '.$paleoArr['latesteraorhighesterathem'];
-					if($eraTerm && !isset($paleoArr['era'])) $paleoArr['era'] = $eraTerm;
-					unset($paleoArr['earliesteraorlowesterathem']);
-					unset($paleoArr['latesteraorhighesterathem']);
+					$eonLow = (!empty($paleoArr['earliesteonorlowesteonothem'])) ? $paleoArr['earliesteonorlowesteonothem'] : '';
+					$eonHigh = (!empty($paleoArr['latesteonorhighesteonothem'])) ? $paleoArr['latesteonorhighesteonothem'] : '';
+					if(($eonLow || $eonHigh) && !isset($paleoArr['eon']))
+						$paleoArr['eon'] = trim($eonLow . ($eonHigh && $eonHigh != $eonLow ? ' - ' . $eonHigh : ''));
+					unset($paleoArr['earliesteonorlowesteonothem'], $paleoArr['latesteonorhighesteonothem']);
 
-					$periodTerm = '';
-					if(isset($paleoArr['earliestperiodorlowestsystem']) && $paleoArr['earliestperiodorlowestsystem']) $periodTerm = $paleoArr['earliestperiodorlowestsystem'];
-					if(isset($paleoArr['latestperiodorhighestsystem']) && $paleoArr['latestperiodorhighestsystem'] != $periodTerm) $periodTerm .= ' - '.$paleoArr['latestperiodorhighestsystem'];
-					if($periodTerm && !isset($paleoArr['period'])) $paleoArr['period'] = $periodTerm;
-					unset($paleoArr['earliestperiodorlowestsystem']);
-					unset($paleoArr['latestperiodorhighestsystem']);
+					$eraLow = (!empty($paleoArr['earliesteraorlowesterathem'])) ? $paleoArr['earliesteraorlowesterathem'] : '';
+					$eraHigh = (!empty($paleoArr['latesteraorhighesterathem'])) ? $paleoArr['latesteraorhighesterathem'] : '';
+					if(($eraLow || $eraHigh) && !isset($paleoArr['era']))
+						$paleoArr['era'] = trim($eraLow . ($eraHigh && $eraHigh != $eraLow ? ' - ' . $eraHigh : ''));
+					unset($paleoArr['earliesteraorlowesterathem'], $paleoArr['latesteraorhighesterathem']);
 
-					$epochTerm = '';
-					if(isset($paleoArr['earliestepochorlowestseries']) && $paleoArr['earliestepochorlowestseries']) $epochTerm = $paleoArr['earliestepochorlowestseries'];
-					if(isset($paleoArr['latestepochorhighestseries']) && $paleoArr['latestepochorhighestseries'] != $epochTerm) $epochTerm .= ' - '.$paleoArr['latestepochorhighestseries'];
-					if($epochTerm && !isset($paleoArr['epoch'])) $paleoArr['epoch'] = $epochTerm;
-					unset($paleoArr['earliestepochorlowestseries']);
-					unset($paleoArr['latestepochorhighestseries']);
+					$periodLow = (!empty($paleoArr['earliestperiodorlowestsystem'])) ? $paleoArr['earliestperiodorlowestsystem'] : '';
+					$periodHigh = (!empty($paleoArr['latestperiodorhighestsystem'])) ? $paleoArr['latestperiodorhighestsystem'] : '';
+					if(($periodLow || $periodHigh) && !isset($paleoArr['period']))
+						$paleoArr['period'] = trim($periodLow . ($periodHigh && $periodHigh != $periodLow ? ' - ' . $periodHigh : ''));
+					unset($paleoArr['earliestperiodorlowestsystem'], $paleoArr['latestperiodorhighestsystem']);
 
-					$stageTerm = '';
-					if(isset($paleoArr['earliestageorloweststage']) && $paleoArr['earliestageorloweststage']) $stageTerm = $paleoArr['earliestageorloweststage'];
-					if(isset($paleoArr['latestageorhigheststage']) && $paleoArr['latestageorhigheststage'] != $stageTerm) $stageTerm .= ' - '.$paleoArr['latestageorhigheststage'];
-					if($stageTerm && !isset($paleoArr['stage'])) $paleoArr['stage'] = $stageTerm;
-					unset($paleoArr['earliestageorloweststage']);
-					unset($paleoArr['latestageorhigheststage']);
+					$epochLow = (!empty($paleoArr['earliestepochorlowestseries'])) ? $paleoArr['earliestepochorlowestseries'] : '';
+					$epochHigh = (!empty($paleoArr['latestepochorhighestseries'])) ? $paleoArr['latestepochorhighestseries'] : '';
+					if(($epochLow || $epochHigh) && !isset($paleoArr['epoch']))
+						$paleoArr['epoch'] = trim($epochLow . ($epochHigh && $epochHigh != $epochLow ? ' - ' . $epochHigh : ''));
+					unset($paleoArr['earliestepochorlowestseries'], $paleoArr['latestepochorhighestseries']);
 
-					$biostratigraphyTerm = '';
-					if(isset($paleoArr['lowestbiostratigraphiczone']) && $paleoArr['lowestbiostratigraphiczone']) $biostratigraphyTerm = $paleoArr['lowestbiostratigraphiczone'];
-					if(isset($paleoArr['highestbiostratigraphiczone']) && $paleoArr['highestbiostratigraphiczone'] != $biostratigraphyTerm) $biostratigraphyTerm .= ' - '.$paleoArr['highestbiostratigraphiczone'];
-					if($biostratigraphyTerm && !isset($paleoArr['biostratigraphy'])) $paleoArr['biostratigraphy'] = $biostratigraphyTerm;
-					unset($paleoArr['lowestbiostratigraphiczone']);
-					unset($paleoArr['highestbiostratigraphiczone']);
+					$stageLow = (!empty($paleoArr['earliestageorloweststage'])) ? $paleoArr['earliestageorloweststage'] : '';
+					$stageHigh = (!empty($paleoArr['latestageorhigheststage'])) ? $paleoArr['latestageorhigheststage'] : '';
+					if(($stageLow || $stageHigh) && !isset($paleoArr['stage']))
+						$paleoArr['stage'] = trim($stageLow . ($stageHigh && $stageHigh != $stageLow ? ' - ' . $stageHigh : ''));
+					unset($paleoArr['earliestageorloweststage'], $paleoArr['latestageorhigheststage']);
 
 					$insertSQL = '';
 					$valueSQL = '';
+
+					if (!isset($paleoArr['earlyInterval'])) {
+						foreach ([ $stageLow, $epochLow, $periodLow, $eraLow, $eonLow ] as $term) {
+							$termLower = strtolower($term);
+							if (isset($lcaseGtsMap[$termLower])) {
+								$paleoArr['earlyInterval'] = $lcaseGtsMap[$termLower];
+								break;
+							}
+						}
+					}
+
+					if (!isset($paleoArr['lateInterval'])) {
+						foreach ([ $stageHigh, $epochHigh, $periodHigh, $eraHigh, $eonHigh ] as $term) {
+							$termLower = strtolower($term);
+							if (isset($lcaseGtsMap[$termLower])) {
+								$paleoArr['lateInterval'] = $lcaseGtsMap[$termLower];
+								break;
+							}
+						}
+					}
+
+					//backfill early or late interval if empty
+					if (!isset($paleoArr['earlyInterval']) && isset($paleoArr['lateInterval']))
+						$paleoArr['earlyInterval'] = $paleoArr['lateInterval'];
+					if (!isset($paleoArr['lateInterval']) && isset($paleoArr['earlyInterval']))
+						$paleoArr['lateInterval'] = $paleoArr['earlyInterval'];
+
 					foreach($paleoArr as $k => $v){
 						$insertSQL .= ','.$k;
 						$valueSQL .= ',"'.$this->cleanInStr($v).'"';
@@ -1264,6 +1288,20 @@ class SpecUploadBase extends SpecUpload{
 			}
 			$rs->free();
 		}
+	}
+
+	public function getPaleoGtsTerms(){
+		$retArr = array();
+		if($GLOBALS['ACTIVATE_PALEO']){
+			$sql = 'SELECT gtsterm, rankid FROM omoccurpaleogts ';
+			$rs = $this->conn->query($sql);
+			while($r = $rs->fetch_object()){
+				$retArr[$r->gtsterm] = $r->rankid;
+			}
+			$rs->free();
+			ksort($retArr);
+		}
+		return $retArr;
 	}
 
 	// private function transferMaterialSampleData(){
@@ -1902,20 +1940,25 @@ class SpecUploadBase extends SpecUpload{
 			$sqlFragments = $this->getSqlFragments($recMap,$this->occurFieldMap);
 			if($sqlFragments){
 				$sql = 'INSERT INTO uploadspectemp(collid'.$sqlFragments['fieldstr'].') VALUES('.$this->collId.$sqlFragments['valuestr'].')';
-				if($this->conn->query($sql)){
-					$this->transferCount++;
-					if($this->transferCount%1000 == 0) $this->outputMsg('<li style="margin-left:10px;">Count: '.$this->transferCount.'</li>');
-					//$this->outputMsg("<li>");
-					//$this->outputMsg("Appending/Replacing observation #".$this->transferCount.": SUCCESS");
-					//$this->outputMsg("</li>");
-				}
-				else{
-					$sql = Encoding::fixUTF8($sql);
-					if(!$this->conn->query($sql)){
-						$this->outputMsg('<li>FAILED adding record #'.$this->transferCount.'</li>');
-						$this->outputMsg('<li style="margin-left:10px;">Error: '.$this->conn->error.'</li>');
-						$this->outputMsg('<li style="margin:0px 0px 10px 10px;">SQL: '.$sql.'</li>');
+				try {
+					if($this->conn->query($sql)){
+						$this->transferCount++;
+						if($this->transferCount%1000 == 0) $this->outputMsg('<li style="margin-left:10px;">Count: '.$this->transferCount.'</li>');
+						//$this->outputMsg("<li>");
+						//$this->outputMsg("Appending/Replacing observation #".$this->transferCount.": SUCCESS");
+						//$this->outputMsg("</li>");
 					}
+					else{
+						$sql = Encoding::fixUTF8($sql);
+						if(!$this->conn->query($sql)){
+							$this->outputMsg('<li>FAILED adding record #'.$this->transferCount.'</li>');
+							$this->outputMsg('<li style="margin-left:10px;">Error: '.$this->conn->error.'</li>');
+							$this->outputMsg('<li style="margin:0px 0px 10px 10px;">SQL: '.$sql.'</li>');
+						}
+					}
+				}
+				catch(mysqli_sql_exception $e){
+					$this->outputMsg('<li>FAILED adding record #' . $this->transferCount . ' Error: ' . $e->getMessage() . '</li>');
 				}
 
 				if($this->uploadType == $this->FILEUPLOAD || $this->uploadType == $this->SKELETAL){
@@ -1958,10 +2001,9 @@ class SpecUploadBase extends SpecUpload{
 			$paleoTermArr = $this->getPaleoTerms();
 			$paleoArr = array();
 			foreach($paleoTermArr as $fieldName){
-				$k = strtolower($fieldName);
-				if(isset($recMap[$k])){
-					if($recMap[$k] !== '') $paleoArr[substr($k,6)] = $recMap[$k];
-					unset($recMap[$k]);
+				if(isset($recMap[$fieldName])){
+					if($recMap[$fieldName] !== '') $paleoArr[substr($fieldName,6)] = $recMap[$fieldName];
+					unset($recMap[$fieldName]);
 				}
 			}
 			if($paleoArr){
@@ -2063,6 +2105,11 @@ class SpecUploadBase extends SpecUpload{
 		}
 	}
 
+  /*
+	* Parses media import rows into a valid media record and insert it into database
+	* @param Array $recMap
+	* @return Bool
+	*/
 	protected function loadMediaRecord($recMap){
 		if($recMap){
 			//Test images
@@ -2079,7 +2126,16 @@ class SpecUploadBase extends SpecUpload{
 			}
 
 			$file = Media::parseFileName($testUrl);
-			$parsed_mime = $recMap['format'] ?? Media::ext2Mime($file['extension']);
+
+			$parsed_mime = false;
+			// If provided format is not supported try to parse it from filename.
+			// Sometimes this happens when wrong formats are spread around
+			// example audio/jpg
+			if(isset($recMap['format']) && Media::getAllowedMime($recMap['format'])) {
+				$parsed_mime = $recMap['format'];
+			} else if(isset($file['extension'])) {
+				$parsed_mime = Media::ext2Mime($file['extension']);
+			}
 
 			if(!$parsed_mime) {
 				try {
@@ -2113,7 +2169,7 @@ class SpecUploadBase extends SpecUpload{
 				return false;
 			}
 
-			$recMap['mediaType'] = $mediaType;
+			$recMap['mediatype'] = $mediaType;
 
 			if($this->verifyImageUrls){
 				if(!$this->urlExists($testUrl)){
@@ -2412,13 +2468,15 @@ class SpecUploadBase extends SpecUpload{
 	private function getPaleoDwcTerms(){
 		$paleoTermArr = array('paleo-earliesteonorlowesteonothem','paleo-latesteonorhighesteonothem','paleo-earliesteraorlowesterathem',
 			'paleo-latesteraorhighesterathem','paleo-earliestperiodorlowestsystem','paleo-latestperiodorhighestsystem','paleo-earliestepochorlowestseries',
-			'paleo-latestepochorhighestseries','paleo-earliestageorloweststage','paleo-latestageorhigheststage','paleo-lowestbiostratigraphiczone','paleo-highestbiostratigraphiczone');
+			'paleo-latestepochorhighestseries','paleo-earliestageorloweststage','paleo-latestageorhigheststage','paleo-lowestbiostratigraphiczone','paleo-highestbiostratigraphiczone',
+			'paleo-geologicalcontextid','paleo-formation','paleo-member','paleo-bed','paleo-lithogroup'
+		);
 		return $paleoTermArr;
 	}
 
 	private function getPaleoSymbTerms(){
-		$paleoTermArr = array('paleo-geologicalcontextid','paleo-lithogroup','paleo-formation','paleo-member','paleo-bed','paleo-eon','paleo-era','paleo-period','paleo-epoch',
-			'paleo-earlyinterval','paleo-lateinterval','paleo-absoluteage','paleo-storageage','paleo-stage','paleo-localstage','paleo-biota','paleo-biostratigraphy',
+		$paleoTermArr = array('paleo-eon','paleo-era','paleo-period','paleo-epoch',
+			'paleo-earlyinterval','paleo-lateinterval','paleo-absoluteage','paleo-stage','paleo-localstage','paleo-biota','paleo-biostratigraphy',
 			'paleo-taxonenvironment','paleo-lithology','paleo-stratremarks','paleo-element','paleo-slideproperties');
 		return $paleoTermArr;
 	}

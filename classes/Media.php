@@ -275,6 +275,34 @@ class Media {
 	private const DEFAULT_GEN_WEB_IMG = true;
 	private const DEFAULT_GEN_THUMBNAIL_IMG = true;
 
+	// Used to maintain the same select between getMedia and fetchOccurrenceMedia
+	const MEDIA_ITEM_SELECT_SCHEMA = [
+		'm.mediaID',
+		'm.url',
+		'm.originalUrl',
+		'm.thumbnailUrl',
+		'm.sourceUrl',
+		'm.mediaType',
+		'm.format',
+		'm.occid',
+		'm.tid',
+		'm.caption',
+		'm.locality',
+		'm.notes',
+		'm.creatorUid',
+		'm.creator',
+		'm.username',
+		'm.owner',
+		'm.copyright',
+		'm.rights',
+		'm.sortSequence',
+		'm.sortOccurrence',
+		"IFNULL(m.creator,CONCAT_WS(' ',u.firstname,u.lastname)) AS creatorDisplay",
+		't.sciname',
+		't.author',
+		't.rankid'
+	];
+
 	public static function setStorageDriver(StorageStrategy $storage_driver): void {
 		$this->storage_driver = $storage_driver::class;
 	}
@@ -419,10 +447,12 @@ class Media {
 			'gif' => 'image/gif',
 			'ico' => ['image/x-icon', 'image/x-ico', 'image/vnd.microsoft.icon' ],
 			'jpg' => ['image/jpeg', 'image/jpeg', 'image/pjpeg'],
+			'jpeg' => ['image/jpeg', 'image/jpeg', 'image/pjpeg'],
 			'jp2' => ['image/jp2', 'image/jpx', 'image/jpm'],
 			'png' => ['image/png', 'image/x-png'],
 			'psd' => 'image/vnd.adobe.photoshop',
 			'svg' => 'image/svg+xml',
+			'tif' => 'image/tiff',
 			'tiff' => 'image/tiff',
 			'webp' => 'image/webp'
 		];
@@ -764,7 +794,7 @@ class Media {
 	public static function getMaximumFileUploadSize(): int {
 		return min(
 			self::size_2_bytes(ini_get('post_max_size')),
-			self::size_2_bytes(ini_get('upload_max_filesize'))
+			self::size_2_bytes(ini_get('upload_max_filesize')),
 		);
 	}
 
@@ -810,7 +840,7 @@ class Media {
 			$file_type_mime = self::ext2Mime($parsed_file['extension'], $media_upload_type);
 
 			// If There is a bunch of potential mime types just assume the first one
-			// this is not perfect and could result weird errors for fringe types 
+			// this is not perfect and could result weird errors for fringe types
 			// but for current use case should be an issue. Types are order by most likely.
 			if(is_array($file_type_mime) && count($file_type_mime) > 0) {
 				$file_type_mime = $file_type_mime[0];
@@ -834,6 +864,7 @@ class Media {
 	**/
 	public static function add(array $post_arr, $storage = null, $file = null): void {
 		$clean_post_arr = Sanitize::in($post_arr);
+		unset($post_arr);
 
 		$copy_to_server = $clean_post_arr['copytoserver']?? false;
 		$mapLargeImg = !($clean_post_arr['nolgimage']?? true);
@@ -846,7 +877,7 @@ class Media {
 				$file = self::parse_map_only_file($clean_post_arr);
 			}
 
-			if(!$file['type'] && $isRemoteMedia) {
+			if((!self::isValidFile($file) || !$file['type']) && $isRemoteMedia) {
 				$file = self::getRemoteFileInfo($clean_post_arr['originalUrl']);
 			}
 		}
@@ -857,7 +888,7 @@ class Media {
 		}
 
 		//If file being uploaded is too big throw error
-		else if($should_upload_file && self::getMaximumFileUploadSize() < intval($file['size'])) {
+		else if($should_upload_file && self::getMaximumFileUploadSize() - memory_get_usage() < intval($file['size'])) {
 			throw new Exception('Error: File is to large to upload');
 		}
 
@@ -891,10 +922,10 @@ class Media {
 			"thumbnailUrl" => $clean_post_arr["thumbnailUrl"] ?? null,
 			// Will get popluated below
 			"originalUrl" => null,
-			"archiveUrl" => $clean_post_arr["archiverurl"] ?? null,// Only Occurrence import
+			"archiveUrl" => $clean_post_arr["archiveUrl"] ?? null,// Only Occurrence import
 			// This is a very bad name that refers to source or downloaded url
-			"sourceUrl" => $clean_post_arr["sourceurl"] ?? null,// TPImageEditorManager / Occurrence import
-			"referenceUrl" => $clean_post_arr["referenceurl"] ?? null,// check keys again might not be one,
+			"sourceUrl" => $clean_post_arr["sourceUrl"] ?? null,// TPImageEditorManager / Occurrence import
+			"referenceUrl" => $clean_post_arr["referenceUrl"] ?? null,// check keys again might not be one,
 			"creator" => $clean_post_arr["creator"] ?? null,
 			"creatorUid" => OccurrenceUtil::verifyUser($clean_post_arr["creatorUid"] ?? null, $conn),
 			"format" =>  $file["type"] ?? $clean_post_arr['format'],
@@ -908,21 +939,17 @@ class Media {
 			"sortOccurrence" => $clean_post_arr['sortOccurrence'] ?? null,
 			"sourceIdentifier" => $clean_post_arr['sourceIdentifier'] ?? ('filename: ' . $file['name']),
 			"rights" => $clean_post_arr['rights'] ?? null,
-			"accessrights" => $clean_post_arr['rights'] ?? null,
+			"accessRights" => $clean_post_arr['accessRights'] ?? null,
 			"copyright" => $clean_post_arr['copyright'] ?? null,
-			"hashFunction" => $clean_post_arr['hashfunction'] ?? null,
+			"hashFunction" => $clean_post_arr['hashFunction'] ?? null,
 			"hashValue" => $clean_post_arr['hashValue'] ?? null,
-			"mediaMD5" => $clean_post_arr['mediamd5'] ?? null,
+			"mediaMD5" => $clean_post_arr['mediaMD5'] ?? null,
 			"recordID" => $clean_post_arr['recordID'] ?? UuidFactory::getUuidV4(),
 			"mediaType" => $media_type_str,
 		];
 
-		if(array_key_exists('sortsequence', $clean_post_arr)){
-			if (is_numeric($clean_post_arr['sortsequence']))
-				$keyValuePairs["sortsequence"] = $clean_post_arr['sortsequence'];
-			else
-				$keyValuePairs["sortsequence"] = 50; //set the default sortSequence
-		}
+		$sort_sequence = $clean_post_arr['sortsequence'] ?? $clean_post_arr['sortSequence'] ?? false;
+		$keyValuePairs["sortsequence"] = is_numeric($sort_sequence)? $sort_sequence: 50;
 
 		//What is url for files
 		if($isRemoteMedia) {
@@ -976,6 +1003,12 @@ class Media {
 
 				//Generate Deriatives if needed
 				if($media_type === MediaType::Image) {
+					$start_mem_limit = ini_get('memory_limit');
+					// Update mem limit if not set to 256M already
+					if(self::size_2_bytes(ini_get('memory_limit')) < self::size_2_bytes('256M')) {
+						ini_set('memory_limit', '256M');
+					}
+
 					//Will download file if its remote.
 					//This is a naive solution assuming we are upload to our server
 					$size = getimagesize($storage->getDirPath($file));
@@ -992,7 +1025,7 @@ class Media {
 						$thumb_name = self::addToFilename($file['name'], '_tn');
 						self::create_image(
 							$file['name'],
-							self::addToFilename($file['name'], '_tn'),
+							$thumb_name,
 							$storage,
 							$GLOBALS['IMG_TN_WIDTH']?? 200,
 							0
@@ -1038,6 +1071,7 @@ class Media {
 			0
 		);
 	}
+
 	/**
 	 * @return void
 	 */
@@ -1099,24 +1133,18 @@ class Media {
 	 * @param mixed $conn
 	 */
 	private static function update_tags($media_id, $tag_arr, $conn = null): void {
-		$tags =	[
-			"HasOrganism",
-			"HasLabel",
-			"HasIDLabel",
-			"TypedText",
-			"Handwriting",
-			"ShowsHabitat",
-			"HasProblem",
-			"Diagnostic",
-			"ImageOfAdult",
-			"ImageOfImmature",
-		];
+		if(!$conn) {
+			$conn = Database::connect('write');
+		}
+
+		$tags = QueryUtil::executeQuery($conn, 'SELECT tagkey FROM imagetagkey');
 
 		$remove_tags = [];
 		$add_tags = [];
-		foreach ($tags as $tag) {
-			$new_value = $tag_arr['ch_' . $tag] ?? false;
-			$old_value = $tag_arr['hidden_' . $tag] ?? false;
+		foreach ($tags as $tagRow) {
+			$tag = $tagRow['tagkey'];
+			$new_value = $tag_arr['ch_' . $tag] ?? $tag_arr['ch_' . strtolower($tag)] ?? false;
+			$old_value = $tag_arr['hidden_' . $tag] ?? $tag_arr['hidden_' . strtolower($tag)] ?? false;
 			if($new_value !== $old_value) {
 				if($new_value === '1') {
 					array_push($add_tags, $tag);
@@ -1124,10 +1152,6 @@ class Media {
 					array_push($remove_tags, $tag);
 				}
 			}
-		}
-
-		if(!$conn) {
-			$conn = Database::connect('write');
 		}
 
 		foreach($add_tags as $add) {
@@ -1146,9 +1170,12 @@ class Media {
 	}
 
 	/**
+	 * Function used for pulling media meta_data out of input array and updating
+	 * the corresponding mediaID.
 	 * @return bool
-	 * @param mixed $media_id
-	 * @param mixed $media_arr
+	 * @param mixed $media_id MediaID associated from database
+	 * @param mixed $media_arr Expects keys to be camel case. Keys that do not
+	 * match $meta_data keys will be not be used.
 	 */
 	public static function update($media_id, $media_arr, StorageStrategy $storage) {
 
@@ -1170,11 +1197,11 @@ class Media {
 			"anatomy",
 			"notes",
 			"username",
-			"sortsequence",
+			"sortSequence",
 			"sortOccurrence",
 			"sourceIdentifier",
 			"rights",
-			"accessrights",
+			"accessRights",
 			"copyright",
 			"hashFunction",
 			"hashValue",
@@ -1182,6 +1209,7 @@ class Media {
 			"recordID",
 			"mediaType",
 		];
+
 
 		$data = [];
 
@@ -1330,9 +1358,14 @@ class Media {
 		}
 
 		$size = getimagesize($src_path);
+
 		$width = $size[0];
 		$height = $size[1];
 		$mime_type = $size['mime'];
+
+		if(!self::enough_memory_gd($size[0], $size[1])) {
+			throw new Exception('Not enough memory to create image: ' . $new_file);
+		}
 
 		$orig_width = $width;
 		$orig_height = $height;
@@ -1347,9 +1380,6 @@ class Media {
 			$width = $new_width;
 		}
 
-
-		$new_image = imagecreatetruecolor($width, $height);
-
 		$image = match($mime_type) {
 			'image/jpeg' => imagecreatefromjpeg($src_path),
 			'image/png' => imagecreatefrompng($src_path),
@@ -1358,6 +1388,8 @@ class Media {
 				'Mime Type: ' . $mime_type . ' not supported for creation'
 			)
 		};
+
+		$new_image = imagecreatetruecolor($width, $height);
 
 		//This is need to maintain transparency if this is here
 		if($mime_type === 'image/png') {
@@ -1375,6 +1407,11 @@ class Media {
 		}
 
 		imagedestroy($image);
+	}
+
+	private static function enough_memory_gd($x, $y, $rgb = 3) {
+		// 1.7 is some coef related to gd or overhead not entirely sure
+		return  ($x * $y * 1.7 * $rgb) < (self::size_2_bytes(ini_get('memory_limit')) - memory_get_usage());
 	}
 
 	/**
@@ -1454,15 +1491,7 @@ class Media {
 	public static function getMedia(int $media_id, string $media_type = null): Array {
 		if(!$media_id) return [];
 		$parameters = [$media_id];
-		$select = [
-			'm.*',
-			"IFNULL(m.creator,CONCAT_WS(' ',u.firstname,u.lastname)) AS creatorDisplay",
-			't.sciname',
-			't.author',
-			't.rankid'
-		];
-
-		$sql ='SELECT ' . implode(', ', $select) .' FROM media m ' .
+		$sql ='SELECT ' . implode(', ', self::MEDIA_ITEM_SELECT_SCHEMA) .' FROM media m ' .
 		'LEFT JOIN taxa t ON t.tid = m.tid ' .
 		'LEFT JOIN users u on u.uid = m.creatorUid ' .
 		'WHERE mediaID = ?';
@@ -1490,15 +1519,7 @@ class Media {
 		if(!$tid) return [];
 		$parameters = [$tid];
 
-		$select = [
-			'm.*',
-			"IFNULL(m.creator,CONCAT_WS(' ',u.firstname,u.lastname)) AS creatorDisplay",
-			't.sciname',
-			't.author',
-			't.rankid'
-		];
-
-		$sql ='SELECT ' . implode(',', $select) . ' FROM media m '.
+		$sql ='SELECT ' . implode(',', self::MEDIA_ITEM_SELECT_SCHEMA) . ' FROM media m '.
 			'LEFT JOIN taxa t ON t.tid = m.tid ' .
 			'LEFT JOIN users u on u.uid = m.creatorUid ' .
 			'WHERE m.tid = ?';
@@ -1520,16 +1541,9 @@ class Media {
 	 */
 	public static function fetchOccurrenceMedia(int $occid, string $media_type = null): Array {
 		if(!$occid) return [];
-		$select = [
-			'm.*',
-			"IFNULL(m.creator,CONCAT_WS(' ',u.firstname,u.lastname)) AS creatorDisplay",
-			't.sciname',
-			't.author',
-			't.rankid'
-		];
 
 		$parameters = [$occid];
-		$sql = 'SELECT '. implode(',', $select).' FROM media m ' .
+		$sql = 'SELECT '. implode(',', self::MEDIA_ITEM_SELECT_SCHEMA).' FROM media m ' .
 			'LEFT JOIN taxa t ON t.tid = m.tid ' .
 			'LEFT JOIN users u on u.uid = m.creatorUid ' .
 			'WHERE m.occid = ?';

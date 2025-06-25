@@ -340,7 +340,7 @@ if ($SYMB_UID) {
 								</a><?= $deactivateTag ?>
 							</li>
 							<?php
-							if ($collData['colltype'] == 'Preserved Specimens') {
+							if (strpos($collData['colltype'], 'Specimens')) {
 								?>
 								<li style="margin-left:10px">
 									<a href="../editor/imageoccursubmit.php?collid=<?= $collid ?>" <?= $deactivateStyle ?>>
@@ -360,11 +360,17 @@ if ($SYMB_UID) {
 									<?= $LANG['EDIT_EXISTING'] ?>
 								</a>
 							</li>
-							<li>
-								<a href="../editor/batchdeterminations.php?collid=<?= $collid ?>">
-									<?= $LANG['ADD_BATCH_DETER'] ?>
-								</a>
-							</li>
+							<?php
+							if ($collData['colltype'] != 'General Observations') {
+								?>
+								<li>
+									<a href="../editor/batchdeterminations.php?collid=<?= $collid ?>">
+										<?= $LANG['ADD_BATCH_DETER'] ?>
+									</a>
+								</li>
+								<?php
+							}
+							?>
 							<li>
 								<a href="../reports/labelmanager.php?collid=<?= $collid ?>">
 									<?= $LANG['PRINT_LABELS'] ?>
@@ -376,32 +382,34 @@ if ($SYMB_UID) {
 								</a>
 							</li>
 							<?php
-							if ($collManager->traitCodingActivated()) {
+							if ($collData['colltype'] != 'General Observations') {
+								if ($collManager->traitCodingActivated()) {
+									?>
+									<li>
+										<a href="#" onclick="$('li.traitItem').show(); return false;">
+											<?= $LANG['TRAIT_CODING_TOOLS'] ?>
+										</a>
+									</li>
+									<li class="traitItem" style="margin-left:10px;display:none;">
+										<a href="../traitattr/occurattributes.php?collid=<?= $collid ?>">
+											<?= $LANG['TRAIT_CODING'] ?>
+										</a>
+									</li>
+									<li class="traitItem" style="margin-left:10px;display:none;">
+										<a href="../traitattr/attributemining.php?collid=<?= $collid ?>">
+											<?= $LANG['TRAIT_MINING'] ?>
+										</a>
+									</li>
+									<?php
+								}
 								?>
 								<li>
-									<a href="#" onclick="$('li.traitItem').show(); return false;">
-										<?= $LANG['TRAIT_CODING_TOOLS'] ?>
-									</a>
-								</li>
-								<li class="traitItem" style="margin-left:10px;display:none;">
-									<a href="../traitattr/occurattributes.php?collid=<?= $collid ?>">
-										<?= $LANG['TRAIT_CODING'] ?>
-									</a>
-								</li>
-								<li class="traitItem" style="margin-left:10px;display:none;">
-									<a href="../traitattr/attributemining.php?collid=<?= $collid ?>">
-										<?= $LANG['TRAIT_MINING'] ?>
+									<a href="../georef/batchgeoreftool.php?collid=<?= $collid ?>">
+										<?= $LANG['BATCH_GEOREF'] ?>
 									</a>
 								</li>
 								<?php
 							}
-							?>
-							<li>
-								<a href="../georef/batchgeoreftool.php?collid=<?= $collid ?>">
-									<?= $LANG['BATCH_GEOREF'] ?>
-								</a>
-							</li>
-							<?php
 							if ($collData['colltype'] == 'Preserved Specimens') {
 								?>
 								<li>
@@ -630,7 +638,7 @@ if ($SYMB_UID) {
 					if(!empty($contactArr)){
 						?>
 						<section style="margin-left: 0;">
-							<h1><span><?= $LANG['CONTACT'] ?>: </span></h1>
+							<h2><span><?= $LANG['CONTACT'] ?>: </span></h2>
 							<ul>
 								<?php
 								foreach($contactArr as $cArr){
@@ -781,6 +789,7 @@ if ($SYMB_UID) {
 						//if($extrastatsArr&&$extrastatsArr['TypeCount']) echo '<li>'.number_format($extrastatsArr['TypeCount']) . ' ' . $LANG['TYPE_SPECIMENS'] . '</li>';
 						?>
 					</ul>
+					<p style="margin-left:3em"><?= '(' . $LANG['LAST_UPDATED'] . ' ' . $statsArr['datelastmodified'] . ')'?></p>
 				</div>
 			</section>
 			<section class="fieldset-like no-left-margin">
@@ -997,7 +1006,7 @@ if ($SYMB_UID) {
 										if(!empty($contactArr)){
 											?>
 											<section style="margin-left: 0;">
-												<h1 style="font: 1.5rem normal;"><span><?= $LANG['CONTACT'] ?>: </span></h1>
+												<h4><span><?= $LANG['CONTACT'] ?>: </span></h4>
 												<ul>
 													<?php
 													foreach($contactArr as $cArr){

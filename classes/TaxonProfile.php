@@ -213,6 +213,7 @@ class TaxonProfile extends Manager {
 				FROM media m LEFT JOIN users u ON m.creatorUid = u.uid
 				INNER JOIN taxstatus ts ON m.tid = ts.tid
 				INNER JOIN taxa t ON m.tid = t.tid
+				LEFT JOIN omoccurrences o ON m.occid = o.occid
 				WHERE (ts.taxauthid = 1) AND ts.tidaccepted IN ('.$tidStr.') AND m.SortSequence < ' . $sortSequnceLimit . ' AND (m.mediaType != "image" || m.thumbnailurl IS NOT NULL)
 				AND (o.recordSecurity != 5 OR o.occid IS NULL) ';
 			if(!$this->displayLocality) $sql .= 'AND m.occid IS NULL ';

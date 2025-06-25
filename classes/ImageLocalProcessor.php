@@ -753,54 +753,6 @@ class ImageLocalProcessor {
 			if($medUrl) $imageArr['url'] = $medUrl;
 			else $this->logOrEcho('Failed to create web image ', 1);
 
-			//Set medium web image
-			$medUrl = '';
-			if($this->medProcessingCode){
-				$medFileName = $fileNameBase.$this->medSourceSuffix.$fileNameExt;
-				$medTargetFileName = substr($targetFileName,0,-4).$this->medSourceSuffix.'.jpg';
-				if(isset($imageArr['url']) && $imageArr['url']){
-					$medFileName = $imageArr['url'];
-					$medTargetFileName = $imageArr['url'];
-				}
-				if($this->medProcessingCode == 1){
-					// evaluate source and import
-					if($fileSize < $this->webFileSizeLimit && $width < ($this->webPixWidth*2)){
-						if(copy($sourcePath.$sourceFileName, $targetPath.$medTargetFileName)){
-							$medUrl = $medTargetFileName;
-							$this->logOrEcho('Source image imported as web image ', 1);
-						}
-					}
-					else{
-						if($this->createNewImage($sourcePath.$sourceFileName, $targetPath.$medTargetFileName, $this->webPixWidth, round($this->webPixWidth*$height/$width), $width, $height)){
-							$medUrl = $medTargetFileName;
-							$this->logOrEcho('Web image created from source image ', 1);
-						}
-					}
-				}
-				elseif($this->medProcessingCode == 2){
-					// import source and use as is
-					if($this->uriExists($sourcePath.$medFileName)){
-						if(copy($sourcePath.$medFileName, $targetPath.$medTargetFileName)){
-							$medUrl = $medTargetFileName;
-							$this->logOrEcho('Web image imported as is ', 1);
-						}
-					}
-					else $this->logOrEcho('WARNING: predesignated medium does not appear to exist ('.$sourcePath.$medFileName.') ', 1);
-				}
-				elseif($this->medProcessingCode == 3){
-					// map to source as the web image
-					if($this->uriExists($sourcePath.$medFileName)){
-						$medUrl = $sourcePath.$medFileName;
-						$this->logOrEcho('Source used as web image ', 1);
-					}
-					else{
-						$this->logOrEcho('WARNING: predesignated medium does not appear to exist ('.$sourcePath.$medFileName.') ',1);
-					}
-				}
-			}
-			if($medUrl) $imageArr['url'] = $medUrl;
-			else $this->logOrEcho('Failed to create web image ', 1);
-
 			//Set thumbnail image
 			$tnUrl = '';
 			if($this->tnProcessingCode){
@@ -905,7 +857,7 @@ class ImageLocalProcessor {
 			$status = true;
 		}
 		else{
-			echo $ct;
+			echo htmlspecialchars($ct, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 			echo $retval;
 		}
 		return $status;
@@ -1006,7 +958,7 @@ class ImageLocalProcessor {
 					'VALUES('.$this->activeCollid.',"'.$catalogNumber.'","unprocessed","'.date('Y-m-d H:i:s').'")';
 				if($this->conn->query($sql2)){
 					$occid = $this->conn->insert_id;
-					$this->logOrEcho('Specimen record does not exist; new empty specimen record created and assigned an "unprocessed" status (occid = <a href="../individual/index.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>) ',1);
+					$this->logOrEcho('Specimen record does not exist; new empty specimen record created and assigned an "unprocessed" status (occid = <a href="../individual/index.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>) ',1, false);
 				}
 				else $this->logOrEcho("ERROR creating new occurrence record: ".$this->conn->error,1);
 			}
@@ -1108,8 +1060,8 @@ class ImageLocalProcessor {
 					$stmt->execute();
 					if($stmt->affected_rows && !$stmt->error){
 						$msg = 'SUCCESS: Image record loaded into database ';
-						if($occid) $msg .= 'and linked to occurrence record <a href="../individual/index.php?occid='.$occid.'" target="_blank">'.$occid.'</a>';
-						$this->logOrEcho($msg,1);
+						if($occid) $msg .= 'and linked to occurrence record <a href="../individual/index.php?occid='.htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE).'" target="_blank">'.htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE).'</a>';
+						$this->logOrEcho($msg,1, false	);
 					}
 					else{
 						$status = false;
@@ -2179,7 +2131,7 @@ class ImageLocalProcessor {
 		return $retStr;
 	}
 
-	protected function logOrEcho($str,$indent = 0){
+	protected function logOrEcho($str,$indent = 0, $isEscaped = true) {
 		if($this->logMode > 1){
 			if($this->logFH){
 				if($indent) $str = "\t".$str;
@@ -2187,7 +2139,8 @@ class ImageLocalProcessor {
 			}
 		}
 		if($this->logMode == 1 || $this->logMode == 3){
-			echo '<li '.($indent?'style="margin-left:'.($indent*15).'px"':'').'>'.$str."</li>\n";
+			$str = $isEscaped ? htmlspecialchars($str, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : $str;
+			echo '<li '.($indent?'style="margin-left:'.($indent*15).'px"':'').'>' . $str . "</li>\n";
 			@ob_flush();
 			@flush();
 		}

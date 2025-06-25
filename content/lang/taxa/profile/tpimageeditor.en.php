@@ -6,7 +6,6 @@ Translated by: Google Translate (2024-09-16)
 ------------------
 */
 
-$LANG['LINKED_FROM'] = 'Linked from';
 $LANG['SORT_SEQUENCE'] = 'Sort sequence';
 $LANG['NEW_VALUE'] = 'New Value';
 $LANG['SUBMIT_SORT_EDITS'] = 'Submit Media Sort Edits';
@@ -36,7 +35,7 @@ $LANG['NOTES'] = 'Notes';
 $LANG['UPLOAD_IMAGE'] = 'Upload Media Resource';
 $LANG['OPEN_LARGE_IMAGE'] = 'Open Large File';
 $LANG['MUST_HAVE_EDIT_PERM'] = 'Must have editing privileges for the collection managing this media file';
-$LANG['IMAGE_LINKED_FROM'] = 'Media linked from';
+$LANG['IMAGE_LINKED_TO'] = 'Media linked to';
 $LANG['TP_IMAGE_EDITOR'] = 'Taxon Profile Media Editor';
 $LANG['CREATOR'] = 'Creator';
 $LANG['NOT_SPECIFIED'] = 'Not Specified';
