@@ -589,7 +589,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 					<input type="checkbox" id="characters" class="accordion-selector" />
 
 					<!-- Character header -->
-					<label for="characters" class="accordion-header"><?php echo $LANG['CHARACTERS'] ?></label>
+					<label for="characters" class="accordion-header"><?php echo $LANG['CHARACTERS'] ?> <a href="https://docs.symbiota.org/docs/User_Guide/searching_records#taxon-character-criteria" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
 
 					<div id="search-form-characters" class="content">
 						<div>
