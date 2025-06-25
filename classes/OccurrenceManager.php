@@ -553,6 +553,50 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			}
 			$sqlWhere .= 'AND (o.occid IN(SELECT occid FROM tmattributes WHERE stateid IN(' . $this->searchTermArr['attr'] . '))) ';
 		}
+
+		if(array_key_exists('characters',$this->searchTermArr)){
+			$characters = $_REQUEST['characters'];
+			$joins = [];
+			$andClauses = [];
+			$i = 1;
+
+			$charPairs = [];
+
+			foreach ($characters as $pair) {
+				if (strpos($pair, ':') === false) continue;
+
+				list($cid, $cs) = explode(':', $pair, 2);
+				$cid = intval($cid);
+				$cs = $this->conn->real_escape_string($cs);
+
+				$charPairs[$cid][] = $cs;
+			}
+
+			foreach ($charPairs as $cid => $csArray) {
+				if (empty($csArray)) continue;
+
+				$alias = "d{$i}";
+				$joins[] = "INNER JOIN kmdescr $alias ON t.tid = $alias.tid";
+
+				$csList = "'" . implode("','", $csArray) . "'";
+				$andClauses[] = "$alias.cid = $cid AND $alias.cs IN ($csList)";
+				$i++;
+			}
+
+			if (!empty($joins)) {
+				$subquery = "
+					SELECT DISTINCT t.tid
+					FROM taxa t
+					" . implode(" ", $joins) . "
+					WHERE t.rankid > 219
+					AND " . implode(" AND ", $andClauses) . "
+				";
+
+				$subquery = preg_replace('/\s+/', ' ', $subquery);
+				$sqlWhere .= 'AND o.tidinterpreted IN (' . $subquery . ') ';
+			}
+		}
+
 		if($sqlWhere){
 			$sqlWhere .= OccurrenceUtil::appendFullProtectionSQL();
 			$this->sqlWhere = 'WHERE '.substr($sqlWhere,4);
@@ -1157,6 +1201,10 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			//$this->searchTermArr['footprintwkt'] = $this->cleanInputStr($_REQUEST['footprintwkt']);
 			$this->searchTermArr['footprintGeoJson'] = $this->cleanInputStr($_REQUEST['footprintGeoJson']);
 		}
+		if(array_key_exists('characters',$_REQUEST)){
+			if($_REQUEST['characters']) $this->searchTermArr['characters'] = $_REQUEST['characters'];
+			else unset($this->searchTermArr['characters']);
+		}
 		if(!empty($_REQUEST['earlyInterval'])){
 			$this->searchTermArr['earlyInterval'] =  $this->cleanInputStr($_REQUEST['earlyInterval']);
 		}
@@ -1194,6 +1242,52 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$rs->close();
 		}
 		return $retArr;
+	}
+
+	public function getCharacters(){
+		$characters = [];
+		$allowedCharacters = isset($GLOBALS['ALLOWEDCHARACTERS']) ? $GLOBALS['ALLOWEDCHARACTERS'] : '';
+
+		//convert string to array
+		if (!empty($allowedCharacters)) {
+			$allowedCharacters = array_filter(
+				array_map('intval', array_map('trim', explode(',', $allowedCharacters)))
+			);
+		} else
+			$allowedCharacters = [];
+
+		$sql = "SELECT h.hid, h.headingName, c.cid, c.charName, c.charType, c.sortSequence, cs.cs, cs.charStateName, cs.stateID
+				FROM kmcharacters c
+				INNER JOIN kmcs cs ON c.cid = cs.cid
+				LEFT JOIN kmcharheading h ON c.hid = h.hid
+				WHERE (h.langID = 1 OR h.langID IS NULL)
+				ORDER BY c.sortSequence, cs.charStateName";
+		$rs = $this->conn->query($sql);
+
+		while ($row = $rs->fetch_assoc()) {
+			$charName = $row['charName'];
+			$charStateName = $row['charStateName'];
+			$cid = $row['cid'];
+
+			//check if the character is allowed
+			if (empty($allowedCharacters) || !in_array($cid, $allowedCharacters))
+				continue;
+
+			$cid = $row['cid'];
+			if (!isset($characters[$cid])) {
+				$characters[$cid] = [
+					'charName' => $charName,
+					'charType' => $row['charType'],
+					'states' => [],
+					'heading' => $row['headingName'] ?? ''
+				];
+			}
+			$characters[$cid]['states'][] = [
+				'cs' => $row['cs'],
+				'charStateName' => $charStateName
+			];
+		}
+		return $characters;
 	}
 
 	//Setters and getters
