@@ -663,7 +663,12 @@ class OccurrenceCleaner extends Manager{
 		}
 	}
 
-	public function verifyCoordAgainstPoliticalV2($countries = []) {
+	public function verifyCoordAgainstPoliticalV2(
+		$countries = [],
+		bool $populateCountry = false,
+		bool $populateStateProvince = false,
+		bool $populateCounty = false
+	) {
 		// Does no need offset because occurrences that get pulled out will get saved to 
 		// omoccurverification table which this query is doing a not in select of so it can 
 		// be iterated through with just a function call
@@ -690,9 +695,9 @@ class OccurrenceCleaner extends Manager{
 
 		$resolve_geo_thesaurus = 'SELECT pts.occid, g70.geoterm as county, g60.geoterm as stateProvince, g50.geoterm as country from omoccurpoints pts
 			join geographicpolygon gp on ST_CONTAINS(gp.footprintPolygon, pts.lngLatPoint) 
-			join geographicthesaurus as g70 on gp.geoThesID = g70.geoThesID
-			join geographicthesaurus as g60 on g60.geoThesID = g70.parentID
-			join geographicthesaurus as g50 on g50.geoThesID = g60.parentID
+			join geographicthesaurus as g70 on gp.geoThesID = g70.geoThesID and g70.geoLevel = 70
+			join geographicthesaurus as g60 on g60.geoThesID = g70.parentID and g60.geoLevel = 60
+			join geographicthesaurus as g50 on g50.geoThesID = g60.parentID and g50.geoLevel = 50
 			join omoccurrences o on o.occid = pts.occid where ';
 
 		if(count($countries)) {
@@ -706,10 +711,26 @@ class OccurrenceCleaner extends Manager{
 
 		$this->conn->commit();
 
+		$editorManager = new OccurrenceEditorManager($this->conn);
+		$editorManager->setCollId($this->collid);
+
 		while(($row = $geo_check_result->fetch_object())) {
-			$occid_arr[$row->occid]['resolvedCountry'] = $row->country;
-			$occid_arr[$row->occid]['resolvedStateProvince'] = $row->stateProvince;
-			$occid_arr[$row->occid]['resolvedCounty'] = $row->county;
+			$editorManager->setOccId($row->occid);
+
+			if($populateCountry && $occid_arr[$row->occid]['country'] === null && $row->country) {
+				$editorManager->editOccurrence(['country' => $row->country, 'occid' => $row->occid, 'editedfields' => 'country'], $GLOBALS['IS_ADMIN'] ?? 0);
+				$occid_arr[$row->occid]['country'] = $row->country;
+			}
+
+			if($populateStateProvince && $occid_arr[$row->occid]['stateProvince'] === null && $row->stateProvince) {
+				$editorManager->editOccurrence(['stateProvince' => $row->stateProvince, 'occid' => $row->occid, 'editedfields' => 'stateProvince'], $GLOBALS['IS_ADMIN'] ?? 0);
+				$occid_arr[$row->occid]['stateProvince'] = $row->stateProvince;
+			}
+
+			if($populateCounty && $occid_arr[$row->occid]['county'] === null && $row->county) {
+				$editorManager->editOccurrence(['county' => $row->county, 'occid' => $row->occid, 'editedfields' => 'county'], $GLOBALS['IS_ADMIN'] ?? 0);
+				$occid_arr[$row->occid]['county'] = $row->county;
+			}
 
 			if($occid_arr[$row->occid]['county'] === $row->county) {
 				$occid_arr[$row->occid]['rank'] = self::COUNTY_VERIFIED;
@@ -737,7 +758,6 @@ class OccurrenceCleaner extends Manager{
 			if($occid != $last_occid) {
 				$batch_verification .= ', ';
 			}
-			//$this->setVerification($occid, 'coordinate', $occurrence['rank'] ?? self::COORDINATE_LOCALITY_MISMATCH, 'geographicthesaurus');
 		}
 
 		QueryUtil::executeQuery($this->conn, $batch_verification);

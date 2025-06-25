@@ -116,46 +116,19 @@ if($IS_ADMIN) $isEditor = 1;
 					$TARGET_OFFSET = 1000;
 					$MAX_VALIDATION_BATCH = 50000;
 					for($offset = 0; $offset < $MAX_VALIDATION_BATCH; $offset += $TARGET_OFFSET) {
-						$count = count($cleanManager->verifyCoordAgainstPoliticalV2());
+						$count = count($cleanManager->verifyCoordAgainstPoliticalV2(
+							[],
+							$_REQUEST['populate_country'] ?? false,
+							$_REQUEST['populate_stateProvince'] ?? false,
+							$_REQUEST['populate_county'] ?? false
+						));
 						$total_proccessed += $count;
 
 						if($count != $TARGET_OFFSET) {
 							break;
 						}
 					}
-
-					echo $total_proccessed . ' took ' . time() - $start. ' seconds';
-				?>
-					<legend><b>Validating Coordinates</b></legend>
-					<table class="styledtable" style="width:100%">
-						<thead>
-							<th>occid</th> 
-							<th>Country</th>
-							<th>Country Found</th>
-							<th>State/Province</th>
-							<th>State/Province Found</th>
-							<th>County</th>
-							<th>County Found</th>
-							<th>Rank</th>
-						</thead>
-						<tbody>
-							<?php foreach([] as $occid => $occurrence): ?>
-							<tr>
-								<td><?= $occid ?></td>
-
-								<td><?= $occurrence['country'] ?></td>
-								<td><?= $occurrence['resolvedCountry'] ?? '' ?></td>
-
-								<td><?= $occurrence['stateProvince'] ?></td>
-								<td><?= $occurrence['resolvedStateProvince'] ?? '' ?></td>
-
-								<td><?= $occurrence['county'] ?></td>
-								<td><?= $occurrence['resolvedCounty'] ?? '' ?></td>
-								<td><?= $occurrence['rank'] ?? '' ?></td>
-							</tr>
-							<?php endforeach ?>
-						</tbody>
-					</table><?php
+					echo $total_proccessed . ' records took ' . time() - $start. ' seconds';
 					}
 					elseif($action == 'displayranklist'){
 						echo '<legend><b>Specimen with rank of '.$ranking.'</b></legend>';
@@ -214,7 +187,7 @@ if($IS_ADMIN) $isEditor = 1;
 							if(array_key_exists($protocolStr, $protocolMap)) $protocolStr = $protocolMap[$protocolStr];
 							echo '<tr>';
 							echo '<td>'.$rank.'</td>';
-							echo '<td>' . $cleanManager->coordinateRankingToText($rank) . '</td>';
+							echo '<td>' . (is_numeric($rank)? $cleanManager->coordinateRankingToText($rank): '') . '</td>';
 							echo '<td>'.number_format($cnt);
 							echo '</td>';
 							echo '</tr>';
