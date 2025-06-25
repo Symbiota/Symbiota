@@ -550,7 +550,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 
 			if (!empty($joins)) {
 				$subquery = "
-					SELECT t.tid
+					SELECT DISTINCT t.tid
 					FROM taxa t
 					" . implode(" ", $joins) . "
 					WHERE t.rankid > 219
