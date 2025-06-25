@@ -38,8 +38,7 @@ $headerMapBase = array( 'institutioncode' => $LANG['INSTITUTION_CODE'], 'collect
 	'georeferenceverificationstatus' => $LANG['GEOREF_VERIF_STATUS'], 'georeferenceremarks' => $LANG['GEOREF_REMARKS'],
 	'minimumelevationinmeters' => $LANG['ELEV_MIN_METERS'], 'maximumelevationinmeters' => $LANG['ELEV_MAX_METERS'], 'verbatimelevation' => $LANG['VERB_ELEV'],
 	'minimumdepthinmeters' => $LANG['DEPTH_MIN_METERS'], 'maximumdepthinmeters' => $LANG['DEPTH_MAX_METERS'], 'verbatimdepth' => $LANG['VERB_DEPTH'],
-	'habitat' => $LANG['HABITAT'], 'earlyInterval' => $LANG['INTERVAL_EARLY'], 'lateInterval' => $LANG['INTERVAL_LATE'],
-	'lithogroup' => $LANG['GROUP'],'formation' => $LANG['FORMATION'], 'member' => $LANG['MEMBER'], 'bed' => $LANG['BED'], 'substrate' => $LANG['SUBSTRATE'],
+	'habitat' => $LANG['HABITAT'], 'substrate' => $LANG['SUBSTRATE'],
 	'occurrenceremarks' => $LANG['OCCURR_REMARKS'], 'associatedtaxa' => $LANG['ASSOC_TAXA'],
 	'verbatimattributes' => $LANG['VERB_ATTRIBUTES'], 'lifestage' => $LANG['LIFE_STAGE'], 'sex' => $LANG['SEX'], 'individualcount' => $LANG['COUNT'],
 	'samplingprotocol' => $LANG['SAMPLE_PROTOCOL'], 'preparations' => $LANG['PREPARATIONS'], 'reproductivecondition' => $LANG['REPRODUCTIVE_CONDITION'],
@@ -47,6 +46,12 @@ $headerMapBase = array( 'institutioncode' => $LANG['INSTITUTION_CODE'], 'collect
 	'disposition' => $LANG['DISPOSITION'], 'duplicatequantity' => $LANG['DUPE_QUANTITY'], 'datelastmodified' => $LANG['DATE_LAST_MODIFIED'], 'labelproject' => $LANG['LABEL_PROJECT'],
 	'processingstatus' => $LANG['PROCESS_STATUS'], 'recordenteredby' => $LANG['RECORD_ENTERED_BY'], 'dbpk' => $LANG['DBPK'], 'basisofrecord' => $LANG['BASIS_REC'],
 	'language' => $LANG['LANG'], 'continent' => $LANG['CONTINENT'], 'islandgroup' => $LANG['ISLAND_GROUP'], 'island' => $LANG['ISLAND'], 'waterbody' => $LANG['WATER_BODY']);
+//paleo fields
+$headerMapPaleoBase = array('earlyInterval' => $LANG['INTERVAL_EARLY'], 'lateInterval' => $LANG['INTERVAL_LATE'],
+	'lithogroup' => $LANG['GROUP'],'formation' => $LANG['FORMATION'], 'member' => $LANG['MEMBER'], 'bed' => $LANG['BED']);
+if (!empty($GLOBALS['ACTIVATE_PALEO']))
+	$headerMapBase = array_merge($headerMapBase, $headerMapPaleoBase);
+
 $headMap = array();
 
 $qryCnt = 0;
