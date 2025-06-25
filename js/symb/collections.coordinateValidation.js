@@ -8,7 +8,7 @@ function verifyCoordinates(f, client_root) {
 	var lngValue = f.decimallongitude.value;
 	var latValue = f.decimallatitude.value;
 
-	if(latValue && lngValue){
+	if(isNumeric(latValue) && isNumeric(lngValue)){
 		$.ajax({
 			type: "GET",
 			url: `${window.location.origin + client_root}/collections/editor/rpc/geocode.php`,
