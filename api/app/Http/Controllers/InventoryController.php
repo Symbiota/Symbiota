@@ -102,6 +102,13 @@ class InventoryController extends Controller{
 	 *	 operationId="/api/v2/inventory/identifier/taxa",
 	 *	 tags={""},
 	 *	 @OA\Parameter(
+	 *		 name="identifier",
+	 *		 in="path",
+	 *		 description="PK, GUID, or recordID associated with target inventory",
+	 *		 required=true,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
 	 *		 name="limit",
 	 *		 in="query",
 	 *		 description="Controls the number of results per page",
@@ -136,7 +143,7 @@ class InventoryController extends Controller{
 
 		$id = $this->getClid($id);
 		$inventoryObj = Inventory::find($id);
-		$fullCnt = $inventoryObj->taxa()->count();
+		$fullCnt = !empty($inventoryObj) ? $inventoryObj->taxa()->count() : 0;
 		$result = null;
 		if($fullCnt){
 			$result = $inventoryObj->taxa()->skip($offset)->take($limit)->get();

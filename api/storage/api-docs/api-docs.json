@@ -715,6 +715,15 @@
                 "operationId": "/api/v2/inventory/identifier/taxa",
                 "parameters": [
                     {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "PK, GUID, or recordID associated with target inventory",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "limit",
                         "in": "query",
                         "description": "Controls the number of results per page",
