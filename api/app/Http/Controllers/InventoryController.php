@@ -92,7 +92,7 @@ class InventoryController extends Controller{
 	public function showOneInventory($id, Request $request){
 		$id = $this->getClid($id);
 		$inventoryObj = Inventory::find($id);
-		if(!$inventoryObj->count()) $inventoryObj = ['status' =>false, 'error' => 'Unable to locate inventory based on identifier'];
+		if(empty($inventoryObj)) $inventoryObj = ['status' =>false, 'error' => 'Unable to locate inventory based on identifier'];
 		return response()->json($inventoryObj);
 	}
 
