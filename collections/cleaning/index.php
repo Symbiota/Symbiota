@@ -123,7 +123,6 @@ if($collMap['colltype'] == 'General Observations'){
 					</ul>
 				</section>
 			</div>
-<!--
 			<h2>Specimen Coordinates</h2>
 			<div style="margin:0px 0px 40px 15px;">
 				<div>
@@ -188,7 +187,6 @@ if($collMap['colltype'] == 'General Observations'){
 					</ul>
 				</fieldset>
 			</div>
- -->
 			<h2> <?php echo (isset($LANG['TAXONOMY']) ? $LANG['TAXONOMY'] : 'Taxonomy') ?> </h2>
 			<div style="margin:0px 0px 40px 15px;">
 				<div>
