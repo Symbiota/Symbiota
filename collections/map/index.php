@@ -2363,21 +2363,21 @@ $serverHost = GeneralUtil::getDomain();
 									if($GLOBALS['ACTIVATE_PALEO']){
 										?>
 										<div id="searchFormPaleo">
-											<div style="margin-top:5px;">
+											<div style="margin-top:5px; display:flex;">
 												<label for="lithogroup"> <?= $LANG['LITHOGROUP'] ?>: </label>
-												<input data-role="none" type="text" id="lithogroup" style="width:125px;" name="lithogroup" value="<?php echo $mapManager->getSearchTerm('lithogroup'); ?>" />
+												<input data-role="none" type="text" id="lithogroup" style="flex:1;margin-left: 0.5rem;" name="lithogroup" value="<?php echo $mapManager->getSearchTerm('lithogroup'); ?>" />
 											</div>
-											<div style="margin-top:5px;">
+											<div style="margin-top:5px; display:flex;">
 												<label for="formation"> <?= $LANG['FORMATION'] ?>: </label>
-												<input data-role="none" type="text" id="formation" style="width:125px;" name="formation" value="<?php echo $mapManager->getSearchTerm('formation'); ?>" />
+												<input data-role="none" type="text" id="formation" style="flex:1;margin-left: 0.5rem;" name="formation" value="<?php echo $mapManager->getSearchTerm('formation'); ?>" />
 											</div>
-											<div style="margin-top:5px;">
+											<div style="margin-top:5px; display:flex;">
 												<label for="member"> <?= $LANG['MEMBER'] ?>: </label>
-												<input data-role="none" type="text" id="member" style="width:125px;" name="member" value="<?php echo $mapManager->getSearchTerm('member'); ?>" />
+												<input data-role="none" type="text" id="member" style="flex:1;margin-left: 0.5rem;" name="member" value="<?php echo $mapManager->getSearchTerm('member'); ?>" />
 											</div>
-											<div style="margin-top:5px;">
+											<div style="margin-top:5px; display:flex;">
 												<label for="bed"> <?= $LANG['BED'] ?>: </label>
-												<input data-role="none" type="text" id="bed" style="width:125px;" name="bed" value="<?php echo $mapManager->getSearchTerm('bed'); ?>" />
+												<input data-role="none" type="text" id="bed" style="flex:1;margin-left: 0.5rem;" name="bed" value="<?php echo $mapManager->getSearchTerm('bed'); ?>" />
 											</div>
 											<div style="margin-top:5px;">
 												<label for="lateInterval"><?php echo $LANG['LATE_INT']; ?>:</label>
