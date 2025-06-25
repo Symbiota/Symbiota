@@ -526,7 +526,7 @@ if($IS_ADMIN){
 						</div>
 						<?php
 						//Collection projects
-						$collArr = $userManager->getCollectionMetadata('Preserved Specimens');
+						$collArr = $userManager->getCollectionMetadata('Preserved Specimens,Fossil Specimens');
 						$obsArr = $userManager->getCollectionMetadata('Observations');
 						$personalObsArr = $userManager->getCollectionMetadata('General Observations');
 						if(array_key_exists("CollAdmin",$userPermissions)){

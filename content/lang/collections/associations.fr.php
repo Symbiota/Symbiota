@@ -6,8 +6,8 @@
  Used by: editor/includes/resourcetab.fr.php, admin/importextended.fr.php
  */
 
-$LANG['ASSOC_OCC'] = 'Occurrences Associées';
-$LANG['CREATE_NEW_ASSOC'] = 'Créer Nouvelle Association';
+ $LANG['ASSOCIATIONS'] = 'Associations';
+ $LANG['CREATE_NEW_ASSOC'] = 'Créer Nouvelle Association';
 $LANG['ASSOCIATION_TYPE'] = "Type d'Association (requis)";
 $LANG['RESOURCE_LINK'] = 'Lien vers une ressource de non-occurrence';
 $LANG['INTERNAL_OCCURRENCE'] = 'Occurrence - Interne (ce portail)';
@@ -19,6 +19,7 @@ $LANG['BASIS_OF_RECORD'] = "Base d'Enregistrement";
 $LANG['HUMAN_OBS'] = 'Observation Jumaine';
 $LANG['LIVING_SPEC'] = 'Spécimen Vivant';
 $LANG['MACHINE_OBS'] = 'Observation des Machines';
+$LANG['FOSSIL_SPEC'] = 'Spécimen fossile';
 $LANG['MAT_SAMPLE'] = 'Échantillon de Matériau';
 $LANG['PRES_SAMPLE'] = 'Spécimen Conservé';
 $LANG['REF_CITATION'] = 'Citation de Référence';

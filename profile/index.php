@@ -1,7 +1,9 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT . '/config/auth_config.php');
-require_once($SERVER_ROOT . '/vendor/autoload.php');
+if(!empty($THIRD_PARTY_OID_AUTH_ENABLED)){
+	include_once($SERVER_ROOT . '/config/auth_config.php');
+	require_once($SERVER_ROOT . '/vendor/autoload.php');
+}
 use Jumbojett\OpenIDConnectClient;
 
 if($SYMB_UID){
@@ -293,7 +295,7 @@ include($SERVER_ROOT.'/includes/header.php');
 				<div style="font-weight:bold;margin-top:5px">
 					<?php echo (isset($LANG['REMEMBER_PWD'])?$LANG['REMEMBER_PWD']:"Can't Remember your password?"); ?>
 				</div>
-				<a href="#" style="color:blue;cursor:pointer;" onclick="resetPassword();"><?php echo (isset($LANG['REST_PWD'])?$LANG['REST_PWD']:'Reset Password'); ?></a>
+				<a href="#" onclick="resetPassword();"><?php echo (isset($LANG['REST_PWD'])?$LANG['REST_PWD']:'Reset Password'); ?></a>
 				<div style="font-weight:bold;margin-top:5px">
 					<?php echo (isset($LANG['REMEMBER_LOGIN'])?$LANG['REMEMBER_LOGIN']:"Can't Remember Login Name?"); ?>
 				</div>

@@ -101,7 +101,8 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 										<option value=""></option>
 										<?php
 										$sortFields = array('c.collectionname' => $LANG['COLLECTION'], 'o.catalogNumber' => $LANG['CATALOG_NUMBER'], 'o.family' => $LANG['FAMILY'], 'o.sciname' => $LANG['SCINAME'], 'o.recordedBy' => $LANG['COLLECTOR'],
-											'o.recordNumber' => $LANG['NUMBER'], 'o.eventDate' => $LANG['EVENT_DATE'], 'o.country' => $LANG['COUNTRY'], 'o.StateProvince' => $LANG['STATE_PROVINCE'], 'o.county' => $LANG['COUNTY'], 'o.minimumElevationInMeters' => $LANG['ELEVATION']);
+											'o.recordNumber' => $LANG['NUMBER'], 'o.eventDate' => $LANG['EVENT_DATE'], 'o.country' => $LANG['COUNTRY'], 'o.StateProvince' => $LANG['STATE_PROVINCE'], 'o.county' => $LANG['COUNTY'], 'o.minimumElevationInMeters' => $LANG['ELEVATION'],
+											'paleo.formation' => (isset($LANG['FORMATION']) ? $LANG['FORMATION'] : 'Formation'), 'paleo.earlyInterval' => (isset($LANG['EARLY_INT']) ? $LANG['EARLY_INT'] : 'Early Interval'), 'paleo.lateInterval' => (isset($LANG['LATE_INT']) ? $LANG['LATE_INT'] : 'Late IntervaL'));
 										foreach($sortFields as $k => $v){
 											echo '<option value="'.$k.'" '.($k==$sortField1?'SELECTED':'').'>'.$v.'</option>';
 										}
@@ -203,6 +204,11 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 							<th><?= $LANG['LOCALITY'] ?></th>
 							<th><?= $LANG['DEC_LAT'] ?></th>
 							<th><?= $LANG['DEC_LONG'] ?></th>
+							<?php if (!empty($ACTIVATE_PALEO)): ?>
+								<th><?= $LANG['FORMATION'] ?></th>
+								<th><?= $LANG['EARLY_INT'] ?></th>
+								<th><?= $LANG['LATE_INT'] ?></th>
+							<?php endif; ?>
 							<th><?= $LANG['HABITAT'] ?></th>
 							<th><?= $LANG['SUBSTRATE'] ?></th>
 							<th><?= $LANG['ELEVATION'] ?></th>
@@ -256,6 +262,11 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 								?></td>
 								<td><?php if(isset($occArr['declat'])) echo $occArr['declat']; ?></td>
 								<td><?php if(isset($occArr['declong'])) echo $occArr['declong']; ?></td>
+								<?php if (!empty($ACTIVATE_PALEO)): ?>
+									<td><?php if(isset($occArr['formation'])) echo $occArr['formation']; ?></td>
+									<td><?php if(isset($occArr['earlyInterval'])) echo $occArr['earlyInterval']; ?></td>
+									<td><?php if(isset($occArr['lateInterval'])) echo $occArr['lateInterval']; ?></td>
+								<?php endif; ?>
 								<td><?php if(isset($occArr['habitat'])) echo ((strlen($occArr['habitat'])>80) ? substr($occArr['habitat'],0,80).'...':$occArr['habitat']); ?></td>
 								<td><?php if(isset($occArr['substrate'])) echo ((strlen($occArr['substrate'])>80) ? substr($occArr['substrate'],0,80).'...':$occArr['substrate']); ?></td>
 								<td><?= (array_key_exists('elev',$occArr) ? $occArr['elev'] : ''); ?></td>

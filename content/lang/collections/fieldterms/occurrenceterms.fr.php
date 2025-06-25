@@ -89,6 +89,7 @@ $LANG['DATA_GENERALIZATIONS'] = 'Généralisations de données';
 $LANG['INSTITUTION_CODE'] = 'Code d\'institution (override)';
 $LANG['COLLECTION_CODE'] = 'Code de collection (override)';
 $LANG['OWNER_INSTITUTION_CODE'] = 'Code du propriétaire (override)';
+$LANG['STORAGELOCATION_CODE'] = 'Storage Location';
 $LANG['PROCESSING_STATUS'] = 'Statut du traitement';
 
 ?>

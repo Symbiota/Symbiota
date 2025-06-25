@@ -3,7 +3,7 @@
 ## REQUIREMENTS
 
 - Apache HTTP Server (2.x or better) - other PHP enabled web servers will work, though the code has been well tested using Apache HTTP Server and Nginx
-- PHP 8.0 or higher is recommended for the best performance, security, and feature support. The minimum requirement is PHP 7.3, but using older versions may cause security and performance issues over time.
+- PHP 8.2 or higher is recommended for the best performance, security, and feature support. The minimum requirement is PHP 8.1, but using older versions may cause security and performance issues over time. When third party authentication is enabled, PHP 8.2 or above is required.
   - Required extensions: mysqli, gd, mbstring, zip, curl, exif, openssl
   - Recommended configuration adjustments: upload_max_filesize = 100M (or expected file size upload), max_input_vars = 2000, memory_limit = 256M, post_max_size = 100M
   - Optional: Pear package Image_Barcode2 (https://pear.php.net/package/Image_Barcode2) – enables barcodes on specimen labels

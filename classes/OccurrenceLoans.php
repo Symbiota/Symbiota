@@ -1119,7 +1119,7 @@ class OccurrenceLoans extends Manager{
 		$retArr = array();
 		$sql = 'SELECT i.iid, IFNULL(c.institutioncode,i.institutioncode) as institutioncode, i.institutionname '.
 			'FROM institutions i LEFT JOIN (SELECT iid, institutioncode, collectioncode, collectionname '.
-			'FROM omcollections WHERE colltype = "Preserved Specimens") c ON i.iid = c.iid '.
+			'FROM omcollections WHERE colltype IN("Preserved Specimens","Fossil Specimens")) c ON i.iid = c.iid '.
 			'ORDER BY i.institutioncode,c.institutioncode,c.collectionname,i.institutionname';
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
