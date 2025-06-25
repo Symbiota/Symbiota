@@ -27,7 +27,10 @@ $collMap = $cleanManager->getCollMap();
 
 $statusStr = '';
 $isEditor = 0;
-if($IS_ADMIN) $isEditor = 1;
+
+if($IS_ADMIN || ($collid && array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin']))){
+	$isEditor = 1;
+}
 
 ?>
 <!DOCTYPE html>
