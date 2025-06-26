@@ -253,7 +253,7 @@ if(!$schemaVersion){
 					<div id="images">
 						<p class="description">
 							<?= $LANG['SEESYMBDOC'] ?>
-							<a href="https://docs.symbiota.org/docs/Collection_Manager_Guide/Images"><?= $LANG['IMGSUB'] ?></a>
+							<a href="https://docs.symbiota.org/docs/Collection_Manager_Guide/Images" target="_blank"><?= $LANG['IMGSUB'] ?></a>
 							<?= $LANG['FORANOVERVIEW'] ?>
 						</p>
 					</div>
