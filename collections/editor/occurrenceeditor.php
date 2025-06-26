@@ -1138,7 +1138,7 @@ else{
 													<option value="1" ' <?= ($securityCode == 1 ? 'SELECTED' : '') ?>><?= $LANG['LOCALITY_SECURITY_APPLIED'] ?></option>
 													<option value="5" ' <?= ($securityCode == 5 ? 'SELECTED' : '') ?>><?= $LANG['FULL_SECURITY_APPLIED'] ?></option>
 												</select>
-												<a href="#" onclick="return dwcDoc('locality-security')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+												<a href="#" onclick="return dwcDoc('security')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
 											</div>
 											<div id="locsecreason" style="margin-left:5px;border:2px solid gray;float:left;display:<?= ($lsrValue||$securityCode?'inline':'none') ?>;padding:3px">
 												<div ><input name="lockSecurity" type="checkbox" onchange="securityLockChanged(this)" tabindex="-1" <?= ($lsrValue?'checked':'') ?> /> <?= $LANG['LOCK_SEC_SETTING'] ?></div>
