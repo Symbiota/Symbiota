@@ -27,6 +27,7 @@ $collMap = $cleanManager->getCollMap();
 
 $statusStr = '';
 $isEditor = 0;
+$coordRankingArr = [];
 
 if($IS_ADMIN || ($collid && array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin']))){
 	$isEditor = 1;
@@ -37,7 +38,7 @@ if($IS_ADMIN || ($collid && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
-	<title><?php echo $DEFAULT_TITLE; ?> Coordinate Validator</title>
+	<title><?php echo $DEFAULT_TITLE; ?> iiiiiiiiii Validator</title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -87,14 +88,15 @@ if($IS_ADMIN || ($collid && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 	<!-- inner text -->
 	<div role="main" id="innertext" style="display: flex; gap: 1rem; flex-direction: column; margin-bottom: 1rem">
 		<h1 class="page-heading" style="margin-bottom: 0"><?php echo $LANG['COOR_VALIDATOR']; ?></h1>
-		<?php if($statusStr) { ?>
+		<?php if($statusStr): ?>
 			<hr/>
 			<div style="margin:20px;color:<?php echo (substr($statusStr,0,5)=='ERROR'?'red':'green');?>">
 				<?php echo $statusStr; ?>
 			</div>
 			<hr/>
-		<?php } if($isEditor) {
-			if($collidStr) { ?>
+		<?php endif ?>
+
+		<?php if($isEditor && $collidStr): ?>
 				<div>
 					<p style="margin: 0">
 						<?= $LANG['TOOL_DESCRIPTION'] ?>
@@ -153,6 +155,30 @@ if($IS_ADMIN || ($collid && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 					echo '</fieldset>';
 				}?>
 
+				<div>
+					<div style="font-weight:bold"><?= $LANG['RANKING_STATISTICS']?></div>
+					<?php
+					$coordRankingArr = $cleanManager->getRankingStats('coordinate');
+					//$rankArr = current($coordRankingArr);
+					//$protocolMap = array('GoogleApiMatch:countryEqual'=>'Questionable State','GoogleApiMatch:stateEqual'=>'Questionable County','GoogleApiMatch:countyEqual'=>'Country, State, and County verified ');
+					?>
+
+					<table class="styledtable">
+					<tr>
+						<th><?= $LANG['RANKING'] ?></th>
+						<th><?= $LANG['STATUS'] ?></th>
+						<th><?= $LANG['COUNT'] ?></th>
+					</tr>
+					<?php foreach($coordRankingArr as $rank => $cnt):?>
+						<tr>
+							<td><?= $rank ?></td>
+							<td><?= (is_numeric($rank)? $cleanManager->coordinateRankingToText($rank): $LANG['UNVERIFIED']) ?></td>
+							<td><?= number_format($cnt) ?></td>
+						</tr>
+					<?php endforeach ?>
+					</table>
+				</div>
+
 				<form action="coordinatevalidator.php" method="post">
 					<input name="q_country" type="hidden" value="<?= $country; ?>" />
 					<input name="collid" type="hidden" value="<?= $collidStr; ?>" />
@@ -173,112 +199,47 @@ if($IS_ADMIN || ($collid && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 						<label for="populate_county"><?= $LANG['POPULATE_COUNTY'] ?></label>
 					</div>
 
-					<button type="submit"><?= $LANG['VALIDATE_ALL_COORDINATES'] ?></button>
+					<button type="submit" <?php ($coordRankingArr['unverified'] ?? 0) === 0? 'disabled': '' ?> ><?= $LANG['VALIDATE_ALL_COORDINATES'] ?></button>
+					<?php if( ($coordRankingArr['unverified'] ?? 0) === 0 ): ?>
+						<p><?= $LANG['ALL_COORDINATES_VALIDATED'] ?></p>
+					<?php endif ?> 
 				</form>
 
-				<div>
-					<div style="font-weight:bold"><?= $LANG['RANKING_STATISTICS']?></div>
-					<?php
-					$coordRankingArr = $cleanManager->getRankingStats('coordinate');
-					$rankArr = current($coordRankingArr);
-					$protocolMap = array('GoogleApiMatch:countryEqual'=>'Questionable State','GoogleApiMatch:stateEqual'=>'Questionable County','GoogleApiMatch:countyEqual'=>'Country, State, and County verified ');
-					?>
+			<?php
+				$countryArr = $cleanManager->getUnverifiedByCountry();
+				arsort($countryArr);
+			?>
 
-					<table class="styledtable">
-					<tr>
-						<th><?= $LANG['RANKING'] ?></th>
-						<th><?= $LANG['PROTOCOL'] ?></th>
-						<th><?= $LANG['COUNT'] ?></th>
-					</tr>
-					<?php foreach($rankArr as $rank => $protocolArr):?>
-						<?php foreach($protocolArr as $protocolStr => $cnt): 
-							if(array_key_exists($protocolStr, $protocolMap)) {
-								$protocolStr = $protocolMap[$protocolStr];
-							}
-						?>
-						<tr>
-							<td><?= $rank ?></td>
-							<td><?= (is_numeric($rank)? $cleanManager->coordinateRankingToText($rank): '') ?></td>
-							<td><?= number_format($cnt) ?></td>
-						</tr>
-						<?php endforeach ?>
-
-					<?php endforeach ?>
-					</table>
-				</div>
+			<?php if(count($countryArr)): ?>
 				<div>
 					<div style="font-weight:bold">Non-verified listed by Country</div>
 					<table class="styledtable">
-					<tr><th>Country</th><th>Count</th>
-					<?php
-					$countryArr = $cleanManager->getUnverifiedByCountry();
-					arsort($countryArr);
-					foreach($countryArr as $country => $cnt) {?>
 						<tr>
-						<td>
-							<div style="display: flex; align-items: center; gap: 0.5rem">
-							<?= $country ?>
-							<a style="display: flex; flex-grow: 1; justify-content: end"href="../list.php?db=<?= $collidStr ?? 'all' ?>&country=<?= htmlspecialchars($country, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE)?>" target="_blank">
-								<img src="../../images/list.png"/>
-							</a>
-							</div>
-						</td>
-						<td><?= number_format($cnt)?></td>
+							<th>Country</th>
+							<th>Count</th>
 						</tr>
-					<?php } ?>
+
+						<?php foreach($countryArr as $country => $cnt) :?>
+							<tr>
+							<td>
+								<div style="display: flex; align-items: center; gap: 0.5rem">
+								<?= $country ?>
+								<a style="display: flex; flex-grow: 1; justify-content: end"href="../list.php?db=<?= $collidStr ?? 'all' ?>&country=<?= htmlspecialchars($country, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE)?>" target="_blank">
+									<img src="../../images/list.png"/>
+								</a>
+								</div>
+							</td>
+							<td><?= number_format($cnt)?></td>
+							</tr>
+						<?php endforeach ?>
 					</table>
 				</div>
-	 			<?php } else { ?>
-				<fieldset style="padding: 15px;margin:20px;">
-					<legend><b>Collection Selector</b></legend>
-					<form name="selectcollidform" action="coordinatevalidator.php" method="post" onsubmit="return checkSelectCollidForm(this)">
-						<div>
-							<input type="checkbox" name="select-all" id="select-all" onclick="selectAllCollections(this,'');" />
-							<label for="select-all"> Select / Unselect All</label>
-						</div>
-						<div>
-							<input type="checkbox" name="select-all-specimens" id="select-all-specimens" onclick="selectAllCollections(this,'specimen');" />
-							<label for="select-all-specimens">Select / Unselect All Specimens</label>
-						</div>
-						<div>
-							<input type="checkbox" name="select-all-observations" id="select-all-observations" onclick="selectAllCollections(this,'observation');" />
-							<label for="select-all-observations">Select / Unselect All Observations</label>
-						</div>
-						<div>
-							<input type="checkbox" name="select-all-live-management" id="select-all-live-management" onclick="selectAllCollections(this,'live');" />
-							<label for="select-all-live-management">Select / Unselect All Live Management</label>
-						</div>
-						<div>
-							<input type="checkbox" name="select-all-snapshot-management" id="select-all-snapshot-management" onclick="selectAllCollections(this,'snapshot');" />
-							<label for="select-all-snapshot-management">Select / Unselect All Snapshot Management</label>
-						</div>
-						<hr/>
-						<?php
-						foreach($collMap as $id => $collArr){
-							echo '<div>';
-							$classStr = '';
-							if($collArr['colltype'] == 'Preserved Specimens' || $collArr['colltype'] == 'Fossil Specimens') $classStr = 'specimen';
-							else $classStr = 'observation';
-							if($collArr['managementtype'] == 'Live Data') $classStr .= ' live';
-							elseif($collArr['managementtype'] == 'Snapshot') $classStr .= ' snapshot';
-							elseif($collArr['managementtype'] == 'Aggregate') $classStr .= ' aggregate';
-							echo '<input name="collid[]" id="collid[]" class="' . $classStr . '" type="checkbox" value="' . $id . '" /> ';
-							echo '<label for="collid[]">' . $collArr['collectionname'].' ('.$collArr['code'].') - '.$collArr['colltype'].':'.$collArr['managementtype'] . '</label>';
-							echo '</div>';
-						}
-						?>
-						<div style="margin: 15px">
-							<button name="submitaction" type="submit" value="EvaluateCollections">Evaluate Collections</button>
-						</div>
-					</form>
-				</fieldset>
-				<?php
-			}
-		}
-		else{
-			echo '<h2>You are not authorized to access this page</h2>';
-		}
-		?>
+			<?php endif ?>
+		<?php elseif(!$collidStr): ?>
+			<h2>You are not authorized to access this page</h2>
+		<?php else: ?>
+			<h2>You are not authorized to access this page</h2>
+		<?php endif ?>
 	</div>
 	<?php
 	include($SERVER_ROOT.'/includes/footer.php');

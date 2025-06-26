@@ -747,7 +747,7 @@ class OccurrenceCleaner extends Manager{
 		foreach($occid_arr as $occid => $occurrence) {
 			$values = [
 				$occid, 
-				'"Coordinate"', 
+				'"coordinate"', 
 				$occurrence['rank'] ?? self::COORDINATE_LOCALITY_MISMATCH, 
 				'"geographicthesaurus"', 
 				$GLOBALS['SYMB_UID']
@@ -949,10 +949,10 @@ class OccurrenceCleaner extends Manager{
 		$sql = 'SELECT o.collid, v.category, v.ranking, v.protocol, COUNT(v.occid) as cnt '.
 			'FROM omoccurverification v INNER JOIN omoccurrences o ON v.occid = o.occid '.
 			'WHERE (o.collid IN('.$this->collid.')) AND v.category = "'.$category.'" '.
-			'GROUP BY o.collid, v.category, v.ranking, v.protocol';
+			'GROUP BY o.collid, v.category, v.ranking';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr[$r->category][$r->ranking][$r->protocol] = $r->cnt;
+			$retArr[$r->ranking] = intval($r->cnt);
 		}
 		$rs->free();
 		if($category){
@@ -962,7 +962,7 @@ class OccurrenceCleaner extends Manager{
 				'WHERE (collid IN('.$this->collid.')) AND (decimallatitude IS NOT NULL) AND (occid NOT IN(SELECT occid FROM omoccurverification WHERE category = "'.$category.'"))';
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
-				$retArr[$category]['unverified'][''] = $r->cnt;
+				$retArr['unverified'] = intval($r->cnt);
 			}
 			$rs->free();
 		}

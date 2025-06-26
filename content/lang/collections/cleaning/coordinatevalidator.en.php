@@ -17,7 +17,9 @@ $LANG['VALIDATE_ALL_COORDINATES'] = 'Validate All Coordinates';
 $LANG['RANKING_STATISTICS'] = 'Ranking Statistics';
 
 $LANG['RANKING'] = 'Ranking';
-$LANG['PROTOCOL'] = 'Protocol';
+$LANG['STATUS'] = 'Status';
 $LANG['COUNT'] = 'Count';
+$LANG['UNVERIFIED'] = 'Unverified';
+$LANG['ALL_COORDINATES_VALIDATED'] = 'All coordinates been validated';
 
 ?>
