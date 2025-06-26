@@ -159,8 +159,6 @@ if($IS_ADMIN || ($collid && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 					<div style="font-weight:bold"><?= $LANG['RANKING_STATISTICS']?></div>
 					<?php
 					$coordRankingArr = $cleanManager->getRankingStats('coordinate');
-					//$rankArr = current($coordRankingArr);
-					//$protocolMap = array('GoogleApiMatch:countryEqual'=>'Questionable State','GoogleApiMatch:stateEqual'=>'Questionable County','GoogleApiMatch:countyEqual'=>'Country, State, and County verified ');
 					?>
 
 					<table class="styledtable">
