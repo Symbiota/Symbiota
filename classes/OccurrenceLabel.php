@@ -171,7 +171,7 @@ class OccurrenceLabel{
 			}
 			//Get occurrence records
 			$this->setLabelFieldArr();
-			$sql2 = 'SELECT '.implode(',',$this->labelFieldArr).' FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.tid '.$sqlWhere;
+			$sql2 = 'SELECT '.implode(',',$this->labelFieldArr).' FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.tid LEFT JOIN taxstatus ts ON ts.tid = o.tidinterpreted LEFT JOIN taxstatus pts ON ts.parenttid = pts.tid LEFT JOIN taxa pt ON pts.tid = pt.tid '.$sqlWhere;
 			if($rs2 = $this->conn->query($sql2)){
 				while($row2 = $rs2->fetch_assoc()){
 					$occid = $row2['occid'];
@@ -270,7 +270,7 @@ class OccurrenceLabel{
 				'speciesName'=>'TRIM(CONCAT_WS(" ",t.unitind1,t.unitname1,t.unitind2,t.unitname2)) AS speciesname', 'taxonRank'=>'t.unitind3 AS taxonrank',
 				'specificepithet'=>'t.unitname2 AS specificepithet',
 				'fieldnumber'=>'o.fieldnumber',
-				'infraSpecificEpithet'=>'t.unitname3 AS infraspecificepithet', 'scientificNameAuthorship'=>'o.scientificnameauthorship', 'parentAuthor'=>'"" AS parentauthor','identifiedBy'=>'o.identifiedby',
+				'infraSpecificEpithet'=>'t.unitname3 AS infraspecificepithet', 'scientificNameAuthorship'=>'o.scientificnameauthorship', 'parentAuthor'=>'pt.author AS parentauthor','identifiedBy'=>'o.identifiedby',
 				'dateIdentified'=>'o.dateidentified', 'identificationReferences'=>'o.identificationreferences', 'identificationRemarks'=>'o.identificationremarks', 'taxonRemarks'=>'o.taxonremarks',
 				'identificationQualifier'=>'o.identificationqualifier', 'typeStatus'=>'o.typestatus', 'collector'=>'o.recordedby as collector', 'collectornumber'=>'o.recordnumber as collectornumber', 'associatedCollectors'=>'o.associatedcollectors',
 				'eventDate'=>'DATE_FORMAT(o.eventdate,"%e %M %Y") AS eventdate', 'year'=>'o.year', 'month'=>'o.month', 'day'=>'o.day', 'monthName'=>'DATE_FORMAT(o.eventdate,"%M") AS monthname',
