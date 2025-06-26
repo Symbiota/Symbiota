@@ -38,7 +38,7 @@ if($IS_ADMIN || ($collid && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
-	<title><?php echo $DEFAULT_TITLE; ?> iiiiiiiiii Validator</title>
+	<title><?php echo $DEFAULT_TITLE; ?>Validator</title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
