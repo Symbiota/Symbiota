@@ -1097,4 +1097,15 @@ class GeographicThesaurus extends Manager {
 
 		return $result->fetch_assoc() ? true : false;
 	}
+
+	static function unitsEqual(String $inputString, String $geoterm, int $rank) {
+		$inputString = strtolower(trim($inputString));
+		$geoterm = strtolower(trim($geoterm));
+
+		if($rank === self::COUNTY) {
+			$inputString = trim(str_replace(array('county','parish'), '', $inputString));
+		}
+
+		return $inputString === $geoterm;
+	}
 }
