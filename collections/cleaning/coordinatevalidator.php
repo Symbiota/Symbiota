@@ -197,7 +197,7 @@ if($IS_ADMIN || ($collid && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 						<label for="populate_county"><?= $LANG['POPULATE_COUNTY'] ?></label>
 					</div>
 
-					<button type="submit" <?php ($coordRankingArr['unverified'] ?? 0) === 0? 'disabled': '' ?> ><?= $LANG['VALIDATE_ALL_COORDINATES'] ?></button>
+					<button type="submit" <?= ($coordRankingArr['unverified'] ?? 0) === 0? 'disabled="true"': '' ?> ><?= $LANG['VALIDATE_ALL_COORDINATES'] ?></button>
 					<?php if( ($coordRankingArr['unverified'] ?? 0) === 0 ): ?>
 						<p><?= $LANG['ALL_COORDINATES_VALIDATED'] ?></p>
 					<?php endif ?> 
