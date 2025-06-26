@@ -401,7 +401,13 @@ function stateProvinceChanged(stateVal) {
 function coordinatesChanged(f, client_root) {
   verifyDecimalLatitude(f);
   verifyDecimalLongitude(f);
+
+  // Used to fire whether to geocode data in verifyCoordinates
+  // Should be reset if the coordinates change
+  // Reset is here because verifyCoordinates is also called when country
+  f.coordinates_validated = false;
   verifyCoordinates(f, client_root);
+
   fieldChanged('decimallatitude');
   fieldChanged('decimallongitude');
 }

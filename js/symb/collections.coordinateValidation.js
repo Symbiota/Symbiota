@@ -14,10 +14,8 @@ function verifyCoordinates(f, client_root) {
 		70: 'county',
 		80: 'municipality',
 	}
-	const already_ran_check = Object.values(geocode_form_map)
-		.find(v => f[v] && f[v].style && f[v].style.backgroundColor === 'lightblue');
 
-	if(isNumeric(latValue) && isNumeric(lngValue) && !already_ran_check){
+	if(isNumeric(latValue) && isNumeric(lngValue) && !f.coordinates_validated){
 		$.ajax({
 			type: "GET",
 			url: `${window.location.origin + client_root}/collections/editor/rpc/geocode.php`,
@@ -52,6 +50,7 @@ function verifyCoordinates(f, client_root) {
 								f[form_name].style.backgroundColor = "lightblue";
 							} else if(!getAccepted(match).includes(f[form_name].value.toLowerCase())) {
 								coord_valid = false;
+								f[form_name].style.backgroundColor = "#ff000066 ";
 							}
 						}
 				}
@@ -62,6 +61,7 @@ function verifyCoordinates(f, client_root) {
 					alert("Are the coordinates accurate? They are not within the entered locality. Click globe symbol to display coordinates in map.");
 
 				}
+				f.coordinates_validated = true;
 			}
 		});
 	}
