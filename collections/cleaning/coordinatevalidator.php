@@ -97,16 +97,15 @@ if($IS_ADMIN || ($collid && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 			if($collidStr) { ?>
 				<div>
 					<p style="margin: 0">
-						Click "Validate All Coordinates" button to loop through all unvalidated georeferenced specimens and verify that the coordinates actually fall within the defined political units.
-						Click on the list symbol to display specimens of that ranking. If there was a mismatch between coordinates and county, this could be due to:
+						<?= $LANG['TOOL_DESCRIPTION'] ?>
 					</p>
 					<ul>
-						<li>Coordinates fall outside of county limits</li>
-						<li>Wrong county was entered</li>
-						<li>County is misspelled</li>
+						<li><?= $LANG['COORDINATES_OUTSIDE_COUNTY_LIMITS'] ?></li>
+						<li><?= $LANG['WRONG_COUNTY_ENTERED'] ?></li>
+						<li><?= $LANG['COUNTY_MISSPELLED'] ?></li>
 					</ul>
 					<p style="margin: 0">
-						* Note coordinate validation is limited to 50000 records at a time, but can be ran mutliple times
+						<?= $LANG['VALIDATION_COUNT_LIMIT'] ?>
 					</p>
 				</div>
 
@@ -161,43 +160,51 @@ if($IS_ADMIN || ($collid && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 
 					<div>
 						<input type="checkbox" id="populate_country" name="populate_country" checked />
-						<label for="populate_country">Populate country if missing and validated</label>
+					<label for="populate_country"><?= $LANG['POPULATE_COUNTRY']?></label>
 					</div>
 
 					<div>
 						<input type="checkbox" id="populate_stateProvince" name="populate_stateProvince" checked />
-						<label for="populate_stateProvince">Populate State/Province if missing and validated</label>
+						<label for="populate_stateProvince"><?= $LANG['POPULATE_STATE_PROVINCE']?></label>
 					</div>
 
 					<div>
 						<input type="checkbox" id="populate_county" name="populate_county" checked />
-						<label for="populate_county">Populate county if missing and validated</label>
+						<label for="populate_county"><?= $LANG['POPULATE_COUNTY'] ?></label>
 					</div>
 
-					<button type="submit">Validate All Coordinates</button>
+					<button type="submit"><?= $LANG['VALIDATE_ALL_COORDINATES'] ?></button>
 				</form>
 
 				<div>
-					<div style="font-weight:bold">Ranking Statistics</div>
+					<div style="font-weight:bold"><?= $LANG['RANKING_STATISTICS']?></div>
 					<?php
 					$coordRankingArr = $cleanManager->getRankingStats('coordinate');
 					$rankArr = current($coordRankingArr);
-					echo '<table class="styledtable">';
-					echo '<tr><th>Ranking</th><th>Protocol</th><th>Count</th></tr>';
 					$protocolMap = array('GoogleApiMatch:countryEqual'=>'Questionable State','GoogleApiMatch:stateEqual'=>'Questionable County','GoogleApiMatch:countyEqual'=>'Country, State, and County verified ');
-					foreach($rankArr as $rank => $protocolArr){
-						foreach($protocolArr as $protocolStr => $cnt){
-							if(array_key_exists($protocolStr, $protocolMap)) $protocolStr = $protocolMap[$protocolStr];
-							echo '<tr>';
-							echo '<td>'.$rank.'</td>';
-							echo '<td>' . (is_numeric($rank)? $cleanManager->coordinateRankingToText($rank): '') . '</td>';
-							echo '<td>'.number_format($cnt);
-							echo '</td>';
-							echo '</tr>';
-						}
-					}
-					echo '</table>';
 					?>
+
+					<table class="styledtable">
+					<tr>
+						<th><?= $LANG['RANKING'] ?></th>
+						<th><?= $LANG['PROTOCOL'] ?></th>
+						<th><?= $LANG['COUNT'] ?></th>
+					</tr>
+					<?php foreach($rankArr as $rank => $protocolArr):?>
+						<?php foreach($protocolArr as $protocolStr => $cnt): 
+							if(array_key_exists($protocolStr, $protocolMap)) {
+								$protocolStr = $protocolMap[$protocolStr];
+							}
+						?>
+						<tr>
+							<td><?= $rank ?></td>
+							<td><?= (is_numeric($rank)? $cleanManager->coordinateRankingToText($rank): '') ?></td>
+							<td><?= number_format($cnt) ?></td>
+						</tr>
+						<?php endforeach ?>
+
+					<?php endforeach ?>
+					</table>
 				</div>
 				<div>
 					<div style="font-weight:bold">Non-verified listed by Country</div>
