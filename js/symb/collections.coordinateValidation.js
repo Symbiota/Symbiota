@@ -8,7 +8,16 @@ function verifyCoordinates(f, client_root) {
 	var lngValue = f.decimallongitude.value;
 	var latValue = f.decimallatitude.value;
 
-	if(isNumeric(latValue) && isNumeric(lngValue)){
+	const geocode_form_map = {
+		50: 'country',
+		60: 'stateprovince',
+		70: 'county',
+		80: 'municipality',
+	}
+	const already_ran_check = Object.values(geocode_form_map)
+		.find(v => f[v] && f[v].style && f[v].style.backgroundColor === 'lightblue');
+
+	if(isNumeric(latValue) && isNumeric(lngValue) && !already_ran_check){
 		$.ajax({
 			type: "GET",
 			url: `${window.location.origin + client_root}/collections/editor/rpc/geocode.php`,
@@ -17,12 +26,6 @@ function verifyCoordinates(f, client_root) {
 		}).done(function( data ) {
 			if(data.matches){
 				let coord_valid = true;
-				const geocode_form_map = {
-					50: 'country',
-					60: 'stateprovince',
-					70: 'county',
-					80: 'municipality',
-				}
 
 				function getAccepted(match) {
 					let returnArr = [];
@@ -52,6 +55,7 @@ function verifyCoordinates(f, client_root) {
 							}
 						}
 				}
+
 				if(!coord_valid) {
 					alert("Are the coordinates accurate? They currently map to: " + data.matches.map(d => d.geoterm).join(', ') + " which differs from what is in the form. Click globe symbol to display coordinates in map.");
 				} else if(data.matches && data.matches.length === 0 && data.is_registered) {
