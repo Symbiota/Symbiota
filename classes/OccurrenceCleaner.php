@@ -807,7 +807,7 @@ class OccurrenceCleaner extends Manager{
 			//Get unranked count
 			$sql = 'SELECT COUNT(occid) AS cnt '.
 				'FROM omoccurrences '.
-				'WHERE (collid IN('.$this->collid.')) AND (decimallatitude IS NOT NULL) AND (occid NOT IN(SELECT occid FROM omoccurverification WHERE category = "'.$category.'"))';
+				'WHERE (collid IN('.$this->collid.')) AND (decimallatitude IS NOT NULL) AND (decimallongitude IS NOT NULL) AND (occid NOT IN(SELECT occid FROM omoccurverification WHERE category = "'.$category.'"))';
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
 				$retArr['unverified'] = intval($r->cnt);
