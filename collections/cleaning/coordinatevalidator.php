@@ -83,7 +83,7 @@ if($IS_ADMIN || ($collid && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
 		<a href="../../sitemap.php">Sitemap</a> &gt;&gt;
-			<b><a href="coordinatevalidator.php?collid=<?= htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>">Coordinate Validator</a></b>
+		<b><a href="coordinatevalidator.php?collid=<?= htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>">Coordinate Validator</a></b>
 	</div>
 	<!-- inner text -->
 	<div role="main" id="innertext" style="display: flex; gap: 1rem; flex-direction: column; margin-bottom: 1rem">
