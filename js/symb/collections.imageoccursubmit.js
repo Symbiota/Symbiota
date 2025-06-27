@@ -85,7 +85,7 @@ function validateImgOccurForm(f){
 
 //Misc
 function dwcDoc(dcTag){
-	dwcWindow=open("https://biokic.github.io/symbiota-docs/editor/edit/fields/#"+dcTag,"dwcaid","width=1250,height=300,left=20,top=20,scrollbars=1");
+	dwcWindow=open("https://docs.symbiota.org/docs/Editor_Guide/Editing_Searching_Records/symbiota_data_fields#"+dcTag,"dwcaid","width=1250,height=300,left=20,top=20,scrollbars=1");
 	//dwcWindow=open("http://rs.tdwg.org/dwc/terms/index.htm#"+dcTag,"dwcaid","width=1250,height=300,left=20,top=20,scrollbars=1");
 	if(dwcWindow.opener == null) dwcWindow.opener = self;
 	dwcWindow.focus();
