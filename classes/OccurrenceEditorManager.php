@@ -1024,6 +1024,8 @@ class OccurrenceEditorManager {
 					}
 					//Update occurrence record
 					$sql = 'UPDATE IGNORE omoccurrences SET ' . substr($sql, 1) . ' WHERE (occid = ' . $this->occid . ')';
+					//TODO (Logan) remove debug log before merge
+					var_dump($sql);
 					if ($this->conn->query($sql)) {
 						if (strtolower($postArr['processingstatus'] ?? '') != 'unprocessed') {
 							//UPDATE uid within omcrowdsourcequeue, only if not yet processed
