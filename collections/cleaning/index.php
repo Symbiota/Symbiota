@@ -128,8 +128,13 @@ if($collMap['colltype'] == 'General Observations'){
 				<div>
 					These tools are to aid collection managers in verifying, ranking, and managing coordinate information associated with occurrence records.
 				</div>
-				<fieldset style="margin:10px 0px;padding:5px;width:550px">
-					<legend style="font-weight:bold">Statistics and Action Panel</legend>
+
+				<section class="fieldset-like max-width-fit-65 ">
+					<h3>
+						<span>
+							Statistics and Action Panel
+						</span>
+					</h3>
 					<ul>
 						<?php
 						$statsArr = $cleanManager->getCoordStats();
@@ -185,7 +190,7 @@ if($collMap['colltype'] == 'General Observations'){
 							<a href="coordinatevalidator.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">Verify coordinates against political boundaries</a>
 						</li>
 					</ul>
-				</fieldset>
+				</section>
 			</div>
 			<h2> <?php echo (isset($LANG['TAXONOMY']) ? $LANG['TAXONOMY'] : 'Taxonomy') ?> </h2>
 			<div style="margin:0px 0px 40px 15px;">
@@ -193,7 +198,7 @@ if($collMap['colltype'] == 'General Observations'){
 					<?php echo (isset($LANG['TAXONOMY_DESCR']) ? $LANG['TAXONOMY_DESCR'] : 'These tools are meant to aid in locating and fixing taxonomic errors and inconsistencies.') ?>
 				</div>
 				<section class="fieldset-like max-width-fit-65 ">
-					<h2> <span> <?php echo (isset($LANG['STAT_ACT_PANEL']) ? $LANG['STAT_ACT_PANEL'] : 'Statistics and Action Panel') ?> </span> </h2>
+					<h3> <span> <?php echo (isset($LANG['STAT_ACT_PANEL']) ? $LANG['STAT_ACT_PANEL'] : 'Statistics and Action Panel') ?> </span> </h3>
 					<ul>
 						<li><a href="taxonomycleaner.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"> <?php echo (isset($LANG['ANALYZE_NAMES']) ? $LANG['ANALYZE_NAMES'] : 'Analyze taxonomic names...') ?> </a></li>
 						<li><a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&stat=taxonomy#taxonomystats"> <?php echo (isset($LANG['TAXON_DISTR']) ? $LANG['TAXON_DISTR'] : 'Taxonomic Distributions...') ?> </a></li>
