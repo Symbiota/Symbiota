@@ -3,19 +3,21 @@ include_once($SERVER_ROOT.'/config/dbconnection.php');
 include_once($SERVER_ROOT.'/classes/Manager.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT.'/classes/AgentManager.php');
+include_once($SERVER_ROOT.'/classes/GeographicThesaurus.php');
 
 class OccurrenceCleaner extends Manager{
 
 	private $collid;
 	private $obsUid;
 	private $featureCount = 0;
-	private $googleApi;
+
+	const COORDINATE_LOCALITY_MISMATCH = 0;
+	const COUNTRY_VERIFIED = 2;
+	const STATE_PROVINCE_VERIFIED = 5;
+	const COUNTY_VERIFIED = 7;
 
 	public function __construct(){
 		parent::__construct(null,'write');
-		$urlPrefix = 'http://';
-		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = "https://";
-		$this->googleApi = $urlPrefix.'maps.googleapis.com/maps/api/geocode/json?sensor=false';
 	}
 
 	public function __destruct(){
@@ -648,167 +650,130 @@ class OccurrenceCleaner extends Manager{
 		return $retArr;
 	}
 
-	public function verifyCoordAgainstPolitical($queryCountry){
-		set_time_limit(3600);
-		$recCnt = 0;
-		$googleCallCnt = 0;
-		echo '<ul>';
-		echo '<li>Starting coordinate crawl...</li>';
-		$sql = 'SELECT occid, country, stateprovince, county, decimallatitude, decimallongitude '.
-			'FROM omoccurrences '.
-			'WHERE (collid IN('.$this->collid.')) AND (decimallatitude IS NOT NULL) AND (decimallongitude IS NOT NULL) AND (country = "'.$queryCountry.'") '.
-			'AND (occid NOT IN(SELECT occid FROM omoccurverification WHERE category = "coordinate")) '.
-			'ORDER BY decimallatitude, decimallongitude '.
-			'LIMIT 50000';
-		$rs = $this->conn->query($sql);
-		$previousCoordStr = '';
-		while($r = $rs->fetch_object()){
-			echo '<li>Checking occurrence <a href="../editor/occurrenceeditor.php?occid=' . htmlspecialchars($r->occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($r->occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>...</li>';
-			$recCnt++;
-			if($previousCoordStr != $r->decimallatitude.','.$r->decimallongitude){
-				$googleUnits = $this->callGoogleApi($r->decimallatitude, $r->decimallongitude);
-				$googleCallCnt++;
-				$previousCoordStr = $r->decimallatitude.','.$r->decimallongitude;
-			}
-			$ranking = 0;
-			$protocolStr = '';
-			if(isset($googleUnits['country'])){
-				if($this->countryUnitsEqual($googleUnits['country'],$r->country)){
-					$ranking = 2;
-					$protocolStr = 'GoogleApiMatch:countryEqual';
-					if(isset($googleUnits['state'])){
-						if($this->unitsEqual($googleUnits['state'], $r->stateprovince)){
-							$ranking = 5;
-							$protocolStr = 'GoogleApiMatch:stateEqual';
-							if(isset($googleUnits['county'])){
-								if($this->countyUnitsEqual($googleUnits['county'], $r->county)){
-									$ranking = 7;
-									$protocolStr = 'GoogleApiMatch:countyEqual';
-								}
-								else{
-									echo '<li style="margin-left:15px;">County not equal (source: '.$r->county.'; Google value: '.$googleUnits['county'].')</li>';
-								}
-							}
-							else{
-								echo '<li style="margin-left:15px;">County not provided by Google</li>';
-							}
-						}
-						else{
-							echo '<li style="margin-left:15px;">State/Province not equal (source: '.$r->stateprovince.'; Google value: '.$googleUnits['state'].')</li>';
-						}
-					}
-					else{
-						echo '<li style="margin-left:15px;">State/Province not provided by Google</li>';
-					}
-				}
-				else{
-					echo '<li style="margin-left:15px;">Country not equal (source: '.$r->country.'; Google value: '.$googleUnits['country'].')</li>';
-				}
-			}
-			else{
-				echo '<li style="margin-left:15px;">Country not provided by Google</li>';
-			}
-			if($ranking){
-				$this->setVerification($r->occid, 'coordinate', $ranking, $protocolStr);
-				echo '<li style="margin-left:15px;">Verification status set (rank: '.$ranking.', '.$protocolStr.')</li>';
-			}
-			else{
-				echo '<li style="margin-left:15px;">Unable to set verification status</li>';
-			}
-			if($recCnt%100 == 0) echo '<div><b>Processing count: '.$recCnt.' (Google calls '.$googleCallCnt.')</b></div>';
-			flush();
-			ob_flush();
+	public function coordinateRankingToText(int $rank): string {
+		switch($rank) {
+			case self::COORDINATE_LOCALITY_MISMATCH: return 'No Matching Locality Fields';
+			case self::COUNTRY_VERIFIED: return 'Country was verified';
+			case self::STATE_PROVINCE_VERIFIED: return 'State was verified';
+			case self::COUNTY_VERIFIED: return 'County was verified';
+			default: return 'Not valid rank';
 		}
-		$rs->free();
 	}
 
-	private function callGoogleApi($lat, $lng){
-		$retArr = array();
-		$apiUrl = $this->googleApi.'&latlng='.$lat.','.$lng;
-		$curl = curl_init();
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		//curl_setopt($curl, CURLOPT_HEADER, 0);
-		curl_setopt($curl, CURLOPT_URL, $apiUrl);
+	public function verifyCoordAgainstPoliticalV2(
+		$countries = [],
+		bool $populateCountry = false,
+		bool $populateStateProvince = false,
+		bool $populateCounty = false
+	) {
+		// Does no need offset because occurrences that get pulled out will get saved to 
+		// omoccurverification table which this query is doing a not in select of so it can 
+		// be iterated through with just a function call
+		$coord_query = 'SELECT o.occid, country, stateProvince, county FROM omoccurrences o
+			LEFT JOIN omoccurverification ov ON ov.occid = o.occid AND category="coordinate"
+			JOIN omoccurpoints pts ON pts.occid = o.occid
+			WHERE ov.occid IS NULL AND collid = ? LIMIT 1000';
 
-		$data = curl_exec($curl);
-		curl_close($curl);
+		$result = QueryUtil::executeQuery($this->conn, $coord_query, [ $this->collid ]);
+		$occid_arr = [];
 
-		//Extract country, state, and county from results
-		$dataObj = json_decode($data);
-		$retArr['status'] = $dataObj->status;
-		if($dataObj->status == "OK"){
-			$rs = $dataObj->results[0];
-			if($rs->address_components){
-				$compArr = $rs->address_components;
-				foreach($compArr as $compObj){
-					if($compObj->long_name && $compObj->types){
-						$longName = $compObj->long_name;
-						$types = $compObj->types;
-						if($types[0] == "country"){
-							$retArr['country'] = $longName;
-						}
-						elseif($types[0] == "administrative_area_level_1"){
-							$retArr['state'] = $longName;
-						}
-						elseif($types[0] == "administrative_area_level_2"){
-							$retArr['county'] = $longName;
-						}
-					}
-				}
+		while(($row = $result->fetch_object())) {
+			$occid_arr[$row->occid] = [];
+			$occid_arr[$row->occid]['country'] = $row->country;
+			$occid_arr[$row->occid]['stateProvince'] = $row->stateProvince;
+			$occid_arr[$row->occid]['county'] = $row->county;
+		}
+
+		if(count($occid_arr) === 0) return $occid_arr;
+
+		QueryUtil::executeQuery($this->conn, 'SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ');
+
+		$this->conn->begin_transaction();
+
+		$resolve_geo_thesaurus = 'SELECT pts.occid, g70.geoterm as county, g60.geoterm as stateProvince, g50.geoterm as country from omoccurpoints pts
+			join geographicpolygon gp on ST_CONTAINS(gp.footprintPolygon, pts.lngLatPoint) 
+			join geographicthesaurus as g70 on gp.geoThesID = g70.geoThesID and g70.geoLevel = 70
+			join geographicthesaurus as g60 on g60.geoThesID = g70.parentID and g60.geoLevel = 60
+			join geographicthesaurus as g50 on g50.geoThesID = g60.parentID and g50.geoLevel = 50
+			join omoccurrences o on o.occid = pts.occid where ';
+
+		if(count($countries)) {
+			$country_parameters = str_repeat('?,', count($countries) - 1) . '?';
+			$resolve_geo_thesaurus .= 'country in (' . $country_parameters . ') AND ';
+		}
+
+		$resolve_geo_thesaurus .= 'pts.occid in (' . implode(',', array_keys($occid_arr)) . ')';
+
+		$geo_check_result = QueryUtil::executeQuery($this->conn, $resolve_geo_thesaurus);
+
+		$this->conn->commit();
+
+		$editorManager = new OccurrenceEditorManager($this->conn);
+		$editorManager->setCollId($this->collid);
+
+		while(($row = $geo_check_result->fetch_object())) {
+			$editorManager->setOccId($row->occid);
+
+			if($populateCountry && $occid_arr[$row->occid]['country'] === null && $row->country) {
+				$editorManager->editOccurrence(['country' => $row->country, 'occid' => $row->occid, 'editedfields' => 'country'], $GLOBALS['IS_ADMIN'] ?? 0);
+				$occid_arr[$row->occid]['country'] = $row->country;
+			}
+
+			if($populateStateProvince && $occid_arr[$row->occid]['stateProvince'] === null && $row->stateProvince) {
+				$editorManager->editOccurrence(['stateProvince' => $row->stateProvince, 'occid' => $row->occid, 'editedfields' => 'stateProvince'], $GLOBALS['IS_ADMIN'] ?? 0);
+				$occid_arr[$row->occid]['stateProvince'] = $row->stateProvince;
+			}
+
+			if($populateCounty && $occid_arr[$row->occid]['county'] === null && $row->county) {
+				$editorManager->editOccurrence(['county' => $row->county, 'occid' => $row->occid, 'editedfields' => 'county'], $GLOBALS['IS_ADMIN'] ?? 0);
+				$occid_arr[$row->occid]['county'] = $row->county;
+			}
+
+			$occid_arr[$row->occid]['r_county'] = $row->county;
+
+			if(GeographicThesaurus::unitsEqual(
+				$occid_arr[$row->occid]['county'] ?? '',
+				$row->county ?? '',
+				GeographicThesaurus::COUNTY)
+			) {
+				$occid_arr[$row->occid]['rank'] = self::COUNTY_VERIFIED;
+			} else if(GeographicThesaurus::unitsEqual(
+				$occid_arr[$row->occid]['stateProvince'] ?? '',
+				$row->stateProvince ?? '',
+				GeographicThesaurus::STATE_PROVINCE)
+			) {
+				$occid_arr[$row->occid]['rank'] = self::STATE_PROVINCE_VERIFIED;
+			} else if(GeographicThesaurus::unitsEqual(
+				$occid_arr[$row->occid]['country'] ?? '',
+				$row->country ?? '',
+				GeographicThesaurus::COUNTRY)
+			) {
+				$occid_arr[$row->occid]['rank'] = self::COUNTRY_VERIFIED;
 			}
 		}
-		else{
-			echo '<li style="margin-left:15px;">Unable to get return from Google API (status: '.$dataObj->status.')</li>';
-		}
-		return $retArr;
-	}
 
-	private function unitsEqual($googleTerm, $dbTerm){
-		$googleTerm = strtolower(trim($googleTerm));
-		$dbTerm = strtolower(trim($dbTerm));
+		$batch_verification = 'INSERT INTO omoccurverification(occid, category, ranking, protocol, uid) VALUES ';
 
-		if($googleTerm == $dbTerm) return true;
-		return false;
-	}
+		$last_occid = array_key_last($occid_arr);
+		foreach($occid_arr as $occid => $occurrence) {
+			$values = [
+				$occid, 
+				'"coordinate"', 
+				$occurrence['rank'] ?? self::COORDINATE_LOCALITY_MISMATCH, 
+				'"geographicthesaurus"', 
+				$GLOBALS['SYMB_UID']
+			];
 
-	private function countryUnitsEqual($countryGoogle,$countryDb){
+			$batch_verification .= '(' . implode(',', $values) . ')';
 
-		if($this->unitsEqual($countryGoogle,$countryDb)) return true;
-
-		$countryGoogle = strtolower(trim($countryGoogle));
-		$countryDb = strtolower(trim($countryDb));
-
-		$synonymArr = array(array('united states','usa','united states of america','u.s.a.'));
-
-		foreach($synonymArr as $synArr){
-			if(in_array($countryGoogle, $synArr)){
-				if(in_array($countryDb, $synArr)) return true;
+			if($occid != $last_occid) {
+				$batch_verification .= ', ';
 			}
 		}
-		return false;
-	}
 
-	private function countyUnitsEqual($countyGoogle,$countyDb){
-		$countyGoogle = strtolower(trim($countyGoogle));
-		$countyDb = strtolower(trim($countyDb));
+		QueryUtil::executeQuery($this->conn, $batch_verification);
 
-		$countyGoogle = trim(str_replace(array('county','parish'), '', $countyGoogle));
-		if(strpos($countyDb,$countyGoogle) !== false) return true;
-
-		return false;
-	}
-
-	private function setVerification($occid, $category, $ranking, $protocol = '', $source = '', $notes = ''){
-		$sql = 'INSERT INTO omoccurverification(occid, category, ranking, protocol, source, notes, uid) '.
-			'VALUES('.$occid.',"'.$category.'",'.$ranking.','.
-			($protocol?'"'.$protocol.'"':'NULL').','.
-			($source?'"'.$source.'"':'NULL').','.
-			($notes?'"'.$notes.'"':'NULL').','.
-			$GLOBALS['SYMB_UID'].')';
-		if(!$this->conn->query($sql)){
-			$this->errorMessage = 'ERROR thrown setting occurrence verification: '.$this->conn->error;
-			echo '<li style="margin-left:15px;">'.$this->errorMessage.'</li>';
-		}
+		return $occid_arr;
 	}
 
 	//General ranking functions
@@ -832,20 +797,20 @@ class OccurrenceCleaner extends Manager{
 		$sql = 'SELECT o.collid, v.category, v.ranking, v.protocol, COUNT(v.occid) as cnt '.
 			'FROM omoccurverification v INNER JOIN omoccurrences o ON v.occid = o.occid '.
 			'WHERE (o.collid IN('.$this->collid.')) AND v.category = "'.$category.'" '.
-			'GROUP BY o.collid, v.category, v.ranking, v.protocol';
+			'GROUP BY o.collid, v.category, v.ranking';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr[$r->category][$r->ranking][$r->protocol] = $r->cnt;
+			$retArr[$r->ranking] = intval($r->cnt);
 		}
 		$rs->free();
 		if($category){
 			//Get unranked count
 			$sql = 'SELECT COUNT(occid) AS cnt '.
 				'FROM omoccurrences '.
-				'WHERE (collid IN('.$this->collid.')) AND (decimallatitude IS NOT NULL) AND (occid NOT IN(SELECT occid FROM omoccurverification WHERE category = "'.$category.'"))';
+				'WHERE (collid IN('.$this->collid.')) AND (decimallatitude IS NOT NULL) AND (decimallongitude IS NOT NULL) AND (occid NOT IN(SELECT occid FROM omoccurverification WHERE category = "'.$category.'"))';
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
-				$retArr[$category]['unverified'][''] = $r->cnt;
+				$retArr['unverified'] = intval($r->cnt);
 			}
 			$rs->free();
 		}
