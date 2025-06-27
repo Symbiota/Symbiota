@@ -349,7 +349,7 @@ class OccurrenceDuplicate {
 		if($occidQuery){
 			$targetFields = array('family', 'sciname', 'scientificNameAuthorship',
 				'identifiedBy', 'dateIdentified', 'identificationReferences', 'identificationRemarks', 'taxonRemarks', 'identificationQualifier',
-				'recordedBy', 'recordNumber', 'associatedCollectors', 'eventDate', 'verbatimEventDate',
+				'recordedBy', 'recordNumber', 'associatedCollectors', 'eventDate', 'eventDate2', 'verbatimEventDate',
 				'country', 'stateProvince', 'county', 'municipality', 'locality', 'locationID', 'decimalLatitude', 'decimalLongitude', 'geodeticDatum',
 				'coordinateUncertaintyInMeters', 'verbatimCoordinates', 'georeferencedBy', 'georeferenceProtocol',
 				'georeferenceSources', 'georeferenceVerificationStatus', 'georeferenceRemarks',
