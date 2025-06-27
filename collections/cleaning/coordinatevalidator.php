@@ -7,7 +7,7 @@ if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/clea
 else include_once($SERVER_ROOT . '/content/lang/collections/cleaning/coordinatevalidator.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:'';
+$collId = array_key_exists('collid',$_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : false;
 $queryCountry = array_key_exists('q_country',$_REQUEST)?$_REQUEST['q_country']:'';
 $ranking = array_key_exists('ranking',$_REQUEST)?$_REQUEST['ranking']:'';
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
@@ -17,19 +17,15 @@ if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/c
 //Sanitation
 if($action && !preg_match('/^[a-zA-Z\s]+$/',$action)) $action = '';
 
-$collidStr = '';
-if(is_array($collid)) $collidStr = implode(',', $collid);
-else $collidStr = $collid;
-
 $cleanManager = new OccurrenceCleaner();
-if($collidStr) $cleanManager->setCollId($collidStr);
+if($collId) $cleanManager->setCollId($collId);
 $collMap = $cleanManager->getCollMap();
 
 $statusStr = '';
 $isEditor = 0;
 $coordRankingArr = [];
 
-if($IS_ADMIN || ($collid && array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin']))){
+if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId,$USER_RIGHTS['CollAdmin']))){
 	$isEditor = 1;
 }
 
@@ -83,7 +79,7 @@ if($IS_ADMIN || ($collid && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
 		<a href="../../sitemap.php">Sitemap</a> &gt;&gt;
-		<b><a href="coordinatevalidator.php?collid=<?= htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>">Coordinate Validator</a></b>
+		<b><a href="coordinatevalidator.php?collid=<?= htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>">Coordinate Validator</a></b>
 	</div>
 	<!-- inner text -->
 	<div role="main" id="innertext" style="display: flex; gap: 1rem; flex-direction: column; margin-bottom: 1rem">
@@ -96,7 +92,7 @@ if($IS_ADMIN || ($collid && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 			<hr/>
 		<?php endif ?>
 
-		<?php if($isEditor && $collidStr): ?>
+		<?php if($isEditor && $collId): ?>
 				<div>
 					<p style="margin: 0">
 						<?= $LANG['TOOL_DESCRIPTION'] ?>
@@ -179,7 +175,7 @@ if($IS_ADMIN || ($collid && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 
 				<form action="coordinatevalidator.php" method="post">
 					<input name="q_country" type="hidden" value="<?= $country; ?>" />
-					<input name="collid" type="hidden" value="<?= $collidStr; ?>" />
+					<input name="collid" type="hidden" value="<?= $collId; ?>" />
 					<input name="action" type="hidden" value="Validate Coordinates" />
 
 					<div>
@@ -222,7 +218,7 @@ if($IS_ADMIN || ($collid && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 							<td>
 								<div style="display: flex; align-items: center; gap: 0.5rem">
 								<?= $country ?>
-								<a style="display: flex; flex-grow: 1; justify-content: end"href="../list.php?db=<?= $collidStr ?? 'all' ?>&country=<?= htmlspecialchars($country, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE)?>" target="_blank">
+								<a style="display: flex; flex-grow: 1; justify-content: end" href="../editor/occurrencetabledisplay.php?collid=<?= $collId ?>&ffcountry=<?= htmlspecialchars($country, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE)?>" target="_blank">
 									<img src="../../images/list.png"/>
 								</a>
 								</div>
@@ -233,7 +229,7 @@ if($IS_ADMIN || ($collid && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 					</table>
 				</div>
 			<?php endif ?>
-		<?php elseif(!$collidStr): ?>
+		<?php elseif(!$collId): ?>
 			<h2>You are not authorized to access this page</h2>
 		<?php else: ?>
 			<h2>You are not authorized to access this page</h2>
