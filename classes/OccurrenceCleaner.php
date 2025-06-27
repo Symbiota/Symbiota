@@ -732,20 +732,20 @@ class OccurrenceCleaner extends Manager{
 			$occid_arr[$row->occid]['r_county'] = $row->county;
 
 			if(GeographicThesaurus::unitsEqual(
-				$occid_arr[$row->occid]['county'], 
-				$row->county, 
+				$occid_arr[$row->occid]['county'] ?? '',
+				$row->county ?? '',
 				GeographicThesaurus::COUNTY)
 			) {
 				$occid_arr[$row->occid]['rank'] = self::COUNTY_VERIFIED;
 			} else if(GeographicThesaurus::unitsEqual(
-				$occid_arr[$row->occid]['stateProvince'], 
-				$row->stateProvince, 
+				$occid_arr[$row->occid]['stateProvince'] ?? '',
+				$row->stateProvince ?? '',
 				GeographicThesaurus::STATE_PROVINCE)
 			) {
 				$occid_arr[$row->occid]['rank'] = self::STATE_PROVINCE_VERIFIED;
 			} else if(GeographicThesaurus::unitsEqual(
-				$occid_arr[$row->occid]['country'], 
-				$row->country, 
+				$occid_arr[$row->occid]['country'] ?? '',
+				$row->country ?? '',
 				GeographicThesaurus::COUNTRY)
 			) {
 				$occid_arr[$row->occid]['rank'] = self::COUNTRY_VERIFIED;
