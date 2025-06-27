@@ -1,12 +1,9 @@
 <?php
 include_once('../config/symbini.php');
+include_once($SERVER_ROOT . '/classes/OtherCatalog.php');
 ini_set('max_execution_time', 300);
 
 $message = '';
-$count = 0;
-$totalProcessed = 0;
-$batchSize = 1000;
-$lastSeenId = 0;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['run_copy'])) {
     $conn = MySQLiConnectionFactory::getCon("write");
@@ -14,40 +11,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['run_copy'])) {
     if (!$conn) {
         $message = "Failed to connect to the database.";
     } else {
-        $modifiedUID = intval($GLOBALS['SYMB_UID']);
+        $catalogCopier = new OtherCatalog($conn, $GLOBALS['SYMB_UID']);
+        $result = $catalogCopier->copyOtherCatalogNumbers();
 
-        while (true) {
-            $sql = "SELECT occid, otherCatalogNumbers
-                    FROM omoccurrences
-                    WHERE TRIM(otherCatalogNumbers) != ''
-                      AND occid > $lastSeenId
-                    ORDER BY occid ASC
-                    LIMIT $batchSize";
-
-            $result = $conn->query($sql);
-
-            if (!$result || $result->num_rows === 0) {
-                break;
-            }
-
-            while ($row = $result->fetch_assoc()) {
-                $occid = intval($row['occid']);
-                $lastSeenId = $occid;
-                $value = $conn->real_escape_string($row['otherCatalogNumbers']);
-
-                $insertSql = "
-                    INSERT IGNORE INTO omoccuridentifiers (occid, identifierValue, modifiedUID)
-                    VALUES ($occid, '$value', $modifiedUID)
-                ";
-
-                if ($conn->query($insertSql) && $conn->affected_rows > 0) {
-                    $count++;
-                }
-                $totalProcessed++;
-            }
-        }
-
-        $message = "Processed $totalProcessed records. Inserted $count new row(s) into <code>omoccuridentifiers</code>.";
+        $message = "Processed {$result['processed']} records. Inserted {$result['inserted']} new row(s) into omoccuridentifiers.<br>{$result['time']}";
         $conn->close();
     }
 }
@@ -65,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['run_copy'])) {
 
 <div class="container" id="innertext">
     <h2>Copy Other Catalog Numbers to Identifier Table</h2>
-    <p>This tool copies all non-empty <code>otherCatalogNumbers</code> from the <code>omoccurrences</code> table to the <code>omoccuridentifiers</code> table. Each value is inserted as a new row using the current user ID as <code>modifiedUID</code>.</p>
+    <p>This tool copies all non-empty otherCatalogNumbers from the omoccurrences table to the omoccuridentifiers table. Each value is inserted as a new row using the current user ID as modifiedUID.</p>
 
     <?php if (!empty($message)): ?>
         <div class="successbox"><?= $message ?></div>
@@ -79,4 +46,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['run_copy'])) {
 <?php include($SERVER_ROOT.'/includes/footer.php'); ?>
 </body>
 </html>
-
