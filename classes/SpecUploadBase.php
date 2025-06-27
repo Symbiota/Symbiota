@@ -1247,31 +1247,44 @@ class SpecUploadBase extends SpecUpload{
 					$insertSQL = '';
 					$valueSQL = '';
 
-					if (!isset($paleoArr['earlyInterval'])) {
+					if (!isset($paleoArr['earlyinterval'])) {
 						foreach ([ $stageLow, $epochLow, $periodLow, $eraLow, $eonLow ] as $term) {
 							$termLower = strtolower($term);
 							if (isset($lcaseGtsMap[$termLower])) {
-								$paleoArr['earlyInterval'] = $lcaseGtsMap[$termLower];
+								$paleoArr['earlyinterval'] = $lcaseGtsMap[$termLower];
 								break;
 							}
 						}
+					} else {
+						$termLower = strtolower($paleoArr['earlyinterval']);
+						if (isset($lcaseGtsMap[$termLower]))
+							$paleoArr['earlyinterval'] = $lcaseGtsMap[$termLower];
+						else
+							$paleoArr['earlyinterval'] = '';
 					}
 
-					if (!isset($paleoArr['lateInterval'])) {
+
+					if (!isset($paleoArr['lateinterval'])) {
 						foreach ([ $stageHigh, $epochHigh, $periodHigh, $eraHigh, $eonHigh ] as $term) {
 							$termLower = strtolower($term);
 							if (isset($lcaseGtsMap[$termLower])) {
-								$paleoArr['lateInterval'] = $lcaseGtsMap[$termLower];
+								$paleoArr['lateinterval'] = $lcaseGtsMap[$termLower];
 								break;
 							}
 						}
+					} else {
+						$termLower = strtolower($paleoArr['lateinterval']);
+						if (isset($lcaseGtsMap[$termLower]))
+							$paleoArr['lateinterval'] = $lcaseGtsMap[$termLower];
+						else
+							$paleoArr['lateinterval'] = '';
 					}
 
 					//backfill early or late interval if empty
-					if (!isset($paleoArr['earlyInterval']) && isset($paleoArr['lateInterval']))
-						$paleoArr['earlyInterval'] = $paleoArr['lateInterval'];
-					if (!isset($paleoArr['lateInterval']) && isset($paleoArr['earlyInterval']))
-						$paleoArr['lateInterval'] = $paleoArr['earlyInterval'];
+					if (!isset($paleoArr['earlyinterval']) && isset($paleoArr['lateinterval']))
+						$paleoArr['earlyinterval'] = $paleoArr['lateinterval'];
+					if (!isset($paleoArr['lateinterval']) && isset($paleoArr['earlyinterval']))
+						$paleoArr['lateinterval'] = $paleoArr['earlyinterval'];
 
 					foreach($paleoArr as $k => $v){
 						$insertSQL .= ','.$k;

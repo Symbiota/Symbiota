@@ -2025,7 +2025,7 @@ class OccurrenceEditorManager {
 				$sqlWhere = 'WHERE occid IN(' . implode(',', $occidArr) . ')';
 				$sql = 'INSERT INTO omoccuredits(occid,fieldName,fieldValueOld,fieldValueNew,appliedStatus,uid,editType) ' .
 					'SELECT o.occid, "' . $fn . '" AS fieldName, IFNULL(' . $fn . ',"") AS oldValue, IFNULL(' . $nvSqlFrag . ',"") AS newValue, ' .
-					'1 AS appliedStatus, ' . $GLOBALS['SYMB_UID'] . ' AS uid, 1 FROM omoccurrences as o ';
+					'1 AS appliedStatus, ' . $GLOBALS['SYMB_UID'] . ' AS uid, 1 FROM ' . $targetTable . ' as o ';
 
 				// This Solution is a bit scuffed their isn't a nice way of getting many to one 
 				// tables in the batch update system without rebuilding most of it
@@ -2040,7 +2040,7 @@ class OccurrenceEditorManager {
 					$statusStr = $LANG['ERROR_ADDING_UPDATE'] . ': ' . $this->conn->error;
 				}
 				//Apply edits to core tables
-				if (isset($this->collMap['paleoActivated']) && array_key_exists($fn, $this->fieldArr['omoccurpaleo'])) {
+				if ((empty($this->collMap) || !empty($this->collMap['paleoActivated'])) && in_array($fn, $this->fieldArr['omoccurpaleo'])) {
 					$sql = 'UPDATE omoccurpaleo SET ' . $fn . ' = ' . $nvSqlFrag . ' ' . $sqlWhere;
 				} else if ($fn === 'identifierValue' || $fn === 'identifierName') {
 					$sql = 'UPDATE omoccuridentifiers as id SET ' . $fn . ' = ' . $nvSqlFrag . ' ' . $sqlWhere;
