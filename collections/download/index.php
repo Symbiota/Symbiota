@@ -56,6 +56,22 @@ $dwcManager = new DwcArchiverCore();
 				<?php
 			}
 			?>
+
+			const form = document.getElementById('downloadform');
+			const spinner = document.getElementById('workingcircle');
+
+        	form.addEventListener('submit', function(event) {
+				const token = 'dl_' + Date.now();
+				document.getElementById('downloadTokenInput').value = token;
+				spinner.style.display = 'block';
+				const interval = setInterval(() => {
+					if (document.cookie.includes(`downloadToken=${token}`)) {
+						clearInterval(interval);
+						spinner.style.display = 'none';
+						document.cookie = `downloadToken=${token}; Max-Age=0; path=/`;
+					}
+				}, 100);
+			});
 		});
 
 		function extensionSelected(obj){
@@ -86,6 +102,8 @@ $dwcManager = new DwcArchiverCore();
 				window.close();
 			}, timeToClose);
 		}
+
+        
 	</script>
 	<style>
 		fieldset{ margin:10px; padding:10px }
@@ -117,7 +135,8 @@ $dwcManager = new DwcArchiverCore();
 			<?= $LANG['GUIDE_TWO'] ?>
 		</div>
 		<div style='margin:30px 15px;'>
-			<form name="downloadform" action="downloadhandler.php" method="post" onsubmit="return validateDownloadForm(this);">
+			<form id="downloadform" name="downloadform" action="downloadhandler.php" method="post" onsubmit="return validateDownloadForm(this);">
+				<input type="hidden" name="downloadToken" id="downloadTokenInput" value="">
 				<fieldset>
 					<legend>
 						<?php
@@ -217,6 +236,7 @@ $dwcManager = new DwcArchiverCore();
 					</div>
 				</fieldset>
 			</form>
+			<div id="result-div"></div>
 		</div>
 	</div>
 	<?php
