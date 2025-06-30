@@ -24,32 +24,11 @@ class ImInventories extends Manager{
 	public function getChecklistMetadata($pid = null){
 		$retArr = array();
 		if($this->clid){
-			$sql = 'SELECT clid, name, locality, publication, abstract, authors, parentclid, notes, latcentroid, longcentroid, pointradiusmeters,
-				access, defaultsettings, dynamicsql, datelastmodified, dynamicProperties, uid, type, footprintwkt, footprintGeoJson, sortsequence, initialtimestamp
-				FROM fmchecklists WHERE (clid = '.$this->clid.')';
-			$result = $this->conn->query($sql);
-			if($row = $result->fetch_object()){
-				$retArr['name'] = $row->name;
-				$retArr['locality'] = $row->locality;
-				$retArr['notes'] = $row->notes;
-				$retArr['type'] = $row->type;
-				$retArr['publication'] = $row->publication;
-				$retArr['abstract'] = $row->abstract;
-				$retArr['authors'] = $row->authors;
-				$retArr['parentclid'] = $row->parentclid;
-				$retArr['uid'] = $row->uid;
-				$retArr['latcentroid'] = $row->latcentroid;
-				$retArr['longcentroid'] = $row->longcentroid;
-				$retArr['pointradiusmeters'] = $row->pointradiusmeters;
-				$retArr['access'] = $row->access;
-				$retArr['defaultsettings'] = $row->defaultsettings;
-				$retArr['dynamicsql'] = $row->dynamicsql;
-				$retArr['hasfootprintwkt'] = ($row->footprintwkt || $row->footprintGeoJson?'1':'0');
-				$retArr['sortsequence'] = $row->sortsequence;
-				$retArr['datelastmodified'] = $row->datelastmodified;
-				$retArr['dynamicProperties'] = $row->dynamicProperties;
-			}
-			$result->free();
+			$this->setChecklistFieldMap();
+			$sql = 'SELECT clid, ' . implode(',', array_keys($this->fieldMap)) . ', dateLastModified, initialTimestamp FROM fmchecklists WHERE (clid = '.$this->clid.')';
+			$rs = $this->conn->query($sql);
+			$retArr = $rs->fetch_assoc();
+			$rs->free();
 			if($retArr){
 				if($retArr['type'] == 'excludespp'){
 					$sql = 'SELECT clid FROM fmchklstchildren WHERE clid != clidchild AND clidchild = ' . $this->clid;
@@ -525,6 +504,31 @@ class ImInventories extends Manager{
 	}
 
 	//Child-Parent checklist functions
+	//Get children checklists
+	public function getChildChecklists(){
+		$retArr = array();
+		if($this->clid){
+			$sqlBase = 'SELECT ch.clidchild, cl2.name
+				FROM fmchecklists cl INNER JOIN fmchklstchildren ch ON cl.clid = ch.clid
+				INNER JOIN fmchecklists cl2 ON ch.clidchild = cl2.clid
+				WHERE (cl2.type != "excludespp") AND (ch.clid != ch.clidchild) AND cl.clid IN(';
+			$sql = $sqlBase . $this->clid . ')';
+			$cnt = 0;
+			do{
+				$childStr = '';
+				$rsChild = $this->conn->query($sql);
+				while($r = $rsChild->fetch_object()){
+					$retArr[$r->clidchild] = $r->name;
+					$childStr .= ','.$r->clidchild;
+				}
+				$sql = $sqlBase.substr($childStr,1).')';
+				$cnt++;
+				if($cnt > 20) break;
+			}while($childStr);
+		}
+		return $retArr;
+	}
+
 	public function insertChildChecklist($clidChild, $modifiedUid){
 		$status = false;
 		if($this->clid != $clidChild){
@@ -760,7 +764,7 @@ class ImInventories extends Manager{
 		return $status;
 	}
 
-	//User role funcitons
+	//User role functions
 	public function getManagers($role, $tableName, $tablePK){
 		$retArr = array();
 		if(is_numeric($tablePK)){

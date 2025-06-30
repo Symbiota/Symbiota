@@ -118,9 +118,9 @@ if($clid){
 		$textrun->addTextBreak(1);
 	}
 }
-if(isset($clArray['locality']) || ($clid && isset ($clArray['latcentroid']) || isset ($clArray['abstract']) || isset($clArray['notes']))){
+if(isset($clArray['locality']) || ($clid && isset ($clArray['latCentroid']) || isset ($clArray['abstract']) || isset($clArray['notes']))){
 	$locStr = $clManager->cleanOutText($clArray['locality']);
-	if($clid && $clArray['latcentroid']) $locStr .= ' ('.$clArray['latcentroid'].', '.$clArray['longcentroid'].')';
+	if($clid && $clArray['latCentroid']) $locStr .= ' ('.$clArray['latCentroid'].', '.$clArray['longCentroid'].')';
 	if($locStr){
 		$textrun->addText('Locality: ','topicFont');
 		$textrun->addText($locStr,'textFont');

@@ -114,7 +114,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<link href="<?= $CSS_BASE_PATH ?>/symbiota/checklists/checklist.css" type="text/css" rel="stylesheet" />
+	<link href="<?= $CSS_BASE_PATH ?>/symbiota/checklists/checklist.css?ver=1" type="text/css" rel="stylesheet" />
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
@@ -133,7 +133,6 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 		var lang_SELECT_TAXON = '<?= $LANG['SELECT_TAXON'] ?>';
 	</script>
 	<script type="text/javascript" src="../js/symb/checklists.checklist.js"></script>
-
 	<style>
 		<?php
 		if($printMode){
@@ -145,11 +144,9 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 			<?php
 		}
 		?>
-		#editsppon { display: none; color:green; font-size: 70%; font-weight:bold; padding-bottom: 5px; position: relative; top: -4px; }
+		.group-div{ font-style: <?= ($showAlphaTaxa ? 'italic' : 'none') ?>; }
+		#editsppon{ display: none; color:green; font-size: 70%; font-weight:bold; padding-bottom: 5px; position: relative; top: -4px; }
 		.moredetails{ clear: both }
-		.normal-font-weight {
-			font-weight: normal;
-		}
 	</style>
 </head>
 <body>
@@ -208,17 +205,17 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 			//Do not show certain fields if Dynamic Checklist ($dynClid)
 			if($clid){
 				if($clArray['type'] == 'rarespp'){
-					echo '<div style="clear:both;"><b>' . $LANG['SENSITIVE_SPECIES'] . ':</b> ' . $clArray["locality"] . '</div>';
-					if($isEditor && $clArray["locality"]){
+					echo '<div style="clear:both;"><b>' . $LANG['SENSITIVE_SPECIES'] . ':</b> ' . $clArray['locality'] . '</div>';
+					if($isEditor && $clArray['locality']){
 						include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
 						$occurMaintenance = new OccurrenceMaintenance();
 						echo '<div style="margin-left:15px">' . $LANG['NUMBER_PENDING'] . ': ';
 						if($action == 'protectspp'){
-							$occurMaintenance->protectStateRareSpecies($clid,$clArray["locality"]);
+							$occurMaintenance->protectStateRareSpecies($clid, $clArray['locality']);
 							echo '0';
 						}
 						elseif($action == 'checkstatus'){
-							$protectCnt = $occurMaintenance->getStateProtectionCount($clid, $clArray["locality"]);
+							$protectCnt = $occurMaintenance->getStateProtectionCount($clid, $clArray['locality']);
 							echo $protectCnt;
 							if($protectCnt){
 								echo '<span style="margin-left:10px"><a href="checklist.php?submitaction=protectspp'. $argStr . '">';
@@ -249,7 +246,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 				if($exclusionArr = $clManager->getExclusionChecklist()){
 					echo '<div class="printoff" style="clear:both">' . $LANG['TAXA_EXCLUDED'] . ': <b><a href="checklist.php?pid=' . $pid . '&clid=' . key($exclusionArr) . '">' . current($exclusionArr) . '</a></b></div>';
 				}
-				if($clArray["authors"] && $clArray['type'] != 'excludespp'){
+				if($clArray['authors'] && $clArray['type'] != 'excludespp'){
 					?>
 					<div id="author-div">
 						<span class="md-label">
@@ -265,19 +262,19 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 					echo '<div style="clear:both;"><span class="md-label">' . $LANG['CITATION'] . ':</span> ' . $pubStr . '</div>';
 				}
 			}
-			if(($clArray["locality"] || ($clid && ($clArray["latcentroid"] || $clArray["abstract"])) || $clArray["notes"])){
+			if(($clArray['locality'] || ($clid && ($clArray['latCentroid'] || $clArray['abstract'])) || $clArray['notes'])){
 				?>
 				<div class="moredetails printoff" style="<?php echo (($showDetails)?'display:none;' : ''); ?>"><a href="#" onclick="toggle('moredetails');return false;"><?php echo $LANG['MOREDETAILS'];?></a></div>
 				<div class="moredetails" style="display:<?php echo (($showDetails || $printMode)?'block' : 'none'); ?>;" aria-live="polite">
 					<?php
 					if($clArray['type'] != 'excludespp'){
-						$locStr = $clArray["locality"];
-						if($clid && $clArray["latcentroid"]) $locStr .= " (".$clArray["latcentroid"] . ", ".$clArray["longcentroid"] . ")";
+						$locStr = $clArray['locality'];
+						if($clid && $clArray['latCentroid']) $locStr .= ' ('.$clArray['latCentroid'] . ', '.$clArray['longCentroid'] . ')';
 						if($locStr){
 							echo '<div><span  class="md-label">' . $LANG['LOCALITY'] . ': </span>' . $locStr . '</div>';
 						}
 					}
-					if($clid && $clArray["abstract"]){
+					if($clid && $clArray['abstract']){
 						$abstractTitle = $LANG['ABSTRACT'];
 						if($clArray['type'] == 'excludespp') $abstractTitle = $LANG['COMMENTS'];
 						echo '<div><span  class="md-label">' . $abstractTitle . ': </span>' . $clArray['abstract'] . '</div>';
@@ -341,7 +338,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 						$taxaLimit = ($showImages?$clManager->getImageLimit():$clManager->getTaxaLimit());
 						$pageCount = ceil($clManager->getTaxaCount()/$taxaLimit);
 						if(($pageNumber)>$pageCount) $pageNumber = 1;
-						echo $LANG['PAGE'] . '<b> ' . ($pageNumber).'</b> ' . $LANG['OF'] . ' <b>' . $pageCount . '</b>: ';
+						echo $LANG['PAGES'] . ': ';
 						for($x=1;$x<=$pageCount;$x++){
 							if($x>1) echo " | ";
 							if(($pageNumber) == $x) echo '<b>';
@@ -364,70 +361,70 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 					<hr />
 					<?php
 					if($showImages){
-						$prevfam = '';
-						foreach($taxaArray as $tid => $sppArr){
-							$tu = (array_key_exists('tnurl',$sppArr) ? $sppArr['tnurl'] : '');
-							$u = (array_key_exists('url',$sppArr) ? $sppArr['url'] : '');
-							$imgSrc = ($tu?$tu:$u);
-							?>
-							<div class="tndiv">
-								<div class="tnimg" style="<?php echo ($imgSrc?'' : 'border:1px solid black;'); ?>">
-									<?php
-									$spUrl = "../taxa/index.php?taxauthid=1&taxon=$tid&clid=".$clid;
-									if($imgSrc){
-										$imgSrc = (array_key_exists('MEDIA_DOMAIN', $GLOBALS) && substr($imgSrc, 0, 4) != 'http' ? $GLOBALS['MEDIA_DOMAIN'] : "") . $imgSrc;
-										echo "<a href='" . $spUrl . "' target='_blank'>";
-										echo "<img src='" . $imgSrc . "' />";
-										echo "</a>";
-									}
-									else{
-										?>
-										<div style="margin-top:50px;">
-											<b><?php echo $LANG['IMAGE'] . '<br/>' . $LANG['NOTY'] . '<br/>' . $LANG['AVAIL']; ?></b>
-										</div>
+						$groupArr = $taxaArray['taxongroup'];
+						unset($taxaArray['taxongroup']);
+						foreach($groupArr as $groupName => $tidArr){
+							foreach($tidArr as $tid){
+								$sppArr = $taxaArray[$tid];
+								$tu = (array_key_exists('tnurl',$sppArr) ? $sppArr['tnurl'] : '');
+								$u = (array_key_exists('url',$sppArr) ? $sppArr['url'] : '');
+								$imgSrc = ($tu?$tu:$u);
+								?>
+								<div class="tndiv">
+									<div class="tnimg" style="<?php echo ($imgSrc?'' : 'border:1px solid black;'); ?>">
 										<?php
-									}
-									?>
-								</div>
-								<div style="clear:both">
-									<?php
-									echo '<a href="' . $spUrl . '" target="_blank">';
-									echo '<b>' . $sppArr['sciname'] . '</b>';
-									echo '</a>';
-									?>
-									<div class="editspp printoff" style="float:left;display:none;">
-										<?php
-										if(isset($sppArr['clid'])){
-											$clidArr = explode(',',$sppArr['clid']);
-											foreach($clidArr as $id){
-												?>
-												<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo $tid . '&clid=' . $id; ?>','editorwindow');">
-													<img src='../images/edit.png' style='width:1.3em;' alt="<?php echo $LANG['EDIT_DETAILS']; ?>" title='<?php echo $LANG['EDIT_DETAILS']; ?>' />
-												</a>
-												<?php
-											}
+										$spUrl = "../taxa/index.php?taxauthid=1&taxon=$tid&clid=".$clid;
+										if($imgSrc){
+											$imgSrc = (array_key_exists('MEDIA_DOMAIN', $GLOBALS) && substr($imgSrc, 0, 4) != 'http' ? $GLOBALS['MEDIA_DOMAIN'] : "") . $imgSrc;
+											echo "<a href='" . $spUrl . "' target='_blank'>";
+											echo "<img src='" . $imgSrc . "' />";
+											echo "</a>";
+										}
+										else{
+											?>
+											<div style="margin-top:50px;">
+												<b><?php echo $LANG['IMAGE'] . '<br/>' . $LANG['NOTY'] . '<br/>' . $LANG['AVAIL']; ?></b>
+											</div>
+											<?php
 										}
 										?>
 									</div>
-									<?php
-									if(array_key_exists('vern',$sppArr)){
-										echo "<div style='font-weight:bold;'>" . $sppArr["vern"] . "</div>";
-									}
-									if(!$showAlphaTaxa){
-										$family = $sppArr['family'];
-										if($family != $prevfam){
+									<div style="clear:both">
+										<?php
+										echo '<a href="' . $spUrl . '" target="_blank">';
+										echo '<b>' . $sppArr['sciname'] . '</b>';
+										echo '</a>';
+										?>
+										<div class="editspp printoff" style="float:left;display:none;">
+											<?php
+											if(isset($sppArr['clid'])){
+												$clidArr = explode(',',$sppArr['clid']);
+												foreach($clidArr as $id){
+													?>
+													<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo $tid . '&clid=' . $id; ?>','editorwindow');">
+														<img src='../images/edit.png' style='width:1.3em;' alt="<?php echo $LANG['EDIT_DETAILS']; ?>" title='<?php echo $LANG['EDIT_DETAILS']; ?>' />
+													</a>
+													<?php
+												}
+											}
 											?>
-											<div class="familydiv" id="<?php echo $family; ?>">
-												[<?php echo $family; ?>]
+										</div>
+										<?php
+										if(array_key_exists('vern',$sppArr)){
+											echo "<div style='font-weight:bold;'>" . $sppArr["vern"] . "</div>";
+										}
+										if(!$showAlphaTaxa){
+											?>
+											<div class="img-group-div" id="<?php echo $groupName; ?>">
+												[<?php echo $groupName; ?>]
 											</div>
 											<?php
-											$prevfam = $family;
 										}
-									}
-									?>
+										?>
+									</div>
 								</div>
-							</div>
-							<?php
+								<?php
+							}
 						}
 					}
 					else{
@@ -442,113 +439,110 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 							$voucherArr = $clManager->getVoucherArr();
 							if($clManager->getAssociatedExternalService()) $externalVoucherArr = $clManager->getExternalVoucherArr();
 						}
-						$prevGroup = '';
 						$arrForExternalServiceApi = '';
-						foreach($taxaArray as $tid => $sppArr){
-							$group = $sppArr['taxongroup'];
-							if($group != $prevGroup){
-								$famUrl = '../taxa/index.php?taxauthid=1&taxon=' . strip_tags($group) . '&clid='.$clid;
-								//Edit family name display style here
-								?>
-								<div class="family-div" id="<?php echo strip_tags($group);?>">
-									<i>
-										<a href="<?php echo strip_tags($famUrl); ?>" target="_blank" style="color:black;">
-											<?php echo strip_tags($group);?>
-										</a>
-									</i>
-								</div>
-								<?php
-								$prevGroup = $group;
-							}
-							echo '<div id="tid-'.$tid.'" class="taxon-container">';
-							//Edit species name display style here
-							echo '<div class="taxon-div">';
-							if(!preg_match('/\ssp\d/',$sppArr["sciname"])) echo '<a href="../taxa/index.php?taxauthid=1&taxon=' . $tid . '&clid=' . $clid . '" target="_blank">';
-							echo '<span class="taxon-span">' . $sppArr['sciname'] . '</span> ';
-							if(array_key_exists("author",$sppArr)) echo $sppArr["author"];
-							if(!preg_match('/\ssp\d/',$sppArr["sciname"])) echo "</a>";
-							if(array_key_exists('vern',$sppArr)){
-								echo ' - <span class="vern-span">'.$sppArr['vern'] . '</span>';
-							}
-							if($clid && $clArray['dynamicsql'] && $SYMB_UID){
-								?>
-								<span class="view-specimen-span printoff">
-									<a href="../collections/list.php?usethes=1&taxontype=2&taxa=<?php echo $tid . "&targetclid=" . $clid . "&targettid=" . $tid;?>" target="_blank" style="text-decoration:none;">
-										<img src="../images/list.png" style="width:1.2em;" title="<?php echo $LANG['VIEW_RELATED']; ?>" />
-									</a>
-									<?php
-									if(isset($dynamPropsArr)){
-										$scinameasid = str_replace(" ", "-", $sppArr['sciname']);
-										$arrForExternalServiceApi .= ($arrForExternalServiceApi?',' : '') . "'" . $scinameasid . "'";
-										$url = 'tools/linkExternalVouchers.php?' . http_build_query([
-											'taxon_name' => $sppArr['sciname'],
-											'target_tid' => $tid,
-											'clid' => $clid,
-											'external_id' => $dynamPropsArr['externalserviceid'] ?? null,
-											'external_service' => $dynamPropsArr['externalservice'] ?? null,
-										]);
-
-										echo '<a class="editspp" style="display: none" href="#" onclick="openPopup(`' . $url . '`, `External iNaturalist Vouchers`)" >';
-										echo '<img src="../images/icons/inaturalist.png" style="width:1.2em;" title="'. $LANG['LINKTOINAT'] . '" />';
-										echo '</a>';
-									}
+						$groupArr = $taxaArray['taxongroup'];
+						unset($taxaArray['taxongroup']);
+						foreach($groupArr as $groupName => $tidArr){
+							$groupUrl = '../taxa/index.php?taxauthid=1&taxon=' . $groupName . '&clid='.$clid;
+							?>
+							<div class="group-div" id="<?= $groupName ?>">
+								<a href="<?= $groupUrl ?>" target="_blank" style="color:black;">
+									<?= $groupName ?>
+								</a>
+							</div>
+							<?php
+							foreach($tidArr as $tid){
+								$sppArr = $taxaArray[$tid];
+								echo '<div id="tid-'.$tid.'" class="taxon-container">';
+								//Edit species name display style here
+								echo '<div class="taxon-div">';
+								if(!preg_match('/\ssp\d/',$sppArr["sciname"])) echo '<a href="../taxa/index.php?taxauthid=1&taxon=' . $tid . '&clid=' . $clid . '" target="_blank">';
+								echo '<span class="taxon-span">' . $sppArr['sciname'] . '</span> ';
+								if(array_key_exists("author",$sppArr)) echo $sppArr["author"];
+								if(!preg_match('/\ssp\d/',$sppArr["sciname"])) echo "</a>";
+								if(array_key_exists('vern',$sppArr)){
+									echo ' - <span class="vern-span">'.$sppArr['vern'] . '</span>';
+								}
+								if($clid && $clArray['dynamicSql'] && $SYMB_UID){
 									?>
-								</span>
-								<?php
-							}
+									<span class="view-specimen-span printoff">
+										<a href="../collections/list.php?usethes=1&taxontype=2&taxa=<?php echo $tid . "&targetclid=" . $clid . "&targettid=" . $tid;?>" target="_blank" style="text-decoration:none;">
+											<img src="../images/list.png" style="width:1.2em;" title="<?php echo $LANG['VIEW_RELATED']; ?>" />
+										</a>
+										<?php
+										if(isset($dynamPropsArr)){
+											$scinameasid = str_replace(" ", "-", $sppArr['sciname']);
+											$arrForExternalServiceApi .= ($arrForExternalServiceApi?',' : '') . "'" . $scinameasid . "'";
+											$url = 'tools/linkExternalVouchers.php?' . http_build_query([
+													'taxon_name' => $sppArr['sciname'],
+													'target_tid' => $tid,
+													'clid' => $clid,
+													'external_id' => $dynamPropsArr['externalserviceid'] ?? null,
+													'external_service' => $dynamPropsArr['externalservice'] ?? null,
+											]);
 
-							if($isEditor){
-								if(isset($sppArr['clid'])){
-									$clidArr = explode(',',$sppArr['clid']);
-									foreach($clidArr as $id){
-										?>
-										<span class="editspp" style="display:none;">
-											<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo $tid . '&clid=' . $id; ?>','editorwindow');"><img src="../images/edit.png" style="width:1.2em;" title="<?php echo $LANG['EDIT_DETAILS']; ?> (clid = <?php echo $id; ?>)" /></a>
-										</span>
-										<?php
-									}
-									if(in_array($clid, $clidArr) && $showVouchers && $clArray['dynamicsql']){
-										?>
-										<span class="editspp" style="margin-left:5px;display:none">
-											<a href="../collections/list.php?usethes=1&taxontype=2&taxa=<?php echo $tid . "&targetclid=" . $clid . "&targettid=" . $tid . '&mode=voucher'; ?>" target="_blank">
-												<img src="../images/link.png" style="width:1.2em;" title="<?php echo $LANG['VIEW_RELATED']; ?>" /><span style="font-size:70%">V</span>
-											</a>
-										</span>
-										<?php
-									}
-								}
-							}
-							echo "</div>\n";
-							if($showSynonyms && isset($sppArr['syn'])){
-								echo '<div class="syn-div">[' . $sppArr['syn'] . ']</div>';
-							}
-							if($showVouchers){
-								$voucStr = '';
-								if(array_key_exists('notes',$sppArr)) $voucStr .= $sppArr['notes'] . '; ';
-								if(array_key_exists($tid,$voucherArr)){
-									$voucCnt = 0;
-									foreach($voucherArr[$tid] as $occid => $collName){
-										if($voucCnt == 4 && !$printMode){
-											$voucStr .= '<a href="#" id="morevouch-' . $tid . '" onclick="return toggleVoucherDiv(' . $tid . ');">' . $LANG['MORE'] . '...</a>'.
-												'<span id="voucdiv-'.$tid.'" style="display:none;">';
+											echo '<a class="editspp" style="display: none" href="#" onclick="openPopup(`' . $url . '`, `External iNaturalist Vouchers`)" >';
+											echo '<img src="../images/icons/inaturalist.png" style="width:1.2em;" title="'. $LANG['LINKTOINAT'] . '" />';
+											echo '</a>';
 										}
-										$voucStr .= '<a href="#" onclick="return openIndividualPopup(' . $occid . ')">' . htmlspecialchars($collName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>, ';
-										$voucCnt++;
-									}
-									if($voucCnt > 4 && !$printMode) $voucStr .= '</span><a href="#" id="lessvouch-' . $tid . '" style="display:none;" onclick="return toggleVoucherDiv(' . $tid . ');">...' . $LANG['LESS'] . '</a>';
+										?>
+									</span>
+									<?php
 								}
-								if(isset($externalVoucherArr[$tid])) {
-									foreach($externalVoucherArr[$tid] as $extVouchArr){
-										if(!empty($extVouchArr['display'])){
-											if(!empty($extVouchArr['url'])) $voucStr .= '<a href="'.$extVouchArr['url'] . '" target="_blank">' . $extVouchArr['display'] . '</a>, ';
-											else $voucStr .= $extVouchArr['display'] . ', ';
+
+								if($isEditor){
+									if(isset($sppArr['clid'])){
+										$clidArr = explode(',',$sppArr['clid']);
+										foreach($clidArr as $id){
+											?>
+											<span class="editspp" style="display:none;">
+												<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo $tid . '&clid=' . $id; ?>','editorwindow');"><img src="../images/edit.png" style="width:1.2em;" title="<?php echo $LANG['EDIT_DETAILS']; ?> (clid = <?php echo $id; ?>)" /></a>
+											</span>
+											<?php
+										}
+										if(in_array($clid, $clidArr) && $showVouchers && $clArray['dynamicSql']){
+											?>
+											<span class="editspp" style="margin-left:5px;display:none">
+												<a href="../collections/list.php?usethes=1&taxontype=2&taxa=<?php echo $tid . "&targetclid=" . $clid . "&targettid=" . $tid . '&mode=voucher'; ?>" target="_blank">
+													<img src="../images/link.png" style="width:1.2em;" title="<?php echo $LANG['VIEW_RELATED']; ?>" /><span style="font-size:70%">V</span>
+												</a>
+											</span>
+											<?php
 										}
 									}
 								}
-								$voucStr = trim($voucStr,' ;,');
-								if($voucStr) echo '<div class="note-div">' . $voucStr . '</div>';
+								echo "</div>\n";
+								if($showSynonyms && isset($sppArr['syn'])){
+									echo '<div class="syn-div">[' . $sppArr['syn'] . ']</div>';
+								}
+								if($showVouchers){
+									$voucStr = '';
+									if(array_key_exists('notes',$sppArr)) $voucStr .= $sppArr['notes'] . '; ';
+									if(array_key_exists($tid,$voucherArr)){
+										$voucCnt = 0;
+										foreach($voucherArr[$tid] as $occid => $collName){
+											if($voucCnt == 4 && !$printMode){
+												$voucStr .= '<a href="#" id="morevouch-' . $tid . '" onclick="return toggleVoucherDiv(' . $tid . ');">' . $LANG['MORE'] . '...</a>'.
+													'<span id="voucdiv-'.$tid.'" style="display:none;">';
+											}
+											$voucStr .= '<a href="#" onclick="return openIndividualPopup(' . $occid . ')">' . htmlspecialchars($collName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>, ';
+											$voucCnt++;
+										}
+										if($voucCnt > 4 && !$printMode) $voucStr .= '</span><a href="#" id="lessvouch-' . $tid . '" style="display:none;" onclick="return toggleVoucherDiv(' . $tid . ');">...' . $LANG['LESS'] . '</a>';
+									}
+									if(isset($externalVoucherArr[$tid])) {
+										foreach($externalVoucherArr[$tid] as $extVouchArr){
+											if(!empty($extVouchArr['display'])){
+												if(!empty($extVouchArr['url'])) $voucStr .= '<a href="'.$extVouchArr['url'] . '" target="_blank">' . $extVouchArr['display'] . '</a>, ';
+												else $voucStr .= $extVouchArr['display'] . ', ';
+											}
+										}
+									}
+									$voucStr = trim($voucStr,' ;,');
+									if($voucStr) echo '<div class="note-div">' . $voucStr . '</div>';
+								}
+								echo "</div>\n";
 							}
-							echo "</div>\n";
 						}
 						echo '</div>';
 						if(isset($dynamPropsArr['externalservice']) && $dynamPropsArr['externalservice'] == 'inaturalist') {
@@ -606,44 +600,44 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 				<div class="printoff" id="cloptiondiv">
 					<div style="">
 						<form id="optionform" name="optionform" action="checklist.php" method="post">
-						<span class="screen-reader-only">
-							<a href = "#img-container"><?php echo $LANG['SKIP_LINK']; ?></a>
-						</span>
+							<span class="screen-reader-only">
+								<a href = "#img-container"><?php echo $LANG['SKIP_LINK']; ?></a>
+							</span>
 							<fieldset style="background-color:white;padding-bottom:10px;">
 								<legend><b><?php echo $LANG['OPTIONS'];?></b></legend>
 								<?php
-									if($activateKey){
-										?>
-										<div class="printoff" style="padding:5px;">
-											<a href="../ident/key.php?clid=<?php echo $clid . "&pid=" . $pid . "&dynclid=" . $dynClid; ?>&taxon=All+Species">
-												<div style="display: flex; align-items: center;">
-													<?= $LANG['OPEN_KEY']; ?>
-													<img src='../images/key.png' style="margin-left: 0.5rem; width:1.3em;" aria-label="<?php echo $LANG['IMG_OPEN_KEY']; ?>" alt="<?php echo $LANG['IMG_OPEN_KEY']; ?>" title='<?php echo $LANG['OPEN_KEY']; ?>' />
+								if($activateKey){
+									?>
+									<div class="printoff" style="padding:5px;">
+										<a href="../ident/key.php?clid=<?php echo $clid . "&pid=" . $pid . "&dynclid=" . $dynClid; ?>&taxon=All+Species">
+											<div style="display: flex; align-items: center;">
+												<?= $LANG['OPEN_KEY']; ?>
+												<img src='../images/key.png' style="margin-left: 0.5rem; width:1.3em;" aria-label="<?php echo $LANG['IMG_OPEN_KEY']; ?>" alt="<?php echo $LANG['IMG_OPEN_KEY']; ?>" title='<?php echo $LANG['OPEN_KEY']; ?>' />
+											</div>
+										</a>
+									</div>
+									<?php
+								}
+								if($taxaArray){
+									?>
+									<div class="printoff" style="padding:5px; margin-bottom: 2.5rem;">
+										<ul id="game-dropdown">
+											<li>
+												<span style="display: flex; align-items: center;" onmouseover="mopen('m1')" onmouseout="mclosetime()" onfocus="mopen('m1')" onblur="mclosetime()" tabindex="0">
+													<span style=" color: var(--link-color); font-size:1rem; text-decoration: underline;"><?= $LANG['GAMES'] ?></span> <img src="../images/games/games.png" style="width:2em" alt="<?php echo $LANG['GAMES']; ?>"/>
+												</span>
+												<div id="m1" onmouseover="mcancelclosetime()" onmouseout="mclosetime()">
+													<?php
+													$varStr = "?clid=".$clid."&dynclid=".$dynClid."&listname=".urlencode($clManager->getClName()).'&taxonfilter='.$taxonFilter.'&showcommon='.$showCommon.($clManager->getThesFilter()?'&thesfilter='.$clManager->getThesFilter():'');
+													?>
+													<a href="../games/namegame.php<?php echo $varStr; ?>" onfocus="mcancelclosetime('m1')" onblur="mclosetime()"><?php echo $LANG['NAMEGAME'];?></a>
+													<a href="../games/flashcards.php<?php echo $varStr; ?>" onfocus="mcancelclosetime('m1')" onblur="mclosetime()"><?php echo $LANG['FLASH'];?></a>
 												</div>
-											</a>
-										</div>
-										<?php
-									}
-									if($taxaArray){
-										?>
-										<div class="printoff" style="padding:5px; margin-bottom: 2.5rem;">
-											<ul id="game-dropdown">
-												<li>
-													<span style="display: flex; align-items: center;" onmouseover="mopen('m1')" onmouseout="mclosetime()" onfocus="mopen('m1')" onblur="mclosetime()" tabindex="0">
-														<span style=" color: var(--link-color); font-size:1rem; text-decoration: underline;"><?= $LANG['GAMES'] ?></span> <img src="../images/games/games.png" style="width:2em" alt="<?php echo $LANG['GAMES']; ?>"/>
-													</span>
-													<div id="m1" onmouseover="mcancelclosetime()" onmouseout="mclosetime()">
-														<?php
-														$varStr = "?clid=".$clid."&dynclid=".$dynClid."&listname=".urlencode($clManager->getClName()).'&taxonfilter='.$taxonFilter.'&showcommon='.$showCommon.($clManager->getThesFilter()?'&thesfilter='.$clManager->getThesFilter():'');
-														?>
-														<a href="../games/namegame.php<?php echo $varStr; ?>" onfocus="mcancelclosetime('m1')" onblur="mclosetime()"><?php echo $LANG['NAMEGAME'];?></a>
-														<a href="../games/flashcards.php<?php echo $varStr; ?>" onfocus="mcancelclosetime('m1')" onblur="mclosetime()"><?php echo $LANG['FLASH'];?></a>
-													</div>
-												</li>
-											</ul>
-										</div>
-										<?php
-									}
+											</li>
+										</ul>
+									</div>
+									<?php
+								}
 								?>
 								<!-- Taxon Filter option -->
 								<div id="taxonfilterdiv">
