@@ -660,11 +660,43 @@ class OccurrenceCleaner extends Manager{
 		}
 	}
 
+	/*
+	* Gets Last verified date of a collection by category
+	* @param String $category string value of either 'coordinate' or 'identification'
+	* @return string | null
+	*/
+	public function getDateLastVerifiedByCategory(string $category) {
+		$sql = 'SELECT DATE(ov.initialtimestamp) lastVerified from omoccurverification ov
+			join omoccurrences o on o.occid = ov.occid
+			where collid = ? and category = ?
+			Group by DATE(ov.initialtimestamp)
+			ORDER BY lastVerified DESC';
+
+		$result = QueryUtil::executeQuery($this->conn, $sql, [ $this->collid, $category ]);
+		$row = $result->fetch_object();
+
+		return $row->lastVerified ?? null;
+	}
+
+	public function removeVerificationByCategory(string $category, $ranking) {
+		$params = [ $this->collid, $category ];
+		$sql = 'DELETE omoccurverification FROM omoccurverification
+			INNER JOIN omoccurrences o on o.occid = omoccurverification.occid
+			WHERE o.collid = ? and omoccurverification.category = ?';
+
+		if(is_numeric($ranking)) {
+			$sql .= ' and omoccurverification.ranking = ?';
+			array_push($params, $ranking);
+		}
+
+		return QueryUtil::executeQuery($this->conn, $sql, $params);
+	}
+
 	public function verifyCoordAgainstPoliticalV2(
 		$countries = [],
 		bool $populateCountry = false,
 		bool $populateStateProvince = false,
-		bool $populateCounty = false
+		bool $populateCounty = false,
 	) {
 		// Does no need offset because occurrences that get pulled out will get saved to 
 		// omoccurverification table which this query is doing a not in select of so it can 

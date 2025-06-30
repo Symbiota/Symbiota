@@ -11,6 +11,7 @@ $collId = array_key_exists('collid',$_REQUEST) ? filter_var($_REQUEST['collid'],
 $queryCountry = array_key_exists('q_country',$_REQUEST)?$_REQUEST['q_country']:'';
 $ranking = array_key_exists('ranking',$_REQUEST)?$_REQUEST['ranking']:'';
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
+$targetRank = array_key_exists('targetRank',$_REQUEST) ? filter_var($_REQUEST['targetRank'], FILTER_SANITIZE_NUMBER_INT) : false;
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/cleaning/coordinatevalidator.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
@@ -67,8 +68,6 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 		}
 	</script>
 	<style type="text/css">
-		table.styledtable {  width: 300px }
-		table.styledtable td { white-space: nowrap; }
 	</style>
 </head>
 <body>
@@ -105,12 +104,18 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 					<p style="margin: 0">
 						<?= $LANG['VALIDATION_COUNT_LIMIT'] ?>
 					</p>
+				<?php if($dateLastVerified = $cleanManager->getDateLastVerifiedByCategory('coordinate')): ?>
+					<p style="margin: 0"><b>Last Verification Date:</b> <?= $dateLastVerified ?></p>
+				<?php endif ?>
 				</div>
 
 				<?php if($action) {
 					echo '<fieldset style="padding:20px">';
 				if($action == 'Validate Coordinates'){
 					// Loop Until max or finished results
+					if(is_numeric($targetRank)) {
+						$cleanManager->removeVerificationByCategory('coordinate', $targetRank);
+					}
 					$total_proccessed = 0;
 					$start = time();
 					$TARGET_OFFSET = 1000;
@@ -120,7 +125,7 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 							[],
 							$_REQUEST['populate_country'] ?? false,
 							$_REQUEST['populate_stateProvince'] ?? false,
-							$_REQUEST['populate_county'] ?? false
+							$_REQUEST['populate_county'] ?? false,
 						));
 						$total_proccessed += $count;
 
@@ -150,31 +155,32 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 					}
 					echo '</fieldset>';
 				}?>
-
-				<div>
-					<div style="font-weight:bold"><?= $LANG['RANKING_STATISTICS']?></div>
-					<?php
-					$coordRankingArr = $cleanManager->getRankingStats('coordinate');
-					?>
-
-					<table class="styledtable">
-					<tr>
-						<th><?= $LANG['RANKING'] ?></th>
-						<th><?= $LANG['STATUS'] ?></th>
-						<th><?= $LANG['COUNT'] ?></th>
-					</tr>
-					<?php foreach($coordRankingArr as $rank => $cnt):?>
-						<tr>
-							<td><?= $rank ?></td>
-							<td><?= (is_numeric($rank)? $cleanManager->coordinateRankingToText($rank): $LANG['UNVERIFIED']) ?></td>
-							<td><?= number_format($cnt) ?></td>
-						</tr>
-					<?php endforeach ?>
-					</table>
-				</div>
-
 				<form action="coordinatevalidator.php" method="post">
-					<input name="q_country" type="hidden" value="<?= $country; ?>" />
+					<?php
+						$coordRankingArr = $cleanManager->getRankingStats('coordinate');
+					?>
+					<div style="margin-bottom: 1rem">
+						<div style="font-weight:bold"><?= $LANG['RANKING_STATISTICS']?></div>
+
+						<table class="styledtable">
+						<tr>
+							<th><?= $LANG['RANKING'] ?></th>
+							<th><?= $LANG['STATUS'] ?></th>
+							<th><?= $LANG['COUNT'] ?></th>
+							<th><?= 'Re-Verify' ?></th>
+						</tr>
+						<?php foreach($coordRankingArr as $rank => $cnt):?>
+							<tr>
+								<td><?= $rank ?></td>
+								<td><?= (is_numeric($rank)? $cleanManager->coordinateRankingToText($rank): $LANG['UNVERIFIED']) ?></td>
+								<td><?= number_format($cnt) ?></td>
+								<td style="width: 1%"><button <?= $cnt > 0? '' : 'disabled="true"'?> type="submit" name="targetRank" value="<?= $rank ?>" class="button">Re-Verify</button></td>
+							</tr>
+						<?php endforeach ?>
+						</table>
+					</div>
+
+					<!-- <input name="q_country" type="hidden" value="<?= $country ?? ''?>" /> -->
 					<input name="collid" type="hidden" value="<?= $collId; ?>" />
 					<input name="action" type="hidden" value="Validate Coordinates" />
 
