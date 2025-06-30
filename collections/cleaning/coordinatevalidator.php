@@ -12,6 +12,7 @@ $queryCountry = array_key_exists('q_country',$_REQUEST)?$_REQUEST['q_country']:'
 $ranking = array_key_exists('ranking',$_REQUEST)?$_REQUEST['ranking']:'';
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 $targetRank = array_key_exists('targetRank',$_REQUEST) ? filter_var($_REQUEST['targetRank'], FILTER_SANITIZE_NUMBER_INT) : false;
+$revalidateAll = array_key_exists('revalidateAll',$_REQUEST) ? true: false;
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/cleaning/coordinatevalidator.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
@@ -114,7 +115,9 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 				if($action == 'Validate Coordinates'){
 					// Loop Until max or finished results
 					if(is_numeric($targetRank)) {
-						$cleanManager->removeVerificationByCategory('coordinate', $targetRank);
+						$cleanManager->removeVerificationByCategory('coordinate', $targetRank);	
+					} elseif($revalidateAll) {
+						$cleanManager->removeVerificationByCategory('coordinate');
 					}
 					$total_proccessed = 0;
 					$start = time();
@@ -199,9 +202,10 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 						<label for="populate_county"><?= $LANG['POPULATE_COUNTY'] ?></label>
 					</div>
 
-					<button type="submit" <?= ($coordRankingArr['unverified'] ?? 0) === 0? 'disabled="true"': '' ?> ><?= $LANG['VALIDATE_ALL_COORDINATES'] ?></button>
 					<?php if( ($coordRankingArr['unverified'] ?? 0) === 0 ): ?>
-						<p><?= $LANG['ALL_COORDINATES_VALIDATED'] ?></p>
+						<button name="revalidateAll"><?= 'Re Validate All Coordinates' ?></button>
+					<?php else: ?>
+						<button type="submit"><?= $LANG['VALIDATE_ALL_COORDINATES'] ?></button>
 					<?php endif ?> 
 				</form>
 

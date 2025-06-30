@@ -678,7 +678,7 @@ class OccurrenceCleaner extends Manager{
 		return $row->lastVerified ?? null;
 	}
 
-	public function removeVerificationByCategory(string $category, $ranking) {
+	public function removeVerificationByCategory(string $category, $ranking = false) {
 		$params = [ $this->collid, $category ];
 		$sql = 'DELETE omoccurverification FROM omoccurverification
 			INNER JOIN omoccurrences o on o.occid = omoccurverification.occid

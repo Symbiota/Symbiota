@@ -22,6 +22,5 @@ $LANG['RANKING'] = 'Ranking';
 $LANG['STATUS'] = 'Status';
 $LANG['COUNT'] = 'Count';
 $LANG['UNVERIFIED'] = 'unverified';
-$LANG['ALL_COORDINATES_VALIDATED'] = 'All coordinates been validated';
 
 ?>
