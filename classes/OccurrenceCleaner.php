@@ -722,19 +722,18 @@ class OccurrenceCleaner extends Manager{
 
 		$this->conn->begin_transaction();
 
-		$resolve_geo_thesaurus = 'SELECT pts.occid, g70.geoterm as county, g60.geoterm as stateProvince, g50.geoterm as country from omoccurpoints pts
-			join geographicpolygon gp on ST_CONTAINS(gp.footprintPolygon, pts.lngLatPoint) 
-			join geographicthesaurus as g70 on gp.geoThesID = g70.geoThesID and g70.geoLevel = 70
-			join geographicthesaurus as g60 on g60.geoThesID = g70.parentID and g60.geoLevel = 60
-			join geographicthesaurus as g50 on g50.geoThesID = g60.parentID and g50.geoLevel = 50
-			join omoccurrences o on o.occid = pts.occid where ';
+		$resolve_geo_thesaurus = 'SELECT pts.occid, g70.geoterm as county, g60.geoterm as stateProvince, g50.geoterm as country from geographicthesaurus as g50
+			left join geographicthesaurus as g60 on g60.parentID = g50.geoThesID and g60.geoLevel = 60
+			left join geographicthesaurus as g70 on g70.parentID = g60.geoThesID and g70.geoLevel = 70
+			join geographicpolygon gp on gp.geoThesID = COALESCE(g70.geoThesID, g60.geoThesID, g50.geoThesID)
+			join omoccurpoints pts on ST_CONTAINS(gp.footprintPolygon, pts.lngLatPoint) where ';
 
 		if(count($countries)) {
 			$country_parameters = str_repeat('?,', count($countries) - 1) . '?';
 			$resolve_geo_thesaurus .= 'country in (' . $country_parameters . ') AND ';
 		}
 
-		$resolve_geo_thesaurus .= 'pts.occid in (' . implode(',', array_keys($occid_arr)) . ')';
+		$resolve_geo_thesaurus .= 'g50.geolevel = 50 and pts.occid in (' . implode(',', array_keys($occid_arr)) . ')';
 
 		$geo_check_result = QueryUtil::executeQuery($this->conn, $resolve_geo_thesaurus);
 
@@ -763,19 +762,19 @@ class OccurrenceCleaner extends Manager{
 
 			$occid_arr[$row->occid]['r_county'] = $row->county;
 
-			if(GeographicThesaurus::unitsEqual(
+			if($row->county && GeographicThesaurus::unitsEqual(
 				$occid_arr[$row->occid]['county'] ?? '',
 				$row->county ?? '',
 				GeographicThesaurus::COUNTY)
 			) {
 				$occid_arr[$row->occid]['rank'] = self::COUNTY_VERIFIED;
-			} else if(GeographicThesaurus::unitsEqual(
+			} else if($row->stateProvince && GeographicThesaurus::unitsEqual(
 				$occid_arr[$row->occid]['stateProvince'] ?? '',
 				$row->stateProvince ?? '',
 				GeographicThesaurus::STATE_PROVINCE)
 			) {
 				$occid_arr[$row->occid]['rank'] = self::STATE_PROVINCE_VERIFIED;
-			} else if(GeographicThesaurus::unitsEqual(
+			} else if($row->country && GeographicThesaurus::unitsEqual(
 				$occid_arr[$row->occid]['country'] ?? '',
 				$row->country ?? '',
 				GeographicThesaurus::COUNTRY)
