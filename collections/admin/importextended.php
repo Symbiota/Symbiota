@@ -226,9 +226,9 @@ if ($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($colli
 		<div class="pageDescription-div">
 			<?= $LANG['INSTRUCTIONS'] ?>:
 			<ul>
-				<li><a href="https://biokic.github.io/symbiota-docs/coll_manager/upload/links" target="_blank"><?= $LANG['ASSOCIATIONS'] ?></a></li>
-				<?php if ($IS_ADMIN) echo '<li><a href="https://biokic.github.io/symbiota-docs/portal_manager/determinations" target="_blank">' . $LANG['DETERMINATIONS'] . '</a></li>'; ?>
-				<li><a href="https://biokic.github.io/symbiota-docs/coll_manager/images/url_upload" target="_blank"><?= $LANG['IMAGE_URLS'] ?></a></li>
+				<li><a href="https://docs.symbiota.org/docs/Collection_Manager_Guide/Importing_Uploading/linked_resources" target="_blank"><?= $LANG['ASSOCIATIONS'] ?></a></li>
+				<?php if ($IS_ADMIN) echo '<li><a href="https://docs.symbiota.org/docs/Portal_Manager_Guide/importing_determinations" target="_blank">' . $LANG['DETERMINATIONS'] . '</a></li>'; ?>
+				<li><a href="https://docs.symbiota.org/docs/Collection_Manager_Guide/Images/media_upload_url" target="_blank"><?= $LANG['IMAGE_URLS'] ?></a></li>
 			</ul>
 		</div>
 		<?php
