@@ -1259,8 +1259,6 @@ class SpecUploadBase extends SpecUpload{
 						$termLower = strtolower($paleoArr['earlyinterval']);
 						if (isset($lcaseGtsMap[$termLower]))
 							$paleoArr['earlyinterval'] = $lcaseGtsMap[$termLower];
-						else
-							$paleoArr['earlyinterval'] = '';
 					}
 
 
@@ -1276,8 +1274,6 @@ class SpecUploadBase extends SpecUpload{
 						$termLower = strtolower($paleoArr['lateinterval']);
 						if (isset($lcaseGtsMap[$termLower]))
 							$paleoArr['lateinterval'] = $lcaseGtsMap[$termLower];
-						else
-							$paleoArr['lateinterval'] = '';
 					}
 
 					//backfill early or late interval if empty
