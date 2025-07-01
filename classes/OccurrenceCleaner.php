@@ -759,7 +759,7 @@ class OccurrenceCleaner extends Manager{
 			}
 
 			if($populateStateProvince && $occid_arr[$row->occid]['stateProvince'] === null && $row->stateProvince) {
-				$editorManager->editOccurrence(['stateProvince' => $row->stateProvince, 'occid' => $row->occid, 'editedfields' => 'stateProvince'], $GLOBALS['IS_ADMIN'] ?? 0);
+				$editorManager->editOccurrence(['stateprovince' => $row->stateProvince, 'occid' => $row->occid, 'editedfields' => 'stateprovince'], $GLOBALS['IS_ADMIN'] ?? 0);
 				$occid_arr[$row->occid]['stateProvince'] = $row->stateProvince;
 			}
 
