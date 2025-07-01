@@ -652,11 +652,19 @@ class OccurrenceCleaner extends Manager{
 
 	public function coordinateRankingToText(int $rank): string {
 		switch($rank) {
-			case self::COORDINATE_LOCALITY_MISMATCH: return 'No Matching Locality Fields';
-			case self::COUNTRY_VERIFIED: return 'Country was verified';
-			case self::STATE_PROVINCE_VERIFIED: return 'State was verified';
-			case self::COUNTY_VERIFIED: return 'County was verified';
-			default: return 'Not valid rank';
+			case self::COORDINATE_LOCALITY_MISMATCH:
+				return $GLOBALS['LANG']['COORDINATE_LOCALITY_MISMATCH'] ??
+				'No Matching Locality Fields';
+			case self::COUNTRY_VERIFIED:
+				return $GLOBALS['LANG']['COUNTRY_VERIFIED'] ??
+				'Coordinate match to the level of country';
+			case self::STATE_PROVINCE_VERIFIED:
+				return $GLOBALS['LANG']['STATE_PROVINCE_VERIFIED'] ??
+				'Coordinate match to the level of state/province';
+			case self::COUNTY_VERIFIED:
+				return $GLOBALS['LANG']['COUNTY_VERIFIED'] ??
+					'Coordinate match to the level of county';
+			default: return $GLOBALS['LANG']['INVALID_RANK'] ?? 'Invalid coordinate match level';
 		}
 	}
 

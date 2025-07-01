@@ -39,4 +39,9 @@ $LANG['COUNTRY'] = 'Country';
 $LANG['VIEW_SPECIMENS'] = 'View Specimens';
 $LANG['NOT_AUTHORIZED'] = 'You are not authorized to access this page';
 
+$LANG['COORDINATE_LOCALITY_MISMATCH'] = 'Non-verified listed by country';
+$LANG['COUNTRY_VERIFIED'] = 'Coordinate match to the level of country';
+$LANG['STATE_PROVINCE_VERIFIED'] = 'Coordinate match to the level of state/province';
+$LANG['COUNTY_VERIFIED'] = 'Coordinate match to the level of county';
+$LANG['INVALID_RANK'] = 'Invalid coordinate match level';
 ?>
