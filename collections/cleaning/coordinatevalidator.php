@@ -77,13 +77,13 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href="../../index.php">Home</a> &gt;&gt;
-		<a href="../../sitemap.php">Sitemap</a> &gt;&gt;
-		<b><a href="coordinatevalidator.php?collid=<?= htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>">Coordinate Validator</a></b>
+		<a href="../../index.php"><?= $LANG['HOME'] ?></a> &gt;&gt;
+		<a href="../misc/collprofiles.php?emode=1&collid=<?= htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>"><?= $LANG['COLLECTION_MANAGEMENT'] ?></a> &gt;&gt;
+		<b><a href="coordinatevalidator.php?collid=<?= htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>"><?= $LANG['COOR_VALIDATOR'] ?></a></b>
 	</div>
 	<!-- inner text -->
 	<div role="main" id="innertext" style="display: flex; gap: 1rem; flex-direction: column; margin-bottom: 1rem">
-		<h1 class="page-heading" style="margin-bottom: 0"><?php echo $LANG['COOR_VALIDATOR']; ?></h1>
+		<h1 class="page-heading" style="margin-bottom: 0"><?= $LANG['COOR_VALIDATOR']; ?></h1>
 		<?php if($statusStr): ?>
 			<hr/>
 			<div style="margin:20px;color:<?php echo (substr($statusStr,0,5)=='ERROR'?'red':'green');?>">
@@ -106,7 +106,7 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 						<?= $LANG['VALIDATION_COUNT_LIMIT'] ?>
 					</p>
 				<?php if($dateLastVerified = $cleanManager->getDateLastVerifiedByCategory('coordinate')): ?>
-					<p style="margin: 0"><b>Last Verification Date:</b> <?= $dateLastVerified ?></p>
+					<p style="margin: 0"><b><?= $LANG['LAST_VER_DATE'] ?>:</b> <?= $dateLastVerified ?></p>
 				<?php endif ?>
 				</div>
 
@@ -136,10 +136,10 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 							break;
 						}
 					}
-					echo $total_proccessed . ' records took ' . time() - $start. ' seconds';
+					echo $total_proccessed . ' ' . $LANG['RECORDS_TOOK'] . ' ' . time() - $start. ' ' . $LANG['SEC'];
 					}
 					elseif($action == 'displayranklist'){
-						echo '<legend><b>Specimen with rank of '.$ranking.'</b></legend>';
+						echo '<legend><b>' . $LANG['SPEC_RANK_OF'] . ' ' . $ranking . '</b></legend>';
 						$occurList = array();
 						if($action == 'displayranklist'){
 							$occurList = $cleanManager->getOccurrenceRankingArr('coordinate', $ranking);
@@ -148,12 +148,12 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 							foreach($occurList as $occid => $inArr){
 								echo '<div>';
 								echo '<a href="../editor/occurrenceeditor.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
-								echo ' - checked by '.$inArr['username'].' on '.$inArr['ts'];
+								echo ' - ' . $LANG['CHECKED_BY'] . ' ' . $inArr['username'] . ' on ' . $inArr['ts'];
 								echo '</div>';
 							}
 						}
 						else{
-							echo '<div style="margin:30px;font-weight:bold;font-size:150%">Nothing to be displayed</div>';
+							echo '<div style="margin:30px;font-weight:bold;font-size:150%">' . $LANG['NOTHING_TO_DISPLAY'] . '</div>';
 						}
 					}
 					echo '</fieldset>';
@@ -170,14 +170,14 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 							<th><?= $LANG['RANKING'] ?></th>
 							<th><?= $LANG['STATUS'] ?></th>
 							<th><?= $LANG['COUNT'] ?></th>
-							<th><?= 'Re-Verify' ?></th>
+							<th><?= $LANG['RE-VERIFY'] ?></th>
 						</tr>
 						<?php foreach($coordRankingArr as $rank => $cnt):?>
 							<tr>
 								<td><?= $rank ?></td>
 								<td><?= (is_numeric($rank)? $cleanManager->coordinateRankingToText($rank): $LANG['UNVERIFIED']) ?></td>
 								<td><?= number_format($cnt) ?></td>
-								<td style="width: 1%"><button <?= $cnt > 0? '' : 'disabled="true"'?> type="submit" name="targetRank" value="<?= $rank ?>" class="button">Re-Verify</button></td>
+								<td style="width: 1%"><button <?= $cnt > 0? '' : 'disabled="true"'?> type="submit" name="targetRank" value="<?= $rank ?>" class="button"><?= $LANG['RE-VERIFY'] ?></button></td>
 							</tr>
 						<?php endforeach ?>
 						</table>
@@ -203,7 +203,7 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 					</div>
 
 					<?php if( ($coordRankingArr['unverified'] ?? 0) === 0 ): ?>
-						<button name="revalidateAll"><?= 'Re Validate All Coordinates' ?></button>
+						<button name="revalidateAll"><?= $LANG['RE-VALIDATE_ALL_COORDINATES'] ?></button>
 					<?php else: ?>
 						<button type="submit"><?= $LANG['VALIDATE_ALL_COORDINATES'] ?></button>
 					<?php endif ?> 
@@ -216,11 +216,11 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 
 			<?php if(count($countryArr)): ?>
 				<div>
-					<div style="font-weight:bold">Non-verified listed by Country</div>
+					<div style="font-weight:bold"><?= $LANG['NON-VERIFIED_BY_COUNTRY'] ?></div>
 					<table class="styledtable">
 						<tr>
-							<th>Country</th>
-							<th>Count</th>
+							<th><?= $LANG['COUNTRY'] ?></th>
+							<th><?= $LANG['COUNT'] ?></th>
 						</tr>
 
 						<?php foreach($countryArr as $country => $cnt) :?>
@@ -228,8 +228,8 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 							<td>
 								<div style="display: flex; align-items: center; gap: 0.5rem">
 								<?= $country ?>
-								<a style="display: flex; flex-grow: 1; justify-content: end" href="../editor/occurrencetabledisplay.php?collid=<?= $collId ?>&q_customfield1=country&q_customtype1=EQUALS&reset&q_customvalue1=<?= htmlspecialchars($country, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE)?>" target="_blank">
-									<img src="../../images/list.png"/>
+								<a style="display: flex; flex-grow: 1; justify-content: end" href="../editor/occurrencetabledisplay.php?collid=<?= $collId ?>&ffcountry=<?= htmlspecialchars($country, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE)?>" target="_blank">
+									<img src="../../images/list.png" title="<?= $LANG['VIEW_SPECIMENS'] ?>"/>
 								</a>
 								</div>
 							</td>
@@ -240,9 +240,9 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 				</div>
 			<?php endif ?>
 		<?php elseif(!$collId): ?>
-			<h2>You are not authorized to access this page</h2>
+			<h2><?= $LANG['NOT_AUTHORIZED'] ?></h2>
 		<?php else: ?>
-			<h2>You are not authorized to access this page</h2>
+			<h2><?= $LANG['NOT_AUTHORIZED'] ?></h2>
 		<?php endif ?>
 	</div>
 	<?php
