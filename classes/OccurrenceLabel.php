@@ -122,9 +122,10 @@ class OccurrenceLabel{
 			elseif(!array_key_exists('extendedsearch', $postArr)){
 				$sqlWhere .= 'AND (o.collid = '.$this->collid.') ';
 			}
-			$sql = 'SELECT DISTINCT o.occid, o.collid, IFNULL(o.duplicatequantity,1) AS q, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS collector, o.observeruid, '.
-				'o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county, o.locality) AS locality, IFNULL(o.recordSecurity,0) AS recordSecurity '.
-				'FROM omoccurrences o LEFT JOIN omoccuridentifiers i ON o.occid = i.occid ';
+			$sql = 'SELECT DISTINCT o.occid, o.collid, IFNULL(o.duplicatequantity,1) AS q, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS collector, o.observeruid,
+				o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county, o.locality) AS locality, IFNULL(o.recordSecurity,0) AS recordSecurity
+				FROM omoccurrences o ';
+			if($postArr['identifier']) $sql .= 'LEFT JOIN omoccuridentifiers i ON o.occid = i.occid ';
 			if($sqlWhere) $sql .= 'WHERE '.substr($sqlWhere, 4);
 			if($sqlOrderBy) $sql .= ' ORDER BY '.substr($sqlOrderBy,1);
 			else $sql .= ' ORDER BY (o.recordnumber+1)';

@@ -54,7 +54,7 @@ $LANG['MUST_MAP_CATNUM'] = 'El número de catálogo u otros números de catálog
 $LANG['LARGE_URL_MAPPED'] = 'La URL de imagen grande debe estar asignada a un campo de importación';
 $LANG['IMG_PROCESSOR_EXPLAIN'] = 'Estas herramientas están diseñadas para ayudar a los administradores de colecciones en el procesamiento por lotes de imágenes de muestras. Póngase en contacto con el administrador del portal para obtener ayuda para configurar un nuevo flujo de trabajo.
 			Una vez que se establece un perfil, el administrador de la colección puede usar este formulario para activar manualmente el procesamiento de imágenes. Para obtener más información, consulte la documentación de Symbiota para
-			<b><a href="https://biokic.github.io/symbiota-docs/coll_manager/images/batch/" target="_blank">prácticas recomendadas</a></b> para integrar imágenes.' ;
+			<b><a href="https://docs.symbiota.org/docs/Collection_Manager_Guide/Images/batch_adding" target="_blank">prácticas recomendadas</a></b> para integrar imágenes.' ;
 $LANG['IMG_FILE_UPLOAD_MAP'] = 'Mapa de carga de archivos de imagen';
 $LANG['SOURCE_FIELD'] = 'Campo de origen';
 $LANG['TARGET_FIELD'] = 'Campo de destino';

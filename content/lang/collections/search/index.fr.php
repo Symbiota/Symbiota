@@ -86,7 +86,7 @@ $LANG['DATE_FORMAT'] = 'AAAA-MM-JJ';
 $LANG['SINGLE_DATE_START_DATE'] = 'Date unique ou date de début de plage (ex : AAAA-MM-JJ ou format similaire).';
 $LANG['COLLECTION_END_DATE'] = 'Date de fin de collecte';
 $LANG['SINGLE_DATE_END_DATE'] = 'Date unique ou date de fin de plage (ex : AAAA-MM-JJ ou format similaire).';
-$LANG['COLLECTOR_LAST_NAME'] = 'Nom de Famille du Collectionneur';
+$LANG['COLLECTOR_NAME'] = 'Nom de Collecteur';
 $LANG['COLLECTOR_NUMBER_'] = 'Numéro de Collecteur';
 $LANG['COLLECTIONS'] = 'Collections';
 $LANG['TAXA'] = 'Taxons';
@@ -107,7 +107,6 @@ $LANG['POINT_LAT'] = 'Point Lat';
 $LANG['POINT_LONG'] = 'Point Long';
 $LANG['EVENT_DATE_START'] = 'Date de début de l\'événement';
 $LANG['EVENT_DATE_END'] = 'Date de fin de l\'événement';
-$LANG['COLLECTOR_LAST'] = 'Famille du Collectionneur';
 
 $LANG['NORTHERN_LATITUDE'] = 'Latitude Nord';
 $LANG['SOUTHERN_LATITUDE'] = 'Latitude Sud';

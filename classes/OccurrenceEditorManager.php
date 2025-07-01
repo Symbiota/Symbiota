@@ -2414,6 +2414,18 @@ class OccurrenceEditorManager {
 		return $imageMap;
 	}
 
+	public function createOccurrenceFrom(): int {
+		$sql = 'INSERT INTO omoccurrences(collid, observeruid,processingstatus) SELECT collid, observeruid, "unprocessed" FROM omoccurrences WHERE occid = ?';
+
+		try {
+			QueryUtil::executeQuery($this->conn, $sql, [$this->occid]);
+			return $this->conn->insert_id;
+		} catch(Exception $e) {
+			$this->errorArr[] = $LANG['UNABLE_RELINK_BLANK'].': '.$this->conn->error;
+			return -1;
+		}
+	}
+
 	protected function getImageTags($imgIdStr) {
 		$retArr = array();
 		$sql = 'SELECT t.mediaID, k.tagkey, k.shortlabel, k.description_en FROM imagetag t INNER JOIN imagetagkey k ON t.keyvalue = k.tagkey WHERE t.mediaID IN(' . $imgIdStr . ')';

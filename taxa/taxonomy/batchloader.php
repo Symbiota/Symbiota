@@ -195,7 +195,7 @@ if($isEditor){
 		<div style="margin:30px;">
 			<div style="margin-bottom:30px;">
 				<?php echo $LANG['TAX_UPLOAD_EXPLAIN1'] . ' '; ?>
-				<a href="https://biokic.github.io/symbiota-docs/portal_manager/taxonomy/batch_load/"><?php echo $LANG['SYMB_DOC']; ?></a>
+				<a href="https://docs.symbiota.org/docs/Portal_Manager_Guide/Taxonomic_Thesaurus/batch_loading"><?php echo $LANG['SYMB_DOC']; ?></a>
 				<?php echo $LANG['TAX_UPLOAD_EXPLAIN2'] ?>
 			</div>
 			<?php

@@ -253,7 +253,7 @@ if(!$schemaVersion){
 					<div id="images">
 						<p class="description">
 							<?= $LANG['SEESYMBDOC'] ?>
-							<a href="https://biokic.github.io/symbiota-docs/editor/images/"><?= $LANG['IMGSUB'] ?></a>
+							<a href="https://docs.symbiota.org/docs/Collection_Manager_Guide/Images" target="_blank"><?= $LANG['IMGSUB'] ?></a>
 							<?= $LANG['FORANOVERVIEW'] ?>
 						</p>
 					</div>
@@ -440,7 +440,7 @@ if(!$schemaVersion){
 					</h2>
 					<p class="description">
 						<?= $LANG['PARA2'] ?>
-						<a href="https://biokic.github.io/symbiota-docs/col_obs/" target="_blank"><?= $LANG['SYMBDOCU'] ?></a> <?= $LANG['FORMOREINFO'] ?>.
+						<a href="https://docs.symbiota.org/docs/Collector_Observer_Guide/" target="_blank"><?= $LANG['SYMBDOCU'] ?></a> <?= $LANG['FORMOREINFO'] ?>.
 					<p class="description">
 					<h3 class="subheader">
 						<span>
