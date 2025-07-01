@@ -72,7 +72,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 				$coordArr[$collName][$row->occid]["sn"] = $row->sciname;
 				$coordArr[$collName][$row->occid]["catalogNumber"] = $row->catalogNumber;
 				$coordArr[$collName][$row->occid]["eventdate"] = $row->eventdate;
-				$coordArr[$collName][$row->occid]["id"] = $this->htmlEntities($row->identifier);
+				$coordArr[$collName][$row->occid]["id"] = $row->identifier;
 				$coordArr[$collName]["c"] = $color;
 			}
 			$statsManager->recordAccessEventByArr($occidArr, 'map');
