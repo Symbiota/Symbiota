@@ -216,7 +216,7 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 
 			<?php if(count($countryArr)): ?>
 				<div>
-					<div style="font-weight:bold"><?= $LANG['NON-VERIFIED_BY_COUNTRY'] ?></div>
+					<div style="font-weight:bold"><?= $LANG['UNVERIFIED_BY_COUNTRY'] ?></div>
 					<table class="styledtable">
 						<tr>
 							<th><?= $LANG['COUNTRY'] ?></th>
