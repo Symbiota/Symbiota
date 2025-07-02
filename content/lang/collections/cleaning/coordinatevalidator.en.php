@@ -34,7 +34,7 @@ $LANG['COUNT'] = 'Count';
 $LANG['RE-VERIFY'] = 'Re-Verify';
 $LANG['UNVERIFIED'] = 'unverified';
 
-$LANG['NON-VERIFIED_BY_COUNTRY'] = 'Non-verified listed by country';
+$LANG['UNVERIFIED_BY_COUNTRY'] = 'Unverified listed by country';
 $LANG['COUNTRY'] = 'Country';
 $LANG['VIEW_SPECIMENS'] = 'View Specimens';
 $LANG['NOT_AUTHORIZED'] = 'You are not authorized to access this page';
