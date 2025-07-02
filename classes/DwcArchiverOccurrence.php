@@ -11,6 +11,7 @@ class DwcArchiverOccurrence extends Manager{
 	private $includePaleo = false;
 	private $includeExsiccatae = false;
 	private $includeAssocSeq = false;
+	private $includeAcceptedNameUsage = false;
 	private $relationshipArr;
 	private $upperTaxonomy = array();
 	private $taxonRankArr = array();
@@ -89,6 +90,14 @@ class DwcArchiverOccurrence extends Manager{
  		$this->occurDefArr['fields']['taxonRemarks'] = 'o.taxonRemarks';
  		$this->occurDefArr['terms']['identificationQualifier'] = 'http://rs.tdwg.org/dwc/terms/identificationQualifier';
  		$this->occurDefArr['fields']['identificationQualifier'] = 'o.identificationQualifier';
+		if($this->includeAcceptedNameUsage) {
+			$this->occurDefArr['terms']['acceptedNameUsage'] = 'http://rs.tdwg.org/dwc/terms/acceptedNameUsage';
+			$this->occurDefArr['fields']['acceptedNameUsage'] = 'ta.sciName AS acceptedNameUsage';
+			$this->occurDefArr['terms']['acceptedNameUsageAuthorship'] = '';
+			$this->occurDefArr['fields']['acceptedNameUsageAuthorship'] = 'ta.author AS acceptedNameUsageAuthorship';
+			$this->occurDefArr['terms']['acceptedNameUsageID'] = 'http://rs.tdwg.org/dwc/terms/acceptedNameUsageID';
+			$this->occurDefArr['fields']['acceptedNameUsageID'] = 'ta.tid AS acceptedNameUsageID';
+		}
 		$this->occurDefArr['terms']['typeStatus'] = 'http://rs.tdwg.org/dwc/terms/typeStatus';
 		$this->occurDefArr['fields']['typeStatus'] = 'o.typeStatus';
 		$this->occurDefArr['terms']['recordedBy'] = 'http://rs.tdwg.org/dwc/terms/recordedBy';
@@ -887,6 +896,10 @@ class DwcArchiverOccurrence extends Manager{
 	public function setIncludePaleo($bool){
 		if($bool) $this->includePaleo = true;
 		else if($GLOBALS['ACTIVATE_PALEO']) $this->includePaleo = true;
+	}
+
+	public function setIncludeAcceptedNameUsage(bool $bool): void {
+		$this->includeAcceptedNameUsage = $bool;
 	}
 }
 ?>
