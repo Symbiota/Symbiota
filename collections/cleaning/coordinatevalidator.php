@@ -188,17 +188,17 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 					<input name="action" type="hidden" value="Validate Coordinates" />
 
 					<div>
-						<input type="checkbox" id="populate_country" name="populate_country" checked />
+						<input type="checkbox" id="populate_country" name="populate_country" />
 					<label for="populate_country"><?= $LANG['POPULATE_COUNTRY']?></label>
 					</div>
 
 					<div>
-						<input type="checkbox" id="populate_stateProvince" name="populate_stateProvince" checked />
+						<input type="checkbox" id="populate_stateProvince" name="populate_stateProvince" />
 						<label for="populate_stateProvince"><?= $LANG['POPULATE_STATE_PROVINCE']?></label>
 					</div>
 
 					<div>
-						<input type="checkbox" id="populate_county" name="populate_county" checked />
+						<input type="checkbox" id="populate_county" name="populate_county" />
 						<label for="populate_county"><?= $LANG['POPULATE_COUNTY'] ?></label>
 					</div>
 
