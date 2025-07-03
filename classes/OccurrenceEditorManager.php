@@ -177,6 +177,8 @@ class OccurrenceEditorManager {
 			if (array_key_exists('orderby', $_REQUEST)) $this->qryArr['orderby'] = trim($_REQUEST['orderby']);
 			if (array_key_exists('orderbydir', $_REQUEST)) $this->qryArr['orderbydir'] = trim($_REQUEST['orderbydir']);
 
+			if (array_key_exists('coordinateRankingIssue', $_REQUEST)) $this->qryArr['coordinateRankingIssue'] = $_REQUEST['coordinateRankingIssue'];
+
 			if (array_key_exists('occidlist', $_POST) && $_POST['occidlist']) $this->setOccidIndexArr($_POST['occidlist']);
 			if (array_key_exists('direction', $_POST)) $this->direction = trim($_POST['direction']);
 			unset($_SESSION['editorquery']);
@@ -498,6 +500,22 @@ class OccurrenceEditorManager {
 			}
 		}
 
+		// Coordinate Quality
+		if(array_key_exists('coordinateRankingIssue', $this->qryArr)) {
+			if(is_numeric($this->qryArr['coordinateRankingIssue'])) {
+				$rank = intval($this->qryArr['coordinateRankingIssue']);
+				$sqlWhere .= 'AND (ovv.ranking = ' . $rank . ' AND ovv.category = "coordinate") ';
+
+				if($rank === 0) {
+					$sqlWhere .= 'AND (country is not null or stateProvince is not null or county is not null) ';
+				} else if($rank === 2) {
+					$sqlWhere .= 'AND (stateProvince is not null or county is not null) ';
+				} else if($rank === 5) {
+					$sqlWhere .= 'AND (county is not null) ';
+				}
+			}
+		}
+
 		//Custom search fields
 		$customWhere = '';
 		for ($x = 1; $x < 9; $x++) {
@@ -772,6 +790,9 @@ class OccurrenceEditorManager {
 		}
 		if (strpos($this->sqlWhere, 'paleo.')) {
 			$sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
+		}
+		if (strpos($this->sqlWhere, 'ovv.')) {
+			$sql .= 'INNER JOIN omoccurverification ovv ON ovv.occid = o.occid ';
 		}
 	}
 

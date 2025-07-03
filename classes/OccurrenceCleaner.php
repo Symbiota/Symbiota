@@ -650,6 +650,21 @@ class OccurrenceCleaner extends Manager{
 		return $retArr;
 	}
 
+	public function questionableRankText(int $rank): string {
+		switch($rank) {
+			case self::COORDINATE_LOCALITY_MISMATCH:
+				return 'Country does not match coordinates' ?? '';
+			case self::COUNTRY_VERIFIED:
+				return $GLOBALS['LANG']['COUNTRY_VERIFIED'] ??
+				'State/Province does not match coordinates';
+			case self::STATE_PROVINCE_VERIFIED:
+				return $GLOBALS['LANG']['STATE_PROVINCE_VERIFIED'] ??
+				'County does not match coordinates';
+			default: return $GLOBALS['LANG']['INVALID_RANK'] ?? 'Invalid coordinate match level';
+		}
+	}
+
+	// TODO (Logan) Deprecate before pull request
 	public function coordinateRankingToText(int $rank): string {
 		switch($rank) {
 			case self::COORDINATE_LOCALITY_MISMATCH:
@@ -698,6 +713,39 @@ class OccurrenceCleaner extends Manager{
 		}
 
 		return QueryUtil::executeQuery($this->conn, $sql, $params);
+	}
+
+	public function getQuestionableCoordinateCounts(): array {
+		$unions = [];
+		$rank_arr = [ self::COORDINATE_LOCALITY_MISMATCH, self::COUNTRY_VERIFIED, self::STATE_PROVINCE_VERIFIED ];
+		$parameters = [];
+		foreach($rank_arr as $rank) {
+			$base_sql = 'SELECT count(*) as count, ranking FROM omoccurrences o
+				JOIN omoccurverification ov on ov.occid = o.occid where category = "coordinate" and collid = ? and ranking = ?';
+
+			if($rank === self::COORDINATE_LOCALITY_MISMATCH) {
+				$base_sql .= ' AND (country is not null or stateProvince is not null or county is not null)';
+			} else if(self::COUNTRY_VERIFIED) {
+				$base_sql .= ' AND (stateProvince is not null or county is not null)';
+			} else if(self::STATE_PROVINCE_VERIFIED) {
+				$base_sql .= ' AND (county is not null)';
+			}
+
+			$parameters[] = $this->collid;
+			$parameters[] = $rank;
+
+			$unions[] = '(' . $base_sql . ')';
+		}
+
+		$sql = implode(' UNION ', $unions);
+		$result = QueryUtil::executeQuery($this->conn, $sql, $parameters);
+
+		$questionableCounts = [];
+		while($row = $result->fetch_object()) {
+			$questionableCounts[$row->ranking] = $row->count;
+		}
+
+		return $questionableCounts;
 	}
 
 	public function verifyCoordAgainstPoliticalV2(
@@ -830,6 +878,7 @@ class OccurrenceCleaner extends Manager{
 		return $retArr;
 	}
 
+	//TODO (Logan) decide if Deprecate before pull request merged?
 	public function getRankingStats($category){
 		$retArr = array();
 		$category = $this->cleanInStr($category);

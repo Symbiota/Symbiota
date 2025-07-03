@@ -161,6 +161,7 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 					echo $country_verified_count . ' Countries verified <br/>';
 					echo $state_verified_count . ' State Verified Count <br/>';
 					echo $county_verified_count . ' County Verified Count <br/>';
+					link here: http://localhost:8000/collections/editor/editreviewer.php
 			*/
 					}
 					elseif($action == 'displayranklist'){
@@ -190,19 +191,34 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 					<div style="margin-bottom: 1rem">
 						<div style="font-weight:bold"><?= $LANG['RANKING_STATISTICS']?></div>
 
+						<!-- <table class="styledtable"> -->
+						<!-- <tr> -->
+						<!-- 	<th><?= $LANG['RANKING'] ?></th> -->
+						<!-- 	<th><?= $LANG['STATUS'] ?></th> -->
+						<!-- 	<th><?= $LANG['COUNT'] ?></th> -->
+						<!-- 	<th><?= $LANG['RE-VERIFY'] ?></th> -->
+						<!-- </tr> -->
+						<!-- <?php foreach($coordRankingArr as $rank => $cnt):?> -->
+						<!-- 	<tr> -->
+						<!-- 		<td><?= $rank ?></td> -->
+						<!-- 		<td><?= (is_numeric($rank)? $cleanManager->coordinateRankingToText($rank): $LANG['UNVERIFIED']) ?></td> -->
+						<!-- 		<td><?= number_format($cnt) ?></td> -->
+						<!-- 		<td style="width: 1%"><button <?= $cnt > 0? '' : 'disabled="true"'?> type="submit" name="targetRank" value="<?= $rank ?>" class="button"><?= $LANG['RE-VERIFY'] ?></button></td> -->
+						<!-- 	</tr> -->
+						<!-- <?php endforeach ?> -->
+						<!-- </table> -->
+
 						<table class="styledtable">
 						<tr>
-							<th><?= $LANG['RANKING'] ?></th>
-							<th><?= $LANG['STATUS'] ?></th>
-							<th><?= $LANG['COUNT'] ?></th>
-							<th><?= $LANG['RE-VERIFY'] ?></th>
+							<th><?= 'Issue' ?></th>
+							<th><?= 'Questionable Records' ?></th>
 						</tr>
-						<?php foreach($coordRankingArr as $rank => $cnt):?>
+						<?php foreach($cleanManager->getQuestionableCoordinateCounts() as $rank => $cnt):?>
 							<tr>
-								<td><?= $rank ?></td>
-								<td><?= (is_numeric($rank)? $cleanManager->coordinateRankingToText($rank): $LANG['UNVERIFIED']) ?></td>
-								<td><?= number_format($cnt) ?></td>
-								<td style="width: 1%"><button <?= $cnt > 0? '' : 'disabled="true"'?> type="submit" name="targetRank" value="<?= $rank ?>" class="button"><?= $LANG['RE-VERIFY'] ?></button></td>
+								<td><?= (is_numeric($rank)? $cleanManager->questionableRankText($rank): $LANG['UNVERIFIED']) ?></td>
+							<td>
+								<a href="../editor/occurrencetabledisplay.php?collid=<?= $collId ?>&reset&coordinateRankingIssue=<?= $rank?>" target="blank"><?= number_format($cnt) ?></a>
+							</td>
 							</tr>
 						<?php endforeach ?>
 						</table>
