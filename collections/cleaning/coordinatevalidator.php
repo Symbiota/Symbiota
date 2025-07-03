@@ -120,23 +120,48 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 						$cleanManager->removeVerificationByCategory('coordinate');
 					}
 					$total_proccessed = 0;
+					$country_verified_count = 0;
+					$state_verified_count = 0;
+					$county_verified_count = 0;
+
 					$start = time();
 					$TARGET_OFFSET = 1000;
 					$MAX_VALIDATION_BATCH = 50000;
 					for($offset = 0; $offset < $MAX_VALIDATION_BATCH; $offset += $TARGET_OFFSET) {
-						$count = count($cleanManager->verifyCoordAgainstPoliticalV2(
+						$validation_array = $cleanManager->verifyCoordAgainstPoliticalV2(
 							[],
 							$_REQUEST['populate_country'] ?? false,
 							$_REQUEST['populate_stateProvince'] ?? false,
 							$_REQUEST['populate_county'] ?? false,
-						));
-						$total_proccessed += $count;
+						);
+						foreach($validation_array as $occurrence) {
+							switch ($occurrence['rank'] ?? 0) {
+								case OccurrenceCleaner::COUNTRY_VERIFIED:
+									$country_verified_count++;
+									break;
+								case OccurrenceCleaner::STATE_PROVINCE_VERIFIED:
+									$state_verified_count++;
+									break;
+								case OccurrenceCleaner::COUNTY_VERIFIED:
+									$county_verified_count++;
+									break;
+								default:
+									break;
+							}
+						}
+						$count = count($validation_array);
 
+						$total_proccessed += $count;
 						if($count != $TARGET_OFFSET) {
 							break;
 						}
 					}
-					echo $total_proccessed . ' ' . $LANG['RECORDS_TOOK'] . ' ' . time() - $start. ' ' . $LANG['SEC'];
+					echo $total_proccessed . ' ' . $LANG['RECORDS_TOOK'] . ' ' . time() - $start. ' ' . $LANG['SEC'] . '<br/>';
+			/*
+					echo $country_verified_count . ' Countries verified <br/>';
+					echo $state_verified_count . ' State Verified Count <br/>';
+					echo $county_verified_count . ' County Verified Count <br/>';
+			*/
 					}
 					elseif($action == 'displayranklist'){
 						echo '<legend><b>' . $LANG['SPEC_RANK_OF'] . ' ' . $ranking . '</b></legend>';
