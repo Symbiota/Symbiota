@@ -1733,6 +1733,10 @@ class DwcArchiverCore extends Manager{
 		$sql .= $this->getTableJoins() . $this->conditionSql;
 		if ($this->paleoWithSql)
 			$sql = $this->paleoWithSql . $sql;
+
+		// Removes duplicate occids that could be introduced from some tables such as `taxstatus`
+		// Requires
+		$sql .= ' GROUP BY o.occid ';
 		if ($this->schemaType != 'backup') $sql .= ' LIMIT 1000000';
 		//Output header
 		$fieldArr = $this->occurrenceFieldArr['fields'];
