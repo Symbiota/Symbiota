@@ -156,13 +156,17 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 							break;
 						}
 					}
+
+					$baseReviewLink = ($CLIENT_ROOT ? '/' . $CLIENT_ROOT: '') .
+						'/collections/editor/editreviewer.php?&collid=' . 
+						$collId;
+
+					$linkBuilder = fn($url, $title) => '<a target="blank" href="' . $url . '">' . $title . '</a>';
+
 					echo $total_proccessed . ' ' . $LANG['RECORDS_TOOK'] . ' ' . time() - $start. ' ' . $LANG['SEC'] . '<br/>';
-			/*
-					echo $country_verified_count . ' Countries verified <br/>';
-					echo $state_verified_count . ' State Verified Count <br/>';
-					echo $county_verified_count . ' County Verified Count <br/>';
-					link here: http://localhost:8000/collections/editor/editreviewer.php
-			*/
+					echo $linkBuilder($baseReviewLink . '&ffieldname=country', $country_verified_count) . ' Countries verified<br/>';
+					echo $linkBuilder($baseReviewLink . '&ffieldname=stateprovince', $state_verified_count) . ' State Verified Count <br/>';
+					echo $linkBuilder($baseReviewLink. '&ffieldname=county', $county_verified_count) . ' County Verified Count <br/>';
 					}
 					elseif($action == 'displayranklist'){
 						echo '<legend><b>' . $LANG['SPEC_RANK_OF'] . ' ' . $ranking . '</b></legend>';
