@@ -16,6 +16,7 @@ $formSubmit = array_key_exists('formsubmit', $_POST) ? $_POST['formsubmit'] : ''
 $instManager = new InstitutionManager();
 $fullCollList = $instManager->getCollectionList();
 $instManager->setInstitutionId($iid);
+if(!$iid) $eMode = 1;
 
 //Create a list of collection that are linked to this institutions
 $collList = array();
@@ -99,16 +100,16 @@ if($editorCode){
 }
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $LANG_TAG ?>">
+<html lang="<?= $LANG_TAG ?>">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
-	<title><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['INSTITUTION_EDITOR']; ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET; ?>">
+	<title><?= $DEFAULT_TITLE; ?> <?= $LANG['INSTITUTION_EDITOR']; ?></title>
+	<link href="<?= $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="../../js/symb/collections.grscicoll.js?ver=2" type="text/javascript"></script>
 	<script>
 		function toggle(target){
@@ -139,20 +140,22 @@ if($editorCode){
 
 		function validateAddCollectionForm(f){
 			if(f.addcollid.value == ""){
-				alert("<?php echo $LANG['SELECT_COLLECTION']; ?>");
+				alert("<?= $LANG['SELECT_COLLECTION']; ?>");
 				return false;
 			}
 			return true;
 		}
-
 	</script>
+	<style>
+		label-div{ float:left; width:155px; font-weight:bold; }
+	</style>
 </head>
 <body>
 <?php
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class='navpath'>
-	<a href='../../index.php'><?php echo $LANG['HOME']; ?></a> &gt;&gt;
+	<a href='../../index.php'><?= $LANG['HOME']; ?></a> &gt;&gt;
 	<?php
 	if($targetCollid && !empty($collList[$targetCollid])){
 		echo '<a href="../misc/collprofiles.php?collid=' . $targetCollid . '&emode=1">' . $collList[$targetCollid] . ' ' . $LANG['MANAGEMENT'] . '</a> &gt;&gt;';
@@ -161,11 +164,11 @@ include($SERVER_ROOT.'/includes/header.php');
 		echo '<a href="institutioneditor.php">' . $LANG['FULL_ADDRESS_LIST'] . '</a> &gt;&gt;';
 	}
 	?>
-	<b><?php echo $LANG['INSTITUTION_EDITOR']; ?></b>
+	<b><?= $LANG['INSTITUTION_EDITOR']; ?></b>
 </div>
 <!-- This is inner text! -->
 <div role="main" id="innertext">
-	<h1 class="page-heading"><?php echo $LANG['INSTITUTION_EDITOR']; ?></h1>
+	<h1 class="page-heading"><?= $LANG['INSTITUTION_EDITOR']; ?></h1>
 	<div id="dialog" title="" style="display: none;">
 		<div id="dialogmsg"></div>
 		<select id="getresult">
@@ -175,449 +178,340 @@ include($SERVER_ROOT.'/includes/header.php');
 	if($statusStr){
 		?>
 		<hr />
-		<div style="margin:20px;color:<?php echo (substr($statusStr,0,5)=='ERROR'?'red':'green'); ?>;">
+		<div style="margin:20px;color:<?= (substr($statusStr,0,5)=='ERROR'?'red':'green'); ?>;">
 			<?= htmlspecialchars($statusStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>
 		</div>
 		<hr />
 		<?php
 	}
-	if($iid){
-		if($instArr = $instManager->getInstitutionData()){
+	$instArr = $instManager->getInstitutionData();
+	?>
+	<div style="float:right;">
+		<?php
+		if($iid){
 			?>
-			<div style="float:right;">
-				<a href="institutioneditor.php">
-					<img src="<?php echo $CLIENT_ROOT;?>/images/toparent.png" style="width:1.2em;border:0px;" title="<?php echo $LANG['RETURN_TO_INST']; ?>" />
-				</a>
-				<?php
-				if($editorCode > 1){
-					?>
-					<a href="#" onclick="toggle('editdiv');">
-						<img src="<?php echo $CLIENT_ROOT;?>/images/edit.png" style="width:1.2em;border:0px;" title="<?php echo $LANG['EDIT_INST']; ?>" />
-					</a>
-					<?php
-				}
-				?>
-			</div>
-			<div style="clear:both;">
-				<form id="insteditform" name="insteditform" action="institutioneditor.php" method="post">
-					<fieldset style="padding:20px;">
-						<legend><b><?php echo $LANG['ADDRESS_DETAILS']; ?></b></legend>
-						<div style="position:relative;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['INSTITUTION_CODE']; ?>:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['institutioncode']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="institutioncode" type="text" value="<?php echo $instArr['institutioncode']; ?>" />
-								<button name="getgrscicoll" type="button" value="Update from GrSciColl" style="display:inline;" onClick="grscicoll('insteditform')"><?php echo $LANG['UPDATE_GRSCICOLL']; ?></button>
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['INSTITUTION_NAME']; ?>:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['institutionname']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="institutionname" type="text" value="<?php echo $instArr['institutionname']; ?>" style="width:400px;" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['INSTITUTION_NAME_TWO']; ?>:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['institutionname2']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="institutionname2" type="text" value="<?php echo $instArr['institutionname2']; ?>" style="width:400px;" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['ADDRESS']; ?>:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['address1']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="address1" type="text" value="<?php echo $instArr['address1']; ?>" style="width:400px;" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['ADDRESS_TWO']; ?>:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['address2']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="address2" type="text" value="<?php echo $instArr['address2']; ?>" style="width:400px;" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['CITY']; ?>City:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['city']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="city" type="text" value="<?php echo $instArr['city']; ?>" style="width:100px;" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['STATE_PROVINCE']; ?>:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['stateprovince']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="stateprovince" type="text" value="<?php echo $instArr['stateprovince']; ?>" style="width:100px;" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['POSTAL_CODE']; ?>:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['postalcode']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="postalcode" type="text" value="<?php echo $instArr['postalcode']; ?>" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['COUNTRY']; ?>:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['country']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="country" type="text" value="<?php echo $instArr['country']; ?>" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['PHONE']; ?>:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['phone']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="phone" type="text" value="<?php echo $instArr['phone']; ?>" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['CONTACT']; ?>:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['contact']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="contact" type="text" value="<?php echo $instArr['contact']; ?>" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['EMAIL']; ?>:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['email']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="email" type="text" value="<?php echo $instArr['email']; ?>" style="width:150px" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['URL']; ?>:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<a href="<?php echo $instArr['url']; ?>" target="_blank">
-									<?php echo $instArr['url']; ?>
-								</a>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="url" type="text" value="<?php echo $instArr['url']; ?>" style="width:400px" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['NOTES']; ?>:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['notes']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="notes" type="text" value="<?php echo $instArr['notes']; ?>" style="width:400px" />
-							</div>
-						</div>
-						<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;clear:both;margin:30px 0px 0px 20px;">
-							<button name="formsubmit" type="submit" value="Update Institution Address" ><?php echo $LANG['UPDATE_INST_ADDRESS']; ?></button>
-							<input name="iid" type="hidden" value="<?php echo $iid; ?>" />
-							<input name="targetcollid" type="hidden" value="<?php echo $targetCollid; ?>" />
-						</div>
-					</fieldset>
-				</form>
-				<div style="clear:both;">
-					<fieldset style="padding:20px;">
-						<legend><b><?php echo $LANG['COLL_LINKED_TO _INST_ADDRESS']; ?></b></legend>
-						<div>
-							<?php
-							if($collList){
-								foreach($collList as $id => $collName){
-									echo '<div style="margin:5px;font-weight:bold;clear:both;height:15px;">';
-									echo '<div style="float:left;"><a href="../misc/collprofiles.php?collid=' . $id . '">' . $collName . '</a></div> ';
-									if($editorCode == 3 || in_array($id,$USER_RIGHTS["CollAdmin"]))
-										echo ' <div class="editdiv" style="margin-left:10px;display:'.($eMode?'':'none').'"><a href="institutioneditor.php?iid=' . $iid . '&removecollid=' . $id . '"><img src="../../images/del.png" style="width:1em;"/></a></div>';
-									echo '</div>';
-								}
-							}
-							else{
-								echo '<div style="margin:25px;"><b>' . $LANG['INST_NOT_LINKED'] . '</b></div>';
-							}
-							?>
-						</div>
-						<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-							<div style="margin:15px;clear:both;">* <?php echo $LANG['CLICK_ON_RED']; ?></div>
-							<?php
-							//Don't show collection that already linked and only show one that user can admin
-							$addList = array();
-							foreach($fullCollList as $collid => $collArr){
-								if($collArr['iid'] != $iid){
-									if($IS_ADMIN || (isset($USER_RIGHTS["CollAdmin"]) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
-										$addList[$collid] = $collArr;
-									}
-								}
-							}
-							if($addList){
-								?>
-								<hr />
-								<form name="addcollectionform" method="post" action="institutioneditor.php" onsubmit="return validateAddCollectionForm(this)">
-									<select name="addcollid" style="width:400px;">
-										<option value=""><?php echo $LANG['SELECT_COLL_TO_ADD']; ?></option>
-										<option value="">------------------------------------</option>
-										<?php
-										foreach($addList as $collid => $collArr){
-											echo '<option value="'.$collid.'">'.$collArr['name'].'</option>';
-										}
-										?>
-									</select>
-									<input name="iid" type="hidden" value="<?php echo $iid; ?>" />
-									<button name="formsubmit" type="submit" value="Add Collection" ><?php echo $LANG['ADD_COLLECTION']; ?></button>
-								</form>
-								<?php
-							}
-							?>
-						</div>
-					</fieldset>
-					<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-						<fieldset style="padding:20px;">
-							<legend><b><?php echo $LANG['DEL_INSTITUTION']; ?></b></legend>
-							<form name="instdelform" action="institutioneditor.php" method="post" onsubmit="return confirm('<?php echo $LANG['WANT_TO_DELETE_INST']; ?>')">
-								<div style="position:relative;clear:both;">
-									<button class="button-danger" name="formsubmit" type="submit" value="Delete Institution" <?php if($collList) echo 'disabled'; ?> ><?php echo $LANG['DEL_INSTITUTION']; ?></button>
-									<input name="deliid" type="hidden" value="<?php echo $iid; ?>" />
-									<?php
-									if($collList) echo '<div style="margin:15px;color:red;">' . $LANG['DELETION_OF_ADDRESS'] . '</div>';
-									?>
-								</div>
-							</form>
-						</fieldset>
-					</div>
-				</div>
-			</div>
+			<a href="#" onclick="toggle('instadddiv');">
+				<img src="<?= $CLIENT_ROOT;?>/images/add.png" style="width:1.5em;border:0px;" title="<?= $LANG['ADD_NEW_INST']; ?>" />
+			</a>
 			<?php
 		}
-	}
-	else{
-		if($editorCode){
+		else{
 			?>
-			<div style="float:right;">
-				<a href="#" onclick="toggle('instadddiv');">
-					<img src="<?php echo $CLIENT_ROOT;?>/images/add.png" style="width:1.5em;border:0px;" title="<?php echo $LANG['ADD_NEW_INST']; ?>" />
-				</a>
-			</div>
-			<div id="instadddiv" style="display:<?php echo ($eMode?'block':'none'); ?>;margin-bottom:8px;">
-				<form id="instaddform" name="instaddform" action="institutioneditor.php" method="post">
-					<fieldset style="padding:20px;">
-						<legend><b><?php echo $LANG['ADD_NEW_INSTITUTION']; ?></b></legend>
-						<div style="position:relative;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['INSTITUTION_CODE']; ?>:
-							</div>
-							<div>
-								<input name="institutioncode" type="text" value="<?= htmlspecialchars($instCodeDefault, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" />
-								<button name="getgrscicoll" type="button" value="Get data from GrSciColl" style="display:inline;" onClick="grscicoll('instaddform')"><?php echo $LANG['GET_DATA_FROM_GRSCICOLL']; ?></button>
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['INSTITUTION_NAME']; ?>:
-							</div>
-							<div>
-								<input name="institutionname" type="text" value="" style="width:400px;" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['INSTITUTION_NAME_TWO']; ?>:
-
-							</div>
-							<div>
-								<input name="institutionname2" type="text" value="" style="width:400px;" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['ADDRESS']; ?>:
-							</div>
-							<div>
-								<input name="address1" type="text" value="" style="width:400px;" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['ADDRESS_TWO']; ?>:
-							</div>
-							<div>
-								<input name="address2" type="text" value="" style="width:400px;" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['CITY']; ?>:
-							</div>
-							<div>
-								<input name="city" type="text" value="" style="width:100px;" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['STATE_PROVINCE']; ?>:
-							</div>
-							<div>
-								<input name="stateprovince" type="text" value="" style="width:100px;" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['POSTAL_CODE']; ?>:
-							</div>
-							<div>
-								<input name="postalcode" type="text" value="" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['COUNTRY']; ?>:
-							</div>
-							<div>
-								<input name="country" type="text" value="" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['PHONE']; ?>:
-							</div>
-							<div>
-								<input name="phone" type="text" value="" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['CONTACT']; ?>:
-							</div>
-							<div>
-								<input name="contact" type="text" value="" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['EMAIL']; ?>:
-							</div>
-							<div>
-								<input name="email" type="text" value="" style="width:150px" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['URL']; ?>:
-							</div>
-							<div>
-								<input name="url" type="text" value="" style="width:400px" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['NOTES']; ?>:
-							</div>
-							<div>
-								<input name="notes" type="text" value="" style="width:400px" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								<?php echo $LANG['LINK_TO']; ?>:
-							</div>
-							<div>
-								<select name="targetcollid" style="width:400px;">
-									<option value=""><?php echo $LANG['LEAVE_ORPHANED']; ?></option>
-									<option value="">--------------------------------------</option>
-									<?php
-									foreach($fullCollList as $collid => $collArr){
-										//Don't show collection that already linked and only show one that user can admin
-										if($collArr['iid'] && ($IS_ADMIN || ($USER_RIGHTS["CollAdmin"] && in_array($collid,$USER_RIGHTS["CollAdmin"])))){
-											echo '<option value="'.$collid.'"'.($collid == $targetCollid?'SELECTED':'').'>'.$collArr['name'].'</option>';
-										}
-									}
-									?>
-								</select>
-							</div>
-						</div>
-						<div style="margin:20px;clear:both;">
-							<button name="formsubmit" type="submit" value="Add Institution" ><?php echo $LANG['ADD_INST']; ?></button>
-						</div>
-					</fieldset>
-				</form>
-			</div>
+			<a href="institutioneditor.php">
+				<img src="<?= $CLIENT_ROOT;?>/images/toparent.png" style="width:1.2em;border:0px;" title="<?= $LANG['RETURN_TO_INST']; ?>" />
+			</a>
 			<?php
-			if(!$eMode){
+			if($editorCode > 1){
 				?>
-				<div style="padding-left:10px;">
-					<h2><?php echo $LANG['SELECT_INST_FROM_LIST']; ?></h2>
-					<ul>
-						<?php
-						$instList = $instManager->getInstitutionList();
-						if($instList){
-							foreach($instList as $iid => $iArr){
-								echo '<li><a href="institutioneditor.php?iid='.$iid.'">';
-								echo $iArr['institutionname'].' ('.$iArr['institutioncode'].')';
-								if($editorCode == 3 || array_intersect(explode(',',$iArr['collid']),$USER_RIGHTS["CollAdmin"])){
-									echo ' <a href="institutioneditor.php?emode=1&iid=' . $iid . '"><img src="' . $CLIENT_ROOT . '/images/edit.png" style="width:1.2em;" /></a>';
-								}
-								echo '</a></li>';
-							}
-						}
-						else{
-							echo "<div>" . $LANG['NO_RIGHTS_TO_EDIT_INST'] . "</div>";
-						}
-						?>
-					</ul>
-				</div>
+				<a href="#" onclick="toggle('editdiv');">
+					<img src="<?= $CLIENT_ROOT;?>/images/edit.png" style="width:1.2em;border:0px;" title="<?= $LANG['EDIT_INST']; ?>" />
+				</a>
 				<?php
 			}
 		}
-		else{
-			echo "<div>" . $LANG['NEED_AMDINISTRATIVE_USER_RIGHTS'] . "</div>";
-		}
+		?>
+	</div>
+	<div style="clear:both;">
+		<form id="insteditform" name="insteditform" action="institutioneditor.php" method="post">
+			<fieldset style="padding:20px;">
+				<legend><b><?= ($iid ? $LANG['ADDRESS_DETAILS'] : $LANG['ADD_NEW_INSTITUTION']) ?></b></legend>
+				<div style="position:relative;">
+					<div class="label-div">
+						<?= $LANG['INSTITUTION_CODE']; ?>:
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'none':'block'; ?>;">
+						<?= $instArr['institutioncode']; ?>
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'block':'none'; ?>;">
+						<input name="institutioncode" type="text" value="<?= $instArr['institutioncode']; ?>" />
+						<button name="getgrscicoll" type="button" value="Update from GrSciColl" style="display:inline;" onClick="grscicoll()"><?= ($iid ? $LANG['UPDATE_GRSCICOLL'] : $LANG['GET_DATA_FROM_GRSCICOLL']) ?></button>
+					</div>
+				</div>
+				<div style="position:relative;clear:both;">
+					<div class="label-div">
+						<?= $LANG['INSTITUTION_NAME']; ?>:
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'none':'block'; ?>;">
+						<?= $instArr['institutionname']; ?>
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'block':'none'; ?>;">
+						<input name="institutionname" type="text" value="<?= $instArr['institutionname']; ?>" style="width:400px;" />
+					</div>
+				</div>
+				<div style="position:relative;clear:both;">
+					<div class="label-div">
+						<?= $LANG['INSTITUTION_NAME_TWO']; ?>:
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'none':'block'; ?>;">
+						<?= $instArr['institutionname2']; ?>
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'block':'none'; ?>;">
+						<input name="institutionname2" type="text" value="<?= $instArr['institutionname2']; ?>" style="width:400px;" />
+					</div>
+				</div>
+				<div style="position:relative;clear:both;">
+					<div class="label-div">
+						<?= $LANG['ADDRESS']; ?>:
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'none':'block'; ?>;">
+						<?= $instArr['address1']; ?>
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'block':'none'; ?>;">
+						<input name="address1" type="text" value="<?= $instArr['address1']; ?>" style="width:400px;" />
+					</div>
+				</div>
+				<div style="position:relative;clear:both;">
+					<div class="label-div">
+						<?= $LANG['ADDRESS_TWO']; ?>:
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'none':'block'; ?>;">
+						<?= $instArr['address2']; ?>
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'block':'none'; ?>;">
+						<input name="address2" type="text" value="<?= $instArr['address2']; ?>" style="width:400px;" />
+					</div>
+				</div>
+				<div style="position:relative;clear:both;">
+					<div class="label-div">
+						<?= $LANG['CITY']; ?>City:
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'none':'block'; ?>;">
+						<?= $instArr['city']; ?>
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'block':'none'; ?>;">
+						<input name="city" type="text" value="<?= $instArr['city']; ?>" style="width:100px;" />
+					</div>
+				</div>
+				<div style="position:relative;clear:both;">
+					<div class="label-div">
+						<?= $LANG['STATE_PROVINCE']; ?>:
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'none':'block'; ?>;">
+						<?= $instArr['stateprovince']; ?>
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'block':'none'; ?>;">
+						<input name="stateprovince" type="text" value="<?= $instArr['stateprovince']; ?>" style="width:100px;" />
+					</div>
+				</div>
+				<div style="position:relative;clear:both;">
+					<div class="label-div">
+						<?= $LANG['POSTAL_CODE']; ?>:
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'none':'block'; ?>;">
+						<?= $instArr['postalcode']; ?>
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'block':'none'; ?>;">
+						<input name="postalcode" type="text" value="<?= $instArr['postalcode']; ?>" />
+					</div>
+				</div>
+				<div style="position:relative;clear:both;">
+					<div class="label-div">
+						<?= $LANG['COUNTRY']; ?>:
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'none':'block'; ?>;">
+						<?= $instArr['country']; ?>
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'block':'none'; ?>;">
+						<input name="country" type="text" value="<?= $instArr['country']; ?>" />
+					</div>
+				</div>
+				<div style="position:relative;clear:both;">
+					<div class="label-div">
+						<?= $LANG['PHONE']; ?>:
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'none':'block'; ?>;">
+						<?= $instArr['phone']; ?>
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'block':'none'; ?>;">
+						<input name="phone" type="text" value="<?= $instArr['phone']; ?>" />
+					</div>
+				</div>
+				<div style="position:relative;clear:both;">
+					<div class="label-div">
+						<?= $LANG['CONTACT']; ?>:
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'none':'block'; ?>;">
+						<?= $instArr['contact']; ?>
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'block':'none'; ?>;">
+						<input name="contact" type="text" value="<?= $instArr['contact']; ?>" />
+					</div>
+				</div>
+				<div style="position:relative;clear:both;">
+					<div class="label-div">
+						<?= $LANG['EMAIL']; ?>:
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'none':'block'; ?>;">
+						<?= $instArr['email']; ?>
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'block':'none'; ?>;">
+						<input name="email" type="text" value="<?= $instArr['email']; ?>" style="width:150px" />
+					</div>
+				</div>
+				<div style="position:relative;clear:both;">
+					<div class="label-div">
+						<?= $LANG['URL']; ?>:
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'none':'block'; ?>;">
+						<a href="<?= $instArr['url']; ?>" target="_blank">
+							<?= $instArr['url']; ?>
+						</a>
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'block':'none'; ?>;">
+						<input name="url" type="text" value="<?= $instArr['url']; ?>" style="width:400px" />
+					</div>
+				</div>
+				<div style="position:relative;clear:both;">
+					<div class="label-div">
+						<?= $LANG['NOTES']; ?>:
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'none':'block'; ?>;">
+						<?= $instArr['notes']; ?>
+					</div>
+					<div class="editdiv" style="display:<?= $eMode?'block':'none'; ?>;">
+						<input name="notes" type="text" value="<?= $instArr['notes']; ?>" style="width:400px" />
+					</div>
+				</div>
+				<?php
+				if(!$iid){
+					?>
+					<div style="position:relative;clear:both;">
+						<div class="label-div">
+							<?= $LANG['LINK_TO']; ?>:
+						</div>
+						<div>
+							<select name="targetcollid" style="width:400px;">
+								<option value=""><?= $LANG['LEAVE_ORPHANED']; ?></option>
+								<option value="">--------------------------------------</option>
+								<?php
+								foreach($fullCollList as $collid => $collArr){
+									//Don't show collection that already linked and only show one that user can admin
+									if($collArr['iid'] && ($IS_ADMIN || ($USER_RIGHTS["CollAdmin"] && in_array($collid,$USER_RIGHTS["CollAdmin"])))){
+										echo '<option value="'.$collid.'"'.($collid == $targetCollid?'SELECTED':'').'>'.$collArr['name'].'</option>';
+									}
+								}
+								?>
+							</select>
+						</div>
+					</div>
+					<?php
+				}
+				?>
+				<div class="editdiv" style="display:<?= $eMode?'block':'none'; ?>;clear:both;margin:30px 0px 0px 20px;">
+					<?php
+					if($iid){
+						?>
+						<button name="formsubmit" type="submit" value="Update Institution Address" ><?= $LANG['UPDATE_INST_ADDRESS']; ?></button>
+						<input name="iid" type="hidden" value="<?= $iid; ?>" />
+						<input name="targetcollid" type="hidden" value="<?= $targetCollid; ?>" />
+						<?php
+					}
+					else{
+						?>
+						<button name="formsubmit" type="submit" value="Add Institution" ><?= $LANG['ADD_INST']; ?></button>
+						<?php
+					}
+					?>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+	<?php
+	if($iid){
+		?>
+		<div style="clear:both;">
+			<fieldset style="padding:20px;">
+				<legend><b><?= $LANG['COLL_LINKED_TO _INST_ADDRESS']; ?></b></legend>
+				<div>
+					<?php
+					if($collList){
+						foreach($collList as $id => $collName){
+							echo '<div style="margin:5px;font-weight:bold;clear:both;height:15px;">';
+							echo '<div style="float:left;"><a href="../misc/collprofiles.php?collid=' . $id . '">' . $collName . '</a></div> ';
+							if($editorCode == 3 || in_array($id,$USER_RIGHTS["CollAdmin"]))
+								echo ' <div class="editdiv" style="margin-left:10px;display:'.($eMode?'':'none').'"><a href="institutioneditor.php?iid=' . $iid . '&removecollid=' . $id . '"><img src="../../images/del.png" style="width:1em;"/></a></div>';
+							echo '</div>';
+						}
+					}
+					else{
+						echo '<div style="margin:25px;"><b>' . $LANG['INST_NOT_LINKED'] . '</b></div>';
+					}
+					?>
+				</div>
+				<div class="editdiv" style="display:<?= $eMode?'block':'none'; ?>;">
+					<div style="margin:15px;clear:both;">* <?= $LANG['CLICK_ON_RED']; ?></div>
+					<?php
+					//Don't show collection that already linked and only show one that user can admin
+					$addList = array();
+					foreach($fullCollList as $collid => $collArr){
+						if($collArr['iid'] != $iid){
+							if($IS_ADMIN || (isset($USER_RIGHTS["CollAdmin"]) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
+								$addList[$collid] = $collArr;
+							}
+						}
+					}
+					if($addList){
+						?>
+						<hr />
+						<form name="addcollectionform" method="post" action="institutioneditor.php" onsubmit="return validateAddCollectionForm(this)">
+							<select name="addcollid" style="width:400px;">
+								<option value=""><?= $LANG['SELECT_COLL_TO_ADD']; ?></option>
+								<option value="">------------------------------------</option>
+								<?php
+								foreach($addList as $collid => $collArr){
+									echo '<option value="'.$collid.'">'.$collArr['name'].'</option>';
+								}
+								?>
+							</select>
+							<input name="iid" type="hidden" value="<?= $iid; ?>" />
+							<button name="formsubmit" type="submit" value="Add Collection" ><?= $LANG['ADD_COLLECTION']; ?></button>
+						</form>
+						<?php
+					}
+					?>
+				</div>
+			</fieldset>
+			<div class="editdiv" style="display:<?= $eMode?'block':'none'; ?>;">
+				<fieldset style="padding:20px;">
+					<legend><b><?= $LANG['DEL_INSTITUTION']; ?></b></legend>
+					<form name="instdelform" action="institutioneditor.php" method="post" onsubmit="return confirm('<?= $LANG['WANT_TO_DELETE_INST']; ?>')">
+						<div style="position:relative;clear:both;">
+							<button class="button-danger" name="formsubmit" type="submit" value="Delete Institution" <?php if($collList) echo 'disabled'; ?> ><?= $LANG['DEL_INSTITUTION']; ?></button>
+							<input name="deliid" type="hidden" value="<?= $iid; ?>" />
+							<?php
+							if($collList) echo '<div style="margin:15px;color:red;">' . $LANG['DELETION_OF_ADDRESS'] . '</div>';
+							?>
+						</div>
+					</form>
+				</fieldset>
+			</div>
+		</div>
+		<?php
+	}
+	elseif(!$eMode){
+		?>
+		<div style="padding-left:10px;">
+			<h2><?= $LANG['SELECT_INST_FROM_LIST'] ?></h2>
+			<ul>
+				<?php
+				$instList = $instManager->getInstitutionList();
+				if($instList){
+					foreach($instList as $iid => $iArr){
+						echo '<li><a href="institutioneditor.php?iid='.$iid.'">';
+						echo $iArr['institutionname'].' ('.$iArr['institutioncode'].')';
+						if($editorCode == 3 || array_intersect(explode(',',$iArr['collid']),$USER_RIGHTS["CollAdmin"])){
+							echo ' <a href="institutioneditor.php?emode=1&iid=' . $iid . '"><img src="' . $CLIENT_ROOT . '/images/edit.png" style="width:1.2em;" /></a>';
+						}
+						echo '</a></li>';
+					}
+				}
+				else{
+					echo "<div>" . $LANG['NO_RIGHTS_TO_EDIT_INST'] . "</div>";
+				}
+				?>
+			</ul>
+		</div>
+		<?php
 	}
 	?>
 </div>
