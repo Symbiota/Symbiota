@@ -190,7 +190,9 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 				<form action="coordinatevalidator.php" method="post">
 					<?php
 						$coordRankingArr = $cleanManager->getRankingStats('coordinate');
+						$questionableCounts = $cleanManager->getQuestionableCoordinateCounts()
 					?>
+					<?php if(count($questionableCounts) > 0): ?>
 					<div style="margin-bottom: 1rem">
 						<div style="font-weight:bold"><?= $LANG['RANKING_STATISTICS']?></div>
 
@@ -210,13 +212,12 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 						<!-- 	</tr> -->
 						<!-- <?php endforeach ?> -->
 						<!-- </table> -->
-
 						<table class="styledtable">
 						<tr>
 							<th><?= 'Issue' ?></th>
 							<th><?= 'Questionable Records' ?></th>
 						</tr>
-						<?php foreach($cleanManager->getQuestionableCoordinateCounts() as $rank => $cnt):?>
+						<?php foreach($questionableCounts as $rank => $cnt):?>
 							<tr>
 								<td><?= (is_numeric($rank)? $cleanManager->questionableRankText($rank): $LANG['UNVERIFIED']) ?></td>
 							<td>
@@ -226,6 +227,7 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 						<?php endforeach ?>
 						</table>
 					</div>
+					<? endif ?>
 
 					<input name="collid" type="hidden" value="<?= $collId; ?>" />
 					<input name="action" type="hidden" value="Validate Coordinates" />
@@ -248,7 +250,10 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 					<?php if( ($coordRankingArr['unverified'] ?? 0) === 0 ): ?>
 						<button name="revalidateAll"><?= $LANG['RE-VALIDATE_ALL_COORDINATES'] ?></button>
 					<?php else: ?>
-						<button type="submit"><?= $LANG['VALIDATE_ALL_COORDINATES'] ?></button>
+					<button type="submit">
+						<?= $LANG['VALIDATE_ALL_COORDINATES'] ?>
+						(<?= ($coordRankingArr['unverified'] ?? 0) . ' ' . $LANG['UNVERIFIED'] . ' records'?>)
+					</button>
 					<?php endif ?> 
 				</form>
 
