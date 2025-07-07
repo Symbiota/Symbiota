@@ -804,16 +804,19 @@ class OccurrenceCleaner extends Manager{
 			if($populateCountry && $occid_arr[$row->occid]['country'] === null && $row->country) {
 				$editorManager->editOccurrence(['country' => $row->country, 'occid' => $row->occid, 'editedfields' => 'country'], $GLOBALS['IS_ADMIN'] ?? 0);
 				$occid_arr[$row->occid]['country'] = $row->country;
+				$occid_arr[$row->occid]['populatedCountry'] = true;
 			}
 
 			if($populateStateProvince && $occid_arr[$row->occid]['stateProvince'] === null && $row->stateProvince) {
 				$editorManager->editOccurrence(['stateprovince' => $row->stateProvince, 'occid' => $row->occid, 'editedfields' => 'stateprovince'], $GLOBALS['IS_ADMIN'] ?? 0);
 				$occid_arr[$row->occid]['stateProvince'] = $row->stateProvince;
+				$occid_arr[$row->occid]['populatedStateProvince'] = true;
 			}
 
 			if($populateCounty && $occid_arr[$row->occid]['county'] === null && $row->county) {
 				$editorManager->editOccurrence(['county' => $row->county, 'occid' => $row->occid, 'editedfields' => 'county'], $GLOBALS['IS_ADMIN'] ?? 0);
 				$occid_arr[$row->occid]['county'] = $row->county;
+				$occid_arr[$row->occid]['populatedCounty'] = true;
 			}
 
 			$occid_arr[$row->occid]['r_county'] = $row->county;

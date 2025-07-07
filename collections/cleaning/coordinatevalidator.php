@@ -120,9 +120,10 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 						$cleanManager->removeVerificationByCategory('coordinate');
 					}
 					$total_proccessed = 0;
-					$country_verified_count = 0;
-					$state_verified_count = 0;
-					$county_verified_count = 0;
+					$countryPopulatedCount = 0;
+					$statePopulatedCount = 0;
+					$countyPopulatedCount = 0;
+					$shouldPopulate = $_REQUEST['populate_country'] ?? $_REQUEST['populate_stateProvince'] ?? $_REQUEST['populate_county'] ?? false;
 
 					$start = time();
 					$TARGET_OFFSET = 1000;
@@ -134,19 +135,15 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 							$_REQUEST['populate_stateProvince'] ?? false,
 							$_REQUEST['populate_county'] ?? false,
 						);
-						foreach($validation_array as $occurrence) {
-							switch ($occurrence['rank'] ?? 0) {
-								case OccurrenceCleaner::COUNTRY_VERIFIED:
-									$country_verified_count++;
-									break;
-								case OccurrenceCleaner::STATE_PROVINCE_VERIFIED:
-									$state_verified_count++;
-									break;
-								case OccurrenceCleaner::COUNTY_VERIFIED:
-									$county_verified_count++;
-									break;
-								default:
-									break;
+						if($shouldPopulate) {
+							foreach($validation_array as $occurrence) {
+								if($occurrence['populatedCountry'] ?? false) {
+									$countryPopulatedCount++;
+								} else if($occurrence['populatedStateProvince'] ?? false) {
+									$statePopulatedCount++;
+								} else if($occurrence['populatedCounty'] ?? false) {
+									$countyPopulatedCount++;
+								}
 							}
 						}
 						$count = count($validation_array);
@@ -162,11 +159,13 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 						$collId;
 
 					$linkBuilder = fn($url, $title) => '<a target="blank" href="' . $url . '">' . $title . '</a>';
-
 					echo $total_proccessed . ' ' . $LANG['RECORDS_TOOK'] . ' ' . time() - $start. ' ' . $LANG['SEC'] . '<br/>';
-					echo $linkBuilder($baseReviewLink . '&ffieldname=country', $country_verified_count) . ' Countries verified<br/>';
-					echo $linkBuilder($baseReviewLink . '&ffieldname=stateprovince', $state_verified_count) . ' State Verified Count <br/>';
-					echo $linkBuilder($baseReviewLink. '&ffieldname=county', $county_verified_count) . ' County Verified Count <br/>';
+					if($shouldPopulate) {
+						echo $linkBuilder($baseReviewLink . '&ffieldname=country', $countryPopulatedCount) . ' Country values populated<br/>';
+						echo $linkBuilder($baseReviewLink . '&ffieldname=stateprovince', $statePopulatedCount) . ' State/Province values populated<br/>';
+						echo $linkBuilder($baseReviewLink. '&ffieldname=county', $countyPopulatedCount) . ' County values populated<br/>';
+					}
+
 					}
 					elseif($action == 'displayranklist'){
 						echo '<legend><b>' . $LANG['SPEC_RANK_OF'] . ' ' . $ranking . '</b></legend>';
