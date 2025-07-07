@@ -742,7 +742,9 @@ class OccurrenceCleaner extends Manager{
 
 		$questionableCounts = [];
 		while($row = $result->fetch_object()) {
-			$questionableCounts[$row->ranking] = $row->count;
+			if($row->count > 0) {
+				$questionableCounts[$row->ranking] = $row->count;
+			}
 		}
 
 		return $questionableCounts;
