@@ -227,22 +227,21 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 						</table>
 					</div>
 
-					<!-- <input name="q_country" type="hidden" value="<?= $country ?? ''?>" /> -->
 					<input name="collid" type="hidden" value="<?= $collId; ?>" />
 					<input name="action" type="hidden" value="Validate Coordinates" />
 
 					<div>
-						<input type="checkbox" id="populate_country" name="populate_country" />
+					<input type="checkbox" id="populate_country" name="populate_country" <?= ($_REQUEST['populate_country'] ?? false) ? 'checked': '' ?>/>
 					<label for="populate_country"><?= $LANG['POPULATE_COUNTRY']?></label>
 					</div>
 
 					<div>
-						<input type="checkbox" id="populate_stateProvince" name="populate_stateProvince" />
+						<input type="checkbox" id="populate_stateProvince" name="populate_stateProvince" <?= ($_REQUEST['populate_stateProvince'] ?? false)? 'checked': '' ?>/>
 						<label for="populate_stateProvince"><?= $LANG['POPULATE_STATE_PROVINCE']?></label>
 					</div>
 
 					<div>
-						<input type="checkbox" id="populate_county" name="populate_county" />
+						<input type="checkbox" id="populate_county" name="populate_county" <?= ($_REQUEST['populate_county'] ?? false) ? 'checked': '' ?>/>
 						<label for="populate_county"><?= $LANG['POPULATE_COUNTY'] ?></label>
 					</div>
 
