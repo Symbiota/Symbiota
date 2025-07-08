@@ -100,7 +100,7 @@ function renderValidateCoordinates($cleanManager, $targetRank) {
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script>
+	<script type="text/javascript">
 		function selectAllCollections(cb,classNameStr){
 			boxesChecked = true;
 			if(!cb.checked){
