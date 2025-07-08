@@ -655,11 +655,9 @@ class OccurrenceCleaner extends Manager{
 			case self::COORDINATE_LOCALITY_MISMATCH:
 				return 'Country does not match coordinates' ?? '';
 			case self::COUNTRY_VERIFIED:
-				return $GLOBALS['LANG']['COUNTRY_VERIFIED'] ??
-				'State/Province does not match coordinates';
+				return'State/Province does not match coordinates';
 			case self::STATE_PROVINCE_VERIFIED:
-				return $GLOBALS['LANG']['STATE_PROVINCE_VERIFIED'] ??
-				'County does not match coordinates';
+				return 'County does not match coordinates';
 			default: return $GLOBALS['LANG']['INVALID_RANK'] ?? 'Invalid coordinate match level';
 		}
 	}
