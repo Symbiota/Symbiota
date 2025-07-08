@@ -31,6 +31,63 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 	$isEditor = 1;
 }
 
+function renderValidateCoordinates($cleanManager, $targetRank) {
+	global $LANG, $collId, $CLIENT_ROOT, $revalidateAll;
+
+	// Loop Until max or finished results
+	if(is_numeric($targetRank)) {
+		$cleanManager->removeVerificationByCategory('coordinate', $targetRank);
+	} elseif($revalidateAll) {
+		$cleanManager->removeVerificationByCategory('coordinate');
+	}
+	$total_proccessed = 0;
+	$countryPopulatedCount = 0;
+	$statePopulatedCount = 0;
+	$countyPopulatedCount = 0;
+	$shouldPopulate = $_REQUEST['populate_country'] ?? $_REQUEST['populate_stateProvince'] ?? $_REQUEST['populate_county'] ?? false;
+
+	$start = time();
+	$TARGET_OFFSET = 1000;
+	$MAX_VALIDATION_BATCH = 50000;
+	for($offset = 0; $offset < $MAX_VALIDATION_BATCH; $offset += $TARGET_OFFSET) {
+		$validation_array = $cleanManager->verifyCoordAgainstPoliticalV2(
+			[],
+			$_REQUEST['populate_country'] ?? false,
+			$_REQUEST['populate_stateProvince'] ?? false,
+			$_REQUEST['populate_county'] ?? false,
+		);
+		if($shouldPopulate) {
+			foreach($validation_array as $occurrence) {
+				if($occurrence['populatedCountry'] ?? false) {
+					$countryPopulatedCount++;
+				} else if($occurrence['populatedStateProvince'] ?? false) {
+					$statePopulatedCount++;
+				} else if($occurrence['populatedCounty'] ?? false) {
+					$countyPopulatedCount++;
+				}
+			}
+		}
+		$count = count($validation_array);
+
+		$total_proccessed += $count;
+		if($count != $TARGET_OFFSET) {
+			break;
+		}
+	}
+
+	$baseReviewLink = ($CLIENT_ROOT ? '/' . $CLIENT_ROOT: '') .
+		'/collections/editor/editreviewer.php?&collid=' .
+		$collId;
+
+	$linkBuilder = fn($url, $title) => '<a target="blank" href="' . $url . '">' . $title . '</a>';
+	echo $total_proccessed . ' ' . $LANG['RECORDS_TOOK'] . ' ' . time() - $start. ' ' . $LANG['SEC'] . '<br/>';
+	if($shouldPopulate) {
+		echo $linkBuilder($baseReviewLink . '&ffieldname=country', $countryPopulatedCount) . ' Country values populated<br/>';
+		echo $linkBuilder($baseReviewLink . '&ffieldname=stateprovince', $statePopulatedCount) . ' State/Province values populated<br/>';
+		echo $linkBuilder($baseReviewLink. '&ffieldname=county', $countyPopulatedCount) . ' County values populated<br/>';
+	}
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -93,169 +150,112 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 		<?php endif ?>
 
 		<?php if($isEditor && $collId): ?>
-				<div>
-					<p style="margin: 0">
-						<?= $LANG['TOOL_DESCRIPTION'] ?>
-					</p>
-					<ul>
-						<li><?= $LANG['COORDINATES_OUTSIDE_COUNTY_LIMITS'] ?></li>
-						<li><?= $LANG['WRONG_COUNTY_ENTERED'] ?></li>
-						<li><?= $LANG['COUNTY_MISSPELLED'] ?></li>
-					</ul>
-					<p style="margin: 0">
-						<?= $LANG['VALIDATION_COUNT_LIMIT'] ?>
-					</p>
+			<div>
+				<p style="margin: 0">
+					<?= $LANG['TOOL_DESCRIPTION'] ?>
+				</p>
+				<ul>
+					<li><?= $LANG['COORDINATES_OUTSIDE_COUNTY_LIMITS'] ?></li>
+					<li><?= $LANG['WRONG_COUNTY_ENTERED'] ?></li>
+					<li><?= $LANG['COUNTY_MISSPELLED'] ?></li>
+				</ul>
+				<p style="margin: 0">
+					<?= $LANG['VALIDATION_COUNT_LIMIT'] ?>
+				</p>
 				<?php if($dateLastVerified = $cleanManager->getDateLastVerifiedByCategory('coordinate')): ?>
 					<p style="margin: 0"><b><?= $LANG['LAST_VER_DATE'] ?>:</b> <?= $dateLastVerified ?></p>
 				<?php endif ?>
+			</div>
+
+			<fieldset style="padding:20px">
+			<?php if($action == 'Validate Coordinates'): ?>
+				<?php renderValidateCoordinates($cleanManager, $targetRank); ?>
+			<?php elseif($action == 'displayranklist'): ?>
+				<legend><b> <?= $LANG['SPEC_RANK_OF'] . ' ' . $ranking ?></b></legend>
+				<?php if($action == 'displayranklist'): ?>
+				<?php foreach($cleanManager->getOccurrenceRankingArr('coordinate', $ranking) as $occid => $inArr): ?>
+					<div>
+						<a href="../editor/occurrenceeditor.php?occid=<?= htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE)?>" target="_blank">
+							<? htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>
+						</a>
+						<?= ' - ' . $LANG['CHECKED_BY'] . ' ' . $inArr['username'] . ' on ' . $inArr['ts'] ?>
+					</div>
+				<?php endforeach ?>
+				<?php else: ?>
+					<div style="margin:30px;font-weight:bold;font-size:150%"><?= $LANG['NOTHING_TO_DISPLAY'] ?> </div>
+				<?php endif ?>
+			<?php endif ?>
+			</fieldset>
+
+			<form action="coordinatevalidator.php" method="post">
+				<?php
+					$coordRankingArr = $cleanManager->getRankingStats('coordinate');
+					$questionableCounts = $cleanManager->getQuestionableCoordinateCounts()
+				?>
+				<?php if(count($questionableCounts) > 0): ?>
+				<div style="margin-bottom: 1rem">
+					<div style="font-weight:bold"><?= $LANG['RANKING_STATISTICS']?></div>
+
+					<!-- <table class="styledtable"> -->
+					<!-- <tr> -->
+					<!-- 	<th><?= $LANG['RANKING'] ?></th> -->
+					<!-- 	<th><?= $LANG['STATUS'] ?></th> -->
+					<!-- 	<th><?= $LANG['COUNT'] ?></th> -->
+					<!-- 	<th><?= $LANG['RE-VERIFY'] ?></th> -->
+					<!-- </tr> -->
+					<!-- <?php foreach($coordRankingArr as $rank => $cnt):?> -->
+					<!-- 	<tr> -->
+					<!-- 		<td><?= $rank ?></td> -->
+					<!-- 		<td><?= (is_numeric($rank)? $cleanManager->coordinateRankingToText($rank): $LANG['UNVERIFIED']) ?></td> -->
+					<!-- 		<td><?= number_format($cnt) ?></td> -->
+					<!-- 		<td style="width: 1%"><button <?= $cnt > 0? '' : 'disabled="true"'?> type="submit" name="targetRank" value="<?= $rank ?>" class="button"><?= $LANG['RE-VERIFY'] ?></button></td> -->
+					<!-- 	</tr> -->
+					<!-- <?php endforeach ?> -->
+					<!-- </table> -->
+					<table class="styledtable">
+					<tr>
+						<th><?= 'Issue' ?></th>
+						<th><?= 'Questionable Records' ?></th>
+					</tr>
+					<?php foreach($questionableCounts as $rank => $cnt):?>
+						<tr>
+							<td><?= (is_numeric($rank)? $cleanManager->questionableRankText($rank): $LANG['UNVERIFIED']) ?></td>
+						<td>
+							<a href="../editor/occurrencetabledisplay.php?collid=<?= $collId ?>&reset&coordinateRankingIssue=<?= $rank?>" target="blank"><?= number_format($cnt) ?></a>
+						</td>
+						</tr>
+					<?php endforeach ?>
+					</table>
+				</div>
+				<?php endif ?>
+
+				<input name="collid" type="hidden" value="<?= $collId; ?>" />
+				<input name="action" type="hidden" value="Validate Coordinates" />
+
+				<div>
+				<input type="checkbox" id="populate_country" name="populate_country" <?= ($_REQUEST['populate_country'] ?? false) ? 'checked': '' ?>/>
+				<label for="populate_country"><?= $LANG['POPULATE_COUNTRY']?></label>
 				</div>
 
-				<?php if($action) {
-					echo '<fieldset style="padding:20px">';
-				if($action == 'Validate Coordinates'){
-					// Loop Until max or finished results
-					if(is_numeric($targetRank)) {
-						$cleanManager->removeVerificationByCategory('coordinate', $targetRank);	
-					} elseif($revalidateAll) {
-						$cleanManager->removeVerificationByCategory('coordinate');
-					}
-					$total_proccessed = 0;
-					$countryPopulatedCount = 0;
-					$statePopulatedCount = 0;
-					$countyPopulatedCount = 0;
-					$shouldPopulate = $_REQUEST['populate_country'] ?? $_REQUEST['populate_stateProvince'] ?? $_REQUEST['populate_county'] ?? false;
+				<div>
+					<input type="checkbox" id="populate_stateProvince" name="populate_stateProvince" <?= ($_REQUEST['populate_stateProvince'] ?? false)? 'checked': '' ?>/>
+					<label for="populate_stateProvince"><?= $LANG['POPULATE_STATE_PROVINCE']?></label>
+				</div>
 
-					$start = time();
-					$TARGET_OFFSET = 1000;
-					$MAX_VALIDATION_BATCH = 50000;
-					for($offset = 0; $offset < $MAX_VALIDATION_BATCH; $offset += $TARGET_OFFSET) {
-						$validation_array = $cleanManager->verifyCoordAgainstPoliticalV2(
-							[],
-							$_REQUEST['populate_country'] ?? false,
-							$_REQUEST['populate_stateProvince'] ?? false,
-							$_REQUEST['populate_county'] ?? false,
-						);
-						if($shouldPopulate) {
-							foreach($validation_array as $occurrence) {
-								if($occurrence['populatedCountry'] ?? false) {
-									$countryPopulatedCount++;
-								} else if($occurrence['populatedStateProvince'] ?? false) {
-									$statePopulatedCount++;
-								} else if($occurrence['populatedCounty'] ?? false) {
-									$countyPopulatedCount++;
-								}
-							}
-						}
-						$count = count($validation_array);
+				<div>
+					<input type="checkbox" id="populate_county" name="populate_county" <?= ($_REQUEST['populate_county'] ?? false) ? 'checked': '' ?>/>
+					<label for="populate_county"><?= $LANG['POPULATE_COUNTY'] ?></label>
+				</div>
 
-						$total_proccessed += $count;
-						if($count != $TARGET_OFFSET) {
-							break;
-						}
-					}
-
-					$baseReviewLink = ($CLIENT_ROOT ? '/' . $CLIENT_ROOT: '') .
-						'/collections/editor/editreviewer.php?&collid=' . 
-						$collId;
-
-					$linkBuilder = fn($url, $title) => '<a target="blank" href="' . $url . '">' . $title . '</a>';
-					echo $total_proccessed . ' ' . $LANG['RECORDS_TOOK'] . ' ' . time() - $start. ' ' . $LANG['SEC'] . '<br/>';
-					if($shouldPopulate) {
-						echo $linkBuilder($baseReviewLink . '&ffieldname=country', $countryPopulatedCount) . ' Country values populated<br/>';
-						echo $linkBuilder($baseReviewLink . '&ffieldname=stateprovince', $statePopulatedCount) . ' State/Province values populated<br/>';
-						echo $linkBuilder($baseReviewLink. '&ffieldname=county', $countyPopulatedCount) . ' County values populated<br/>';
-					}
-
-					}
-					elseif($action == 'displayranklist'){
-						echo '<legend><b>' . $LANG['SPEC_RANK_OF'] . ' ' . $ranking . '</b></legend>';
-						$occurList = array();
-						if($action == 'displayranklist'){
-							$occurList = $cleanManager->getOccurrenceRankingArr('coordinate', $ranking);
-						}
-						if($occurList){
-							foreach($occurList as $occid => $inArr){
-								echo '<div>';
-								echo '<a href="../editor/occurrenceeditor.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
-								echo ' - ' . $LANG['CHECKED_BY'] . ' ' . $inArr['username'] . ' on ' . $inArr['ts'];
-								echo '</div>';
-							}
-						}
-						else{
-							echo '<div style="margin:30px;font-weight:bold;font-size:150%">' . $LANG['NOTHING_TO_DISPLAY'] . '</div>';
-						}
-					}
-					echo '</fieldset>';
-				}?>
-				<form action="coordinatevalidator.php" method="post">
-					<?php
-						$coordRankingArr = $cleanManager->getRankingStats('coordinate');
-						$questionableCounts = $cleanManager->getQuestionableCoordinateCounts()
-					?>
-					<?php if(count($questionableCounts) > 0): ?>
-					<div style="margin-bottom: 1rem">
-						<div style="font-weight:bold"><?= $LANG['RANKING_STATISTICS']?></div>
-
-						<!-- <table class="styledtable"> -->
-						<!-- <tr> -->
-						<!-- 	<th><?= $LANG['RANKING'] ?></th> -->
-						<!-- 	<th><?= $LANG['STATUS'] ?></th> -->
-						<!-- 	<th><?= $LANG['COUNT'] ?></th> -->
-						<!-- 	<th><?= $LANG['RE-VERIFY'] ?></th> -->
-						<!-- </tr> -->
-						<!-- <?php foreach($coordRankingArr as $rank => $cnt):?> -->
-						<!-- 	<tr> -->
-						<!-- 		<td><?= $rank ?></td> -->
-						<!-- 		<td><?= (is_numeric($rank)? $cleanManager->coordinateRankingToText($rank): $LANG['UNVERIFIED']) ?></td> -->
-						<!-- 		<td><?= number_format($cnt) ?></td> -->
-						<!-- 		<td style="width: 1%"><button <?= $cnt > 0? '' : 'disabled="true"'?> type="submit" name="targetRank" value="<?= $rank ?>" class="button"><?= $LANG['RE-VERIFY'] ?></button></td> -->
-						<!-- 	</tr> -->
-						<!-- <?php endforeach ?> -->
-						<!-- </table> -->
-						<table class="styledtable">
-						<tr>
-							<th><?= 'Issue' ?></th>
-							<th><?= 'Questionable Records' ?></th>
-						</tr>
-						<?php foreach($questionableCounts as $rank => $cnt):?>
-							<tr>
-								<td><?= (is_numeric($rank)? $cleanManager->questionableRankText($rank): $LANG['UNVERIFIED']) ?></td>
-							<td>
-								<a href="../editor/occurrencetabledisplay.php?collid=<?= $collId ?>&reset&coordinateRankingIssue=<?= $rank?>" target="blank"><?= number_format($cnt) ?></a>
-							</td>
-							</tr>
-						<?php endforeach ?>
-						</table>
-					</div>
-					<? endif ?>
-
-					<input name="collid" type="hidden" value="<?= $collId; ?>" />
-					<input name="action" type="hidden" value="Validate Coordinates" />
-
-					<div>
-					<input type="checkbox" id="populate_country" name="populate_country" <?= ($_REQUEST['populate_country'] ?? false) ? 'checked': '' ?>/>
-					<label for="populate_country"><?= $LANG['POPULATE_COUNTRY']?></label>
-					</div>
-
-					<div>
-						<input type="checkbox" id="populate_stateProvince" name="populate_stateProvince" <?= ($_REQUEST['populate_stateProvince'] ?? false)? 'checked': '' ?>/>
-						<label for="populate_stateProvince"><?= $LANG['POPULATE_STATE_PROVINCE']?></label>
-					</div>
-
-					<div>
-						<input type="checkbox" id="populate_county" name="populate_county" <?= ($_REQUEST['populate_county'] ?? false) ? 'checked': '' ?>/>
-						<label for="populate_county"><?= $LANG['POPULATE_COUNTY'] ?></label>
-					</div>
-
-					<?php if( ($coordRankingArr['unverified'] ?? 0) === 0 ): ?>
-						<button name="revalidateAll"><?= $LANG['RE-VALIDATE_ALL_COORDINATES'] ?></button>
-					<?php else: ?>
-					<button type="submit">
-						<?= $LANG['VALIDATE_ALL_COORDINATES'] ?>
-						(<?= ($coordRankingArr['unverified'] ?? 0) . ' ' . $LANG['UNVERIFIED'] . ' records'?>)
-					</button>
-					<?php endif ?> 
-				</form>
+				<?php if( ($coordRankingArr['unverified'] ?? 0) === 0 ): ?>
+					<button name="revalidateAll"><?= $LANG['RE-VALIDATE_ALL_COORDINATES'] ?></button>
+				<?php else: ?>
+				<button type="submit">
+					<?= $LANG['VALIDATE_ALL_COORDINATES'] ?>
+					(<?= ($coordRankingArr['unverified'] ?? 0) . ' ' . $LANG['UNVERIFIED'] . ' records'?>)
+				</button>
+				<?php endif ?> 
+			</form>
 
 			<?php
 				$countryArr = $cleanManager->getUnverifiedByCountry();
@@ -297,4 +297,3 @@ if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_arr
 	include($SERVER_ROOT.'/includes/footer.php');
 	?>
 </body>
-</html>
