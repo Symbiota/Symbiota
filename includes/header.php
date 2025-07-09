@@ -89,7 +89,7 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
 						</a>
 					</li>
 					<li>
-						<a href="https://symbiota.org/docs" target="_blank" rel="noopener noreferrer">
+						<a href="https://docs.symbiota.org/docs/about/" target="_blank" rel="noopener noreferrer">
 							<?= $LANG['H_HELP'] ?>
 						</a>
 					</li>
