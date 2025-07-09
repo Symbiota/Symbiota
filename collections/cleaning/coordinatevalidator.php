@@ -3,6 +3,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', '1');
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCleaner.php');
+include_once($SERVER_ROOT.'/classes/Sanitize.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/cleaning/coordinatevalidator.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/cleaning/coordinatevalidator.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/cleaning/coordinatevalidator.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
@@ -41,6 +42,33 @@ function renderValidateCoordinates($cleanManager, $targetRank) {
 		$cleanManager->removeVerificationByCategory('coordinate');
 	}
 
+	$geoThesIDs = Sanitize::in($_REQUEST['geoThesIDs'] ?? []);
+	$countries = Sanitize::in($_REQUEST['countries'] ?? []);
+	$countryIdMap = [];
+
+	if(count($countries) === count($geoThesIDs) && count($geoThesIDs) != 0) {
+		for($i = 0; $i < count($geoThesIDs); $i++) {
+			$geoThesID = $geoThesIDs[$i];
+			$country = $countries[$i];
+
+			if(is_numeric($geoThesID)) {
+				if(array_key_exists($geoThesID, $countryIdMap)) {
+					$countryIdMap[$geoThesID]['countries'][] = $country;
+				} else {
+					$countryIdMap[$geoThesID] = [
+						'countries' => [ $country ],
+						'geoThesID' => $geoThesID
+					];
+				}
+			}
+		}
+
+		$countryIdMap = array_values($countryIdMap);
+	}
+
+	// Empty Optimization to verify first then cleanup unidentifiable
+	array_push($countryIdMap, ['countries' => [],'geoThesID' => false]);
+
 	$total_proccessed = 0;
 	$countryPopulatedCount = 0;
 	$statePopulatedCount = 0;
@@ -50,29 +78,38 @@ function renderValidateCoordinates($cleanManager, $targetRank) {
 	$start = time();
 	$TARGET_OFFSET = 1000;
 	$MAX_VALIDATION_BATCH = 50000;
-	for($offset = 0; $offset < $MAX_VALIDATION_BATCH; $offset += $TARGET_OFFSET) {
-		$validation_array = $cleanManager->verifyCoordAgainstPoliticalV2(
-			[],
-			$_REQUEST['populate_country'] ?? false,
-			$_REQUEST['populate_stateProvince'] ?? false,
-			$_REQUEST['populate_county'] ?? false,
-		);
-		if($shouldPopulate) {
-			foreach($validation_array as $occurrence) {
-				if($occurrence['populatedCountry'] ?? false) {
-					$countryPopulatedCount++;
-				} else if($occurrence['populatedStateProvince'] ?? false) {
-					$statePopulatedCount++;
-				} else if($occurrence['populatedCounty'] ?? false) {
-					$countyPopulatedCount++;
+
+	foreach($countryIdMap as $countryGroups) {
+		for($offset = 0; $offset < $MAX_VALIDATION_BATCH; $offset += $TARGET_OFFSET) {
+			$validation_array = $cleanManager->verifyCoordAgainstPoliticalV2(
+				$countryGroups['countries'],
+				$countryGroups['geoThesID']? [$countryGroups['geoThesID']]: [],
+				$_REQUEST['populate_country'] ?? false,
+				$_REQUEST['populate_stateProvince'] ?? false,
+				$_REQUEST['populate_county'] ?? false,
+			);
+			if($shouldPopulate) {
+				foreach($validation_array as $occurrence) {
+					if($occurrence['populatedCountry'] ?? false) {
+						$countryPopulatedCount++;
+					} else if($occurrence['populatedStateProvince'] ?? false) {
+						$statePopulatedCount++;
+					} else if($occurrence['populatedCounty'] ?? false) {
+						$countyPopulatedCount++;
+					}
 				}
 			}
-		}
-		$count = count($validation_array);
+			$count = count($validation_array);
 
-		$total_proccessed += $count;
-		if($count != $TARGET_OFFSET) {
-			break;
+			$total_proccessed += $count;
+
+			if($MAX_VALIDATION_BATCH <= $total_proccessed) {
+				// Breaks both loops
+				break 2;
+			} else if ($count != $TARGET_OFFSET) {
+				// Breaks to next geoThesID
+				break;
+			}
 		}
 	}
 
@@ -280,7 +317,8 @@ function renderValidateCoordinates($cleanManager, $targetRank) {
 										<img src="../../images/list.png" title="<?= $LANG['VIEW_SPECIMENS'] ?>"/>
 									</a>
 									</div>
-									<input type="hidden" name="geoThesID[]" value="<?= $obj->geoThesID ?>">
+									<input type="hidden" name="geoThesIDs[]" value="<?= $obj->geoThesID ?>">
+									<input type="hidden" name="countries[]" value="<?= $country?>">
 								</td>
 								<td><?= number_format($obj->cnt)?></td>
 								</tr>

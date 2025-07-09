@@ -751,7 +751,8 @@ class OccurrenceCleaner extends Manager{
 	}
 
 	public function verifyCoordAgainstPoliticalV2(
-		$countries = [],
+		array $countries = [],
+		array $targetGeoThesIDs = [],
 		bool $populateCountry = false,
 		bool $populateStateProvince = false,
 		bool $populateCounty = false,
@@ -762,9 +763,19 @@ class OccurrenceCleaner extends Manager{
 		$coord_query = 'SELECT o.occid, country, stateProvince, county FROM omoccurrences o
 			LEFT JOIN omoccurverification ov ON ov.occid = o.occid AND category="coordinate"
 			JOIN omoccurpoints pts ON pts.occid = o.occid
-			WHERE ov.occid IS NULL AND collid = ? LIMIT 1000';
+			WHERE ov.occid IS NULL AND collid = ? ';
+		$coord_query_params = [$this->collid];
 
-		$result = QueryUtil::executeQuery($this->conn, $coord_query, [ $this->collid ]);
+		if(count($countries)) {
+			$parameters = str_repeat('?,', count($countries) - 1) . '?';
+			$coord_query .= 'AND o.country in (' . $parameters . ') ';
+
+			$coord_query_params = array_merge($coord_query_params, $countries);
+		}
+
+		$coord_query .= 'LIMIT 1000';
+
+		$result = QueryUtil::executeQuery($this->conn, $coord_query, $coord_query_params);
 		$occid_arr = [];
 
 		while(($row = $result->fetch_object())) {
@@ -798,15 +809,17 @@ class OccurrenceCleaner extends Manager{
 			join geographicpolygon gp on gp.geoThesID = g70.geoThesID
 			join omoccurpoints pts on ST_CONTAINS(gp.footprintPolygon, pts.lngLatPoint)
 			where ';
+		$resolve_geo_thesaurus_parameters = [];
 
-		if(count($countries)) {
-			$country_parameters = str_repeat('?,', count($countries) - 1) . '?';
-			$resolve_geo_thesaurus .= 'country in (' . $country_parameters . ') AND ';
+		if(count($targetGeoThesIDs)) {
+			$parameters = str_repeat('?,', count($targetGeoThesIDs) - 1) . '?';
+			$resolve_geo_thesaurus .= 'g50.geoThesID in (' . $parameters . ') AND ';
+			$resolve_geo_thesaurus_parameters = $targetGeoThesIDs;
 		}
 
 		$resolve_geo_thesaurus .= 'g50.geolevel = 50 and pts.occid in (' . implode(',', array_keys($occid_arr)) . ')';
 
-		$geo_check_result = QueryUtil::executeQuery($this->conn, $resolve_geo_thesaurus);
+		$geo_check_result = QueryUtil::executeQuery($this->conn, $resolve_geo_thesaurus, $resolve_geo_thesaurus_parameters);
 
 		$this->conn->commit();
 
@@ -900,7 +913,7 @@ class OccurrenceCleaner extends Manager{
 		$sql = 'SELECT count(*) as unverified_cnt from omoccurrences o
 		JOIN omoccurpoints pts ON pts.occid = o.occid
 		LEFT JOIN omoccurverification ov ON ov.occid = o.occid AND category = ?
-		WHERE collid = ?';
+		WHERE collid = ? AND ov.occid IS NULL';
 
 		$rs = QueryUtil::executeQuery($this->conn, $sql, [ $category, $this->collid]);
 		$r = $rs->fetch_object();
