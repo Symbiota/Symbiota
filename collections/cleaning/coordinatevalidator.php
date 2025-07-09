@@ -40,6 +40,7 @@ function renderValidateCoordinates($cleanManager, $targetRank) {
 	} elseif($revalidateAll) {
 		$cleanManager->removeVerificationByCategory('coordinate');
 	}
+
 	$total_proccessed = 0;
 	$countryPopulatedCount = 0;
 	$statePopulatedCount = 0;
@@ -189,7 +190,8 @@ function renderValidateCoordinates($cleanManager, $targetRank) {
 
 			<form action="coordinatevalidator.php" method="post">
 				<?php
-					$coordRankingArr = $cleanManager->getRankingStats('coordinate');
+					//$coordRankingArr = $cleanManager->getRankingStats('coordinate');
+					$unverifiedCount = $cleanManager->getUnverifiedCount('coordinate');
 					$questionableCounts = $cleanManager->getQuestionableCoordinateCounts()
 				?>
 				<?php if(count($questionableCounts) > 0): ?>
@@ -247,46 +249,47 @@ function renderValidateCoordinates($cleanManager, $targetRank) {
 					<label for="populate_county"><?= $LANG['POPULATE_COUNTY'] ?></label>
 				</div>
 
-				<?php if( ($coordRankingArr['unverified'] ?? 0) === 0 ): ?>
+				<?php if( $unverifiedCount === 0 ): ?>
 					<button name="revalidateAll"><?= $LANG['RE-VALIDATE_ALL_COORDINATES'] ?></button>
 				<?php else: ?>
 				<button type="submit">
 					<?= $LANG['VALIDATE_ALL_COORDINATES'] ?>
-					(<?= ($coordRankingArr['unverified'] ?? 0) . ' ' . $LANG['UNVERIFIED'] . ' records'?>)
+					(<?= $unverifiedCount . ' ' . $LANG['UNVERIFIED'] . ' records'?>)
 				</button>
 				<?php endif ?> 
-			</form>
 
-			<?php
-				$countryArr = $cleanManager->getUnverifiedByCountry();
-				arsort($countryArr);
-			?>
-
-			<?php if(count($countryArr)): ?>
-				<div>
-					<div style="font-weight:bold"><?= $LANG['UNVERIFIED_BY_COUNTRY'] ?></div>
-					<table class="styledtable">
-						<tr>
-							<th><?= $LANG['COUNTRY'] ?></th>
-							<th><?= $LANG['COUNT'] ?></th>
-						</tr>
-
-						<?php foreach($countryArr as $country => $cnt) :?>
+				<?php
+					$countryArr = $cleanManager->getUnverifiedByCountry();
+					arsort($countryArr);
+				?>
+				<?php if(count($countryArr)): ?>
+					<div>
+						<div style="font-weight:bold"><?= $LANG['UNVERIFIED_BY_COUNTRY'] ?></div>
+						<table class="styledtable">
 							<tr>
-							<td>
-								<div style="display: flex; align-items: center; gap: 0.5rem">
-								<?= $country ?>
-								<a style="display: flex; flex-grow: 1; justify-content: end" href="../editor/occurrencetabledisplay.php?collid=<?= $collId ?>&ffcountry=<?= htmlspecialchars($country, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE)?>" target="_blank">
-									<img src="../../images/list.png" title="<?= $LANG['VIEW_SPECIMENS'] ?>"/>
-								</a>
-								</div>
-							</td>
-							<td><?= number_format($cnt)?></td>
+								<th><?= $LANG['COUNTRY'] ?></th>
+								<th><?= $LANG['COUNT'] ?></th>
 							</tr>
-						<?php endforeach ?>
-					</table>
-				</div>
-			<?php endif ?>
+
+							<?php foreach($countryArr as $country => $obj) :?>
+								<tr>
+								<td>
+									<div style="display: flex; align-items: center; gap: 0.5rem">
+									<?= $country ?>
+									<a style="display: flex; flex-grow: 1; justify-content: end" href="../editor/occurrencetabledisplay.php?collid=<?= $collId ?>&ffcountry=<?= htmlspecialchars($country, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE)?>" target="_blank">
+										<img src="../../images/list.png" title="<?= $LANG['VIEW_SPECIMENS'] ?>"/>
+									</a>
+									</div>
+									<input type="hidden" name="geoThesID[]" value="<?= $obj->geoThesID ?>">
+								</td>
+								<td><?= number_format($obj->cnt)?></td>
+								</tr>
+							<?php endforeach ?>
+						</table>
+					</div>
+				<?php endif ?>
+
+			</form>
 		<?php elseif(!$collId): ?>
 			<h2><?= $LANG['NOT_AUTHORIZED'] ?></h2>
 		<?php else: ?>

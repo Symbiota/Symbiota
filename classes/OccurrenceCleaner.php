@@ -637,14 +637,16 @@ class OccurrenceCleaner extends Manager{
 
 	public function getUnverifiedByCountry(){
 		$retArr = array();
-		$sql = 'SELECT country, count(occid) AS cnt '.
-			'FROM omoccurrences '.
-			'WHERE (collid IN('.$this->collid.')) AND (decimallatitude IS NOT NULL) AND (decimallongitude IS NOT NULL) AND country IS NOT NULL '.
-			'AND (occid NOT IN(SELECT occid FROM omoccurverification WHERE category = "coordinate")) '.
-			'GROUP BY country';
+		$sql = 'SELECT country, count(country) as cnt, COALESCE(acceptedID, geoThesID) as geoThesID FROM omoccurrences o
+			JOIN omoccurpoints pts ON pts.occid = o.occid
+			LEFT JOIN omoccurverification ov ON ov.occid = o.occid AND category = "coordinate"
+			LEFT JOIN geographicthesaurus g ON g.geoterm = country and geoLevel = 50
+			WHERE collid = ' . $this->collid . ' AND country IS NOT NULL AND ov.occid IS NULL
+			GROUP BY country';
+
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr[$r->country] = $r->cnt;
+			$retArr[$r->country] = $r;
 		}
 		$rs->free();
 		return $retArr;
@@ -783,6 +785,7 @@ class OccurrenceCleaner extends Manager{
 		// 	left join geographicthesaurus as g70 on g70.parentID = g60.geoThesID and g70.geoLevel = 70
 		// 	join geographicpolygon gp on gp.geoThesID = COALESCE(g70.geoThesID, g60.geoThesID, g50.geoThesID)
 		// 	join omoccurpoints pts on ST_CONTAINS(gp.footprintPolygon, pts.lngLatPoint) where ';
+
 		$resolve_geo_thesaurus = 'SELECT pts.occid, g70.geoterm as county, g60.geoterm as stateProvince, g50.geoterm as country from geographicthesaurus as g50
 			left join (
 				select g.geoThesID, parentID, geoterm from geographicthesaurus as g
@@ -891,6 +894,19 @@ class OccurrenceCleaner extends Manager{
 		$rs->free();
 		sort($retArr);
 		return $retArr;
+	}
+
+	public function getUnverifiedCount(string $category): int {
+		$sql = 'SELECT count(*) as unverified_cnt from omoccurrences o
+		JOIN omoccurpoints pts ON pts.occid = o.occid
+		LEFT JOIN omoccurverification ov ON ov.occid = o.occid AND category = ?
+		WHERE collid = ?';
+
+		$rs = QueryUtil::executeQuery($this->conn, $sql, [ $category, $this->collid]);
+		$r = $rs->fetch_object();
+		$rs->free();
+
+		return $r->unverified_cnt;
 	}
 
 	//TODO (Logan) decide if Deprecate before pull request merged?
