@@ -322,7 +322,7 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
     window.location.href = '<?php echo $CLIENT_ROOT; ?>/includes/usagepolicy.php';
   };
   const navigateToHelp = () => {
-    window.location.href = 'https://symbiota.org/docs';
+    window.location.href = 'https://docs.symbiota.org/docs/about/';
   };
   const navigateToSiteMap = () => {
     window.location.href = '<?php echo $CLIENT_ROOT; ?>/sitemap.php';
