@@ -778,11 +778,23 @@ class OccurrenceCleaner extends Manager{
 
 		$this->conn->begin_transaction();
 
+		// $resolve_geo_thesaurus = 'SELECT pts.occid, g70.geoterm as county, g60.geoterm as stateProvince, g50.geoterm as country from geographicthesaurus as g50
+		// 	left join geographicthesaurus as g60 on g60.parentID = g50.geoThesID and g60.geoLevel = 60
+		// 	left join geographicthesaurus as g70 on g70.parentID = g60.geoThesID and g70.geoLevel = 70
+		// 	join geographicpolygon gp on gp.geoThesID = COALESCE(g70.geoThesID, g60.geoThesID, g50.geoThesID)
+		// 	join omoccurpoints pts on ST_CONTAINS(gp.footprintPolygon, pts.lngLatPoint) where ';
 		$resolve_geo_thesaurus = 'SELECT pts.occid, g70.geoterm as county, g60.geoterm as stateProvince, g50.geoterm as country from geographicthesaurus as g50
-			left join geographicthesaurus as g60 on g60.parentID = g50.geoThesID and g60.geoLevel = 60
-			left join geographicthesaurus as g70 on g70.parentID = g60.geoThesID and g70.geoLevel = 70
-			join geographicpolygon gp on gp.geoThesID = COALESCE(g70.geoThesID, g60.geoThesID, g50.geoThesID)
-			join omoccurpoints pts on ST_CONTAINS(gp.footprintPolygon, pts.lngLatPoint) where ';
+			left join (
+				select g.geoThesID, parentID, geoterm from geographicthesaurus as g
+				join geographicpolygon as gp on gp.geoThesID = g.geoThesID and g.geoLevel = 60
+			) as g60 on g60.parentID = g50.geoThesID
+			left join (
+				select g.geoThesID, parentID, geoterm from geographicthesaurus as g
+				join geographicpolygon as gp on gp.geoThesID = g.geoThesID and g.geoLevel = 70
+			) as g70 on g70.parentID = g60.geoThesID
+			join geographicpolygon gp on gp.geoThesID = g70.geoThesID
+			join omoccurpoints pts on ST_CONTAINS(gp.footprintPolygon, pts.lngLatPoint)
+			where ';
 
 		if(count($countries)) {
 			$country_parameters = str_repeat('?,', count($countries) - 1) . '?';
