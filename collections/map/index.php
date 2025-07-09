@@ -144,7 +144,7 @@ if(isset($_REQUEST['llpoint'])) {
 }
 
 //Gets the geo context terms
-if ($GLOBALS['ACTIVATE_PALEO']){
+if (!empty($GLOBALS['ACTIVATE_PALEO'])){
 	$gtsTermArr = $mapManager->getPaleoGtsTerms();
 	$paleoTimes = $mapManager->getPaleoTimes();
 }
@@ -2360,7 +2360,7 @@ $serverHost = GeneralUtil::getDomain();
 									</div>
 									<div><hr></div>
 									<?php
-									if($GLOBALS['ACTIVATE_PALEO']){
+									if(!empty($GLOBALS['ACTIVATE_PALEO'])){
 										?>
 										<div id="searchFormPaleo">
 											<div style="margin-top:5px; display:flex;">

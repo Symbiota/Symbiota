@@ -117,6 +117,7 @@ class SpecUploadFile extends SpecUploadBase{
 			$this->outputMsg('<li>Beginning to load records...</li>',1);
 			while($recordArr = $this->getRecordArr($fh)){
 				$recMap = Array();
+				$recMapPaleo = Array();
 				$hasCultivarEpithet = false;
 				$hasTradeName = false;
 				$isCultivar = false;
@@ -138,6 +139,11 @@ class SpecUploadFile extends SpecUploadBase{
 						if(strtolower($valueStr) == 'cultivar' && $sMap['field'] == 'taxonrank'){
 							$isCultivar = true;
 						}
+						if($this->paleoSupport && strpos($symbField, 'paleo-') === 0){
+							$cleanKey = substr($symbField, 6);
+							$recMapPaleo[$cleanKey] = $valueStr;
+							continue;
+						}
 						//If value is enclosed by quotes, remove quotes
 						if(substr($valueStr,0,1) == '"' && substr($valueStr,-1) == '"'){
 							$valueStr = substr($valueStr,1,strlen($valueStr)-2);
@@ -154,6 +160,8 @@ class SpecUploadFile extends SpecUploadBase{
 					unset($recMap);
 					continue;
 				}
+				if (!empty($recMapPaleo))
+					$recMap['paleo'] = $recMapPaleo;
 				$this->loadRecord($recMap);
 				unset($recMap);
 			}

@@ -15,6 +15,31 @@ ALTER TABLE `omoccurpaleogts`
   ADD COLUMN `colorCode` VARCHAR(10) NULL DEFAULT NULL AFTER `errorRange`,
   ADD COLUMN `geoTimeID` INT NULL DEFAULT NULL AFTER `parentgtsid`;
 
+#Add paleo fields to uploadspectemp
+ALTER TABLE uploadspectemp
+  ADD COLUMN eon varchar(65),
+  ADD COLUMN era varchar(65),
+  ADD COLUMN period varchar(65),
+  ADD COLUMN epoch varchar(65),
+  ADD COLUMN earlyInterval varchar(65),
+  ADD COLUMN lateInterval varchar(65),
+  ADD COLUMN absoluteAge varchar(65),
+  ADD COLUMN storageLoc varchar(65),
+  ADD COLUMN stage varchar(65),
+  ADD COLUMN localStage varchar(65),
+  ADD COLUMN biota varchar(100),
+  ADD COLUMN biostratigraphy varchar(65),
+  ADD COLUMN taxonEnvironment varchar(65),
+  ADD COLUMN lithogroup varchar(65),
+  ADD COLUMN formation varchar(65),
+  ADD COLUMN member varchar(65),
+  ADD COLUMN bed varchar(65),
+  ADD COLUMN lithology varchar(700),
+  ADD COLUMN stratRemarks varchar(1000),
+  ADD COLUMN element varchar(250),
+  ADD COLUMN slideProperties varchar(1000),
+  ADD COLUMN geologicalContextID varchar(100);
+
 #Add paleo indexes
 ALTER TABLE `omoccurpaleo`
   ADD INDEX `IX_paleo_earlyInterval` (`earlyInterval` ASC),

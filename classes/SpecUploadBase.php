@@ -1200,108 +1200,45 @@ class SpecUploadBase extends SpecUpload{
 	}
 
 	private function transferPaleoData(){
-		if($this->paleoSupport){
-			$this->outputMsg('<li>Linking Paleo data...</li>');
-			$sql = 'SELECT occid, catalogNumber, paleoJSON FROM uploadspectemp WHERE (occid IS NOT NULL) AND (paleoJSON IS NOT NULL) AND (collid = '.$this->collId.')';
-			$rs = $this->conn->query($sql);
-			$paleogtsTerms = $this->getPaleoGtsTerms();
-			$lcaseGtsMap = [];
-			foreach ($paleogtsTerms as $key => $val) {
-				$lcaseGtsMap[strtolower($key)] = $key;
-			}
-			while($r = $rs->fetch_object()){
-				try{
-					$paleoArr = json_decode($r->paleoJSON,true);
-					//Deal with DwC terms
+		if (!$this->paleoSupport) return;
+		$this->outputMsg('<li>Linking Paleo data...</li>');
+		$paleoFields = ['eon', 'era', 'period', 'epoch', 'earlyInterval', 'lateInterval','absoluteAge', 'storageLoc', 'stage', 'localStage',
+			'biota', 'biostratigraphy', 'taxonEnvironment', 'lithogroup', 'formation', 'member', 'bed', 'lithology', 'stratRemarks', 'element',
+			'slideProperties', 'geologicalContextID'
+		];
 
-					$eonLow = (!empty($paleoArr['earliesteonorlowesteonothem'])) ? $paleoArr['earliesteonorlowesteonothem'] : '';
-					$eonHigh = (!empty($paleoArr['latesteonorhighesteonothem'])) ? $paleoArr['latesteonorhighesteonothem'] : '';
-					if(($eonLow || $eonHigh) && !isset($paleoArr['eon']))
-						$paleoArr['eon'] = trim($eonLow . ($eonHigh && $eonHigh != $eonLow ? ' - ' . $eonHigh : ''));
-					unset($paleoArr['earliesteonorlowesteonothem'], $paleoArr['latesteonorhighesteonothem']);
-
-					$eraLow = (!empty($paleoArr['earliesteraorlowesterathem'])) ? $paleoArr['earliesteraorlowesterathem'] : '';
-					$eraHigh = (!empty($paleoArr['latesteraorhighesterathem'])) ? $paleoArr['latesteraorhighesterathem'] : '';
-					if(($eraLow || $eraHigh) && !isset($paleoArr['era']))
-						$paleoArr['era'] = trim($eraLow . ($eraHigh && $eraHigh != $eraLow ? ' - ' . $eraHigh : ''));
-					unset($paleoArr['earliesteraorlowesterathem'], $paleoArr['latesteraorhighesterathem']);
-
-					$periodLow = (!empty($paleoArr['earliestperiodorlowestsystem'])) ? $paleoArr['earliestperiodorlowestsystem'] : '';
-					$periodHigh = (!empty($paleoArr['latestperiodorhighestsystem'])) ? $paleoArr['latestperiodorhighestsystem'] : '';
-					if(($periodLow || $periodHigh) && !isset($paleoArr['period']))
-						$paleoArr['period'] = trim($periodLow . ($periodHigh && $periodHigh != $periodLow ? ' - ' . $periodHigh : ''));
-					unset($paleoArr['earliestperiodorlowestsystem'], $paleoArr['latestperiodorhighestsystem']);
-
-					$epochLow = (!empty($paleoArr['earliestepochorlowestseries'])) ? $paleoArr['earliestepochorlowestseries'] : '';
-					$epochHigh = (!empty($paleoArr['latestepochorhighestseries'])) ? $paleoArr['latestepochorhighestseries'] : '';
-					if(($epochLow || $epochHigh) && !isset($paleoArr['epoch']))
-						$paleoArr['epoch'] = trim($epochLow . ($epochHigh && $epochHigh != $epochLow ? ' - ' . $epochHigh : ''));
-					unset($paleoArr['earliestepochorlowestseries'], $paleoArr['latestepochorhighestseries']);
-
-					$stageLow = (!empty($paleoArr['earliestageorloweststage'])) ? $paleoArr['earliestageorloweststage'] : '';
-					$stageHigh = (!empty($paleoArr['latestageorhigheststage'])) ? $paleoArr['latestageorhigheststage'] : '';
-					if(($stageLow || $stageHigh) && !isset($paleoArr['stage']))
-						$paleoArr['stage'] = trim($stageLow . ($stageHigh && $stageHigh != $stageLow ? ' - ' . $stageHigh : ''));
-					unset($paleoArr['earliestageorloweststage'], $paleoArr['latestageorhigheststage']);
-
+		$sql = 'SELECT occid, catalogNumber, ' . implode(', ', $paleoFields) . ' FROM uploadspectemp WHERE (occid IS NOT NULL) AND collid = ' . $this->collId;
+		$rs = $this->conn->query($sql);
+		while ($r = $rs->fetch_object()) {
+			try {
+				$paleoArr = [];
+				foreach ($paleoFields as $field) {
+					if (isset($r->$field) && $r->$field !== '') {
+						$paleoArr[$field] = $r->$field;
+					}
+				}
+				if (!empty($paleoArr)) {
 					$insertSQL = '';
 					$valueSQL = '';
-
-					if (!isset($paleoArr['earlyinterval'])) {
-						foreach ([ $stageLow, $epochLow, $periodLow, $eraLow, $eonLow ] as $term) {
-							$termLower = strtolower($term);
-							if (isset($lcaseGtsMap[$termLower])) {
-								$paleoArr['earlyinterval'] = $lcaseGtsMap[$termLower];
-								break;
-							}
-						}
-					} else {
-						$termLower = strtolower($paleoArr['earlyinterval']);
-						if (isset($lcaseGtsMap[$termLower]))
-							$paleoArr['earlyinterval'] = $lcaseGtsMap[$termLower];
+					foreach ($paleoArr as $k => $v) {
+						$insertSQL .= ',' . $k;
+						$valueSQL .= ',"' . $this->cleanInStr($v) . '"';
 					}
-
-
-					if (!isset($paleoArr['lateinterval'])) {
-						foreach ([ $stageHigh, $epochHigh, $periodHigh, $eraHigh, $eonHigh ] as $term) {
-							$termLower = strtolower($term);
-							if (isset($lcaseGtsMap[$termLower])) {
-								$paleoArr['lateinterval'] = $lcaseGtsMap[$termLower];
-								break;
-							}
-						}
-					} else {
-						$termLower = strtolower($paleoArr['lateinterval']);
-						if (isset($lcaseGtsMap[$termLower]))
-							$paleoArr['lateinterval'] = $lcaseGtsMap[$termLower];
-					}
-
-					//backfill early or late interval if empty
-					if (!isset($paleoArr['earlyinterval']) && isset($paleoArr['lateinterval']))
-						$paleoArr['earlyinterval'] = $paleoArr['lateinterval'];
-					if (!isset($paleoArr['lateinterval']) && isset($paleoArr['earlyinterval']))
-						$paleoArr['lateinterval'] = $paleoArr['earlyinterval'];
-
-					foreach($paleoArr as $k => $v){
-						$insertSQL .= ','.$k;
-						$valueSQL .= ',"'.$this->cleanInStr($v).'"';
-					}
-					$sql = 'REPLACE INTO omoccurpaleo(occid'.$insertSQL.') VALUES('.$r->occid.$valueSQL.')';
-					if(!$this->conn->query($sql)){
-						$this->outputMsg('<li>ERROR adding paleo resources: '.$this->conn->error.'</li>',1);
+					$sql = 'REPLACE INTO omoccurpaleo(occid' . $insertSQL . ') VALUES(' . $r->occid . $valueSQL . ')';
+					if (!$this->conn->query($sql)) {
+						$this->outputMsg('<li>ERROR adding paleo resources: ' . $this->conn->error . '</li>', 1);
 					}
 				}
-				catch(Exception $e){
-					$this->outputMsg('<li>ERROR adding paleo record (occid: '.$r->occid.', catalogNumber: '.$r->catalogNumber.'): '.$e->getMessage().'</li>',1);
-				}
+			} catch (Exception $e) {
+				$this->outputMsg('<li>ERROR adding paleo record (occid: ' . $r->occid . ', catalogNumber: ' . $r->catalogNumber . '): ' . $e->getMessage() . '</li>', 1);
 			}
-			$rs->free();
 		}
+		$rs->free();
 	}
 
 	public function getPaleoGtsTerms(){
 		$retArr = array();
-		if($GLOBALS['ACTIVATE_PALEO']){
+		if(!empty($GLOBALS['ACTIVATE_PALEO'])){
 			$sql = 'SELECT gtsterm, rankid FROM omoccurpaleogts ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
@@ -1887,6 +1824,12 @@ class SpecUploadBase extends SpecUpload{
 	}
 
 	protected function loadRecord($recMap){
+		//Unset paleo array
+		if (!empty($recMap['paleo']) && is_array($recMap['paleo'])) {
+			$paleoArr = $recMap['paleo'];
+			$paleoArr = OccurrenceUtil::occurrenceArrayCleaning($paleoArr);
+			unset($recMap['paleo']);
+		}
 		//Only import record if at least one of the minimal fields have data
 		$recMap = OccurrenceUtil::occurrenceArrayCleaning($recMap);
 
@@ -1932,12 +1875,9 @@ class SpecUploadBase extends SpecUpload{
 			if($this->sourceDatabaseType == 'specify' && (!isset($recMap['occurrenceid']) || !$recMap['occurrenceid'])){
 				if(strlen($recMap['dbpk']) == 36) $recMap['occurrenceid'] = $recMap['dbpk'];
 			}
-			try {
-				$this->buildPaleoJSON($recMap);
-			} catch (Exception $e){
-				$this->outputMsg('<li>Error JSON encoding paleo data for record #'.$this->transferCount.'</li>');
-				$this->outputMsg('<li style="margin-left:10px;">Error: '.$e->getMessage().'</li>');
-			}
+			//Add the paleo fields
+			if (!empty($paleoArr))
+				$this->buildPaleoFields($recMap, $paleoArr);
 			// try {
 			// 	$this->buildMaterialSampleJSON($recMap);
 			// } catch (Exception $e){
@@ -2005,22 +1945,82 @@ class SpecUploadBase extends SpecUpload{
 		return $parsedCatalogNumbers;
 	}
 
-	private function buildPaleoJSON(&$recMap){
-		if($this->paleoSupport){
-			$paleoTermArr = $this->getPaleoTerms();
-			$paleoArr = array();
-			foreach($paleoTermArr as $fieldName){
-				if(isset($recMap[$fieldName])){
-					if($recMap[$fieldName] !== '') $paleoArr[substr($fieldName,6)] = $recMap[$fieldName];
-					unset($recMap[$fieldName]);
+	private function buildPaleoFields(&$recMap, $paleoArr){
+		if (!$this->paleoSupport || empty($paleoArr)) return;
+		$paleogtsTerms = $this->getPaleoGtsTerms();
+		$lcaseGtsMap = [];
+		foreach ($paleogtsTerms as $gtsTerm => $val) {
+			$lcaseGtsMap[strtolower($gtsTerm)] = $gtsTerm;
+		}
+
+		//Deal with DwC terms
+		$eonLow = (!empty($paleoArr['earliesteonorlowesteonothem'])) ? $paleoArr['earliesteonorlowesteonothem'] : '';
+		$eonHigh = (!empty($paleoArr['latesteonorhighesteonothem'])) ? $paleoArr['latesteonorhighesteonothem'] : '';
+		if(($eonLow || $eonHigh) && !isset($paleoArr['eon']))
+			$paleoArr['eon'] = trim($eonLow . ($eonHigh && $eonHigh != $eonLow ? ' - ' . $eonHigh : ''));
+		unset($paleoArr['earliesteonorlowesteonothem'], $paleoArr['latesteonorhighesteonothem']);
+
+		$eraLow = (!empty($paleoArr['earliesteraorlowesterathem'])) ? $paleoArr['earliesteraorlowesterathem'] : '';
+		$eraHigh = (!empty($paleoArr['latesteraorhighesterathem'])) ? $paleoArr['latesteraorhighesterathem'] : '';
+		if(($eraLow || $eraHigh) && !isset($paleoArr['era']))
+			$paleoArr['era'] = trim($eraLow . ($eraHigh && $eraHigh != $eraLow ? ' - ' . $eraHigh : ''));
+		unset($paleoArr['earliesteraorlowesterathem'], $paleoArr['latesteraorhighesterathem']);
+
+		$periodLow = (!empty($paleoArr['earliestperiodorlowestsystem'])) ? $paleoArr['earliestperiodorlowestsystem'] : '';
+		$periodHigh = (!empty($paleoArr['latestperiodorhighestsystem'])) ? $paleoArr['latestperiodorhighestsystem'] : '';
+		if(($periodLow || $periodHigh) && !isset($paleoArr['period']))
+			$paleoArr['period'] = trim($periodLow . ($periodHigh && $periodHigh != $periodLow ? ' - ' . $periodHigh : ''));
+		unset($paleoArr['earliestperiodorlowestsystem'], $paleoArr['latestperiodorhighestsystem']);
+
+		$epochLow = (!empty($paleoArr['earliestepochorlowestseries'])) ? $paleoArr['earliestepochorlowestseries'] : '';
+		$epochHigh = (!empty($paleoArr['latestepochorhighestseries'])) ? $paleoArr['latestepochorhighestseries'] : '';
+		if(($epochLow || $epochHigh) && !isset($paleoArr['epoch']))
+			$paleoArr['epoch'] = trim($epochLow . ($epochHigh && $epochHigh != $epochLow ? ' - ' . $epochHigh : ''));
+		unset($paleoArr['earliestepochorlowestseries'], $paleoArr['latestepochorhighestseries']);
+
+		$stageLow = (!empty($paleoArr['earliestageorloweststage'])) ? $paleoArr['earliestageorloweststage'] : '';
+		$stageHigh = (!empty($paleoArr['latestageorhigheststage'])) ? $paleoArr['latestageorhigheststage'] : '';
+		if(($stageLow || $stageHigh) && !isset($paleoArr['stage']))
+			$paleoArr['stage'] = trim($stageLow . ($stageHigh && $stageHigh != $stageLow ? ' - ' . $stageHigh : ''));
+		unset($paleoArr['earliestageorloweststage'], $paleoArr['latestageorhigheststage']);
+
+		//assign early/late interval based on lowest/highest provided gts term
+		if (empty($paleoArr['earlyinterval'])) {
+			foreach ([$stageLow, $epochLow, $periodLow, $eraLow, $eonLow] as $term) {
+				$termLower = strtolower($term);
+				if (isset($lcaseGtsMap[$termLower])) {
+					$paleoArr['earlyinterval'] = $lcaseGtsMap[$termLower];
+					break;
 				}
 			}
-			if($paleoArr){
-				$recMap['paleoJSON'] = json_encode($paleoArr);
-				if(json_last_error() !== JSON_ERROR_NONE){
-					throw new Exception("JSON encoding error: ".json_last_error_msg());
+		} else {
+			$termLower = strtolower($paleoArr['earlyinterval']);
+			if (isset($lcaseGtsMap[$termLower]))
+				$paleoArr['earlyinterval'] = $lcaseGtsMap[$termLower];
+		}
+
+		if (empty($paleoArr['lateinterval'])) {
+			foreach ([$stageHigh, $epochHigh, $periodHigh, $eraHigh, $eonHigh] as $term) {
+				$termLower = strtolower($term);
+				if (isset($lcaseGtsMap[$termLower])) {
+					$paleoArr['lateinterval'] = $lcaseGtsMap[$termLower];
+					break;
 				}
 			}
+		} else {
+			$termLower = strtolower($paleoArr['lateinterval']);
+			if (isset($lcaseGtsMap[$termLower]))
+				$paleoArr['lateinterval'] = $lcaseGtsMap[$termLower];
+		}
+
+		//backfill early or late interval if empty
+		if (empty($paleoArr['earlyinterval']) && !empty($paleoArr['lateinterval']))
+			$paleoArr['earlyinterval'] = $paleoArr['lateinterval'];
+		if (empty($paleoArr['lateinterval']) && !empty($paleoArr['earlyinterval']))
+			$paleoArr['lateinterval'] = $paleoArr['earlyinterval'];
+
+		foreach ($paleoArr as $key => $val) {
+			$recMap[$key] = trim($val);
 		}
 	}
 

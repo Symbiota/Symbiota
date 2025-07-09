@@ -35,7 +35,7 @@ class OccurrenceListManager extends OccurrenceManager{
 			'o.catalognumber, o.family, o.sciname, o.scientificnameauthorship, o.tidinterpreted, o.recordedby, o.recordnumber, o.eventdate, '.
 			'o.country, o.stateprovince, o.county, o.locality, o.decimallatitude, o.decimallongitude, o.recordsecurity, o.securityreason, '.
 			'o.habitat, o.substrate, o.minimumelevationinmeters, o.maximumelevationinmeters, o.observeruid, c.sortseq ';
-		if ($GLOBALS['ACTIVATE_PALEO'] && $sqlWhere)
+		if (!empty($GLOBALS['ACTIVATE_PALEO']) && $sqlWhere)
 			$sql .= ', paleo.formation, paleo.earlyInterval, paleo.lateInterval ';
 		$sql .= 'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
 		$sql .= $this->getTableJoins($sqlWhere).$sqlWhere;
@@ -77,7 +77,7 @@ class OccurrenceListManager extends OccurrenceManager{
 				$retArr[$row->occid]['sciname'] = ($row->sciname?$this->cleanOutStr($row->sciname):'undetermined');
 				$retArr[$row->occid]['tid'] = $row->tidinterpreted;
 				$retArr[$row->occid]['author'] = $this->cleanOutStr($row->scientificnameauthorship);
-				if ($GLOBALS['ACTIVATE_PALEO']) {
+				if (!empty($GLOBALS['ACTIVATE_PALEO'])) {
 					$retArr[$row->occid]['earlyInterval'] = $this->cleanOutStr($row->earlyInterval);
 					$retArr[$row->occid]['lateInterval'] = $this->cleanOutStr($row->lateInterval);
 					$retArr[$row->occid]['formation'] = $this->cleanOutStr($row->formation);
