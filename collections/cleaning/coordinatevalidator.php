@@ -3,7 +3,6 @@ error_reporting(E_ALL);
 ini_set('display_errors', '1');
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCleaner.php');
-include_once($SERVER_ROOT.'/classes/Sanitize.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/cleaning/coordinatevalidator.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/cleaning/coordinatevalidator.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/cleaning/coordinatevalidator.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
@@ -42,27 +41,20 @@ function renderValidateCoordinates($cleanManager, $targetRank) {
 		$cleanManager->removeVerificationByCategory('coordinate');
 	}
 
-	$geoThesIDs = Sanitize::in($_REQUEST['geoThesIDs'] ?? []);
-	$countries = Sanitize::in($_REQUEST['countries'] ?? []);
+	$countryArr = $cleanManager->getUnverifiedByCountry();
+
 	$countryIdMap = [];
-
-	if(count($countries) === count($geoThesIDs) && count($geoThesIDs) != 0) {
-		for($i = 0; $i < count($geoThesIDs); $i++) {
-			$geoThesID = $geoThesIDs[$i];
-			$country = $countries[$i];
-
-			if(is_numeric($geoThesID)) {
-				if(array_key_exists($geoThesID, $countryIdMap)) {
-					$countryIdMap[$geoThesID]['countries'][] = $country;
-				} else {
-					$countryIdMap[$geoThesID] = [
-						'countries' => [ $country ],
-						'geoThesID' => $geoThesID
-					];
-				}
-			}
+	foreach($countryArr as $country => $row) {
+		if(array_key_exists($row->geoThesID, $countryArr)) {
+			$countryIdMap[$row->geoThesID]['countries'][] = $country;
+		} else {
+			$countryIdMap[$row->geoThesID] = [
+				'countries' => [ $country ],
+				'geoThesID' => $row->geoThesID
+			];
 		}
-
+	}
+	if(count($countryIdMap)) {
 		$countryIdMap = array_values($countryIdMap);
 	}
 
@@ -317,8 +309,6 @@ function renderValidateCoordinates($cleanManager, $targetRank) {
 										<img src="../../images/list.png" title="<?= $LANG['VIEW_SPECIMENS'] ?>"/>
 									</a>
 									</div>
-									<input type="hidden" name="geoThesIDs[]" value="<?= $obj->geoThesID ?>">
-									<input type="hidden" name="countries[]" value="<?= $country?>">
 								</td>
 								<td><?= number_format($obj->cnt)?></td>
 								</tr>
