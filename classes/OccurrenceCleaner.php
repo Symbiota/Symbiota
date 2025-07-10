@@ -11,6 +11,7 @@ class OccurrenceCleaner extends Manager{
 	private $obsUid;
 	private $featureCount = 0;
 
+	const UNVERIFIABLE_NO_POLYGON = -1;
 	const COORDINATE_LOCALITY_MISMATCH = 0;
 	const COUNTRY_VERIFIED = 2;
 	const STATE_PROVINCE_VERIFIED = 5;
@@ -660,6 +661,8 @@ class OccurrenceCleaner extends Manager{
 				return'State/Province does not match coordinates';
 			case self::STATE_PROVINCE_VERIFIED:
 				return 'County does not match coordinates';
+			case self::UNVERIFIABLE_NO_POLYGON;
+				return 'Could not locate point within a geographic polygon';
 			default: return $GLOBALS['LANG']['INVALID_RANK'] ?? 'Invalid coordinate match level';
 		}
 	}
@@ -717,7 +720,7 @@ class OccurrenceCleaner extends Manager{
 
 	public function getQuestionableCoordinateCounts(): array {
 		$unions = [];
-		$rank_arr = [ self::COORDINATE_LOCALITY_MISMATCH, self::COUNTRY_VERIFIED, self::STATE_PROVINCE_VERIFIED ];
+		$rank_arr = [self::UNVERIFIABLE_NO_POLYGON, self::COORDINATE_LOCALITY_MISMATCH, self::COUNTRY_VERIFIED, self::STATE_PROVINCE_VERIFIED ];
 		$parameters = [];
 		foreach($rank_arr as $rank) {
 			$base_sql = 'SELECT count(*) as count, ranking FROM omoccurrences o
@@ -725,9 +728,9 @@ class OccurrenceCleaner extends Manager{
 
 			if($rank === self::COORDINATE_LOCALITY_MISMATCH) {
 				$base_sql .= ' AND (country is not null or stateProvince is not null or county is not null)';
-			} else if(self::COUNTRY_VERIFIED) {
+			} else if($rank === self::COUNTRY_VERIFIED) {
 				$base_sql .= ' AND (stateProvince is not null or county is not null)';
-			} else if(self::STATE_PROVINCE_VERIFIED) {
+			} else if($rank === self::STATE_PROVINCE_VERIFIED) {
 				$base_sql .= ' AND (county is not null)';
 			}
 
@@ -810,6 +813,7 @@ class OccurrenceCleaner extends Manager{
 			join omoccurpoints pts on ST_CONTAINS(gp.footprintPolygon, pts.lngLatPoint)
 			where ';
 		$resolve_geo_thesaurus_parameters = [];
+			//join geographicpolygon gp on gp.geoThesID = COALESCE(g70.geoThesID, g60.geoThesID, g50.geoThesID)
 
 		if(count($targetGeoThesIDs)) {
 			$parameters = str_repeat('?,', count($targetGeoThesIDs) - 1) . '?';
@@ -847,8 +851,6 @@ class OccurrenceCleaner extends Manager{
 				$occid_arr[$row->occid]['populatedCounty'] = true;
 			}
 
-			$occid_arr[$row->occid]['r_county'] = $row->county;
-
 			if($row->county && GeographicThesaurus::unitsEqual(
 				$occid_arr[$row->occid]['county'] ?? '',
 				$row->county ?? '',
@@ -867,6 +869,8 @@ class OccurrenceCleaner extends Manager{
 				GeographicThesaurus::COUNTRY)
 			) {
 				$occid_arr[$row->occid]['rank'] = self::COUNTRY_VERIFIED;
+			} else {
+				$occid_arr[$row->occid]['rank'] = self::COORDINATE_LOCALITY_MISMATCH;
 			}
 		}
 
@@ -877,7 +881,7 @@ class OccurrenceCleaner extends Manager{
 			$values = [
 				$occid, 
 				'"coordinate"', 
-				$occurrence['rank'] ?? self::COORDINATE_LOCALITY_MISMATCH, 
+				$occurrence['rank'] ?? self::UNVERIFIABLE_NO_POLYGON, 
 				'"geographicthesaurus"', 
 				$GLOBALS['SYMB_UID']
 			];
