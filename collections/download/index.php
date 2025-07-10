@@ -17,6 +17,7 @@ $displayHeader = array_key_exists('displayheader', $_REQUEST) ? filter_var($_REQ
 $searchVar = array_key_exists('searchvar', $_REQUEST) ? htmlspecialchars($_REQUEST['searchvar'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE| ENT_QUOTES) : '';
 
 $dwcManager = new DwcArchiverCore();
+$filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -30,6 +31,7 @@ $dwcManager = new DwcArchiverCore();
 	?>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?php echo $filename ?>" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
 			var dialogArr = new Array("schemanative","schemadwc");
@@ -58,17 +60,23 @@ $dwcManager = new DwcArchiverCore();
 			?>
 
 			const form = document.getElementById('downloadform');
+			const spinnerSpan = document.getElementById('spinner-span');
 			const spinner = document.getElementById('workingcircle');
+			const downloadButton = document.getElementById('submitaction');
 
         	form.addEventListener('submit', function(event) {
 				const token = 'dl_' + Date.now();
 				document.getElementById('downloadTokenInput').value = token;
 				spinner.style.display = 'block';
+				downloadButton.disabled = true;
+				spinnerSpan.textContent = translations.DOWNLOAD_IN_PROGRESS;
 				const interval = setInterval(() => {
 					if (document.cookie.includes(`downloadToken=${token}`)) {
 						clearInterval(interval);
 						spinner.style.display = 'none';
+						spinnerSpan.textContent = '';
 						document.cookie = `downloadToken=${token}; Max-Age=0; path=/`;
+						downloadButton.disabled = false;
 					}
 				}, 100);
 			});
@@ -228,8 +236,11 @@ $dwcManager = new DwcArchiverCore();
 						<input name="taxonFilterCode" type="hidden" value="<?= $taxonFilterCode; ?>" />
 						<input name="sourcepage" type="hidden" value="<?= htmlspecialchars($sourcePage); ?>" />
 						<input name="searchvar" type="hidden" value="<?= $searchVar ?>" />
-						<button type="submit" name="submitaction"><?= $LANG['DOWNLOAD_DATA'] ?></button>
-						<img id="workingcircle" src="../../images/ajax-loader_sm.gif" style="margin-bottom:-4px;width:20px;display:none;" />
+						<button type="submit" name="submitaction" id="submitaction"><?= $LANG['DOWNLOAD_DATA'] ?></button>
+						<div id="spinner-div" class="top-breathing-room-rel">
+							<span id="spinner-span"></span>
+							<img id="workingcircle" src="../../images/ajax-loader_sm.gif" style="margin-bottom:-4px;width:20px;display:none;" />
+						</div>
 					</div>
 					<div class="sectionDiv">
 						*  <?= $LANG['LIMIT_NOTE'] ?>
