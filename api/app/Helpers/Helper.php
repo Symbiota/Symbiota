@@ -50,4 +50,9 @@ class Helper {
 		$rightsOutput = '<span class="rights-span">' . $rightsOutput . '</span>';
 		return $rightsOutput;
 	}
+	public static function readyPhraseForBooleanModeFulltextSearch($inputStr){
+		$words = preg_split('/\s+/', trim($inputStr));
+		$booleanModeResult = implode(' ', array_map(fn($w) => '+' . $w, $words));
+		return $booleanModeResult;
+	}
 }
