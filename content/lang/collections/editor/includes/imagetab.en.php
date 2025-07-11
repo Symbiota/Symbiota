@@ -48,6 +48,7 @@ $LANG['DEL_IMG'] = 'Delete Resource';
 $LANG['REM_FROM_SERVER'] = 'Remove resource from server';
 $LANG['RM_DB_NOT_SERVER'] = 'Note: leaving unchecked removes resource from database without removing from server)';
 $LANG['REMAP_TO_ANOTHER'] = 'Remap to Another Specimen';
+$LANG['CANNOT_REMAP_EXPLAIN'] = 'This image cannot be re-mapped to another occurrence because the image name matches the catalog number of the occurrence. Please upload a new, re-named version of the image to the correct occurrence. Make sure you then return to this record and <b>Delete Resource</b> to unmap it from this occurrence.';
 $LANG['TARGET_OCCID'] = 'Target record ID';
 $LANG['OPEN_LINK_AID'] = 'Occurrence Linking Tool';
 $LANG['REMAP_IMG'] = 'Remap Resource';
