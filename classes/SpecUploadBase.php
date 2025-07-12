@@ -1984,6 +1984,13 @@ class SpecUploadBase extends SpecUpload{
 			$paleoArr['stage'] = trim($stageLow . ($stageHigh && $stageHigh != $stageLow ? ' - ' . $stageHigh : ''));
 		unset($paleoArr['earliestageorloweststage'], $paleoArr['latestageorhigheststage']);
 
+		$biostratLow = (!empty($paleoArr['lowestbiostratigraphiczone'])) ? $paleoArr['lowestbiostratigraphiczone'] : '';
+		$biostratHigh = (!empty($paleoArr['highestbiostratigraphiczone'])) ? $paleoArr['highestbiostratigraphiczone'] : '';
+		if (($biostratLow || $biostratHigh) && !isset($paleoArr['biostratigraphy'])) {
+			$paleoArr['biostratigraphy'] = trim($biostratLow . ($biostratHigh && $biostratHigh != $biostratLow ? ' - ' . $biostratHigh : ''));
+		}
+		unset($paleoArr['lowestbiostratigraphiczone'], $paleoArr['highestbiostratigraphiczone']);
+
 		//assign early/late interval based on lowest/highest provided gts term
 		if (empty($paleoArr['earlyinterval'])) {
 			foreach ([$stageLow, $epochLow, $periodLow, $eraLow, $eonLow] as $term) {
