@@ -146,6 +146,7 @@ $LANG['WARNING_ADD_EXS_NO'] = 'ATTENTION ajout du numéro exsiccati';
 $LANG['WARNING_ADD_EXS'] = 'ATTENTION ajout d\'exsiccati';
 $LANG['FAILED_ADD_OCC'] = 'ERREUR - échec de l\'ajout de l\'enregistrement d\'occurrence';
 $LANG['ERROR_REMOVING_OCR'] = 'ERREUR lors de la suppression des blocs OCR liés au multimédia';
+$LANG['UNABLE_RELINK_BLANK'] = "Impossible de relier l'image à un nouvel enregistrement d'occurrence vide";
 $LANG['ERROR_REMOVING_IMAGETAGS'] = 'ERREUR lors de la suppression des imageTags liés au multimédia';
 $LANG['ERROR_REMOVING_LINKS'] = 'ERREUR lors de la suppression des liens multimédia';
 $LANG['ERROR_TRYING_TO_DELETE'] = 'ERREUR lors de la tentative de suppression de l\'enregistrement d\'occurrence';
