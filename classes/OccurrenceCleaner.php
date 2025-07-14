@@ -753,6 +753,28 @@ class OccurrenceCleaner extends Manager{
 		return $questionableCounts;
 	}
 
+	public function cleanMissingPolygonVerifications() {
+		// TODO (Logan) fix this sql
+		$sql = 'SELECT o.occid from omoccurrences o
+			join omoccurverification ov on ov.occid = o.occid
+			left join (
+				SELECT g70.geoterm as county, g60.geoterm as stateProvince, g50.geoterm as country from geographicthesaurus as g50
+				left join (
+					select g.geoThesID, parentID, geoterm from geographicthesaurus as g
+					join geographicpolygon as gp on gp.geoThesID = g.geoThesID and g.geoLevel = 60
+				) as g60 on g60.parentID = g50.geoThesID
+				left join (
+					select g.geoThesID, parentID, geoterm from geographicthesaurus as g
+					join geographicpolygon as gp on gp.geoThesID = g.geoThesID and g.geoLevel = 70
+				) as g70 on g70.parentID = g60.geoThesID
+				join geographicpolygon gp on gp.geoThesID = g70.geoThesID
+			) as gpb on (gpb.county = o.county or gpb.country = o.country or gpb.stateProvince = o.stateProvince)
+			where ranking = -1 and category = "coordinate" and o.collid = ?
+			group by o.occid';
+
+		$rs = QueryUtil::executeQuery($this->conn, $sql, [ $this->collid ]);
+	}
+
 	public function verifyCoordAgainstPoliticalV2(
 		array $countries = [],
 		array $targetGeoThesIDs = [],
