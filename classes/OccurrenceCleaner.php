@@ -656,36 +656,18 @@ class OccurrenceCleaner extends Manager{
 
 	public function questionableRankText(int $rank): string {
 		switch($rank) {
-			case self::HAS_POLYGON_FAILED_TO_VERIFY:
-				return 'Issue with coordinate or search polygon';
-			case self::COORDINATE_LOCALITY_MISMATCH:
-				return 'Country does not match coordinates';
-			case self::COUNTRY_VERIFIED:
-				return'State/Province does not match coordinates';
-			case self::STATE_PROVINCE_VERIFIED:
-				return 'County does not match coordinates';
 			case self::UNVERIFIABLE_NO_POLYGON;
-				return 'Could not locate point within a geographic polygon';
-			default: return $GLOBALS['LANG']['INVALID_RANK'] ?? 'Invalid coordinate match level';
-		}
-	}
-
-	// TODO (Logan) Deprecate before pull request
-	public function coordinateRankingToText(int $rank): string {
-		switch($rank) {
+				return $GLOBALS['LANG']['UNVERIFIABLE_NO_POLYGON'];
+			case self::HAS_POLYGON_FAILED_TO_VERIFY:
+				return $GLOBALS['LANG']['HAS_POLYGON_FAILED_TO_VERIFY'];
 			case self::COORDINATE_LOCALITY_MISMATCH:
-				return $GLOBALS['LANG']['COORDINATE_LOCALITY_MISMATCH'] ??
-				'No Matching Locality Fields';
+				return $GLOBALS['LANG']['COUNTRY_DOES_NOT_MATCH_COORDS'];
 			case self::COUNTRY_VERIFIED:
-				return $GLOBALS['LANG']['COUNTRY_VERIFIED'] ??
-				'Coordinate match to the level of country';
+				return $GLOBALS['LANG']['STATE_PROVINCE_DOES_NOT_MATCH_COORDS'];
 			case self::STATE_PROVINCE_VERIFIED:
-				return $GLOBALS['LANG']['STATE_PROVINCE_VERIFIED'] ??
-				'Coordinate match to the level of state/province';
-			case self::COUNTY_VERIFIED:
-				return $GLOBALS['LANG']['COUNTY_VERIFIED'] ??
-					'Coordinate match to the level of county';
-			default: return $GLOBALS['LANG']['INVALID_RANK'] ?? 'Invalid coordinate match level';
+				return $GLOBALS['LANG']['COUNTRY_DOES_NOT_MATCH_COORDS'];
+			default: 
+				return $GLOBALS['LANG']['INVALID_RANK'];
 		}
 	}
 

@@ -39,9 +39,15 @@ $LANG['COUNTRY'] = 'Country';
 $LANG['VIEW_SPECIMENS'] = 'View Specimens';
 $LANG['NOT_AUTHORIZED'] = 'You are not authorized to access this page';
 
-$LANG['COORDINATE_LOCALITY_MISMATCH'] = 'Non-verified listed by country';
-$LANG['COUNTRY_VERIFIED'] = 'Coordinate match to the level of country';
-$LANG['STATE_PROVINCE_VERIFIED'] = 'Coordinate match to the level of state/province';
-$LANG['COUNTY_VERIFIED'] = 'Coordinate match to the level of county';
-$LANG['INVALID_RANK'] = 'Invalid coordinate match level';
+$LANG['COUNTRY_DOES_NOT_MATCH_COORDS'] = 'Country does not match coordinates';
+$LANG['STATE_PROVINCE_DOES_NOT_MATCH_COORDS'] = 'State/Province does not match coordinates';
+$LANG['COUNTRY_DOES_NOT_MATCH_COORDS'] = 'County does not match coordinates';
+$LANG['UNVERIFIABLE_NO_POLYGON'] = 'Failed to validate coordinate based on geographic thesaurus';
+$LANG['HAS_POLYGON_FAILED_TO_VERIFY'] = 'Coordinate failed to validate despite known search polygon';
+$LANG['NOT_AUTHORIZED'] = 'You are not authorized to access this page';
+$LANG['INVALID_RANK'] = 'Invalid coordinate validation ranking';
+
+$LANG['COUNTRY_POPULATED'] = 'Country values populated';
+$LANG['STATE_PROVINCE_POPULATED'] = 'State/Province values populated';
+$LANG['COUNTY_POPULATED'] = 'County values populated';
 ?>

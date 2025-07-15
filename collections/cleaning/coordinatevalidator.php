@@ -117,9 +117,9 @@ function renderValidateCoordinates($cleanManager, $targetRank) {
 	$linkBuilder = fn($url, $title) => '<a target="blank" href="' . $url . '">' . $title . '</a>';
 	echo $total_proccessed . ' ' . $LANG['RECORDS_TOOK'] . ' ' . time() - $start. ' ' . $LANG['SEC'] . '<br/>';
 	if($shouldPopulate) {
-		echo $linkBuilder($baseReviewLink . '&ffieldname=country', $countryPopulatedCount) . ' Country values populated<br/>';
-		echo $linkBuilder($baseReviewLink . '&ffieldname=stateprovince', $statePopulatedCount) . ' State/Province values populated<br/>';
-		echo $linkBuilder($baseReviewLink. '&ffieldname=county', $countyPopulatedCount) . ' County values populated<br/>';
+		echo $linkBuilder($baseReviewLink . '&ffieldname=country', $countryPopulatedCount) . ' ' . $LANG['COUNTRY_POPULATED'] . '<br/>';
+		echo $linkBuilder($baseReviewLink . '&ffieldname=stateprovince', $statePopulatedCount) . ' ' . $LANG['STATE_PROVINCE_POPULATED'] . '<br/>';
+		echo $linkBuilder($baseReviewLink. '&ffieldname=county', $countyPopulatedCount) . ' ' . $LANG['COUNTY_POPULATED'] . '<br/>';
 	}
 }
 
@@ -233,23 +233,6 @@ function renderValidateCoordinates($cleanManager, $targetRank) {
 				<?php if(count($questionableCounts) > 0): ?>
 				<div style="margin-bottom: 1rem">
 					<div style="font-weight:bold"><?= $LANG['RANKING_STATISTICS']?></div>
-
-					<!-- <table class="styledtable"> -->
-					<!-- <tr> -->
-					<!-- 	<th><?= $LANG['RANKING'] ?></th> -->
-					<!-- 	<th><?= $LANG['STATUS'] ?></th> -->
-					<!-- 	<th><?= $LANG['COUNT'] ?></th> -->
-					<!-- 	<th><?= $LANG['RE-VERIFY'] ?></th> -->
-					<!-- </tr> -->
-					<!-- <?php foreach($coordRankingArr as $rank => $cnt):?> -->
-					<!-- 	<tr> -->
-					<!-- 		<td><?= $rank ?></td> -->
-					<!-- 		<td><?= (is_numeric($rank)? $cleanManager->coordinateRankingToText($rank): $LANG['UNVERIFIED']) ?></td> -->
-					<!-- 		<td><?= number_format($cnt) ?></td> -->
-					<!-- 		<td style="width: 1%"><button <?= $cnt > 0? '' : 'disabled="true"'?> type="submit" name="targetRank" value="<?= $rank ?>" class="button"><?= $LANG['RE-VERIFY'] ?></button></td> -->
-					<!-- 	</tr> -->
-					<!-- <?php endforeach ?> -->
-					<!-- </table> -->
 					<table class="styledtable">
 					<tr>
 						<th><?= 'Issue' ?></th>
