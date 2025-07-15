@@ -13,7 +13,7 @@ const addElemFirst = (parentDivId, targetChildDivId) => {
 const reorderElements = (parentDivId, desiredDivIds, removeDivIds) => {
   const parent = document.getElementById(parentDivId);
   const allChildren = Array.from(parent.children);
-  const allChildrenIds = allChildren.map(child=>child.id);
+  const allChildrenIds = allChildren?.map(child=>child.id) || [];
   desiredDivIds.forEach((currentId) => {
     const desiredEl = document.getElementById(currentId);
     if(!desiredEl) return;
