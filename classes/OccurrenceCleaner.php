@@ -656,8 +656,10 @@ class OccurrenceCleaner extends Manager{
 
 	public function questionableRankText(int $rank): string {
 		switch($rank) {
+			case self::HAS_POLYGON_FAILED_TO_VERIFY:
+				return 'Issue with coordinate or search polygon';
 			case self::COORDINATE_LOCALITY_MISMATCH:
-				return 'Country does not match coordinates' ?? '';
+				return 'Country does not match coordinates';
 			case self::COUNTRY_VERIFIED:
 				return'State/Province does not match coordinates';
 			case self::STATE_PROVINCE_VERIFIED:
@@ -721,7 +723,7 @@ class OccurrenceCleaner extends Manager{
 
 	public function getQuestionableCoordinateCounts(): array {
 		$unions = [];
-		$rank_arr = [self::UNVERIFIABLE_NO_POLYGON, self::COORDINATE_LOCALITY_MISMATCH, self::COUNTRY_VERIFIED, self::STATE_PROVINCE_VERIFIED ];
+		$rank_arr = [self::UNVERIFIABLE_NO_POLYGON, self::HAS_POLYGON_FAILED_TO_VERIFY, self::COORDINATE_LOCALITY_MISMATCH, self::COUNTRY_VERIFIED, self::STATE_PROVINCE_VERIFIED ];
 		$parameters = [];
 		foreach($rank_arr as $rank) {
 			$base_sql = 'SELECT count(*) as count, ranking FROM omoccurrences o
@@ -755,8 +757,8 @@ class OccurrenceCleaner extends Manager{
 	}
 
 	public function findFailedVerificationsOnKnownPolyons() {
-		// TODO (Logan) fix this sql
-		$sql = 'SELECT occid, missing_coords.country, g50.geoterm, g60.geoterm, g70.geoterm from geographicthesaurus g50
+		$sql = 'update omoccurverification set ranking = ? where category = "coordinate" and occid in (
+		SELECT occid from geographicthesaurus g50
 			join geographicthesaurus g60 on g60.geoLevel = 60 and g60.parentID = g50.geoThesID
 			join geographicthesaurus g70 on g70.geoLevel = 70 and g70.parentID = g60.geoThesID
 			join geographicpolygon gp on gp.geoThesID = g70.geoThesID
@@ -767,9 +769,9 @@ class OccurrenceCleaner extends Manager{
 			) as missing_coords on 
 			missing_coords.country = g50.geoterm and 
 			missing_coords.stateProvince = g60.geoterm and 
-			missing_coords.county = g70.geoterm';
+			missing_coords.county = g70.geoterm)';
 
-		$rs = QueryUtil::executeQuery($this->conn, $sql, [ $this->collid ]);
+		$rs = QueryUtil::executeQuery($this->conn, $sql, [self::HAS_POLYGON_FAILED_TO_VERIFY, $this->collid ]);
 	}
 
 	public function verifyCoordAgainstPoliticalV2(
@@ -813,12 +815,6 @@ class OccurrenceCleaner extends Manager{
 
 		$this->conn->begin_transaction();
 
-		// $resolve_geo_thesaurus = 'SELECT pts.occid, g70.geoterm as county, g60.geoterm as stateProvince, g50.geoterm as country from geographicthesaurus as g50
-		// 	left join geographicthesaurus as g60 on g60.parentID = g50.geoThesID and g60.geoLevel = 60
-		// 	left join geographicthesaurus as g70 on g70.parentID = g60.geoThesID and g70.geoLevel = 70
-		// 	join geographicpolygon gp on gp.geoThesID = COALESCE(g70.geoThesID, g60.geoThesID, g50.geoThesID)
-		// 	join omoccurpoints pts on ST_CONTAINS(gp.footprintPolygon, pts.lngLatPoint) where ';
-
 		$resolve_geo_thesaurus = 'SELECT pts.occid, g70.geoterm as county, g60.geoterm as stateProvince, g50.geoterm as country from geographicthesaurus as g50
 			left join (
 				select g.geoThesID, parentID, geoterm from geographicthesaurus as g
@@ -832,7 +828,6 @@ class OccurrenceCleaner extends Manager{
 			join omoccurpoints pts on ST_CONTAINS(gp.footprintPolygon, pts.lngLatPoint)
 			where ';
 		$resolve_geo_thesaurus_parameters = [];
-			//join geographicpolygon gp on gp.geoThesID = COALESCE(g70.geoThesID, g60.geoThesID, g50.geoThesID)
 
 		if(count($targetGeoThesIDs)) {
 			$parameters = str_repeat('?,', count($targetGeoThesIDs) - 1) . '?';
@@ -852,6 +847,7 @@ class OccurrenceCleaner extends Manager{
 		while(($row = $geo_check_result->fetch_object())) {
 			$editorManager->setOccId($row->occid);
 
+			// Handle Data Population
 			if($populateCountry && $occid_arr[$row->occid]['country'] === null && $row->country) {
 				$editorManager->editOccurrence(['country' => $row->country, 'occid' => $row->occid, 'editedfields' => 'country'], $GLOBALS['IS_ADMIN'] ?? 0);
 				$occid_arr[$row->occid]['country'] = $row->country;
@@ -869,7 +865,14 @@ class OccurrenceCleaner extends Manager{
 				$occid_arr[$row->occid]['county'] = $row->county;
 				$occid_arr[$row->occid]['populatedCounty'] = true;
 			}
+			
+			// Build Notes Field
+			$occid_arr[$row->occid]['notes'] = 'Coordinate Verified to: ' . 
+				$row->country . ' | ' . 
+				$row->stateProvince . ' | ' . 
+				$row->county;
 
+			// Determine Verification Level
 			if($row->county && GeographicThesaurus::unitsEqual(
 				$occid_arr[$row->occid]['county'] ?? '',
 				$row->county ?? '',
@@ -893,7 +896,7 @@ class OccurrenceCleaner extends Manager{
 			}
 		}
 
-		$batch_verification = 'INSERT INTO omoccurverification(occid, category, ranking, protocol, uid) VALUES ';
+		$batch_verification = 'INSERT INTO omoccurverification(occid, category, ranking, protocol, uid, notes) VALUES ';
 
 		$last_occid = array_key_last($occid_arr);
 		foreach($occid_arr as $occid => $occurrence) {
@@ -902,7 +905,8 @@ class OccurrenceCleaner extends Manager{
 				'"coordinate"', 
 				$occurrence['rank'] ?? self::UNVERIFIABLE_NO_POLYGON, 
 				'"geographicthesaurus"', 
-				$GLOBALS['SYMB_UID']
+				$GLOBALS['SYMB_UID'],
+				array_key_exists('notes', $occurrence) ? '"' . $occurrence['notes'] .'"': 'NULL' 
 			];
 
 			$batch_verification .= '(' . implode(',', $values) . ')';

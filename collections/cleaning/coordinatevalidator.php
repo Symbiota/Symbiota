@@ -105,6 +105,11 @@ function renderValidateCoordinates($cleanManager, $targetRank) {
 		}
 	}
 
+	// This is a clean up step for data evaluated to be
+	// missing but should have generated a match based
+	// on Country, state/province, and county values
+	$cleanManager->findFailedVerificationsOnKnownPolyons();
+
 	$baseReviewLink = ($CLIENT_ROOT ? '/' . $CLIENT_ROOT: '') .
 		'/collections/editor/editreviewer.php?&collid=' .
 		$collId;
