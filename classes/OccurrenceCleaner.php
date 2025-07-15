@@ -665,7 +665,7 @@ class OccurrenceCleaner extends Manager{
 			case self::COUNTRY_VERIFIED:
 				return $GLOBALS['LANG']['STATE_PROVINCE_DOES_NOT_MATCH_COORDS'];
 			case self::STATE_PROVINCE_VERIFIED:
-				return $GLOBALS['LANG']['COUNTRY_DOES_NOT_MATCH_COORDS'];
+				return $GLOBALS['LANG']['COUNTY_DOES_NOT_MATCH_COORDS'];
 			default: 
 				return $GLOBALS['LANG']['INVALID_RANK'];
 		}

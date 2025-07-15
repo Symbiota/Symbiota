@@ -186,15 +186,13 @@ function renderValidateCoordinates($cleanManager, $targetRank) {
 
 		<?php if($isEditor && $collId): ?>
 			<div>
-				<p style="margin: 0">
+				<p>
+					<?= $LANG['RECOMMEND_USE_GEOGRAPHIC_CLEANER'] ?>
+				</p>
+				<p>
 					<?= $LANG['TOOL_DESCRIPTION'] ?>
 				</p>
-				<ul>
-					<li><?= $LANG['COORDINATES_OUTSIDE_COUNTY_LIMITS'] ?></li>
-					<li><?= $LANG['WRONG_COUNTY_ENTERED'] ?></li>
-					<li><?= $LANG['COUNTY_MISSPELLED'] ?></li>
-				</ul>
-				<p style="margin: 0">
+				<p>
 					<?= $LANG['VALIDATION_COUNT_LIMIT'] ?>
 				</p>
 				<?php if($dateLastVerified = $cleanManager->getDateLastVerifiedByCategory('coordinate')): ?>
