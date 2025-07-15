@@ -325,6 +325,9 @@ $traitArr = $indManager->getTraitArr();
 		}
 		#exsiccati-div{ clear: both; }
 		#rights-div{ clear: both; }
+		.danger{ 
+			color: var(--danger-color);
+		}
 		<?php
 		if($shouldUseMinimalMapHeader){
 			?>
@@ -624,7 +627,7 @@ $traitArr = $indManager->getTraitArr();
 							<div id="typestatus-div" class="bottom-breathing-room-rel-sm">
 								<?php
 								echo '<label>'.$LANG['TYPE_STATUS'].': </label>';
-								echo '<span style="color: var(--danger-color)">' . $occArr['typestatus'] . '</span>';
+								echo '<span class="danger">' . $occArr['typestatus'] . '</span>';
 								?>
 							</div>
 							<?php
