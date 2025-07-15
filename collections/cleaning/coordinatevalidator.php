@@ -202,6 +202,7 @@ function renderValidateCoordinates($cleanManager, $targetRank) {
 				<?php endif ?>
 			</div>
 
+			<?php if($action): ?>
 			<fieldset style="padding:20px">
 			<?php if($action == 'Validate Coordinates'): ?>
 				<?php renderValidateCoordinates($cleanManager, $targetRank); ?>
@@ -221,6 +222,7 @@ function renderValidateCoordinates($cleanManager, $targetRank) {
 				<?php endif ?>
 			<?php endif ?>
 			</fieldset>
+			<?php endif ?>
 
 			<form action="coordinatevalidator.php" method="post">
 				<?php
