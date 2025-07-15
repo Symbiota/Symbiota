@@ -271,7 +271,7 @@ function renderValidateCoordinates($cleanManager, $targetRank) {
 				<?php else: ?>
 				<button type="submit">
 					<?= $LANG['VALIDATE_ALL_COORDINATES'] ?>
-					(<?= $unverifiedCount . ' ' . $LANG['UNVERIFIED'] . ' records'?>)
+					(<?= $unverifiedCount . ' ' . $LANG['UNVERIFIED_RECORDS'] ?>)
 				</button>
 				<?php endif ?> 
 
@@ -281,7 +281,7 @@ function renderValidateCoordinates($cleanManager, $targetRank) {
 				?>
 				<?php if(count($countryArr)): ?>
 					<div>
-						<div style="font-weight:bold"><?= $LANG['UNVERIFIED_BY_COUNTRY'] ?></div>
+						<div style="font-weight:bold; margin-top:1rem"><?= $LANG['UNVERIFIED_BY_COUNTRY'] ?></div>
 						<table class="styledtable">
 							<tr>
 								<th><?= $LANG['COUNTRY'] ?></th>

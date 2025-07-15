@@ -10,7 +10,7 @@ $LANG['COLLECTION_MANAGEMENT'] = 'Collection Management';
 $LANG['COOR_VALIDATOR'] = 'Coordinate Validator';
 $LANG['RECOMMEND_USE_GEOGRAPHIC_CLEANER'] = '<b>*Note*</b>: It is recommended to use the Geography Cleaning Tools before validating coordinates. 
     This will ensure that your political units match those in the geographic thesaurus.';
-$LANG['TOOL_DESCRIPTION'] = 'Clicking the "Validate All Coordinates" button will loop through all unvalidated georeferenced specimens to verify that 
+$LANG['TOOL_DESCRIPTION'] = 'Clicking the "Validate All Coordinates" button will loop through all unvalidated georeferenced records to verify that 
     the coordinates actually fall within the defined geographic units, as defined by geographic polygons stored in the geographic thesaurus. 
     Click on the number in the Questionable Records column (available after validating) to view records with the named issue. For more information about this tool, 
     visit <a href="https://docs.symbiota.org/Collection_Manager_Guide/Data_Cleaning/coordinate_validator/" target="_blank">Symbiota Docs</a>.';
@@ -21,14 +21,15 @@ $LANG['VALIDATION_COUNT_LIMIT'] = 'Coordinate validation is limited to 50000 rec
 $LANG['LAST_VER_DATE'] = 'Last Verification Date';
 $LANG['RECORDS_TOOK'] = 'records took';
 $LANG['SEC'] = 'seconds';
-$LANG['SPEC_RANK_OF'] = 'Specimen with rank of';
+$LANG['SPEC_RANK_OF'] = 'Record with rank of';
 $LANG['CHECKED_BY'] = 'checked by';
  $LANG['NOTHING_TO_DISPLAY'] = 'Nothing to be displayed';
 $LANG['POPULATE_COUNTRY'] = 'Populate country if missing and can be inferred from coordinates';
 $LANG['POPULATE_STATE_PROVINCE'] = 'Populate state/province if missing and can be inferred from coordinates';
 $LANG['POPULATE_COUNTY'] = 'Populate county if missing and can be inferred from coordinates';
-$LANG['RE-VALIDATE_ALL_COORDINATES'] = 'Re Validate All Coordinates';
+$LANG['RE-VALIDATE_ALL_COORDINATES'] = 'Re-Validate All Coordinates';
 $LANG['VALIDATE_ALL_COORDINATES'] = 'Validate All Coordinates';
+ $LANG['UNVERIFIED_RECORDS'] = 'unverified records';
 $LANG['RANKING_STATISTICS'] = 'Ranking Statistics';
 
 $LANG['RANKING'] = 'Ranking';
@@ -37,7 +38,7 @@ $LANG['COUNT'] = 'Count';
 $LANG['RE-VERIFY'] = 'Re-Verify';
 $LANG['UNVERIFIED'] = 'unverified';
 
-$LANG['UNVERIFIED_BY_COUNTRY'] = 'Unverified listed by country';
+$LANG['UNVERIFIED_BY_COUNTRY'] = 'Unverified records listed by country';
 $LANG['COUNTRY'] = 'Country';
 $LANG['VIEW_SPECIMENS'] = 'View Specimens';
 $LANG['NOT_AUTHORIZED'] = 'You are not authorized to access this page';
