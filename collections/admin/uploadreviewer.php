@@ -81,11 +81,12 @@ if($SYMB_UID){
 			//Setup header map
 			$recArr = $uploadManager->getPendingImportData(($recLimit*$pageIndex),$recLimit,$searchVar);
 			if($recArr){
+				$excludeKeys = ['eon', 'era', 'period', 'epoch', 'stage'];
 				//Check to see which headers have values
 				$headerArr = array();
 				foreach($recArr as $occurArr){
 					foreach($occurArr as $k => $v){
-						if($v && trim($v) && !array_key_exists($k,$headerArr)){
+						if($v && trim($v) && !array_key_exists($k,$headerArr) && !in_array($k, $excludeKeys)){
 							$headerArr[$k] = $k;
 						}
 					}
