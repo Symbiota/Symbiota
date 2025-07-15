@@ -578,6 +578,12 @@ $traitArr = $indManager->getTraitArr();
 												if($detArr['qualifier']) echo $detArr['qualifier'];
 												echo ' <label><i>'.$detArr['sciname'].'</i></label> '.$detArr['author'];
 												?>
+												<div id="identby-div" class="identby-div">
+													<?php
+													echo '<label>'.(isset($LANG['DETERMINER'])?$LANG['DETERMINER']:'Determiner').': </label>';
+													echo $detArr['identifiedby'];
+													?>
+												</div>
 												<div id="identdate-div" class="identdate-div">
 													<?php
 													echo '<label>'.$LANG['DATE'].': </label>';
