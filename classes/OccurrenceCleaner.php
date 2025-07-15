@@ -13,6 +13,7 @@ class OccurrenceCleaner extends Manager{
 
 	const UNVERIFIABLE_NO_POLYGON = -1;
 	const COORDINATE_LOCALITY_MISMATCH = 0;
+	const HAS_POLYGON_FAILED_TO_VERIFY = 1;
 	const COUNTRY_VERIFIED = 2;
 	const STATE_PROVINCE_VERIFIED = 5;
 	const COUNTY_VERIFIED = 7;
@@ -753,24 +754,20 @@ class OccurrenceCleaner extends Manager{
 		return $questionableCounts;
 	}
 
-	public function cleanMissingPolygonVerifications() {
+	public function findFailedVerificationsOnKnownPolyons() {
 		// TODO (Logan) fix this sql
-		$sql = 'SELECT o.occid from omoccurrences o
-			join omoccurverification ov on ov.occid = o.occid
-			left join (
-				SELECT g70.geoterm as county, g60.geoterm as stateProvince, g50.geoterm as country from geographicthesaurus as g50
-				left join (
-					select g.geoThesID, parentID, geoterm from geographicthesaurus as g
-					join geographicpolygon as gp on gp.geoThesID = g.geoThesID and g.geoLevel = 60
-				) as g60 on g60.parentID = g50.geoThesID
-				left join (
-					select g.geoThesID, parentID, geoterm from geographicthesaurus as g
-					join geographicpolygon as gp on gp.geoThesID = g.geoThesID and g.geoLevel = 70
-				) as g70 on g70.parentID = g60.geoThesID
-				join geographicpolygon gp on gp.geoThesID = g70.geoThesID
-			) as gpb on (gpb.county = o.county or gpb.country = o.country or gpb.stateProvince = o.stateProvince)
-			where ranking = -1 and category = "coordinate" and o.collid = ?
-			group by o.occid';
+		$sql = 'SELECT occid, missing_coords.country, g50.geoterm, g60.geoterm, g70.geoterm from geographicthesaurus g50
+			join geographicthesaurus g60 on g60.geoLevel = 60 and g60.parentID = g50.geoThesID
+			join geographicthesaurus g70 on g70.geoLevel = 70 and g70.parentID = g60.geoThesID
+			join geographicpolygon gp on gp.geoThesID = g70.geoThesID
+			join (
+				SELECT o.occid, country, stateProvince, county from omoccurrences o
+				join omoccurverification as ov on ov.occid = o.occid
+				where ranking = -1 and ov.category = "coordinate" and collid = ?
+			) as missing_coords on 
+			missing_coords.country = g50.geoterm and 
+			missing_coords.stateProvince = g60.geoterm and 
+			missing_coords.county = g70.geoterm';
 
 		$rs = QueryUtil::executeQuery($this->conn, $sql, [ $this->collid ]);
 	}
