@@ -178,6 +178,7 @@ $traitArr = $indManager->getTraitArr();
 	<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/individual/popup.css" type="text/css" rel="stylesheet" >
 	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT . '/collections/individual/domManipulationUtils.js'; ?>" type="text/javascript"></script>
 	<script type="text/javascript">
 		var tabIndex = <?= $tabIndex; ?>;
 		var map;
@@ -514,11 +515,11 @@ $traitArr = $indManager->getTraitArr();
 								?>
 							</div>
 							<?php if($occArr['dateidentified']): ?>
-								<div id="identby-div" class="identby-div bottom-breathing-room-rel-sm">
-								<?php
-									echo '<label>'.$LANG['DATE_DET']  . ': '. '</label>' . $occArr['dateidentified'];
-								?>
-							</div>
+								<div id="identdate-div" class="identby-div bottom-breathing-room-rel-sm">
+									<?php
+										echo '<label>'.$LANG['DATE_DET']  . ': '. '</label>' . $occArr['dateidentified'];
+									?>
+								</div>
 							<?php endif; ?>
 							<?php
 						}
@@ -577,12 +578,6 @@ $traitArr = $indManager->getTraitArr();
 												if($detArr['qualifier']) echo $detArr['qualifier'];
 												echo ' <label><i>'.$detArr['sciname'].'</i></label> '.$detArr['author'];
 												?>
-												<div id="identby-div" class="identby-div">
-													<?php
-													echo '<label>'.(isset($LANG['DETERMINER'])?$LANG['DETERMINER']:'Determiner').': </label>';
-													echo $detArr['identifiedby'];
-													?>
-												</div>
 												<div id="identdate-div" class="identdate-div">
 													<?php
 													echo '<label>'.$LANG['DATE'].': </label>';
@@ -623,7 +618,7 @@ $traitArr = $indManager->getTraitArr();
 							<div id="typestatus-div" class="bottom-breathing-room-rel-sm">
 								<?php
 								echo '<label>'.$LANG['TYPE_STATUS'].': </label>';
-								echo $occArr['typestatus'];
+								echo '<span style="color: var(--danger-color)">' . $occArr['typestatus'] . '</span>';
 								?>
 							</div>
 							<?php
