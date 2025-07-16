@@ -29,12 +29,12 @@ class OccurrenceEditorManager {
 	protected $isShareConn = false;
 	protected $ft_min_token_size;
 
-	public function __construct($conn = null, $ft_min_token_size = null) {
+	public function __construct($conn = null) {
 		if ($conn) {
 			$this->conn = $conn;
 			$this->isShareConn = true;
 		} else $this->conn = MySQLiConnectionFactory::getCon("write");
-		$this->ft_min_token_size = $ft_min_token_size ?: 3;
+		$this->ft_min_token_size = 3;
 		$this->fieldArr['omoccurrences'] = array(
 			'basisofrecord' => 's',
 			'catalognumber' => 's',
@@ -150,6 +150,10 @@ class OccurrenceEditorManager {
 		);
 		$this->fieldArr['omoccuridentifiers'] = array('idname', 'idvalue');
 		$this->fieldArr['omexsiccatiocclink'] = array('ometid', 'exstitle', 'exsnumber');
+	}
+
+	public function setFullTextMinSize($ft_min_token_size = 3){
+		$this->ft_min_token_size = $ft_min_token_size;
 	}
 
 	public function __destruct() {
