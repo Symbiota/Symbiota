@@ -190,11 +190,12 @@ class SpecUpload{
 			$sql = $this->getPendingImportSql($searchVariables) ;
 			//echo "<div>".$sql."</div>";
 			$fieldMap = array();
+			$excludeKeys = ['eon', 'era', 'period', 'epoch', 'stage'];
 			$rs = $this->conn->query($sql, MYSQLI_USE_RESULT);
 			//Determine which fields have data
 			while($r = $rs->fetch_assoc()){
 				foreach($r as $k => $v){
-					if($v && $v !== '0') $fieldMap[$k] = '';
+					if($v && $v !== '0' && !in_array($k, $excludeKeys)) $fieldMap[$k] = '';
 				}
 			}
 			$rs->free();
