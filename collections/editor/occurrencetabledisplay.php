@@ -13,7 +13,6 @@ $dynamicTable = array_key_exists('dynamictable', $_REQUEST) ? filter_var($_REQUE
 $action = array_key_exists('submitaction', $_REQUEST) ? $_REQUEST['submitaction'] : '';
 
 $occManager = new OccurrenceEditorManager();
-$occManager->setFullTextMinSize($FULLTEXT_MIN_TOKEN_SIZE);
 
 if($crowdSourceMode) $occManager->setCrowdSourceMode(1);
 
@@ -148,7 +147,7 @@ else{
 		table.styledtable td { white-space: nowrap; }
 		fieldset{ padding:15px }
 		fieldset > legend{ font-weight:bold }
-		.fieldGroupDiv { 
+		.fieldGroupDiv {
 			display: flex;
 			align-items: center;
 			gap: 0.75rem;
@@ -160,15 +159,15 @@ else{
 				display: flex;
 			}
 		}
-		.fieldDiv{ 
+		.fieldDiv{
 			display: inline;
 		}
 		#innertext{ background-color: white; margin: 0px 10px; }
 
-		#record-viewer-innertext { 
+		#record-viewer-innertext {
 			margin-left: 2em;
 			width: calc(100vw - 4em);
-			background-color: white; 
+			background-color: white;
 		}
 		.editimg{ width: 15px; }
 		.table-scroll {
@@ -181,13 +180,13 @@ else{
 		}
 
 		.button-toggle {
-			background-color: transparent; 
-			color: var(--body-text-color); 
+			background-color: transparent;
+			color: var(--body-text-color);
 			border: 2px solid var(--darkest-color);
 
 			&.active {
-				background-color: var(--darkest-color); 
-				color: white; 
+				background-color: var(--darkest-color);
+				color: white;
 			}
 
 			&:hover {
@@ -353,7 +352,7 @@ else{
 			?>
 			<div style="display:flex;width:850px;clear:both;">
 				<?php echo $navStr; ?>
-				
+
 			</div>
 			<?php
 			if($recArr){

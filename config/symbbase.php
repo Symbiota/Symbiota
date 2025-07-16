@@ -117,10 +117,6 @@ $ALLOWED_MEDIA_MIME_TYPES = [
 	"audio/mpeg", "audio/wav", "audio/ogg"
 ];
 
-// Set a value if not present in symbini
-$FULLTEXT_MIN_TOKEN_SIZE ??= 3;
-// TODO: set $FULLTEXT_MIN_TOKEN_LENGTH dynamically to innodb_ft_min_token_size
-
 if(!empty($GEO_JSON_LAYERS)) {
 	/* Load GeoJSON Paths */
 	for($i = 0; $i < count($GEO_JSON_LAYERS); $i++) {
