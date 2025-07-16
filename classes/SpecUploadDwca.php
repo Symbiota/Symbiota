@@ -629,6 +629,7 @@ class SpecUploadDwca extends SpecUploadBase{
 								$this->coreIdArr[$recordArr[0]] = '';
 							}
 							$recMap = Array();
+							$recMapPaleo = [];
 							foreach($this->occurFieldMap as $symbField => $sMap){
 								if(substr($symbField,0,8) != 'unmapped'){
 									//Apply source filter if they exist
@@ -637,10 +638,18 @@ class SpecUploadDwca extends SpecUploadBase{
 									if(array_key_exists($index,$recordArr)){
 										$valueStr = trim($recordArr[$index]);
 										if($cset != $this->encoding) $valueStr = $this->encodeString($valueStr);
+										//add paleo fields separately
+										if ($this->paleoSupport && strpos($symbField, 'paleo-') === 0) {
+											$cleanKey = substr($symbField, 6);
+											$recMapPaleo[$cleanKey] = $valueStr;
+											continue;
+										}
 										$recMap[$symbField] = $valueStr;
 									}
 								}
 							}
+							if (!empty($recMapPaleo))
+								$recMap['paleo'] = $recMapPaleo;
 							$this->loadRecord($recMap);
 							unset($recMap);
 						}

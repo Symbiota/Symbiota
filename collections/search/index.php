@@ -650,7 +650,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 
 				<!-- Geological Context -->
 				<?php
-				if ($GLOBALS['ACTIVATE_PALEO']) { ?>
+				if (!empty($GLOBALS['ACTIVATE_PALEO'])) { ?>
 					<section>
 						<!-- Accordion selector -->
 						<input type="checkbox" id="geocontext" class="accordion-selector" />
