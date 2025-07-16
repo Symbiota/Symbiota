@@ -120,6 +120,9 @@ if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERV
 // template_properties: Array[String] - List of property names to used in popup generation
 $GEO_JSON_LAYERS = [];
 
+//Database settings
+$FULLTEXT_MIN_TOKEN_SIZE = 3  // Should match innodb_ft_max_token_size (MariaDB default is 3)
+
 //Base code shared by all pages; leave as is
 include_once('symbbase.php');
 /* --DO NOT ADD ANY EXTRA SPACES BELOW THIS LINE-- */

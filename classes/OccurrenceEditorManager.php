@@ -27,12 +27,14 @@ class OccurrenceEditorManager {
 	private $catNumIsNum;
 	protected $errorArr = array();
 	protected $isShareConn = false;
+	protected $ft_min_token_size;
 
-	public function __construct($conn = null) {
+	public function __construct($conn = null, $ft_min_token_size = null) {
 		if ($conn) {
 			$this->conn = $conn;
 			$this->isShareConn = true;
 		} else $this->conn = MySQLiConnectionFactory::getCon("write");
+		$this->ft_min_token_size = $ft_min_token_size ?: 3;
 		$this->fieldArr['omoccurrences'] = array(
 			'basisofrecord' => 's',
 			'catalognumber' => 's',
@@ -449,7 +451,11 @@ class OccurrenceEditorManager {
 				$sqlWhere .= 'AND (o.recordedby IS NULL) ';
 			} elseif (substr($this->qryArr['rb'], 0, 1) == '%') {
 				$collStr = $this->cleanInStr(substr($this->qryArr['rb'], 1));
-				$sqlWhere .= 'AND (MATCH(o.recordedby) AGAINST("' . $collStr . '" IN BOOLEAN MODE)) ';
+				if(strlen($collStr) >= $this->ft_min_token_size){
+					$sqlWhere .= 'AND (MATCH(o.recordedby) AGAINST("' . $collStr . '" IN BOOLEAN MODE)) ';
+				} else {
+					$sqlWhere .= 'AND (o.recordedby LIKE "%' . $collStr . '") ';
+				}
 			} else {
 				$sqlWhere .= 'AND (o.recordedby LIKE "' . $this->cleanInStr($this->qryArr['rb']) . '%") ';
 			}
