@@ -774,12 +774,13 @@
 #memberDiv{ float:left; margin:3px; }
 #bedDiv{ float:left; margin:3px; }
 #lithologyDiv{ float:left; margin:3px; }
-#lithologyDiv input{ width:600px; }
+#lithologyDiv input{ width:800px; }
 #stratRemarksDiv{ float:left; margin:3px; }
-#stratRemarksDiv input{ width:600px; }
+#stratRemarksDiv input{ width:800px; }
 #elementDiv{ float:left; margin:3px; }
+#elementDiv input{ width:470px; } 
 #slidePropertiesDiv{ float:left; margin:3px; }
-#slidePropertiesDiv input{ width:400px; }
+#slidePropertiesDiv input{ width:200px; }
 #geologicalContextIDDiv{ float:left; margin:3px; }
 #geologicalContextIDDiv input{ width:120px; }
 
