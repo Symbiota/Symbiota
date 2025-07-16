@@ -57,7 +57,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 	<script src="<?php echo $CLIENT_ROOT . '/js/symb/localitySuggest.js' ?>" type="text/javascript"></script>
 	<script>
 		const clientRoot = '<?php echo $CLIENT_ROOT; ?>';
-		const paleoTimes = <?= json_encode($paleoTimes) ?>;
+		const paleoTimes = <?= json_encode($paleoTimes ?? []) ?>;
 		const handleAccordionExpand = () => {
 			const accordions = document.querySelectorAll('input[class="accordion-selector"]');
 			const accordionIds = [];
