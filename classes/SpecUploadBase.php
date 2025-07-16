@@ -2116,12 +2116,7 @@ class SpecUploadBase extends SpecUpload{
 				if($parsed_mime) {
 					$this->outputMsg('<li style="margin-left:20px;">Unsupported File Format: ' . $parsed_mime . ' from url ' . $testUrl . ' </li>');
 				} else {
-					// Use Fallback if still unknown
-					if($GLOBALS['MIME_FALL_BACK'] ?? false) {
-						$mime = $GLOBALS['MIME_FALL_BACK'];
-					} else {
-						$this->outputMsg('<li style="margin-left:20px;">Could Not Parse the File Format: ' . $testUrl . ' </li>');
-					}
+					$mime = $GLOBALS['MIME_FALL_BACK'];
 				}
 				// Not Supported extension
 				return false;
