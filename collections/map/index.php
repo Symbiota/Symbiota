@@ -332,7 +332,7 @@ $serverHost = GeneralUtil::getDomain();
 		let clusteroff = true;
 
 		//Get paleo times
-		const paleoTimes = <?= json_encode($paleoTimes) ?>;
+		const paleoTimes = JSON.parse(`<?= json_encode($paleoTimes ?? []) ?>`);
 
 		const colorChange = new Event("colorchange",  {
 			bubbles: true,
