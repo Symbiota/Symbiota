@@ -12,7 +12,8 @@ $crowdSourceMode = array_key_exists('csmode', $_REQUEST) ? filter_var($_REQUEST[
 $dynamicTable = array_key_exists('dynamictable', $_REQUEST) ? filter_var($_REQUEST['dynamictable'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $action = array_key_exists('submitaction', $_REQUEST) ? $_REQUEST['submitaction'] : '';
 
-$occManager = new OccurrenceEditorManager(null,$FULLTEXT_MIN_TOKEN_SIZE);
+$occManager = new OccurrenceEditorManager();
+$occManager->setFullTextMinSize($FULLTEXT_MIN_TOKEN_SIZE);
 
 if($crowdSourceMode) $occManager->setCrowdSourceMode(1);
 
