@@ -117,6 +117,8 @@ $ALLOWED_MEDIA_MIME_TYPES = [
 	"audio/mpeg", "audio/wav", "audio/ogg"
 ];
 
+$MIME_FALL_BACK = 'image/jpeg';
+
 if(!empty($GEO_JSON_LAYERS)) {
 	/* Load GeoJSON Paths */
 	for($i = 0; $i < count($GEO_JSON_LAYERS); $i++) {
