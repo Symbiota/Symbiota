@@ -294,7 +294,9 @@ $traitArr = $indManager->getTraitArr();
             map = new LeafletMap("map_canvas", {
                center: mLatLng,
                zoom: 8,
-            });
+			},
+				JSON.parse(`<?= json_encode($GEO_JSON_LAYERS ?? []) ?>`)
+			);
 
 			if(coordError > 0) {
 			   map.enableDrawing({...map.DEFAULT_DRAW_OPTIONS, control: false})

@@ -68,7 +68,10 @@ if($coorArr && count($coorArr) == 4){
 				zoom: 3,
 				center: [lat, lng],
 			};
-			map = new LeafletMap('map_canvas', dmOptions);
+			map = new LeafletMap('map_canvas',
+				dmOptions,
+				JSON.parse(`<?= json_encode($GEO_JSON_LAYERS ?? []) ?>`)
+			);
 
 			const markers = [];
 

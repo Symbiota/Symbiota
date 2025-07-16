@@ -96,7 +96,10 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 				map_options.defaultBounds = mapBounds;
 			}
 
-			map = new LeafletMap('map_canvas', map_options);
+			map = new LeafletMap('map_canvas',
+				map_options,
+				JSON.parse(`<?= json_encode($GEO_JSON_LAYERS ?? []) ?>`)
+			);
 
 			var drawnItems = new L.FeatureGroup();
 			map.mapLayer.addLayer(drawnItems);
