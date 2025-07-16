@@ -16,29 +16,29 @@ ALTER TABLE `omoccurpaleogts`
   ADD COLUMN `geoTimeID` INT NULL DEFAULT NULL AFTER `parentgtsid`;
 
 #Add paleo fields to uploadspectemp
-ALTER TABLE uploadspectemp
-  ADD COLUMN eon varchar(65),
-  ADD COLUMN era varchar(65),
-  ADD COLUMN period varchar(65),
-  ADD COLUMN epoch varchar(65),
-  ADD COLUMN earlyInterval varchar(65),
-  ADD COLUMN lateInterval varchar(65),
-  ADD COLUMN absoluteAge varchar(65),
-  ADD COLUMN storageLoc varchar(65),
-  ADD COLUMN stage varchar(65),
-  ADD COLUMN localStage varchar(65),
-  ADD COLUMN biota varchar(100),
-  ADD COLUMN biostratigraphy varchar(65),
-  ADD COLUMN taxonEnvironment varchar(65),
-  ADD COLUMN lithogroup varchar(65),
-  ADD COLUMN formation varchar(65),
-  ADD COLUMN member varchar(65),
-  ADD COLUMN bed varchar(65),
-  ADD COLUMN lithology varchar(700),
-  ADD COLUMN stratRemarks varchar(1000),
-  ADD COLUMN element varchar(250),
-  ADD COLUMN slideProperties varchar(1000),
-  ADD COLUMN geologicalContextID varchar(100);
+ALTER TABLE 'uploadspectemp'
+  ADD COLUMN 'eon' TEXT,
+  ADD COLUMN 'era' TEXT,
+  ADD COLUMN 'period' TEXT,
+  ADD COLUMN 'epoch' TEXT,
+  ADD COLUMN 'earlyInterval' TEXT,
+  ADD COLUMN 'lateInterval' TEXT,
+  ADD COLUMN 'absoluteAge' TEXT,
+  ADD COLUMN 'storageLoc' TEXT,
+  ADD COLUMN 'stage' TEXT,
+  ADD COLUMN 'localStage' TEXT,
+  ADD COLUMN 'biota' TEXT,
+  ADD COLUMN 'biostratigraphy' TEXT,
+  ADD COLUMN 'taxonEnvironment' TEXT,
+  ADD COLUMN 'lithogroup' TEXT,
+  ADD COLUMN 'formation' TEXT,
+  ADD COLUMN 'member' TEXT,
+  ADD COLUMN 'bed' TEXT,
+  ADD COLUMN 'lithology' TEXT,
+  ADD COLUMN 'stratRemarks' TEXT,
+  ADD COLUMN 'element' TEXT,
+  ADD COLUMN 'slideProperties' TEXT,
+  ADD COLUMN 'geologicalContextID' TEXT;
 
 #Add paleo indexes
 ALTER TABLE `omoccurpaleo`
