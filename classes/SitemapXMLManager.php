@@ -5,8 +5,6 @@ class SitemapXMLManager extends Manager {
     private $host;
     private $database;
     private $port;
-    private $username;
-    private $protocol = 'https';
     private $sitemapMessage = '';
 
     public function __construct() {
@@ -21,9 +19,9 @@ class SitemapXMLManager extends Manager {
     }
 
     public function generateSitemap() {
-        global $CLIENT_ROOT, $SERVER_ROOT, $SERVER_HOST, $PRIVATE_VIEWING_ONLY;
+        global $CLIENT_ROOT, $SERVER_ROOT, $PRIVATE_VIEWING_ONLY;
 
-        $baseUrl = "{$this->protocol}://{$SERVER_HOST}" . $CLIENT_ROOT;
+        $baseUrl = GeneralUtil::getDomain() . $CLIENT_ROOT;
 
         $conn = MySQLiConnectionFactory::getCon("readonly");
 
@@ -39,7 +37,7 @@ class SitemapXMLManager extends Manager {
         $landingPagePath = '/index.php';
         if ($this->isPathAllowed($landingPagePath)) {
             $xml .= "  <url>\n";
-            $xml .= "    <loc>{$baseUrl}{$landingPagePath}</loc>\n";
+            $xml .= "    <loc>" . $baseUrl . $landingPagePath . "</loc>\n";
             $xml .= "  </url>\n";
         }
 
@@ -67,16 +65,16 @@ class SitemapXMLManager extends Manager {
                 before running installation/update scripts.";
             return false;
         }
-        $outputFile = "{$outputDir}/sitemap.xml";
+        $outputFile = $outputDir . "/sitemap.xml";
 
         if (!is_dir($outputDir)) {
             if (!mkdir($outputDir, 0777, true)) {
-                $this->sitemapMessage = "Failed to create sitemap directory: $outputDir";
+                $this->sitemapMessage = "Failed to create sitemap directory: " . $outputDir;
                 return false;
             }
         }
 
-        if (file_put_contents("{$outputDir}/sitemap.xml", $xml) === false) {
+        if (file_put_contents($outputDir . "/sitemap.xml", $xml) === false) {
             $this->sitemapMessage = "Failed to write sitemap file.";
             return false;
         }
@@ -91,11 +89,11 @@ class SitemapXMLManager extends Manager {
         $rs = $conn->query($sql);
         $xml = '';
         while ($row = $rs->fetch_assoc()) {
-            $path = "/collections/misc/collprofiles.php?collid={$row['collid']}";
+            $path = "/collections/misc/collprofiles.php?collid=" . $row['collid'];
             if (!$this->isPathAllowed($path)) continue;
 
             $xml .= "  <url>\n";
-            $xml .= "    <loc>{$baseUrl}{$path}</loc>\n";
+            $xml .= "    <loc>" . $baseUrl . $path . "</loc>\n";
 
             $timestamp = !empty($row['datelastmodified']) ? $row['datelastmodified'] : $row['initialtimestamp'];
             if (!empty($timestamp)) {
@@ -111,7 +109,7 @@ class SitemapXMLManager extends Manager {
         if (!$this->isPathAllowed($path)) return '';
 
         return "  <url>\n" .
-               "    <loc>{$baseUrl}{$path}</loc>\n" .
+               "    <loc>" . $baseUrl . $path . "</loc>\n" .
                "  </url>\n";
     }
 
@@ -120,7 +118,7 @@ class SitemapXMLManager extends Manager {
         if (!$this->isPathAllowed($path)) return '';
 
         return "  <url>\n" .
-               "    <loc>{$baseUrl}{$path}</loc>\n" .
+               "    <loc>" . $baseUrl . $path . "</loc>\n" .
                "  </url>\n";
     }
 
@@ -129,11 +127,11 @@ class SitemapXMLManager extends Manager {
         $sql = "SELECT ometid, initialtimestamp FROM omexsiccatititles";
         $rs = $conn->query($sql);
         while ($row = $rs->fetch_assoc()) {
-            $path = "/collections/exsiccati/index.php?ometid={$row['ometid']}";
+            $path = "/collections/exsiccati/index.php?ometid=" . $row['ometid'];
             if (!$this->isPathAllowed($path)) continue;
 
             $xml .= "  <url>\n";
-            $xml .= "    <loc>{$baseUrl}{$path}</loc>\n";
+            $xml .= "    <loc>" . $baseUrl . $path . "</loc>\n";
             $xml .= "    <lastmod>" . date("Y-m-d", strtotime($row['initialtimestamp'])) . "</lastmod>\n";
             $xml .= "  </url>\n";
         }
@@ -145,11 +143,11 @@ class SitemapXMLManager extends Manager {
         $sql = "SELECT tid, modifiedtimestamp, initialtimestamp FROM taxa WHERE rankid <= 180";
         $rs = $conn->query($sql);
         while ($row = $rs->fetch_assoc()) {
-            $path = "/taxa/index.php?tid={$row['tid']}";
+            $path = "/taxa/index.php?tid=" . $row['tid'];
             if (!$this->isPathAllowed($path)) continue;
 
             $xml .= "  <url>\n";
-            $xml .= "    <loc>{$baseUrl}{$path}</loc>\n";
+            $xml .= "    <loc>" . $baseUrl . $path . "</loc>\n";
             $timestamp = !empty($row['modifiedtimestamp']) ? $row['modifiedtimestamp'] : $row['initialtimestamp'];
             if (!empty($timestamp)) {
                 $xml .= "    <lastmod>" . date("Y-m-d", strtotime($timestamp)) . "</lastmod>\n";
@@ -157,12 +155,6 @@ class SitemapXMLManager extends Manager {
             $xml .= "  </url>\n";
         }
         return $xml;
-    }
-
-    public function setProtocol($protocol) {
-        if (in_array($protocol, ['http', 'https'])) {
-            $this->protocol = $protocol;
-        }
     }
 
     public function getSitemapMessage() {
@@ -190,7 +182,7 @@ class SitemapXMLManager extends Manager {
                 if ($path === '/index.php' || $path === '/projects/index.php' || $path === '/checklists/index.php') continue;
 
                 $xml .= "  <url>\n";
-                $xml .= "    <loc>{$baseUrl}{$path}</loc>\n";
+                $xml .= "    <loc>" . $baseUrl . $path . "</loc>\n";
                 $xml .= "  </url>\n";
             }
         }
@@ -208,7 +200,7 @@ class SitemapXMLManager extends Manager {
                 if (!$this->isPathAllowed($path)) continue;
 
                 $xml .= "  <url>\n";
-                $xml .= "    <loc>{$baseUrl}{$path}</loc>\n";
+                $xml .= "    <loc>" . $baseUrl . $path . "</loc>\n";
                 if (!empty($row['datelastmodified'])) {
                     $xml .= "    <lastmod>" . date("Y-m-d", strtotime($row['datelastmodified'])) . "</lastmod>\n";
                 }
