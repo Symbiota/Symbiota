@@ -698,10 +698,9 @@ class Media {
 		$ch = curl_init($url);
 
 		curl_setopt($ch, CURLOPT_HEADER, true);
-		curl_setopt($ch, CURLOPT_NOBODY, true);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-		curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
+		curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
 
 		$data = curl_exec($ch);
 
@@ -956,7 +955,7 @@ class Media {
 			//Required to exist
 			$source_url = $clean_post_arr['originalUrl'];
 			$keyValuePairs['originalUrl'] =  $source_url;
-			$keyValuePairs['url'] = $clean_post_arr['weburl']?? $source_url;
+			$keyValuePairs['url'] = $clean_post_arr['weburl'] ?? $clean_post_arr['url'] ?? $source_url;
 		} else {
 			$keyValuePairs['url'] = $storage->getUrlPath() . $file['name'];
 			$keyValuePairs['originalUrl'] = $storage->getUrlPath() . $file['name'];
