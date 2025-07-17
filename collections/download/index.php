@@ -174,10 +174,17 @@ $filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIEN
 								</a><br/>
 								<div id="schemadwcinfodialog">
 									<?= $LANG['DARWIN_GUIDE'] ?>
-									<a href="http://rs.tdwg.org/dwc/index.htm"target='_blank'> <?= $LANG['DARWIN_GUIDE_LINK'] ?></a>.
+									<a href="http://rs.tdwg.org/dwc/index.htm" target='_blank'> <?= $LANG['DARWIN_GUIDE_LINK'] ?></a>.
 								</div>
 							</div>
 						</fieldset>
+
+						<fieldset class="sectionDiv">
+							<legend>  <?= $LANG['TAXONOMIC_RESOLUTION'] ?? 'Taxonomic Resolution'?>:</legend>
+							<input type="checkbox" name="acceptedNameUsage" id="acceptedNameUsage" value="1" />
+							<label for="acceptedNameUsage"> <?= $LANG['ACCEPTED_NAME_USAGE'] ?? 'Include Accepted Scientific Name and Authorship'?></label>
+						</fieldset>
+
 						<fieldset class="sectionDiv">
 							<legend>  <?= $LANG['DATA_EXTS'] ?>:</legend>
 							<div class="formElemDiv">
