@@ -773,10 +773,10 @@
 #taxonEnvironmentDiv{ float:left; margin:3px; }
 #memberDiv{ float:left; margin:3px; }
 #bedDiv{ float:left; margin:3px; }
-#lithologyDiv{ float:left; margin:3px; }
-#lithologyDiv input{ width:800px; }
-#stratRemarksDiv{ float:left; margin:3px; }
-#stratRemarksDiv input{ width:800px; }
+#lithologyDiv{ float:left; margin:3px; width: 100%;}
+#lithologyDiv input{ width:95%; }
+#stratRemarksDiv{ float:left; margin:3px; width: 100%;}
+#stratRemarksDiv textarea{ width: 95%; height: 18px; resize: vertical;}
 #elementDiv{ float:left; margin:3px; }
 #elementDiv input{ width:470px; } 
 #slidePropertiesDiv{ float:left; margin:3px; }
