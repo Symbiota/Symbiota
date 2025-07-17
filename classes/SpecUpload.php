@@ -218,7 +218,6 @@ class SpecUpload{
 		if($this->collId){
 			$sql = $this->getPendingImportSql($searchVariables) ;
 			if($limit) $sql .= 'LIMIT '.$start.','.$limit;
-			//echo "<div>".$sql."</div>"; exit;
 			$rs = $this->conn->query($sql);
 			while($row = $rs->fetch_assoc()){
 				$retArr[] = array_change_key_case($row);
@@ -236,7 +235,9 @@ class SpecUpload{
 		$schemaRS = $this->conn->query($schemaSQL);
 		while($schemaRow = $schemaRS->fetch_object()){
 			$fieldName = strtolower($schemaRow->Field);
-			if(!in_array($fieldName,$this->skipOccurFieldArr)){
+			$skipFieldArr = $this->skipOccurFieldArr;
+			unset($skipFieldArr[array_search('materialsamplejson', $skipFieldArr)]);
+			if(!in_array($fieldName,$skipFieldArr)){
 				if($fieldName === 'othercatalognumbers' && !$searchVariables) {
 					$occFieldArr[] = 'CASE WHEN u.otherCatalogNumbers IS NULL THEN i.identifiers WHEN i.identifiers IS NULL THEN u.otherCatalogNumbers ELSE CONCAT(u.otherCatalogNumbers, "; ", i.identifiers) END as otherCatalogNumbers';
 				} else {
