@@ -197,7 +197,7 @@ class SpecUploadBase extends SpecUpload{
 		$this->symbFields[] = 'authorinfraspecific';
 		sort($this->symbFields);
 		if($this->paleoSupport) $this->symbFields = array_merge($this->symbFields,$this->getPaleoTerms());
-		// if($this->materialSampleSupport) $this->symbFields = array_merge($this->symbFields,$this->getMaterialSampleTerms());
+		if($this->materialSampleSupport) $this->symbFields = array_merge($this->symbFields,$this->getMaterialSampleTerms());
 
 	/*	//Associated Occurrence fields
 		// All-purpose fields
@@ -354,7 +354,7 @@ class SpecUploadBase extends SpecUpload{
 			'generalnotes'=>'occurrenceremarks','plantdescription'=>'verbatimattributes','description'=>'verbatimattributes','specimendescription'=>'verbatimattributes',
 			'phenology'=>'reproductivecondition','field:habitat'=>'habitat','habitatdescription'=>'habitat','sitedeschabitat'=>'habitat','captivecultivated'=>'cultivationstatus',
 			'ometid'=>'exsiccatiidentifier','exsiccataeidentifier'=>'exsiccatiidentifier','exsnumber'=>'exsiccatinumber','exsiccataenumber'=>'exsiccatinumber',
-			'group'=>'paleo-lithogroup',//'materialsample-materialsampleid'=>'materialsample-guid','preparationdetails'=>'materialsample-preparationprocess','materialsampletype'=>'materialsample-sampletype',
+			'group'=>'paleo-lithogroup','materialsample-materialsampleid'=>'materialsample-guid','preparationdetails'=>'materialsample-preparationprocess','materialsampletype'=>'materialsample-sampletype',
 			'lithostratigraphic'=>'paleo-lithology','imageurl'=>'associatedmedia','subject_references'=>'tempfield01',
 			'subject_recordid'=>'tempfield02'
 		);
@@ -366,14 +366,14 @@ class SpecUploadBase extends SpecUpload{
 				$translationMap[substr($v,6)] = $v;
 			}
 		}
-		// if($this->materialSampleSupport){
-		// 	$msArr = $this->getMaterialSampleTerms();
-		// 	foreach($msArr as $term){
-		// 		$term = strtolower($term);
-		// 		$baseTerm = substr($term,15);
-		// 		if($baseTerm != 'individualcount' && $baseTerm != 'disposition' && $baseTerm != 'catalognumber') $translationMap[$baseTerm] = $term;
-		// 	}
-		// }
+		if($this->materialSampleSupport){
+			$msArr = $this->getMaterialSampleTerms();
+			foreach($msArr as $term){
+				$term = strtolower($term);
+				$baseTerm = substr($term,15);
+				if($baseTerm != 'individualcount' && $baseTerm != 'disposition' && $baseTerm != 'catalognumber') $translationMap[$baseTerm] = $term;
+			}
+		}
 		if($mode == 'ident'){
 			$prefix = 'ID-';
 			$fieldMap = $this->identFieldMap;
@@ -451,7 +451,7 @@ class SpecUploadBase extends SpecUpload{
 				if(array_key_exists($fieldName,$sourceSymbArr)){
 					//Source Field is mapped to Symbiota Field
 					foreach($symbFields as $sFieldDisplay => $sField){
-						echo "<option ".($sourceSymbArr[$fieldName]==$sField?"SELECTED":"").">".$sFieldDisplay."</option>\n";
+						echo "<option ".(strtolower($sourceSymbArr[$fieldName])==$sField?"SELECTED":"").">".$sFieldDisplay."</option>\n";
 					}
 				}
 				elseif($isAutoMapped){
@@ -1026,7 +1026,7 @@ class SpecUploadBase extends SpecUpload{
 			$this->transferExsiccati();
 			$this->transferGeneticLinks();
 			$this->transferPaleoData();
-			//$this->transferMaterialSampleData();
+			$this->transferMaterialSampleData();
 
 			//Setup and add datasets and link datasets to current user
 		}
@@ -1266,32 +1266,33 @@ class SpecUploadBase extends SpecUpload{
 		}
 	}
 
-	// private function transferMaterialSampleData(){
-	// 	if($this->materialSampleSupport){
-	// 		$this->outputMsg('<li>Linking Material Sample data...</li>');
-	// 		$sql = 'SELECT occid, catalogNumber, materialSampleJSON FROM uploadspectemp WHERE (occid IS NOT NULL) AND (materialSampleJSON IS NOT NULL) AND (collid = '.$this->collId.')';
-	// 		$rs = $this->conn->query($sql);
-	// 		while($r = $rs->fetch_object()){
-	// 			try{
-	// 				$matSampleArr = json_decode($r->materialSampleJSON,true);
-	// 				$insertSQL = '';
-	// 				$valueSQL = '';
-	// 				foreach($matSampleArr as $k => $v){
-	// 					$insertSQL .= ','.$k;
-	// 					$valueSQL .= ',"'.$this->cleanInStr($v).'"';
-	// 				}
-	// 				$sql = 'REPLACE INTO ommaterialsample(occid'.$insertSQL.') VALUES('.$r->occid.$valueSQL.')';
-	// 				if(!$this->conn->query($sql)){
-	// 					$this->outputMsg('<li>ERROR adding Material Sample resources: '.$this->conn->error.'</li>',1);
-	// 				}
-	// 			}
-	// 			catch(Exception $e){
-	// 				$this->outputMsg('<li>ERROR adding Material Sample record (occid: '.$r->occid.', catalogNumber: '.$r->catalogNumber.'): '.$e->getMessage().'</li>',1);
-	// 			}
-	// 		}
-	// 		$rs->free();
-	// 	}
-	// }
+	private function transferMaterialSampleData(){
+		if($this->materialSampleSupport){
+			$this->outputMsg('<li>Linking Material Sample data...</li>');
+			$sql = 'SELECT occid, catalogNumber, materialSampleJSON FROM uploadspectemp WHERE (occid IS NOT NULL) AND (materialSampleJSON IS NOT NULL) AND (collid = '.$this->collId.')';
+			$rs = $this->conn->query($sql);
+			while($r = $rs->fetch_object()){
+				try{
+					$matSampleArr = json_decode($r->materialSampleJSON,true);
+					$insertSQL = '';
+					$valueSQL = '';
+					foreach($matSampleArr as $k => $v){
+						$insertSQL .= ','.$k;
+						$valueSQL .= ',"'.$this->cleanInStr($v).'"';
+					}
+					$sql = 'REPLACE INTO ommaterialsample(occid'.$insertSQL.') VALUES('.$r->occid.$valueSQL.')';
+					if(!$this->conn->query($sql)){
+						$this->outputMsg('<li>ERROR adding Material Sample resources: '.$this->conn->error.'</li>',1);
+					}
+				}
+				catch(Exception $e){
+					$this->outputMsg('<li>ERROR adding Material Sample record (occid: '.$r->occid.', catalogNumber: '.$r->catalogNumber.'): '.$e->getMessage().'</li>',1);
+				}
+			}
+			$rs->free();
+		}
+	}
+
 	private function setOtherCatalogNumbers(){
 		if($this->uploadType == $this->FILEUPLOAD || $this->uploadType == $this->SKELETAL){
 			$sql = 'INSERT IGNORE INTO omoccuridentifiers (occid, identifiername, identifiervalue, modifiedUid)
@@ -1891,13 +1892,12 @@ class SpecUploadBase extends SpecUpload{
 				$this->outputMsg('<li>Error JSON encoding paleo data for record #'.$this->transferCount.'</li>');
 				$this->outputMsg('<li style="margin-left:10px;">Error: '.$e->getMessage().'</li>');
 			}
-			// try {
-			// 	$this->buildMaterialSampleJSON($recMap);
-			// } catch (Exception $e){
-			// 	$this->outputMsg('<li>Error JSON encoding material sample data for record #'.$this->transferCount.'</li>');
-			// 	$this->outputMsg('<li style="margin-left:10px;">Error: '.$e->getMessage().'</li>');
-			// }
-
+			try {
+				$this->buildMaterialSampleJSON($recMap);
+			} catch (Exception $e){
+				$this->outputMsg('<li>Error JSON encoding material sample data for record #'.$this->transferCount.'</li>');
+				$this->outputMsg('<li style="margin-left:10px;">Error: '.$e->getMessage().'</li>');
+			}
 
 			$sqlFragments = $this->getSqlFragments($recMap,$this->occurFieldMap);
 			if($sqlFragments){
@@ -1978,24 +1978,24 @@ class SpecUploadBase extends SpecUpload{
 		}
 	}
 
-	// private function buildMaterialSampleJSON(&$recMap){
-	// 	if($this->materialSampleSupport){
-	// 		$msTermArr = $this->getMaterialSampleTerms();
-	// 		$msArr = array();
-	// 		foreach($msTermArr as $fieldName){
-	// 			if(isset($recMap[$fieldName])){
-	// 				if($recMap[$fieldName] !== '') $msArr[substr($fieldName,15)] = $recMap[$fieldName];
-	// 				unset($recMap[$fieldName]);
-	// 			}
-	// 		}
-	// 		if($msArr){
-	// 			$recMap['materialSampleJSON'] = json_encode($msArr);
-	// 			if(json_last_error() !== JSON_ERROR_NONE){
-	// 				throw new Exception("JSON encoding error: ".json_last_error_msg());
-	// 			}
-	// 		}
-	// 	}
-	// }
+	private function buildMaterialSampleJSON(&$recMap){
+		if($this->materialSampleSupport){
+			$msTermArr = $this->getMaterialSampleTerms();
+			$msArr = array();
+			foreach($msTermArr as $fieldName){
+				if(isset($recMap[$fieldName])){
+					if($recMap[$fieldName] !== '') $msArr[substr($fieldName,15)] = $recMap[$fieldName];
+					unset($recMap[$fieldName]);
+				}
+			}
+			if($msArr){
+				$recMap['materialSampleJSON'] = json_encode($msArr);
+				if(json_last_error() !== JSON_ERROR_NONE){
+					throw new Exception("JSON encoding error: ".json_last_error_msg());
+				}
+			}
+		}
+	}
 
 	protected function loadIdentificationRecord($recMap){
 		if($recMap){
@@ -2116,7 +2116,7 @@ class SpecUploadBase extends SpecUpload{
 				if($parsed_mime) {
 					$this->outputMsg('<li style="margin-left:20px;">Unsupported File Format: ' . $parsed_mime . ' from url ' . $testUrl . ' </li>');
 				} else {
-					$this->outputMsg('<li style="margin-left:20px;">Could Not Parse the File Format: ' . $testUrl . ' </li>');
+					$mime = $GLOBALS['MIME_FALL_BACK'];
 				}
 				// Not Supported extension
 				return false;
@@ -2442,19 +2442,19 @@ class SpecUploadBase extends SpecUpload{
 		return $paleoTermArr;
 	}
 
-	// private function getMaterialSampleTerms(){
-	// 	$msTermArr = array('materialSample-guid','materialSample-sampleType','materialSample-catalogNumber','materialSample-sampleCondition','materialSample-disposition',
-	// 		'materialSample-preservationType','materialSample-preparationProcess','materialSample-preparationDate','materialSample-individualCount',
-	// 		'materialSample-sampleSize','materialSample-storageLocation','materialSample-remarks');
-	// 	//Get dynamic fields
-	// 	$sql = 'SELECT t.term FROM ctcontrolvocab v INNER JOIN ctcontrolvocabterm t ON v.cvID = t.cvID WHERE v.tableName = "ommaterialsampleextended" AND v.fieldName = "fieldName"';
-	// 	$rs = $this->conn->query($sql);
-	// 	while($r = $rs->fetch_object()){
-	// 		$msTermArr[] = 'materialSample-'.$r->term;
-	// 	}
-	// 	$rs->free();
-	// 	return $msTermArr;
-	// }
+	private function getMaterialSampleTerms(){
+		$msTermArr = array('materialSample-sampleType','materialSample-catalogNumber','materialSample-guid','materialSample-sampleCondition','materialSample-disposition',
+			'materialSample-preservationType','materialSample-preparationDetails','materialSample-preparationDate','materialSample-individualCount',
+			'materialSample-sampleSize','materialSample-storageLocation','materialSample-remarks');
+		//Get dynamic fields
+		$sql = 'SELECT t.term FROM ctcontrolvocab v INNER JOIN ctcontrolvocabterm t ON v.cvID = t.cvID WHERE v.tableName = "ommaterialsampleextended" AND v.fieldName = "fieldName"';
+		$rs = $this->conn->query($sql);
+		while($r = $rs->fetch_object()){
+			$msTermArr[] = 'materialSample-'.$r->term;
+		}
+		$rs->free();
+		return $msTermArr;
+	}
 
 	public function getObserverUidArr(){
 		$retArr = array();

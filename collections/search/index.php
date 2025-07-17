@@ -47,7 +47,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 	<link href="<?= $CLIENT_ROOT ?>/collections/search/css/tables.css" type="text/css" rel="stylesheet">
 	<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet">
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js?ver=1" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT . '/js/jquery-ui.min.js'; ?>" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT . '/collections/individual/domManipulationUtils.js'; ?>" type="text/javascript"></script>
 	<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
@@ -107,7 +107,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 			<button onClick="handleAccordionExpand()" class="inner-search button" id="expand-all-button" type="button" style="font-size: 1rem;"><?= $LANG['EXPAND_ALL_SECTIONS']; ?></button>
 			<button onClick="handleAccordionCollapse()" class="inner-search button" id="collapse-all-button" type="button" style="display: none; font-size: 1rem;"><?= $LANG['COLLAPSE_ALL_SECTIONS']; ?></button>
 		</div>
-		<form id="params-form" action="javascript:void(0);">
+		<form id="params-form" action="<?php echo $CLIENT_ROOT . "/collections/list.php"; ?>">
 			<!-- Criteria forms -->
 			<div class="accordions">
 				<!-- Taxonomy -->
@@ -292,7 +292,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 								<div class="text-area-container">
 									<label for="footprintwkt" class="text-area--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['POLYGON'] ?></span>
-										<textarea id="footprintwkt" name="footprintGeoJson" class="full-width-pcnt" rows="5"></textarea>
+										<textarea id="footprintwkt" name="footprintGeoJson" class="full-width-pcnt" rows="5" onchange="cleanPolygon(this)"></textarea>
 										<span class="inset-input-label"><?php echo $LANG['POLYGON'] ?></span>
 										<span class="assistive-text"><?= $LANG['GEOJSON_FORMAT'] ?></span>
 									</label>
@@ -613,8 +613,8 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 						<label for="table-button"><?php echo $LANG['TABLE'] ?></label>
 					</div>
 				</fieldset>
-				<button id="search-btn" onclick="simpleSearch()"><?php echo $LANG['SEARCH'] ?></button>
-				<button id="reset-btn"><?php echo $LANG['RESET'] ?></button>
+				<button id="search-btn" type="submit"><?php echo $LANG['SEARCH'] ?></button>
+				<button id="reset-btn" type="button"><?php echo $LANG['RESET'] ?></button>
 				<h2><?php echo $LANG['CRITERIA'] ?></h2>
 				<div class="criteria-panel">
 					<div id="chips"></div>
@@ -627,7 +627,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 	?>
 </body>
 <script src="<?php echo $filename ?>" type="text/javascript"></script>
-<script src="js/searchform.js?ver=1" type="text/javascript"></script>
+<script src="js/searchform.js?ver=2" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/collections/search/js/alerts.js?v=202107'; ?>" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/js/symb/api.taxonomy.taxasuggest.js'; ?>" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/js/symb/collections.index.js?ver=20171215' ?>" type="text/javascript"></script>

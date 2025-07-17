@@ -449,7 +449,11 @@ class OccurrenceEditorManager {
 				$sqlWhere .= 'AND (o.recordedby IS NULL) ';
 			} elseif (substr($this->qryArr['rb'], 0, 1) == '%') {
 				$collStr = $this->cleanInStr(substr($this->qryArr['rb'], 1));
-				$sqlWhere .= 'AND (MATCH(o.recordedby) AGAINST("' . $collStr . '" IN BOOLEAN MODE)) ';
+				if(strlen($collStr) < 3){
+					$sqlWhere .= 'AND (o.recordedby REGEXP "\\\b' . $collStr . '\\\b") ';
+				} else {
+					$sqlWhere .= 'AND (MATCH(o.recordedby) AGAINST("' . $collStr . '" IN BOOLEAN MODE)) ';
+				}
 			} else {
 				$sqlWhere .= 'AND (o.recordedby LIKE "' . $this->cleanInStr($this->qryArr['rb']) . '%") ';
 			}
