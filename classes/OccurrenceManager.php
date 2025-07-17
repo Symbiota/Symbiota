@@ -279,15 +279,25 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 					}
 					else{
 						if(strpos($value, ' ')){
-							$tempCollSqlArr[] = '(MATCH(o.recordedby) AGAINST("'.str_replace(' ', ' +', $value).'" IN BOOLEAN MODE) AND o.recordedby LIKE "%'.$value.'%")';
+							$tempCollSqlArr[] = '(MATCH(o.recordedby) AGAINST("+'.str_replace(' ', ' +', $value).'" IN BOOLEAN MODE) AND o.recordedby LIKE "%'.$value.'%")';
 						}
 						else{
-							$singleWordArr[] = $value;
+							if(strlen($value) < 3) $singleWordArr['sm'][] = $value;
+							else $singleWordArr['lg'][] = $value;
 						}
 						$tempCollTextArr[] = $value;
 					}
 				}
-				if($singleWordArr) $tempCollSqlArr[] = '(MATCH(o.recordedby) AGAINST("'.implode(' ', $singleWordArr).'"))';
+				if($singleWordArr){
+					if(isset($singleWordArr['sm'])){
+						foreach($singleWordArr['sm'] as $word){
+							$tempCollSqlArr[] = '(o.recordedby REGEXP "\\\b' . $word . '\\\b")';
+						}
+					}
+					if(isset($singleWordArr['lg'])){
+						$tempCollSqlArr[] = '(MATCH(o.recordedby) AGAINST("'.implode(' ', $singleWordArr['lg']).'"))';
+					}
+				}
 			}
 			if($tempCollSqlArr) $sqlWhere .= 'AND ('.implode(' OR ',$tempCollSqlArr).') ';
 			if($tempCollTextArr) $this->displaySearchArr[] = implode(' OR ',$tempCollTextArr);
