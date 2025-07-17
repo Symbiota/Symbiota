@@ -52,6 +52,7 @@ $LANG['REMAP_TO_ANOTHER'] = 'Remapear a Otro Espécimen';
 $LANG['TARGET_OCCID'] = 'Registro objetivo';
 $LANG['OPEN_LINK_AID'] = 'Abrir Ayuda para Enlace de Ocurrencias';
 $LANG['REMAP_IMG'] = 'Remapear Recurso';
+$LANG['CANNOT_REMAP_EXPLAIN'] = 'Esta imagen no se puede reasignar a otra instancia porque el nombre de la imagen coincide con el número de catálogo de la instancia. Cargue una nueva versión de la imagen, con el nombre cambiado, a la instancia correcta. Asegúrese de volver a este registro y <b>Eliminar Recurso</b> para desasignarla de esta instancia.';
 $LANG['LINK_TO_BLANK'] = 'Enlazar a Nuevo Registro de Ocurrencia en Blanco entre la Colección';
 $LANG['LINK_TO_NEW'] = 'Enlazar a Nueva Ocurrencia';
 $LANG['DISASSOCIATE_IMG_ALL'] = 'Disociar Recurso de todos los Registros de Espécimen';
