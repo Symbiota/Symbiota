@@ -380,8 +380,9 @@ DELIMITER |
 CREATE FUNCTION `swap_wkt_coords`(str TEXT) RETURNS text 
   BEGIN 
     DECLARE latStart, latEnd, lngStart, lngEnd, i INT;
-    DECLARE cha CHAR;
+    DECLARE cha BINARY;
     DECLARE flipped TEXT;
+    DECLARE firstPt TEXT;
 
     SET i = 0;
     SET flipped = '';
@@ -399,6 +400,21 @@ CREATE FUNCTION `swap_wkt_coords`(str TEXT) RETURNS text
               " ", 
               SUBSTRING(str, latStart, CASE WHEN latStart = latEnd THEN 1 ELSE latEnd - latStart END)
             );
+
+            IF firstPt is null THEN
+              SET firstPt = CONCAT(
+                SUBSTRING(str, lngStart, CASE WHEN lngStart = lngEnd THEN 1 ELSE lngEnd - lngStart END),
+                " ",
+                SUBSTRING(str, latStart, CASE WHEN latStart = latEnd THEN 1 ELSE latEnd - latStart END)
+              );
+            END IF;
+
+            IF cha = ')' AND firstPt is not null and flipped not like CONCAT('%', firstPt) THEN
+              -- ST_GEOMFROMTEXT requires a polygon's first and last points be the same, so add the first point at the end if needed.
+              SET flipped = CONCAT(flipped, ',', firstPt);
+              SET firstPt = NULL;
+            END IF;
+
           END IF;
           -- SET flipped = CONCAT(flipped, lngEnd);
           SET flipped = CONCAT(flipped, cha);
@@ -512,9 +528,9 @@ END//
 DELIMITER ;
 
 
-DROP TRIGGER specprocessorrawlabelsfulltext_insert;
-DROP TRIGGER specprocessorrawlabelsfulltext_update;
-DROP TRIGGER specprocessorrawlabelsfulltext_delete;
+DROP TRIGGER IF EXISTS specprocessorrawlabelsfulltext_update;
+DROP TRIGGER IF EXISTS specprocessorrawlabelsfulltext_delete;
+DROP TRIGGER IF EXISTS specprocessorrawlabelsfulltext_insert;
 
 DROP TABLE `specprocessorrawlabelsfulltext`;
 
