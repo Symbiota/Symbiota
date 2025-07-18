@@ -70,9 +70,9 @@ else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imgpro
 				<div id="anchorImgDiv" style="float:left;margin-left:10px;display:none" title="<?php echo $LANG['ANCHOR_IMG']; ?>"><a href="#" onclick="anchorImgPanel()"><img src="../../images/anchor.png" style="width:1.3em" /></a></div>
 			</div>
 			<div style="float:left;;padding-right:10px;margin:2px 20px 0px 0px;"><?php echo $LANG['ROTATE']; ?>: <a href="#" onclick="rotateImage(-90)">&nbsp;L&nbsp;</a> &lt;&gt; <a href="#" onclick="rotateImage(90)">&nbsp;R&nbsp;</a></div>
-			<div style="float:right;margin:0px 3px;">
-				<div><input id="imgresmed" name="resradio"  type="radio" checked onchange="changeImgRes('med')" /><?php echo $LANG['MED_RES']; ?>.</div>
-				<div><input id="imgreslg" name="resradio" type="radio" onchange="changeImgRes('lg')" /><?php echo $LANG['HIGH_RES']; ?>.</div>
+			<div id="imgres" style="float:right;margin:0px 3px;">
+				<div><input id="imgresmed" name="resradio"  type="radio" value="med" checked onchange="changeImgRes('med')" /><?php echo $LANG['MED_RES']; ?>.</div>
+				<div><input id="imgreslg" name="resradio" type="radio" value="lg" onchange="changeImgRes('lg')" /><?php echo $LANG['HIGH_RES']; ?>.</div>
 			</div>
 		</div>
 		<div id="labelprocessingdiv" style="clear:both;">
