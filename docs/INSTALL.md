@@ -69,27 +69,82 @@ git clone https://github.com/Symbiota/Symbiota.git
 
 or [Download Source Files From Latest Release](https://github.com/Symbiota/Symbiota/releases)
 
-<!-- 1. Download Symbiota code from GitHub repository -->
-<!--    - https://github.com/BioKIC/Symbiota -->
-<!--    - Command line checkout (recommended): sudo git clone https://github.com/BioKIC/Symbiota.git -->
+### STEP 2: Run setup script
 
-### STEP 2: Configure the Symbiota Portal
-1. Run /config/setup.bash (e.g. sudo bash setup.bash)
-  This script will attempt to:
-     - find all _template.* files and copy them to a new file at the same location without the '_template' suffix 
-     - set ACL permissions on folders that need to be writable by the web server:
-        - /api/storage/framework
-        - /api/storage/logs
-        - /content/collections/
-        - /content/collicon/
-        - /content/dwca/
-        - /content/geolocate/
-        - /content/logs/
-        - /temp/
-2. Symbiota initialization configuration
-  - Modify variables within config/symbini.php to match your project environment. See instructions within configuration file.
+Run /config/setup.bash (e.g. sudo bash setup.bash) which
 
-### STEP 3: Install and configure Symbiota database schema
+This script will attempt to:
+
+1. Find all `_template.*` files and copy them to a new file at the same location without the '_template' suffix. 
+
+<!-- Output from: tree --prune --matchdirs -P '*_template.*' -I 'vendor' Symbiota -->
+```bash
+Symbiota
+├── collections
+│   ├── editor
+│   │   └── includes
+│   │       └── config
+│   │           ├── occurVarColl1_template.php
+│   │           ├── occurVarDefault_template.php
+│   │           └── occurVarGenObsDefault_template.php
+│   └── specprocessor
+│       └── standalone_scripts
+│           ├── ImageBatchConf_template.php
+│           └── ImageBatchConnectionFactory_template.php
+├── config
+│   ├── auth_config_template.php
+│   ├── dbconnection_template.php
+│   └── symbini_template.php
+├── content
+│   ├── collections
+│   │   └── reports
+│   │       └── labeljson_template.php
+│   └── lang
+│       ├── index.es_template.php
+│       └── misc
+│           ├── aboutproject.en_template.php
+│           └── aboutproject.es_template.php
+├── docs
+│   └── pull_request_template.md
+├── includes
+│   ├── citationcollection_template.php
+│   ├── citationdataset_template.php
+│   ├── citationgbif_template.php
+│   ├── citationportal_template.php
+│   ├── footer_template.php
+│   ├── header_template.php
+│   ├── head_template.php
+│   ├── minimalheader_template.php
+│   └── usagepolicy_template.php
+├── index_template.php
+└── misc
+    ├── aboutproject_template.php
+    ├── contacts_template.php
+    ├── generalsimple_template.php
+    ├── general_template.php
+    └── partners_template.php
+```
+
+2. Set ACL permissions on folders that need to be writable by the web server
+```bash
+Symbiota
+├── api
+│   └── storage
+│       └── framework
+├── content
+│   ├── collections
+│   ├── collicon
+│   ├── dwca
+│   └── geolocate
+└── temp
+```
+
+### STEP 3: Configure the Symbiota Portal
+Symbiota initialization configuration
+
+Modify variables within config/symbini.php to match your project environment. See instructions within configuration file.
+
+### STEP 4: Install and configure Symbiota database schema
 1. Create new database (e.g. CREATE SCHEMA symbdb CHARACTER SET utf8 COLLATE utf8_general_ci)
 2. Create read-only and read/write users for Symbiota database
   - CREATE USER 'symbreader'@'localhost' IDENTIFIED BY 'password1';
@@ -109,7 +164,7 @@ or [Download Source Files From Latest Release](https://github.com/Symbiota/Symbi
      - Make sure to run the scripts in the correct order e.g. db_schema_patch-3.1.sql, db_schema_patch-3.2.sql, etc.
   `NOTE: At this point you should have an operational "out of the box" Symbiota portal.`
 
-### STEP 4: Customize
+### STEP 5: Customize
 1. Homepage
   - Modify index.php. This is your home page or landing page to which will need introductory text, graphics, etc.
 2. Layout - Within the /includes directory the header.php and footer.php files are used by all  
