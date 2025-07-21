@@ -123,7 +123,7 @@ if($SYMB_UID){
 						echo "<tr ".($cnt%2?'class="alt"':'').">\n";
 						foreach($headerArr as $k => $v){
 							$displayStr = $occArr[$k];
-							if($displayStr){
+							if($displayStr || $displayStr == 0){
 								if(strlen($displayStr) > 60){
 									$displayStr = substr($displayStr,0,60).'...';
 								}
