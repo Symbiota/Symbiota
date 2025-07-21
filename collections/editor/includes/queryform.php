@@ -366,36 +366,37 @@ else{
 				</section>
 				<section class="fieldGroupDiv">
 					<div class="" style="margin-left: 0;">
-						<label for="orderby"><?php echo $LANG['SORT_BY']; ?>:</label>
+						<label for="orderby"><?= $LANG['SORT_BY']; ?>:</label>
 						<select name="orderby" id="orderby">
 							<option value=""></option>
-							<option value="recordedby" <?php echo ($qOrderBy=='recordedby'?'SELECTED':''); ?>><?php echo $LANG['COLLECTOR']; ?></option>
-							<option value="recordnumber" <?php echo ($qOrderBy=='recordnumber'?'SELECTED':''); ?>><?php echo $LANG['NUMBER']; ?></option>
-							<option value="eventdate" <?php echo ($qOrderBy=='eventdate'?'SELECTED':''); ?>><?php echo $LANG['DATE']; ?></option>
-							<option value="catalognumber" <?php echo ($qOrderBy=='catalognumber'?'SELECTED':''); ?>><?php echo $LANG['CAT_NUM']; ?></option>
-							<option value="recordenteredby" <?php echo ($qOrderBy=='recordenteredby'?'SELECTED':''); ?>><?php echo $LANG['ENTERED_BY']; ?></option>
-							<option value="dateentered" <?php echo ($qOrderBy=='dateentered'?'SELECTED':''); ?>><?php echo $LANG['DATE_ENTERED']; ?></option>
-							<option value="datelastmodified" <?php echo ($qOrderBy=='datelastmodified'?'SELECTED':''); ?>><?php echo $LANG['DATE_LAST_MODIFIED']; ?></option>
-							<option value="processingstatus" <?php echo ($qOrderBy=='processingstatus'?'SELECTED':''); ?>><?php echo $LANG['PROC_STATUS']; ?></option>
-							<option value="sciname" <?php echo ($qOrderBy=='sciname'?'SELECTED':''); ?>><?php echo $LANG['SCI_NAME']; ?></option>
-							<option value="family" <?php echo ($qOrderBy=='family'?'SELECTED':''); ?>><?php echo $LANG['FAMILY']; ?></option>
-							<option value="country" <?php echo ($qOrderBy=='country'?'SELECTED':''); ?>><?php echo $LANG['COUNTRY']; ?></option>
-							<option value="stateprovince" <?php echo ($qOrderBy=='stateprovince'?'SELECTED':''); ?>><?php echo $LANG['STATE_PROVINCE']; ?></option>
-							<option value="county" <?php echo ($qOrderBy=='county'?'SELECTED':''); ?>><?php echo $LANG['COUNTY']; ?></option>
-							<option value="municipality" <?php echo ($qOrderBy=='municipality'?'SELECTED':''); ?>><?php echo $LANG['MUNICIPALITY']; ?></option>
-							<option value="locationid" <?php echo ($qOrderBy=='locationid'?'SELECTED':''); ?>><?php echo $LANG['LOCATION_ID']; ?></option>
-							<option value="locality" <?php echo ($qOrderBy=='locality'?'SELECTED':''); ?>><?php echo $LANG['LOCALITY']; ?></option>
-							<option value="decimallatitude" <?php echo ($qOrderBy=='decimallatitude'?'SELECTED':''); ?>><?php echo $LANG['DEC_LAT']; ?></option>
-							<option value="decimallongitude" <?php echo ($qOrderBy=='decimallongitude'?'SELECTED':''); ?>><?php echo $LANG['DEC_LONG']; ?></option>
-							<option value="minimumelevationinmeters" <?php echo ($qOrderBy=='minimumelevationinmeters'?'SELECTED':''); ?>><?php echo $LANG['ELEV_MIN']; ?></option>
-							<option value="maximumelevationinmeters" <?php echo ($qOrderBy=='maximumelevationinmeters'?'SELECTED':''); ?>><?php echo $LANG['ELEV_MAX']; ?></option>
+							<option value="recordedby" <?= ($qOrderBy=='recordedby'?'SELECTED':''); ?>><?= $LANG['COLLECTOR']; ?></option>
+							<option value="recordnumber" <?= ($qOrderBy=='recordnumber'?'SELECTED':''); ?>><?= $LANG['NUMBER']; ?></option>
+							<option value="eventdate" <?= ($qOrderBy=='eventdate'?'SELECTED':''); ?>><?= $LANG['DATE']; ?></option>
+							<option value="catalognumber" <?= ($qOrderBy=='catalognumber'?'SELECTED':''); ?>><?= $LANG['CAT_NUM']; ?></option>
+							<option value="recordenteredby" <?= ($qOrderBy=='recordenteredby'?'SELECTED':''); ?>><?= $LANG['ENTERED_BY']; ?></option>
+							<option value="dateentered" <?= ($qOrderBy=='dateentered'?'SELECTED':''); ?>><?= $LANG['DATE_ENTERED']; ?></option>
+							<option value="datelastmodified" <?= ($qOrderBy=='datelastmodified'?'SELECTED':''); ?>><?= $LANG['DATE_LAST_MODIFIED']; ?></option>
+							<option value="processingstatus" <?= ($qOrderBy=='processingstatus'?'SELECTED':''); ?>><?= $LANG['PROC_STATUS']; ?></option>
+							<option value="sciname" <?= ($qOrderBy=='sciname'?'SELECTED':''); ?>><?= $LANG['SCI_NAME']; ?></option>
+							<option value="family" <?= ($qOrderBy=='family'?'SELECTED':''); ?>><?= $LANG['FAMILY']; ?></option>
+							<option value="country" <?= ($qOrderBy=='country'?'SELECTED':''); ?>><?= $LANG['COUNTRY']; ?></option>
+							<option value="stateprovince" <?= ($qOrderBy=='stateprovince'?'SELECTED':''); ?>><?= $LANG['STATE_PROVINCE']; ?></option>
+							<option value="county" <?= ($qOrderBy=='county'?'SELECTED':''); ?>><?= $LANG['COUNTY']; ?></option>
+							<option value="municipality" <?= ($qOrderBy=='municipality'?'SELECTED':''); ?>><?= $LANG['MUNICIPALITY']; ?></option>
+							<option value="locationid" <?= ($qOrderBy=='locationid'?'SELECTED':''); ?>><?= $LANG['LOCATION_ID']; ?></option>
+							<option value="locality" <?= ($qOrderBy=='locality'?'SELECTED':''); ?>><?= $LANG['LOCALITY']; ?></option>
+							<option value="decimallatitude" <?= ($qOrderBy=='decimallatitude'?'SELECTED':''); ?>><?= $LANG['DEC_LAT']; ?></option>
+							<option value="decimallongitude" <?= ($qOrderBy=='decimallongitude'?'SELECTED':''); ?>><?= $LANG['DEC_LONG']; ?></option>
+							<option value="minimumelevationinmeters" <?= ($qOrderBy=='minimumelevationinmeters'?'SELECTED':''); ?>><?= $LANG['ELEV_MIN']; ?></option>
+							<option value="maximumelevationinmeters" <?= ($qOrderBy=='maximumelevationinmeters'?'SELECTED':''); ?>><?= $LANG['ELEV_MAX']; ?></option>
+							<option value="labelProject" <?= ($qOrderBy=='labelProject'?'SELECTED':''); ?>><?= $LANG['LAB_PROJECT']; ?></option>
 						</select>
 					</div>
 					<div>
-						<label for="orderbydir"><?php echo $LANG['ORDER_BY'] ?>:</label>
+						<label for="orderbydir"><?= $LANG['ORDER_BY'] ?>:</label>
 						<select name="orderbydir" id="orderbydir">
-							<option value="ASC"><?php echo $LANG['ASCENDING']; ?></option>
-							<option value="DESC" <?php echo ($qOrderByDir=='DESC'?'SELECTED':''); ?>><?php echo $LANG['DESCENDING']; ?></option>
+							<option value="ASC"><?= $LANG['ASCENDING']; ?></option>
+							<option value="DESC" <?= ($qOrderByDir=='DESC'?'SELECTED':''); ?>><?= $LANG['DESCENDING']; ?></option>
 						</select>
 					</div>
 					<div >
@@ -406,10 +407,10 @@ else{
 							?>
 						</label>
 						<select name="reclimit" id="reclimit" >
-							<option <?php echo ($recLimit==500?'selected':''); ?>>500</option>
-							<option <?php echo ($recLimit==1000?'selected':''); ?>>1000</option>
-							<option <?php echo ($recLimit==2000?'selected':''); ?>>2000</option>
-							<option <?php echo ($recLimit==3000?'selected':''); ?>>3000</option>
+							<option <?= ($recLimit==500?'selected':''); ?>>500</option>
+							<option <?= ($recLimit==1000?'selected':''); ?>>1000</option>
+							<option <?= ($recLimit==2000?'selected':''); ?>>2000</option>
+							<option <?= ($recLimit==3000?'selected':''); ?>>3000</option>
 						</select> <?php //echo $LANG['RECORDS']; ?>
 					</div>
 				</section>
