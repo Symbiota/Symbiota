@@ -1,10 +1,10 @@
 # Installing Symbiota
 
 ## REQUIREMENTS
-- GIT Client - not required, though recommend for installation and updating source code
+GIT Client - not required, though recommend for installation and updating source code
 
 ### Web Server
-- Apache HTTP Server (2.x or better) - other PHP enabled web servers will work, though the code has been well tested using Apache HTTP Server and Nginx
+Apache HTTP Server (2.x or better) - other PHP enabled web servers will work, though the code has been well tested using Apache HTTP Server and Nginx
 
 ### PHP
 PHP 8.2 or higher is recommended for the best performance, security, and feature support. The minimum requirement is PHP 8.1, but using older versions may cause security and performance issues over time. When third party authentication is enabled, PHP 8.2 or above is required.
