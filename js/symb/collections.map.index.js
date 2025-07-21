@@ -346,7 +346,8 @@ function verifyCollForm(f) {
   }
 
   // Geo Context
-  if (window.searchFormPaleo) {
+  const searchFormPaleo = document.getElementById("searchFormPaleo") || null;
+  if (searchFormPaleo) {
     let early = f.earlyInterval.value;
     let late = f.lateInterval.value;
     if ((early !== "" && late === "") || (early === "" && late !== "")) {
