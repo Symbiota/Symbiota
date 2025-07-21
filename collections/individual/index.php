@@ -1037,10 +1037,14 @@ $traitArr = $indManager->getTraitArr();
 									if($imgArr['url'] && substr($thumbUrl,0,7)!='process' && $imgArr['url'] != $imgArr['lgurl']) echo '<div><a href="' . $imgArr['url'] . '" target="_blank">' . $LANG['OPEN_MEDIUM'] . '</a></div>';
 									if($imgArr['lgurl']) echo '<div><a href="' . $imgArr['lgurl'] . '" target="_blank">' . $LANG['OPEN_LARGE'] . '</a></div>';
 									if($imgArr['sourceurl']) echo '<div><a href="' . $imgArr['sourceurl'] . '" target="_blank">' . $LANG['OPEN_SOURCE'] . '</a></div>';
-									//Use image rights settings as the default for current record
-									if($imgArr['rights']) $collMetadata['rights'] = $imgArr['rights'];
-									if($imgArr['copyright']) $collMetadata['rightsholder'] = $imgArr['copyright'];
-									if($imgArr['accessrights']) $collMetadata['accessrights'] = $imgArr['accessrights'];
+									if($imgArr['copyright']) {
+										// Add a clickable link to the rights licence if it's a web address with http
+										if($imgArr['rights'] && strpos($imgArr['rights'], "http") !== false) {
+											echo '<br/><div style="max-width: 200px;"><a href="' . $imgArr['rights'] . '" target="_blank">' .  $imgArr['copyright'] . '</a></div>';
+										} else {
+											echo '<br/><div style="max-width: 200px;">' . $imgArr['copyright'] . '</div>';
+										}
+									}
 									echo '</div>';
 								}
 								?>
