@@ -276,7 +276,8 @@ class Media {
 	private const DEFAULT_GEN_THUMBNAIL_IMG = true;
 
 	public static function setStorageDriver(StorageStrategy $storage_driver): void {
-		$this->storage_driver = $storage_driver::class;
+		//$this->storage_driver = $storage_driver::class;
+		$this->storage_driver = get_class($storage_driver);
 	}
 
 	private static function getMediaRootPath(): string {
@@ -1349,14 +1350,28 @@ class Media {
 
 		$new_image = imagecreatetruecolor($width, $height);
 
-		$image = match($mime_type) {
-			'image/jpeg' => imagecreatefromjpeg($src_path),
-			'image/png' => imagecreatefrompng($src_path),
-			'image/gif' => imagecreatefromgif($src_path),
-			default => throw new Exception(
-				'Mime Type: ' . $mime_type . ' not supported for creation'
-			)
-		};
+		// JGM: match() is only compatible with PHP 8.0
+		// $image = match($mime_type) {
+		// 	'image/jpeg' => imagecreatefromjpeg($src_path),
+		// 	'image/png' => imagecreatefrompng($src_path),
+		// 	'image/gif' => imagecreatefromgif($src_path),
+		// 	default => throw new Exception(
+		// 		'Mime Type: ' . $mime_type . ' not supported for creation'
+		// 	)
+		// };
+		switch($mime_type) {
+			case 'image/jpeg':
+				$image = imagecreatefromjpeg($src_path);
+			case 'image/png':
+				$image = imagecreatefrompng($src_path);
+			case 'image/gif':
+				$image = imagecreatefromgif($src_path);
+			default:
+				throw new Exception(
+					'Mime Type: ' . $mime_type . ' not supported for creation'
+				);
+		}
+
 
 		//This is need to maintain transparency if this is here
 		if($mime_type === 'image/png') {
@@ -1565,7 +1580,7 @@ class Media {
 	 * @param Mysqli $conn
 	 * @return array<string>
 	 */
-	public static function getMediaTags(int|array $media_id, mysqli $conn = null): array {
+	public static function getMediaTags($media_id, mysqli $conn = null): array {
 		$sql = 'SELECT t.mediaID, k.tagkey, k.shortlabel, k.description_en FROM imagetag t
 		INNER JOIN imagetagkey k ON t.keyvalue = k.tagkey
 		WHERE t.mediaID ';
