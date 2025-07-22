@@ -212,6 +212,7 @@ Modify index.php. This is your home page or landing page to which will need intr
 #### Layout
 Layout - Within the /includes directory the header.php and footer.php files are used by all pages to establish uniform layout.
 
+<!-- Output: tree --prune --matchdirs -P 'header.php|footer.php' -I 'vendor' Symbiota -->
 ```
 Symbiota
 └── includes
@@ -221,7 +222,7 @@ Symbiota
 
 #### Css Styles
 Files for style control - Within the css/symbiota folder there are two files you can modify to change the appearance of the portal:
-<!-- TODO (Logan) file tree -->
+<!-- Output: tree --prune --matchdirs -P 'variables.css|customizations.css' -I 'vendor' Symbiota -->
 ```
 Symbiota
 └── css
