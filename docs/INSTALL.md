@@ -234,7 +234,7 @@ NOTE: Do not modify any other css files as these files may be over written in fu
 
 #### Customize language tags
 Overide existing language tags or create new tags by modifying the override files in content/lang/templates/
-Example: modify content/lang/templates/header.es.override.php to replace the defualt values used when browsing the portal in Spanish.
+Example: modify content/lang/templates/header.es.override.php to replace the default values used when browsing the portal in Spanish.
 
 #### Misc configurations and recommendations
 Modify usagepolicy.php as needed
