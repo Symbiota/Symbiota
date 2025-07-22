@@ -205,25 +205,36 @@ Symbiota
 `NOTE: At this point you should have an operational "out of the box" Symbiota portal.`
 
 ### STEP 5: Customize
-1. Homepage
-  - Modify index.php. This is your home page or landing page to which will need introductory text, graphics, etc.
-2. Layout - Within the /includes directory the header.php and footer.php files are used by all  
-  pages to establish uniform layout. 
-  - header.php: determines the content of the global page header and menu navigation.  
-  - footer.php: determines the content of the global page footer.  
-3. Files for style control - Within the css/symbiota folder there are two files you can modify to change the appearance of the portal:
+
+#### Homepage
+Modify index.php. This is your home page or landing page to which will need introductory text, graphics, etc.
+
+#### Layout
+Layout - Within the /includes directory the header.php and footer.php files are used by all pages to establish uniform layout.
+  - header.php: determines the content of the global page header and menu navigation.
+  - footer.php: determines the content of the global page footer.
+
+#### Css Styles
+Files for style control - Within the css/symbiota folder there are two files you can modify to change the appearance of the portal:
   - variables.css - Modify this file to set global values used across the portal
-  - customization.css - Add css selectors to this file to override Symbiota's default styling on specific html elements 
+  - customization.css - Add css selectors to this file to override Symbiota's default styling on specific html elements
+<!-- TODO (Logan) file tree -->
+
   - NOTE: Do not modify any other css files as these files may be over written in future updates
-4. Customize language tags
-  - Overide existing language tags or create new tags by modifying the override files in content/lang/templates/
-     - Example: modify content/lang/templates/header.es.override.php to replace the defualt values used when browsing the portal in Spanish.
-5. Misc configurations and recommendations
-- Modify usagepolicy.php as needed 
-- Install robots.txt file within root directory - The robots.txt file is a standard method used by websites to indicate to visiting web crawlers and other web robots which portions of the website they are allowed to visit and under what conditions. A robots.txt template can be found within the /includes directory. This file should be moved into the domain's root directory, which may or may not be the Symbiota root directory. The file paths listed within the file should be adjusted to match the portal installation path (e.g., start with $CLIENT_ROOT). See links below for more information:
- - https://developers.google.com/search/docs/crawling-indexing/robots/create-robots-txt
- - https://en.wikipedia.org/wiki/Robots.txt
-- Refer to the [third party authentication instructions](https://github.com/BioKIC/Symbiota/blob/master/docs/third_party_auth_setup.md) for specifics about third party authentication setup.
+
+#### Customize language tags
+Overide existing language tags or create new tags by modifying the override files in content/lang/templates/
+Example: modify content/lang/templates/header.es.override.php to replace the defualt values used when browsing the portal in Spanish.
+
+#### Misc configurations and recommendations
+Modify usagepolicy.php as needed
+
+Install robots.txt file within root directory - The robots.txt file is a standard method used by websites to indicate to visiting web crawlers and other web robots which portions of the website they are allowed to visit and under what conditions. A robots.txt template can be found within the /includes directory. This file should be moved into the domain's root directory, which may or may not be the Symbiota root directory. The file paths listed within the file should be adjusted to match the portal installation path (e.g., start with $CLIENT_ROOT). See links below for more information:
+
+https://developers.google.com/search/docs/crawling-indexing/robots/create-robots-txt
+https://en.wikipedia.org/wiki/Robots.txt
+
+Refer to the [third party authentication instructions](https://github.com/BioKIC/Symbiota/blob/master/docs/third_party_auth_setup.md) for specifics about third party authentication setup.
 
 ## DATA
 
