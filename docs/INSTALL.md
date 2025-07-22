@@ -75,7 +75,7 @@ Run /config/setup.bash (e.g. sudo bash setup.bash) which
 
 This script will attempt to:
 
-1. Find all `_template.*` files and copy them to a new file at the same location without the '_template' suffix. 
+Find all `_template.*` files and copy them to a new file at the same location without the `_template` suffix.
 
 <!-- Output from: tree --prune --matchdirs -P '*_template.*' -I 'vendor' Symbiota -->
 ```bash
@@ -125,7 +125,7 @@ Symbiota
     └── partners_template.php
 ```
 
-2. Set ACL permissions on folders that need to be writable by the web server
+Then set ACL permissions on folders that need to be writable by the web server
 ```bash
 Symbiota
 ├── api
@@ -142,7 +142,15 @@ Symbiota
 ### STEP 3: Configure the Symbiota Portal
 Symbiota initialization configuration
 
-Modify variables within config/symbini.php to match your project environment. See instructions within configuration file.
+Modify variables within 
+<!-- Output from: tree --prune --matchdirs -P 'symbini.php' -I 'vendor' Symbiota -->
+```bash
+Symbiota
+└── config
+    └── symbini.php
+```
+to match your project environment. See instructions within configuration file.
+<!-- TODO (Logan) Add mininum required symbini variables here -->
 
 ### STEP 4: Install and configure Symbiota database schema
 1. Create new database (e.g. CREATE SCHEMA symbdb CHARACTER SET utf8 COLLATE utf8_general_ci)
