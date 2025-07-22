@@ -82,8 +82,10 @@ if($action == 'Automap Fields') $autoMap = true;
 
 $statusStr = '';
 $isEditor = 0;
-if($IS_ADMIN) $isEditor = 1;
-elseif(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin'])) $isEditor = 1;
+$isAdmin = ($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin']))) ? 1 : 0;
+if($isAdmin) $isEditor = 1;
+// Allow for Personal Observation Management
+elseif($duManager->getCollInfo('colltype') == 'General Observations' && array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'])) $isEditor = 1;
 if($isEditor && $collid){
 	$duManager->readUploadParameters();
 	$isLiveData = false;
@@ -261,8 +263,19 @@ include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class="navpath">
 	<a href="../../index.php"><?php echo htmlspecialchars((isset($LANG['HOME']) ? $LANG['HOME'] : 'Home'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+
+	<?php
+	if($duManager->getCollInfo('colltype') == 'General Observations' && !$isAdmin){
+	?>
+	<a href="../../profile/viewprofile.php?tabindex=1"><?php echo htmlspecialchars((isset($LANG['PERS_MANAGEMENT'])?$LANG['PERS_MANAGEMENT']:'Personal Management'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+	<?php
+	} else {
+	?>
 	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo htmlspecialchars((isset($LANG['COL_MGMNT']) ? $LANG['COL_MGMNT'] : 'Collection Management Panel'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 	<a href="specuploadmanagement.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars((isset($LANG['LIST_UPLOAD']) ? $LANG['LIST_UPLOAD'] : 'List of Upload Profiles'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+	<?php
+	}
+	?>
 	<b><?php echo (isset($LANG['SPEC_UPLOAD']) ? $LANG['SPEC_UPLOAD'] : 'Specimen Uploader'); ?></b>
 </div>
 <div role="main" id="innertext">
@@ -430,7 +443,7 @@ include($SERVER_ROOT.'/includes/header.php');
 									<div style="margin-top:30px;">
 										<?php
 										if($isLiveData){
-											if($duManager->getCollInfo('colltype') == 'General Observations'){
+											if($duManager->getCollInfo('colltype') == 'General Observations' && $isAdmin){
 												echo (isset($LANG['TARGET_USER']) ? $LANG['TARGET_USER'] : 'Target User').': ';
 												echo '<select name="observeruid">';
 												echo '<option value="">'.(isset($LANG['SEL_TAR_USER']) ? $LANG['SEL_TAR_USER'] : 'Select Target User').'</option>';
@@ -599,7 +612,7 @@ include($SERVER_ROOT.'/includes/header.php');
 						<div id="uldiv" style="margin-top:30px;">
 							<?php
 							if($isLiveData || $uploadType == $SKELETAL){
-								if($duManager->getCollInfo('colltype') == 'General Observations'){
+								if($duManager->getCollInfo('colltype') == 'General Observations' && $isAdmin){
 									echo (isset($LANG['TARGET_USER']) ? $LANG['TARGET_USER'] : 'Target User').': ';
 									echo '<select name="observeruid">';
 									echo '<option value="">'.(isset($LANG['SEL_TAR_USER']) ? $LANG['SEL_TAR_USER'] : 'Select Target User').'</option>';

@@ -26,6 +26,7 @@ foreach($collArr as $id => $collectionArr){
 		<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['OCCURRENCE_MENU'];?></title>	
 		<link href="<?php echo htmlspecialchars($CSS_BASE_PATH, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/symbiota/main.css" type="text/css" rel="stylesheet">
 		<style>
+			.importItem { margin-left:10px; display:none; }
          .screen-reader-only{ 
             position: absolute;
             left: -10000px;
@@ -80,6 +81,19 @@ foreach($collArr as $id => $collectionArr){
 					<li>
 						<a href="../collections/editor/observationsubmit.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
 							<?php echo htmlspecialchars($LANG['SUBMIT_OBSERVATION'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>
+						</a>
+					</li>
+					<li>
+						<a href="#" onclick="$('li.importItem').show(); return false;">
+							<?= $LANG['IMPORT_SPECIMEN'] ?>
+						</a>
+						<a id="importinfo" href="https://biokic.github.io/symbiota-docs/coll_manager/upload/" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>">
+								<img src="../images/info.png" style="width:13px;" alt="<?= $LANG['INFO_ALT'] ?>" />
+						</a><br/>
+					</li>
+					<li class="importItem">
+						<a href="../collections/admin/specupload.php?uploadtype=3&collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+							<?= $LANG['TEXT_FILE_IMPORT'] ?>
 						</a>
 					</li>
 					<li>

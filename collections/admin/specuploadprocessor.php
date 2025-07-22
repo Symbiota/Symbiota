@@ -82,8 +82,10 @@ $duManager->setVerifyImageUrls($verifyImages);
 $duManager->setProcessingStatus($processingStatus);
 
 $isEditor = 0;
-if($IS_ADMIN) $isEditor = 1;
-elseif(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin'])) $isEditor = 1;
+$isAdmin = ($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin']))) ? 1 : 0;
+if($isAdmin) $isEditor = 1;
+// Allow for Personal Observation Management
+elseif($duManager->getCollInfo('colltype') == 'General Observations' && array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'])) $isEditor = 1;
 if($isEditor && $collid){
 	$duManager->readUploadParameters();
 	$duManager->setFieldMaps($_POST);
@@ -110,8 +112,18 @@ include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class="navpath">
 	<a href="../../index.php"><?php echo (isset($LANG['HOME']) ? $LANG['HOME'] : 'Home'); ?></a> &gt;&gt;
+	<?php
+	if($duManager->getCollInfo('colltype') == 'General Observations' && !$isAdmin){
+	?>
+	<a href="../../profile/viewprofile.php?tabindex=1"><?php echo htmlspecialchars((isset($LANG['PERS_MANAGEMENT'])?$LANG['PERS_MANAGEMENT']:'Personal Management'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+	<?php
+	} else {
+	?>
 	<a href="../misc/collprofiles.php?collid=<?= $collid ?>&emode=1"><?php echo (isset($LANG['COL_MGMNT']) ? $LANG['COL_MGMNT'] : 'Collection Management Panel'); ?></a> &gt;&gt;
 	<a href="specuploadmanagement.php?collid=<?= $collid ?>"><?php echo (isset($LANG['LIST_UPLOAD']) ? $LANG['LIST_UPLOAD'] : 'List of Upload Profiles'); ?></a> &gt;&gt;
+	<?php
+	}
+	?>
 	<b><?php echo (isset($LANG['SPEC_UPLOAD']) ? $LANG['SPEC_UPLOAD'] : 'Specimen Uploader'); ?></b>
 </div>
 <div role="main" id="innertext">

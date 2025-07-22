@@ -22,9 +22,10 @@ if($uploadType) $duManager->setUploadType($uploadType);
 else $uploadType = $duManager->getUploadType();
 
 $isEditor = 0;
-if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin']))){
-	$isEditor = 1;
-}
+$isAdmin = ($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin']))) ? 1 : 0;
+if($isAdmin) $isEditor = 1;
+// Allow for Personal Observation Management
+elseif($duManager->getCollInfo('colltype') == 'General Observations' && array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'])) $isEditor = 1;
 if($uploadType == $IPTUPLOAD || $uploadType == $SYMBIOTA){
 	if($duManager->getPath()) header('Location: specuploadmap.php?uploadtype='.$uploadType.'&uspid='.$uspid.'&collid='.$collid);
 }
@@ -102,8 +103,18 @@ include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class="navpath">
 	<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+	<?php
+	if($duManager->getCollInfo('colltype') == 'General Observations' && !$isAdmin){
+	?>
+	<a href="../../profile/viewprofile.php?tabindex=1"><?php echo htmlspecialchars((isset($LANG['PERS_MANAGEMENT'])?$LANG['PERS_MANAGEMENT']:'Personal Management'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+	<?php
+	} else {
+	?>
 	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo htmlspecialchars($LANG['COL_MGMNT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 	<a href="specuploadmanagement.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars($LANG['LIST_UPLOAD'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+	<?php
+	}
+	?>
 	<b><?php echo $LANG['SPEC_UPLOAD']; ?></b>
 </div>
 <div role="main" id="innertext">
