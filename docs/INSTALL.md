@@ -25,7 +25,7 @@ Optional: Pear package [Image_Barcode2](https://pear.php.net/package/Image_Barco
 
 Optional: Install Pear [Mail](https://pear.php.net/package/Mail/redirected) for SMTP mail support
 
-Optional: Install pecl package [Imagick](https://pecl.php.net/package/imagick) alternativelibrary for image processing.
+Optional: Install pecl package [Imagick](https://pecl.php.net/package/imagick) alternative library for image processing.
 
 Recommended configuration adjustments: 
 ```ini
