@@ -174,6 +174,11 @@ Symbiota
     └── dbconnection.php
 ```
 
+Note - If your php version lower than 8.1 you must add this line to `dbconnection.php` in the `getCon` function.
+```php
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT)
+```
+
 Lastly, install database schema and schema patch files
 
 #### Method 1: Web Browser Schema Manager
