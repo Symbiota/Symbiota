@@ -10,6 +10,9 @@ Apache HTTP Server (2.x or better) - other PHP enabled web servers will work, th
 PHP 8.2 or higher is recommended for the best performance, security, and feature support. The minimum requirement is PHP 8.1, but using older versions may cause security and performance issues over time. When third party authentication is enabled, PHP 8.2 or above is required.
 
 Required extensions:
+- mbstring
+- openssl
+
 ```ini
 extension=curl
 extension=exif
@@ -17,9 +20,6 @@ extension=gd
 extension=mysqli
 extension=zip
 ```
-
-( todo mbstring config)
-( todo openssl config)
 
 Optional: Pear package [Image_Barcode2](https://pear.php.net/package/Image_Barcode2) – enables barcodes on specimen labels
 
@@ -53,10 +53,6 @@ MariaDB (v10.3+) or MySQL (v8.0+) - Development and testing performed using Mari
 Recommended Settings:
 ```sql
 SET GLOBAL sql_mode = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
-```
-
-```
-mysqld --innodb-buffer-pool-size=[80% or ram] --innodb-buffer-pool-instances=[todo get number]
 ```
 
 ## INSTRUCTIONS
