@@ -247,24 +247,31 @@ Refer to the [third party authentication instructions](https://github.com/BioKIC
 Data - The general layers of data within Symbiota are: user, taxonomic, occurrence (specimen), images, checklist, identification key, and taxon profile (common names, text descriptions, etc).
 While user interfaces have been developed for web management for most of these data layers, some table tables still need to be managed via the backend (e.g. loaded by hand).
 
-   1. User and permissions - Default administrative user has been installed with following login: username = admin; password: admin.
-      It is highly recommended that you change the password, or better yet, create a new admin user, assign admin rights, and then delete default admin user.
-      Management control panel for permissions is available within Data Management Panel on the sitemap page.
-   2. Occurrence (Specimen) Data: SuperAdmin can create new collection instances via Data Management pane within sitemap. 
-      Within the collection's data management menu, one can provide admin and read access to new users, add/edit occurrences, batch load data, etc.
-   3. Taxonomic Thesaurus - Taxon names are stored within the 'taxa' table.
-      Taxonomic hierarchy and placement definitions are controlled in the 'taxstatus' table.
-      A recursive data relationship within the 'taxstatus' table defines the taxonomic hierarchy.
-      While multiple taxonomic thesauri can be defined, one of the thesauri needs to function as the central taxonomy.
-      Names must be added in order from upper taxonomic levels to lower (e.g. kingdom, class, order, variety).
-      Accepted names must be loaded before non-accepted names.
-      1. Names can be added one-by-one using taxonomic management tools (see sitemap.php)
-      2. Name can be imported from taxonomic authorities (e.g. Catalog of Life, WoRMS, TROPICOS, etc) based on occurrence data loaded into the system.
-         This is the recommended method since it will focus on only relevant taxonomic groups. First, load an occurrence dataset (see step 2 above), 
-         then from the Collection Data Management menu, select Data Cleaning Tools => Analyze taxonomic names...
-      3. Batch Loader - Multiple names can be loaded from a flat, tab-delimited text file. See instructions on the batch loader for loading multiple names from a flat file.
-      4. Look in /config/schema/data/ folder to find taxonomic thesaurus data that may serve as a base for your taxonomic thesaurus.
-   4. See <https://symbiota.org> for tutorials and more information on how load and manage data 
+### User and permissions
+Default administrative user has been installed with following login: username = admin; password: admin.
+It is highly recommended that you change the password, or better yet, create a new admin user, assign admin rights, and then delete default admin user.
+Management control panel for permissions is available within Data Management Panel on the sitemap page.
+
+### Occurrence (Specimen) Data
+SuperAdmin can create new collection instances via Data Management pane within sitemap. 
+Within the collection's data management menu, one can provide admin and read access to new users, add/edit occurrences, batch load data, etc.
+
+### Taxonomic Thesaurus
+Taxon names are stored within the 'taxa' table.
+Taxonomic hierarchy and placement definitions are controlled in the 'taxstatus' table.
+A recursive data relationship within the 'taxstatus' table defines the taxonomic hierarchy.
+While multiple taxonomic thesauri can be defined, one of the thesauri needs to function as the central taxonomy.
+Names must be added in order from upper taxonomic levels to lower (e.g. kingdom, class, order, variety).
+Accepted names must be loaded before non-accepted names.
+  1. Names can be added one-by-one using taxonomic management tools (see sitemap.php)
+  2. Name can be imported from taxonomic authorities (e.g. Catalog of Life, WoRMS, TROPICOS, etc) based on occurrence data loaded into the system.
+     This is the recommended method since it will focus on only relevant taxonomic groups. First, load an occurrence dataset (see step 2 above), 
+     then from the Collection Data Management menu, select Data Cleaning Tools => Analyze taxonomic names...
+  3. Batch Loader - Multiple names can be loaded from a flat, tab-delimited text file. See instructions on the batch loader for loading multiple names from a flat file.
+  4. Look in /config/schema/data/ folder to find taxonomic thesaurus data that may serve as a base for your taxonomic thesaurus.
+
+### Futher Assistance
+See <https://symbiota.org> for tutorials and more information on how load and manage data 
 
 ## UPDATES
 
