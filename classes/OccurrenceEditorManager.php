@@ -769,7 +769,7 @@ class OccurrenceEditorManager {
 
 	public function getRecordIdByOccId($occid) {
 		$recordId = '';
-		$stmt = $this->conn->prepare("SELECT recordId$recordId FROM omoccurrences WHERE occid = ?");
+		$stmt = $this->conn->prepare("SELECT recordId FROM omoccurrences WHERE occid = ?");
 		$stmt->bind_param("i", $occid);
 		if ($stmt->execute()) {
 			$stmt->bind_result($recordId);
