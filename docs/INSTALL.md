@@ -226,8 +226,8 @@ Files for style control - Within the css/symbiota folder there are two files you
 Symbiota
 └── css
     └── symbiota
-        ├── customizations.css - Add css selectors to this file to override Symbiota\'s default styling on specific html elements
-        └── variables.css - Modify this file to set global values used across the portal
+        ├── customizations.css - Add css selector overrides for Symbiota default styling
+        └── variables.css - Set global values used across the portal
 ```
 NOTE: Do not modify any other css files as these files may be over written in future updates
 
