@@ -153,24 +153,56 @@ to match your project environment. See instructions within configuration file.
 <!-- TODO (Logan) Add mininum required symbini variables here -->
 
 ### STEP 4: Install and configure Symbiota database schema
-1. Create new database (e.g. CREATE SCHEMA symbdb CHARACTER SET utf8 COLLATE utf8_general_ci)
-2. Create read-only and read/write users for Symbiota database
-  - CREATE USER 'symbreader'@'localhost' IDENTIFIED BY 'password1';
-  - CREATE USER 'symbwriter'@'localhost' IDENTIFIED BY 'password2';
-  - GRANT SELECT,EXECUTE ON `symbdb`.\* TO `symbreader`@localhost;
-  - GRANT SELECT,UPDATE,INSERT,DELETE,EXECUTE ON `symbdb`.\* TO `symbwriter`@localhost;
-3. Modify config/dbconnection.php with read-only and read/write logins, passwords, and schema (DB) name.
-4. Install database schema and schema patch files
-  - Location: <SymbiotaBaseFolder>/config/schema/3.0/
-  - Method 1: Using a web browser
-     - Navigate to <SymbiotaServer>/admin/schemamanager.php. Selecting Sitemap from site menu will automatically forward to installer if database schema is missing. 
-     - Follow the prompts provided by the database schema assistant
-  - Method 2: MySQL command-line
-     - Run db_schema-3.0.sql to install the core table structure
-        - From MySQL command-line: SOURCE <BaseFolderPath>/config/schema/3.0/db_schema-3.0.sql
-     - From MySQL command-line run each schema patch: SOURCE /BaseFolderPath/config/schema/3.0/patches/db_schema_patch-3.x.sql
-     - Make sure to run the scripts in the correct order e.g. db_schema_patch-3.1.sql, db_schema_patch-3.2.sql, etc.
-  `NOTE: At this point you should have an operational "out of the box" Symbiota portal.`
+<!-- 1. Create new database (e.g. CREATE SCHEMA symbdb CHARACTER SET utf8 COLLATE utf8_general_ci) -->
+
+<!-- 2. Create read-only and read/write users for Symbiota database -->
+Run sql to create database and create read and write users. Make sure to change passwords and database name as needed.
+
+* Note make sure to run this sql as the root user or a user with proper permissions.
+```sql
+-- Create new database
+CREATE SCHEMA symbdb CHARACTER SET utf8 COLLATE utf8_general_ci
+
+-- Create read-only and read/write users for Symbiota database
+CREATE USER 'symbreader'@'localhost' IDENTIFIED BY 'password1';
+CREATE USER 'symbwriter'@'localhost' IDENTIFIED BY 'password2';
+GRANT SELECT,EXECUTE ON `symbdb`.* TO `symbreader`@localhost;
+GRANT SELECT,UPDATE,INSERT,DELETE,EXECUTE ON `symbdb`.* TO `symbwriter`@localhost;
+```
+
+Then modify `dbconnection.php` with read-only and read/write logins, passwords, and database name to the values you chose.
+<!-- Output: tree --prune --matchdirs -P 'dbconnection.php' -I 'vendor' Symbiota  -->
+```bash
+Symbiota
+└── config
+    └── dbconnection.php
+```
+
+Lastly, install database schema and schema patch files
+
+#### Method 1: Web Browser Schema Manager
+Navigate to `<SymbiotaServer>/admin/schemamanager.php`.
+
+Selecting Sitemap from site menu will automatically forward to installer if database schema is missing.
+
+Follow the prompts provided by the database schema assistant
+
+#### Method 2: MySQL Command Line
+Run the following sql source files in order from top to bottom
+<!-- Output: tree --prune --matchdirs -P '*_patch-*|db_schema-*' -I 'vendor|1.0' Symbiota -->
+```bash
+Symbiota
+└── config
+    └── schema
+        └── 3.0
+            ├── db_schema-3.0.sql
+            └── patches
+                ├── db_schema_patch-3.1.sql
+                ├── db_schema_patch-3.2.sql
+                └── db_schema_patch-3.3.sql
+```
+
+`NOTE: At this point you should have an operational "out of the box" Symbiota portal.`
 
 ### STEP 5: Customize
 1. Homepage
