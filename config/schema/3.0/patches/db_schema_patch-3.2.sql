@@ -400,7 +400,7 @@ CREATE FUNCTION `swap_wkt_coords`(str TEXT) RETURNS text
               SUBSTRING(str, lngStart, CASE WHEN lngStart = lngEnd THEN 1 ELSE lngEnd - lngStart END),
               " ", 
               SUBSTRING(str, latStart, CASE WHEN latStart = latEnd THEN 1 ELSE latEnd - latStart END)
-			      );
+	    );
             SET flipped = CONCAT(flipped, flippedPoint);
 
             IF firstPt is null THEN
