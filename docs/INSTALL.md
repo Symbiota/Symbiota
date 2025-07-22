@@ -167,6 +167,11 @@ GRANT SELECT,UPDATE,INSERT,DELETE,EXECUTE ON `symbdb`.* TO `symbwriter`@localhos
 ```
 
 Then modify `dbconnection.php` with read-only and read/write logins, passwords, and database name to the values you chose.
+* Note - If running a php version prior to 8.1 you must add the following
+```php
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT)
+```
+
 <!-- Output: tree --prune --matchdirs -P 'dbconnection.php' -I 'vendor' Symbiota  -->
 ```
 Symbiota
