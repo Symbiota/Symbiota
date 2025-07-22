@@ -55,7 +55,7 @@ Recommended Settings:
 SET GLOBAL sql_mode = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
 ```
 
-```bash
+```
 mysqld --innodb-buffer-pool-size=[80% or ram] --innodb-buffer-pool-instances=[todo get number]
 ```
 
@@ -63,7 +63,7 @@ mysqld --innodb-buffer-pool-size=[80% or ram] --innodb-buffer-pool-instances=[to
 
 ### STEP 1: Download Symbiota code
 
-```bash
+```
 git clone https://github.com/Symbiota/Symbiota.git
 ```
 
@@ -78,7 +78,7 @@ This script will attempt to:
 Find all `_template.*` files and copy them to a new file at the same location without the `_template` suffix.
 
 <!-- Output from: tree --prune --matchdirs -P '*_template.*' -I 'vendor' Symbiota -->
-```bash
+```
 Symbiota
 ├── collections
 │   ├── editor
@@ -126,7 +126,7 @@ Symbiota
 ```
 
 Then set ACL permissions on folders that need to be writable by the web server
-```bash
+```
 Symbiota
 ├── api
 │   └── storage
@@ -144,7 +144,7 @@ Symbiota initialization configuration
 
 Modify variables within 
 <!-- Output from: tree --prune --matchdirs -P 'symbini.php' -I 'vendor' Symbiota -->
-```bash
+```
 Symbiota
 └── config
     └── symbini.php
@@ -172,7 +172,7 @@ GRANT SELECT,UPDATE,INSERT,DELETE,EXECUTE ON `symbdb`.* TO `symbwriter`@localhos
 
 Then modify `dbconnection.php` with read-only and read/write logins, passwords, and database name to the values you chose.
 <!-- Output: tree --prune --matchdirs -P 'dbconnection.php' -I 'vendor' Symbiota  -->
-```bash
+```
 Symbiota
 └── config
     └── dbconnection.php
@@ -190,7 +190,7 @@ Follow the prompts provided by the database schema assistant
 #### Method 2: MySQL Command Line
 Run the following sql source files in order from top to bottom
 <!-- Output: tree --prune --matchdirs -P '*_patch-*|db_schema-*' -I 'vendor|1.0' Symbiota -->
-```bash
+```
 Symbiota
 └── config
     └── schema
@@ -212,7 +212,7 @@ Modify index.php. This is your home page or landing page to which will need intr
 #### Layout
 Layout - Within the /includes directory the header.php and footer.php files are used by all pages to establish uniform layout.
 
-```bash
+```
 Symbiota
 └── includes
     ├── footer.php - determines the content of the global page header and menu navigation.
@@ -222,11 +222,11 @@ Symbiota
 #### Css Styles
 Files for style control - Within the css/symbiota folder there are two files you can modify to change the appearance of the portal:
 <!-- TODO (Logan) file tree -->
-```bash
+```
 Symbiota
 └── css
     └── symbiota
-        ├── customizations.css - Add css selector overrides for Symbiota default styling
+        ├── customizations.css - Add css selector overrides Symbiota default styling
         └── variables.css - Set global values used across the portal
 ```
 NOTE: Do not modify any other css files as these files may be over written in future updates
