@@ -441,7 +441,7 @@ class DwcArchiverOccurrence extends Manager{
 			//Get associations defined within omoccurassociations (both subject and object)
 			$assocTypeArr = array('internalOccurrence', 'externalOccurrence');
 			if($associationType) $assocTypeArr = explode(' ', $associationType);
-			$sql = 'SELECT assocID, occid, associationType, occidAssociate, relationship, subType, resourceUrl, identifier, basisOfRecord, verbatimSciname, recordID FROM omoccurassociations
+			$sql = 'SELECT assocID, occid, associationType, occidAssociate, relationship, subType, resourceUrl, objectID, basisOfRecord, verbatimSciname, recordID FROM omoccurassociations
 				WHERE (occid = '.$occid.' OR occidAssociate = '.$occid.') AND associationType IN("'.implode('","', $assocTypeArr).'") ';
 			$rs = $this->conn->query($sql);
 			if($rs){
@@ -460,7 +460,7 @@ class DwcArchiverOccurrence extends Manager{
 					}
 					elseif($r->resourceUrl){
 						$assocArr[$r->assocID]['resourceUrl'] = $r->resourceUrl;
-						$assocArr[$r->assocID]['identifier'] = $r->identifier;
+						$assocArr[$r->assocID]['objectID'] = $r->objectID;
 					}
 					$assocArr[$r->assocID]['relationship'] = $relationship;
 					$assocArr[$r->assocID]['subtype'] = $r->subType;
@@ -492,7 +492,7 @@ class DwcArchiverOccurrence extends Manager{
 				else{
 					$retStr .= ' | relationship: ' . $assocateArr['relationship'];
 					if(!empty($assocateArr['subtype'])) $retStr .= ' (' . $assocateArr['subtype'] . ')';
-					if(!empty($assocateArr['identifier'])) $retStr .= ', identifier: ' . $assocateArr['identifier'];
+					if(!empty($assocateArr['objectID'])) $retStr .= ', objectID: ' . $assocateArr['objectID'];
 					elseif(!empty($assocateArr['recordID'])) $retStr .= ', recordID:  ' . $assocateArr['recordID'];
 					if(!empty($assocateArr['basisOfRecord'])) $retStr .= ', basisOfRecord: ' . $assocateArr['basisOfRecord'];
 					if(!empty($assocateArr['scientificName'])) $retStr .= ', scientificName: ' . $assocateArr['scientificName'];
@@ -507,7 +507,7 @@ class DwcArchiverOccurrence extends Manager{
 	private function getAssociationJSON($occid) {
 
 		// Build SQL to find any associations for the occurrence record passed with occid
-		$sql = 'SELECT occid, associationType, occidAssociate, relationship, subType, identifier, basisOfRecord, resourceUrl, verbatimSciname, locationOnHost
+		$sql = 'SELECT occid, associationType, occidAssociate, relationship, subType, objectID, basisOfRecord, resourceUrl, verbatimSciname, locationOnHost
 			FROM omoccurassociations
 			WHERE (occid = ' . $occid . ' OR occidAssociate = ' . $occid . ') ';
 		if ($rs = $this->conn->query($sql)) {
@@ -557,14 +557,14 @@ class DwcArchiverOccurrence extends Manager{
 
 				// Set the association type field
 				if (array_key_exists('occidAssociate', $assocArr)) {
-					$assocArr['type'] = 'internalOccurrence';
-				} else if (array_key_exists('identifier', $assocArr) || array_key_exists('resourceUrl', $assocArr)) {
-					$assocArr['type'] = 'externalOccurrence';
+					$assocArr['associationType'] = 'internalOccurrence';
+				} else if (array_key_exists('objectID', $assocArr) || array_key_exists('resourceUrl', $assocArr)) {
+					$assocArr['associationType'] = 'externalOccurrence';
 				} else if (array_key_exists('verbatimSciname', $assocArr)) {
-					$assocArr['type'] = 'genericObservation';
+					$assocArr['associationType'] = 'genericObservation';
 				} else {
 					// Should not happen, but if so, this seems to be the best fit
-					$assocArr['type'] = 'genericObservation';
+					$assocArr['associationType'] = 'genericObservation';
 				}
 
 				// Check for cases where the occidAssociate is this occid.
@@ -647,7 +647,7 @@ class DwcArchiverOccurrence extends Manager{
 			$retArr[$r->occid]['scientificName'] = $r->sciname;
 			$guid = $r->recordID;
 			if($r->occurrenceID) $guid = $r->occurrenceID;
-			$retArr[$r->occid]['identifier'] = $guid;
+			$retArr[$r->occid]['objectID'] = $guid;
 			$resourceUrl = $guid;
 			if(substr($resourceUrl, 0, 4) != 'http'){
 				$resourceUrl = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?guid='.$guid;

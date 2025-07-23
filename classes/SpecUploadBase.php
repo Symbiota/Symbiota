@@ -202,7 +202,7 @@ class SpecUploadBase extends SpecUpload{
 	/*	//Associated Occurrence fields
 		// All-purpose fields
 		$this->symbFields[] = 'associatedOccurrences';
-		$this->symbFields[] = 'associatedOccurrence:type';
+		$this->symbFields[] = 'associatedOccurrence:associationType';
 		$this->symbFields[] = 'associatedOccurrence:basisOfRecord';
 		$this->symbFields[] = 'associatedOccurrence:relationship';
 		$this->symbFields[] = 'associatedOccurrence:subType';
@@ -211,7 +211,7 @@ class SpecUploadBase extends SpecUpload{
 		// internalOccurrence
 		$this->symbFields[] = 'associatedOccurrence:occidAssociate';
 		// externalOccurrence
-		$this->symbFields[] = 'associatedOccurrence:identifier';
+		$this->symbFields[] = 'associatedOccurrence:objectID';
 		$this->symbFields[] = 'associatedOccurrence:resourceUrl';
 		// genericObservation
 		$this->symbFields[] = 'associatedOccurrence:verbatimSciname';
@@ -1628,24 +1628,24 @@ class SpecUploadBase extends SpecUpload{
 
 					// Get the type, and remove it from the array
 					// TODO: Anything needed to be done with the type here?
-					$type = $assoc['type'];
-					unset($assoc['type']);
+					$type = $assoc['associationType'];
+					//unset($assoc['associationType']);
 
 					// Association is marked as an internal occurrence, but includes an identifier (guid), and resourceUrl
 					// Need to determine if it is still an internal occurrence, and if so, get its guid
 					// TODO: Should there be a check to make sure that this is an internal occurrence,
 					//   regardless of whether identifier/resourceURL are present?
-					if($type == 'internalOccurrence' && array_key_exists('identifier', $assoc) && array_key_exists('resourceUrl', $assoc)) {
+					if($type == 'internalOccurrence' && array_key_exists('objectID', $assoc) && array_key_exists('resourceUrl', $assoc)) {
 
 						// Construct and run query to get occid from guid
 						// Check for an occurrenceID first, then a guid.
 						// Finally, check for an occurrenceID or a dbpk that matches
-						$sql = "SELECT occid FROM omoccurrences WHERE occurrenceID = '" . $assoc['identifier'] .
+						$sql = "SELECT occid FROM omoccurrences WHERE occurrenceID = '" . $assoc['objectID'] .
 							"' UNION " .
-							"SELECT occid FROM guidoccurrences WHERE guid = '" . $assoc['identifier'] .
+							"SELECT occid FROM guidoccurrences WHERE guid = '" . $assoc['objectID'] .
 							"' UNION " .
-							"SELECT occid FROM uploadspectemp WHERE (occurrenceID = '" . $assoc['identifier'] .
-							"' OR dbpk = '" . $assoc['identifier'] . "' OR dbpk = " . $assoc['occidAssociate'] . ")";
+							"SELECT occid FROM uploadspectemp WHERE (occurrenceID = '" . $assoc['objectID'] .
+							"' OR dbpk = '" . $assoc['objectID'] . "' OR dbpk = " . $assoc['occidAssociate'] . ")";
 
 						//echo $sql;
 						$rs1 = $this->conn->query($sql);
@@ -1657,7 +1657,7 @@ class SpecUploadBase extends SpecUpload{
 							$assoc['occidAssociate'] = $r1->occid;
 
 							// Remove the externalOccurrence fields, no longer needed
-							unset($assoc['identifier'], $assoc['resourceUrl']);
+							unset($assoc['objectID'], $assoc['resourceUrl']);
 
 						} else {
 
@@ -1671,7 +1671,7 @@ class SpecUploadBase extends SpecUpload{
 
 					// First, try to update the association record if it already exists
 					// If if exists, it should have identical occid/occidAssociate, relationship, and one of:
-					//   occidAssociate/occid, verbatimSciname, identifier, or resourcUrl
+					//   occidAssociate/occid, verbatimSciname, objectID, or resourcUrl
 
 					// Set up a where clause to test whether or not the association already exists
 					// Check whether occidAssociate is set. If so, then the relationships apply to both specimens with one entry
@@ -1687,12 +1687,12 @@ class SpecUploadBase extends SpecUpload{
 						// Check for verbatimSciname if set, otherwise check for identifier if set, and finally for resourceUrl if set
 						$sqlWhere = " WHERE occid = " . $r->occid . " AND relationship = '" . $assoc['relationship'] . "'" .
 							(array_key_exists('verbatimSciname', $assoc) ? " AND verbatimSciname = '" . $assoc['verbatimSciname'] . "'" :
-							(array_key_exists('identifier', $assoc) ? " AND identifier = '" . $assoc['identifier'] . "'" :
+							(array_key_exists('objectID', $assoc) ? " AND objectID = '" . $assoc['objectID'] . "'" :
 							(array_key_exists('resourceUrl', $assoc) ? " AND resourceUrl = '" . $assoc['resourceUrl'] . "'" : '')));
 					}
 
 					// Check for matching rows: the association already exists
-					$sql = 'SELECT subType, identifier, basisOfRecord, resourceUrl, verbatimSciname, locationOnHost, notes ' .
+					$sql = 'SELECT subType, objectID, basisOfRecord, resourceUrl, verbatimSciname, locationOnHost, notes ' .
 						'FROM omoccurassociations' . $sqlWhere;
 					$rs1 = $this->conn->query($sql);
 
@@ -1721,8 +1721,6 @@ class SpecUploadBase extends SpecUpload{
 							// Add where clause to update query.
 							$sql .= $sqlWhere;
 
-							//echo $sql . '<br/>';
-
 							// Run update query, reporting any error
 							if (!$this->conn->query($sql)) {
 								$this->outputMsg('<li>Updating association failed for occid: ' . $r->occid .
@@ -1738,8 +1736,6 @@ class SpecUploadBase extends SpecUpload{
 							implode(', ', array_map(function($value) {
 								return("'{$value}'");
 							}, $assoc)) . ');';
-
-						//echo $sql . '<br/>';
 
 						// Run insert query, reporting any error
 						if (!$this->conn->query($sql)) {

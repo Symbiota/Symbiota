@@ -11,7 +11,7 @@ class OccurrenceUtil {
 
 	// Current version for associatedOccurrences JSON
 	// TODO: is this the best place for it? No other obvious landing spot.
-	public static $assocOccurVersion = '1.0';
+	public static $assocOccurVersion = '1.1';
 
 	/*
 	 * INPUT: String representing a verbatim date
@@ -824,38 +824,38 @@ class OccurrenceUtil {
 			$assocArr = array();
 
 			// Establish the associated occurrence type, check first to see if it's already set (and valid)
-			if (isset($recMap['associatedOccurrence:type'])) {
+			if (isset($recMap['associatedOccurrence:associationType'])) {
 
 				// Valid type, so use it
-				if ($recMap['associatedOccurrence:type'] == 'internalOccurrence' ||
-					$recMap['associatedOccurrence:type'] == 'externalOccurrence' ||
-					$recMap['associatedOccurrence:type'] == 'genericObservation') {
-					$assocArr['type'] = $recMap['associatedOccurrence:type'];
+				if ($recMap['associatedOccurrence:associationType'] == 'internalOccurrence' ||
+					$recMap['associatedOccurrence:associationType'] == 'externalOccurrence' ||
+					$recMap['associatedOccurrence:associationType'] == 'genericObservation') {
+					$assocArr['associationType'] = $recMap['associatedOccurrence:associationType'];
 				} else {
 
 					// Invalid type, fall back to genericObservation
-					$assocArr['type'] = 'genericObservation';
+					$assocArr['associationType'] = 'genericObservation';
 				}
 			}
 
 			// No association type set, try to guess
-			if (!isset($assocArr['type'])) {
+			if (!isset($assocArr['associationType'])) {
 
 				if (isset($recMap['associatedOccurrence:occidAssociate']) && $recMap['associatedOccurrence:occidAssociate']) {
-					$assocArr['type'] = 'internalOccurrence';
-				} else if ((isset($recMap['associatedOccurrence:identifier']) && $recMap['associatedOccurrence:identifier']) ||
+					$assocArr['associationType'] = 'internalOccurrence';
+				} else if ((isset($recMap['associatedOccurrence:objectID']) && $recMap['associatedOccurrence:objectID']) ||
 					(isset($recMap['associatedOccurrence:resourceUrl']) && $recMap['associatedOccurrence:resourceUrl'])) {
-					$assocArr['type'] = 'externalOccurrence';
+					$assocArr['associationType'] = 'externalOccurrence';
 				} else if (isset($recMap['associatedOccurrence:verbatimSciname']) && $recMap['associatedOccurrence:verbatimSciname']) {
-					$assocArr['type'] = 'genericObservation';
+					$assocArr['associationType'] = 'genericObservation';
 				} else {
 					// Should not happen, but if so, this seems to be the best fit
-					$assocArr['type'] = 'genericObservation';
+					$assocArr['associationType'] = 'genericObservation';
 				}
 			}
 
 			// Finished with the type field, so unset it
-			unset($recMap['associatedOccurrence:type']);
+			unset($recMap['associatedOccurrence:associationType']);
 
 			// TODO: restrict fields to controlled vocab for relationship and subtype?
 
