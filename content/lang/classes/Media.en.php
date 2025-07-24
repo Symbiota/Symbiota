@@ -11,5 +11,6 @@ $LANG['DUPLICATE_MEDIA_FILE'] = 'Duplicate Media File';
 $LANG['FILE_DOES_NOT_EXIST'] = 'File does not exist';
 $LANG['FILE_ALREADY_EXISTS'] = 'File already exists';
 $LANG['UNKNOWN_MEDIA_TYPE_MSG'] = 'Unknown Media Type';
+$LANG['SUSPICIOUS_FILE'] = 'Suspicious File';
 
 ?>
