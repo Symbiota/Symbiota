@@ -2,7 +2,7 @@
 User-agent: *  
 
 Crawl-delay: 10
-Sitemap: /portal/sitemap.php
+Sitemap: /portal/content/sitemaps/sitemap.xml
 
 Allow: /portal/index.php  
 Allow: /portal/checklists/index.php  
