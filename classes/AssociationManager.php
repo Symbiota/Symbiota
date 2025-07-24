@@ -82,11 +82,14 @@ class AssociationManager extends OccurrenceTaxaManager{
 			// External, observational, or resource associations
 			$externalAndObservationalSql = "SELECT oa.occid FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid  LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE (oa.associationType='observational' OR oa.associationType='externalOccurrence' OR oa.associationType='resource') AND oa.relationship " . $relationshipStr . " ";
 			$externalAndObservationalSql .= $this->getAssociatedTaxonWhereFrag($associationArr);
+			// @TODO if association type is any and there's an entry in taxon, subtract out occids with od.tidinterpreted in the list for taxon
 	
 			if(array_key_exists('search', $associationArr)){
 				$sql .= "AND (o.occid IN (SELECT occid FROM ( " . $forwardSql . " UNION " . $obsSql . " UNION " . $reverseSql . " UNION " . $externalAndObservationalSql . " ) AS occids)";
+				// $sql .= "AND (o.occid IN (SELECT occid FROM ( " . $forwardSql . " UNION " . $obsSql . " UNION " . $reverseSql . " ) AS occids)";
 			}else{
 				$sql .= "AND (o.occid IN (SELECT occid FROM ( " . $forwardSql . " UNION " . $reverseSql . " UNION " . $externalAndObservationalSql . " ) AS occids)";
+				// $sql .= "AND (o.occid IN (SELECT occid FROM ( " . $forwardSql . " UNION " . $reverseSql . " ) AS occids)";
 			}
     	}
     	return $sql;
