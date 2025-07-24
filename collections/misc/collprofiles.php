@@ -96,7 +96,7 @@ if ($SYMB_UID) {
 			if(e.submitter.value === "edit") {
 				return processEditQuickSearch('<?php echo $CLIENT_ROOT ?>')
 			} else if(e.submitter.value === "search") {
-				return submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includecult=' + <?= !empty($SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT) ? '1' : '0' ?> + '&includeothercatnum=1', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? '1' : '0' ?> + '&usethes=1&taxontype=2 ');
+				return submitAndRedirectSearchForm('<?= $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includecult=' + <?= !empty($SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT) ? '1' : '0' ?> + '&includeothercatnum=1', '&includecult=' + <?= !empty($SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT) ? '1' : '0' ?> + '&usethes=1&taxontype=2 ');
 			}
 
 			e.preventDefault();

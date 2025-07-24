@@ -740,7 +740,7 @@ if($IS_ADMIN){
 					}
 					?>
 					<form method="POST" action="<?php echo $CLIENT_ROOT ?>/profile/newprofile.php">
-						<button id="adminRegister" name="adminRegister" class="button button-tertiary" type="submit" value="1">
+						<button id="adminRegister" name="adminRegister" class="button button-secondary bottom-breathing-room" type="submit" value="1">
 							<?php echo isset($LANG['CREATE_NEW_USER']) ? $LANG['CREATE_NEW_USER'] : 'Create New User'; ?>
 						</button>
 					</form>

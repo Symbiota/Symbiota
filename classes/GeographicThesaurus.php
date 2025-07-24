@@ -4,6 +4,19 @@ include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 
 class GeographicThesaurus extends Manager {
 
+	const OCEANS = 10;
+	const ISLAND_GROUP = 20;
+	const ISLAND = 30;
+	const CONTINENT_REGION = 40;
+	const COUNTRY = 50;
+	const STATE_PROVINCE = 60;
+	const COUNTY = 70;
+	const MUNICIPALITY = 80;
+	const CITY_TOWN = 100;
+	const PLACE_NAME = 110;
+	const LAKE_POND = 150;
+	const RIVER_CREEK = 160;
+
 	function __construct() {
 		parent::__construct(null, 'write');
 	}
@@ -342,18 +355,18 @@ class GeographicThesaurus extends Manager {
 			$rankArr = $GLOBALS['GEO_THESAURUS_RANKING'];
 		} else {
 			$rankArr = array(
-				10 => 'Oceans',
-				20 => 'Island Group',
-				30 => 'Island',
-				40 => 'Continent/Region',
-				50 => 'Country',
-				60 => 'State/Province',
-				70 => 'County',
-				80 => 'Municipality',
-				100 => 'City/Town',
-				110 => 'Place Name',
-				150 => 'Lake/Pond',
-				160 => 'River/Creek'
+				self::OCEANS => 'Oceans',
+				self::ISLAND_GROUP => 'Island Group',
+				self::ISLAND => 'Island',
+				self::CONTINENT_REGION => 'Continent/Region',
+				self::COUNTRY => 'Country',
+				self::STATE_PROVINCE => 'State/Province',
+				self::COUNTY => 'County',
+				self::MUNICIPALITY => 'Municipality',
+				self::CITY_TOWN => 'City/Town',
+				self::PLACE_NAME  => 'Place Name',
+				self::LAKE_POND => 'Lake/Pond',
+				self::RIVER_CREEK => 'River/Creek'
 			);
 		}
 		return $rankArr;
@@ -1083,5 +1096,16 @@ class GeographicThesaurus extends Manager {
 		);
 
 		return $result->fetch_assoc() ? true : false;
+	}
+
+	static function unitsEqual(String $inputString, String $geoterm, int $rank) {
+		$inputString = strtolower(trim($inputString));
+		$geoterm = strtolower(trim($geoterm));
+
+		if($rank === self::COUNTY) {
+			$inputString = trim(str_replace(array('county','parish'), '', $inputString));
+		}
+
+		return $inputString === $geoterm;
 	}
 }

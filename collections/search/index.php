@@ -51,13 +51,13 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 	<link href="<?= $CLIENT_ROOT ?>/collections/search/css/tables.css" type="text/css" rel="stylesheet">
 	<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet">
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js?ver=1" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT . '/js/jquery-ui.min.js'; ?>" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT . '/collections/individual/domManipulationUtils.js'; ?>" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT . '/js/symb/localitySuggest.js' ?>" type="text/javascript"></script>
 	<script>
 		const clientRoot = '<?php echo $CLIENT_ROOT; ?>';
-		const paleoTimes = <?= json_encode($paleoTimes) ?>;
+		const paleoTimes = <?= json_encode($paleoTimes ?? []) ?>;
 		const handleAccordionExpand = () => {
 			const accordions = document.querySelectorAll('input[class="accordion-selector"]');
 			const accordionIds = [];
@@ -231,7 +231,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 								<div class="input-text-container">
 									<label for="upperlat" class="input-text--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['NORTHERN_LATITUDE'] ?></span>
-										<input type="number" step="any" min="-90" max="90" id="upperlat" name="upperlat" data-chip="<?php echo $LANG['UPPER_LAT'] ?>" />
+										<input type="number" step="any" min="0" max="90" id="upperlat" name="upperlat" data-chip="<?php echo $LANG['UPPER_LAT'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['NORTHERN_LATITUDE'] ?></span>
 										<span class="assistive-text"><?php echo $LANG['VALUE_BETWEEN_NUM'] ?></span>
 									</label>
@@ -240,53 +240,54 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 										<span class="screen-reader-only"><?php echo $LANG['SELECT_UPPER_LAT_DIRECTION_NORTH_SOUTH'] ?></span>
 										<select class="mt-1" id="upperlat_NS" name="upperlat_NS">
 											<option value=""><?php echo $LANG['SELECT_NORTH_SOUTH'] ?></option>
-											<option id="ulN" value="N"><?php echo $LANG['NORTH'] ?></option>
-											<option id="ulS" value="S"><?php echo $LANG['SOUTH'] ?></option>
+											<option id="ulN" value="N" data-chip="<?php echo $LANG['UPPER_HEMI'] ?>"><?php echo $LANG['NORTH'] ?></option>
+											<option id="ulS" value="S" data-chip="<?php echo $LANG['UPPER_HEMI'] ?>"><?php echo $LANG['SOUTH'] ?></option>
 										</select>
 									</label>
 								</div>
 								<div class="input-text-container">
 									<label for="bottomlat" class="input-text--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['SOUTHERN_LATITUDE'] ?></span>
-										<input type="number" step="any" min="-90" max="90" id="bottomlat" name="bottomlat" data-chip="<?php echo $LANG['BOTTOM_LAT'] ?>" />
+										<input type="number" step="any" min="0" max="90" id="bottomlat" name="bottomlat" data-chip="<?php echo $LANG['BOTTOM_LAT'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['SOUTHERN_LATITUDE'] ?></span>
 									</label>
 									<label for="bottomlat_NS">
 										<span class="screen-reader-only"><?php echo $LANG['SELECT_BOTTOM_LAT_DIREC_NORTH_SOUTH'] ?></span>
 										<select class="mt-1" id="bottomlat_NS" name="bottomlat_NS">
 											<option value=""><?php echo $LANG['SELECT_NORTH_SOUTH'] ?></option>
-											<option id="blN" value="N"><?php echo $LANG['NORTH'] ?></option>
-											<option id="blS" value="S"><?php echo $LANG['SOUTH'] ?></option>
+											<option id="blN" value="N" data-chip="<?php echo $LANG['BOTTOM_HEMI'] ?>"><?php echo $LANG['NORTH'] ?></option>
+											<option id="blS" value="S" data-chip="<?php echo $LANG['BOTTOM_HEMI'] ?>"><?php echo $LANG['SOUTH'] ?></option>
 										</select>
 									</label>
 								</div>
 								<div class="input-text-container">
 									<label for="leftlong" class="input-text--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['LEFT_LONGITUDE'] ?></span>
-										<input type="number" step="any" min="-180" max="180" id="leftlong" name="leftlong" data-chip="<?php echo $LANG['LEFT_LONG'] ?>" />
+										<input type="number" step="any" min="0" max="180" id="leftlong" name="leftlong" data-chip="<?php echo $LANG['LEFT_LONG'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['WESTERN_LONGITUDE'] ?></span>
+										<span class="assistive-text"><?php echo $LANG['VALUES_BETWEEN_0_TO_180'] ?></span>
 									</label>
 									<label for="leftlong_EW" class="input-text--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['SELECT_LEFT_LONG_DIREC_WEST_EAST'] ?></span>
 										<select class="mt-1" id="leftlong_EW" name="leftlong_EW">
 											<option value=""><?php echo $LANG['SELECT_WEST_EAST'] ?></option>
-											<option id="llW" value="W"><?php echo $LANG['WEST'] ?></option>
-											<option id="llE" value="E"><?php echo $LANG['EAST'] ?></option>
+											<option id="llW" value="W" data-chip="<?php echo $LANG['LEFT_HEMI'] ?>"><?php echo $LANG['WEST'] ?></option>
+											<option id="llE" value="E" data-chip="<?php echo $LANG['LEFT_HEMI'] ?>"><?php echo $LANG['EAST'] ?></option>
 										</select>
 									</label>
 								</div>
 								<div class="input-text-container">
 									<label for="rightlong" class="input-text--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['RIGHT_LONGITUDE'] ?></span>
-										<input type="number" step="any" min="-180" max="180" id="rightlong" name="rightlong" data-chip="<?php echo $LANG['RIGHT_LONG'] ?>" />
+										<input type="number" step="any" min="0" max="180" id="rightlong" name="rightlong" data-chip="<?php echo $LANG['RIGHT_LONG'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['EASTERN_LONGITUDE'] ?></span>
 									</label>
 									<label for="rightlong_EW" class="input-text--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['SELECT_RIGHT_LONG_DIREC_WEST_EAST'] ?></span>
 										<select class="mt-1" id="rightlong_EW" name="rightlong_EW">
 											<option value=""><?php echo $LANG['SELECT_WEST_EAST'] ?></option>
-											<option id="rlW" value="W"><?php echo $LANG['WEST'] ?></option>
-											<option id="rlE" value="E"><?php echo $LANG['EAST'] ?></option>
+											<option id="rlW" value="W" data-chip="<?php echo $LANG['RIGHT_HEMI'] ?>"><?php echo $LANG['WEST'] ?></option>
+											<option id="rlE" value="E" data-chip="<?php echo $LANG['RIGHT_HEMI'] ?>"><?php echo $LANG['EAST'] ?></option>
 										</select>
 									</label>
 								</div>
@@ -297,7 +298,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 								<div class="text-area-container">
 									<label for="footprintwkt" class="text-area--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['POLYGON'] ?></span>
-										<textarea id="footprintwkt" name="footprintGeoJson" class="full-width-pcnt" rows="5"></textarea>
+										<textarea id="footprintwkt" name="footprintGeoJson" class="full-width-pcnt" rows="5" onchange="cleanPolygon(this)"></textarea>
 										<span class="inset-input-label"><?php echo $LANG['POLYGON'] ?></span>
 										<span class="assistive-text"><?= $LANG['GEOJSON_FORMAT'] ?></span>
 									</label>
@@ -309,30 +310,30 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 								<div class="input-text-container">
 									<label for="pointlat" class="input-text--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['POINT_LATITUDE'] ?></span>
-										<input type="number" step="any" min="-90" max="90" id="pointlat" name="pointlat" data-chip="<?php echo $LANG['POINT_LAT'] ?>" />
+										<input type="number" step="any" min="0" max="90" id="pointlat" name="pointlat" data-chip="<?php echo $LANG['POINT_LAT'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['LATITUDE'] ?></span>
 									</label>
 									<label for="pointlat_NS" class="input-text--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['POINT_LAT_DIREC_NORTH_SOUTH'] ?></span>
 										<select class="mt-1" id="pointlat_NS" name="pointlat_NS">
 											<option value=""><?php echo $LANG['SELECT_NORTH_SOUTH'] ?></option>
-											<option id="N" value="N"><?php echo $LANG['NORTH'] ?></option>
-											<option id="S" value="S"><?php echo $LANG['SOUTH'] ?></option>
+											<option id="N" value="N" data-chip="<?php echo $LANG['POINT_LAT_HEMI'] ?>"><?php echo $LANG['NORTH'] ?></option>
+											<option id="S" value="S" data-chip="<?php echo $LANG['POINT_LAT_HEMI'] ?>"><?php echo $LANG['SOUTH'] ?></option>
 										</select>
 									</label>
 								</div>
 								<div class="input-text-container">
 									<label for="pointlong" class="input-text--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['POINT_LONGITUDE'] ?></span>
-										<input type="number" step="any" min="-180" max="180" id="pointlong" name="pointlong" data-chip="<?php echo $LANG['POINT_LONG'] ?>" />
+										<input type="number" step="any" min="0" max="180" id="pointlong" name="pointlong" data-chip="<?php echo $LANG['POINT_LONG'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['LONGITUDE'] ?></span>
 									</label>
 									<label for="pointlong_EW" class="input-text--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['POINT_LONGITUDE_DIREC_EAST_WEST'] ?></span>
 										<select class="mt-1" id="pointlong_EW" name="pointlong_EW">
 											<option value=""><?php echo $LANG['SELECT_WEST_EAST'] ?></option>
-											<option id="W" value="W"><?php echo $LANG['WEST'] ?></option>
-											<option id="E" value="E"><?php echo $LANG['EAST'] ?></option>
+											<option id="W" value="W" data-chip="<?php echo $LANG['POINT_LONG_HEMI'] ?>"><?php echo $LANG['WEST'] ?></option>
+											<option id="E" value="E" data-chip="<?php echo $LANG['POINT_LONG_HEMI'] ?>"><?php echo $LANG['EAST'] ?></option>
 										</select>
 									</label>
 								</div>

@@ -177,6 +177,8 @@ class OccurrenceEditorManager {
 			if (array_key_exists('orderby', $_REQUEST)) $this->qryArr['orderby'] = trim($_REQUEST['orderby']);
 			if (array_key_exists('orderbydir', $_REQUEST)) $this->qryArr['orderbydir'] = trim($_REQUEST['orderbydir']);
 
+			if (array_key_exists('coordinateRankingIssue', $_REQUEST)) $this->qryArr['coordinateRankingIssue'] = $_REQUEST['coordinateRankingIssue'];
+
 			if (array_key_exists('occidlist', $_POST) && $_POST['occidlist']) $this->setOccidIndexArr($_POST['occidlist']);
 			if (array_key_exists('direction', $_POST)) $this->direction = trim($_POST['direction']);
 			unset($_SESSION['editorquery']);
@@ -390,7 +392,11 @@ class OccurrenceEditorManager {
 				$sqlWhere .= 'AND (o.recordedby IS NULL) ';
 			} elseif (substr($this->qryArr['rb'], 0, 1) == '%') {
 				$collStr = $this->cleanInStr(substr($this->qryArr['rb'], 1));
-				$sqlWhere .= 'AND (MATCH(o.recordedby) AGAINST("' . $collStr . '" IN BOOLEAN MODE)) ';
+				if(strlen($collStr) < 3){
+					$sqlWhere .= 'AND (o.recordedby REGEXP "\\\b' . $collStr . '\\\b") ';
+				} else {
+					$sqlWhere .= 'AND (MATCH(o.recordedby) AGAINST("' . $collStr . '" IN BOOLEAN MODE)) ';
+				}
 			} else {
 				$sqlWhere .= 'AND (o.recordedby LIKE "' . $this->cleanInStr($this->qryArr['rb']) . '%") ';
 			}
@@ -494,6 +500,22 @@ class OccurrenceEditorManager {
 					$sqlWhere .= ' AND (tms.stateid NOT IN (' . implode(',', $stateids) . ') OR tms.stateid IS NULL) ';
 				} else {
 					$sqlWhere .= ' AND tms.stateid IN (' . implode(',', $stateids) . ') ';
+				}
+			}
+		}
+
+		// Coordinate Quality
+		if(array_key_exists('coordinateRankingIssue', $this->qryArr)) {
+			if(is_numeric($this->qryArr['coordinateRankingIssue'])) {
+				$rank = intval($this->qryArr['coordinateRankingIssue']);
+				$sqlWhere .= 'AND (ovv.ranking = ' . $rank . ' AND ovv.category = "coordinate") ';
+
+				if($rank === 0) {
+					$sqlWhere .= 'AND (country is not null or stateProvince is not null or county is not null) ';
+				} else if($rank === 2) {
+					$sqlWhere .= 'AND (stateProvince is not null or county is not null) ';
+				} else if($rank === 5) {
+					$sqlWhere .= 'AND (county is not null) ';
 				}
 			}
 		}
@@ -773,6 +795,9 @@ class OccurrenceEditorManager {
 		if (strpos($this->sqlWhere, 'paleo.')) {
 			$sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
 		}
+		if (strpos($this->sqlWhere, 'ovv.')) {
+			$sql .= 'INNER JOIN omoccurverification ovv ON ovv.occid = o.occid ';
+		}
 	}
 
 	private function setAdditionalIdentifiers(&$occurrenceArr) {
@@ -932,7 +957,7 @@ class OccurrenceEditorManager {
 						$rs2->free();
 					}
 					//If additional identifiers exist, NULL otherCatalogNumbers
-					if ($postArr['idvalue'][0]) $postArr['othercatalognumbers'] = '';
+					if (array_key_exists('idvalue', $postArr) && $postArr['idvalue'][0]) $postArr['othercatalognumbers'] = '';
 
 					//If processing status was "unprocessed" and recordEnteredBy is null, populate with user login
 					$oldProcessingStatus = isset($oldValueArr['omoccurrences']['processingstatus']) ? $oldValueArr['omoccurrences']['processingstatus'] : '';
@@ -1025,7 +1050,7 @@ class OccurrenceEditorManager {
 					//Update occurrence record
 					$sql = 'UPDATE IGNORE omoccurrences SET ' . substr($sql, 1) . ' WHERE (occid = ' . $this->occid . ')';
 					if ($this->conn->query($sql)) {
-						if (strtolower($postArr['processingstatus']) != 'unprocessed') {
+						if (strtolower($postArr['processingstatus'] ?? '') != 'unprocessed') {
 							//UPDATE uid within omcrowdsourcequeue, only if not yet processed
 							$isVolunteer = true;
 							if (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($this->collId, $USER_RIGHTS['CollAdmin'])) $isVolunteer = false;

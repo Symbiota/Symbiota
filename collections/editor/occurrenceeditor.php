@@ -963,21 +963,26 @@ else{
 												<img class="seemore" src="../../images/tochild.png" style="width:1.3em;height:1.3em">
 											</div>
 										</div>
-										<div  id="idrefdiv">
+										<?php
+											$identificationreferences = $occArr['identificationreferences'] ?? '';
+											$identificationremarks = $occArr['identificationremarks'] ?? '';
+											$taxonremarks = $occArr['taxonremarks'] ?? '';
+										?>
+										<div id="idrefdiv" style="<?= $identificationreferences || $identificationremarks || $taxonremarks? '': 'display:none' ?>">
 											<div id="identificationReferencesDiv" class="field-div">
 												<?php echo $LANG['ID_REFERENCES']; ?>:
 												<a href="#" onclick="return dwcDoc('identification-references')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-												<input type="text" name="identificationreferences" value="<?php echo array_key_exists('identificationreferences',$occArr)?$occArr['identificationreferences']:''; ?>" onchange="fieldChanged('identificationreferences');" />
+												<input type="text" name="identificationreferences" value="<?= $identificationreferences ?>" onchange="fieldChanged('identificationreferences');" />
 											</div>
 											<div id="identificationRemarksDiv" class="field-div">
 												<?php echo $LANG['ID_REMARKS']; ?>:
 												<a href="#" onclick="return dwcDoc('identification-remarks')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-												<input type="text" name="identificationremarks" value="<?php echo array_key_exists('identificationremarks',$occArr)?$occArr['identificationremarks']:''; ?>" onchange="fieldChanged('identificationremarks');" />
+												<input type="text" name="identificationremarks" value="<?= $identificationremarks ?>" onchange="fieldChanged('identificationremarks');" />
 											</div>
 											<div id="taxonRemarksDiv" class="field-div">
 												<?php echo $LANG['TAXON_REMARKS']; ?>:
 												<a href="#" onclick="return dwcDoc('taxon-remarks')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
-												<input type="text" name="taxonremarks" value="<?php echo array_key_exists('taxonremarks',$occArr)?$occArr['taxonremarks']:''; ?>" onchange="fieldChanged('taxonremarks');" />
+												<input type="text" name="taxonremarks" value="<?= $taxonremarks ?>" onchange="fieldChanged('taxonremarks');" />
 											</div>
 										</div>
 									</fieldset>

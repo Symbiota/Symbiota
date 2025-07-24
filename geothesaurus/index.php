@@ -155,7 +155,12 @@ function listGeoUnits($arr) {
             map_container.style.display = "block";
          }
 
-         let map = new LeafletMap('map_canvas', {center: [0,0], zoom: 1});
+		 let map = new LeafletMap('map_canvas', {
+			center: [0,0],
+			zoom: 1
+		 },
+			JSON.parse(`<?= json_encode($GEO_JSON_LAYERS ?? []) ?>`)
+		 );
 
          map.enableDrawing({
             polyline: false,
