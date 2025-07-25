@@ -13,8 +13,9 @@ $SECURITY_KEY = '';				//Typically a UUID used to verify access to certain web s
 
 $SERVER_HOST = '';				//fully qualified domain name or IP address of the server. e.g. 'symbiota.org' or 'localhost'
 $CLIENT_ROOT = '';				//URL path to project root folder (relative path w/o domain, e.g. '/seinet')
-$SERVER_ROOT = '';				//Full path to Symbiota project root folder
-$TEMP_DIR_ROOT = $SERVER_ROOT . '/temp';				//Must be writable by Apache; will use system default if not specified
+$SERVER_ROOT = '';				//Full path to Symbiota project root folder E.g. /var/www/html/portalname
+//Must be writable by Apache; it is highly recommended to set this to a path outside of the Apache DocumentRoot to avoid malicous file uploads; will use system default if not specified
+$TEMP_DIR_ROOT = '';		//E.g. /var/www/temp/portalname			
 $LOG_PATH = $SERVER_ROOT . '/content/logs';					//Must be writable by Apache; will use <SYMBIOTA_ROOT>/temp/logs if not specified
 
 //Path to CSS files
