@@ -155,13 +155,15 @@ class PluginsManager extends Manager {
 
 			//Save data to slideshow history/configuration files
 			if($clid){
-				$fp = fopen($previousFile, 'w');
-				fwrite($fp, json_encode($previousArr));
+				if($fp = fopen($previousFile, 'w')){
+					fwrite($fp, json_encode($previousArr));
+					fclose($fp);
+				}
+			}
+			if($fp = fopen($infoFile, 'w')){
+				fwrite($fp, json_encode($ssIdInfo));
 				fclose($fp);
 			}
-			$fp = fopen($infoFile, 'w');
-			fwrite($fp, json_encode($ssIdInfo));
-			fclose($fp);
 		}
 	}
 
