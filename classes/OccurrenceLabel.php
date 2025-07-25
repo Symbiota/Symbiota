@@ -620,7 +620,6 @@ class OccurrenceLabel {
 	}
 
 	public function deleteLabelFormat($group, $labelIndex) {
-		// @TODO implement with new stuff
 		$status = true;
 		if (is_numeric($labelIndex)) {
 			if ($group == 'g') {
