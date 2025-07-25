@@ -579,7 +579,6 @@ class OccurrenceLabel {
 			$sourceLabelArr = array();
 			if ($group == 'g' || $cloneTarget == 'g') {
 				if ($jsonData = $this->fetchGlobalLabelJson()) {
-					// if(isset($LABEL_FORMAT_JSON)) 
 					$globalFormatArr = json_decode($jsonData, true);
 					if ($group == 'g') $sourceLabelArr = $globalFormatArr['labelFormats'][$labelIndex];
 				}
@@ -621,6 +620,7 @@ class OccurrenceLabel {
 	}
 
 	public function deleteLabelFormat($group, $labelIndex) {
+		// @TODO implement with new stuff
 		$status = true;
 		if (is_numeric($labelIndex)) {
 			if ($group == 'g') {
@@ -695,16 +695,6 @@ class OccurrenceLabel {
 			}
 			return $status;
 		}
-
-		// $sql = "UPDATE adminconfig SET dynamicProperties = ? WHERE attributeName = ?)";
-		// if ($stmt = $this->conn->prepare($sql)) {
-		// 	$attributeName = 'LabelFormatJson';
-		// 	$stmt->bind_param('ss', $jsonDynProps, $attributeName);
-		// 	$stmt->execute();
-		// 	if (!$stmt->error) $status = true;
-		// 	$stmt->close();
-		// }
-		// return $status;
 	}
 
 	private function updateCollectionJson($formatArr) {
