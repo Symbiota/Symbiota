@@ -206,9 +206,18 @@ class LocalStorage extends StorageStrategy {
 	public function rename(string $filepath, string $new_filepath): void {
 		//Remove MEDIA_ROOT_PATH + Path from filepath if it exists
 		global $SERVER_ROOT;
+
+		$old_file = Media::parseFileName($filepath);
+		$new_file = Media::parseFileName($new_filepath);
+
+		if($old_file['extension'] != $new_file['extension']) {
+			throw new MediaException(MediaException::IllegalRenameChangedFileType);
+		}
+
 		$dir_path = $this->getDirPath() . $this->path;
-		$filepath = str_replace($dir_path, '', $GLOBALS['SERVER_ROOT']. $filepath);
+		$filepath = str_replace($dir_path, '', $GLOBALS['SERVER_ROOT'] . $filepath);
 		$new_filepath = str_replace($dir_path, '', $GLOBALS['SERVER_ROOT'] . $new_filepath);
+
 		//Constrain Rename to Scope of MEDIA_ROOT_PATH + Storage Path
 		if($this->file_exists($new_filepath)) {
 			throw new MediaException(MediaException::FileAlreadyExists);
@@ -248,6 +257,7 @@ class MediaException extends Exception {
 	public const FileDoesNotExist = 'FILE_DOES_NOT_EXIST';
 	public const FileAlreadyExists = 'FILE_ALREADY_EXISTS';
 	public const SuspiciousMimeType= 'SUSPICIOUS_MIME_TYPE';
+	public const IllegalRenameChangedFileType = 'ILLEGAL_RENAME_CHANGED_FILE_TYPE';
 
 	function __construct(string $case, string $message = ''){
 		global $LANG;
@@ -1186,6 +1196,18 @@ class Media {
 		return $errors;
 	}
 
+	private static function check_file_rename(string $old_filepath, string $new_filepath) {		
+
+		$old_file = self::parseFileName($old_filepath);
+		$new_file = self::parseFileName($new_filepath);
+
+		if($old_file['extension'] != $new_file['extension']) {
+			throw new MediaException(MediaException::IllegalRenameChangedFileType);
+		}
+
+		return true;
+	}
+
 	/**
 	 * Function used for pulling media meta_data out of input array and updating
 	 * the corresponding mediaID.
@@ -1240,19 +1262,30 @@ class Media {
 		$conn = Database::connect('write');
 		mysqli_begin_transaction($conn);
 		try {
+			$current_media_arr = self::getMedia($media_id);
+			// If file is stored locally then check to make sure the extension is not being changed
+			foreach(['url', 'thumbnailUrl', 'originalUrl'] as $url) {
+				if(array_key_exists($url, $data) && $storage->file_exists($current_media_arr[$url])) {
+					self::check_file_rename(
+						$current_media_arr[$url], 
+						$data[$url]
+					);
+				}
+			}
+
 			self::update_metadata($data, $media_id, $conn);
 			self::update_tags($media_id, $media_arr, $conn);
 
 			if(array_key_exists("renameweburl", $media_arr)) {
-				$storage->rename($media_arr['old_url'], $data['url']);
+				$storage->rename($current_media_arr['url'], $data['url']);
 			}
 
 			if(array_key_exists("renametnurl", $media_arr)) {
-				$storage->rename($media_arr['old_thumbnailUrl'], $data['thumbnailUrl']);
+				$storage->rename($current_media_arr['thumbnailUrl'], $data['thumbnailUrl']);
 			}
 
 			if(array_key_exists("renameorigurl", $media_arr)) {
-				$storage->rename($media_arr['old_originalUrl'], $data['originalUrl']);
+				$storage->rename($current_media_arr['originalUrl'], $data['originalUrl']);
 			}
 
 			mysqli_commit($conn);
