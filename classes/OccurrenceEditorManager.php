@@ -3,6 +3,7 @@ include_once($SERVER_ROOT . '/config/dbconnection.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceDuplicate.php');
 include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
+include_once($SERVER_ROOT . '/classes/Media.php');
 
 if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/editor/occurrenceeditor.' . $LANG_TAG . '.php'))
 	include_once($SERVER_ROOT . '/content/lang/collections/editor/occurrenceeditor.' . $LANG_TAG . '.php');
@@ -1666,20 +1667,17 @@ class OccurrenceEditorManager {
 						}
 					}
 					if (isset($postArr['carryoverimages']) && $postArr['carryoverimages']) {
-						$sql = 'INSERT INTO media (occid, tid, url, thumbnailurl, originalurl, archiveurl, creator, creatorUid, mediaType, imagetype, format, caption, owner,
-							sourceurl, referenceUrl, copyright, rights, accessrights, locality, notes, anatomy, username, sourceIdentifier, mediaMD5, dynamicProperties,
-							defaultDisplay, sortsequence, sortOccurrence)
-							SELECT ' . $this->occid . ', tid, url, thumbnailurl, originalurl, archiveurl, creator, creatorUid, mediaType, imagetype, format, caption, owner, sourceurl, referenceUrl,
-							copyright, rights, accessrights, locality, notes, anatomy, username, sourceIdentifier, mediaMD5, dynamicProperties, defaultDisplay, sortsequence, sortOccurrence
-							FROM media WHERE occid = ' . $sourceOccid;
-						if (!$this->conn->query($sql)) {
-							$this->errorArr[] = $LANG['ERROR_ADDING_IMAGES'] . ': ' . $this->conn->error;
+						try {
+							Media::copyOccurrenceMedia($sourceOccid, $this->occid, $this->conn);
+						} catch(Throwable $th) {
+							$this->errorArr[] = $LANG['ERROR_ADDING_IMAGES'] . ': ' . $th->getMessage();
 						}
 					}
 				}
 			}
 			$this->occid = $sourceOccid;
 		}
+
 		return $retArr;
 	}
 
