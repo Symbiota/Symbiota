@@ -10,7 +10,7 @@ The Symbiota Software Project is building a library of webtools to aid biologist
 
 More information about this project can be accessed through [https://symbiota.org](https://symbiota.org).
 
-For documentation and user guides please visit [Symbiota Docs](https://docs.symbiota.org/docs/about/).
+For documentation and user guides please visit [Symbiota Docs](https://docs.symbiota.org/).
 
 ## ACKNOWLEDGEMENTS
 
