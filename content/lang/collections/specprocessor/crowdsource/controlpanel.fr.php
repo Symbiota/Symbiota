@@ -9,7 +9,7 @@ Translated by: Google Translate
 $LANG['CROWDSOURCING_ADMIN'] = 'Administración de Crowdsourcing';
 $LANG['CROWDSOURCE_EXPLAIN'] = 'Ce module peut être utilisé pour soumettre et gérer des enregistrements pour la saisie de données par le
 			grand public. Pour plus d\'informations, consultez le
-			<a href="https://docs.symbiota.org/docs/Collection_Manager_Guide/Crowdsourcing/adding_crowdsourcing" target="_blank">
+			<a href="https://docs.symbiota.org/Collection_Manager_Guide/Crowdsourcing/adding_crowdsourcing" target="_blank">
 			Documentation Symbiota sur le crowdsourcing</a>';
 $LANG['EDIT_PROJECT'] = 'Modifier le projet';
 $LANG['GENERAL_INSTRUCTIONS'] = 'Instructions générales';
