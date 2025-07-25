@@ -374,15 +374,12 @@ class OccurrenceLabel {
 
 	private function transferFromPhpToDynamicProperties() {
 		$status = false;
-		if (file_exists($GLOBALS['SERVER_ROOT'] . '/content/collections/reports/labeljson.php')) {
-			include($GLOBALS['SERVER_ROOT'] . '/content/collections/reports/labeljson.php');
-			if (isset($LABEL_FORMAT_JSON)) {
-				if ($labelFormatArr = json_decode($LABEL_FORMAT_JSON, true)) {
-					$this->saveGlobalJson($labelFormatArr);
-					return $this->fetchGlobalLabelJson();
-					// @TODO log what the PHP file contents were at the time of this transfer
-					// @TODO delete the PHP file
-				}
+		$targetFile = $GLOBALS['SERVER_ROOT'] . '/content/collections/reports/label.json';
+		if (file_exists($targetFile)) {
+			$jsonFileContents = file_get_contents($targetFile);
+			if (!empty($jsonFileContents)) {
+				$this->saveGlobalJson($jsonFileContents, true);
+				return $this->fetchGlobalLabelJson();
 			}
 		}
 		return $status;
@@ -659,10 +656,10 @@ class OccurrenceLabel {
 		return $status;
 	}
 
-	private function saveGlobalJson($formatArr) {
+	private function saveGlobalJson($dataObj, $isAlreadyDecoded = false) {
 		$status = false;
 
-		$jsonDynProps = json_encode($formatArr, JSON_PRETTY_PRINT | JSON_HEX_APOS);
+		$jsonDynProps = $isAlreadyDecoded ? $dataObj : json_encode($dataObj, JSON_PRETTY_PRINT | JSON_HEX_APOS);
 		$attributeName = 'LabelFormatJson';
 		$checkSql = "SELECT COUNT(*) FROM adminconfig WHERE attributeName = ?";
 		if ($checkStmt = $this->conn->prepare($checkSql)) {
