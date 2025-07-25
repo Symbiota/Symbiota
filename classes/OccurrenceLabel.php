@@ -364,24 +364,6 @@ class OccurrenceLabel{
 		return $status;
 	}
 
-	// private function saveGlobalLabelJson() {
-	// 	$status = false;
-
-	// 	$jsonDynProps = json_encode($dynPropArr);
-
-	// 	$this->resetConnection(); // @TODO decided whether this is necessary
-	// 	$sql = "select dynamicProperties from adminconfig WHERE attributeName = 'LabelFormatJson'";
-	// 	if ($stmt = $this->conn->prepare($sql)) {
-	// 		$stmt->execute();
-	// 		$stmt->bind_result($jsonResult);
-	// 		if ($stmt->fetch()) {
-	// 			$stmt->close();
-	// 			return $jsonResult;
-	// 		}
-	// 	}
-	// 	return $status;
-	// }
-
 	public function getLabelFormatByID($labelCat, $labelIndex){
 		if(is_numeric($labelIndex)){
 			if($labelCat == 'global'){
@@ -436,9 +418,7 @@ class OccurrenceLabel{
 		if($GLOBALS['SYMB_UID']){
 			if (!$jsonData = $this->fetchGlobalLabelJson()) {
 				$jsonData = $this->transferFromPhpToDynamicProperties();
-				// @copy($GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson_template.php',$GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson.php');
 			}
-			// @TODO open the json file if it exists, loop through the label formats array and assign them to retArr as specified
 			if (!empty($jsonData)) {
 					if ($globalFormatArr = json_decode($jsonData, true)) {
 						if ($annotated) {
@@ -450,24 +430,7 @@ class OccurrenceLabel{
 							}
 						} else $retArr['g'] = $globalFormatArr['labelFormats'];
 					}
-				// }
 			}
-			// if(file_exists($GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson.php')){
-			// 	include($GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson.php');
-			// 	if(isset($LABEL_FORMAT_JSON)){
-			// 		if($globalFormatArr = json_decode($LABEL_FORMAT_JSON,true)){
-			// 			if($annotated){
-			// 				if(isset($globalFormatArr['labelFormats'])){
-			// 					foreach($globalFormatArr['labelFormats'] as $k => $labelObj){
-			// 						unset($labelObj['labelFormats']);
-			// 						$retArr['g'][$k] = $labelObj;
-			// 					}
-			// 				}
-			// 			}
-			// 			else $retArr['g'] = $globalFormatArr['labelFormats'];
-			// 		}
-			// 	}
-			// }
 			else $retArr['g'] = array('labelFormats'=>array());
 			//Add collection defined label formats
 			if($this->collid){
