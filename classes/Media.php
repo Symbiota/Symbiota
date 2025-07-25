@@ -256,7 +256,7 @@ class MediaException extends Exception {
 	public const DuplicateMediaFile = 'DUPLICATE_MEDIA_FILE';
 	public const FileDoesNotExist = 'FILE_DOES_NOT_EXIST';
 	public const FileAlreadyExists = 'FILE_ALREADY_EXISTS';
-	public const SuspiciousMimeType= 'SUSPICIOUS_MIME_TYPE';
+	public const SuspiciousFile = 'SUSPICIOUS_FILE';
 	public const IllegalRenameChangedFileType = 'ILLEGAL_RENAME_CHANGED_FILE_TYPE';
 	public const FileTypeNotAllowed = 'FILE_TYPE_NOT_ALLOWED';
 
@@ -931,7 +931,7 @@ class Media {
 			$type_guess = mime_content_type($file['tmp_name']);
 
 			if($type_guess != $file['type']) {
-				throw new MediaException(MediaException::SuspiciousMimeType, ' ' . $type_guess);
+				throw new MediaException(MediaException::SuspiciousFile);
 			}
 
 			$guess_ext = self::mime2ext($type_guess);
@@ -939,12 +939,14 @@ class Media {
 			$provided_file_data = self::parseFileName($file['name']);
 
 			if(!$guess_ext || $guess_ext != $provided_file_data['extension']) {
-				throw new MediaException(MediaException::SuspiciousMimeType, ' ' . $guess_ext . ' ' . $provided_file_data['extension']);
+				throw new MediaException(MediaException::SuspiciousFile);
 			}
 		}
+
 		if(!self::getAllowedMime($file['type'])) {
 			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $file['type']);
 		}
+
 		$keyValuePairs = [
 			"tid" => $clean_post_arr["tid"] ?? null,
 			"occid" => $clean_post_arr["occid"] ?? null,
