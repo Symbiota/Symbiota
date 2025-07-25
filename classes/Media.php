@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT . "/classes//Database.php");
+include_once($SERVER_ROOT . "/classes/Database.php");
 include_once($SERVER_ROOT . "/classes/Sanitize.php");
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
