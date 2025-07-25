@@ -1,4 +1,6 @@
 <?php
+
+
 include_once($SERVER_ROOT.'/config/dbconnection.php');
 
 class OccurrenceLabel{
@@ -330,23 +332,68 @@ class OccurrenceLabel{
 		return '';
 	}
 
+	private function transferFromPhpToDynamicProperties(){
+		$status = false;
+		if(file_exists($GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson.php')){
+			include($GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson.php');
+			if(isset($LABEL_FORMAT_JSON)){
+				if($labelFormatArr = json_decode($LABEL_FORMAT_JSON,true)){
+					$this->saveGlobalJson($labelFormatArr);
+					return $this->fetchGlobalLabelJson();
+					// @TODO log what the PHP file contents were at the time of this transfer
+					// @TODO delete the PHP file
+				}
+			}
+		}
+		return $status;
+	}
+
+	private function fetchGlobalLabelJson(){
+		$status = false;
+		$sql = 'SELECT dynamicProperties FROM adminconfig WHERE attributeName = ?';
+		if ($stmt = $this->conn->prepare($sql)) {
+			$attributeName = 'LabelFormatJson';
+			$stmt->bind_param('s', $attributeName);
+			$stmt->execute();
+			$stmt->bind_result($jsonResult);
+			$stmt->fetch();
+			$stmt->close();
+			if(empty($jsonResult)) $jsonResult = $this->transferFromPhpToDynamicProperties();
+			return $jsonResult;
+		}
+		return $status;
+	}
+
+	// private function saveGlobalLabelJson() {
+	// 	$status = false;
+
+	// 	$jsonDynProps = json_encode($dynPropArr);
+
+	// 	$this->resetConnection(); // @TODO decided whether this is necessary
+	// 	$sql = "select dynamicProperties from adminconfig WHERE attributeName = 'LabelFormatJson'";
+	// 	if ($stmt = $this->conn->prepare($sql)) {
+	// 		$stmt->execute();
+	// 		$stmt->bind_result($jsonResult);
+	// 		if ($stmt->fetch()) {
+	// 			$stmt->close();
+	// 			return $jsonResult;
+	// 		}
+	// 	}
+	// 	return $status;
+	// }
+
 	public function getLabelFormatByID($labelCat, $labelIndex){
 		if(is_numeric($labelIndex)){
 			if($labelCat == 'global'){
-				if(file_exists($GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson.php')){
-					include($GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson.php');
-					if(isset($LABEL_FORMAT_JSON)){
-						if($labelFormatArr = json_decode($LABEL_FORMAT_JSON,true)){
+				if($jsonData = $this->fetchGlobalLabelJson()){
+						if($labelFormatArr = json_decode($jsonData,true)){
 							if(isset($labelFormatArr['labelFormats'][$labelIndex])){
 								return $labelFormatArr['labelFormats'][$labelIndex];
 							}
 							else $this->errorArr[] = 'ERROR returning global format: index does not exist';
 						}
 						else $this->errorArr[] = 'ERROR returning global format: issue parsing JSON string';
-					}
-					else $this->errorArr[] = 'ERROR returning global format: $LABEL_FORMAT_JSON does not exist';
-				}
-				else $this->errorArr[] = 'ERROR returning global format: /content/collections/reports/labeljson.php does not exist';
+				} else $this->errorArr[] = 'ERROR returning global format: lable JSON does not exist.';
 				return false;
 			}
 			elseif($labelCat == 'coll'){
@@ -387,26 +434,40 @@ class OccurrenceLabel{
 	public function getLabelFormatArr($annotated = false){
 		$retArr = array();
 		if($GLOBALS['SYMB_UID']){
-			//Add global portal defined label formats
-			if(!file_exists($GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson.php')){
-				@copy($GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson_template.php',$GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson.php');
+			if (!$jsonData = $this->fetchGlobalLabelJson()) {
+				$jsonData = $this->transferFromPhpToDynamicProperties();
+				// @copy($GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson_template.php',$GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson.php');
 			}
-			if(file_exists($GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson.php')){
-				include($GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson.php');
-				if(isset($LABEL_FORMAT_JSON)){
-					if($globalFormatArr = json_decode($LABEL_FORMAT_JSON,true)){
-						if($annotated){
-							if(isset($globalFormatArr['labelFormats'])){
-								foreach($globalFormatArr['labelFormats'] as $k => $labelObj){
+			// @TODO open the json file if it exists, loop through the label formats array and assign them to retArr as specified
+			if (!empty($jsonData)) {
+					if ($globalFormatArr = json_decode($jsonData, true)) {
+						if ($annotated) {
+							if (isset($globalFormatArr['labelFormats'])) {
+								foreach ($globalFormatArr['labelFormats'] as $k => $labelObj) {
 									unset($labelObj['labelFormats']);
 									$retArr['g'][$k] = $labelObj;
 								}
 							}
-						}
-						else $retArr['g'] = $globalFormatArr['labelFormats'];
+						} else $retArr['g'] = $globalFormatArr['labelFormats'];
 					}
-				}
+				// }
 			}
+			// if(file_exists($GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson.php')){
+			// 	include($GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson.php');
+			// 	if(isset($LABEL_FORMAT_JSON)){
+			// 		if($globalFormatArr = json_decode($LABEL_FORMAT_JSON,true)){
+			// 			if($annotated){
+			// 				if(isset($globalFormatArr['labelFormats'])){
+			// 					foreach($globalFormatArr['labelFormats'] as $k => $labelObj){
+			// 						unset($labelObj['labelFormats']);
+			// 						$retArr['g'][$k] = $labelObj;
+			// 					}
+			// 				}
+			// 			}
+			// 			else $retArr['g'] = $globalFormatArr['labelFormats'];
+			// 		}
+			// 	}
+			// }
 			else $retArr['g'] = array('labelFormats'=>array());
 			//Add collection defined label formats
 			if($this->collid){
@@ -456,9 +517,8 @@ class OccurrenceLabel{
 		if(is_numeric($labelIndex) || $labelIndex == ''){
 			if($group == 'g'){
 				$globalFormatArr = array();
-				if(file_exists($GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson.php')){
-					include($GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson.php');
-					if(isset($LABEL_FORMAT_JSON)) $globalFormatArr = json_decode($LABEL_FORMAT_JSON,true);
+				if($jsonData = $this->fetchGlobalLabelJson()){
+					$globalFormatArr = json_decode($jsonData,true);
 				}
 				$this->setLabelFormatAttributes($globalFormatArr,$labelIndex,$postArr);
 				$status = $this->saveGlobalJson($globalFormatArr);
@@ -532,9 +592,9 @@ class OccurrenceLabel{
 			$dynPropArr = array();
 			$sourceLabelArr = array();
 			if($group == 'g' || $cloneTarget == 'g'){
-				if(file_exists($GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson.php')){
-					include($GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson.php');
-					if(isset($LABEL_FORMAT_JSON)) $globalFormatArr = json_decode($LABEL_FORMAT_JSON,true);
+				if($jsonData = $this->fetchGlobalLabelJson()){
+					// if(isset($LABEL_FORMAT_JSON)) 
+					$globalFormatArr = json_decode($jsonData,true);
 					if($group == 'g') $sourceLabelArr = $globalFormatArr['labelFormats'][$labelIndex];
 				}
 			}
@@ -628,19 +688,46 @@ class OccurrenceLabel{
 
 	private function saveGlobalJson($formatArr){
 		$status = false;
-		$jsonStr = "<?php\n ".'$LABEL_FORMAT_JSON = \''.json_encode($formatArr,JSON_PRETTY_PRINT | JSON_HEX_APOS)."'; \n?>";
-		if($fh = fopen($GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson.php','w')){
-			if(!fwrite($fh,$jsonStr)){
-				$this->errorArr[] = 'ERROR saving label format to global file ';
-				$status = false;
+
+		$jsonDynProps = json_encode($formatArr, JSON_PRETTY_PRINT | JSON_HEX_APOS);
+		$attributeName = 'LabelFormatJson';
+		$checkSql = "SELECT COUNT(*) FROM adminconfig WHERE attributeName = ?";
+		if ($checkStmt = $this->conn->prepare($checkSql)) {
+			$checkStmt->bind_param('s', $attributeName);
+			$checkStmt->execute();
+			$checkStmt->bind_result($count);
+			$checkStmt->fetch();
+			$checkStmt->close();
+
+			if ($count > 0) {
+				$updateSql = "UPDATE adminconfig SET dynamicProperties = ? WHERE attributeName = ?";
+				if ($updateStmt = $this->conn->prepare($updateSql)) {
+					$updateStmt->bind_param('ss', $jsonDynProps, $attributeName);
+					$updateStmt->execute();
+					$status = !$updateStmt->error;
+					$updateStmt->close();
+				}
+			} else {
+				$insertSql = "INSERT INTO adminconfig (attributeName, attributeValue, dynamicProperties) VALUES (?, ?, ?)";
+				if ($insertStmt = $this->conn->prepare($insertSql)) {
+					$insertStmt->bind_param('sss', $attributeName, $attributeName, $jsonDynProps);
+					$insertStmt->execute();
+					$status = !$insertStmt->error;
+					$insertStmt->close();
+				}
 			}
-			fclose($fh);
+			return $status;
 		}
-		else{
-			$this->errorArr[] = 'ERROR saving label format: unable opening/creating labeljson.php for writing';
-			$status = false;
-		}
-		return $status;
+
+		// $sql = "UPDATE adminconfig SET dynamicProperties = ? WHERE attributeName = ?)";
+		// if ($stmt = $this->conn->prepare($sql)) {
+		// 	$attributeName = 'LabelFormatJson';
+		// 	$stmt->bind_param('ss', $jsonDynProps, $attributeName);
+		// 	$stmt->execute();
+		// 	if (!$stmt->error) $status = true;
+		// 	$stmt->close();
+		// }
+		// return $status;
 	}
 
 	private function updateCollectionJson($formatArr){
