@@ -3,6 +3,7 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecUploadDirect.php');
 include_once($SERVER_ROOT.'/classes/SpecUploadFile.php');
 include_once($SERVER_ROOT.'/classes/SpecUploadDwca.php');
+include_once($SERVER_ROOT.'/classes/SpecUploadINat.php');
 include_once($SERVER_ROOT.'/content/lang/collections/admin/specupload.'.$LANG_TAG.'.php');
 
 header('Content-Type: text/html; charset='.$CHARSET);
@@ -14,6 +15,10 @@ $uploadType = array_key_exists('uploadtype',$_REQUEST) ? filter_var($_REQUEST['u
 $uspid = array_key_exists('uspid',$_REQUEST) ? $_REQUEST['uspid'] : '';
 $action = array_key_exists('action',$_REQUEST) ? $_REQUEST['action'] : '';
 $ulPath = array_key_exists('ulpath',$_REQUEST) ? $_REQUEST['ulpath'] : '';
+$iNatData = array_key_exists('inatdata',$_REQUEST)?$_REQUEST['inatdata']:'';
+$apiToken = htmlspecialchars(array_key_exists('apitoken',$_REQUEST)?$_REQUEST['apitoken']:'', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$addLink = array_key_exists('addlink',$_REQUEST) ? filter_var($_REQUEST['addlink'], FILTER_SANITIZE_NUMBER_INT) : false;
+$fullImport = array_key_exists('fullimport',$_REQUEST) ? filter_var($_REQUEST['fullimport'], FILTER_SANITIZE_NUMBER_INT) : false;
 $importIdent = array_key_exists('importident',$_REQUEST) ? true : false;
 $importImage = array_key_exists('importimage',$_REQUEST) ? true : false;
 $observerUid = array_key_exists('observeruid',$_POST) ? filter_var($_POST['observeruid'], FILTER_SANITIZE_NUMBER_INT) : '';
@@ -42,7 +47,7 @@ if($verifyImages !== true) $verifyImages = false;
 if(!preg_match('/^[a-zA-Z0-9\s_-]+$/',$processingStatus)) $processingStatus = '';
 if($dbpk) $dbpk = htmlspecialchars($dbpk);
 
-$DIRECTUPLOAD = 1; $FILEUPLOAD = 3; $STOREDPROCEDURE = 4; $SCRIPTUPLOAD = 5; $DWCAUPLOAD = 6; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9; $SYMBIOTA = 13;
+$DIRECTUPLOAD = 1; $FILEUPLOAD = 3; $STOREDPROCEDURE = 4; $SCRIPTUPLOAD = 5; $DWCAUPLOAD = 6; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9; $SYMBIOTA = 13; $INATURALIST = 14;
 
 $duManager = new SpecUploadBase();
 if($uploadType == $DIRECTUPLOAD){
@@ -69,6 +74,16 @@ elseif($uploadType == $DWCAUPLOAD || $uploadType == $IPTUPLOAD || $uploadType ==
 	}
 	$duManager->setSourcePortalIndex($sourceIndex);
 	$duManager->setPublicationGuid($publicationGuid);
+}
+
+// iNaturalist import
+elseif($uploadType == $INATURALIST){
+	$duManager = new SpecUploadINat();
+	$duManager->setIncludeImages($importImage);
+	$duManager->getINatData($iNatData);
+	$duManager->setApiToken($apiToken);
+	$duManager->setAddLink($addLink);
+	$duManager->setFullImport($fullImport);
 }
 
 $duManager->setCollId($collid);
@@ -248,6 +263,9 @@ include($SERVER_ROOT.'/includes/header.php');
 						<input type="hidden" name="sourceindex" value="<?php echo $sourceIndex;?>" >
 						<input type="hidden" name="publicationGuid" value="<?php echo $publicationGuid;?>" >
 						<input type="hidden" name="fieldlist" value="<?php echo $duManager->getTargetFieldStr(); ?>" >
+						<input type="hidden" name="apitoken"value='<?php echo $apiToken;?>' />
+						<input type="hidden" name="addlink"value='<?php echo $addLink;?>' />
+						<input type="hidden" name="fullimport"value='<?php echo $fullImport;?>' />
 						<div style="margin:5px;">
 							<button type="submit" name="action" value="activateOccurrences"><?php echo (isset($LANG['TRANS_RECS']) ? $LANG['TRANS_RECS'] : 'Transfer Records to Central Specimen Table'); ?></button>
 						</div>

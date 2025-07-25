@@ -637,3 +637,6 @@ CREATE TABLE `usersthirdpartysessions` (
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`thirdparty_id`,`localsession_id`) 
 ) ENGINE=InnoDB;
+
+# Add iNaturalistObservation as a controlled vocabulary term for a linked resource relationship
+INSERT INTO `ctcontrolvocabterm`VALUES (NULL, 1, NULL, 'iNaturalistObservation', NULL, 'NULL', NULL, 'A reference to an iNaturalist observation that corresponds to the Symbiota record', NULL, NULL, NULL, 1, 'This should not have an inverse relationship.', NULL, NULL, NULL, NULL);

@@ -32,6 +32,7 @@ $LANG['SYMBIOTA_DWCA'] = 'Symbiota Import';
 $LANG['FILE'] = 'Carga de Archivos';
 $LANG['SKELETAL_FILE'] = 'Carga de Archivos Esqueléticos';
 $LANG['NFN_UPLOAD'] = 'Carga de Archivo de NfN';
+$LANG['INAT_UPLOAD'] = 'iNaturalist Observation Upload';
 $LANG['DIRECT_DB'] = 'Mapeo Directo de la Base de Datos';
 $LANG['STORED_PROC'] = 'Procedimiento Almacenado';
 $LANG['SCRIPT_UP'] = 'Carga con Script';

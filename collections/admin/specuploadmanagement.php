@@ -12,7 +12,7 @@ $collid = array_key_exists('collid',$_REQUEST) ? filter_var($_REQUEST['collid'],
 $uspid = array_key_exists('uspid',$_REQUEST) ? filter_var($_REQUEST['uspid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $action = array_key_exists('action',$_REQUEST) ? $_REQUEST['action'] : '';
 
-$DIRECTUPLOAD = 1; $FILEUPLOAD = 3; $STOREDPROCEDURE = 4; $SCRIPTUPLOAD = 5; $DWCAUPLOAD = 6; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9; $SYMBIOTA = 13;
+$DIRECTUPLOAD = 1; $FILEUPLOAD = 3; $STOREDPROCEDURE = 4; $SCRIPTUPLOAD = 5; $DWCAUPLOAD = 6; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9; $SYMBIOTA = 13; $INATURALIST = 14;
 
 $duManager = new SpecUpload();
 
@@ -246,6 +246,7 @@ include($SERVER_ROOT.'/includes/header.php');
 									echo '<option value="' . $FILEUPLOAD . '" ' . ($uploadType==$FILEUPLOAD ? 'SELECTED' : '') . '>' . $LANG['FILE'] . '</option>';
 									echo '<option value="' . $SKELETAL . '" ' . ($uploadType==$SKELETAL ? 'SELECTED':'') . '>' . $LANG['SKELETAL_FILE'] . '</option>';
 									echo '<option value="' . $NFNUPLOAD . '" ' . ($uploadType==$NFNUPLOAD ? 'SELECTED':'') . '>' . $LANG['NFN_UPLOAD'] . '</option>';
+									echo '<option value="' . $INATURALIST  . '" ' . ($uploadType==$INATURALIST  ? 'SELECTED':'') . '>' . $LANG['INAT_UPLOAD'] . '</option>';
 									echo '<option value="">......................................</option>';
 									echo '<option value="' . $DIRECTUPLOAD . '" ' . ($uploadType==$DIRECTUPLOAD ? 'SELECTED':'') . '>' . $LANG['DIRECT_DB'] . '</option>';
 									echo '<option value="' . $STOREDPROCEDURE . '" ' . ($uploadType==$STOREDPROCEDURE ? 'SELECTED':'') . '>' . $LANG['STORED_PROC'] . '</option>';

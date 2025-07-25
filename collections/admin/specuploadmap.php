@@ -3,6 +3,7 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecUploadDirect.php');
 include_once($SERVER_ROOT.'/classes/SpecUploadFile.php');
 include_once($SERVER_ROOT.'/classes/SpecUploadDwca.php');
+include_once($SERVER_ROOT.'/classes/SpecUploadINat.php');
 include_once($SERVER_ROOT.'/content/lang/collections/admin/specupload.'.$LANG_TAG.'.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/admin/specupload.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
@@ -13,6 +14,10 @@ $uspid = htmlspecialchars(array_key_exists('uspid',$_REQUEST) ? $_REQUEST['uspid
 $autoMap = array_key_exists('automap',$_POST) ? true : false;
 $action = htmlspecialchars(array_key_exists('action',$_REQUEST) ? $_REQUEST['action']: '', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 $ulPath = htmlspecialchars(array_key_exists('ulpath',$_REQUEST) ? $_REQUEST['ulpath']: '', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$iNatData = array_key_exists('inatdata',$_REQUEST) ? $_REQUEST['inatdata'] : '';
+$apiToken = array_key_exists('apitoken',$_REQUEST) ? $_REQUEST['apitoken'] : '';
+$addLink = array_key_exists('addlink',$_REQUEST) ? true : false;
+$fullImport = array_key_exists('fullimport',$_REQUEST) ? true : false;
 $importIdent = array_key_exists('importident',$_REQUEST) ? true : false;
 $importImage = array_key_exists('importimage',$_REQUEST) ? true : false;
 $observerUid = htmlspecialchars(array_key_exists('observeruid',$_POST) ? $_POST['observeruid']: '', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
@@ -43,7 +48,7 @@ if($verifyImages !== true) $verifyImages = false;
 if(!preg_match('/^[a-zA-Z0-9\s_-]+$/',$processingStatus)) $processingStatus = '';
 if($dbpk) $dbpk = htmlspecialchars($dbpk);
 
-$FILEUPLOAD = 3; $DWCAUPLOAD = 6; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9; $SYMBIOTA = 13;
+$FILEUPLOAD = 3; $DWCAUPLOAD = 6; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9; $SYMBIOTA = 13; $INATURALIST = 14;
 
 $duManager = new SpecUploadBase();
 if($uploadType == $FILEUPLOAD || $uploadType == $NFNUPLOAD){
@@ -66,6 +71,11 @@ elseif($uploadType == $DWCAUPLOAD || $uploadType == $IPTUPLOAD || $uploadType ==
 		}
 	}
 	if(array_key_exists('publicationGuid',$_REQUEST)) $duManager->setPublicationGuid($_REQUEST['publicationGuid']);
+}
+
+// iNaturalist import
+elseif($uploadType == $INATURALIST){
+    $duManager = new SpecUploadINat();
 }
 
 $duManager->setCollId($collid);
@@ -293,7 +303,11 @@ include($SERVER_ROOT.'/includes/header.php');
 		echo '<div style="margin:0px 0px 15px 15px;"><b>Last Upload Date:</b> '.($duManager->getCollInfo('uploaddate') ? $duManager->getCollInfo('uploaddate') : (isset($LANG['NOT_REC']) ? $LANG['NOT_REC'] : 'not recorded')).'</div>';
 		$processingList = array('unprocessed' => 'Unprocessed', 'stage 1' => 'Stage 1', 'stage 2' => 'Stage 2', 'stage 3' => 'stage 3', 'pending review' => 'Pending Review',
 			'expert required' => 'Expert Required', 'pending review-nfn' => 'Pending Review-NfN', 'reviewed' => 'Reviewed', 'closed' => 'Closed');
-		if(!$ulPath) $ulPath = $duManager->uploadFile();
+
+		if($uploadType != $INATURALIST) {
+			if(!$ulPath) $ulPath = $duManager->uploadFile();
+		}
+
 		if(($uploadType == $DWCAUPLOAD || $uploadType == $IPTUPLOAD || $uploadType == $SYMBIOTA) && $ulPath){
 			//Data has been uploaded and it's a DWCA upload type
 			if($duManager->analyzeUpload()){
@@ -546,14 +560,18 @@ include($SERVER_ROOT.'/includes/header.php');
 			</form>
 			<?php
 		}
-		elseif(($uploadType == $FILEUPLOAD || $uploadType == $SKELETAL) && $ulPath){
-			$duManager->analyzeUpload();
+		elseif((($uploadType == $FILEUPLOAD || $uploadType == $SKELETAL) && $ulPath) || ($uploadType == $INATURALIST && $iNatData)){
+			if($uploadType == $INATURALIST) {
+				$duManager->getINatData($iNatData);
+			} else {
+				$duManager->analyzeUpload();
+			}
 			?>
 			<form name="filemappingform" action="specuploadmap.php" method="post" onsubmit="return verifyMappingForm(this)">
 				<fieldset style="width:95%;">
 					<legend style="<?php if($uploadType == $SKELETAL) echo 'background-color:lightgreen'; ?>"><?php echo $duManager->getTitle(); ?></legend>
 					<?php
-					if(!$isLiveData && $uploadType != $SKELETAL){
+					if(!$isLiveData && $uploadType != $SKELETAL && $uploadType != $INATURALIST){
 						//Primary key field is required and must be mapped
 						?>
 						<div style="margin:20px;">
@@ -577,6 +595,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					$displayStr = 'block';
 					if(!$isLiveData) $displayStr = 'none';
 					if($uploadType == $SKELETAL) $displayStr = 'block';
+					if($uploadType == $INATURALIST) $displayStr = 'block; margin: 0px 0px 20px 20px;';
 					if($dbpk) $displayStr = 'block';
 					?>
 					<div id="mdiv" style="display:<?php echo $displayStr; ?>">
@@ -592,11 +611,31 @@ include($SERVER_ROOT.'/includes/header.php');
 								<a href="https://symbiota.org/symbiota-introduction/loading-specimen-data/" target="_blank"><?php echo htmlspecialchars((isset($LANG['LOADING_DATA']) ? $LANG['LOADING_DATA'] : 'Loading Data into Symbiota'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 							</div>
 						</div>
+					<?php
+					if($uploadType == $INATURALIST) {
+					// Adds option to import and map images
+					?>
+					</div>
+					<div>
+						<input name="importimage" value="1" type="checkbox" checked />
+						<?php echo (isset($LANG['IMP_IMG'])?$LANG['IMP_IMG']:'Import Images'); ?> (<a href="#" onclick="toggle('ImgDiv');return false;"><?php echo (isset($LANG['VIEW_DETS'])?$LANG['VIEW_DETS']:'view details'); ?></a>)
+					</div>
+					<div id="ImgDiv" style="display:none;margin:20px;">
+						<?php $duManager->echoFieldMapTable($autoMap,'image'); ?>
+						<div>
+							<?php echo '* '.(isset($LANG['UNVER'])?$LANG['UNVER']:'Unverified mappings are displayed in yellow'); ?>
+						</div>
+					</div>
+					<hr>
+					<div>
+					<?php
+					}
+					?>
 						<div style="margin:10px;">
 							<?php
 							if($uspid){
 								?>
-								<button type="submit" name="action" value="Reset Field Mapping" ><?php echo (isset($LANG['RESET_MAP']) ? $LANG['RESET_MAP'] : 'Reset Field Mapping'); ?></button>
+								<button class="bottom-breathing-room-rel-sm" type="submit" name="action" value="Reset Field Mapping" ><?php echo (isset($LANG['RESET_MAP']) ? $LANG['RESET_MAP'] : 'Reset Field Mapping'); ?></button>
 								<?php
 							}
 							?>
@@ -623,6 +662,7 @@ include($SERVER_ROOT.'/includes/header.php');
 									}
 									echo '</select>';
 								}
+								if($uploadType != $INATURALIST){
 								?>
 								<div>
 									<input name="matchcatnum" type="checkbox" value="1" checked />
@@ -640,6 +680,7 @@ include($SERVER_ROOT.'/includes/header.php');
 									?>
 								</ul>
 								<?php
+								}
 							}
 							if($isLiveData){
 								?>
@@ -652,7 +693,13 @@ include($SERVER_ROOT.'/includes/header.php');
 							?>
 							<div style="margin:10px 0px;">
 								<input name="verifyimages" type="checkbox" value="1" />
-								<?php echo (isset($LANG['VER_LINKS_MEDIA']) ? $LANG['VER_LINKS_MEDIA'] : 'Verify image links from associatedMedia field'); ?>
+								<?php
+									if($uploadType == $INATURALIST){
+										echo (isset($LANG['VER_LINKS']) ? $LANG['VER_LINKS'] : 'Verify image links');
+									} else {
+										echo (isset($LANG['VER_LINKS_MEDIA']) ? $LANG['VER_LINKS_MEDIA'] : 'Verify image links from associatedMedia field');
+									}
+								?>
 							</div>
 							<div style="margin:10px 0px;">
 								<?php echo (isset($LANG['PROC_STATUS']) ? $LANG['PROC_STATUS'] : 'Processing Status'); ?>:
@@ -690,9 +737,23 @@ include($SERVER_ROOT.'/includes/header.php');
 				<input type="hidden" name="uspid" value="<?php echo $uspid;?>" />
 				<input type="hidden" name="collid" value="<?php echo $collid;?>" />
 				<input type="hidden" name="uploadtype" value="<?php echo $uploadType;?>" />
+				<?php
+				if($uploadType == $INATURALIST) {
+				?>
+				<input type="hidden" name="inatdata" value='<?php echo $iNatData;?>' />
+				<input type="hidden" name="apitoken"value="<?php echo $apiToken;?>" />
+				<input type="hidden" name="addlink"value="<?php echo $addLink;?>" />
+				<input type="hidden" name="fullimport"value="<?php echo $fullImport;?>" />
+				<?php
+				} else {
+				?>
 				<input type="hidden" name="ulpath" value="<?php echo $ulPath;?>" />
+				<?php
+				}
+				?>
 			</form>
 			<?php
+
 		}
 	}
 	else{

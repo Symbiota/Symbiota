@@ -18,6 +18,7 @@ $LANG['IMPORT_SPECIMEN'] = 'Import Records';
 $LANG['MORE_INFO'] = 'More Information';
 $LANG['INFO_ALT'] = "Info. icon indicating link to information about import/update";
 $LANG['TEXT_FILE_IMPORT'] = 'Full Text File Import';
+$LANG['INAT_IMPORT'] = 'iNaturalist Observation Import';
 $LANG['REVIEW_EDITS'] = 'Review/Verify Occurrence Edits';
 $LANG['DOWNLOAD_BACKUP'] = 'Download backup file (CSV extract)';
 $LANG['VIEW_COMMENTS'] = 'View User Comments';

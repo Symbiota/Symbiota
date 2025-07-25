@@ -32,6 +32,7 @@ $LANG['SYMBIOTA_DWCA'] = 'Symbiota Import';
 $LANG['FILE'] = 'File Upload';
 $LANG['SKELETAL_FILE'] = 'Skeletal File Upload';
 $LANG['NFN_UPLOAD'] = 'NfN File Upload';
+$LANG['INAT_UPLOAD'] = 'iNaturalist Observation Upload';
 $LANG['DIRECT_DB'] = 'Direct Database Mapping';
 $LANG['STORED_PROC'] = 'Stored Procedure';
 $LANG['SCRIPT_UP'] = 'Script Upload';

@@ -1,0 +1,182 @@
+/* CSS styles for the iNaturalist upload interface */
+
+/* ~~~ Page styles ~~~ */
+
+button {
+	display: inline;
+}
+
+fieldset {
+	padding: 10px;
+	margin-bottom: 10px;
+}
+
+/* ~~~ Search terms styles ~~~ */
+
+#search div {
+	margin: 5px 0px;
+}
+
+#search select {
+	margin-bottom: 7px;
+}
+
+#url {
+	width: 100%;
+	border: 2px solid #74AC00; /* iNat green */
+	border-radius: 5px;
+	margin-bottom: 10px;
+
+}
+
+/* ~~~ Autocomplete dropdown styles ~~~ */
+
+/* Menu item wrapper style */
+.ui-menu-item-wrapper {
+	display: block;
+	line-height: 1.5;
+}
+
+/* Menu item style */
+.ui-menu-picker {
+	min-width: 350px;
+	display: flex;
+}
+
+/* Styling for hover over a menu item */
+.ui-state-active {
+	margin: 0px !important;
+	border: 0 !important;
+	font-weight: bold !important;
+}
+
+/* Thumbnail images in dropdowns */
+.ui-menu-thumb img {
+	width: 40px;
+	height: 40px;
+	margin: 2px 7px 2px -3px;
+}
+
+/* Styling for menu item label */
+.ui-menu-label {
+	margin-top: 2px;
+}
+
+/* Styling for sublabel (below the label) */
+.ui-menu-sublabel {
+	font-size: .8em;
+	display: block;
+	color: #727272;
+	line-height: 14px;
+}
+
+/* Styling for place types in autocomplete dropdown */
+.ui-menu-placetype {
+	font-size: 0.8em;
+	color: #0066FF;
+}
+
+/* Styling for project autocomplete title */
+.ui-menu-project {
+	margin-top: 8px;
+	display: block;
+}
+
+/* ~~~ Site data styles ~~~ */
+
+#site-data {
+	margin-top: 10px;
+}
+
+#site-data img.docimg {
+	border: 0px;
+	width: 11px;
+	margin-bottom: 2px;
+}
+
+#site-data div {
+	margin-bottom: 2px;
+}
+
+#site-data label {
+	display: block;
+	margin-bottom: 2px;
+}
+
+#site-data textarea {
+	height: 15px;
+	width: 95%;
+	height: 22px;
+}
+
+/* ~~~ Spin animation for importing observations ~~~ */
+
+.spin {
+	height: 20px;
+	width: 20px;
+	position: relative;
+	top: 5px;
+	display: inline-block;
+	border: solid 5px #cfd0d1;
+	border-bottom-color: #1c87c9;
+	border-radius: 50%;
+	transform: rotate(135deg);  
+	animation: spin 1.3s steps(2) .2s infinite;
+  	-webkit-animation: spin 1.3s linear infinite;
+}
+
+@-webkit-keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+/* ~~~ Table styles for iNat observations table ~~~ */
+
+#results {
+	padding-top: 10px;
+}
+
+#resultstable table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 10px;
+}
+
+#resultstable th, td {
+	border: 1px solid #BBB;
+	padding: 5px;
+}
+
+#resultstable td {
+	vertical-align: middle;
+}
+
+#resultstable tr:nth-child(even) {
+	background-color: #EEE;
+}
+
+#resultstable img {
+	border: 2px solid #333;
+	border-radius: 5px;
+}
+
+#resultstable .researchgrade {
+	font-weight: bold;
+	color: #74AC00;
+	text-align: center;
+}
+
+#topButton {
+	position: fixed; /* Fixed/sticky position */
+	bottom: 20px; /* Place the button at the bottom of the page */
+	right: 20px; /* Place the button 30px from the right */
+	z-index: 99; /* Make sure it does not overlap */			  
+	cursor: pointer; /* Add a mouse pointer on hover */
+	padding: 10px; /* Some padding */
+	border-radius: 6px; /* Rounded corners */
+	font-size: 1.2em /* Increase font size */
+}

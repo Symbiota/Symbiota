@@ -126,4 +126,93 @@ $LANG['PAGE_ERROR'] = 'ERROR: Either you have tried to reach this page without g
 $LANG['USE_BACK'] = 'Use the back arrows to get back to the file upload page.';
 $LANG['UPLOAD'] = 'Upload File';
 
+// ##### iNaturalist Upload Interface #####
+// iNaturalist status fieldset
+$LANG['STATUS_FIELDSET'] = 'iNaturalist Status';
+$LANG['INAT_AUTH'] = 'iNaturalist Authentication';
+$LANG['AUTH_NONE'] = 'Not Authenticated';
+$LANG['AUTH_SUCCESS'] = 'Authorized as';
+$LANG['AUTH_FAIL'] = 'Unauthorized (check your API Token)';
+$LANG['AUTHORIZE'] = 'Please authorize yourself by getting and API token and pasting it in the iNaturalist Status section.';
+$LANG['GET_TOKEN'] = 'Get iNaturalist API Token';
+$LANG['TOKEN_EXPIRE'] = '(expires every 24 hrs)';
+$LANG['AUTH_INSTRUCTIONS'] = '* Click the link above, login to iNaturalist, and copy the text string provided.<br/>Then, paste the text in the box above to authenticate yourself.';
+
+// Import options fieldset
+$LANG['OPTIONS_FIELDSET'] = 'Import Options';
+$LANG['OBS_FIELDS'] = 'Include Data in iNaturalist Observation Fields';
+$LANG['ELEVATION'] = 'Include Elevation Based on Observation Coordinates';
+$LANG['ASSOC_TAXA_SEARCH'] = 'Get Associated Taxa from nearby iNaturalist observations';
+$LANG['ASSOC_TAXA_RADIUS'] = 'Associated Taxa Inclusion Radius (in meters)';
+$LANG['AUTOMAP_INAT'] = 'Automap Data to Symbiota Fields';
+$LANG['UPDATE_RECORDS'] = 'Update Existing Records with Current iNaturalist Data';
+$LANG['SYMBIOTA_URL'] = 'Add Symbiota record URL to the iNaturalist observations';
+$LANG['SAVE_OPTIONS'] = 'Remember my Import Options and Search Terms';
+
+// Search terms fieldset
+$LANG['SEARCH_FIELDSET'] = 'Search Terms';
+$LANG['SEARCH_URL'] = 'Search URL';
+$LANG['URL_PLACEHOLDER'] = 'iNaturalist search url';
+$LANG['OBSERVER'] = 'Observer';
+$LANG['OBSERVER_PLACEHOLDER'] = 'start typing username';
+$LANG['PROJECT'] = 'Project';
+$LANG['PROJECT_PLACEHOLDER'] = 'start typing project name';
+$LANG['IDENTIFIER'] = 'Identifier';
+$LANG['IDENTIFIER_PLACEHOLDER'] = 'start typing username';
+$LANG['PLACE'] = 'Place';
+$LANG['PLACE_PLACEHOLDER'] = 'start typing place name';
+$LANG['TAXON'] = 'Taxon';
+$LANG['TAXON_PLACEHOLDER'] = 'start typing taxon name';
+$LANG['OBS_AFTER'] = 'Observed After';
+$LANG['OBS_BEFORE'] = 'Observed Before';
+$LANG['QUALITY'] = 'Quality Grade';
+$LANG['ANY'] = 'Any';
+$LANG['QUALITY_RESEARCH'] = 'Research Grade';
+$LANG['QUALITY_NEEDSID'] = 'Needs ID';
+$LANG['QUALITY_CASUAL'] = 'Casual';
+$LANG['CULTIVATED'] = 'Cultivated/Captive';
+$LANG['CULT_YES'] = 'Yes';
+$LANG['CULT_NO'] = 'No';
+$LANG['ID_AGREE'] = 'Identification agreement';
+$LANG['AGREE_MOST'] = 'Most Agree';
+$LANG['AGREE_SOME'] = 'Some Agree';
+$LANG['AGREE_DISAGREE'] = 'Most Disagree';
+$LANG['COORD_UNCERTAINTY'] = 'Max Coordinate Uncertainty (m)';
+$LANG['ORDER_BY'] = 'Order Results By';
+$LANG['ORDER_OBSERVED'] = 'Observed';
+$LANG['ORDER_UPLOADED'] = 'Uploaded';
+$LANG['ORDER_UPDATED'] = 'Last Updated';
+$LANG['ORDER_DESC'] = 'Descending';
+$LANG['ORDER_ASC'] = 'Ascending';
+$LANG['SEARCH_INSTRUCTIONS'] = '* Use the fields above to search for observations to import, or construct a more complicated search using <a href="https://www.inaturalist.org/observations/export" target="_blank">https://www.inaturalist.org/observations/export</a> and paste the query into the Search URL field above.';
+$LANG['FIND_BUTTON'] = 'Find Observations';
+$LANG['RESET_BUTTON'] = 'Reset Search';
+$LANG['NO_SEARCH'] = 'No search parameters defined. Please construct a search above.';
+$LANG['SEARCH_ERROR'] = 'Error: iNaturalist search failed. Make sure that your search terms are valid.';
+
+// Site data input
+$LANG['LOCALITY'] = 'Locality';
+$LANG['HABITAT'] = 'Habitat';
+$LANG['ASSOC_TAXA'] = 'Associated Taxa';
+$LANG['ASSOC_COLL'] = 'Associated Collectors';
+$LANG['SITE_INSTRUCTIONS'] = '* These data will be applied to all selected observations, overwriting existing data.';
+
+// Results fieldset
+$LANG['RESULTS_FIELDSET'] = 'Observations';
+$LANG['LOADING'] = 'Loading';
+$LANG['IMPORT_BUTTON'] = 'Import Selected Observations';
+$LANG['SITE_DATA_BUTTON'] = 'Add Site Data to Selections';
+$LANG['SCROLL'] = 'Scroll to the bottom to load more records.';
+$LANG['SKIPPED'] = 'Skipped';
+$LANG['OBSCURED_COORDS'] = 'records due to obscured coordinates';
+$LANG['LICENSING_RESTRICT'] = 'or licensing restrictions';
+$LANG['TOP_BUTTON'] = 'Top';
+$LANG['HEADER_PHOTO'] = 'Photo';
+$LANG['HEADER_SCINAME'] = 'Scientific Name';
+$LANG['HEADER_OBSERVED'] = 'Observed';
+$LANG['HEADER_UPLOADED'] = 'Uploaded';
+$LANG['HEADER_LOCATION'] = 'Location';
+$LANG['HEADER_OBSERVER'] = 'Observer';
+$LANG['NO_OBS'] = 'No iNaturalist observations selected. Please select at least one to import.';
+
 ?>

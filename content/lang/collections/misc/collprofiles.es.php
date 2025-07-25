@@ -46,6 +46,7 @@ $LANG['DWCA_IMPORT'] = 'DwC-Archive Importación';
 $LANG['IPT_IMPORT'] = 'IPT Importación';
 $LANG['EXTENDED_IMPORT'] = 'Datos Extendidos Importación';
 $LANG['NFN_IMPORT'] = 'Notes from Nature Importación';
+$LANG['INAT_IMPORT'] = 'iNaturalist Observation Import';
 $LANG['IMPORT_PROFILES'] = 'Perfiles de Importación Guardados';
 $LANG['CREATE_PROFILE'] = 'Crear un Nuevo Perfil de Importación';
 $LANG['PROCESSING_TOOLBOX'] = 'Caja de Herramientas de Procesamiento';

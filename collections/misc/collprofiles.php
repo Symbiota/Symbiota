@@ -504,6 +504,11 @@ if ($SYMB_UID) {
 								}
 								?>
 								<li class="importItem">
+									<a href="../admin/specupload.php?uploadtype=14&collid=<?php echo $collid; ?>">
+										<?= $LANG['INAT_IMPORT'] ?>
+									</a>
+								</li>
+								<li class="importItem">
 									<a href="../admin/specuploadmanagement.php?collid=<?php echo $collid; ?>">
 										<?= $LANG['IMPORT_PROFILES'] ?>
 									</a>

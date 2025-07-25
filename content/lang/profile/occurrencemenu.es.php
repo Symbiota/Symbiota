@@ -18,6 +18,7 @@ $LANG['IMPORT_SPECIMEN'] = 'Importar Registros';
 $LANG['MORE_INFO'] = 'More Information';
 $LANG['INFO_ALT'] = "Icono de información que indica un enlace a información sobre importación/actualización";
 $LANG['TEXT_FILE_IMPORT'] = 'Carga Rápida de Archivos';
+$LANG['INAT_IMPORT'] = 'iNaturalist Observation Import';
 $LANG['REVIEW_EDITS'] = 'Revisar/Verificar Ediciones de Ocurrencia';
 $LANG['DOWNLOAD_BACKUP'] = 'Descargar archivo de respaldo (extracto CSV)';
 $LANG['VIEW_COMMENTS'] = 'Ver Comentarios de Usuarios';

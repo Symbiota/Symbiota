@@ -96,6 +96,11 @@ foreach($collArr as $id => $collectionArr){
 							<?= $LANG['TEXT_FILE_IMPORT'] ?>
 						</a>
 					</li>
+					<li class="importItem">
+						<a href="../collections/admin/specupload.php?uploadtype=14&collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+							<?= $LANG['INAT_IMPORT'] ?>
+						</a>
+					</li>
 					<li>
 						<a href="../collections/editor/editreviewer.php?display=1&collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
 							<?php echo htmlspecialchars($LANG['REVIEW_EDITS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>

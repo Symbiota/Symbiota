@@ -18,6 +18,7 @@ $LANG['IMPORT_SPECIMEN'] = 'Importer des Enregistrements';
 $LANG['MORE_INFO'] = 'Plus d\'Information';
 $LANG['INFO_ALT'] = "Icône d'information indiquant un lien vers des informations sur l'importation/mise à jour";
 $LANG['TEXT_FILE_IMPORT'] = 'Importation de Fichier Texte Intégral';
+$LANG['INAT_IMPORT'] = 'iNaturalist Observation Import';
 $LANG['REVIEW_EDITS'] = "Examiner/vérifier Modifications d'Occurrence";
 $LANG['DOWNLOAD_BACKUP'] = 'Télécharger Fichier de Sauvegarde (Extrait CSV)';
 $LANG['VIEW_COMMENTS'] = 'Afficher Commentaires des Utilisateurs';
