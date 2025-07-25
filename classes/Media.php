@@ -116,11 +116,13 @@ class LocalStorage extends StorageStrategy {
 	 */
 
 	public function file_exists($file): bool {
-		if(is_array($file)) {
-			return file_exists($this->getDirPath() . $file['name']);
-		} else {
-			return file_exists($this->getDirPath() . $file);
+		$filename = is_array($file)? $file['name']: $file;
+
+		if(str_contains($filename, $this->getUrlPath())) {
+			$filename = str_replace($this->getUrlPath(), '', $filename);
 		}
+
+		return file_exists($this->getDirPath() . $filename);
 	}
 
 	/**
