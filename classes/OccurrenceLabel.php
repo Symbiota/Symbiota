@@ -625,14 +625,11 @@ class OccurrenceLabel {
 		if (is_numeric($labelIndex)) {
 			if ($group == 'g') {
 				$globalFormatArr = array();
-				if (file_exists($GLOBALS['SERVER_ROOT'] . '/content/collections/reports/labeljson.php')) {
-					include($GLOBALS['SERVER_ROOT'] . '/content/collections/reports/labeljson.php');
-					if (isset($LABEL_FORMAT_JSON)) {
-						$globalFormatArr = json_decode($LABEL_FORMAT_JSON, true);
-						unset($globalFormatArr['labelFormats'][$labelIndex]);
-						$globalFormatArr['labelFormats'] = array_values($globalFormatArr['labelFormats']);
-						$status = $this->saveGlobalJson($globalFormatArr);
-					}
+				if ($jsonData = $this->fetchGlobalLabelJson()) {
+					$globalFormatArr = json_decode($jsonData, true);
+					unset($globalFormatArr['labelFormats'][$labelIndex]);
+					$globalFormatArr['labelFormats'] = array_values($globalFormatArr['labelFormats']);
+					$status = $this->saveGlobalJson($globalFormatArr);
 				}
 			} elseif ($group == 'c') {
 				if ($this->collid) {
