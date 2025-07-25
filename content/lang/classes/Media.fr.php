@@ -11,5 +11,8 @@ $LANG['DUPLICATE_MEDIA_FILE'] = 'Fichier multimédia en double';
 $LANG['FILE_DOES_NOT_EXIST'] = 'Le fichier n\'existe pas';
 $LANG['FILE_ALREADY_EXISTS'] = 'Le fichier existe déjà';
 $LANG['UNKNOWN_MEDIA_TYPE_MSG'] = 'Type de support inconnu';
+$LANG['SUSPICIOUS_FILE'] = 'Fichier suspect';
+$LANG['ILLEGAL_RENAME_CHANGED_FILE_TYPE'] = 'Renommage illégal, type de fichier modifié';
+$LANG['FILE_TYPE_NOT_ALLOWED'] = 'Type de fichier non autorisé';
 
 ?>
