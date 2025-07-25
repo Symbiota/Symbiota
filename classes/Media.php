@@ -258,6 +258,7 @@ class MediaException extends Exception {
 	public const FileAlreadyExists = 'FILE_ALREADY_EXISTS';
 	public const SuspiciousMimeType= 'SUSPICIOUS_MIME_TYPE';
 	public const IllegalRenameChangedFileType = 'ILLEGAL_RENAME_CHANGED_FILE_TYPE';
+	public const FileTypeNotAllowed = 'FILE_TYPE_NOT_ALLOWED';
 
 	function __construct(string $case, string $message = ''){
 		global $LANG;
@@ -427,8 +428,7 @@ class Media {
 	}
 
 	/**
-	 * @param mixed $url
-	 * @param mixed $text
+	 * @param mixed $mime
 	 */
 	public static function getAllowedMime($mime) {
 		// Fall back if ALLOWED_MEDIA_MIME_TYPES is not present
@@ -941,6 +941,9 @@ class Media {
 			if(!$guess_ext || $guess_ext != $provided_file_data['extension']) {
 				throw new MediaException(MediaException::SuspiciousMimeType, ' ' . $guess_ext . ' ' . $provided_file_data['extension']);
 			}
+		}
+		if(!self::getAllowedMime($file['type'])) {
+			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $file['type']);
 		}
 		$keyValuePairs = [
 			"tid" => $clean_post_arr["tid"] ?? null,
