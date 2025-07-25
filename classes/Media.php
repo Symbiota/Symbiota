@@ -1026,8 +1026,6 @@ class Media {
 					], $media_id, $conn);
 				}
 
-				$storage->upload($file);
-
 				//Generate Deriatives if needed
 				if($media_type === MediaType::Image) {
 					$start_mem_limit = ini_get('memory_limit');
@@ -1038,7 +1036,12 @@ class Media {
 
 					//Will download file if its remote.
 					//This is a naive solution assuming we are upload to our server
-					$size = getimagesize($storage->getDirPath($file));
+					$size = getimagesize(
+						//$storage->getDirPath($file)
+						$file['tmp_name']
+					);
+
+
 					$metadata = [
 						'pixelXDimension' => $size[0],
 						'pixelYDimension' => $size[1]
@@ -1046,6 +1049,8 @@ class Media {
 
 					$width = $size[0];
 					$height = $size[1];
+
+					$storage->upload($file);
 
 					$thumb_url = $clean_post_arr['thumbnailUrl'] ?? null;
 					if(!$thumb_url) {
@@ -1080,6 +1085,8 @@ class Media {
 					}
 
 					self::update_metadata($metadata, $media_id, $conn);
+				} else {
+					$storage->upload($file);
 				}
 			}
 
