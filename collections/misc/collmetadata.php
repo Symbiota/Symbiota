@@ -158,7 +158,7 @@ $collManager->cleanOutArr($collData);
 				alert("<?php echo $LANG['SORT_NUMERIC'] ?>");
 				return false;
 			}
-			return true;
+			return verifyIconURL(f);
 		}
 
 		function managementTypeChanged(selElem) {
@@ -225,7 +225,9 @@ $collManager->cleanOutArr($collData);
 			var iconImageFile = document.getElementById("iconurl").value;
 			if (iconImageFile && (iconImageFile.substr(iconImageFile.length - 4) != '.jpg') && (iconImageFile.substr(iconImageFile.length - 4) != '.png') && (iconImageFile.substr(iconImageFile.length - 4) != '.gif')) {
 				alert("<?php echo $LANG['NOT_SUPP_URL'] ?>");
+				return false;
 			}
+			return true;
 		}
 	</script>
 	<style>
