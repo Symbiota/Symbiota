@@ -1209,12 +1209,13 @@ class Media {
 	}
 
 	private static function check_file_rename(string $old_filepath, string $new_filepath) {		
+		if($old_filepath && $new_filepath) {
+			$old_file = self::parseFileName($old_filepath);
+			$new_file = self::parseFileName($new_filepath);
 
-		$old_file = self::parseFileName($old_filepath);
-		$new_file = self::parseFileName($new_filepath);
-
-		if($old_file['extension'] != $new_file['extension']) {
-			throw new MediaException(MediaException::IllegalRenameChangedFileType);
+			if($old_file['extension'] != $new_file['extension']) {
+				throw new MediaException(MediaException::IllegalRenameChangedFileType);
+			}
 		}
 
 		return true;
