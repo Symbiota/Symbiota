@@ -6,6 +6,7 @@ include_once($SERVER_ROOT . "/classes/MediaType.php");
 include_once($SERVER_ROOT . "/classes/MediaException.php");
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/UploadUtil.php');
 
 if(file_exists($SERVER_ROOT.'/content/lang/classes/Media.'.$LANG_TAG.'.php')) {
 	include_once($SERVER_ROOT.'/content/lang/classes/Media.'.$LANG_TAG.'.php');
