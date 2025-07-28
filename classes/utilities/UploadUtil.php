@@ -30,7 +30,7 @@ class UploadUtil {
 	 * @return type
 	 * @throws conditon
 	 **/
-	public static function check_file_upload(array $uploaded_file, array $allowed_mimes = []): bool {
+	public static function checkFileUpload(array $uploaded_file, array $allowed_mimes = []): bool {
 		if(self::getMaximumFileUploadSize() - memory_get_usage() < intval($uploaded_file['size'])) {
 			throw new Exception('Error: File is to large to upload');
 		}
