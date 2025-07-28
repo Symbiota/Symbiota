@@ -1037,7 +1037,9 @@ class TaxonProfile extends Manager {
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$this->langArr[strtolower($r->langname)] = $r->langid;
-			$this->langArr[strtolower($r->iso639_1)] = $r->langid;
+			if (!empty($r->iso639_1)) {
+				$this->langArr[strtolower($r->iso639_1)] = $r->langid;
+			}
 		}
 		$rs->free();
 	}

@@ -1043,7 +1043,9 @@ class TaxonomyUpload{
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$this->langArr[$r->langname] = $r->langid;
-				$this->langArr[$r->iso639_1] = $r->langid;
+				if (!empty($r->iso639_1)) {
+					$this->langArr[$r->iso639_1] = $r->langid;
+				}
 			}
 			$rs->free();
 		}
