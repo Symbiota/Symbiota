@@ -95,6 +95,50 @@ class UploadUtil {
 	}
 
 	/**
+	 * Utility function to parse out useful information when uploading and processing files.
+	 *
+	 * Wrapper to use parse_url, pathinfo, and parse_str in order to have a stable
+	 * and consistent filepath / url parsing utility.
+	 *
+	 * @phpstan-type DecomposedUrl array{
+	 *		scheme?: string
+	 *		host?: string
+	 *		port?: int
+	 *		path?: string
+	 *		basename?: string
+	 *		extension?: string
+	 *		dirname?: string
+	 *		filename?: string
+	 *		query?: string
+	 *		query_parts?: { key_name: string, ...}
+	 *	}
+	 *
+	 * @param string $url Can be a url or pathname or file name.
+	 * @return Bool | DecomposedUrl
+	 **/
+	public static function decomposeUrl(string $url) {
+		$parts = parse_url($url);
+
+		if (!is_array($parts)) return false;
+
+		# Pull out host information
+		if (array_key_exists('host', $parts) && strrpos($parts['host'], '.') !== false) {
+			$parts['tld'] = end(explode('.', $parts['host']));
+		}
+
+		# Parse path information
+		if (array_key_exists('path', $parts)) {
+			$parts = array_merge($parts, pathinfo($parts['path']));
+		}
+
+		# Parse out query
+		if (array_key_exists('query', $parts)) {
+			parse_str($parts['query'], $parts['query_parts']);
+		}
+		return $parts;
+	}
+
+	/**
 	 * @param string $mime
 	 * @return string | bool
 	 */
