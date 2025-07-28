@@ -33,7 +33,7 @@ if($isEditor){
 		if(!empty($_REQUEST['ulfilename'])){
 			$uploadStatus = $loaderManager->setFileName($_REQUEST['ulfilename']);
 		}
-		else{
+		elseif($action == 'mapInputFile'){
 			$ulOverride = '';
 			if(!empty($_REQUEST['uloverride'])) $ulOverride = $_REQUEST['uloverride'];
 			$uploadStatus = $loaderManager->uploadFile($ulOverride);
@@ -178,6 +178,7 @@ if($isEditor){
 	<style type="text/css">
 		fieldset { width:90%; padding:10px 15px }
 		legend { font-weight:bold; }
+		button { margin: 3px }
 	</style>
 </head>
 <body>
@@ -186,10 +187,10 @@ $displayLeftMenu = (isset($taxa_admin_taxaloaderMenu)?$taxa_admin_taxaloaderMenu
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class="navpath">
-	<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-	<a href="taxonomydisplay.php"><?php echo htmlspecialchars($LANG['BASIC_TREE_VIEWER'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-	<a href="taxonomydynamicdisplay.php"><?php echo htmlspecialchars($LANG['DYN_TREE_VIEWER'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-	<a href="batchloader.php"><b><?php echo htmlspecialchars($LANG['TAX_BATCH_LOADER'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></b></a>
+	<a href="../../index.php"><?= $LANG['HOME'] ?></a> &gt;&gt;
+	<a href="taxonomydisplay.php"><?= $LANG['BASIC_TREE_VIEWER'] ?></a> &gt;&gt;
+	<a href="taxonomydynamicdisplay.php"><?= $LANG['DYN_TREE_VIEWER'] ?></a> &gt;&gt;
+	<a href="batchloader.php"><b><?= $LANG['TAX_BATCH_LOADER'] ?></b></a>
 </div>
 <?php
 if($isEditor){
