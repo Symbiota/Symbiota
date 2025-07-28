@@ -138,6 +138,26 @@ class UploadUtil {
 		return $parts;
 	}
 
+	public static function downloadFromRemote(string $url) {
+		$info = Media::getRemoteFileInfo($url);
+
+		$availableMemory = self::getMaximumFileUploadSize() - memory_get_usage();
+		if($availableMemory < intValue($info['size'])) {
+			throw new Exception('Error: File is to large to upload');
+		}
+
+		$tempPath = self::getTempDir() . $info['name'] . $info['extension'];
+
+		file_put_contents(
+			$tempPath,
+			fopen($url, 'r')
+		);
+
+		$info['tmp_name'] = tempPath;
+
+		return $info;
+	}
+
 	/**
 	 * @param string $mime
 	 * @return string | bool
