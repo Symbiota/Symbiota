@@ -571,32 +571,6 @@ class Media {
 		return $file_name;
 	}
 
-	/**
-	  * This function returns the maximum files size that can be uploaded
-	  * in PHP
-	  * @returns int File size in bytes
-	  **/
-	public static function getMaximumFileUploadSize(): int {
-		return min(
-			self::size_2_bytes(ini_get('post_max_size')),
-			self::size_2_bytes(ini_get('upload_max_filesize')),
-		);
-	}
-
-	private static function size_2_bytes(string $size):int {
-		// Remove the non-unit characters from the size.
-		$unit = preg_replace('/[^bkmgtpezy]/i', '', $size);
-		// Remove the non-numeric characters from the size.
-		$size = preg_replace('/[^0-9\.]/', '', $size);
-		if ($unit) {
-			// Find the position of the unit in the ordered string which is the power of magnitude to multiply a kilobyte by.
-			return round($size * pow(1024, stripos('bkmgtpezy', $unit[0])));
-		}
-		else {
-			return round($size);
-		}
-	}
-
 	private static function isValidFile($file): bool {
 		return $file && !empty($file) && isset($file['error']) && $file['error'] === 0;
 	}
@@ -673,7 +647,7 @@ class Media {
 		}
 
 		//If file being uploaded is too big throw error
-		else if($should_upload_file && self::getMaximumFileUploadSize() - memory_get_usage() < intval($file['size'])) {
+		else if($should_upload_file && UploadUtil::getMaximumFileUploadSize() - memory_get_usage() < intval($file['size'])) {
 			throw new Exception('Error: File is to large to upload');
 		}
 
@@ -808,7 +782,7 @@ class Media {
 				if($media_type === MediaType::Image) {
 					$start_mem_limit = ini_get('memory_limit');
 					// Update mem limit if not set to 256M already
-					if(self::size_2_bytes(ini_get('memory_limit')) < self::size_2_bytes('256M')) {
+					if(UploadUtil::size2Bytes(ini_get('memory_limit')) < UploadUtil::size2Bytes('256M')) {
 						ini_set('memory_limit', '256M');
 					}
 
@@ -1247,7 +1221,7 @@ class Media {
 
 	private static function enough_memory_gd($x, $y, $rgb = 3) {
 		// 1.7 is some coef related to gd or overhead not entirely sure
-		return  ($x * $y * 1.7 * $rgb) < (self::size_2_bytes(ini_get('memory_limit')) - memory_get_usage());
+		return  ($x * $y * 1.7 * $rgb) < (UploadUtil::size2Bytes(ini_get('memory_limit')) - memory_get_usage());
 	}
 
 	/**

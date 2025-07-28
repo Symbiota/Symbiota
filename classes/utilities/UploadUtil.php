@@ -66,8 +66,8 @@ class UploadUtil {
 	  **/
 	public static function getMaximumFileUploadSize(): int {
 		return min(
-			self::size_2_bytes(ini_get('post_max_size')),
-			self::size_2_bytes(ini_get('upload_max_filesize')),
+			self::size2Bytes(ini_get('post_max_size')),
+			self::size2Bytes(ini_get('upload_max_filesize')),
 		);
 	}
 
@@ -80,7 +80,7 @@ class UploadUtil {
 	 * @return type
 	 * @throws conditon
 	 **/
-	public static function size_2_bytes(string $size):int {
+	public static function size2Bytes(string $size):int {
 		// Remove the non-unit characters from the size.
 		$unit = preg_replace('/[^bkmgtpezy]/i', '', $size);
 		// Remove the non-numeric characters from the size.
