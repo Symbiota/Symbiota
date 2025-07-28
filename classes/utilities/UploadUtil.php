@@ -21,31 +21,6 @@ class UploadUtil {
 	}
 
 	/**
-	 * Pulls file name out of directory path or url
-	 *
-	 * Note: The url parsing expects the filename to not be in the query or hash
-	 *
-	 * @param string $filepath Can be a file or url path
-	 * return array<string,mixed>
-	 * @return array<string,mixed>
-	 */
-	public static function parseFileName(string $filepath): array {
-		$file_name = $filepath;
-
-		//Filepath maybe a url so clear out url query if it exists
-		$query_pos = strpos($file_name,'?');
-		if($query_pos) $file_name = substr($file_name, 0, $query_pos);
-
-		$file_parts = pathinfo($file_name);
-
-		return [
-			'name' => $file_parts['filename'],
-			'tmp_name' => $filepath,
-			'extension' => (!empty($file_parts['extension'])) ? strtolower($file_parts['extension']) : ''
-		];
-	}
-
-	/**
 	 * undocumented function summary
 	 *
 	 * Undocumented function long description
@@ -67,7 +42,7 @@ class UploadUtil {
 		}
 
 		$guess_ext = self::mime2ext($type_guess);
-		$provided_file_data = self::parseFileName($uploaded_file['name']);
+		$provided_file_data = pathinfo($uploaded_file['name']);
 
 		if(!$guess_ext || $guess_ext != $provided_file_data['extension']) {
 			throw new MediaException(MediaException::SuspiciousFile);
