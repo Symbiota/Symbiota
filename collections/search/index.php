@@ -53,7 +53,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js?ver=1" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT . '/js/jquery-ui.min.js'; ?>" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT . '/collections/individual/domManipulationUtils.js'; ?>" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT . '/js/symb/domManipulationUtils.js'; ?>" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT . '/js/symb/localitySuggest.js' ?>" type="text/javascript"></script>
 	<script>
 		const clientRoot = '<?php echo $CLIENT_ROOT; ?>';
@@ -783,8 +783,8 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 	?>
 </body>
 <script src="<?php echo $filename ?>" type="text/javascript"></script>
-<script src="js/searchform.js?ver=2" type="text/javascript"></script>
-<script src="<?php echo $CLIENT_ROOT . '/collections/search/js/alerts.js?v=202107'; ?>" type="text/javascript"></script>
+<script src="<?php echo $CLIENT_ROOT . '/js/symb/searchform.js?ver=2'; ?>" type="text/javascript"></script>
+<script src="<?php echo $CLIENT_ROOT . '/js/alerts.js?v=202107'; ?>" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/js/symb/api.taxonomy.taxasuggest.js'; ?>" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT . '/js/symb/collections.index.js?ver=20171215' ?>" type="text/javascript"></script>
 <script type="text/javascript">
