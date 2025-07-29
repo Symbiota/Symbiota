@@ -13,12 +13,13 @@ const addElemFirst = (parentDivId, targetChildDivId) => {
 const reorderElements = (parentDivId, desiredDivIds, removeDivIds) => {
   const parent = document.getElementById(parentDivId);
   const allChildren = Array.from(parent.children);
-
-  allChildren.forEach((childEl) => {
-    const currentId = childEl.id;
-    if (desiredDivIds.includes(currentId)) {
+  const allChildrenIds = allChildren?.map(child=>child.id) || [];
+  desiredDivIds.forEach((currentId) => {
+    const desiredEl = document.getElementById(currentId);
+    if(!desiredEl) return;
+    if (allChildrenIds.includes(currentId)) {
       currentChildIdxInDesiredList = desiredDivIds.indexOf(currentId);
-      parent.appendChild(childEl);
+      parent.appendChild(desiredEl);
       if (desiredDivIds[currentChildIdxInDesiredList + 1] === "hr") {
         const hrElement = document.createElement("hr");
         hrElement.style.cssText = "margin-bottom: 2rem; clear: both;";
@@ -26,7 +27,7 @@ const reorderElements = (parentDivId, desiredDivIds, removeDivIds) => {
       }
     }
     if (removeDivIds.includes(currentId)) {
-      childEl.remove();
+      desiredEl.remove();
     }
   });
 };

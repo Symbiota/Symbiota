@@ -96,7 +96,7 @@ if ($SYMB_UID) {
 			if(e.submitter.value === "edit") {
 				return processEditQuickSearch('<?php echo $CLIENT_ROOT ?>')
 			} else if(e.submitter.value === "search") {
-				return submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includecult=' + <?= !empty($SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT) ? '1' : '0' ?> + '&includeothercatnum=1', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? '1' : '0' ?> + '&usethes=1&taxontype=2 ');
+				return submitAndRedirectSearchForm('<?= $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includecult=' + <?= !empty($SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT) ? '1' : '0' ?> + '&includeothercatnum=1', '&includecult=' + <?= !empty($SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT) ? '1' : '0' ?> + '&usethes=1&taxontype=2 ');
 			}
 
 			e.preventDefault();
@@ -471,7 +471,7 @@ if ($SYMB_UID) {
 									<a href="#" onclick="$('li.importItem').show(); return false;">
 										<?= $LANG['IMPORT_SPECIMEN'] ?>
 									</a>
-									<a id="importinfo" href="https://biokic.github.io/symbiota-docs/coll_manager/upload/" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>">
+									<a id="importinfo" href="https://docs.symbiota.org/Collection_Manager_Guide/Importing_Uploading/" target="_blank" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>">
 											<img src="../../images/info.png" style="width:13px;" alt="<?= $LANG['INFO_ALT'] ?>" />
 									</a><br/>
 								</li>

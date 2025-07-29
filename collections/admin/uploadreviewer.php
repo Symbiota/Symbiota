@@ -83,12 +83,24 @@ if($SYMB_UID){
 			if($recArr){
 				//Check to see which headers have values
 				$headerArr = array();
+				$matSampleHeaderArr = array();
 				foreach($recArr as $occurArr){
 					foreach($occurArr as $k => $v){
 						if($v && trim($v) && !array_key_exists($k,$headerArr)){
-							$headerArr[$k] = $k;
+							if($k == 'materialsamplejson'){
+								if($matSampleObj = json_decode($v)){
+									foreach($matSampleObj as $matKey => $matValue){
+										$matSampleHeaderArr[$matKey] = $matKey;
+									}
+								}
+							}
+							else $headerArr[$k] = $k;
 						}
 					}
+				}
+				foreach($matSampleHeaderArr as $matFieldName){
+					//Material Sample records exists, thus add to header array
+					$headerArr[$matFieldName] = $matFieldName;
 				}
 				$translationMap = array('catalognumber' => 'catalogNumber','occurrenceid' => 'occurrenceID','othercatalognumbers' => 'otherCatalogNumbers',
 					'identificationqualifier' => 'identificationQualifier','sciname' => 'scientificName','scientificnameauthorship'=>'scientificNameAuthorship',
@@ -121,8 +133,14 @@ if($SYMB_UID){
 					foreach($recArr as $id => $occArr){
 						if($occArr['sciname']) $occArr['sciname'] = '<i>'.$occArr['sciname'].'</i> ';
 						echo "<tr ".($cnt%2?'class="alt"':'').">\n";
+						$matSampleArr = array();
+						if(!empty($occArr['materialsamplejson'])){
+							$matSampleArr = json_decode($occArr['materialsamplejson'], true);
+						}
 						foreach($headerArr as $k => $v){
-							$displayStr = $occArr[$k];
+							$displayStr = '';
+							if(!empty($occArr[$k])) $displayStr = $occArr[$k];
+							if(!empty($matSampleArr[$k])) $displayStr = $matSampleArr[$k];
 							if($displayStr){
 								if(strlen($displayStr) > 60){
 									$displayStr = substr($displayStr,0,60).'...';

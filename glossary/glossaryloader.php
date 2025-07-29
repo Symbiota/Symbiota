@@ -1,4 +1,6 @@
 <?php
+//Deactivate file all together until function is rebuilt in a more secure manner
+exit();
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/GlossaryUpload.php');
 include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
@@ -15,7 +17,7 @@ $batchSource = array_key_exists("batchsources",$_REQUEST)?str_replace("'","&#39;
 $isEditor = false;
 if($IS_ADMIN || array_key_exists('GlossaryEditor',$USER_RIGHTS)) $isEditor = true;
 
-$loaderManager = new GlossaryUpload();
+//$loaderManager = new GlossaryUpload();
 
 $fieldMap = array();
 if($isEditor){

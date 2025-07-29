@@ -17,18 +17,13 @@ echo "Creating head include: /includes/head.php"
 cp -n ../includes/head_template.php ../includes/head.php
 echo "Creating usage policy include: /includes/usagepolicy.php"
 cp -n ../includes/usagepolicy_template.php ../includes/usagepolicy.php
-echo "Creating default collection label include: /content/collections/reports/labeljson.php"
-cp -n ../content/collections/reports/labeljson_template.php ../content/collections/reports/labeljson.php
-
 
 #Adjust file permission to give write access to certain folders and files
 echo "Adjusting file permissions"
-chmod -R 777 ../temp
 chmod -R 777 ../content/collicon
 chmod -R 777 ../content/dwca
 chmod -R 777 ../content/geolocate
 chmod -R 777 ../content/imglib
-#chmod -R 777 ../content/lang
 chmod -R 777 ../content/logs 
 chmod -R 777 ../api/storage/framework 
 chmod -R 777 ../api/storage/logs 

@@ -146,6 +146,7 @@ $LANG['WARNING_ADD_EXS_NO'] = 'AVISO adicionando número exsiccati';
 $LANG['WARNING_ADD_EXS'] = 'AVISO adicionando exsiccati';
 $LANG['FAILED_ADD_OCC'] = 'ERRO - falha ao adicionar registro de ocorrência';
 $LANG['ERROR_REMOVING_OCR'] = 'ERRO ao remover blocos de OCR vinculados à multimídia';
+$LANG['UNABLE_RELINK_BLANK'] = 'Não é possível ligar a imagem ao novo registo de instância vazio';
 $LANG['ERROR_REMOVING_IMAGETAGS'] = 'ERRO ao remover imageTags vinculadas a multimídia';
 $LANG['ERROR_REMOVING_LINKS'] = 'ERRO ao remover links multimídia';
 $LANG['ERROR_TRYING_TO_DELETE'] = 'ERRO ao tentar excluir registro de ocorrência';

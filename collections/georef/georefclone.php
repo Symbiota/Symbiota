@@ -164,10 +164,9 @@ if($coorArr && count($coorArr) == 4){
 
 			try{
 				if(data.err == 0) data.err = "";	
-
-				const update_arr = [
+const update_arr = [
 					["#decimallatitude", data.lat],
-					["#decimallongitude", data.lat],
+					["#decimallongitude", data.lng],
 					["#coordinateuncertaintyinmeters", data.err],
 					["#georeferencedByDiv input", data.georeferencedBy],
 					["#georeferenceRemarksDiv input", data.georeferenceRemarks],
