@@ -126,7 +126,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 					<div class="targetdiv">
 						<input type='hidden' name='MAX_FILE_SIZE' value='10000000' />
 						<div>
-							<input name='imgfile' type='file' aria-label="<?php echo (isset($LANG['UPLOAD']) ? $LANG['UPLOAD'] : 'Upload the File'); ?>" />
+							<input name='imgfile' type='file' aria-label="<?php echo (isset($LANG['UPLOAD']) ? $LANG['UPLOAD'] : 'Upload the File'); ?>" accept="<?= implode(",", $ALLOWED_MEDIA_MIME_TYPES) ?>"/>
 						</div>
 						<div id="newimagediv"></div>
 						<div style="margin:10px 0px;">
