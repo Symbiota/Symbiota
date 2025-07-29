@@ -236,7 +236,6 @@ if($SYMB_UID){
 				$tabTarget = 2;
 			}
 			elseif($action == 'Submit New Image') {
-
 				$collMap = $occManager->getCollMap();
 
 				//Ensures correct order on taxon profile page
@@ -252,10 +251,9 @@ if($SYMB_UID){
 						$occur_map['catalognumber']
 					);
 
-					Media::add(
-						$_POST,
-						new LocalStorage($path),
-						$_FILES['imgfile'] ?? null
+					Media::uploadAndInsert(
+						$_FILES['imgfile'],
+						new LocalStorage($path)
 					);
 
 					if($errors = Media::getErrors()) {
