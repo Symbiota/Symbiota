@@ -117,6 +117,7 @@ if($isEditor && $action){
 		$path = ($family? $family: '') . '/' . date('Ym') . '/';
 		try {
 			Media::uploadAndInsert(
+				$_POST,
 				$_FILES['imgfile'] ?? null,
 				new LocalStorage($path)
 			);

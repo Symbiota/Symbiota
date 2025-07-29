@@ -41,6 +41,7 @@ if($isEditor){
 				$_POST['occid'] = $occid;
 
 				Media::uploadAndInsert(
+					$_POST,
 					$_FILES['imgfile'],
 					new LocalStorage($path)
 				);
