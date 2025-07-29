@@ -1,6 +1,5 @@
 #!/bin/bash
 
-chcon -R -t httpd_sys_rw_content_t ../temp/
 chcon -R -t httpd_sys_rw_content_t ../content/collections/
 chcon -R -t httpd_sys_rw_content_t ../content/collicon/
 chcon -R -t httpd_sys_rw_content_t ../content/geolocate/
