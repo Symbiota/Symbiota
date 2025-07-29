@@ -474,84 +474,13 @@ class Media {
 		return isset($mime_map[$mime]) ? $mime_map[$mime] : false;
 	}
 
-	/*
-	 * Curls url for header information and returns a $_FILES like file array
-	 * @param string $url
-	 * return array | bool
-	 */
-	public static function getRemoteFileInfo(string $url) {
-		if(!function_exists('curl_init')) throw new Exception('Curl is not installed');
-		$ch = curl_init($url);
-
-		curl_setopt($ch, CURLOPT_HEADER, true);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-		curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
-
-		$data = curl_exec($ch);
-
-		//If there is no data then throw error
-		if($data === false && $errno = curl_errno($ch)) {
-			$message = curl_strerror($errno);
-			curl_close($ch);
-			throw new Exception($message);
-		}
-
-		$retCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-		if($retCode >= 400) {
-			error_log(
-				'Error Status ' . $retCode . ' in getRemoteFileInfo LINE:' . __LINE__ .
-				' URL:' . $url
-			);
-			return false;
-		}
-
-		$file_size_bytes = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
-		$file_type_mime = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-
-		curl_close($ch);
-
-		// Check response header for a provided filename in "Content-Disposition"
-		$headers = explode("\r\n", $data);
-		$response_file_name = '';
-		if ($found = preg_grep('/^Content-Disposition\: /', $headers)) {
-			preg_match("/.* filename[*]?=(?:utf-8[']{2})?(.*)/",current($found),$matches);
-			if (!empty($matches)){
-				$response_file_name = urldecode($matches[1]);
-			}
-		}
-
-		// Use filename sent in response header.  Otherwise fallback to contents of URL.
-		if(!empty($response_file_name)){
-			$parsed_file = self::parseFileName($response_file_name);
-		}
-		else {
-			$parsed_file = self::parseFileName($url);
-		}
-
-		$parsed_file['name'] = self::cleanFileName($parsed_file['name']);
-
-		if(!$parsed_file['extension'] && $file_type_mime) {
-			$parsed_file['extension'] = self::mime2ext($file_type_mime);
-		}
-
-		return [
-			'name' => $parsed_file['name'] . ($parsed_file['extension'] ? '.' .$parsed_file['extension']: ''),
-			'tmp_name' => $url,
-			'error' => 0,
-			'type' => $file_type_mime,
-			'size' => intval($file_size_bytes)
-		];
-	}
-
 	/**
 	 * Strips out undesired characters from from a pure file name string
 	 *
 	 * @param string $file_name A file name without the extension
 	 * return string
 	 */
-	private static function cleanFileName(string $file_name):string {
+	public static function cleanFileName(string $file_name):string {
 		$file_name = str_replace(".","", $file_name);
 		$file_name = str_replace(array("%20","%23"," ","__"),"_",$file_name);
 		$file_name = str_replace("__","_",$file_name);
@@ -654,7 +583,7 @@ class Media {
 			$file = self::parse_map_only_file($clean_post_arr);
 
 			if( (!self::isValidFile($file) || !$file['type']) ) {
-				$file = self::getRemoteFileInfo($clean_post_arr['originalUrl']);
+				$file = UploadUtil::getRemoteFileInfo($clean_post_arr['originalUrl']);
 			}
 
 			$clean_post_arr['format'] = $file['type'] ?? null;
