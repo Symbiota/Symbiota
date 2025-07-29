@@ -616,8 +616,12 @@ class Media {
 	}
 
 	/**
-	 * @param array<int,mixed> $media_meta
-	 * @param Mysqli $conn
+     * Function to insert a record into the media table. does not handle file uploads
+	 * of any kind, but will check to make sure the originalUrl has an allowed format
+	 * for the media table.
+	 *
+	 * @param array<int,mixed> $post_arr
+	 * @param Mysqli|Null $conn Optional field if caller wants to keep connection for transactions
 	 * @return void
 	**/
 	public static function insert(array $post_arr, $conn = null): array {
@@ -719,6 +723,16 @@ class Media {
 		return $keyValuePairs;
 	}
 
+	/**
+	 * Function to use $_POST data to link uploaded files as media assets to tids or occids
+	 * If all you want to do is insert a record see the insert function. This is a wrapper
+	 * of that function that also handles file and remote file uploads with their need security
+	 * checks.
+	 *
+	 * @param StorageStrategy $storage Class where and how to save files. If left empty will not store files
+	 * @param array $file {name: string, type: string, tmp_name: string, error: int, size: int} Post file data, if none given will assume remote resource
+	 * @return bool
+	**/
 	public static function uploadAndInsert($file, $storage): void {
 		$createdFilepaths = [];
 
