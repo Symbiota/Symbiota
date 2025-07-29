@@ -14,7 +14,7 @@ if(file_exists($SERVER_ROOT.'/content/lang/classes/Media.'.$LANG_TAG.'.php')) {
 	include_once($SERVER_ROOT.'/content/lang/classes/Media.en.php');
 }
 
-function get_occurrence_upload_path($institutioncode, $collectioncode, $catalognumber) {
+function get_occurrence_upload_path($institutioncode, $collectioncode, $catalognumber = null) {
 		$root = $institutioncode . ($collectioncode? '_'. $collectioncode: '') . '/';
 
 		if($catalognumber) {
