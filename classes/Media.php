@@ -616,6 +616,233 @@ class Media {
 	}
 
 	/**
+	 * @param array<int,mixed> $media_meta
+	 * @param Mysqli $conn
+	 * @return void
+	**/
+	public static function insert(array $post_arr, $conn = null): array {
+		if(!$conn) {
+			$conn = Database::connect('write');
+		}
+
+		$clean_post_arr = Sanitize::in($post_arr);
+
+		//Not Sure if I Need
+		$mapLargeImg = !($clean_post_arr['nolgimage']?? true);
+
+		$sql = <<< SQL
+		SELECT tidinterpreted 
+		FROM omoccurrences 
+		WHERE tidinterpreted IS NOT NULL AND occid = ? 
+		SQL;
+
+		$taxon_result = QueryUtil::executeQuery(
+			$conn,
+			$sql,
+			[$clean_post_arr['occid']]
+		);
+
+		if(!isset($clean_post_arr['tid']) && $row = $taxon_result->fetch_object()) {
+			$clean_post_arr['tid'] = $row->tidinterpreted;
+		}
+
+		if(!($clean_post_arr['copytoserver'] ?? false) && !($clean_post_arr['format'] ?? false)) {
+			$file = self::parse_map_only_file($clean_post_arr);
+
+			if( (!self::isValidFile($file) || !$file['type']) ) {
+				$file = self::getRemoteFileInfo($clean_post_arr['originalUrl']);
+			}
+
+			$clean_post_arr['format'] = $file['type'] ?? null;
+
+			if(!isset($clean_post_arr['sourceIdentifier'])) {
+				$clean_post_arr['sourceIdentifier'] = 'filename: ' . $file['name'];
+			}
+		}
+
+		if(!self::getAllowedMime($clean_post_arr['format'])) {
+			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $file['type']);
+		}
+
+		$keyValuePairs = [
+			"tid" => $clean_post_arr["tid"] ?? null,
+			"occid" => $clean_post_arr["occid"] ?? null,
+			"url" => $clean_post_arr['weburl'] ?? $clean_post_arr['url'] ?? null,
+			"thumbnailUrl" => $clean_post_arr["thumbnailUrl"] ?? null,
+			// Will get popluated below
+			"originalUrl" => $clean_post_arr['originalUrl'],
+			"archiveUrl" => $clean_post_arr["archiveUrl"] ?? null,// Only Occurrence import
+			// This is a very bad name that refers to source or downloaded url
+			"sourceUrl" => $clean_post_arr["sourceUrl"] ?? null,// TPImageEditorManager / Occurrence import
+			"referenceUrl" => $clean_post_arr["referenceUrl"] ?? null,// check keys again might not be one,
+			"creator" => $clean_post_arr["creator"] ?? null,
+			"creatorUid" => OccurrenceUtil::verifyUser($clean_post_arr["creatorUid"] ?? null, $conn),
+			"format" =>  $clean_post_arr['format'],
+			"caption" => $clean_post_arr["caption"] ?? null,
+			"owner" => $clean_post_arr["owner"] ?? null,
+			"locality" => $clean_post_arr["locality"] ?? null,
+			"anatomy" => $clean_post_arr["anatomy"] ?? null,
+			"notes" => $clean_post_arr["notes"] ?? null,
+			"username" => Sanitize::in($GLOBALS['USERNAME']),
+			// check if its is_numeric?
+			"sortOccurrence" => $clean_post_arr['sortOccurrence'] ?? null,
+			"sourceIdentifier" => $clean_post_arr['sourceIdentifier'] ?? null,
+			"rights" => $clean_post_arr['rights'] ?? null,
+			"accessRights" => $clean_post_arr['accessRights'] ?? null,
+			"copyright" => $clean_post_arr['copyright'] ?? null,
+			"hashFunction" => $clean_post_arr['hashFunction'] ?? null,
+			"hashValue" => $clean_post_arr['hashValue'] ?? null,
+			"mediaMD5" => $clean_post_arr['mediaMD5'] ?? null,
+			"recordID" => $clean_post_arr['recordID'] ?? UuidFactory::getUuidV4(),
+			"mediaType" => self::getMediaTypeStrFromMime($clean_post_arr['format']),
+		];
+
+		$sort_sequence = $clean_post_arr['sortsequence'] ?? $clean_post_arr['sortSequence'] ?? false;
+		$keyValuePairs["sortsequence"] = is_numeric($sort_sequence)? $sort_sequence: 50;
+
+		$keys = implode(",", array_keys($keyValuePairs));
+		$parameters = str_repeat('?,', count($keyValuePairs) - 1) . '?';
+
+		$sql = <<< SQL
+		INSERT INTO media($keys) VALUES ($parameters)
+		SQL;
+
+		$result = QueryUtil::executeQuery($conn, $sql, array_values($keyValuePairs));
+		//Insert to other tables as needed like imagetags...
+
+		$media_id = $conn->insert_id;
+		self::update_tags($media_id, $clean_post_arr, $conn);
+
+		// Attach created id to metadata
+		$keyValuePairs['mediaID'] = $media_id;
+
+		return $keyValuePairs;
+	}
+
+	public static function uploadAndInsert($file, $storage): void {
+		$createdFilepaths = [];
+
+		$conn = Database::connect('write');
+		mysqli_begin_transaction($conn);
+
+		try {
+			if(!self::isValidFile($file) && ($_POST['copytoserver'] ?? false)) {
+				$file = UploadUtil::downloadFromRemote($_POST['originalUrl']);
+				$createdFilepaths[] = $file['tmp_name'];
+			}
+
+			if(self::isValidFile($file)) {
+				UploadUtil::checkFileUpload($file, $GLOBALS['ALLOWED_MEDIA_MIME_TYPES']);
+				$_POST['format'] = $file['type'];
+				$_POST['originalUrl'] = $storage->getUrlPath() . $file['name'];
+
+				if(!isset($_POST['sourceIdentifier'])) {
+					$_POST['sourceIdentifier'] = 'filename: ' . $file['name'];
+				}
+			}
+			
+			$media_metadata = self::insert($_POST, $conn);
+			$media_type = MediaType::tryFrom($media_metadata['mediaType']);
+
+			if(self::isValidFile($file)) {
+				//Check if file exists
+				if($storage->file_exists($file)) {
+					//Add mediaID onto end of file name which should be unique within portal
+					$file['name'] = self::addToFilename($file['name'], '_' . $media_metadata['mediaID']);
+
+					//Fail case the appended mediaID is taken stops after 10
+					$cnt = 1;
+					while($storage->file_exists($file) && $cnt < 10) {
+						$file['name'] = self::addToFilename($file['name'], '_' . $cnt);
+						$cnt++;
+					}
+					$updated_path = $storage->getUrlPath() . $file['name'];
+
+					//Update source url to reflect new filename
+					self::update_metadata([
+						'url' => $updated_path,
+						'originalUrl' => $updated_path
+					], $media_metadata['mediaID'], $conn);
+				}
+
+				//Generate Deriatives if needed
+				if($media_type === MediaType::Image) {
+					$start_mem_limit = ini_get('memory_limit');
+					// Update mem limit if not set to 256M already
+					if(UploadUtil::size2Bytes(ini_get('memory_limit')) < UploadUtil::size2Bytes('256M')) {
+						ini_set('memory_limit', '256M');
+					}
+
+					$size = getimagesize($file['tmp_name']);
+
+					$metadata = [
+						'pixelXDimension' => $size[0],
+						'pixelYDimension' => $size[1]
+					];
+
+					$width = $size[0];
+					$height = $size[1];
+
+					$storage->upload($file);
+
+					$urls = [ 
+						'thumbnailUrl' => [
+							'name' => self::addToFilename($file['name'], '_tn'),
+							'width' => $GLOBALS['IMG_TN_WIDTH']?? 200,
+							'height' => 0
+						],
+						'url' => [
+							'name' =>self::addToFilename($file['name'], '_lg'),
+							'width' => $GLOBALS['IMG_WEB_WIDTH']?? 1400,
+							'height' => 0
+						]
+					];
+
+					foreach($urls as $url => $data) {
+						if(!($media_metadata[$url] ?? false)) {
+							self::create_image(
+								$file['name'],
+								$data['name'],
+								$storage,
+								$data['width'],
+								$data['height']
+							);
+
+							if($storage->file_exists($data['name'])) {
+								$metadata[$url] = $storage->getUrlPath($data['name']);
+								$createdFilepaths[] = $url;
+							}
+
+						}
+					}
+					self::update_metadata($metadata, $media_metadata['mediaID'], $conn);
+				} elseif($media_type === MediaType::Audio) {
+					$storage->upload($file);
+				}
+			}
+
+			mysqli_commit($conn);
+		} catch(Throwable $th) {
+			mysqli_rollback($conn);
+
+			foreach($createdFilepaths as $filepath) {
+				unlink($filepath);
+			}
+
+			array_push(self::$errors, $th->getMessage());
+		}
+	}
+
+	public static function getMediaTypeStrFromMime(string $mime) {
+		$media_type_str = explode('/', $mime)[0];
+		$media_type = MediaType::tryFrom($media_type_str);
+
+		if(!$media_type) throw new MediaException(MediaException::InvalidMediaType, ' ' . $media_type_str);
+
+		return $media_type_str;
+	}
+
+	/**
 	 * @param array<int,mixed> $post_arr
 	 * @param StorageStrategy $storage Class where and how to save files. If left empty will not store files
 	 * @param array $file {name: string, type: string, tmp_name: string, error: int, size: int} Post file data, if none given will assume remote resource
