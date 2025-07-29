@@ -2156,7 +2156,7 @@ class SpecUploadBase extends SpecUpload{
 
 			if(!$parsed_mime) {
 				try {
-					$file = Media::getRemoteFileInfo($testUrl);
+					$file = UploadUtil::getRemoteFileInfo($testUrl);
 					$parsed_mime = $file['type'];
 				} catch(Throwable $error) {
 					error_log('SpecUploadBase: Failed to Parse File: ' . $error->getMessage() . ' ' . $testUrl . ' ' . __LINE__ . ' ');
