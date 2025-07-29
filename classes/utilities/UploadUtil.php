@@ -142,18 +142,18 @@ class UploadUtil {
 		$info = Media::getRemoteFileInfo($url);
 
 		$availableMemory = self::getMaximumFileUploadSize() - memory_get_usage();
-		if($availableMemory < intValue($info['size'])) {
+		if($availableMemory < intval($info['size'])) {
 			throw new Exception('Error: File is to large to upload');
 		}
 
-		$tempPath = self::getTempDir() . $info['name'] . $info['extension'];
+		$tempPath = self::getTempDir() . $info['name'];
 
 		file_put_contents(
 			$tempPath,
 			fopen($url, 'r')
 		);
 
-		$info['tmp_name'] = tempPath;
+		$info['tmp_name'] = $tempPath;
 
 		return $info;
 	}
