@@ -6,8 +6,7 @@
 TEMPLATE_SUFFIX='_template'
 TEMPLATE_PATHS=('../config/' '../' '../includes/' '../content/collections/reports/')
 # Add an 'r' to the begining of the relative path (../&&&) to recursivly make all subdirectories writabe
-WRITABLE_PATHS=('../temp' 'r../content/collections' 'r../content/collicon' 'r../content/dwca' \
-'r../content/geolocate' 'r../content/imglib' 'r../content/logs' 'r../api/storage/framework' 'r../api/storage/logs')
+WRITABLE_PATHS=('r../content/collicon' 'r../content/dwca' 'r../content/geolocate' 'r../content/imglib' 'r../content/logs' 'r../api/storage/framework' 'r../api/storage/logs')
 
 FORCEWRITE=0
 TESTMODE=0

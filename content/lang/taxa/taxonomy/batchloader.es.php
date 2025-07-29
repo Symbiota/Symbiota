@@ -4,6 +4,7 @@
 Language: Español
 ------------------
 */
+
 $LANG['TAXA_LOADER'] = 'Carga de Taxa';
 $LANG['ENTER_PATH'] = 'Por favor ingrese un valor para la ruta del archivo que desea cargar';
 $LANG['UPLOAD_ZIP'] = 'El archivo a cargar debe tener formato CSV o ser archivo ZIP';
@@ -22,6 +23,10 @@ $LANG['TAX_NAME_BATCH_LOADER'] = 'Carga Masiva de Nombres Taxonómicos';
 $LANG['TAX_UPLOAD_EXPLAIN1'] = 'Esta página permite que un Administrador Taxonómico cargue de forma masiva archivos con datos taxonómicos. See';
 $LANG['SYMB_DOC'] = 'Documentación de Symbiota';
 $LANG['TAX_UPLOAD_EXPLAIN2'] = 'páginas para más detalles acerca de la configuración del Tesauro Taxonómico.';
+$LANG['UNABLE_TO_COPY_INPUT_FILE'] = 'No se puede transferir el archivo de entrada';
+$LANG['UABLE_TO_IMPORT_INPUT_FILE'] = 'No se puede importar el archivo de entrada';
+$LANG['UABLE_TO_EXTRACT_INPUT_FILE'] = 'No se puede extraer el archivo de entrada';
+$LANG['INVALID_INPUT_FILE'] = 'Archivo de entrada no válido';
 $LANG['TAX_UPLOAD'] = 'Carga de Taxa';
 $LANG['SOURCE_FIELD'] = 'Archivo Fuente';
 $LANG['TARGET_FIELD'] = 'Campo Objetivo';

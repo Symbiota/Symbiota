@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT . "/classes//Database.php");
+include_once($SERVER_ROOT . "/classes/Database.php");
 include_once($SERVER_ROOT . "/classes/Sanitize.php");
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
@@ -116,11 +116,13 @@ class LocalStorage extends StorageStrategy {
 	 */
 
 	public function file_exists($file): bool {
-		if(is_array($file)) {
-			return file_exists($this->getDirPath() . $file['name']);
-		} else {
-			return file_exists($this->getDirPath() . $file);
+		$filename = is_array($file)? $file['name']: $file;
+
+		if(str_contains($filename, $this->getUrlPath())) {
+			$filename = str_replace($this->getUrlPath(), '', $filename);
 		}
+
+		return file_exists($this->getDirPath() . $filename);
 	}
 
 	/**
@@ -204,9 +206,18 @@ class LocalStorage extends StorageStrategy {
 	public function rename(string $filepath, string $new_filepath): void {
 		//Remove MEDIA_ROOT_PATH + Path from filepath if it exists
 		global $SERVER_ROOT;
+
+		$old_file = Media::parseFileName($filepath);
+		$new_file = Media::parseFileName($new_filepath);
+
+		if($old_file['extension'] != $new_file['extension']) {
+			throw new MediaException(MediaException::IllegalRenameChangedFileType);
+		}
+
 		$dir_path = $this->getDirPath() . $this->path;
-		$filepath = str_replace($dir_path, '', $GLOBALS['SERVER_ROOT']. $filepath);
+		$filepath = str_replace($dir_path, '', $GLOBALS['SERVER_ROOT'] . $filepath);
 		$new_filepath = str_replace($dir_path, '', $GLOBALS['SERVER_ROOT'] . $new_filepath);
+
 		//Constrain Rename to Scope of MEDIA_ROOT_PATH + Storage Path
 		if($this->file_exists($new_filepath)) {
 			throw new MediaException(MediaException::FileAlreadyExists);
@@ -245,6 +256,9 @@ class MediaException extends Exception {
 	public const DuplicateMediaFile = 'DUPLICATE_MEDIA_FILE';
 	public const FileDoesNotExist = 'FILE_DOES_NOT_EXIST';
 	public const FileAlreadyExists = 'FILE_ALREADY_EXISTS';
+	public const SuspiciousFile = 'SUSPICIOUS_FILE';
+	public const IllegalRenameChangedFileType = 'ILLEGAL_RENAME_CHANGED_FILE_TYPE';
+	public const FileTypeNotAllowed = 'FILE_TYPE_NOT_ALLOWED';
 
 	function __construct(string $case, string $message = ''){
 		global $LANG;
@@ -414,8 +428,7 @@ class Media {
 	}
 
 	/**
-	 * @param mixed $url
-	 * @param mixed $text
+	 * @param mixed $mime
 	 */
 	public static function getAllowedMime($mime) {
 		// Fall back if ALLOWED_MEDIA_MIME_TYPES is not present
@@ -909,10 +922,30 @@ class Media {
 			$clean_post_arr['tid'] = $row->tidinterpreted;
 		}
 
-		$media_type_str = explode('/', $file['type'])[0];
+		$media_type_str = explode('/', $file['type'])[0];	
 		$media_type = MediaType::tryFrom($media_type_str);
 
 		if(!$media_type) throw new MediaException(MediaException::InvalidMediaType, ' ' . $media_type_str);
+
+		if($should_upload_file) {
+			$type_guess = mime_content_type($file['tmp_name']);
+
+			if($type_guess != $file['type']) {
+				throw new MediaException(MediaException::SuspiciousFile);
+			}
+
+			$guess_ext = self::mime2ext($type_guess);
+
+			$provided_file_data = self::parseFileName($file['name']);
+
+			if(!$guess_ext || $guess_ext != $provided_file_data['extension']) {
+				throw new MediaException(MediaException::SuspiciousFile);
+			}
+		}
+
+		if(!self::getAllowedMime($file['type'])) {
+			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $file['type']);
+		}
 
 		$keyValuePairs = [
 			"tid" => $clean_post_arr["tid"] ?? null,
@@ -998,8 +1031,6 @@ class Media {
 					], $media_id, $conn);
 				}
 
-				$storage->upload($file);
-
 				//Generate Deriatives if needed
 				if($media_type === MediaType::Image) {
 					$start_mem_limit = ini_get('memory_limit');
@@ -1010,7 +1041,12 @@ class Media {
 
 					//Will download file if its remote.
 					//This is a naive solution assuming we are upload to our server
-					$size = getimagesize($storage->getDirPath($file));
+					$size = getimagesize(
+						//$storage->getDirPath($file)
+						$file['tmp_name']
+					);
+
+
 					$metadata = [
 						'pixelXDimension' => $size[0],
 						'pixelYDimension' => $size[1]
@@ -1018,6 +1054,8 @@ class Media {
 
 					$width = $size[0];
 					$height = $size[1];
+
+					$storage->upload($file);
 
 					$thumb_url = $clean_post_arr['thumbnailUrl'] ?? null;
 					if(!$thumb_url) {
@@ -1052,6 +1090,8 @@ class Media {
 					}
 
 					self::update_metadata($metadata, $media_id, $conn);
+				} else {
+					$storage->upload($file);
 				}
 			}
 
@@ -1168,6 +1208,19 @@ class Media {
 		return $errors;
 	}
 
+	private static function check_file_rename(string $old_filepath, string $new_filepath) {		
+		if($old_filepath && $new_filepath) {
+			$old_file = self::parseFileName($old_filepath);
+			$new_file = self::parseFileName($new_filepath);
+
+			if($old_file['extension'] != $new_file['extension']) {
+				throw new MediaException(MediaException::IllegalRenameChangedFileType);
+			}
+		}
+
+		return true;
+	}
+
 	/**
 	 * Function used for pulling media meta_data out of input array and updating
 	 * the corresponding mediaID.
@@ -1222,19 +1275,30 @@ class Media {
 		$conn = Database::connect('write');
 		mysqli_begin_transaction($conn);
 		try {
+			$current_media_arr = self::getMedia($media_id);
+			// If file is stored locally then check to make sure the extension is not being changed
+			foreach(['url', 'thumbnailUrl', 'originalUrl'] as $url) {
+				if(array_key_exists($url, $data) && $storage->file_exists($current_media_arr[$url])) {
+					self::check_file_rename(
+						$current_media_arr[$url], 
+						$data[$url]
+					);
+				}
+			}
+
 			self::update_metadata($data, $media_id, $conn);
 			self::update_tags($media_id, $media_arr, $conn);
 
 			if(array_key_exists("renameweburl", $media_arr)) {
-				$storage->rename($media_arr['old_url'], $data['url']);
+				$storage->rename($current_media_arr['url'], $data['url']);
 			}
 
 			if(array_key_exists("renametnurl", $media_arr)) {
-				$storage->rename($media_arr['old_thumbnailUrl'], $data['thumbnailUrl']);
+				$storage->rename($current_media_arr['thumbnailUrl'], $data['thumbnailUrl']);
 			}
 
 			if(array_key_exists("renameorigurl", $media_arr)) {
-				$storage->rename($media_arr['old_originalUrl'], $data['originalUrl']);
+				$storage->rename($current_media_arr['originalUrl'], $data['originalUrl']);
 			}
 
 			mysqli_commit($conn);
