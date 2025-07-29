@@ -252,6 +252,7 @@ if($SYMB_UID){
 					);
 
 					Media::uploadAndInsert(
+						$_POST,
 						$_FILES['imgfile'],
 						new LocalStorage($path)
 					);

@@ -460,36 +460,36 @@ class Media {
 	/**
 	 * Function to use $_POST data to link uploaded files as media assets to tids or occids
 	 * If all you want to do is insert a record see the insert function. This is a wrapper
-	 * of that function that also handles file and remote file uploads with their need security
-	 * checks.
+	 * of that function that also handles file and remote file uploads with their need security checks.
 	 *
+	 * @param array<int,mixed> $post_arr
 	 * @param StorageStrategy $storage Class where and how to save files. If left empty will not store files
 	 * @param array $file {name: string, type: string, tmp_name: string, error: int, size: int} Post file data, if none given will assume remote resource
 	 * @return bool
 	**/
-	public static function uploadAndInsert($file, $storage): void {
+	public static function uploadAndInsert($post_arr, $file, $storage): void {
 		$createdFilepaths = [];
 
 		$conn = Database::connect('write');
 		mysqli_begin_transaction($conn);
 
 		try {
-			if(!self::isValidFile($file) && ($_POST['copytoserver'] ?? false)) {
-				$file = UploadUtil::downloadFromRemote($_POST['originalUrl']);
+			if(!self::isValidFile($file) && ($post_arr['copytoserver'] ?? false)) {
+				$file = UploadUtil::downloadFromRemote($post_arr['originalUrl']);
 				$createdFilepaths[] = $file['tmp_name'];
 			}
 
 			if(self::isValidFile($file)) {
 				UploadUtil::checkFileUpload($file, $GLOBALS['ALLOWED_MEDIA_MIME_TYPES']);
-				$_POST['format'] = $file['type'];
-				$_POST['originalUrl'] = $storage->getUrlPath() . $file['name'];
+				$post_arr['format'] = $file['type'];
+				$post_arr['originalUrl'] = $storage->getUrlPath() . $file['name'];
 
-				if(!isset($_POST['sourceIdentifier'])) {
-					$_POST['sourceIdentifier'] = 'filename: ' . $file['name'];
+				if(!isset($post_arr['sourceIdentifier'])) {
+					$post_arr['sourceIdentifier'] = 'filename: ' . $file['name'];
 				}
 			}
 			
-			$media_metadata = self::insert($_POST, $conn);
+			$media_metadata = self::insert($post_arr, $conn);
 			$media_type = MediaType::tryFrom($media_metadata['mediaType']);
 
 			if(self::isValidFile($file)) {
