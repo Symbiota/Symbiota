@@ -2,6 +2,8 @@
 //TODO: add code to automatically select hide locality details when taxon/state match name on list
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ObservationSubmitManager.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
+include_once($SERVER_ROOT.'/classes/Media.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/observationsubmit.'.$LANG_TAG.'.php'))
 	include_once($SERVER_ROOT.'/content/lang/collections/editor/observationsubmit.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/editor/observationsubmit.en.php');
@@ -17,9 +19,16 @@ $action = array_key_exists('action', $_POST) ? $_POST['action'] : '';
 //Sanitation
 $recordedBy = htmlspecialchars($recordedBy);
 
-$obsManager = new ObservationSubmitManager();
-$obsManager->setCollid($collId);
-$collMap = $obsManager->getCollMap();
+$MAX_MEDIA_COUNT = 5;
+
+// $obsManager = new ObservationSubmitManager();
+// $obsManager->setCollid($collId);
+// $collMap = $obsManager->getCollMap();
+
+$occurManager = new OccurrenceEditorManager();
+$occurManager->setCollId($collId);
+$collMap = $occurManager->getCollMap();
+
 if(!$collId && $collMap) $collId = $collMap['collid'];
 
 $isEditor = 0;
@@ -35,11 +44,41 @@ if($collMap){
 		$isEditor = 1;
 	}
 	if($isEditor && $action == "Submit"){
-		$occid = $obsManager->addObservation($_POST);
+		//$occid = $obsManager->addObservation($_POST);
+		$statusStr = $occurManager->addOccurrence($_POST);
+		$occid = $occurManager->getOccId();
+
+		$path = get_occurrence_upload_path(
+			$collMap['institutioncode'],
+			$collMap['collectioncode'],
+		);
+
+		for($i = 1; $i <= min($MAX_MEDIA_COUNT, count($_FILES)); $i++) {
+			$file = ($_FILES['imgfile' . $i] ?? false);
+			if($file && $file['error'] === 0) {
+				Media::uploadAndInsert(
+					[
+						'caption' => $_POST['caption' . $i] ?? null,
+						'notes' => $_POST['notes' . $i] ?? null,
+						'occid' => $occid
+					],
+					$file, 
+					new LocalStorage($path)
+				);
+
+				if($errors = Media::getErrors()) {
+					// TODO (Logan) Media Error Handling
+					// var_dump($errors);
+				}
+			}
+		}
 	}
-	if(!$recordedBy) $recordedBy = $obsManager->getUserName();
+	//if(!$recordedBy) $recordedBy = $obsManager->getUserName();
+	if(!$recordedBy) $recordedBy = $occurManager->getUserName();
 }
-$clArr = $obsManager->getChecklists();
+//$clArr = $obsManager->getChecklists();
+
+$clArr = $occurManager->getUserChecklists();
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
@@ -107,7 +146,7 @@ $clArr = $obsManager->getChecklists();
 						<?php
 					}
 				}
-				$errArr = $obsManager->getErrorArr();
+				$errArr = $occurManager->getErrorArr();
 				if($errArr){
 					echo '<div style="color:red;">';
 					echo $LANG['ERROR'].':<ol>';
@@ -135,7 +174,7 @@ $clArr = $obsManager->getChecklists();
 				    	<!-- following line sets MAX_FILE_SIZE (must precede the file input field)  -->
 						<input type='hidden' name='MAX_FILE_SIZE' value='<?= $maxUpload; ?>' />
 						<?php
-						for($x=1; $x<6; $x++){
+						for($x=1; $x <= $MAX_MEDIA_COUNT; $x++){
 							?>
 							<div class="imgSubmitDiv" id="img<?= $x; ?>div" style="<?php if($x > 1) echo 'display:none'; ?>">
 								<div style="margin-bottom: 10px;">
@@ -154,7 +193,7 @@ $clArr = $obsManager->getChecklists();
 										</div>
 									</section>
 									<?php
-									if($x < 5){
+									if($x < $MAX_MEDIA_COUNT){
 										?>
 										<div style="margin-bottom: 10px;">
 											<a href="#" onclick="toggle('img<?= ($x+1); ?>div');return false">
