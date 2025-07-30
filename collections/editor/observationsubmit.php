@@ -1,7 +1,6 @@
 <?php
 //TODO: add code to automatically select hide locality details when taxon/state match name on list
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ObservationSubmitManager.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT.'/classes/Media.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/observationsubmit.'.$LANG_TAG.'.php'))
@@ -21,13 +20,10 @@ $recordedBy = htmlspecialchars($recordedBy);
 
 $MAX_MEDIA_COUNT = 5;
 
-// $obsManager = new ObservationSubmitManager();
-// $obsManager->setCollid($collId);
-// $collMap = $obsManager->getCollMap();
-
 $occurManager = new OccurrenceEditorManager();
 $occurManager->setCollId($collId);
 $collMap = $occurManager->getCollMap();
+$mediaErrors = [];
 
 if(!$collId && $collMap) $collId = $collMap['collid'];
 
@@ -44,8 +40,7 @@ if($collMap){
 		$isEditor = 1;
 	}
 	if($isEditor && $action == "Submit"){
-		//$occid = $obsManager->addObservation($_POST);
-		$statusStr = $occurManager->addOccurrence($_POST);
+		$occurManager->addOccurrence($_POST);
 		$occid = $occurManager->getOccId();
 
 		$path = get_occurrence_upload_path(
@@ -65,19 +60,17 @@ if($collMap){
 					$file, 
 					new LocalStorage($path)
 				);
-
+				
 				if($errors = Media::getErrors()) {
-					// TODO (Logan) Media Error Handling
-					// var_dump($errors);
+					$mediaErrors[$i] = $errors;
+				} else {
+					$mediaErrors[$i] = false;
 				}
 			}
 		}
 	}
-	//if(!$recordedBy) $recordedBy = $obsManager->getUserName();
 	if(!$recordedBy) $recordedBy = $occurManager->getUserName();
 }
-//$clArr = $obsManager->getChecklists();
-
 $clArr = $occurManager->getUserChecklists();
 ?>
 <!DOCTYPE html>
@@ -127,11 +120,27 @@ $clArr = $occurManager->getUserChecklists();
 			<hr />
 			<div style="margin:15px;font-weight:bold;">
 				<?php
-				if($occid){
+
+				if($mediaErrors) {
+					echo '<div>';
+					echo $LANG['MEDIA_STATUS'] . ':<ol>';
+					foreach($mediaErrors as $mediaNumber => $e){
+						if($e) {
+							echo '<li style="color:red;">Media #' . $mediaNumber . ' ';
+							echo $LANG['ERROR'] . ': '. $e[0];
+							echo '</li>';
+						} else {
+							echo '<li style="color:green;">Media #' . $mediaNumber . ' ';
+							echo $LANG['SUCCESS_IMAGE'];
+							echo '</li>';
+						}
+					}
+					echo '</ol>';
+					echo '</div>';
+				}
+
+				if($occid) {
 					?>
-					<div style="color:green;">
-						<?= $LANG['SUCCESS_IMAGE']; ?>
-					</div>
 					<div style="font:weight;margin-top:10px;">
 						<?= $LANG['OPEN']; ?> <a href="../individual/index.php?occid=<?= $occid ?>" target="_blank" rel="noopener"><?= $LANG['OCC_DET_VIEW'] ?></a> <?= $LANG['TO_SEE_NEW'] ?>
 					</div>
