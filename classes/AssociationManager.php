@@ -1,6 +1,5 @@
 <?php
 
-use function PHPUnit\Framework\isEmpty;
 
 include_once($SERVER_ROOT.'/classes/OccurrenceTaxaManager.php');
 include_once($SERVER_ROOT.'/classes/utilities/TaxonomyUtil.php');
@@ -81,8 +80,17 @@ class AssociationManager extends OccurrenceTaxaManager{
 
 			// External, observational, or resource associations
 			$externalAndObservationalSql = "SELECT oa.occid FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid  LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE (oa.associationType='observational' OR oa.associationType='externalOccurrence' OR oa.associationType='resource') AND oa.relationship " . $relationshipStr . " ";
-			$externalAndObservationalSql .= $this->getAssociatedTaxonWhereFrag($associationArr);
-			// @TODO if association type is any and there's an entry in taxon, subtract out occids with od.tidinterpreted in the list for taxon
+			$externalAndObservationalSql .= $this->getAssociatedTaxonWhereFrag($associationArr, 'thisOne');
+			// @TODO if there's an 'any' and the tid(s) from the $searchTaxon don't match the tid(s?) from the verbatimSciname, don't return the occids from this query.
+			
+			// @TODO less confident in the below thoughts
+			// @TODO if association type is 'any' and there's an entry in taxon (i.e., if $searchTaxon is non-null), subtract out occids with od.tidinterpreted in the list for taxon if oa.associationType is observational
+			// @TODO maybe the route is to get tid(s?) from verbatimSciName and if they match anything in the initial $searchTaxon tid set, return those occids. Otherwise, don't.
+			// @TODO make sure the above doesn't mess up, say a search for Muhlenbergia montana returning Helianthus results (from occid 4547652) as below:
+			// 			| occid   | associationType | occidAssociate | relationship           | verbatimSciname                          | tid  |
+			// +---------+-----------------+----------------+------------------------+------------------------------------------+------+
+			// | 4547652 | observational   |           NULL | ecologicallyOccursWith | Muhlenbergia montana                     | NULL |
+
 	
 			if(array_key_exists('search', $associationArr)){
 				$sql .= "AND (o.occid IN (SELECT occid FROM ( " . $forwardSql . " UNION " . $obsSql . " UNION " . $reverseSql . " UNION " . $externalAndObservationalSql . " ) AS occids)";
@@ -95,7 +103,7 @@ class AssociationManager extends OccurrenceTaxaManager{
     	return $sql;
     }
 
-	private function getAssociatedTaxonWhereFrag($associationArr){
+	private function getAssociatedTaxonWhereFrag($associationArr, $deleteMeStr=''){
 		$sqlWhereTaxa = '';
 		if(isset($associationArr['taxa'])){
 			$tidInArr = array();
