@@ -382,4 +382,9 @@ img[id^="activeimg-"] {
 
 button.icon-button svg {
 	fill: var(--light-color);
-  }
+}
+
+form label:has(+ input[required]):after {
+	color: red;
+	content: '*';
+}
