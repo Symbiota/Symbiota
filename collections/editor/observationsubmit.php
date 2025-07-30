@@ -218,7 +218,7 @@ $clArr = $occurManager->getUserChecklists();
 									<span>
 										<label for="sciname"><?= $LANG['SCINAME']; ?>:</label>
 										<input type="text" id="sciname" name="sciname" maxlength="250" style="width:390px;" required />
-										<input type="hidden" id="tidtoadd" name="tidtoadd" value="" />
+										<input type="hidden" id="tidinterpreted" name="tidinterpreted" value="" />
 									</span>
 									<span stlye="margin-left: 10px">
 										<label for="scientificnameauthorship"><?= $LANG['AUTHOR']; ?>:</label>
