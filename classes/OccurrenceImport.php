@@ -139,7 +139,7 @@ class OccurrenceImport extends UtilitiesFileImport {
 
 				// Will Not store files on the server unless StorageStrategy is provided which is desired for this use case
 				try {
-					Media::add($data);
+					Media::insert($data);
 					if ($errors = Media::getErrors()) {
 						$this->logOrEcho('ERROR: ' . array_pop($errors));
 					} else {
