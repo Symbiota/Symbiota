@@ -39,9 +39,9 @@ class UploadUtil {
 	}
 
 	/**
-	 * undocumented function summary
-	 *
-	 * Undocumented function long description
+	 * Cross checks file type and extension to make sure they match.
+	 * Also ensures file's mimetype matches $allowed_mimes which
+	 * defaults to self::ALLOWED_IMAGE_MIMES
 	 *
 	 * @param array $uploaded_file Uses $_FILES like array
 	 * @param array $allowed_mimes Description
@@ -49,8 +49,12 @@ class UploadUtil {
 	 * @throws conditon
 	 **/
 	public static function checkFileUpload(array $uploaded_file, array $allowed_mimes = []): bool {
-		if(self::getMaximumFileUploadSize() - memory_get_usage() < intval($uploaded_file['size'])) {
-			throw new Exception('Error: File is to large to upload');
+		if(count($allowed_mimes) <= 0) {
+			$allowed_mimes = self::ALLOWED_IMAGE_MIMES;
+		}
+
+		if(!in_array($uploaded_file['type'], $allowed_mimes)) {
+			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $uploaded_file['type']);
 		}
 
 		$type_guess = mime_content_type($uploaded_file['tmp_name']);
@@ -64,10 +68,6 @@ class UploadUtil {
 
 		if(!$guess_ext || $guess_ext != $provided_file_data['extension']) {
 			throw new MediaException(MediaException::SuspiciousFile);
-		}
-
-		if(count($allowed_mimes) && !in_array($uploaded_file['type'], $allowed_mimes)) {
-			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $uploaded_file['type']);
 		}
 
 		return true;
@@ -170,7 +170,7 @@ class UploadUtil {
 	public static function downloadFromRemote(string $url, array $allowed_mimes	= []): array {
 		$info = self::getRemoteFileInfo($url);
 
-		if(count($allowed_mimes) > 0) {
+		if(count($allowed_mimes) <= 0) {
 			$allowed_mimes = self::ALLOWED_IMAGE_MIMES;
 		}
 
