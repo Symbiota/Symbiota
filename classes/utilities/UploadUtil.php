@@ -1,4 +1,5 @@
 <?php
+include_once($SERVER_ROOT . "/classes/Media.php");
 include_once($SERVER_ROOT . "/classes/MediaException.php");
 
 class UploadUtil {
@@ -179,7 +180,7 @@ class UploadUtil {
 		// malicous file upload attempts. Actual file should also be checked after download.
 		if(!in_array($info['type'], $allowed_mimes)) {
 			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $info['type']);
-		} else if(self::mime2ext('type') !== $info['extension']) {
+		} else if(self::mime2ext($info['type']) !== $info['extension']) {
 			throw new MediaException(MediaException::SuspiciousFile);
 		}
 
@@ -265,6 +266,7 @@ class UploadUtil {
 		return [
 			'name' => $parsed_file['name'] . ($parsed_file['extension'] ? '.' .$parsed_file['extension']: ''),
 			'tmp_name' => $url,
+			'extension' => $parsed_file['extension'],
 			'error' => 0,
 			'type' => $file_type_mime,
 			'size' => intval($file_size_bytes)
