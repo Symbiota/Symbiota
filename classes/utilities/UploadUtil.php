@@ -2,6 +2,24 @@
 include_once($SERVER_ROOT . "/classes/MediaException.php");
 
 class UploadUtil {
+
+	const ALLOWED_LOAN_MIMES = [
+		'text/plain',
+		'image/jpeg', 'image/png',
+		'application/pdf', 'application/msword',
+		'application/vnd.ms-excel',
+		'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+	];
+
+	const ALLOWED_IMAGE_MIMES = [
+		"image/jpeg", "image/png",
+	];
+
+	const ALLOWED_AUDIO_MIMES = [
+		"audio/mpeg", "audio/wav", "audio/ogg"
+	];
+
 	/**
 	 * Gets temporary file storage path for portal.
 	 *
