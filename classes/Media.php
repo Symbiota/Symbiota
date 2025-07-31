@@ -402,6 +402,26 @@ class Media {
 			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $file['type']);
 		}
 
+		if($should_upload_file) {
+			$type_guess = mime_content_type($file['tmp_name']);
+
+			if($type_guess != $file['type']) {
+				throw new MediaException(MediaException::SuspiciousFile);
+			}
+
+			$guess_ext = self::mime2ext($type_guess);
+
+			$provided_file_data = self::parseFileName($file['name']);
+
+			if(!$guess_ext || $guess_ext != $provided_file_data['extension']) {
+				throw new MediaException(MediaException::SuspiciousFile);
+			}
+		}
+
+		if(!self::getAllowedMime($file['type'])) {
+			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $file['type']);
+		}
+
 		$keyValuePairs = [
 			"tid" => $clean_post_arr["tid"] ?? null,
 			"occid" => $clean_post_arr["occid"] ?? null,

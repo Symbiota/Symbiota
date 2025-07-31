@@ -47,8 +47,8 @@ class GamesManager extends Manager{
 			$currentDate = date("Y-m-d");
 			$replace = 0;
 			$oldArr = array();
-			if(file_exists($SERVER_ROOT.'/temp/ootd/'.$oodID.'_info.json')){
-				$oldArr = json_decode(file_get_contents($SERVER_ROOT.'/temp/ootd/'.$oodID.'_info.json'), true);
+			if(file_exists($SERVER_ROOT.'/content/ootd/'.$oodID.'_info.json')){
+				$oldArr = json_decode(file_get_contents($SERVER_ROOT.'/content/ootd/'.$oodID.'_info.json'), true);
 				$lastDate = $oldArr['lastDate'];
 				$lastCLID = $oldArr['clid'];
 				if(($currentDate > $lastDate) || ($clid && $clid != $lastCLID)) $replace = 1;
@@ -57,12 +57,12 @@ class GamesManager extends Manager{
 			if($replace == 1){
 				//Delete old files
 				$previous = Array();
-				if(file_exists($SERVER_ROOT.'/temp/ootd/'.$oodID.'_previous.json')){
-					$previous = json_decode(file_get_contents($SERVER_ROOT.'/temp/ootd/'.$oodID.'_previous.json'), true);
-					unlink($SERVER_ROOT.'/temp/ootd/'.$oodID.'_previous.json');
+				if(file_exists($SERVER_ROOT.'/content/ootd/'.$oodID.'_previous.json')){
+					$previous = json_decode(file_get_contents($SERVER_ROOT.'/content/ootd/'.$oodID.'_previous.json'), true);
+					unlink($SERVER_ROOT.'/content/ootd/'.$oodID.'_previous.json');
 				}
-				if(file_exists($SERVER_ROOT.'/temp/ootd/'.$oodID.'_info.json')){
-					unlink($SERVER_ROOT.'/temp/ootd/'.$oodID.'_info.json');
+				if(file_exists($SERVER_ROOT.'/content/ootd/'.$oodID.'_info.json')){
+					unlink($SERVER_ROOT.'/content/ootd/'.$oodID.'_info.json');
 				}
 				if($oldArr){
 					foreach($oldArr['images'] as $imgUrl){
@@ -123,7 +123,7 @@ class GamesManager extends Manager{
 					$cnt = 1;
 					$repcnt = 1;
 					$rs = $this->conn->query($sql3);
-					$newfileBase = '/temp/ootd/'.$oodID.'_'.time().'_';
+					$newfileBase = '/content/ootd/'.$oodID.'_'.time().'_';
 					while(($row = $rs->fetch_object()) && ($cnt < 6)){
 						$file = '';
 						if (substr($row->url, 0, 1) == '/'){
@@ -143,17 +143,17 @@ class GamesManager extends Manager{
 					$ootdInfo['images'] = $files;
 
 					if(array_diff($tidArr,$previous)){
-						$fp = fopen($SERVER_ROOT.'/temp/ootd/'.$oodID.'_previous.json', 'w');
+						$fp = fopen($SERVER_ROOT.'/content/ootd/'.$oodID.'_previous.json', 'w');
 						fwrite($fp, json_encode($previous));
 						fclose($fp);
 					}
-					$fp = fopen($SERVER_ROOT.'/temp/ootd/'.$oodID.'_info.json', 'w');
+					$fp = fopen($SERVER_ROOT.'/content/ootd/'.$oodID.'_info.json', 'w');
 					fwrite($fp, json_encode($ootdInfo));
 					fclose($fp);
 				}
 			}
 
-			$infoArr = json_decode(file_get_contents($SERVER_ROOT.'/temp/ootd/'.$oodID.'_info.json'), true);
+			$infoArr = json_decode(file_get_contents($SERVER_ROOT.'/content/ootd/'.$oodID.'_info.json'), true);
 			//echo json_encode($infoArr);
 		}
 		return $infoArr;
