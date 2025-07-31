@@ -711,7 +711,7 @@ class OccurrenceLabel {
 	}
 
 	//Annotation functions
-	public function getAnnoArray($detidArr, $speciesAuthors) {
+	public function getAnnoArray($detidArr, $speciesAuthors, $familyName) {
 		$retArr = array();
 		if ($detidArr) {
 			$authorArr = array();
@@ -735,7 +735,11 @@ class OccurrenceLabel {
 			}
 
 			//Get determination records
-			$sql2 = 'SELECT d.detid, d.identifiedBy, d.dateIdentified, d.sciname, d.scientificNameAuthorship, d.identificationQualifier, ' .
+			$familyAdditionStr = '';
+			if($familyName){
+				$familyAdditionStr .= 'd.family as family1, o.family as family2, ';
+			}
+			$sql2 = 'SELECT ' . $familyAdditionStr . 'd.detid, d.identifiedBy, d.dateIdentified, d.sciname, d.scientificNameAuthorship, d.identificationQualifier, ' .
 				'd.identificationReferences, d.identificationRemarks, IFNULL(o.catalogNumber,o.otherCatalogNumbers) AS catalogNumber ' .
 				'FROM omoccurdeterminations d INNER JOIN omoccurrences o ON d.occid = o.occid ' . $sqlWhere;
 			//echo 'SQL: '.$sql2;
@@ -745,6 +749,7 @@ class OccurrenceLabel {
 					if (array_key_exists($row2['detid'], $authorArr)) {
 						$row2['parentauthor'] = $authorArr[$row2['detid']];
 					}
+					$row2['family'] = $row2['family1'] ?? $row2['family2'] ?? '';
 					$retArr[$row2['detid']] = $row2;
 				}
 				$rs2->free();

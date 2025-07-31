@@ -189,7 +189,7 @@ if($isEditor){
 									<b><?php echo $LANG['REM_ANNO']; ?></b>
 								</div>
 								<div style="margin:4px;">
-									<input type="checkbox" name="print-family" value="0" onclick="" />
+									<input type="checkbox" name="print-family" value="1" onclick="" />
 									<b><?php echo $LANG['PRINT_FAMILY_NAME']; ?></b>
 								</div>
 							</div>

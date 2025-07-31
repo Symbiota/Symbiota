@@ -41,7 +41,8 @@ if($SYMB_UID){
 $labelArr = array();
 if($isEditor && $action){
 	$speciesAuthors = ((array_key_exists('speciesauthors',$_POST) && $_POST['speciesauthors'])?1:0);
-	$labelArr = $labelManager->getAnnoArray($_POST['detid'], $speciesAuthors);
+	$familyName = ((array_key_exists('print-family',$_POST) && $_POST['print-family'])?1:0);
+	$labelArr = $labelManager->getAnnoArray($_POST['detid'], $speciesAuthors, $familyName);
 	if(array_key_exists('clearqueue',$_POST) && $_POST['clearqueue']){
 		$labelManager->clearAnnoQueue($_POST['detid']);
 	}
