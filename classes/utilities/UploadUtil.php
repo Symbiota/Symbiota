@@ -156,8 +156,32 @@ class UploadUtil {
 		return $parts;
 	}
 
-	public static function downloadFromRemote(string $url) {
+	/**
+	 * Checks if remote file provided by $url matches $allowed_mimes then 
+	 * proceeds to download into a temporary folder
+	 *
+	 * Be sure to check file after upload.
+	 *
+	 * @param string $url Url path desired to download
+	 * @return array
+	 * @throws MediaException
+	 * @throws Exception
+	 **/
+	public static function downloadFromRemote(string $url, array $allowed_mimes	= []): array {
 		$info = self::getRemoteFileInfo($url);
+
+		if(count($allowed_mimes) > 0) {
+			$allowed_mimes = self::ALLOWED_IMAGE_MIMES;
+		}
+
+		// Sanity Check files extension and claimed type before uploading
+		// This does not guarantee the file is safe but weeds out simple
+		// malicous file upload attempts. Actual file should also be checked after download.
+		if(!in_array($info['type'], $allowed_mimes)) {
+			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $info['type']);
+		} else if(self::mime2ext('type') !== $info['extension']) {
+			throw new MediaException(MediaException::SuspiciousFile);
+		}
 
 		$availableMemory = self::getMaximumFileUploadSize() - memory_get_usage();
 		if($availableMemory < intval($info['size'])) {
