@@ -60,6 +60,7 @@ $phpWord->addParagraphStyle('scientificname', array('align'=>'left','lineHeight'
 $phpWord->addFontStyle('scientificnameFont', array('bold'=>true,'italic'=>true,'size'=>10,'name'=>'Arial'));
 $phpWord->addFontStyle('scientificnameinterFont', array('bold'=>true,'size'=>10,'name'=>'Arial'));
 $phpWord->addFontStyle('scientificnameauthFont', array('size'=>10,'name'=>'Arial'));
+$phpWord->addFontStyle('familyFont', array('size'=>8,'name'=>'Arial'));
 $phpWord->addFontStyle('identifiedFont', array('size'=>8,'name'=>'Arial'));
 $marginSize = 80;
 if(array_key_exists('marginsize',$_POST) && $_POST['marginsize']) $marginSize = 16*$_POST['marginsize'];
@@ -73,7 +74,10 @@ if($borderWidth){
 }
 $colRowStyle = array('cantSplit'=>true);
 $phpWord->addTableStyle('defaultTable',$tableStyle,$colRowStyle);
-$cellStyle = array('valign'=>'top');
+$cellStyle = array('valign'=>'top',
+	'halign' => 'left',
+	'borderSize' => 0,
+    'borderColor' => 'ffffff');
 
 $section = $phpWord->addSection($sectionStyle);
 
@@ -85,13 +89,20 @@ foreach($labelArr as $occid => $occArr){
 	for($i = 0;$i < $dupCnt;$i++){
 		$section->addText(htmlspecialchars(' '),'dividerFont','firstLine');
 		$table = $section->addTable('defaultTable');
-		$table->addRow();
-		$cell = $table->addCell(5000,$cellStyle);
+		// $table->addRow();
+		$table->addRow(null, ['tblHeader' => false, 'exactHeight' => false]);
+		// $cell = $table->addCell(5000,$cellStyle);
+		$leftCell = $table->addCell(8000, $cellStyle);
+		$rightCell = $table->addCell(4000, $cellStyle);
 		if($headerStr){
-			$textrun = $cell->addTextRun('header');
+			// $textrun = $cell->addTextRun('header');
+			$textrun = $leftCell->addTextRun('header');
+
+
 			$textrun->addText(htmlspecialchars($headerStr),'headerfooterFont');
 		}
-		$textrun = $cell->addTextRun('scientificname');
+		// $textrun = $cell->addTextRun('scientificname');
+		$textrun = $leftCell->addTextRun('scientificname');
 		if($occArr['identificationqualifier']) $textrun->addText(htmlspecialchars($occArr['identificationqualifier']).' ','scientificnameauthFont');
 		$scinameStr = $occArr['sciname'];
 		$parentAuthor = (array_key_exists('parentauthor',$occArr)?' '.$occArr['parentauthor']:'');
@@ -168,8 +179,16 @@ foreach($labelArr as $occid => $occArr){
 			$textrun->addText(htmlspecialchars($scinameStr).' ','scientificnameFont');
 		}
 		$textrun->addText(htmlspecialchars($occArr['scientificnameauthorship']),'scientificnameauthFont');
+		if($occArr['family']){
+			$familyRun = $rightCell->addTextRun(['alignment' => 'right']);
+			// $textrun->addText(strtoupper(htmlspecialchars(' ' . $occArr['family'])),'scientificnameauthFont');
+			$familyRun->addText(strtoupper(htmlspecialchars($occArr['family'])),'familyFont');
+			// $familyRun = $cell->addTextRun(['alignment' => 'right']);
+			// $familyRun->addText(strtoupper(htmlspecialchars($occArr['family'])), 'scientificnameauthFont');
+		}
 		if($occArr['identifiedby'] || $occArr['dateidentified']){
-			$textrun = $cell->addTextRun('other');
+			// $textrun = $cell->addTextRun('other');
+			$textrun = $leftCell->addTextRun('other');
 			if($occArr['identifiedby']){
 				$identByStr = $occArr['identifiedby'];
 				if($occArr['dateidentified']){
@@ -179,18 +198,25 @@ foreach($labelArr as $occid => $occArr){
 			}
 		}
 		if(array_key_exists('printcatnum',$_POST) && $_POST['printcatnum'] && $occArr['catalognumber']){
-			$textrun = $cell->addTextRun('other');
+			// $textrun = $cell->addTextRun('other');
+			$textrun = $leftCell->addTextRun('other');
 			$textrun->addText('Catalog #: '.htmlspecialchars($occArr['catalognumber']).' ','identifiedFont');
 		}
 		if($occArr['identificationremarks']){
-			$textrun = $cell->addTextRun('other');
+			// $textrun = $cell->addTextRun('other');
+			$textrun = $leftCell->addTextRun('other');
 			$textrun->addText(htmlspecialchars($occArr['identificationremarks']).' ','identifiedFont');
 		}
 		if($occArr['identificationreferences']){
-			$textrun = $cell->addTextRun('other');
+			// $textrun = $cell->addTextRun('other');
+			$textrun = $leftCell->addTextRun('other');
 			$textrun->addText(htmlspecialchars($occArr['identificationreferences']).' ','identifiedFont');
 		}
 		if($footerStr){
+			// $textrun = $cell->addTextRun('footer');
+			// // $textrun = $leftCell->addTextRun('footer');
+			$table->addRow(null, ['tblHeader' => false, 'exactHeight' => false]);
+			$cell = $table->addCell(5000,$cellStyle);
 			$textrun = $cell->addTextRun('footer');
 			$textrun->addText(htmlspecialchars($footerStr),'headerfooterFont');
 		}
