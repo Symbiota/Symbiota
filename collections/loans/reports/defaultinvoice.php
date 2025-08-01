@@ -426,28 +426,35 @@ else{
 						<div>
 							<table class="header" align="center">
 								<tr>
-									<td><?php echo $addressArr['institutionname']; ?> (<?php echo $addressArr['institutioncode']; ?>)</td>
+									<td><?php if(isset($addressArr['institutionname'])) echo $addressArr['institutionname']; ?> (<?php if(isset($addressArr['institutioncode'])) echo $addressArr['institutioncode']; ?>)</td>
 								</tr>
-								<?php if($addressArr['institutionname2']){ ?>
+								<?php if(isset($addressArr['institutionname2'])){ ?>
 									<tr>
 										<td><?php echo $addressArr['institutionname2']; ?></td>
 									</tr>
 								<?php } ?>
-								<?php if($addressArr['address1']){ ?>
+								<?php if(isset($addressArr['address1'])){ ?>
 									<tr>
 										<td><?php echo $addressArr['address1']; ?></td>
 									</tr>
 								<?php } ?>
-								<?php if($addressArr['address2']){ ?>
+								<?php if(isset($addressArr['address2'])){ ?>
 									<tr>
 										<td><?php echo $addressArr['address2']; ?></td>
 									</tr>
 								<?php } ?>
 								<tr>
-									<td><?php echo $addressArr['city'].($addressArr['stateprovince']?', ':'').$addressArr['stateprovince'].' '.$addressArr['postalcode'].' '.$addressArr['country']; ?></td>
+									<td>
+										<?php 
+										if (isset($addressArr['city'])) echo $addressArr['city'];
+										if (isset($addressArr['stateprovince'])) echo ', '.$addressArr['stateprovince'];
+										if (isset($addressArr['postalcode'])) echo ' '.$addressArr['postalcode'];
+										if (isset($addressArr['country'])) echo ' '.$addressArr['country'];
+										?>
+									</td>
 								</tr>
 								<tr>
-									<td><?php echo $addressArr['phone']; ?></td>
+									<td><?php if(isset($addressArr['phone'])) echo $addressArr['phone']; ?></td>
 								</tr>
 								<tr style="height:10px;">
 									<td></td>
@@ -480,13 +487,16 @@ else{
 											<?php
 											echo date('l').', '.date('F').' '.date('j').', '.date('Y').'<br />';
 											if($loanType == 'out'){
-												echo $addressArr['institutioncode'].' Loan ID: '.$invoiceArr['loanidentifierown'];
+												if(isset($addressArr['institutioncode'])) echo $addressArr['institutioncode'].' ';
+												echo 'Loan ID: '.$invoiceArr['loanidentifierown'];
 											}
 											elseif($loanType == 'in'){
-												echo $addressArr['institutioncode'].' Loan-in ID: '.$invoiceArr['loanidentifierborr'];
+												if(isset($addressArr['institutioncode'])) echo $addressArr['institutioncode'].' ';
+												echo 'Loan-in ID: '.$invoiceArr['loanidentifierborr'];
 											}
 											elseif($loanType == 'exchange'){
-												echo $addressArr['institutioncode'].' Transaction ID: '.$invoiceArr['identifier'];
+												if(isset($addressArr['institutioncode'])) echo $addressArr['institutioncode'].' ';
+												echo 'Transaction ID: '.$invoiceArr['identifier'];
 											}
 											?>
 										</div>
