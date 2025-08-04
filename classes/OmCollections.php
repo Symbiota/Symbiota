@@ -276,7 +276,7 @@ class OmCollections extends Manager{
 			}
 			$rs->free();
 		}
-		return json_decode($jsonStr ?? '',true);
+		return $jsonStr? json_decode($jsonStr,true): '';
 	}
 
 	//Institution address functions
