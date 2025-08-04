@@ -19,6 +19,12 @@ class UploadUtil {
 
 	const ALLOWED_AUDIO_MIMES = [
 		"audio/mpeg", "audio/wav", "audio/ogg"
+	const ALLOWED_ZIP_MIMES = [
+		'application/x-zip',
+		'application/zip',
+		'application/x-zip-compressed',
+		'application/s-compressed',
+		'multipart/x-zip',
 	];
 
 	/**
