@@ -27,6 +27,10 @@ class UploadUtil {
 		'application/x-zip-compressed',
 		'application/s-compressed',
 		'multipart/x-zip',
+		'text/csv',
+		'text/x-comma-separated-values',
+		'text/comma-separated-values',
+		'application/vnd.msexcel',
 	];
 
 	/**
@@ -329,6 +333,7 @@ class UploadUtil {
 			'application/x-x509-ca-cert' => 'crt',
 			'application/pkix-cert' => 'crt',
 			'text/css' => 'css',
+			'text/csv' => 'csv',
 			'text/x-comma-separated-values' => 'csv',
 			'text/comma-separated-values' => 'csv',
 			'application/vnd.msexcel' => 'csv',
