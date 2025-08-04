@@ -153,29 +153,31 @@ class ImageShared {
 		$this->errArr = array();
 	}
 
-	public function uploadImage($imgFile = 'imgfile') {
-		if ($this->targetPath) {
-			if (file_exists($this->targetPath)) {
-				$imgFileName = basename($_FILES[$imgFile]['name']);
-				$fileName = $this->cleanFileName($imgFileName);
-				if (move_uploaded_file($_FILES[$imgFile]['tmp_name'], $this->targetPath . $fileName . $this->imgExt)) {
-					$this->sourcePath = $this->targetPath . $fileName . $this->imgExt;
-					$this->imgName = $fileName;
-					if ($this->testOrientation) $this->evaluateOrientation();
-					return true;
-				} else {
-					$this->errArr[] = 'FATAL ERROR: unable to move image to target from ' . $_FILES[$imgFile]['tmp_name'] . '(' . $this->targetPath . $fileName . $this->imgExt . ')';
-				}
-			} else {
-				$this->errArr[] = 'FATAL ERROR: Target path does not exist in uploadImage method (' . $this->targetPath . ')';
-				//trigger_error('Path does not exist in uploadImage method',E_USER_ERROR);
-			}
-		} else {
-			$this->errArr[] = 'FATAL ERROR: Path NULL in uploadImage method';
-			//trigger_error('Path NULL in uploadImage method',E_USER_ERROR);
-		}
-		return false;
-	}
+	// TODO (Logan) deprecate function 
+	// commenting out as instructed
+	// public function uploadImage($imgFile = 'imgfile') {
+	// 	if ($this->targetPath) {
+	// 		if (file_exists($this->targetPath)) {
+	// 			$imgFileName = basename($_FILES[$imgFile]['name']);
+	// 			$fileName = $this->cleanFileName($imgFileName);
+	// 			if (move_uploaded_file($_FILES[$imgFile]['tmp_name'], $this->targetPath . $fileName . $this->imgExt)) {
+	// 				$this->sourcePath = $this->targetPath . $fileName . $this->imgExt;
+	// 				$this->imgName = $fileName;
+	// 				if ($this->testOrientation) $this->evaluateOrientation();
+	// 				return true;
+	// 			} else {
+	// 				$this->errArr[] = 'FATAL ERROR: unable to move image to target from ' . $_FILES[$imgFile]['tmp_name'] . '(' . $this->targetPath . $fileName . $this->imgExt . ')';
+	// 			}
+	// 		} else {
+	// 			$this->errArr[] = 'FATAL ERROR: Target path does not exist in uploadImage method (' . $this->targetPath . ')';
+	// 			//trigger_error('Path does not exist in uploadImage method',E_USER_ERROR);
+	// 		}
+	// 	} else {
+	// 		$this->errArr[] = 'FATAL ERROR: Path NULL in uploadImage method';
+	// 		//trigger_error('Path NULL in uploadImage method',E_USER_ERROR);
+	// 	}
+	// 	return false;
+	// }
 
 	public function copyImageFromUrl() {
 		//Returns full path
