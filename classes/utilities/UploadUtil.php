@@ -14,11 +14,13 @@ class UploadUtil {
 	];
 
 	const ALLOWED_IMAGE_MIMES = [
-		"image/jpeg", "image/png",
+		'image/jpeg', 'image/png',
 	];
 
 	const ALLOWED_AUDIO_MIMES = [
-		"audio/mpeg", "audio/wav", "audio/ogg"
+		'audio/mpeg', 'audio/wav', 'audio/ogg'
+	];
+
 	const ALLOWED_ZIP_MIMES = [
 		'application/x-zip',
 		'application/zip',
