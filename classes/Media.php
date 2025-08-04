@@ -475,7 +475,7 @@ class Media {
 
 		try {
 			if(!self::isValidFile($file) && ($post_arr['copytoserver'] ?? false)) {
-				$file = UploadUtil::downloadFromRemote($post_arr['originalUrl']);
+				$file = UploadUtil::downloadFromRemote($post_arr['originalUrl'], $GLOBALS['ALLOWED_MEDIA_MIME_TYPES']);
 				$createdFilepaths[] = $file['tmp_name'];
 			}
 

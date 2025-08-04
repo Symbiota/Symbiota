@@ -1,7 +1,26 @@
 <?php
+include_once($SERVER_ROOT . "/classes/Media.php");
 include_once($SERVER_ROOT . "/classes/MediaException.php");
 
 class UploadUtil {
+
+	const ALLOWED_LOAN_MIMES = [
+		'text/plain',
+		'image/jpeg', 'image/png',
+		'application/pdf', 'application/msword',
+		'application/vnd.ms-excel',
+		'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+	];
+
+	const ALLOWED_IMAGE_MIMES = [
+		"image/jpeg", "image/png",
+	];
+
+	const ALLOWED_AUDIO_MIMES = [
+		"audio/mpeg", "audio/wav", "audio/ogg"
+	];
+
 	/**
 	 * Gets temporary file storage path for portal.
 	 *
@@ -21,9 +40,9 @@ class UploadUtil {
 	}
 
 	/**
-	 * undocumented function summary
-	 *
-	 * Undocumented function long description
+	 * Cross checks file type and extension to make sure they match.
+	 * Also ensures file's mimetype matches $allowed_mimes which
+	 * defaults to self::ALLOWED_IMAGE_MIMES
 	 *
 	 * @param array $uploaded_file Uses $_FILES like array
 	 * @param array $allowed_mimes Description
@@ -31,8 +50,12 @@ class UploadUtil {
 	 * @throws conditon
 	 **/
 	public static function checkFileUpload(array $uploaded_file, array $allowed_mimes = []): bool {
-		if(self::getMaximumFileUploadSize() - memory_get_usage() < intval($uploaded_file['size'])) {
-			throw new Exception('Error: File is to large to upload');
+		if(count($allowed_mimes) <= 0) {
+			$allowed_mimes = self::ALLOWED_IMAGE_MIMES;
+		}
+
+		if(!in_array($uploaded_file['type'], $allowed_mimes)) {
+			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $uploaded_file['type']);
 		}
 
 		$type_guess = mime_content_type($uploaded_file['tmp_name']);
@@ -46,10 +69,6 @@ class UploadUtil {
 
 		if(!$guess_ext || $guess_ext != $provided_file_data['extension']) {
 			throw new MediaException(MediaException::SuspiciousFile);
-		}
-
-		if(count($allowed_mimes) && !in_array($uploaded_file['type'], $allowed_mimes)) {
-			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $uploaded_file['type']);
 		}
 
 		return true;
@@ -138,8 +157,32 @@ class UploadUtil {
 		return $parts;
 	}
 
-	public static function downloadFromRemote(string $url) {
+	/**
+	 * Checks if remote file provided by $url matches $allowed_mimes then 
+	 * proceeds to download into a temporary folder
+	 *
+	 * Be sure to check file after upload.
+	 *
+	 * @param string $url Url path desired to download
+	 * @return array
+	 * @throws MediaException
+	 * @throws Exception
+	 **/
+	public static function downloadFromRemote(string $url, array $allowed_mimes	= []): array {
 		$info = self::getRemoteFileInfo($url);
+
+		if(count($allowed_mimes) <= 0) {
+			$allowed_mimes = self::ALLOWED_IMAGE_MIMES;
+		}
+
+		// Sanity Check files extension and claimed type before uploading
+		// This does not guarantee the file is safe but weeds out simple
+		// malicous file upload attempts. Actual file should also be checked after download.
+		if(!in_array($info['type'], $allowed_mimes)) {
+			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $info['type']);
+		} else if(self::mime2ext($info['type']) !== $info['extension']) {
+			throw new MediaException(MediaException::SuspiciousFile);
+		}
 
 		$availableMemory = self::getMaximumFileUploadSize() - memory_get_usage();
 		if($availableMemory < intval($info['size'])) {
@@ -223,6 +266,7 @@ class UploadUtil {
 		return [
 			'name' => $parsed_file['name'] . ($parsed_file['extension'] ? '.' .$parsed_file['extension']: ''),
 			'tmp_name' => $url,
+			'extension' => $parsed_file['extension'],
 			'error' => 0,
 			'type' => $file_type_mime,
 			'size' => intval($file_size_bytes)
