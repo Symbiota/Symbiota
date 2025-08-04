@@ -207,7 +207,9 @@ if($isEditor){
 			<?php
 			if(!$uploadStatus){
 				$errStr = $loaderManager->getErrorStr();
-				if($errStr) echo '<h2 style="color:red">'.$LANG[$errStr].'</h2>';
+				if($errStr) {
+					echo '<h2 style="color:red">' . ($LANG[$errStr] ?? $errStr) .'</h2>';
+				}
 			}
 			else{
 				if($action == 'mapInputFile' || $action == 'verifyMapping'){
