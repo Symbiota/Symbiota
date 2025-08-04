@@ -7,6 +7,7 @@ Language: Français (French)
 
 $LANG['FAILED'] = 'Échec de la mise à jour du profil!';
 $LANG['PWORD_SUCCESS'] = 'Mise à jour du mot de passe réussie';
+$LANG['ERROR_PWD_SAME'] = 'ERREUR: Votre nouveau mot de passe ne peut pas être le même que votre mot de passe précédent';
 $LANG['PWD_UPDATE_FAILED'] = "Échec de la mise à jour du mot de passe ! Êtes-vous sûr d'avoir saisi correctement le mot de passe précédent?";
 $LANG['UPDATE_SUCCESSFUL'] = "Mise à jour du nom d'utilisateur réussie!";
 $LANG['LOGIN_USED'] = 'La connexion est déjà utilisée par un autre utilisateur. Veuillez essayer une nouvelle connexion.';
