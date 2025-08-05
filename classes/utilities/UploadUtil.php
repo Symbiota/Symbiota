@@ -14,7 +14,7 @@ class UploadUtil {
 	];
 
 	const ALLOWED_IMAGE_MIMES = [
-		'image/jpeg', 'image/png',
+		'image/jpeg', 'image/png', 'image/gif'
 	];
 
 	const ALLOWED_AUDIO_MIMES = [
