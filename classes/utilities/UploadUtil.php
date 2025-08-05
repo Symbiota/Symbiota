@@ -43,7 +43,7 @@ class UploadUtil {
 	 * @return string
 	 **/
 	public static function getTempDir(): string {
-		$temp_dir = $GLOBALS["TEMP_DIR_ROOT"] ?? ini_get('upload_tmp_dir');
+		$temp_dir = $GLOBALS["TEMP_DIR_ROOT"] ?? ini_get('upload_tmp_dir') ?? '/var/www/symb/temp/';
 		if(substr($temp_dir,-1) != '/') {
 			$temp_dir .= "/";
 		}
