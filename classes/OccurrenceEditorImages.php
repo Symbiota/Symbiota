@@ -305,65 +305,67 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 		return $bool;
 	}
 
-	public function remapImage($mediaID, $targetOccid = 0){
-		global $LANG;
-		$status = true;
-		if(!is_numeric($mediaID)) return false;
-		if($targetOccid == 'new'){
-			$sql = 'INSERT INTO omoccurrences(collid, observeruid,processingstatus) SELECT collid, observeruid, "unprocessed" FROM omoccurrences WHERE occid = '.$this->occid;
-			if($this->conn->query($sql)){
-				$targetOccid = $this->conn->insert_id;
-				$status = $targetOccid;
-			}
-			else{
-				$this->errorArr[] = $LANG['UNABLE_RELINK_BLANK'].': '.$this->conn->error;
-				return false;
-			}
-		}
-		if($targetOccid && is_numeric($targetOccid)){
-			$imgArr = array_intersect_key(current(parent::getImageMap($mediaID)), array('url'=>'','tnurl'=>'','origurl'=>''));
-			$editArr = array('mediaid' => $mediaID, 'occid' => $targetOccid);
-			if(!$this->imageNotCatalogNumberLimited($imgArr)){
-				if($this->imagesAreWritable($imgArr)){
-					//Rename images to ensure that files are not written over with file named using previous catalog number
-					$ts = time();
-					if(isset($imgArr['url']) && $imgArr['url']){
-						$ext = substr($imgArr['url'], strrpos($imgArr['url'],'.'));
-						$pathFrag = substr($imgArr['url'], 0, strrpos($imgArr['url'],'.'));
-						$editArr['renameweburl'] = 1;
-						$editArr['oldurl'] = $imgArr['url'];
-						$editArr['url'] = $pathFrag.'_'.$ts.$ext;
-					}
-					if(isset($imgArr['tnurl']) && $imgArr['tnurl']){
-						$ext = substr($imgArr['tnurl'], strrpos($imgArr['tnurl'],'.'));
-						$pathFrag = substr($imgArr['tnurl'], 0, strrpos($imgArr['tnurl'],'.'));
-						$editArr['renametnurl'] = 1;
-						$editArr['oldtnurl'] = $imgArr['tnurl'];
-						$editArr['tnurl'] = $pathFrag.'_'.$ts.$ext;
-					}
-					if(isset($imgArr['origurl']) && $imgArr['origurl']){
-						$ext = substr($imgArr['origurl'], strrpos($imgArr['origurl'],'.'));
-						$pathFrag = substr($imgArr['origurl'], 0, strrpos($imgArr['origurl'],'.'));
-						$editArr['renameorigurl'] = 1;
-						$editArr['oldorigurl'] = $imgArr['origurl'];
-						$editArr['origurl'] = $pathFrag.'_'.$ts.$ext;
-					}
-				}
-			}
-			if(!$this->editImage($editArr)){
-				$this->errorArr[] = $LANG['UNABLE_REMAP_ANOTHER'].': '.$this->conn->error;
-				return false;
-			}
-		}
-		else{
-			$sql = 'UPDATE media SET occid = NULL WHERE (mediaID = '.$imgId.')';
-			if(!$this->conn->query($sql)){
-				$this->errorArr[] = $LANG['UNABLE_DISSOCIATE'].': '.$this->conn->error;
-				return false;
-			}
-		}
-		return $status;
-	}
+	// TODO (Logan) deprecate function
+	// commenting out for now as instructed
+	// public function remapImage($mediaID, $targetOccid = 0){
+	// 	global $LANG;
+	// 	$status = true;
+	// 	if(!is_numeric($mediaID)) return false;
+	// 	if($targetOccid == 'new'){
+	// 		$sql = 'INSERT INTO omoccurrences(collid, observeruid,processingstatus) SELECT collid, observeruid, "unprocessed" FROM omoccurrences WHERE occid = '.$this->occid;
+	// 		if($this->conn->query($sql)){
+	// 			$targetOccid = $this->conn->insert_id;
+	// 			$status = $targetOccid;
+	// 		}
+	// 		else{
+	// 			$this->errorArr[] = $LANG['UNABLE_RELINK_BLANK'].': '.$this->conn->error;
+	// 			return false;
+	// 		}
+	// 	}
+	// 	if($targetOccid && is_numeric($targetOccid)){
+	// 		$imgArr = array_intersect_key(current(parent::getImageMap($mediaID)), array('url'=>'','tnurl'=>'','origurl'=>''));
+	// 		$editArr = array('mediaid' => $mediaID, 'occid' => $targetOccid);
+	// 		if(!$this->imageNotCatalogNumberLimited($imgArr)){
+	// 			if($this->imagesAreWritable($imgArr)){
+	// 				//Rename images to ensure that files are not written over with file named using previous catalog number
+	// 				$ts = time();
+	// 				if(isset($imgArr['url']) && $imgArr['url']){
+	// 					$ext = substr($imgArr['url'], strrpos($imgArr['url'],'.'));
+	// 					$pathFrag = substr($imgArr['url'], 0, strrpos($imgArr['url'],'.'));
+	// 					$editArr['renameweburl'] = 1;
+	// 					$editArr['oldurl'] = $imgArr['url'];
+	// 					$editArr['url'] = $pathFrag.'_'.$ts.$ext;
+	// 				}
+	// 				if(isset($imgArr['tnurl']) && $imgArr['tnurl']){
+	// 					$ext = substr($imgArr['tnurl'], strrpos($imgArr['tnurl'],'.'));
+	// 					$pathFrag = substr($imgArr['tnurl'], 0, strrpos($imgArr['tnurl'],'.'));
+	// 					$editArr['renametnurl'] = 1;
+	// 					$editArr['oldtnurl'] = $imgArr['tnurl'];
+	// 					$editArr['tnurl'] = $pathFrag.'_'.$ts.$ext;
+	// 				}
+	// 				if(isset($imgArr['origurl']) && $imgArr['origurl']){
+	// 					$ext = substr($imgArr['origurl'], strrpos($imgArr['origurl'],'.'));
+	// 					$pathFrag = substr($imgArr['origurl'], 0, strrpos($imgArr['origurl'],'.'));
+	// 					$editArr['renameorigurl'] = 1;
+	// 					$editArr['oldorigurl'] = $imgArr['origurl'];
+	// 					$editArr['origurl'] = $pathFrag.'_'.$ts.$ext;
+	// 				}
+	// 			}
+	// 		}
+	// 		if(!$this->editImage($editArr)){
+	// 			$this->errorArr[] = $LANG['UNABLE_REMAP_ANOTHER'].': '.$this->conn->error;
+	// 			return false;
+	// 		}
+	// 	}
+	// 	else{
+	// 		$sql = 'UPDATE media SET occid = NULL WHERE (mediaID = '.$imgId.')';
+	// 		if(!$this->conn->query($sql)){
+	// 			$this->errorArr[] = $LANG['UNABLE_DISSOCIATE'].': '.$this->conn->error;
+	// 			return false;
+	// 		}
+	// 	}
+	// 	return $status;
+	// }
 
 	// TODO (Logan) deprecate function
 	// commenting out for now as instructed
