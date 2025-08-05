@@ -1,6 +1,7 @@
 <?php
 include_once($SERVER_ROOT.'/config/dbconnection.php');
 include_once($SERVER_ROOT.'/classes/utilities/TaxonomyUtil.php');
+include_once($SERVER_ROOT.'/classes/utilities/UploadUtil.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyHarvester.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
 include_once($SERVER_ROOT.'/traits/TaxonomyTrait.php');
@@ -59,6 +60,16 @@ class TaxonomyUpload{
 			}
 		}
 		elseif(!empty($_FILES['uploadfile']['name'])){
+			try {
+				UploadUtil::checkFileUpload(
+					$_FILES['uploadfile'],
+					UploadUtil::ALLOWED_ZIP_MIMES
+				);
+			} catch(Exception $e) {
+				$this->errorStr = 'ERROR: ' . $e->getMessage();
+				return false;
+			}
+
 			if($this->validateFileName($_FILES['uploadfile']['name'], true)){
 				$this->uploadFileName = $_FILES['uploadfile']['name'];
 				if(move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->uploadTargetPath.$this->uploadFileName)){

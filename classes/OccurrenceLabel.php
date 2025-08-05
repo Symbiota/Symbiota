@@ -166,7 +166,7 @@ class OccurrenceLabel {
 			}
 			//Get occurrence records
 			$this->setLabelFieldArr();
-			$sql2 = 'SELECT ' . implode(',', $this->labelFieldArr) . ' FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.tid ' . $sqlWhere;
+			$sql2 = 'SELECT '.implode(',',$this->labelFieldArr).' FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.tid LEFT JOIN taxstatus ts ON ts.tid = o.tidinterpreted LEFT JOIN taxstatus pts ON ts.parenttid = pts.tid LEFT JOIN taxa pt ON pts.tid = pt.tid '.$sqlWhere;
 			if ($rs2 = $this->conn->query($sql2)) {
 				while ($row2 = $rs2->fetch_assoc()) {
 					$occid = $row2['occid'];
@@ -266,20 +266,23 @@ class OccurrenceLabel {
 				'family' => 'o.family',
 				'scientificName' => 'o.sciname AS scientificname',
 				'scientificName_with_author' => 'CONCAT_WS(" ",o.sciname,o.scientificnameauthorship) AS scientificname_with_author',
+				'genus'=>'t.unitName1 AS genus',
 				'speciesName' => 'TRIM(CONCAT_WS(" ",t.unitind1,t.unitname1,t.unitind2,t.unitname2)) AS speciesname',
 				'taxonRank' => 't.unitind3 AS taxonrank',
-				'infraSpecificEpithet' => 't.unitname3 AS infraspecificepithet',
-				'scientificNameAuthorship' => 'o.scientificnameauthorship',
-				'parentAuthor' => '"" AS parentauthor',
-				'identifiedBy' => 'o.identifiedby',
+				'specificepithet'=>'t.unitname2 AS specificepithet',
+				'fieldnumber'=>'o.fieldnumber',
+				'infraSpecificEpithet'=>'t.unitname3 AS infraspecificepithet', 
+				'scientificNameAuthorship'=>'o.scientificnameauthorship', 
+				'parentAuthor'=>'pt.author AS parentauthor',
+				'identifiedBy'=>'o.identifiedby',
 				'dateIdentified' => 'o.dateidentified',
 				'identificationReferences' => 'o.identificationreferences',
 				'identificationRemarks' => 'o.identificationremarks',
 				'taxonRemarks' => 'o.taxonremarks',
 				'identificationQualifier' => 'o.identificationqualifier',
 				'typeStatus' => 'o.typestatus',
-				'recordedBy' => 'o.recordedby',
-				'recordNumber' => 'o.recordnumber',
+				'collector'=>'o.recordedby as collector',
+				'collectornumber'=>'o.recordnumber as collectornumber',
 				'associatedCollectors' => 'o.associatedcollectors',
 				'eventDate' => 'DATE_FORMAT(o.eventdate,"%e %M %Y") AS eventdate',
 				'year' => 'o.year',
@@ -292,7 +295,7 @@ class OccurrenceLabel {
 				'occurrenceRemarks' => 'o.occurrenceremarks',
 				'associatedTaxa' => 'o.associatedtaxa',
 				'dynamicProperties' => 'o.dynamicproperties',
-				'verbatimAttributes' => 'o.verbatimattributes',
+				'description'=>'o.verbatimattributes as description',
 				'behavior' => 'behavior',
 				'reproductiveCondition' => 'o.reproductivecondition',
 				'cultivationStatus' => 'o.cultivationstatus',

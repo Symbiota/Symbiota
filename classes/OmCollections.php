@@ -4,6 +4,7 @@ include_once($SERVER_ROOT . '/classes/Manager.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
+include_once($SERVER_ROOT . '/classes/utilities/UploadUtil.php');
 
 class OmCollections extends Manager{
 
@@ -52,6 +53,8 @@ class OmCollections extends Manager{
 		if($this->collid){
 			$reqArr = $this->getRequestArr($postArr);
 			if(!$this->isCollUnique($reqArr['collectionCode'], $reqArr['institutionCode'])) {
+				return false;
+			} elseif($this->errorMessage) {
 				return false;
 			}
 
@@ -162,7 +165,13 @@ class OmCollections extends Manager{
 		$retArr['rightsHolder'] = ($postArr['rightsHolder']?trim($postArr['rightsHolder']):NULL);
 		$retArr['accessRights'] = ($postArr['accessRights']?trim($postArr['accessRights']):NULL);
 		$retArr['individualUrl'] = ($postArr['individualUrl']?trim($postArr['individualUrl']):NULL);
-		if(isset($_FILES['iconFile']['name']) && $_FILES['iconFile']['name']) $retArr['icon'] = $this->addIconImageFile($postArr);
+		if(isset($_FILES['iconFile']['name']) && $_FILES['iconFile']['name']) {
+			try {
+				$retArr['icon'] = $this->addIconImageFile($postArr);
+			} catch(Exception $e) {
+				$this->errorMessage = 'ERROR: ' . $e->getMessage();
+			}
+		}
 		elseif(isset($postArr['iconUrl']) && $postArr['iconUrl']) $retArr['icon'] = trim($postArr['iconUrl']);
 		elseif(isset($postArr['icon']) && $postArr['icon']) $retArr['icon'] = trim($postArr['icon']);
 		else $retArr['icon'] = NULL;
@@ -181,6 +190,11 @@ class OmCollections extends Manager{
 	private function addIconImageFile($postArr){
 		$targetPath = $GLOBALS['SERVER_ROOT'].'/content/collicon/';
 		$urlBase = GeneralUtil::getDomain() . $GLOBALS['CLIENT_ROOT'] . '/content/collicon/';
+
+		UploadUtil::checkFileUpload(
+			$_FILES['iconFile'],
+			['image/jpeg', 'image/png', 'image/gif']
+		);
 
 		//Clean file name
 		$fileName = basename($_FILES['iconFile']['name']);
@@ -276,7 +290,7 @@ class OmCollections extends Manager{
 			}
 			$rs->free();
 		}
-		return json_decode($jsonStr,true);
+		return $jsonStr? json_decode($jsonStr,true): '';
 	}
 
 	//Institution address functions
