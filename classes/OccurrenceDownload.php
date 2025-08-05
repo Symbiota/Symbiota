@@ -505,18 +505,24 @@ class OccurrenceDownload{
 			}
 			$sql .= 'FROM omcollections c INNER JOIN omoccurrences o ON c.collid = o.collid LEFT JOIN taxa t ON o.tidinterpreted = t.tid LEFT JOIN taxstatus ts ON t.tid = ts.tid ';
 			$sql .= $this->setTableJoins($this->sqlWhere);
-			$this->applyConditions();
-			$sql .= $this->sqlWhere;
-			if($this->redactLocalities){
-				if($this->rareReaderArr){
-					$sql .= 'AND (o.recordSecurity = 0 OR c.collid IN('.implode(',',$this->rareReaderArr).')) ';
+			if($this->sqlWhere){
+				$this->applyConditions();
+				$sql .= $this->sqlWhere;
+				if($this->redactLocalities){
+					if($this->rareReaderArr){
+						$sql .= 'AND (o.recordSecurity = 0 OR c.collid IN('.implode(',',$this->rareReaderArr).')) ';
+					}
+					else{
+						$sql .= 'AND (o.recordSecurity = 0) ';
+					}
 				}
-				else{
-					$sql .= 'AND (o.recordSecurity = 0) ';
-				}
+				$sql .= OccurrenceUtil::appendFullProtectionSQL();
+				$sql .= 'ORDER BY o.collid';
 			}
-			$sql .= OccurrenceUtil::appendFullProtectionSQL();
-			$sql .= 'ORDER BY o.collid';
+			else{
+				//Don't allow someone to query all occurrences if there are no conditions
+				$sql .= 'WHERE o.occid IS NULL ';
+			}
 		}
 		//echo $sql; exit;
 		return $sql;
@@ -524,10 +530,12 @@ class OccurrenceDownload{
 
 	private function setTableJoins($sqlWhere){
 		$sqlJoin = '';
-		if(strpos($sqlWhere,'e.taxauthid')) $sqlJoin .= 'INNER JOIN taxaenumtree e ON o.tidinterpreted = e.tid ';
-		if(strpos($sqlWhere,'ctl.clid')) $sqlJoin .= 'INNER JOIN fmvouchers v ON o.occid = v.occid INNER JOIN fmchklsttaxalink ctl ON v.clTaxaID = ctl.clTaxaID ';
-		if(strpos($sqlWhere,'p.lngLatPoint')) $sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
-		if (strpos($sqlWhere, 'ds.datasetid')) $sqlJoin .= 'INNER JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
+		if($sqlWhere){
+			if(strpos($sqlWhere,'e.taxauthid')) $sqlJoin .= 'INNER JOIN taxaenumtree e ON o.tidinterpreted = e.tid ';
+			if(strpos($sqlWhere,'ctl.clid')) $sqlJoin .= 'INNER JOIN fmvouchers v ON o.occid = v.occid INNER JOIN fmchklsttaxalink ctl ON v.clTaxaID = ctl.clTaxaID ';
+			if(strpos($sqlWhere,'p.lngLatPoint')) $sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
+			if (strpos($sqlWhere, 'ds.datasetid')) $sqlJoin .= 'INNER JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
+		}
 		return $sqlJoin;
 	}
 

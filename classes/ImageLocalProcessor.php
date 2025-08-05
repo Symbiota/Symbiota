@@ -958,7 +958,7 @@ class ImageLocalProcessor {
 					'VALUES('.$this->activeCollid.',"'.$catalogNumber.'","unprocessed","'.date('Y-m-d H:i:s').'")';
 				if($this->conn->query($sql2)){
 					$occid = $this->conn->insert_id;
-					$this->logOrEcho('Specimen record does not exist; new empty specimen record created and assigned an "unprocessed" status (occid = <a href="../individual/index.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>) ',1);
+					$this->logOrEcho('Specimen record does not exist; new empty specimen record created and assigned an "unprocessed" status (occid = <a href="../individual/index.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>) ',1, false);
 				}
 				else $this->logOrEcho("ERROR creating new occurrence record: ".$this->conn->error,1);
 			}
@@ -1060,8 +1060,8 @@ class ImageLocalProcessor {
 					$stmt->execute();
 					if($stmt->affected_rows && !$stmt->error){
 						$msg = 'SUCCESS: Image record loaded into database ';
-						if($occid) $msg .= 'and linked to occurrence record <a href="../individual/index.php?occid='.$occid.'" target="_blank">'.$occid.'</a>';
-						$this->logOrEcho($msg,1);
+						if($occid) $msg .= 'and linked to occurrence record <a href="../individual/index.php?occid='.htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE).'" target="_blank">'.htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE).'</a>';
+						$this->logOrEcho($msg,1, false	);
 					}
 					else{
 						$status = false;
@@ -2131,7 +2131,7 @@ class ImageLocalProcessor {
 		return $retStr;
 	}
 
-	protected function logOrEcho($str,$indent = 0){
+	protected function logOrEcho($str,$indent = 0, $isEscaped = true) {
 		if($this->logMode > 1){
 			if($this->logFH){
 				if($indent) $str = "\t".$str;
@@ -2139,7 +2139,8 @@ class ImageLocalProcessor {
 			}
 		}
 		if($this->logMode == 1 || $this->logMode == 3){
-			echo '<li '.($indent?'style="margin-left:'.($indent*15).'px"':'').'>' . htmlspecialchars($str, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</li>\n";
+			$str = $isEscaped ? htmlspecialchars($str, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : $str;
+			echo '<li '.($indent?'style="margin-left:'.($indent*15).'px"':'').'>' . $str . "</li>\n";
 			@ob_flush();
 			@flush();
 		}

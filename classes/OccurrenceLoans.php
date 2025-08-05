@@ -1,5 +1,6 @@
 <?php
 include_once($SERVER_ROOT.'/classes/Manager.php');
+include_once($SERVER_ROOT.'/classes/utilities/UploadUtil.php');
 
 class OccurrenceLoans extends Manager{
 
@@ -992,6 +993,14 @@ class OccurrenceLoans extends Manager{
 		// Check the mimetype of the file, don't rely on the file extension
 		} else if (!in_array(mime_content_type($file['tmp_name']), $mimetypes)) {
 			$this->errorMessage = 'Error: File type does not match extension. File must be a PDF (.pdf), MS Word document (.doc or .docx), MS Excel file (.xls or .xlsx), image (.jpg, .jpeg, or .png). or a text file (.txt, .csv).';
+			return false;
+		}
+
+		// Ensure that the file type matches the mimetype
+		try {
+			UploadUtil::checkFileUpload($file, $mimetypes);
+		} catch(Exception $e) {
+			$this->errorMessage = 'Error: ' . $e->getMessage();
 			return false;
 		}
 

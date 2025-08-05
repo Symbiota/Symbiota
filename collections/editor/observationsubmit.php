@@ -1,7 +1,8 @@
 <?php
 //TODO: add code to automatically select hide locality details when taxon/state match name on list
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ObservationSubmitManager.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
+include_once($SERVER_ROOT.'/classes/Media.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/observationsubmit.'.$LANG_TAG.'.php'))
 	include_once($SERVER_ROOT.'/content/lang/collections/editor/observationsubmit.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/editor/observationsubmit.en.php');
@@ -17,9 +18,13 @@ $action = array_key_exists('action', $_POST) ? $_POST['action'] : '';
 //Sanitation
 $recordedBy = htmlspecialchars($recordedBy);
 
-$obsManager = new ObservationSubmitManager();
-$obsManager->setCollid($collId);
-$collMap = $obsManager->getCollMap();
+$MAX_MEDIA_COUNT = 5;
+
+$occurManager = new OccurrenceEditorManager();
+$occurManager->setCollId($collId);
+$collMap = $occurManager->getCollMap();
+$mediaErrors = [];
+
 if(!$collId && $collMap) $collId = $collMap['collid'];
 
 $isEditor = 0;
@@ -35,11 +40,38 @@ if($collMap){
 		$isEditor = 1;
 	}
 	if($isEditor && $action == "Submit"){
-		$occid = $obsManager->addObservation($_POST);
+		$occurManager->addOccurrence($_POST);
+		$occid = $occurManager->getOccId();
+
+		$path = get_occurrence_upload_path(
+			$collMap['institutioncode'],
+			$collMap['collectioncode'],
+		);
+
+		for($i = 1; $i <= min($MAX_MEDIA_COUNT, count($_FILES)); $i++) {
+			$file = ($_FILES['imgfile' . $i] ?? false);
+			if($file && $file['error'] === 0) {
+				Media::uploadAndInsert(
+					[
+						'caption' => $_POST['caption' . $i] ?? null,
+						'notes' => $_POST['notes' . $i] ?? null,
+						'occid' => $occid
+					],
+					$file, 
+					new LocalStorage($path)
+				);
+				
+				if($errors = Media::getErrors()) {
+					$mediaErrors[$i] = $errors;
+				} else {
+					$mediaErrors[$i] = false;
+				}
+			}
+		}
 	}
-	if(!$recordedBy) $recordedBy = $obsManager->getUserName();
+	if(!$recordedBy) $recordedBy = $occurManager->getUserName();
 }
-$clArr = $obsManager->getChecklists();
+$clArr = $occurManager->getUserChecklists();
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
@@ -88,11 +120,27 @@ $clArr = $obsManager->getChecklists();
 			<hr />
 			<div style="margin:15px;font-weight:bold;">
 				<?php
-				if($occid){
+
+				if($mediaErrors) {
+					echo '<div>';
+					echo $LANG['MEDIA_STATUS'] . ':<ol>';
+					foreach($mediaErrors as $mediaNumber => $e){
+						if($e) {
+							echo '<li style="color:red;">Media #' . $mediaNumber . ' ';
+							echo $LANG['ERROR'] . ': '. $e[0];
+							echo '</li>';
+						} else {
+							echo '<li style="color:green;">Media #' . $mediaNumber . ' ';
+							echo $LANG['SUCCESS_IMAGE'];
+							echo '</li>';
+						}
+					}
+					echo '</ol>';
+					echo '</div>';
+				}
+
+				if($occid) {
 					?>
-					<div style="color:green;">
-						<?= $LANG['SUCCESS_IMAGE']; ?>
-					</div>
 					<div style="font:weight;margin-top:10px;">
 						<?= $LANG['OPEN']; ?> <a href="../individual/index.php?occid=<?= $occid ?>" target="_blank" rel="noopener"><?= $LANG['OCC_DET_VIEW'] ?></a> <?= $LANG['TO_SEE_NEW'] ?>
 					</div>
@@ -107,7 +155,7 @@ $clArr = $obsManager->getChecklists();
 						<?php
 					}
 				}
-				$errArr = $obsManager->getErrorArr();
+				$errArr = $occurManager->getErrorArr();
 				if($errArr){
 					echo '<div style="color:red;">';
 					echo $LANG['ERROR'].':<ol>';
@@ -135,7 +183,7 @@ $clArr = $obsManager->getChecklists();
 				    	<!-- following line sets MAX_FILE_SIZE (must precede the file input field)  -->
 						<input type='hidden' name='MAX_FILE_SIZE' value='<?= $maxUpload; ?>' />
 						<?php
-						for($x=1; $x<6; $x++){
+						for($x=1; $x <= $MAX_MEDIA_COUNT; $x++){
 							?>
 							<div class="imgSubmitDiv" id="img<?= $x; ?>div" style="<?php if($x > 1) echo 'display:none'; ?>">
 								<div style="margin-bottom: 10px;">
@@ -154,7 +202,7 @@ $clArr = $obsManager->getChecklists();
 										</div>
 									</section>
 									<?php
-									if($x < 5){
+									if($x < $MAX_MEDIA_COUNT){
 										?>
 										<div style="margin-bottom: 10px;">
 											<a href="#" onclick="toggle('img<?= ($x+1); ?>div');return false">
@@ -179,7 +227,7 @@ $clArr = $obsManager->getChecklists();
 									<span>
 										<label for="sciname"><?= $LANG['SCINAME']; ?>:</label>
 										<input type="text" id="sciname" name="sciname" maxlength="250" style="width:390px;" required />
-										<input type="hidden" id="tidtoadd" name="tidtoadd" value="" />
+										<input type="hidden" id="tidinterpreted" name="tidinterpreted" value="" />
 									</span>
 									<span stlye="margin-left: 10px">
 										<label for="scientificnameauthorship"><?= $LANG['AUTHOR']; ?>:</label>

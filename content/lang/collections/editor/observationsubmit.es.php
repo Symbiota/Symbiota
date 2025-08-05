@@ -71,5 +71,6 @@ $LANG['CULT_CAPT_EG'] = 'Haga clic si el espécimen fue cultivado o cautivo';
 $LANG['IMG_GLOBE'] = 'Una pequeña imagen del globo terráqueo';
 $LANG['IMG_EDIT'] = 'Botón Mostrar campos adicionales';
 $LANG['NO_COLLECTION'] = 'Sin Colección';
+$LANG['MEDIA_STATUS'] = 'Estado de los medios';
 
 ?>

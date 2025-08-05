@@ -2,6 +2,7 @@
 require_once($SERVER_ROOT.'/config/dbconnection.php');
 require_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
 include_once($SERVER_ROOT.'/classes/GuidManager.php');
+include_once($SERVER_ROOT.'/classes/utilities/UploadUtil.php');
 
 class ImageProcessor {
 
@@ -198,7 +199,8 @@ class ImageProcessor {
 		$inFileName = basename($_FILES['uploadfile']['name']);
 		$ext = substr(strrchr($inFileName, '.'), 1);
 		$fileName = 'imageMappingFile_'.time();
-		$fullPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) != '/'?'/':'').'temp/data/';
+		$fullPath = UploadUtil::getTempDir() . 'data/';
+
 		if(move_uploaded_file($_FILES['uploadfile']['tmp_name'],$fullPath.$fileName.'.'.$ext)){
 			if($ext == 'zip'){
 				$zipFilePath = $fullPath.$fileName.'.zip';
@@ -230,7 +232,8 @@ class ImageProcessor {
 
 	public function getHeaderArr($fileName){
 		$retArr = array();
-		$fullPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) != '/'?'/':'').'temp/data/'.$fileName;
+		$fullPath = UploadUtil::getTempDir() . 'data/' . $fileName;
+
 		if($fh = fopen($fullPath,'rb')){
 			$headerArr = fgetcsv($fh,0,',');
 			foreach($headerArr as $i => $sourceField){
@@ -244,7 +247,8 @@ class ImageProcessor {
 	public function loadFileData($postArr){
 		if(isset($postArr['filename']) && isset($postArr['tf'])){
 			$fieldMap = array_flip($postArr['tf']);
-			$fullPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) != '/'?'/':'').'temp/data/'.$postArr['filename'];
+			$fullPath = $fullPath = UploadUtil::getTempDir() . 'data/' . $postArr['filename'];
+
 			if($fh = fopen($fullPath,'rb')){
 				$this->initProcessor('processing/imgmap');
 				$this->logOrEcho('Starting to process image URLs within image mapping file '.$postArr['filename'].' ('.date('Y-m-d H:i:s').')');

@@ -16,16 +16,19 @@ $(document).ready(function() {
 					if(data){
 						f.scientificnameauthorship.value = data.author;
 						f.family.value = data.family;
+						f.tidinterpreted.value = data.tid;
 					}
 					else{
 						f.scientificnameauthorship.value = "";
 						f.family.value = "";
+						f.tidinterpreted.value = "";
 					}
 				});
 			}
 			else{
 				f.scientificnameauthorship.value = "";
 				f.family.value = "";
+				f.tidinterpreted.value = "";
 			}				
 		}
 	});

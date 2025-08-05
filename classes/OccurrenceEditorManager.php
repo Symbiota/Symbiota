@@ -449,7 +449,11 @@ class OccurrenceEditorManager {
 				$sqlWhere .= 'AND (o.recordedby IS NULL) ';
 			} elseif (substr($this->qryArr['rb'], 0, 1) == '%') {
 				$collStr = $this->cleanInStr(substr($this->qryArr['rb'], 1));
-				$sqlWhere .= 'AND (MATCH(o.recordedby) AGAINST("' . $collStr . '" IN BOOLEAN MODE)) ';
+				if(strlen($collStr) < 3){
+					$sqlWhere .= 'AND (o.recordedby REGEXP "\\\b' . $collStr . '\\\b") ';
+				} else {
+					$sqlWhere .= 'AND (MATCH(o.recordedby) AGAINST("' . $collStr . '" IN BOOLEAN MODE)) ';
+				}
 			} else {
 				$sqlWhere .= 'AND (o.recordedby LIKE "' . $this->cleanInStr($this->qryArr['rb']) . '%") ';
 			}
@@ -761,6 +765,18 @@ class OccurrenceEditorManager {
 			$this->occurrenceMap = $retArr;
 			if ($this->occid) $this->setPaleoData();
 		}
+	}
+
+	public function getRecordIdByOccId($occid) {
+		$recordId = '';
+		$stmt = $this->conn->prepare("SELECT recordId FROM omoccurrences WHERE occid = ?");
+		$stmt->bind_param("i", $occid);
+		if ($stmt->execute()) {
+			$stmt->bind_result($recordId);
+			$stmt->fetch();
+		}
+		$stmt->close();
+		return $recordId;
 	}
 
 	private function addTableJoins(&$sql) {
@@ -2241,6 +2257,19 @@ class OccurrenceEditorManager {
 		return $retArr;
 	}
 
+	public function getUserName(){
+		$retStr = '';
+		if(is_numeric($GLOBALS['SYMB_UID'])){
+			$sql = 'SELECT CONCAT_WS(", ",lastname,firstname) AS username FROM users WHERE uid = '.$GLOBALS['SYMB_UID'];
+			$rs = $this->conn->query($sql);
+			while($r = $rs->fetch_object()){
+				$retStr = $r->username;
+			}
+			$rs->free();
+		}
+		return $retStr;
+	}
+
 	//Duplicate functions
 	private function linkDuplicates($occidStr, $dupTitle) {
 		$status = '';
@@ -2412,6 +2441,18 @@ class OccurrenceEditorManager {
 		}
 		$this->cleanOutArr($imageMap);
 		return $imageMap;
+	}
+
+	public function createOccurrenceFrom(): int {
+		$sql = 'INSERT INTO omoccurrences(collid, observeruid,processingstatus) SELECT collid, observeruid, "unprocessed" FROM omoccurrences WHERE occid = ?';
+
+		try {
+			QueryUtil::executeQuery($this->conn, $sql, [$this->occid]);
+			return $this->conn->insert_id;
+		} catch(Exception $e) {
+			$this->errorArr[] = $LANG['UNABLE_RELINK_BLANK'].': '.$this->conn->error;
+			return -1;
+		}
 	}
 
 	protected function getImageTags($imgIdStr) {

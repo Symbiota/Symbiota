@@ -146,6 +146,7 @@ $LANG['WARNING_ADD_EXS_NO'] = 'WARNING adding exsiccati number';
 $LANG['WARNING_ADD_EXS'] = 'WARNING adding exsiccati';
 $LANG['FAILED_ADD_OCC'] = 'ERROR - failed to add occurrence record';
 $LANG['ERROR_REMOVING_OCR'] = 'ERROR al eliminar bloques OCR vinculados a medios';
+$LANG['UNABLE_RELINK_BLANK'] = "Imposible vincular la imagen a un nuevo registro de ocurrencia vacío";
 $LANG['ERROR_REMOVING_IMAGETAGS'] = 'ERROR al eliminar etiquetas de imagen vinculadas a medios';
 $LANG['ERROR_REMOVING_LINKS'] = 'ERROR al eliminar enlaces medios';
 $LANG['ERROR_TRYING_TO_DELETE'] = 'ERROR trying to delete occurrence record';
