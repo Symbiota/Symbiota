@@ -28,7 +28,6 @@
             - /content/dwca/
             - /content/geolocate/
             - /content/logs/
-            - /temp/
    2. Symbiota initialization configuration
       - Modify variables within config/symbini.php to match your project environment. See instructions within configuration file.
 3. Install and configure Symbiota database schema

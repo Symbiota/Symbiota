@@ -7,7 +7,7 @@ Language: Español
 $LANG['CROWDSOURCING_ADMIN'] = 'Administración de Crowdsourcing';
 $LANG['CROWDSOURCE_EXPLAIN'] = 'Esta herramienta es para entregar y gestionar registros para el ingreso de datos por
 							el publico general. Por más información revisa a
-							<a href="https://docs.symbiota.org/docs/Collection_Manager_Guide/Crowdsourcing/adding_crowdsourcing" target="_blank">
+							<a href="https://docs.symbiota.org/Collection_Manager_Guide/Crowdsourcing/adding_crowdsourcing" target="_blank">
 							Documentación de Symbiota para Crowdsourcing</a>';
 $LANG['EDIT_PROJECT'] = 'Editar el Proyecto';
 $LANG['GENERAL_INSTRUCTIONS'] = 'Instrucciones Generales';
