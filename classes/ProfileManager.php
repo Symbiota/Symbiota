@@ -249,9 +249,33 @@ class ProfileManager extends Manager{
 					if(!$testStatus) return false;
 				}
 			}
+			if(!$this->testAgainstPrevious($newPwd)) return false;
 			if($this->updatePassword($this->uid, $newPwd)) return true;
 		}
 		return false;
+	}
+
+	private function testAgainstPrevious($newPassword){
+		$bool = true;
+		try{
+			// If passwords are believed to have been compromised, rename "password" column to "passwordOld" and then NULL "password".
+			// This force users to reset their passwords and this code ensures they don't reset to their old password
+			$sql = 'SELECT uid FROM users WHERE (uid = ?) AND (passwordOld = CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?))))))';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('is', $this->uid, $newPassword);
+				$stmt->execute();
+				$stmt->store_result();
+				if($stmt->num_rows){
+					$this->errorMessage = 'ERROR_PWD_SAME';
+					$bool = false;
+				}
+				$stmt->close();
+			}
+		}
+		catch(Exception $e){
+
+		}
+		return $bool;
 	}
 
 	public function resetPassword($un){
@@ -316,7 +340,7 @@ class ProfileManager extends Manager{
 		// generate new random password
 		$newPassword = "";
 		$alphabet = str_split("0123456789abcdefghijklmnopqrstuvwxyz");
-		for($i = 0; $i<8; $i++) {
+		for($i = 0; $i<10; $i++) {
 			$newPassword .= $alphabet[rand(0,count($alphabet)-1)];
 		}
 		return $newPassword;
@@ -437,14 +461,14 @@ class ProfileManager extends Manager{
 
 			//Test if login exists
 			if($this->loginExists($newLogin)){
-				$this->errorMessage = 'loginExists';
+				$this->errorMessage = 'LOGIN_USED';
 				return false;
 			}
 
 			$this->setUserName();
 			if($isSelf){
 				if(!$this->authenticate($pwd)){
-					$this->errorMessage = 'incorrectPassword';
+					$this->errorMessage = 'INCORRECT_PWD';
 					return false;
 				}
 			}

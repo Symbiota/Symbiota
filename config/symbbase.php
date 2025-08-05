@@ -2,7 +2,7 @@
 header('X-Frame-Options: DENY');
 header('Cache-control: private'); // IE 6 FIX
 date_default_timezone_set('America/Phoenix');
-$CODE_VERSION = '3.3.2';
+$CODE_VERSION = '3.3.5';
 
 set_include_path(get_include_path() . PATH_SEPARATOR . $SERVER_ROOT . PATH_SEPARATOR . $SERVER_ROOT.'/config/' . PATH_SEPARATOR . $SERVER_ROOT.'/classes/');
 
@@ -113,9 +113,11 @@ $CSS_VERSION = '16';
 
 // Used for what media is allowed to be uploaded. Does not restrict external links
 $ALLOWED_MEDIA_MIME_TYPES = [
-	"image/jpeg", "image/png",
+	"image/jpeg", "image/png", "image/gif",
 	"audio/mpeg", "audio/wav", "audio/ogg"
 ];
+
+$MIME_FALL_BACK = 'image/jpeg';
 
 if(!empty($GEO_JSON_LAYERS)) {
 	/* Load GeoJSON Paths */

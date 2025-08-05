@@ -70,3 +70,9 @@ function openCoordAid(options) {
 	if (mapWindow.opener == null) mapWindow.opener = self;
 	mapWindow.focus();
 }
+
+function cleanPolygon(inputObj){
+	polygon = inputObj.value;
+	polygon = polygon.replace(/\s+/g, " ");
+	inputObj.value = polygon;
+}

@@ -93,47 +93,49 @@ class TPImageEditorManager extends TPEditorManager{
 		return $status;
 	}
 
-	public function loadImage($postArr){
-		$status = true;
-		$imgManager = new ImageShared();
-		$imgManager->setTid($this->tid);
-		$imgManager->setCaption($postArr['caption']);
-		if($postArr['creator']){
-			$imgManager->setCreator($postArr['creator']);
-		} else {
-			$imgManager->setCreatorUid($postArr['creatoruid']);
-		}
-		$imgManager->setSourceUrl($postArr['sourceurl']);
-		$imgManager->setCopyright($postArr['copyright']);
-		$imgManager->setOwner($postArr['owner']);
-		$imgManager->setLocality($postArr['locality']);
-		$imgManager->setOccid($postArr['occid']);
-		$imgManager->setNotes($postArr['notes']);
-		$sort = $postArr['sortsequence'];
-		if(!$sort) $sort = 40;
-		$imgManager->setSortSeq($sort);
-
-		$imgManager->setTargetPath(($this->family?$this->family.'/':'').date('Ym').'/');
-		$imgPath = $postArr['filepath'];
-		if($imgPath){
-			$imgManager->setMapLargeImg(true);
-			$imgManager->parseUrl($imgPath);
-			$importUrl = (array_key_exists('importurl',$postArr) && $postArr['importurl']==1?true:false);
-			if($importUrl) $imgManager->copyImageFromUrl();
-		}
-		else{
-			$createLargeImg = false;
-			if(array_key_exists('createlargeimg',$postArr) && $postArr['createlargeimg']==1) $createLargeImg = true;
-			$imgManager->setMapLargeImg($createLargeImg);
-			if(!$imgManager->uploadImage()){
-				//echo implode('; ',$imgManager->getErrArr());
-			}
-		}
-		if(!$imgManager->processImage()){
-			$this->errorMessage = implode('<br/>',$imgManager->getErrArr());
-			$status = false;
-		}
-		return $status;
-	}
+	// TODO (Logan) deprecate function 
+	// commenting out for now as instructed
+	// public function loadImage($postArr){
+	// 	$status = true;
+	// 	$imgManager = new ImageShared();
+	// 	$imgManager->setTid($this->tid);
+	// 	$imgManager->setCaption($postArr['caption']);
+	// 	if($postArr['creator']){
+	// 		$imgManager->setCreator($postArr['creator']);
+	// 	} else {
+	// 		$imgManager->setCreatorUid($postArr['creatoruid']);
+	// 	}
+	// 	$imgManager->setSourceUrl($postArr['sourceurl']);
+	// 	$imgManager->setCopyright($postArr['copyright']);
+	// 	$imgManager->setOwner($postArr['owner']);
+	// 	$imgManager->setLocality($postArr['locality']);
+	// 	$imgManager->setOccid($postArr['occid']);
+	// 	$imgManager->setNotes($postArr['notes']);
+	// 	$sort = $postArr['sortsequence'];
+	// 	if(!$sort) $sort = 40;
+	// 	$imgManager->setSortSeq($sort);
+	//
+	// 	$imgManager->setTargetPath(($this->family?$this->family.'/':'').date('Ym').'/');
+	// 	$imgPath = $postArr['filepath'];
+	// 	if($imgPath){
+	// 		$imgManager->setMapLargeImg(true);
+	// 		$imgManager->parseUrl($imgPath);
+	// 		$importUrl = (array_key_exists('importurl',$postArr) && $postArr['importurl']==1?true:false);
+	// 		if($importUrl) $imgManager->copyImageFromUrl();
+	// 	}
+	// 	else{
+	// 		$createLargeImg = false;
+	// 		if(array_key_exists('createlargeimg',$postArr) && $postArr['createlargeimg']==1) $createLargeImg = true;
+	// 		$imgManager->setMapLargeImg($createLargeImg);
+	// 		if(!$imgManager->uploadImage()){
+	// 			//echo implode('; ',$imgManager->getErrArr());
+	// 		}
+	// 	}
+	// 	if(!$imgManager->processImage()){
+	// 		$this->errorMessage = implode('<br/>',$imgManager->getErrArr());
+	// 		$status = false;
+	// 	}
+	// 	return $status;
+	// }
 }
 ?>

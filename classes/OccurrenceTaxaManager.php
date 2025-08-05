@@ -637,6 +637,7 @@ class OccurrenceTaxaManager {
 		$str = preg_replace('/%%+/', '%',$str);
 		$str = preg_replace('/^[\s%]+/', '',$str);
 		$str = trim($str,' ,;');
+		$str = preg_replace('/\s\s+/', ' ',$str);
 		if($str == '%') $str = '';
 		$str = strip_tags($str);
 		//$str = htmlspecialchars($str, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML401);

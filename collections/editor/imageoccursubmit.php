@@ -1,6 +1,7 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorImages.php');
+include_once($SERVER_ROOT.'/classes/Media.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/imageoccursubmit.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/imageoccursubmit.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/editor/imageoccursubmit.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
@@ -27,12 +28,34 @@ if($collid){
 	}
 }
 if($isEditor){
-	if($action == 'Submit Occurrence'){
-		if($occurManager->addImageOccurrence($_POST)){
-			$occid = $occurManager->getOccid();
-			if($occid) $statusStr = $LANG['NEW_RECORD_CREATED'].': <a href="occurrenceeditor.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank" rel="noopener">' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
-		}
-		else{
+	if($action == 'Submit Occurrence') {
+		if($occurManager->addOccurrence($_POST) && ($occid = $occurManager->getOccid())) {
+			try {
+				$occur_map = $occurManager->getOccurMap()[$occid];
+				$path = get_occurrence_upload_path(
+					$occur_map['institutioncode'],
+					$occur_map['collectioncode'],
+					$occur_map['catalognumber']
+				);
+
+				$_POST['occid'] = $occid;
+
+				Media::uploadAndInsert(
+					$_POST,
+					$_FILES['imgfile'],
+					new LocalStorage($path)
+				);
+
+				if($errors = Media::getErrors()) {
+					$statusStr = "ERROR: " . array_pop($errors);
+				} else {
+					$statusStr = $LANG['NEW_RECORD_CREATED'].': <a href="occurrenceeditor.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank" rel="noopener">' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
+				}
+			} catch(Exception $e) {
+				$statusStr = "ERROR: " . $e->getMessage();
+			}
+
+		} else {
 			$statusStr = $occurManager->getErrorStr();
 		}
 	}
@@ -126,7 +149,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 					<div class="targetdiv">
 						<input type='hidden' name='MAX_FILE_SIZE' value='10000000' />
 						<div>
-							<input name='imgfile' type='file' aria-label="<?php echo (isset($LANG['UPLOAD']) ? $LANG['UPLOAD'] : 'Upload the File'); ?>" />
+							<input name='imgfile' type='file' aria-label="<?php echo (isset($LANG['UPLOAD']) ? $LANG['UPLOAD'] : 'Upload the File'); ?>" accept="<?= implode(",", $ALLOWED_MEDIA_MIME_TYPES) ?>"/>
 						</div>
 						<div id="newimagediv"></div>
 						<div style="margin:10px 0px;">

@@ -158,7 +158,7 @@ $collManager->cleanOutArr($collData);
 				alert("<?php echo $LANG['SORT_NUMERIC'] ?>");
 				return false;
 			}
-			return true;
+			return verifyIconURL(f);
 		}
 
 		function managementTypeChanged(selElem) {
@@ -196,12 +196,12 @@ $collManager->cleanOutArr($collData);
 		}
 
 		function verifyIconImage(f) {
-			var iconImageFile = document.getElementById("iconfile").value;
+			var iconImageFile = document.getElementById("iconFile").value;
 			if (iconImageFile) {
 				var iconExt = iconImageFile.substr(iconImageFile.length - 4);
 				iconExt = iconExt.toLowerCase();
 				if ((iconExt != '.jpg') && (iconExt != 'jpeg') && (iconExt != '.png') && (iconExt != '.gif')) {
-					document.getElementById("iconfile").value = '';
+					document.getElementById("iconFile").value = '';
 					alert("<?php echo $LANG['NOT_SUPP'] ?>");
 				} else {
 					var fr = new FileReader;
@@ -209,14 +209,14 @@ $collManager->cleanOutArr($collData);
 						var img = new Image;
 						img.onload = function() {
 							if ((img.width > 500) || (img.height > 500)) {
-								document.getElementById("iconfile").value = '';
+								document.getElementById("iconFile").value = '';
 								img = '';
 								alert("<?php echo $LANG['MUST_SMALL'] ?>");
 							}
 						};
 						img.src = fr.result;
 					};
-					fr.readAsDataURL(document.getElementById("iconfile").files[0]);
+					fr.readAsDataURL(document.getElementById("iconFile").files[0]);
 				}
 			}
 		}
@@ -225,7 +225,9 @@ $collManager->cleanOutArr($collData);
 			var iconImageFile = document.getElementById("iconurl").value;
 			if (iconImageFile && (iconImageFile.substr(iconImageFile.length - 4) != '.jpg') && (iconImageFile.substr(iconImageFile.length - 4) != '.png') && (iconImageFile.substr(iconImageFile.length - 4) != '.gif')) {
 				alert("<?php echo $LANG['NOT_SUPP_URL'] ?>");
+				return false;
 			}
+			return true;
 		}
 	</script>
 	<style>

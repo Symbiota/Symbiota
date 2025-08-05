@@ -10,45 +10,50 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl='.$CLIENT_ROOT.'/taxa/taxonomy/batchloader.php');
 ini_set('max_execution_time', 3600);
 
-$action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
 $taxAuthId = (array_key_exists('taxauthid', $_REQUEST) ? filter_var($_REQUEST['taxauthid'], FILTER_SANITIZE_NUMBER_INT) : 1);
 $kingdomName = (array_key_exists('kingdomname', $_REQUEST) ? htmlspecialchars($_REQUEST['kingdomname'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '');
 $sciname = (array_key_exists('sciname', $_REQUEST) ? htmlspecialchars($_REQUEST['sciname'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '');
 $targetApi = $_REQUEST['targetapi'] ?? '';
 $rankLimit = (array_key_exists('ranklimit', $_REQUEST) ? filter_var($_REQUEST['ranklimit'], FILTER_SANITIZE_NUMBER_INT):'');
+$action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
 
 $isEditor = false;
 if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 	$isEditor = true;
 }
 
+$uploadStatus = true;
 $loaderManager = new TaxonomyUpload();
 $loaderManager->setTaxaAuthId($taxAuthId);
 $loaderManager->setKingdomName($kingdomName);
 
 $fieldMap = Array();
 if($isEditor){
-	$ulFileName = array_key_exists('ulfilename',$_REQUEST)?$_REQUEST['ulfilename']:'';
-	$ulOverride = array_key_exists('uloverride',$_REQUEST)?$_REQUEST['uloverride']:'';
-	if($ulFileName){
-		$loaderManager->setFileName($ulFileName);
-	}
-	else{
-		$loaderManager->setUploadFile($ulOverride);
-	}
-
-	if(array_key_exists("sf",$_REQUEST)){
-		//Grab field mapping, if mapping form was submitted
- 		$targetFields = $_REQUEST["tf"];
- 		$sourceFields = $_REQUEST["sf"];
-		for($x = 0;$x<count($targetFields);$x++){
-			if($targetFields[$x] && $sourceFields[$x]) $fieldMap[$sourceFields[$x]] = $targetFields[$x];
+	if($action){
+		if(!empty($_REQUEST['ulfilename'])){
+			$uploadStatus = $loaderManager->setFileName($_REQUEST['ulfilename']);
 		}
-	}
+		elseif($action == 'mapInputFile'){
+			$ulOverride = '';
+			if(!empty($_REQUEST['uloverride'])) $ulOverride = $_REQUEST['uloverride'];
+			$uploadStatus = $loaderManager->uploadFile($ulOverride);
+		}
 
-	if($action == 'downloadcsv'){
-		$loaderManager->exportUploadTaxa();
-		exit;
+		if($uploadStatus){
+			if(array_key_exists("sf",$_REQUEST)){
+				//Grab field mapping, if mapping form was submitted
+		 		$targetFields = $_REQUEST["tf"];
+		 		$sourceFields = $_REQUEST["sf"];
+				for($x = 0;$x<count($targetFields);$x++){
+					if($targetFields[$x] && $sourceFields[$x]) $fieldMap[$sourceFields[$x]] = $targetFields[$x];
+				}
+			}
+		}
+
+		if($action == 'downloadcsv'){
+			$loaderManager->exportUploadTaxa();
+			exit;
+		}
 	}
 }
 ?>
@@ -173,6 +178,7 @@ if($isEditor){
 	<style type="text/css">
 		fieldset { width:90%; padding:10px 15px }
 		legend { font-weight:bold; }
+		button { margin: 3px }
 	</style>
 </head>
 <body>
@@ -181,10 +187,10 @@ $displayLeftMenu = (isset($taxa_admin_taxaloaderMenu)?$taxa_admin_taxaloaderMenu
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class="navpath">
-	<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-	<a href="taxonomydisplay.php"><?php echo htmlspecialchars($LANG['BASIC_TREE_VIEWER'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-	<a href="taxonomydynamicdisplay.php"><?php echo htmlspecialchars($LANG['DYN_TREE_VIEWER'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-	<a href="batchloader.php"><b><?php echo htmlspecialchars($LANG['TAX_BATCH_LOADER'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></b></a>
+	<a href="../../index.php"><?= $LANG['HOME'] ?></a> &gt;&gt;
+	<a href="taxonomydisplay.php"><?= $LANG['BASIC_TREE_VIEWER'] ?></a> &gt;&gt;
+	<a href="taxonomydynamicdisplay.php"><?= $LANG['DYN_TREE_VIEWER'] ?></a> &gt;&gt;
+	<a href="batchloader.php"><b><?= $LANG['TAX_BATCH_LOADER'] ?></b></a>
 </div>
 <?php
 if($isEditor){
@@ -195,270 +201,278 @@ if($isEditor){
 		<div style="margin:30px;">
 			<div style="margin-bottom:30px;">
 				<?php echo $LANG['TAX_UPLOAD_EXPLAIN1'] . ' '; ?>
-				<a href="https://docs.symbiota.org/docs/Portal_Manager_Guide/Taxonomic_Thesaurus/batch_loading"><?php echo $LANG['SYMB_DOC']; ?></a>
+				<a href="https://docs.symbiota.org/Portal_Manager_Guide/Taxonomic_Thesaurus/batch_loading"><?php echo $LANG['SYMB_DOC']; ?></a>
 				<?php echo $LANG['TAX_UPLOAD_EXPLAIN2'] ?>
 			</div>
 			<?php
-			if($action == 'mapInputFile' || $action == 'verifyMapping'){
-				?>
-				<form name="mapform" action="batchloader.php" method="post" onsubmit="return verifyMapForm(this)">
-					<fieldset>
-						<legend><?php echo $LANG['TAX_UPLOAD']; ?></legend>
-						<div style="margin:10px;">
-						</div>
-						<table class="styledtable" style="width:450px">
-							<tr>
-								<th>
-									<?php echo $LANG['SOURCE_FIELD']; ?>
-								</th>
-								<th>
-									<?php echo $LANG['TARGET_FIELD']; ?>
-								</th>
-							</tr>
-							<?php
-							$translationMap = array('phylum'=>'division', 'division'=>'phylum', 'subphylum'=>'subdivision', 'subdivision'=>'subphylum', 'sciname'=>'scinameinput',
-								'scientificname'=>'scinameinput', 'scientificnameauthorship'=>'author', 'vernacularname'=>'vernacular',
-								'taxonid'=>'sourceid', 'parenttaxonid'=>'sourceparentid', 'parentscientificname'=>'parentstr',
-								'acceptedtaxonid'=>'sourceacceptedid', 'acceptedscientificname'=>'acceptedstr', 'acceptedname'=>'acceptedstr', 'cultivar' => 'cultivarepithet',
-								'genus' => 'unitname1', 'specificepithet' => 'unitname2', 'taxonrank' => 'unitind3', 'infraspecificepithet' => 'unitname3'
-							);
-							$sArr = $loaderManager->getSourceArr();
-							$tArr = $loaderManager->getTargetArr();
-							asort($tArr);
-							foreach($sArr as $sField){
-								?>
+			if(!$uploadStatus){
+				$errStr = $loaderManager->getErrorStr();
+				if($errStr) {
+					echo '<h2 style="color:red">' . ($LANG[$errStr] ?? $errStr) .'</h2>';
+				}
+			}
+			else{
+				if($action == 'mapInputFile' || $action == 'verifyMapping'){
+					?>
+					<form name="mapform" action="batchloader.php" method="post" onsubmit="return verifyMapForm(this)">
+						<fieldset>
+							<legend><?php echo $LANG['TAX_UPLOAD']; ?></legend>
+							<div style="margin:10px;">
+							</div>
+							<table class="styledtable" style="width:450px">
 								<tr>
-									<td style='padding:2px;'>
-										<?php
-										echo $sField;
-										$sField = strtolower($sField);
-										$sTestField = str_replace(array(' ', '_'), '', $sField);
-										if(isset($translationMap[$sTestField])) $sTestField = $translationMap[$sTestField];
-										?>
-										<input type="hidden" name="sf[]" value="<?php echo $sField; ?>" />
-									</td>
-									<td>
-										<?php
-										$selStr = '';
-										$mappedTarget = (array_key_exists($sField,$fieldMap)?$fieldMap[$sField]:"");
-										if($mappedTarget=='unmapped') $selStr = 'SELECTED';
-										$optionStr = '<option value="unmapped" ' . $selStr . '>' . $LANG['LEAVE_UNMAPPED'] . '</option>';
-										if($selStr) $selStr = 0;
-										foreach($tArr as $k => $tField){
-											if($selStr !== 0){
-												$tTestField = strtolower($tField);
-												if($mappedTarget && $mappedTarget == $k){
-													$selStr = 'SELECTED';
-												}
-												elseif($tTestField == $sTestField && $tTestField != 'sciname'){
-													$selStr = 'SELECTED';
-												}
-												elseif($sTestField == $k){
-													$selStr = 'SELECTED';
-												}
-											}
-											$optionStr .= '<option value="'.$k.'" '.($selStr?$selStr:'').'>'.$tField."</option>\n";
-											if($selStr) $selStr = 0;
-										}
-										?>
-										<select name="tf[]" style="background:<?php echo ($selStr !== '' ? '' : 'yellow'); ?>">
-											<option value=""><?php echo $LANG['FIELD_UNMAPPED']; ?></option>
-											<option value="">-------------------------</option>
-											<?php
-											echo $optionStr;
-											?>
-										</select>
-									</td>
+									<th>
+										<?php echo $LANG['SOURCE_FIELD']; ?>
+									</th>
+									<th>
+										<?php echo $LANG['TARGET_FIELD']; ?>
+									</th>
 								</tr>
 								<?php
-							}
-							?>
-						</table>
-						<div>
-							* <?php echo $LANG['YELLOW_FIELDS']; ?>
-						</div>
-						<div style="margin-top:10px">
-							<?php echo '<b>' . $LANG['TARGET_KINGDOM'] . ':</b> ' . $kingdomName . '<br/>'; ?>
-							<?php echo '<b>' . $LANG['TARGET_THESAURUS'] . ':</b> ' . $loaderManager->getTaxAuthorityName(); ?>
-						</div>
-						<div style="margin:10px;">
-							<button type="submit" name="action" value="verifyMapping"><?php echo $LANG['VERIFY_MAPPING']; ?></button>
-							<button type="submit" name="action" value="uploadTaxa"><?php echo $LANG['UPLOAD_TAXA']; ?></button>
-							<input type="hidden" name="taxauthid" value="<?php echo $taxAuthId;?>" />
-							<input type="hidden" name="ulfilename" value="<?php echo $loaderManager->getFileName();?>" />
-							<input type="hidden" name="kingdomname" value="<?php echo $kingdomName; ?>" />
-						</div>
-					</fieldset>
-				</form>
-				<?php
-			}
-			elseif($action == 'uploadTaxa' || $action == 'Upload ITIS File' || $action == 'Analyze Taxa'){
-				echo '<ul>';
-				if($action == 'uploadTaxa'){
-					$loaderManager->loadFile($fieldMap);
-					$loaderManager->cleanUpload();
-				}
-				elseif($action == 'Upload ITIS File'){
-					$loaderManager->loadItisFile($fieldMap);
-					$loaderManager->cleanUpload();
-				}
-				elseif($action == 'Analyze Taxa'){
-					$loaderManager->cleanUpload();
-				}
-				$reportArr = $loaderManager->analysisUpload();
-				echo '</ul>';
-				?>
-				<form name="transferform" action="batchloader.php" method="post" onsubmit="return checkTransferForm(this)">
-					<fieldset style="width:450px;">
-						<legend><?php echo $LANG['TRANSFER_TO_CENTRAL']; ?></legend>
-						<div style="margin:10px;">
-							<?php echo $LANG['REVIEW_BEFORE_ACTIVATE']; ?>
-						</div>
-						<div style="margin:10px">
-							<?php echo $LANG['TARGET_KINGDOM'] . ': <b>' . $kingdomName . '</b><br/>'; ?>
-							<?php echo $LANG['TARGET_THESAURUS'] . ': <b>' . $loaderManager->getTaxAuthorityName() . '</b>'; ?>
-						</div>
-						<div style="margin:10px;">
-							<?php
-							$statArr = $loaderManager->getStatArr();
-							if($statArr){
-								if(isset($statArr['upload'])) echo $LANG['TAXA_UPLOADED'] . ': <b>' . $statArr['upload'] . '</b><br/>';
-								echo $LANG['TOTAL_TAXA'] . ': <b>' . $statArr['total'] . '</b> (' . $LANG['INCLUDES_PARENTS'] . ')<br/>';
-								echo $LANG['TAXA_IN_THES'] . ': <b>' . (isset($statArr['exist'])?$statArr['exist']:0) . '</b><br/>';
-								echo $LANG['NEW_TAXA'] . ': <b>' . (isset($statArr['new'])?$statArr['new']:0) . '</b><br/>';
-								echo $LANG['ACCEPTED_TAXA'] . ': <b>' . (isset($statArr['accepted'])?$statArr['accepted']:0) . '</b><br/>';
-								echo $LANG['NON_ACCEPTED_TAXA'] . ': <b>' . (isset($statArr['nonaccepted'])?$statArr['nonaccepted']:0) . '</b><br/>';
-								if(isset($statArr['bad'])){
+								$translationMap = array('phylum'=>'division', 'division'=>'phylum', 'subphylum'=>'subdivision', 'subdivision'=>'subphylum', 'sciname'=>'scinameinput',
+									'scientificname'=>'scinameinput', 'scientificnameauthorship'=>'author', 'vernacularname'=>'vernacular',
+									'taxonid'=>'sourceid', 'parenttaxonid'=>'sourceparentid', 'parentscientificname'=>'parentstr',
+									'acceptedtaxonid'=>'sourceacceptedid', 'acceptedscientificname'=>'acceptedstr', 'acceptedname'=>'acceptedstr', 'cultivar' => 'cultivarepithet',
+									'genus' => 'unitname1', 'specificepithet' => 'unitname2', 'taxonrank' => 'unitind3', 'infraspecificepithet' => 'unitname3'
+								);
+								$sArr = $loaderManager->getSourceArr();
+								$tArr = $loaderManager->getTargetArr();
+								asort($tArr);
+								foreach($sArr as $sField){
 									?>
-									<fieldset style="margin:15px;padding:15px;">
-										<legend><b><?php echo $LANG['PROBLEM_TAXA']; ?></b></legend>
-										<div style="margin-bottom:10px">
-											<?php echo $LANG['TAXA_FAILED']; ?>
-										</div>
-										<?php
-										foreach($statArr['bad'] as $msg => $cnt){
-											echo '<div style="margin-left:10px">'.$msg.': <b>'.$cnt.'</b></div>';
-										}
-										?>
-									</fieldset>
+									<tr>
+										<td style='padding:2px;'>
+											<?php
+											echo $sField;
+											$sField = strtolower($sField);
+											$sTestField = str_replace(array(' ', '_'), '', $sField);
+											if(isset($translationMap[$sTestField])) $sTestField = $translationMap[$sTestField];
+											?>
+											<input type="hidden" name="sf[]" value="<?php echo $sField; ?>" />
+										</td>
+										<td>
+											<?php
+											$selStr = '';
+											$mappedTarget = (array_key_exists($sField,$fieldMap)?$fieldMap[$sField]:"");
+											if($mappedTarget=='unmapped') $selStr = 'SELECTED';
+											$optionStr = '<option value="unmapped" ' . $selStr . '>' . $LANG['LEAVE_UNMAPPED'] . '</option>';
+											if($selStr) $selStr = 0;
+											foreach($tArr as $k => $tField){
+												if($selStr !== 0){
+													$tTestField = strtolower($tField);
+													if($mappedTarget && $mappedTarget == $k){
+														$selStr = 'SELECTED';
+													}
+													elseif($tTestField == $sTestField && $tTestField != 'sciname'){
+														$selStr = 'SELECTED';
+													}
+													elseif($sTestField == $k){
+														$selStr = 'SELECTED';
+													}
+												}
+												$optionStr .= '<option value="'.$k.'" '.($selStr?$selStr:'').'>'.$tField."</option>\n";
+												if($selStr) $selStr = 0;
+											}
+											?>
+											<select name="tf[]" style="background:<?php echo ($selStr !== '' ? '' : 'yellow'); ?>">
+												<option value=""><?php echo $LANG['FIELD_UNMAPPED']; ?></option>
+												<option value="">-------------------------</option>
+												<?php
+												echo $optionStr;
+												?>
+											</select>
+										</td>
+									</tr>
 									<?php
 								}
-							}
-							else{
-								echo $LANG['STATS_NOT_AVAIL'];
-							}
-							?>
-						</div>
-						<!--
-						<div style="margin:10px;">
-							<label>Target Thesaurus:</label>
-							<select name="taxauthid">
-								<?php
-								$taxonAuthArr = $loaderManager->getTaxAuthorityArr();
-								foreach($taxonAuthArr as $k => $v){
-									echo '<option value="' . $k . '" ' . ($k==$taxAuthId?'SELECTED':'') . '>' . $v . '</option>' . "\n";
-								}
 								?>
-							</select>
-						</div>
-						-->
-						<div style="margin:10px;">
-							<input type="hidden" name="taxauthid" value="<?php echo $taxAuthId;?>" />
-							<input name="kingdomname" type="hidden" value="<?php echo $kingdomName; ?>" />
-							<button type="submit" name="action" value="activateTaxa"><?php echo $LANG['ACTIVATE_TAXA']; ?></button>
-						</div>
-						<div style="float:right;margin:10px;">
-							<a href="batchloader.php?action=downloadcsv" target="_blank"><?php echo htmlspecialchars($LANG['DOWNLOAD_CSV'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
-						</div>
-					</fieldset>
-				</form>
-				<?php
-			}
-			elseif($action == 'activateTaxa'){
-				echo '<ul>';
-				$loaderManager->transferUpload($taxAuthId);
-				echo '<li>' . $LANG['TAX_UPLOAD_SUCCESS'] . '</li>';
-				echo '<li>' . $LANG['GO_TO'] . ' <a href="taxonomydisplay.php">' . $LANG['TAX_TREE_SEARCH'] . '</a> ' . $LANG['TO_QUERY'] . '</li>';
-				echo '</ul>';
-			}
-			elseif($action == 'loadApiNode'){
-				if($targetApi == 'col'){
-					$harvester = new TaxonomyHarvester();
-					$harvester->setVerboseMode(2);
-					$harvester->setTaxAuthId($taxAuthId);
-					$harvester->setKingdomName($kingdomName);
-					if(isset($_REQUEST['dskey'])){
-						echo '<fieldset>';
-						echo '<legend>' . $LANG['ACTION_PANEL'] . '</legend>';
-						$id = htmlspecialchars($_REQUEST['id'], HTML_SPECIAL_CHARS_FLAGS);
-						$datasetKey = filter_var($_REQUEST['dskey'], FILTER_SANITIZE_NUMBER_INT);
-						$harvester->addColNode($id, $datasetKey, $sciname, $rankLimit);
-						echo '</fieldset>';
+							</table>
+							<div>
+								* <?php echo $LANG['YELLOW_FIELDS']; ?>
+							</div>
+							<div style="margin-top:10px">
+								<?php echo '<b>' . $LANG['TARGET_KINGDOM'] . ':</b> ' . $kingdomName . '<br/>'; ?>
+								<?php echo '<b>' . $LANG['TARGET_THESAURUS'] . ':</b> ' . $loaderManager->getTaxAuthorityName(); ?>
+							</div>
+							<div style="margin:10px;">
+								<button type="submit" name="action" value="verifyMapping"><?php echo $LANG['VERIFY_MAPPING']; ?></button>
+								<button type="submit" name="action" value="uploadTaxa"><?php echo $LANG['UPLOAD_TAXA']; ?></button>
+								<input type="hidden" name="taxauthid" value="<?php echo $taxAuthId;?>" />
+								<input type="hidden" name="ulfilename" value="<?php echo $loaderManager->getFileName();?>" />
+								<input type="hidden" name="kingdomname" value="<?php echo $kingdomName; ?>" />
+							</div>
+						</fieldset>
+					</form>
+					<?php
+				}
+				elseif($action == 'uploadTaxa' || $action == 'Upload ITIS File' || $action == 'Analyze Taxa'){
+					echo '<ul>';
+					if($action == 'uploadTaxa'){
+						$loaderManager->loadFile($fieldMap);
+						$loaderManager->cleanUpload();
 					}
-					else{
-						$targetArr = $harvester->fetchColNode($sciname);
-						echo '<fieldset>';
-						echo '<legend>' . $LANG['RESULT_TARGETS'] . '</legend>';
-						if($targetArr){
-							$numResults = $targetArr['number_results'];
-							unset($targetArr['number_results']);
-							echo '<div><b>' . $LANG['TARGET_TAXON'] . ':</b> ' . $sciname . '</div>';
-							echo '<div><b>' . $LANG['KINGDOM'] . ':</b> ' . substr($kingdomName,strpos($kingdomName,':')+1) . '</div>';
-							echo '<div><b>' . $LANG['LOWEST_RANK'] . ':</b> ' . $rankArr[$rankLimit] . '</div>';
-							echo '<div><b>' . $LANG['SOURCE_LINK'] .':</b> <a href="https://www.catalogueoflife.org" target="_blank">https://www.catalogueoflife.org</a></div>';
-							echo '<div><b>' . $LANG['TOTAL_RESULTS'] . ':</b> ' . $numResults . '</div>';
-							echo '<div><hr/></div>';
-							foreach($targetArr as $cbNameUsageID => $colArr){
-								echo '<div style="margin-top:10px">';
-								echo '<div><b>' . $LANG['ID'] . ':</b> '. $cbNameUsageID . '</div>';
-								if(isset($colArr['error'])){
-									echo '<div>' . $LANG['ERROR'] . ': ' . $colArr['error'] . '</div>';
-								}
-								else{
-									echo '<div>' . $LANG['NAME'] . ': ' . $colArr['label'] . '</div>';
-									echo '<div>' . $LANG['DATSET_KEY'] . ': <a href="https://api.catalogueoflife.org/dataset/' . htmlspecialchars($colArr['datasetKey'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($colArr['datasetKey'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></div>';
-									echo '<div>'.(isset($LANG['STATUS'])?$LANG['STATUS']:'Status').': '.$colArr['status'].'</div>';
-									if(isset($colArr['link'])) echo '<div>' . $LANG['SOURCE_LINK'] . ': <a href="' . $colArr['link'] . '" target="_blank">' . $colArr['link'] . '</a></div>';
-									$targetStatus = '<span style="color:orange">' . $LANG['NOT_PREF'] . '</span>';
-									if($colArr['isPreferred']) $targetStatus = '<span style="color:green">' . $LANG['PREF_TARGET'] . '</span>';
-									echo '<div>' . $LANG['TARGET_STATUS'] . ': ' . $targetStatus . '</div>';
-									if(isset($colArr['apiUrl'])) echo '<div>' . $LANG['API_URL'] . ': <a href="' . $colArr['apiUrl'] . '" target="_blank">' . $colArr['apiUrl'] . '</a></div>';
-									if($colArr['datasetKey']){
+					elseif($action == 'Upload ITIS File'){
+						$loaderManager->loadItisFile($fieldMap);
+						$loaderManager->cleanUpload();
+					}
+					elseif($action == 'Analyze Taxa'){
+						$loaderManager->cleanUpload();
+					}
+					$reportArr = $loaderManager->analysisUpload();
+					echo '</ul>';
+					?>
+					<form name="transferform" action="batchloader.php" method="post" onsubmit="return checkTransferForm(this)">
+						<fieldset style="width:450px;">
+							<legend><?php echo $LANG['TRANSFER_TO_CENTRAL']; ?></legend>
+							<div style="margin:10px;">
+								<?php echo $LANG['REVIEW_BEFORE_ACTIVATE']; ?>
+							</div>
+							<div style="margin:10px">
+								<?php echo $LANG['TARGET_KINGDOM'] . ': <b>' . $kingdomName . '</b><br/>'; ?>
+								<?php echo $LANG['TARGET_THESAURUS'] . ': <b>' . $loaderManager->getTaxAuthorityName() . '</b>'; ?>
+							</div>
+							<div style="margin:10px;">
+								<?php
+								$statArr = $loaderManager->getStatArr();
+								if($statArr){
+									if(isset($statArr['upload'])) echo $LANG['TAXA_UPLOADED'] . ': <b>' . $statArr['upload'] . '</b><br/>';
+									echo $LANG['TOTAL_TAXA'] . ': <b>' . $statArr['total'] . '</b> (' . $LANG['INCLUDES_PARENTS'] . ')<br/>';
+									echo $LANG['TAXA_IN_THES'] . ': <b>' . (isset($statArr['exist'])?$statArr['exist']:0) . '</b><br/>';
+									echo $LANG['NEW_TAXA'] . ': <b>' . (isset($statArr['new'])?$statArr['new']:0) . '</b><br/>';
+									echo $LANG['ACCEPTED_TAXA'] . ': <b>' . (isset($statArr['accepted'])?$statArr['accepted']:0) . '</b><br/>';
+									echo $LANG['NON_ACCEPTED_TAXA'] . ': <b>' . (isset($statArr['nonaccepted'])?$statArr['nonaccepted']:0) . '</b><br/>';
+									if(isset($statArr['bad'])){
 										?>
-										<form target="batchloader.php" method="post">
-											<input type="hidden" name="id" value="<?= htmlspecialchars($cbNameUsageID, HTML_SPECIAL_CHARS_FLAGS) ?>">
-											<input type="hidden" name="dskey" value="<?= filter_var($colArr['datasetKey'], FILTER_SANITIZE_NUMBER_INT) ?>">
-											<input type="hidden" name="targetapi" value="col">
-											<input type="hidden" name="taxauthid" value="<?= $taxAuthId ?>">
-											<input type="hidden" name="kingdomname" value="<?= $kingdomName ?>">
-											<input type="hidden" name="ranklimit" value="<?= $rankLimit ?>">
-											<input type="hidden" name="sciname" value="<?= $sciname ?>">
-											<button type="submit" name="action" value="loadApiNode" style="margin-top:10px"><?= $LANG['IMPORT_THIS_NODE'] ?></button>
-										</form>
+										<fieldset style="margin:15px;padding:15px;">
+											<legend><b><?php echo $LANG['PROBLEM_TAXA']; ?></b></legend>
+											<div style="margin-bottom:10px">
+												<?php echo $LANG['TAXA_FAILED']; ?>
+											</div>
+											<?php
+											foreach($statArr['bad'] as $msg => $cnt){
+												echo '<div style="margin-left:10px">'.$msg.': <b>'.$cnt.'</b></div>';
+											}
+											?>
+										</fieldset>
 										<?php
 									}
 								}
-								echo '</div>';
-							}
+								else{
+									echo $LANG['STATS_NOT_AVAIL'];
+								}
+								?>
+							</div>
+							<!--
+							<div style="margin:10px;">
+								<label>Target Thesaurus:</label>
+								<select name="taxauthid">
+									<?php
+									$taxonAuthArr = $loaderManager->getTaxAuthorityArr();
+									foreach($taxonAuthArr as $k => $v){
+										echo '<option value="' . $k . '" ' . ($k==$taxAuthId?'SELECTED':'') . '>' . $v . '</option>' . "\n";
+									}
+									?>
+								</select>
+							</div>
+							-->
+							<div style="margin:10px;">
+								<input type="hidden" name="taxauthid" value="<?php echo $taxAuthId;?>" />
+								<input name="kingdomname" type="hidden" value="<?php echo $kingdomName; ?>" />
+								<button type="submit" name="action" value="activateTaxa"><?php echo $LANG['ACTIVATE_TAXA']; ?></button>
+							</div>
+							<div style="float:right;margin:10px;">
+								<a href="batchloader.php?action=downloadcsv" target="_blank"><?php echo htmlspecialchars($LANG['DOWNLOAD_CSV'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
+							</div>
+						</fieldset>
+					</form>
+					<?php
+				}
+				elseif($action == 'activateTaxa'){
+					echo '<ul>';
+					$loaderManager->transferUpload($taxAuthId);
+					echo '<li>' . $LANG['TAX_UPLOAD_SUCCESS'] . '</li>';
+					echo '<li>' . $LANG['GO_TO'] . ' <a href="taxonomydisplay.php">' . $LANG['TAX_TREE_SEARCH'] . '</a> ' . $LANG['TO_QUERY'] . '</li>';
+					echo '</ul>';
+				}
+				elseif($action == 'loadApiNode'){
+					if($targetApi == 'col'){
+						$harvester = new TaxonomyHarvester();
+						$harvester->setVerboseMode(2);
+						$harvester->setTaxAuthId($taxAuthId);
+						$harvester->setKingdomName($kingdomName);
+						if(isset($_REQUEST['dskey'])){
+							echo '<fieldset>';
+							echo '<legend>' . $LANG['ACTION_PANEL'] . '</legend>';
+							$id = htmlspecialchars($_REQUEST['id'], HTML_SPECIAL_CHARS_FLAGS);
+							$datasetKey = filter_var($_REQUEST['dskey'], FILTER_SANITIZE_NUMBER_INT);
+							$harvester->addColNode($id, $datasetKey, $sciname, $rankLimit);
+							echo '</fieldset>';
 						}
 						else{
-							echo $LANG['NO_VALID_COL'];
-							return false;
+							$targetArr = $harvester->fetchColNode($sciname);
+							echo '<fieldset>';
+							echo '<legend>' . $LANG['RESULT_TARGETS'] . '</legend>';
+							if($targetArr){
+								$numResults = $targetArr['number_results'];
+								unset($targetArr['number_results']);
+								echo '<div><b>' . $LANG['TARGET_TAXON'] . ':</b> ' . $sciname . '</div>';
+								echo '<div><b>' . $LANG['KINGDOM'] . ':</b> ' . substr($kingdomName,strpos($kingdomName,':')+1) . '</div>';
+								echo '<div><b>' . $LANG['LOWEST_RANK'] . ':</b> ' . $rankArr[$rankLimit] . '</div>';
+								echo '<div><b>' . $LANG['SOURCE_LINK'] .':</b> <a href="https://www.catalogueoflife.org" target="_blank">https://www.catalogueoflife.org</a></div>';
+								echo '<div><b>' . $LANG['TOTAL_RESULTS'] . ':</b> ' . $numResults . '</div>';
+								echo '<div><hr/></div>';
+								foreach($targetArr as $cbNameUsageID => $colArr){
+									echo '<div style="margin-top:10px">';
+									echo '<div><b>' . $LANG['ID'] . ':</b> '. $cbNameUsageID . '</div>';
+									if(isset($colArr['error'])){
+										echo '<div>' . $LANG['ERROR'] . ': ' . $colArr['error'] . '</div>';
+									}
+									else{
+										echo '<div>' . $LANG['NAME'] . ': ' . $colArr['label'] . '</div>';
+										echo '<div>' . $LANG['DATSET_KEY'] . ': <a href="https://api.catalogueoflife.org/dataset/' . htmlspecialchars($colArr['datasetKey'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($colArr['datasetKey'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></div>';
+										echo '<div>'.(isset($LANG['STATUS'])?$LANG['STATUS']:'Status').': '.$colArr['status'].'</div>';
+										if(isset($colArr['link'])) echo '<div>' . $LANG['SOURCE_LINK'] . ': <a href="' . $colArr['link'] . '" target="_blank">' . $colArr['link'] . '</a></div>';
+										$targetStatus = '<span style="color:orange">' . $LANG['NOT_PREF'] . '</span>';
+										if($colArr['isPreferred']) $targetStatus = '<span style="color:green">' . $LANG['PREF_TARGET'] . '</span>';
+										echo '<div>' . $LANG['TARGET_STATUS'] . ': ' . $targetStatus . '</div>';
+										if(isset($colArr['apiUrl'])) echo '<div>' . $LANG['API_URL'] . ': <a href="' . $colArr['apiUrl'] . '" target="_blank">' . $colArr['apiUrl'] . '</a></div>';
+										if($colArr['datasetKey']){
+											?>
+											<form target="batchloader.php" method="post">
+												<input type="hidden" name="id" value="<?= htmlspecialchars($cbNameUsageID, HTML_SPECIAL_CHARS_FLAGS) ?>">
+												<input type="hidden" name="dskey" value="<?= filter_var($colArr['datasetKey'], FILTER_SANITIZE_NUMBER_INT) ?>">
+												<input type="hidden" name="targetapi" value="col">
+												<input type="hidden" name="taxauthid" value="<?= $taxAuthId ?>">
+												<input type="hidden" name="kingdomname" value="<?= $kingdomName ?>">
+												<input type="hidden" name="ranklimit" value="<?= $rankLimit ?>">
+												<input type="hidden" name="sciname" value="<?= $sciname ?>">
+												<button type="submit" name="action" value="loadApiNode" style="margin-top:10px"><?= $LANG['IMPORT_THIS_NODE'] ?></button>
+											</form>
+											<?php
+										}
+									}
+									echo '</div>';
+								}
+							}
+							else{
+								echo $LANG['NO_VALID_COL'];
+								return false;
+							}
+							echo '</fieldset>';
 						}
-						echo '</fieldset>';
 					}
-				}
-				elseif($targetApi == 'worms'){
-					$harvester = new TaxonomyHarvester();
-					$harvester->setVerboseMode(2);
-					$harvester->setTaxAuthId($taxAuthId);
-					$harvester->setKingdomName($kingdomName);
-					echo '<ul>';
-					if($harvester->addWormsNode($_POST)){
-						echo '<li>' . $harvester->getTransactionCount() . ' ' . $LANG['TAXA_LOADED_SUCCESS'] . '</li>';
-						echo '<li>' . $LANG['GO_TO'] . ' <a href="taxonomydisplay.php">' . htmlspecialchars($LANG['TAX_TREE_SEARCH'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ' . htmlspecialchars($LANG['TO_QUERY'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</li>';
+					elseif($targetApi == 'worms'){
+						$harvester = new TaxonomyHarvester();
+						$harvester->setVerboseMode(2);
+						$harvester->setTaxAuthId($taxAuthId);
+						$harvester->setKingdomName($kingdomName);
+						echo '<ul>';
+						if($harvester->addWormsNode($_POST)){
+							echo '<li>' . $harvester->getTransactionCount() . ' ' . $LANG['TAXA_LOADED_SUCCESS'] . '</li>';
+							echo '<li>' . $LANG['GO_TO'] . ' <a href="taxonomydisplay.php">' . htmlspecialchars($LANG['TAX_TREE_SEARCH'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ' . htmlspecialchars($LANG['TO_QUERY'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</li>';
+						}
+						echo '</ul>';
 					}
-					echo '</ul>';
 				}
 			}
 			?>
