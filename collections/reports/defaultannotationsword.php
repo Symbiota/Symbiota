@@ -87,107 +87,246 @@ foreach($labelArr as $occid => $occArr){
 
 	$dupCnt = $_POST['q-'.$occid];
 	for($i = 0;$i < $dupCnt;$i++){
-		$section->addText(htmlspecialchars(' '),'dividerFont','firstLine');
+        $charCount = 0;
+		$currentTxt = htmlspecialchars(' ');
+		$section->addText($currentTxt, 'firstLine');
+		$charCount += strlen($currentTxt);
+
 		$table = $section->addTable('defaultTable');
 		$table->addRow();
 		// $table->addRow(null, ['tblHeader' => false, 'exactHeight' => false]);
-		$cell = $table->addCell(5000,$cellStyle);
+		// $cell = $table->addCell(5000,$cellStyle);
+        $cellLength = 15000;
+		$averageTwipsPerCharacter = 400; //240;
+		$cell = $table->addCell($cellLength,$cellStyle);
 		// $leftCell = $table->addCell(8000, $cellStyle);
 		// $rightCell = $table->addCell(4000, $cellStyle);
 		if($headerStr){
 			$textrun = $cell->addTextRun('header');
 			// $textrun = $leftCell->addTextRun('header');
 
-
-			$textrun->addText(htmlspecialchars($headerStr),'headerfooterFont');
+			$currentTxt = htmlspecialchars($headerStr);
+			$textrun->addText($currentTxt, 'headerfooterFont');
+			$charCount += strlen($currentTxt);
 		}
 		$textrun = $cell->addTextRun('scientificname');
 		// $textrun = $leftCell->addTextRun('scientificname');
-		if($occArr['identificationqualifier']) $textrun->addText(htmlspecialchars($occArr['identificationqualifier']).' ','scientificnameauthFont');
+		if($occArr['identificationqualifier']){
+			$currentTxt = htmlspecialchars($occArr['identificationqualifier']) . ' ';
+			$textrun->addText($currentTxt, 'scientificnameauthFont');
+			$charCount += strlen($currentTxt);
+		} 
 		$scinameStr = $occArr['sciname'];
 		$parentAuthor = (array_key_exists('parentauthor',$occArr)?' '.$occArr['parentauthor']:'');
 		if(strpos($scinameStr,' sp.') !== false){
 			$scinameArr = explode(" sp. ",$scinameStr);
-			$textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-			if($parentAuthor) $textrun->addText(htmlspecialchars($parentAuthor).' ','scientificnameauthFont');
-			$textrun->addText('sp.','scientificnameinterFont');
+			$currentTxt = htmlspecialchars($scinameArr[0]) . ' ';
+			$textrun->addText($currentTxt, 'scientificnameFont');
+			$charCount += strlen($currentTxt);
+			if($parentAuthor){
+				$currentTxt = htmlspecialchars($parentAuthor).' ';
+				$textrun->addText($currentTxt, 'scientificnameauthFont');
+				$charCount += strlen($currentTxt);
+			} 
+			$currentTxt = 'sp.';
+			$textrun->addText($currentTxt, 'scientificnameinterFont');
+			$charCount += strlen($currentTxt);
 		}
 		elseif(strpos($scinameStr,'subsp.') !== false){
 			$scinameArr = explode(" subsp. ",$scinameStr);
-			$textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-			if($parentAuthor) $textrun->addText(htmlspecialchars($parentAuthor).' ','scientificnameauthFont');
-			$textrun->addText('subsp. ','scientificnameinterFont');
-			$textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
+			$currentTxt = htmlspecialchars($scinameArr[0]) . ' ';
+			$textrun->addText($currentTxt, 'scientificnameFont');
+			$charCount += strlen($currentTxt);
+			if($parentAuthor){
+				$currentTxt = htmlspecialchars($parentAuthor) . ' ';
+				$textrun->addText($currentTxt, 'scientificnameauthFont');
+				$charCount += strlen($currentTxt);
+			} 
+			$currentTxt = 'subsp. ';
+			$textrun->addText($currentTxt, 'scientificnameinterFont');
+			$charCount += strlen($currentTxt);
+
+			$currentTxt = htmlspecialchars($scinameArr[1]) . ' ';
+			$textrun->addText($currentTxt, 'scientificnameFont');
+			$charCount += strlen($currentTxt);
 		}
 		elseif(strpos($scinameStr,'ssp.') !== false){
 			$scinameArr = explode(" ssp. ",$scinameStr);
-			$textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-			if($parentAuthor) $textrun->addText(htmlspecialchars($parentAuthor).' ','scientificnameauthFont');
-			$textrun->addText('ssp. ','scientificnameinterFont');
-			$textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
+
+			$currentTxt = htmlspecialchars($scinameArr[0]) . ' ';
+			$textrun->addText($currentTxt, 'scientificnameFont');
+			$charCount += strlen($currentTxt);
+			if($parentAuthor){
+				$currentTxt = htmlspecialchars($parentAuthor) . ' ';
+				$textrun->addText($currentTxt, 'scientificnameauthFont');
+				$charCount += strlen($currentTxt);
+			}
+			$currentTxt = 'ssp. ';
+			$textrun->addText($currentTxt, 'scientificnameinterFont');
+			$charCount += strlen($currentTxt);
+
+			$currentTxt = htmlspecialchars($scinameArr[1]) . ' ';
+			$textrun->addText($currentTxt, 'scientificnameFont');
+			$charCount += strlen($currentTxt);
 		}
 		elseif(strpos($scinameStr,'var.') !== false){
 			$scinameArr = explode(" var. ",$scinameStr);
-			$textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-			if($parentAuthor) $textrun->addText(htmlspecialchars($parentAuthor).' ','scientificnameauthFont');
-			$textrun->addText('var. ','scientificnameinterFont');
-			$textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
+
+			$currentTxt = htmlspecialchars($scinameArr[0]) . ' ';
+			$textrun->addText($currentTxt, 'scientificnameFont');
+			$charCount += strlen($currentTxt);
+
+			if($parentAuthor){
+                $currentTxt = htmlspecialchars($parentAuthor) . ' ';
+                $textrun->addText($currentTxt, 'scientificnameauthFont');
+                $charCount += strlen($currentTxt);
+            } 
+			$currentTxt = 'var. ';
+			$textrun->addText($currentTxt, 'scientificnameinterFont');
+			$charCount += strlen($currentTxt);
+
+			$currentTxt = htmlspecialchars($scinameArr[1]) . ' ';
+			$textrun->addText($currentTxt, 'scientificnameFont');
+			$charCount += strlen($currentTxt);
 		}
 		elseif(strpos($scinameStr,'variety') !== false){
 			$scinameArr = explode(" variety ",$scinameStr);
-			$textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-			if($parentAuthor) $textrun->addText(htmlspecialchars($parentAuthor).' ','scientificnameauthFont');
-			$textrun->addText('var. ','scientificnameinterFont');
-			$textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
+
+			$currentTxt = htmlspecialchars($scinameArr[0]) . ' ';
+			$textrun->addText($currentTxt, 'scientificnameFont');
+			$charCount += strlen($currentTxt);
+			if($parentAuthor) {
+                $currentTxt = htmlspecialchars($parentAuthor) . ' ';
+                $textrun->addText($currentTxt, 'scientificnameauthFont');
+                $charCount += strlen($currentTxt);
+            }
+			$currentTxt = 'var. ';
+			$textrun->addText($currentTxt, 'scientificnameinterFont');
+			$charCount += strlen($currentTxt);
+
+			$currentTxt = htmlspecialchars($scinameArr[1]) . ' ';
+			$textrun->addText($currentTxt, 'scientificnameFont');
+			$charCount += strlen($currentTxt);
 		}
 		elseif(strpos($scinameStr,'Variety') !== false){
 			$scinameArr = explode(" Variety ",$scinameStr);
-			$textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-			if($parentAuthor) $textrun->addText(htmlspecialchars($parentAuthor).' ','scientificnameauthFont');
-			$textrun->addText('var. ','scientificnameinterFont');
-			$textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
+
+			$currentTxt = htmlspecialchars($scinameArr[0]) . ' ';
+			$textrun->addText($currentTxt, 'scientificnameFont');
+			$charCount += strlen($currentTxt);
+			if($parentAuthor){
+                $currentTxt = htmlspecialchars($parentAuthor) . ' ';
+                $textrun->addText($currentTxt, 'scientificnameauthFont');
+                $charCount += strlen($currentTxt);
+            } 
+			$currentTxt = 'var. ';
+			$textrun->addText($currentTxt, 'scientificnameinterFont');
+			$charCount += strlen($currentTxt);
+
+			$currentTxt = htmlspecialchars($scinameArr[1]) . ' ';
+			$textrun->addText($currentTxt, 'scientificnameFont');
+			$charCount += strlen($currentTxt);
 		}
 		elseif(strpos($scinameStr,'v.') !== false){
 			$scinameArr = explode(" v. ",$scinameStr);
-			$textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-			if($parentAuthor) $textrun->addText(htmlspecialchars($parentAuthor).' ','scientificnameauthFont');
-			$textrun->addText('var. ','scientificnameinterFont');
-			$textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
+
+			$currentTxt = htmlspecialchars($scinameArr[0]) . ' ';
+			$textrun->addText($currentTxt, 'scientificnameFont');
+			$charCount += strlen($currentTxt);
+			if($parentAuthor) {
+                $currentTxt = htmlspecialchars($parentAuthor) . ' ';
+                $textrun->addText($currentTxt, 'scientificnameauthFont');
+                $charCount += strlen($currentTxt);
+            }
+			$currentTxt = 'var. ';
+			$textrun->addText($currentTxt, 'scientificnameinterFont');
+			$charCount += strlen($currentTxt);
+
+			$currentTxt = htmlspecialchars($scinameArr[1]) . ' ';
+			$textrun->addText($currentTxt, 'scientificnameFont');
+			$charCount += strlen($currentTxt);
 		}
 		elseif(strpos($scinameStr,' f.') !== false){
 			$scinameArr = explode(" f. ",$scinameStr);
-			$textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-			if($parentAuthor) $textrun->addText(htmlspecialchars($parentAuthor).' ','scientificnameauthFont');
-			$textrun->addText('f. ','scientificnameinterFont');
-			$textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
+
+			$currentTxt = htmlspecialchars($scinameArr[0]) . ' ';
+			$textrun->addText($currentTxt, 'scientificnameFont');
+			$charCount += strlen($currentTxt);
+			if($parentAuthor){
+                $currentTxt = htmlspecialchars($parentAuthor) . ' ';
+                $textrun->addText($currentTxt, 'scientificnameauthFont');
+                $charCount += strlen($currentTxt);
+            } 
+			$currentTxt = 'f. ';
+			$textrun->addText($currentTxt, 'scientificnameinterFont');
+			$charCount += strlen($currentTxt);
+
+			$currentTxt = htmlspecialchars($scinameArr[1]) . ' ';
+			$textrun->addText($currentTxt, 'scientificnameFont');
+			$charCount += strlen($currentTxt);
 		}
 		elseif(strpos($scinameStr,'cf.') !== false){
 			$scinameArr = explode(" cf. ",$scinameStr);
-			$textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-			if($parentAuthor) $textrun->addText(htmlspecialchars($parentAuthor).' ','scientificnameauthFont');
-			$textrun->addText('cf. ','scientificnameinterFont');
-			$textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
+
+			$currentTxt = htmlspecialchars($scinameArr[0]) . ' ';
+			$textrun->addText($currentTxt, 'scientificnameFont');
+			$charCount += strlen($currentTxt);
+
+			if($parentAuthor){
+                $currentTxt = htmlspecialchars($parentAuthor) . ' ';
+                $textrun->addText($currentTxt, 'scientificnameauthFont');
+                $charCount += strlen($currentTxt);
+            }
+			$currentTxt = 'cf. ';
+			$textrun->addText($currentTxt, 'scientificnameinterFont');
+			$charCount += strlen($currentTxt);
+
+			$currentTxt = htmlspecialchars($scinameArr[1]) . ' ';
+			$textrun->addText($currentTxt, 'scientificnameFont');
+			$charCount += strlen($currentTxt);
 		}
 		elseif(strpos($scinameStr,'aff.') !== false){
 			$scinameArr = explode(" aff. ",$scinameStr);
-			$textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-			if($parentAuthor) $textrun->addText(htmlspecialchars($parentAuthor).' ','scientificnameauthFont');
-			$textrun->addText('aff. ','scientificnameinterFont');
-			$textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
+
+			$currentTxt = htmlspecialchars($scinameArr[0]) . ' ';
+			$textrun->addText($currentTxt, 'scientificnameFont');
+			$charCount += strlen($currentTxt);
+			if($parentAuthor){
+                $currentTxt = htmlspecialchars($parentAuthor) . ' ';
+                $textrun->addText($currentTxt, 'scientificnameauthFont');
+                $charCount += strlen($currentTxt);
+            }
+			$currentTxt = 'aff. ';
+			$textrun->addText($currentTxt, 'scientificnameinterFont');
+			$charCount += strlen($currentTxt);
+
+			$currentTxt = htmlspecialchars($scinameArr[1]) . ' ';
+			$textrun->addText($currentTxt, 'scientificnameFont');
+			$charCount += strlen($currentTxt);
 		}
 		else{
-			$textrun->addText(htmlspecialchars($scinameStr).' ','scientificnameFont');
+			$currentTxt = htmlspecialchars($scinameStr) . ' ';
+			$textrun->addText($currentTxt, 'scientificnameFont');
+			$charCount += strlen($currentTxt);
 		}
 		$scientificnameauthorshipStr = $occArr['scientificnameauthorship'];
 		if($occArr['family']){
-			$scientificnameauthorshipStr .= '      ' . $occArr['family'];
+			// $charCount = 38; // @TODO remove and troubleshoot upstream
+			$scientificnameauthorshipStrChars = $scientificnameauthorshipStr . $occArr['family'];
+			$totalCharactersInTopLine = $charCount + strlen($scientificnameauthorshipStrChars);
+            $remainingWhiteSpace = floor(($cellLength - ($totalCharactersInTopLine * $averageTwipsPerCharacter))/ $averageTwipsPerCharacter);
+            $asManySpacesAsNecessary = str_repeat(' ', max($remainingWhiteSpace - 1, 1));
+			$scientificnameauthorshipStr .= $asManySpacesAsNecessary . $occArr['family'];
 			// $familyRun = $rightCell->addTextRun(['alignment' => 'right']);
-			// $textrun->addText(strtoupper(htmlspecialchars(' ' . $occArr['family'])),'scientificnameauthFont');
-			// $familyRun->addText(strtoupper(htmlspecialchars($occArr['family'])),'familyFont');
+			// $currentTxt = strtoupper(htmlspecialchars(' ' . $occArr['family']));
+			// $currentTxt = strtoupper(htmlspecialchars($occArr['family']));
 			// $familyRun = $cell->addTextRun(['alignment' => 'right']);
-			// $familyRun->addText(strtoupper(htmlspecialchars($occArr['family'])), 'scientificnameauthFont');
+			// $currentTxt = strtoupper(htmlspecialchars($occArr['family']));
 		}
-		$textrun->addText(htmlspecialchars($scientificnameauthorshipStr),'scientificnameauthFont');
+		$currentTxt = htmlspecialchars($scientificnameauthorshipStr);
+		$textrun->addText($currentTxt, 'scientificnameauthFont');
+        // @TODO can stop here?
+		// $charCount += strlen($currentTxt);
 		if($occArr['identifiedby'] || $occArr['dateidentified']){
 			$textrun = $cell->addTextRun('other');
 			// $textrun = $leftCell->addTextRun('other');
@@ -196,23 +335,31 @@ foreach($labelArr as $occid => $occArr){
 				if($occArr['dateidentified']){
 					$identByStr .= '      '.$occArr['dateidentified'];
 				}
-				$textrun->addText('Det: '.htmlspecialchars($identByStr),'identifiedFont');
+				$currentTxt = 'Det: ' . htmlspecialchars($identByStr);
+				$textrun->addText($currentTxt, 'identifiedFont');
+				// $charCount += strlen($currentTxt);
 			}
 		}
 		if(array_key_exists('printcatnum',$_POST) && $_POST['printcatnum'] && $occArr['catalognumber']){
 			$textrun = $cell->addTextRun('other');
 			// $textrun = $leftCell->addTextRun('other');
-			$textrun->addText('Catalog #: '.htmlspecialchars($occArr['catalognumber']).' ','identifiedFont');
+			$currentTxt = 'Catalog #: ' . htmlspecialchars($occArr['catalognumber']).' ';
+			$textrun->addText($currentTxt, 'identifiedFont');
+			// $charCount += strlen($currentTxt);
 		}
 		if($occArr['identificationremarks']){
 			$textrun = $cell->addTextRun('other');
 			// $textrun = $leftCell->addTextRun('other');
-			$textrun->addText(htmlspecialchars($occArr['identificationremarks']).' ','identifiedFont');
+			$currentTxt = htmlspecialchars($occArr['identificationremarks']).' ';
+			$textrun->addText($currentTxt, 'identifiedFont');
+			// $charCount += strlen($currentTxt);
 		}
 		if($occArr['identificationreferences']){
 			$textrun = $cell->addTextRun('other');
 			// $textrun = $leftCell->addTextRun('other');
-			$textrun->addText(htmlspecialchars($occArr['identificationreferences']).' ','identifiedFont');
+			$currentTxt = htmlspecialchars($occArr['identificationreferences']).' ';
+			$textrun->addText($currentTxt, 'identifiedFont');
+			// $charCount += strlen($currentTxt);
 		}
 		if($footerStr){
 			// $textrun = $leftCell->addTextRun('footer');
@@ -221,9 +368,13 @@ foreach($labelArr as $occid => $occArr){
 			// $table->addRow(null, ['tblHeader' => false, 'exactHeight' => false]);
 			// $cell = $table->addCell(5000,$cellStyle);
 			// $textrun = $cell->addTextRun('footer');
-			$textrun->addText(htmlspecialchars($footerStr),'headerfooterFont');
+			$currentTxt = htmlspecialchars($footerStr);
+			$textrun->addText($currentTxt, 'headerfooterFont');
+			// $charCount += strlen($currentTxt);
 		}
-		$section->addText(htmlspecialchars(' '),'dividerFont','lastLine');
+		$currentTxt = htmlspecialchars(' ');
+		$section->addText($currentTxt,'dividerFont', 'lastLine');
+		// $charCount += strlen($currentTxt);
 	}
 }
 
