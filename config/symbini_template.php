@@ -26,8 +26,8 @@ $PUBLIC_MEDIA_UPLOAD_ROOT = '/content/imglib';
 
 //the root for the collection image directory
 $MEDIA_DOMAIN = '';				//Domain path to images, if different from portal
-$MEDIA_ROOT_URL = '';			//URL path to images
-$MEDIA_ROOT_PATH = '';			//Writable path to images, especially needed for downloading images
+$MEDIA_ROOT_URL = '/imglib';			//URL path to images
+$MEDIA_ROOT_PATH = '/var/www/html/imglib';			//Writable path to images, especially needed for downloading images
 
 
 //Pixel width of web images
