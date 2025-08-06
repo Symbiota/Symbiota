@@ -114,18 +114,31 @@ else{
 						<td>
 							<div class="fromaddress">
 								<?php
-								echo $addressArr['institutionname'].' ('.$addressArr['institutioncode'].')<br />';
-								if($addressArr['institutionname2']){
+								if(isset($addressArr['institutionname']) && isset($addressArr['institutioncode'])) {
+									echo $addressArr['institutionname'].' ('.$addressArr['institutioncode'].')<br />';
+								}
+								if(isset($addressArr['institutionname2'])){
 									echo $addressArr['institutionname2'].'<br />';
 								}
-								if($addressArr['address1']){
+								if(isset($addressArr['address1'])){
 									echo $addressArr['address1'].'<br />';
 								}
-								if($addressArr['address2']){
+								if(isset($addressArr['address2'])){
 									echo $addressArr['address2'].'<br />';
 								}
-								echo $addressArr['city'].($addressArr['stateprovince']?', ':'').$addressArr['stateprovince'].' '.$addressArr['postalcode'].'<br />'.$addressArr['country'].'<br />';
-								if($accountNum){
+								if(isset($addressArr['city'])){
+									echo $addressArr['city'];
+								}
+								if(isset($addressArr['stateprovince'])){
+									echo ', '.$addressArr['stateprovince'];
+								}
+								if(isset($addressArr['postalcode'])){
+									echo ' '.$addressArr['postalcode'].'<br />';
+								}
+								if(isset($addressArr['country'])){
+									echo ' '.$addressArr['country'].'<br />';
+								}
+								if(isset($accountNum)){
 									echo '(Acct. #'.$accountNum.')<br />';
 								}
 								echo '<br />';
