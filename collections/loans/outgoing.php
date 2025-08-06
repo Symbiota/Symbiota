@@ -8,6 +8,7 @@ if(!$SYMB_UID) header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=.
 
 $collid = $_REQUEST['collid'];
 $loanId = array_key_exists('loanid', $_REQUEST) ? $_REQUEST['loanid'] : 0;
+$loanIdOwn = array_key_exists('loanidentifierown', $_REQUEST) ? $_REQUEST['loanidentifierown'] : 0;
 $tabIndex = array_key_exists('tabindex', $_REQUEST) ? $_REQUEST['tabindex'] : 0;
 $sortTag = (isset($_REQUEST['sortTag']) ? $_REQUEST['sortTag'] : '');
 $formSubmit = array_key_exists('formsubmit', $_REQUEST) ? $_REQUEST['formsubmit'] : '';

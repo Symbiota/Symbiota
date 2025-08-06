@@ -5,6 +5,7 @@ include_once($SERVER_ROOT . '/classes/GuidManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/Encoding.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/UploadUtil.php');
 include_once($SERVER_ROOT . '/classes/Media.php');
 
 class SpecUploadBase extends SpecUpload{
@@ -2102,7 +2103,7 @@ class SpecUploadBase extends SpecUpload{
 
 			if(!$parsed_mime) {
 				try {
-					$file = Media::getRemoteFileInfo($testUrl);
+					$file = UploadUtil::getRemoteFileInfo($testUrl);
 					$parsed_mime = $file['type'];
 				} catch(Throwable $error) {
 					error_log('SpecUploadBase: Failed to Parse File: ' . $error->getMessage() . ' ' . $testUrl . ' ' . __LINE__ . ' ');
@@ -2338,19 +2339,12 @@ class SpecUploadBase extends SpecUpload{
 	}
 
 	protected function setUploadTargetPath(){
-		$tPath = $GLOBALS['TEMP_DIR_ROOT'];
-		if(!$tPath){
-			$tPath = ini_get('upload_tmp_dir');
-		}
-		if(!$tPath){
-			$tPath = $GLOBALS['SERVER_ROOT'].'/temp';
-		}
-		if(substr($tPath,-1) != '/' && substr($tPath,-1) != '\\'){
-			$tPath .= '/';
-		}
+		$tPath = UploadUtil::getTempDir();
+
 		if(file_exists($tPath.'downloads')){
 			$tPath .= 'data/';
 		}
+
 		$this->uploadTargetPath = $tPath;
 	}
 

@@ -2257,6 +2257,19 @@ class OccurrenceEditorManager {
 		return $retArr;
 	}
 
+	public function getUserName(){
+		$retStr = '';
+		if(is_numeric($GLOBALS['SYMB_UID'])){
+			$sql = 'SELECT CONCAT_WS(", ",lastname,firstname) AS username FROM users WHERE uid = '.$GLOBALS['SYMB_UID'];
+			$rs = $this->conn->query($sql);
+			while($r = $rs->fetch_object()){
+				$retStr = $r->username;
+			}
+			$rs->free();
+		}
+		return $retStr;
+	}
+
 	//Duplicate functions
 	private function linkDuplicates($occidStr, $dupTitle) {
 		$status = '';

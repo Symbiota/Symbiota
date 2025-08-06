@@ -274,10 +274,10 @@ if($isEditor && $action){
 					if(substr($substrateStr,-1) != '.'){$substrateStr .= '.';}
 					$textrun->addText(htmlspecialchars($substrateStr),'otherFont');
 				}
-				if($occArr['verbatimattributes'] || $occArr['establishmentmeans']){
+				if($occArr['description'] || $occArr['establishmentmeans']){
 					$textrun = $section->addTextRun('other');
-					$textrun->addText(htmlspecialchars($occArr['verbatimattributes']),'otherFont');
-					if($occArr['verbatimattributes'] && $occArr['establishmentmeans']) $textrun->addText('; ','otherFont');
+					$textrun->addText(htmlspecialchars($occArr['description']),'otherFont');
+					if($occArr['description'] && $occArr['establishmentmeans']) $textrun->addText('; ','otherFont');
 					$textrun->addText($occArr['establishmentmeans'], 'otherFont');
 				}
 				if($occArr['associatedtaxa']){
@@ -292,8 +292,8 @@ if($isEditor && $action){
 					$section->addText(htmlspecialchars($occArr['typestatus']),'otherFont','other');
 				}
 				$textrun = $section->addTextRun('collector');
-				$textrun->addText(htmlspecialchars($occArr['recordedby']),'otherFont');
-				$textrun->addText(htmlspecialchars(' '.$occArr['recordnumber']),'otherFont');
+				$textrun->addText(htmlspecialchars($occArr['collector']),'otherFont');
+				$textrun->addText(htmlspecialchars(' '.$occArr['collectornumber']),'otherFont');
 				$section->addText(htmlspecialchars($occArr['eventdate']),'otherFont','other');
 				if($occArr['associatedcollectors']){
 					$section->addText(htmlspecialchars('With: '.$occArr['associatedcollectors']),'otherFont','identified');
