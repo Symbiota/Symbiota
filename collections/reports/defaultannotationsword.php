@@ -98,19 +98,19 @@ foreach($labelArr as $occid => $occArr){
 		// $cell = $table->addCell(5000,$cellStyle);
         $cellLength = 15000;
 		$averageTwipsPerCharacter = 400; //240;
-		$cell = $table->addCell($cellLength,$cellStyle);
-		// $leftCell = $table->addCell(8000, $cellStyle);
-		// $rightCell = $table->addCell(4000, $cellStyle);
+		// $cell = $table->addCell($cellLength,$cellStyle);
+		$leftCell = $table->addCell(8000, $cellStyle);
+		$rightCell = $table->addCell(4000, $cellStyle);
 		if($headerStr){
-			$textrun = $cell->addTextRun('header');
-			// $textrun = $leftCell->addTextRun('header');
+			// $textrun = $cell->addTextRun('header');
+			$textrun = $leftCell->addTextRun('header');
 
 			$currentTxt = htmlspecialchars($headerStr);
 			$textrun->addText($currentTxt, 'headerfooterFont');
 			$charCount += strlen($currentTxt);
 		}
-		$textrun = $cell->addTextRun('scientificname');
-		// $textrun = $leftCell->addTextRun('scientificname');
+		// $textrun = $cell->addTextRun('scientificname');
+		$textrun = $leftCell->addTextRun('scientificname');
 		if($occArr['identificationqualifier']){
 			$currentTxt = htmlspecialchars($occArr['identificationqualifier']) . ' ';
 			$textrun->addText($currentTxt, 'scientificnameauthFont');
@@ -316,7 +316,9 @@ foreach($labelArr as $occid => $occArr){
 			$totalCharactersInTopLine = $charCount + strlen($scientificnameauthorshipStrChars);
             $remainingWhiteSpace = floor(($cellLength - ($totalCharactersInTopLine * $averageTwipsPerCharacter))/ $averageTwipsPerCharacter);
             $asManySpacesAsNecessary = str_repeat(' ', max($remainingWhiteSpace - 1, 1));
-			$scientificnameauthorshipStr .= $asManySpacesAsNecessary . $occArr['family'];
+			// $scientificnameauthorshipStr .= $asManySpacesAsNecessary . $occArr['family'];
+			$scientificnameauthorshipStr .= ' ' . $occArr['family'];
+
 			// $familyRun = $rightCell->addTextRun(['alignment' => 'right']);
 			// $currentTxt = strtoupper(htmlspecialchars(' ' . $occArr['family']));
 			// $currentTxt = strtoupper(htmlspecialchars($occArr['family']));
