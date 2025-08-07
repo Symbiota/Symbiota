@@ -15,9 +15,11 @@ class ProfileManager extends Manager{
 	protected $userName;
 	protected $displayName;
 	protected $token;
+	protected $salt;
 
 	public function __construct($connType = 'readonly'){
 		parent::__construct(null, $connType);
+		$salt = $GLOBALS['SECURITY_KEY'];
 	}
 
  	public function __destruct(){
@@ -344,6 +346,31 @@ class ProfileManager extends Manager{
 			$newPassword .= $alphabet[rand(0,count($alphabet)-1)];
 		}
 		return $newPassword;
+	}
+
+	/**
+	 * Wrapper function for password_hash using bcrypt to keep
+	 * options the same across usage
+	 *
+	 * @param string $value Value to check is stored in the hash
+	 * @param string $hash Encrypted hash that is being checked
+	 * @return bool
+	 **/
+	public function hash($value) {
+		$options = [ 'cost' => 10 ];
+		return password_hash($this->salt . $value, PASSWORD_BCRYPT, $options);
+	}
+
+	/**
+	 * Wrapper function for password_verify to keep it flexible
+	 * should the need to deprecate arrives
+	 *
+	 * @param string $value Value to check is stored in the hash
+	 * @param string $hash Encrypted hash that is being checked
+	 * @return bool
+	 **/
+	public function checkHash(string $value, string $hash): bool {
+		return password_verify($this->salt . $value,  $hash);
 	}
 
 	public function register($postArr, $adminRegister = false){
