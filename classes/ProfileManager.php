@@ -1,11 +1,9 @@
 <?php
-
-use function PHPUnit\Framework\returnValue;
-
 include_once('Manager.php');
 include_once('Person.php');
 include_once('utilities/Encryption.php');
 include_once('utilities/GeneralUtil.php');
+include_once('utilities/QueryUtil.php');
 @include_once 'Mail.php';
 
 class ProfileManager extends Manager{
@@ -108,6 +106,7 @@ class ProfileManager extends Manager{
 		$status = false;
 		if($pwdStr){
 			$sql = 'SELECT uid, firstname, username FROM users WHERE (password = CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?)))))) AND (username = ? OR email = ?) ';
+
 			if($stmt = $this->conn->prepare($sql)){
 				if($stmt->bind_param('sss', $pwdStr, $this->userName, $this->userName)){
 					$stmt->execute();
@@ -120,6 +119,42 @@ class ProfileManager extends Manager{
 			else echo 'error preparing statement: '.$this->conn->error;
 		}
 		return $status;
+	}
+
+	private function authenticateUsingPasswordNew($pwdStr){
+		try {
+			$params = [];
+			$sql = 'SELECT uid, firstname, username, password FROM users WHERE ';
+
+			if($this->uid) {
+				$sql .= '(uid = ?)';
+				$params = [ $this->uid ];
+			} else {
+				$sql .= '(username = ? OR email = ?)';
+				$params = [ $this->userName, $this->userName ];
+			}
+
+			$rs = QueryUtil::executeQuery(
+				$this->conn,
+				$sql,
+				$params
+			);
+
+			$user = $rs->fetch_object();
+
+			if(!$user || !$this->checkHash($pwdStr, $user->password)) {
+				//Account missing our passwords didn't match
+				return false;
+			} else {
+				$this->uid = $user->uid;
+				$this->displayName = $user->firstname;
+				$this->userName  = $user->username;
+				return true;
+			}
+		} catch(Exception $e) {
+			//Some erroring setting
+			return false;
+		}
 	}
 
 	private function authenticateLoginAs(){
@@ -257,6 +292,19 @@ class ProfileManager extends Manager{
 		return false;
 	}
 
+	public function changePasswordNew($newPwd, $oldPwd = "", $isSelf = 0) {
+		if(!newPwd) return false;
+
+		$this->resetConnection();
+		if($isSelf){
+			if(!$this->authenticateUsingPassword($oldPwd)) {
+				return  false;
+			}
+		}
+		if(!$this->testAgainstPrevious($newPwd)) return false;
+		if($this->updatePasswordNew($this->uid, $newPwd)) return true;
+	}
+
 	private function testAgainstPrevious($newPassword){
 		$bool = true;
 		try{
@@ -338,6 +386,21 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
+	private function updatePasswordNew($uid, $newPassword){
+		$status = false;
+		$sql = 'UPDATE users SET password = ? WHERE (uid = ?)';
+		$hash = $this->hash($newPassword);
+
+		if($stmt = $this->conn->prepare($sql) && $hash){
+			$stmt->bind_param('si', $hash, $uid);
+			$stmt->execute();
+			if(!$stmt->error) $status = true;
+			else $this->errorMessage = $stmt->error;
+			$stmt->close();
+		}
+		return $status;
+	}
+
 	private function generateNewPassword(){
 		// generate new random password
 		$newPassword = "";
@@ -394,6 +457,12 @@ class ProfileManager extends Manager{
 		$jsonDynProps = json_encode($initialDynamicProperties);
 
 		$sql = 'INSERT INTO users(username, password, email, firstName, lastName, title, institution, country, city, state, zip, guid, dynamicProperties) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)';
+		$hash = $this->hash($pwd);
+
+		if(!$hash) {
+			$this->errorMessage = 'ERROR inserting new user: Failed to encrypt password';
+		}
+
 		$this->resetConnection();
 		if($stmt = $this->conn->prepare($sql)) {
 			$stmt->bind_param('sssssssssssss', $this->userName, $this->hash($pwd), $email, $firstName, $lastName, $title, $institution, $country, $city, $state, $zip, $guid, $jsonDynProps);
