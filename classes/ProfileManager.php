@@ -307,7 +307,7 @@ class ProfileManager extends Manager{
 				$body = 'Your '.$GLOBALS['DEFAULT_TITLE'].' password has been reset to: '.$newPassword.'<br/><br/> '.
 					'After logging in, you can change your password by clicking on the My Profile link within the site menu and then selecting the Edit Profile tab. '.
 					'If you have problems, contact the System Administrator: '.$GLOBALS['ADMIN_EMAIL'].'<br/><br/>'.
-					'Data portal: <a href="' . htmlspecialchars($serverPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($serverPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a><br/>'.
+					'Data portal: <a href="' . htmlspecialchars($serverPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/">' . htmlspecialchars($serverPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a><br/>'.
 					'Direct link to your user profile: <a href="' . htmlspecialchars($serverPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/profile/viewprofile.php?tabindex=2">' . htmlspecialchars($serverPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/profile/viewprofile.php</a>';
 
 				if($this->sendEmail($email, $subject, $body, $from)){
