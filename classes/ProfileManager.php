@@ -393,10 +393,10 @@ class ProfileManager extends Manager{
 		$initialDynamicProperties['accessibilityPref'] = $isAccessiblePreferred === "1" ? true : false;
 		$jsonDynProps = json_encode($initialDynamicProperties);
 
-		$sql = 'INSERT INTO users(username, password, email, firstName, lastName, title, institution, country, city, state, zip, guid, dynamicProperties) VALUES(?,CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?))))),?,?,?,?,?,?,?,?,?,?,?)';
+		$sql = 'INSERT INTO users(username, password, email, firstName, lastName, title, institution, country, city, state, zip, guid, dynamicProperties) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)';
 		$this->resetConnection();
 		if($stmt = $this->conn->prepare($sql)) {
-			$stmt->bind_param('sssssssssssss', $this->userName, $pwd, $email, $firstName, $lastName, $title, $institution, $country, $city, $state, $zip, $guid, $jsonDynProps);
+			$stmt->bind_param('sssssssssssss', $this->userName, $this->hash($pwd), $email, $firstName, $lastName, $title, $institution, $country, $city, $state, $zip, $guid, $jsonDynProps);
 			$stmt->execute();
 			if($stmt->affected_rows){
 				$this->uid = $stmt->insert_id;
