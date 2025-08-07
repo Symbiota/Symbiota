@@ -105,12 +105,6 @@ $DATE_DEFAULT_TIMEZONE = NULL; // This should be set if server default timezone 
 $PRIVATE_VIEWING_ONLY = false; // Setting to true sets all content to be password protected besides below pages
 $PRIVATE_VIEWING_OVERRIDES = ['/index.php', '/misc/contacts.php','/misc/aboutproject.php', '/profile/newprofile.php', '/profile/index.php'];  //These pages will always be accessible to public viewing.  Add to as needed.
 
-$COOKIE_SECURE = false;
-if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) {
-	header('strict-transport-security: max-age=600');
-	$COOKIE_SECURE = true;
-}
-
 // Creates Togglable Overlay for GeoJSON file
 // Only Support with Leaflet Map
 // Supports of an area with the following properties:
