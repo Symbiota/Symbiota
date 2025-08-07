@@ -888,6 +888,7 @@ class OccurrenceLabel {
 	public static function processSciNameLabelForWord($scinameStr, $queryKey, $queryVal, &$textrun, &$charCount, $parentAuthor, $shouldAddNextElement, &$shouldStop){
 		if(!$shouldStop){
 			if(strpos($scinameStr,$queryKey) !== false){
+				$shouldStop = true;
 				$trimmedQueryKey = trim($queryKey);
 				$scinameArr = explode(' ' . $trimmedQueryKey . ' ', $scinameStr);
 				$currentTxt = htmlspecialchars($scinameArr[0]) . ' ';
@@ -908,7 +909,7 @@ class OccurrenceLabel {
 					$charCount += strlen($currentTxt);	
 				}
 			}
-			$shouldStop = true;
+			
 		}
 	}
 }
