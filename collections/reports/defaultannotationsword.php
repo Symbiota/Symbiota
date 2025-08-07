@@ -64,8 +64,37 @@ $phpWord->addFontStyle('familyFont', array('size'=>8,'name'=>'Arial'));
 $phpWord->addFontStyle('identifiedFont', array('size'=>8,'name'=>'Arial'));
 $marginSize = 80;
 if(array_key_exists('marginsize',$_POST) && $_POST['marginsize']) $marginSize = 16*$_POST['marginsize'];
-$tableStyle = array('width'=>100,'cellMargin'=>$marginSize);
 $borderWidth = 2;
+$outerStyle = [
+  'borderColor' => '000000',
+  'borderSize'  => $borderWidth,
+  'borderInsideHSize' => 0,
+  'borderInsideVSize' => 0,
+];
+$section = $phpWord->addSection($sectionStyle);
+$phpWord->addTableStyle('labelBox', $outerStyle);
+// $outer = $section->addTable('labelBox');
+// $outer->addRow();
+// $boxCell = $outer->addCell($cellLength);
+
+$innerStyle = [
+  'borderSize' => 0,
+  'borderColor' => 'ffffff',
+  'borderInsideHSize' => 0,
+  'borderInsideVSize' => 0,
+];
+$phpWord->addTableStyle('labelInner', $innerStyle);
+
+// $tableStyle = array('width'=>100,
+// 	'cellMargin'=>$marginSize,
+// 	'borderColor' => '000000',
+// 	'borderSize' => $borderWidth,
+// 	'borderInsideHSize' => 0,
+// 	'borderInsideHSize' => 0,
+// 	'borderInsideVSize' => 0,
+// 	'borderInsideHColor' => '000000',
+// 	'borderInsideVColor' => '000000',
+// );
 if(array_key_exists('borderwidth',$_POST)) $borderWidth = $_POST['borderwidth'];
 if($borderWidth) $borderWidth++;
 if($borderWidth){
@@ -73,13 +102,12 @@ if($borderWidth){
 	$tableStyle['borderSize'] = $borderWidth;
 }
 $colRowStyle = array('cantSplit'=>true);
-$phpWord->addTableStyle('defaultTable',$tableStyle,$colRowStyle);
+// $phpWord->addTableStyle('defaultTable',$tableStyle,$colRowStyle);
 $cellStyle = array('valign'=>'top',
-	'halign' => 'left',
-	'borderSize' => 0,
-    'borderColor' => 'ffffff');
+	'halign' => 'left')
+	;
 
-$section = $phpWord->addSection($sectionStyle);
+
 
 foreach($labelArr as $occid => $occArr){
 	$headerStr = trim($lHeader);
@@ -92,10 +120,14 @@ foreach($labelArr as $occid => $occArr){
 		$section->addText($currentTxt, 'firstLine');
 		$charCount += strlen($currentTxt);
 
-		$table = $section->addTable('defaultTable');
-		$table->addRow();
+		$outer = $section->addTable('labelBox');       // <-- uses $section
+    	$outer->addRow();
+    	$boxCell = $outer->addCell(12000);
+		// $table->addRow();
 		// $table->addRow(null, ['tblHeader' => false, 'exactHeight' => false]);
 		// $cell = $table->addCell(5000,$cellStyle);
+		$table = $boxCell->addTable('labelInner');
+		$table->addRow();
         $cellLength = 12000;
 		$averageTwipsPerCharacter = 400; //240;
 		$leftCell = $table->addCell(8000, $cellStyle);
@@ -190,10 +222,12 @@ foreach($labelArr as $occid => $occArr){
 		if($footerStr){
 			// $textrun = $leftCell->addTextRun('footer');
 			$table->addRow();
-			$footerCell = $table->addCell(
-				$cellLength, 
-				array_merge($cellStyle, ['gridSpan' => 2])
-			);
+			// $footerCell = $table->addCell(
+			// 	$cellLength, 
+			// 	array_merge($cellStyle, ['gridSpan' => 2])
+			// );
+
+			$footerCell = $table->addCell($cellLength, ['gridSpan' => 2]);
 			// $cell = $table->addCell($cellLength,$cellStyle);
 			$textrun = $footerCell->addTextRun('footer');
 			// // $textrun = $leftCell->addTextRun('footer');
