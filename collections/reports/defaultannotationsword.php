@@ -96,11 +96,11 @@ foreach($labelArr as $occid => $occArr){
 		$table->addRow();
 		// $table->addRow(null, ['tblHeader' => false, 'exactHeight' => false]);
 		// $cell = $table->addCell(5000,$cellStyle);
-        $cellLength = 15000;
+        $cellLength = 12000;
 		$averageTwipsPerCharacter = 400; //240;
-		// $cell = $table->addCell($cellLength,$cellStyle);
 		$leftCell = $table->addCell(8000, $cellStyle);
 		$rightCell = $table->addCell(4000, $cellStyle);
+		// $cell = $table->addCell($cellLength,$cellStyle);
 		if($headerStr){
 			// $textrun = $cell->addTextRun('header');
 			$textrun = $leftCell->addTextRun('header');
@@ -157,7 +157,9 @@ foreach($labelArr as $occid => $occArr){
 			if($occArr['identifiedby']){
 				$identByStr = $occArr['identifiedby'];
 				if($occArr['dateidentified']){
-					$identByStr .= '      '.$occArr['dateidentified'];
+					$textrun2 = $rightCell->addTextRun('other');
+					$textrun2->addText($occArr['dateidentified'], 'identifiedFont');
+					// $identByStr .= '      '.$occArr['dateidentified'];
 				}
 				$currentTxt = 'Det: ' . htmlspecialchars($identByStr);
 				$textrun->addText($currentTxt, 'identifiedFont');
@@ -186,8 +188,14 @@ foreach($labelArr as $occid => $occArr){
 			// $charCount += strlen($currentTxt);
 		}
 		if($footerStr){
-			$textrun = $leftCell->addTextRun('footer');
-			// $textrun = $cell->addTextRun('footer');
+			// $textrun = $leftCell->addTextRun('footer');
+			$table->addRow();
+			$footerCell = $table->addCell(
+				$cellLength, 
+				array_merge($cellStyle, ['gridSpan' => 2])
+			);
+			// $cell = $table->addCell($cellLength,$cellStyle);
+			$textrun = $footerCell->addTextRun('footer');
 			// // $textrun = $leftCell->addTextRun('footer');
 			// $table->addRow(null, ['tblHeader' => false, 'exactHeight' => false]);
 			// $cell = $table->addCell(5000,$cellStyle);
