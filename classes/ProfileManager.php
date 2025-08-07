@@ -40,8 +40,7 @@ class ProfileManager extends Manager{
 	public function reset(){
 		$domainName = filter_var($_SERVER['SERVER_NAME'], FILTER_SANITIZE_URL);
 		if($domainName == 'localhost') $domainName = false;
-		setcookie('SymbiotaCrumb', '', time() - 3600, ($GLOBALS['CLIENT_ROOT']?$GLOBALS['CLIENT_ROOT']:'/'), $domainName, false, true);
-		setcookie('SymbiotaCrumb', '', time() - 3600, ($GLOBALS['CLIENT_ROOT']?$GLOBALS['CLIENT_ROOT']:'/'));
+		setcookie('SymbiotaCrumb', '', time() - 3600, ($GLOBALS['CLIENT_ROOT']?$GLOBALS['CLIENT_ROOT']:'/'), $domainName, true, true);
 		unset($_SESSION['userrights']);
 		unset($_SESSION['userparams']);
 	}
@@ -50,6 +49,7 @@ class ProfileManager extends Manager{
 		$status = false;
 		unset($_SESSION['userrights']);
 		unset($_SESSION['userparams']);
+
 		if($this->userName){
 			if($this->token){
 				$status = $this->authenticateUsingToken();
@@ -151,7 +151,7 @@ class ProfileManager extends Manager{
 			$cookieExpire = time() + 60 * 60 * 24 * 30;
 			$domainName = filter_var($_SERVER['SERVER_NAME'], FILTER_SANITIZE_URL);
 			if ($domainName == 'localhost') $domainName = false;
-			setcookie('SymbiotaCrumb', Encryption::encrypt(json_encode($tokenArr)), $cookieExpire, ($GLOBALS['CLIENT_ROOT'] ? $GLOBALS['CLIENT_ROOT'] : '/'), $domainName, false, true);
+			setcookie('SymbiotaCrumb', Encryption::encrypt(json_encode($tokenArr)), $cookieExpire, ($GLOBALS['CLIENT_ROOT'] ? $GLOBALS['CLIENT_ROOT'] : '/'), $domainName, true, true);
 		}
 	}
 
