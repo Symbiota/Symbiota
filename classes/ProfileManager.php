@@ -13,11 +13,9 @@ class ProfileManager extends Manager{
 	protected $userName;
 	protected $displayName;
 	protected $token;
-	protected $salt;
 
 	public function __construct($connType = 'readonly'){
 		parent::__construct(null, $connType);
-		$salt = $GLOBALS['SECURITY_KEY'];
 	}
 
  	public function __destruct(){
@@ -421,7 +419,7 @@ class ProfileManager extends Manager{
 	 **/
 	public function hash($value) {
 		$options = [ 'cost' => 10 ];
-		return password_hash($this->salt . $value, PASSWORD_BCRYPT, $options);
+		return password_hash($value, PASSWORD_BCRYPT, $options);
 	}
 
 	/**
@@ -433,7 +431,7 @@ class ProfileManager extends Manager{
 	 * @return bool
 	 **/
 	public function checkHash(string $value, string $hash): bool {
-		return password_verify($this->salt . $value,  $hash);
+		return password_verify($value,  $hash);
 	}
 
 	public function register($postArr, $adminRegister = false){
