@@ -29,5 +29,6 @@ $LANG['PRINT_IN_BROWSER'] = 'Imprimir en el navegador';
 $LANG['EXPORT_TO_DOC'] = 'Exportar a DOCX';
 $LANG['NO_ANNO'] = 'No hay anotaciones en cola para imprimir.';
 $LANG['NO_ANNO_PERMISSIONS'] = 'No tienes permisos para imprimir etiquetas de anotaciones para esta colección. Comuníquese con el administrador del sitio para obtener los permisos necesarios.';
+$LANG['PRINT_FAMILY_NAME'] = 'Imprimir Nombre de Familia';
 
 ?>
