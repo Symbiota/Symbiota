@@ -73,11 +73,9 @@ $outerStyle = [
 ];
 $section = $phpWord->addSection($sectionStyle);
 $phpWord->addTableStyle('labelBox', $outerStyle);
-// $outer = $section->addTable('labelBox');
-// $outer->addRow();
-// $boxCell = $outer->addCell($cellLength);
 
 $innerStyle = [
+  'cellMargin'=>$marginSize,
   'borderSize' => 0,
   'borderColor' => 'ffffff',
   'borderInsideHSize' => 0,
@@ -85,16 +83,6 @@ $innerStyle = [
 ];
 $phpWord->addTableStyle('labelInner', $innerStyle);
 
-// $tableStyle = array('width'=>100,
-// 	'cellMargin'=>$marginSize,
-// 	'borderColor' => '000000',
-// 	'borderSize' => $borderWidth,
-// 	'borderInsideHSize' => 0,
-// 	'borderInsideHSize' => 0,
-// 	'borderInsideVSize' => 0,
-// 	'borderInsideHColor' => '000000',
-// 	'borderInsideVColor' => '000000',
-// );
 if(array_key_exists('borderwidth',$_POST)) $borderWidth = $_POST['borderwidth'];
 if($borderWidth) $borderWidth++;
 if($borderWidth){
@@ -102,12 +90,9 @@ if($borderWidth){
 	$tableStyle['borderSize'] = $borderWidth;
 }
 $colRowStyle = array('cantSplit'=>true);
-// $phpWord->addTableStyle('defaultTable',$tableStyle,$colRowStyle);
 $cellStyle = array('valign'=>'top',
 	'halign' => 'left')
 	;
-
-
 
 foreach($labelArr as $occid => $occArr){
 	$headerStr = trim($lHeader);
@@ -122,16 +107,16 @@ foreach($labelArr as $occid => $occArr){
 
 		$outer = $section->addTable('labelBox');       // <-- uses $section
     	$outer->addRow();
-    	$boxCell = $outer->addCell(12000);
+        $cellLength = 20000;
+    	$boxCell = $outer->addCell($cellLength);
 		// $table->addRow();
 		// $table->addRow(null, ['tblHeader' => false, 'exactHeight' => false]);
-		// $cell = $table->addCell(5000,$cellStyle);
 		$table = $boxCell->addTable('labelInner');
 		$table->addRow();
-        $cellLength = 12000;
 		$averageTwipsPerCharacter = 400; //240;
-		$leftCell = $table->addCell(8000, $cellStyle);
-		$rightCell = $table->addCell(4000, $cellStyle);
+		$leftCell = $table->addCell(0.67 * $cellLength, $cellStyle);
+		$rightCell = $table->addCell(0.33 * $cellLength, $cellStyle);
+		// $rightCell = $table->addCell(4000, array_merge($cellStyle, ['noWrap' => true]));
 		// $cell = $table->addCell($cellLength,$cellStyle);
 		if($headerStr){
 			// $textrun = $cell->addTextRun('header');
@@ -162,26 +147,26 @@ foreach($labelArr as $occid => $occArr){
 			$charCount += strlen($currentTxt);
 		}
 		$scientificnameauthorshipStr = $occArr['scientificnameauthorship'];
+		$familyRun = $rightCell->addTextRun(['alignment' => 'right']);
 		if($occArr['family']){
-			// $charCount = 38; // @TODO remove and troubleshoot upstream
 			$scientificnameauthorshipStrChars = $scientificnameauthorshipStr . $occArr['family'];
 			$totalCharactersInTopLine = $charCount + strlen($scientificnameauthorshipStrChars);
             $remainingWhiteSpace = floor(($cellLength - ($totalCharactersInTopLine * $averageTwipsPerCharacter))/ $averageTwipsPerCharacter);
             $asManySpacesAsNecessary = str_repeat(' ', max($remainingWhiteSpace - 1, 1));
 			// $scientificnameauthorshipStr .= $asManySpacesAsNecessary . $occArr['family'];
 			// $scientificnameauthorshipStr .= ' ' . strtoupper($occArr['family']);
-
-			$familyRun = $rightCell->addTextRun(['alignment' => 'right']);
+			
 			$currentTxt = strtoupper(htmlspecialchars($occArr['family']));
 			$familyRun->addText($currentTxt, 'scientificnameauthFont');
 			// $currentTxt = strtoupper(htmlspecialchars($occArr['family']));
 			// $familyRun = $cell->addTextRun(['alignment' => 'right']);
 			// $currentTxt = strtoupper(htmlspecialchars($occArr['family']));
+		}else{
+			$familyRun->addText('', 'scientificnameauthFont');
 		}
 		$currentTxt = htmlspecialchars($scientificnameauthorshipStr);
 		$textrun->addText($currentTxt, 'scientificnameauthFont');
 		// $familyRun->addText($currentTxt, 'scientificnameauthFont');
-        // @TODO can stop here?
 		// $charCount += strlen($currentTxt);
 		if($occArr['identifiedby'] || $occArr['dateidentified']){
 			// $textrun = $cell->addTextRun('other');
