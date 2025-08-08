@@ -100,7 +100,7 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
-	private function authenticateUsingPassword($pwdStr){
+	private function authenticateUsingPasswordOld($pwdStr){
 		$status = false;
 		if($pwdStr){
 			$sql = 'SELECT uid, firstname, username FROM users WHERE (password = CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?)))))) AND (username = ? OR email = ?) ';
@@ -119,7 +119,7 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
-	private function authenticateUsingPasswordNew($pwdStr){
+	private function authenticateUsingPassword($pwdStr){
 		try {
 			$params = [];
 			$sql = 'SELECT uid, firstname, username, password FROM users WHERE ';
@@ -140,7 +140,11 @@ class ProfileManager extends Manager{
 
 			$user = $rs->fetch_object();
 
-			if(!$user || !$this->checkHash($pwdStr, $user->password)) {
+			// If it's an old password then allow for login
+			// then rehash
+			if($user && substr($user->password, 0, 4) != '$2y$' && $this->authenticateUsingPasswordOld($pwdStr)) {
+				return $this->updatePassword($this->uid, $pwdStr);
+			} else if(!$user || !$this->checkHash($pwdStr, $user->password)) {
 				//Account missing our passwords didn't match
 				return false;
 			} else {
@@ -267,7 +271,7 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
-	public function changePassword ($newPwd, $oldPwd = "", $isSelf = 0) {
+	public function changePasswordOld ($newPwd, $oldPwd = "", $isSelf = 0) {
 		if($newPwd){
 			$this->resetConnection();
 			if($isSelf){
@@ -290,7 +294,7 @@ class ProfileManager extends Manager{
 		return false;
 	}
 
-	public function changePasswordNew($newPwd, $oldPwd = "", $isSelf = 0) {
+	public function changePassword($newPwd, $oldPwd = "", $isSelf = 0) {
 		if(!newPwd) return false;
 
 		$this->resetConnection();
@@ -300,7 +304,7 @@ class ProfileManager extends Manager{
 			}
 		}
 		if(!$this->testAgainstPrevious($newPwd)) return false;
-		if($this->updatePasswordNew($this->uid, $newPwd)) return true;
+		if($this->updatePassword($this->uid, $newPwd)) return true;
 	}
 
 	private function testAgainstPrevious($newPassword){
@@ -371,7 +375,7 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
-	private function updatePassword($uid, $newPassword){
+	private function updatePasswordOld($uid, $newPassword){
 		$status = false;
 		$sql = 'UPDATE users SET password = CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?))))) WHERE (uid = ?)';
 		if($stmt = $this->conn->prepare($sql)){
@@ -384,12 +388,12 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
-	private function updatePasswordNew($uid, $newPassword){
+	private function updatePassword(int $uid, string $newPassword): bool {
 		$status = false;
 		$sql = 'UPDATE users SET password = ? WHERE (uid = ?)';
 		$hash = $this->hash($newPassword);
 
-		if($stmt = $this->conn->prepare($sql) && $hash){
+		if(($stmt = $this->conn->prepare($sql)) && $hash){
 			$stmt->bind_param('si', $hash, $uid);
 			$stmt->execute();
 			if(!$stmt->error) $status = true;
@@ -417,9 +421,8 @@ class ProfileManager extends Manager{
 	 * @param string $hash Encrypted hash that is being checked
 	 * @return bool
 	 **/
-	public function hash($value) {
-		$options = [ 'cost' => 10 ];
-		return password_hash($value, PASSWORD_BCRYPT, $options);
+	public function hash(string $value) {
+		return password_hash($value, PASSWORD_BCRYPT, [ 'cost' => 10 ]);
 	}
 
 	/**
