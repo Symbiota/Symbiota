@@ -79,7 +79,7 @@ class UploadUtil {
 		$guess_ext = self::mime2ext($type_guess);
 		$provided_file_data = pathinfo($uploaded_file['name']);
 
-		if(!$guess_ext || $guess_ext != $provided_file_data['extension']) {
+		if(!$guess_ext || strtolower($guess_ext) != strtolower($provided_file_data['extension'])) {
 			throw new MediaException(MediaException::SuspiciousFile);
 		}
 
