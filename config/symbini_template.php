@@ -114,6 +114,10 @@ $PRIVATE_VIEWING_OVERRIDES = ['/index.php', '/misc/contacts.php','/misc/aboutpro
 // template_properties: Array[String] - List of property names to used in popup generation
 $GEO_JSON_LAYERS = [];
 
+// Toggles `strict-transport-security` header
+// Do not turn off for production portals
+$HTTPS_ONLY = true;
+
 //Base code shared by all pages; leave as is
 include_once('symbbase.php');
 /* --DO NOT ADD ANY EXTRA SPACES BELOW THIS LINE-- */

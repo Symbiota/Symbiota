@@ -1,7 +1,9 @@
 <?php
 header('X-Frame-Options: DENY');
 header('Cache-control: private'); // IE 6 FIX
-header('strict-transport-security: max-age=600');
+if($GLOBALS['HTTPS_ONLY'] ?? true) {
+	header('strict-transport-security: max-age=600');
+}
 date_default_timezone_set('America/Phoenix');
 $CODE_VERSION = '3.3.6';
 
