@@ -194,14 +194,14 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 		<?php
 		if($isEditor){
 			$reportsWritable = false;
-			if(is_writable($SERVER_ROOT.'/temp/report')) $reportsWritable = true;
+			/**if(is_writable($SERVER_ROOT.'/temp/report')) $reportsWritable = true;
 			if(!$reportsWritable){
 				?>
 				<div style="padding:5px;">
 					<span style="color:red;"> <?php echo (isset($LANG['CONTACT_ADMIN']) ? $LANG['CONTACT_ADMIN'] : 'Please contact the site administrator to make temp/report folder writable in order to export to docx files.') ?></span>
 				</div>
 				<?php
-			}
+			} **/
 			$isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General Observations')?true:false);
 			echo '<h2>'.$labelManager->getCollName().'</h2>';
 			?>
