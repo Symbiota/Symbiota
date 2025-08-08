@@ -14,5 +14,6 @@ $LANG['UNKNOWN_MEDIA_TYPE_MSG'] = 'Type de support inconnu';
 $LANG['SUSPICIOUS_FILE'] = 'Fichier suspect';
 $LANG['ILLEGAL_RENAME_CHANGED_FILE_TYPE'] = 'Renommage illégal, type de fichier modifié';
 $LANG['FILE_TYPE_NOT_ALLOWED'] = 'Type de fichier non autorisé';
+$LANG['FILEPATH_NOT_WRITABLE'] = 'Le chemin du fichier n\'est pas accessible en écriture';
 
 ?>

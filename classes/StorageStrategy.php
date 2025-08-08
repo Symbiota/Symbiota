@@ -96,7 +96,11 @@ class LocalStorage extends StorageStrategy {
 
 		// Create Storage Directory If it doesn't exist
 		if(!is_dir($dir_path)) {
-			mkdir($dir_path, 744, true);
+			mkdir($dir_path, 764, true);
+		}
+
+		if(!is_writable($dir_path)) {
+			throw new MediaException(MediaException::FilepathNotWritable, $dir_path);
 		}
 
 		if(file_exists($file_path)) {
