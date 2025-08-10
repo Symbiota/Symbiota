@@ -48,6 +48,7 @@ $LANG['DEL_IMG'] = 'Supprimer Ressource';
 $LANG['REM_FROM_SERVER'] = 'Supprimer ressource du serveur';
 $LANG['RM_DB_NOT_SERVER'] = 'Remarque: ne pas cocher la case supprime la ressource de la base de données sans la supprimer du serveur)';
 $LANG['REMAP_TO_ANOTHER'] = 'Remapper à Autre Spécimen';
+$LANG['CANNOT_REMAP_EXPLAIN'] = "Cette image ne peut pas être re-mappée vers une autre occurrence car le nom de l'image correspond au numéro de catalogue de l'occurrence. Veuillez télécharger une nouvelle version renommée de l'image vers l'occurrence correcte. Assurez-vous de revenir ensuite à cet enregistrement et de <b>Supprimer Ressource</b> pour la dissocier de cette occurrence.";
 $LANG['TARGET_OCCID'] = 'Enregistrement Occurrence #';
 $LANG['OPEN_LINK_AID'] = 'Ouvrir Aide de Liaison d\'Occurrence';
 $LANG['REMAP_IMG'] = 'Remapper Ressource';
