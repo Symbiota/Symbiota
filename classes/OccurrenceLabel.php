@@ -378,6 +378,14 @@ class OccurrenceLabel {
 	private function transferFromPhpToDynamicProperties() {
 		$status = false;
 		$targetFile = $GLOBALS['SERVER_ROOT'] . '/content/collections/reports/label.json';
+		$defaultFile = $GLOBALS['SERVER_ROOT'] . '/content/collections/reports/labeldefault.json';
+		if(!file_exists($targetFile) && file_exists($defaultFile)){
+			$jsonFileContents = file_get_contents($defaultFile);
+			if (!empty($jsonFileContents)) {
+				$this->saveGlobalJson($jsonFileContents, true);
+				return $this->fetchGlobalLabelJson();
+			}
+		}
 		if (file_exists($targetFile)) {
 			$jsonFileContents = file_get_contents($targetFile);
 			if (!empty($jsonFileContents)) {
