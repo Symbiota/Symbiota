@@ -1,8 +1,12 @@
 <?php
-include_once($SERVER_ROOT . "/classes//Database.php");
+include_once($SERVER_ROOT . "/classes/Database.php");
 include_once($SERVER_ROOT . "/classes/Sanitize.php");
+include_once($SERVER_ROOT . "/classes/StorageStrategy.php");
+include_once($SERVER_ROOT . "/classes/MediaType.php");
+include_once($SERVER_ROOT . "/classes/MediaException.php");
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/UploadUtil.php');
 
 if(file_exists($SERVER_ROOT.'/content/lang/classes/Media.'.$LANG_TAG.'.php')) {
 	include_once($SERVER_ROOT.'/content/lang/classes/Media.'.$LANG_TAG.'.php');
@@ -10,56 +14,7 @@ if(file_exists($SERVER_ROOT.'/content/lang/classes/Media.'.$LANG_TAG.'.php')) {
 	include_once($SERVER_ROOT.'/content/lang/classes/Media.en.php');
 }
 
-abstract class StorageStrategy {
-	/**
-	 * If a file is given then return the storage path for that resource otherwise just return the root path.
-	 * @param string | array $file {name: string, type: string, tmp_name: string, error: int, size: int}
-	 * @return string
-	 */
-	abstract public function getDirPath($file): string;
-
-	/**
-	 * If a file is given then return the url path to that resource otherwise just return the root url path.
-	 * @param string | array $file {name: string, type: string, tmp_name: string, error: int, size: int}
-	 * @return string
-	 */
-	abstract public function getUrlPath($file): string;
-
-	/**
-	 * Function to check if a file exists for the storage location of the upload strategy.
-	 * @param string | array $file {name: string, type: string, tmp_name: string, error: int, size: int}
-	 * @return bool
-	 */
-	abstract public function file_exists($file): bool;
-
-	/**
-	 * Function to handle how a file should be uploaded.
-	 * @param array $file {name: string, type: string, tmp_name: string, error: int, size: int}
-	 * @return bool
-	 * @throws MediaException(MediaException::DuplicateMediaFile)
-	 */
-	abstract public function upload(array $file): bool;
-
-	/**
-	 * Function to handle how a file should be removed.
-	 * @param array $file {name: string, type: string, tmp_name: string, error: int, size: int}
-	 * @return bool
-	 * @throws MediaException(MediaException::DuplicateMediaFile)
-	 */
-	abstract public function remove(string $file): bool;
-
-	/**
-	 * Function to handle renaming an existing file.
-	 * @param string $filepath
-	 * @param array $new_filepath
-	 * @return bool
-	 * @throws MediaException(MediaException::FileDoesNotExist)
-	 * @throws MediaException(MediaException::FileAlreadyExists)
-	 */
-	abstract public function rename(string $filepath, string $new_filepath): void;
-}
-
-function get_occurrence_upload_path($institutioncode, $collectioncode, $catalognumber) {
+function get_occurrence_upload_path($institutioncode, $collectioncode, $catalognumber = null) {
 		$root = $institutioncode . ($collectioncode? '_'. $collectioncode: '') . '/';
 
 		if($catalognumber) {
@@ -87,174 +42,6 @@ function get_occurrence_upload_path($institutioncode, $collectioncode, $catalogn
 		}
 
 		return $root;
-}
-
-class LocalStorage extends StorageStrategy {
-	private string $path;
-
-	public function __construct($path = '') {
-		$this->path = $path ?? '';
-	}
-
-	public function getDirPath($file = null): string {
-		$file_name = is_array($file)? $file['name']: $file;
-		return $GLOBALS['MEDIA_ROOT_PATH'] .
-			(substr($GLOBALS['MEDIA_ROOT_PATH'],-1) != "/"? '/': '') .
-			$this->path . $file_name;
-	}
-
-	public function getUrlPath($file = null): string {
-		$file_name = is_array($file)? $file['name']: $file;
-		return $GLOBALS['MEDIA_ROOT_URL'] .
-		   	(substr($GLOBALS['MEDIA_ROOT_URL'],-1) != "/"? '/': '') .
-		   	$this->path . $file_name;
-	}
-
-	/**
-	 * Private help function for interal use that holds logic for how storage paths are created.
-	 * @return string
-	 */
-
-	public function file_exists($file): bool {
-		if(is_array($file)) {
-			return file_exists($this->getDirPath() . $file['name']);
-		} else {
-			return file_exists($this->getDirPath() . $file);
-		}
-	}
-
-	/**
-	 * Upload implemenation stores files on the server and expect duplicate files to be handled by the caller
-	 */
-	public function upload(array $file): bool {
-		$dir_path = $this->getDirPath();
-		$file_path = $dir_path . $file['name'];
-
-		// Create Storage Directory If it doesn't exist
-		if(!is_dir($dir_path)) {
-			mkdir($dir_path, 744, true);
-		}
-
-		if(file_exists($file_path)) {
-			throw new MediaException(MediaException::DuplicateMediaFile);
-		}
-
-		//If Uploaded from $_POST then move file to new path
-		if(is_uploaded_file($file['tmp_name'])) {
-			move_uploaded_file($file['tmp_name'], $file_path);
-		//If temp path is on server then just move to new location;
-		} else if(file_exists($file['tmp_name'])) {
-			rename($file['tmp_name'], $file_path);
-		//Otherwise assume tmp_name a url and stream file contents over
-		} else {
-			error_log("Moving" . $file['tmp_name'] . ' to ' . $file_path );
-			file_put_contents($file_path, fopen($file['tmp_name'], 'r'));
-		}
-
-		return true;
-	}
-	/**
-	 * @return bool
-	 * @param mixed $path
-	 */
-	static private function on_system($path) {
-		//Check if path is absoulte path
-		if(file_exists($path)) {
-			return true;
-		}
-		//Convert url path to dir_path
-		$dir_path = str_replace(
-			$GLOBALS['MEDIA_ROOT_URL'],
-			$GLOBALS['MEDIA_ROOT_PATH'],
-			$path
-		);
-
-		return file_exists($dir_path);
-	}
-
-	public function remove(string $filename): bool {
-		//Check Relative Path
-		if($this->file_exists($filename)) {
-			if(!unlink($this->getDirPath($filename))) {
-				error_log("WARNING: File (path: " . $this->getDirPath($filename) . ") failed to delete from server in LocalStorage->remove");
-				return false;
-			};
-			return true;
-		}
-
-		//Get Absoulte Path
-		$dir_path = str_replace(
-			$GLOBALS['MEDIA_ROOT_URL'],
-			$GLOBALS['MEDIA_ROOT_PATH'],
-			$filename
-		);
-
-		//Check Absolute path
-		if($dir_path !== $filename && file_exists($dir_path)) {
-			if(!unlink($dir_path)) {
-				error_log("WARNING: File (path: " . $dir_path. ") failed to delete from server in LocalStorage->remove");
-				return false;
-			}
-			return true;
-		}
-
-		return false;
-	}
-
-	public function rename(string $filepath, string $new_filepath): void {
-		//Remove MEDIA_ROOT_PATH + Path from filepath if it exists
-		global $SERVER_ROOT;
-		$dir_path = $this->getDirPath() . $this->path;
-		$filepath = str_replace($dir_path, '', $GLOBALS['SERVER_ROOT']. $filepath);
-		$new_filepath = str_replace($dir_path, '', $GLOBALS['SERVER_ROOT'] . $new_filepath);
-		//Constrain Rename to Scope of MEDIA_ROOT_PATH + Storage Path
-		if($this->file_exists($new_filepath)) {
-			throw new MediaException(MediaException::FileAlreadyExists);
-		} else if(!$this->file_exists($filepath)) {
-			throw new MediaException(MediaException::FileDoesNotExist);
-		} else {
-			rename($dir_path . $filepath, $dir_path . $new_filepath);
-		}
-	}
-}
-
-class MediaType {
-	public const Image = 'image';
-	public const Audio = 'audio';
-	public const Video = 'video' ;
-
-	public static function tryFrom(string $value) {
-		if($value === self::Image || $value === self::Audio || $value === self::Video) {
-			return $value;
-		} else {
-			return null;
-		}
-	}
-
-	public static function values(): array {
-		return [
-			self::Image,
-			self::Audio,
-			self::Video
-		];
-	}
-}
-
-class MediaException extends Exception {
-	public const InvalidMediaType = 'INVALID_MEDIA_TYPE';
-	public const DuplicateMediaFile = 'DUPLICATE_MEDIA_FILE';
-	public const FileDoesNotExist = 'FILE_DOES_NOT_EXIST';
-	public const FileAlreadyExists = 'FILE_ALREADY_EXISTS';
-
-	function __construct(string $case, string $message = ''){
-		global $LANG;
-
-		if($message) {
-			parent::__construct($LANG[$case] . ': ' . $message);
-		} else {
-			parent::__construct($LANG[$case]);
-		}
-	}
 }
 
 class Media {
@@ -414,8 +201,7 @@ class Media {
 	}
 
 	/**
-	 * @param mixed $url
-	 * @param mixed $text
+	 * @param mixed $mime
 	 */
 	public static function getAllowedMime($mime) {
 		// Fall back if ALLOWED_MEDIA_MIME_TYPES is not present
@@ -494,278 +280,12 @@ class Media {
 	}
 
 	/**
-	 * @param string $mime
-	 * @return string | bool
-	 */
-	public static function mime2ext(string $mime) {
-		$mime_map = [
-			'video/3gpp2' => '3g2',
-			'video/3gp'=> '3gp',
-			'video/3gpp'=> '3gp',
-			'application/x-compressed'=> '7zip',
-			'audio/x-acc'=> 'aac',
-			'audio/ac3'=> 'ac3',
-			'application/postscript' => 'ai',
-			'audio/x-aiff' => 'aif',
-			'audio/aiff' => 'aif',
-			'audio/x-au' => 'au',
-			'video/x-msvideo' => 'avi',
-			'video/msvideo' => 'avi',
-			'video/avi' => 'avi',
-			'application/x-troff-msvideo' => 'avi',
-			'application/macbinary' => 'bin',
-			'application/mac-binary' => 'bin',
-			'application/x-binary' => 'bin',
-			'application/x-macbinary' => 'bin',
-			'image/bmp' => 'bmp',
-			'image/x-bmp' => 'bmp',
-			'image/x-bitmap' => 'bmp',
-			'image/x-xbitmap' => 'bmp',
-			'image/x-win-bitmap' => 'bmp',
-			'image/x-windows-bmp' => 'bmp',
-			'image/ms-bmp' => 'bmp',
-			'image/x-ms-bmp' => 'bmp',
-			'application/bmp' => 'bmp',
-			'application/x-bmp' => 'bmp',
-			'application/x-win-bitmap' => 'bmp',
-			'application/cdr' => 'cdr',
-			'application/coreldraw' => 'cdr',
-			'application/x-cdr' => 'cdr',
-			'application/x-coreldraw' => 'cdr',
-			'image/cdr' => 'cdr',
-			'image/x-cdr' => 'cdr',
-			'zz-application/zz-winassoc-cdr' => 'cdr',
-			'application/mac-compactpro' => 'cpt',
-			'application/pkix-crl' => 'crl',
-			'application/pkcs-crl' => 'crl',
-			'application/x-x509-ca-cert' => 'crt',
-			'application/pkix-cert' => 'crt',
-			'text/css' => 'css',
-			'text/x-comma-separated-values' => 'csv',
-			'text/comma-separated-values' => 'csv',
-			'application/vnd.msexcel' => 'csv',
-			'application/x-director' => 'dcr',
-			'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
-			'application/x-dvi' => 'dvi',
-			'message/rfc822' => 'eml',
-			'application/x-msdownload' => 'exe',
-			'video/x-f4v' => 'f4v',
-			'audio/x-flac' => 'flac',
-			'video/x-flv' => 'flv',
-			'image/gif' => 'gif',
-			'application/gpg-keys' => 'gpg',
-			'application/x-gtar' => 'gtar',
-			'application/x-gzip' => 'gzip',
-			'application/mac-binhex40' => 'hqx',
-			'application/mac-binhex' => 'hqx',
-			'application/x-binhex40' => 'hqx',
-			'application/x-mac-binhex40' => 'hqx',
-			'text/html' => 'html',
-			'image/x-icon' => 'ico',
-			'image/x-ico' => 'ico',
-			'image/vnd.microsoft.icon' => 'ico',
-			'text/calendar' => 'ics',
-			'application/java-archive' => 'jar',
-			'application/x-java-application' => 'jar',
-			'application/x-jar' => 'jar',
-			'image/jp2' => 'jp2',
-			'video/mj2' => 'jp2',
-			'image/jpx' => 'jp2',
-			'image/jpm' => 'jp2',
-			'image/jpeg' => 'jpg',
-			'image/pjpeg' => 'jpg',
-			'application/x-javascript' => 'js',
-			'application/json' => 'json',
-			'text/json' => 'json',
-			'application/vnd.google-earth.kml+xml' => 'kml',
-			'application/vnd.google-earth.kmz' => 'kmz',
-			'text/x-log' => 'log',
-			'audio/x-m4a' => 'm4a',
-			'audio/mp4' => 'm4a',
-			'application/vnd.mpegurl' => 'm4u',
-			'audio/midi' => 'mid',
-			'application/vnd.mif' => 'mif',
-			'video/quicktime' => 'mov',
-			'video/x-sgi-movie' => 'movie',
-			'audio/mpeg' => 'mp3',
-			'audio/mpg' => 'mp3',
-			'audio/mpeg3' => 'mp3',
-			'audio/mp3' => 'mp3',
-			'video/mp4' => 'mp4',
-			'video/mpeg' => 'mpeg',
-			'application/oda' => 'oda',
-			'audio/ogg' => 'ogg',
-			'video/ogg' => 'ogg',
-			'application/ogg' => 'ogg',
-			'font/otf' => 'otf',
-			'application/x-pkcs10' => 'p10',
-			'application/pkcs10' => 'p10',
-			'application/x-pkcs12' => 'p12',
-			'application/x-pkcs7-signature' => 'p7a',
-			'application/pkcs7-mime' => 'p7c',
-			'application/x-pkcs7-mime' => 'p7c',
-			'application/x-pkcs7-certreqresp' => 'p7r',
-			'application/pkcs7-signature' => 'p7s',
-			'application/pdf' => 'pdf',
-			'application/octet-stream' => 'pdf',
-			'application/x-x509-user-cert' => 'pem',
-			'application/x-pem-file' => 'pem',
-			'application/pgp' => 'pgp',
-			'application/x-httpd-php' => 'php',
-			'application/php' => 'php',
-			'application/x-php' => 'php',
-			'text/php' => 'php',
-			'text/x-php' => 'php',
-			'application/x-httpd-php-source' => 'php',
-			'image/png' => 'png',
-			'image/x-png' => 'png',
-			'application/powerpoint' => 'ppt',
-			'application/vnd.ms-powerpoint' => 'ppt',
-			'application/vnd.ms-office' => 'ppt',
-			'application/msword' => 'doc',
-			'application/vnd.openxmlformats-officedocument.presentationml.presentation' => 'pptx',
-			'application/x-photoshop' => 'psd',
-			'image/vnd.adobe.photoshop' => 'psd',
-			'audio/x-realaudio' => 'ra',
-			'audio/x-pn-realaudio' => 'ram',
-			'application/x-rar' => 'rar',
-			'application/rar' => 'rar',
-			'application/x-rar-compressed' => 'rar',
-			'audio/x-pn-realaudio-plugin' => 'rpm',
-			'application/x-pkcs7' => 'rsa',
-			'text/rtf' => 'rtf',
-			'text/richtext' => 'rtx',
-			'video/vnd.rn-realvideo' => 'rv',
-			'application/x-stuffit' => 'sit',
-			'application/smil' => 'smil',
-			'text/srt' => 'srt',
-			'image/svg+xml' => 'svg',
-			'application/x-shockwave-flash' => 'swf',
-			'application/x-tar' => 'tar',
-			'application/x-gzip-compressed' => 'tgz',
-			'image/tiff' => 'tiff',
-			'font/ttf' => 'ttf',
-			'text/plain' => 'txt',
-			'text/x-vcard' => 'vcf',
-			'application/videolan' => 'vlc',
-			'text/vtt' => 'vtt',
-			'audio/x-wav' => 'wav',
-			'audio/wave' => 'wav',
-			'audio/wav' => 'wav',
-			'application/wbxml' => 'wbxml',
-			'video/webm' => 'webm',
-			'image/webp' => 'webp',
-			'audio/x-ms-wma' => 'wma',
-			'application/wmlc' => 'wmlc',
-			'video/x-ms-wmv' => 'wmv',
-			'video/x-ms-asf' => 'wmv',
-			'font/woff' => 'woff',
-			'font/woff2' => 'woff2',
-			'application/xhtml+xml' => 'xhtml',
-			'application/excel' => 'xl',
-			'application/msexcel' => 'xls',
-			'application/x-msexcel' => 'xls',
-			'application/x-ms-excel' => 'xls',
-			'application/x-excel' => 'xls',
-			'application/x-dos_ms_excel' => 'xls',
-			'application/xls' => 'xls',
-			'application/x-xls' => 'xls',
-			'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx',
-			'application/vnd.ms-excel' => 'xlsx',
-			'application/xml' => 'xml',
-			'text/xml' => 'xml',
-			'text/xsl' => 'xsl',
-			'application/xspf+xml' => 'xspf',
-			'application/x-compress' => 'z',
-			'application/x-zip' => 'zip',
-			'application/zip' => 'zip',
-			'application/x-zip-compressed' => 'zip',
-			'application/s-compressed' => 'zip',
-			'multipart/x-zip' => 'zip',
-			'text/x-scriptzsh' => 'zsh',
-		];
-
-		return isset($mime_map[$mime]) ? $mime_map[$mime] : false;
-	}
-
-	/*
-	 * Curls url for header information and returns a $_FILES like file array
-	 * @param string $url
-	 * return array | bool
-	 */
-	public static function getRemoteFileInfo(string $url) {
-		if(!function_exists('curl_init')) throw new Exception('Curl is not installed');
-		$ch = curl_init($url);
-
-		curl_setopt($ch, CURLOPT_HEADER, true);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-		curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
-
-		$data = curl_exec($ch);
-
-		//If there is no data then throw error
-		if($data === false && $errno = curl_errno($ch)) {
-			$message = curl_strerror($errno);
-			curl_close($ch);
-			throw new Exception($message);
-		}
-
-		$retCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-		if($retCode >= 400) {
-			error_log(
-				'Error Status ' . $retCode . ' in getRemoteFileInfo LINE:' . __LINE__ .
-				' URL:' . $url
-			);
-			return false;
-		}
-
-		$file_size_bytes = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
-		$file_type_mime = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-
-		curl_close($ch);
-
-		// Check response header for a provided filename in "Content-Disposition"
-		$headers = explode("\r\n", $data);
-		$response_file_name = '';
-		if ($found = preg_grep('/^Content-Disposition\: /', $headers)) {
-			preg_match("/.* filename[*]?=(?:utf-8[']{2})?(.*)/",current($found),$matches);
-			if (!empty($matches)){
-				$response_file_name = urldecode($matches[1]);
-			}
-		}
-
-		// Use filename sent in response header.  Otherwise fallback to contents of URL.
-		if(!empty($response_file_name)){
-			$parsed_file = self::parseFileName($response_file_name);
-		}
-		else {
-			$parsed_file = self::parseFileName($url);
-		}
-
-		$parsed_file['name'] = self::cleanFileName($parsed_file['name']);
-
-		if(!$parsed_file['extension'] && $file_type_mime) {
-			$parsed_file['extension'] = self::mime2ext($file_type_mime);
-		}
-
-		return [
-			'name' => $parsed_file['name'] . ($parsed_file['extension'] ? '.' .$parsed_file['extension']: ''),
-			'tmp_name' => $url,
-			'error' => 0,
-			'type' => $file_type_mime,
-			'size' => intval($file_size_bytes)
-		];
-	}
-
-	/**
 	 * Strips out undesired characters from from a pure file name string
 	 *
 	 * @param string $file_name A file name without the extension
 	 * return string
 	 */
-	private static function cleanFileName(string $file_name):string {
+	public static function cleanFileName(string $file_name):string {
 		$file_name = str_replace(".","", $file_name);
 		$file_name = str_replace(array("%20","%23"," ","__"),"_",$file_name);
 		$file_name = str_replace("__","_",$file_name);
@@ -783,32 +303,6 @@ class Media {
 		}
 
 		return $file_name;
-	}
-
-	/**
-	  * This function returns the maximum files size that can be uploaded
-	  * in PHP
-	  * @returns int File size in bytes
-	  **/
-	public static function getMaximumFileUploadSize(): int {
-		return min(
-			self::size_2_bytes(ini_get('post_max_size')),
-			self::size_2_bytes(ini_get('upload_max_filesize')),
-		);
-	}
-
-	private static function size_2_bytes(string $size):int {
-		// Remove the non-unit characters from the size.
-		$unit = preg_replace('/[^bkmgtpezy]/i', '', $size);
-		// Remove the non-numeric characters from the size.
-		$size = preg_replace('/[^0-9\.]/', '', $size);
-		if ($unit) {
-			// Find the position of the unit in the ordered string which is the power of magnitude to multiply a kilobyte by.
-			return round($size * pow(1024, stripos('bkmgtpezy', $unit[0])));
-		}
-		else {
-			return round($size);
-		}
 	}
 
 	private static function isValidFile($file): bool {
@@ -834,7 +328,7 @@ class Media {
 		$parsed_file['name'] = self::cleanFileName($parsed_file['name']);
 
 		if(!$parsed_file['extension'] && $file_type_mime) {
-			$parsed_file['extension'] = self::mime2ext($file_type_mime);
+			$parsed_file['extension'] = UploadUtil::mime2ext($file_type_mime);
 		} else if (!$file_type_mime && $parsed_file['extension']) {
 			$file_type_mime = self::ext2Mime($parsed_file['extension'], $media_upload_type);
 
@@ -856,42 +350,23 @@ class Media {
 	}
 
 	/**
+     * Function to insert a record into the media table. does not handle file uploads
+	 * of any kind, but will check to make sure the originalUrl has an allowed format
+	 * for the media table.
+	 *
 	 * @param array<int,mixed> $post_arr
-	 * @param StorageStrategy $storage Class where and how to save files. If left empty will not store files
-	 * @param array $file {name: string, type: string, tmp_name: string, error: int, size: int} Post file data, if none given will assume remote resource
-	 * @return bool
+	 * @param Mysqli|Null $conn Optional field if caller wants to keep connection for transactions
+	 * @return void
 	**/
-	public static function add(array $post_arr, $storage = null, $file = null): void {
+	public static function insert(array $post_arr, $conn = null): array {
+		if(!$conn) {
+			$conn = Database::connect('write');
+		}
+
 		$clean_post_arr = Sanitize::in($post_arr);
-		unset($post_arr);
 
-		$copy_to_server = $clean_post_arr['copytoserver']?? false;
+		//Not Sure if I Need
 		$mapLargeImg = !($clean_post_arr['nolgimage']?? true);
-		$isRemoteMedia = isset($clean_post_arr['originalUrl']) && $clean_post_arr['originalUrl'];
-		$should_upload_file = (self::isValidFile($file) || $copy_to_server) && $storage;
-
-		//If no file is given and downloads from urls are enabled
-		if(!self::isValidFile($file)) {
-			if(!$should_upload_file) {
-				$file = self::parse_map_only_file($clean_post_arr);
-			}
-
-			if((!self::isValidFile($file) || !$file['type']) && $isRemoteMedia) {
-				$file = self::getRemoteFileInfo($clean_post_arr['originalUrl']);
-			}
-		}
-
-		//If that didn't popluate then return;
-		if(!self::isValidFile($file)) {
-			throw new Exception('Error: Uploaded/Remote media missing');
-		}
-
-		//If file being uploaded is too big throw error
-		else if($should_upload_file && self::getMaximumFileUploadSize() - memory_get_usage() < intval($file['size'])) {
-			throw new Exception('Error: File is to large to upload');
-		}
-
-		$conn = Database::connect('write');
 
 		$sql = <<< SQL
 		SELECT tidinterpreted 
@@ -909,25 +384,38 @@ class Media {
 			$clean_post_arr['tid'] = $row->tidinterpreted;
 		}
 
-		$media_type_str = explode('/', $file['type'])[0];
-		$media_type = MediaType::tryFrom($media_type_str);
+		if(!($clean_post_arr['copytoserver'] ?? false) && !($clean_post_arr['format'] ?? false)) {
+			$file = self::parse_map_only_file($clean_post_arr);
 
-		if(!$media_type) throw new MediaException(MediaException::InvalidMediaType, ' ' . $media_type_str);
+			if( (!self::isValidFile($file) || !$file['type']) ) {
+				$file = UploadUtil::getRemoteFileInfo($clean_post_arr['originalUrl']);
+			}
+
+			$clean_post_arr['format'] = $file['type'] ?? null;
+
+			if(!isset($clean_post_arr['sourceIdentifier'])) {
+				$clean_post_arr['sourceIdentifier'] = 'filename: ' . $file['name'];
+			}
+		}
+
+		if(!self::getAllowedMime($clean_post_arr['format'])) {
+			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $file['type']);
+		}
 
 		$keyValuePairs = [
 			"tid" => $clean_post_arr["tid"] ?? null,
 			"occid" => $clean_post_arr["occid"] ?? null,
-			"url" => null,
+			"url" => $clean_post_arr['weburl'] ?? $clean_post_arr['url'] ?? null,
 			"thumbnailUrl" => $clean_post_arr["thumbnailUrl"] ?? null,
 			// Will get popluated below
-			"originalUrl" => null,
+			"originalUrl" => $clean_post_arr['originalUrl'],
 			"archiveUrl" => $clean_post_arr["archiveUrl"] ?? null,// Only Occurrence import
 			// This is a very bad name that refers to source or downloaded url
 			"sourceUrl" => $clean_post_arr["sourceUrl"] ?? null,// TPImageEditorManager / Occurrence import
 			"referenceUrl" => $clean_post_arr["referenceUrl"] ?? null,// check keys again might not be one,
 			"creator" => $clean_post_arr["creator"] ?? null,
 			"creatorUid" => OccurrenceUtil::verifyUser($clean_post_arr["creatorUid"] ?? null, $conn),
-			"format" =>  $file["type"] ?? $clean_post_arr['format'],
+			"format" =>  $clean_post_arr['format'],
 			"caption" => $clean_post_arr["caption"] ?? null,
 			"owner" => $clean_post_arr["owner"] ?? null,
 			"locality" => $clean_post_arr["locality"] ?? null,
@@ -936,7 +424,7 @@ class Media {
 			"username" => Sanitize::in($GLOBALS['USERNAME']),
 			// check if its is_numeric?
 			"sortOccurrence" => $clean_post_arr['sortOccurrence'] ?? null,
-			"sourceIdentifier" => $clean_post_arr['sourceIdentifier'] ?? ('filename: ' . $file['name']),
+			"sourceIdentifier" => $clean_post_arr['sourceIdentifier'] ?? null,
 			"rights" => $clean_post_arr['rights'] ?? null,
 			"accessRights" => $clean_post_arr['accessRights'] ?? null,
 			"copyright" => $clean_post_arr['copyright'] ?? null,
@@ -944,22 +432,11 @@ class Media {
 			"hashValue" => $clean_post_arr['hashValue'] ?? null,
 			"mediaMD5" => $clean_post_arr['mediaMD5'] ?? null,
 			"recordID" => $clean_post_arr['recordID'] ?? UuidFactory::getUuidV4(),
-			"mediaType" => $media_type_str,
+			"mediaType" => self::getMediaTypeStrFromMime($clean_post_arr['format']),
 		];
 
 		$sort_sequence = $clean_post_arr['sortsequence'] ?? $clean_post_arr['sortSequence'] ?? false;
 		$keyValuePairs["sortsequence"] = is_numeric($sort_sequence)? $sort_sequence: 50;
-
-		//What is url for files
-		if($isRemoteMedia) {
-			//Required to exist
-			$source_url = $clean_post_arr['originalUrl'];
-			$keyValuePairs['originalUrl'] =  $source_url;
-			$keyValuePairs['url'] = $clean_post_arr['weburl'] ?? $clean_post_arr['url'] ?? $source_url;
-		} else {
-			$keyValuePairs['url'] = $storage->getUrlPath() . $file['name'];
-			$keyValuePairs['originalUrl'] = $storage->getUrlPath() . $file['name'];
-		}
 
 		$keys = implode(",", array_keys($keyValuePairs));
 		$parameters = str_repeat('?,', count($keyValuePairs) - 1) . '?';
@@ -968,20 +445,58 @@ class Media {
 		INSERT INTO media($keys) VALUES ($parameters)
 		SQL;
 
+		$result = QueryUtil::executeQuery($conn, $sql, array_values($keyValuePairs));
+		//Insert to other tables as needed like imagetags...
+
+		$media_id = $conn->insert_id;
+		self::update_tags($media_id, $clean_post_arr, $conn);
+
+		// Attach created id to metadata
+		$keyValuePairs['mediaID'] = $media_id;
+
+		return $keyValuePairs;
+	}
+
+	/**
+	 * Function to use $_POST data to link uploaded files as media assets to tids or occids
+	 * If all you want to do is insert a record see the insert function. This is a wrapper
+	 * of that function that also handles file and remote file uploads with their need security checks.
+	 *
+	 * @param array<int,mixed> $post_arr
+	 * @param StorageStrategy $storage Class where and how to save files. If left empty will not store files
+	 * @param array $file {name: string, type: string, tmp_name: string, error: int, size: int} Post file data, if none given will assume remote resource
+	 * @return bool
+	**/
+	public static function uploadAndInsert($post_arr, $file, $storage): void {
+		$createdFilepaths = [];
+
+		$conn = Database::connect('write');
 		mysqli_begin_transaction($conn);
+
 		try {
-			//insert media
-			$result = QueryUtil::executeQuery($conn, $sql, array_values($keyValuePairs));
-			//Insert to other tables as needed like imagetags...
+			if(!self::isValidFile($file) && ($post_arr['copytoserver'] ?? false)) {
+				$file = UploadUtil::downloadFromRemote($post_arr['originalUrl'], $GLOBALS['ALLOWED_MEDIA_MIME_TYPES']);
+				$createdFilepaths[] = $file['tmp_name'];
+			}
 
-			$media_id = $conn->insert_id;
-			self::update_tags($media_id, $clean_post_arr, $conn);
+			if(self::isValidFile($file)) {
+				UploadUtil::checkFileUpload($file, $GLOBALS['ALLOWED_MEDIA_MIME_TYPES']);
+				$post_arr['format'] = $file['type'];
+				$post_arr['originalUrl'] = $storage->getUrlPath() . $file['name'];
 
-			if($should_upload_file) {
+				if(!isset($post_arr['sourceIdentifier'])) {
+					$post_arr['sourceIdentifier'] = 'filename: ' . $file['name'];
+				}
+			}
+			
+			$media_metadata = self::insert($post_arr, $conn);
+			$media_type = MediaType::tryFrom($media_metadata['mediaType']);
+
+			if(self::isValidFile($file)) {
 				//Check if file exists
 				if($storage->file_exists($file)) {
 					//Add mediaID onto end of file name which should be unique within portal
-					$file['name'] = self::addToFilename($file['name'], '_' . $media_id);
+					$file['name'] = self::addToFilename($file['name'], '_' . $media_metadata['mediaID']);
 
 					//Fail case the appended mediaID is taken stops after 10
 					$cnt = 1;
@@ -995,22 +510,19 @@ class Media {
 					self::update_metadata([
 						'url' => $updated_path,
 						'originalUrl' => $updated_path
-					], $media_id, $conn);
+					], $media_metadata['mediaID'], $conn);
 				}
-
-				$storage->upload($file);
 
 				//Generate Deriatives if needed
 				if($media_type === MediaType::Image) {
 					$start_mem_limit = ini_get('memory_limit');
 					// Update mem limit if not set to 256M already
-					if(self::size_2_bytes(ini_get('memory_limit')) < self::size_2_bytes('256M')) {
+					if(UploadUtil::size2Bytes(ini_get('memory_limit')) < UploadUtil::size2Bytes('256M')) {
 						ini_set('memory_limit', '256M');
 					}
 
-					//Will download file if its remote.
-					//This is a naive solution assuming we are upload to our server
-					$size = getimagesize($storage->getDirPath($file));
+					$size = getimagesize($file['tmp_name']);
+
 					$metadata = [
 						'pixelXDimension' => $size[0],
 						'pixelYDimension' => $size[1]
@@ -1019,47 +531,63 @@ class Media {
 					$width = $size[0];
 					$height = $size[1];
 
-					$thumb_url = $clean_post_arr['thumbnailUrl'] ?? null;
-					if(!$thumb_url) {
-						$thumb_name = self::addToFilename($file['name'], '_tn');
-						self::create_image(
-							$file['name'],
-							$thumb_name,
-							$storage,
-							$GLOBALS['IMG_TN_WIDTH']?? 200,
-							0
-					   	);
+					$storage->upload($file);
 
-						if($storage->file_exists($thumb_name)) {
-							$metadata['thumbnailUrl'] = $storage->getUrlPath($thumb_name);
+					$urls = [ 
+						'thumbnailUrl' => [
+							'name' => self::addToFilename($file['name'], '_tn'),
+							'width' => $GLOBALS['IMG_TN_WIDTH']?? 200,
+							'height' => 0
+						],
+						'url' => [
+							'name' =>self::addToFilename($file['name'], '_lg'),
+							'width' => $GLOBALS['IMG_WEB_WIDTH']?? 1400,
+							'height' => 0
+						]
+					];
+
+					foreach($urls as $url => $data) {
+						if(!($media_metadata[$url] ?? false)) {
+							self::create_image(
+								$file['name'],
+								$data['name'],
+								$storage,
+								$data['width'],
+								$data['height']
+							);
+
+							if($storage->file_exists($data['name'])) {
+								$metadata[$url] = $storage->getUrlPath($data['name']);
+								$createdFilepaths[] = $url;
+							}
+
 						}
 					}
-
-					$med_url = $clean_post_arr['weburl'] ?? null;
-					if(!$med_url) {
-						$med_name =	self::addToFilename($file['name'], '_lg');
-						self::create_image(
-							$file['name'],
-							$med_name,
-							$storage,
-							$GLOBALS['IMG_WEB_WIDTH']?? 1400,
-							0
-					   	);
-
-						if($storage->file_exists($med_name)) {
-							$metadata['url'] = $storage->getUrlPath($med_name);
-						}
-					}
-
-					self::update_metadata($metadata, $media_id, $conn);
+					self::update_metadata($metadata, $media_metadata['mediaID'], $conn);
+				} elseif($media_type === MediaType::Audio) {
+					$storage->upload($file);
 				}
 			}
 
 			mysqli_commit($conn);
-		} catch(Throwable $e) {
+		} catch(Throwable $th) {
 			mysqli_rollback($conn);
-			array_push(self::$errors, $e->getMessage());
+
+			foreach($createdFilepaths as $filepath) {
+				unlink($filepath);
+			}
+
+			array_push(self::$errors, $th->getMessage());
 		}
+	}
+
+	public static function getMediaTypeStrFromMime(string $mime) {
+		$media_type_str = explode('/', $mime)[0];
+		$media_type = MediaType::tryFrom($media_type_str);
+
+		if(!$media_type) throw new MediaException(MediaException::InvalidMediaType, ' ' . $media_type_str);
+
+		return $media_type_str;
 	}
 
 	private static function addToFilename(string $filename, string $ext): string {
@@ -1168,6 +696,19 @@ class Media {
 		return $errors;
 	}
 
+	private static function check_file_rename(string $old_filepath, string $new_filepath) {		
+		if($old_filepath && $new_filepath) {
+			$old_file = self::parseFileName($old_filepath);
+			$new_file = self::parseFileName($new_filepath);
+
+			if($old_file['extension'] != $new_file['extension']) {
+				throw new MediaException(MediaException::IllegalRenameChangedFileType);
+			}
+		}
+
+		return true;
+	}
+
 	/**
 	 * Function used for pulling media meta_data out of input array and updating
 	 * the corresponding mediaID.
@@ -1222,19 +763,30 @@ class Media {
 		$conn = Database::connect('write');
 		mysqli_begin_transaction($conn);
 		try {
+			$current_media_arr = self::getMedia($media_id);
+			// If file is stored locally then check to make sure the extension is not being changed
+			foreach(['url', 'thumbnailUrl', 'originalUrl'] as $url) {
+				if(array_key_exists($url, $data) && $storage->file_exists($current_media_arr[$url])) {
+					self::check_file_rename(
+						$current_media_arr[$url], 
+						$data[$url]
+					);
+				}
+			}
+
 			self::update_metadata($data, $media_id, $conn);
 			self::update_tags($media_id, $media_arr, $conn);
 
 			if(array_key_exists("renameweburl", $media_arr)) {
-				$storage->rename($media_arr['old_url'], $data['url']);
+				$storage->rename($current_media_arr['url'], $data['url']);
 			}
 
 			if(array_key_exists("renametnurl", $media_arr)) {
-				$storage->rename($media_arr['old_thumbnailUrl'], $data['thumbnailUrl']);
+				$storage->rename($current_media_arr['thumbnailUrl'], $data['thumbnailUrl']);
 			}
 
 			if(array_key_exists("renameorigurl", $media_arr)) {
-				$storage->rename($media_arr['old_originalUrl'], $data['originalUrl']);
+				$storage->rename($current_media_arr['originalUrl'], $data['originalUrl']);
 			}
 
 			mysqli_commit($conn);
@@ -1410,7 +962,7 @@ class Media {
 
 	private static function enough_memory_gd($x, $y, $rgb = 3) {
 		// 1.7 is some coef related to gd or overhead not entirely sure
-		return  ($x * $y * 1.7 * $rgb) < (self::size_2_bytes(ini_get('memory_limit')) - memory_get_usage());
+		return  ($x * $y * 1.7 * $rgb) < (UploadUtil::size2Bytes(ini_get('memory_limit')) - memory_get_usage());
 	}
 
 	/**

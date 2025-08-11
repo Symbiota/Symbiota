@@ -1,5 +1,6 @@
 <?php
 include_once('Manager.php');
+include_once($SERVER_ROOT . '/classes/utilities/UploadUtil.php');
 
 class UtilitiesFileImport extends Manager {
 
@@ -91,10 +92,8 @@ class UtilitiesFileImport extends Manager {
 
 	protected function setTargetPath(){
 		if($this->targetPath) return true;
-		$path = $GLOBALS['TEMP_DIR_ROOT'];
-		if(!$path) $path = ini_get('upload_tmp_dir');
-		if(!$path) $path = $GLOBALS['SERVER_ROOT'].'/temp';
-		if(substr($path,-1) != '/') $path .= '/';
+		$path = UploadUtil::getTempDir();
+
 		if(is_dir($path.'data')) $path .= 'data/';
 		if(!is_writable($path)){
 			$this->errorMessage = 'FATAL ERROR: target directory does not exist or is not writable by web server ('.$this->targetPath.')';

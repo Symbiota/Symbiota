@@ -71,5 +71,6 @@ $LANG['CULT_CAPT_EG'] = 'Click if specimen was cultivated or captive';
 $LANG['IMG_GLOBE'] = 'A small image of the globe';
 $LANG['IMG_EDIT'] = 'Display additional fields button';
 $LANG['NO_COLLECTION'] = 'No Collection';
+$LANG['MEDIA_STATUS'] = 'Media Status';
 
 ?>

@@ -5,6 +5,7 @@
 include_once($SERVER_ROOT . '/classes/Manager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Encoding.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/UploadUtil.php');
 
 class SpecProcessorOcr extends Manager{
 
@@ -838,19 +839,8 @@ class SpecProcessorOcr extends Manager{
 	}
 
 	private function setTempPath(){
-		$tempPath = 0;
-		if(!empty($GLOBALS['TEMP_DIR_ROOT'])){
-			$tempPath = $GLOBALS['TEMP_DIR_ROOT'];
-		}
-		else{
-			$tempPath = ini_get('upload_tmp_dir');
-		}
-		if(!$tempPath){
-			$tempPath = $GLOBALS['SERVER_ROOT'];
-			if(substr($tempPath,-1) != '/') $tempPath .= '/';
-			$tempPath .= 'temp/';
-		}
-		if(substr($tempPath,-1) != '/') $tempPath .= '/';
+		$tempPath = UploadUtil::getTempDir();
+
 		if(file_exists($tempPath.'symbocr/') || mkdir($tempPath.'symbocr/')){
 			$tempPath .= 'symbocr/';
 		}

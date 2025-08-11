@@ -510,8 +510,8 @@ class SpecUpload{
 				$logPath .= '_'.date('Y-m-d').".log";
 				$this->logFH = fopen($logPath, 'a');
 				$this->outputMsg('Start time: '.date('Y-m-d h:i:s A'));
-				if(isset($_SERVER['REMOTE_ADDR'])) $this->outputMsg('REMOTE_ADDR: '.$_SERVER['REMOTE_ADDR']);
-				if(isset($_SERVER['REMOTE_PORT'])) $this->outputMsg('REMOTE_PORT: '.$_SERVER['REMOTE_PORT']);
+				if(isset($_SERVER['REMOTE_ADDR'])) $this->outputMsg('REMOTE_ADDR: '.htmlspecialchars($_SERVER['REMOTE_ADDR'], ENT_QUOTES));
+				if(isset($_SERVER['REMOTE_PORT'])) $this->outputMsg('REMOTE_PORT: '.htmlspecialchars($_SERVER['REMOTE_PORT'], ENT_QUOTES));
 				if(isset($_SERVER['QUERY_STRING'])) $this->outputMsg('QUERY_STRING: '.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 			}
 		}
