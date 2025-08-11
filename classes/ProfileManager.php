@@ -729,7 +729,7 @@ class ProfileManager extends Manager{
 		$statement->close();
 	}
 
-	public function deleteUserTaxonomy($utid,$editorStatus = ''){
+	public function deleteUserTaxonomy($utid, $editorStatus = ''){
 		$statusStr = 'SUCCESS: Taxonomic relationship deleted';
 		if(is_numeric($utid) || $utid == 'all'){
 			$sql = 'DELETE FROM usertaxonomy ';
@@ -786,7 +786,6 @@ class ProfileManager extends Manager{
 					}
 				}
 				elseif($stmt->error) $this->errorMessage = 'ERROR adding taxonomic relationship: '.$stmt->error;
-				$stmt->fetch();
 				$stmt->close();
 			}
 			else $this->errorMessage = 'ERROR preparing statement for adding taxonomic relationship: '.$this->conn->error;
