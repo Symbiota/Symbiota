@@ -729,32 +729,96 @@ class ProfileManager extends Manager{
 		$statement->close();
 	}
 
-	public function deleteUserTaxonomy($utid, $editorStatus = ''){
+	public function deleteUserTaxonomy($utid, $editorStatus = ''){ // h/t chatGTP
 		$statusStr = 'SUCCESS: Taxonomic relationship deleted';
-		if(is_numeric($utid) || $utid == 'all'){
-			$sql = 'DELETE FROM usertaxonomy ';
-			if($utid == 'all'){
-				$sql .= 'WHERE uid = '.$this->uid;
-			}
-			else{
-				$sql .= 'WHERE idusertaxonomy = '.$utid;
-			}
-			if($editorStatus){
-				$sql .= ' AND editorstatus = "'.$editorStatus.'" ';
-			}
-			$this->resetConnection();
-			if($this->conn->query($sql)){
-				if($this->uid == $GLOBALS['SYMB_UID']){
-					$this->userName = $GLOBALS['USERNAME'];
-					$this->authenticate();
+
+		$allowedEditorStatuses = ['OccurrenceEditor','RegionOfInterest', 'TaxonomicThesaurusEditor']; // @TODO are there other values that we want to be valid?
+		$useEditor = false;
+		if ($editorStatus !== '' && in_array($editorStatus, $allowedEditorStatuses, true)) {
+			$useEditor = true;
+		}
+
+		$this->resetConnection();
+
+		if ($utid === 'all') {
+			if ($useEditor) {
+				$sql = 'DELETE FROM usertaxonomy WHERE uid = ? AND editorstatus = ?';
+				if ($stmt = $this->conn->prepare($sql)) {
+					$stmt->bind_param('is', $this->uid, $editorStatus);
+					$stmt->execute();
+					if ($stmt->error) {
+						$statusStr = 'ERROR deleting taxonomic relationship: ' . $stmt->error;
+					} else {
+						if ($this->uid == $GLOBALS['SYMB_UID']) {
+							$this->userName = $GLOBALS['USERNAME'];
+							$this->authenticate();
+						}
+					}
+					$stmt->close();
+				} else {
+					$statusStr = 'ERROR preparing statement for delete: ' . $this->conn->error;
+				}
+			} else {
+				$sql = 'DELETE FROM usertaxonomy WHERE uid = ?';
+				if ($stmt = $this->conn->prepare($sql)) {
+					$stmt->bind_param('i', $this->uid);
+					$stmt->execute();
+					if ($stmt->error) {
+						$statusStr = 'ERROR deleting taxonomic relationship: ' . $stmt->error;
+					} else {
+						if ($this->uid == $GLOBALS['SYMB_UID']) {
+							$this->userName = $GLOBALS['USERNAME'];
+							$this->authenticate();
+						}
+					}
+					$stmt->close();
+				} else {
+					$statusStr = 'ERROR preparing statement for delete: ' . $this->conn->error;
 				}
 			}
-			else{
-				$statusStr = 'ERROR deleting taxonomic relationship: '.$this->conn->error;
+		} elseif (is_numeric($utid)) {
+			$utidParam = (int) $utid;
+			if ($useEditor) {
+				$sql = 'DELETE FROM usertaxonomy WHERE idusertaxonomy = ? AND editorstatus = ?';
+				if ($stmt = $this->conn->prepare($sql)) {
+					$stmt->bind_param('is', $utidParam, $editorStatus);
+					$stmt->execute();
+					if ($stmt->error) {
+						$statusStr = 'ERROR deleting taxonomic relationship: ' . $stmt->error;
+					} else {
+						if ($this->uid == $GLOBALS['SYMB_UID']) {
+							$this->userName = $GLOBALS['USERNAME'];
+							$this->authenticate();
+						}
+					}
+					$stmt->close();
+				} else {
+					$statusStr = 'ERROR preparing statement for delete: ' . $this->conn->error;
+				}
+			} else {
+				$sql = 'DELETE FROM usertaxonomy WHERE idusertaxonomy = ?';
+				if ($stmt = $this->conn->prepare($sql)) {
+					$stmt->bind_param('i', $utidParam);
+					$stmt->execute();
+					if ($stmt->error) {
+						$statusStr = 'ERROR deleting taxonomic relationship: ' . $stmt->error;
+					} else {
+						if ($this->uid == $GLOBALS['SYMB_UID']) {
+							$this->userName = $GLOBALS['USERNAME'];
+							$this->authenticate();
+						}
+					}
+					$stmt->close();
+				} else {
+					$statusStr = 'ERROR preparing statement for delete: ' . $this->conn->error;
+				}
 			}
+		} else {
+			$statusStr = 'ERROR: invalid id';
 		}
 		return $statusStr;
 	}
+
 
 	public function addUserTaxonomy($taxon, $editorStatus, $geographicScope, $notes){
 		$statusStr = 'SUCCESS adding taxonomic relationship';
