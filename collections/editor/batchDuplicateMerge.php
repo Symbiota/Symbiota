@@ -6,22 +6,23 @@ include_once($SERVER_ROOT . '/classes/Database.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCleaner.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
 
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
+$collid = array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid'])? intval($_REQUEST['collid']):0;
 $start = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
 $limit = array_key_exists('limit',$_REQUEST)?$_REQUEST['limit']:1000;
 
-$collid = 2;
+$updated = [];
+$errors = [];
 
 $fields = [
 	'o.occid', 
 	'o.catalognumber', 
+	'c.institutionCode',
+	'c.collectionCode',
 	'dl.duplicateid', 
 	'o.collid',
 	'country',
 	'stateProvince',
 	'county',
-	'c.institutionCode',
-	'c.collectionCode',
 ];
 
 $harvestFields = [
@@ -37,6 +38,23 @@ $harvestFields = [
 	//'georeferenceDate',
 	'georeferenceVerificationStatus',
 ];
+
+// Don't show in ui table
+$fieldIgnores = [
+	'collid',
+	'duplicateid',
+];
+
+foreach($_POST as $targetOccId => $sourceOccId) {
+	if(is_numeric($targetOccId) && is_numeric($sourceOccId)) {
+		try {
+			copyOccurrenceInfo($targetOccId, $sourceOccId, $harvestFields);
+			array_push($updated, $targetOccId);
+		} catch(Exception $e)  {
+			$errors[$targetOccId] = $e->getMessage();
+		}
+	}
+}
 
 
 $sql = 'SELECT ' . implode(',', $fields) . ',' . implode(',', $harvestFields) . ' from omoccurduplicatelink dl
@@ -67,12 +85,16 @@ foreach ($duplicates as $dupe) {
 	$options[$dupe['duplicateid']][] = $dupe;
 }
 
-function getTableHeaders(array $arr) {
+function getTableHeaders(array $arr, array $ignore = []) {
 	$html = '<thead>';
 	$html .= '<th></th>';
 
 	foreach($arr as $key => $value) {
-		$html .= '<th>' . $key . '</th>';
+		if(in_array($key, $ignore)) {
+			continue;
+		} else {
+			$html .= '<th>' . $key . '</th>';
+		}
 	}
 
 	$html .= '</thead>';
@@ -80,14 +102,16 @@ function getTableHeaders(array $arr) {
 	return $html;
 }
 
-function render_row($row, $checkboxName = false) {
+function render_row($row, $checkboxName = false, $fieldIgnores = []) {
 	$html = '<tr>';
 	$html .= '<td><div style="display:flex; align-items:center; justify-content: center;">' . 
 		($checkboxName ? '<input type="checkbox" onclick="checkbox_one_only(this)" name="'. $checkboxName  .'" value="' . $row['occid'] . '" style="margin:0"/>': '') . 
 		'</div></td>';
 		
 	foreach ($row as $key => $value) {
-		if($key === 'occid') {
+		if(in_array($key, $fieldIgnores)) {
+			continue;
+		} else if($key === 'occid') {
 			$html .= '<td><a href="#">' . $value . '</a></td>';
 		}  else  {
 			$html .= '<td>' . $value . '</td>';
@@ -97,31 +121,37 @@ function render_row($row, $checkboxName = false) {
 	return $html .=  '</tr>';
 }
 
-function copyOccurrenceInfo($targetOccId, $sourceOccId) {
+function copyOccurrenceInfo($targetOccId, $sourceOccId, $harvestFields) {
 	$sql = 'Update omoccurrences target 
 		INNER JOIN omoccurrences source on target.occid = ? and source.occid = ? 
-		SET target.country = COALESCE(source.country, target.country)';
+		SET ';
 
+	$count = 0;
+	$maxCount = count($harvestFields);
 	foreach ($harvestFields as $field) {
-		$sql .= 'target.' . $field . '  =  COALESCE(source.'  . $field . ', target.'. $field . ')';
+		$sql .= 'target.' . $field . '  =  source.'  . $field;
+		if(++$count < $maxCount) {
+			$sql .= ', ';
+		}
 	}
 
 	QueryUtil::executeQuery(
-		Database::connect('write'), 
-		$sql, 
+		Database::connect('write'),
+		$sql,
 		[$targetOccId, $sourceOccId]
 	);
 }
-$target_occids = $_POST['targets'] ?? [];
-$sources = $_POST['sources'] ?? [];
 
-if(count($target_occids) && count($sources) && count($sources) === count($target_occids)) {
-	for ($i = 0; $i  < count($sources); $i ++) { 
-		# code...
+function isCopyable($target, $source) {
+	global $harvestFields;
+	foreach ($harvestFields as $field) {
+		if(($target[$field] ?? false) != ($source[$field] ?? false)) {
+			return true;
+		}
 	}
 }
 
-$ui_option = 1
+$ui_option = 2;
 
 ?>
 
@@ -186,6 +216,23 @@ $ui_option = 1
 				</div>
 			</form>
 
+			<?php include 'includes/queryform.php' ?>
+
+			<?php foreach($errors as $duplicateId => $error): ?>
+			<div style="margin-bottom:0.5rem">
+			<?= 'ERROR: ' . $error ?>
+			</div>
+			<?php endforeach ?>
+
+			<?php foreach($updated as $occId): ?>
+			<div style="margin-bottom:0.5rem">
+			<?= 'Updated Record ' ?>
+			<a href="<?= ($CLIENT_ROOT? '/' . $CLIENT_ROOT: '' ) . '/collections/individual/index.php?occid=' . $occId ?>" >
+				<?= '#' . $occId ?>
+			</a>
+			</div>
+			<?php endforeach ?>
+
 			<form method="POST">
 			<?php if($ui_option === 1): ?>
 
@@ -193,11 +240,11 @@ $ui_option = 1
 			
 			<?php if(count($options[$duplicateId])): ?>
 			<table class="styledtable table-scroll">
-				<?php echo getTableHeaders($target) ?>
+				<?php echo getTableHeaders($target, $fieldIgnores) ?>
 				<tbody>
-					<?= render_row($target) ?>
+					<?= render_row($target, false, $fieldIgnores) ?>
 					<?php foreach ($options[$duplicateId] as $dupe): ?>
-						<?= $dupe['occid'] !== $target['occid']? render_row($dupe, $duplicateId): '' ?>
+						<?= $dupe['occid'] !== $target['occid']? render_row($dupe, $target['occid'], $fieldIgnores): '' ?>
 					<?php endforeach ?>
 				</tbody>
 			</table>
@@ -205,6 +252,23 @@ $ui_option = 1
 			<?php endforeach ?>
 
 			<?php elseif($ui_option === 2): ?>
+
+			<table class="styledtable table-scroll">
+			<?php echo getTableHeaders(current($targets), $fieldIgnores) ?>
+			<?php foreach ($targets as $duplicateId => $target): ?>
+			<?php if(count($options[$duplicateId])): ?>
+				<tbody>
+					<?= render_row($target, false, $fieldIgnores) ?>
+					<?php foreach ($options[$duplicateId] as $dupe): ?>
+						<?= $dupe['occid'] !== $target['occid']? render_row($dupe, $target['occid'], $fieldIgnores): '' ?>
+					<?php endforeach ?>
+					<tr>
+						<td colspan="18" style="height: 1rem"></td>
+					</tr>
+				</tbody>
+			<?php endif ?>
+			<?php endforeach ?>
+			</table>
 
 			<?php endif ?>
 
