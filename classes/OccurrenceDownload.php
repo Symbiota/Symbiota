@@ -541,14 +541,9 @@ class OccurrenceDownload{
 
 	private function getOutputFilePath(){
 		$retStr = $GLOBALS['TEMP_DIR_ROOT'];
-		if(!$retStr){
-			$retStr = $GLOBALS['SERVER_ROOT'];
-			if(substr($retStr,-1) != '/' && substr($retStr,-1) != "\\") $retStr .= '/';
-			$retStr .= 'temp/';
-		}
 		if(substr($retStr,-1) != '/' && substr($retStr,-1) != "\\") $retStr .= '/';
-		if(file_exists($retStr.'downloads/')){
-			$retStr .= 'downloads/';
+		if(file_exists($retStr.'exports/')){
+			$retStr .= 'exports/';
 		}
 		return $retStr;
 	}

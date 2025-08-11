@@ -353,7 +353,7 @@ if($outputMode == 'doc'){
 	$textrun->addTextBreak(2);
 	$textrun->addText(htmlspecialchars(($english?'Signed':'').($engspan?'/':'').($spanish?'Firma':'').':______________________________________  '.($english?'Date':'').($engspan?'/':'').($spanish?'Fecha':'').':______________'),'otherFont');
 
-	$targetFile = $SERVER_ROOT.'/temp/report/'.$identifier.'_invoice.docx';
+	$targetFile = $TEMP_DIR_ROOT . '/' . $identifier . '_invoice.docx';
 	$phpWord->save($targetFile, 'Word2007');
 
 	ob_start();

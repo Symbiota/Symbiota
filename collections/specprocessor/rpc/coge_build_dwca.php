@@ -43,11 +43,14 @@ if($collid && is_numeric($collid)){
 		$dwcaHandler->setGeolocateVariables(array('cogecomm'=>$_POST['cogecomm'],'cogename'=>$_POST['cogename'],'cogedescr'=>$_POST['cogedescr'],));
 
 		//Set direct path to file
-		$tPath = $SERVER_ROOT;
+		$tPath = $TEMP_DIR_ROOT;
 		if(substr($tPath,-1) != '/' && substr($tPath,-1) != '\\'){
 			$tPath .= '/';
 		}
-		$pathFrag = 'temp/data/';
+		$pathFrag = '';
+		if(file_exists($tPath . 'exports/')){
+			$pathFrag = 'exports/';
+		}
 		$tPath .= $pathFrag;
 		$dwcaHandler->setTargetPath($tPath);
 		$cnt = $dwcaHandler->getOccurrenceCnt();

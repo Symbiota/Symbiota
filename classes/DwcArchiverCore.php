@@ -128,13 +128,6 @@ class DwcArchiverCore extends Manager{
 			if (!$tPath) {
 				$tPath = ini_get('upload_tmp_dir');
 			}
-			if (!$tPath) {
-				$tPath = $GLOBALS['SERVER_ROOT'];
-				if (substr($tPath, -1) != '/' && substr($tPath, -1) != '\\') {
-					$tPath .= '/';
-				}
-				$tPath .= "temp/";
-			}
 			if (substr($tPath, -1) != '/' && substr($tPath, -1) != '\\') {
 				$tPath .= '/';
 			}
