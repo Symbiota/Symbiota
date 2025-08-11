@@ -7,7 +7,7 @@ Language: English
 
 $LANG['SPEC_LABEL_MANAGER'] = 'Specimen Label Manager';
 $LANG['PERS_MANAG_MENU'] = 'Personal Management Menu';
-$LANG['CONTACT_ADMIN'] = 'Please contact the site administrator to make temp/report folder writable in order to export to docx files.';
+$LANG['CONTACT_ADMIN'] = 'Please contact the site administrator to make TEMP_DIR_ROOT folder writable in order to export to docx files.';
 $LANG['DEF_SPEC_REC'] = 'Define Specimen Recordset';
 $LANG['SCI_NAME'] = 'Scientific Name: ';
 $LANG['FULL_NAME'] = 'Full or last name of collector as entered in database.';

@@ -271,8 +271,8 @@ class OccurrenceLabel {
 				'taxonRank' => 't.unitind3 AS taxonrank',
 				'specificepithet'=>'t.unitname2 AS specificepithet',
 				'fieldnumber'=>'o.fieldnumber',
-				'infraSpecificEpithet'=>'t.unitname3 AS infraspecificepithet', 
-				'scientificNameAuthorship'=>'o.scientificnameauthorship', 
+				'infraSpecificEpithet'=>'t.unitname3 AS infraspecificepithet',
+				'scientificNameAuthorship'=>'o.scientificnameauthorship',
 				'parentAuthor'=>'pt.author AS parentauthor',
 				'identifiedBy'=>'o.identifiedby',
 				'dateIdentified' => 'o.dateidentified',
@@ -375,27 +375,6 @@ class OccurrenceLabel {
 		return '';
 	}
 
-	private function transferFromPhpToDynamicProperties() {
-		$status = false;
-		$targetFile = $GLOBALS['SERVER_ROOT'] . '/content/collections/reports/label.json';
-		$defaultFile = $GLOBALS['SERVER_ROOT'] . '/content/collections/reports/labeldefault.json';
-		if(!file_exists($targetFile) && file_exists($defaultFile)){
-			$jsonFileContents = file_get_contents($defaultFile);
-			if (!empty($jsonFileContents)) {
-				$this->saveGlobalJson($jsonFileContents, true);
-				return $this->fetchGlobalLabelJson();
-			}
-		}
-		if (file_exists($targetFile)) {
-			$jsonFileContents = file_get_contents($targetFile);
-			if (!empty($jsonFileContents)) {
-				$this->saveGlobalJson($jsonFileContents, true);
-				return $this->fetchGlobalLabelJson();
-			}
-		}
-		return $status;
-	}
-
 	private function fetchGlobalLabelJson() {
 		$status = false;
 		$sql = 'SELECT dynamicProperties FROM adminconfig WHERE attributeName = ?';
@@ -406,7 +385,7 @@ class OccurrenceLabel {
 			$stmt->bind_result($jsonResult);
 			$stmt->fetch();
 			$stmt->close();
-			if (empty($jsonResult)) $jsonResult = $this->transferFromPhpToDynamicProperties();
+			if (empty($jsonResult)) $jsonResult = $this->setDefaultLabelFormat();
 			return $jsonResult;
 		}
 		return $status;
@@ -455,7 +434,7 @@ class OccurrenceLabel {
 		$retArr = array();
 		if ($GLOBALS['SYMB_UID']) {
 			if (!$jsonData = $this->fetchGlobalLabelJson()) {
-				$jsonData = $this->transferFromPhpToDynamicProperties();
+				$jsonData = $this->setDefaultLabelFormat();
 			}
 			if (!empty($jsonData)) {
 				if ($globalFormatArr = json_decode($jsonData, true)) {
@@ -504,6 +483,30 @@ class OccurrenceLabel {
 			}
 		}
 		return $retArr;
+	}
+
+	private function setDefaultLabelFormat() {
+		$status = false;
+		$jsonFileContents = '';
+		$oldFile = $GLOBALS['SERVER_ROOT'] . '/content/collections/reports/label.json';
+		$defaultFile = $GLOBALS['SERVER_ROOT'] . '/content/collections/reports/labeldefault.json';
+		if (file_exists($oldFile)) {
+			//Sets default label format (global) to what was defined prior to v3.3.6 (e.g. portal manager coverted labeljson.php to label.json)
+			$jsonFileContents = file_get_contents($oldFile);
+		}
+		elseif(file_exists($defaultFile)){
+			$oldNotConvertedFile = $GLOBALS['SERVER_ROOT'] . '/content/collections/reports/labeljson.php';
+			if(!file_exists($oldNotConvertedFile)){
+				//Set default using labeldefault.json (portal is a new install or a v3.3.6 pre-defined format does not exist)
+				//A default format will not be defined if labeljson.php exists. In this case, portal managers needs to convert labeljson.php to label.json, or remove file.
+				$jsonFileContents = file_get_contents($defaultFile);
+			}
+		}
+		if($jsonFileContents){
+			$this->saveGlobalJson($jsonFileContents, true);
+			return $this->fetchGlobalLabelJson();
+		}
+		return $status;
 	}
 
 	public function saveLabelJson($postArr) {

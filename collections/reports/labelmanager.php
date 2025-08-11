@@ -193,15 +193,6 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 		<h1 class="page-heading"><?= $LANG['SPEC_LABEL_MANAGER']; ?></h1>
 		<?php
 		if($isEditor){
-			$reportsWritable = false;
-			/**if(is_writable($SERVER_ROOT.'/temp/report')) $reportsWritable = true;
-			if(!$reportsWritable){
-				?>
-				<div style="padding:5px;">
-					<span style="color:red;"> <?php echo (isset($LANG['CONTACT_ADMIN']) ? $LANG['CONTACT_ADMIN'] : 'Please contact the site administrator to make temp/report folder writable in order to export to docx files.') ?></span>
-				</div>
-				<?php
-			} **/
 			$isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General Observations')?true:false);
 			echo '<h2>'.$labelManager->getCollName().'</h2>';
 			?>
@@ -460,27 +451,14 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 										<div style="margin:10px">
 											<input type="submit" name="submitaction" onclick="return changeFormExport(this,'labeldynamic.php','_self');" value="<?php echo (isset($LANG['EXP_CSV']) ? $LANG['EXP_CSV'] : 'Export to CSV') ?>" />
 										</div>
-										<?php
-										if($reportsWritable){
-											?>
-											<div style="margin:10px">
-												<input type="submit" name="submitaction" onclick="return changeFormExport(this,'labelsword.php','_self');" value="<?php echo (isset($LANG['EXP_DOCX']) ? $LANG['EXP_DOCX'] : 'Export to DOCX') ?>" />
-											</div>
-											<?php
-										}
-										?>
-									</div>
-										<?php
-										if($reportsWritable){
-											?>
-											<div style="clear:both;padding:10px 0px">
-												<b><?php echo (isset($LANG['NOTE']) ? $LANG['NOTE'] : 'Note:') ?></b> <?php echo (isset($LANG['NOTE_1']) ? $LANG['NOTE_1'] : 'Currently, Word (DOCX) output only generates the old static label format.') ?><br/><?php echo (isset($LANG['NOTE_2']) ? $LANG['NOTE_2'] : 'Output of variable Label Formats (pulldown options) as a Word document is not yet supported.') ?><br/>
-												<?php echo (isset($LANG['NOTE_3']) ? $LANG['NOTE_3'] : 'A possible work around is to print labels as PDF and then convert to a Word doc using Adobe tools.') ?><br/>
-												<?php echo (isset($LANG['NOTE_4']) ? $LANG['NOTE_4'] : 'Another alternatively, is to output the data as CSV and then setup a Mail Merge Word document.') ?>
-											</div>
-											<?php
-										}
-										?>
+										<div style="margin:10px">
+											<input type="submit" name="submitaction" onclick="return changeFormExport(this,'labelsword.php','_self');" value="<?php echo (isset($LANG['EXP_DOCX']) ? $LANG['EXP_DOCX'] : 'Export to DOCX') ?>" />
+										</div>
+										<div style="clear:both;padding:10px 0px">
+											<b><?php echo (isset($LANG['NOTE']) ? $LANG['NOTE'] : 'Note:') ?></b> <?php echo (isset($LANG['NOTE_1']) ? $LANG['NOTE_1'] : 'Currently, Word (DOCX) output only generates the old static label format.') ?><br/><?php echo (isset($LANG['NOTE_2']) ? $LANG['NOTE_2'] : 'Output of variable Label Formats (pulldown options) as a Word document is not yet supported.') ?><br/>
+											<?php echo (isset($LANG['NOTE_3']) ? $LANG['NOTE_3'] : 'A possible work around is to print labels as PDF and then convert to a Word doc using Adobe tools.') ?><br/>
+											<?php echo (isset($LANG['NOTE_4']) ? $LANG['NOTE_4'] : 'Another alternatively, is to output the data as CSV and then setup a Mail Merge Word document.') ?>
+										</div>
 								</fieldset>
 							</form>
 							<?php
