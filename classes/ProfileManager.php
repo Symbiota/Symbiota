@@ -1,11 +1,9 @@
 <?php
-
-use function PHPUnit\Framework\returnValue;
-
 include_once('Manager.php');
 include_once('Person.php');
 include_once('utilities/Encryption.php');
 include_once('utilities/GeneralUtil.php');
+include_once('utilities/QueryUtil.php');
 @include_once 'Mail.php';
 
 class ProfileManager extends Manager{
@@ -102,10 +100,11 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
-	private function authenticateUsingPassword($pwdStr){
+	private function authenticateUsingPasswordOld($pwdStr){
 		$status = false;
 		if($pwdStr){
 			$sql = 'SELECT uid, firstname, username FROM users WHERE (password = CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?)))))) AND (username = ? OR email = ?) ';
+
 			if($stmt = $this->conn->prepare($sql)){
 				if($stmt->bind_param('sss', $pwdStr, $this->userName, $this->userName)){
 					$stmt->execute();
@@ -118,6 +117,46 @@ class ProfileManager extends Manager{
 			else echo 'error preparing statement: '.$this->conn->error;
 		}
 		return $status;
+	}
+
+	private function authenticateUsingPassword($pwdStr){
+		try {
+			$params = [];
+			$sql = 'SELECT uid, firstname, username, password FROM users WHERE ';
+
+			if($this->uid) {
+				$sql .= '(uid = ?)';
+				$params = [ $this->uid ];
+			} else {
+				$sql .= '(username = ? OR email = ?)';
+				$params = [ $this->userName, $this->userName ];
+			}
+
+			$rs = QueryUtil::executeQuery(
+				$this->conn,
+				$sql,
+				$params
+			);
+
+			$user = $rs->fetch_object();
+
+			// If it's an old password then allow for login
+			// then rehash
+			if($user && substr($user->password, 0, 4) != '$2y$' && $this->authenticateUsingPasswordOld($pwdStr)) {
+				return $this->updatePassword($this->uid, $pwdStr);
+			} else if(!$user || !$this->checkHash($pwdStr, $user->password)) {
+				//Account missing our passwords didn't match
+				return false;
+			} else {
+				$this->uid = $user->uid;
+				$this->displayName = $user->firstname;
+				$this->userName  = $user->username;
+				return true;
+			}
+		} catch(Exception $e) {
+			//Some erroring setting
+			return false;
+		}
 	}
 
 	private function authenticateLoginAs(){
@@ -232,7 +271,7 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
-	public function changePassword ($newPwd, $oldPwd = "", $isSelf = 0) {
+	public function changePasswordOld ($newPwd, $oldPwd = "", $isSelf = 0) {
 		if($newPwd){
 			$this->resetConnection();
 			if($isSelf){
@@ -253,6 +292,19 @@ class ProfileManager extends Manager{
 			if($this->updatePassword($this->uid, $newPwd)) return true;
 		}
 		return false;
+	}
+
+	public function changePassword($newPwd, $oldPwd = "", $isSelf = 0) {
+		if(!newPwd) return false;
+
+		$this->resetConnection();
+		if($isSelf){
+			if(!$this->authenticateUsingPassword($oldPwd)) {
+				return  false;
+			}
+		}
+		if(!$this->testAgainstPrevious($newPwd)) return false;
+		if($this->updatePassword($this->uid, $newPwd)) return true;
 	}
 
 	private function testAgainstPrevious($newPassword){
@@ -323,11 +375,26 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
-	private function updatePassword($uid, $newPassword){
+	private function updatePasswordOld($uid, $newPassword){
 		$status = false;
 		$sql = 'UPDATE users SET password = CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?))))) WHERE (uid = ?)';
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('si', $newPassword, $uid);
+			$stmt->execute();
+			if(!$stmt->error) $status = true;
+			else $this->errorMessage = $stmt->error;
+			$stmt->close();
+		}
+		return $status;
+	}
+
+	private function updatePassword(int $uid, string $newPassword): bool {
+		$status = false;
+		$sql = 'UPDATE users SET password = ? WHERE (uid = ?)';
+		$hash = $this->hash($newPassword);
+
+		if(($stmt = $this->conn->prepare($sql)) && $hash){
+			$stmt->bind_param('si', $hash, $uid);
 			$stmt->execute();
 			if(!$stmt->error) $status = true;
 			else $this->errorMessage = $stmt->error;
@@ -344,6 +411,30 @@ class ProfileManager extends Manager{
 			$newPassword .= $alphabet[rand(0,count($alphabet)-1)];
 		}
 		return $newPassword;
+	}
+
+	/**
+	 * Wrapper function for password_hash using bcrypt to keep
+	 * options the same across usage
+	 *
+	 * @param string $value Value to check is stored in the hash
+	 * @param string $hash Encrypted hash that is being checked
+	 * @return bool
+	 **/
+	public function hash(string $value) {
+		return password_hash($value, PASSWORD_BCRYPT, [ 'cost' => 10 ]);
+	}
+
+	/**
+	 * Wrapper function for password_verify to keep it flexible
+	 * should the need to deprecate arrives
+	 *
+	 * @param string $value Value to check is stored in the hash
+	 * @param string $hash Encrypted hash that is being checked
+	 * @return bool
+	 **/
+	public function checkHash(string $value, string $hash): bool {
+		return password_verify($value,  $hash);
 	}
 
 	public function register($postArr, $adminRegister = false){
@@ -366,10 +457,16 @@ class ProfileManager extends Manager{
 		$initialDynamicProperties['accessibilityPref'] = $isAccessiblePreferred === "1" ? true : false;
 		$jsonDynProps = json_encode($initialDynamicProperties);
 
-		$sql = 'INSERT INTO users(username, password, email, firstName, lastName, title, institution, country, city, state, zip, guid, dynamicProperties) VALUES(?,CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?))))),?,?,?,?,?,?,?,?,?,?,?)';
+		$sql = 'INSERT INTO users(username, password, email, firstName, lastName, title, institution, country, city, state, zip, guid, dynamicProperties) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)';
+		$hash = $this->hash($pwd);
+
+		if(!$hash) {
+			$this->errorMessage = 'ERROR inserting new user: Failed to encrypt password';
+		}
+
 		$this->resetConnection();
 		if($stmt = $this->conn->prepare($sql)) {
-			$stmt->bind_param('sssssssssssss', $this->userName, $pwd, $email, $firstName, $lastName, $title, $institution, $country, $city, $state, $zip, $guid, $jsonDynProps);
+			$stmt->bind_param('sssssssssssss', $this->userName, $this->hash($pwd), $email, $firstName, $lastName, $title, $institution, $country, $city, $state, $zip, $guid, $jsonDynProps);
 			$stmt->execute();
 			if($stmt->affected_rows){
 				$this->uid = $stmt->insert_id;
