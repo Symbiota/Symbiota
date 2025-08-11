@@ -446,18 +446,20 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 									<div style="float:left;margin: 15px 50px;">
 										<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
 										<div style="margin:10px">
-											<input type="submit" name="submitaction" onclick="return changeFormExport(this,'labeldynamic.php','_blank');" value="<?php echo (isset($LANG['PRINT_BROWSER']) ? $LANG['PRINT_BROWSER'] : 'Print in Browser') ?>" <?php echo ($labelFormatArr?'':'DISABLED title="' . (isset($LANG["CONTACT_ADMIN"]) ? $LANG["CONTACT_ADMIN"] : "Browser based label printing has not been activated within the portal. Contact Portal Manager to activate this feature.") . '"'); ?> />
+											<input type="submit" name="submitaction" onclick="return changeFormExport(this,'labeldynamic.php','_blank');" value="<?= $LANG['PRINT_BROWSER'] ?>" <?php echo ($labelFormatArr?'':'DISABLED title="' . $LANG['CONTACT_ADMIN'] . '"'); ?> />
 										</div>
 										<div style="margin:10px">
-											<input type="submit" name="submitaction" onclick="return changeFormExport(this,'labeldynamic.php','_self');" value="<?php echo (isset($LANG['EXP_CSV']) ? $LANG['EXP_CSV'] : 'Export to CSV') ?>" />
+											<input type="submit" name="submitaction" onclick="return changeFormExport(this,'labeldynamic.php','_self');" value="<?= $LANG['EXP_CSV'] ?>" />
 										</div>
 										<div style="margin:10px">
-											<input type="submit" name="submitaction" onclick="return changeFormExport(this,'labelsword.php','_self');" value="<?php echo (isset($LANG['EXP_DOCX']) ? $LANG['EXP_DOCX'] : 'Export to DOCX') ?>" />
+											<input type="submit" name="submitaction" onclick="return changeFormExport(this,'labelsword.php','_self');" value="<?= $LANG['EXP_DOCX'] ?>" />
 										</div>
 										<div style="clear:both;padding:10px 0px">
-											<b><?php echo (isset($LANG['NOTE']) ? $LANG['NOTE'] : 'Note:') ?></b> <?php echo (isset($LANG['NOTE_1']) ? $LANG['NOTE_1'] : 'Currently, Word (DOCX) output only generates the old static label format.') ?><br/><?php echo (isset($LANG['NOTE_2']) ? $LANG['NOTE_2'] : 'Output of variable Label Formats (pulldown options) as a Word document is not yet supported.') ?><br/>
-											<?php echo (isset($LANG['NOTE_3']) ? $LANG['NOTE_3'] : 'A possible work around is to print labels as PDF and then convert to a Word doc using Adobe tools.') ?><br/>
-											<?php echo (isset($LANG['NOTE_4']) ? $LANG['NOTE_4'] : 'Another alternatively, is to output the data as CSV and then setup a Mail Merge Word document.') ?>
+											<b><?= $LANG['NOTE'] ?></b>
+											<?= $LANG['NOTE_1'] ?><br/>
+											<?= $LANG['NOTE_2'] ?><br/>
+											<?= $LANG['NOTE_3'] ?><br/>
+											<?= $LANG['NOTE_4'] ?>
 										</div>
 								</fieldset>
 							</form>
@@ -466,7 +468,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 						else{
 							?>
 							<div style="font-weight:bold;margin:20px;font-weight:150%;">
-								<?php echo (isset($LANG['NO_DATA']) ? $LANG['NO_DATA'] : 'Query returned no data!') ?>
+								<?= $LANG['NO_DATA'] ?>
 							</div>
 							<?php
 						}
@@ -479,8 +481,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 		else{
 			?>
 			<div style="font-weight:bold;margin:20px;font-weight:150%;">
-				<?php echo (isset($LANG['NO_PERM']) ? $LANG['NO_PERM'] : 'You do not have permissions to print labels for this collection.
-				Please contact the site administrator to obtain the necessary permissions.') ?>
+				<?= $LANG['NO_PERM'] ?>
 			</div>
 			<?php
 		}
