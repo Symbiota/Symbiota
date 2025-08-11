@@ -194,28 +194,55 @@ class ProfileManager extends Manager{
 
 	public function getPerson(){
 		$sqlStr = 'SELECT uid, firstname, lastname, title, institution, department, address, city, state, zip, country, phone, email, '.
-			'url, guid, notes, username, lastlogindate FROM users WHERE (uid = '.$this->uid.')';
+			'url, guid, notes, username, lastlogindate FROM users WHERE (uid = ?)';
 		$person = new Person();
-		$rs = $this->conn->query($sqlStr);
-		if($r = $rs->fetch_object()){
-			$person->setUid($r->uid);
-			$person->setUserName($r->username);
-			$person->setLastLoginDate($r->lastlogindate);
-			$person->setFirstName($r->firstname);
-			$person->setLastName($r->lastname);
-			$person->setTitle($r->title);
-			$person->setInstitution($r->institution);
-			$person->setDepartment($r->department);
-			$person->setCity($r->city);
-			$person->setState($r->state);
-			$person->setZip($r->zip);
-			$person->setCountry($r->country);
-			$person->setPhone($r->phone);
-			$person->setEmail($r->email);
-			$person->setGUID($r->guid);
-			$this->setUserTaxonomy($person);
+		if($stmt = $this->conn->prepare($sqlStr)){
+			if($stmt->bind_param('i', $this->uid)){
+				$stmt->execute();
+				$stmt->store_result();
+				$stmt->bind_result(
+					$r_uid,
+					$r_firstname,
+					$r_lastname,
+					$r_title,
+					$r_institution,
+					$r_department,
+					$r_address,
+					$r_city,
+					$r_state,
+					$r_zip,
+					$r_country,
+					$r_phone,
+					$r_email,
+					$r_url,
+					$r_guid,
+					$r_notes,
+					$r_username,
+					$r_lastlogindate
+				);
+				if ($stmt->fetch()) {
+                $person->setUid($r_uid);
+                $person->setUserName($r_username);
+                $person->setLastLoginDate($r_lastlogindate);
+                $person->setFirstName($r_firstname);
+                $person->setLastName($r_lastname);
+                $person->setTitle($r_title);
+                $person->setInstitution($r_institution);
+                $person->setDepartment($r_department);
+                $person->setCity($r_city);
+                $person->setState($r_state);
+                $person->setZip($r_zip);
+                $person->setCountry($r_country);
+                $person->setPhone($r_phone);
+                $person->setEmail($r_email);
+                $person->setGUID($r_guid);
+                $this->setUserTaxonomy($person);
+            }
+
+			}
 		}
-		$rs->free();
+		$stmt->free_result();
+		$stmt->close();
 		return $person;
 	}
 
@@ -494,13 +521,20 @@ class ProfileManager extends Manager{
 		}
 		if(!$this->validateEmailAddress($emailAddr)) return false;
 		$loginStr = '';
-		$sql = 'SELECT uid, username, concat_ws("; ", lastname, firstname) FROM users WHERE (email = "'.$emailAddr.'")';
-		$rs = $this->conn->query($sql);
-		while($row = $rs->fetch_object()){
-			if($loginStr) $loginStr .= '; ';
-			$loginStr .= $row->username;
+		$sql = 'SELECT uid, username, concat_ws("; ", lastname, firstname) FROM users WHERE (email = ?)';
+		if($stmt = $this->conn->prepare($sql)){
+			if($stmt->bind_param('s', $emailAddr)){
+				if ($stmt->execute()) {
+					 $stmt->bind_result($r_uid, $r_username, $r_fullname);
+					while ($stmt->fetch()) {
+                	    if ($loginStr) $loginStr .= '; ';
+                    	$loginStr .= $r_username;
+                	}
+				}
+			}
 		}
-		$rs->free();
+		$stmt->free_result();
+		$stmt->close();
 		if($loginStr){
 			$subject = $GLOBALS['DEFAULT_TITLE'].' Login Name';
 			$serverPath = GeneralUtil::getDomain().$GLOBALS['CLIENT_ROOT'];
