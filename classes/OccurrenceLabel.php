@@ -885,7 +885,7 @@ class OccurrenceLabel {
 		return $newStr;
 	}
 
-	public static function processSciNameLabelForWord($scinameStr, $queryKey, $queryVal, &$textrun, &$charCount, $parentAuthor, $shouldAddNextElement, &$shouldStop){
+	public static function processSciNameLabelForWord($scinameStr, $queryKey, $queryVal, &$textrun, $parentAuthor, $shouldAddNextElement, &$shouldStop){
 		if(!$shouldStop){
 			if(strpos($scinameStr,$queryKey) !== false){
 				$shouldStop = true;
@@ -893,20 +893,15 @@ class OccurrenceLabel {
 				$scinameArr = explode(' ' . $trimmedQueryKey . ' ', $scinameStr);
 				$currentTxt = htmlspecialchars($scinameArr[0]) . ' ';
 				$textrun->addText($currentTxt, 'scientificnameFont');
-				$charCount += strlen($currentTxt);
 				if($parentAuthor){
 					$currentTxt = htmlspecialchars($parentAuthor) . ' ';
 					$textrun->addText($currentTxt, 'scientificnameauthFont');
-					$charCount += strlen($currentTxt);
 				} 
 				$currentTxt = $queryVal . ' ';
 				$textrun->addText($currentTxt, 'scientificnameinterFont');
-				$charCount += strlen($currentTxt);
-	
 				if($shouldAddNextElement){
 					$currentTxt = htmlspecialchars($scinameArr[1]) . ' ';
 					$textrun->addText($currentTxt, 'scientificnameFont');
-					$charCount += strlen($currentTxt);	
 				}
 			}
 			

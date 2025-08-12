@@ -109,11 +109,8 @@ foreach($labelArr as $occid => $occArr){
 
 	$dupCnt = $_POST['q-'.$occid];
 	for($i = 0;$i < $dupCnt;$i++){
-        $charCount = 0; // the character count logic was tracking characters in the species name so that an appropriate amount of spacing could be placed between that and family name. Ultimately, a table with different cells and text alignment justifications per cell was used instead of spacing, but I'm keeping this logic in for now in case it's useful to have
-		$averageTwipsPerCharacter = 400; //240; // similarly, twips per character is way to establish the relationship between physical space on the label and text characters. It's an approximation and currently a bad one at that.
 		$currentTxt = htmlspecialchars(' ');
 		$section->addText($currentTxt, 'firstLine');
-		$charCount += strlen($currentTxt);
 
 		$outer = $section->addTable('labelBox');
     	$outer->addRow();
@@ -126,7 +123,6 @@ foreach($labelArr as $occid => $occArr){
 			$textrun = $cell->addTextRun('header');
 			$currentTxt = htmlspecialchars($headerStr);
 			$textrun->addText($currentTxt, 'headerfooterFont');
-			$charCount += strlen($currentTxt);
 		}
         $table->addRow();
         $leftCell = $table->addCell(0.55 * $cellLength, $cellStyle);
@@ -136,7 +132,6 @@ foreach($labelArr as $occid => $occArr){
 		if($occArr['identificationqualifier']){
 			$currentTxt = htmlspecialchars($occArr['identificationqualifier']) . ' ';
 			$textrun->addText($currentTxt, 'scientificnameauthFont');
-			$charCount += strlen($currentTxt);
 		} 
 		$scinameStr = $occArr['sciname'];
 		$parentAuthor = (array_key_exists('parentauthor',$occArr)?' '.$occArr['parentauthor']:'');
@@ -144,21 +139,15 @@ foreach($labelArr as $occid => $occArr){
 		$shouldStop = false;
 		$shouldAddNextElList = ['subsp.', 'ssp.', 'var.', 'variety', 'Variety', 'v.', 'f.', 'cf.', 'aff.'];
 		foreach($queryArr as $queryKey => $queryVal){
-			OccurrenceLabel::processSciNameLabelForWord($scinameStr, $queryKey, $queryVal, $textrun, $charCount, $parentAuthor, in_array($queryKey, $shouldAddNextElList), $shouldStop);
+			OccurrenceLabel::processSciNameLabelForWord($scinameStr, $queryKey, $queryVal, $textrun, $parentAuthor, in_array($queryKey, $shouldAddNextElList), $shouldStop);
 		}
 		if(!$shouldStop){
 			$currentTxt = htmlspecialchars($scinameStr) . ' ';
 			$textrun->addText($currentTxt, 'scientificnameFont');
-			$charCount += strlen($currentTxt);
 		}
 		$scientificnameauthorshipStr = $occArr['scientificnameauthorship'];
 		$familyRun = $rightCell->addTextRun('noSpacing');
 		if($occArr['family']){
-			$scientificnameauthorshipStrChars = $scientificnameauthorshipStr . $occArr['family'];
-			$totalCharactersInTopLine = $charCount + strlen($scientificnameauthorshipStrChars);
-            $remainingWhiteSpace = floor(($cellLength - ($totalCharactersInTopLine * $averageTwipsPerCharacter))/ $averageTwipsPerCharacter);
-            $asManySpacesAsNecessary = str_repeat(' ', max($remainingWhiteSpace - 1, 1));
-			
 			$currentTxt = strtoupper(htmlspecialchars($occArr['family']));
 			$familyRun->addText($currentTxt, 'scientificnameauthFont');
 		}else{
