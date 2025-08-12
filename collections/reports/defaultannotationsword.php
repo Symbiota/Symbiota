@@ -15,20 +15,6 @@ $detIdArr = $_POST['detid'];
 $action = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
 $columnsPerPage = array_key_exists('columncount',$_POST)?$_POST['columncount']:3;
 
-$sectionStyle = array();
-if($columnsPerPage==1){
-	$lineWidth = 740;
-	$sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>360,'marginRight'=>360,'marginTop'=>360,'marginBottom'=>360,'headerHeight'=>0,'footerHeight'=>0);
-}
-if($columnsPerPage==2){
-	$lineWidth = 350;
-	$sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>360,'marginRight'=>360,'marginTop'=>360,'marginBottom'=>360,'headerHeight'=>0,'footerHeight'=>0,'colsNum'=>2,'colsSpace'=>180,'breakType'=>'continuous');
-}
-if($columnsPerPage==3){
-	$lineWidth = 220;
-	$sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>360,'marginRight'=>360,'marginTop'=>360,'marginBottom'=>360,'headerHeight'=>0,'footerHeight'=>0,'colsNum'=>3,'colsSpace'=>180,'breakType'=>'continuous');
-}
-
 $labelManager->setCollid($collid);
 
 $isEditor = 0;
@@ -57,31 +43,38 @@ $phpWord->addParagraphStyle('footer', array('align'=>'center','lineHeight'=>1.0,
 $phpWord->addFontStyle('headerfooterFont', array('bold'=>true,'size'=>9,'name'=>'Arial'));
 $phpWord->addParagraphStyle('other', array('align'=>'left','lineHeight'=>1.0,'spaceBefore'=>30,'spaceAfter'=>0,'keepNext'=>true,'keepLines'=>true));
 $phpWord->addParagraphStyle('scientificname', array('align'=>'left','lineHeight'=>1.0,'spaceAfter'=>0,'keepNext'=>true,'keepLines'=>true));
+$phpWord->addParagraphStyle('noSpacing', [
+    'spaceBefore' => 0,
+    'spaceAfter'  => 0,
+    'lineHeight'  => 1.0,
+    'keepNext'    => true,
+    'keepLines'   => true,
+	'alignment' => 'right'
+]);
 $phpWord->addFontStyle('scientificnameFont', array('bold'=>true,'italic'=>true,'size'=>10,'name'=>'Arial'));
 $phpWord->addFontStyle('scientificnameinterFont', array('bold'=>true,'size'=>10,'name'=>'Arial'));
 $phpWord->addFontStyle('scientificnameauthFont', array('size'=>10,'name'=>'Arial'));
 $phpWord->addFontStyle('familyFont', array('size'=>8,'name'=>'Arial'));
 $phpWord->addFontStyle('identifiedFont', array('size'=>8,'name'=>'Arial'));
 $marginSize = 80;
-if(array_key_exists('marginsize',$_POST) && $_POST['marginsize']) $marginSize = 16*$_POST['marginsize'];
+if(array_key_exists('marginsize',$_POST) && $_POST['marginsize']) $marginSize = 16 * $_POST['marginsize'];
 $borderWidth = 2;
-$outerStyle = [
-  'borderColor' => '000000',
-  'borderSize'  => $borderWidth,
-  'borderInsideHSize' => 0,
-  'borderInsideVSize' => 0,
-];
-$section = $phpWord->addSection($sectionStyle);
-$phpWord->addTableStyle('labelBox', $outerStyle);
+$cellLength = 20000;
 
-$innerStyle = [
-  'cellMargin'=>$marginSize,
-  'borderSize' => 0,
-  'borderColor' => 'ffffff',
-  'borderInsideHSize' => 0,
-  'borderInsideVSize' => 0,
-];
-$phpWord->addTableStyle('labelInner', $innerStyle);
+$sectionStyle = array();
+if($columnsPerPage==1){
+	$lineWidth = 740;
+	$sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>360,'marginRight'=>360,'marginTop'=>360,'marginBottom'=>360,'headerHeight'=>0,'footerHeight'=>0);
+}
+if($columnsPerPage==2){
+	$lineWidth = 350;
+	$sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>360,'marginRight'=>360,'marginTop'=>360,'marginBottom'=>360,'headerHeight'=>0,'footerHeight'=>0,'colsNum'=>2,'colsSpace'=>180,'breakType'=>'continuous');
+}
+if($columnsPerPage==3){
+	$lineWidth = 220;
+	$sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>360,'marginRight'=>360,'marginTop'=>360,'marginBottom'=>360,'headerHeight'=>0,'footerHeight'=>0,'colsNum'=>3,'colsSpace'=>180,'breakType'=>'continuous');
+}
+$section = $phpWord->addSection($sectionStyle);
 
 if(array_key_exists('borderwidth',$_POST)) $borderWidth = $_POST['borderwidth'];
 if($borderWidth) $borderWidth++;
@@ -89,10 +82,43 @@ if($borderWidth){
 	$tableStyle['borderColor'] = '000000';
 	$tableStyle['borderSize'] = $borderWidth;
 }
+
+$outerStyle = [
+  'borderColor' => '000000',
+  'borderSize'  => $borderWidth,
+  'borderInsideHSize' => 0,
+  'borderInsideVSize' => 0,
+];
+// $phpWord->addTableStyle('labelBox', $outerStyle);
+
+// $outerStyle = [
+	//   'borderColor' => 'FF0000',
+	//   'borderSize'  => $borderWidth,
+	//   'borderInsideHSize' => 3,
+	//   'borderInsideVSize' => 3,
+	// ];
+$phpWord->addTableStyle('labelBox', $outerStyle);
+	
+$innerStyle = [
+	'cellMargin'=>$marginSize,
+	'borderSize' => 0,
+	'borderColor' => 'ffffff',
+	'borderInsideHSize' => 0,
+	'borderInsideVSize' => 0,
+];
+// $innerStyle = [
+//   'cellMargin'=>$marginSize,
+//   'borderSize' => 0,
+//   'borderColor' => '000000',
+//   'borderInsideHSize' => 3,
+//   'borderInsideVSize' => 3,
+// ];
+$phpWord->addTableStyle('labelInner', $innerStyle);
+
+
+
 $colRowStyle = array('cantSplit'=>true);
-$cellStyle = array('valign'=>'top',
-	'halign' => 'left')
-	;
+$cellStyle = array('valign'=>'top','halign' => 'left');
 
 foreach($labelArr as $occid => $occArr){
 	$headerStr = trim($lHeader);
@@ -105,29 +131,35 @@ foreach($labelArr as $occid => $occArr){
 		$section->addText($currentTxt, 'firstLine');
 		$charCount += strlen($currentTxt);
 
-		$outer = $section->addTable('labelBox');       // <-- uses $section
+		$outer = $section->addTable('labelBox');
     	$outer->addRow();
-        $cellLength = 20000;
+
     	$boxCell = $outer->addCell($cellLength);
 		// $table->addRow();
 		// $table->addRow(null, ['tblHeader' => false, 'exactHeight' => false]);
 		$table = $boxCell->addTable('labelInner');
-		$table->addRow();
 		$averageTwipsPerCharacter = 400; //240;
-		$leftCell = $table->addCell(0.67 * $cellLength, $cellStyle);
-		$rightCell = $table->addCell(0.33 * $cellLength, $cellStyle);
+		// $leftCell = $table->addCell(0.67 * $cellLength, $cellStyle);
+		// $rightCell = $table->addCell(0.33 * $cellLength, $cellStyle);
 		// $rightCell = $table->addCell(4000, array_merge($cellStyle, ['noWrap' => true]));
-		// $cell = $table->addCell($cellLength,$cellStyle);
 		if($headerStr){
-			// $textrun = $cell->addTextRun('header');
-			$textrun = $leftCell->addTextRun('header');
+            $table->addRow();
+            $cell = $table->addCell($cellLength,$cellStyle);
+			$textrun = $cell->addTextRun('header');
+			// $textrun = $leftCell->addTextRun('header');
+            // $textrunRt = $rightCell->addTextRun('header');
 
 			$currentTxt = htmlspecialchars($headerStr);
 			$textrun->addText($currentTxt, 'headerfooterFont');
 			$charCount += strlen($currentTxt);
 		}
+        $table->addRow();
 		// $textrun = $cell->addTextRun('scientificname');
+        $leftCell = $table->addCell(0.55 * $cellLength, $cellStyle);
+		$rightCell = $table->addCell(0.45 * $cellLength, $cellStyle);
+
 		$textrun = $leftCell->addTextRun('scientificname');
+        // $textrunRt = $rightCell->addTextRun('scientificname');
 		if($occArr['identificationqualifier']){
 			$currentTxt = htmlspecialchars($occArr['identificationqualifier']) . ' ';
 			$textrun->addText($currentTxt, 'scientificnameauthFont');
@@ -147,7 +179,8 @@ foreach($labelArr as $occid => $occArr){
 			$charCount += strlen($currentTxt);
 		}
 		$scientificnameauthorshipStr = $occArr['scientificnameauthorship'];
-		$familyRun = $rightCell->addTextRun(['alignment' => 'right']);
+		$familyRun = $rightCell->addTextRun('noSpacing');
+        // $familyRunLft = $leftCell->addTextRun(['alignment' => 'left']);
 		if($occArr['family']){
 			$scientificnameauthorshipStrChars = $scientificnameauthorshipStr . $occArr['family'];
 			$totalCharactersInTopLine = $charCount + strlen($scientificnameauthorshipStrChars);
@@ -170,12 +203,14 @@ foreach($labelArr as $occid => $occArr){
 		// $charCount += strlen($currentTxt);
 		if($occArr['identifiedby'] || $occArr['dateidentified']){
 			// $textrun = $cell->addTextRun('other');
-			$textrun = $leftCell->addTextRun('other');
+			// $textrun = $leftCell->addTextRun('other');
 			if($occArr['identifiedby']){
 				$identByStr = $occArr['identifiedby'];
 				if($occArr['dateidentified']){
-					$textrun2 = $rightCell->addTextRun('other');
+                    // $textrunLft = $leftCell->addTextRun('other');
+					$textrun2 = $rightCell->addTextRun(['alignment' => 'right']);
 					$textrun2->addText($occArr['dateidentified'], 'identifiedFont');
+					// $textrun->addText($occArr['dateidentified'], 'identifiedFont');
 					// $identByStr .= '      '.$occArr['dateidentified'];
 				}
 				$currentTxt = 'Det: ' . htmlspecialchars($identByStr);
@@ -186,6 +221,7 @@ foreach($labelArr as $occid => $occArr){
 		if(array_key_exists('printcatnum',$_POST) && $_POST['printcatnum'] && $occArr['catalognumber']){
 			// $textrun = $cell->addTextRun('other');
 			$textrun = $leftCell->addTextRun('other');
+            $textrunRt = $rightCell->addTextRun('other');
 			$currentTxt = 'Catalog #: ' . htmlspecialchars($occArr['catalognumber']).' ';
 			$textrun->addText($currentTxt, 'identifiedFont');
 			// $charCount += strlen($currentTxt);
@@ -193,6 +229,7 @@ foreach($labelArr as $occid => $occArr){
 		if($occArr['identificationremarks']){
 			// $textrun = $cell->addTextRun('other');
 			$textrun = $leftCell->addTextRun('other');
+            $textrunRt = $rightCell->addTextRun('other');
 			$currentTxt = htmlspecialchars($occArr['identificationremarks']).' ';
 			$textrun->addText($currentTxt, 'identifiedFont');
 			// $charCount += strlen($currentTxt);
@@ -200,6 +237,7 @@ foreach($labelArr as $occid => $occArr){
 		if($occArr['identificationreferences']){
 			// $textrun = $cell->addTextRun('other');
 			$textrun = $leftCell->addTextRun('other');
+            $textrunRt = $rightCell->addTextRun('other');
 			$currentTxt = htmlspecialchars($occArr['identificationreferences']).' ';
 			$textrun->addText($currentTxt, 'identifiedFont');
 			// $charCount += strlen($currentTxt);
