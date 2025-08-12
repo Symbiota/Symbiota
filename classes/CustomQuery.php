@@ -1,4 +1,5 @@
 <?php
+include_once('utilities/Language.php');
 
 class CustomQuery {
 	const MAX_CUSTOM_INPUTS = 8;
