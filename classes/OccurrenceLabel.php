@@ -503,6 +503,7 @@ class OccurrenceLabel {
 			}
 		}
 		if($jsonFileContents){
+			$jsonFileContents = preg_replace('/\s\s+/', ' ',$jsonFileContents);
 			$this->saveGlobalJson($jsonFileContents, true);
 			return $this->fetchGlobalLabelJson();
 		}
@@ -673,7 +674,7 @@ class OccurrenceLabel {
 	private function saveGlobalJson($dataObj, $isAlreadyDecoded = false) {
 		$status = false;
 
-		$jsonDynProps = $isAlreadyDecoded ? $dataObj : json_encode($dataObj, JSON_PRETTY_PRINT | JSON_HEX_APOS);
+		$jsonDynProps = $isAlreadyDecoded ? $dataObj : json_encode($dataObj, JSON_HEX_APOS);
 		$attributeName = 'LabelFormatJson';
 		$checkSql = "SELECT COUNT(*) FROM adminconfig WHERE attributeName = ?";
 		if ($checkStmt = $this->conn->prepare($checkSql)) {
