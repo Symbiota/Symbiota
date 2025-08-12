@@ -5,6 +5,8 @@ include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT . '/classes/Database.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCleaner.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
+include_once($SERVER_ROOT . '/classes/Sanitize.php');
+include_once($SERVER_ROOT . '/classes/CustomQuery.php');
 
 $collid = array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid'])? intval($_REQUEST['collid']):0;
 $start = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
@@ -213,19 +215,18 @@ $ui_option = 2;
 
 			<h1>Duplicate Data Harvester</h1>
 
-			<form>
-				<div style="width:100%; height:150px; background-color: #ccc; margin-bottom: 1rem;">
-					<div style="display:flex; justify-content:center; align-items: center;  height: 100%;">
-						Place Holder Form
-					</div>
+			<form method="POST" style="margin-bottom: 1rem;">
+
+				<div style="margin-bottom: 1rem;">
+					<?php CustomQuery::renderCustomInputs() ?>
 				</div>
+				<button class="button">Submit</button>
 			</form>
 
-			<?php include 'includes/queryform.php' ?>
 
 			<?php foreach($errors as $duplicateId => $error): ?>
 			<div style="margin-bottom:0.5rem">
-			<?= 'ERROR: ' . $error ?>
+<?= 'ERROR: ' . $error ?>
 			</div>
 			<?php endforeach ?>
 
