@@ -26,10 +26,13 @@ class QueryUtil {
 						$bind_params_str .= 'i';
 					}
 				}
-				$stmt = $conn->prepare($sql);
-				$stmt->bind_param($bind_params_str,...$params);
-				$stmt->execute();
-				return $stmt->get_result();
+				if($stmt = $conn->prepare($sql)) {
+					$stmt->bind_param($bind_params_str, ...$params);
+					$stmt->execute();
+					return $stmt->get_result();
+				} else {
+					return false;
+				}
 			} else {
 				return mysqli_query($conn, $sql);
 			}
