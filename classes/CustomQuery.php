@@ -3,16 +3,16 @@
 class CustomQuery {
 	const MAX_CUSTOM_INPUTS = 8;
 
-	const TERMS_OPTIONS = [
-		'EQUALS',
-		'NOT_EQUALS',
-		'STARTS_WITH',
-		'LIKE',
-		'NOT_LIKE',
-		'GREATER_THAN',
-		'LESS_THAN',
-		'IS_NULL',
-		'NOT_NULL'
+	const OPERATOR_OPTIONS = [
+		'EQUALS' => '=',
+		'NOT_EQUALS' => '!=',
+		'STARTS_WITH' => 'LIKE',
+		'LIKE' => 'LIKE',
+		'NOT_LIKE' => 'NOT LIKE',
+		'GREATER_THAN' => '<',
+		'LESS_THAN' => '>',
+		'IS_NULL' => 'IS NULL',
+		'NOT_NULL' => 'IS NOT NULL'
 	];
 
 	static function getCustomValues(array $qryArr, array $customFieldArr = []): array {
@@ -33,7 +33,7 @@ class CustomQuery {
 			],
 			'q_customtype' => [
 				'field' => 'term',
-				'predicate' => fn($v) => in_array($v, self::TERMS_OPTIONS)
+				'predicate' => fn($v) => array_key_exists($v, self::OPERATOR_OPTIONS)
 			],
 			'q_customvalue' => [
 				'field' => 'value',
@@ -60,7 +60,7 @@ class CustomQuery {
 		global $SERVER_ROOT;
 
 		$MAX_CUSTOM_INPUTS = self::MAX_CUSTOM_INPUTS;
-		$CUSTOM_TERMS = self::TERMS_OPTIONS;
+		$CUSTOM_TERMS = array_keys(self::OPERATOR_OPTIONS);
 		$CUSTOM_VALUES = self::getCustomValues(
 			$_REQUEST,
 			[]
