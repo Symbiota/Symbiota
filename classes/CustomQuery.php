@@ -65,6 +65,43 @@ class CustomQuery {
 		return $customValues;
 	}
 
+	static function buildCustomWhere(array $customValues, array $customFieldArr): array {
+		$sql = '';
+		$binds = [];
+		foreach($customValues as $customValue) {
+			$field = $customFieldArr[$customValue['field']] ?? null;
+			$andOr = $customValue['andor'] ?? null;
+			$compareOperator = self::OPERATOR_OPTIONS[$customValue['term']] ?? null;
+			$openParen = $customValue['openparen'] ?? '';
+			$closeParen = $customValue['closeparen'] ?? '';
+
+			if($field && $compareOperator) {
+				if($sql) {
+					if($andOr === 'AND') {
+						$sql .= 'AND ';
+					} else if($andOr) {
+						$sql .= 'OR ';
+					}
+				}
+
+				$sql .= $openParen .
+					$field . ' ' . $compareOperator . ' ?' .
+				$closeParen . ' ';
+
+				if($customValue['term'] === 'STARTS_WITH') {
+					$binds[] = $customValue['value'] . '%';
+				} else if($customValue['term'] === 'NOT LIKE' || $customValue['term'] === 'LIKE') {
+					$binds[] = '%' . $customValue['value'] . '%';
+				}
+			}
+		}
+
+		return [
+			'sql' => $sql,
+			'bindings' => $binds
+		];
+	}
+
 
 	static function renderCustomInputs(): void {
 		global $SERVER_ROOT;
