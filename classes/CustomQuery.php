@@ -45,10 +45,20 @@ class CustomQuery {
 		];
 
 		for($i = 1; $i <= self::MAX_CUSTOM_INPUTS; $i++) {
+			$customValue = [];
+
 			foreach($map as $key => $mapping) {
 				if(($v = $qryArr[$key . $i] ?? null) && (!isset($mapping['predicate']) || $mapping['predicate']($v))) {
-					$customValues[$i][$mapping['field']] = $v;
+					$customValue[$mapping['field']] = $v;
 				}
+			}
+
+			$field = $customValue['field'] ?? null;
+			$term = $customValue['term'] ?? null;
+			$value = $customValue['value'] ?? null;
+
+			if($field && $term && ($value || in_array($term, ['IS_NULL', 'NOT_NULL']))) {
+				$customValues[$i] = $customValue;
 			}
 		}
 
