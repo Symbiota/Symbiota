@@ -930,15 +930,23 @@ class Media {
 			$height = intval(($new_width / $width) * $height);
 			$width = $new_width;
 		}
+		$image = null;
 
-		$image = match($mime_type) {
-			'image/jpeg' => imagecreatefromjpeg($src_path),
-			'image/png' => imagecreatefrompng($src_path),
-			'image/gif' => imagecreatefromgif($src_path),
-			default => throw new Exception(
-				'Mime Type: ' . $mime_type . ' not supported for creation'
-			)
-		};
+		switch($mime_type) {
+			case 'image/jpeg':
+				$image = imagecreatefromjpeg($src_path);
+				break;
+			case 'image/png':
+				$image = imagecreatefrompng($src_path);
+				break;
+			case 'image/gif':
+				$image = imagecreatefromgif($src_path);
+				break;
+			default:
+				throw new Exception(
+					'Mime Type: ' . $mime_type . ' not supported for creation'
+				);
+		}
 
 		$new_image = imagecreatetruecolor($width, $height);
 
