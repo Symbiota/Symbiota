@@ -14,29 +14,29 @@ $updated = [];
 $errors = [];
 
 $fields = [
-	'o.occid', 
+	'dl.occid',
 	'o.catalognumber', 
-	'c.institutionCode',
-	'c.collectionCode',
+	'"" as institutionCode',
+	'"" as collectionCode',
 	'dl.duplicateid', 
 	'o.collid',
-	'country',
-	'stateProvince',
-	'county',
+	'o.country',
+	'o.stateProvince',
+	'o.county',
 ];
 
 $harvestFields = [
-	'decimalLatitude',
-	'decimalLongitude',
-	'geodeticDatum',
-	'footprintWKT',
-	'coordinateUncertaintyInMeters',
-	'georeferencedBy',
-	'georeferenceRemarks',
-	'georeferenceSources',
-	'georeferenceProtocol',
+	'o.decimalLatitude',
+	'o.decimalLongitude',
+	'o.geodeticDatum',
+	'o.footprintWKT',
+	'o.coordinateUncertaintyInMeters',
+	'o.georeferencedBy',
+	'o.georeferenceRemarks',
+	'o.georeferenceSources',
+	'o.georeferenceProtocol',
 	//'georeferenceDate',
-	'georeferenceVerificationStatus',
+	'o.georeferenceVerificationStatus',
 ];
 
 // Don't show in ui table
@@ -56,19 +56,20 @@ foreach($_POST as $targetOccId => $sourceOccId) {
 	}
 }
 
-
-$sql = 'SELECT ' . implode(',', $fields) . ',' . implode(',', $harvestFields) . ' from omoccurduplicatelink dl
-	join omoccurrences o on o.occid = dl.occid
-	join omcollections  c on c.collid = o.collid
-	where dl.duplicateid in (
-		SELECT duplicateid from omoccurduplicatelink dl 
-		join omoccurrences o on o.occid = dl.occid 
-		where collid = ?
-	)';
+$sql = 'SELECT ' . implode(',', $fields) . ',' . implode(',', $harvestFields) . ' from omoccurduplicatelink dlc
+	join omoccurrences o2 on o2.occid = dlc.occid and o2.collid = ?
+	join omoccurduplicatelink dl on dl.duplicateid = dlc.duplicateid
+	join omoccurrences o on o.occid = dl.occid';
 
 $conn = Database::connect('readonly');
 $rs = QueryUtil::executeQuery($conn, $sql, [$collid]);
 $duplicates = $rs->fetch_all(MYSQLI_ASSOC);
+
+$rs = QueryUtil::executeQuery($conn, 'SELECT collid, collectionCode, institutionCode from omcollections', []);
+$collections = [];
+foreach($rs->fetch_all(MYSQLI_ASSOC) as $row) {
+	$collections[$row['collid']] = $row;
+}
 
 $targets  = [];
 $options = [];
@@ -77,6 +78,10 @@ foreach ($duplicates as $dupe) {
 	if(!isset($options[$dupe['duplicateid']])) {
 		$options[$dupe['duplicateid']] = [];
 	}
+
+	$collection = $collections[$dupe['collid']];
+	$dupe['institutionCode'] = $collection['institutionCode'];
+	$dupe['collectionCode'] = $collection['collectionCode'];
 
 	if($dupe['collid'] === $collid) {
 		$targets[$dupe['duplicateid']] = $dupe;
