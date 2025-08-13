@@ -1142,7 +1142,7 @@ class Media {
 	 * @param Mysqli $conn
 	 * @return array<string>
 	 */
-	public static function getMediaTags(int|array $media_id, mysqli $conn = null): array {
+	public static function getMediaTags($media_id, mysqli $conn = null): array {
 		$sql = 'SELECT t.mediaID, k.tagkey, k.shortlabel, k.description_en FROM imagetag t
 		INNER JOIN imagetagkey k ON t.keyvalue = k.tagkey
 		WHERE t.mediaID ';
