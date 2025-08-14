@@ -428,11 +428,12 @@ if($isEditor){
 									<a href="../reports/annotationmanager.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank"><img src="../../images/list.png" style="width:1.2em" title="<?php echo htmlspecialchars($LANG['DISPLAY_QUEUE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" /></a>
 								</div>
 								<div style='margin:15px;'>
-									<div style="float:left;">
+									<div>
 										<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 										<input name="tabtarget" type="hidden" value="0" />
 										<button type="submit" name="formsubmit" value="Add New Determinations"><?php echo $LANG['ADD_DETERS']; ?></button>
 									</div>
+									<p><?php include('includes/requiredFieldInstruction.php')?></p>
 								</div>
 							</fieldset>
 						</div>
