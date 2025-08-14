@@ -426,7 +426,7 @@ else{
 						<div>
 							<table class="header" align="center">
 								<tr>
-									<td><?php if(isset($addressArr['institutionname'])) echo $addressArr['institutionname']; ?> (<?php if(isset($addressArr['institutioncode'])) echo $addressArr['institutioncode']; ?>)</td>
+									<td><?php if(isset($addressArr['institutionname'])) echo $addressArr['institutionname']; ?> <?php if(isset($addressArr['institutioncode'])) echo '(' . $addressArr['institutioncode'] . ')'; ?></td>
 								</tr>
 								<?php if(isset($addressArr['institutionname2'])){ ?>
 									<tr>
@@ -472,8 +472,9 @@ else{
 									<td>
 										<div class="toaddress">
 											<?php
-											echo $invoiceArr['contact'].'<br />';
-											echo $invoiceArr['institutionname'].' ('.$invoiceArr['institutioncode'].')<br />';
+											echo $invoiceArr['contact'] . '<br />';
+											$institutionCodeStr = !empty($invoiceArr['institutioncode']) ? ' ('.$invoiceArr['institutioncode'] . ')' : '';
+											echo $invoiceArr['institutionname'] . $institutionCodeStr . '<br />';
 											if($invoiceArr['institutionname2']) echo $invoiceArr['institutionname2'].'<br />';
 											if($invoiceArr['address1']) echo $invoiceArr['address1'].'<br />';
 											if($invoiceArr['address2']) echo $invoiceArr['address2'].'<br />';
