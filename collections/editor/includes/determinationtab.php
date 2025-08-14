@@ -206,7 +206,7 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 							<input type="hidden" name="catalognumber" value="<?php echo $catalognumber; ?>" />
 							<input type="hidden" name="institutioncode" value="<?php echo $institutioncode; ?>" />
 							<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
-							<div style="float:left;">
+							<div>
 								<button type="submit" name="submitaction" class="button" value="submitDetermination" ><?php echo $LANG['SUBMIT_DET']; ?></button>
 							</div>
 						</div>
