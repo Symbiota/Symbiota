@@ -49,7 +49,6 @@ class Media {
 	private static $mediaRootUrl;
 
 	private static $errors = [];
-	private static $storage_driver = LocalStorage::class;
 
 	private const DEFAULT_THUMBNAIL_WIDTH_PX = 200;
 	private const DEFAULT_WEB_WIDTH_PX = 1600;
@@ -89,10 +88,6 @@ class Media {
 		't.author',
 		't.rankid'
 	];
-
-	public static function setStorageDriver(StorageStrategy $storage_driver): void {
-		$this->storage_driver = $storage_driver::class;
-	}
 
 	private static function getMediaRootPath(): string {
 		if(self::$mediaRootPath) {
