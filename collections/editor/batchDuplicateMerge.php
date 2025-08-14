@@ -58,7 +58,7 @@ foreach($_POST as $targetOccId => $sourceOccId) {
 	}
 }
 
-$sql = 'SELECT ' . implode(',', $fields) . ',' . implode(',', $harvestFields) . ' from omoccurduplicatelink dlc
+$sql = 'SELECT DISTINCT ' . implode(',', $fields) . ',' . implode(',', $harvestFields) . ' from omoccurduplicatelink dlc
 	join omoccurrences o2 on o2.occid = dlc.occid and o2.collid = ?
 	join omoccurduplicatelink dl on dl.duplicateid = dlc.duplicateid
 	join omoccurrences o on o.occid = dl.occid';
