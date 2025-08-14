@@ -4,8 +4,9 @@ class QueryUtil {
 	 * This function is a wrapper for mysqli_execute_query. Not all Symbiota portals can update version so this an effort to fix backward compat issues 
 	 *
 	 * @param mysqli $conn
-	 * @param string $sql 
+	 * @param string $sql
 	 * @param string $params
+	 * @throws mysqli_sql_exception
 	 */
 	static function executeQuery(mysqli $conn, string $sql, array $params = []) {
 		//This is supported from 4 to 8
@@ -25,13 +26,33 @@ class QueryUtil {
 						$bind_params_str .= 'i';
 					}
 				}
-				$stmt = $conn->prepare($sql);
-				$stmt->bind_param($bind_params_str,...$params);
-				$stmt->execute();
-				return $stmt->get_result();
+				if($stmt = $conn->prepare($sql)) {
+					$stmt->bind_param($bind_params_str, ...$params);
+					$stmt->execute();
+					return $stmt->get_result();
+				} else {
+					return false;
+				}
 			} else {
 				return mysqli_query($conn, $sql);
 			}
+		}
+	}
+
+	/*
+	 * This function is a wrapper for executeQuery that automatically
+	 * catches mysqli_execute_query and returns bool. Errors can
+	 * Be accessed via the mysqli object.
+	 *
+	 * @param mysqli $conn
+	 * @param string $sql
+	 * @param string $params
+	 */
+	static function tryExecuteQuery(mysqli $conn, string $sql, array $params = []) {
+		try {
+			return self::executeQuery($conn, $sql, $params);
+		} catch(mysqli_sql_exception $e) {
+			return false;
 		}
 	}
 }
