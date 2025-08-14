@@ -16,34 +16,55 @@ $updated = [];
 $errors = [];
 
 $fields = [
-	'dl.occid',
-	'o.catalognumber', 
-	'"" as institutionCode',
-	'"" as collectionCode',
-	'dl.duplicateid', 
-	'o.collid',
-	'o.country',
-	'o.stateProvince',
-	'o.county',
+	'occid',
+	'catalognumber', 
+	// '"" as institutionCode',
+	// '"" as collectionCode',
+	'duplicateid', 
+	'collid',
+	'country',
+	'stateProvince',
+	'county',
 ];
 
 $harvestFields = [
-	'o.decimalLatitude',
-	'o.decimalLongitude',
-	'o.geodeticDatum',
-	'o.footprintWKT',
-	'o.coordinateUncertaintyInMeters',
-	'o.georeferencedBy',
-	'o.georeferenceRemarks',
-	'o.georeferenceSources',
-	'o.georeferenceProtocol',
+	'decimalLatitude',
+	'decimalLongitude',
+	'geodeticDatum',
+	'footprintWKT',
+	'coordinateUncertaintyInMeters',
+	'georeferencedBy',
+	'georeferenceRemarks',
+	'georeferenceSources',
+	'georeferenceProtocol',
 	//'georeferenceDate',
-	'o.georeferenceVerificationStatus',
+	'georeferenceVerificationStatus',
 ];
+
+function getSqlFields(array $fields, string $prefix = '') {	
+	$sql = '';
+
+	for($i = 0; $i < count($fields); $i++) {
+		$sql .= mapField($fields[$i], $prefix) . ($i < (count($fields) - 1)? ', ': '') ;
+	}
+
+	return $sql;
+}
+
+function mapField($field, $prefix) {
+	$tableAlias = 'o';
+	$fieldAlias = ($prefix? ' AS ' . $field . $prefix: '');
+
+	if($field == 'duplicateid') {
+		$tableAlias = 'dl';
+	}
+
+	return $tableAlias . $prefix . '.' . $field . ($prefix? ' AS ' . $field . $prefix: '');
+};
 
 // Don't show in ui table
 $fieldIgnores = [
-	'collid',
+	//'collid',
 	'duplicateid',
 ];
 
@@ -58,15 +79,20 @@ foreach($_POST as $targetOccId => $sourceOccId) {
 	}
 }
 
-$sql = 'SELECT DISTINCT ' . implode(',', $fields) . ',' . implode(',', $harvestFields) . ' from omoccurduplicatelink dlc
-	join omoccurrences o2 on o2.occid = dlc.occid and o2.collid = ?
-	join omoccurduplicatelink dl on dl.duplicateid = dlc.duplicateid
+$sql = 'SELECT DISTINCT ' . 
+	getSqlFields($fields) . ',' . 
+	getSqlFields($harvestFields) . ',' . 
+	getSqlFields($fields, '2') . ',' . 
+	getSqlFields($harvestFields, '2') . ' from omoccurduplicatelink dl2
+	join omoccurrences o2 on o2.occid = dl2.occid and o2.collid = ?
+	join omoccurduplicatelink dl on dl.duplicateid = dl2.duplicateid
 	join omoccurrences o on o.occid = dl.occid';
+
 $parameters = [$collid];
 
 $customWhere = CustomQuery::buildCustomWhere($_REQUEST, 'o');
-if($customWhere['sql']) {
-	$sql .= ' where o2.occid = o.occid or (' . $customWhere['sql'] . ')';
+if($customWhere['sql'] && false) {
+	$sql .= ' where o2.collid != o.collid and (' . $customWhere['sql'] . ')';
 
 	$parameters = array_merge($parameters, $customWhere['bindings']);
 }
@@ -83,6 +109,7 @@ foreach($rs->fetch_all(MYSQLI_ASSOC) as $row) {
 
 $targets  = [];
 $options = [];
+$tableHeaders = '';
 
 foreach ($duplicates as $dupe) {
 	if(!isset($options[$dupe['duplicateid']])) {
@@ -93,9 +120,15 @@ foreach ($duplicates as $dupe) {
 	$dupe['institutionCode'] = $collection['institutionCode'];
 	$dupe['collectionCode'] = $collection['collectionCode'];
 
-	if($dupe['collid'] === $collid) {
-		$targets[$dupe['duplicateid']] = $dupe;
+	if(array_key_exists($dupe['occid2'], $targets)) {
 	}
+
+	if($dupe['collid'] === $collid) {
+		if(!$tableHeaders) {
+			$tableHeaders = getTableHeaders($dupe, $fieldIgnores);
+		}
+		$targets[$dupe['occid']] = $dupe;
+	} 
 
 	$options[$dupe['duplicateid']][] = $dupe;
 }
@@ -257,7 +290,7 @@ $ui_option = 2;
 			
 			<?php if(count($options[$duplicateId])): ?>
 			<table class="styledtable table-scroll">
-				<?php echo getTableHeaders($target, $fieldIgnores) ?>
+				<?php echo $tableHeaders ?>
 				<tbody>
 					<?= render_row($target, false, $fieldIgnores) ?>
 					<?php foreach ($options[$duplicateId] as $dupe): ?>
@@ -271,13 +304,13 @@ $ui_option = 2;
 			<?php elseif($ui_option === 2): ?>
 
 			<table class="styledtable table-scroll">
-			<?php echo getTableHeaders(current($targets), $fieldIgnores) ?>
-			<?php foreach ($targets as $duplicateId => $target): ?>
-			<?php if(count($options[$duplicateId])): ?>
+			<?php echo $tableHeaders ?>
+			<?php foreach ($targets as $targetOccid => $target): ?>
+			<?php if(count($options[$target['duplicateid']])): ?>
 				<tbody>
 					<?= render_row($target, false, $fieldIgnores) ?>
-					<?php foreach ($options[$duplicateId] as $dupe): ?>
-						<?= $dupe['occid'] !== $target['occid']? render_row($dupe, $target['occid'], $fieldIgnores): '' ?>
+					<?php foreach ($options[$target['duplicateid']] as $dupe): ?>
+						<?= $dupe['occid'] !== $targetOccid? render_row($dupe, $targetOccid, $fieldIgnores): '' ?>
 					<?php endforeach ?>
 					<tr>
 						<td colspan="18" style="height: 1rem"></td>
