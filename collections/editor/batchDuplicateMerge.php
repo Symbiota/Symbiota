@@ -114,12 +114,15 @@ function render_row($row, $checkboxName = false, $fieldIgnores = []) {
 	$html .= '<td><div style="display:flex; align-items:center; justify-content: center;">' . 
 		($checkboxName ? '<input type="checkbox" onclick="checkbox_one_only(this)" name="'. $checkboxName  .'" value="' . $row['occid'] . '" style="margin:0"/>': '') . 
 		'</div></td>';
+
+	$base_url = ($GLOBALS['CLIENT_ROOT']? $GLOBALS['CLIENT_ROOT'] . '/': '') . 
+	'/collections/individual/index.php?occid=';
 		
 	foreach ($row as $key => $value) {
 		if(in_array($key, $fieldIgnores)) {
 			continue;
 		} else if($key === 'occid') {
-			$html .= '<td><a href="#">' . $value . '</a></td>';
+			$html .= '<td><a href="'. $base_url . $value . '">' . $value . '</a></td>';
 		}  else  {
 			$html .= '<td>' . $value . '</td>';
 		}
