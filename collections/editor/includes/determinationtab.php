@@ -209,6 +209,7 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 							<div>
 								<button type="submit" name="submitaction" class="button" value="submitDetermination" ><?php echo $LANG['SUBMIT_DET']; ?></button>
 							</div>
+							<p><?php include('requiredFieldInstruction.php') ?></p>
 						</div>
 					</fieldset>
 				</form>
@@ -325,6 +326,7 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 									<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
 									<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
 									<button type="submit" name="submitaction" class="button" value="submitDeterminationEdit"><?php echo $LANG['SUBMIT_DET_EDITS']; ?></button>
+									<p><?php include('requiredFieldInstruction.php') ?></p>
 								</div>
 							</form>
 							<?php
