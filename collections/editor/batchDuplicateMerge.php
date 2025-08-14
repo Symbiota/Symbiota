@@ -62,9 +62,17 @@ $sql = 'SELECT DISTINCT ' . implode(',', $fields) . ',' . implode(',', $harvestF
 	join omoccurrences o2 on o2.occid = dlc.occid and o2.collid = ?
 	join omoccurduplicatelink dl on dl.duplicateid = dlc.duplicateid
 	join omoccurrences o on o.occid = dl.occid';
+$parameters = [$collid];
+
+$customWhere = CustomQuery::buildCustomWhere($_REQUEST, 'o');
+if($customWhere['sql']) {
+	$sql .= ' where o2.occid = o.occid or (' . $customWhere['sql'] . ')';
+
+	$parameters = array_merge($parameters, $customWhere['bindings']);
+}
 
 $conn = Database::connect('readonly');
-$rs = QueryUtil::executeQuery($conn, $sql, [$collid]);
+$rs = QueryUtil::executeQuery($conn, $sql, $parameters);
 $duplicates = $rs->fetch_all(MYSQLI_ASSOC);
 
 $rs = QueryUtil::executeQuery($conn, 'SELECT collid, collectionCode, institutionCode from omcollections', []);
