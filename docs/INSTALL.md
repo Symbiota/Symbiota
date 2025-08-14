@@ -4,7 +4,7 @@
 GIT Client - not required, though recommend for installation and updating source code
 
 ### Web Server
-Apache HTTP Server (2.x or better) - other PHP enabled web servers will work, though the code has been well tested using Apache HTTP Server and Nginx
+Apache HTTP Server (2.x or better) - other PHP-enabled web servers will work, though the code has been well-tested using Apache HTTP Server and Nginx.
 
 ### PHP
 PHP 8.2 or higher is recommended for the best performance, security, and feature support. The minimum requirement is PHP 8.1, but using older versions may cause security and performance issues over time. When third party authentication is enabled, PHP 8.2 or above is required.
@@ -48,7 +48,7 @@ post_max_size = 100M
 ```
 
 ### Database
-MariaDB (v10.3+) or MySQL (v8.0+) - Development and testing performed using MariaDB. If you are using Oracle MySQL instead, please [report any issues](https://github.com/BioKIC/Symbiota/issues/new).
+MariaDB (v10.3+) or MySQL (v8.0+) - Development and testing performed using MariaDB. If you are using Oracle MySQL instead, please [report any issues](https://github.com/Symbiota/Symbiota/issues/new).
 
 Recommended Settings:
 ```sql
@@ -121,7 +121,7 @@ Symbiota
     └── partners_template.php
 ```
 
-Then set ACL permissions on folders that need to be writable by the web server
+Then set ACL permissions on folders that need to be writable by the web server.
 ```
 Symbiota
 ├── api
@@ -167,6 +167,11 @@ GRANT SELECT,UPDATE,INSERT,DELETE,EXECUTE ON `symbdb`.* TO `symbwriter`@localhos
 ```
 
 Then modify `dbconnection.php` with read-only and read/write logins, passwords, and database name to the values you chose.
+* Note - If running a php version prior to 8.1 you must add the following
+```php
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT)
+```
+
 <!-- Output: tree --prune --matchdirs -P 'dbconnection.php' -I 'vendor' Symbiota  -->
 ```
 Symbiota
@@ -208,17 +213,17 @@ Symbiota
 ### STEP 5: Customize
 
 #### Homepage
-Modify index.php. This is your home page or landing page to which will need introductory text, graphics, etc.
+Modify index.php. This is your home page or landing page which will need introductory text, graphics, etc.
 
 #### Layout
-Layout - Within the /includes directory the header.php and footer.php files are used by all pages to establish uniform layout.
+Layout - Within the /includes directory, the header.php and footer.php files are used by all pages to establish uniform layout.
 
 <!-- Output: tree --prune --matchdirs -P 'header.php|footer.php' -I 'vendor' Symbiota -->
 ```
 Symbiota
 └── includes
-    ├── footer.php - determines the content of the global page header and menu navigation.
-    └── header.php - determines the content of the global page footer
+    ├── footer.php - determines the content of the global page footer and menu navigation.
+    └── header.php - determines the content of the global page header
 ```
 
 #### Css Styles
@@ -228,10 +233,10 @@ Files for style control - Within the css/symbiota folder there are two files you
 Symbiota
 └── css
     └── symbiota
-        ├── customizations.css - Add css selector overrides Symbiota default styling
+        ├── customizations.css - Add css selectors to override Symbiota default styling
         └── variables.css - Set global values used across the portal
 ```
-NOTE: Do not modify any other css files as these files may be over written in future updates
+NOTE: Do not modify any other css files as these files may be overwritten in future updates
 
 #### Customize language tags
 Overide existing language tags or create new tags by modifying the override files in content/lang/templates/
@@ -245,7 +250,7 @@ Install robots.txt file within root directory - The robots.txt file is a standar
 https://developers.google.com/search/docs/crawling-indexing/robots/create-robots-txt
 https://en.wikipedia.org/wiki/Robots.txt
 
-Refer to the [third party authentication instructions](https://github.com/BioKIC/Symbiota/blob/master/docs/third_party_auth_setup.md) for specifics about third party authentication setup.
+Refer to the [third party authentication instructions](https://github.com/Symbiota/Symbiota/blob/master/docs/third_party_auth_setup.md) for specifics about third party authentication setup.
 
 ## DATA
 
@@ -253,23 +258,23 @@ Data - The general layers of data within Symbiota are: user, taxonomic, occurren
 While user interfaces have been developed for web management for most of these data layers, some table tables still need to be managed via the backend (e.g. loaded by hand).
 
 ### User and permissions
-Default administrative user has been installed with following login: username = admin; password: admin.
+A default administrative user has been installed with following login: username = admin; password: admin.
 It is highly recommended that you change the password, or better yet, create a new admin user, assign admin rights, and then delete default admin user.
-Management control panel for permissions is available within Data Management Panel on the sitemap page.
+A management control panel for User Permissions is available within Data Management Panel on the sitemap page.
 
 ### Occurrence (Specimen) Data
-SuperAdmin can create new collection instances via Data Management pane within sitemap. 
-Within the collection's data management menu, one can provide admin and read access to new users, add/edit occurrences, batch load data, etc.
+SuperAdmins can create new collection instances via the Data Management pane within sitemap. 
+Within the collection's data management menu, one can provide admin and edit access to new users, add/edit occurrences, batch load data, etc.
 
 ### Taxonomic Thesaurus
 Taxon names are stored within the 'taxa' table.
 Taxonomic hierarchy and placement definitions are controlled in the 'taxstatus' table.
 A recursive data relationship within the 'taxstatus' table defines the taxonomic hierarchy.
-While multiple taxonomic thesauri can be defined, one of the thesauri needs to function as the central taxonomy.
-Names must be added in order from upper taxonomic levels to lower (e.g. kingdom, class, order, variety).
+While multiple taxonomic thesauri can be defined, one of the thesauri needs to function as the central taxonomic authority.
+Names must be added in order from upper taxonomic levels to lower (e.g. kingdom, class, order).
 Accepted names must be loaded before non-accepted names.
   1. Names can be added one-by-one using taxonomic management tools (see sitemap.php)
-  2. Name can be imported from taxonomic authorities (e.g. Catalog of Life, WoRMS, TROPICOS, etc) based on occurrence data loaded into the system.
+  2. Names can be imported from taxonomic authorities (e.g., Catalog of Life, WoRMS, etc.) based on occurrence data loaded into the system.
      This is the recommended method since it will focus on only relevant taxonomic groups. First, load an occurrence dataset (see step 2 above), 
      then from the Collection Data Management menu, select Data Cleaning Tools => Analyze taxonomic names...
   3. Batch Loader - Multiple names can be loaded from a flat, tab-delimited text file. See instructions on the batch loader for loading multiple names from a flat file.
