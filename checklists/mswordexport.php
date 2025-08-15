@@ -246,7 +246,7 @@ else{
 $fileName = str_replace(array(' ', '/', '.'), '_', $clManager->getClName() ?? "");
 $fileName = preg_replace('/[^0-9A-Za-z\-]/', '', $fileName);
 if(strlen($fileName) > 30) $fileName = substr($fileName, 0, 30);
-$targetFile = $SERVER_ROOT.'/temp/report/'.$fileName.'_'.date('Y-m-d').'.docx';
+$targetFile = $TEMP_DIR_ROOT.'/'.$fileName.'_'.date('Y-m-d').'.docx';
 $phpWord->save($targetFile, 'Word2007');
 
 ob_start();

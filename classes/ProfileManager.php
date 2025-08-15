@@ -1158,11 +1158,11 @@ class ProfileManager extends Manager{
 	}
 
 	private function getTempPath(){
-		$tPath = $GLOBALS['SERVER_ROOT'];
+		$tPath = $GLOBALS['TEMP_DIR_ROOT'];
+		if(!$tPath) return false;
 		if(substr($tPath,-1) != '/' && substr($tPath,-1) != '\\') $tPath .= '/';
-		$tPath .= "temp/";
-		if(file_exists($tPath."downloads/")){
-			$tPath .= "downloads/";
+		if(file_exists($tPath . 'exports/')){
+			$tPath .= 'exports/';
 		}
 		return $tPath;
 	}
