@@ -7,7 +7,7 @@ Language: English
 
 $LANG['SPEC_LABEL_MANAGER'] = 'Specimen Label Manager';
 $LANG['PERS_MANAG_MENU'] = 'Personal Management Menu';
-$LANG['CONTACT_ADMIN'] = 'Please contact the site administrator to make temp/report folder writable in order to export to docx files.';
+$LANG['CONTACT_ADMIN'] = 'Please contact the site administrator to make TEMP_DIR_ROOT folder writable in order to export to docx files.';
 $LANG['DEF_SPEC_REC'] = 'Define Specimen Recordset';
 $LANG['SCI_NAME'] = 'Scientific Name: ';
 $LANG['FULL_NAME'] = 'Full or last name of collector as entered in database.';
@@ -57,7 +57,7 @@ $LANG['NOTE'] = 'Note:';
 $LANG['NOTE_1'] = 'Currently, Word (DOCX) output only generates the old static label format.';
 $LANG['NOTE_2'] = 'Output of variable Label Formats (pulldown options) as a Word document is not yet supported.';
 $LANG['NOTE_3'] = 'A possible work around is to print labels as PDF and then convert to a Word doc using Adobe tools.';
-$LANG['NOTE_4'] = 'Another alternatively, is to output the data as CSV and then setup a Mail Merge Word document.';
+$LANG['NOTE_4'] = 'Another alternative is to output the data as CSV and then setup a Mail Merge Word document.';
 $LANG['NO_DATA'] = 'Query returned no data!';
 $LANG['NO_PERM'] = 'You do not have permissions to print labels for this collection.
             Please contact the site administrator to obtain the necessary permissions.';
