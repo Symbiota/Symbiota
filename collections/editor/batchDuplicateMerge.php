@@ -274,7 +274,7 @@ $collections = getCollections($conn);
 $targets  = [];
 $options = [];
 
-$targetsOccids = [];
+$targetOccids = [];
 $optionOccids = [];
 
 foreach ($duplicates as $dupe) {
@@ -284,7 +284,7 @@ foreach ($duplicates as $dupe) {
 
 	if(!isset($targets[$targetOccid])) {
 		$targets[$targetOccid] = $duplicateId;
-		$targetsOccids[] = $targetOccid;
+		$targetOccids[] = $targetOccid;
 	}
 
 	if(!isset($options[$duplicateId])) {
@@ -297,7 +297,7 @@ foreach ($duplicates as $dupe) {
 	}
 }
 
-foreach (getOccurrences($targetsOccids, $conn) as $target) {
+foreach (getOccurrences($targetOccids, $conn) as $target) {
 	$target['duplicateid'] = $targets[$target['occid']]; 
 	$target['institutionCode'] = $collections[$target['collid']]['institutionCode'];
 	$target['collectionCode'] = $collections[$target['collid']]['collectionCode'];
