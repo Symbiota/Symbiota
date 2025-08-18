@@ -17,10 +17,8 @@ $errors = [];
 
 $fields = [
 	'occid',
-	'catalognumber', 
-	// '"" as institutionCode',
-	// '"" as collectionCode',
-	'duplicateid', 
+	'catalognumber',
+	'duplicateid',
 	'collid',
 	'country',
 	'stateProvince',
@@ -39,6 +37,18 @@ $harvestFields = [
 	'georeferenceProtocol',
 	//'georeferenceDate',
 	'georeferenceVerificationStatus',
+];
+
+$shownFields = [
+	'occid',
+	'catalognumber',
+	'institutionCode',
+	'collectionCode',
+	'duplicateid',
+	'country',
+	'stateProvince',
+	'county',
+	...$harvestFields,
 ];
 
 function getSqlFields(array $fields, string $prefix = '') {	
@@ -86,13 +96,13 @@ $sql = 'SELECT DISTINCT ' .
 	getSqlFields($harvestFields, '2') . ' from omoccurduplicatelink dl2
 	join omoccurrences o2 on o2.occid = dl2.occid and o2.collid = ?
 	join omoccurduplicatelink dl on dl.duplicateid = dl2.duplicateid
-	join omoccurrences o on o.occid = dl.occid';
+	join omoccurrences o on o.occid = dl.occid where o.occid != o2.occid';
 
 $parameters = [$collid];
 
 $customWhere = CustomQuery::buildCustomWhere($_REQUEST, 'o');
-if($customWhere['sql'] && false) {
-	$sql .= ' where o2.collid != o.collid and (' . $customWhere['sql'] . ')';
+if($customWhere['sql']) {
+	$sql .= ' and (' . $customWhere['sql'] . ')';
 
 	$parameters = array_merge($parameters, $customWhere['bindings']);
 }
@@ -111,33 +121,41 @@ $targets  = [];
 $options = [];
 $tableHeaders = '';
 
+function getShownDuplicate(array $occurrenceDuplicate, string $postfix = '') {
+	global $shownFields;
+
+	$shownDuplicate = [];
+	foreach($shownFields as $field) {
+		$shownDuplicate[$field] = $occurrenceDuplicate[$field . $postfix] ?? null;
+	}
+
+	return $shownDuplicate;
+}
+
 foreach ($duplicates as $dupe) {
 	if(!isset($options[$dupe['duplicateid']])) {
 		$options[$dupe['duplicateid']] = [];
 	}
 
-	$collection = $collections[$dupe['collid']];
-	$dupe['institutionCode'] = $collection['institutionCode'];
-	$dupe['collectionCode'] = $collection['collectionCode'];
-
-	if(array_key_exists($dupe['occid2'], $targets)) {
+	if($dupe['collid2'] === $collid) {
+		$targets[$dupe['occid2']] = getShownDuplicate($dupe, '2');
+		$targets[$dupe['occid2']]['institutionCode'] = $collections[$dupe['collid2']]['institutionCode'];
+		$targets[$dupe['occid2']]['collectionCode'] = $collections[$dupe['collid2']]['collectionCode'];
+		$targets[$dupe['occid2']]['duplicateid'] = $dupe['duplicateid2'];
 	}
 
-	if($dupe['collid'] === $collid) {
-		if(!$tableHeaders) {
-			$tableHeaders = getTableHeaders($dupe, $fieldIgnores);
-		}
-		$targets[$dupe['occid']] = $dupe;
-	} 
-
-	$options[$dupe['duplicateid']][] = $dupe;
+	$shownDupe = getShownDuplicate($dupe);
+	$shownDupe['duplicateid'] = $dupe['duplicateid'];
+	$shownDupe['institutionCode'] = $collections[$dupe['collid']]['institutionCode'];
+	$shownDupe['collectionCode'] = $collections[$dupe['collid']]['collectionCode'];
+	$options[$dupe['duplicateid']][] = $shownDupe;
 }
 
 function getTableHeaders(array $arr, array $ignore = []) {
 	$html = '<thead>';
 	$html .= '<th></th>';
 
-	foreach($arr as $key => $value) {
+	foreach($arr as $key) {
 		if(in_array($key, $ignore)) {
 			continue;
 		} else {
@@ -290,7 +308,7 @@ $ui_option = 2;
 			
 			<?php if(count($options[$duplicateId])): ?>
 			<table class="styledtable table-scroll">
-				<?php echo $tableHeaders ?>
+				<?= getTableHeaders($shownFields, $fieldIgnores)?>
 				<tbody>
 					<?= render_row($target, false, $fieldIgnores) ?>
 					<?php foreach ($options[$duplicateId] as $dupe): ?>
@@ -304,7 +322,7 @@ $ui_option = 2;
 			<?php elseif($ui_option === 2): ?>
 
 			<table class="styledtable table-scroll">
-			<?php echo $tableHeaders ?>
+			<?= getTableHeaders($shownFields, $fieldIgnores) ?>
 			<?php foreach ($targets as $targetOccid => $target): ?>
 			<?php if(count($options[$target['duplicateid']])): ?>
 				<tbody>
