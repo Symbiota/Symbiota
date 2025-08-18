@@ -181,6 +181,7 @@ function getShownDuplicate(array $occurrenceDuplicate, string $postfix = '') {
 
 function getOccurrences(array $occIds, mysqli $conn) {
 	global $fields, $harvestFields; 
+	if(count($occIds) <= 0) return [];
 
 	$parameters = str_repeat('?,', count($occIds) - 1) . '?';
 
