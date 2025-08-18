@@ -94,17 +94,22 @@ class CustomQuery {
 						$sql .= 'OR ';
 					}
 				}
-				$sql .= $openParen .
-					($tablePrefix? $tablePrefix . '.': '') . $field . ' ' . $compareOperator . ' ?' .
-				$closeParen . ' ';
+
+				$bindValue = true;
 
 				if($customValue['term'] === 'STARTS_WITH') {
 					$binds[] = $customValue['value'] . '%';
-				} else if($customValue['term'] === 'NOT LIKE' || $customValue['term'] === 'LIKE') {
+				} else if($customValue['term'] === 'NOT_LIKE' || $customValue['term'] === 'LIKE') {
 					$binds[] = '%' . $customValue['value'] . '%';
-				} else {
+				} else if(!in_array($customValue['term'], ['IS_NULL', 'NOT_NULL'])) {
 					$binds[] = $customValue['value'];
+				} else {
+					$bindValue = false;
 				}
+
+				$sql .= $openParen .
+					($tablePrefix? $tablePrefix . '.': '') . $field . ' ' . $compareOperator . ($bindValue? ' ?':'') .
+				$closeParen . ' ';
 			}
 		}
 
