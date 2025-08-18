@@ -193,22 +193,36 @@ function getOccurrences(array $occIds, mysqli $conn) {
 }
 
 function searchDuplicateOptions(int $targetCollId, mysqli $conn) {
+	global $harvestFields;
+
 	$sql = 'SELECT dl.duplicateid, o2.occid as targetOccid, o.occid from omoccurduplicatelink dl2
 	join omoccurrences o2 on o2.occid = dl2.occid and o2.collid = ?
 	join omoccurduplicatelink dl on dl.duplicateid = dl2.duplicateid
 	join omoccurrences o on o.occid = dl.occid where o.occid != o2.occid';
+	//
+	// $oneHarvestableField = '';
+	//
+	// for($i = 0; $i < count($harvestFields); $i++) {
+	// 	$field = $harvestFields[$i];
+	// 	$oneHarvestableField .= 'o2.' . $field . ' != ' . 'o.' . $field;
+	//
+	// 	if($i < count($harvestFields) - 1) {
+	// 		$oneHarvestableField .= ' OR ';
+	// 	}
+	// }
+	//
+	// $sql .= ' AND (' . $oneHarvestableField . ')';
 
 	$parameters = [$targetCollId];
 
 	$customWhere = CustomQuery::buildCustomWhere($_REQUEST, 'o');
 	if($customWhere['sql']) {
-		$sql .= ' and (' . $customWhere['sql'] . ')';
+		$sql .= ' AND (' . $customWhere['sql'] . ')';
 
 		$parameters = array_merge($parameters, $customWhere['bindings']);
 	}
 
 	$sql .= ' LIMIT 100';
-
 	$rs = QueryUtil::executeQuery($conn, $sql, $parameters);
 
 	return $rs->fetch_all(MYSQLI_ASSOC);
@@ -236,6 +250,19 @@ function copyInfo() {
 			}
 		}
 	}
+}
+
+function hasDiff(array $duplicateA, array $duplicateB) {
+	global $harvestFields;
+	foreach($harvestFields as $key) {
+		$valueB = $duplicateB[$key] ?? null;
+		$valueA = $duplicateA[$key] ?? null;
+
+		if($valueA != $valueB) {
+			return true;
+		}
+	}
+	return false;
 }
 
 $conn = Database::connect('readonly');
@@ -415,7 +442,7 @@ $ui_option = 2;
 				<tbody>
 					<?= render_row($target, false, $shownFields) ?>
 					<?php foreach ($options[$target['duplicateid']] as $dupeOccid => $dupe): ?>
-						<?= $dupeOccid !== $targetOccid? render_row($dupe, $targetOccid, $shownFields): '' ?>
+						<?= $dupeOccid !== $targetOccid && hasDiff($target, $option)? render_row($dupe, $targetOccid, $shownFields): '' ?>
 					<?php endforeach ?>
 					<tr>
 						<td colspan="18" style="height: 1rem"></td>
