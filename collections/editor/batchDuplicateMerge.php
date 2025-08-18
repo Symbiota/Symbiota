@@ -107,6 +107,8 @@ if($customWhere['sql']) {
 	$parameters = array_merge($parameters, $customWhere['bindings']);
 }
 
+$sql .= ' ORDER BY duplicateid LIMIT 100';
+
 $conn = Database::connect('readonly');
 $rs = QueryUtil::executeQuery($conn, $sql, $parameters);
 $duplicates = $rs->fetch_all(MYSQLI_ASSOC);
