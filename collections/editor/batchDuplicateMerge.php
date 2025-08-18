@@ -262,6 +262,7 @@ function hasDiff(array $duplicateA, array $duplicateB) {
 			return true;
 		}
 	}
+
 	return false;
 }
 
@@ -442,7 +443,7 @@ $ui_option = 2;
 				<tbody>
 					<?= render_row($target, false, $shownFields) ?>
 					<?php foreach ($options[$target['duplicateid']] as $dupeOccid => $dupe): ?>
-						<?= $dupeOccid !== $targetOccid && hasDiff($target, $option)? render_row($dupe, $targetOccid, $shownFields): '' ?>
+						<?= ($dupeOccid !== $targetOccid && hasDiff($target, $option))? render_row($dupe, $targetOccid, $shownFields): '' ?>
 					<?php endforeach ?>
 					<tr>
 						<td colspan="18" style="height: 1rem"></td>
