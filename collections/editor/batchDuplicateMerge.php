@@ -17,6 +17,7 @@ $errors = [];
 
 $fields = [
 	'occid',
+	'collid',
 	'catalognumber',
 	'duplicateid',
 	'collid',
@@ -49,6 +50,12 @@ $shownFields = [
 	'stateProvince',
 	'county',
 	...$harvestFields,
+];
+
+// Don't show in ui table
+$fieldIgnores = [
+	'collid',
+	'duplicateid',
 ];
 
 function getSqlFields(array $fields, string $prefix = '') {	
