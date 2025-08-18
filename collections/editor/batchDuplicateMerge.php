@@ -199,19 +199,19 @@ function searchDuplicateOptions(int $targetCollId, mysqli $conn) {
 	join omoccurrences o2 on o2.occid = dl2.occid and o2.collid = ?
 	join omoccurduplicatelink dl on dl.duplicateid = dl2.duplicateid
 	join omoccurrences o on o.occid = dl.occid where o.occid != o2.occid';
-	//
-	// $oneHarvestableField = '';
-	//
-	// for($i = 0; $i < count($harvestFields); $i++) {
-	// 	$field = $harvestFields[$i];
-	// 	$oneHarvestableField .= 'o2.' . $field . ' != ' . 'o.' . $field;
-	//
-	// 	if($i < count($harvestFields) - 1) {
-	// 		$oneHarvestableField .= ' OR ';
-	// 	}
-	// }
-	//
-	// $sql .= ' AND (' . $oneHarvestableField . ')';
+
+	$oneHarvestableField = '';
+
+	for($i = 0; $i < count($harvestFields); $i++) {
+		$field = $harvestFields[$i];
+		$oneHarvestableField .= 'o2.' . $field . ' != ' . 'o.' . $field;
+
+		if($i < count($harvestFields) - 1) {
+			$oneHarvestableField .= ' OR ';
+		}
+	}
+
+	$sql .= ' AND (' . $oneHarvestableField . ')';
 
 	$parameters = [$targetCollId];
 
@@ -443,7 +443,7 @@ $ui_option = 2;
 				<tbody>
 					<?= render_row($target, false, $shownFields) ?>
 					<?php foreach ($options[$target['duplicateid']] as $dupeOccid => $dupe): ?>
-						<?= ($dupeOccid !== $targetOccid && hasDiff($target, $dupe))? render_row($dupe, $targetOccid, $shownFields): '' ?>
+						<?= $dupeOccid !== $targetOccid? render_row($dupe, $targetOccid, $shownFields): '' ?>
 					<?php endforeach ?>
 					<tr>
 						<td colspan="18" style="height: 1rem"></td>
