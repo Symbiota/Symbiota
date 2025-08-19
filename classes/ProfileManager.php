@@ -199,7 +199,7 @@ class ProfileManager extends Manager{
 		if($stmt = $this->conn->prepare($sqlStr)){
 			if($stmt->bind_param('i', $this->uid)){
 				$stmt->execute();
-				// $stmt->store_result();
+				$stmt->store_result();
 				$stmt->bind_result(
 					$r_uid,
 					$r_firstname,
