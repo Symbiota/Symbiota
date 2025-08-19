@@ -11,6 +11,7 @@ include_once($SERVER_ROOT . '/classes/CustomQuery.php');
 $collid = array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid'])? intval($_REQUEST['collid']):0;
 $start = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
 $limit = array_key_exists('limit',$_REQUEST)?$_REQUEST['limit']:1000;
+$db = array_key_exists('db',$_REQUEST)?$_REQUEST['db']:[];
 $hideExactMatches = array_key_exists('hideExactMatches',$_REQUEST);
 $missingLatLng = array_key_exists('missingLatLng',$_REQUEST);
 
@@ -196,12 +197,14 @@ function getOccurrences(array $occIds, mysqli $conn) {
 }
 
 function searchDuplicateOptions(int $targetCollId, mysqli $conn) {
-	global $harvestFields, $hideExactMatches, $missingLatLng;
+	global $harvestFields, $hideExactMatches, $missingLatLng, $db;
 
 	$sql = 'SELECT dl.duplicateid, o2.occid as targetOccid, o.occid from omoccurduplicatelink dl2
 	join omoccurrences o2 on o2.occid = dl2.occid and o2.collid = ?
 	join omoccurduplicatelink dl on dl.duplicateid = dl2.duplicateid
 	join omoccurrences o on o.occid = dl.occid where o.occid != o2.occid';
+
+	$parameters = [$targetCollId];
 
 	if($hideExactMatches) {
 		$oneHarvestableField = '';
@@ -221,7 +224,10 @@ function searchDuplicateOptions(int $targetCollId, mysqli $conn) {
 		$sql .=	' AND (o2.decimalLongitude IS NULL OR o2.decimalLatitude IS NULL)';
 	}
 
-	$parameters = [$targetCollId];
+	if(count($db) > 0) {
+		$sql .= '  AND o.collid in (' . str_repeat('?, ', count($db) -1 ) . '? ' . ')';
+		$parameters = array_merge($parameters, $db);
+	}
 
 	$customWhere = CustomQuery::buildCustomWhere($_REQUEST, 'o');
 	if($customWhere['sql']) {
@@ -231,6 +237,8 @@ function searchDuplicateOptions(int $targetCollId, mysqli $conn) {
 	}
 
 	$sql .= ' LIMIT 100';
+
+	echo $sql;
 	$rs = QueryUtil::executeQuery($conn, $sql, $parameters);
 
 	return $rs->fetch_all(MYSQLI_ASSOC);
@@ -415,6 +423,17 @@ $ui_option = 2;
 					<label for="hideExactMatches">Only show targets with harvestable data</label>
 				</div>
 
+				<dialog id="collections_dialog" style="min-width: 900px;">
+					<div style="display:flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+						<h1 style="margin:0;">Collections</h1>
+						<div style="flex-grow: 1;">
+						<button class="button" style="margin-left: auto;" type="button" onclick="document.getElementById('collections_dialog').close()">Close</button>
+						</div>
+					</div>
+					<?php include_once(__DIR__ . '/includes/collectionForm.php') ?>
+				</dialog>
+
+				<button style="margin-bottom:1rem" class="button" type="button" onclick="document.getElementById('collections_dialog').showModal()">Filter Collections</button>
 				<button class="button">Submit</button>
 
 			</form>
