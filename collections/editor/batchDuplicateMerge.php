@@ -238,7 +238,6 @@ function searchDuplicateOptions(int $targetCollId, mysqli $conn) {
 
 	$sql .= ' LIMIT 100';
 
-	echo $sql;
 	$rs = QueryUtil::executeQuery($conn, $sql, $parameters);
 
 	return $rs->fetch_all(MYSQLI_ASSOC);
