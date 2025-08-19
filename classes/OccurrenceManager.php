@@ -788,7 +788,10 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		if($hasEverythingRequiredForAssociationSearchForDownload){
 			$this->setAssociationRequestVariable($this->searchTermArr);
 		}
-		$voucherVariableArr = $this->voucherManager->getQueryVariableArr();
+
+		$voucherVariableArr = [];
+		if ($this->voucherManager)
+			$voucherVariableArr = $this->voucherManager->getQueryVariableArr() ?? [];
 		$country = '';
 		if (!empty($_REQUEST['country']))
 			$country = $this->cleanInputStr($_REQUEST['country']);
