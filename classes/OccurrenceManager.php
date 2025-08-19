@@ -755,6 +755,8 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		if(array_key_exists('targetclid',$_REQUEST) && is_numeric($_REQUEST['targetclid'])){
 			$this->searchTermArr['targetclid'] = $_REQUEST['targetclid'];
 			$this->setChecklistVariables($_REQUEST['targetclid']);
+			if ($this->voucherManager)
+				$voucherVariableArr = $this->voucherManager->getQueryVariableArr() ?? [];
 		}
 		elseif(array_key_exists('clid',$_REQUEST)){
 			//Limit by checklist voucher links
@@ -793,6 +795,8 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$country = $this->cleanInputStr($_REQUEST['country']);
 		elseif (!empty($parsedArr['country']))
 			$country = $this->cleanInputStr($parsedArr['country']);
+		elseif (isset($voucherVariableArr) && !empty($voucherVariableArr["country"]))
+			$country = $voucherVariableArr["country"];
 		if($country){
 			$str = str_replace(',', ';', $country);
 			$countryRaw = '';					//Terms that were not found within geo thesaurus
