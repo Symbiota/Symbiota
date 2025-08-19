@@ -790,7 +790,6 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		if($hasEverythingRequiredForAssociationSearchForDownload){
 			$this->setAssociationRequestVariable($this->searchTermArr);
 		}
-
 		$country = '';
 		if (!empty($_REQUEST['country']))
 			$country = $this->cleanInputStr($_REQUEST['country']);
