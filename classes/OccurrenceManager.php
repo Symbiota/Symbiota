@@ -788,11 +788,14 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		if($hasEverythingRequiredForAssociationSearchForDownload){
 			$this->setAssociationRequestVariable($this->searchTermArr);
 		}
+		$voucherVariableArr = $this->voucherManager->getQueryVariableArr();
 		$country = '';
 		if (!empty($_REQUEST['country']))
 			$country = $this->cleanInputStr($_REQUEST['country']);
 		elseif (!empty($parsedArr['country']))
 			$country = $this->cleanInputStr($parsedArr['country']);
+		elseif (!empty($voucherVariableArr["country"]))
+			$country = $voucherVariableArr["country"];
 		if($country){
 			$str = str_replace(',', ';', $country);
 			$countryRaw = '';					//Terms that were not found within geo thesaurus
