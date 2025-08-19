@@ -119,7 +119,7 @@ function render_row($row, $checkboxName = false, $shownFields = []) {
 	foreach($shownFields as $key) {
 		$value = $row[$key] ?? null;
 		if($key === 'occid') {
-			$html .= '<td><a href="'. $base_url . $value . '">' . $value . '</a></td>';
+			$html .= '<td><a target="_blank" href="'. $base_url . $value . '">' . $value . '</a></td>';
 		}  else  {
 			$html .= '<td>' . $value . '</td>';
 		}
