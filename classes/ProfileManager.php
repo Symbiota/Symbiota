@@ -199,7 +199,7 @@ class ProfileManager extends Manager{
 		if($stmt = $this->conn->prepare($sqlStr)){
 			if($stmt->bind_param('i', $this->uid)){
 				$stmt->execute();
-				$stmt->store_result();
+				// $stmt->store_result();
 				$stmt->bind_result(
 					$r_uid,
 					$r_firstname,
@@ -729,7 +729,7 @@ class ProfileManager extends Manager{
 		$statement->close();
 	}
 
-	public function deleteUserTaxonomy($utid, $editorStatus = ''){ // h/t chatGTP
+	public function deleteUserTaxonomy($utid, $editorStatus = ''){
 		$statusStr = 'SUCCESS: Taxonomic relationship deleted';
 
 		$allowedEditorStatuses = ['OccurrenceEditor','RegionOfInterest', 'TaxonomicThesaurusEditor']; // @TODO are there other values that we want to be valid?
