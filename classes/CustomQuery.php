@@ -10,8 +10,8 @@ class CustomQuery {
 		'STARTS_WITH' => 'LIKE',
 		'LIKE' => 'LIKE',
 		'NOT_LIKE' => 'NOT LIKE',
-		'GREATER_THAN' => '<',
-		'LESS_THAN' => '>',
+		'GREATER_THAN' => '>',
+		'LESS_THAN' => '<',
 		'IS_NULL' => 'IS NULL',
 		'NOT_NULL' => 'IS NOT NULL'
 	];
