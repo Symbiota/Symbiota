@@ -11,6 +11,8 @@ include_once($SERVER_ROOT . '/classes/CustomQuery.php');
 $collid = array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid'])? intval($_REQUEST['collid']):0;
 $start = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
 $limit = array_key_exists('limit',$_REQUEST)?$_REQUEST['limit']:1000;
+$hideExactMatches = array_key_exists('hideExactMatches',$_REQUEST);
+$missingLatLng = array_key_exists('missingLatLng',$_REQUEST);
 
 $updated = [];
 $errors = [];
@@ -194,25 +196,30 @@ function getOccurrences(array $occIds, mysqli $conn) {
 }
 
 function searchDuplicateOptions(int $targetCollId, mysqli $conn) {
-	global $harvestFields;
+	global $harvestFields, $hideExactMatches, $missingLatLng;
 
 	$sql = 'SELECT dl.duplicateid, o2.occid as targetOccid, o.occid from omoccurduplicatelink dl2
 	join omoccurrences o2 on o2.occid = dl2.occid and o2.collid = ?
 	join omoccurduplicatelink dl on dl.duplicateid = dl2.duplicateid
 	join omoccurrences o on o.occid = dl.occid where o.occid != o2.occid';
 
-	$oneHarvestableField = '';
+	if($hideExactMatches) {
+		$oneHarvestableField = '';
+		for($i = 0; $i < count($harvestFields); $i++) {
+			$field = $harvestFields[$i];
+			$oneHarvestableField .= 'o2.' . $field . ' != ' . 'o.' . $field;
 
-	for($i = 0; $i < count($harvestFields); $i++) {
-		$field = $harvestFields[$i];
-		$oneHarvestableField .= 'o2.' . $field . ' != ' . 'o.' . $field;
-
-		if($i < count($harvestFields) - 1) {
-			$oneHarvestableField .= ' OR ';
+			if($i < count($harvestFields) - 1) {
+				$oneHarvestableField .= ' OR ';
+			}
 		}
+
+		$sql .= ' AND (' . $oneHarvestableField . ')';
 	}
 
-	$sql .= ' AND (' . $oneHarvestableField . ')';
+	if($missingLatLng) {
+		$sql .=	' AND (o2.decimalLongitude IS NULL OR o2.decimalLatitude IS NULL)';
+	}
 
 	$parameters = [$targetCollId];
 
@@ -398,7 +405,18 @@ $ui_option = 2;
 				<div style="margin-bottom: 1rem;">
 					<?php CustomQuery::renderCustomInputs() ?>
 				</div>
+				<div>
+					<input id="missingLatLng" type="checkbox" name="missingLatLng" value="1" <?= $missingLatLng? 'checked': ''?>>
+					<label for="missingLatLng">Only show targets missing latitude and longitude</label>
+				</div>
+
+				<div style="margin-bottom: 1rem;">
+					<input id="hideExactMatches" type="checkbox" name="hideExactMatches" value="1" <?= $hideExactMatches? 'checked': ''?>>
+					<label for="hideExactMatches">Only show targets with harvestable data</label>
+				</div>
+
 				<button class="button">Submit</button>
+
 			</form>
 
 
@@ -437,8 +455,10 @@ $ui_option = 2;
 
 			<?php elseif($ui_option === 2): ?>
 
+			<?php if(count($targets)): ?>
 			<table class="styledtable table-scroll">
 			<?= getTableHeaders($shownFields, $fieldIgnores) ?>
+
 			<?php foreach ($targets as $targetOccid => $target): ?>
 			<?php if(count($options[$target['duplicateid']])): ?>
 				<tbody>
@@ -454,9 +474,17 @@ $ui_option = 2;
 			<?php endforeach ?>
 			</table>
 
+			<?php else: ?>
+				<h4 style="margin-bottom: 1rem; padding:1rem 0;">
+					There are no duplicate clusters that match this search
+				</h4>
+			<?php endif ?>
 			<?php endif ?>
 
 			<button class="button">Copy Duplicate Data</button>
+			<p>
+				Clicking the button above will replace the georeference data in the target (dark grey) record with the data from the checked duplicate record. The following fields will be replaced: decimalLatitude, decimalLongitude, geodeticDatum, footprintWKT, coordinateUncertaintyInMeters, georeferencedBy, georeferenceRemarks, georeferenceSources, georeferenceProtocol, georeferenceVerificationStatus
+			</p>
 			</form>
 			<br/>
 		</div>
