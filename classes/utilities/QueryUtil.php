@@ -14,7 +14,12 @@ class QueryUtil {
 		[$major, $minor, $patch] = explode('.', $version);
 
 		if($major >= 8 && $minor >= 2) {
-			return mysqli_execute_query($conn, $sql, $params);
+			$rs = mysqli_execute_query($conn, $sql, $params);
+			if($conn->error) {
+				throw new mysqli_sql_exception($conn->error);
+			} else {
+				return $rs;
+			}
 		} else {
 			if(count($params)) {
 				$bind_params_str = '';
@@ -30,11 +35,18 @@ class QueryUtil {
 					$stmt->bind_param($bind_params_str, ...$params);
 					$stmt->execute();
 					return $stmt->get_result();
+				} else if($conn->error) {
+					throw new mysqli_sql_exception($conn->error);
 				} else {
 					return false;
 				}
 			} else {
-				return mysqli_query($conn, $sql);
+				$rs = mysqli_query($conn, $sql);
+				if($conn->error) {
+					throw new mysqli_sql_exception($conn->error);
+				} else {
+					return $rs;
+				}
 			}
 		}
 	}
