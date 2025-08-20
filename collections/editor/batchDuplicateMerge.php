@@ -243,7 +243,7 @@ function getCollections(mysqli $conn) {
 }
 
 function copyInfo() {
-	global $errors, $harvestFields;
+	global $errors, $harvestFields, $updated;
 	foreach($_POST as $targetOccId => $sourceOccId) {
 		if(is_numeric($targetOccId) && is_numeric($sourceOccId)) {
 			try {
@@ -270,7 +270,10 @@ function hasDiff(array $duplicateA, array $duplicateB) {
 	return false;
 }
 
+if(count($_POST)) copyInfo();
+
 $conn = Database::connect('readonly');
+
 
 $duplicates = searchDuplicateOptions($collid, $conn);
 $collections = getCollections($conn);
@@ -396,7 +399,7 @@ $ui_option = 2;
 						<button class="button" style="margin-left: auto;" type="button" onclick="document.getElementById('collections_dialog').close()">Close</button>
 						</div>
 					</div>
-					<?php include_once(__DIR__ . '/includes/collectionForm.php') ?>
+					<?php include(__DIR__ . '/includes/collectionForm.php') ?>
 				</dialog>
 
 				<button style="margin-bottom:1rem" class="button" type="button" onclick="document.getElementById('collections_dialog').showModal()">Filter Collections</button>
