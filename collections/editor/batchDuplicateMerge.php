@@ -114,8 +114,7 @@ function render_row($row, $checkboxName = false, $shownFields = []) {
 		($checkboxName ? '<input type="checkbox" onclick="checkbox_one_only(this)" name="'. $checkboxName  .'" value="' . $row['occid'] . '" style="margin:0"/>': '') . 
 		'</div></td>';
 
-	$base_url = $GLOBALS['CLIENT_ROOT'];
-	'/collections/individual/index.php?occid=';
+	$base_url = $GLOBALS['CLIENT_ROOT'] . '/collections/individual/index.php?occid=';
 		
 	foreach($shownFields as $key) {
 		$value = $row[$key] ?? null;
