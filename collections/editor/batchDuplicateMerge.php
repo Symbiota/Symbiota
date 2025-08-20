@@ -377,8 +377,8 @@ $ui_option = 2;
 
 			<h1>Duplicate Data Harvester</h1>
 
+			<h2>Duplicate Search Criteria</h2>
 			<form method="POST" style="margin-bottom: 1rem;">
-
 				<div style="margin-bottom: 1rem;">
 					<?php CustomQuery::renderCustomInputs() ?>
 				</div>
@@ -403,7 +403,7 @@ $ui_option = 2;
 				</dialog>
 
 				<button style="margin-bottom:1rem" class="button" type="button" onclick="document.getElementById('collections_dialog').showModal()">Filter Collections</button>
-				<button class="button">Submit</button>
+				<button class="button">Search</button>
 
 			</form>
 
