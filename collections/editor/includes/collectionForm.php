@@ -131,6 +131,7 @@ function toggleCategory(categoryId) {
 				<label>
 					<?= $collection['collectionname'] . ' (' . $collection['institutioncode'] . ($collection['collectioncode'] ? '-' . $collection['collectioncode'] : '') . ')' ?>
 				</label>
+				<a target="_blank" href="<?= ($CLIENT_ROOT? '/'. $CLIENT_ROOT: '' ); ?>/collections/misc/collprofiles.php?collid=<?= $collection['collid']?>">More Info</a>
 			</div>
 			<?php endforeach ?>
 		</div>
