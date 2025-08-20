@@ -14,6 +14,10 @@ $sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, 
 	WHERE s.recordcnt > 0 AND (cat.inclusive IS NULL OR cat.inclusive = 1 OR cat.ccpk = 1) 
 	order by cat.category, collectionname';
 
+$checkedCollections = [];
+foreach($_REQUEST['db'] as $collId) {
+	$checkedCollections[$collId] = true;
+}
 
 $collectionsByCategory = [
 	'Specimens' => [],
@@ -91,7 +95,15 @@ function toggleCategory(categoryId) {
 
 </script>
 <div>
-	<input style="margin:0;" onclick="toggleAllCheckboxes(this.parentElement, this.checked)" type="checkbox" id="all_collections" name="all_collections" value="1">
+	<input
+		style="margin:0;"
+		onclick="toggleAllCheckboxes(this.parentElement, this.checked)"
+		type="checkbox"
+		id="all_collections"
+		name="all_collections"
+		value="1"
+		<?= array_key_exists('all_collections', $_REQUEST)? 'checked': '' ?>
+	>
 	<label for="all_collections">
 		Select/Deselect <a href="<?= $CLIENT_ROOT? '/' . $CLIENT_ROOT: ''?>/collections/misc/collprofiles.php">All Collections</a>
 	</label>
@@ -103,31 +115,58 @@ function toggleCategory(categoryId) {
 	<fieldset id="<?=  $categoryIdentifer . '_container' ?>" style="margin-bottom: 1rem;">
 		<legend>
 			<div style="display:flex; align-items: center; gap:0.5rem;">
-				<input data-category onchange="updateParent(document.querySelectorAll('input[data-category]'),'#all_collections')"  onclick="toggleAllCheckboxes(document.getElementById(`<?= $categoryIdentifer . '_container' ?>`), this.checked)"
-					style="margin:0;" type="checkbox" id="<?= $categoryIdentifer ?>" name="<?= $categoryIdentifer ?>" value="1">
+				<input
+					data-category
+					onchange="updateParent(document.querySelectorAll('input[data-category]'),'#all_collections')"
+					onclick="toggleAllCheckboxes(document.getElementById(`<?= $categoryIdentifer . '_container' ?>`), this.checked)"
+					style="margin:0;"
+					type="checkbox"
+					id="<?= $categoryIdentifer ?>"
+					name="<?= $categoryIdentifer ?>"
+					value="1"
+					<?= array_key_exists($categoryIdentifer, $_REQUEST)? 'checked': '' ?>
+				>
 				<label for="<?= $categoryIdentifer ?>">
 					<?= $category['name'] ?>
 				</label>
 
 				<a onclick="toggleCategory(`<?=  $categoryIdentifer ?>`)" style="cursor: pointer;">
-					<span id="<?=  $categoryIdentifer . '_open_toggle' ?>" style="display: none; align-items: center; gap:0.5rem;">
-						<img  src="<?= ($CLIENT_ROOT? '/'. $CLIENT_ROOT: '' ); ?>/images/plus.png" style="width: 1em; height: 1em; cursor: pointer;"/>
+					<span id="<?=  $categoryIdentifer . '_open_toggle' ?>"
+						style="display: none; align-items: center; gap:0.5rem;">
+						<img
+							src="<?= ($CLIENT_ROOT? '/'. $CLIENT_ROOT: '' ); ?>/images/plus.png"
+							style="width: 1em; height: 1em; cursor: pointer;"
+						/>
 						Expand
 					</span>
 
-					<span id="<?=  $categoryIdentifer . '_close_toggle' ?>" style="display: flex; align-items: center; gap:0.5rem;">
-						<img src="<?= ($CLIENT_ROOT? '/'. $CLIENT_ROOT: '' ); ?>/images/minus.png" style="width: 1em; height: 1em; cursor: pointer;"/>
+					<span id="<?=  $categoryIdentifer . '_close_toggle' ?>"
+						style="display: flex; align-items: center; gap:0.5rem;">
+						<img
+							src="<?= ($CLIENT_ROOT? '/'. $CLIENT_ROOT: '' ); ?>/images/minus.png"
+							style="width: 1em; height: 1em; cursor: pointer;"
+						/>
 						Condense
 					</span>
 				</a>
 			</div>
 		</legend>
 
-		<div id="<?=  $categoryIdentifer . '_inputs' ?>"  style="display:flex; flex-direction:column; gap:0.5rem;" onchange="updateParent(this.querySelectorAll(`input[type=checkbox]`), '#<?= $categoryIdentifer ?>')">
+		<div id="<?=  $categoryIdentifer . '_inputs' ?>"
+			style="display:flex; flex-direction:column; gap:0.5rem;"
+			onchange="updateParent(this.querySelectorAll(`input[type=checkbox]`), '#<?= $categoryIdentifer ?>')"
+		>
 			<?php foreach($category['collections'] as $collection): ?>
 			<div style="display:flex; align-items: center; gap: 0.5rem;">
 				<img width="30px" height="30px" src="<?= $collection['icon'] ?>">
-				<input style="margin:0;" id="<?= $category['name'] . '_' . $collection['collid'] ?>" type="checkbox" name="db[]" value="<?= $collection['collid'] ?>">
+				<input
+					style="margin:0;"
+					id="<?= $category['name'] . '_' . $collection['collid'] ?>"
+					<?= array_key_exists($collection['collid'] ,$checkedCollections)? 'checked': '' ?>
+					type="checkbox"
+					name="db[]"
+					value="<?= $collection['collid'] ?>"
+				>
 				<label>
 					<?= $collection['collectionname'] . ' (' . $collection['institutioncode'] . ($collection['collectioncode'] ? '-' . $collection['collectioncode'] : '') . ')' ?>
 				</label>
