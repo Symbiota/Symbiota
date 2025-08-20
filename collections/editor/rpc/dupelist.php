@@ -86,9 +86,10 @@ $dupArr = $dupeManager->getDupeList($recordedBy, $recordNumber, $eventDate, $cat
 					?>
 					<div style="margin:30px 10px">
 						<div>
-							<?php 
-							echo $occArr['collname'];
-							?>
+							<b><?php echo $occArr['sciname'];?></b>
+						</div>
+						<div>
+							<?php echo $occArr['collname'];?>
 						</div>
 						<div>
 							<?php 
