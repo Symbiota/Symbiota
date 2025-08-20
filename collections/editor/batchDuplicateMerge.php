@@ -10,7 +10,6 @@ include_once($SERVER_ROOT . '/classes/CustomQuery.php');
 
 $collid = array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid'])? intval($_REQUEST['collid']):0;
 $start = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
-$limit = array_key_exists('limit',$_REQUEST)?$_REQUEST['limit']:1000;
 $db = array_key_exists('db',$_REQUEST)?$_REQUEST['db']:[];
 $hideExactMatches = array_key_exists('hideExactMatches',$_REQUEST);
 $missingLatLng = array_key_exists('missingLatLng',$_REQUEST);
@@ -185,7 +184,7 @@ function getOccurrences(array $occIds, mysqli $conn) {
 	return $rs->fetch_all(MYSQLI_ASSOC);
 }
 
-function searchDuplicateOptions(int $targetCollId, mysqli $conn) {
+function searchDuplicateOptions(int $targetCollId, int $page, mysqli $conn) {
 	global $harvestFields, $hideExactMatches, $missingLatLng, $db;
 
 	$sql = 'SELECT dl.duplicateid, o2.occid as targetOccid, o.occid from omoccurduplicatelink dl2
@@ -225,7 +224,7 @@ function searchDuplicateOptions(int $targetCollId, mysqli $conn) {
 		$parameters = array_merge($parameters, $customWhere['bindings']);
 	}
 
-	$sql .= ' LIMIT 100';
+	$sql .= ' LIMIT 100 OFFSET '. ($page ?? 0) * 100;
 
 	$rs = QueryUtil::executeQuery($conn, $sql, $parameters);
 
@@ -274,9 +273,10 @@ if(count($_POST)) copyInfo();
 
 $conn = Database::connect('readonly');
 
-
-$duplicates = searchDuplicateOptions($collid, $conn);
+$duplicates = searchDuplicateOptions($collid, $start, $conn);
 $collections = getCollections($conn);
+
+$paginateNext = count($duplicates) == 100;
 
 $targets  = [];
 $options = [];
@@ -421,6 +421,20 @@ $ui_option = 2;
 			</a>
 			</div>
 			<?php endforeach ?>
+
+			<div style="margin-bottom: 1rem; display: flex; gap: 1rem;">
+				<?php if($start != 0): ?>
+					<a href="?collid=<?= $collid?>&start=<?= $start - 1 ?>">Previous</a>
+				<?php endif ?>
+
+				<?php if($paginateNext): ?>
+					<a href="?collid=<?= $collid?>&start=<?= $start + 1 ?>">Next</a>
+				<?php endif ?>
+
+				<!-- <div style="flex-grow: 1; display: flex; justify-content: end;"> -->
+				<!-- 	<?= (($start * 100) + 1) . '-' . (($start * 100) + count($duplicates)) . ' duplicates'?> -->
+				<!-- </div> -->
+			</div>
 
 			<form method="POST">
 			<?php if($ui_option === 1): ?>
