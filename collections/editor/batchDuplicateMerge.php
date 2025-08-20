@@ -114,7 +114,7 @@ function render_row($row, $checkboxName = false, $shownFields = []) {
 		($checkboxName ? '<input type="checkbox" onclick="checkbox_one_only(this)" name="'. $checkboxName  .'" value="' . $row['occid'] . '" style="margin:0"/>': '') . 
 		'</div></td>';
 
-	$base_url = ($GLOBALS['CLIENT_ROOT']? '/' . $GLOBALS['CLIENT_ROOT']: '') . 
+	$base_url = $GLOBALS['CLIENT_ROOT'];
 	'/collections/individual/index.php?occid=';
 		
 	foreach($shownFields as $key) {
@@ -416,7 +416,7 @@ $ui_option = 2;
 			<?php foreach($updated as $occId): ?>
 			<div style="margin-bottom:0.5rem">
 			<?= 'Updated Record ' ?>
-			<a href="<?= ($CLIENT_ROOT? '/' . $CLIENT_ROOT: '' ) . '/collections/individual/index.php?occid=' . $occId ?>" >
+			<a href="<?= $CLIENT_ROOT . '/collections/individual/index.php?occid=' . $occId ?>" >
 				<?= '#' . $occId ?>
 			</a>
 			</div>

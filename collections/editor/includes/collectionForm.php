@@ -109,7 +109,7 @@ function toggleCategory(categoryId) {
 		<?= array_key_exists('all_collections', $_REQUEST)? 'checked': '' ?>
 	>
 	<label for="all_collections">
-		Select/Deselect <a href="<?= $CLIENT_ROOT? '/' . $CLIENT_ROOT: ''?>/collections/misc/collprofiles.php">All Collections</a>
+		Select/Deselect <a href="<?= $CLIENT_ROOT ?>/collections/misc/collprofiles.php">All Collections</a>
 	</label>
 	<?php foreach($collectionsByCategory as $collectionType => $categories): ?>
 	<h2><?= $collectionType === 'Specimens'? 'Specimen Collections': 'Observation Collections' ?></h2>
@@ -138,7 +138,7 @@ function toggleCategory(categoryId) {
 					<span id="<?=  $categoryIdentifer . '_open_toggle' ?>"
 						style="display: none; align-items: center; gap:0.5rem;">
 						<img
-							src="<?= ($CLIENT_ROOT? '/'. $CLIENT_ROOT: '' ); ?>/images/plus.png"
+							src="<?= $CLIENT_ROOT ?>/images/plus.png"
 							style="width: 1em; height: 1em; cursor: pointer;"
 						/>
 						Expand
@@ -147,7 +147,7 @@ function toggleCategory(categoryId) {
 					<span id="<?=  $categoryIdentifer . '_close_toggle' ?>"
 						style="display: flex; align-items: center; gap:0.5rem;">
 						<img
-							src="<?= ($CLIENT_ROOT? '/'. $CLIENT_ROOT: '' ); ?>/images/minus.png"
+							src="<?= $CLIENT_ROOT ?>/images/minus.png"
 							style="width: 1em; height: 1em; cursor: pointer;"
 						/>
 						Condense
@@ -174,7 +174,7 @@ function toggleCategory(categoryId) {
 				<label>
 					<?= $collection['collectionname'] . ' (' . $collection['institutioncode'] . ($collection['collectioncode'] ? '-' . $collection['collectioncode'] : '') . ')' ?>
 				</label>
-				<a target="_blank" href="<?= ($CLIENT_ROOT? '/'. $CLIENT_ROOT: '' ); ?>/collections/misc/collprofiles.php?collid=<?= $collection['collid']?>">More Info</a>
+				<a target="_blank" href="<?= $CLIENT_ROOT ?>/collections/misc/collprofiles.php?collid=<?= $collection['collid']?>">More Info</a>
 			</div>
 			<?php endforeach ?>
 		</div>
