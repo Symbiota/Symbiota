@@ -381,7 +381,7 @@ $ui_option = 2;
 				</div>
 				<div>
 					<input id="missingLatLng" type="checkbox" name="missingLatLng" value="1" <?= $missingLatLng? 'checked': ''?>>
-					<label for="missingLatLng">Only show targets missing latitude and longitude</label>
+					<label for="missingLatLng">Only show specimens from my collection without latitude and longitude</label>
 				</div>
 
 				<div style="margin-bottom: 1rem;">
