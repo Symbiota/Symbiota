@@ -5,7 +5,7 @@ class QueryUtil {
 	 *
 	 * @param mysqli $conn
 	 * @param string $sql
-	 * @param string $params
+	 * @param array $params
 	 * @throws mysqli_sql_exception
 	 */
 	static function executeQuery(mysqli $conn, string $sql, array $params = []) {
@@ -58,7 +58,7 @@ class QueryUtil {
 	 *
 	 * @param mysqli $conn
 	 * @param string $sql
-	 * @param string $params
+	 * @param array $params
 	 */
 	static function tryExecuteQuery(mysqli $conn, string $sql, array $params = []) {
 		try {
