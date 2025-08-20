@@ -16,7 +16,7 @@ $CLIENT_ROOT = '';				//URL path to project root folder (relative path w/o domai
 $SERVER_ROOT = '';				//Full path to Symbiota project root folder E.g. /var/www/html/portalname
 //Temp directory must be writable by Apache; it is highly recommended to set this to a path outside of the Apache DocumentRoot to avoid malicous file uploads; will use system default if not specified
 $TEMP_DIR_ROOT = '';		//E.g. /var/www/temp/portalname
-$LOG_PATH = $SERVER_ROOT . '/content/logs';					//Must be writable by Apache; will use <SYMBIOTA_ROOT>/temp/logs if not specified
+$LOG_PATH = $SERVER_ROOT . '/content/logs';					//Must be writable by Apache; will use <SYMBIOTA_ROOT>/content/logs if not specified
 
 //Path to CSS files
 $CSS_BASE_PATH = $CLIENT_ROOT . '/css';
