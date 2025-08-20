@@ -15,8 +15,12 @@ $sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, 
 	order by cat.category, collectionname';
 
 $checkedCollections = [];
-foreach($_REQUEST['db'] as $collId) {
-	$checkedCollections[$collId] = true;
+
+if(array_key_exists('db', $_REQUEST)) {
+	$collIds = is_array($_REQUEST['db'])? $_REQUEST['db']: [$_REQUEST['db']];
+	foreach($collIds as $collId) {
+		$checkedCollections[$collId] = true;
+	}
 }
 
 $collectionsByCategory = [
