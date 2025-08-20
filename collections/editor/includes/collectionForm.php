@@ -129,7 +129,7 @@ function toggleCategory(categoryId) {
 				<img width="30px" height="30px" src="<?= $collection['icon'] ?>">
 				<input style="margin:0;" id="<?= $category['name'] . '_' . $collection['collid'] ?>" type="checkbox" name="db[]" value="<?= $collection['collid'] ?>">
 				<label>
-					<?= $collection['collectionname'] ?>
+					<?= $collection['collectionname'] . ' (' . $collection['institutioncode'] . ($collection['collectioncode'] ? '-' . $collection['collectioncode'] : '') . ')' ?>
 				</label>
 			</div>
 			<?php endforeach ?>
