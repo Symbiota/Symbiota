@@ -11,7 +11,8 @@ $sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, 
 	FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid
 	LEFT JOIN omcollcatlink ccl ON c.collid = ccl.collid
 	LEFT JOIN omcollcategories cat ON ccl.ccpk = cat.ccpk
-	WHERE s.recordcnt > 0 AND (cat.inclusive IS NULL OR cat.inclusive = 1 OR cat.ccpk = 1)';
+	WHERE s.recordcnt > 0 AND (cat.inclusive IS NULL OR cat.inclusive = 1 OR cat.ccpk = 1) 
+	order by cat.category, collectionname';
 
 
 $collectionsByCategory = [
