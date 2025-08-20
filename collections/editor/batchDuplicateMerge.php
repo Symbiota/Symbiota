@@ -388,7 +388,7 @@ $ui_option = 2;
 
 				<div style="margin-bottom: 1rem;">
 					<input id="hideExactMatches" type="checkbox" name="hideExactMatches" value="1" <?= $hideExactMatches? 'checked': ''?>>
-					<label for="hideExactMatches">Only show targets with harvestable data</label>
+					<label for="hideExactMatches">Only show duplicates with georeferences different than target specimen</label>
 				</div>
 
 				<dialog id="collections_dialog" style="min-width: 900px;">
