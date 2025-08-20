@@ -118,7 +118,6 @@ function render_row($row, $checkboxName = false, $shownFields = []) {
 	$base_url = ($GLOBALS['CLIENT_ROOT']? '/' . $GLOBALS['CLIENT_ROOT']: '') . 
 	'/collections/individual/index.php?occid=';
 		
-
 	foreach($shownFields as $key) {
 		$value = $row[$key] ?? null;
 		if($key === 'occid') {
@@ -127,16 +126,6 @@ function render_row($row, $checkboxName = false, $shownFields = []) {
 			$html .= '<td>' . $value . '</td>';
 		}
 	}
-
-	// foreach ($row as $key => $value) {
-	// 	if(in_array($key, $fieldIgnores)) {
-	// 		continue;
-	// 	} else if($key === 'occid') {
-	// 		$html .= '<td><a href="'. $base_url . $value . '">' . $value . '</a></td>';
-	// 	}  else  {
-	// 		$html .= '<td>' . $value . '</td>';
-	// 	}
-	// }
 
 	return $html .=  '</tr>';
 }
@@ -327,28 +316,6 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 	$option['collectionCode'] = $collections[$option['collid']]['collectionCode'];
 	$options[$duplicateId][$occid] = $option;
 }
-
-//var_dump($targetsOccurrneces, $optionsOccurrences);
-
-
-// foreach ($duplicates as $dupe) {
-// 	if(!isset($options[$dupe['duplicateid']])) {
-// 		$options[$dupe['duplicateid']] = [];
-// 	}
-//
-// 	if($dupe['collid2'] === $collid) {
-// 		$targets[$dupe['occid2']] = getShownDuplicate($dupe, '2');
-// 		$targets[$dupe['occid2']]['institutionCode'] = $collections[$dupe['collid2']]['institutionCode'];
-// 		$targets[$dupe['occid2']]['collectionCode'] = $collections[$dupe['collid2']]['collectionCode'];
-// 		$targets[$dupe['occid2']]['duplicateid'] = $dupe['duplicateid2'];
-// 	}
-//
-// 	$shownDupe = getShownDuplicate($dupe);
-// 	$shownDupe['duplicateid'] = $dupe['duplicateid'];
-// 	$shownDupe['institutionCode'] = $collections[$dupe['collid']]['institutionCode'];
-// 	$shownDupe['collectionCode'] = $collections[$dupe['collid']]['collectionCode'];
-// 	$options[$dupe['duplicateid']][$dupe['occid']] = $shownDupe;
-// }
 
 $ui_option = 2;
 
