@@ -367,8 +367,7 @@ $ui_option = 2;
 
 		<div role="main" id="record-viewer-innertext">
 
-			<!-- TODO (Logan) import lang tags -->
-			<?php /* breadcrumbs([
+			<?php /* TODO (Logan) import lang tags breadcrumbs([
 			'Home' => '../../index.php',
 			'Collections Profile' => '../misc/collprofiles.php?emode=1&collid=' . $collid,
 			'Duplicate Merger',
@@ -377,7 +376,7 @@ $ui_option = 2;
 
 			<h1>Duplicate Data Harvester</h1>
 
-			<h2>Duplicate Search Criteria</h2>
+			<h2 style="margin-bottom: 0.5rem">Duplicate Search Criteria</h2>
 			<form method="POST" style="margin-bottom: 1rem;">
 				<div style="margin-bottom: 1rem;">
 					<?php CustomQuery::renderCustomInputs() ?>
