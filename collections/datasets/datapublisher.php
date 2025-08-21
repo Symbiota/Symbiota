@@ -55,7 +55,7 @@ elseif ($action) {
 	$dwcaManager->setIncludeIdentifiers($includeIdentifiers);
 	if (!array_key_exists('redact', $_POST)) $redactLocalities = 0;
 	$dwcaManager->setRedactLocalities($redactLocalities);
-	$dwcaManager->setTargetPath($SERVER_ROOT . (substr($SERVER_ROOT, -1) == '/' ? '' : '/') . 'content/dwca/');
+	$dwcaManager->setTargetPath('dwca-pub');
 }
 
 $idigbioKey = $collManager->getIdigbioKey();
@@ -284,13 +284,14 @@ if ($isEditor) {
 					$collArr['doi'] = $responseData->doi;
 					$_SESSION['colldata'] = $collArr;
 				}
-				$dwcaManager->createDwcArchive();
-				$dwcaManager->writeRssFile();
-				echo '</ul>';
-				if ($publishGBIF) {
-					echo '<ul>';
-					$collManager->triggerGBIFCrawl($collArr['dwcaurl'], $collid, $collArr['collectionname']);
+				if($dwcaManager->createDwcArchive()){
+					$dwcaManager->writeRssFile();
 					echo '</ul>';
+					if ($publishGBIF) {
+						echo '<ul>';
+						$collManager->triggerGBIFCrawl($collArr['dwcaurl'], $collid, $collArr['collectionname']);
+						echo '</ul>';
+					}
 				}
 			}
 			$dwcUri = '';

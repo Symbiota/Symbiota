@@ -7,11 +7,11 @@ if(!empty($THIRD_PARTY_OID_AUTH_ENABLED)){
 use Jumbojett\OpenIDConnectClient;
 
 if($SYMB_UID){
-	if($_SESSION['refurl']){
+	if($_SESSION['refurl'] ?? false){
 		header("Location:" . $_SESSION['refurl']);
 		unset($_SESSION['refurl']);
 	}
-	if ($_REQUEST['refurl']){
+	if ($_REQUEST['refurl'] ?? false){
 		header("Location:" . $_REQUEST['refurl']);
 	}
 	else{
@@ -90,7 +90,7 @@ if($action == 'logout'){
 	}
 	else{
 		$pHandler->reset();
-		header('Location: ../index.php');
+		header('Location: '  . ($CLIENT_ROOT? '/' . $CLIENT_ROOT: '') . '/index.php');
 	}
 }
 elseif($action == 'login'){
