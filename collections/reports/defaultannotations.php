@@ -56,7 +56,8 @@ if($SYMB_UID){
 			if($isEditor){
 				if($action){
 					$speciesAuthors = ((array_key_exists('speciesauthors',$_POST) && $_POST['speciesauthors'])?1:0);
-					$labelArr = $labelManager->getAnnoArray($_POST['detid'], $speciesAuthors);
+					$familyName = ((array_key_exists('print-family',$_POST) && $_POST['print-family'])?1:0);
+					$labelArr = $labelManager->getAnnoArray($_POST['detid'], $speciesAuthors, $familyName);
 					if(array_key_exists('clearqueue',$_POST) && $_POST['clearqueue']){
 						$labelManager->clearAnnoQueue($_POST['detid']);
 					}
@@ -80,26 +81,29 @@ if($SYMB_UID){
 									<?php
 								}
 								?>
-								<div class="scientificnamediv">
-									<?php
-									if($occArr['identificationqualifier']) echo '<span class="identificationqualifier">'.$occArr['identificationqualifier'].'</span> ';
-									$scinameStr = $occArr['sciname'];
-									$parentAuthor = (array_key_exists('parentauthor',$occArr)?' '.$occArr['parentauthor']:'');
-									$scinameStr = str_replace(' sp. ','</i></b>'.$parentAuthor.' <b>sp.</b>',$scinameStr);
-									$scinameStr = str_replace(' subsp. ','</i></b>'.$parentAuthor.' <b>subsp. <i>',$scinameStr);
-									$scinameStr = str_replace(' ssp. ','</i></b>'.$parentAuthor.' <b>ssp. <i>',$scinameStr);
-									$scinameStr = str_replace(' var. ','</i></b>'.$parentAuthor.' <b>var. <i>',$scinameStr);
-									$scinameStr = str_replace(' variety ','</i></b>'.$parentAuthor.' <b>var. <i>',$scinameStr);
-									$scinameStr = str_replace(' Variety ','</i></b>'.$parentAuthor.' <b>var. <i>',$scinameStr);
-									$scinameStr = str_replace(' v. ','</i></b>'.$parentAuthor.' <b>var. <i>',$scinameStr);
-									$scinameStr = str_replace(' f. ','</i></b>'.$parentAuthor.' <b>f. <i>',$scinameStr);
-									$scinameStr = str_replace(' cf. ','</i></b>'.$parentAuthor.' <b>cf. <i>',$scinameStr);
-									$scinameStr = str_replace(' aff. ','</i></b>'.$parentAuthor.' <b>aff. <i>',$scinameStr);
-									?>
-									<span class="sciname">
-										<b><i><?php echo $scinameStr; ?></i></b>
-									</span>
-									<span class="scientificnameauthorship"><?php echo $occArr['scientificnameauthorship']; ?></span>
+								<div class="scientificnamediv" style="display: flex;">
+									<div class="sciname-group" style="display: flex; gap: 0.5rem; align-items: center;">
+										<?php
+										if($occArr['identificationqualifier']) echo '<span class="identificationqualifier">'.$occArr['identificationqualifier'].'</span> ';
+										$scinameStr = $occArr['sciname'];
+										$parentAuthor = (array_key_exists('parentauthor',$occArr)?' '.$occArr['parentauthor']:'');
+										$scinameStr = str_replace(' sp. ','</i></b>'.$parentAuthor.' <b>sp.</b>',$scinameStr);
+										$scinameStr = str_replace(' subsp. ','</i></b>'.$parentAuthor.' <b>subsp. <i>',$scinameStr);
+										$scinameStr = str_replace(' ssp. ','</i></b>'.$parentAuthor.' <b>ssp. <i>',$scinameStr);
+										$scinameStr = str_replace(' var. ','</i></b>'.$parentAuthor.' <b>var. <i>',$scinameStr);
+										$scinameStr = str_replace(' variety ','</i></b>'.$parentAuthor.' <b>var. <i>',$scinameStr);
+										$scinameStr = str_replace(' Variety ','</i></b>'.$parentAuthor.' <b>var. <i>',$scinameStr);
+										$scinameStr = str_replace(' v. ','</i></b>'.$parentAuthor.' <b>var. <i>',$scinameStr);
+										$scinameStr = str_replace(' f. ','</i></b>'.$parentAuthor.' <b>f. <i>',$scinameStr);
+										$scinameStr = str_replace(' cf. ','</i></b>'.$parentAuthor.' <b>cf. <i>',$scinameStr);
+										$scinameStr = str_replace(' aff. ','</i></b>'.$parentAuthor.' <b>aff. <i>',$scinameStr);
+										?>
+										<span class="sciname">
+											<b><i><?php echo $scinameStr; ?></i></b>
+										</span>
+										<span class="scientificnameauthorship"><?php echo $occArr['scientificnameauthorship']; ?></span>
+									</div>
+									<span style="margin-left: auto;" class="family"><?php echo strtoupper($occArr['family']); ?></span>
 								</div>
 								<?php
 								if($occArr['identifiedby'] || $occArr['dateidentified']){

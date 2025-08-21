@@ -40,41 +40,44 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 	/**
 	 * Takes parameters from a form submission and modifies an existing image record
 	 * in the database.
+	 *
+	 * TODO (Logan) deprecate because no usage
+	 * commenting out for now as instructed
 	 */
-	public function addImageOccurrence($postArr){
-		global $LANG;
-		$status = true;
-		if($this->addOccurrence($postArr)){
-			if($this->addImage($postArr)){
-				if($this->activeImgId){
-					//Load OCR
-					$rawStr = '';
-					$ocrSource = '';
-					if($postArr['ocrblock']){
-						$rawStr = trim($postArr['ocrblock']);
-						if($postArr['ocrsource']) $ocrSource = $postArr['ocrsource'];
-						else $ocrSource = 'User submitted';
-					}
-					elseif(isset($postArr['tessocr']) && $postArr['tessocr']){
-						$ocrManager = new SpecProcessorOcr();
-						$rawStr = $ocrManager->ocrImageById($this->activeImgId);
-						$ocrSource = 'Tesseract';
-					}
-					if($rawStr){
-						if($ocrSource) $ocrSource .= ': '.date('Y-m-d');
-						$sql = 'INSERT INTO specprocessorrawlabels(mediaID, rawstr, source) VALUES('.$this->activeImgId.',"'.$this->cleanRawFragment($rawStr).'","'.$this->cleanInStr($ocrSource).'")';
-						if(!$this->conn->query($sql)){
-							$this->errorArr[] = $LANG['ERROR_LOAD_OCR'].': '.$this->conn->error;
-						}
-					}
-				}
-			}
-		}
-		else{
-			$status = false;
-		}
-		return $status;
-	}
+	// public function addImageOccurrence($postArr){
+	// 	global $LANG;
+	// 	$status = true;
+	// 	if($this->addOccurrence($postArr)){
+	// 		if($this->addImage($postArr)){
+	// 			if($this->activeImgId){
+	// 				//Load OCR
+	// 				$rawStr = '';
+	// 				$ocrSource = '';
+	// 				if($postArr['ocrblock']){
+	// 					$rawStr = trim($postArr['ocrblock']);
+	// 					if($postArr['ocrsource']) $ocrSource = $postArr['ocrsource'];
+	// 					else $ocrSource = 'User submitted';
+	// 				}
+	// 				elseif(isset($postArr['tessocr']) && $postArr['tessocr']){
+	// 					$ocrManager = new SpecProcessorOcr();
+	// 					$rawStr = $ocrManager->ocrImageById($this->activeImgId);
+	// 					$ocrSource = 'Tesseract';
+	// 				}
+	// 				if($rawStr){
+	// 					if($ocrSource) $ocrSource .= ': '.date('Y-m-d');
+	// 					$sql = 'INSERT INTO specprocessorrawlabels(mediaID, rawstr, source) VALUES('.$this->activeImgId.',"'.$this->cleanRawFragment($rawStr).'","'.$this->cleanInStr($ocrSource).'")';
+	// 					if(!$this->conn->query($sql)){
+	// 						$this->errorArr[] = $LANG['ERROR_LOAD_OCR'].': '.$this->conn->error;
+	// 					}
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// 	else{
+	// 		$status = false;
+	// 	}
+	// 	return $status;
+	// }
 
 	private function editImage($imgArr){
 		$status = false;
@@ -302,155 +305,147 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 		return $bool;
 	}
 
-	public function createOccurrenceFrom(): int {
-		$sql = 'INSERT INTO omoccurrences(collid, observeruid,processingstatus) SELECT collid, observeruid, "unprocessed" FROM omoccurrences WHERE occid = ?';
+	// TODO (Logan) deprecate function
+	// commenting out for now as instructed
+	// public function remapImage($mediaID, $targetOccid = 0){
+	// 	global $LANG;
+	// 	$status = true;
+	// 	if(!is_numeric($mediaID)) return false;
+	// 	if($targetOccid == 'new'){
+	// 		$sql = 'INSERT INTO omoccurrences(collid, observeruid,processingstatus) SELECT collid, observeruid, "unprocessed" FROM omoccurrences WHERE occid = '.$this->occid;
+	// 		if($this->conn->query($sql)){
+	// 			$targetOccid = $this->conn->insert_id;
+	// 			$status = $targetOccid;
+	// 		}
+	// 		else{
+	// 			$this->errorArr[] = $LANG['UNABLE_RELINK_BLANK'].': '.$this->conn->error;
+	// 			return false;
+	// 		}
+	// 	}
+	// 	if($targetOccid && is_numeric($targetOccid)){
+	// 		$imgArr = array_intersect_key(current(parent::getImageMap($mediaID)), array('url'=>'','tnurl'=>'','origurl'=>''));
+	// 		$editArr = array('mediaid' => $mediaID, 'occid' => $targetOccid);
+	// 		if(!$this->imageNotCatalogNumberLimited($imgArr)){
+	// 			if($this->imagesAreWritable($imgArr)){
+	// 				//Rename images to ensure that files are not written over with file named using previous catalog number
+	// 				$ts = time();
+	// 				if(isset($imgArr['url']) && $imgArr['url']){
+	// 					$ext = substr($imgArr['url'], strrpos($imgArr['url'],'.'));
+	// 					$pathFrag = substr($imgArr['url'], 0, strrpos($imgArr['url'],'.'));
+	// 					$editArr['renameweburl'] = 1;
+	// 					$editArr['oldurl'] = $imgArr['url'];
+	// 					$editArr['url'] = $pathFrag.'_'.$ts.$ext;
+	// 				}
+	// 				if(isset($imgArr['tnurl']) && $imgArr['tnurl']){
+	// 					$ext = substr($imgArr['tnurl'], strrpos($imgArr['tnurl'],'.'));
+	// 					$pathFrag = substr($imgArr['tnurl'], 0, strrpos($imgArr['tnurl'],'.'));
+	// 					$editArr['renametnurl'] = 1;
+	// 					$editArr['oldtnurl'] = $imgArr['tnurl'];
+	// 					$editArr['tnurl'] = $pathFrag.'_'.$ts.$ext;
+	// 				}
+	// 				if(isset($imgArr['origurl']) && $imgArr['origurl']){
+	// 					$ext = substr($imgArr['origurl'], strrpos($imgArr['origurl'],'.'));
+	// 					$pathFrag = substr($imgArr['origurl'], 0, strrpos($imgArr['origurl'],'.'));
+	// 					$editArr['renameorigurl'] = 1;
+	// 					$editArr['oldorigurl'] = $imgArr['origurl'];
+	// 					$editArr['origurl'] = $pathFrag.'_'.$ts.$ext;
+	// 				}
+	// 			}
+	// 		}
+	// 		if(!$this->editImage($editArr)){
+	// 			$this->errorArr[] = $LANG['UNABLE_REMAP_ANOTHER'].': '.$this->conn->error;
+	// 			return false;
+	// 		}
+	// 	}
+	// 	else{
+	// 		$sql = 'UPDATE media SET occid = NULL WHERE (mediaID = '.$imgId.')';
+	// 		if(!$this->conn->query($sql)){
+	// 			$this->errorArr[] = $LANG['UNABLE_DISSOCIATE'].': '.$this->conn->error;
+	// 			return false;
+	// 		}
+	// 	}
+	// 	return $status;
+	// }
 
-		try {
-			QueryUtil::executeQuery($this->conn, $sql, [$this->occid]);
-			return $this->conn->insert_id;
-		} catch(Exception $e) {
-			$this->errorArr[] = $LANG['UNABLE_RELINK_BLANK'].': '.$this->conn->error;
-			return -1;
-		}
-	}
-
-	public function remapImage($mediaID, $targetOccid = 0){
-		global $LANG;
-		$status = true;
-		if(!is_numeric($mediaID)) return false;
-		if($targetOccid == 'new'){
-			$sql = 'INSERT INTO omoccurrences(collid, observeruid,processingstatus) SELECT collid, observeruid, "unprocessed" FROM omoccurrences WHERE occid = '.$this->occid;
-			if($this->conn->query($sql)){
-				$targetOccid = $this->conn->insert_id;
-				$status = $targetOccid;
-			}
-			else{
-				$this->errorArr[] = $LANG['UNABLE_RELINK_BLANK'].': '.$this->conn->error;
-				return false;
-			}
-		}
-		if($targetOccid && is_numeric($targetOccid)){
-			$imgArr = array_intersect_key(current(parent::getImageMap($mediaID)), array('url'=>'','tnurl'=>'','origurl'=>''));
-			$editArr = array('mediaid' => $mediaID, 'occid' => $targetOccid);
-			if(!$this->imageNotCatalogNumberLimited($imgArr)){
-				if($this->imagesAreWritable($imgArr)){
-					//Rename images to ensure that files are not written over with file named using previous catalog number
-					$ts = time();
-					if(isset($imgArr['url']) && $imgArr['url']){
-						$ext = substr($imgArr['url'], strrpos($imgArr['url'],'.'));
-						$pathFrag = substr($imgArr['url'], 0, strrpos($imgArr['url'],'.'));
-						$editArr['renameweburl'] = 1;
-						$editArr['oldurl'] = $imgArr['url'];
-						$editArr['url'] = $pathFrag.'_'.$ts.$ext;
-					}
-					if(isset($imgArr['tnurl']) && $imgArr['tnurl']){
-						$ext = substr($imgArr['tnurl'], strrpos($imgArr['tnurl'],'.'));
-						$pathFrag = substr($imgArr['tnurl'], 0, strrpos($imgArr['tnurl'],'.'));
-						$editArr['renametnurl'] = 1;
-						$editArr['oldtnurl'] = $imgArr['tnurl'];
-						$editArr['tnurl'] = $pathFrag.'_'.$ts.$ext;
-					}
-					if(isset($imgArr['origurl']) && $imgArr['origurl']){
-						$ext = substr($imgArr['origurl'], strrpos($imgArr['origurl'],'.'));
-						$pathFrag = substr($imgArr['origurl'], 0, strrpos($imgArr['origurl'],'.'));
-						$editArr['renameorigurl'] = 1;
-						$editArr['oldorigurl'] = $imgArr['origurl'];
-						$editArr['origurl'] = $pathFrag.'_'.$ts.$ext;
-					}
-				}
-			}
-			if(!$this->editImage($editArr)){
-				$this->errorArr[] = $LANG['UNABLE_REMAP_ANOTHER'].': '.$this->conn->error;
-				return false;
-			}
-		}
-		else{
-			$sql = 'UPDATE media SET occid = NULL WHERE (mediaID = '.$imgId.')';
-			if(!$this->conn->query($sql)){
-				$this->errorArr[] = $LANG['UNABLE_DISSOCIATE'].': '.$this->conn->error;
-				return false;
-			}
-		}
-		return $status;
-	}
-
-	public function addImage($postArr){
-		$status = false;
-		$imgManager = new ImageShared();
-		//Set target path
-		$subTargetPath = $this->collMap['institutioncode'];
-		if($this->collMap['collectioncode']) $subTargetPath .= '_'.$this->collMap['collectioncode'];
-		$subTargetPath .= '/';
-		if(!$this->occurrenceMap) $this->setOccurArr();
-		$catNum = $this->occurrenceMap[$this->occid]['catalognumber'];
-		if($catNum){
-			$catNum = str_replace(array('/','\\',' '), '', $catNum);
-			if(preg_match('/^(\D{0,8}\d{4,})/', $catNum, $m)){
-				$catPath = substr($m[1], 0, -3);
-				if(is_numeric($catPath) && strlen($catPath)<5) $catPath = str_pad($catPath, 5, "0", STR_PAD_LEFT);
-				$subTargetPath .= $catPath.'/';
-			}
-			else{
-				$subTargetPath .= '00000/';
-			}
-		}
-		else{
-			$subTargetPath .= date('Ym').'/';
-		}
-		$imgManager->setTargetPath($subTargetPath);
-
-		//Import large image or not
-		if(array_key_exists('nolgimage',$postArr) && $postArr['nolgimage']==1){
-			$imgManager->setMapLargeImg(false);
-		}
-		else{
-			$imgManager->setMapLargeImg(true);
-		}
-
-		//Set image metadata variables
-		if(!empty($postArr['caption'])) $imgManager->setCaption($postArr['caption']);
-		if(!empty($postArr['creatoruid'])) $imgManager->setCreatorUid($postArr['creatoruid']);
-		if(!empty($postArr['creator'])) $imgManager->setCreator($postArr['creator']);
-		if(!empty($postArr['sourceurl'])) $imgManager->setSourceUrl($postArr['sourceurl']);
-		if(!empty($postArr['copyright'])) $imgManager->setCopyright($postArr['copyright']);
-		if(!empty($postArr['notes'])) $imgManager->setNotes($postArr['notes']);
-		if(!empty($postArr['sortOccurrence'])) $imgManager->setSortOccurrence($postArr['sortOccurrence']);
-		if(strpos($this->collMap['colltype'], 'Observations') !== false)  $imgManager->setSortSeq(40);
-
-		$sourceImgUri = $postArr['imgurl'];
-		if($sourceImgUri){
-			//Source image is a URI supplied by user
-			$imgManager->parseUrl($sourceImgUri);
-			$imgWeb = '';
-			$imgThumb = '';
-			if(isset($postArr['weburl']) && $postArr['weburl']) $imgWeb = $postArr['weburl'];
-			if(isset($postArr['tnurl']) && $postArr['tnurl']) $imgThumb = $postArr['tnurl'];
-			if($imgThumb && !$imgWeb) $imgManager->setCreateWebDerivative(false);
-			if($imgWeb) $imgManager->setImgWebUrl($imgWeb);
-			if($imgThumb) $imgManager->setImgTnUrl($imgThumb);
-			if(array_key_exists('copytoserver',$postArr) && $postArr['copytoserver']){
-				if($imgManager->copyImageFromUrl()) $status = true;
-			}
-			else $imgManager->setImgLgUrl($sourceImgUri);
-		}
-		else{
-			//Image is a file upload
-			if($imgManager->uploadImage()) $status = true;
-		}
-		$imgManager->setOccid($this->occid);
-		if(isset($this->occurrenceMap[$this->occid]['tidinterpreted'])) $imgManager->setTid($this->occurrenceMap[$this->occid]['tidinterpreted']);
-		if($imgManager->processImage()){
-			$this->activeImgId = $imgManager->getActiveImgId();
-			$status = true;
-		}
-
-		//Load tags
-		$status = $imgManager->insertImageTags($postArr);
-
-		//Get errors and warnings
-		$this->errorArr[] = $imgManager->getErrStr();
-		return $status;
-	}
+	// TODO (Logan) deprecate function
+	// commenting out for now as instructed
+	// public function addImage($postArr){
+	// 	$status = false;
+	// 	$imgManager = new ImageShared();
+	// 	//Set target path
+	// 	$subTargetPath = $this->collMap['institutioncode'];
+	// 	if($this->collMap['collectioncode']) $subTargetPath .= '_'.$this->collMap['collectioncode'];
+	// 	$subTargetPath .= '/';
+	// 	if(!$this->occurrenceMap) $this->setOccurArr();
+	// 	$catNum = $this->occurrenceMap[$this->occid]['catalognumber'];
+	// 	if($catNum){
+	// 		$catNum = str_replace(array('/','\\',' '), '', $catNum);
+	// 		if(preg_match('/^(\D{0,8}\d{4,})/', $catNum, $m)){
+	// 			$catPath = substr($m[1], 0, -3);
+	// 			if(is_numeric($catPath) && strlen($catPath)<5) $catPath = str_pad($catPath, 5, "0", STR_PAD_LEFT);
+	// 			$subTargetPath .= $catPath.'/';
+	// 		}
+	// 		else{
+	// 			$subTargetPath .= '00000/';
+	// 		}
+	// 	}
+	// 	else{
+	// 		$subTargetPath .= date('Ym').'/';
+	// 	}
+	// 	$imgManager->setTargetPath($subTargetPath);
+	//
+	// 	//Import large image or not
+	// 	if(array_key_exists('nolgimage',$postArr) && $postArr['nolgimage']==1){
+	// 		$imgManager->setMapLargeImg(false);
+	// 	}
+	// 	else{
+	// 		$imgManager->setMapLargeImg(true);
+	// 	}
+	//
+	// 	//Set image metadata variables
+	// 	if(!empty($postArr['caption'])) $imgManager->setCaption($postArr['caption']);
+	// 	if(!empty($postArr['creatoruid'])) $imgManager->setCreatorUid($postArr['creatoruid']);
+	// 	if(!empty($postArr['creator'])) $imgManager->setCreator($postArr['creator']);
+	// 	if(!empty($postArr['sourceurl'])) $imgManager->setSourceUrl($postArr['sourceurl']);
+	// 	if(!empty($postArr['copyright'])) $imgManager->setCopyright($postArr['copyright']);
+	// 	if(!empty($postArr['notes'])) $imgManager->setNotes($postArr['notes']);
+	// 	if(!empty($postArr['sortOccurrence'])) $imgManager->setSortOccurrence($postArr['sortOccurrence']);
+	// 	if(strpos($this->collMap['colltype'], 'Observations') !== false)  $imgManager->setSortSeq(40);
+	//
+	// 	$sourceImgUri = $postArr['imgurl'];
+	// 	if($sourceImgUri){
+	// 		//Source image is a URI supplied by user
+	// 		$imgManager->parseUrl($sourceImgUri);
+	// 		$imgWeb = '';
+	// 		$imgThumb = '';
+	// 		if(isset($postArr['weburl']) && $postArr['weburl']) $imgWeb = $postArr['weburl'];
+	// 		if(isset($postArr['tnurl']) && $postArr['tnurl']) $imgThumb = $postArr['tnurl'];
+	// 		if($imgThumb && !$imgWeb) $imgManager->setCreateWebDerivative(false);
+	// 		if($imgWeb) $imgManager->setImgWebUrl($imgWeb);
+	// 		if($imgThumb) $imgManager->setImgTnUrl($imgThumb);
+	// 		if(array_key_exists('copytoserver',$postArr) && $postArr['copytoserver']){
+	// 			if($imgManager->copyImageFromUrl()) $status = true;
+	// 		}
+	// 		else $imgManager->setImgLgUrl($sourceImgUri);
+	// 	}
+	// 	else{
+	// 		//Image is a file upload
+	// 		if($imgManager->uploadImage()) $status = true;
+	// 	}
+	// 	$imgManager->setOccid($this->occid);
+	// 	if(isset($this->occurrenceMap[$this->occid]['tidinterpreted'])) $imgManager->setTid($this->occurrenceMap[$this->occid]['tidinterpreted']);
+	// 	if($imgManager->processImage()){
+	// 		$this->activeImgId = $imgManager->getActiveImgId();
+	// 		$status = true;
+	// 	}
+	//
+	// 	//Load tags
+	// 	$status = $imgManager->insertImageTags($postArr);
+	//
+	// 	//Get errors and warnings
+	// 	$this->errorArr[] = $imgManager->getErrStr();
+	// 	return $status;
+	// }
 
 	public function getCreatorArr(){
 		if(!$this->creatorArr){

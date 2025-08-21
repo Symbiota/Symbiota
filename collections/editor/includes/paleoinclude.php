@@ -191,7 +191,7 @@ if(isset($occArr['lateInterval'])) $lateIntervalTerm = $occArr['lateInterval'];
 		<div id="stratRemarksDiv">
 			<?= $LANG['STRAT_REMARKS_LABEL'] ?>
 			<a href="#" onclick="return dwcDoc('stratRemarks')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-			<input type="text" name="stratRemarks" value="<?php echo isset($occArr['stratRemarks'])?$occArr['stratRemarks']:''; ?>" onchange="fieldChanged('stratRemarks');" />
+			<textarea type="text" name="stratRemarks" onchange="fieldChanged('stratRemarks');"><?php echo isset($occArr['stratRemarks'])?$occArr['stratRemarks']:''; ?></textarea>
 		</div>
 	</div>
 	<div style="clear:both">

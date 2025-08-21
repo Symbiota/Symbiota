@@ -87,6 +87,7 @@ function checkHarvestParamsForm(frm){
 	}
 
 	// Geo Context
+	const searchFormPaleo = document.getElementById("searchFormPaleo") || null;
 	if (searchFormPaleo) {
 		let early = frm.earlyInterval.value;
 		let late = frm.lateInterval.value;

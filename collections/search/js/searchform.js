@@ -1068,6 +1068,20 @@ function toggleAccordionsFromSessionStorage(accordionIds) {
   });
 }
 
+function toggleCharacterGroup(charID) {
+  const plus = document.getElementById('plus-' + charID);
+  const minus = document.getElementById('minus-' + charID);
+  const block = document.getElementById('char-block-' + charID);
+
+  if (!plus || !minus || !block) return;
+
+  const isVisible = block.style.display === 'block';
+
+  block.style.display = isVisible ? 'none' : 'block';
+  plus.style.display = isVisible ? 'inline' : 'none';
+  minus.style.display = isVisible ? 'none' : 'inline';
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 /**

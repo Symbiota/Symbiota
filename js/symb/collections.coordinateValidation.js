@@ -8,7 +8,14 @@ function verifyCoordinates(f, client_root) {
 	var lngValue = f.decimallongitude.value;
 	var latValue = f.decimallatitude.value;
 
-	if(latValue && lngValue){
+	const geocode_form_map = {
+		50: 'country',
+		60: 'stateprovince',
+		70: 'county',
+		80: 'municipality',
+	}
+
+	if(isNumeric(latValue) && isNumeric(lngValue) && !f.coordinates_validated){
 		$.ajax({
 			type: "GET",
 			url: `${window.location.origin + client_root}/collections/editor/rpc/geocode.php`,
@@ -17,12 +24,6 @@ function verifyCoordinates(f, client_root) {
 		}).done(function( data ) {
 			if(data.matches){
 				let coord_valid = true;
-				const geocode_form_map = {
-					50: 'country',
-					60: 'stateprovince',
-					70: 'county',
-					80: 'municipality',
-				}
 
 				function getAccepted(match) {
 					let returnArr = [];
@@ -49,15 +50,18 @@ function verifyCoordinates(f, client_root) {
 								f[form_name].style.backgroundColor = "lightblue";
 							} else if(!getAccepted(match).includes(f[form_name].value.toLowerCase())) {
 								coord_valid = false;
+								f[form_name].style.backgroundColor = "#ff000066 ";
 							}
 						}
 				}
+
 				if(!coord_valid) {
 					alert("Are the coordinates accurate? They currently map to: " + data.matches.map(d => d.geoterm).join(', ') + " which differs from what is in the form. Click globe symbol to display coordinates in map.");
 				} else if(data.matches && data.matches.length === 0 && data.is_registered) {
 					alert("Are the coordinates accurate? They are not within the entered locality. Click globe symbol to display coordinates in map.");
 
 				}
+				f.coordinates_validated = true;
 			}
 		});
 	}

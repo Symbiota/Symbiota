@@ -68,7 +68,10 @@ if($coorArr && count($coorArr) == 4){
 				zoom: 3,
 				center: [lat, lng],
 			};
-			map = new LeafletMap('map_canvas', dmOptions);
+			map = new LeafletMap('map_canvas',
+				dmOptions,
+				JSON.parse(`<?= json_encode($GEO_JSON_LAYERS ?? []) ?>`)
+			);
 
 			const markers = [];
 
@@ -164,10 +167,9 @@ if($coorArr && count($coorArr) == 4){
 
 			try{
 				if(data.err == 0) data.err = "";	
-
-				const update_arr = [
+const update_arr = [
 					["#decimallatitude", data.lat],
-					["#decimallongitude", data.lat],
+					["#decimallongitude", data.lng],
 					["#coordinateuncertaintyinmeters", data.err],
 					["#georeferencedByDiv input", data.georeferencedBy],
 					["#georeferenceRemarksDiv input", data.georeferenceRemarks],

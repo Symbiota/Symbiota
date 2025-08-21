@@ -17,6 +17,7 @@ $displayHeader = array_key_exists('displayheader', $_REQUEST) ? filter_var($_REQ
 $searchVar = array_key_exists('searchvar', $_REQUEST) ? htmlspecialchars($_REQUEST['searchvar'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE| ENT_QUOTES) : '';
 
 $dwcManager = new DwcArchiverCore();
+$filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -30,6 +31,7 @@ $dwcManager = new DwcArchiverCore();
 	?>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?php echo $filename ?>" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
 			var dialogArr = new Array("schemanative","schemadwc");
@@ -56,6 +58,28 @@ $dwcManager = new DwcArchiverCore();
 				<?php
 			}
 			?>
+
+			const form = document.getElementById('downloadform');
+			const spinnerSpan = document.getElementById('spinner-span');
+			const spinner = document.getElementById('workingcircle');
+			const downloadButton = document.getElementById('submitaction');
+
+        	form.addEventListener('submit', function(event) {
+				const token = 'dl_' + Date.now();
+				document.getElementById('downloadTokenInput').value = token;
+				spinner.style.display = 'block';
+				downloadButton.disabled = true;
+				spinnerSpan.textContent = translations.DOWNLOAD_IN_PROGRESS;
+				const interval = setInterval(() => {
+					if (document.cookie.includes(`downloadToken=${token}`)) {
+						clearInterval(interval);
+						spinner.style.display = 'none';
+						spinnerSpan.textContent = '';
+						document.cookie = `downloadToken=${token}; Max-Age=0; path=/`;
+						downloadButton.disabled = false;
+					}
+				}, 100);
+			});
 		});
 
 		function extensionSelected(obj){
@@ -86,6 +110,8 @@ $dwcManager = new DwcArchiverCore();
 				window.close();
 			}, timeToClose);
 		}
+
+        
 	</script>
 	<style>
 		fieldset{ margin:10px; padding:10px }
@@ -111,13 +137,14 @@ $dwcManager = new DwcArchiverCore();
 	}
 	?>
 	<div style="width:100%; background-color:white;">
-		<h1 class="page-heading"><?= $LANG['DATA_GUIDE'] ?></h1>
+		<h1 class="page-heading"><?= $LANG['COLL_SEARCH_DWNL'] ?></h1>
 		<div style="margin:15px 0px;">
-		<?= $LANG['GUIDE_ONE'] ?> <a href="../../includes/usagepolicy.php#images"> <?= $LANG['GUIDE_LINK'] ?> </a>.
+		<?= '<b>' . $LANG['DATA_GUIDE'] . '</b>' ?><?= $LANG['GUIDE_ONE'] ?> <a href="../../includes/usagepolicy.php#images"> <?= $LANG['GUIDE_LINK'] ?> </a>.
 			<?= $LANG['GUIDE_TWO'] ?>
 		</div>
 		<div style='margin:30px 15px;'>
-			<form name="downloadform" action="downloadhandler.php" method="post" onsubmit="return validateDownloadForm(this);">
+			<form id="downloadform" name="downloadform" action="downloadhandler.php" method="post" onsubmit="return validateDownloadForm(this);">
+				<input type="hidden" name="downloadToken" id="downloadTokenInput" value="">
 				<fieldset>
 					<legend>
 						<?php
@@ -147,10 +174,17 @@ $dwcManager = new DwcArchiverCore();
 								</a><br/>
 								<div id="schemadwcinfodialog">
 									<?= $LANG['DARWIN_GUIDE'] ?>
-									<a href="http://rs.tdwg.org/dwc/index.htm"target='_blank'> <?= $LANG['DARWIN_GUIDE_LINK'] ?></a>.
+									<a href="http://rs.tdwg.org/dwc/index.htm" target='_blank'> <?= $LANG['DARWIN_GUIDE_LINK'] ?></a>.
 								</div>
 							</div>
 						</fieldset>
+
+						<fieldset class="sectionDiv">
+							<legend>  <?= $LANG['TAXONOMIC_RESOLUTION'] ?? 'Taxonomic Resolution'?>:</legend>
+							<input type="checkbox" name="acceptedNameUsage" id="acceptedNameUsage" value="1" />
+							<label for="acceptedNameUsage"> <?= $LANG['ACCEPTED_NAME_USAGE'] ?? 'Include Accepted Scientific Name and Authorship'?></label>
+						</fieldset>
+
 						<fieldset class="sectionDiv">
 							<legend>  <?= $LANG['DATA_EXTS'] ?>:</legend>
 							<div class="formElemDiv">
@@ -209,14 +243,18 @@ $dwcManager = new DwcArchiverCore();
 						<input name="taxonFilterCode" type="hidden" value="<?= $taxonFilterCode; ?>" />
 						<input name="sourcepage" type="hidden" value="<?= htmlspecialchars($sourcePage); ?>" />
 						<input name="searchvar" type="hidden" value="<?= $searchVar ?>" />
-						<button type="submit" name="submitaction"><?= $LANG['DOWNLOAD_DATA'] ?></button>
-						<img id="workingcircle" src="../../images/ajax-loader_sm.gif" style="margin-bottom:-4px;width:20px;display:none;" />
+						<button type="submit" name="submitaction" id="submitaction"><?= $LANG['DOWNLOAD_DATA'] ?></button>
+						<div id="spinner-div" class="top-breathing-room-rel">
+							<span id="spinner-span"></span>
+							<img id="workingcircle" src="../../images/ajax-loader_sm.gif" style="margin-bottom:-4px;width:20px;display:none;" />
+						</div>
 					</div>
 					<div class="sectionDiv">
 						*  <?= $LANG['LIMIT_NOTE'] ?>
 					</div>
 				</fieldset>
 			</form>
+			<div id="result-div"></div>
 		</div>
 	</div>
 	<?php

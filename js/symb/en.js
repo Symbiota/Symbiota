@@ -23,4 +23,5 @@ const translations = {
   // paleo search
   INTERVAL_MISSING: "Both Early Interval and Late Interval need to have a value selected, even if the values are the same.",
   INTERVALS_WRONG_ORDER: "The Early Interval must be geologically older than the Late Interval.",
+  DOWNLOAD_IN_PROGRESS: "Download in progress..."
 };

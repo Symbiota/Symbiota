@@ -9,6 +9,15 @@ $sourcePage = array_key_exists("sourcepage", $_REQUEST) ? $_REQUEST["sourcepage"
 $schema = array_key_exists("schema", $_REQUEST) ? $_REQUEST["schema"] : "symbiota";
 $cSet = array_key_exists("cset", $_POST) ? $_POST["cset"] : '';
 
+$token = $_POST['downloadToken'] ?? null;
+if ($token) {
+	setcookie('downloadToken', $token, [
+		'expires' => time() + 60,
+		'path' => '/',
+		'samesite' => 'Lax'
+	]);
+}
+
 if ($schema == 'backup') {
 	$collid = $_POST['collid'];
 	if ($collid && is_numeric($collid)) {

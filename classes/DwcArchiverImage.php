@@ -96,7 +96,7 @@ class DwcArchiverImage{
 				$sql .= 'INNER JOIN tmattributes a ON o.occid = a.occid '.
 					'INNER JOIN tmstates s ON a.stateid = s.stateid ';
 			}
-			if($GLOBALS['ACTIVATE_PALEO']){
+			if(!empty($GLOBALS['ACTIVATE_PALEO'])){
 				$sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
 				if(strpos($conditionSql,'early.myaStart')){
 					$sql .= 'JOIN omoccurpaleogts early ON paleo.earlyInterval = early.gtsterm ';

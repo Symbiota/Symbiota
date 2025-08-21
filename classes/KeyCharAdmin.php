@@ -302,11 +302,10 @@ class KeyCharAdmin{
 				$imageRootUrl .= 'ident/csimgs/';
 
 				//Image is to be downloaded
-				$fileName = $this->cleanFileName(basename($_FILES['urlupload']['name']),$imageRootUrl);
-				$imagePath = $imageRootPath.str_replace('.','_temp.',$fileName);
-				move_uploaded_file($_FILES['urlupload']['tmp_name'], $imagePath);
-				if(file_exists($imagePath)){
-					if($this->createNewCsImage($imagePath)){
+				$fileName = $this->cleanFileName(basename($_FILES['urlupload']['name']), $imageRootUrl);
+
+				if(file_exists($_FILES['urlupload']['tmp_name'])){
+					if($this->createNewCsImage($_FILES['urlupload']['tmp_name'], $imageRootPath . $fileName)) {
 						//Add url to database
 						$notes = $this->cleanInStr($formArr['notes']);
 						$sql = 'INSERT INTO kmcsimages(cid, cs, url, notes, sortsequence, username) '.
@@ -316,16 +315,17 @@ class KeyCharAdmin{
 						if(!$this->conn->query($sql)){
 							$statusStr = 'ERROR loading char state image: '.$this->conn->error;
 						}
-						unlink($imagePath);
+					} else {
+						return 'Error: Unable to create image file: ' . $imageRootPath . $fileName;
 					}
 				}
 				else{
-					return 'ERROR uploading file, file does not exist: '.$imagePath;
+					return 'ERROR uploading file, file does not exist: ' . $_FILES['urlupload']['tmp_name'];
 				}
 			}
 		}
 		else{
-			$statusStr = 'ERROR: Upload path does not exist (path: '.$imageRootPath.')';
+			$statusStr = 'ERROR: Upload path does not exist (path: ' . $imageRootPath . ')';
 		}
 		return $statusStr;
 	}
@@ -358,23 +358,26 @@ class KeyCharAdmin{
  		return $tempFileName.'.'.$ext;
  	}
 
-	private function createNewCsImage($path){
+	private function createNewCsImage($path, $fileName){
 		$status = false;
 		$imgWidth = 800;
 		$qualityRating= 100;
 		list($width, $height) = getimagesize(str_replace(' ', '%20', $path));
+		if($width <= 0) {
+			return $status;
+		}
+
 		$imgHeight = ($imgWidth*($height/$width));
-		echo $imgHeight;
+
    		$sourceImg = imagecreatefromjpeg($path);
 		$newImg = imagecreatetruecolor($imgWidth,$imgHeight);
 		imagecopyresampled($newImg,$sourceImg,0,0,0,0,$imgWidth,$imgHeight,$width,$height);
 		//imagecopyresized($newImg,$sourceImg,0,0,0,0,$imgWidth,$imgHeight,$width,$height);
-		$status = imagejpeg($newImg, str_replace('_temp','',$path), $qualityRating);
-		if(!$status){
-			echo 'Error: Unable to create image file: '.$path;
+		$status = imagejpeg($newImg, $fileName, $qualityRating);
+		if($status){
+			imagedestroy($newImg);
+			imagedestroy($sourceImg);
 		}
-		imagedestroy($newImg);
-		imagedestroy($sourceImg);
 		return $status;
 	}
 

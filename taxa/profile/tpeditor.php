@@ -116,10 +116,10 @@ if($isEditor && $action){
 		$family = $tEditor->getFamily();
 		$path = ($family? $family: '') . '/' . date('Ym') . '/';
 		try {
-			Media::add(
-				$_POST, 
-				new LocalStorage($path), 
-				$_FILES['imgfile'] ?? null
+			Media::uploadAndInsert(
+				$_POST,
+				$_FILES['imgfile'] ?? null,
+				new LocalStorage($path)
 			);
 		} catch(Exception $e) {
 			$statusStr .= '<br/>' . $e->getMessage();

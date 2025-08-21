@@ -208,7 +208,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 			//Note mediaType is cleaned to only be 'image' and 'audio' strings
 			$sqlWhere .= 'AND (m.mediaType = "' . $this->mediaType . '") ';
 		}
-		$sqlWhere .= OccurrenceUtil::appendFullProtectionSQL();
+		$sqlWhere .= OccurrenceUtil::appendFullProtectionSQL(true);
 		if(strpos($sqlWhere,'ts.taxauthid')) $sqlWhere = str_replace('m.tid', 'ts.tid', $sqlWhere);
 		if($sqlWhere) $this->sqlWhere = 'WHERE '.substr($sqlWhere,4);
 	}
@@ -219,7 +219,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 			if($this->imageCount == 1) $sql = 'SELECT COUNT(DISTINCT m.tid) AS cnt ';
 			elseif($this->imageCount == 2) $sql = 'SELECT COUNT(DISTINCT m.occid) AS cnt ';
 		}
-		$sql .= $this->getSqlBase().$this->sqlWhere;
+		$sql .= $this->getSqlBase(true).$this->sqlWhere;
 		$result = $this->conn->query($sql);
 		if($row = $result->fetch_object()){
 			$this->recordCount = $row->cnt;
@@ -227,12 +227,12 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		$result->free();
 	}
 
-	private function getSqlBase(){
+	private function getSqlBase($isForCount = false){
 		$sql = 'FROM media m ';
 		if($this->taxaArr){
 			$sql .= 'INNER JOIN taxa t ON m.tid = t.tid ';
 		}
-		else{
+		elseif(!$isForCount){
 			$sql .= 'LEFT JOIN taxa t ON m.tid = t.tid ';
 		}
 		if(strpos($this->sqlWhere,'ts.taxauthid')){
@@ -244,7 +244,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		if($this->keywords){
 			//$sql .= 'INNER JOIN imagekeywords ik ON m.mediaID = ik.mediaid ';
 		}
-		if($this->dbStr && $this->dbStr != 'all'){
+		if($this->imageType == 1){
 			$sql .= 'INNER JOIN omoccurrences o ON m.occid = o.occid ';
 		}
 		else{

@@ -1,6 +1,7 @@
 <?php
 include_once($SERVER_ROOT . '/classes/Manager.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/UploadUtil.php');
 
 class MapSupport extends Manager{
 
@@ -128,19 +129,29 @@ class MapSupport extends Manager{
 		$status = false;
 		$tid = $portArr['tid'];
 		$title = $portArr['title'];
-      $mapType = 'heatmap';
+		$mapType = 'heatmap';
 
 		if(isset($portArr['maptype'])) $mapType = $portArr['maptype'];
 		if(!empty($_FILES['mapupload']['name'])){
+			try {
+				UploadUtil::checkFileUpload(
+					$_FILES['mapupload'],
+					UploadUtil::ALLOWED_IMAGE_MIMES
+				);
+			} catch(Exception $e) {
+				$this->errorMessage = 'ERROR: ' . $e->getMessage();
+				return false;
+			}
+
 			$ext = substr($_FILES['mapupload']['name'], strrpos($_FILES['mapupload']['name'], '.'));
 			$fileName = $tid.'_'.$mapType.'_'.time() . $ext;
 
-         //Clear Out Old Thumbnails
-         $this->deleteAllTaxonMaps($tid);
+			//Clear Out Old Thumbnails
+			$this->deleteAllTaxonMaps($tid);
 
 			$this->setTargetPaths();
 			if(move_uploaded_file($_FILES['mapupload']['tmp_name'], $this->targetPath.$fileName)){
-		      $this->targetPath;
+				$this->targetPath;
 				$status = $this->insertImage($tid, $title, $this->targetUrl.$fileName);
 			}
 			else{
@@ -148,7 +159,7 @@ class MapSupport extends Manager{
 				return false;
 			}
 		}
-   }
+	}
 
 	private function insertImage($tid, $title, $url){
 		$status = false;

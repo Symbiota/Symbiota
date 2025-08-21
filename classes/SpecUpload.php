@@ -190,11 +190,12 @@ class SpecUpload{
 			$sql = $this->getPendingImportSql($searchVariables) ;
 			//echo "<div>".$sql."</div>";
 			$fieldMap = array();
+			$excludeKeys = ['eon', 'era', 'period', 'epoch', 'stage'];
 			$rs = $this->conn->query($sql, MYSQLI_USE_RESULT);
 			//Determine which fields have data
 			while($r = $rs->fetch_assoc()){
 				foreach($r as $k => $v){
-					if($v && $v !== '0') $fieldMap[$k] = '';
+					if($v && $v !== '0' && !in_array($k, $excludeKeys)) $fieldMap[$k] = '';
 				}
 			}
 			$rs->free();
@@ -222,7 +223,6 @@ class SpecUpload{
 		if($this->collId){
 			$sql = $this->getPendingImportSql($searchVariables) ;
 			if($limit) $sql .= 'LIMIT '.$start.','.$limit;
-			//echo "<div>".$sql."</div>"; exit;
 			$rs = $this->conn->query($sql);
 			while($row = $rs->fetch_assoc()){
 				$retArr[] = array_change_key_case($row);
@@ -240,7 +240,9 @@ class SpecUpload{
 		$schemaRS = $this->conn->query($schemaSQL);
 		while($schemaRow = $schemaRS->fetch_object()){
 			$fieldName = strtolower($schemaRow->Field);
-			if(!in_array($fieldName,$this->skipOccurFieldArr)){
+			$skipFieldArr = $this->skipOccurFieldArr;
+			unset($skipFieldArr[array_search('materialsamplejson', $skipFieldArr)]);
+			if(!in_array($fieldName,$skipFieldArr)){
 				if($fieldName === 'othercatalognumbers' && !$searchVariables) {
 					$occFieldArr[] = 'CASE WHEN u.otherCatalogNumbers IS NULL THEN i.identifiers WHEN i.identifiers IS NULL THEN u.otherCatalogNumbers ELSE CONCAT(u.otherCatalogNumbers, "; ", i.identifiers) END as otherCatalogNumbers';
 				} else {
@@ -314,7 +316,7 @@ class SpecUpload{
 	protected function setSkipOccurFieldArr(){
 		$this->skipOccurFieldArr = array('dbpk','initialtimestamp','occid','collid','tidinterpreted','fieldnotes','coordinateprecision',
 			'verbatimcoordinatesystem','institutionid','collectionid','associatedoccurrences','datasetid','associatedreferences',
-			'previousidentifications','genericcolumn1','genericcolumn2');
+			'previousidentifications','storagelocation','genericcolumn1','genericcolumn2','materialsamplejson');
 		if($this->collMetadataArr['managementtype'] == 'Live Data' && $this->collMetadataArr['guidtarget'] != 'occurrenceId'){
 			//Do not import occurrenceID if dataset is a live dataset, unless occurrenceID is explicitly defined as the guidSource.
 			//This avoids the situtation where folks are exporting data from one collection and importing into their collection along with the other collection's occurrenceID GUID, which is very bad
@@ -513,8 +515,8 @@ class SpecUpload{
 				$logPath .= '_'.date('Y-m-d').".log";
 				$this->logFH = fopen($logPath, 'a');
 				$this->outputMsg('Start time: '.date('Y-m-d h:i:s A'));
-				if(isset($_SERVER['REMOTE_ADDR'])) $this->outputMsg('REMOTE_ADDR: '.$_SERVER['REMOTE_ADDR']);
-				if(isset($_SERVER['REMOTE_PORT'])) $this->outputMsg('REMOTE_PORT: '.$_SERVER['REMOTE_PORT']);
+				if(isset($_SERVER['REMOTE_ADDR'])) $this->outputMsg('REMOTE_ADDR: '.htmlspecialchars($_SERVER['REMOTE_ADDR'], ENT_QUOTES));
+				if(isset($_SERVER['REMOTE_PORT'])) $this->outputMsg('REMOTE_PORT: '.htmlspecialchars($_SERVER['REMOTE_PORT'], ENT_QUOTES));
 				if(isset($_SERVER['QUERY_STRING'])) $this->outputMsg('QUERY_STRING: '.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 			}
 		}

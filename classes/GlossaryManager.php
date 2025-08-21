@@ -1,6 +1,7 @@
 <?php
 include_once($SERVER_ROOT . '/classes/Manager.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/UploadUtil.php');
 
 class GlossaryManager extends Manager {
 
@@ -790,32 +791,49 @@ class GlossaryManager extends Manager {
 	}
 
 	public function copyImageFromUrl($sourceUri) {
-		//Returns full path
 		if (!$sourceUri) {
-			$this->errArr[] = 'ERROR: Image source uri NULL in copyImageFromUrl method';
-			//trigger_error('Image source uri NULL in copyImageFromUrl method',E_USER_ERROR);
+			$this->errorMessage = 'ERROR: Image source uri NULL in copyImageFromUrl method';
 			return false;
 		}
+
+		//Returns full path
 		if (!$this->targetPath) {
-			$this->errArr[] = 'ERROR: Image target url NULL in copyImageFromUrl method';
-			//trigger_error('Image target url NULL in copyImageFromUrl method',E_USER_ERROR);
+			$this->errorMessage = 'ERROR: Image target url NULL in copyImageFromUrl method';
 			return false;
 		}
+
 		if (!file_exists($this->targetPath)) {
-			$this->errArr[] = 'ERROR: Image target file (' . $this->targetPath . ') does not exist in copyImageFromUrl method';
-			//trigger_error('Image target file ('.$this->targetPath.') does not exist in copyImageFromUrl method',E_USER_ERROR);
+			$this->errorMessage = 'ERROR: Image target file (' . $this->targetPath . ') does not exist in copyImageFromUrl method';
 			return false;
 		}
-		//Clean and copy file
-		$fileName = $this->cleanFileName($sourceUri);
-		if (copy($sourceUri, $this->targetPath . $fileName . $this->imgExt)) {
-			$this->sourcePath = $this->targetPath . $fileName . $this->imgExt;
-			$this->imgName = $fileName;
-			//$this->testOrientation();
-			return true;
+
+		try {
+			$file = UploadUtil::downloadFromRemote(
+				$sourceUri,
+				UploadUtil::ALLOWED_IMAGE_MIMES
+			);
+
+			UploadUtil::checkFileUpload(
+				$file,
+				UploadUtil::ALLOWED_IMAGE_MIMES
+			);
+
+			$fileName = $this->cleanFileName($sourceUri);
+
+			if(rename($file['tmp_name'], $this->targetPath . $fileName . $this->imgExt)) {
+				$this->sourcePath = $this->targetPath . $fileName . $this->imgExt;
+				$this->imgName = $fileName;
+				return true;
+			} else {
+				unlink($file['tmp_name']);
+
+				//Clean and copy file
+				$this->errorMessage = 'ERROR: Unable to rename image to target (' . $this->targetPath . $fileName . $this->imgExt . ')';
+				return false;
+			}
+		} catch(Exception $e) {
+			$this->errorMessage = 'ERROR: ' . $e->getMessage();
 		}
-		$this->errArr[] = 'ERROR: Unable to copy image to target (' . $this->targetPath . $fileName . $this->imgExt . ')';
-		return false;
 	}
 
 	public function cleanFileName($fPath) {
@@ -879,15 +897,24 @@ class GlossaryManager extends Manager {
 	}
 
 	private function loadImage() {
-		$imgFile = basename($_FILES['imgfile']['name']);
-		$fileName = $this->cleanFileName($imgFile);
-		if (move_uploaded_file($_FILES['imgfile']['tmp_name'], $this->targetPath . $fileName . $this->imgExt)) {
-			$this->sourcePath = $this->targetPath . $fileName . $this->imgExt;
-			$this->imgName = $fileName;
-			//$this->testOrientation();
-			return true;
+		try {
+			UploadUtil::checkFileUpload(
+				$_FILES['imgfile'],
+				UploadUtil::ALLOWED_IMAGE_MIMES
+			);
+
+			$imgFile = basename($_FILES['imgfile']['name']);
+			$fileName = $this->cleanFileName($imgFile);
+			if (move_uploaded_file($_FILES['imgfile']['tmp_name'], $this->targetPath . $fileName . $this->imgExt)) {
+				$this->sourcePath = $this->targetPath . $fileName . $this->imgExt;
+				$this->imgName = $fileName;
+				//$this->testOrientation();
+				return true;
+			}
+			return false;
+		} catch (Exception $e) {
+			$this->errorMessage = 'ERROR: ' . $e->getMessage();
 		}
-		return false;
 	}
 
 	private function databaseImage($imgWebUrl, $imgTnUrl, $imgLgUrl) {

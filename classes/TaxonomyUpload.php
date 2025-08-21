@@ -1,6 +1,7 @@
 <?php
 include_once($SERVER_ROOT.'/config/dbconnection.php');
 include_once($SERVER_ROOT.'/classes/utilities/TaxonomyUtil.php');
+include_once($SERVER_ROOT.'/classes/utilities/UploadUtil.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyHarvester.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
 include_once($SERVER_ROOT.'/traits/TaxonomyTrait.php');
@@ -37,30 +38,68 @@ class TaxonomyUpload{
 		}
 	}
 
-	public function setUploadFile($ulFileName = ""){
+	public function uploadFile($ulFileName = ""){
+		$status = false;
 		if($ulFileName){
-			//URL to existing file
+			//URL to file residing on a server
 			if(file_exists($ulFileName)){
 				$pos = strrpos($ulFileName,"/");
 				if(!$pos) $pos = strrpos($ulFileName,"\\");
-				$this->uploadFileName = substr($ulFileName,$pos+1);
-				//$this->outputMsg($this->uploadFileName;
-				copy($ulFileName,$this->uploadTargetPath.$this->uploadFileName);
+				$fileName = substr($ulFileName,$pos+1);
+				if($this->validateFileName($ulFileName)){
+					$this->uploadFileName = $fileName;
+					//$this->outputMsg($this->uploadFileName;
+					if(copy($ulFileName,$this->uploadTargetPath.$this->uploadFileName)){
+						$status = true;
+					}
+					else{
+						$this->errorStr = 'UNABLE_TO_COPY_INPUT_FILE';
+						return false;
+					}
+				}
 			}
 		}
-		elseif(array_key_exists('uploadfile',$_FILES)){
-			$this->uploadFileName = $_FILES['uploadfile']['name'];
-			move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->uploadTargetPath.$this->uploadFileName);
+		elseif(!empty($_FILES['uploadfile']['name'])){
+			try {
+				UploadUtil::checkFileUpload(
+					$_FILES['uploadfile'],
+					UploadUtil::ALLOWED_ZIP_MIMES
+				);
+			} catch(Exception $e) {
+				$this->errorStr = 'ERROR: ' . $e->getMessage();
+				return false;
+			}
+
+			if($this->validateFileName($_FILES['uploadfile']['name'], true)){
+				$this->uploadFileName = $_FILES['uploadfile']['name'];
+				if(move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->uploadTargetPath.$this->uploadFileName)){
+					$status = true;
+				}
+				else{
+					$this->errorStr = 'UABLE_TO_IMPORT_INPUT_FILE';
+					return false;
+				}
+			}
 		}
 		if(file_exists($this->uploadTargetPath.$this->uploadFileName) && substr($this->uploadFileName ?? '',-4) == ".zip"){
 			$zip = new ZipArchive;
 			$zip->open($this->uploadTargetPath.$this->uploadFileName);
 			$zipFile = $this->uploadTargetPath.$this->uploadFileName;
-			$this->uploadFileName = $zip->getNameIndex(0);
-			$zip->extractTo($this->uploadTargetPath);
+			if($this->validateFileName($zip->getNameIndex(0))){
+				$this->uploadFileName = $zip->getNameIndex(0);
+				if(!$zip->extractTo($this->uploadTargetPath)){
+					$this->errorStr = 'UABLE_TO_EXTRACT_INPUT_FILE';
+					$status = false;
+				}
+			}
+			else{
+				$status = false;
+			}
 			$zip->close();
 			unlink($zipFile);
 		}
+
+		return $status;
 	}
 
 	public function loadFile($fieldMap){
@@ -186,7 +225,7 @@ class TaxonomyUpload{
 						}
 						//Insert record into uploadtaxa table
 						if(array_key_exists('scinameinput', $inputArr)){
-							
+
 							if(!isset($inputArr['sciname']) && isset($inputArr['unitname1']) && $inputArr['unitname1']){
 								//Build sciname
 								$sciname = $inputArr['unitname1'];
@@ -559,8 +598,8 @@ class TaxonomyUpload{
 		}
 		$this->outputMsg('Populating and mapping parent taxon... ');
 		//Set parents of cultivar taxa
-		$sql = 'UPDATE uploadtaxa 
-			SET parentstr = CONCAT_WS(" ", unitname1, unitname2, CONCAT_WS(" ", unitind3, unitname3)) 
+		$sql = 'UPDATE uploadtaxa
+			SET parentstr = CONCAT_WS(" ", unitname1, unitname2, CONCAT_WS(" ", unitind3, unitname3))
 			WHERE ((parentstr IS NULL) OR (parentstr LIKE "PENDING:%")) AND (rankid = 300)';
 		if(!$this->conn->query($sql)){
 			$this->outputMsg('ERROR: '.$this->conn->error,1);
@@ -1077,7 +1116,45 @@ class TaxonomyUpload{
 	}
 
 	public function setFileName($fName){
-		$this->uploadFileName = $fName;
+		if($this->validateFileName($fName)){
+			$this->uploadFileName = $fName;
+		}
+		return true;
+	}
+
+	private function validateFileName($fileName, $allowZipFiles = false){
+		if(!$fileName) return false;
+
+		// Disallow directory traversal sequences
+		if (strpos($fileName, '..') !== false || strpos($fileName, '/') !== false || strpos($fileName, '\\') !== false) {
+			$this->errorStr = 'INVALID_INPUT_FILE';
+			return false;
+		}
+
+		// Check for invalid characters
+		$allowedCharsRegex = '/^[a-zA-Z0-9_\-.]+$/';
+		if (!preg_match($allowedCharsRegex, $fileName)) {
+			$this->errorStr = 'INVALID_INPUT_FILE';
+			return false;
+		}
+
+		// Enforce a maximum length (e.g., 255 characters)
+		if (strlen($fileName) > 255) {
+			$this->errorStr = 'INVALID_INPUT_FILE';
+			return false;
+		}
+
+		//Validate file extension
+		$ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+		if($ext != 'csv'){
+			if($allowZipFiles && $ext == 'zip'){
+				return true;
+			}
+			$this->errorStr = 'INVALID_INPUT_FILE';
+			return false;
+		}
+
+		return true;
 	}
 
 	public function getFileName(){

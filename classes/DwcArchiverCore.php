@@ -53,6 +53,7 @@ class DwcArchiverCore extends Manager{
 	protected $includeAssociations = 0;
 	private $hasPaleo = false;
 	private $includePaleo = null;
+	private $includeAcceptedNameUsage = false;
 	private $redactLocalities = 1;
 	private $rareReaderArr = array();
 	private $charSetSource = '';
@@ -95,6 +96,11 @@ class DwcArchiverCore extends Manager{
 			'georeferenceVerificationStatus', 'habitat'
 		);
 
+		if(array_key_exists('acceptedNameUsage', $_REQUEST)) {
+			$this->includeAcceptedNameUsage = true;
+		}
+
+
 		//ini_set('memory_limit','512M');
 		set_time_limit(1800);
 	}
@@ -110,6 +116,7 @@ class DwcArchiverCore extends Manager{
 		$dwcOccurManager = new DwcArchiverOccurrence($this->conn);
 		$dwcOccurManager->setSchemaType($this->schemaType);
 		$dwcOccurManager->setExtended($this->extended);
+		$dwcOccurManager->setIncludeAcceptedNameUsage($this->includeAcceptedNameUsage);
 		if (!$this->occurrenceFieldArr) $this->occurrenceFieldArr = $dwcOccurManager->getOccurrenceArr();
 		$sql = $dwcOccurManager->getSqlOccurrences($this->occurrenceFieldArr['fields'], false);
 		$sql .= $this->getTableJoins() . $this->conditionSql;
@@ -306,6 +313,12 @@ class DwcArchiverCore extends Manager{
 		if (array_key_exists('datasetid', $_REQUEST) && is_numeric($_REQUEST['datasetid'])) {
 			$this->conditionSql .= 'AND (ds.datasetid IN(' . $_REQUEST['datasetid'] . ')) ';
 		}
+
+		if($this->includeAcceptedNameUsage) {
+			// TODO (Logan) Should there be a select for this? 
+			$this->conditionSql .= 'AND (ts.taxauthid = 1) ';
+		}
+
 		$sqlFrag = '';
 		if ($this->conditionArr) {
 			foreach ($this->conditionArr as $field => $condArr) {
@@ -392,8 +405,13 @@ class DwcArchiverCore extends Manager{
 	private function getTableJoins(){
 		$sql = '';
 		if ($this->conditionSql) {
-			if (stripos($this->conditionSql, 'ts.')) {
+			$taxa_accepted_table = $this->includeAcceptedNameUsage;
+
+			if (stripos($this->conditionSql, 'ts.') || $taxa_accepted_table) {
 				$sql = 'LEFT JOIN taxstatus ts ON o.tidinterpreted = ts.tid ';
+			}
+			if ($taxa_accepted_table) {
+				$sql .= 'LEFT JOIN taxa ta ON ts.tidaccepted = ta.tid ';
 			}
 			if (stripos($this->conditionSql, 'e.parenttid')) {
 				$sql .= 'LEFT JOIN taxaenumtree e ON o.tidinterpreted = e.tid ';
@@ -707,8 +725,11 @@ class DwcArchiverCore extends Manager{
 		$dwcOccurManager->setSchemaType($this->schemaType);
 		$dwcOccurManager->setExtended($this->extended);
 		$dwcOccurManager->setIncludePaleo($this->includePaleo);
+		$dwcOccurManager->setIncludeAcceptedNameUsage($this->includeAcceptedNameUsage);
+
 		if (!$this->occurrenceFieldArr) $this->occurrenceFieldArr = $dwcOccurManager->getOccurrenceArr($this->schemaType, $this->extended);
 		$this->applyConditions();
+
 		if (!$this->conditionSql) return false;
 		$sql = $dwcOccurManager->getSqlOccurrences($this->occurrenceFieldArr['fields']);
 		$sql .= $this->getTableJoins() . $this->conditionSql;
@@ -1703,6 +1724,7 @@ class DwcArchiverCore extends Manager{
 		$dwcOccurManager->setIncludeExsiccatae();
 		$dwcOccurManager->setIncludeAssociatedSequences();
 		$dwcOccurManager->setIncludePaleo($this->includePaleo);
+		$dwcOccurManager->setIncludeAcceptedNameUsage($this->includeAcceptedNameUsage);
 		if (!$this->occurrenceFieldArr) $this->occurrenceFieldArr = $dwcOccurManager->getOccurrenceArr($this->schemaType, $this->extended);
 		//Output records
 		$this->applyConditions();
@@ -1711,6 +1733,10 @@ class DwcArchiverCore extends Manager{
 		$sql .= $this->getTableJoins() . $this->conditionSql;
 		if ($this->paleoWithSql)
 			$sql = $this->paleoWithSql . $sql;
+
+		// Removes duplicate occids that could be introduced from some tables such as `taxstatus`
+		// Requires
+		$sql .= ' GROUP BY o.occid ';
 		if ($this->schemaType != 'backup') $sql .= ' LIMIT 1000000';
 		//Output header
 		$fieldArr = $this->occurrenceFieldArr['fields'];

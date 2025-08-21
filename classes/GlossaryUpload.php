@@ -13,6 +13,9 @@ class GlossaryUpload{
 	private $errorStr = '';
 
 	function __construct() {
+		//Deactivate class file all together until it is rebuilt in a more secure format
+		exit();
+
 		$this->conn = MySQLiConnectionFactory::getCon("write");
  		$this->setUploadTargetPath();
  		set_time_limit(3000);

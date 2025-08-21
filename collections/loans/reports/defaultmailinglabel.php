@@ -33,7 +33,8 @@ if($outputMode == 'doc'){
 	$section = $phpWord->addSection(array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>360,'marginRight'=>360,'marginTop'=>360,'marginBottom'=>360,'headerHeight'=>0,'footerHeight'=>0));
 
 	$textrun = $section->addTextRun('fromAddress');
-	$textrun->addText(htmlspecialchars($addressArr['institutionname'].' ('.$addressArr['institutioncode'].')'),'fromAddressFont');
+	$institutionCodeStr = !empty($addressArr['institutioncode']) ? ' (' . $addressArr['institutioncode'] . ')' : '';
+	$textrun->addText(htmlspecialchars($addressArr['institutionname'] . $institutionCodeStr),'fromAddressFont');
 	$textrun->addTextBreak(1);
 	if($addressArr['institutionname2']){
 		$textrun->addText(htmlspecialchars($addressArr['institutionname2']),'fromAddressFont');
@@ -58,7 +59,8 @@ if($outputMode == 'doc'){
 	$textrun = $section->addTextRun('toAddress');
 	$textrun->addText(htmlspecialchars($invoiceArr['contact']),'toAddressFont');
 	$textrun->addTextBreak(1);
-	$textrun->addText(htmlspecialchars($invoiceArr['institutionname'].' ('.$invoiceArr['institutioncode'].')'),'toAddressFont');
+	$institutionCodeStr = !empty($addressArr['institutioncode']) ? ' (' . $addressArr['institutioncode'] . ')' : '';
+	$textrun->addText(htmlspecialchars($invoiceArr['institutionname'] .$institutionCodeStr),'toAddressFont');
 	$textrun->addTextBreak(1);
 	if($invoiceArr['institutionname2']){
 		$textrun->addText(htmlspecialchars($invoiceArr['institutionname2']),'toAddressFont');
@@ -114,18 +116,32 @@ else{
 						<td>
 							<div class="fromaddress">
 								<?php
-								echo $addressArr['institutionname'].' ('.$addressArr['institutioncode'].')<br />';
-								if($addressArr['institutionname2']){
+								if(isset($addressArr['institutionname'])) {
+									$institutionCodeStr = !empty($addressArr['institutioncode']) ? ' (' . $addressArr['institutioncode'] . ')' : '';
+									echo $addressArr['institutionname'] . $institutionCodeStr . '<br />';
+								}
+								if(isset($addressArr['institutionname2'])){
 									echo $addressArr['institutionname2'].'<br />';
 								}
-								if($addressArr['address1']){
+								if(isset($addressArr['address1'])){
 									echo $addressArr['address1'].'<br />';
 								}
-								if($addressArr['address2']){
+								if(isset($addressArr['address2'])){
 									echo $addressArr['address2'].'<br />';
 								}
-								echo $addressArr['city'].($addressArr['stateprovince']?', ':'').$addressArr['stateprovince'].' '.$addressArr['postalcode'].'<br />'.$addressArr['country'].'<br />';
-								if($accountNum){
+								if(isset($addressArr['city'])){
+									echo $addressArr['city'];
+								}
+								if(isset($addressArr['stateprovince'])){
+									echo ', '.$addressArr['stateprovince'];
+								}
+								if(isset($addressArr['postalcode'])){
+									echo ' '.$addressArr['postalcode'].'<br />';
+								}
+								if(isset($addressArr['country'])){
+									echo ' '.$addressArr['country'].'<br />';
+								}
+								if(isset($accountNum)){
 									echo '(Acct. #'.$accountNum.')<br />';
 								}
 								echo '<br />';
@@ -136,7 +152,8 @@ else{
 							<div class="toaddress">
 								<?php
 								echo $invoiceArr['contact'].'<br />';
-								echo $invoiceArr['institutionname'].' ('.$invoiceArr['institutioncode'].')<br />';
+								$institutionCodeStr = !empty($addressArr['institutioncode']) ? ' (' . $addressArr['institutioncode'] . ')' : '';
+								echo $invoiceArr['institutionname'] . $institutionCodeStr . '<br />';
 								if($invoiceArr['institutionname2']){
 									echo $invoiceArr['institutionname2'].'<br />';
 								}

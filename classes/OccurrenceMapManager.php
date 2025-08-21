@@ -45,6 +45,8 @@ class OccurrenceMapManager extends OccurrenceManager {
 				'o.othercatalognumbers, c.institutioncode, c.collectioncode, c.CollectionName '.
 				'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
 
+			if (!empty($GLOBALS['ACTIVATE_PALEO']))
+				$sql = $this->getPaleoSqlWith() . $sql;
 			$this->sqlWhere .= 'AND (ts.taxauthid = 1 OR ts.taxauthid IS NULL) ';
 
 			$sql .= $this->getTableJoins($this->sqlWhere);
@@ -72,7 +74,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 				$coordArr[$collName][$row->occid]["sn"] = $row->sciname;
 				$coordArr[$collName][$row->occid]["catalogNumber"] = $row->catalogNumber;
 				$coordArr[$collName][$row->occid]["eventdate"] = $row->eventdate;
-				$coordArr[$collName][$row->occid]["id"] = $this->htmlEntities($row->identifier);
+				$coordArr[$collName][$row->occid]["id"] = $row->identifier;
 				$coordArr[$collName]["c"] = $color;
 			}
 			$statsManager->recordAccessEventByArr($occidArr, 'map');
@@ -178,6 +180,8 @@ class OccurrenceMapManager extends OccurrenceManager {
 	private function setRecordCnt(){
 		if($this->sqlWhere){
 			$sql = "SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences o ".$this->getTableJoins($this->sqlWhere).$this->sqlWhere;
+			if (!empty($GLOBALS['ACTIVATE_PALEO']))
+				$sql = $this->getPaleoSqlWith() . $sql;
 			$result = $this->conn->query($sql);
 			if($result){
 				if($row = $result->fetch_object()){
@@ -195,22 +199,20 @@ class OccurrenceMapManager extends OccurrenceManager {
 	//SQL where functions
 	private function setGeoSqlWhere(){
 		global $USER_RIGHTS;
-		$sqlWhere = $this->getSqlWhere();
-		if($this->searchTermArr) {
-			$sqlWhere .= ($sqlWhere?' AND ':' WHERE ').'(o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) ';
-			if(!empty($this->searchTermArr['clid'])) {
-				if($this->voucherManager->getClFootprint()){
-					//Set Footprint for map to load
-					$this->setSearchTerm('footprintGeoJson', $this->voucherManager->getClFootprint());
-					if(isset($this->searchTermArr['cltype']) && $this->searchTermArr['cltype'] == 'all') {
-						$sqlWhere .= "AND (ST_Within(p.lngLatPoint,ST_GeomFromGeoJSON('". $this->voucherManager->getClFootprint()." '))) ";
+		if($sqlWhere = $this->getSqlWhere()){
+			if($this->searchTermArr) {
+				$sqlWhere .= ($sqlWhere?' AND ':' WHERE ').'(o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) ';
+				if(!empty($this->searchTermArr['clid'])) {
+					if($this->voucherManager->getClFootprint()){
+						//Set Footprint for map to load
+						$this->setSearchTerm('footprintGeoJson', $this->voucherManager->getClFootprint());
+						if(isset($this->searchTermArr['cltype']) && $this->searchTermArr['cltype'] == 'all') {
+							$sqlWhere .= "AND (ST_Within(p.lngLatPoint,ST_GeomFromGeoJSON('". $this->voucherManager->getClFootprint()." '))) ";
+						}
 					}
 				}
 			}
-		}
 
-		//Only add these if a search is going to be done
-		if($sqlWhere) {
 			//Check and exclude records with sensitive species protections
 			if(array_key_exists('SuperAdmin',$USER_RIGHTS) || array_key_exists('CollAdmin',$USER_RIGHTS) || array_key_exists('RareSppAdmin',$USER_RIGHTS) || array_key_exists('RareSppReadAll',$USER_RIGHTS)){
 				//Is global rare species reader, thus do nothing to sql and grab all records
@@ -226,8 +228,12 @@ class OccurrenceMapManager extends OccurrenceManager {
 			}
 
 			$sqlWhere .=  ' AND ((o.decimallatitude BETWEEN -90 AND 90) AND (o.decimallongitude BETWEEN -180 AND 180)) ';
+			$this->sqlWhere = $sqlWhere;
 		}
-		$this->sqlWhere = $sqlWhere;
+		else{
+			//Don't allow someone to query all occurrences if there are no conditions
+			$this->sqlWhere = 'WHERE o.occid IS NULL ';
+		}
 	}
 
 	//Shape functions

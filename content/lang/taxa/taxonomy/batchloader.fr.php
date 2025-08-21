@@ -2,8 +2,7 @@
 /*
 ------------------
 Language: Français (French)
-Translated by: Google Translate
-Translation date: 2024-10-16
+Translated by: Google Translate (2024-10-16)
 ------------------
 */
 $LANG['TAXA_LOADER'] = 'Taxa Loader';
@@ -18,13 +17,17 @@ $LANG['PLS_SEL_KINGDOM'] = 'Veuillez sélectionner le royaume cible';
 $LANG['SEL_AUTHORITY'] = 'Veuillez sélectionner une autorité taxonomique qui sera utilisée pour la récolte';
 $LANG['HOME'] = 'Accueil';
 $LANG['BASIC_TREE_VIEWER'] = 'Arbre de base Viewer';
-$LANG['DYN_TREE_VIEWER'] = 'Dynamic Tree Viewer';
-$LANG['TAX_BATCH_LOADER'] = 'Taxa Batch Loader';
-$LANG['TAX_NAME_BATCH_LOADER'] = 'Taxonomic Name Batch Loader';
+$LANG['DYN_TREE_VIEWER'] = "Visionneuse d'arborescence dynamique";
+$LANG['TAX_BATCH_LOADER'] = 'Chargeur de lots de taxons';
+$LANG['TAX_NAME_BATCH_LOADER'] = 'Chargeur par lots de noms taxonomiques';
 $LANG['TAX_UPLOAD_EXPLAIN1'] = 'Cette page permet à un administrateur taxonomique de télécharger par lots des fichiers de données taxonomiques. Voir';
 $LANG['SYMB_DOC'] = 'Documentation Symbiota';
 $LANG['TAX_UPLOAD_EXPLAIN2'] = 'pages pour plus de détails sur la mise en page du thésaurus taxonomique.';
-$LANG['TAX_UPLOAD'] = 'Taxa Upload';
+$LANG['UNABLE_TO_COPY_INPUT_FILE'] = "Impossible de transférer le fichier d'entrée";
+$LANG['UABLE_TO_IMPORT_INPUT_FILE'] = "Impossible d'importer le fichier d'entrée";
+$LANG['UABLE_TO_EXTRACT_INPUT_FILE'] = "Impossible d'extraire le fichier d'entrée";
+$LANG['INVALID_INPUT_FILE'] = "Fichier d'entrée invalide";
+$LANG['TAX_UPLOAD'] = 'Téléchargement de taxons';
 $LANG['SOURCE_FIELD'] = 'Champ source';
 $LANG['TARGET_FIELD'] = 'Champ cible';
 $LANG['FIELD_UNMAPPED'] = 'Champ non mappé';

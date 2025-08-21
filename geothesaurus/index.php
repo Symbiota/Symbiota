@@ -155,7 +155,12 @@ function listGeoUnits($arr) {
             map_container.style.display = "block";
          }
 
-         let map = new LeafletMap('map_canvas', {center: [0,0], zoom: 1});
+		 let map = new LeafletMap('map_canvas', {
+			center: [0,0],
+			zoom: 1
+		 },
+			JSON.parse(`<?= json_encode($GEO_JSON_LAYERS ?? []) ?>`)
+		 );
 
          map.enableDrawing({
             polyline: false,
@@ -170,7 +175,7 @@ function listGeoUnits($arr) {
 
       function openCoordAid(id="footprintwkt") {
          mapWindow = open(
-            `../collections/tools/mapcoordaid.php?mapmode=polygon&map_mode_strict=true&geoJson&wkt_input_id=${id}`,
+            `../collections/tools/mapcoordaid.php?map_mode=polygon&polygon_text_type=geojson&map_mode_strict=true&wkt_input_id=${id}`,
             "polygon",
             "resizable=0,width=900,height=630,left=20,top=20",
          );

@@ -401,7 +401,13 @@ function stateProvinceChanged(stateVal) {
 function coordinatesChanged(f, client_root) {
   verifyDecimalLatitude(f);
   verifyDecimalLongitude(f);
+
+  // Used to fire whether to geocode data in verifyCoordinates
+  // Should be reset if the coordinates change
+  // Reset is here because verifyCoordinates is also called when country
+  f.coordinates_validated = false;
   verifyCoordinates(f, client_root);
+
   fieldChanged('decimallatitude');
   fieldChanged('decimallongitude');
 }
@@ -695,7 +701,9 @@ function parseVerbatimCoordinates(f, verbose) {
       f.decimallatitude.value = Math.round(latDec * 1000000) / 1000000;
       f.decimallongitude.value = Math.round(lngDec * 1000000) / 1000000;
       decimalLatitudeChanged(f);
-      decimalLongitudeChanged(f);  
+      decimalLongitudeChanged(f);
+      f.decimallatitude.dispatchEvent(new Event('input', { bubbles: true }));
+      f.decimallongitude.dispatchEvent(new Event('input', { bubbles: true }));
     }
     else {
       if (verbose) alert("Unable to parse coordinates");
@@ -1225,13 +1233,13 @@ function dwcDoc(dcTag) {
   var language = getCookie("lang");
   if (language == "es") {
     dwcWindow = open(
-      "https://biokic.github.io/symbiota-docs/es/editor/edit/fields/#" + dcTag,
+      "https://docs.symbiota.org/Editor_Guide/Editing_Searching_Records/symbiota_data_fields#" + dcTag,
       "dwcaid",
       "width=1250,height=300,left=20,top=20,scrollbars=1"
     );
   } else {
     dwcWindow = open(
-      "https://biokic.github.io/symbiota-docs/editor/edit/fields/#" + dcTag,
+      "https://docs.symbiota.org/Editor_Guide/Editing_Searching_Records/symbiota_data_fields#" + dcTag,
       "dwcaid",
       "width=1250,height=300,left=20,top=20,scrollbars=1"
     );
