@@ -1,5 +1,6 @@
 <?php
 include_once('../../config/symbini.php');
+global $SERVER_ROOT, $IS_ADMIN, $USER_RIGHTS, $CLIENT_ROOT;
 include_once($SERVER_ROOT . '/components/breadcrumbs.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT . '/classes/Database.php');
@@ -8,7 +9,7 @@ include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT . '/classes/Sanitize.php');
 include_once($SERVER_ROOT . '/classes/CustomQuery.php');
 
-$collid = array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid'])? intval($_REQUEST['collid']):0;
+$collId = array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid'])? intval($_REQUEST['collid']):0;
 $start = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
 $db = array_key_exists('db',$_REQUEST)?$_REQUEST['db']:[];
 $hideExactMatches = array_key_exists('hideExactMatches',$_REQUEST);
@@ -272,7 +273,7 @@ if(count($_POST)) copyInfo();
 
 $conn = Database::connect('readonly');
 
-$duplicates = searchDuplicateOptions($collid, $start, $conn);
+$duplicates = searchDuplicateOptions($collId, $start, $conn);
 $collections = getCollections($conn);
 
 $paginateNext = count($duplicates) == 100;
@@ -320,6 +321,10 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 }
 
 $ui_option = 2;
+
+if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin']))){
+	$isEditor = 1;
+}
 
 ?>
 
@@ -423,11 +428,11 @@ $ui_option = 2;
 
 			<div style="margin-bottom: 1rem; display: flex; gap: 1rem;">
 				<?php if($start != 0): ?>
-					<a href="?collid=<?= $collid?>&start=<?= $start - 1 ?>">Previous</a>
+					<a href="?collid=<?= $collId?>&start=<?= $start - 1 ?>">Previous</a>
 				<?php endif ?>
 
 				<?php if($paginateNext): ?>
-					<a href="?collid=<?= $collid?>&start=<?= $start + 1 ?>">Next</a>
+					<a href="?collid=<?= $collId?>&start=<?= $start + 1 ?>">Next</a>
 				<?php endif ?>
 
 				<!-- <div style="flex-grow: 1; display: flex; justify-content: end;"> -->
