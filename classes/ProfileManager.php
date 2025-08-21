@@ -151,6 +151,7 @@ class ProfileManager extends Manager{
 			// If it's an old password then allow for login
 			// then rehash
 			if($user && substr($user->password, 0, 4) != '$2y$' && $this->authenticateUsingPasswordOld($pwdStr)) {
+				$this->resetConnection();
 				return $this->updatePassword($this->uid, $pwdStr);
 			} else if(!$user || !$this->checkHash($pwdStr, $user->password)) {
 				//Account missing our passwords didn't match
