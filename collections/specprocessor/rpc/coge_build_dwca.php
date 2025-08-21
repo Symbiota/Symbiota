@@ -42,22 +42,9 @@ if($collid && is_numeric($collid)){
 		//Set GeoLocate CoGe variables
 		$dwcaHandler->setGeolocateVariables(array('cogecomm'=>$_POST['cogecomm'],'cogename'=>$_POST['cogename'],'cogedescr'=>$_POST['cogedescr'],));
 
-		//Set direct path to file
-		$tPath = $SERVER_ROOT;
-		if(substr($tPath,-1) != '/' && substr($tPath,-1) != '\\'){
-			$tPath .= '/';
-		}
-		$pathFrag = 'temp/data/';
-		$tPath .= $pathFrag;
-		$dwcaHandler->setTargetPath($tPath);
 		$cnt = $dwcaHandler->getOccurrenceCnt();
-		$fileName = 'CoGe'.'_'.time();
-		$dwcaHandler->createDwcArchive($fileName);
-
-		//Set URL path to file
-		$urlPath = $dwcaHandler->getServerDomain().$CLIENT_ROOT;
-		if(substr($urlPath,-1) != '/' && substr($urlPath,-1) != '\\') $urlPath .= '/';
-		$urlPath .= $pathFrag.$fileName.'_DwC-A.zip';
+		$dwcaHandler->createDwcArchive();
+		$urlPath = $dwcaHandler->getDwcaOutputUrl();
 
 		if($cnt){
 			if((@fclose(@fopen($urlPath,'r')))){

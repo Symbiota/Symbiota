@@ -15,33 +15,33 @@ if(file_exists($SERVER_ROOT.'/content/lang/classes/Media.'.$LANG_TAG.'.php')) {
 }
 
 function get_occurrence_upload_path($institutioncode, $collectioncode, $catalognumber = null) {
-		$root = $institutioncode . ($collectioncode? '_'. $collectioncode: '') . '/';
+	$root = $institutioncode . ($collectioncode? '_'. $collectioncode: '') . '/';
 
-		if($catalognumber) {
-			//Clean out Symbols that would interfere with
-			$derived_cat_num = str_replace(array('/','\\',' '), '', $catalognumber);
+	if($catalognumber) {
+		//Clean out Symbols that would interfere with
+		$derived_cat_num = str_replace(array('/','\\',' '), '', $catalognumber);
 
-			//Grab any characters in the range of 0-8 then any amount digits
-			if(preg_match('/^(\D{0,8}\d{4,})/', $derived_cat_num, $matches)){
-				//Truncate cat number to keep directories from getting out of hand
-				$derived_cat_num = substr($matches[1], 0, -3);
+		//Grab any characters in the range of 0-8 then any amount digits
+		if(preg_match('/^(\D{0,8}\d{4,})/', $derived_cat_num, $matches)){
+			//Truncate cat number to keep directories from getting out of hand
+			$derived_cat_num = substr($matches[1], 0, -3);
 
-				//If derived catalog number is a number less then five pad front with 0's
-				if(is_numeric($derived_cat_num) && strlen($derived_cat_num) < 5) {
-					$derived_cat_num = str_pad($derived_cat_num, 5, "0", STR_PAD_LEFT);
-				}
-
-				$root .= $derived_cat_num . '/';
-			//backup catalogNumber
-			} else {
-				$root .= '00000/';
+			//If derived catalog number is a number less then five pad front with 0's
+			if(is_numeric($derived_cat_num) && strlen($derived_cat_num) < 5) {
+				$derived_cat_num = str_pad($derived_cat_num, 5, "0", STR_PAD_LEFT);
 			}
-		//Use date as a backup so that main directory doesn't get filled up but can debug
-		} else {
-			$root .= date('Ym') . '/';
-		}
 
-		return $root;
+			$root .= $derived_cat_num . '/';
+			//backup catalogNumber
+		} else {
+			$root .= '00000/';
+		}
+		//Use date as a backup so that main directory doesn't get filled up but can debug
+	} else {
+		$root .= date('Ym') . '/';
+	}
+
+	return str_replace(' ', '_', $root);
 }
 
 class Media {
@@ -49,7 +49,6 @@ class Media {
 	private static $mediaRootUrl;
 
 	private static $errors = [];
-	private static $storage_driver = LocalStorage::class;
 
 	private const DEFAULT_THUMBNAIL_WIDTH_PX = 200;
 	private const DEFAULT_WEB_WIDTH_PX = 1600;
@@ -89,10 +88,6 @@ class Media {
 		't.author',
 		't.rankid'
 	];
-
-	public static function setStorageDriver(StorageStrategy $storage_driver): void {
-		$this->storage_driver = $storage_driver::class;
-	}
 
 	private static function getMediaRootPath(): string {
 		if(self::$mediaRootPath) {
@@ -930,15 +925,23 @@ class Media {
 			$height = intval(($new_width / $width) * $height);
 			$width = $new_width;
 		}
+		$image = null;
 
-		$image = match($mime_type) {
-			'image/jpeg' => imagecreatefromjpeg($src_path),
-			'image/png' => imagecreatefrompng($src_path),
-			'image/gif' => imagecreatefromgif($src_path),
-			default => throw new Exception(
-				'Mime Type: ' . $mime_type . ' not supported for creation'
-			)
-		};
+		switch($mime_type) {
+			case 'image/jpeg':
+				$image = imagecreatefromjpeg($src_path);
+				break;
+			case 'image/png':
+				$image = imagecreatefrompng($src_path);
+				break;
+			case 'image/gif':
+				$image = imagecreatefromgif($src_path);
+				break;
+			default:
+				throw new Exception(
+					'Mime Type: ' . $mime_type . ' not supported for creation'
+				);
+		}
 
 		$new_image = imagecreatetruecolor($width, $height);
 
@@ -1021,6 +1024,9 @@ class Media {
 			if($remove_files) {
 				foreach($media_urls as $url) {
 					if($url && file_exists($GLOBALS['SERVER_ROOT'] . $url)) {
+						if(!is_writable($GLOBALS['SERVER_ROOT'] . $url)) {
+							throw new MediaException(MediaException::FilepathNotWritable, $url);
+						}
 						if(!unlink($GLOBALS['SERVER_ROOT'] . $url)) {
 							error_log("WARNING: File (path: " . $url . ") failed to delete from server");
 						}
@@ -1131,7 +1137,7 @@ class Media {
 	 * @param Mysqli $conn
 	 * @return array<string>
 	 */
-	public static function getMediaTags(int|array $media_id, mysqli $conn = null): array {
+	public static function getMediaTags($media_id, mysqli $conn = null): array {
 		$sql = 'SELECT t.mediaID, k.tagkey, k.shortlabel, k.description_en FROM imagetag t
 		INNER JOIN imagetagkey k ON t.keyvalue = k.tagkey
 		WHERE t.mediaID ';
