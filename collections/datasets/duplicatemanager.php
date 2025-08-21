@@ -155,6 +155,11 @@ if($isEditor && $formSubmit){
 							<?php echo $LANG['BATCH_LINK_DUPS']; ?>
 						</a> - <?php echo $LANG['BATCH_LINK_EXPLANATION']; ?>
 					</div>
+					<div style="margin:25px;">
+						<a href="<?= $CLIENT_ROOT . '/collections/editor/batchDuplicateGeorefCopy.php?collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>">
+							<?= $LANG['BATCH_COPY_GEOREFERENCE_DUPLICATES'] ?>
+						</a> - <?= $LANG['BATCH_COPY_GEOREFERENCE_DUPLICATES_EXPLANATION'] ?>
+					</div>
 					<?php
 					if(!empty($ACTIVATE_EXSICCATI) && $collMap['colltype'] == 'Preserved Specimens'){
 						?>
