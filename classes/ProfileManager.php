@@ -100,6 +100,14 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
+	private function authenticateUsingPassword($pwdStr){
+		if($GLOBALS['USE_BCRYPT'] ?? false) {
+			return $this->authenticateUsingPasswordBcrypt($pwdStr);
+		} else {
+			return $this->authenticateUsingPasswordOld($pwdStr);
+		}
+	}
+
 	private function authenticateUsingPasswordOld($pwdStr){
 		$status = false;
 		if($pwdStr){
@@ -119,7 +127,7 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
-	private function authenticateUsingPassword($pwdStr){
+	private function authenticateUsingPasswordBcrypt($pwdStr){
 		try {
 			$params = [];
 			$sql = 'SELECT uid, firstname, username, password FROM users WHERE ';
@@ -298,6 +306,14 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
+	public function changePassword($newPwd, $oldPwd = "", $isSelf = 0) {
+		if($GLOBALS['USE_BCRYPT'] ?? false) {
+			return $this->changePasswordBcrypt($newPwd, $oldPwd, $isSelf);
+		} else {
+			return $this->changePasswordOld($newPwd, $oldPwd, $isSelf);
+		}
+	}
+
 	public function changePasswordOld ($newPwd, $oldPwd = "", $isSelf = 0) {
 		if($newPwd){
 			$this->resetConnection();
@@ -321,7 +337,7 @@ class ProfileManager extends Manager{
 		return false;
 	}
 
-	public function changePassword($newPwd, $oldPwd = "", $isSelf = 0) {
+	public function changePasswordBcrypt($newPwd, $oldPwd = "", $isSelf = 0) {
 		if(!newPwd) return false;
 
 		$this->resetConnection();
@@ -402,6 +418,14 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
+	private function updatePassword($uid, $newPassword){
+		if($GLOBALS['USE_BCRYPT'] ?? false) {
+			return $this->updatePasswordBcrypt($uid, $newPassword);
+		} else {
+			return $this->updatePasswordOld($uid, $newPassword);
+		}
+	}
+
 	private function updatePasswordOld($uid, $newPassword){
 		$status = false;
 		$sql = 'UPDATE users SET password = CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?))))) WHERE (uid = ?)';
@@ -415,7 +439,7 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
-	private function updatePassword(int $uid, string $newPassword): bool {
+	private function updatePasswordBcrypt(int $uid, string $newPassword): bool {
 		$status = false;
 		$sql = 'UPDATE users SET password = ? WHERE (uid = ?)';
 		$hash = $this->hash($newPassword);
