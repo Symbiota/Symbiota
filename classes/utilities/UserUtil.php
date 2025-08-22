@@ -22,7 +22,7 @@ class UserUtil {
 	 * @param bool $authCheck Represents if user has permissons or not
 	 * @return void
 	 **/
-	static function checkAccess(bool $authCheck): void {
+	static function authorizedOrDenyAccess(bool $authCheck): void {
 		global $SERVER_ROOT;
 		if(!$authCheck) {
 			include($SERVER_ROOT . '/includes/accessDenied.php');
@@ -39,6 +39,6 @@ class UserUtil {
 	 * @return void
 	 **/
 	static function isCollectionAdminOrDenyAcess(int $collId): void {
-		self::checkAccess(self::isCollectionAdmin($collId));
+		self::authorizedOrDenyAccess(self::isCollectionAdmin($collId));
 	}
 }

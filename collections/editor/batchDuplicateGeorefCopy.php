@@ -1,6 +1,6 @@
 <?php
 include_once('../../config/symbini.php');
-global $SERVER_ROOT, $IS_ADMIN, $USER_RIGHTS, $CLIENT_ROOT;
+global $SERVER_ROOT, $IS_ADMIN, $USER_RIGHTS, $CLIENT_ROOT, $LANG;
 include_once($SERVER_ROOT . '/components/breadcrumbs.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/UserUtil.php');
@@ -15,7 +15,7 @@ Language::load('collections/sharedterms');
 
 $collId = array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid'])? intval($_REQUEST['collid']):0;
 
-UserUtil::checkAccess(UserUtil::isCollectionAdmin($collId));
+UserUtil::isCollectionAdminOrDenyAcess($collId);
 
 $start = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
 $db = array_key_exists('db',$_REQUEST)?$_REQUEST['db']:[];
