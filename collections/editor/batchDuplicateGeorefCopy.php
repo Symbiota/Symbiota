@@ -18,16 +18,17 @@ $missingLatLng = array_key_exists('missingLatLng',$_REQUEST);
 $updated = [];
 $errors = [];
 
+// Other none copied fields selected out of occurrence table
 $fields = [
 	'occid',
 	'collid',
 	'catalognumber',
-	// 'duplicateid',
 	'country',
 	'stateProvince',
 	'county',
 ];
 
+// Fields that will get copied into occurrence
 $harvestFields = [
 	'decimalLatitude',
 	'decimalLongitude',
@@ -38,10 +39,10 @@ $harvestFields = [
 	'georeferenceRemarks',
 	'georeferenceSources',
 	'georeferenceProtocol',
-	//'georeferenceDate',
 	'georeferenceVerificationStatus',
 ];
 
+// Fields that are shown in the table
 $shownFields = [
 	'occid',
 	'catalognumber',
@@ -59,16 +60,6 @@ $fieldIgnores = [
 	'duplicateid',
 ];
 
-function getSqlFields(array $fields, string $prefix = '') {	
-	$sql = '';
-
-	for($i = 0; $i < count($fields); $i++) {
-		$sql .= mapField($fields[$i], $prefix) . ($i < (count($fields) - 1)? ', ': '') ;
-	}
-
-	return $sql;
-}
-
 function mapField($field, $prefix) {
 	$tableAlias = 'o';
 	$fieldAlias = ($prefix? ' AS ' . $field . $prefix: '');
@@ -80,16 +71,14 @@ function mapField($field, $prefix) {
 	return $tableAlias . $prefix . '.' . $field . ($prefix? ' AS ' . $field . $prefix: '');
 };
 
-function getTargets(int $collId) {
-	global $fields, $harvestFields;
+function getSqlFields(array $fields, string $prefix = '') {	
+	$sql = '';
 
-	$sql = 'SELECT DISTINCT duplicateid from omoccurduplicatelink dl
-	join omoccurrences o on o.occid = dl.occid and o.collid = ?
-	ORDER BY duplicateid LIMIT 100';
+	for($i = 0; $i < count($fields); $i++) {
+		$sql .= mapField($fields[$i], $prefix) . ($i < (count($fields) - 1)? ', ': '') ;
+	}
 
-	$conn = Database::connect('readonly');
-	$rs = QueryUtil::executeQuery($conn, $sql, [$collId]);
-	return array_map(fn($v) => $v['duplicateid'], $rs->fetch_all(MYSQLI_ASSOC));
+	return $sql;
 }
 
 function getTableHeaders(array $arr, array $ignore = []) {
@@ -148,26 +137,6 @@ function copyOccurrenceInfo($targetOccId, $sourceOccId, $harvestFields) {
 		$sql,
 		[$targetOccId, $sourceOccId]
 	);
-}
-
-function isCopyable($target, $source) {
-	global $harvestFields;
-	foreach ($harvestFields as $field) {
-		if(($target[$field] ?? false) != ($source[$field] ?? false)) {
-			return true;
-		}
-	}
-}
-
-function getShownDuplicate(array $occurrenceDuplicate, string $postfix = '') {
-	global $shownFields;
-
-	$shownDuplicate = [];
-	foreach($shownFields as $field) {
-		$shownDuplicate[$field] = $occurrenceDuplicate[$field . $postfix] ?? null;
-	}
-
-	return $shownDuplicate;
 }
 
 function getOccurrences(array $occIds, mysqli $conn) {
@@ -255,20 +224,6 @@ function copyInfo() {
 	}
 }
 
-function hasDiff(array $duplicateA, array $duplicateB) {
-	global $harvestFields;
-	foreach($harvestFields as $key) {
-		$valueB = $duplicateB[$key] ?? null;
-		$valueA = $duplicateA[$key] ?? null;
-
-		if($valueA != $valueB) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
 if(count($_POST)) copyInfo();
 
 $conn = Database::connect('readonly');
@@ -318,12 +273,6 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 	$option['institutionCode'] = $collections[$option['collid']]['institutionCode'];
 	$option['collectionCode'] = $collections[$option['collid']]['collectionCode'];
 	$options[$duplicateId][$occid] = $option;
-}
-
-$ui_option = 2;
-
-if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin']))){
-	$isEditor = 1;
 }
 
 ?>
@@ -441,25 +390,6 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collId
 			</div>
 
 			<form method="POST">
-			<?php if($ui_option === 1): ?>
-
-			<?php foreach ($targets as $duplicateId => $target): ?>
-			
-			<?php if(count($options[$duplicateId])): ?>
-			<table class="styledtable table-scroll">
-				<?= getTableHeaders($shownFields, $fieldIgnores)?>
-				<tbody>
-					<?= render_row($target, false, $shownFields) ?>
-					<?php foreach ($options[$duplicateId] as $dupe): ?>
-						<?= $dupe['occid'] !== $target['occid']? render_row($dupe, $target['occid'], $shownFields): '' ?>
-					<?php endforeach ?>
-				</tbody>
-			</table>
-			<?php endif ?>
-			<?php endforeach ?>
-
-			<?php elseif($ui_option === 2): ?>
-
 			<?php if(count($targets)): ?>
 			<table class="styledtable table-scroll">
 			<?= getTableHeaders($shownFields, $fieldIgnores) ?>
@@ -483,7 +413,6 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collId
 				<h4 style="margin-bottom: 1rem; padding:1rem 0;">
 					There are no duplicate clusters that match this search
 				</h4>
-			<?php endif ?>
 			<?php endif ?>
 
 			<button class="button">Copy Duplicate Data</button>
