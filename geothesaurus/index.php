@@ -325,7 +325,7 @@ function listGeoUnits($arr) {
                   </div>
                   <div class="field-div">
                      <label><?=$LANG['POLYGON']?></label>:
-                     <a onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root: '<?= $CLIENT_ROOT?>', polygon_input_id: 'addfootprintwkt'})">
+                     <a onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root: '<?= $CLIENT_ROOT?>', polygon_input_id: 'addfootprintwkt', map_mode_strict: true})">
                         <img src='../images/world.png' style='width:10px;border:0' alt='<?= $LANG['IMG_OF_GLOBE'] ?>' /> <?= $LANG['EDIT_POLYGON']?>
                      </a>
                      <span><textarea id="addfootprintwkt" name="polygon" style="margin-top: 0.5rem; width:98%;height:90px;"></textarea></span>
@@ -461,7 +461,7 @@ function listGeoUnits($arr) {
                            <?= $geoUnit['geoJSON'] !== null? $LANG['YES_POLYGON']: $LANG['NO_POLYGON'] ?>
                         </span>
                         <div id="map_canvas" style="margin: 1rem 0; width:100%; height:20rem"></div>
-                        <a class="editFormElem" onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root: '<?= $CLIENT_ROOT?>', polygon_input_id: 'footprintwkt'})">
+                        <a class="editFormElem" onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root: '<?= $CLIENT_ROOT?>', polygon_input_id: 'footprintwkt', map_mode_strict: true})">
                            <img src='../images/world.png' style='width:10px;border:0' alt='<?= $LANG['IMG_OF_GLOBE'] ?>' /> <?= $LANG['EDIT_POLYGON']?>
                         </a>
                         <span class="editFormElem" style="margin-top: 0.5rem">
