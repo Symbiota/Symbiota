@@ -31,6 +31,7 @@ $siteData = new DatasetsMetadata();
 
 $catId = array_key_exists("catid", $_REQUEST) ? $_REQUEST["catid"] : '';
 $collList = $collManager->getFullCollectionList($catId);
+$polygonList = $collManager->getSearchablePolygons();
 $specArr = (isset($collList['spec']) ? $collList['spec'] : null);
 $obsArr = (isset($collList['obs']) ? $collList['obs'] : null);
 $associationManager = new AssociationManager();
@@ -210,6 +211,20 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 										</label>
 									</div>
 								</div>
+							</div>
+							<div class="input-text-container">
+								<label for="polygons" class="input-text--outlined">
+									<span class="screen-reader-only"><?php echo $LANG['POLYGONS'] ?></span>
+									<select style="padding: 0.5rem;" name="polygons[]" id="polygons" data-chip="<?php echo $LANG['POLYGONS'] ?>"> {{/*  add 'multiple' to allow several polygons  */}}
+										<option value=""></option>
+										<?php
+										foreach($polygonList as $row){
+											echo '<option value="'.$row['geoThesID'].'" data-chip="'.$LANG['POLYGONS'].'">'.htmlspecialchars($row['geoterm']).'</option>';
+										}
+										?>
+									</select>
+									<span class="inset-input-label"><?php echo $LANG['POLYGONS'] ?></span>
+								</label>
 							</div>
 						</div>
 					</div>

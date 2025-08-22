@@ -145,9 +145,32 @@ function addChip(element) {
     };
   }
   else if (element.tagName === "OPTION") {
-    inputChip.id = "chip-" + element.dataset.chip;
-    inputChip.textContent = (element.dataset.chip ? element.dataset.chip + ": " : "") + element.textContent;
-    chipBtn.onclick = () => handleRemoval(element, inputChip);
+    const selectElement = element.closest("select");
+    if (selectElement && selectElement.multiple) {
+        //if multiple options (like polygons)
+        let oldChip = document.getElementById("chip-" + selectElement.dataset.chip);
+        if (oldChip) removeChip(oldChip);
+
+        const selected = Array.from(selectElement.selectedOptions).map(opt => opt.textContent);
+        if (selected.length > 0) {
+            inputChip.id = "chip-" + selectElement.dataset.chip;
+            inputChip.textContent =
+                (selectElement.dataset.chip ? selectElement.dataset.chip + ": " : "") +
+                selected.join(", ");
+
+            chipBtn.onclick = () => {
+                Array.from(selectElement.options).forEach(opt => (opt.selected = false));
+                removeChip(inputChip);
+            };
+        }
+    } else {
+        //if single option
+        inputChip.id = "chip-" + element.dataset.chip;
+        inputChip.textContent = (element.dataset.chip ? element.dataset.chip + ": " : "") + element.textContent;
+
+        chipBtn.onclick = () => handleRemoval(element, inputChip);
+    }
+    inputChip.appendChild(chipBtn);
   }
   else {
     inputChip.id = "chip-" + element.id;
@@ -910,6 +933,11 @@ function setSearchForm(frm) {
     if (urlVar["bed"]) {
       if (frm["bed"]) {
         frm["bed"].value = urlVar["bed"];
+      }
+    }
+    if (urlVar["polygons"]) {
+      if (frm["polygons"]) {
+        frm["polygons"].value = urlVar["polygons"];
       }
     }
 
