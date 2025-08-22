@@ -366,6 +366,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 						<input name="occid" type="hidden" value="<?php echo $occid; ?>" />
 						<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 						<input name="occindex" type="hidden" value="<?php echo $occIndex ?>" />
+						<input name="createdUid" type="hidden" value="<?php echo $GLOBALS['SYMB_UID'] ?>" />
 						<button name="submitaction" type="submit" class="button" value="createAssociation"><?php echo $LANG['CREATE_ASSOC']; ?></button>
 					</div>
 				</div>
