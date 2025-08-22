@@ -140,5 +140,4 @@ $LANG['MEMBER'] = 'Member';
 $LANG['BED'] = 'Bed';
 $LANG['POLYGONS'] = 'Polygons';
 
-
 ?>
