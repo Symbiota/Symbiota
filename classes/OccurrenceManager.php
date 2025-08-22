@@ -607,6 +607,11 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			}
 		}
 
+		if(!empty($this->searchTermArr['polygons'])){
+			$sqlWhere .= 'AND gth.isSearchable = 1 ';
+			$sqlWhere .= 'AND ST_Contains(gpoly.footprintPolygon, p.lngLatPoint) ';
+		}
+
 		if($sqlWhere){
 			$sqlWhere .= OccurrenceUtil::appendFullProtectionSQL();
 			$this->sqlWhere = 'WHERE '.substr($sqlWhere,4);
@@ -625,6 +630,23 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$this->paleoSqlWith = $paleoSqlWith;
 		}
 	}
+
+	public function getSearchablePolygons(){
+        $sql = "SELECT geoThesID, geoterm
+                FROM geographicthesaurus
+                WHERE geoLevel = 110
+                  AND isSearchable = 1
+                ORDER BY geoterm";
+        $rs = $this->conn->query($sql);
+
+        $results = [];
+        if($rs){
+            while($row = $rs->fetch_assoc()){
+                $results[] = $row;
+            }
+        }
+        return $results;
+    }
 
 	private function getAdditionIdentifiers($identFrag){
 		$retArr = array();
@@ -687,8 +709,16 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			if(strpos($sqlWhere,'ds.datasetid')){
 				$sqlJoin .= 'INNER JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
 			}
-			if(array_key_exists('footprintGeoJson',$this->searchTermArr) || strpos($sqlWhere,'p.lngLatPoint')){
+			if(array_key_exists('footprintGeoJson',$this->searchTermArr) || strpos($sqlWhere,'p.lngLatPoint') || array_key_exists('polygons',$this->searchTermArr)){
 				$sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
+			}
+			if(array_key_exists('polygons',$this->searchTermArr)){
+				$polygonIDs = $this->searchTermArr['polygons'];
+				if (is_string($polygonIDs))
+					$polygonIDs = explode(',', $polygonIDs);
+				$polygonIDs = array_map('intval', $polygonIDs);
+				$sqlJoin .= 'INNER JOIN geographicpolygon gpoly ON gpoly.geothesid IN (' . implode(',', $polygonIDs) . ') ';
+				$sqlJoin .= 'INNER JOIN geographicthesaurus gth ON gpoly.geothesid = gth.geothesid ';
 			}
 			if (!empty($GLOBALS['ACTIVATE_PALEO'])) {
 				$sqlJoin .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
@@ -1221,6 +1251,10 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		if(array_key_exists('characters',$_REQUEST)){
 			if($_REQUEST['characters']) $this->searchTermArr['characters'] = $_REQUEST['characters'];
 			else unset($this->searchTermArr['characters']);
+		}
+		if(array_key_exists('polygons',$_REQUEST)){
+			if($_REQUEST['polygons']) $this->searchTermArr['polygons'] = $_REQUEST['polygons'];
+			else unset($this->searchTermArr['polygons']);
 		}
 		if(!empty($_REQUEST['earlyInterval'])){
 			$this->searchTermArr['earlyInterval'] =  $this->cleanInputStr($_REQUEST['earlyInterval']);

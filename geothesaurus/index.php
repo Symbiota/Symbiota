@@ -199,6 +199,22 @@ function listGeoUnits($arr) {
          if(!auto_input || (auto_input.inputEl && !auto_input.inputEl.value)) return;
          window.location.href = `index.php?geoThesID=${auto_input.value}`
       }
+
+      document.addEventListener('DOMContentLoaded', function() {
+         const footprint = document.getElementById('footprintwkt');
+         const searchableBox = document.getElementById('isSearchable');
+
+         function updateCheckbox() {
+            if (footprint.value.trim() === '') {
+                  searchableBox.checked = false;
+                  searchableBox.disabled = true;
+            } else {
+                  searchableBox.disabled = false;
+            }
+         }
+         updateCheckbox();
+         footprint.addEventListener('input', updateCheckbox);
+      });
       </script>
    </head>
    <body onload="init()">
@@ -472,6 +488,23 @@ function listGeoUnits($arr) {
                         <a class="editFormElem" onclick="openCoordAid()">
                            <img src='../images/world.png' style='width:10px;border:0' alt='<?= $LANG['IMG_OF_GLOBE'] ?>' /> <?= $LANG['EDIT_POLYGON']?>
                         </a>
+                        <div class="field-div">
+                        <label><?= $LANG['SEARCHABLE'] ?></label>:
+                        <span class="editTerm">
+                           <?= !empty($geoUnit['isSearchable']) ? $LANG['YES_POLYGON'] : $LANG['NO_POLYGON'] ?>
+                        </span>
+                        <span class="editFormElem" style="margin-top:0.5rem;">
+                           <?php
+                                 $hasPolygon = !empty($geoUnit['geoJSON']);
+                                 $checked = !empty($geoUnit['isSearchable']) ? 'checked' : '';
+                                 $disabled = $hasPolygon ? '' : 'disabled';
+                           ?>
+                           <input type="checkbox" name="isSearchable" class="editFormElem" id="isSearchable" value="1" <?= $checked ?> <?= $disabled ?>/>
+                           <?php if (!$hasPolygon): ?>
+                                 <span>(<?= $LANG['POLYGON_REQUIRED'] ?>)</span>
+                           <?php endif; ?>
+                        </span>
+                     </div>
                         <span class="editFormElem" style="margin-top: 0.5rem">
                            <textarea id="footprintwkt" name="polygon" style="margin-top: 0.5rem; width:98%;height:90px;"><?= isset($geoUnit['geoJSON'])? trim($geoUnit['geoJSON']): null ?></textarea>
                         </span>
