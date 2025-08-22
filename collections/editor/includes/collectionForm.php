@@ -1,8 +1,10 @@
 <?php
-global $SERVER_ROOT, $LANG_TAG, $CLIENT_ROOT;
+global $SERVER_ROOT, $LANG_TAG, $LANG, $CLIENT_ROOT;
 include_once($SERVER_ROOT.'/classes/Database.php');
 include_once($SERVER_ROOT.'/classes/utilities/QueryUtil.php');
-include_once($SERVER_ROOT.'/content/lang/collections/sharedterms.' . $LANG_TAG . '.php');
+include_once($SERVER_ROOT.'/classes/utilities/Language.php');
+
+Language::load('collections/sharedterms');
 
 $catId = array_key_exists("catid",$_REQUEST)?$_REQUEST["catid"]:'';
 
@@ -109,10 +111,11 @@ function toggleCategory(categoryId) {
 		<?= array_key_exists('all_collections', $_REQUEST)? 'checked': '' ?>
 	>
 	<label for="all_collections">
-		Select/Deselect <a href="<?= $CLIENT_ROOT ?>/collections/misc/collprofiles.php">All Collections</a>
+		<?= $LANG['SELECT_DESELECT']?>
+		<a href="<?= $CLIENT_ROOT ?>/collections/misc/collprofiles.php"><?= $LANG['ALL_COLLECTIONS']?></a>
 	</label>
 	<?php foreach($collectionsByCategory as $collectionType => $categories): ?>
-	<h2><?= $collectionType === 'Specimens'? 'Specimen Collections': 'Observation Collections' ?></h2>
+	<h2><?= $collectionType === 'Specimens'? $LANG['SPECIMEN_COLLECTIONS']: $LANG['OBSERVATION_COLLECTIONS'] ?></h2>
 	<?php foreach($categories as $category): ?>
 	<?php $categoryIdentifer = $collectionType . '_' . $category['id'] ?>
 
@@ -141,7 +144,7 @@ function toggleCategory(categoryId) {
 							src="<?= $CLIENT_ROOT ?>/images/plus.png"
 							style="width: 1em; height: 1em; cursor: pointer;"
 						/>
-						Expand
+						<?= $LANG['EXPAND'] ?>
 					</span>
 
 					<span id="<?=  $categoryIdentifer . '_close_toggle' ?>"
@@ -150,7 +153,7 @@ function toggleCategory(categoryId) {
 							src="<?= $CLIENT_ROOT ?>/images/minus.png"
 							style="width: 1em; height: 1em; cursor: pointer;"
 						/>
-						Condense
+						<?= $LANG['CONDENSE'] ?>
 					</span>
 				</a>
 			</div>
