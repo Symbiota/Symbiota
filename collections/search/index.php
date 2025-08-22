@@ -216,6 +216,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 								<label for="polygons" class="input-text--outlined">
 									<span class="screen-reader-only"><?php echo $LANG['POLYGONS'] ?></span>
 									<select style="padding: 0.5rem;" name="polygons[]" id="polygons" data-chip="<?php echo $LANG['POLYGONS'] ?>"> {{/*  add 'multiple' to allow several polygons  */}}
+										<option value=""></option>
 										<?php
 										foreach($polygonList as $row){
 											echo '<option value="'.$row['geoThesID'].'" data-chip="'.$LANG['POLYGONS'].'">'.htmlspecialchars($row['geoterm']).'</option>';
