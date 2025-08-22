@@ -3,6 +3,7 @@ include_once('../../config/symbini.php');
 global $SERVER_ROOT, $IS_ADMIN, $USER_RIGHTS, $CLIENT_ROOT;
 include_once($SERVER_ROOT . '/components/breadcrumbs.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/UserUtil.php');
 include_once($SERVER_ROOT . '/classes/Database.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCleaner.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
@@ -10,6 +11,9 @@ include_once($SERVER_ROOT . '/classes/Sanitize.php');
 include_once($SERVER_ROOT . '/classes/CustomQuery.php');
 
 $collId = array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid'])? intval($_REQUEST['collid']):0;
+
+UserUtil::checkAccess(UserUtil::isCollectionAdmin($collId));
+
 $start = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
 $db = array_key_exists('db',$_REQUEST)?$_REQUEST['db']:[];
 $hideExactMatches = array_key_exists('hideExactMatches',$_REQUEST);
