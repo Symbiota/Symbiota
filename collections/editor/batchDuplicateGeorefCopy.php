@@ -14,7 +14,11 @@ include_once($SERVER_ROOT . '/classes/CustomQuery.php');
 $collId = array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid'])? intval($_REQUEST['collid']):0;
 
 UserUtil::isCollectionAdminOrDenyAcess($collId);
-Language::load('collections/sharedterms');
+Language::load([
+	'collections/sharedterms',
+	'collections/misc/sharedterms',
+	'collections/editor/batchDuplicateGeorefCopy'
+]);
 
 $start = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
 $db = array_key_exists('db',$_REQUEST)?$_REQUEST['db']:[];
@@ -327,9 +331,9 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 		<div role="main" id="record-viewer-innertext">
 
 			<?php breadcrumbs([
-			'Home' => '../../index.php',
-			'Collections Profile' => '../misc/collprofiles.php?emode=1&collid=' . $collId,
-			'Duplicate Merger',
+			$LANG['HOME'] => '../../index.php',
+			$LANG['COL_MGMNT'] => '../misc/collprofiles.php?emode=1&collid=' . $collId,
+			$LANG['BATCH_DUPLICATE_HARVESTER'],
 			])
 			?>
 
