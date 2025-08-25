@@ -255,6 +255,8 @@ class OccurrenceImport extends UtilitiesFileImport {
 			foreach ($occidArr as $occid) {
 				$importManager->setOccid($occid);
 				$fieldArr = array_keys($importManager->getSchemaMap());
+				$catNumIdx = array_search('catalogNumber', $fieldArr);
+				$fieldArr[$catNumIdx] = 'ms_catalogNumber'; // replace DB column name with imported field name
 				$msArr = array();
 				foreach ($fieldArr as $field) {
 					$fieldLower = strtolower($field);
