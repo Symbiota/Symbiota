@@ -1,5 +1,7 @@
 <?php
 include_once('../config/symbini.php');
+include_once('../classes/utilities/GeneralUtil.php');
+
 if(!empty($THIRD_PARTY_OID_AUTH_ENABLED)){
 	include_once($SERVER_ROOT . '/config/auth_config.php');
 	require_once($SERVER_ROOT . '/vendor/autoload.php');
@@ -15,7 +17,7 @@ if($SYMB_UID){
 		header("Location:" . $_REQUEST['refurl']);
 	}
 	else{
-		header("Location:" . $CLIENT_ROOT . '/profile/viewprofile.php');
+		header("Location:" . GeneralUtil::getDomain() . $CLIENT_ROOT . '/profile/viewprofile.php');
 	}
 }
 
@@ -90,7 +92,7 @@ if($action == 'logout'){
 	}
 	else{
 		$pHandler->reset();
-		header('Location: '  . ($CLIENT_ROOT? '/' . $CLIENT_ROOT: '') . '/index.php');
+		header('Location: ' . GeneralUtil::getDomain() . $CLIENT_ROOT . '/index.php');
 	}
 }
 elseif($action == 'login'){
