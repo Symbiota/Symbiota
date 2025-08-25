@@ -17,7 +17,8 @@ UserUtil::isCollectionAdminOrDenyAcess($collId);
 Language::load([
 	'collections/sharedterms',
 	'collections/misc/sharedterms',
-	'collections/editor/batchDuplicateGeorefCopy'
+	'collections/editor/batchDuplicateGeorefCopy',
+	'collections/list'
 ]);
 
 $start = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
@@ -346,25 +347,25 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 				</div>
 				<div>
 					<input id="missingLatLng" type="checkbox" name="missingLatLng" value="1" <?= $missingLatLng? 'checked': ''?>>
-					<label for="missingLatLng">Only show specimens from my collection without latitude and longitude</label>
+					<label for="missingLatLng"><?= $LANG['MISSING_LAT_LNG'] ?></label>
 				</div>
 
 				<div style="margin-bottom: 1rem;">
 					<input id="hideExactMatches" type="checkbox" name="hideExactMatches" value="1" <?= $hideExactMatches? 'checked': ''?>>
-					<label for="hideExactMatches">Only show duplicates with georeferences different than target specimen</label>
+					<label for="hideExactMatches"><?= $LANG['HIDE_EXACT_MATCHES'] ?></label>
 				</div>
 
 				<dialog id="collections_dialog" style="min-width: 900px;">
 					<div style="display:flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
 						<h1 style="margin:0;"><?= $LANG['NAV_COLLECTIONS'] ?></h1>
 						<div style="flex-grow: 1;">
-						<button class="button" style="margin-left: auto;" type="button" onclick="document.getElementById('collections_dialog').close()">Close</button>
+						<button class="button" style="margin-left: auto;" type="button" onclick="document.getElementById('collections_dialog').close()"><?= $LANG['CLOSE'] ?></button>
 						</div>
 					</div>
 					<?php include(__DIR__ . '/includes/collectionForm.php') ?>
 				</dialog>
 
-				<button style="margin-bottom:1rem" class="button" type="button" onclick="document.getElementById('collections_dialog').showModal()">Filter Collections</button>
+				<button style="margin-bottom:1rem" class="button" type="button" onclick="document.getElementById('collections_dialog').showModal()"><?= $LANG['FILTER_COLLECTIONS'] ?></button>
 				<button class="button">Search</button>
 
 			</form>
@@ -387,11 +388,11 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 
 			<div style="margin-bottom: 1rem; display: flex; gap: 1rem;">
 				<?php if($start != 0): ?>
-					<a href="?collid=<?= $collId?>&start=<?= $start - 1 ?>">Previous</a>
+					<a href="?collid=<?= $collId?>&start=<?= $start - 1 ?>"><?= $LANG['PAGINATION_NEXT'] ?></a>
 				<?php endif ?>
 
 				<?php if($paginateNext): ?>
-					<a href="?collid=<?= $collId?>&start=<?= $start + 1 ?>">Next</a>
+					<a href="?collid=<?= $collId?>&start=<?= $start + 1 ?>"><?= $LANG['PAGINATION_PREVIOUS'] ?></a>
 				<?php endif ?>
 
 				<!-- <div style="flex-grow: 1; display: flex; justify-content: end;"> -->
@@ -421,13 +422,13 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 
 			<?php else: ?>
 				<h4 style="margin-bottom: 1rem; padding:1rem 0;">
-					There are no duplicate clusters that match this search
+					<?= $LANG['NO_DUPLICATES'] ?>
 				</h4>
 			<?php endif ?>
 
-			<button class="button">Copy Duplicate Data</button>
+			<button class="button"><?= $LANG['COPY_DUPLICATE_DATA'] ?></button>
 			<p>
-				Clicking the button above will replace the georeference data in the target (dark grey) record with the data from the checked duplicate record. The following fields will be replaced: decimalLatitude, decimalLongitude, geodeticDatum, footprintWKT, coordinateUncertaintyInMeters, georeferencedBy, georeferenceRemarks, georeferenceSources, georeferenceProtocol, georeferenceVerificationStatus
+				<?= $LANG['COPY_DUPLICATE_DATA_EXPLANATION'] ?>
 			</p>
 			</form>
 			<br/>
