@@ -339,7 +339,7 @@ class ProfileManager extends Manager{
 	}
 
 	public function changePasswordBcrypt($newPwd, $oldPwd = "", $isSelf = 0) {
-		if(!newPwd) return false;
+		if(!$newPwd) return false;
 
 		$this->resetConnection();
 		if($isSelf){
