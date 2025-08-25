@@ -5,6 +5,7 @@ Language: Español
 ------------------
 */
 $LANG['BATCH_DUPLICATE_HARVESTER'] = 'Recopilador de datos duplicados';
+$LANG['DUPLICATE_SEARCH_CRITERIA'] = 'Criterios de búsqueda duplicados';
 $LANG['MISSING_LAT_LNG'] = 'Solo mostrar especímenes de mi colección sin latitud y longitud';
 $LANG['HIDE_EXACT_MATCHES'] = 'Mostrar solo duplicados con georreferencias diferentes a la muestra de destino';
 $LANG['NO_DUPLICATES'] = 'No hay clústeres duplicados que coincidan con esta búsqueda';

@@ -340,7 +340,7 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 
 			<h1><?= $LANG['BATCH_DUPLICATE_HARVESTER'] ?></h1>
 
-			<h2 style="margin-bottom: 0.5rem">Duplicate Search Criteria</h2>
+			<h2 style="margin-bottom: 0.5rem"><?= $LANG['DUPLICATE_SEARCH_CRITERIA'] ?></h2>
 			<form method="POST" style="margin-bottom: 1rem;">
 				<div style="margin-bottom: 1rem;">
 					<?php CustomQuery::renderCustomInputs() ?>

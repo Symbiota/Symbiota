@@ -5,6 +5,7 @@ Language: English
 ------------------
 */
 $LANG['BATCH_DUPLICATE_HARVESTER'] = 'Duplicate Data Harvester';
+$LANG['DUPLICATE_SEARCH_CRITERIA'] = 'Duplicate Search Criteria';
 $LANG['MISSING_LAT_LNG'] = 'Only show specimens from my collection without latitude and longitude';
 $LANG['HIDE_EXACT_MATCHES'] = 'Only show duplicates with georeferences different than target specimen';
 $LANG['NO_DUPLICATES'] = 'There are no duplicate clusters that match this search';

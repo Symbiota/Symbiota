@@ -5,6 +5,7 @@ Language: Français (French)
 ------------------
 */
 $LANG['BATCH_DUPLICATE_HARVESTER'] = 'Récupérateur de données en double';
+$LANG['DUPLICATE_SEARCH_CRITERIA'] = 'Critères de recherche en double';
 $LANG['MISSING_LAT_LNG'] = 'Ne montrez que les spécimens de ma collection sans latitude ni longitude';
 $LANG['HIDE_EXACT_MATCHES'] = 'Afficher uniquement les doublons avec des géoréférences différentes de l\'échantillon cible';
 $LANG['NO_DUPLICATES'] = 'Il n\'y a pas de clusters en double qui correspondent à cette recherche';
