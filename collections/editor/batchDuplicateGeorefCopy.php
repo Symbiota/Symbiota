@@ -338,7 +338,7 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 			])
 			?>
 
-			<h1>Duplicate Data Harvester</h1>
+			<h1><?= $LANG['BATCH_DUPLICATE_HARVESTER'] ?></h1>
 
 			<h2 style="margin-bottom: 0.5rem">Duplicate Search Criteria</h2>
 			<form method="POST" style="margin-bottom: 1rem;">
@@ -366,7 +366,7 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 				</dialog>
 
 				<button style="margin-bottom:1rem" class="button" type="button" onclick="document.getElementById('collections_dialog').showModal()"><?= $LANG['FILTER_COLLECTIONS'] ?></button>
-				<button class="button">Search</button>
+				<button class="button"><?= $LANG['SEARCH'] ?></button>
 
 			</form>
 
