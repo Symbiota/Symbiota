@@ -26,8 +26,8 @@ $PUBLIC_MEDIA_UPLOAD_ROOT = '/content/imglib';
 
 //the root for the collection image directory
 $MEDIA_DOMAIN = '';				//Domain path to images, if different from portal
-$MEDIA_ROOT_URL = '';			//URL path to images
-$MEDIA_ROOT_PATH = '';			//Writable path to images, especially needed for downloading images
+$MEDIA_ROOT_URL = '/imglib';			//URL path to images
+$MEDIA_ROOT_PATH = '/var/www/html/imglib';			//Writable path to images, especially needed for downloading images
 
 
 //Pixel width of web images
@@ -104,6 +104,12 @@ $DATE_DEFAULT_TIMEZONE = NULL; // This should be set if server default timezone 
 
 $PRIVATE_VIEWING_ONLY = false; // Setting to true sets all content to be password protected besides below pages
 $PRIVATE_VIEWING_OVERRIDES = ['/index.php', '/misc/contacts.php','/misc/aboutproject.php', '/profile/newprofile.php', '/profile/index.php'];  //These pages will always be accessible to public viewing.  Add to as needed.
+
+//USDA-specific config
+$NA_COLLID=70;
+$BARC_COLLID=99;
+$BPI_SNAPSHOT_COLLID=85;
+/* end USDA-specific config */
 
 // Creates Togglable Overlay for GeoJSON file
 // Only Support with Leaflet Map

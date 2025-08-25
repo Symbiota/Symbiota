@@ -22,7 +22,6 @@ $collIdsFromUrl = array_key_exists("db", $_GET) ? explode(",", $explodable) : ''
 
 $collManager = new OccurrenceManager();
 $collectionSource = $collManager->getQueryTermStr();
-
 $collData = new CollectionMetadata();
 $siteData = new DatasetsMetadata();
 

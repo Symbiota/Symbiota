@@ -6,8 +6,7 @@
   --header-font-color: #fff;
   --brand-font-size: 1.5rem;
   --logo-width: 120px;
-  --menu-top-bg-color: #1b3d2f;
-  --menu-font-size: 1rem;
+  --menu-top-bg-color: #0071bc;
   --body-bg-color: #fafafa;
   --body-text-color: #000000;
   --body-font-size: 1rem;
@@ -18,7 +17,8 @@
   --darkest-color: #1b3d2f;
   --medium-color: #5a5a53;
   --light-color: #f2f0e9;
-  --bright-color: #b9d432;
+  --bright-color: #0071bc;
   --danger-color: #b31b1b;
   --max-innertext-width: 1024px;
+  --usda-footer-text-color: #fafafa;
 }

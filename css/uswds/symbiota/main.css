@@ -1,0 +1,533 @@
+/**
+* * Symbiota Redesign - main.css
+* * Version: September 2022
+* * Author: Laura Rocha Prado
+* * Author URI: http://laura.rochaprado.com
+* * License: GNU General Public License v2 or later
+* * License URI: http://www.gnu.org/licenses/gpl-2.0.html 
+*/
+
+/** 
+* * CONTENTS
+* * - Fonts imports
+* * - Global variables
+* * - Global styles
+* * - Utility classes
+* * - Components
+*/
+
+/* Fonts imports
+  ========================================================================== */
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+
+/* Global variables and components
+   ========================================================================== */
+@import "base.css";
+@import "variables.css";
+/* @import "header.css"; */
+@import "styles.css";
+
+/* Global styles
+   ========================================================================== */
+html {
+  font-size: 13px; /*0.7rem; /* 1rem = 10px */
+}
+
+body {
+  background-color: var(--body-bg-color);
+  color: var(--body-text-color);
+  margin: 0;
+  -webkit-text-size-adjust: 100%;
+  font-size: 1.2rem;
+  font-weight: 400;
+  font-family: var(--body-font-family);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--darkest-color);
+  font-weight: 700;
+  font-family: var(--heading-font-family);
+}
+
+h1 {
+  font-size: 3rem;
+}
+
+h2 {
+  font-size: 2.5rem;
+}
+
+h3 {
+  font-size: 2rem;
+}
+
+h4 {
+  font-size: 1.6rem;
+}
+
+p {
+  font-size: 1.4rem;
+}
+
+a {
+  transition: all 0.2s ease-in-out;
+  color: var(--link-color);
+  font-weight: 600;
+}
+
+a:hover {
+  color: var(--bright-color);
+  cursor: pointer;
+}
+
+button {
+  background-color: var(--darkest-color);
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  color: #fff;
+  font-family: var(--heading-font-family);
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+button:hover {
+  background-color: var(--medium-color);
+  color: var(--light-color);
+}
+
+hr {
+  border: 1px solid var(--bright-color);
+}
+
+#innertext {
+  margin: auto;
+  padding: 3rem 0;
+  background-color: var(--body-bg-color);
+  width: 90%;
+}
+
+#innertext p {
+  color: var(--body-text-color);
+  line-height: 1.5;
+}
+
+#popup-innertext {
+  font-size: 1.2rem;
+}
+
+.navpath {
+  margin: 10px auto;
+  width: 100%;
+  max-width: var(--max-innertext-width);
+}
+
+/**
+/* overriding jQuery UI CSS */
+.ui-widget,
+.ui-widget input,
+.ui-widget select,
+.ui-widget textarea,
+.ui-widget button,
+.ui-widget-content a {
+  font-family: var(--body-font-family);
+}
+
+#maps.ui-widget-content button a {
+  color: #fff;
+  text-decoration: none;
+}
+
+#maps.ui-widget-content button:hover a {
+  color: #000;
+}
+
+#innertext #tabs {
+  max-width: 100%;
+}
+
+#tabs {
+  font-family: var(--body-font-family);
+}
+
+#tabs div:first-child {
+  /* padding: ; */
+}
+
+#tabs a {
+  color: var(--darkest-color);
+  transition: all 0.2s ease-in-out;
+}
+
+#tabs a:hover {
+  color: var(--bright-color);
+}
+
+#tabs table {
+  width: 90%;
+}
+
+/****** Not found in v202209/symbiota/main.css 1 of ****/
+
+.ui-tabs .ui-tabs-panel {
+  padding: 10px 4px;
+}
+
+/* styled table */
+table.styledtable {
+  table-layout: auto;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table.styledtable th {
+  text-align: left;
+  padding: 4px;
+  border: 1px solid gray;
+  background-color: #dbe5f1;
+  color: black;
+}
+
+table.styledtable td {
+  padding: 3px;
+  border: 1px solid gray;
+  background-color: #efefef;
+}
+
+table.styledtable tr.alt td {
+  color: #000000;
+  background-color: #dfdfdf;
+}
+/****** End not found in v202209/symbiota/main.css ****/
+
+/***********************************************************************/
+
+/* Utility classes
+========================================================================== */
+.text-huge {
+  font-size: 4rem;
+  font-family: var(--title-font-family);
+  margin: 0;
+}
+
+.text-big {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.text-md {
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  align-items: center;
+}
+
+.grid-3 {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  fit-content: auto;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.button {
+  border: none;
+  border-radius: 5px;
+  padding: 0.6rem 1rem;
+  font-family: var(--heading-font-family);
+  letter-spacing: 1px;
+  text-align: center;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.button > a {
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.button-primary {
+  background-color: var(--darkest-color);
+}
+
+.button-primary:hover,
+.button-secondary:hover {
+  background-color: var(--medium-color);
+}
+
+.button-primary:hover > a,
+.button-secondary:hover > a {
+  color: var(--light-color);
+}
+
+.button-primary > a {
+  color: var(--light-color);
+}
+
+.button-secondary {
+  background-color: var(--bright-color);
+}
+
+.button-secondary > a {
+  color: var(--light-color);
+}
+
+.button-tertiary {
+  background-color: none;
+  border: 1px solid var(--bright-color);
+  padding: 0.5rem 0.9rem;
+}
+
+.skip-link {
+  position: absolute;
+  left: -10000px;
+}
+
+/* Media queries
+========================================================================== */
+/* Medium screens and up */
+@media (min-width: 768px) {
+  body {
+    display: grid;
+    grid-template-rows: auto auto 1fr auto; /* header, breadcrumbs, main, footer */
+  }
+}
+
+/* Medium-large screens only */
+@media screen and (min-width: 1024px) {
+  #innertext {
+    width: 90%;
+    max-width: var(--max-innertext-width);
+  }
+}
+
+/* Huge screens only */
+@media screen and (min-width: 2560px) {
+  .text-huge {
+    font-size: 5rem;
+    font-family: var(--title-font-family);
+    margin: 0;
+  }
+
+  .text-big {
+    font-size: 2.5rem;
+  }
+}
+/* -------------------- */
+
+.top-breathing-room-rel {
+  margin-top: 1rem;
+}
+
+.top-breathing-room-rel-sm {
+  margin-top: 0.5rem;
+}
+
+.left-breathing-room-rel {
+  margin-left: 1rem;
+}
+
+.bottom-breathing-room {
+  margin-bottom: 10px;
+}
+
+.bottom-breathing-room-rel {
+  margin-bottom: 1rem;
+}
+
+.bottom-breathing-room-rel-sm {
+  margin-bottom: 0.5rem;
+}
+
+.justify-center {
+  display: flex;
+  justify-content: center;
+}
+
+.cat-icon-div {
+  width: 4rem;
+  height: 3rem;
+}
+
+.collection-checkbox {
+  width: 25px;
+  padding-top: 8px;
+}
+
+.no-margin {
+  margin: 0;
+}
+
+.search-bar {
+  width: 25rem;
+}
+
+/* .ui-autocomplete {
+  background-color: inherit;
+} */
+
+/* USDA - specific ********************************************************************************/
+
+.card-image {
+  min-height: 22rem;
+  max-height: 22rem;
+}
+
+.card-button {
+  width: 100%;
+}
+
+.harvest-param-breadcrumbs-margin {
+  /* margin-top: 18rem; */
+}
+
+.adjusted-input-width {
+  max-width: 37rem;
+}
+
+*,
+:after,
+:before {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.spinner {
+  margin-top: -21px;
+  /* position: absolute; */
+  text-align: center;
+  top: 50%;
+  width: 100%;
+}
+
+.spinner svg {
+  -webkit-animation: loading-rotate 2s linear infinite;
+  -moz-animation: loading-rotate 2s linear infinite;
+  -o-animation: loading-rotate 2s linear infinite;
+  animation: loading-rotate 2s linear infinite;
+  height: 42px;
+  width: 42px;
+}
+
+.spinner .path {
+  stroke-dasharray: 90, 150;
+  stroke-dashoffset: 0;
+  stroke-width: 2;
+  stroke: #409eff;
+  stroke-linecap: round;
+  -webkit-animation: loading-dash 1.5s ease-in-out infinite;
+  -moz-animation: loading-dash 1.5s ease-in-out infinite;
+  -o-animation: loading-dash 1.5s ease-in-out infinite;
+  animation: loading-dash 1.5s ease-in-out infinite;
+}
+
+@-webkit-keyframes loading-rotate {
+  to {
+    -webkit-transform: rotate(1turn);
+    transform: rotate(1turn);
+  }
+}
+
+@-moz-keyframes loading-rotate {
+  to {
+    -moz-transform: rotate(1turn);
+    transform: rotate(1turn);
+  }
+}
+
+@-o-keyframes loading-rotate {
+  to {
+    -o-transform: rotate(1turn);
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes loading-rotate {
+  to {
+    -webkit-transform: rotate(1turn);
+    -moz-transform: rotate(1turn);
+    -o-transform: rotate(1turn);
+    transform: rotate(1turn);
+  }
+}
+
+@-webkit-keyframes loading-dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -40px;
+  }
+  to {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -120px;
+  }
+}
+
+@-moz-keyframes loading-dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -40px;
+  }
+  to {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -120px;
+  }
+}
+
+@-o-keyframes loading-dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -40px;
+  }
+  to {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -120px;
+  }
+}
+
+@keyframes loading-dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -40px;
+  }
+  to {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -120px;
+  }
+}
+
+/* End USDA ********************************************************************************/

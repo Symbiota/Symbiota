@@ -42,7 +42,7 @@ $searchVar = $collManager->getQueryTermStr();
 		button{ margin: 2px }
 		select{ margin-bottom: 4px }
 		.catHeaderDiv { font-weight:bold; font-size: 18px }
-		.coordBoxDiv { float:left; border:2px solid brown; padding:10px; margin:5px; white-space: nowrap; }
+		.coordBoxDiv { float:left; border:2px solid brown; padding:10px; margin:5px; white-space: nowrap; max-width: 40rem; }
 		.coordBoxDiv .labelDiv { font-weight:bold;float:left }
 		.coordBoxDiv .iconDiv { float: left; margin-left: 5px; }
 		.coordBoxDiv .iconDiv img { width:18px; }
@@ -55,7 +55,7 @@ $searchVar = $collManager->getQueryTermStr();
 	include($SERVER_ROOT.'/includes/header.php');
 	if(isset($collections_harvestparamsCrumbs)){
 		if($collections_harvestparamsCrumbs){
-			echo '<div class="navpath">';
+			echo '<div class="navpath harvest-param-breadcrumbs-margin">';
 			echo $collections_harvestparamsCrumbs.' &gt;&gt; ';
 			echo '<b>'.$LANG['NAV_SEARCH'].'</b>';
 			echo '</div>';
@@ -63,7 +63,7 @@ $searchVar = $collManager->getQueryTermStr();
 	}
 	else{
 		?>
-		<div class='navpath'>
+		<div class='navpath harvest-param-breadcrumbs-margin'>
 			<a href="../index.php"><?php echo htmlspecialchars($LANG['NAV_HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 			<a href="index.php"><?php echo htmlspecialchars($LANG['NAV_COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 			<b><?php echo $LANG['NAV_SEARCH']; ?></b>
@@ -99,7 +99,7 @@ $searchVar = $collManager->getQueryTermStr();
 						</div>
 						<div>
 							<label for="taxa"><?php echo $LANG['TYPE_TAXON'] ?>:</label>
-							<input id="taxa" type="text" size="60" name="taxa" id="taxa" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
+							<input class="adjusted-input-width" id="taxa" type="text" size="60" name="taxa" id="taxa" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
 						</div>
 					</section>
 				</div>
@@ -304,10 +304,18 @@ $searchVar = $collManager->getQueryTermStr();
 					<input type='checkbox' name='hasimages' id='hasimages' value='1' />
 					<label for="hasimages"><?php echo isset($LANG['HAS_IMAGE'])?$LANG['HAS_IMAGE']:'Limit to Specimens with Images Only'; ?></label>
 				</div>
+				<?php 
+					if($CSS_VERSION_RELEASE !== 'uswds'){
+
+					
+				?>
 				<div>
 					<input type='checkbox' name='hasgenetic' id='hasgenetic' value='1' />
 					<label for="hasgenetic"><?php echo isset($LANG['HAS_GENETIC'])?$LANG['HAS_GENETIC']:'Limit to Specimens with Genetic Data Only'; ?></label>
 				</div>
+				<?php 
+					}
+				?>
 				<div>
 					<input type='checkbox' name='hascoords' id='hascoords' value='1' />
 					<label for="hascoords"><?php echo isset($LANG['HAS_COORDS'])?$LANG['HAS_COORDS']:'Limit to Specimens with Geocoordinates Only'; ?></label>

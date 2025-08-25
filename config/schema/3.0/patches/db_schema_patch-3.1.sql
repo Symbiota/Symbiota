@@ -282,4 +282,3 @@ CREATE TABLE `usersthirdpartyauth` (
 # Deprecate omoccurresource table in preference for omoccurassociations. 
 ALTER TABLE `omoccurresource` 
   RENAME TO  `deprecated_omoccurresource` ;
-

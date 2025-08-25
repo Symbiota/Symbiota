@@ -55,8 +55,8 @@ function setHeight() {
   var winHeight = window.innerHeight;
   var mapInterface = document.getElementById("mapinterface");
   var loadingOverlay = document.getElementById("loadingOverlay");
-  if(mapInterface) mapInterface.style.height = winHeight + "px";
-  if(loadingOverlay) loadingOverlay.style.height = winHeight + "px";
+  if (mapInterface) mapInterface.style.height = winHeight + "px";
+  if (loadingOverlay) loadingOverlay.style.height = winHeight + "px";
 }
 
 function checkRecordLimit(f) {
@@ -359,11 +359,11 @@ function resetQueryForm(f) {
   $("input[name=hasgenetic]").attr("checked", false);
   $("input[name=includecult]").attr("checked", false);
   const crossPortalForm = $("autocomplete-input[name=external-taxa-input]");
-  if(crossPortalForm && crossPortalForm[0]) {
-    crossPortalForm[0].getInputElement().value="";
+  if (crossPortalForm && crossPortalForm[0]) {
+    crossPortalForm[0].getInputElement().value = "";
   }
-  document.dispatchEvent(new Event('deleteShape'));
-  document.dispatchEvent(new Event('resetMap'));
+  document.dispatchEvent(new Event("deleteShape"));
+  document.dispatchEvent(new Event("resetMap"));
 }
 
 function prepSelectionKml(f) {
@@ -383,10 +383,10 @@ function prepSelectionKml(f) {
 }
 
 function openRecord(record) {
-   let url = record.host? 
-      `${record.host}/collections/individual/index.php?occid=${record.occid}` :
-      "../individual/index.php?occid=" + record.occid 
-   openPopup(url);
+  let url = record.host
+    ? `${record.host}/collections/individual/index.php?occid=${record.occid}`
+    : "../individual/index.php?occid=" + record.occid;
+  openPopup(url);
 }
 
 function openPopup(urlStr) {
@@ -398,7 +398,7 @@ function openPopup(urlStr) {
   } catch (err) {}
   newWindow = window.open(
     urlStr,
-   "_blank",
+    "_blank",
     "scrollbars=1,toolbar=0,resizable=1,width=" +
       wWidth +
       ",height=600,left=20,top=20"

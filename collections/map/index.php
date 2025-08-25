@@ -2152,17 +2152,18 @@ $serverHost = GeneralUtil::getDomain();
 										if($specArr || $obsArr){
 										?>
 										<div id="specobsdiv">
-											<div style="margin:0px 0px 10px 5px;">
+											<div class="select-deselect-input">
 												<input id="dballcb" data-role="none" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" <?php echo (!$mapManager->getSearchTerm('db') || $mapManager->getSearchTerm('db')=='all'?'checked':'') ?> />
 												<?= $LANG['SELECT_DESELECT'].' <a href="../misc/collprofiles.php" target="_blank">' . $LANG['ALL_COLLECTIONS'] . '</a>'; ?>
 											</div>
 											<?php
 											if($specArr){
-											$mapManager->outputFullCollArr($specArr, $catId, false, false);
+												$mapManager->outputFullCollArr($specArr, $catId, false, false, '', 'Specimens');
 											}
-											if($specArr && $obsArr) echo '<hr style="clear:both;margin:20px 0px;"/>';
+											$hrAndHeaderText = '<div class="specimen-header-margin"><hr/><h2>' . $LANG['OBSERVATION_COLLECTIONS'] . '</h2></div>';
+											if($specArr && $obsArr) echo $hrAndHeaderText;
 											if($obsArr){
-											$mapManager->outputFullCollArr($obsArr, $catId, false, false);
+												$mapManager->outputFullCollArr($obsArr, $catId, false, false, '', 'Observations');
 											}
 											?>
 											<div style="clear:both;">&nbsp;</div>

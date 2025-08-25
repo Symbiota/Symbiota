@@ -389,7 +389,6 @@ $_SESSION['citationvar'] = $searchVar;
 									}
 									echo '<div style="margin:4px;">';
 
-
 									if (isset($fieldArr['sciname'])) {
 										$sciStr = '<span style="font-style:italic;">' . $fieldArr['sciname'] . '</span>';
 										if (isset($fieldArr['author']) && $fieldArr['author']) $sciStr .= ' ' . $fieldArr['author'];

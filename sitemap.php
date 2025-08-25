@@ -5,7 +5,6 @@ if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/sitemap.' . $L
 	include_once($SERVER_ROOT.'/content/lang/sitemap.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT.'/content/lang/sitemap.en.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
-
 $smManager = new SiteMapManager();
 $schemaVersion = $smManager->getSchemaVersion();
 if(!$schemaVersion){

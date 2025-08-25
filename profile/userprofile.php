@@ -96,7 +96,7 @@ if($isEditor){
 							<td>
 								<div>
 									<input type="checkbox" name="accessibility-pref" id="accessibility-pref" value="1" <?php echo $isAccessiblePreferred ? 'checked' : ''; ?> />
-									<label for="accessibility-pref"><?php echo (isset($LANG['ACCESSIBILITY_PREF_DESC'])?$LANG['ACCESSIBILITY_PREF_DESC']:'Check to indicate a preference for accessibility-optimized styles'); ?></label>
+									<label for="accessibility-pref"><?php echo $LANG['ACCESSIBILITY_PREF_DESC']; ?></label>
 								</div>
 							</td>
 						</tr>

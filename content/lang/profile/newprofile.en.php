@@ -53,7 +53,7 @@ $LANG['BIOGRAPHY'] = 'Biography';
 $LANG['PUBLIC_PROF'] = 'Public can view email and bio within website (e.g., on media contributors list)';
 $LANG['CREATE_LOGIN'] = 'Create Login';
 $LANG['ACCESSIBILITY_PREF'] = 'Accessibility Preference';
-$LANG['ACCESSIBILITY_PREF_DESC'] = 'Check to indicate a preference for accessibility-optimized styles';
+$LANG['ACCESSIBILITY_PREF_DESC'] = 'Check to indicate a preference for vertical form layout';
 $LANG['PROFILE_CREATION_DISABLED'] = 'Public user creation has been disabled on this portal.';
 
 ?>

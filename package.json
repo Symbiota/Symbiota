@@ -1,0 +1,28 @@
+{
+  "name": "symbiota",
+  "version": "1.0.0",
+  "description": "This fork of the Symbiota code is actively being developed by the Biodiversity Knowledge Integration Center (BioKIC, https://github.com/BioKIC) development team at Arizona State University. Even though BioKIC code developments are regularly pushed back to this repository, we recommend that you download/fork code directly from the BioKIC/Symbiota repository (https://github.com/BioKIC/Symbiota) to ensure that you obtain the most recently code changes.",
+  "main": "index.php",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BioKIC/Symbiota.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BioKIC/Symbiota/issues"
+  },
+  "homepage": "https://github.com/BioKIC/Symbiota#readme",
+  "dependencies": {
+    "@uswds/uswds": "^3.5.0"
+  },
+  "devDependencies": {
+    "@uswds/compile": "^1.0.0"
+  }
+}

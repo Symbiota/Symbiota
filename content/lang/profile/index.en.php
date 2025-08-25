@@ -28,5 +28,5 @@ $LANG['REMEMBER_LOGIN'] = "Can't Remember Login Name?";
 $LANG['RETRIEVE'] = 'Retrieve Login';
 $LANG['YOUR_EMAIL'] = 'Your Email';
 $LANG['OID_LOGIN'] = 'Login with OID';
-$LANG['THIRD_PARTY_LOGIN'] = 'Login using third-party authentication';
+$LANG['THIRD_PARTY_LOGIN'] = 'Login';
 ?>

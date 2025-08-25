@@ -170,5 +170,4 @@ $LANG['REPORTED_AS_INAPPROPRIATE'] = 'The following comment has been reported as
 $LANG['EMAIL_NOT_DEFINED'] = 'ERROR: Portal admin email not defined in central configuration file';
 $LANG['UNABLE_TO_VERIFY_TARGET'] = 'ERROR deleting voucher: unable to verify target checklist for voucher';
 $LANG['PERMISSION_ERROR'] = 'ERROR deleting voucher: permission error';
-
 ?>
