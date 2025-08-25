@@ -326,11 +326,11 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 
 		<div role="main" id="record-viewer-innertext">
 
-			<?php /* TODO (Logan) import lang tags breadcrumbs([
+			<?php breadcrumbs([
 			'Home' => '../../index.php',
-			'Collections Profile' => '../misc/collprofiles.php?emode=1&collid=' . $collid,
+			'Collections Profile' => '../misc/collprofiles.php?emode=1&collid=' . $collId,
 			'Duplicate Merger',
-			]) */
+			])
 			?>
 
 			<h1>Duplicate Data Harvester</h1>

@@ -14,7 +14,7 @@ function breadcrumb($label, $link = null) {
 function breadcrumbs(array $labelLinks) {
 	$breadcrumbHtml = [];
 	$count = 0;
-	echo '<div class="navpath">';
+	echo '<div class="navpath" style="margin: 10px 0">';
 	foreach ($labelLinks as $key => $value) {
 		if(!is_numeric($key)) {
 			echo breadcrumb($key, $value);
