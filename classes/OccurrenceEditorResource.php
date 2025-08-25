@@ -91,7 +91,7 @@ class OccurrenceEditorResource extends OccurrenceEditorManager {
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$catNum = '';
-				if(strpos($r->catalogNumber,$r->collcode) === false) $catNum = $r->collcode.':';
+				if(!empty($r->catalogNumber) && strpos($r->catalogNumber,$r->collcode) === false) $catNum = $r->collcode.':';
 				$catNum .= $r->catalogNumber;
 				if($r->otherCatalogNumbers){
 					if($catNum) $catNum .= ' ('.$r->otherCatalogNumbers.')';

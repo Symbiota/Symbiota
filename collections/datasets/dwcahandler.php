@@ -59,10 +59,11 @@ if($argc){
 		if($dwcaManager->hasAssociations()) $dwcaManager->setIncludeAssociations($includeAssociations);
 		$dwcaManager->setRedactLocalities($redactLocalities);
 		$dwcaManager->setServerDomain($serverDomain);
-		$dwcaManager->setTargetPath($SERVER_ROOT.(substr($SERVER_ROOT,-1)=='/'?'':'/').'content/dwca/');
 		$dwcaManager->setVerboseMode(0);
-		$collArr = explode(',',$collStr);
-		$dwcaManager->batchCreateDwca($collArr);
+		if($dwcaManager->setTargetPath('dwca-pub')){
+			$collArr = explode(',',$collStr);
+			$dwcaManager->batchCreateDwca($collArr);
+		}
 	}
 }
 ?>

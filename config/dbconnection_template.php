@@ -28,6 +28,9 @@ class MySQLiConnectionFactory {
 			$server = MySQLiConnectionFactory::$SERVERS[$i];
 			if($server['type'] == $type){
 				try{
+					if (version_compare(PHP_VERSION, '8.1', '>=')) {
+						mysqli_report(MYSQLI_REPORT_OFF);
+					}
 					$connection = new mysqli($server['host'], $server['username'], $server['password'], $server['database'], $server['port']);
 					if(isset($server['charset']) && $server['charset']) {
 						if(!$connection->set_charset($server['charset'])){

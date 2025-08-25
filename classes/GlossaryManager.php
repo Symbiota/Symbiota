@@ -35,9 +35,9 @@ class GlossaryManager extends Manager {
 	public function __construct() {
 		parent::__construct(null, 'write');
 		$this->imageRootPath = $GLOBALS['MEDIA_ROOT_PATH'];
-		if (substr($this->imageRootPath, -1) != "/") $this->imageRootPath .= "/";
+		if ($this->imageRootPath && substr($this->imageRootPath, -1) != "/") $this->imageRootPath .= "/";
 		$this->imageRootUrl = $GLOBALS['MEDIA_ROOT_URL'];
-		if (substr($this->imageRootUrl, -1) != "/") $this->imageRootUrl .= "/";
+		if ($this->imageRootUrl && substr($this->imageRootUrl, -1) != "/") $this->imageRootUrl .= "/";
 		if (!empty($GLOBALS['IMG_TN_WIDTH'])) {
 			$this->tnPixWidth = $GLOBALS['IMG_TN_WIDTH'];
 		}

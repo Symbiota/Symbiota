@@ -784,12 +784,6 @@ class SpecUploadDwca extends SpecUploadBase{
 			}
 			closedir($handle);
 		}
-		//Delete directory
-		/*
-		if(stripos($dirPath, $this->uploadTargetPath) === 0 && !preg_match('#/temp/data/$#', $dirPath)){
-			rmdir($dirPath);
-		}
-		*/
 	}
 
 	private function uploadExtension($targetStr, $fieldMap, $sourceArr){

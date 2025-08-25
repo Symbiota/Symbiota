@@ -7,7 +7,7 @@ Language: Spanish
 
 $LANG['SPEC_LABEL_MANAGER'] = 'Administrador de etiquetas de muestras';
 $LANG['PERS_MANAG_MENU'] = 'Menú de Gestión Personal';
-$LANG['CONTACT_ADMIN'] = 'Por favor, póngase en contacto con el administrador del sitio para que se pueda escribir en la carpeta temporal/de informes para poder exportar a archivos docx.';
+$LANG['CONTACT_ADMIN'] = 'Por favor, póngase en contacto con el administrador del sitio para que se pueda escribir en la carpeta TEMP_DIR_ROOT para poder exportar a archivos docx.';
 $LANG['DEF_SPEC_REC'] = 'Definir conjunto de registros de muestras';
 $LANG['SCI_NAME'] = 'Nombre científico: ';
 $LANG['FULL_NAME'] = 'Nombre completo o apellido del recopilador tal como se ingresó en la base de datos.';
