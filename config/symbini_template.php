@@ -16,7 +16,7 @@ $CLIENT_ROOT = '';				//URL path to project root folder (relative path w/o domai
 $SERVER_ROOT = '';				//Full path to Symbiota project root folder E.g. /var/www/html/portalname
 //Temp directory must be writable by Apache; it is highly recommended to set this to a path outside of the Apache DocumentRoot to avoid malicous file uploads; will use system default if not specified
 $TEMP_DIR_ROOT = '';		//E.g. /var/www/temp/portalname
-$LOG_PATH = $SERVER_ROOT . '/content/logs';					//Must be writable by Apache; will use <SYMBIOTA_ROOT>/temp/logs if not specified
+$LOG_PATH = $SERVER_ROOT . '/content/logs';					//Must be writable by Apache; will use <SYMBIOTA_ROOT>/content/logs if not specified
 
 //Path to CSS files
 $CSS_BASE_PATH = $CLIENT_ROOT . '/css';
@@ -105,12 +105,6 @@ $DATE_DEFAULT_TIMEZONE = NULL; // This should be set if server default timezone 
 $PRIVATE_VIEWING_ONLY = false; // Setting to true sets all content to be password protected besides below pages
 $PRIVATE_VIEWING_OVERRIDES = ['/index.php', '/misc/contacts.php','/misc/aboutproject.php', '/profile/newprofile.php', '/profile/index.php'];  //These pages will always be accessible to public viewing.  Add to as needed.
 
-$COOKIE_SECURE = false;
-if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) {
-	header('strict-transport-security: max-age=600');
-	$COOKIE_SECURE = true;
-}
-
 // Creates Togglable Overlay for GeoJSON file
 // Only Support with Leaflet Map
 // Supports of an area with the following properties:
@@ -119,6 +113,10 @@ if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERV
 // popup_template: String - Html string for what label should be generated on a GeoJSON feature. Will replace text like `[Property_name]` with a features property value if present
 // template_properties: Array[String] - List of property names to used in popup generation
 $GEO_JSON_LAYERS = [];
+
+// Toggles `strict-transport-security` header
+// Do not turn off for production portals
+$HTTPS_ONLY = true;
 
 //Base code shared by all pages; leave as is
 include_once('symbbase.php');

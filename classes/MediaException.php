@@ -7,6 +7,7 @@ class MediaException extends Exception {
 	public const SuspiciousFile = 'SUSPICIOUS_FILE';
 	public const IllegalRenameChangedFileType = 'ILLEGAL_RENAME_CHANGED_FILE_TYPE';
 	public const FileTypeNotAllowed = 'FILE_TYPE_NOT_ALLOWED';
+	public const FilepathNotWritable = 'FILEPATH_NOT_WRITABLE';
 
 	function __construct(string $case, string $message = ''){
 		global $LANG, $LANG_TAG, $SERVER_ROOT;

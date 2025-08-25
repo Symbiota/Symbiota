@@ -187,7 +187,7 @@ $clArr = $occurManager->getUserChecklists();
 							?>
 							<div class="imgSubmitDiv" id="img<?= $x; ?>div" style="<?php if($x > 1) echo 'display:none'; ?>">
 								<div style="margin-bottom: 10px;">
-									<label for="imgfile<?= $x; ?>"><?= $LANG['IMAGE'].' '.$x; ?>:</label>
+									<label for="imgfile<?= $x; ?>"style="font-weight: bold;"><?= $LANG['IMAGE'].' '.$x; ?>:</label>
 									<input name='imgfile<?= $x; ?>' id='imgfile<?= $x; ?>' type='file' onchange="verifyImageSize(this)" <?php if($x == 1) echo 'required'; ?> />
 								</div>
 								<div>
@@ -225,7 +225,7 @@ $clArr = $occurManager->getUserChecklists();
 							<section class="flex-form">
 								<div>
 									<span>
-										<label for="sciname"><?= $LANG['SCINAME']; ?>:</label>
+										<label for="sciname" style="font-weight: bold;"><?= $LANG['SCINAME']; ?>:</label>
 										<input type="text" id="sciname" name="sciname" maxlength="250" style="width:390px;" required />
 										<input type="hidden" id="tidinterpreted" name="tidinterpreted" value="" />
 									</span>
@@ -243,7 +243,7 @@ $clArr = $occurManager->getUserChecklists();
 						<div style="clear:both;" class="flex-form">
 							<div>
 								<span>
-									<label for="recordedby"><?= $LANG['OBSERVER']; ?>:</label>
+									<label for="recordedby" style="font-weight: bold;"><?= $LANG['OBSERVER']; ?>:</label>
 									<input type="text" name="recordedby" id="recordedby" maxlength="255" style="width:250px;" value="<?= htmlspecialchars($recordedBy, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" required />
 								</span>
 								<span stlye="margin-left: 10px">
@@ -251,7 +251,7 @@ $clArr = $occurManager->getUserChecklists();
 									<input type="text" name="recordnumber" id="recordnumber" maxlength="45" style="width:80px;" title="Observer Number, if observer uses a numbering system " />
 								</span>
 								<span>
-									<label for="eventdate"><?= $LANG['DATE']; ?>:</label>
+									<label for="eventdate" style="font-weight: bold;"><?= $LANG['DATE']; ?>:</label>
 									<input type="text" id="eventdate" name="eventdate" style="width:120px;" onchange="verifyDate(this);" title="format: yyyy-mm-dd" required />
 									<a href="#" style="margin:15px 0px 0px 5px;" onclick="toggle('obsextradiv');return false" title="<?= $LANG['EDIT_BTN'] ?>" aria-label="<?= $LANG['EDIT_BTN'] ?>">
 										<img src="../../images/editplus.png" style="width:1.5em;" alt="<?= $LANG['IMG_EDIT'] ?>"/>
@@ -291,11 +291,11 @@ $clArr = $occurManager->getUserChecklists();
 						<div style="clear:both;" class="flex-form">
 							<div>
 								<span>
-									<label for="country"><?= $LANG['COUNTRY']; ?>:</label>
+									<label for="country" style="font-weight: bold;"><?= $LANG['COUNTRY']; ?>:</label>
 									<input type="text" name="country" id="country" style="width:150px;" value="" required />
 								</span>
 								<span stlye="margin-left: 10px">
-									<label for="stateprovince"><?= $LANG['STATE_PROVINCE']; ?>:</label>
+									<label for="stateprovince" style="font-weight: bold;"><?= $LANG['STATE_PROVINCE']; ?>:</label>
 									<input type="text" name="stateprovince" id="stateprovince" style="width:150px;" value="" required />
 								</span>
 								<span stlye="margin-left: 10px">
@@ -305,7 +305,7 @@ $clArr = $occurManager->getUserChecklists();
 							</div>
 						</div>
 						<div style="clear:both;margin:4px 0px 2px 0px;">
-							<label for="locality"><?= $LANG['LOCALITY']; ?>:</label>
+							<label for="locality" style="font-weight: bold;"><?= $LANG['LOCALITY']; ?>:</label>
 							<input type="text" name="locality" id="locality" style="width:95%;" value="" required />
 						</div>
 						<div style="clear:both;margin-bottom:5px;">
@@ -315,11 +315,11 @@ $clArr = $occurManager->getUserChecklists();
 						<div style="clear:both;" class="flex-form">
 							<div>
 								<span>
-									<label for="decimallatitude"><?= $LANG['LATITUDE']; ?>:</label>
+									<label for="decimallatitude" style="font-weight: bold;"><?= $LANG['LATITUDE']; ?>:</label>
 									<input type="text" id="decimallatitude" name="decimallatitude" maxlength="10" style="width:100px;" value="" onchange="verifyLatValue(this.form, '<?= $CLIENT_ROOT?>')" title="Decimal Format (eg 34.5436)" required />
 								</span>
 								<span>
-									<label for="decimallongitude"><?= $LANG['LONGITUDE']; ?>:</label>
+									<label for="decimallongitude" style="font-weight: bold;"><?= $LANG['LONGITUDE']; ?>:</label>
 									<input type="text" id="decimallongitude" name="decimallongitude" maxlength="13" style="width:100px;" value="" onchange="verifyLngValue(this.form, '<?= $CLIENT_ROOT?>')" title="Decimal Format (eg -112.5436)" required />
 								</span>
 								<span style="margin-top:10px; margin-left:3px; margin-bottom:10px" >
@@ -329,7 +329,7 @@ $clArr = $occurManager->getUserChecklists();
 									<button id="dmsButton" type="button" onclick="toggle('dmsdiv');"><?= $LANG['DMS']; ?></button>
 								</span>
 								<span>
-									<label for="coordinateuncertaintyinmeters"><?= $LANG['UNCERTAINTY_M']; ?>:</label>
+									<label for="coordinateuncertaintyinmeters" style="font-weight: bold;"><?= $LANG['UNCERTAINTY_M']; ?>:</label>
 									<input type="text" id="coordinateuncertaintyinmeters" name="coordinateuncertaintyinmeters" maxlength="10" style="width:110px;" onchange="inputIsNumeric(this, 'Lat/long uncertainty')" title="Uncertainty in Meters" value="<?= $uncertaintyInMeters; ?>" required />
 								</span>
 								<span>

@@ -43,7 +43,8 @@ class UploadUtil {
 	 * @return string
 	 **/
 	public static function getTempDir(): string {
-		$temp_dir = $GLOBALS["TEMP_DIR_ROOT"] ?? ini_get('upload_tmp_dir') ?? '/var/www/symb/temp/';
+		$temp_dir = $GLOBALS['TEMP_DIR_ROOT'] ?? ini_get('upload_tmp_dir') ;
+		if(!$temp_dir) return false;
 		if(substr($temp_dir,-1) != '/') {
 			$temp_dir .= "/";
 		}
@@ -79,7 +80,7 @@ class UploadUtil {
 		$guess_ext = self::mime2ext($type_guess);
 		$provided_file_data = pathinfo($uploaded_file['name']);
 
-		if(!$guess_ext || $guess_ext != $provided_file_data['extension']) {
+		if(!$guess_ext || strtolower($guess_ext) != strtolower($provided_file_data['extension'])) {
 			throw new MediaException(MediaException::SuspiciousFile);
 		}
 
@@ -170,7 +171,7 @@ class UploadUtil {
 	}
 
 	/**
-	 * Checks if remote file provided by $url matches $allowed_mimes then 
+	 * Checks if remote file provided by $url matches $allowed_mimes then
 	 * proceeds to download into a temporary folder
 	 *
 	 * Be sure to check file after upload.

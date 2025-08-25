@@ -7,7 +7,7 @@ Language: French
 
 $LANG['SPEC_LABEL_MANAGER'] = 'Gestionnaire d\'étiquettes d\'échantillons';
 $LANG['PERS_MANAG_MENU'] = 'Menu de gestion personnelle';
-$LANG['CONTACT_ADMIN'] = 'Veuillez contacter l\'administrateur du site pour rendre le dossier temp/report accessible en écriture afin de pouvoir l\'exporter vers des fichiers docx.';
+$LANG['CONTACT_ADMIN'] = 'Veuillez contacter l\'administrateur du site pour rendre le dossier TEMP_DIR_ROOT accessible en écriture afin de pouvoir l\'exporter vers des fichiers docx.';
 $LANG['DEF_SPEC_REC'] = 'Définir le jeu d\'enregistrements de spécimen';
 $LANG['SCI_NAME'] = 'Nom scientifique : ';
 $LANG['FULL_NAME'] = 'Nom complet ou nom du collectionneur tel que saisi dans la base de données.';

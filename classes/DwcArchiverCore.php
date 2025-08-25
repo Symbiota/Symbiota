@@ -26,6 +26,7 @@ class DwcArchiverCore extends Manager{
 
 	private $targetPath;
 	protected $serverDomain;
+	private $dwcaOutputUrl;
 
 	private $schemaType = 'dwc';			//dwc, symbiota, backup, coge, pensoft
 	private $limitToGuids = false;			//Limit output to only records with GUIDs
@@ -117,32 +118,6 @@ class DwcArchiverCore extends Manager{
 			$rs->free();
 		}
 		return $retStr;
-	}
-
-	public function setTargetPath($tp = ''){
-		if ($tp) {
-			$this->targetPath = $tp;
-		} else {
-			//Set to temp download path
-			$tPath = $GLOBALS['TEMP_DIR_ROOT'];
-			if (!$tPath) {
-				$tPath = ini_get('upload_tmp_dir');
-			}
-			if (!$tPath) {
-				$tPath = $GLOBALS['SERVER_ROOT'];
-				if (substr($tPath, -1) != '/' && substr($tPath, -1) != '\\') {
-					$tPath .= '/';
-				}
-				$tPath .= "temp/";
-			}
-			if (substr($tPath, -1) != '/' && substr($tPath, -1) != '\\') {
-				$tPath .= '/';
-			}
-			if (file_exists($tPath . "downloads")) {
-				$tPath .= "downloads/";
-			}
-			$this->targetPath = $tPath;
-		}
 	}
 
 	public function setCollArr($collTarget, $collType = ''){
@@ -812,109 +787,161 @@ class DwcArchiverCore extends Manager{
 		return trim($retStr, ';');
 	}
 
-	public function createDwcArchive($fileNameSeed = ''){
+	public function createDwcArchive(){
 		$status = false;
-		if (!$fileNameSeed) {
-			if ($this->collArr && count($this->collArr) == 1) {
+		$archiveFile = '';
+		if($fileName = $this->getFileName()){
+			$this->logOrEcho('Creating DwC-A file: ' . $fileName . "\n");
+
+			if (!class_exists('ZipArchive')) {
+				$this->logOrEcho("FATAL ERROR: PHP ZipArchive class is not installed, please contact your server admin\n");
+				exit('FATAL ERROR: PHP ZipArchive class is not installed, please contact your server admin');
+			}
+			$this->dataConn = MySQLiConnectionFactory::getCon('readonly');
+			$status = $this->writeOccurrenceFile();
+			$archiveFile = $this->targetPath . $fileName;
+			if ($status) {
+				if (file_exists($archiveFile)) unlink($archiveFile);
+				$zipArchive = new ZipArchive;
+				$status = $zipArchive->open($archiveFile, ZipArchive::CREATE);
+				if ($status !== true) {
+					exit('FATAL ERROR: unable to create archive file: ' . $status);
+				}
+				//$this->logOrEcho("DWCA created: ".$archiveFile."\n");
+
+				$zipArchive->addFile($this->targetPath . $this->ts . '-occur' . $this->fileExt);
+				$zipArchive->renameName($this->targetPath . $this->ts . '-occur' . $this->fileExt, 'occurrences' . $this->fileExt);
+				if ($this->includeDets) {
+					$this->writeDeterminationFile();
+					$zipArchive->addFile($this->targetPath . $this->ts . '-det' . $this->fileExt);
+					$zipArchive->renameName($this->targetPath . $this->ts . '-det' . $this->fileExt, 'identifications' . $this->fileExt);
+				}
+				if ($this->includeImgs) {
+					$this->writeImageFile();
+					$zipArchive->addFile($this->targetPath . $this->ts . '-multimedia' . $this->fileExt);
+					$zipArchive->renameName($this->targetPath . $this->ts . '-multimedia' . $this->fileExt, 'multimedia' . $this->fileExt);
+				}
+				if ($this->includeAttributes && file_exists($this->targetPath . $this->ts . '-attr' . $this->fileExt)) {
+					$zipArchive->addFile($this->targetPath . $this->ts . '-attr' . $this->fileExt);
+					$zipArchive->renameName($this->targetPath . $this->ts . '-attr' . $this->fileExt, 'measurementOrFact' . $this->fileExt);
+				}
+				if ($this->includeMaterialSample && file_exists($this->targetPath . $this->ts . '-matSample' . $this->fileExt)) {
+					$zipArchive->addFile($this->targetPath . $this->ts . '-matSample' . $this->fileExt);
+					$zipArchive->renameName($this->targetPath . $this->ts . '-matSample' . $this->fileExt, 'materialSample' . $this->fileExt);
+				}
+				if ($this->includeIdentifiers && file_exists($this->targetPath . $this->ts . '-ident' . $this->fileExt)) {
+					$zipArchive->addFile($this->targetPath . $this->ts . '-ident' . $this->fileExt);
+					$zipArchive->renameName($this->targetPath . $this->ts . '-ident' . $this->fileExt, 'identifiers' . $this->fileExt);
+				}
+				//Meta file
+				$this->writeMetaFile();
+				$zipArchive->addFile($this->targetPath . $this->ts . '-meta.xml');
+				$zipArchive->renameName($this->targetPath . $this->ts . '-meta.xml', 'meta.xml');
+				//EML file
+				$this->writeEmlFile();
+				$zipArchive->addFile($this->targetPath . $this->ts . '-eml.xml');
+				$zipArchive->renameName($this->targetPath . $this->ts . '-eml.xml', 'eml.xml');
+				//Citation file
+				$this->writeCitationFile();
+				$zipArchive->addFile($this->targetPath . $this->ts . '-citation.txt');
+				$zipArchive->renameName($this->targetPath . $this->ts . '-citation.txt', 'CITEME.txt');
+
+				$zipArchive->close();
+				unlink($this->targetPath . $this->ts . '-occur' . $this->fileExt);
+				if ($this->includeDets) unlink($this->targetPath . $this->ts . '-det' . $this->fileExt);
+				if ($this->includeImgs) unlink($this->targetPath . $this->ts . '-multimedia' . $this->fileExt);
+				if ($this->includeAttributes && file_exists($this->targetPath . $this->ts . '-attr' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-attr' . $this->fileExt);
+				if ($this->includeMaterialSample && file_exists($this->targetPath . $this->ts . '-matSample' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-matSample' . $this->fileExt);
+				if ($this->includeIdentifiers && file_exists($this->targetPath . $this->ts . '-ident' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-ident' . $this->fileExt);
+				unlink($this->targetPath . $this->ts . '-meta.xml');
+				if ($this->schemaType == 'dwc') rename($this->targetPath . $this->ts . '-eml.xml', $this->targetPath . str_replace('.zip', '.eml', $fileName));
+				else unlink($this->targetPath . $this->ts . '-eml.xml');
+				if (file_exists($this->targetPath . $this->ts . '-citation.txt')) unlink($this->targetPath . $this->ts . '-citation.txt');
+			}
+			else {
+				$this->errorMessage = 'FAILED to create archive file due to failure to return occurrence records; check and adjust search variables';
+				$this->logOrEcho($this->errorMessage);
+				if($this->targetPath && strpos($this->targetPath, 'content/dwca')){
+					//Archive is being published to Dwc-A publishing directory, thus remove from RSS feed since it's an empty archive
+					if($this->collArr){
+						$collid = key($this->collArr);
+						if ($collid) $this->deleteArchive($collid);
+						unset($this->collArr[$collid]);
+					}
+				}
+			}
+			$this->logOrEcho("\n-----------------------------------------------------\n");
+			$this->dataConn->close();
+		}
+		else{
+			$this->logOrEcho('ERROR building DwC-Archive: '.$this->getErrorMessage());
+		}
+		return $archiveFile;
+	}
+
+	private function getFileName(){
+		$fileName = '';
+		if($this->setTargetPath()){
+			if($this->schemaType == 'coge'){
+				$fileName = 'CoGe'.'_'.time();
+			}
+			elseif($this->schemaType == 'backup'){
+				$firstColl = current($this->collArr);
+				$fileName = $firstColl['instcode'];
+				if ($firstColl['collcode']) $fileName .= '-' . $firstColl['collcode'];
+				$fileName .= '_backup_' . date('Y-m-d_His', $this->ts);
+			}
+			elseif($this->collArr && count($this->collArr) == 1) {
 				$firstColl = current($this->collArr);
 				if ($firstColl) {
-					$fileNameSeed = $firstColl['instcode'];
-					if ($firstColl['collcode']) $fileNameSeed .= '-' . $firstColl['collcode'];
-				}
-				if ($this->schemaType == 'backup') {
-					$fileNameSeed .= '_backup_' . date('Y-m-d_His', $this->ts);
+					$fileName = $firstColl['instcode'];
+					if ($firstColl['collcode']) $fileName .= '-' . $firstColl['collcode'];
 				}
 			}
 			else {
-				$fileNameSeed = 'SymbOutput_' . date('Y-m-d_His', $this->ts);
+				$fileName = 'SymbOutput_' . date('Y-m-d_His', $this->ts);
 			}
+			$fileName = str_replace(array(' ', '"', "'"), '', $fileName);
+			$fileName .=  '_DwC-A.zip';
+
+			//Set URL path to DwC-Archive file
+			if($this->dwcaOutputUrl) $this->dwcaOutputUrl .= $fileName;
 		}
-		$fileName = str_replace(array(' ', '"', "'"), '', $fileNameSeed) . '_DwC-A.zip';
+		return $fileName;
+	}
 
-		if (!$this->targetPath) $this->setTargetPath();
-		$archiveFile = '';
-		$this->logOrEcho('Creating DwC-A file: ' . $fileName . "\n");
-
-		if (!class_exists('ZipArchive')) {
-			$this->logOrEcho("FATAL ERROR: PHP ZipArchive class is not installed, please contact your server admin\n");
-			exit('FATAL ERROR: PHP ZipArchive class is not installed, please contact your server admin');
-		}
-		$this->dataConn = MySQLiConnectionFactory::getCon('readonly');
-		$status = $this->writeOccurrenceFile();
-		if ($status) {
-			$archiveFile = $this->targetPath . $fileName;
-			if (file_exists($archiveFile)) unlink($archiveFile);
-			$zipArchive = new ZipArchive;
-			$status = $zipArchive->open($archiveFile, ZipArchive::CREATE);
-			if ($status !== true) {
-				exit('FATAL ERROR: unable to create archive file: ' . $status);
-			}
-			//$this->logOrEcho("DWCA created: ".$archiveFile."\n");
-
-			$zipArchive->addFile($this->targetPath . $this->ts . '-occur' . $this->fileExt);
-			$zipArchive->renameName($this->targetPath . $this->ts . '-occur' . $this->fileExt, 'occurrences' . $this->fileExt);
-			if ($this->includeDets) {
-				$this->writeDeterminationFile();
-				$zipArchive->addFile($this->targetPath . $this->ts . '-det' . $this->fileExt);
-				$zipArchive->renameName($this->targetPath . $this->ts . '-det' . $this->fileExt, 'identifications' . $this->fileExt);
-			}
-			if ($this->includeImgs) {
-				$this->writeImageFile();
-				$zipArchive->addFile($this->targetPath . $this->ts . '-multimedia' . $this->fileExt);
-				$zipArchive->renameName($this->targetPath . $this->ts . '-multimedia' . $this->fileExt, 'multimedia' . $this->fileExt);
-			}
-			if ($this->includeAttributes && file_exists($this->targetPath . $this->ts . '-attr' . $this->fileExt)) {
-				$zipArchive->addFile($this->targetPath . $this->ts . '-attr' . $this->fileExt);
-				$zipArchive->renameName($this->targetPath . $this->ts . '-attr' . $this->fileExt, 'measurementOrFact' . $this->fileExt);
-			}
-			if ($this->includeMaterialSample && file_exists($this->targetPath . $this->ts . '-matSample' . $this->fileExt)) {
-				$zipArchive->addFile($this->targetPath . $this->ts . '-matSample' . $this->fileExt);
-				$zipArchive->renameName($this->targetPath . $this->ts . '-matSample' . $this->fileExt, 'materialSample' . $this->fileExt);
-			}
-			if ($this->includeIdentifiers && file_exists($this->targetPath . $this->ts . '-ident' . $this->fileExt)) {
-				$zipArchive->addFile($this->targetPath . $this->ts . '-ident' . $this->fileExt);
-				$zipArchive->renameName($this->targetPath . $this->ts . '-ident' . $this->fileExt, 'identifiers' . $this->fileExt);
-			}
-			//Meta file
-			$this->writeMetaFile();
-			$zipArchive->addFile($this->targetPath . $this->ts . '-meta.xml');
-			$zipArchive->renameName($this->targetPath . $this->ts . '-meta.xml', 'meta.xml');
-			//EML file
-			$this->writeEmlFile();
-			$zipArchive->addFile($this->targetPath . $this->ts . '-eml.xml');
-			$zipArchive->renameName($this->targetPath . $this->ts . '-eml.xml', 'eml.xml');
-			//Citation file
-			$this->writeCitationFile();
-			$zipArchive->addFile($this->targetPath . $this->ts . '-citation.txt');
-			$zipArchive->renameName($this->targetPath . $this->ts . '-citation.txt', 'CITEME.txt');
-
-			$zipArchive->close();
-			unlink($this->targetPath . $this->ts . '-occur' . $this->fileExt);
-			if ($this->includeDets) unlink($this->targetPath . $this->ts . '-det' . $this->fileExt);
-			if ($this->includeImgs) unlink($this->targetPath . $this->ts . '-multimedia' . $this->fileExt);
-			if ($this->includeAttributes && file_exists($this->targetPath . $this->ts . '-attr' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-attr' . $this->fileExt);
-			if ($this->includeMaterialSample && file_exists($this->targetPath . $this->ts . '-matSample' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-matSample' . $this->fileExt);
-			if ($this->includeIdentifiers && file_exists($this->targetPath . $this->ts . '-ident' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-ident' . $this->fileExt);
-			unlink($this->targetPath . $this->ts . '-meta.xml');
-			if ($this->schemaType == 'dwc') rename($this->targetPath . $this->ts . '-eml.xml', $this->targetPath . str_replace('.zip', '.eml', $fileName));
-			else unlink($this->targetPath . $this->ts . '-eml.xml');
-			if (file_exists($this->targetPath . $this->ts . '-citation.txt')) unlink($this->targetPath . $this->ts . '-citation.txt');
-		}
-		else {
-			$this->errorMessage = 'FAILED to create archive file due to failure to return occurrence records; check and adjust search variables';
-			$this->logOrEcho($this->errorMessage);
-			if($this->targetPath && strpos($this->targetPath, 'content/dwca')){
-				//Archive is being published to Dwc-A publishing directory, thus remove from RSS feed since it's an empty archive
-				if($this->collArr){
-					$collid = key($this->collArr);
-					if ($collid) $this->deleteArchive($collid);
-					unset($this->collArr[$collid]);
+	public function setTargetPath($target=''){
+		if(!$this->targetPath){
+			if ($this->schemaType == 'coge') {
+				$this->targetPath = $GLOBALS['SERVER_ROOT'] . '/content/geolocate/';
+				$this->dwcaOutputUrl = $this->getServerDomain() . $GLOBALS['CLIENT_ROOT'] . '/content/geolocate/';
+			} elseif ($target == 'dwca-pub') {
+				$this->targetPath = $GLOBALS['SERVER_ROOT'] . '/content/dwca/';
+				$this->dwcaOutputUrl = $this->getServerDomain() . $GLOBALS['CLIENT_ROOT'] . '/content/dwca/';
+			} else {
+				//Set to temp download path
+				$tPath = $GLOBALS['TEMP_DIR_ROOT'];
+				if (!$tPath) {
+					$tPath = ini_get('upload_tmp_dir');
 				}
+				if(!$tPath){
+					$this->errorMessage = 'SYSTEM ERROR: TEMP_DIR_ROOT path not set within Symbiota configuration file (symbini)';
+					return false;
+				}
+				if (!file_exists($tPath)){
+					$this->errorMessage = 'SYSTEM ERROR: temporary directory (e.g. TEMP_DIR_ROOT) does not exist (' . $tPath . ')';
+					return false;
+				}
+				if (substr($tPath, -1) != '/' && substr($tPath, -1) != '\\') {
+					$tPath .= '/';
+				}
+				if (file_exists($tPath . 'export')) {
+					$tPath .= 'export/';
+				}
+				$this->targetPath = $tPath;
 			}
 		}
-		$this->logOrEcho("\n-----------------------------------------------------\n");
-		$this->dataConn->close();
-		return $archiveFile;
+		return true;
 	}
 
 	//Generate DwC support files
@@ -1882,7 +1909,7 @@ class DwcArchiverCore extends Manager{
 	}
 
 	public function getOccurrenceFile(){
-		if (!$this->targetPath) $this->setTargetPath();
+		$this->setTargetPath();
 		$this->dataConn = MySQLiConnectionFactory::getCon('readonly');
 		$filePath = $this->writeOccurrenceFile();
 		$this->dataConn->close();
@@ -2341,6 +2368,10 @@ class DwcArchiverCore extends Manager{
 	public function getServerDomain(){
 		$this->setServerDomain();
 		return $this->serverDomain;
+	}
+
+	public function getDwcaOutputUrl(){
+		return $this->dwcaOutputUrl;
 	}
 
 	protected function encodeArr(&$inArr){
