@@ -5,6 +5,7 @@ include_once($SERVER_ROOT . '/components/breadcrumbs.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/UserUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 include_once($SERVER_ROOT . '/classes/Database.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCleaner.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
@@ -170,7 +171,8 @@ function searchDuplicateOptions(int $targetCollId, int $page, mysqli $conn) {
 	$sql = 'SELECT dl.duplicateid, o2.occid as targetOccid, o.occid from omoccurduplicatelink dl2
 	join omoccurrences o2 on o2.occid = dl2.occid and o2.collid = ?
 	join omoccurduplicatelink dl on dl.duplicateid = dl2.duplicateid
-	join omoccurrences o on o.occid = dl.occid where o.occid != o2.occid';
+	join omoccurrences o on o.occid = dl.occid where o.occid != o2.occid ' .
+	OccurrenceUtil::appendFullProtectionSQL();
 
 	$parameters = [$targetCollId];
 
