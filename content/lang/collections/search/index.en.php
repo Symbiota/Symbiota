@@ -138,5 +138,6 @@ $LANG['LITHOGROUP'] = 'Group';
 $LANG['FORMATION'] = 'Formation';
 $LANG['MEMBER'] = 'Member';
 $LANG['BED'] = 'Bed';
+$LANG['POLYGONS'] = 'Polygons';
 
 ?>

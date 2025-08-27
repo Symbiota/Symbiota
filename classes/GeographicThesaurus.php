@@ -60,7 +60,7 @@ class GeographicThesaurus extends Manager {
 		$retArr = array();
 		if (is_numeric($geoThesID)) {
 			$sql = 'SELECT t.geoThesID, t.geoTerm, t.abbreviation, t.iso2, t.iso3, t.numCode, t.category, t.geoLevel, t.parentID, p.geoTerm as parentTerm, t.notes, t.termStatus,
-				t.acceptedID, a.geoterm as acceptedTerm, gp.footprintWKT as wkt, gp.geoJSON
+				t.acceptedID, t.isSearchable, a.geoterm as acceptedTerm, gp.footprintWKT as wkt, gp.geoJSON
 				FROM geographicthesaurus t LEFT JOIN geographicthesaurus a ON t.acceptedID = a.geoThesID
 				LEFT JOIN geographicthesaurus p ON t.parentID = p.geoThesID
 				LEFT JOIN geographicpolygon gp ON t.geoThesID = gp.geoThesID
@@ -86,6 +86,7 @@ class GeographicThesaurus extends Manager {
 					$retArr['termStatus'] = $r->termStatus;
 					$retArr['wkt'] = $r->wkt;
 					$retArr['geoJSON'] = $r->geoJSON;
+					$retArr['isSearchable'] = $r->isSearchable;
 				}
 				$rs->free();
 				$stmt->close();
@@ -130,7 +131,7 @@ class GeographicThesaurus extends Manager {
 
 		$sql = <<<'SQL'
 		UPDATE geographicthesaurus SET geoterm = ?, abbreviation = ?, iso2 = ?, iso3 = ?,
-		numcode = ?, geoLevel = ?, acceptedID = ?, parentID = ?, notes = ?
+		numcode = ?, geoLevel = ?, acceptedID = ?, parentID = ?, notes = ?, isSearchable = ?
 		WHERE geoThesID = ?
 		SQL;
 
@@ -145,6 +146,7 @@ class GeographicThesaurus extends Manager {
 				empty($postArr['acceptedID']) ? null : $postArr['acceptedID'],
 				empty($postArr['parentID']) ? null : $postArr['parentID'],
 				empty($postArr['notes']) ? null : $postArr['notes'],
+				empty($postArr['isSearchable']) ? 0 : $postArr['isSearchable'],
 				$postArr['geoThesID']
 			]);
 		} catch (\Throwable $th) {
