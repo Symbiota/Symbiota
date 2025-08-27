@@ -174,6 +174,9 @@ function searchDuplicateOptions(int $targetCollId, int $page, mysqli $conn) {
 	join omoccurrences o on o.occid = dl.occid where o.occid != o2.occid ' .
 	OccurrenceUtil::appendFullProtectionSQL();
 
+	// Don't process records with hidden locality information
+	$sql .= ' AND o.recordSecurity != 1 ';
+
 	$parameters = [$targetCollId];
 
 	if($hideExactMatches) {
