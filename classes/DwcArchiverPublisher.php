@@ -324,7 +324,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 	}
 
 	private function getFileSize(string $filePath) {
-		global $SERVER_ROOT, $SERVER_HOST;
+		global $SERVER_ROOT, $SERVER_HOST, $CLIENT_ROOT;
 		$size = false;
 
 		if($fileParts = UploadUtil::decomposeUrl($filePath)) {
@@ -341,7 +341,15 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 					}
 				}
 			} else {
-				$size = @filesize($SERVER_ROOT . $fileParts['path']);
+				$path = $fileParts['path'];
+
+				// If $CLIENT_ROOT is present remove from path to prevent
+				// double up as it is already in $SERVER_ROOT
+				if($CLIENT_ROOT) {
+					$path = str_replace($CLIENT_ROOT, '',$path);
+				}
+
+				$size = @filesize($SERVER_ROOT . $path);
 			}
 		}
 
