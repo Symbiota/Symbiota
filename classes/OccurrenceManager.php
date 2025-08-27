@@ -1253,8 +1253,13 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			else unset($this->searchTermArr['characters']);
 		}
 		if(array_key_exists('polygons',$_REQUEST)){
-			if($_REQUEST['polygons']) $this->searchTermArr['polygons'] = $_REQUEST['polygons'];
-			else unset($this->searchTermArr['polygons']);
+			$polygons = array_filter($_REQUEST['polygons'], function($val) {
+				return trim($val) !== '';
+			});
+			if (!empty($polygons))
+				$this->searchTermArr['polygons'] = $polygons;
+			else
+				unset($this->searchTermArr['polygons']);
 		}
 		if(!empty($_REQUEST['earlyInterval'])){
 			$this->searchTermArr['earlyInterval'] =  $this->cleanInputStr($_REQUEST['earlyInterval']);
