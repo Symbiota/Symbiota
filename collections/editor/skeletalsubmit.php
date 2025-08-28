@@ -1,6 +1,6 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceSkeletal.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/skeletalsubmit.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/skeletalsubmit.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/editor/skeletalsubmit.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
@@ -9,10 +9,11 @@ if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/e
 $collid  = $_REQUEST["collid"];
 $action = array_key_exists("formaction",$_REQUEST)?$_REQUEST["formaction"]:"";
 
-$skeletalManager = new OccurrenceSkeletal();
+$occurrenceEditor = new OccurrenceEditorManager();
+
 if($collid){
-	$skeletalManager->setCollid($collid);
-	$collMap = $skeletalManager->getCollectionMap();
+	$occurrenceEditor->setCollId($collid);
+	$collMap = $occurrenceEditor->getCollMap();
 }
 
 $statusStr = '';
@@ -216,7 +217,7 @@ if($collid){
 								<select id="flanguage" name="language" style="margin-top:4px">
 									<option value=""></option>
 									<?php
-									$langArr = $skeletalManager->getLanguageArr();
+									$langArr = $occurrenceEditor->getLanguageArr();
 									foreach($langArr as $code => $langStr){
 										echo '<option value="'.$code.'">'.$langStr.'</option>';
 									}
