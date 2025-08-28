@@ -147,6 +147,7 @@ function submitDefaultForm(f){
 			dataType: "json",
 			data: { 
 				sciname: $( "#fsciname" ).val(), 
+				tidinterpreted: $( "#ftidinterpreted" ).val(),
 				scientificnameauthorship: $( "#fscientificnameauthorship" ).val(), 
 				family: $( "#ffamily" ).val(), 
 				recordsecurity: ($( "#flocalitysecurity" ).prop('checked')?"1":"0"),
