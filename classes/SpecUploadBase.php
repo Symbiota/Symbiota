@@ -1313,7 +1313,7 @@ class SpecUploadBase extends SpecUpload{
 
 	private function setDeterminations(){
 		if($this->collId){
-			if($this->uploadType == $this->FILEUPLOAD || $this->uploadType == $this->SKELETAL){
+			if($this->uploadType == $this->FILEUPLOAD || $this->uploadType == $this->SKELETAL || $this->uploadType == $this->INATURALIST){
 				//Reset existing current determinations to match fields in the omoccurrences table (e.g. import data changes, will equal current determinations)
 				$sql = 'UPDATE IGNORE uploadspectemp u INNER JOIN omoccurrences o ON u.occid = o.occid
 					INNER JOIN omoccurdeterminations d ON o.occid = d.occid
