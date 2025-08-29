@@ -155,7 +155,8 @@ class UploadUtil {
 
 		# Pull out host information
 		if (array_key_exists('host', $parts) && strrpos($parts['host'], '.') !== false) {
-			$parts['tld'] = end(explode('.', $parts['host']));
+			$hostParts = explode('.', $parts['host']);
+			$parts['tld'] = end($hostParts);
 		}
 
 		# Parse path information
