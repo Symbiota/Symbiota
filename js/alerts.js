@@ -10,7 +10,6 @@ function handleAlerts(alerts, id, limitMessage) {
     if (c.indexOf("alertCnt=" + id) > -1) return false;
   }
   let alertDiv = document.getElementById("alert-msgs");
-  console.log(alertDiv);
   alertDiv.innerHTML = "";
   alerts.map((alert) => {
     alertDiv.classList.remove("visually-hidden");
