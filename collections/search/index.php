@@ -785,8 +785,8 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 <script src="<?= $JS_LANG_FILENAME ?>" type="text/javascript"></script>
 <script src="<?= $CLIENT_ROOT ?>/js/searchform.js?ver=2" type="text/javascript"></script>
 <script src="<?= $CLIENT_ROOT ?>js/alerts.js?v=202107" type="text/javascript"></script>
-<script src="<?= $CLIENT_ROOT ?>'/js/symb/api.taxonomy.taxasuggest.js" type="text/javascript"></script>
-<script src="<?= $CLIENT_ROOT ?>'/js/symb/collections.index.js?ver=20171215>" type="text/javascript"></script>
+<script src="<?= $CLIENT_ROOT ?>/js/symb/api.taxonomy.taxasuggest.js" type="text/javascript"></script>
+<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.index.js?ver=20171215>" type="text/javascript"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
 		<?php
