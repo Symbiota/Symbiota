@@ -1,6 +1,7 @@
 <?php
 include_once($SERVER_ROOT.'/config/dbconnection.php');
 include_once($SERVER_ROOT.'/traits/TaxonomyTrait.php');
+include_once($SERVER_ROOT.'/classes/Sanitize.php');
 
 class TaxonomyUtil {
 
@@ -347,6 +348,46 @@ class TaxonomyUtil {
 		else $status = 'ERROR re-populating taxaenumtree: NULL connection object';
 		return $status;
 	}
+
+	/**
+	 * Renders scientific name with proper html formatting
+	 *
+	 * Supports genus, species, hybrids, varieties, subspecies, cultivars.
+	 * Tradenames will default display to italics. This is not ideal, but need
+	 * and way of identifing them consistently.
+	 *
+	 * Can parse hybrid strings using 'X', 'x', '×', or '&times;' and resolve
+	 * cultivars that use " or ' as denotations
+	 *
+	 * @param Type $scientificName
+	 * @return string
+	 **/
+	function renderSciname(string $scientificName): string {
+		$matches = null;
+		preg_match_all("/(?:[^\s'\"]+|['\"][^'\"]*['\"])+/", $scientificName, $matches);
+
+		$matches = $matches[0];
+
+		$html = '';
+
+		for($i=0; $i < count($matches); $i++) {
+			$part = $matches[$i];
+			$previousPart = $i != 0? $matches[$i - 1]: false;
+
+			if(in_array($part, ['X', 'x', '×', '&times;'])) {
+				$html .= '&times; ';
+			} else if($part === 'subsp.' || $part === 'var.' || strlen($part) > 0 && $part[0] === "'") {
+				$html .= Sanitize::out($part) . ' ';
+			} else if(strlen($part) > 0 && ($part[0] === "'" || $part[0] === '"')) {
+				$html .= "'" . Sanitize::out(str_replace(["'", '"'], "", $part)) . "' " ;
+			} else {
+				$html .= '<i>' . Sanitize::out($part) . ' </i>';
+			}		
+		}
+
+		return '<span>' . $html . '</span>';
+	}
+
 
 	/*
 	public static function buildHierarchyNestedTree($conn, $taxAuthId = 1){
