@@ -2739,6 +2739,34 @@ class OccurrenceEditorManager {
 		return $retArr;
 	}
 
+	public function catalogNumberExists($catNum) {
+		$status = false;
+		if($this->collId){
+			$sql = 'SELECT occid FROM omoccurrences WHERE (catalognumber = "'.$this->cleanInStr($catNum).'") AND (collid = '.$this->collId.')';
+			//echo $sql;
+			$rs = $this->conn->query($sql);
+			while ($r = $rs->fetch_object()) {
+				$this->occid = $r->occid;
+				$status = true;
+			}
+			$rs->free();
+		}
+		return $status;
+	}
+
+	public function getLanguageArr() {
+		$retArr = array();
+		$sql = 'SELECT iso639_1, langname '.
+			'FROM adminlanguages ';
+		$rs = $this->conn->query($sql);
+		while($r = $rs->fetch_object()){
+			$retArr[$r->iso639_1] = $r->langname;
+		}
+		$rs->free();
+		asort($retArr);
+		return $retArr;
+	}
+
 	public function isCrowdsourceEditor() {
 		$isEditor = false;
 		if ($this->occid) {

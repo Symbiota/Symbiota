@@ -208,7 +208,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 			//Note mediaType is cleaned to only be 'image' and 'audio' strings
 			$sqlWhere .= 'AND (m.mediaType = "' . $this->mediaType . '") ';
 		}
-		$sqlWhere .= OccurrenceUtil::appendFullProtectionSQL(true);
+		//$sqlWhere .= OccurrenceUtil::appendFullProtectionSQL(true);
 		if(strpos($sqlWhere,'ts.taxauthid')) $sqlWhere = str_replace('m.tid', 'ts.tid', $sqlWhere);
 		if($sqlWhere) $this->sqlWhere = 'WHERE '.substr($sqlWhere,4);
 	}
