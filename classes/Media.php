@@ -511,10 +511,10 @@ class Media {
 				//Generate Deriatives if needed
 				if($media_type === MediaType::Image) {
 					$start_mem_limit = ini_get('memory_limit');
-					// Update mem limit if not set to 256M already
-					if(UploadUtil::size2Bytes(ini_get('memory_limit')) < UploadUtil::size2Bytes('256M')) {
-						ini_set('memory_limit', '256M');
-					}
+
+					// Dynamically set memory to fit enought to process it.
+					// It will throw error if set above max
+					self::setMemoryLimit($file['tmp_name']);
 
 					$size = getimagesize($file['tmp_name']);
 
@@ -909,17 +909,9 @@ class Media {
 		$height = $size[1];
 		$mime_type = $size['mime'];
 
-		
-
-		// if(!self::enough_memory_gd($size[0], $size[1])) {
-		// 	throw new Exception('Not enough memory to create image: ' . $new_file);
-		// }
-		// max = 268435456
-		// c * (x * y * 3) - max = left
-		// c = (28672 + max) / (x * y * 3)
-		// c = (28672 + 267499856) / 205702632
-		// 205702632*c = 268406784
-		// 268435456
+		if(!self::enough_memory_gd($size[0], $size[1])) {
+			throw new MediaException(MediaException::NotEnoughMemoryImage, ': ' . $new_file);
+		}
 
 		$orig_width = $width;
 		$orig_height = $height;
@@ -934,19 +926,6 @@ class Media {
 			$width = $new_width;
 		}
 		$image = null;
-
-		$estMem = ($size[1] * $size[0] * 1.3005595767 * 3);
-		$memLeft= UploadUtil::size2Bytes(ini_get('memory_limit')) - memory_get_usage();
-		var_dump(
-			$size,
-			$estMem, 
-			$memLeft, 
-			$estMem - $memLeft,
-			($size[1] * $size[0] * 8 * 3) / 8 * 1.65,
-			($size[1] * $size[0] * 3) * 1.65
-		);
-
-		self::setMemoryLimit($src_path);
 
 		switch($mime_type) {
 			case 'image/jpeg':
@@ -983,6 +962,7 @@ class Media {
 
 		imagedestroy($image);
 	}
+
 	/**
 	 * Dynamically allocate memory based on image dimensions, bit-depth and channels
 	 * Shamelessly stolen somewhere online years ago.
@@ -994,7 +974,7 @@ class Media {
 	 *
 	 * @return bool true on success or if no memory increase required, false if required memory amount is too large
 	 */
-	static function setMemoryLimit($filename, $tweak_factor = 1.8, $original_name = null) {
+	static function setMemoryLimit($filename, $tweak_factor = 1.8, $original_name = null): bool {
 
 		$maxMemoryUsage = 512 * 1024 * 1024; // 512MB
 		$width = 0;
