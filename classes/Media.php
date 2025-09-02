@@ -909,9 +909,17 @@ class Media {
 		$height = $size[1];
 		$mime_type = $size['mime'];
 
-		if(!self::enough_memory_gd($size[0], $size[1])) {
-			throw new Exception('Not enough memory to create image: ' . $new_file);
-		}
+		
+
+		// if(!self::enough_memory_gd($size[0], $size[1])) {
+		// 	throw new Exception('Not enough memory to create image: ' . $new_file);
+		// }
+		// max = 268435456
+		// c * (x * y * 3) - max = left
+		// c = (28672 + max) / (x * y * 3)
+		// c = (28672 + 267499856) / 205702632
+		// 205702632*c = 268406784
+		// 268435456
 
 		$orig_width = $width;
 		$orig_height = $height;
@@ -926,6 +934,19 @@ class Media {
 			$width = $new_width;
 		}
 		$image = null;
+
+		$estMem = ($size[1] * $size[0] * 1.3005595767 * 3);
+		$memLeft= UploadUtil::size2Bytes(ini_get('memory_limit')) - memory_get_usage();
+		var_dump(
+			$size,
+			$estMem, 
+			$memLeft, 
+			$estMem - $memLeft,
+			($size[1] * $size[0] * 8 * 3) / 8 * 1.65,
+			($size[1] * $size[0] * 3) * 1.65
+		);
+
+		self::setMemoryLimit($src_path);
 
 		switch($mime_type) {
 			case 'image/jpeg':
@@ -961,6 +982,68 @@ class Media {
 		}
 
 		imagedestroy($image);
+	}
+	/**
+	 * Dynamically allocate memory based on image dimensions, bit-depth and channels
+	 * Shamelessly stolen somewhere online years ago.
+	 * Probably from https://alvarotrigo.com/blog/allocate-memory-on-the-fly-PHP-image-resizing/
+	 *
+	 * @param string $filename Full path to a file supported by getimagesize() function
+	 * @param int $tweak_factor Multiplier for tweaking required memory. 1.8 seems fine. More info: http://php.net/imagecreatefromjpeg#76968
+	 * @param string $original_name Used purely for reporting actual file name instead of uploaded temp file (e.g. /tmp/RaNd0m.tmp)
+	 *
+	 * @return bool true on success or if no memory increase required, false if required memory amount is too large
+	 */
+	static function setMemoryLimit($filename, $tweak_factor = 1.8, $original_name = null) {
+
+		$maxMemoryUsage = 512 * 1024 * 1024; // 512MB
+		$width = 0;
+		$height = 0;
+		$memory_limit = UploadUtil::size2Bytes(ini_get('memory_limit'));
+
+		$memory_baseline_usage = memory_get_usage(true);
+
+		// Getting the image info
+		$info = @getimagesize($filename);
+		if( empty($info) ) {
+			throw new Exception( sprintf('ERROR: getimagesize("%s") returned: %s', $filename, print_r($info, true)) );
+			return false;
+		}
+
+		!empty($original_name) ? $filename = $original_name : $original_name;
+
+		$channels = isset($info['channels']) ? $info['channels'] : 3;
+		$width = $info[0];
+		$height = $info[1];
+
+		if($info['mime'] == 'image/png') {
+			$channels = 4;
+		}
+
+		if(!isset($info['bits'])) {
+			$info['bits'] = 16;
+		}
+		$bytes_per_channel = ( ($info['bits'] / 8) * $channels );
+
+		// Calculating the needed memory
+		$new_limit = $memory_baseline_usage + ($width * $height * $bytes_per_channel * $tweak_factor + 1048576);
+
+		if( $new_limit <= $memory_limit ) {
+			return true;
+		}
+
+		/* We don't want to allocate an extremely large amount of memory
+	so it's a good practice to define a limit and bail out if new limit is more than that */
+		if ($new_limit > $maxMemoryUsage) {
+			throw new Exception( sprintf( "Failed increasing memory limit to %dMB (max=%dMB) for file '%s' (%d x %d)", ceil( $new_limit / 1048576 ), ceil( $maxMemoryUsage / 1048576 ), $filename, $width, $height ) );
+			return false;
+		}
+
+		$new_limit = ceil( $new_limit / 1048576 );
+
+		// Updating the default value
+		ini_set('memory_limit', $new_limit.'M');
+		return true;
 	}
 
 	private static function enough_memory_gd($x, $y, $rgb = 3) {
