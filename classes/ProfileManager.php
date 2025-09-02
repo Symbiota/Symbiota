@@ -148,6 +148,10 @@ class ProfileManager extends Manager{
 
 			$user = $rs->fetch_object();
 
+			if(!$user->password) {
+				return false;
+			}
+
 			// If it's an old password then allow for login
 			// then rehash
 			if($user && substr($user->password, 0, 4) != '$2y$' && $this->authenticateUsingPasswordOld($pwdStr)) {
