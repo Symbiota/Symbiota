@@ -710,35 +710,61 @@ class OccurrenceLoans extends Manager{
 
 	private function addLoanSpecimen($loanid,$occid){
 		$status = false;
-		$sql = 'INSERT INTO omoccurloanslink(loanid,occid) VALUES ('.$loanid.','.$occid.') ';
-		if($this->conn->query($sql)) $status = true;
-		else $this->errorMessage = $this->conn->error;
+		$sql = 'INSERT INTO omoccurloanslink(loanid,occid) VALUES (?,?) ';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('ii', $loanid, $occid);
+			try{
+				if($stmt->execute()){
+					$status = true;
+				}
+			} catch (mysqli_sql_exception $e){
+				$this->errorMessage = $stmt->error;
+			} catch (Exception $e){
+				$this->errorMessage = 'unknown error';
+			}
+			$stmt->close();
+		}
 		return $status;
 	}
 
 	public function getSpecimenDetails($loanId, $occid){
 		$retArr = array();
 		if(is_numeric($loanId) && is_numeric($occid)){
-			$sql = 'SELECT DATE_FORMAT(returndate, "%Y-%m-%dT%H:%i") AS returndate, notes FROM omoccurloanslink WHERE loanid = '.$loanId.' AND occid = '.$occid;
-			if($rs = $this->conn->query($sql)){
-				while($r = $rs->fetch_object()){
-					$retArr['returnDate'] = $r->returndate;
-					$retArr['notes'] = $r->notes;
-				}
-				$rs->free();
+			$sql = 'SELECT returndate, notes FROM omoccurloanslink WHERE loanid = ? AND occid = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('ii', $loanId, $occid);
+					$stmt->execute();
+					if($rs = $stmt->get_result()){
+						While($r = $rs->fetch_object()){
+							$retArr['returnDate'] = $r->returndate;
+							$retArr['notes'] = $r->notes;
+						}
+						$rs->free();
+					}
+				$stmt->close();
 			}
 		}
 		return $retArr;
 	}
 
-	public function editSpecimenDetails($loanId, $occid, $returnDate, $noteStr){
+	public function editSpecimenDetails($loanID, $occid, $returnDate, $noteStr){
 		$status = false;
-		if(is_numeric($loanId) && is_numeric($occid)){
-			$sql = 'UPDATE omoccurloanslink '.
-				'SET returnDate = '.($returnDate?'"'.$this->cleanInStr($returnDate).'"':'NULL').', notes = '.($noteStr?'"'.$this->cleanInStr($noteStr).'"':'NULL').' '.
-				'WHERE (loanid = '.$loanId.') AND (occid = '.$occid.')';
-			if($this->conn->query($sql)) $status = true;
-			else $this->errorMessage = 'ERROR updating specimen notes: '.$this->conn->error;
+		if(is_numeric($loanID) && is_numeric($occid)){
+			if($returnDate === '') $returnDate = null;
+			$sql = 'UPDATE omoccurloanslink  SET returnDate = ?, notes = ?  WHERE (loanid = ?) AND (occid = ?)';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('ssii', $returnDate, $noteStr, $loanID, $occid);
+				try{
+					if($stmt->execute()){
+						$status = true;
+					}
+				} catch (mysqli_sql_exception $e){
+					$this->errorMessage = $stmt->error;
+				} catch (Exception $e){
+					$this->errorMessage = 'unknown error';
+				}
+				$stmt->close();
+			}
 		}
 		return $status;
 	}
@@ -749,9 +775,20 @@ class OccurrenceLoans extends Manager{
 		if(is_numeric($occidInput)) $occidStr = $occidInput;
 		else $occidStr = implode(',',$occidInput);
 		if(is_numeric($loanID) && preg_match('/^[\d,]+$/', $occidStr)){
-			$sql = 'UPDATE omoccurloanslink SET returndate = "'.date('Y-m-d H:i:s').'" WHERE loanid = '.$loanID.' AND (occid IN('.$occidStr.')) AND (returndate IS NULL) ';
-			if($this->conn->query($sql)) $status = $this->conn->affected_rows;
-			else $this->errorMessage = 'ERROR checking in specimens: '.$this->conn->error;
+			$sql = 'UPDATE omoccurloanslink SET returndate = "'.date('Y-m-d H:i:s').'" WHERE loanid = ? AND (occid IN('.$occidStr.')) AND (returndate IS NULL) ';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $loanID);
+				try{
+					if($stmt->execute()){
+						$status = $this->conn->affected_rows;
+					}
+				} catch (mysqli_sql_exception $e){
+					$this->errorMessage = $stmt->error;
+				} catch (Exception $e){
+					$this->errorMessage = 'unknown error';
+				}
+				$stmt->close();
+			}
 		}
 		return $status;
 	}
