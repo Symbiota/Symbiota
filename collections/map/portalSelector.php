@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 
 if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/portalSelector.' . $LANG_TAG . '.php')) {
    include_once($SERVER_ROOT . '/content/lang/collections/portalSelector.' . $LANG_TAG . '.php');
@@ -18,7 +18,7 @@ $portals = $conn->query(<<<sql
    sql)->fetch_all(MYSQLI_ASSOC);
 
 //Kinda a getto way of ensuring unique id's if multiple of this file is
-//included. 
+//included.
 $PORTAL_SELECTOR_ID = !isset($PORTAL_SELECTOR_ID) || !is_int($PORTAL_SELECTOR_ID)? 0: $PORTAL_SELECTOR_ID + 1;
 
 ?>
@@ -27,10 +27,10 @@ $PORTAL_SELECTOR_ID = !isset($PORTAL_SELECTOR_ID) || !is_int($PORTAL_SELECTOR_ID
    <?php if(count($portals) > 0):?>
    <script src="<?php echo $CLIENT_ROOT?>/js/autocomplete-input.js" type="module"></script>
    <div>
-      <input 
+      <input
          onchange="onEnablePortalSelector(this.checked)"
-         data_role="none" 
-         type="checkbox" 
+         data_role="none"
+         type="checkbox"
          id="cross_portal_switch_<?php echo $PORTAL_SELECTOR_ID?>"
          autocomplete='off'
          name="cross_portal_switch"
@@ -40,10 +40,10 @@ $PORTAL_SELECTOR_ID = !isset($PORTAL_SELECTOR_ID) || !is_int($PORTAL_SELECTOR_ID
       </label>
    </div>
    <div id="portal-selector-<?php echo $PORTAL_SELECTOR_ID?>" style="display:none">
-      <div style="margin-top: 5px">   
-         <input 
-            data_role="none" 
-            type="hidden" 
+      <div style="margin-top: 5px">
+         <input
+            data_role="none"
+            type="hidden"
             name="cross_portal_label"
             id="portal-selector-name-<?php echo $PORTAL_SELECTOR_ID?>"
             value="<?= htmlspecialchars($portals[0]['portalName'])?>"
@@ -57,7 +57,7 @@ $PORTAL_SELECTOR_ID = !isset($PORTAL_SELECTOR_ID) || !is_int($PORTAL_SELECTOR_ID
       <div style="margin-top: 5px">
          <label for="portal-taxa-suggest-<?php echo $PORTAL_SELECTOR_ID?>">Taxa:</label>
          <input name="" type="hidden">
-         <autocomplete-input 
+         <autocomplete-input
             id="portal-taxa-suggest-<?php echo $PORTAL_SELECTOR_ID?>"
             name="external-taxa-input"
             response_type="json"

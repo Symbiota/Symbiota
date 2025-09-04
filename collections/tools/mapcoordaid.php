@@ -1,5 +1,5 @@
 <?php
-   include_once('../../config/symbini.php');
+   include_once(__DIR__ . '/../../config/symbini.php');
    if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/tools/mapaids.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/tools/mapaids.' . $LANG_TAG . '.php');
 	else include_once($SERVER_ROOT . '/content/lang/collections/tools/mapaids.en.php');
    include_once($SERVER_ROOT.'/classes/ChecklistAdmin.php');
@@ -73,12 +73,12 @@ else{
 		</div>
 		<div id="helptext"></div>
 		<div id="map"></div>
-		<div 
-			id="service-container" 
-			data-zoom="<?= htmlspecialchars($zoom) ?>" 
-			data-lat-center="<?= htmlspecialchars($latCenter) ?>" 
-			data-lng-center="<?= htmlspecialchars($lngCenter) ?>" 
-			data-map-mode="<?= htmlspecialchars($mapMode) ?>" 
+		<div
+			id="service-container"
+			data-zoom="<?= htmlspecialchars($zoom) ?>"
+			data-lat-center="<?= htmlspecialchars($latCenter) ?>"
+			data-lng-center="<?= htmlspecialchars($lngCenter) ?>"
+			data-map-mode="<?= htmlspecialchars($mapMode) ?>"
 			data-map-mode-strict="<?= htmlspecialchars($mapModeStrict) ?>"
 			data-footprint-type="<?= htmlspecialchars($outputType) ?>"
 			data-footprint-id="<?= htmlspecialchars($polygonInputId) ?>"
@@ -95,7 +95,7 @@ else{
 		/* Shape Defintions:
 		*
 		* Polygon {
-		*    type: polygon, 
+		*    type: polygon,
 		*    latlngs: [[lat, lng]...],
 		*    wkt: String (Wkt format),
 		* }
@@ -108,7 +108,7 @@ else{
 		*    leftLng: lng,
 		* }
 		*
-		* Circle { 
+		* Circle {
 		*    type: "circle"
 		*    radius: float,
 		*    center [lat, lng]
@@ -116,7 +116,7 @@ else{
 		*/
 
 		const MILEStoKM = 1.60934;
-		const KMtoM = 1000; 
+		const KMtoM = 1000;
 		const SIG_FIGS = 6;
 		const data = document.getElementById("service-container");
 		const mapMode = data.getAttribute('data-map-mode');
@@ -192,12 +192,12 @@ else{
 			setField(footprintId, poly_output);
 		}
 
-		/* setShapeToSearchForm: 
+		/* setShapeToSearchForm:
 		*
 		* Sets Shape data to search form.
 		*
 		* activeShape: Shape Type (See Def at top of script)
-		* 
+		*
 		*/
 		function setShapeToSearchForm(activeShape) {
 			//Clear Form
@@ -243,13 +243,13 @@ else{
 					setRectangle(rec.upperLat, rec.lowerLat, rec.leftLng, rec.rightLng);
 					break;
 				case "circle":
-					const circ = activeShape; 
+					const circ = activeShape;
 					setCircle(circ.radius, circ.center.lat, circ.center.lng);
 					break;
 			}
 		}
 
-		/* LoadShape Reads Coordinates from Form: 
+		/* LoadShape Reads Coordinates from Form:
 		*
 		* mapMode: enum ("polygon", "rectangle", "circle")
 		*
@@ -262,8 +262,8 @@ else{
 					if(footprintType && footprintType.toLowerCase() === "geojson" && geoJsonStr) {
 						try {
 							const geoJson = JSON.parse(geoJsonStr);
-							return { 
-								type: "geoJSON", 
+							return {
+								type: "geoJSON",
 								geoJSON: geoJson
 							};
 						} catch(e) {
@@ -310,7 +310,7 @@ else{
 							type: "circle",
 							radius: (radUnits === "mi"? radius * MILEStoKM: parseFloat(radius)) * KMtoM,
 							latlng: [
-								pointlat * (getField("pointlat_NS") === "N"? 1: -1), 
+								pointlat * (getField("pointlat_NS") === "N"? 1: -1),
 								pointlng * (getField("pointlong_EW") === "E"? 1: -1)
 							]
 						}
@@ -320,7 +320,7 @@ else{
 					alert(`No Settings for Map Mode: ${mapMode}`)
 					return false;
 				break;
-			} 
+			}
 		}
 
 		const formShape = loadShape(mapMode);
@@ -372,9 +372,9 @@ else{
 			}
 		}
 
-		<?php if(empty($GOOGLE_MAP_KEY)): ?> 
+		<?php if(empty($GOOGLE_MAP_KEY)): ?>
 			leafletInit();
-		<?php else:?> 
+		<?php else:?>
 			googleInit();
 		<?php endif ?>
 		</script>

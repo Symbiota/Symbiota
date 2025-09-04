@@ -1,5 +1,5 @@
 <?php
-include_once('../../../config/symbini.php');
+include_once(__DIR__ . '/../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceDuplicate.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/rpc/editor_rpc.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/editor/rpc/editor_rpc.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/editor/rpc/editor_rpc.en.php');
@@ -25,14 +25,14 @@ $dupArr = $dupeManager->getDupeList($recordedBy, $recordNumber, $eventDate, $cat
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['DUPLICATE_LINKER'] ?></title>
 	<script>
-		<?php 
+		<?php
 		if($action == 'Link as Duplicate'){
 			$dupeManager->linkDuplicates($currentOccid,$dupeOccid,$dupeTitle);
 			echo 'window.opener.document.getElementById("dupeRefreshForm").submit();';
 			echo 'self.close();';
 		}
 		?>
-		
+
 		function validateDupeForm(f){
 
 
@@ -80,7 +80,7 @@ $dupArr = $dupeManager->getDupeList($recordedBy, $recordNumber, $eventDate, $cat
 		</fieldset>
 		<fieldset>
 			<legend><b><?php echo $LANG['POSSIBLE_DUPLICATES'] ?></b></legend>
-			<?php 
+			<?php
 			if($dupArr){
 				foreach($dupArr as $dupOccid => $occArr){
 					?>
@@ -92,7 +92,7 @@ $dupArr = $dupeManager->getDupeList($recordedBy, $recordNumber, $eventDate, $cat
 							<?php echo $occArr['collname'];?>
 						</div>
 						<div>
-							<?php 
+							<?php
 							echo $occArr['recordedby'] . ' ' . $occArr['recordnumber'] . ' <span style="margin-left:15px">' . $occArr['eventdate'];
 							if($occArr['verbatimeventdate']) echo ' (' . $occArr['verbatimeventdate'] . ')';
 							echo '</span>';
@@ -100,7 +100,7 @@ $dupArr = $dupeManager->getDupeList($recordedBy, $recordNumber, $eventDate, $cat
 							?>
 						</div>
 						<div>
-							<?php 
+							<?php
 							echo trim($occArr['country'] . ', ' . $occArr['stateprovince'] . ', ' . $occArr['county'] . ', ' . $occArr['locality'],' ,');
 							?>
 						</div>

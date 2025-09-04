@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.en.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCollectionProfile.php');
@@ -405,7 +405,7 @@ if ($SYMB_UID) {
 										<a href="javascript:void(0)" onclick="showItemsList('traitItem')">
 											<?= $LANG['TRAIT_CODING_TOOLS'] ?>
 										</a>
-										<a onclick="showItemsList('traitItem')"> 
+										<a onclick="showItemsList('traitItem')">
 											<img class = seemore-icon src="../../images/tochild.png">
 										</a>
 									</li>
@@ -464,7 +464,7 @@ if ($SYMB_UID) {
 									<a href="javascript:void(0)" onclick="showItemsList('metadataItem')"  >
 										<?= $LANG['OPEN_META'] ?>
 									</a>
-									<a onclick="showItemsList('metadataItem')"> 
+									<a onclick="showItemsList('metadataItem')">
 										<img class="seemore-icon" src="../../images/tochild.png">
 									</a>
 								</li>
@@ -496,7 +496,7 @@ if ($SYMB_UID) {
 									<a id="importinfo" href="https://docs.symbiota.org/Collection_Manager_Guide/Importing_Uploading/" target="_blank" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>">
 											<img src="../../images/info.png" style="width:13px;" alt="<?= $LANG['INFO_ALT'] ?>" />
 									</a>
-									<a onclick="showItemsList('importItem')"> 
+									<a onclick="showItemsList('importItem')">
 										<img class="seemore-icon" src="../../images/tochild.png"">
 									</a>
 								</li>

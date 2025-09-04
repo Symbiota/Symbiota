@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceDuplicate.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/dupesearch.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/dupesearch.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/editor/dupesearch.en.php');
@@ -367,7 +367,7 @@ if(!$IS_ADMIN){
 							if(!isset($ACTIVATE_DUPLICATES) || $ACTIVATE_DUPLICATES){
 								?>
 								<div style="margin-left:30px;float:left;">
-									<input id="linkdupe-<?php echo $occId; ?>" type="checkbox" <?php echo ($dupeType == 'exact'?'checked':''); ?> /> 
+									<input id="linkdupe-<?php echo $occId; ?>" type="checkbox" <?php echo ($dupeType == 'exact'?'checked':''); ?> />
 									<label for="linkdupe-<?php echo $occId; ?>"><?php echo $LANG['LINK_DUPE']; ?></label>
 								</div>
 								<?php
@@ -383,7 +383,7 @@ if(!$IS_ADMIN){
 								if($curOccid){
 									?>
 									<div style="margin-left:30px;float:left;">
-						<a href="dupesearch.php?submitaction=mergerecs&curoccid=<?php echo htmlspecialchars($curOccid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&occidmerge=' . htmlspecialchars($occId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&occidquery=' . htmlspecialchars($occidQuery, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); 
+						<a href="dupesearch.php?submitaction=mergerecs&curoccid=<?php echo htmlspecialchars($curOccid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&occidmerge=' . htmlspecialchars($occId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&occidquery=' . htmlspecialchars($occidQuery, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 							?>" onclick="return confirm('<?php echo htmlspecialchars($LANG['SURE_MERGE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>')">
 											<?php echo $LANG['MERGE_RECORDS']; ?>
 										</a>

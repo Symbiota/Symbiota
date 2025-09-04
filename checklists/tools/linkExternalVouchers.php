@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/ChecklistVoucherAdmin.php');
 include_once($SERVER_ROOT . '/classes/ChecklistManager.php');
 include_once($SERVER_ROOT . "/classes/Sanitize.php");
@@ -19,7 +19,7 @@ if(!($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $
 if($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$voucherManager = new ChecklistVoucherAdmin();
 	$voucherManager->setClid($clid);
-	
+
 	if($_POST['external_voucher_link_json_data'] ?? false) {
 		$voucher_json_data = json_decode($_POST['external_voucher_link_json_data'], true) ?? [];
 		if($voucher_json_data) {
@@ -74,7 +74,7 @@ if($clManager->getAssociatedExternalService()) {
 				} catch(e) {
 					voucher_loader.style.display = 'none';
 					voucher_error.style.display = '';
-					voucher_error.textContent = e;	
+					voucher_error.textContent = e;
 				} finally {
 					if(voucher_submit_button) voucher_submit_button.disabled = null;
 				}
@@ -146,7 +146,7 @@ if($clManager->getAssociatedExternalService()) {
 					if(!checklist_id) throw Error("<?= $LANG['CHECKLIST_ID_REQUIRED'] ?>");
 					if(!target_tid) throw Error("<?= $LANG['TARGET_TAXON_REQUIRED'] ?>");
 
-					await fetchObservations(taxon_name, external_id, linked_external_vouchers); 
+					await fetchObservations(taxon_name, external_id, linked_external_vouchers);
 
 				}).then( () => {
 					if(app_state.vouchers.length <= 0) {
@@ -216,7 +216,7 @@ if($clManager->getAssociatedExternalService()) {
 			}
 		</script>
 	</head>
-	<body onload="initExternalVouchers()">	
+	<body onload="initExternalVouchers()">
 		<div id="data-store" data-linked_external_vouchers="<?= htmlspecialchars(json_encode($linked_external_vouchers))?>"></div>
 		<div id="innertext" style="height:100vh; position:relative">
 			<template id="external_voucher_template">

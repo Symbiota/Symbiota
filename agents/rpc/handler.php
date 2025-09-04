@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 $defaultMode = "list";
 $mode = preg_replace("[^A-Za-z]",'', array_key_exists("mode",$_REQUEST) ? $_REQUEST["mode"] : $defaultMode );
 $table = preg_replace("[^A-Za-z_]",'', array_key_exists("table",$_REQUEST) ? $_REQUEST["table"] : '' );
@@ -8,14 +8,14 @@ include_once($SERVER_ROOT . '/classes/utilities/RdfUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
 
 
-switch ($mode) { 
+switch ($mode) {
   case "ping":
     echo "pong";
     break;
-  case "autobuild":  
+  case "autobuild":
     // auto create agents from collector records
     $am = new AgentManager();
-    if ($am->isAgentEditor()) {    
+    if ($am->isAgentEditor()) {
       echo "<!DOCTYPE html><html lang=" . $LANG_TAG . "><head>" . str_repeat(" ", 1024) . "</head><body>\n";
       echo "<h2>Creating agents from collector records.</h2>\n";
       flush();
@@ -25,23 +25,23 @@ switch ($mode) {
       flush();
       echo "<h2>Done</h2>\n";
       echo "</body></html>\n";
-    } else { 
+    } else {
       echo "Not authorized.";
     }
     break;
-  case "show":  
+  case "show":
     // Display record
     $agent = loadAgent();
     echo showAgent($agent);
     break;
   case "edit":
     // Display record in an edit form
-    switch ($table) { 
-       case "Agent": 
+    switch ($table) {
+       case "Agent":
           $agent = loadAgent();
           echo editAgent($agent);
           break;
-       case "AgentName": 
+       case "AgentName":
           $agentname = loadAgentName();
           echo editAgentName($agentname);
           break;
@@ -63,7 +63,7 @@ switch ($mode) {
           break;
        default:
           echo "Table to edit not specified.";
-    } 
+    }
     break;
   case "listjson":
     // Run a query to list agents as json
@@ -75,7 +75,7 @@ switch ($mode) {
     break;
   case "savenew":
     // Create a new agent, then save changes to it
-    switch ($table) { 
+    switch ($table) {
        case "Agent":
           echo saveAgent();
           break;
@@ -100,7 +100,7 @@ switch ($mode) {
     break;
   case "save":
     // Save changes to a record
-    switch ($table) { 
+    switch ($table) {
        case "Agent":
           $agentid = preg_replace('[^0-9]','',array_key_exists("agentid",$_REQUEST)?$_REQUEST["agentid"]:"");
           echo saveAgent($agentid);
@@ -131,7 +131,7 @@ switch ($mode) {
     break;
   case "create":
       // create a new record, display in edit form
-      switch ($table) { 
+      switch ($table) {
          case "Agent":
            echo createAgent();
            break;
@@ -156,7 +156,7 @@ switch ($mode) {
       break;
   case "delete":
       // delete a record
-      switch ($table) { 
+      switch ($table) {
          case "Agent":
             $agentid = preg_replace('[^0-9]','',array_key_exists("agentid",$_REQUEST)?$_REQUEST["agentid"]:"");
             echo deleteAgent($agentid);
@@ -195,27 +195,27 @@ switch ($mode) {
  * Obtain agentid or uuid from request and lookup agent.
  * @return agent found, or null.
  */
-function loadAgent() { 
+function loadAgent() {
    $agent = null;
    $agentid = preg_replace('[^0-9]','',array_key_exists("agentid",$_REQUEST)?$_REQUEST["agentid"]:"");
    $uuid = array_key_exists("uuid",$_REQUEST)?$_REQUEST["uuid"]:"";
-   if (strlen($agentid) > 0 ) { 
+   if (strlen($agentid) > 0 ) {
      $agent = new Agent();
      $agent->load($agentid);
-   } elseif (strlen($uuid)>0) { 
-     if (UuidFactory::isValid($uuid)) { 
+   } elseif (strlen($uuid)>0) {
+     if (UuidFactory::isValid($uuid)) {
         $agent = new Agent();
         $agent->loadByGUID($uuid);
-     } 
+     }
    }
    return $agent;
-} 
+}
 
-function showAgent($agent) { 
+function showAgent($agent) {
    $result = "";
-   if ($agent==null) { 
+   if ($agent==null) {
       $result = "Error: No agent found";
-   } else { 
+   } else {
       $agentview = new AgentView();
       $agentview->setModel($agent);
       $result .= "<div id='agentDetailDiv$agent->getrecordedById()'>";
@@ -223,33 +223,33 @@ function showAgent($agent) {
       $result .= "</div>";
    }
    return $result;
-} 
+}
 
-function editAgent($agent) { 
+function editAgent($agent) {
    $result = "";
    $am = new AgentManager();
-   if ($am->isAgentEditor()) { 
-      if ($agent==null) { 
+   if ($am->isAgentEditor()) {
+      if ($agent==null) {
          $result =  "Error: No agent found";
-      } else { 
+      } else {
          $agentview = new AgentView();
          $agentview->setModel($agent);
          $result = $agentview->getEditFormView();
       }
-   } else { 
+   } else {
       $result =  "You aren't authorized to edit agent records.";
    }
    return $result;
-} 
+}
 
-function listagents() { 
+function listagents() {
   $am = new AgentManager();
   $query = array_key_exists("name",$_REQUEST)?$_REQUEST["name"]:"%";
   $result .= $am->agentNameSearch($query);
   return $result;
 }
 
-function listagentsjson() { 
+function listagentsjson() {
   $am = new AgentManager();
   $query = array_key_exists("term",$_REQUEST)?$_REQUEST["term"]:"%";
   $type = array_key_exists("type",$_REQUEST)?$_REQUEST["type"]:"Individual";
@@ -257,66 +257,66 @@ function listagentsjson() {
   return $result;
 }
 
-function saveAgent($agentid=NULL) { 
+function saveAgent($agentid=NULL) {
    global $CLIENT_ROOT;
    $result = "";
    $am = new AgentManager();
-   if ($am->isAgentEditor()) { 
-      if (strlen($agentid)==0) { 
+   if ($am->isAgentEditor()) {
+      if (strlen($agentid)==0) {
          $toSave = new Agent();
-         $toSave = $am->getAndChangeAgentFromRequest($agentid);      
-         if ($toSave!=null) { 
+         $toSave = $am->getAndChangeAgentFromRequest($agentid);
+         if ($toSave!=null) {
              $result = $am->saveNewAgent($toSave);
-         } else { 
+         } else {
              $result =  "Error in saving new agent record.";
          }
-      } else { 
-         $toSave = $am->getAndChangeAgentFromRequest($agentid);      
-         if ($toSave!=null) { 
+      } else {
+         $toSave = $am->getAndChangeAgentFromRequest($agentid);
+         if ($toSave!=null) {
              $result = $am->saveAgent($toSave);
-         } else { 
+         } else {
              $result =  "Error in saving agent record.";
          }
       }
-   } else { 
-      $result =  "You aren't authorized to edit agent records.";
-   }
-   return $result;
-}
- 
-function createAgent() { 
-   $result = "";
-   $am = new AgentManager();
-   if ($am->isAgentEditor()) { 
-     $toSave = new Agent();      
-     if ($toSave!=null) { 
-        $result = editAgent($toSave);
-     } else { 
-        $result =  "Error in creating agent record.";
-     }
-   } else { 
+   } else {
       $result =  "You aren't authorized to edit agent records.";
    }
    return $result;
 }
 
-function deleteAgent($agentid=NULL) { 
+function createAgent() {
+   $result = "";
+   $am = new AgentManager();
+   if ($am->isAgentEditor()) {
+     $toSave = new Agent();
+     if ($toSave!=null) {
+        $result = editAgent($toSave);
+     } else {
+        $result =  "Error in creating agent record.";
+     }
+   } else {
+      $result =  "You aren't authorized to edit agent records.";
+   }
+   return $result;
+}
+
+function deleteAgent($agentid=NULL) {
    global $CLIENT_ROOT;
    $result = "";
    $am = new AgentManager();
-   if ($am->isAgentEditor()) { 
-      if (strlen($agentid)>0) { 
+   if ($am->isAgentEditor()) {
+      if (strlen($agentid)>0) {
          $toDelete = new Agent();
-         $toDelete->setagentid($agentid);      
-         if ($toDelete->delete()) { 
+         $toDelete->setagentid($agentid);
+         if ($toDelete->delete()) {
              $result = "Deleted.";
-         } else { 
+         } else {
              $result =  "Error in deleting agent record. " . $toDelete->errorMessage();
          }
-      } else { 
+      } else {
          $result =  "No agent specified to delete.";
       }
-   } else { 
+   } else {
       $result =  "You aren't authorized to edit agent records.";
    }
    return $result;
@@ -324,7 +324,7 @@ function deleteAgent($agentid=NULL) {
 
 /* Functions for handling AgentNames (agentnames) *******/
 
-function saveAgentName($agentnameid=NULL) { 
+function saveAgentName($agentnameid=NULL) {
    global $CLIENT_ROOT;
    $result = "";
    $am = new AgentManager();
@@ -352,73 +352,73 @@ function saveAgentName($agentnameid=NULL) {
  * Obtain agentid or uuid from request and lookup agent.
  * @return agent found, or null.
  */
-function loadAgentName() { 
+function loadAgentName() {
    $agentname = null;
    $agentnameid = preg_replace('[^0-9]','',array_key_exists("agentnamesid",$_REQUEST)?$_REQUEST["agentnamesid"]:"");
-   if (strlen($agentnameid) > 0 ) { 
+   if (strlen($agentnameid) > 0 ) {
      $agentname = new agentnames();
      $agentname->load($agentnameid);
-   } else { 
+   } else {
       throw new Exception("No agent name specified.");
    }
    return $agentname;
-} 
+}
 
-function editAgentName($agentname) { 
+function editAgentName($agentname) {
    $result = "";
    $am = new AgentManager();
-   if ($am->isAgentEditor()) { 
-      if ($agentname==null) { 
+   if ($am->isAgentEditor()) {
+      if ($agentname==null) {
          $result =  "Error: No agent name found";
-      } else { 
+      } else {
          $agentview = new agentnamesView();
          $agentview->setModel($agentname);
          $result = $agentview->getEditFormView();
       }
-   } else { 
+   } else {
       $result =  "You aren't authorized to edit agent records.";
    }
    return $result;
-} 
- 
-function createAgentName() { 
+}
+
+function createAgentName() {
    $result = "";
    $am = new AgentManager();
-   if ($am->isAgentEditor()) { 
-     $toSave = new agentnames();      
-     if ($toSave!=null) { 
+   if ($am->isAgentEditor()) {
+     $toSave = new agentnames();
+     if ($toSave!=null) {
         $agentid = preg_replace('[^0-9]','',array_key_exists("agentid",$_REQUEST)?$_REQUEST["agentid"]:"");
         $toSave->setagentid($agentid);
         $result  = "<div id='nameStatusDiv".$toSave->getagentnamesid()."'></div>";
         $result .= "<div id='nameResultDiv".$toSave->getagentnamesid()."'></div>";
         $result .= "<div id='nameDetailDiv_".$toSave->getagentid()."_".$toSave->getagentnamesid()."'></div>";
         $result .= editAgentName($toSave);
-     } else { 
+     } else {
         $result =  "Error in creating agent name record.";
      }
-   } else { 
+   } else {
       $result =  "You aren't authorized to edit agent records.";
    }
    return $result;
 }
 
-function deleteAgentName($agentnameid=NULL) { 
+function deleteAgentName($agentnameid=NULL) {
    global $CLIENT_ROOT;
    $result = "";
    $am = new AgentManager();
-   if ($am->isAgentEditor()) { 
-      if (strlen($agentnameid)>0) { 
+   if ($am->isAgentEditor()) {
+      if (strlen($agentnameid)>0) {
          $toDelete = new agentnames();
-         $toDelete->setagentnamesid($agentnameid);      
-         if ($toDelete->delete()) { 
+         $toDelete->setagentnamesid($agentnameid);
+         if ($toDelete->delete()) {
              $result = "Deleted.";
-         } else { 
+         } else {
              $result =  "Error in deleting agent name record. " . $toDelete->errorMessage();
          }
-      } else { 
+      } else {
          $result =  "No agent name specified to delete.";
       }
-   } else { 
+   } else {
       $result =  "You aren't authorized to edit agent records.";
    }
    return $result;
@@ -426,19 +426,19 @@ function deleteAgentName($agentnameid=NULL) {
 
 //***  Functions for handling agent number patterns ****//
 
-function loadAgentNumberPattern() { 
+function loadAgentNumberPattern() {
    $np = null;
    $npid = preg_replace('[^0-9]','',array_key_exists("agentnumberpatternid",$_REQUEST)?$_REQUEST["agentnumberpatternid"]:"");
-   if (strlen($npid) > 0 ) { 
+   if (strlen($npid) > 0 ) {
      $np = new agentnumberpattern();
      $np->load($npid);
-   } else { 
+   } else {
       throw new Exception("No agent number pattern specified.");
    }
    return $np;
-} 
+}
 
-function saveAgentNumberPattern($agentnumberpatternid=NULL) { 
+function saveAgentNumberPattern($agentnumberpatternid=NULL) {
    global $CLIENT_ROOT;
    $result = "";
    $am = new AgentManager();
@@ -461,58 +461,58 @@ function saveAgentNumberPattern($agentnumberpatternid=NULL) {
 
 }
 
-function createAgentNumberPattern() { 
+function createAgentNumberPattern() {
    $result = "";
    $am = new AgentManager();
-   if ($am->isAgentEditor()) { 
-     $toSave = new agentnumberpattern();      
-     if ($toSave!=null) { 
+   if ($am->isAgentEditor()) {
+     $toSave = new agentnumberpattern();
+     if ($toSave!=null) {
         $agentid = preg_replace('[^0-9]','',array_key_exists("agentid",$_REQUEST)?$_REQUEST["agentid"]:"");
         $toSave->setagentid($agentid);
         $result = editAgentNumberPattern($toSave);
-     } else { 
+     } else {
         $result =  "Error in creating agent number pattern record.";
      }
-   } else { 
+   } else {
       $result =  "You aren't authorized to edit agent records.";
    }
    return $result;
 }
 
-function editAgentNumberPattern($np) { 
+function editAgentNumberPattern($np) {
    $result = "";
    $am = new AgentManager();
-   if ($am->isAgentEditor()) { 
-      if ($np==null) { 
+   if ($am->isAgentEditor()) {
+      if ($np==null) {
          $result =  "Error: No agent number pattern found";
-      } else { 
+      } else {
          $npview = new agentnumberpatternView();
          $npview->setModel($np);
          $result = $npview->getEditFormView();
       }
-   } else { 
+   } else {
       $result =  "You aren't authorized to edit agent records.";
    }
    return $result;
-} 
+}
 
-function deleteAgentNumberPattern($agentnumberpatternid=NULL) { 
+function deleteAgentNumberPattern($agentnumberpatternid=NULL) {
    global $CLIENT_ROOT;
    $result = "";
    $am = new AgentManager();
-   if ($am->isAgentEditor()) { 
-      if (strlen($agentnumberpatternid)>0) { 
+   if ($am->isAgentEditor()) {
+      if (strlen($agentnumberpatternid)>0) {
          $toDelete = new agentnumberpattern();
-         $toDelete->setagentnumberpatternid($agentnumberpatternid);      
-         if ($toDelete->delete()) { 
+         $toDelete->setagentnumberpatternid($agentnumberpatternid);
+         if ($toDelete->delete()) {
              $result = "Deleted.";
-         } else { 
+         } else {
              $result =  "Error in deleting agent number pattern record. " . $toDelete->errorMessage();
          }
-      } else { 
+      } else {
          $result =  "No agent number pattern specified to delete.";
       }
-   } else { 
+   } else {
       $result =  "You aren't authorized to edit agent records.";
    }
    return $result;
@@ -520,19 +520,19 @@ function deleteAgentNumberPattern($agentnumberpatternid=NULL) {
 
 //***  Functions for handling agent links ****//
 
-function loadAgentLinks() { 
+function loadAgentLinks() {
    $al = null;
    $alid = preg_replace('[^0-9]','',array_key_exists("agentlinksid",$_REQUEST)?$_REQUEST["agentlinksid"]:"");
-   if (strlen($alid) > 0 ) { 
+   if (strlen($alid) > 0 ) {
      $al = new agentlinks();
      $al->load($alid);
-   } else { 
+   } else {
       throw new Exception("No agent links record specified.");
    }
    return $al;
-} 
+}
 
-function saveAgentLinks($agentlinksid=NULL) { 
+function saveAgentLinks($agentlinksid=NULL) {
    global $CLIENT_ROOT;
    $result = "";
    $am = new AgentManager();
@@ -555,58 +555,58 @@ function saveAgentLinks($agentlinksid=NULL) {
 
 }
 
-function createAgentLinks() { 
+function createAgentLinks() {
    $result = "";
    $am = new AgentManager();
-   if ($am->isAgentEditor()) { 
-     $toSave = new agentlinks();      
-     if ($toSave!=null) { 
+   if ($am->isAgentEditor()) {
+     $toSave = new agentlinks();
+     if ($toSave!=null) {
         $agentid = preg_replace('[^0-9]','',array_key_exists("agentid",$_REQUEST)?$_REQUEST["agentid"]:"");
         $toSave->setagentid($agentid);
         $result = editAgentLinks($toSave);
-     } else { 
+     } else {
         $result =  "Error in creating agent links record.";
      }
-   } else { 
+   } else {
       $result =  "You aren't authorized to edit agent records.";
    }
    return $result;
 }
 
-function editAgentLinks($al) { 
+function editAgentLinks($al) {
    $result = "";
    $am = new AgentManager();
-   if ($am->isAgentEditor()) { 
-      if ($al==null) { 
+   if ($am->isAgentEditor()) {
+      if ($al==null) {
          $result =  "Error: No agent link object found.";
-      } else { 
+      } else {
          $alview = new agentlinksView();
          $alview->setModel($al);
          $result = $alview->getEditFormView();
       }
-   } else { 
+   } else {
       $result =  "You aren't authorized to edit agent records.";
    }
    return $result;
-} 
+}
 
-function deleteAgentLinks($agentlinksid=NULL) { 
+function deleteAgentLinks($agentlinksid=NULL) {
    global $CLIENT_ROOT;
    $result = "";
    $am = new AgentManager();
-   if ($am->isAgentEditor()) { 
-      if (strlen($agentlinksid)>0) { 
+   if ($am->isAgentEditor()) {
+      if (strlen($agentlinksid)>0) {
          $toDelete = new agentlinks();
-         $toDelete->setagentlinksid($agentlinksid);      
-         if ($toDelete->delete()) { 
+         $toDelete->setagentlinksid($agentlinksid);
+         if ($toDelete->delete()) {
              $result = "Deleted.";
-         } else { 
+         } else {
              $result =  "Error in deleting agent links record. " . $toDelete->errorMessage();
          }
-      } else { 
+      } else {
          $result =  "No agent links specified to delete.";
       }
-   } else { 
+   } else {
       $result =  "You aren't authorized to edit agent records.";
    }
    return $result;
@@ -614,19 +614,19 @@ function deleteAgentLinks($agentlinksid=NULL) {
 
 //***  Functions for handling agent relationships ****//
 
-function loadAgentRelations() { 
+function loadAgentRelations() {
    $al = null;
    $alid = preg_replace('[^0-9]','',array_key_exists("agentrelationsid",$_REQUEST)?$_REQUEST["agentrelationsid"]:"");
-   if (strlen($alid) > 0 ) { 
+   if (strlen($alid) > 0 ) {
      $al = new agentrelations();
      $al->load($alid);
-   } else { 
+   } else {
       throw new Exception("No agent relationships record specified.");
    }
    return $al;
-} 
+}
 
-function saveAgentRelations($agentrelationsid=NULL) { 
+function saveAgentRelations($agentrelationsid=NULL) {
    global $CLIENT_ROOT;
    $result = "";
    $am = new AgentManager();
@@ -649,58 +649,58 @@ function saveAgentRelations($agentrelationsid=NULL) {
 
 }
 
-function createAgentRelations() { 
+function createAgentRelations() {
    $result = "";
    $am = new AgentManager();
-   if ($am->isAgentEditor()) { 
-     $toSave = new agentrelations();      
-     if ($toSave!=null) { 
+   if ($am->isAgentEditor()) {
+     $toSave = new agentrelations();
+     if ($toSave!=null) {
         $fromagentid = preg_replace('[^0-9]','',array_key_exists("fromagentid",$_REQUEST)?$_REQUEST["fromagentid"]:"");
         $toSave->setfromagentid($fromagentid);
         $result = editAgentRelations($toSave);
-     } else { 
+     } else {
         $result =  "Error in creating agent relationships record.";
      }
-   } else { 
+   } else {
       $result =  "You aren't authorized to edit agent records.";
    }
    return $result;
 }
 
-function editAgentRelations($al) { 
+function editAgentRelations($al) {
    $result = "";
    $am = new AgentManager();
-   if ($am->isAgentEditor()) { 
-      if ($al==null) { 
+   if ($am->isAgentEditor()) {
+      if ($al==null) {
          $result =  "Error: No agent relationship object found.";
-      } else { 
+      } else {
          $alview = new agentrelationsView();
          $alview->setModel($al);
          $result = $alview->getEditFormView();
       }
-   } else { 
+   } else {
       $result =  "You aren't authorized to edit agent records.";
    }
    return $result;
-} 
+}
 
-function deleteAgentRelations($agentrelationsid=NULL) { 
+function deleteAgentRelations($agentrelationsid=NULL) {
    global $CLIENT_ROOT;
    $result = "";
    $am = new AgentManager();
-   if ($am->isAgentEditor()) { 
-      if (strlen($agentrelationsid)>0) { 
+   if ($am->isAgentEditor()) {
+      if (strlen($agentrelationsid)>0) {
          $toDelete = new agentrelations();
-         $toDelete->setagentrelationsid($agentrelationsid);      
-         if ($toDelete->delete()) { 
+         $toDelete->setagentrelationsid($agentrelationsid);
+         if ($toDelete->delete()) {
              $result = "Deleted.";
-         } else { 
+         } else {
              $result =  "Error in deleting agent relationships record. " . $toDelete->errorMessage();
          }
-      } else { 
+      } else {
          $result =  "No agent relationships specified to delete.";
       }
-   } else { 
+   } else {
       $result =  "You aren't authorized to edit agent records.";
    }
    return $result;
@@ -708,19 +708,19 @@ function deleteAgentRelations($agentrelationsid=NULL) {
 
 //***  Functions for handling agent teams ****//
 
-function loadAgentTeams() { 
+function loadAgentTeams() {
    $al = null;
    $alid = preg_replace('[^0-9]','',array_key_exists("agentteamid",$_REQUEST)?$_REQUEST["agentteamid"]:"");
-   if (strlen($alid) > 0 ) { 
+   if (strlen($alid) > 0 ) {
      $al = new agentteams();
      $al->load($alid);
-   } else { 
+   } else {
       throw new Exception("No agent team record specified.");
    }
    return $al;
-} 
+}
 
-function saveAgentTeams($agentteamid=NULL) { 
+function saveAgentTeams($agentteamid=NULL) {
    global $CLIENT_ROOT;
    $result = "";
    $am = new AgentManager();
@@ -743,58 +743,58 @@ function saveAgentTeams($agentteamid=NULL) {
 
 }
 
-function createAgentTeams() { 
+function createAgentTeams() {
    $result = "";
    $am = new AgentManager();
-   if ($am->isAgentEditor()) { 
-     $toSave = new agentteams();      
-     if ($toSave!=null) { 
+   if ($am->isAgentEditor()) {
+     $toSave = new agentteams();
+     if ($toSave!=null) {
         $teamagentid = preg_replace('[^0-9]','',array_key_exists("teamagentid",$_REQUEST)?$_REQUEST["teamagentid"]:"");
         $toSave->setteamagentid($teamagentid);
         $result = editAgentTeams($toSave);
-     } else { 
+     } else {
         $result =  "Error in creating agent teams record.";
      }
-   } else { 
+   } else {
       $result =  "You aren't authorized to edit agent records.";
    }
    return $result;
 }
 
-function editAgentTeams($al) { 
+function editAgentTeams($al) {
    $result = "";
    $am = new AgentManager();
-   if ($am->isAgentEditor()) { 
-      if ($al==null) { 
+   if ($am->isAgentEditor()) {
+      if ($al==null) {
          $result =  "Error: No agent team object found.";
-      } else { 
+      } else {
          $alview = new agentteamsView();
          $alview->setModel($al);
          $result = $alview->getEditFormView();
       }
-   } else { 
+   } else {
       $result =  "You aren't authorized to edit agent records.";
    }
    return $result;
-} 
+}
 
-function deleteAgentTeams($agentteamid=NULL) { 
+function deleteAgentTeams($agentteamid=NULL) {
    global $CLIENT_ROOT;
    $result = "";
    $am = new AgentManager();
-   if ($am->isAgentEditor()) { 
-      if (strlen($agentteamid)>0) { 
+   if ($am->isAgentEditor()) {
+      if (strlen($agentteamid)>0) {
          $toDelete = new agentteams();
-         $toDelete->setagentteamid($agentteamid);      
-         if ($toDelete->delete()) { 
+         $toDelete->setagentteamid($agentteamid);
+         if ($toDelete->delete()) {
              $result = "Deleted.";
-         } else { 
+         } else {
              $result =  "Error in deleting agent team record. " . $toDelete->errorMessage();
          }
-      } else { 
+      } else {
          $result =  "No agent teams specified to delete.";
       }
-   } else { 
+   } else {
       $result =  "You aren't authorized to edit agent records.";
    }
    return $result;

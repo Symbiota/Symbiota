@@ -1,18 +1,18 @@
 <?php
 /*
  * INPUT
- * 		ocrinput [required] - 
+ * 		ocrinput [required] -
  *  	returnformat [optional] - json, xml, html
  *  	charset output [not yet supported] - utf-8, iso-8859-1
- * 
+ *
  * OUTPUT
- * 		Success: string representing parsed data with Darwin Core terms as field keys 
+ * 		Success: string representing parsed data with Darwin Core terms as field keys
  * 		Fail: string with error
  */
 
 //error_reporting(E_ALL);
 error_reporting(0);
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SalixHandler.php');
 header("Content-Type: text/html; charset=UTF-8");
 

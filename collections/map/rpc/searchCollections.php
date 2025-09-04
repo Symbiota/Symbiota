@@ -1,5 +1,5 @@
 <?php
-include_once('../../../config/symbini.php');
+include_once(__DIR__ . '/../../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceMapManager.php');
 
 header('Content-Type: application/json;charset=' . $CHARSET);
@@ -80,12 +80,12 @@ foreach ($coordArr as $collName => $coll) {
 
 		//Collect all records
 		array_push($recordArr, [
-			'id' => $record['id'], 
-			'tid' => $record['tid'], 
-			'catalogNumber' => $record['catalogNumber'], 
-			'eventdate' => $record['eventdate'], 
-			'sciname' => $record['sn'], 
-			'collid' => $record['collid'], 
+			'id' => $record['id'],
+			'tid' => $record['tid'],
+			'catalogNumber' => $record['catalogNumber'],
+			'eventdate' => $record['eventdate'],
+			'sciname' => $record['sn'],
+			'collid' => $record['collid'],
 			'family' => $record['fam'],
 			'occid' => $recordId,
 			'host' => $host,
