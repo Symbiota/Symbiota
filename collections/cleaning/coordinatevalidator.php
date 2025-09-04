@@ -1,7 +1,7 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCleaner.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
@@ -275,7 +275,7 @@ function renderValidateCoordinates($cleanManager, $targetRank) {
 					<?= $LANG['VALIDATE_ALL_COORDINATES'] ?>
 					(<?= $unverifiedCount . ' ' . $LANG['UNVERIFIED_RECORDS'] ?>)
 				</button>
-				<?php endif ?> 
+				<?php endif ?>
 
 				<?php
 					$countryArr = $cleanManager->getUnverifiedByCountry();
