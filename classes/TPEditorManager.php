@@ -315,7 +315,9 @@ class TPEditorManager extends Manager {
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr[$r->langname] = $r->langid;
-			$retArr[$r->iso639_1] = $r->langid;
+			if (!empty($r->iso639_1)) {
+				$retArr[$r->iso639_1] = $r->langid;
+			}
 		}
 		$rs->free();
 		return $retArr;
