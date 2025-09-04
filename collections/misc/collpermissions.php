@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/PermissionsManager.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/misc/collpermissions.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/misc/collpermissions.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/misc/collpermissions.en.php');
@@ -185,7 +185,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 			}
 			?>
 			<section class="fieldset-like">
-				<h2><span><b><?php echo (isset($LANG['EDITORS'])?$LANG['EDITORS']:'Editors'); ?></b></span></h2> 
+				<h2><span><b><?php echo (isset($LANG['EDITORS'])?$LANG['EDITORS']:'Editors'); ?></b></span></h2>
 				<?php
 				if(array_key_exists('editor',$collPerms)){
 					?>

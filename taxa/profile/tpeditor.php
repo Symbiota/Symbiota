@@ -2,7 +2,7 @@
 
 use PHPUnit\Exception;
 
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TPEditorManager.php');
 include_once($SERVER_ROOT.'/classes/TPDescEditorManager.php');
 include_once($SERVER_ROOT.'/classes/TPImageEditorManager.php');
@@ -208,7 +208,7 @@ if($isEditor && $action){
 		 $tradeName = !empty($splitSciname['tradeName']) ? ($tEditor->standardizeTradeName($splitSciname['tradeName']) . ' ') : '';
 		 $nonItalicizedScinameComponent = $author . $cultivarEpithet . $tradeName;
 
-		 echo $LANG['TAX_PROF_EDITOR'] . ': <i>' . $splitSciname['base'] . '</i> ' . $nonItalicizedScinameComponent; 
+		 echo $LANG['TAX_PROF_EDITOR'] . ': <i>' . $splitSciname['base'] . '</i> ' . $nonItalicizedScinameComponent;
 		 ?></h1>
 		<?php
 		if($tEditor->getTid()){

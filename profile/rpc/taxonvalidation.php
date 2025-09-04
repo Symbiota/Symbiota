@@ -1,12 +1,12 @@
 <?php
-	include_once('../../config/symbini.php');
+	include_once(__DIR__ . '/../../config/symbini.php');
 	include_once($SERVER_ROOT.'/config/dbconnection.php');
 	header("Content-Type: text/html; charset=".$CHARSET);
 	$con = MySQLiConnectionFactory::getCon("readonly");
 	$queryString = $con->real_escape_string($_REQUEST['term']);
 	$retStr = '';
 	if($queryString){
-		$sql = 'SELECT tid '. 
+		$sql = 'SELECT tid '.
 			'FROM taxa '.
 			'WHERE sciname = "'.$queryString.'" ';
 		//echo $sql;

@@ -13,11 +13,11 @@ if(!file_exists('./config/symbini.php')) {
 			<title>Script Error</title>
 			$head
 		</head>
-		<body style="width: 100vw; height: 100vh;display: flex">      
+		<body style="width: 100vw; height: 100vh;display: flex">
 			<div style="text-align: center; margin: auto; background-color: --primary">
 				<h1 class="page-heading">Command Line Only Script</h1>
 				<a href="$CLIENT_ROOT">Back to Home</a>
-			</div> 
+			</div>
 		</body>
 	</html>
 	HTML;
@@ -31,11 +31,11 @@ if(!file_exists('./config/symbini.php')) {
 		$conn = MySQLiConnectionFactory::getCon('readonly');
 		$taxons = $conn->query(
 			'SELECT ts.family, t.tid, t.sciname, t.rankid, s.tid as synTid, IF(t.sciname
-			!= s.sciname ,s.sciname, null) as Synonym FROM taxa t INNER JOIN  
-			taxstatus ts ON t.tid = ts.tidaccepted INNER JOIN taxa s ON ts.tid = 
-			s.tid INNER JOIN taxstatus tst ON t.tid = tst.tid WHERE t.rankid >= 180 
-			AND (ts.taxonomicStatus IS NULL OR ts.taxonomicStatus != 
-			"unresolved") AND tst.tid = tst.tidaccepted AND ts.family 
+			!= s.sciname ,s.sciname, null) as Synonym FROM taxa t INNER JOIN
+			taxstatus ts ON t.tid = ts.tidaccepted INNER JOIN taxa s ON ts.tid =
+			s.tid INNER JOIN taxstatus tst ON t.tid = tst.tid WHERE t.rankid >= 180
+			AND (ts.taxonomicStatus IS NULL OR ts.taxonomicStatus !=
+			"unresolved") AND tst.tid = tst.tidaccepted AND ts.family
 			IN("Amblystegiaceae","Andreaeaceae","Andreaeobryaceae","Anomodo
 			ntaceae","Archidiaceae","Aulacomniaceae","Bartramiaceae","Brachytheciaceae",
 			"Bruchiaceae","Bryaceae","Bryoxiphiaceae","Calliergonacea
@@ -55,7 +55,7 @@ if(!file_exists('./config/symbini.php')) {
 			"Rutenbergiaceae","Schistostegaceae","Scouleriaceae","Seligeriaceae"
 			,"Sematophyllaceae","Sphagnaceae","Splachnaceae","Splachnobryace
 			ae","Stereophyllaceae","Takakiaceae","Tetraphidaceae","Theliaceae","
-			Thuidiaceae","Timmiaceae") ORDER BY ts.family, t.sciname, t.rankid, 
+			Thuidiaceae","Timmiaceae") ORDER BY ts.family, t.sciname, t.rankid,
 			s.sciname'
 		);
 
@@ -194,7 +194,7 @@ if(!file_exists('./config/symbini.php')) {
 			foreach($element->attributes as $attrib) {
 				if($attrib->name == "class") {
 					if(in_array($attrib->value, ['statement'])) {
-						$innerHTML = ""; 
+						$innerHTML = "";
 						foreach ($element->childNodes as $child) {
 							$innerHTML .= $element->ownerDocument->saveHTML($child);
 						}
@@ -247,8 +247,8 @@ if(!file_exists('./config/symbini.php')) {
 	function getWikipediaStatements($taxon_name) {
 		$host = 'https://www.wikipedia.org';
 		return [
-			'source' => 'wikipedia', 
-			'sourceUrl' => $host . '/wiki/' . str_replace(' ', '_', $taxon_name), 
+			'source' => 'wikipedia',
+			'sourceUrl' => $host . '/wiki/' . str_replace(' ', '_', $taxon_name),
 			'statements' => [
 				['header' => 'General Info', 'statement' => extractWikiSentences($host)(10, $taxon_name)]
 			]
@@ -287,7 +287,7 @@ if(!file_exists('./config/symbini.php')) {
 	}
 
 	if(isset($GLOBALS['SYMB_UID'])) {
-		$taxon_names  =get_taxon_names(); 
+		$taxon_names  =get_taxon_names();
 		$count = 0;
 
 		$maxCount = count($taxon_names);
@@ -315,10 +315,10 @@ if(!file_exists('./config/symbini.php')) {
 
 
 			/* No Wikipedia statements for now
-	  //If no synonym hits check wikipedia for main name 
+	  //If no synonym hits check wikipedia for main name
 	  if(!$statements) $statements = getWikipediaStatements($taxon['sciname']);
 
-	  //If no main name wikipedia hits check synonyms 
+	  //If no main name wikipedia hits check synonyms
 	  if(!$statements) {
 		 foreach($taxon['synonyms'] as $synonym) {
 			$statements = getWikipediaStatements($synonym);

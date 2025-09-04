@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCollectionProfile.php');
 include_once($SERVER_ROOT.'/content/lang/collections/misc/collstats.' . $LANG_TAG . '.php');
 header("Content-Type: text/html; charset=" . $CHARSET);
@@ -1063,7 +1063,7 @@ if($action != "Update Statistics"){
 									</section>
 									<div class="top-marg">
 										<b><?php echo $LANG['SPEC_W_COUNTRY']; ?>:</b> <?php echo number_format($total); ?><br />
-										<?php 
+										<?php
 										if ($results){
 											echo $LANG['SPEC_WO_COUNTRY']; ?>: <?php echo number_format(($results['SpecimenCount']-$total)+$results['SpecimensNullLatitude']);
 										}

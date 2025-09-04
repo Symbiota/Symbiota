@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/TaxonProfile.php');
 Header('Content-Type: text/html; charset=' . $CHARSET);
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/taxa/index.' . $LANG_TAG . '.php'))
@@ -107,7 +107,7 @@ $nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 						}
 						?>
 						<div id="scinameDiv">
-							<?php 
+							<?php
 								$splitSciname = $taxonManager->splitSciname();
 								$sciName = $splitSciname['base'];
 								$taxonRankId = $taxonManager->getRankId();
@@ -117,7 +117,7 @@ $nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 								$nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 								$sciName .= $nonItalicizedScinameComponent;
 								$taxonToDisplay = $taxonRankId > 179 ? $sciName : $taxonManager->getTaxonName();
-								echo '<span id="'.($taxonRankId > 179 ? 'sciname':'taxon').'">' . $taxonToDisplay . '</span>'; 
+								echo '<span id="'.($taxonRankId > 179 ? 'sciname':'taxon').'">' . $taxonToDisplay . '</span>';
 							?>
 							<span id="author"><?php echo $taxonManager->getTaxonAuthor(); ?></span>
 							<?php

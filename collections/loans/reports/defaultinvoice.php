@@ -1,5 +1,5 @@
 <?php
-include_once('../../../config/symbini.php');
+include_once(__DIR__ . '/../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLoans.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/loans/reports/defaultinvoice.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/loans/reports/defaultinvoice.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/loans/reports/defaultinvoice.en.php');
@@ -445,7 +445,7 @@ else{
 								<?php } ?>
 								<tr>
 									<td>
-										<?php 
+										<?php
 										if (isset($addressArr['city'])) echo $addressArr['city'];
 										if (isset($addressArr['stateprovince'])) echo ', '.$addressArr['stateprovince'];
 										if (isset($addressArr['postalcode'])) echo ' '.$addressArr['postalcode'];

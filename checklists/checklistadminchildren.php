@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistAdmin.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/checklistadminchildren.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/checklists/checklistadminchildren.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT.'/content/lang/checklists/checklistadminchildren.en.php');
@@ -167,9 +167,9 @@ $childArr = $clManager->getChildrenChecklist()
 				</div>
 				<div class="section-div">
 					<label><?php echo $LANG['TRANSFER_METHOD'] ?>:</label>
-					<input name="transmethod" id="transtaxa" type="radio" value="0" <?php if(!$transferMethod) echo 'checked'; ?>> 
+					<input name="transmethod" id="transtaxa" type="radio" value="0" <?php if(!$transferMethod) echo 'checked'; ?>>
 					<label for="transtaxa"><?php echo $LANG['TRANSFERTAXA'] ?></label>
-					<input name="transmethod" id="copytaxa" type="radio" value="1" <?php if($transferMethod == 1) echo 'checked'; ?>> 
+					<input name="transmethod" id="copytaxa" type="radio" value="1" <?php if($transferMethod == 1) echo 'checked'; ?>>
 					<label for="copytaxa"><?php echo $LANG['COPYTAXA'] ?></label>
 				</div>
 				<div class="section-div">

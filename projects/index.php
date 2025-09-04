@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ImInventories.php');
 include_once($SERVER_ROOT.'/classes/MapSupport.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/projects/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/projects/index.' . $LANG_TAG . '.php');
@@ -226,7 +226,7 @@ if(!$researchList && !$editMode){
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href="<?= $CLIENT_ROOT ?>/"><?= $LANG['NAV_HOME'] ?> </a> &gt;&gt; 
+		<a href="<?= $CLIENT_ROOT ?>/"><?= $LANG['NAV_HOME'] ?> </a> &gt;&gt;
 		<b><a href="index.php?pid=<?= $pid ?>"><?= $LANG['INVPROJLIST'] ?></a></b>
 	</div>
 

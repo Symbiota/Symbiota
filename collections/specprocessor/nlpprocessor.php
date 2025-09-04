@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecProcessorManager.php');
 include_once($SERVER_ROOT.'/classes/SpecProcNlpBryophyte.php');
 include_once($SERVER_ROOT.'/classes/SpecProcNlpLichen.php');
@@ -40,36 +40,36 @@ if($isEditor){
 <!-- This is inner text! -->
 <div role="main" id="innertext">
 	<h1><?php echo $LANG['NLP_PROCESSOR']; ?></h1>
-	<?php 
-	if($status){ 
+	<?php
+	if($status){
 		?>
 		<div style='margin:20px 0px 20px 0px;'>
 			<hr/>
 			<?php echo $status; ?>
 			<hr/>
 		</div>
-		<?php 
+		<?php
 	}
 	if($isEditor && $collid){
 		$unprocessedCnt = $procManager->getProcessingStatusCount('unprocessed');
 		?>
 		<div style="height:400px;">
 			<div style="margin:5px;">
-				<?php echo $LANG['UNPROCESSED_SPECS']; ?>: 
-				<?php 
-				echo $unprocessedCnt; 
+				<?php echo $LANG['UNPROCESSED_SPECS']; ?>:
+				<?php
+				echo $unprocessedCnt;
 				?>
 			</div>
 			<div style="margin:5px;">
-				<?php echo $LANG['UNPROCESSED_SPECS_NO_IMGS']; ?>: 
-				<?php 
-				echo $procManager->getUnprocSpecNoImage(); 
+				<?php echo $LANG['UNPROCESSED_SPECS_NO_IMGS']; ?>:
+				<?php
+				echo $procManager->getUnprocSpecNoImage();
 				?>
 			</div>
 			<div style="margin:5px;">
-				<?php echo $LANG['UNPROCESSED_SPECS_NO_OCR']; ?>: 
-				<?php 
-				echo $procManager->getSpecNoOcr(); 
+				<?php echo $LANG['UNPROCESSED_SPECS_NO_OCR']; ?>:
+				<?php
+				echo $procManager->getSpecNoOcr();
 				?>
 			</div>
 		</div>
@@ -77,7 +77,7 @@ if($isEditor){
 		if($unprocessedCnt){
 			?>
 			<div>
-				
+
 			</div>
 			<?php
 		}
