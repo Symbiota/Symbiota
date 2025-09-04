@@ -202,6 +202,22 @@ function submitDefaultForm(f){
 
 function resetForm(){
 	$( "#fometid" ).val("");
+
+	const reset_available_inputs = [
+		'othercatalognumbersdiv',
+		'countrydiv',
+		'recordedbydiv',
+		'recordnumberdiv',
+		'eventdatediv',
+		'labelprojectdiv',
+		'processingstatusdiv',
+		'languagediv',
+		'exsiccatadiv',
+	];
+
+	for(let id of reset_available_inputs) {
+		toggleFieldDiv(id, false);
+	}
 }
 
 function createOccurDiv(catalogNumber, occid, action){
@@ -244,12 +260,23 @@ function deleteOccurrence(occid){
 	}
 }
 
-function toggleFieldDiv(divName){
-	toggle(divName);
+function toggleFieldDiv(divName, checked){
+	const elem = document.getElementById(divName);
+	if(elem) {
+		if(checked) {
+			elem.style.display = '';
+		} else {
+			elem.style.display = 'none';
+		}
+	}
+
 	var allInputs = $("#"+divName+" > :input");
 	allInputs.each(function(){
-		if(this.type == "checkbox") $(this).prop("checked", false);
-		else this.value = "";
+		if(this.type == "checkbox") { 
+			$(this).prop("checked", false);
+		} else {
+			this.value = "" 
+		};
 	});
 }
 

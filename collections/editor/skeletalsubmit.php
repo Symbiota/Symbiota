@@ -92,20 +92,20 @@ if($collid){
 							<legend><?php echo $LANG['OPTIONS']; ?></legend>
 							<div style="float:right;"><a href="#" onclick="hideOptions()" style="color:red" ><?php echo $LANG['X_CLOSE']; ?></a></div>
 							<div style="text-decoration: underline"><?php echo $LANG['FIELD_DISPLAY']; ?>:</div>
-							<input type="checkbox" onclick="toggleFieldDiv('othercatalognumbersdiv')" /> <?php echo $LANG['OTHER_CAT_NUMS']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('authordiv')" CHECKED /> <?php echo $LANG['AUTHOR']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('familydiv')" CHECKED /> <?php echo $LANG['FAMILY']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('localitysecuritydiv')" CHECKED /> <?php echo $LANG['SECURITY']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('countrydiv')" /> <?php echo $LANG['COUNTRY']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('statediv')" CHECKED /> <?php echo $LANG['STATE_PROVINCE']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('countydiv')" CHECKED /> <?php echo $LANG['COUNTY_PARISH']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('recordedbydiv')" /> <?php echo $LANG['COLLECTOR']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('recordnumberdiv')" /> <?php echo $LANG['COLLECTOR_NO']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('eventdatediv')" /> <?php echo $LANG['COLLECTION_DATE']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('labelprojectdiv')" /> <?php echo $LANG['LABEL_PROJECT']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('processingstatusdiv')" /> <?php echo $LANG['PROCESSING_STATUS']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('languagediv')" /> <?php echo $LANG['LANGUAGE']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('exsiccatadiv')" /> <?php echo $LANG['EXSICCATA']; ?><br/>
+							<input type="checkbox" onclick="toggleFieldDiv('othercatalognumbersdiv', this.checked)" /> <?php echo $LANG['OTHER_CAT_NUMS']; ?><br/>
+							<input type="checkbox" onclick="toggleFieldDiv('authordiv', this.checked)" CHECKED /> <?php echo $LANG['AUTHOR']; ?><br/>
+							<input type="checkbox" onclick="toggleFieldDiv('familydiv', this.checked)" CHECKED /> <?php echo $LANG['FAMILY']; ?><br/>
+							<input type="checkbox" onclick="toggleFieldDiv('localitysecuritydiv', this)" CHECKED /> <?php echo $LANG['SECURITY']; ?><br/>
+							<input type="checkbox" onclick="toggleFieldDiv('countrydiv', this.checked)" /> <?php echo $LANG['COUNTRY']; ?><br/>
+							<input type="checkbox" onclick="toggleFieldDiv('statediv', this.checked)" CHECKED /> <?php echo $LANG['STATE_PROVINCE']; ?><br/>
+							<input type="checkbox" onclick="toggleFieldDiv('countydiv', this.checked)" CHECKED /> <?php echo $LANG['COUNTY_PARISH']; ?><br/>
+							<input type="checkbox" onclick="toggleFieldDiv('recordedbydiv', this.checked)" /> <?php echo $LANG['COLLECTOR']; ?><br/>
+							<input type="checkbox" onclick="toggleFieldDiv('recordnumberdiv', this.checked)" /> <?php echo $LANG['COLLECTOR_NO']; ?><br/>
+							<input type="checkbox" onclick="toggleFieldDiv('eventdatediv', this.checked)" /> <?php echo $LANG['COLLECTION_DATE']; ?><br/>
+							<input type="checkbox" onclick="toggleFieldDiv('labelprojectdiv', this.checked)" /> <?php echo $LANG['LABEL_PROJECT']; ?><br/>
+							<input type="checkbox" onclick="toggleFieldDiv('processingstatusdiv', this.checked)" /> <?php echo $LANG['PROCESSING_STATUS']; ?><br/>
+							<input type="checkbox" onclick="toggleFieldDiv('languagediv', this.checked)" /> <?php echo $LANG['LANGUAGE']; ?><br/>
+							<input type="checkbox" onclick="toggleFieldDiv('exsiccatadiv', this.checked)" /> <?php echo $LANG['EXSICCATA']; ?><br/>
 							<div style="text-decoration: underline"><?php echo $LANG['CATNUM_MATCH']; ?>:</div>
 							<input name="addaction" type="radio" value="1" checked /> <?php echo $LANG['RESTRICT_IF_EXISTS']; ?> <br/>
 							<input name="addaction" type="radio" value="2" /> <?php echo $LANG['APPEND_VALUES']; ?>
