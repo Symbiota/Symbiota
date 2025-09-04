@@ -202,22 +202,6 @@ function submitDefaultForm(f){
 
 function resetForm(){
 	$( "#fometid" ).val("");
-
-	const reset_available_inputs = [
-		'othercatalognumbersdiv',
-		'countrydiv',
-		'recordedbydiv',
-		'recordnumberdiv',
-		'eventdatediv',
-		'labelprojectdiv',
-		'processingstatusdiv',
-		'languagediv',
-		'exsiccatadiv',
-	];
-
-	for(let id of reset_available_inputs) {
-		toggleFieldDiv(id, false);
-	}
 }
 
 function createOccurDiv(catalogNumber, occid, action){
