@@ -1,7 +1,7 @@
 <?php
 //Deactivate file all together until function is rebuilt in a more secure manner
 exit();
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/GlossaryUpload.php');
 include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
 include_once($SERVER_ROOT.'/content/lang/glossary/glossaryloader.'.$LANG_TAG.'.php');

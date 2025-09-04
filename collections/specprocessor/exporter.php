@@ -1,11 +1,11 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceDownload.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/specprocessor/exporter.' . $LANG_TAG . '.php')){
 	include_once($SERVER_ROOT . '/content/lang/collections/specprocessor/exporter.' . $LANG_TAG . '.php');
 }else{
 	include_once($SERVER_ROOT . '/content/lang/collections/specprocessor/exporter.en.php');
-} 
+}
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/customsearchtype.' . $LANG_TAG . '.php')){
 	include_once($SERVER_ROOT . '/content/lang/collections/customsearchtype.' . $LANG_TAG . '.php');
 }

@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once('../classes/utilities/GeneralUtil.php');
 
 if(!empty($THIRD_PARTY_OID_AUTH_ENABLED)){

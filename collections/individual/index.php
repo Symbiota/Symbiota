@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceIndividual.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverCore.php');
 include_once($SERVER_ROOT . '/classes/utilities/RdfUtil.php');
@@ -327,7 +327,7 @@ $traitArr = $indManager->getTraitArr();
 		}
 		#exsiccati-div{ clear: both; }
 		#rights-div{ clear: both; }
-		.danger{ 
+		.danger{
 			color: var(--danger-color);
 		}
 		<?php

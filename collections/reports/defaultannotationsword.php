@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLabel.php');
 require_once $SERVER_ROOT.'/vendor/phpoffice/phpword/bootstrap.php';
 
@@ -90,7 +90,7 @@ $outerStyle = [
   'borderInsideVSize' => 0,
 ];
 $phpWord->addTableStyle('labelBox', $outerStyle);
-	
+
 $innerStyle = [
 	'cellMargin'=>$marginSize,
 	'borderSize' => 0,
@@ -132,7 +132,7 @@ foreach($labelArr as $occid => $occArr){
 		if($occArr['identificationqualifier']){
 			$currentTxt = htmlspecialchars($occArr['identificationqualifier']) . ' ';
 			$textrun->addText($currentTxt, 'scientificnameauthFont');
-		} 
+		}
 		$scinameStr = $occArr['sciname'];
 		$parentAuthor = (array_key_exists('parentauthor',$occArr)?' '.$occArr['parentauthor']:'');
 		$queryArr = ['subsp.'=>'subsp.', 'sp.'=>'sp.' , 'ssp.'=>'ssp.', 'var.'=>'var.', 'variety'=>'var.', 'Variety'=>'var.', 'v.'=>'var.','f.'=>'f.', 'cf.'=>'cf.', 'aff.'=>'aff.'];

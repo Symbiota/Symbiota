@@ -1,5 +1,5 @@
 <?php
-include_once('../../../config/symbini.php');
+include_once(__DIR__ . '/../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/utilities/SpecProcNlpUtil.php');
 
 $targetParser = 'common';
@@ -26,7 +26,7 @@ if($rawStr) {
 	$handler;
 	if($targetParser == 'bryophyte'){
 		$handler = new SpecProcNlpLbccBryophyte();
-		
+
 	}
 	elseif($targetParser == 'lichen'){
 		$handler = new SpecProcNlpLbccLichen();

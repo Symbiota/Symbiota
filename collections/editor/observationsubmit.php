@@ -1,6 +1,6 @@
 <?php
 //TODO: add code to automatically select hide locality details when taxon/state match name on list
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT.'/classes/Media.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/observationsubmit.'.$LANG_TAG.'.php'))
@@ -57,10 +57,10 @@ if($collMap){
 						'notes' => $_POST['notes' . $i] ?? null,
 						'occid' => $occid
 					],
-					$file, 
+					$file,
 					new LocalStorage($path)
 				);
-				
+
 				if($errors = Media::getErrors()) {
 					$mediaErrors[$i] = $errors;
 				} else {

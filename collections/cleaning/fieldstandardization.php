@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCleaner.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/cleaning/fieldstandardization.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/cleaning/fieldstandardization.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/cleaning/fieldstandardization.en.php');
@@ -55,7 +55,7 @@ if($collMap['colltype'] == 'General Observations' && $obsUid !== 0){
 		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo $LANG['COLLECTION_MANAGEMENT'] ?></a> &gt;&gt;
 		<b><?php echo $LANG['BATCH_FIELD_TOOLS'] ?></b>
 	</div>
-	
+
 	<!-- inner text -->
 	<div role="main" id="innertext">
 		<h1 class="page-heading"><?php echo $LANG['FIELD_STANDARDIZATION']; ?></h1>
@@ -89,10 +89,10 @@ if($collMap['colltype'] == 'General Observations' && $obsUid !== 0){
 							<option value=""><?php echo $LANG['SELECT_TARGET_FIELD'] ?></option>
 							<option value="">--------------------------------</option>
 							<?php
-	
-	
-	
-	
+
+
+
+
 							?>
 						</select>
 					</div>
@@ -102,10 +102,10 @@ if($collMap['colltype'] == 'General Observations' && $obsUid !== 0){
 							<option value=""><?php echo $LANG['SELECT_TARGET_VALUE'] ?></option>
 							<option value="">--------------------------------</option>
 							<?php
-	
-	
-	
-	
+
+
+
+
 							?>
 						</select>
 					</div>

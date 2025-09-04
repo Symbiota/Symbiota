@@ -2,7 +2,7 @@
 
 use PHPUnit\Exception;
 
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TPEditorManager.php');
 include_once($SERVER_ROOT.'/classes/TPDescEditorManager.php');
 include_once($SERVER_ROOT.'/classes/TPImageEditorManager.php');
@@ -114,7 +114,7 @@ if($isEditor && $action){
 	}
 	elseif($action == 'Upload Image'){
 		$family = $tEditor->getFamily();
-		$path = ($family? $family: '') . '/' . date('Ym') . '/';
+		$path = ($family? $family . '/': '') . date('Ym') . '/';
 		try {
 			Media::uploadAndInsert(
 				$_POST,
