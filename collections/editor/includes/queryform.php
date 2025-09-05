@@ -255,18 +255,28 @@ else{
 				if($ACTIVATE_EXSICCATI){
 					if($exsList = $occManager->getExsiccatiList()){
 						?>
-						<div class="fieldGroupDiv" title="<?php echo $LANG['ENTER_EXS_TITLE']; ?>">
-							<div class="fieldDiv">
-								<?php echo $LANG['EXS_TITLE']; ?>:
-								<select name="q_exsiccatiid" style="max-width:650px">
-									<option value=""></option>
-									<?php
-									foreach($exsList as $exsID => $exsTitle){
-										echo '<option value="'.$exsID.'" '.($qExsiccatiId==$exsID?'SELECTED':'').'>'.$exsTitle.'</option>';
-									}
-									?>
-								</select>
+						<div style="display:flex; gap: 1rem">
+							<div class="fieldGroupDiv" title="<?php echo $LANG['ENTER_EXS_TITLE']; ?>">
+								<div class="fieldDiv">
+									<?php echo $LANG['EXS_TITLE']; ?>:
+									<select name="q_exsiccatiid" style="max-width:650px">
+										<option value=""></option>
+										<?php
+										foreach($exsList as $exsID => $exsTitle){
+											echo '<option value="'.$exsID.'" '.($qExsiccatiId==$exsID?'SELECTED':'').'>'.$exsTitle.'</option>';
+										}
+										?>
+									</select>
+								</div>
 							</div>
+
+							<div class="fieldGroupDiv" title="<?php echo $LANG['ENTER_EXS_TITLE']; ?>">
+								<div class="fieldDiv">
+									<?php echo ' Exsiccati Number' ?>:
+									<input id="q_exsnumber" name="q_exsnumber" type="number">
+								</div>
+							</div>
+
 						</div>
 						<?php
 					}

@@ -160,6 +160,7 @@ class OccurrenceEditorManager {
 			if (array_key_exists('q_processingstatus', $_REQUEST) && $_REQUEST['q_processingstatus']) $this->qryArr['ps'] = trim($_REQUEST['q_processingstatus']);
 			if (array_key_exists('q_datelastmodified', $_REQUEST) && $_REQUEST['q_datelastmodified']) $this->qryArr['dm'] = trim($_REQUEST['q_datelastmodified']);
 			if (array_key_exists('q_exsiccatiid', $_REQUEST) && is_numeric($_REQUEST['q_exsiccatiid'])) $this->qryArr['exsid'] = $_REQUEST['q_exsiccatiid'];
+			if (array_key_exists('q_exsnumber', $_REQUEST) && is_numeric($_REQUEST['q_exsnumber'])) $this->qryArr['exsnumber'] = $_REQUEST['q_exsnumber'];
 			if (array_key_exists('q_dateentered', $_REQUEST) && $_REQUEST['q_dateentered']) $this->qryArr['de'] = trim($_REQUEST['q_dateentered']);
 			if (array_key_exists('q_ocrfrag', $_REQUEST) && $_REQUEST['q_ocrfrag']) $this->qryArr['ocr'] = trim($_REQUEST['q_ocrfrag']);
 			if (array_key_exists('q_imgonly', $_REQUEST) && $_REQUEST['q_imgonly']) $this->qryArr['io'] = 1;
@@ -482,6 +483,12 @@ class OccurrenceEditorManager {
 			$sqlWhere .= 'AND (exn.ometid = ' . $this->qryArr['exsid'] . ') ';
 		}
 
+		//Exsiccati Number
+		if (array_key_exists('exsnumber', $this->qryArr) && is_numeric($this->qryArr['exsnumber'])) {
+			//Used to find records linked to a specific exsiccati
+			$sqlWhere .= 'AND (exn.exsnumber = ' . $this->qryArr['exsnumber'] . ') ';
+		}
+
 		// Traits
 		$traitids = array_key_exists('traitid', $this->qryArr) && is_array($this->qryArr['traitid'])?
 			array_filter($this->qryArr['traitid'], fn($v) => is_numeric($v)): [];
@@ -799,7 +806,7 @@ class OccurrenceEditorManager {
 		if (strpos($this->sqlWhere, 'u.username')) {
 			$sql .= 'LEFT JOIN omoccuredits ome ON o.occid = ome.occid LEFT JOIN users u ON ome.uid = u.uid ';
 		}
-		if (strpos($this->sqlWhere, 'exn.ometid')) {
+		if (strpos($this->sqlWhere, 'exn.ometid') || strpos($this->sqlWhere, 'exn.exsnumber')) {
 			$sql .= 'INNER JOIN omexsiccatiocclink exocc ON o.occid = exocc.occid INNER JOIN omexsiccatinumbers exn ON exocc.omenid = exn.omenid ';
 		}
 		if ($this->crowdSourceMode) {
