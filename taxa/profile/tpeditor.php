@@ -114,7 +114,7 @@ if($isEditor && $action){
 	}
 	elseif($action == 'Upload Image'){
 		$family = $tEditor->getFamily();
-		$path = ($family? $family: '') . '/' . date('Ym') . '/';
+		$path = ($family? $family . '/': '') . date('Ym') . '/';
 		try {
 			Media::uploadAndInsert(
 				$_POST,
