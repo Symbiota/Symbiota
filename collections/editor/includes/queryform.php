@@ -24,6 +24,7 @@ $qProcessingStatus = (array_key_exists('ps',$qryArr)?$qryArr['ps']:'');
 $qDateEntered = (array_key_exists('de',$qryArr)?$qryArr['de']:'');
 $qDateLastModified = (array_key_exists('dm',$qryArr)?$qryArr['dm']:'');
 $qExsiccatiId = (array_key_exists('exsid',$qryArr)?$qryArr['exsid']:'');
+$qExsnumber = (array_key_exists('exsnumber',$qryArr)?$qryArr['exsnumber']:'');
 $qImgOnly = (array_key_exists('io',$qryArr)?$qryArr['io']:0);
 $qWithoutImg = (array_key_exists('woi',$qryArr)?$qryArr['woi']:0);
 $qOcrFrag = (array_key_exists('ocr',$qryArr)?htmlentities($qryArr['ocr'], ENT_COMPAT, $CHARSET):'');
@@ -270,10 +271,10 @@ else{
 								</div>
 							</div>
 
-							<div class="fieldGroupDiv" title="<?php echo $LANG['ENTER_EXS_TITLE']; ?>">
+							<div class="fieldGroupDiv" title="<?php echo $LANG['ENTER_EXS_NUMBER']; ?>">
 								<div class="fieldDiv">
-									<?php echo ' Exsiccati Number' ?>:
-									<input id="q_exsnumber" name="q_exsnumber" type="number">
+									<?php echo $LANG['EXS_NUMBER']; ?>:
+									<input id="q_exsnumber" name="q_exsnumber" type="number" value="<?= $qExsnumber  ?>">
 								</div>
 							</div>
 
