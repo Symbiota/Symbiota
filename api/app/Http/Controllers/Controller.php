@@ -8,7 +8,7 @@ use App\Models\Collection;
 use App\Models\UserAccessToken;
 use App\Models\UserRole;
 
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../../../../config/symbini.php');
 $_ENV['DEFAULT_TITLE'] = $DEFAULT_TITLE;
 $_ENV['PORTAL_GUID'] = $PORTAL_GUID;
 $_ENV['SECURITY_KEY'] = $SECURITY_KEY;
