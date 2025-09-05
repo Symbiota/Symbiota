@@ -96,7 +96,7 @@ class LocalStorage extends StorageStrategy {
 
 		// Create Storage Directory If it doesn't exist
 		if(!is_dir($dir_path)) {
-			mkdir($dir_path, 764, true);
+			mkdir($dir_path, 0764, true);
 		}
 
 		if(!is_writable($dir_path)) {

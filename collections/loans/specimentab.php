@@ -213,7 +213,7 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 	function displayNewDetPanel(mode){
 		if(mode){
 			hideAll();
-			$(".form-checkbox").show();
+			$(".form-checkbox").css("display", "revert");
 			$('#newdet-div').show();
 		}
 		else{
@@ -225,7 +225,7 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 	function displayBatchActionPanel(mode){
 		if(mode){
 			hideAll();
-			$(".form-checkbox").show();
+			$(".form-checkbox").css("display", "revert");
 			$("#batchaction-div").show();
 		}
 		else{
@@ -249,6 +249,7 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 	.form-checkbox{ display:none; }
 	label{ font-weight: bold }
 	.field-div{ margin: 10px 0px }
+	.icon-img{ width: 1.3em }
 </style>
 <div id="outloanspecdiv">
 	<div id="menu-div">
@@ -322,7 +323,7 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 					<button name="formsubmit" type="submit"><?php echo $LANG['PROCESS_SPEC']; ?></button>
 				</div>
 			</form>
-			<form name="refreshspeclist" action="outgoing.php" method="post" style="float:left; margin-left:10px;">
+			<form name="refreshspeclist" action="outgoing.php" method="post" style="float:left; margin:8px;">
 				<input name="loanid" type="hidden" value="<?php echo $loanId; ?>" />
 				<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 				<input name="tabindex" type="hidden" value="1" />
@@ -432,10 +433,10 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 						</td>
 						<td>
 							<div>
-								<a href="#" onclick="openIndPopup(<?php echo $occid; ?>); return false;"><img src="../../images/list.png" style="width:1.3em" title="<?php echo $LANG['OPEN_SPECIMEN_DETAILS']; ?>" /></a><br/>
+								<a href="#" onclick="openIndPopup(<?php echo $occid; ?>); return false;"><img class="icon-img" src="../../images/list.png" title="<?php echo $LANG['OPEN_SPECIMEN_DETAILS']; ?>" /></a><br/>
 							</div>
 							<div>
-								<a href="#" onclick="openEditorPopup(<?php echo $occid; ?>); return false;"><img src="../../images/edit.png" style="width:1.3em" title="<?php echo $LANG['OPEN_OCC_EDITOR']; ?>" /></a>
+								<a href="#" onclick="openEditorPopup(<?php echo $occid; ?>); return false;"><img class="icon-img" src="../../images/edit.png" title="<?php echo $LANG['OPEN_OCC_EDITOR']; ?>" /></a>
 							</div>
 						</td>
 						<td>
@@ -456,7 +457,7 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 							?>
 						</td>
 						<td><?php
-						echo '<div style="float:right"><a href="#" onclick="openCheckinPopup(' . $loanId . ',' . $occid . ',' . $collid . ');return false"><img src="../../images/edit.png" style="width:13px" title="' . $LANG['EDIT_NOTES'] . '" /></a></div>';
+						echo '<div style="float:right"><a href="#" onclick="openCheckinPopup(' . $loanId . ',' . $occid . ',' . $collid . ');return false"><img class="icon-img" src="../../images/edit.png" title="' . $LANG['EDIT_NOTES'] . '" /></a></div>';
 						echo $specArr['returndate'];
 						?></td>
 					</tr>

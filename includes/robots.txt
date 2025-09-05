@@ -1,20 +1,24 @@
-#Activate by moving file to portal's base directory
-User-agent: *  
+User-agent: Googlebot
+User-agent: Bingbot
+User-agent: Slurp
+User-agent: DuckDuckBot
+Crawl-delay: 120
+Allow: /
+Disallow: */checklists/checklist.php?clid=*&
+Disallow: */collections/datasets/emlhandler.php
+Disallow: */collections/individual/
+Disallow: */collections/list.php
+Disallow: */collections/misc/collprofiles.php?collid=*&
+Disallow: */collections/search/
+Disallow: */games/
+Disallow: */ident/key.php?clid=*&
+Disallow: */imagelib/contributors.php*
+Disallow: */imagelib/search.php*
+Disallow: */projects/index.php?pid=*&
+Disallow: *?*refurl=
+Disallow: */taxa/index.php?taxon=*&
+Disallow: */taxa/taxonomy/*
+Disallow: */taxa/resourcetab.php*
 
-Crawl-delay: 10
-Sitemap: /portal/sitemap.php
-
-Allow: /portal/index.php  
-Allow: /portal/checklists/index.php  
-Allow: /portal/collections/index.php  
-Allow: /portal/collections/exsiccati/index.php  
-Allow: /portal/collections/misc/collprofiles.php  
-Allow: /portal/games/index.php  
-Allow: /portal/ident/index.php  
-Allow: /portal/imagelib/index.php  
-Allow: /portal/projects/index.php  
-Allow: /portal/sitemap.php    
-  
-Disallow: /portal/collections/list.php  
-Disallow: /portal/temp/  
-Disallow: /portal/images/
+User-agent: *
+Disallow: /

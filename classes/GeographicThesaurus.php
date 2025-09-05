@@ -1032,7 +1032,7 @@ class GeographicThesaurus extends Manager {
 	public function geocode($lng, $lat) {
 		if (!$lng || !$lat) return [];
 
-		$result = QueryUtil::execute_query($this->conn, "
+		$result = QueryUtil::executeQuery($this->conn, "
 			SELECT g.geoThesID, g.geoterm, g.geoLevel, s.synonyms
 			FROM geographicthesaurus g 
 			JOIN geographicpolygon gp on gp.geoThesID = g.geoThesID 
@@ -1075,7 +1075,7 @@ class GeographicThesaurus extends Manager {
 			JOIN geographicpolygon gp ON gp.geoThesID = g.geoThesID 
 			WHERE " . implode(" or ", $parameters);
 
-		$result = QueryUtil::execute_query(
+		$result = QueryUtil::executeQuery(
 			$this->conn,
 			$sql,
 			$binds

@@ -1,76 +1,97 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ProfileManager.php');
-@include_once($SERVER_ROOT.'/content/lang/profile/personalspecbackup.'.$LANG_TAG.'.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once($SERVER_ROOT . '/classes/DwcArchiverCore.php');
 
-$collId = $_REQUEST["collid"];
-$action = array_key_exists("formsubmit",$_REQUEST)?$_REQUEST["formsubmit"]:'';
-$cSet = array_key_exists("cset",$_REQUEST)?$_REQUEST["cset"]:'utf8';
-$zipFile = array_key_exists("zipfile",$_REQUEST)?$_REQUEST["zipfile"]:0;
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/profile/personalspecbackup.' . $LANG_TAG . '.php'))
+	include_once($SERVER_ROOT.'/content/lang/profile/personalspecbackup.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/profile/personalspecbackup.en.php');
+header('Content-Type: text/html; charset=' . $CHARSET);
 
-$dlManager = new ProfileManager();
-$dlManager->setUid($SYMB_UID);
+$collid = filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT);
+$characterSet = array_key_exists('cset',$_REQUEST) ? $_REQUEST['cset'] : 'UTF-8';
+$action = array_key_exists('formsubmit', $_REQUEST) ? $_REQUEST['formsubmit'] : '';
 
 $editable = 0;
-if($IS_ADMIN
-	|| array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"])
-	|| array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollEditor"])){
-		$editable = 1;
+if($IS_ADMIN || !empty($USER_RIGHTS['CollAdmin'][$collid]) || !empty($USER_RIGHTS['CollEditor'][$collid])){
+	$editable = 1;
+}
+$statusStr = '';
+if($action == 'Perform Backup'){
+	if ($collid) {
+		$dwcaHandler = new DwcArchiverCore();
+		$dwcaHandler->setSchemaType('backup');
+		$dwcaHandler->setObserverUid($SYMB_UID);
+		$dwcaHandler->setCharSetOut($characterSet);
+		$dwcaHandler->setVerboseMode(0);
+		$dwcaHandler->setIncludeDets(1);
+		$dwcaHandler->setIncludeImgs(1);
+		$dwcaHandler->setIncludeAttributes(1);
+		if ($dwcaHandler->hasMaterialSamples($collid)) $dwcaHandler->setIncludeMaterialSample(1);
+		if ($dwcaHandler->hasIdentifiers($collid)) $dwcaHandler->setIncludeIdentifiers(1);
+		$dwcaHandler->setRedactLocalities(0);
+		$dwcaHandler->setCollArr($collid);
+
+		$archiveFile = $dwcaHandler->createDwcArchive();
+
+		if ($archiveFile) {
+			ob_start();
+			ob_clean();
+			ob_end_flush();
+			header('Content-Description: Backup File (DwC-Archive data package)');
+			header('Content-Type: application/zip');
+			header('Content-Disposition: attachment; filename=' . basename($archiveFile));
+			header('Content-Transfer-Encoding: binary');
+			header('Expires: 0');
+			header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+			header('Pragma: public');
+			header('Content-Length: ' . filesize($archiveFile));
+			//od_end_clean();
+			readfile($archiveFile);
+			unlink($archiveFile);
+		} else {
+			$errMsg = $dwcaHandler->getErrorMessage();
+			if($errMsg) $statusStr = 'ERROR: ' . $errMsg;
+			else $statusStr = 'ERROR creating output file. Query may not have included records.';
+		}
+	}
 }
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $LANG_TAG ?>">
+<html lang="<?= $LANG_TAG ?>">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
-	<title><?php echo $LANG['PERS_SPEC_BACKUP']; ?></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET ?>">
+	<title><?= $LANG['PERS_SPEC_BACKUP'] ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 </head>
-<body>
+<body style="min-height: 90%">
 <!-- This is inner text! -->
 <div role="main" id="innertext">
 	<h1 class="page-heading"><?= $LANG['PERS_SPEC_BACKUP']; ?></h1>
 	<?php
 	if($editable){
-		if($action == 'Perform Backup'){
-			echo '<ul>';
-			$dlFile = $dlManager->dlSpecBackup($collId,$cSet,$zipFile);
-			if($dlFile){
-				echo '<li style="font-weight:bold;">'.(isset($LANG['BACK_COMPLETE'])?$LANG['BACK_COMPLETE']:'Backup Complete').'!</li>';
-				echo '<li style="font-weight:bold;">'.(isset($LANG['CLICK'])?$LANG['CLICK']:'Click on file to download').': <a href="' . htmlspecialchars($dlFile, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($dlFile, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></li>';
-				echo '</ul>';
-			}
-			echo '</ul>';
-		}
-		else{
+		if($statusStr){
 			?>
-			<form name="buform" action="personalspecbackup.php" method="post">
-				<fieldset style="padding:15px;">
-					<legend><?php echo (isset($LANG['DOWNLOAD_MOD'])?$LANG['DOWNLOAD_MOD']:'Download Module'); ?></legend>
-					<div style="float:left;">
-						<?php echo (isset($LANG['DATA_SET'])?$LANG['DATA_SET']:'Data Set'); ?>:
-					</div>
-					<div style="float:left;">
-						<?php
-						$cSet = str_replace('-','',strtolower($CHARSET));
-						?>
-						<input type="radio" name="cset" value="latin1" <?php echo ($cSet=='iso88591'?'checked':''); ?> /> <?php echo (isset($LANG['ISO'])?$LANG['ISO']:'ISO-8859-1 (western)'); ?><br/>
-						<input type="radio" name="cset" value="utf8" <?php echo ($cSet=='utf8'?'checked':''); ?> /> <?php echo (isset($LANG['UTF'])?$LANG['UTF']:'UTF-8 (unicode)'); ?>
-					</div>
-					<div style="clear:both;">
-						<input name="zipfile" type="checkbox" value="1" CHECKED />
-						<?php echo (isset($LANG['COMPRESS'])?$LANG['COMPRESS']:'Compress data into a zip file'); ?>
-					</div>
-					<div style="clear:both;">
-						<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
-						<button type="submit" name="formsubmit" value="Perform Backup"><?php echo (isset($LANG['BACKUP'])?$LANG['BACKUP']:'Perform Backup'); ?></button>
-					</div>
-				</fieldset>
-			</form>
+			<div style="margin=20px"><?= $statusStr ?></div>
 			<?php
 		}
+		?>
+		<form name="buform" action="personalspecbackup.php" method="post">
+			<fieldset style="padding:15px;">
+				<legend><?= $LANG['DOWNLOAD_MOD'] ?></legend>
+				<label><?= $LANG['DATA_SET'] ?>:</label>
+				<div style="margin-left: 15px">
+					<input type="radio" name="cset" value="ISO-8859-1" <?= ($characterSet == 'ISO-8859-1' ? 'checked' : ''); ?> /> <?= $LANG['ISO'] ?><br/>
+					<input type="radio" name="cset" value="UTF-8" <?= ($characterSet == 'UTF-8' ? 'checked' : ''); ?> /> <?= $LANG['UTF'] ?>
+				</div>
+				<div style="margin: 10px">
+					<input type="hidden" name="collid" value="<?= $collid; ?>" />
+					<button type="submit" name="formsubmit" value="Perform Backup"><?= $LANG['BACKUP'] ?></button>
+				</div>
+			</fieldset>
+		</form>
+		<?php
 	}
 	?>
 </div>

@@ -1,4 +1,4 @@
-<?php
+<?php global $LANG;
 /*
 ------------------
 Language: Français (French)
@@ -15,5 +15,6 @@ $LANG['SUSPICIOUS_FILE'] = 'Fichier suspect';
 $LANG['ILLEGAL_RENAME_CHANGED_FILE_TYPE'] = 'Renommage illégal, type de fichier modifié';
 $LANG['FILE_TYPE_NOT_ALLOWED'] = 'Type de fichier non autorisé';
 $LANG['FILEPATH_NOT_WRITABLE'] = 'Le chemin du fichier n\'est pas accessible en écriture';
+$LANG['NOT_ENOUGH_MEMORY_IMAGE'] = 'Mémoire insuffisante pour créer une image'
 
 ?>
