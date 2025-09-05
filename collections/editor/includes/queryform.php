@@ -495,6 +495,7 @@ else{
 		}
 
 		if(f.q_exsiccatiid) f.q_exsiccatiid.value = "";
+		if(f.q_exsnumber) f.q_exsnumber.value = "";
 
 		for(let x = 1; x < 9; x++){
 			resetCustomElements(x);
