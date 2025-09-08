@@ -1,8 +1,8 @@
 <p align="center">
     <a href="https://symbiota.org/" target="_blank">
         <picture>
-			<source width="500" media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/94a3507e-675f-4fe8-8504-12a567f268e9">
-			<source width="500" media="(prefers-color-scheme: light)" srcset="https://symbiota.org/wp-content/uploads/LogoSymbiotaPNG-1024x682.png">
+		    <source width="500" media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/94a3507e-675f-4fe8-8504-12a567f268e9">
+   		    <source width="500" media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/a3897966-7240-4345-ae27-af095adfdde0">
             <img width="500px" src="https://github.com/user-attachments/assets/94a3507e-675f-4fe8-8504-12a567f268e9" />
 		</picture>
     </a>
