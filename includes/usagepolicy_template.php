@@ -43,14 +43,14 @@ $serverHost = GeneralUtil::getDomain();
 					echo $DEFAULT_TITLE;
 				}
 				else {
-					echo 'Name of people or institutional reponsible for maintaining the portal';
+					echo 'Name of people or institutional responsible for maintaining the portal';
 				};
 				echo ' (accessed through the ';
 				if ($DEFAULT_TITLE) {
 					echo $DEFAULT_TITLE;
 				}
 				else {
-					echo 'Name of people or institutional reponsible for maintaining the portal';
+					echo 'Name of people or institutional responsible for maintaining the portal';
 				};
 				echo ' Portal, ' . $serverHost . $CLIENT_ROOT . ', ' . date('Y-m-d') . ').';
 			};
@@ -79,7 +79,7 @@ $serverHost = GeneralUtil::getDomain();
 					echo $DEFAULT_TITLE;
 				}
 				else {
-					echo 'Name of people or institutional reponsible for maintaining the portal';
+					echo 'Name of people or institutional responsible for maintaining the portal';
 				};
 				echo '. Glossary. ' . $serverHost . $CLIENT_ROOT . 'glossary/index.php. Accessed: ' . date('Y-m-d') . '.';
 			?>

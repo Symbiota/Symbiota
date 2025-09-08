@@ -80,7 +80,7 @@ class UploadUtil {
 		$guess_ext = self::mime2ext($type_guess);
 		$provided_file_data = pathinfo($uploaded_file['name']);
 
-		if(!$guess_ext || strtolower($guess_ext) != strtolower($provided_file_data['extension'])) {
+		if(!$guess_ext || !$provided_file_data['extension'] || !self::extensionsEqual($guess_ext, $provided_file_data['extension'])) {
 			throw new MediaException(MediaException::SuspiciousFile);
 		}
 
@@ -155,7 +155,8 @@ class UploadUtil {
 
 		# Pull out host information
 		if (array_key_exists('host', $parts) && strrpos($parts['host'], '.') !== false) {
-			$parts['tld'] = end(explode('.', $parts['host']));
+			$hostParts = explode('.', $parts['host']);
+			$parts['tld'] = end($hostParts);
 		}
 
 		# Parse path information
@@ -284,6 +285,26 @@ class UploadUtil {
 			'type' => $file_type_mime,
 			'size' => intval($file_size_bytes)
 		];
+	}
+
+	/**
+	 * Function will compare file extensions with equality check
+	 * case insensitive and if that fails it will check for if
+	 * extensions are synonyms.
+	 *
+	 * An example of a synonym extension is jpg and jpeg which historically
+	 * existed because some OS's only supported 3 letter extensions.
+	 *
+	 * @param string $extensionA First file extension to compare
+	 * @param string $extensionB Second file extension to compare
+	 * @return bool
+	 **/
+	public static function extensionsEqual(string $extensionA, string $extensionB): bool {
+		$extensionA = strtolower($extensionA);
+		$extensionB = strtolower($extensionB);
+
+		return $extensionA === $extensionB ||
+			Media::ext2Mime($extensionA) === Media::ext2Mime($extensionB);
 	}
 
 	/**

@@ -219,9 +219,10 @@ $LANG['NO_SPECS_REGISTERED'] = 'No hay especímenes registrados para este prést
 
 // from specnoteseditor.php
 $LANG['LOAN_NOTES_EDITOR'] = 'Editor de Notas de Préstamo de Especímenes';
+$LANG['SPECIMEN_CHECKIN'] = 'Editor de registro de muestras';
 $LANG['LOAN_SPEC_EDIT'] = 'Editor de Préstamo de Especímenes';
 $LANG['SPEC_NOTES'] = 'Notas de los Especímenes';
 $LANG['SAVE_EDITS'] = 'Guardar Ediciones';
-
+$LANG['RESET_CHECKIN'] = 'Restablecer registro';
 
 ?>

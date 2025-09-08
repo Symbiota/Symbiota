@@ -219,9 +219,10 @@ $LANG['NO_SPECS_REGISTERED'] = 'There are no specimens registered for this loan.
 
 // from specnoteseditor.php
 $LANG['LOAN_NOTES_EDITOR'] = 'Loan Specimen Notes Editor';
+$LANG['SPECIMEN_CHECKIN'] = 'Specimen Check-in Editor';
 $LANG['LOAN_SPEC_EDIT'] = 'Loan Specimen Editor';
 $LANG['SPEC_NOTES'] = 'Specimen Notes';
 $LANG['SAVE_EDITS'] = 'Save Edits';
-
+$LANG['RESET_CHECKIN'] = 'Reset Check-in';
 
 ?>
