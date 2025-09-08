@@ -609,6 +609,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 
 		if(!empty($this->searchTermArr['polygons'])){
 			$sqlWhere .= 'AND gth.isSearchable = 1 ';
+			$sqlWhere .= 'AND MBRContains(gpoly.footprintPolygon, p.lngLatPoint) ';
 			$sqlWhere .= 'AND ST_Contains(gpoly.footprintPolygon, p.lngLatPoint) ';
 		}
 
@@ -1253,7 +1254,10 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			else unset($this->searchTermArr['characters']);
 		}
 		if(array_key_exists('polygons',$_REQUEST)){
-			$polygons = array_filter($_REQUEST['polygons'], function($val) {
+			$polygons = $_REQUEST['polygons'];
+			if (!is_array($polygons))
+				$polygons = [$polygons];
+			$polygons = array_filter($polygons, function($val) {
 				return trim($val) !== '';
 			});
 			if (!empty($polygons))
