@@ -177,6 +177,240 @@ function ocrImage(ocrButton, target, imgidVar, imgCnt){
 	});
 }
 
+// Function to run OCR via Vouchervision-Go API
+async function ocrVV(ocrButton, imgCnt){
+
+	// Get the busy indicator and image url
+	const busy = $('#workingcircle-vv-' + imgCnt);
+	const imgurl = $('#activeimg-' + imgCnt).attr('src');
+
+	// Get user-selected parameters
+	const prompt = $('#prompt').val();
+	const llm_model = $('#llm-model').val();
+    const engines = [];
+    $('input[name="engines"]:checked').each(function() {
+        engines.push($(this).attr('id'));
+    });
+    const ocrOnly = $('#ocrOnly').is(':checked');
+
+    // Show busy indicator
+    busy.show();
+
+    // Disable additional OCR Image button presses
+    $(ocrButton).prop('disabled', true);
+
+    // Symbiota field mappings for data returned by various prompts
+	const vvMapping = {
+		SLTPvM_default: {
+			// James Note: Catch-all field: Turning this off may be preferred, it accumulates a lot of junk.
+			additionalText: "occurrenceremarks",
+			// James Note: I think this is currently a bit shaky for an important field
+			//catalogNumber: "catalognumber",
+			collectedBy: "recordedby",
+			collectionDate: "eventdate",
+			collectionDateEnd: "eventdate2",
+			collectorNumber: "recordnumber",
+			continent: "continent",
+			country: "country",
+			county: "county",
+			cultivated: "cultivationstatus", // checkbox
+			// James Note: decimal lat/long can sometimes be hallucinated,
+			// incorrectly derived from locality,
+			// or improperly converted from other coordinates
+			decimalLatitude: "decimallatitude",
+			decimalLongitude: "decimallongitude",
+			//elevationUnits: "",
+			//genus: "",
+			habitat: "habitat",
+			//identificationHistory: "",
+			identifiedBy: "identifiedby",
+			identifiedConfidence: "identificationqualifier",
+			identifiedDate: "dateidentified",
+			identifiedRemarks: "identificationremarks",
+			locality: "locality",
+			maximumElevationInMeters: "maximumelevationinmeters",
+			minimumElevationInMeters: "minimumelevationinmeters",
+			scientificName: "sciname",
+			scientificNameAuthorship: "scientificnameauthorship",
+			//specificEpithet: "",
+			specimenDescription: "verbatimattributes",
+			stateProvince: "stateprovince",
+			verbatimCollectionDate: "verbatimeventdate",
+			verbatimCoordinates: "verbatimcoordinates"
+		},
+		OSC_Symbiota: {
+			// James Note: I think this is currently a bit shaky for an important field
+			//catalogNumber: "catalognumber",
+			collector: "recordedby",
+			associatedCollectors: "associatedcollectors",
+			collectorNumber: "recordnumber",
+			verbatimCollectionDate: "verbatimeventdate",
+			collectionDate: "eventdate",
+			scientificName: "sciname",
+			scientificNameAuthorship: "scientificnameauthorship",
+			family: "family",
+			// James Note: Asking for genus, specific epithet and infra-epithet and
+			// constructing a scientific name with that was more reliable than the
+			// scientific name returned by Vouchervision for Gemini 1.5 Flash at least
+			// Tendency for the full scientific name to include authors
+			//genus: "",
+			//specificEpithet: "",
+			//infraspecificEpithet: "",
+			identifiedBy: "identifiedby",
+			identifiedConfidence: "identificationqualifier",
+			identifiedDate: "dateidentified",
+			identifiedRemarks: "identificationremarks",
+			continent: "continent",
+			country: "country",
+			stateProvince: "stateprovince",
+			county: "county",
+			locality: "locality",
+			// James Note: decimal lat/long can sometimes be hallucinated,
+			// incorrectly derived from locality,
+			// or improperly converted from other coordinates
+			decimalLatitude: "decimallatitude",
+			decimalLongitude: "decimallongitude",
+			verbatimCoordinates: "verbatimcoordinates",
+			datum: "geodeticdatum",
+			verbatimElevation: "verbatimelevation",
+			cultivated: "cultivationstatus",
+			habitat: "habitat",
+			specimenDescription: "verbatimattributes",
+			associatedSpecies: "associatedtaxa",
+			// James Note: Catch-all field: Turning this off may be preferred
+			additionalText: "occurrenceremarks",
+		}
+	}
+
+	// Construct a data object with parameters to pass to the API
+	const vvData = {
+		image_url: imgurl,
+		engines: engines,
+		prompt: prompt + '.yaml',
+		llm_model: llm_model,
+		ocr_only: ocrOnly
+	};
+
+	// Start a timer to check how long the API call took
+	var start = Date.now();
+
+    // Send the request to VoucherVision-Go
+	$.ajax({
+		type: 'POST',
+		url: 'rpc/voucherVisionGo.php',
+		data: JSON.stringify(vvData),
+		dataType: 'json',
+		contentType: 'application/json',
+		success: function (data) {
+
+			// Object to store the costs
+			let cost = {"ocr": 0, "transcription": 0, "total": 0};
+
+			// Get transcription cost
+			cost.transcription = data.parsing_info.cost_in + data.parsing_info.cost_out;
+
+			// Get OCR cost
+			Object.keys(data.ocr_info).forEach(key => {
+				cost.ocr += data.ocr_info[key].cost_in + data.ocr_info[key].cost_out;
+			});
+
+			// Calculate the total cost
+			cost.total = cost.transcription + cost.ocr;
+
+			// Format the cost as a currency string
+			let costStr = new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD',
+				minimumFractionDigits: 6}).format(cost.total);
+
+			// Write out message on success, along with the time, cost, and returned data object
+			console.log('VoucherVision-Go returned data after ' + ((Date.now() - start)/1000).toFixed(2) +
+				' seconds. Total cost: ' + costStr + '\n', data);
+
+			// Get the OCR text
+			let ocr = data.ocr;
+
+			// Hide the edit div (existing content), and show the add div for new OCR content
+			$('#tfeditdiv-' + imgCnt).hide();
+			$('#tfadddiv-' + imgCnt).show();
+
+			// Add OCR data to the editor
+			$('#tfadddiv-' + imgCnt + ' textarea[name="rawtext"]').val(ocr);
+
+			// Construct the OCR source string
+			// Add the date
+			let today = new Date();
+			// Add leading zeros to day and month
+			let dd = String(today.getDate()).padStart(2, '0');
+			let mm = String(today.getMonth()+1).padStart(2, '0'); //January is 0!
+			let yyyy = today.getFullYear();
+
+			// Add Vouchervision-Go, the date, and the OCR/Transcription models to the source string
+			let sourceStr = 'Vouchervision-Go: ' + yyyy + '-' + mm + '-' + dd;
+			sourceStr += '; OCR Model(s): ' + engines.join("+");
+			sourceStr += '; Transcription Model: ' + llm_model + "; Prompt: " + prompt;
+
+			// Put the source string in the OCR source field
+			$('input[name="rawsource"]').val(sourceStr);
+
+			// If not just OCRing, add the data to the editor using the field mappings
+			if(!ocrOnly){
+
+				// Get the categorized data
+				let json = data.formatted_json;
+
+				// Color to highlight the form fields that have been changed by Vouchervision-Go
+				let vvColor = 'moccasin';
+
+				// Make sure there is data returned before proceeding
+				if(json){
+					// Cycle through all the fields in the field mapping object for the given prompt
+					for (const [field, mapping] of Object.entries(vvMapping[prompt])) {
+
+						// Get the edit form element
+						const elem = $('[name="' + mapping + '"]');
+
+						// First modify cultivationstatus if needed, this is a checkbox. Save status if the element is not disabled
+						if(json[field] && mapping == "cultivationstatus" && !elem.prop('disabled')) {
+
+							// Set cultivation status and highlight the checkbox
+							elem.prop('checked', true);
+							elem.css({"accent-color": vvColor, "box-shadow": "0 0 2px 1px gray"});
+
+							// Trigger a fieldChanged event
+							fieldChanged(mapping);
+
+						// For the rest of the fields, avoid saving data into disabled, hidden, or non-empty elements
+						} else if (json[field] && !elem.prop('disabled') && elem.attr('type') != 'hidden' && elem.val() === '') {
+
+							// Save data returned from VoucherVision to the mapped form element and highlight the form element
+							elem.val(json[field]);
+							elem.css('background-color', vvColor);
+
+							// Trigger a fieldChanged event
+							fieldChanged(mapping);
+
+						}
+					}
+				}
+			}
+
+			// Stop the busy indicator, and re-enable OCR button
+			busy.hide();
+			$(ocrButton).prop('disabled', false);
+		},
+		error: function(xhr, status, error) {
+			// Failed to get data back from the Vouchervision-Go API
+			console.log("Failed to get an OCR response from Vouchervision-Go", xhr, status, error);
+			alert("Failed to get an OCR response from Vouchervision-Go");
+
+			// Stop busy indicator, and re-enable OCR button
+			busy.hide();
+			$(ocrButton).prop('disabled', false);
+		}
+	});
+}
+
+
+
 function nlpLbcc(nlpButton,prlid){
 	document.getElementById("workingcircle_lbcc-"+prlid).style.display = "inline";
 	nlpButton.disabled = true;
