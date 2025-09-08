@@ -1,5 +1,5 @@
-<?php 
-include_once('../../config/symbini.php');
+<?php
+include_once(__DIR__ . '/../../config/symbini.php');
 require_once($SERVER_ROOT.'/classes/SpecUploadBase.php');
 require_once($SERVER_ROOT.'/classes/SpecUploadDwca.php');
 
@@ -23,10 +23,10 @@ foreach($uspidArr as $uploadId){
 	$duManager->setUspid($uploadId);
 	$duManager->readUploadParameters();
 	$duManager->setSourceDatabaseType('batchDwcaUpload');
-	
+
 	if($duManager->getTitle() == '') exit('ERROR: unable to set upload profile data (uspid: '.$uploadId.')');
 	if($duManager->getCollInfo('managementtype') != 'Snapshot') exit('ERROR: automatic updates only allowed for Snapshot collections');
-	
+
 	$duManager->loadFieldMap(true);
 	$ulPath = $duManager->uploadFile();
 	if(!$ulPath){
@@ -41,7 +41,7 @@ foreach($uspidArr as $uploadId){
 	}
 	$transferCnt = $duManager->getTransferCount();
 	$duManager->finalTransfer();
-	
+
 	if($transferCnt > 0){
 		echo 'Transfer successful: '.$transferCnt.' records transferred';
 		$reportArr = $duManager->getTransferReport();

@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
 include_once($SERVER_ROOT.'/classes/Person.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/profile/viewprofile.' . $LANG_TAG . '.php'))
