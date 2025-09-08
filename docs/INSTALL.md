@@ -127,12 +127,11 @@ Symbiota
 ├── api
 │   └── storage
 │       └── framework
-├── content
-│   ├── collections
-│   ├── collicon
-│   ├── dwca
-│   └── geolocate
-└── temp
+└── content
+    ├── collections
+    ├── collicon
+    ├── dwca
+    └── geolocate
 ```
 
 ### STEP 3: Configure the Symbiota Portal
