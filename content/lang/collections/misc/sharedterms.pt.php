@@ -32,3 +32,4 @@ $LANG['LINK_ADDRESS'] = 'Endereço do link';
 $LANG['ADD_ADDRESS'] = 'Adicione um novo endereço que não está na lista';
 $LANG['ADD_INST'] = 'Adicione uma instituição que não está na lista';
 $LANG['LINK_URL_REQ'] = 'O URL e o título do link são obrigatórios';
+$LANG['CLOSE'] = 'Fechar';
