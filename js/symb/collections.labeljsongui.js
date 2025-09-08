@@ -36,6 +36,19 @@ const fieldProps = [
     group: 'taxon',
   },
   { block: 'labelBlock', name: 'Taxon Rank', id: 'taxonrank', group: 'taxon' },
+  { block: "labelBlock", name: "Genus", id: "genus", group: "taxon" },
+  {
+    block: "labelBlock",
+    name: "Specific Epithet",
+    id: "specificepithet",
+    group: "taxon"
+  },
+  {
+    block: "labelBlock",
+    name: "Field Number",
+        id: "fieldnumber",
+    group: "taxon",
+  },
   {
     block: 'labelBlock',
     name: 'Infraspecific Epithet',
@@ -98,13 +111,13 @@ const fieldProps = [
   },
   {
     block: 'labelBlock',
-    name: 'Recorded By',
+    name: 'Collector',
     id: 'recordedby',
     group: 'event',
   },
   {
     block: 'labelBlock',
-    name: 'Record Number',
+    name: 'Collector Number',
     id: 'recordnumber',
     group: 'event',
   },
@@ -142,9 +155,9 @@ const fieldProps = [
   // { block: 'labelBlock', name: 'Dynamic Properties', id: 'dynamicProperties' },
   {
     block: 'labelBlock',
-    name: 'Verbatim Attributes',
-    id: 'verbatimattributes',
-    group: 'event',
+    name: 'Description',
+    id: 'verbatimAttributes',
+    group: 'specimen',
   },
   { block: 'labelBlock', name: 'Behavior', id: 'behavior', group: 'specimen' },
   {

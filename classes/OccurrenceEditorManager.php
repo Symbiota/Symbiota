@@ -767,6 +767,18 @@ class OccurrenceEditorManager {
 		}
 	}
 
+	public function getRecordIdByOccId($occid) {
+		$recordId = '';
+		$stmt = $this->conn->prepare("SELECT recordId FROM omoccurrences WHERE occid = ?");
+		$stmt->bind_param("i", $occid);
+		if ($stmt->execute()) {
+			$stmt->bind_result($recordId);
+			$stmt->fetch();
+		}
+		$stmt->close();
+		return $recordId;
+	}
+
 	private function addTableJoins(&$sql) {
 
 		if (strpos($this->sqlWhere, 'ocr.rawstr')) {
@@ -1276,8 +1288,6 @@ class OccurrenceEditorManager {
 			$postArr = array_merge($postArr, $this->getDatefields($postArr));
 			$guid = UuidFactory::getUuidV4();
 			$sql = 'INSERT IGNORE INTO omoccurrences(collid, recordID, ' . implode(',', array_keys($this->fieldArr['omoccurrences'])) . ') VALUES (' . $postArr['collid'] . ', "' . $guid . '"';
-			//if(array_key_exists('cultivationstatus',$postArr) && $postArr['cultivationstatus']) $postArr['cultivationstatus'] = $postArr['cultivationstatus'];
-			//if(array_key_exists('recordsecurity',$postArr) && $postArr['recordsecurity']) $postArr['recordsecurity'] = $postArr['recordsecurity'];
 			if (!isset($postArr['dateentered']) || !$postArr['dateentered']) $postArr['dateentered'] = date('Y-m-d H:i:s');
 			if (!isset($postArr['basisofrecord']) || !$postArr['basisofrecord']) $postArr['basisofrecord'] = (strpos($this->collMap['colltype'], 'Observations') !== false ? 'HumanObservation' : 'PreservedSpecimen');
 			if (isset($postArr['institutioncode']) && $postArr['institutioncode'] == $this->collMap['institutioncode']) $postArr['institutionCode'] = '';
@@ -1286,7 +1296,7 @@ class OccurrenceEditorManager {
 			foreach ($this->fieldArr['omoccurrences'] as $fieldStr => $fieldType) {
 				$fieldValue = '';
 				if (array_key_exists($fieldStr, $postArr)) $fieldValue = $postArr[$fieldStr];
-				if ($fieldValue) {
+				if ($fieldValue !== '') {
 					if ($fieldType == 'n') {
 						if (is_numeric($fieldValue)) $sql .= ', ' . $fieldValue;
 						else $sql .= ', NULL';
@@ -2245,6 +2255,19 @@ class OccurrenceEditorManager {
 		return $retArr;
 	}
 
+	public function getUserName(){
+		$retStr = '';
+		if(is_numeric($GLOBALS['SYMB_UID'])){
+			$sql = 'SELECT CONCAT_WS(", ",lastname,firstname) AS username FROM users WHERE uid = '.$GLOBALS['SYMB_UID'];
+			$rs = $this->conn->query($sql);
+			while($r = $rs->fetch_object()){
+				$retStr = $r->username;
+			}
+			$rs->free();
+		}
+		return $retStr;
+	}
+
 	//Duplicate functions
 	private function linkDuplicates($occidStr, $dupTitle) {
 		$status = '';
@@ -2711,6 +2734,34 @@ class OccurrenceEditorManager {
 			}
 			$rs->free();
 		}
+		return $retArr;
+	}
+
+	public function catalogNumberExists($catNum) {
+		$status = false;
+		if($this->collId){
+			$sql = 'SELECT occid FROM omoccurrences WHERE (catalognumber = "'.$this->cleanInStr($catNum).'") AND (collid = '.$this->collId.')';
+			//echo $sql;
+			$rs = $this->conn->query($sql);
+			while ($r = $rs->fetch_object()) {
+				$this->occid = $r->occid;
+				$status = true;
+			}
+			$rs->free();
+		}
+		return $status;
+	}
+
+	public function getLanguageArr() {
+		$retArr = array();
+		$sql = 'SELECT iso639_1, langname '.
+			'FROM adminlanguages ';
+		$rs = $this->conn->query($sql);
+		while($r = $rs->fetch_object()){
+			$retArr[$r->iso639_1] = $r->langname;
+		}
+		$rs->free();
+		asort($retArr);
 		return $retArr;
 	}
 

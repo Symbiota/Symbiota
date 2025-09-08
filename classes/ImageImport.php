@@ -1,5 +1,6 @@
 <?php
 include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT . '/classes/utilities/UploadUtil.php');
 include_once("ImageShared.php");
 
 class ImageImport{
@@ -142,15 +143,7 @@ class ImageImport{
 	}
 
 	private function setUploadTargetPath(){
-		$tPath = $GLOBALS['TEMP_DIR_ROOT'];
-		if(!$tPath){
-			$tPath = ini_get('upload_tmp_dir');
-		}
-		if(!$tPath){
-			$tPath = $GLOBALS['SERVER_ROOT']."/temp/downloads";
-		}
-		if(substr($tPath,-1) != '/') $tPath .= "/";
-		$this->uploadTargetPath = $tPath;
+		$this->uploadTargetPath = UploadUtil::getTempDir();
     }
 }
 ?>

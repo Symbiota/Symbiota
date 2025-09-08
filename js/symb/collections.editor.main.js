@@ -1230,13 +1230,13 @@ function dwcDoc(dcTag) {
   var language = getCookie("lang");
   if (language == "es") {
     dwcWindow = open(
-      "https://docs.symbiota.org/docs/Editor_Guide/Editing_Searching_Records/symbiota_data_fields#" + dcTag,
+      "https://docs.symbiota.org/Editor_Guide/Editing_Searching_Records/symbiota_data_fields#" + dcTag,
       "dwcaid",
       "width=1250,height=300,left=20,top=20,scrollbars=1"
     );
   } else {
     dwcWindow = open(
-      "https://docs.symbiota.org/docs/Editor_Guide/Editing_Searching_Records/symbiota_data_fields#" + dcTag,
+      "https://docs.symbiota.org/Editor_Guide/Editing_Searching_Records/symbiota_data_fields#" + dcTag,
       "dwcaid",
       "width=1250,height=300,left=20,top=20,scrollbars=1"
     );

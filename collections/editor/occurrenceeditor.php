@@ -44,6 +44,7 @@ $fragArr = array();
 $qryCnt = false;
 $statusStr = '';
 $navStr = '';
+$readOnly = '';
 
 $isEditor = 0;
 $LOCALITY_AUTO_LOOKUP = 1;
@@ -234,7 +235,6 @@ if($SYMB_UID){
 				$tabTarget = 2;
 			}
 			elseif($action == 'Submit New Image') {
-
 				$collMap = $occManager->getCollMap();
 
 				//Ensures correct order on taxon profile page
@@ -250,10 +250,10 @@ if($SYMB_UID){
 						$occur_map['catalognumber']
 					);
 
-					Media::add(
+					Media::uploadAndInsert(
 						$_POST,
-						new LocalStorage($path),
-						$_FILES['imgfile'] ?? null
+						$_FILES['imgfile'],
+						new LocalStorage($path)
 					);
 
 					if($errors = Media::getErrors()) {
@@ -414,6 +414,11 @@ if($SYMB_UID){
 						$isEditor = 1;
 					}
 				}
+			}
+			else if ($collMap && !empty($collMap['guidtarget']) && $collMap['guidtarget'] === "symbiotaUUID" && empty($occArr['occurrenceid'])){
+				$occArr['recordID'] = $occManager->getRecordIdByOccId($occId);
+				$occArr['occurrenceid'] = $occArr['recordID'];
+				$readOnly = 'readonly style="background-color:lightgray"';
 			}
 		}
 	}
@@ -1458,7 +1463,8 @@ else{
 											<div id="occurrenceIdDiv" class="field-div" title="If different than institution code">
 												<?php echo $LANG['OCCURRENCE_ID']; ?>
 												<a href="#" onclick="return dwcDoc('occurrence-id-override')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-												<input type="text" name="occurrenceid" maxlength="255" value="<?php echo array_key_exists('occurrenceid',$occArr)?$occArr['occurrenceid']:''; ?>" onchange="fieldChanged('occurrenceid');" />
+												<input type="text" name="occurrenceid" maxlength="255" value="<?php echo array_key_exists('occurrenceid',$occArr)?$occArr['occurrenceid']:''; ?>" onchange="fieldChanged('occurrenceid');"
+												<?php echo $readOnly; ?> />
 											</div>
 											<div id="fieldNumberDiv" class="field-div" title="An identifier given to the collecting event in the field">
 												<?php echo $LANG['FIELD_NUMBER']; ?>

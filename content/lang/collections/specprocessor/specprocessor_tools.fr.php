@@ -54,7 +54,7 @@ $LANG['MUST_MAP_CATNUM'] = "Le numéro de catalogue ou d'autres numéros de cata
 $LANG['LARGE_URL_MAPPED'] = "L'URL des grandes images doit être mappée à un champ d'importation";
 $LANG['IMG_PROCESSOR_EXPLAIN'] = 'Ces outils sont conçus pour aider les gestionnaires de collections dans le traitement par lots d\'images d\'échantillons. Contactez le gestionnaire de portail pour obtenir de l\'aide sur la configuration d\'un nouveau flux de travail.
 			Une fois le profil établi, le gestionnaire de collection peut utiliser ce formulaire pour déclencher manuellement le traitement des images. Pour plus d\'informations, consultez la documentation Symbiota pour
-			<b><a href="https://docs.symbiota.org/docs/Collection_Manager_Guide/Images/batch_adding" target="_blank">pratiques recommandées</a></b> pour l\'intégration d\'images.' ;
+			<b><a href="https://docs.symbiota.org/Collection_Manager_Guide/Images/batch_adding" target="_blank">pratiques recommandées</a></b> pour l\'intégration d\'images.' ;
 $LANG['IMG_FILE_UPLOAD_MAP'] = 'Carte de téléchargement de fichier image';
 $LANG['SOURCE_FIELD'] = 'Champ source';
 $LANG['TARGET_FIELD'] = 'Champ cible';

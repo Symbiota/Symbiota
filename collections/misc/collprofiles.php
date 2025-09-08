@@ -471,7 +471,7 @@ if ($SYMB_UID) {
 									<a href="#" onclick="$('li.importItem').show(); return false;">
 										<?= $LANG['IMPORT_SPECIMEN'] ?>
 									</a>
-									<a id="importinfo" href="https://docs.symbiota.org/docs/Collection_Manager_Guide/Importing_Uploading/" target="_blank" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>">
+									<a id="importinfo" href="https://docs.symbiota.org/Collection_Manager_Guide/Importing_Uploading/" target="_blank" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>">
 											<img src="../../images/info.png" style="width:13px;" alt="<?= $LANG['INFO_ALT'] ?>" />
 									</a><br/>
 								</li>

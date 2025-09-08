@@ -55,7 +55,7 @@ elseif ($action) {
 	$dwcaManager->setIncludeIdentifiers($includeIdentifiers);
 	if (!array_key_exists('redact', $_POST)) $redactLocalities = 0;
 	$dwcaManager->setRedactLocalities($redactLocalities);
-	$dwcaManager->setTargetPath($SERVER_ROOT . (substr($SERVER_ROOT, -1) == '/' ? '' : '/') . 'content/dwca/');
+	$dwcaManager->setTargetPath('dwca-pub');
 }
 
 $idigbioKey = $collManager->getIdigbioKey();
@@ -235,8 +235,8 @@ if ($isEditor) {
 				<?php
 				echo $LANG['DWCA_EXPLAIN_1'] . ' <a href="https://en.wikipedia.org/wiki/Darwin_Core_Archive" target="_blank">' . $LANG['DWCA'] . '</a> ' . $LANG['DWCA_EXPLAIN_2'] .
 					' <a href="http://rs.tdwg.org/dwc/terms/" target="_blank">' . $LANG['DWC'] . '</a> ' . $LANG['DWCA_EXPLAIN_3'] .
-					' <a href="https://docs.symbiota.org/docs/Collection_Manager_Guide/Data_Publishing/publishing_idigbio" target="_blank"> ' . $LANG['PUBLISH_IDIGBIO'] . '</a> &amp;' .
-					' <a href="https://docs.symbiota.org/docs/Collection_Manager_Guide/Data_Publishing/publishing_gbif" target="_blank"> ' . $LANG['PUBLISH_GBIF'] . '</a>.';
+					' <a href="https://docs.symbiota.org/Collection_Manager_Guide/Data_Publishing/publishing_idigbio" target="_blank"> ' . $LANG['PUBLISH_IDIGBIO'] . '</a> &amp;' .
+					' <a href="https://docs.symbiota.org/Collection_Manager_Guide/Data_Publishing/publishing_gbif" target="_blank"> ' . $LANG['PUBLISH_GBIF'] . '</a>.';
 				?>
 			</div>
 			<?php
@@ -284,13 +284,14 @@ if ($isEditor) {
 					$collArr['doi'] = $responseData->doi;
 					$_SESSION['colldata'] = $collArr;
 				}
-				$dwcaManager->createDwcArchive();
-				$dwcaManager->writeRssFile();
-				echo '</ul>';
-				if ($publishGBIF) {
-					echo '<ul>';
-					$collManager->triggerGBIFCrawl($collArr['dwcaurl'], $collid, $collArr['collectionname']);
+				if($dwcaManager->createDwcArchive()){
+					$dwcaManager->writeRssFile();
 					echo '</ul>';
+					if ($publishGBIF) {
+						echo '<ul>';
+						$collManager->triggerGBIFCrawl($collArr['dwcaurl'], $collid, $collArr['collectionname']);
+						echo '</ul>';
+					}
 				}
 			}
 			$dwcUri = '';

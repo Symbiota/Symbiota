@@ -40,7 +40,7 @@ if($isEditor && $action){
 			}
 		}
 		elseif($action == 'deleteProfile'){
-			if(!$labelManager->deleteLabelFormat($_POST['group'],$_POST['index'])){
+			if(!$labelManager->deleteLabelFormat($_POST['group'],$_POST['index'])){ // @TODO this is brittle. If you refresh the page after successful deletion, it will delete the profile that now has this index. So, it'll just keep eating profiles.
 				$statusStr = implode('; ', $labelManager->getErrorArr());
 			}
 		}
