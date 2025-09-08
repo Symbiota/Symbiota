@@ -317,16 +317,9 @@ $traitArr = $indManager->getTraitArr();
 		.smaller-header {
 			font-size: 2rem;
 		}
-
-		#exsiccati-div {
-			clear: both;
-		}
-
-		#rights-div {
-			clear: both;
-		}
-
-		.danger {
+		#exsiccati-div{ clear: both; }
+		#rights-div{ clear: both; }
+		.danger{
 			color: var(--danger-color);
 		}
 
@@ -1326,11 +1319,10 @@ $traitArr = $indManager->getTraitArr();
 							<hr style="color:gray;" />
 					<?php
 						}
-					} else echo '<div class="title2-div left-breathing-room-rel top-breathing-room-rel bottom-breathing-room" >' . $LANG['NO_COMMENTS'] . '</div>';
-					?>
-					<?php
-					if ($SYMB_UID) {
-					?>
+					}
+					else echo '<div class="title2-div left-breathing-room-rel top-breathing-room-rel bottom-breathing-room" >'.$LANG['NO_COMMENTS'].'</div>';
+					if($SYMB_UID){
+						?>
 						<form class="left-breathing-room-rel" name="commentform" action="index.php" method="post" onsubmit="return verifyCommentForm(this);">
 							<label for="commentstr"><?php echo $LANG['NEW_COMMENT']; ?></label>
 							<textarea name="commentstr" id="commentstr" rows="8" style="width:98%;"></textarea>
@@ -1343,8 +1335,9 @@ $traitArr = $indManager->getTraitArr();
 								<?php echo $LANG['MESSAGE_WARNING']; ?>
 							</div>
 						</form>
-					<?php
-					} else {
+						<?php
+					}
+					else{
 						echo '<div style="margin:10px;">';
 						echo '<a href="../../profile/index.php?refurl=../collections/individual/index.php?tabindex=2&occid=' . $occid . '">';
 						echo $LANG['LOGIN'];
