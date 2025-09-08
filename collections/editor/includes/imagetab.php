@@ -448,6 +448,17 @@ $creatorArray = Media::getCreatorArray();
 										</fieldset>
 									</form>
 									<?php
+								} else {
+								?>
+										<form name="img<?php echo $imgId; ?>remapform" action="occurrenceeditor.php" method="post" onsubmit="return verifyImgRemapForm(this);">
+										<fieldset style="padding:15px">
+											<legend><b><?php echo $LANG['REMAP_TO_ANOTHER']; ?></b></legend>
+											<div style="margin:10px 20px;">
+												<?= $LANG['CANNOT_REMAP_EXPLAIN'] ?>
+											</div>
+										</fieldset>
+									</form>
+								<?php
 								}
 								?>
 								<form action="occurrenceeditor.php" method="post">

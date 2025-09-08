@@ -48,6 +48,7 @@ $LANG['DEL_IMG'] = 'Excluir Recurso';
 $LANG['REM_FROM_SERVER'] = 'Remover recurso do servidor';
 $LANG['RM_DB_NOT_SERVER'] = 'Observação: deixar essa opção desmarcada remove o recurso do banco de dados sem removê-lo do servidor';
 $LANG['REMAP_TO_ANOTHER'] = 'Remapear para outro espécime';
+$LANG['CANNOT_REMAP_EXPLAIN'] = 'Esta imagem não pode ser remapeada para outra ocorrência porque o nome da imagem corresponde ao número de catálogo da ocorrência. Carregue uma nova versão da imagem, renomeada, para a ocorrência correta. Certifique-se de retornar a este registro e <b>Excluir Recurso</b> para desmapeá-la desta ocorrência.';
 $LANG['TARGET_OCCID'] = 'ID do registro de destino';
 $LANG['OPEN_LINK_AID'] = 'Ferramenta de vinculação de ocorrências';
 $LANG['REMAP_IMG'] = 'Remapear recurso';
