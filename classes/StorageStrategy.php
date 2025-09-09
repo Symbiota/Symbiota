@@ -1,6 +1,7 @@
 <?php
 include_once($SERVER_ROOT . "/classes/MediaException.php");
 include_once($SERVER_ROOT . "/classes/MediaType.php");
+require_once($SERVER_ROOT . '/vendor/autoload.php');
 
 abstract class StorageStrategy {
 	/**
@@ -193,4 +194,49 @@ class LocalStorage extends StorageStrategy {
 			rename($dir_path . $filepath, $dir_path . $new_filepath);
 		}
 	}
+}
+
+class S3Storage extends StorageStrategy {
+	private $client;
+
+	public function __construct() {
+		$this->client =  new Aws\S3\S3Client([
+			'version' => 'latest',
+			'region'  => $GLOBALS['S3_REGION'],
+			'endpoint' => $GLOBALS['S3_ENDPOINT'],
+			'use_path_style_endpoint' => true,
+			'credentials' => [
+				'key' => $GLOBALS['S3_ACCESS_KEY_ID'],
+				'secret' => $GLOBALS['S3_SECRET_ID']
+			],
+		]);
+	}
+
+	public function getDirPath($file = null): string {
+		$file_name = is_array($file)? $file['name']: $file;
+		return $GLOBALS['MEDIA_ROOT_PATH'] .
+			(substr($GLOBALS['MEDIA_ROOT_PATH'],-1) != "/"? '/': '') .
+			$this->path . $file_name;
+	}
+
+	public function getUrlPath($file = null): string {
+		$file_name = is_array($file)? $file['name']: $file;
+		return $GLOBALS['MEDIA_ROOT_URL'] .
+		   	(substr($GLOBALS['MEDIA_ROOT_URL'],-1) != "/"? '/': '') .
+		   	$this->path . $file_name;
+	}
+
+	public function file_exists($file): bool {}
+
+	public function upload(array $file): bool {
+		// TODO (Logan) modular bucket name?
+		$this->client->putObject([
+			'Bucket' => $GLOBALS['S3_MEDIA_BUCKET_NAME'],
+			'Key'    => $file['name'],
+			'Body'   => fopen($file['tmp_name']),
+		]);
+	}
+
+	public function remove(string $filename): bool {}
+	public function rename(string $filepath, string $new_filepath): void {}
 }
