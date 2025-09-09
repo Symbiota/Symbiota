@@ -67,7 +67,7 @@ or [Download Source Files From Latest Release](https://github.com/Symbiota/Symbi
 
 ### STEP 2: Run setup script
 
-Run /config/setup.bash (e.g. sudo bash setup.bash) which
+Run /config/setup.bash (e.g. sudo bash setup.bash)
 
 This script will attempt to:
 
