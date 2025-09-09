@@ -362,7 +362,7 @@ class TaxonomyUtil {
 	 * @param Type $scientificName
 	 * @return string
 	 **/
-	function renderSciname(string $scientificName): string {
+	static function renderSciname(string $scientificName): string {
 		$matches = null;
 		preg_match_all("/(?:[^\s'\"]+|['\"][^'\"]*['\"])+/", $scientificName, $matches);
 
