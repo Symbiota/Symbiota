@@ -136,8 +136,12 @@ class TaxonomyController extends Controller {
 	 *	 ),
 	 * )
 	 */
-	public function showOneTaxon($id, Request $request) {
+	public function showOneTaxon($id) {
 		$taxonObj = Taxonomy::find($id);
+		if(!$taxonObj){
+			$taxonObj = ['status' => false, 'error' => 'Unable to locate inventory based on identifier'];
+			return response()->json($taxonObj);
+		}
 		if($taxonObj){
 			$taxonObj->makeHidden('sciName');
 		};
