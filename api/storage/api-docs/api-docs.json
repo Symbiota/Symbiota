@@ -1224,7 +1224,11 @@
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "default": 0
+                            "default": 0,
+                            "enum": [
+                                0,
+                                1
+                            ]
                         }
                     },
                     {
