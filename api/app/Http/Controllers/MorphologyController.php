@@ -103,9 +103,8 @@ class MorphologyController extends Controller{
 	 *	 ),
 	 * )
 	 */
-	public function showOneCharacter($id, Request $request){
+	public function showOneCharacter($id){
 		$morphObj = MorphologyCharacter::find($id);
-
 		if($morphObj->count()) $morphObj->states;
 		else $morphObj = ['status'=>false,'error'=>'Unable to locate morphological character based on identifier'];
 		return response()->json($morphObj);
