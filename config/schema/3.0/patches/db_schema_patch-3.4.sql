@@ -1,3 +1,9 @@
+INSERT INTO `schemaversion` (versionnumber) values ("3.4");
+
+#Increase user password field to accommodate new bcrypt hash 
+ALTER TABLE `users` 
+  CHANGE COLUMN `password` `password` VARCHAR(255) NULL DEFAULT NULL ;
+
 
 ALTER TABLE `omoccurpaleo`
   CHANGE COLUMN `biota` `biota` VARCHAR(100) NULL DEFAULT NULL COMMENT 'Flora or Fanua' ,
@@ -8,38 +14,6 @@ ALTER TABLE `omoccurpaleo`
 ALTER TABLE `omoccurpaleo`
   DROP COLUMN `storageAge`;
 
-ALTER TABLE `omoccurpaleogts`
-  ADD COLUMN `myaStart` FLOAT NULL DEFAULT NULL AFTER `rankname`,
-  ADD COLUMN `myaEnd` FLOAT NULL DEFAULT NULL AFTER `myaStart`,
-  ADD COLUMN `errorRange` FLOAT NULL DEFAULT NULL AFTER `myaEnd`,
-  ADD COLUMN `colorCode` VARCHAR(10) NULL DEFAULT NULL AFTER `errorRange`,
-  ADD COLUMN `geoTimeID` INT NULL DEFAULT NULL AFTER `parentgtsid`;
-
-#Add paleo fields to uploadspectemp
-ALTER TABLE 'uploadspectemp'
-  ADD COLUMN 'eon' TEXT,
-  ADD COLUMN 'era' TEXT,
-  ADD COLUMN 'period' TEXT,
-  ADD COLUMN 'epoch' TEXT,
-  ADD COLUMN 'earlyInterval' TEXT,
-  ADD COLUMN 'lateInterval' TEXT,
-  ADD COLUMN 'absoluteAge' TEXT,
-  ADD COLUMN 'storageLoc' TEXT,
-  ADD COLUMN 'stage' TEXT,
-  ADD COLUMN 'localStage' TEXT,
-  ADD COLUMN 'biota' TEXT,
-  ADD COLUMN 'biostratigraphy' TEXT,
-  ADD COLUMN 'taxonEnvironment' TEXT,
-  ADD COLUMN 'lithogroup' TEXT,
-  ADD COLUMN 'formation' TEXT,
-  ADD COLUMN 'member' TEXT,
-  ADD COLUMN 'bed' TEXT,
-  ADD COLUMN 'lithology' TEXT,
-  ADD COLUMN 'stratRemarks' TEXT,
-  ADD COLUMN 'element' TEXT,
-  ADD COLUMN 'slideProperties' TEXT,
-  ADD COLUMN 'geologicalContextID' TEXT;
-
 #Add paleo indexes
 ALTER TABLE `omoccurpaleo`
   ADD INDEX `IX_paleo_earlyInterval` (`earlyInterval` ASC),
@@ -48,6 +22,18 @@ ALTER TABLE `omoccurpaleo`
   ADD INDEX `IX_paleo_group` (`lithogroup` ASC),
   ADD INDEX `IX_paleo_member` (`member` ASC),
   ADD INDEX `IX_paleo_bed` (`bed` ASC);
+
+#Increase the character limit on  biostratigraphy
+ALTER TABLE `omoccurpaleo` 
+  MODIFY COLUMN `biostratigraphy` VARCHAR(100);
+
+
+ALTER TABLE `omoccurpaleogts`
+  ADD COLUMN `myaStart` FLOAT NULL DEFAULT NULL AFTER `rankname`,
+  ADD COLUMN `myaEnd` FLOAT NULL DEFAULT NULL AFTER `myaStart`,
+  ADD COLUMN `errorRange` FLOAT NULL DEFAULT NULL AFTER `myaEnd`,
+  ADD COLUMN `colorCode` VARCHAR(10) NULL DEFAULT NULL AFTER `errorRange`,
+  ADD COLUMN `geoTimeID` INT NULL DEFAULT NULL AFTER `parentgtsid`;
 
 ALTER TABLE `omoccurpaleogts`
   DROP INDEX `UNIQUE_gtsterm`,
@@ -58,11 +44,6 @@ ALTER TABLE `omoccurpaleogts`
   ADD INDEX `FK_paleogts_parent_idx` (`parentGtsID` ASC),
   ADD INDEX `IX_paleogts_myaStart` (`myaStart` ASC),
   ADD INDEX `IX_paleogts_myaEnd` (`myaEnd` ASC);
-
-#increase the character limit on  biostratigraphy
-ALTER TABLE `omoccurpaleo` MODIFY COLUMN `biostratigraphy` VARCHAR(100);
-
-
 
 #reset the values within omoccurpaleogts table
 TRUNCATE omoccurpaleogts;
@@ -244,3 +225,35 @@ INSERT INTO `omoccurpaleogts` VALUES
 (174,'Cambrian Stage 3',60,'age',521,514,NULL,'',74,1468,'2024-10-17 19:59:29'),
 (175,'Cambrian Stage 2',60,'age',529,521,NULL,'',75,1467,'2024-10-17 19:59:29'),
 (176,'Fortunian',60,'age',538.8,529,NULL,'',75,1486,'2024-10-17 19:59:29');
+
+
+#Add paleo fields to uploadspectemp
+ALTER TABLE 'uploadspectemp'
+  ADD COLUMN 'eon' TEXT,
+  ADD COLUMN 'era' TEXT,
+  ADD COLUMN 'period' TEXT,
+  ADD COLUMN 'epoch' TEXT,
+  ADD COLUMN 'earlyInterval' TEXT,
+  ADD COLUMN 'lateInterval' TEXT,
+  ADD COLUMN 'absoluteAge' TEXT,
+  ADD COLUMN 'storageLoc' TEXT,
+  ADD COLUMN 'stage' TEXT,
+  ADD COLUMN 'localStage' TEXT,
+  ADD COLUMN 'biota' TEXT,
+  ADD COLUMN 'biostratigraphy' TEXT,
+  ADD COLUMN 'taxonEnvironment' TEXT,
+  ADD COLUMN 'lithogroup' TEXT,
+  ADD COLUMN 'formation' TEXT,
+  ADD COLUMN 'member' TEXT,
+  ADD COLUMN 'bed' TEXT,
+  ADD COLUMN 'lithology' TEXT,
+  ADD COLUMN 'stratRemarks' TEXT,
+  ADD COLUMN 'element' TEXT,
+  ADD COLUMN 'slideProperties' TEXT,
+  ADD COLUMN 'geologicalContextID' TEXT;
+
+# CURRENT: title varchar(50) NOT NULL
+# While unlikely possible combination of omocurrences
+# recordedBy(varchar(255)) + ' '  + recordNumber(varchar(45)) + ' ' eventDate(10 chars after string conversion)
+# would result in ~312 chars maximum which breaks this fields maximum characters
+ALTER TABLE omoccurduplicates MODIFY title TEXT NOT NULL;
