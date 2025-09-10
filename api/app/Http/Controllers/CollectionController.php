@@ -26,14 +26,14 @@ class CollectionController extends Controller{
 	 *		 in="query",
 	 *		 description="live, snapshot, aggregate",
 	 *		 required=false,
-	 *		 @OA\Schema(type="string")
+	 *		 @OA\Schema(type="string", enum={"live", "snapshot","aggregate"})
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="collectionType",
 	 *		 in="query",
 	 *		 description="preservedSpecimens, observations, researchObservation",
 	 *		 required=false,
-	 *		 @OA\Schema(type="string")
+	 *		 @OA\Schema(type="string", enum={"preservedSpecimens", "observations", "researchObservation"})
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="limit",

@@ -27,7 +27,12 @@
                         "description": "live, snapshot, aggregate",
                         "required": false,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "enum": [
+                                "live",
+                                "snapshot",
+                                "aggregate"
+                            ]
                         }
                     },
                     {
@@ -36,7 +41,12 @@
                         "description": "preservedSpecimens, observations, researchObservation",
                         "required": false,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "enum": [
+                                "preservedSpecimens",
+                                "observations",
+                                "researchObservation"
+                            ]
                         }
                     },
                     {
