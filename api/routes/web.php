@@ -67,7 +67,7 @@ $router->group(['prefix' => 'v2'], function () use ($router) {
 	$router->get('taxonomy/{id}', ['uses' => 'TaxonomyController@showOneTaxon']);
 	$router->post('taxonomy',  ['uses' => 'TaxonomyController@create']);
 	//$router->get('taxonomy/{id}/description',  ['uses' => 'TaxonomyController@showAllDescriptions']);
-	//$router->get('taxonomy/{id}/description/{id}',  ['uses' => 'TaxonomyDescriptionController@showOneDescription']);
+	//$router->get('taxonomy/{id}/description/{identifier}',  ['uses' => 'TaxonomyDescriptionController@showOneDescription']);
 
 	$router->get('exsiccata', ['uses' => 'ExsiccataController@showAllExsiccata']);
 	$router->get('exsiccata/{identifier}', ['uses' => 'ExsiccataController@showExsiccata']);
