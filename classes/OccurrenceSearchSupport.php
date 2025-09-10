@@ -188,7 +188,7 @@ class OccurrenceSearchSupport {
 														$cIcon = (substr($collName2["icon"],0,6)=='images'?$CLIENT_ROOT:'').$collName2["icon"];
 														?>
 														<a href = '<?= $CLIENT_ROOT ?>/collections/misc/collprofiles.php?collid=<?= $collid ?>'>
-															<img src="<?= $cIcon ?>" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection <?php echo isset($collName2["collname"]) ? substr($collName2["collname"],0, 20) : substr($idStr,0, 20) ?>' />
+															<img src="<?= $cIcon ?>" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection <?php echo isset($collName2["collname"]) ? substr($collName2["collname"],0, 20) : substr($idStr,0, 20) ?>' onerror="this.onerror=null; this.src='<?php echo $CLIENT_ROOT; ?>/images/image-icon.svg'"/>
 														</a>
 														<?php
 													}

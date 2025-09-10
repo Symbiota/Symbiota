@@ -11,7 +11,7 @@ if ($LANG_TAG == 'en' || !file_exists($SERVER_ROOT . '/content/lang/collections/
 else include_once($SERVER_ROOT . '/content/lang/collections/search/index.' . $LANG_TAG . '.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
-$filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
+$JS_LANG_FILENAME = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
 
 $dbsWithBracketsRemoved = array_key_exists("db", $_GET) ?  str_replace(array('[', ']'), '', $_GET["db"]) : '';
 $explodable = $dbsWithBracketsRemoved;
@@ -47,15 +47,15 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 	<?php
 	include_once($SERVER_ROOT . '/includes/head.php');
 	?>
-	<link href="<?= $CLIENT_ROOT ?>/collections/search/css/searchStyles.css?ver=1" type="text/css" rel="stylesheet">
-	<link href="<?= $CLIENT_ROOT ?>/collections/search/css/searchStylesInner.css" type="text/css" rel="stylesheet">
-	<link href="<?= $CLIENT_ROOT ?>/collections/search/css/tables.css" type="text/css" rel="stylesheet">
+	<link href="<?= $CSS_BASE_PATH ?>/searchStyles.css?ver=1" type="text/css" rel="stylesheet">
+	<link href="<?= $CSS_BASE_PATH ?>/searchStylesInner.css" type="text/css" rel="stylesheet">
+	<link href="<?= $CSS_BASE_PATH ?>/tables.css" type="text/css" rel="stylesheet">
 	<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet">
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js?ver=1" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT . '/js/jquery-ui.min.js'; ?>" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT . '/collections/individual/domManipulationUtils.js'; ?>" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT . '/js/symb/localitySuggest.js' ?>" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/collections/individual/domManipulationUtils.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/localitySuggest.js" type="text/javascript"></script>
 	<script>
 		const clientRoot = '<?php echo $CLIENT_ROOT; ?>';
 		const paleoTimes = <?= json_encode($paleoTimes ?? []) ?>;
@@ -107,7 +107,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 	?>
 	<!-- This is inner text! -->
 	<div role="main" id="innertext" class="inner-search" style="max-width: 1920px">
-		<h1 class="page-heading"><?php echo $LANG['SAMPLE_SEARCH'] ?> <a href="https://docs.symbiota.org/Symbiota-Documentation/docs/User_Guide/searching_records" target="_blank" title="<?= $LANG['HOW_TO_SEARCH'] ?>" alt="<?= $LANG['HOW_TO_SEARCH'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></h1>
+		<h1 class="page-heading"><?php echo $LANG['SAMPLE_SEARCH'] ?> <a href="https://docs.symbiota.org/User_Guide/searching_records" target="_blank" title="<?= $LANG['HOW_TO_SEARCH'] ?>" alt="<?= $LANG['HOW_TO_SEARCH'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></h1>
 		<div id="error-msgs" class="errors"></div>
 		<div style="display: grid; grid-template-columns: 3fr 1fr;">
 			<button onClick="handleAccordionExpand()" class="inner-search button" id="expand-all-button" type="button" style="font-size: 1rem;"><?= $LANG['EXPAND_ALL_SECTIONS']; ?></button>
@@ -497,7 +497,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 							<!-- Accordion selector -->
 							<input type="checkbox" id="trait" class="accordion-selector" />
 							<!-- Accordion header -->
-							<label for="trait" class="accordion-header"><?php echo $LANG['TRAIT_CRITERIA'] ?> <a href="https://docs.symbiota.org/Symbiota-Documentation/docs/User_Guide/traits" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
+							<label for="trait" class="accordion-header"><?php echo $LANG['TRAIT_CRITERIA'] ?> <a href="https://docs.symbiota.org/User_Guide/traits" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
 							<!-- Accordion content -->
 							<div class="content">
 								<div id="search-form-trait">
@@ -539,7 +539,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 					<input type="checkbox" id="associations" class="accordion-selector" />
 
 					<!-- Accordion header -->
-					<label for="associations" class="accordion-header"><?php echo $LANG['ASSOCIATIONS'] ?> <a href="https://docs.symbiota.org/Symbiota-Documentation/docs/User_Guide/associations" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
+					<label for="associations" class="accordion-header"><?php echo $LANG['ASSOCIATIONS'] ?> <a href="https://docs.symbiota.org/User_Guide/associations" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
 
 					<!-- Taxonomy -->
 					<div id="search-form-associations" class="content">
@@ -797,11 +797,11 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 	include($SERVER_ROOT . '/includes/footer.php');
 	?>
 </body>
-<script src="<?php echo $filename ?>" type="text/javascript"></script>
-<script src="js/searchform.js?ver=2" type="text/javascript"></script>
-<script src="<?php echo $CLIENT_ROOT . '/collections/search/js/alerts.js?v=202107'; ?>" type="text/javascript"></script>
-<script src="<?php echo $CLIENT_ROOT . '/js/symb/api.taxonomy.taxasuggest.js'; ?>" type="text/javascript"></script>
-<script src="<?php echo $CLIENT_ROOT . '/js/symb/collections.index.js?ver=20171215' ?>" type="text/javascript"></script>
+<script src="<?= $JS_LANG_FILENAME ?>" type="text/javascript"></script>
+<script src="<?= $CLIENT_ROOT ?>/js/searchform.js?ver=2" type="text/javascript"></script>
+<script src="<?= $CLIENT_ROOT ?>/js/alerts.js?v=202107" type="text/javascript"></script>
+<script src="<?= $CLIENT_ROOT ?>/js/symb/api.taxonomy.taxasuggest.js" type="text/javascript"></script>
+<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.index.js?ver=20171215>" type="text/javascript"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
 		<?php

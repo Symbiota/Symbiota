@@ -1,6 +1,6 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceSkeletal.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/skeletalsubmit.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/skeletalsubmit.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/editor/skeletalsubmit.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
@@ -9,10 +9,11 @@ if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/e
 $collid  = $_REQUEST["collid"];
 $action = array_key_exists("formaction",$_REQUEST)?$_REQUEST["formaction"]:"";
 
-$skeletalManager = new OccurrenceSkeletal();
+$occurrenceEditor = new OccurrenceEditorManager();
+
 if($collid){
-	$skeletalManager->setCollid($collid);
-	$collMap = $skeletalManager->getCollectionMap();
+	$occurrenceEditor->setCollId($collid);
+	$collMap = $occurrenceEditor->getCollMap();
 }
 
 $statusStr = '';
@@ -40,7 +41,7 @@ if($collid){
 	?>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.skeletal.js?ver=2" type="text/javascript"></script>
+	<script src="../../js/symb/collections.editor.skeletal.js?ver=3" type="text/javascript"></script>
 	<script src="../../js/symb/collections.editor.autocomplete.js?ver=1" type="text/javascript"></script>
 	<script src="../../js/symb/shared.js?ver=1" type="text/javascript"></script>
 	<style>
@@ -85,31 +86,31 @@ if($collid){
 						<?php echo $LANG['SKELETAL_DESCIPRTION_3']; //Click the Display Option symbol located above scientific name to adjust field display...?>
 					</div>
  				</div>
+				<div id="optiondiv" style="display:none;position:absolute;background-color:white; z-index: 1;">
+					<fieldset style="margin-top: -10px;padding-top:5px">
+						<legend><?php echo $LANG['OPTIONS']; ?></legend>
+						<div style="float:right;"><a href="#" onclick="hideOptions()" style="color:red" ><?php echo $LANG['X_CLOSE']; ?></a></div>
+						<div style="text-decoration: underline"><?php echo $LANG['FIELD_DISPLAY']; ?>:</div>
+						<input type="checkbox" onclick="toggleFieldDiv('othercatalognumbersdiv', this.checked)" /> <?php echo $LANG['OTHER_CAT_NUMS']; ?><br/>
+						<input type="checkbox" onclick="toggleFieldDiv('authordiv', this.checked)" CHECKED /> <?php echo $LANG['AUTHOR']; ?><br/>
+						<input type="checkbox" onclick="toggleFieldDiv('familydiv', this.checked)" CHECKED /> <?php echo $LANG['FAMILY']; ?><br/>
+						<input type="checkbox" onclick="toggleFieldDiv('localitysecuritydiv', this)" CHECKED /> <?php echo $LANG['SECURITY']; ?><br/>
+						<input type="checkbox" onclick="toggleFieldDiv('countrydiv', this.checked)" /> <?php echo $LANG['COUNTRY']; ?><br/>
+						<input type="checkbox" onclick="toggleFieldDiv('statediv', this.checked)" CHECKED /> <?php echo $LANG['STATE_PROVINCE']; ?><br/>
+						<input type="checkbox" onclick="toggleFieldDiv('countydiv', this.checked)" CHECKED /> <?php echo $LANG['COUNTY_PARISH']; ?><br/>
+						<input type="checkbox" onclick="toggleFieldDiv('recordedbydiv', this.checked)" /> <?php echo $LANG['COLLECTOR']; ?><br/>
+						<input type="checkbox" onclick="toggleFieldDiv('recordnumberdiv', this.checked)" /> <?php echo $LANG['COLLECTOR_NO']; ?><br/>
+						<input type="checkbox" onclick="toggleFieldDiv('eventdatediv', this.checked)" /> <?php echo $LANG['COLLECTION_DATE']; ?><br/>
+						<input type="checkbox" onclick="toggleFieldDiv('labelprojectdiv', this.checked)" /> <?php echo $LANG['LABEL_PROJECT']; ?><br/>
+						<input type="checkbox" onclick="toggleFieldDiv('processingstatusdiv', this.checked)" /> <?php echo $LANG['PROCESSING_STATUS']; ?><br/>
+						<input type="checkbox" onclick="toggleFieldDiv('languagediv', this.checked)" /> <?php echo $LANG['LANGUAGE']; ?><br/>
+						<input type="checkbox" onclick="toggleFieldDiv('exsiccatadiv', this.checked)" /> <?php echo $LANG['EXSICCATA']; ?><br/>
+						<div style="text-decoration: underline"><?php echo $LANG['CATNUM_MATCH']; ?>:</div>
+						<input name="addaction" type="radio" value="1" checked /> <?php echo $LANG['RESTRICT_IF_EXISTS']; ?> <br/>
+						<input name="addaction" type="radio" value="2" /> <?php echo $LANG['APPEND_VALUES']; ?>
+					</fieldset>
+				</div>
 				<form id="defaultform" name="defaultform" action="skeletalsubmit.php" method="post" autocomplete="off" onsubmit="return submitDefaultForm(this)">
-					<div id="optiondiv" style="display:none;position:absolute;background-color:white; z-index: 1;">
-						<fieldset style="margin-top: -10px;padding-top:5px">
-							<legend><?php echo $LANG['OPTIONS']; ?></legend>
-							<div style="float:right;"><a href="#" onclick="hideOptions()" style="color:red" ><?php echo $LANG['X_CLOSE']; ?></a></div>
-							<div style="text-decoration: underline"><?php echo $LANG['FIELD_DISPLAY']; ?>:</div>
-							<input type="checkbox" onclick="toggleFieldDiv('othercatalognumbersdiv')" /> <?php echo $LANG['OTHER_CAT_NUMS']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('authordiv')" CHECKED /> <?php echo $LANG['AUTHOR']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('familydiv')" CHECKED /> <?php echo $LANG['FAMILY']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('localitysecuritydiv')" CHECKED /> <?php echo $LANG['SECURITY']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('countrydiv')" /> <?php echo $LANG['COUNTRY']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('statediv')" CHECKED /> <?php echo $LANG['STATE_PROVINCE']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('countydiv')" CHECKED /> <?php echo $LANG['COUNTY_PARISH']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('recordedbydiv')" /> <?php echo $LANG['COLLECTOR']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('recordnumberdiv')" /> <?php echo $LANG['COLLECTOR_NO']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('eventdatediv')" /> <?php echo $LANG['COLLECTION_DATE']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('labelprojectdiv')" /> <?php echo $LANG['LABEL_PROJECT']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('processingstatusdiv')" /> <?php echo $LANG['PROCESSING_STATUS']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('languagediv')" /> <?php echo $LANG['LANGUAGE']; ?><br/>
-							<input type="checkbox" onclick="toggleFieldDiv('exsiccatadiv')" /> <?php echo $LANG['EXSICCATA']; ?><br/>
-							<div style="text-decoration: underline"><?php echo $LANG['CATNUM_MATCH']; ?>:</div>
-							<input name="addaction" type="radio" value="1" checked /> <?php echo $LANG['RESTRICT_IF_EXISTS']; ?> <br/>
-							<input name="addaction" type="radio" value="2" /> <?php echo $LANG['APPEND_VALUES']; ?>
-						</fieldset>
-					</div>
 					<div style="display: flex; justify-content:right; gap: 0.5rem; margin-bottom: 1rem">
 						<div>
 							<?php echo $LANG['SESSION']; ?>: <span id="minutes">00</span>:<span id="seconds">00</span><br/>
@@ -216,7 +217,7 @@ if($collid){
 								<select id="flanguage" name="language" style="margin-top:4px">
 									<option value=""></option>
 									<?php
-									$langArr = $skeletalManager->getLanguageArr();
+									$langArr = $occurrenceEditor->getLanguageArr();
 									foreach($langArr as $code => $langStr){
 										echo '<option value="'.$code.'">'.$langStr.'</option>';
 									}

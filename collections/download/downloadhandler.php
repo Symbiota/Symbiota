@@ -30,9 +30,9 @@ if ($schema == 'backup') {
 			$dwcaHandler->setIncludeDets(1);
 			$dwcaHandler->setIncludeImgs(1);
 			$dwcaHandler->setIncludeAttributes(1);
-			if ($dwcaHandler->hasMaterialSamples()) $dwcaHandler->setIncludeMaterialSample(1);
-			if ($dwcaHandler->hasIdentifiers()) $dwcaHandler->setIncludeIdentifiers(1);
-			if ($dwcaHandler->hasAssociations()) $dwcaHandler->setIncludeAssociations(1);
+			if ($dwcaHandler->hasMaterialSamples($collid)) $dwcaHandler->setIncludeMaterialSample(1);
+			if ($dwcaHandler->hasIdentifiers($collid)) $dwcaHandler->setIncludeIdentifiers(1);
+			if ($dwcaHandler->hasAssociations($collid)) $dwcaHandler->setIncludeAssociations(1);
 			$dwcaHandler->setRedactLocalities(0);
 			$dwcaHandler->setCollArr($collid);
 
@@ -54,7 +54,9 @@ if ($schema == 'backup') {
 				readfile($archiveFile);
 				unlink($archiveFile);
 			} else {
-				echo 'ERROR creating output file. Query probably did not include any records.';
+				$errMsg = $dwcaHandler->getErrorMessage();
+				if($errMsg) echo $errMsg;
+				else echo 'ERROR creating output file. Query probably did not include any records.';
 			}
 		}
 	}
@@ -271,7 +273,8 @@ if ($schema == 'backup') {
 		} else {
 			header("Content-type: text/plain");
 			header("Content-Disposition: attachment; filename=NoData.txt");
-			echo 'The query failed to return records. Please modify query criteria and try again.';
+			if($dwcaHandler->getErrorMessage()) echo $dwcaHandler->getErrorMessage();
+			else echo 'The query failed to return records. Please modify query criteria and try again.';
 		}
 	}
 }

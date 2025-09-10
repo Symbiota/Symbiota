@@ -224,9 +224,10 @@ $LANG['NO_SPECS_REGISTERED'] = 'Aucun spécimen n\'est enregistré pour ce prêt
 
 // from specnoteseditor.php
 $LANG['LOAN_NOTES_EDITOR'] = 'Éditeur de notes de spécimen de prêt';
+$LANG['SPECIMEN_CHECKIN'] = "Éditeur d'enregistrement de spécimens";
 $LANG['LOAN_SPEC_EDIT'] = 'Éditeur de spécimens de prêt';
 $LANG['SPEC_NOTES'] = 'Notes sur les spécimens';
 $LANG['SAVE_EDITS'] = 'Enregistrer les modifications';
-
+$LANG['RESET_CHECKIN'] = "Réinitialiser l'enregistrement";
 
 ?>

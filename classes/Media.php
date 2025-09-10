@@ -15,33 +15,33 @@ if(file_exists($SERVER_ROOT.'/content/lang/classes/Media.'.$LANG_TAG.'.php')) {
 }
 
 function get_occurrence_upload_path($institutioncode, $collectioncode, $catalognumber = null) {
-		$root = $institutioncode . ($collectioncode? '_'. $collectioncode: '') . '/';
+	$root = $institutioncode . ($collectioncode? '_'. $collectioncode: '') . '/';
 
-		if($catalognumber) {
-			//Clean out Symbols that would interfere with
-			$derived_cat_num = str_replace(array('/','\\',' '), '', $catalognumber);
+	if($catalognumber) {
+		//Clean out Symbols that would interfere with
+		$derived_cat_num = str_replace(array('/','\\',' '), '', $catalognumber);
 
-			//Grab any characters in the range of 0-8 then any amount digits
-			if(preg_match('/^(\D{0,8}\d{4,})/', $derived_cat_num, $matches)){
-				//Truncate cat number to keep directories from getting out of hand
-				$derived_cat_num = substr($matches[1], 0, -3);
+		//Grab any characters in the range of 0-8 then any amount digits
+		if(preg_match('/^(\D{0,8}\d{4,})/', $derived_cat_num, $matches)){
+			//Truncate cat number to keep directories from getting out of hand
+			$derived_cat_num = substr($matches[1], 0, -3);
 
-				//If derived catalog number is a number less then five pad front with 0's
-				if(is_numeric($derived_cat_num) && strlen($derived_cat_num) < 5) {
-					$derived_cat_num = str_pad($derived_cat_num, 5, "0", STR_PAD_LEFT);
-				}
-
-				$root .= $derived_cat_num . '/';
-			//backup catalogNumber
-			} else {
-				$root .= '00000/';
+			//If derived catalog number is a number less then five pad front with 0's
+			if(is_numeric($derived_cat_num) && strlen($derived_cat_num) < 5) {
+				$derived_cat_num = str_pad($derived_cat_num, 5, "0", STR_PAD_LEFT);
 			}
-		//Use date as a backup so that main directory doesn't get filled up but can debug
-		} else {
-			$root .= date('Ym') . '/';
-		}
 
-		return $root;
+			$root .= $derived_cat_num . '/';
+			//backup catalogNumber
+		} else {
+			$root .= '00000/';
+		}
+		//Use date as a backup so that main directory doesn't get filled up but can debug
+	} else {
+		$root .= date('Ym') . '/';
+	}
+
+	return str_replace(' ', '_', $root);
 }
 
 class Media {
@@ -49,7 +49,6 @@ class Media {
 	private static $mediaRootUrl;
 
 	private static $errors = [];
-	private static $storage_driver = LocalStorage::class;
 
 	private const DEFAULT_THUMBNAIL_WIDTH_PX = 200;
 	private const DEFAULT_WEB_WIDTH_PX = 1600;
@@ -89,10 +88,6 @@ class Media {
 		't.author',
 		't.rankid'
 	];
-
-	public static function setStorageDriver(StorageStrategy $storage_driver): void {
-		$this->storage_driver = $storage_driver::class;
-	}
 
 	private static function getMediaRootPath(): string {
 		if(self::$mediaRootPath) {
@@ -232,8 +227,8 @@ class Media {
 			'cdr' => ['image/cdr', 'image/x-cdr'],
 			'gif' => 'image/gif',
 			'ico' => ['image/x-icon', 'image/x-ico', 'image/vnd.microsoft.icon' ],
-			'jpg' => ['image/jpeg', 'image/jpeg', 'image/pjpeg'],
-			'jpeg' => ['image/jpeg', 'image/jpeg', 'image/pjpeg'],
+			'jpg' => ['image/jpeg', 'image/pjpeg'],
+			'jpeg' => ['image/jpeg', 'image/pjpeg'],
 			'jp2' => ['image/jp2', 'image/jpx', 'image/jpm'],
 			'png' => ['image/png', 'image/x-png'],
 			'psd' => 'image/vnd.adobe.photoshop',
@@ -516,10 +511,10 @@ class Media {
 				//Generate Deriatives if needed
 				if($media_type === MediaType::Image) {
 					$start_mem_limit = ini_get('memory_limit');
-					// Update mem limit if not set to 256M already
-					if(UploadUtil::size2Bytes(ini_get('memory_limit')) < UploadUtil::size2Bytes('256M')) {
-						ini_set('memory_limit', '256M');
-					}
+
+					// Dynamically set memory to fit enought to process it.
+					// It will throw error if set above max
+					self::setMemoryLimit($file['tmp_name']);
 
 					$size = getimagesize($file['tmp_name']);
 
@@ -915,7 +910,7 @@ class Media {
 		$mime_type = $size['mime'];
 
 		if(!self::enough_memory_gd($size[0], $size[1])) {
-			throw new Exception('Not enough memory to create image: ' . $new_file);
+			throw new MediaException(MediaException::NotEnoughMemoryImage, ': ' . $new_file);
 		}
 
 		$orig_width = $width;
@@ -930,15 +925,23 @@ class Media {
 			$height = intval(($new_width / $width) * $height);
 			$width = $new_width;
 		}
+		$image = null;
 
-		$image = match($mime_type) {
-			'image/jpeg' => imagecreatefromjpeg($src_path),
-			'image/png' => imagecreatefrompng($src_path),
-			'image/gif' => imagecreatefromgif($src_path),
-			default => throw new Exception(
-				'Mime Type: ' . $mime_type . ' not supported for creation'
-			)
-		};
+		switch($mime_type) {
+			case 'image/jpeg':
+				$image = imagecreatefromjpeg($src_path);
+				break;
+			case 'image/png':
+				$image = imagecreatefrompng($src_path);
+				break;
+			case 'image/gif':
+				$image = imagecreatefromgif($src_path);
+				break;
+			default:
+				throw new Exception(
+					'Mime Type: ' . $mime_type . ' not supported for creation'
+				);
+		}
 
 		$new_image = imagecreatetruecolor($width, $height);
 
@@ -958,6 +961,69 @@ class Media {
 		}
 
 		imagedestroy($image);
+	}
+
+	/**
+	 * Dynamically allocate memory based on image dimensions, bit-depth and channels
+	 * Shamelessly stolen somewhere online years ago.
+	 * Probably from https://alvarotrigo.com/blog/allocate-memory-on-the-fly-PHP-image-resizing/
+	 *
+	 * @param string $filename Full path to a file supported by getimagesize() function
+	 * @param int $tweak_factor Multiplier for tweaking required memory. 1.8 seems fine. More info: http://php.net/imagecreatefromjpeg#76968
+	 * @param string $original_name Used purely for reporting actual file name instead of uploaded temp file (e.g. /tmp/RaNd0m.tmp)
+	 *
+	 * @return bool true on success or if no memory increase required, false if required memory amount is too large
+	 */
+	static function setMemoryLimit($filename, $tweak_factor = 1.8, $original_name = null): bool {
+
+		$maxMemoryUsage = 512 * 1024 * 1024; // 512MB
+		$width = 0;
+		$height = 0;
+		$memory_limit = UploadUtil::size2Bytes(ini_get('memory_limit'));
+
+		$memory_baseline_usage = memory_get_usage(true);
+
+		// Getting the image info
+		$info = @getimagesize($filename);
+		if( empty($info) ) {
+			throw new Exception( sprintf('ERROR: getimagesize("%s") returned: %s', $filename, print_r($info, true)) );
+			return false;
+		}
+
+		!empty($original_name) ? $filename = $original_name : $original_name;
+
+		$channels = isset($info['channels']) ? $info['channels'] : 3;
+		$width = $info[0];
+		$height = $info[1];
+
+		if($info['mime'] == 'image/png') {
+			$channels = 4;
+		}
+
+		if(!isset($info['bits'])) {
+			$info['bits'] = 16;
+		}
+		$bytes_per_channel = ( ($info['bits'] / 8) * $channels );
+
+		// Calculating the needed memory
+		$new_limit = $memory_baseline_usage + ($width * $height * $bytes_per_channel * $tweak_factor + 1048576);
+
+		if( $new_limit <= $memory_limit ) {
+			return true;
+		}
+
+		/* We don't want to allocate an extremely large amount of memory
+	so it's a good practice to define a limit and bail out if new limit is more than that */
+		if ($new_limit > $maxMemoryUsage) {
+			throw new Exception( sprintf( "Failed increasing memory limit to %dMB (max=%dMB) for file '%s' (%d x %d)", ceil( $new_limit / 1048576 ), ceil( $maxMemoryUsage / 1048576 ), $filename, $width, $height ) );
+			return false;
+		}
+
+		$new_limit = ceil( $new_limit / 1048576 );
+
+		// Updating the default value
+		ini_set('memory_limit', $new_limit.'M');
+		return true;
 	}
 
 	private static function enough_memory_gd($x, $y, $rgb = 3) {
@@ -1021,6 +1087,9 @@ class Media {
 			if($remove_files) {
 				foreach($media_urls as $url) {
 					if($url && file_exists($GLOBALS['SERVER_ROOT'] . $url)) {
+						if(!is_writable($GLOBALS['SERVER_ROOT'] . $url)) {
+							throw new MediaException(MediaException::FilepathNotWritable, $url);
+						}
 						if(!unlink($GLOBALS['SERVER_ROOT'] . $url)) {
 							error_log("WARNING: File (path: " . $url . ") failed to delete from server");
 						}
@@ -1131,7 +1200,7 @@ class Media {
 	 * @param Mysqli $conn
 	 * @return array<string>
 	 */
-	public static function getMediaTags(int|array $media_id, mysqli $conn = null): array {
+	public static function getMediaTags($media_id, mysqli $conn = null): array {
 		$sql = 'SELECT t.mediaID, k.tagkey, k.shortlabel, k.description_en FROM imagetag t
 		INNER JOIN imagetagkey k ON t.keyvalue = k.tagkey
 		WHERE t.mediaID ';

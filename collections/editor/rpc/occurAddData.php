@@ -1,6 +1,8 @@
 <?php
-include_once('../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceSkeletal.php');
+include_once(__DIR__ . '/../../../config/symbini.php');
+global $SERVER_ROOT, $IS_ADMIN, $USER_RIGHTS;
+
+include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 
 $collid = array_key_exists('collid',$_REQUEST);
 $responseArr = array();
@@ -16,10 +18,11 @@ if($collid){
 		$isEditor = 1;
 	}
 	if($isEditor){
-		$skelHandler = new OccurrenceSkeletal();
-		$skelHandler->setCollid($_REQUEST['collid']);
-		if(array_key_exists('catalognumber',$_REQUEST) && $skelHandler->catalogNumberExists($_REQUEST['catalognumber'])){
-			$responseArr['occid'] = implode(',', $skelHandler->getOccidArr());
+		$occurrenceEditor = new OccurrenceEditorManager();
+		$occurrenceEditor->setCollId($_REQUEST['collid']);
+
+		if(array_key_exists('catalognumber',$_REQUEST) && $occurrenceEditor->catalogNumberExists($_REQUEST['catalognumber'])){
+			$responseArr['occid'] = $occurrenceEditor->getOccId();
 			if($_REQUEST['addaction'] == '1'){
 				$responseArr['action'] = 'none';
 				$responseArr['status'] = 'false';
@@ -28,21 +31,20 @@ if($collid){
 			elseif($_REQUEST['addaction'] == '2'){
 				$responseArr['action'] = 'update';
 				$responseArr['status'] = 'true';
-				if(!$skelHandler->updateOccurrence($_REQUEST)){
+				if(!$occurrenceEditor->editOccurrence($_REQUEST)){
 					$responseArr['status'] = 'false';
-					$responseArr['error'] = $skelHandler->getErrorStr();
+					$responseArr['error'] = $occurrenceEditor->getErrorStr();
 				}
 			}
 		}
 		else{
 			$responseArr['action'] = 'add';
-			if($skelHandler->addOccurrence($_REQUEST)){
+			if($occurrenceEditor->addOccurrence($_REQUEST)) {
 				$responseArr['status'] = 'true';
-				$responseArr['occid'] = implode(',', $skelHandler->getOccidArr());
-			}
-			else{
+				$responseArr['occid'] = $occurrenceEditor->getOccId();
+			} else {
 				$responseArr['status'] = 'false';
-				$responseArr['error'] = $skelHandler->getErrorStr();
+				$responseArr['error'] = $occurrenceEditor->getErrorStr();
 			}
 		}
 	}

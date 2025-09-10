@@ -349,6 +349,10 @@ class DwcArchiverOccurrence extends Manager{
 				$trimArr = array('collectionID','rights','rightsHolder','accessRights');
 				$this->occurDefArr[$k] = array_diff_key($vArr,array_flip($trimArr));
 			}
+			elseif($this->schemaType == 'backup-personal'){
+				$trimArr = array('collectionID','rights','rightsHolder','accessRights');
+				$this->occurDefArr[$k] = array_diff_key($vArr,array_flip($trimArr));
+			}
 			elseif($this->schemaType == 'coge'){
 				$targetArr = array('id','basisOfRecord','institutionCode','collectionCode','catalogNumber','occurrenceID','family','scientificName','scientificNameAuthorship',
 					'kingdom','phylum','class','order','genus','specificEpithet','infraSpecificEpithet','recordedBy','recordNumber','eventDate','year','month','day','fieldNumber',
@@ -885,8 +889,9 @@ class DwcArchiverOccurrence extends Manager{
 	}
 
 	//Setter and getter
-	public function setSchemaType($t){
-		$this->schemaType = $t;
+	public function setSchemaType($t, $observerUid = 0){
+		if($t == 'backup' && $observerUid) $this->schemaType = 'backup-personal';
+		else $this->schemaType = $t;
 	}
 
 	public function setExtended($e){

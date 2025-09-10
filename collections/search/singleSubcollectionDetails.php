@@ -10,7 +10,7 @@
                 $cIcon = isset($nestedCatEl["icon"]) ? $prefix . $nestedCatEl["icon"]: '#';
                 ?>
                 <a href = '<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/collections/misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>'>
-                    <img src="<?php echo htmlspecialchars($cIcon, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection <?php echo isset($nestedCatEl["collname"]) ? substr($nestedCatEl["collname"],0, 20) : substr($idStr,0, 20) ?>' />
+                    <img src="<?php echo htmlspecialchars($cIcon, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection <?php echo isset($nestedCatEl["collname"]) ? substr($nestedCatEl["collname"],0, 20) : substr($idStr,0, 20) ?>' onerror="this.onerror=null; this.src='<?php echo $CLIENT_ROOT; ?>/images/image-icon.svg'" />
                 </a>
                 <?php
             }
