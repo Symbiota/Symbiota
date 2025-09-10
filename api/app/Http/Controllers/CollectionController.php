@@ -118,11 +118,11 @@ class CollectionController extends Controller{
 	 *	 ),
 	 * )
 	 */
-	public function showOneCollection($id, Request $request){
+	public function showOneCollection($id){
 		$collectionObj = null;
 		if(is_numeric($id)) $collectionObj = Collection::find($id);
 		else $collectionObj = Collection::where('collectionGuid',$id)->first();
-		if(!$collectionObj->count()) $collectionObj = ["status"=>false,"error"=>"Unable to locate collection based on identifier"];
+		if(!$collectionObj || !$collectionObj->count()) $collectionObj = ["status"=>false,"error"=>"Unable to locate collection based on identifier"];
 		return response()->json($collectionObj);
 	}
 
