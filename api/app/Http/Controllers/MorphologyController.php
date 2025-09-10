@@ -25,7 +25,7 @@ class MorphologyController extends Controller{
 	 *		 in="query",
 	 *		 description="Controls whether character traits are included within output: 0 [default] = do not include state, 1 = include states ",
 	 *		 required=false,
-	 *		 @OA\Schema(type="integer", default=0)
+	 *		 @OA\Schema(type="integer", enum={0, 1}, default=0)
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="limit",
@@ -103,9 +103,8 @@ class MorphologyController extends Controller{
 	 *	 ),
 	 * )
 	 */
-	public function showOneCharacter($id, Request $request){
+	public function showOneCharacter($id){
 		$morphObj = MorphologyCharacter::find($id);
-
 		if($morphObj->count()) $morphObj->states;
 		else $morphObj = ['status'=>false,'error'=>'Unable to locate morphological character based on identifier'];
 		return response()->json($morphObj);
