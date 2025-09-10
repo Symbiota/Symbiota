@@ -59,7 +59,7 @@ class DwcArchiverImage{
 		return array_diff_key($imageArr,array_flip($trimArr));
 	}
 
-	public static function getSqlImages($fieldArr, $conditionSql, $redactLocalities, $rareReaderArr){
+	public static function getSqlImages($fieldArr, $conditionSql, $tableJoins, $redactLocalities, $rareReaderArr){
 		$sql = '';
 		if($fieldArr && $conditionSql){
 			$sqlFrag = '';
@@ -70,40 +70,7 @@ class DwcArchiverImage{
 				INNER JOIN omcollections c ON o.collid = c.collid
 				LEFT JOIN imagetag tag ON m.mediaID = tag.mediaID
 				LEFT JOIN users u ON m.creatorUid = u.uid ';
-			if(strpos($conditionSql,'ts.taxauthid')){
-				$sql .= 'LEFT JOIN taxstatus ts ON o.tidinterpreted = ts.tid ';
-			}
-			if(stripos($conditionSql,'e.parenttid')){
-				$sql .= 'LEFT JOIN taxaenumtree e ON o.tidinterpreted = e.tid ';
-			}
-			if(strpos($conditionSql,'ctl.clid')){
-				//Search criteria came from custom search page
-				$sql .= 'LEFT JOIN fmvouchers v ON o.occid = v.occid LEFT JOIN fmchklsttaxalink ctl ON v.clTaxaID = ctl.clTaxaID ';
-			}
-			if(strpos($conditionSql,'p.lngLatPoint')){
-				//Search criteria came from map search page
-				$sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
-			}
-			if(strpos($conditionSql,'ds.datasetid')){
-				$sql .= 'LEFT JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
-			}
-			if(stripos($conditionSql,'a.stateid')){
-				//Search is limited by occurrence attribute
-				$sql .= 'INNER JOIN tmattributes a ON o.occid = a.occid ';
-			}
-			elseif(stripos($conditionSql,'s.traitid')){
-				//Search is limited by occurrence trait
-				$sql .= 'INNER JOIN tmattributes a ON o.occid = a.occid '.
-					'INNER JOIN tmstates s ON a.stateid = s.stateid ';
-			}
-			if(!empty($GLOBALS['ACTIVATE_PALEO'])){
-				$sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
-				if(strpos($conditionSql,'early.myaStart')){
-					$sql .= 'JOIN omoccurpaleogts early ON paleo.earlyInterval = early.gtsterm ';
-					$sql .= 'JOIN omoccurpaleogts late ON paleo.lateInterval = late.gtsterm ';
-					$sql .= 'CROSS JOIN searchRange search ';
-				}
-			}
+			$sql .= $tableJoins;
 			$sql .= $conditionSql;
 			if($redactLocalities){
 				if($rareReaderArr){

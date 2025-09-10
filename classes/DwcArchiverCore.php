@@ -19,10 +19,9 @@ class DwcArchiverCore extends Manager{
 	private $ts;
 
 	protected $collArr;
+	protected $polygons;
 	private $customWhereSql;
-
 	private $paleoWithSql;
-
 	protected $conditionSql = '';
 	protected $conditionArr = array();
 	private $condAllowArr;
@@ -257,6 +256,14 @@ class DwcArchiverCore extends Manager{
 		$this->paleoWithSql = $sql;
 	}
 
+	public function setPolygons($polygons) {
+        $this->polygons = $polygons;
+    }
+
+    public function getPolygons() {
+        return $this->polygons;
+    }
+
 	public function addCondition($field, $cond, $value = ''){
 		$cond = strtoupper(trim($cond));
 		if (!preg_match('/^[A-Za-z]+$/', $field)) return false;
@@ -415,6 +422,14 @@ class DwcArchiverCore extends Manager{
 			}
 			if (strpos($this->conditionSql, 'id.identifierValue')) {
 				$sql .= 'LEFT JOIN omoccuridentifiers id ON o.occid = id.occid ';
+			}
+			if(strpos($this->conditionSql, 'gpoly.footprintPolygon')){
+				$polygonIDs = $this->getPolygons();
+				if (is_string($polygonIDs))
+					$polygonIDs = explode(',', $polygonIDs);
+				$polygonIDs = array_map('intval', $polygonIDs);
+				$sql .= 'INNER JOIN geographicpolygon gpoly ON gpoly.geothesid IN (' . implode(',', $polygonIDs) . ') ';
+				$sql .= 'INNER JOIN geographicthesaurus gth ON gpoly.geothesid = gth.geothesid ';
 			}
 			if($GLOBALS["ACTIVATE_PALEO"]){
 				$sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
@@ -2086,9 +2101,9 @@ class DwcArchiverCore extends Manager{
 		$headerArr = array_keys($this->imageFieldArr['fields']);
 		array_pop($headerArr);
 		$this->writeOutRecord($fh, $headerArr);
-
+		$tableJoins = $this->getTableJoins();
 		//Output records
-		$sql = DwcArchiverImage::getSqlImages($this->imageFieldArr['fields'], $this->conditionSql, $this->redactLocalities, $this->rareReaderArr);
+		$sql = DwcArchiverImage::getSqlImages($this->imageFieldArr['fields'], $this->conditionSql, $tableJoins,  $this->redactLocalities, $this->rareReaderArr);
 		if ($this->paleoWithSql)
 			$sql = $this->paleoWithSql . $sql;
 		if ($rs = $this->dataConn->query($sql, MYSQLI_USE_RESULT)) {
