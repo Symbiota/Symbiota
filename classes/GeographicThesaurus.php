@@ -1,6 +1,7 @@
 <?php
 include_once($SERVER_ROOT . '/classes/Manager.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
+include_once($SERVER_ROOT . '/classes/Database.php');
 
 class GeographicThesaurus extends Manager {
 	const US_STATE_LIST = array('AK' => 'Alaska', 'AL' => 'Alabama', 'AZ' => 'Arizona', 'AR' => 'Arkansas', 'CA' => 'California',
@@ -53,23 +54,27 @@ class GeographicThesaurus extends Manager {
 		return $retArr;
 	}
 
-	public static function getCountryByState($state, $conn){
-		$countryStr = '';
-		if($state){
-			if(in_array(ucwords($state),self::US_STATE_LIST)){
-				$countryStr = 'United States';
-			}
-			else{
-				$sql = 'SELECT c.geoTerm AS countryName
-					FROM geographicthesaurus s INNER JOIN geographicthesaurus c ON s.parentID = c.geoThesID
-					WHERE s.geoTerm = "'.$state.'"';
-				$rs = $conn->query($sql);
-				if($r = $rs->fetch_object()) {
-					$countryStr = $r->countryName;
-				}
-				$rs->free();
-			}
+	public static function getCountryByState($state, $conn = null) {
+		if(!$state) { 
+			return '';
 		}
+
+		if(in_array(ucwords($state),self::US_STATE_LIST)) {
+			return 'United States';
+		}
+
+		if(!$conn) {
+			$conn = Database::connect('readonly');
+		}
+
+		$countryStr = '';
+		$rs = QueryUtil::executeQuery($conn, 'SELECT c.geoTerm AS countryName FROM geographicthesaurus s INNER JOIN geographicthesaurus c ON s.parentID = c.geoThesID WHERE s.geoTerm = ?', [ $state ]);
+
+		if($r = $rs->fetch_object()) {
+			$countryStr = $r->countryName;
+		}
+		$rs->free();
+
 		return $countryStr;
 	}
 

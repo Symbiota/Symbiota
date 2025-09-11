@@ -3,7 +3,6 @@ include_once($SERVER_ROOT . '/config/dbconnection.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceDuplicate.php');
 include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
-include_once($SERVER_ROOT . '/classes/GeographicThesaurus.php');
 
 if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/editor/occurrenceeditor.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/editor/occurrenceeditor.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/editor/occurrenceeditor.en.php');
@@ -1285,10 +1284,6 @@ class OccurrenceEditorManager {
 	public function addOccurrence($postArr) {
 		global $LANG;
 		$status = $LANG['SUCCESS_NEW_OCC_SUBMITTED'];
-
-		if((!isset($postArr['country']) || !$postArr['country']) && isset($postArr['stateprovince']) && $postArr['stateprovince']){
-			$postArr['country'] = GeographicThesaurus::getCountryByState($postArr['stateprovince'], $this->conn);
-		}
 
 		if ($postArr) {
 			$postArr = array_merge($postArr, $this->getDatefields($postArr));
