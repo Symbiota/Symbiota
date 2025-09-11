@@ -31,6 +31,7 @@ $LANG['SCINAME'] = 'Nom Scientifique';
 $LANG['COLLECTOR'] = 'Collectionneur';
 $LANG['NUMBER'] = 'Numéro du Collecteur';
 $LANG['EVENT_DATE'] = 'Date';
+$LANG['EVENT_TIME'] = 'Heure de l\'événement';
 $LANG['COUNTRY'] = 'Pays';
 $LANG['STATE_PROVINCE'] = 'État/province';
 $LANG['COUNTY'] = 'Comté';
