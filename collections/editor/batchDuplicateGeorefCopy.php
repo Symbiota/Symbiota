@@ -24,8 +24,8 @@ Language::load([
 
 $start = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
 $db = array_key_exists('db',$_REQUEST)?$_REQUEST['db']:[];
-$hideExactMatches = array_key_exists('hideExactMatches',$_REQUEST);
 $missingLatLng = array_key_exists('missingLatLng',$_REQUEST);
+$hideExactMatches = array_key_exists('hideExactMatches',$_REQUEST);
 
 $updated = [];
 $errors = [];
@@ -35,6 +35,8 @@ $fields = [
 	'occid',
 	'collid',
 	'catalognumber',
+	'recordedBy',
+	'recordNumber',
 	'country',
 	'stateProvince',
 	'county',
@@ -60,6 +62,8 @@ $shownFields = [
 	'catalognumber',
 	'institutionCode',
 	'collectionCode',
+	'collector',
+	'collector number',
 	'country',
 	'stateProvince',
 	'county',
@@ -110,11 +114,13 @@ function getTableHeaders(array $arr, array $ignore = []) {
 	return $html;
 }
 
-function render_row($row, $checkboxName = false, $shownFields = []) {
-	$html = '<tr>';
-	$html .= '<td><div style="display:flex; align-items:center; justify-content: center;">' . 
-		($checkboxName ? '<input type="checkbox" onclick="checkbox_one_only(this)" name="'. $checkboxName  .'" value="' . $row['occid'] . '" style="margin:0"/>': '') . 
-		'</div></td>';
+function render_row($row, $checkboxName = false, $shownFields = [], $onlyOption = false) {
+	$html = '<tr><td><div style="display:flex; align-items:center; justify-content: center;">';
+	if($checkboxName) {
+		$html .= '<input type="checkbox" onclick="checkbox_one_only(this)" name="' . $checkboxName . '" value="' . $row['occid'] . '" style="margin:0" ' . ($onlyOption? 'data-only-option ': '') . '/>';
+	}
+
+	$html .= '</div></td>';
 
 	$base_url = $GLOBALS['CLIENT_ROOT'] . '/collections/individual/index.php?occid=';
 		
@@ -279,6 +285,8 @@ foreach (getOccurrences($targetOccids, $conn) as $target) {
 	$target['duplicateid'] = $targets[$target['occid']]; 
 	$target['institutionCode'] = $collections[$target['collid']]['institutionCode'];
 	$target['collectionCode'] = $collections[$target['collid']]['collectionCode'];
+	$target['collector'] = $target['recordedBy'];
+	$target['collector number'] = $target['recordNumber'];
 	$targets[$target['occid']] =  $target;
 }
 
@@ -288,6 +296,8 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 	$option['duplicateid'] = $duplicateId;
 	$option['institutionCode'] = $collections[$option['collid']]['institutionCode'];
 	$option['collectionCode'] = $collections[$option['collid']]['collectionCode'];
+	$option['collector'] = $option['recordedBy'];
+	$option['collector number'] = $option['recordNumber'];
 	$options[$duplicateId][$occid] = $option;
 }
 
@@ -411,11 +421,11 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 			<?= getTableHeaders($shownFields, $fieldIgnores) ?>
 
 			<?php foreach ($targets as $targetOccid => $target): ?>
-			<?php if(count($options[$target['duplicateid']])): ?>
+			<?php if($optionCount = count($options[$target['duplicateid']])): ?>
 				<tbody>
 					<?= render_row($target, false, $shownFields) ?>
 					<?php foreach ($options[$target['duplicateid']] as $dupeOccid => $dupe): ?>
-						<?= $dupeOccid !== $targetOccid? render_row($dupe, $targetOccid, $shownFields): '' ?>
+						<?= $dupeOccid !== $targetOccid? render_row($dupe, $targetOccid, $shownFields, $optionCount === 1): '' ?>
 					<?php endforeach ?>
 					<tr>
 						<td colspan="18" style="height: 1rem"></td>
