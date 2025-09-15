@@ -1869,7 +1869,7 @@
                     {
                         "name": "identifier",
                         "in": "path",
-                        "description": "occid associated with target occurrence",
+                        "description": "occid or specimen GUID (occurrenceID) or recordID associated with target occurrence",
                         "required": true,
                         "schema": {
                             "type": "string"

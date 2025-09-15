@@ -427,7 +427,7 @@ class OccurrenceController extends Controller {
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
-	 *		 description="occid associated with target occurrence",
+	 *		 description="occid or specimen GUID (occurrenceID) or recordID associated with target occurrence",
 	 *		 required=true,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
@@ -443,7 +443,9 @@ class OccurrenceController extends Controller {
 	 * )
 	 */
 	public function showOneOccurrenceMedia($id, Request $request) {
-		$occurrence = Occurrence::find($id);
+		$occid = $this->getOccidFromOtherIds($id)->occid ?? null;
+		if (!$occid) return response()->json(['error' => 'Occurrence not found with that ID'], 404);
+		$occurrence = Occurrence::find($occid);
 		if (!$occurrence) {
 			return response()->json(['error' => 'Occurrence not found'], 404);
 		}
@@ -899,5 +901,22 @@ class OccurrenceController extends Controller {
 				->first();
 		}
 		return $occurrence;
+	}
+
+	private function getOccidFromOtherIds($id) {
+		$decodedId = urldecode($id);
+		$occid = null;
+		if (is_numeric($decodedId)) {
+			$occid = DB::table('omoccurrences as o')
+				->select('o.occid')
+				->where('occid', $decodedId)
+				->first();
+		} else {
+			$occid = DB::table('omoccurrences as o')->select('o.occid')
+				->where('recordID', (string)$decodedId)
+				->orWhere('occurrenceID', (string)$decodedId)
+				->first();
+		}
+		return $occid;
 	}
 }
