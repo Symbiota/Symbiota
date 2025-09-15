@@ -26,6 +26,7 @@ $start = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
 $db = array_key_exists('db',$_REQUEST)?$_REQUEST['db']:[];
 $missingLatLng = array_key_exists('missingLatLng',$_REQUEST);
 $hideExactMatches = array_key_exists('hideExactMatches',$_REQUEST);
+$disableAutoCheckSingleOptions = array_key_exists('disableAutoCheckSingleOptions',$_REQUEST);
 
 $updated = [];
 $errors = [];
@@ -117,7 +118,7 @@ function getTableHeaders(array $arr, array $ignore = []) {
 function render_row($row, $checkboxName = false, $shownFields = [], $onlyOption = false) {
 	$html = '<tr><td><div style="display:flex; align-items:center; justify-content: center;">';
 	if($checkboxName) {
-		$html .= '<input type="checkbox" onclick="checkbox_one_only(this)" name="' . $checkboxName . '" value="' . $row['occid'] . '" style="margin:0" ' . ($onlyOption? 'data-only-option ': '') . '/>';
+		$html .= '<input type="checkbox" onclick="checkbox_one_only(this)" name="' . $checkboxName . '" value="' . $row['occid'] . '" style="margin:0" ' . ($onlyOption? 'checked': '') . '/>';
 	}
 
 	$html .= '</div></td>';
@@ -301,6 +302,17 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 	$options[$duplicateId][$occid] = $option;
 }
 
+function getUniqueOptionCount($options, $targetOccid) {
+	$count = 0;
+	foreach($options as $dupeOccid => $dup) {
+		if($dupeOccid !== $targetOccid) {
+			$count++;
+		}
+	}
+
+	return $count;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -365,9 +377,14 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 					<label for="missingLatLng"><?= $LANG['MISSING_LAT_LNG'] ?></label>
 				</div>
 
-				<div style="margin-bottom: 1rem;">
+				<div>
 					<input id="hideExactMatches" type="checkbox" name="hideExactMatches" value="1" <?= $hideExactMatches? 'checked': ''?>>
 					<label for="hideExactMatches"><?= $LANG['HIDE_EXACT_MATCHES'] ?></label>
+				</div>
+
+				<div style="margin-bottom: 1rem;">
+					<input id="disableAutoCheckSingleOptions" type="checkbox" name="disableAutoCheckSingleOptions" value="1" <?= $hideExactMatches? 'checked': ''?>>
+					<label for="disableAutoCheckSingleOptions"><?= $LANG['DISABLE_AUTO_CHECK'] ?? 'Disable autochecking on single value duplicate clusters' ?></label>
 				</div>
 
 				<dialog id="collections_dialog" style="min-width: 900px;">
@@ -421,11 +438,13 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 			<?= getTableHeaders($shownFields, $fieldIgnores) ?>
 
 			<?php foreach ($targets as $targetOccid => $target): ?>
-			<?php if($optionCount = count($options[$target['duplicateid']])): ?>
+			<?php if($optionCount = getUniqueOptionCount($options[$target['duplicateid']], $targetOccid)): ?>
 				<tbody>
 					<?= render_row($target, false, $shownFields) ?>
 					<?php foreach ($options[$target['duplicateid']] as $dupeOccid => $dupe): ?>
-						<?= $dupeOccid !== $targetOccid? render_row($dupe, $targetOccid, $shownFields, $optionCount === 1): '' ?>
+						<?php if($dupeOccid !== $targetOccid): ?>
+							<?= render_row($dupe, $targetOccid, $shownFields, ($optionCount === 1 && !$disableAutoCheckSingleOptions)) ?>
+						<?php endif ?>
 					<?php endforeach ?>
 					<tr>
 						<td colspan="18" style="height: 1rem"></td>
