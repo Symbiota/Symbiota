@@ -544,12 +544,19 @@ class Media {
 					foreach($urls as $url => $data) {
 						if(!($media_metadata[$url] ?? false)) {
 							self::create_image(
-								$file['name'],
-								$data['name'],
-								$storage,
+								$storage->getDirPath($file['name']),
+								$storage->getDirPath($data['name']),
 								$data['width'],
 								$data['height']
 							);
+
+							//If file doesn't according to the upload strategy then upload it to the correct place. This will only run if the media storage is remote to the server
+							if(!$storage->file_exists($data['name'])) {
+								$storage->upload([
+									'name' => $data['name'],
+									'tmp_name' => $storage->getDirPath($data['name']),
+								]);
+							}
 
 							if($storage->file_exists($data['name'])) {
 								$metadata[$url] = $storage->getUrlPath($data['name']);
@@ -808,23 +815,15 @@ class Media {
 	 * @param int $new_width Maximum width for the new image if zero will box to height
 	 * @param int $new_height Maximum height for the new image if zero will box to width
 	 */
-	public static function create_image($src_file, $new_file, StorageStrategy $storage, $new_width, $new_height): void {
+	public static function create_image($src_path, $new_path, $new_width, $new_height): void {
 		global $USE_IMAGE_MAGICK;
 
 		if($USE_IMAGE_MAGICK) {
-			self::create_image_imagick($src_file, $new_file, $storage, $new_width, $new_height);
+			self::create_image_imagick($src_path, $new_path, $new_width, $new_height);
 		} elseif(extension_loaded('gd') && function_exists('gd_info')) {
-			self::create_image_gd($src_file, $new_file, $storage, $new_width, $new_height);
+			self::create_image_gd($src_path, $new_path, $new_width, $new_height);
 		} else {
 			throw new Exception('No image handler for image conversions');
-		}
-
-		//If file doesn't according to the upload strategy then upload it to the correct place. This will only run if the media storage is remote to the server
-		if(!$storage->file_exists($new_file)) {
-			$storage->upload([
-				'name' => $new_file,
-				'tmp_name' => $storage->getDirPath($new_file),
-			]);
 		}
 	}
 
@@ -835,19 +834,15 @@ class Media {
 	 * Most portals using imagick have ImageMagick installed on server and make system calls in order to use it.
 	 * At the time of making this function no know portals have the imagick pecl package installed but and implemenation was made as we are potentially heading in that direction.
 	 *
-	 * @param string $src_file Filename to image base
-	 * @param string $new_file Filename for newly resized image
-	 * @param StorageStrategy $storage Class that instructs where how how an image should be stored
+	 * @param string $src_file Filepath to image base
+	 * @param string $new_file Filepath for newly resized image
 	 * @param int $new_width Maximum width for the new image if zero will box to height
 	 * @param int $new_height Maximum height for the new image if zero will box to width
 	 */
 	private static function create_image_imagick(
-		string $src_file, string $new_file,
-		StorageStrategy $storage,
+		string $src_path, string $new_path,
 		int $new_width, int $new_height
 	): void {
-		$src_path = $storage->getDirPath($src_file);
-		$new_path = $storage->getDirPath($new_file);
 
 		if($new_height === 0 && $new_width === 0) {
 			throw new Exception('Must have width or height as non zero values');
@@ -886,18 +881,13 @@ class Media {
 	 *
 	 * @param string $src_file Filename to image base
 	 * @param string $new_file Filename for newly resized image
-	 * @param StorageStrategy $storage Class that instructs where how how an image should be stored
 	 * @param int $new_width Maximum width for the new image if zero will box to height
 	 * @param int $new_height Maximum height for the new image if zero will box to width
 	 */
 	private static function create_image_gd(
-		string $src_file, string $new_file,
-		StorageStrategy $storage,
+		string $src_path, string $new_path,
 		int $new_width, int $new_height
 	): void {
-
-		$src_path = $storage->getDirPath($src_file);
-		$new_path = $storage->getDirPath($new_file);
 
 		if($new_width === 0 && $new_height === 0) {
 			throw new Exception('Must have width or height as non zero values');
@@ -910,7 +900,7 @@ class Media {
 		$mime_type = $size['mime'];
 
 		if(!self::enough_memory_gd($size[0], $size[1])) {
-			throw new MediaException(MediaException::NotEnoughMemoryImage, ': ' . $new_file);
+			throw new MediaException(MediaException::NotEnoughMemoryImage, ': ' . $new_path);
 		}
 
 		$orig_width = $width;
