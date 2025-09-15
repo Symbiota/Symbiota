@@ -905,7 +905,7 @@ class OccurrenceController extends Controller {
 		return $occurrence;
 	}
 
-	private function getOccidFromOtherIds($id) {
+	protected function getOccidFromOtherIds($id) {
 		$decodedId = urldecode($id);
 		$occid = null;
 		if (is_numeric($decodedId)) {
