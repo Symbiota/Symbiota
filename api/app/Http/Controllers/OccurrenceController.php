@@ -219,7 +219,7 @@ class OccurrenceController extends Controller {
 			->select('o.*', 't.author', 't.sciName as trueSciName')
 			->leftJoin('taxa as t', 'o.tidInterpreted', '=', 't.tid');
 		$occurrenceModel->where('o.recordSecurity', '=', 0);
-		if($request->has('collid')){
+		if ($request->has('collid')) {
 			$occurrenceModel->whereIn('o.collid', explode(',', $request->collid));
 		}
 		if ($request->has('catalogNumber')) {
@@ -288,7 +288,7 @@ class OccurrenceController extends Controller {
 			$occurrenceModel->where('o.datasetID', $request->datasetID);
 		}
 		//Locality place names
-		if($request->has('country')){
+		if ($request->has('country')) {
 			$geoCountries = GeoThesaurusHelper::getGeoterms($request->country);
 			if (!empty($geoCountries['country']) || !empty($geoCountries['countryCode'])) {
 				$occurrenceModel->where(function ($query) use ($geoCountries) {
@@ -301,11 +301,11 @@ class OccurrenceController extends Controller {
 				});
 			}
 		}
-		if($request->has('stateProvince')){
+		if ($request->has('stateProvince')) {
 			$inputProvinces = array_map('trim', explode(',', $request->stateProvince));
 			$occurrenceModel->whereIn('stateProvince', $inputProvinces);
 		}
-		if($request->has('county')){
+		if ($request->has('county')) {
 			$inputCounties = array_map('trim', explode(',', $request->county));
 			$occurrenceModel->whereIn('county', $inputCounties);
 		}
@@ -427,7 +427,7 @@ class OccurrenceController extends Controller {
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
-	 *		 description="occid or specimen GUID (occurrenceID) or recordID associated with target occurrence",
+	 *		 description="occid associated with target occurrence",
 	 *		 required=true,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
@@ -449,9 +449,9 @@ class OccurrenceController extends Controller {
 		}
 		$media = null;
 		if ($occurrence) {
-			$media=$occurrence->media;
+			$media = $occurrence->media;
 		}
-		if (!$media) {
+		if (!$media || count($media) < 1) {
 			return response()->json(['error' => 'Occurrence found, but no media found'], 404);
 		}
 		return response()->json($media);
@@ -769,7 +769,7 @@ class OccurrenceController extends Controller {
 		$occurrence = Occurrence::find($occid);
 		if (!$occurrence) {
 			$responseArr['status'] = 500;
-			$responseArr['error'] = 'Unable to locate occurrence record (occid = '.$occid.')';
+			$responseArr['error'] = 'Unable to locate occurrence record (occid = ' . $occid . ')';
 			return response()->json($responseArr);
 		}
 		if ($occurrence->collection->managementType == 'Live Data') {
@@ -785,27 +785,44 @@ class OccurrenceController extends Controller {
 				if ($sourcePortalID && $remoteOccid) {
 					//Get remote occurrence data
 					$urlRoot = PortalIndex::where('portalID', $sourcePortalID)->value('urlRoot');
-					$url = $urlRoot.'/api/v2/occurrence/'.$remoteOccid;
-					if($remoteOccurrence = $this->getAPIResponce($url)){
+					$url = $urlRoot . '/api/v2/occurrence/' . $remoteOccid;
+					if ($remoteOccurrence = $this->getAPIResponce($url)) {
 						$remoteOccurrence['occid'] = $occid;
 						$remoteCollid = $remoteOccurrence['collid'];
 						$sourceDateLastModified = $remoteOccurrence['dateLastModified'];
 						$clearFieldArr = array(
-							'collid', 'dbpk', 'otherCatalogNumbers', 'tidInterpreted', 'dynamicProperties', 'processingStatus', 'recordID',
-							'modified', 'dateEntered' ,'dateLastModified', 'genus', 'specificEpithet', 'institutionCode', 'collectionCode',
-							'scientificNameAuthorship', 'identifiedBy', 'dateIdentified', 'verbatimEventDate', 'countryCode', 'localitySecurity'
+							'collid',
+							'dbpk',
+							'otherCatalogNumbers',
+							'tidInterpreted',
+							'dynamicProperties',
+							'processingStatus',
+							'recordID',
+							'modified',
+							'dateEntered',
+							'dateLastModified',
+							'genus',
+							'specificEpithet',
+							'institutionCode',
+							'collectionCode',
+							'scientificNameAuthorship',
+							'identifiedBy',
+							'dateIdentified',
+							'verbatimEventDate',
+							'countryCode',
+							'localitySecurity'
 						);
-						foreach($clearFieldArr as $field){
+						foreach ($clearFieldArr as $field) {
 							unset($remoteOccurrence[$field]);
 						}
 						//Update local occurrence record with remote data
-						if($occurrence->update($remoteOccurrence)){
+						if ($occurrence->update($remoteOccurrence)) {
 							//print_r($occurrence); exit;
 							$ts = date('Y-m-d H:i:s');
 							$changeArr = $occurrence->getChanges();
 							$responseArr['status'] = 200;
 							$responseArr['numberFieldChanged'] = count($changeArr);
-							if($changeArr) $responseArr['fieldsModified'] = $changeArr;
+							if ($changeArr) $responseArr['fieldsModified'] = $changeArr;
 							$responseArr['sourceDateLastModified'] = $sourceDateLastModified;
 							$responseArr['dateLastModified'] = $ts;
 							$responseArr['sourceCollectionUrl'] = $urlRoot . '/collections/misc/collprofiles.php?collid=' . $remoteCollid;
@@ -814,14 +831,12 @@ class OccurrenceController extends Controller {
 							$portalOccur = PortalOccurrence::where('occid', $occid)->where('pubid', $pub->pubid)->first();
 							$portalOccur->refreshTimestamp = $ts;
 							$portalOccur->save();
-						}
-						else{
+						} else {
 							return response()->json(['error' => 'Unspecified Error'], 501);
 						}
-					}
-					else {
+					} else {
 						$responseArr['status'] = 400;
-						$responseArr['error'] = 'Unable to locate remote/source occurrence (sourceID = '.$occid.')';
+						$responseArr['error'] = 'Unable to locate remote/source occurrence (sourceID = ' . $occid . ')';
 						$responseArr['sourceUrl'] = $url;
 					}
 				}
@@ -831,10 +846,10 @@ class OccurrenceController extends Controller {
 	}
 
 	//Helper functions
-	protected function getOccid($id){
-		if(!is_numeric($id)){
+	protected function getOccid($id) {
+		if (!is_numeric($id)) {
 			$occid = Occurrence::where('occurrenceID', $id)->orWhere('recordID', $id)->value('occid');
-			if(is_numeric($occid)) $id = $occid;
+			if (is_numeric($occid)) $id = $occid;
 		}
 		return $id;
 	}
