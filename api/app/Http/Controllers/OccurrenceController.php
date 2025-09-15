@@ -407,13 +407,15 @@ class OccurrenceController extends Controller {
 	 * )
 	 */
 	public function showOneOccurrenceIdentifications($id, Request $request) {
-		$occurrence = Occurrence::find($id);
+		$occid = $this->getOccidFromOtherIds($id)->occid ?? null;
+		if (!$occid) return response()->json(['error' => 'Occurrence not found with that ID'], 404);
+		$occurrence = Occurrence::find($occid);
 		if (!$occurrence) {
 			return response()->json(['error' => 'Occurrence not found'], 404);
 		}
 		$identification = null;
 		$identification = $occurrence->identification;
-		if (!$identification) {
+		if (!$identification || count($identification) < 1) {
 			return response()->json(['error' => 'Occurrence found, but no identification found'], 404);
 		}
 		return response()->json($identification);
