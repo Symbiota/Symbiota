@@ -1167,24 +1167,16 @@ class Media {
 				QueryUtil::executeQuery($conn, $query, [$media_id]);
 			}
 
+			$storage = StorageFactory::make();
+
 			//Unlink all files
 			if($remove_files) {
 				$root_url = self::getMediaRootUrl();
 				$root_path = self::getMediaRootPath();
 				foreach($media_urls as $url) {
-					if($url && $root_url) {
-						if(strpos($url, $root_url) === 0){		//Only images residing on local server can be deleted
-							//Convert url to a local path
-							$path = $root_path . substr($url, strlen($root_url));
-							if(file_exists($path)){
-								if(is_writable($path)) {
-									if(!unlink($path)) {
-										error_log("WARNING: File (path: " . $path . ") failed to delete from server");
-									}
-								} else{
-									throw new MediaException(MediaException::FilepathNotWritable, $path);
-								}
-							}
+					if($url && $storage->file_exists($url)) {
+						if(!$storage->remove($url)) {
+							error_log("WARNING: File (path: " . $url . ") failed to delete from server");
 						}
 					}
 				}
