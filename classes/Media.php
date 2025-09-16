@@ -588,11 +588,7 @@ class Media {
 					$width = $size[0];
 					$height = $size[1];
 
-
-					$storage->upload($file);
-					$createdFilepaths['originalUrl'] = $storage->getDirPath($file);
-
-					$urls = [
+					$urls = [ 
 						'thumbnailUrl' => [
 							'name' => self::addToFilename($file['name'], '_tn'),
 							'width' => $GLOBALS['IMG_TN_WIDTH']?? 200,
@@ -608,7 +604,7 @@ class Media {
 					foreach($urls as $url => $data) {
 						if(!($media_metadata[$url] ?? false)) {
 							self::create_image(
-								$storage->getDirPath($file['name']),
+								$file['tmp_name'],
 								$storage->getDirPath($data['name']),
 								$data['width'],
 								$data['height']
@@ -629,7 +625,8 @@ class Media {
 
 						}
 					}
-
+					$storage->upload($file);
+					$createdFilepaths['originalUrl'] = $storage->getDirPath($file);
 					self::update_metadata($metadata, $media_metadata['mediaID'], $conn);
 				} elseif($media_type === MediaType::Audio) {
 					$storage->upload($file);
