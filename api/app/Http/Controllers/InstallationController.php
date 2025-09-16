@@ -92,7 +92,7 @@ class InstallationController extends Controller{
 		$portalObj = null;
 		if(is_numeric($id)) $portalObj = PortalIndex::find($id);
 		else $portalObj = PortalIndex::where('guid',$id)->first();
-		if(!$portalObj->count()) $portalObj = ["status"=>false,"error"=>"Unable to locate installation based on identifier"];
+		if(!$portalObj) $portalObj = ["status"=>false,"error"=>"Unable to locate installation based on identifier"];
 		return response()->json($portalObj);
 	}
 
