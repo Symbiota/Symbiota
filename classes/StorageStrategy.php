@@ -1,4 +1,4 @@
-<?php
+<?php global $SERVER_ROOT;
 include_once($SERVER_ROOT . "/classes/MediaException.php");
 include_once($SERVER_ROOT . "/classes/MediaType.php");
 require_once($SERVER_ROOT . '/vendor/autoload.php');
@@ -239,4 +239,15 @@ class S3Storage extends StorageStrategy {
 
 	public function remove(string $filename): bool {}
 	public function rename(string $filepath, string $new_filepath): void {}
+}
+
+class StorageFactory {
+	static function make($path = ''): StorageStrategy {
+		switch($GLOBALS['STORAGE_DRIVER']) {
+			case 'local': return new LocalStorage($path);
+			case 's3': return new S3Storage($path);
+			default: throw new Exception('STORAGE_DRIVER not configure properly. Use "local" or "s3" as options');
+		}
+
+	}
 }
