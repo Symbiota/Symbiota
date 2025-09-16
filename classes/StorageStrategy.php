@@ -1,6 +1,7 @@
 <?php global $SERVER_ROOT;
 include_once($SERVER_ROOT . "/classes/MediaException.php");
 include_once($SERVER_ROOT . "/classes/MediaType.php");
+include_once($SERVER_ROOT . "/classes/utilities/UploadUtil.php");
 require_once($SERVER_ROOT . '/vendor/autoload.php');
 
 abstract class StorageStrategy {
@@ -77,7 +78,6 @@ class LocalStorage extends StorageStrategy {
 	 * Private help function for interal use that holds logic for how storage paths are created.
 	 * @return string
 	 */
-
 	public function file_exists($file): bool {
 		$filename = is_array($file)? $file['name']: $file;
 
@@ -142,6 +142,10 @@ class LocalStorage extends StorageStrategy {
 	}
 
 	public function remove(string $filename): bool {
+		if(!is_writable($GLOBALS['SERVER_ROOT'] . $filename)) {
+			throw new MediaException(MediaException::FilepathNotWritable, $filename);
+		}
+
 		//Check Relative Path
 		if($this->file_exists($filename)) {
 			if(!unlink($this->getDirPath($filename))) {
@@ -200,7 +204,7 @@ class S3Storage extends StorageStrategy {
 	private $client;
 	private $path;
 
-	public function __construct($path) {
+	public function __construct($path = '') {
 		$this->path = $path;
 		$this->client =  new Aws\S3\S3Client([
 			'version' => 'latest',
@@ -230,7 +234,9 @@ class S3Storage extends StorageStrategy {
 	}
 
 	public function file_exists($file): bool {
-		return $this->client->doesObjectExistV2($GLOBALS['S3_MEDIA_BUCKET_NAME'], self::getDirPath($file));
+		$filename = is_array($file)? $file['name']: $file;
+
+		return $this->client->doesObjectExistV2($GLOBALS['S3_MEDIA_BUCKET_NAME'], self::getPathFromUrl($filename));
 	}
 
 	public function upload(array $file): bool {
@@ -249,10 +255,41 @@ class S3Storage extends StorageStrategy {
 		return true;
 	}
 
+	function getPathFromUrl($url) {
+		$url_parts = UploadUtil::decomposeUrl($url);
+		$bucket_path = '/' . $GLOBALS['S3_MEDIA_BUCKET_NAME'];
+		$path = $url_parts['path'];
+
+		if($path === $url_parts['basename']) {
+			$path = self::getDirPath($path);
+		}
+
+		if(strpos($path, $bucket_path) === 0) {
+			return substr($path, strlen($bucket_path));
+		}
+
+		return $path;
+	}
+
 	public function remove(string $filename): bool {
+
+		$trimed_file_name = str_replace($GLOBALS['MEDIA_DOMAIN'] . $GLOBALS['S3_MEDIA_BUCKET_NAME'],'', $filename);
+
+		$result = $this->client->deleteObject([
+			'Bucket' => $GLOBALS['S3_MEDIA_BUCKET_NAME'],
+			'Key'    => self::getPathFromUrl($filename),
+		]);
+
+		if(($metadata = $result->get('@metadata')) && ($metadata['statusCode'] ?? false) === 204) {
+			return true;
+		}
+
 		return false;
 	}
-	public function rename(string $filepath, string $new_filepath): void {}
+
+	public function rename(string $filepath, string $new_filepath): void {
+		// TODO (Logan)
+	}
 }
 
 class StorageFactory {

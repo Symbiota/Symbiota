@@ -1077,14 +1077,13 @@ class Media {
 				QueryUtil::executeQuery($conn, $query, [$media_id]);
 			}
 
+			$storage = StorageFactory::make();
+
 			//Unlink all files
 			if($remove_files) {
 				foreach($media_urls as $url) {
-					if($url && file_exists($GLOBALS['SERVER_ROOT'] . $url)) {
-						if(!is_writable($GLOBALS['SERVER_ROOT'] . $url)) {
-							throw new MediaException(MediaException::FilepathNotWritable, $url);
-						}
-						if(!unlink($GLOBALS['SERVER_ROOT'] . $url)) {
+					if($url && $storage->file_exists($url)) {
+						if(!$storage->remove($url)) {
 							error_log("WARNING: File (path: " . $url . ") failed to delete from server");
 						}
 					}
