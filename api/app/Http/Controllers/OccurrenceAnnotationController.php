@@ -201,7 +201,8 @@ class OccurrenceAnnotationController extends OccurrenceController{
 		]);
 		$type = $request->input('type', 'internal');
 
-		$id = $this->getOccid($id);
+		$id = $this->getOccidFromOtherIds($id)->occid ?? null;
+		if(!$id) return response()->json(['error' => 'Occurrence with that ID not found'], 404);
 		$annotation = null;
 		$occurrence = Occurrence::find($id);
 		if(!$occurrence){
@@ -213,7 +214,7 @@ class OccurrenceAnnotationController extends OccurrenceController{
 		elseif($type == 'external'){
 			$annotation = $occurrence->annotationExternal;
 		}
-		if(!$annotation){
+		if(!$annotation || count($annotation) < 1){
 			return response()->json(['error' => 'Annotation(s) not found'], 404);
 		}
 
