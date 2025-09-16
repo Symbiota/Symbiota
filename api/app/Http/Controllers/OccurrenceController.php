@@ -769,7 +769,8 @@ class OccurrenceController extends Controller {
 			$responseArr['error'] = 'At this time, API call can only be triggered locally';
 			return response()->json($responseArr);
 		}
-		$occid = $this->getOccid($id);
+		$occid = $this->getOccidFromOtherIds($id)->occid ?? null;
+		if (!$occid) return response()->json(['error' => 'Occurrence not found with that ID'], 404);
 		$occurrence = Occurrence::find($occid);
 		if (!$occurrence) {
 			$responseArr['status'] = 500;
