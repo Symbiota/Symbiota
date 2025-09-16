@@ -198,8 +198,10 @@ class LocalStorage extends StorageStrategy {
 
 class S3Storage extends StorageStrategy {
 	private $client;
+	private $path;
 
-	public function __construct() {
+	public function __construct($path) {
+		$this->path = $path;
 		$this->client =  new Aws\S3\S3Client([
 			'version' => 'latest',
 			'region'  => $GLOBALS['S3_REGION'],
@@ -214,30 +216,42 @@ class S3Storage extends StorageStrategy {
 
 	public function getDirPath($file = null): string {
 		$file_name = is_array($file)? $file['name']: $file;
-		return $GLOBALS['MEDIA_ROOT_PATH'] .
-			(substr($GLOBALS['MEDIA_ROOT_PATH'],-1) != "/"? '/': '') .
+
+		return $GLOBALS['MEDIA_ROOT_URL'] .
+			(substr($GLOBALS['MEDIA_ROOT_URL'],-1) != "/"? '/': '') .
 			$this->path . $file_name;
 	}
 
 	public function getUrlPath($file = null): string {
 		$file_name = is_array($file)? $file['name']: $file;
-		return $GLOBALS['MEDIA_ROOT_URL'] .
+		return $GLOBALS['MEDIA_DOMAIN'] . $GLOBALS['MEDIA_ROOT_URL'] .
 		   	(substr($GLOBALS['MEDIA_ROOT_URL'],-1) != "/"? '/': '') .
 		   	$this->path . $file_name;
 	}
 
-	public function file_exists($file): bool {}
-
-	public function upload(array $file): bool {
-		// TODO (Logan) modular bucket name?
-		$this->client->putObject([
-			'Bucket' => $GLOBALS['S3_MEDIA_BUCKET_NAME'],
-			'Key'    => $file['name'],
-			'Body'   => fopen($file['tmp_name']),
-		]);
+	public function file_exists($file): bool {
+		return $this->client->doesObjectExistV2($GLOBALS['S3_MEDIA_BUCKET_NAME'], self::getDirPath($file));
 	}
 
-	public function remove(string $filename): bool {}
+	public function upload(array $file): bool {
+		if(!file_exists($file['tmp_name'])) {
+			throw new MediaException(MediaException::FileDoesNotExist, $file['tmp_name']);
+		}
+
+		$this->client->putObject([
+			'Bucket' => $GLOBALS['S3_MEDIA_BUCKET_NAME'],
+			'Key'    => $GLOBALS['MEDIA_ROOT_URL'] . (substr($GLOBALS['MEDIA_ROOT_URL'],-1) != "/"? '/': '') . $this->path . $file['name'],
+			'ContentType' => $file['type'],
+			'Body'   => fopen($file['tmp_name'], "r"),
+			'ACL' => 'public-read'
+		]);
+
+		return true;
+	}
+
+	public function remove(string $filename): bool {
+		return false;
+	}
 	public function rename(string $filepath, string $new_filepath): void {}
 }
 
