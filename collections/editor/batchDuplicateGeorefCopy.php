@@ -429,11 +429,11 @@ function getUniqueOptionCount($options, $targetOccid) {
 
 			<div style="margin-bottom: 1rem; display: flex; gap: 1rem;">
 				<?php if($start != 0): ?>
-					<a href="?collid=<?= $collId?>&start=<?= $start - 1 ?>"><?= $LANG['PAGINATION_NEXT'] ?></a>
+					<a href="?collid=<?= $collId?>&start=<?= $start - 1 ?>"><?= $LANG['PAGINATION_PREVIOUS'] ?></a>
 				<?php endif ?>
 
 				<?php if($paginateNext): ?>
-					<a href="?collid=<?= $collId?>&start=<?= $start + 1 ?>"><?= $LANG['PAGINATION_PREVIOUS'] ?></a>
+					<a href="?collid=<?= $collId?>&start=<?= $start + 1 ?>"><?= $LANG['PAGINATION_NEXT'] ?></a>
 				<?php endif ?>
 
 				<!-- <div style="flex-grow: 1; display: flex; justify-content: end;"> -->
