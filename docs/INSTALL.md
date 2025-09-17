@@ -238,7 +238,9 @@ Symbiota
 NOTE: Do not modify any other css files as these files may be overwritten in future updates
 
 #### Customize language tags
-Overide existing language tags or create new tags by modifying the override files in content/lang/templates/
+
+Override existing language tags or create new tags by modifying the override files in content/lang/templates/
+
 Example: modify content/lang/templates/header.es.override.php to replace the default values used when browsing the portal in Spanish.
 
 #### Misc configurations and recommendations
