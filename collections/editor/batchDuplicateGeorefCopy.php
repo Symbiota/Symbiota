@@ -12,31 +12,6 @@ include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT . '/classes/Sanitize.php');
 include_once($SERVER_ROOT . '/classes/CustomQuery.php');
 
-$collId = array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid'])? intval($_REQUEST['collid']):0;
-
-UserUtil::isCollectionAdminOrDenyAcess($collId);
-Language::load([
-	'collections/sharedterms',
-	'collections/misc/sharedterms',
-	'collections/editor/batchDuplicateGeorefCopy',
-	'collections/list'
-]);
-
-$start = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
-$db = array_key_exists('db',$_REQUEST)?$_REQUEST['db']:[];
-$missingLatLng = array_key_exists('missingLatLng',$_REQUEST);
-$hideExactMatches = array_key_exists('hideExactMatches',$_REQUEST);
-
-$autoCheckSingleOptions = true;
-if(array_key_exists('autoCheckSingleOptions',$_REQUEST)) {
-	$autoCheckSingleOptions = true;
-} else if(array_key_exists('disableAutoCheckSingleOptions',$_REQUEST)) {
-	$autoCheckSingleOptions = false;
-}
-
-$updated = [];
-$errors = [];
-
 // Other none copied fields selected out of occurrence table
 $fields = [
 	'occid',
@@ -84,6 +59,74 @@ $fieldIgnores = [
 	'collid',
 	'duplicateid',
 ];
+
+$updated = [];
+$errors = [];
+
+function copyOccurrenceInfo($targetOccId, $sourceOccId, $harvestFields) {
+	$sql = 'Update omoccurrences target
+		INNER JOIN omoccurrences source on target.occid = ? and source.occid = ?
+		SET ';
+
+	$count = 0;
+	$maxCount = count($harvestFields);
+	foreach ($harvestFields as $field) {
+		$sql .= 'target.' . $field . '  =  source.'  . $field;
+		if(++$count < $maxCount) {
+			$sql .= ', ';
+		}
+	}
+
+	QueryUtil::executeQuery(
+		Database::connect('write'),
+		$sql,
+		[$targetOccId, $sourceOccId]
+	);
+}
+
+function copyInfo() {
+	global $errors, $harvestFields, $updated;
+	foreach($_POST as $targetOccId => $sourceOccId) {
+		if(is_numeric($targetOccId) && is_numeric($sourceOccId)) {
+			try {
+				copyOccurrenceInfo($targetOccId, $sourceOccId, $harvestFields);
+				array_push($updated, $targetOccId);
+			} catch(Exception $e)  {
+				$errors[$targetOccId] = $e->getMessage();
+			}
+		}
+	}
+}
+
+if(array_key_exists('copyInfo', $_POST)) {
+	copyInfo();
+	 $_REQUEST = $_SESSION['batchDuplicateGeorefCopyRequest'];
+} else {
+	//Assume Search
+	$_SESSION['batchDuplicateGeorefCopyRequest'] = $_REQUEST;
+}
+
+$collId = array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid'])? intval($_REQUEST['collid']):0;
+
+UserUtil::isCollectionAdminOrDenyAcess($collId);
+Language::load([
+	'collections/sharedterms',
+	'collections/misc/sharedterms',
+	'collections/editor/batchDuplicateGeorefCopy',
+	'collections/list'
+]);
+
+$start = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
+$db = array_key_exists('db',$_REQUEST)?$_REQUEST['db']:[];
+$missingLatLng = array_key_exists('missingLatLng',$_REQUEST);
+$hideExactMatches = array_key_exists('hideExactMatches',$_REQUEST);
+
+$autoCheckSingleOptions = true;
+if(array_key_exists('autoCheckSingleOptions',$_REQUEST)) {
+	$autoCheckSingleOptions = true;
+} else if(array_key_exists('disableAutoCheckSingleOptions',$_REQUEST)) {
+	$autoCheckSingleOptions = false;
+}
 
 function mapField($field, $prefix) {
 	$tableAlias = 'o';
@@ -143,27 +186,6 @@ function render_row($row, $checkboxName = false, $shownFields = [], $onlyOption 
 	}
 
 	return $html .=  '</tr>';
-}
-
-function copyOccurrenceInfo($targetOccId, $sourceOccId, $harvestFields) {
-	$sql = 'Update omoccurrences target 
-		INNER JOIN omoccurrences source on target.occid = ? and source.occid = ? 
-		SET ';
-
-	$count = 0;
-	$maxCount = count($harvestFields);
-	foreach ($harvestFields as $field) {
-		$sql .= 'target.' . $field . '  =  source.'  . $field;
-		if(++$count < $maxCount) {
-			$sql .= ', ';
-		}
-	}
-
-	QueryUtil::executeQuery(
-		Database::connect('write'),
-		$sql,
-		[$targetOccId, $sourceOccId]
-	);
 }
 
 function getOccurrences(array $occIds, mysqli $conn) {
@@ -240,22 +262,6 @@ function getCollections(mysqli $conn) {
 
 	return $collections;
 }
-
-function copyInfo() {
-	global $errors, $harvestFields, $updated;
-	foreach($_POST as $targetOccId => $sourceOccId) {
-		if(is_numeric($targetOccId) && is_numeric($sourceOccId)) {
-			try {
-				copyOccurrenceInfo($targetOccId, $sourceOccId, $harvestFields);
-				array_push($updated, $targetOccId);
-			} catch(Exception $e)  {
-				$errors[$targetOccId] = $e->getMessage();
-			}
-		}
-	}
-}
-
-if(count($_POST)) copyInfo();
 
 $conn = Database::connect('readonly');
 
@@ -469,6 +475,7 @@ function getUniqueOptionCount($options, $targetOccid) {
 				</h4>
 			<?php endif ?>
 
+			<input type="hidden" name="copyInfo" value="1" />
 			<button class="button"><?= $LANG['COPY_DUPLICATE_DATA'] ?></button>
 			<p>
 				<?= $LANG['COPY_DUPLICATE_DATA_EXPLANATION'] ?>
