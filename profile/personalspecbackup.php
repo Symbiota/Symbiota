@@ -12,9 +12,16 @@ $characterSet = array_key_exists('cset',$_REQUEST) ? $_REQUEST['cset'] : 'UTF-8'
 $action = array_key_exists('formsubmit', $_REQUEST) ? $_REQUEST['formsubmit'] : '';
 
 $editable = 0;
-if($IS_ADMIN || !empty($USER_RIGHTS['CollAdmin'][$collid]) || !empty($USER_RIGHTS['CollEditor'][$collid])){
+if($IS_ADMIN){
 	$editable = 1;
 }
+elseif(!empty($USER_RIGHTS['CollAdmin']) && in_array($collid, $USER_RIGHTS['CollAdmin'])){
+	$editable = 1;
+}
+elseif(!empty($USER_RIGHTS['CollEditor']) && in_array($collid, $USER_RIGHTS['CollEditor'])){
+	$editable = 1;
+}
+
 $statusStr = '';
 if($action == 'Perform Backup'){
 	if ($collid) {
