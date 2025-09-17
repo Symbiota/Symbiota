@@ -198,6 +198,7 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 							<th><?= $LANG['COLLECTOR'] ?></th>
 							<th><?= $LANG['NUMBER'] ?></th>
 							<th><?= $LANG['EVENT_DATE'] ?></th>
+							<th><?= $LANG['EVENT_TIME'] ?></th>
 							<th><?= $LANG['COUNTRY'] ?></th>
 							<th><?= $LANG['STATE_PROVINCE'] ?></th>
 							<th><?= $LANG['COUNTY'] ?></th>
@@ -251,6 +252,7 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 								<td><?= $occArr['collector']; ?></td>
 								<td><?= (array_key_exists('collnum',$occArr) ? $occArr['collnum'] : ''); ?></td>
 								<td><?= (array_key_exists('date',$occArr) ? $occArr['date'] : ''); ?></td>
+								<td><?= $occArr['eventtime']; ?></td>
 								<td><?= $occArr['country']; ?></td>
 								<td><?= $occArr['state']; ?></td>
 								<td><?= $occArr['county']; ?></td>
