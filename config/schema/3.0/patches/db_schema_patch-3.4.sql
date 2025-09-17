@@ -1,8 +1,16 @@
 INSERT INTO `schemaversion` (versionnumber) values ("3.4");
 
-#Increase user password field to accommodate new bcrypt hash 
-ALTER TABLE `users` 
-  CHANGE COLUMN `password` `password` VARCHAR(255) NULL DEFAULT NULL ;
+
+ALTER TABLE `geographicthesaurus` 
+  ADD INDEX `FK_geothes_geolevel` (`geoLevel` ASC);
+
+
+# CURRENT: title varchar(50) NOT NULL
+# While unlikely possible combination of omocurrences
+# recordedBy(varchar(255)) + ' '  + recordNumber(varchar(45)) + ' ' eventDate(10 chars after string conversion)
+# would result in ~312 chars maximum which breaks this fields maximum characters
+ALTER TABLE `omoccurduplicates` 
+  CHANGE COLUMN `title` `title` TEXT NOT NULL ;
 
 
 ALTER TABLE `omoccurpaleo`
@@ -46,7 +54,7 @@ ALTER TABLE `omoccurpaleogts`
   ADD INDEX `IX_paleogts_myaEnd` (`myaEnd` ASC);
 
 #reset the values within omoccurpaleogts table
-TRUNCATE omoccurpaleogts;
+TRUNCATE `omoccurpaleogts`;
 
 INSERT INTO `omoccurpaleogts` VALUES
 (1,'Precambrian',10,'superera',4567,538.8,NULL,'#F74370',NULL,1374,'2024-10-17 19:59:29'),
@@ -252,8 +260,7 @@ ALTER TABLE 'uploadspectemp'
   ADD COLUMN 'slideProperties' TEXT,
   ADD COLUMN 'geologicalContextID' TEXT;
 
-# CURRENT: title varchar(50) NOT NULL
-# While unlikely possible combination of omocurrences
-# recordedBy(varchar(255)) + ' '  + recordNumber(varchar(45)) + ' ' eventDate(10 chars after string conversion)
-# would result in ~312 chars maximum which breaks this fields maximum characters
-ALTER TABLE omoccurduplicates MODIFY title TEXT NOT NULL;
+#Increase user password field to accommodate new bcrypt hash 
+ALTER TABLE `users` 
+  CHANGE COLUMN `password` `password` VARCHAR(255) NULL DEFAULT NULL ;
+
