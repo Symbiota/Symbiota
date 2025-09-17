@@ -288,7 +288,14 @@ class S3Storage extends StorageStrategy {
 	}
 
 	public function rename(string $filepath, string $new_filepath): void {
-		// TODO (Logan)
+		$src_path = self::getPathFromUrl($filepath);
+		$result = $this->client->copyObject([
+			'Bucket' => $GLOBALS['S3_MEDIA_BUCKET_NAME'],
+			'CopySource' => $GLOBALS['S3_MEDIA_BUCKET_NAME'] . $src_path,
+			'Key' => self::getPathFromUrl($new_filepath)
+		]);
+
+		$this->remove($filepath);
 	}
 }
 
