@@ -427,7 +427,7 @@ function getUniqueOptionCount($options, $targetOccid) {
 			<?php foreach($updated as $occId): ?>
 			<div style="margin-bottom:0.5rem">
 			<?= 'Updated Record ' ?>
-			<a href="<?= $CLIENT_ROOT . '/collections/individual/index.php?occid=' . $occId ?>" >
+			<a href="<?= $CLIENT_ROOT . '/collections/individual/index.php?occid=' . $occId ?>" target="_blank">
 				<?= '#' . $occId ?>
 			</a>
 			</div>
