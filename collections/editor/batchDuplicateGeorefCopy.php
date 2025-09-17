@@ -47,6 +47,7 @@ $fields = [
 	'country',
 	'stateProvince',
 	'county',
+	'locality',
 ];
 
 // Fields that will get copied into occurrence
@@ -74,6 +75,7 @@ $shownFields = [
 	'country',
 	'stateProvince',
 	'county',
+	'locality',
 	...$harvestFields,
 ];
 
