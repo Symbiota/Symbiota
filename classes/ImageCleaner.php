@@ -165,7 +165,7 @@ class ImageCleaner extends Manager{
 			}
 		}
 		else{
-			$imgUrl = trim($recUrlWeb);
+			if($recUrlWeb) $imgUrl = trim($recUrlWeb);
 			if((!$imgUrl || $imgUrl == 'empty') && $recUrlOrig){
 				$imgUrl = trim($recUrlOrig);
 				$webIsEmpty = true;
