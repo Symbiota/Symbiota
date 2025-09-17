@@ -443,7 +443,7 @@ function getUniqueOptionCount($options, $targetOccid) {
 					<?= render_row($target, false, $shownFields) ?>
 					<?php foreach ($options[$target['duplicateid']] as $dupeOccid => $dupe): ?>
 						<?php if($dupeOccid !== $targetOccid): ?>
-							<?= render_row($dupe, $targetOccid, $shownFields, ($optionCount === 1 && !$disableAutoCheckSingleOptions)) ?>
+							<?= render_row($dupe, $targetOccid, $shownFields, ($optionCount === 1 && $dupe['collid'] != $target['collid'] && !$disableAutoCheckSingleOptions)) ?>
 						<?php endif ?>
 					<?php endforeach ?>
 					<tr>
