@@ -1,46 +1,44 @@
 <?php
 include_once('../config/symbini.php');
-include_once('../classes/utilities/GeneralUtil.php');
-
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+include_once($SERVER_ROOT . '/classes/ProfileManager.php');
 if(!empty($THIRD_PARTY_OID_AUTH_ENABLED)){
 	include_once($SERVER_ROOT . '/config/auth_config.php');
 	require_once($SERVER_ROOT . '/vendor/autoload.php');
 }
 use Jumbojett\OpenIDConnectClient;
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/profile/index.' . $LANG_TAG . '.php'))
+	include_once($SERVER_ROOT.'/content/lang/profile/index.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/profile/index.en.php');
+header('Content-Type: text/html; charset=' . $CHARSET);
 
-if($SYMB_UID){
-	if($_SESSION['refurl'] ?? false){
-		header("Location:" . $_SESSION['refurl']);
-		unset($_SESSION['refurl']);
+$login = isset($_REQUEST['login']) ? $_REQUEST['login'] : '';
+$remMe = isset($_POST['remember']) ? 1 : 0;
+$emailAddr = isset($_POST['email']) ? $_POST['email'] : '';
+$resetPwd = (isset($_REQUEST['resetpwd']) && $_REQUEST['resetpwd'] == 1) ? 1 : 0;
+$action = isset($_POST['action']) ? $_POST['action'] : '';
+if(!$action && array_key_exists('submit', $_REQUEST)) $action = $_REQUEST['submit'];
+
+$pHandler = new ProfileManager();
+
+$statusStr = '';
+//Sanitation
+if($login){
+	if(!$pHandler->setUserName($login)){
+		$login = '';
+		$statusStr = $LANG['INVALID_LOGIN'] . '<ERR/>';
 	}
-	if ($_REQUEST['refurl'] ?? false){
-		header("Location:" . $_REQUEST['refurl']);
-	}
-	else{
-		header("Location:" . GeneralUtil::getDomain() . $CLIENT_ROOT . '/profile/viewprofile.php');
+}
+if($emailAddr){
+	if(!$pHandler->validateEmailAddress($emailAddr)){
+		$emailAddr = '';
+		$statusStr = $LANG['INVALID_EMAIL'] . '<ERR/>';
 	}
 }
 
-include_once($SERVER_ROOT.'/classes/ProfileManager.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/profile/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/profile/index.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/profile/index.en.php');
-
-
-header("Content-Type: text/html; charset=".$CHARSET);
-
-$THIRD_PARTY_OID_AUTH_ENABLED = $THIRD_PARTY_OID_AUTH_ENABLED ?? false;
-$SYMBIOTA_LOGIN_ENABLED = $SYMBIOTA_LOGIN_ENABLED ?? true;
-$LOGIN_ACTION_PAGE = $LOGIN_ACTION_PAGE ?? $CLIENT_ROOT . '/profile/openIdAuth.php';
-
-$login = array_key_exists('login',$_REQUEST)?$_REQUEST['login']:'';
-$remMe = array_key_exists("remember",$_POST)?$_POST["remember"]:'';
-$emailAddr = array_key_exists('email',$_POST)?$_POST['email']:'';
-$resetPwd = ((array_key_exists("resetpwd",$_REQUEST) && is_numeric($_REQUEST["resetpwd"]))?$_REQUEST["resetpwd"]:0);
-$action = array_key_exists("action",$_POST)?$_POST["action"]:"";
-if(!$action && array_key_exists('submit',$_REQUEST)) $action = $_REQUEST['submit'];
-
 $refUrl = '';
 if(array_key_exists('refurl',$_REQUEST)){
+	//Code rebuilds a sanitized redirect URL, which will get parsed into numerous import variables that need to be reappended to redirect url
 	$refGetStr = '';
 	foreach($_GET as $k => $v){
 		$k = htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
@@ -62,37 +60,19 @@ if(array_key_exists('refurl',$_REQUEST)){
 	else $refUrl .= $refGetStr;
 }
 
-$pHandler = new ProfileManager();
-
-$statusStr = '';
-//Sanitation
-if($login){
-	if(!$pHandler->setUserName($login)){
-		$login = '';
-		$statusStr = (isset($LANG['INVALID_LOGIN'])?$LANG['INVALID_LOGIN']:'Invalid login name').'<ERR/>';
-	}
-}
-if($emailAddr){
-	if(!$pHandler->validateEmailAddress($emailAddr)){
-		$emailAddr = '';
-		$statusStr = (isset($LANG['INVALID_EMAIL'])?$LANG['INVALID_EMAIL']:'Invalid email').'<ERR/>';
-	}
-}
-if(!is_numeric($resetPwd)) $resetPwd = 0;
-if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) $action = '';
-
 if($remMe) $pHandler->setRememberMe(true);
 if($action == 'logout'){
+	$redirect = GeneralUtil::getDomain() . $CLIENT_ROOT . '/index.php';
 	//check if using third party auth
 	if(array_key_exists('AUTH_PROVIDER', $_SESSION)){
 		$oidc = new OpenIDConnectClient($PROVIDER_URLS[$_SESSION['AUTH_PROVIDER']], $CLIENT_IDS[$_SESSION['AUTH_PROVIDER']], $CLIENT_SECRETS[$_SESSION['AUTH_PROVIDER']], $PROVIDER_URLS[$_SESSION['AUTH_PROVIDER']]);
 		$pHandler->reset();
 		$oidc->signOut($_SESSION['AUTH_CLIENT_ID'], $redirect);
-
 	}
 	else{
 		$pHandler->reset();
-		header('Location: ' . GeneralUtil::getDomain() . $CLIENT_ROOT . '/index.php');
+		header('Location: ' . $redirect);
+		exit;
 	}
 }
 elseif($action == 'login'){
@@ -101,75 +81,82 @@ elseif($action == 'login'){
 			header('Location: ../index.php');
 		}
 		else{
+			//Only relative paths are redirected to target
 			header('Location: '.$refUrl);
 		}
+		exit;
 	}
 	else{
 		if($pHandler->getErrorMessage()){
 			$statusStr = $pHandler->getErrorMessage();
 		}
 		else{
-			if(isset($LANG['INCORRECT'])) $statusStr = $LANG['INCORRECT'];
-			else $statusStr = 'Your username or password was incorrect. Please try again.<br/> If you are unable to remember your login credentials, use the controls below to retrieve your login or reset your password.';
-			$statusStr .= '<ERR/>';
+			$statusStr = $LANG['INCORRECT'] . '<ERR/>';
 			error_log('Authorization of user <F-USER>' . $login . '</F-USER> to access ' . $_SERVER['PHP_SELF']. ' failed', 0);
 		}
 	}
 }
-elseif($action == 'Retrieve Login'){
+elseif($action == 'retrieveLogin'){
 	if($emailAddr){
 		if($pHandler->lookupUserName($emailAddr)){
-			if(isset($LANG['LOGIN_EMAILED'])) $statusStr = $LANG['LOGIN_EMAILED'];
-			else $statusStr = 'Your login name will be emailed to';
-			$statusStr .= ': '.$emailAddr;
+			$statusStr = $LANG['LOGIN_EMAILED'] . ': ' . $emailAddr;
 		}
 		else{
-			$statusStr = (isset($LANG['EMAIL_ERROR'])?$LANG['EMAIL_ERROR']:'Error sending email, contact administrator').' ('.$pHandler->getErrorMessage().')<ERR/>';
+			$statusStr = $LANG['EMAIL_ERROR'] . ' (' . $pHandler->getErrorMessage() . ')<ERR/>';
 		}
 	}
 }
 elseif($resetPwd){
 	if($email = $pHandler->resetPassword($login)){
-		$statusStr = (isset($LANG['PWD_EMAILED'])?$LANG['PWD_EMAILED']:'Your new password was just emailed to').': '.$email.'<ERR/>';
+		$statusStr = $LANG['PWD_EMAILED'] . ': ' . $email . '<ERR/>';
 	}
 	else{
-		$statusStr = (isset($LANG['RESET_FAILED'])?$LANG['RESET_FAILED']:'Reset Failed! Contact Administrator').'<ERR/>';
+		$statusStr = $LANG['RESET_FAILED'] . '<ERR/>';
 		if($pHandler->getErrorMessage()) $statusStr .= ' ('.$pHandler->getErrorMessage().')';
 	}
 }
 else{
 	$statusStr = $pHandler->getErrorMessage();
 }
+
+if($SYMB_UID){
+	//Redirect logged in users somewhere else, with user's profile page the default target
+	if(!empty($_REQUEST['refurl']) && substr($_REQUEST['refurl'], 0, 1) == '/'){
+		header('Location:' . GeneralUtil::getDomain() . $CLIENT_ROOT . $_REQUEST['refurl']);
+		exit;
+	}
+	elseif(!empty($_SESSION['refurl']) && substr($_SESSION['refurl'], 0, 1) == '/'){
+		header('Location:' . GeneralUtil::getDomain() . $CLIENT_ROOT . $_SESSION['refurl']);
+		unset($_SESSION['refurl']);
+		exit;
+	}
+	else{
+		header('Location:' . GeneralUtil::getDomain() . $CLIENT_ROOT . '/profile/viewprofile.php');
+		exit;
+	}
+}
+
 if (array_key_exists('last_message', $_SESSION)){
 	$statusStr .= $_SESSION['last_message'];
 	unset($_SESSION['last_message']);
 }
-
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $LANG_TAG ?>">
+<html lang="<?= $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['LOGIN_NAME']; ?></title>
+	<title><?= $DEFAULT_TITLE . ' ' . $LANG['LOGIN_NAME'] ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		if(!navigator.cookieEnabled){
-			<?php
-			$alertStr = 'Your browser cookies are disabled. To be able to login and access your profile, they must be enabled for this domain.';
-			if(isset($LANG['COOKIES'])) $alertStr = $LANG['COOKIES'];
-			?>
-			alert("<?php echo $alertStr; ?>");
+			alert("<?= $LANG['COOKIES'] ?>");
 		}
 
 		function resetPassword(){
 			if(document.getElementById("portal-login").value == ""){
-				<?php
-				$alertStr = 'Enter your login name in the Login field and leave the password blank';
-				if(isset($LANG['ENTER_LOGIN_NO_PWD'])) $alertStr = $LANG['ENTER_LOGIN_NO_PWD'];
-				?>
-				alert("<?php echo $alertStr; ?>");
+				alert("<?= $LANG['ENTER_LOGIN_NO_PWD'] ?>");
 				return false;
 			}
 			document.getElementById("resetpwd").value = "1";
@@ -178,11 +165,7 @@ if (array_key_exists('last_message', $_SESSION)){
 
 		function checkCreds(){
 			if(document.getElementById("login").value == "" || document.getElementById("password").value == ""){
-				<?php
-				$alertStr = 'Please enter your login and password';
-				if(isset($LANG['ENTER_LOGIN'])) $alertStr = $LANG['ENTER_LOGIN'];
-				?>
-				alert("<?php echo $alertStr; ?>");
+				alert("<?= $LANG['ENTER_LOGIN'] ?>");
 				return false;
 			}
 			return true;
@@ -219,101 +202,107 @@ include($SERVER_ROOT.'/includes/header.php');
 <div class="navpath"></div>
 <!-- inner text -->
 <div role="main" id="innertext" style="padding-left:0px;margin-left:0px;">
-	<h1 class="page-heading screen-reader-only"><?php echo $LANG['LOGIN']; ?></h1>
+	<h1 class="page-heading screen-reader-only"><?= $LANG['LOGIN'] ?></h1>
 	<?php
 	if($statusStr){
 		$color = 'green';
 		if(strpos($statusStr, '<ERR/>')) $color = 'red';
 		?>
-		<div style='color:<?php echo $color; ?>;margin: 1em 1em 0em 1em;'>
+		<div style='color:<?= $color ?>;margin: 1em 1em 0em 1em;'>
 			<?php
 			echo $statusStr;
 			?>
 		</div>
 		<?php
 	}
+	$SYMBIOTA_LOGIN_ENABLED = $SYMBIOTA_LOGIN_ENABLED ?? true;
 	?>
 	<div class="gridlike-form justify-center-full-screen" style="margin: 0;">
 		<div class="flex-item-login bottom-breathing-room-rel">
 			<form id="loginform" name="loginform" action="index.php" onsubmit="return checkCreds();" method="post">
-				<?php if($SYMBIOTA_LOGIN_ENABLED){ ?>
+				<?php
+				if($SYMBIOTA_LOGIN_ENABLED){
+					?>
 					<fieldset class="profile-fieldset">
-						<legend class="profile-legend"><?php echo (isset($LANG['PORTAL_LOGIN'])?$LANG['PORTAL_LOGIN']:'Portal Login'); ?></legend>
+						<legend class="profile-legend"><?= $LANG['PORTAL_LOGIN'] ?></legend>
 						<div>
-							<label for="portal-login"><?php echo (isset($LANG['LOGIN_NAME'])?$LANG['LOGIN_NAME']:'Login'); ?>:</label>
-							<input id="portal-login" name="login" value="<?php echo $login; ?>" style="border-style:inset;" />
+							<label for="portal-login"><?= $LANG['LOGIN_NAME'] ?>:</label>
+							<input id="portal-login" name="login" value="<?= $login; ?>" style="border-style:inset;" />
 						</div>
 						<div>
-							<label for="password"><?php echo (isset($LANG['PASSWORD'])?$LANG['PASSWORD']:"Password"); ?>:</label>
+							<label for="password"><?= $LANG['PASSWORD'] ?>:</label>
 							<input type="password" id="password" name="password"  style="border-style:inset;" autocomplete="off" />
 						</div>
 						<div>
 							<input type="checkbox" value='1' name="remember" id="remember" checked >
 							<label for="remember">
-								<?php echo (isset($LANG['REMEMBER'])?$LANG['REMEMBER']:'Remember me on this computer'); ?>
+								<?= $LANG['REMEMBER'] ?>
 							</label>
 						</div>
 						<div>
-							<input type="hidden" name="refurl" value="<?php echo $refUrl; ?>" />
+							<input type="hidden" name="refurl" value="<?= $refUrl; ?>" />
 							<input type="hidden" id="resetpwd" name="resetpwd" value="">
-							<button name="action" type="submit" value="login"><?php echo (isset($LANG['SIGNIN'])?$LANG['SIGNIN']:'Sign In'); ?></button>
+							<button name="action" type="submit" value="login"><?= $LANG['SIGNIN'] ?></button>
 						</div>
 					</fieldset>
-				<?php }?>
+					<?php
+				}
+				?>
 			</form>
 		</div>
 		<?php
-			if($THIRD_PARTY_OID_AUTH_ENABLED){
-				$_SESSION['refurl'] = array_key_exists('refurl', $_REQUEST) ? $_REQUEST['refurl'] : '';
-
-		?>
+		if(!empty($THIRD_PARTY_OID_AUTH_ENABLED)){
+			if($refUrl) $_SESSION['refurl'] = $refUrl;
+			if(empty($LOGIN_ACTION_PAGE)) $LOGIN_ACTION_PAGE = $CLIENT_ROOT . '/profile/openIdAuth.php';
+			?>
 			<div class="flex-item-login bottom-breathing-room-rel">
 				<form action='<?= $LOGIN_ACTION_PAGE ?>' onsubmit="">
 					<fieldset  class="profile-fieldset">
-						<legend class="profile-legend"><?php echo (isset($LANG['THIRD_PARTY_LOGIN'])?$LANG['THIRD_PARTY_LOGIN']:'Login using third-party authentication'); ?></legend>
+						<legend class="profile-legend"><?= $LANG['THIRD_PARTY_LOGIN'] ?></legend>
 						<div class="justify-center">
-							<button type="submit" value="login"><?php echo (isset($LANG['OID_LOGIN'])?$LANG['OID_LOGIN']:'Login with OID'); ?></button>
+							<button type="submit" value="login"><?= $LANG['OID_LOGIN'] ?></button>
 						</div>
 					</fieldset>
 				</form>
 			</div>
-		<?php
-			}
+			<?php
+		}
 		?>
 		<div class="flex-item-login" style="text-align:center">
 			<?php
-				$shouldBeAbleToCreatePublicUser = $SHOULD_BE_ABLE_TO_CREATE_PUBLIC_USER ?? true;
-				if($shouldBeAbleToCreatePublicUser){
-			?>
+			$shouldBeAbleToCreatePublicUser = $SHOULD_BE_ABLE_TO_CREATE_PUBLIC_USER ?? true;
+			if($shouldBeAbleToCreatePublicUser){
+				?>
 				<div style="font-weight:bold;">
-					<?php echo (isset($LANG['NO_ACCOUNT'])?$LANG['NO_ACCOUNT']:"Don't have an Account?"); ?>
+					<?= $LANG['NO_ACCOUNT'] ?>
 				</div>
 				<div>
-					<a href="newprofile.php?refurl=<?php echo htmlspecialchars($refUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars((isset($LANG['CREATE_ACCOUNT'])?$LANG['CREATE_ACCOUNT']:'Create an account'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
+					<a href="newprofile.php?refurl=<?= $refUrl ?>"><?= $LANG['CREATE_ACCOUNT'] ?></a>
 				</div>
-			<?php
-		 		}
-			?>
-			<?php if($SYMBIOTA_LOGIN_ENABLED){ ?>
+				<?php
+	 		}
+			if($SYMBIOTA_LOGIN_ENABLED){ ?>
 				<div style="font-weight:bold;margin-top:5px">
-					<?php echo (isset($LANG['REMEMBER_PWD'])?$LANG['REMEMBER_PWD']:"Can't Remember your password?"); ?>
+					<?= $LANG['REMEMBER_PWD'] ?>
 				</div>
-				<a href="#" onclick="resetPassword();"><?php echo (isset($LANG['REST_PWD'])?$LANG['REST_PWD']:'Reset Password'); ?></a>
+				<a href="#" onclick="resetPassword();"><?= $LANG['REST_PWD'] ?></a>
 				<div style="font-weight:bold;margin-top:5px">
-					<?php echo (isset($LANG['REMEMBER_LOGIN'])?$LANG['REMEMBER_LOGIN']:"Can't Remember Login Name?"); ?>
+					<?= $LANG['REMEMBER_LOGIN'] ?>
 				</div>
 				<div>
-					<div><a href="#" onclick="toggle('emaildiv');"><?php echo htmlspecialchars((isset($LANG['RETRIEVE'])?$LANG['RETRIEVE']:'Retrieve Login'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></div>
+					<div><a href="#" onclick="toggle('emaildiv');"><?= $LANG['RETRIEVE'] ?></a></div>
 					<div id="emaildiv" style="display:none;margin:10px 0px 10px 40px;">
 						<fieldset class="profile-fieldset">
 							<form id="retrieveloginform" name="retrieveloginform" action="index.php" method="post">
-								<div><?php echo (isset($LANG['YOUR_EMAIL'])?$LANG['YOUR_EMAIL']:'Your Email'); ?>: <input type="text" name="email" /></div>
-								<div><button name="action" type="submit" value="Retrieve Login"><?php echo (isset($LANG['RETRIEVE'])?$LANG['RETRIEVE']:'Retrieve Login'); ?></button></div>
+								<div><?= $LANG['YOUR_EMAIL'] ?>: <input type="text" name="email" /></div>
+								<div><button name="action" type="submit" value="retrieveLogin"><?= $LANG['RETRIEVE'] ?></button></div>
 							</form>
 						</fieldset>
 					</div>
 				</div>
-			<?php } ?>
+				<?php
+			}
+			?>
 		</div>
 	</div>
 </div>
