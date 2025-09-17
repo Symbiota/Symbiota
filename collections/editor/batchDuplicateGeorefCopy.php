@@ -26,7 +26,13 @@ $start = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
 $db = array_key_exists('db',$_REQUEST)?$_REQUEST['db']:[];
 $missingLatLng = array_key_exists('missingLatLng',$_REQUEST);
 $hideExactMatches = array_key_exists('hideExactMatches',$_REQUEST);
-$disableAutoCheckSingleOptions = array_key_exists('disableAutoCheckSingleOptions',$_REQUEST);
+
+$autoCheckSingleOptions = true;
+if(array_key_exists('autoCheckSingleOptions',$_REQUEST)) {
+	$autoCheckSingleOptions = true;
+} else if(array_key_exists('disableAutoCheckSingleOptions',$_REQUEST)) {
+	$autoCheckSingleOptions = false;
+}
 
 $updated = [];
 $errors = [];
@@ -383,8 +389,9 @@ function getUniqueOptionCount($options, $targetOccid) {
 				</div>
 
 				<div style="margin-bottom: 1rem;">
-					<input id="disableAutoCheckSingleOptions" type="checkbox" name="disableAutoCheckSingleOptions" value="1" <?= $hideExactMatches? 'checked': ''?>>
-					<label for="disableAutoCheckSingleOptions"><?= $LANG['DISABLE_AUTO_CHECK'] ?? 'Disable autochecking on single value duplicate clusters' ?></label>
+					<input id="disableAutoCheckSingleOptions" type="hidden" name="disableAutoCheckSingleOptions" value="<?= $autoCheckSingleOptions? '0': '1' ?>">
+					<input id="autoCheckSingleOptions" onchange="document.getElementById('disableAutoCheckSingleOptions').value = !this.checked" type="checkbox" name="autoCheckSingleOptions" value="1" <?= $autoCheckSingleOptions? 'checked': ''?>>
+					<label for="disableAutoCheckSingleOptions"><?= $LANG['ENABLE_AUTO_CHECK'] ?></label>
 				</div>
 
 				<dialog id="collections_dialog" style="min-width: 900px;">
@@ -443,7 +450,7 @@ function getUniqueOptionCount($options, $targetOccid) {
 					<?= render_row($target, false, $shownFields) ?>
 					<?php foreach ($options[$target['duplicateid']] as $dupeOccid => $dupe): ?>
 						<?php if($dupeOccid !== $targetOccid): ?>
-							<?= render_row($dupe, $targetOccid, $shownFields, ($optionCount === 1 && $dupe['collid'] != $target['collid'] && !$disableAutoCheckSingleOptions)) ?>
+							<?= render_row($dupe, $targetOccid, $shownFields, ($optionCount === 1 && $dupe['collid'] != $target['collid'] && $autoCheckSingleOptions)) ?>
 						<?php endif ?>
 					<?php endforeach ?>
 					<tr>
