@@ -603,13 +603,11 @@ class Media {
 
 					foreach($urls as $url => $data) {
 						if(!($media_metadata[$url] ?? false)) {
-							$temp_path = $GLOBALS['SERVER_ROOT'] . '/temp/' . $data['name'];
+							$temp_path = UploadUtil::getTempDir() . $data['name'];
 
-							// TODO (Logan) clean up temp files on failure
 							self::create_image(
 								$file['tmp_name'],
 								$temp_path,
-								// $storage->getDirPath($data['name']),
 								$data['width'],
 								$data['height']
 							);
@@ -628,6 +626,7 @@ class Media {
 								$createdFilepaths[$url] = $storage->getDirPath($data['name']);
 							}
 
+							unlink($temp_path);
 						}
 					}
 					$storage->upload($file);
@@ -653,9 +652,7 @@ class Media {
 			mysqli_rollback($conn);
 
 			foreach($createdFilepaths as $field => $filepath) {
-				if(file_exists($filepath)) {
-					unlink($filepath);
-				}
+				$storage->remove($filepath);
 			}
 
 			array_push(self::$errors, $th->getMessage());
