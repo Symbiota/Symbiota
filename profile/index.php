@@ -122,7 +122,8 @@ else{
 if($SYMB_UID){
 	//Redirect logged in users somewhere else, with user's profile page the default target
 	if(!empty($_REQUEST['refurl']) && substr($_REQUEST['refurl'], 0, 1) == '/'){
-		header('Location:' . GeneralUtil::getDomain() . $CLIENT_ROOT . $_REQUEST['refurl']);
+		$refUrl = htmlspecialchars($_REQUEST['refurl'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+		header('Location:' . GeneralUtil::getDomain() . $CLIENT_ROOT . $refUrl);
 		exit;
 	}
 	elseif(!empty($_SESSION['refurl']) && substr($_SESSION['refurl'], 0, 1) == '/'){
@@ -276,7 +277,7 @@ include($SERVER_ROOT.'/includes/header.php');
 					<?= $LANG['NO_ACCOUNT'] ?>
 				</div>
 				<div>
-					<a href="newprofile.php?refurl=<?= $refUrl ?>"><?= $LANG['CREATE_ACCOUNT'] ?></a>
+					<a href="newprofile.php"><?= $LANG['CREATE_ACCOUNT'] ?></a>
 				</div>
 				<?php
 	 		}
