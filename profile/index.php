@@ -163,8 +163,8 @@ if (array_key_exists('last_message', $_SESSION)){
 			document.forms["loginform"].submit();
 		}
 
-		function checkCreds(){
-			if(document.getElementById("login").value == "" || document.getElementById("password").value == ""){
+		function checkCreds(f){
+			if(f.password.value == ""){
 				alert("<?= $LANG['ENTER_LOGIN'] ?>");
 				return false;
 			}
@@ -184,7 +184,6 @@ if (array_key_exists('last_message', $_SESSION)){
 		.justify-center-full-screen {
 			display: flex;
 			justify-content: center;
-			width: 100vw;
 		}
 		.flex-item-login {
 			width: 100%;
@@ -201,7 +200,7 @@ include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class="navpath"></div>
 <!-- inner text -->
-<div role="main" id="innertext" style="padding-left:0px;margin-left:0px;">
+<div role="main" id="innertext">
 	<h1 class="page-heading screen-reader-only"><?= $LANG['LOGIN'] ?></h1>
 	<?php
 	if($statusStr){
@@ -217,20 +216,20 @@ include($SERVER_ROOT.'/includes/header.php');
 	}
 	$SYMBIOTA_LOGIN_ENABLED = $SYMBIOTA_LOGIN_ENABLED ?? true;
 	?>
-	<div class="gridlike-form justify-center-full-screen" style="margin: 0;">
+	<div class="gridlike-form justify-center-full-screen">
 		<div class="flex-item-login bottom-breathing-room-rel">
-			<form id="loginform" name="loginform" action="index.php" onsubmit="return checkCreds();" method="post">
+			<form id="loginform" name="loginform" action="index.php" onsubmit="return checkCreds(this);" method="post">
 				<?php
 				if($SYMBIOTA_LOGIN_ENABLED){
 					?>
 					<fieldset class="profile-fieldset">
 						<legend class="profile-legend"><?= $LANG['PORTAL_LOGIN'] ?></legend>
 						<div>
-							<label for="portal-login"><?= $LANG['LOGIN_NAME'] ?>:</label>
-							<input id="portal-login" name="login" value="<?= $login; ?>" style="border-style:inset;" />
+							<label for="portal-login"><?= $LANG['LOGIN_NAME'] ?></label>:
+							<input id="portal-login" name="login" value="<?= $login; ?>" style="border-style:inset;" required />
 						</div>
 						<div>
-							<label for="password"><?= $LANG['PASSWORD'] ?>:</label>
+							<label for="password"><?= $LANG['PASSWORD'] ?></label>:
 							<input type="password" id="password" name="password"  style="border-style:inset;" autocomplete="off" />
 						</div>
 						<div>
@@ -291,11 +290,16 @@ include($SERVER_ROOT.'/includes/header.php');
 				</div>
 				<div>
 					<div><a href="#" onclick="toggle('emaildiv');"><?= $LANG['RETRIEVE'] ?></a></div>
-					<div id="emaildiv" style="display:none;margin:10px 0px 10px 40px;">
+					<div id="emaildiv" style="display:none;">
 						<fieldset class="profile-fieldset">
 							<form id="retrieveloginform" name="retrieveloginform" action="index.php" method="post">
-								<div><?= $LANG['YOUR_EMAIL'] ?>: <input type="text" name="email" /></div>
-								<div><button name="action" type="submit" value="retrieveLogin"><?= $LANG['RETRIEVE'] ?></button></div>
+								<div style="text-align:left">
+									<label for="email"><?= $LANG['YOUR_EMAIL'] ?></label>:
+									<input id="email" name="email" type="text" required />
+								</div>
+								<div>
+									<button name="action" type="submit" value="retrieveLogin"><?= $LANG['RETRIEVE'] ?></button>
+								</div>
 							</form>
 						</fieldset>
 					</div>
