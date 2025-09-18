@@ -265,9 +265,6 @@ span[class="link"]:hover {
 /* The section below addresses CSS reset recommended by USDA 508 compliance:  https://github.com/BioKIC/Symbiota/pull/881 https://www.usda.gov/digital-strategy/development/plays#development3*/
 ul {
   display: block;
-  list-style-type: disc;
-  margin-block-start: 1em;
-  margin-block-end: 1em;
   margin-inline-start: 0px;
   margin-inline-end: 0px;
   padding-inline-start: 40px;
