@@ -176,7 +176,7 @@ if($action == 'Create Login'){
 					<div style="margin:15px">
 						<form name="retrieveLoginForm" method="post" action="index.php">
 							<input name="email" type="hidden" value="<?php echo $emailAddr; ?>" />
-							<button name="action" type="submit" value="Retrieve Login"><?php echo (isset($LANG['RETRIEVE_LOGIN']) ? $LANG['RETRIEVE_LOGIN'] : 'Retrieve Login'); ?></button>
+							<button name="action" type="submit" value="retrieveLogin"><?php echo (isset($LANG['RETRIEVE_LOGIN']) ? $LANG['RETRIEVE_LOGIN'] : 'Retrieve Login'); ?></button>
 						</form>
 					</div>
 				</div>
