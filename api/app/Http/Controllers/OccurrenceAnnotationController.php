@@ -18,8 +18,8 @@ class OccurrenceAnnotationController extends OccurrenceController{
 
 	/**
 	 * @OA\Get(
-	 *	 path="/api/v2/occurrence/annotation/search",
-	 *	 operationId="/api/v2/occurrence/annotation/search",
+	 *	 path="/api/v2/occurrence/annotation",
+	 *	 operationId="/api/v2/occurrence/annotation",
 	 *	 tags={""},
 	 *	 @OA\Parameter(
 	 *		 name="collid",
@@ -31,14 +31,14 @@ class OccurrenceAnnotationController extends OccurrenceController{
 	 *	 @OA\Parameter(
 	 *		 name="type",
 	 *		 in="query",
-	 *		 description="Annoration type (internal, external) ",
+	 *		 description="Annotation type (internal, external) ",
 	 *		 required=true,
 	 *		 @OA\Schema(type="string", default="internal", enum = {"internal", "external"})
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="source",
 	 *		 in="query",
-	 *		 description="External source of Annoration (e.g. geolocate) ",
+	 *		 description="External source of Annotation (e.g. geolocate) ",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
@@ -160,19 +160,62 @@ class OccurrenceAnnotationController extends OccurrenceController{
 		return response()->json($retObj);
 	}
 
+	/**
+	 * @OA\Get(
+	 *	 path="/api/v2/occurrence/{identifier}/annotation",
+	 *	 operationId="/api/v2/occurrence/{identifier}/annotation",
+	 *	 summary="Edits made to target occurrence",
+	 *	 tags={""},
+	 *	 @OA\Parameter(
+	 *		 name="identifier",
+	 *		 in="path",
+	 *		 description="occid or specimen GUID (occurrenceID) or recordID associated with target occurrence",
+	 *		 required=true,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="type",
+	 *		 in="query",
+	 *		 description="Annotation type (internal, external) ",
+	 *		 required=true,
+	 *		 @OA\Schema(type="string", default="internal", enum = {"internal", "external"})
+	 *	 ),
+	 *	 @OA\Response(
+	 *		 response="200",
+	 *		 description="Returns list of occurrence edits",
+	 *		 @OA\JsonContent()
+	 *	 ),
+	 *	 @OA\Response(
+	 *		 response="400",
+	 *		 description="Error: Bad request. ",
+	 *	 ),
+	 *   @OA\Response(
+     *       response="404",
+     *       description="Record not found"
+     *   )
+	 * )
+	 */
 	public function showOccurrenceAnnotations($id, Request $request){
 		$this->validate($request, [
 			'type' => [Rule::in(['internal', 'external'])]
 		]);
 		$type = $request->input('type', 'internal');
 
-		$id = $this->getOccid($id);
+		$id = $this->getOccidFromOtherIds($id)->occid ?? null;
+		if(!$id) return response()->json(['error' => 'Occurrence with that ID not found'], 404);
 		$annotation = null;
+		$occurrence = Occurrence::find($id);
+		if(!$occurrence){
+			return response()->json(['error' => 'Occurrence not found'], 404);
+		}
 		if($type == 'internal'){
-			$annotation = Occurrence::find($id)->annotationInternal;
+			$annotation = $occurrence->annotationInternal;
 		}
 		elseif($type == 'external'){
-			$annotation = Occurrence::find($id)->annotationExternal;
+			$annotation = $occurrence->annotationExternal;
+		}
+		if(!$annotation || count($annotation) < 1){
+			return response()->json(['error' => 'Annotation(s) not found'], 404);
 		}
 
 		return response()->json($annotation);
