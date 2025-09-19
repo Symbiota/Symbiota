@@ -33,6 +33,10 @@ class UploadUtil {
 		'application/vnd.msexcel',
 	];
 
+	const DEPRECATED_MIME_CONVERSION = [
+		'audio/mp3' => 'audio/mpeg'
+	];
+
 	/**
 	 * Gets temporary file storage path for portal.
 	 *
