@@ -66,12 +66,18 @@ $errors = [];
 function copyOccurrenceInfo($targetOccId, $sourceOccId, $harvestFields) {
 	$sql = 'Update omoccurrences target
 		INNER JOIN omoccurrences source on target.occid = ? and source.occid = ?
+		INNER JOIN omcollections c on c.collid = source.collid
 		SET ';
 
 	$count = 0;
 	$maxCount = count($harvestFields);
 	foreach ($harvestFields as $field) {
-		$sql .= 'target.' . $field . '  =  source.'  . $field;
+		if($field === 'georeferenceRemarks') {
+			$sql .= 'target.' . $field . ' = TRIM(CONCAT("Copied from duplicate ", c.institutionCode, " ", COALESCE(source.catalogNumber, source.otherCatalogNumbers, source.occid), " ", COALESCE(source.'  . $field .', "")))';
+		} else {
+			$sql .= 'target.' . $field . ' = source.'  . $field;
+		}
+
 		if(++$count < $maxCount) {
 			$sql .= ', ';
 		}
