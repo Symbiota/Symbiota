@@ -27,9 +27,9 @@
         }
         if(array_key_exists('collcode', $nestedCatEl)){
             $codeStr .= '-' . $nestedCatEl['collcode'];
-        } 
+        }
         $codeStr .= ')';
-        echo '<input  style="margin:0" data-chip="Collection: ' . $codeStr . '" aria-label="select collection ' . $collid . '" id="coll-' . $collid . '-' . $idStr . '" data-role="none" name="db[]" value="'.$collid.'" type="checkbox" class="cat-'.$idStr.'" onclick="unselectCat(\'cat-' . $idStr . '\')" '.($catSelected || !$collSelArr || in_array($collid, $collSelArr)?'checked':'').' />';
+        echo '<input  style="margin:0" data-chip="Collection: ' . $codeStr . '" aria-label="select collection ' . $collid . '" id="coll-' . $collid . '-' . $idStr . '" data-role="none" name="db[]" value="'.$collid.'" type="checkbox" class="cat-'.$idStr.'" onclick="unselectCat(\'cat-' . $idStr . '\')" '.($catSelected || ($collSelArr && in_array($collid, $collSelArr))?'checked':'').' />';
         ?>
     </div>
     <div>

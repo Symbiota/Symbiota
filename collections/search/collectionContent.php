@@ -14,8 +14,20 @@
 		$catSelArr = array();
 		$collSelArr = array();
 		$displayIcons = true;
-		if(isset($_POST['cat'])) $catSelArr = $_POST['cat'];
-		if(isset($_POST['db'])) $collSelArr = $_POST['db'];
+		if(isset($_REQUEST['cat'])){
+			if(preg_match('/^[\d,]+$/', $_REQUEST['cat'])){
+				if(is_array($_REQUEST['cat'])) $catSelArr = $_REQUEST['cat'];
+				elseif(is_string($_REQUEST['cat'])) $catSelArr = explode(',',$_REQUEST['cat']);
+			}
+		}
+		elseif(!empty($DEFAULTCATID)){
+			//Set default selection of collections as defined within symbini config
+			$catSelArr = explode(',', $DEFAULTCATID);
+		}
+		if(isset($_REQUEST['db'])){
+			if(is_array($_REQUEST['db'])) $collSelArr = $_REQUEST['db'];
+			elseif(is_string($_REQUEST['db'])) $collSelArr = explode(',',$_REQUEST['db']);
+		}
 		$targetCatArr = array();
 		$targetCatID = (string)$catId;
 		if($targetCatID != '') $targetCatArr = explode(',', $catId);
