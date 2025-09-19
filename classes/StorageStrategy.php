@@ -15,50 +15,50 @@ require_once($SERVER_ROOT . '/vendor/autoload.php');
 abstract class StorageStrategy {
 	/**
 	 * If a file is given then return the storage path for that resource otherwise just return the root path.
-	 * @param string|array $file {name: string, type: string, tmp_name: string, error: int, size: int}
-	 * @return string
+	 * @param String|Array $file {name: String, type: String, tmp_name: String, error: Int, size: Int}
+	 * @return String
 	 */
-	abstract public function getDirPath($file): string;
+	abstract public function getDirPath($file): String;
 
 	/**
 	 * If a file is given then return the url path to that resource otherwise just return the root url path.
-	 * @param string|array $file {name: string, type: string, tmp_name: string, error: int, size: int}
-	 * @return string
+	 * @param String|Array $file {name: String, type: String, tmp_name: String, error: Int, size: Int}
+	 * @return String
 	 */
-	abstract public function getUrlPath($file): string;
+	abstract public function getUrlPath($file): String;
 
 	/**
 	 * Function to check if a file exists for the storage location of the upload strategy.
-	 * @param string|array $file {name: string, type: string, tmp_name: string, error: int, size: int}
-	 * @return bool
+	 * @param String|Array $file {name: String, type: String, tmp_name: String, error: Int, size: Int}
+	 * @return Bool
 	 */
-	abstract public function file_exists($file): bool;
+	abstract public function file_exists($file): Bool;
 
 	/**
 	 * Function to handle how a file should be uploaded.
-	 * @param array $file {name: string, type: string, tmp_name: string, error: int, size: int}
-	 * @return bool
+	 * @param Array $file {name: String, type: String, tmp_name: String, error: Int, size: Int}
+	 * @return Bool
 	 * @throws MediaException(MediaException::DuplicateMediaFile)
 	 */
-	abstract public function upload(array $file): bool;
+	abstract public function upload(Array $file): Bool;
 
 	/**
 	 * Function to handle how a file should be removed.
-	 * @param string|array $file {name: string, type: string, tmp_name: string, error: int, size: int}
-	 * @return bool
+	 * @param String|Array $file {name: String, type: String, tmp_name: String, error: Int, size: Int}
+	 * @return Bool
 	 * @throws MediaException(MediaException::DuplicateMediaFile)
 	 */
-	abstract public function remove($file): bool;
+	abstract public function remove($file): Bool;
 
 	/**
 	 * Function to handle renaming an existing file.
-	 * @param string $filepath
-	 * @param array $new_filepath
-	 * @return bool
+	 * @param String $filepath
+	 * @param Array $new_filepath
+	 * @return Bool
 	 * @throws MediaException(MediaException::FileDoesNotExist)
 	 * @throws MediaException(MediaException::FileAlreadyExists)
 	 */
-	abstract public function rename(string $filepath, string $new_filepath): void;
+	abstract public function rename(String $filepath, String $new_filepath): void;
 }
 
 /**
@@ -69,32 +69,32 @@ abstract class StorageStrategy {
  * driver securely make sure to configure nginx or apache properly
  */
 class LocalStorage extends StorageStrategy {
-	private string $path;
+	private String $path;
 
 	/**
-	 * @param String $path Path is string filepath starting with no slash and ending
+	 * @param String $path Path is String filepath starting with no slash and ending
 	 * with a slash. It serves as an extension of the root storage path to limit
 	 * where files can be stored.
 	 **/
-	public function __construct(string $path = '') {
+	public function __construct(String $path = '') {
 		$this->path = $path ?? '';
 	}
 
-	public function getDirPath($file = ''): string {
+	public function getDirPath($file = ''): String {
 		$filename = is_array($file)? $file['name']: $file;
 		return $GLOBALS['MEDIA_ROOT_PATH'] .
 			(substr($GLOBALS['MEDIA_ROOT_PATH'],-1) != "/"? '/': '') .
 			$this->path . $filename;
 	}
 
-	public function getUrlPath($file = ''): string {
+	public function getUrlPath($file = ''): String {
 		$filename = is_array($file)? $file['name']: $file;
 		return $GLOBALS['MEDIA_ROOT_URL'] .
 		   	(substr($GLOBALS['MEDIA_ROOT_URL'],-1) != "/"? '/': '') .
 			$this->path . $filename;
 	}
 
-	public function file_exists($file): bool {
+	public function file_exists($file): Bool {
 		$filename = is_array($file)? $file['name']: $file;
 
 		if(str_contains($filename, $this->getUrlPath())) {
@@ -104,7 +104,7 @@ class LocalStorage extends StorageStrategy {
 		return file_exists($this->getDirPath() . $filename);
 	}
 
-	public function upload(array $file): bool {
+	public function upload(array $file): Bool {
 		$dir_path = $this->getDirPath();
 		$filepath = $dir_path . $file['name'];
 
@@ -147,7 +147,7 @@ class LocalStorage extends StorageStrategy {
 	 * @param String $path Filepath that needs checking
 	 * @return Bool
 	 **/
-	static private function on_system(string $path): Bool {
+	static private function on_system(String $path): Bool {
 		//Check if path is absoulte path
 		if(file_exists($path)) {
 			return true;
@@ -162,7 +162,7 @@ class LocalStorage extends StorageStrategy {
 		return file_exists($dir_path);
 	}
 
-	public function remove($file): bool {
+	public function remove($file): Bool {
 		$filename = is_array($file)? $file['name']: $file;
 
 		if(!is_writable($GLOBALS['SERVER_ROOT'] . $filename)) {
@@ -197,7 +197,7 @@ class LocalStorage extends StorageStrategy {
 		return false;
 	}
 
-	public function rename(string $filepath, string $new_filepath): void {
+	public function rename(String $filepath, String $new_filepath): void {
 		//Remove MEDIA_ROOT_PATH + Path from filepath if it exists
 		global $SERVER_ROOT;
 
@@ -248,7 +248,7 @@ class S3Storage extends StorageStrategy {
 	 * $S3_ACCESS_KEY_ID: credentials => key
 	 * $S3_SECRET_ID: credentials => secret
 	 *
-	 * @param String $path Path is string filepath starting with no slash and ending
+	 * @param String $path Path is String filepath starting with no slash and ending
 	 * with a slash. It serves as an extension of the root storage path to limit
 	 * where files can be stored.
 	 **/
@@ -266,7 +266,7 @@ class S3Storage extends StorageStrategy {
 		]);
 	}
 
-	public function getDirPath($file = ''): string {
+	public function getDirPath($file = ''): String {
 		$file_name = is_array($file)? $file['name']: $file;
 
 		return $GLOBALS['MEDIA_ROOT_URL'] .
@@ -274,20 +274,20 @@ class S3Storage extends StorageStrategy {
 			$this->path . $file_name;
 	}
 
-	public function getUrlPath($file = ''): string {
+	public function getUrlPath($file = ''): String {
 		$file_name = is_array($file)? $file['name']: $file;
 		return $GLOBALS['MEDIA_DOMAIN'] . $GLOBALS['MEDIA_ROOT_URL'] .
 		   	(substr($GLOBALS['MEDIA_ROOT_URL'],-1) != "/"? '/': '') .
 		   	$this->path . $file_name;
 	}
 
-	public function file_exists($file): bool {
+	public function file_exists($file): Bool {
 		$filename = is_array($file)? $file['name']: $file;
 
 		return $this->client->doesObjectExistV2($GLOBALS['S3_MEDIA_BUCKET_NAME'], self::getPathFromUrl($filename));
 	}
 
-	public function upload(array $file): bool {
+	public function upload(array $file): Bool {
 		if(!file_exists($file['tmp_name'])) {
 			throw new MediaException(MediaException::FileDoesNotExist, $file['tmp_name']);
 		}
@@ -326,7 +326,7 @@ class S3Storage extends StorageStrategy {
 		return $path;
 	}
 
-	public function remove($file): bool {
+	public function remove($file): Bool {
 		$filename = is_array($file)? $file['name']: $file;
 		$trimed_file_name = str_replace($GLOBALS['MEDIA_DOMAIN'] . $GLOBALS['S3_MEDIA_BUCKET_NAME'],'', $filename);
 
@@ -362,7 +362,7 @@ class StorageFactory {
 	 * Requires $STORAGE_DRIVER be set in the config/symbini.php
 	 * to either 'local' or 's3'.
 	 *
-	 * @param String $path Path is string filepath starting with no slash and ending
+	 * @param String $path Path is String filepath starting with no slash and ending
 	 * with a slash. It serves as an extension of the root storage path to limit
 	 * where files can be stored.
 	 * @return StorageStrategy
