@@ -45,13 +45,18 @@ $shownFields = [
 	'catalognumber',
 	'institutionCode',
 	'collectionCode',
-	'collector',
-	'collector number',
+	'recordedBy',
+	'recordNumber',
 	'country',
 	'stateProvince',
 	'county',
 	'locality',
 	...$harvestFields,
+];
+
+$fieldDisplayAlias = [
+	'recordedBy' => 'collector',
+	'recordNumber' => 'collector number',
 ];
 
 // Don't show in ui table
@@ -62,6 +67,13 @@ $fieldIgnores = [
 
 $updated = [];
 $errors = [];
+$hiddenFields = [];
+
+foreach($shownFields as $field) {
+	if(array_key_exists('hide_' . $field, $_REQUEST)) {
+		array_push($hiddenFields, $field);
+	}
+}
 
 function copyOccurrenceInfo($targetOccId, $sourceOccId, $harvestFields) {
 	$sql = 'Update omoccurrences target
@@ -75,6 +87,7 @@ function copyOccurrenceInfo($targetOccId, $sourceOccId, $harvestFields) {
 		if($field === 'georeferenceRemarks') {
 			$sql .= 'target.' . $field . ' = TRIM(CONCAT("Copied from duplicate ", c.institutionCode, " ", COALESCE(source.catalogNumber, source.otherCatalogNumbers, source.occid), " ", COALESCE(source.'  . $field .', "")))';
 		} else {
+
 			$sql .= 'target.' . $field . ' = source.'  . $field;
 		}
 
@@ -162,7 +175,7 @@ function getSqlFields(array $fields, string $prefix = '') {
 	return $sql;
 }
 
-function getTableHeaders(array $arr, array $ignore = []) {
+function getTableHeaders(array $arr, array $ignore = [], array $alias = []) {
 	$html = '<thead>';
 	$html .= '<th></th>';
 
@@ -170,7 +183,8 @@ function getTableHeaders(array $arr, array $ignore = []) {
 		if(in_array($key, $ignore)) {
 			continue;
 		} else {
-			$html .= '<th data-key="'. $key .'">' . $key . '</th>';
+			$hide = array_key_exists('hide_' . $key, $_REQUEST);
+			$html .= '<th data-key="'. $key .'" ' . ($hide? 'style="display:none"':'') . '>' . ($alias[$key] ?? $key) . '</th>';
 		}
 	}
 
@@ -191,10 +205,12 @@ function render_row($row, $checkboxName = false, $shownFields = [], $onlyOption 
 		
 	foreach($shownFields as $key) {
 		$value = $row[$key] ?? null;
+		$hide = array_key_exists('hide_' . $key, $_REQUEST);
+
 		if($key === 'occid') {
-			$html .= '<td data-key="'. $key .'"><a target="_blank" href="'. $base_url . $value . '">' . $value . '</a></td>';
+			$html .= '<td data-key="'. $key .'" ' . ($hide? 'style="display:none"':'') . '><a target="_blank" href="'. $base_url . $value . '">' . $value . '</a></td>';
 		}  else  {
-			$html .= '<td data-key="'. $key .'">' . $value . '</td>';
+			$html .= '<td data-key="'. $key .'" ' . ($hide? 'style="display:none"':'') . '>' . $value . '</td>';
 		}
 	}
 
@@ -313,8 +329,6 @@ foreach (getOccurrences($targetOccids, $conn) as $target) {
 	$target['duplicateid'] = $targets[$target['occid']]; 
 	$target['institutionCode'] = $collections[$target['collid']]['institutionCode'];
 	$target['collectionCode'] = $collections[$target['collid']]['collectionCode'];
-	$target['collector'] = $target['recordedBy'];
-	$target['collector number'] = $target['recordNumber'];
 	$targets[$target['occid']] =  $target;
 }
 
@@ -324,8 +338,6 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 	$option['duplicateid'] = $duplicateId;
 	$option['institutionCode'] = $collections[$option['collid']]['institutionCode'];
 	$option['collectionCode'] = $collections[$option['collid']]['collectionCode'];
-	$option['collector'] = $option['recordedBy'];
-	$option['collector number'] = $option['recordNumber'];
 	$options[$duplicateId][$occid] = $option;
 }
 
@@ -425,8 +437,8 @@ function getUniqueOptionCount($options, $targetOccid) {
 
 						<?php foreach ($shownFields as $field):?>
 						<div>
-							<input id="hide_<?= $field ?>" type="checkbox" name="hide_<?= $field ?>" onclick="document.querySelectorAll('[data-key=<?= $field ?>]').forEach(el => el.style.display = this.checked? 'none': '')">
-							<label for="hide_<?= $field ?>" ><?= $field ?></label>
+							<input id="hide_<?= $field ?>" type="checkbox" name="hide_<?= $field ?>" <?= array_key_exists('hide_' . $field, $_REQUEST)? 'checked': ''?> onclick="document.querySelectorAll('[data-key=<?= $field ?>]').forEach(el => el.style.display = this.checked? 'none': '')">
+							<label for="hide_<?= $field ?>" ><?= ($fieldDisplayAlias[$field] ?? $field) ?></label>
 						</div>
 						<?php endforeach ?>
 					</dialog>
@@ -482,7 +494,7 @@ function getUniqueOptionCount($options, $targetOccid) {
 			<form method="POST">
 			<?php if(count($targets)): ?>
 			<table class="styledtable table-scroll">
-			<?= getTableHeaders($shownFields, $fieldIgnores) ?>
+			<?= getTableHeaders($shownFields, $fieldIgnores, $fieldDisplayAlias) ?>
 
 			<?php foreach ($targets as $targetOccid => $target): ?>
 			<?php if($optionCount = getUniqueOptionCount($options[$target['duplicateid']], $targetOccid)): ?>
