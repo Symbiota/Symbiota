@@ -130,8 +130,15 @@ $hideExactMatches = array_key_exists('hideExactMatches',$_REQUEST);
 $autoCheckSingleOptions = true;
 if(array_key_exists('autoCheckSingleOptions',$_REQUEST)) {
 	$autoCheckSingleOptions = true;
-} else if(array_key_exists('disableAutoCheckSingleOptions',$_REQUEST)) {
+} else if(array_key_exists('searchDuplicates',$_REQUEST)) {
 	$autoCheckSingleOptions = false;
+}
+
+$missingLatLng = true;
+if(array_key_exists('missingLatLng',$_REQUEST)) {
+	$missingLatLng = true;
+} else if(array_key_exists('searchDuplicates',$_REQUEST)) {
+	$missingLatLng = false;
 }
 
 function mapField($field, $prefix) {
@@ -403,9 +410,8 @@ function getUniqueOptionCount($options, $targetOccid) {
 				</div>
 
 				<div style="margin-bottom: 1rem;">
-					<input id="disableAutoCheckSingleOptions" type="hidden" name="disableAutoCheckSingleOptions" value="<?= $autoCheckSingleOptions? '0': '1' ?>">
-					<input id="autoCheckSingleOptions" onchange="document.getElementById('disableAutoCheckSingleOptions').value = !this.checked" type="checkbox" name="autoCheckSingleOptions" value="1" <?= $autoCheckSingleOptions? 'checked': ''?>>
-					<label for="disableAutoCheckSingleOptions"><?= $LANG['ENABLE_AUTO_CHECK'] ?></label>
+					<input id="autoCheckSingleOptions" type="checkbox" name="autoCheckSingleOptions" value="1" <?= $autoCheckSingleOptions? 'checked': ''?>>
+					<label for="autoCheckSingleOptions"><?= $LANG['ENABLE_AUTO_CHECK'] ?></label>
 				</div>
 
 				<dialog id="collections_dialog" style="min-width: 900px;">
@@ -417,6 +423,7 @@ function getUniqueOptionCount($options, $targetOccid) {
 					</div>
 					<?php include(__DIR__ . '/includes/collectionForm.php') ?>
 				</dialog>
+				<input type="hidden" name="searchDuplicates" value="1"/>
 
 				<button style="margin-bottom:1rem" class="button" type="button" onclick="document.getElementById('collections_dialog').showModal()"><?= $LANG['FILTER_COLLECTIONS'] ?></button>
 				<button class="button"><?= $LANG['SEARCH'] ?></button>
