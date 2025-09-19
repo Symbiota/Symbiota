@@ -170,7 +170,7 @@ function getTableHeaders(array $arr, array $ignore = []) {
 		if(in_array($key, $ignore)) {
 			continue;
 		} else {
-			$html .= '<th>' . $key . '</th>';
+			$html .= '<th data-key="'. $key .'">' . $key . '</th>';
 		}
 	}
 
@@ -192,9 +192,9 @@ function render_row($row, $checkboxName = false, $shownFields = [], $onlyOption 
 	foreach($shownFields as $key) {
 		$value = $row[$key] ?? null;
 		if($key === 'occid') {
-			$html .= '<td><a target="_blank" href="'. $base_url . $value . '">' . $value . '</a></td>';
+			$html .= '<td data-key="'. $key .'"><a target="_blank" href="'. $base_url . $value . '">' . $value . '</a></td>';
 		}  else  {
-			$html .= '<td>' . $value . '</td>';
+			$html .= '<td data-key="'. $key .'">' . $value . '</td>';
 		}
 	}
 
@@ -414,20 +414,39 @@ function getUniqueOptionCount($options, $targetOccid) {
 					<label for="autoCheckSingleOptions"><?= $LANG['ENABLE_AUTO_CHECK'] ?></label>
 				</div>
 
-				<dialog id="collections_dialog" style="min-width: 900px;">
-					<div style="display:flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
-						<h1 style="margin:0;"><?= $LANG['NAV_COLLECTIONS'] ?></h1>
-						<div style="flex-grow: 1;">
-						<button class="button" style="margin-left: auto;" type="button" onclick="document.getElementById('collections_dialog').close()"><?= $LANG['CLOSE'] ?></button>
+				<div style="display:flex; gap:1rem;margin-bottom:1rem;">
+					<dialog id="table_toggle_dialog" style="min-width: 900px;">
+						<div style="display:flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+							<h1 style="margin:0;"><?= 'Hide Displayed Fields' ?></h1>
+							<div style="flex-grow: 1;">
+							<button class="button" style="margin-left: auto;" type="button" onclick="document.getElementById('table_toggle_dialog').close()"><?= $LANG['CLOSE'] ?></button>
+							</div>
 						</div>
-					</div>
-					<?php include(__DIR__ . '/includes/collectionForm.php') ?>
-				</dialog>
+
+						<?php foreach ($shownFields as $field):?>
+						<div>
+							<input id="hide_<?= $field ?>" type="checkbox" name="hide_<?= $field ?>" onclick="document.querySelectorAll('[data-key=<?= $field ?>]').forEach(el => el.style.display = this.checked? 'none': '')">
+							<label for="hide_<?= $field ?>" ><?= $field ?></label>
+						</div>
+						<?php endforeach ?>
+					</dialog>
+					<input type="hidden" name="searchDuplicates" value="1"/>
+					<button class="button" type="button" onclick="document.getElementById('table_toggle_dialog').showModal()"><?= 'Hide Fields' ?></button>
+
+					<dialog id="collections_dialog" style="min-width: 900px;">
+						<div style="display:flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+							<h1 style="margin:0;"><?= $LANG['NAV_COLLECTIONS'] ?></h1>
+							<div style="flex-grow: 1;">
+							<button class="button" style="margin-left: auto;" type="button" onclick="document.getElementById('collections_dialog').close()"><?= $LANG['CLOSE'] ?></button>
+							</div>
+						</div>
+						<?php include(__DIR__ . '/includes/collectionForm.php') ?>
+					</dialog>
+					<button class="button" type="button" onclick="document.getElementById('collections_dialog').showModal()"><?= $LANG['FILTER_COLLECTIONS'] ?></button>
+					<button class="button"><?= $LANG['SEARCH'] ?></button>
+				</div>
+
 				<input type="hidden" name="searchDuplicates" value="1"/>
-
-				<button style="margin-bottom:1rem" class="button" type="button" onclick="document.getElementById('collections_dialog').showModal()"><?= $LANG['FILTER_COLLECTIONS'] ?></button>
-				<button class="button"><?= $LANG['SEARCH'] ?></button>
-
 			</form>
 
 
