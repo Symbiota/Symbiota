@@ -393,6 +393,11 @@ class Media {
 			}
 		}
 
+		// Converts Deprecated mimes to proper mime type
+		if($real_mime = UploadUtil::DEPRECATED_MIME_CONVERSION[$clean_post_arr['format']] ?? false) {
+			$clean_post_arr['format'] = $real_mime;
+		}
+
 		if(!self::getAllowedMime($clean_post_arr['format'])) {
 			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $file['type']);
 		}
