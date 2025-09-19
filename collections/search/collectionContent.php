@@ -15,8 +15,10 @@
 		$collSelArr = array();
 		$displayIcons = true;
 		if(isset($_REQUEST['cat'])){
-			if(is_array($_REQUEST['cat'])) $catSelArr = $_REQUEST['cat'];
-			elseif(is_string($_REQUEST['cat'])) $catSelArr = explode(',',$_REQUEST['cat']);
+			if(preg_match('/^[\d,]+$/', $_REQUEST['cat'])){
+				if(is_array($_REQUEST['cat'])) $catSelArr = $_REQUEST['cat'];
+				elseif(is_string($_REQUEST['cat'])) $catSelArr = explode(',',$_REQUEST['cat']);
+			}
 		}
 		elseif(!empty($DEFAULTCATID)){
 			//Set default selection of collections as defined within symbini config
