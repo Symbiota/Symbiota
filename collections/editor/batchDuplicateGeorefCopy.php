@@ -278,7 +278,7 @@ function getCollections(mysqli $conn) {
 
 $conn = Database::connect('readonly');
 
-$duplicates = searchDuplicateOptions($collId, $start, $conn);
+$duplicates = array_key_exists('searchDuplicates', $_REQUEST)? searchDuplicateOptions($collId, $start, $conn): [];
 $collections = getCollections($conn);
 
 $paginateNext = count($duplicates) == 100;
@@ -483,9 +483,15 @@ function getUniqueOptionCount($options, $targetOccid) {
 			</table>
 
 			<?php else: ?>
-				<h4 style="margin-bottom: 1rem; padding:1rem 0;">
-					<?= $LANG['NO_DUPLICATES'] ?>
-				</h4>
+				<?php if(array_key_exists('searchDuplicates', $_REQUEST)): ?>
+					<h4 style="margin-bottom: 1rem; padding:1rem 0;">
+						<?= $LANG['NO_DUPLICATES'] ?>
+					</h4>
+				<?php else: ?>
+					<h4 style="margin-bottom: 1rem; padding:1rem 0;">
+						<?= $LANG['SEARCH_TO_SEE_DUPLICATES'] ?>
+					</h4>
+				<?php endif ?>
 			<?php endif ?>
 
 			<input type="hidden" name="copyInfo" value="1" />
