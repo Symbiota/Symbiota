@@ -30,5 +30,6 @@ $LANG['SEL_ADDRESS'] = 'Sélectionnez Adresse de Établissement';
 $LANG['LINK_ADDRESS'] = 'Lier Adresse';
 $LANG['ADD_ADDRESS'] = 'Ajouter une nouvelle adresse ne figurant pas dans la liste';
 $LANG['ADD_INST'] = 'Ajouter une institution qui ne figure pas sur la liste';
+$LANG['CLOSE'] = 'Fermer';
 
 ?>
