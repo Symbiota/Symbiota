@@ -119,7 +119,7 @@ if($isEditor && $action){
 			Media::uploadAndInsert(
 				$_POST,
 				$_FILES['imgfile'] ?? null,
-				new LocalStorage($path)
+				StorageFactory::make($path)
 			);
 		} catch(Exception $e) {
 			$statusStr .= '<br/>' . $e->getMessage();

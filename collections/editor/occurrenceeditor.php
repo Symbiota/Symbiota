@@ -228,7 +228,7 @@ if($SYMB_UID){
 				}
 			}
 			elseif($action == 'Submit Image Edits'){
-				Media::update($_POST['imgid'], $_POST, new LocalStorage());
+				Media::update($_POST['imgid'], $_POST, StorageFactory::make());
 
 				if($errors = Media::getErrors()) {
 					$statusStr = 'ERROR: ' . array_pop($errors);
@@ -254,7 +254,7 @@ if($SYMB_UID){
 					Media::uploadAndInsert(
 						$_POST,
 						$_FILES['imgfile'],
-						new LocalStorage($path)
+						StorageFactory::make($path)
 					);
 
 					if($errors = Media::getErrors()) {
@@ -307,8 +307,8 @@ if($SYMB_UID){
 					Media::remap(
 						intval($_POST['imgid']),
 						$target_occid,
-						new LocalStorage($current_path),
-						new LocalStorage($remap_path)
+						StorageFactory::make($path),
+						StorageFactory::make($remap_path)
 					);
 
 					$statusStr = $LANG['IMAGE_REMAP_SUCCESS'] .' <a href="occurrenceeditor.php?occid=' . htmlspecialchars($target_occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($target_occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';

@@ -58,7 +58,7 @@ if($collMap){
 						'occid' => $occid
 					],
 					$file, 
-					new LocalStorage($path)
+					StorageFactory::make($path)
 				);
 				
 				if($errors = Media::getErrors()) {
