@@ -37,6 +37,7 @@ if (!is_numeric($recLimit)) $recLimit = 15000;
 
 $mapManager = new OccurrenceMapManager();
 $searchVar = $mapManager->getQueryTermStr();
+$searchArray = $mapManager->getSearchArr();
 
 $obsIDs = $mapManager->getObservationIds();
 
@@ -98,4 +99,4 @@ foreach ($coordArr as $collName => $coll) {
 }
 ob_get_clean();
 
-echo json_encode(['taxaArr' => $taxaArr, 'collArr' => $collArr, 'recordArr' => $recordArr, 'origin' => $host, 'query' => $searchVar]);
+echo json_encode(['taxaArr' => $taxaArr, 'collArr' => $collArr, 'recordArr' => $recordArr, 'origin' => $host, 'query' => $searchVar, 'searchArray' => $searchArray]);
