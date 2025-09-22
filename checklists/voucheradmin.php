@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherReport.php');
 include_once($SERVER_ROOT.'/classes/ChecklistAdmin.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/voucheradmin.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/checklists/voucheradmin.' . $LANG_TAG . '.php');
@@ -98,7 +98,7 @@ $clMetaArr = $clManager->getClMetadata();
 					footprint_json = JSON.parse(footprint_json);
 				} catch(err) {
 					footprint_json = false;
-					error_msg_box.innerHTML = "<?= $LANG['ERROR_INVALID_JSON'] ?>"; 
+					error_msg_box.innerHTML = "<?= $LANG['ERROR_INVALID_JSON'] ?>";
 					error_msg_box.style.display="block";
 				}
 			}

@@ -3,7 +3,7 @@ date_default_timezone_set('America/Phoenix');
 
 require_once('ImageBatchConf.php');
 if(file_exists('../../../config/symbini.php')){
-	include_once('../../../config/symbini.php');
+	include_once(__DIR__ . '/../../../config/symbini.php');
 	require_once($SERVER_ROOT.'/classes/ImageBatchProcessor.php');
 	if(!$serverRoot) $serverRoot = $SERVER_ROOT;
 }

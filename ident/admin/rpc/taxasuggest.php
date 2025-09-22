@@ -1,12 +1,12 @@
 <?php
-	include_once('../../../config/symbini.php');
+	include_once(__DIR__ . '/../../../config/symbini.php');
 	include_once($SERVER_ROOT.'/config/dbconnection.php');
 	header("Content-Type: text/html; charset=".$CHARSET);
 	$retArr = Array();
 	$con = MySQLiConnectionFactory::getCon("readonly");
 	$queryString = $con->real_escape_string($_REQUEST['term']);
 	if($queryString){
-		$sql = 'SELECT tid, sciname '. 
+		$sql = 'SELECT tid, sciname '.
 			'FROM taxa '.
 			'WHERE rankid < 220 AND sciname LIKE "'.$queryString.'%" ';
 		//echo $sql;

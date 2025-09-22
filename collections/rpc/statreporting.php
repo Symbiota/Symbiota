@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceAccessStats.php');
 
 $occidStr = array_key_exists('occidstr',$_REQUEST)?$_REQUEST['occidstr']:'';

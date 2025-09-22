@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceMapManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
@@ -649,7 +649,7 @@ $serverHost = GeneralUtil::getDomain();
 			let map = new LeafletMap('map', {
 				lang: "<?= $LANG_TAG ?>",
 				default_bounds: [],
-			}, 
+			},
 				JSON.parse(`<?= json_encode($GEO_JSON_LAYERS ?? []) ?>`)
 			);
 
@@ -2237,7 +2237,7 @@ $serverHost = GeneralUtil::getDomain();
 									<div style="margin:5 0 5 0;"><hr /></div>
 
 									<?php if(!empty($ENABLE_CROSS_PORTAL)): ?>
-									<?php include('./portalSelector.php')?>
+									<?php include(__DIR__ . '/portalSelector.php')?>
 									<div style="margin:5 0 5 0;"><hr /></div>
 									<?php endif ?>
 									<?php

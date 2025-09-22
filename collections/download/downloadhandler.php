@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceDownload.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceMapManager.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverCore.php');
@@ -168,14 +168,14 @@ if ($schema == 'backup') {
 				for ($i = 1; $i  < 10; $i ++) {
 					if ($occurManager->getSearchTerm('customfield' . $i)) {
 						$dwcaHandler->addCondition(
-							$occurManager->getSearchTerm('customfield' . $i), 
-							$occurManager->getSearchTerm('customtype' . $i), 
+							$occurManager->getSearchTerm('customfield' . $i),
+							$occurManager->getSearchTerm('customtype' . $i),
 							$occurManager->getSearchTerm('customvalue' . $i)
 						);
 					}
 				}
 
-				// Traits Support 
+				// Traits Support
 				if ($occurManager->getSearchTerm('stateid')) {
 					$dwcaHandler->addCondition('stateid', 'EQUALS', $occurManager->getSearchTerm('stateid'));
 				} elseif ($occurManager->getSearchTerm('traitid')) {
