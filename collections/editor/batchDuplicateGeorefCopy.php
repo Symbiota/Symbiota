@@ -47,11 +47,11 @@ $shownFields = [
 	'collectionCode',
 	'recordedBy',
 	'recordNumber',
+	...$harvestFields,
 	'country',
 	'stateProvince',
 	'county',
 	'locality',
-	...$harvestFields,
 ];
 
 $fieldDisplayAlias = [
@@ -405,7 +405,11 @@ function getUniqueOptionCount($options, $targetOccid) {
 			?>
 
 			<h1><?= $LANG['BATCH_DUPLICATE_HARVESTER'] ?></h1>
-
+			<div style="max-width:50rem">
+			<p>
+				<?= $LANG['MUST_BATCH_LINK_DUPLICATES'] ?>
+			</p>
+			</div>
 			<h2 style="margin-bottom: 0.5rem"><?= $LANG['DUPLICATE_SEARCH_CRITERIA'] ?></h2>
 			<form method="POST" style="margin-bottom: 1rem;">
 				<div style="margin-bottom: 1rem;">
