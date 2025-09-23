@@ -27,7 +27,12 @@
                         "description": "live, snapshot, aggregate",
                         "required": false,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "enum": [
+                                "live",
+                                "snapshot",
+                                "aggregate"
+                            ]
                         }
                     },
                     {
@@ -36,7 +41,12 @@
                         "description": "preservedSpecimens, observations, researchObservation",
                         "required": false,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "enum": [
+                                "preservedSpecimens",
+                                "observations",
+                                "researchObservation"
+                            ]
                         }
                     },
                     {
@@ -71,6 +81,145 @@
                     },
                     "400": {
                         "description": "Error: Bad request. "
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Collections"
+                ],
+                "description": "Create a new biocollection entity",
+                "operationId": "createCollection",
+                "parameters": [
+                    {
+                        "name": "apiToken",
+                        "in": "query",
+                        "description": "API security token to authenticate post action",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Collection data to be inserted",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "institutionCode",
+                                    "collectionName",
+                                    "collType",
+                                    "managementType",
+                                    "publicEdits"
+                                ],
+                                "properties": {
+                                    "institutionCode": {
+                                        "description": "The name (or acronym) in use by the institution having custody of the occurrence records",
+                                        "type": "string",
+                                        "maxLength": 45
+                                    },
+                                    "collectionCode": {
+                                        "description": "The name, acronym, or code identifying the collection or data set from which the record was derived",
+                                        "type": "string",
+                                        "maxLength": 45
+                                    },
+                                    "collectionName": {
+                                        "description": "What you want the collection to be called",
+                                        "type": "string",
+                                        "maxLength": 150
+                                    },
+                                    "collectionID": {
+                                        "description": "Global Unique Identifier for this collection (see dwc:collectionID): If your collection already has a previously assigned GUID, that identifier should be represented here. For physical specimens, the recommended best practice is to use an identifier from a collections registry such as the Global Registry of Biodiversity Repositories",
+                                        "type": "string",
+                                        "maxLength": 45
+                                    },
+                                    "fullDescription": {
+                                        "description": "Description of the collection in <2000 characters",
+                                        "type": "string",
+                                        "maxLength": 2000
+                                    },
+                                    "individualUrl": {
+                                        "description": "A dynamic link back to the source record if available",
+                                        "type": "string",
+                                        "maxLength": 500
+                                    },
+                                    "latitudeDecimal": {
+                                        "description": "Latitude as a decimal",
+                                        "type": "number",
+                                        "maxLength": 15
+                                    },
+                                    "longitudeDecimal": {
+                                        "description": "Longitude as a decimal",
+                                        "type": "number",
+                                        "maxLength": 15
+                                    },
+                                    "collType": {
+                                        "description": "'Preserved Specimens', 'General Observations', or 'Observations'. Preserved Specimens signify a collection type that contains physical samples that are available for inspection by researchers and taxonomic experts. Use Observations when the record is not based on a physical specimen. Personal Observation Management is a dataset where registered users can independently manage their own subset of records. Records entered into this dataset are explicitly linked to the user’s profile and can only be edited by them. This type of collection is typically used by field researchers to manage their collection data and print labels prior to depositing the physical material within a collection. Even though personal collections are represented by a physical sample, they are classified as “observations” until the physical material is publicly available within a collection",
+                                        "type": "string",
+                                        "maxLength": 45,
+                                        "enum": [
+                                            "Preserved Specimens",
+                                            "General Observations",
+                                            "Observations"
+                                        ]
+                                    },
+                                    "managementType": {
+                                        "description": "Use 'Snapshot' when there is a separate in-house database maintained in the collection and the dataset within the Symbiota portal is only a periodically updated snapshot of the central database. A 'Live Data' dataset is when the data is managed directly within the portal and the central database is the portal data",
+                                        "type": "string",
+                                        "maxLength": 45,
+                                        "enum": [
+                                            "Snapshot",
+                                            "Live Data"
+                                        ]
+                                    },
+                                    "publicEdits": {
+                                        "description": "The option to enable public edits (1 for yes, 0 for no)",
+                                        "type": "integer",
+                                        "maxLength": 1,
+                                        "enum": [
+                                            0,
+                                            1
+                                        ]
+                                    },
+                                    "rightsHolder": {
+                                        "description": "The organization or person managing or owning the rights of the resource. For more details, see Darwin Core definition",
+                                        "type": "string",
+                                        "maxLength": 250
+                                    },
+                                    "rights": {
+                                        "description": "Information or a URL link to page with details explaining how one can use the data. See Darwin Core definition",
+                                        "type": "string",
+                                        "maxLength": 250
+                                    },
+                                    "accessRights": {
+                                        "description": "Information or a URL link to page with details explaining how one can use the data. See Darwin Core definition",
+                                        "type": "string",
+                                        "maxLength": 1000
+                                    },
+                                    "sortSeq": {
+                                        "description": "Leave this field empty if you want the collections to sort alphabetically (default)",
+                                        "type": "string",
+                                        "maxLength": 10
+                                    },
+                                    "icon": {
+                                        "description": "URL of an image icon representing the collection. The URL path can be absolute or relative. The use of icons are optional",
+                                        "type": "string",
+                                        "maxLength": 250
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Returns full JSON object of the of collection that was created"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
                     }
                 }
             }
@@ -150,6 +299,160 @@
                 }
             }
         },
+        "/api/v2/exsiccata/{identifier}": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/exsiccata/{identifier}",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "Exsiccata ID or record ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns exsiccata record with matching identifier",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. Valid Exsiccata identifier required"
+                    },
+                    "404": {
+                        "description": "Record not found"
+                    }
+                }
+            }
+        },
+        "/api/v2/exsiccata/{identifier}/number": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/exsiccata/identifier/number",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "Identifier (ometid (PK) - currently does not accommodate recordID) associated with target exsiccata title",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Controls the number of results in the page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 100
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Determines the starting point for the search results. A limit of 100 and offset of 200, will display 100 records starting the 200th record.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns all exsiccata numbers associated with a single exsiccati title corresponding to matching identifier",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. Exsiccata identifier is required."
+                    },
+                    "404": {
+                        "description": "Record not found"
+                    }
+                }
+            }
+        },
+        "/api/v2/exsiccata/{identifier}/number/{numberIdentifier}/": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/exsiccata/identifier/number/{numberIdentifier}/",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "Identifier (ometid (PK)) associated with target exsiccata number",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "numberIdentifier",
+                        "in": "path",
+                        "description": "Identifier (omenid or recordID in the schema) associated with target exsiccata number",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Controls the number of results in the page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 100
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Determines the starting point for the search results. A limit of 100 and offset of 200, will display 100 records starting the 200th record.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns all exsiccata numbers associated with a single exsiccati title corresponding to matching identifier",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. Exsiccata identifier is required."
+                    },
+                    "404": {
+                        "description": "Record not found"
+                    }
+                }
+            }
+        },
         "/api/v2/installation": {
             "get": {
                 "tags": [
@@ -225,12 +528,12 @@
                 }
             }
         },
-        "/api/v2/installation/ping": {
+        "/api/v2/installation/status": {
             "get": {
                 "tags": [
                     ""
                 ],
-                "operationId": "/api/v2/installation/ping",
+                "operationId": "/api/v2/installation/status",
                 "responses": {
                     "200": {
                         "description": "Returns installation metadata",
@@ -246,17 +549,17 @@
                 }
             }
         },
-        "/api/v2/installation/{identifier}/touch": {
+        "/api/v2/installation/{identifier}/handshake": {
             "get": {
                 "tags": [
                     ""
                 ],
-                "operationId": "/api/v2/installation/identifier/touch",
+                "operationId": "/api/v2/installation/identifier/handshake",
                 "parameters": [
                     {
                         "name": "identifier",
                         "in": "path",
-                        "description": "Identifier of the remote installation",
+                        "description": "Identifier of the remote installation (GUID)",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -467,7 +770,7 @@
                     {
                         "name": "tid",
                         "in": "query",
-                        "description": "Display media filtered by target taxon ID (PK key of taxon)",
+                        "description": "Display media filtered by target taxon ID (PK of taxon)",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -931,7 +1234,11 @@
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "default": 0
+                            "default": 0,
+                            "enum": [
+                                0,
+                                1
+                            ]
                         }
                     },
                     {
@@ -1072,12 +1379,12 @@
                 }
             }
         },
-        "/api/v2/occurrence/annotation/search": {
+        "/api/v2/occurrence/annotation": {
             "get": {
                 "tags": [
                     ""
                 ],
-                "operationId": "/api/v2/occurrence/annotation/search",
+                "operationId": "/api/v2/occurrence/annotation",
                 "parameters": [
                     {
                         "name": "collid",
@@ -1091,7 +1398,7 @@
                     {
                         "name": "type",
                         "in": "query",
-                        "description": "Annoration type (internal, external) ",
+                        "description": "Annotation type (internal, external) ",
                         "required": true,
                         "schema": {
                             "type": "string",
@@ -1105,7 +1412,7 @@
                     {
                         "name": "source",
                         "in": "query",
-                        "description": "External source of Annoration (e.g. geolocate) ",
+                        "description": "External source of Annotation (e.g. geolocate) ",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -1174,12 +1481,62 @@
                 }
             }
         },
-        "/api/v2/occurrence/search": {
+        "/api/v2/occurrence/{identifier}/annotation": {
             "get": {
                 "tags": [
                     ""
                 ],
-                "operationId": "/api/v2/occurrence/search",
+                "summary": "Edits made to target occurrence",
+                "operationId": "/api/v2/occurrence/{identifier}/annotation",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "occid or specimen GUID (occurrenceID) or recordID associated with target occurrence",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Annotation type (internal, external) ",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "internal",
+                            "enum": [
+                                "internal",
+                                "external"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns list of occurrence edits",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. "
+                    },
+                    "404": {
+                        "description": "Record not found"
+                    }
+                }
+            }
+        },
+        "/api/v2/occurrence": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/occurrence",
                 "parameters": [
                     {
                         "name": "collid",
@@ -1256,7 +1613,88 @@
                     {
                         "name": "eventDate",
                         "in": "query",
-                        "description": "Date as YYYY, YYYY-MM or YYYY-MM-DD",
+                        "description": "Date as YYYY, YYYY-MM or YYYY-MM-DD that the occurrence was collected or observed, or earliest date if a range was provided",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "eventDate2",
+                        "in": "query",
+                        "description": "Last date as YYYY, YYYY-MM or YYYY-MM-DD that the occurrence was collected or observed. Used when a date range is provided",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "decimalLatitude",
+                        "in": "query",
+                        "description": "Latitude as a decimal",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "decimalLongitude",
+                        "in": "query",
+                        "description": "Longitude as a decimal",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "minimumElevationInMeters",
+                        "in": "query",
+                        "description": "Minimum elevation in meters to nearest integer",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "maximumElevationInMeters",
+                        "in": "query",
+                        "description": "Maximum elevation in meters to nearest integer",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "verbatimElevation",
+                        "in": "query",
+                        "description": "Elevation expressed as a string (e.g., '1000 ft')",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "minimumDepthInMeters",
+                        "in": "query",
+                        "description": "Minimum depth in meters to nearest integer",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "maximumDepthInMeters",
+                        "in": "query",
+                        "description": "Maximum depth in meters to nearest integer",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "verbatimDepth",
+                        "in": "query",
+                        "description": "Depth expressed as a string (e.g., '200 ft')",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -1265,7 +1703,7 @@
                     {
                         "name": "country",
                         "in": "query",
-                        "description": "country",
+                        "description": "country(s), separated by comma",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -1274,7 +1712,7 @@
                     {
                         "name": "stateProvince",
                         "in": "query",
-                        "description": "State, Province, or second level political unit",
+                        "description": "State(s), Province(s), or second level political unit(s), separated by comma",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -1283,7 +1721,7 @@
                     {
                         "name": "county",
                         "in": "query",
-                        "description": "County, parish, or third level political unit",
+                        "description": "County(s), parish(s), or third level political unit(s), separated by comma",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -1344,7 +1782,7 @@
                     {
                         "name": "identifier",
                         "in": "path",
-                        "description": "occid or specimen GUID (occurrenceID) associated with target occurrence",
+                        "description": "occid or specimen GUID (occurrenceID) or recordID associated with target occurrence",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -1353,10 +1791,15 @@
                     {
                         "name": "includeMedia",
                         "in": "query",
-                        "description": "Whether to include media within output",
+                        "description": "Whether (1) or not (0) to include media within output",
                         "required": false,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "default": "0",
+                            "enum": [
+                                0,
+                                1
+                            ]
                         }
                     },
                     {
@@ -1394,7 +1837,7 @@
                     {
                         "name": "identifier",
                         "in": "path",
-                        "description": "occid or specimen GUID (occurrenceID) associated with target occurrence",
+                        "description": "occid or specimen GUID (occurrenceID) or recordID associated with target occurrence",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -1426,7 +1869,7 @@
                     {
                         "name": "identifier",
                         "in": "path",
-                        "description": "occid or specimen GUID (occurrenceID) associated with target occurrence",
+                        "description": "occid or specimen GUID (occurrenceID) or recordID associated with target occurrence",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -1453,7 +1896,7 @@
                 "tags": [
                     ""
                 ],
-                "description": "If an existing record can be located within target collection based on matching the input identifier, empty (null) target fields will be updated with Skeletal Data.\n\t\t\tIf the target field contains data, it will remain unaltered.\n\t\t\tIf multiple records are returned matching the input identifier, data will be added only to the first record.\n\t\t\tIf an identifier is not provided or a matching record can not be found, a new Skeletal record will be created and primed with input data.\n\t\t\tNote that catalogNumber or otherCatalogNumber must be provided to create a new skeletal record. If processingStatus is not defined, new skeletal records will be set as 'unprocessed'",
+                "description": "If an existing record can be located within target collection based on matching the input identifier, empty (null) target fields will be updated with Skeletal Data.\n\t *\t\tIf the target field contains data, it will remain unaltered.\n\t *\t\tIf multiple records are returned matching the input identifier, data will be added only to the first record.\n\t *\t\tIf an identifier is not provided or a matching record can not be found, a new Skeletal record will be created and primed with input data.\n\t *\t\tNote that catalogNumber or otherCatalogNumber must be provided to create a new skeletal record. If processingStatus is not defined, new skeletal records will be set as 'unprocessed'",
                 "operationId": "skeletalImport",
                 "parameters": [
                     {
@@ -1590,37 +2033,115 @@
                 }
             }
         },
-        "/api/v2/taxonomy": {
+        "/api/v2/occurrence/{identifier}/reharvest": {
             "get": {
                 "tags": [
                     ""
                 ],
-                "operationId": "/api/v2/taxonomy",
+                "operationId": "/api/v2/occurrence/identifier/reharvest",
                 "parameters": [
                     {
-                        "name": "limit",
-                        "in": "query",
-                        "description": "Controls the number of results in the page.",
-                        "required": false,
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "occid or specimen GUID (occurrenceID) associated with target occurrence",
+                        "required": true,
                         "schema": {
-                            "type": "integer",
-                            "default": 100
-                        }
-                    },
-                    {
-                        "name": "offset",
-                        "in": "query",
-                        "description": "Determines the starting point for the search results. A limit of 100 and offset of 200, will display 100 records starting the 200th record.",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 0
+                            "type": "string"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Returns list of inventories registered within system",
+                        "description": "Triggers a reharvest event of a snapshot record. If record is Live managed, request is ignored",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request: Occurrence identifier is required, API can only be triggered locally (at this time)."
+                    },
+                    "500": {
+                        "description": "Error: unable to locate record"
+                    }
+                }
+            }
+        },
+        "/api/v2/occurrence/duplicate": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/occurrence/duplicate",
+                "parameters": [
+                    {
+                        "name": "recordedBy",
+                        "in": "query",
+                        "description": "Collector/observer of occurrence",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "recordedByLastName",
+                        "in": "query",
+                        "description": "Last name of collector/observer of occurrence",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "recordNumber",
+                        "in": "query",
+                        "description": "Personal number of the collector or observer of the occurrence",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "eventDate",
+                        "in": "query",
+                        "description": "Collection date. Multiple standards formats are allowed, but must be a valid date that can be converted to YYYY-MM-DD.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ometid",
+                        "in": "query",
+                        "description": "Primary key for exsiccati title ",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "exsiccatiNumber",
+                        "in": "query",
+                        "description": "Number assigned to the exsiccati series",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "subjectIdentifier",
+                        "in": "query",
+                        "description": "Identifier (occurrenceID, recordID, or occid) of subject occurrence",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns list of occurrences",
                         "content": {
                             "application/json": {
                                 "schema": {}
@@ -1633,18 +2154,18 @@
                 }
             }
         },
-        "/api/v2/taxonomy/search": {
+        "/api/v2/taxonomy": {
             "get": {
                 "tags": [
                     ""
                 ],
-                "operationId": "/api/v2/taxonomy/search",
+                "operationId": "/api/v2/taxonomy",
                 "parameters": [
                     {
                         "name": "taxon",
                         "in": "query",
                         "description": "Taxon search term",
-                        "required": true,
+                        "required": false,
                         "schema": {
                             "type": "string"
                         }
@@ -1699,6 +2220,184 @@
                         "description": "Error: Bad request. "
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "Taxonomy"
+                ],
+                "description": "Create a new taxon",
+                "operationId": "createTaxon",
+                "parameters": [
+                    {
+                        "name": "apiToken",
+                        "in": "query",
+                        "description": "API security token to authenticate post action",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Taxon data to be inserted",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "kingdomName",
+                                    "parenttid",
+                                    "sciName",
+                                    "rankID",
+                                    "unitName1",
+                                    "author",
+                                    "securityStatus"
+                                ],
+                                "properties": {
+                                    "kingdomName": {
+                                        "description": "The name of the kingdom",
+                                        "type": "string",
+                                        "maxLength": 45,
+                                        "enum": [
+                                            "Plantae",
+                                            "Fungi",
+                                            "Animalia",
+                                            "Chromista",
+                                            "Protista",
+                                            "Bacteria"
+                                        ]
+                                    },
+                                    "parenttid": {
+                                        "description": "The tid of the parent taxon. This is visible in the URL of the target taxon profile page, and it's also displayed in the taxonomy editor page.",
+                                        "type": "integer",
+                                        "default": null,
+                                        "maxLength": 10
+                                    },
+                                    "sciName": {
+                                        "description": "The name of the taxon excluding authorship. E.g., 'Abutilon guineense var. forrestii'",
+                                        "type": "string",
+                                        "maxLength": 250
+                                    },
+                                    "author": {
+                                        "description": "The authorship associated with the taxon",
+                                        "type": "string",
+                                        "maxLength": 150
+                                    },
+                                    "rankID": {
+                                        "description": "Rank id associated with the rank of the target taxon: class= 60, cultivar= 300, division= 30, family= 140, form= 260, genus= 180, kingdom= 10, non-ranked node= 0, order= 100, organism= 1, section= 200, species= 220, subclass= 70, subdivision= 40, subfamily= 150, subform= 270, subgenus= 190, subkingdom= 20, suborder= 110, subsection= 210, subspecies= 230, subtribe= 170, subvariety= 250, superclass= 50, tribe= 160, variety= 240",
+                                        "type": "integer",
+                                        "maxLength": 45,
+                                        "enum": [
+                                            0,
+                                            1,
+                                            10,
+                                            15,
+                                            20,
+                                            25,
+                                            27,
+                                            30,
+                                            40,
+                                            60,
+                                            70,
+                                            90,
+                                            100,
+                                            110,
+                                            120,
+                                            130,
+                                            140,
+                                            150,
+                                            160,
+                                            170,
+                                            180,
+                                            190,
+                                            200,
+                                            220,
+                                            230,
+                                            240,
+                                            250,
+                                            260,
+                                            300
+                                        ]
+                                    },
+                                    "unitInd1": {
+                                        "description": "An optional character to indicate hybrid (×) or extinct (†) status",
+                                        "type": "string",
+                                        "maxLength": 1
+                                    },
+                                    "unitName1": {
+                                        "description": "First name of the new taxon. If there is only one name (e.g., if the taxon is question is a genus), enter that name. If the taxon is binomial or more (e.g., 'Acer rubrum'), just enter the first taxonomic unit (e.g., 'Acer' in the previous example)",
+                                        "type": "string",
+                                        "maxLength": 50
+                                    },
+                                    "unitInd2": {
+                                        "description": "An optional character to indicate hybrid (×) status",
+                                        "type": "string",
+                                        "maxLength": 1
+                                    },
+                                    "unitName2": {
+                                        "description": "Optional second name of the new taxon. If there is only one name (e.g., if the taxon is question is a genus), leave this empty. If the taxon is binomial or more (e.g., 'Acer rubrum'), just enter the second taxonomic unit (e.g., 'rubrum' in the previous example)",
+                                        "type": "string",
+                                        "maxLength": 50
+                                    },
+                                    "unitInd3": {
+                                        "description": "An optional string to indicate the nature of the optional third name of the taxon (e.g., 'f.', 'var.', 'subvar.', 'spp.')",
+                                        "type": "string",
+                                        "maxLength": 45
+                                    },
+                                    "unitName3": {
+                                        "description": "Optional third name of the new taxon. If there are only two names (e.g., if the taxon is question is a species), leave this empty. If the taxon is trinomial or more (e.g., 'Trichomanes rigidum var. elongatum'), enter the third taxonomic unit (e.g., 'elongatum' in the previous example)",
+                                        "type": "string",
+                                        "maxLength": 35
+                                    },
+                                    "cultivarEpithet": {
+                                        "description": "Optional cultivar epithet if the taxon is a cultivar. Although single quotations will be appended to the full sciName of this taxon, single quotations should NOT be used here",
+                                        "type": "string",
+                                        "maxLength": 50
+                                    },
+                                    "tradeName": {
+                                        "description": "Optional trade name if the taxon has a trade name. By convention, trade names should be entered completely capitalized (e.g., 'EMPRESS')",
+                                        "type": "string",
+                                        "maxLength": 50
+                                    },
+                                    "source": {
+                                        "description": "Optional. Add a link or citation for the source of the scientific name you are adding, for example, a Plants of the World Online entry, a literature citation with DOI, etc.",
+                                        "type": "string",
+                                        "maxLength": 250
+                                    },
+                                    "notes": {
+                                        "description": "Optional. Any notes about the taxon that might be important to communicate",
+                                        "type": "string",
+                                        "maxLength": 250
+                                    },
+                                    "securityStatus": {
+                                        "description": "Enter 0 if no security filter is required. Enter 1 if TODO. Enter 5 if TODO.",
+                                        "type": "integer",
+                                        "maxLength": 10,
+                                        "enum": [
+                                            0,
+                                            1,
+                                            5
+                                        ]
+                                    },
+                                    "UnacceptabilityReason": {
+                                        "description": "Reasons why the taxon may not be widely accepted",
+                                        "type": "string",
+                                        "maxLength": 250
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Returns full JSON object of the of collection that was created"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
             }
         },
         "/api/v2/taxonomy/{identifier}": {
@@ -1732,12 +2431,105 @@
                     }
                 }
             }
+        },
+        "/api/v2/taxonomy/{identifier}/description": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/taxonomy/identifier/description",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "PK, GUID, or recordID associated with target taxonomic unit",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Controls the number of results in the page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 100
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Determines the starting point for the search results. A limit of 100 and offset of 200, will display 100 records starting the 200th record.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns list of taxonomic descriptions for a given taxon",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. "
+                    }
+                }
+            }
+        },
+        "/api/v2/taxonomy/{identifier}/description/{identifier}": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "operationId": "/api/v2/taxonomy/identifier/description/identifier",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "PK, GUID, or recordID associated with target taxonomic unit",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "Identifier (PK, tdbid) associated with taxonomic description",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns metabase on inventory registered within system with matching ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. Inventory identifier is required."
+                    }
+                }
+            }
         }
     },
     "components": {
         "responses": {
             "200": {
-                "description": "Triggers a reharvest event of a snapshot record. If record is Live managed, request is ignored",
+                "description": "Returns list of occurrences associated with the given exsiccata number",
                 "content": {
                     "application/json": {
                         "schema": {}
@@ -1745,20 +2537,29 @@
                 }
             },
             "400": {
-                "description": "Error: Bad request: Occurrence identifier is required, API can only be triggered locally (at this time)."
+                "description": "Error: Bad request. Valid Exsiccata identifier and Number identifier required"
             },
-            "500": {
-                "description": "Error: unable to locate record"
+            "404": {
+                "description": "Record not found"
             }
         },
         "parameters": {
             "identifier": {
                 "name": "identifier",
                 "in": "path",
-                "description": "occid or specimen GUID (occurrenceID) associated with target occurrence",
+                "description": "Exsiccata ID or record ID",
                 "required": true,
                 "schema": {
                     "type": "string"
+                }
+            },
+            "numberIdentifier": {
+                "name": "numberIdentifier",
+                "in": "path",
+                "description": "Exsiccata number ID (omenid)",
+                "required": true,
+                "schema": {
+                    "type": "integer"
                 }
             }
         }
