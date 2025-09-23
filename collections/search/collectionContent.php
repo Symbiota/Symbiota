@@ -2,7 +2,7 @@
 	<h2><?php echo $LANG['SPECIMEN_COLLECTIONS'] ?></h2>
 </div>
 	<div class="select-deselect-input">
-		<?php 
+		<?php
 			$checkedStatus = $collectionSource == '' ? 'checked' : '';
 		?>
 		<input data-chip="<?php echo $LANG['ALL_COLLECTIONS'] ?>" id="dballcb" name="db[]" class="specobs all-neon-colls" value='all' type="checkbox" onclick="selectAll(this);" <?php echo $checkedStatus ?> />
@@ -84,5 +84,6 @@
 					</table>
 					<?php
 				}
+				session_write_close();
 			?>
 			</div>

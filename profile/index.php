@@ -140,11 +140,13 @@ elseif($resetPwd){
 else{
 	$statusStr = $pHandler->getErrorMessage();
 }
-if (array_key_exists('last_message', $_SESSION)){
-	$statusStr .= $_SESSION['last_message'];
-	unset($_SESSION['last_message']);
+if($THIRD_PARTY_OID_AUTH_ENABLED){
+	session_start(array('gc_maxlifetime'=>3600,'cookie_path'=>$CLIENT_ROOT,'cookie_secure'=>true,'cookie_httponly'=>true, 'use_only_cookies' => true));
+	if (array_key_exists('last_message', $_SESSION)){
+		$statusStr .= $_SESSION['last_message'];
+		unset($_SESSION['last_message']);
+	}
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">

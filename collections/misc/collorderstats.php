@@ -18,6 +18,7 @@ if($collId){
 	ksort($orderArr, SORT_STRING | SORT_FLAG_CASE);
 }
 $_SESSION['statsOrderArr'] = $orderArr;
+session_write_close();
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">

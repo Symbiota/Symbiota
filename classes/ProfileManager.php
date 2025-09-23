@@ -694,6 +694,7 @@ class ProfileManager extends Manager{
 			$_SESSION['userrights'] = $userRights;
 			$GLOBALS['USER_RIGHTS'] = $userRights;
 		}
+		session_write_close();
 	}
 
 	protected function setUserParams(){

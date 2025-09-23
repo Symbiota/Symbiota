@@ -2119,6 +2119,7 @@ class DwcArchiverCore extends Manager{
 		$citationParamsArr = array();
 
 		// Data has to be stored in the session to be available for the citation formats
+		session_start();
 		if (array_key_exists('citationvar', $_SESSION)) {
 			$citationVarArr = parse_url(urldecode($_SESSION['citationvar']));
 			parse_str($citationVarArr['path'], $citationParamsArr);
@@ -2163,6 +2164,7 @@ class DwcArchiverCore extends Manager{
 				$datasetid = $_SESSION['datasetid'];
 				break;
 		}
+		session_write_close();
 
 		$output = "This data package was downloaded from a " . $GLOBALS['DEFAULT_TITLE'] . " " . $citationPrefix . " on " . date('Y-m-d H:i:s') . ".\n\nPlease use the following format to cite this dataset:\n";
 

@@ -17,8 +17,8 @@ class OpenIdProfileManager extends ProfileManager
 			if (strlen($this->displayName) > 15) $this->displayName = $this->userName;
 			if (strlen($this->displayName) > 15) $this->displayName = substr($this->displayName, 0, 10) . '...';
 			$this->reset();
-			$this->setUserRights();
 			$this->setUserParams();
+			$this->setUserRights();
 			// if($this->rememberMe) $this->setTokenCookie();
 			if (!isset($GLOBALS['SYMB_UID']) || !$GLOBALS['SYMB_UID']) {
 				$this->resetConnection();
@@ -78,7 +78,7 @@ class OpenIdProfileManager extends ProfileManager
 	public function linkLocalUserOidSub($email, $sub, $provider)
 	{
 		if ($email && $sub && $provider) {
-			$sql = 'SELECT u.uid, oid.subUuid, oid.provider from users u LEFT join usersthirdpartyauth oid ON u.uid = oid.uid 
+			$sql = 'SELECT u.uid, oid.subUuid, oid.provider from users u LEFT join usersthirdpartyauth oid ON u.uid = oid.uid
 			WHERE u.email = ?';
 			if ($stmt = $this->conn->prepare($sql)) {
 				if ($stmt->bind_param('s', $email)) {
@@ -108,7 +108,7 @@ class OpenIdProfileManager extends ProfileManager
 						while ($row = $results->fetch_array(MYSQLI_ASSOC)) {
 							$uidPlaceholder = $row['uid']; // assumes one-to-one relationship between user and email address
 							if ($row['provider'] == $provider && $row['subUuid'] !== $sub) {
-								return false; // current assumption is that if this happens, the subUuid is not kosher. 
+								return false; // current assumption is that if this happens, the subUuid is not kosher.
 								// If this assumption is ever violated, one solution would be to purge relevant rows from usersthirdpartyauth
 							} else continue;
 						}
@@ -157,7 +157,7 @@ class OpenIdProfileManager extends ProfileManager
 	{
 		if(!empty($thirdparty_sid)){
 			$this->removeThirdPartySid($targetSessionId, $thirdparty_sid);
-		}		
+		}
 		session_write_close();
 		session_id($targetSessionId);
 		session_start();

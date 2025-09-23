@@ -373,7 +373,7 @@ $_SESSION['citationvar'] = $searchVar;
 									if (isset($fieldArr['has_image']) && $fieldArr['has_image']) {
 										echo '<div style="float:right;margin:5px 25px;">';
 										echo '<a href="#" onclick="return openIndPU(' . $occid . ',' . ($targetClid ? $targetClid : "0") . ');">';
-										echo '<img src="' . $fieldArr['media']['thumbnail'] . '" style="height:70px" alt="' . (isset($LANG['IMG_OCC']) ? $LANG['IMG_OCC'] : 'Image Associated With the Occurrence') . '" 
+										echo '<img src="' . $fieldArr['media']['thumbnail'] . '" style="height:70px" alt="' . (isset($LANG['IMG_OCC']) ? $LANG['IMG_OCC'] : 'Image Associated With the Occurrence') . '"
 											onerror="this.onerror=null; this.src=\'' . $CLIENT_ROOT . '/images/image-icon.svg\';" />';
 										echo '</a></div>';
 									}
@@ -555,6 +555,7 @@ $_SESSION['citationvar'] = $searchVar;
 		</div>
 	</div>
 	<?php
+	session_write_close();
 	include($SERVER_ROOT . '/includes/footer.php');
 	?>
 </body>

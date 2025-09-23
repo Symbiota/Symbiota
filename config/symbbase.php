@@ -9,40 +9,38 @@ $CODE_VERSION = '3.3.9';
 
 set_include_path(get_include_path() . PATH_SEPARATOR . $SERVER_ROOT . PATH_SEPARATOR . $SERVER_ROOT.'/config/' . PATH_SEPARATOR . $SERVER_ROOT.'/classes/');
 
-session_start(array('gc_maxlifetime'=>3600,'cookie_path'=>$CLIENT_ROOT,'cookie_secure'=>true,'cookie_httponly'=>true, 'use_only_cookies' => true));
-
 include_once($SERVER_ROOT . '/classes/utilities/Encryption.php');
 include_once($SERVER_ROOT . '/classes/ProfileManager.php');
 
-//Check session data to see if signed in
-
-if (isset($_SESSION['force_logout'])){
-	if(!isset($pHandler)) $pHandler = new ProfileManager();
-	$pHandler->reset();
-	unset($_SESSION['force_logout']);
-}
 $pHandler = null;
-
 $PARAMS_ARR = Array();				//params => 'un=egbot&dn=Edward&uid=301'
 $USER_RIGHTS = Array();
-if(isset($_SESSION['userparams'])) $PARAMS_ARR = $_SESSION['userparams'];
-if(isset($_SESSION['userrights'])) $USER_RIGHTS = $_SESSION['userrights'];
-if(isset($_COOKIE['SymbiotaCrumb']) && !$PARAMS_ARR){
-	$tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true);
-	if($tokenArr){
-		if($pHandler === null) $pHandler = new ProfileManager();
-		if((isset($_REQUEST['submit']) && $_REQUEST['submit'] == 'logout') || isset($_REQUEST['loginas'])){
-	        $pHandler->deleteToken($pHandler->getUid($tokenArr[0]),$tokenArr[1]);
-		}
-		else{
-			if($pHandler->setUserName($tokenArr[0])){
-				$pHandler->setRememberMe(true);
-				$pHandler->setToken($tokenArr[1]);
-				if($pHandler->authenticate()){
-					if(isset($_SESSION['userparams'])) $PARAMS_ARR = $_SESSION['userparams'];
-					if(isset($_SESSION['userrights'])) $USER_RIGHTS = $_SESSION['userrights'];
+if(!empty($_COOKIE['SymbiotaCrumb'])){
+	session_start(array('gc_maxlifetime'=>3600,'cookie_path'=>$CLIENT_ROOT,'cookie_secure'=>true,'cookie_httponly'=>true, 'use_only_cookies' => true));
+	if (isset($_SESSION['force_logout'])){
+		if(!isset($pHandler)) $pHandler = new ProfileManager();
+		$pHandler->reset();
+		unset($_SESSION['force_logout']);
+	}
+	if(isset($_SESSION['userparams'])) $PARAMS_ARR = $_SESSION['userparams'];
+	if(isset($_SESSION['userrights'])) $USER_RIGHTS = $_SESSION['userrights'];
+	if(isset($_COOKIE['SymbiotaCrumb']) && !$PARAMS_ARR){
+		$tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true);
+		if($tokenArr){
+			if($pHandler === null) $pHandler = new ProfileManager();
+			if((isset($_REQUEST['submit']) && $_REQUEST['submit'] == 'logout') || isset($_REQUEST['loginas'])){
+		        $pHandler->deleteToken($pHandler->getUid($tokenArr[0]),$tokenArr[1]);
+			}
+			else{
+				if($pHandler->setUserName($tokenArr[0])){
+					$pHandler->setRememberMe(true);
+					$pHandler->setToken($tokenArr[1]);
+					if($pHandler->authenticate()){
+						if(isset($_SESSION['userparams'])) $PARAMS_ARR = $_SESSION['userparams'];
+						if(isset($_SESSION['userrights'])) $USER_RIGHTS = $_SESSION['userrights'];
+					}
+					else $pHandler->reset();
 				}
-				else $pHandler->reset();
 			}
 		}
 	}
