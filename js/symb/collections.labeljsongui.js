@@ -68,6 +68,12 @@ const fieldProps = [
     group: 'taxon',
   },
   {
+    block: "labelBlock",
+    name: "Species Name",
+    id: "speciesname",
+    group: "taxon",
+  },
+  {
     block: 'labelBlock',
     name: 'Identified By',
     id: 'identifiedby',
