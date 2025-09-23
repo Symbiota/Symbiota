@@ -1,7 +1,7 @@
 <?php
 include_once('../../config/symbini.php');
 $currentlyEnabledStylesheet = $_REQUEST['currentEnabledStylesheet'];
-//session_start();
+session_start();
 $accessiblePath = $CSS_BASE_PATH . '/symbiota/condensed.css?ver=14';
 $condensedPath = $CSS_BASE_PATH . '/symbiota/accessibility-compliant.css?ver=14';
 if($currentlyEnabledStylesheet === $condensedPath){
@@ -10,4 +10,5 @@ if($currentlyEnabledStylesheet === $condensedPath){
     $_SESSION['active_stylesheet'] = $condensedPath;
 }
 echo $_SESSION['active_stylesheet'];
+session_write_close();
 ?>
