@@ -61,7 +61,7 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['terms']['taxonID'] = 'http://rs.tdwg.org/dwc/terms/taxonID';
 		$this->occurDefArr['fields']['taxonID'] = 'o.tidinterpreted as taxonID';
 		$this->occurDefArr['terms']['scientificNameAuthorship'] = 'http://rs.tdwg.org/dwc/terms/scientificNameAuthorship';
-		$this->occurDefArr['fields']['scientificNameAuthorship'] = 'IFNULL(t.author,o.scientificNameAuthorship) AS scientificNameAuthorship';
+		$this->occurDefArr['fields']['scientificNameAuthorship'] = 'o.scientificNameAuthorship';
 		$this->occurDefArr['terms']['genus'] = 'http://rs.tdwg.org/dwc/terms/genus';
 		$this->occurDefArr['fields']['genus'] = 'IF(t.rankid >= 180,CONCAT_WS(" ",t.unitind1,t.unitname1),NULL) AS genus';
 		$this->occurDefArr['terms']['subgenus'] = 'http://rs.tdwg.org/dwc/terms/subgenus';
@@ -123,8 +123,8 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['terms']['verbatimEventDate'] = 'http://rs.tdwg.org/dwc/terms/verbatimEventDate';
 		$this->occurDefArr['fields']['verbatimEventDate'] = 'o.verbatimEventDate';
 		$this->occurDefArr['terms']['occurrenceRemarks'] = 'http://rs.tdwg.org/dwc/terms/occurrenceRemarks';
-		$this->occurDefArr['terms']['habitat'] = 'http://rs.tdwg.org/dwc/terms/habitat';
 		$this->occurDefArr['fields']['occurrenceRemarks'] = 'o.occurrenceRemarks';
+		$this->occurDefArr['terms']['habitat'] = 'http://rs.tdwg.org/dwc/terms/habitat';
 		$this->occurDefArr['fields']['habitat'] = 'o.habitat';
 		$this->occurDefArr['terms']['substrate'] = 'https://symbiota.org/terms/substrate';
 		$this->occurDefArr['fields']['substrate'] = 'o.substrate';
@@ -372,9 +372,9 @@ class DwcArchiverOccurrence extends Manager{
 		return $this->occurDefArr;
 	}
 
-	public function getSqlOccurrences($fieldArr, $fullSql = true){
+	public function getSqlOccurrences($fieldArr){
 		$sql = '';
-		if($fullSql){
+		if($fieldArr){
 			$sqlFrag = '';
 			foreach($fieldArr as $fieldName => $colName){
 				if($colName){
@@ -385,10 +385,9 @@ class DwcArchiverOccurrence extends Manager{
 				}
 			}
 			$sqlFrag .= ', t.rankid';
-			$sql = 'SELECT DISTINCT '.trim($sqlFrag,', ');
+			$sql = 'SELECT '.trim($sqlFrag,', ');
 		}
-		$sql .= ' FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid '.
-			'LEFT JOIN taxa t ON o.tidinterpreted = t.TID ';
+		$sql .= ' FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid INNER JOIN omExport ex ON o.occid = ex.occid ';
 		//if($fullSql) $sql .= ' ORDER BY c.collid ';
 		//echo '<div>'.$sql.'</div>'; exit;
 		return $sql;

@@ -12,7 +12,6 @@ $catId = array_key_exists("catid",$_REQUEST)?$_REQUEST["catid"]:'';
 if(!preg_match('/^[,\d]+$/',$catId)) $catId = '';
 if($catId == '' && isset($DEFAULTCATID)) $catId = $DEFAULTCATID;
 
-
 $collManager = new OccurrenceManager();
 $collManager->reset();
 
