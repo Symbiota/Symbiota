@@ -31,25 +31,25 @@ class TaxonSearchSupport{
 			if($this->taxonType == TaxaSearchType::ANY_NAME){
 			    global $LANG;
 			    $sql =
-			    "SELECT DISTINCT tid, CONCAT('".$LANG['SELECT_1-5'].": ',v.vernacularname) AS sciname ".
+			    "SELECT DISTINCT tid, CONCAT('".$LANG['SELECT_1-5'].": ',v.vernacularname) AS label, v.vernacularname AS sciname ".
 			    "FROM taxavernaculars v ".
 			    "WHERE v.vernacularname LIKE '%".$this->queryString."%' ".
 
 			    "UNION ".
 
-			    "SELECT DISTINCT tid, CONCAT('".$LANG['SELECT_1-2'].": ', sciname) AS sciname ".
+			    "SELECT DISTINCT tid, CONCAT('".$LANG['SELECT_1-2'].": ', sciname) AS label,  sciname AS value ".
 			    "FROM taxa ".
 			    "WHERE sciname LIKE '%".$this->queryString."%' AND rankid > 179 ".
 
 			    "UNION ".
 
-			    "SELECT DISTINCT tid, CONCAT('".$LANG['SELECT_1-3'].": ', sciname) AS sciname ".
+			    "SELECT DISTINCT tid, CONCAT('".$LANG['SELECT_1-3'].": ', sciname) AS label, sciname AS value ".
 			    "FROM taxa ".
 			    "WHERE sciname LIKE '".$this->queryString."%' AND rankid = 140 ".
 
 			    "UNION ".
 
-			    "SELECT tid, CONCAT('".$LANG['SELECT_1-4'].": ',sciname) AS sciname ".
+			    "SELECT tid, CONCAT('".$LANG['SELECT_1-4'].": ',sciname) AS label, sciname AS value ".
 			    "FROM taxa ".
 			    "WHERE sciname LIKE '".$this->queryString."%' AND rankid > 20 AND rankid < 180 AND rankid != 140 ";
 
@@ -74,7 +74,10 @@ class TaxonSearchSupport{
 			}
 			$rs = $this->conn->query($sql);
 			while ($r = $rs->fetch_object()) {
-				$retArr[] = array('id' => $r->tid, 'value' => $r->sciname);
+				$keys = ['id' => $r->tid, 'value' => $r->sciname];
+				if (!empty($r->label))
+					$keys['label'] = $r->label;
+				$retArr[] = $keys;
 			}
 			$rs->free();
 		}

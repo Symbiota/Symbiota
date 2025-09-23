@@ -1,3 +1,13 @@
+<p align="center">
+    <a href="https://symbiota.org/" target="_blank">
+        <picture>
+		    <source width="500" media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/94a3507e-675f-4fe8-8504-12a567f268e9">
+   		    <source width="500" media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/a3897966-7240-4345-ae27-af095adfdde0">
+            <img width="500px" src="https://github.com/user-attachments/assets/94a3507e-675f-4fe8-8504-12a567f268e9" />
+		</picture>
+    </a>
+</p>
+
 This fork of the Symbiota code is actively being developed by the Symbiota Support Hub (SSH, https://symbiota.org/about-us) development team at the University of Kansas Biodiversity Institute.
 Even though SSH code developments are regularly pushed back to this repository, we recommend that you download/fork code directly from the
 Symbiota/Symbiota repository (https://github.com/Symbiota/Symbiota) to ensure that you obtain the most recently code changes.

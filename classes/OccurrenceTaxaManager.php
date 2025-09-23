@@ -259,6 +259,7 @@ class OccurrenceTaxaManager {
 		else{
 			$taxaStr = str_replace(';',',',$this->cleanInputStr($_REQUEST['taxa']));
 		}
+		$taxaStr = str_replace('_', ' ',$taxaStr);
 		if($taxaStr){
 			$this->taxaArr['search'] = $taxaStr;
 			//Set usage of taxonomic thesaurus
