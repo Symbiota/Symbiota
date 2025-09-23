@@ -247,7 +247,7 @@ class Media {
 			'm4a' => ['audio/mp4', 'audio/x-m4a'],
 			'mp4' => 'audio/mp4',
 			'mid' => 'audio/midi',
-			'mp3' => [ 'audio/mp3', 'audio/mpeg', 'audio/mpg', 'audio/mpeg3' ],
+			'mp3' => [ 'audio/mpeg', 'audio/mp3', 'audio/mpg', 'audio/mpeg3' ],
 			'ogg' => 'audio/ogg',
 			'ra' => 'audio/x-realaudio',
 			'ram' => 'audio/x-pn-realaudio',
