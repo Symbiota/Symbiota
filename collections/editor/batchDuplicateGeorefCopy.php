@@ -140,7 +140,7 @@ $db = array_key_exists('db',$_REQUEST)?$_REQUEST['db']:[];
 $missingLatLng = array_key_exists('missingLatLng',$_REQUEST);
 $hideExactMatches = array_key_exists('hideExactMatches',$_REQUEST);
 
-$autoCheckSingleOptions = true;
+$autoCheckSingleOptions = false;
 if(array_key_exists('autoCheckSingleOptions',$_REQUEST)) {
 	$autoCheckSingleOptions = true;
 } else if(array_key_exists('searchDuplicates',$_REQUEST)) {
