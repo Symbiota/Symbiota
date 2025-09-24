@@ -265,7 +265,10 @@ class SpecProcessorOcr extends Manager{
 					'FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid '.
 					'LEFT JOIN specprocessorrawlabels r ON m.mediaID = r.mediaID '.
 					'WHERE (o.collid = '.$collid.') AND r.prlid IS NULL ';
-				if($procStatus) $sql .= 'AND o.processingstatus = "' . $procStatus . '" ';
+				if($procStatus){
+					if($procStatus == 'null') $sql .= 'AND processingstatus IS NULL';
+					else $sql .= 'AND o.processingstatus = "' . $procStatus . '" ';
+				} 
 				if($limit) $sql .= 'LIMIT '.$limit;
 				if($rs = $this->conn->query($sql)){
 					$recCnt = 1;
