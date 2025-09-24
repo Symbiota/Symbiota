@@ -267,7 +267,7 @@ class SpecProcessorOcr extends Manager{
 					'WHERE (o.collid = '.$collid.') AND r.prlid IS NULL ';
 				if($procStatus){
 					if($procStatus == 'null') $sql .= 'AND processingstatus IS NULL';
-					else $sql .= 'AND o.processingstatus = "' . $procStatus . '" ';
+					else $sql .= 'AND o.processingstatus = "' . $this->cleanInStr($procStatus) . '" ';
 				} 
 				if($limit) $sql .= 'LIMIT '.$limit;
 				if($rs = $this->conn->query($sql)){
