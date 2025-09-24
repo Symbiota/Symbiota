@@ -129,6 +129,7 @@ $statusStr = "";
 					$batchLimit = 100;
 					if(array_key_exists('batchlimit',$_POST)) $batchLimit = $_POST['batchlimit'];
 					echo '<ul>';
+					if($procStatus == "null") $procStatus = null;
 					$ocrManager->batchOcrUnprocessed($collid,$procStatus,$batchLimit,0);
 					echo '</ul>';
 				}
