@@ -115,7 +115,7 @@ if($isEditor){
 								 <?php echo $LANG['TAXON_RANK'] . ' *'; ?>: 
 								</label>
 						</div>
-						<select id="rankid" name="rankid" title="Rank ID" class='search-bar-short'>
+						<select id="rankid" name="rankid" title="Rank ID" class='search-bar-short bottom-breathing-room-rel-sm'>
 							<option value=""><?php echo $LANG['SEL_TAX_RANK']; ?></option>
 							<option value="0"><?php echo $LANG['NON_RANKED_NODE']; ?></option>
 							<option value="">--------------------------------</option>
@@ -195,22 +195,6 @@ if($isEditor){
 									<input type='text' id='tradeName' name='tradeName' onchange="updateFullname(this.form, true)" class='search-bar' aria-label="<?php echo $LANG['UNITNAME5']; ?>" title="<?php echo $LANG['UNITNAME5']; ?>" />
 								</div>
 							</div>
-							<div id="div3hide" style="clear:both;display:none;" class="bottom-breathing-room-rel">
-								<div class="left-column">
-									<label for="">
-										<?php echo $LANG['UNITNAME4']; ?>:
-									</label>
-								</div>
-								<input type='text' id='cultivarEpithet' name='cultivarEpithet' onchange="updateFullname(this.form)" class='search-bar' aria-label="<?php echo $LANG['UNITNAME4']; ?>" title="<?php echo $LANG['UNITNAME4']; ?>" />
-							</div>
-							<div id="div4hide" style="clear:both;display:none;" class="bottom-breathing-room-rel">
-								<div class="left-column">
-									<label for="tradeName">
-										<?php echo $LANG['UNITNAME5']; ?>:
-									</label>
-								</div>
-								<input type='text' id='tradeName' name='tradeName' onchange="updateFullname(this.form)" class='search-bar' aria-label="<?php echo $LANG['UNITNAME5']; ?>" title="<?php echo $LANG['UNITNAME5']; ?>" />
-							</div>
 					<?php
 					}?>
 					<div id="author-div" style="clear: both;">
@@ -235,7 +219,7 @@ if($isEditor){
 						</span>
 						<input id="parenttid" name="parenttid" type="hidden" value="" />
 					</div>
-					<div style="clear:both;" class="bottom-breathing-room-rel">
+					<div style="clear:both;">
 						<div class="left-column">
 							<label for="notes">
 								<?php echo $LANG['NOTES']; ?>:
@@ -243,14 +227,14 @@ if($isEditor){
 						</div>
 						<input type='text' id='notes' name='notes' class='search-bar-long'/>
 					</div>
-					<div style="clear:both;" class="bottom-breathing-room-rel">
+					<div style="clear:both;">
 						<div class="left-column">
 							<label for="source"> <?php echo $LANG['SOURCE']; ?>:
 							</label>
 						</div>
 						<input type='text' id='source' name='source' class='search-bar-long'/>
 					</div>
-					<div style="clear:both;" class="bottom-breathing-room-rel">
+					<div style="clear:both;">
 						<div class="left-column">
 							<label for="securitystatus"> <?php echo $LANG['LOC_SECURITY']; ?>:
 							</label>
@@ -260,7 +244,7 @@ if($isEditor){
 							<option value="1"><?php echo $LANG['HIDE_LOC_DETAILS']; ?></option>
 						</select>
 					</div>
-					<div style="clear:both;" class="bottom-breathing-room-rel">
+					<div style="clear:both;">
 						<fieldset>
 							<legend><b><?php echo $LANG['ACCEPT_STATUS']; ?></b></legend>
 							<div>
@@ -269,7 +253,7 @@ if($isEditor){
 							</div>
 							<div id="accdiv" style="display:none;margin-top:3px;">
 								<div>
-									<div class="left-column bottom-breathing-room-rel">
+									<div class="left-column">
 										<label for="acceptedstr"> <?php echo $LANG['ACCEPTED_TAXON']; ?>:
 										</label>
 									</div>
@@ -277,7 +261,7 @@ if($isEditor){
 									<input id="tidaccepted" name="tidaccepted" type="hidden" />
 								</div>
 								<div>
-									<div class="left-column bottom-breathing-room-rel">
+									<div class="left-column">
 										<label for="unacceptabilityreason"> <?php echo $LANG['UNACCEPT_REASON']; ?>:
 										</label>
 									</div>
