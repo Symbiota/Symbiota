@@ -1,0 +1,11 @@
+name: symbiota-testing
+services:
+  web:
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    restart: 'always'
+    image: 'muchquakz/symbiota-testing'
+    ports:
+      - 8000:80
+    volumes:
+      - .:/var/www/html/
