@@ -31,6 +31,7 @@ $LANG['SCINAME'] = 'Nombre Científico';
 $LANG['COLLECTOR'] = 'Colector';
 $LANG['EVENT_DATE'] = 'Fecha';
 $LANG['NUMBER'] = 'Número de Colecta';
+$LANG['EVENT_TIME'] = 'Hora del evento';
 $LANG['COUNTRY'] = 'País';
 $LANG['STATE_PROVINCE'] = 'Estado/Provincia';
 $LANG['COUNTY'] = 'Condado';
