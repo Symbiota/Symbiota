@@ -14,6 +14,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: 'Run Setup Script'
+      run : cd config && bash setup.bash
+
     - name: 'Build Docker Resources'
       run : |
         echo --- Building and Starting up docker ---
