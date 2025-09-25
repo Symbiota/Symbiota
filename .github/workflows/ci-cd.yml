@@ -22,10 +22,10 @@ jobs:
         echo --- Containers Up ---
 
     - name: Debugging Container Failure
-      # if: failure()
+      if: failure()
       run: |
         docker ps
-        # docker logs symbiota-web-1
+        docker logs symbiota-web-1
 
     - name: 'Install PhpUnit'
       run : docker exec symbiota-testing-web-1 composer require --dev phpunit/phpunit
