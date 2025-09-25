@@ -10,6 +10,7 @@ final class MediaTest extends TestCase {
 
 		$this->assertSame('trival', $file['name']);
 		$this->assertSame('jpg', $file['extension']);
+		$this->assertSame('jpg', 'failOnPurpose');
 	}
 
 	public function test_directory_file_parsing(): void {
