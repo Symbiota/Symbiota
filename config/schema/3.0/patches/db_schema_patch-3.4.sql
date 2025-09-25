@@ -265,4 +265,5 @@ ALTER TABLE `users`
   CHANGE COLUMN `password` `password` VARCHAR(255) NULL DEFAULT NULL ;
 
 #Add update to omoccurdeterminations.dateLastModified tracked any update to the row
-ALTER TABLE omoccurdeterminations MODIFY COLUMN dateLastModified timestamp DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP;
+ALTER TABLE omoccurdeterminations 
+  MODIFY COLUMN dateLastModified timestamp DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP;
