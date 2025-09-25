@@ -164,7 +164,7 @@ $occManager->setOccId($occid);
 				<div id="delapprovediv" style="margin:15px;display:none;">
 					<input name="occid" type="hidden" value="<?php echo $occid; ?>" />
 					<input name="occindex" type="hidden" value="<?php echo $occIndex; ?>" />
-					<button class="button-danger" name="submitaction" type="submit" value="Delete Occurrence"><?php echo $LANG['DEL_OCC']; ?></button>
+					<button class="button button-danger" name="submitaction" type="submit" value="Delete Occurrence"><?php echo $LANG['DEL_OCC']; ?></button>
 				</div>
 			</div>
 		</form>
