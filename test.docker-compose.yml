@@ -6,6 +6,6 @@ services:
     restart: 'always'
     image: 'muchquakz/symbiota-testing'
     ports:
-      - 8000:80
+      - 80:80
     volumes:
       - .:/var/www/html/
