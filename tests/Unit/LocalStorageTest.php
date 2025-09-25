@@ -4,7 +4,7 @@ include_once($GLOBALS['SERVER_ROOT'] . '/classes/StorageStrategy.php');
 
 use PHPUnit\Framework\TestCase;
 
-final class SymbiotaUploadStrategyTest extends TestCase {
+final class LocalStorageTest extends TestCase {
 	const root_path = 'image/root/path/';
 	const root_url = 'image/root/url/';
 
