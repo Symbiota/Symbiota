@@ -44,5 +44,8 @@ $LANG['COMPRESSED_ZIP'] = 'Compressed ZIP file';
 $LANG['DOWNLOAD_DATA'] = 'Download Data';
 $LANG['LIMIT_NOTE'] = '* There is a 1,000,000 record limit to occurrence downloads';
 $LANG['INCLUDE_ASSOCIATIONS'] = 'include Resource Relationships (associations & linked resources)';
+$LANG['TAXONOMIC_RESOLUTION'] = 'Taxonomic Resolution';
+$LANG['ACCEPTED_NAME_USAGE'] = 'Include Accepted Scientific Name and Authorship';
+$LANG['TAXONOMIC_RESOLUTION_GUIDE']= 'TODO';
 
 ?>

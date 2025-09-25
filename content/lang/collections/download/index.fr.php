@@ -45,4 +45,7 @@ $LANG['COMPRESSED_ZIP'] = 'Fichier ZIP compressé';
 $LANG['DOWNLOAD_DATA'] = 'Télécharger les données';
 $LANG['LIMIT_NOTE'] = '* Il existe une limite de 1 000 000 d\'enregistrements pour les téléchargements d\'occurrences';
 $LANG['INCLUDE_ASSOCIATIONS'] = 'inclure les Relations entre Ressources (associations et ressources liées)';
+$LANG['TAXONOMIC_RESOLUTION'] = 'Résolution taxonomique';
+$LANG['ACCEPTED_NAME_USAGE'] = 'Inclure le nom scientifique accepté et la paternité de l\'auteur';
+$LANG['TAXONOMIC_RESOLUTION_GUIDE']= 'TODO';
 
