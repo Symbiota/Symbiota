@@ -11,9 +11,9 @@ $CHARSET = 'UTF-8';					//ISO-8859-1 or UTF-8
 $PORTAL_GUID = '';				//Typically a UUID
 $SECURITY_KEY = '';				//Typically a UUID used to verify access to certain web service
 
-$SERVER_HOST = '';				//fully qualified domain name or IP address of the server. e.g. 'symbiota.org' or 'localhost'
+$SERVER_HOST = 'localhost:80';				//fully qualified domain name or IP address of the server. e.g. 'symbiota.org' or 'localhost'
 $CLIENT_ROOT = '';				//URL path to project root folder (relative path w/o domain, e.g. '/seinet')
-$SERVER_ROOT = '';				//Full path to Symbiota project root folder E.g. /var/www/html/portalname
+$SERVER_ROOT = '/var/www/html';				//Full path to Symbiota project root folder E.g. /var/www/html/portalname
 //Temp directory must be writable by Apache; it is highly recommended to set this to a path outside of the Apache DocumentRoot to avoid malicous file uploads; will use system default if not specified
 $TEMP_DIR_ROOT = '';		//E.g. /var/www/temp/portalname
 $LOG_PATH = $SERVER_ROOT . '/content/logs';					//Must be writable by Apache; will use <SYMBIOTA_ROOT>/content/logs if not specified

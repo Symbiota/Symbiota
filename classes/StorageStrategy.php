@@ -1,4 +1,4 @@
-<?php
+<?php global $SERVER_ROOT;
 include_once($SERVER_ROOT . "/classes/MediaException.php");
 include_once($SERVER_ROOT . "/classes/MediaType.php");
 
