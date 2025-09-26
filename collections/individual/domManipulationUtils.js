@@ -13,12 +13,12 @@ const addElemFirst = (parentDivId, targetChildDivId) => {
 const reorderElements = (parentDivId, desiredDivIds, removeDivIds) => {
   const parent = document.getElementById(parentDivId);
   const allChildren = Array.from(parent.children);
-  const allChildrenIds = allChildren?.map(child=>child.id) || [];
+  const allChildrenIds = allChildren?.map(child=>child.id)?.filter(entry=>entry!=='') || [];
   const revisedDesired = desiredDivIds.filter((desiredDiv) => {
     return (
       allChildrenIds.includes(desiredDiv) ||
       desiredDiv === "br" ||
-      desiredDiv == "hr"
+      desiredDiv === "hr"
     );
   });
   revisedDesired.forEach((currentId) => {
@@ -40,14 +40,14 @@ const reorderElements = (parentDivId, desiredDivIds, removeDivIds) => {
     //   parent.appendChild(brElement);
     // }
     if (allChildrenIds.includes(currentId)) {
-      currentChildIdxInDesiredList = desiredDivIds.indexOf(currentId);
+      const currentChildIdxInDesiredList = revisedDesired.indexOf(currentId);
       parent.appendChild(desiredEl);
-      if (desiredDivIds[currentChildIdxInDesiredList + 1] === "hr") {
+      if (revisedDesired[currentChildIdxInDesiredList + 1] === "hr") {
         const hrElement = document.createElement("hr");
         hrElement.style.cssText = "margin-bottom: 2rem; clear: both;";
         parent.appendChild(hrElement);
       }
-      if (desiredDivIds[currentChildIdxInDesiredList + 1] === "br") {
+      if (revisedDesired[currentChildIdxInDesiredList + 1] === "br") {
         const brElement = document.createElement("br");
         brElement.style.cssText = "margin-bottom: 2rem; clear: both;";
         parent.appendChild(brElement);

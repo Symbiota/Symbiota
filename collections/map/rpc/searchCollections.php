@@ -36,11 +36,11 @@ $recLimit = array_key_exists('recordlimit', $_REQUEST) ? $_REQUEST['recordlimit'
 if (!is_numeric($recLimit)) $recLimit = 15000;
 
 $mapManager = new OccurrenceMapManager();
-$searchVar = $mapManager->getQueryTermStr();
+$searchArray = $mapManager->getQueryTermArr();
 
 $obsIDs = $mapManager->getObservationIds();
 
-if ($searchVar && $recLimit) $searchVar .= '&reclimit=' . $recLimit;
+if ($searchArray && $recLimit) $searchVar['reclimit'] = $recLimit;
 
 //Gets Coordinates
 $coordArr = $mapManager->getCoordinateMap(0, $recLimit);
@@ -98,4 +98,4 @@ foreach ($coordArr as $collName => $coll) {
 }
 ob_get_clean();
 
-echo json_encode(['taxaArr' => $taxaArr, 'collArr' => $collArr, 'recordArr' => $recordArr, 'origin' => $host, 'query' => $searchVar]);
+echo json_encode(['taxaArr' => $taxaArr, 'collArr' => $collArr, 'recordArr' => $recordArr, 'origin' => $host, 'query' => http_build_query($searchArray), 'searchArray' => $searchArray]);
