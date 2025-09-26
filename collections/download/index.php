@@ -34,7 +34,7 @@ $filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIEN
 	<script src="<?php echo $filename ?>" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
-			var dialogArr = new Array("schemanative","schemadwc");
+			var dialogArr = new Array("schemanative","schemadwc", "taxaresolution");
 			var dialogStr = "";
 			for(i=0;i<dialogArr.length;i++){
 				dialogStr = dialogArr[i]+"info";
@@ -180,9 +180,16 @@ $filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIEN
 						</fieldset>
 
 						<fieldset class="sectionDiv">
-							<legend>  <?= $LANG['TAXONOMIC_RESOLUTION'] ?? 'Taxonomic Resolution'?>:</legend>
+							<legend>  <?= $LANG['TAXONOMIC_RESOLUTION'] ?>:</legend>
 							<input type="checkbox" name="acceptedNameUsage" id="acceptedNameUsage" value="1" />
-							<label for="acceptedNameUsage"> <?= $LANG['ACCEPTED_NAME_USAGE'] ?? 'Include Accepted Scientific Name and Authorship'?></label>
+							<label for="acceptedNameUsage"> <?= $LANG['ACCEPTED_NAME_USAGE'] ?></label>
+
+							<a id="taxaresolutioninfo" href="#" title="<?= $LANG['MORE_INFO'] ?>" aria-label="<?= $LANG['MORE_INFO'] ?>">
+								<img src="../../images/info.png" alt=" <?= $LANG['IMG_DARWIN_INFO'] ?>" style="width:1.2em;" />
+							</a><br/>
+							<div id="taxaresolutioninfodialog">
+								<?= $LANG['TAXONOMIC_RESOLUTION_GUIDE'] ?>
+							</div>
 						</fieldset>
 
 						<fieldset class="sectionDiv">
