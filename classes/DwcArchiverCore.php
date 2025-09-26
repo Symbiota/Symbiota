@@ -1731,6 +1731,11 @@ class DwcArchiverCore extends Manager{
 		$this->applyConditions();
 		if (!$this->conditionSql) return false;
 		if($omExportID = $this->primeStagingTables()){
+			$dwcOccurManager->setOtherCatalogNumbers();
+
+			//Populate staging tables with taxonomic hierarchy
+
+
 			$sql = $dwcOccurManager->getSqlOccurrences($this->occurrenceFieldArr['fields']);
 			$sql .= 'AND (ex.omExportID = ' . $omExportID . ') ';
 			if ($this->paleoWithSql) $sql = $this->paleoWithSql . $sql;
@@ -1782,6 +1787,13 @@ class DwcArchiverCore extends Manager{
 				$sqlFrag = substr($sql, strpos($sql, 'WHERE '));
 				if($p = strpos($sqlFrag, 'LIMIT ')) $sqlFrag = substr($sqlFrag, 0, $p);
 				$occurAccessID = $statsManager->insertAccessEvent('download', $sqlFrag);
+				//Set access statistics
+				if ($this->isPublicDownload) {
+					if ($this->schemaType == 'dwc' || $this->schemaType == 'symbiota') {
+						//Don't count if dl is backup, GeoLocate transfer, or pensoft
+						$statsManager->insertDownloadOccurrences($occurAccessID, $omExportID);
+					}
+				}
 				$batchOccidArr = array();
 				while ($r = $rs->fetch_assoc()) {
 					if ($this->isPublicDownload || $this->limitToGuids) {
@@ -1797,14 +1809,15 @@ class DwcArchiverCore extends Manager{
 					if(!isset($this->collArr[$r['collID']])){
 						$this->setCollArr($r['collID'], 'internalCall');
 					}
-					if (!$r['occurrenceID']) {
+					//Set occurrenceID GUID or skip records if not defined (required output)
+					if(!$r['occurrenceID']) {
 						if($guidTarget = $this->collArr[$r['collID']]['guidtarget']){
 							//Set occurrence GUID based on GUID target, but only if occurrenceID field isn't already populated
-							if ($guidTarget == 'catalogNumber') $r['occurrenceID'] = $r['catalogNumber'];
-							elseif ($guidTarget == 'symbiotaUUID') $r['occurrenceID'] = $r['recordID'];
+							if($guidTarget == 'catalogNumber') $r['occurrenceID'] = $r['catalogNumber'];
+							elseif($guidTarget == 'symbiotaUUID') $r['occurrenceID'] = $r['recordID'];
 						}
 					}
-					if ($this->limitToGuids && (!$r['occurrenceID'] || !$r['basisOfRecord'])) {
+					if($this->limitToGuids && (!$r['occurrenceID'] || !$r['basisOfRecord'])) {
 						// Skip record because there is no occurrenceID guid
 						continue;
 					}
@@ -1832,6 +1845,7 @@ class DwcArchiverCore extends Manager{
 						}
 					}
 					if ($this->schemaType == 'dwc') {
+						//Apply DwC output requirements
 						unset($r['recordSecurity']);
 						unset($r['collID']);
 						unset($r['biota']);
@@ -1882,7 +1896,6 @@ class DwcArchiverCore extends Manager{
 					}
 					elseif ($this->schemaType == 'backup') unset($r['collID']);
 
-					if ($ocnStr = $dwcOccurManager->getAdditionalCatalogNumberStr($r['occid'])) $r['otherCatalogNumbers'] = $ocnStr;
 					if ($this->schemaType != 'coge') {
 						if ($exsArr = $dwcOccurManager->getExsiccateArr($r['occid'])) {
 							$exsStr = $exsArr['exsStr'];
@@ -1931,13 +1944,6 @@ class DwcArchiverCore extends Manager{
 						if ($pubID && $portalManager) $portalManager->insertPortalOccurrences($pubID, $batchOccidArr);
 						unset($batchOccidArr);
 						$batchOccidArr = array();
-					}
-					//Set access statistics
-					if ($this->isPublicDownload) {
-						if ($this->schemaType == 'dwc' || $this->schemaType == 'symbiota') {
-							//Don't count if dl is backup, GeoLocate transfer, or pensoft
-							$statsManager->insertAccessOccurrence($occurAccessID, $r['occid']);
-						}
 					}
 				}
 				$rs->free();

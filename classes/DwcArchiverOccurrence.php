@@ -394,18 +394,26 @@ class DwcArchiverOccurrence extends Manager{
 	}
 
 	//Special functions for appending additional data
-	public function getAdditionalCatalogNumberStr($occid){
-		$retStr = '';
-		if(is_numeric($occid)){
-			$sql = 'SELECT identifierName, identifierValue FROM omoccuridentifiers WHERE occid = '.$occid.' ORDER BY sortBy';
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				if($r->identifierName) $retStr .= $r->identifierName.': ';
-				$retStr .= $r->identifierValue.'; ';
+	public function setOtherCatalogNumbers($omExportID){
+		$status = false;
+		$sql = 'UPDATE omexportoccurrences ex INNER JOIN
+			(SELECT i.occid, GROUP_CONCAT(CONCAT(i.identifierName, if(i.identifierName != "",": ",""), i.identifierValue) SEPARATOR "; ") as ocn
+			FROM omoccuridentifiers i INNER JOIN omexportoccurrences e ON i.occid = e.occid
+			WHERE e.omExportID = 333
+			GROUP BY occid) intab ON ex.occid = intab.occid
+			SET ex.otherCatalogNumbers = intab.ocn
+			WHERE ex.omExportID = ?';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $omExportID);
+			if($stmt->execute()) $status = true;
+			else{
+				$this->errorMessage = 'ERROR batch linking occurrences from download: ' . $stmt->error;
+				$this->logOrEcho($this->errorMessage);
 			}
-			$rs->free();
+			$stmt->close();
 		}
-		return trim($retStr,'; ');
+		else $this->errorMessage = $this->conn->error;
+		return $status;
 	}
 
 	public function setIncludeExsiccatae(){
