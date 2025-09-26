@@ -704,6 +704,7 @@ if ($SYMB_UID) {
 				}
 				echo '</blockquote></div>';
 			}
+			session_write_close();
 			if ($addrArr = $collManager->getAddress()) {
 				?>
 				<section class="fieldset-like no-left-margin">

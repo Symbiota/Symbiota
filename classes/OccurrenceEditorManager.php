@@ -242,6 +242,7 @@ class OccurrenceEditorManager {
 		} elseif (isset($_SESSION['editorquery'])) {
 			$this->qryArr = json_decode($_SESSION['editorquery'], true);
 		}
+		session_write_close();
 		$this->setSqlWhere();
 	}
 
@@ -654,6 +655,7 @@ class OccurrenceEditorManager {
 			$rs->free();
 			$this->qryArr['rc'] = (int)$recCnt;
 			$_SESSION['editorquery'] = json_encode($this->qryArr);
+			session_write_close();
 		}
 		return $recCnt;
 	}

@@ -10,4 +10,5 @@ if($currentlyEnabledStylesheet === $condensedPath){
     $_SESSION['active_stylesheet'] = $condensedPath;
 }
 echo $_SESSION['active_stylesheet'];
+session_write_close();
 ?>

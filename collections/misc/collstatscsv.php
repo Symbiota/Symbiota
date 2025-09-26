@@ -15,6 +15,7 @@ $years = array_key_exists("years",$_REQUEST)?$_REQUEST["years"]:1;
 $famArr = isset($_SESSION['statsFamilyArr'])?$_SESSION['statsFamilyArr']:Array();
 $geoArr = isset($_SESSION['statsCountryArr'])?$_SESSION['statsCountryArr']:Array();
 $ordArr = isset($_SESSION['statsOrderArr'])?$_SESSION['statsOrderArr']:Array();
+session_write_close();
 
 $days = 365 * $years;
 $months = 12 * $years;
