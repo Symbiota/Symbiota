@@ -7,6 +7,7 @@ CREATE TABLE `omexport` (
   `category` VARCHAR(45) NOT NULL,
   `tagName` VARCHAR(45) NOT NULL,
   `queryTerms` MEDIUMTEXT NOT NULL,
+  `fileUrl` VARCHAR(255) NULL,
   `portalDomain` VARCHAR(45) NULL,
   `expiration` DATETIME NULL,
   `ipAddress` VARCHAR(45) NULL,
@@ -44,6 +45,7 @@ CREATE TABLE `omexportoccurrences` (
   `acceptedNameUsage` VARCHAR(45) NULL,
   `acceptedNameUsageAuthorship` VARCHAR(45) NULL,
   `acceptedNameUsageID` VARCHAR(45) NULL,
+  `occurrenceRemarks` TEXT NULL,
   `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp
   PRIMARY KEY (`pmExportStagingID`));
 
@@ -58,5 +60,6 @@ ALTER TABLE `omexportoccurrences`
   ADD CONSTRAINT `FK_omexportoccur_occid`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE;
 
 ALTER TABLE `omexportoccurrences` 
-  ADD UNIQUE INDEX `UQ_omexportoccur_unique` (`omExportID` ASC, `occid` ASC);
+  ADD UNIQUE INDEX `UQ_omexportoccur_unique` (`omExportID` ASC, `occid` ASC),
+  ADD INDEX `IX_omexportoccur_taxonID` (`taxonID` ASC);
 

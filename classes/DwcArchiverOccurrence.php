@@ -9,11 +9,9 @@ class DwcArchiverOccurrence extends Manager{
 	private $schemaType;
 	private $extended = false;
 	private $includePaleo = false;
-	private $includeExsiccatae = false;
 	private $includeAssocSeq = false;
 	private $includeAcceptedNameUsage = false;
 	private $relationshipArr;
-	private $upperTaxonomy = array();
 	private $taxonRankArr = array();
 	private $paleoGtsArr = null;
 	private $serverDomain;
@@ -394,7 +392,7 @@ class DwcArchiverOccurrence extends Manager{
 	}
 
 	//Special functions for appending additional data
-	public function setOtherCatalogNumbers($omExportID){
+	public function setOtherCatalogNumbers($exportID){
 		$status = false;
 		$sql = 'UPDATE omexportoccurrences ex INNER JOIN
 			(SELECT i.occid, GROUP_CONCAT(CONCAT(i.identifierName, if(i.identifierName != "",": ",""), i.identifierValue) SEPARATOR "; ") as ocn
@@ -404,7 +402,7 @@ class DwcArchiverOccurrence extends Manager{
 			SET ex.otherCatalogNumbers = intab.ocn
 			WHERE ex.omExportID = ?';
 		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param('i', $omExportID);
+			$stmt->bind_param('i', $exportID);
 			if($stmt->execute()) $status = true;
 			else{
 				$this->errorMessage = 'ERROR batch linking occurrences from download: ' . $stmt->error;
@@ -416,41 +414,24 @@ class DwcArchiverOccurrence extends Manager{
 		return $status;
 	}
 
-	public function setIncludeExsiccatae(){
-		$sql = 'SELECT occid FROM omexsiccatiocclink LIMIT 1';
-		$rs = $this->conn->query($sql);
-		if($rs->num_rows) $this->includeExsiccatae = true;
-		$rs->free();
-	}
-
-	public function getExsiccateArr($occid){
-		$retArr = array();
-		if($this->includeExsiccatae && is_numeric($occid)){
-			$sql = 'SELECT t.title, t.abbreviation, t.editor, t.exsrange, n.exsnumber, l.notes '.
-				'FROM omexsiccatiocclink l INNER JOIN omexsiccatinumbers n ON l.omenid = n.omenid '.
-				'INNER JOIN omexsiccatititles t ON n.ometid = t.ometid '.
-				'WHERE l.occid = '.$occid;
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				$exsStr = $r->title;
-				if($r->abbreviation) $exsStr .= ' ['.$r->abbreviation.']';
-				if($r->exsrange) $exsStr .= ', '.$r->exsrange;
-				if($r->editor) $exsStr .= ', '.$r->editor;
-				$exsStr .= ', exs #: '.$r->exsnumber;
-				if($r->notes) $exsStr .= ' ('.$r->notes.')';
-				$retArr['exsStr'] = $exsStr;
-				$dynProp = array();
-				$dynProp['exsTitle'] = $r->title;
-				if($r->abbreviation) $dynProp['exsAbbreviation'] = $r->abbreviation;
-				if($r->exsrange) $dynProp['exsRange'] = $r->exsrange;
-				if($r->editor) $dynProp['exsEditor'] = $r->editor;
-				$dynProp['exsNumber'] = $r->exsnumber;
-				if($r->notes) $dynProp['exsNotes'] = $r->notes;
-				$retArr['exsProps'] = $dynProp;
+	public function setExsiccate($exportID){
+		$status = false;
+		$sql = 'UPDATE omexportoccurrences x INNER JOIN omexsiccatiocclink l ON x.occid = l.occid
+			INNER JOIN omexsiccatinumbers n ON l.omenid = n.omenid
+			INNER JOIN omexsiccatititles t ON n.ometid = t.ometid
+			SET x.occurrenceRemarks = CONCAT_WS("; ", x.occurrenceRemarks, CONCAT_WS(" ", t.title, CONCAT("[", t.abbreviation, "]"), CONCAT(", ", t.editor), CONCAT(", ", t.exsrange), CONCAT(", exs #: ", n.exsnumber), CONCAT(" (", l.notes, ")")))
+			WHERE x.omExportID = ?';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $exportID);
+			if($stmt->execute()) $status = true;
+			else{
+				$this->errorMessage = 'ERROR batch linking occurrences from download: ' . $stmt->error;
+				$this->logOrEcho($this->errorMessage);
 			}
-			$rs->free();
+			$stmt->close();
 		}
-		return $retArr;
+		else $this->errorMessage = $this->conn->error;
+		return $status;
 	}
 
 	public function getAssociationStr($occid, $associationType = null){
@@ -727,117 +708,89 @@ class DwcArchiverOccurrence extends Manager{
 		}
 	}
 
-	public function appendUpperTaxonomy(&$targetArr){
-		if($targetArr['family'] && $this->upperTaxonomy){
-			$higherStr = '';
-			$famStr = strtolower($targetArr['family']);
-			if(isset($this->upperTaxonomy[$famStr]['k'])){
-				$targetArr['t_kingdom'] = $this->upperTaxonomy[$famStr]['k'];
-				$higherStr = $targetArr['t_kingdom'];
-			}
-			if(isset($this->upperTaxonomy[$famStr]['p'])){
-				$targetArr['t_phylum'] = $this->upperTaxonomy[$famStr]['p'];
-				$higherStr .= '|'.$targetArr['t_phylum'];
-			}
-			if(isset($this->upperTaxonomy[$famStr]['c'])){
-				$targetArr['t_class'] = $this->upperTaxonomy[$famStr]['c'];
-				$higherStr .= '|'.trim($targetArr['t_class'],'|');
-			}
-			if(isset($this->upperTaxonomy[$famStr]['o'])){
-				$targetArr['t_order'] = $this->upperTaxonomy[$famStr]['o'];
-				$higherStr .= '|'.trim($targetArr['t_class'],'|');
-			}
-			$targetArr['t_higherClassification'] = trim($higherStr,'| ');
-		}
+	//Taxonomic data
+	public function setTaxonomy($exportID){
+		$this->setUpperTaxonomy($exportID, $rankID, $fieldName);
+		$this->setBaseTaxonomy($exportID, $rankID, $fieldName);
+		$this->setSpeciesTaxonomy($exportID);
+		$this->setTaxonRank($exportID);
 	}
 
-	public function appendUpperTaxonomy2(&$r){
-		$target = (isset($r['taxonID'])?$r['taxonID']:false);
-		if(!$target && !empty($r['family'])) $target = ucfirst($r['family']);
-		if($target){
-			if(array_key_exists($target, $this->upperTaxonomy)){
-				if(isset($this->upperTaxonomy[$target]['k'])) $r['t_kingdom'] = $this->upperTaxonomy[$target]['k'];
-				if(isset($this->upperTaxonomy[$target]['p'])) $r['t_phylum'] = $this->upperTaxonomy[$target]['p'];
-				if(isset($this->upperTaxonomy[$target]['c'])) $r['t_class'] = $this->upperTaxonomy[$target]['c'];
-				if(isset($this->upperTaxonomy[$target]['o'])) $r['t_order'] = $this->upperTaxonomy[$target]['o'];
-				if(isset($this->upperTaxonomy[$target]['f']) && !$r['family']) $r['family'] = $this->upperTaxonomy[$target]['f'];
-				if(isset($this->upperTaxonomy[$target]['s'])) $r['t_subgenus'] = $this->upperTaxonomy[$target]['s'];
-				if(isset($this->upperTaxonomy[$target]['u'])) $r['t_higherClassification'] = $this->upperTaxonomy[$target]['u'];
-			}
-			else{
-				$higherStr = '';
-				$sql = 'SELECT t.tid, t.sciname, t.rankid FROM taxaenumtree e INNER JOIN taxa t ON e.parentTid = t.tid ';
-				if(!is_numeric($target)) $sql .= 'INNER JOIN taxa t2 ON e.tid = t2.tid WHERE e.taxauthid = 1 AND t2.sciname = "'.$this->cleanInStr($target).'" ORDER BY t.rankid';
-				else $sql .= 'WHERE e.taxauthid = 1 AND e.tid = '.$target.' ORDER BY t.rankid';
-				$rs = $this->conn->query($sql);
-				while($row = $rs->fetch_object()){
-					if($row->rankid == 10) $r['t_kingdom'] = $row->sciname;
-					elseif($row->rankid == 30) $r['t_phylum'] = $row->sciname;
-					elseif($row->rankid == 60) $r['t_class'] = $row->sciname;
-					elseif($row->rankid == 100) $r['t_order'] = $row->sciname;
-					elseif($row->rankid == 140 && !$r['family']) $r['family'] = $row->sciname;
-					elseif($row->rankid == 190) $r['t_subgenus'] = $row->sciname;
-					$higherStr .= '|'.$row->sciname;
+	private function setUpperTaxonomy($exportID, $rankID, $fieldName){
+		//Set parent rank fields for all occurrences
+		$nodeArr = array(10 => 'kingdom', 30 => 'phylum', 60 => 'class', 100 => 'order', 140 => 'family', 180 => 'genus', 190 => 'subgenus');
+		foreach($nodeArr as $rankID => $fieldName){
+			$sql = 'UPDATE omexportoccurrences x INNER JOIN taxaenumtree e ON x.taxonID = e.tid
+				INNER JOIN taxa t ON e.parentTid = t.tid
+				SET x.' . $fieldName . ' = t.sciname
+				WHERE x.omExportID = ? AND t.rankid = ?';
+			if($stmt = $this->dataConn->prepare($sql)){
+				try{
+					$stmt->bind_param('ii', $exportID, $rankID);
+					$stmt->execute();
+				} catch (mysqli_sql_exception $e){
+					$this->errorMessage = $stmt->error;
 				}
-				$rs->free();
-				if($higherStr && $this->schemaType != 'coge') $r['t_higherClassification'] = trim($higherStr,'| ');
-				if(count($this->upperTaxonomy)<1000 || !is_numeric($target)){
-					if(isset($r['t_kingdom'])) $this->upperTaxonomy[$target]['k'] = $r['t_kingdom'];
-					if(isset($r['t_phylum'])) $this->upperTaxonomy[$target]['p'] = $r['t_phylum'];
-					if(isset($r['t_class'])) $this->upperTaxonomy[$target]['c'] = $r['t_class'];
-					if(isset($r['t_order'])) $this->upperTaxonomy[$target]['o'] = $r['t_order'];
-					if(isset($r['family'])) $this->upperTaxonomy[$target]['f'] = $r['family'];
-					if(isset($r['t_subgenus'])) $this->upperTaxonomy[$target]['s'] = $r['t_subgenus'];
-					if(isset($r['t_higherClassification'])) $this->upperTaxonomy[$target]['u'] = $r['t_higherClassification'];
+				$stmt->close();
+			}
+		}
+	}
+
+	private function setBaseTaxonomy($exportID, $rankID, $fieldName){
+		//Set field of the current rank for occurrences ID to higher ranks
+		$nodeArr = array(10 => 'kingdom', 30 => 'phylum', 60 => 'class', 100 => 'order', 140 => 'family');
+		foreach($nodeArr as $rankID => $fieldName){
+			$sql = 'UPDATE omexportoccurrences x INNER JOIN taxa t ON x.taxonID = t.tid
+				SET x.' . $fieldName . ' = t.sciname
+				WHERE x.omExportID = ? AND t.rankid = ?';
+			if($stmt = $this->dataConn->prepare($sql)){
+				try{
+					$stmt->bind_param('ii', $exportID, $rankID);
+					$stmt->execute();
+				} catch (mysqli_sql_exception $e){
+					$this->errorMessage = $stmt->error;
 				}
+				$stmt->close();
 			}
 		}
 	}
 
-	public function setUpperTaxonomy(){
-		if(!$this->upperTaxonomy){
-			$sqlOrder = 'SELECT t.sciname AS family, t2.sciname AS taxonorder '.
-				'FROM taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid '.
-				'INNER JOIN taxa t2 ON e.parenttid = t2.tid '.
-				'WHERE t.rankid = 140 AND t2.rankid = 100';
-			$rsOrder = $this->conn->query($sqlOrder);
-			while($rowOrder = $rsOrder->fetch_object()){
-				$this->upperTaxonomy[strtolower($rowOrder->family)]['o'] = $rowOrder->taxonorder;
+	private function setSpeciesTaxonomy($exportID){
+		//Set taxon fields for occurrences ID to species
+		$sql = 'UPDATE omexportoccurrences x INNER JOIN taxa t ON x.taxonID = t.tid
+			SET x.genus = CONCAT_WS(" ", t.indName1, t.unitName1),
+			x.specificEpithet = CONCAT_WS(" ", t.indName2, t.unitName2),
+			x.verbatimTaxonRank = t.indName3, x.infraspecificEpithet = t.unitName3,
+			x.cultivarEpithet = t.cultivarEpithet, x.tradeName = t.tradeName
+			WHERE x.omExportID = ? AND t.rankid >= 180';
+		if($stmt = $this->dataConn->prepare($sql)){
+			try{
+				$stmt->bind_param('i', $exportID);
+				$stmt->execute();
+			} catch (mysqli_sql_exception $e){
+				$this->errorMessage = $stmt->error;
 			}
-			$rsOrder->free();
-
-			$sqlClass = 'SELECT t.sciname AS family, t2.sciname AS taxonclass '.
-				'FROM taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid '.
-				'INNER JOIN taxa t2 ON e.parenttid = t2.tid '.
-				'WHERE t.rankid = 140 AND t2.rankid = 60';
-			$rsClass = $this->conn->query($sqlClass);
-			while($rowClass = $rsClass->fetch_object()){
-				$this->upperTaxonomy[strtolower($rowClass->family)]['c'] = $rowClass->taxonclass;
-			}
-			$rsClass->free();
-
-			$sqlPhylum = 'SELECT t.sciname AS family, t2.sciname AS taxonphylum '.
-				'FROM taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid '.
-				'INNER JOIN taxa t2 ON e.parenttid = t2.tid '.
-				'WHERE t.rankid = 140 AND t2.rankid = 30';
-			$rsPhylum = $this->conn->query($sqlPhylum);
-			while($rowPhylum = $rsPhylum->fetch_object()){
-				$this->upperTaxonomy[strtolower($rowPhylum->family)]['p'] = $rowPhylum->taxonphylum;
-			}
-			$rsPhylum->free();
-
-			$sqlKing = 'SELECT t.sciname AS family, t2.sciname AS kingdom '.
-				'FROM taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid '.
-				'INNER JOIN taxa t2 ON e.parenttid = t2.tid '.
-				'WHERE t.rankid = 140 AND t2.rankid = 10';
-			$rsKing = $this->conn->query($sqlKing);
-			while($rowKing = $rsKing->fetch_object()){
-				$this->upperTaxonomy[strtolower($rowKing->family)]['k'] = $rowKing->kingdom;
-			}
-			$rsKing->free();
+			$stmt->close();
 		}
 	}
 
+	private function setTaxonRank($exportID){
+		$sql = 'UPDATE omexportoccurrences x INNER JOIN taxa t ON x.taxonID = t.tid
+			INNER JOIN taxonunits u ON t.rankid = u.rankid
+			SET x.taxonRank = u.rankName
+			WHERE x.omExportID = ? AND x.kingdom = u.kingdomName';
+		if($stmt = $this->dataConn->prepare($sql)){
+			try{
+				$stmt->bind_param('i', $exportID);
+				$stmt->execute();
+			} catch (mysqli_sql_exception $e){
+				$this->errorMessage = $stmt->error;
+			}
+			$stmt->close();
+		}
+	}
+
+	//Paleo data
 	public function appendPaleoTerms(&$r){
 		$this->setPaleoGtsTerms();
 		if($this->paleoGtsArr){
@@ -875,20 +828,6 @@ class DwcArchiverOccurrence extends Manager{
 			}
 			$rs->free();
 		}
-	}
-
-	public function setTaxonRank(){
-		$sql = 'SELECT DISTINCT rankid, rankname FROM taxonunits';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$this->taxonRankArr[$r->rankid] = $r->rankname;
-		}
-		$rs->free();
-	}
-
-	public function getTaxonRank($rankID){
-		if(array_key_exists($rankID, $this->taxonRankArr)) return $this->taxonRankArr[$rankID];
-		else return '';
 	}
 
 	public function setServerDomain(){

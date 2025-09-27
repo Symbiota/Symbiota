@@ -57,9 +57,6 @@ class DwcArchiverDetermination{
 		elseif($schemaType == 'backup'){
 			$trimArr = array();
 		}
-		elseif($schemaType == 'coge'){
-			$trimArr = array();
-		}
 		return array_diff_key($detArr,array_flip($trimArr));
 	}
 

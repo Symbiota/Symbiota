@@ -1722,7 +1722,6 @@ class DwcArchiverCore extends Manager{
 		$dwcOccurManager = new DwcArchiverOccurrence($this->conn);
 		$dwcOccurManager->setSchemaType($this->schemaType, $this->observerUid);
 		$dwcOccurManager->setExtended($this->extended);
-		$dwcOccurManager->setIncludeExsiccatae();
 		$dwcOccurManager->setIncludeAssociatedSequences();
 		$dwcOccurManager->setIncludePaleo($this->includePaleo);
 		$dwcOccurManager->setIncludeAcceptedNameUsage($this->includeAcceptedNameUsage);
@@ -1730,14 +1729,22 @@ class DwcArchiverCore extends Manager{
 		//Output records
 		$this->applyConditions();
 		if (!$this->conditionSql) return false;
-		if($omExportID = $this->primeStagingTables()){
-			$dwcOccurManager->setOtherCatalogNumbers();
-
+		if($exportID = $this->primeStagingTables()){
 			//Populate staging tables with taxonomic hierarchy
+			if ($this->schemaType != 'coge') {
+				$dwcOccurManager->setOtherCatalogNumbers($exportID);
+				$dwcOccurManager->setTaxonomy($exportID);
+				$dwcOccurManager->setExsiccate($exportID);
+
+				if ($assocSeqStr = $dwcOccurManager->getAssociatedSequencesStr($r['occid'])) $r['t_associatedSequences'] = $assocSeqStr;
+			}
+
+
+
 
 
 			$sql = $dwcOccurManager->getSqlOccurrences($this->occurrenceFieldArr['fields']);
-			$sql .= 'AND (ex.omExportID = ' . $omExportID . ') ';
+			$sql .= 'AND (ex.omExportID = ' . $exportID . ') ';
 			if ($this->paleoWithSql) $sql = $this->paleoWithSql . $sql;
 			if ($this->schemaType != 'backup') $sql .= ' LIMIT 1000000';
 			//Output header
@@ -1764,10 +1771,6 @@ class DwcArchiverCore extends Manager{
 			if ($this->schemaType == 'dwc') unset($fieldOutArr[array_search('eventDate2', $fieldOutArr)]);
 			$this->writeOutRecord($fh, $fieldOutArr);
 
-			if ($this->schemaType != 'coge') {
-				//$dwcOccurManager->setUpperTaxonomy();
-				$dwcOccurManager->setTaxonRank();
-			}
 			if ($rs = $this->dataConn->query($sql, MYSQLI_USE_RESULT)) {
 				$this->setServerDomain();
 				$urlPathPrefix = $this->serverDomain . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) == '/' ? '' : '/');
@@ -1791,7 +1794,7 @@ class DwcArchiverCore extends Manager{
 				if ($this->isPublicDownload) {
 					if ($this->schemaType == 'dwc' || $this->schemaType == 'symbiota') {
 						//Don't count if dl is backup, GeoLocate transfer, or pensoft
-						$statsManager->insertDownloadOccurrences($occurAccessID, $omExportID);
+						$statsManager->insertDownloadOccurrences($occurAccessID, $exportID);
 					}
 				}
 				$batchOccidArr = array();
@@ -1806,9 +1809,6 @@ class DwcArchiverCore extends Manager{
 						}
 					}
 
-					if(!isset($this->collArr[$r['collID']])){
-						$this->setCollArr($r['collID'], 'internalCall');
-					}
 					//Set occurrenceID GUID or skip records if not defined (required output)
 					if(!$r['occurrenceID']) {
 						if($guidTarget = $this->collArr[$r['collID']]['guidtarget']){
@@ -1822,6 +1822,9 @@ class DwcArchiverCore extends Manager{
 						continue;
 					}
 					$hasRecords = true;
+					if(!isset($this->collArr[$r['collID']])){
+						$this->setCollArr($r['collID'], 'internalCall');
+					}
 					//Protect sensitive records
 					if ($this->redactLocalities && $r['recordSecurity'] == 1 && !in_array($r['collID'], $this->rareReaderArr)) {
 						$protectedFields = array();
@@ -1895,28 +1898,6 @@ class DwcArchiverCore extends Manager{
 						else $r['typeStatus'] = 'Other material';
 					}
 					elseif ($this->schemaType == 'backup') unset($r['collID']);
-
-					if ($this->schemaType != 'coge') {
-						if ($exsArr = $dwcOccurManager->getExsiccateArr($r['occid'])) {
-							$exsStr = $exsArr['exsStr'];
-							if (isset($r['occurrenceRemarks']) && $r['occurrenceRemarks']) {
-								$exsStr = $r['occurrenceRemarks'] . '; ' . $exsStr;
-							}
-							$r['occurrenceRemarks'] = $exsStr;
-
-							//$dynProp = 'exsiccatae: ' . $exsArr['exsJson'];
-							if (!isset($r['dynamicProperties']) || !is_array($r['dynamicProperties'])) {
-								$r['dynamicProperties'] = [];
-							}
-							$r['dynamicProperties']['exsiccatae'] = $exsArr['exsProps'];
-
-							//$dynProp = $r['dynamicProperties'] . '; ' . $dynProp;
-							//$r['dynamicProperties'] = $dynProp;
-						}
-						if ($assocSeqStr = $dwcOccurManager->getAssociatedSequencesStr($r['occid'])) $r['t_associatedSequences'] = $assocSeqStr;
-					}
-					//$dwcOccurManager->appendUpperTaxonomy($r);
-					$dwcOccurManager->appendUpperTaxonomy2($r);
 					if($this->includePaleo){
 						$dwcOccurManager->appendPaleoTerms($r);
 						if($this->schemaType == 'dwc'){
@@ -2026,8 +2007,8 @@ class DwcArchiverCore extends Manager{
 
 	private function insertExportOccurrenceRecords($omExportID){
 		$status = false;
-		$sql = 'INSERT IGNORE INTO omexportoccurrences(omExportID, occid, scientificNameAuthorship)
-			SELECT ' . $omExportID . ' AS omExportID, o.occid, o.scientificNameAuthorship FROM omoccurrences o ';
+		$sql = 'INSERT IGNORE INTO omexportoccurrences(omExportID, occid, taxonID, scientificNameAuthorship, occurrenceRemarks)
+			SELECT ' . $omExportID . ' AS omExportID, o.occid, o.tidInterpreted, o.scientificNameAuthorship, o.occurrenceRemarks FROM omoccurrences o ';
 		$sql .= $this->getTableJoins() . $this->conditionSql;
 		if($stmt = $this->dataConn->prepare($sql)){
 			try{
