@@ -676,6 +676,11 @@ $traitArr = $indManager->getTraitArr();
 							}
 							echo '</div>';
 						}
+						if($occArr['eventtime']){
+							echo '<div id="eventtime-div" class="bottom-breathing-room-rel-sm">';
+							echo '<label>'.$LANG['EVENT_TIME'].':</label> '.$occArr['eventtime'];
+							echo '</div>';
+						}
 						if($occArr['verbatimeventdate']){
 							echo '<div id="verbeventid-div" class="bottom-breathing-room-rel-sm"><label>'.$LANG['VERBATIM_DATE'].':</label> '.$occArr['verbatimeventdate'].'</div>';
 						}
