@@ -87,6 +87,7 @@ $LANG['DATA_GENERALIZATIONS'] = 'Generalizações de dados';
 $LANG['INSTITUTION_CODE'] = 'Código da Instituição (substituir)';
 $LANG['COLLECTION_CODE'] = 'Código de coleção (substituir)';
 $LANG['OWNER_INSTITUTION_CODE'] = 'Código do proprietário (substituir)';
+$LANG['STORAGELOCATION_CODE'] = 'Storage Location';
 $LANG['PROCESSING_STATUS'] = 'Status de processamento';
 
 ?>

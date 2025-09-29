@@ -387,8 +387,8 @@ if($isEditor){
 									<input type="text" name="identificationqualifier" title="e.g. cf, aff, etc" />
 								</div>
 								<div style='margin:3px;'>
-									<b><?php echo $LANG['SCINAME']; ?>:</b>
-									<input type="text" id="dafsciname" name="sciname" style="background-color:lightyellow;width:350px;" onfocus="initDetAutocomplete(this.form)" />
+									<label for="dafsciname"><b><?= $LANG['SCINAME']; ?></b></label>:
+									<input type="text" id="dafsciname" name="sciname" required style="width:350px;" onfocus="initDetAutocomplete(this.form)" />
 									<input type="hidden" id="daftidtoadd" name="tidtoadd" value="" />
 									<input type="hidden" name="family" value="" />
 								</div>
@@ -405,12 +405,12 @@ if($isEditor){
 									</select>
 								</div>
 								<div id="identifiedByDiv" style='margin:3px;'>
-									<b><?php echo $LANG['DETERMINER']; ?>:</b>
-									<input type="text" name="identifiedby" id="identifiedby" style="background-color:lightyellow;width:200px;" />
+									<label for="identifiedby"><b><?= $LANG['DETERMINER']; ?></b></label>:
+									<input type="text" name="identifiedby" id="identifiedby" required style="width:200px;" />
 								</div>
 								<div id="dateIdentifiedDiv" style='margin:3px;'>
-									<b><?php echo $LANG['DATE']; ?>:</b>
-									<input type="text" name="dateidentified" id="dateidentified" style="background-color:lightyellow;" onchange="detDateChanged(this.form);" />
+									<label for="dateidentified"><b><?= $LANG['DATE']; ?></b></label>:
+									<input type="text" name="dateidentified" id="dateidentified" required onchange="detDateChanged(this.form);" />
 								</div>
 								<div style='margin:3px;'>
 									<b><?php echo $LANG['REFERENCE']; ?>:</b>
@@ -428,11 +428,12 @@ if($isEditor){
 									<a href="../reports/annotationmanager.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank"><img src="../../images/list.png" style="width:1.2em" title="<?php echo htmlspecialchars($LANG['DISPLAY_QUEUE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" /></a>
 								</div>
 								<div style='margin:15px;'>
-									<div style="float:left;">
+									<div>
 										<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 										<input name="tabtarget" type="hidden" value="0" />
 										<button type="submit" name="formsubmit" value="Add New Determinations"><?php echo $LANG['ADD_DETERS']; ?></button>
 									</div>
+									<p><?php include('includes/requiredFieldInstruction.php')?></p>
 								</div>
 							</fieldset>
 						</div>

@@ -3,6 +3,12 @@ if(!$displayQuery && array_key_exists('displayquery',$_REQUEST)) $displayQuery =
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/includes/queryform.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/queryform.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/queryform.en.php');
 
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/specprocessor/exporter.' . $LANG_TAG . '.php')){
+	include_once($SERVER_ROOT . '/content/lang/collections/specprocessor/exporter.' . $LANG_TAG . '.php');
+} else{
+	include_once($SERVER_ROOT . '/content/lang/collections/specprocessor/exporter.en.php');
+}
+
 $qryArr = $occManager->getQueryVariables();
 // Construct a link containing the queryform search parameters
 $queryLink = '?displayquery=1&collid='.$collId.'&'.http_build_query($qryArr, '', '&amp;');
@@ -18,11 +24,18 @@ $qProcessingStatus = (array_key_exists('ps',$qryArr)?$qryArr['ps']:'');
 $qDateEntered = (array_key_exists('de',$qryArr)?$qryArr['de']:'');
 $qDateLastModified = (array_key_exists('dm',$qryArr)?$qryArr['dm']:'');
 $qExsiccatiId = (array_key_exists('exsid',$qryArr)?$qryArr['exsid']:'');
+$qExsnumber = (array_key_exists('exsnumber',$qryArr)?$qryArr['exsnumber']:'');
 $qImgOnly = (array_key_exists('io',$qryArr)?$qryArr['io']:0);
 $qWithoutImg = (array_key_exists('woi',$qryArr)?$qryArr['woi']:0);
 $qOcrFrag = (array_key_exists('ocr',$qryArr)?htmlentities($qryArr['ocr'], ENT_COMPAT, $CHARSET):'');
 $qOrderBy = (array_key_exists('orderby',$qryArr)?$qryArr['orderby']:'');
 $qOrderByDir = (array_key_exists('orderbydir',$qryArr)?$qryArr['orderbydir']:'');
+$qTraitIds = (array_key_exists('traitid',$qryArr)?$qryArr['traitid']: []);
+$qTraitAbsence = (array_key_exists('traitAbsence',$qryArr)?$qryArr['traitAbsence']: false);
+$qTraitStateIds = (array_key_exists('stateid',$qryArr)?$qryArr['stateid']: []);
+
+$qTraitArr = $occManager->getAttributeTraits($collId);
+$qCollMap = $occManager->getCollMap();
 
 $customFieldArr = array();
 if($crowdSourceMode){
@@ -33,28 +46,37 @@ if($crowdSourceMode){
 else{
 	$customFieldArr = array('associatedCollectors'=>$LANG['ASSOC_COLLECTORS'],'associatedOccurrences'=>$LANG['ASSOC_OCCS'],
 			'associatedTaxa'=>$LANG['ASSOC_TAXA'],'attributes'=>$LANG['ATTRIBUTES'],'scientificNameAuthorship'=>$LANG['AUTHOR'],
-			'basisOfRecord'=>$LANG['BASIS_OF_RECORD'],'behavior'=>$LANG['BEHAVIOR'],'catalogNumber'=>$LANG['CAT_NUM'],'collectionCode'=>$LANG['COL_CODE'],'recordNumber'=>$LANG['COL_NUMBER'],
-			'recordedBy'=>$LANG['COL_OBS'],'continent'=>$LANG['CONTINENT'],'coordinateUncertaintyInMeters'=>$LANG['COORD_UNCERT_M'],'country'=>$LANG['COUNTRY'],
+			'basisOfRecord'=>$LANG['BASIS_OF_RECORD'], 'behavior'=>$LANG['BEHAVIOR'],'catalogNumber'=>$LANG['CAT_NUM'],'collectionCode'=>$LANG['COL_CODE'],
+			'recordNumber'=>$LANG['COL_NUMBER'],'recordedBy'=>$LANG['COL_OBS'],'continent'=>$LANG['CONTINENT'],'coordinateUncertaintyInMeters'=>$LANG['COORD_UNCERT_M'],'country'=>$LANG['COUNTRY'],
 			'county'=>$LANG['COUNTY'],'cultivationStatus'=>$LANG['CULT_STATUS'],'dataGeneralizations'=>$LANG['DATA_GEN'],'eventDate'=>$LANG['DATE'], 'eventDate2'=> $LANG['DATE2'],
 			'dateEntered'=>$LANG['DATE_ENTERED'],'dateLastModified'=>$LANG['DATE_LAST_MODIFIED'],'dbpk'=>$LANG['DBPK'],'decimalLatitude'=>$LANG['DEC_LAT'],
 			'decimalLongitude'=>$LANG['DEC_LONG'],'maximumDepthInMeters'=>$LANG['DEPTH_MAX'],'minimumDepthInMeters'=>$LANG['DEPTH_MIN'],
 			'verbatimAttributes'=>$LANG['DESCRIPTION'],'disposition'=>$LANG['DISPOSITION'],'dynamicProperties'=>$LANG['DYNAMIC_PROPS'],
 			'maximumElevationInMeters'=>$LANG['ELEV_MAX_M'],'minimumElevationInMeters'=>$LANG['ELEV_MIN_M'],
 			'establishmentMeans'=>$LANG['ESTAB_MEANS'],'family'=>$LANG['FAMILY'],'fieldNotes'=>$LANG['FIELD_NOTES'],'fieldnumber'=>$LANG['FIELD_NUMBER'],
-			'geodeticDatum'=>$LANG['GEO_DATUM'],'georeferenceProtocol'=>$LANG['GEO_PROTOCOL'],
-			'georeferenceRemarks'=>$LANG['GEO_REMARKS'],'georeferenceSources'=>$LANG['GEO_SOURCES'],
-			'georeferenceVerificationStatus'=>$LANG['GEO_VERIF_STATUS'],'georeferencedBy'=>$LANG['GEO_BY'],'habitat'=>$LANG['HABITAT'],
-			'identificationQualifier'=>$LANG['ID_QUALIFIER'],'identificationReferences'=>$LANG['ID_REFERENCES'],
+			'geodeticDatum'=>$LANG['GEO_DATUM'],'georeferenceProtocol'=>$LANG['GEO_PROTOCOL'],'georeferenceRemarks'=>$LANG['GEO_REMARKS'],
+			'georeferenceSources'=>$LANG['GEO_SOURCES'],'georeferenceVerificationStatus'=>$LANG['GEO_VERIF_STATUS'],'georeferencedBy'=>$LANG['GEO_BY'],
+			'habitat'=>$LANG['HABITAT'],'identificationQualifier'=>$LANG['ID_QUALIFIER'],'identificationReferences'=>$LANG['ID_REFERENCES'],
 			'identificationRemarks'=>$LANG['ID_REMARKS'],'identifiedBy'=>$LANG['IDED_BY'],'individualCount'=>$LANG['IND_COUNT'],
+			'identifierName' => $LANG['IDENTIFIER_TAG_NAME'], 'identifierValue' => $LANG['IDENTIFIER_TAG_VALUE'],
 			'informationWithheld'=>$LANG['INFO_WITHHELD'],'institutionCode'=>$LANG['INST_CODE'],'island'=>$LANG['ISLAND'],'islandgroup'=>$LANG['ISLAND_GROUP'],
-			'labelProject'=>$LANG['LAB_PROJECT'],'language'=>$LANG['LANGUAGE'],'lifeStage'=>$LANG['LIFE_STAGE'],'locationid'=>$LANG['LOCATION_ID'],'locality'=>$LANG['LOCALITY'],
-			'recordSecurity'=>$LANG['SECURITY'],'securityReason'=>$LANG['SECURITY_REASON'],'locationRemarks'=>$LANG['LOC_REMARKS'],
-			'username'=>$LANG['MODIFIED_BY'],'municipality'=>$LANG['MUNICIPALITY'],'occurrenceRemarks'=>$LANG['NOTES_REMARKS'],'ocrFragment'=>$LANG['OCR_FRAGMENT'],
-			'otherCatalogNumbers'=>$LANG['OTHER_CAT_NUMS'],'ownerInstitutionCode'=>$LANG['OWNER_CODE'],'preparations'=>$LANG['PREPARATIONS'],
-			'reproductiveCondition'=>$LANG['REP_COND'],'samplingEffort'=>$LANG['SAMP_EFFORT'],'samplingProtocol'=>$LANG['SAMP_PROTOCOL'],
-			'sciname'=>$LANG['SCI_NAME'],'sex'=>$LANG['SEX'],'stateProvince'=>$LANG['STATE_PROVINCE'],
-			'substrate'=>$LANG['SUBSTRATE'],'taxonRemarks'=>$LANG['TAXON_REMARKS'],'typeStatus'=>$LANG['TYPE_STATUS'],'verbatimCoordinates'=>$LANG['VERBAT_COORDS'],
-			'verbatimEventDate'=>$LANG['VERBATIM_DATE'],'verbatimDepth'=>$LANG['VERBATIM_DEPTH'],'verbatimElevation'=>$LANG['VERBATIM_ELE'],'waterbody'=> $LANG['WATER_BODY']);
+			'labelProject'=>$LANG['LAB_PROJECT'],'language'=>$LANG['LANGUAGE'],'lifeStage'=>$LANG['LIFE_STAGE'],
+			'locationid'=>$LANG['LOCATION_ID'],'locality'=>$LANG['LOCALITY'],'recordSecurity'=>$LANG['SECURITY'],'securityReason'=>$LANG['SECURITY_REASON'],
+			'locationRemarks'=>$LANG['LOC_REMARKS'],'username'=>$LANG['MODIFIED_BY'],'municipality'=>$LANG['MUNICIPALITY'],
+			'occurrenceRemarks'=>$LANG['NOTES_REMARKS'],'ocrFragment'=>$LANG['OCR_FRAGMENT'],'otherCatalogNumbers'=>$LANG['OTHER_CAT_NUMS'],
+			'ownerInstitutionCode'=>$LANG['OWNER_CODE'],'preparations'=>$LANG['PREPARATIONS'],'reproductiveCondition'=>$LANG['REP_COND'],
+			'samplingEffort'=>$LANG['SAMP_EFFORT'],'samplingProtocol'=>$LANG['SAMP_PROTOCOL'],'sciname'=>$LANG['SCI_NAME'],'sex'=>$LANG['SEX'],
+			'stateProvince'=>$LANG['STATE_PROVINCE'],'substrate'=>$LANG['SUBSTRATE'],'taxonRemarks'=>$LANG['TAXON_REMARKS'],
+			'typeStatus'=>$LANG['TYPE_STATUS'],'verbatimCoordinates'=>$LANG['VERBAT_COORDS'],'verbatimEventDate'=>$LANG['VERBATIM_DATE'],
+			'verbatimDepth'=>$LANG['VERBATIM_DEPTH'],'verbatimElevation'=>$LANG['VERBATIM_ELE'],'waterbody'=> $LANG['WATER_BODY']);
+	if (!empty($qCollMap['paleoActivated'])){
+		$customPaleoFieldArr = array('absoluteAge'=>$LANG['ABS_AGE'],'bed'=>$LANG['BED'],'biostratigraphy'=>$LANG['BIOSTRAT'],'biota'=>$LANG['BIOTA'],
+			'earlyInterval'=>$LANG['EARLY_INT'],'element'=>$LANG['ELEMENT'],'formation'=>$LANG['FORMATION'],'geologicalContextID'=>$LANG['GEO_CONTEXT_ID'],
+			'lateInterval'=>$LANG['LATE_INT'],'lithogroup'=>$LANG['GROUP'],'lithology'=>$LANG['LITHOLOGY'],'localStage'=>$LANG['LOCAL_STAGE'],'member'=>$LANG['MEMBER'],
+			'slideProperties'=>$LANG['SLIDE_PROP'],'stage'=>$LANG['STAGE'],'stratRemarks'=>$LANG['STRAT_REMARKS'],'taxonEnvironment'=>$LANG['TAXON_ENVIRONMENT'],);
+		$customFieldArr = array_merge($customFieldArr, $customPaleoFieldArr);
+		ksort($customFieldArr);
+	}
 }
 $customTermArr = array('EQUALS', 'NOT_EQUALS', 'STARTS_WITH', 'LIKE', 'NOT_LIKE', 'GREATER_THAN', 'LESS_THAN', 'IS_NULL', 'NOT_NULL');
 $customArr = array();
@@ -81,14 +103,33 @@ else{
 	<form name="queryform" action="<?php echo $_SERVER['SCRIPT_NAME']; ?>" method="post" onsubmit="return verifyQueryForm(this)">
 		<fieldset style="padding:0.5rem; position: relative">
 			<legend><?php echo $LANG['RECORD_SEARCH_FORM']; ?></legend>
-			<button style="position: absolute; margin:0; right:0.5rem; top:0;" type="button" class="icon-button" onclick="copyQueryLink(event)" title="<?php echo $LANG['COPY_SEARCH']; ?>" aria-label="<?php echo $LANG['COPY_LINK']; ?>">
-				<span style="display:flex; align-content: center;">
+			<div style="float: right">
+				<button type="button" class="icon-button" onclick="copyQueryLink(event)" title="<?php echo $LANG['COPY_SEARCH']; ?>" aria-label="<?php echo $LANG['COPY_LINK']; ?>">
+					<span style="display:flex; align-content: center;">
 						<svg alt="Copies the search terms as a link." style="width:1.2em;margin-right:5px;" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg>
-						<span style="align-content: center;">
-							<?php echo $LANG['COPY_LINK']; ?>
-						</span>
-				</span>
-			</button>
+					</span>
+				</button>
+				<?php
+				if(!$crowdSourceMode){
+					$qryStr = '';
+					if($qRecordedBy) $qryStr .= '&recordedby='.$qRecordedBy;
+					if($qRecordNumber) $qryStr .= '&recordnumber='.$qRecordNumber;
+					if($qEventDate) $qryStr .= '&eventdate='.$qEventDate;
+					if($qCatalogNumber) $qryStr .= '&catalognumber='.$qCatalogNumber;
+					if($qOtherCatalogNumbers) $qryStr .= '&othercatalognumbers='.$qOtherCatalogNumbers;
+					if($qRecordEnteredBy) $qryStr .= '&recordenteredby='.$qRecordEnteredBy;
+					if($qDateEntered) $qryStr .= '&dateentered='.$qDateEntered;
+					if($qDateLastModified) $qryStr .= '&datelastmodified='.$qDateLastModified;
+					if($qryStr){
+						?>
+						<a class="button button-primary icon-button" style="display: inline-flex; padding: 7px" title="<?php echo $LANG['GO_LABEL_PRINT']; ?>" href="../reports/labelmanager.php?collid=<?= $collId . htmlspecialchars($qryStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank">
+							<img src="../../images/list.png" style="width:1.3em" />
+						</a>
+						<?php
+					}
+				}
+				?>
+			</div>
 			<?php
 			if(!$crowdSourceMode){
 				?>
@@ -178,22 +219,72 @@ else{
 						<label for="q_withoutimg"><?php echo $LANG['WITHOUT_IMAGES']; ?></label>
 					</div>
 				</div>
-				<?php
-				if($ACTIVATE_EXSICCATI){
-					if($exsList = $occManager->getExsiccatiList()){
-						?>
-						<div class="fieldGroupDiv" title="<?php echo $LANG['ENTER_EXS_TITLE']; ?>">
-							<div class="fieldDiv">
-								<?php echo $LANG['EXS_TITLE']; ?>:
-								<select name="q_exsiccatiid" style="max-width:650px">
-									<option value=""></option>
+				<?php if($qTraitArr): ?>
+					<div style="margin-bottom: 10px">
+						<div class="fieldGroupDiv">
+							<div>
+								<div>
+									<?php echo $LANG['TRAIT_FILTER']; ?>:
+								</div>
+							</div>
+							<div>
+								<select name="q_traitid[]" multiple>
 									<?php
-									foreach($exsList as $exsID => $exsTitle){
-										echo '<option value="'.$exsID.'" '.($qExsiccatiId==$exsID?'SELECTED':'').'>'.$exsTitle.'</option>';
+										foreach($qTraitArr as $traitID => $tArr){
+											echo '<option '. (in_array($traitID, $qTraitIds)? 'selected':'') .' value="'.$traitID.'">'.$tArr['name'].' [ID:'.$traitID.']</option>';
+										}
+									?>
+								</select>
+							</div>
+							<div>
+							-- <?php echo $LANG['OR_SPEC_ATTRIBUTE']; ?> --
+							</div>
+							<div>
+								<select name="q_stateid[]" multiple>
+									<?php
+									foreach($qTraitArr as $traitID => $tArr){
+										$stateArr = $tArr['state'];
+										foreach($stateArr as $stateID => $stateName){
+											echo '<option ' . (in_array($stateID, $qTraitStateIds)? 'selected':'') . ' value="'.$stateID.'">'.$tArr['name'].': '.$stateName.'</option>';
+										}
 									}
 									?>
 								</select>
 							</div>
+						</div>
+						<input id="qTraitAbsence" name="q_traitAbsence" type="checkbox" <?= $qTraitAbsence? 'checked': '' ?> value="1" />
+						<label for="qTraitAbsence"><?= $LANG['SEARCH_MISSING_TRAITS']?></label>
+						<div>
+							* <?php echo $LANG['HOLD_CTRL']; ?>
+						</div>
+					</div>
+				<?php endif ?>
+				<?php
+				if($ACTIVATE_EXSICCATI){
+					if($exsList = $occManager->getExsiccatiList()){
+						?>
+						<div style="display:flex; gap: 1rem">
+							<div class="fieldGroupDiv" title="<?php echo $LANG['ENTER_EXS_TITLE']; ?>">
+								<div class="fieldDiv">
+									<?php echo $LANG['EXS_TITLE']; ?>:
+									<select name="q_exsiccatiid" style="max-width:650px">
+										<option value=""></option>
+										<?php
+										foreach($exsList as $exsID => $exsTitle){
+											echo '<option value="'.$exsID.'" '.($qExsiccatiId==$exsID?'SELECTED':'').'>'.$exsTitle.'</option>';
+										}
+										?>
+									</select>
+								</div>
+							</div>
+
+							<div class="fieldGroupDiv" title="<?php echo $LANG['ENTER_EXS_NUMBER']; ?>">
+								<div class="fieldDiv">
+									<?php echo $LANG['EXS_NUMBER']; ?>:
+									<input id="q_exsnumber" name="q_exsnumber" type="number" value="<?= $qExsnumber  ?>">
+								</div>
+							</div>
+
 						</div>
 						<?php
 					}
@@ -263,44 +354,17 @@ else{
 				</div>
 				<?php
 			}
-			?>
-				<?php
-				if($isGenObs && ($IS_ADMIN || ($collId && array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"])))){
-					?>
-					<div class="fieldGroupDiv">
-						<div>
-							<input type="checkbox" name="q_returnall" value="1" <?php echo ($qReturnAll?'CHECKED':''); ?> /> <?php echo $LANG['SHOW_RECS_ALL']; ?>
-						</div>
-					</div>
-					<?php
-				}
+			if($isGenObs && ($IS_ADMIN || ($collId && array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"])))){
 				?>
-				<div>
+				<div class="fieldGroupDiv">
 					<div>
-
-					<?php
-					if(!$crowdSourceMode){
-						$qryStr = '';
-						if($qRecordedBy) $qryStr .= '&recordedby='.$qRecordedBy;
-						if($qRecordNumber) $qryStr .= '&recordnumber='.$qRecordNumber;
-						if($qEventDate) $qryStr .= '&eventdate='.$qEventDate;
-						if($qCatalogNumber) $qryStr .= '&catalognumber='.$qCatalogNumber;
-						if($qOtherCatalogNumbers) $qryStr .= '&othercatalognumbers='.$qOtherCatalogNumbers;
-						if($qRecordEnteredBy) $qryStr .= '&recordenteredby='.$qRecordEnteredBy;
-						if($qDateEntered) $qryStr .= '&dateentered='.$qDateEntered;
-						if($qDateLastModified) $qryStr .= '&datelastmodified='.$qDateLastModified;
-						if($qryStr){
-					?>
-						<a class="button button-primary icon-button bottom-breathing-room-rel" title="<?php echo $LANG['GO_LABEL_PRINT']; ?>" href="../reports/labelmanager.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . htmlspecialchars($qryStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank">
-							<img src="../../images/list.png" style="width:1.3em" />
-						</a>	
-					<?php
-						}
-					}
-					?>
+						<input type="checkbox" name="q_returnall" value="1" <?php echo ($qReturnAll?'CHECKED':''); ?> /> <?php echo $LANG['SHOW_RECS_ALL']; ?>
 					</div>
 				</div>
-				<div>
+				<?php
+			}
+			?>
+			<div>
 				<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
 				<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
 				<input type="hidden" name="occid" value="<?php echo $occManager->getOccId(); ?>" />
@@ -320,36 +384,37 @@ else{
 				</section>
 				<section class="fieldGroupDiv">
 					<div class="" style="margin-left: 0;">
-						<label for="orderby"><?php echo $LANG['SORT_BY']; ?>:</label>
+						<label for="orderby"><?= $LANG['SORT_BY']; ?>:</label>
 						<select name="orderby" id="orderby">
 							<option value=""></option>
-							<option value="recordedby" <?php echo ($qOrderBy=='recordedby'?'SELECTED':''); ?>><?php echo $LANG['COLLECTOR']; ?></option>
-							<option value="recordnumber" <?php echo ($qOrderBy=='recordnumber'?'SELECTED':''); ?>><?php echo $LANG['NUMBER']; ?></option>
-							<option value="eventdate" <?php echo ($qOrderBy=='eventdate'?'SELECTED':''); ?>><?php echo $LANG['DATE']; ?></option>
-							<option value="catalognumber" <?php echo ($qOrderBy=='catalognumber'?'SELECTED':''); ?>><?php echo $LANG['CAT_NUM']; ?></option>
-							<option value="recordenteredby" <?php echo ($qOrderBy=='recordenteredby'?'SELECTED':''); ?>><?php echo $LANG['ENTERED_BY']; ?></option>
-							<option value="dateentered" <?php echo ($qOrderBy=='dateentered'?'SELECTED':''); ?>><?php echo $LANG['DATE_ENTERED']; ?></option>
-							<option value="datelastmodified" <?php echo ($qOrderBy=='datelastmodified'?'SELECTED':''); ?>><?php echo $LANG['DATE_LAST_MODIFIED']; ?></option>
-							<option value="processingstatus" <?php echo ($qOrderBy=='processingstatus'?'SELECTED':''); ?>><?php echo $LANG['PROC_STATUS']; ?></option>
-							<option value="sciname" <?php echo ($qOrderBy=='sciname'?'SELECTED':''); ?>><?php echo $LANG['SCI_NAME']; ?></option>
-							<option value="family" <?php echo ($qOrderBy=='family'?'SELECTED':''); ?>><?php echo $LANG['FAMILY']; ?></option>
-							<option value="country" <?php echo ($qOrderBy=='country'?'SELECTED':''); ?>><?php echo $LANG['COUNTRY']; ?></option>
-							<option value="stateprovince" <?php echo ($qOrderBy=='stateprovince'?'SELECTED':''); ?>><?php echo $LANG['STATE_PROVINCE']; ?></option>
-							<option value="county" <?php echo ($qOrderBy=='county'?'SELECTED':''); ?>><?php echo $LANG['COUNTY']; ?></option>
-							<option value="municipality" <?php echo ($qOrderBy=='municipality'?'SELECTED':''); ?>><?php echo $LANG['MUNICIPALITY']; ?></option>
-							<option value="locationid" <?php echo ($qOrderBy=='locationid'?'SELECTED':''); ?>><?php echo $LANG['LOCATION_ID']; ?></option>
-							<option value="locality" <?php echo ($qOrderBy=='locality'?'SELECTED':''); ?>><?php echo $LANG['LOCALITY']; ?></option>
-							<option value="decimallatitude" <?php echo ($qOrderBy=='decimallatitude'?'SELECTED':''); ?>><?php echo $LANG['DEC_LAT']; ?></option>
-							<option value="decimallongitude" <?php echo ($qOrderBy=='decimallongitude'?'SELECTED':''); ?>><?php echo $LANG['DEC_LONG']; ?></option>
-							<option value="minimumelevationinmeters" <?php echo ($qOrderBy=='minimumelevationinmeters'?'SELECTED':''); ?>><?php echo $LANG['ELEV_MIN']; ?></option>
-							<option value="maximumelevationinmeters" <?php echo ($qOrderBy=='maximumelevationinmeters'?'SELECTED':''); ?>><?php echo $LANG['ELEV_MAX']; ?></option>
+							<option value="recordedby" <?= ($qOrderBy=='recordedby'?'SELECTED':''); ?>><?= $LANG['COLLECTOR']; ?></option>
+							<option value="recordnumber" <?= ($qOrderBy=='recordnumber'?'SELECTED':''); ?>><?= $LANG['NUMBER']; ?></option>
+							<option value="eventdate" <?= ($qOrderBy=='eventdate'?'SELECTED':''); ?>><?= $LANG['DATE']; ?></option>
+							<option value="catalognumber" <?= ($qOrderBy=='catalognumber'?'SELECTED':''); ?>><?= $LANG['CAT_NUM']; ?></option>
+							<option value="recordenteredby" <?= ($qOrderBy=='recordenteredby'?'SELECTED':''); ?>><?= $LANG['ENTERED_BY']; ?></option>
+							<option value="dateentered" <?= ($qOrderBy=='dateentered'?'SELECTED':''); ?>><?= $LANG['DATE_ENTERED']; ?></option>
+							<option value="datelastmodified" <?= ($qOrderBy=='datelastmodified'?'SELECTED':''); ?>><?= $LANG['DATE_LAST_MODIFIED']; ?></option>
+							<option value="processingstatus" <?= ($qOrderBy=='processingstatus'?'SELECTED':''); ?>><?= $LANG['PROC_STATUS']; ?></option>
+							<option value="sciname" <?= ($qOrderBy=='sciname'?'SELECTED':''); ?>><?= $LANG['SCI_NAME']; ?></option>
+							<option value="family" <?= ($qOrderBy=='family'?'SELECTED':''); ?>><?= $LANG['FAMILY']; ?></option>
+							<option value="country" <?= ($qOrderBy=='country'?'SELECTED':''); ?>><?= $LANG['COUNTRY']; ?></option>
+							<option value="stateprovince" <?= ($qOrderBy=='stateprovince'?'SELECTED':''); ?>><?= $LANG['STATE_PROVINCE']; ?></option>
+							<option value="county" <?= ($qOrderBy=='county'?'SELECTED':''); ?>><?= $LANG['COUNTY']; ?></option>
+							<option value="municipality" <?= ($qOrderBy=='municipality'?'SELECTED':''); ?>><?= $LANG['MUNICIPALITY']; ?></option>
+							<option value="locationid" <?= ($qOrderBy=='locationid'?'SELECTED':''); ?>><?= $LANG['LOCATION_ID']; ?></option>
+							<option value="locality" <?= ($qOrderBy=='locality'?'SELECTED':''); ?>><?= $LANG['LOCALITY']; ?></option>
+							<option value="decimallatitude" <?= ($qOrderBy=='decimallatitude'?'SELECTED':''); ?>><?= $LANG['DEC_LAT']; ?></option>
+							<option value="decimallongitude" <?= ($qOrderBy=='decimallongitude'?'SELECTED':''); ?>><?= $LANG['DEC_LONG']; ?></option>
+							<option value="minimumelevationinmeters" <?= ($qOrderBy=='minimumelevationinmeters'?'SELECTED':''); ?>><?= $LANG['ELEV_MIN']; ?></option>
+							<option value="maximumelevationinmeters" <?= ($qOrderBy=='maximumelevationinmeters'?'SELECTED':''); ?>><?= $LANG['ELEV_MAX']; ?></option>
+							<option value="labelProject" <?= ($qOrderBy=='labelProject'?'SELECTED':''); ?>><?= $LANG['LAB_PROJECT']; ?></option>
 						</select>
 					</div>
 					<div>
-						<label for="orderbydir"><?php echo $LANG['ORDER_BY'] ?>:</label>
+						<label for="orderbydir"><?= $LANG['ORDER_BY'] ?>:</label>
 						<select name="orderbydir" id="orderbydir">
-							<option value="ASC"><?php echo $LANG['ASCENDING']; ?></option>
-							<option value="DESC" <?php echo ($qOrderByDir=='DESC'?'SELECTED':''); ?>><?php echo $LANG['DESCENDING']; ?></option>
+							<option value="ASC"><?= $LANG['ASCENDING']; ?></option>
+							<option value="DESC" <?= ($qOrderByDir=='DESC'?'SELECTED':''); ?>><?= $LANG['DESCENDING']; ?></option>
 						</select>
 					</div>
 					<div >
@@ -360,10 +425,10 @@ else{
 							?>
 						</label>
 						<select name="reclimit" id="reclimit" >
-							<option <?php echo ($recLimit==500?'selected':''); ?>>500</option>
-							<option <?php echo ($recLimit==1000?'selected':''); ?>>1000</option>
-							<option <?php echo ($recLimit==2000?'selected':''); ?>>2000</option>
-							<option <?php echo ($recLimit==3000?'selected':''); ?>>3000</option>
+							<option <?= ($recLimit==500?'selected':''); ?>>500</option>
+							<option <?= ($recLimit==1000?'selected':''); ?>>1000</option>
+							<option <?= ($recLimit==2000?'selected':''); ?>>2000</option>
+							<option <?= ($recLimit==3000?'selected':''); ?>>3000</option>
 						</select> <?php //echo $LANG['RECORDS']; ?>
 					</div>
 				</section>
@@ -426,7 +491,18 @@ else{
 		f.q_dateentered.value = "";
 		f.q_datelastmodified.value = "";
 		f.q_processingstatus.value = "";
+
+
+		if(f["q_traitid[]"]) {
+			f["q_traitid[]"].value = "";
+		}
+
+		if(f["q_stateid[]"]) {
+			f["q_stateid[]"].value = "";
+		}
+
 		if(f.q_exsiccatiid) f.q_exsiccatiid.value = "";
+		if(f.q_exsnumber) f.q_exsnumber.value = "";
 
 		for(let x = 1; x < 9; x++){
 			resetCustomElements(x);

@@ -264,6 +264,13 @@ $_SESSION['citationvar'] = $searchVar;
 												'o.county' => $LANG['COUNTY'],
 												'o.minimumElevationInMeters' => $LANG['ELEVATION']
 											);
+												if (!empty($GLOBALS['ACTIVATE_PALEO'])) {
+													$sortFields = array_merge($sortFields, [
+														'paleo.lateInterval' => $LANG['LATE_INT'],
+														'paleo.earlyInterval' => $LANG['EARLY_INT'],
+														'paleo.formation' => $LANG['FORMATION']
+													]);
+												}
 											foreach ($sortFields as $k => $v) {
 												echo '<option value="' . $k . '" ' . ($k == $sortField1 ? 'SELECTED' : '') . '>' . $v . '</option>';
 											}
@@ -418,8 +425,23 @@ $_SESSION['citationvar'] = $searchVar;
 										if (isset($fieldArr['elev']) && $fieldArr['elev']) $localStr .= ', ' . $fieldArr['elev'] . 'm';
 									}
 									$localStr = trim($localStr, ' ,');
-									echo $localStr;
-									echo '</div><div style="margin:4px">';
+									echo $localStr . '</div>';
+									if (!empty($fieldArr['earlyInterval']) || !empty($fieldArr['lateInterval']) || !empty($fieldArr['formation'])) {
+										echo '<div style="margin:4px;">';
+										echo $LANG['GEO_CONTEXT'] . ':' . ' ';
+										$earlyInt = $fieldArr['earlyInterval'] ?? '';
+										$lateInt = $fieldArr['lateInterval'] ?? '';
+										if ($earlyInt || $lateInt) {
+											if ($lateInt === '' || $earlyInt === $lateInt)
+												echo '<span style="margin-right:20px;">' . $earlyInt . '</span>';
+											else
+												echo '<span style="margin-right:20px;">' . trim("$earlyInt to $lateInt") . '</span>';
+										}
+										if (!empty($fieldArr['formation']))
+											echo '<span>' . $fieldArr['formation'] . '</span>';
+										echo '</div>';
+									}
+									echo '<div style="margin:4px">';
 									echo '<b><a href="#" onclick="return openIndPU(' . $occid . ',' . ($targetClid ? $targetClid : "0") . ');">' . $LANG['FULL_DETAILS'] . '</a></b>';
 									echo '</div></td></tr><tr><td colspan="2"><hr/></td></tr>';
 								}

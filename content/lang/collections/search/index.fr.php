@@ -42,7 +42,7 @@ $LANG['LAT_LONG_SEARCH_EXPLAIN'] = "<b>Remarque:</b> la recherche d'enregistreme
 $LANG['BOUNDING_BOX'] = 'Boîte Englobante';
 $LANG['SELECT_IN_MAP'] = 'Cartographier Boîte Englobante';
 $LANG['UPPER_LATITUDE'] = 'Latitude Supérieure';
-$LANG['VALUE_BETWEEN_NUM'] = 'Valeurs comprises entre -90 et 90.';
+$LANG['VALUE_BETWEEN_NUM'] = 'Valeurs comprises entre 0 et 90.';
 $LANG['SELECT_UPPER_LAT_DIRECTION_NORTH_SOUTH'] = 'Sélectionnez la direction latérale supérieure N/S';
 $LANG['SELECT_NORTH_SOUTH'] = 'Sélectionner N/S';
 $LANG['NORTH'] = 'N';
@@ -50,7 +50,7 @@ $LANG['SOUTH'] = 'S';
 $LANG['BOTTOM_LATITUDE'] = 'Latitude Inférieure';
 $LANG['SELECT_BOTTOM_LAT_DIREC_NORTH_SOUTH'] = 'Sélectionnez la direction latérale inférieure N/S';
 $LANG['LEFT_LONGITUDE'] = 'Longitude Gauche';
-$LANG['VALUES_BETWEEN_NEG180_TO_180'] = 'Valeurs comprises entre -180 et 180.';
+$LANG['VALUES_BETWEEN_0_TO_180'] = 'Valeurs comprises entre 0 et 180.';
 
 $LANG['SELECT_LEFT_LONG_DIREC_WEST_EAST'] = 'Sélectionner la direction longue gauche W/E';
 $LANG['SELECT_WEST_EAST'] = 'Sélectionner W/E';
@@ -105,6 +105,12 @@ $LANG['LEFT_LONG'] = 'Longueur Gauche';
 $LANG['RIGHT_LONG'] = 'Droite Longue';
 $LANG['POINT_LAT'] = 'Point Lat';
 $LANG['POINT_LONG'] = 'Point Long';
+$LANG['UPPER_HEMI'] = 'Hémisphère supérieur';
+$LANG['BOTTOM_HEMI'] = 'Hémisphère inférieur';
+$LANG['LEFT_HEMI'] = 'Hémisphère gauche';
+$LANG['RIGHT_HEMI'] = 'Hémisphère droit';
+$LANG['POINT_LAT_HEMI'] = 'Point lat. hémisphère';
+$LANG['POINT_LONG_HEMI'] = 'Point long. hémisphère';
 $LANG['EVENT_DATE_START'] = 'Date de début de l\'événement';
 $LANG['EVENT_DATE_END'] = 'Date de fin de l\'événement';
 
@@ -125,5 +131,15 @@ $LANG['ASSOCIATIONS'] = 'Les associations';
 $LANG['ASSOCIATION_DESCRIPTION'] = 'Trouver toutes les occurrences de taxons qui ont l\'association suivante';
 $LANG['ASSOCIATION_DESCRIPTION_2'] = 'avec le taxon suivant';
 $LANG['ASSOCIATION_TYPE'] = 'Type d\'association';
+$LANG['CHARACTERS'] = 'Caractères';
+$LANG['CHARACTER_NOTE'] = "<b>Remarque</b>: les états de caractères dépendent des valeurs attribuées par la communauté de ce portail. Certains taxons peuvent ne pas avoir d'états de caractères attribués et peuvent donc ne pas apparaître dans vos résultats de recherche.";
+$LANG['NOCHARFOUND'] = 'Aucun caractère trouvé';
+$LANG['GEO_CONTEXT'] = 'Contexte géologique';
+$LANG['EARLY_INT'] = 'Intervalle précoce';
+$LANG['LATE_INT'] = 'Intervalle tardif';
+$LANG['LITHOGROUP'] = 'Groupe';
+$LANG['FORMATION'] = 'Formation';
+$LANG['MEMBER'] = 'Membre';
+$LANG['BED'] = 'Lit';
 
 ?>

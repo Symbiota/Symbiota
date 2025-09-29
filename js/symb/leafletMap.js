@@ -206,7 +206,7 @@ class LeafletMap {
 				if(macro_strat_data.mapData[0].ref) {
 					content += `<div style="font-size:0.8rem">
 						<span style="font-weight:bold">Source:</span>
-						${macro_strat_data.mapData[0].ref.authors}, ${macro_strat_data.mapData[0].ref.ref_title}: ${macro_strat_data.mapData[0].ref.ref_source}, ${macro_strat_data.mapData[0].ref.isbn_doi} ${macro_strat_data.mapData[0].ref.source_id} / ${macro_strat_data.mapData[0].map_id}
+						${macro_strat_data.mapData[0].ref.authors}, ${macro_strat_data.mapData[0].ref.ref_year}, ${macro_strat_data.mapData[0].ref.ref_title}: ${macro_strat_data.mapData[0].ref.ref_source}, ${macro_strat_data.mapData[0].ref.isbn_doi} ${macro_strat_data.mapData[0].ref.source_id} / ${macro_strat_data.mapData[0].map_id}
 					</div>`;
 				}
 
@@ -225,39 +225,6 @@ class LeafletMap {
 						</div>`)
 					.openOn(this.mapLayer);
 			}
-		}
-
-		/* Alternative to using the api. Uses color inference. Back if we don't want to use macrostrat api*/
-		const macro_strat_color = (e) => {
-			const zoom = e.target._zoom;
-
-			let coords = this.mapLayer.project(e.latlng, zoom).floor();
-
-			let pX = coords.x / 256;
-			let pY = coords.y / 256;
-
-			coords.x = Math.floor(pX);
-			coords.y = Math.floor(pY);
-			coords.z = zoom
-
-			const tile = new Image();
-			tile.crossOrigin = "anonymous";
-			tile.src = `https://macrostrat.org/api/v2/maps/burwell/emphasized/${coords.z}/${coords.x}/${coords.y}/tile.png`;
-
-			const canvas = document.createElement("canvas");
-			const ctx = canvas.getContext("2d");
-
-			tile.addEventListener('load', function() {
-				ctx.drawImage(tile, 0, 0);
-				const dX = Math.floor((pX - coords.x) * 512);
-				const dY = Math.floor((pY - coords.y) * 512);
-				const pixel = ctx.getImageData(dX, dY, 1, 1);	
-
-				ctx.fillRect(dX, dY, 10, 10);
-
-				const data = pixel.data;
-				console.log(`rgb(${data[0]} ${data[1]} ${data[2]} / ${data[3] / 255})`);
-			});
 		}
 
 		macro_strat.on('add', (e) => {
@@ -298,6 +265,8 @@ class LeafletMap {
       }
 
       this.setLang(map_options.lang);
+
+      L.Path.mergeOptions(this.DEFAULT_DRAW_OPTIONS.drawColor);
 
       this.mapLayer._onResize();
    }

@@ -206,6 +206,9 @@ if ($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($colli
 		button {
 			margin: 10px 15px
 		}
+		.submit__button--no-left-margin {
+			margin-left:0
+		}
 	</style>
 </head>
 
@@ -392,11 +395,14 @@ if ($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($colli
 								<option value="externalOccurrence"><?= $LANG['EXTERNAL_OCCURRENCE'] ?></option>
 								<option value="observational"><?= $LANG['OBSERVATION'] ?></option>
 							</select>
+							<div class="top-breathing-room-rel danger" style="color: var(--danger-color);">
+									<caption><?= $LANG['ASSOCIATION_UPLOAD_WARNING'] ?></caption>
+							</div>
 						</div>
 						<div class="formField-div">
 							<input name="collid" type="hidden" value="<?= $collid ?>">
 							<input name="MAX_FILE_SIZE" type="hidden" value="10000000" />
-							<button name="submitAction" type="submit" value="initiateImport"><?= $LANG['INITIALIZE_IMPORT'] ?></button>
+							<button name="submitAction" class="submit__button--no-left-margin" type="submit" value="initiateImport"><?= $LANG['INITIALIZE_IMPORT'] ?></button>
 						</div>
 					</fieldset>
 				</form>

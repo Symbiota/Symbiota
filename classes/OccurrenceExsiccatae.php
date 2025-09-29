@@ -727,7 +727,7 @@ class OccurrenceExsiccatae {
 		if($collArr){
 			$sql ='SELECT DISTINCT c.collid, c.collectionname, c.institutioncode, c.collectioncode '.
 				'FROM omcollections c '.
-				'WHERE (colltype != "Preserved Specimens") '.
+				'WHERE (colltype NOT IN("Preserved Specimens","Fossil Specimens")) '.
 				'ORDER BY c.collectionname, c.institutioncode';
 			//echo $sql;
 			$rs = $this->conn->query($sql);

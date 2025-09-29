@@ -50,4 +50,89 @@ $LANG['IMG_LINK'] = 'Bouton Lier';
 $LANG['SKIP_SEARCH'] = 'Passer au contenu du tableau';
 $LANG['SAME_WINDOW'] = 'ouvrir dans la même fenêtre';
 
+$LANG['INSTITUTION_CODE'] = 'Code de l\'établissement (remplacer)';
+$LANG['COLLEC_CODE'] = 'Code de la collection (remplacer)';
+$LANG['OWNER_CODE'] = 'Code du propriétaire (remplacer)';
+
+$LANG['CATALOG_NUM'] = 'Numéro de catalogue';
+$LANG['FAMILY'] = 'Famille';
+$LANG['ID_QUALIFIER'] = 'Qualificateur d\'identification';
+$LANG['SCI_NAME'] = 'Nom scientifique';
+$LANG['SCI_NAME_AUTHOR'] = 'Auteur';
+$LANG['RECORD_COLLEC'] = 'Collecteur';
+$LANG['RECORD_NUM'] = 'Numéro de collecteur';
+$LANG['ASSOC_COLLEC'] = 'Collecteurs associés';
+$LANG['EVENT_DATE'] = 'Date de l\'événement';
+$LANG['VERB_EVENT_DATE'] = 'Date textuelle';
+
+$LANG['ID_REMARKS'] = 'Remarques d\'identification';
+$LANG['TAXON_REMARKS'] = 'Remarques sur le taxon';
+$LANG['ID_BY'] = 'Identifié par';
+$LANG['DATE_IDENTIFIED'] = 'Date d\'identification';
+$LANG['ID_REF'] = 'Références d\'identification';
+
+$LANG['COUNTRY'] = 'Pays';
+$LANG['STATE_PROVINCE'] = 'État/Province';
+$LANG['COMTÉ'] = 'Comté';
+$LANG['MUNICIPALITY'] = 'Municipalité';
+$LANG['LOCALITY'] = 'Localité';
+$LANG['LATITUDE'] = 'Latitude';
+$LANG['LONGITUDE'] = 'Longitude';
+
+$LANG['ID_TAG_NAME'] = 'Nom de la balise d\'identification';
+$LANG['ID_TAG_VAL'] = 'Valeur de la balise d\'identification';
+$LANG['UNCERTAINTY_METERS'] = 'Incertitude en mètres';
+$LANG['VERB_COORDINATES'] = 'Coordonnées verbatim';
+$LANG['DATUM'] = 'Donnée';
+
+$LANG['GEOREF_BY'] = 'Géoréférencé par';
+$LANG['GEOREF_PROTOCOL'] = 'Protocole de géoréférence';
+$LANG['GEOREF_SOURCE'] = 'Sources de géoréférence';
+$LANG['GEOREF_VERIF_STATUS'] = 'Statut de vérification de la géoréférence';
+$LANG['GEOREF_REMARKS'] = 'Remarques de géoréférence';
+
+$LANG['ELEV_MIN_METERS'] = 'Élév. Min. (m)';
+$LANG['ELEV_MAX_METERS'] = 'Élév. Max. (m)';
+$LANG['VERB_ELEV'] = 'Élévation verbatim.';
+$LANG['DEPTH_MIN_METERS'] = 'Profondeur. Min. (m)';
+$LANG['DEPTH_MAX_METERS'] = 'Profondeur. Max. (m)';
+$LANG['VERB_DEPTH'] = 'Profondeur textuelle';
+
+$LANG['HABITAT'] = 'Habitat';
+$LANG['INTERVAL_EARLY'] = 'Intervalle précoce';
+$LANG['INTERVAL_LATE'] = 'Intervalle tardif';
+$LANG['GROUP'] = 'Groupe';
+$LANG['FORMATION'] = 'Formation';
+$LANG['MEMBER'] = 'Membre';
+$LANG['BED'] = 'Lit';
+$LANG['SUBSTRATE'] = 'Substrat';
+$LANG['OCCURR_REMARKS'] = 'Notes (Remarques d\'occurrence)';
+$LANG['ASSOC_TAXA'] = 'Taxons associés';
+$LANG['VERB_ATTRIBUTES'] = 'Description';
+$LANG['LIFE_STAGE'] = 'Étape de vie';
+$LANG['SEX'] = 'Sexe';
+
+$LANG['COUNT'] = 'Nombre d\'individus';
+$LANG['SAMPLE_PROTOCOL'] = 'Protocole d\'échantillonnage';
+$LANG['PREPARATIONS'] = 'Préparations';
+$LANG['REPRODUCTIVE_CONDITION'] = 'Condition reproductive';
+$LANG['TYPE_STATUS'] = 'Statut du type';
+$LANG['CULTIVATION_STATUS'] = 'Statut de culture';
+$LANG['ESTABLISHMENT_MEANS'] = 'Moyens d\'établissement';
+$LANG['DATA_GENERALIZATIONS'] = 'Généralisations des données';
+
+$LANG['DISPOSITION'] = 'Disposition';
+$LANG['DUPE_QUANTITY'] = 'Quantité de doublons';
+$LANG['DATE_LAST_MODIFIED'] = 'Date de dernière modification';
+$LANG['LABEL_PROJECT'] = 'Étiquette du projet';
+$LANG['PROCESS_STATUS'] = 'État du traitement';
+$LANG['RECORD_ENTERED_BY'] = 'Saisi par';
+$LANG['DBPK'] = 'dbpk';
+$LANG['BASIS_REC'] = 'Base d\'enregistrement';
+$LANG['LANG'] = 'Langue';
+$LANG['CONTINENT'] = 'Continent';
+$LANG['ISLAND_GROUP'] = 'Groupe d\'îles';
+$LANG['ISLAND'] = 'Île';
+$LANG['WATER_BODY'] = 'Plan d\'eau';
+
 ?>

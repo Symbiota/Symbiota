@@ -454,39 +454,50 @@ class ChecklistManager extends Manager{
 		}
 	}
 
-  public function getExternalVoucherArr(){
+  /**
+   * Gets all external vouchers, currently only supports iNaturalist. 
+   * If given a $tid param then only get vouchers associated to that tid. 
+   * Requires $taxaList be set or a $tid to be passed in.
+   *
+   * @param int|null $tid Optional Taxonomic id that will give only vouchers of the associated id
+   * @return array with the key structure of [ (tid) => [[ (clCoordID) => [ display => string, url => string, id => int|string] ]]]
+   **/
+  public function getExternalVoucherArr($tid = null) {
 		$externalVoucherArr = array();
-		if($this->taxaList){
+
+		if(is_numeric($tid) || $this->taxaList) {
+			$taxaList = is_numeric($tid)? [ $tid ]: array_keys($this->taxaList);
 			$clidStr = $this->clid;
 			if($this->childClidArr){
 				$clidStr .= ','.implode(',',array_keys($this->childClidArr));
 			}
 			$sql = 'SELECT clCoordID, clid, tid, sourceIdentifier, referenceUrl, dynamicProperties
 				FROM fmchklstcoordinates
-				WHERE (clid IN ('.$clidStr.')) AND (tid IN('.implode(',',array_keys($this->taxaList)).')) AND sourceName = "EXTERNAL_VOUCHER"';
+				WHERE (clid IN (' . $clidStr . ')) AND (tid IN(' . implode(',', $taxaList) . ')) AND sourceName = "EXTERNAL_VOUCHER"';
+
 			$rs = $this->conn->query($sql);
 			while ($r = $rs->fetch_object()){
-				$dynPropArr = json_decode($r->dynamicProperties);
-				foreach($dynPropArr as $vouch) {
-					$displayStr = '';
-					if(!empty($vouch->user)) $displayStr = $vouch->user;
-					if(strlen($displayStr) > 25){
-						//Collector string is too big, thus reduce
-						$strPos = strpos($displayStr,';');
-						if(!$strPos) $strPos = strpos($displayStr,',');
-						if(!$strPos) $strPos = strpos($displayStr,' ',10);
-						if($strPos) $displayStr = substr($displayStr,0,$strPos).'...';
-					}
-					if($vouch->date) $displayStr .= ' '.$vouch->date;
-					if(!trim($displayStr)) $displayStr = 'undefined voucher';
-					$displayStr .= ' ['.$vouch->repository.($vouch->id?'-'.$vouch->id:'').']';
-					$externalVoucherArr[$r->tid][$r->clCoordID]['display'] = trim($displayStr);
-					$url = 'https://www.inaturalist.org/observations/'.$r->sourceIdentifier;
-					$externalVoucherArr[$r->tid][$r->clCoordID]['url'] = $url;
+				$dynVoucher = json_decode($r->dynamicProperties);
+				$displayStr = '';
+				if(!empty($dynVoucher->user)) $displayStr = $dynVoucher->user;
+				if(strlen($displayStr) > 25){
+					//Collector string is too big, thus reduce
+					$strPos = strpos($displayStr,';');
+					if(!$strPos) $strPos = strpos($displayStr,',');
+					if(!$strPos) $strPos = strpos($displayStr,' ',10);
+					if($strPos) $displayStr = substr($displayStr,0,$strPos).'...';
 				}
+				if($dynVoucher->date) $displayStr .= ' '.$dynVoucher->date;
+				if(!trim($displayStr)) $displayStr = 'undefined voucher';
+				$displayStr .= ' ['.$dynVoucher->repository.($dynVoucher->id?'-'.$dynVoucher->id:'').']';
+				$externalVoucherArr[$r->tid][$r->clCoordID]['display'] = trim($displayStr);
+				$url = 'https://www.inaturalist.org/observations/'.$r->sourceIdentifier;
+				$externalVoucherArr[$r->tid][$r->clCoordID]['url'] = $url;
+				$externalVoucherArr[$r->tid][$r->clCoordID]['id'] = $dynVoucher->id;
 			}
 			$rs->free();
 		}
+
 		return $externalVoucherArr;
 	}
 

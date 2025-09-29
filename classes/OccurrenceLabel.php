@@ -166,9 +166,9 @@ class OccurrenceLabel {
 			}
 			//Get occurrence records
 			$this->setLabelFieldArr();
-			$sql2 = 'SELECT '.implode(',',$this->labelFieldArr).' FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.tid LEFT JOIN taxstatus ts ON ts.tid = o.tidinterpreted LEFT JOIN taxstatus pts ON ts.parenttid = pts.tid LEFT JOIN taxa pt ON pts.tid = pt.tid '.$sqlWhere;
-			if ($rs2 = $this->conn->query($sql2)) {
-				while ($row2 = $rs2->fetch_assoc()) {
+			$sql2 = 'SELECT ' . implode(',', $this->labelFieldArr) . ' FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.tid LEFT JOIN taxstatus ts ON ts.tid = o.tidinterpreted LEFT JOIN taxstatus pts ON ts.parenttid = pts.tid LEFT JOIN taxa pt ON pts.tid = pt.tid '.$sqlWhere;
+			if($rs2 = $this->conn->query($sql2)){
+				while($row2 = $rs2->fetch_assoc()){
 					$occid = $row2['occid'];
 					foreach ($row2 as $fieldName => $fieldValue) {
 						$retArr[$occid][strtolower($fieldName)] = $fieldValue ?? '';
@@ -563,7 +563,6 @@ class OccurrenceLabel {
 		$labelArr['labelFooter']['className'] = $postArr['fClassName'];
 		$labelArr['labelFooter']['style'] = $postArr['fStyle'];
 		$labelArr['customStyles'] = $postArr['customStyles'];
-		$labelArr['defaultCss'] = $postArr['defaultCss'];
 		$labelArr['customCss'] = $postArr['customCss'];
 		$labelArr['customJS'] = $postArr['customJS'];
 		$labelArr['labelType'] = $postArr['labelType'];
@@ -727,7 +726,7 @@ class OccurrenceLabel {
 	}
 
 	//Annotation functions
-	public function getAnnoArray($detidArr, $speciesAuthors) {
+	public function getAnnoArray($detidArr, $speciesAuthors, $familyName) {
 		$retArr = array();
 		if ($detidArr) {
 			$authorArr = array();
@@ -751,7 +750,11 @@ class OccurrenceLabel {
 			}
 
 			//Get determination records
-			$sql2 = 'SELECT d.detid, d.identifiedBy, d.dateIdentified, d.sciname, d.scientificNameAuthorship, d.identificationQualifier, ' .
+			$familyAdditionStr = '';
+			if($familyName){
+				$familyAdditionStr .= 'd.family as family1, o.family as family2, ';
+			}
+			$sql2 = 'SELECT ' . $familyAdditionStr . 'd.detid, d.identifiedBy, d.dateIdentified, d.sciname, d.scientificNameAuthorship, d.identificationQualifier, ' .
 				'd.identificationReferences, d.identificationRemarks, IFNULL(o.catalogNumber,o.otherCatalogNumbers) AS catalogNumber ' .
 				'FROM omoccurdeterminations d INNER JOIN omoccurrences o ON d.occid = o.occid ' . $sqlWhere;
 			//echo 'SQL: '.$sql2;
@@ -761,6 +764,7 @@ class OccurrenceLabel {
 					if (array_key_exists($row2['detid'], $authorArr)) {
 						$row2['parentauthor'] = $authorArr[$row2['detid']];
 					}
+					$row2['family'] = $row2['family1'] ?? $row2['family2'] ?? '';
 					$retArr[$row2['detid']] = $row2;
 				}
 				$rs2->free();
@@ -894,5 +898,28 @@ class OccurrenceLabel {
 		$newStr = preg_replace('/\s\s+/', ' ', $newStr);
 		$newStr = $this->conn->real_escape_string($newStr);
 		return $newStr;
+	}
+
+	public static function processSciNameLabelForWord($scinameStr, $queryKey, $queryVal, &$textrun, $parentAuthor, $shouldAddNextElement, &$shouldStop){
+		if(!$shouldStop){
+			if(strpos($scinameStr,$queryKey) !== false){
+				$shouldStop = true;
+				$trimmedQueryKey = trim($queryKey);
+				$scinameArr = explode(' ' . $trimmedQueryKey . ' ', $scinameStr);
+				$currentTxt = htmlspecialchars($scinameArr[0]) . ' ';
+				$textrun->addText($currentTxt, 'scientificnameFont');
+				if($parentAuthor){
+					$currentTxt = htmlspecialchars($parentAuthor) . ' ';
+					$textrun->addText($currentTxt, 'scientificnameauthFont');
+				} 
+				$currentTxt = $queryVal . ' ';
+				$textrun->addText($currentTxt, 'scientificnameinterFont');
+				if($shouldAddNextElement){
+					$currentTxt = htmlspecialchars($scinameArr[1]) . ' ';
+					$textrun->addText($currentTxt, 'scientificnameFont');
+				}
+			}
+			
+		}
 	}
 }

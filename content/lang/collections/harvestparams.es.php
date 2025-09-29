@@ -69,4 +69,11 @@ $LANG['SELECT_TAXON_TYPE'] = 'Seleccionar tipo de taxón';
 $LANG['DIRECTION'] = 'Dirección';
 $LANG['DISTANCE_UNIT'] = 'Unidad de distancia';
 $LANG['MATERIAL_SAMPLE'] = 'Muestra de Materiales';
+$LANG['GEO_CONTEXT'] = 'Contexto geológico';
+$LANG['EARLY_INT'] = 'Intervalo temprano';
+$LANG['LATE_INT'] = 'Intervalo tardío';
+$LANG['LITHOGROUP'] = 'Grupo';
+$LANG['FORMATION'] = 'Formación';
+$LANG['MEMBER'] = 'Miembro';
+$LANG['BED'] = 'Estrato';
 ?>

@@ -100,6 +100,9 @@ class SpecUpload{
 
 	private function setCollInfo(){
 		if($this->collId){
+			//Set default paleo activation based on what is set within symbini config file
+			if(!empty($GLOBALS['ACTIVATE_PALEO'])) $this->paleoSupport = true;
+			//Set collection metadata and configurations
 			$sql = 'SELECT DISTINCT c.collid, c.collectionname, c.institutioncode, c.collectioncode, c.collectionguid, c.icon, c.colltype, c.managementtype, '.
 				'cs.uploaddate, c.securitykey, c.guidtarget, c.dynamicproperties '.
 				'FROM omcollections c LEFT JOIN omcollectionstats cs ON c.collid = cs.collid '.
@@ -124,6 +127,7 @@ class SpecUpload{
 						foreach($propArr['editorProps']['modules-panel'] as $modArr){
 							if(isset($modArr['paleo'])){
 								if($modArr['paleo']['status'] == 1) $this->paleoSupport = true;
+								elseif($modArr['paleo']['status'] == 0) $this->paleoSupport = false;
 							}
 							elseif(isset($modArr['matSample'])){
 								if($modArr['matSample']['status'] == 1) $this->materialSampleSupport = true;
@@ -186,11 +190,12 @@ class SpecUpload{
 			$sql = $this->getPendingImportSql($searchVariables) ;
 			//echo "<div>".$sql."</div>";
 			$fieldMap = array();
+			$excludeKeys = ['eon', 'era', 'period', 'epoch', 'stage'];
 			$rs = $this->conn->query($sql, MYSQLI_USE_RESULT);
 			//Determine which fields have data
 			while($r = $rs->fetch_assoc()){
 				foreach($r as $k => $v){
-					if($v && $v !== '0') $fieldMap[$k] = '';
+					if($v && $v !== '0' && !in_array($k, $excludeKeys)) $fieldMap[$k] = '';
 				}
 			}
 			$rs->free();

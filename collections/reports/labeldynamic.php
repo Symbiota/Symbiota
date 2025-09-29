@@ -68,6 +68,9 @@ if($SYMB_UID){
 <html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['LABELS']; ?></title>
+
+		<link rel="stylesheet" type="text/css" href="<?= $CSS_BASE_PATH ?>/symbiota/collections/reports/labelhelpers.css">
+
 		<style type="text/css">
 			.row { display: flex; flex-wrap: nowrap; margin-left: auto; margin-right: auto;}
 			.label { page-break-before: auto; page-break-inside: avoid; }
@@ -114,13 +117,6 @@ if($SYMB_UID){
 			@media print { .controls { display: none; } }
 		</style>
 		<?php
-		if(isset($targetLabelFormatArr['defaultCss']) && $targetLabelFormatArr['defaultCss']){
-			$cssPath = $targetLabelFormatArr['defaultCss'];
-			if(substr($cssPath,0,1) == '/' && !file_exists($cssPath)){
-				if(file_exists($SERVER_ROOT.$targetLabelFormatArr['defaultCss'])) $cssPath = $CLIENT_ROOT.$targetLabelFormatArr['defaultCss'];
-			}
-			echo '<link href="' . htmlspecialchars($cssPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" type="text/css" rel="stylesheet" />'."\n";
-		}
 		if(isset($targetLabelFormatArr['customCss']) && $targetLabelFormatArr['customCss']){
 			$cssPath = $targetLabelFormatArr['customCss'];
 			if(substr($cssPath,0,1) == '/' && !file_exists($cssPath)){

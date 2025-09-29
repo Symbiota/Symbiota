@@ -62,7 +62,11 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
                zoom: 3,
                center: [41,-95],
             };
-            map = new LeafletMap("map_canvas", dmOptions);
+			map = new LeafletMap("map_canvas",
+				dmOptions,
+				JSON.parse(`<?= json_encode($GEO_JSON_LAYERS ?? []) ?>`)
+			);
+
             const leafletSmallPin = img => L.icon({
                iconUrl: img,
                iconSize:     [12, 20],

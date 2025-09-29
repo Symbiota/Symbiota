@@ -35,6 +35,9 @@ $LANG['COUNTRY'] = 'Pays';
 $LANG['STATE_PROVINCE'] = 'État/province';
 $LANG['COUNTY'] = 'Comté';
 $LANG['ELEVATION'] = 'Élévation';
+$LANG['FORMATION'] = 'Formation';
+$LANG['EARLY_INT'] = 'Intervalle Précoce';
+$LANG['LATE_INT'] = 'Intervalle Tardif';
 
 $LANG['PAGINATION_FIRST'] = 'Premiers';
 $LANG['LAST'] = 'dernier';
@@ -82,4 +85,5 @@ $LANG['SEE_MAP_POINT'] = 'Voir le point sur la carte';
 $LANG['RECORD_COUNT_EXCEEDS_LIMIT'] = 'Le nombre d\'enregistrements dépasse la limite';
 $LANG['NO_RECORDS'] = 'Aucun enregistrement trouvé correspondant à la requête';
 $LANG['ASSOCIATIONS'] = 'Ressources Associées';
+$LANG['GEO_CONTEXT'] = 'Contexte Géologique';
 ?>

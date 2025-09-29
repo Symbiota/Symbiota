@@ -45,6 +45,8 @@ class OccurrenceMapManager extends OccurrenceManager {
 				'o.othercatalognumbers, c.institutioncode, c.collectioncode, c.CollectionName '.
 				'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
 
+			if (!empty($GLOBALS['ACTIVATE_PALEO']))
+				$sql = $this->getPaleoSqlWith() . $sql;
 			$this->sqlWhere .= 'AND (ts.taxauthid = 1 OR ts.taxauthid IS NULL) ';
 
 			$sql .= $this->getTableJoins($this->sqlWhere);
@@ -178,6 +180,8 @@ class OccurrenceMapManager extends OccurrenceManager {
 	private function setRecordCnt(){
 		if($this->sqlWhere){
 			$sql = "SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences o ".$this->getTableJoins($this->sqlWhere).$this->sqlWhere;
+			if (!empty($GLOBALS['ACTIVATE_PALEO']))
+				$sql = $this->getPaleoSqlWith() . $sql;
 			$result = $this->conn->query($sql);
 			if($result){
 				if($row = $result->fetch_object()){

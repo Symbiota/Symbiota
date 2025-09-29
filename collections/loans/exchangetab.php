@@ -24,7 +24,7 @@ if(!$transInstList) echo '<script type="text/javascript">displayNewExchange();</
 			<div style="padding-top:10px;float:left;">
 				<span>
 					<b><?php echo $LANG['TRANS_NO']; ?>:</b>
-					<input type="text" autocomplete="off" name="identifier" maxlength="255" style="width:120px;border:2px solid black;text-align:center;font-weight:bold;color:black;" value="1" />
+					<input type="text" autocomplete="off" name="identifier" maxlength="255" style="width:120px;border:2px solid black;text-align:center;font-weight:bold;color:black;" placeholder="1" />
 				</span>
 			</div>
 			<div style="clear:left;padding-top:6px;float:left;">

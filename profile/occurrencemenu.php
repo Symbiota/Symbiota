@@ -16,7 +16,7 @@ $oArr = array();
 $collArr = $specHandler->getCollectionArr();
 foreach($collArr as $id => $collectionArr){
 	if($collectionArr['colltype'] == 'General Observations') $genArr[$id] = $collectionArr;
-	elseif($collectionArr['colltype'] == 'Preserved Specimens') $cArr[$id] = $collectionArr;
+	elseif($collectionArr['colltype'] == 'Preserved Specimens' || $collectionArr['colltype'] == 'Fossil Specimens') $cArr[$id] = $collectionArr;
 	elseif($collectionArr['colltype'] == 'Observations') $oArr[$id] = $collectionArr;
 }
 ?>

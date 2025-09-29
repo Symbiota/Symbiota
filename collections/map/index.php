@@ -10,6 +10,8 @@ if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/list
 	include_once($SERVER_ROOT.'/content/lang/collections/list.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/list.en.php');
 
+$filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
+
 header('Content-Type: text/html; charset='.$CHARSET);
 header("Accept-Encoding: gzip, deflate, br");
 ob_start('ob_gzhandler');
@@ -141,6 +143,10 @@ if(isset($_REQUEST['llpoint'])) {
    }
 }
 
+//Gets the geo context terms
+$gtsTermArr = $mapManager->getPaleoGtsTerms();
+$paleoTimes = $mapManager->getPaleoTimes();
+
 $serverHost = GeneralUtil::getDomain();
 ?>
 <!DOCTYPE html>
@@ -173,7 +179,7 @@ $serverHost = GeneralUtil::getDomain();
 			include_once($SERVER_ROOT.'/includes/googleMap.php');
 		}
 		?>
-
+		<script src="<?php echo $filename ?>" type="text/javascript"></script>
 		<script src="../../js/symb/wktpolygontools.js" type="text/javascript"></script>
 		<script src="../../js/symb/MapShapeHelper.js" type="text/javascript"></script>
 		<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
@@ -269,19 +275,29 @@ $serverHost = GeneralUtil::getDomain();
 		}
 
 		#mapSearchRecordsTable th {
-		top: 0;
-		position: sticky;
+			top: 0;
+			position: sticky;
+		}
+
+		#recordstaxaheader, #search_criteria {
+			font-weight: bold;
 		}
 
 		#tabs2 {
-		display:none;
-		padding:0px;
-		display: block;
-		height: 100%;
-		/* overflow: scroll; */
+			display:none;
+			padding:0px;
+			display: block;
+			height: 100%;
+			/* overflow: scroll; */
 		}
+
+		/* Overwrite so it isn't white on gray */
+		.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {
+			color: currentcolor;
+		}
+
 		.cluster text {
-		text-shadow: 0 0 8px white, 0 0 8px white, 0 0 8px white;
+			text-shadow: 0 0 8px white, 0 0 8px white, 0 0 8px white;
 		}
 
 		<?php if($shouldUseMinimalMapHeader){ ?>
@@ -322,6 +338,9 @@ $serverHost = GeneralUtil::getDomain();
 
 		//Indciates if clustering should be drawn. Only comes into effect after redraw or refreshes
 		let clusteroff = true;
+
+		//Get paleo times
+		const paleoTimes = <?= json_encode($paleoTimes ?? []) ?>;
 
 		const colorChange = new Event("colorchange",  {
 			bubbles: true,
@@ -2135,7 +2154,7 @@ $serverHost = GeneralUtil::getDomain();
 			<div class="panel-content">
 				<div id="mapinterface">
 					<div id="accordion">
-						<h3 style="margin-top:0"><?= $LANG['SEARCH_CRITERIA'] ?></h3>
+						<h3 id="search_criteria" style="margin-top:0"><?= $LANG['SEARCH_CRITERIA'] ?></h3>
 						<div id="tabs1" style="padding:0px;height:100%">
 							<form name="mapsearchform" id="mapsearchform" data-ajax="false">
 								<ul>
@@ -2348,6 +2367,63 @@ $serverHost = GeneralUtil::getDomain();
 										<?= $LANG['INCLUDE_CULTIVATED'] ?>
 									</div>
 									<div><hr></div>
+									<?php
+									if(!empty($GLOBALS['ACTIVATE_PALEO'])){
+										?>
+										<div id="searchFormPaleo">
+											<div style="margin-top:5px; display:flex;">
+												<label for="lithogroup"> <?= $LANG['LITHOGROUP'] ?>: </label>
+												<input data-role="none" type="text" id="lithogroup" style="flex:1;margin-left: 0.5rem;" name="lithogroup" value="<?php echo $mapManager->getSearchTerm('lithogroup'); ?>" />
+											</div>
+											<div style="margin-top:5px; display:flex;">
+												<label for="formation"> <?= $LANG['FORMATION'] ?>: </label>
+												<input data-role="none" type="text" id="formation" style="flex:1;margin-left: 0.5rem;" name="formation" value="<?php echo $mapManager->getSearchTerm('formation'); ?>" />
+											</div>
+											<div style="margin-top:5px; display:flex;">
+												<label for="member"> <?= $LANG['MEMBER'] ?>: </label>
+												<input data-role="none" type="text" id="member" style="flex:1;margin-left: 0.5rem;" name="member" value="<?php echo $mapManager->getSearchTerm('member'); ?>" />
+											</div>
+											<div style="margin-top:5px; display:flex;">
+												<label for="bed"> <?= $LANG['BED'] ?>: </label>
+												<input data-role="none" type="text" id="bed" style="flex:1;margin-left: 0.5rem;" name="bed" value="<?php echo $mapManager->getSearchTerm('bed'); ?>" />
+											</div>
+											<div style="margin-top:5px;">
+												<label for="lateInterval"><?php echo $LANG['LATE_INT']; ?>:</label>
+												<select name="lateInterval" id="lateInterval">
+													<option value=""></option>
+													<?php
+													$lateIntervalTerm = $mapManager->getSearchTerm('lateInterval');
+													if($lateIntervalTerm && !array_key_exists($lateIntervalTerm, $gtsTermArr)){
+														echo '<option value="'.$lateIntervalTerm.'" SELECTED>'.$lateIntervalTerm.' - mismatched term</option>';
+														echo '<option value="">---------------------------</option>';
+													}
+													foreach($gtsTermArr as $term => $rankid){
+														echo '<option value="'.$term.'" '.($lateIntervalTerm==$term?'SELECTED':'').'>'.$term.'</option>';
+													}
+													?>
+												</select>
+											</div>
+											<div style="margin-top:5px;">
+												<label for="earlyInterval"><?php echo $LANG['EARLY_INT']; ?>:</label>
+												<select name="earlyInterval" id="earlyInterval">
+													<option value=""></option>
+													<?php
+													$earlyIntervalTerm = $mapManager->getSearchTerm('earlyInterval');
+													if($earlyIntervalTerm && !array_key_exists($earlyIntervalTerm, $gtsTermArr)){
+														echo '<option value="'.$earlyIntervalTerm.'" SELECTED>'.$earlyIntervalTerm.' - mismatched term</option>';
+														echo '<option value="">---------------------------</option>';
+													}
+													foreach($gtsTermArr as $term => $rankid){
+														echo '<option value="'.$term.'" '.($earlyIntervalTerm==$term?'SELECTED':'').'>'.$term.'</option>';
+													}
+													?>
+												</select>
+											</div>
+										</div>
+										<div><hr></div>
+										<?php
+									}
+									?>
 									<input type="hidden" name="reset" value="1" />
 								</div>
 							</form>
@@ -2460,7 +2536,7 @@ $serverHost = GeneralUtil::getDomain();
 								<input data-role="none" name="csvreclimit" id="csvreclimit" type="hidden" value="<?= $recLimit; ?>" />
 							</form>
 						</div>
-						<h3 id="recordstaxaheader" style="display:none;padding-left:30px;"><?= $LANG['RECORDS_TAXA'] ?></h3>
+						<h3 id="recordstaxaheader" style="display:none;"><?= $LANG['RECORDS_TAXA'] ?></h3>
 						<div id="tabs2" style="display:none;padding:0px;">
 							<ul>
 								<li><a href='#occurrencelist'><?= $LANG['RECORDS'] ?></a></li>

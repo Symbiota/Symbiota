@@ -65,11 +65,11 @@ function setPortXY(portWidth,portHeight){
 	document.cookie = "symbimgport=" + portWidth + ":" + portHeight;
 }
 
-function initImgRes(){
+function initImgRes() {
 	var imgObj = document.getElementById("activeimg-"+activeImgIndex);
 	if(imgObj){
 		if(imgLgArr[activeImgIndex]){
-			var imgRes = getCookie("symbimgres");
+			var imgRes = getImgRes(); 
 			if(imgRes == 'lg') changeImgRes('lg');
 		}
 		else{
@@ -259,6 +259,11 @@ function pushDwcArrToForm(msg,bgColor){
 	
 }
 
+function getImgRes() {
+	const resRadio = document.querySelector('#imgres input[name="resradio"]:checked');
+	return resRadio? resRadio.value: getCookie("symbimgres");
+}
+
 function nextLabelProcessingImage(imgCnt){
 	document.getElementById("labeldiv-"+(imgCnt-1)).style.display = "none";
 	var imgObj = document.getElementById("labeldiv-"+imgCnt);
@@ -268,8 +273,9 @@ function nextLabelProcessingImage(imgCnt){
 	}
 	imgObj.style.display = "block";
 	
-	initImageTool("activeimg-"+imgCnt);
 	activeImgIndex = imgCnt;
+	initImageTool("activeimg-"+imgCnt);
+	initImgRes()
 	
 	return false;
 }

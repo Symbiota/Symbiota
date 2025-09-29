@@ -85,7 +85,7 @@ class TaxonomyCleaner extends Manager{
 			$itemCnt = 0;
 			while($r = $rs->fetch_object()){
 				$editLink = '[<a href="#" onclick="openPopup(\'' . htmlspecialchars($GLOBALS['CLIENT_ROOT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) .
-					'/collections/editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=sciname&q_customtype1=EQUALS&q_customvalue1=' . urlencode($r->sciname) . '&collid=' . 
+					'/collections/editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=sciname&q_customtype1=EQUALS&q_customvalue1=' . urlencode($r->sciname) . '&collid=' .
 					htmlspecialchars($this->collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '\'); return false;">' . htmlspecialchars($r->cnt, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' specimens <img src="../../images/edit.png" style="width:1.2em;" /></a>]';
 				$this->logOrEcho('<div style="margin-top:5px">Resolving #'.$taxaCnt.': <b><i>'.$r->sciname.'</i></b>'.($r->family?' ('.$r->family.')':'').'</b> '.$editLink.'</div>');
 				if($r->family) $taxonHarvester->setDefaultFamily($r->family);
@@ -674,7 +674,7 @@ class TaxonomyCleaner extends Manager{
 		if(isset($USER_RIGHTS['CollAdmin'])) $collArr = $USER_RIGHTS['CollAdmin'];
 		if($IS_ADMIN) $collArr = array_merge($collArr, explode(',',$this->collid));
 		$sql = 'SELECT collid, CONCAT_WS("-",institutioncode, collectioncode) AS code, collectionname, icon, colltype, managementtype FROM omcollections '.
-			'WHERE (colltype IN("Preserved Specimens","Observations")) AND (collid IN('.implode(',', $collArr).')) '.
+			'WHERE (colltype IN("Preserved Specimens","Fossil Specimens","Observations")) AND (collid IN('.implode(',', $collArr).')) '.
 			'ORDER BY collectionname, collectioncode ';
 		//echo $sql;
 		$rs = $this->conn->query($sql);

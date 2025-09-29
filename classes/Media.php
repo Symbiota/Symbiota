@@ -1334,6 +1334,7 @@ class Media {
 		}
 		return $bool;
 	}
+
 	/**
 	 * @return bool
 	 * @param mixed $imgArr
@@ -1349,6 +1350,60 @@ class Media {
 		}
 		return $bool;
 	}
+
+	/**
+	 * @return void
+	 * @param int $source Occid for source of media copy
+	 * @param int $target Occid for target of media copy
+	 * @param Mysqli $conn Database connection with write permissions
+	 * @thows mysqli_sql_exception
+	 */
+	public static function copyOccurrenceMedia(int $source, int $target, $conn): void {
+		if(!isset($conn)) {
+			$conn = Database::connect('write');
+		}
+		mysqli_begin_transaction($conn);
+
+		// Using * to copy all and using mediaID which
+		// is safe since it was newly added. Be careful
+		// accessing other values they have differed in
+		// casing portal to portal in the past.
+		$fetchSql = 'SELECT * FROM media where occid = ?';
+		$fetchRs = QueryUtil::executeQuery($conn, $fetchSql, [$source]);
+
+		$mediaItems = $fetchRs->fetch_all(MYSQLI_ASSOC);
+
+		if(count($mediaItems) <= 0) {
+			return;
+		}
+
+		$oldMediaID = $mediaItems[0]['mediaID'];
+		unset($mediaItems[0]['mediaID']);
+		$keys = array_keys($mediaItems[0]);
+
+		$parameters = str_repeat('?,', count($keys) - 1) . '?';
+		$sql = 'INSERT INTO media (' . implode(',', $keys) . ') VALUES (' . $parameters .')';
+
+		$insertTagSql = 'INSERT INTO imagetag(mediaID, keyValue, imageBoundingBox, notes)
+			SELECT ?, keyValue, imageBoundingBox, notes from imagetag
+			where mediaID = ?';
+
+		foreach($mediaItems as $item) {
+			if(array_key_exists('mediaID', $item)) {
+				$oldMediaID = $item['mediaID'];
+				unset($item['mediaID']);
+			}
+
+			$item['occid'] = $target;
+
+			QueryUtil::executeQuery($conn, $sql, array_values($item));
+
+			$rs = QueryUtil::executeQuery($conn, 'SELECT LAST_INSERT_ID() AS ID');
+			$newMediaID = ($rs->fetch_assoc())['ID'];
+			QueryUtil::executeQuery($conn, $insertTagSql, [$newMediaID, $oldMediaID]);
+		}
+
+		mysqli_commit($conn);
+	}
 }
 
-?>
