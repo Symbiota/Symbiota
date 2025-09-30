@@ -8,6 +8,7 @@ Translated by: Google Translate (2025-06-03)
 
 $LANG['EXTERNAL_VOUCHER_LINKING'] = 'Vinculación de cupones externos';
 $LANG['CHECKLIST_ID_REQUIRED'] = 'Se requiere una identificación de lista de verificación para que esta herramienta funcione';
+$LANG['EXTERNAL_ID_REQUIRED'] = 'Se requiere un identificador externo para que esta herramienta funcione. Configurar en el administrador de la lista de comprobación.';
 $LANG['TARGET_TAXON_REQUIRED'] = 'Se requiere un ID de taxón de destino para que esta herramienta funcione';
 $LANG['LINK_VOUCHER'] = 'Cupón de enlace';
 $LANG['TAXON_NAME'] = 'Nombre del taxón';
