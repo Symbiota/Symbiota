@@ -55,6 +55,7 @@ $LANG['H_CONTACT_US'] = 'Contact Us';
 $LANG['H_SKIP_NAV'] = 'Skip Navigation';
 
 //Footer variables
+$LANG['F_NSF'] = 'U.S. NSF';
 $LANG['F_VISIT_NSF'] = 'Visit U.S. National Science Foundation website';
 $LANG['F_NSF_LOGO'] = 'Logo for the U.S. National Science Foundation';
 $LANG['F_VISIT_IDIGBIO'] = 'Visit iDigBio website';
