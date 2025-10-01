@@ -31,5 +31,6 @@ $LANG['LINK_ADDRESS'] = 'Link Address';
 $LANG['ADD_ADDRESS'] = 'Add a new address not on the list';
 $LANG['ADD_INST'] = 'Add an institution not on list';
 $LANG['LINK_URL_REQ'] = 'Link URL and title is required';
+$LANG['CLOSE'] = 'Close';
 
 ?>

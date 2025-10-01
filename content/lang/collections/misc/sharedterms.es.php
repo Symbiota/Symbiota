@@ -31,5 +31,6 @@ $LANG['LINK_ADDRESS'] = 'Vincular Dirección';
 $LANG['ADD_ADDRESS'] = 'Añadir una nueva dirección no incluida en la lista';
 $LANG['ADD_INST'] = 'Añadir una nueva institución no incluida en la lista';
 $LANG['LINK_URL_REQ'] = 'URL de enlace y título requeridos';
+$LANG['CLOSE'] = 'Cerrar';
 
 ?>
