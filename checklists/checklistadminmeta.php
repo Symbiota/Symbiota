@@ -21,8 +21,9 @@ if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
 }
 $dynamPropsArr = array();
 if(isset($clArray['dynamicProperties']) && $clArray['dynamicProperties']){
-	$dynamPropsArr = json_decode($clArray['dynamicProperties'], true);
+	$dynamPropsArr = json_decode(str_replace('&quot;', '"', $clArray['dynamicProperties']), true);
 }
+
 ?>
 <script type="text/javascript" src="../js/tinymce/tinymce.min.js"></script>
 <script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js" type="text/javascript"></script>

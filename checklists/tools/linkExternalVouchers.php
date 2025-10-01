@@ -59,6 +59,7 @@ if($clManager->getAssociatedExternalService()) {
 				const voucher_loader = document.getElementById('voucher_loader')
 				const voucher_error = document.getElementById('voucher_error')
 				const voucher_submit_button = document.getElementById('voucher_submit_button')
+				let status = true;
 
 				external_vouchers_container.style.display = 'none';
 				voucher_error.style.display = 'none';
@@ -75,9 +76,12 @@ if($clManager->getAssociatedExternalService()) {
 					voucher_loader.style.display = 'none';
 					voucher_error.style.display = '';
 					voucher_error.textContent = e;	
+					status = false;
 				} finally {
 					if(voucher_submit_button) voucher_submit_button.disabled = null;
 				}
+
+				return status;
 			}
 
 			async function fetchObservations(taxon_name, external_id, linked_external_vouchers = [], page=1) {
@@ -145,11 +149,12 @@ if($clManager->getAssociatedExternalService()) {
 				runWithLoading(async () => {
 					if(!checklist_id) throw Error("<?= $LANG['CHECKLIST_ID_REQUIRED'] ?>");
 					if(!target_tid) throw Error("<?= $LANG['TARGET_TAXON_REQUIRED'] ?>");
+					if(!external_id) throw Error("<?= $LANG['EXTERNAL_ID_REQUIRED'] ?>");
 
 					await fetchObservations(taxon_name, external_id, linked_external_vouchers); 
 
-				}).then( () => {
-					if(app_state.vouchers.length <= 0) {
+				}).then(status => {
+					if(status && app_state.vouchers.length <= 0) {
 						const external_vouchers_container = document.getElementById('external_vouchers_container')
 						const all_vouchers_linked = document.getElementById('all_vouchers_linked')
 						external_vouchers_container.style.display = 'none';
@@ -234,7 +239,8 @@ if($clManager->getAssociatedExternalService()) {
 			</template>
 
 			<div id="external_vouchers_container" style="display:none">
-			<?php if(!empty($clid)): ?>
+			<?php if(empty($clid)): echo $LANG['CHECKLIST_ID_REQUIRED']; ?>
+			<?php else: ?>
 				<form method="POST" id="external_voucher_form" onsubmit="external_vouchers_sumbit(event)">
 					<h1><?= $LANG['EXTERNAL_VOUCHER_LINKING'] ?> - iNaturalist</h1>
 
@@ -262,7 +268,7 @@ if($clManager->getAssociatedExternalService()) {
 
 					<button id="voucher_submit_button" class="button" style="margin-top:1rem">Submit</button>
 				</form>
-			<?php else: echo $LANG['CHECKLIST_ID_REQUIRED']; endif ?>
+			<?php endif ?>
 			</div>
 
 			<div id="voucher_loader" style="position:absolute; top:50%; width:100%; text-align:center">

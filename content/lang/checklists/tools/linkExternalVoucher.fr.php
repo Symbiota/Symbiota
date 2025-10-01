@@ -8,6 +8,7 @@ Translated by: Google Translate (2025-06-03)
 
 $LANG['EXTERNAL_VOUCHER_LINKING'] = 'Lien vers un bon externe';
 $LANG['CHECKLIST_ID_REQUIRED'] = 'Un identifiant de liste de contrôle est requis pour que cet outil fonctionne';
+$LANG['EXTERNAL_ID_REQUIRED'] = 'Un identifiant externe est requis pour que cet outil fonctionne. Configurer dans Checklist Admin.';
 $LANG['TARGET_TAXON_REQUIRED'] = 'Un identifiant de taxon cible est requis pour que cet outil fonctionne';
 $LANG['LINK_VOUCHER'] = 'Lien Bon';
 $LANG['TAXON_NAME'] = 'Nom du taxon';
