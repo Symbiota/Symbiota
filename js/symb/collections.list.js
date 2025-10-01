@@ -78,3 +78,17 @@ function targetPopup(f) {
 	window.open('', 'downloadpopup', 'left=100,top=50,width=900,height=700');
 	f.target = 'downloadpopup';
 }
+
+function setSessionQueryStr() {
+	try {
+		const data = document.getElementById('service-container');
+		const searchVar = data.getAttribute('data-search-var');
+		if(searchVar) {
+			sessionStorage.querystr = searchVar;
+		}
+		return searchVar;
+	} catch(err) {
+		console.log('ERROR Setting session querystr: ' + err);
+		return false;
+	}
+}

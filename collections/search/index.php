@@ -55,6 +55,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/collections/individual/domManipulationUtils.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/localitySuggest.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.list.js?ver=20251002>" type="text/javascript"></script>
 	<script>
 		const clientRoot = '<?php echo $CLIENT_ROOT; ?>';
 		const paleoTimes = <?= json_encode($paleoTimes ?? []) ?>;
@@ -101,6 +102,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 </head>
 
 <body>
+	<div id="service-container" data-search-var="<?= $collectionSource; ?>"></div>
 	<?php
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
@@ -789,13 +791,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 <script src="<?= $CLIENT_ROOT ?>/js/symb/collections.index.js?ver=20171215>" type="text/javascript"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
-		<?php
-		if ($collectionSource) {
-		?>
-			sessionStorage.querystr = "<?php echo $collectionSource; ?>";
-		<?php
-		}
-		?>
+		setSessionQueryStr();
 		setSearchForm(document.getElementById("params-form"));
 		toggleTheNonDefaultsClosed(<?php echo $DEFAULTCATID ?>);
 		toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
