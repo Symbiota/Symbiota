@@ -6,10 +6,7 @@ function copyUrl(){
 	if(sessionStorage.querystr){
 		activeLink = activeLink + "?" + encodedQueryStr(sessionStorage.querystr);
 	}
-	const verbatimUrl = sessionStorage.getItem('verbatimSearchUrl');
-	if(verbatimUrl){
-		activeLink = verbatimUrl;
-	}
+
 	$temp.val(activeLink).select();
 	document.execCommand("copy");
 	$temp.remove();
