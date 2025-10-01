@@ -766,11 +766,7 @@ function simpleSearch() {
   errors = validateForm();
   let isValid = errors.length == 0;
   if (isValid) {
-    const searchUrl = shortenSearchUrlIfAllCollectionsAreSearched();
-    sessionStorage.setItem('verbatimSearchUrl', searchUrl);
     const submitForm = document.getElementById("params-form");
-    submitForm.method = "POST"; // if GET is used instead, the URL is too short for complex polygon + many collections queries. Hence, the need for POST.
-    submitForm.action = getSearchUrl();
     submitForm.submit();
   } else {
     handleValErrors(errors);
