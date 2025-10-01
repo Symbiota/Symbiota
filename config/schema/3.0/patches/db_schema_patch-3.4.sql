@@ -267,3 +267,10 @@ ALTER TABLE `users`
 #Add update to omoccurdeterminations.dateLastModified tracked any update to the row
 ALTER TABLE omoccurdeterminations 
   MODIFY COLUMN dateLastModified timestamp DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP;
+
+
+ALTER TABLE `uploadspectemp` 
+  ADD INDEX `IX_uploadspectemp_country` (`country` ASC),
+  ADD INDEX `IX_uploadspectemp_stateProvince` (`stateProvince` ASC);
+  
+  
