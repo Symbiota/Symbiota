@@ -3,16 +3,16 @@ class MySQLiConnectionFactory {
 	static $SERVERS = array(
 		array(
 			'type' => 'readonly',
-			'host' => 'host.docker.internal',
+			'host' => 'mariadb',
 			'username' => 'ci_user',
 			'password' => 'ci_password',
-			'database' => 'testing',
+			'database' => 'ci_testing',
 			'port' => '3306',
 			'charset' => 'utf8'		//utf8, latin1, latin2, etc
 		),
 		array(
 			'type' => 'write',
-			'host' => 'host.docker.internal',
+			'host' => 'mariadb',
 			'username' => 'ci_user',
 			'password' => 'ci_password',
 			'database' => 'ci_testing',

@@ -9,6 +9,10 @@ services:
       - 80:80
     volumes:
       - .:/var/www/html/
+    depends_on:
+        mariadb:
+            condition: 'service_healthy'
+            restart: true
   mariadb:
     image: 'mariadb:11'
     expose:
