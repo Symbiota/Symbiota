@@ -531,7 +531,9 @@ class Media {
 					$width = $size[0];
 					$height = $size[1];
 
+
 					$storage->upload($file);
+					$createdFilepaths[] = $storage->getDirPath($file);
 
 					$urls = [ 
 						'thumbnailUrl' => [
