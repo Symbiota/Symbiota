@@ -20,6 +20,9 @@ jobs:
     - name: 'Run Setup Script'
       run : cd config && bash setup.bash
 
+    - name: 'Check Config Script'
+      run : cat config/dbconnnection.php
+
     - name: 'Build Docker Resources'
       run : |
         echo --- Building and Starting up docker ---
@@ -37,5 +40,5 @@ jobs:
     - name: 'Install PhpUnit'
       run : docker exec symbiota-testing-web-1 composer require --dev phpunit/phpunit
 
-    - name: 'Execute tests Unit Tests via PHPUnit'
-      run: docker exec symbiota-testing-web-1 ./vendor/bin/phpunit tests/Unit
+    - name: 'Execute Tests via PHPUnit'
+      run: docker exec symbiota-testing-web-1 ./vendor/bin/phpunit
