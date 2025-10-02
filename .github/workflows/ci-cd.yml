@@ -14,6 +14,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: 'Setup Testing Database Config'
+      run : mv config/dbconnection_testing_template.php config/dbconnnection.php
+
     - name: 'Run Setup Script'
       run : cd config && bash setup.bash
 
@@ -28,7 +31,8 @@ jobs:
       if: failure()
       run: |
         docker ps
-        docker logs symbiota-web-1
+        docker logs symbiota-testing-web-1
+        docker logs symbiota-testing-mariadb-1
 
     - name: 'Install PhpUnit'
       run : docker exec symbiota-testing-web-1 composer require --dev phpunit/phpunit

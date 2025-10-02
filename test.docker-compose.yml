@@ -9,3 +9,26 @@ services:
       - 80:80
     volumes:
       - .:/var/www/html/
+  mariadb:
+    image: 'mariadb:11'
+    expose:
+        - 3306
+    ports:
+        - '3306:3306'
+    environment:
+        MYSQL_ROOT_PASSWORD: 'ci_root_password'
+        MYSQL_ROOT_HOST: '%'
+        MYSQL_DATABASE: 'ci_testing'
+        MYSQL_USER: 'ci_user'
+        MYSQL_PASSWORD: 'ci_password'
+        MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    healthcheck:
+        test:
+            - CMD
+            - healthcheck.sh
+            - '--connect'
+            - '--innodb_initialized'
+        retries: 3
+        interval: 10s
+        start_period: 30s
+        timeout: 10s
