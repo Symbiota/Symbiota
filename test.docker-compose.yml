@@ -9,6 +9,8 @@ services:
       - 80:80
     volumes:
       - .:/var/www/html/
+    networks:
+      - symbiota
     depends_on:
         mariadb:
             condition: 'service_healthy'
@@ -26,6 +28,8 @@ services:
         MYSQL_USER: 'ci_user'
         MYSQL_PASSWORD: 'ci_password'
         MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    networks:
+      - symbiota
     healthcheck:
         test:
             - CMD
@@ -36,3 +40,6 @@ services:
         interval: 10s
         start_period: 30s
         timeout: 10s
+networks:
+  symbiota:
+    driver: bridge
