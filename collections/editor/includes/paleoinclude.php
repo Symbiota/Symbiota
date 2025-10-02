@@ -87,7 +87,7 @@ if(isset($occArr['lateInterval'])) $lateIntervalTerm = $occArr['lateInterval'];
 	<div>
 		<div id="earlyIntervalDiv">
 			<?= $LANG['EARLY_INTERVAL_LABEL'] ?>
-			<a href="#" onclick="return dwcDoc('earlyInterval')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+			<a href="#" onclick="return dwcDoc('early-interval-and-late-interval')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
 			<select name="earlyInterval" onchange="earlyIntervalChanged(this.form)">
 				<option value=""></option>
 				<?php
@@ -103,7 +103,7 @@ if(isset($occArr['lateInterval'])) $lateIntervalTerm = $occArr['lateInterval'];
 		</div>
 		<div id="lateIntervalDiv">
 			<?= $LANG['LATE_INTERVAL_LABEL'] ?>
-			<a href="#" onclick="return dwcDoc('lateInterval')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+			<a href="#" onclick="return dwcDoc('late-interval')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
 			<select name="lateInterval" onchange="lateIntervalChanged(this.form)">
 				<option value=""></option>
 				<?php
@@ -123,12 +123,12 @@ if(isset($occArr['lateInterval'])) $lateIntervalTerm = $occArr['lateInterval'];
 	<div style="clear:both">
 		<div id="absoluteAgeDiv">
 			<?= $LANG['ABSOLUTE_AGE_LABEL'] ?>
-			<a href="#" onclick="return dwcDoc('absoluteAge')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+			<a href="#" onclick="return dwcDoc('absolute-age')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
 			<input type="text" name="absoluteAge" value="<?php echo isset($occArr['absoluteAge'])?$occArr['absoluteAge']:''; ?>" onchange="fieldChanged('absoluteAge');" />
 		</div>
 		<div id="localStageDiv">
 			<?= $LANG['LOCAL_STAGE_LABEL'] ?>
-			<a href="#" onclick="return dwcDoc('localStage')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+			<a href="#" onclick="return dwcDoc('local-stage')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
 			<input type="text" name="localStage" value="<?php echo isset($occArr['localStage'])?$occArr['localStage']:''; ?>" onchange="fieldChanged('localStage');" />
 		</div>
 	</div>
@@ -145,7 +145,7 @@ if(isset($occArr['lateInterval'])) $lateIntervalTerm = $occArr['lateInterval'];
 		</div>
 		<div id="taxonEnvironmentDiv">
 			<?= $LANG['TAXON_ENVIRONMENT_LABEL'] ?>
-			<a href="#" onclick="return dwcDoc('taxonEnvironment')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+			<a href="#" onclick="return dwcDoc('taxon-environment')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
 			<?php
 			$taxonEnvir = '';
 			if(isset($occArr['taxonEnvironment'])) $taxonEnvir = $occArr['taxonEnvironment'];
@@ -190,7 +190,7 @@ if(isset($occArr['lateInterval'])) $lateIntervalTerm = $occArr['lateInterval'];
 	<div style="clear:both">
 		<div id="stratRemarksDiv">
 			<?= $LANG['STRAT_REMARKS_LABEL'] ?>
-			<a href="#" onclick="return dwcDoc('stratRemarks')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+			<a href="#" onclick="return dwcDoc('stratigraphic-remarks')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
 			<textarea type="text" name="stratRemarks" onchange="fieldChanged('stratRemarks');"><?php echo isset($occArr['stratRemarks'])?$occArr['stratRemarks']:''; ?></textarea>
 		</div>
 	</div>
@@ -202,12 +202,12 @@ if(isset($occArr['lateInterval'])) $lateIntervalTerm = $occArr['lateInterval'];
 		</div>
 		<div id="slidePropertiesDiv">
 			<?= $LANG['SLIDE_PROPERTIES_LABEL'] ?>
-			<a href="#" onclick="return dwcDoc('slideProperties')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+			<a href="#" onclick="return dwcDoc('slide-properties')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
 			<input type="text" name="slideProperties" value="<?php echo isset($occArr['slideProperties'])?$occArr['slideProperties']:''; ?>" onchange="fieldChanged('slideProperties');" />
 		</div>
 		<div id="geologicalContextIDDiv">
 			<?= $LANG['GEOLOGICAL_CONTEXT_ID_LABEL'] ?>
-			<a href="#" onclick="return dwcDoc('geologicalContextID')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+			<a href="#" onclick="return dwcDoc('geological-context-id')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
 			<input type="text" name="geologicalContextID" value="<?php echo isset($occArr['geologicalContextID'])?$occArr['geologicalContextID']:''; ?>" onchange="fieldChanged('geologicalContextID');" />
 		</div>
 	</div>
