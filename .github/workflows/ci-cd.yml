@@ -20,9 +20,6 @@ jobs:
     - name: 'Run Setup Script'
       run : cd config && bash setup.bash
 
-    - name: 'Check Config Script'
-      run : cat config/dbconnection.php
-
     - name: 'Build Docker Resources'
       run : |
         echo --- Building and Starting up docker ---
@@ -31,7 +28,7 @@ jobs:
         echo --- Containers Up ---
 
     - name: Debugging Container Failure
-      # if: failure()
+      if: failure()
       run: |
         docker ps
         docker logs symbiota-testing-web-1
