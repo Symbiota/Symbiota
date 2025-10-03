@@ -4,12 +4,9 @@ function copyUrl(){
 	$("body").append($temp);
 	let activeLink = host + window.location.pathname;
 	if(sessionStorage.querystr){
-		activeLink = activeLink + "?" + encodedQueryStr(sessionStorage.querystr);
+		activeLink = activeLink + "?" + sessionStorage.querystr;
 	}
-	const verbatimUrl = sessionStorage.getItem('verbatimSearchUrl');
-	if(verbatimUrl){
-		activeLink = verbatimUrl;
-	}
+
 	$temp.val(activeLink).select();
 	document.execCommand("copy");
 	$temp.remove();
@@ -77,24 +74,21 @@ function openMapPU(searchParams = "") {
 	window.open(mapUrl.href,'Map Search','toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=1,resizable=1,width=1150,height=900,left=20,top=20');
 }
 
-function encodedQueryStr(querystr){
-	let encodedQueryStr = "";
-	querystr.split("&").forEach(function(part) {
-		let eq = part.indexOf("=");
-		let key = part;
-		let val = "";
-		if(eq > -1){
-			key = part.substr(0, eq);
-			val = encodeURIComponent(part.substr(eq + 1));
-			if(key == 'db') val = val.replace(/%2C/g, ",");		
-		}
-		if(encodedQueryStr != "") encodedQueryStr = encodedQueryStr + "&";
-		encodedQueryStr = encodedQueryStr + key + "=" + val;
-	});
-	return encodedQueryStr;
-}
-
 function targetPopup(f) {
 	window.open('', 'downloadpopup', 'left=100,top=50,width=900,height=700');
 	f.target = 'downloadpopup';
+}
+
+function setSessionQueryStr() {
+	try {
+		const data = document.getElementById('service-container');
+		const searchVar = data.getAttribute('data-search-var');
+		if(searchVar) {
+			sessionStorage.querystr = searchVar;
+		}
+		return searchVar;
+	} catch(err) {
+		console.log('ERROR Setting session querystr: ' + err);
+		return false;
+	}
 }

@@ -2049,8 +2049,7 @@ $serverHost = GeneralUtil::getDomain();
 
 				externalPortalHosts = JSON.parse(data.getAttribute('data-external-portal-hosts'));
 
-				searchVar = data.getAttribute('data-search-var');
-				if(searchVar) sessionStorage.querystr = searchVar;
+				searchVar = setSessionQueryStr();
 
 				let shapeType;
 
@@ -2123,7 +2122,7 @@ $serverHost = GeneralUtil::getDomain();
 	  	<h1 class="page-heading screen-reader-only">Map Interface</h1>
 		<div
 			id="service-container"
-			data-search-var="<?=htmlspecialchars($searchVar)?>"
+			data-search-var="<?=$searchVar?>"
 			data-map-bounds="<?=htmlspecialchars(json_encode($bounds))?>"
 			data-taxa-map="<?=htmlspecialchars(json_encode($taxaArr))?>"
 			data-coll-map="<?=htmlspecialchars(json_encode($collArr))?>"

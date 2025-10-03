@@ -9,47 +9,6 @@ const formSites = document.getElementById("site-list") || null;
 const searchFormColls = document.getElementById("search-form-colls") || null;
 const searchFormPaleo = document.getElementById("search-form-geocontext") || null;
 
-// list of parameters to be passed to url, modified by getSearchUrl method
-let paramNames = [
-  "db",
-  "datasetid",
-  "catnum",
-  "includeothercatnum",
-  "hasimages",
-  "hasaudio",
-  "typestatus",
-  "hasgenetic",
-  "hascoords",
-  "includecult",
-  "country",
-  "state",
-  "county",
-  "local",
-  "elevlow",
-  "elevhigh",
-  "llbound",
-  "footprintGeoJson",
-  "llpoint",
-  "eventdate1",
-  "eventdate2",
-  "taxa",
-  "usethes",
-  "taxontype",
-  "collnum",
-  "collector",
-  "attr[]",
-  "materialsampletype",
-  "association-type",
-  "associated-taxa",
-  "taxontype-association",
-  "usethes-associations",
-  "earlyInterval",
-  "lateInterval",
-  "lithogroup",
-  "formation",
-  "member",
-  "bed",
-];
 const uLat = document.getElementById("upperlat") || null;
 const uLatNs = document.getElementById("upperlat_NS") || null;
 const bLat = document.getElementById("bottomlat") || null;
@@ -496,137 +455,6 @@ function getTraitsSelected() {
 }
 
 /**
- * Searches specified fields and capture values
- * @param {String} paramName Name of parameter to be looked for in form
- * Passes objects to `paramsArr`
- * Passes default objects
- */
-function getParam(paramName) {
-  //Default country
-  // paramsArr['country'] = 'USA';
-  const elements = document.getElementsByName(paramName);
-  const firstEl = elements[0];
-
-  let elementValues = "";
-
-  // for traits
-  if (paramName === "attr[]") {
-    const selectedTraits = getTraitsSelected();
-    elementValues = selectedTraits?.map((selectedTrait) => selectedTrait.value);
-  }
-
-  // for db and datasetid
-  if (paramName === "db") {
-    const selectedCollections = getCollsSelected();
-    elementValues = selectedCollections?.map(
-      (selectedCollection) => selectedCollection.value
-    );
-  } else if (paramName === "datasetid") {
-    // won't happen in vanilla symbiota
-    let datasetArr = [];
-    elements.forEach((el) => {
-      if (el.checked) {
-        let isSite = el.dataset.domain != undefined;
-        if (isSite) {
-          let isDomainSel = document.getElementById(el.dataset.domain).checked;
-          isDomainSel ? "" : datasetArr.push(el.value);
-        } else {
-          datasetArr.push(el.value);
-        }
-      }
-    });
-    elementValues = datasetArr;
-  } else if (paramName === "llbound") {
-    // Only if inputs aren't empty
-    if (
-      uLat.value != "" &&
-      bLat.value != "" &&
-      lLng.value != "" &&
-      rLng.value != ""
-    ) {
-      let uLatVal = uLatNs.value == "S" ? uLat.value * -1 : uLat.value * 1;
-      let bLatVal = bLatNs.value == "S" ? bLat.value * -1 : bLat.value * 1;
-      let lLngVal = lLngEw.value == "W" ? lLng.value * -1 : lLng.value * 1;
-      let rLngVal = rLngEw.value == "W" ? rLng.value * -1 : rLng.value * 1;
-      elementValues = `${uLatVal};${bLatVal};${lLngVal};${rLngVal}`;
-    }
-  } else if (paramName === "llpoint") {
-    if (
-      pLat.value != "" &&
-      pLng.value != "" &&
-      pRadius.value != "" &&
-      pRadiusUn.value != ""
-    ) {
-      let pLatVal =
-        pLatNs.value == "S"
-          ? Math.round(pLat.value * -1 * 100000) / 100000
-          : Math.round(pLat.value * 100000) / 100000;
-      let pLngVal =
-        pLngEw.value == "W"
-          ? Math.round(pLng.value * -1 * 100000) / 100000
-          : Math.round(pLng.value * 100000) / 100000;
-      let pRadiusVal = pRadius.value + ";" + pRadiusUn.value;
-      elementValues = `${pLatVal};${pLngVal};${pRadiusVal}`;
-    }
-  } else if (paramName === "elevlow" || paramName === "elevhigh") {
-    firstEl.type === "number" && firstEl != ""
-      ? (elementValues = firstEl.value)
-      : "";
-  } else if (elements[0] != undefined) {
-    switch (firstEl.tagName) {
-      case "INPUT":
-        (firstEl.type === "checkbox" && firstEl.checked) ||
-        (firstEl.type === "text" && firstEl != "")
-          ? (elementValues = firstEl.value)
-          : "";
-        break;
-      case "SELECT":
-        elementValues = firstEl.options[firstEl.selectedIndex].value;
-        break;
-      case "TEXTAREA":
-        elementValues = firstEl.value;
-        break;
-    }
-  }
-  elementValues != "" ? (paramsArr[paramName] = elementValues) : "";
-  return paramsArr;
-}
-
-/**
- * Creates search URL with parameters
- * Define parameters to be looked for in `paramNames` array
- */
-function getSearchUrl(appendParams = false) {
-  const formatPreference = document.getElementById("list-button").checked
-    ? "list"
-    : "table";
-  const harvestUrl = location.href.slice(0, location.href.indexOf("search"));
-  const urlSuffix =
-    formatPreference === "list" ? "list.php" : "listtabledisplay.php";
-
-  const baseUrl = new URL(harvestUrl + urlSuffix);
-
-  if(appendParams){
-    // Clears array temporarily to avoid redundancy
-    paramsArr = {};
-  
-    // Grabs params from form for each param name
-    paramNames.forEach((param, i) => {
-      return getParam(paramNames[i]);
-    });
-  
-    // Appends each key value for each param in search url
-    let queryString = Object.keys(paramsArr).map((key) => {
-      baseUrl.searchParams.append(key, paramsArr[key]);
-    });
-  
-    baseUrl.searchParams.append("comingFrom", "newsearch");
-  }
-
-  return baseUrl.href;
-}
-
-/**
  * Form validation functions
  * @returns {Array} errors Array of errors objects with form element it refers to (elId), for highlighting, and errorMsg
  */
@@ -766,24 +594,11 @@ function simpleSearch() {
   errors = validateForm();
   let isValid = errors.length == 0;
   if (isValid) {
-    const searchUrl = shortenSearchUrlIfAllCollectionsAreSearched();
-    sessionStorage.setItem('verbatimSearchUrl', searchUrl);
     const submitForm = document.getElementById("params-form");
-    submitForm.method = "POST"; // if GET is used instead, the URL is too short for complex polygon + many collections queries. Hence, the need for POST.
-    submitForm.action = getSearchUrl();
     submitForm.submit();
   } else {
     handleValErrors(errors);
   }
-}
-
-function shortenSearchUrlIfAllCollectionsAreSearched(){
-  const searchUrlOriginal = getSearchUrl(true);
-    let searchUrl = searchUrlOriginal;
-    if(searchUrlOriginal.includes("db=all")){
-      searchUrl = searchUrlOriginal.replace(/db=all(?:%[^&?]*)*/, "db=all");
-    }
-    return searchUrl;
 }
 
 /**
