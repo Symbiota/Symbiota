@@ -55,14 +55,19 @@ $LANG['H_CONTACT_US'] = 'Contactez-Nous';
 $LANG['H_SKIP_NAV'] = 'Sauter la Navigation';
 
 //Footer variables
+$LANG['F_NSF'] = 'NSF Américain';
 $LANG['F_VISIT_NSF'] = 'Visitez le site Web de la U.S. National Science Foundation';
 $LANG['F_NSF_LOGO'] = 'Logo de la U.S. National Science Foundation';
 $LANG['F_VISIT_IDIGBIO'] = 'Visitez le site iDigBio';
 $LANG['F_IDIGBIO_LOGO'] = 'Logo du iDigBio, or, Integrated Digitized Biocollections';
+$LANG['F_KU-BI'] = 'KU Biodiversity Institute and Natural History Museum';
+$LANG['F_KU-BI_LOGO'] = 'Logo du KU Biodiversity Institute and Natural History Museum';
 $LANG['F_BIOKIC'] = 'Biodiversity Knowledge Integration Center';
 $LANG['F_BIOKIC_LOGO'] = 'Logo du Biodiversity Knowledge Integration Center';
 $LANG['F_SSH'] = "Centre d'Assistance Symbiota";
 $LANG['F_SSH_LOGO'] = "Logo du Centre d'Assistance Symbiota";
+$LANG['F_GBIF'] = 'Global Biodiversity Information Facility (GBIF)';
+$LANG['F_GBIF_LOGO'] = 'Logo du Global Biodiversity Information Facility (GBIF)';
 $LANG['F_NSF_AWARDS'] = 'Ce projet rendu possible grâce aux U.S. National Science Foundation Awards';
 $LANG['F_MORE_INFO'] = "Pour plus d'informations sur Symbiota";
 $LANG['F_READ_DOCS'] = 'lire la documentation';
