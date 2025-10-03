@@ -129,7 +129,7 @@ class OccurrenceImport extends UtilitiesFileImport {
 				foreach($fields as $key) {
 					$record_idx = $this->fieldMap[$key] ?? $this->fieldMap[strtolower($key)] ?? false;
 					if($record_idx && $recordArr[$record_idx]) {
-						$data[$key] = $recordArr[$record_idx];
+						$data[$key] = $this->encodeString($recordArr[$record_idx]);
 					}
 				}
 
@@ -166,7 +166,7 @@ class OccurrenceImport extends UtilitiesFileImport {
 				$detArr = array();
 				foreach ($fieldArr as $field) {
 					$fieldLower = strtolower($field);
-					if (isset($this->fieldMap[$fieldLower]) && !empty($recordArr[$this->fieldMap[$fieldLower]])) $detArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
+					if (isset($this->fieldMap[$fieldLower]) && !empty($recordArr[$this->fieldMap[$fieldLower]])) $detArr[$field] = $this->encodeString($recordArr[$this->fieldMap[$fieldLower]]);
 				}
 				if (empty($detArr['sciname'])) {
 					$this->logOrEcho('ERROR loading determination: Scientific name is empty.', 1);
@@ -195,7 +195,7 @@ class OccurrenceImport extends UtilitiesFileImport {
 				$assocArr = array();
 				foreach ($fieldArr as $field) {
 					$fieldLower = strtolower($field);
-					if (isset($this->fieldMap[$fieldLower])) $assocArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
+					if (isset($this->fieldMap[$fieldLower])) $assocArr[$field] = $this->encodeString($recordArr[$this->fieldMap[$fieldLower]]);
 				}
 				if ($assocArr) {
 					if (!empty($postArr['associationType']) && !empty($postArr['relationship'])) {
@@ -258,7 +258,7 @@ class OccurrenceImport extends UtilitiesFileImport {
 				$msArr = array();
 				foreach ($fieldArr as $field) {
 					$fieldLower = strtolower($field);
-					if (isset($this->fieldMap[$fieldLower]) && !empty($recordArr[$this->fieldMap[$fieldLower]])) $msArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
+					if (isset($this->fieldMap[$fieldLower]) && !empty($recordArr[$this->fieldMap[$fieldLower]])) $msArr[$field] = $this->encodeString($recordArr[$this->fieldMap[$fieldLower]]);
 				}
 				if (isset($msArr['ms_catalogNumber']) && $msArr['ms_catalogNumber']) {
 					$msArr['catalogNumber'] = $msArr['ms_catalogNumber'];
@@ -282,7 +282,7 @@ class OccurrenceImport extends UtilitiesFileImport {
 					if ($fieldLower == 'occid') {
 						$identifierArr[$field] = $occid;
 					} else {
-						if (isset($this->fieldMap[$fieldLower])) $identifierArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
+						if (isset($this->fieldMap[$fieldLower])) $identifierArr[$field] = $this->encodeString($recordArr[$this->fieldMap[$fieldLower]]);
 					}
 				}
 				if (empty($identifierArr['occid'])) {
