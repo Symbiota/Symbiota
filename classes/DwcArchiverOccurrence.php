@@ -1,10 +1,10 @@
 <?php
 // Only needed for symbiotaAssociations version number.
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
-include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 class DwcArchiverOccurrence extends Manager{
 
+	private $exportID;
 	private $occurDefArr = array();
 	private $schemaType;
 	private $extended = false;
@@ -12,7 +12,6 @@ class DwcArchiverOccurrence extends Manager{
 	private $includeAssocSeq = false;
 	private $includeAcceptedNameUsage = false;
 	private $relationshipArr;
-	private $taxonRankArr = array();
 	private $paleoGtsArr = null;
 	private $serverDomain;
 
@@ -43,39 +42,39 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['terms']['otherCatalogNumbers'] = 'http://rs.tdwg.org/dwc/terms/otherCatalogNumbers';
 		$this->occurDefArr['fields']['otherCatalogNumbers'] = 'o.otherCatalogNumbers';
 		$this->occurDefArr['terms']['higherClassification'] = 'http://rs.tdwg.org/dwc/terms/higherClassification';
-		$this->occurDefArr['fields']['higherClassification'] = '';
+		$this->occurDefArr['fields']['higherClassification'] = 'x.higherClassification';
 		$this->occurDefArr['terms']['kingdom'] = 'http://rs.tdwg.org/dwc/terms/kingdom';
-		$this->occurDefArr['fields']['kingdom'] = '';
+		$this->occurDefArr['fields']['kingdom'] = 'x.kingdom';
 		$this->occurDefArr['terms']['phylum'] = 'http://rs.tdwg.org/dwc/terms/phylum';
-		$this->occurDefArr['fields']['phylum'] = '';
+		$this->occurDefArr['fields']['phylum'] = 'x.phylum';
 		$this->occurDefArr['terms']['class'] = 'http://rs.tdwg.org/dwc/terms/class';
-		$this->occurDefArr['fields']['class'] = '';
+		$this->occurDefArr['fields']['class'] = 'x.class';
 		$this->occurDefArr['terms']['order'] = 'http://rs.tdwg.org/dwc/terms/order';
-		$this->occurDefArr['fields']['order'] = '';
+		$this->occurDefArr['fields']['order'] = 'x.order';
 		$this->occurDefArr['terms']['family'] = 'http://rs.tdwg.org/dwc/terms/family';
-		$this->occurDefArr['fields']['family'] = 'o.family';
+		$this->occurDefArr['fields']['family'] = 'IFNULL(o.family,x.family) AS family';
 		$this->occurDefArr['terms']['scientificName'] = 'http://rs.tdwg.org/dwc/terms/scientificName';
 		$this->occurDefArr['fields']['scientificName'] = 'o.sciname AS scientificName';
 		$this->occurDefArr['terms']['taxonID'] = 'http://rs.tdwg.org/dwc/terms/taxonID';
 		$this->occurDefArr['fields']['taxonID'] = 'o.tidinterpreted as taxonID';
 		$this->occurDefArr['terms']['scientificNameAuthorship'] = 'http://rs.tdwg.org/dwc/terms/scientificNameAuthorship';
-		$this->occurDefArr['fields']['scientificNameAuthorship'] = 'o.scientificNameAuthorship';
+		$this->occurDefArr['fields']['scientificNameAuthorship'] = 'IFNULL(o.scientificNameAuthorship, x.scientificNameAuthorship) AS scientificNameAuthorship';
 		$this->occurDefArr['terms']['genus'] = 'http://rs.tdwg.org/dwc/terms/genus';
-		$this->occurDefArr['fields']['genus'] = 'IF(t.rankid >= 180,CONCAT_WS(" ",t.unitind1,t.unitname1),NULL) AS genus';
+		$this->occurDefArr['fields']['genus'] = 'x.genus';
 		$this->occurDefArr['terms']['subgenus'] = 'http://rs.tdwg.org/dwc/terms/subgenus';
-		$this->occurDefArr['fields']['subgenus'] = '';
+		$this->occurDefArr['fields']['subgenus'] = 'x.subgenus';
 		$this->occurDefArr['terms']['specificEpithet'] = 'http://rs.tdwg.org/dwc/terms/specificEpithet';
-		$this->occurDefArr['fields']['specificEpithet'] = 'CONCAT_WS(" ",t.unitind2,t.unitname2) AS specificEpithet';
+		$this->occurDefArr['fields']['specificEpithet'] = 'x.specificEpithet';
 		$this->occurDefArr['terms']['verbatimTaxonRank'] = 'http://rs.tdwg.org/dwc/terms/verbatimTaxonRank';
-		$this->occurDefArr['fields']['verbatimTaxonRank'] = 't.unitind3 AS verbatimTaxonRank';
+		$this->occurDefArr['fields']['verbatimTaxonRank'] = 'x.verbatimTaxonRank';
 		$this->occurDefArr['terms']['infraspecificEpithet'] = 'http://rs.tdwg.org/dwc/terms/infraspecificEpithet';
-		$this->occurDefArr['fields']['infraspecificEpithet'] = 't.unitname3 AS infraspecificEpithet';
+		$this->occurDefArr['fields']['infraspecificEpithet'] = 'x.infraspecificEpithet';
 		$this->occurDefArr['terms']['cultivarEpithet'] = 'http://rs.tdwg.org/dwc/terms/cultivarEpithet';
-		$this->occurDefArr['fields']['cultivarEpithet'] = 't.cultivarEpithet AS cultivarEpithet';
+		$this->occurDefArr['fields']['cultivarEpithet'] = 'x.cultivarEpithet';
 		$this->occurDefArr['terms']['tradeName'] = 'http://rs.tdwg.org/dwc/terms/tradeName';
-		$this->occurDefArr['fields']['tradeName'] = 't.tradeName AS tradeName';
+		$this->occurDefArr['fields']['tradeName'] = 'x.tradeName';
 		$this->occurDefArr['terms']['taxonRank'] = 'http://rs.tdwg.org/dwc/terms/taxonRank';
-		$this->occurDefArr['fields']['taxonRank'] = '';
+		$this->occurDefArr['fields']['taxonRank'] = 'x.taxonRank';
 		$this->occurDefArr['terms']['identifiedBy'] = 'http://rs.tdwg.org/dwc/terms/identifiedBy';
  		$this->occurDefArr['fields']['identifiedBy'] = 'o.identifiedBy';
  		$this->occurDefArr['terms']['dateIdentified'] = 'http://rs.tdwg.org/dwc/terms/dateIdentified';
@@ -90,11 +89,11 @@ class DwcArchiverOccurrence extends Manager{
  		$this->occurDefArr['fields']['identificationQualifier'] = 'o.identificationQualifier';
 		if($this->includeAcceptedNameUsage) {
 			$this->occurDefArr['terms']['acceptedNameUsage'] = 'http://rs.tdwg.org/dwc/terms/acceptedNameUsage';
-			$this->occurDefArr['fields']['acceptedNameUsage'] = 'ta.sciName AS acceptedNameUsage';
+			$this->occurDefArr['fields']['acceptedNameUsage'] = 'x.acceptedNameUsage';
 			$this->occurDefArr['terms']['acceptedNameUsageAuthorship'] = '';
-			$this->occurDefArr['fields']['acceptedNameUsageAuthorship'] = 'ta.author AS acceptedNameUsageAuthorship';
+			$this->occurDefArr['fields']['acceptedNameUsageAuthorship'] = 'x.acceptedNameUsageAuthorship';
 			$this->occurDefArr['terms']['acceptedNameUsageID'] = 'http://rs.tdwg.org/dwc/terms/acceptedNameUsageID';
-			$this->occurDefArr['fields']['acceptedNameUsageID'] = 'ta.tid AS acceptedNameUsageID';
+			$this->occurDefArr['fields']['acceptedNameUsageID'] = 'x.acceptedNameUsageID';
 		}
 		$this->occurDefArr['terms']['typeStatus'] = 'http://rs.tdwg.org/dwc/terms/typeStatus';
 		$this->occurDefArr['fields']['typeStatus'] = 'o.typeStatus';
@@ -286,10 +285,6 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['disposition'] = 'o.disposition';
 		$this->occurDefArr['terms']['language'] = 'http://purl.org/dc/terms/language';
 		$this->occurDefArr['fields']['language'] = 'o.language';
-		//$this->occurDefArr['terms']['genericcolumn1'] = 'https://symbiota.org/terms/genericcolumn1';
-		//$this->occurDefArr['fields']['genericcolumn1'] = 'o.genericcolumn1';
-		//$this->occurDefArr['terms']['genericcolumn2'] = 'https://symbiota.org/terms/genericcolumn2';
-		//$this->occurDefArr['fields']['genericcolumn2'] = 'o.genericcolumn2';
 		$this->occurDefArr['terms']['storageLocation'] = 'https://symbiota.org/terms/storageLocation';
 		$this->occurDefArr['fields']['storageLocation'] = 'o.storageLocation';
 		$this->occurDefArr['terms']['observerUid'] = 'https://symbiota.org/terms/observerUid';
@@ -372,37 +367,40 @@ class DwcArchiverOccurrence extends Manager{
 
 	public function getSqlOccurrences($fieldArr){
 		$sql = '';
-		if($fieldArr){
-			$sqlFrag = '';
-			foreach($fieldArr as $fieldName => $colName){
-				if($colName){
-					$sqlFrag .= ', '.$colName;
+		if($this->exportID){
+			if($fieldArr){
+				$sqlFrag = '';
+				foreach($fieldArr as $fieldName => $colName){
+					if($colName){
+						$sqlFrag .= ', '.$colName;
+					}
+					else{
+						$sqlFrag .= ', "" AS t_'.$fieldName;
+					}
 				}
-				else{
-					$sqlFrag .= ', "" AS t_'.$fieldName;
-				}
+				$sql = 'SELECT '.trim($sqlFrag,', ');
 			}
-			$sqlFrag .= ', t.rankid';
-			$sql = 'SELECT '.trim($sqlFrag,', ');
+			$sql .= ' FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid INNER JOIN omexportoccurrences x ON o.occid = x.occid ';
+			if($this->includePaleo) $sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
+			$sql .= 'WHERE (x.omExportID = ' . $this->exportID . ') ';
+			//if($fullSql) $sql .= ' ORDER BY c.collid ';
+			//echo '<div>'.$sql.'</div>'; exit;
 		}
-		$sql .= ' FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid INNER JOIN omExport ex ON o.occid = ex.occid ';
-		//if($fullSql) $sql .= ' ORDER BY c.collid ';
-		//echo '<div>'.$sql.'</div>'; exit;
 		return $sql;
 	}
 
 	//Special functions for appending additional data
-	public function setOtherCatalogNumbers($exportID){
+	public function setOtherCatalogNumbers(){
 		$status = false;
-		$sql = 'UPDATE omexportoccurrences ex INNER JOIN
+		$sql = 'UPDATE omexportoccurrences e INNER JOIN
 			(SELECT i.occid, GROUP_CONCAT(CONCAT(i.identifierName, if(i.identifierName != "",": ",""), i.identifierValue) SEPARATOR "; ") as ocn
-			FROM omoccuridentifiers i INNER JOIN omexportoccurrences e ON i.occid = e.occid
-			WHERE e.omExportID = 333
-			GROUP BY occid) intab ON ex.occid = intab.occid
-			SET ex.otherCatalogNumbers = intab.ocn
-			WHERE ex.omExportID = ?';
+			FROM omoccuridentifiers i INNER JOIN omexportoccurrences e2 ON i.occid = e2.occid
+			WHERE e2.omExportID = 333
+			GROUP BY i.occid) intab ON e.occid = intab.occid
+			SET e.otherCatalogNumbers = intab.ocn
+			WHERE e.omExportID = ?';
 		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param('i', $exportID);
+			$stmt->bind_param('i', $this->exportID);
 			if($stmt->execute()) $status = true;
 			else{
 				$this->errorMessage = 'ERROR batch linking occurrences from download: ' . $stmt->error;
@@ -414,7 +412,7 @@ class DwcArchiverOccurrence extends Manager{
 		return $status;
 	}
 
-	public function setExsiccate($exportID){
+	public function setExsiccate(){
 		$status = false;
 		$sql = 'UPDATE omexportoccurrences x INNER JOIN omexsiccatiocclink l ON x.occid = l.occid
 			INNER JOIN omexsiccatinumbers n ON l.omenid = n.omenid
@@ -422,7 +420,7 @@ class DwcArchiverOccurrence extends Manager{
 			SET x.occurrenceRemarks = CONCAT_WS("; ", x.occurrenceRemarks, CONCAT_WS(" ", t.title, CONCAT("[", t.abbreviation, "]"), CONCAT(", ", t.editor), CONCAT(", ", t.exsrange), CONCAT(", exs #: ", n.exsnumber), CONCAT(" (", l.notes, ")")))
 			WHERE x.omExportID = ?';
 		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param('i', $exportID);
+			$stmt->bind_param('i', $this->exportID);
 			if($stmt->execute()) $status = true;
 			else{
 				$this->errorMessage = 'ERROR batch linking occurrences from download: ' . $stmt->error;
@@ -434,6 +432,7 @@ class DwcArchiverOccurrence extends Manager{
 		return $status;
 	}
 
+	//Set Associations
 	public function getAssociationStr($occid, $associationType = null){
 		$occid = filter_var($occid, FILTER_SANITIZE_NUMBER_INT);
 		if($occid){
@@ -644,7 +643,6 @@ class DwcArchiverOccurrence extends Manager{
 
 	private function getInternalResourceIdentifiers($internalAssocOccidArr){
 		$retArr = array();
-		$this->setServerDomain();
 		//Replace GUID identifiers with occurrenceID values
 		$sql = 'SELECT occid, sciname, occurrenceID, recordID FROM omoccurrences WHERE occid IN('.implode(',',array_keys($internalAssocOccidArr)).')';
 		$rs = $this->conn->query($sql);
@@ -708,44 +706,71 @@ class DwcArchiverOccurrence extends Manager{
 		}
 	}
 
-	//Taxonomic data
-	public function setTaxonomy($exportID){
-		$this->setUpperTaxonomy($exportID, $rankID, $fieldName);
-		$this->setBaseTaxonomy($exportID, $rankID, $fieldName);
-		$this->setSpeciesTaxonomy($exportID);
-		$this->setTaxonRank($exportID);
+	//Append Taxonomic data
+	public function setTaxonomy(){
+		$this->setUpperTaxonomy();
+		$this->setBaseTaxonomy();
+		$this->setSpeciesTaxonomy();
+		$this->setTaxonRank();
+		$this->setAcceptedTaxonomy();
 	}
 
-	private function setUpperTaxonomy($exportID, $rankID, $fieldName){
-		//Set parent rank fields for all occurrences
-		$nodeArr = array(10 => 'kingdom', 30 => 'phylum', 60 => 'class', 100 => 'order', 140 => 'family', 180 => 'genus', 190 => 'subgenus');
-		foreach($nodeArr as $rankID => $fieldName){
-			$sql = 'UPDATE omexportoccurrences x INNER JOIN taxaenumtree e ON x.taxonID = e.tid
-				INNER JOIN taxa t ON e.parentTid = t.tid
-				SET x.' . $fieldName . ' = t.sciname
-				WHERE x.omExportID = ? AND t.rankid = ?';
-			if($stmt = $this->dataConn->prepare($sql)){
-				try{
-					$stmt->bind_param('ii', $exportID, $rankID);
-					$stmt->execute();
-				} catch (mysqli_sql_exception $e){
-					$this->errorMessage = $stmt->error;
+	private function setUpperTaxonomy(){
+		if($this->exportID){
+			//Set parent rank fields for all occurrences
+			$nodeArr = array(10 => 'kingdom', 30 => 'phylum', 60 => 'class', 100 => 'order', 140 => 'family', 180 => 'genus', 190 => 'subgenus');
+			foreach($nodeArr as $rankID => $fieldName){
+				$sql = 'UPDATE omexportoccurrences x INNER JOIN taxaenumtree e ON x.taxonID = e.tid
+					INNER JOIN taxa t ON e.parentTid = t.tid
+					SET x.' . $fieldName . ' = t.sciname
+					WHERE x.omExportID = ? AND t.rankid = ?';
+				if($stmt = $this->conn->prepare($sql)){
+					try{
+						$stmt->bind_param('ii', $this->exportID, $rankID);
+						$stmt->execute();
+					} catch (mysqli_sql_exception $e){
+						$this->errorMessage = $stmt->error;
+					}
+					$stmt->close();
 				}
-				$stmt->close();
 			}
 		}
 	}
 
-	private function setBaseTaxonomy($exportID, $rankID, $fieldName){
-		//Set field of the current rank for occurrences ID to higher ranks
-		$nodeArr = array(10 => 'kingdom', 30 => 'phylum', 60 => 'class', 100 => 'order', 140 => 'family');
-		foreach($nodeArr as $rankID => $fieldName){
+	private function setBaseTaxonomy(){
+		if($this->exportID){
+			//Set field of the current rank for occurrences ID to higher ranks
+			$nodeArr = array(10 => 'kingdom', 30 => 'phylum', 60 => 'class', 100 => 'order', 140 => 'family');
+			foreach($nodeArr as $rankID => $fieldName){
+				$sql = 'UPDATE omexportoccurrences x INNER JOIN taxa t ON x.taxonID = t.tid
+					SET x.' . $fieldName . ' = t.sciname
+					WHERE x.omExportID = ? AND t.rankid = ?';
+				if($stmt = $this->conn->prepare($sql)){
+					try{
+						$stmt->bind_param('ii', $this->exportID, $rankID);
+						$stmt->execute();
+					} catch (mysqli_sql_exception $e){
+						$this->errorMessage = $stmt->error;
+					}
+					$stmt->close();
+				}
+			}
+		}
+	}
+
+	private function setSpeciesTaxonomy(){
+		if($this->exportID){
+			//Set taxon fields for occurrences ID to species
 			$sql = 'UPDATE omexportoccurrences x INNER JOIN taxa t ON x.taxonID = t.tid
-				SET x.' . $fieldName . ' = t.sciname
-				WHERE x.omExportID = ? AND t.rankid = ?';
-			if($stmt = $this->dataConn->prepare($sql)){
+				SET x.genus = CONCAT_WS(" ", t.unitInd1, t.unitName1),
+				x.specificEpithet = CONCAT_WS(" ", t.unitInd2, t.unitName2),
+				x.verbatimTaxonRank = t.unitInd3, x.infraspecificEpithet = t.unitName3,
+				x.cultivarEpithet = t.cultivarEpithet, x.tradeName = t.tradeName,
+				x.scientificNameAuthorship = t.sciname
+				WHERE x.omExportID = ? AND t.rankid >= 180';
+			if($stmt = $this->conn->prepare($sql)){
 				try{
-					$stmt->bind_param('ii', $exportID, $rankID);
+					$stmt->bind_param('i', $this->exportID);
 					$stmt->execute();
 				} catch (mysqli_sql_exception $e){
 					$this->errorMessage = $stmt->error;
@@ -755,38 +780,40 @@ class DwcArchiverOccurrence extends Manager{
 		}
 	}
 
-	private function setSpeciesTaxonomy($exportID){
-		//Set taxon fields for occurrences ID to species
-		$sql = 'UPDATE omexportoccurrences x INNER JOIN taxa t ON x.taxonID = t.tid
-			SET x.genus = CONCAT_WS(" ", t.indName1, t.unitName1),
-			x.specificEpithet = CONCAT_WS(" ", t.indName2, t.unitName2),
-			x.verbatimTaxonRank = t.indName3, x.infraspecificEpithet = t.unitName3,
-			x.cultivarEpithet = t.cultivarEpithet, x.tradeName = t.tradeName
-			WHERE x.omExportID = ? AND t.rankid >= 180';
-		if($stmt = $this->dataConn->prepare($sql)){
-			try{
-				$stmt->bind_param('i', $exportID);
-				$stmt->execute();
-			} catch (mysqli_sql_exception $e){
-				$this->errorMessage = $stmt->error;
+	private function setTaxonRank(){
+		if($this->exportID){
+			$sql = 'UPDATE omexportoccurrences x INNER JOIN taxa t ON x.taxonID = t.tid
+				INNER JOIN taxonunits u ON t.rankid = u.rankid
+				SET x.taxonRank = u.rankName
+				WHERE x.omExportID = ? AND x.kingdom = u.kingdomName';
+			if($stmt = $this->conn->prepare($sql)){
+				try{
+					$stmt->bind_param('i', $this->exportID);
+					$stmt->execute();
+				} catch (mysqli_sql_exception $e){
+					$this->errorMessage = $stmt->error;
+				}
+				$stmt->close();
 			}
-			$stmt->close();
 		}
 	}
 
-	private function setTaxonRank($exportID){
-		$sql = 'UPDATE omexportoccurrences x INNER JOIN taxa t ON x.taxonID = t.tid
-			INNER JOIN taxonunits u ON t.rankid = u.rankid
-			SET x.taxonRank = u.rankName
-			WHERE x.omExportID = ? AND x.kingdom = u.kingdomName';
-		if($stmt = $this->dataConn->prepare($sql)){
-			try{
-				$stmt->bind_param('i', $exportID);
-				$stmt->execute();
-			} catch (mysqli_sql_exception $e){
-				$this->errorMessage = $stmt->error;
+	private function setAcceptedTaxonomy(){
+		if($this->includeAcceptedNameUsage && $this->exportID){
+			//Set basic taxon level terms by matching on occurrence tid
+			$sql = 'UPDATE omexportoccurrences x INNER JOIN taxstatus ts ON x.taxonID = ts.tid
+				INNER JOIN taxa t ON ts.tidaccepted = t.tid
+				SET x.acceptedNameUsageID = t.tid, x.acceptedNameUsage = t.sciname, x.acceptedNameUsageAuthorship = t.scientificNameAuthorship
+				WHERE x.omExportID = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				try{
+					$stmt->bind_param('i', $this->exportID);
+					$stmt->execute();
+				} catch (mysqli_sql_exception $e){
+					$this->errorMessage = $stmt->error;
+				}
+				$stmt->close();
 			}
-			$stmt->close();
 		}
 	}
 
@@ -830,11 +857,11 @@ class DwcArchiverOccurrence extends Manager{
 		}
 	}
 
-	public function setServerDomain(){
-		if(!$this->serverDomain) $this->serverDomain = GeneralUtil::getDomain();
+	//Setter and getter
+	public function setExportID($id){
+		$this->exportID = $id;
 	}
 
-	//Setter and getter
 	public function setSchemaType($t, $observerUid = 0){
 		if($t == 'backup' && $observerUid) $this->schemaType = 'backup-personal';
 		else $this->schemaType = $t;
@@ -851,6 +878,10 @@ class DwcArchiverOccurrence extends Manager{
 
 	public function setIncludeAcceptedNameUsage(bool $bool): void {
 		$this->includeAcceptedNameUsage = $bool;
+	}
+
+	public function setServerDomain($domain){
+		$this->serverDomain = $domain;
 	}
 }
 ?>

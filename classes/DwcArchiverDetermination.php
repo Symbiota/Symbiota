@@ -3,7 +3,7 @@ class DwcArchiverDetermination{
 
 	public static function getDeterminationArr($schemaType,$extended){
 		$fieldArr = array();
-		$fieldArr['coreid'] = 'o.occid';
+		$fieldArr['coreid'] = 'x.occid';
 		$termArr['identifiedBy'] = 'http://rs.tdwg.org/dwc/terms/identifiedBy';
 		$fieldArr['identifiedBy'] = 'd.identifiedBy';
 		//$termArr['identifiedByID'] = 'https://symbiota.org/terms/identifiedByID';
@@ -60,19 +60,18 @@ class DwcArchiverDetermination{
 		return array_diff_key($detArr,array_flip($trimArr));
 	}
 
-	public static function getSql($fieldArr, $tableJoins, $conditionSql){
+	public static function getSql($fieldArr, $exportID){
 		$sql = '';
-		if($fieldArr && $conditionSql){
+		if($fieldArr && $exportID){
 			$sql = 'SELECT ';
 			$delimiter = '';
 			foreach($fieldArr as $fieldSql){
 				if($fieldSql) $sql .= $delimiter.$fieldSql;
 				$delimiter = ', ';
 			}
-			$sql .= ' FROM omoccurdeterminations d INNER JOIN omoccurrences o ON d.occid = o.occid LEFT JOIN taxa t ON d.tidinterpreted = t.tid ';
-			$sql .= $tableJoins;
-			$sql .= $conditionSql.' AND d.appliedstatus = 1 ';
-			$sql .= 'ORDER BY o.collid';
+			$sql .= ' FROM omoccurdeterminations d INNER JOIN omexportoccurrences x ON d.occid = x.occid
+				LEFT JOIN taxa t ON d.tidinterpreted = t.tid
+				WHERE x.omExportID = ' . $exportID . ' AND d.appliedstatus = 1 ';
 			//echo '<div>'.$sql.'</div>'; exit;
 		}
 		return $sql;

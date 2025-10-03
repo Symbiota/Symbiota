@@ -3,7 +3,7 @@
 #download staging tables
 CREATE TABLE `omexport` (
   `omExportID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `uid` INT UNSIGNED NOT NULL,
+  `uid` INT UNSIGNED NULL,
   `category` VARCHAR(45) NOT NULL,
   `tagName` VARCHAR(45) NOT NULL,
   `queryTerms` MEDIUMTEXT NOT NULL,
@@ -11,6 +11,10 @@ CREATE TABLE `omexport` (
   `portalDomain` VARCHAR(45) NULL,
   `expiration` DATETIME NULL,
   `ipAddress` VARCHAR(45) NULL,
+  `status` ENUM('queued', 'inProcess', 'completed', 'failed') NULL,
+  `statusHistory` TEXT NULL,
+  `gui` VARCHAR(45) NULL,
+  `guiType` VARCHAR(45) NULL,
   `notes` VARCHAR(255) NULL,
   `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp
   PRIMARY KEY (`omExportID`));
@@ -26,6 +30,7 @@ CREATE TABLE `omexportoccurrences` (
   `pmExportOccurID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `omExportID` INT UNSIGNED NOT NULL,
   `occid` INT UNSIGNED NOT NULL,
+  `collid` INT UNSIGNED NOT NULL,
   `otherCatalogNumbers` TEXT NULL,
   `higherClassification` TEXT NULL,
   `kingdom` VARCHAR(45) NULL,
@@ -46,10 +51,9 @@ CREATE TABLE `omexportoccurrences` (
   `acceptedNameUsageAuthorship` VARCHAR(45) NULL,
   `acceptedNameUsageID` VARCHAR(45) NULL,
   `occurrenceRemarks` TEXT NULL,
+  `recordSecurity` INT NULL,
   `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp
   PRIMARY KEY (`pmExportStagingID`));
-
-
 
 ALTER TABLE `omexportoccurrences` 
   ADD INDEX `FK_omexportoccur_omExportID_idx` (`omExportID` ASC),
