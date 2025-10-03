@@ -275,19 +275,29 @@ $serverHost = GeneralUtil::getDomain();
 		}
 
 		#mapSearchRecordsTable th {
-		top: 0;
-		position: sticky;
+			top: 0;
+			position: sticky;
+		}
+
+		#recordstaxaheader, #search_criteria {
+			font-weight: bold;
 		}
 
 		#tabs2 {
-		display:none;
-		padding:0px;
-		display: block;
-		height: 100%;
-		/* overflow: scroll; */
+			display:none;
+			padding:0px;
+			display: block;
+			height: 100%;
+			/* overflow: scroll; */
 		}
+
+		/* Overwrite so it isn't white on gray */
+		.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {
+			color: currentcolor;
+		}
+
 		.cluster text {
-		text-shadow: 0 0 8px white, 0 0 8px white, 0 0 8px white;
+			text-shadow: 0 0 8px white, 0 0 8px white, 0 0 8px white;
 		}
 
 		<?php if($shouldUseMinimalMapHeader){ ?>
@@ -2144,7 +2154,7 @@ $serverHost = GeneralUtil::getDomain();
 			<div class="panel-content">
 				<div id="mapinterface">
 					<div id="accordion">
-						<h3 style="margin-top:0"><?= $LANG['SEARCH_CRITERIA'] ?></h3>
+						<h3 id="search_criteria" style="margin-top:0"><?= $LANG['SEARCH_CRITERIA'] ?></h3>
 						<div id="tabs1" style="padding:0px;height:100%">
 							<form name="mapsearchform" id="mapsearchform" data-ajax="false">
 								<ul>
@@ -2526,7 +2536,7 @@ $serverHost = GeneralUtil::getDomain();
 								<input data-role="none" name="csvreclimit" id="csvreclimit" type="hidden" value="<?= $recLimit; ?>" />
 							</form>
 						</div>
-						<h3 id="recordstaxaheader" style="display:none;padding-left:30px;"><?= $LANG['RECORDS_TAXA'] ?></h3>
+						<h3 id="recordstaxaheader" style="display:none;"><?= $LANG['RECORDS_TAXA'] ?></h3>
 						<div id="tabs2" style="display:none;padding:0px;">
 							<ul>
 								<li><a href='#occurrencelist'><?= $LANG['RECORDS'] ?></a></li>

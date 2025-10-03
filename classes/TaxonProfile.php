@@ -26,6 +26,7 @@ class TaxonProfile extends Manager {
 	private $imageArr;
 	private $sppArray;
 	private $linkArr = false;
+	private $header;
 
 	private $displayLocality = 1;
 
@@ -495,7 +496,13 @@ class TaxonProfile extends Manager {
 		$url = "https://en.wikipedia.org/w/api.php?action=parse&page={$formattedName}&redirects=1&format=json&prop=sections";
 		$wikiUrl = "https://en.wikipedia.org/wiki/" . urlencode(str_replace(' ', '_', $sciName));
 
-		$response = @file_get_contents($url);
+		$options = [
+			"http" => [
+				"header" => "User-Agent: Symbiota (" . $GLOBALS['SERVER_HOST'] . $GLOBALS['CLIENT_ROOT'] . ")\r\n"
+			]
+		];
+		$this->header = stream_context_create($options);
+		$response = @file_get_contents($url, false, $this->header);
 		if (!$response) {
 			error_log("Wikipedia API request failed: " . $url);
 			return null;
@@ -513,7 +520,7 @@ class TaxonProfile extends Manager {
 		$maxLength = 2000;
 
 		$summaryUrl = "https://en.wikipedia.org/w/api.php?action=query&redirects=1&format=json&prop=extracts&titles={$formattedName}&exintro=true&explaintext=true";
-		$summaryResponse = @file_get_contents($summaryUrl);
+		$summaryResponse = @file_get_contents($summaryUrl, false, $this->header);
 		if (!$summaryResponse) {
 			error_log("Wikipedia summary request failed: " . $summaryUrl);
 			return null;
@@ -570,7 +577,7 @@ class TaxonProfile extends Manager {
 
 	private function getSectionContent($page, $section) {
 		$url = "https://en.wikipedia.org/w/api.php?action=parse&page={$page}&redirects=1&format=json&prop=text&section={$section}";
-		$response = @file_get_contents($url);
+		$response = @file_get_contents($url, false, $this->header);
 		if (!$response) {
 			error_log("Wikipedia section request failed: " . $url);
 			return '';

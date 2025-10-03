@@ -26,6 +26,11 @@ $LANG['DARWIN_CORE'] = 'Núcleo Darwin';
 $LANG['IMG_DARWIN_INFO'] = 'Ícone de informações: DwC é um padrão endossado pelo TDWG para biodados. Link para o guia de referência rápida do DwC na caixa de diálogo.';
 $LANG['DARWIN_GUIDE'] = 'Darwin Core (DwC) é um padrão de intercâmbio endossado pelo TDWG especificamente para conjuntos de dados de biodiversidade.                        Para obter mais informações sobre quais campos de dados estão incluídos no DwC, visite o';
 $LANG['DARWIN_GUIDE_LINK'] = 'Guia de referência rápida DwC';
+$LANG['TAXONOMIC_RESOLUTION'] = 'Resolução taxonômica';
+$LANG['ACCEPTED_NAME_USAGE'] = 'Incluir nome científico aceito e autoria';
+$LANG['TAXONOMIC_RESOLUTION_GUIDE']= 'Marcar esta caixa adicionará três campos ao seu arquivo de ocorrências: acceptedNameUsage, acceptedNameUsageAuthorship
+        e acceptedNameUsageID. Esses campos conterão o nome, a autoria e o taxonID do nome do táxon "aceito" do nome científico do registro,
+        de acordo com o tesauro taxonômico do portal no momento do download.';
 $LANG['WHAT_IS_DARWIN_LINK'] = 'O que é Darwin Core?';
 $LANG['DATA_EXTS'] = 'Extensões de dados';
 $LANG['INCLUDE_HISTORY'] = 'incluir histórico de determinação';

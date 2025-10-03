@@ -264,3 +264,13 @@ ALTER TABLE 'uploadspectemp'
 ALTER TABLE `users` 
   CHANGE COLUMN `password` `password` VARCHAR(255) NULL DEFAULT NULL ;
 
+#Add update to omoccurdeterminations.dateLastModified tracked any update to the row
+ALTER TABLE omoccurdeterminations 
+  MODIFY COLUMN dateLastModified timestamp DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP;
+
+
+ALTER TABLE `uploadspectemp` 
+  ADD INDEX `IX_uploadspectemp_country` (`country` ASC),
+  ADD INDEX `IX_uploadspectemp_stateProvince` (`stateProvince` ASC);
+  
+  
