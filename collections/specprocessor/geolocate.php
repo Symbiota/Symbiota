@@ -143,7 +143,7 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 												}
 												$dwcaHandler->addCondition('locality','NOT_NULL');
 												$dwcaHandler->addCondition('catalognumber','NOT_NULL');
-												echo '<span id="countdiv">'.$dwcaHandler->getOccurrenceCnt().'</span> records';
+												echo '<span id="countdiv">'.$dwcaHandler->getOccurrenceCount().'</span> records';
 												?>
 												<span id="recalspan" style="color:orange;display:none;"><?php echo $LANG['RECALCULATING']; ?>... <img src="../../images/workingcircle.gif" style="width:13px;" /></span>
 												<span style="margin-left:15px;"><button type="button" onclick="cogeUpdateCount(this)">Reset Count</button></span>

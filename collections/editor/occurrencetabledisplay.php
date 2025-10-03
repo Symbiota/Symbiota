@@ -157,7 +157,7 @@ else{
 		table.styledtable td { white-space: nowrap; }
 		fieldset{ padding:15px }
 		fieldset > legend{ font-weight:bold }
-		.fieldGroupDiv { 
+		.fieldGroupDiv {
 			display: flex;
 			align-items: center;
 			gap: 0.75rem;
@@ -169,15 +169,15 @@ else{
 				display: flex;
 			}
 		}
-		.fieldDiv{ 
+		.fieldDiv{
 			display: inline;
 		}
 		#innertext{ background-color: white; margin: 0px 10px; }
 
-		#record-viewer-innertext { 
+		#record-viewer-innertext {
 			margin-left: 2em;
 			width: calc(100vw - 4em);
-			background-color: white; 
+			background-color: white;
 		}
 		.editimg{ width: 15px; }
 		.table-scroll {
@@ -190,13 +190,13 @@ else{
 		}
 
 		.button-toggle {
-			background-color: transparent; 
-			color: var(--body-text-color); 
+			background-color: transparent;
+			color: var(--body-text-color);
 			border: 2px solid var(--darkest-color);
 
 			&.active {
-				background-color: var(--darkest-color); 
-				color: white; 
+				background-color: var(--darkest-color);
+				color: white;
 			}
 
 			&:hover {
@@ -272,7 +272,7 @@ else{
 				foreach($recArr as $id => $occArr){
 					foreach($occArr as $k => $v){
 						if(!is_array($v)){
-							if($v && trim($v) && !array_key_exists($k,$headerArr)){
+							if((trim($v) || $v === 0) && !array_key_exists($k,$headerArr)){
 								$headerArr[$k] = $k;
 							}
 						}
@@ -369,7 +369,7 @@ else{
 			?>
 			<div style="display:flex;width:850px;clear:both;">
 				<?php echo $navStr; ?>
-				
+
 			</div>
 			<?php
 			if($recArr){
@@ -416,7 +416,7 @@ else{
 											$displayStr = substr($displayStr,0,60).'...';
 										}
 									}
-									else $displayStr = '&nbsp;';
+									elseif($displayStr === '') $displayStr = '&nbsp;';
 									echo '<td>'.$displayStr.'</td>'."\n";
 								}
 								echo "</tr>\n";

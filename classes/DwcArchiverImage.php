@@ -2,7 +2,7 @@
 class DwcArchiverImage{
 
 	public static function getImageArr($schemaType){
-		$fieldArr['coreid'] = 'o.occid';
+		$fieldArr['coreid'] = 'x.occid';
 		$termArr['identifier'] = 'http://purl.org/dc/terms/identifier';
 		$fieldArr['identifier'] = 'IFNULL(m.originalurl,m.url) as identifier';
 		$termArr['accessURI'] = 'http://rs.tdwg.org/ac/terms/accessURI';
@@ -18,15 +18,15 @@ class DwcArchiverImage{
 		$termArr['subtype'] = 'http://rs.tdwg.org/ac/terms/subtype';		//Photograph or Recorded Organism
 		$fieldArr['subtype'] = 'CASE WHEN m.mediaType = "audio" THEN "Recorded Organism" ELSE "Photograph" END as subtype';
 		$termArr['rights'] = 'http://purl.org/dc/terms/rights';
-		$fieldArr['rights'] = 'c.rights';
+		$fieldArr['rights'] = '';
 		$termArr['Owner'] = 'http://ns.adobe.com/xap/1.0/rights/Owner';	//Institution name
-		$fieldArr['Owner'] = 'IFNULL(c.rightsholder,CONCAT(c.collectionname," (",CONCAT_WS("-",c.institutioncode,c.collectioncode),")")) AS owner';
+		$fieldArr['Owner'] = '';
 		$termArr['creator'] = 'http://purl.org/dc/elements/1.1/creator';
 		$fieldArr['creator'] = 'IF(m.creatorUid IS NOT NULL,CONCAT_WS(" ",u.firstname,u.lastname),m.creator) AS creator';
 		$termArr['UsageTerms'] = 'http://ns.adobe.com/xap/1.0/rights/UsageTerms';	//Creative Commons BY-SA 4.0 license
 		$fieldArr['UsageTerms'] = 'm.copyright AS usageterms';
 		$termArr['WebStatement'] = 'http://ns.adobe.com/xap/1.0/rights/WebStatement';	//https://creativecommons.org/licenses/by-nc-sa/4.0/us/
-		$fieldArr['WebStatement'] = 'c.accessrights AS webstatement';
+		$fieldArr['WebStatement'] = '';
 		$termArr['caption'] = 'http://rs.tdwg.org/ac/terms/caption';
 		$fieldArr['caption'] = 'm.caption';
 		$termArr['comments'] = 'http://rs.tdwg.org/ac/terms/comments';
@@ -59,58 +59,24 @@ class DwcArchiverImage{
 		return array_diff_key($imageArr,array_flip($trimArr));
 	}
 
-	public static function getSqlImages($fieldArr, $conditionSql, $redactLocalities, $rareReaderArr){
+	public static function getSqlImages($fieldArr, $exportID, $redactLocalities, $rareReaderArr){
 		$sql = '';
-		if($fieldArr && $conditionSql){
+		if($fieldArr && $exportID){
 			$sqlFrag = '';
 			foreach($fieldArr as $fieldName => $colName){
 				if($colName) $sqlFrag .= ', '.$colName;
 			}
-			$sql = 'SELECT '.trim($sqlFrag,', '). ' FROM media m INNER JOIN omoccurrences o ON m.occid = o.occid
-				INNER JOIN omcollections c ON o.collid = c.collid
+			$sql = 'SELECT '.trim($sqlFrag,', '). ', x.collid
+				FROM media m INNER JOIN omexportoccurrences x ON m.occid = x.occid
 				LEFT JOIN imagetag tag ON m.mediaID = tag.mediaID
-				LEFT JOIN users u ON m.creatorUid = u.uid ';
-			if(strpos($conditionSql,'ts.taxauthid')){
-				$sql .= 'LEFT JOIN taxstatus ts ON o.tidinterpreted = ts.tid ';
-			}
-			if(stripos($conditionSql,'e.parenttid')){
-				$sql .= 'LEFT JOIN taxaenumtree e ON o.tidinterpreted = e.tid ';
-			}
-			if(strpos($conditionSql,'ctl.clid')){
-				//Search criteria came from custom search page
-				$sql .= 'LEFT JOIN fmvouchers v ON o.occid = v.occid LEFT JOIN fmchklsttaxalink ctl ON v.clTaxaID = ctl.clTaxaID ';
-			}
-			if(strpos($conditionSql,'p.lngLatPoint')){
-				//Search criteria came from map search page
-				$sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
-			}
-			if(strpos($conditionSql,'ds.datasetid')){
-				$sql .= 'LEFT JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
-			}
-			if(stripos($conditionSql,'a.stateid')){
-				//Search is limited by occurrence attribute
-				$sql .= 'INNER JOIN tmattributes a ON o.occid = a.occid ';
-			}
-			elseif(stripos($conditionSql,'s.traitid')){
-				//Search is limited by occurrence trait
-				$sql .= 'INNER JOIN tmattributes a ON o.occid = a.occid '.
-					'INNER JOIN tmstates s ON a.stateid = s.stateid ';
-			}
-			if(!empty($GLOBALS['ACTIVATE_PALEO'])){
-				$sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
-				if(strpos($conditionSql,'early.myaStart')){
-					$sql .= 'JOIN omoccurpaleogts early ON paleo.earlyInterval = early.gtsterm ';
-					$sql .= 'JOIN omoccurpaleogts late ON paleo.lateInterval = late.gtsterm ';
-					$sql .= 'CROSS JOIN searchRange search ';
-				}
-			}
-			$sql .= $conditionSql;
+				LEFT JOIN users u ON m.creatorUid = u.uid
+				WHERE (x.omExportID = ' . $exportID . ') ';
 			if($redactLocalities){
 				if($rareReaderArr){
-					$sql .= 'AND (o.recordSecurity = 0 OR c.collid IN('.implode(',',$rareReaderArr).')) ';
+					$sql .= 'AND (x.recordSecurity = 0 OR x.collid IN('.implode(',',$rareReaderArr).')) ';
 				}
 				else{
-					$sql .= 'AND (o.recordSecurity = 0) ';
+					$sql .= 'AND (x.recordSecurity = 0) ';
 				}
 			}
 			$sql .= 'GROUP BY m.mediaID';
