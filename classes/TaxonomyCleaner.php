@@ -283,10 +283,10 @@ class TaxonomyCleaner extends Manager{
 			'INNER JOIN taxa t2 ON e.parenttid = t2.tid '.
 			'SET t.kingdomname = t2.sciname '.
 			'WHERE (e.taxauthid = '.$this->taxAuthId.') AND (t2.rankid = 10) AND (t.kingdomName = "")';
-		if($this->conn->query($sql)){
+		try {
+			QueryUtil::executeQuery($this->conn, $sql);
 			$this->logOrEcho('Populating null kingdom name tags... '.$this->conn->affected_rows.' taxon records updated', 1);
-		}
-		else{
+		} catch (\Throwable $e) {
 			$this->logOrEcho('ERROR updating kingdoms: '.$this->conn->error, 1);
 		}
 		flush();
@@ -297,10 +297,10 @@ class TaxonomyCleaner extends Manager{
 			'INNER JOIN taxstatus ts ON t.tid = ts.tid '.
 			'SET ts.family = t2.sciname '.
 			'WHERE (e.taxauthid = '.$this->taxAuthId.') AND (ts.taxauthid = '.$this->taxAuthId.') AND (t2.rankid = 140) AND (ts.family IS NULL)';
-		if($this->conn->query($sql)){
+		try {
+			QueryUtil::executeQuery($this->conn, $sql);
 			$this->logOrEcho('Populating null family lookup tags within thesaurus... '.$this->conn->affected_rows.' taxon records updated', 1);
-		}
-		else{
+		} catch (\Throwable $e) {
 			$this->logOrEcho('ERROR updating family lookup field: '.$this->conn->error, 1);
 		}
 		flush();
