@@ -1,0 +1,41 @@
+name: Tests
+
+on:
+  push:
+    branches: [ "master", "Development" ]
+  pull_request:
+    branches: [ "master", "Development" ]
+
+jobs:
+  tests:
+
+    runs-on: 'ubuntu-latest'
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: 'Setup Testing Database Config'
+      run : mv config/dbconnection_testing_template.php config/dbconnection.php
+
+    - name: 'Run Setup Script'
+      run : cd config && bash setup.bash
+
+    - name: 'Build Docker Resources'
+      run : |
+        echo --- Building and Starting up docker ---
+        docker compose --file test.docker-compose.yml pull
+        docker compose --file test.docker-compose.yml up -d --no-build
+        echo --- Containers Up ---
+
+    - name: Debugging Container Failure
+      if: failure()
+      run: |
+        docker ps
+        docker logs symbiota-testing-web-1
+        docker logs symbiota-testing-mariadb-1
+
+    - name: 'Install PhpUnit'
+      run : docker exec symbiota-testing-web-1 composer require --dev phpunit/phpunit
+
+    - name: 'Execute Tests via PHPUnit'
+      run: docker exec symbiota-testing-web-1 ./vendor/bin/phpunit

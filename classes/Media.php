@@ -1,4 +1,4 @@
-<?php
+<?php global $SERVER_ROOT, $LANG_TAG;
 include_once($SERVER_ROOT . "/classes/Database.php");
 include_once($SERVER_ROOT . "/classes/Sanitize.php");
 include_once($SERVER_ROOT . "/classes/StorageStrategy.php");
