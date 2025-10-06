@@ -4,10 +4,11 @@ services:
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     restart: 'always'
-    image: 'muchquakz/symbiota-testing'
+    image: 'muchquakz/symbiota-testing:latest'
     ports:
       - 80:80
     volumes:
+      # Binds Symbiota Code to Container
       - .:/var/www/html/
     networks:
       - symbiota
