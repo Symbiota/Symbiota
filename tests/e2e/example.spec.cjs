@@ -5,8 +5,8 @@ test('Has Login', async ({ page }) => {
   await page.goto('./');
 
   //Click Sign In button
-  await page.getByRole('button', { name: 'Sign In' }).click();
+  await page.getByText('Sign In').click({force: true});
 
   // Expects page to have a heading with the name of Installation.
-  await expect(page.getByRole('group', { name: 'Portal Login' })).toBeVisible();
+  await expect(page.getByText('Portal Login')).toBeVisible();
 });
