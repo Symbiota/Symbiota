@@ -13,22 +13,73 @@ const addElemFirst = (parentDivId, targetChildDivId) => {
 const reorderElements = (parentDivId, desiredDivIds, removeDivIds) => {
   const parent = document.getElementById(parentDivId);
   const allChildren = Array.from(parent.children);
-  const allChildrenIds = allChildren?.map(child=>child.id) || [];
-  desiredDivIds.forEach((currentId) => {
+  const allChildrenIds = allChildren?.map(child=>child.id)?.filter(entry=>entry!=='') || [];
+  const revisedDesired = desiredDivIds.filter((desiredDiv) => {
+    return (
+      allChildrenIds.includes(desiredDiv) ||
+      desiredDiv === "br" ||
+      desiredDiv === "hr"
+    );
+  });
+  revisedDesired.forEach((currentId) => {
     const desiredEl = document.getElementById(currentId);
-    if(!desiredEl) return;
+    if (!desiredEl) return;
+    //get tip of parent child array to make sure we're not repeating breaks or hrs
+    // const tipId = Array.from(parent.children)?.slice(-1)[0]?.id;
+
+    // if (currentId === "hr" && tipId !== "") {
+    //   // @TODO skip if preceding entry in parent's id is hr
+    //   const hrElement = document.createElement("hr");
+    //   hrElement.style.cssText = "margin-bottom: 2rem; clear: both;";
+    //   parent.appendChild(hrElement);
+    // }
+    // if (currentId === "br" && tipId !== "") {
+    //   // @TODO skip if preceding entry in parent's id is hr
+    //   const brElement = document.createElement("br");
+    //   brElement.style.cssText = "margin-bottom: 2rem; clear: both;";
+    //   parent.appendChild(brElement);
+    // }
     if (allChildrenIds.includes(currentId)) {
-      currentChildIdxInDesiredList = desiredDivIds.indexOf(currentId);
+      const currentChildIdxInDesiredList = revisedDesired.indexOf(currentId);
       parent.appendChild(desiredEl);
-      if (desiredDivIds[currentChildIdxInDesiredList + 1] === "hr") {
+      if (revisedDesired[currentChildIdxInDesiredList + 1] === "hr") {
         const hrElement = document.createElement("hr");
         hrElement.style.cssText = "margin-bottom: 2rem; clear: both;";
         parent.appendChild(hrElement);
       }
+      if (revisedDesired[currentChildIdxInDesiredList + 1] === "br") {
+        const brElement = document.createElement("br");
+        brElement.style.cssText = "margin-bottom: 2rem; clear: both;";
+        parent.appendChild(brElement);
+      }
     }
-    if (removeDivIds.includes(currentId)) {
-      desiredEl.remove();
-    }
+    // if (removeDivIds.includes(currentId)) {
+    //   desiredEl.remove();
+    // }
+    // if (currentId !== "hr" && currentId !== "br") {
+    //   const targetIndexInAllChildren = allChildrenIds.indexOf(currentId);
+    //   parent.appendChild(allChildren[targetIndexInAllChildren]);
+    // }
+  });
+  removeDivIds.forEach(removeId=>{
+    const targetEl = document.getElementById(removeId);
+    if(!targetEl) return;
+    targetEl.remove();
+  });
+  // if (removeDivIds.includes(currentId)) {
+  //   desiredEl.remove();
+  // }
+
+  const leftOverChildren = allChildren.filter(
+    (child) => !revisedDesired.includes(child.id)
+  );
+  if (leftOverChildren.length > 0) {
+    const brElement = document.createElement("br");
+    brElement.style.cssText = "margin-bottom: 2rem; clear: both;";
+    parent.appendChild(brElement);
+  }
+  leftOverChildren.forEach((orphan) => {
+    parent.appendChild(orphan);
   });
 };
 

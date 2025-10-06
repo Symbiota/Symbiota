@@ -232,7 +232,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 	.resourceTab #subType-div select{ min-width: 130px; }
 	.resourceTab #taxonomy-fieldset{ display: none; }
 </style>
-<div id="voucherdiv" style="width:795px;">
+<div id="voucherdiv">
 	<?php
 	$assocArr = $occManager->getOccurrenceRelationships();
 	$basisOfRecordArr = array('HumanObservation' => $LANG['HUMAN_OBS'], 'LivingSpecimen' => $LANG['LIVING_SPEC'], 'MachineObservation' => $LANG['MACHINE_OBS'], 'FossilSpecimen' => $LANG['FOSSIL_SPEC'],

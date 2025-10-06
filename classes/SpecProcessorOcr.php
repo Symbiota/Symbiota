@@ -233,7 +233,7 @@ class SpecProcessorOcr extends Manager{
 			}
 			//Set temp folder path and file names
 			$ts = time();
-			$this->imgUrlLocal = $this->tempPath.$ts.'_img.jpg';
+			$this->imgUrlLocal = $this->tempPath.$ts.'_img.jpg'; // @TODO is it intentional that it is always .jpg?
 
 			//Copy image to temp folder
 			$status = copy($imgUrl,$this->imgUrlLocal);
@@ -265,7 +265,10 @@ class SpecProcessorOcr extends Manager{
 					'FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid '.
 					'LEFT JOIN specprocessorrawlabels r ON m.mediaID = r.mediaID '.
 					'WHERE (o.collid = '.$collid.') AND r.prlid IS NULL ';
-				if($procStatus) $sql .= 'AND o.processingstatus = "unprocessed" ';
+				if($procStatus){
+					if($procStatus == 'null') $sql .= 'AND processingstatus IS NULL';
+					else $sql .= 'AND o.processingstatus = "' . $this->cleanInStr($procStatus) . '" ';
+				} 
 				if($limit) $sql .= 'LIMIT '.$limit;
 				if($rs = $this->conn->query($sql)){
 					$recCnt = 1;

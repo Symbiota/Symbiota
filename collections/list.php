@@ -60,13 +60,7 @@ $_SESSION['citationvar'] = $searchVar;
 		let urlQueryStr = "<?php if ($searchVar) echo $searchVar . '&page=' . $pageNumber; ?>";
 
 		$(document).ready(function() {
-			<?php
-			if ($searchVar) {
-			?>
-				sessionStorage.querystr = "<?php echo $searchVar; ?>";
-			<?php
-			}
-			?>
+			setSessionQueryStr();
 
 			$('#tabs').tabs({
 				active: <?= $tabIndex; ?>,
@@ -111,6 +105,7 @@ $_SESSION['citationvar'] = $searchVar;
 </head>
 
 <body>
+	<div id="service-container" data-search-var="<?= $searchVar; ?>"></div>
 	<?php
 	$displayLeftMenu = (isset($collections_listMenu) ? $collections_listMenu : false);
 	include($SERVER_ROOT . '/includes/header.php');
