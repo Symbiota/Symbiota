@@ -32,7 +32,7 @@ class UserUtil {
 
 	/**
 	 * Checks if user is a collectionAdmin for given collId
-	 * If then are not then php will include accessDenied.php
+	 * If they are not then php will include accessDenied.php
 	 * page and hard exit.
 	 *
 	 * @param int $collId Collection id
