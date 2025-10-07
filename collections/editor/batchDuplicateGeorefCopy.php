@@ -135,8 +135,8 @@ Language::load([
 	'collections/list'
 ]);
 
-$start = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
-$db = array_key_exists('db',$_REQUEST)?$_REQUEST['db']:[];
+$start = array_key_exists('start',$_REQUEST)? $_REQUEST['start']:0;
+$db = array_key_exists('db',$_REQUEST)? $_REQUEST['db']:[];
 $missingLatLng = array_key_exists('missingLatLng',$_REQUEST);
 $hideExactMatches = array_key_exists('hideExactMatches',$_REQUEST);
 
