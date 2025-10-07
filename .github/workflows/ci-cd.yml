@@ -43,9 +43,6 @@ jobs:
     - name: 'Install Playwright Npm Package'
       run: docker exec symbiota-testing-web-1 npm install @playwright/test --save-dev
 
-    - name: 'Install Playwright Browsers'
-      run: docker exec symbiota-testing-web-1 npx playwright install --with-deps
-
     - name: 'Run Playwright Tests'
       run: docker exec symbiota-testing-web-1 npx playwright test
 
