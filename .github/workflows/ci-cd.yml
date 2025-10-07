@@ -40,11 +40,8 @@ jobs:
     - name: 'Execute Tests via PHPUnit'
       run: docker exec symbiota-testing-web-1 ./vendor/bin/phpunit
 
-    - name: 'Install Playwright Npm Package'
-      run: docker exec symbiota-testing-web-1 npm install @playwright/test --save-dev
-
     - name: 'Run Playwright Tests'
-      run: docker exec symbiota-testing-web-1 npx playwright test
+      run: docker run -it --rm -v .:/var/www/html --add-host host.docker.internal:host-gateway --ipc=host mcr.microsoft.com/playwright:v1.56.0-noble /bin/bash -c "cd /var/www/html && npm install @playwright/test --save-dev && npx playwright test"
 
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
