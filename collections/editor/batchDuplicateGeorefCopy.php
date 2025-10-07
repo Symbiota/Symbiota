@@ -12,9 +12,6 @@ include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT . '/classes/Sanitize.php');
 include_once($SERVER_ROOT . '/classes/CustomQuery.php');
 
-$collId = array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid'])? intval($_REQUEST['collid']):0;
-UserUtil::isCollectionAdminOrDenyAcess($collId);
-
 // Other fields selected for display and logic purposes
 $otherFields = [
 	'occid',
@@ -70,12 +67,49 @@ $fieldIgnores = [
 
 $updated = [];
 $errors = [];
-$hiddenFields = [];
 
-foreach($shownFields as $field) {
-	if(array_key_exists('hide_' . $field, $_REQUEST)) {
-		array_push($hiddenFields, $field);
+Language::load([
+	'collections/sharedterms',
+	'collections/misc/sharedterms',
+	'collections/editor/batchDuplicateGeorefCopy',
+	'collections/list'
+]);
+
+$collId = array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid'])? intval($_REQUEST['collid']):0;
+UserUtil::isCollectionAdminOrDenyAcess($collId);
+
+if(array_key_exists('copyInfo', $_POST)) {
+	foreach($_POST as $targetOccId => $sourceOccId) {
+		if(is_numeric($targetOccId) && is_numeric($sourceOccId)) {
+			try {
+				copyOccurrenceInfo($targetOccId, $sourceOccId, $harvestFields);
+				array_push($updated, $targetOccId);
+			} catch(Exception $e)  {
+				$errors[$targetOccId] = $e->getMessage();
+			}
+		}
 	}
+	$_REQUEST = $_SESSION['batchDuplicateGeorefCopyRequest'];
+} else if(array_key_exists('searchDuplicates', $_REQUEST)) {
+	$_SESSION['batchDuplicateGeorefCopyRequest'] = $_REQUEST;
+}
+
+$start = array_key_exists('start',$_REQUEST)? $_REQUEST['start']:0;
+$db = array_key_exists('db',$_REQUEST)? $_REQUEST['db']:[];
+$hideExactMatches = array_key_exists('hideExactMatches',$_REQUEST);
+
+$autoCheckSingleOptions = false;
+if(array_key_exists('autoCheckSingleOptions',$_REQUEST)) {
+	$autoCheckSingleOptions = true;
+} else if(array_key_exists('searchDuplicates',$_REQUEST)) {
+	$autoCheckSingleOptions = false;
+}
+
+$missingLatLng = true;
+if(array_key_exists('missingLatLng',$_REQUEST)) {
+	$missingLatLng = true;
+} else if(array_key_exists('searchDuplicates',$_REQUEST)) {
+	$missingLatLng = false;
 }
 
 function copyOccurrenceInfo($targetOccId, $sourceOccId, $harvestFields) {
@@ -106,54 +140,6 @@ function copyOccurrenceInfo($targetOccId, $sourceOccId, $harvestFields) {
 	);
 }
 
-function copyInfo() {
-	global $errors, $harvestFields, $updated;
-	foreach($_POST as $targetOccId => $sourceOccId) {
-		if(is_numeric($targetOccId) && is_numeric($sourceOccId)) {
-			try {
-				copyOccurrenceInfo($targetOccId, $sourceOccId, $harvestFields);
-				array_push($updated, $targetOccId);
-			} catch(Exception $e)  {
-				$errors[$targetOccId] = $e->getMessage();
-			}
-		}
-	}
-}
-
-if(array_key_exists('copyInfo', $_POST)) {
-	copyInfo();
-	 $_REQUEST = $_SESSION['batchDuplicateGeorefCopyRequest'];
-} else {
-	//Assume Search
-	$_SESSION['batchDuplicateGeorefCopyRequest'] = $_REQUEST;
-}
-
-Language::load([
-	'collections/sharedterms',
-	'collections/misc/sharedterms',
-	'collections/editor/batchDuplicateGeorefCopy',
-	'collections/list'
-]);
-
-$start = array_key_exists('start',$_REQUEST)? $_REQUEST['start']:0;
-$db = array_key_exists('db',$_REQUEST)? $_REQUEST['db']:[];
-$missingLatLng = array_key_exists('missingLatLng',$_REQUEST);
-$hideExactMatches = array_key_exists('hideExactMatches',$_REQUEST);
-
-$autoCheckSingleOptions = false;
-if(array_key_exists('autoCheckSingleOptions',$_REQUEST)) {
-	$autoCheckSingleOptions = true;
-} else if(array_key_exists('searchDuplicates',$_REQUEST)) {
-	$autoCheckSingleOptions = false;
-}
-
-$missingLatLng = true;
-if(array_key_exists('missingLatLng',$_REQUEST)) {
-	$missingLatLng = true;
-} else if(array_key_exists('searchDuplicates',$_REQUEST)) {
-	$missingLatLng = false;
-}
-
 function mapField($field, $prefix) {
 	$tableAlias = 'o';
 	$fieldAlias = ($prefix? ' AS ' . $field . $prefix: '');
@@ -173,48 +159,6 @@ function getSqlFields(array $fields, string $prefix = '') {
 	}
 
 	return $sql;
-}
-
-function getTableHeaders(array $arr, array $ignore = [], array $alias = []) {
-	$html = '<thead>';
-	$html .= '<th></th>';
-
-	foreach($arr as $key) {
-		if(in_array($key, $ignore)) {
-			continue;
-		} else {
-			$hide = array_key_exists('hide_' . $key, $_REQUEST);
-			$html .= '<th data-key="'. $key .'" ' . ($hide? 'style="display:none"':'') . '>' . ($alias[$key] ?? $key) . '</th>';
-		}
-	}
-
-	$html .= '</thead>';
-
-	return $html;
-}
-
-function render_row($row, $checkboxName = false, $shownFields = [], $onlyOption = false) {
-	$html = '<tr><td><div style="display:flex; align-items:center; justify-content: center;">';
-	if($checkboxName) {
-		$html .= '<input type="checkbox" onclick="checkbox_one_only(this)" name="' . $checkboxName . '" value="' . $row['occid'] . '" style="margin:0" ' . ($onlyOption? 'checked': '') . '/>';
-	}
-
-	$html .= '</div></td>';
-
-	$base_url = $GLOBALS['CLIENT_ROOT'] . '/collections/individual/index.php?occid=';
-		
-	foreach($shownFields as $key) {
-		$value = $row[$key] ?? null;
-		$hide = array_key_exists('hide_' . $key, $_REQUEST);
-
-		if($key === 'occid') {
-			$html .= '<td data-key="'. $key .'" ' . ($hide? 'style="display:none"':'') . '><a target="_blank" href="'. $base_url . $value . '">' . $value . '</a></td>';
-		}  else  {
-			$html .= '<td data-key="'. $key .'" ' . ($hide? 'style="display:none"':'') . '>' . $value . '</td>';
-		}
-	}
-
-	return $html .=  '</tr>';
 }
 
 function getOccurrences(array $occIds, mysqli $conn) {
@@ -292,6 +236,59 @@ function getCollections(mysqli $conn) {
 	return $collections;
 }
 
+function getTableHeaders(array $arr, array $ignore = [], array $alias = []) {
+	$html = '<thead>';
+	$html .= '<th></th>';
+
+	foreach($arr as $key) {
+		if(in_array($key, $ignore)) {
+			continue;
+		} else {
+			$hide = array_key_exists('hide_' . $key, $_REQUEST);
+			$html .= '<th data-key="'. $key .'" ' . ($hide? 'style="display:none"':'') . '>' . ($alias[$key] ?? $key) . '</th>';
+		}
+	}
+
+	$html .= '</thead>';
+
+	return $html;
+}
+
+function render_row($row, $checkboxName = false, $shownFields = [], $onlyOption = false) {
+	$html = '<tr><td><div style="display:flex; align-items:center; justify-content: center;">';
+	if($checkboxName) {
+		$html .= '<input type="checkbox" onclick="checkbox_one_only(this)" name="' . $checkboxName . '" value="' . $row['occid'] . '" style="margin:0" ' . ($onlyOption? 'checked': '') . '/>';
+	}
+
+	$html .= '</div></td>';
+
+	$base_url = $GLOBALS['CLIENT_ROOT'] . '/collections/individual/index.php?occid=';
+		
+	foreach($shownFields as $key) {
+		$value = $row[$key] ?? null;
+		$hide = array_key_exists('hide_' . $key, $_REQUEST);
+
+		if($key === 'occid') {
+			$html .= '<td data-key="'. $key .'" ' . ($hide? 'style="display:none"':'') . '><a target="_blank" href="'. $base_url . $value . '">' . $value . '</a></td>';
+		}  else  {
+			$html .= '<td data-key="'. $key .'" ' . ($hide? 'style="display:none"':'') . '>' . $value . '</td>';
+		}
+	}
+
+	return $html .=  '</tr>';
+}
+
+function getUniqueOptionCount($options, $targetOccid) {
+	$count = 0;
+	foreach($options as $dupeOccid => $dup) {
+		if($dupeOccid !== $targetOccid) {
+			$count++;
+		}
+	}
+
+	return $count;
+}
+
 $conn = Database::connect('readonly');
 
 $duplicates = array_key_exists('searchDuplicates', $_REQUEST)? searchDuplicateOptions($collId, $start, $conn): [];
@@ -341,17 +338,6 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 	$options[$duplicateId][$occid] = $option;
 }
 
-function getUniqueOptionCount($options, $targetOccid) {
-	$count = 0;
-	foreach($options as $dupeOccid => $dup) {
-		if($dupeOccid !== $targetOccid) {
-			$count++;
-		}
-	}
-
-	return $count;
-}
-
 ?>
 
 <!DOCTYPE html>
@@ -381,7 +367,6 @@ function getUniqueOptionCount($options, $targetOccid) {
 	</style>
 		<script type="text/javascript">
 		function checkbox_one_only(input) {
-			//console.log(input.checked, e.target.checked)
 			const checked_elements = document.querySelectorAll(`input[name='${input.name}']:checked`);
 			for(let elem  of checked_elements) {
 				if(elem.value !=  input.value) {
