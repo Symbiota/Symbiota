@@ -1,7 +1,7 @@
 // @ts-check
 const { defineConfig, devices } = require('@playwright/test');
 
-const APP_URL = 'http://127.0.0.1:80';
+const APP_URL = 'http://host.docker.internal:80';
 
 /**
  * Read environment variables from file.
@@ -40,7 +40,8 @@ module.exports = defineConfig({
       name: 'chromium',
       use: { 
 	    ...devices['Desktop Chrome'],
-		viewport: { width: 1920, height: 1080 }
+		viewport: { width: 1920, height: 1080 },
+		args: ['--disable-gpu', '--no-sandbox', '--disable-setuid-sandbox']
 	  },
     },
 
@@ -60,11 +61,4 @@ module.exports = defineConfig({
 	  },
     },
   ],
-
-  /* Run your local dev server before starting the tests */
-  webServer: {
-     command: '',
-     url: APP_URL,
-     reuseExistingServer: !process.env.CI,
-  },
 });
