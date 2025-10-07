@@ -12,8 +12,8 @@ include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT . '/classes/Sanitize.php');
 include_once($SERVER_ROOT . '/classes/CustomQuery.php');
 
-// Other non copied fields selected out of occurrence table
-$fields = [
+// Other fields selected for display and logic purposes
+$other_fields = [
 	'occid',
 	'collid',
 	'catalognumber',
@@ -218,12 +218,12 @@ function render_row($row, $checkboxName = false, $shownFields = [], $onlyOption 
 }
 
 function getOccurrences(array $occIds, mysqli $conn) {
-	global $fields, $harvestFields; 
+	global $other_fields, $harvestFields; 
 	if(count($occIds) <= 0) return [];
 
 	$parameters = str_repeat('?,', count($occIds) - 1) . '?';
 
-	$sql = 'SELECT ' . getSqlFields($fields) . ',' .getSqlFields($harvestFields) . 
+	$sql = 'SELECT ' . getSqlFields($other_fields) . ',' .getSqlFields($harvestFields) . 
 	' from omoccurrences o where occid in (' . $parameters . ')';
 
 	$rs = QueryUtil::executeQuery($conn, $sql, $occIds);
