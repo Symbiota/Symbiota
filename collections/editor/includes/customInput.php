@@ -1,8 +1,8 @@
 <?php
 global $LANG, $LANG_TAG, $SERVER_ROOT;
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/includes/queryform.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/queryform.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/queryform.en.php');
+Language::load('collections/editor/includes/queryform');
 
 // Pass in through function scope;
 $MAX_CUSTOM_INPUTS = $MAX_CUSTOM_INPUTS ?? 8;
