@@ -236,29 +236,29 @@ INSERT INTO `omoccurpaleogts` VALUES
 
 
 #Add paleo fields to uploadspectemp
-ALTER TABLE 'uploadspectemp'
-  ADD COLUMN 'eon' TEXT,
-  ADD COLUMN 'era' TEXT,
-  ADD COLUMN 'period' TEXT,
-  ADD COLUMN 'epoch' TEXT,
-  ADD COLUMN 'earlyInterval' TEXT,
-  ADD COLUMN 'lateInterval' TEXT,
-  ADD COLUMN 'absoluteAge' TEXT,
-  ADD COLUMN 'storageLoc' TEXT,
-  ADD COLUMN 'stage' TEXT,
-  ADD COLUMN 'localStage' TEXT,
-  ADD COLUMN 'biota' TEXT,
-  ADD COLUMN 'biostratigraphy' TEXT,
-  ADD COLUMN 'taxonEnvironment' TEXT,
-  ADD COLUMN 'lithogroup' TEXT,
-  ADD COLUMN 'formation' TEXT,
-  ADD COLUMN 'member' TEXT,
-  ADD COLUMN 'bed' TEXT,
-  ADD COLUMN 'lithology' TEXT,
-  ADD COLUMN 'stratRemarks' TEXT,
-  ADD COLUMN 'element' TEXT,
-  ADD COLUMN 'slideProperties' TEXT,
-  ADD COLUMN 'geologicalContextID' TEXT;
+ALTER TABLE `uploadspectemp`
+  ADD COLUMN `eon` TEXT,
+  ADD COLUMN `era` TEXT,
+  ADD COLUMN `period` TEXT,
+  ADD COLUMN `epoch` TEXT,
+  ADD COLUMN `earlyInterval` TEXT,
+  ADD COLUMN `lateInterval` TEXT,
+  ADD COLUMN `absoluteAge` TEXT,
+  ADD COLUMN `storageLoc` TEXT,
+  ADD COLUMN `stage` TEXT,
+  ADD COLUMN `localStage` TEXT,
+  ADD COLUMN `biota` TEXT,
+  ADD COLUMN `biostratigraphy` TEXT,
+  ADD COLUMN `taxonEnvironment` TEXT,
+  ADD COLUMN `lithogroup` TEXT,
+  ADD COLUMN `formation` TEXT,
+  ADD COLUMN `member` TEXT,
+  ADD COLUMN `bed` TEXT,
+  ADD COLUMN `lithology` TEXT,
+  ADD COLUMN `stratRemarks` TEXT,
+  ADD COLUMN `element` TEXT,
+  ADD COLUMN `slideProperties` TEXT,
+  ADD COLUMN `geologicalContextID` TEXT;
 
 #Increase user password field to accommodate new bcrypt hash 
 ALTER TABLE `users` 
