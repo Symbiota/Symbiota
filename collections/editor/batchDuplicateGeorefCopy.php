@@ -12,6 +12,9 @@ include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT . '/classes/Sanitize.php');
 include_once($SERVER_ROOT . '/classes/CustomQuery.php');
 
+$collId = array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid'])? intval($_REQUEST['collid']):0;
+UserUtil::isCollectionAdminOrDenyAcess($collId);
+
 // Other fields selected for display and logic purposes
 $otherFields = [
 	'occid',
@@ -125,9 +128,6 @@ if(array_key_exists('copyInfo', $_POST)) {
 	$_SESSION['batchDuplicateGeorefCopyRequest'] = $_REQUEST;
 }
 
-$collId = array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid'])? intval($_REQUEST['collid']):0;
-
-UserUtil::isCollectionAdminOrDenyAcess($collId);
 Language::load([
 	'collections/sharedterms',
 	'collections/misc/sharedterms',
