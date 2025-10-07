@@ -12,7 +12,7 @@ include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT . '/classes/Sanitize.php');
 include_once($SERVER_ROOT . '/classes/CustomQuery.php');
 
-// Other none copied fields selected out of occurrence table
+// Other non copied fields selected out of occurrence table
 $fields = [
 	'occid',
 	'collid',
