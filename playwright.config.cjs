@@ -1,7 +1,7 @@
 // @ts-check
 const { defineConfig, devices } = require('@playwright/test');
 
-const APP_URL = 'http://host.docker.internal:80';
+const APP_URL = 'http://localhost:80';
 
 /**
  * Read environment variables from file.
