@@ -20,7 +20,7 @@ ALTER TABLE `omoccurpaleo`
   CHANGE COLUMN `geologicalContextID` `geologicalContextID` VARCHAR(100) NULL DEFAULT NULL ;
 
 ALTER TABLE `omoccurpaleo`
-  DROP COLUMN `storageAge`;
+  DROP COLUMN IF EXISTS `storageAge`;
 
 #Add paleo indexes
 ALTER TABLE `omoccurpaleo`
