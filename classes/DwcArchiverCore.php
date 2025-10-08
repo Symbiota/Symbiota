@@ -1922,6 +1922,7 @@ class DwcArchiverCore extends Manager{
 
 				if ($ocnStr = $dwcOccurManager->getAdditionalCatalogNumberStr($r['occid'])) $r['otherCatalogNumbers'] = $ocnStr;
 				if ($this->schemaType != 'coge') {
+					/*
 					if ($exsArr = $dwcOccurManager->getExsiccateArr($r['occid'])) {
 						$exsStr = $exsArr['exsStr'];
 						if (isset($r['occurrenceRemarks']) && $r['occurrenceRemarks']) {
@@ -1938,7 +1939,10 @@ class DwcArchiverCore extends Manager{
 						//$dynProp = $r['dynamicProperties'] . '; ' . $dynProp;
 						//$r['dynamicProperties'] = $dynProp;
 					}
+					*/
+					//if ($assocOccurStr = $dwcOccurManager->getAssociationStr($r['occid'])) $r['t_associatedOccurrences'] = $assocOccurStr;
 					if ($assocSeqStr = $dwcOccurManager->getAssociatedSequencesStr($r['occid'])) $r['t_associatedSequences'] = $assocSeqStr;
+					//if ($assocTaxa = $dwcOccurManager->getAssociationStr($r['occid'], 'observational')) $r['associatedTaxa'] = $assocTaxa;
 				}
 				//$dwcOccurManager->appendUpperTaxonomy($r);
 				$dwcOccurManager->appendUpperTaxonomy2($r);

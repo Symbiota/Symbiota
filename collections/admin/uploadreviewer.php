@@ -94,6 +94,7 @@ if($SYMB_UID){
 										$matSampleHeaderArr[$matKey] = $matKey;
 									}
 								}
+							}
 							else $headerArr[$k] = $k;
 						}
 					}

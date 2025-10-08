@@ -20,7 +20,7 @@ ALTER TABLE `omoccurpaleo`
   CHANGE COLUMN `geologicalContextID` `geologicalContextID` VARCHAR(100) NULL DEFAULT NULL ;
 
 ALTER TABLE `omoccurpaleo`
-  DROP COLUMN `storageAge`;
+  DROP COLUMN IF EXISTS `storageAge`;
 
 #Add paleo indexes
 ALTER TABLE `omoccurpaleo`
@@ -45,13 +45,20 @@ ALTER TABLE `omoccurpaleogts`
 
 ALTER TABLE `omoccurpaleogts`
   DROP INDEX `UNIQUE_gtsterm`,
-  DROP INDEX `FK_gtsparent_idx`;
 
 ALTER TABLE `omoccurpaleogts`
   ADD UNIQUE INDEX `UQ_paleogts_gtsterm` (`gtsterm` ASC),
-  ADD INDEX `FK_paleogts_parent_idx` (`parentGtsID` ASC),
   ADD INDEX `IX_paleogts_myaStart` (`myaStart` ASC),
   ADD INDEX `IX_paleogts_myaEnd` (`myaEnd` ASC);
+
+# Disable foreign key checks temporarily to rename index
+SET FOREIGN_KEY_CHECKS=0;
+
+ALTER TABLE `omoccurpaleogts`
+  DROP INDEX IF EXISTS `FK_gtsparent_idx`,
+  ADD INDEX IF NOT EXISTS `FK_paleogts_parent_idx` (`parentGtsID` ASC);
+
+SET FOREIGN_KEY_CHECKS=1;
 
 #reset the values within omoccurpaleogts table
 TRUNCATE `omoccurpaleogts`;
@@ -236,31 +243,41 @@ INSERT INTO `omoccurpaleogts` VALUES
 
 
 #Add paleo fields to uploadspectemp
-ALTER TABLE 'uploadspectemp'
-  ADD COLUMN 'eon' TEXT,
-  ADD COLUMN 'era' TEXT,
-  ADD COLUMN 'period' TEXT,
-  ADD COLUMN 'epoch' TEXT,
-  ADD COLUMN 'earlyInterval' TEXT,
-  ADD COLUMN 'lateInterval' TEXT,
-  ADD COLUMN 'absoluteAge' TEXT,
-  ADD COLUMN 'storageLoc' TEXT,
-  ADD COLUMN 'stage' TEXT,
-  ADD COLUMN 'localStage' TEXT,
-  ADD COLUMN 'biota' TEXT,
-  ADD COLUMN 'biostratigraphy' TEXT,
-  ADD COLUMN 'taxonEnvironment' TEXT,
-  ADD COLUMN 'lithogroup' TEXT,
-  ADD COLUMN 'formation' TEXT,
-  ADD COLUMN 'member' TEXT,
-  ADD COLUMN 'bed' TEXT,
-  ADD COLUMN 'lithology' TEXT,
-  ADD COLUMN 'stratRemarks' TEXT,
-  ADD COLUMN 'element' TEXT,
-  ADD COLUMN 'slideProperties' TEXT,
-  ADD COLUMN 'geologicalContextID' TEXT;
+ALTER TABLE `uploadspectemp`
+  ADD COLUMN `eon` TEXT,
+  ADD COLUMN `era` TEXT,
+  ADD COLUMN `period` TEXT,
+  ADD COLUMN `epoch` TEXT,
+  ADD COLUMN `earlyInterval` TEXT,
+  ADD COLUMN `lateInterval` TEXT,
+  ADD COLUMN `absoluteAge` TEXT,
+  ADD COLUMN `storageLoc` TEXT,
+  ADD COLUMN `stage` TEXT,
+  ADD COLUMN `localStage` TEXT,
+  ADD COLUMN `biota` TEXT,
+  ADD COLUMN `biostratigraphy` TEXT,
+  ADD COLUMN `taxonEnvironment` TEXT,
+  ADD COLUMN `lithogroup` TEXT,
+  ADD COLUMN `formation` TEXT,
+  ADD COLUMN `member` TEXT,
+  ADD COLUMN `bed` TEXT,
+  ADD COLUMN `lithology` TEXT,
+  ADD COLUMN `stratRemarks` TEXT,
+  ADD COLUMN `element` TEXT,
+  ADD COLUMN `slideProperties` TEXT,
+  ADD COLUMN `geologicalContextID` TEXT;
 
 #Increase user password field to accommodate new bcrypt hash 
 ALTER TABLE `users` 
   CHANGE COLUMN `password` `password` VARCHAR(255) NULL DEFAULT NULL ;
 
+#Add update to omoccurdeterminations.dateLastModified tracked any update to the row
+ALTER TABLE omoccurdeterminations 
+  MODIFY COLUMN dateLastModified timestamp DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP;
+
+
+ALTER TABLE `uploadspectemp` 
+  ADD INDEX `IX_uploadspectemp_country` (`country` ASC),
+  ADD INDEX `IX_uploadspectemp_stateProvince` (`stateProvince` ASC);
+  
+  
