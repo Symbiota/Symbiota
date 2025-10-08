@@ -44,7 +44,7 @@ ALTER TABLE `omoccurpaleogts`
   ADD COLUMN `geoTimeID` INT NULL DEFAULT NULL AFTER `parentgtsid`;
 
 ALTER TABLE `omoccurpaleogts`
-  DROP INDEX `UNIQUE_gtsterm`,
+  DROP INDEX `UNIQUE_gtsterm`;
 
 ALTER TABLE `omoccurpaleogts`
   ADD UNIQUE INDEX `UQ_paleogts_gtsterm` (`gtsterm` ASC),
