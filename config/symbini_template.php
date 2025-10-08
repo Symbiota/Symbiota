@@ -125,6 +125,7 @@ $GEO_JSON_LAYERS = [];
 // Toggles `strict-transport-security` header
 // Do not turn off for production portals
 $HTTPS_ONLY = true;
+$USE_BCRYPT = true;
 
 //Base code shared by all pages; leave as is
 include_once('symbbase.php');
