@@ -22,13 +22,16 @@ services:
         - 3306
     ports:
         - '3306:3306'
-    # Currently has issues because of schema problems
-    # volumes:
-    #   - ./config/schema/3.0/db_schema-3.0.sql:/docker-entrypoint-initdb.d/3.0.sql
-    #   - ./config/schema/3.0/patches/db_schema_patch-3.1.sql:/docker-entrypoint-initdb.d/3.1.sql
-    #   - ./config/schema/3.0/patches/db_schema_patch-3.2.sql:/docker-entrypoint-initdb.d/3.2.sql
-    #   - ./config/schema/3.0/patches/db_schema_patch-3.3.sql:/docker-entrypoint-initdb.d/3.3.sql
-    #   - ./config/schema/3.0/patches/db_schema_patch-3.4.sql:/docker-entrypoint-initdb.d/3.4.sql
+    volumes:
+      # Setup Base Schema
+      - ./config/schema/3.0/db_schema-3.0.sql:/docker-entrypoint-initdb.d/3.0.0.sql
+      # Setup tables needed to avoid fresh install errors
+      - ./config/schema/3.0/ci_table_setup.sql:/docker-entrypoint-initdb.d/3.0.1.sql
+      # Run Schema Patches
+      - ./config/schema/3.0/patches/db_schema_patch-3.1.sql:/docker-entrypoint-initdb.d/3.1.sql
+      - ./config/schema/3.0/patches/db_schema_patch-3.2.sql:/docker-entrypoint-initdb.d/3.2.sql
+      - ./config/schema/3.0/patches/db_schema_patch-3.3.sql:/docker-entrypoint-initdb.d/3.3.sql
+      - ./config/schema/3.0/patches/db_schema_patch-3.4.sql:/docker-entrypoint-initdb.d/3.4.sql
     environment:
         MYSQL_ROOT_PASSWORD: 'ci_root_password'
         MYSQL_ROOT_HOST: '%'
