@@ -522,7 +522,7 @@ class ProfileManager extends Manager{
 
 		$this->resetConnection();
 		if($stmt = $this->conn->prepare($sql)) {
-			$stmt->bind_param('sssssssssssss', $this->userName, $this->hash($pwd), $email, $firstName, $lastName, $title, $institution, $country, $city, $state, $zip, $guid, $jsonDynProps);
+			$stmt->bind_param('sssssssssssss', $this->userName, $hash, $email, $firstName, $lastName, $title, $institution, $country, $city, $state, $zip, $guid, $jsonDynProps);
 			$stmt->execute();
 			if($stmt->affected_rows){
 				$this->uid = $stmt->insert_id;
