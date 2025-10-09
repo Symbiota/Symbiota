@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 
-test('Create an Account', async ({ page }) => {
+test('Create an Account', async ({ page }, workerInfo) => {
 	await page.goto('./');
 
 	//Click Sign In button
@@ -17,13 +17,15 @@ test('Create an Account', async ({ page }) => {
 	// Navigation successful
 	await expect(page.getByRole('heading', {name: 'Create New Profile'})).toBeVisible();
 
+	const user = `${workerInfo.project.name}TestUser`;
+
 	// Text input
-	await page.locator('input[name=login]').fill('testUser');
+	await page.locator('input[name=login]').fill(user);
 	await page.locator('input[name=pwd]').fill('ciPassword');
 	await page.locator('input[name=pwd2]').fill('ciPassword');
 	await page.locator('input[name=firstname]').fill('test_first');
 	await page.locator('input[name=lastname]').fill('test_last');
-	await page.locator('input[name=email]').fill('test_email@symbiota.org');
+	await page.locator('input[name=email]').fill(user + '@symbiota.org');
 
 	await page.getByText('Create Login').click({force: true});
 
