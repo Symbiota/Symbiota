@@ -503,13 +503,13 @@ $collManager->cleanOutArr($collData);
 								}
 								else{
 									//Is a new collection, thus set to Fossil Specimen is that is the default for the portal
-									if($ACTIVATE_PALEO) $collTypeValue = 'fs';
+									if(!empty($GLOBALS['ACTIVATE_PALEO'])) $collTypeValue = 'fs';
 								}
 								?>
 								<div class="field-block">
 									<span class="field-elem">
 										<label for="collType"> <?= $LANG['DATASET_TYPE'] ?>: </label>
-										<select id="collType" name="collType">
+										<select id="collType" name="collType" onchange="toggleFossilWarning()">
 											<option value="Preserved Specimens"><?= $LANG['PRES_SPECS']; ?></option>
 											<option value="Fossil Specimens" <?= ($collTypeValue == 'fs' ? 'SELECTED' : '') ?>><?= $LANG['FOSSIL_SPECS'] ?></option>
 											<option value="Observations" <?= ($collTypeValue == 'obs' ? 'SELECTED' : '') ?>><?= $LANG['OBSERVATIONS'] ?></option>
@@ -521,6 +521,7 @@ $collManager->cleanOutArr($collData);
 										<span id="colltypeinfodialog" aria-live="polite">
 											<?= $LANG['COL_TYPE_DEF'] ?>
 										</span>
+										<span id="fossilWarning" style="display:none; color:#b36b00; font-size:0.9em; margin-left:0.8em;"> <?= $LANG['FOSSIL_WARN'] ?> </span>
 									</span>
 								</div>
 								<div class="field-block">

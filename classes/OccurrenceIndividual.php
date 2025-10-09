@@ -54,8 +54,7 @@ class OccurrenceIndividual extends Manager{
 						if($propArr = json_decode($this->metadataArr['dynamicproperties'], true)) {
 							if(isset($propArr['editorProps']['modules-panel'])) {
 								foreach($propArr['editorProps']['modules-panel'] as $k => $modArr) {
-									if(isset($modArr['paleo']['status'])) $this->activeModules['paleo'] = true;
-									elseif (isset($modArr['matSample']['status'])) $this->activeModules['matSample'] = true;
+									if (isset($modArr['matSample']['status'])) $this->activeModules['matSample'] = true;
 								}
 							}
 						}

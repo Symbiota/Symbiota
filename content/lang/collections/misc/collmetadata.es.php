@@ -58,6 +58,7 @@ $LANG['ACCESS_DEF'] = 'Información o un enlace URL a una página con detalles q
 $LANG['DATASET_TYPE'] = 'Tipo de conjunto de datos';
 $LANG['PRES_SPECS'] = 'Especímenes preservados';
 $LANG['FOSSIL_SPECS'] = 'Espécimenes fósiles';
+$LANG['FOSSIL_WARN'] = 'Al elegir “Especímenes fósiles” se activará el Módulo Paleo para esta colección y se establecerá la base predeterminada de registro en “Especímenes fósiles”';
 $LANG['OBSERVATIONS'] = 'Observaciones';
 $LANG['PERS_OBS_MAN'] = 'Gestión de observación personal';
 $LANG['MORE_COL_TYPE'] = 'Más información sobre el tipo de colección';

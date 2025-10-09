@@ -58,6 +58,7 @@ $LANG['ACCESS_DEF'] = 'Information or a URL link to page with details explaining
 $LANG['DATASET_TYPE'] = 'Dataset Type';
 $LANG['PRES_SPECS'] = 'Preserved Specimens';
 $LANG['FOSSIL_SPECS'] = 'Fossil Specimens';
+$LANG['FOSSIL_WARN'] = 'Choosing “Fossil Specimens” will activate the Paleo Module for this collection and set the default basisOfRecord to “FossilSpecimen”';
 $LANG['OBSERVATIONS'] = 'Observations';
 $LANG['PERS_OBS_MAN'] = 'Personal Observation Management';
 $LANG['MORE_COL_TYPE'] = 'More information about Collection Type';

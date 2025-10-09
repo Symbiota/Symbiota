@@ -57,6 +57,7 @@ $LANG['ACCESS_DEF'] = 'Des informations ou un lien URL vers une page avec des d�
 $LANG['DATASET_TYPE'] = 'Type de Jeu de Données';
 $LANG['PRES_SPECS'] = 'Spécimens Conservés';
 $LANG['FOSSIL_SPECS'] = 'Spécimens fossiles';
+$LANG['FOSSIL_WARN'] = 'Choisir « Spécimens fossiles » activera le module Paléo pour cette collection et définira la base d\'enregistrement par défaut sur «FossilSpecimen»';
 $LANG['OBSERVATIONS'] = 'Observations';
 $LANG['PERS_OBS_MAN'] = 'Gestion des Observations Personnelles';
 $LANG['MORE_COL_TYPE'] = "Plus d'informations sur Type de Collection";

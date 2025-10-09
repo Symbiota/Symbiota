@@ -53,8 +53,7 @@ class DwcArchiverCore extends Manager{
 	protected $includeMaterialSample = 0;
 	protected $includeIdentifiers = 0;
 	protected $includeAssociations = 0;
-	private $hasPaleo = false;
-	private $includePaleo = null;
+	private $includePaleo = false;
 	private $includeAcceptedNameUsage = false;
 	private $redactLocalities = 1;
 	private $rareReaderArr = array();
@@ -180,16 +179,13 @@ class DwcArchiverCore extends Manager{
 					$this->collArr[$r->collid]['country'] = $r->country ?? '';
 					$this->collArr[$r->collid]['phone'] = $r->phone ?? '';
 					if(!$this->includePaleo) $this->includePaleo = null;
+					if ($this->collArr[$r->collid]['colltype'] == 'Fossil Specimens')
+						$this->includePaleo = true;
 					if ($r->dynamicproperties) {
 						if ($propArr = json_decode($r->dynamicproperties, true)) {
 							if (isset($propArr['editorProps']['modules-panel'])) {
 								foreach ($propArr['editorProps']['modules-panel'] as $k => $modArr) {
-									if (isset($modArr['paleo']['status'])){
-										//includePaleo = true if module is activated for any of the collections, and only false if all collections explicitly have module deactivated
-										if($modArr['paleo']['status']) $this->includePaleo = true;
-										elseif($this->includePaleo === null) $this->includePaleo = false;
-									}
-									elseif (isset($modArr['matSample']['status'])){
+									if (isset($modArr['matSample']['status'])){
 										$this->collArr[$r->collid]['matSample'] = 1;
 									}
 								}
@@ -209,10 +205,6 @@ class DwcArchiverCore extends Manager{
 			else{
 				echo 'error: '.$this->conn->error.'<br>';
 			}
-		}
-		if(!empty($GLOBALS['ACTIVATE_PALEO']) && $this->includePaleo === null){
-			//Paleo module is globally set as true AND all target portals have not explicitly set the paleo module to false
-			$this->includePaleo = 1;
 		}
 	}
 
@@ -1778,6 +1770,8 @@ class DwcArchiverCore extends Manager{
 			unset($fieldArr['recordSecurity']);
 			unset($fieldArr['collID']);
 			unset($fieldArr['biota']);
+			unset($fieldArr['earlyInterval']);
+			unset($fieldArr['lateInterval']);
 		} elseif ($this->schemaType == 'backup') unset($fieldArr['collID']);
 		$fieldOutArr = array();
 		if ($this->schemaType == 'coge') {
@@ -1873,6 +1867,8 @@ class DwcArchiverCore extends Manager{
 					unset($r['recordSecurity']);
 					unset($r['collID']);
 					unset($r['biota']);
+					unset($r['earlyInterval']);
+					unset($r['lateInterval']);
 
 					//Format dates
 					if($r['eventDate']){

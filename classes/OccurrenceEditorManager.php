@@ -97,10 +97,6 @@ class OccurrenceEditorManager {
 				$retArr = $propArr['editorProps'];
 				if(isset($retArr['modules-panel'])){
 					foreach($retArr['modules-panel'] as $module){
-						if(isset($module['paleo']['status'])){
-							if($module['paleo']['status']) $this->collMap['paleoActivated'] = true;
-							else $this->collMap['paleoActivated'] = false;
-						}
 						if(isset($module['matSample']['status'])){
 							if($module['matSample']['status']) $this->collMap['matSampleActivated'] = true;
 							else $this->collMap['matSampleActivated'] = false;
@@ -109,7 +105,7 @@ class OccurrenceEditorManager {
 				}
 			}
 		}
-		if(!isset($this->collMap['paleoActivated']) && !empty($GLOBALS['ACTIVATE_PALEO'])) $this->collMap['paleoActivated'] = 1;
+		if(!isset($this->collMap['paleoActivated']) && $this->collMap['colltype'] == 'Fossil Specimens') $this->collMap['paleoActivated'] = 1;
 	}
 
 	public function getDownloadQuery(): string {
