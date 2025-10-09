@@ -180,7 +180,7 @@ class ChecklistAdmin extends Manager{
 					$row = $rs->fetch_object();
 					if($row->footprintGeoJson) {
 						return ["type" => "geoJson", "footprint" => $row->footprintGeoJson];
-					} else {
+					} else if($row->footprintWkt) {
 						return ["type" => "wkt", "footprint" => $row->footprintWkt];
 					}
 					$rs->free();

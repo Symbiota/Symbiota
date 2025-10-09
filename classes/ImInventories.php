@@ -169,7 +169,7 @@ class ImInventories extends Manager{
 	private function setChecklistFieldMap(){
 		$this->fieldMap = array('name' => 's', 'authors' => 's', 'type' => 's', 'locality' => 's', 'publication' => 's', 'abstract' => 's', 'notes' => 's',
 			'latCentroid' => 'd', 'longCentroid' => 'd', 'pointRadiusMeters' => 'i', 'access' => 's', 'defaultSettings' => 's', 'dynamicSql' => 's',
-			'dynamicProperties' => 's', 'uid' => 'i', 'footprintWkt' => 's', 'sortSequence' => 'i');
+			'dynamicProperties' => 's', 'uid' => 'i', 'footprintWkt' => 's', 'footprintgeoJson' => 's', 'sortSequence' => 'i');
 	}
 
 	public function deleteChecklist(){
