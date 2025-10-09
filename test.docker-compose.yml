@@ -10,6 +10,8 @@ services:
     volumes:
       # Binds Symbiota Code to Container
       - .:/var/www/html/
+    environment:
+        APP_ENV: 'testing'
     networks:
       - symbiota
     depends_on:
