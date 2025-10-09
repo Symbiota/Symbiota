@@ -41,7 +41,6 @@ module.exports = defineConfig({
       use: { 
 	    ...devices['Desktop Chrome'],
 		viewport: { width: 1920, height: 1080 },
-		args: ['--disable-gpu', '--no-sandbox', '--disable-setuid-sandbox']
 	  },
     },
 
