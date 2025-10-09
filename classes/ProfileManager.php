@@ -523,6 +523,7 @@ class ProfileManager extends Manager{
 
 			if(!$hash) {
 				$this->errorMessage = 'ERROR inserting new user: Failed to encrypt password';
+				return $status;
 			}
 		}
 
