@@ -519,11 +519,11 @@ class ProfileManager extends Manager{
 
 		if($GLOBALS['USE_BCRYPT'] ?? false) {
 			$sql = 'INSERT INTO users(username, password, email, firstName, lastName, title, institution, country, city, state, zip, guid, dynamicProperties) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)';
+			$hash = $this->hash($pwd);
+
 			if(!$hash) {
 				$this->errorMessage = 'ERROR inserting new user: Failed to encrypt password';
 			}
-
-			$hash = $this->hash($pwd);
 		}
 
 		$this->resetConnection();
