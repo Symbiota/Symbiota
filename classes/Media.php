@@ -1042,10 +1042,12 @@ class Media {
 	 * This function is assumes clean data because it is interal
 	 *
 	 * @param array $metadata_arr Key value array of Media table attributes
+	 * @param array $media_id Id of media function updates
+	 * @param ?Mysqli $conn Nullable Mysqli connection
 	 * @return void
 	 * @throws Exception
 	 **/
-	private static function update_metadata(array $metadata_arr, int $media_id, mysqli $conn = null): void {
+	private static function update_metadata(array $metadata_arr, int $media_id, ?Mysqli $conn = null): void {
 		$values = [];
 		$parameter_str = '';
 
@@ -1113,7 +1115,7 @@ class Media {
 	 * @param int $media_id
 	 * @param string mediaType Should use MediaType Constants
 	 */
-	public static function getMedia(int $media_id, string $media_type = null): Array {
+	public static function getMedia(int $media_id, ?string $media_type = null): Array {
 		if(!$media_id) return [];
 		$parameters = [$media_id];
 		$sql ='SELECT ' . implode(', ', self::MEDIA_ITEM_SELECT_SCHEMA) .' FROM media m ' .
@@ -1140,7 +1142,7 @@ class Media {
 	 * @param int $tid
 	 * @param string $media_type Should use MediaType Constants
 	 */
-	public static function getByTid(int $tid, string $media_type = null): Array {
+	public static function getByTid(int $tid, ?string $media_type = null): Array {
 		if(!$tid) return [];
 		$parameters = [$tid];
 
@@ -1162,9 +1164,9 @@ class Media {
 
 	/**
 	 * @param int $occid
-	 * @param string $media_type Should use MediaType constants
+	 * @param ?string $media_type Should use MediaType constants
 	 */
-	public static function fetchOccurrenceMedia(int $occid, string $media_type = null): Array {
+	public static function fetchOccurrenceMedia(int $occid, ?string $media_type = null): Array {
 		if(!$occid) return [];
 
 		$parameters = [$occid];
@@ -1202,10 +1204,10 @@ class Media {
 
 	/**
 	 * @param int|array $media_id
-	 * @param Mysqli $conn
+	 * @param ?Mysqli $conn
 	 * @return array<string>
 	 */
-	public static function getMediaTags($media_id, mysqli $conn = null): array {
+	public static function getMediaTags($media_id, ?Mysqli $conn = null): array {
 		$sql = 'SELECT t.mediaID, k.tagkey, k.shortlabel, k.description_en FROM imagetag t
 		INNER JOIN imagetagkey k ON t.keyvalue = k.tagkey
 		WHERE t.mediaID ';
