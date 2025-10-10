@@ -44,6 +44,8 @@ if($tid){
 					?>
 					<div style='clear:both;'>
 						<form action='tpeditor.php' method='post' target='_self'>
+							<input name='tid' type='hidden' value='<?php echo $imageEditor->getTid(); ?>'>
+							<input type="hidden" name="tabindex" value="2" />
 							<table border='0' cellspacing='0'>
 								<tr>
 									<?php
@@ -118,8 +120,6 @@ if($tid){
 									?>
 								</tr>
 							</table>
-							<input name='tid' type='hidden' value='<?php echo $imageEditor->getTid(); ?>'>
-							<input type="hidden" name="tabindex" value="2" />
 							<?php
 							if($imgCnt%5 != 0) echo "<div style='margin-top:2px;'><button type='submit' name='action' id='imgsortsubmit' value='Submit Image Sort Edits'>" . $LANG['SUBMIT_SORT_EDITS'] . "</button></div>\n";
 							?>

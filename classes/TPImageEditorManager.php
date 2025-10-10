@@ -41,7 +41,7 @@ class TPImageEditorManager extends TPEditorManager{
 				LEFT JOIN users u ON m.creatorUid = u.uid
 				WHERE (m.tid IN(' . implode(',', $tidArr) . ')) AND m.SortSequence < 500 ';
 		}
-		$sql .= 'ORDER BY m.sortsequence';
+		$sql .= 'ORDER BY m.sortsequence LIMIT 500';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$imageArr[$r->mediaID]['url'] = $r->url;
@@ -93,7 +93,7 @@ class TPImageEditorManager extends TPEditorManager{
 		return $status;
 	}
 
-	// TODO (Logan) deprecate function 
+	// TODO (Logan) deprecate function
 	// commenting out for now as instructed
 	// public function loadImage($postArr){
 	// 	$status = true;
