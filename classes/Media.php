@@ -284,12 +284,13 @@ class Media {
 		$file_name = str_replace(".","", $file_name);
 		$file_name = str_replace(array("%20","%23"," ","__"),"_",$file_name);
 		$file_name = str_replace("__","_",$file_name);
-		$file_name = str_replace(array(chr(231),chr(232),chr(233),chr(234),chr(260)),"a",$file_name);
-		$file_name = str_replace(array(chr(230),chr(236),chr(237),chr(238)),"e",$file_name);
-		$file_name = str_replace(array(chr(239),chr(240),chr(241),chr(261)),"i",$file_name);
-		$file_name = str_replace(array(chr(247),chr(248),chr(249),chr(262)),"o",$file_name);
-		$file_name = str_replace(array(chr(250),chr(251),chr(263)),"u", $file_name);
-		$file_name = str_replace(array(chr(264),chr(265)),"n",$file_name);
+		$file_name = str_replace(["à","á","â","ã","ä","å","æ"],"a", $file_name);
+		$file_name = str_replace(["è","é","ê","ë"],"e",$file_name);
+		$file_name = str_replace(["ì","í","î","ï"],"i",$file_name);
+		$file_name = str_replace(["ò","ó","ô","õ","ö"],"o",$file_name);
+		$file_name = str_replace(["ù","ú","û","ü"],"u",$file_name);
+		$file_name = str_replace("ñ","n",$file_name);
+
 		$file_name = preg_replace("/[^a-zA-Z0-9\-_]/", "", $file_name);
 		$file_name = trim($file_name,' _-');
 
