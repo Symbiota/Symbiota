@@ -61,7 +61,7 @@ class KeyDataManager extends Manager {
 				while($row = $rs->fetch_object()){
 					$charList[] = $row->CID;
 				}
-				$countMin = (float)($countMin * 0.9);
+				$countMin = $countMin * 0.9;
 				$loopCnt++;
 			}
 			$charList = array_merge($charList,array_keys($this->charArr));
@@ -186,7 +186,7 @@ class KeyDataManager extends Manager {
 				while($row = $rs->fetch_object()){
 					$charList[] = $row->CID;
 				}
-				$countMin = (float)($countMin * 0.9);
+				$countMin = $countMin * 0.9;
 				$loopCnt++;
 			}
 			$charList = array_merge($charList,array_keys($this->charArr));
