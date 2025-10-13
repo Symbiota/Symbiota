@@ -2796,13 +2796,29 @@ class OccurrenceEditorManager {
 	}
 
 	public function getAttributeTraits($collid = ''){
+		$stateIds = [];
+
+		if($collid) {
+			$rs = QueryUtil::executeQuery($this->conn,
+				'SELECT DISTINCT a.stateid from omoccurrences o INNER JOIN tmattributes a ON a.occid = o.occid WHERE collid = ?',
+				[$collid]
+			);
+			$stateIds = [];
+
+			while($r = $rs->fetch_object()) {
+				array_push($stateIds, $r->stateid);
+			}
+		}
+
+		$sql = 'SELECT DISTINCT t.traitid, t.traitname, s.stateid, s.statename FROM tmtraits t
+		INNER JOIN tmstates s ON t.traitid = s.traitid';
+
+		if(count($stateIds) > 0) {
+			$sql .= ' where s.stateid in (' . str_repeat('?,', count($stateIds) - 1) . '?' . ')';
+		}
+		
 		$retArr = array();
-		$sql = 'SELECT DISTINCT t.traitid, t.traitname, s.stateid, s.statename '.
-			'FROM tmtraits t INNER JOIN tmstates s ON t.traitid = s.traitid '.
-			'INNER JOIN tmattributes a ON s.stateid = a.stateid '.
-			'INNER JOIN omoccurrences o ON a.occid = o.occid ';
-		if($collid) $sql .= 'WHERE o.collid = '.$collid;
-		$rs = $this->conn->query($sql);
+		$rs = QueryUtil::executeQuery($this->conn, $sql, $stateIds);
 		while($r = $rs->fetch_object()){
 			$retArr[$r->traitid]['name'] = $r->traitname;
 			$retArr[$r->traitid]['state'][$r->stateid] = $r->statename;

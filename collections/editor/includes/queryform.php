@@ -34,7 +34,11 @@ $qTraitIds = (array_key_exists('traitid',$qryArr)?$qryArr['traitid']: []);
 $qTraitAbsence = (array_key_exists('traitAbsence',$qryArr)?$qryArr['traitAbsence']: false);
 $qTraitStateIds = (array_key_exists('stateid',$qryArr)?$qryArr['stateid']: []);
 
-$qTraitArr = $occManager->getAttributeTraits($collId);
+$qTraitArr = [];
+if($occManager->traitCodingActivated()){
+	$qTraitArr = $occManager->getAttributeTraits($collId);
+}
+
 $qCollMap = $occManager->getCollMap();
 
 $customFieldArr = array();
