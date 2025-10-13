@@ -25,6 +25,7 @@ $genticArr = $occManager->getGeneticArr();
 $dupManager = new OccurrenceDuplicate();
 $dupClusterArr = $dupManager->getClusterArr($occid);
 ?>
+<div id="occResourceDiv">
 <script>
 	let defaultRelationships = ["<?= implode('","', $defaultRelationshipArr) ?>"];
 	let resourceRelationships = ["<?= implode('","', $resourceRelationshipArr) ?>"];
@@ -770,4 +771,5 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 			?>
 		</div>
 	</fieldset>
+</div>
 </div>
