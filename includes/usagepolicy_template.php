@@ -1,7 +1,7 @@
 <?php
 include_once('../config/symbini.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/includes/useagepolicy_template.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/includes/useagepolicy_template.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/includes/useagepolicy_template.en.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/templates/usagepolicy.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/templates/usagepolicy.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/templates/usagepolicy.en.php');
 include_once ($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 header("Content-Type: text/html; charset=" . $CHARSET);
@@ -11,7 +11,7 @@ $serverHost = GeneralUtil::getDomain();
 <html lang="en">
 
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Data Usage Guidelines</title>
+	<title><?php echo $DEFAULT_TITLE . $LANG['DATA_USAGE_GUIDELINES']; ?></title>
 	<?php
 	include_once($SERVER_ROOT . '/includes/head.php');
 	?>
@@ -23,111 +23,97 @@ $serverHost = GeneralUtil::getDomain();
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php">Home</a> &gt;&gt;
-		<b>Data Usage Guidelines</b>
+		<a href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php"><?php echo $LANG['HOME']; ?></a> &gt;&gt;
+		<b><?php echo $LANG['DATA_USAGE_GUIDELINES']; ?></b>
 	</div>
 	<!-- This is inner text! -->
 	<div role="main" id="innertext">
-		<h1 class="page-heading">Guidelines for Acceptable Use of Data</h1>
-		<h2>Recommended Citation Formats</h2>
-		<p>Use one of the following formats to cite data retrieved from the <?php echo $DEFAULT_TITLE; ?> network:</p>
-		<h3>General Citation</h3>
+		<h1 class="page-heading"><?php echo $LANG ['GUIDE_ACCESSIBLE']; ?></h1>
+		<h2><?php echo $LANG ['REC_CITATION']; ?></h2>
+		<p><?php echo $LANG ['USE_FOLLOWING'] . " " . $DEFAULT_TITLE . " " . $LANG ['NETWORK']; ?>:</p>
+		<h3><?php echo $LANG ['GENERAL_CITATION']; ?></h3>
 		<blockquote>
 			<?php
 			if (file_exists($SERVER_ROOT . '/includes/citationportal.php')) {
 				include($SERVER_ROOT . '/includes/citationportal.php');
 			}
 			else {
-				echo 'Biodiversity occurrence data published by: ';
+				echo $LANG['PUBLISHED_BY'] . ': ';
 				if ($DEFAULT_TITLE) {
 					echo $DEFAULT_TITLE;
 				}
 				else {
-					echo 'Name of people or institutional responsible for maintaining the portal';
+					echo $LANG['RESPONSIBLE_FOR'];
 				};
-				echo ' (accessed through the ';
+				echo ' ' . $LANG['ACCESSED_THROUGH'] . ' ';
 				if ($DEFAULT_TITLE) {
 					echo $DEFAULT_TITLE;
 				}
 				else {
-					echo 'Name of people or institutional responsible for maintaining the portal';
+					echo $LANG['RESPONSIBLE_FOR'];
 				};
-				echo ' Portal, ' . $serverHost . $CLIENT_ROOT . ', ' . date('Y-m-d') . ').';
+				echo ' ' . $LANG['PORTAL'] . ' ' . $serverHost . $CLIENT_ROOT . ', ' . date('Y-m-d') . ').';
 			};
 			?>
 		</blockquote>
 
-		<h3>Usage of occurrence data from specific institutions</h3>
-		<p>Access each collection profile page to find the available citation formats.</p>
-		<h4>Example</h4>
+		<h3><?php echo $LANG ['USAGE_FROM']; ?></h3>
+		<p><?php echo $LANG ['ACCESS_EACH']; ?>.</p>
+		<h4><?php echo $LANG ['EXAMPLE']; ?></h4>
 		<blockquote>
 			<?php
-			$collData['collectionname'] = 'Name of Institution or Collection';
+			$collData['collectionname'] = $LANG['NAME_INST_COLL'];
 			$collData['dwcaurl'] = $serverHost . $CLIENT_ROOT . '/portal/content/dwca/NIC_DwC-A.zip';
 			if (file_exists($SERVER_ROOT . '/includes/citationcollection.php')) {
 				include($SERVER_ROOT . '/includes/citationcollection.php');
 			} else {
-				echo 'Name of Institution or Collection. Occurrence dataset ' . 'http://gh.local/Symbiota/portal/content/dwca/' . 'accessed via the' . 'Fresh Symbiota Install' . 'Portal, ' . 'http://gh.local/Symbiota' . ', 2022-07-25.';
+				echo $LANG['NAME_INST_OCCUR'] . ' ' . 'http://gh.local/Symbiota/portal/content/dwca/' . $LANG['ACCESSED_VIA'] . ', ' . 'http://gh.local/Symbiota' . ', 2022-07-25.';
 			}
 			?>
 		</blockquote>
-		<h3>Glossary</h3>
-		<p>Please cite this portal's glossary as:</p>
+		<h3><?php echo $LANG ['GLOSSARY']; ?></h3>
+		<p><?php echo $LANG ['PLEASE_CITE']; ?>:</p>
 		<blockquote>
 			<?php
 				if ($DEFAULT_TITLE) {
 					echo $DEFAULT_TITLE;
 				}
 				else {
-					echo 'Name of people or institutional responsible for maintaining the portal';
+					echo $LANG['RESPONSIBLE_FOR'];
 				};
 				echo '. Glossary. ' . $serverHost . $CLIENT_ROOT . 'glossary/index.php. Accessed: ' . date('Y-m-d') . '.';
 			?>
 		</blockquote>
 
-		<h2>Occurrence Record Use Policy</h2>
+		<h2><?php echo $LANG ['RECORD_USE_POLICY']; ?></h2>
 		<div>
 			<ul>
 				<li>
-					While <?php echo $DEFAULT_TITLE; ?> will make every effort possible to control and document the quality
-					of the data it publishes, the data are made available "as is". Any report of errors in the data should be
-					directed to the appropriate curators and/or collections managers.
+					<?php echo $LANG ['OCC_REC_POLICY_1_1'] . ' ' . $DEFAULT_TITLE . ' ' . $LANG ['OCC_REC_POLICY_1_2']; ?>
 				</li>
 				<li>
-					<?php echo $DEFAULT_TITLE; ?> cannot assume responsibility for damages resulting from misuse or
-					misinterpretation of datasets or from errors or omissions that may exist in the data.
+					<?php echo $DEFAULT_TITLE . ' ' . $LANG ['OCC_REC_POLICY_2']; ?>
 				</li>
 				<li>
-					It is considered a matter of professional ethics to cite and acknowledge the work of other scientists that
-					has resulted in data used in subsequent research. We encourages users to
-					contact the original investigator responsible for the data that they are accessing.
+					<?php echo $LANG ['OCC_REC_POLICY_3']; ?>
 				</li>
 				<li>
-					<?php echo $DEFAULT_TITLE; ?> asks that users not redistribute data obtained from this site without permission for data owners.
-					However, links or references to this site may be freely posted.
+					<?php echo $DEFAULT_TITLE . ' ' . $LANG ['OCC_REC_POLICY_4']; ?>
 				</li>
 			</ul>
 		</div>
 
-		<h2>Images</h2>
-		<p>Images within this website have been generously contributed by their owners to promote education and research. These contributors retain the full copyright for their images.
-		Unless stated otherwise, images are made available under the Creative Commons Attribution-ShareAlike
+		<h2><?php echo $LANG ['IMAGES']; ?></h2>
+		<p><?php echo $LANG ['IMAGES_POLICY_1']; ?>
 		(<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA</a>).
-		Users are allowed to copy, transmit, reuse, and/or adapt content, as long as attribution regarding the source of the content is made. If the content is altered, transformed,
-		or enhanced, it may be re-distributed only under the same or similar license by which it was acquired.
+		<?php echo $LANG ['IMAGES_POLICY_2']; ?>
 		</p>
 
-		<h2>Notes on Specimen Records and Images</h2>
-		<p>Specimens are used for scientific research and because of skilled preparation and careful use they may last for hundreds of years. Some collections have specimens that were
-		collected over 100 years ago that are no longer occur within the area. By making these specimens available on the web as images, their availability and value improves without
-		an increase in inadvertent damage caused by use. Note that if you are considering making specimens, remember collecting normally requires permission of the landowner and,
-		in the case of rare and endangered plants, additional permits may be required. It is best to coordinate such efforts with a regional institution that manages a publicly
-		accessible collection.
+		<h2><?php echo $LANG ['NOTES_REC_IMG']; ?></h2>
+		<p><?php echo $LANG ['REC_IMG_DESC']; ?>
 		</p>
 
-		<p><b>Disclaimer:</b> This data portal may contain specimens and historical records that are culturally sensitive. The collections include specimens dating back over 200 years
-		collected from all around the world. Some records may also include offensive language. These records do not reflect the portal community's current viewpoint but rather the
-		social attitudes and circumstances of the time period when specimens were collected or cataloged.
+		<p><b><?php echo $LANG ['DISCLAIMER'] . ': ' ?> </b> <?php echo $LANG ['DISCLAIMER_DESC']; ?>
 		</p>
 	</div>
 	<?php
