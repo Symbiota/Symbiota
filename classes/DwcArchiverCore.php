@@ -249,6 +249,16 @@ class DwcArchiverCore extends Manager{
 		$this->paleoWithSql = $sql;
 	}
 
+	private function hasPaleoCollection() {
+		if (empty($this->collArr))
+			return false;
+		foreach ($this->collArr as $collData) {
+			if (!empty($collData['colltype']) && $collData['colltype'] === 'Fossil Specimens')
+				return true;
+		}
+		return false;
+	}
+
 	public function addCondition($field, $cond, $value = ''){
 		$cond = strtoupper(trim($cond));
 		if (!preg_match('/^[A-Za-z]+$/', $field)) return false;
@@ -408,9 +418,9 @@ class DwcArchiverCore extends Manager{
 			if (strpos($this->conditionSql, 'id.identifierValue')) {
 				$sql .= 'LEFT JOIN omoccuridentifiers id ON o.occid = id.occid ';
 			}
-			if($GLOBALS["ACTIVATE_PALEO"]){
+			if ($this->hasPaleoCollection()) {
 				$sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
-				if(strpos($this->conditionSql, 'early.myaStart')){
+				if (strpos($this->conditionSql, 'early.myaStart') !== false) {
 					$sql .= 'JOIN omoccurpaleogts early ON paleo.earlyInterval = early.gtsterm ';
 					$sql .= 'JOIN omoccurpaleogts late ON paleo.lateInterval = late.gtsterm ';
 					$sql .= 'CROSS JOIN searchRange search ';
