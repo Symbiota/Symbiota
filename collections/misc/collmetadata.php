@@ -522,7 +522,11 @@ $collManager->cleanOutArr($collData);
 										<span id="colltypeinfodialog" aria-live="polite">
 											<?= $LANG['COL_TYPE_DEF'] ?>
 										</span>
-										<span id="fossilWarning" style="display:none; color:var(--danger-color); font-size:0.9em; margin-left:0.8em;"> <?= $LANG['FOSSIL_WARN'] ?> </span>
+										<span id="fossilWarning" style="display:none; color:var(--danger-color);">
+											<b> <?= $LANG['FOSSIL_WARN_1'] ?>
+												<a href="https://dwc.tdwg.org/terms/#dwc:basisOfRecord" target="_blank" style="color:inherit; text-decoration:underline;">dwc:basisOfRecord</a> .</b>
+											<b><?= $LANG['FOSSIL_WARN_2'] ?></b><?= ' ' . $LANG['FOSSIL_WARN_3'] ?>
+										</span>
 									</span>
 								</div>
 								<div class="field-block">
