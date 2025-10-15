@@ -62,7 +62,7 @@ function localitySecurityCheck(f){
 	if(tidIn != "" && stateIn != ""){
 		$.ajax({
 			type: "POST",
-			url: "rpc/localitysecuritycheck.php",
+			url: "rpc/securitycheck.php",
 			dataType: "json",
 			data: { tid: tidIn, state: stateIn }
 		}).done(function( data ) {
