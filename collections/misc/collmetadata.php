@@ -36,14 +36,18 @@ if ($isEditor) {
 	}
 	elseif ($action == 'newCollection') {
 		if ($IS_ADMIN) {
-			$newCollid = $collManager->collectionInsert($_POST);
-			if ($newCollid) {
-				$statusStr = '<span style="color:green">' . $LANG['ADD_SUCCESS'] . '!</span><br/>' .
-					$LANG['ADD_STUFF'] . '.';
-				$collid = $newCollid;
-				$tabIndex = 1;
+			if (empty($_POST['collType']))
+				$statusStr = '<span style="color:var(--danger-color);">Please select a Dataset Type before submitting.</span>';
+			else {
+				$newCollid = $collManager->collectionInsert($_POST);
+				if ($newCollid) {
+					$statusStr = '<span style="color:green">' . $LANG['ADD_SUCCESS'] . '!</span><br/>' .
+						$LANG['ADD_STUFF'] . '.';
+					$collid = $newCollid;
+					$tabIndex = 1;
+				}
+				else $statusStr = $collManager->getErrorMessage();
 			}
-			else $statusStr = $collManager->getErrorMessage();
 		}
 	}
 	elseif ($action == 'saveResourceLink') {
@@ -501,15 +505,12 @@ $collManager->cleanOutArr($collData);
 									elseif($collData['colltype'] == 'General Observations') $collTypeValue = 'go';
 									elseif($collData['colltype'] == 'Fossil Specimens') $collTypeValue = 'fs';
 								}
-								else{
-									//Is a new collection, thus set to Fossil Specimen is that is the default for the portal
-									if(!empty($GLOBALS['ACTIVATE_PALEO'])) $collTypeValue = 'fs';
-								}
 								?>
 								<div class="field-block">
 									<span class="field-elem">
 										<label for="collType"> <?= $LANG['DATASET_TYPE'] ?>: </label>
 										<select id="collType" name="collType" onchange="toggleFossilWarning()">
+											<?php if (!empty($GLOBALS['ACTIVATE_PALEO'])): ?> <option value="" <?= ($collTypeValue == '' ? 'SELECTED' : '') ?>><?= $LANG['SELECT_DATASET_TYPE'] ?? '— Select dataset type —' ?></option><?php endif; ?>
 											<option value="Preserved Specimens"><?= $LANG['PRES_SPECS']; ?></option>
 											<option value="Fossil Specimens" <?= ($collTypeValue == 'fs' ? 'SELECTED' : '') ?>><?= $LANG['FOSSIL_SPECS'] ?></option>
 											<option value="Observations" <?= ($collTypeValue == 'obs' ? 'SELECTED' : '') ?>><?= $LANG['OBSERVATIONS'] ?></option>
@@ -521,7 +522,7 @@ $collManager->cleanOutArr($collData);
 										<span id="colltypeinfodialog" aria-live="polite">
 											<?= $LANG['COL_TYPE_DEF'] ?>
 										</span>
-										<span id="fossilWarning" style="display:none; color:#b36b00; font-size:0.9em; margin-left:0.8em;"> <?= $LANG['FOSSIL_WARN'] ?> </span>
+										<span id="fossilWarning" style="display:none; color:var(--danger-color); font-size:0.9em; margin-left:0.8em;"> <?= $LANG['FOSSIL_WARN'] ?> </span>
 									</span>
 								</div>
 								<div class="field-block">
