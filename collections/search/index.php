@@ -212,6 +212,9 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 									</div>
 								</div>
 							</div>
+							<?php if (empty($polygonList)): ?>
+								<p><?php echo $LANG['NO_POLYGONS_FOUND']; ?></p>
+							<?php else: ?>
 							<div class="input-text-container">
 								<label for="polygons" class="input-text--outlined">
 									<span class="screen-reader-only"><?php echo $LANG['POLYGONS'] ?></span>
@@ -226,6 +229,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 									<span class="inset-input-label"><?php echo $LANG['POLYGONS'] ?></span>
 								</label>
 							</div>
+							<?php endif; ?>
 						</div>
 					</div>
 				</section>
