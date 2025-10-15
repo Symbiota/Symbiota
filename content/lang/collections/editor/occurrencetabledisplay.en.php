@@ -50,4 +50,89 @@ $LANG['IMG_LINK'] = 'Link Button';
 $LANG['SKIP_SEARCH'] = 'Skip to Table Content';
 $LANG['SAME_WINDOW'] = 'open in same window';
 
+$LANG['INSTITUTION_CODE'] = 'Institution Code (override)';
+$LANG['COLLEC_CODE'] = 'Collection Code (override)';
+$LANG['OWNER_CODE'] = 'Owner Code (override)';
+
+$LANG['CATALOG_NUM'] = 'Catalog Number';
+$LANG['FAMILY'] = 'Family';
+$LANG['ID_QUALIFIER'] = 'ID Qualifier';
+$LANG['SCI_NAME'] = 'Scientific Name';
+$LANG['SCI_NAME_AUTHOR'] = 'Author';
+$LANG['RECORD_COLLEC'] = 'Collector';
+$LANG['RECORD_NUM'] = 'Collector Number';
+$LANG['ASSOC_COLLEC'] = 'Associated Collectors';
+$LANG['EVENT_DATE'] = 'Event Date';
+$LANG['VERB_EVENT_DATE'] = 'Verbatim Date';
+
+$LANG['ID_REMARKS'] = 'Identification Remarks';
+$LANG['TAXON_REMARKS'] = 'Taxon Remarks';
+$LANG['ID_BY'] = 'Identified By';
+$LANG['DATE_IDENTIFIED'] = 'Date Identified';
+$LANG['ID_REF'] = 'Identification References';
+
+$LANG['COUNTRY'] = 'Country';
+$LANG['STATE_PROVINCE'] = 'State/Province';
+$LANG['COUNTY'] = 'County';
+$LANG['MUNICIPALITY'] = 'Municipality';
+$LANG['LOCALITY'] = 'Locality';
+$LANG['LATITUDE'] = 'Latitude';
+$LANG['LONGITUDE'] = 'Longitude';
+
+$LANG['ID_TAG_NAME'] = 'Identifier Tag Name';
+$LANG['ID_TAG_VAL'] = 'Identifier Tag Value';
+$LANG['UNCERTAINTY_METERS'] = 'Uncertainty In Meters';
+$LANG['VERB_COORDINATES'] = 'Verbatim Coordinates';
+$LANG['DATUM'] = 'Datum';
+
+$LANG['GEOREF_BY'] = 'Georeferenced By';
+$LANG['GEOREF_PROTOCOL'] = 'Georeference Protocol';
+$LANG['GEOREF_SOURCE'] = 'Georeference Sources';
+$LANG['GEOREF_VERIF_STATUS'] = 'Georef Verification Status';
+$LANG['GEOREF_REMARKS'] = 'Georef Remarks';
+
+$LANG['ELEV_MIN_METERS'] = 'Elev. Min. (m)';
+$LANG['ELEV_MAX_METERS'] = 'Elev. Max. (m)';
+$LANG['VERB_ELEV'] = 'Verbatim Elev.';
+$LANG['DEPTH_MIN_METERS'] = 'Depth. Min. (m)';
+$LANG['DEPTH_MAX_METERS'] = 'Depth. Max. (m)';
+$LANG['VERB_DEPTH'] = 'Verbatim Depth';
+
+$LANG['HABITAT'] = 'Habitat';
+$LANG['INTERVAL_EARLY'] = 'Early Interval';
+$LANG['INTERVAL_LATE'] = 'Late Interval';
+$LANG['GROUP'] = 'Group';
+$LANG['FORMATION'] = 'Formation';
+$LANG['MEMBER'] = 'Member';
+$LANG['BED'] = 'Bed';
+$LANG['SUBSTRATE'] = 'Substrate';
+$LANG['OCCURR_REMARKS'] = 'Notes (Occurrence Remarks)';
+$LANG['ASSOC_TAXA'] = 'Associated Taxa';
+$LANG['VERB_ATTRIBUTES'] = 'Description';
+$LANG['LIFE_STAGE'] = 'Life Stage';
+$LANG['SEX'] = 'Sex';
+
+$LANG['COUNT'] = 'Individual Count';
+$LANG['SAMPLE_PROTOCOL'] = 'Sampling Protocol';
+$LANG['PREPARATIONS'] = 'Preparations';
+$LANG['REPRODUCTIVE_CONDITION'] = 'Reproductive Condition';
+$LANG['TYPE_STATUS'] = 'Type Status';
+$LANG['CULTIVATION_STATUS'] = 'Cultivation Status';
+$LANG['ESTABLISHMENT_MEANS'] = 'Establishment Means';
+$LANG['DATA_GENERALIZATIONS'] = 'Data Generalizations';
+
+$LANG['DISPOSITION'] = 'Disposition';
+$LANG['DUPE_QUANTITY'] = 'Duplicate Qty';
+$LANG['DATE_LAST_MODIFIED'] = 'Date Last Modified';
+$LANG['LABEL_PROJECT'] = 'Label Project';
+$LANG['PROCESS_STATUS'] = 'Processing Status';
+$LANG['RECORD_ENTERED_BY'] = 'Entered By';
+$LANG['DBPK'] = 'dbpk';
+$LANG['BASIS_REC'] = 'Basis Of Record';
+$LANG['LANG'] = 'Language';
+$LANG['CONTINENT'] = 'Continent';
+$LANG['ISLAND_GROUP'] = 'Island Group';
+$LANG['ISLAND'] = 'Island';
+$LANG['WATER_BODY'] = 'Water Body';
+
 ?>

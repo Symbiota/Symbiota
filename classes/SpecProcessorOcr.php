@@ -5,6 +5,7 @@
 include_once($SERVER_ROOT . '/classes/Manager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Encoding.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/UploadUtil.php');
 
 class SpecProcessorOcr extends Manager{
 
@@ -232,7 +233,7 @@ class SpecProcessorOcr extends Manager{
 			}
 			//Set temp folder path and file names
 			$ts = time();
-			$this->imgUrlLocal = $this->tempPath.$ts.'_img.jpg';
+			$this->imgUrlLocal = $this->tempPath.$ts.'_img.jpg'; // @TODO is it intentional that it is always .jpg?
 
 			//Copy image to temp folder
 			$status = copy($imgUrl,$this->imgUrlLocal);
@@ -264,7 +265,10 @@ class SpecProcessorOcr extends Manager{
 					'FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid '.
 					'LEFT JOIN specprocessorrawlabels r ON m.mediaID = r.mediaID '.
 					'WHERE (o.collid = '.$collid.') AND r.prlid IS NULL ';
-				if($procStatus) $sql .= 'AND o.processingstatus = "unprocessed" ';
+				if($procStatus){
+					if($procStatus == 'null') $sql .= 'AND processingstatus IS NULL';
+					else $sql .= 'AND o.processingstatus = "' . $this->cleanInStr($procStatus) . '" ';
+				} 
 				if($limit) $sql .= 'LIMIT '.$limit;
 				if($rs = $this->conn->query($sql)){
 					$recCnt = 1;
@@ -838,19 +842,8 @@ class SpecProcessorOcr extends Manager{
 	}
 
 	private function setTempPath(){
-		$tempPath = 0;
-		if(!empty($GLOBALS['TEMP_DIR_ROOT'])){
-			$tempPath = $GLOBALS['TEMP_DIR_ROOT'];
-		}
-		else{
-			$tempPath = ini_get('upload_tmp_dir');
-		}
-		if(!$tempPath){
-			$tempPath = $GLOBALS['SERVER_ROOT'];
-			if(substr($tempPath,-1) != '/') $tempPath .= '/';
-			$tempPath .= 'temp/';
-		}
-		if(substr($tempPath,-1) != '/') $tempPath .= '/';
+		$tempPath = UploadUtil::getTempDir();
+
 		if(file_exists($tempPath.'symbocr/') || mkdir($tempPath.'symbocr/')){
 			$tempPath .= 'symbocr/';
 		}

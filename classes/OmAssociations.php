@@ -18,21 +18,18 @@ class OmAssociations extends Manager{
 		parent::__construct(null, 'write', $conn);
 		$this->schemaMap = array('associationType' => 's', 'occidAssociate' => 'i', 'relationship' => 's', 'relationshipID' => 's', 'subType' => 's', 'objectID' => 's',
 			'basisOfRecord' => 's', 'resourceUrl' => 's', 'verbatimSciname' => 's', 'tid' => 'i', 'locationOnHost' => 's', 'conditionOfAssociate' => 's', 'establishedDate' => 's',
-			'imageMapJSON' => 's', 'dynamicProperties' => 's', 'notes' => 's', 'accordingTo' => 's', 'instanceID' => 's', 'recordID' => 's');
+			'imageMapJSON' => 's', 'dynamicProperties' => 's', 'notes' => 's', 'accordingTo' => 's', 'instanceID' => 's', 'recordID' => 's', 'createdUid' => 's');
 	}
 
 	public function __destruct(){
 		parent::__destruct();
 	}
 
-	public function getAssociationArr($filter = null, $excludeScriptGenerated = true){
+	public function getAssociationArr($filter = null){
 		$retArr = array();
 		$relOccidArr = array();
 		$uidArr = array();
 		$sql = 'SELECT assocID, occid, '.implode(', ', array_keys($this->schemaMap)).', modifiedUid, modifiedTimestamp, createdUid, initialTimestamp FROM omoccurassociations WHERE ';
-		if($excludeScriptGenerated){
-			$sql .= "(basisOfRecord IS NULL OR basisOfRecord != 'scriptGenerated') AND ";
-		}
 		if($this->assocID) $sql .= '(assocID = '.$this->assocID.') ';
 		elseif($filter == 'FULL')$sql .= '(occid = '.$this->occid.' OR occidAssociate = '.$this->occid.') ';
 		elseif($this->occid) $sql .= '(occid = '.$this->occid.') ';
@@ -41,7 +38,7 @@ class OmAssociations extends Manager{
 				$sql .= 'AND '.$field.' = "'.$this->cleanInStr($cond).'" ';
 			}
 		}
-
+		// echo 'sql is: ' . $sql;
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_assoc()){
 				$retArr[$r['assocID']] = $r;

@@ -180,12 +180,12 @@ reset($treePath);
 						?>
 					</div>
 					<div class="flex-form" style="margin: 10px">
-						<div style="float: right">
-							<button name="tdsubmit" type="submit" value="exportTaxonTree"><?= $LANG['EXPORT_TREE'] ?></button>
-						</div>
 						<div>
 							<button name="tdsubmit" type="submit" value="displayTaxonTree"><?= $LANG['DISP_TAX_TREE'] ?></button>
 							<input name="taxauthid" type="hidden" value="<?= $taxAuthId; ?>" />
+						</div>
+						<div style="float: right">
+							<button name="tdsubmit" type="submit" value="exportTaxonTree"><?= $LANG['EXPORT_TREE'] ?></button>
 						</div>
 					</div>
 				</fieldset>

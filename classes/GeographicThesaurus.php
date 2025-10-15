@@ -1,8 +1,32 @@
 <?php
 include_once($SERVER_ROOT . '/classes/Manager.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
+include_once($SERVER_ROOT . '/classes/Database.php');
 
 class GeographicThesaurus extends Manager {
+	const US_STATE_LIST = array('AK' => 'Alaska', 'AL' => 'Alabama', 'AZ' => 'Arizona', 'AR' => 'Arkansas', 'CA' => 'California',
+		'CO' => 'Colorado', 'CT' => 'Connecticut', 'DE' => 'Delaware', 'DC' => 'District of Columbia', 'FL' => 'Florida',
+		'GA' => 'Georgia', 'GU' => 'Guam', 'HI' => 'Hawaii', 'ID' => 'Idaho', 'IL' => 'Illinois', 'IN' => 'Indiana', 'IA' =>
+		'Iowa', 'KS' => 'Kansas', 'KY' => 'Kentucky', 'LA' => 'Louisiana', 'ME' => 'Maine', 'MH' => 'Marshall Islands', 'MD' =>
+		'Maryland', 'MA' => 'Massachusetts', 'MI' => 'Michigan', 'MN' => 'Minnesota', 'MS' => 'Mississippi', 'MO' => 'Missouri',
+		'MT' => 'Montana', 'NE' => 'Nebraska', 'NV' => 'Nevada', 'NH' => 'New Hampshire', 'NJ' => 'New Jersey', 'NM' => 'New Mexico',
+		'NY' => 'New York', 'NC' => 'North Carolina', 'ND' => 'North Dakota', 'MP' => 'Northern Mariana Islands', 'OH' => 'Ohio',
+		'OK' => 'Oklahoma', 'OR' => 'Oregon', 'PW' => 'Palau', 'PA' => 'Pennsylvania', 'PR' => 'Puerto Rico', 'RI' => 'Rhode Island',
+		'SC' => 'South Carolina', 'SD' => 'South Dakota', 'TN' => 'Tennessee', 'TX' => 'Texas', 'UT' => 'Utah', 'VT' => 'Vermont',
+		'VI' => 'Virgin Islands', 'VA' => 'Virginia', 'WA' => 'Washington', 'WV' => 'West Virginia', 'WI' => 'Wisconsin', 'WY' =>  'Wyoming');
+
+	const OCEANS = 10;
+	const ISLAND_GROUP = 20;
+	const ISLAND = 30;
+	const CONTINENT_REGION = 40;
+	const COUNTRY = 50;
+	const STATE_PROVINCE = 60;
+	const COUNTY = 70;
+	const MUNICIPALITY = 80;
+	const CITY_TOWN = 100;
+	const PLACE_NAME = 110;
+	const LAKE_POND = 150;
+	const RIVER_CREEK = 160;
 
 	function __construct() {
 		parent::__construct(null, 'write');
@@ -41,6 +65,38 @@ class GeographicThesaurus extends Manager {
 			}
 		}
 		return $retArr;
+	}
+
+	public static function getCountryByState($state, $conn = null) {
+		if(!$state) { 
+			return '';
+		}
+
+		if(in_array(ucwords($state),self::US_STATE_LIST)) {
+			return 'United States';
+		}
+
+		if(!$conn) {
+			$conn = Database::connect('readonly');
+		}
+
+		$countryStr = '';
+		$rs = QueryUtil::executeQuery($conn, 'SELECT c.geoTerm AS countryName FROM geographicthesaurus s INNER JOIN geographicthesaurus c ON s.parentID = c.geoThesID WHERE s.geoTerm = ?', [ $state ]);
+
+		if($r = $rs->fetch_object()) {
+			$countryStr = $r->countryName;
+		}
+		$rs->free();
+
+		return $countryStr;
+	}
+
+	public static function getStateByAbbreviationUs($abbr){
+		$stateStr = '';
+		if(array_key_exists($abbr,self::US_STATE_LIST)){
+			$stateStr = self::US_STATE_LIST[$abbr];
+		}
+		return $stateStr;
 	}
 
 	public function getGeograpicUnit($geoThesID) {
@@ -342,18 +398,18 @@ class GeographicThesaurus extends Manager {
 			$rankArr = $GLOBALS['GEO_THESAURUS_RANKING'];
 		} else {
 			$rankArr = array(
-				10 => 'Oceans',
-				20 => 'Island Group',
-				30 => 'Island',
-				40 => 'Continent/Region',
-				50 => 'Country',
-				60 => 'State/Province',
-				70 => 'County',
-				80 => 'Municipality',
-				100 => 'City/Town',
-				110 => 'Place Name',
-				150 => 'Lake/Pond',
-				160 => 'River/Creek'
+				self::OCEANS => 'Oceans',
+				self::ISLAND_GROUP => 'Island Group',
+				self::ISLAND => 'Island',
+				self::CONTINENT_REGION => 'Continent/Region',
+				self::COUNTRY => 'Country',
+				self::STATE_PROVINCE => 'State/Province',
+				self::COUNTY => 'County',
+				self::MUNICIPALITY => 'Municipality',
+				self::CITY_TOWN => 'City/Town',
+				self::PLACE_NAME  => 'Place Name',
+				self::LAKE_POND => 'Lake/Pond',
+				self::RIVER_CREEK => 'River/Creek'
 			);
 		}
 		return $rankArr;
@@ -1033,7 +1089,7 @@ class GeographicThesaurus extends Manager {
 	public function geocode($lng, $lat) {
 		if (!$lng || !$lat) return [];
 
-		$result = QueryUtil::execute_query($this->conn, "
+		$result = QueryUtil::executeQuery($this->conn, "
 			SELECT g.geoThesID, g.geoterm, g.geoLevel, s.synonyms
 			FROM geographicthesaurus g 
 			JOIN geographicpolygon gp on gp.geoThesID = g.geoThesID 
@@ -1076,12 +1132,23 @@ class GeographicThesaurus extends Manager {
 			JOIN geographicpolygon gp ON gp.geoThesID = g.geoThesID 
 			WHERE " . implode(" or ", $parameters);
 
-		$result = QueryUtil::execute_query(
+		$result = QueryUtil::executeQuery(
 			$this->conn,
 			$sql,
 			$binds
 		);
 
 		return $result->fetch_assoc() ? true : false;
+	}
+
+	static function unitsEqual(String $inputString, String $geoterm, int $rank) {
+		$inputString = strtolower(trim($inputString));
+		$geoterm = strtolower(trim($geoterm));
+
+		if($rank === self::COUNTY) {
+			$inputString = trim(str_replace(array('county','parish'), '', $inputString));
+		}
+
+		return $inputString === $geoterm;
 	}
 }

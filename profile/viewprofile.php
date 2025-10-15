@@ -2,16 +2,14 @@
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
 include_once($SERVER_ROOT.'/classes/Person.php');
-@include_once($SERVER_ROOT.'/content/lang/profile/viewprofile.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/profile/viewprofile.' . $LANG_TAG . '.php'))
+	include_once($SERVER_ROOT.'/content/lang/profile/viewprofile.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/profile/viewprofile.en.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
-
-$action = array_key_exists('action', $_REQUEST) ? htmlspecialchars($_REQUEST['action'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $userId = array_key_exists('userid', $_REQUEST) ? filter_var($_REQUEST['userid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $tabIndex = array_key_exists('tabindex',$_REQUEST) ? filter_var($_REQUEST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
-
-//Sanitation
-if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) $action = '';
+$action = array_key_exists('action', $_REQUEST) ? htmlspecialchars($_REQUEST['action'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 
 $isSelf = 0;
 $isEditor = 0;
@@ -52,10 +50,14 @@ if($isEditor){
 			$updateStatus = $pHandler->changePassword($newPwd);
 		}
 		if($updateStatus){
-			$statusStr = '<span style="color:green">'.(isset($LANG['PWORD_SUCCESS'])?$LANG['PWORD_SUCCESS']:'Password update successful').'!</span>';
+			$statusStr = '<span style="color:green">' . $LANG['PWORD_SUCCESS'] . '!</span>';
 		}
 		else{
-			$statusStr = '<span style="color:red">'.$LANG['PWD_UPDATE_FAILED'].'</span>';
+			$statusStr = '<span style="color:red">';
+			$errMsg = $pHandler->getErrorMessage();
+			if($errMsg) $statusStr .= $LANG[$errMsg];
+			else $statusStr .= $LANG['PWD_UPDATE_FAILED'];
+			$statusStr .= '</span>';
 		}
 		$person = $pHandler->getPerson();
 		$tabIndex = 2;
@@ -68,8 +70,8 @@ if($isEditor){
 		}
 		else{
 			$statusStr = '<span style="color:red">';
-			if($pHandler->getErrorMessage() == 'loginExists') $statusStr .= $LANG['LOGIN_USED'];
-			elseif($pHandler->getErrorMessage() == 'incorrectPassword') $statusStr .= $LANG['INCORRECT_PWD'];
+			$errMsg = $pHandler->getErrorMessage();
+			if($errMsg) $statusStr .= $LANG[$errMsg];
 			else $statusStr .= $LANG['ERROR_SAVING_LOGIN'];
 			$statusStr .= '</span>';
 		}
@@ -112,19 +114,19 @@ if($isEditor){
 }
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $LANG_TAG ?>">
+<html lang="<?= $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE . ' - ' . $LANG['VIEW_PROFILE']; ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<title><?= $DEFAULT_TITLE . ' - ' . $LANG['VIEW_PROFILE']; ?></title>
+	<link href="<?= $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 	<script type="text/javascript">
-		var tabIndex = <?php echo $tabIndex; ?>;
+		var tabIndex = <?= $tabIndex; ?>;
 	</script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../js/symb/profile.viewprofile.js?ver=20170530"></script>
+	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="../js/symb/profile.viewprofile.js?ver=2"></script>
 	<script type="text/javascript" src="../js/symb/shared.js"></script>
 	<style>
 		fieldset{ padding:15px;margin:15px; }
@@ -138,11 +140,11 @@ if($isEditor){
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href='../index.php'><?php echo htmlspecialchars((isset($LANG['HOME'])?$LANG['HOME']:'Home'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-		<a href="../profile/viewprofile.php"><?php echo htmlspecialchars((isset($LANG['MY_PROFILE'])?$LANG['MY_PROFILE']:'My Profile'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
+		<a href='../index.php'><?= $LANG['HOME'] ?></a> &gt;&gt;
+		<a href="../profile/viewprofile.php"><?= $LANG['MY_PROFILE'] ?></a>
 	</div>
 	<div role="main" id="innertext">
-		<h1 class="page-heading"><?= $LANG['VIEW_PROFILE']; ?></h1>
+		<h1 class="page-heading screen-reader-only"><?= $LANG['VIEW_PROFILE']; ?></h1>
 		<?php
 		if($isEditor){
 			if($statusStr) echo $statusStr;
@@ -152,12 +154,12 @@ if($isEditor){
 					<?php
 					if($FLORA_MOD_IS_ACTIVE){
 						?>
-						<li><a href="../checklists/checklistadminmeta.php?userid=<?php echo $userId; ?>"><?php echo (isset($LANG['SPEC_CHECKLIST'])?$LANG['SPEC_CHECKLIST']:'Species Checklists'); ?></a></li>
+						<li><a href="../checklists/checklistadminmeta.php?userid=<?= $userId; ?>"><?= $LANG['SPEC_CHECKLIST'] ?></a></li>
 						<?php
 					}
 					?>
-					<li><a href="occurrencemenu.php"><?php echo (isset($LANG['OCC_MGMNT'])?$LANG['OCC_MGMNT']:'Occurrence Management'); ?></a></li>
-					<li><a href="userprofile.php?userid=<?php echo $userId; ?>"><?php echo (isset($LANG['USER_PROFILE'])?$LANG['USER_PROFILE']:'User Profile'); ?></a></li>
+					<li><a href="occurrencemenu.php"><?= $LANG['OCC_MGMNT'] ?></a></li>
+					<li><a href="userprofile.php?userid=<?= $userId; ?>"><?= $LANG['USER_PROFILE'] ?></a></li>
 					<?php
 					if($person->getIsTaxonomyEditor()) {
 						echo '<li><a href="specimenstoid.php?userid='.$userId.'&action='.$action.'">'.(isset($LANG['IDS_NEEDED'])?$LANG['IDS_NEEDED']:'IDs Needed').'</a></li>';

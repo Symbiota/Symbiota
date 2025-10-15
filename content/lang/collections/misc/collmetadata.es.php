@@ -50,13 +50,14 @@ $LANG['LEGAL_DOC'] = 'Un documento legal que otorga permiso oficial para hacer a
 $LANG['RIGHTS_HOLDER'] = 'Titular de los derechos';
 $LANG['MORE_INFO_RIGHTS_H'] = 'Más información sobre el Titular de los derechos';
 $LANG['HOLDER_DEF'] = 'La organización o persona que administra o posee los derechos del recurso.
-                    Para obtener más detalles, consulte';   
+                    Para obtener más detalles, consulte';
 $LANG['ACCESS_RIGHTS'] = 'Derechos de acceso';
 $LANG['MORE_INFO_ACCESS_RIGHTS'] = 'Más información sobre Derechos de Acceso';
 $LANG['ACCESS_DEF'] = 'Información o un enlace URL a una página con detalles que explican
                     cómo se pueden utilizar los datos. Ver';
 $LANG['DATASET_TYPE'] = 'Tipo de conjunto de datos';
 $LANG['PRES_SPECS'] = 'Especímenes preservados';
+$LANG['FOSSIL_SPECS'] = 'Espécimenes fósiles';
 $LANG['OBSERVATIONS'] = 'Observaciones';
 $LANG['PERS_OBS_MAN'] = 'Gestión de observación personal';
 $LANG['MORE_COL_TYPE'] = 'Más información sobre el tipo de colección';
@@ -125,7 +126,7 @@ $LANG['SECURITY_KEY'] = 'Clave de seguridad';
 $LANG['RECORDID'] = 'ID de registro';
 $LANG['SAVE_EDITS'] = 'Guardar ediciones';
 $LANG['CREATE_COLL_2'] = 'Crear nueva colección';
-$LANG['TINYMCE_INFO'] = 'Descripción de la colección. Puede acceder a la barra de herramientas de edición de texto para esta descripción presionando 
+$LANG['TINYMCE_INFO'] = 'Descripción de la colección. Puede acceder a la barra de herramientas de edición de texto para esta descripción presionando
                         la combinación de teclas ALT + F10 en Windows u OPCIÓN + F10 en MacOS.';
 
 ?>

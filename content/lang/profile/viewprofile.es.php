@@ -7,6 +7,7 @@ Language: Español (Spanish)
 
 $LANG['FAILED'] = '¡Falló actualización de perfil!';
 $LANG['PWORD_SUCCESS'] = 'Actualización de contraseña exitosa';
+$LANG['ERROR_PWD_SAME'] = 'ERROR: Su nueva contraseña no puede ser la misma que su contraseña anterior';
 $LANG['PWD_UPDATE_FAILED'] = '¡Falló actualización de contraseña!';
 $LANG['UPDATE_SUCCESSFUL'] = '¡Actualización de nombre de usuario exitosa!';
 $LANG['LOGIN_USED'] = 'El inicio de sesión ya está siendo utilizado por otro usuario. Intente un nuevo inicio de sesión.';
@@ -17,6 +18,8 @@ $LANG['TOKENS_ERROR'] = 'ERROR al borrar tokens de acceso';
 $LANG['DELETE_FAILED'] = '¡Falló eliminación del perfil!';
 $LANG['DATA_CONFLICT'] = 'ID de usuario requerido dentro de otra tabla (e.g. foreign key constraint).';
 $LANG['CONTACT_ADMIN'] = 'Por favor contacte al administrador del sistema.';
+$LANG['HOME'] = 'Inicio';
+$LANG['MY_PROFILE'] = 'Mi Perfil';
 $LANG['VIEW_PROFILE'] = 'Ver Perfil del Usuario';
 $LANG['SPEC_CHECKLIST'] = 'Listados de Especies';
 $LANG['OCC_MGMNT'] = 'Manejo de Ocurrencias';

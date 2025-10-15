@@ -385,6 +385,9 @@ class OccurrenceUtil {
 			$recMap[$k] = trim($v);
 		}
 		//Date cleaning
+		if(isset($recMap['recordsecurity']) && !is_numeric($recMap['recordsecurity'])){
+			$recMap['recordsecurity'] = 0;
+		}
 		if(isset($recMap['eventdate']) && $recMap['eventdate']){
 			if(!preg_match('/\d{4}-\d{2}-\d{2}/', $recMap['eventdate'])){
 				if(is_numeric($recMap['eventdate'])){

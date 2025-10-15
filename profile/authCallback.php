@@ -27,7 +27,7 @@ if (array_key_exists('code', $_REQUEST) && $_REQUEST['code']) {
   try{
     $status = $oidc->authenticate();
     $claims = $oidc->getVerifiedClaims();
-    $sid = $claims->sid;
+    $sid = isset($claims->sid) ? $claims->sid : false;
   }
   catch (Exception $ex){
     $_SESSION['last_message'] = $LANG['CAUGHT_EXCEPTION'] . ' ' . $ex->getMessage() . ' <ERR/>';

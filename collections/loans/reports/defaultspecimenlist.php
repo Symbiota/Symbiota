@@ -65,7 +65,7 @@ if($outputMode == 'doc'){
 		$table->addCell(6000,$cellStyle)->addText(htmlspecialchars($specArr['sciname']),'colFont','colSpace');
 	}
 
-	$targetFile = $SERVER_ROOT.'/temp/report/'.$loanId.'_specimen_list.docx';
+	$targetFile = $TEMP_DIR_ROOT . '/' . $loanId . '_specimen_list.docx';
 	$phpWord->save($targetFile, 'Word2007');
 
 	ob_start();

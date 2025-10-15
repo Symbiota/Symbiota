@@ -1,5 +1,6 @@
 <?php
 include_once ('../config/symbini.php');
+global $SERVER_ROOT, $CLIENT_ROOT, $LANG_TAG, $LANG, $CHARSET, $IS_ADMIN, $DEFAULT_TITLE, $GEO_JSON_LAYERS;
 include_once ($SERVER_ROOT . '/classes/GeographicThesaurus.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/geothesaurus/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/geothesaurus/index.' . $LANG_TAG . '.php');
    else include_once($SERVER_ROOT . '/content/lang/geothesaurus/index.en.php');
@@ -113,6 +114,7 @@ function listGeoUnits($arr) {
       #status-div{ margin:15px; padding: 15px; color: red; }
       </style>
       <script src="<?php echo $CLIENT_ROOT?>/js/autocomplete-input.js" type="module"></script>
+      <script src="<?php echo $CLIENT_ROOT?>/js/symb/mapAidUtils.js"></script>
       <script type="text/javascript">
 		function toggleEditor(){
 			toggle(".editTerm");
@@ -155,7 +157,12 @@ function listGeoUnits($arr) {
             map_container.style.display = "block";
          }
 
-         let map = new LeafletMap('map_canvas', {center: [0,0], zoom: 1});
+		 let map = new LeafletMap('map_canvas', {
+			center: [0,0],
+			zoom: 1
+		 },
+			JSON.parse(`<?= json_encode($GEO_JSON_LAYERS ?? []) ?>`)
+		 );
 
          map.enableDrawing({
             polyline: false,
@@ -166,16 +173,6 @@ function listGeoUnits($arr) {
          });
 
          map.drawShape({type: "geoJSON", geoJSON: JSON.parse(wkt_form.value)})
-      }
-
-      function openCoordAid(id="footprintwkt") {
-         mapWindow = open(
-            `../collections/tools/mapcoordaid.php?mapmode=polygon&map_mode_strict=true&geoJson&wkt_input_id=${id}`,
-            "polygon",
-            "resizable=0,width=900,height=630,left=20,top=20",
-         );
-         if (mapWindow.opener == null) mapWindow.opener = self;
-         mapWindow.focus();
       }
 
       function init() {
@@ -328,7 +325,7 @@ function listGeoUnits($arr) {
                   </div>
                   <div class="field-div">
                      <label><?=$LANG['POLYGON']?></label>:
-                     <a onclick="openCoordAid('addfootprintwkt')">
+                     <a onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root: '<?= $CLIENT_ROOT?>', polygon_input_id: 'addfootprintwkt', map_mode_strict: true})">
                         <img src='../images/world.png' style='width:10px;border:0' alt='<?= $LANG['IMG_OF_GLOBE'] ?>' /> <?= $LANG['EDIT_POLYGON']?>
                      </a>
                      <span><textarea id="addfootprintwkt" name="polygon" style="margin-top: 0.5rem; width:98%;height:90px;"></textarea></span>
@@ -464,7 +461,7 @@ function listGeoUnits($arr) {
                            <?= $geoUnit['geoJSON'] !== null? $LANG['YES_POLYGON']: $LANG['NO_POLYGON'] ?>
                         </span>
                         <div id="map_canvas" style="margin: 1rem 0; width:100%; height:20rem"></div>
-                        <a class="editFormElem" onclick="openCoordAid()">
+                        <a class="editFormElem" onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root: '<?= $CLIENT_ROOT?>', polygon_input_id: 'footprintwkt', map_mode_strict: true})">
                            <img src='../images/world.png' style='width:10px;border:0' alt='<?= $LANG['IMG_OF_GLOBE'] ?>' /> <?= $LANG['EDIT_POLYGON']?>
                         </a>
                         <span class="editFormElem" style="margin-top: 0.5rem">

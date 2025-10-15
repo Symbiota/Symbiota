@@ -8,6 +8,7 @@ if(!$SYMB_UID) header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=.
 
 $collid = $_REQUEST['collid'];
 $loanId = array_key_exists('loanid', $_REQUEST) ? $_REQUEST['loanid'] : 0;
+$loanIdOwn = array_key_exists('loanidentifierown', $_REQUEST) ? $_REQUEST['loanidentifierown'] : 0;
 $tabIndex = array_key_exists('tabindex', $_REQUEST) ? $_REQUEST['tabindex'] : 0;
 $sortTag = (isset($_REQUEST['sortTag']) ? $_REQUEST['sortTag'] : '');
 $formSubmit = array_key_exists('formsubmit', $_REQUEST) ? $_REQUEST['formsubmit'] : '';
@@ -163,7 +164,7 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 	</div>
 	<!-- This is inner text! -->
 	<div role="main" id="innertext">
-		<h1 class="page-heading"><?= $LANG['OUTGOING_LOAN_MANAGE']; ?></h1>
+		<h1 class="page-heading screen-reader-only"><?= $LANG['OUTGOING_LOAN_MANAGE']; ?></h1>
 		<?php
 		if($isEditor && $collid){
 			//Collection is defined and User is logged-in and have permissions
@@ -382,7 +383,7 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 									<label><?php echo $LANG['ATTACH_TITLE']; ?>: </label>
 									<input name="uploadtitle" type="text" placeholder=" optional, replaces filename" maxlength="80" size="30" />
 									<input id="uploadfile" name="uploadfile" type="file" size="30" onchange="verifyFileSize(this)">
-									<button name="formsubmit" type="submit" value="saveAttachment"><?php echo $LANG['SAVE_ATTACH']; ?></button>
+									<button class="top-breathing-room-rel-sm" name="formsubmit" type="submit" value="saveAttachment"><?php echo $LANG['SAVE_ATTACH']; ?></button>
 									<div style="margin-left: 10px"><br/>
 									<sup>*</sup><?php echo $LANG['ATTACH_DESCRIPTION']; ?>
 									</div>

@@ -109,7 +109,7 @@ if($isEditor){
 		<?php
 		if($isEditor){
 			$reportsWritable = false;
-			if(is_writable($SERVER_ROOT.'/temp/report')) $reportsWritable = true;
+			if(is_writable($TEMP_DIR_ROOT)) $reportsWritable = true;
 			if(!$reportsWritable){
 				?>
 				<div style="padding:5px;">
@@ -187,6 +187,10 @@ if($isEditor){
 								<div style="margin:4px;">
 									<input type="checkbox" name="clearqueue" value="1" onclick="" />
 									<b><?php echo $LANG['REM_ANNO']; ?></b>
+								</div>
+								<div style="margin:4px;">
+									<input type="checkbox" name="print-family" value="1" onclick="" />
+									<b><?php echo $LANG['PRINT_FAMILY_NAME']; ?></b>
 								</div>
 							</div>
 							<div style="float:left;margin-left:50px">

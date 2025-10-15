@@ -3,6 +3,7 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/ChecklistVoucherAdmin.php');
 include_once($SERVER_ROOT . '/classes/ChecklistManager.php');
 include_once($SERVER_ROOT . "/classes/Sanitize.php");
+include_once($SERVER_ROOT . '/content/lang/checklists/tools/linkExternalVoucher.' . $LANG_TAG . '.php');
 
 $clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $target_tid = array_key_exists('target_tid', $_REQUEST) ? filter_var($_REQUEST['target_tid'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -58,6 +59,7 @@ if($clManager->getAssociatedExternalService()) {
 				const voucher_loader = document.getElementById('voucher_loader')
 				const voucher_error = document.getElementById('voucher_error')
 				const voucher_submit_button = document.getElementById('voucher_submit_button')
+				let status = true;
 
 				external_vouchers_container.style.display = 'none';
 				voucher_error.style.display = 'none';
@@ -74,9 +76,12 @@ if($clManager->getAssociatedExternalService()) {
 					voucher_loader.style.display = 'none';
 					voucher_error.style.display = '';
 					voucher_error.textContent = e;	
+					status = false;
 				} finally {
 					if(voucher_submit_button) voucher_submit_button.disabled = null;
 				}
+
+				return status;
 			}
 
 			async function fetchObservations(taxon_name, external_id, linked_external_vouchers = [], page=1) {
@@ -142,13 +147,14 @@ if($clManager->getAssociatedExternalService()) {
 				}
 
 				runWithLoading(async () => {
-					if(!checklist_id) throw Error('A checklist id is required for this tool to function');
-					if(!target_tid) throw Error('A target taxon id is required for this tool to function');
+					if(!checklist_id) throw Error("<?= $LANG['CHECKLIST_ID_REQUIRED'] ?>");
+					if(!target_tid) throw Error("<?= $LANG['TARGET_TAXON_REQUIRED'] ?>");
+					if(!external_id) throw Error("<?= $LANG['EXTERNAL_ID_REQUIRED'] ?>");
 
 					await fetchObservations(taxon_name, external_id, linked_external_vouchers); 
 
-				}).then( () => {
-					if(app_state.vouchers.length <= 0) {
+				}).then(status => {
+					if(status && app_state.vouchers.length <= 0) {
 						const external_vouchers_container = document.getElementById('external_vouchers_container')
 						const all_vouchers_linked = document.getElementById('all_vouchers_linked')
 						external_vouchers_container.style.display = 'none';
@@ -218,25 +224,6 @@ if($clManager->getAssociatedExternalService()) {
 	<body onload="initExternalVouchers()">	
 		<div id="data-store" data-linked_external_vouchers="<?= htmlspecialchars(json_encode($linked_external_vouchers))?>"></div>
 		<div id="innertext" style="height:100vh; position:relative">
-			<template id="external_voucher_template_old">
-				<div class="voucher_container" style="display:flex; gap: 1rem; align-items:center">
-					<div>
-						<img class="display_img"  height="75px" width="75px"/>
-					</div>
-					<div>
-						<h3 class="taxon_name" style="margin: 0"></h3>
-						<div class="coordinates"></div>
-						<div class="locality"></div>
-					</div>
-
-					<div style="flex-grow: 1; display:flex; justify-content:end">
-						<div>
-							<button class="button voucher_link_button">Link Voucher</button>
-						</div>
-					</div>
-				</div>
-			</template>
-
 			<template id="external_voucher_template">
 				<tr class="voucher_container">
 					<td>
@@ -247,14 +234,15 @@ if($clManager->getAssociatedExternalService()) {
 					<td class="observer"></td>
 					<td class="date_observed"></td>
 					<td class="external_id"></td>
-					<td><a class="external_source" href="" target="_blank">Source Link</a></td>
+					<td><a class="external_source" href="" target="_blank"><?= $LANG['SOURCE_LINK'] ?></a></td>
 				</tr>
 			</template>
 
 			<div id="external_vouchers_container" style="display:none">
-			<?php if(!empty($clid)): ?>
+			<?php if(empty($clid)): echo $LANG['CHECKLIST_ID_REQUIRED']; ?>
+			<?php else: ?>
 				<form method="POST" id="external_voucher_form" onsubmit="external_vouchers_sumbit(event)">
-					<h1>External Voucher Linking - iNaturalist</h1>
+					<h1><?= $LANG['EXTERNAL_VOUCHER_LINKING'] ?> - iNaturalist</h1>
 
 					<input type="hidden" name="clid" value="<?= htmlspecialchars($clid) ?>">
 					<input type="hidden" name="target_tid" value="<?= htmlspecialchars($target_tid) ?>">
@@ -263,16 +251,16 @@ if($clManager->getAssociatedExternalService()) {
 					<input type="hidden" name="external_service" value="<?= $external_service ?>">
 					<input type="hidden" name="external_voucher_link_json_data" value="">
 
-					<div style="margin-bottom:1rem"><b>Vouchers for: </b><?= $taxon_name ?></div>
+					<div style="margin-bottom:1rem"><b><?= $LANG['VOUCHERS_FOR'] ?></b>: <?= $taxon_name ?></div>
 					<table class="styledtable">
 						<thead>
 							<th><input id="link-all" onchange="toggleChecked(this.checked)" type="checkbox" name="link-all"></th>
-							<th>Taxon Name</th>
-							<th>Locality</th>
-							<th>Observer</th>
-							<th>Date Observed</th>
-							<th>External ID</th>
-							<th>Source</th>
+							<th><?= $LANG['TAXON_NAME'] ?></th>
+							<th><?= $LANG['LOCALITY'] ?></th>
+							<th><?= $LANG['OBSERVER'] ?></th>
+							<th><?= $LANG['DATE_OBSERVERED'] ?></th>
+							<th><?= $LANG['EXTERNAL_ID'] ?></th>
+							<th><?= $LANG['SOURCE'] ?></th>
 						</thead>
 						<tbody id="external_vouchers">
 						</tbody>
@@ -280,21 +268,16 @@ if($clManager->getAssociatedExternalService()) {
 
 					<button id="voucher_submit_button" class="button" style="margin-top:1rem">Submit</button>
 				</form>
-			<?php else: ?>
-				You must provide a checklist id
 			<?php endif ?>
 			</div>
 
 			<div id="voucher_loader" style="position:absolute; top:50%; width:100%; text-align:center">
-				...Loading External Vouchers
+				<?= $LANG['LOADING_EXTERNAL_VOUCHERS']?>
 			</div>
 
 			<div id="voucher_error" style="display:none;position:absolute; top:50%; width:100%; text-align:center"></div>
 			<div id="all_vouchers_linked" style="display:none;position:absolute; top:50%; width:100%; text-align:center">
-				All vouchers associated 
-				<i><?= $taxon_name ?></i> in
-				<a href="https://www.inaturalist.org/projects/<?= $external_id ?>" target="_blank">iNaturalist Project</a>
-				have already been linked
+				<?= $LANG['ALL_VOUCHERS_ASSOCIATED']?>: <a href="https://www.inaturalist.org/projects/<?= $external_id ?>" target="_blank">iNaturalist <i><?= $taxon_name ?></i></a>
 			</div>
 		</div>
 	</body>

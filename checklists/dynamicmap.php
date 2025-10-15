@@ -107,7 +107,10 @@ if(!$zoomInt){
             center: [latCent, lngCent],
          };
 
-         map = new LeafletMap('map_canvas', dmOptions)
+		  map = new LeafletMap('map_canvas',
+			dmOptions,
+			JSON.parse(`<?= json_encode($GEO_JSON_LAYERS ?? []) ?>`)
+		 )
 
          let markerGroup = new L.layerGroup().addTo(map.mapLayer);
          let latlng;

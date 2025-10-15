@@ -60,7 +60,7 @@ class OmMaterialSample{
 				$stmt->bind_param($this->typeStr, ...$paramArr);
 				if($stmt->execute()){
 					if($stmt->affected_rows || !$stmt->error){
-						$this->assocID = $stmt->insert_id;
+						$this->matSampleID = $stmt->insert_id;
 						$status = true;
 					}
 					else $this->errorMessage = 'ERROR inserting material sample record (2): '.$stmt->error;
@@ -83,7 +83,7 @@ class OmMaterialSample{
 				$sqlFrag .= $fieldName . ' = ?, ';
 				$paramArr[] = $value;
 			}
-			$paramArr[] = $this->assocID;
+			$paramArr[] = $this->matSampleID;
 			$this->typeStr .= 'i';
 			$sql = 'UPDATE ommaterialsample SET '.trim($sqlFrag, ', ').' WHERE (matSampleID = ?)';
 			if($stmt = $this->conn->prepare($sql)) {

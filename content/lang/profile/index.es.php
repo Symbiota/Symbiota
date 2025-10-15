@@ -4,7 +4,6 @@
 Language: Español (Spanish)
 ------------------
 */
-
 $LANG['LOGIN'] = 'Iniciar Sesión';
 $LANG['INVALID_LOGIN'] = 'Inicio de sesión inválido';
 $LANG['INVALID_EMAIL'] = 'Correo electrónico inválido';
@@ -20,6 +19,7 @@ $LANG['PORTAL_LOGIN'] = 'Iniciar sesión';
 $LANG['LOGIN_NAME'] = 'Iniciar sesión';
 $LANG['PASSWORD'] = 'Contraseña';
 $LANG['REMEMBER'] = 'Recordame en esta computadora';
+$LANG['SIGNIN'] = 'Iniciar sesión';
 $LANG['NO_ACCOUNT'] = "¿No tiene una cuenta?";
 $LANG['CREATE_ACCOUNT'] = 'Crea una cuenta';
 $LANG['REMEMBER_PWD'] = "¿No recuerda su contraseña?";

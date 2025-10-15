@@ -23,28 +23,35 @@ $displayQuery = 0;
 $isGenObs = 0;
 $collMap = array();
 $recArr = array();
-$headerMapBase = array('institutioncode'=>'Institution Code (override)','collectioncode'=>'Collection Code (override)',
-	'ownerinstitutioncode'=>'Owner Code (override)','catalognumber' => 'Catalog Number',
-	'othercatalognumbers' => 'Other Catalog #','family' => 'Family','identificationqualifier' => 'ID Qualifier',
-	'sciname' => 'Scientific Name','scientificnameauthorship'=>'Author','recordedby' => 'Collector','recordnumber' => 'Collector Number',
-	'associatedcollectors' => 'Associated Collectors','eventdate' => 'Event Date','verbatimeventdate' => 'Verbatim Date',
-	'identificationremarks' => 'Identification Remarks','taxonremarks' => 'Taxon Remarks','identifiedby' => 'Identified By',
-	'dateidentified' => 'Date Identified', 'identificationreferences' => 'Identification References',
-	'country' => 'Country','stateprovince' => 'State/Province','county' => 'County','municipality' => 'Municipality',
-	'locality' => 'Locality','decimallatitude' => 'Latitude', 'decimallongitude' => 'Longitude',
-	'identifierName' => 'Identifier Tag Name','identifierValue' => 'Identifier Tag Value',
-	'coordinateuncertaintyinmeters' => 'Uncertainty In Meters', 'verbatimcoordinates' => 'Verbatim Coordinates','geodeticdatum' => 'Datum',
-	'georeferencedby' => 'Georeferenced By','georeferenceprotocol' => 'Georeference Protocol','georeferencesources' => 'Georeference Sources',
-	'georeferenceverificationstatus' => 'Georef Verification Status','georeferenceremarks' => 'Georef Remarks',
-	'minimumelevationinmeters' => 'Elev. Min. (m)','maximumelevationinmeters' => 'Elev. Max. (m)','verbatimelevation' => 'Verbatim Elev.',
-	'minimumdepthinmeters' => 'Depth. Min. (m)','maximumdepthinmeters' => 'Depth. Max. (m)','verbatimdepth' => 'Verbatim Depth',
-	'habitat' => 'Habitat','substrate' => 'Substrate','occurrenceremarks' => 'Notes (Occurrence Remarks)','associatedtaxa' => 'Associated Taxa',
-	'verbatimattributes' => 'Description','lifestage' => 'Life Stage', 'sex' => 'Sex', 'individualcount' => 'Individual Count',
-	'samplingprotocol' => 'Sampling Protocol', 'preparations' => 'Preparations', 'reproductivecondition' => 'Reproductive Condition',
-	'typestatus' => 'Type Status','cultivationstatus' => 'Cultivation Status','establishmentmeans' => 'Establishment Means','datageneralizations' => 'Data Generalizations',
-	'disposition' => 'Disposition','duplicatequantity' => 'Duplicate Qty','datelastmodified' => 'Date Last Modified', 'labelproject' => 'Label Project',
-	'processingstatus' => 'Processing Status','recordenteredby' => 'Entered By','dbpk' => 'dbpk','basisofrecord' => 'Basis Of Record',
-	'language' => 'Language','continent' => 'Continent','islandgroup' => 'Island Group','island' => 'Island', 'waterbody' => 'Water Body');
+$headerMapBase = array( 'institutioncode' => $LANG['INSTITUTION_CODE'], 'collectioncode' => $LANG['COLLEC_CODE'],
+	'ownerinstitutioncode' => $LANG['OWNER_CODE'], 'catalognumber' => $LANG['CATALOG_NUM'],
+	'family' => $LANG['FAMILY'], 'identificationqualifier' => $LANG['ID_QUALIFIER'],
+	'sciname' => $LANG['SCI_NAME'], 'scientificnameauthorship' => $LANG['SCI_NAME_AUTHOR'], 'recordedby' => $LANG['RECORD_COLLEC'], 'recordnumber' => $LANG['RECORD_NUM'],
+	'associatedcollectors' => $LANG['ASSOC_COLLEC'], 'eventdate' => $LANG['EVENT_DATE'], 'verbatimeventdate' => $LANG['VERB_EVENT_DATE'],
+	'identificationremarks' => $LANG['ID_REMARKS'], 'taxonremarks' => $LANG['TAXON_REMARKS'], 'identifiedby' => $LANG['ID_BY'],
+	'dateidentified' => $LANG['DATE_IDENTIFIED'], 'identificationreferences' => $LANG['ID_REF'],
+	'country' => $LANG['COUNTRY'], 'stateprovince' => $LANG['STATE_PROVINCE'], 'county' => $LANG['COUNTY'], 'municipality' => $LANG['MUNICIPALITY'],
+ 	'locality' => $LANG['LOCALITY'], 'decimallatitude' => $LANG['LATITUDE'], 'decimallongitude' => $LANG['LONGITUDE'],
+	'identifierName' => $LANG['ID_TAG_NAME'], 'identifierValue' => $LANG['ID_TAG_VAL'],
+	'coordinateuncertaintyinmeters' => $LANG['UNCERTAINTY_METERS'], 'verbatimcoordinates' => $LANG['VERB_COORDINATES'], 'geodeticdatum' => $LANG['DATUM'],
+	'georeferencedby' => $LANG['GEOREF_BY'], 'georeferenceprotocol' => $LANG['GEOREF_PROTOCOL'], 'georeferencesources' => $LANG['GEOREF_SOURCE'],
+	'georeferenceverificationstatus' => $LANG['GEOREF_VERIF_STATUS'], 'georeferenceremarks' => $LANG['GEOREF_REMARKS'],
+	'minimumelevationinmeters' => $LANG['ELEV_MIN_METERS'], 'maximumelevationinmeters' => $LANG['ELEV_MAX_METERS'], 'verbatimelevation' => $LANG['VERB_ELEV'],
+	'minimumdepthinmeters' => $LANG['DEPTH_MIN_METERS'], 'maximumdepthinmeters' => $LANG['DEPTH_MAX_METERS'], 'verbatimdepth' => $LANG['VERB_DEPTH'],
+	'habitat' => $LANG['HABITAT'], 'substrate' => $LANG['SUBSTRATE'],
+	'occurrenceremarks' => $LANG['OCCURR_REMARKS'], 'associatedtaxa' => $LANG['ASSOC_TAXA'],
+	'verbatimattributes' => $LANG['VERB_ATTRIBUTES'], 'lifestage' => $LANG['LIFE_STAGE'], 'sex' => $LANG['SEX'], 'individualcount' => $LANG['COUNT'],
+	'samplingprotocol' => $LANG['SAMPLE_PROTOCOL'], 'preparations' => $LANG['PREPARATIONS'], 'reproductivecondition' => $LANG['REPRODUCTIVE_CONDITION'],
+	'typestatus' => $LANG['TYPE_STATUS'], 'cultivationstatus' => $LANG['CULTIVATION_STATUS'], 'establishmentmeans' => $LANG['ESTABLISHMENT_MEANS'], 'datageneralizations' => $LANG['DATA_GENERALIZATIONS'],
+	'disposition' => $LANG['DISPOSITION'], 'duplicatequantity' => $LANG['DUPE_QUANTITY'], 'datelastmodified' => $LANG['DATE_LAST_MODIFIED'], 'labelproject' => $LANG['LABEL_PROJECT'],
+	'processingstatus' => $LANG['PROCESS_STATUS'], 'recordenteredby' => $LANG['RECORD_ENTERED_BY'], 'dbpk' => $LANG['DBPK'], 'basisofrecord' => $LANG['BASIS_REC'],
+	'language' => $LANG['LANG'], 'continent' => $LANG['CONTINENT'], 'islandgroup' => $LANG['ISLAND_GROUP'], 'island' => $LANG['ISLAND'], 'waterbody' => $LANG['WATER_BODY']);
+//paleo fields
+$headerMapPaleoBase = array('earlyInterval' => $LANG['INTERVAL_EARLY'], 'lateInterval' => $LANG['INTERVAL_LATE'],
+	'lithogroup' => $LANG['GROUP'],'formation' => $LANG['FORMATION'], 'member' => $LANG['MEMBER'], 'bed' => $LANG['BED']);
+if (!empty($GLOBALS['ACTIVATE_PALEO']))
+	$headerMapBase = array_merge($headerMapBase, $headerMapPaleoBase);
+
 $headMap = array();
 
 $qryCnt = 0;
@@ -150,7 +157,7 @@ else{
 		table.styledtable td { white-space: nowrap; }
 		fieldset{ padding:15px }
 		fieldset > legend{ font-weight:bold }
-		.fieldGroupDiv { 
+		.fieldGroupDiv {
 			display: flex;
 			align-items: center;
 			gap: 0.75rem;
@@ -162,15 +169,15 @@ else{
 				display: flex;
 			}
 		}
-		.fieldDiv{ 
+		.fieldDiv{
 			display: inline;
 		}
 		#innertext{ background-color: white; margin: 0px 10px; }
 
-		#record-viewer-innertext { 
+		#record-viewer-innertext {
 			margin-left: 2em;
 			width: calc(100vw - 4em);
-			background-color: white; 
+			background-color: white;
 		}
 		.editimg{ width: 15px; }
 		.table-scroll {
@@ -183,13 +190,13 @@ else{
 		}
 
 		.button-toggle {
-			background-color: transparent; 
-			color: var(--body-text-color); 
+			background-color: transparent;
+			color: var(--body-text-color);
 			border: 2px solid var(--darkest-color);
 
 			&.active {
-				background-color: var(--darkest-color); 
-				color: white; 
+				background-color: var(--darkest-color);
+				color: white;
 			}
 
 			&:hover {
@@ -265,7 +272,7 @@ else{
 				foreach($recArr as $id => $occArr){
 					foreach($occArr as $k => $v){
 						if(!is_array($v)){
-							if($v && trim($v) && !array_key_exists($k,$headerArr)){
+							if(trim($v) !== '' && !array_key_exists($k,$headerArr)){
 								$headerArr[$k] = $k;
 							}
 						}
@@ -362,7 +369,7 @@ else{
 			?>
 			<div style="display:flex;width:850px;clear:both;">
 				<?php echo $navStr; ?>
-				
+
 			</div>
 			<?php
 			if($recArr){
@@ -409,7 +416,7 @@ else{
 											$displayStr = substr($displayStr,0,60).'...';
 										}
 									}
-									else $displayStr = '&nbsp;';
+									elseif($displayStr === '') $displayStr = '&nbsp;';
 									echo '<td>'.$displayStr.'</td>'."\n";
 								}
 								echo "</tr>\n";

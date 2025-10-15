@@ -85,7 +85,7 @@ class TaxonomyCleaner extends Manager{
 			$itemCnt = 0;
 			while($r = $rs->fetch_object()){
 				$editLink = '[<a href="#" onclick="openPopup(\'' . htmlspecialchars($GLOBALS['CLIENT_ROOT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) .
-					'/collections/editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=sciname&q_customtype1=EQUALS&q_customvalue1=' . urlencode($r->sciname) . '&collid=' . 
+					'/collections/editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=sciname&q_customtype1=EQUALS&q_customvalue1=' . urlencode($r->sciname) . '&collid=' .
 					htmlspecialchars($this->collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '\'); return false;">' . htmlspecialchars($r->cnt, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' specimens <img src="../../images/edit.png" style="width:1.2em;" /></a>]';
 				$this->logOrEcho('<div style="margin-top:5px">Resolving #'.$taxaCnt.': <b><i>'.$r->sciname.'</i></b>'.($r->family?' ('.$r->family.')':'').'</b> '.$editLink.'</div>');
 				if($r->family) $taxonHarvester->setDefaultFamily($r->family);
@@ -283,10 +283,10 @@ class TaxonomyCleaner extends Manager{
 			'INNER JOIN taxa t2 ON e.parenttid = t2.tid '.
 			'SET t.kingdomname = t2.sciname '.
 			'WHERE (e.taxauthid = '.$this->taxAuthId.') AND (t2.rankid = 10) AND (t.kingdomName = "")';
-		if($this->conn->query($sql)){
+		try {
+			QueryUtil::executeQuery($this->conn, $sql);
 			$this->logOrEcho('Populating null kingdom name tags... '.$this->conn->affected_rows.' taxon records updated', 1);
-		}
-		else{
+		} catch (\Throwable $e) {
 			$this->logOrEcho('ERROR updating kingdoms: '.$this->conn->error, 1);
 		}
 		flush();
@@ -297,10 +297,10 @@ class TaxonomyCleaner extends Manager{
 			'INNER JOIN taxstatus ts ON t.tid = ts.tid '.
 			'SET ts.family = t2.sciname '.
 			'WHERE (e.taxauthid = '.$this->taxAuthId.') AND (ts.taxauthid = '.$this->taxAuthId.') AND (t2.rankid = 140) AND (ts.family IS NULL)';
-		if($this->conn->query($sql)){
+		try {
+			QueryUtil::executeQuery($this->conn, $sql);
 			$this->logOrEcho('Populating null family lookup tags within thesaurus... '.$this->conn->affected_rows.' taxon records updated', 1);
-		}
-		else{
+		} catch (\Throwable $e) {
 			$this->logOrEcho('ERROR updating family lookup field: '.$this->conn->error, 1);
 		}
 		flush();
@@ -674,7 +674,7 @@ class TaxonomyCleaner extends Manager{
 		if(isset($USER_RIGHTS['CollAdmin'])) $collArr = $USER_RIGHTS['CollAdmin'];
 		if($IS_ADMIN) $collArr = array_merge($collArr, explode(',',$this->collid));
 		$sql = 'SELECT collid, CONCAT_WS("-",institutioncode, collectioncode) AS code, collectionname, icon, colltype, managementtype FROM omcollections '.
-			'WHERE (colltype IN("Preserved Specimens","Observations")) AND (collid IN('.implode(',', $collArr).')) '.
+			'WHERE (colltype IN("Preserved Specimens","Fossil Specimens","Observations")) AND (collid IN('.implode(',', $collArr).')) '.
 			'ORDER BY collectionname, collectioncode ';
 		//echo $sql;
 		$rs = $this->conn->query($sql);

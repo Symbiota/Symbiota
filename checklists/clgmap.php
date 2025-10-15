@@ -32,7 +32,10 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
          }
 
          function leafletInit() {
-            let map = new LeafletMap('map_canvas');
+			let map = new LeafletMap('map_canvas',
+				{},
+				JSON.parse(`<?= json_encode($GEO_JSON_LAYERS ?? []) ?>`)
+			);
             const markers = [];
 
             for(let checklistId of Object.keys(checklists)) {

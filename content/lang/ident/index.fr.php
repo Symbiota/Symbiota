@@ -5,12 +5,10 @@ Language: French
 ------------------
 */
 
-$LANG['IDKEY'] = 'Clés d\'identification';
-$LANG['IDKEYLIST'] = 'Liste des clés d\'identification';
-
+$LANG['NAV_HOME'] = 'Accueil';
 $LANG['IDKEYS'] = 'Clés d\'identification';
+$LANG['IDKEYLIST'] = 'Liste des clés d\'identification';
 $LANG['SHOWCHECK'] = 'Afficher les listes de contrôle sur la carte';
-
 $LANG['CHAR_ADMIN'] = 'Administration des Caractères Taxonaux';
 $LANG['ALERT_NAME'] = 'Le nom du personnage doit avoir une valeur';
 $LANG['ALERT_TYPE'] = 'Un type de caractère doit être sélectionné';

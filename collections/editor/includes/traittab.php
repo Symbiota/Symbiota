@@ -109,10 +109,12 @@ if($isEditor){
 				$statusCode = 0;
 				$notes = '';
 				$source = '';
-				foreach($traitData['states'] as $id => $stArr){
-					if(isset($stArr['statuscode']) && $stArr['statuscode']) $statusCode = $stArr['statuscode'];
-					if(isset($stArr['notes']) && $stArr['notes']) $notes = $stArr['notes'];
-					if(isset($stArr['source']) && $stArr['source']) $source = $stArr['source'];
+				if(array_key_exists('states', $traitData)){
+					foreach($traitData['states'] as $id => $stArr){
+						if(isset($stArr['statuscode']) && $stArr['statuscode']) $statusCode = $stArr['statuscode'];
+						if(isset($stArr['notes']) && $stArr['notes']) $notes = $stArr['notes'];
+						if(isset($stArr['source']) && $stArr['source']) $source = $stArr['source'];
+					}
 				}
 				?>
 				<fieldset style="margin-top:20px">
@@ -170,11 +172,11 @@ if($isEditor){
 								<input name="occindex" type="hidden" value="<?php echo $occIndex; ?>" />
 								<input name="traitid" type="hidden" value="<?php echo $traitID; ?>" />
 								<input name="tabtarget" type="hidden" value="4" />
-								<button type="button" class="button icon-button" value="editTraitCoding" onclick="submitEditForm(this); return false"><?php echo $LANG['SAVE_EDITS'];?></button>
+								<button type="button" class="button" value="editTraitCoding" onclick="submitEditForm(this); return false"><?php echo $LANG['SAVE_EDITS'];?></button>
 								<span id="msgDiv-<?php echo $traitID; ?>"></span>
 							</div>
 							<div style="margin:20px;float:right;">
-								<button class="button icon-button button-danger" type="button" value="deleteTraitCoding" onclick="submitEditForm(this); return false"><?php echo $LANG['DEL_CODING'];?></button>
+								<button class="button button-danger" type="button" value="deleteTraitCoding" onclick="submitEditForm(this); return false"><?php echo $LANG['DEL_CODING'];?></button>
 							</div>
 						</div>
 					</form>

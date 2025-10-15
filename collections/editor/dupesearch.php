@@ -261,15 +261,21 @@ if(!$IS_ADMIN){
 							<?php
 							echo '<span title="recordedby">'.($occObj['recordedBy']?$occObj['recordedBy']:'Collector field empty').'</span>';
 							if($occObj['recordNumber']) echo '<span style="margin-left:20px;" title="recordnumber">'.$occObj['recordNumber'].'</span>';
-							if($occObj['eventDate']){
-								echo '<span style="margin-left:20px;" title="eventdate">'.$occObj['eventDate'].'</span>';
+
+							$dateTitle = 'eventDate';
+
+							if(!$occObj['eventDate'] && $occObj['verbatimEventDate']) {
+								$dateTitle = 'verbatimeventdate';
 							}
-							elseif($occObj['verbatimEventDate']){
-								echo '<span style="margin-left:20px;" title="verbatimeventdate">'.$occObj['verbatimEventDate'].'</span>';
+
+							$dateDisplay = $occObj['eventDate'] ?? $occObj['verbatimEventDate'] ?? $LANG['DATE_EMPTY'];
+							echo '<span style="margin-left:20px;">';
+							echo '<span style="margin-left:20px;" title="' . $dateTitle.'">'. $dateDisplay .'</span>';
+							if($occObj['eventDate2']) {
+								echo ' - <span title="eventDate2">' . $occObj['eventDate2'] . '<span>';
 							}
-							else{
-								echo '<span style="margin-left:20px;" title="eventdate">'.$LANG['DATE_EMPTY'].'</span>';
-							}
+							echo '</span>';
+
 							if($occObj['associatedCollectors']) echo '<div style="margin-left:10px;" title="associatedCollectors">'.$LANG['ASSOC_COLL'].': '.$occObj['associatedCollectors'].'</div>';
 							?>
 						</div>
@@ -383,7 +389,7 @@ if(!$IS_ADMIN){
 										</a>
 									</div>
 									<div style="margin-left:5px;float:left;">
-										<a href="https://biokic.github.io/symbiota-docs/editor/edit/duplicates/#merge-records" id="mergeduplicateinfo" style="text-decoration:none;">
+										<a href="https://docs.symbiota.org/Editor_Guide/Editing_Searching_Records/duplicate_matching#merge-records" target="_blank" id="mergeduplicateinfo" style="text-decoration:none;">
 											<img src="../../images/info.png" style="width:1.3em;" alt="<?php echo $LANG['MORE_INFO_ALT']; ?>" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>"/>
 										</a>
 									</div>

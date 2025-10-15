@@ -3,8 +3,10 @@ include_once($SERVER_ROOT . '/config/dbconnection.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceDuplicate.php');
 include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
+include_once($SERVER_ROOT . '/classes/Media.php');
 
-if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/editor/occurrenceeditor.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/editor/occurrenceeditor.' . $LANG_TAG . '.php');
+if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/editor/occurrenceeditor.' . $LANG_TAG . '.php'))
+	include_once($SERVER_ROOT . '/content/lang/collections/editor/occurrenceeditor.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT . '/content/lang/collections/editor/occurrenceeditor.en.php');
 
 class OccurrenceEditorManager {
@@ -33,119 +35,21 @@ class OccurrenceEditorManager {
 			$this->conn = $conn;
 			$this->isShareConn = true;
 		} else $this->conn = MySQLiConnectionFactory::getCon("write");
-		$this->fieldArr['omoccurrences'] = array(
-			'basisofrecord' => 's',
-			'catalognumber' => 's',
-			'othercatalognumbers' => 's',
-			'occurrenceid' => 's',
-			'ownerinstitutioncode' => 's',
-			'institutioncode' => 's',
-			'collectioncode' => 's',
-			'eventid' => 's',
-			'family' => 's',
-			'sciname' => 's',
-			'tidinterpreted' => 'n',
-			'scientificnameauthorship' => 's',
-			'identifiedby' => 's',
-			'dateidentified' => 's',
-			'identificationreferences' => 's',
-			'identificationremarks' => 's',
-			'taxonremarks' => 's',
-			'identificationqualifier' => 's',
-			'typestatus' => 's',
-			'recordedby' => 's',
-			'recordnumber' => 's',
-			'associatedcollectors' => 's',
-			'eventdate' => 'd',
-			'eventdate2' => 'd',
-			'year' => 'n',
-			'month' => 'n',
-			'day' => 'n',
-			'startdayofyear' => 'n',
-			'enddayofyear' => 'n',
-			'verbatimeventdate' => 's',
-			'habitat' => 's',
-			'substrate' => 's',
-			'fieldnumber' => 's',
-			'occurrenceremarks' => 's',
-			'datageneralizations' => 's',
-			'associatedtaxa' => 's',
-			'verbatimattributes' => 's',
-			'behavior' => 's',
-			'vitality' => 's',
-			'dynamicproperties' => 's',
-			'reproductivecondition' => 's',
-			'cultivationstatus' => 's',
-			'establishmentmeans' => 's',
-			'lifestage' => 's',
-			'sex' => 's',
-			'individualcount' => 's',
-			'samplingprotocol' => 's',
-			'preparations' => 's',
-			'continent' => 's',
-			'waterbody' => 's',
-			'islandgroup' => 's',
-			'island' => 's',
-			'countrycode' => 's',
-			'country' => 's',
-			'stateprovince' => 's',
-			'county' => 's',
-			'municipality' => 's',
-			'locationid' => 's',
-			'locality' => 's',
-			'recordsecurity' => 'n',
-			'securityreason' => 's',
-			'locationremarks' => 's',
-			'decimallatitude' => 'n',
-			'decimallongitude' => 'n',
-			'geodeticdatum' => 's',
-			'coordinateuncertaintyinmeters' => 'n',
-			'verbatimcoordinates' => 's',
-			'footprintwkt' => 's',
-			'georeferencedby' => 's',
-			'georeferenceprotocol' => 's',
-			'georeferencesources' => 's',
-			'georeferenceverificationstatus' => 's',
-			'georeferenceremarks' => 's',
-			'minimumelevationinmeters' => 'n',
-			'maximumelevationinmeters' => 'n',
-			'verbatimelevation' => 's',
-			'minimumdepthinmeters' => 'n',
-			'maximumdepthinmeters' => 'n',
-			'verbatimdepth' => 's',
-			'disposition' => 's',
-			'language' => 's',
-			'duplicatequantity' => 'n',
-			'labelproject' => 's',
-			'processingstatus' => 's',
-			'recordenteredby' => 's',
-			'observeruid' => 'n',
-			'dateentered' => 'd'
-		);
-		$this->fieldArr['omoccurpaleo'] = array(
-			'eon',
-			'era',
-			'period',
-			'epoch',
-			'earlyinterval',
-			'lateinterval',
-			'absoluteage',
-			'storageage',
-			'stage',
-			'localstage',
-			'biota',
-			'biostratigraphy',
-			'lithogroup',
-			'formation',
-			'taxonenvironment',
-			'member',
-			'bed',
-			'lithology',
-			'stratremarks',
-			'element',
-			'slideproperties',
-			'geologicalcontextid'
-		);
+		$this->fieldArr['omoccurrences'] = array('basisofrecord' => 's','catalognumber' => 's','othercatalognumbers' => 's','occurrenceid' => 's','ownerinstitutioncode' => 's',
+			'institutioncode' => 's','collectioncode' => 's','eventid' => 's','family' => 's','sciname' => 's','tidinterpreted' => 'n','scientificnameauthorship' => 's','identifiedby' => 's',
+			'dateidentified' => 's','identificationreferences' => 's','identificationremarks' => 's','taxonremarks' => 's','identificationqualifier' => 's','typestatus' => 's',
+			'recordedby' => 's','recordnumber' => 's','associatedcollectors' => 's','eventdate' => 'd','eventdate2' => 'd','year' => 'n','month' => 'n','day' => 'n','startdayofyear' => 'n',
+			'enddayofyear' => 'n','verbatimeventdate' => 's','habitat' => 's','substrate' => 's','fieldnumber' => 's','occurrenceremarks' => 's','datageneralizations' => 's','associatedtaxa' => 's',
+			'verbatimattributes' => 's','behavior' => 's','vitality' => 's','dynamicproperties' => 's','reproductivecondition' => 's','cultivationstatus' => 's','establishmentmeans' => 's',
+			'lifestage' => 's','sex' => 's','individualcount' => 's','samplingprotocol' => 's','preparations' => 's','continent' => 's','waterbody' => 's','islandgroup' => 's',
+			'island' => 's','countrycode' => 's','country' => 's','stateprovince' => 's','county' => 's','municipality' => 's','locationid' => 's','locality' => 's','recordsecurity' => 'n',
+			'securityreason' => 's','locationremarks' => 's','decimallatitude' => 'n','decimallongitude' => 'n','geodeticdatum' => 's','coordinateuncertaintyinmeters' => 'n',
+			'verbatimcoordinates' => 's','footprintwkt' => 's','georeferencedby' => 's','georeferenceprotocol' => 's','georeferencesources' => 's','georeferenceverificationstatus' => 's',
+			'georeferenceremarks' => 's','minimumelevationinmeters' => 'n','maximumelevationinmeters' => 'n','verbatimelevation' => 's','minimumdepthinmeters' => 'n','maximumdepthinmeters' => 'n',
+			'verbatimdepth' => 's','storagelocation' => 's','disposition' => 's','language' => 's','duplicatequantity' => 'n','labelproject' => 's','processingstatus' => 's',
+			'recordenteredby' => 's','observeruid' => 'n','dateentered' => 'd');
+		$this->fieldArr['omoccurpaleo'] = array('eon','era','period','epoch','earlyInterval','lateInterval','absoluteAge','stage','localStage','biota','biostratigraphy',
+			'lithogroup','formation','taxonEnvironment','member','bed','lithology','stratRemarks','element','slideProperties','geologicalContextID');
 		$this->fieldArr['omoccuridentifiers'] = array('idname', 'idvalue');
 		$this->fieldArr['omexsiccatiocclink'] = array('ometid', 'exstitle', 'exsnumber');
 	}
@@ -191,38 +95,29 @@ class OccurrenceEditorManager {
 			$propArr = json_decode($this->collMap['dynamicproperties'], true);
 			if (isset($propArr['editorProps'])) {
 				$retArr = $propArr['editorProps'];
-				if (isset($retArr['modules-panel'])) {
-					foreach ($retArr['modules-panel'] as $module) {
-						if (!empty($module['paleo']['status'])) {
-							$this->collMap['paleoActivated'] = true;
+				if(isset($retArr['modules-panel'])){
+					foreach($retArr['modules-panel'] as $module){
+						if(isset($module['paleo']['status'])){
+							if($module['paleo']['status']) $this->collMap['paleoActivated'] = true;
+							else $this->collMap['paleoActivated'] = false;
 						}
-						if (!empty($module['matSample']['status'])) {
-							$this->collMap['matSampleActivated'] = true;
+						if(isset($module['matSample']['status'])){
+							if($module['matSample']['status']) $this->collMap['matSampleActivated'] = true;
+							else $this->collMap['matSampleActivated'] = false;
 						}
 					}
 				}
 			}
 		}
+		if(!isset($this->collMap['paleoActivated']) && !empty($GLOBALS['ACTIVATE_PALEO'])) $this->collMap['paleoActivated'] = 1;
 	}
 
-	function getDownloadQuery(): string {
+	public function getDownloadQuery(): string {
 		$queryArr = $this->getQueryVariables();
 		$retArr = [ 'db' => $this->collId ];
 
-		$map = [
-			'rb' => 'collector',
-			'rn' => 'collnum',
-			'ed' => 'eventdate1',
-			'cn' => 'catnum',
-			'ocn' => 'othercatalognumbers',
-			'eb' => 'recordenteredby',
-			'de' => 'dateentered',
-			'dm' => 'datelastmodified',
-			'ps' => 'processingstatus',
-			'traitid' => 'traitid',
-			'stateid' => 'stateid',
-			'exsid' => 'exsiccatiid',
-		];
+		$map = 	['rb' => 'collector','rn' => 'collnum','ed' => 'eventdate1','cn' => 'catnum','ocn' => 'othercatalognumbers','eb' => 'recordenteredby','de' => 'dateentered',
+				'dm' => 'datelastmodified','ps' => 'processingstatus','traitid' => 'traitid','stateid' => 'stateid','exsid' => 'exsiccatiid'];
 
 		// Handle woi and io seperately since they distill into one variable
 		if(array_key_exists('io', $queryArr)) {
@@ -232,7 +127,7 @@ class OccurrenceEditorManager {
 		}
 
 		$custom_fields = [];
-		for ($i=1; $i < 11; $i++) { 
+		for ($i=1; $i < 11; $i++) {
 			$custom_fields['cf' . $i] = 'customfield' . $i;
 			$custom_fields['ct' . $i] = 'customtype' . $i;
 			$custom_fields['cv' . $i] = 'customvalue' . $i;
@@ -265,6 +160,7 @@ class OccurrenceEditorManager {
 			if (array_key_exists('q_processingstatus', $_REQUEST) && $_REQUEST['q_processingstatus']) $this->qryArr['ps'] = trim($_REQUEST['q_processingstatus']);
 			if (array_key_exists('q_datelastmodified', $_REQUEST) && $_REQUEST['q_datelastmodified']) $this->qryArr['dm'] = trim($_REQUEST['q_datelastmodified']);
 			if (array_key_exists('q_exsiccatiid', $_REQUEST) && is_numeric($_REQUEST['q_exsiccatiid'])) $this->qryArr['exsid'] = $_REQUEST['q_exsiccatiid'];
+			if (array_key_exists('q_exsnumber', $_REQUEST) && is_numeric($_REQUEST['q_exsnumber'])) $this->qryArr['exsnumber'] = $_REQUEST['q_exsnumber'];
 			if (array_key_exists('q_dateentered', $_REQUEST) && $_REQUEST['q_dateentered']) $this->qryArr['de'] = trim($_REQUEST['q_dateentered']);
 			if (array_key_exists('q_ocrfrag', $_REQUEST) && $_REQUEST['q_ocrfrag']) $this->qryArr['ocr'] = trim($_REQUEST['q_ocrfrag']);
 			if (array_key_exists('q_imgonly', $_REQUEST) && $_REQUEST['q_imgonly']) $this->qryArr['io'] = 1;
@@ -282,6 +178,8 @@ class OccurrenceEditorManager {
 			}
 			if (array_key_exists('orderby', $_REQUEST)) $this->qryArr['orderby'] = trim($_REQUEST['orderby']);
 			if (array_key_exists('orderbydir', $_REQUEST)) $this->qryArr['orderbydir'] = trim($_REQUEST['orderbydir']);
+
+			if (array_key_exists('coordinateRankingIssue', $_REQUEST)) $this->qryArr['coordinateRankingIssue'] = $_REQUEST['coordinateRankingIssue'];
 
 			if (array_key_exists('occidlist', $_POST) && $_POST['occidlist']) $this->setOccidIndexArr($_POST['occidlist']);
 			if (array_key_exists('direction', $_POST)) $this->direction = trim($_POST['direction']);
@@ -496,7 +394,11 @@ class OccurrenceEditorManager {
 				$sqlWhere .= 'AND (o.recordedby IS NULL) ';
 			} elseif (substr($this->qryArr['rb'], 0, 1) == '%') {
 				$collStr = $this->cleanInStr(substr($this->qryArr['rb'], 1));
-				$sqlWhere .= 'AND (MATCH(o.recordedby) AGAINST("' . $collStr . '" IN BOOLEAN MODE)) ';
+				if(strlen($collStr) < 3){
+					$sqlWhere .= 'AND (o.recordedby REGEXP "\\\b' . $collStr . '\\\b") ';
+				} else {
+					$sqlWhere .= 'AND (MATCH(o.recordedby) AGAINST("' . $collStr . '" IN BOOLEAN MODE)) ';
+				}
 			} else {
 				$sqlWhere .= 'AND (o.recordedby LIKE "' . $this->cleanInStr($this->qryArr['rb']) . '%") ';
 			}
@@ -580,7 +482,13 @@ class OccurrenceEditorManager {
 			//Used to find records linked to a specific exsiccati
 			$sqlWhere .= 'AND (exn.ometid = ' . $this->qryArr['exsid'] . ') ';
 		}
-			
+
+		//Exsiccati Number
+		if (array_key_exists('exsnumber', $this->qryArr) && is_numeric($this->qryArr['exsnumber'])) {
+			//Used to find records linked to a specific exsiccati
+			$sqlWhere .= 'AND (exn.exsnumber = ' . $this->qryArr['exsnumber'] . ') ';
+		}
+
 		// Traits
 		$traitids = array_key_exists('traitid', $this->qryArr) && is_array($this->qryArr['traitid'])?
 			array_filter($this->qryArr['traitid'], fn($v) => is_numeric($v)): [];
@@ -604,6 +512,22 @@ class OccurrenceEditorManager {
 			}
 		}
 
+		// Coordinate Quality
+		if(array_key_exists('coordinateRankingIssue', $this->qryArr)) {
+			if(is_numeric($this->qryArr['coordinateRankingIssue'])) {
+				$rank = intval($this->qryArr['coordinateRankingIssue']);
+				$sqlWhere .= 'AND (ovv.ranking = ' . $rank . ' AND ovv.category = "coordinate") ';
+
+				if($rank === 0) {
+					$sqlWhere .= 'AND (country is not null or stateProvince is not null or county is not null) ';
+				} else if($rank === 2) {
+					$sqlWhere .= 'AND (stateProvince is not null or county is not null) ';
+				} else if($rank === 5) {
+					$sqlWhere .= 'AND (county is not null) ';
+				}
+			}
+		}
+
 		//Custom search fields
 		$customWhere = '';
 		for ($x = 1; $x < 9; $x++) {
@@ -623,7 +547,11 @@ class OccurrenceEditorManager {
 					$customField = 'u.username';
 				} elseif ($customField == 'identifierName' || $customField == 'identifierValue') {
 					$customField = 'id.' . $customField;
-				} else {
+				} elseif(in_array($customField,$this->fieldArr['omoccurpaleo'])){
+					//Used for paleo fields
+					$customField = 'paleo.'.$customField;
+				}
+				else{
 					$customField = 'o.' . $customField;
 				}
 				if ($customField == 'o.otherCatalogNumbers') {
@@ -773,12 +701,16 @@ class OccurrenceEditorManager {
 		$retArr = array();
 		$localIndex = false;
 		$sqlFrag = '';
-		if ($this->occid && !$this->direction) {
-			$sqlFrag .= 'WHERE (o.occid = ' . $this->occid . ')';
-		} elseif ($this->sqlWhere) {
+		if($this->occid && !$this->direction){
+			$sqlFrag .= 'LEFT JOIN omoccurpaleo paleo ON paleo.occid = o.occid WHERE (o.occid = '.$this->occid.')';
+		}
+		elseif($this->sqlWhere){
 			$this->addTableJoins($sqlFrag);
+			if (strpos($sqlFrag, 'LEFT JOIN omoccurpaleo') === false) {
+				$sqlFrag .= ' LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
+			}
 			$sqlFrag .= $this->sqlWhere;
-			if ($limit) {
+			if($limit){
 				$this->setSqlOrderBy($sqlFrag);
 				$sqlFrag .= 'LIMIT ' . $start . ',' . $limit;
 			} elseif ($this->occid) {
@@ -792,8 +724,8 @@ class OccurrenceEditorManager {
 				$sqlFrag .= 'LIMIT ' . $localStart . ',' . $localLimit;
 			}
 		}
-		if ($sqlFrag) {
-			$sql = 'SELECT DISTINCT o.occid, o.collid, o.' . implode(',o.', array_keys($this->fieldArr['omoccurrences'])) . ', o.datelastmodified FROM omoccurrences o ' . $sqlFrag;
+		if($sqlFrag){
+			$sql = 'SELECT DISTINCT o.occid, o.collid, o.'.implode(',o.',array_keys($this->fieldArr['omoccurrences'])) . ',paleo.' . implode(',paleo.',($this->fieldArr['omoccurpaleo'])).', o.datelastmodified FROM omoccurrences o '.$sqlFrag;
 			$previousOccid = 0;
 
 			$rs = $this->conn->query($sql);
@@ -837,6 +769,18 @@ class OccurrenceEditorManager {
 		}
 	}
 
+	public function getRecordIdByOccId($occid) {
+		$recordId = '';
+		$stmt = $this->conn->prepare("SELECT recordId FROM omoccurrences WHERE occid = ?");
+		$stmt->bind_param("i", $occid);
+		if ($stmt->execute()) {
+			$stmt->bind_result($recordId);
+			$stmt->fetch();
+		}
+		$stmt->close();
+		return $recordId;
+	}
+
 	private function addTableJoins(&$sql) {
 		if (strpos($this->sqlWhere, 'ocr.rawstr')) {
 			if (strpos($this->sqlWhere, 'ocr.rawstr IS NULL') && array_key_exists('io', $this->qryArr)) {
@@ -851,9 +795,9 @@ class OccurrenceEditorManager {
 		} elseif (array_key_exists('woi', $this->qryArr)) {
 			$sql .= 'LEFT JOIN media m ON o.occid = m.occid ';
 		}
-		//Traits 
+		//Traits
 		if(strpos($this->sqlWhere, 'tms.stateid') || strpos($this->sqlWhere, 'tms.traitid')) {
-			$sql .= ' LEFT JOIN tmattributes tma ON tma.occid = o.occid ' . 
+			$sql .= ' LEFT JOIN tmattributes tma ON tma.occid = o.occid ' .
 			'LEFT JOIN tmstates tms ON tms.stateid = tma.stateid ';
 		}
 		if (strpos($this->sqlWhere, 'id.identifierValue') || strpos($this->sqlWhere, 'id.identifierName')) {
@@ -862,11 +806,17 @@ class OccurrenceEditorManager {
 		if (strpos($this->sqlWhere, 'u.username')) {
 			$sql .= 'LEFT JOIN omoccuredits ome ON o.occid = ome.occid LEFT JOIN users u ON ome.uid = u.uid ';
 		}
-		if (strpos($this->sqlWhere, 'exn.ometid')) {
+		if (strpos($this->sqlWhere, 'exn.ometid') || strpos($this->sqlWhere, 'exn.exsnumber')) {
 			$sql .= 'INNER JOIN omexsiccatiocclink exocc ON o.occid = exocc.occid INNER JOIN omexsiccatinumbers exn ON exocc.omenid = exn.omenid ';
 		}
 		if ($this->crowdSourceMode) {
 			$sql .= 'INNER JOIN omcrowdsourcequeue q ON q.occid = o.occid ';
+		}
+		if (strpos($this->sqlWhere, 'paleo.')) {
+			$sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
+		}
+		if (strpos($this->sqlWhere, 'ovv.')) {
+			$sql .= 'INNER JOIN omoccurverification ovv ON ovv.occid = o.occid ';
 		}
 	}
 
@@ -1027,7 +977,7 @@ class OccurrenceEditorManager {
 						$rs2->free();
 					}
 					//If additional identifiers exist, NULL otherCatalogNumbers
-					if ($postArr['idvalue'][0]) $postArr['othercatalognumbers'] = '';
+					if (array_key_exists('idvalue', $postArr) && $postArr['idvalue'][0]) $postArr['othercatalognumbers'] = '';
 
 					//If processing status was "unprocessed" and recordEnteredBy is null, populate with user login
 					$oldProcessingStatus = isset($oldValueArr['omoccurrences']['processingstatus']) ? $oldValueArr['omoccurrences']['processingstatus'] : '';
@@ -1120,7 +1070,7 @@ class OccurrenceEditorManager {
 					//Update occurrence record
 					$sql = 'UPDATE IGNORE omoccurrences SET ' . substr($sql, 1) . ' WHERE (occid = ' . $this->occid . ')';
 					if ($this->conn->query($sql)) {
-						if (strtolower($postArr['processingstatus']) != 'unprocessed') {
+						if (strtolower($postArr['processingstatus'] ?? '') != 'unprocessed') {
 							//UPDATE uid within omcrowdsourcequeue, only if not yet processed
 							$isVolunteer = true;
 							if (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($this->collId, $USER_RIGHTS['CollAdmin'])) $isVolunteer = false;
@@ -1135,7 +1085,7 @@ class OccurrenceEditorManager {
 						//Deal with additional identifiers
 						if (isset($postArr['idvalue'])) $this->updateIdentifiers($postArr, $identArr);
 						//Deal with paleo fields
-						if (isset($this->collMap['paleoActivated']) && array_key_exists('eon', $postArr)) {
+						if(isset($this->collMap['paleoActivated']) && array_key_exists('earlyInterval',$postArr)){
 							//Check to see if paleo record already exists
 							$paleoRecordExist = false;
 							$paleoSql = 'SELECT paleoid FROM omoccurpaleo WHERE occid = ' . $this->occid;
@@ -1346,12 +1296,11 @@ class OccurrenceEditorManager {
 	public function addOccurrence($postArr) {
 		global $LANG;
 		$status = $LANG['SUCCESS_NEW_OCC_SUBMITTED'];
+
 		if ($postArr) {
 			$postArr = array_merge($postArr, $this->getDatefields($postArr));
 			$guid = UuidFactory::getUuidV4();
 			$sql = 'INSERT IGNORE INTO omoccurrences(collid, recordID, ' . implode(',', array_keys($this->fieldArr['omoccurrences'])) . ') VALUES (' . $postArr['collid'] . ', "' . $guid . '"';
-			//if(array_key_exists('cultivationstatus',$postArr) && $postArr['cultivationstatus']) $postArr['cultivationstatus'] = $postArr['cultivationstatus'];
-			//if(array_key_exists('recordsecurity',$postArr) && $postArr['recordsecurity']) $postArr['recordsecurity'] = $postArr['recordsecurity'];
 			if (!isset($postArr['dateentered']) || !$postArr['dateentered']) $postArr['dateentered'] = date('Y-m-d H:i:s');
 			if (!isset($postArr['basisofrecord']) || !$postArr['basisofrecord']) $postArr['basisofrecord'] = (strpos($this->collMap['colltype'], 'Observations') !== false ? 'HumanObservation' : 'PreservedSpecimen');
 			if (isset($postArr['institutioncode']) && $postArr['institutioncode'] == $this->collMap['institutioncode']) $postArr['institutionCode'] = '';
@@ -1360,7 +1309,7 @@ class OccurrenceEditorManager {
 			foreach ($this->fieldArr['omoccurrences'] as $fieldStr => $fieldType) {
 				$fieldValue = '';
 				if (array_key_exists($fieldStr, $postArr)) $fieldValue = $postArr[$fieldStr];
-				if ($fieldValue) {
+				if ($fieldValue !== '') {
 					if ($fieldType == 'n') {
 						if (is_numeric($fieldValue)) $sql .= ', ' . $fieldValue;
 						else $sql .= ', NULL';
@@ -1376,7 +1325,7 @@ class OccurrenceEditorManager {
 				//Deal with identifiers
 				if (isset($postArr['idvalue'])) $this->updateIdentifiers($postArr);
 				//Deal with paleo
-				if (isset($this->collMap['paleoActivated']) && array_key_exists('eon', $postArr)) {
+				if(isset($this->collMap['paleoActivated']) && array_key_exists('earlyInterval',$postArr)){
 					//Add new record
 					$paleoFrag1 = '';
 					$paleoFrag2 = '';
@@ -1736,20 +1685,17 @@ class OccurrenceEditorManager {
 						}
 					}
 					if (isset($postArr['carryoverimages']) && $postArr['carryoverimages']) {
-						$sql = 'INSERT INTO media (occid, tid, url, thumbnailurl, originalurl, archiveurl, creator, creatorUid, mediaType, imagetype, format, caption, owner,
-							sourceurl, referenceUrl, copyright, rights, accessrights, locality, notes, anatomy, username, sourceIdentifier, mediaMD5, dynamicProperties,
-							defaultDisplay, sortsequence, sortOccurrence)
-							SELECT ' . $this->occid . ', tid, url, thumbnailurl, originalurl, archiveurl, creator, creatorUid, mediaType, imagetype, format, caption, owner, sourceurl, referenceUrl,
-							copyright, rights, accessrights, locality, notes, anatomy, username, sourceIdentifier, mediaMD5, dynamicProperties, defaultDisplay, sortsequence, sortOccurrence
-							FROM media WHERE occid = ' . $sourceOccid;
-						if (!$this->conn->query($sql)) {
-							$this->errorArr[] = $LANG['ERROR_ADDING_IMAGES'] . ': ' . $this->conn->error;
+						try {
+							Media::copyOccurrenceMedia($sourceOccid, $this->occid, $this->conn);
+						} catch(Throwable $th) {
+							$this->errorArr[] = $LANG['ERROR_ADDING_IMAGES'] . ': ' . $th->getMessage();
 						}
 					}
 				}
 			}
 			$this->occid = $sourceOccid;
 		}
+
 		return $retArr;
 	}
 
@@ -1870,6 +1816,13 @@ class OccurrenceEditorManager {
 			UPDATE media SET occid = ? WHERE occid = ?;
 			SQL;
 			$stage = $LANG['ERROR_REMAPPING_IMAGES'];
+			QueryUtil::executeQuery($this->conn, $sql, [$targetOccid, $sourceOccid]);
+
+			//Remap material sample
+			$sql = <<<'SQL'
+			UPDATE IGNORE ommaterialsample SET occid = ? WHERE occid = ?;
+			SQL;
+			$stage = $LANG['ERROR_REMAPPING_MATSAMPLE'];
 			QueryUtil::executeQuery($this->conn, $sql, [$targetOccid, $sourceOccid]);
 
 			//Remap paleo
@@ -2096,12 +2049,24 @@ class OccurrenceEditorManager {
 					$nvSqlFrag = 'REPLACE(' . $fn . ',"' . $ov . '","' . $nv . '")';
 				}
 
-				$sqlWhere = 'WHERE occid IN(' . implode(',', $occidArr) . ')';
+				//Set default table and prefix
+				$targetTable = 'omoccurrences';
+				$fieldPrefix = '';
 
-				//Add edits to the omoccuredit table
+				//Set the target table for omoccuredits
+				foreach ($this->fieldArr as $table => $fields) {
+					if (in_array($fn, $fields)) {
+						$targetTable = $table;
+						$fieldPrefix = ($table !== 'omoccurrences') ? $table . ':' : '';
+						break;
+					}
+				}
+
+				//Insert data from target table into omoccuredits
+				$sqlWhere = 'WHERE occid IN(' . implode(',', $occidArr) . ')';
 				$sql = 'INSERT INTO omoccuredits(occid,fieldName,fieldValueOld,fieldValueNew,appliedStatus,uid,editType) ' .
 					'SELECT o.occid, "' . $fn . '" AS fieldName, IFNULL(' . $fn . ',"") AS oldValue, IFNULL(' . $nvSqlFrag . ',"") AS newValue, ' .
-					'1 AS appliedStatus, ' . $GLOBALS['SYMB_UID'] . ' AS uid, 1 FROM omoccurrences as o ';
+					'1 AS appliedStatus, ' . $GLOBALS['SYMB_UID'] . ' AS uid, 1 FROM ' . $targetTable . ' as o ';
 
 				// This Solution is a bit scuffed their isn't a nice way of getting many to one 
 				// tables in the batch update system without rebuilding most of it
@@ -2116,7 +2081,7 @@ class OccurrenceEditorManager {
 					$statusStr = $LANG['ERROR_ADDING_UPDATE'] . ': ' . $this->conn->error;
 				}
 				//Apply edits to core tables
-				if (isset($this->collMap['paleoActivated']) && array_key_exists($fn, $this->fieldArr['omoccurpaleo'])) {
+				if ((empty($this->collMap) || !empty($this->collMap['paleoActivated'])) && in_array($fn, $this->fieldArr['omoccurpaleo'])) {
 					$sql = 'UPDATE omoccurpaleo SET ' . $fn . ' = ' . $nvSqlFrag . ' ' . $sqlWhere;
 				} else if ($fn === 'identifierValue' || $fn === 'identifierName') {
 					$sql = 'UPDATE omoccuridentifiers as id SET ' . $fn . ' = ' . $nvSqlFrag . ' ' . $sqlWhere;
@@ -2158,81 +2123,32 @@ class OccurrenceEditorManager {
 		$sql = $this->sqlWhere;
 
 		$tablePrefix = 'o.';
-		if($fn == 'identifierValue' || 'identifierName') {
+		if($fn == 'identifierValue' || $fn == 'identifierName') {
 			$tablePrefix = 'id.';
 		}
 
 		if (!$buMatch || $ov === '') {
-			$sql .= ' AND (' . $tablePrefix . $fn . ' ' . ($ov === '' ? 'IS NULL' : '= "' . $ov . '"') . ') ';
+			if (in_array($fn, $this->fieldArr['omoccurpaleo']))
+				$sql .= ' AND (paleo.'.$fn.' '.($ov===''?'IS NULL':'= "'.$ov.'"').') ';
+			else
+				$sql .= ' AND (' . $tablePrefix . $fn . ' ' . ($ov === '' ? 'IS NULL' : '= "' . $ov . '"') . ') ';
 		} else {
 			//Selected "Match any part of field"
-			$sql .= ' AND ('. $tablePrefix . $fn . ' LIKE "%' . $ov . '%") ';
+			if (in_array($fn, $this->fieldArr['omoccurpaleo']))
+				$sql .= ' AND (paleo.'.$fn.' LIKE "%'.$ov.'%") ';
+			else
+				$sql .= ' AND ('. $tablePrefix . $fn . ' LIKE "%' . $ov . '%") ';
 		}
 		return $sql;
 	}
 
 	public function carryOverValues($fArr) {
-		$locArr = array(
-			'recordedby',
-			'associatedcollectors',
-			'eventdate',
-			'eventdate2',
-			'verbatimeventdate',
-			'country',
-			'stateprovince',
-			'county',
-			'municipality',
-			'locationid',
-			'locality',
-			'decimallatitude',
-			'decimallongitude',
-			'verbatimcoordinates',
-			'coordinateuncertaintyinmeters',
-			'footprintwkt',
-			'geodeticdatum',
-			'georeferencedby',
-			'georeferenceprotocol',
-			'georeferencesources',
-			'georeferenceverificationstatus',
-			'georeferenceremarks',
-			'minimumelevationinmeters',
-			'maximumelevationinmeters',
-			'verbatimelevation',
-			'minimumdepthinmeters',
-			'maximumdepthinmeters',
-			'verbatimdepth',
-			'habitat',
-			'substrate',
-			'lifestage',
-			'sex',
-			'individualcount',
-			'samplingprotocol',
-			'preparations',
-			'associatedtaxa',
-			'basisofrecord',
-			'language',
-			'labelproject',
-			'eon',
-			'era',
-			'period',
-			'epoch',
-			'earlyinterval',
-			'lateinterval',
-			'absoluteage',
-			'storageage',
-			'stage',
-			'localstage',
-			'biota',
-			'biostratigraphy',
-			'lithogroup',
-			'formation',
-			'taxonenvironment',
-			'member',
-			'bed',
-			'lithology',
-			'stratremarks',
-			'element'
-		);
+		$locArr = array('recordedby','associatedcollectors','eventdate','eventdate2','verbatimeventdate','country','stateprovince','county','municipality','locationid','locality',
+			'decimallatitude','decimallongitude','verbatimcoordinates','coordinateuncertaintyinmeters','footprintwkt','geodeticdatum','georeferencedby','georeferenceprotocol','georeferencesources',
+			'georeferenceverificationstatus','georeferenceremarks','minimumelevationinmeters','maximumelevationinmeters','verbatimelevation','minimumdepthinmeters','maximumdepthinmeters',
+			'verbatimdepth','habitat','substrate','lifestage','sex','individualcount','samplingprotocol','preparations','associatedtaxa','basisofrecord','language','labelproject',
+			'eon','era','period','epoch','earlyInterval','lateInterval','absoluteAge','stage','localStage','biota','biostratigraphy','lithogroup','formation','taxonEnvironment',
+			'member','bed','lithology','stratRemarks','element');
 		$retArr = array_intersect_key($fArr, array_flip($locArr));
 		$this->cleanOutArr($retArr);
 		return $retArr;
@@ -2339,6 +2255,19 @@ class OccurrenceEditorManager {
 			asort($retArr);
 		}
 		return $retArr;
+	}
+
+	public function getUserName(){
+		$retStr = '';
+		if(is_numeric($GLOBALS['SYMB_UID'])){
+			$sql = 'SELECT CONCAT_WS(", ",lastname,firstname) AS username FROM users WHERE uid = '.$GLOBALS['SYMB_UID'];
+			$rs = $this->conn->query($sql);
+			while($r = $rs->fetch_object()){
+				$retStr = $r->username;
+			}
+			$rs->free();
+		}
+		return $retStr;
 	}
 
 	//Duplicate functions
@@ -2512,6 +2441,18 @@ class OccurrenceEditorManager {
 		}
 		$this->cleanOutArr($imageMap);
 		return $imageMap;
+	}
+
+	public function createOccurrenceFrom(): int {
+		$sql = 'INSERT INTO omoccurrences(collid, observeruid,processingstatus) SELECT collid, observeruid, "unprocessed" FROM omoccurrences WHERE occid = ?';
+
+		try {
+			QueryUtil::executeQuery($this->conn, $sql, [$this->occid]);
+			return $this->conn->insert_id;
+		} catch(Exception $e) {
+			$this->errorArr[] = $LANG['UNABLE_RELINK_BLANK'].': '.$this->conn->error;
+			return -1;
+		}
 	}
 
 	protected function getImageTags($imgIdStr) {
@@ -2798,6 +2739,34 @@ class OccurrenceEditorManager {
 		return $retArr;
 	}
 
+	public function catalogNumberExists($catNum) {
+		$status = false;
+		if($this->collId){
+			$sql = 'SELECT occid FROM omoccurrences WHERE (catalognumber = "'.$this->cleanInStr($catNum).'") AND (collid = '.$this->collId.')';
+			//echo $sql;
+			$rs = $this->conn->query($sql);
+			while ($r = $rs->fetch_object()) {
+				$this->occid = $r->occid;
+				$status = true;
+			}
+			$rs->free();
+		}
+		return $status;
+	}
+
+	public function getLanguageArr() {
+		$retArr = array();
+		$sql = 'SELECT iso639_1, langname '.
+			'FROM adminlanguages ';
+		$rs = $this->conn->query($sql);
+		while($r = $rs->fetch_object()){
+			$retArr[$r->iso639_1] = $r->langname;
+		}
+		$rs->free();
+		asort($retArr);
+		return $retArr;
+	}
+
 	public function isCrowdsourceEditor() {
 		$isEditor = false;
 		if ($this->occid) {
@@ -2827,13 +2796,29 @@ class OccurrenceEditorManager {
 	}
 
 	public function getAttributeTraits($collid = ''){
+		$stateIds = [];
+
+		if($collid) {
+			$rs = QueryUtil::executeQuery($this->conn,
+				'SELECT DISTINCT a.stateid from omoccurrences o INNER JOIN tmattributes a ON a.occid = o.occid WHERE collid = ?',
+				[$collid]
+			);
+			$stateIds = [];
+
+			while($r = $rs->fetch_object()) {
+				array_push($stateIds, $r->stateid);
+			}
+		}
+
+		$sql = 'SELECT DISTINCT t.traitid, t.traitname, s.stateid, s.statename FROM tmtraits t
+		INNER JOIN tmstates s ON t.traitid = s.traitid';
+
+		if(count($stateIds) > 0) {
+			$sql .= ' where s.stateid in (' . str_repeat('?,', count($stateIds) - 1) . '?' . ')';
+		}
+		
 		$retArr = array();
-		$sql = 'SELECT DISTINCT t.traitid, t.traitname, s.stateid, s.statename '.
-			'FROM tmtraits t INNER JOIN tmstates s ON t.traitid = s.traitid '.
-			'INNER JOIN tmattributes a ON s.stateid = a.stateid '.
-			'INNER JOIN omoccurrences o ON a.occid = o.occid ';
-		if($collid) $sql .= 'WHERE o.collid = '.$collid;
-		$rs = $this->conn->query($sql);
+		$rs = QueryUtil::executeQuery($this->conn, $sql, $stateIds);
 		while($r = $rs->fetch_object()){
 			$retArr[$r->traitid]['name'] = $r->traitname;
 			$retArr[$r->traitid]['state'][$r->stateid] = $r->statename;

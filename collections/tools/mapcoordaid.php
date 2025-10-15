@@ -331,7 +331,11 @@ else{
 				lang
 			};
 
-			let map = new LeafletMap('map', MapOptions );
+			let map = new LeafletMap(
+				'map',
+				MapOptions,
+				JSON.parse(`<?= json_encode($GEO_JSON_LAYERS ?? []) ?>`)
+			);
 
 			map.enableDrawing({
 				polyline: false,

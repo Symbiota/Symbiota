@@ -1,7 +1,8 @@
 <?php
 //TODO: add code to automatically select hide locality details when taxon/state match name on list
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ObservationSubmitManager.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
+include_once($SERVER_ROOT.'/classes/Media.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/observationsubmit.'.$LANG_TAG.'.php'))
 	include_once($SERVER_ROOT.'/content/lang/collections/editor/observationsubmit.'.$LANG_TAG.'.php');
 else include_once($SERVER_ROOT.'/content/lang/collections/editor/observationsubmit.en.php');
@@ -17,9 +18,13 @@ $action = array_key_exists('action', $_POST) ? $_POST['action'] : '';
 //Sanitation
 $recordedBy = htmlspecialchars($recordedBy);
 
-$obsManager = new ObservationSubmitManager();
-$obsManager->setCollid($collId);
-$collMap = $obsManager->getCollMap();
+$MAX_MEDIA_COUNT = 5;
+
+$occurManager = new OccurrenceEditorManager();
+$occurManager->setCollId($collId);
+$collMap = $occurManager->getCollMap();
+$mediaErrors = [];
+
 if(!$collId && $collMap) $collId = $collMap['collid'];
 
 $isEditor = 0;
@@ -35,11 +40,38 @@ if($collMap){
 		$isEditor = 1;
 	}
 	if($isEditor && $action == "Submit"){
-		$occid = $obsManager->addObservation($_POST);
+		$occurManager->addOccurrence($_POST);
+		$occid = $occurManager->getOccId();
+
+		$path = get_occurrence_upload_path(
+			$collMap['institutioncode'],
+			$collMap['collectioncode'],
+		);
+
+		for($i = 1; $i <= min($MAX_MEDIA_COUNT, count($_FILES)); $i++) {
+			$file = ($_FILES['imgfile' . $i] ?? false);
+			if($file && $file['error'] === 0) {
+				Media::uploadAndInsert(
+					[
+						'caption' => $_POST['caption' . $i] ?? null,
+						'notes' => $_POST['notes' . $i] ?? null,
+						'occid' => $occid
+					],
+					$file, 
+					new LocalStorage($path)
+				);
+				
+				if($errors = Media::getErrors()) {
+					$mediaErrors[$i] = $errors;
+				} else {
+					$mediaErrors[$i] = false;
+				}
+			}
+		}
 	}
-	if(!$recordedBy) $recordedBy = $obsManager->getUserName();
+	if(!$recordedBy) $recordedBy = $occurManager->getUserName();
 }
-$clArr = $obsManager->getChecklists();
+$clArr = $occurManager->getUserChecklists();
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
@@ -88,11 +120,27 @@ $clArr = $obsManager->getChecklists();
 			<hr />
 			<div style="margin:15px;font-weight:bold;">
 				<?php
-				if($occid){
+
+				if($mediaErrors) {
+					echo '<div>';
+					echo $LANG['MEDIA_STATUS'] . ':<ol>';
+					foreach($mediaErrors as $mediaNumber => $e){
+						if($e) {
+							echo '<li style="color:red;">Media #' . $mediaNumber . ' ';
+							echo $LANG['ERROR'] . ': '. $e[0];
+							echo '</li>';
+						} else {
+							echo '<li style="color:green;">Media #' . $mediaNumber . ' ';
+							echo $LANG['SUCCESS_IMAGE'];
+							echo '</li>';
+						}
+					}
+					echo '</ol>';
+					echo '</div>';
+				}
+
+				if($occid) {
 					?>
-					<div style="color:green;">
-						<?= $LANG['SUCCESS_IMAGE']; ?>
-					</div>
 					<div style="font:weight;margin-top:10px;">
 						<?= $LANG['OPEN']; ?> <a href="../individual/index.php?occid=<?= $occid ?>" target="_blank" rel="noopener"><?= $LANG['OCC_DET_VIEW'] ?></a> <?= $LANG['TO_SEE_NEW'] ?>
 					</div>
@@ -107,7 +155,7 @@ $clArr = $obsManager->getChecklists();
 						<?php
 					}
 				}
-				$errArr = $obsManager->getErrorArr();
+				$errArr = $occurManager->getErrorArr();
 				if($errArr){
 					echo '<div style="color:red;">';
 					echo $LANG['ERROR'].':<ol>';
@@ -135,11 +183,11 @@ $clArr = $obsManager->getChecklists();
 				    	<!-- following line sets MAX_FILE_SIZE (must precede the file input field)  -->
 						<input type='hidden' name='MAX_FILE_SIZE' value='<?= $maxUpload; ?>' />
 						<?php
-						for($x=1; $x<6; $x++){
+						for($x=1; $x <= $MAX_MEDIA_COUNT; $x++){
 							?>
 							<div class="imgSubmitDiv" id="img<?= $x; ?>div" style="<?php if($x > 1) echo 'display:none'; ?>">
 								<div style="margin-bottom: 10px;">
-									<label for="imgfile<?= $x; ?>"><?= $LANG['IMAGE'].' '.$x; ?>:</label>
+									<label for="imgfile<?= $x; ?>"style="font-weight: bold;"><?= $LANG['IMAGE'].' '.$x; ?>:</label>
 									<input name='imgfile<?= $x; ?>' id='imgfile<?= $x; ?>' type='file' onchange="verifyImageSize(this)" <?php if($x == 1) echo 'required'; ?> />
 								</div>
 								<div>
@@ -154,7 +202,7 @@ $clArr = $obsManager->getChecklists();
 										</div>
 									</section>
 									<?php
-									if($x < 5){
+									if($x < $MAX_MEDIA_COUNT){
 										?>
 										<div style="margin-bottom: 10px;">
 											<a href="#" onclick="toggle('img<?= ($x+1); ?>div');return false">
@@ -177,9 +225,9 @@ $clArr = $obsManager->getChecklists();
 							<section class="flex-form">
 								<div>
 									<span>
-										<label for="sciname"><?= $LANG['SCINAME']; ?>:</label>
+										<label for="sciname" style="font-weight: bold;"><?= $LANG['SCINAME']; ?>:</label>
 										<input type="text" id="sciname" name="sciname" maxlength="250" style="width:390px;" required />
-										<input type="hidden" id="tidtoadd" name="tidtoadd" value="" />
+										<input type="hidden" id="tidinterpreted" name="tidinterpreted" value="" />
 									</span>
 									<span stlye="margin-left: 10px">
 										<label for="scientificnameauthorship"><?= $LANG['AUTHOR']; ?>:</label>
@@ -195,7 +243,7 @@ $clArr = $obsManager->getChecklists();
 						<div style="clear:both;" class="flex-form">
 							<div>
 								<span>
-									<label for="recordedby"><?= $LANG['OBSERVER']; ?>:</label>
+									<label for="recordedby" style="font-weight: bold;"><?= $LANG['OBSERVER']; ?>:</label>
 									<input type="text" name="recordedby" id="recordedby" maxlength="255" style="width:250px;" value="<?= htmlspecialchars($recordedBy, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" required />
 								</span>
 								<span stlye="margin-left: 10px">
@@ -203,7 +251,7 @@ $clArr = $obsManager->getChecklists();
 									<input type="text" name="recordnumber" id="recordnumber" maxlength="45" style="width:80px;" title="Observer Number, if observer uses a numbering system " />
 								</span>
 								<span>
-									<label for="eventdate"><?= $LANG['DATE']; ?>:</label>
+									<label for="eventdate" style="font-weight: bold;"><?= $LANG['DATE']; ?>:</label>
 									<input type="text" id="eventdate" name="eventdate" style="width:120px;" onchange="verifyDate(this);" title="format: yyyy-mm-dd" required />
 									<a href="#" style="margin:15px 0px 0px 5px;" onclick="toggle('obsextradiv');return false" title="<?= $LANG['EDIT_BTN'] ?>" aria-label="<?= $LANG['EDIT_BTN'] ?>">
 										<img src="../../images/editplus.png" style="width:1.5em;" alt="<?= $LANG['IMG_EDIT'] ?>"/>
@@ -243,11 +291,11 @@ $clArr = $obsManager->getChecklists();
 						<div style="clear:both;" class="flex-form">
 							<div>
 								<span>
-									<label for="country"><?= $LANG['COUNTRY']; ?>:</label>
+									<label for="country" style="font-weight: bold;"><?= $LANG['COUNTRY']; ?>:</label>
 									<input type="text" name="country" id="country" style="width:150px;" value="" required />
 								</span>
 								<span stlye="margin-left: 10px">
-									<label for="stateprovince"><?= $LANG['STATE_PROVINCE']; ?>:</label>
+									<label for="stateprovince" style="font-weight: bold;"><?= $LANG['STATE_PROVINCE']; ?>:</label>
 									<input type="text" name="stateprovince" id="stateprovince" style="width:150px;" value="" required />
 								</span>
 								<span stlye="margin-left: 10px">
@@ -257,7 +305,7 @@ $clArr = $obsManager->getChecklists();
 							</div>
 						</div>
 						<div style="clear:both;margin:4px 0px 2px 0px;">
-							<label for="locality"><?= $LANG['LOCALITY']; ?>:</label>
+							<label for="locality" style="font-weight: bold;"><?= $LANG['LOCALITY']; ?>:</label>
 							<input type="text" name="locality" id="locality" style="width:95%;" value="" required />
 						</div>
 						<div style="clear:both;margin-bottom:5px;">
@@ -267,11 +315,11 @@ $clArr = $obsManager->getChecklists();
 						<div style="clear:both;" class="flex-form">
 							<div>
 								<span>
-									<label for="decimallatitude"><?= $LANG['LATITUDE']; ?>:</label>
+									<label for="decimallatitude" style="font-weight: bold;"><?= $LANG['LATITUDE']; ?>:</label>
 									<input type="text" id="decimallatitude" name="decimallatitude" maxlength="10" style="width:100px;" value="" onchange="verifyLatValue(this.form, '<?= $CLIENT_ROOT?>')" title="Decimal Format (eg 34.5436)" required />
 								</span>
 								<span>
-									<label for="decimallongitude"><?= $LANG['LONGITUDE']; ?>:</label>
+									<label for="decimallongitude" style="font-weight: bold;"><?= $LANG['LONGITUDE']; ?>:</label>
 									<input type="text" id="decimallongitude" name="decimallongitude" maxlength="13" style="width:100px;" value="" onchange="verifyLngValue(this.form, '<?= $CLIENT_ROOT?>')" title="Decimal Format (eg -112.5436)" required />
 								</span>
 								<span style="margin-top:10px; margin-left:3px; margin-bottom:10px" >
@@ -281,7 +329,7 @@ $clArr = $obsManager->getChecklists();
 									<button id="dmsButton" type="button" onclick="toggle('dmsdiv');"><?= $LANG['DMS']; ?></button>
 								</span>
 								<span>
-									<label for="coordinateuncertaintyinmeters"><?= $LANG['UNCERTAINTY_M']; ?>:</label>
+									<label for="coordinateuncertaintyinmeters" style="font-weight: bold;"><?= $LANG['UNCERTAINTY_M']; ?>:</label>
 									<input type="text" id="coordinateuncertaintyinmeters" name="coordinateuncertaintyinmeters" maxlength="10" style="width:110px;" onchange="inputIsNumeric(this, 'Lat/long uncertainty')" title="Uncertainty in Meters" value="<?= $uncertaintyInMeters; ?>" required />
 								</span>
 								<span>
