@@ -1160,6 +1160,25 @@ class Media {
 		return Sanitize::out(self::get_media_items($results));
 	}
 
+	public static function countByTid(int $tid, string $media_type = null) {
+		if(!$tid) return [];
+		$parameters = [$tid];
+
+		$sql ='SELECT ' . 'count(*) as cnt' . ' FROM media m '.
+			'LEFT JOIN taxa t ON t.tid = m.tid ' .
+			'LEFT JOIN users u on u.uid = m.creatorUid ' .
+			'WHERE m.tid = ?';
+
+		if($media_type) {
+			$sql .= ' AND mediaType = ?';
+			array_push($parameters, $media_type);
+		}
+
+		$results = QueryUtil::executeQuery(Database::connect('readonly'), $sql, $parameters);
+
+		return $results->fetch_object()->cnt;
+	}
+
 	/**
 	 * @param int $occid
 	 * @param string $media_type Should use MediaType constants
