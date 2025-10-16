@@ -9,6 +9,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 
 $tid = filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT);
 $category = array_key_exists('cat', $_REQUEST) ? $_REQUEST['cat'] : '';
+$page = array_key_exists('mediaPage', $_REQUEST)? intval(filter_var($_REQUEST['mediaPage'], FILTER_SANITIZE_NUMBER_INT)): 1;
 
 $imageEditor = new TPImageEditorManager();
 $isEditor = false;
@@ -40,7 +41,7 @@ if($tid){
 		<?php
 		if($isEditor && $tid){
 			if($category == "imagequicksort"){
-				if($images = $imageEditor->getImages()){
+				if($images = $imageEditor->getImages($page)){
 					?>
 					<div style='clear:both;'>
 						<form action='tpeditor.php' method='post' target='_self'>
@@ -233,7 +234,7 @@ if($tid){
 				<?php
 			}
 			else{
-				if($images = $imageEditor->getImages()){
+				if($images = $imageEditor->getImages($page)){
 					?>
 					<div style='clear:both;'>
 						<section class="gridlike-form">

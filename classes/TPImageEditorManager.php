@@ -14,7 +14,10 @@ class TPImageEditorManager extends TPEditorManager{
  		parent::__destruct();
  	}
 
-	public function getImages(){
+	public function getImages(Int $page = 1){
+		$LIMIT = 10;
+		$OFFSET = ($page - 1) * $LIMIT;
+
 		$imageArr = array();
 		$tidArr = array($this->tid);
 		if($this->rankid == 220){
@@ -41,7 +44,7 @@ class TPImageEditorManager extends TPEditorManager{
 				LEFT JOIN users u ON m.creatorUid = u.uid
 				WHERE (m.tid IN(' . implode(',', $tidArr) . ')) AND m.SortSequence < 500 ';
 		}
-		$sql .= 'ORDER BY m.sortsequence LIMIT 500';
+		$sql .= 'ORDER BY m.sortsequence LIMIT ' . $LIMIT . ' OFFSET ' . $OFFSET;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$imageArr[$r->mediaID]['url'] = $r->url;

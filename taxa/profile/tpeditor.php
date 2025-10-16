@@ -220,7 +220,7 @@ if($isEditor && $action){
 				<div id="tabs" style="margin:10px;">
 					<ul>
 						<li><a href="#commontab"><span><?= $LANG['SYN_VERNAC'] ?></span></a></li>
-						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() ?>"><span><?= $LANG['IMAGES'] ?></span></a></li>
+						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() ?>&mediaPage=1"><span><?= $LANG['IMAGES'] ?></span></a></li>
 						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&cat=imagequicksort' ?>"><span><?= $LANG['IMAGE_SORT'] ?></span></a></li>
 						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&cat=imageadd' ?>"><span><?= $LANG['ADD_IMAGE'] ?></span></a></li>
 						<li><a href="tpdesceditor.php?tid=<?= $tEditor->getTid() . '&action=' . htmlspecialchars($action, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>"><span><?= $LANG['DESCRIPTIONS'] ?></span></a></li>
