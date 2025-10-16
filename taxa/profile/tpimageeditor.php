@@ -2,6 +2,7 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TPImageEditorManager.php');
 include_once($SERVER_ROOT . '/classes/Media.php');
+include_once($SERVER_ROOT . '/classes/Paginator.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/profile/tpimageeditor.' . $LANG_TAG . '.php'))
 	include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpimageeditor.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpimageeditor.en.php');
@@ -9,10 +10,12 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 
 $tid = filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT);
 $category = array_key_exists('cat', $_REQUEST) ? $_REQUEST['cat'] : '';
-$page = array_key_exists('mediaPage', $_REQUEST)? intval(filter_var($_REQUEST['mediaPage'], FILTER_SANITIZE_NUMBER_INT)): 1;
+// $page = array_key_exists('mediaPage', $_REQUEST)? intval(filter_var($_REQUEST['mediaPage'], FILTER_SANITIZE_NUMBER_INT)): 1;
 
+$paginator = new Paginator(100, 10, 'mediaPage');
 $imageEditor = new TPImageEditorManager();
 $isEditor = false;
+
 
 if($tid){
 	$imageEditor->setTid($tid);
@@ -41,8 +44,9 @@ if($tid){
 		<?php
 		if($isEditor && $tid){
 			if($category == "imagequicksort"){
-				if($images = $imageEditor->getImages($page)){
+				if($images = $imageEditor->getImages($paginator->activePage)){
 					?>
+					<?php echo $paginator->renderPagination() ?>
 					<div style='clear:both;'>
 						<form action='tpeditor.php' method='post' target='_self'>
 							<input name='tid' type='hidden' value='<?php echo $imageEditor->getTid(); ?>'>
@@ -234,8 +238,9 @@ if($tid){
 				<?php
 			}
 			else{
-				if($images = $imageEditor->getImages($page)){
+				if($images = $imageEditor->getImages($paginator->activePage)){
 					?>
+				<?php echo $paginator->renderPagination() ?>
 					<div style='clear:both;'>
 						<section class="gridlike-form">
 							<?php
