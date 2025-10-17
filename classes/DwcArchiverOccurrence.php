@@ -138,8 +138,8 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['dataGeneralizations'] = 'o.dataGeneralizations';
 		$this->occurDefArr['terms']['dynamicProperties'] = 'http://rs.tdwg.org/dwc/terms/dynamicProperties';
 		$this->occurDefArr['fields']['dynamicProperties'] = 'o.dynamicProperties';
-		$this->occurDefArr['terms']['associatedOccurrences'] = 'http://rs.tdwg.org/dwc/terms/associatedOccurrences';
-		$this->occurDefArr['fields']['associatedOccurrences'] = '';
+		//$this->occurDefArr['terms']['associatedOccurrences'] = 'http://rs.tdwg.org/dwc/terms/associatedOccurrences';
+		//$this->occurDefArr['fields']['associatedOccurrences'] = '';
 		$this->occurDefArr['terms']['associatedSequences'] = 'http://rs.tdwg.org/dwc/terms/associatedSequences';
 		$this->occurDefArr['fields']['associatedSequences'] = '';
 		$this->occurDefArr['terms']['associatedTaxa'] = 'http://rs.tdwg.org/dwc/terms/associatedTaxa';
@@ -330,6 +330,10 @@ class DwcArchiverOccurrence extends Manager{
 				$this->occurDefArr[$k] = array_diff_key($vArr,array_flip($trimArr));
 			}
 			elseif($this->schemaType == 'backup'){
+				$trimArr = array('collectionID','rights','rightsHolder','accessRights');
+				$this->occurDefArr[$k] = array_diff_key($vArr,array_flip($trimArr));
+			}
+			elseif($this->schemaType == 'backup-personal'){
 				$trimArr = array('collectionID','rights','rightsHolder','accessRights');
 				$this->occurDefArr[$k] = array_diff_key($vArr,array_flip($trimArr));
 			}
@@ -833,8 +837,9 @@ class DwcArchiverOccurrence extends Manager{
 	}
 
 	//Setter and getter
-	public function setSchemaType($t){
-		$this->schemaType = $t;
+	public function setSchemaType($t, $observerUid = 0){
+		if($t == 'backup' && $observerUid) $this->schemaType = 'backup-personal';
+		else $this->schemaType = $t;
 	}
 
 	public function setExtended($e){

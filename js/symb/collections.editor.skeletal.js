@@ -147,6 +147,7 @@ function submitDefaultForm(f){
 			dataType: "json",
 			data: { 
 				sciname: $( "#fsciname" ).val(), 
+				tidinterpreted: $( "#ftidinterpreted" ).val(),
 				scientificnameauthorship: $( "#fscientificnameauthorship" ).val(), 
 				family: $( "#ffamily" ).val(), 
 				recordsecurity: ($( "#flocalitysecurity" ).prop('checked')?"1":"0"),
@@ -243,12 +244,23 @@ function deleteOccurrence(occid){
 	}
 }
 
-function toggleFieldDiv(divName){
-	toggle(divName);
+function toggleFieldDiv(divName, checked){
+	const elem = document.getElementById(divName);
+	if(elem) {
+		if(checked) {
+			elem.style.display = '';
+		} else {
+			elem.style.display = 'none';
+		}
+	}
+
 	var allInputs = $("#"+divName+" > :input");
 	allInputs.each(function(){
-		if(this.type == "checkbox") $(this).prop("checked", false);
-		else this.value = "";
+		if(this.type == "checkbox") { 
+			$(this).prop("checked", false);
+		} else {
+			this.value = "" 
+		};
 	});
 }
 

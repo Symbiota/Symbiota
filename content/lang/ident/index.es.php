@@ -5,12 +5,10 @@ Language: Espa�ol (Spanish)
 ------------------
 */
 
-$LANG['IDKEY'] = ' Claves de identificación';
+$LANG['NAV_HOME'] = 'Inicio';
+$LANG['IDKEYS'] = ' Claves de identificación';
 $LANG['IDKEYLIST'] = 'Listado de claves de identificación';
-
-$LANG['IDKEYS'] = 'Claves de Identificación';
 $LANG['SHOWCHECK'] = 'Mostrar listados de verificación en mapa';
-
 $LANG['CHAR_ADMIN'] = 'Administración de Caracteres Taxonómicos';
 $LANG['ALERT_NAME'] = 'El nombre del personaje debe tener un valor';
 $LANG['ALERT_TYPE'] = 'Se debe seleccionar un tipo de carácter';
