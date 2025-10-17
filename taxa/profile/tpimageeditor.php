@@ -10,7 +10,6 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 
 $tid = filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT);
 $category = array_key_exists('cat', $_REQUEST) ? $_REQUEST['cat'] : '';
-// $page = array_key_exists('mediaPage', $_REQUEST)? intval(filter_var($_REQUEST['mediaPage'], FILTER_SANITIZE_NUMBER_INT)): 1;
 
 // TODO (Logan) change to not fire during media add
 $paginator = new Paginator(
