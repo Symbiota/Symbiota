@@ -13,9 +13,10 @@ class Paginator {
 	public array $queryParams;
 
 	function __construct(int $resultCount, int $resultPerPage, string $pageRequestVar, string $baseLink, array $queryParams = []) {
-		$this->activePage = array_key_exists($pageRequestVar, $_REQUEST)? intval(filter_var($_REQUEST[$pageRequestVar], FILTER_SANITIZE_NUMBER_INT)): 1;
 		$this->totalCount = $resultCount;
 		$this->perPage = $resultPerPage;
+		$this->pageRequestVar = $pageRequestVar;
+		$this->activePage = array_key_exists($pageRequestVar, $_REQUEST)? intval(filter_var($_REQUEST[$pageRequestVar], FILTER_SANITIZE_NUMBER_INT)): 1;
 		$this->baseLink = $baseLink;
 		$this->queryParams = $queryParams;
 	}
@@ -67,6 +68,6 @@ class Paginator {
 	}
 
 	private function getNavigationLink(int $page, $text = null): string {
-		return '<a href="' . $this->baseLink . '?' . http_build_query([...$this->queryParams, $this->pageRequestVar => $page]) . '">' . ($text ?? $page) . '</a>';
+		return '<a href="' . htmlspecialchars($this->baseLink . '?' . http_build_query([...$this->queryParams, $this->pageRequestVar => $page])) . '">' . ($text ?? $page) . '</a>';
 	}
 }
