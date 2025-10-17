@@ -13,7 +13,7 @@ $category = array_key_exists('cat', $_REQUEST) ? $_REQUEST['cat'] : '';
 // $page = array_key_exists('mediaPage', $_REQUEST)? intval(filter_var($_REQUEST['mediaPage'], FILTER_SANITIZE_NUMBER_INT)): 1;
 
 // TODO (Logan) change to not fire during media add
-$paginator = new Paginator(Media::countByTid($tid), 10, 'mediaPage');
+$paginator = new Paginator(Media::countByTid($tid), 10, 'mediaPage', 'tpeditor.php', ['tid' => $tid, 'tabindex' => $category === 'imagequicksort'? 2: 1]);
 $imageEditor = new TPImageEditorManager();
 $isEditor = false;
 
