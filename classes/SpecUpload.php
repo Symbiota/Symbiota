@@ -186,7 +186,7 @@ class SpecUpload{
 			$sql = $this->getPendingImportSql($searchVariables) ;
 			//echo "<div>".$sql."</div>";
 			$fieldMap = array();
-			$excludeKeys = ['eon', 'era', 'period', 'epoch', 'stage'];
+			$excludeKeys = ['paleo_eon', 'paleo_era', 'paleo_period', 'paleo_epoch', 'paleo_stage'];
 			$rs = $this->conn->query($sql, MYSQLI_USE_RESULT);
 			//Determine which fields have data
 			while($r = $rs->fetch_assoc()){
@@ -200,7 +200,11 @@ class SpecUpload{
 				$rs = $this->conn->query($sql, MYSQLI_USE_RESULT);
 				while($r = $rs->fetch_assoc()){
 					if($outputHeader){
-						fputcsv($outstream,array_keys(array_intersect_key($r, $fieldMap)));
+						$keys = array_keys(array_intersect_key($r, $fieldMap));
+						$keys = array_map(function($k) {
+							return (strpos($k, 'paleo_') === 0) ? substr($k, 6) : $k;
+						}, $keys);
+						fputcsv($outstream, $keys);
 						$outputHeader = false;
 					}
 					fputcsv($outstream,array_intersect_key($r, $fieldMap));

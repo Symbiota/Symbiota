@@ -162,6 +162,7 @@ class SpecUploadBase extends SpecUpload{
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
 			$field = strtolower($row->Field);
+			if (!$this->paleoSupport && strpos($field, 'paleo') === 0) continue;
 			if(!in_array($field,$this->skipOccurFieldArr)){
 				if($autoBuildFieldMap){
 					$this->occurFieldMap[$field]["field"] = $field;
@@ -196,8 +197,8 @@ class SpecUploadBase extends SpecUpload{
 		$this->symbFields[] = 'coordinateuncertaintyunits';
 		$this->symbFields[] = 'authorspecies';
 		$this->symbFields[] = 'authorinfraspecific';
-		sort($this->symbFields);
 		if($this->paleoSupport) $this->symbFields = array_merge($this->symbFields,$this->getPaleoTerms());
+		sort($this->symbFields);
 		if($this->materialSampleSupport) $this->symbFields = array_merge($this->symbFields,$this->getMaterialSampleTerms());
 
 	/*	//Associated Occurrence fields
@@ -1207,15 +1208,18 @@ class SpecUploadBase extends SpecUpload{
 			'biota', 'biostratigraphy', 'taxonEnvironment', 'lithogroup', 'formation', 'member', 'bed', 'lithology', 'stratRemarks', 'element',
 			'slideProperties', 'geologicalContextID'
 		];
-
-		$sql = 'SELECT occid, catalogNumber, ' . implode(', ', $paleoFields) . ' FROM uploadspectemp WHERE (occid IS NOT NULL) AND collid = ' . $this->collId;
+		$sqlFields = implode(', ', array_map(function($f) {
+			return 'paleo_' . $f;
+		}, $paleoFields));
+		$sql = 'SELECT occid, catalogNumber, ' . $sqlFields . ' FROM uploadspectemp WHERE (occid IS NOT NULL) AND collid = ' . $this->collId;
 		$rs = $this->conn->query($sql);
 		while ($r = $rs->fetch_object()) {
 			try {
 				$paleoArr = [];
 				foreach ($paleoFields as $field) {
-					if (isset($r->$field) && $r->$field !== '') {
-						$paleoArr[$field] = $r->$field;
+					$dbField = 'paleo_' . $field;
+					if (isset($r->$dbField) && $r->$dbField !== '') {
+						$paleoArr[$field] = $r->$dbField;
 					}
 				}
 				if (!empty($paleoArr)) {
@@ -2029,7 +2033,7 @@ class SpecUploadBase extends SpecUpload{
 			$paleoArr['lateinterval'] = $paleoArr['earlyinterval'];
 
 		foreach ($paleoArr as $key => $val) {
-			$recMap[$key] = trim($val);
+			$recMap['paleo_' . $key] = trim($val);
 		}
 	}
 
