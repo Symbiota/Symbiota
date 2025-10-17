@@ -83,6 +83,10 @@ class Media {
 		'm.rights',
 		'm.sortSequence',
 		'm.sortOccurrence',
+		// Older schema term that can be "specimen", "field", or NULL
+		// More in reference the subject of the media
+		'm.imageType',
+		'm.initialtimestamp',
 		"IFNULL(m.creator,CONCAT_WS(' ',u.firstname,u.lastname)) AS creatorDisplay",
 		't.sciname',
 		't.author',
