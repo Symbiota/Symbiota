@@ -22,7 +22,7 @@ class Paginator {
 	}
 
 	public function renderPagination(): String {
-		$lastPage = floor($this->totalCount / $this->perPage);
+		$lastPage = ceil($this->totalCount / $this->perPage);
 		$startPage = $this->activePage <= floor($this->pagesShown/2)? 1: $this->activePage - floor($this->pagesShown / 2); 
 		$maxActive = max(1, $lastPage - $this->pagesShown);
 
