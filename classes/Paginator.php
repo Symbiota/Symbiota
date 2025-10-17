@@ -4,15 +4,15 @@
  * Class used to standarized the creation of Pagination Componenets
  */
 class Paginator {
-	public $pageRequestVar = 'page';
-	public int $activePage = 1;
-	public int $totalCount = 0;
-	public int $perPage = 100;
-	public int $pagesShown = 10;
-	public string $baseLink;
-	public array $queryParams;
+	public Int $activePage = 1;
+	public Int $totalCount = 0;
+	public Int $perPage = 100;
+	public Int $pagesShown = 10;
+	public String $pageRequestVar = 'page';
+	public String $baseLink;
+	public Array $queryParams;
 
-	function __construct(int $resultCount, int $resultPerPage, string $pageRequestVar, string $baseLink, array $queryParams = []) {
+	function __construct(Int $resultCount, Int $resultPerPage, String $pageRequestVar, String $baseLink, Array $queryParams = []) {
 		$this->totalCount = $resultCount;
 		$this->perPage = $resultPerPage;
 		$this->pageRequestVar = $pageRequestVar;
@@ -21,7 +21,7 @@ class Paginator {
 		$this->queryParams = $queryParams;
 	}
 
-	public function renderPagination() {
+	public function renderPagination(): String {
 		$lastPage = floor($this->totalCount / $this->perPage);
 		$startPage = $this->activePage <= floor($this->pagesShown/2)? 1: $this->activePage - floor($this->pagesShown / 2); 
 		$maxActive = max(1, $lastPage - $this->pagesShown);
@@ -53,21 +53,17 @@ class Paginator {
 		return '<div style="display:flex; gap:0.2rem">' . $html . '<div style="flex-grow:1; display:flex;justify-content:end">Page ' . $this->summaryText() . '</div></div>';
 	}	
 
-	private function summaryText(): string {
+	private function summaryText(): String {
 		return $this->activePage . ', records ' . (( ($this->activePage - 1) * $this->perPage) + 1) . ' - ' . $this->perPage * $this->activePage . ' of ' . $this->totalCount;
 	}
 
-	private function btn() {
-		return '<button>';
-	}
-
-	private function pageLink(int $page) {
+	private function pageLink(Int $page): String {
 		return '<span class="pagination">' . 
 			($page === $this->activePage? $page: $this->getNavigationLink($page)) .
 		'</span>';
 	}
 
-	private function getNavigationLink(int $page, $text = null): string {
+	private function getNavigationLink(Int $page, ?String $text = null): String {
 		return '<a href="' . htmlspecialchars($this->baseLink . '?' . http_build_query([...$this->queryParams, $this->pageRequestVar => $page])) . '">' . ($text ?? $page) . '</a>';
 	}
 }
