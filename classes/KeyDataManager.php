@@ -51,17 +51,17 @@ class KeyDataManager extends Manager {
 		//Rate char list: Get list of char that are coded for a percentage of taxa list that is greater than
 		if($this->sql){
 			$charList = Array();
-			$countMin = $this->taxaCount * $this->relevanceValue;
+			$countMin = (float)($this->taxaCount * $this->relevanceValue);
 			$loopCnt = 0;
 			while(!$charList && $loopCnt < 10){
-				$sqlRev = 'SELECT tc.CID, Count(tc.TID) AS c FROM
-					(SELECT DISTINCT tList.TID, d.CID FROM (' . $this->sql . ') AS tList INNER JOIN kmdescr d ON tList.TID = d.TID WHERE (d.CS <> '-')) AS tc
-					GROUP BY tc.CID HAVING ((Count(tc.TID)) > $countMin)';
+				$sqlRev = 'SELECT tc.CID, Count(tc.TID) AS c FROM '.
+					'(SELECT DISTINCT tList.TID, d.CID FROM (' . $this->sql . ') AS tList INNER JOIN kmdescr d ON tList.TID = d.TID WHERE (d.CS <> "-")) AS tc '.
+					'GROUP BY tc.CID HAVING ((Count(tc.TID)) > ' . $countMin . ')';
 				$rs = $this->conn->query($sqlRev);
 				while($row = $rs->fetch_object()){
 					$charList[] = $row->CID;
 				}
-				$countMin = $countMin*0.9;
+				$countMin = $countMin * 0.9;
 				$loopCnt++;
 			}
 			$charList = array_merge($charList,array_keys($this->charArr));
@@ -175,7 +175,7 @@ class KeyDataManager extends Manager {
 		$retArr = Array();
 		if($this->sql){
 			$charList = Array();
-			$countMin = $this->taxaCount * $this->relevanceValue;
+			$countMin = (float)($this->taxaCount * $this->relevanceValue);
 			$loopCnt = 0;
 			while(!$charList && $loopCnt < 10){
 				$sqlRev = 'SELECT tc.CID, Count(tc.TID) AS c '.
@@ -186,7 +186,7 @@ class KeyDataManager extends Manager {
 				while($row = $rs->fetch_object()){
 					$charList[] = $row->CID;
 				}
-				$countMin = $countMin*0.9;
+				$countMin = $countMin * 0.9;
 				$loopCnt++;
 			}
 			$charList = array_merge($charList,array_keys($this->charArr));

@@ -21,6 +21,7 @@ $searchVar = $collManager->getQueryTermStr();
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="../js/symb/collections.harvestparams.js?ver=3" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/collections.list.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js?ver=1" type="text/javascript"></script>
 	<script src="../js/symb/collections.traitsearch.js?ver=8" type="text/javascript"></script> <!-- Contains search-by-trait modifications -->
 	<script src="../js/symb/wktpolygontools.js?ver=1c" type="text/javascript"></script>
@@ -28,13 +29,7 @@ $searchVar = $collManager->getQueryTermStr();
 		const paleoTimes = <?= json_encode($paleoTimes ?? []) ?>;
 		var clientRoot = "<?php echo $CLIENT_ROOT; ?>";
 		$(document).ready(function() {
-			<?php
-			if($searchVar){
-				?>
-				sessionStorage.querystr = "<?php echo $searchVar; ?>";
-				<?php
-			}
-			?>
+			setSessionQueryStr();
 			setHarvestParamsForm(document.harvestparams);
 		});
 	</script>
@@ -52,6 +47,7 @@ $searchVar = $collManager->getQueryTermStr();
 	</style>
 </head>
 <body>
+<div id="service-container" data-search-var="<?= $searchVar; ?>"></div>
 <?php
 	$displayLeftMenu = (isset($collections_harvestparamsMenu)?$collections_harvestparamsMenu:false);
 	include($SERVER_ROOT.'/includes/header.php');

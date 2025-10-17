@@ -21,8 +21,9 @@ if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
 }
 $dynamPropsArr = array();
 if(isset($clArray['dynamicProperties']) && $clArray['dynamicProperties']){
-	$dynamPropsArr = json_decode($clArray['dynamicProperties'], true);
+	$dynamPropsArr = json_decode(str_replace('&quot;', '"', $clArray['dynamicProperties']), true);
 }
+
 ?>
 <script type="text/javascript" src="../js/tinymce/tinymce.min.js"></script>
 <script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js" type="text/javascript"></script>
@@ -257,8 +258,8 @@ if(!$clid){
 					<span id="polyNotDefDiv" style="display:<?php echo ($clArray && $clArray["hasfootprintwkt"]?'none':'inline'); ?>;">
 						<?php echo $LANG['POLYGON_NOT_DEFINED']; ?>
 					</span>
-					<span style="margin:10px;"><a href="#" onclick="openCoordAid({map_mode:MAP_MODES.POLYGON, client_root: '<?= $CLIENT_ROOT?>', polygon_text_type: POLYGON_TEXT_TYPES.<?=$footprint['type'] === 'geoJson' ? 'GEOJSON': 'WKT'?>});return false;" title="<?php echo $LANG['CREATE_EDIT_POLYGON']; ?>"><img src="../images/world.png" style="width:1em;" /></a></span>
-					<input type="hidden" id="footprintwkt" name="footprint<?=htmlspecialchars($footprint['type'])?>" value="<?=htmlspecialchars($footprint['footprint'])?>" />
+					<span style="margin:10px;"><a href="#" onclick="openCoordAid({map_mode:MAP_MODES.POLYGON, client_root: '<?= $CLIENT_ROOT?>', polygon_text_type: POLYGON_TEXT_TYPES.<?= isset($footprint['type']) && $footprint['type'] === 'wkt' ? 'WKT': 'GEOJSON' ?>});return false;" title="<?php echo $LANG['CREATE_EDIT_POLYGON']; ?>"><img src="../images/world.png" style="width:1em;" /></a></span>
+					<input type="hidden" id="footprintwkt" name="footprint<?=htmlspecialchars($footprint['type'] ?? 'geoJson')?>" value="<?= htmlspecialchars($footprint['footprint'] ?? '')?>" />
 				</fieldset>
 			</div>
 			<div style="clear:both;" class="top-breathing-room-rel">

@@ -69,9 +69,15 @@ const fieldProps = [
   },
   {
     block: "labelBlock",
-    name: "Identified By",
-    id: "identifiedby",
-    group: "determination",
+    name: "Species Name",
+    id: "speciesname",
+    group: "taxon",
+  },
+  {
+    block: 'labelBlock',
+    name: 'Identified By',
+    id: 'identifiedby',
+    group: 'determination',
   },
   {
     block: "labelBlock",

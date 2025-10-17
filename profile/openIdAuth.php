@@ -15,6 +15,10 @@ $oidc = new OpenIDConnectClient(
   $CLIENT_SECRETS[$AUTH_PROVIDER]
 );
 
+$oidc->addAuthParam(array(
+    'prompt' => 'login'
+));
+
 $oidc->addScope(array('openid'));
 $oidc->addScope(array('email'));
 $oidc->setResponseTypes(array('code'));

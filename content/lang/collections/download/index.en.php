@@ -26,6 +26,11 @@ $LANG['DARWIN_CORE'] = 'Darwin Core';
 $LANG['IMG_DARWIN_INFO'] = 'Info icon: DwC is a TDWG endorsed standard for biodata. Link to DwC quick ref guide in the dialog.';
 $LANG['DARWIN_GUIDE'] = 'Darwin Core (DwC) is a TDWG endorsed exchange standard specifically for biodiversity datasets.                        For more information on what data fields are included in DwC, visit the';
 $LANG['DARWIN_GUIDE_LINK'] = 'DwC Quick Reference Guide';
+$LANG['TAXONOMIC_RESOLUTION'] = 'Taxonomic Resolution';
+$LANG['ACCEPTED_NAME_USAGE'] = 'Include Accepted Scientific Name and Authorship';
+$LANG['TAXONOMIC_RESOLUTION_GUIDE']= 'Checking this box will add three fields to your occurrences file: acceptedNameUsage, acceptedNameUsageAuthorship, 
+    and acceptedNameUsageID. These fields will contain the name, authorship, and taxonID of the "accepted" taxon name of the record\'s scientific name 
+    according to the portal\'s taxonomic thesaurus at time of download.';
 $LANG['DATA_EXTS'] = 'Data Extensions';
 $LANG['INCLUDE_HISTORY'] = 'include Determination History';
 $LANG['INCLUDE_IMG'] = 'include Media Records';

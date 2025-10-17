@@ -45,11 +45,12 @@ select{
 	font-size: 1em;
 }
 
-#occdiv{
+#occdiv, #occResourceDiv {
 	width: 900px;
 	resize:both;
 	overflow:auto; /* something other than visible */
 }
+
 
 #admindiv{
 	width: 795px;
