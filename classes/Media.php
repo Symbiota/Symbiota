@@ -183,6 +183,7 @@ class Media {
 	/**
 	 * @param mixed $url
 	 * @param mixed $text
+	 * @return string
 	 */
 	static function render_media_link($url, $text) {
 		$slash_route = substr($url, 0, 1) == '/';
@@ -193,6 +194,22 @@ class Media {
 		$clean_text = htmlspecialchars($text, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 
 		return '<a href="' . $clean_url . '">'. $clean_text . '</a>';
+	}
+
+	/**
+	 * Creates html option output for users
+	 *
+	 * @param ?int $userId What user id is selected
+	 * @return string
+	 */
+	static function renderCreatorOptions(?int $userId = null): string {
+		$html = '';
+
+		foreach(self::getCreatorArray() as $id => $uname) {
+			$html .= "<option value='" . $id ."' ".($id == $userId ?"SELECTED":"") . ">" . $uname . '</option>';
+		}
+
+		return $html;
 	}
 
 	/**
