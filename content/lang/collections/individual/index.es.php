@@ -171,5 +171,6 @@ $LANG['REPORTED_AS_INAPPROPRIATE'] = 'El siguiente comentario ha sido eliminado 
 $LANG['EMAIL_NOT_DEFINED'] = 'ERROR: El correo electrónico del administrador del portal no está definido en el archivo de configuración central';
 $LANG['UNABLE_TO_VERIFY_TARGET'] = 'ERROR al eliminar el cupón: no se puede verificar la lista de verificación objetivo del cupón';
 $LANG['PERMISSION_ERROR'] = 'ERROR al eliminar el comprobante: error de permiso';
-
+$LANG['CULT_STATUS'] = 'Estado de Cultivo';
+$LANG['CULTIVATED'] = 'Cultivado';
 ?>

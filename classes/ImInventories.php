@@ -199,7 +199,7 @@ class ImInventories extends Manager{
 
 	public function getChecklistArr($pid = 0){
 		$retArr = Array();
-		$sql = 'SELECT c.clid, c.name, c.latcentroid, c.longcentroid, c.access FROM fmchecklists c ';
+		$sql = 'SELECT c.clid, c.name, c.latcentroid, c.longcentroid, c.access, c.defaultsettings FROM fmchecklists c ';
 		if($pid && is_numeric($pid)) $sql .= 'INNER JOIN fmchklstprojlink pl ON c.clid = pl.clid WHERE (pl.pid = '.$pid.') ';
 		$sql .= 'ORDER BY c.sortSequence, c.name';
 		$rs = $this->conn->query($sql);
@@ -208,6 +208,7 @@ class ImInventories extends Manager{
 			$retArr[$r->clid]['lat'] = $r->latcentroid;
 			$retArr[$r->clid]['lng'] = $r->longcentroid;
 			$retArr[$r->clid]['access'] = $r->access;
+			$retArr[$r->clid]['defaultsettings'] = $r->defaultsettings;
 		}
 		$rs->free();
 		return $retArr;

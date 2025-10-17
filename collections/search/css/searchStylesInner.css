@@ -23,18 +23,6 @@
   font-size: 1.1rem !important;
 }
 
-@font-face {
-  font-family: "Material Icons";
-  font-style: normal;
-  font-weight: 400;
-  src: url(../fonts/MaterialIcons-Regular.eot);
-  src: local("Material Icons");
-  src: local("MaterialIcons-Regular");
-  src: url(../fonts/MaterialIcons-Regular.woff2) format("woff2");
-  src: url(../fonts/MaterialIcons-Regular.woff) format("woff");
-  src: url(../fonts/MaterialIcons-Regular.ttf) format("truetype");
-}
-
 .inner-search .material-icons {
   font-family: "Material Icons";
   font-weight: normal;

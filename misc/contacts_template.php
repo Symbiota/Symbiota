@@ -1,7 +1,9 @@
 <?php
 include_once('../config/symbini.php');
 header("Content-Type: text/html; charset=".$CHARSET);
-include_once('content/lang/misc/aboutproject.'.$LANG_TAG.'.php');
+if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/templates/aboutproject.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/templates/aboutproject.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/templates/aboutproject.en.php');
+
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">

@@ -23,6 +23,7 @@ class DwcArchiverCore extends Manager{
 	protected $conditionArr = array();
 	private $condAllowArr;
 	private $overrideConditionLimit = false;
+	private $observerUid = 0;				//If set, this is a person backup event
 
 	private $targetPath;
 	protected $serverDomain;
@@ -255,6 +256,9 @@ class DwcArchiverCore extends Manager{
 				$this->conditionSql .= 'AND (o.collid IN(' . $this->conditionArr['collid'] . ')) ';
 			}
 			unset($this->conditionArr['collid']);
+		}
+		if($this->observerUid){
+			$this->conditionSql .= 'AND (o.observerUid = ' . $this->observerUid . ') ';
 		}
 		if (array_key_exists('exclude', $_REQUEST) && preg_match('/^[\d,]+$/', $_REQUEST['exclude'])) {
 			$this->conditionSql .= 'AND (o.collid NOT IN(' . $_REQUEST['exclude'] . ')) ';
@@ -842,9 +846,11 @@ class DwcArchiverCore extends Manager{
 				$zipArchive->addFile($this->targetPath . $this->ts . '-eml.xml');
 				$zipArchive->renameName($this->targetPath . $this->ts . '-eml.xml', 'eml.xml');
 				//Citation file
-				$this->writeCitationFile();
-				$zipArchive->addFile($this->targetPath . $this->ts . '-citation.txt');
-				$zipArchive->renameName($this->targetPath . $this->ts . '-citation.txt', 'CITEME.txt');
+				if($this->schemaType != 'backup'){
+					$this->writeCitationFile();
+					$zipArchive->addFile($this->targetPath . $this->ts . '-citation.txt');
+					$zipArchive->renameName($this->targetPath . $this->ts . '-citation.txt', 'CITEME.txt');
+				}
 
 				$zipArchive->close();
 				unlink($this->targetPath . $this->ts . '-occur' . $this->fileExt);
@@ -1664,7 +1670,7 @@ class DwcArchiverCore extends Manager{
 		$hasRecords = false;
 
 		$dwcOccurManager = new DwcArchiverOccurrence($this->conn);
-		$dwcOccurManager->setSchemaType($this->schemaType);
+		$dwcOccurManager->setSchemaType($this->schemaType, $this->observerUid);
 		$dwcOccurManager->setExtended($this->extended);
 		$dwcOccurManager->setIncludeExsiccatae();
 		$dwcOccurManager->setIncludeAssociatedSequences();
@@ -1822,6 +1828,7 @@ class DwcArchiverCore extends Manager{
 
 				if ($ocnStr = $dwcOccurManager->getAdditionalCatalogNumberStr($r['occid'])) $r['otherCatalogNumbers'] = $ocnStr;
 				if ($this->schemaType != 'coge') {
+					/*
 					if ($exsArr = $dwcOccurManager->getExsiccateArr($r['occid'])) {
 						$exsStr = $exsArr['exsStr'];
 						if (isset($r['occurrenceRemarks']) && $r['occurrenceRemarks']) {
@@ -1838,9 +1845,10 @@ class DwcArchiverCore extends Manager{
 						//$dynProp = $r['dynamicProperties'] . '; ' . $dynProp;
 						//$r['dynamicProperties'] = $dynProp;
 					}
-					if ($assocOccurStr = $dwcOccurManager->getAssociationStr($r['occid'])) $r['t_associatedOccurrences'] = $assocOccurStr;
+					*/
+					//if ($assocOccurStr = $dwcOccurManager->getAssociationStr($r['occid'])) $r['t_associatedOccurrences'] = $assocOccurStr;
 					if ($assocSeqStr = $dwcOccurManager->getAssociatedSequencesStr($r['occid'])) $r['t_associatedSequences'] = $assocSeqStr;
-					if ($assocTaxa = $dwcOccurManager->getAssociationStr($r['occid'], 'observational')) $r['associatedTaxa'] = $assocTaxa;
+					//if ($assocTaxa = $dwcOccurManager->getAssociationStr($r['occid'], 'observational')) $r['associatedTaxa'] = $assocTaxa;
 				}
 				//$dwcOccurManager->appendUpperTaxonomy($r);
 				$dwcOccurManager->appendUpperTaxonomy2($r);
@@ -2227,6 +2235,10 @@ class DwcArchiverCore extends Manager{
 	public function setOverrideConditionLimit($bool){
 		if ($bool) $this->overrideConditionLimit = true;
 		else $this->overrideConditionLimit = false;
+	}
+
+	public function setObserverUid($uid){
+		if(is_numeric($uid)) $this->observerUid = $uid;
 	}
 
 	public function setSchemaType($type){

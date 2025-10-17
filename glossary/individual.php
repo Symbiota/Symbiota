@@ -72,7 +72,7 @@ if($glossId){
 	<?php
 	if($termArr){
 		$glosManager->remapDescriptionCrossLinks($termArr);
-		if(strpos($_SERVER['HTTP_REFERER'], 'individual.php')){
+		if(array_key_exists('HTTP_REFERER', $_SERVER) && strpos($_SERVER['HTTP_REFERER'], 'individual.php')){
 			echo '<div class="navpath"><a href="#" onclick="history.back();">&lt;&lt; ' . $LANG['RETURN_TO_PREVIOUS'] . '</a></div>';
 		}
 		?>
