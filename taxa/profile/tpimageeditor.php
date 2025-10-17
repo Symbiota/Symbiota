@@ -51,7 +51,7 @@ if($tid){
 		<?php
 		if($isEditor && $tid){
 			if($category == "imagequicksort"){
-				if($images = $imageEditor->getImages($paginator->activePage)){
+				if($images = Media::getByTid($tid, null, $paginator) ){
 					?>
 					<?php echo $paginator->renderPagination() ?>
 					<div style='clear:both;'>
@@ -245,7 +245,7 @@ if($tid){
 				<?php
 			}
 			else{
-				if($images = $imageEditor->getImages($paginator->activePage)){
+				if($images = Media::getByTid($tid, null, $paginator)){
 					?>
 				<?php echo $paginator->renderPagination() ?>
 					<div style='clear:both;'>
