@@ -954,8 +954,8 @@ class ImageLocalProcessor {
 			}
 			if(!$occid && $this->createNewRec){
 				//Records does not exist, create a new one to which image will be linked
-				$sql2 = 'INSERT INTO omoccurrences(collid,'.($this->matchCatalogNumber?'catalognumber':'othercatalognumbers').',processingstatus,dateentered) '.
-					'VALUES('.$this->activeCollid.',"'.$catalogNumber.'","unprocessed","'.date('Y-m-d H:i:s').'")';
+				$sql2 = 'INSERT INTO omoccurrences(collid,'.($this->matchCatalogNumber?'catalognumber':'othercatalognumbers').',processingstatus,dateentered, recordEnteredBy) '.
+					'VALUES('.$this->activeCollid.',"'.$catalogNumber.'","unprocessed","'.date('Y-m-d H:i:s').'", "uploaded image")';
 				if($this->conn->query($sql2)){
 					$occid = $this->conn->insert_id;
 					$this->logOrEcho('Specimen record does not exist; new empty specimen record created and assigned an "unprocessed" status (occid = <a href="../individual/index.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>) ',1, false);
