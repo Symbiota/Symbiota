@@ -66,4 +66,12 @@ class Paginator {
 	private function getNavigationLink(Int $page, ?String $text = null): String {
 		return '<a href="' . htmlspecialchars($this->baseLink . '?' . http_build_query([...$this->queryParams, $this->pageRequestVar => $page])) . '">' . ($text ?? $page) . '</a>';
 	}
+
+	public static function getPageRequestVar(String $variableName): Int {
+		if(($page = $_REQUEST[$variableName] ?? false) && is_numeric($page)) {
+			return intval(filter_var($page, FILTER_SANITIZE_NUMBER_INT));
+		} else {
+			return 1;
+		}
+	}
 }

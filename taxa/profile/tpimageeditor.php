@@ -11,18 +11,8 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 $tid = filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT);
 $category = array_key_exists('cat', $_REQUEST) ? $_REQUEST['cat'] : '';
 
-// TODO (Logan) change to not fire during media add
-$paginator = new Paginator(
-	Media::countByTid($tid), 10, 'mediaPage',
-	'tpeditor.php', [
-		'tid' => $tid,
-		'tabindex' => $category === 'imagequicksort'? 2: 1
-	]
-);
-
 $imageEditor = new TPImageEditorManager();
 $isEditor = false;
-
 
 if($tid){
 	$imageEditor->setTid($tid);
@@ -51,9 +41,17 @@ if($tid){
 		<?php
 		if($isEditor && $tid){
 			if($category == "imagequicksort"){
-				if($images = Media::getByTid($tid, null, $paginator) ){
+				$sortPaginator = new Paginator(
+					Media::countByTid($tid), 10, 'mediaSortPage',
+					'tpeditor.php', [
+						'tid' => $tid,
+						'tabindex' => 2,
+						'mediaPage' => Paginator::getPageRequestVar('mediaPage')
+					]
+				);
+				if($images = Media::getByTid($tid, null, $sortPaginator) ){
 					?>
-					<?php echo $paginator->renderPagination() ?>
+					<?php echo $sortPaginator->renderPagination() ?>
 					<div style='clear:both;'>
 						<form action='tpeditor.php' method='post' target='_self'>
 							<input name='tid' type='hidden' value='<?php echo $imageEditor->getTid(); ?>'>
@@ -245,6 +243,14 @@ if($tid){
 				<?php
 			}
 			else{
+				$paginator = new Paginator(
+					Media::countByTid($tid), 10, 'mediaPage',
+					'tpeditor.php', [
+						'tid' => $tid,
+						'tabindex' => 1,
+						'mediaSortPage' => Paginator::getPageRequestVar('mediaSortPage')
+					]
+				);
 				if($images = Media::getByTid($tid, null, $paginator)){
 					?>
 				<?php echo $paginator->renderPagination() ?>
