@@ -33,7 +33,7 @@ header("Content-Type: text/html; charset=" . $CHARSET);
 		<p class="grid-3"><span class="button button-primary"><a href="#">Primary Button (Link)</a></span><span class="button button-secondary"><a href="#">Secondary Button (Link)</a></span><span class="button button-tertiary"><a href="#">Tertiary Button (Link)</a></span></p>
 		<h1>Forms in accessibility mode vs condensed mode</h1>
 		<section style="margin-bottom: 10;">
-			<button style="font-size:14" onclick="toggleAccessibilityStyles()" id="accessibility-button-2" name="accessibility-button-2" data-accessibility="accessibility-button" ?><?= $LANG['TOGGLE_508_ON'] ?></button>
+			<button style="font-size:14" onclick="toggleAccessibilityStyles()" id="accessibility-button-2" name="accessibility-button-2" data-accessibility="accessibility-button" ?><?= $LANG['A_TOGGLE_508_ON'] ?></button>
 		</section>
 		<section class="flex-form">
 			<section>
