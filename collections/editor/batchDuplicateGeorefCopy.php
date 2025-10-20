@@ -1,7 +1,7 @@
 <?php
 include_once('../../config/symbini.php');
 global $SERVER_ROOT, $IS_ADMIN, $USER_RIGHTS, $CLIENT_ROOT, $LANG;
-include_once($SERVER_ROOT . '/components/breadcrumbs.php');
+include_once($SERVER_ROOT . '/classes/Breadcrumbs.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/UserUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
@@ -382,7 +382,7 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 
 		<div role="main" id="record-viewer-innertext">
 
-			<?php breadcrumbs([
+			<?= Breadcrumbs::renderMany([
 			$LANG['HOME'] => '../../index.php',
 			$LANG['COL_MGMNT'] => '../misc/collprofiles.php?emode=1&collid=' . $collId,
 			$LANG['BATCH_DUPLICATE_HARVESTER'],
