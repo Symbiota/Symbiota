@@ -176,5 +176,42 @@ class OmMaterialSample{
 	public function getErrorMessage(){
 		return $this->errorMessage;
 	}
+
+	public static function getMsLabels(): Array {
+		global $LANG;
+		return [
+			'sampleType' => $LANG['SAMPLE_TYPE'],
+			'catalogNumber' => $LANG['CATALOG_NUMBER'],
+			'guid' => $LANG['GUID'],
+			'sampleCondition' => $LANG['SAMPLE_CONDITION'],
+			'disposition' => $LANG['DISPOSITION'],
+			'preservationType' => $LANG['PRESERVATION_TYPE'],
+			'preparationDetails' => $LANG['PREPARATION DETAILS'],
+			'preparationDate' => $LANG['PREPARATION_DATE'],
+			'preparedBy' => $LANG['PREPARED_BY'],
+			'individualCount' => $LANG['INDIVIDUAL COUNT'],
+			'sampleSize' => $LANG['SAMPLE_SIZE'],
+			'storageLocation' => $LANG['STORAGE_LOCATION'],
+			'remarks' => $LANG['REMARKS'],
+			'concentration' => $LANG['CONCENTRATION'],
+			'concentrationUnit' => $LANG['CONCENTRATION_UNIT'],
+			'ratioOfAbsorbance260/230' => $LANG['RATIO_OF_ABSORBANCE_260/230'],
+			'ratioOfAbsorbance260/230' => $LANG['RATIO_OF_ABSORBANCE_260/280'],
+			'volume' => $LANG['VOLUME'],
+			'weight' => $LANG['WEIGHT'],
+			'weightMethod' => $LANG['WEIGHT_METHOD'],
+			'purification Method' => $LANG['PURIFICATION_METHOD'],
+			'quality' => $LANG['QUALITY'],
+			'qualityRemarks' => $LANG['QUALITY_REMARKS'],
+			'qualityCheckDate' => $LANG['QUALITY_CHECK_DATE'],
+			'sampleSize' => $LANG['SAMPLE_SIZE'],
+			'sieving' => $LANG['SIEVING'],
+			'dnaHybridization' => $LANG['DNA_HYBRIDIZATION'],
+			'dnaMeltingPoint' => $LANG['DNA_MELTING_POINT'],
+			'estimatedSize' => $LANG['ESTIMATED_SIZE'],
+			'poolDnaExtracts' => $LANG['POOL_DNA_EXTRACTS'],
+			'sampleDesignation' => $LANG['SAMPLE_DESIGNATION']
+		];
+	 }
 }
 ?>

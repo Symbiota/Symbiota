@@ -995,6 +995,7 @@ $traitArr = $indManager->getTraitArr();
 							$matSampleArr = $occArr['matSample'];
 							$msCnt = 0;
 							$msKey = 0;
+							$MS_LABEL_ARR = OmMaterialSample::getMsLabels();
 							echo '<fieldset><legend>'.$LANG['MATERIAL_SAMPLES'].'</legend>';
 							do{
 								if($msKey = key($matSampleArr)){
