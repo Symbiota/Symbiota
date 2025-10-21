@@ -1,9 +1,10 @@
 <?php
 include_once('../config/symbini.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('templates/misc/aboutproject');
+
 header("Content-Type: text/html; charset=".$CHARSET);
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/misc/aboutproject.' . $LANG_TAG . '.php'))
-include_once($SERVER_ROOT . '/content/lang/misc/aboutproject.en.php');
-else include_once($SERVER_ROOT . '/content/lang/misc/aboutproject.' . $LANG_TAG . '.php');
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
