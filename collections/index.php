@@ -1,10 +1,12 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/content/lang/collections/sharedterms.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-Language::load('collections/index');
+Language::load([
+	'collections/sharedterms',
+	'collections/index'
+]);
 
 header("Content-Type: text/html; charset=".$CHARSET);
 

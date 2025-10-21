@@ -1,10 +1,12 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/content/lang/collections/misc/collprops.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCollectionProperty.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-Language::load('collections/misc/collectionproperties');
+Language::load([
+	'collections/misc/collectionproperties',
+	'collections/misc/collprops'
+]);
 
 header('Content-Type: text/html; charset='.$CHARSET);
 

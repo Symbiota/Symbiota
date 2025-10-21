@@ -1,5 +1,8 @@
 <?php
-include_once($SERVER_ROOT.'/content/lang/collections/misc/collstats.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/misc/collstats');
+
 class OccurrenceSearchSupport {
 
 	private $conn;

@@ -7,12 +7,9 @@ include_once($SERVER_ROOT . "/classes/MediaException.php");
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/UploadUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-if(file_exists($SERVER_ROOT.'/content/lang/classes/Media.'.$LANG_TAG.'.php')) {
-	include_once($SERVER_ROOT.'/content/lang/classes/Media.'.$LANG_TAG.'.php');
-} else {
-	include_once($SERVER_ROOT.'/content/lang/classes/Media.en.php');
-}
+Language::load('classes/Media');
 
 function get_occurrence_upload_path($institutioncode, $collectioncode, $catalognumber = null) {
 	$root = $institutioncode . ($collectioncode? '_'. $collectioncode: '') . '/';

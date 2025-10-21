@@ -3,11 +3,12 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-Language::load('collections/editor/occurrencetabledisplay');
+Language::load([
+	'collections/editor/occurrencetabledisplay',
+	'collections/list'
+]);
 
 header('Content-Type: text/html; charset='.$CHARSET);
-
-include_once($SERVER_ROOT . '/content/lang/collections/list.'.$LANG_TAG.'.php');
 
 $collId = array_key_exists('collid',$_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : false;
 $recLimit = array_key_exists('reclimit', $_REQUEST) ? filter_var($_REQUEST['reclimit'], FILTER_SANITIZE_NUMBER_INT) : 1000;
