@@ -3,9 +3,9 @@ include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT.'/classes/SpecProcessorOcr.php');
 include_once($SERVER_ROOT.'/classes/ImageShared.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/classes/OccurrenceEditorImages'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/classes/OccurrenceEditorImages.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/classes/OccurrenceEditorImages.en.php');
+Language::load('classes/OccurrenceEditorImages');
 
 class OccurrenceEditorImages extends OccurrenceEditorManager {
 
