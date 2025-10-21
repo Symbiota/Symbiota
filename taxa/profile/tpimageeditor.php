@@ -2,9 +2,10 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TPImageEditorManager.php');
 include_once($SERVER_ROOT . '/classes/Media.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/profile/tpimageeditor.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpimageeditor.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpimageeditor.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('taxa/profile/tpimageeditor');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $tid = filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT);

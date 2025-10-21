@@ -1,8 +1,10 @@
 <?php
 include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/LanguageAdmin.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/admin/langmanager.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/admin/langmanager.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/admin/langmanager.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('admin/langmanager');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../content/lang/admin/langmanager.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));

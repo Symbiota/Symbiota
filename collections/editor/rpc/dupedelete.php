@@ -1,8 +1,9 @@
 <?php
 include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceDuplicate.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/rpc/editor_rpc.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/editor/rpc/editor_rpc.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/editor/rpc/editor_rpc.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/editor/rpc/editor_rpc');
 
 $dupid = array_key_exists('dupid',$_REQUEST)?$_REQUEST['dupid']:'';
 $occid = array_key_exists('occid',$_REQUEST)?$_REQUEST['occid']:'';
