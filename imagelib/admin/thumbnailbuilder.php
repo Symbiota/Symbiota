@@ -1,9 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ImageCleaner.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/imagelib/admin/thumbnailbuilder.'.$LANG_TAG.'.php'))
-	include_once($SERVER_ROOT.'/content/lang/imagelib/admin/thumbnailbuilder.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/imagelib/admin/thumbnailbuilder.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('imagelib/admin/thumbnailbuilder');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../imagelib/admin/thumbnailbuilder.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));

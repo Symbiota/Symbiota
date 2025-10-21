@@ -1,8 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceSupport.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/datasets/occurharvester.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/datasets/occurharvester.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/datasets/occurharvester.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/datasets/occurharvester');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:'';

@@ -1,9 +1,10 @@
 <?php
 include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/RpcOccurrenceEditor.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/rpc/getPaleoGtsTable.'.$LANG_TAG.'.php'))
-	include_once($SERVER_ROOT.'/content/lang/collections/editor/rpc/getPaleoGtsTable.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/editor/rpc/getPaleoGtsTable.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/editor/rpc/getPaleoGtsTable');
+
 header('Content-Type: application/json; charset=' . $CHARSET);
 
 $earlyInterval = isset($_REQUEST['earlyInterval']) ? $_REQUEST['earlyInterval'] : '';

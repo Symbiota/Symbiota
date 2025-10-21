@@ -1,10 +1,11 @@
 <?php
 include_once ('../config/symbini.php');
 global $SERVER_ROOT, $CLIENT_ROOT, $LANG_TAG, $LANG, $CHARSET, $IS_ADMIN, $DEFAULT_TITLE, $GEO_JSON_LAYERS;
+
 include_once ($SERVER_ROOT . '/classes/GeographicThesaurus.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/geothesaurus/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/geothesaurus/index.' . $LANG_TAG . '.php');
-   else include_once($SERVER_ROOT . '/content/lang/geothesaurus/index.en.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('geothesaurus/index');
 
 $geoThesID = array_key_exists('geoThesID', $_REQUEST) ? filter_var($_REQUEST['geoThesID'], FILTER_SANITIZE_NUMBER_INT) : '';
 $parentID = array_key_exists('parentID', $_REQUEST) ? filter_var($_REQUEST['parentID'], FILTER_SANITIZE_NUMBER_INT) : '';
