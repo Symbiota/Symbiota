@@ -2,8 +2,9 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/content/lang/collections/misc/collprops.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCollectionProperty.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/misc/collectionproperties.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/misc/collectionproperties.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/misc/collectionproperties.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/misc/collectionproperties');
 
 header('Content-Type: text/html; charset='.$CHARSET);
 

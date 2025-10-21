@@ -2,13 +2,12 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceMapManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/map/index.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT.'/content/lang/collections/map/index.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/map/index.en.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/list.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT.'/content/lang/collections/list.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/list.en.php');
+Language::load([
+	'collections/map/index',
+	'collections/list'
+]);
 
 $filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
 

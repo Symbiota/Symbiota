@@ -1,9 +1,9 @@
 <?php
 include_once('../../config/symbini.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/misc/collbackup.' . $LANG_TAG . '.php')){
-	include_once($SERVER_ROOT . '/content/lang/collections/misc/collbackup.' . $LANG_TAG . '.php');
-}
-else include_once($SERVER_ROOT . '/content/lang/collections/misc/collbackup.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/misc/collbackup');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $collid = isset($_REQUEST['collid']) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
