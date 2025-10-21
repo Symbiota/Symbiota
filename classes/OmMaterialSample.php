@@ -177,6 +177,16 @@ class OmMaterialSample{
 		return $this->errorMessage;
 	}
 
+	/**
+	 * Function to get key values of material sample fields and their translated
+	 * display text.
+	 *
+	 * NOTE /content/lang/collections/fieldterms/materialSampleVars.[$LANG_TAG].php
+	 * must be loaded for this work see classes/utilities/Language.php for loading it.
+	 *
+	 * @return Array Key Value array with translated field names
+	 * @throws conditon
+	 **/
 	public static function getMsLabels(): Array {
 		global $LANG;
 		return [
