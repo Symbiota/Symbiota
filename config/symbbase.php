@@ -66,7 +66,6 @@ if (!$SYMB_UID && $PORTAL_PRIVATE){
 		$requested_url = explode($CLIENT_ROOT, $_SERVER['PHP_SELF'])[1];
 	}
 	else $requested_url = $_SERVER['PHP_SELF'];
-	$requested_url = explode($CLIENT_ROOT, $_SERVER['PHP_SELF'])[1];
 	if (!in_array($requested_url, $public_pages)){
 		$referringUrl =  $_SERVER['PHP_SELF'] . (!empty($_SERVER['QUERY_STRING']) ? urlencode( '?' . $_SERVER['QUERY_STRING']) : '');
 		header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=' . $referringUrl);
