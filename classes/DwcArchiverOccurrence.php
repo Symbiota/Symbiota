@@ -898,11 +898,6 @@ class DwcArchiverOccurrence extends Manager{
 		if($e) $this->extended = true;
 	}
 
-	public function setIncludePaleo($bool){
-		if($bool) $this->includePaleo = true;
-		else if(!empty($GLOBALS['ACTIVATE_PALEO'])) $this->includePaleo = true;
-	}
-
 	public function setIncludeAcceptedNameUsage(bool $bool): void {
 		$this->includeAcceptedNameUsage = $bool;
 	}

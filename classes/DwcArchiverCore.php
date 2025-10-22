@@ -249,14 +249,15 @@ class DwcArchiverCore extends Manager{
 		$this->paleoWithSql = $sql;
 	}
 
-	private function hasPaleoCollection() {
-		if (empty($this->collArr))
-			return false;
-		foreach ($this->collArr as $collData) {
-			if (!empty($collData['colltype']) && $collData['colltype'] === 'Fossil Specimens')
-				return true;
+	private function setIncludePaleo(){
+		if ((strpos($this->conditionSql, 'paleo') || strpos($this->conditionSql, 'early.myaStart')))
+			$this->includePaleo = true;
+		elseif (!empty($this->collArr)) {
+			foreach ($this->collArr as $coll) {
+				if (!empty($coll['colltype']) && $coll['colltype'] === 'Fossil Specimens')
+					$this->includePaleo = true;
+			}
 		}
-		return false;
 	}
 
 	public function addCondition($field, $cond, $value = ''){
@@ -418,7 +419,7 @@ class DwcArchiverCore extends Manager{
 			if (strpos($this->conditionSql, 'id.identifierValue')) {
 				$sql .= 'LEFT JOIN omoccuridentifiers id ON o.occid = id.occid ';
 			}
-			if ($this->hasPaleoCollection()) {
+			if ($this->includePaleo) {
 				$sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
 				if (strpos($this->conditionSql, 'early.myaStart') !== false) {
 					$sql .= 'JOIN omoccurpaleogts early ON paleo.earlyInterval = early.gtsterm ';
@@ -705,13 +706,13 @@ class DwcArchiverCore extends Manager{
 		$dwcOccurManager = new DwcArchiverOccurrence($this->conn);
 		$dwcOccurManager->setSchemaType($this->schemaType);
 		$dwcOccurManager->setExtended($this->extended);
-		$dwcOccurManager->setIncludePaleo($this->includePaleo);
 		$dwcOccurManager->setIncludeAcceptedNameUsage($this->includeAcceptedNameUsage);
 
 		if (!$this->occurrenceFieldArr) $this->occurrenceFieldArr = $dwcOccurManager->getOccurrenceArr($this->schemaType, $this->extended);
 		$this->applyConditions();
 
 		if (!$this->conditionSql) return false;
+		$this->setIncludePaleo();
 		$sql = $dwcOccurManager->getSqlOccurrences($this->occurrenceFieldArr['fields']);
 		$sql .= $this->getTableJoins() . $this->conditionSql;
 		if (!$sql) return false;
@@ -1759,12 +1760,12 @@ class DwcArchiverCore extends Manager{
 		$dwcOccurManager->setExtended($this->extended);
 		$dwcOccurManager->setIncludeExsiccatae();
 		$dwcOccurManager->setIncludeAssociatedSequences();
-		$dwcOccurManager->setIncludePaleo($this->includePaleo);
 		$dwcOccurManager->setIncludeAcceptedNameUsage($this->includeAcceptedNameUsage);
 		if (!$this->occurrenceFieldArr) $this->occurrenceFieldArr = $dwcOccurManager->getOccurrenceArr($this->schemaType, $this->extended);
 		//Output records
 		$this->applyConditions();
 		if (!$this->conditionSql) return false;
+		$this->setIncludePaleo();
 		$sql = $dwcOccurManager->getSqlOccurrences($this->occurrenceFieldArr['fields']);
 		$sql .= $this->getTableJoins() . $this->conditionSql;
 		if ($this->paleoWithSql)

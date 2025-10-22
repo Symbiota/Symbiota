@@ -504,6 +504,7 @@ $collManager->cleanOutArr($collData);
 									if($collData['colltype'] == 'Observations') $collTypeValue = 'obs';
 									elseif($collData['colltype'] == 'General Observations') $collTypeValue = 'go';
 									elseif($collData['colltype'] == 'Fossil Specimens') $collTypeValue = 'fs';
+									elseif($collData['colltype'] == 'Preserved Specimens') $collTypeValue = 'ps';
 								}
 								?>
 								<div class="field-block">
@@ -511,7 +512,7 @@ $collManager->cleanOutArr($collData);
 										<label for="collType"> <?= $LANG['DATASET_TYPE'] ?>: </label>
 										<select id="collType" name="collType" onchange="toggleFossilWarning()">
 											<?php if (!empty($GLOBALS['ACTIVATE_PALEO'])): ?> <option value="" <?= ($collTypeValue == '' ? 'SELECTED' : '') ?>><?= $LANG['SELECT_DATASET_TYPE'] ?? '— Select dataset type —' ?></option><?php endif; ?>
-											<option value="Preserved Specimens"><?= $LANG['PRES_SPECS']; ?></option>
+											<option value="Preserved Specimens" <?= ($collTypeValue == 'ps' ? 'SELECTED' : '') ?>><?= $LANG['PRES_SPECS'] ?></option>
 											<option value="Fossil Specimens" <?= ($collTypeValue == 'fs' ? 'SELECTED' : '') ?>><?= $LANG['FOSSIL_SPECS'] ?></option>
 											<option value="Observations" <?= ($collTypeValue == 'obs' ? 'SELECTED' : '') ?>><?= $LANG['OBSERVATIONS'] ?></option>
 											<option value="General Observations" <?= ($collTypeValue == 'go' ? 'SELECTED' : '') ?>><?= $LANG['PERS_OBS_MAN'] ?></option>
