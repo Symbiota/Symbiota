@@ -184,7 +184,6 @@ class ImInventories extends Manager{
 				$stmt->execute();
 				if($stmt->affected_rows && !$stmt->error){
 					$status = true;
-					//Delete userpermissions reference once patch is submitted
 					$this->deleteUserRole('ClAdmin', $this->clid, $GLOBALS['SYMB_UID']);
 				}
 				else $this->errorMessage = $stmt->error;

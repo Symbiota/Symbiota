@@ -504,12 +504,9 @@ class ChecklistAdmin extends Manager{
 	public function getManagementLists($uid){
 		$returnArr = Array();
 		if(is_numeric($uid)){
-			//Get project and checklist IDs from userpermissions
 			$clStr = '';
 			$projStr = '';
 			$sql = 'SELECT role,tablepk FROM userroles WHERE (uid = '.$uid.') AND (role = "ClAdmin" OR role = "ProjAdmin") ';
-			//$sql = 'SELECT pname FROM userpermissions '.
-			//	'WHERE (uid = '.$uid.') AND (pname LIKE "ClAdmin-%" OR pname LIKE "ProjAdmin-%") ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				if($r->role == 'ClAdmin') $clStr .= ','.$r->tablepk;
