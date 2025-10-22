@@ -5,36 +5,37 @@ Language: Spanish
 ------------------
 */
 
-$LANG['SAMPLE_TYPE'] = 'Sample Type';
-$LANG['CATALOG_NUMBER'] = 'Catalog Number / Barcode';
-$LANG['GUID'] = 'Material Sample ID (GUID)';
-$LANG['SAMPLE_CONDITION'] = 'Condition';
-$LANG['DISPOSITION'] = 'Disposition';
-$LANG['PRESERVATION_TYPE'] = 'Preservation type';
-$LANG['PREPARATION DETAILS'] = 'Preparation details';
-$LANG['PREPARATION_DATE'] = 'Preparation date';
-$LANG['PREPARED_BY'] = 'Prepared by';
-$LANG['INDIVIDUAL COUNT'] = 'Individual count';
-$LANG['SAMPLE_SIZE'] = 'Sample size';
-$LANG['STORAGE_LOCATION'] = 'Storage location';
-$LANG['REMARKS'] = 'Remarks';
-$LANG['CONCENTRATION'] = 'Concentration';
-$LANG['CONCENTRATION_UNIT'] = 'Concentration Unit';
-$LANG['RATIO_OF_ABSORBANCE_260/230'] = 'Ratio of Absorbance (260/230)';
-$LANG['RATIO_OF_ABSORBANCE_260/280'] = 'Ratio of Absorbance (260/280)';
-$LANG['VOLUME'] = 'Volume';
-$LANG['WEIGHT'] = 'Weight';
-$LANG['WEIGHT_METHOD'] = 'Weight Method';
-$LANG['PURIFICATION_METHOD'] = 'Purification Method';
-$LANG['QUALITY'] = 'Quality';
-$LANG['QUALITY_REMARKS'] = 'Quality Remarks';
-$LANG['QUALITY_CHECK_DATE'] = 'Quality Check Date';
-$LANG['SAMPLE_SIZE'] = 'Sample Size';
-$LANG['SIEVING'] = 'Sieving';
-$LANG['DNA_HYBRIDIZATION'] = 'DNA Hybridization';
-$LANG['DNA_MELTING_POINT'] = 'DNA Melting Point';
-$LANG['ESTIMATED_SIZE'] = 'Estimated Size';
-$LANG['POOL_DNA_EXTRACTS'] = 'Pool DNA Extracts';
-$LANG['SAMPLE_DESIGNATION'] = 'Sample Designation';
+$LANG['SAMPLE_TYPE'] = 'Tipo de Muestra';
+$LANG['CATALOG_NUMBER'] = 'Número de Catálogo/Código de Barras';
+$LANG['GUID'] = 'ID de Muestra de Material (GUID)';
+$LANG['SAMPLE_CONDITION'] = 'Condición';
+$LANG['DISPOSITION'] = 'Disposición';
+$LANG['PRESERVATION_TYPE'] = 'Tipo de Conservación';
+$LANG['PREPARATION DETAILS'] = 'Detalles de la Preparación';
+$LANG['PREPARATION_DATE'] = 'Fecha de Preparación';
+$LANG['PREPARED_BY'] = 'Preparado por';
+$LANG['INDIVIDUAL COUNT'] = 'Recuento Individual';
+$LANG['SAMPLE_SIZE'] = 'Tamaño de la Muestra';
+$LANG['STORAGE_LOCATION'] = 'Ubicación de Almacenamiento';
+$LANG['REMARKS'] = 'Observaciones';
+$LANG['CONCENTRATION'] = 'Concentración';
+$LANG['CONCENTRATION_UNIT'] = 'Unidad de Concentración';
+$LANG['RATIO_OF_ABSORBANCE_260/230'] = 'Ratio de Absorbancia (260/230)';
+$LANG['RATIO_OF_ABSORBANCE_260/280'] = 'Ratio de Absorbancia (260/280)';
+$LANG['VOLUME'] = 'Volumen';
+$LANG['WEIGHT'] = 'Peso';
+$LANG['WEIGHT_METHOD'] = 'Método de Peso';
+$LANG['PURIFICATION_METHOD'] = 'Método de Purificación';
+$LANG['QUALITY'] = 'Calidad';
+$LANG['QUALITY_REMARKS'] = 'Observaciones de Calidad';
+$LANG['QUALITY_CHECK_DATE'] = 'Fecha de Control de Calidad';
+$LANG['SAMPLE_SIZE'] = 'Tamaño de la Muestra';
+$LANG['SIEVING'] = 'Tamizado';
+$LANG['DNA_HYBRIDIZATION'] = 'Hibridación de ADN';
+$LANG['DNA_MELTING_POINT'] = 'Punto de Fusión del ADN';
+$LANG['ESTIMATED_SIZE'] = 'Tamaño Estimado';
+$LANG['POOL_DNA_EXTRACTS'] = 'Extractos de ADN del Pool';
+$LANG['SAMPLE_DESIGNATION'] = 'Designación de la Muestra';
+
 ?>
 
