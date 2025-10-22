@@ -417,7 +417,7 @@ if ($imgArr) {
 							<?php echo $LANG['ERROR_COMMENT_ABOUT_IMAGE'] ?> <br /><?php echo $LANG['SEND_EMAIL'] ?>:
 							<?php
 							$emailSubject = $DEFAULT_TITLE . ' ' . $LANG['IMG_NO'] . ' ' . $mediaID;
-							$emailBody = 'Image being referenced: ' . urlencode($serverPath . $CLIENT_ROOT . '/imagelib/imgdetails.php?mediaid=' . $imgId);
+							$emailBody = 'Image being referenced: ' . urlencode($serverPath . $CLIENT_ROOT . '/imagelib/imgdetails.php?mediaid=' . $mediaID);
 							$emailRef = 'subject=' . $emailSubject . '&cc=' . $ADMIN_EMAIL . '&body=' . $emailBody;
 							echo '<a href="mailto:' . $ADMIN_EMAIL . '?' . $emailRef . '">' . $emailAddress . '</a>';
 							?>

@@ -36,5 +36,7 @@ $LANG['DET_BY'] = 'Determined by';
 $LANG['NO_DUP_CLUSTERS'] = 'No Duplicate Clusters match the request. Consider returning to the Duplicate Cluster menu and batch building duplicate clusters.';
 $LANG['RETURN_MAIN'] = 'Return to main menu';
 $LANG['NOT_AUTH'] = 'You are not authorized to access this page';
+$LANG['BATCH_COPY_GEOREFERENCE_DUPLICATES'] = 'Batch copy duplicate georeference data';
+$LANG['BATCH_COPY_GEOREFERENCE_DUPLICATES_EXPLANATION'] = 'tool for copying georeference data from linked duplicates';
 
 ?>

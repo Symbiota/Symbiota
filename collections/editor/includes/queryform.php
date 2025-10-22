@@ -34,7 +34,12 @@ $qTraitIds = (array_key_exists('traitid',$qryArr)?$qryArr['traitid']: []);
 $qTraitAbsence = (array_key_exists('traitAbsence',$qryArr)?$qryArr['traitAbsence']: false);
 $qTraitStateIds = (array_key_exists('stateid',$qryArr)?$qryArr['stateid']: []);
 
-$qTraitArr = $occManager->getAttributeTraits($collId);
+$qTraitArr = [];
+if($occManager->traitCodingActivated()){
+	$qTraitArr = $occManager->getAttributeTraits($collId);
+}
+
+$qCollMap = $occManager->getCollMap();
 
 $customFieldArr = array();
 if($crowdSourceMode){
@@ -45,7 +50,7 @@ if($crowdSourceMode){
 else{
 	$customFieldArr = array('associatedCollectors'=>$LANG['ASSOC_COLLECTORS'],'associatedOccurrences'=>$LANG['ASSOC_OCCS'],
 			'associatedTaxa'=>$LANG['ASSOC_TAXA'],'attributes'=>$LANG['ATTRIBUTES'],'scientificNameAuthorship'=>$LANG['AUTHOR'],
-			'basisOfRecord'=>$LANG['BASIS_OF_RECORD'],'behavior'=>$LANG['BEHAVIOR'],'catalogNumber'=>$LANG['CAT_NUM'],'collectionCode'=>$LANG['COL_CODE'],
+			'basisOfRecord'=>$LANG['BASIS_OF_RECORD'], 'behavior'=>$LANG['BEHAVIOR'],'catalogNumber'=>$LANG['CAT_NUM'],'collectionCode'=>$LANG['COL_CODE'],
 			'recordNumber'=>$LANG['COL_NUMBER'],'recordedBy'=>$LANG['COL_OBS'],'continent'=>$LANG['CONTINENT'],'coordinateUncertaintyInMeters'=>$LANG['COORD_UNCERT_M'],'country'=>$LANG['COUNTRY'],
 			'county'=>$LANG['COUNTY'],'cultivationStatus'=>$LANG['CULT_STATUS'],'dataGeneralizations'=>$LANG['DATA_GEN'],'eventDate'=>$LANG['DATE'], 'eventDate2'=> $LANG['DATE2'],
 			'dateEntered'=>$LANG['DATE_ENTERED'],'dateLastModified'=>$LANG['DATE_LAST_MODIFIED'],'dbpk'=>$LANG['DBPK'],'decimalLatitude'=>$LANG['DEC_LAT'],
@@ -53,9 +58,9 @@ else{
 			'verbatimAttributes'=>$LANG['DESCRIPTION'],'disposition'=>$LANG['DISPOSITION'],'dynamicProperties'=>$LANG['DYNAMIC_PROPS'],
 			'maximumElevationInMeters'=>$LANG['ELEV_MAX_M'],'minimumElevationInMeters'=>$LANG['ELEV_MIN_M'],
 			'establishmentMeans'=>$LANG['ESTAB_MEANS'],'family'=>$LANG['FAMILY'],'fieldNotes'=>$LANG['FIELD_NOTES'],'fieldnumber'=>$LANG['FIELD_NUMBER'],
-			'geodeticDatum'=>$LANG['GEO_DATUM'],'georeferenceProtocol'=>$LANG['GEO_PROTOCOL'],'georeferenceRemarks'=>$LANG['GEO_REMARKS'],'georeferenceSources'=>$LANG['GEO_SOURCES'],
-			'georeferenceVerificationStatus'=>$LANG['GEO_VERIF_STATUS'],'georeferencedBy'=>$LANG['GEO_BY'],'habitat'=>$LANG['HABITAT'],
-			'identificationQualifier'=>$LANG['ID_QUALIFIER'],'identificationReferences'=>$LANG['ID_REFERENCES'],
+			'geodeticDatum'=>$LANG['GEO_DATUM'],'georeferenceProtocol'=>$LANG['GEO_PROTOCOL'],'georeferenceRemarks'=>$LANG['GEO_REMARKS'],
+			'georeferenceSources'=>$LANG['GEO_SOURCES'],'georeferenceVerificationStatus'=>$LANG['GEO_VERIF_STATUS'],'georeferencedBy'=>$LANG['GEO_BY'],
+			'habitat'=>$LANG['HABITAT'],'identificationQualifier'=>$LANG['ID_QUALIFIER'],'identificationReferences'=>$LANG['ID_REFERENCES'],
 			'identificationRemarks'=>$LANG['ID_REMARKS'],'identifiedBy'=>$LANG['IDED_BY'],'individualCount'=>$LANG['IND_COUNT'],
 			'identifierName' => $LANG['IDENTIFIER_TAG_NAME'], 'identifierValue' => $LANG['IDENTIFIER_TAG_VALUE'],
 			'informationWithheld'=>$LANG['INFO_WITHHELD'],'institutionCode'=>$LANG['INST_CODE'],'island'=>$LANG['ISLAND'],'islandgroup'=>$LANG['ISLAND_GROUP'],
@@ -68,14 +73,13 @@ else{
 			'stateProvince'=>$LANG['STATE_PROVINCE'],'substrate'=>$LANG['SUBSTRATE'],'taxonRemarks'=>$LANG['TAXON_REMARKS'],
 			'typeStatus'=>$LANG['TYPE_STATUS'],'verbatimCoordinates'=>$LANG['VERBAT_COORDS'],'verbatimEventDate'=>$LANG['VERBATIM_DATE'],
 			'verbatimDepth'=>$LANG['VERBATIM_DEPTH'],'verbatimElevation'=>$LANG['VERBATIM_ELE'],'waterbody'=> $LANG['WATER_BODY']);
-
-	$customPaleoFieldArr = array('absoluteAge'=>$LANG['ABS_AGE'],'bed'=>$LANG['BED'],'biostratigraphy'=>$LANG['BIOSTRAT'],'biota'=>$LANG['BIOTA'],'earlyInterval'=>$LANG['EARLY_INT'],
-			'element'=>$LANG['ELEMENT'],'formation'=>$LANG['FORMATION'],'geologicalContextID'=>$LANG['GEO_CONTEXT_ID'],'lithogroup'=>$LANG['GROUP'],
-			'lateInterval'=>$LANG['LATE_INT'],'lithology'=>$LANG['LITHOLOGY'],'localStage'=>$LANG['LOCAL_STAGE'],'member'=>$LANG['MEMBER'],
-			'slideProperties'=>$LANG['SLIDE_PROP'],'stage'=>$LANG['STAGE'],'stratRemarks'=>$LANG['STRAT_REMARKS'],'taxonEnvironment'=>$LANG['TAXON_ENVIRONMENT']);
-	if ($collMap['colltype'] == "Fossil Specimens"){
-		$customFieldArr = array_merge($customFieldArr,$customPaleoFieldArr);
-		ksort($customFieldArr);
+	if (!empty($qCollMap['paleoActivated'])){
+		$customPaleoFieldArr = array('absoluteAge'=>$LANG['ABS_AGE'],'bed'=>$LANG['BED'],'biostratigraphy'=>$LANG['BIOSTRAT'],'biota'=>$LANG['BIOTA'],
+			'earlyInterval'=>$LANG['EARLY_INT'],'element'=>$LANG['ELEMENT'],'formation'=>$LANG['FORMATION'],'geologicalContextID'=>$LANG['GEO_CONTEXT_ID'],
+			'lateInterval'=>$LANG['LATE_INT'],'lithogroup'=>$LANG['GROUP'],'lithology'=>$LANG['LITHOLOGY'],'localStage'=>$LANG['LOCAL_STAGE'],'member'=>$LANG['MEMBER'],
+			'slideProperties'=>$LANG['SLIDE_PROP'],'stage'=>$LANG['STAGE'],'stratRemarks'=>$LANG['STRAT_REMARKS'],'taxonEnvironment'=>$LANG['TAXON_ENVIRONMENT'],);
+		$customFieldArr = array_merge($customFieldArr, $customPaleoFieldArr);
+		asort($customFieldArr);
 	}
 }
 $customTermArr = array('EQUALS', 'NOT_EQUALS', 'STARTS_WITH', 'LIKE', 'NOT_LIKE', 'GREATER_THAN', 'LESS_THAN', 'IS_NULL', 'NOT_NULL');

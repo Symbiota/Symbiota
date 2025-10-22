@@ -247,7 +247,7 @@ class Media {
 			'm4a' => ['audio/mp4', 'audio/x-m4a'],
 			'mp4' => 'audio/mp4',
 			'mid' => 'audio/midi',
-			'mp3' => [ 'audio/mp3', 'audio/mpeg', 'audio/mpg', 'audio/mpeg3' ],
+			'mp3' => [ 'audio/mpeg', 'audio/mp3', 'audio/mpg', 'audio/mpeg3' ],
 			'ogg' => 'audio/ogg',
 			'ra' => 'audio/x-realaudio',
 			'ram' => 'audio/x-pn-realaudio',
@@ -391,6 +391,11 @@ class Media {
 			if(!isset($clean_post_arr['sourceIdentifier'])) {
 				$clean_post_arr['sourceIdentifier'] = 'filename: ' . $file['name'];
 			}
+		}
+
+		// Converts Deprecated mimes to proper mime type
+		if($real_mime = UploadUtil::DEPRECATED_MIME_CONVERSION[$clean_post_arr['format']] ?? false) {
+			$clean_post_arr['format'] = $real_mime;
 		}
 
 		if(!self::getAllowedMime($clean_post_arr['format'])) {
@@ -1135,11 +1140,40 @@ class Media {
 	 * @param int $tid
 	 * @param string $media_type Should use MediaType Constants
 	 */
-	public static function getByTid(int $tid, string $media_type = null): Array {
+	public static function getByTid(int $tid, string $media_type = null, ?Paginator $paginator): Array {
 		if(!$tid) return [];
 		$parameters = [$tid];
 
 		$sql ='SELECT ' . implode(',', self::MEDIA_ITEM_SELECT_SCHEMA) . ' FROM media m '.
+			'INNER JOIN taxstatus ts ON m.tid = ts.tid ' .
+			'INNER JOIN taxa t ON m.tid = t.tid ' .
+			// 'LEFT JOIN taxa t ON t.tid = m.tid ' .
+			'LEFT JOIN users u on u.uid = m.creatorUid ' .
+			'WHERE ts.tid = ? and ts.taxauthid = 1';
+
+		if($media_type) {
+			$sql .= ' AND mediaType = ?';
+			array_push($parameters, $media_type);
+		}
+
+		$sql .= ' ORDER BY m.sortsequence IS NULL ASC, m.sortsequence ASC';
+
+		if($paginator) {
+			$sql .= ' LIMIT ? OFFSET ?';
+			array_push($parameters, $paginator->perPage);
+			array_push($parameters, ($paginator->activePage- 1) * $paginator->perPage);
+		}
+
+		$results = QueryUtil::executeQuery(Database::connect('readonly'), $sql, $parameters);
+
+		return Sanitize::out(self::get_media_items($results));
+	}
+
+	public static function countByTid(int $tid, string $media_type = null): int {
+		if(!$tid) return 0;
+		$parameters = [$tid];
+
+		$sql ='SELECT ' . 'count(*) as cnt' . ' FROM media m '.
 			'LEFT JOIN taxa t ON t.tid = m.tid ' .
 			'LEFT JOIN users u on u.uid = m.creatorUid ' .
 			'WHERE m.tid = ?';
@@ -1149,10 +1183,9 @@ class Media {
 			array_push($parameters, $media_type);
 		}
 
-		$sql .= ' ORDER BY sortsequence IS NULL ASC, sortsequence ASC';
 		$results = QueryUtil::executeQuery(Database::connect('readonly'), $sql, $parameters);
 
-		return Sanitize::out(self::get_media_items($results));
+		return $results->fetch_object()->cnt;
 	}
 
 	/**

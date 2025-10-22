@@ -8,6 +8,7 @@ Translated by: Google Translate (2025-06-03)
 
 $LANG['EXTERNAL_VOUCHER_LINKING'] = 'External Voucher Linking';
 $LANG['CHECKLIST_ID_REQUIRED'] = 'A checklist id is required for this tool to function';
+$LANG['EXTERNAL_ID_REQUIRED'] = 'An external id is required for this tool to function. Configure in Checklist Admin.';
 $LANG['TARGET_TAXON_REQUIRED'] = 'A target taxon id is required for this tool to function';
 $LANG['LINK_VOUCHER'] = 'Link Voucher';
 $LANG['TAXON_NAME'] = 'Taxon Name';

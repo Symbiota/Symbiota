@@ -607,6 +607,12 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			}
 		}
 
+		if(!empty($this->searchTermArr['polygons'])){
+			$sqlWhere .= 'AND gth.isSearchable = 1 ';
+			$sqlWhere .= 'AND MBRContains(gpoly.footprintPolygon, p.lngLatPoint) ';
+			$sqlWhere .= 'AND ST_Contains(gpoly.footprintPolygon, p.lngLatPoint) ';
+		}
+
 		if($sqlWhere){
 			$sqlWhere .= OccurrenceUtil::appendFullProtectionSQL();
 			$this->sqlWhere = 'WHERE '.substr($sqlWhere,4);
@@ -625,6 +631,23 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$this->paleoSqlWith = $paleoSqlWith;
 		}
 	}
+
+	public function getSearchablePolygons(){
+        $sql = "SELECT geoThesID, geoterm
+                FROM geographicthesaurus
+                WHERE geoLevel = 110
+                  AND isSearchable = 1
+                ORDER BY geoterm";
+        $rs = $this->conn->query($sql);
+
+        $results = [];
+        if($rs){
+            while($row = $rs->fetch_assoc()){
+                $results[] = $row;
+            }
+        }
+        return $results;
+    }
 
 	private function getAdditionIdentifiers($identFrag){
 		$retArr = array();
@@ -687,8 +710,16 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			if(strpos($sqlWhere,'ds.datasetid')){
 				$sqlJoin .= 'INNER JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
 			}
-			if(array_key_exists('footprintGeoJson',$this->searchTermArr) || strpos($sqlWhere,'p.lngLatPoint')){
+			if(array_key_exists('footprintGeoJson',$this->searchTermArr) || strpos($sqlWhere,'p.lngLatPoint') || array_key_exists('polygons',$this->searchTermArr)){
 				$sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
+			}
+			if(array_key_exists('polygons',$this->searchTermArr)){
+				$polygonIDs = $this->searchTermArr['polygons'];
+				if (is_string($polygonIDs))
+					$polygonIDs = explode(',', $polygonIDs);
+				$polygonIDs = array_map('intval', $polygonIDs);
+				$sqlJoin .= 'INNER JOIN geographicpolygon gpoly ON gpoly.geothesid IN (' . implode(',', $polygonIDs) . ') ';
+				$sqlJoin .= 'INNER JOIN geographicthesaurus gth ON gpoly.geothesid = gth.geothesid ';
 			}
 			if (!empty($GLOBALS['ACTIVATE_PALEO'])) {
 				$sqlJoin .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
@@ -824,6 +855,47 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		return '';
 	}
 
+	public function getQueryTermArr(){
+		$queryTermArr = $this->searchTermArr;
+
+		unset($queryTermArr['countryCode']);
+		unset($queryTermArr['countryCodeRaw']);
+
+		if(isset($this->taxaArr['search'])){
+			$patternTaxonChars = '/^[a-zA-Z0-9\s\-\,\.×†]*$/';
+			if (preg_match($patternTaxonChars, $this->getTaxaSearchTerm())==1) {
+				$queryTermArr['taxa'] = $this->getTaxaSearchTerm();
+			}
+			if($this->taxaArr['usethes']) $queryTermArr['usethes'] = 1;
+			if(is_numeric($this->taxaArr['taxontype'])) {
+				$queryTermArr['taxontype'] = intval($this->taxaArr['taxontype']);
+			} else {
+				$queryTermArr['taxontype'] = 1;
+			}
+		}
+		$patternOfOnlyLettersDigitsAndSpaces = '/^[a-zA-Z0-9\s\-]*$/'; // TOOD accommodate symbols associated with extinct taxa, hybrid crosses, and abbreviations with periods, e.g. "var."?
+		if(isset($this->associationArr['search'])){
+			if (preg_match($patternOfOnlyLettersDigitsAndSpaces, $this->associationArr['search'])==1) {
+				$queryTermArr['associated-taxa'] = $this->associationArr['search'];
+			}
+		}
+
+		if(isset($this->associationArr['relationship'])){
+			if (preg_match($patternOfOnlyLettersDigitsAndSpaces, $this->associationArr['relationship'])==1) {
+				$queryTermArr['association-type'] = $this->associationArr['relationship'];
+			}
+		}
+
+		if(isset($this->associationArr['associated-taxa'])){
+			$queryTermArr['associated-taxon-type'] = $this->associationArr['associated-taxa'];
+		}
+		if(isset($this->associationArr['usethes-associations'])){
+			$queryTermArr['usethes-associations'] = $this->associationArr['usethes-associations'];
+		}
+
+		return $queryTermArr;
+	}
+
 	public function getQueryTermStr(){
 		//Returns a search variable string
 		$retStr = '';
@@ -834,11 +906,6 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			if($v) $retStr .= '&'. $this->cleanOutStr($k) . '=' . $this->cleanOutStr($v);
 		}
 		if(isset($this->taxaArr['search'])){
-			if (
-				isset($this->taxaArr['taxontype']) && $this->taxaArr['taxontype'] == 1 &&
-				preg_match('/^[^:]+:\s*(.+)$/', $this->taxaArr['search'], $matches)
-			)
-				$this->taxaArr['search'] = $matches[1];
 			$patternTaxonChars = '/^[a-zA-Z0-9\s\-\,\.×†]*$/';
 			if (preg_match($patternTaxonChars, $this->getTaxaSearchTerm())==1) {
 				$retStr .= '&taxa=' . $this->getTaxaSearchTerm();
@@ -1225,6 +1292,18 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		if(array_key_exists('characters',$_REQUEST)){
 			if($_REQUEST['characters']) $this->searchTermArr['characters'] = $_REQUEST['characters'];
 			else unset($this->searchTermArr['characters']);
+		}
+		if(array_key_exists('polygons',$_REQUEST)){
+			$polygons = $_REQUEST['polygons'];
+			if (!is_array($polygons))
+				$polygons = [$polygons];
+			$polygons = array_filter($polygons, function($val) {
+				return trim($val) !== '';
+			});
+			if (!empty($polygons))
+				$this->searchTermArr['polygons'] = $polygons;
+			else
+				unset($this->searchTermArr['polygons']);
 		}
 		if(!empty($_REQUEST['earlyInterval'])){
 			$this->searchTermArr['earlyInterval'] =  $this->cleanInputStr($_REQUEST['earlyInterval']);
