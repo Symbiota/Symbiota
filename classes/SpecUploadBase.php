@@ -356,7 +356,6 @@ class SpecUploadBase extends SpecUpload{
 			'generalnotes'=>'occurrenceremarks','plantdescription'=>'verbatimattributes','description'=>'verbatimattributes','specimendescription'=>'verbatimattributes',
 			'phenology'=>'reproductivecondition','field:habitat'=>'habitat','habitatdescription'=>'habitat','sitedeschabitat'=>'habitat','captivecultivated'=>'cultivationstatus',
 			'ometid'=>'exsiccatiidentifier','exsiccataeidentifier'=>'exsiccatiidentifier','exsnumber'=>'exsiccatinumber','exsiccataenumber'=>'exsiccatinumber',
-			'group'=>'paleo-lithogroup','lithostratigraphic'=>'paleo-lithology',
 			//'materialsample-materialsampleid'=>'materialsample-guid','preparationdetails'=>'materialsample-preparationprocess','materialsampletype'=>'materialsample-sampletype',
 			'imageurl'=>'associatedmedia','subject_references'=>'tempfield01',
 			'subject_recordid'=>'tempfield02'
@@ -397,6 +396,7 @@ class SpecUploadBase extends SpecUpload{
 
 		$symbFields = array();
 		foreach($symbFieldsRaw as $sValue){
+			if ($this->paleoSupport && strpos($sValue, 'paleo_') === 0) continue;
 			$symbFields[$sValue] = strtolower($sValue);
 		}
 
