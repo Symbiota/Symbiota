@@ -285,4 +285,6 @@ ALTER TABLE `uploadspectemp`
   ADD INDEX `IX_uploadspectemp_country` (`country` ASC),
   ADD INDEX `IX_uploadspectemp_stateProvince` (`stateProvince` ASC);
   
-  
+# Add index for performance fixes for counts on verbatimCoordinates seen in OccurrenceCleaner
+# Added because of slow performance on collections/cleaning/index.php
+CREATE INDEX collid_verbatimCoordinates ON omoccurrences (collid, verbatimCoordinates);
