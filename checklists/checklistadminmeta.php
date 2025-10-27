@@ -32,7 +32,7 @@ elseif($excludeParent) $clType = 'excludespp';
 <script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js" type="text/javascript"></script>
 <script type="text/javascript">
 	<?php
-	if($clType) echo 'setExclusionChecklistMode();';
+	if($excludeParent) echo 'setExclusionChecklistMode();';
 	?>
 
 	tinymce.init({
@@ -105,6 +105,7 @@ elseif($excludeParent) $clType = 'excludespp';
 			document.getElementById("inclusiveClDiv").style.display = "block";
 			document.getElementById("geoDiv").style.display = "block";
 			document.getElementById("externalService-div").style.display = "block";
+			document.getElementById("polygon-div").style.display = "block";
 		}
 	}
 
@@ -116,6 +117,7 @@ elseif($excludeParent) $clType = 'excludespp';
 		document.getElementById("inclusiveClDiv").style.display = "none";
 		document.getElementById("geoDiv").style.display = "none";
 		document.getElementById("externalService-div").style.display = "none";
+		document.getElementById("polygon-div").style.display = "none";
 		document.getElementById("checklisteditform").activatekey.checked = false;
 	}
 
@@ -271,8 +273,8 @@ if($clid || !empty($_REQUEST['excludeparent'])) $displayform = true;
 					<input type="number" id="coordinateuncertaintyinmeters" name="pointradiusmeters" style="width:110px;" value="<?php echo ($clArray?$clArray["pointradiusmeters"]:''); ?>" />
 				</div>
 			</div>
-			<div style="clear:both" class="top-breathing-room-rel">
-				<fieldset style="width:350px;padding:10px">
+			<div id="polygon-div" style="clear:both" class="top-breathing-room-rel">
+				<fieldset style="width:350px;">
 					<legend><b><?php echo $LANG['POLYFOOT']; ?></b></legend>
 					<span id="polyDefDiv" style="display:<?php echo ($clArray && $clArray["hasfootprintwkt"]?'inline':'none'); ?>;">
 						<?php echo $LANG['POLYGON_DEFINED']; ?>
