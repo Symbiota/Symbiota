@@ -147,7 +147,15 @@ if($isEditor){
 									<?php echo $LANG['ENTERED_BY']; ?>:
 								</span><br />
 								<span>
-									<input type="text" autocomplete="off" name="createdbyborr" maxlength="32" style="width:100px;" value="<?php echo ($loanArr['createdbyborr']?$loanArr['createdbyborr']:$PARAMS_ARR['un']); ?>" onchange=" " disabled />
+									<?php
+									$enteredBy = '';
+									if($loanArr){
+										if(!empty($loanArr['createdbyown'])) $enteredBy = $loanArr['createdbyown'];
+										elseif(!empty($loanArr['createdbyborr'])) $enteredBy = $loanArr['createdbyborr'];
+									}
+									else $enteredBy = $PARAMS_ARR['un'];
+									?>
+									<input type="text" autocomplete="off" name="createdbyborr" maxlength="32" style="width:100px;" value="<?= $enteredBy ?>" disabled />
 								</span>
 							</div>
 							<div style="margin-left:20px;padding-top:4px;float:left;">
