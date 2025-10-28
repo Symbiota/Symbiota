@@ -99,7 +99,11 @@ $AVAILABLE_LANGS = array('en','es','fr','pt');
 $LANG_TAG = 'en';
 if(isset($_REQUEST['lang']) && $_REQUEST['lang']){
 	$LANG_TAG = $_REQUEST['lang'];
-	setcookie('lang', $LANG_TAG, time() + (3600 * 24 * 30),'/');
+	setcookie('lang', $LANG_TAG, [
+		'domain' => '/',
+		'expires' => time() + (3600 * 24 * 30),
+		'secure' => false
+	]);
 }
 else if(isset($_COOKIE['lang']) && $_COOKIE['lang']){
 	$LANG_TAG = $_COOKIE['lang'];

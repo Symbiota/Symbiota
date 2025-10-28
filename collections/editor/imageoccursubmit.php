@@ -1,6 +1,6 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorImages.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT.'/classes/Media.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
@@ -12,7 +12,7 @@ if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/e
 $collid  = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $action = array_key_exists('action',$_POST)?$_POST['action']:'';
 
-$occurManager = new OccurrenceEditorImages();
+$occurManager = new OccurrenceEditorManager();
 $occurManager->setCollid($collid);
 $collMap = $occurManager->getCollMap();
 

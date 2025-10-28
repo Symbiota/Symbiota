@@ -1137,11 +1137,40 @@ class Media {
 	 * @param int $tid
 	 * @param string $media_type Should use MediaType Constants
 	 */
-	public static function getByTid(int $tid, string $media_type = null): Array {
+	public static function getByTid(int $tid, string $media_type = null, ?Paginator $paginator): Array {
 		if(!$tid) return [];
 		$parameters = [$tid];
 
 		$sql ='SELECT ' . implode(',', self::MEDIA_ITEM_SELECT_SCHEMA) . ' FROM media m '.
+			'INNER JOIN taxstatus ts ON m.tid = ts.tid ' .
+			'INNER JOIN taxa t ON m.tid = t.tid ' .
+			// 'LEFT JOIN taxa t ON t.tid = m.tid ' .
+			'LEFT JOIN users u on u.uid = m.creatorUid ' .
+			'WHERE ts.tid = ? and ts.taxauthid = 1';
+
+		if($media_type) {
+			$sql .= ' AND mediaType = ?';
+			array_push($parameters, $media_type);
+		}
+
+		$sql .= ' ORDER BY m.sortsequence IS NULL ASC, m.sortsequence ASC';
+
+		if($paginator) {
+			$sql .= ' LIMIT ? OFFSET ?';
+			array_push($parameters, $paginator->perPage);
+			array_push($parameters, ($paginator->activePage- 1) * $paginator->perPage);
+		}
+
+		$results = QueryUtil::executeQuery(Database::connect('readonly'), $sql, $parameters);
+
+		return Sanitize::out(self::get_media_items($results));
+	}
+
+	public static function countByTid(int $tid, string $media_type = null): int {
+		if(!$tid) return 0;
+		$parameters = [$tid];
+
+		$sql ='SELECT ' . 'count(*) as cnt' . ' FROM media m '.
 			'LEFT JOIN taxa t ON t.tid = m.tid ' .
 			'LEFT JOIN users u on u.uid = m.creatorUid ' .
 			'WHERE m.tid = ?';
@@ -1151,10 +1180,9 @@ class Media {
 			array_push($parameters, $media_type);
 		}
 
-		$sql .= ' ORDER BY sortsequence IS NULL ASC, sortsequence ASC';
 		$results = QueryUtil::executeQuery(Database::connect('readonly'), $sql, $parameters);
 
-		return Sanitize::out(self::get_media_items($results));
+		return $results->fetch_object()->cnt;
 	}
 
 	/**
