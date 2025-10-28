@@ -2,6 +2,7 @@
 include_once($SERVER_ROOT . '/config/dbconnection.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 class OmMaterialSample{
 
@@ -189,6 +190,7 @@ class OmMaterialSample{
 	 **/
 	public static function getMsLabels(): Array {
 		global $LANG;
+		Language::load('collections/fieldterms/materialSampleVars');
 		return [
 			'sampleType' => $LANG['SAMPLE_TYPE'],
 			'catalogNumber' => $LANG['CATALOG_NUMBER'],

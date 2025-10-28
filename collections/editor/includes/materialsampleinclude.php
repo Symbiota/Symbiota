@@ -3,10 +3,7 @@ include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OmMaterialSample.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-Language::load([
-	'collections/fieldterms/materialSampleVars',
-	'collections/editor/includes/materialsampleinclude'
-]);
+Language::load('collections/editor/includes/materialsampleinclude');
 
 header('Content-Type: text/html; charset='.$CHARSET);
 
