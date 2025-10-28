@@ -903,5 +903,10 @@ class DwcArchiverOccurrence extends Manager{
 	public function setIncludeAcceptedNameUsage(bool $bool): void {
 		$this->includeAcceptedNameUsage = $bool;
 	}
+
+	public function setIncludePaleo(bool $bool): void {
+		$this->includePaleo = $bool;
+	}
+
 }
 ?>

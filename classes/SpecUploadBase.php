@@ -1270,15 +1270,13 @@ class SpecUploadBase extends SpecUpload{
 
 	public function getPaleoGtsTerms(){
 		$retArr = array();
-		if(!empty($GLOBALS['ACTIVATE_PALEO'])){
-			$sql = 'SELECT gtsterm, rankid FROM omoccurpaleogts ';
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				$retArr[$r->gtsterm] = $r->rankid;
-			}
-			$rs->free();
-			ksort($retArr);
+		$sql = 'SELECT gtsterm, rankid FROM omoccurpaleogts ';
+		$rs = $this->conn->query($sql);
+		while($r = $rs->fetch_object()){
+			$retArr[$r->gtsterm] = $r->rankid;
 		}
+		$rs->free();
+		ksort($retArr);
 		return $retArr;
 	}
 
@@ -2032,6 +2030,22 @@ class SpecUploadBase extends SpecUpload{
 		if (empty($paleoArr['lateinterval']) && !empty($paleoArr['earlyinterval']))
 			$paleoArr['lateinterval'] = $paleoArr['earlyinterval'];
 
+		//if still empty fill early and late period based on stratigraphic levels
+		if (empty($paleoArr['earlyinterval'])) {
+			foreach (['stage', 'epoch', 'period', 'era', 'eon'] as $stratLevel) {
+				if (!empty($paleoArr[$stratLevel])) {
+					$term = strtolower($paleoArr[$stratLevel]);
+					if (isset($lcaseGtsMap[$term])) {
+						$paleoArr['earlyinterval'] = $lcaseGtsMap[$term];
+						$paleoArr['lateinterval'] = $lcaseGtsMap[$term];
+					} else {
+						$paleoArr['earlyinterval'] = $paleoArr[$stratLevel];
+						$paleoArr['lateinterval'] = $paleoArr[$stratLevel];
+					}
+					break;
+				}
+			}
+		}
 		foreach ($paleoArr as $key => $val) {
 			$recMap['paleo_' . $key] = trim($val);
 		}

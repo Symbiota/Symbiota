@@ -257,7 +257,8 @@ class DwcArchiverCore extends Manager{
     }
 
 	private function setIncludePaleo(){
-		if ((strpos($this->conditionSql, 'paleo') || strpos($this->conditionSql, 'early.myaStart')))
+		if (((!empty($this->conditionSql) && (strpos($this->conditionSql, 'paleo.') !== false || strpos($this->conditionSql, 'early.myaStart') !== false)) ||
+			(!empty($this->customWhereSql) && strpos($this->customWhereSql, 'paleo.') !== false)))
 			$this->includePaleo = true;
 		elseif (!empty($this->collArr)) {
 			foreach ($this->collArr as $coll) {
@@ -722,7 +723,8 @@ class DwcArchiverCore extends Manager{
 		$dwcOccurManager->setSchemaType($this->schemaType);
 		$dwcOccurManager->setExtended($this->extended);
 		$dwcOccurManager->setIncludeAcceptedNameUsage($this->includeAcceptedNameUsage);
-
+		$this->setIncludePaleo();
+		$dwcOccurManager->setIncludePaleo($this->includePaleo);
 		if (!$this->occurrenceFieldArr) $this->occurrenceFieldArr = $dwcOccurManager->getOccurrenceArr($this->schemaType, $this->extended);
 		$this->applyConditions();
 
@@ -1776,6 +1778,8 @@ class DwcArchiverCore extends Manager{
 		$dwcOccurManager->setIncludeExsiccatae();
 		$dwcOccurManager->setIncludeAssociatedSequences();
 		$dwcOccurManager->setIncludeAcceptedNameUsage($this->includeAcceptedNameUsage);
+		$this->setIncludePaleo();
+		$dwcOccurManager->setIncludePaleo($this->includePaleo);
 		if (!$this->occurrenceFieldArr) $this->occurrenceFieldArr = $dwcOccurManager->getOccurrenceArr($this->schemaType, $this->extended);
 		//Output records
 		$this->applyConditions();
