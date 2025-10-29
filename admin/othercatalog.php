@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['run_copy'])) {
 
 <div class="container" id="innertext">
     <h2>Copy Other Catalog Numbers to Identifier Table</h2>
-    <p>This tool copies all non-empty otherCatalogNumbers from the omoccurrences table to the omoccuridentifiers table. Each value is inserted as a new row using the current user ID as modifiedUID.</p>
+    <p>This tool copies all non-empty otherCatalogNumbers from the omoccurrences table to the omoccuridentifiers table, unless values in omoccuridentifiers already exist. Each value is inserted as a new row using the current user ID as modifiedUID.</p>
 
     <?php if (!empty($message)): ?>
         <div class="successbox"><?= $message ?></div>
