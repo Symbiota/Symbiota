@@ -183,7 +183,7 @@ class OccurrenceCleaner extends Manager{
 
 	public function hasDuplicateClusters(){
 		$retStatus = false;
-		$sql = 'SELECT o.occid FROM omoccurrences o FORCE INDEX (Index_collid) INNER JOIN omoccurduplicatelink d ON o.occid = d.occid WHERE (o.collid = '.$this->collid.') LIMIT 1';
+		$sql = 'SELECT o.occid FROM omoccurrences o INNER JOIN omoccurduplicatelink d ON o.occid = d.occid WHERE (o.collid = '.$this->collid.') LIMIT 1';
 		$rs = $this->conn->query($sql);
 		if($rs->num_rows) $retStatus = true;
 		$rs->free();
