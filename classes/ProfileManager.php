@@ -149,6 +149,7 @@ class ProfileManager extends Manager{
 			$user = $rs->fetch_object();
 
 			if(!$user->password) {
+				$this->errorMessage = 'PASSWORD_RESET_REQUIRED';
 				return false;
 			}
 
