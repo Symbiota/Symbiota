@@ -114,7 +114,7 @@ else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imgpro
 							</fieldset>
 							<?php
 						}
-						if(!empty($VOUCHERVISION_OCR_ACTIVATED)){
+						if(!empty($VOUCHERVISION_API_KEY)){
 						?>
 						<fieldset class="ocr-box">
 							<legend>VoucherVision OCR</legend>
