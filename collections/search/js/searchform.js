@@ -861,43 +861,6 @@ function selectAllObs(cb) {
   handleHeaderSections(boxesChecked, translations.OBSERVATION);
 }
 
-function selectAll(cb) {
-  let boxesChecked = true;
-  if (!cb.checked) {
-    boxesChecked = false;
-  }
-  
-  if (document.getElementById("dballspeccb")) {
-    document.getElementById("dballspeccb").checked = false;
-  }
-  if (document.getElementById("dballobscb")) {
-    document.getElementById("dballobscb").checked = false;
-  }
-  
-  const f = cb.form;
-  if (f) {
-    for (let i = 0; i < f.length; i++) {
-      if (
-        f.elements[i].name == "db[]" ||
-        f.elements[i].name == "cat[]" ||
-        f.elements[i].name == "current-collid"
-      ) {
-        // Don't change the state of the specimen/observation specific checkboxes
-        if (f.elements[i].id !== "dballspeccb" && f.elements[i].id !== "dballobscb" && f.elements[i].id !== "dballcb") {
-          f.elements[i].checked = boxesChecked;
-        }
-      }
-    }
-  }
-  const categoryChunks = document.querySelectorAll('div[id^="category-chunk-"]');
-  categoryChunks.forEach((chunk) => {
-    const checkboxes = chunk.querySelectorAll('input[name="db[]"], input[name="cat[]"]');
-    checkboxes.forEach((checkbox) => {
-      checkbox.checked = boxesChecked;
-    });
-  });
-}
-
 function uncheckAll() {
   if (document.getElementById("dballcb")) {
     document.getElementById("dballcb").checked = false;
