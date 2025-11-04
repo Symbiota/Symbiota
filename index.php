@@ -90,9 +90,9 @@ header("Content-Type: text/html; charset=".$CHARSET);
                                 by other regional and international aggregators. The data within the portal are freely available for use, but proper citation is encouraged.
                                 </p>
                                 <p>
-                                The Guatemala Biodiversity Portal is hosted by the <a href="https://biokic.asu.edu" target="_blank">Biodiversity Knowledge Integration Center (BIOKIC)</a>
-                                at Arizona State University, USA. For further information or to have a collection profile established, please contact
-                                Samanta Orellana (<a href="mailto:sorellana@asu.edu">sorellana@asu.edu</a>) or Zabdi López (<a href="mailto:zabdi@alumni.uvg.edu.gt">zabdi@alumni.uvg.edu.gt</a>)
+                                The Guatemala Biodiversity Portal is hosted by the <a href="https://biodiversity.ku.edu/symbiota-support-hub" target="_blank">Symbiota Support Hub</a>
+                                at the University of Kansas, USA. For further information or to have a collection profile established, please contact
+                                Samanta Orellana (<a href="mailto:samanta.orellana@ku.edu">samanta.orellana@ku.edu</a>) or Zabdi López (<a href="mailto:zabdi@alumni.uvg.edu.gt">zabdi@alumni.uvg.edu.gt</a>)
                                 </p>
                         </div>
                         <?php
@@ -112,10 +112,10 @@ header("Content-Type: text/html; charset=".$CHARSET);
                                 estudiantes y público en general, pero se insta a citar adecuadamente el origen de los datos.
                                 </p>
                                 <p>
-                                El portal está alojado en los servidores del Centro de
-                                <a href="https://biokic.asu.edu" target="_blank">Integración del Conocimiento de la Biodiversidad (BIOKIC)</a> de la Universidad Estatal de Arizona (ASU),
+                                El portal está alojado en los servidores del 
+                                <a href="https://biodiversity.ku.edu/symbiota-support-hub" target="_blank">Symbiota Support Hub</a> de la Universidad de Kansas,
                                 en Estados Unidos. Para más información o para gestionar un perfil por favor comunicarse con
-                                Samanta Orellana (<a href="mailto:sorellana@asu.edu">sorellana@asu.edu</a>) o Zabdi López (<a href="mailto:zabdi@alumni.uvg.edu.gt">zabdi@alumni.uvg.edu.gt</a>).
+                                Samanta Orellana (<a href="mailto:samanta.orellana@ku.edu">samanta.orellana@ku.edu</a>) o Zabdi López (<a href="mailto:zabdi@alumni.uvg.edu.gt">zabdi@alumni.uvg.edu.gt</a>).
                                 </p>
                         </div>
                         <?php
