@@ -861,48 +861,6 @@ function selectAllObs(cb) {
   handleHeaderSections(boxesChecked, translations.OBSERVATION);
 }
 
-function uncheckAll() {
-  if (document.getElementById("dballcb")) {
-    document.getElementById("dballcb").checked = false;
-  }
-  if (document.getElementById("dballspeccb")) {
-    document.getElementById("dballspeccb").checked = false;
-  }
-  if (document.getElementById("dballobscb")) {
-    document.getElementById("dballobscb").checked = false;
-  }
-}
-
-function unselectCat(catTarget) {
-  const catObj = document.querySelector(
-    `input[id^="${catTarget}"][name="cat[]"]`
-  );
-  if (catObj) catObj.checked = false;
-  uncheckAll();
-}
-
-function selectAllCat(cb, target) {
-  let boxesChecked = true;
-  if (!cb.checked) {
-    boxesChecked = false;
-    uncheckAll();
-  }
-  
-  if (cb.checked) {
-    uncheckAll();
-  }
-
-  const inputObjs = document.getElementsByTagName("input");
-  for (let i = 0; i < inputObjs.length; i++) {
-    const inputObj = inputObjs[i];
-    if (
-      inputObj.getAttribute("class") == target ||
-      inputObj.getAttribute("className") == target
-    ) {
-      inputObj.checked = boxesChecked;
-    }
-  }
-}
 
 function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
   queriedCollections.forEach((queriedCollection) => {
