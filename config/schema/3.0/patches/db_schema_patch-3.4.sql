@@ -1,11 +1,16 @@
+
 INSERT INTO `schemaversion` (versionnumber) values ("3.4");
 
+#field for search by polygons
+ALTER TABLE geographicthesaurus
+    ADD COLUMN isSearchable TINYINT(1) NOT NULL DEFAULT 0;
 
 ALTER TABLE `geographicthesaurus` 
   ADD INDEX `FK_geothes_geolevel` (`geoLevel` ASC);
 
 
 # CURRENT: title varchar(50) NOT NULL
+
 # While unlikely possible combination of omocurrences
 # recordedBy(varchar(255)) + ' '  + recordNumber(varchar(45)) + ' ' eventDate(10 chars after string conversion)
 # would result in ~312 chars maximum which breaks this fields maximum characters
@@ -20,7 +25,7 @@ ALTER TABLE `omoccurpaleo`
   CHANGE COLUMN `geologicalContextID` `geologicalContextID` VARCHAR(100) NULL DEFAULT NULL ;
 
 ALTER TABLE `omoccurpaleo`
-  DROP COLUMN `storageAge`;
+  DROP COLUMN IF EXISTS `storageAge`;
 
 #Add paleo indexes
 ALTER TABLE `omoccurpaleo`
@@ -44,14 +49,21 @@ ALTER TABLE `omoccurpaleogts`
   ADD COLUMN `geoTimeID` INT NULL DEFAULT NULL AFTER `parentgtsid`;
 
 ALTER TABLE `omoccurpaleogts`
-  DROP INDEX `UNIQUE_gtsterm`,
-  DROP INDEX `FK_gtsparent_idx`;
+  DROP INDEX `UNIQUE_gtsterm`;
 
 ALTER TABLE `omoccurpaleogts`
   ADD UNIQUE INDEX `UQ_paleogts_gtsterm` (`gtsterm` ASC),
-  ADD INDEX `FK_paleogts_parent_idx` (`parentGtsID` ASC),
   ADD INDEX `IX_paleogts_myaStart` (`myaStart` ASC),
   ADD INDEX `IX_paleogts_myaEnd` (`myaEnd` ASC);
+
+# Disable foreign key checks temporarily to rename index
+SET FOREIGN_KEY_CHECKS=0;
+
+ALTER TABLE `omoccurpaleogts`
+  DROP INDEX IF EXISTS `FK_gtsparent_idx`,
+  ADD INDEX IF NOT EXISTS `FK_paleogts_parent_idx` (`parentGtsID` ASC);
+
+SET FOREIGN_KEY_CHECKS=1;
 
 #reset the values within omoccurpaleogts table
 TRUNCATE `omoccurpaleogts`;
@@ -236,29 +248,29 @@ INSERT INTO `omoccurpaleogts` VALUES
 
 
 #Add paleo fields to uploadspectemp
-ALTER TABLE 'uploadspectemp'
-  ADD COLUMN 'eon' TEXT,
-  ADD COLUMN 'era' TEXT,
-  ADD COLUMN 'period' TEXT,
-  ADD COLUMN 'epoch' TEXT,
-  ADD COLUMN 'earlyInterval' TEXT,
-  ADD COLUMN 'lateInterval' TEXT,
-  ADD COLUMN 'absoluteAge' TEXT,
-  ADD COLUMN 'storageLoc' TEXT,
-  ADD COLUMN 'stage' TEXT,
-  ADD COLUMN 'localStage' TEXT,
-  ADD COLUMN 'biota' TEXT,
-  ADD COLUMN 'biostratigraphy' TEXT,
-  ADD COLUMN 'taxonEnvironment' TEXT,
-  ADD COLUMN 'lithogroup' TEXT,
-  ADD COLUMN 'formation' TEXT,
-  ADD COLUMN 'member' TEXT,
-  ADD COLUMN 'bed' TEXT,
-  ADD COLUMN 'lithology' TEXT,
-  ADD COLUMN 'stratRemarks' TEXT,
-  ADD COLUMN 'element' TEXT,
-  ADD COLUMN 'slideProperties' TEXT,
-  ADD COLUMN 'geologicalContextID' TEXT;
+ALTER TABLE `uploadspectemp`
+  ADD COLUMN `eon` TEXT,
+  ADD COLUMN `era` TEXT,
+  ADD COLUMN `period` TEXT,
+  ADD COLUMN `epoch` TEXT,
+  ADD COLUMN `earlyInterval` TEXT,
+  ADD COLUMN `lateInterval` TEXT,
+  ADD COLUMN `absoluteAge` TEXT,
+  ADD COLUMN `storageLoc` TEXT,
+  ADD COLUMN `stage` TEXT,
+  ADD COLUMN `localStage` TEXT,
+  ADD COLUMN `biota` TEXT,
+  ADD COLUMN `biostratigraphy` TEXT,
+  ADD COLUMN `taxonEnvironment` TEXT,
+  ADD COLUMN `lithogroup` TEXT,
+  ADD COLUMN `formation` TEXT,
+  ADD COLUMN `member` TEXT,
+  ADD COLUMN `bed` TEXT,
+  ADD COLUMN `lithology` TEXT,
+  ADD COLUMN `stratRemarks` TEXT,
+  ADD COLUMN `element` TEXT,
+  ADD COLUMN `slideProperties` TEXT,
+  ADD COLUMN `geologicalContextID` TEXT;
 
 #Increase user password field to accommodate new bcrypt hash 
 ALTER TABLE `users` 
@@ -273,4 +285,6 @@ ALTER TABLE `uploadspectemp`
   ADD INDEX `IX_uploadspectemp_country` (`country` ASC),
   ADD INDEX `IX_uploadspectemp_stateProvince` (`stateProvince` ASC);
   
-  
+# Add index for performance fixes for counts on verbatimCoordinates seen in OccurrenceCleaner
+# Added because of slow performance on collections/cleaning/index.php
+CREATE INDEX collid_verbatimCoordinates ON omoccurrences (collid, verbatimCoordinates);

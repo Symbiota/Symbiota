@@ -7,9 +7,10 @@ if(!empty($THIRD_PARTY_OID_AUTH_ENABLED)){
 	require_once($SERVER_ROOT . '/vendor/autoload.php');
 }
 use Jumbojett\OpenIDConnectClient;
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/profile/index.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT.'/content/lang/profile/index.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/profile/index.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('profile/index');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $login = isset($_REQUEST['login']) ? $_REQUEST['login'] : '';

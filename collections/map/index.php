@@ -2,13 +2,12 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceMapManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/map/index.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT.'/content/lang/collections/map/index.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/map/index.en.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/list.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT.'/content/lang/collections/list.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/list.en.php');
+Language::load([
+	'collections/map/index',
+	'collections/list'
+]);
 
 $filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
 
@@ -2049,8 +2048,7 @@ $serverHost = GeneralUtil::getDomain();
 
 				externalPortalHosts = JSON.parse(data.getAttribute('data-external-portal-hosts'));
 
-				searchVar = data.getAttribute('data-search-var');
-				if(searchVar) sessionStorage.querystr = searchVar;
+				searchVar = setSessionQueryStr();
 
 				let shapeType;
 
@@ -2123,7 +2121,7 @@ $serverHost = GeneralUtil::getDomain();
 	  	<h1 class="page-heading screen-reader-only">Map Interface</h1>
 		<div
 			id="service-container"
-			data-search-var="<?=htmlspecialchars($searchVar)?>"
+			data-search-var="<?=$searchVar?>"
 			data-map-bounds="<?=htmlspecialchars(json_encode($bounds))?>"
 			data-taxa-map="<?=htmlspecialchars(json_encode($taxaArr))?>"
 			data-coll-map="<?=htmlspecialchars(json_encode($collArr))?>"

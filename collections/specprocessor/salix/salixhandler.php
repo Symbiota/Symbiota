@@ -1,7 +1,10 @@
 <?php
 include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/SalixUtilities.php');
-include_once($SERVER_ROOT . '/content/lang/collections/specprocessor/salix/salixhandler.' . $LANG_TAG . '.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/specprocessor/salix/salixhandler');
+
 header("Content-Type: text/html; charset=" . $CHARSET);
 if(!$SYMB_UID){
 	header('Location: ../../../profile/index.php?refurl=../collections/specprocessor/salix/salixhandler.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));

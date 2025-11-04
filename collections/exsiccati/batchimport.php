@@ -1,8 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceExsiccatae.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/exsiccati/batchimport.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/exsiccati/batchimport.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/exsiccati/batchimport.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/exsiccati/batchimport');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/exsiccati/batchimport.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));

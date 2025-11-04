@@ -2,9 +2,9 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyUpload.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyHarvester.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/taxonomy/batchloader.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/batchloader.' . $LANG_TAG . '.php');
-	else include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/batchloader.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('taxa/taxonomy/batchloader');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl='.$CLIENT_ROOT.'/taxa/taxonomy/batchloader.php');

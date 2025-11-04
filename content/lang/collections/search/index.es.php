@@ -141,5 +141,7 @@ $LANG['LITHOGROUP'] = 'Grupo';
 $LANG['FORMATION'] = 'Formación';
 $LANG['MEMBER'] = 'Miembro';
 $LANG['BED'] = 'Estrato';
+$LANG['POLYGONS'] = 'Polígonos';
+$LANG['NO_POLYGONS_FOUND'] = 'No se encontraron polígonos que se puedan buscar en el tesauro.';
 
 ?>

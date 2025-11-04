@@ -1,7 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/InstitutionManager.php');
-include_once($SERVER_ROOT.'/content/lang/collections/misc/colladdress.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/misc/colladdress');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/misc/colladdress.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));

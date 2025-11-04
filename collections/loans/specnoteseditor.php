@@ -1,27 +1,28 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceLoans.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php');
-	else include_once($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.en.php');
-	header("Content-Type: text/html; charset=".$CHARSET);
-	if(!$SYMB_UID) header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=../collections/loans/specimennotes.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-	$collid = filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT);
-	$occid = filter_var($_REQUEST['occid'], FILTER_SANITIZE_NUMBER_INT);;
-	$loanID = filter_var($_REQUEST['loanid'], FILTER_SANITIZE_NUMBER_INT);;
+Language::load('collections/loans/loan_langs');
 
-	$isEditor = 0;
-	if($SYMB_UID && $collid){
-		if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin']))
-				|| (array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollEditor']))){
-					$isEditor = 1;
-		}
+header("Content-Type: text/html; charset=".$CHARSET);
+if(!$SYMB_UID) header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=../collections/loans/specimennotes.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+
+$collid = filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT);
+$occid = filter_var($_REQUEST['occid'], FILTER_SANITIZE_NUMBER_INT);;
+$loanID = filter_var($_REQUEST['loanid'], FILTER_SANITIZE_NUMBER_INT);;
+
+$isEditor = 0;
+if($SYMB_UID && $collid){
+	if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin']))
+			|| (array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollEditor']))){
+				$isEditor = 1;
 	}
+}
 
-	$loanManager = new OccurrenceLoans();
-	$loanManager->setCollId($collid);
-	?>
+$loanManager = new OccurrenceLoans();
+$loanManager->setCollId($collid);
+?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
 <head>

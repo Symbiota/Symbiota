@@ -1,8 +1,10 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/glossary/index.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/glossary/index.en.php');
-else include_once($SERVER_ROOT.'/content/lang/glossary/index.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('glossary/index');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $glossId = array_key_exists('glossid', $_REQUEST) ? filter_var($_REQUEST['glossid'], FILTER_SANITIZE_NUMBER_INT) : 0;

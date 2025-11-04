@@ -1,10 +1,13 @@
 <?php
 include_once ('../config/symbini.php');
 include_once ($SERVER_ROOT . '/classes/GeographicThesaurus.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/geothesaurus/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/geothesaurus/index.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/geothesaurus/index.en.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/geothesaurus/harvester.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/geothesaurus/harvester.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/geothesaurus/harvester.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load([
+	'geothesaurus/index',
+	'geothesaurus/harvester'
+]);
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $geoThesID = array_key_exists('geoThesID', $_REQUEST) ? filter_var($_REQUEST['geoThesID'], FILTER_SANITIZE_NUMBER_INT) : '';
