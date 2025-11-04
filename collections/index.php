@@ -95,9 +95,6 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 			<?php
 			if($specArr && $obsArr){
 				?>
-				<div>
-					<h2>Well hello there 1</h2>
-				</div>
 				<div id="specobsdiv">
 					<div class="specimen-header-margin">
 						<h2><?php echo $LANG['SPECIMEN_COLLECTIONS'] ?></h2>

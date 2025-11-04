@@ -2151,9 +2151,6 @@ $serverHost = GeneralUtil::getDomain();
 										$obsArr = (isset($collList['obs']) ? $collList['obs'] : null);
 										if($specArr || $obsArr){
 										?>
-										<div>
-											<h2>Well hello there 2</h2>
-										</div>
 										<div id="specobsdiv">
 											<div style="margin:0px 0px 10px 5px;">
 												<input id="dballcb" data-role="none" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" <?php echo (!$mapManager->getSearchTerm('db') || $mapManager->getSearchTerm('db')=='all'?'checked':'') ?> />

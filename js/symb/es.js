@@ -20,4 +20,7 @@ const translations = {
   SELECT_PARENT_NAME: "Debe seleccionar un nombre de la lista. Si Taxón Superior no está en la lista, podría ser necesario agregarlo",
   TAXON_NOT_EXISTS: "No existe. Por favor, agregue primero el padre al sistema.",
   MATCHES_TWO: "Coincide con dos nombres diferentes en el tesauro. Por favor, seleccione el taxón con el autor correcto.",
+  TAXON_NAME_MATCH_WARNING: "Este nombre de taxón coincide con otro que existe en la base de datos. ¿Está seguro de que desea crear uno nuevo con el mismo nombre?",
+  SPECIMEN: "Especimen",
+  OBSERVATION: "Observación"
 };

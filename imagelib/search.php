@@ -313,9 +313,6 @@ if($action == 'batchAssignTag'){
 								<fieldset>
 									<legend><?= $LANG['COLLECTIONS'] ?></legend>
 									<div id="specobsdiv">
-										<div>
-											<h2>Well hello there 5</h2>
-										</div>
 										<div style="margin:0px 0px 10px 5px;">
 											<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" <?= $allChecked ?> />
 											<?= $LANG['SELECT_ALL'] ?>

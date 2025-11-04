@@ -435,9 +435,6 @@ if($action != "Update Statistics"){
 						<?php
 						if($specArr || $obsArr){
 							?>
-							<div>
-								<h2>Well hello there 3</h2>
-							</div>
 							<form name="collform" id="collform" action="collstats.php" method="post" onsubmit="return changeCollForm(this);">
 								<div>
 									<?php

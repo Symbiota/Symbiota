@@ -784,7 +784,6 @@ function uncheckEverything() {
 function selectAllSpec(cb) {
   const boxesChecked = cb.checked;
   
-  // Uncheck the main "all collections" checkbox and "all observations" checkbox
   if (document.getElementById("dballcb")) {
     document.getElementById("dballcb").checked = false;
   }
@@ -796,7 +795,9 @@ function selectAllSpec(cb) {
   categoryChunks.forEach((chunk) => {
     const legends = chunk.querySelectorAll('fieldset[name="subcollection-fieldset"] legend');
     legends.forEach((legend) => {
-      if (legend.textContent.includes(translations['SPECIMEN'])) {
+      console.log('Checking legend:');
+      console.log(translations.SPECIMEN);
+      if (legend.textContent.includes(translations.SPECIMEN)) {
         const categoryCheckbox = chunk.querySelector('input[name="cat[]"]');
         if (categoryCheckbox) {
           categoryCheckbox.checked = boxesChecked;
@@ -811,14 +812,14 @@ function selectAllSpec(cb) {
   });
   
   const specimenHeader = Array.from(document.querySelectorAll('h2')).find(h => 
-    h.textContent.includes(translations['SPECIMEN'])
+    h.textContent.includes(translations.SPECIMEN)
   );
   
   if (specimenHeader) {
     let currentElement = specimenHeader.parentElement.nextElementSibling;
     while (currentElement) {
       const headerInSection = currentElement.querySelector('h2');
-      if (headerInSection && headerInSection.textContent.includes(translations['OBSERVATION'])) {
+      if (headerInSection && headerInSection.textContent.includes(translations.OBSERVATION)) {
         break;
       }
       
@@ -846,7 +847,7 @@ function selectAllObs(cb) {
   categoryChunks.forEach((chunk) => {
     const legends = chunk.querySelectorAll('fieldset[name="subcollection-fieldset"] legend');
     legends.forEach((legend) => {
-      if (legend.textContent.includes(translations['OBSERVATION'])) {
+      if (legend.textContent.includes(translations.OBSERVATION)) {
         const categoryCheckbox = chunk.querySelector('input[name="cat[]"]');
         if (categoryCheckbox) {
           categoryCheckbox.checked = boxesChecked;
@@ -860,7 +861,7 @@ function selectAllObs(cb) {
   });
   
   const observationHeader = Array.from(document.querySelectorAll('h2')).find(h => 
-    h.textContent.includes(translations['OBSERVATION'])
+    h.textContent.includes(translations.OBSERVATION)
   );
   
   if (observationHeader) {
