@@ -790,7 +790,7 @@ function uncheckSpecifiedCheckboxes(checkboxIds) {
   });
 }
 
-function handleCategoryChunks(boxesChecked, collectionType) {
+function handleCategoryChunks(parentBoxCheckStatus, collectionType) {
   const categoryChunks = document.querySelectorAll('div[id^="category-chunk-"]');
   categoryChunks.forEach((chunk) => {
     const legends = chunk.querySelectorAll('fieldset[name="subcollection-fieldset"] legend');
@@ -798,19 +798,19 @@ function handleCategoryChunks(boxesChecked, collectionType) {
       if (legend.textContent.includes(collectionType)) {
         const categoryCheckbox = chunk.querySelector('input[name="cat[]"]');
         if (categoryCheckbox) {
-          categoryCheckbox.checked = boxesChecked;
+          categoryCheckbox.checked = parentBoxCheckStatus;
         }
         
         const collectionCheckboxes = chunk.querySelectorAll('input[name="db[]"]');
         collectionCheckboxes.forEach((checkbox) => {
-          checkbox.checked = boxesChecked;
+          checkbox.checked = parentBoxCheckStatus;
         });
       }
     });
   });
 }
 
-function handleHeaderSections(boxesChecked, headerType, stopType = null) {
+function handleHeaderSections(parentBoxCheckStatus, headerType, stopType = null) {
   const targetHeader = Array.from(document.querySelectorAll('h2')).find(h => 
     h.textContent.includes(headerType)
   );
@@ -825,7 +825,7 @@ function handleHeaderSections(boxesChecked, headerType, stopType = null) {
       }
       const checkboxes = currentElement.querySelectorAll('input[name="db[]"][id^="collection-"]');
       checkboxes.forEach((checkbox) => {
-        checkbox.checked = boxesChecked;
+        checkbox.checked = parentBoxCheckStatus;
       });
       currentElement = currentElement.nextElementSibling;
     }
@@ -833,17 +833,17 @@ function handleHeaderSections(boxesChecked, headerType, stopType = null) {
 }
 
 function selectAllSpec(cb) {
-  const boxesChecked = cb.checked;
+  const boxCheckedStatus = cb.checked;
   uncheckSpecifiedCheckboxes(["dballcb", "dballobscb"]);
-  handleCategoryChunks(boxesChecked, translations.SPECIMEN);
-  handleHeaderSections(boxesChecked, translations.SPECIMEN, translations.OBSERVATION);
+  handleCategoryChunks(boxCheckedStatus, translations.SPECIMEN);
+  handleHeaderSections(boxCheckedStatus, translations.SPECIMEN, translations.OBSERVATION);
 }
 
 function selectAllObs(cb) {
-  const boxesChecked = cb.checked;
+  const boxCheckedStatus = cb.checked;
   uncheckSpecifiedCheckboxes(["dballcb", "dballspeccb"]);
-  handleCategoryChunks(boxesChecked, translations.OBSERVATION);
-  handleHeaderSections(boxesChecked, translations.OBSERVATION);
+  handleCategoryChunks(boxCheckedStatus, translations.OBSERVATION);
+  handleHeaderSections(boxCheckedStatus, translations.OBSERVATION);
 }
 
 
