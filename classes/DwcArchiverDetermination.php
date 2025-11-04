@@ -1,7 +1,7 @@
 <?php
 class DwcArchiverDetermination{
 
-	public static function getDeterminationArr($schemaType,$extended){
+	public static function getDeterminationArr($schemaType, $extended){
 		$fieldArr = array();
 		$fieldArr['coreid'] = 'x.occid';
 		$termArr['identifiedBy'] = 'http://rs.tdwg.org/dwc/terms/identifiedBy';
@@ -39,12 +39,12 @@ class DwcArchiverDetermination{
 		$termArr['detID'] = 'https://symbiota.org/terms/detID';
 		$fieldArr['detID'] = 'd.detID';
 
-		$retArr['terms'] = self::trimBySchemaType($termArr,$schemaType,$extended);
-		$retArr['fields'] = self::trimBySchemaType($fieldArr,$schemaType,$extended);
+		$retArr['terms'] = self::trimBySchemaType($termArr, $schemaType, $extended);
+		$retArr['fields'] = self::trimBySchemaType($fieldArr, $schemaType, $extended);
 		return $retArr;
 	}
 
-	private static function trimBySchemaType($detArr,$schemaType,$extended){
+	private static function trimBySchemaType($detArr, $schemaType, $extended){
 		$trimArr = array();
 		if($schemaType == 'dwc'){
 			$trimArr = array('identifiedByID', 'tidInterpreted', 'identificationIsCurrent');
@@ -57,7 +57,7 @@ class DwcArchiverDetermination{
 		elseif($schemaType == 'backup'){
 			$trimArr = array();
 		}
-		return array_diff_key($detArr,array_flip($trimArr));
+		return array_diff_key($detArr, array_flip($trimArr));
 	}
 
 	public static function getSql($fieldArr, $exportID){
@@ -66,7 +66,7 @@ class DwcArchiverDetermination{
 			$sql = 'SELECT ';
 			$delimiter = '';
 			foreach($fieldArr as $fieldSql){
-				if($fieldSql) $sql .= $delimiter.$fieldSql;
+				if($fieldSql) $sql .= $delimiter . $fieldSql;
 				$delimiter = ', ';
 			}
 			$sql .= ' FROM omoccurdeterminations d INNER JOIN omexportoccurrences x ON d.occid = x.occid
