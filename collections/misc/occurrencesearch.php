@@ -103,7 +103,7 @@ $occManager = new OccurrenceSupport();
 	<div role="main" id="innertext">
 		<h1 class="page-heading"><?php echo $LANG['SEARCH_OCCUR']; ?></h1>
 		<?php
-		if($collEditorArr){
+		if($IS_ADMIN || $collEditorArr){
 			$collArr = $occManager->getCollectionArr($IS_ADMIN?null:$collEditorArr);
 			?>
 			<form name="occform" action="occurrencesearch.php" method="post" onsubmit="return verifyOccurSearchForm(this)" >
