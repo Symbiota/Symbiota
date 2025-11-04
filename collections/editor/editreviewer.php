@@ -356,7 +356,7 @@ $navStr .= '</div>';
 					<?php
 					echo '<div style="clear:both">'.$navStr.'</div>';
 					?>
-					<table class="styledtable" style="font-size:1.25rem;" aria-label="<?php echo (isset($LANG['TABLE']) ? $LANG['TABLE'] : 'Table of Records'); ?>" aria-labeledby="table-desc">
+					<table class="styledtable" aria-label="<?php echo (isset($LANG['TABLE']) ? $LANG['TABLE'] : 'Table of Records'); ?>" aria-labeledby="table-desc">
 						<caption id="table-desc" class="bottom-breathing-room-rel top-breathing-room-rel screen-reader-only">
 							<?php echo $LANG['TABLE_DESC']; ?>
 						</caption>
