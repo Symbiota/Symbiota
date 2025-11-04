@@ -781,10 +781,6 @@ function uncheckEverything() {
   });
 }
 
-/**
- * Helper function to uncheck specified checkboxes
- * @param {string[]} checkboxIds - Array of checkbox IDs to uncheck
- */
 function uncheckSpecifiedCheckboxes(checkboxIds) {
   checkboxIds.forEach(id => {
     const checkbox = document.getElementById(id);
@@ -794,11 +790,6 @@ function uncheckSpecifiedCheckboxes(checkboxIds) {
   });
 }
 
-/**
- * Helper function to handle category chunks for a specific type
- * @param {boolean} boxesChecked - Whether checkboxes should be checked
- * @param {string} collectionType - The collection type to match (SPECIMEN or OBSERVATION)
- */
 function handleCategoryChunks(boxesChecked, collectionType) {
   const categoryChunks = document.querySelectorAll('div[id^="category-chunk-"]');
   categoryChunks.forEach((chunk) => {
@@ -819,12 +810,6 @@ function handleCategoryChunks(boxesChecked, collectionType) {
   });
 }
 
-/**
- * Helper function to handle header sections
- * @param {boolean} boxesChecked - Whether checkboxes should be checked
- * @param {string} headerType - The header type to find (SPECIMEN or OBSERVATION)
- * @param {string} stopType - The header type to stop at (optional)
- */
 function handleHeaderSections(boxesChecked, headerType, stopType = null) {
   const targetHeader = Array.from(document.querySelectorAll('h2')).find(h => 
     h.textContent.includes(headerType)
