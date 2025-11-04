@@ -178,7 +178,7 @@ class OccurrenceSearchSupport {
 									<?php
 									foreach($catArr as $collid => $collName2){
 										?>
-										<section class="gridlike-form-row bottom-breathing-room-rel">
+										<section id="occurrence-search-support-section" class="gridlike-form-row bottom-breathing-room-rel">
 											<?php
 											if($displayIcons){
 												?>
@@ -212,7 +212,7 @@ class OccurrenceSearchSupport {
 													$codeStr = ' ('.$collName2['instcode'];
 													if($collName2['collcode']) $codeStr .= '-'.$collName2['collcode'];
 													$codeStr .= ')';
-													echo '<div class="collectionname">'.$collName2["collname"].'</div><div class="collectioncode">'.$codeStr.'</div>';
+													echo '<div class="collectionname">' . $collName2["collname"] . $codeStr . '</div>';
 													?>
 													<a href='<?= $CLIENT_ROOT ?>/collections/misc/collprofiles.php?collid=<?= $collid ?>' target="_blank">
 														<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info...'); ?>
@@ -242,7 +242,7 @@ class OccurrenceSearchSupport {
 				<?php
 				foreach($collArr as $collid => $cArr){
 					?>
-					<section class="gridlike-form-row bottom-breathing-room-rel">
+					<section id="occurrence-search-support-single-collection-details" class="gridlike-form-row bottom-breathing-room-rel">
 						<?php
 						if($displayIcons){
 							?>

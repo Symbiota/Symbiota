@@ -1,6 +1,6 @@
 <?php
 ?>
-    <section class="gridlike-form-row bottom-breathing-room-rel">
+    <section id="single-collection-without-category-details" class="gridlike-form-row bottom-breathing-room-rel">
         <?php
         if($displayIcons){
             ?>
@@ -39,7 +39,7 @@
                 $codeStr = '('.$cArr['instcode'];
                 if($cArr['collcode']) $codeStr .= '-'.$cArr['collcode'];
                 $codeStr .= ')';
-                echo '<div class="collectionname">'.$cArr["collname"].'</div> <div class="collectioncode">'.$codeStr.'</div> ';
+                echo '<div class="collectionname">' . $cArr["collname"] . $codeStr . '</div> ';
                 ?>
                 <a href = '<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/collections/misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>' target="_blank">
                     <?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info...'); ?>
