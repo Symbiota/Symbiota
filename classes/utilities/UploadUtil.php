@@ -37,6 +37,11 @@ class UploadUtil {
 		'audio/mp3' => 'audio/mpeg'
 	];
 
+	// recordEnteredBy Values used for automatic record
+	// creation for csv uploads of images/file
+	const UPLOADED_IMAGE = 'uploaded image';
+	const UPLOADED_FILE = 'uploaded file';
+
 	/**
 	 * Gets temporary file storage path for portal.
 	 *

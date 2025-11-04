@@ -319,8 +319,8 @@ class ImageProcessor {
 						else{
 							if($this->createNewRecord){
 								//Create new occurrence record to link image
-								$sqlIns = 'INSERT INTO omoccurrences(collid,'.($catalogNumber?'catalogNumber':'otherCatalogNumbers').',processingstatus,dateentered, mediaType) '.
-									'VALUES('.$this->collid.',"'.($catalogNumber?$catalogNumber:$otherCatalogNumbers).'","unprocessed",now(), "image")';
+								$sqlIns = 'INSERT INTO omoccurrences(collid,'.($catalogNumber?'catalogNumber':'otherCatalogNumbers').',processingstatus,dateentered, recordEnteredBy) '.
+									'VALUES('.$this->collid.',"'.($catalogNumber?$catalogNumber:$otherCatalogNumbers).'","unprocessed",now(), "'. UploadUtil::UPLOADED_IMAGE .'")';
 								if($this->conn->query($sqlIns)){
 									$occArr[$this->conn->insert_id] = 0;
 									$this->logOrEcho('Unable to find record with matching '.($catalogNumber?'catalogNumber':'otherCatalogNumbers').'; new occurrence record created',1);

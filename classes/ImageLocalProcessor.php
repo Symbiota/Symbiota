@@ -4,6 +4,7 @@ if(isset($SERVER_ROOT) && $SERVER_ROOT){
 	include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
 	include_once($SERVER_ROOT.'/classes/ImageShared.php');
 	include_once($SERVER_ROOT . '/classes/GuidManager.php');
+	include_once($SERVER_ROOT . '/classes/utilities/UploadUtil.php');
 }
 
 class ImageLocalProcessor {
@@ -955,7 +956,7 @@ class ImageLocalProcessor {
 			if(!$occid && $this->createNewRec){
 				//Records does not exist, create a new one to which image will be linked
 				$sql2 = 'INSERT INTO omoccurrences(collid,'.($this->matchCatalogNumber?'catalognumber':'othercatalognumbers').',processingstatus,dateentered, recordEnteredBy) '.
-					'VALUES('.$this->activeCollid.',"'.$catalogNumber.'","unprocessed","'.date('Y-m-d H:i:s').'", "uploaded image")';
+					'VALUES('.$this->activeCollid.',"'.$catalogNumber.'","unprocessed","'.date('Y-m-d H:i:s').'", "' . UploadUtil::UPLOADED_IMAGE . '")';
 				if($this->conn->query($sql2)){
 					$occid = $this->conn->insert_id;
 					$this->logOrEcho('Specimen record does not exist; new empty specimen record created and assigned an "unprocessed" status (occid = <a href="../individual/index.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>) ',1, false);
@@ -1396,8 +1397,8 @@ class ImageLocalProcessor {
 							if(!$occid){
 								//Insert new record
 								if($activeFields){
-									$sqlIns1 = 'INSERT INTO omoccurrences(collid,'.($this->matchCatalogNumber?'catalogNumber':'othercatalogNumbers').',processingstatus,dateentered';
-									$sqlIns2 = 'VALUES ('.$this->activeCollid.',"'.$catNum.'","unprocessed","'.date('Y-m-d H:i:s').'"';
+									$sqlIns1 = 'INSERT INTO omoccurrences(collid,'.($this->matchCatalogNumber?'catalogNumber':'othercatalogNumbers').',processingstatus,dateentered,recordEnteredBy';
+									$sqlIns2 = 'VALUES ('.$this->activeCollid.',"'.$catNum.'","unprocessed","'.date('Y-m-d H:i:s').'","' . UploadUtil::UPLOADED_IMAGE . '"';
 									foreach($activeFields as $aField){
 										$sqlIns1 .= ','.$aField;
 										$value = $this->cleanInString($recMap[$aField]);
