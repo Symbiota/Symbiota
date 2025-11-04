@@ -781,23 +781,30 @@ function uncheckEverything() {
   });
 }
 
-function selectAllSpec(cb) {
-  const boxesChecked = cb.checked;
-  
-  if (document.getElementById("dballcb")) {
-    document.getElementById("dballcb").checked = false;
-  }
-  if (document.getElementById("dballobscb")) {
-    document.getElementById("dballobscb").checked = false;
-  }
-  
+/**
+ * Helper function to uncheck specified checkboxes
+ * @param {string[]} checkboxIds - Array of checkbox IDs to uncheck
+ */
+function uncheckSpecifiedCheckboxes(checkboxIds) {
+  checkboxIds.forEach(id => {
+    const checkbox = document.getElementById(id);
+    if (checkbox) {
+      checkbox.checked = false;
+    }
+  });
+}
+
+/**
+ * Helper function to handle category chunks for a specific type
+ * @param {boolean} boxesChecked - Whether checkboxes should be checked
+ * @param {string} collectionType - The collection type to match (SPECIMEN or OBSERVATION)
+ */
+function handleCategoryChunks(boxesChecked, collectionType) {
   const categoryChunks = document.querySelectorAll('div[id^="category-chunk-"]');
   categoryChunks.forEach((chunk) => {
     const legends = chunk.querySelectorAll('fieldset[name="subcollection-fieldset"] legend');
     legends.forEach((legend) => {
-      console.log('Checking legend:');
-      console.log(translations.SPECIMEN);
-      if (legend.textContent.includes(translations.SPECIMEN)) {
+      if (legend.textContent.includes(collectionType)) {
         const categoryCheckbox = chunk.querySelector('input[name="cat[]"]');
         if (categoryCheckbox) {
           categoryCheckbox.checked = boxesChecked;
@@ -810,70 +817,48 @@ function selectAllSpec(cb) {
       }
     });
   });
-  
-  const specimenHeader = Array.from(document.querySelectorAll('h2')).find(h => 
-    h.textContent.includes(translations.SPECIMEN)
+}
+
+/**
+ * Helper function to handle header sections
+ * @param {boolean} boxesChecked - Whether checkboxes should be checked
+ * @param {string} headerType - The header type to find (SPECIMEN or OBSERVATION)
+ * @param {string} stopType - The header type to stop at (optional)
+ */
+function handleHeaderSections(boxesChecked, headerType, stopType = null) {
+  const targetHeader = Array.from(document.querySelectorAll('h2')).find(h => 
+    h.textContent.includes(headerType)
   );
-  
-  if (specimenHeader) {
-    let currentElement = specimenHeader.parentElement.nextElementSibling;
+  if (targetHeader) {
+    let currentElement = targetHeader.parentElement.nextElementSibling;
     while (currentElement) {
-      const headerInSection = currentElement.querySelector('h2');
-      if (headerInSection && headerInSection.textContent.includes(translations.OBSERVATION)) {
-        break;
+      if (stopType) {
+        const headerInSection = currentElement.querySelector('h2');
+        if (headerInSection && headerInSection.textContent.includes(stopType)) {
+          break;
+        }
       }
-      
       const checkboxes = currentElement.querySelectorAll('input[name="db[]"][id^="collection-"]');
       checkboxes.forEach((checkbox) => {
         checkbox.checked = boxesChecked;
       });
-      
       currentElement = currentElement.nextElementSibling;
     }
   }
 }
 
+function selectAllSpec(cb) {
+  const boxesChecked = cb.checked;
+  uncheckSpecifiedCheckboxes(["dballcb", "dballobscb"]);
+  handleCategoryChunks(boxesChecked, translations.SPECIMEN);
+  handleHeaderSections(boxesChecked, translations.SPECIMEN, translations.OBSERVATION);
+}
+
 function selectAllObs(cb) {
   const boxesChecked = cb.checked;
-  
-  if (document.getElementById("dballcb")) {
-    document.getElementById("dballcb").checked = false;
-  }
-  if (document.getElementById("dballspeccb")) {
-    document.getElementById("dballspeccb").checked = false;
-  }
-  
-  const categoryChunks = document.querySelectorAll('div[id^="category-chunk-"]');
-  categoryChunks.forEach((chunk) => {
-    const legends = chunk.querySelectorAll('fieldset[name="subcollection-fieldset"] legend');
-    legends.forEach((legend) => {
-      if (legend.textContent.includes(translations.OBSERVATION)) {
-        const categoryCheckbox = chunk.querySelector('input[name="cat[]"]');
-        if (categoryCheckbox) {
-          categoryCheckbox.checked = boxesChecked;
-        }
-        const collectionCheckboxes = chunk.querySelectorAll('input[name="db[]"]');
-        collectionCheckboxes.forEach((checkbox) => {
-          checkbox.checked = boxesChecked;
-        });
-      }
-    });
-  });
-  
-  const observationHeader = Array.from(document.querySelectorAll('h2')).find(h => 
-    h.textContent.includes(translations.OBSERVATION)
-  );
-  
-  if (observationHeader) {
-    let currentElement = observationHeader.parentElement.nextElementSibling;
-    while (currentElement) {
-      const checkboxes = currentElement.querySelectorAll('input[name="db[]"][id^="collection-"]');
-      checkboxes.forEach((checkbox) => {
-        checkbox.checked = boxesChecked;
-      });
-      currentElement = currentElement.nextElementSibling;
-    }
-  }
+  uncheckSpecifiedCheckboxes(["dballcb", "dballspeccb"]);
+  handleCategoryChunks(boxesChecked, translations.OBSERVATION);
+  handleHeaderSections(boxesChecked, translations.OBSERVATION);
 }
 
 function selectAll(cb) {
