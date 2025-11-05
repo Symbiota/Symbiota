@@ -33,6 +33,7 @@ class DwcArchiverBaseManager extends Manager{
 	}
 
 	public function writeOutData($exportID){
+		$recordCnt = 0;
 		if($this->sql){
 			if($stmt = $this->conn->prepare($this->sql)){
 				$stmt->bind_param('i', $exportID);
@@ -42,6 +43,7 @@ class DwcArchiverBaseManager extends Manager{
 					$this->encodeArr($r);
 					$this->addcslashesArr($r);
 					$this->writeOutRecord($r);
+					$recordCnt++;
 				}
 				$rs->free();
 				$stmt->close();
@@ -51,6 +53,7 @@ class DwcArchiverBaseManager extends Manager{
 				//$this->logOrEcho("\tSQL: ".$this->sql."\n");
 			}
 		}
+		return $recordCnt;
 	}
 
 	private function writeOutRecord($outputArr){

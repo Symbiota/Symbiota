@@ -21,6 +21,7 @@ class DwcArchiverIdentifier extends DwcArchiverBaseManager{
 	//Based on https://rs.gbif.org/extension/gbif/1.0/identifier.xml
 	private function setFieldArr(){
 		$columnArr = array();
+		$termArr = array();
 		$columnArr['coreid'] = 'i.occid';
 		$termArr['identifier'] = 'http://purl.org/dc/terms/identifier';
 		$columnArr['identifier'] = 'i.identifierValue';

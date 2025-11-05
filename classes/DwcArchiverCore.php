@@ -38,7 +38,6 @@ class DwcArchiverCore extends Manager{
 	private $delimiter = ',';
 	private $fileExt = '.csv';
 	private $occurrenceFieldArr = array();
-	private $determinationFieldArr = array();
 	private $imageFieldArr = array();
 	private $fieldArrMap = array();
 	private $isPublicDownload = false;
@@ -828,7 +827,8 @@ class DwcArchiverCore extends Manager{
 				$this->logOrEcho("FATAL ERROR: PHP ZipArchive class is not installed, please contact your server admin\n");
 				exit('FATAL ERROR: PHP ZipArchive class is not installed, please contact your server admin');
 			}
-			$status = $this->writeOccurrenceFile();
+			$occurFile = $this->targetPath . $this->ts . '-occur' . $this->fileExt;
+			$status = $this->writeOccurrenceFile($occurFile);
 			$archiveFile = $this->targetPath . $fileName;
 			if ($status) {
 				if (file_exists($archiveFile)) unlink($archiveFile);
@@ -837,68 +837,89 @@ class DwcArchiverCore extends Manager{
 				if ($status !== true) {
 					exit('FATAL ERROR: unable to create archive file: ' . $status);
 				}
-				//$this->logOrEcho("DWCA created: ".$archiveFile."\n");
-
-				$zipArchive->addFile($this->targetPath . $this->ts . '-occur' . $this->fileExt);
-				$zipArchive->renameName($this->targetPath . $this->ts . '-occur' . $this->fileExt, 'occurrences' . $this->fileExt);
+				$zipArchive->addFile($occurFile);
+				$zipArchive->renameName($occurFile, 'occurrences' . $this->fileExt);
+				$unlinkFileArr = array($occurFile);
+				//Create extension files
 				if ($this->includeDets) {
-					$this->writeDeterminationFile();
-					$zipArchive->addFile($this->targetPath . $this->ts . '-det' . $this->fileExt);
-					$zipArchive->renameName($this->targetPath . $this->ts . '-det' . $this->fileExt, 'identifications' . $this->fileExt);
+					$detFile = $this->targetPath . $this->ts . '-det' . $this->fileExt;
+					if($this->writeDeterminationFile()){
+						$zipArchive->addFile($detFile);
+						$zipArchive->renameName($detFile, 'identifications' . $this->fileExt);
+					}
+					$unlinkFileArr[] = $detFile;
 				}
 				if ($this->includeImgs) {
-					$this->writeImageFile();
-					$zipArchive->addFile($this->targetPath . $this->ts . '-multimedia' . $this->fileExt);
-					$zipArchive->renameName($this->targetPath . $this->ts . '-multimedia' . $this->fileExt, 'multimedia' . $this->fileExt);
+					$imgFile = $this->targetPath . $this->ts . '-multimedia' . $this->fileExt;
+					if($this->writeImageFile()){
+						$zipArchive->addFile($imgFile);
+						$zipArchive->renameName($imgFile, 'multimedia' . $this->fileExt);
+					}
+					$unlinkFileArr[] = $imgFile;
 				}
-				if ($this->includeAttributes && file_exists($this->targetPath . $this->ts . '-attr' . $this->fileExt)) {
-					$this->writeAttributeData();
-					$zipArchive->addFile($this->targetPath . $this->ts . '-attr' . $this->fileExt);
-					$zipArchive->renameName($this->targetPath . $this->ts . '-attr' . $this->fileExt, 'measurementOrFact' . $this->fileExt);
+				if ($this->includeAttributes) {
+					$attrFile = $this->targetPath . $this->ts . '-attr' . $this->fileExt;
+					if($this->writeAttributeData()){
+						$zipArchive->addFile($attrFile);
+						$zipArchive->renameName($attrFile, 'measurementOrFact' . $this->fileExt);
+					}
+					$unlinkFileArr[] = $attrFile;
 				}
-				if ($this->includeMaterialSample && file_exists($this->targetPath . $this->ts . '-matSample' . $this->fileExt)) {
-					$this->writeMaterialSampleData();
-					$zipArchive->addFile($this->targetPath . $this->ts . '-matSample' . $this->fileExt);
-					$zipArchive->renameName($this->targetPath . $this->ts . '-matSample' . $this->fileExt, 'materialSample' . $this->fileExt);
+				if ($this->includeMaterialSample) {
+					$matSampleFile = $this->targetPath . $this->ts . '-matSample' . $this->fileExt;
+					if($this->writeMaterialSampleData()){
+						$zipArchive->addFile($matSampleFile);
+						$zipArchive->renameName($matSampleFile, 'materialSample' . $this->fileExt);
+					}
+					$unlinkFileArr[] = $matSampleFile;
 				}
-				if ($this->includeIdentifiers && file_exists($this->targetPath . $this->ts . '-ident' . $this->fileExt)) {
-					$this->writeIdentifierData();
-					$zipArchive->addFile($this->targetPath . $this->ts . '-ident' . $this->fileExt);
-					$zipArchive->renameName($this->targetPath . $this->ts . '-ident' . $this->fileExt, 'identifiers' . $this->fileExt);
+				if ($this->includeIdentifiers) {
+					$identFile = $this->targetPath . $this->ts . '-ident' . $this->fileExt;
+					if($this->writeIdentifierData($identFile)){
+						$zipArchive->addFile($identFile);
+						$zipArchive->renameName($identFile, 'identifiers' . $this->fileExt);
+					}
+					$unlinkFileArr[] = $identFile;
 				}
-				if ($this->includeAssociations && file_exists($this->targetPath . $this->ts . '-assoc' . $this->fileExt)) {
-					$this->writeAssociationData();
-					$zipArchive->addFile($this->targetPath . $this->ts . '-assoc' . $this->fileExt);
-					$zipArchive->renameName($this->targetPath . $this->ts . '-assoc' . $this->fileExt, 'resourceRelationships' . $this->fileExt);
+				if ($this->includeAssociations) {
+					$assocFile = $this->targetPath . $this->ts . '-assoc' . $this->fileExt;
+					if($this->writeAssociationData()){
+						$zipArchive->addFile($assocFile);
+						$zipArchive->renameName($assocFile, 'resourceRelationships' . $this->fileExt);
+					}
+					$unlinkFileArr[] = $assocFile;
 				}
+
 				//Meta file
+				$metaFile = $this->targetPath . $this->ts . '-meta.xml';
 				$this->writeMetaFile();
-				$zipArchive->addFile($this->targetPath . $this->ts . '-meta.xml');
-				$zipArchive->renameName($this->targetPath . $this->ts . '-meta.xml', 'meta.xml');
+				$zipArchive->addFile($metaFile);
+				$zipArchive->renameName($metaFile, 'meta.xml');
+				$unlinkFileArr[] = $metaFile;
+
 				//EML file
+				$emlFile = $this->targetPath . $this->ts . '-eml.xml';
 				$this->writeEmlFile();
-				$zipArchive->addFile($this->targetPath . $this->ts . '-eml.xml');
-				$zipArchive->renameName($this->targetPath . $this->ts . '-eml.xml', 'eml.xml');
+				$zipArchive->addFile($emlFile);
+				$zipArchive->renameName($emlFile, 'eml.xml');
+				if ($this->schemaType == 'dwc') rename($emlFile, $this->targetPath . str_replace('.zip', '.eml', $fileName));
+				else $unlinkFileArr[] = $emlFile;
+
 				//Citation file
 				if($this->schemaType != 'backup'){
+					$citeFile = $this->targetPath . $this->ts . '-citation.txt';
 					$this->writeCitationFile();
-					$zipArchive->addFile($this->targetPath . $this->ts . '-citation.txt');
-					$zipArchive->renameName($this->targetPath . $this->ts . '-citation.txt', 'CITEME.txt');
+					$zipArchive->addFile($citeFile);
+					$zipArchive->renameName($citeFile, 'CITEME.txt');
+					$unlinkFileArr[] = $citeFile;
 				}
 
 				$zipArchive->close();
-				unlink($this->targetPath . $this->ts . '-occur' . $this->fileExt);
-				if ($this->includeDets) unlink($this->targetPath . $this->ts . '-det' . $this->fileExt);
-				if ($this->includeImgs) unlink($this->targetPath . $this->ts . '-multimedia' . $this->fileExt);
-				if ($this->includeAttributes && file_exists($this->targetPath . $this->ts . '-attr' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-attr' . $this->fileExt);
-				if ($this->includeMaterialSample && file_exists($this->targetPath . $this->ts . '-matSample' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-matSample' . $this->fileExt);
-				if ($this->includeIdentifiers && file_exists($this->targetPath . $this->ts . '-ident' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-ident' . $this->fileExt);
-				if ($this->includeAssociations && file_exists($this->targetPath . $this->ts . '-assoc' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-assoc' . $this->fileExt);
 
-				unlink($this->targetPath . $this->ts . '-meta.xml');
-				if ($this->schemaType == 'dwc') rename($this->targetPath . $this->ts . '-eml.xml', $this->targetPath . str_replace('.zip', '.eml', $fileName));
-				else unlink($this->targetPath . $this->ts . '-eml.xml');
-				if (file_exists($this->targetPath . $this->ts . '-citation.txt')) unlink($this->targetPath . $this->ts . '-citation.txt');
+				//Clean up temp files
+				foreach($unlinkFileArr as $deleteFile){
+					if (file_exists($deleteFile)) unlink($deleteFile);
+				}
 			}
 			else {
 				$this->errorMessage = 'FAILED to create archive file due to failure to return occurrence records; check and adjust search variables';
@@ -1036,11 +1057,9 @@ class DwcArchiverCore extends Manager{
 		}
 		$rootElem->appendChild($coreElem);
 
-		if ($this->includeDets) {
-			//Identification extension
-			$termArr = $this->determinationFieldArr['terms'];
-			unset($termArr['detID']);
-			$this->setExtensionNode($rootElem, $newDoc, $termArr, 'http://rs.tdwg.org/dwc/terms/Identification', 'identifications');
+		if (isset($this->fieldArrMap['det'])) {
+			//Identification/determination extension
+			$this->setExtensionNode($rootElem, $newDoc, $this->fieldArrMap['det'], 'http://rs.tdwg.org/dwc/terms/Identification', 'identifications');
 		}
 
 		if ($this->includeImgs) {
@@ -1050,19 +1069,19 @@ class DwcArchiverCore extends Manager{
 			$this->setExtensionNode($rootElem, $newDoc, $termArr, 'http://rs.tdwg.org/ac/terms/Multimedia', 'multimedia');
 		}
 
-		if ($this->includeAttributes) {
+		if (isset($this->fieldArrMap['attribute'])) {
 			//MeasurementOrFact extension
 			$this->setExtensionNode($rootElem, $newDoc, $this->fieldArrMap['attribute'], 'http://rs.iobis.org/obis/terms/ExtendedMeasurementOrFact', 'measurementOrFact');
 		}
-		if ($this->includeMaterialSample) {
+		if (isset($this->fieldArrMap['materialSample'])) {
 			//MaterialSample extension
 			$this->setExtensionNode($rootElem, $newDoc, $this->fieldArrMap['materialSample'], 'http://data.ggbn.org/schemas/ggbn/terms/MaterialSample', 'materialSample');
 		}
-		if ($this->includeIdentifiers) {
+		if (isset($this->fieldArrMap['identifier'])) {
 			//Identifier extension  https://rs.gbif.org/extension/gbif/1.0/identifier.xml
 			$this->setExtensionNode($rootElem, $newDoc, $this->fieldArrMap['identifier'], 'http://rs.gbif.org/terms/1.0/Identifier', 'identifiers');
 		}
-		if ($this->includeAssociations) {
+		if (isset($this->fieldArrMap['associations'])) {
 			//Association/Resource relationship extension  https://rs.gbif.org/extension/resource_relationship_2024-02-19.xml
 			$this->setExtensionNode($rootElem, $newDoc, $this->fieldArrMap['associations'], 'http://rs.tdwg.org/dwc/terms/ResourceRelationship', 'resourceRelationships');
 		}
@@ -1603,9 +1622,8 @@ class DwcArchiverCore extends Manager{
 	}
 
 	//Generate Data files
-	private function writeOccurrenceFile(){
+	private function writeOccurrenceFile($filePath){
 		$this->logOrEcho('Creating occurrence file (' . date('h:i:s A') . ')... ');
-		$filePath = $this->targetPath . $this->ts . '-occur' . $this->fileExt;
 		$fh = fopen($filePath, 'w');
 		if (!$fh) {
 			$this->logOrEcho('ERROR establishing output file (' . $filePath . '), perhaps target folder is not readable by web server.');
@@ -1879,44 +1897,22 @@ class DwcArchiverCore extends Manager{
 	}
 
 	private function writeDeterminationFile(){
-		$this->logOrEcho('Creating identification extension file (' . date('h:i:s A') . ')... ');
-		$filePath = $this->targetPath . $this->ts . '-det' . $this->fileExt;
-		$fh = fopen($filePath, 'w');
-		if (!$fh) {
-			$this->logOrEcho('ERROR establishing output file (' . $filePath . '), perhaps target folder is not readable by web server.');
-			return false;
-		}
-
-		if (!$this->determinationFieldArr) {
-			$this->determinationFieldArr = DwcArchiverDetermination::getDeterminationArr($this->schemaType, $this->extended);
-		}
-		//Output header
-		$headerArr = array_keys($this->determinationFieldArr['fields']);
-		array_pop($headerArr);
-		$this->writeOutRecord($fh, $headerArr);
-
-		//Output records
-		$sql = DwcArchiverDetermination::getSql($this->determinationFieldArr['fields'], $this->exportID);
-		if ($rs = $this->conn->query($sql)) {
-			$previousDetID = 0;
-			while ($r = $rs->fetch_assoc()) {
-				if ($previousDetID == $r['detID']) continue;
-				$previousDetID = $r['detID'];
-				unset($r['detID']);
-				$r['recordID'] = 'urn:uuid:' . $r['recordID'];
-				$this->encodeArr($r);
-				$this->addcslashesArr($r);
-				$this->writeOutRecord($fh, $r);
+		$recordCnt = 0;
+		if($this->exportID){
+			$this->logOrEcho('Creating identification (aka determination) extension file (' . date('h:i:s A') . ')...');
+			$detHandler = new DwcArchiverDetermination($this->conn);
+			$detHandler->setSchemaType($this->schemaType);
+			if($this->extended) $detHandler->setExtended(true);
+			$detHandler->initiateProcess($this->targetPath . $this->ts . '-det' . $this->fileExt);
+			$recordCnt = $detHandler->writeOutData($this->exportID);
+			if($recordCnt){
+				$this->fieldArrMap['det'] = $detHandler->getFieldArrTerms();
+				$msg = $recordCnt . ' records added ';
+				if(!$recordCnt) $msg .= '(file excluded)';
+				$this->logOrEcho($msg, 1);
 			}
-			$rs->free();
 		}
-		else {
-			$this->logOrEcho('ERROR creating identification extension file: ' . $this->conn->error . "\n");
-			$this->logOrEcho("\tSQL: " . $sql . "\n");
-		}
-
-		fclose($fh);
-		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 1);
+		return $recordCnt;
 	}
 
 	private function writeImageFile(){
@@ -2036,52 +2032,80 @@ class DwcArchiverCore extends Manager{
 		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 1);
 	}
 
-	private function writeIdentifierData(){
+	private function writeIdentifierData($targetFile){
+		$recordCnt = 0;
 		if($this->exportID){
 			$this->logOrEcho('Creating alternative Identifiers extension file (' . date('h:i:s A') . ')...');
 			$identierHandler = new DwcArchiverIdentifier($this->conn);
 			$identierHandler->setSchemaType($this->schemaType);
-			$identierHandler->initiateProcess($this->targetPath . $this->ts . '-ident' . $this->fileExt);
-			$this->fieldArrMap['identifier'] = $identierHandler->getFieldArrTerms();
-			$identierHandler->writeOutData($this->exportID);
+			$identierHandler->initiateProcess($targetFile);
+			$recordCnt = $identierHandler->writeOutData($this->exportID);
+			if($recordCnt){
+				$this->fieldArrMap['identifier'] = $identierHandler->getFieldArrTerms();
+				$msg = $recordCnt . ' records added ';
+				if(!$recordCnt) $msg .= '(file excluded)';
+				$this->logOrEcho($msg, 1);
+			}
 		}
+		return $recordCnt;
 	}
 
 	private function writeAttributeData(){
+		$recordCnt = 0;
 		if($this->exportID){
 			$this->logOrEcho('Creating MeasurementsOrFact (aka Occurrence Attributes) extension file (' . date('h:i:s A') . ')...');
 			$attributeHandler = new DwcArchiverAttribute($this->conn);
 			$attributeHandler->setSchemaType($this->schemaType);
 			$attributeHandler->initiateProcess($this->targetPath . $this->ts . '-attr' . $this->fileExt);
-			$this->fieldArrMap['attribute'] = $attributeHandler->getFieldArrTerms();
-			$attributeHandler->writeOutData($this->exportID);
+			$recordCnt = $attributeHandler->writeOutData($this->exportID);
+			if($recordCnt){
+				$this->fieldArrMap['attribute'] = $attributeHandler->getFieldArrTerms();
+				$msg = $recordCnt . ' records added ';
+				if(!$recordCnt) $msg .= '(file excluded)';
+				$this->logOrEcho($msg, 1);
+			}
 		}
+		return $recordCnt;
 	}
 
 	private function writeMaterialSampleData(){
+		$recordCnt = 0;
 		if($this->exportID){
 			$this->logOrEcho('Creating MaterialSample extension file (' . date('h:i:s A') . ')...');
 			$materialSampleHandler = new DwcArchiverMaterialSample($this->conn);
 			$materialSampleHandler->setSchemaType($this->schemaType);
 			$materialSampleHandler->initiateProcess($this->targetPath . $this->ts . '-matSample' . $this->fileExt);
-			$this->fieldArrMap['materialSample'] = $materialSampleHandler->getFieldArrTerms();
-			$materialSampleHandler->writeOutData($this->exportID);
+			$recordCnt = $materialSampleHandler->writeOutData($this->exportID);
+			if($recordCnt){
+				$this->fieldArrMap['materialSample'] = $materialSampleHandler->getFieldArrTerms();
+				$msg = $recordCnt . ' records added ';
+				if(!$recordCnt) $msg .= '(file excluded)';
+				$this->logOrEcho($msg, 1);
+			}
 		}
+		return $recordCnt;
 	}
 
 	private function writeAssociationData(){
+		$recordCnt = 0;
 		if($this->exportID){
 			$this->logOrEcho('Creating ResourceRelationship extension file (' . date('h:i:s A') . ')...');
 			$associationHandler = new DwcArchiverResourceRelationship($this->conn);
 			$associationHandler->setSchemaType($this->schemaType);
 			$associationHandler->initiateProcess($this->targetPath . $this->ts . '-assoc' . $this->fileExt);
-			$this->fieldArrMap['associations'] = $associationHandler->getFieldArrTerms();
 
-			$associationHandler->writeOutData($this->exportID);
+			$recordCnt = $associationHandler->writeOutData($this->exportID);
 			//Now add inverse relationships
 			$associationHandler->setSqlInverse();
-			$associationHandler->writeOutData($this->exportID);
+			$recordCnt += $associationHandler->writeOutData($this->exportID);
+			if($recordCnt){
+				$this->fieldArrMap['associations'] = $associationHandler->getFieldArrTerms();
+				$msg = $recordCnt . ' records added ';
+				if(!$recordCnt) $msg .= '(file excluded)';
+				$this->logOrEcho($msg, 1);
+			}
 		}
+		return $recordCnt;
 	}
 
 	private function writeCitationFile(){
