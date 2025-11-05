@@ -916,7 +916,7 @@ class DwcArchiverCore extends Manager{
 
 				$zipArchive->close();
 
-				//Clean up temp files
+				//Clean up temp files, which only can be deleted after the zipArchive is closed
 				foreach($unlinkFileArr as $deleteFile){
 					if (file_exists($deleteFile)) unlink($deleteFile);
 				}
@@ -1840,7 +1840,8 @@ class DwcArchiverCore extends Manager{
 
 	public function getOccurrenceFile(){
 		$this->setTargetPath();
-		$filePath = $this->writeOccurrenceFile();
+		$occurFile = $this->targetPath . $this->ts . '-occur' . $this->fileExt;
+		$filePath = $this->writeOccurrenceFile($occurFile);
 		return $filePath;
 	}
 
