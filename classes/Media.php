@@ -1092,11 +1092,13 @@ class Media {
 
 			//Unlink all files
 			if($remove_files) {
+				$root_url = self::getMediaRootUrl();
+				$root_path = self::getMediaRootPath();
 				foreach($media_urls as $url) {
-					if($url && $GLOBALS['IMAGE_ROOT_URL']) {
-						if(strpos($url, $GLOBALS['IMAGE_ROOT_URL']) === 0){		//Only images residing on local server can be deleted
+					if($url && $root_url) {
+						if(strpos($url, $root_url) === 0){		//Only images residing on local server can be deleted
 							//Convert url to a local path
-							$path = $GLOBALS['IMAGE_ROOT_PATH'] . substr($url, strlen($GLOBALS['IMAGE_ROOT_URL']));
+							$path = $root_path . substr($url, strlen($root_url));
 							if(file_exists($path)){
 								if(is_writable($path)) {
 									if(!unlink($path)) {
