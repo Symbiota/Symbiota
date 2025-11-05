@@ -206,11 +206,6 @@ if($tid){
 								<input name='copyright' type='text' value='' size='70' maxlength='250'>
 							</div>
 							<div style='margin-top:2px;'>
-								<b><?php echo $LANG['OCC_REC_NUM']; ?>:</b>
-								<input id="imgoccid-0" name="occid" type="text" value=""/>
-								<a href="#" onclick="openOccurrenceSearch('0')"><?php echo $LANG['LINK_TO_OCC']; ?></a>
-							</div>
-							<div style='margin-top:2px;'>
 								<b><?php echo $LANG['LOCALITY']; ?>:</b>
 								<input name='locality' type='text' value='' size='70' maxlength='250'>
 							</div>
