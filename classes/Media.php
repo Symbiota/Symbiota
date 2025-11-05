@@ -1164,12 +1164,10 @@ class Media {
 				QueryUtil::executeQuery($conn, $query, [$media_id]);
 			}
 
-			$storage = StorageFactory::make();
-
 			//Unlink all files
 			if($remove_files) {
-				$root_url = self::getMediaRootUrl();
-				$root_path = self::getMediaRootPath();
+				$storage = StorageFactory::make();
+
 				foreach($media_urls as $url) {
 					if($url && $storage->file_exists($url)) {
 						if(!$storage->remove($url)) {
