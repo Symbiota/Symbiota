@@ -2,9 +2,10 @@
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/TaxonomyEditorManager.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceListManager.php');
-if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/list.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT . '/content/lang/collections/list.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/list.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/list');
+
 header("Content-Type: text/html; charset=" . $CHARSET);
 
 $taxonFilter = array_key_exists('taxonfilter', $_REQUEST) ? filter_var($_REQUEST['taxonfilter'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -60,13 +61,7 @@ $_SESSION['citationvar'] = $searchVar;
 		let urlQueryStr = "<?php if ($searchVar) echo $searchVar . '&page=' . $pageNumber; ?>";
 
 		$(document).ready(function() {
-			<?php
-			if ($searchVar) {
-			?>
-				sessionStorage.querystr = "<?php echo $searchVar; ?>";
-			<?php
-			}
-			?>
+			setSessionQueryStr();
 
 			$('#tabs').tabs({
 				active: <?= $tabIndex; ?>,
@@ -111,6 +106,7 @@ $_SESSION['citationvar'] = $searchVar;
 </head>
 
 <body>
+	<div id="service-container" data-search-var="<?= $searchVar; ?>"></div>
 	<?php
 	$displayLeftMenu = (isset($collections_listMenu) ? $collections_listMenu : false);
 	include($SERVER_ROOT . '/includes/header.php');
@@ -264,6 +260,13 @@ $_SESSION['citationvar'] = $searchVar;
 												'o.county' => $LANG['COUNTY'],
 												'o.minimumElevationInMeters' => $LANG['ELEVATION']
 											);
+												if (!empty($GLOBALS['ACTIVATE_PALEO'])) {
+													$sortFields = array_merge($sortFields, [
+														'paleo.lateInterval' => $LANG['LATE_INT'],
+														'paleo.earlyInterval' => $LANG['EARLY_INT'],
+														'paleo.formation' => $LANG['FORMATION']
+													]);
+												}
 											foreach ($sortFields as $k => $v) {
 												echo '<option value="' . $k . '" ' . ($k == $sortField1 ? 'SELECTED' : '') . '>' . $v . '</option>';
 											}
@@ -418,8 +421,23 @@ $_SESSION['citationvar'] = $searchVar;
 										if (isset($fieldArr['elev']) && $fieldArr['elev']) $localStr .= ', ' . $fieldArr['elev'] . 'm';
 									}
 									$localStr = trim($localStr, ' ,');
-									echo $localStr;
-									echo '</div><div style="margin:4px">';
+									echo $localStr . '</div>';
+									if (!empty($fieldArr['earlyInterval']) || !empty($fieldArr['lateInterval']) || !empty($fieldArr['formation'])) {
+										echo '<div style="margin:4px;">';
+										echo $LANG['GEO_CONTEXT'] . ':' . ' ';
+										$earlyInt = $fieldArr['earlyInterval'] ?? '';
+										$lateInt = $fieldArr['lateInterval'] ?? '';
+										if ($earlyInt || $lateInt) {
+											if ($lateInt === '' || $earlyInt === $lateInt)
+												echo '<span style="margin-right:20px;">' . $earlyInt . '</span>';
+											else
+												echo '<span style="margin-right:20px;">' . trim("$earlyInt to $lateInt") . '</span>';
+										}
+										if (!empty($fieldArr['formation']))
+											echo '<span>' . $fieldArr['formation'] . '</span>';
+										echo '</div>';
+									}
+									echo '<div style="margin:4px">';
 									echo '<b><a href="#" onclick="return openIndPU(' . $occid . ',' . ($targetClid ? $targetClid : "0") . ');">' . $LANG['FULL_DETAILS'] . '</a></b>';
 									echo '</div></td></tr><tr><td colspan="2"><hr/></td></tr>';
 								}

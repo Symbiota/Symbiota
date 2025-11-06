@@ -7,15 +7,19 @@ include_once($SERVER_ROOT.'/classes/TPEditorManager.php');
 include_once($SERVER_ROOT.'/classes/TPDescEditorManager.php');
 include_once($SERVER_ROOT.'/classes/TPImageEditorManager.php');
 include_once($SERVER_ROOT.'/classes/Media.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.' . $LANG_TAG . '.php'))
-include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.en.php');
+include_once($SERVER_ROOT.'/classes/Paginator.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('taxa/profile/tpeditor');
+
 header('Content-Type: text/html; charset='.$CHARSET);
 
 $tid = array_key_exists('tid', $_REQUEST) ? filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $taxon = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']:'';
 $tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
+$mediaPage = Paginator::getPageRequestVar('mediaPage');
+$mediaSortPage = Paginator::getPageRequestVar('mediaSortPage');
 
 $tEditor = null;
 if($tabIndex == 1 || $tabIndex == 2){
@@ -164,11 +168,6 @@ if($isEditor && $action){
 				return false;
 			}
 		}
-
-		function openOccurrenceSearch(target) {
-			occWindow=open("../../collections/misc/occurrencesearch.php?targetid="+target,"occsearch","resizable=1,scrollbars=1,width=700,height=500,left=20,top=20");
-			if (occWindow.opener == null) occWindow.opener = self;
-		}
 	</script>
 	<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
 	<style>
@@ -220,10 +219,10 @@ if($isEditor && $action){
 				<div id="tabs" style="margin:10px;">
 					<ul>
 						<li><a href="#commontab"><span><?= $LANG['SYN_VERNAC'] ?></span></a></li>
-						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() ?>"><span><?= $LANG['IMAGES'] ?></span></a></li>
-						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&cat=imagequicksort' ?>"><span><?= $LANG['IMAGE_SORT'] ?></span></a></li>
-						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&cat=imageadd' ?>"><span><?= $LANG['ADD_IMAGE'] ?></span></a></li>
-						<li><a href="tpdesceditor.php?tid=<?= $tEditor->getTid() . '&action=' . htmlspecialchars($action, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>"><span><?= $LANG['DESCRIPTIONS'] ?></span></a></li>
+					<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&mediaPage=' . $mediaPage . '&mediaSortPage=' . $mediaSortPage?>"><span><?= $LANG['IMAGES'] ?></span></a></li>
+						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&cat=imagequicksort&mediaSortPage=' . $mediaSortPage . '&mediaPage=' . $mediaPage ?> "><span><?= $LANG['IMAGE_SORT'] ?></span></a></li>
+						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&cat=imageadd' . '&mediaSortPage=' . $mediaSortPage . '&mediaPage=' . $mediaPage ?>"><span><?= $LANG['ADD_IMAGE'] ?></span></a></li>
+						<li><a href="tpdesceditor.php?tid=<?= $tEditor->getTid() . '&action=' . htmlspecialchars($action, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&mediaSortPage=' . $mediaSortPage . '&mediaPage=' . $mediaPage?>"><span><?= $LANG['DESCRIPTIONS'] ?></span></a></li>
 					</ul>
 					<div id="commontab">
 						<?php

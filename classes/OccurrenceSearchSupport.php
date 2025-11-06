@@ -1,5 +1,8 @@
 <?php
-include_once($SERVER_ROOT.'/content/lang/collections/misc/collstats.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/misc/collstats');
+
 class OccurrenceSearchSupport {
 
 	private $conn;
@@ -371,7 +374,7 @@ class OccurrenceSearchSupport {
 		//Do nothing if db = all
 		if($dbSearchTerm != 'all'){
 			if($dbSearchTerm == 'allspec'){
-				$sqlRet .= 'AND (o.collid IN(SELECT collid FROM omcollections WHERE colltype = "Preserved Specimens")) ';
+				$sqlRet .= 'AND (o.collid IN(SELECT collid FROM omcollections WHERE colltype IN("Preserved Specimens","Fossil Specimens"))) ';
 			}
 			elseif($dbSearchTerm == 'allobs'){
 				$sqlRet .= 'AND (o.collid IN(SELECT collid FROM omcollections WHERE colltype IN("General Observations","Observations"))) ';

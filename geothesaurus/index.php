@@ -1,9 +1,11 @@
 <?php
 include_once ('../config/symbini.php');
+global $SERVER_ROOT, $CLIENT_ROOT, $LANG_TAG, $LANG, $CHARSET, $IS_ADMIN, $DEFAULT_TITLE, $GEO_JSON_LAYERS;
+
 include_once ($SERVER_ROOT . '/classes/GeographicThesaurus.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/geothesaurus/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/geothesaurus/index.' . $LANG_TAG . '.php');
-   else include_once($SERVER_ROOT . '/content/lang/geothesaurus/index.en.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('geothesaurus/index');
 
 $geoThesID = array_key_exists('geoThesID', $_REQUEST) ? filter_var($_REQUEST['geoThesID'], FILTER_SANITIZE_NUMBER_INT) : '';
 $parentID = array_key_exists('parentID', $_REQUEST) ? filter_var($_REQUEST['parentID'], FILTER_SANITIZE_NUMBER_INT) : '';
@@ -113,6 +115,7 @@ function listGeoUnits($arr) {
       #status-div{ margin:15px; padding: 15px; color: red; }
       </style>
       <script src="<?php echo $CLIENT_ROOT?>/js/autocomplete-input.js" type="module"></script>
+      <script src="<?php echo $CLIENT_ROOT?>/js/symb/mapAidUtils.js"></script>
       <script type="text/javascript">
 		function toggleEditor(){
 			toggle(".editTerm");
@@ -155,7 +158,12 @@ function listGeoUnits($arr) {
             map_container.style.display = "block";
          }
 
-         let map = new LeafletMap('map_canvas', {center: [0,0], zoom: 1});
+		 let map = new LeafletMap('map_canvas', {
+			center: [0,0],
+			zoom: 1
+		 },
+			JSON.parse(`<?= json_encode($GEO_JSON_LAYERS ?? []) ?>`)
+		 );
 
          map.enableDrawing({
             polyline: false,
@@ -166,16 +174,6 @@ function listGeoUnits($arr) {
          });
 
          map.drawShape({type: "geoJSON", geoJSON: JSON.parse(wkt_form.value)})
-      }
-
-      function openCoordAid(id="footprintwkt") {
-         mapWindow = open(
-            `../collections/tools/mapcoordaid.php?map_mode=polygon&polygon_text_type=geojson&map_mode_strict=true&wkt_input_id=${id}`,
-            "polygon",
-            "resizable=0,width=900,height=630,left=20,top=20",
-         );
-         if (mapWindow.opener == null) mapWindow.opener = self;
-         mapWindow.focus();
       }
 
       function init() {
@@ -194,6 +192,22 @@ function listGeoUnits($arr) {
          if(!auto_input || (auto_input.inputEl && !auto_input.inputEl.value)) return;
          window.location.href = `index.php?geoThesID=${auto_input.value}`
       }
+
+      document.addEventListener('DOMContentLoaded', function() {
+         const footprint = document.getElementById('footprintwkt');
+         const searchableBox = document.getElementById('isSearchable');
+
+         function updateCheckbox() {
+            if (footprint.value.trim() === '') {
+                  searchableBox.checked = false;
+                  searchableBox.disabled = true;
+            } else {
+                  searchableBox.disabled = false;
+            }
+         }
+         updateCheckbox();
+         footprint.addEventListener('input', updateCheckbox);
+      });
       </script>
    </head>
    <body onload="init()">
@@ -328,7 +342,7 @@ function listGeoUnits($arr) {
                   </div>
                   <div class="field-div">
                      <label><?=$LANG['POLYGON']?></label>:
-                     <a onclick="openCoordAid('addfootprintwkt')">
+                     <a onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root: '<?= $CLIENT_ROOT?>', polygon_input_id: 'addfootprintwkt', map_mode_strict: true})">
                         <img src='../images/world.png' style='width:10px;border:0' alt='<?= $LANG['IMG_OF_GLOBE'] ?>' /> <?= $LANG['EDIT_POLYGON']?>
                      </a>
                      <span><textarea id="addfootprintwkt" name="polygon" style="margin-top: 0.5rem; width:98%;height:90px;"></textarea></span>
@@ -464,9 +478,26 @@ function listGeoUnits($arr) {
                            <?= $geoUnit['geoJSON'] !== null? $LANG['YES_POLYGON']: $LANG['NO_POLYGON'] ?>
                         </span>
                         <div id="map_canvas" style="margin: 1rem 0; width:100%; height:20rem"></div>
-                        <a class="editFormElem" onclick="openCoordAid()">
+                        <a class="editFormElem" onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root: '<?= $CLIENT_ROOT?>', polygon_input_id: 'footprintwkt', map_mode_strict: true})">
                            <img src='../images/world.png' style='width:10px;border:0' alt='<?= $LANG['IMG_OF_GLOBE'] ?>' /> <?= $LANG['EDIT_POLYGON']?>
                         </a>
+                        <div class="field-div">
+                        <label><?= $LANG['SEARCHABLE'] ?></label>:
+                        <span class="editTerm">
+                           <?= !empty($geoUnit['isSearchable']) ? $LANG['YES_POLYGON'] : $LANG['NO_POLYGON'] ?>
+                        </span>
+                        <span class="editFormElem" style="margin-top:0.5rem;">
+                           <?php
+                                 $hasPolygon = !empty($geoUnit['geoJSON']);
+                                 $checked = !empty($geoUnit['isSearchable']) ? 'checked' : '';
+                                 $disabled = $hasPolygon ? '' : 'disabled';
+                           ?>
+                           <input type="checkbox" name="isSearchable" class="editFormElem" id="isSearchable" value="1" <?= $checked ?> <?= $disabled ?>/>
+                           <?php if (!$hasPolygon): ?>
+                                 <span>(<?= $LANG['POLYGON_REQUIRED'] ?>)</span>
+                           <?php endif; ?>
+                        </span>
+                     </div>
                         <span class="editFormElem" style="margin-top: 0.5rem">
                            <textarea id="footprintwkt" name="polygon" style="margin-top: 0.5rem; width:98%;height:90px;"><?= isset($geoUnit['geoJSON'])? trim($geoUnit['geoJSON']): null ?></textarea>
                         </span>

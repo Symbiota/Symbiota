@@ -1,8 +1,9 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/profile/occurrencemenu.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/profile/occurrencemenu.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/profile/occurrencemenu.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('profile/occurrencemenu');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 unset($_SESSION['editorquery']);
@@ -16,7 +17,7 @@ $oArr = array();
 $collArr = $specHandler->getCollectionArr();
 foreach($collArr as $id => $collectionArr){
 	if($collectionArr['colltype'] == 'General Observations') $genArr[$id] = $collectionArr;
-	elseif($collectionArr['colltype'] == 'Preserved Specimens') $cArr[$id] = $collectionArr;
+	elseif($collectionArr['colltype'] == 'Preserved Specimens' || $collectionArr['colltype'] == 'Fossil Specimens') $cArr[$id] = $collectionArr;
 	elseif($collectionArr['colltype'] == 'Observations') $oArr[$id] = $collectionArr;
 }
 ?>

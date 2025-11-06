@@ -254,6 +254,10 @@ function verifyCollForm(f) {
     }
   }
   //make sure they have filled out at least one field.
+  const paleoFields = ['lithogroup', 'formation', 'bed', 'member', 'earlyInterval', 'lateInterval'];
+  let paleoValues = paleoFields
+    .filter(field => f[field])
+    .map(field => f[field].value.trim());
   if (
     f.taxa.value == "" &&
     f.country.value == "" &&
@@ -266,7 +270,8 @@ function verifyCollForm(f) {
     f.collector.value == "" &&
     f.collnum.value == "" &&
     f.eventdate1.value == "" &&
-    f.catnum.value == ""
+    f.catnum.value == "" &&
+    paleoValues.every(v => v === "")
   ) {
     alert("Please fill in at least one search parameter!");
     return false;
@@ -339,6 +344,23 @@ function verifyCollForm(f) {
       return false;
     }
   }
+
+  // Geo Context
+  const searchFormPaleo = document.getElementById("searchFormPaleo") || null;
+  if (searchFormPaleo) {
+    let early = f.earlyInterval.value;
+    let late = f.lateInterval.value;
+    if ((early !== "" && late === "") || (early === "" && late !== "")) {
+      alert(translations.INTERVAL_MISSING);
+      return false;
+    }
+
+    if (early in paleoTimes && late in paleoTimes && paleoTimes[early].myaStart <= paleoTimes[late].myaEnd) {
+      alert(translations.INTERVALS_WRONG_ORDER);
+      return false;
+    }
+  }
+
   return true;
 }
 

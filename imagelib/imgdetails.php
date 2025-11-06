@@ -3,8 +3,9 @@ include_once('../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/Media.php');
 include_once($SERVER_ROOT . '/classes/ImageDetailManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
-if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/imagelib/imgdetails.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/imagelib/imgdetails.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/imagelib/imgdetails.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('imagelib/imgdetails');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 

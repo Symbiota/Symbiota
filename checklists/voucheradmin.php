@@ -2,8 +2,10 @@
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherReport.php');
 include_once($SERVER_ROOT.'/classes/ChecklistAdmin.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/voucheradmin.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/checklists/voucheradmin.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT.'/content/lang/checklists/voucheradmin.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('checklists/voucheradmin');
+
 header('Content-Type: text/html; charset='.$CHARSET);
 if(!$SYMB_UID) header('Location: ../profile/index.php?refurl=../checklists/voucheradmin.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
@@ -54,7 +56,7 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USE
 			if(substr($key, 0, 2) == 'i-') {
 				$tid = substr($key, 2);
 				if(is_numeric($tid) && !empty($_POST[$tid])) {
-					if($clManager->addExternalVouchers($tid, urldecode($_POST[$tid]))){
+					if($clManager->addExternalVouchers($tid, json_decode($_POST[$tid], true))){
 						$cnt++;
 					}
 					else{

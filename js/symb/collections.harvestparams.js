@@ -1,6 +1,8 @@
 function displayTableView(f) {
-  f.action = "listtabledisplay.php";
-  f.submit();
+  if (checkHarvestParamsForm(f)) {
+	f.action = "listtabledisplay.php";
+	f.submit();
+  }
 }
 
 function cleanNumericInput(formElem) {
@@ -22,7 +24,7 @@ function checkHarvestParamsForm(frm){
 				break;
 			}
 		}
-		else if(traitInputs[i].name == "materialsampletype"){
+		else if(traitInputs[i].name == "materialsampletype" || traitInputs[i].name == "earlyInterval" || traitInputs[i].name == "lateInterval" ){
 			if(traitInputs[i].value.trim() != ""){
 				searchDefined = true;
 				break;
@@ -80,6 +82,22 @@ function checkHarvestParamsForm(frm){
 	if (frm.pointlat.value != "" || frm.pointlong.value != "" || frm.radius.value != "") {
 		if ( frm.pointlat.value == "" || frm.pointlong.value == "" || frm.radius.value == "" ) {
 			alert("Error: Please make all Lat/Long point-radius values contain a value or all are empty");
+			return false;
+		}
+	}
+
+	// Geo Context
+	const searchFormPaleo = document.getElementById("searchFormPaleo") || null;
+	if (searchFormPaleo) {
+		let early = frm.earlyInterval.value;
+		let late = frm.lateInterval.value;
+		if ((early !== "" && late === "") || (early === "" && late !== "")) {
+			alert(translations.INTERVAL_MISSING);
+			return false;
+		}
+
+		if (early in paleoTimes && late in paleoTimes && paleoTimes[early].myaStart <= paleoTimes[late].myaEnd) {
+			alert(translations.INTERVALS_WRONG_ORDER);
 			return false;
 		}
 	}

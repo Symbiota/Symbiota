@@ -334,6 +334,11 @@ fieldset {
   border-image: initial;
 }
 
+form label:has(+ input[required]):after {
+  color: red;
+  content: '*';
+}
+
 /* Base Button Button CSS
 ========================================================================== */
 button {

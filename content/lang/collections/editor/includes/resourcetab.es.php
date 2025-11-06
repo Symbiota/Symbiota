@@ -16,6 +16,7 @@ $LANG['SURE_UNLINK'] = '¿Está seguro que quiere desvincular el registro como d
 $LANG['ERROR_DELETING'] = 'ERROR eliminando duplicado';
 $LANG['GEN_RES_NOT_BLANK'] = 'Nombre de recurso genético no debe estar vacío';
 $LANG['PERM_REMOVE_RES'] = '¿Está seguro que quiere remover este recurso permanentemente?';
+$LANG['DELETE_ASSOC'] = '¿Está seguro que quiere eliminar esta asociación?';
 
 $LANG['CHECKLIST_LINKS'] = 'Enlaces a Vouchers de Listados de Especies';
 $LANG['LINK_TO_CHECKLIST'] = 'Enlazar Espécimen como Voucher a Listado de Especies';

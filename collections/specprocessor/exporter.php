@@ -1,17 +1,13 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceDownload.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/specprocessor/exporter.' . $LANG_TAG . '.php')){
-	include_once($SERVER_ROOT . '/content/lang/collections/specprocessor/exporter.' . $LANG_TAG . '.php');
-}else{
-	include_once($SERVER_ROOT . '/content/lang/collections/specprocessor/exporter.en.php');
-} 
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/customsearchtype.' . $LANG_TAG . '.php')){
-	include_once($SERVER_ROOT . '/content/lang/collections/customsearchtype.' . $LANG_TAG . '.php');
-}
-else{
-	include_once($SERVER_ROOT . '/content/lang/collections/customsearchtype.en.php');
-}
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load([
+	'collections/specprocessor/exporter',
+	'collections/customsearchtype'
+]);
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
@@ -100,6 +96,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 					var f = cbObj.form;
 					f.identifications.checked = false;
 					f.images.checked = false;
+					f.associations.checked = false;
 					if(f.attributes) f.attributes.checked = false;
 				}
 			}
@@ -490,6 +487,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 										<div style="margin:10px 0px;">
 											<input type="checkbox" name="identifications" value="1" onchange="extensionSelected(this)" checked /> <?php echo $LANG['INCLUDE_DET']; ?><br/>
 											<input type="checkbox" name="images" value="1" onchange="extensionSelected(this)" checked /> <?php echo $LANG['INCLUDE_IMAGES']; ?><br/>
+											<input type="checkbox" name="associations" value="1" onchange="extensionSelected(this)" checked /> <?php echo $LANG['INCLUDE_ASSOCIATIONS']; ?><br/>
 											<?php
 											if($traitArr) echo '<input type="checkbox" name="attributes" value="1" onchange="extensionSelected(this)" checked /> '.$LANG['INCLUDE_ATTRIBUTES'].'<br/>';
 											?>

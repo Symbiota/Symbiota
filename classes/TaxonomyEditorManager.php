@@ -2,9 +2,9 @@
 
 include_once($SERVER_ROOT.'/traits/TaxonomyTrait.php');
 include_once($SERVER_ROOT.'/classes/Manager.php');
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT . '/content/lang/classes/TaxonomyEditorManager.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT . '/content/lang/classes/TaxonomyEditorManager.en.php');
-else include_once($SERVER_ROOT . '/content/lang/classes/TaxonomyEditorManager.' . $LANG_TAG . '.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('classes/TaxonomyEditorManager');
 
 class TaxonomyEditorManager extends Manager{
 

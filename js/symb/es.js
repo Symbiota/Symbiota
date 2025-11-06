@@ -22,5 +22,8 @@ const translations = {
   MATCHES_TWO: "Coincide con dos nombres diferentes en el tesauro. Por favor, seleccione el taxón con el autor correcto.",
   TAXON_NAME_MATCH_WARNING: "Este nombre de taxón coincide con otro que existe en la base de datos. ¿Está seguro de que desea crear uno nuevo con el mismo nombre?",
   SPECIMEN: "Especimen",
-  OBSERVATION: "Observación"
+  OBSERVATION: "Observación",
+  // paleo search
+  INTERVAL_MISSING: "Es necesario seleccionar un valor tanto para el Intervalo Temprano como para el Intervalo Tardío, incluso si son iguales.",
+  INTERVALS_WRONG_ORDER: "El Intervalo Temprano debe ser geológicamente más antiguo que el Intervalo Tardío.",
 };

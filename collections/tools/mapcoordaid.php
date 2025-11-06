@@ -1,8 +1,9 @@
 <?php
-   include_once('../../config/symbini.php');
-   if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/tools/mapaids.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/tools/mapaids.' . $LANG_TAG . '.php');
-	else include_once($SERVER_ROOT . '/content/lang/collections/tools/mapaids.en.php');
-   include_once($SERVER_ROOT.'/classes/ChecklistAdmin.php');
+include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/tools/mapaids');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $clid = array_key_exists("clid",$_REQUEST) && is_numeric($_REQUEST["clid"])? $_REQUEST["clid"]:0;
@@ -331,7 +332,11 @@ else{
 				lang
 			};
 
-			let map = new LeafletMap('map', MapOptions );
+			let map = new LeafletMap(
+				'map',
+				MapOptions,
+				JSON.parse(`<?= json_encode($GEO_JSON_LAYERS ?? []) ?>`)
+			);
 
 			map.enableDrawing({
 				polyline: false,
