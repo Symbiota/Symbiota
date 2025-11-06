@@ -853,10 +853,39 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
     if (!targetElem) {
       if (queriedCollection === "all") {
         targetElem = document.getElementById("dballcb");
+        // Also trigger selection of all collections
+        if (targetElem) {
+          targetElem.checked = true;
+          // Check the "Select All Specimens" and "Select All Observations" checkboxes too
+          const allSpecCheckbox = document.getElementById("dballspeccb");
+          const allObsCheckbox = document.getElementById("dballobscb");
+          if (allSpecCheckbox) allSpecCheckbox.checked = true;
+          if (allObsCheckbox) allObsCheckbox.checked = true;
+          // Check all individual collections
+          handleCategoryChunks(true, "Specimen");
+          handleHeaderSections(true, "Specimen", "Observation");
+          handleCategoryChunks(true, "Observation");
+          handleHeaderSections(true, "Observation");
+        }
+        return;
       } else if (queriedCollection === "allspec") {
         targetElem = document.getElementById("dballspeccb");
+        // Also trigger selection of specimen collections
+        if (targetElem) {
+          targetElem.checked = true;
+          handleCategoryChunks(true, "Specimen");
+          handleHeaderSections(true, "Specimen", "Observation");
+        }
+        return;
       } else if (queriedCollection === "allobs") {
         targetElem = document.getElementById("dballobscb");
+        // Also trigger selection of observation collections
+        if (targetElem) {
+          targetElem.checked = true;
+          handleCategoryChunks(true, "Observation");
+          handleHeaderSections(true, "Observation");
+        }
+        return;
       } else {
         const prefix = "coll-" + queriedCollection + "-";
         const candidateTargetElems =

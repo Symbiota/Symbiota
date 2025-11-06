@@ -342,9 +342,9 @@ class OccurrenceSearchSupport {
 		if(isset($_REQUEST['db'])){
 			$dbInput = $_REQUEST['db'];
 			if(is_array($dbInput)){
-				if(in_array('allspec', $dbInput)) $dbStr = 'allspec';
+				if(in_array('all', $dbInput)) $dbStr = 'all';
+				elseif(in_array('allspec', $dbInput)) $dbStr = 'allspec';
 				elseif(in_array('allobs', $dbInput)) $dbStr = 'allobs';
-				elseif(in_array('all', $dbInput)) $dbStr = 'all';
 				else{
 					$dbArr = array_unique($dbInput);
 					$dbStr = implode(',', $dbArr);
@@ -352,9 +352,9 @@ class OccurrenceSearchSupport {
 			}
 			else{
 				//Input is a string
-				if(strpos($dbStr,'allspec') !== false) $dbStr = 'allspec';
+				if(strpos($dbStr,'all') !== false) $dbStr = 'all';
+				elseif(strpos($dbStr,'allspec') !== false) $dbStr = 'allspec';
 				elseif(strpos($dbStr,'allobs') !== false) $dbStr = 'allobs';
-				elseif(strpos($dbStr,'all') !== false) $dbStr = 'all';
 				else $dbStr = $dbInput;
 			}
 		}
