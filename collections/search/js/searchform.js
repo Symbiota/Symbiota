@@ -851,12 +851,19 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
   queriedCollections.forEach((queriedCollection) => {
     let targetElem = document.getElementById("collection-" + queriedCollection);
     if (!targetElem) {
-      // get elements if categories exist
-      const prefix = "coll-" + queriedCollection + "-";
-      const candidateTargetElems =
-        document.querySelectorAll(`[id^="${prefix}"]`) || [];
-      if (candidateTargetElems.length > 0) {
-        targetElem = candidateTargetElems[0]; // there should only be one match; get the first one
+      if (queriedCollection === "all") {
+        targetElem = document.getElementById("dballcb");
+      } else if (queriedCollection === "allspec") {
+        targetElem = document.getElementById("dballspeccb");
+      } else if (queriedCollection === "allobs") {
+        targetElem = document.getElementById("dballobscb");
+      } else {
+        const prefix = "coll-" + queriedCollection + "-";
+        const candidateTargetElems =
+          document.querySelectorAll(`[id^="${prefix}"]`) || [];
+        if (candidateTargetElems.length > 0) {
+          targetElem = candidateTargetElems[0]; // there should only be one match; get the first one
+        }
       }
     } 
     if(targetElem){
