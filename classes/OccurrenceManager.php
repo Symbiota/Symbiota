@@ -117,8 +117,9 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$this->displaySearchArr[] = $this->LANG['CHECKLIST_ID'] . ': ' . $this->searchTermArr['clid'];
 		}
 		elseif(array_key_exists('db',$this->searchTermArr)){
-			$pattern = '/[^\d,a-zA-Z]/';
-			if (preg_match($pattern, $this->searchTermArr['db'])==0) {
+			$pattern1 = '/[^\d,]/';
+			$pattern2 = '/^all(spec|obs)$/';
+			if (preg_match($pattern1, $this->searchTermArr['db'])==0 || preg_match($pattern2, $this->searchTermArr['db'])==1) {
 				$sqlWhere .= OccurrenceSearchSupport::getDbWhereFrag($this->cleanInStr($this->searchTermArr['db']));
 			}
 		}
