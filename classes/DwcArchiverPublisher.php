@@ -229,7 +229,6 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		}
 
 		$this->logOrEcho('Done!', 1);
-		$this->logOrEcho('-----------------------------------------------------');
 	}
 
 	//Misc data retrival functions

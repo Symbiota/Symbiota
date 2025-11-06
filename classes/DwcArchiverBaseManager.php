@@ -56,7 +56,7 @@ class DwcArchiverBaseManager extends Manager{
 		return $recordCnt;
 	}
 
-	private function writeOutRecord($outputArr){
+	protected function writeOutRecord($outputArr){
 		if($this->fileHandler){
 			if($this->delimiter == ","){
 				fputcsv($this->fileHandler, $outputArr);

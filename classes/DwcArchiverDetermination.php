@@ -56,8 +56,6 @@ class DwcArchiverDetermination extends DwcArchiverBaseManager{
 		$fieldArr['recordID'] = 'd.recordID AS recordID';
 		$termArr['modified'] = 'http://purl.org/dc/terms/modified';
 		$fieldArr['modified'] = 'd.initialTimeStamp AS modified';
-		$termArr['detID'] = 'https://symbiota.org/terms/detID';
-		$fieldArr['detID'] = 'd.detID';
 
 		$this->fieldArr['terms'] = $this->trimBySchemaType($termArr);
 		$this->fieldArr['fields'] =  $this->trimBySchemaType($fieldArr);

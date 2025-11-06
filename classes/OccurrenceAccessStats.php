@@ -121,7 +121,7 @@ class OccurrenceAccessStats extends Manager{
 		return $status;
 	}
 
-	private function insertDownloadOccurrences($occurAccessID, $omExportID){
+	public function insertDownloadOccurrences($occurAccessID, $omExportID){
 		$status = false;
 		if(is_numeric($occurAccessID)){
 			$sql = 'INSERT INTO omoccuraccesslink(occurAccessID, occid) SELECT ?, occid FROM omExportOccurrences WHERE omExportID = ?';
