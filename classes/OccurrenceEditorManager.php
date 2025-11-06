@@ -967,13 +967,6 @@ class OccurrenceEditorManager {
 					//If additional identifiers exist, NULL otherCatalogNumbers
 					if ($postArr['idvalue'][0]) $postArr['othercatalognumbers'] = '';
 
-					//If processing status was "unprocessed" and recordEnteredBy is null, populate with user login
-					$oldProcessingStatus = isset($oldValueArr['omoccurrences']['processingstatus']) ? $oldValueArr['omoccurrences']['processingstatus'] : '';
-					$oldRecordEnteredBy = isset($oldValueArr['omoccurrences']['recordenteredby']) ? $oldValueArr['omoccurrences']['recordenteredby'] : '';
-					if (!$oldRecordEnteredBy && ($oldProcessingStatus == 'unprocessed' || $oldProcessingStatus == 'stage 1')) {
-						$postArr['recordenteredby'] = $GLOBALS['USERNAME'];
-						$editFieldArr['omoccurrences'][] = 'recordenteredby';
-					}
 					//Version edits; add edits to omoccuredits
 					$sqlEditsBase = 'INSERT INTO omoccuredits(occid,reviewstatus,appliedstatus,uid,fieldname,fieldvaluenew,fieldvalueold) ' .
 						'VALUES (' . $this->occid . ',1,' . ($autoCommit ? '1' : '0') . ',' . $GLOBALS['SYMB_UID'] . ',';

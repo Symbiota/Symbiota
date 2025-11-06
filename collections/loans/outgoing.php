@@ -158,9 +158,9 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 	?>
 	<div class='navpath'>
 		<a href='../../index.php'>Home</a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo $LANG['COL_MNG_MENU']; ?></a> &gt;&gt;
-		<a href="index.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo $LANG['LOAN_INDEX']; ?></a> &gt;&gt;
-		<a href="outgoing.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&loanid=' . htmlspecialchars($loanId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><b><?php echo $LANG['OUTGOING_LOAN_MANAGE']; ?></b></a>
+		<a href="../misc/collprofiles.php?collid=<?= $collid ?>&emode=1"><?php echo $LANG['COL_MNG_MENU']; ?></a> &gt;&gt;
+		<a href="index.php?collid=<?= $collid ?>"><?php echo $LANG['LOAN_INDEX']; ?></a> &gt;&gt;
+		<a href="outgoing.php?collid=<?= $collid . '&loanid=' . $loanId ?>"><b><?php echo $LANG['OUTGOING_LOAN_MANAGE']; ?></b></a>
 	</div>
 	<!-- This is inner text! -->
 	<div role="main" id="innertext">
@@ -236,6 +236,7 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 								</span><br />
 								<span>
 									<select name="iidborrower">
+										<option value="">-------------------------------------------</option>
 										<?php
 										$instArr = $loanManager->getInstitutionArr();
 										foreach($instArr as $k => $v){
@@ -248,7 +249,7 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 								if($IS_ADMIN){
 									?>
 									<span>
-										<a href="../misc/institutioneditor.php?iid=<?php echo htmlspecialchars($loanArr['iidborrower'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank" title="<?php echo $LANG['EDIT_INST_DETAILS']; ?>">
+										<a href="../misc/institutioneditor.php?iid=<?= $loanArr['iidborrower'] ?>" target="_blank" title="<?= $LANG['EDIT_INST_DETAILS']; ?>">
 											<img src="../../images/edit.png" style="width:1.3em;" />
 										</a>
 									</span>
@@ -371,7 +372,7 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 											echo '<div style="float: left; margin-left: 5px;"><a href="../../' .
 												$attachArr['path'] . $attachArr['filename']  . '" target="_blank">' .
 												($attachArr['title'] != "" ? $attachArr['title'] : $attachArr['filename']) . '</a></div>';
-											echo '<a href="outgoing.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&loanid=' . htmlspecialchars($loanId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&attachid=' . htmlspecialchars($attachId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&formsubmit=delAttachment"><img src="../../images/del.png" style="width: 1.2em; margin-left: 5px;"></a></li>';
+											echo '<a href="outgoing.php?collid=' . $collid . '&loanid=' . $loanId . '&attachid=' . $attachId . '&formsubmit=delAttachment"><img src="../../images/del.png" style="width: 1.2em; margin-left: 5px;"></a></li>';
 										}
 										echo '</ul>';
 									}
@@ -393,7 +394,7 @@ $specimenTotal = $loanManager->getSpecimenTotal($loanId);
 						<?php
 					}
 					?>
-					<div style="margin:20px"><b>&lt;&lt; <a href="index.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">Return to Loan Index Page</a></b></div>
+					<div style="margin:20px"><b>&lt;&lt; <a href="index.php?collid=<?= $collid ?>">Return to Loan Index Page</a></b></div>
 				</div>
 				<div id="outloandeldiv">
 					<form name="deloutloanform" action="index.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this loan?')">

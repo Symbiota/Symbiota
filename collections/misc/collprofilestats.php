@@ -1,11 +1,13 @@
 <?php
 include_once($SERVER_ROOT.'/content/lang/collections/misc/collprofiles.'.$LANG_TAG.'.php');
 
-$statDisplay = array_key_exists('stat',$_REQUEST)?$_REQUEST['stat']:'';
+$statDisplay = array_key_exists('stat', $_REQUEST) ? $_REQUEST['stat'] : '';
+$collid = filter_var($collid, FILTER_SANITIZE_NUMBER_INT);
 
 if($statDisplay == 'geography'){
-	$countryDist = array_key_exists('country',$_REQUEST) ? $collManager->cleanOutStr($_REQUEST['country']) : '';
-	$stateDist = array_key_exists('state',$_REQUEST) ? $collManager->cleanOutStr($_REQUEST['state']) : '';
+	$countryDist = array_key_exists('country',$_REQUEST) ? $_REQUEST['country'] : '';
+	$stateDist = array_key_exists('state',$_REQUEST) ? $_REQUEST['state'] : '';
+
 	$distArr = $collManager->getGeographyStats($countryDist, $stateDist);
 	if($distArr){
 		?>
@@ -13,24 +15,27 @@ if($statDisplay == 'geography'){
 			<legend>
 				<b>
 					<?php
-					echo (isset($LANG['GEO_DIST'])?$LANG['GEO_DIST']:'Geographic Distribution');
+					echo $LANG['GEO_DIST'];
 					if($stateDist) echo ' - '.$stateDist;
 					elseif($countryDist) echo ' - '.$countryDist;
 					?>
 				</b>
 			</legend>
-			<div style="margin:15px;"><?php echo (isset($LANG['CLICK_ON_SPEC_REC'])?$LANG['CLICK_ON_SPEC_REC']:'Click on the specimen record counts within the parenthesis to return the records for that term'); ?></div>
+			<div style="margin:15px;"><?= $LANG['CLICK_ON_SPEC_REC'] ?></div>
 			<ul>
 				<?php
-				foreach($distArr as $term => $cnt){
-					$countryTerm = ($countryDist?$countryDist:$term);
-					$stateTerm = ($countryDist?($stateDist?$stateDist:$term):'');
-					$countyTerm = ($countryDist && $stateDist?$term:'');
+				foreach($distArr as $term => $subArr){
+					$cnt = $subArr['cnt'];
+					$hasChild = false;
+					if(!$stateDist && $subArr['hasChild']) $hasChild = true;
+					$countryTerm = htmlspecialchars(($countryDist ? $countryDist : $term), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+					$stateTerm = htmlspecialchars(($countryDist ? ($stateDist ? $stateDist : $term) : ''), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+					$countyTerm = htmlspecialchars(($countryDist && $stateDist ? $term : ''), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 					echo '<li>';
-					if(!$stateDist) echo '<a href="collprofiles.php?collid=' .htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&stat=geography&country=' . htmlspecialchars($countryTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&state=' . htmlspecialchars($stateTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '#geographystats">';
+					if($hasChild) echo '<a href="collprofiles.php?collid=' . $collid . '&stat=geography&country=' . $countryTerm . '&state=' . $stateTerm . '#geographystats">';
 					echo $term;
-					if(!$stateDist) echo '</a>';
-					echo ' (<a href="../list.php?db=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&reset=1&country=' . htmlspecialchars($countryTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&state=' . htmlspecialchars($stateTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&county=' . htmlspecialchars($countyTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($cnt, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>)';
+					if($hasChild) echo '</a>';
+					echo ' (<a href="../list.php?db=' . $collid . '&reset=1&usethes=1&country=' . $countryTerm . '&state=' . $stateTerm . '&county=' . $countyTerm . '" target="_blank">' . $cnt . '</a>)';
 					echo '</li>';
 				}
 				?>
@@ -44,19 +49,23 @@ elseif($statDisplay == 'taxonomy'){
 	$taxArr = $collManager->getTaxonomyStats($famDist);
 	?>
 	<fieldset id="taxonomystats" style="margin:20px;width:90%;">
-		<legend><b><?php echo (isset($LANG['TAXON_DIST'])?$LANG['TAXON_DIST']:'Taxon Distribution'); ?></b></legend>
+		<legend><b><?= $LANG['TAXON_DIST'] ?></b></legend>
 		<div style="margin:15px;float:left;">
-			<?php echo (isset($LANG['TAXON_DIST'])?$LANG['TAXON_DIST']:'Click on the specimen record counts within the parenthesis to return the records for that family'); ?>
+			<?= $LANG['TAXON_DIST'] ?>
 		</div>
 		<div style="clear:both;">
 			<ul>
 				<?php
-				foreach($taxArr as $name => $cnt){
+				foreach($taxArr as $name => $subArr){
+					$name = htmlspecialchars($name, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+					$cnt = $subArr['cnt'];
+					$hasChild = false;
+					if($subArr['hasChild']) $hasChild = true;
 					echo '<li>';
-					if(!$famDist) echo '<a href="collprofiles.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&stat=taxonomy&family=' . htmlspecialchars($name, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '#taxonomystats">';
+					if($hasChild) echo '<a href="collprofiles.php?collid=' . $collid . '&stat=taxonomy&family=' . $name . '#taxonomystats">';
 					echo $name;
-					if(!$famDist) echo '</a>';
-					echo ' (<a href="../list.php?db=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&taxontype=' . htmlspecialchars(($famDist?2:3), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&reset=1&taxa=' . htmlspecialchars($name, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($cnt, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>)';
+					if($hasChild) echo '</a>';
+					echo ' (<a href="../list.php?db=' . $collid . '&taxontype=' . ($famDist?2:3) . '&reset=1&usethes=1&taxa=' . $name . '" target="_blank">' . $cnt . '</a>)';
 					echo '</li>';
 				}
 				?>

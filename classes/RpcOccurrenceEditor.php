@@ -238,7 +238,7 @@ class RpcOccurrenceEditor extends RpcBase{
 		return $retArr;
 	}
 
-	//Used by /collections/editor/rpc/localitysecuritycheck.php
+	//Used by /collections/editor/rpc/securitycheck.php
 	public function getStateSecuritySetting($tid, $state){
 		$retStr = 0;
 		if(is_numeric($tid) && $state){

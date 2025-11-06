@@ -29,7 +29,6 @@ $LANG['URL_TO_SOURCE'] = 'URL para o projeto de origem. Use ao vincular a uma m�
 $LANG['SOURCE_URL'] = 'URL de Origem';
 $LANG['COPYRIGHT'] = 'Direitos Autorais';
 $LANG['OCC_REC_NUM'] = 'Registro de Ocorrência #';
-$LANG['LINK_TO_OCC'] = 'Link para registro de ocorrência';
 $LANG['LOCALITY'] = 'Localidade';
 $LANG['NOTES'] = 'Notas';
 $LANG['UPLOAD_IMAGE'] = 'Carregar mídia';

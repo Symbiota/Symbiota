@@ -7,10 +7,10 @@ header("Content-Type: text/html; charset=".$CHARSET);
 if(!$SYMB_UID) header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=../collections/loans/incoming.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $collid = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$loanId = array_key_exists('loanid',$_REQUEST)?$_REQUEST['loanid']:0;
-$loanIdborr = array_key_exists('loanidentifierborr',$_REQUEST)?$_REQUEST['loanidentifierborr']:0;
-$formSubmit = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'';
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
+$loanId = array_key_exists('loanid', $_REQUEST) ? filter_var($_REQUEST['loanid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$loanIdborr = array_key_exists('loanidentifierborr', $_REQUEST) ? filter_var($_REQUEST['loanidentifierborr'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$formSubmit = array_key_exists('formsubmit', $_REQUEST)?$_REQUEST['formsubmit']:'';
 
 $isEditor = 0;
 if($SYMB_UID && $collid){
@@ -96,9 +96,9 @@ if($isEditor){
 	?>
 	<div class="navpath">
 		<a href='../../index.php'>Home</a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo $LANG['COL_MNG_MENU']; ?></a> &gt;&gt;
-		<a href="index.php?tabindex=1&collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo $LANG['LOAN_INDEX']; ?></a> &gt;&gt;
-		<a href="incoming.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&loanid=' . htmlspecialchars($loanId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><b><?php echo $LANG['INCOMING_LOAN_MANAGE']; ?></b></a>
+		<a href="../misc/collprofiles.php?collid=<?= $collid ?>&emode=1"><?= $LANG['COL_MNG_MENU'] ?></a> &gt;&gt;
+		<a href="index.php?tabindex=1&collid=<?= $collid ?>"><?php echo $LANG['LOAN_INDEX']; ?></a> &gt;&gt;
+		<a href="incoming.php?collid=<?= $collid . '&loanid=' . $loanId ?>"><b><?= $LANG['INCOMING_LOAN_MANAGE']; ?></b></a>
 	</div>
 	<!-- This is inner text! -->
 	<div role="main" id="innertext">
@@ -147,7 +147,15 @@ if($isEditor){
 									<?php echo $LANG['ENTERED_BY']; ?>:
 								</span><br />
 								<span>
-									<input type="text" autocomplete="off" name="createdbyborr" maxlength="32" style="width:100px;" value="<?php echo ($loanArr['createdbyborr']?$loanArr['createdbyborr']:$PARAMS_ARR['un']); ?>" onchange=" " disabled />
+									<?php
+									$enteredBy = '';
+									if($loanArr){
+										if(!empty($loanArr['createdbyown'])) $enteredBy = $loanArr['createdbyown'];
+										elseif(!empty($loanArr['createdbyborr'])) $enteredBy = $loanArr['createdbyborr'];
+									}
+									else $enteredBy = $PARAMS_ARR['un'];
+									?>
+									<input type="text" autocomplete="off" name="createdbyborr" maxlength="32" style="width:100px;" value="<?= $enteredBy ?>" disabled />
 								</span>
 							</div>
 							<div style="margin-left:20px;padding-top:4px;float:left;">
@@ -181,6 +189,7 @@ if($isEditor){
 									</span><br />
 									<span>
 										<select name="iidowner">
+											<option value="">-------------------------------------------</option>
 											<?php
 											$instArr = $loanManager->getInstitutionArr();
 											foreach($instArr as $k => $v){
@@ -316,7 +325,7 @@ if($isEditor){
 											echo '<div style="float: left; margin-left: 5px;"><a href="../../' .
 												$attachArr['path'] . $attachArr['filename']  . '" target="_blank" rel="noopener">' .
 												($attachArr['title'] != "" ? $attachArr['title'] : $attachArr['filename']) . '</a></div>';
-											echo '<a href="incoming.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&loanid=' . htmlspecialchars($loanId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&attachid=' . htmlspecialchars($attachId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&formsubmit=delAttachment"><img src="../../images/del.png" style="width: 1.2em; margin-left: 5px;"></a></li>';
+											echo '<a href="incoming.php?collid=' . $collid . '&loanid=' . $loanId . '&attachid=' . $attachId . '&formsubmit=delAttachment"><img src="../../images/del.png" style="width: 1.2em; margin-left: 5px;"></a></li>';
 										}
 										echo '</ul>';
 									}
@@ -339,7 +348,7 @@ if($isEditor){
 						<?php
 					}
 					?>
-					<div style="margin:20px"><b>&lt;&lt; <a href="index.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo $LANG['RETURN_LOAN_INDEX']; ?></a></b></div>
+					<div style="margin:20px"><b>&lt;&lt; <a href="index.php?collid=<?= $collid ?>"><?= $LANG['RETURN_LOAN_INDEX'] ?></a></b></div>
 				</div>
 				<?php
 				if($specList){

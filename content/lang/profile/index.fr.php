@@ -7,6 +7,7 @@ Language: Français (French)
 $LANG['LOGIN'] = 'Connexion';
 $LANG['INVALID_LOGIN'] = 'Nom d\'utilisateur invalide';
 $LANG['INVALID_EMAIL'] = 'Email invalide';
+$LANG['PASSWORD_RESET_REQUIRED'] = 'Réinitialisation du mot de passe requise!<br>Cliquez sur le lien &quot;Réinitialiser le mot de passe&quot; situé sous le champ de connexion.';
 $LANG['INCORRECT'] = "Votre nom d'utilisateur ou mot de passe était incorrect. Veuillez réessayer.<br/> Si vous ne parvenez pas à vous souvenir de vos identifiants de connexion, utilisez les commandes ci-dessous pour récupérer votre identifiant ou réinitialiser votre mot de passe.";
 $LANG['EMAIL_ERROR'] = "Erreur lors de l'envoi de l'e-mail, contactez l'administrateur";
 $LANG['LOGIN_EMAILED'] = "Votre nom d'utilisateur sera envoyé par courriel à";

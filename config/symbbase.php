@@ -5,7 +5,7 @@ if($GLOBALS['HTTPS_ONLY'] ?? true) {
 	header('strict-transport-security: max-age=600');
 }
 date_default_timezone_set('America/Phoenix');
-$CODE_VERSION = '3.3.10';
+$CODE_VERSION = '3.3.11';
 
 set_include_path(get_include_path() . PATH_SEPARATOR . $SERVER_ROOT . PATH_SEPARATOR . $SERVER_ROOT.'/config/' . PATH_SEPARATOR . $SERVER_ROOT.'/classes/');
 
@@ -62,7 +62,10 @@ $PORTAL_PRIVATE = $PRIVATE_VIEWING_ONLY ?? false;
 if (!$SYMB_UID && $PORTAL_PRIVATE){
 	$PRIVATE_VIEWING_OVERRIDES = $PRIVATE_VIEWING_OVERRIDES ?? [];
 	$public_pages = [...$PRIVATE_VIEWING_OVERRIDES, ...['/profile/newprofile.php', '/profile/index.php']];
-	$requested_url = explode($CLIENT_ROOT, $_SERVER['PHP_SELF'])[1];
+	if(!empty($CLIENT_ROOT)){
+		$requested_url = explode($CLIENT_ROOT, $_SERVER['PHP_SELF'])[1];
+	}
+	else $requested_url = $_SERVER['PHP_SELF'];
 	if (!in_array($requested_url, $public_pages)){
 		$referringUrl =  $_SERVER['PHP_SELF'] . (!empty($_SERVER['QUERY_STRING']) ? urlencode( '?' . $_SERVER['QUERY_STRING']) : '');
 		header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=' . $referringUrl);

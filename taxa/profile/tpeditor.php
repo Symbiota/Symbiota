@@ -164,11 +164,6 @@ if($isEditor && $action){
 				return false;
 			}
 		}
-
-		function openOccurrenceSearch(target) {
-			occWindow=open("../../collections/misc/occurrencesearch.php?targetid="+target,"occsearch","resizable=1,scrollbars=1,width=700,height=500,left=20,top=20");
-			if (occWindow.opener == null) occWindow.opener = self;
-		}
 	</script>
 	<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
 	<style>
