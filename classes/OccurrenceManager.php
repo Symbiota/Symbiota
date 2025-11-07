@@ -30,6 +30,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 
 		Language::load('classes/OccurrenceManager');
 
+		global $LANG;
 		$this->LANG = $LANG;
  	}
 
