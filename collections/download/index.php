@@ -3,8 +3,7 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-Language::load('collections/editor/rpc/getPaleoGtsTable');
-Language::load('collections/download/index');
+Language::load(['collections/editor/rpc/getPaleoGtsTable', 'collections/download/index']);
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 
