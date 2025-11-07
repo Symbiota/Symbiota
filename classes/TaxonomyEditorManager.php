@@ -612,7 +612,7 @@ class TaxonomyEditorManager extends Manager{
 			((array_key_exists('tradeName', $dataArr) && $dataArr['tradeName']) ? ('"' . $this->cleanInStr($processedTradeName) . '"') : '""') . ',' .
 			($dataArr['source']? '"'.$this->cleanInStr($dataArr['source']).'"':'NULL').','.
 			($dataArr['notes']?'"'.$this->cleanInStr($dataArr['notes']).'"':'NULL').','.
-			$this->cleanInStr($dataArr['securitystatus']).','.
+			($dataArr['securitystatus']? '"' . $this->cleanInStr($dataArr['securitystatus']) . '",' : '0,').
 			$GLOBALS['SYMB_UID'].',"'.
 			date('Y-m-d H:i:s').'")';
 		$insertStatus = false;
