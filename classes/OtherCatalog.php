@@ -1,7 +1,7 @@
 <?php
 class OtherCatalog {
     private $conn;
-    private $batchSize = 100000;
+    private $batchSize = 25000;
     private $modifiedUID;
     private $count = 0;
     private $totalProcessed = 0;
@@ -49,7 +49,7 @@ class OtherCatalog {
                 $this->totalProcessed++;
 
                 //show progress
-                if ($this->totalProcessed % 1000 === 0 || $this->totalProcessed === $total) {
+                if ($this->totalProcessed % $this->batchSize === 0 || $this->totalProcessed === $total) {
                     $percent = round(($this->totalProcessed / $total) * 100, 2);
                     echo "<div>{$this->totalProcessed} / {$total} processed ({$percent}%)</div>";
                     if (ob_get_level() > 0) ob_flush();
