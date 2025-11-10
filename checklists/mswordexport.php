@@ -1,49 +1,30 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ChecklistManager.php');
-require_once($SERVER_ROOT.'/vendor/phpoffice/phpword/bootstrap.php');
+include_once($SERVER_ROOT . '/classes/ChecklistManager.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+require_once($SERVER_ROOT . '/vendor/phpoffice/phpword/bootstrap.php');
 
-header('Content-Type: text/html; charset='.$CHARSET);
+header('Content-Type: text/html; charset=' . $CHARSET);
 ini_set('max_execution_time', 240); //240 seconds = 4 minutes
 
-$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
-$dynClid = array_key_exists('dynclid',$_REQUEST)?$_REQUEST['dynclid']:0;
-$pageNumber = array_key_exists('pagenumber',$_REQUEST)?$_REQUEST['pagenumber']:1;
-$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']:'';
-$thesFilter = array_key_exists('thesfilter',$_REQUEST)?$_REQUEST['thesfilter']:0;
-$taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?$_REQUEST['taxonfilter']:'';
-$showAuthors = array_key_exists('showauthors',$_REQUEST)?$_REQUEST['showauthors']:0;
-$showSynonyms = array_key_exists('showsynonyms',$_REQUEST)?$_REQUEST['showsynonyms']:0;
-$showCommon = array_key_exists('showcommon',$_REQUEST)?$_REQUEST['showcommon']:0;
-$showImages = array_key_exists('showimages',$_REQUEST)?$_REQUEST['showimages']:0;
-$showVouchers = array_key_exists('showvouchers',$_REQUEST)?$_REQUEST['showvouchers']:0;
-$showAlphaTaxa = array_key_exists('showalphataxa',$_REQUEST)?$_REQUEST['showalphataxa']:0;
-$searchCommon = array_key_exists('searchcommon',$_REQUEST)?$_REQUEST['searchcommon']:0;
-$searchSynonyms = array_key_exists('searchsynonyms',$_REQUEST)?$_REQUEST['searchsynonyms']:0;
-
-//Sanitation
-if(!is_numeric($clid)) $clid = 0;
-if(!is_numeric($dynClid)) $dynClid = 0;
-if(!is_numeric($pid)) $pid = 0;
-if(!is_numeric($pageNumber)) $pageNumber = 1;
-if(!is_numeric($thesFilter)) $thesFilter = 0;
-if(!preg_match('/^[a-z\-\s]+$/i', $taxonFilter)) $taxonFilter = '';
-if(!is_numeric($showAuthors)) $showAuthors = 0;
-if(!is_numeric($showSynonyms)) $showSynonyms = 0;
-if(!is_numeric($showCommon)) $showCommon = 0;
-if(!is_numeric($showImages)) $showImages = 0;
-if(!is_numeric($showVouchers)) $showVouchers = 0;
-if(!is_numeric($showAlphaTaxa)) $showAlphaTaxa = 0;
-if(!is_numeric($searchCommon)) $searchCommon = 0;
-if(!is_numeric($searchSynonyms)) $searchSynonyms = 0;
+$clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$dynClid = array_key_exists('dynclid', $_REQUEST) ? filter_var($_REQUEST['dynclid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$pageNumber = array_key_exists('pagenumber', $_REQUEST) ? filter_var($_REQUEST['pagenumber'], FILTER_SANITIZE_NUMBER_INT) : 1;
+$pid = array_key_exists('pid', $_REQUEST) ? filter_var($_REQUEST['pid'], FILTER_SANITIZE_NUMBER_INT) : '';
+$thesFilter = array_key_exists('thesfilter', $_REQUEST) ? filter_var($_REQUEST['thesfilter'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$taxonFilter = array_key_exists('taxonfilter', $_REQUEST) ? $_REQUEST['taxonfilter'] : '';
+$showAuthors = array_key_exists('showauthors', $_REQUEST) ? filter_var($_REQUEST['showauthors'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$showSynonyms = array_key_exists('showsynonyms', $_REQUEST) ? filter_var($_REQUEST['showsynonyms'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$showCommon = array_key_exists('showcommon', $_REQUEST) ? filter_var($_REQUEST['showcommon'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$showImages = array_key_exists('showimages', $_REQUEST) ? filter_var($_REQUEST['showimages'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$showVouchers = array_key_exists('showvouchers', $_REQUEST) ? filter_var($_REQUEST['showvouchers'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$showAlphaTaxa = array_key_exists('showalphataxa', $_REQUEST) ? filter_var($_REQUEST['showalphataxa'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$searchCommon = array_key_exists('searchcommon', $_REQUEST) ? filter_var($_REQUEST['searchcommon'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$searchSynonyms = array_key_exists('searchsynonyms', $_REQUEST) ? filter_var($_REQUEST['searchsynonyms'], FILTER_SANITIZE_NUMBER_INT) : 0;
 
 $clManager = new ChecklistManager();
-if($clid){
-	$clManager->setClid($clid);
-}
-elseif($dynClid){
-	$clManager->setDynClid($dynClid);
-}
+if($clid) $clManager->setClid($clid);
+elseif($dynClid) $clManager->setDynClid($dynClid);
 $clArray = Array();
 if($clid || $dynClid){
 	$clArray = $clManager->getClMetaData();
@@ -92,10 +73,9 @@ $phpWord->addTableStyle('imageTable',$tableStyle,$colRowStyle);
 $imageCellStyle = array('valign'=>'center','width'=>2475,'borderSize'=>15,'borderColor'=>'808080');
 $blankCellStyle = array('valign'=>'center','width'=>2475,'borderSize'=>15,'borderColor'=>'000000');
 
-$domainRoot = $clManager->getDomain().$CLIENT_ROOT;
+$domainRoot = GeneralUtil::getDomain() . $CLIENT_ROOT;
 $section = $phpWord->addSection(array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>1080,'marginRight'=>1080,'marginTop'=>1080,'marginBottom'=>1080,'headerHeight'=>0,'footerHeight'=>0));
-$title = $clManager->getClName();
-$clManager->cleanOutText($title);
+$title = $clManager->cleanOutText($clManager->getClName());
 $textrun = $section->addTextRun('defaultPara');
 $textrun->addLink($domainRoot.'/checklists/checklist.php?clid='.$clid.'&pid='.$pid.'&dynclid='.$dynClid, $title,'titleFont');
 $textrun->addTextBreak(1);
@@ -117,7 +97,7 @@ if($clid){
 		$textrun->addTextBreak(1);
 	}
 }
-if(($clArray['locality'] || ($clid && ($clArray['latcentroid'] || $clArray['abstract'])) || $clArray['notes'])){
+if(isset($clArray['locality']) || ($clid && isset ($clArray['latcentroid']) || isset ($clArray['abstract']) || isset($clArray['notes']))){
 	$locStr = $clManager->cleanOutText($clArray['locality']);
 	if($clid && $clArray['latcentroid']) $locStr .= ' ('.$clArray['latcentroid'].', '.$clArray['longcentroid'].')';
 	if($locStr){
@@ -125,13 +105,13 @@ if(($clArray['locality'] || ($clid && ($clArray['latcentroid'] || $clArray['abst
 		$textrun->addText($locStr,'textFont');
 		$textrun->addTextBreak(1);
 	}
-	if($clid && $clArray['abstract']){
+	if($clid && isset ($clArray['abstract'])){
 		$abstract = $clManager->cleanOutText($clArray['abstract']);
 		$textrun->addText('Abstract: ', 'topicFont');
 		$textrun->addText($abstract, 'textFont');
 		$textrun->addTextBreak(1);
 	}
-	if($clid && $clArray['notes']){
+	if($clid && isset ($clArray['notes'])){
 		$notes = $clManager->cleanOutText($clArray['notes']);
 		$textrun->addText('Notes: ', 'topicFont');
 		$textrun->addText($notes, 'textFont');
@@ -165,7 +145,7 @@ if($showImages){
 		$imgSrc = ($tu?$tu:$u);
 		if($imageCnt%4 == 1) $table->addRow();
 		if($imgSrc){
-			$imgSrc = (array_key_exists('imageDomain',$GLOBALS)&&substr($imgSrc,0,4)!='http'?$GLOBALS['imageDomain']:'').$imgSrc;
+			$imgSrc = (array_key_exists('MEDIA_DOMAIN', $GLOBALS) && substr($imgSrc, 0, 4) != 'http' ? $GLOBALS['MEDIA_DOMAIN'] : '') . $imgSrc;
 			$cell = $table->addCell(null,$imageCellStyle);
 			$textrun = $cell->addTextRun('imagePara');
 			$textrun->addImage($imgSrc,array('width'=>160,'height'=>160));
@@ -242,12 +222,15 @@ else{
 		}
 	}
 }
-$fileName = str_replace(array(' ', '/', '.'), '_', $clManager->getClName());
+$fileName = str_replace(array(' ', '/', '.'), '_', $clManager->getClName() ?? "");
 $fileName = preg_replace('/[^0-9A-Za-z\-]/', '', $fileName);
 if(strlen($fileName) > 30) $fileName = substr($fileName, 0, 30);
-$targetFile = $SERVER_ROOT.'/temp/report/'.$fileName.'_'.date('Y-m-d').'.docx';
+$targetFile = $TEMP_DIR_ROOT.'/'.$fileName.'_'.date('Y-m-d').'.docx';
 $phpWord->save($targetFile, 'Word2007');
 
+ob_start();
+ob_clean();
+ob_end_flush();
 header('Content-Description: File Transfer');
 header('Content-type: application/force-download');
 header('Content-Disposition: attachment; filename='.basename($targetFile));

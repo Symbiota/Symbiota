@@ -23,6 +23,7 @@ class Manager  {
 			$this->isConnInherited = true;
 		}
 		else $this->conn = MySQLiConnectionFactory::getCon($conType);
+		if($this->conn === null) exit;
  		if($id != null || is_numeric($id)){
 	 		$this->id = $id;
  		}
@@ -89,29 +90,28 @@ class Manager  {
 		return $this->warningArr;
 	}
 
-	public function getDomain(){
-		$domain = 'http://';
-		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $domain = 'https://';
-		if(!empty($GLOBALS['SERVER_HOST'])){
-			if(substr($GLOBALS['SERVER_HOST'], 0, 4) == 'http') $domain = $GLOBALS['SERVER_HOST'];
-			else $domain .= $GLOBALS['SERVER_HOST'];
-		}
-		else $domain .= $_SERVER['SERVER_NAME'];
-		if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443 && !strpos($domain, ':'.$_SERVER['SERVER_PORT'])){
-			$domain .= ':'.$_SERVER['SERVER_PORT'];
-		}
-		$domain = filter_var($domain, FILTER_SANITIZE_URL);
-		return $domain;
-	}
-
 	public function sanitizeInt($int){
 		return filter_var($int, FILTER_SANITIZE_NUMBER_INT);
+	}
+
+	public function cleanOutArray($inputArray){
+		if(is_array($inputArray)){
+			foreach($inputArray as $key => $value){
+				if(is_array($value)){
+					$inputArray[$key] = $this->cleanOutArray($value);
+				}
+				else{
+					$inputArray[$key] = $this->cleanOutStr($value);
+				}
+			}
+		}
+		return $inputArray;
 	}
 
 	public function cleanOutStr($str){
 		//Sanitize output
 		if(!is_string($str) && !is_numeric($str) && !is_bool($str)) $str = '';
-		$str = htmlspecialchars($str, HTML_SPECIAL_CHARS_FLAGS);
+		$str = htmlspecialchars($str, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 		return $str;
 	}
 
@@ -148,7 +148,7 @@ class Manager  {
 			$fixedwordchars=array("'", "'", '"', '"', '-', '...');
 			$retStr = str_replace($badwordchars, $fixedwordchars, $retStr);
 			if($retStr){
-				$retStr = mb_convert_encoding($retStr, $charsetOut, mb_detect_encoding($retStr));
+				$retStr = mb_convert_encoding($retStr, $charsetOut, mb_detect_encoding($retStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 	 		}
 		}
 		return $retStr;

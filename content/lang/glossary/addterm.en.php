@@ -4,6 +4,7 @@
 Language: English
 ------------------
 */
+$LANG['ADD_GLOSSARY_TERM'] = 'Add New Glossary Term';
 
 $LANG['GLOSSARY'] = 'Glossary';
 $LANG['ADD_TERM'] = 'Add New Term';
@@ -31,6 +32,7 @@ $LANG['SEL_REL'] = 'Select Relationship';
 $LANG['SYN'] = 'Synonym';
 $LANG['TRANSLATION'] = 'Translation';
 $LANG['TRANSS'] = 'Translations';
+$LANG['IMAGES'] = 'Images';
 $LANG['SEL_TERM'] = 'Select Term to be Linked';
 $LANG['CREATE_TERM'] = 'Create Term';
 $LANG['NO_PERM'] = 'You do not have editing permissions for glossary';

@@ -8,7 +8,7 @@ use PhpOffice\PhpSpreadsheet\Calculation\Internal\WildcardMatch;
 
 abstract class DatabaseAbstract
 {
-    abstract public static function evaluate($database, $field, $criteria);
+    abstract public static function evaluate(array $database, array|null|int|string $field, array $criteria): null|float|int|string;
 
     /**
      * fieldExtract.
@@ -25,16 +25,21 @@ abstract class DatabaseAbstract
      *                                        represents the position of the column within the list: 1 for
      *                                        the first column, 2 for the second column, and so on.
      */
-    protected static function fieldExtract(array $database, $field): ?int
+    protected static function fieldExtract(array $database, mixed $field): ?int
     {
-        $field = strtoupper(Functions::flattenSingleValue($field));
+        $field = strtoupper(Functions::flattenSingleValue($field) ?? '');
         if ($field === '') {
             return null;
         }
 
         $fieldNames = array_map('strtoupper', array_shift($database));
         if (is_numeric($field)) {
-            return ((int) $field) - 1;
+            $field = (int) $field - 1;
+            if ($field < 0 || $field >= count($fieldNames)) {
+                return null;
+            }
+
+            return $field;
         }
         $key = array_search($field, array_values($fieldNames), true);
 
@@ -95,7 +100,7 @@ abstract class DatabaseAbstract
         foreach ($criteria as $key => $criterion) {
             foreach ($criterion as $field => $value) {
                 $criterionName = $criteriaNames[$field];
-                if ($value !== null && $value !== '') {
+                if ($value !== null) {
                     $condition = self::buildCondition($value, $criterionName);
                     $baseQuery[$key][] = $condition;
                 }
@@ -103,16 +108,14 @@ abstract class DatabaseAbstract
         }
 
         $rowQuery = array_map(
-            function ($rowValue) {
-                return (count($rowValue) > 1) ? 'AND(' . implode(',', $rowValue) . ')' : $rowValue[0];
-            },
+            fn ($rowValue): string => (count($rowValue) > 1) ? 'AND(' . implode(',', $rowValue) . ')' : ($rowValue[0] ?? ''),
             $baseQuery
         );
 
-        return (count($rowQuery) > 1) ? 'OR(' . implode(',', $rowQuery) . ')' : $rowQuery[0];
+        return (count($rowQuery) > 1) ? 'OR(' . implode(',', $rowQuery) . ')' : ($rowQuery[0] ?? '');
     }
 
-    private static function buildCondition($criterion, string $criterionName): string
+    private static function buildCondition(mixed $criterion, string $criterionName): string
     {
         $ifCondition = Functions::ifCondition($criterion);
 
@@ -153,7 +156,7 @@ abstract class DatabaseAbstract
         return $database;
     }
 
-    private static function processCondition(string $criterion, array $fields, array $dataValues, string $conditions)
+    private static function processCondition(string $criterion, array $fields, array $dataValues, string $conditions): string
     {
         $key = array_search($criterion, $fields, true);
 
@@ -163,7 +166,7 @@ abstract class DatabaseAbstract
         } elseif ($dataValues[$key] !== null) {
             $dataValue = $dataValues[$key];
             // escape quotes if we have a string containing quotes
-            if (is_string($dataValue) && strpos($dataValue, '"') !== false) {
+            if (is_string($dataValue) && str_contains($dataValue, '"')) {
                 $dataValue = str_replace('"', '""', $dataValue);
             }
             $dataValue = (is_string($dataValue)) ? Calculation::wrapResult(strtoupper($dataValue)) : $dataValue;

@@ -1,6 +1,8 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ReferenceManager.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/references/authoreditor.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/references/authoreditor.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/references/authoreditor.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 if(!$SYMB_UID) header('Location: ../profile/index.php?refurl=../references/index.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
@@ -48,16 +50,16 @@ if(!$addAuth){
 
 ?>
 <!DOCTYPE HTML>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-	<title><?php echo $DEFAULT_TITLE; ?> Author Management</title>
+	<title><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['AUTHOR_MANAGEMENT']; ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script type="text/javascript" src="../js/jquery.js"></script>
-	<script type="text/javascript" src="../js/jquery-ui.js"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/symb/references.index.js"></script>
 	<script type="text/javascript">
 		var refid = <?php echo $refId; ?>;
@@ -77,7 +79,8 @@ if(!$addAuth){
 	}
 	?>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
+		<h1 class="page-heading">Author Management</h1>
 		<?php
 		if($isEditor){
 			if($statusStr){
@@ -94,7 +97,7 @@ if(!$addAuth){
 					?>
 					<div style="float:right;margin:10px;">
 						<a href="#" onclick="toggle('newauthordiv');">
-							<img src="../images/add.png" alt="Create New Author" />
+							<img src="../images/add.png" style="width:1.3em" alt="Create New Author" />
 						</a>
 					</div>
 					<?php
@@ -133,7 +136,7 @@ if(!$addAuth){
 							echo '<div><ul>';
 							foreach($authArr as $authId => $recArr){
 								echo '<li>';
-								echo '<a href="authoreditor.php?authid='.$authId.'"><b>'.$recArr["authorName"].'</b></a>';
+								echo '<a href="authoreditor.php?authid=' . htmlspecialchars($authId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><b>' . htmlspecialchars($recArr["authorName"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</b></a>';
 								echo '</li>';
 							}
 							echo '</ul></div>';
@@ -186,7 +189,7 @@ if(!$addAuth){
 									echo '<div><ul>';
 									foreach($authPubArr as $refId => $recArr){
 										echo '<li>';
-										echo '<a href="refdetails.php?refid='.$refId.'" target="_blank"><b>'.$recArr["title"].'</b></a>';
+										echo '<a href="refdetails.php?refid=' . htmlspecialchars($refId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank"><b>' . htmlspecialchars($recArr["title"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</b></a>';
 										echo ($recArr["secondarytitle"]?', '.$recArr["secondarytitle"].'.':'');
 										echo ($recArr["shorttitle"]?', '.$recArr["shorttitle"].'.':'');
 										echo ($recArr["pubdate"]?$recArr["pubdate"].'.':'');

@@ -2,6 +2,8 @@
 include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLoans.php');
 require_once $SERVER_ROOT.'/vendor/phpoffice/phpword/bootstrap.php';
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/loans/reports/defaultspecimenlist.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/loans/reports/defaultspecimenlist.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/loans/reports/defaultspecimenlist.en.php');
 
 $collId = $_REQUEST['collid'];
 $outputMode = $_POST['outputmode'];
@@ -63,9 +65,12 @@ if($outputMode == 'doc'){
 		$table->addCell(6000,$cellStyle)->addText(htmlspecialchars($specArr['sciname']),'colFont','colSpace');
 	}
 
-	$targetFile = $SERVER_ROOT.'/temp/report/'.$loanId.'_specimen_list.docx';
+	$targetFile = $TEMP_DIR_ROOT . '/' . $loanId . '_specimen_list.docx';
 	$phpWord->save($targetFile, 'Word2007');
 
+	ob_start();
+	ob_clean();
+	ob_end_flush();
 	header('Content-Description: File Transfer');
 	header('Content-type: application/force-download');
 	header('Content-Disposition: attachment; filename='.basename($targetFile));
@@ -76,15 +81,15 @@ if($outputMode == 'doc'){
 }
 else{
 	?>
-	<html>
+	<!DOCTYPE html>
+	<html lang="<?php echo $LANG_TAG ?>">
 		<head>
-			<title><?php echo $sourceCode.' '.$invoiceArr['loanidentifierown']; ?> Specimen List</title>
+			<title><?php echo $sourceCode.' '.$invoiceArr['loanidentifierown']; ?> <?php echo $LANG['SPECIMEN_LIST']; ?></title>
 			<?php
-	
+
 			include_once($SERVER_ROOT.'/includes/head.php');
 			?>
 			<style type="text/css">
-				body {font-family:arial,sans-serif;}
 				p.printbreak {page-break-after:always;}
 				.header {width:100%;text-align:left;font:14pt arial,sans-serif;}
 				.loaninfo {width:100%;text-align:left;font:11pt arial,sans-serif;}
@@ -93,6 +98,7 @@ else{
 			</style>
 		</head>
 		<body style="background-color:#ffffff;">
+			<h1 class="page-heading screen-reader-only"><?php echo $sourceCode.' '.$invoiceArr['loanidentifierown']; ?> <?php echo $LANG['SPECIMEN_LIST']; ?></h1>
 			<div>
 				<div class="header">
 					List of specimens loaned to: <?php echo $targetCode; ?>

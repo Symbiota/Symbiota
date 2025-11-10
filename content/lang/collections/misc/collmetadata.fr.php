@@ -6,7 +6,8 @@ Language: Français (French)
 */
 
 include_once($SERVER_ROOT.'/content/lang/collections/misc/sharedterms.fr.php');
-
+$LANG['EDIT_METADATA'] = 'Modifier les Métadonnées et les Contacts de la Collection';
+$LANG['COLLECTION_METADATA_EDITOR'] = 'Onglet Éditeur de Métadonnées de Collection';
 $LANG['ADD_SUCCESS'] = 'Nouvelle collection ajoutée avec succès';
 $LANG['ADD_STUFF'] = 'Ajoutez des contacts, des liens vers des ressources ou l\'adresse de l\'institution ci-dessous';
 $LANG['COL_PROFS'] = 'Profils de Collecte';
@@ -30,6 +31,8 @@ $LANG['CONTACT'] = 'Contact';
 $LANG['EMAIL'] = 'Email';
 $LANG['LAT'] = 'Latitude';
 $LANG['LONG'] = 'Longitude';
+$LANG['MAP'] = 'Ouvrir la carte';
+$LANG['MORE_INFO'] = 'Afficher plus d\'informations';
 $LANG['CATEGORY'] = 'Catégorie';
 $LANG['NO_CATEGORY'] = 'Aucune Catégorie';
 $LANG['ALLOW_PUBLIC_EDITS'] = 'Autoriser Modifications Publiques';
@@ -87,6 +90,7 @@ $LANG['OCCID_DEF_2'] = "champ. L'utilisation de l'ID d'Occurrence comme GUID n'e
 						des UUID GUID pour chaque enregistrement. Cette option est recommandée pour beaucoup pour les Jeux de Données en Direct
 						mais non autorisé pour les collections d'instantanés gérées dans le système de gestion local.";
 $LANG['PUBLISH_TO_AGGS'] = 'Publier sur Agrégateurs';
+$LANG['MORE_INFO_AGGREGATORS'] = 'Plus d\'informations sur la publication sur des agrégateurs';
 $LANG['ACTIVATE_GBIF'] = "Active les outils de publication GBIF disponibles dans l'option de menu Publier Archive Darwin Core";
 $LANG['SOURCE_REC_URL'] = "URL de l'Enregistrement Source";
 $LANG['DYNAMIC_LINK_REC'] = "Lien dynamique vers la page d'enregistrement individuel de la base de données source";
@@ -119,5 +123,7 @@ $LANG['SECURITY_KEY'] = 'Clef de Sécurité';
 $LANG['RECORDID'] = 'IDenregistrement';
 $LANG['SAVE_EDITS'] = 'Énregistrer Modifications';
 $LANG['CREATE_COLL_2'] = 'Créer Nouvelle Collection';
+$LANG['TINYMCE_INFO'] = 'Descriptif des collections. Vous pouvez accéder à la barre d\'outils d\'édition de texte pour cette description en appuyant
+						 sur la combinaison de touches ALT + F10 sous Windows ou OPTION + F10 sous MacOS.';
 
 ?>

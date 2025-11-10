@@ -1,10 +1,14 @@
 <?php
 include_once($SERVER_ROOT.'/config/dbconnection.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
+include_once($SERVER_ROOT.'/classes/utilities/TaxonomyUtil.php');
+include_once($SERVER_ROOT.'/classes/utilities/UploadUtil.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyHarvester.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
+include_once($SERVER_ROOT.'/traits/TaxonomyTrait.php');
 
 class TaxonomyUpload{
+
+	use TaxonomyTrait;
 
 	private $conn;
 	private $uploadFileName = '';
@@ -34,30 +38,68 @@ class TaxonomyUpload{
 		}
 	}
 
-	public function setUploadFile($ulFileName = ""){
+	public function uploadFile($ulFileName = ""){
+		$status = false;
 		if($ulFileName){
-			//URL to existing file
+			//URL to file residing on a server
 			if(file_exists($ulFileName)){
 				$pos = strrpos($ulFileName,"/");
 				if(!$pos) $pos = strrpos($ulFileName,"\\");
-				$this->uploadFileName = substr($ulFileName,$pos+1);
-				//$this->outputMsg($this->uploadFileName;
-				copy($ulFileName,$this->uploadTargetPath.$this->uploadFileName);
+				$fileName = substr($ulFileName,$pos+1);
+				if($this->validateFileName($ulFileName)){
+					$this->uploadFileName = $fileName;
+					//$this->outputMsg($this->uploadFileName;
+					if(copy($ulFileName,$this->uploadTargetPath.$this->uploadFileName)){
+						$status = true;
+					}
+					else{
+						$this->errorStr = 'UNABLE_TO_COPY_INPUT_FILE';
+						return false;
+					}
+				}
 			}
 		}
-		elseif(array_key_exists('uploadfile',$_FILES)){
-			$this->uploadFileName = $_FILES['uploadfile']['name'];
-			move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->uploadTargetPath.$this->uploadFileName);
+		elseif(!empty($_FILES['uploadfile']['name'])){
+			try {
+				UploadUtil::checkFileUpload(
+					$_FILES['uploadfile'],
+					UploadUtil::ALLOWED_ZIP_MIMES
+				);
+			} catch(Exception $e) {
+				$this->errorStr = 'ERROR: ' . $e->getMessage();
+				return false;
+			}
+
+			if($this->validateFileName($_FILES['uploadfile']['name'], true)){
+				$this->uploadFileName = $_FILES['uploadfile']['name'];
+				if(move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->uploadTargetPath.$this->uploadFileName)){
+					$status = true;
+				}
+				else{
+					$this->errorStr = 'UABLE_TO_IMPORT_INPUT_FILE';
+					return false;
+				}
+			}
 		}
-		if(file_exists($this->uploadTargetPath.$this->uploadFileName) && substr($this->uploadFileName,-4) == ".zip"){
+		if(file_exists($this->uploadTargetPath.$this->uploadFileName) && substr($this->uploadFileName ?? '',-4) == ".zip"){
 			$zip = new ZipArchive;
 			$zip->open($this->uploadTargetPath.$this->uploadFileName);
 			$zipFile = $this->uploadTargetPath.$this->uploadFileName;
-			$this->uploadFileName = $zip->getNameIndex(0);
-			$zip->extractTo($this->uploadTargetPath);
+			if($this->validateFileName($zip->getNameIndex(0))){
+				$this->uploadFileName = $zip->getNameIndex(0);
+				if(!$zip->extractTo($this->uploadTargetPath)){
+					$this->errorStr = 'UABLE_TO_EXTRACT_INPUT_FILE';
+					$status = false;
+				}
+			}
+			else{
+				$status = false;
+			}
 			$zip->close();
 			unlink($zipFile);
 		}
+
+		return $status;
 	}
 
 	public function loadFile($fieldMap){
@@ -73,6 +115,10 @@ class TaxonomyUpload{
 
 		if(($fh = fopen($this->uploadTargetPath.$this->uploadFileName,'r')) !== FALSE){
 			$headerArr = fgetcsv($fh);
+			if(substr($headerArr[0], 0, 3) == chr(hexdec('EF')).chr(hexdec('BB')).chr(hexdec('BF'))){
+				//Remove UTF-8 BOM
+				$headerArr[0] = trim(substr($headerArr[0], 3), ' "');
+			}
 			$uploadTaxaFieldArr = $this->getUploadTaxaFieldArr();
 			if(!$this->taxonUnitArr) $this->setTaxonUnitArr();
 			$taxonUnitArr = $this->taxonUnitArr;
@@ -166,7 +212,7 @@ class TaxonomyUpload{
 									$inputArr['rankid'] = $id;
 								}
 							}
-							if($infraArr = TaxonomyUtilities::cleanInfra($inputArr['unitind3'])){
+							if($infraArr = TaxonomyUtil::cleanInfra($inputArr['unitind3'])){
 								$inputArr['unitind3'] = $infraArr['infra'];
 								$inputArr['rankid'] = $infraArr['rankid'];
 							}
@@ -179,6 +225,7 @@ class TaxonomyUpload{
 						}
 						//Insert record into uploadtaxa table
 						if(array_key_exists('scinameinput', $inputArr)){
+
 							if(!isset($inputArr['sciname']) && isset($inputArr['unitname1']) && $inputArr['unitname1']){
 								//Build sciname
 								$sciname = $inputArr['unitname1'];
@@ -189,6 +236,12 @@ class TaxonomyUpload{
 										$sciname .= ' '.$inputArr['unitname3'];
 									}
 								}
+								if(!empty($inputArr['cultivarepithet'])){
+									$sciname .= " " . self::standardizeCultivarEpithet($inputArr['cultivarepithet']);
+								}
+								if(!empty($inputArr['tradename'])){
+									$sciname .= ' ' . self::standardizeTradeName($inputArr['tradename']);
+								}
 								$inputArr['sciname'] = trim($sciname);
 							}
 							if(isset($inputArr['rankid']) && $inputArr['rankid'] < 220 && isset($inputArr['sciname']) && !isset($inputArr['unitname1'])){
@@ -197,7 +250,7 @@ class TaxonomyUpload{
 							if(isset($inputArr['acceptedstr'])){
 								if($this->kingdomName == 'Animalia') $inputArr['acceptedstr'] = str_replace(array(' subsp. ',' ssp. ',' var. ',' f. ',' fo. '), ' ', $inputArr['acceptedstr']);
 							}
-							$sciArr = TaxonomyUtilities::parseScientificName($inputArr['scinameinput'],$this->conn,(isset($inputArr['rankid'])?$inputArr['rankid']:0),$this->kingdomName);
+							$sciArr = TaxonomyUtil::parseScientificName($inputArr['scinameinput'],$this->conn,(isset($inputArr['rankid'])?$inputArr['rankid']:0),$this->kingdomName);
 							foreach($sciArr as $sciKey => $sciValue){
 								if(!array_key_exists($sciKey, $inputArr) && $sciValue) $inputArr[$sciKey] = $sciValue;
 							}
@@ -213,13 +266,16 @@ class TaxonomyUpload{
 								if($k == 'author') $sql2 .= ',"'.($inValue?$inValue:'').'"';
 								else $sql2 .= ','.($inValue?'"'.$inValue.'"':'NULL');
 							}
-							$sql = 'INSERT INTO uploadtaxa('.substr($sql1,1).') VALUES('.substr($sql2,1).')';
+							$sql = 'INSERT IGNORE INTO uploadtaxa('.substr($sql1,1).') VALUES('.substr($sql2,1).')';
 							//echo '<div>'.$sql.'</div>';
 							if($this->conn->query($sql)){
 								if($recordCnt%1000 == 0){
 									$this->outputMsg('Upload count: '.$recordCnt,1);
 									ob_flush();
 									flush();
+								}
+								if($warnings = $this->conn->get_warnings()){
+									$this->outputMsg('WARNING at line ' . $recordCnt . ': ' . $warnings->message, 2);
 								}
 							}
 							else{
@@ -245,7 +301,7 @@ class TaxonomyUpload{
 						$this->outputMsg('ERROR loading taxonunit: '.$this->conn->error);
 					}
 				}
-				$this->outputMsg($recordCnt.' taxon records pre-processed');
+				$this->outputMsg(($recordCnt - 1) . ' taxon records pre-processed');
 			}
 			else{
 				$this->outputMsg('ERROR: Scientific name is not mapped to &quot;scinameinput&quot;');
@@ -540,8 +596,15 @@ class TaxonomyUpload{
 		if(!$this->conn->query($sql)){
 			$this->outputMsg('ERROR (3): '.$this->conn->error,1);
 		}
-
 		$this->outputMsg('Populating and mapping parent taxon... ');
+		//Set parents of cultivar taxa
+		$sql = 'UPDATE uploadtaxa
+			SET parentstr = CONCAT_WS(" ", unitname1, unitname2, CONCAT_WS(" ", unitind3, unitname3))
+			WHERE ((parentstr IS NULL) OR (parentstr LIKE "PENDING:%")) AND (rankid = 300)';
+		if(!$this->conn->query($sql)){
+			$this->outputMsg('ERROR: '.$this->conn->error,1);
+		}
+		//Set parent of infraspecific taxa
 		$sql = 'UPDATE uploadtaxa '.
 			'SET parentstr = CONCAT_WS(" ", unitname1, unitname2) '.
 			'WHERE ((parentstr IS NULL) OR (parentstr LIKE "PENDING:%")) AND (rankid > 220)';
@@ -719,8 +782,8 @@ class TaxonomyUpload{
 			return false;
 		}
 		//Prime table with kingdoms that are not yet in table
-		$sql = 'INSERT INTO taxa(kingdomName, SciName, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes, modifiedUid, modifiedTimeStamp) '.
-			'SELECT DISTINCT "'.$this->kingdomName.'", SciName, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, IFNULL(Author,"") AS author, Source, Notes, '.$GLOBALS['SYMB_UID'].' as uid, now() '.
+		$sql = 'INSERT INTO taxa(kingdomName, SciName, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, cultivarEpithet, tradeName, Author, Source, Notes, modifiedUid, modifiedTimeStamp) '.
+			'SELECT DISTINCT "'.$this->kingdomName.'", SciName, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, cultivarEpithet, tradeName, IFNULL(Author,"") AS author, Source, Notes, '.$GLOBALS['SYMB_UID'].' as uid, now() '.
 			'FROM uploadtaxa '.
 			'WHERE (TID IS NULL) AND (rankid = 10)';
 		if($this->conn->query($sql)){
@@ -737,8 +800,8 @@ class TaxonomyUpload{
 		do{
 			$this->outputMsg('Starting loop '.$loopCnt);
 			$this->outputMsg('Transferring taxa to taxon table... ',1);
-			$sql = 'INSERT IGNORE INTO taxa(kingdomName, SciName, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes) '.
-				'SELECT DISTINCT "'.$this->kingdomName.'", SciName, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes '.
+			$sql = 'INSERT IGNORE INTO taxa(kingdomName, SciName, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, cultivarEpithet, tradeName, Author, Source, Notes) '.
+				'SELECT DISTINCT "'.$this->kingdomName.'", SciName, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, cultivarEpithet, tradeName, Author, Source, Notes '.
 				'FROM uploadtaxa '.
 				'WHERE (tid IS NULL) AND (parenttid IS NOT NULL) AND (rankid IS NOT NULL) AND (ErrorStatus IS NULL) '.
 				'ORDER BY RankId ASC ';
@@ -810,11 +873,13 @@ class TaxonomyUpload{
 		}while($loopCnt < 30);
 
 		$this->outputMsg('House cleaning... ');
-		TaxonomyUtilities::buildHierarchyEnumTree($this->conn, $this->taxAuthId);
+		$enumTreeStatus = TaxonomyUtil::buildHierarchyEnumTree($this->conn, $this->taxAuthId);
+		if (is_string($enumTreeStatus)) {
+			$this->outputMsg($enumTreeStatus);
+		}
 
 		//Update occurrences with new tids
 		$occurMaintenance = new OccurrenceMaintenance($this->conn);
-		$occurMaintenance->setCollidStr($this->collid);
 		$occurMaintenance->generalOccurrenceCleaning();
 		$occurMaintenance->batchUpdateGeoreferenceIndex();
 	}
@@ -857,7 +922,7 @@ class TaxonomyUpload{
 
 	public function exportUploadTaxa(){
 		$fieldArr = array('tid','family','scinameInput','sciname','author','rankId','unitInd1','unitName1','unitInd2','unitName2',
-			'unitInd3','unitName3,parentTid','parentStr','acceptance','tidAccepted','acceptedStr','unacceptabilityReason',
+			'unitInd3','unitName3','cultivarEpithet','tradeName','parentTid','parentStr','acceptance','tidAccepted','acceptedStr','unacceptabilityReason',
 			'securityStatus','source','notes','vernacular','vernlang','sourceId','sourceAcceptedId','sourceParentId','errorStatus');
 		$fileName = 'taxaUpload_'.time().'.csv';
 		header ('Cache-Control: must-revalidate, post-check=0, pre-check=0');
@@ -911,11 +976,11 @@ class TaxonomyUpload{
 		$retArr = $this->getUploadTaxaFieldArr();
 		unset($retArr['unitind1']);
 		unset($retArr['unitind2']);
-		$retArr['unitname1'] = 'genus';
+		$retArr['unitname1'] = 'unitname1 (e.g. genus)';
 		//unset($retArr['genus']);
-		$retArr['unitname2'] = 'specificepithet';
-		$retArr['unitind3'] = 'taxonrank';
-		$retArr['unitname3'] = 'infraspecificepithet';
+		$retArr['unitname2'] = 'unitname2 (specificEpithet)';
+		$retArr['unitind3'] = 'unitind3 (taxonrank)';
+		$retArr['unitname3'] = 'unitname3 (infraSpecificEpithet)';
 		if(!$this->taxonUnitArr) $this->setTaxonUnitArr();
 		foreach($this->taxonUnitArr as $rankid => $rankName){
 			if($rankName != 'genus' && $rankid < 220) $retArr[$rankName] = $rankName;
@@ -952,13 +1017,19 @@ class TaxonomyUpload{
 		$sourceArr = array();
 		if(($fh = fopen($this->uploadTargetPath.$this->uploadFileName,'r')) !== FALSE){
 			$headerArr = fgetcsv($fh);
-			foreach($headerArr as $field){
-				$fieldStr = strtolower(TRIM($field));
-				if($fieldStr){
-					$sourceArr[] = $fieldStr;
+			if($headerArr){
+				if(substr($headerArr[0], 0, 3) == chr(hexdec('EF')).chr(hexdec('BB')).chr(hexdec('BF'))){
+					//Remove UTF-8 BOM
+					$headerArr[0] = trim(substr($headerArr[0], 3), ' "');
 				}
-				else{
-					break;
+				foreach($headerArr as $field){
+					$fieldStr = trim($field);
+					if($fieldStr){
+						$sourceArr[] = $fieldStr;
+					}
+					else{
+						break;
+					}
 				}
 			}
 		}
@@ -1027,25 +1098,58 @@ class TaxonomyUpload{
 	//Setters and getters
 	private function setUploadTargetPath(){
 		$tPath = '';
-		if(!$tPath && isset($GLOBALS["TEMP_DIR_ROOT"])){
+		if(!$tPath && isset($GLOBALS['TEMP_DIR_ROOT'])){
 			$tPath = $GLOBALS['TEMP_DIR_ROOT'];
 			if(substr($tPath,-1) != '/') $tPath .= "/";
-			if(file_exists($tPath.'downloads')) $tPath .= 'downloads/';
+			if(file_exists($tPath.'imports')) $tPath .= 'imports/';
 		}
 		elseif(!$tPath){
 			$tPath = ini_get('upload_tmp_dir');
-		}
-		if(!$tPath){
-			$tPath = $GLOBALS['SERVER_ROOT'];
-			if(substr($tPath,-1) != '/') $tPath .= "/";
-			$tPath .= "temp/downloads/";
 		}
 		if(substr($tPath,-1) != '/') $tPath .= '/';
 		$this->uploadTargetPath = $tPath;
 	}
 
 	public function setFileName($fName){
-		$this->uploadFileName = $fName;
+		if($this->validateFileName($fName)){
+			$this->uploadFileName = $fName;
+		}
+		return true;
+	}
+
+	private function validateFileName($fileName, $allowZipFiles = false){
+		if(!$fileName) return false;
+
+		// Disallow directory traversal sequences
+		if (strpos($fileName, '..') !== false || strpos($fileName, '/') !== false || strpos($fileName, '\\') !== false) {
+			$this->errorStr = 'INVALID_INPUT_FILE';
+			return false;
+		}
+
+		// Check for invalid characters
+		$allowedCharsRegex = '/^[a-zA-Z0-9_\-.]+$/';
+		if (!preg_match($allowedCharsRegex, $fileName)) {
+			$this->errorStr = 'INVALID_INPUT_FILE';
+			return false;
+		}
+
+		// Enforce a maximum length (e.g., 255 characters)
+		if (strlen($fileName) > 255) {
+			$this->errorStr = 'INVALID_INPUT_FILE';
+			return false;
+		}
+
+		//Validate file extension
+		$ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+		if($ext != 'csv'){
+			if($allowZipFiles && $ext == 'zip'){
+				return true;
+			}
+			$this->errorStr = 'INVALID_INPUT_FILE';
+			return false;
+		}
+
+		return true;
 	}
 
 	public function getFileName(){
@@ -1135,34 +1239,22 @@ class TaxonomyUpload{
 
 	private function encodeString($inStr){
 		global $CHARSET;
-		$retStr = $inStr;
 		//Get rid of UTF-8 curly smart quotes and dashes
-		$badwordchars=array("\xe2\x80\x98", // left single quote
-							"\xe2\x80\x99", // right single quote
-							"\xe2\x80\x9c", // left double quote
-							"\xe2\x80\x9d", // right double quote
-							"\xe2\x80\x94", // em dash
-							"\xe2\x80\xa6" // elipses
+		$badwordchars=array(
+			"\xe2\x80\x98", // left single quote
+			"\xe2\x80\x99", // right single quote
+			"\xe2\x80\x9c", // left double quote
+			"\xe2\x80\x9d", // right double quote
+			"\xe2\x80\x94", // em dash
+			"\xe2\x80\xa6" // elipses
 		);
 		$fixedwordchars=array("'", "'", '"', '"', '-', '...');
-		$inStr = str_REPLACE($badwordchars, $fixedwordchars, $inStr);
+		$inStr = str_replace($badwordchars, $fixedwordchars, $inStr);
 
 		if($inStr){
-			if(strtolower($CHARSET) == "utf-8" || strtolower($CHARSET) == "utf8"){
-				//$this->outputMsg($inStr.': '.mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true);
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) == "ISO-8859-1"){
-					$retStr = utf8_encode($inStr);
-					//$retStr = iconv("ISO-8859-1//TRANSLIT","UTF-8",$inStr);
-				}
-			}
-			elseif(strtolower($CHARSET) == "iso-8859-1"){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') == "UTF-8"){
-					$retStr = utf8_decode($inStr);
-					//$retStr = iconv("UTF-8","ISO-8859-1//TRANSLIT",$inStr);
-				}
-			}
+			$inStr = mb_convert_encoding($inStr, $CHARSET, mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
  		}
-		return $retStr;
+ 		return $inStr;
 	}
 }
 ?>

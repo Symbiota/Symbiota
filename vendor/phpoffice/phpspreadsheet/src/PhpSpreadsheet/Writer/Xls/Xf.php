@@ -48,88 +48,58 @@ class Xf
 {
     /**
      * Style XF or a cell XF ?
-     *
-     * @var bool
      */
-    private $isStyleXf;
+    private bool $isStyleXf;
 
     /**
      * Index to the FONT record. Index 4 does not exist.
-     *
-     * @var int
      */
-    private $fontIndex;
+    private int $fontIndex;
 
     /**
      * An index (2 bytes) to a FORMAT record (number format).
-     *
-     * @var int
      */
-    private $numberFormatIndex;
+    private int $numberFormatIndex;
 
     /**
      * 1 bit, apparently not used.
-     *
-     * @var int
      */
-    private $textJustLast;
+    private int $textJustLast;
 
     /**
      * The cell's foreground color.
-     *
-     * @var int
      */
-    private $foregroundColor;
+    private int $foregroundColor;
 
     /**
      * The cell's background color.
-     *
-     * @var int
      */
-    private $backgroundColor;
+    private int $backgroundColor;
 
     /**
      * Color of the bottom border of the cell.
-     *
-     * @var int
      */
-    private $bottomBorderColor;
+    private int $bottomBorderColor;
 
     /**
      * Color of the top border of the cell.
-     *
-     * @var int
      */
-    private $topBorderColor;
+    private int $topBorderColor;
 
     /**
      * Color of the left border of the cell.
-     *
-     * @var int
      */
-    private $leftBorderColor;
+    private int $leftBorderColor;
 
     /**
      * Color of the right border of the cell.
-     *
-     * @var int
      */
-    private $rightBorderColor;
+    private int $rightBorderColor;
 
-    /**
-     * @var int
-     */
-    private $diag;
+    //private $diag; // theoretically int, not yet implemented
+    private int $diagColor;
 
-    /**
-     * @var int
-     */
-    private $diagColor;
-
-    /**
-     * @var Style
-     */
-    private $style;
+    private Style $style;
 
     /**
      * Constructor.
@@ -148,7 +118,7 @@ class Xf
         $this->foregroundColor = 0x40;
         $this->backgroundColor = 0x41;
 
-        $this->diag = 0;
+        //$this->diag = 0;
 
         $this->bottomBorderColor = 0x40;
         $this->topBorderColor = 0x40;
@@ -163,7 +133,7 @@ class Xf
      *
      * @return string The XF record
      */
-    public function writeXf()
+    public function writeXf(): string
     {
         // Set the type of the XF record and some of the attributes.
         if ($this->isStyleXf) {
@@ -177,10 +147,10 @@ class Xf
         $atr_num = ($this->numberFormatIndex != 0) ? 1 : 0;
         $atr_fnt = ($this->fontIndex != 0) ? 1 : 0;
         $atr_alc = ((int) $this->style->getAlignment()->getWrapText()) ? 1 : 0;
-        $atr_bdr = (CellBorder::style($this->style->getBorders()->getBottom()) ||
-            CellBorder::style($this->style->getBorders()->getTop()) ||
-            CellBorder::style($this->style->getBorders()->getLeft()) ||
-            CellBorder::style($this->style->getBorders()->getRight())) ? 1 : 0;
+        $atr_bdr = (CellBorder::style($this->style->getBorders()->getBottom())
+            || CellBorder::style($this->style->getBorders()->getTop())
+            || CellBorder::style($this->style->getBorders()->getLeft())
+            || CellBorder::style($this->style->getBorders()->getRight())) ? 1 : 0;
         $atr_pat = ($this->foregroundColor != 0x40) ? 1 : 0;
         $atr_pat = ($this->backgroundColor != 0x41) ? 1 : $atr_pat;
         $atr_pat = CellFill::style($this->style->getFill()) ? 1 : $atr_pat;
@@ -254,7 +224,7 @@ class Xf
         $biff8_options |= (int) $this->style->getAlignment()->getShrinkToFit() << 4;
 
         $data = pack('vvvC', $ifnt, $ifmt, $style, $align);
-        $data .= pack('CCC', self::mapTextRotation($this->style->getAlignment()->getTextRotation()), $biff8_options, $used_attrib);
+        $data .= pack('CCC', self::mapTextRotation((int) $this->style->getAlignment()->getTextRotation()), $biff8_options, $used_attrib);
         $data .= pack('VVv', $border1, $border2, $icv);
 
         return $header . $data;
@@ -262,10 +232,8 @@ class Xf
 
     /**
      * Is this a style XF ?
-     *
-     * @param bool $value
      */
-    public function setIsStyleXf($value): void
+    public function setIsStyleXf(bool $value): void
     {
         $this->isStyleXf = $value;
     }
@@ -275,7 +243,7 @@ class Xf
      *
      * @param int $colorIndex Color index
      */
-    public function setBottomColor($colorIndex): void
+    public function setBottomColor(int $colorIndex): void
     {
         $this->bottomBorderColor = $colorIndex;
     }
@@ -285,7 +253,7 @@ class Xf
      *
      * @param int $colorIndex Color index
      */
-    public function setTopColor($colorIndex): void
+    public function setTopColor(int $colorIndex): void
     {
         $this->topBorderColor = $colorIndex;
     }
@@ -295,7 +263,7 @@ class Xf
      *
      * @param int $colorIndex Color index
      */
-    public function setLeftColor($colorIndex): void
+    public function setLeftColor(int $colorIndex): void
     {
         $this->leftBorderColor = $colorIndex;
     }
@@ -305,7 +273,7 @@ class Xf
      *
      * @param int $colorIndex Color index
      */
-    public function setRightColor($colorIndex): void
+    public function setRightColor(int $colorIndex): void
     {
         $this->rightBorderColor = $colorIndex;
     }
@@ -315,7 +283,7 @@ class Xf
      *
      * @param int $colorIndex Color index
      */
-    public function setDiagColor($colorIndex): void
+    public function setDiagColor(int $colorIndex): void
     {
         $this->diagColor = $colorIndex;
     }
@@ -325,7 +293,7 @@ class Xf
      *
      * @param int $colorIndex Color index
      */
-    public function setFgColor($colorIndex): void
+    public function setFgColor(int $colorIndex): void
     {
         $this->foregroundColor = $colorIndex;
     }
@@ -335,7 +303,7 @@ class Xf
      *
      * @param int $colorIndex Color index
      */
-    public function setBgColor($colorIndex): void
+    public function setBgColor(int $colorIndex): void
     {
         $this->backgroundColor = $colorIndex;
     }
@@ -346,7 +314,7 @@ class Xf
      *
      * @param int $numberFormatIndex Index to format record
      */
-    public function setNumberFormatIndex($numberFormatIndex): void
+    public function setNumberFormatIndex(int $numberFormatIndex): void
     {
         $this->numberFormatIndex = $numberFormatIndex;
     }
@@ -356,19 +324,15 @@ class Xf
      *
      * @param int $value Font index, note that value 4 does not exist
      */
-    public function setFontIndex($value): void
+    public function setFontIndex(int $value): void
     {
         $this->fontIndex = $value;
     }
 
     /**
      * Map to BIFF8 codes for text rotation angle.
-     *
-     * @param int $textRotation
-     *
-     * @return int
      */
-    private static function mapTextRotation($textRotation)
+    private static function mapTextRotation(int $textRotation): int
     {
         if ($textRotation >= 0) {
             return $textRotation;
@@ -388,14 +352,10 @@ class Xf
 
     /**
      * Map locked values.
-     *
-     * @param string $locked
-     *
-     * @return int
      */
-    private static function mapLocked($locked)
+    private static function mapLocked(?string $locked): int
     {
-        return array_key_exists($locked, self::LOCK_ARRAY) ? self::LOCK_ARRAY[$locked] : 1;
+        return $locked !== null && array_key_exists($locked, self::LOCK_ARRAY) ? self::LOCK_ARRAY[$locked] : 1;
     }
 
     private const HIDDEN_ARRAY = [
@@ -406,13 +366,9 @@ class Xf
 
     /**
      * Map hidden.
-     *
-     * @param string $hidden
-     *
-     * @return int
      */
-    private static function mapHidden($hidden)
+    private static function mapHidden(?string $hidden): int
     {
-        return array_key_exists($hidden, self::HIDDEN_ARRAY) ? self::HIDDEN_ARRAY[$hidden] : 0;
+        return $hidden !== null && array_key_exists($hidden, self::HIDDEN_ARRAY) ? self::HIDDEN_ARRAY[$hidden] : 0;
     }
 }

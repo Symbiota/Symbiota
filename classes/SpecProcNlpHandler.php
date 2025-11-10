@@ -1,6 +1,6 @@
 <?php
 include_once($SERVER_ROOT.'/config/dbconnection.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceUtilities.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 include_once($SERVER_ROOT.'/classes/SpecProcNlpSalix.php');
 include_once($SERVER_ROOT.'/classes/SpecProcNlpLbcc.php');
 include_once($SERVER_ROOT.'/classes/SpecProcNlpLbccLichen.php');
@@ -22,7 +22,7 @@ class SpecProcNlpHandler {
 
 	function __construct() {
 		$this->conn = MySQLiConnectionFactory::getCon("write");
-		$this->outFilePath = $GLOBALS['serverRoot'].(substr($GLOBALS['serverRoot'],-1)=='/'?'':'/')."content/logs/LbccParser_".date('Y-m-d_his');
+		$this->outFilePath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1)=='/'?'':'/')."content/logs/LbccParser_".date('Y-m-d_his');
 		set_time_limit(7200);
 	}
 
@@ -30,8 +30,8 @@ class SpecProcNlpHandler {
 		if($this->printMode == 1){
 			$this->printSummary();
 			$this->outToReport('Processing finished: '.date('Y-m-d h:i:s A')."\n\n");
-			echo '<div style="margin-left:10px;">Output file: <a href="'.$this->outFilePath.'.txt">'.$this->outFilePath.'.txt</a></div>';
-			echo '<div style="margin-left:10px;">Log file: <a href="'.$this->outFilePath.'.log">'.$this->outFilePath.'.log</a></div>';
+			echo '<div style="margin-left:10px;">Output file: <a href="' . htmlspecialchars($this->outFilePath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '.txt">' . htmlspecialchars($this->outFilePath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '.txt</a></div>';
+			echo '<div style="margin-left:10px;">Log file: <a href="' . htmlspecialchars($this->outFilePath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '.log">' . htmlspecialchars($this->outFilePath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '.log</a></div>';
 			if($this->outFH) fclose($this->outFH);
 		}
 		elseif($this->printMode == 2){
@@ -50,7 +50,7 @@ class SpecProcNlpHandler {
 			fclose($outFinalFH);
 
 			$this->logMsg($this->totalStats['collmeta']['totalcnt'].' records output to CSV');
-			echo '<div style="margin-left:10px;">Output file: <a href="'.$this->outFilePath.'.csv">'.$this->outFilePath.'.csv</a></div>';
+			echo '<div style="margin-left:10px;">Output file: <a href="' . htmlspecialchars($this->outFilePath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE)  .'.csv">' . htmlspecialchars($this->outFilePath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '.csv</a></div>';
 		}
 		elseif($this->printMode === 0){
 			$this->logMsg($this->totalStats['collmeta']['totalcnt'].' records processed and databased');
@@ -122,8 +122,8 @@ class SpecProcNlpHandler {
 		//Get raw OCR string
 		$sql = 'SELECT r.rawstr, o.collid, o.catalogNumber '.
 			'FROM omoccurrences o '.
-			'INNER JOIN images i ON o.occid = i.occid '.
-			'INNER JOIN specprocessorrawlabels r ON i.imgid = r.imgid '.
+			'INNER JOIN media m ON o.occid = m.occid '.
+			'INNER JOIN specprocessorrawlabels r ON m.mediaID = r.mediaID '.
 			'WHERE (r.prlid = '.$prlid.')';
 		//echo $sql;
 		$rs = $this->conn->query($sql);
@@ -142,9 +142,9 @@ class SpecProcNlpHandler {
 		$totalCnt = 0;
 		foreach($collArr as $collid){
 			$this->setCollId($collid);
-			$sql = 'SELECT r.prlid, r.rawstr, r.source, o.occid, o.collid, o.catalognumber, IFNULL(i.originalurl,i.url) AS url '.
-				'FROM specprocessorrawlabels r LEFT JOIN images i ON r.imgid = i.imgid '.
-				'INNER JOIN omoccurrences o ON IFNULL(i.occid,r.occid) = o.occid '.
+			$sql = 'SELECT r.prlid, r.rawstr, r.source, o.occid, o.collid, o.catalognumber, IFNULL(m.originalurl,m.url) AS url '.
+				'FROM specprocessorrawlabels r LEFT JOIN media m ON r.mediaID = m.mediaID '.
+				'INNER JOIN omoccurrences o ON IFNULL(m.occid,r.occid) = o.occid '.
 				'WHERE length(r.rawstr) > 20 AND (o.processingstatus = "unprocessed") ';
 			//if($this->collId) $sql .= 'AND (o.collid = '.$this->collId.') ';
 			if($source) $sql .= 'AND r.source LIKE "%'.$source.'%" ';
@@ -199,33 +199,13 @@ class SpecProcNlpHandler {
 		$this->totalStats['collmeta']['totalcnt'] = $totalCnt;
 	}
 
-	private function getRawOcr($prlid){
-		$retArr = array();
-		//Get raw OCR string
-		$sql = 'SELECT r.rawstr, o.collid, o.catalogNumber '.
-			'FROM omoccurrences o '.
-			'INNER JOIN images i ON o.occid = i.occid '.
-			'INNER JOIN specprocessorrawlabels r ON i.imgid = r.imgid '.
-			'WHERE (r.prlid = '.$prlid.')';
-		//echo $sql;
-		$rs = $this->conn->query($sql);
-		if($r = $rs->fetch_object()){
-			$retArr['rawocr'] = $r->rawstr;
-			$retArr['collid'] = $r->collid;
-			$retArr['catnum'] = $r->catalogNumber;
-		}
-		$rs->free();
-		return $retArr;
-	}
-
 	public function convertDwcArrToJson($dwcArr){
 		//Convert to UTF-8, json_encode call requires UTF-8
 		foreach($dwcArr as $k => $v){
 			if($v){
 				//If is a latin character set, convert to UTF-8
-				if(mb_detect_encoding($v,'UTF-8,ISO-8859-1',true) == "ISO-8859-1"){
-					$dwcArr[$k] = utf8_encode($v);
-					//$dwcArr[$k] = iconv("ISO-8859-1//TRANSLIT","UTF-8",$v);
+				if(mb_detect_encoding($v,'UTF-8,ISO-8859-1',true) == 'ISO-8859-1'){
+					$dwcArr[$k] = mb_convert_encoding($v, 'UTF-8', 'ISO-8859-1');
 				}
 			}
 			else{
@@ -296,8 +276,8 @@ class SpecProcNlpHandler {
 		if(isset($dwcArr['month']) && !is_numeric($dwcArr['month'])){
 			//Month should be numeric, yet is a sting. Check to see if it is the month name or abbreviation
 			$mStr = strtolower(substr($dwcArr['month'],0,3));
-			if(array_key_exists($mStr,OccurrenceUtilities::$monthNames)){
-				$dwcArr['month'] = OccurrenceUtilities::$monthNames[$mStr];
+			if(array_key_exists($mStr,OccurrenceUtil::$monthNames)){
+				$dwcArr['month'] = OccurrenceUtil::$monthNames[$mStr];
 			}
 			else{
 				if(!isset($dwcArr['verbatimeventdate']) || !$dwcArr['verbatimeventdate']){
@@ -316,7 +296,7 @@ class SpecProcNlpHandler {
 			$dwcArr['eventdate'] = $dwcArr['year'].'-'.$dwcArr['month'].'-'.$dwcArr['day'];
 		}
 		if(!isset($dwcArr['eventdate']) && isset($dwcArr['verbatimeventdate'])){
-			$dwcArr['eventdate'] = OccurrenceUtilities::formatDate($dwcArr['verbatimeventdate']);
+			$dwcArr['eventdate'] = OccurrenceUtil::formatDate($dwcArr['verbatimeventdate']);
 		}
 
 		//Load data
@@ -343,7 +323,7 @@ class SpecProcNlpHandler {
 					}
 					elseif(strpos($targetFields[$fieldTerm],'date') === 0){
 						//Target field is a date data type
-						$dateValue = OccurrenceUtilities::formatDate($valueStr);
+						$dateValue = OccurrenceUtil::formatDate($valueStr);
 						if($dateValue){
 							$valueIn = '"'.$dateValue.'"';
 						}

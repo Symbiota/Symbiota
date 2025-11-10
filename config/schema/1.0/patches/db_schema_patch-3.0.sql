@@ -14,7 +14,7 @@ CREATE TABLE `adminconfig` (
   INDEX `FK_adminConfig_uid_idx` (`modifiedUid` ASC),
   UNIQUE INDEX `UQ_adminconfig_name` (`attributeName` ASC),
   CONSTRAINT `FK_adminConfig_uid`  FOREIGN KEY (`modifiedUid`)  REFERENCES `users` (`uid`)  ON DELETE RESTRICT  ON UPDATE RESTRICT
-);
+) ENGINE=InnoDB;
 
 ALTER TABLE `agents` 
   CHANGE COLUMN `taxonomicgroups` `taxonomicGroups` text NULL DEFAULT NULL ,
@@ -30,8 +30,8 @@ ALTER TABLE `agents`
   ADD INDEX `IX_agents_firstname` (`firstName` ASC);
 
 ALTER TABLE `agents` 
-  ADD INDEX `FK_agents_preferred_recby_idx` (`preferredRecByID` ASC),
-  DROP INDEX `FK_agents_preferred_recby`;
+  DROP INDEX `FK_agents_preferred_recby`,
+  ADD INDEX `FK_agents_preferred_recby_idx` (`preferredRecByID` ASC);
 
 CREATE TABLE `agentoccurrencelink` (
   `agentID` BIGINT(20) NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE `agentoccurrencelink` (
   CONSTRAINT `FK_agentoccurlink_occid`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_agentoccurlink_created`  FOREIGN KEY (`createdUid`)  REFERENCES `users` (`uid`)  ON DELETE RESTRICT  ON UPDATE CASCADE,
   CONSTRAINT `FK_agentoccurlink_modified` FOREIGN KEY (`modifiedUid`)  REFERENCES `users` (`uid`)  ON DELETE RESTRICT  ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
 INSERT IGNORE INTO agents(familyName,firstName,middleName,startYearActive,endYearActive,notes,rating,guid)
   SELECT DISTINCT c.familyname, c.firstname, c.middlename, c.startyearactive, c.endyearactive, c.notes, c.rating, c.guid 
@@ -79,7 +79,7 @@ CREATE TABLE `agentdeterminationlink` (
   CONSTRAINT `FK_agentdetlink_detid`  FOREIGN KEY (`detID`)  REFERENCES `omoccurdeterminations` (`detid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_agentdetlink_modified`  FOREIGN KEY (`modifiedUid`)  REFERENCES `users` (`uid`)  ON DELETE RESTRICT  ON UPDATE CASCADE,
   CONSTRAINT `FK_agentdetlink_created`  FOREIGN KEY (`createdUid`)  REFERENCES `users` (`uid`)  ON DELETE RESTRICT  ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
 ALTER TABLE `agentlinks` 
   CHANGE COLUMN `isprimarytopicof` `isPrimaryTopicOf` TINYINT(1) NOT NULL DEFAULT 1 ;
@@ -267,7 +267,7 @@ ALTER TABLE `geographicthesaurus`
   DROP FOREIGN KEY `FK_geothes_parentID`;
 
 ALTER TABLE `geographicthesaurus` 
-ADD CONSTRAINT `FK_geothes_parentID`  FOREIGN KEY (`parentID`)  REFERENCES `geographicthesaurus` (`geoThesID`)  ON DELETE RESTRICT  ON UPDATE CASCADE;
+  ADD CONSTRAINT `FK_geothes_parentID`  FOREIGN KEY (`parentID`)  REFERENCES `geographicthesaurus` (`geoThesID`)  ON DELETE RESTRICT  ON UPDATE CASCADE;
 
 ALTER TABLE `geographicthesaurus` 
   ADD UNIQUE INDEX `UQ_geothes` (`geoterm` ASC, `parentID` ASC);
@@ -311,7 +311,7 @@ CREATE TABLE `glossarycategory` (
   CONSTRAINT `FK_glossarycategory_lang`   FOREIGN KEY (`langID`)  REFERENCES `adminlanguages` (`langid`)  ON DELETE SET NULL  ON UPDATE CASCADE,
   CONSTRAINT `FK_glossarycategory_transCatID`  FOREIGN KEY (`translationCatID`)  REFERENCES `glossarycategory` (`glossCatID`)  ON DELETE SET NULL  ON UPDATE CASCADE,
   CONSTRAINT `FK_glossarycategory_parentCatID`  FOREIGN KEY (`parentCatID`)  REFERENCES `glossarycategory` (`glossCatID`)  ON DELETE SET NULL  ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE `glossarycategorylink` (
   `glossCatLinkID` INT NOT NULL AUTO_INCREMENT,
@@ -323,7 +323,7 @@ CREATE TABLE `glossarycategorylink` (
   INDEX `FK_glossCatLink_glossCatID_idx` (`glossCatID` ASC),
   CONSTRAINT `FK_glossCatLink_glossID`  FOREIGN KEY (`glossID`)  REFERENCES `glossary` (`glossid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_glossCatLink_glossCatID`  FOREIGN KEY (`glossCatID`)  REFERENCES `glossarycategory` (`glossCatID`)  ON DELETE CASCADE  ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
 
 ALTER TABLE `igsnverification` 
@@ -391,7 +391,7 @@ CREATE TABLE `imagetaggroup` (
   `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp,
   PRIMARY KEY (`imgTagGroupID`),
   INDEX `IX_imagetaggroup` (`groupName` ASC)
-);
+) ENGINE=InnoDB;
 
 ALTER TABLE `imagetagkey` 
   ADD COLUMN `imgTagGroupID` INT NULL AFTER `tagkey`,
@@ -481,7 +481,7 @@ CREATE TABLE `omcollproperties` (
   INDEX `FK_omcollproperties_uid_idx` (`modifiedUid` ASC),
   CONSTRAINT `FK_omcollproperties_collid`  FOREIGN KEY (`collid`)  REFERENCES `omcollections` (`CollID`)   ON DELETE CASCADE   ON UPDATE CASCADE,
   CONSTRAINT `FK_omcollproperties_uid`   FOREIGN KEY (`modifiedUid`)   REFERENCES `users` (`uid`)   ON DELETE CASCADE   ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
 
 CREATE TABLE `omcrowdsourceproject` (
@@ -497,7 +497,7 @@ CREATE TABLE `omcrowdsourceproject` (
   `modifiedTimestamp` DATETIME NULL,
   `initialTimestamp` TIMESTAMP NOT NULL DEFAULT current_timestamp,
   PRIMARY KEY (`csProjID`)
-);
+) ENGINE=InnoDB;
 
 ALTER TABLE `omcrowdsourceproject` 
   ADD INDEX `FK_croudsourceproj_uid_idx` (`modifiedUid` ASC) ;
@@ -546,7 +546,7 @@ CREATE TABLE `omoccuraccesssummary` (
   `initialTimestamp` TIMESTAMP NOT NULL DEFAULT current_timestamp,
   PRIMARY KEY (`oasid`),
   UNIQUE INDEX `UNIQUE_occuraccess` (`ipaddress` ASC, `accessdate` ASC, `accesstype` ASC)
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE `omoccuraccesssummarylink` (
   `oasid` BIGINT(20) UNSIGNED NOT NULL,
@@ -556,7 +556,7 @@ CREATE TABLE `omoccuraccesssummarylink` (
   INDEX `omoccuraccesssummarylink_occid_idx` (`occid` ASC),
   CONSTRAINT `FK_omoccuraccesssummarylink_oasid`  FOREIGN KEY (`oasid`)  REFERENCES `omoccuraccesssummary` (`oasid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_omoccuraccesssummarylink_occid`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
 DROP TABLE omoccuraccessstats;
 
@@ -579,7 +579,7 @@ CREATE TABLE `omoccurarchive` (
   INDEX `FK_occurarchive_uid_idx` (`createdUid` ASC),
   UNIQUE INDEX `UQ_occurarchive_occid` (`occid` ASC),
   CONSTRAINT `FK_occurarchive_uid` FOREIGN KEY (`createdUid`)  REFERENCES `users` (`uid`)  ON DELETE RESTRICT  ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
 INSERT INTO omoccurarchive(archiveObj, occid, recordID)
 SELECT archiveObj, occid, guid FROM guidoccurrences WHERE archiveObj IS NOT NULL;
@@ -732,7 +732,7 @@ CREATE TABLE `omoccurloansattachment` (
   PRIMARY KEY (`attachmentid`),
   KEY `FK_occurloansattachment_loanid_idx` (`loanid`),
   KEY `FK_occurloansattachment_exchangeid_idx` (`exchangeid`)
-);
+) ENGINE=InnoDB;
 
 ALTER TABLE `omoccurloansattachment`
   ADD CONSTRAINT `FK_occurloansattachment_exchangeid` FOREIGN KEY (`exchangeid`) REFERENCES `omoccurexchange` (`exchangeid`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -794,7 +794,7 @@ CREATE TABLE `portalindex` (
   `initialTimestamp` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`portalID`),
   UNIQUE KEY `UQ_portalIndex_guid` (`guid`)
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE `portalpublications` (
   `pubid` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -820,7 +820,7 @@ CREATE TABLE `portalpublications` (
   CONSTRAINT `FK_portalpub_collid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`collID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_portalpub_createdUid` FOREIGN KEY (`createdUid`) REFERENCES `users` (`uid`) ON UPDATE CASCADE,
   CONSTRAINT `FK_portalpub_portalID` FOREIGN KEY (`portalID`) REFERENCES `portalindex` (`portalID`) ON DELETE CASCADE ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE `portaloccurrences` (
   `portalOccurrencesID` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -836,7 +836,7 @@ CREATE TABLE `portaloccurrences` (
   UNIQUE INDEX `UQ_portalOccur_occid_pubid` (`occid` ASC, `pubid` ASC),
   CONSTRAINT `FK_portalOccur_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_portalOccur_pubid` FOREIGN KEY (`pubid`) REFERENCES `portalpublications` (`pubid`) ON DELETE CASCADE ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
 
 ALTER TABLE `specprocessorprojects` 
@@ -919,7 +919,7 @@ CREATE TABLE `taxadescrprofile` (
   INDEX `FK_taxadescrprofile_uid_idx` (`modifiedUid` ASC),
   CONSTRAINT `FK_taxadescrprofile_langid`  FOREIGN KEY (`langid`)  REFERENCES `adminlanguages` (`langid`)  ON DELETE SET NULL  ON UPDATE CASCADE,
   CONSTRAINT `FK_taxadescrprofile_uid`  FOREIGN KEY (`modifiedUid`)  REFERENCES `users` (`uid`)  ON DELETE SET NULL  ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
 ALTER TABLE `taxadescrblock` 
   ADD COLUMN `tdProfileID` INT UNSIGNED NULL AFTER `tdbid`,
@@ -1087,7 +1087,7 @@ CREATE TABLE `ommaterialsample` (
   INDEX `FK_ommatsample_prepUid_idx` (`preparedByUid` ASC),
   CONSTRAINT `FK_ommatsample_occid` FOREIGN KEY (`occid`)   REFERENCES `omoccurrences` (`occid`)   ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_ommatsample_prepUid`   FOREIGN KEY (`preparedByUid`)   REFERENCES `users` (`uid`)   ON DELETE CASCADE  ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
 ALTER TABLE `ommaterialsample`
   ADD UNIQUE INDEX `UQ_ommatsample_recordID` (`recordID`);
@@ -1166,7 +1166,7 @@ CREATE TABLE `ommaterialsampleextended` (
   INDEX `IX_matsampleextend_fieldName` (`fieldName` ASC),
   INDEX `IX_matsampleextend_fieldValue` (`fieldValue` ASC),
   CONSTRAINT `FK_matsampleextend_matSampleID`  FOREIGN KEY (`matSampleID`)   REFERENCES `ommaterialsample` (`matSampleID`)   ON DELETE CASCADE   ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
 
 INSERT INTO ctcontrolvocab(title,tableName,fieldName, limitToList)

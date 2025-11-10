@@ -15,12 +15,14 @@ class WordCloud{
 	private $cloudWidth;
 	private $wordColors;
 	private $supportUtf8 = true;
+	private $LANG;
+
 
 	public function __construct(){
 		$this->conn = MySQLiConnectionFactory::getCon('readonly');
 
 		$this->displayedWordCount = 150;
-		if($GLOBALS['charset'] == 'ISO-8859-1') $this->supportUtf8 = false;
+		if($GLOBALS['CHARSET'] == 'ISO-8859-1') $this->supportUtf8 = false;
 		//$this->tagUrl = "https://www.google.com/search?hl=en&q=";
 		$this->tagUrl = $GLOBALS['CLIENT_ROOT'].'/collections/editor/occurrencetabledisplay.php?occindex=0&reset=1&q_processingstatus=unprocessed';
 		$this->backgroundColor = "#000";
@@ -40,6 +42,13 @@ class WordCloud{
 			'most,must,my,neither,no,nor,not,of,off,often,on,only,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,theres,these,they,this.'.
 			'to,too,us,wants,was,wasnt,we,were,werent,what,when,when,where,which,while,who,whom,why,will,with,wont,would,wouldve,wouldnt,yet,you,your';
 		$this->commonWordArr = explode(',', $commonWordStr);
+
+		$langTag = '';
+		if(!empty($GLOBALS['LANG_TAG'])) $langTag = $GLOBALS['LANG_TAG'];
+		if($langTag != 'en' && file_exists($GLOBALS['SERVER_ROOT'] . '/content/lang/classes/WordCloud.' . $langTag . '.php'))
+			include_once($GLOBALS['SERVER_ROOT'] . '/content/lang/classes/WordCloud.' . $langTag . '.php');
+		else include_once($GLOBALS['SERVER_ROOT'] . '/content/lang/classes/WordCloud.en.php');
+		$this->LANG = $LANG;
 	}
 
 	public function __destruct(){
@@ -48,7 +57,7 @@ class WordCloud{
 
 	public function batchBuildWordClouds($csMode = 0){
 		$processingArr = array();
-		$sql = 'SELECT DISTINCT c.collid FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid INNER JOIN specprocessorrawlabels r ON i.imgid = r.imgid ';
+		$sql = 'SELECT DISTINCT c.collid FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid INNER JOIN specprocessorrawlabels r ON m.mediaID = r.mediaID ';
 		if($csMode) $sql .= 'INNER JOIN omcrowdsourcequeue q ON o.occid = q.occid ';
 		$sql .= 'WHERE o.processingstatus = "unprocessed" AND o.locality IS NULL ';
 		$rs = $this->conn->query($sql);
@@ -67,7 +76,7 @@ class WordCloud{
 		unset($this->frequencyArr);
 		$this->frequencyArr = array();
 		$this->tagUrl .= '&collid='.$collid.'&q_customfield1=ocrFragment&q_customtype1=LIKE&q_customvalue1=';
-		$sql = 'SELECT DISTINCT r.rawstr FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid INNER JOIN specprocessorrawlabels r ON i.imgid = r.imgid ';
+		$sql = 'SELECT DISTINCT r.rawstr FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid INNER JOIN specprocessorrawlabels r ON m.mediaID = r.mediaID ';
 		if($csMode) $sql .= 'INNER JOIN omcrowdsourcequeue q ON o.occid = q.occid ';
 		$sql .= 'WHERE o.processingstatus = "unprocessed" AND o.locality IS NULL ';
 		if($collid) $sql .= 'AND o.collid = '.$collid;
@@ -170,9 +179,9 @@ class WordCloud{
 			$maxCount = max($this->frequencyArr);
 			foreach ($topTags as $tag => $useCount){
 				$grade = $this->gradeFrequency(($useCount * 100) / $maxCount);
-				$retStr .= ('<a href="'. $this->tagUrl.urlencode($tag).'" style="color:'.$this->wordColors[$grade].';" target="_blank">'.
+				$retStr .= ('<a href="'. $this->tagUrl.urlencode($tag).'" style="color:' . $this->wordColors[$grade] . ';" target="_blank">'.
 					'<span style="color:'.$this->wordColors[$grade].'; letter-spacing:3px; '.
-					'padding:4px; font-family:Tahoma; font-weight:900; font-size:'.
+					'padding:4px;  font-weight:900; font-size:'.
 					(0.6 + 0.1 * $grade).'em">'.$tag.'</span></a> ');
 			}
 			$retStr .= '</div>';
@@ -183,10 +192,10 @@ class WordCloud{
 	}
 
 	private function getCloudHtmlWrapper($cloudStr){
-		$htmlStr = '<html>
+		$htmlStr = '<!DOCTYPE html><html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>'.$GLOBALS['DEFAULT_TITLE'].' - Word Cloud </title>';
+		<title>'.$GLOBALS['DEFAULT_TITLE'].' - ' . $this->LANG['WORD_CLOUD'] . ' </title>';
 		$htmlStr .= '<?php
 
 		include_once($SERVER_ROOT."/includes/head.php");
@@ -194,8 +203,9 @@ class WordCloud{
 		$htmlStr .= '
 	</head>
 	<body>
-			<!-- This is inner text! -->
-			<div id="innertext">';
+	<!-- This is inner text! -->
+	<div role="main" id="innertext">
+		<h1 class="page-heading">' . $this->LANG['WORD_CLOUD'] . '</h1>';
 		$htmlStr .= $cloudStr;
 		$htmlStr .= '		</div>
 	</body>

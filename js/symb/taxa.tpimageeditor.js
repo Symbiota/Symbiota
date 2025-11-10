@@ -53,26 +53,19 @@ function expandImages(){
 }
 
 function submitAddForm(f){
-	var imgUploadPath = f.elements["userfile"].value.replace(/\s/g, "");
-	if(imgUploadPath == "" ){
-		imgUploadPath = f.elements["filepath"].value.replace(/\s/g, "");
-        if(imgUploadPath == ""){
-			alert("File path must be entered");
-			return false;
-        }
+	var imgFileInput = f.elements["imgfile"];
+    var originalUrlInput = f.elements["originalUrl"];
+
+    var imgUploadPath = imgFileInput && imgFileInput.files.length > 0 ? imgFileInput.files[0].name.trim() : "";
+    var originalUrl = originalUrlInput ? originalUrlInput.value.trim() : "";
+
+	if (imgUploadPath === "" && originalUrl === "") {
+        alert(translations.FILE_PATH_MISSING);
+        return false;
     }
-	if((imgUploadPath.indexOf(".jpg") == -1) && (imgUploadPath.indexOf(".JPG") == -1) && (imgUploadPath.indexOf(".jpeg") == -1) && (imgUploadPath.indexOf(".JPEG") == -1)){
-		alert("Image file upload must be a JPG file (with a .jpg extension)");
-		return false;
-	}
-    if(f.elements["photographeruid"].value.replace(/\s/g, "") == "" ){
-        if(f.elements["photographer"].value.replace(/\s/g, "") == ""){
-			alert("Please select the photographer from the pulldown or enter an override value");
-			return false;
-        }
-    }
+
     if(isNumeric(f.sortsequence.value) == false){
-		alert("Sort value must be a number");
+		alert(translations.SORT_NOT_NUMBER);
 		return false;
     }
     return true;

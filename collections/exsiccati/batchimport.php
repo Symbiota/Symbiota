@@ -1,15 +1,17 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceExsiccatae.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/exsiccati/batchimport.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/exsiccati/batchimport.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/exsiccati/batchimport.en.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/exsiccati/batchimport.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$ometid = array_key_exists('ometid',$_REQUEST)?$_REQUEST['ometid']:0;
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$source1 = array_key_exists('source1',$_POST)?$_POST['source1']:0;
-$source2 = array_key_exists('source2',$_POST)?$_POST['source2']:0;
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
+$ometid = array_key_exists('ometid',$_REQUEST) ? filter_var($_REQUEST['ometid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$collid = array_key_exists('collid',$_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$source1 = array_key_exists('source1',$_POST) ? filter_var($_POST['source1'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$source2 = array_key_exists('source2',$_POST) ? filter_var($_POST['source2'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$formSubmit = array_key_exists('formsubmit',$_POST) ? htmlspecialchars($_POST['formsubmit'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 
 $statusStr = '';
 $isEditor = 0;
@@ -35,9 +37,10 @@ if($isEditor && $formSubmit){
 }
 
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Exsiccatae Batch Transfer</title>
+	<title><?php echo $DEFAULT_TITLE . $LANG['EXS_BATCH_TRANSFER']; ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -51,7 +54,7 @@ if($isEditor && $formSubmit){
 				}
 			}
 			if(!formVerified){
-				alert("Select at least one record");
+				alert("<?= $LANG['SEL_ONE_RECORD'] ?>");
 				return false;
 			}
 			if(f.collid.value == ""){
@@ -63,7 +66,7 @@ if($isEditor && $formSubmit){
 
 		function verifyFirstForm(f){
 			if(f.ometid.value == ""){
-				alert("Exsiccata title must be selected");
+				alert("<?= $LANG['EXS_TITLE_SEL'] ?>");
 				return false;
 			}
 			return true;
@@ -115,16 +118,17 @@ if($isEditor && $formSubmit){
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href="../../index.php">Home</a> &gt;&gt;
-		<a href="index.php">Exsiccatae Index</a> &gt;&gt;
-		<a href="batchimport.php">Batch Import Module</a>
+		<a href="../../index.php"><?= $LANG['HOME'] ?></a> &gt;&gt;
+		<a href="index.php"><?= $LANG['EXS_INDEX'] ?></a> &gt;&gt;
+		<a href="batchimport.php"><?= $LANG['BATCH_IMP_MOD'] ?></a>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
+		<h1 class="page-heading"><?= $LANG['EXS_BATCH_IMP'] ?></h1>
 		<?php
 		if($statusStr){
 			echo '<hr/>';
-			echo '<div style="margin:10px;color:'.(strpos($statusStr,'SUCCESS') === false?'red':'green').';">'.$statusStr.'</div>';
+			echo '<div style="margin:10px;color:' . (strpos($statusStr,'SUCCESS') === false ? 'red' : 'green') . ';">' . $statusStr . '</div>';
 			echo '<hr/>';
 		}
 		if(!$ometid){
@@ -132,14 +136,14 @@ if($isEditor && $formSubmit){
 				?>
 				<form name="firstform" action="batchimport.php" method="post" onsubmit="return verifyFirstForm(this)">
 					<fieldset>
-						<legend><b>Batch Import Module</b></legend>
+						<legend><b><?= $LANG['BATCH_IMP_MOD'] ?></b></legend>
 						<div style="margin:30px">
 							<select name="ometid" style="width:500px;" onchange="this.form.submit()">
-								<option value="">Choose Exsiccata Series</option>
+								<option value=""><?= $LANG['CHOOSE_EXS_SERIES'] ?></option>
 								<option value="">------------------------------------</option>
 								<?php
 								foreach($exsArr as $exid => $titleStr){
-									echo '<option value="'.$exid.'">'.$titleStr.'</option>';
+									echo '<option value="' . $exid . '">' . $titleStr . '</option>';
 								}
 								?>
 							</select>
@@ -150,7 +154,7 @@ if($isEditor && $formSubmit){
 				<?php
 			}
 			else{
-				echo '<div style="margin:20px;font-size:120%;"><b>The system does not yet have occurrences linked to exsiccatae that can be transferred</b></div>';
+				echo '<div style="margin:20px;font-size:120%;"><b>' . $LANG['NO_OCC_W_EXS'] . '</b></div>';
 			}
 		}
 		elseif($formSubmit == 'Show Exsiccatae Table'){
@@ -162,11 +166,10 @@ if($isEditor && $formSubmit){
 				?>
 				<form name="exstableform" method="post" action="batchimport.php" onsubmit="return verifyExsTableForm(this)">
 					<div style="margin:10px 0px;">
-						Enter your catalog numbers in field associated with record and then transfer into your collection or download as a spreadsheet (CSV)
-						for import into a local database application.
+						<?= $LANG['ENTER_CATNUMS_EXPLAIN'] ?>
 					</div>
-					<table class="styledtable" style="font-family:Arial;font-size:12px;">
-						<tr><th><input name="selectAllCB" type="checkbox" onchange="selectAll(this)" /></th><th>Catalog Number</th><th>Exsiccata #</th><th>Details</th></tr>
+					<table class="styledtable" style="font-size:12px;">
+						<tr><th><input name="selectAllCB" type="checkbox" onchange="selectAll(this)" /></th><th><?= $LANG['CATNUM'] ?></th><th><?= $LANG['EXS_NO'] ?></th><th><?= $LANG['DETAILS'] ?></th></tr>
 						<?php
 						foreach($occurArr as $omenid => $occArr){
 							//Sort by preferred source collections and ranking
@@ -209,15 +212,15 @@ if($isEditor && $formSubmit){
 						?>
 						<div style="margin:10px">
 							<select name="collid">
-								<option value="">Choose Target Collection</option>
+								<option value=""><?= $LANG['CHOOSE_TARGET_COLL'] ?></option>
 								<option value="">----------------------------------</option>
 								<?php
 								foreach($targetCollArr as $id => $collName){
-									echo '<option value="'.$id.'" '.($id==$collid?'SELECTED':'').'>'.$collName.'</option>';
+									echo '<option value="' . $id . '" ' . ($id == $collid ? 'SELECTED' : '') . '>' . $collName . '</option>';
 								}
 								?>
 							</select>
-							<input name="formsubmit" type="submit" value="Import Selected Records" />
+							<button name="formsubmit" type="submit" value="Import Selected Records"><?= $LANG['IMP_SEL_RECORDS'] ?></button>
 						</div>
 						<?php
 					}
@@ -225,20 +228,20 @@ if($isEditor && $formSubmit){
 					<div style="margin:15px">
 						<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 						<input name="ometid" type="hidden" value="<?php echo $ometid; ?>" />
-						<input name="formsubmit" type="submit" value="Export Selected Records" />
+						<button name="formsubmit" type="submit" value="Export Selected Records" ><?= $LANG['EXP_SEL_RECORDS'] ?></button>
 					</div>
 				</form>
 				<?php
 			}
 			else{
-				echo '<div style="font-weight:bold;">There are no specimen records linked to this exsiccati title</div>';
+				echo '<div style="font-weight:bold;">' . $LANG['NO_SPECS_W_EXS'] . '</div>';
 			}
 		}
 		else{
 			?>
 			<form name="queryform" action="batchimport.php" method="post">
 				<fieldset>
-					<legend><b>Batch Import Module</b></legend>
+					<legend><b><?= $LANG['BATCH_IMP_MOD'] ?></b></legend>
 					<?php
 					$exsMeta = $exsManager->getTitleObj($ometid);
 					echo '<h2>'.$exsMeta['title'].'</h2>';
@@ -246,15 +249,15 @@ if($isEditor && $formSubmit){
 						?>
 						<div style="margin:10px">
 							<div>
-								<b>Select up to two collections that are the preferred sources for occurrence records</b>
+								<b><?= $LANG['SEL_COLL_SOURCES'] ?></b>
 							</div>
 							<div style="margin:5px 0px">
 								<select name="source1">
-									<option value="">Source Collection 1</option>
+									<option value=""><?= $LANG['SOURCE_COLL_1'] ?></option>
 									<option value="">------------------------------------</option>
 									<?php
 									foreach($sourceCollArr as $id => $cTitle){
-										echo '<option value="'.$id.'" '.($source1==$id?'SELECTED':'').'>'.$cTitle.'</option>';
+										echo '<option value="' . $id . '" ' . ($source1 == $id ? 'SELECTED' : '') . '>' . $cTitle . '</option>';
 									}
 									?>
 								</select>
@@ -264,11 +267,11 @@ if($isEditor && $formSubmit){
 								?>
 								<div style="margin:5px 0px">
 									<select name="source2">
-										<option value="">Source Collection 2</option>
+										<option value=""><?= $LANG['SOURCE_COLL_2'] ?></option>
 										<option value="">------------------------------------</option>
 										<?php
 										foreach($sourceCollArr as $id => $cTitle){
-											echo '<option value="'.$id.'" '.($source2==$id?'SELECTED':'').'>'.$cTitle.'</option>';
+											echo '<option value="' . $id . '" ' . ($source2 == $id ? 'SELECTED' : '') . '>' . $cTitle . '</option>';
 										}
 										?>
 									</select>
@@ -283,7 +286,7 @@ if($isEditor && $formSubmit){
 					<div style="margin:20px">
 						<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 						<input name="ometid" type="hidden" value="<?php echo $ometid; ?>" />
-						<input name="formsubmit" type="submit" value="Show Exsiccatae Table" />
+						<button name="formsubmit" type="submit" value="Show Exsiccatae Table" ><?= $LANG['SHOW_EXS_TABLE'] ?></button>
 					</div>
 				</fieldset>
 			</form>
@@ -295,4 +298,3 @@ if($isEditor && $formSubmit){
 	include($SERVER_ROOT.'/includes/footer.php');
 	?>
 </body>
-</html>

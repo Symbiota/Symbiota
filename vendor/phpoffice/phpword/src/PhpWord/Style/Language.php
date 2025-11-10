@@ -11,15 +11,17 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Style;
 
+use InvalidArgumentException;
+
 /**
  * Language
- * A couple of predefined values are defined here, see the websites below for more values
+ * A couple of predefined values are defined here, see the websites below for more values.
  *
  * @see http://www.datypic.com/sc/ooxml/t-w_CT_Language.html
  * @see https://technet.microsoft.com/en-us/library/cc287874(v=office.12).aspx
@@ -38,17 +40,26 @@ final class Language extends AbstractStyle
     const FR_BE = 'fr-BE';
     const FR_BE_ID = 2060;
 
+    const FR_CH = 'fr-CH';
+    const FR_CH_ID = 4108;
+
     const ES_ES = 'es-ES';
     const ES_ES_ID = 3082;
 
     const DE_DE = 'de-DE';
     const DE_DE_ID = 1031;
 
+    const DE_CH = 'de-CH';
+    const DE_CH_ID = 2055;
+
     const HE_IL = 'he-IL';
     const HE_IL_ID = 1037;
 
     const IT_IT = 'it-IT';
     const IT_IT_ID = 1040;
+
+    const IT_CH = 'it-CH';
+    const IT_CH_ID = 2064;
 
     const JA_JP = 'ja-JP';
     const JA_JP_ID = 1041;
@@ -68,6 +79,9 @@ final class Language extends AbstractStyle
     const NL_NL = 'nl-NL';
     const NL_NL_ID = 1043;
 
+    const SV_SE = 'sv-SE';
+    const SV_SE_ID = 1053;
+
     const UK_UA = 'uk-UA';
     const UK_UA_ID = 1058;
 
@@ -75,40 +89,41 @@ final class Language extends AbstractStyle
     const RU_RU_ID = 1049;
 
     /**
-     * Language ID, used for RTF document generation
+     * Language ID, used for RTF document generation.
      *
      * @var int
+     *
      * @see https://technet.microsoft.com/en-us/library/cc179219.aspx
      */
     private $langId;
 
     /**
-     * Latin Language
+     * Latin Language.
      *
      * @var string
      */
     private $latin;
 
     /**
-     * East Asian Language
+     * East Asian Language.
      *
      * @var string
      */
     private $eastAsia;
 
     /**
-     * Complex Script Language
+     * Complex Script Language.
      *
      * @var string
      */
     private $bidirectional;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param string|null $latin
-     * @param string|null $eastAsia
-     * @param string|null $bidirectional
+     * @param null|string $latin
+     * @param null|string $eastAsia
+     * @param null|string $bidirectional
      */
     public function __construct($latin = null, $eastAsia = null, $bidirectional = null)
     {
@@ -124,10 +139,11 @@ final class Language extends AbstractStyle
     }
 
     /**
-     * Set the Latin Language
+     * Set the Latin Language.
      *
      * @param string $latin
      *            The value for the latin language
+     *
      * @return self
      */
     public function setLatin($latin)
@@ -138,9 +154,9 @@ final class Language extends AbstractStyle
     }
 
     /**
-     * Get the Latin Language
+     * Get the Latin Language.
      *
-     * @return string|null
+     * @return null|string
      */
     public function getLatin()
     {
@@ -148,11 +164,13 @@ final class Language extends AbstractStyle
     }
 
     /**
-     * Set the Language ID
+     * Set the Language ID.
      *
      * @param int $langId
      *            The value for the language ID
+     *
      * @return self
+     *
      * @see https://technet.microsoft.com/en-us/library/cc287874(v=office.12).aspx
      */
     public function setLangId($langId)
@@ -163,7 +181,7 @@ final class Language extends AbstractStyle
     }
 
     /**
-     * Get the Language ID
+     * Get the Language ID.
      *
      * @return int
      */
@@ -173,10 +191,11 @@ final class Language extends AbstractStyle
     }
 
     /**
-     * Set the East Asian Language
+     * Set the East Asian Language.
      *
      * @param string $eastAsia
      *            The value for the east asian language
+     *
      * @return self
      */
     public function setEastAsia($eastAsia)
@@ -187,9 +206,9 @@ final class Language extends AbstractStyle
     }
 
     /**
-     * Get the East Asian Language
+     * Get the East Asian Language.
      *
-     * @return string|null
+     * @return null|string
      */
     public function getEastAsia()
     {
@@ -197,10 +216,11 @@ final class Language extends AbstractStyle
     }
 
     /**
-     * Set the Complex Script Language
+     * Set the Complex Script Language.
      *
      * @param string $bidirectional
      *            The value for the complex script language
+     *
      * @return self
      */
     public function setBidirectional($bidirectional)
@@ -211,9 +231,9 @@ final class Language extends AbstractStyle
     }
 
     /**
-     * Get the Complex Script Language
+     * Get the Complex Script Language.
      *
-     * @return string|null
+     * @return null|string
      */
     public function getBidirectional()
     {
@@ -221,9 +241,10 @@ final class Language extends AbstractStyle
     }
 
     /**
-     * Validates that the language passed is in the format xx-xx
+     * Validates that the language passed is in the format xx-xx.
      *
      * @param string $locale
+     *
      * @return string
      */
     private function validateLocale($locale)
@@ -232,12 +253,14 @@ final class Language extends AbstractStyle
             $locale = str_replace('_', '-', $locale);
         }
 
-        if (strlen($locale) === 2) {
+        if ($locale !== null && strlen($locale) === 2) {
             return strtolower($locale) . '-' . strtoupper($locale);
         }
-
+        if ($locale === 'und') {
+            return 'en-EN';
+        }
         if ($locale !== null && $locale !== 'zxx' && strstr($locale, '-') === false) {
-            throw new \InvalidArgumentException($locale . ' is not a valid language code');
+            throw new InvalidArgumentException($locale . ' is not a valid language code');
         }
 
         return $locale;

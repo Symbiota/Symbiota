@@ -47,8 +47,8 @@ class GamesManager extends Manager{
 			$currentDate = date("Y-m-d");
 			$replace = 0;
 			$oldArr = array();
-			if(file_exists($SERVER_ROOT.'/temp/ootd/'.$oodID.'_info.json')){
-				$oldArr = json_decode(file_get_contents($SERVER_ROOT.'/temp/ootd/'.$oodID.'_info.json'), true);
+			if(file_exists($SERVER_ROOT.'/content/ootd/'.$oodID.'_info.json')){
+				$oldArr = json_decode(file_get_contents($SERVER_ROOT.'/content/ootd/'.$oodID.'_info.json'), true);
 				$lastDate = $oldArr['lastDate'];
 				$lastCLID = $oldArr['clid'];
 				if(($currentDate > $lastDate) || ($clid && $clid != $lastCLID)) $replace = 1;
@@ -57,12 +57,12 @@ class GamesManager extends Manager{
 			if($replace == 1){
 				//Delete old files
 				$previous = Array();
-				if(file_exists($SERVER_ROOT.'/temp/ootd/'.$oodID.'_previous.json')){
-					$previous = json_decode(file_get_contents($SERVER_ROOT.'/temp/ootd/'.$oodID.'_previous.json'), true);
-					unlink($SERVER_ROOT.'/temp/ootd/'.$oodID.'_previous.json');
+				if(file_exists($SERVER_ROOT.'/content/ootd/'.$oodID.'_previous.json')){
+					$previous = json_decode(file_get_contents($SERVER_ROOT.'/content/ootd/'.$oodID.'_previous.json'), true);
+					unlink($SERVER_ROOT.'/content/ootd/'.$oodID.'_previous.json');
 				}
-				if(file_exists($SERVER_ROOT.'/temp/ootd/'.$oodID.'_info.json')){
-					unlink($SERVER_ROOT.'/temp/ootd/'.$oodID.'_info.json');
+				if(file_exists($SERVER_ROOT.'/content/ootd/'.$oodID.'_info.json')){
+					unlink($SERVER_ROOT.'/content/ootd/'.$oodID.'_info.json');
 				}
 				if($oldArr){
 					foreach($oldArr['images'] as $imgUrl){
@@ -76,19 +76,13 @@ class GamesManager extends Manager{
 				$ootdInfo['lastDate'] = $currentDate;
 
 				$tidArr = Array();
-				$sql = 'SELECT l.TID, COUNT(i.imgid) AS cnt '.
-					'FROM fmchklsttaxalink l INNER JOIN images i ON l.TID = i.tid '.
-					'LEFT JOIN omoccurrences o ON i.occid = o.occid '.
+				$sql = 'SELECT l.TID, COUNT(m.mediaID) AS cnt '.
+					'FROM fmchklsttaxalink l INNER JOIN media m ON l.TID = m.tid '.
+					'LEFT JOIN omoccurrences o ON m.occid = o.occid '.
 					'LEFT JOIN omcollections c ON o.collid = c.collid '.
-					'WHERE (l.CLID IN('.$clid.')) AND (i.occid IS NULL OR c.CollType LIKE "%Observations") '.
+					'WHERE (l.CLID IN('.$clid.')) AND (m.occid IS NULL OR c.CollType LIKE "%Observations") '.
 					'GROUP BY l.TID';
-				/*
-				$sql = 'SELECT l.TID, COUNT(i.imgid) AS cnt '.
-					'FROM fmchklsttaxalink l INNER JOIN images i ON l.TID = i.tid '.
-					'WHERE (l.CLID IN('.$clid.')) '.
-					'GROUP BY l.TID';
-				*/
-				//echo '<div>'.$sql.'</div>';
+
 				$rs = $this->conn->query($sql);
 				while($row = $rs->fetch_object()){
 					if(($row->cnt > 2) && (!in_array($row->TID, $previous))){
@@ -124,16 +118,16 @@ class GamesManager extends Manager{
 					if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80 && $_SERVER['SERVER_PORT'] != 443) $domain .= ':'.$_SERVER["SERVER_PORT"];
 
 					$files = Array();
-					$sql3 = 'SELECT url FROM images WHERE (tid = '.$randTaxa.' AND url IS NOT NULL AND url != "empty") ORDER BY sortsequence ';
+					$sql3 = 'SELECT url FROM media WHERE (tid = '.$randTaxa.' AND url IS NOT NULL AND url != "empty") ORDER BY sortsequence ';
 					//echo '<div>'.$sql.'</div>';
 					$cnt = 1;
 					$repcnt = 1;
 					$rs = $this->conn->query($sql3);
-					$newfileBase = '/temp/ootd/'.$oodID.'_'.time().'_';
+					$newfileBase = '/content/ootd/'.$oodID.'_'.time().'_';
 					while(($row = $rs->fetch_object()) && ($cnt < 6)){
 						$file = '';
 						if (substr($row->url, 0, 1) == '/'){
-							if(isset($GLOBALS['imageDomain']) && $GLOBALS['imageDomain']) $file = $GLOBALS['imageDomain'].$row->url;
+							if(!empty($GLOBALS['MEDIA_DOMAIN'])) $file = $GLOBALS['MEDIA_DOMAIN'] . $row->url;
 							else $file = $domain.$row->url;
 						}
 						else{
@@ -149,17 +143,17 @@ class GamesManager extends Manager{
 					$ootdInfo['images'] = $files;
 
 					if(array_diff($tidArr,$previous)){
-						$fp = fopen($SERVER_ROOT.'/temp/ootd/'.$oodID.'_previous.json', 'w');
+						$fp = fopen($SERVER_ROOT.'/content/ootd/'.$oodID.'_previous.json', 'w');
 						fwrite($fp, json_encode($previous));
 						fclose($fp);
 					}
-					$fp = fopen($SERVER_ROOT.'/temp/ootd/'.$oodID.'_info.json', 'w');
+					$fp = fopen($SERVER_ROOT.'/content/ootd/'.$oodID.'_info.json', 'w');
 					fwrite($fp, json_encode($ootdInfo));
 					fclose($fp);
 				}
 			}
 
-			$infoArr = json_decode(file_get_contents($SERVER_ROOT.'/temp/ootd/'.$oodID.'_info.json'), true);
+			$infoArr = json_decode(file_get_contents($SERVER_ROOT.'/content/ootd/'.$oodID.'_info.json'), true);
 			//echo json_encode($infoArr);
 		}
 		return $infoArr;
@@ -167,9 +161,9 @@ class GamesManager extends Manager{
 
 	//Flashcard functions
 	public function getFlashcardImages(){
-		//Get species list
-		$retArr = Array();
-		//Grab a random list of no more than 1000 taxa
+			//Get species list
+		$taxaArr = Array();
+		//Grab a random list of no more than 200 taxa
 		$sql = '';
 		if($this->clid){
 			if(!$this->clidStr) $this->setClidStr();
@@ -185,78 +179,56 @@ class GamesManager extends Manager{
 				'WHERE (ctl.dynclid = '.$this->dynClid.') AND (ts.taxauthid = 1) ';
 		}
 		if($this->taxonFilter) $sql .= 'AND (ts.Family = "'.$this->taxonFilter.'" OR t.sciname Like "'.$this->taxonFilter.'%") ';
-		$sql .= 'ORDER BY RAND() LIMIT 1000 ';
+		$sql .= 'ORDER BY RAND() LIMIT 200 ';
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
-				$retArr[$r->tidaccepted]['tid'] = $r->tid;
-				$retArr[$r->tidaccepted]['sciname'] = $r->sciname;
+				$taxaArr[$r->tidaccepted]['tid'] = $r->tid;
+				$taxaArr[$r->tidaccepted]['sciname'] = $r->sciname;
 			}
 			$rs->free();
 		}
 
-		if($retArr){
-			$tidStr = implode(',',array_keys($retArr));
-			$tidComplete = array();
+		if($taxaArr){
+			$tidStr = implode(',',array_keys($taxaArr));
 
 			if($this->showCommon){
 				//Grab vernaculars
 				$sqlV = 'SELECT ts.tidaccepted, v.vernacularname '.
 					'FROM taxavernaculars v INNER JOIN taxstatus ts ON v.tid = ts.tid '.
-					'WHERE v.langid = '.$this->langId.' AND ts.tidaccepted IN('.$tidStr.') '.
+					'WHERE v.langid = '.$this->langId.' AND ts.taxauthid = 1 AND ts.tidaccepted IN('.$tidStr.') '.
 					'ORDER BY v.SortSequence';
 				if($rsV = $this->conn->query($sqlV)){
 					while($rV = $rsV->fetch_object()){
-						if(!array_key_exists('vern',$retArr[$rV->tidaccepted])) $retArr[$rV->tidaccepted]['vern'] = $rV->vernacularname;
+						if(!array_key_exists('vern', $taxaArr[$rV->tidaccepted])) $taxaArr[$rV->tidaccepted]['vern'] = $rV->vernacularname;
 					}
 					$rsV->free();
 				}
 			}
-
-			//Grab images, first pass
-			$sqlImg = 'SELECT DISTINCT i.url, ts.tidaccepted FROM images i INNER JOIN taxstatus ts ON i.tid = ts.tid '.
-				'WHERE ts.tidaccepted IN('.$tidStr.') AND i.occid IS NULL '.
-				'ORDER BY i.sortsequence';
-			//echo $sql;
-			$rsImg = $this->conn->query($sqlImg);
-			while($rImg = $rsImg->fetch_object()){
-				$iCnt = 0;
-				if(array_key_exists('url',$retArr[$rImg->tidaccepted])) $iCnt = count($retArr[$rImg->tidaccepted]['url']);
-				if($iCnt < 5){
-					$url = $rImg->url;
-					if(array_key_exists("IMAGE_DOMAIN",$GLOBALS) && substr($url,0,1)=="/"){
-						$url = $GLOBALS["IMAGE_DOMAIN"].$url;
-					}
-					$retArr[$rImg->tidaccepted]['url'][] = $url;
-				}
-				else{
-					$tidComplete[$rImg->tidaccepted] = $rImg->tidaccepted;
-				}
-			}
-			$rsImg->free();
-
-			//For taxa without 5 images, look for images linked to children taxa
-			if(count($tidComplete) < count($retArr)){
-				$newTidStr = implode(',',array_keys(array_diff_key($retArr,$tidComplete)));
-				$sqlImg2 = 'SELECT DISTINCT i.url, ts.parenttid FROM images i INNER JOIN taxstatus ts ON i.tid = ts.tid '.
-					'WHERE ts.parenttid IN('.$newTidStr.') AND i.occid IS NULL '.
-					'ORDER BY i.sortsequence';
-				$rsImg2 = $this->conn->query($sqlImg2);
-				while($rImg2 = $rsImg2->fetch_object()){
-					$iCnt = 0;
-					if(array_key_exists('url',$retArr[$rImg2->parenttid])) $iCnt = count($retArr[$rImg2->parenttid]['url']);
-					if($iCnt < 5){
-						$url = $rImg2->url;
-						if(array_key_exists("IMAGE_DOMAIN",$GLOBALS) && substr($url,0,1)=="/"){
-							$url = $GLOBALS["IMAGE_DOMAIN"].$url;
-						}
-						$retArr[$rImg2->parenttid]['url'][] = $url;
-					}
-				}
-				$rsImg2->free();
+			foreach($taxaArr as $tidAccepted => $retData){
+				//Grab images, first pass
+				$this->loadImages($taxaArr, $tidAccepted);
+				if(isset($taxaArr[$tidAccepted]['url']) && count($taxaArr[$tidAccepted]['url']) < 5) $this->loadImages($taxaArr, $tidAccepted, true);
 			}
 		}
+		return $taxaArr;
+	}
 
-		return $retArr;
+	private function loadImages(&$taxaArr, $tid, $targetChildTaxa = false){
+		$sql = 'SELECT m.mediaID, m.url, m.originalUrl
+			FROM media m INNER JOIN taxstatus ts ON m.tid = ts.tid
+			WHERE ts.taxauthid = 1 AND ts.' . ($targetChildTaxa ? 'parenttid' : 'tidaccepted') . ' IN(' . $tid . ') AND (m.mediaType = "image") AND (m.creatorUid IS NOT NULL)
+			ORDER BY m.sortsequence LIMIT 5';
+		$rs = $this->conn->query($sql);
+		while($r = $rs->fetch_object()){
+			$url = $r->url;
+			if(!$url && $url == 'empty') $url = $r->originalUrl;
+			if(array_key_exists('MEDIA_DOMAIN', $GLOBALS) && substr($url, 0, 1) == '/'){
+				$url = $GLOBALS['MEDIA_DOMAIN'] . $url;
+			}
+			$taxaArr[$tid]['url'][$r->mediaID] = $url;
+			if(count($taxaArr[$tid]['url']) >= 5) break;
+		}
+		$rs->free();
 	}
 
 	public function echoFlashcardTaxonFilterList(){

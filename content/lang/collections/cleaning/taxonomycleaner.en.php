@@ -4,6 +4,7 @@
 Language: English
 ------------------
 */
+$LANG['TAX_CLEANING_TOOL'] = 'Taxonomy Cleaning Tool';
 
 $LANG['OCC_TAX_CLEAN'] = 'Occurrence Taxon Cleaner';
 $LANG['SCINAME_NOT_FOUND'] = 'Scientific name not found in Thesaurus.';
@@ -44,5 +45,6 @@ $LANG['NO_PERM'] = 'ERROR: you do not have permission to edit this collection';
 $LANG['BATCH_TAXON_CLEAN'] = 'Batch Taxonomic Cleaning Tool';
 $LANG['COL_SELECTOR'] = 'Collection Selector';
 $LANG['ERROR_COLID_NUL'] = 'ERROR: Collection identifier is null';
+$LANG['ADD_BUTTON'] = 'Add Button';
 
 ?>

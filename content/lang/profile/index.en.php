@@ -4,7 +4,7 @@
 Language: English
 ------------------
 */
-
+$LANG['LOGIN'] = 'Login';
 $LANG['INVALID_LOGIN'] = 'Invalid username';
 $LANG['INVALID_EMAIL'] = 'Invalid email';
 $LANG['INCORRECT'] = 'Your username or password was incorrect. Please try again.<br/> If you are unable to remember your login credentials, use the controls below to retrieve your login or reset your password.';
@@ -27,4 +27,6 @@ $LANG['REST_PWD'] = 'Reset Password';
 $LANG['REMEMBER_LOGIN'] = "Can't Remember Login Name?";
 $LANG['RETRIEVE'] = 'Retrieve Login';
 $LANG['YOUR_EMAIL'] = 'Your Email';
+$LANG['OID_LOGIN'] = 'Login with OID';
+$LANG['THIRD_PARTY_LOGIN'] = 'Login using third-party authentication';
 ?>

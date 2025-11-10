@@ -1,0 +1,157 @@
+.smSampleTypeDiv {
+	float:left;
+	margin: 2px;
+}
+
+.smSampleTypeDiv label{
+	display: block;
+}
+
+.smSampleTypeDiv input{
+}
+
+.smCatalogNumberDiv {
+	float:left;
+	margin: 2px;
+}
+
+.smCatalogNumberDiv label{
+	display: block;
+}
+
+.smCatalogNumberDiv input{
+}
+
+.smGuidDiv {
+	float:left;
+	margin: 2px;
+}
+
+.smGuidDiv label{
+	display: block;
+}
+
+.smGuidDiv input{
+}
+
+.smSampleConditionDiv {
+	float:left;
+	margin: 2px;
+}
+
+.smSampleConditionDiv label{
+	display: block;
+}
+
+.smSampleConditionDiv input{
+}
+
+.smDispositionDiv {
+	float:left;
+	margin: 2px;
+}
+
+.smDispositionDiv label{
+	display: block;
+}
+
+.smDispositionDiv input{
+}
+
+.smPreservationTypeDiv {
+	float:left;
+	margin: 2px;
+}
+
+.smPreservationTypeDiv label{
+	display: block;
+}
+
+.smPreservationTypeDiv input{
+}
+
+.smPreparationDateDiv {
+	float:left;
+	margin: 2px;
+}
+
+.smPreparationDateDiv label{
+	display: block;
+}
+
+.smPreparationDateDiv input{
+}
+
+.smPreparedByUidDiv {
+	float:left;
+	margin: 2px;
+}
+
+.smPreparedByUidDiv label{
+	display: block;
+}
+
+.smPreparedByUidDiv input{
+}
+
+.smPreparationDetailsDiv {
+	clear:both;
+	margin: 2px;
+}
+
+.smPreparationDetailsDiv label{
+	display: block;
+}
+
+.smPreparationDetailsDiv input{
+	width: 90%;
+}
+
+.smIndividualCountDiv {
+	float:left;
+	margin: 2px;
+}
+
+.smIndividualCountDiv label{
+	display: block;
+}
+
+.smIndividualCountDiv input{
+}
+
+.smSampleSizeDiv {
+	float:left;
+	margin: 2px;
+}
+
+.smSampleSizeDiv label{
+	display: block;
+}
+
+.smSampleSizeDiv input{
+}
+
+.smStorageLocationDiv {
+	float:left;
+	margin: 2px;
+}
+
+.smStorageLocationDiv label{
+	display: block;
+}
+
+.smStorageLocationDiv input{
+}
+
+.smRemarksDiv {
+	clear:both;
+	margin: 2px;
+}
+
+.smRemarksDiv label{
+	display: block;
+}
+
+.smRemarksDiv input{
+	width: 90%;
+}

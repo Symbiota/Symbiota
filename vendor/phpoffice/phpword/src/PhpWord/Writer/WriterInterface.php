@@ -11,21 +11,19 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- * @copyright   2010-2018 PHPWord contributors
+ *
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer;
 
 /**
- * Writer interface
+ * Writer interface.
  */
 interface WriterInterface
 {
     /**
-     * Save PhpWord to file
-     *
-     * @param string $filename
+     * Save PhpWord to file.
      */
-    public function save($filename = null);
+    public function save(string $filename): void;
 }

@@ -4,7 +4,7 @@
 Language: English
 ------------------
 */
-
+$LANG['OCCUR_COMMENTS'] = 'Occurrence Comments';
 $LANG['COMMENTS_LISTING'] = 'Comments Listing';
 $LANG['HOME'] = 'Home';
 $LANG['COL_MANAGE'] = 'TEST Collection Management';
@@ -34,5 +34,9 @@ $LANG['DEL_COMMENT'] = 'Delete Comment';
 $LANG['NO_COMMENTS_MATCHING'] = 'No comments are available matching the defined Filter Options';
 $LANG['ONLY_PUBLIC_NONREVIEWED'] = 'Note that only public, non-reviewed comments are currently being displayed. <br/>Modify form to the right to show all comments.';
 $LANG['COLLID_NULL'] = 'ERROR: collid is null';
+$LANG['COMMENTER'] = 'Commenter';
+$LANG['START_DATE'] = 'Start date';
+$LANG['END_DATE'] = 'End date';
+$LANG['COMMENT_TYPE'] = 'Comment Type';
 
 ?>

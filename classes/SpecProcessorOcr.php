@@ -2,9 +2,10 @@
 /*
  * Used by automatic nightly process and by the occurrence editor (/collections/editor/occurrenceeditor.php)
  */
-include_once($SERVER_ROOT.'/config/dbconnection.php');
-include_once($SERVER_ROOT.'/classes/Manager.php');
-include_once($SERVER_ROOT.'/classes/Encoding.php');
+include_once($SERVER_ROOT . '/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/utilities/Encoding.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/UploadUtil.php');
 
 class SpecProcessorOcr extends Manager{
 
@@ -178,12 +179,12 @@ class SpecProcessorOcr extends Manager{
 	}
 
 	//Misc OCR support functions
-	private function getImageUrl($imgid){
+	private function getImageUrl($mediaID){
 		$retUrl = false;
-		if(is_numeric($imgid)){
-			$sql = 'SELECT url, originalurl FROM images WHERE imgid = ?';
+		if(is_numeric($mediaID)){
+			$sql = 'SELECT url, originalurl FROM media WHERE mediaID = ?';
 			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('i', $imgid);
+				$stmt->bind_param('i', $mediaID);
 				$stmt->execute();
 				$url = '';
 				$stmt->bind_result($url, $retUrl);
@@ -195,13 +196,13 @@ class SpecProcessorOcr extends Manager{
 		return $retUrl;
 	}
 
-	private function databaseRawStr($imgId,$rawStr,$notes,$source){
-		if(is_numeric($imgId) && $rawStr){
+	private function databaseRawStr($mediaID,$rawStr,$notes,$source){
+		if(is_numeric($mediaID) && $rawStr){
 			$rawStr = $this->cleanInStr($this->encodeString($rawStr));
 			$score = '';
 			if($rawStr == 'Failed OCR return') $score = 0;
-			$sql = 'INSERT INTO specprocessorrawlabels(imgid,rawstr,notes,source,score) '.
-				'VALUE ('.$imgId.',"'.$rawStr.'",'.
+			$sql = 'INSERT INTO specprocessorrawlabels(mediaID,rawstr,notes,source,score) '.
+				'VALUE ('.$mediaID.',"'.$rawStr.'",'.
 				($notes?'"'.$this->cleanInStr($notes).'"':'NULL').','.
 				($source?'"'.$this->cleanInStr($source).'"':'NULL').','.
 				($score?'"'.$this->cleanInStr($score).'"':'NULL').')';
@@ -220,19 +221,19 @@ class SpecProcessorOcr extends Manager{
 	private function loadImage($imgUrl){
 		$status = false;
 		if($imgUrl){
-			if(substr($imgUrl,0,1)=="/"){
-				if(array_key_exists("imageDomain",$GLOBALS) && $GLOBALS["imageDomain"]){
+			if(substr($imgUrl,0,1) == '/'){
+				if(!empty($GLOBALS['MEDIA_DOMAIN'])){
 					//If there is an image domain name is set in symbini.php and url is relative,
 					//then it's assumed that image is located on another server, thus add domain to url
-					$imgUrl = $GLOBALS["imageDomain"].$imgUrl;
+					$imgUrl = $GLOBALS['MEDIA_DOMAIN'] . $imgUrl;
 				}
 				else{
-					$imgUrl = $this->getDomain().$imgUrl;
+					$imgUrl = GeneralUtil::getDomain() . $imgUrl;
 				}
 			}
 			//Set temp folder path and file names
 			$ts = time();
-			$this->imgUrlLocal = $this->tempPath.$ts.'_img.jpg';
+			$this->imgUrlLocal = $this->tempPath.$ts.'_img.jpg'; // @TODO is it intentional that it is always .jpg?
 
 			//Copy image to temp folder
 			$status = copy($imgUrl,$this->imgUrlLocal);
@@ -260,21 +261,24 @@ class SpecProcessorOcr extends Manager{
 			//Batch OCR
 			foreach($collArr as $collid => $instCode){
 				$this->logOrEcho('Starting batch processing for '.$instCode);
-				$sql = 'SELECT i.imgid, IFNULL(i.originalurl, i.url) AS url, o.sciName, i.occid '.
-					'FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
-					'LEFT JOIN specprocessorrawlabels r ON i.imgid = r.imgid '.
+				$sql = 'SELECT m.mediaID, IFNULL(m.originalurl, m.url) AS url, o.sciName, m.occid '.
+					'FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid '.
+					'LEFT JOIN specprocessorrawlabels r ON m.mediaID = r.mediaID '.
 					'WHERE (o.collid = '.$collid.') AND r.prlid IS NULL ';
-				if($procStatus) $sql .= 'AND o.processingstatus = "unprocessed" ';
+				if($procStatus){
+					if($procStatus == 'null') $sql .= 'AND processingstatus IS NULL';
+					else $sql .= 'AND o.processingstatus = "' . $this->cleanInStr($procStatus) . '" ';
+				} 
 				if($limit) $sql .= 'LIMIT '.$limit;
 				if($rs = $this->conn->query($sql)){
 					$recCnt = 1;
 					while($r = $rs->fetch_object()){
 						$rawStr = $this->ocrImageByUrl($r->url,$getBest,$r->sciName);
 						if($rawStr != 'ERROR'){
-							$this->logOrEcho('#'.$recCnt.': image <a href="../editor/occurrenceeditor.php?occid='.$r->occid.'" target="_blank">'.$r->imgid.'</a> processed ('.date("Y-m-d H:i:s").')');
+							$this->logOrEcho('#'.$recCnt.': image <a href="../editor/occurrenceeditor.php?occid=' . $r->occid . '" target="_blank">' . $r->mediaID . '</a> processed (' . date("Y-m-d H:i:s") . ')');
 							$notes = '';
 							$source = 'Tesseract: '.date('Y-m-d');
-							$this->databaseRawStr($r->imgid,$rawStr,$notes,$source);
+							$this->databaseRawStr($r->mediaID,$rawStr,$notes,$source);
 						}
 						ob_flush();
 						flush();
@@ -465,25 +469,25 @@ class SpecProcessorOcr extends Manager{
 				}
 			}
 			if($catNumber){
-				//Grab image primary key (imgid)
+				//Grab image primary key (mediaID)
 				$imgArr = array();
-				$sql = 'SELECT i.imgid, IFNULL(i.originalurl,i.url) AS url '.
-					'FROM images i INNER JOIN omoccurrences o ON i.occid = o.occid '.
+				$sql = 'SELECT m.mediaID, IFNULL(m.originalurl,m.url) AS url '.
+					'FROM media m INNER JOIN omoccurrences o ON m.occid = o.occid '.
 					'WHERE (o.collid = '.$this->collid.') AND (o.catalognumber = "'.$this->cleanInStr($catNumber).'")';
 				$rs = $this->conn->query($sql);
 				while($r = $rs->fetch_object()){
-					$imgArr[$r->imgid] = $r->url;
+					$imgArr[$r->mediaID] = $r->url;
 				}
 				$rs->free();
 				if(!$imgArr){
 					$fileBaseName = basename($sourcePath.$fileName, ".txt");
 					if(strlen($fileBaseName)>4){
-						$sql = 'SELECT i.imgid, IFNULL(i.originalurl,i.url) AS url '.
-							'FROM images i INNER JOIN omoccurrences o ON i.occid = o.occid '.
-							'WHERE (o.collid = '.$this->collid.') AND ((i.originalurl LIKE "%/'.$this->cleanInStr($fileBaseName).'.jpg") OR (i.url LIKE "%/'.$this->cleanInStr($fileBaseName).'.jpg"))';
+						$sql = 'SELECT m.mediaID, IFNULL(m.originalurl,m.url) AS url '.
+							'FROM media m INNER JOIN omoccurrences o ON m.occid = o.occid '.
+							'WHERE (o.collid = '.$this->collid.') AND ((m.originalurl LIKE "%/'.$this->cleanInStr($fileBaseName).'.jpg") OR (m.url LIKE "%/'.$this->cleanInStr($fileBaseName).'.jpg"))';
 						$rs = $this->conn->query($sql);
 						while($r = $rs->fetch_object()){
-							$imgArr[$r->imgid] = $r->url;
+							$imgArr[$r->mediaID] = $r->url;
 						}
 						$rs->free();
 					}
@@ -535,10 +539,10 @@ class SpecProcessorOcr extends Manager{
 					$imgH = imagesy($img);
 					if(($this->cropX + $this->cropW) > 1) $this->cropW = 1 - $this->cropX;
 					if(($this->cropY + $this->cropH) > 1) $this->cropH = 1 - $this->cropY;
-					$pX = $imgW*$this->cropX;
-					$pY = $imgH*$this->cropY;
-					$pW = $imgW*$this->cropW;
-					$pH = $imgH*$this->cropH;
+					$pX = (int)($imgW*$this->cropX);
+					$pY = (int)($imgH*$this->cropY);
+					$pW = (int)($imgW*$this->cropW);
+					$pH = (int)($imgH*$this->cropH);
 					$dest = imagecreatetruecolor($pW,$pH);
 
 					// Copy image
@@ -838,19 +842,8 @@ class SpecProcessorOcr extends Manager{
 	}
 
 	private function setTempPath(){
-		$tempPath = 0;
-		if(array_key_exists('tempDirRoot',$GLOBALS)){
-			$tempPath = $GLOBALS['tempDirRoot'];
-		}
-		else{
-			$tempPath = ini_get('upload_tmp_dir');
-		}
-		if(!$tempPath){
-			$tempPath = $GLOBALS['SERVER_ROOT'];
-			if(substr($tempPath,-1) != '/') $tempPath .= '/';
-			$tempPath .= 'temp/';
-		}
-		if(substr($tempPath,-1) != '/') $tempPath .= '/';
+		$tempPath = UploadUtil::getTempDir();
+
 		if(file_exists($tempPath.'symbocr/') || mkdir($tempPath.'symbocr/')){
 			$tempPath .= 'symbocr/';
 		}

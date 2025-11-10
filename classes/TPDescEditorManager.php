@@ -35,14 +35,15 @@ class TPDescEditorManager extends TPEditorManager{
 					if(array_key_exists($r->language, $langArr)) $langID = $langArr[$r->language];
 					else $langID = 1;
 				}
-				$descrArr[$langID][$r->tdbid]['tdProfileID'] = $r->tdProfileID;
-				$descrArr[$langID][$r->tdbid]['caption'] = $r->caption;
-				$descrArr[$langID][$r->tdbid]['source'] = $r->source;
-				$descrArr[$langID][$r->tdbid]['sourceurl'] = $r->sourceurl;
-				$descrArr[$langID][$r->tdbid]['displaylevel'] = $r->displaylevel;
-				$descrArr[$langID][$r->tdbid]['notes'] = $r->notes;
-				$descrArr[$langID][$r->tdbid]['tid'] = $r->tid;
-				$descrArr[$langID][$r->tdbid]['sciname'] = $r->sciname;
+				$tdbid = $this->sanitizeInt($r->tdbid);
+				$descrArr[$langID][$tdbid]['tdProfileID'] = $this->sanitizeInt($r->tdProfileID);
+				$descrArr[$langID][$tdbid]['caption'] = $this->cleanOutStr($r->caption);
+				$descrArr[$langID][$tdbid]['source'] = $this->cleanOutStr($r->source);
+				$descrArr[$langID][$tdbid]['sourceurl'] = $this->cleanOutStr($r->sourceurl);
+				$descrArr[$langID][$tdbid]['displaylevel'] = $this->sanitizeInt($r->displaylevel);
+				$descrArr[$langID][$tdbid]['notes'] = $this->cleanOutStr($r->notes);
+				$descrArr[$langID][$tdbid]['tid'] = $this->sanitizeInt($r->tid);
+				$descrArr[$langID][$tdbid]['sciname'] = $this->cleanOutStr($r->sciname);
 			}
 			$rs->free();
 		}
@@ -54,11 +55,12 @@ class TPDescEditorManager extends TPEditorManager{
 				$sql2 = 'SELECT tdbid, tdsid, heading, statement, notes, displayheader, sortsequence FROM taxadescrstmts WHERE (tdbid = '.$tdbid.') ORDER BY sortsequence';
 				if($rs2 = $this->conn->query($sql2)){
 					while($r2 = $rs2->fetch_object()){
-						$descrArr[$langId][$tdbid]['stmts'][$r2->tdsid]['heading'] = $r2->heading;
-						$descrArr[$langId][$tdbid]['stmts'][$r2->tdsid]['statement'] = $r2->statement;
-						$descrArr[$langId][$tdbid]['stmts'][$r2->tdsid]['notes'] = $r2->notes;
-						$descrArr[$langId][$tdbid]['stmts'][$r2->tdsid]['displayheader'] = $r2->displayheader;
-						$descrArr[$langId][$tdbid]['stmts'][$r2->tdsid]['sortsequence'] = $r2->sortsequence;
+						$tdsid = $this->sanitizeInt($r2->tdsid);
+						$descrArr[$langId][$tdbid]['stmts'][$tdsid]['heading'] = $this->cleanOutStr($r2->heading);
+						$descrArr[$langId][$tdbid]['stmts'][$tdsid]['statement'] = $r2->statement;
+						$descrArr[$langId][$tdbid]['stmts'][$tdsid]['notes'] = $this->cleanOutStr($r2->notes);
+						$descrArr[$langId][$tdbid]['stmts'][$tdsid]['displayheader'] = $this->cleanOutStr($r2->displayheader);
+						$descrArr[$langId][$tdbid]['stmts'][$tdsid]['sortsequence'] = $this->sanitizeInt($r2->sortsequence);
 					}
 					$rs2->free();
 				}
@@ -195,8 +197,12 @@ class TPDescEditorManager extends TPEditorManager{
 				if($stmt = $this->conn->prepare($sql)){
 					if($stmt->bind_param($paramType, ...$paramArr)){
 						if($stmt->execute()){
-							if($stmt->affected_rows) $status = true;
-							elseif($stmt->error) $this->errorMessage = $stmt->error;
+							if($stmt->affected_rows >= 0){
+								$status = true;
+							}
+							elseif($stmt->error){
+								 $this->errorMessage = $stmt->error;
+							}
 							$stmt->close();
 						}
 						else  $this->errorMessage = $stmt->error;

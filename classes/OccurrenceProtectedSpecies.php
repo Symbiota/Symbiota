@@ -54,8 +54,8 @@ class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
 			$sql2 = 'UPDATE omoccurrences o INNER JOIN taxstatus ts1 ON o.tidinterpreted = ts1.tid '.
 				'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 				'INNER JOIN taxa t ON ts2.tid = t.tid '.
-				'SET o.LocalitySecurity = 0 '.
-				'WHERE (t.tid = '.$tid.') AND (o.localitySecurityReason IS NULL) ';
+				'SET o.recordSecurity = 0 '.
+				'WHERE (t.tid = '.$tid.') AND (o.securityReason IS NULL) ';
 			//echo $sql2; exit;
 			$this->conn->query($sql2);
 			$protectCnt = $this->protectGlobalSpecies();
@@ -115,7 +115,7 @@ class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
 	public function getSpecimenCnt(){
 		$retCnt = 0;
 		//Get number of specimens protected
-		$sql = 'SELECT COUNT(*) AS cnt FROM omoccurrences WHERE (LocalitySecurity > 0)';
+		$sql = 'SELECT COUNT(*) AS cnt FROM omoccurrences WHERE (recordSecurity > 0)';
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){
 			$retCnt = $r->cnt;

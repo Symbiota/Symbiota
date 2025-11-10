@@ -1,15 +1,18 @@
 <?php
 include_once('../config/symbini.php');
-include_once ($SERVER_ROOT.'/classes/UtilityFunctions.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/includes/useagepolicy_template.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/includes/useagepolicy_template.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/includes/useagepolicy_template.en.php');
+include_once ($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+
 header("Content-Type: text/html; charset=" . $CHARSET);
-$serverHost = UtilityFunctions::getDomain();
+$serverHost = GeneralUtil::getDomain();
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Data Usage Guidelines</title>
 	<?php
-
 	include_once($SERVER_ROOT . '/includes/head.php');
 	?>
 </head>
@@ -20,12 +23,12 @@ $serverHost = UtilityFunctions::getDomain();
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href="<?php echo $CLIENT_ROOT; ?>/index.php">Home</a> &gt;&gt;
+		<a href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php">Home</a> &gt;&gt;
 		<b>Data Usage Guidelines</b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
-		<h1>Guidelines for Acceptable Use of Data</h1>
+	<div role="main" id="innertext">
+		<h1 class="page-heading">Guidelines for Acceptable Use of Data</h1>
 		<h2>Recommended Citation Formats</h2>
 		<p>Use one of the following formats to cite data retrieved from the <?php echo $DEFAULT_TITLE; ?> network:</p>
 		<h3>General Citation</h3>
@@ -40,14 +43,14 @@ $serverHost = UtilityFunctions::getDomain();
 					echo $DEFAULT_TITLE;
 				}
 				else {
-					echo 'Name of people or institutional reponsible for maintaining the portal';
+					echo 'Name of people or institutional responsible for maintaining the portal';
 				};
 				echo ' (accessed through the ';
 				if ($DEFAULT_TITLE) {
 					echo $DEFAULT_TITLE;
 				}
 				else {
-					echo 'Name of people or institutional reponsible for maintaining the portal';
+					echo 'Name of people or institutional responsible for maintaining the portal';
 				};
 				echo ' Portal, ' . $serverHost . $CLIENT_ROOT . ', ' . date('Y-m-d') . ').';
 			};
@@ -68,6 +71,19 @@ $serverHost = UtilityFunctions::getDomain();
 			}
 			?>
 		</blockquote>
+		<h3>Glossary</h3>
+		<p>Please cite this portal's glossary as:</p>
+		<blockquote>
+			<?php
+				if ($DEFAULT_TITLE) {
+					echo $DEFAULT_TITLE;
+				}
+				else {
+					echo 'Name of people or institutional responsible for maintaining the portal';
+				};
+				echo '. Glossary. ' . $serverHost . $CLIENT_ROOT . 'glossary/index.php. Accessed: ' . date('Y-m-d') . '.';
+			?>
+		</blockquote>
 
 		<h2>Occurrence Record Use Policy</h2>
 		<div>
@@ -78,8 +94,8 @@ $serverHost = UtilityFunctions::getDomain();
 					directed to the appropriate curators and/or collections managers.
 				</li>
 				<li>
-					<?php echo $DEFAULT_TITLE; ?> cannot assume responsibility for damages resulting from mis-use or
-					mis-interpretation of datasets or from errors or omissions that may exist in the data.
+					<?php echo $DEFAULT_TITLE; ?> cannot assume responsibility for damages resulting from misuse or
+					misinterpretation of datasets or from errors or omissions that may exist in the data.
 				</li>
 				<li>
 					It is considered a matter of professional ethics to cite and acknowledge the work of other scientists that
@@ -105,7 +121,7 @@ $serverHost = UtilityFunctions::getDomain();
 		<p>Specimens are used for scientific research and because of skilled preparation and careful use they may last for hundreds of years. Some collections have specimens that were
 		collected over 100 years ago that are no longer occur within the area. By making these specimens available on the web as images, their availability and value improves without
 		an increase in inadvertent damage caused by use. Note that if you are considering making specimens, remember collecting normally requires permission of the landowner and,
-		in the case of rare and endangered plants, additional permits may be required. It is best to coordinate such efforts with a regional institution that manages a publically
+		in the case of rare and endangered plants, additional permits may be required. It is best to coordinate such efforts with a regional institution that manages a publicly
 		accessible collection.
 		</p>
 
@@ -118,5 +134,4 @@ $serverHost = UtilityFunctions::getDomain();
 	include($SERVER_ROOT . '/includes/footer.php');
 	?>
 </body>
-
 </html>

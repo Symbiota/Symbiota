@@ -3,9 +3,9 @@ include_once('../../config/symbini.php');
 $defaultMode = "list";
 $mode = preg_replace("[^A-Za-z]",'', array_key_exists("mode",$_REQUEST) ? $_REQUEST["mode"] : $defaultMode );
 $table = preg_replace("[^A-Za-z_]",'', array_key_exists("table",$_REQUEST) ? $_REQUEST["table"] : '' );
-include_once($SERVER_ROOT.'/classes/AgentManager.php');
-include_once($SERVER_ROOT.'/classes/RdfUtility.php');
-include_once($SERVER_ROOT.'/classes/UuidFactory.php');
+include_once($SERVER_ROOT . '/classes/AgentManager.php');
+include_once($SERVER_ROOT . '/classes/utilities/RdfUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
 
 
 switch ($mode) { 
@@ -16,7 +16,7 @@ switch ($mode) {
     // auto create agents from collector records
     $am = new AgentManager();
     if ($am->isAgentEditor()) {    
-      echo "<html><head>".str_repeat(" ", 1024)."</head><body>\n";
+      echo "<!DOCTYPE html><html lang=" . $LANG_TAG . "><head>" . str_repeat(" ", 1024) . "</head><body>\n";
       echo "<h2>Creating agents from collector records.</h2>\n";
       flush();
       echo $am->createCollectorsByPattern();

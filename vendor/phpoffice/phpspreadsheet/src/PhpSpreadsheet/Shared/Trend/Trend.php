@@ -21,7 +21,7 @@ class Trend
      *
      * @var string[]
      */
-    private static $trendTypes = [
+    private static array $trendTypes = [
         self::TREND_LINEAR,
         self::TREND_LOGARITHMIC,
         self::TREND_EXPONENTIAL,
@@ -33,7 +33,7 @@ class Trend
      *
      * @var string[]
      */
-    private static $trendTypePolynomialOrders = [
+    private static array $trendTypePolynomialOrders = [
         self::TREND_POLYNOMIAL_2,
         self::TREND_POLYNOMIAL_3,
         self::TREND_POLYNOMIAL_4,
@@ -46,9 +46,9 @@ class Trend
      *
      * @var BestFit[]
      */
-    private static $trendCache = [];
+    private static array $trendCache = [];
 
-    public static function calculate($trendType = self::TREND_BEST_FIT, $yValues = [], $xValues = [], $const = true)
+    public static function calculate(string $trendType = self::TREND_BEST_FIT, array $yValues = [], array $xValues = [], bool $const = true): mixed
     {
         //    Calculate number of points in each dataset
         $nY = count($yValues);
@@ -82,7 +82,7 @@ class Trend
             case self::TREND_POLYNOMIAL_5:
             case self::TREND_POLYNOMIAL_6:
                 if (!isset(self::$trendCache[$key])) {
-                    $order = substr($trendType, -1);
+                    $order = (int) substr($trendType, -1);
                     self::$trendCache[$key] = new PolynomialBestFit($order, $yValues, $xValues);
                 }
 
@@ -95,12 +95,13 @@ class Trend
                 $bestFitValue = [];
                 foreach (self::$trendTypes as $trendMethod) {
                     $className = '\PhpOffice\PhpSpreadsheet\Shared\Trend\\' . $trendType . 'BestFit';
+                    //* @phpstan-ignore-next-line
                     $bestFit[$trendMethod] = new $className($yValues, $xValues, $const);
                     $bestFitValue[$trendMethod] = $bestFit[$trendMethod]->getGoodnessOfFit();
                 }
                 if ($trendType != self::TREND_BEST_FIT_NO_POLY) {
                     foreach (self::$trendTypePolynomialOrders as $trendMethod) {
-                        $order = substr($trendMethod, -1);
+                        $order = (int) substr($trendMethod, -1);
                         $bestFit[$trendMethod] = new PolynomialBestFit($order, $yValues, $xValues);
                         if ($bestFit[$trendMethod]->getError()) {
                             unset($bestFit[$trendMethod]);

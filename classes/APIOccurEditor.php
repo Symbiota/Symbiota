@@ -1,6 +1,6 @@
 <?php
-require_once($SERVER_ROOT.'/classes/APIBase.php');
-require_once($SERVER_ROOT.'/classes/OccurrenceUtilities.php');
+require_once($SERVER_ROOT . '/classes/APIBase.php');
+require_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 class APIOccurEditor extends APIBase{
 
@@ -22,7 +22,7 @@ class APIOccurEditor extends APIBase{
 			'occurrenceremarks', 'associatedtaxa', 'verbatimattributes',
 			'dynamicproperties', 'reproductivecondition', 'cultivationstatus', 'establishmentmeans',
 			'lifestage', 'sex', 'individualcount', 'samplingprotocol', 'preparations',
-			'country', 'stateprovince', 'county', 'municipality', 'locality', 'localitysecurity', 'localitysecurityreason',
+			'country', 'stateprovince', 'county', 'municipality', 'locality', 'recordsecurity', 'securityreason',
 			'decimallatitude', 'decimallongitude','geodeticdatum', 'coordinateuncertaintyinmeters',
 			'locationremarks', 'verbatimcoordinates', 'georeferencedby', 'georeferenceprotocol', 'georeferencesources',
 			'georeferenceverificationstatus', 'georeferenceremarks', 'minimumelevationinmeters', 'maximumelevationinmeters',
@@ -217,7 +217,7 @@ class APIOccurEditor extends APIBase{
 			}
 			//Filter out unapproved fields
 			$recArr = array_intersect_key($recArr, array_flip($this->approvedFields));
-			$this->dwcArr = OccurrenceUtilities::occurrenceArrayCleaning($recArr);
+			$this->dwcArr = OccurrenceUtil::occurrenceArrayCleaning($recArr);
 			//urldecode input data
 			foreach($this->dwcArr as $k => $v){
 				$this->dwcArr[$k] = urldecode($v);

@@ -13,10 +13,10 @@ $submitAction = array_key_exists("submitaction",$_POST)?$_POST["submitaction"]:'
 
 //Sanitation
 if(!preg_match('/^[\d,]+$/', $clidStr)) $clidStr = 0;
-$ootdTitle = htmlspecialchars($ootdTitle, HTML_SPECIAL_CHARS_FLAGS);
-$ootdType = htmlspecialchars($ootdType, HTML_SPECIAL_CHARS_FLAGS);
-$familyAnswer = htmlspecialchars($familyAnswer, HTML_SPECIAL_CHARS_FLAGS);
-$scinameAnswer = htmlspecialchars($scinameAnswer, HTML_SPECIAL_CHARS_FLAGS);
+$ootdTitle = htmlspecialchars($ootdTitle, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$ootdType = htmlspecialchars($ootdType, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$familyAnswer = htmlspecialchars($familyAnswer, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+$scinameAnswer = htmlspecialchars($scinameAnswer, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 
 $gameManager = new GamesManager();
 $gameInfo = $gameManager->setOOTD($oodID,$clidStr);
@@ -28,15 +28,16 @@ foreach($imageArr as $k => $imgValue){
 }
 $genusAnswer = strtok($scinameAnswer, " ");
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title><?php echo $ootdTitle; ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script src="../../js/jquery.js" type="text/javascript"></script>
-	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		var clientRoot = "<?php echo $CLIENT_ROOT; ?>";
 		var giveUp = false;
@@ -104,11 +105,11 @@ $genusAnswer = strtok($scinameAnswer, " ");
 	$displayLeftMenu = (isset($indexMenu)?$indexMenu:"true");
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
-	<div id="innertext" style="">
+	<div role="main" id="innertext" style="">
 		<!-- This is inner text! -->
 		<div style="width:80%;margin-left:auto;margin-right:auto;">
 			<div style="text-align:center;margin-bottom:20px;">
-				<h1><?php echo $ootdTitle; ?></h1>
+				<h1 class="page-heading"><?php echo $ootdTitle; ?></h1>
 			</div>
 			<?php
 			if(!$submitAction){
@@ -126,7 +127,7 @@ $genusAnswer = strtok($scinameAnswer, " ");
 					<div style="margin-left:auto;margin-right:auto;font-size:18px;text-align:center;margin-top:20px;margin-bottom:20px;" >
 						<b>Name that <?php echo $ootdType; ?>!</b>
 						<a id="gameinfo" href="#" onclick="return false" title="How to Play?">
-							<img src="../../images/games/ootd/qmark.png" style="height:20px;"/>
+							<img src="../../images/qmark.png" style="width:2em;"/>
 						</a>
 						<div id="gameinfodialog" title="How to Play">
 							Look at the picture, and see if you can figure out what the <?php echo $ootdType; ?> is. If you get completely stumped, you can
@@ -234,11 +235,11 @@ $genusAnswer = strtok($scinameAnswer, " ");
 								</div>
 								<div style="margin-top:40px;font-size:16px;" >
 									<div>
-										<a href = "index.php?oodid=<?php echo $oodID.'&cl='.$clidStr.'&title='.$ootdTitle.'&type='.$ootdType; ?>">Click here to try again!</a>
+										<a href = "index.php?oodid=<?php echo htmlspecialchars($oodID, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&cl=' . htmlspecialchars($clidStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&title=' . htmlspecialchars($ootdTitle, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&type=' . htmlspecialchars($ootdType, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">Click here to try again!</a>
 									</div>
 									<div>-- OR --</div>
 									<div>
-										<a href = "index.php?submitaction=giveup?oodid=<?php echo $oodID.'&cl='.$clidStr.'&title='.$ootdTitle.'&type='.$ootdType; ?>" onClick="openTaxonProfile()" >-Click here reveal what the <?php echo $ootdType; ?> was-</a>
+										<a href = "index.php?submitaction=giveup?oodid=<?php echo htmlspecialchars($oodID, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) .'&cl=' . htmlspecialchars($clidStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&title=' . htmlspecialchars($ootdTitle, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&type=' . htmlspecialchars($ootdType, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" onClick="openTaxonProfile()" >-Click here reveal what the <?php echo htmlspecialchars($ootdType, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?> was-</a>
 									</div>
 								</div>
 							</div>

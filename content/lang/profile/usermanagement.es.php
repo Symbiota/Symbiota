@@ -6,7 +6,8 @@ Language: Español (Spanish)
 */
 
 $LANG['USER_MNGMT'] = 'Administración de Usuario';
-$LANG['SEARCH'] = 'Ayuda';
+$LANG['SEARCH_BOX'] = 'Busqueda'; //because a search box and the "search" button might have different names in different languages
+$LANG['SEARCH'] = 'Buscar';
 $LANG['LAST_OR_LOGIN'] = 'Apellido o Usuario';
 $LANG['ENTER_LAST'] = 'Introducir Apellido';
 $LANG['QUICK_SEARCH'] = 'Búsqueda Rápida';
@@ -58,5 +59,9 @@ $LANG['PERS_SP_MGMNT'] = 'Manejo de Especímenes Personales';
 $LANG['INV_MGMNT'] = 'Proyecto de Manejo de Inventario';
 $LANG['CHECKLIST_MGMNT'] = 'Manejo de Listados de Especies';
 $LANG['MUST_LOGIN'] = 'Debe estar conectado y poseer permisos de administrador para manejar usuarios';
+$LANG['SKIP_LINK'] = 'Saltar a la lista de usuarios';
+$LANG['CREATE_NEW_USER'] = 'Crear nuevo usuario';
+$LANG['USER_CREATED_SUCCESSFULLY'] = 'Usuario creado con éxito:';
+$LANG['USERS'] = 'Usuarios';
 
 ?>

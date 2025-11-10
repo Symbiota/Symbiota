@@ -1,16 +1,18 @@
 <?php
 include_once('Manager.php');
 include_once('Person.php');
-include_once('Encryption.php');
+include_once('utilities/Encryption.php');
+include_once('utilities/GeneralUtil.php');
+include_once('utilities/QueryUtil.php');
 @include_once 'Mail.php';
 
 class ProfileManager extends Manager{
 
-	private $rememberMe = false;
-	private $uid;
-	private $userName;
-	private $displayName;
-	private $token;
+	protected $rememberMe = false;
+	protected $uid;
+	protected $userName;
+	protected $displayName;
+	protected $token;
 
 	public function __construct($connType = 'readonly'){
 		parent::__construct(null, $connType);
@@ -20,15 +22,21 @@ class ProfileManager extends Manager{
  		parent::__destruct();
 	}
 
-	private function resetConnection(){
+	protected function resetConnection(){
 		$this->conn = MySQLiConnectionFactory::getCon('write');
+	}
+
+	public function closeConnection(){
+		if($this->conn !== null){
+			$this->conn->close();
+			$this->conn = null;
+		}
 	}
 
 	public function reset(){
 		$domainName = filter_var($_SERVER['SERVER_NAME'], FILTER_SANITIZE_URL);
 		if($domainName == 'localhost') $domainName = false;
-		setcookie('SymbiotaCrumb', '', time() - 3600, ($GLOBALS['CLIENT_ROOT']?$GLOBALS['CLIENT_ROOT']:'/'), $domainName, false, true);
-		setcookie('SymbiotaCrumb', '', time() - 3600, ($GLOBALS['CLIENT_ROOT']?$GLOBALS['CLIENT_ROOT']:'/'));
+		setcookie('SymbiotaCrumb', '', time() - 3600, ($GLOBALS['CLIENT_ROOT']?$GLOBALS['CLIENT_ROOT']:'/'), $domainName, true, true);
 		unset($_SESSION['userrights']);
 		unset($_SESSION['userparams']);
 	}
@@ -37,6 +45,7 @@ class ProfileManager extends Manager{
 		$status = false;
 		unset($_SESSION['userrights']);
 		unset($_SESSION['userparams']);
+
 		if($this->userName){
 			if($this->token){
 				$status = $this->authenticateUsingToken();
@@ -72,23 +81,38 @@ class ProfileManager extends Manager{
 	private function authenticateUsingToken(){
 		$status = false;
 		if($this->token){
-			$sql = 'SELECT u.uid, u.firstname, u.username FROM users u INNER JOIN useraccesstokens t ON u.uid = t.uid WHERE (t.token = ?) AND ((u.username = ?) OR (u.email = ?)) ';
-			if($stmt = $this->conn->prepare($sql)){
-				if($stmt->bind_param('sss', $this->token, $this->userName, $this->userName)){
-					$stmt->execute();
-					$stmt->bind_result($this->uid, $this->displayName, $this->userName);
-					if($stmt->fetch()) $status = true;
-					$stmt->close();
+			try{
+				$sql = 'SELECT u.uid, u.firstname, u.username FROM users u INNER JOIN useraccesstokens t ON u.uid = t.uid WHERE (t.token = ?) AND ((u.username = ?) OR (u.email = ?)) ';
+				if($stmt = $this->conn->prepare($sql)){
+					if($stmt->bind_param('sss', $this->token, $this->userName, $this->userName)){
+						$stmt->execute();
+						$stmt->bind_result($this->uid, $this->displayName, $this->userName);
+						if($stmt->fetch()) $status = true;
+						$stmt->close();
+					}
 				}
+			}
+			catch(Exception $e){
+				//Probably a new installation and schema does not yet exists, thus just catch error and let schema manager handle the issue
+				//echo $e->getMessage();
 			}
 		}
 		return $status;
 	}
 
 	private function authenticateUsingPassword($pwdStr){
+		if($GLOBALS['USE_BCRYPT'] ?? false) {
+			return $this->authenticateUsingPasswordBcrypt($pwdStr);
+		} else {
+			return $this->authenticateUsingPasswordOld($pwdStr);
+		}
+	}
+
+	private function authenticateUsingPasswordOld($pwdStr){
 		$status = false;
 		if($pwdStr){
 			$sql = 'SELECT uid, firstname, username FROM users WHERE (password = CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?)))))) AND (username = ? OR email = ?) ';
+
 			if($stmt = $this->conn->prepare($sql)){
 				if($stmt->bind_param('sss', $pwdStr, $this->userName, $this->userName)){
 					$stmt->execute();
@@ -101,6 +125,51 @@ class ProfileManager extends Manager{
 			else echo 'error preparing statement: '.$this->conn->error;
 		}
 		return $status;
+	}
+
+	private function authenticateUsingPasswordBcrypt($pwdStr){
+		try {
+			$params = [];
+			$sql = 'SELECT uid, firstname, username, password FROM users WHERE ';
+
+			if($this->uid) {
+				$sql .= '(uid = ?)';
+				$params = [ $this->uid ];
+			} else {
+				$sql .= '(username = ? OR email = ?)';
+				$params = [ $this->userName, $this->userName ];
+			}
+
+			$rs = QueryUtil::executeQuery(
+				$this->conn,
+				$sql,
+				$params
+			);
+
+			$user = $rs->fetch_object();
+
+			if(!$user->password) {
+				return false;
+			}
+
+			// If it's an old password then allow for login
+			// then rehash
+			if($user && substr($user->password, 0, 4) != '$2y$' && $this->authenticateUsingPasswordOld($pwdStr)) {
+				$this->resetConnection();
+				return $this->updatePassword($this->uid, $pwdStr);
+			} else if(!$user || !$this->checkHash($pwdStr, $user->password)) {
+				//Account missing our passwords didn't match
+				return false;
+			} else {
+				$this->uid = $user->uid;
+				$this->displayName = $user->firstname;
+				$this->userName  = $user->username;
+				return true;
+			}
+		} catch(Exception $e) {
+			//Some erroring setting
+			return false;
+		}
 	}
 
 	private function authenticateLoginAs(){
@@ -121,7 +190,7 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
-	private function setTokenCookie(){
+	protected function setTokenCookie(){
 		$tokenArr = Array();
 		if(!$this->token){
 			$this->createToken();
@@ -132,34 +201,61 @@ class ProfileManager extends Manager{
 			$cookieExpire = time() + 60 * 60 * 24 * 30;
 			$domainName = filter_var($_SERVER['SERVER_NAME'], FILTER_SANITIZE_URL);
 			if ($domainName == 'localhost') $domainName = false;
-			setcookie('SymbiotaCrumb', Encryption::encrypt(json_encode($tokenArr)), $cookieExpire, ($GLOBALS['CLIENT_ROOT'] ? $GLOBALS['CLIENT_ROOT'] : '/'), $domainName, false, true);
+			setcookie('SymbiotaCrumb', Encryption::encrypt(json_encode($tokenArr)), $cookieExpire, ($GLOBALS['CLIENT_ROOT'] ? $GLOBALS['CLIENT_ROOT'] : '/'), $domainName, true, true);
 		}
 	}
 
 	public function getPerson(){
 		$sqlStr = 'SELECT uid, firstname, lastname, title, institution, department, address, city, state, zip, country, phone, email, '.
-			'url, guid, notes, username, lastlogindate FROM users WHERE (uid = '.$this->uid.')';
+			'url, guid, notes, username, lastlogindate FROM users WHERE (uid = ?)';
 		$person = new Person();
-		$rs = $this->conn->query($sqlStr);
-		if($r = $rs->fetch_object()){
-			$person->setUid($r->uid);
-			$person->setUserName($r->username);
-			$person->setLastLoginDate($r->lastlogindate);
-			$person->setFirstName($r->firstname);
-			$person->setLastName($r->lastname);
-			$person->setTitle($r->title);
-			$person->setInstitution($r->institution);
-			$person->setDepartment($r->department);
-			$person->setCity($r->city);
-			$person->setState($r->state);
-			$person->setZip($r->zip);
-			$person->setCountry($r->country);
-			$person->setPhone($r->phone);
-			$person->setEmail($r->email);
-			$person->setGUID($r->guid);
-			$this->setUserTaxonomy($person);
+		if($stmt = $this->conn->prepare($sqlStr)){
+			if($stmt->bind_param('i', $this->uid)){
+				$stmt->execute();
+				$stmt->store_result();
+				$stmt->bind_result(
+					$r_uid,
+					$r_firstname,
+					$r_lastname,
+					$r_title,
+					$r_institution,
+					$r_department,
+					$r_address,
+					$r_city,
+					$r_state,
+					$r_zip,
+					$r_country,
+					$r_phone,
+					$r_email,
+					$r_url,
+					$r_guid,
+					$r_notes,
+					$r_username,
+					$r_lastlogindate
+				);
+				if ($stmt->fetch()) {
+                $person->setUid($r_uid);
+                $person->setUserName($r_username);
+                $person->setLastLoginDate($r_lastlogindate);
+                $person->setFirstName($r_firstname);
+                $person->setLastName($r_lastname);
+                $person->setTitle($r_title);
+                $person->setInstitution($r_institution);
+                $person->setDepartment($r_department);
+                $person->setCity($r_city);
+                $person->setState($r_state);
+                $person->setZip($r_zip);
+                $person->setCountry($r_country);
+                $person->setPhone($r_phone);
+                $person->setEmail($r_email);
+                $person->setGUID($r_guid);
+                $this->setUserTaxonomy($person);
+            }
+
+			}
 		}
-		$rs->free();
+		$stmt->free_result();
+		$stmt->close();
 		return $person;
 	}
 
@@ -175,20 +271,25 @@ class ProfileManager extends Manager{
 		$zip = array_key_exists('zip', $postArr) ? strip_tags($postArr['zip']) : '';
 		$country = array_key_exists('country', $postArr) ? strip_tags($postArr['country']) : '';
 		$guid = array_key_exists('guid', $postArr) ? strip_tags($postArr['guid']) : '';
+		$isAccessiblePreferred = array_key_exists('accessibility-pref', $postArr) ? strip_tags($postArr['accessibility-pref']) : '0';
 
 		$status = false;
+
+		$accessibilityStatus = $this->setAccessibilityPreference($isAccessiblePreferred === '1' ? true : false, $this->uid);
+
 		if($this->uid && $lastName && $email){
 			$this->resetConnection();
 			$sql = 'UPDATE users SET firstname = ?, lastname = ?, email = ?, title = ?, institution = ?, city = ?, state = ?, zip = ?, country = ?, guid = ? WHERE (uid = ?)';
 			if($stmt = $this->conn->prepare($sql)) {
 				$stmt->bind_param('ssssssssssi', $firstName, $lastName, $email, $title, $institution, $city, $state, $zip, $country, $guid, $this->uid);
 				$stmt->execute();
-				if(!$stmt->error) $status = true;
+				if($accessibilityStatus && !$stmt->error) $status = true;
 				else $this->errorMessage = 'ERROR updating user profile: '.$stmt->error;
 				$stmt->close();
 			}
 			else $this->errorMessage = 'ERROR preparing statement user profile update: '.$this->conn->error;
 		}
+
 		return $status;
 	}
 
@@ -210,7 +311,15 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
-	public function changePassword ($newPwd, $oldPwd = "", $isSelf = 0) {
+	public function changePassword($newPwd, $oldPwd = "", $isSelf = 0) {
+		if($GLOBALS['USE_BCRYPT'] ?? false) {
+			return $this->changePasswordBcrypt($newPwd, $oldPwd, $isSelf);
+		} else {
+			return $this->changePasswordOld($newPwd, $oldPwd, $isSelf);
+		}
+	}
+
+	public function changePasswordOld ($newPwd, $oldPwd = "", $isSelf = 0) {
 		if($newPwd){
 			$this->resetConnection();
 			if($isSelf){
@@ -227,9 +336,46 @@ class ProfileManager extends Manager{
 					if(!$testStatus) return false;
 				}
 			}
+			if(!$this->testAgainstPrevious($newPwd)) return false;
 			if($this->updatePassword($this->uid, $newPwd)) return true;
 		}
 		return false;
+	}
+
+	public function changePasswordBcrypt($newPwd, $oldPwd = "", $isSelf = 0) {
+		if(!$newPwd) return false;
+
+		$this->resetConnection();
+		if($isSelf){
+			if(!$this->authenticateUsingPassword($oldPwd)) {
+				return  false;
+			}
+		}
+		if(!$this->testAgainstPrevious($newPwd)) return false;
+		if($this->updatePassword($this->uid, $newPwd)) return true;
+	}
+
+	private function testAgainstPrevious($newPassword){
+		$bool = true;
+		try{
+			// If passwords are believed to have been compromised, rename "password" column to "passwordOld" and then NULL "password".
+			// This force users to reset their passwords and this code ensures they don't reset to their old password
+			$sql = 'SELECT uid FROM users WHERE (uid = ?) AND (passwordOld = CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?))))))';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('is', $this->uid, $newPassword);
+				$stmt->execute();
+				$stmt->store_result();
+				if($stmt->num_rows){
+					$this->errorMessage = 'ERROR_PWD_SAME';
+					$bool = false;
+				}
+				$stmt->close();
+			}
+		}
+		catch(Exception $e){
+
+		}
+		return $bool;
 	}
 
 	public function resetPassword($un){
@@ -251,7 +397,7 @@ class ProfileManager extends Manager{
 
 			if($uid){
 				$subject = 'RE: Password reset';
-				$serverPath = $this->getDomain().$GLOBALS['CLIENT_ROOT'];
+				$serverPath = GeneralUtil::getDomain().$GLOBALS['CLIENT_ROOT'];
 				$from = '';
 				if (array_key_exists("SYSTEM_EMAIL", $GLOBALS) && !empty($GLOBALS["SYSTEM_EMAIL"])){
 					$from = 'Reset Request <'.$GLOBALS["SYSTEM_EMAIL"].'>';
@@ -259,8 +405,8 @@ class ProfileManager extends Manager{
 				$body = 'Your '.$GLOBALS['DEFAULT_TITLE'].' password has been reset to: '.$newPassword.'<br/><br/> '.
 					'After logging in, you can change your password by clicking on the My Profile link within the site menu and then selecting the Edit Profile tab. '.
 					'If you have problems, contact the System Administrator: '.$GLOBALS['ADMIN_EMAIL'].'<br/><br/>'.
-					'Data portal: <a href="'.$serverPath.'">'.$serverPath.'</a><br/>'.
-					'Direct link to your user profile: <a href="'.$serverPath.'/profile/viewprofile.php?tabindex=2">'.$serverPath.'/profile/viewprofile.php</a>';
+					'Data portal: <a href="' . htmlspecialchars($serverPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/">' . htmlspecialchars($serverPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a><br/>'.
+					'Direct link to your user profile: <a href="' . htmlspecialchars($serverPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/profile/viewprofile.php?tabindex=2">' . htmlspecialchars($serverPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/profile/viewprofile.php</a>';
 
 				if($this->sendEmail($email, $subject, $body, $from)){
 					$this->resetConnection();
@@ -278,6 +424,14 @@ class ProfileManager extends Manager{
 	}
 
 	private function updatePassword($uid, $newPassword){
+		if($GLOBALS['USE_BCRYPT'] ?? false) {
+			return $this->updatePasswordBcrypt($uid, $newPassword);
+		} else {
+			return $this->updatePasswordOld($uid, $newPassword);
+		}
+	}
+
+	private function updatePasswordOld($uid, $newPassword){
 		$status = false;
 		$sql = 'UPDATE users SET password = CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?))))) WHERE (uid = ?)';
 		if($stmt = $this->conn->prepare($sql)){
@@ -290,17 +444,56 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
+	private function updatePasswordBcrypt(int $uid, string $newPassword): bool {
+		$status = false;
+		$sql = 'UPDATE users SET password = ? WHERE (uid = ?)';
+		$hash = $this->hash($newPassword);
+
+		if(($stmt = $this->conn->prepare($sql)) && $hash){
+			$stmt->bind_param('si', $hash, $uid);
+			$stmt->execute();
+			if(!$stmt->error) $status = true;
+			else $this->errorMessage = $stmt->error;
+			$stmt->close();
+		}
+		return $status;
+	}
+
 	private function generateNewPassword(){
 		// generate new random password
 		$newPassword = "";
 		$alphabet = str_split("0123456789abcdefghijklmnopqrstuvwxyz");
-		for($i = 0; $i<8; $i++) {
+		for($i = 0; $i<10; $i++) {
 			$newPassword .= $alphabet[rand(0,count($alphabet)-1)];
 		}
 		return $newPassword;
 	}
 
-	public function register($postArr){
+	/**
+	 * Wrapper function for password_hash using bcrypt to keep
+	 * options the same across usage
+	 *
+	 * @param string $value Value to check is stored in the hash
+	 * @param string $hash Encrypted hash that is being checked
+	 * @return bool
+	 **/
+	public function hash(string $value) {
+		return password_hash($value, PASSWORD_BCRYPT, [ 'cost' => 10 ]);
+	}
+
+	/**
+	 * Wrapper function for password_verify to keep it flexible
+	 * should the need to deprecate arrives
+	 *
+	 * @param string $value Value to check is stored in the hash
+	 * @param string $hash Encrypted hash that is being checked
+	 * @return bool
+	 **/
+	public function checkHash(string $value, string $hash): bool {
+		return password_verify($value,  $hash);
+	}
+
+	public function register($postArr, $adminRegister = false){
 		$status = false;
 
 		$firstName = strip_tags($postArr['firstname']);
@@ -315,25 +508,48 @@ class ProfileManager extends Manager{
 		$zip = array_key_exists('zip', $postArr) ? strip_tags($postArr['zip']) : '';
 		$country = array_key_exists('country', $postArr) ? strip_tags($postArr['country']) : '';
 		$guid = array_key_exists('guid', $postArr) ? strip_tags($postArr['guid']) : '';
+		$isAccessiblePreferred = array_key_exists('accessibility-pref', $postArr) ? strip_tags($postArr['accessibility-pref']) : '0';
+		$initialDynamicProperties = array();
+		$initialDynamicProperties['accessibilityPref'] = $isAccessiblePreferred === "1" ? true : false;
+		$jsonDynProps = json_encode($initialDynamicProperties);
 
-		$sql = 'INSERT INTO users(username, password, email, firstName, lastName, title, institution, country, city, state, zip, guid) VALUES(?,CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?))))),?,?,?,?,?,?,?,?,?,?)';
+		$sql = 'INSERT INTO users(username, password, email, firstName, lastName, title, institution, country, city, state, zip, guid, dynamicProperties) VALUES(?,CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?))))),?,?,?,?,?,?,?,?,?,?,?)';
+
+		$hash = $pwd;
+
+		if($GLOBALS['USE_BCRYPT'] ?? false) {
+			$sql = 'INSERT INTO users(username, password, email, firstName, lastName, title, institution, country, city, state, zip, guid, dynamicProperties) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)';
+			$hash = $this->hash($pwd);
+
+			if(!$hash) {
+				$this->errorMessage = 'ERROR inserting new user: Failed to encrypt password';
+				return $status;
+			}
+		}
+
 		$this->resetConnection();
 		if($stmt = $this->conn->prepare($sql)) {
-			$stmt->bind_param('ssssssssssss', $this->userName, $pwd, $email, $firstName, $lastName, $title, $institution, $country, $city, $state, $zip, $guid);
+			$stmt->bind_param('sssssssssssss', $this->userName, $hash, $email, $firstName, $lastName, $title, $institution, $country, $city, $state, $zip, $guid, $jsonDynProps);
 			$stmt->execute();
 			if($stmt->affected_rows){
 				$this->uid = $stmt->insert_id;
 				$this->displayName = $firstName;
-				$this->reset();
-				$this->authenticate($pwd);
+				if(!$adminRegister){
+					$this->reset();
+					$this->authenticate($pwd);
+				}
 				$status = true;
 			}
 			elseif($stmt->error) $this->errorMessage = 'ERROR inserting new user: '.$stmt->error;
 			$stmt->close();
+
 		}
 		else $this->errorMessage = 'ERROR inserting new user: '.$this->conn->error;
 
 		return $status;
+	}
+
+	private function registerOld(array $userOptions) {
 	}
 
 	public function lookupUserName($emailAddr){
@@ -344,17 +560,24 @@ class ProfileManager extends Manager{
 		}
 		if(!$this->validateEmailAddress($emailAddr)) return false;
 		$loginStr = '';
-		$sql = 'SELECT uid, username, concat_ws("; ", lastname, firstname) FROM users WHERE (email = "'.$emailAddr.'")';
-		$rs = $this->conn->query($sql);
-		while($row = $rs->fetch_object()){
-			if($loginStr) $loginStr .= '; ';
-			$loginStr .= $row->username;
+		$sql = 'SELECT uid, username, concat_ws("; ", lastname, firstname) FROM users WHERE (email = ?)';
+		if($stmt = $this->conn->prepare($sql)){
+			if($stmt->bind_param('s', $emailAddr)){
+				if ($stmt->execute()) {
+					 $stmt->bind_result($r_uid, $r_username, $r_fullname);
+					while ($stmt->fetch()) {
+                	    if ($loginStr) $loginStr .= '; ';
+                    	$loginStr .= $r_username;
+                	}
+				}
+			}
 		}
-		$rs->free();
+		$stmt->free_result();
+		$stmt->close();
 		if($loginStr){
 			$subject = $GLOBALS['DEFAULT_TITLE'].' Login Name';
-			$serverPath = $this->getDomain().$GLOBALS['CLIENT_ROOT'];
-			$bodyStr = 'Your '.$GLOBALS['DEFAULT_TITLE'].' (<a href="'.$serverPath.'">'.$serverPath.'</a>) login name is: '.
+			$serverPath = GeneralUtil::getDomain().$GLOBALS['CLIENT_ROOT'];
+			$bodyStr = 'Your '.$GLOBALS['DEFAULT_TITLE'].' (<a href="' . htmlspecialchars($serverPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($serverPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>) login name is: '.
 				$loginStr.'<br/><br/>If you continue to have login issues, contact the System Administrator: '.$GLOBALS['ADMIN_EMAIL'];
 			$status = $this->sendEmail($emailAddr, $subject, $bodyStr, $from);
 		}
@@ -408,14 +631,14 @@ class ProfileManager extends Manager{
 
 			//Test if login exists
 			if($this->loginExists($newLogin)){
-				$this->errorMessage = 'loginExists';
+				$this->errorMessage = 'LOGIN_USED';
 				return false;
 			}
 
 			$this->setUserName();
 			if($isSelf){
 				if(!$this->authenticate($pwd)){
-					$this->errorMessage = 'incorrectPassword';
+					$this->errorMessage = 'INCORRECT_PWD';
 					return false;
 				}
 			}
@@ -463,7 +686,7 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
-	private function setUserRights(){
+	public function setUserRights(){
 		if($this->uid){
 			$userRights = array();
 			$sql = 'SELECT role, tablepk FROM userroles WHERE (uid = ?) ';
@@ -483,7 +706,7 @@ class ProfileManager extends Manager{
 		}
 	}
 
-	private function setUserParams(){
+	protected function setUserParams(){
 		global $PARAMS_ARR;
 		$_SESSION['userparams']['un'] = $this->userName;
 		$_SESSION['userparams']['dn'] = $this->displayName;
@@ -545,32 +768,96 @@ class ProfileManager extends Manager{
 		$statement->close();
 	}
 
-	public function deleteUserTaxonomy($utid,$editorStatus = ''){
+	public function deleteUserTaxonomy($utid, $editorStatus = ''){
 		$statusStr = 'SUCCESS: Taxonomic relationship deleted';
-		if(is_numeric($utid) || $utid == 'all'){
-			$sql = 'DELETE FROM usertaxonomy ';
-			if($utid == 'all'){
-				$sql .= 'WHERE uid = '.$this->uid;
-			}
-			else{
-				$sql .= 'WHERE idusertaxonomy = '.$utid;
-			}
-			if($editorStatus){
-				$sql .= ' AND editorstatus = "'.$editorStatus.'" ';
-			}
-			$this->resetConnection();
-			if($this->conn->query($sql)){
-				if($this->uid == $GLOBALS['SYMB_UID']){
-					$this->userName = $GLOBALS['USERNAME'];
-					$this->authenticate();
+
+		$allowedEditorStatuses = ['OccurrenceEditor','RegionOfInterest', 'TaxonomicThesaurusEditor']; // @TODO are there other values that we want to be valid?
+		$useEditor = false;
+		if ($editorStatus !== '' && in_array($editorStatus, $allowedEditorStatuses, true)) {
+			$useEditor = true;
+		}
+
+		$this->resetConnection();
+
+		if ($utid === 'all') {
+			if ($useEditor) {
+				$sql = 'DELETE FROM usertaxonomy WHERE uid = ? AND editorstatus = ?';
+				if ($stmt = $this->conn->prepare($sql)) {
+					$stmt->bind_param('is', $this->uid, $editorStatus);
+					$stmt->execute();
+					if ($stmt->error) {
+						$statusStr = 'ERROR deleting taxonomic relationship: ' . $stmt->error;
+					} else {
+						if ($this->uid == $GLOBALS['SYMB_UID']) {
+							$this->userName = $GLOBALS['USERNAME'];
+							$this->authenticate();
+						}
+					}
+					$stmt->close();
+				} else {
+					$statusStr = 'ERROR preparing statement for delete: ' . $this->conn->error;
+				}
+			} else {
+				$sql = 'DELETE FROM usertaxonomy WHERE uid = ?';
+				if ($stmt = $this->conn->prepare($sql)) {
+					$stmt->bind_param('i', $this->uid);
+					$stmt->execute();
+					if ($stmt->error) {
+						$statusStr = 'ERROR deleting taxonomic relationship: ' . $stmt->error;
+					} else {
+						if ($this->uid == $GLOBALS['SYMB_UID']) {
+							$this->userName = $GLOBALS['USERNAME'];
+							$this->authenticate();
+						}
+					}
+					$stmt->close();
+				} else {
+					$statusStr = 'ERROR preparing statement for delete: ' . $this->conn->error;
 				}
 			}
-			else{
-				$statusStr = 'ERROR deleting taxonomic relationship: '.$this->conn->error;
+		} elseif (is_numeric($utid)) {
+			$utidParam = (int) $utid;
+			if ($useEditor) {
+				$sql = 'DELETE FROM usertaxonomy WHERE idusertaxonomy = ? AND editorstatus = ?';
+				if ($stmt = $this->conn->prepare($sql)) {
+					$stmt->bind_param('is', $utidParam, $editorStatus);
+					$stmt->execute();
+					if ($stmt->error) {
+						$statusStr = 'ERROR deleting taxonomic relationship: ' . $stmt->error;
+					} else {
+						if ($this->uid == $GLOBALS['SYMB_UID']) {
+							$this->userName = $GLOBALS['USERNAME'];
+							$this->authenticate();
+						}
+					}
+					$stmt->close();
+				} else {
+					$statusStr = 'ERROR preparing statement for delete: ' . $this->conn->error;
+				}
+			} else {
+				$sql = 'DELETE FROM usertaxonomy WHERE idusertaxonomy = ?';
+				if ($stmt = $this->conn->prepare($sql)) {
+					$stmt->bind_param('i', $utidParam);
+					$stmt->execute();
+					if ($stmt->error) {
+						$statusStr = 'ERROR deleting taxonomic relationship: ' . $stmt->error;
+					} else {
+						if ($this->uid == $GLOBALS['SYMB_UID']) {
+							$this->userName = $GLOBALS['USERNAME'];
+							$this->authenticate();
+						}
+					}
+					$stmt->close();
+				} else {
+					$statusStr = 'ERROR preparing statement for delete: ' . $this->conn->error;
+				}
 			}
+		} else {
+			$statusStr = 'ERROR: invalid id';
 		}
 		return $statusStr;
 	}
+
 
 	public function addUserTaxonomy($taxon, $editorStatus, $geographicScope, $notes){
 		$statusStr = 'SUCCESS adding taxonomic relationship';
@@ -602,7 +889,6 @@ class ProfileManager extends Manager{
 					}
 				}
 				elseif($stmt->error) $this->errorMessage = 'ERROR adding taxonomic relationship: '.$stmt->error;
-				$stmt->fetch();
 				$stmt->close();
 			}
 			else $this->errorMessage = 'ERROR preparing statement for adding taxonomic relationship: '.$this->conn->error;
@@ -639,7 +925,7 @@ class ProfileManager extends Manager{
 						'INNER JOIN omcollections c ON o.collid = c.collid '.
 						'INNER JOIN taxa t ON o.tidinterpreted = t.tid '.
 						'INNER JOIN taxaenumtree e ON t.tid = e.tid ';
-					if($withImgOnly) $sql .= 'INNER JOIN images i ON o.occid = i.occid ';
+					if($withImgOnly) $sql .= 'INNER JOIN media i ON o.occid = i.occid ';
 					$sql .= 'WHERE v.category = "identification" AND v.ranking < 6 AND e.taxauthid = 1 '.
 						'AND (e.parenttid = '.$tid.' OR t.tid = '.$tid.') '.
 						'ORDER BY o.sciname,t.sciname,o.catalognumber ';
@@ -648,7 +934,7 @@ class ProfileManager extends Manager{
 					if($rs->num_rows){
 						while($r = $rs->fetch_object()){
 							echo '<li><i>'.$r->sciname.'</i>, ';
-							echo '<a href="../collections/editor/occurrenceeditor.php?occid='.$r->occid.'" target="_blank">';
+							echo '<a href="../collections/editor/occurrenceeditor.php?occid=' . htmlspecialchars($r->occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">';
 							echo $r->catalognumber.'</a> ['.$r->collcode.']'.($r->stateprovince?', '.$r->stateprovince:'');
 							echo '</li>'."\n";
 						}
@@ -674,7 +960,7 @@ class ProfileManager extends Manager{
 			$sql = 'SELECT DISTINCT o.occid, o.catalognumber, o.stateprovince, '.
 				'CONCAT_WS("-",IFNULL(o.institutioncode,c.institutioncode),IFNULL(o.collectioncode,c.collectioncode)) AS collcode '.
 				'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
-			if($withImgOnly) $sql .= 'INNER JOIN images i ON o.occid = i.occid ';
+			if($withImgOnly) $sql .= 'INNER JOIN media i ON o.occid = i.occid ';
 			$sql .= 'WHERE (o.sciname IS NULL) '.
 				'ORDER BY c.institutioncode, o.catalognumber LIMIT 2000';
 			//echo '<div>'.$sql.'</div>';
@@ -682,7 +968,7 @@ class ProfileManager extends Manager{
 			if($rs->num_rows){
 				while($r = $rs->fetch_object()){
 					echo '<li>';
-					echo '<a href="../collections/editor/occurrenceeditor.php?occid='.$r->occid.'" target="_blank">';
+					echo '<a href="../collections/editor/occurrenceeditor.php?occid=' . htmlspecialchars($r->occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">';
 					echo $r->catalognumber.'</a> ['.$r->collcode.']'.($r->stateprovince?', '.$r->stateprovince:'');
 					echo '</li>'."\n";
 				}
@@ -696,95 +982,6 @@ class ProfileManager extends Manager{
 			ob_flush();
 			flush();
 		}
-	}
-
-	//Function needs to be replaced with current specimen backup function
-	public function dlSpecBackup($collId, $characterSet, $zipFile = 1){
-		global $PARAMS_ARR;
-
-		$tempPath = $this->getTempPath();
-		$buFileName = $PARAMS_ARR['un'].'_'.time();
-
- 		$cSet = str_replace('-','',strtolower($GLOBALS['CHARSET']));
-		$fileUrl = '';
-		//If zip archive can be created, the occurrences, determinations, and image records will be added to single archive file
-		//If not, then a CSV file containing just occurrence records will be returned
-		echo '<li style="font-weight:bold;">Zip Archive created</li>';
-		echo '<li style="font-weight:bold;">Adding occurrence records to archive...';
-		ob_flush();
-		flush();
-		//Adding occurrence records
-		$fileName = $tempPath.$buFileName;
-		$specFH = fopen($fileName.'_spec.csv', "w");
-		//Output header
-		$headerStr = 'occid,dbpk,basisOfRecord,otherCatalogNumbers,ownerInstitutionCode, '.
-			'family,scientificName,sciname,tidinterpreted,genus,specificEpithet,taxonRank,infraspecificEpithet,scientificNameAuthorship, '.
-			'taxonRemarks,identifiedBy,dateIdentified,identificationReferences,identificationRemarks,identificationQualifier, '.
-			'typeStatus,recordedBy,recordNumber,associatedCollectors,eventDate,year,month,day,startDayOfYear,endDayOfYear, '.
-			'verbatimEventDate,habitat,substrate,occurrenceRemarks,informationWithheld,associatedOccurrences, '.
-			'dataGeneralizations,associatedTaxa,dynamicProperties,verbatimAttributes,reproductiveCondition, '.
-			'cultivationStatus,establishmentMeans,lifeStage,sex,individualCount,country,stateProvince,county,municipality, '.
-			'locality,localitySecurity,localitySecurityReason,decimalLatitude,decimalLongitude,geodeticDatum, '.
-			'coordinateUncertaintyInMeters,verbatimCoordinates,georeferencedBy,georeferenceProtocol,georeferenceSources, '.
-			'georeferenceVerificationStatus,georeferenceRemarks,minimumElevationInMeters,maximumElevationInMeters,verbatimElevation, '.
-			'previousIdentifications,disposition,modified,language,processingstatus,recordEnteredBy,duplicateQuantity,dateLastModified ';
-		fputcsv($specFH, explode(',',$headerStr));
-		//Query and output values
-		$sql = 'SELECT '.$headerStr.' FROM omoccurrences WHERE collid = '.$collId.' AND observeruid = '.$this->uid;
-		if($rs = $this->conn->query($sql)){
-			while($r = $rs->fetch_row()){
-				if($characterSet && $characterSet != $cSet){
-					$this->encodeArr($r,$characterSet);
-				}
-				fputcsv($specFH, $r);
-			}
-			$rs->free();
-		}
-		fclose($specFH);
-
-		if($zipFile && class_exists('ZipArchive')){
-			$zipArchive = new ZipArchive;
-			$zipArchive->open($tempPath.$buFileName.'.zip', ZipArchive::CREATE);
-			//Add occurrence file and then rename to
-			$zipArchive->addFile($fileName.'_spec.csv');
-			$zipArchive->renameName($fileName.'_spec.csv','occurrences.csv');
-
-			//Add determinations
-			/*
-			echo 'Done!</li> ';
-			echo '<li style="font-weight:bold;">Adding determinations records to archive...';
-			ob_flush();
-			flush();
-			$detFH = fopen($fileName.'_det.csv', "w");
-			fputcsv($detFH, Array('detid','occid','sciname','scientificNameAuthorship','identifiedBy','d.dateIdentified','identificationQualifier','identificationReferences','identificationRemarks','sortsequence'));
-			//Add determination values
-			$sql = 'SELECT d.detid,d.occid,d.sciname,d.scientificNameAuthorship,d.identifiedBy,d.dateIdentified, '.
-				'd.identificationQualifier,d.identificationReferences,d.identificationRemarks,d.sortsequence '.
-				'FROM omdeterminations d INNER JOIN omoccurrences o ON d.occid = o.occid '.
-				'WHERE o.collid = '.$this->collId.' AND o.observeruid = '.$this->uid;
-			if($rs = $this->conn->query($sql)){
-				while($r = $rs->fetch_row()){
-					fputcsv($detFH, $r);
-				}
-				$rs->close();
-			}
-			fclose($detFH);
-			$zipArchive->addFile($fileName.'_det.csv');
-			$zipArchive->renameName($fileName.'_det.csv','determinations.csv');
-			*/
-
-			echo 'Done!</li> ';
-			ob_flush();
-			flush();
-			$fileUrl = str_replace($GLOBALS['SERVER_ROOT'],$GLOBALS['CLIENT_ROOT'],$tempPath.$buFileName.'.zip');
-			$zipArchive->close();
-			unlink($fileName.'_spec.csv');
-			//unlink($fileName.'_det.csv');
-		}
-		else{
-			$fileUrl = str_replace($GLOBALS['SERVER_ROOT'],$GLOBALS['CLIENT_ROOT'],$tempPath.$buFileName.'_spec.csv');
-		}
-		return $fileUrl;
 	}
 
 	//OAuth2 functions
@@ -1008,32 +1205,79 @@ class ProfileManager extends Manager{
 	}
 
 	private function getTempPath(){
-		$tPath = $GLOBALS['SERVER_ROOT'];
+		$tPath = $GLOBALS['TEMP_DIR_ROOT'];
+		if(!$tPath) return false;
 		if(substr($tPath,-1) != '/' && substr($tPath,-1) != '\\') $tPath .= '/';
-		$tPath .= "temp/";
-		if(file_exists($tPath."downloads/")){
-			$tPath .= "downloads/";
+		if(file_exists($tPath . 'exports/')){
+			$tPath .= 'exports/';
 		}
 		return $tPath;
 	}
 
-	//setter and getters
-	public function setRememberMe($test){
-		$this->rememberMe = $test;
+	//Accessubility functions
+	private function setAccessibilityPreference($pref, $uid){
+		$status = false;
+		$currentDynamicProperties = $this->getDynamicProperties($uid);
+		if(!$currentDynamicProperties) $currentDynamicProperties = array();
+		$currentDynamicProperties['accessibilityPref'] = $pref;
+		$status = $this->setDynamicProperties($uid, $currentDynamicProperties);
+		return $status;
 	}
 
-	public function getRememberMe(){
-		return $this->rememberMe;
-	}
+	private function setDynamicProperties($uid, $dynPropArr){
+		$status = false;
+		if(!$uid) return $status;
 
-	public function setToken($token){
-		$this->token = $token;
-	}
+		$jsonDynProps = json_encode($dynPropArr);
 
-	public function setUid($uid){
-		if(is_numeric($uid)){
-			$this->uid = $uid;
+		$this->resetConnection(); // @TODO decided whether this is necessary
+		$sql = 'UPDATE users SET dynamicProperties = ? WHERE (uid = ?)';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('si', $jsonDynProps, $uid);
+			$stmt->execute();
+			if(!$stmt->error) $status = true; // note: removed $stmt->affected_rows &&
+			$stmt->close();
 		}
+		return $status;
+	}
+
+	public function getAccessibilityPreference($uid){
+		if(!$uid){
+			return false;
+		}
+		$returnVal = false;
+		$dynPropArr = $this->getDynamicProperties($uid);
+
+		if($dynPropArr && isset($dynPropArr['accessibilityPref'])){
+			$returnVal = ($dynPropArr['accessibilityPref'] === true) ? true : false;
+		}
+		return $returnVal;
+	}
+
+	private function getDynamicProperties($uid){
+		$returnVal = false;
+		try{
+			$sql = 'SELECT dynamicProperties FROM users WHERE uid = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $uid);
+				$stmt->execute();
+				$respns= $stmt->get_result();
+				if($fetchedObj = $respns->fetch_object()){
+					if(!empty($fetchedObj->dynamicProperties)){
+						if($dynPropArr = json_decode($fetchedObj->dynamicProperties, true)){
+							$returnVal = $dynPropArr;
+						}
+					}
+				}
+				$respns->free();
+				$stmt->close();
+			}
+		}
+		catch(Exception $e){
+			//Probably a new installation and schema does not yet exists, thus just catch error and let schema manager handle the issue
+			//echo $e->getMessage();
+		}
+		return $returnVal;
 	}
 
 	//Misc support functions
@@ -1054,9 +1298,22 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
-	private function encodeArr(&$inArr,$cSet){
-		foreach($inArr as $k => $v){
-			$inArr[$k] = $this->encodeString($v,$cSet);
+	//setter and getters
+	public function setRememberMe($test){
+		$this->rememberMe = $test;
+	}
+
+	public function getRememberMe(){
+		return $this->rememberMe;
+	}
+
+	public function setToken($token){
+		$this->token = $token;
+	}
+
+	public function setUid($uid){
+		if(is_numeric($uid)){
+			$this->uid = $uid;
 		}
 	}
 }

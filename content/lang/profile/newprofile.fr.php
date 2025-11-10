@@ -15,7 +15,7 @@ $LANG['NEW_USER'] = 'Nouveau Profil d\'Utilisateur';
 $LANG['CHECK_CAPTCHA'] = "Vous devez d'abord cocher la case reCAPTCHA (je ne suis pas un robot)";
 $LANG['BOTH_PASSWORDS'] = 'Les deux champs de mot de passe doivent contenir une valeur';
 $LANG['NO_SPACE'] = 'Le mot de passe ne peut pas commencer ou se terminer par un espace, mais ils peuvent inclure des espaces dans le mot de passe';
-$LANG['GREATER_THAN_SIX'] = 'Le mot de passe doit comporter plus de 6 caractères';
+$LANG['PWD_TOO_SHORT'] = 'Le mot de passe doit comporter plus de 6 caractères';
 $LANG['NO_MATCH'] = 'Les mots de passe ne correspondent pas, veuillez saisir à nouveau';
 $LANG['NEED_NAME'] = "Le nom d'utilisateur doit contenir une valeur";
 $LANG['NO_SPECIAL_CHARS'] = "Le nom d'utilisateur ne doit contenir que 0-9A-Za-z_.!@ (les espaces ne sont pas autorisés)";
@@ -52,5 +52,7 @@ $LANG['URL'] = 'URL';
 $LANG['BIOGRAPHY'] = 'Biographie';
 $LANG['PUBLIC_PROF'] = 'Le public peut voir les e-mails et la biographie sur le site Web (par exemple, la liste des photographes)';
 $LANG['CREATE_LOGIN'] = 'Créer une Compte';
-
+$LANG['ACCESSIBILITY_PREF'] = 'Préférences d\'accessibilité';
+$LANG['ACCESSIBILITY_PREF_DESC'] = 'Cochez pour indiquer une préférence pour les styles optimisés pour l\'accessibilité';
+$LANG['PROFILE_CREATION_DISABLED'] = 'La création d\'utilisateurs publics a été désactivée sur ce portail.';
 ?>

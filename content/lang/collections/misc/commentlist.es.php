@@ -4,7 +4,7 @@
 Language: Español
 ------------------
 */
-
+$LANG['OCCUR_COMMENTS'] = 'Comentarios de Ocurrencia';
 $LANG['COMMENTS_LISTING'] = 'Listado de Comentarios';
 $LANG['HOME'] = 'Inicio';
 $LANG['COL_MANAGE'] = 'TEST Manejo de Colecciones';
@@ -34,3 +34,8 @@ $LANG['DEL_COMMENT'] = 'Eliminar Comentario';
 $LANG['NO_COMMENTS_MATCHING'] = 'No existen comentarios disponibles que coincidan con las Opciones de Filtro definidas';
 $LANG['ONLY_PUBLIC_NONREVIEWED'] = 'Notar que únicamente comentarios públicos y sin revisar están siendo desplegados. <br/>Modifique formulario a la derecha para mostrar todos los comentarios.';
 $LANG['COLLID_NULL'] = 'ERROR: collid es nulo';
+$LANG['START_DATE'] = 'Fecha de inicio';
+$LANG['END_DATE'] = 'Fecha de finalización';
+$LANG['COMMENT_TYPE'] = 'Tipo de comentario';
+
+?>

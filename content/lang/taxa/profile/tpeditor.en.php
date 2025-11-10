@@ -7,17 +7,18 @@ Language: English
 
 $LANG['TAXON_EDITOR'] = 'Taxon Editor';
 $LANG['ENTER_SCINAME'] = 'Please enter a scientific name';
-$LANG['IMG_TOO_LARGE'] = 'The image you are trying to upload is too big, please reduce the file size to less than 4MB'; 
+$LANG['IMG_TOO_LARGE'] = 'The media file you are trying to upload is too big, please reduce the file size to less than 4MB'; 
 $LANG['HOME'] = 'Home';
 $LANG['TAX_PROF_PUBLIC_DISP'] = 'Taxon Profile Public Display';
 $LANG['TAX_PROF_EDITOR'] = 'Taxon Profile Editor';
 $LANG['REDIRECTED_FROM'] = 'Redirected from';
+$LANG['VIEW_PUBLIC_TAXON'] = 'View Public Taxon Profile';
 $LANG['GO_TO_PARENT'] = 'Go to Parent';
 $LANG['FAMILY'] = 'Family';
 $LANG['SYN_VERNAC'] = 'Synonyms / Vernaculars';
-$LANG['IMAGES'] = 'Images';
-$LANG['IMAGE_SORT'] = "Image Sort";
-$LANG['ADD_IMAGE'] = "Add Image";
+$LANG['IMAGES'] = 'Media';
+$LANG['IMAGE_SORT'] = "Media Sort";
+$LANG['ADD_IMAGE'] = "Add Media";
 $LANG['DESCRIPTIONS'] = "Descriptions";
 $LANG['ADD_NEW_COMMON_NAME'] = 'Add a New Common Name'; 
 $LANG['COMMON_NAMES'] = 'Common Names';
@@ -45,5 +46,6 @@ $LANG['SCINAME'] = 'Scientific Name';
 $LANG['EDIT_TAXON'] = 'Edit Taxon';
 $LANG['MORE_THAN_ONE_TAXON'] = 'Your search term matched on more than one taxa. Select the target taxon below';
 $LANG['NOT_IN_SYSTEM'] = 'not found in system. Check spelling, or contact administrator to request name to be added into system';
+$LANG['EDIT_TAXON_PROFILE'] = 'Edit Taxon Profile';
 
 ?>

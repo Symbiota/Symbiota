@@ -1,6 +1,16 @@
-This fork of the Symbiota code is actively being developed by the Biodiversity Knowledge Integration Center (BioKIC, https://github.com/BioKIC) development team at Arizona State University.
-Even though BioKIC code developments are regularly pushed back to this repository, we recommend that you download/fork code directly from the
-BioKIC/Symbiota repository (https://github.com/BioKIC/Symbiota) to ensure that you obtain the most recently code changes.
+<p align="center">
+    <a href="https://symbiota.org/" target="_blank">
+        <picture>
+		    <source width="500" media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/94a3507e-675f-4fe8-8504-12a567f268e9">
+   		    <source width="500" media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/a3897966-7240-4345-ae27-af095adfdde0">
+            <img width="500px" src="https://github.com/user-attachments/assets/94a3507e-675f-4fe8-8504-12a567f268e9" />
+		</picture>
+    </a>
+</p>
+
+This fork of the Symbiota code is actively being developed by the Symbiota Support Hub (SSH, https://symbiota.org/about-us) development team at the University of Kansas Biodiversity Institute.
+Even though SSH code developments are regularly pushed back to this repository, we recommend that you download/fork code directly from the
+Symbiota/Symbiota repository (https://github.com/Symbiota/Symbiota) to ensure that you obtain the most recently code changes.
 
 # Welcome to the Symbiota code repository
 
@@ -10,11 +20,11 @@ The Symbiota Software Project is building a library of webtools to aid biologist
 
 More information about this project can be accessed through [https://symbiota.org](https://symbiota.org).
 
-For documentation and user guides please visit [Symbiota Docs](https://symbiota.org/docs).
+For documentation and user guides please visit [Symbiota Docs](https://docs.symbiota.org/).
 
 ## ACKNOWLEDGEMENTS
 
-Symbiota has been generously funded by the National Science Foundation (DBI-0743827) from 15 July 2008 to 30 June 2011 (Estimated). The Global Institute of Sustainability (GIOS) at Arizona State University has also been a major supporters of the Symbiota initiative since the very beginning. Arizona State University Vascular Plant and Lichen Herbarium have been intricately involved in the development from the start. Sky Island Alliance and the Arizona-Sonora Desert Museum have both been long-term participants in the development of this product.
+Symbiota has been generously funded by the U.S. National Science Foundation. The Global Institute of Sustainability (GIOS) at Arizona State University has also been a major supporters of the Symbiota initiative since the very beginning. Arizona State University Vascular Plant and Lichen Herbarium have been intricately involved in the development from the start. Sky Island Alliance and the Arizona-Sonora Desert Museum have both been long-term participants in the development of this product.
 
 ## FEATURES
 
@@ -33,6 +43,7 @@ Symbiota has been generously funded by the National Science Foundation (DBI-0743
 
 - Tested thoroughly on Linux and Windows operating systems
 - Code should work with an PHP enabled web server, though central development and testing done using Apache HTTP Server
+- Development and testing preformed using MariaDB. If you are using Oracle MySQL instead, please [report any issues](https://github.com/Symbiota/Symbiota/issues/new).
 
 ## INSTALLATION
 
@@ -41,3 +52,7 @@ Please read the [INSTALL.md](docs/INSTALL.md) file for installation instructions
 ## UPDATES
 
 Please read the [UPDATE.md](docs/UPDATE.md) file for instructions on how to update Symbiota.
+
+## CONTRIBUTING
+
+Please visit the [CONTRIBUTING.md](docs/CONTRIBUTING.md) page for guidance on contributing to the main Symbiota codebase.

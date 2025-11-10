@@ -1,6 +1,7 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ImInventories.php');
+include_once($SERVER_ROOT.'/content/lang/projects/index.'.$LANG_TAG.'.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 
 $pid = $_REQUEST['pid'];
@@ -20,9 +21,9 @@ foreach($clRemoveArr as $id => $removeArr){
 	<div style="margin:10px;">
 		<form name="claddform" action="index.php" method="post" onsubmit="return validateChecklistForm(this)">
 			<fieldset class="form-color">
-				<legend><b>Add a Checklist</b></legend>
+				<legend><b><?= $LANG['ADD_A_CHECKLIST']?></b></legend>
 				<select name="clid" style="width:450px;">
-					<option value="">Select Checklist to Add</option>
+					<option value=""><?= $LANG['SELECT_CHECKLIST_TO_ADD'] ?></option>
 					<option value="">-----------------------------------------</option>
 					<?php
 					foreach($clAddArr as $clid => $clArr){
@@ -35,16 +36,16 @@ foreach($clRemoveArr as $id => $removeArr){
 					?>
 				</select><br/>
 				<input type="hidden" name="pid" value="<?php echo $pid;?>">
-				<button type="submit" name="projsubmit" value="Add Checklist">Add Checklist</button>
+				<button style="margin-top:0.5rem" type="submit" name="projsubmit" value="Add Checklist"><?= $LANG['ADD_CHECKLIST']?></button>
 			</fieldset>
 		</form>
 	</div>
 	<div style="margin:10px;">
 		<form name="cldeleteform" action="index.php" method="post" onsubmit="return validateChecklistForm(this)">
 			<fieldset class="form-color">
-				<legend><b>Delete a Checklist</b></legend>
+				<legend><b><?= $LANG['DELETE_A_CHECKLIST']?></b></legend>
 				<select name="clid" style="width:450px;">
-					<option value="">Select Checklist to Delete</option>
+					<option value=""><?= $LANG['SELECT_CHECKLIST_TO_DELETE']?></option>
 					<option value="">-----------------------------------------</option>
 					<?php
 					foreach($clRemoveArr as $clid => $clArr){
@@ -53,7 +54,7 @@ foreach($clRemoveArr as $id => $removeArr){
 					?>
 				</select><br/>
 				<input type="hidden" name="pid" value="<?php echo $pid;?>">
-				<button type="submit" name="projsubmit" value="Delete Checklist">Delete Checklist</button>
+				<button class="button-danger" style="margin-top:0.5rem" type="submit" name="projsubmit" value="Delete Checklist"><?= $LANG['DELETE_CHECKLIST']?></button>
 			</fieldset>
 		</form>
 	</div>

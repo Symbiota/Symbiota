@@ -1,11 +1,14 @@
 <?php
 include_once('../config/symbini.php');
 header("Content-Type: text/html; charset=".$CHARSET);
-include_once('content/lang/misc/aboutproject.'.$LANG_TAG.'.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/misc/aboutproject.' . $LANG_TAG . '.php'))
+include_once($SERVER_ROOT . '/content/lang/misc/aboutproject.en.php');
+else include_once($SERVER_ROOT . '/content/lang/misc/aboutproject.' . $LANG_TAG . '.php');
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?= $LANG_TAG ?>">
 	<head>
-		<title>About Project</title>
+		<title><?= $LANG['ABOUT_PROJECT'] ?></title>
 		<?php
 
 		include_once($SERVER_ROOT.'/includes/head.php');
@@ -17,16 +20,16 @@ include_once('content/lang/misc/aboutproject.'.$LANG_TAG.'.php');
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div class="navpath">
-			<a href="../index.php"><?php echo (isset($LANG['HOME'])?$LANG['HOME']:'Home'); ?></a> &gt;&gt;
-			<b><?php echo (isset($LANG['ABOUT_PROJECT'])?$LANG['ABOUT_PROJECT']:'About the Project'); ?></b>
+			<a href="../index.php"><?= $LANG['HOME']; ?></a> &gt;&gt;
+			<b><?= $LANG['ABOUT_PROJECT']; ?></b>
 		</div>
 		<!-- This is inner text! -->
-		<div id="innertext" style="margin:10px 20px">
-			<h1><?php echo (isset($LANG['ABOUT_PROJECT'])?$LANG['ABOUT_PROJECT']:'About the Project'); ?>:</h1>
+		<div role="main" id="innertext" style="margin:10px 20px">
+			<h1 class="page-heading"><?= $LANG['ABOUT_PROJECT']; ?>:</h1>
 
 			<p></p>
 
-			<h1><?php echo (isset($LANG['FUNDING'])?$LANG['FUNDING']:'Funding'); ?>:</h1>
+			<h1><?= $LANG['FUNDING']; ?>:</h1>
 
 			<p>This portal has been supported by the following NSF Awards:</p>
 

@@ -1,5 +1,3 @@
 /config/dbconnection.php
 /config/symbini.php
-.project
-.settings/org.eclipse.core.resources.prefs
-.settings/org.eclipse.php.ui.prefs
+/config/auth_config.php

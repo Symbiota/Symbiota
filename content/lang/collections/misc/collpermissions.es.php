@@ -1,12 +1,14 @@
 <?php
 /*
 ------------------
-Language: English
+Language: Español (Spanish)
+Translated by: Samanta Orellana
+Date Translated: 2021-08-18
 ------------------
 */
 
-$LANG['COL_PERMISSIONS'] = 'Permisos de Colección';
-$LANG['PLS_SEL_USER'] = 'Por favor seleccionar un usuario de la lista';
+$LANG['COL_PERMISSIONS'] = 'Permisos de recopilación';
+$LANG['PLS_SEL_USER'] = 'Seleccione un usuario (comience a escribir el apellido para ver la lista desplegable)';
 $LANG['SEL_PERMISSIONS'] = 'Por favor seleccionar el permiso que desea asignar a este usuario';
 $LANG['SEL_OBS'] = 'Por favor seleccione un proyecto de Manejo de Observaciones Personales';
 $LANG['COL_PROFS'] = 'Perfiles de Colecciones';
@@ -16,6 +18,7 @@ $LANG['PERMISSIONS'] = 'Permisos';
 $LANG['ADMINS'] = 'Administradores';
 $LANG['YES_REM_ADMIN'] = '¿Está seguro que quiere remover los permisos de administrador para este usuario?';
 $LANG['DEL_PERMISSIONS'] = 'Eliminar permisos para este usuario';
+$LANG['REMOVE_PERMISSIONS'] = 'Eliminar permisos de usuario';
 $LANG['NO_PERMS'] = 'No existen permisos administrativos (excluyendo Super Administradores)';
 $LANG['EDITORS'] = 'Editores';
 $LANG['YES_REM_EDIT'] = '¿Está seguro que quiere remover los permisos de editor para este usuario?';
@@ -37,10 +40,15 @@ $LANG['SPONSOR_EXPLAIN'] = 'Los administradores de colecciones listados arriba, 
 						Esto permite que los usuarios ingresen datos de campo como observaciones que están vinculadas directamente a su perfil de usuario, imprimir etiquetas,
 						and later collection data can be transferred once specimens are donated to this collection.
 						Listed below are all users that have been given such rights by one of the collection administrators listed above.';
+		
+$LANG['CHECKLIST_SPONSOR'] = 'Lista de verificación/Patrocinio de gestión de conjuntos de datos';
+$LANG['CHECKLIST_SPONSOR_EXPLAIN'] = 'Los administradores de colecciones enumerados anteriormente pueden patrocinar usuarios para la gestión de listas de verificación y conjuntos de datos.
+						Esto permite a los usuarios crear nuevas listas de verificación o conjuntos de datos públicos y privados que están vinculados directamente a su perfil de usuario. Las listas de verificación públicas y los conjuntos de datos son visibles para todos los visitantes del portal.';
+
 $LANG['SURE_DELETE'] = '¿Está seguro que quiere eliminar estos permisos?';
 $LANG['NONE_SPONSORED'] = 'Ningún usuario ha sido avalado aún';
 $LANG['NEW_SPONSOR'] = 'Nuevo Aval';
-$LANG['SEL_USER'] = 'Seleccionar Usuario';
+$LANG['ENTER_USER_NAME'] = 'Ingrese Nombre de Usuario (Apellido, Nombre)';
 $LANG['SEL_PERS_OBS'] = 'Seleccionar Proyecto Personal de Observaciones';
 $LANG['SPONSOR_USER'] = 'Avalar Usuario';
 $LANG['ID_EDITS'] = 'Editores de Identificaciones';
@@ -59,5 +67,7 @@ $LANG['ALL_RANGES'] = 'Todos los rangos taxonómicos aprobados enumerados abajo'
 $LANG['SURE_REM_ID'] = '¿Está seguro que quiere remover los derechos de edición de identificación para este usuario?';
 $LANG['NO_ID_PERMS'] = 'No existen permisos de Editor de Identificación';
 $LANG['NOT_AUTH'] = 'Sin autorización para ver esta página. Debe poseer permisos administrativos para esta colección.';
+
+$LANG['DROP_ICON'] = 'Icono de colocación';
 
 ?>

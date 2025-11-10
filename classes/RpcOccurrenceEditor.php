@@ -98,15 +98,18 @@ class RpcOccurrenceEditor extends RpcBase{
 	public function getDupesOtherCatalogNumbers($otherCatNum, $collid, $skipOccid){
 		$retArr = array();
 		if(is_numeric($collid) && is_numeric($skipOccid) && $otherCatNum){
-			$sql = 'SELECT o.occid FROM omoccurrences o LEFT JOIN omoccuridentifiers i ON o.occid = i.occid
-				WHERE (o.othercatalognumbers = ? OR i.identifierValue = ?) AND (o.collid = ?) AND (o.occid != ?) ';
+			$sql = 'SELECT o.occid FROM omoccurrences o INNER JOIN omoccuridentifiers i ON o.occid = i.occid
+				WHERE (i.identifierValue = ?) AND (o.collid = ?)
+				UNION
+				SELECT occid FROM omoccurrences
+				WHERE (othercatalognumbers = ?) AND (collid = ?) ';
 			if($stmt = $this->conn->prepare($sql)) {
-				$stmt->bind_param('ssii', $otherCatNum, $otherCatNum, $collid, $skipOccid);
+				$stmt->bind_param('sisi', $otherCatNum, $collid, $otherCatNum, $collid);
 				$stmt->execute();
 				$occid = 0;
 				$stmt->bind_result($occid);
 				while($stmt->fetch()){
-					$retArr[$occid] = $occid;
+					if($occid != $skipOccid) $retArr[$occid] = $occid;
 				}
 				$stmt->close();
 			}
@@ -139,7 +142,7 @@ class RpcOccurrenceEditor extends RpcBase{
 	public function getImageCount($occid){
 		$retCnt = 0;
 		if(is_numeric($occid)){
-			$sql = 'SELECT count(*) AS imgcnt FROM images WHERE occid = ?';
+			$sql = 'SELECT count(*) AS imgcnt FROM media WHERE occid = ?';
 			if($stmt = $this->conn->prepare($sql)){
 				if($stmt->bind_param('i', $occid)){
 					$stmt->execute();
@@ -188,8 +191,7 @@ class RpcOccurrenceEditor extends RpcBase{
 			$str3 = $strArr[2];
 		}
 
-		// Construct the SQL query
-		$sql = 'SELECT DISTINCT tid, sciname FROM taxa WHERE unitname1 LIKE "'.$str1.'%" ';
+		$sql = 'SELECT DISTINCT tid, sciname FROM taxa WHERE unitname1 LIKE "' . $str1 . '%" ';
 		if($str2){
 			$sql .= 'AND unitname2 LIKE "'.$str2.'%" ';
 		}
@@ -212,18 +214,20 @@ class RpcOccurrenceEditor extends RpcBase{
 	public function getTaxonArr($term){
 		$retArr = array();
 		if($term){
-			$sql = 'SELECT DISTINCT t.tid, t.author, ts.family, t.securitystatus FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid WHERE t.sciname = ? AND ts.taxauthid = 1 ';
+			$sql = 'SELECT DISTINCT t.tid, t.author, t.sciname, ts.family, t.securitystatus FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid WHERE t.sciname = ? AND ts.taxauthid = 1 ';
 			if($stmt = $this->conn->prepare($sql)){
 				if($stmt->bind_param('s', $term)){
 					$stmt->execute();
 					$tid = 0;
 					$family = null;
+					$sciname = null;
 					$author = null;
 					$status = null;
-					$stmt->bind_result($tid, $author, $family, $status);
+					$stmt->bind_result($tid, $author, $sciname, $family, $status);
 					while($stmt->fetch()){
 						$retArr['tid'] = $tid;
 						$retArr['family'] = $family;
+						$retArr['sciname'] = $sciname;
 						$retArr['author'] = $author;
 						$retArr['status'] = $status;
 					}
@@ -231,6 +235,67 @@ class RpcOccurrenceEditor extends RpcBase{
 				}
 			}
 		}
+		return $retArr;
+	}
+
+	//Used by /collections/editor/rpc/localitysecuritycheck.php
+	public function getStateSecuritySetting($tid, $state){
+		$retStr = 0;
+		if(is_numeric($tid) && $state){
+			$sql = 'SELECT c.clid
+				FROM fmchecklists c INNER JOIN fmchklsttaxalink cl ON c.clid = cl.clid
+				INNER JOIN taxstatus ts1 ON cl.tid = ts1.tid
+				INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted
+				WHERE c.type = "rarespp" AND ts1.taxauthid = 1 AND ts2.taxauthid = 1
+				AND (ts2.tid = ?) AND (c.locality = ?)';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('is', $tid, $state);
+				$stmt->execute();
+				$stmt->store_result();
+				if($stmt->num_rows) $retStr = 1;
+				$stmt->close();
+			}
+		}
+		return $retStr;
+	}
+
+	//Used by Geographic Thesaurus calls
+	public function getGeography($term, $target, $parentTerm){
+		$retArr = Array();
+		$sql = 'SELECT geoterm FROM geographicthesaurus WHERE geoterm LIKE "'.$this->cleanInStr($term).'%" AND geolevel = 50 ';
+		if($target == 'state'){
+			$sql = 'SELECT DISTINCT s.geoterm FROM geographicthesaurus s ';
+			$sqlWhere = 'WHERE s.geolevel = 60 AND s.geoterm LIKE "'.$this->cleanInStr($term).'%" ';
+			if($parentTerm){
+				$sql .= 'INNER JOIN geographicthesaurus c ON s.parentID = c.geoThesID ';
+				$sqlWhere .= 'AND c.geolevel = 50 AND c.geoterm = "'.$this->cleanInStr($parentTerm).'" ';
+			}
+			$sql .= $sqlWhere;
+		}
+		elseif($target == 'county'){
+			$sql = 'SELECT DISTINCT c.geoterm FROM geographicthesaurus c ';
+			$sqlWhere = 'WHERE c.geolevel = 70 AND c.geoterm LIKE "'.$this->cleanInStr($term).'%" ';
+			if($parentTerm){
+				$sql .= 'INNER JOIN geographicthesaurus s ON c.parentID = s.geoThesID ';
+				$sqlWhere .= 'AND s.geolevel = 60 AND s.geoterm = "'.$this->cleanInStr($parentTerm).'" ';
+			}
+			$sql .= $sqlWhere;
+		}
+		elseif($target == 'municipality'){
+			$sql = 'SELECT DISTINCT m.geoterm FROM geographicthesaurus m ';
+			$sqlWhere = 'WHERE m.geolevel = 80 AND m.geoterm LIKE "'.$this->cleanInStr($term).'%" ';
+			if($parentTerm){
+				$sql .= 'INNER JOIN geographicthesaurus s ON m.parentID = s.geoThesID ';
+				$sqlWhere .= 'AND s.geolevel = 70 AND s.geoterm = "'.$this->cleanInStr($parentTerm).'" ';
+			}
+			$sql .= $sqlWhere;
+		}
+		$rs = $this->conn->query($sql);
+		while ($r = $rs->fetch_object()) {
+			$retArr[] = $r->geoterm;
+		}
+		$rs->free();
+		sort($retArr);
 		return $retArr;
 	}
 

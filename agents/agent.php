@@ -2,11 +2,11 @@
 
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/AgentManager.php');
-include_once($SERVER_ROOT.'/classes/RdfUtility.php');
-include_once($SERVER_ROOT.'/classes/UuidFactory.php');
+include_once($SERVER_ROOT.'/classes/utilities/RdfUtil.php');
+include_once($SERVER_ROOT.'/classes/utilities/UuidFactory.php');
 
 // Find out what media types the client would like, in order.
-$accept = RdfUtility::parseHTTPAcceptHeader($_SERVER['HTTP_ACCEPT']);
+$accept = RdfUtil::parseHTTPAcceptHeader($_SERVER['HTTP_ACCEPT']);
 $force = array_key_exists("force",$_REQUEST)?$_REQUEST["force"]:"";
 $agentid = preg_replace('[^0-9]','',array_key_exists("agentid",$_REQUEST)?$_REQUEST["agentid"]:"");
 $uuid = array_key_exists("uuid",$_REQUEST)?$_REQUEST["uuid"]:"";
@@ -18,7 +18,7 @@ if (strlen($agentid) > 0 ) {
   $agent->load($agentid);
   $agentview->setModel($agent);
 } elseif (strlen($uuid)>0) {
-  if (UuidFactory::is_valid($uuid)) {
+  if (UuidFactory::isValid($uuid)) {
      $agent->loadByGUID($uuid);
      $agentview->setModel($agent);
   }
@@ -137,7 +137,7 @@ function deliverRdfXml() {
 function pageheader($agent) {
    global $SERVER_ROOT, $DEFAULT_TITLE, $spDisplay, $CLIENT_ROOT, $agent_indexCrumbs, $charset;
 echo '<!DOCTYPE HTML>
-<html>
+<html lang="en">
 <head>
 	<title>'.$DEFAULT_TITLE.' - '.$spDisplay. '</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
@@ -145,8 +145,8 @@ echo '<!DOCTYPE HTML>
 	<link href="../css/base.css" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css" type="text/css" rel="stylesheet" />
 	<link href="../css/jquery-ui_accordian.css" type="text/css" rel="stylesheet" />
-	<script type="text/javascript" src="../js/jquery.js"></script>
-	<script type="text/javascript" src="../js/jquery-ui.js"></script>';
+   <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>';
     // include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 echo '<script type="text/javascript">
 		var currentLevel = ' . ($descrDisplayLevel?$descrDisplayLevel:"1"). ';

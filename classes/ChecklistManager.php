@@ -1,6 +1,8 @@
 <?php
 include_once($SERVER_ROOT.'/classes/Manager.php');
+include_once($SERVER_ROOT.'/classes/ImInventories.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 class ChecklistManager extends Manager{
 
@@ -79,7 +81,7 @@ class ChecklistManager extends Manager{
 		if($this->clid){
 			$sql = 'SELECT c.clid, c.name, c.locality, c.publication, c.abstract, c.authors, c.parentclid, c.notes, '.
 				'c.latcentroid, c.longcentroid, c.pointradiusmeters, c.footprintwkt, c.access, c.defaultSettings, '.
-				'c.dynamicsql, c.datelastmodified, c.uid, c.type, c.initialtimestamp '.
+				'c.dynamicsql, c.datelastmodified, c.dynamicProperties, c.uid, c.type, c.initialtimestamp '.
 				'FROM fmchecklists c WHERE (c.clid = '.$this->clid.')';
 		 	$result = $this->conn->query($sql);
 			if($result){
@@ -101,6 +103,7 @@ class ChecklistManager extends Manager{
 					$this->clMetadata["defaultSettings"] = $row->defaultSettings;
 					$this->clMetadata["dynamicsql"] = $row->dynamicsql;
 					$this->clMetadata["datelastmodified"] = $row->datelastmodified;
+					$this->clMetadata['dynamicProperties'] = $row->dynamicProperties;
 				}
 				$result->free();
 			}
@@ -144,6 +147,17 @@ class ChecklistManager extends Manager{
 			else $this->setDynamicMetaData();
 		}
 		return $this->clMetadata;
+	}
+
+	public function getAssociatedExternalService(){
+		$resp = false;
+ 		if($this->clMetadata['dynamicProperties']){
+			$dynpropArr = json_decode($this->clMetadata['dynamicProperties'], true);
+			if(array_key_exists('externalservice', $dynpropArr)) {
+				$resp = $dynpropArr['externalservice'];
+			}
+		}
+		return $resp;
 	}
 
 	public function getParentChecklist(){
@@ -200,7 +214,7 @@ class ChecklistManager extends Manager{
 		if(!$this->basicSql) $this->setClSql();
 		$result = $this->conn->query($this->basicSql);
 		while($row = $result->fetch_object()){
-			$family = strtoupper($row->family);
+			$family = strtoupper($row->family ?? '');
 			if($row->rankid > 140 && !$family) $family = 'Incertae Sedis';
 			$this->filterArr[$family] = '';
 			$taxonGroup = $family;
@@ -281,22 +295,23 @@ class ChecklistManager extends Manager{
 					FROM fmvouchers v INNER JOIN fmchklsttaxalink cl ON v.clTaxaID = cl.clTaxaID
 					INNER JOIN omoccurrences o ON v.occid = o.occid
 					INNER JOIN omcollections c ON o.collid = c.collid
-					WHERE (cl.clid IN ('.$clidStr.')) AND cl.tid IN('.implode(',',array_keys($this->taxaList)).')
-					ORDER BY o.collid';
+					WHERE (cl.clid IN ('.$clidStr.')) AND cl.tid IN('.implode(',',array_keys($this->taxaList)).') ';
 				if($this->thesFilter){
 					$vSql = 'SELECT DISTINCT ts.tidaccepted AS tid, v.occid, c.institutioncode, v.notes, o.catalognumber, o.othercatalognumbers, o.recordedby, o.recordnumber, o.eventdate, o.collid
 						FROM fmvouchers v INNER JOIN fmchklsttaxalink cl ON v.clTaxaID = cl.clTaxaID
 						INNER JOIN omoccurrences o ON v.occid = o.occid
 						INNER JOIN omcollections c ON o.collid = c.collid
 						INNER JOIN taxstatus ts ON cl.tid = ts.tid
-						WHERE (ts.taxauthid = '.$this->thesFilter.') AND (cl.clid IN ('.$clidStr.'))
-						AND (ts.tidaccepted IN('.implode(',',array_keys($this->taxaList)).'))
-						ORDER BY o.collid';
+						WHERE (ts.taxauthid = '.$this->thesFilter.') AND (cl.clid IN ('.$clidStr.')) AND (ts.tidaccepted IN('.implode(',',array_keys($this->taxaList)).')) ';
 				}
-				//echo $vSql; exit;
+				$vSql .= OccurrenceUtil::appendFullProtectionSQL();
+				$vSql .= 'ORDER BY o.collid';
 		 		$vResult = $this->conn->query($vSql);
 				while ($row = $vResult->fetch_object()){
-					$displayStr = ($row->recordedby?$row->recordedby:($row->catalognumber?$row->catalognumber:$row->othercatalognumbers));
+					$displayStr = '';
+					if($row->recordedby) $displayStr = $row->recordedby;
+					elseif($row->catalognumber) $displayStr = $row->catalognumber;
+					elseif($row->othercatalognumbers) $displayStr = $row->othercatalognumbers;
 					if(strlen($displayStr) > 25){
 						//Collector string is too big, thus reduce
 						$strPos = strpos($displayStr,';');
@@ -343,30 +358,30 @@ class ChecklistManager extends Manager{
 				if($this->childClidArr){
 					$clidStr .= ','.implode(',',array_keys($this->childClidArr));
 				}
-				$sql = 'SELECT i.tid, i.url, i.thumbnailurl, i.originalurl
-					FROM images i INNER JOIN omoccurrences o ON i.occid = o.occid
+				$sql = 'SELECT m.tid, m.url, m.thumbnailurl, m.originalurl
+					FROM media m INNER JOIN omoccurrences o ON m.occid = o.occid
 					INNER JOIN fmvouchers v ON o.occid = v.occid
 					INNER JOIN fmchklsttaxalink cl ON v.clTaxaID = cl.clTaxaID
-					WHERE (cl.clid = '.$clidStr.') AND (i.tid IN('.implode(',',array_keys($this->taxaList)).'))
-					ORDER BY i.sortOccurrence, i.sortSequence';
+					WHERE (cl.clid = '.$clidStr.') AND (m.tid IN('.implode(',',array_keys($this->taxaList)).'))
+					ORDER BY m.sortOccurrence, m.sortSequence';
 				$matchedArr = $this->setImageSubset($sql);
 			}
 			if($missingArr = array_diff(array_keys($this->taxaList),$matchedArr)){
-				$sql = 'SELECT i2.tid, i.url, i.thumbnailurl FROM images i INNER JOIN '.
-					'(SELECT ts1.tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
+				$sql = 'SELECT m2.tid, m.url, m.thumbnailurl FROM media m INNER JOIN '.
+					'(SELECT ts1.tid, SUBSTR(MIN(CONCAT(LPAD(m.sortsequence,6,"0"),m.mediaID)),7) AS mediaID '.
 					'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-					'INNER JOIN images i ON ts2.tid = i.tid '.
-					'WHERE i.sortsequence < 500 AND (i.thumbnailurl IS NOT NULL) AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.tid IN('.implode(',',$missingArr).')) '.
-					'GROUP BY ts1.tid) i2 ON i.imgid = i2.imgid';
+					'INNER JOIN media m ON ts2.tid = m.tid '.
+					'WHERE m.sortsequence < 500 AND (m.thumbnailurl IS NOT NULL) AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.tid IN('.implode(',',$missingArr).')) '.
+					'GROUP BY ts1.tid) m2 ON m.mediaID	= m2.mediaID';
 				$matchedArr = $this->setImageSubset($sql);
 				if($missingArr = array_diff(array_keys($this->taxaList),$matchedArr)){
 					//Get children images
-					$sql = 'SELECT DISTINCT i2.tid, i.url, i.thumbnailurl FROM images i INNER JOIN '.
-						'(SELECT ts1.parenttid AS tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
+					$sql = 'SELECT DISTINCT m2.tid, m.url, m.thumbnailurl FROM media m INNER JOIN '.
+						'(SELECT ts1.parenttid AS tid, SUBSTR(MIN(CONCAT(LPAD(m.sortsequence,6,"0"),m.mediaID)),7) AS mediaID '.
 						'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-						'INNER JOIN images i ON ts2.tid = i.tid '.
-						'WHERE i.sortsequence < 500 AND (i.thumbnailurl IS NOT NULL) AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.parenttid IN('.implode(',',$missingArr).')) '.
-						'GROUP BY ts1.tid) i2 ON i.imgid = i2.imgid';
+						'INNER JOIN media m ON ts2.tid = m.tid '.
+						'WHERE m.sortsequence < 500 AND (m.thumbnailurl IS NOT NULL) AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.parenttid IN('.implode(',',$missingArr).')) '.
+						'GROUP BY ts1.tid) m2 ON m.mediaID = m2.mediaID';
 					$this->setImageSubset($sql);
 				}
 			}
@@ -397,7 +412,6 @@ class ChecklistManager extends Manager{
 				'WHERE ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.tid IN('.implode(',',array_keys($this->taxaList)).')) ';
 			if($this->langId) $sql .= 'AND v.langid = '.$this->langId.' ';
 			$sql .= 'ORDER BY v.sortsequence DESC ';
-			//echo $sql; exit;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				if($r->vernacularname) $this->taxaList[$r->tid]['vern'] = $this->cleanOutStr($r->vernacularname);
@@ -415,7 +429,6 @@ class ChecklistManager extends Manager{
 				'WHERE (ts.taxauthid = '.($this->thesFilter?$this->thesFilter:'1').') AND (ts2.taxauthid = '.($this->thesFilter?$this->thesFilter:'1').') '.
 				'AND (ts.tid IN('.implode(',',array_keys($this->taxaList)).')) AND (ts.tid != ts2.tid) '.
 				'ORDER BY t.sciname';
-			//echo $sql;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$tempArr[$r->tid][] = '<i>'.$r->sciname.'</i>'.($this->showAuthors && $r->author?' '.$r->author:'');
@@ -441,6 +454,42 @@ class ChecklistManager extends Manager{
 		}
 	}
 
+  public function getExternalVoucherArr(){
+		$externalVoucherArr = array();
+		if($this->taxaList){
+			$clidStr = $this->clid;
+			if($this->childClidArr){
+				$clidStr .= ','.implode(',',array_keys($this->childClidArr));
+			}
+			$sql = 'SELECT clCoordID, clid, tid, sourceIdentifier, referenceUrl, dynamicProperties
+				FROM fmchklstcoordinates
+				WHERE (clid IN ('.$clidStr.')) AND (tid IN('.implode(',',array_keys($this->taxaList)).')) AND sourceName = "EXTERNAL_VOUCHER"';
+			$rs = $this->conn->query($sql);
+			while ($r = $rs->fetch_object()){
+				$dynPropArr = json_decode($r->dynamicProperties);
+				foreach($dynPropArr as $vouch) {
+					$displayStr = '';
+					if(!empty($vouch->user)) $displayStr = $vouch->user;
+					if(strlen($displayStr) > 25){
+						//Collector string is too big, thus reduce
+						$strPos = strpos($displayStr,';');
+						if(!$strPos) $strPos = strpos($displayStr,',');
+						if(!$strPos) $strPos = strpos($displayStr,' ',10);
+						if($strPos) $displayStr = substr($displayStr,0,$strPos).'...';
+					}
+					if($vouch->date) $displayStr .= ' '.$vouch->date;
+					if(!trim($displayStr)) $displayStr = 'undefined voucher';
+					$displayStr .= ' ['.$vouch->repository.($vouch->id?'-'.$vouch->id:'').']';
+					$externalVoucherArr[$r->tid][$r->clCoordID]['display'] = trim($displayStr);
+					$url = 'https://www.inaturalist.org/observations/'.$r->sourceIdentifier;
+					$externalVoucherArr[$r->tid][$r->clCoordID]['url'] = $url;
+				}
+			}
+			$rs->free();
+		}
+		return $externalVoucherArr;
+	}
+
 	public function getVoucherCoordinates($limit=0){
 		$retArr = array();
 		if(!$this->basicSql) $this->setClSql();
@@ -455,7 +504,6 @@ class ChecklistManager extends Manager{
 				'FROM fmchklstcoordinates cc INNER JOIN ('.$this->basicSql.') t ON cc.tid = t.tid '.
 				'WHERE cc.clid IN ('.$clidStr.') AND cc.decimallatitude BETWEEN -90 AND 90 AND cc.decimallongitude  BETWEEN -180 AND 180 ';
 			if($limit) $sql1 .= 'ORDER BY RAND() LIMIT '.$limit;
-			//echo $sql1;
 			$rs1 = $this->conn->query($sql1);
 			if($rs1){
 				while($r1 = $rs1->fetch_object()){
@@ -478,9 +526,8 @@ class ChecklistManager extends Manager{
 					INNER JOIN fmchklsttaxalink cl ON v.clTaxaID = cl.clTaxaID
 					INNER JOIN ('.$this->basicSql.') t ON cl.tid = t.tid
 					WHERE cl.clid IN ('.$clidStr.') AND o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL
-					AND (o.localitysecurity = 0 OR o.localitysecurity IS NULL) ';
+					AND (o.recordSecurity = 0) ';
 				if($limit) $sql2 .= 'ORDER BY RAND() LIMIT '.$limit;
-				//echo $sql2;
 				$rs2 = $this->conn->query($sql2);
 				if($rs2){
 					while($r2 = $rs2->fetch_object()){
@@ -494,32 +541,6 @@ class ChecklistManager extends Manager{
 					$rs2->free();
 				}
 				//else echo 'ERROR getting voucher coordinates: '.$this->conn->error;
-			}
-		}
-		return $retArr;
-	}
-
-	public function getPolygonCoordinates(){
-		$retArr = array();
-		if($this->clid){
-			if($this->clMetadata['dynamicsql']){
-				$sql = 'SELECT o.decimallatitude, o.decimallongitude FROM omoccurrences o ';
-				if($this->clMetadata['footprintwkt'] && substr($this->clMetadata['footprintwkt'],0,7) == 'POLYGON'){
-					$sql .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid WHERE (ST_Within(p.point,GeomFromText("'.$this->clMetadata['footprintwkt'].'"))) ';
-				}
-				else{
-					$voucherManager = new ChecklistVoucherAdmin();
-					$voucherManager->setClid($this->clid);
-					$voucherManager->setCollectionVariables();
-					$sql .= 'WHERE ('.$voucherManager->getSqlFrag().') ';
-				}
-				$sql .= 'LIMIT 50';
-				//echo $sql; exit;
-				$rs = $this->conn->query($sql);
-				while($r = $rs->fetch_object()){
-					$retArr[] = $r->decimallatitude.','.$r->decimallongitude;
-				}
-				$rs->free();
 			}
 		}
 		return $retArr;
@@ -617,57 +638,43 @@ class ChecklistManager extends Manager{
 	public function addNewSpecies($postArr){
 		if(!$this->clid) return 'ERROR adding species: checklist identifier not set';
 		$insertStatus = false;
-		$dataArr = array('tid','familyoverride','morphospecies','habitat','abundance','notes','source','internalnotes');
-		$colSql = '';
-		$valueSql = '';
-		foreach($dataArr as $v){
-			if(isset($postArr[$v]) && $postArr[$v]){
-				$colSql .= ','.$v;
-				if(is_numeric($postArr[$v])) $valueSql .= ','.$postArr[$v];
-				else $valueSql .= ',"'.$this->cleanInStr($postArr[$v]).'"';
-			}
-		}
-		$conn = MySQLiConnectionFactory::getCon('write');
-		$sql = 'INSERT INTO fmchklsttaxalink (clid'.$colSql.') VALUES ('.$this->clid.$valueSql.')';
-		if($conn->query($sql)){
-			if($this->clMetadata['type'] == 'rarespp' && $this->clMetadata['locality'] && is_numeric($postArr['tid'])){
-				$sqlRare = 'UPDATE omoccurrences o INNER JOIN taxstatus ts1 ON o.tidinterpreted = ts1.tid '.
-					'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-					'SET o.localitysecurity = 1 '.
-					'WHERE (o.localitysecurity IS NULL OR o.localitysecurity = 0) AND (o.localitySecurityReason IS NULL) '.
-					'AND (ts1.taxauthid = 1) AND (ts2.taxauthid = 1) AND (o.stateprovince = "'.$this->clMetadata['locality'].'") AND (ts2.tid = '.$postArr['tid'].')';
-				//echo $sqlRare; exit;
-				$conn->query($sqlRare);
-			}
-		}
-		else{
-			$mysqlErr = $conn->error;
+		$inventoryManager = new ImInventories();
+		if(!$inventoryManager->insertChecklistTaxaLink($postArr)){
 			$insertStatus = 'ERROR adding species: ';
-			if(strpos($mysqlErr,'Duplicate') !== false){
-				$insertStatus .= 'Species already exists within checklist';
+			if($inventoryManager->getErrorMessage()){
+				if(strpos($inventoryManager->getErrorMessage(), 'Duplicate') !== false){
+					$insertStatus .= 'Species already exists within checklist';
+				}
+				else{
+					$insertStatus .= $inventoryManager->getErrorMessage();
+				}
 			}
 			else{
-				$insertStatus .= $conn->error;
+				$insertStatus .= 'unknown error';
 			}
 		}
-		$conn->close();
 		return $insertStatus;
 	}
 
-	//Checklist index page fucntions
+	//Checklist index page functions
 	public function getChecklists($limitToKey=false){
 		$retArr = Array();
-		$sql = 'SELECT p.pid, p.projname, p.ispublic, c.clid, c.name, c.access, c.defaultSettings, COUNT(l.tid) AS sppcnt
+		$sql = 'SELECT p.pid, p.projname, p.ispublic, c.clid, c.name, c.access, c.defaultSettings, c.latCentroid
 			FROM fmchecklists c LEFT JOIN fmchklstprojlink cpl ON c.clid = cpl.clid
-			INNER JOIN fmchklsttaxalink l ON c.clid = l.clid
 			LEFT JOIN fmprojects p ON cpl.pid = p.pid
-			WHERE ((c.access LIKE "public%") ';
-		if(isset($GLOBALS['USER_RIGHTS']['ClAdmin']) && $GLOBALS['USER_RIGHTS']['ClAdmin']) $sql .= 'OR (c.clid IN('.implode(',',$GLOBALS['USER_RIGHTS']['ClAdmin']).'))';
+			WHERE c.type != "excludespp" AND ((c.access LIKE "public%") ';
+		if(isset($GLOBALS['USER_RIGHTS']['ClAdmin']) && $GLOBALS['USER_RIGHTS']['ClAdmin']){
+			$sql .= 'OR (c.clid IN('.implode(',',$GLOBALS['USER_RIGHTS']['ClAdmin']).'))';
+		}
 		$sql .= ') AND ((p.pid IS NULL) OR (p.ispublic = 1) ';
-		if(isset($GLOBALS['USER_RIGHTS']['ProjAdmin']) && $GLOBALS['USER_RIGHTS']['ProjAdmin']) $sql .= 'OR (p.pid IN('.implode(',',$GLOBALS['USER_RIGHTS']['ProjAdmin']).'))';
+		if(isset($GLOBALS['USER_RIGHTS']['ProjAdmin']) && $GLOBALS['USER_RIGHTS']['ProjAdmin']){
+			$sql .= 'OR (p.pid IN('.implode(',',$GLOBALS['USER_RIGHTS']['ProjAdmin']).'))';
+		}
 		$sql .= ') ';
 		if($this->pid) $sql .= 'AND (p.pid = '.$this->pid.') ';
-		$sql .= 'GROUP BY p.projname, c.Name HAVING sppcnt > 10';
+		//Following line limits result to only checklists that have a linked taxon or is a parent checklist with possible inherited taxa
+		$sql .= 'AND c.clid IN(SELECT clid FROM fmchklsttaxalink UNION DISTINCT SELECT clid FROM fmchklstchildren) ';
+		$sql .= 'ORDER BY p.projname, c.sortSequence, c.name';
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
 			if($limitToKey){
@@ -681,6 +688,7 @@ class ChecklistManager extends Manager{
 				$pid = 0;
 				$projName = 'Miscellaneous Inventories';
 			}
+			if($row->latCentroid) $retArr[$pid]['displayMap'] = 1;
 			$retArr[$pid]['name'] = $this->cleanOutStr($projName);
 			$retArr[$pid]['clid'][$row->clid] = $this->cleanOutStr($row->name).($row->access=='private'?' (Private)':'');
 		}
@@ -746,11 +754,14 @@ class ChecklistManager extends Manager{
 		$term = preg_replace('/[^a-zA-Z\-\. ]+/', '', $term);
 		$term = preg_replace('/\s{1}x{1}\s{0,1}$/i', ' _ ', $term);
 		$term = preg_replace('/\s{1}[\D]{1}\s{1}/i', ' _ ', $term);
+
 		if($term){
-			$sql = 'SELECT tid, sciname FROM taxa WHERE (rankid > 179) AND (sciname LIKE "'.$term.'%")';
+
+			$sql = 'SELECT tid, sciname, author FROM taxa WHERE (rankid > 179) AND (sciname LIKE "'.$term.'%")';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$retArr[] = $r->sciname;
+				$retArr[] = (object) [ 'value' => $r->sciname . ' ' . $r->author,
+				'id' => $r->tid];
 			}
 			$rs->free();
 		}
@@ -903,7 +914,7 @@ class ChecklistManager extends Manager{
 	//Misc functions
 	public function cleanOutText($str){
 		//Need to clean for MS Word ouput: strip html tags, convert all html entities and then reset as html tags
-		$str = strip_tags($str);
+		$str = strip_tags($str ?? "");
 		$str = html_entity_decode($str);
 		$str = htmlspecialchars($str);
 		return $str;

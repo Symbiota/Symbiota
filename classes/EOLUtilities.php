@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
+include_once($SERVER_ROOT . '/classes/utilities/TaxonomyUtil.php');
 
 class EOLUtilities {
 
@@ -101,7 +101,7 @@ class EOLUtilities {
 			//Get other stuff - to be added
 
 			//Get taxonomic concepts
-			$taxonArr = TaxonomyUtilities::parseScientificName($eolObj->scientificName);
+			$taxonArr = TaxonomyUtil::parseScientificName($eolObj->scientificName);
 			if($eolObj->scientificName) $taxonArr['scientificName'] = $eolObj->scientificName;
 			if(isset($eolObj->taxonConcepts)){
 				$cnt = 1;
@@ -159,7 +159,7 @@ class EOLUtilities {
 				//Process return
 				$eolObj = json_decode($content);
 				if($eolObj->scientificName){
-					$taxonArr = TaxonomyUtilities::parseScientificName($eolObj->scientificName);
+					$taxonArr = TaxonomyUtil::parseScientificName($eolObj->scientificName);
 					$taxonArr['scientificName'] = $eolObj->scientificName;
 					$taxonArr['taxonRank'] = $eolObj->taxonRank;
 					if(isset($eolObj->nameAccordingTo)) $taxonArr['source'] = $eolObj->nameAccordingTo[0];
@@ -258,14 +258,14 @@ class EOLUtilities {
 								if($agentObj['full_name']){
 									if($agentCnt < 2) $agentArr[] = $agentObj['full_name'];
 									if($agentObj['role'] == 'photographer'){
-										$retArr['photographer'] = $agentObj['full_name'];
+										$retArr['creator'] = $agentObj['full_name'];
 										unset($agentArr);
 										break;
 									}
 									$agentCnt++;
 								}
 							}
-							if(isset($agentArr) && $agentArr) $retArr['photographer'] = implode('; ',array_unique($agentArr));
+							if(isset($agentArr) && $agentArr) $retArr['creator'] = implode('; ',array_unique($agentArr));
 						}
 						$noteStr = 'Harvest via EOL on '.date('Y-m-d');
 						if(array_key_exists('description',$objArr)) $noteStr .= '; '.$objArr['description'];
@@ -310,7 +310,7 @@ class EOLUtilities {
  		$retStr = $inStr;
  		if($inStr){
  			$retStr = trim($inStr);
- 			$retStr = mb_convert_encoding($retStr, $GLOBALS['CHARSET'], mb_detect_encoding($retStr));
+ 			$retStr = mb_convert_encoding($retStr, $GLOBALS['CHARSET'], mb_detect_encoding($retStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
  		}
 		return $retStr;
 	}

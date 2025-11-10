@@ -1,0 +1,6 @@
+# Prevent execution/interpretation of files under this folder
+# Best practice would be to place this in your Apache conf or virtual host definition
+<FilesMatch ".*.(php|php3|php4|php5|php6|php7|php8|phps|pl|py|pyc|pyo|jsp|asp|htm|html|shtml|phtml|sh|cgi)$">
+  SetHandler None
+  Require all denied
+</FilesMatch>

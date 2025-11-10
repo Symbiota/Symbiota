@@ -3,11 +3,13 @@
 namespace PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions;
 
 use PhpOffice\PhpSpreadsheet\Calculation\Functions;
+use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 
 class NewtonRaphson
 {
     private const MAX_ITERATIONS = 256;
 
+    /** @var callable */
     protected $callback;
 
     public function __construct(callable $callback)
@@ -15,7 +17,7 @@ class NewtonRaphson
         $this->callback = $callback;
     }
 
-    public function execute(float $probability)
+    public function execute(float $probability): string|int|float
     {
         $xLo = 100;
         $xHi = 0;
@@ -54,7 +56,7 @@ class NewtonRaphson
         }
 
         if ($i == self::MAX_ITERATIONS) {
-            return Functions::NA();
+            return ExcelError::NA();
         }
 
         return $x;

@@ -1,5 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 class OccurrenceSesar extends Manager {
 
@@ -148,7 +149,7 @@ class OccurrenceSesar extends Manager {
 			//$this->logOrEcho('#'.$increment.': IGSN created for <a href="../editor/occurrenceeditor.php?occid='.$this->fieldMap['occid']['value'].'" target="_blank">'.$this->fieldMap['catalogNumber']['value'].'</a>',1);
 			if($this->registrationMethod == 'api'){
 				if($this->registerIdentifiersViaApi()){
-					$this->logOrEcho('#'.$increment.': IGSN registered: <a href="../editor/occurrenceeditor.php?occid='.$r['occid'].'" target="_blank">'.$igsn.'</a>',1);
+					$this->logOrEcho('#' . htmlspecialchars($increment, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ': IGSN registered: <a href="../editor/occurrenceeditor.php?occid=' . htmlspecialchars($r['occid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($igsn, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>',1);
 				}
 				$this->igsnDom = null;
 			}
@@ -164,6 +165,9 @@ class OccurrenceSesar extends Manager {
 			}
 			elseif($this->registrationMethod == 'xml'){
 				$this->logOrEcho('XML document created');
+				ob_start();
+				ob_clean();
+				ob_end_flush();
 				header('Content-Description: ');
 				header('Content-Type: application/xml');
 				header('Content-Disposition: attachment; filename=SESAR_IGSN_registration_'.date('Y-m-d_His').'.xml');
@@ -384,7 +388,7 @@ class OccurrenceSesar extends Manager {
 		$this->addSampleElem($this->igsnDom, $sampleElem, 'current_archive', $this->collArr['collectionName']);
 		$this->addSampleElem($this->igsnDom, $sampleElem, 'current_archive_contact', $this->collArr['contact'].($this->collArr['email']?' ('.$this->collArr['email'].')':''));
 
-		$baseUrl = $this->getDomain().$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1)=='/'?'':'/');
+		$baseUrl = GeneralUtil::getDomain().$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1)=='/'?'':'/');
 		//$baseUrl = 'http://swbiodiversity.org/seinet/';
 		$url = $baseUrl.'collections/individual/index.php?occid='.$this->fieldMap['occid']['value'];
 		$externalUrlsElem = $this->igsnDom->createElement('external_urls');
@@ -461,7 +465,7 @@ class OccurrenceSesar extends Manager {
 
 	private function cleanCountryStr($countryStr){
 		if(!$countryStr) return $countryStr;
-		$countryStr = $this->mbStrtr($countryStr,'áéÉ','aeE');
+		$countryStr = mb_strtr($countryStr,'áéÉ','aeE');
 		$testStr = strtolower($countryStr);
 		$synonymArr = array('united states of america'=>'United States','usa'=>'United States','u.s.a.'=>'united states','us'=>'United States');
 		if(array_key_exists($testStr, $synonymArr)) $countryStr = $synonymArr[$testStr];
@@ -498,20 +502,6 @@ class OccurrenceSesar extends Manager {
 			}
 		}
 		return $countryStr;
-	}
-
-	function mbStrtr($str, $from, $to = null) {
-		if(function_exists('mb_strtr')) {
-			return mb_strtr($str, $from, $to);
-		}
-		else{
-			if(is_array($from)) {
-				$from = array_map('utf8_decode', $from);
-				$from = array_map('utf8_decode', array_flip ($from));
-				return utf8_encode (strtr (utf8_decode ($str), array_flip ($from)));
-			}
-			return utf8_encode (strtr (utf8_decode ($str), utf8_decode($from), utf8_decode ($to)));
-		}
 	}
 
 	//GUID verification functions

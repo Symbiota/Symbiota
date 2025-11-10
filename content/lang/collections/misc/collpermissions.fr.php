@@ -6,7 +6,7 @@ Language: Français (French)
 */
 
 $LANG['COL_PERMISSIONS'] = 'Autorisations de Collecte';
-$LANG['PLS_SEL_USER'] = 'Veuillez sélectionner utilisateur dans liste';
+$LANG['PLS_SEL_USER'] = 'Veuillez sélectionner un utilisateur (commencez à saisir le nom de famille pour voir la liste déroulante)';
 $LANG['SEL_PERMISSIONS'] = 'Veuillez sélectionner les autorisations que vous souhaitez attribuer à cet utilisateur';
 $LANG['SEL_OBS'] = "Veuillez sélectionner un Projet de Gestion d'Observation Personnelle";
 $LANG['COL_PROFS'] = 'Profils de Collecte';
@@ -20,6 +20,7 @@ $LANG['NO_PERMS'] = "Il n'y a pas d'autorisations administratives (à l'exceptio
 $LANG['EDITORS'] = 'Éditeurs';
 $LANG['YES_REM_EDIT'] = "Voulez-vous vraiment supprimer les droits d'éditeur pour cet utilisateur?";
 $LANG['DEL_PERMISSIONS'] = 'Supprimer autorisations pour cet utilisateur';
+$LANG['REMOVE_PERMISSIONS'] = 'Supprimer les autorisations utilisateur';
 $LANG['NO_GENERAL_PERMS'] = "Il n'y a pas d'autorisations générales d'éditeur";
 $LANG['ADMINS_INHERIT'] = "Les administrateurs héritent automatiquement des droits d'édition";
 $LANG['RARE_SP_READERS'] = "Lecteurs d'Espèces Rares";
@@ -37,10 +38,15 @@ $LANG['SPONSOR_EXPLAIN'] = "Les administrateurs de collection répertoriés ci-d
 						Cela permet aux utilisateurs de saisir des données de terrain sous forme d'observations directement liées à leur profil d'utilisateur, d'imprimer des étiquettes,
 						et les données de collection ultérieures peuvent être transférées une fois que les spécimens sont donnés à cette collection.
 						La liste ci-dessous répertorie tous les utilisateurs qui ont reçu de tels droits par l'un des administrateurs de collection énumérés ci-dessus.";
+
+$LANG['CHECKLIST_SPONSOR'] = 'Liste de contrôle / Parrainage de la gestion des ensembles de données';
+$LANG['CHECKLIST_SPONSOR_EXPLAIN'] = 'Les administrateurs de collections répertoriés ci-dessus peuvent parrainer des utilisateurs pour la gestion des listes de contrôle et des ensembles de données.
+						Cela permet aux utilisateurs de créer de nouvelles listes de contrôle ou ensembles de données publics et privés qui sont directement liés à leur profil utilisateur. Les listes de contrôle et les ensembles de données publics sont visibles par tous les visiteurs du portail.';
+
 $LANG['SURE_DELETE'] = 'Êtes-vous sûr de vouloir supprimer ces autorisations?';
 $LANG['NONE_SPONSORED'] = "Aucun utilisateur n'a encore été parrainé";
 $LANG['NEW_SPONSOR'] = 'Nouveau Parrainage';
-$LANG['SEL_USER'] = 'Sélectionnez Utilisateur';
+$LANG['ENTER_USER_NAME'] = "Entrez Nom d'Utilisateur (Nom, Prénom)";
 $LANG['SEL_PERS_OBS'] = 'Sélectionnez Projet d\'Observation Personnelle';
 $LANG['SPONSOR_USER'] = 'Parrainer Utilisateur';
 $LANG['ID_EDITS'] = 'Éditeurs d\'Identification';
@@ -59,5 +65,7 @@ $LANG['ALL_RANGES'] = 'Toutes les gammes taxonomiques approuvées énumérées c
 $LANG['SURE_REM_ID'] = "Êtes-vous sûr de vouloir supprimer les droits d'édition d'identification pour cet utilisateur?";
 $LANG['NO_ID_PERMS'] = "Il n'y a pas d'autorisations d'éditeur d'identification";
 $LANG['NOT_AUTH'] = 'Non autorisé à voir cette page. Vous devez avoir le droit administratif pour cette collection.';
+
+$LANG['DROP_ICON'] = 'Déposer l\'icône';
 
 ?>

@@ -1,5 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/classes/Manager.php');
+include_once('Manager.php');
+include_once('ImInventories.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 class ChecklistVoucherAdmin extends Manager {
 
@@ -7,7 +9,7 @@ class ChecklistVoucherAdmin extends Manager {
 	protected $clName;
 	protected $clMetadata;
 	private $childClidArr = array();
-	private $footprintWkt;
+	private $footprintGeoJson;
 	private $queryVariablesArr = array();
 
 	function __construct($con=null) {
@@ -44,7 +46,7 @@ class ChecklistVoucherAdmin extends Manager {
 	private function setMetaData(){
 		if($this->clid){
 			$sql = 'SELECT clid, name, locality, publication, abstract, authors, parentclid, notes, latcentroid, longcentroid, pointradiusmeters, '.
-				'footprintwkt, access, defaultSettings, dynamicsql, datelastmodified, uid, type, initialtimestamp '.
+				'footprintGeoJson, access, defaultSettings, dynamicsql, datelastmodified, dynamicProperties, uid, type, initialtimestamp '.
 				'FROM fmchecklists WHERE (clid = '.$this->clid.')';
 		 	$rs = $this->conn->query($sql);
 			if($rs){
@@ -61,11 +63,12 @@ class ChecklistVoucherAdmin extends Manager {
 					$this->clMetadata["latcentroid"] = $row->latcentroid;
 					$this->clMetadata["longcentroid"] = $row->longcentroid;
 					$this->clMetadata["pointradiusmeters"] = $row->pointradiusmeters;
-					$this->clMetadata['footprintwkt'] = $row->footprintwkt;
+					$this->clMetadata['footprintGeoJson'] = $row->footprintGeoJson;
 					$this->clMetadata["access"] = $row->access;
 					$this->clMetadata["defaultSettings"] = $row->defaultSettings;
 					$this->clMetadata["dynamicsql"] = $row->dynamicsql;
 					$this->clMetadata["datelastmodified"] = $row->datelastmodified;
+					$this->clMetadata['dynamicProperties'] = $row->dynamicProperties;
 				}
 				$rs->free();
 			}
@@ -84,40 +87,27 @@ class ChecklistVoucherAdmin extends Manager {
 		}
 	}
 
-	public function getPolygonCoordinates(){
-		$retArr = array();
-		if($this->clid){
-			if($this->clMetadata['dynamicsql']){
-				$sql = 'SELECT o.decimallatitude, o.decimallongitude FROM omoccurrences o ';
-				if($this->clMetadata['footprintwkt'] && substr($this->clMetadata['footprintwkt'],0,7) == 'POLYGON'){
-					$sql .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid WHERE (ST_Within(p.point,GeomFromText("'.$this->clMetadata['footprintwkt'].'"))) ';
-				}
-				else{
-					$this->setCollectionVariables();
-					$sql .= 'WHERE ('.$this->getSqlFrag().') ';
-				}
-				$sql .= 'LIMIT 50';
-				//echo $sql; exit;
-				$rs = $this->conn->query($sql);
-				while($r = $rs->fetch_object()){
-					$retArr[] = $r->decimallatitude.','.$r->decimallongitude;
-				}
-				$rs->free();
+	public function getAssociatedExternalService(){
+		$resp = false;
+ 		if($this->clMetadata['dynamicProperties']){
+			$dynpropArr = json_decode($this->clMetadata['dynamicProperties'], true);
+			if(array_key_exists('externalservice', $dynpropArr)) {
+				$resp = $dynpropArr['externalservice'];
 			}
 		}
-		return $retArr;
+		return $resp;
 	}
 
 	//Dynamic query variable functions
 	public function setCollectionVariables(){
 		if($this->clid){
-			$sql = 'SELECT name, dynamicsql, footprintwkt FROM fmchecklists WHERE (clid = '.$this->clid.')';
+			$sql = 'SELECT name, dynamicsql, footprintGeoJson FROM fmchecklists WHERE (clid = '.$this->clid.')';
 			$result = $this->conn->query($sql);
 			if($row = $result->fetch_object()){
 				$this->clName = $this->cleanOutStr($row->name);
-				$this->footprintWkt = $row->footprintwkt;
-				$sqlFrag = $row->dynamicsql;
-				$varArr = json_decode($sqlFrag,true);
+				$this->footprintGeoJson = $row->footprintGeoJson;
+				$sqlFrag = $row->dynamicsql ?? '';
+				$varArr = json_decode($sqlFrag, true);
 				if(json_last_error() != JSON_ERROR_NONE){
 					$varArr = $this->parseSqlFrag($sqlFrag);
 					$this->saveQueryVariables($varArr);
@@ -266,7 +256,8 @@ class ChecklistVoucherAdmin extends Manager {
 			$tStr = $this->cleanInStr($this->queryVariablesArr['taxon']);
 			$tidPar = $this->getTid($tStr);
 			if($tidPar){
-				$sqlFrag .= 'AND (o.tidinterpreted IN (SELECT ts.tid FROM taxaenumtree e INNER JOIN taxstatus ts ON e.tid = ts.tidaccepted WHERE ts.taxauthid = 1 AND e.taxauthid = 1 AND e.parenttid = '.$tidPar.')) ';
+				$sqlFrag .= 'AND (o.tidinterpreted IN (SELECT ts.tid FROM taxaenumtree e INNER JOIN taxstatus ts ON e.tid = ts.tidaccepted
+					WHERE ts.taxauthid = 1 AND e.taxauthid = 1 AND (e.parenttid = '.$tidPar.' OR e.tid = '.$tidPar.'))) ';
 			}
 		}
 		//Locality and Latitude and longitude
@@ -276,13 +267,7 @@ class ChecklistVoucherAdmin extends Manager {
 			$locArr = explode(',', $localityStr);
 			foreach($locArr as $str){
 				$str = $this->cleanInStr($str);
-				if(strlen($str) > 4){
-					$locStr .= 'OR (MATCH(f.locality) AGAINST(\'"'.$str.'"\' IN BOOLEAN MODE)) ';
-				}
-				else{
-					$locStr .= 'OR (o.locality LIKE "%'.$str.'%") ';
-				}
-				//$locStr .= 'OR (o.locality LIKE "%'.$this->cleanInStr($str).'%") ';
+				$locStr .= 'OR (MATCH(o.locality) AGAINST(\'"'.$str.'"\' IN BOOLEAN MODE)) ';
 			}
 		}
 		$llStr = '';
@@ -292,9 +277,9 @@ class ChecklistVoucherAdmin extends Manager {
 					'AND (o.decimallongitude BETWEEN '.$this->queryVariablesArr['lngwest'].' AND '.$this->queryVariablesArr['lngeast'].') ';
 			}
 		}
-		if(isset($this->queryVariablesArr['includewkt']) && $this->queryVariablesArr['includewkt'] && $this->footprintWkt){
+		if(isset($this->queryVariablesArr['includewkt']) && $this->queryVariablesArr['includewkt'] && $this->footprintGeoJson){
 			//Searh based on polygon
-			$sqlFrag .= 'AND (ST_Within(p.point,GeomFromText("'.$this->footprintWkt.'"))) ';
+			$sqlFrag .= "AND (ST_Within(p.lngLatPoint,ST_GeomFromGeoJson('" . $this->footprintGeoJson . "'))) ";
 			$llStr = false;
 		}
 		if(isset($this->queryVariablesArr['latlngor']) && $this->queryVariablesArr['latlngor'] && $locStr && $llStr){
@@ -323,12 +308,12 @@ class ChecklistVoucherAdmin extends Manager {
 			$collArr = explode(';',$collStr);
 			$tempArr = array();
 			foreach($collArr as $str){
-				if(strlen($str) < 4 || in_array($str,array('best','little'))){
+				if(strlen($str) < 4){
 					//Need to avoid FULLTEXT stopwords interfering with return
 					$tempArr[] = '(o.recordedby LIKE "%'.$this->cleanInStr($str).'%")';
 				}
 				else{
-					$tempArr[] = '(MATCH(f.recordedby) AGAINST("'.$this->cleanInStr($str).'"))';
+					$tempArr[] = '(MATCH(o.recordedby) AGAINST("'.$this->cleanInStr($str).'" IN BOOLEAN MODE))';
 				}
 			}
 			$sqlFrag .= 'AND ('.implode(' OR ', $tempArr).') ';
@@ -449,57 +434,66 @@ class ChecklistVoucherAdmin extends Manager {
 		}
 	}
 
-	//Data mod functions
-	protected function insertChecklistTaxaLink($tid, $clid = null, $morpho = ''){
+	//Checklist Coordinate functions
+	public function addExternalVouchers($tid, $dataAsJson){
+		// EG suggested storing external (e.g., iNaturalist) voucher records in the `fmchklstcoordinates` table as this table
+		//   was un- or under-used as of schema 3.0. The `notes` column serves as a flag for these vouchers. --CDT 2023-08-21
 		$status = false;
-		if(!$clid) $clid = $this->clid;
-		if(is_numeric($tid) && is_numeric($clid)){
-			$sql = 'INSERT INTO fmchklsttaxalink(tid,clid,morphospecies) VALUES(?,?,?)';
-			if($stmt = $this->conn->prepare($sql)) {
-				$stmt->bind_param('iis', $tid, $clid, $morpho);
-				$stmt->execute();
-				if($stmt->affected_rows && !$stmt->error){
-					$status = $stmt->insert_id;
-				}
-				elseif($stmt->error) $this->errorMessage = 'ERROR inserting checklist-taxa-link: '.$stmt->error;
-				$stmt->close();
+		$inputData = json_decode($dataAsJson, true);
+		// for single vouchers, add ll, for multiple use zero :(.
+		// we could try averaging ll for multiples, but then the software would be introducing non-real data, which is bad.
+		// not that zero/zero is real data either... CDT 8/2023
+		$lat = (count($inputData) == 1 ? $inputData[0]['lat'] : 0);
+		$lng = (count($inputData) == 1 ? $inputData[0]['lng'] : 0);
+		$sourceIdentifier = $inputData[0]['id'];
+		$referenceUrl = null;
+		if($sourceIdentifier) $referenceUrl = 'https://www.inaturalist.org/observations/'.$sourceIdentifier;
+		if(is_numeric($tid) && $lat && $lng){
+			unset($inputData[0]['lat']);
+			unset($inputData[0]['lng']);
+			unset($inputData[0]['taxon']);
+			$inputArr = array('tid' => $tid, 'decimalLatitude' => $lat, 'decimalLongitude' => $lng, 'sourceName' => 'EXTERNAL_VOUCHER',
+				'sourceIdentifier' => $sourceIdentifier, 'referenceUrl' => $referenceUrl, 'dynamicProperties' => json_encode($inputData));
+			$inventoryManager = new ImInventories();
+			$inventoryManager->setClid($this->clid);
+			if($inventoryManager->insertChecklistCoordinates($inputArr)){
+				$status = true;
 			}
-			else $this->errorMessage = 'ERROR preparing statement for checklist-taxa-link insert: '.$this->conn->error;
+			else{
+				$errStr = $inventoryManager->getErrorMessage();
+				if(strpos($errStr, 'Duplicate') !== false) $errStr = 'Voucher already linked!';
+				$this->errorMessage = $errStr;
+			}
 		}
 		return $status;
+	}
+
+	//Data mod functions
+	protected function insertChecklistTaxaLink($tid, $clid = null, $morpho = ''){
+		$clTaxaID = false;
+		if(!$clid) $clid = $this->clid;
+		if(is_numeric($tid) && is_numeric($clid)){
+			$inventoryManager = new ImInventories();
+			$inputArr = array('tid' => $tid, 'clid' => $clid);
+			if($morpho) $inputArr['morphoSpecies'] = $morpho;
+			if($inventoryManager->insertChecklistTaxaLink($inputArr)){
+				$clTaxaID = $inventoryManager->getPrimaryKey();
+			}
+			else $this->errorMessage = $inventoryManager->getErrorMessage();
+		}
+		return $clTaxaID;
 	}
 
 	protected function insertVoucher($clTaxaID, $occid, $editorNotes = null, $notes = null){
 		$status = false;
 		if(is_numeric($clTaxaID) && is_numeric($occid)){
-			if($editorNotes == '') $editorNotes = null;
-			if($notes == '') $notes = null;
-			$sql = 'INSERT INTO fmvouchers(clTaxaID, occid, editorNotes, notes) VALUES (?,?,?,?)';
-			if($stmt = $this->conn->prepare($sql)) {
-				$stmt->bind_param('iiss', $clTaxaID, $occid, $editorNotes, $notes);
-				$stmt->execute();
-				if($stmt->affected_rows){
-					$status = $stmt->insert_id;
-				}
-				elseif($stmt->error) $this->errorMessage = 'ERROR inserting voucher: '.$stmt->error;
-				$stmt->close();
-			}
-			else $this->errorMessage = 'ERROR preparing statement for voucher insert: '.$this->conn->error;
-		}
-		return $status;
-	}
-
-	private function transferVouchers($target, $source){
-		$status = false;
-		if(is_numeric($target) && is_numeric($source)){
-			$sql = 'UPDATE fmvouchers SET clTaxaID = ? WHERE clTaxaID = ?';
-			if($stmt = $this->conn->prepare($sql)) {
-				$stmt->bind_param('ii', $target, $source);
-				$stmt->execute();
-				if($stmt->error) $this->errorMessage = 'ERROR transferring vouchers: '.$stmt->error;
-				$stmt->close();
-			}
-			else $this->errorMessage = 'ERROR preparing statement for voucher transfer: '.$this->conn->error;
+			$inventoryManager = new ImInventories();
+			$inventoryManager->setClTaxaID($clTaxaID);
+			$inputArr = array('occid' => $occid);
+			if($editorNotes) $inputArr['editorNotes'] = $editorNotes;
+			if($notes) $inputArr['notes'] = $notes;
+			$status = $inventoryManager->insertChecklistVoucher($inputArr);
+			if(!$status) $this->errorMessage = $inventoryManager->getErrorMessage();
 		}
 		return $status;
 	}
@@ -507,15 +501,10 @@ class ChecklistVoucherAdmin extends Manager {
 	public function deleteVoucher($voucherID){
 		$status = false;
 		if(is_numeric($voucherID)){
-			$sql = 'DELETE FROM fmvouchers WHERE (voucherID = ?)';
-			if($stmt = $this->conn->prepare($sql)) {
-				$stmt->bind_param('i', $voucherID);
-				$stmt->execute();
-				if($stmt->affected_rows) $status = true;
-				elseif($stmt->error) $this->errorMessage = 'ERROR deleting vouchers: '.$stmt->error;
-				$stmt->close();
-			}
-			else $this->errorMessage = 'ERROR preparing statement for voucher deletion: '.$this->conn->error;
+			$inventoryManager = new ImInventories();
+			$inventoryManager->setVoucherID($voucherID);
+			$status = $inventoryManager->deleteChecklistVoucher();
+			if(!$status) $this->errorMessage = $inventoryManager->getErrorMessage();
 		}
 		return $status;
 	}
@@ -754,8 +743,8 @@ class ChecklistVoucherAdmin extends Manager {
 		return $this->clMetadata;
 	}
 
-	public function getClFootprintWkt(){
-		return $this->footprintWkt;
+	public function getClFootprint() {
+		return $this->footprintGeoJson;
 	}
 
 	//Misc functions
@@ -775,13 +764,13 @@ class ChecklistVoucherAdmin extends Manager {
 		$retStr = $inStr;
 		if($inStr && $charSetSource){
 			if($charSetOut == 'UTF-8'){
-				$retStr = mb_convert_encoding($inStr, 'UTF-8', mb_detect_encoding($inStr));
+				$retStr = mb_convert_encoding($inStr, 'UTF-8', mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 			}
 			elseif($charSetOut == 'ISO-8859-1'){
-				$retStr = mb_convert_encoding($inStr, 'ISO-8859-1', mb_detect_encoding($inStr));
+				$retStr = mb_convert_encoding($inStr, 'ISO-8859-1', mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 			}
 			else{
-				$retStr = mb_convert_encoding($inStr, $charSetOut, mb_detect_encoding($inStr));
+				$retStr = mb_convert_encoding($inStr, $charSetOut, mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 			}
 		}
 		return $retStr;

@@ -33,18 +33,18 @@ $LANG['SURE_DEL'] = 'Are you sure you want to delete this record?';
 $LANG['REC_MUST_EVALUATE'] = 'Record first needs to be evaluated before it can be deleted from the system.
 				The evaluation ensures that the deletion of this record will not interfere with
 				the integrity of other linked data. Note that all determination and
-				comments for this occurrence will be automatically deleted. Links to images, and checklist vouchers
+				comments for this occurrence will be automatically deleted. Links to media resources and checklist vouchers
 				will have to be individually addressed before can be deleted.';
 $LANG['EVALUATE_FOR_DEL'] = 'Evaluate record for deletion';
-$LANG['IMG_LINKS'] = 'Image Links';
-$LANG['CHECKING_IMG_LINKS'] = 'checking image links';
+$LANG['MEDIA_LINKS'] = 'Media Resource Links';
+$LANG['CHECKING_MEDIA_LINKS'] = 'checking media resources links';
 $LANG['WARNING'] = 'Warning';
-$LANG['IMAGES_ARE_LINKED'] = 'One or more images are linked to this occurrence.
-						Continuing will remove all images linked to this specimen record.
-						If you prefer to leave the image in the system only linked to the taxon name,
-						visit the Image Tab to disassociate image from specimen.';
+$LANG['MEDIA_ARE_LINKED'] = 'One or more media resources are linked to this occurrence.
+						Continuing will remove all media resources linked to this specimen record.
+						If you prefer to leave the media resource in the system only linked to the taxon name,
+						visit the Media tab to disassociate media resources from specimen.';
 $LANG['APPROVED_FOR_DEL'] = 'Approved for deletion';
-$LANG['NO_IMGS'] = 'No images are directly associated with this occurrence record';
+$LANG['NO_MEDIA'] = 'No media resources are directly associated with this occurrence record';
 $LANG['CHECKLIST_LINKS'] = 'Checklist Voucher Links';
 $LANG['CHECKING_LINKS'] = 'checking checklist links';
 $LANG['NO_CHECKLISTS'] = 'No checklists have been linked to this occurrence record';

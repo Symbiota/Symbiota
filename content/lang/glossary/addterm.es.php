@@ -4,7 +4,7 @@
 Language: Español (Spanish)
 ------------------
 */
-
+$LANG['ADD_GLOSSARY_TERM'] = 'Ajouter un nouveau terme de glossaire';
 $LANG['GLOSSARY'] = 'Glosario';
 $LANG['ADD_TERM'] = 'Añadir Nuevo Término';
 $LANG['PLEASE_ADD_TERM'] = 'Por favor introducir un valor en el campo de término';
@@ -31,6 +31,7 @@ $LANG['SEL_REL'] = 'Seleccione Relación';
 $LANG['SYN'] = 'Sinónimo';
 $LANG['TRANSLATION'] = 'Traducción';
 $LANG['TRANSS'] = 'Traducciones';
+$LANG['IMAGES'] = 'Imágenes';
 $LANG['SEL_TERM'] = 'Seleccione un Término a ser Vinculado';
 $LANG['CREATE_TERM'] = 'Crear Término';
 $LANG['NO_PERM'] = 'No tiene permisos de etitor para el glosario';

@@ -1,5 +1,7 @@
-<?php
+<?php global $SERVER_ROOT;
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
+include_once($SERVER_ROOT.'/classes/utilities/GeneralUtil.php');
+include_once($SERVER_ROOT.'/classes/utilities/UploadUtil.php');
 
 class DwcArchiverPublisher extends DwcArchiverCore{
 
@@ -53,6 +55,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		$successArr = array();
 		$includeAttributes = $this->includeAttributes;
 		$includeMatSample = $this->includeMaterialSample;
+		$includeIdentifiers = $this->includeIdentifiers;
 		foreach($collIdArr as $id){
 			//Create a separate DWCA object for each collection
 			if($includeAttributes){
@@ -62,6 +65,10 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 			if($includeMatSample){
 				if($this->hasMaterialSamples($id)) $this->includeMaterialSample = true;
 				else $this->includeMaterialSample = false;
+			}
+			if($includeIdentifiers){
+				if($this->hasIdentifiers($id)) $this->includeIdentifiers = true;
+				else $this->includeIdentifiers = false;
 			}
 			$this->resetCollArr($id);
 			$this->conditionArr['collid'] = $id;
@@ -73,6 +80,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		}
 		$this->includeAttributes = $includeAttributes;
 		$this->includeMaterialSample = $includeMatSample;
+		$this->includeIdentifiers = $includeIdentifiers;
 		//Reset $this->collArr with all the collections ran successfully and then rebuild the RSS feed
 		$this->resetCollArr(implode(',',$successArr));
 		$this->writeRssFile();
@@ -118,7 +126,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		//Create new item for target archives and load into array
 		$itemArr = array();
 		foreach($this->collArr as $collID => $cArr){
-			$cArr = $this->utf8EncodeArr($cArr);
+			$this->encodeArr($cArr);
 			$itemElem = $newDoc->createElement('item');
 			$itemAttr = $newDoc->createAttribute('collid');
 			$itemAttr->value = $collID;
@@ -210,7 +218,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 
 		if($sourcePath == $deprecatedPath || !file_exists($deprecatedPath)){
 			$redirectDoc = new DOMDocument();
-			$redirectDoc->loadXML('<redirect><newLocation>'.$this->getDomain().$GLOBALS['CLIENT_ROOT'].'/content/dwca/rss.xml</newLocation></redirect>');
+			$redirectDoc->loadXML('<redirect><newLocation>' . GeneralUtil::getDomain() . $GLOBALS['CLIENT_ROOT'] . '/content/dwca/rss.xml</newLocation></redirect>');
 			$redirectDoc->save($deprecatedPath);
 		}
 
@@ -253,7 +261,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 
 	public function getCollectionList($catID){
 		$retArr = array();
-		$serverName = $this->getDomain();
+		$serverName = GeneralUtil::getDomain();
 		$sql = 'SELECT c.collid, c.collectionname, CONCAT_WS("-",c.institutioncode,c.collectioncode) as instcode, c.guidtarget, c.dwcaurl, c.managementtype, c.dynamicProperties '.
 			'FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid '.
 			'LEFT JOIN omcollcatlink l ON c.collid = l.collid '.
@@ -315,23 +323,47 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		$array = $ret;
 	}
 
-	public function humanFileSize($filePath) {
-		if(substr($filePath,0,4)=='http') {
-			$x = array_change_key_case(get_headers($filePath, 1),CASE_LOWER);
-			if( strcasecmp($x[0], 'HTTP/1.1 200 OK') != 0 ) {
-				$x = $x['content-length'][1];
-			}
-			else {
-				$x = $x['content-length'];
-			}
-		}
-		else {
-			$x = @filesize($filePath);
-		}
-		$x = round($x/1000000, 1);
-		if(!$x) $x = 0.1;
+	private function getFileSize(string $filePath) {
+		global $SERVER_ROOT, $SERVER_HOST, $CLIENT_ROOT;
+		$size = false;
 
-		return $x.'M ';
+		if($fileParts = UploadUtil::decomposeUrl($filePath)) {
+			$host = $fileParts['host'] . (isset($fileParts['port'])? ':' . $fileParts['port']: '');
+
+			if($host !== $SERVER_HOST) {
+				if($headerArr = @get_headers($filePath, 1)){
+					$size = array_change_key_case($headerArr, CASE_LOWER);
+					if( strcasecmp($size[0], 'HTTP/1.1 200 OK') != 0 ) {
+						$size = $size['content-length'][1];
+					}
+					else {
+						$size = $size['content-length'];
+					}
+				}
+			} else {
+				$path = $fileParts['path'];
+
+				// If $CLIENT_ROOT is present remove from path to prevent
+				// double up as it is already in $SERVER_ROOT
+				if($CLIENT_ROOT) {
+					$path = str_replace($CLIENT_ROOT, '',$path);
+				}
+
+				$size = @filesize($SERVER_ROOT . $path);
+			}
+		}
+
+		return $size;
+	}
+
+	public function humanFileSize(string $filePath): string {
+		if($size = $this->getFileSize($filePath)) {
+			$size = round($size/1000000, 1);
+			if(!$size) $size = 0.1;
+			return $size.'M';
+		} else {
+			return '?M';
+		}
 	}
 }
 ?>

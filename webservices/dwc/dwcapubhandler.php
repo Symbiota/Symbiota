@@ -8,7 +8,7 @@
  *       Format: cond=<field1>-<optional operator>:<value1>;<field2>-<optional operator>:<value2>
  *       Fields allowed: catalogNumber, otherCatalogNumbers, occurrenceID, family, sciname, country, stateProvince, county, municipality, recordedBy, recordNumber, eventDate,
  *       	decimalLatitude, decimalLongitude, minimumElevationInMeters, maximumElevationInMeters, cultivationStatus, processingStatus, dateLastModified, dateEntered, dbpk
- *       Optional operators: EQUALS, NULL, NOTNULL, START, LIKE, LESSTHAN, GREATERTHAN
+ *       Optional operators: EQUALS, IS_NULL, NOT_NULL, START_WITH, LIKE, LESS_THAN, GREATER_THAN
  *       Note the dash separating the field and operator; operator is not case specific
  *       Multiple conditions can be supplied separated by semicolons
  *       Multiple values can be supplied separated by commas
@@ -16,9 +16,10 @@
  *   usethes (0 [default] or 1): when searching on a taxonomic name, setting usethes to 1 will run search term through the taxonomic thesaurus to include synonym within the search
  *   schema (dwc [default], symbiota): schema type
  *   extended (0 [default], 1): true outputs extended data fields such as: collectionID,rights fields, storageLocation, observerUid, processingStatus, duplicateQuantity, dateEntered, dateLastModified
- *   imgs (0, 1 [default]): Output image URLs within an media extension file
+ *   imgs (0, 1 [default]): Output image URLs within a media extension file
  *   dets (0, 1 [default]): Output determination history within an identification extension file
  *   attr (0 [default], 1): Output occurrence attribute values within a MeasurementOrFact extension file
+ *   ident (0 [default], 1): Output occurrence identifiers values within an Alternative Identifiers extension file
  *
  * Return: Darwin Core Archive of matching occurrences, associated images, identification history, and other associated data extensions
  *   Occurrence record return limited to 1,000,000 records
@@ -41,11 +42,12 @@ $collid = array_key_exists('collid', $_REQUEST) ? $_REQUEST['collid'] : 0;
 $cond = array_key_exists('cond', $_REQUEST) ? $_REQUEST['cond'] : '';
 $collType = array_key_exists('colltype', $_REQUEST) ? $_REQUEST['colltype'] : '';
 $schemaType = array_key_exists('schema', $_REQUEST) ? $_REQUEST['schema'] : 'dwc';
-$extended = array_key_exists('extended', $_REQUEST) ? $_REQUEST['extended'] : 0;
-$includeDets = array_key_exists('dets', $_REQUEST) ? $_REQUEST['dets'] : 1;
-$includeImgs = array_key_exists('imgs', $_REQUEST) ? $_REQUEST['imgs'] : 1;
-$includeAttributes = array_key_exists('attr', $_REQUEST) ? $_REQUEST['attr'] : 0;
-$includeMaterialSample = array_key_exists('matsample', $_REQUEST) ? $_REQUEST['matsample'] : 0;
+$extended = !empty($_REQUEST['extended']) ? 1 : 0;
+$includeDets = isset($_REQUEST['dets']) && !$_REQUEST['dets'] ? 0 : 1;
+$includeImgs = isset($_REQUEST['imgs']) && !$_REQUEST['imgs'] ? 0 : 1;
+$includeAttributes = !empty($_REQUEST['attr']) ? 1 : 0;
+$includeMaterialSample = !empty($_REQUEST['matsample']) ? 1 : 0;
+$includeIdentifiers = !empty($_REQUEST['ident']) ? 1 : 0;
 $pubGuid = array_key_exists('publicationguid', $_REQUEST) ? $_REQUEST['publicationguid'] : 0;
 $requestPortalGuid = array_key_exists('portalguid', $_REQUEST) ? $_REQUEST['portalguid'] : 0;
 
@@ -100,12 +102,15 @@ $dwcaHandler->setIncludeDets($includeDets);
 $dwcaHandler->setIncludeImgs($includeImgs);
 $dwcaHandler->setIncludeAttributes($includeAttributes);
 $dwcaHandler->setIncludeMaterialSample($includeMaterialSample);
+$dwcaHandler->setIncludeIdentifiers($includeIdentifiers);
 $dwcaHandler->setPublicationGuid($pubGuid);
 $dwcaHandler->setRequestPortalGuid($requestPortalGuid);
 
 $archiveFile = $dwcaHandler->createDwcArchive();
+ob_start();
+ob_clean();
+ob_end_flush();
 if ($archiveFile) {
-	ob_start();
 	header('Content-Description: DwC-A File Transfer');
 	header('Content-Type: application/zip');
 	header('Content-Disposition: attachment; filename=' . basename($archiveFile));

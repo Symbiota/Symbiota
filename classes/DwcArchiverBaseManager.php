@@ -1,6 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/Manager.php');
-include_once($SERVER_ROOT.'/classes/UuidFactory.php');
+include_once($SERVER_ROOT . '/classes/Manager.php');
 
 class DwcArchiverBaseManager extends Manager{
 
@@ -10,7 +9,7 @@ class DwcArchiverBaseManager extends Manager{
 	protected $charSetSource = '';
 	protected $charSetOut = '';
 	protected $sqlBase;
-	protected $fileHandler;
+	private $fileHandler;
 
 	public function __construct($conType, $connOverride){
 		parent::__construct(null, $conType, $connOverride);
@@ -20,6 +19,7 @@ class DwcArchiverBaseManager extends Manager{
 
 	public function __destruct(){
 		parent::__destruct();
+		if($this->fileHandler) fclose($this->fileHandler);
 	}
 
 	protected function setFileHandler($filePath){
@@ -87,7 +87,7 @@ class DwcArchiverBaseManager extends Manager{
 				}
 			}
 			else{
-				$retStr = mb_convert_encoding($inStr, $this->charSetOut, mb_detect_encoding($inStr));
+				$retStr = mb_convert_encoding($inStr, $this->charSetOut, mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1,ISO-8859-15'));
 			}
 		}
 		return $retStr;

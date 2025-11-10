@@ -1,19 +1,21 @@
 <?php
+
+use PHPUnit\Exception;
+
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TPEditorManager.php');
 include_once($SERVER_ROOT.'/classes/TPDescEditorManager.php');
 include_once($SERVER_ROOT.'/classes/TPImageEditorManager.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT.'/classes/Media.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.' . $LANG_TAG . '.php'))
+include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.en.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset='.$CHARSET);
 
-$tid = array_key_exists("tid",$_REQUEST)?$_REQUEST["tid"]:0;
-$taxon = array_key_exists("taxon",$_REQUEST)?$_REQUEST["taxon"]:"";
-$action = array_key_exists("action",$_REQUEST)?$_REQUEST["action"]:"";
-$tabIndex = array_key_exists("tabindex",$_REQUEST)?$_REQUEST["tabindex"]:0;
-
-if(!is_numeric($tid)) $tid = 0;
-if(!is_numeric($tabIndex)) $tabIndex = 0;
+$tid = array_key_exists('tid', $_REQUEST) ? filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$taxon = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']:'';
+$tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 
 $tEditor = null;
 if($tabIndex == 1 || $tabIndex == 2){
@@ -39,7 +41,7 @@ if(!$tid && $taxon){
 $tEditor->setTid($tid);
 $tid = $tEditor->getTid();
 
-$statusStr = "";
+$statusStr = '';
 $isEditor = false;
 if($IS_ADMIN || array_key_exists("TaxonProfile",$USER_RIGHTS)) $isEditor = true;
 
@@ -107,26 +109,35 @@ if($isEditor && $action){
 		$statusStr = $tEditor->editImageSort($imgSortArr);
 	}
 	elseif($action == 'Upload Image'){
-		if($tEditor->loadImage($_POST)){
-			$statusStr = 'Image uploaded successful';
-		}
-		if($tEditor->getErrorMessage()){
-			$statusStr .= '<br/>'.$tEditor->getErrorMessage();
+		$family = $tEditor->getFamily();
+		$path = ($family? $family . '/': '') . date('Ym') . '/';
+		try {
+			Media::uploadAndInsert(
+				$_POST,
+				$_FILES['imgfile'] ?? null,
+				new LocalStorage($path)
+			);
+		} catch(Exception $e) {
+			$statusStr .= '<br/>' . $e->getMessage();
 		}
 	}
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.' '.$LANG['TAXON_EDITOR'] .': '.$tEditor->getSciName(); ?></title>
+	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['TAXON_EDITOR'] .': ' . $tEditor->getSciName(); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>" />
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
+	$filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
 	?>
+	<script src="<?php echo $filename ?>" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/symb/shared.js"></script>
-	<script type="text/javascript" src="../../js/jquery.js"></script>
-	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/taxa.tpimageeditor.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		var clientRoot = "<?php echo $CLIENT_ROOT; ?>";
 
@@ -160,18 +171,18 @@ if($isEditor && $action){
 		}
 	</script>
 	<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
-	<style type="text/css">
+	<style>
 		.sectionDiv{ clear:both; }
 		.sectionDiv div{ float:left }
 		.labelDiv{ margin-right: 5px }
-		#redirectedfrom{ font-size:16px; margin-top:5px; margin-left:10px; font-weight:bold; }
-		#taxonDiv{ font-size:18px; margin-top:15px; margin-left:10px; }
+		#redirectedfrom{ font-size:1rem; margin-top:5px; margin-left:10px; font-weight:bold; }
+		#taxonDiv{ font-size:1.125rem; margin-top:15px; margin-left:10px; }
 		#taxonDiv a{ color:#990000; font-weight: bold; font-style: italic; }
-		#taxonDiv img{ border: 0px; margin: 0px; height: 15px; }
 		#familyDiv{ margin-left:20px; margin-top:0.25em; }
 		.tox-dialog{ min-height: 400px }
 		input{ margin:3px; border:inset; }
 		hr{ margin:30px 0px; }
+		.icon-img{ border: 0px; height: 1.2em; }
 	</style>
 </head>
 <body>
@@ -180,30 +191,39 @@ if($isEditor && $action){
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href="../../index.php"><?php echo $LANG['HOME']; ?></a> &gt;&gt;
+		<a href="../../index.php"><?= $LANG['HOME'] ?></a> &gt;&gt;
 		<?php
-		if($tid) echo '<a href="../index.php?tid='.$tid.'">'.$LANG['TAX_PROF_PUBLIC_DISP'].'</a> &gt;&gt; ';
+		if($tid) echo '<a href="../index.php?tid=' . $tid . '">' . $LANG['TAX_PROF_PUBLIC_DISP'] . '</a> &gt;&gt; ';
 		echo '<b>'.$LANG['TAX_PROF_EDITOR'].'</b>';
 		?>
 	</div>
-	<div id="innertext">
+	<div role="main" id="innertext">
+		<h1 class="page-heading"><?php
+		 $splitSciname = $tEditor->splitSciname();
+		 $author = !empty($splitSciname['author']) ? ($splitSciname['author'] . ' ') : '';
+		 $cultivarEpithet = !empty($splitSciname['cultivarEpithet']) ? ($tEditor->standardizeCultivarEpithet($splitSciname['cultivarEpithet'])) . ' ' : '';
+		 $tradeName = !empty($splitSciname['tradeName']) ? ($tEditor->standardizeTradeName($splitSciname['tradeName']) . ' ') : '';
+		 $nonItalicizedScinameComponent = $author . $cultivarEpithet . $tradeName;
+
+		 echo $LANG['TAX_PROF_EDITOR'] . ': <i>' . $splitSciname['base'] . '</i> ' . $nonItalicizedScinameComponent;
+		 ?></h1>
 		<?php
 		if($tEditor->getTid()){
 			if($isEditor){
-				if($tEditor->isForwarded()) echo '<div id="redirectedfrom">'.$LANG['REDIRECTED_FROM'].': <i>'.$tEditor->getSubmittedValue('sciname').'</i></div>';
-				echo '<div id="taxonDiv"><a href="../index.php?taxon='.$tEditor->getTid().'">'.$tEditor->getSciName().'</a> '.$tEditor->getAuthor();
-				if($tEditor->getRankId() > 140) echo "&nbsp;<a href='tpeditor.php?tid=".$tEditor->getParentTid()."'><img src='../../images/toparent.png' title='".$LANG['GO_TO_PARENT']."' /></a>";
+				if($tEditor->isForwarded()) echo '<div id="redirectedfrom">' . $LANG['REDIRECTED_FROM'] . ': <i>' . $tEditor->getSubmittedValue('sciname') . '</i></div>';
+				echo '<div id="taxonDiv"><a href="../index.php?taxon=' . $tEditor->getTid() . '">' . $LANG['VIEW_PUBLIC_TAXON'] . '</a> ';
+				if($tEditor->getRankId() > 140) echo "&nbsp;<a href='tpeditor.php?tid=" . $tEditor->getParentTid() . "'><img class='icon-img' src='../../images/toparent.png' title='" . $LANG['GO_TO_PARENT'] . "' /></a>";
 				echo "</div>\n";
-				if($tEditor->getFamily()) echo '<div id="familyDiv"><b>'.$LANG['FAMILY'].':</b> '.$tEditor->getFamily().'</div>'."\n";
-				if($statusStr) echo '<div style="margin:15px;font-weight:bold;font-size:120%;color:'.(stripos($statusStr,'error') !== false?'red':'green') .';">'.$statusStr.'</div>';
+				if($tEditor->getFamily()) echo '<div id="familyDiv"><b>' . $LANG['FAMILY'] . ':</b> ' . $tEditor->getFamily() . '</div>' . "\n";
+				if($statusStr) echo '<div style="margin:15px;font-weight:bold;font-size:120%;color:' . (stripos($statusStr,'error') !== false?'red':'green') .';">' . $statusStr . '</div>';
 				?>
 				<div id="tabs" style="margin:10px;">
 					<ul>
-						<li><a href="#commontab"><span><?php echo $LANG['SYN_VERNAC']; ?></span></a></li>
-						<li><a href="tpimageeditor.php?tid=<?php echo $tEditor->getTid().'"><span>'.$LANG['IMAGES'].'</span></a></li>'; ?>
-						<li><a href="tpimageeditor.php?tid=<?php echo $tEditor->getTid().'&cat=imagequicksort'.'"><span>'.$LANG['IMAGE_SORT'].'</span></a></li>'; ?>
-						<li><a href="tpimageeditor.php?tid=<?php echo $tEditor->getTid().'&cat=imageadd'.'"><span>'.$LANG['ADD_IMAGE'].'</span></a></li>'; ?>
-						<li><a href="tpdesceditor.php?tid=<?php echo $tEditor->getTid().'&action='.$action.'"><span>'.$LANG['DESCRIPTIONS'].'</span></a></li>'; ?>
+						<li><a href="#commontab"><span><?= $LANG['SYN_VERNAC'] ?></span></a></li>
+						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() ?>"><span><?= $LANG['IMAGES'] ?></span></a></li>
+						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&cat=imagequicksort' ?>"><span><?= $LANG['IMAGE_SORT'] ?></span></a></li>
+						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&cat=imageadd' ?>"><span><?= $LANG['ADD_IMAGE'] ?></span></a></li>
+						<li><a href="tpdesceditor.php?tid=<?= $tEditor->getTid() . '&action=' . htmlspecialchars($action, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>"><span><?= $LANG['DESCRIPTIONS'] ?></span></a></li>
 					</ul>
 					<div id="commontab">
 						<?php
@@ -213,9 +233,9 @@ if($isEditor && $action){
 						?>
 						<div>
 							<div style="margin:10px 0px" title="<?php echo $LANG['ADD_COMMON_NAME']; ?>">
-								<b><?php echo ($vernacularList?$LANG['COMMON_NAMES']:$LANG['NO_COMMON_NAMES']); ?></b>
+								<b><?php echo ($vernacularList ? $LANG['COMMON_NAMES'] : $LANG['NO_COMMON_NAMES']); ?></b>
 								<a href="#" onclick="toggle('addvern');return false;">
-									<img style="border:0px;width:15px;" src="../../images/add.png"/>
+									<img class="icon-img" src="../../images/add.png"/>
 								</a>
 							</div>
 							<div id="addvern" class="addvern" style="display:<?php echo ($vernacularList?'none':'block'); ?>;">
@@ -232,7 +252,7 @@ if($isEditor && $action){
 												<option value=""><?php echo $LANG['SEL_LANGUAGE']; ?></option>
 												<?php
 												foreach($langArr as $langID => $langName){
-													echo '<option value="'.$langID.'" '.(strpos($langName,'('.$DEFAULT_LANG.')')?'SELECTED':'').'>'.$langName.'</option>';
+													echo '<option value="' . $langID . '" ' . (strpos($langName,'(' . $DEFAULT_LANG . ')') ? 'SELECTED' : '') . '>' . $langName . '</option>';
 												}
 												?>
 											</select>
@@ -268,7 +288,7 @@ if($isEditor && $action){
 											<div style="margin-left:10px;" title="<?php echo $LANG['EDIT_COMMON_NAME']; ?>">
 												<b><?php echo $vernArr['vernname']; ?></b>
 												<a href="#" onclick="toggle('vid-<?php echo $vid; ?>');return false;">
-													<img style="border:0px;width:12px;" src="../../images/edit.png" />
+													<img class="icon-img" src="../../images/edit.png" />
 												</a>
 											</div>
 											<form name="updatevern" action="tpeditor.php" method="post" style="margin:15px;clear:both">
@@ -285,7 +305,7 @@ if($isEditor && $action){
 															<option value=""><?php echo $LANG['SEL_LANGUAGE']; ?></option>
 															<?php
 															foreach($langArr as $langID => $langName){
-																echo '<option value="'.$langID.'" '.($vernArr['langid']==$langID?'SELECTED':'').'>'.$langName.'</option>';
+																echo '<option value="' . $langID . '" ' . ($vernArr['langid']==$langID ? 'SELECTED' : '') . '>' . $langName . '</option>';
 															}
 															?>
 														</select>
@@ -324,7 +344,7 @@ if($isEditor && $action){
 												<form id="delvern" name="delvern" action="tpeditor.php" method="post" onsubmit="return window.confirm('<?php echo $LANG['SURE_DELETE_COMMON']; ?>')">
 													<input type="hidden" name="delvern" value="<?php echo $vid; ?>" />
 													<input type="hidden" name="tid" value="<?php echo $tEditor->getTid(); ?>" />
-													<button name="action" type="submit" value="Delete Common Name"><?php echo $LANG['DELETE_COMMON']; ?></button>
+													<button class="button-danger" name="action" type="submit" value="Delete Common Name"><?php echo $LANG['DELETE_COMMON']; ?></button>
 												</form>
 											</div>
 											<div style="clear:both;margin:10px 0px"><hr/></div>
@@ -345,13 +365,13 @@ if($isEditor && $action){
 							if($synonymArr = $tEditor->getSynonym()){
 								?>
 								<div style="float:right;" title="<?php echo $LANG['EDIT_SYN_ORDER']; ?>">
-									<a href="#"  onclick="toggle('synsort');return false;"><img style="border:0px;width:12px;" src="../../images/edit.png"/></a>
+									<a href="#"  onclick="toggle('synsort');return false;"><img class="icon-img" src="../../images/edit.png"/></a>
 								</div>
 								<div style="font-weight:bold;margin-left:15px;">
 									<ul>
 										<?php
 										foreach($synonymArr as $tidKey => $valueArr){
-											 echo '<li>'.$valueArr["sciname"].'</li>';
+											 echo '<li>' . $valueArr["sciname"] . '</li>';
 										}
 										?>
 									</ul>
@@ -384,11 +404,11 @@ if($isEditor && $action){
 								<?php
 							}
 							else{
-								echo '<div style="margin:20px 0px"><b>'.$LANG['NO_SYN_LINK'].'</b></div>';
+								echo '<div style="margin:20px 0px"><b>' . $LANG['NO_SYN_LINK'] . '</b></div>';
 							}
 							?>
 							<div style="margin:10px;">
-								*<?php echo $LANG['MOST_SYN_IN_TAX_THES'].' <a href="../../sitemap.php">'.$LANG['SITEMAP'].'</a>).'; ?>
+								*<?php echo $LANG['MOST_SYN_IN_TAX_THES'] . ' <a href="../../sitemap.php">' . $LANG['SITEMAP'] . '</a>).'; ?>
 							</div>
 						</fieldset>
 					</div>
@@ -407,9 +427,9 @@ if($isEditor && $action){
 			?>
 			<div style="margin:20px;">
 				<form name="gettidform" action="tpeditor.php" method="post" onsubmit="return checkGetTidForm(this);">
-					<b><?php echo $LANG['SCINAME']; ?>: </b><input id="taxa" name="taxon" value="<?php echo $taxon; ?>" size="40" />
+					<b> <label for="taxa"> <?php echo $LANG['SCINAME']; ?>: </label> </b> <input id="taxa" name="taxon" value="<?php echo $taxon; ?>" size="40" />
 					<input type="hidden" name="tabindex" value="<?php echo $tabIndex; ?>" />
-					<button type="submit" name="action" value="Edit Taxon" ><?php echo $LANG['EDIT_TAXON']; ?></button>
+					<button type="submit" name="action" value="Edit Taxon" ><?php echo $LANG['EDIT_TAXON_PROFILE']; ?></button>
 				</form>
 			</div>
 			<?php
@@ -417,18 +437,18 @@ if($isEditor && $action){
 				echo '<div style="margin:15px">'.$LANG['MORE_THAN_ONE_TAXON'].': </div>';
 				echo '<div style="margin:10px">';
 				foreach($taxaArr as $tidKey => $sciArr){
-					$outStr = '<b>'.$sciArr['sciname'];
+					$outStr = '<b>' . $sciArr['sciname'];
 					if($sciArr['rankid'] > 179) $outStr = '<i>'.$outStr.'</i> ';
 					$outStr .= $sciArr['author'].'</b> ';
-					if(isset($sciArr['rankname'])) $outStr .= '- '.$sciArr['rankname'].' rank ';
-					if(isset($sciArr['kingdom'])) $outStr .= ' ('.$sciArr['kingdom'].')';
-					echo '<div><a href="tpeditor.php?tid='.$tidKey.'">'.$outStr.'</a></div>';
+					if(isset($sciArr['rankname'])) $outStr .= '- ' . $sciArr['rankname'] . ' rank ';
+					if(isset($sciArr['kingdom'])) $outStr .= ' (' . $sciArr['kingdom'] . ')';
+					echo '<div><a href="tpeditor.php?tid=' . htmlspecialchars($tidKey, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($outStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></div>';
 				}
 				echo '</div>';
 			}
 			else{
 				echo '<div style="margin:15px">';
-				if($taxon) echo "<i>".ucfirst($taxon)."</i> ".$LANG['NOT_IN_SYSTEM'].".";
+				if($taxon) echo "<i>" . ucfirst($taxon) . "</i> " . $LANG['NOT_IN_SYSTEM'] . ".";
 				echo '</div>';
 			}
 		}

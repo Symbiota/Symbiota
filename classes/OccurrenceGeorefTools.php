@@ -232,7 +232,7 @@ class OccurrenceGeorefTools {
 
 	public function getGeorefClones($locality, $country, $state, $county, $searchType, $collStr){
 		$occArr = array();
-		$sql = 'SELECT count(o.occid) AS cnt, o.decimallatitude, o.decimallongitude, o.coordinateUncertaintyInMeters, o.georeferencedby, o.locality '.
+		$sql = 'SELECT count(o.occid) AS cnt, o.decimallatitude, o.decimallongitude, o.coordinateUncertaintyInMeters, o.georeferencedBy, o.georeferenceProtocol, o.georeferenceSources, o.georeferenceRemarks, o.georeferenceVerificationStatus, o.locality, o.footprintWKT '.
 			'FROM omoccurrences o ';
 		$sqlWhere = 'WHERE (o.decimallatitude IS NOT NULL) AND (o.decimallongitude IS NOT NULL) ';
 		if($collStr){
@@ -240,20 +240,18 @@ class OccurrenceGeorefTools {
 		}
 		if($searchType == 2){
 			//Wildcard search
-			$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
-			$sqlWhere .= 'AND (MATCH(f.locality) AGAINST(\'"'.$locality.'"\' IN BOOLEAN MODE)) ';
+			$sqlWhere .= 'AND (MATCH(o.locality) AGAINST(\'"'.$locality.'"\' IN BOOLEAN MODE)) ';
 		}
 		elseif($searchType == 3){
 			//Deep search
-			$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
 			$localArr = explode(' ', $locality);
 			foreach($localArr as $str){
-				$sqlWhere .= 'AND (MATCH(f.locality) AGAINST("'.$str.'")) ';
+				$sqlWhere .= 'AND (MATCH(o.locality) AGAINST("'.$str.'" IN BOOLEAN MODE)) ';
 			}
 		}
 		else{
 			//Exact search
-			$sqlWhere .= 'AND o.locality = "'.trim($this->cleanInStr($locality), " .").'" ';
+			$sqlWhere .= 'AND o.locality = "'.trim($this->cleanInStr($locality) ?? '', " .").'" ';
 		}
 		if($country){
 			$country = $this->cleanInStr($country);
@@ -283,7 +281,12 @@ class OccurrenceGeorefTools {
 			//$occArr[$cnt]['country'] = $r->country;
 			//$occArr[$cnt]['state'] = $r->stateprovince;
 			//$occArr[$cnt]['county'] = $r->county;
-			$occArr[$cnt]['georefby'] = $r->georeferencedby;
+			$occArr[$cnt]['georeferencedBy'] = $r->georeferencedBy;
+			$occArr[$cnt]['georeferenceProtocol'] = $r->georeferenceProtocol;
+			$occArr[$cnt]['georeferenceSources'] = $r->georeferenceSources;
+			$occArr[$cnt]['georeferenceRemarks'] = $r->georeferenceRemarks;
+			$occArr[$cnt]['georeferenceVerificationStatus'] = $r->georeferenceVerificationStatus;
+			$occArr[$cnt]['footprintWKT'] = $r->footprintWKT;
 			$occArr[$cnt]['locality'] = $r->locality;
 			$cnt++;
 		}
@@ -333,7 +336,7 @@ class OccurrenceGeorefTools {
 		$sql = 'SELECT DISTINCT country FROM omoccurrences WHERE decimalLatitude IS NULL AND collid IN('.$this->collStr.')';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$cStr = trim($r->country);
+			$cStr = trim($r->country ?? '');
 			if($cStr) $retArr[] = $cStr;
 		}
 		$rs->free();
@@ -346,7 +349,7 @@ class OccurrenceGeorefTools {
 		$sql = 'SELECT DISTINCT stateprovince FROM omoccurrences WHERE decimalLatitude IS NULL AND collid IN('.$this->collStr.') ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$sStr = trim($r->stateprovince);
+			$sStr = trim($r->stateprovince ?? '');
 			if($sStr) $retArr[] = $sStr;
 		}
 		$rs->free();
@@ -360,7 +363,7 @@ class OccurrenceGeorefTools {
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$cStr = trim($r->county);
+			$cStr = trim($r->county ?? '');
 			if($cStr) $retArr[] = $cStr;
 		}
 		$rs->free();
@@ -374,7 +377,7 @@ class OccurrenceGeorefTools {
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$mStr = trim($r->municipality);
+			$mStr = trim($r->municipality ?? '');
 			if($mStr) $retArr[] = $mStr;
 		}
 		$rs->free();
@@ -403,7 +406,7 @@ class OccurrenceGeorefTools {
 		return $retArr;
 	}
 	private function cleanInStr($str){
-		$newStr = trim($str);
+		$newStr = trim($str ?? '');
 		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
 		$newStr = $this->conn->real_escape_string($newStr);
 		return $newStr;

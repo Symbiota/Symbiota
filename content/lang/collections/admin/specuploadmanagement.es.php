@@ -12,6 +12,7 @@ $LANG['UP_PROF_MAN'] = 'Administrador de Perfiles de Importación de Especímene
 $LANG['OPT_PLZ'] = 'Por favor seleccione una Opción de Importación';
 $LANG['TITLE_REQ'] = 'Título del perfil es requerido';
 $LANG['SELECT_TYPE'] = 'Seleccionar Tipo de Importación';
+$LANG['SELECT_PATH'] = 'Se requiere la ruta al proveedor de datos';
 $LANG['HOME'] = 'Inicio';
 $LANG['SPEC_LOADER'] = 'Importador de Especímenes';
 $LANG['COL_MAN_PAN'] = 'Panel de Administración de Colecciones';
@@ -50,7 +51,10 @@ $LANG['SAVE_PROFILE'] = 'Guardar Perfil';
 $LANG['CREATE_PROFILE'] = 'Crear Perfil';
 $LANG['QUERY'] = 'Cadena de Consulta/Comando';
 $LANG['PATH_EXPLAIN'] = 'La dirección puede ser una URL o una dirección local que lleve a un Archivo Darwin Core comprimido en zip, o una dirección a un directorio con un Archivo DwC pre extraído';
+$LANG['VERIFY_DEL'] = '¿Estás seguro de que deseas eliminar permanentemente este perfil?';
 $LANG['DEL_PROFILE'] = 'Eliminar este Perfil';
 $LANG['DEL_PR'] = 'Eliminar Perfil';
 $LANG['ERROR_AUTH'] = 'ERROR: no está autorizado para cargar archivos en esta colección';
+$LANG['IMG_EDIT'] = 'Editar imagen';
+
 ?>

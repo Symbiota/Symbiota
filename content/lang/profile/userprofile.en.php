@@ -29,7 +29,6 @@ $LANG['MAKE_PUBLIC'] = 'Make user information displayable to public';
 $LANG['SUBMIT_EDITS'] = 'Submit Edits';
 $LANG['SURE_DELETE'] = 'Are you sure you want to delete profile?';
 $LANG['DELETE_PROF'] = 'Delete Profile';
-$LANG['CHANGE_PWORD'] = 'Change Password';
 $LANG['CURRENT_PWORD'] = 'Current Password';
 $LANG['PWORD_AGAIN'] = 'New Password Again';
 $LANG['CHANGE_USERNAME'] = 'Change Username';
@@ -49,5 +48,10 @@ $LANG['ADD_TAX'] = 'Add Taxonomic Relationship';
 $LANG['OCC_EDIT'] = 'Occurrence Editor';
 $LANG['TAX_THES'] = 'Taxonomic Thesaurus Editor';
 $LANG['NO_RELS'] = 'No relationships defined';
+$LANG['ACCESSIBILITY_PREF'] = 'Accessibility Preference';
+$LANG['ACCESSIBILITY_PREF_DESC'] = 'Check to indicate a preference for accessibility-optimized styles';
+
+$LANG['CREATE_TAXON_REL'] = 'Create a New Taxonomic Relationship';
+$LANG['ADD_ICON'] = 'Add Icon';
 
 ?>

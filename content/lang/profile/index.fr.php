@@ -4,7 +4,7 @@
 Language: Français (French)
 ------------------
 */
-
+$LANG['LOGIN'] = 'Connexion';
 $LANG['INVALID_LOGIN'] = 'Nom d\'utilisateur invalide';
 $LANG['INVALID_EMAIL'] = 'Email invalide';
 $LANG['INCORRECT'] = "Votre nom d'utilisateur ou mot de passe était incorrect. Veuillez réessayer.<br/> Si vous ne parvenez pas à vous souvenir de vos identifiants de connexion, utilisez les commandes ci-dessous pour récupérer votre identifiant ou réinitialiser votre mot de passe.";
@@ -27,5 +27,6 @@ $LANG['REST_PWD'] = '\'Réinitialiser le mot de passe';
 $LANG['REMEMBER_LOGIN'] = "Ne me souviens pas nom d\'utilisateur?";
 $LANG['RETRIEVE'] = 'Récupérer le nom d\'utilisateur';
 $LANG['YOUR_EMAIL'] = 'Votre E-mail';
-
+$LANG['OID_LOGIN'] = 'Connectez-vous avec l\'OID';
+$LANG['THIRD_PARTY_LOGIN'] = 'Connectez-vous à l\'aide d\'une authentification tierce';
 ?>

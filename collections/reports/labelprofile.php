@@ -1,6 +1,7 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLabel.php');
+
 header('Content-Type: text/html; charset='.$CHARSET);
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/reports/labelprofile.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
@@ -39,7 +40,7 @@ if($isEditor && $action){
 			}
 		}
 		elseif($action == 'deleteProfile'){
-			if(!$labelManager->deleteLabelFormat($_POST['group'],$_POST['index'])){
+			if(!$labelManager->deleteLabelFormat($_POST['group'],$_POST['index'])){ // @TODO this is brittle. If you refresh the page after successful deletion, it will delete the profile that now has this index. So, it'll just keep eating profiles.
 				$statusStr = implode('; ', $labelManager->getErrorArr());
 			}
 		}
@@ -48,7 +49,7 @@ if($isEditor && $action){
 $isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General Observations')?true:false);
 ?>
 <!DOCTYPE HTML>
-<html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 		<title><?php echo $DEFAULT_TITLE; ?> Specimen Label Manager</title>
@@ -56,8 +57,8 @@ $isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
-		<script src="../../js/jquery.js" type="text/javascript"></script>
-		<script src="../../js/jquery-ui.js" type="text/javascript"></script>
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 		<script type="text/javascript">
 			var activeProfileCode = "";
 
@@ -67,7 +68,7 @@ $isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General
 			}
 
 			function makeJsonEditable(classTag){
-				alert("You should now be able to edit the JSON label definition. Feel free to modify, but note that editing the raw JSON requires knowledge of the JSON format. A simple error may cause label generation to completely fail. Within the next couple weeks, there should be a editor interface made available that will assist. Until then, you may need to ask your portal manager for assistance if you run into problems. Thank you for your patience.");
+				alert("You should now be able to edit the JSON label definition. Feel free to modify, but note that editing the raw JSON requires knowledge of the JSON format. A simple error may cause label generation to completely fail and your changes to be lost. We recommend creating and editing your JSON in a separate text file, then pasting it into the field below to see if it works.");
 				$('#json-'+classTag).prop('readonly', false);
 				activeProfileCode = classTag;
 			}
@@ -130,14 +131,15 @@ $isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General
 		<?php
 		if($isGeneralObservation) echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Management Menu</a> &gt;&gt; ';
 		elseif($collid){
-			echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Management Panel</a> &gt;&gt; ';
+			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">Collection Management Panel</a> &gt;&gt; ';
 		}
 		?>
-		<a href="labelmanager.php?collid=<?php echo $collid; ?>&emode=1">Label Manager</a> &gt;&gt;
+		<a href="labelmanager.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1">Label Manager</a> &gt;&gt;
 		<b>Label Profile Editor</b>
 	</div>
 	<!-- This is inner text! -->
-	<div id="innertext">
+	<div role="main" id="innertext">
+		<h1 class="page-heading">Specimen Label Manager</h1>
 		<div style="width:700px"><span style="color:orange;font-weight:bold;">In development!</span> We are currently working on developing a new system that will allow collection managers and general users to create their own custom label formats that can be saved within the collection and user profiles. We are trying our best to develop these tools with minimum disruptions to normal label printing. More details to provided in the near future.</div>
 		<?php
 		if($statusStr){
@@ -148,7 +150,6 @@ $isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General
 			</div>
 			<?php
 		}
-		echo '<h2>Specimen Label Profiles</h2>';
 		$labelFormatArr = $labelManager->getLabelFormatArr();
 		foreach($labelFormatArr as $group => $groupArr){
 			$fieldsetTitle = '';
@@ -161,7 +162,7 @@ $isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General
 				<legend><?php echo $fieldsetTitle; ?></legend>
 				<?php
 				if($isEditor == 3 || $group == 'u' || ($group == 'c' && $isEditor > 1))
-					echo '<div style="float:right;" title="Create a new label profile"><img class="edit-icon" src="../../images/add.png" onclick="$(\'#edit-'.$group.'\').toggle()" /></div>';
+					echo '<div style="float:right" title="Create a new label profile"><img class="edit-icon" src="../../images/add.png" style="width:1.5em" onclick="$(\'#edit-'.$group.'\').toggle()" /></div>';
 				$index = '';
 				$formatArr = array();
 				do{
@@ -177,7 +178,7 @@ $isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General
 								<span class="field-value"><?php echo htmlspecialchars($formatArr['title']); ?></span>
 								<?php
 								if($isEditor == 3 || $group == 'u' || ($group == 'c' && $isEditor > 1))
-									echo '<span title="Edit label profile"> <a href="#" onclick="toggleEditDiv(\''.$group.'-'.$index.'\');return false;"><img class="edit-icon" src="../../images/edit.png" /></a></span>';
+									echo '<span title="Edit label profile"> <a href="#" onclick="toggleEditDiv(\''.$group.'-'.$index.'\');return false;"><img class="edit-icon" src="../../images/edit.png" style="width:1.3em" /></a></span>';
 								?>
 							</div>
 							<?php
@@ -233,7 +234,7 @@ $isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General
 								<span class="label">Title:</span>
 								<span class="field-elem"><input name="title" type="text" value="<?php echo ($formatArr?htmlspecialchars($formatArr['title']):''); ?>" required /> </span>
 								<?php
-								if($formatArr) echo '<span title="Edit label profile"> <img class="edit-icon" src="../../images/edit.png" onclick="toggleEditDiv(\''.$group.'-'.$index.'\')" /></span>';
+								if($formatArr) echo '<span title="Edit label profile"> <img class="edit-icon" src="../../images/edit.png" style="width:1.3em" onclick="toggleEditDiv(\''.$group.'-'.$index.'\')" /></span>';
 								?>
 							</div>
 							<fieldset class="fieldset-block">
@@ -354,7 +355,7 @@ $isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General
 								</div>
 							</fieldset>
 							<div class="field-block">
-								<div class="label">JSON: <span title="Edit JSON label definition"><a href="#" onclick="makeJsonEditable('<?php echo $group.(is_numeric($index)?'-'.$index:''); ?>');return false"><img  class="edit-icon" src="../../images/edit.png" /></a></span><span title="Edit JSON label definition (Visual Interface)"><a href="#" onclick="openJsonEditorPopup('<?php echo $group.(is_numeric($index)?'-'.$index:''); ?>');return false"><img  class="edit-icon" src="../../images/edit.png" />(visual interface)</a></span>
+								<div class="label">JSON: <span title="Edit JSON label definition"><a href="#" onclick="makeJsonEditable('<?php echo $group.(is_numeric($index)?'-'.$index:''); ?>');return false"><img  class="edit-icon" src="../../images/edit.png" style="width:1.2em" /></a><a href="#" onclick="makeJsonEditable('<?php echo $group.(is_numeric($index)?'-'.$index:''); ?>');return false">(edit via text interface)</a>  </span><span title="Edit JSON label definition (Visual Interface)"><a href="#" onclick="openJsonEditorPopup('<?php echo $group.(is_numeric($index)?'-'.$index:''); ?>');return false"><img  class="edit-icon" src="../../images/editsquare.png" style="1.3em" />(edit via visual interface)</a></span>
 								</div>
 								<div class="field-block">
 									<textarea id="json-<?php echo $group.(is_numeric($index)?'-'.$index:''); ?>" name="json" readonly><?php echo (isset($formatArr['labelBlocks'])?json_encode($formatArr['labelBlocks'],JSON_PRETTY_PRINT):''); ?></textarea>

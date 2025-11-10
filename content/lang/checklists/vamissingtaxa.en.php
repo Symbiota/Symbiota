@@ -5,6 +5,7 @@ Language: English
 ------------------
 */
 
+
 $LANG['PROBLEMS'] = 'Problem Taxa';
 $LANG['POSS_MISSING'] = 'Possible Missing Taxa';
 $LANG['REFRESH'] = 'Refresh List';
@@ -14,6 +15,7 @@ $LANG['SPEC_LIST'] = 'Species List';
 $LANG['BATCH_LINK'] = 'Batch Linking';
 $LANG['NOT_FOUND'] = 'Listed below are specimens identified to a species not found in the checklist.
                         Use the form to add the names and link the vouchers as a batch action.';
+$LANG['SELECT_ALL'] = 'Select All';
 $LANG['SPEC_ID'] = 'Specimen ID';
 $LANG['COLLECTOR'] = 'Collector';
 $LANG['LOCALITY'] = 'Locality';
@@ -31,5 +33,6 @@ $LANG['LINK_VOUCHER'] = 'Link Voucher';
 $LANG['NOT_IN_CHECKLIST'] = 'Listed below are taxon names not found in the checklist
                             but are represented by one or more specimens that have a locality matching the above search term.';
 $LANG['LINK_VOUCHERS'] = 'Link Voucher Specimens';
+$LANG['NOVOUCHERS'] = 'No vouchers found';
 
 ?>

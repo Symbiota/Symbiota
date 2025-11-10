@@ -29,7 +29,6 @@ $LANG['MAKE_PUBLIC'] = 'Rendre les informations utilisateur affichables au publi
 $LANG['SUBMIT_EDITS'] = 'Soumettre Modifications';
 $LANG['SURE_DELETE'] = 'Êtes-vous sûr de vouloir supprimer Profil?';
 $LANG['DELETE_PROF'] = 'Supprimer Profil';
-$LANG['CHANGE_PWORD'] = 'Changer Mot de Passe';
 $LANG['CURRENT_PWORD'] = 'Mot de Passe Actuel';
 $LANG['PWORD_AGAIN'] = 'Mot de Passe Actuel à Nouveau';
 $LANG['CHANGE_USERNAME'] = "Changer de Nom d'Utilisateur";
@@ -49,5 +48,8 @@ $LANG['ADD_TAX'] = 'Ajouter Relation Taxonomique';
 $LANG['OCC_EDIT'] = 'Éditeur d\'Occurrences';
 $LANG['TAX_THES'] = 'Éditeur de Thésaurus Taxonomique';
 $LANG['NO_RELS'] = 'Aucune Relation Définie';
-
+$LANG['ACCESSIBILITY_PREF'] = 'Préférences d\'accessibilité';
+$LANG['ACCESSIBILITY_PREF_DESC'] = 'Cochez pour indiquer une préférence pour les styles optimisés pour l\'accessibilité';
+$LANG['CREATE_TAXON_REL'] = 'Créer une nouvelle relation taxonomique';
+$LANG['ADD_ICON'] = 'Ajouter une icône';
 ?>

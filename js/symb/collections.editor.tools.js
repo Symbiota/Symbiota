@@ -41,12 +41,12 @@ function toggleCoordDiv(){
 
 function toggleCsMode(modeId){ 
 	if(modeId == 1){
-		document.getElementById("editorCssLink").href = "includes/config/occureditorcrowdsource.css?ver=170201";
+		document.getElementById("editorCssLink").href = "includes/config/occureditorcrowdsource.css?ver=4";
 		document.getElementById("longtagspan").style.display = "block";
 		document.getElementById("shorttagspan").style.display = "none";
 	}
 	else{
-		document.getElementById("editorCssLink").href = "../../css/occureditor.css";
+		document.getElementById("editorCssLink").href = "../../css/occureditor.css?ver=9";
 		document.getElementById("longtagspan").style.display = "none";
 		document.getElementById("shorttagspan").style.display = "block";
 	}
@@ -60,18 +60,6 @@ function openMappingAid() {
 	var zoom = 5;
 	if(latDef && lngDef) zoom = 11;
 	var mapWindow=open("../tools/mappointaid.php","mappointaid","resizable=0,width=900,height=700,left=20,top=20");
-	if(mapWindow != null){
-		if (mapWindow.opener == null) mapWindow.opener = self;
-		mapWindow.focus();
-	}
-	else{
-		alert("Unable to open map, which is likely due to your browser blocking popups. Please adjust your browser settings to allow popups from this website.");
-	}
-}
-
-function openMappingPolyAid() {
-	var zoom = 5;
-	var mapWindow=open("../tools/mappolyaid.php?zoom="+zoom,"mappolyaid","resizable=0,width=800,height=700,left=20,top=20");
 	if(mapWindow != null){
 		if (mapWindow.opener == null) mapWindow.opener = self;
 		mapWindow.focus();
@@ -114,7 +102,7 @@ function geoLocateLocality(){
 	}
 }
 
-function geoLocateUpdateCoord(latValue,lngValue,coordErrValue, footprintWKT){
+function geoLocateUpdateCoord(latValue,lngValue,coordErrValue, footprintWKT, client_root){
 	document.getElementById("georefExtraDiv").style.display = "block";
 
 	var f = document.fullform;
@@ -137,7 +125,7 @@ function geoLocateUpdateCoord(latValue,lngValue,coordErrValue, footprintWKT){
 	fieldChanged('decimallatitude');
 	verifyDecimalLongitude(f);
 	fieldChanged('decimallongitude');
-	//verifyCoordinates(f);
+	verifyCoordinates(f, client_root);
 	f.coordinateuncertaintyinmeters.onchange();
 	f.georeferencesources.onchange();
 	f.geodeticdatum.onchange();

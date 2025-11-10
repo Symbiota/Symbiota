@@ -39,8 +39,8 @@ function verifyPwdForm(f){
 		alert("Password cannot start or end with a space, but they can include spaces within the password");
 		return false;
 	}
-	if(pwd1.length < 7){
-		alert("Password must be greater than 6 characters");
+	if(pwd1.length < 10){
+		alert("Password must be 10 characters or more");
 		return false;
 	}
     if(pwd1 != pwd2){

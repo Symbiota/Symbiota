@@ -9,6 +9,7 @@ ini_set('display_errors', '1');
 include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/MediaResolutionTools.php');
 
+
 $collid = (array_key_exists('collid', $_POST)?$_POST['collid']:'');
 $imgIdStart = (array_key_exists('imgidstart', $_POST)?$_POST['imgidstart']:0);
 $limit = (array_key_exists('limit', $_POST)?$_POST['limit']:10000);
@@ -27,6 +28,7 @@ $deleteSource = (array_key_exists('deleteSource', $_POST)?$_POST['deleteSource']
 $imgRootUrl = (array_key_exists('imgRootUrl', $_POST)?$_POST['imgRootUrl']:'');
 $imgRootPath = (array_key_exists('imgRootPath', $_POST)?$_POST['imgRootPath']:'');
 $imgSubPath = (array_key_exists('imgSubPath', $_POST)?$_POST['imgSubPath']:'');
+$copyover = (!empty($_POST['copyover']) ? 1 : 0);
 $submit = (array_key_exists('submitbutton', $_POST)?$_POST['submitbutton']:'');
 
 //Sanitation
@@ -37,17 +39,10 @@ if(!is_numeric($archiveImages)) $archiveImages = 0;
 if(!is_numeric($delThumb)) $delThumb = 0;
 if(!is_numeric($delWeb)) $delWeb = 0;
 if(!is_numeric($delLarge)) $delLarge = 0;
-$imgidStr = filter_var($imgidStr,FILTER_SANITIZE_STRING);
 if(!is_numeric($transferThumbnail)) $transferThumbnail = 0;
 if(!is_numeric($transferWeb)) $transferWeb = 0;
 if(!is_numeric($transferLarge)) $transferLarge = 0;
-$matchTermThumbnail = filter_var($matchTermThumbnail,FILTER_SANITIZE_STRING);
-$matchTermWeb = filter_var($matchTermWeb,FILTER_SANITIZE_STRING);
-$matchTermLarge = filter_var($matchTermLarge,FILTER_SANITIZE_STRING);
 if(!is_numeric($deleteSource)) $deleteSource = 0;
-$imgRootUrl = filter_var($imgRootUrl,FILTER_SANITIZE_STRING);
-$imgRootPath = filter_var($imgRootPath,FILTER_SANITIZE_STRING);
-$imgSubPath = filter_var($imgSubPath,FILTER_SANITIZE_STRING);
 
 $toolManager = new MediaResolutionTools();
 $toolManager->setCollid($collid);
@@ -55,15 +50,16 @@ $toolManager->setCollid($collid);
 $isEditor = false;
 if($IS_ADMIN) $isEditor = true;
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 <head>
 	<title>Media Tools</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script src="../../../js/jquery.js" type="text/javascript"></script>
-	<script src="../../../js/jquery-ui.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		function verifyMigrationCode(f){
 			if(f.matchTermThumbnail.value == "" && f.matchTermWeb.value == "" && f.matchTermLarge.value == ""){
@@ -90,7 +86,8 @@ if($IS_ADMIN) $isEditor = true;
 	<?php
 	if($isEditor){
 		?>
-		<div id="innertext">
+		<div role="main" id="innertext">
+			<h1 class="page-heading">Media Tools</h1>
 			<div id="actionDiv">
 				<?php
 				$imgidEnd = 0;
@@ -112,6 +109,7 @@ if($IS_ADMIN) $isEditor = true;
 							$toolManager->setImgRootUrl($imgRootUrl);
 							$toolManager->setImgRootPath($imgRootPath);
 							$toolManager->setImgSubPath($imgSubPath);
+							$toolManager->setCopyOverExistingImages($copyover);
 							if($collid) $imgIdStart = $toolManager->migrateCollectionDerivatives($imgIdStart, $limit);
 							else $imgIdStart = $toolManager->migrateFieldDerivatives($imgIdStart, $limit);
 							?>
@@ -252,19 +250,19 @@ if($IS_ADMIN) $isEditor = true;
 							<div class="fieldRowDiv">
 								<div class="fieldDiv">
 									<span class="fieldLabel">Thumbnail Matching Term (thumbnailUrl):</span>
-									<input name="matchTermThumbnail" type="text" value="<?php echo $matchTermThumbnail; ?>" style="width:300px" />
+									<input name="matchTermThumbnail" type="text" value="<?php echo htmlspecialchars($matchTermThumbnail); ?>" style="width:300px" />
 								</div>
 							</div>
 							<div class="fieldRowDiv">
 								<div class="fieldDiv">
 									<span class="fieldLabel">Web Image (medium) Matching Term (url):</span>
-									<input name="matchTermWeb" type="text" value="<?php echo $matchTermWeb; ?>" style="width:300px" />
+									<input name="matchTermWeb" type="text" value="<?php echo htmlspecialchars($matchTermWeb); ?>" style="width:300px" />
 								</div>
 							</div>
 							<div class="fieldRowDiv">
 								<div class="fieldDiv">
 									<span class="fieldLabel">Large Image Matching Term (originalurl):</span>
-									<input name="matchTermLarge" type="text" value="<?php echo $matchTermLarge; ?>" style="width:300px" />
+									<input name="matchTermLarge" type="text" value="<?php echo htmlspecialchars($matchTermLarge); ?>" style="width:300px" />
 								</div>
 							</div>
 						</fieldset>
@@ -275,22 +273,28 @@ if($IS_ADMIN) $isEditor = true;
 							<div class="fieldRowDiv">
 								<div class="fieldDiv">
 									<span class="fieldLabel">Image Root URL (imgRootUrl):</span>
-									<input name="imgRootUrl" type="text" value="<?php echo ($imgRootUrl?$imgRootUrl:$IMAGE_ROOT_URL); ?>" style="width:400px" />
+									<input name="imgRootUrl" type="text" value="<?php echo ($imgRootUrl ? htmlspecialchars($imgRootUrl) : $MEDIA_ROOT_URL); ?>" style="width:400px" />
 								</div>
 							</div>
 							<div class="fieldRowDiv">
 								<div class="fieldDiv">
 									<span class="fieldLabel">Image Root Path (imgRootPath):</span>
-									<input name="imgRootPath" type="text" value="<?php echo ($imgRootPath?$imgRootPath:$IMAGE_ROOT_PATH); ?>" style="width:400px" />
+									<input name="imgRootPath" type="text" value="<?php echo ($imgRootPath ? htmlspecialchars($imgRootPath) : $MEDIA_ROOT_PATH); ?>" style="width:400px" />
 								</div>
 							</div>
 							<div class="fieldRowDiv">
 								<div class="fieldDiv">
 									<span class="fieldLabel">Target Sub-Path:</span>
-									<input name="imgSubPath" type="text" value="<?php echo $imgSubPath; ?>" style="width:400px" />
+									<input name="imgSubPath" type="text" value="<?= htmlspecialchars($imgSubPath) ?>" style="width:400px" />
 								</div>
 							</div>
 						</fieldset>
+					</div>
+					<div class="fieldRowDiv">
+						<div class="fieldDiv">
+							<input type="checkbox" name="copyover" value="1" <?= ($copyover ? 'checked' : '') ?>>
+							<span class="fieldLabel">copyover existing target images</span>
+						</div>
 					</div>
 					<div class="fieldRowDiv">
 						<div class="fieldDiv">

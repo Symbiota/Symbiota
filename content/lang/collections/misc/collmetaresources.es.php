@@ -1,12 +1,14 @@
 <?php
 /*
 ------------------
-Language: English
+Language: Español (Spanish)
+Translated by: Samanta Orellana
+Date Translated: 2021-08-18
 ------------------
 */
 
 include_once($SERVER_ROOT.'/content/lang/collections/misc/sharedterms.es.php');
-
+$LANG['CONTACTS_RESOURCE_TAB'] = 'Pestaña Contactos y Recursos';
 $LANG['LINK_RESOURCE'] = 'Enlazar Listado de Recursos';
 $LANG['ENGLISH'] = 'Inglés';
 $LANG['SPANISH'] = 'Español';

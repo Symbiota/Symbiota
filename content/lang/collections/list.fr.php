@@ -8,6 +8,7 @@ Language: Français (French)
 include_once('sharedterms.fr.php');
 
 $LANG['PAGE_TITLE'] = 'Résultats de Recherche de Collections';
+$LANG['SEARCH_RES_LIST'] = 'Résultats de Recherche (Liste)';
 $LANG['NAV_SPECIMEN_LIST'] = 'Dossiers de Spécimens';
 $LANG['TABLE_DISPLAY'] = 'Affichage du Tableau';
 $LANG['LIST_DISPLAY'] = 'Affichage de Liste';
@@ -15,6 +16,26 @@ $LANG['SHOW_ALL'] = 'Afficher Tout';
 $LANG['DATASET'] = 'Jeu de Donnés';
 $LANG['TAXA'] = 'Taxons';
 $LANG['SEARCH_CRITERIA'] = 'Critères de Recherche';
+
+$LANG['SORT'] = 'Trier';
+$LANG['SORT BY'] = 'Trier par';
+$LANG['SORT_THEN_BY'] = 'Puis Trier Par';
+$LANG['SORT_ORDER'] = 'Ordre du Tri';
+$LANG['SORT_ASCENDING'] = 'Ascendant';
+$LANG['SORT_DESCENDING'] = 'Descendant';
+
+$LANG['COLLECTION'] = 'Collection';
+$LANG['CATALOG_NUMBER'] = 'Numéro de Catalogue';
+$LANG['FAMILY'] = 'Family';
+$LANG['SCINAME'] = 'Nom Scientifique';
+$LANG['COLLECTOR'] = 'Collectionneur';
+$LANG['NUMBER'] = 'Numéro du Collecteur';
+$LANG['EVENT_DATE'] = 'Date';
+$LANG['COUNTRY'] = 'Pays';
+$LANG['STATE_PROVINCE'] = 'État/province';
+$LANG['COUNTY'] = 'Comté';
+$LANG['ELEVATION'] = 'Élévation';
+
 $LANG['PAGINATION_FIRST'] = 'Premiers';
 $LANG['LAST'] = 'dernier';
 $LANG['PAGINATION_PAGE'] = 'Page';
@@ -38,12 +59,27 @@ $LANG['FULL_DETAILS'] = 'Détails Complets du Dossier';
 $LANG['NO_RESULTS'] = "Votre requête n'a renvoyé aucun résultat. Veuillez modifier vos paramètres de requêtes";
 $LANG['PERHAPS_LOOKING_FOR'] = 'Peut-être cherchiez-vous:';
 $LANG['MAP_DOWNLOAD'] = 'Télécharger Données de Coordonnées';
-$LANG['GOOGLE_MAP_HEADER'] = 'Google Map';
-$LANG['GOOGLE_MAP_DISPLAY'] = 'Afficher Coordonnées dans Google Map';
-$LANG['GOOGLE_MAP_DESCRIPTION'] = 'Google Maps est un service de cartographie Web fourni par Google qui propose une carte que les utilisateurs peuvent faire défiler (en faisant glisser la souris) et zoomer (en utilisant la molette de la souris). Les points de collecte sont affichés sous forme de marqueurs de couleur qui, lorsque vous cliquez dessus, affichent toutes les informations de cette collection. Lorsque plusieurs espèces sont interrogées (séparées par des points-virgules), des marqueurs de couleurs différentes indiquent chaque espèce individuelle.';
-$LANG['GOOGLE_EARTH_HEADER'] = 'Google Earth (KML)';
-$LANG['GOOGLE_EARTH_DESCRIPTION'] = 'Cela crée un fichier KML qui peut être ouvert dans l\'application de cartographie Google Earth. Notez que vous devez avoir installé<a href="http://earth.google.com/" target="_blank"> Google Earth</a> sur votre ordinateur pour utiliser cette option.';
-$LANG['GOOGLE_EARTH_EXTRA'] = 'Ajouter des Champs Supplémentaires';
+$LANG['MAP_HEADER'] = 'Carte';
+$LANG['MAP_DISPLAY'] = 'Afficher les coordonnées sur la carte';
+$LANG['MAP_DESCRIPTION'] = 'La fonctionnalité de cartes fournit aux utilisateurs une carte interactive qui peut se déplacer (en faisant glisser la souris) et zoomer (en utilisant la molette de la souris).
+	Les points de collecte sont affichés sous forme de marqueurs colorés qui, une fois cliqués, affichent toutes les informations sur cette collection. Lorsque plusieurs espèces sont interrogées
+	(séparées par des points-virgules), des marqueurs de couleurs différentes désignent chaque espèce individuelle.';
+$LANG['KML_HEADER'] = 'KML';
+$LANG['KML_DESCRIPTION'] = 'Cela crée un fichier KML à utiliser dans Google Earth ou toute autre application utilisant des fichiers KML.';
+$LANG['KML_EXTRA'] = 'Ajouter Champs Supplémentaires';
 $LANG['CREATE_KML'] = 'Créer KML';
-
+$LANG['DATASET_MANAGEMENT'] = 'Gestion des ensembles de données';
+$LANG['IMG_DATASET_MANAGEMENT'] = 'Gestion ouverte des ensembles de données';
+$LANG['IMG_TABLE_DISPLAY'] = 'Ouvrir l\'affichage du tableau';
+$LANG['IMG_DWNL_DATA'] = 'Bouton de téléchargement';
+$LANG['IMG_COPY'] = 'Bouton Copier';
+$LANG['ID_PROTECTED'] = 'ID protégé';
+$LANG['IMG_ADD_VOUCHER'] = 'Ajouter un bon';
+$LANG['IMG_EDIT_OCC'] = 'Modifier l\'occurrence';
+$LANG['IMG_OCC'] = 'Image associée à l\'occurrence';
+$LANG['MAP_LINK'] = 'Lien vers la Carte';
+$LANG['SEE_MAP_POINT'] = 'Voir le point sur la carte';
+$LANG['RECORD_COUNT_EXCEEDS_LIMIT'] = 'Le nombre d\'enregistrements dépasse la limite';
+$LANG['NO_RECORDS'] = 'Aucun enregistrement trouvé correspondant à la requête';
+$LANG['ASSOCIATIONS'] = 'Ressources Associées';
 ?>

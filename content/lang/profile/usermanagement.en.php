@@ -6,6 +6,7 @@ Language: English
 */
 
 $LANG['USER_MNGMT'] = 'User Management';
+$LANG['SEARCH_BOX'] = 'Search'; //because a search box and the "search" button might have different names in different languages
 $LANG['SEARCH'] = 'Search';
 $LANG['LAST_OR_LOGIN'] = 'Last Name or Login Name';
 $LANG['ENTER_LAST'] = 'Enter Last Name';
@@ -58,5 +59,9 @@ $LANG['PERS_SP_MGMNT'] = 'Personal Specimen Management';
 $LANG['INV_MGMNT'] = 'Inventory Project Management';
 $LANG['CHECKLIST_MGMNT'] = 'Checklist Management';
 $LANG['MUST_LOGIN'] = 'You must log in and have administrator permissions to manage users';
+$LANG['SKIP_LINK'] = 'Skip to list of users';
+$LANG['CREATE_NEW_USER'] = 'Create new user';
+$LANG['USER_CREATED_SUCCESSFULLY'] = 'Successfully created user: ';
+$LANG['USERS'] = 'Users';
 
 ?>

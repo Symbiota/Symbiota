@@ -1,5 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT . '/config/dbconnection.php');
+include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
 
 /**
  * AgentManager.php
@@ -1651,9 +1652,9 @@ class AgentManager{
           $result .= "<li><h3>Has bad duplicates</h3></li>";
        }
        $result .= '<ul>';
-       foreach ($baddups as $keyagentid => $valueagent) {
-          $result .= "<li><a href='$CLIENT_ROOT/agents/agent.php?agentid=$keyagentid'>".$valueagent->getAssembledName()."</a>";
-       }
+       foreach ($baddups as $keyagentid => $valueagent) { 
+          $result .= "<li><a href='$CLIENT_ROOT/agents/agent.php?agentid=$keyagentid'>" . htmlspecialchars($valueagent->getAssembledName(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a>";
+       } 
        $result .= '</ul>';
        return $result;
     }
@@ -2109,8 +2110,7 @@ class Agent {
             $sql .=  " ,  ? ";
             $sql .= ')';
             if (strlen($this->uuid)==0) {
-               $uf = new UuidFactory();
-               $this->setuuid($uf->getUuidV4());
+               $this->setuuid(UuidFactory::getUuidV4());
             }
         }
         if ($statement = $this->conn->prepare($sql)) {
@@ -2701,7 +2701,7 @@ class Agent {
        }
    }
    public function setuuid($uuid) {
-       if (!UuidFactory::is_valid(str_replace("urn:uuid:","",$uuid))) {
+       if (!UuidFactory::isValid(str_replace("urn:uuid:","",$uuid))) {
            throw new Exception("Not a valid uuid [$uuid].");
        }
        if (strlen($uuid) > Agent::UUID_SIZE) {
@@ -2785,7 +2785,7 @@ class AgentView {
        $returnvalue .= "<li>".Agent::TAXONOMICGROUPS.": ".$model->gettaxonomicgroups()."</li>\n";
        $returnvalue .= "<li>".Agent::COLLECTIONSAT.": ".$model->getcollectionsat()."</li>\n";
        $returnvalue .= "<li>".Agent::MBOX_SHA1SUM.": ".$model->getmbox_sha1sum()."</li>\n";
-       $returnvalue .= "<li>".Agent::UUID.": <a href='$CLIENT_ROOT/agents/agent.php?uuid=".$model->getuuid()."'>".$model->getuuid()."</a></li>\n";
+       $returnvalue .= "<li>".Agent::UUID.": <a href='$CLIENT_ROOT/agents/agent.php?uuid=" . htmlspecialchars($model->getuuid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'>" . htmlspecialchars($model->getuuid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a></li>\n";
        $returnvalue .= "<li>".Agent::DATELASTMODIFIED.": ".$model->getdatelastmodified()."</li>\n";
        $returnvalue .= "<li>".Agent::LASTMODIFIEDBYUID.": ".$model->getlastmodifiedbyuid()."</li>\n";
        $returnvalue .= "<div id='statusDiv'></div>";
@@ -3029,7 +3029,7 @@ class AgentView {
        $returnvalue = '<tr>';
        $model = $this->model;
        $dates = "(".$model->getyearofbirth()."-".$model->getyearofdeath().")";
-       $returnvalue .= "<td><a href='$CLIENT_ROOT/agents/agent.php?agentid=".$model->getagentid()."'>".$model->getMinimalName()."</a></td>\n";
+       $returnvalue .= "<td><a href='$CLIENT_ROOT/agents/agent.php?agentid=" . htmlspecialchars($model->getagentid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'>" . htmlspecialchars($model->getMinimalName(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a></td>\n";
        $returnvalue .= "<td>$dates</td>\n";
        $returnvalue .= "<td>".$model->gettype()."</td>\n";
        $returnvalue .= '</tr>';

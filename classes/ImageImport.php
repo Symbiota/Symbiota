@@ -1,5 +1,6 @@
 <?php
 include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT . '/classes/utilities/UploadUtil.php');
 include_once("ImageShared.php");
 
 class ImageImport{
@@ -21,7 +22,7 @@ class ImageImport{
 
 		$this->setUploadTargetPath();
 
-		$this->targetArr = array('url','originalUrl','scientificName','tid','photographer','photographerUid','caption',
+		$this->targetArr = array('url','originalUrl','scientificName','tid','creator','creatorUid','caption',
 			'locality','sourceUrl','anatomy','notes','owner','copyright','sortSequence',
 			'institutionCode','collectionCode','catalogNumber','occid');
 	}
@@ -46,7 +47,7 @@ class ImageImport{
 		if($this->fieldMap){
 			//url field is required (symbIndex == 0)
 			if(in_array(0,$this->fieldMap) && $this->fieldMap[0]){
-				$sqlBase = 'INSERT INTO images('.implode(',',array_keys($fieldMap)).') ';
+				$sqlBase = 'INSERT INTO media ('.implode(',',array_keys($fieldMap)).') ';
 				while($recordArr = fgetcsv($fh)){
 
 					if(in_array("sciname",$fieldMap)){
@@ -142,15 +143,7 @@ class ImageImport{
 	}
 
 	private function setUploadTargetPath(){
-		$tPath = $GLOBALS["tempDirRoot"];
-		if(!$tPath){
-			$tPath = ini_get('upload_tmp_dir');
-		}
-		if(!$tPath){
-			$tPath = $GLOBALS["serverRoot"]."/temp/downloads";
-		}
-		if(substr($tPath,-1) != '/') $tPath .= "/";
-		$this->uploadTargetPath = $tPath;
+		$this->uploadTargetPath = UploadUtil::getTempDir();
     }
 }
 ?>

@@ -5,26 +5,29 @@ use Illuminate\Database\Eloquent\Model;
 
 class Media extends Model{
 
-	protected $table = 'images';
-	protected $primaryKey = 'imgid';
+	protected $table = 'media';
+	protected $primaryKey = 'mediaID';
 
 	public $timestamps = false;
 
-	protected $fillable = [
-		'url', ' thumbnailUrl', 'originalUrl', 'archiveUrl', 'photographer', 'photographerUid', 'imageType', 'format', 'caption', 'owner', 'sourceUrl', 'referenceUrl', 'copyright',
-		'rights', 'accessRights', 'locality', 'occid', 'notes', 'anatomy', 'username', 'sourceIdentifier', 'hashFunction', 'hashValue', 'mediaMD5', 'dynamicProperties',
-		'defaultDisplay', 'sortSequence', 'sortOccurrence'
-	];
-
-	protected $hidden = ['dynamicProperties', 'username', 'photographerUid', 'sortOccurrence', 'defaultDisplay'];
+	protected $fillable = [ 'url', 'thumbnailUrl', 'originalUrl', 'archiveUrl', 'tid', 'photographer', 'photographerUid', 'imageType', 'format', 'caption', 'owner', 'sourceUrl', 'referenceUrl',
+		'copyright', 'rights', 'accessRights', 'locality', 'occid', 'notes', 'anatomy', 'username', 'sourceIdentifier', 'hashFunction', 'hashValue', 'mediaMD5', 'dynamicProperties',
+		'defaultDisplay', 'sortSequence', 'sortOccurrence', 'recordID' ];
+	protected $guarded = [];
+	protected $hidden = ['dynamicProperties', 'username', 'defaultDisplay'];
 	private $serverDomain;
 
-	public function __construct(){
+	public function __construct(array $attributes = array()){
+		parent::__construct($attributes);
 		$this->setServerDomain();
 	}
 
 	public function occurrence() {
 		return $this->belongsTo(Occurrence::class, 'occid', 'occid');
+	}
+
+	public function Taxonomy() {
+		return $this->belongsTo(Taxonomy::class, 'tid', 'tid');
 	}
 
 	//Accessor functions

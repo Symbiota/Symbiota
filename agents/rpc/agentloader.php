@@ -10,9 +10,8 @@ die;
 include_once('../../config/symbini.php');
 $filename = "agentnames.csv";
 $filename = preg_replace("[^A-Za-z_\.0-9\-]",'', array_key_exists("file",$_REQUEST) ? $_REQUEST["file"] : $filename );
-include_once($SERVER_ROOT.'/classes/AgentManager.php');
-include_once($SERVER_ROOT.'/classes/RdfUtility.php');
-include_once($SERVER_ROOT.'/classes/UuidFactory.php');
+include_once($SERVER_ROOT . '/classes/AgentManager.php');
+include_once($SERVER_ROOT . '/classes/utilities/RdfUtil.php');
 
 $debug = FALSE;
 
@@ -34,7 +33,13 @@ if (file_exists($filename) && is_readable($filename)) {
       $others  = "";
       // TODO: Use a CSV parser
       $bits = explode('","',$line);
-      if ($debug) { print_r($bits); } 
+      if ($debug) { 
+         echo '<pre>';
+         foreach ($bits as $bit) {
+            echo htmlspecialchars($bit, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401) . "\n";
+         }
+         echo '</pre>';
+      }
       $familyname = trim(str_replace('"','',$bits[0])); 
       $firstname = trim(str_replace('"','',$bits[1])); 
       $middlename = trim(str_replace('"','',$bits[2])); 

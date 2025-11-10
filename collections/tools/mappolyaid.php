@@ -1,6 +1,8 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/content/lang/collections/tools/mapaids.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/tools/mapaids.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/tools/mapaids.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/collections/tools/mapaids.en.php');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $formName = array_key_exists("formname",$_REQUEST)?$_REQUEST["formname"]:"";
@@ -31,11 +33,12 @@ else{
 	$lngCenter = -97.380979;
 }
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
 	<head>
 		<title><?php echo $DEFAULT_TITLE; ?> - Coordinate Polygon Aid</title>
 		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-		<script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'&key='.$GOOGLE_MAP_KEY:''); ?>"></script>
+		<script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing<?= (!empty($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY != 'DEV' ? 'key=' . $GOOGLE_MAP_KEY : '') ?>"></script>
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/wktpolygontools.js" type="text/javascript"></script>
 		<script type="text/javascript">
 			var map;
@@ -227,16 +230,28 @@ else{
 				return false;
 			}
 		</script>
+		<style>
+			.screen-reader-only {
+				position: absolute;
+				left: -10000px;
+			}
+		</style>
 	</head>
 	<body style="background-color:#ffffff;" onload="initialize()">
+		<h1 class="page-heading screen-reader-only"><?php echo $LANG['COOR_POLYGON_AID']; ?></h1>
 		<div style="float:right" style="margin-left:20px;">
-			<button type="submit" name="addcoords" onclick="updateParentForm()">Submit Polygon</button>
+         <button type="submit" name="addcoords" onclick="updateParentForm()">
+            <?php echo isset($LANG['SAVE_N_CLOSE'])? $LANG['SAVE_N_CLOSE'] :'Save and Close'?>
+         </button>
 		</div>
 		<div style="float:right" style="margin-left:20px;">
-			<button id="delete-button" onclick="deleteSelectedShape();return false">Delete Selected Shape</button>
+         <button id="delete-button" onclick="deleteSelectedShape();return false">
+            <?php echo isset($LANG['DELETE_SELECTED'])? $LANG['DELETE_SELECTED'] :'Delete Selected Polygon'?>
+         </button>
 		</div>
 		<div id="helptext" style="">
-			Click on polygon symbol to activate polygon tool. Click submit button transfer polygon to editor.<br/>
+         <?php echo isset($LANG['MPA_INSTRUCTIONS'])? $LANG['MPA_INSTRUCTIONS'] :'Click on polygon symbol to activate polygon tool. Click submit button transfer polygon to editor.'?>
+			<br/>
 		</div>
 		<div id='map_canvas' style='width:100%;height:700px;'></div>
 	</body>

@@ -164,14 +164,14 @@ class OccurrenceAssociations extends Manager {
 
 	private function databaseAssocSpecies($assocArr, $occid){
 		if($assocArr){
-			$sql = 'INSERT INTO omoccurassociations(occid, verbatimsciname, relationship) VALUES';
+			$sql = 'INSERT INTO omoccurassociations(occid, associationType, verbatimsciname, relationship) VALUES';
 			foreach($assocArr as $aStr){
-				$sql .= '('.$occid.',"'.$this->conn->real_escape_string($aStr).'","associatedSpecies"), ';
+				$sql .= '('.$occid.', "observational", "'.$this->conn->real_escape_string($aStr).'","associatedSpecies"), ';
 			}
 			$sql = trim($sql,', ');
 			//echo $sql; exit;
 			if(!$this->conn->query($sql)){
-				echo '<li style="margin-left:20px;">ERROR adding assocaited values (<a href="../individual/index.php?occid='.$occid.'" target="_blank">'.$occid.'</a>): '.$this->conn->error.'</li>';
+				echo '<li style="margin-left:20px;">ERROR adding assocaited values (<a href="../individual/index.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>): ' . htmlspecialchars($this->conn->error, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</li>';
 				//echo '<li style="margin-left:20px;">SQL: '.$sql.'</li>';
 			}
 		}

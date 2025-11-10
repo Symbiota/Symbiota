@@ -92,7 +92,7 @@ class OccurrenceAccessStats extends Manager{
 	public function insertAccessOccurrence($occurAccessID, $occid){
 		$status = false;
 		if(!empty($GLOBALS['STORE_STATISTICS'])){
-			$sql = 'INSERT INTO omoccuraccesslink(occurAccessID, occid) VALUES(?, ?)';
+			$sql = 'INSERT IGNORE INTO omoccuraccesslink(occurAccessID, occid) VALUES(?, ?)';
 			$stmt = $this->conn->stmt_init();
 			$stmt->prepare($sql);
 			$stmt->bind_param('ii', $occurAccessID, $occid);

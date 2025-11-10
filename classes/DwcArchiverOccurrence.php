@@ -1,4 +1,8 @@
 <?php
+// Only needed for symbiotaAssociations version number.
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+
 class DwcArchiverOccurrence extends Manager{
 
 	private $occurDefArr = array();
@@ -68,6 +72,10 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['verbatimTaxonRank'] = 't.unitind3 AS verbatimTaxonRank';
 		$this->occurDefArr['terms']['infraspecificEpithet'] = 'http://rs.tdwg.org/dwc/terms/infraspecificEpithet';
 		$this->occurDefArr['fields']['infraspecificEpithet'] = 't.unitname3 AS infraspecificEpithet';
+		$this->occurDefArr['terms']['cultivarEpithet'] = 'http://rs.tdwg.org/dwc/terms/cultivarEpithet';
+		$this->occurDefArr['fields']['cultivarEpithet'] = 't.cultivarEpithet AS cultivarEpithet';
+		$this->occurDefArr['terms']['tradeName'] = 'http://rs.tdwg.org/dwc/terms/tradeName';
+		$this->occurDefArr['fields']['tradeName'] = 't.tradeName AS tradeName';
 		$this->occurDefArr['terms']['taxonRank'] = 'http://rs.tdwg.org/dwc/terms/taxonRank';
 		$this->occurDefArr['fields']['taxonRank'] = '';
 		$this->occurDefArr['terms']['identifiedBy'] = 'http://rs.tdwg.org/dwc/terms/identifiedBy';
@@ -116,6 +124,10 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['substrate'] = 'o.substrate';
 		$this->occurDefArr['terms']['verbatimAttributes'] = 'https://symbiota.org/terms/verbatimAttributes';
 		$this->occurDefArr['fields']['verbatimAttributes'] = 'o.verbatimAttributes';
+		$this->occurDefArr['terms']['behavior'] = 'http://rs.tdwg.org/dwc/terms/behavior';
+		$this->occurDefArr['fields']['behavior'] = 'o.behavior';
+		$this->occurDefArr['terms']['vitality'] = 'http://rs.tdwg.org/dwc/terms/vitality';
+		$this->occurDefArr['fields']['vitality'] = 'o.vitality';
 		$this->occurDefArr['terms']['fieldNumber'] = 'http://rs.tdwg.org/dwc/terms/fieldNumber';
 		$this->occurDefArr['fields']['fieldNumber'] = 'o.fieldNumber';
 		$this->occurDefArr['terms']['eventID'] = 'http://rs.tdwg.org/dwc/terms/eventID';
@@ -126,8 +138,8 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['dataGeneralizations'] = 'o.dataGeneralizations';
 		$this->occurDefArr['terms']['dynamicProperties'] = 'http://rs.tdwg.org/dwc/terms/dynamicProperties';
 		$this->occurDefArr['fields']['dynamicProperties'] = 'o.dynamicProperties';
-		$this->occurDefArr['terms']['associatedOccurrences'] = 'http://rs.tdwg.org/dwc/terms/associatedOccurrences';
-		$this->occurDefArr['fields']['associatedOccurrences'] = '';
+		//$this->occurDefArr['terms']['associatedOccurrences'] = 'http://rs.tdwg.org/dwc/terms/associatedOccurrences';
+		//$this->occurDefArr['fields']['associatedOccurrences'] = '';
 		$this->occurDefArr['terms']['associatedSequences'] = 'http://rs.tdwg.org/dwc/terms/associatedSequences';
 		$this->occurDefArr['fields']['associatedSequences'] = '';
 		$this->occurDefArr['terms']['associatedTaxa'] = 'http://rs.tdwg.org/dwc/terms/associatedTaxa';
@@ -162,6 +174,8 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['island'] = 'o.island';
 		$this->occurDefArr['terms']['country'] = 'http://rs.tdwg.org/dwc/terms/country';
 		$this->occurDefArr['fields']['country'] = 'o.country';
+		$this->occurDefArr['terms']['countryCode'] = 'http://rs.tdwg.org/dwc/terms/countryCode';
+		$this->occurDefArr['fields']['countryCode'] = 'o.countryCode';
 		$this->occurDefArr['terms']['stateProvince'] = 'http://rs.tdwg.org/dwc/terms/stateProvince';
 		$this->occurDefArr['fields']['stateProvince'] = 'o.stateProvince';
 		$this->occurDefArr['terms']['county'] = 'http://rs.tdwg.org/dwc/terms/county';
@@ -172,10 +186,10 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['locality'] = 'o.locality';
 		$this->occurDefArr['terms']['locationRemarks'] = 'http://rs.tdwg.org/dwc/terms/locationRemarks';
 		$this->occurDefArr['fields']['locationRemarks'] = 'o.locationremarks';
-		$this->occurDefArr['terms']['localitySecurity'] = 'https://symbiota.org/terms/localitySecurity';
-		$this->occurDefArr['fields']['localitySecurity'] = 'o.localitySecurity';
-		$this->occurDefArr['terms']['localitySecurityReason'] = 'https://symbiota.org/terms/localitySecurityReason';
-		$this->occurDefArr['fields']['localitySecurityReason'] = 'o.localitySecurityReason';
+		$this->occurDefArr['terms']['recordSecurity'] = 'https://symbiota.org/terms/recordSecurity';
+		$this->occurDefArr['fields']['recordSecurity'] = 'o.recordSecurity';
+		$this->occurDefArr['terms']['securityReason'] = 'https://symbiota.org/terms/securityReason';
+		$this->occurDefArr['fields']['securityReason'] = 'o.securityReason';
 		$this->occurDefArr['terms']['decimalLatitude'] = 'http://rs.tdwg.org/dwc/terms/decimalLatitude';
 		$this->occurDefArr['fields']['decimalLatitude'] = 'o.decimalLatitude';
 		$this->occurDefArr['terms']['decimalLongitude'] = 'http://rs.tdwg.org/dwc/terms/decimalLongitude';
@@ -269,7 +283,7 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['terms']['observerUid'] = 'https://symbiota.org/terms/observerUid';
 		$this->occurDefArr['fields']['observerUid'] = 'o.observeruid';
 		$this->occurDefArr['terms']['processingStatus'] = 'https://symbiota.org/terms/processingStatus';
-		$this->occurDefArr['fields']['processingStatus'] = 'o.processingstatus';
+		$this->occurDefArr['fields']['processingStatus'] = 'o.processingStatus';
 		$this->occurDefArr['terms']['duplicateQuantity'] = 'https://symbiota.org/terms/duplicateQuantity';
 		$this->occurDefArr['fields']['duplicateQuantity'] = 'o.duplicateQuantity';
 		$this->occurDefArr['terms']['labelProject'] = 'https://symbiota.org/terms/labelProject';
@@ -279,7 +293,7 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['terms']['dateEntered'] = 'https://symbiota.org/terms/dateEntered';
 		$this->occurDefArr['fields']['dateEntered'] = 'o.dateEntered';
 		$this->occurDefArr['terms']['dateLastModified'] = 'http://rs.tdwg.org/dwc/terms/dateLastModified';
-		$this->occurDefArr['fields']['dateLastModified'] = 'o.datelastmodified';
+		$this->occurDefArr['fields']['dateLastModified'] = 'o.dateLastModified';
 		$this->occurDefArr['terms']['modified'] = 'http://purl.org/dc/terms/modified';
 		$this->occurDefArr['fields']['modified'] = 'IFNULL(o.modified,o.datelastmodified) AS modified';
 		$this->occurDefArr['terms']['rights'] = 'http://purl.org/dc/elements/1.1/rights';
@@ -303,8 +317,9 @@ class DwcArchiverOccurrence extends Manager{
 		foreach($this->occurDefArr as $k => $vArr){
 			if($this->schemaType == 'dwc' || $this->schemaType == 'pensoft'){
 				$trimArr = array('recordedByID','associatedCollectors','substrate','verbatimAttributes','cultivationStatus',
-					'localitySecurityReason','genericcolumn1','genericcolumn2','storageLocation','observerUid','processingStatus',
-					'duplicateQuantity','labelProject','dateEntered','dateLastModified','sourcePrimaryKey-dbpk');
+					'securityReason','genericcolumn1','genericcolumn2','storageLocation','observerUid','processingStatus',
+					'duplicateQuantity','labelProject','dateEntered','dateLastModified','sourcePrimaryKey-dbpk', 'tradeName');
+				// TODO add confirm dialog and look for a notes section in the DWC export to alert end user of loss of the trimmed fields during export.
 				$this->occurDefArr[$k] = array_diff_key($vArr,array_flip($trimArr));
 			}
 			elseif($this->schemaType == 'symbiota'){
@@ -318,11 +333,15 @@ class DwcArchiverOccurrence extends Manager{
 				$trimArr = array('collectionID','rights','rightsHolder','accessRights');
 				$this->occurDefArr[$k] = array_diff_key($vArr,array_flip($trimArr));
 			}
+			elseif($this->schemaType == 'backup-personal'){
+				$trimArr = array('collectionID','rights','rightsHolder','accessRights');
+				$this->occurDefArr[$k] = array_diff_key($vArr,array_flip($trimArr));
+			}
 			elseif($this->schemaType == 'coge'){
 				$targetArr = array('id','basisOfRecord','institutionCode','collectionCode','catalogNumber','occurrenceID','family','scientificName','scientificNameAuthorship',
 					'kingdom','phylum','class','order','genus','specificEpithet','infraSpecificEpithet','recordedBy','recordNumber','eventDate','year','month','day','fieldNumber',
 					'eventID', 'locationID','continent','waterBody','islandGroup','island','country','stateProvince','county','municipality',
-					'locality','localitySecurity','geodeticDatum','decimalLatitude','decimalLongitude','verbatimCoordinates',
+					'locality','recordSecurity','geodeticDatum','decimalLatitude','decimalLongitude','verbatimCoordinates',
 					'minimumElevationInMeters','maximumElevationInMeters','verbatimElevation','maximumDepthInMeters','minimumDepthInMeters','establishmentMeans',
 					'occurrenceRemarks','dateEntered','dateLastModified','recordID','references','collID');
 				$this->occurDefArr[$k] = array_intersect_key($vArr,array_flip($targetArr));
@@ -405,89 +424,242 @@ class DwcArchiverOccurrence extends Manager{
 				if($r->editor) $dynProp['exsEditor'] = $r->editor;
 				$dynProp['exsNumber'] = $r->exsnumber;
 				if($r->notes) $dynProp['exsNotes'] = $r->notes;
-				$retArr['exsJson'] = json_encode($dynProp);
+				$retArr['exsProps'] = $dynProp;
 			}
 			$rs->free();
 		}
 		return $retArr;
 	}
 
-	public function getAssociationStr($occid){
-		if(is_numeric($occid)){
-			$relOccidArr = array();
+	public function getAssociationStr($occid, $associationType = null){
+		$occid = filter_var($occid, FILTER_SANITIZE_NUMBER_INT);
+		if($occid){
+
+			// Return symbiotaAssociations JSON for the associatedOccurrences field instead of the text string generated below
+			// TODO: There is room for fine-tuning what conditions will return the JSON
+			// Seems like it should be turned on for schemaType == 'backup', but re-importing that backup currently fails
+			if ($this->schemaType == 'symbiota') return $this->getAssociationJSON($occid);
+
+			$internalAssocOccidArr = array();
 			$assocArr = array();
-			//Get associations defined within omoccurassociations
-			$sql = 'SELECT assocID, occid, occidAssociate, relationship, subType, resourceUrl, identifier FROM omoccurassociations
-				WHERE (occid = '.$occid.' OR occidAssociate = '.$occid.') AND verbatimSciname IS NULL ';
+			//Get associations defined within omoccurassociations (both subject and object)
+			$assocTypeArr = array('internalOccurrence', 'externalOccurrence');
+			if($associationType) $assocTypeArr = explode(' ', $associationType);
+			$sql = 'SELECT assocID, occid, associationType, occidAssociate, relationship, subType, resourceUrl, identifier, basisOfRecord, verbatimSciname, recordID FROM omoccurassociations
+				WHERE (occid = '.$occid.' OR occidAssociate = '.$occid.') AND associationType IN("'.implode('","', $assocTypeArr).'") ';
 			$rs = $this->conn->query($sql);
 			if($rs){
 				while($r = $rs->fetch_object()){
 					$relOccid = $r->occidAssociate;
 					$relationship = $r->relationship;
 					if($occid == $r->occidAssociate){
+						//Association was defined within secondary occurrence record, thus switch subject/object
 						$relOccid = $r->occid;
 						$relationship = $this->getInverseRelationship($relationship);
 					}
 					if($relOccid){
+						//Is an internally defined association
 						$assocArr[$r->assocID]['occidassoc'] = $relOccid;
-						$relOccidArr[$relOccid][] = $r->assocID;
-						$assocArr[$r->assocID]['relationship'] = $relationship;
-						$assocArr[$r->assocID]['subtype'] = $r->subType;
+						$internalAssocOccidArr[$relOccid][] = $r->assocID;
 					}
 					elseif($r->resourceUrl){
-						$assocArr[$r->assocID]['resourceurl'] = $r->resourceUrl;
+						$assocArr[$r->assocID]['resourceUrl'] = $r->resourceUrl;
 						$assocArr[$r->assocID]['identifier'] = $r->identifier;
-						$assocArr[$r->assocID]['relationship'] = $relationship;
-						$assocArr[$r->assocID]['subtype'] = $r->subType;
 					}
+					$assocArr[$r->assocID]['relationship'] = $relationship;
+					$assocArr[$r->assocID]['subtype'] = $r->subType;
+					if($r->basisOfRecord) $assocArr[$r->assocID]['basisOfRecord'] = $r->basisOfRecord;
+					if($r->verbatimSciname) $assocArr[$r->assocID]['scientificName'] = $r->verbatimSciname;
+					if($r->recordID) $assocArr[$r->assocID]['recordID'] = $r->recordID;
 				}
 				$rs->free();
 			}
-			//Append duplicate specimen duplicate associations
-			$sql = 'SELECT s.occid, l.occid as occidAssociate
-				FROM omoccurduplicatelink s INNER JOIN omoccurduplicates d ON s.duplicateid = d.duplicateid
-				INNER JOIN omoccurduplicatelink l ON d.duplicateid = l.duplicateid
-				WHERE s.occid IN('.$occid.') AND s.occid != l.occid ';
-			$rs = $this->conn->query($sql);
-			if($rs){
-				while($r = $rs->fetch_object()){
-					$assocKey = 'sd-'.$r->occidAssociate;
-					$assocArr[$assocKey]['occidassoc'] = $r->occidAssociate;
-					$assocArr[$assocKey]['relationship'] = 'herbariumSpecimenDuplicate';
-					$relOccidArr[$r->occidAssociate][] = $assocKey;
-				}
-				$rs->free();
-			}
+			//Append associations of duplicate specimen
+			$this->appendSpecimenDuplicateAssociations($occid, $assocArr, $internalAssocOccidArr);
+
 			//Append resource URLs to each output record
-			if($relOccidArr){
-				$this->setServerDomain();
-				//Replace GUID identifiers with occurrenceID values
-				$sql = 'SELECT occid, occurrenceID, recordID FROM omoccurrences WHERE occid IN('.implode(',',array_keys($relOccidArr)).')';
-				$rs = $this->conn->query($sql);
-				while($r = $rs->fetch_object()){
-					foreach($relOccidArr[$r->occid] as $k => $targetAssocID){
-						if($r->occurrenceID){
-							$assocArr[$targetAssocID]['resourceurl'] = $r->occurrenceID;
-							if(substr($r->occurrenceID, 0, 4) != 'http'){
-								$assocArr[$targetAssocID]['resourceurl'] = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?guid='.$r->occurrenceID;
-							}
-						}
-						elseif($r->recordID){
-							$assocArr[$targetAssocID]['resourceurl'] = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?guid='.$r->recordID;
-						}
+			if($internalAssocOccidArr){
+				$identifierArr = $this->getInternalResourceIdentifiers($internalAssocOccidArr);
+				foreach($identifierArr as $internalOccid => $idArr){
+					foreach($internalAssocOccidArr[$internalOccid] as $targetAssocID){
+						$assocArr[$targetAssocID] = array_merge($assocArr[$targetAssocID], $idArr);
 					}
 				}
-				$rs->free();
 			}
 			//Create output strings
 			$retStr = '';
 			foreach($assocArr as $assocateArr){
-				$retStr .= ' | '.$assocateArr['relationship'];
-				if(!empty($assocateArr['subtype'])) $retStr .= ' ('.$assocateArr['subtype'].')';
-				$retStr .= ': '.$assocateArr['resourceurl'];
+				if($associationType == 'observational'){
+					$retStr .= ' | ' . $assocateArr['relationship'];
+					if(!empty($assocateArr['scientificName'])) $retStr .= ': '.$assocateArr['scientificName'];
+				}
+				else{
+					$retStr .= ' | relationship: ' . $assocateArr['relationship'];
+					if(!empty($assocateArr['subtype'])) $retStr .= ' (' . $assocateArr['subtype'] . ')';
+					if(!empty($assocateArr['identifier'])) $retStr .= ', identifier: ' . $assocateArr['identifier'];
+					elseif(!empty($assocateArr['recordID'])) $retStr .= ', recordID:  ' . $assocateArr['recordID'];
+					if(!empty($assocateArr['basisOfRecord'])) $retStr .= ', basisOfRecord: ' . $assocateArr['basisOfRecord'];
+					if(!empty($assocateArr['scientificName'])) $retStr .= ', scientificName: ' . $assocateArr['scientificName'];
+					if(!empty($assocateArr['resourceUrl'])) $retStr .= ', resourceUrl:  ' . $assocateArr['resourceUrl'];
+				}
 			}
 		}
 		return trim($retStr,' |');
+	}
+
+	// Function to return any associations as JSON for the associatedOccurrences field
+	private function getAssociationJSON($occid) {
+
+		// Build SQL to find any associations for the occurrence record passed with occid
+		$sql = 'SELECT occid, associationType, occidAssociate, relationship, subType, identifier, basisOfRecord, resourceUrl, verbatimSciname, locationOnHost
+			FROM omoccurassociations
+			WHERE (occid = ' . $occid . ' OR occidAssociate = ' . $occid . ') ';
+		if ($rs = $this->conn->query($sql)) {
+
+			// No associations, so just return an empty string, and quit the function
+			if (!$rs->num_rows) return '';
+
+			// Build verbatimText array
+			// Get any pre-existing contents of the associatedOccurrences field in omoccurrences
+			$verbatimText = $this->getVerbatimTextObject($occid);
+			// Check if the contents of the field already is JSON
+			if ($verbatimText['verbatimText']){
+				if ($assocOccArr = json_decode($verbatimText['verbatimText'], true)) {
+					$verbatimText['verbatimText'] = '';
+					// There's already JSON here
+					// TODO: What should we do? Perform some checks?
+				}
+			}
+
+			// No associatedOccurrences array exists, so build one
+			if (!isset($assocOccArr)) {
+
+				// Build JSON array
+				$assocOccArr = array();
+
+				// Build symbiotaAssociations array
+				$symbiotaAssociations = array();
+				$symbiotaAssociations['type'] = 'symbiotaAssociations';
+				$symbiotaAssociations['version'] = OccurrenceUtil::$assocOccurVersion;
+				$symbiotaAssociations['associations'] = array();
+
+				// Add the symbiotaAssociations array
+				array_push($assocOccArr, $symbiotaAssociations);
+
+				// Add the verbatimText array
+				array_push($assocOccArr, $verbatimText);
+			}
+
+			// Make an array to hold occurrence IDs that need an additional guid (internalOccurrences)
+			$relOccidArr = array();
+
+			// Get each associated occurrence
+			while ($assocArr = $rs->fetch_assoc()) {
+
+				// Filter out any empty fields
+				$assocArr = array_filter($assocArr);
+
+				// Set the association type field
+				if (array_key_exists('occidAssociate', $assocArr)) {
+					$assocArr['type'] = 'internalOccurrence';
+				} else if (array_key_exists('identifier', $assocArr) || array_key_exists('resourceUrl', $assocArr)) {
+					$assocArr['type'] = 'externalOccurrence';
+				} else if (array_key_exists('verbatimSciname', $assocArr)) {
+					$assocArr['type'] = 'genericObservation';
+				} else {
+					// Should not happen, but if so, this seems to be the best fit
+					$assocArr['type'] = 'genericObservation';
+				}
+
+				// Check for cases where the occidAssociate is this occid.
+				// In those cases, we need to switch the occid and occidAssociate and get the inverse relationship
+				if (array_key_exists('occidAssociate', $assocArr) && $assocArr['occidAssociate'] == $occid) {
+					$assocArr['occidAssociate'] = $assocArr['occid'];
+					$assocArr['relationship'] = $this->getInverseRelationship($assocArr['relationship']);
+				}
+
+				// remove occid key, no longer needed
+				unset($assocArr['occid']);
+
+				// Check if the associated occurrence is an internal occurrence
+				// If so, we need to flag this to add the GUID identifier & resource url, in case it gets imported in another portal
+				if (array_key_exists('occidAssociate', $assocArr)) {
+					array_push($relOccidArr, $assocArr['occidAssociate']);
+				}
+
+				// Add associated occurrence array to the full associatedOccurrences array
+				array_push($assocOccArr[0]['associations'], $assocArr);
+
+			}
+
+			// There are some associated occurrences with an internal occidAssociate
+			// For these, we need to get their guids and construct reference URLs, in case they become external references
+			if ($relOccidArr) {
+				$identifierArr = $this->getInternalResourceIdentifiers($relOccidArr);
+				foreach($identifierArr as $internalOccid => $idArr){
+					foreach ($assocOccArr[0]['associations'] as $index => $associateArr) {
+						if (array_key_exists('occidAssociate', $associateArr) && $assocOccArr[0]['associations'][$index]['occidAssociate'] == $internalOccid) {
+							// Add the GUID as the identifier, and the resource URL in case this ends up being treated as an external resource
+							$assocOccArr[0]['associations'][$index] = array_merge($assocOccArr[0]['associations'][$index], $idArr);
+						}
+					}
+				}
+			}
+
+			// Return the full symbiotaAssociations array as JSON
+			// TODO: this is returning "null" for fields that are empty, like verbatimText.
+			return json_encode( $assocOccArr, JSON_UNESCAPED_SLASHES);
+		}
+	}
+
+	private function appendSpecimenDuplicateAssociations($occid, &$assocArr, &$internalAssocOccidArr){
+		$sql = 'SELECT s.occid, l.occid as occidAssociate
+				FROM omoccurduplicatelink s INNER JOIN omoccurduplicates d ON s.duplicateid = d.duplicateid
+				INNER JOIN omoccurduplicatelink l ON d.duplicateid = l.duplicateid
+				WHERE s.occid IN('.$occid.') AND s.occid != l.occid ';
+		$rs = $this->conn->query($sql);
+		if($rs){
+			while($r = $rs->fetch_object()){
+				$assocKey = 'sd-'.$r->occidAssociate;
+				$assocArr[$assocKey]['occidassoc'] = $r->occidAssociate;
+				$assocArr[$assocKey]['relationship'] = 'herbariumSpecimenDuplicate';
+				$internalAssocOccidArr[$r->occidAssociate][] = $assocKey;
+			}
+			$rs->free();
+		}
+	}
+
+	private function getVerbatimTextObject($occid){
+		$verbatimText = array('type' => 'verbatimText', 'verbatimText' => '');
+
+		$sql = 'SELECT associatedOccurrences FROM omoccurrences WHERE occid = ' . $occid;
+		$rs = $this->conn->query($sql);
+		if($r = $rs->fetch_object()){
+			if($r->associatedOccurrences) $verbatimText['verbatimText'] = $r->associatedOccurrences;
+		}
+		$rs->free();
+		return $verbatimText;
+	}
+
+	private function getInternalResourceIdentifiers($internalAssocOccidArr){
+		$retArr = array();
+		$this->setServerDomain();
+		//Replace GUID identifiers with occurrenceID values
+		$sql = 'SELECT occid, sciname, occurrenceID, recordID FROM omoccurrences WHERE occid IN('.implode(',',array_keys($internalAssocOccidArr)).')';
+		$rs = $this->conn->query($sql);
+		while($r = $rs->fetch_object()){
+			$retArr[$r->occid]['scientificName'] = $r->sciname;
+			$guid = $r->recordID;
+			if($r->occurrenceID) $guid = $r->occurrenceID;
+			$retArr[$r->occid]['identifier'] = $guid;
+			$resourceUrl = $guid;
+			if(substr($resourceUrl, 0, 4) != 'http'){
+				$resourceUrl = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?guid='.$guid;
+			}
+			$retArr[$r->occid]['resourceUrl'] = $resourceUrl;
+		}
+		$rs->free();
+		return $retArr;
 	}
 
 	public function setIncludeAssociatedSequences(){
@@ -514,21 +686,6 @@ class DwcArchiverOccurrence extends Manager{
 			}
 		}
 		return trim($retStr,' |,');
-	}
-
-	public function getAssocTaxa($occid){
-		$retStr = '';
-		if(is_numeric($occid)){
-			$sql = 'SELECT assocID, relationship, subType, verbatimSciname FROM omoccurassociations WHERE occid = '.$occid.' AND verbatimSciname IS NOT NULL ';
-			$rs = $this->conn->query($sql);
-			if($rs){
-				while($r = $rs->fetch_object()){
-					$retStr .= '|'.$r->relationship.($r->subType?' ('.$r->subType.')':'').': '.$r->verbatimSciname;
-				}
-				$rs->free();
-			}
-		}
-		return trim($retStr,' |');
 	}
 
 	private function getInverseRelationship($relationship){
@@ -676,12 +833,13 @@ class DwcArchiverOccurrence extends Manager{
 	}
 
 	public function setServerDomain(){
-		if(!$this->serverDomain) $this->serverDomain = $this->getDomain();
+		if(!$this->serverDomain) $this->serverDomain = GeneralUtil::getDomain();
 	}
 
 	//Setter and getter
-	public function setSchemaType($t){
-		$this->schemaType = $t;
+	public function setSchemaType($t, $observerUid = 0){
+		if($t == 'backup' && $observerUid) $this->schemaType = 'backup-personal';
+		else $this->schemaType = $t;
 	}
 
 	public function setExtended($e){

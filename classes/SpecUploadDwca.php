@@ -1,6 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/classes/SpecUploadBase.php');
-include_once($SERVER_ROOT.'/classes/PortalIndex.php');
+include_once($SERVER_ROOT . '/classes/SpecUploadBase.php');
+include_once($SERVER_ROOT . '/classes/PortalIndex.php');
+include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
 
 class SpecUploadDwca extends SpecUploadBase{
 
@@ -561,13 +562,13 @@ class SpecUploadDwca extends SpecUploadBase{
 										}
 									}
 								}
-								if($cond == 'ISNULL'){
+								if($cond == 'IS_NULL'){
 									if($targetValue){
 										$addRecord = false;
 										continue 2;
 									}
 								}
-								elseif($cond == 'NOTNULL'){
+								elseif($cond == 'NOT_NULL'){
 									if(!$targetValue){
 										$addRecord = false;
 										continue 2;
@@ -580,7 +581,7 @@ class SpecUploadDwca extends SpecUploadBase{
 									}
 								}
 								else{
-									if($cond == 'STARTS'){
+									if($cond == 'STARTS_WITH'){
 										//Multiple values treated as an OR condition
 										$condMeet = false;
 										foreach($valueArr as $filterValue){
@@ -606,14 +607,14 @@ class SpecUploadDwca extends SpecUploadBase{
 											continue 2;
 										}
 									}
-									elseif($cond == 'LESSTHAN'){
+									elseif($cond == 'LESS_THAN'){
 										$filterValue = array_pop($valueArr);
 										if($targetValue > $filterValue){
 											$addRecord = false;
 											continue 2;
 										}
 									}
-									elseif($cond == 'GREATERTHAN'){
+									elseif($cond == 'GREATER_THAN'){
 										$filterValue = array_pop($valueArr);
 										if($targetValue < $filterValue){
 											$addRecord = false;
@@ -774,12 +775,6 @@ class SpecUploadDwca extends SpecUploadBase{
 			}
 			closedir($handle);
 		}
-		//Delete directory
-		/*
-		if(stripos($dirPath, $this->uploadTargetPath) === 0 && !preg_match('#/temp/data/$#', $dirPath)){
-			rmdir($dirPath);
-		}
-		*/
 	}
 
 	private function uploadExtension($targetStr, $fieldMap, $sourceArr){
@@ -843,7 +838,7 @@ class SpecUploadDwca extends SpecUploadBase{
 							$this->loadIdentificationRecord($recMap);
 						}
 						elseif($targetStr == 'image'){
-							$this->loadImageRecord($recMap);
+							$this->loadMediaRecord($recMap);
 						}
 						unset($recMap);
 					}
@@ -925,6 +920,7 @@ class SpecUploadDwca extends SpecUploadBase{
 			}
 			else $this->outputMsg('<li>ERROR cross-mapping occurrences: '.$portalManager->getErrorMessage().'</li> ');
 		}
+		$this->transferAssociatedOccurrences();
 		$this->finalCleanup();
 		$this->outputMsg('<li style="">Upload Procedure Complete ('.date('Y-m-d h:i:s A').')!</li>');
 		$this->outputMsg(' ');
@@ -1001,7 +997,7 @@ class SpecUploadDwca extends SpecUploadBase{
 	}
 
 	public function setPublicationGuid($guid){
-		if(UuidFactory::is_valid($guid)) $this->publicationGuid = $guid;
+		if(UuidFactory::isValid($guid)) $this->publicationGuid = $guid;
 	}
 
 	public function getPublicationGuid(){

@@ -4,21 +4,20 @@ namespace PhpOffice\PhpSpreadsheet\Worksheet;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
+/**
+ * @implements \Iterator<int, Worksheet>
+ */
 class Iterator implements \Iterator
 {
     /**
      * Spreadsheet to iterate.
-     *
-     * @var Spreadsheet
      */
-    private $subject;
+    private Spreadsheet $subject;
 
     /**
      * Current iterator position.
-     *
-     * @var int
      */
-    private $position = 0;
+    private int $position = 0;
 
     /**
      * Create a new worksheet iterator.
@@ -63,10 +62,8 @@ class Iterator implements \Iterator
 
     /**
      * Are there more Worksheet instances available?
-     *
-     * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
         return $this->position < $this->subject->getSheetCount() && $this->position >= 0;
     }

@@ -1,7 +1,9 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
-@include_once($SERVER_ROOT.'/content/lang/profile/occurrencemenu.'.$LANG_TAG.'.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/profile/occurrencemenu.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/profile/occurrencemenu.' . $LANG_TAG . '.php');
+else include_once($SERVER_ROOT . '/content/lang/profile/occurrencemenu.en.php');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 unset($_SESSION['editorquery']);
 
@@ -18,158 +20,174 @@ foreach($collArr as $id => $collectionArr){
 	elseif($collectionArr['colltype'] == 'Observations') $oArr[$id] = $collectionArr;
 }
 ?>
-<div style="margin:10px;">
-<?php
-if($SYMB_UID){
-	if(!$collArr) echo '<div style="margin:40px 15px;font-weight:bold">'.(isset($LANG['NO_PROJECTS'])?$LANG['NO_PROJECTS']:'You do not yet have management permissions for any occurrence projects').'</div>';
-	foreach($genArr as $collId => $secArr){
-		$cName = $secArr['collectionname'].' ('.$secArr['institutioncode'].($secArr['collectioncode']?'-'.$secArr['collectioncode']:'').')';
-		?>
-		<fieldset>
-			<legend><?php echo $cName; ?></legend>
-			<div style="margin-left:10px">
-				<?php
-				echo (isset($LANG['TOTAL_RECORDS'])?$LANG['TOTAL_RECORDS']:'Total Record Count').': '.$specHandler->getPersonalOccurrenceCount($collId);
-				?>
-			</div>
-			<ul>
-				<li>
-					<a href="../collections/editor/occurrencetabledisplay.php?collid=<?php echo $collId; ?>">
-						<?php echo (isset($LANG['DISPLAY_ALL'])?$LANG['DISPLAY_ALL']:'Display All Records'); ?>
-					</a>
-				</li>
-				<li>
-					<a href="../collections/editor/occurrencetabledisplay.php?collid=<?php echo $collId; ?>&displayquery=1">
-						<?php echo (isset($LANG['SEARCH_RECORDS'])?$LANG['SEARCH_RECORDS']:'Search Records'); ?>
-					</a>
-				</li>
-				<li>
-					<a href="../collections/editor/occurrenceeditor.php?gotomode=1&collid=<?php echo $collId; ?>">
-						<?php echo (isset($LANG['ADD_RECORD'])?$LANG['ADD_RECORD']:'Add a New Record'); ?>
-					</a>
-				</li>
-				<li>
-					<a href="../collections/reports/labelmanager.php?collid=<?php echo $collId; ?>">
-						<?php echo (isset($LANG['PRINT_LABELS'])?$LANG['PRINT_LABELS']:'Print Labels'); ?>
-					</a>
-				</li>
-				<li>
-					<a href="../collections/reports/annotationmanager.php?collid=<?php echo $collId; ?>">
-						<?php echo (isset($LANG['PRINT_ANNOTATIONS'])?$LANG['PRINT_ANNOTATIONS']:'Print Annotation Labels'); ?>
-					</a>
-				</li>
-				<li>
-					<a href="../collections/editor/observationsubmit.php?collid=<?php echo $collId; ?>">
-						<?php echo (isset($LANG['SUBMIT_OBSERVATION'])?$LANG['SUBMIT_OBSERVATION']:'Submit image-vouchered observation'); ?>
-					</a>
-				</li>
-				<li>
-					<a href="../collections/editor/editreviewer.php?display=1&collid=<?php echo $collId; ?>">
-						<?php echo (isset($LANG['REVIEW_EDITS'])?$LANG['REVIEW_EDITS']:'Review/Verify Occurrence Edits'); ?>
-					</a>
-				</li>
-				<?php
-				if (!empty($ACTIVATE_DUPLICATES)) {
-					?>
-					<li>
-						<a href="../collections/datasets/duplicatemanager.php?collid=<?php echo $collId; ?>">
-							<?php echo (isset($LANG['DUP_CLUSTER']) ? $LANG['DUP_CLUSTER'] : 'Duplicate Clustering'); ?>
-						</a>
-					</li>
-					<?php
-				}
-				?>
-				<li>
-					<a href="#" onclick="newWindow = window.open('personalspecbackup.php?collid=<?php echo $collId; ?>','bucollid','scrollbars=1,toolbar=0,resizable=1,width=400,height=200,left=20,top=20');">
-						<?php echo (isset($LANG['DOWNLOAD_BACKUP'])?$LANG['DOWNLOAD_BACKUP']:'Download backup file (CSV extract)'); ?>
-					</a>
-				</li>
-				<li>
-					<a href="../collections/misc/commentlist.php?collid=<?php echo $collId; ?>">
-						<?php echo (isset($LANG['VIEW_COMMENTS'])?$LANG['VIEW_COMMENTS']:'View User Comments'); ?>
-					</a>
-					<?php if($commCnt = $specHandler->unreviewedCommentsExist($collId)) echo '- <span style="color:orange">'.$commCnt.' '.(isset($LANG['UNREVIEWED'])?$LANG['UNREVIEWED']:'unreviewed comments').'</span>'; ?>
-				</li>
-				<!--
-				<li>
-					<a href="../collections/cleaning/index.php?collid=<?php echo $collId; ?>">
-						<?php echo (isset($LANG['DATA_CLEANING'])?$LANG['DATA_CLEANING']:'Data Cleaning Module'); ?>
-					</a>
-				</li>
-				 -->
-			</ul>
-		</fieldset>
+<!DOCTYPE html>
+<html lang="<?php echo $LANG_TAG ?>">
+	<head>
+		<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['OCCURRENCE_MENU'];?></title>
+	</head>
+	<div style="margin:10px;">
+		<h1 class="page-heading screen-reader-only"><?php echo $LANG['OCCURRENCE_MENU']; ?></h1>
 		<?php
-	}
-	if($cArr){
-		?>
-		<fieldset>
-			<legend><?php echo (isset($LANG['COL_MANAGE'])?$LANG['COL_MANAGE']:'Collection Management'); ?></legend>
-			<ul>
-				<?php
-				foreach($cArr as $collId => $secArr){
-					$cName = $secArr['collectionname'].' ('.$secArr['institutioncode'].($secArr['collectioncode']?'-'.$secArr['collectioncode']:'').')';
-					echo '<li><a href="../collections/misc/collprofiles.php?collid='.$collId.'&emode=1">'.$cName.'</a></li>';
-				}
+		if($SYMB_UID){
+			if(!$collArr) echo '<div style="margin:40px 15px;font-weight:bold">' . $LANG['NO_PROJECTS'] . '</div>';
+			foreach($genArr as $collId => $secArr){
+				$collId = filter_var($collId, FILTER_SANITIZE_NUMBER_INT); //This really is not needed because DB output is an int, but may be needed to satisfy scanners
+				$cName = $secArr['collectionname'] . ' (' . $secArr['institutioncode'] . ($secArr['collectioncode']?'-' . $secArr['collectioncode']:'') . ')';
 				?>
-			</ul>
-		</fieldset>
-		<?php
-	}
-	if($oArr){
-		?>
-		<fieldset>
-			<legend><?php echo (isset($LANG['OBS_MANAGEMENT'])?$LANG['OBS_MANAGEMENT']:'Observation Project Management'); ?></legend>
-			<ul>
+				<section class="fieldset-like">
+					<h2>
+						<span>
+							<?php echo $cName; ?>
+						</span>
+					</h2>
+					<div style="margin-left:10px">
+						<?php
+						echo $LANG['TOTAL_RECORDS'] . ': ' . $specHandler->getPersonalOccurrenceCount($collId);
+						?>
+					</div>
+					<ul>
+						<li>
+							<a href="../collections/editor/occurrencetabledisplay.php?collid=<?= $collId ?>">
+								<?= $LANG['DISPLAY_ALL'] ?>
+							</a>
+						</li>
+						<li>
+							<a href="../collections/editor/occurrencetabledisplay.php?collid=<?= $collId ?>&displayquery=1">
+								<?= $LANG['SEARCH_RECORDS'] ?>
+							</a>
+						</li>
+						<li>
+							<a href="../collections/editor/occurrenceeditor.php?gotomode=1&collid=<?= $collId ?>">
+								<?= $LANG['ADD_RECORD'] ?>
+							</a>
+						</li>
+						<li>
+							<a href="../collections/reports/labelmanager.php?collid=<?= $collId ?>">
+								<?= $LANG['PRINT_LABELS'] ?>
+							</a>
+						</li>
+						<li>
+							<a href="../collections/reports/annotationmanager.php?collid=<?= $collId ?>">
+								<?= $LANG['PRINT_ANNOTATIONS'] ?>
+							</a>
+						</li>
+						<li>
+							<a href="../collections/editor/observationsubmit.php?collid=<?= $collId ?>">
+								<?= $LANG['SUBMIT_OBSERVATION'] ?>
+							</a>
+						</li>
+						<li>
+							<a href="../collections/editor/editreviewer.php?display=1&collid=<?= $collId ?>">
+								<?= $LANG['REVIEW_EDITS'] ?>
+							</a>
+						</li>
+						<?php
+						if (!empty($ACTIVATE_DUPLICATES)) {
+							?>
+							<li>
+								<a href="../collections/datasets/duplicatemanager.php?collid=<?= $collId ?>">
+									<?= $LANG['DUP_CLUSTER'] ?>
+								</a>
+							</li>
+							<?php
+						}
+						?>
+						<li>
+							<a href="#" onclick="newWindow = window.open('personalspecbackup.php?collid=<?= $collId ?>','bucollid','scrollbars=1,toolbar=0,resizable=1,width=600,height=400,left=20,top=20');">
+								<?= $LANG['DOWNLOAD_BACKUP'] ?>
+							</a>
+						</li>
+						<li>
+							<a href="../collections/misc/commentlist.php?collid=<?= $collId ?>">
+								<?= $LANG['VIEW_COMMENTS'] ?>
+							</a>
+							<?php if($commCnt = $specHandler->unreviewedCommentsExist($collId)) echo '- <span style="color:orange">' . $commCnt . ' ' . $LANG['UNREVIEWED'] . '</span>'; ?>
+						</li>
+						<!--
+						<li>
+							<a href="../collections/cleaning/index.php?collid=<?= $collId ?>">
+								<?= $LANG['DATA_CLEANING'] ?>
+							</a>
+						</li>
+						-->
+					</ul>
+				</section>
 				<?php
-				foreach($oArr as $collId => $secArr){
-					$cName = $secArr['collectionname'].' ('.$secArr['institutioncode'].($secArr['collectioncode']?'-'.$secArr['collectioncode']:'').')';
-					echo '<li><a href="../collections/misc/collprofiles.php?collid='.$collId.'&emode=1">'.$cName.'</a></li>';
-				}
+			}
+			if($cArr){
 				?>
-			</ul>
-		</fieldset>
-		<?php
-	}
-	$genAdminArr = array();
-	if($genArr && isset($USER_RIGHTS['CollAdmin'])){
-		$genAdminArr = array_intersect_key($genArr,array_flip($USER_RIGHTS['CollAdmin']));
-		if($genAdminArr){
-			?>
-			<fieldset>
-				<legend><?php echo (isset($LANG['GEN_OBS_ADMIN'])?$LANG['GEN_OBS_ADMIN']:'General Observation Administration'); ?></legend>
-				<ul>
-					<?php
-					foreach($genAdminArr as $id => $secArr){
-						$cName = $secArr['collectionname'].' ('.$secArr['institutioncode'].($secArr['collectioncode']?'-'.$secArr['collectioncode']:'').')';
-						echo '<li><a href="../collections/misc/collprofiles.php?collid='.$id.'&emode=1">'.$cName.'</a></li>';
-					}
+				<section class="fieldset-like">
+					<h2>
+						<span>
+							<?php echo $LANG['COL_MANAGE']; ?>
+						</span>
+					</h2>
+					<ul>
+						<?php
+						foreach($cArr as $collId => $secArr){
+							$cName = $secArr['collectionname'] . ' (' . $secArr['institutioncode'] . ($secArr['collectioncode'] ? '-' . $secArr['collectioncode'] : '') . ')';
+							echo '<li><a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">' . htmlspecialchars($cName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></li>';
+						}
+						?>
+					</ul>
+				</section>
+				<?php
+			}
+			if($oArr){
+				?>
+				<section class="fieldset-like">
+					<h2><span><?php echo $LANG['OBS_MANAGEMENT'] ?></span></h2>
+					<ul>
+						<?php
+						foreach($oArr as $collId => $secArr){
+							$cName = $secArr['collectionname'] . ' (' . $secArr['institutioncode'] . ($secArr['collectioncode'] ? '-' . $secArr['collectioncode'] : '') . ')';
+							echo '<li><a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">' . htmlspecialchars($cName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></li>';
+						}
+						?>
+					</ul>
+				</section>
+				<?php
+			}
+			$genAdminArr = array();
+			if($genArr && isset($USER_RIGHTS['CollAdmin'])){
+				$genAdminArr = array_intersect_key($genArr,array_flip($USER_RIGHTS['CollAdmin']));
+				if($genAdminArr){
 					?>
-				</ul>
-			</fieldset>
-			<?php
-		}
-	}
-	?>
-	<fieldset>
-		<legend><?php echo (isset($LANG['MISC_TOOLS'])?$LANG['MISC_TOOLS']:'Miscellaneous Tools'); ?></legend>
-		<ul>
-			<li><a href="../collections/datasets/index.php"><?php echo (isset($LANG['DATASET_MANAGEMENT'])?$LANG['DATASET_MANAGEMENT']:'Dataset Management'); ?></a></li>
-			<?php
-			if((count($cArr)+count($oArr)) > 1){
-				?>
-				<li><a href="../collections/georef/batchgeoreftool.php"><?php echo (isset($LANG['CROSS_COL_GEOREF'])?$LANG['CROSS_COL_GEOREF']:'Cross-Collection Georeferencing Tool'); ?></a></li>
-				<?php
-				if(isset($USER_RIGHTS['CollAdmin']) && count(array_diff($USER_RIGHTS['CollAdmin'],array_keys($genAdminArr))) > 1){
-					?>
-					<li><a href="../collections/cleaning/taxonomycleaner.php"><?php echo (isset($LANG['CROSS_COL_TAXON'])?$LANG['CROSS_COL_TAXON']:'Cross Collection Taxonomy Cleaning Tool'); ?></a></li>
+					<section class="fieldset-like">
+						<h2><span><?php echo $LANG['GEN_OBS_ADMIN'] ?></span></h2>
+						<ul>
+							<?php
+							foreach($genAdminArr as $id => $secArr){
+								$cName = $secArr['collectionname'] . ' (' . $secArr['institutioncode'] . ($secArr['collectioncode'] ? '-' . $secArr['collectioncode'] : '') . ')';
+								echo '<li><a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($id, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">' . htmlspecialchars($cName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></li>';
+							}
+							?>
+						</ul>
+					</section>
 					<?php
 				}
 			}
 			?>
-		</ul>
-	</fieldset>
-	<?php
-}
-?>
-</div>
+			<section class="fieldset-like">
+				<h2><span><?php echo $LANG['MISC_TOOLS'] ?></span></h2>
+				<ul>
+					<li><a href="../collections/datasets/index.php"><?= $LANG['DATASET_MANAGEMENT'] ?></a></li>
+					<?php
+					if((count($cArr)+count($oArr)) > 1){
+						?>
+						<li><a href="../collections/georef/batchgeoreftool.php"><?= $LANG['CROSS_COL_GEOREF'] ?></a></li>
+						<?php
+						if(isset($USER_RIGHTS['CollAdmin']) && count(array_diff($USER_RIGHTS['CollAdmin'],array_keys($genAdminArr))) > 1){
+							?>
+							<li><a href="../collections/cleaning/taxonomycleaner.php"><?= $LANG['CROSS_COL_TAXON'] ?></a></li>
+							<?php
+						}
+					}
+					?>
+				</ul>
+			</section>
+			<?php
+		}
+		?>
+	</div>
+</html>
