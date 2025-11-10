@@ -3,6 +3,12 @@ include_once('../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OtherCatalog.php');
 ini_set('max_execution_time', 300);
 
+//allow partial bufferring, real-time updates on progress
+@apache_setenv('no-gzip', 1);
+@ini_set('zlib.output_compression', 0);
+@ini_set('implicit_flush', 1);
+ob_implicit_flush(1);
+while (ob_get_level() > 0) ob_end_flush();
 $message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['run_copy'])) {

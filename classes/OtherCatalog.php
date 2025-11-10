@@ -14,6 +14,20 @@ class OtherCatalog {
     public function copyOtherCatalogNumbers() {
         $lastId = 0;
         $startTime = microtime(true);
+        //calculate total count of records to be processed
+        $totalSql = "SELECT COUNT(*) AS total
+                     FROM omoccurrences
+                     WHERE TRIM(otherCatalogNumbers) != ''
+                       AND occid NOT IN (SELECT occid FROM omoccuridentifiers)";
+        $totalResult = $this->conn->query($totalSql);
+        $total = ($totalResult && $row = $totalResult->fetch_assoc()) ? intval($row['total']) : 0;
+
+        echo "<div style='margin-bottom:10px;'>Total records to process: <b>{$total}</b></div>";
+        if (ob_get_level() > 0) ob_flush();
+        flush();
+
+        if ($total === 0)
+            return ['processed' => 0, 'inserted' => 0, 'time' => '0s'];
 
         while (true) {
             $sql = "SELECT occid, otherCatalogNumbers
@@ -33,11 +47,15 @@ class OtherCatalog {
                 $lastId = $occid;
                 $this->processCatalogNumber($occid, $row['otherCatalogNumbers']);
                 $this->totalProcessed++;
-            }
 
-            echo "<div>{$this->totalProcessed} total processed... last occid $lastId</div>";
-            ob_flush();
-            flush();
+                //show progress
+                if ($this->totalProcessed % 1000 === 0 || $this->totalProcessed === $total) {
+                    $percent = round(($this->totalProcessed / $total) * 100, 2);
+                    echo "<div>{$this->totalProcessed} / {$total} processed ({$percent}%)</div>";
+                    if (ob_get_level() > 0) ob_flush();
+                    flush();
+                }
+            }
         }
 
         $timeTaken = round(microtime(true) - $startTime, 2) . "s";
