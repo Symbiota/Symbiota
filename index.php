@@ -67,62 +67,61 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 
 					//Enter number of days of most recent images that should be included
 					$numDays = 30;
-                                //---------------------------DO NOT CHANGE BELOW HERE-----------------------------
-                                ini_set('max_execution_time', 120);
-                                include_once($SERVER_ROOT.'/classes/PluginsManager.php');
-                                $pluginManager = new PluginsManager();
-                                echo $pluginManager->createSlideShow($ssId,$numSlides,$width,$numDays,$imageType,$clId,$dayInterval,$interval);
-                                ?>
-                        </div>
-                </div>
-                <?php
-                if($LANG_TAG=='en'){
-                        ?>
-                        <h1>Welcome to the Guatemala Biodiversity Portal</h1>
-                        <div>
-                                <p>
-                                This portal aims to serve as a collaborative resource to integrate biodiversity data from
-                                Guatemala. This portal represents an accessible option for the management and digitization of data from
-                                biological collections or field observations gathered by entities and researchers dedicated to the study of biodiversity.
-                                The portal also allows the generation of maps, checklists and other interactive projects. The information entered in this portal can
-                                be published to the <a href="https://www.gbif.org" target="_blank">Global Biodiversity Information Facility (GBIF)</a>, from where it can be harvested
-                                by other regional and international aggregators. The data within the portal are freely available for use, but proper citation is encouraged.
-                                </p>
-                                <p>
-                                The Guatemala Biodiversity Portal is hosted by the <a href="https://biodiversity.ku.edu/symbiota-support-hub" target="_blank">Symbiota Support Hub</a>
-                                at the University of Kansas, USA. For further information or to have a collection profile established, please contact
-                                Samanta Orellana (<a href="mailto:samanta.orellana@ku.edu">samanta.orellana@ku.edu</a>) or Zabdi López (<a href="mailto:zabdi@alumni.uvg.edu.gt">zabdi@alumni.uvg.edu.gt</a>)
-                                </p>
-                        </div>
-                        <?php
-                }
-                else{
-                        ?>
-                        <h1>Bienvenidos al Portal de Biodiversidad de Guatemala</h1>
-                        <div>
-                                <p>
-                                Este portal está diseñado para funcionar como un recurso colaborativo para la integración de datos de biodiversidad de Guatemala
-                                provenientes de distintas fuentes. El portal ofrece una alternativa libre y gratuita para el manejo y digitalización de datos
-                                provenientes de colecciones biológicas, así como de observaciones de campo de entidades o investigadores dedicados al estudio de la
-                                biodiversidad. El portal, además, permite la generación de mapas, listados de especies y otros proyectos interactivos.
-                                La información ingresada en este portal también puede ser añadida a la Instalación
-                                <a href="https://www.gbif.org" target="_blank">Global de Información de Biodiversidad -GBIF-</a>, desde donde puede alimentar a otros
-                                agregadores de información locales e internacionales. Los datos añadidos al portal están disponibles para ser utilizados por investigadores,
-                                estudiantes y público en general, pero se insta a citar adecuadamente el origen de los datos.
-                                </p>
-                                <p>
-                                El portal está alojado en los servidores del 
-                                <a href="https://biodiversity.ku.edu/symbiota-support-hub" target="_blank">Symbiota Support Hub</a> de la Universidad de Kansas,
-                                en Estados Unidos. Para más información o para gestionar un perfil por favor comunicarse con
-                                Samanta Orellana (<a href="mailto:samanta.orellana@ku.edu">samanta.orellana@ku.edu</a>) o Zabdi López (<a href="mailto:zabdi@alumni.uvg.edu.gt">zabdi@alumni.uvg.edu.gt</a>).
-                                </p>
-                        </div>
-                        <?php
-                }
-                ?>
-        </div>
-        <?php
-        include($SERVER_ROOT.'/includes/footer.php');
-        ?>
+
+					//---------------------------DO NOT CHANGE BELOW HERE-----------------------------
+					ini_set('max_execution_time', 120);
+					include_once($SERVER_ROOT.'/classes/PluginsManager.php');
+					$pluginManager = new PluginsManager();
+					echo $pluginManager->createSlideShow($ssId,$numSlides,$width,$numDays,$imageType,$clId,$dayInterval,$interval);
+					?>
+				</div>
+			</div>
+			<?php
+			if($LANG_TAG=='en'){
+			?>
+			<h1>Welcome to the Guatemala Biodiversity Portal</h1>
+			<div>
+				<p>
+				This portal represents an accessible option for the management and digitization of data from
+				biological collections or field observations gathered by entities and researchers dedicated to the study of biodiversity.
+				The portal also allows the generation of maps, checklists and other interactive projects. The information entered in this portal can
+				be published to the <a href="https://www.gbif.org" target="_blank">Global Biodiversity Information Facility (GBIF)</a>, from where it can be harvested
+				by other regional and international aggregators. The data within the portal are freely available for use, but proper citation is encouraged.
+				</p>
+				<p>
+				The Guatemala Biodiversity Portal is hosted by the <a href="https://biodiversity.ku.edu/symbiota-support-hub" target="_blank">Symbiota Support Hub</a>
+				at the University of Kansas, USA. For further information or to have a collection profile established, please contact
+				Samanta Orellana (<a href="mailto:samanta.orellana@ku.edu">samanta.orellana@ku.edu</a>) or Zabdi López (<a href="mailto:zabdi@alumni.uvg.edu.gt">zabdi@alumni.uvg.edu.gt</a>).
+				</p>
+			</div>
+			<?php
+			}
+			else{
+			?>
+			<h1>Bienvenidos al Portal de Biodiversidad de Guatemala</h1>
+			<div>
+				<p>
+				El portal ofrece una alternativa libre y gratuita para el manejo y digitalización de datos
+				provenientes de colecciones biológicas, así como de observaciones de campo de entidades o investigadores dedicados al estudio de la
+				biodiversidad. El portal, además, permite la generación de mapas, listados de especies y otros proyectos interactivos.
+				La información ingresada en este portal también puede ser añadida a la Instalación
+				<a href="https://www.gbif.org" target="_blank">Global de Información de Biodiversidad -GBIF-</a>, desde donde puede alimentar a otros
+				agregadores de información locales e internacionales. Los datos añadidos al portal están disponibles para ser utilizados por investigadores,
+				estudiantes y público en general, pero se insta a citar adecuadamente el origen de los datos.
+				</p>
+				<p>
+				El portal está alojado en los servidores del 
+				<a href="https://biodiversity.ku.edu/symbiota-support-hub" target="_blank">Symbiota Support Hub</a> de la Universidad de Kansas,
+				en Estados Unidos. Para más información o para gestionar un perfil por favor comunicarse con
+				Samanta Orellana (<a href="mailto:samanta.orellana@ku.edu">samanta.orellana@ku.edu</a>) o Zabdi López (<a href="mailto:zabdi@alumni.uvg.edu.gt">zabdi@alumni.uvg.edu.gt</a>).
+				</p>
+			<?php
+			}
+			?>
+		</div>
+	</main>
+	<?php
+	include($SERVER_ROOT . '/includes/footer.php');
+	?>
 </body>
 </html>
