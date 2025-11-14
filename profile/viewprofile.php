@@ -153,8 +153,10 @@ if($isEditor){
 				<ul>
 					<?php
 					if($FLORA_MOD_IS_ACTIVE){
+						$excludeParent = 0;
+						if(!empty($_REQUEST['excludeparent'])) $excludeParent = $_REQUEST['excludeparent'];
 						?>
-						<li><a href="../checklists/checklistadminmeta.php?userid=<?= $userId; ?>"><?= $LANG['SPEC_CHECKLIST'] ?></a></li>
+						<li><a href="../checklists/checklistadminmeta.php?userid=<?= $userId . ($excludeParent ? '&excludeparent=' . $excludeParent : ''); ?>"><?= $LANG['SPEC_CHECKLIST'] ?></a></li>
 						<?php
 					}
 					?>

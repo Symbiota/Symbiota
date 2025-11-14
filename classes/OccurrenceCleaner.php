@@ -3,6 +3,7 @@ include_once($SERVER_ROOT.'/config/dbconnection.php');
 include_once($SERVER_ROOT.'/classes/Manager.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT.'/classes/AgentManager.php');
+include_once($SERVER_ROOT.'/classes/utilities/QueryUtil.php');
 
 class OccurrenceCleaner extends Manager{
 
@@ -588,48 +589,43 @@ class OccurrenceCleaner extends Manager{
 		return $retArr;
 	}
 
-	//Coordinate field verifier
-	public function getCoordStats(){
+	/**
+	 * Gets the counts for occurrences without points, with points, no points with
+	 * verbatim point, no points without verbatim points. Operates on collId set in instance
+	 *
+	 * @return Array Uses following structure [?coord, ?noCoord, ?noCoord_verbatim, ?noCoord_noVerbatim]
+	 **/
+	public function getCoordStats(): Array {
 		$retArr = array();
-		//Get count georeferenced
-		$sql = 'SELECT count(*) AS cnt '.
-			'FROM omoccurrences '.
-			'WHERE (collid IN('.$this->collid.')) AND (decimallatitude IS NOT NULL) AND (decimallongitude IS NOT NULL)';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retArr['coord'] = $r->cnt;
-		}
-		$rs->free();
+		$pointSql = 'SELECT count(*) AS cnt FROM omoccurrences o 
+			INNER JOIN omoccurpoints p on p.occid = o.occid 
+			WHERE collid IN(?)';
+		$retArr['coord'] = QueryUtil::tryExecuteQuery(
+			$this->conn, 
+			$pointSql, 
+			[$this->collid]
+		)->fetch_object()->cnt;
 
-		//Get count not georeferenced
-		$sql = 'SELECT count(*) AS cnt '.
-			'FROM omoccurrences '.
-			'WHERE (collid IN('.$this->collid.')) AND (decimallatitude IS NULL) AND (decimallongitude IS NULL)';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retArr['noCoord'] = $r->cnt;
-		}
-		$rs->free();
+		$totalSql = 'SELECT count(*) AS cnt FROM omoccurrences o WHERE collid IN(?)';
+		$totalCount = QueryUtil::tryExecuteQuery(
+			$this->conn, 
+			$totalSql, 
+			[$this->collid]
+		)->fetch_object()->cnt;
 
-		//Count not georeferenced with verbatimCoordinates info
-		$sql = 'SELECT count(*) AS cnt '.
-			'FROM omoccurrences '.
-			'WHERE (collid IN('.$this->collid.')) AND (decimallatitude IS NULL) AND (decimallongitude IS NULL) AND (verbatimcoordinates IS NOT NULL)';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retArr['noCoord_verbatim'] = $r->cnt;
-		}
-		$rs->free();
+		$retArr['noCoord'] = $totalCount - $retArr['coord'];
 
-		//Count not georeferenced without verbatimCoordinates info
-		$sql = 'SELECT count(*) AS cnt '.
-			'FROM omoccurrences '.
-			'WHERE (collid IN('.$this->collid.')) AND (decimallatitude IS NULL) AND (decimallongitude IS NULL) AND (verbatimcoordinates IS NULL)';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retArr['noCoord_noVerbatim'] = $r->cnt;
-		}
-		$rs->free();
+		$noCoordsVerbatimSql = 'SELECT count(*) as cnt FROM omoccurrences o
+		LEFT JOIN omoccurpoints p on p.occid = o.occid
+		WHERE collid IN(?) and p.occid IS NULL and verbatimCoordinates IS NOT NULL';
+		$retArr['noCoord_verbatim'] = QueryUtil::tryExecuteQuery(
+			$this->conn, 
+			$noCoordsVerbatimSql, 
+			[$this->collid]
+		)->fetch_object()->cnt;
+
+		$retArr['noCoord_noVerbatim'] = $retArr['noCoord'] - $retArr['noCoord_verbatim'];
+
 		return $retArr;
 	}
 

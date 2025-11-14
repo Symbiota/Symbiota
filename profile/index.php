@@ -107,6 +107,10 @@ elseif($action == 'login'){
 	else{
 		if($pHandler->getErrorMessage()){
 			$statusStr = $pHandler->getErrorMessage();
+			if(preg_match('/^[A-Z_]+$/', $statusStr)){
+				//Error is a LANG code
+				$statusStr = $LANG[$statusStr].'<ERR/>';
+			}
 		}
 		else{
 			if(isset($LANG['INCORRECT'])) $statusStr = $LANG['INCORRECT'];
@@ -265,7 +269,6 @@ include($SERVER_ROOT.'/includes/header.php');
 		<?php
 			if($THIRD_PARTY_OID_AUTH_ENABLED){
 				$_SESSION['refurl'] = array_key_exists('refurl', $_REQUEST) ? $_REQUEST['refurl'] : '';
-
 		?>
 			<div class="flex-item-login bottom-breathing-room-rel">
 				<form action='<?= $LOGIN_ACTION_PAGE ?>' onsubmit="">

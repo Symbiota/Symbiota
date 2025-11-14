@@ -683,9 +683,11 @@ class SpecUploadBase extends SpecUpload{
 		$this->conn->query($sql);
 
 		//Convert state abbreviations to full spellings
-		$sql = 'UPDATE uploadspectemp u INNER JOIN geographicthesaurus s ON u.stateProvince = s.abbreviation
+		$sql = 'UPDATE uploadspectemp u 
+			INNER JOIN geographicthesaurus s ON u.stateProvince = s.abbreviation AND s.geoLevel = 60
+			INNER JOIN geographicthesaurus c ON s.parentID = c.geoThesID AND c.geoLevel = 50
 			SET u.stateProvince = s.geoTerm
-			WHERE s.geoLevel = 60 AND u.collid IN('.$this->collId.')';
+			WHERE u.collid IN('.$this->collId.') AND (u.country = c.geoterm OR u.countryCode = c.iso2)';
 		$this->conn->query($sql);
 
 		//Fill null country with state matches

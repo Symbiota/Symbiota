@@ -1,7 +1,8 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistAdmin.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/checklistadminmeta.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/checklists/checklistadminmeta.' . $LANG_TAG . '.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/checklistadminmeta.' . $LANG_TAG . '.php'))
+	include_once($SERVER_ROOT . '/content/lang/checklists/checklistadminmeta.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT.'/content/lang/checklists/checklistadminmeta.en.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 
@@ -19,17 +20,20 @@ $defaultArr = array();
 if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
 	$defaultArr = json_decode($clArray['defaultsettings'], true);
 }
-$dynamPropsArr = array();
-if(isset($clArray['dynamicProperties']) && $clArray['dynamicProperties']){
-	$dynamPropsArr = json_decode($clArray['dynamicProperties'], true);
-}
+
+$excludeParent = 0;
+if(!empty($clArray['excludeparent'])) $excludeParent = $clArray['excludeparent'];
+elseif(!empty($_REQUEST['excludeparent'])) $excludeParent = filter_var($_REQUEST['excludeparent'], FILTER_SANITIZE_NUMBER_INT);
+$clType = '';
+if(!empty($clArray['type'])) $clType = $clArray['type'];
+elseif($excludeParent) $clType = 'excludespp';
 ?>
 <script type="text/javascript" src="../js/tinymce/tinymce.min.js"></script>
 <script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js" type="text/javascript"></script>
 <script type="text/javascript">
-	var f = document.getElementById("checklisteditform");
-
-	if(f.type.value == "excludespp") setExclusionChecklistMode(f);
+	<?php
+	if($excludeParent) echo 'setExclusionChecklistMode();';
+	?>
 
 	tinymce.init({
 		selector: "textarea",
@@ -88,28 +92,33 @@ if(isset($clArray['dynamicProperties']) && $clArray['dynamicProperties']){
 		return true;
 	}
 
-	function checklistTypeChanged(f){
-		if(f.type.value == "excludespp"){
-			setExclusionChecklistMode(f);
+	function checklistTypeChanged(){
+		if(document.getElementById("checklisteditform").type.value == "excludespp"){
+			setExclusionChecklistMode();
 		}
 		else{
-			f.excludeparent.style.display = "none";
+			document.getElementById("exclude-div").style.display = "none";
+			document.getElementById("checklisteditform").excludeparent.value = '';
 			document.getElementById("accessDiv").style.display = "block";
 			document.getElementById("authorDiv").style.display = "block";
 			document.getElementById("locDiv").style.display = "block";
 			document.getElementById("inclusiveClDiv").style.display = "block";
 			document.getElementById("geoDiv").style.display = "block";
+			document.getElementById("externalService-div").style.display = "block";
+			document.getElementById("polygon-div").style.display = "block";
 		}
 	}
 
-	function setExclusionChecklistMode(f){
-		f.excludeparent.style.display = "inline";
+	function setExclusionChecklistMode(){
+		document.getElementById("exclude-div").style.display = "block";
 		document.getElementById("accessDiv").style.display = "none";
 		document.getElementById("authorDiv").style.display = "none";
 		document.getElementById("locDiv").style.display = "none";
 		document.getElementById("inclusiveClDiv").style.display = "none";
 		document.getElementById("geoDiv").style.display = "none";
-		f.activatekey.checked = false;
+		document.getElementById("externalService-div").style.display = "none";
+		document.getElementById("polygon-div").style.display = "none";
+		document.getElementById("checklisteditform").activatekey.checked = false;
 	}
 
 	function openMappingPointAid() {
@@ -122,37 +131,44 @@ if(isset($clArray['dynamicProperties']) && $clArray['dynamicProperties']){
 		let xsid = document.getElementById('externalserviceid');
 		let xstaxonfilter = document.getElementById('externalserviceiconictaxon');
 		if(xsrv.value == '') {
+			document.getElementById("externalServiceID-div").style.display = "none";
 			xsid.setAttribute("disabled","");
 			xstaxonfilter.setAttribute("disabled","");
 		} else {
+			document.getElementById("externalServiceID-div").style.display = "block";
 			xsid.removeAttribute("disabled");
 			xstaxonfilter.removeAttribute("disabled");
 		}
 	}
 </script>
+<style>
+	label{ font-weight: bold; display:block; }
+</style>
 <?php
 if(!$clid){
 	?>
 	<div style="float:right;">
-		<a href="#" onclick="toggle('checklistDiv')" title="<?php echo htmlspecialchars($LANG['CREATE_CHECKLIST'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><img src="../images/add.png" style="width:1.5em;" /></a>
+		<a href="#" onclick="toggle('checklistDiv')" title="<?= $LANG['CREATE_CHECKLIST'] ?>"><img src="../images/add.png" style="width:1.5em;" /></a>
 	</div>
 	<?php
 }
+$displayform = false;
+if($clid || !empty($_REQUEST['excludeparent'])) $displayform = true;
 ?>
-<div id="checklistDiv" style="display:<?php echo ($clid?'block':'none'); ?>;">
+<div id="checklistDiv" style="display:<?= ($displayform ? 'block' : 'none') ?>;">
 	<form id="checklisteditform" action="<?php echo $CLIENT_ROOT; ?>/checklists/checklistadmin.php" method="post" name="editclmatadata" onsubmit="return validateChecklistForm(this)">
 		<fieldset style="margin:15px;padding:10px;">
 			<legend><b><?php echo ($clid?$LANG['EDITCHECKDET']:$LANG['CREATECHECKDET']); ?></b></legend>
 			<div>
-				<b><?php echo $LANG['CHECKNAME']; ?></b><br/>
+				<label><?php echo $LANG['CHECKNAME']; ?></label>
 				<input type="text" name="name" style="width:95%" value="<?php echo $clManager->getClName();?>" />
 			</div>
 			<div id="authorDiv">
-				<b><?php echo $LANG['AUTHORS'];?></b><br/>
+				<label><?php echo $LANG['AUTHORS'];?></label>
 				<input type="text" name="authors" style="width:95%" value="<?php echo ($clArray?$clArray["authors"]:''); ?>" />
 			</div>
 			<div>
-				<b><?php echo $LANG['CHECKTYPE'];?></b><br/>
+				<label><?php echo $LANG['CHECKTYPE'];?></label>
 				<?php
 				$userClArr = $clManager->getUserChecklistArr();
 				?>
@@ -161,65 +177,74 @@ if(!$clid){
 					<?php
 					if($userClArr){
 						?>
-						<option value="excludespp" <?php echo ($clArray && $clArray["type"]=='excludespp'?'SELECTED':'') ?>><?php echo $LANG['EXCLUDESPP']; ?></option>
+						<option value="excludespp" <?php echo ($clType == 'excludespp' ? 'SELECTED' : '') ?>><?= $LANG['EXCLUDESPP'] ?></option>
 						<?php
 					}
 					if(isset($GLOBALS['USER_RIGHTS']['RareSppAdmin']) || $IS_ADMIN){
-						echo '<option value="rarespp"' . ($clArray && $clArray["type"]=='rarespp'?'SELECTED':'') . '>' . $LANG['RARETHREAT'] . '</option>';
+						echo '<option value="rarespp"' . ($clType == 'rarespp' ? 'SELECTED' : '') . '>' . $LANG['RARETHREAT'] . '</option>';
 					}
 					?>
 				</select>
-				<?php
-				if($userClArr){
-					?>
-					<select name="excludeparent" style="<?php echo ($clid && isset($clArray['excludeparent'])?'':'display:none'); ?>">
-						<option value=""><?php echo $LANG['SELECT_PARENT']; ?></option>
+			</div>
+			<?php
+			if($userClArr){
+				?>
+				<div id="exclude-div" style="margin-left:15px;<?= $excludeParent ? '' : 'display:none' ?>">
+					<label><?= $LANG['FOR_PARENT_LIST'] ?></label>
+					<select name="excludeparent">
+						<option value=""><?= $LANG['SELECT_PARENT'] ?></option>
 						<option value="">-------------------------------</option>
 						<?php
 						foreach($userClArr as $userClid => $userClValue){
-							echo '<option value="' . $userClid . '" ' . (isset($clArray['excludeparent'])&&$userClid==$clArray['excludeparent']?'SELECTED':'') . '>' . $userClValue . '</option>';
+							echo '<option value="' . $userClid . '" ' . ($userClid==$excludeParent ? 'SELECTED' : '') . '>' . $userClValue . '</option>';
 						}
 						?>
 					</select>
-					<?php
-				}
-				?>
-			</div>
-			<div class="top-breathing-room-rel">
-				<b><?php echo $LANG['EXTSERVICE']; ?></b><br/>
+				</div>
+				<?php
+			}
+
+			$dynamPropsArr = array();
+			if(isset($clArray['dynamicProperties']) && $clArray['dynamicProperties']){
+				$dynamPropsArr = json_decode($clArray['dynamicProperties'], true);
+			}
+			?>
+			<div id="externalService-div" class="top-breathing-room-rel">
+				<label><?php echo $LANG['EXTSERVICE']; ?></label>
 				<select name="externalservice" id="externalservice" onchange="enableDisableExtServiceFields()">
 					<option value=""></option>
 					<option value="">-------------------------------</option>
 					<option value="inaturalist" <?php echo ((isset($dynamPropsArr['externalservice']) && $dynamPropsArr['externalservice']=='inaturalist')?'selected':''); ?>><?php echo $LANG['INATURALIST']; ?></option>
 				</select>
-			</div>
-			<div style="width:100%" class="top-breathing-room-rel">
-				<div style="float:left;width:25%">
-				<b><?php echo $LANG['EXTSERVICEID']; ?></b><br/>
-				<input type="text" name="externalserviceid" id="externalserviceid" style="width:100%" value="<?php echo ($dynamPropsArr?$dynamPropsArr['externalserviceid']:''); ?>" />
-				</div><div style="float:left;margin-left:15px;">
-				<b><?php echo $LANG['EXTSERVICETAXON']; ?></b><br/>
-				<input type="text" name="externalserviceiconictaxon" id="externalserviceiconictaxon" style="width:100%" value="<?php echo ($dynamPropsArr?$dynamPropsArr['externalserviceiconictaxon']:''); ?>" />
+				<div id="externalServiceID-div" style="margin-left:15px;<?= empty($dynamPropsArr['externalservice']) ? 'display:none' : '' ?>" class="top-breathing-room-rel">
+					<div>
+						<label><?php echo $LANG['EXTSERVICEID']; ?></label>
+						<input type="text" name="externalserviceid" id="externalserviceid" style="width: 350px" value="<?php echo ($dynamPropsArr?$dynamPropsArr['externalserviceid']:''); ?>" />
+					</div>
+					<div>
+						<label><?php echo $LANG['EXTSERVICETAXON']; ?></label>
+						<input type="text" name="externalserviceiconictaxon" id="externalserviceiconictaxon" style="width: 350px" value="<?php echo ($dynamPropsArr?$dynamPropsArr['externalserviceiconictaxon']:''); ?>" />
+					</div>
 				</div>
 			</div>
-			<div id="locDiv" style="clear:both" class="top-breathing-room-rel">
-				<b><?php echo $LANG['LOC']; ?></b><br/>
+			<div id="locDiv" class="top-breathing-room-rel">
+				<label><?php echo $LANG['LOC']; ?></label>
 				<input type="text" name="locality" style="width:95%" value="<?php echo ($clArray?$clArray["locality"]:''); ?>" />
 			</div>
-			<div>
-				<b><?php echo $LANG['CITATION']; ?></b><br/>
+			<div class="top-breathing-room-rel">
+				<label><?php echo $LANG['CITATION']; ?></label>
 				<input type="text" name="publication" style="width:95%" value="<?php echo ($clArray?$clArray["publication"]:''); ?>" />
 			</div>
-			<div>
-				<b><?php echo $LANG['ABSTRACT']; ?></b><br/>
+			<div class="top-breathing-room-rel">
+				<label><?php echo $LANG['ABSTRACT']; ?></label>
 				<textarea name="abstract" style="width:95%" rows="6"><?php echo ($clArray?$clArray["abstract"]:''); ?></textarea>
 			</div>
-			<div>
-				<b><?php echo $LANG['NOTES']; ?></b><br/>
+			<div class="top-breathing-room-rel">
+				<label><?php echo $LANG['NOTES']; ?></label>
 				<input type="text" name="notes" style="width:95%" value="<?php echo ($clArray?$clArray["notes"]:''); ?>" />
 			</div>
 			<div id="inclusiveClDiv">
-				<b><?php echo $LANG['REFERENCE_CHECK']; ?>:</b><br/>
+				<label><?php echo $LANG['REFERENCE_CHECK']; ?>:</label>
 				<select name="parentclid">
 					<option value=""><?php echo $LANG['NONE']; ?></option>
 					<option value="">----------------------------------</option>
@@ -233,23 +258,23 @@ if(!$clid){
 			</div>
 			<div id="geoDiv" style="width:100%" class="top-breathing-room-rel">
 				<div style="float:left;">
-					<b><?php echo $LANG['LATCENT']; ?></b><br/>
+					<label><?php echo $LANG['LATCENT']; ?></label>
 					<input id="decimallatitude" type="text" name="latcentroid" style="width:110px;" value="<?php echo ($clArray?$clArray["latcentroid"]:''); ?>" />
 				</div>
 				<div style="float:left;margin-left:15px;">
-					<b><?php echo $LANG['LONGCENT']; ?></b><br/>
+					<label><?php echo $LANG['LONGCENT']; ?></label>
 					<input id="decimallongitude" type="text" name="longcentroid" style="width:110px;" value="<?php echo ($clArray?$clArray["longcentroid"]:''); ?>" />
 				</div>
 				<div style="float:left;margin:25px 3px;">
 					<a href="#" onclick="openMappingPointAid();return false;"><img src="../images/world.png" style="width:1em;" /></a>
 				</div>
 				<div style="float:left;margin-left:15px;">
-					<b><?php echo $LANG['POINTRAD']; ?></b><br/>
+					<label><?php echo $LANG['POINTRAD']; ?></label>
 					<input type="number" id="coordinateuncertaintyinmeters" name="pointradiusmeters" style="width:110px;" value="<?php echo ($clArray?$clArray["pointradiusmeters"]:''); ?>" />
 				</div>
 			</div>
-			<div style="clear:both" class="top-breathing-room-rel">
-				<fieldset style="width:350px;padding:10px">
+			<div id="polygon-div" style="clear:both" class="top-breathing-room-rel">
+				<fieldset style="width:350px;">
 					<legend><b><?php echo $LANG['POLYFOOT']; ?></b></legend>
 					<span id="polyDefDiv" style="display:<?php echo ($clArray && $clArray["hasfootprintwkt"]?'inline':'none'); ?>;">
 						<?php echo $LANG['POLYGON_DEFINED']; ?>

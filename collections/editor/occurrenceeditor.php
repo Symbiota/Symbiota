@@ -579,6 +579,10 @@ else{
 			display: inline;
 		}
 
+		.field-div{
+			margin: 3px;
+		}
+
 		.editimg{ width: 15px; }
 
 		.button-toggle {
@@ -1486,6 +1490,11 @@ else{
 												<a href="#" onclick="return dwcDoc('dupe-count')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
 												<input type="text" name="duplicatequantity" value="<?php echo array_key_exists('duplicatequantity',$occArr)?$occArr['duplicatequantity']:''; ?>" onchange="fieldChanged('duplicatequantity');" />
 											</div>
+											<div id="dataGeneralizationsDiv" class="field-div" title="<?php echo $LANG['AKA_GENERAL']; ?>">
+												<?php echo $LANG['DATA_GENERALIZATIONS']; ?>
+												<a href="#" onclick="return dwcDoc('data-generalizations')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+												<input type="text" name="datageneralizations" value="<?php echo array_key_exists('datageneralizations',$occArr)?$occArr['datageneralizations']:''; ?>" onchange="fieldChanged('datageneralizations');" />
+											</div>
 										</div>
 										<div style="padding:3px;clear:both;">
 											<div id="institutionCodeDiv" class="field-div" title="<?php echo $LANG['INST_CODE_EXPLAIN']; ?>">
@@ -1503,26 +1512,39 @@ else{
 												<a href="#" onclick="return dwcDoc('owner-code-override')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
 												<input type="text" name="ownerinstitutioncode" maxlength="32" value="<?php echo array_key_exists('ownerinstitutioncode',$occArr)?$occArr['ownerinstitutioncode']:''; ?>" onchange="fieldChanged('ownerinstitutioncode');" />
 											</div>
+										</div>
+										<div style="padding:3px;clear:both;">
 											<div id="basisOfRecordDiv" class="field-div">
 												<?php echo $LANG['BASIS_OF_RECORD']; ?>
 												<a href="#" onclick="return dwcDoc('basis-of-record')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
 												<?php
-												$borArr = array('FossilSpecimen'=>0,'HumanObservation'=>0,'LivingSpecimen'=>0,'MachineObservation'=>0,'PreservedSpecimen'=>0);
-												if(isset($occArr['basisofrecord']) && $occArr['basisofrecord']){
-													if(in_array($occArr['basisofrecord'],$borArr)) $borArr[$occArr['basisofrecord']] = 1;
-													else $borArr[$occArr['basisofrecord']] = 2;
+												$borArr = array('FossilSpecimen'=>0,'HumanObservation'=>0,'LivingSpecimen'=>0,'MachineObservation'=>0,'PreservedSpecimen'=>0,);
+												if(isset($occArr['basisofrecord'])){
+													if($occArr['basisofrecord']){
+														$borFound = false;
+														foreach($borArr as $borKey => $borValue){
+															if(strtolower($borKey) == strtolower($occArr['basisofrecord'])){
+																$borArr[$borKey] = 1;
+																$borFound = true;
+																break;
+															}
+														}
+														if(!$borFound) $borArr[$occArr['basisofrecord']] = 2;
+													}
 												}
-												if(!isset($occArr['basisofrecord']) || !$occArr['basisofrecord']){
+												else{
 													if($collType == 'obs') $borArr['HumanObservation'] = 1;
 													elseif($collType == 'paleo') $borArr['FossilSpecimen'] = 1;
 													elseif($collType == 'spec') $borArr['PreservedSpecimen'] = 1;
 												}
 												?>
 												<select name="basisofrecord" onchange="fieldChanged('basisofrecord');">
+													<option value="">--------------------------</option>
 													<?php
 													foreach($borArr as $bValue => $statueCode){
-														if($statueCode == 2) echo '<option value="">---'.$LANG['NON_SANCTIONED'].'---</option><option SELECTED>'.$bValue.'</option>';
-														else echo '<option '.($statueCode?'SELECTED':'').'>'.$bValue.'</option>';
+														$borDisplay = $bValue;
+														if($statueCode == 2) $borDisplay .= ' (' . $LANG['NON_SANCTIONED'] . ')';
+														echo '<option ' . ($statueCode ? 'SELECTED' : '') . ' value="' . $bValue . '">' . $borDisplay . '</option>';
 													}
 													?>
 												</select>
@@ -1551,11 +1573,6 @@ else{
 													}
 													?>
 												</select>
-											</div>
-											<div id="dataGeneralizationsDiv" class="field-div" title="<?php echo $LANG['AKA_GENERAL']; ?>">
-												<?php echo $LANG['DATA_GENERALIZATIONS']; ?>
-												<a href="#" onclick="return dwcDoc('data-generalizations')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-												<input type="text" name="datageneralizations" value="<?php echo array_key_exists('datageneralizations',$occArr)?$occArr['datageneralizations']:''; ?>" onchange="fieldChanged('datageneralizations');" />
 											</div>
 										</div>
 										<?php

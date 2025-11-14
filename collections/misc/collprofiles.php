@@ -297,7 +297,7 @@ if ($SYMB_UID) {
 			if ($collData['collectioncode']) $codeStr .= '-' . $collData['collectioncode'];
 			$codeStr .= ')';
 			$_SESSION['colldata'] = $collData;
-			echo '<h1 class="page-heading">' . $LANG['COLL_PROF_FOR'] . ':<br>' . $collData['collectionname'] . $codeStr . '</h1>';
+			echo '<h2 class="page-heading"><span class="screen-reader-only">' . $LANG['COLL_PROF_FOR'] . ':<br></span>' . $collData['collectionname'] . $codeStr . '</h2>';
 			// GBIF citations widget
 			if ($datasetKey) {
 				echo '<div style="margin-left: 10px; margin-bottom: 20px;">';
@@ -617,9 +617,11 @@ if ($SYMB_UID) {
 				</div>
 				<?php
 			}
+			if(isset($collData['fulldescription'])){
 			?>
-			<div class="coll-description bottom-breathing-room-rel"><?= $collData['fulldescription'] ?></div>
+				<div class="coll-description bottom-breathing-room-rel"><?= $collData['fulldescription'] ?></div>
 			<?php
+			}
 			if(isset($collData['resourcejson'])){
 				if($resourceArr = json_decode($collData['resourcejson'], true)){
 					$title = $LANG['HOMEPAGE'];

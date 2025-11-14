@@ -124,7 +124,29 @@ class ProfileManager extends Manager{
 			}
 			else echo 'error preparing statement: '.$this->conn->error;
 		}
+		if(!$status) $this->checkResetRequired();
 		return $status;
+	}
+
+	private function checkResetRequired(){
+		//Check to see if password field was set to NULL, which forces a password reset
+		try {
+			$sql = 'SELECT uid, firstname, username, password FROM users WHERE password IS NULL AND ';
+			if($this->uid) {
+				$sql .= '(uid = ?)';
+				$params = [ $this->uid ];
+			} else {
+				$sql .= '(username = ? OR email = ?)';
+				$params = [ $this->userName, $this->userName ];
+			}
+			$rs = QueryUtil::executeQuery($this->conn, $sql, $params);
+			$user = $rs->fetch_object();
+			if($user){
+				$this->errorMessage = 'PASSWORD_RESET_REQUIRED';
+			}
+		} catch (Exception $e) {
+			return false;
+		}
 	}
 
 	private function authenticateUsingPasswordBcrypt($pwdStr){
@@ -145,10 +167,10 @@ class ProfileManager extends Manager{
 				$sql,
 				$params
 			);
-
 			$user = $rs->fetch_object();
 
-			if(!$user->password) {
+			if(empty($user->password)) {
+				if(!empty($user->username)) $this->errorMessage = 'PASSWORD_RESET_REQUIRED';
 				return false;
 			}
 

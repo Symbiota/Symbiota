@@ -306,39 +306,44 @@ class OccurrenceCollectionProfile extends OmCollections{
 		return $returnArr;
 	}
 
-	public function getGeographyStats($country,$state){
+	public function getGeographyStats($country, $state){
 		$retArr = Array();
+		$isEditor = $this->isEditor();
 		$sql = '';
 		if($state){
-			$sql = 'SELECT o.county as termstr, Count(*) AS cnt '.
-				'FROM omoccurrences o '.
-				'WHERE (o.CollID = '.$this->collid.') '.($country?'AND (o.country = "'.$this->cleanInStr($country).'") ':'').
-				'AND (o.stateprovince = "'.$this->cleanInStr($state).'") AND (o.county IS NOT NULL) '.
-				'GROUP BY o.StateProvince, o.county';
+			$sql = 'SELECT county as termstr, COUNT(*) AS cnt
+				FROM omoccurrences
+				WHERE (collID = '.$this->collid.') '.($country?'AND (country = "'.$this->cleanInStr($country).'") ':'').
+				'AND (stateprovince = "'.$this->cleanInStr($state).'") AND (county IS NOT NULL) ';
+			if(!$isEditor) $sql .= 'AND (recordSecurity != 5) ';
+			$sql .= 'GROUP BY stateProvince, county';
 		}
 		elseif($country){
-			$sql = 'SELECT o.stateprovince as termstr, Count(*) AS cnt '.
-				'FROM omoccurrences o '.
-				'WHERE (o.CollID = '.$this->collid.') AND (o.StateProvince IS NOT NULL) AND (o.country = "'.$this->cleanInStr($country).'") '.
-				'GROUP BY o.StateProvince, o.country';
+			$sql = 'SELECT stateprovince as termstr, county as child, COUNT(*) AS cnt
+				FROM omoccurrences
+				WHERE (collID = '.$this->collid.') AND (stateProvince IS NOT NULL) AND (country = "'.$this->cleanInStr($country).'") ';
+			if(!$isEditor) $sql .= 'AND (recordSecurity != 5) ';
+			$sql .= 'GROUP BY stateProvince, country';
 		}
 		else{
-			$sql = 'SELECT o.country as termstr, Count(*) AS cnt '.
-				'FROM omoccurrences o '.
-				'WHERE (o.CollID = '.$this->collid.') AND (o.Country IS NOT NULL) '.
-				'GROUP BY o.Country ';
+			$sql = 'SELECT country as termstr, stateProvince as child, COUNT(*) AS cnt
+				FROM omoccurrences
+				WHERE (collID = '.$this->collid.') AND (country IS NOT NULL) ';
+			if(!$isEditor) $sql .= 'AND (recordSecurity != 5) ';
+			$sql .= 'GROUP BY country ';
 		}
-		//echo $sql; exit;
 		$rs = $this->conn->query($sql);
-		while($row = $rs->fetch_object()){
-			$t = $row->termstr;
-			$cnt = $row->cnt;
+		while($r = $rs->fetch_object()){
+			$t = $r->termstr;
+			$cnt = $r->cnt;
 			if($state){
 				$t = trim(str_ireplace(array(' county',' co.',' counties'),'',$t));
 				if(array_key_exists($t, $retArr)) $cnt = $cnt + $retArr[$t];
 			}
-			//if($country) $t = ucwords(strtolower($t));
-			if($t) $retArr[$t] = $cnt;
+			if($t){
+				$retArr[$t]['cnt'] = $cnt;
+				$retArr[$t]['hasChild'] = (!empty($r->child) ? 1 : 0);
+			}
 		}
 		$rs->free();
 		ksort($retArr);
@@ -347,23 +352,40 @@ class OccurrenceCollectionProfile extends OmCollections{
 
 	public function getTaxonomyStats($famStr){
 		$retArr = Array();
-		$sql = 'SELECT IFNULL(ts.family,o.family) as taxon, count(DISTINCT o.occid) as cnt '.
-			'FROM omoccurrences o LEFT JOIN taxstatus ts ON o.tidinterpreted = ts.tid '.
-			'WHERE (o.collid = '.$this->collid.') AND (ts.taxauthid = 1 OR ts.taxauthid IS NULL) '.
-			'GROUP BY IFNULL(ts.family,o.family)';
+		$isEditor = $this->isEditor();
+		$sql = 'SELECT IFNULL(ts.family, o.family) as taxon, o.tidInterpreted, COUNT(DISTINCT o.occid) as cnt
+			FROM omoccurrences o LEFT JOIN taxstatus ts ON o.tidinterpreted = ts.tid
+			WHERE (o.collid = '.$this->collid.') AND o.family != o.sciname AND (ts.taxauthid = 1 OR ts.taxauthid IS NULL) ';
+		if(!$isEditor) $sql .= 'AND (o.recordSecurity != 5) ';
+		$sql .= 'GROUP BY taxon';
 		if($famStr){
-			$sql = 'SELECT t.unitname1 as taxon, count(o.occid) as cnt '.
-				'FROM omoccurrences o INNER JOIN taxa t ON o.tidinterpreted = t.tid '.
-				'WHERE (o.family = "'.$this->cleanInStr($famStr).'" OR o.sciname = "'.$this->cleanInStr($famStr).'") AND (o.collid = '.$this->collid.') AND (t.unitname1 IS NOT NULL) AND (t.rankid > 140) '.
-				'GROUP BY t.unitname1';
+			$sql = 'SELECT t.unitname1 as taxon, COUNT(o.occid) as cnt
+				FROM omoccurrences o INNER JOIN taxa t ON o.tidInterpreted = t.tid
+				WHERE (o.family = "'.$this->cleanInStr($famStr).'") AND (o.collid = '.$this->collid.') AND (t.rankid > 140) ';
+			if(!$isEditor) $sql .= 'AND (o.recordSecurity != 5) ';
+			$sql .= 'GROUP BY taxon';
 		}
-		//echo $sql; exit;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			if($r->taxon) $retArr[ucwords($r->taxon)] = $r->cnt;
+			if($r->taxon){
+				$taxon = ucwords($r->taxon);
+				$retArr[$taxon]['cnt'] = $r->cnt;
+				$retArr[$taxon]['hasChild'] = (empty($r->tidInterpreted) ? 0 : 1);
+			}
 		}
 		$rs->free();
 		return $retArr;
+	}
+
+	private function isEditor(){
+		if (!empty($GLOBALS['SYMB_UID'])){
+			if(!empty($GLOBALS['IS_ADMIN'])) return true;
+			if ($this->collid && !empty($GLOBALS['USER_RIGHTS'])) {
+				if (array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) && in_array($this->collid, $GLOBALS['USER_RIGHTS']['CollAdmin'])) return true;
+				if (array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array($this->collid, $GLOBALS['USER_RIGHTS']['CollEditor'])) return true;
+			}
+		}
+		return false;
 	}
 
 	//Statistic functions
