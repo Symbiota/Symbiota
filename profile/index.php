@@ -90,6 +90,10 @@ elseif($action == 'login'){
 	else{
 		if($pHandler->getErrorMessage()){
 			$statusStr = $pHandler->getErrorMessage();
+			if(preg_match('/^[A-Z_]+$/', $statusStr)){
+				//Error is a LANG code
+				$statusStr = $LANG[$statusStr].'<ERR/>';
+			}
 		}
 		else{
 			$statusStr = $LANG['INCORRECT'] . '<ERR/>';

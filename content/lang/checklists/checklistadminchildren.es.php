@@ -9,15 +9,14 @@ Date Translated: 2021-08-05; 2024-02-20
 
 $LANG['CHILD_CHECKLIST'] = 'Listados inferiores';
 $LANG['CHILD_DESCRIBE'] = 'Los listados de especies heredarán nombres científicos, vouchers, notas, etc. de todos los listados inferiores.
-		Añadir un nuevo taxon o voucher a un listado inferior lo añadirá automáticamente  a todos los listados superiores.
-		La relación inferior y superior puede trascender niveles múltiples (p.e. país &lt;- estado &lt;- condado).
-		Notar que solamente los listados derivados pueden ser removidos.';
+	Añadir un nuevo taxon o voucher a un listado inferior lo añadirá automáticamente  a todos los listados superiores.';
 $LANG['LINK_NEW'] = 'Enlazar nuevo Listado';
 $LANG['SELECT_CHILD'] = 'Seleccionar Listado Inferior';
 $LANG['ADD_CHILD'] = 'Añadir Listado Inferior';
 $LANG['SURE'] = 'Está seguro que quiere remover el listado';
 $LANG['AS_CHILD'] = 'como un listado inferior';
 $LANG['NO_CHILDREN'] = 'No hay Listados Inferiores';
+$LANG['CREATE_EXCLUSION_LIST'] = 'Create an Exclusion child checklist';
 $LANG['PARENTS'] = 'Listados Superiores';
 $LANG['NO_PARENTS'] = 'No hay Listados Superiores';
 $LANG['BATCH_PARSE_SP_LIST'] = 'Lista de especies de análisis por lotes';

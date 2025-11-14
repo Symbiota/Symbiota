@@ -36,7 +36,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 
 			<p>
 				Thematic Collections Network Award:
-				<a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=------" target="_blank">-----</a>
+				<a href="https://www.nsf.gov/awardsearch/show-award/?AWD_ID=------" target="_blank">-----</a>
 			</p>
 
 		</div>

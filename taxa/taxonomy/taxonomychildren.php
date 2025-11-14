@@ -5,12 +5,8 @@ include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load('taxa/taxonomy/taxonomychildren');
 
-$tid = $_REQUEST['tid'];
-$taxAuthId = array_key_exists('taxauthid', $_REQUEST)?$_REQUEST['taxauthid']:1;
-
-//Sanitation
-if(!is_numeric($tid)) $tid = 0;
-if(!is_numeric($taxAuthId)) $taxAuthId = 1;
+$tid = filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT);
+$taxAuthId = array_key_exists('taxauthid', $_REQUEST) ? filter_var($_REQUEST['taxauthid'], FILTER_SANITIZE_NUMBER_INT) : 1;
 
 $taxonEditorObj = new TaxonomyEditorManager();
 $taxonEditorObj->setTid($tid);
@@ -27,12 +23,14 @@ $childrenArr = $taxonEditorObj->getChildren();
 			<?php
 			if($childrenArr){
 				foreach($childrenArr as $childTid => $childArr){
-					echo '<div style="margin:3px 10px;">';
-					echo '<a href="taxoneditor.php?tid=' . htmlspecialchars($childTid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><i>' . htmlspecialchars($childArr['sciname'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</i> ' . htmlspecialchars($childArr['author'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
-					if($childArr['accTid'] && $childArr['accTid'] != $childTid){
-						echo '<span style="margin-left:10px">&#10140; <a href="taxoneditor.php?tid=' . htmlspecialchars($childArr['accTid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><i>' . htmlspecialchars($childArr['accSciname'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</i> ' . htmlspecialchars($childArr['accAuthor'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></span>';
+					if($childTid != $tid){
+						echo '<div style="margin:3px 10px;">';
+						echo '<a href="taxoneditor.php?tid=' . $childTid . '"><i>' . htmlspecialchars($childArr['sciname'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</i> ' . htmlspecialchars($childArr['author'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
+						if($childArr['accTid'] && $childArr['accTid'] != $childTid){
+							echo '<span style="margin-left:10px">&#10140; <a href="taxoneditor.php?tid=' . htmlspecialchars($childArr['accTid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><i>' . htmlspecialchars($childArr['accSciname'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</i> ' . htmlspecialchars($childArr['accAuthor'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></span>';
+						}
+						echo '</div>';
 					}
-					echo '</div>';
 				}
 				echo '<div style="margin-top:20px;">* '.(isset($LANG['SHOWING_DIRECT'])?$LANG['SHOWING_DIRECT']:'Showing direct children only').'</div>';
 			}

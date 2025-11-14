@@ -13,7 +13,6 @@ if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/c
 
 //Sanitation
 if(!is_numeric($collid)) $collid = 0;
-
 $cleanManager = new OccurrenceCleaner();
 if($collid) $cleanManager->setCollId($collid);
 $collMap = current($cleanManager->getCollMap());
@@ -27,6 +26,7 @@ if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,
 if($collMap['colltype'] == 'General Observations'){
 	$cleanManager->setObsUid($SYMB_UID);
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -139,6 +139,7 @@ if($collMap['colltype'] == 'General Observations'){
 					</h3>
 					<ul>
 						<?php
+
 						$statsArr = $cleanManager->getCoordStats();
 						?>
 						<li>Georeferenced: <?php echo $statsArr['coord']; ?>
