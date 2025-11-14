@@ -1206,7 +1206,7 @@ class DwcArchiverCore extends Manager{
 				}
 				$emlArr['collMetadata'][$id]['resourceLogoUrl'] = $imgLink;
 			}
-			$emlArr['collMetadata'][$id]['onlineUrl'] = $collArr['url'];
+			$emlArr['collMetadata'][$id]['onlineUrl'] = $collArr['url'] ?? '';
 			$emlArr['collMetadata'][$id]['intellectualRights'] = $collArr['rights'];
 			if ($collArr['rightsholder']) $emlArr['collMetadata'][$id]['additionalInfo'] = $collArr['rightsholder'];
 			if ($collArr['usageterm']) $emlArr['collMetadata'][$id]['additionalInfo'] = $collArr['usageterm'];
@@ -1445,7 +1445,7 @@ class DwcArchiverCore extends Manager{
 						}
 					} else {
 						$collElem2 = $newDoc->createElement($collKey);
-						$collElem2->appendChild($newDoc->createTextNode($collValue));
+						$collElem2->appendChild($newDoc->createTextNode($collValue ?? ''));
 						$collElem->appendChild($collElem2);
 					}
 				}
@@ -1711,6 +1711,9 @@ class DwcArchiverCore extends Manager{
 						}
 					}
 
+					if(!isset($this->collArr[$r['collID']])){
+						$this->setCollArr($r['collID'], 'internalCall');
+					}
 					//Set occurrenceID GUID or skip records if not defined (required output)
 					if(!$r['occurrenceID']) {
 						if($guidTarget = $this->collArr[$r['collID']]['guidtarget']){
@@ -1724,9 +1727,6 @@ class DwcArchiverCore extends Manager{
 						continue;
 					}
 					$hasRecords = true;
-					if(!isset($this->collArr[$r['collID']])){
-						$this->setCollArr($r['collID'], 'internalCall');
-					}
 					//Protect sensitive records
 					if ($this->redactLocalities && $r['recordSecurity'] == 1 && !in_array($r['collID'], $this->rareReaderArr)) {
 						$protectedFields = array();

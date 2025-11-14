@@ -110,72 +110,74 @@ class DwcArchiverMedia extends DwcArchiverBaseManager{
 				$stmt->execute();
 				$rs = $stmt->get_result();
 				while($r = $rs->fetch_assoc()){
-					if ($r['identifier'] && substr($r['identifier'], 0, 1) == '/') $r['identifier'] = $serverDomain . $r['identifier'];
-					if ($r['accessURI'] && substr($r['accessURI'], 0, 1) == '/') $r['accessURI'] = $serverDomain . $r['accessURI'];
-					if($r['thumbnailAccessURI']){
-						if (substr($r['thumbnailAccessURI'], 0, 10) == 'processing') $r['thumbnailAccessURI'] = '';
-						elseif (substr($r['thumbnailAccessURI'], 0, 1) == '/') $r['thumbnailAccessURI'] = $serverDomain . $r['thumbnailAccessURI'];
-					}
-					if($r['goodQualityAccessURI']) {
-						if ($r['goodQualityAccessURI'] == 'empty' || substr($r['goodQualityAccessURI'], 0, 10) == 'processing') $r['goodQualityAccessURI'] = '';
-						elseif (substr($r['goodQualityAccessURI'], 0, 1) == '/') $r['goodQualityAccessURI'] = $serverDomain . $r['goodQualityAccessURI'];
-					}
-					$collid = $r['collid'];
-					unset($r['collid']);
-					$r['rights'] = $collArr[$collid]['rights'];
-					$r['owner'] = $collArr[$collid]['rightsholder'];
-					$r['webstatement'] = $collArr[$collid]['accessrights'];
-					if ($this->schemaType != 'backup') {
-						if ($r['rights'] && stripos($r['rights'], 'creativecommons.org') === 0) {
-							$r['webstatement'] = $r['rights'];
-							$r['rights'] = '';
-							if (!$r['usageterms'] && $r['webstatement']) {
-								if (strpos($r['webstatement'], '/zero/1.0/')) {
-									$r['usageterms'] = 'CC0 1.0 (Public-domain)';
+					if(!empty($r['occid'])){
+						if ($r['identifier'] && substr($r['identifier'], 0, 1) == '/') $r['identifier'] = $serverDomain . $r['identifier'];
+						if ($r['accessURI'] && substr($r['accessURI'], 0, 1) == '/') $r['accessURI'] = $serverDomain . $r['accessURI'];
+						if($r['thumbnailAccessURI']){
+							if (substr($r['thumbnailAccessURI'], 0, 10) == 'processing') $r['thumbnailAccessURI'] = '';
+							elseif (substr($r['thumbnailAccessURI'], 0, 1) == '/') $r['thumbnailAccessURI'] = $serverDomain . $r['thumbnailAccessURI'];
+						}
+						if($r['goodQualityAccessURI']) {
+							if ($r['goodQualityAccessURI'] == 'empty' || substr($r['goodQualityAccessURI'], 0, 10) == 'processing') $r['goodQualityAccessURI'] = '';
+							elseif (substr($r['goodQualityAccessURI'], 0, 1) == '/') $r['goodQualityAccessURI'] = $serverDomain . $r['goodQualityAccessURI'];
+						}
+						$collid = $r['collid'];
+						unset($r['collid']);
+						$r['rights'] = $collArr[$collid]['rights'];
+						$r['owner'] = $collArr[$collid]['rightsholder'];
+						$r['webstatement'] = $collArr[$collid]['accessrights'];
+						if ($this->schemaType != 'backup') {
+							if ($r['rights'] && stripos($r['rights'], 'creativecommons.org') === 0) {
+								$r['webstatement'] = $r['rights'];
+								$r['rights'] = '';
+								if (!$r['usageterms'] && $r['webstatement']) {
+									if (strpos($r['webstatement'], '/zero/1.0/')) {
+										$r['usageterms'] = 'CC0 1.0 (Public-domain)';
+									}
+									elseif (strpos($r['webstatement'], '/by/')) {
+										$r['usageterms'] = 'CC BY (Attribution)';
+									}
+									elseif (strpos($r['webstatement'], '/by-sa/')) {
+										$r['usageterms'] = 'CC BY-SA (Attribution-ShareAlike)';
+									}
+									elseif (strpos($r['webstatement'], '/by-nc/')) {
+										$r['usageterms'] = 'CC BY-NC (Attribution-NonCommercial-ShareAlike)';
+									}
+									elseif (strpos($r['webstatement'], '/by-nc-sa/')) {
+										$r['usageterms'] = 'CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)';
+									}
 								}
-								elseif (strpos($r['webstatement'], '/by/')) {
-									$r['usageterms'] = 'CC BY (Attribution)';
+							}
+							if (!$r['usageterms']) $r['usageterms'] = 'CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)';
+						}
+						$r['providermanagedid'] = 'urn:uuid:' . $r['providermanagedid'];
+						$r['associatedSpecimenReference'] = $urlPathPrefix . 'collections/individual/index.php?occid=' . $r['occid'];
+						if($r['accessURI']){
+							$extStr = strtolower(substr($r['accessURI'], strrpos($r['accessURI'], '.') + 1));
+							if ($r['format'] == '') {
+								if ($extStr == 'jpg' || $extStr == 'jpeg') {
+									$r['format'] = 'image/jpeg';
 								}
-								elseif (strpos($r['webstatement'], '/by-sa/')) {
-									$r['usageterms'] = 'CC BY-SA (Attribution-ShareAlike)';
+								elseif ($extStr == 'gif') {
+									$r['format'] = 'image/gif';
 								}
-								elseif (strpos($r['webstatement'], '/by-nc/')) {
-									$r['usageterms'] = 'CC BY-NC (Attribution-NonCommercial-ShareAlike)';
+								elseif ($extStr == 'png') {
+									$r['format'] = 'image/png';
 								}
-								elseif (strpos($r['webstatement'], '/by-nc-sa/')) {
-									$r['usageterms'] = 'CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)';
+								elseif ($extStr == 'tiff' || $extStr == 'tif') {
+									$r['format'] = 'image/tiff';
+								}
+								else {
+									$r['format'] = '';
 								}
 							}
 						}
-						if (!$r['usageterms']) $r['usageterms'] = 'CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)';
+						$r['metadataLanguage'] = 'en';
+						$this->encodeArr($r);
+						$this->addcslashesArr($r);
+						$this->writeOutRecord($r);
+						$recordCnt++;
 					}
-					$r['providermanagedid'] = 'urn:uuid:' . $r['providermanagedid'];
-					$r['associatedSpecimenReference'] = $urlPathPrefix . 'collections/individual/index.php?occid=' . $r['occid'];
-					if($r['accessURI']){
-						$extStr = strtolower(substr($r['accessURI'], strrpos($r['accessURI'], '.') + 1));
-						if ($r['format'] == '') {
-							if ($extStr == 'jpg' || $extStr == 'jpeg') {
-								$r['format'] = 'image/jpeg';
-							}
-							elseif ($extStr == 'gif') {
-								$r['format'] = 'image/gif';
-							}
-							elseif ($extStr == 'png') {
-								$r['format'] = 'image/png';
-							}
-							elseif ($extStr == 'tiff' || $extStr == 'tif') {
-								$r['format'] = 'image/tiff';
-							}
-							else {
-								$r['format'] = '';
-							}
-						}
-					}
-					$r['metadataLanguage'] = 'en';
-					$this->encodeArr($r);
-					$this->addcslashesArr($r);
-					$this->writeOutRecord($r);
-					$recordCnt++;
 				}
 				$rs->free();
 				$stmt->close();
