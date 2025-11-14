@@ -5,6 +5,7 @@ include_once($SERVER_ROOT . '/classes/OccurrenceTaxaManager.php');
 include_once($SERVER_ROOT . '/classes/AssociationManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+Language::load('classes/OccurrenceManager');
 
 class OccurrenceManager extends OccurrenceTaxaManager {
 
@@ -25,13 +26,8 @@ class OccurrenceManager extends OccurrenceTaxaManager {
  		if(array_key_exists('reset',$_REQUEST) && $_REQUEST['reset'])  $this->reset();
 		$this->associationManager = new AssociationManager();
 		$this->readRequestVariables();
-		$langTag = '';
-		if(!empty($GLOBALS['LANG_TAG'])) $langTag = $GLOBALS['LANG_TAG'];
 
-		Language::load('classes/OccurrenceManager');
-
-		global $LANG;
-		$this->LANG = $LANG;
+		$this->LANG = $GLOBALS['LANG'];
  	}
 
 	public function __destruct(){
@@ -146,7 +142,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$sqlWhere = substr_replace($sqlWhere,'',-1);
 			$sqlWhere .= $this->associationManager->getAssociatedRecords($this->searchTermArr, 'association-type') . ')';
 		}
-		
+
 
 		//Country term
 		//Note: $this->displaySearchArr is set within the readRequestVariables function
@@ -755,7 +751,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 	}
 
 	public function getPaleoTimes(){
-		$paleoTimes = []; 
+		$paleoTimes = [];
 		if (!empty($GLOBALS['ACTIVATE_PALEO'])) {
 			$sql = "SELECT gtsterm, myaStart, myaEnd FROM omoccurpaleogts";
 			$rs = $this->conn->query($sql);

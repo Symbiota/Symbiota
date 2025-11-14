@@ -13,7 +13,7 @@ class DwcArchiverAttribute extends DwcArchiverBaseManager{
 
 	public function initiateProcess($filePath){
 		$this->setFieldArr();
-		$this->setSqlBase();
+		$this->setSql();
 
 		$this->setFileHandler($filePath);
 	}
@@ -57,16 +57,18 @@ class DwcArchiverAttribute extends DwcArchiverBaseManager{
 		return array_diff_key($dataArr,array_flip($trimArr));
 	}
 
-	private function setSqlBase(){
+	private function setSql(){
 		if($this->fieldArr){
 			$sqlFrag = '';
 			foreach($this->fieldArr['fields'] as $colName){
 				if($colName) $sqlFrag .= ', '.$colName;
 			}
-			$this->sqlBase = 'SELECT '.trim($sqlFrag,', ').'
+			$this->sql = 'SELECT '.trim($sqlFrag,', ').'
 				FROM tmtraits m INNER JOIN tmstates s ON m.traitid = s.traitid
 				INNER JOIN tmattributes a ON s.stateid = a.stateid
-				INNER JOIN users u ON a.createduid = u.uid ';
+				INNER JOIN omexportoccurrences e ON a.occid = e.occid
+				INNER JOIN users u ON a.createduid = u.uid
+				WHERE (e.omExportID = ?) ';
 		}
 	}
 }

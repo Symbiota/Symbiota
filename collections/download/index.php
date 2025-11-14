@@ -3,7 +3,7 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-Language::load(['collections/editor/rpc/getPaleoGtsTable', 'collections/download/index']);
+Language::load('collections/download/index');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 
@@ -112,7 +112,7 @@ $filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIEN
 			}, timeToClose);
 		}
 
-        
+
 	</script>
 	<style>
 		fieldset{ margin:10px; padding:10px }

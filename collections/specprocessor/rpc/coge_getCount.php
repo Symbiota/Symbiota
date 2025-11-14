@@ -27,7 +27,7 @@ if($collid && is_numeric($collid)){
 		if($customField1) $dwcaHandler->addCondition($customField1,$_REQUEST['ct1'],$_REQUEST['cv1']);
 		if($customField2) $dwcaHandler->addCondition($customField2,$_REQUEST['ct2'],$_REQUEST['cv2']);
 		if($customField3) $dwcaHandler->addCondition($customField3,$_REQUEST['ct3'],$_REQUEST['cv3']);
-		$cntStr = $dwcaHandler->getOccurrenceCnt();
+		$cntStr = $dwcaHandler->getOccurrenceCount();
 	}
 }
 echo json_encode($cntStr)
