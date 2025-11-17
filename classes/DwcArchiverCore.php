@@ -177,7 +177,7 @@ class DwcArchiverCore extends Manager{
 					$this->collArr[$r->collid]['postalcode'] = $r->postalcode ?? '';
 					$this->collArr[$r->collid]['country'] = $r->country ?? '';
 					$this->collArr[$r->collid]['phone'] = $r->phone ?? '';
-					if(!$this->includePaleo) $this->includePaleo = null;
+					if(!$this->includePaleo) $this->includePaleo = false;
 					if ($this->collArr[$r->collid]['colltype'] == 'Fossil Specimens')
 						$this->includePaleo = true;
 					if ($r->dynamicproperties) {
@@ -257,8 +257,9 @@ class DwcArchiverCore extends Manager{
     }
 
 	private function setIncludePaleo(){
-		if (((!empty($this->conditionSql) && (strpos($this->conditionSql, 'paleo.') !== false || strpos($this->conditionSql, 'early.myaStart') !== false)) ||
-			(!empty($this->customWhereSql) && strpos($this->customWhereSql, 'paleo.') !== false)))
+		if ((!empty($GLOBALS['ACTIVATE_PALEO'])) ||
+		(!empty($this->conditionSql) && (strpos($this->conditionSql, 'paleo.') !== false || strpos($this->conditionSql, 'early.myaStart') !== false)) ||
+		(!empty($this->customWhereSql) && (strpos($this->customWhereSql, 'paleo.') !== false || strpos($this->customWhereSql, 'early.myaStart') !== false)))
 			$this->includePaleo = true;
 		elseif (!empty($this->collArr)) {
 			foreach ($this->collArr as $coll) {
