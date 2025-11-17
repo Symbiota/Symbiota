@@ -52,8 +52,6 @@ $includeAssociations = !empty($_REQUEST['assoc']) ? 1 : 0;
 $pubGuid = array_key_exists('publicationguid', $_REQUEST) ? $_REQUEST['publicationguid'] : 0;
 $requestPortalGuid = array_key_exists('portalguid', $_REQUEST) ? $_REQUEST['portalguid'] : 0;
 
-$_SESSION['citationvar'] = 'collid=' . $collid;
-
 $dwcaHandler = new DwcArchiverCore();
 
 $dwcaHandler->setVerboseMode(0);

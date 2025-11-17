@@ -12,9 +12,6 @@ $LANG['REC_CITATION'] = 'Formats de citation recommandés';
 $LANG['USE_FOLLOWING'] = 'Utilisez l\'un des formats suivants pour citer les données extraites du';
 $LANG['NETWORK'] = 'réseau';
 $LANG['GENERAL_CITATION'] = 'Citation générale';
-$LANG['PUBLISHED_BY'] = 'Données d\'occurrence de la biodiversité publiées par';
-$LANG['RESPONSIBLE_FOR'] = 'Nom de la personne ou de l\'institution responsable de la maintenance du portail';
-$LANG['ACCESSED_THROUGH'] = '(accessible via le';
 $LANG['PORTAL'] = 'Portail';
 $LANG['USAGE_FROM'] = 'Utilisation des données d\'occurrence d\'institutions spécifiques';
 $LANG['ACCESS_EACH'] = 'Accéder à chaque page de profil de collection pour trouver les formats de citation disponibles';
@@ -29,7 +26,7 @@ $LANG['OCC_REC_POLICY_1_1'] = 'Bien que';
 $LANG['OCC_REC_POLICY_1_2'] = 'mettra tout en œuvre pour contrôler et documenter la qualité
                             des données qu\'elle publie, celles-ci sont mises à disposition «en l\'état».
                             Tout signalement d\'erreur dans les données doit être adressé aux conservateurs et/ou gestionnaires de collections concernés.';
-$LANG['OCC_REC_POLICY_2'] = 'ne peut être tenu responsable des dommages résultant d\'une mauvaise utilisation ou d\'une mauvaise 
+$LANG['OCC_REC_POLICY_2'] = 'ne peut être tenu responsable des dommages résultant d\'une mauvaise utilisation ou d\'une mauvaise
                             interprétation des ensembles de données, ni d\'erreurs ou d\'omissions pouvant exister dans les données.';
 $LANG['OCC_REC_POLICY_3'] = 'Il est considéré comme une question d\'éthique professionnelle de citer et
                             de reconnaître les travaux d\'autres scientifiques ayant abouti à dans les données utilisées
@@ -39,7 +36,7 @@ $LANG['OCC_REC_POLICY_4'] = 'demande aux utilisateurs de ne pas redistribuer les
                             sans l\'autorisation des propriétaires des données.
                             Cependant, les liens ou références vers ce site peuvent être publiés librement.';
 $LANG['IMAGES'] = 'Images';
-$LANG['IMAGES_POLICY_1'] = 'Les images de ce site web ont été généreusement fournies par leurs propriétaires afin 
+$LANG['IMAGES_POLICY_1'] = 'Les images de ce site web ont été généreusement fournies par leurs propriétaires afin
                             de promouvoir l\'éducation et la recherche. Ces contributeurs conservent
                             l\'intégralité des droits d\'auteur sur leurs images. Sauf indication contraire,
                             les images sont mises à disposition sous licence Creative Commons Attribution-ShareAlike.';
