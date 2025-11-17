@@ -805,7 +805,7 @@ class DwcArchiverOccurrence extends Manager{
 			//Set basic taxon level terms by matching on occurrence tid
 			$sql = 'UPDATE omexportoccurrences x INNER JOIN taxstatus ts ON x.taxonID = ts.tid
 				INNER JOIN taxa t ON ts.tidaccepted = t.tid
-				SET x.acceptedNameUsageID = t.tid, x.acceptedNameUsage = t.sciname, x.acceptedNameUsageAuthorship = t.scientificNameAuthorship
+				SET x.acceptedNameUsageID = t.tid, x.acceptedNameUsage = t.sciname, x.acceptedNameUsageAuthorship = t.author
 				WHERE x.omExportID = ?';
 			if($stmt = $this->conn->prepare($sql)){
 				try{

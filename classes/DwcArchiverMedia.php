@@ -95,6 +95,7 @@ class DwcArchiverMedia extends DwcArchiverBaseManager{
 					$this->sql .= 'AND (x.recordSecurity = 0) ';
 				}
 			}
+			$this->sql .= 'GROUP BY m.mediaID';
 		}
 	}
 

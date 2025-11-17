@@ -1434,7 +1434,7 @@ class DwcArchiverCore extends Manager{
 				}
 				$abstractStr = '';
 				if (isset($collArr['abstract']) && $collArr['abstract']) {
-					$abstractStr = $collArr['abstract'];
+					$abstractStr = $this->encodeStr($collArr['abstract']);
 					unset($collArr['abstract']);
 				}
 				foreach ($collArr as $collKey => $collValue) {
@@ -1483,7 +1483,6 @@ class DwcArchiverCore extends Manager{
 		$addMetaElem = $newDoc->createElement('additionalMetadata');
 		$addMetaElem->appendChild($metaElem);
 		$rootElem->appendChild($addMetaElem);
-
 		return $newDoc;
 	}
 
@@ -1905,7 +1904,10 @@ class DwcArchiverCore extends Manager{
 			if($recordCnt){
 				$this->extensionFieldMap['det'] = $detHandler->getFieldArrTerms();
 				$msg = $recordCnt . ' records added ';
-				if(!$recordCnt) $msg .= '(file excluded)';
+				$this->logOrEcho($msg, 1);
+			}
+			else{
+				$msg = 'No records located (file excluded)';
 				$this->logOrEcho($msg, 1);
 			}
 		}
@@ -1925,7 +1927,10 @@ class DwcArchiverCore extends Manager{
 			if($recordCnt){
 				$this->extensionFieldMap['media'] = $mediaHandler->getFieldArrTerms();
 				$msg = $recordCnt . ' records added ';
-				if(!$recordCnt) $msg .= '(file excluded)';
+				$this->logOrEcho($msg, 1);
+			}
+			else{
+				$msg = 'No records located (file excluded)';
 				$this->logOrEcho($msg, 1);
 			}
 		}
@@ -1943,7 +1948,10 @@ class DwcArchiverCore extends Manager{
 			if($recordCnt){
 				$this->extensionFieldMap['identifier'] = $identierHandler->getFieldArrTerms();
 				$msg = $recordCnt . ' records added ';
-				if(!$recordCnt) $msg .= '(file excluded)';
+				$this->logOrEcho($msg, 1);
+			}
+			else{
+				$msg = 'No records located (file excluded)';
 				$this->logOrEcho($msg, 1);
 			}
 		}
@@ -1961,7 +1969,10 @@ class DwcArchiverCore extends Manager{
 			if($recordCnt){
 				$this->extensionFieldMap['attribute'] = $attributeHandler->getFieldArrTerms();
 				$msg = $recordCnt . ' records added ';
-				if(!$recordCnt) $msg .= '(file excluded)';
+				$this->logOrEcho($msg, 1);
+			}
+			else{
+				$msg = 'No records located (file excluded)';
 				$this->logOrEcho($msg, 1);
 			}
 		}
@@ -1979,7 +1990,10 @@ class DwcArchiverCore extends Manager{
 			if($recordCnt){
 				$this->extensionFieldMap['materialSample'] = $materialSampleHandler->getFieldArrTerms();
 				$msg = $recordCnt . ' records added ';
-				if(!$recordCnt) $msg .= '(file excluded)';
+				$this->logOrEcho($msg, 1);
+			}
+			else{
+				$msg = 'No records located (file excluded)';
 				$this->logOrEcho($msg, 1);
 			}
 		}
@@ -2001,7 +2015,10 @@ class DwcArchiverCore extends Manager{
 			if($recordCnt){
 				$this->extensionFieldMap['associations'] = $associationHandler->getFieldArrTerms();
 				$msg = $recordCnt . ' records added ';
-				if(!$recordCnt) $msg .= '(file excluded)';
+				$this->logOrEcho($msg, 1);
+			}
+			else{
+				$msg = 'No records located (file excluded)';
 				$this->logOrEcho($msg, 1);
 			}
 		}
