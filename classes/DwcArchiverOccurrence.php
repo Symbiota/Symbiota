@@ -397,12 +397,12 @@ class DwcArchiverOccurrence extends Manager{
 		$sql = 'UPDATE omexportoccurrences e INNER JOIN
 			(SELECT i.occid, GROUP_CONCAT(CONCAT(i.identifierName, if(i.identifierName != "",": ",""), i.identifierValue) SEPARATOR "; ") as ocn
 			FROM omoccuridentifiers i INNER JOIN omexportoccurrences e2 ON i.occid = e2.occid
-			WHERE e2.omExportID = 333
+			WHERE e2.omExportID = ?
 			GROUP BY i.occid) intab ON e.occid = intab.occid
 			SET e.otherCatalogNumbers = intab.ocn
 			WHERE e.omExportID = ?';
 		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param('i', $this->exportID);
+			$stmt->bind_param('ii', $this->exportID, $this->exportID);
 			if($stmt->execute()) $status = true;
 			else{
 				$this->errorMessage = 'ERROR batch linking occurrences from download: ' . $stmt->error;
@@ -616,9 +616,9 @@ class DwcArchiverOccurrence extends Manager{
 
 	private function appendSpecimenDuplicateAssociations($occid, &$assocArr, &$internalAssocOccidArr){
 		$sql = 'SELECT s.occid, l.occid as occidAssociate
-				FROM omoccurduplicatelink s INNER JOIN omoccurduplicates d ON s.duplicateid = d.duplicateid
-				INNER JOIN omoccurduplicatelink l ON d.duplicateid = l.duplicateid
-				WHERE s.occid IN('.$occid.') AND s.occid != l.occid ';
+			FROM omoccurduplicatelink s INNER JOIN omoccurduplicates d ON s.duplicateid = d.duplicateid
+			INNER JOIN omoccurduplicatelink l ON d.duplicateid = l.duplicateid
+			WHERE s.occid IN('.$occid.') AND s.occid != l.occid ';
 		$rs = $this->conn->query($sql);
 		if($rs){
 			while($r = $rs->fetch_object()){
@@ -663,6 +663,26 @@ class DwcArchiverOccurrence extends Manager{
 		return $retArr;
 	}
 
+	private function getInverseRelationship($relationship){
+		if(!$this->relationshipArr) $this->setRelationshipArr();
+		if(array_key_exists($relationship, $this->relationshipArr)) return $this->relationshipArr[$relationship];
+		return $relationship;
+	}
+
+	private function setRelationshipArr(){
+		if(!$this->relationshipArr){
+			$sql = 'SELECT t.term, t.inverseRelationship FROM ctcontrolvocabterm t INNER JOIN ctcontrolvocab v  ON t.cvid = v.cvid WHERE v.tableName = "omoccurassociations" AND v.fieldName = "relationship"';
+			if($rs = $this->conn->query($sql)){
+				while($r = $rs->fetch_object()){
+					$this->relationshipArr[$r->term] = $r->inverseRelationship;
+					$this->relationshipArr[$r->inverseRelationship] = $r->term;
+				}
+				$rs->free();
+			}
+		}
+	}
+
+	//Associated genetic sequence functions
 	public function setIncludeAssociatedSequences(){
 		$sql = 'SELECT occid FROM omoccurgenetic LIMIT 1';
 		$rs = $this->conn->query($sql);
@@ -687,25 +707,6 @@ class DwcArchiverOccurrence extends Manager{
 			}
 		}
 		return trim($retStr,' |,');
-	}
-
-	private function getInverseRelationship($relationship){
-		if(!$this->relationshipArr) $this->setRelationshipArr();
-		if(array_key_exists($relationship, $this->relationshipArr)) return $this->relationshipArr[$relationship];
-		return $relationship;
-	}
-
-	private function setRelationshipArr(){
-		if(!$this->relationshipArr){
-			$sql = 'SELECT t.term, t.inverseRelationship FROM ctcontrolvocabterm t INNER JOIN ctcontrolvocab v  ON t.cvid = v.cvid WHERE v.tableName = "omoccurassociations" AND v.fieldName = "relationship"';
-			if($rs = $this->conn->query($sql)){
-				while($r = $rs->fetch_object()){
-					$this->relationshipArr[$r->term] = $r->inverseRelationship;
-					$this->relationshipArr[$r->inverseRelationship] = $r->term;
-				}
-				$rs->free();
-			}
-		}
 	}
 
 	//Append Taxonomic data
