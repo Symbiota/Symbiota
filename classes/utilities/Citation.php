@@ -20,7 +20,7 @@ class Citation{
 			echo $DEFAULT_TITLE;
 		}
 		else {
-			echo $LANG['RESPONSIBLE_FOR'];
+			echo $LANG['CUSTOM_TITLE'];
 		};
 		echo ' ' . $LANG['PORTAL'] . ' ' . GeneralUtil::getDomain() . ', ' . date('Y-m-d') . ').';
 	}
@@ -54,9 +54,29 @@ class Citation{
 			echo $DEFAULT_TITLE;
 		}
 		else {
-			echo $LANG['RESPONSIBLE_FOR'];
+			echo $LANG['CUSTOM_TITLE'];
 		};
 		echo ' ' . GeneralUtil::getDomain() . ' on ' . date('Y-m-d') . ').';
+	}
+
+	public static function dataset($datasetName, $datasetID){
+		global $LANG, $DEFAULT_TITLE;
+
+		echo 'Biodiversity occurrence data published by: ';
+		if ($DEFAULT_TITLE) {
+			echo $DEFAULT_TITLE;
+		}
+		else {
+			echo $LANG['RESPONSIBLE_FOR'];
+		};
+		echo $datasetName . ' (ID: ' . $datasetID . ') ' . GeneralUtil::getDomain() . $CLIENT_ROOT . '/portal/collections/list.php?datasetid=' . $datasetID . ' accessed via the ';
+		if ($DEFAULT_TITLE) {
+			echo $DEFAULT_TITLE;
+		}
+		else {
+			echo $LANG['CUSTOM_TITLE'];
+		};
+		echo ' ' . GeneralUtil::getDomain() . ', ' . date('Y-m-d') . ').';
 	}
 }
 ?>

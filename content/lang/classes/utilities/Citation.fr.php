@@ -5,8 +5,10 @@
  ------------------
  */
 
-$LANG['PUBLISHED_BY'] = 'Données d\'occurrence de la biodiversité publiées par';
-$LANG['RESPONSIBLE_FOR'] = 'Nom de la personne ou de l\'institution responsable de la maintenance du portail';
+$LANG['PUBLISHED_BY'] = "Données d'occurrence de la biodiversité publiées par";
+$LANG['RESPONSIBLE_FOR'] = '[NOM-OU-INSTITUTION-DES-RESPONSABLES-DU-PORTAIL]';
 $LANG['ACCESSED_THROUGH'] = '(accessible via le';
+$LANG['CUSTOM_TITLE'] = '[TITRE-PERSONNALISÉ-POUR-PORTAIL]';
 
+include('Citation.fr.override.php');
 ?>
