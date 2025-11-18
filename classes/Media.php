@@ -576,7 +576,9 @@ class Media {
 			mysqli_rollback($conn);
 
 			foreach($createdFilepaths as $filepath) {
-				unlink($filepath);
+				if(file_exists($filepath)) {
+					unlink($filepath);
+				}
 			}
 
 			array_push(self::$errors, $th->getMessage());
