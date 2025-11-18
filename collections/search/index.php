@@ -479,10 +479,10 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 									<label for="materialsampletype"><?= $LANG['MATERIAL_SAMPLE_TYPE'] ?></label>
 									<select name="materialsampletype" id="materialsampletype">
 										<option id="materialsampletype-none" data-chip="<?php echo $LANG['MATERIAL_SAMPLE'] . ': ---' ?>" value="">---------------</option>
-										<option id="materialsampletype-all-ms" data-chip="<?php echo $LANG['MATERIAL_SAMPLE'] . ': ' . $LANG['ALL_MATERIAL_SAMPLE'] ?>" value="all-ms"><?= $LANG['ALL_MATERIAL_SAMPLE'] ?></option>
+										<option id="materialsampletype-all-ms" data-chip="<?php echo $LANG['MATERIAL_SAMPLE']?>" value="all-ms"><?= $LANG['ALL_MATERIAL_SAMPLE'] ?></option>
 										<?php
 										foreach ($matSampleTypeArr as $matSampeType) {
-											echo '<option id="materialsampletype-' . $matSampeType . '" data-chip="' . $LANG['MATERIAL_SAMPLE'] . ': ' . $matSampeType . '" value="' . $matSampeType . '">' . $matSampeType . '</option>';
+											echo '<option id="materialsampletype-' . $matSampeType . '" data-chip="' . $LANG['MATERIAL_SAMPLE'] . '" value="' . $matSampeType . '">' . $matSampeType . '</option>';
 										}
 										?>
 									</select>
