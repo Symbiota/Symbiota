@@ -771,6 +771,23 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
       targetElem.checked = true;
     }
   });
+  
+  updateCategoryCheckboxes();
+}
+
+function updateCategoryCheckboxes() {
+  const categoryCheckboxes = document.querySelectorAll('input[name="cat[]"]');
+  categoryCheckboxes.forEach((categoryCheckbox) => {
+    const categoryId = categoryCheckbox.id;
+    const numberPattern = categoryId.match(/cat-(\d+-\d+)/)?.[1];
+    const childCollections = document.querySelectorAll(`input[id^="coll-"][id*="-${numberPattern}"]`);
+    if (childCollections.length > 0) {
+      const checkedChildren = Array.from(childCollections).filter(checkbox => checkbox.checked);
+      if (checkedChildren.length === childCollections.length) {
+        categoryCheckbox.checked = true;
+      }
+    }
+  });
 }
 
 function setSearchForm(frm) {
