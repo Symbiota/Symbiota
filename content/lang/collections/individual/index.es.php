@@ -42,6 +42,7 @@ $LANG['TYPE_STATUS'] = 'Estado de Tipo';
 $LANG['OBSERVER'] = 'Observador';
 $LANG['COLLECTOR'] = 'Colector';
 $LANG['NUMBER'] = 'Número';
+$LANG['EVENT_TIME'] = 'Hora del evento';
 $LANG['VERBATIM_DATE'] = 'Fecha Literal';
 $LANG['ADDITIONAL_COLLECTORS'] = 'Colectores Adicionales';
 $LANG['LOCALITY'] = 'Localidad';

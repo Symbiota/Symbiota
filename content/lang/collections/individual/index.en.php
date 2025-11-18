@@ -42,6 +42,7 @@ $LANG['OBSERVER'] = 'Observer';
 $LANG['COLLECTOR'] = 'Collector';
 $LANG['NUMBER'] = 'Number';
 $LANG['VERBATIM_DATE'] = 'Verbatim Date';
+$LANG['EVENT_TIME'] = 'Event Time';
 $LANG['ADDITIONAL_COLLECTORS'] = 'Additional Collectors';
 $LANG['LOCALITY'] = 'Locality';
 $LANG['PROTECTED'] = 'details protected';
