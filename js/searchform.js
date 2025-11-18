@@ -307,9 +307,18 @@ function updateChip(e) {
 
   // then go through remaining options and find selected items
   const optionElements = document.querySelectorAll(".content option");
+  const defaultValues = [
+    { id: "association-type-none", value: "none" },
+    { id: "taxontype-association-scientific", value: "2" },
+  ];
   optionElements.forEach((item) => {
     if (item.selected && item.value && item.hasAttribute("data-chip")) {
-      addChip(item);
+      const isInDefaultValList = defaultValues.some(
+        (val) => val.id === item.id && val.value === item.value
+      );
+      if (!isInDefaultValList) {
+        addChip(item);
+      }
     }
   });
 }
