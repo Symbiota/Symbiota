@@ -1,9 +1,9 @@
 <?php
 include_once('../config/symbini.php');
 header("Content-Type: text/html; charset=".$CHARSET);
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/misc/aboutproject.' . $LANG_TAG . '.php'))
-include_once($SERVER_ROOT . '/content/lang/misc/aboutproject.en.php');
-else include_once($SERVER_ROOT . '/content/lang/misc/aboutproject.' . $LANG_TAG . '.php');
+if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/templates/aboutproject.' . $LANG_TAG . '.php'))
+include_once($SERVER_ROOT . '/content/lang/templates/aboutproject.en.php');
+else include_once($SERVER_ROOT . '/content/lang/templates/aboutproject.' . $LANG_TAG . '.php');
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
@@ -35,7 +35,7 @@ else include_once($SERVER_ROOT . '/content/lang/misc/aboutproject.' . $LANG_TAG 
 
 			<p>
 				Thematic Collections Network Award:
-				<a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=------" target="_blank">-----</a>
+				<a href="https://www.nsf.gov/awardsearch/show-award/?AWD_ID=------" target="_blank">-----</a>
 			</p>
 
 		</div>

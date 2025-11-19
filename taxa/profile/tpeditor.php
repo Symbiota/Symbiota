@@ -10,16 +10,12 @@ include_once($SERVER_ROOT.'/classes/Media.php');
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.' . $LANG_TAG . '.php'))
 include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.' . $LANG_TAG . '.php');
 else include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.en.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset='.$CHARSET);
 
-$tid = array_key_exists("tid",$_REQUEST)?$_REQUEST["tid"]:0;
-$taxon = array_key_exists("taxon",$_REQUEST)?$_REQUEST["taxon"]:"";
-$action = array_key_exists("action",$_REQUEST)?$_REQUEST["action"]:"";
-$tabIndex = array_key_exists("tabindex",$_REQUEST)?$_REQUEST["tabindex"]:0;
-$filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
-
-if(!is_numeric($tid)) $tid = 0;
-if(!is_numeric($tabIndex)) $tabIndex = 0;
+$tid = array_key_exists('tid', $_REQUEST) ? filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$taxon = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']:'';
+$tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 
 $tEditor = null;
 if($tabIndex == 1 || $tabIndex == 2){
@@ -45,7 +41,7 @@ if(!$tid && $taxon){
 $tEditor->setTid($tid);
 $tid = $tEditor->getTid();
 
-$statusStr = "";
+$statusStr = '';
 $isEditor = false;
 if($IS_ADMIN || array_key_exists("TaxonProfile",$USER_RIGHTS)) $isEditor = true;
 
@@ -135,6 +131,7 @@ if($isEditor && $action){
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
+	$filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
 	?>
 	<script src="<?php echo $filename ?>" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/symb/shared.js"></script>
@@ -167,11 +164,6 @@ if($isEditor && $action){
 				return false;
 			}
 		}
-
-		function openOccurrenceSearch(target) {
-			occWindow=open("../../collections/misc/occurrencesearch.php?targetid="+target,"occsearch","resizable=1,scrollbars=1,width=700,height=500,left=20,top=20");
-			if (occWindow.opener == null) occWindow.opener = self;
-		}
 	</script>
 	<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
 	<style>
@@ -194,9 +186,9 @@ if($isEditor && $action){
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+		<a href="../../index.php"><?= $LANG['HOME'] ?></a> &gt;&gt;
 		<?php
-		if($tid) echo '<a href="../index.php?tid=' . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($LANG['TAX_PROF_PUBLIC_DISP'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
+		if($tid) echo '<a href="../index.php?tid=' . $tid . '">' . $LANG['TAX_PROF_PUBLIC_DISP'] . '</a> &gt;&gt; ';
 		echo '<b>'.$LANG['TAX_PROF_EDITOR'].'</b>';
 		?>
 	</div>
@@ -208,25 +200,25 @@ if($isEditor && $action){
 		 $tradeName = !empty($splitSciname['tradeName']) ? ($tEditor->standardizeTradeName($splitSciname['tradeName']) . ' ') : '';
 		 $nonItalicizedScinameComponent = $author . $cultivarEpithet . $tradeName;
 
-		 echo $LANG['TAX_PROF_EDITOR'] . ': <i>' . $splitSciname['base'] . '</i> ' . $nonItalicizedScinameComponent; 
+		 echo $LANG['TAX_PROF_EDITOR'] . ': <i>' . $splitSciname['base'] . '</i> ' . $nonItalicizedScinameComponent;
 		 ?></h1>
 		<?php
 		if($tEditor->getTid()){
 			if($isEditor){
 				if($tEditor->isForwarded()) echo '<div id="redirectedfrom">' . $LANG['REDIRECTED_FROM'] . ': <i>' . $tEditor->getSubmittedValue('sciname') . '</i></div>';
-				echo '<div id="taxonDiv"><a href="../index.php?taxon=' . htmlspecialchars($tEditor->getTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . $LANG['VIEW_PUBLIC_TAXON'] . '</a> ';
-				if($tEditor->getRankId() > 140) echo "&nbsp;<a href='tpeditor.php?tid=" . htmlspecialchars($tEditor->getParentTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'><img class='icon-img' src='../../images/toparent.png' title='" . htmlspecialchars($LANG['GO_TO_PARENT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "' /></a>";
+				echo '<div id="taxonDiv"><a href="../index.php?taxon=' . $tEditor->getTid() . '">' . $LANG['VIEW_PUBLIC_TAXON'] . '</a> ';
+				if($tEditor->getRankId() > 140) echo "&nbsp;<a href='tpeditor.php?tid=" . $tEditor->getParentTid() . "'><img class='icon-img' src='../../images/toparent.png' title='" . $LANG['GO_TO_PARENT'] . "' /></a>";
 				echo "</div>\n";
 				if($tEditor->getFamily()) echo '<div id="familyDiv"><b>' . $LANG['FAMILY'] . ':</b> ' . $tEditor->getFamily() . '</div>' . "\n";
 				if($statusStr) echo '<div style="margin:15px;font-weight:bold;font-size:120%;color:' . (stripos($statusStr,'error') !== false?'red':'green') .';">' . $statusStr . '</div>';
 				?>
 				<div id="tabs" style="margin:10px;">
 					<ul>
-						<li><a href="#commontab"><span><?php echo htmlspecialchars($LANG['SYN_VERNAC'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span></a></li>
-						<li><a href="tpimageeditor.php?tid=<?php echo htmlspecialchars($tEditor->getTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><span>' . htmlspecialchars($LANG['IMAGES'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</span></a></li>'; ?>
-						<li><a href="tpimageeditor.php?tid=<?php echo htmlspecialchars($tEditor->getTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&cat=imagequicksort'.'"><span>' . htmlspecialchars($LANG['IMAGE_SORT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</span></a></li>'; ?>
-						<li><a href="tpimageeditor.php?tid=<?php echo htmlspecialchars($tEditor->getTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&cat=imageadd'.'"><span>' . htmlspecialchars($LANG['ADD_IMAGE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</span></a></li>'; ?>
-						<li><a href="tpdesceditor.php?tid=<?php echo htmlspecialchars($tEditor->getTid(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&action='.$action.'"><span>' . htmlspecialchars($LANG['DESCRIPTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</span></a></li>'; ?>
+						<li><a href="#commontab"><span><?= $LANG['SYN_VERNAC'] ?></span></a></li>
+						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() ?>"><span><?= $LANG['IMAGES'] ?></span></a></li>
+						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&cat=imagequicksort' ?>"><span><?= $LANG['IMAGE_SORT'] ?></span></a></li>
+						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&cat=imageadd' ?>"><span><?= $LANG['ADD_IMAGE'] ?></span></a></li>
+						<li><a href="tpdesceditor.php?tid=<?= $tEditor->getTid() . '&action=' . htmlspecialchars($action, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>"><span><?= $LANG['DESCRIPTIONS'] ?></span></a></li>
 					</ul>
 					<div id="commontab">
 						<?php
@@ -411,7 +403,7 @@ if($isEditor && $action){
 							}
 							?>
 							<div style="margin:10px;">
-								*<?php echo $LANG['MOST_SYN_IN_TAX_THES'] . ' <a href="../../sitemap.php">' . htmlspecialchars($LANG['SITEMAP'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>).'; ?>
+								*<?php echo $LANG['MOST_SYN_IN_TAX_THES'] . ' <a href="../../sitemap.php">' . $LANG['SITEMAP'] . '</a>).'; ?>
 							</div>
 						</fieldset>
 					</div>

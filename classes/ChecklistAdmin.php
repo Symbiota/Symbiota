@@ -43,7 +43,8 @@ class ChecklistAdmin extends Manager{
 				$newPManager->setUserRights();
 				if($postArr['type'] == 'excludespp' && $postArr['excludeparent']){
 					//If is an exclusion checklists, link to parent checklist
-					if(!$inventoryManager->insertChildChecklist($postArr['excludeparent'], $newClid, $GLOBALS['SYMB_UID'])){
+					$inventoryManager->setClid($postArr['excludeparent']);
+					if(!$inventoryManager->insertChildChecklist($newClid, $GLOBALS['SYMB_UID'])){
 						$this->errorMessage = 'ERROR linking exclusion checklist to parent: '.$this->conn->error;
 					}
 				}
@@ -210,7 +211,7 @@ class ChecklistAdmin extends Manager{
 		$retArr = Array();
 		$targetStr = $this->clid;
 		do{
-			$sql = 'SELECT c.clid, c.name, child.clid as pclid
+			$sql = 'SELECT c.clid, c.name, c.type, child.clid as pclid
 				FROM fmchklstchildren child INNER JOIN fmchecklists c ON child.clidchild = c.clid
 				WHERE child.clid IN(' . trim($targetStr, ',') . ') AND child.clid != child.clidchild
 				ORDER BY c.name ';
@@ -218,6 +219,7 @@ class ChecklistAdmin extends Manager{
 			$targetStr = '';
 			while($r = $rs->fetch_object()){
 				$retArr[$r->clid]['name'] = $r->name;
+				$retArr[$r->clid]['type'] = $r->type;
 				$retArr[$r->clid]['pclid'] = $r->pclid;
 				$targetStr .= ',' . $r->clid;
 			}
@@ -504,12 +506,9 @@ class ChecklistAdmin extends Manager{
 	public function getManagementLists($uid){
 		$returnArr = Array();
 		if(is_numeric($uid)){
-			//Get project and checklist IDs from userpermissions
 			$clStr = '';
 			$projStr = '';
 			$sql = 'SELECT role,tablepk FROM userroles WHERE (uid = '.$uid.') AND (role = "ClAdmin" OR role = "ProjAdmin") ';
-			//$sql = 'SELECT pname FROM userpermissions '.
-			//	'WHERE (uid = '.$uid.') AND (pname LIKE "ClAdmin-%" OR pname LIKE "ProjAdmin-%") ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				if($r->role == 'ClAdmin') $clStr .= ','.$r->tablepk;

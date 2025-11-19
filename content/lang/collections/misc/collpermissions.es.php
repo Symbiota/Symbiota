@@ -69,5 +69,6 @@ $LANG['NO_ID_PERMS'] = 'No existen permisos de Editor de Identificación';
 $LANG['NOT_AUTH'] = 'Sin autorización para ver esta página. Debe poseer permisos administrativos para esta colección.';
 
 $LANG['DROP_ICON'] = 'Icono de colocación';
+$LANG['SEL_USER'] = 'Seleccionar Usuario';
 
 ?>

@@ -41,7 +41,7 @@ class OccurrenceLoans extends Manager{
 		if($extLoanArr) $sql .= 'OR l.loanid IN('.implode(',',$extLoanArr).')';
 		$sql .= ') ';
 		if(!$displayAll) $sql .= 'AND l.dateclosed IS NULL ';
-		$sql .= 'ORDER BY l.loanidentifierown + 1 DESC';
+		$sql .= 'ORDER BY l.loanidentifierown';
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
 				if(!$searchTerm || stripos($r->instcode1,$searchTerm) !== false || stripos($r->instcode2,$searchTerm) !== false || stripos($r->forwhom,$searchTerm) !== false){
@@ -161,7 +161,7 @@ class OccurrenceLoans extends Manager{
 			'LEFT JOIN omcollections c ON l.collidown = c.collid '.
 			'WHERE l.collidborr = '.$this->collid.' ';
 		if(!$displayAll) $sql .= 'AND l.dateclosed IS NULL ';
-		$sql .= 'ORDER BY l.loanidentifierborr + 1';
+		$sql .= 'ORDER BY l.loanidentifierborr';
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
 				if(!$searchTerm || stripos($r->instcode1,$searchTerm) !== false || stripos($r->instcode2,$searchTerm) !== false || stripos($r->forwhom,$searchTerm) !== false){
@@ -181,11 +181,11 @@ class OccurrenceLoans extends Manager{
 	public function getLoanInDetails($loanid){
 		$retArr = array();
 		if(is_numeric($loanid)){
-			$sql = 'SELECT loanid, loanidentifierown, loanidentifierborr, collidown, iidowner, datesentreturn, totalboxesreturned, '.
-				'shippingmethodreturn, datedue, datereceivedborr, dateclosed, forwhom, description, numspecimens, '.
-				'notes, createdbyborr, processedbyborr, processedbyreturnborr, invoicemessageborr '.
-				'FROM omoccurloans '.
-				'WHERE loanid = '.$loanid;
+			$sql = 'SELECT loanid, loanidentifierown, loanidentifierborr, collidown, iidowner, datesentreturn, totalboxesreturned,
+				shippingmethodreturn, datedue, datereceivedborr, dateclosed, forwhom, description, numspecimens,
+				notes, createdbyborr, createdbyown, processedbyborr, processedbyreturnborr, invoicemessageborr
+				FROM omoccurloans
+				WHERE loanid = '.$loanid;
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
 					$retArr['loanidentifierown'] = $r->loanidentifierown;
@@ -203,6 +203,7 @@ class OccurrenceLoans extends Manager{
 					$retArr['numspecimens'] = $r->numspecimens;
 					$retArr['notes'] = $r->notes;
 					$retArr['createdbyborr'] = $r->createdbyborr;
+					$retArr['createdbyown'] = $r->createdbyown;
 					$retArr['processedbyborr'] = $r->processedbyborr;
 					$retArr['processedbyreturnborr'] = $r->processedbyreturnborr;
 					$retArr['invoicemessageborr'] = $r->invoicemessageborr;
@@ -486,7 +487,7 @@ class OccurrenceLoans extends Manager{
 				CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS collector, CONCAT_WS(", ",stateprovince,county,locality) AS locality
 				FROM omoccurloanslink l INNER JOIN omoccurrences o ON l.occid = o.occid
 				WHERE l.loanid = '.$loanid.'
-				ORDER BY o.catalognumber+1, o.othercatalognumbers+1';
+				ORDER BY o.catalognumber, o.othercatalognumbers';
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
 					$retArr[$r->occid]['collid'] = $r->collid;

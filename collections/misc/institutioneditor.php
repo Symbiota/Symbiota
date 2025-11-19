@@ -19,8 +19,10 @@ $instManager->setInstitutionId($iid);
 
 //Create a list of collection that are linked to this institutions
 $collList = array();
-foreach($fullCollList as $k => $v){
-	if($v['iid'] == $iid) $collList[$k] = $v['name'];
+if($iid){
+	foreach($fullCollList as $k => $v){
+		if($v['iid'] == $iid) $collList[$k] = $v['name'];
+	}
 }
 
 $editorCode = 0;
@@ -29,11 +31,19 @@ if($IS_ADMIN){
 }
 elseif(array_key_exists('CollAdmin', $USER_RIGHTS)){
 	$editorCode = 1;
-	if($collList && array_intersect($USER_RIGHTS['CollAdmin'], array_keys($collList))){
-		$editorCode = 2;
+	if($iid){
+		if(!$collList){
+			//User can edit because institution is not linked to any collection
+			$editorCode = 2;
+		}
+		elseif(array_intersect($USER_RIGHTS['CollAdmin'], array_keys($collList))){
+			//User can edit because the are an administrator for one of the collections that are linked to this institution
+			$editorCode = 2;
+		}
 	}
 }
 $statusStr = '';
+
 if($editorCode){
 	if($formSubmit == 'Add Institution'){
 		if($instManager->insertInstitution($_POST)){
@@ -55,20 +65,20 @@ if($editorCode){
 					$statusStr = 'ERROR updating institutions record: ' . $instManager->getErrorMessage();
 				}
 			}
-			elseif(!empty($_POST['deliid'])){
-				if($instManager->deleteInstitution($_POST['deliid'])){
+			elseif($formSubmit == 'deleteInstitution'){
+				if($instManager->deleteInstitution($iid)){
 					$statusStr = 'SUCCESS! Institution deleted.';
 					$iid = 0;
 				}
 				else{
-					$statusStr = 'Unable to delete: ';
+					$statusStr = 'ERROR: unable to delete due to ';
 					$errorStr = $instManager->getErrorMessage();
 					if($errorStr == 'LINKED_COLLECTIONS'){
-						$statusStr .= 'following collections need to be unlinked before deletion is allowed';
+						$statusStr .= 'following linked collections';
 						$statusStr .= '<ul><li>' . implode('</li><li>', $instManager->getWarningArr()) . '</li></ul>';
 					}
 					elseif($errorStr == 'LINKED_LOANS'){
-						$statusStr .= 'institution is linked to ' . count($instManager->getWarningArr()) . ' loans';
+						$statusStr .= 'institution linked to ' . count($instManager->getWarningArr()) . ' loans';
 					}
 					else{
 						$errorStr = 'ERROR deleting institution: ' . $errorStr;
@@ -423,8 +433,8 @@ include($SERVER_ROOT.'/includes/header.php');
 							<legend><b><?php echo $LANG['DEL_INSTITUTION']; ?></b></legend>
 							<form name="instdelform" action="institutioneditor.php" method="post" onsubmit="return confirm('<?php echo $LANG['WANT_TO_DELETE_INST']; ?>')">
 								<div style="position:relative;clear:both;">
-									<button class="button-danger" name="formsubmit" type="submit" value="Delete Institution" <?php if($collList) echo 'disabled'; ?> ><?php echo $LANG['DEL_INSTITUTION']; ?></button>
-									<input name="deliid" type="hidden" value="<?php echo $iid; ?>" />
+									<input name="iid" type="hidden" value="<?= $iid ?>">
+									<button class="button-danger" name="formsubmit" type="submit" value="deleteInstitution" <?php if($collList) echo 'disabled'; ?> ><?= $LANG['DEL_INSTITUTION'] ?></button>
 									<?php
 									if($collList) echo '<div style="margin:15px;color:red;">' . $LANG['DELETION_OF_ADDRESS'] . '</div>';
 									?>
@@ -600,7 +610,11 @@ include($SERVER_ROOT.'/includes/header.php');
 							foreach($instList as $iid => $iArr){
 								echo '<li><a href="institutioneditor.php?iid='.$iid.'">';
 								echo $iArr['institutionname'].' ('.$iArr['institutioncode'].')';
-								if($editorCode == 3 || array_intersect(explode(',',$iArr['collid']),$USER_RIGHTS["CollAdmin"])){
+								$editsAllowed = false;
+								if($editorCode == 3) $editsAllowed = true;
+								elseif(!$iArr['collid']) $editsAllowed = true;
+								elseif(array_intersect(explode(',', $iArr['collid']), $USER_RIGHTS['CollAdmin'])) $editsAllowed = true;
+								if($editsAllowed){
 									echo ' <a href="institutioneditor.php?emode=1&iid=' . $iid . '"><img src="' . $CLIENT_ROOT . '/images/edit.png" style="width:1.2em;" /></a>';
 								}
 								echo '</a></li>';

@@ -124,7 +124,29 @@ class ProfileManager extends Manager{
 			}
 			else echo 'error preparing statement: '.$this->conn->error;
 		}
+		if(!$status) $this->checkResetRequired();
 		return $status;
+	}
+
+	private function checkResetRequired(){
+		//Check to see if password field was set to NULL, which forces a password reset
+		try {
+			$sql = 'SELECT uid, firstname, username, password FROM users WHERE password IS NULL AND ';
+			if($this->uid) {
+				$sql .= '(uid = ?)';
+				$params = [ $this->uid ];
+			} else {
+				$sql .= '(username = ? OR email = ?)';
+				$params = [ $this->userName, $this->userName ];
+			}
+			$rs = QueryUtil::executeQuery($this->conn, $sql, $params);
+			$user = $rs->fetch_object();
+			if($user){
+				$this->errorMessage = 'PASSWORD_RESET_REQUIRED';
+			}
+		} catch (Exception $e) {
+			return false;
+		}
 	}
 
 	private function authenticateUsingPasswordBcrypt($pwdStr){
@@ -145,10 +167,10 @@ class ProfileManager extends Manager{
 				$sql,
 				$params
 			);
-
 			$user = $rs->fetch_object();
 
-			if(!$user->password) {
+			if(empty($user->password)) {
+				if(!empty($user->username)) $this->errorMessage = 'PASSWORD_RESET_REQUIRED';
 				return false;
 			}
 
@@ -513,16 +535,23 @@ class ProfileManager extends Manager{
 		$initialDynamicProperties['accessibilityPref'] = $isAccessiblePreferred === "1" ? true : false;
 		$jsonDynProps = json_encode($initialDynamicProperties);
 
-		$sql = 'INSERT INTO users(username, password, email, firstName, lastName, title, institution, country, city, state, zip, guid, dynamicProperties) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)';
-		$hash = $this->hash($pwd);
+		$sql = 'INSERT INTO users(username, password, email, firstName, lastName, title, institution, country, city, state, zip, guid, dynamicProperties) VALUES(?,CONCAT(\'*\', UPPER(SHA1(UNHEX(SHA1(?))))),?,?,?,?,?,?,?,?,?,?,?)';
 
-		if(!$hash) {
-			$this->errorMessage = 'ERROR inserting new user: Failed to encrypt password';
+		$hash = $pwd;
+
+		if($GLOBALS['USE_BCRYPT'] ?? false) {
+			$sql = 'INSERT INTO users(username, password, email, firstName, lastName, title, institution, country, city, state, zip, guid, dynamicProperties) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)';
+			$hash = $this->hash($pwd);
+
+			if(!$hash) {
+				$this->errorMessage = 'ERROR inserting new user: Failed to encrypt password';
+				return $status;
+			}
 		}
 
 		$this->resetConnection();
 		if($stmt = $this->conn->prepare($sql)) {
-			$stmt->bind_param('sssssssssssss', $this->userName, $this->hash($pwd), $email, $firstName, $lastName, $title, $institution, $country, $city, $state, $zip, $guid, $jsonDynProps);
+			$stmt->bind_param('sssssssssssss', $this->userName, $hash, $email, $firstName, $lastName, $title, $institution, $country, $city, $state, $zip, $guid, $jsonDynProps);
 			$stmt->execute();
 			if($stmt->affected_rows){
 				$this->uid = $stmt->insert_id;
@@ -540,6 +569,9 @@ class ProfileManager extends Manager{
 		else $this->errorMessage = 'ERROR inserting new user: '.$this->conn->error;
 
 		return $status;
+	}
+
+	private function registerOld(array $userOptions) {
 	}
 
 	public function lookupUserName($emailAddr){

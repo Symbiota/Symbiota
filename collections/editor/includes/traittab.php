@@ -109,10 +109,12 @@ if($isEditor){
 				$statusCode = 0;
 				$notes = '';
 				$source = '';
-				foreach($traitData['states'] as $id => $stArr){
-					if(isset($stArr['statuscode']) && $stArr['statuscode']) $statusCode = $stArr['statuscode'];
-					if(isset($stArr['notes']) && $stArr['notes']) $notes = $stArr['notes'];
-					if(isset($stArr['source']) && $stArr['source']) $source = $stArr['source'];
+				if(array_key_exists('states', $traitData)){
+					foreach($traitData['states'] as $id => $stArr){
+						if(isset($stArr['statuscode']) && $stArr['statuscode']) $statusCode = $stArr['statuscode'];
+						if(isset($stArr['notes']) && $stArr['notes']) $notes = $stArr['notes'];
+						if(isset($stArr['source']) && $stArr['source']) $source = $stArr['source'];
+					}
 				}
 				?>
 				<fieldset style="margin-top:20px">
