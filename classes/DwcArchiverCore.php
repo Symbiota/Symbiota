@@ -919,6 +919,7 @@ class DwcArchiverCore extends Manager{
 				foreach($unlinkFileArr as $deleteFile){
 					if (file_exists($deleteFile)) unlink($deleteFile);
 				}
+				//$this->clearStagingTable();
 			}
 			else {
 				$this->errorMessage = 'FAILED to create archive file due to failure to return occurrence records; check and adjust search variables';
@@ -1004,12 +1005,25 @@ class DwcArchiverCore extends Manager{
 		return true;
 	}
 
+	private function clearStagingTable(){
+		$status = false;
+		if($this->exportID){
+			$sql = 'DELETE FROM omexportoccurrences WHERE omExportID = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->exportID);
+				if($stmt->execute()) $status = true;
+				$stmt->close();
+			}
+		}
+		return $status;
+	}
+
 	//Generate DwC support files
 	private function writeMetaFile(){
 		$this->logOrEcho("Creating meta.xml (" . date('h:i:s A') . ")... ");
 
 		//Create new DOM document
-		$newDoc = new DOMDocument('1.0', $this->charSetOut);
+		$newDoc = new DOMDocument('1.0', 'UTF-8');
 
 		//Add root element
 		$rootElem = $newDoc->createElement('archive');
@@ -1117,118 +1131,6 @@ class DwcArchiverCore extends Manager{
 		}
 	}
 
-	private function getEmlArr(){
-
-		$this->setServerDomain();
-		$urlPathPrefix = $this->serverDomain . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) == '/' ? '' : '/');
-		$localDomain = $this->serverDomain;
-
-		$emlArr = array();
-		if (count($this->collArr) == 1) {
-			$collId = key($this->collArr);
-			$emlArr['alternateIdentifier'][] = $urlPathPrefix . 'collections/misc/collprofiles.php?collid=' . $collId;
-			$emlArr['title'] = $this->collArr[$collId]['collname'];
-			$emlArr['description'] = $this->collArr[$collId]['description'];
-
-			if (isset($this->collArr[$collId]['contact'][0]['givenName'])) $emlArr['contact']['givenName'] = $this->collArr[$collId]['contact'][0]['givenName'];
-			if (isset($this->collArr[$collId]['contact'][0]['surName'])) $emlArr['contact']['surName'] = $this->collArr[$collId]['contact'][0]['surName'];
-			if (isset($this->collArr[$collId]['collname'])) $emlArr['contact']['organizationName'] = $this->collArr[$collId]['collname'];
-			if (isset($this->collArr[$collId]['phone'])) $emlArr['contact']['phone'] = $this->collArr[$collId]['phone'];
-			if (isset($this->collArr[$collId]['contact'][0]['electronicMailAddress'])) $emlArr['contact']['electronicMailAddress'] = $this->collArr[$collId]['contact'][0]['electronicMailAddress'];
-			if (isset($this->collArr[$collId]['contact'][0]['userId'])) $emlArr['contact']['userId'] = $this->collArr[$collId]['contact'][0]['userId'];
-			if ($this->collArr[$collId]['url']) $emlArr['contact']['onlineUrl'] = $this->collArr[$collId]['url'];
-			$addrStr = $this->collArr[$collId]['address1'];
-			if ($this->collArr[$collId]['address2']) $addrStr .= ', ' . $this->collArr[$collId]['address2'];
-			if ($addrStr) $emlArr['contact']['addr']['deliveryPoint'] = $addrStr;
-			if ($this->collArr[$collId]['city']) $emlArr['contact']['addr']['city'] = $this->collArr[$collId]['city'];
-			if ($this->collArr[$collId]['state']) $emlArr['contact']['addr']['administrativeArea'] = $this->collArr[$collId]['state'];
-			if ($this->collArr[$collId]['postalcode']) $emlArr['contact']['addr']['postalCode'] = $this->collArr[$collId]['postalcode'];
-			if ($this->collArr[$collId]['country']) $emlArr['contact']['addr']['country'] = $this->collArr[$collId]['country'];
-			if ($this->collArr[$collId]['rights']) $emlArr['intellectualRights'] = $this->collArr[$collId]['rights'];
-			if (isset($this->collArr[$collId]['project'])) $emlArr['project'] = $this->collArr[$collId]['project'];
-		} else {
-			//Dataset contains multiple collection data
-			$emlArr['title'] = $GLOBALS['DEFAULT_TITLE'] . ' general data extract';
-			if (isset($GLOBALS['SYMB_UID']) && $GLOBALS['SYMB_UID']) {
-				$sql = 'SELECT uid, lastname, firstname, title, institution, department, address, city, state, zip, country, phone, email FROM users WHERE (uid = ' . $GLOBALS['SYMB_UID'] . ')';
-				$rs = $this->conn->query($sql);
-				if ($r = $rs->fetch_object()) {
-					$emlArr['associatedParty'][0]['individualName']['surName'] = $r->lastname;
-					if ($r->firstname) $emlArr['associatedParty'][0]['individualName']['givenName'] = $r->firstname;
-					if ($r->email) $emlArr['associatedParty'][0]['electronicMailAddress'] = $r->email;
-					$emlArr['associatedParty'][0]['role'] = 'datasetOriginator';
-					if ($r->institution) $emlArr['associatedParty'][0]['organizationName'] = $r->institution;
-					if ($r->title) $emlArr['associatedParty'][0]['positionName'] = $r->title;
-					if ($r->phone) $emlArr['associatedParty'][0]['phone'] = $r->phone;
-					if ($r->state) {
-						if ($r->department) $emlArr['associatedParty'][0]['address']['deliveryPoint'][] = $r->department;
-						if ($r->address) $emlArr['associatedParty'][0]['address']['deliveryPoint'][] = $r->address;
-						if ($r->city) $emlArr['associatedParty'][0]['address']['city'] = $r->city;
-						$emlArr['associatedParty'][0]['address']['administrativeArea'] = $r->state;
-						if ($r->zip) $emlArr['associatedParty'][0]['address']['postalCode'] = $r->zip;
-						if ($r->country) $emlArr['associatedParty'][0]['address']['country'] = $r->country;
-					}
-					$rs->free();
-				}
-			}
-		}
-
-		if (array_key_exists('PORTAL_GUID', $GLOBALS) && $GLOBALS['PORTAL_GUID']) {
-			$emlArr['creator'][0]['attr']['id'] = $GLOBALS['PORTAL_GUID'];
-		}
-		$emlArr['creator'][0]['organizationName'] = $GLOBALS['DEFAULT_TITLE'];
-		$emlArr['creator'][0]['electronicMailAddress'] = $GLOBALS['ADMIN_EMAIL'];
-		$emlArr['creator'][0]['onlineUrl'] = $urlPathPrefix . 'index.php';
-
-		$emlArr['metadataProvider'][0]['organizationName'] = $GLOBALS['DEFAULT_TITLE'];
-		$emlArr['metadataProvider'][0]['electronicMailAddress'] = $GLOBALS['ADMIN_EMAIL'];
-		$emlArr['metadataProvider'][0]['onlineUrl'] = $urlPathPrefix . 'index.php';
-
-		$emlArr['pubDate'] = date("Y-m-d");
-
-		//Append collection metadata
-		foreach ($this->collArr as $id => $collArr) {
-			//Collection metadata section (additionalMetadata)
-			$emlArr['collMetadata'][$id]['attr']['identifier'] = $collArr['collectionguid'];
-			$emlArr['collMetadata'][$id]['attr']['id'] = $id;
-			$emlArr['collMetadata'][$id]['alternateIdentifier'] = $urlPathPrefix . 'collections/misc/collprofiles.php?collid=' . $id;
-			$emlArr['collMetadata'][$id]['parentCollectionIdentifier'] = $collArr['instcode'];
-			$emlArr['collMetadata'][$id]['collectionIdentifier'] = $collArr['collcode'];
-			$emlArr['collMetadata'][$id]['collectionName'] = $collArr['collname'];
-			if ($collArr['icon']) {
-				$imgLink = '';
-				if (substr($collArr['icon'], 0, 17) == 'images/collicons/') {
-					$imgLink = $urlPathPrefix . $collArr['icon'];
-				} elseif (substr($collArr['icon'], 0, 1) == '/') {
-					$imgLink = $localDomain . $collArr['icon'];
-				} else {
-					$imgLink = $collArr['icon'];
-				}
-				$emlArr['collMetadata'][$id]['resourceLogoUrl'] = $imgLink;
-			}
-			$emlArr['collMetadata'][$id]['onlineUrl'] = $collArr['url'] ?? '';
-			$emlArr['collMetadata'][$id]['intellectualRights'] = $collArr['rights'];
-			if ($collArr['rightsholder']) $emlArr['collMetadata'][$id]['additionalInfo'] = $collArr['rightsholder'];
-			if ($collArr['usageterm']) $emlArr['collMetadata'][$id]['additionalInfo'] = $collArr['usageterm'];
-			$emlArr['collMetadata'][$id]['abstract'] = $collArr['description'];
-			if (isset($collArr['contact'])) {
-				$contactArr = $collArr['contact'];
-				foreach ($contactArr as $cnt => $cArr) {
-					if (count($this->collArr) == 1) {
-						//Set contacts within associated party element
-						$cArr['role'] = 'contentProvider';
-						$emlArr['associatedParty'][] = $cArr;
-					}
-					//Also set info within collMetadata element
-					$keepContactArr = array('userId', 'individualName', 'electronicMailAddress', 'positionName', 'onlineUrl');
-					$emlArr['collMetadata'][$id]['contact'][$cnt] = array_intersect_key($cArr, array_flip($keepContactArr));
-				}
-			}
-		}
-		$this->encodeArr($emlArr);
-		return $emlArr;
-	}
-
 	private function writeEmlFile(){
 		$this->logOrEcho("Creating eml.xml (" . date('h:i:s A') . ")... ");
 
@@ -1274,9 +1176,8 @@ class DwcArchiverCore extends Manager{
 		);
 
 		if (!$emlArr) $emlArr = $this->getEmlArr();
-
 		//Create new DOM document
-		$newDoc = new DOMDocument('1.0', $this->charSetOut);
+		$newDoc = new DOMDocument('1.0', 'utf-8');
 
 		//Add root element
 		$rootElem = $newDoc->createElement('eml:eml');
@@ -1412,7 +1313,7 @@ class DwcArchiverCore extends Manager{
 		$symbElem->appendChild($citeElem);
 		//Physical
 		$physicalElem = $newDoc->createElement('physical');
-		$physicalElem->appendChild($newDoc->createElement('characterEncoding', $this->charSetOut));
+		$physicalElem->appendChild($newDoc->createElement('characterEncoding', 'UTF-8'));
 		//format
 		$dfElem = $newDoc->createElement('dataFormat');
 		$edfElem = $newDoc->createElement('externallyDefinedFormat');
@@ -1423,7 +1324,6 @@ class DwcArchiverCore extends Manager{
 		//Collection data
 		if (array_key_exists('collMetadata', $emlArr)) {
 			foreach ($emlArr['collMetadata'] as $k => $collArr) {
-				$this->encodeArr($collArr);
 				$collElem = $newDoc->createElement('collection');
 				if (isset($collArr['attr']) && $collArr['attr']) {
 					$attrArr = $collArr['attr'];
@@ -1434,7 +1334,7 @@ class DwcArchiverCore extends Manager{
 				}
 				$abstractStr = '';
 				if (isset($collArr['abstract']) && $collArr['abstract']) {
-					$abstractStr = $this->encodeStr($collArr['abstract']);
+					$abstractStr = $collArr['abstract'];
 					unset($collArr['abstract']);
 				}
 				foreach ($collArr as $collKey => $collValue) {
@@ -1506,9 +1406,119 @@ class DwcArchiverCore extends Manager{
 		return $newNode;
 	}
 
+	private function getEmlArr(){
+		$this->setServerDomain();
+		$urlPathPrefix = $this->serverDomain . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) == '/' ? '' : '/');
+		$localDomain = $this->serverDomain;
+
+		$emlArr = array();
+		if (count($this->collArr) == 1) {
+			$collId = key($this->collArr);
+			$emlArr['alternateIdentifier'][] = $urlPathPrefix . 'collections/misc/collprofiles.php?collid=' . $collId;
+			$emlArr['title'] = $this->collArr[$collId]['collname'];
+			$emlArr['description'] = $this->collArr[$collId]['description'];
+
+			if (isset($this->collArr[$collId]['contact'][0]['givenName'])) $emlArr['contact']['givenName'] = $this->collArr[$collId]['contact'][0]['givenName'];
+			if (isset($this->collArr[$collId]['contact'][0]['surName'])) $emlArr['contact']['surName'] = $this->collArr[$collId]['contact'][0]['surName'];
+			if (isset($this->collArr[$collId]['collname'])) $emlArr['contact']['organizationName'] = $this->collArr[$collId]['collname'];
+			if (isset($this->collArr[$collId]['phone'])) $emlArr['contact']['phone'] = $this->collArr[$collId]['phone'];
+			if (isset($this->collArr[$collId]['contact'][0]['electronicMailAddress'])) $emlArr['contact']['electronicMailAddress'] = $this->collArr[$collId]['contact'][0]['electronicMailAddress'];
+			if (isset($this->collArr[$collId]['contact'][0]['userId'])) $emlArr['contact']['userId'] = $this->collArr[$collId]['contact'][0]['userId'];
+			if ($this->collArr[$collId]['url']) $emlArr['contact']['onlineUrl'] = $this->collArr[$collId]['url'];
+			$addrStr = $this->collArr[$collId]['address1'];
+			if ($this->collArr[$collId]['address2']) $addrStr .= ', ' . $this->collArr[$collId]['address2'];
+			if ($addrStr) $emlArr['contact']['addr']['deliveryPoint'] = $addrStr;
+			if ($this->collArr[$collId]['city']) $emlArr['contact']['addr']['city'] = $this->collArr[$collId]['city'];
+			if ($this->collArr[$collId]['state']) $emlArr['contact']['addr']['administrativeArea'] = $this->collArr[$collId]['state'];
+			if ($this->collArr[$collId]['postalcode']) $emlArr['contact']['addr']['postalCode'] = $this->collArr[$collId]['postalcode'];
+			if ($this->collArr[$collId]['country']) $emlArr['contact']['addr']['country'] = $this->collArr[$collId]['country'];
+			if ($this->collArr[$collId]['rights']) $emlArr['intellectualRights'] = $this->collArr[$collId]['rights'];
+			if (isset($this->collArr[$collId]['project'])) $emlArr['project'] = $this->collArr[$collId]['project'];
+		} else {
+			//Dataset contains multiple collection data
+			$emlArr['title'] = $GLOBALS['DEFAULT_TITLE'] . ' general data extract';
+			if (isset($GLOBALS['SYMB_UID']) && $GLOBALS['SYMB_UID']) {
+				$sql = 'SELECT uid, lastname, firstname, title, institution, department, address, city, state, zip, country, phone, email FROM users WHERE (uid = ' . $GLOBALS['SYMB_UID'] . ')';
+				$rs = $this->conn->query($sql);
+				if ($r = $rs->fetch_object()) {
+					$emlArr['associatedParty'][0]['individualName']['surName'] = $r->lastname;
+					if ($r->firstname) $emlArr['associatedParty'][0]['individualName']['givenName'] = $r->firstname;
+					if ($r->email) $emlArr['associatedParty'][0]['electronicMailAddress'] = $r->email;
+					$emlArr['associatedParty'][0]['role'] = 'datasetOriginator';
+					if ($r->institution) $emlArr['associatedParty'][0]['organizationName'] = $r->institution;
+					if ($r->title) $emlArr['associatedParty'][0]['positionName'] = $r->title;
+					if ($r->phone) $emlArr['associatedParty'][0]['phone'] = $r->phone;
+					if ($r->state) {
+						if ($r->department) $emlArr['associatedParty'][0]['address']['deliveryPoint'][] = $r->department;
+						if ($r->address) $emlArr['associatedParty'][0]['address']['deliveryPoint'][] = $r->address;
+						if ($r->city) $emlArr['associatedParty'][0]['address']['city'] = $r->city;
+						$emlArr['associatedParty'][0]['address']['administrativeArea'] = $r->state;
+						if ($r->zip) $emlArr['associatedParty'][0]['address']['postalCode'] = $r->zip;
+						if ($r->country) $emlArr['associatedParty'][0]['address']['country'] = $r->country;
+					}
+					$rs->free();
+				}
+			}
+		}
+
+		if (array_key_exists('PORTAL_GUID', $GLOBALS) && $GLOBALS['PORTAL_GUID']) {
+			$emlArr['creator'][0]['attr']['id'] = $GLOBALS['PORTAL_GUID'];
+		}
+		$emlArr['creator'][0]['organizationName'] = $GLOBALS['DEFAULT_TITLE'];
+		$emlArr['creator'][0]['electronicMailAddress'] = $GLOBALS['ADMIN_EMAIL'];
+		$emlArr['creator'][0]['onlineUrl'] = $urlPathPrefix . 'index.php';
+
+		$emlArr['metadataProvider'][0]['organizationName'] = $GLOBALS['DEFAULT_TITLE'];
+		$emlArr['metadataProvider'][0]['electronicMailAddress'] = $GLOBALS['ADMIN_EMAIL'];
+		$emlArr['metadataProvider'][0]['onlineUrl'] = $urlPathPrefix . 'index.php';
+
+		$emlArr['pubDate'] = date("Y-m-d");
+
+		//Append collection metadata
+		foreach ($this->collArr as $id => $collArr) {
+			//Collection metadata section (additionalMetadata)
+			$emlArr['collMetadata'][$id]['attr']['identifier'] = $collArr['collectionguid'];
+			$emlArr['collMetadata'][$id]['attr']['id'] = $id;
+			$emlArr['collMetadata'][$id]['alternateIdentifier'] = $urlPathPrefix . 'collections/misc/collprofiles.php?collid=' . $id;
+			$emlArr['collMetadata'][$id]['parentCollectionIdentifier'] = $collArr['instcode'];
+			$emlArr['collMetadata'][$id]['collectionIdentifier'] = $collArr['collcode'];
+			$emlArr['collMetadata'][$id]['collectionName'] = $collArr['collname'];
+			if ($collArr['icon']) {
+				$imgLink = '';
+				if (substr($collArr['icon'], 0, 17) == 'images/collicons/') {
+					$imgLink = $urlPathPrefix . $collArr['icon'];
+				} elseif (substr($collArr['icon'], 0, 1) == '/') {
+					$imgLink = $localDomain . $collArr['icon'];
+				} else {
+					$imgLink = $collArr['icon'];
+				}
+				$emlArr['collMetadata'][$id]['resourceLogoUrl'] = $imgLink;
+			}
+			$emlArr['collMetadata'][$id]['onlineUrl'] = $collArr['url'] ?? '';
+			$emlArr['collMetadata'][$id]['intellectualRights'] = $collArr['rights'];
+			if ($collArr['rightsholder']) $emlArr['collMetadata'][$id]['additionalInfo'] = $collArr['rightsholder'];
+			if ($collArr['usageterm']) $emlArr['collMetadata'][$id]['additionalInfo'] = $collArr['usageterm'];
+			$emlArr['collMetadata'][$id]['abstract'] = $collArr['description'];
+			if (isset($collArr['contact'])) {
+				$contactArr = $collArr['contact'];
+				foreach ($contactArr as $cnt => $cArr) {
+					if (count($this->collArr) == 1) {
+						//Set contacts within associated party element
+						$cArr['role'] = 'contentProvider';
+						$emlArr['associatedParty'][] = $cArr;
+					}
+					//Also set info within collMetadata element
+					$keepContactArr = array('userId', 'individualName', 'electronicMailAddress', 'positionName', 'onlineUrl');
+					$emlArr['collMetadata'][$id]['contact'][$cnt] = array_intersect_key($cArr, array_flip($keepContactArr));
+				}
+			}
+		}
+		return $emlArr;
+	}
+
 	public function getFullRss(){
 		//Create new document and write out to target
-		$newDoc = new DOMDocument('1.0', $this->charSetOut);
+		$newDoc = new DOMDocument('1.0', 'UTF-8');
 
 		//Add root element
 		$rootElem = $newDoc->createElement('rss');
@@ -1548,7 +1558,6 @@ class DwcArchiverCore extends Manager{
 		$rs = $this->conn->query($sql);
 		while ($r = $rs->fetch_assoc()) {
 			$cArr = $r;
-			$this->encodeArr($cArr);
 			$itemElem = $newDoc->createElement('item');
 			$itemAttr = $newDoc->createAttribute('collid');
 			$itemAttr->value = $cArr['collid'];
@@ -1630,7 +1639,6 @@ class DwcArchiverCore extends Manager{
 		$dwcOccurManager = new DwcArchiverOccurrence($this->conn);
 		$dwcOccurManager->setSchemaType($this->schemaType, $this->observerUid);
 		$dwcOccurManager->setExtended($this->extended);
-		$dwcOccurManager->setIncludeAssociatedSequences();
 		$dwcOccurManager->setIncludePaleo($this->includePaleo);
 		$dwcOccurManager->setIncludeAcceptedNameUsage($this->includeAcceptedNameUsage);
 		$dwcOccurManager->setServerDomain($this->serverDomain);
@@ -1644,7 +1652,7 @@ class DwcArchiverCore extends Manager{
 				$dwcOccurManager->setOtherCatalogNumbers();
 				$dwcOccurManager->setTaxonomy();
 				$dwcOccurManager->setExsiccate();
-				//if ($assocSeqStr = $dwcOccurManager->getAssociatedSequencesStr($r['occid'])) $r['t_associatedSequences'] = $assocSeqStr;
+				$dwcOccurManager->setAssociatedSequences();
 			}
 			$sql = $dwcOccurManager->getSqlOccurrences($this->occurrenceFieldArr['fields']);
 			if ($this->paleoWithSql) $sql = $this->paleoWithSql . $sql;

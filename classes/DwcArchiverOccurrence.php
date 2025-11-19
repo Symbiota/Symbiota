@@ -9,7 +9,6 @@ class DwcArchiverOccurrence extends Manager{
 	private $schemaType;
 	private $extended = false;
 	private $includePaleo = false;
-	private $includeAssocSeq = false;
 	private $includeAcceptedNameUsage = false;
 	private $relationshipArr;
 	private $paleoGtsArr = null;
@@ -434,7 +433,26 @@ class DwcArchiverOccurrence extends Manager{
 		return $status;
 	}
 
-	//Set Associations
+	public function setAssociatedSequences(){
+		$status = false;
+		$sql = 'UPDATE omexportoccurrences x INNER JOIN (SELECT occid, GROUP_CONCAT(CONCAT_WS(", ", identifier, resourceName, title, locus, resourceUrl) SEPARATOR " | ") as details
+			FROM omoccurgenetic GROUP BY occid) g ON x.occid = g.occid
+			SET x.associatedSequences = g.details
+			WHERE x.omExportID = ?';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $this->exportID);
+			if($stmt->execute()) $status = true;
+			else{
+				$this->errorMessage = 'ERROR populating associatedSequences: ' . $stmt->error;
+				$this->logOrEcho($this->errorMessage);
+			}
+			$stmt->close();
+		}
+		else $this->errorMessage = $this->conn->error;
+		return $status;
+	}
+
+	//Set Associations Simple DwC elements (e.g. associatedOccurrences, associatedTaxa) - not implimented within 3.4, but might be reimplimented, thus keeping functions in code
 	public function getAssociationStr($occid, $associationType = null){
 		$occid = filter_var($occid, FILTER_SANITIZE_NUMBER_INT);
 		if($occid){
@@ -614,23 +632,6 @@ class DwcArchiverOccurrence extends Manager{
 		}
 	}
 
-	private function appendSpecimenDuplicateAssociations($occid, &$assocArr, &$internalAssocOccidArr){
-		$sql = 'SELECT s.occid, l.occid as occidAssociate
-			FROM omoccurduplicatelink s INNER JOIN omoccurduplicates d ON s.duplicateid = d.duplicateid
-			INNER JOIN omoccurduplicatelink l ON d.duplicateid = l.duplicateid
-			WHERE s.occid IN('.$occid.') AND s.occid != l.occid ';
-		$rs = $this->conn->query($sql);
-		if($rs){
-			while($r = $rs->fetch_object()){
-				$assocKey = 'sd-'.$r->occidAssociate;
-				$assocArr[$assocKey]['occidassoc'] = $r->occidAssociate;
-				$assocArr[$assocKey]['relationship'] = 'herbariumSpecimenDuplicate';
-				$internalAssocOccidArr[$r->occidAssociate][] = $assocKey;
-			}
-			$rs->free();
-		}
-	}
-
 	private function getVerbatimTextObject($occid){
 		$verbatimText = array('type' => 'verbatimText', 'verbatimText' => '');
 
@@ -682,31 +683,21 @@ class DwcArchiverOccurrence extends Manager{
 		}
 	}
 
-	//Associated genetic sequence functions
-	public function setIncludeAssociatedSequences(){
-		$sql = 'SELECT occid FROM omoccurgenetic LIMIT 1';
+	private function appendSpecimenDuplicateAssociations($occid, &$assocArr, &$internalAssocOccidArr){
+		$sql = 'SELECT s.occid, l.occid as occidAssociate
+			FROM omoccurduplicatelink s INNER JOIN omoccurduplicates d ON s.duplicateid = d.duplicateid
+			INNER JOIN omoccurduplicatelink l ON d.duplicateid = l.duplicateid
+			WHERE s.occid IN('.$occid.') AND s.occid != l.occid ';
 		$rs = $this->conn->query($sql);
-		if($rs->num_rows) $this->includeAssocSeq = true;
-		$rs->free();
-	}
-
-	public function getAssociatedSequencesStr($occid){
-		$retStr = '';
-		if(is_numeric($occid)){
-			$sql = 'SELECT identifier, resourceName, title, locus, resourceUrl FROM omoccurgenetic WHERE occid = '.$occid;
-			$rs = $this->conn->query($sql);
-			if($rs){
-				while($r = $rs->fetch_object()){
-					$retStr .= '|'.$r->resourceName.', ';
-					if($r->title) $retStr .= $r->title.', ';
-					if($r->identifier) $retStr .= $r->identifier.', ';
-					if($r->locus) $retStr .= $r->locus.', ';
-					$retStr .= $r->resourceUrl;
-				}
-				$rs->free();
+		if($rs){
+			while($r = $rs->fetch_object()){
+				$assocKey = 'sd-'.$r->occidAssociate;
+				$assocArr[$assocKey]['occidassoc'] = $r->occidAssociate;
+				$assocArr[$assocKey]['relationship'] = 'herbariumSpecimenDuplicate';
+				$internalAssocOccidArr[$r->occidAssociate][] = $assocKey;
 			}
+			$rs->free();
 		}
-		return trim($retStr,' |,');
 	}
 
 	//Append Taxonomic data
@@ -767,9 +758,11 @@ class DwcArchiverOccurrence extends Manager{
 			$sql = 'UPDATE omexportoccurrences x INNER JOIN taxa t ON x.taxonID = t.tid
 				SET x.genus = CONCAT_WS(" ", t.unitInd1, t.unitName1),
 				x.specificEpithet = CONCAT_WS(" ", t.unitInd2, t.unitName2),
-				x.verbatimTaxonRank = t.unitInd3, x.infraspecificEpithet = t.unitName3,
-				x.cultivarEpithet = t.cultivarEpithet, x.tradeName = t.tradeName,
-				x.scientificNameAuthorship = t.sciname
+				x.verbatimTaxonRank = t.unitInd3,
+				x.infraspecificEpithet = t.unitName3,
+				x.cultivarEpithet = t.cultivarEpithet,
+				x.tradeName = t.tradeName,
+				x.scientificNameAuthorship = t.author
 				WHERE x.omExportID = ? AND t.rankid >= 180';
 			if($stmt = $this->conn->prepare($sql)){
 				try{

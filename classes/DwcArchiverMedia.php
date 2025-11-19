@@ -54,7 +54,7 @@ class DwcArchiverMedia extends DwcArchiverBaseManager{
 		$termArr['comments'] = 'http://rs.tdwg.org/ac/terms/comments';
 		$fieldArr['comments'] = 'm.notes';
 		$termArr['tag'] = 'http://rs.tdwg.org/ac/terms/tag';
-		$fieldArr['tag'] = 'GROUP_CONCAT( tag.keyValue ) AS tag';
+		$fieldArr['tag'] = 'GROUP_CONCAT( tag.keyValue SEPARATOR " | ") AS tag';
 		$termArr['providerManagedID'] = 'http://rs.tdwg.org/ac/terms/providerManagedID';	//GUID
 		$fieldArr['providerManagedID'] = 'm.recordID AS providermanagedid';
 		$termArr['MetadataDate'] = 'http://ns.adobe.com/xap/1.0/MetadataDate';	//timestamp
