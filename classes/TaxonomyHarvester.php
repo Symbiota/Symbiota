@@ -983,7 +983,10 @@ class TaxonomyHarvester extends Manager{
 						$taxonArr['author'] = $unitArr['authors'];
 						$rankID = $this->getRankId($unitArr['rank']);
 						if($rankID) $taxonArr['rankid'] = $rankID;
-						$taxonArr['source'] = 'Via fDex: '.$unitArr['recordSource'];
+						$sourceStr = 'Via fDex: '.$unitArr['recordSource'];
+						if(!empty($unitArr['mbNumber'])) $sourceStr .= '; mbNumber: ' . $unitArr['mbNumber'];
+						if(!empty($unitArr['otherID'])) $sourceStr .= '; otherID: ' . $unitArr['otherID'];
+						$taxonArr['source'] = $sourceStr;
 						$taxonArr['notes'] = 'taxonomicStatus: '.$unitArr['taxonomicStatus'].'; currentStatus: '.$unitArr['currentStatus'];
 						if(isset($unitArr['parentTaxon'])){
 							$parentTaxon = $unitArr['parentTaxon'];

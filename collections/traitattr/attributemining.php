@@ -1,12 +1,13 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceAttributes.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/traitattr/attributemining');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../collections/traitattr/attributemining.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
-
-if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/traitattr/attributemining.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/traitattr/attributemining.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/traitattr/attributemining.en.php');
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:'';
 $selectAll = array_key_exists('selectall',$_POST)?$_POST['selectall']:'';

@@ -1,8 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecUpload.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/admin/uploadreviewer.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/admin/uploadreviewer.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/admin/uploadreviewer.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/admin/uploadreviewer');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;

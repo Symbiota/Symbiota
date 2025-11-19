@@ -7,8 +7,10 @@ include_once($SERVER_ROOT . '/classes/DatasetsMetadata.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceManager.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceAttributeSearch.php');
 include_once($SERVER_ROOT . '/classes/AssociationManager.php');
-if ($LANG_TAG == 'en' || !file_exists($SERVER_ROOT . '/content/lang/collections/search/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/search/index.en.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/search/index.' . $LANG_TAG . '.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/search/index');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $JS_LANG_FILENAME = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';

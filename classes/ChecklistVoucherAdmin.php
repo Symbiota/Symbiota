@@ -118,18 +118,6 @@ class ChecklistVoucherAdmin extends Manager {
 				$this->clName = 'Unknown';
 			}
 			$result->free();
-			//Get children checklists
-			$sqlChildBase = 'SELECT clidchild FROM fmchklstchildren WHERE clid != clidchild AND clid IN(';
-			$sqlChild = $sqlChildBase.$this->clid.')';
-			do{
-				$childStr = "";
-				$rsChild = $this->conn->query($sqlChild);
-				while($rChild = $rsChild->fetch_object()){
-					$this->childClidArr[] = $rChild->clidchild;
-					$childStr .= ','.$rChild->clidchild;
-				}
-				$sqlChild = $sqlChildBase.substr($childStr,1).')';
-			}while($childStr);
 		}
 	}
 

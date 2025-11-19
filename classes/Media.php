@@ -7,12 +7,9 @@ include_once($SERVER_ROOT . "/classes/MediaException.php");
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/UploadUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-if(file_exists($SERVER_ROOT.'/content/lang/classes/Media.'.$LANG_TAG.'.php')) {
-	include_once($SERVER_ROOT.'/content/lang/classes/Media.'.$LANG_TAG.'.php');
-} else {
-	include_once($SERVER_ROOT.'/content/lang/classes/Media.en.php');
-}
+Language::load('classes/Media');
 
 function get_occurrence_upload_path($institutioncode, $collectioncode, $catalognumber = null) {
 	$root = $institutioncode . ($collectioncode? '_'. $collectioncode: '') . '/';
@@ -380,20 +377,22 @@ class Media {
 		//Not Sure if I Need
 		$mapLargeImg = !($clean_post_arr['nolgimage']?? true);
 
-		$sql = <<< SQL
-		SELECT tidinterpreted 
-		FROM omoccurrences 
-		WHERE tidinterpreted IS NOT NULL AND occid = ? 
-		SQL;
+		if(empty($clean_post_arr['tid']) && !empty($clean_post_arr['occid'])){
+			$sql = <<< SQL
+			SELECT tidinterpreted 
+			FROM omoccurrences 
+			WHERE tidinterpreted IS NOT NULL AND occid = ? 
+			SQL;
 
-		$taxon_result = QueryUtil::executeQuery(
-			$conn,
-			$sql,
-			[$clean_post_arr['occid']]
-		);
+			$taxon_result = QueryUtil::executeQuery(
+				$conn,
+				$sql,
+				[$clean_post_arr['occid']]
+			);
 
-		if(!isset($clean_post_arr['tid']) && $row = $taxon_result->fetch_object()) {
-			$clean_post_arr['tid'] = $row->tidinterpreted;
+			if($row = $taxon_result->fetch_object()) {
+				$clean_post_arr['tid'] = $row->tidinterpreted;
+			}
 		}
 
 		if(!($clean_post_arr['copytoserver'] ?? false) && !($clean_post_arr['format'] ?? false)) {
@@ -462,7 +461,7 @@ class Media {
 		INSERT INTO media($keys) VALUES ($parameters)
 		SQL;
 
-		$result = QueryUtil::executeQuery($conn, $sql, array_values($keyValuePairs));
+		QueryUtil::executeQuery($conn, $sql, array_values($keyValuePairs));
 		//Insert to other tables as needed like imagetags...
 
 		$media_id = $conn->insert_id;
@@ -505,7 +504,7 @@ class Media {
 					$post_arr['sourceIdentifier'] = 'filename: ' . $file['name'];
 				}
 			}
-			
+
 			$media_metadata = self::insert($post_arr, $conn);
 			$media_type = MediaType::tryFrom($media_metadata['mediaType']);
 
@@ -548,9 +547,11 @@ class Media {
 					$width = $size[0];
 					$height = $size[1];
 
-					$storage->upload($file);
 
-					$urls = [ 
+					$storage->upload($file);
+					$createdFilepaths[] = $storage->getDirPath($file);
+
+					$urls = [
 						'thumbnailUrl' => [
 							'name' => self::addToFilename($file['name'], '_tn'),
 							'width' => $GLOBALS['IMG_TN_WIDTH']?? 200,
@@ -591,7 +592,9 @@ class Media {
 			mysqli_rollback($conn);
 
 			foreach($createdFilepaths as $filepath) {
-				unlink($filepath);
+				if(file_exists($filepath)) {
+					unlink($filepath);
+				}
 			}
 
 			array_push(self::$errors, $th->getMessage());
@@ -713,7 +716,7 @@ class Media {
 		return $errors;
 	}
 
-	private static function check_file_rename(string $old_filepath, string $new_filepath) {		
+	private static function check_file_rename(string $old_filepath, string $new_filepath) {
 		if($old_filepath && $new_filepath) {
 			$old_file = self::parseFileName($old_filepath);
 			$new_file = self::parseFileName($new_filepath);
@@ -785,7 +788,7 @@ class Media {
 			foreach(['url', 'thumbnailUrl', 'originalUrl'] as $url) {
 				if(array_key_exists($url, $data) && $storage->file_exists($current_media_arr[$url])) {
 					self::check_file_rename(
-						$current_media_arr[$url], 
+						$current_media_arr[$url],
 						$data[$url]
 					);
 				}
@@ -959,6 +962,9 @@ class Media {
 			case 'image/gif':
 				$image = imagecreatefromgif($src_path);
 				break;
+			case 'image/bmp':
+				$image = imagecreatefrombmp($src_path);
+				break;
 			default:
 				throw new Exception(
 					'Mime Type: ' . $mime_type . ' not supported for creation'
@@ -1107,13 +1113,22 @@ class Media {
 
 			//Unlink all files
 			if($remove_files) {
+				$root_url = self::getMediaRootUrl();
+				$root_path = self::getMediaRootPath();
 				foreach($media_urls as $url) {
-					if($url && file_exists($GLOBALS['SERVER_ROOT'] . $url)) {
-						if(!is_writable($GLOBALS['SERVER_ROOT'] . $url)) {
-							throw new MediaException(MediaException::FilepathNotWritable, $url);
-						}
-						if(!unlink($GLOBALS['SERVER_ROOT'] . $url)) {
-							error_log("WARNING: File (path: " . $url . ") failed to delete from server");
+					if($url && $root_url) {
+						if(strpos($url, $root_url) === 0){		//Only images residing on local server can be deleted
+							//Convert url to a local path
+							$path = $root_path . substr($url, strlen($root_url));
+							if(file_exists($path)){
+								if(is_writable($path)) {
+									if(!unlink($path)) {
+										error_log("WARNING: File (path: " . $path . ") failed to delete from server");
+									}
+								} else{
+									throw new MediaException(MediaException::FilepathNotWritable, $path);
+								}
+							}
 						}
 					}
 				}
@@ -1157,11 +1172,40 @@ class Media {
 	 * @param int $tid
 	 * @param string $media_type Should use MediaType Constants
 	 */
-	public static function getByTid(int $tid, string $media_type = null): Array {
+	public static function getByTid(int $tid, string $media_type = null, ?Paginator $paginator): Array {
 		if(!$tid) return [];
 		$parameters = [$tid];
 
 		$sql ='SELECT ' . implode(',', self::MEDIA_ITEM_SELECT_SCHEMA) . ' FROM media m '.
+			'INNER JOIN taxstatus ts ON m.tid = ts.tid ' .
+			'INNER JOIN taxa t ON m.tid = t.tid ' .
+			// 'LEFT JOIN taxa t ON t.tid = m.tid ' .
+			'LEFT JOIN users u on u.uid = m.creatorUid ' .
+			'WHERE ts.tid = ? and ts.taxauthid = 1';
+
+		if($media_type) {
+			$sql .= ' AND mediaType = ?';
+			array_push($parameters, $media_type);
+		}
+
+		$sql .= ' ORDER BY m.sortsequence IS NULL ASC, m.sortsequence ASC';
+
+		if($paginator) {
+			$sql .= ' LIMIT ? OFFSET ?';
+			array_push($parameters, $paginator->perPage);
+			array_push($parameters, ($paginator->activePage- 1) * $paginator->perPage);
+		}
+
+		$results = QueryUtil::executeQuery(Database::connect('readonly'), $sql, $parameters);
+
+		return Sanitize::out(self::get_media_items($results));
+	}
+
+	public static function countByTid(int $tid, string $media_type = null): int {
+		if(!$tid) return 0;
+		$parameters = [$tid];
+
+		$sql ='SELECT ' . 'count(*) as cnt' . ' FROM media m '.
 			'LEFT JOIN taxa t ON t.tid = m.tid ' .
 			'LEFT JOIN users u on u.uid = m.creatorUid ' .
 			'WHERE m.tid = ?';
@@ -1171,10 +1215,9 @@ class Media {
 			array_push($parameters, $media_type);
 		}
 
-		$sql .= ' ORDER BY sortsequence IS NULL ASC, sortsequence ASC';
 		$results = QueryUtil::executeQuery(Database::connect('readonly'), $sql, $parameters);
 
-		return Sanitize::out(self::get_media_items($results));
+		return $results->fetch_object()->cnt;
 	}
 
 	/**

@@ -18,6 +18,7 @@ $LANG['NUMERIC_RADIUS'] = 'Point radius must be a numeric value only';
 $LANG['NEED_STATE'] = 'Rare species checklists must have a state value entered into the locality field';
 $LANG['NEED_PARENT'] = 'You need to select a parent checklist to create an Exclude Species Checklist';
 $LANG['CREATE_CHECKLIST'] = 'Create a New Checklist';
+$LANG['FOR_PARENT_LIST'] = 'for parent list';
 $LANG['SELECT_PARENT'] = 'Select a parent checklist';
 $LANG['REFERENCE_CHECK'] = 'More Inclusive Reference Checklist';
 $LANG['NONE'] = 'None Selected';

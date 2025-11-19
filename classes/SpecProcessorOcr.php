@@ -550,7 +550,7 @@ class SpecProcessorOcr extends Manager{
 						//$status = imagejpeg($dest,str_replace('_img.jpg','_crop.jpg',$this->imgUrlLocal));
 						$status = imagejpeg($dest,$this->imgUrlLocal);
 					}
-					imagedestroy($dest);
+					if($dest)imagedestroy($dest);
 					imagedestroy($img);
 				}
 			}
@@ -563,9 +563,12 @@ class SpecProcessorOcr extends Manager{
 
 	private function imageTrimBorder($c=0,$t=100){
 		$img = imagecreatefromjpeg($this->imgUrlLocal);
+		if(!$img){
+			return false;
+		}
 		if (!is_numeric($c) || $c < 0 || $c > 255) {
 			// Color ($c) not valid, thus grab the color from the top left corner and use that as default
-			$rgb = imagecolorat($im, 2, 2); // 2 pixels in to avoid messy edges
+			$rgb = imagecolorat($img, 2, 2); // 2 pixels in to avoid messy edges
 			$r = ($rgb >> 16) & 0xFF;
 			$g = ($rgb >> 8) & 0xFF;
 			$b = $rgb & 0xFF;
@@ -646,10 +649,11 @@ class SpecProcessorOcr extends Manager{
 			if(imagecopy($dest, $img, 0, 0, $bLeft, $bTop, $w, $h)){
 				$status = imagejpeg($dest,$this->imgUrlLocal);
 			}
-			imagedestroy($dest);
+			if($dest) imagedestroy($dest);
 			imagedestroy($img);
 			return true;
 		}
+		if($img) imagedestroy($img);
 		return false;
 	}
 

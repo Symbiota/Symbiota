@@ -36,8 +36,8 @@ let paramsArr = {};
  * Uses jQuery
  */
 $('input[type="radio"]')?.click(function () {
-  var inputValue = $(this)?.attr("value");
-  var targetBox = $("#" + inputValue);
+  const inputValue = $(this)?.attr("value");
+  const targetBox = $("#" + inputValue);
   $(".box")?.not(targetBox)?.hide();
   $(targetBox)?.show();
   $(this)?.parent()?.addClass("tab-active");
@@ -658,16 +658,113 @@ function uncheckEverything() {
   });
 }
 
+function uncheckSpecifiedCheckboxes(checkboxIds) {
+  checkboxIds.forEach(id => {
+    const checkbox = document.getElementById(id);
+    if (checkbox) {
+      checkbox.checked = false;
+    }
+  });
+}
+
+function handleCategoryChunks(parentBoxCheckStatus, collectionType) {
+  const categoryChunks = document.querySelectorAll('div[id^="category-chunk-"]');
+  categoryChunks.forEach((chunk) => {
+    const legends = chunk.querySelectorAll('fieldset[name="subcollection-fieldset"] legend');
+    legends.forEach((legend) => {
+      if (legend.textContent.includes(collectionType)) {
+        const categoryCheckbox = chunk.querySelector('input[name="cat[]"]');
+        if (categoryCheckbox) {
+          categoryCheckbox.checked = parentBoxCheckStatus;
+        }
+        
+        const collectionCheckboxes = chunk.querySelectorAll('input[name="db[]"]');
+        collectionCheckboxes.forEach((checkbox) => {
+          checkbox.checked = parentBoxCheckStatus;
+        });
+      }
+    });
+  });
+}
+
+function handleHeaderSections(parentBoxCheckStatus, headerType, stopType = null) {
+  const targetHeader = Array.from(document.querySelectorAll('h2')).find(h => 
+    h.textContent.includes(headerType)
+  );
+  if (targetHeader) {
+    let currentElement = targetHeader.parentElement.nextElementSibling;
+    while (currentElement) {
+      if (stopType) {
+        const headerInSection = currentElement.querySelector('h2');
+        if (headerInSection && headerInSection.textContent.includes(stopType)) {
+          break;
+        }
+      }
+      const checkboxes = currentElement.querySelectorAll('input[name="db[]"][id^="collection-"]');
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = parentBoxCheckStatus;
+      });
+      currentElement = currentElement.nextElementSibling;
+    }
+  }
+}
+
+function selectAllSpec(cb) {
+  const boxCheckedStatus = cb.checked;
+  uncheckSpecifiedCheckboxes(["dballcb", "dballobscb"]);
+  handleCategoryChunks(boxCheckedStatus, translations.SPECIMEN);
+  handleHeaderSections(boxCheckedStatus, translations.SPECIMEN, translations.OBSERVATION);
+}
+
+function selectAllObs(cb) {
+  const boxCheckedStatus = cb.checked;
+  uncheckSpecifiedCheckboxes(["dballcb", "dballspeccb"]);
+  handleCategoryChunks(boxCheckedStatus, translations.OBSERVATION);
+  handleHeaderSections(boxCheckedStatus, translations.OBSERVATION);
+}
+
+
 function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
   queriedCollections.forEach((queriedCollection) => {
     let targetElem = document.getElementById("collection-" + queriedCollection);
     if (!targetElem) {
-      // get elements if categories exist
-      const prefix = "coll-" + queriedCollection + "-";
-      const candidateTargetElems =
-        document.querySelectorAll(`[id^="${prefix}"]`) || [];
-      if (candidateTargetElems.length > 0) {
-        targetElem = candidateTargetElems[0]; // there should only be one match; get the first one
+      if (queriedCollection === "all") {
+        targetElem = document.getElementById("dballcb");
+        if (targetElem) {
+          targetElem.checked = true;
+          const allSpecCheckbox = document.getElementById("dballspeccb");
+          const allObsCheckbox = document.getElementById("dballobscb");
+          if (allSpecCheckbox) allSpecCheckbox.checked = true;
+          if (allObsCheckbox) allObsCheckbox.checked = true;
+          handleCategoryChunks(true, "Specimen");
+          handleHeaderSections(true, "Specimen", "Observation");
+          handleCategoryChunks(true, "Observation");
+          handleHeaderSections(true, "Observation");
+        }
+        return;
+      } else if (queriedCollection === "allspec") {
+        targetElem = document.getElementById("dballspeccb");
+        if (targetElem) {
+          targetElem.checked = true;
+          handleCategoryChunks(true, "Specimen");
+          handleHeaderSections(true, "Specimen", "Observation");
+        }
+        return;
+      } else if (queriedCollection === "allobs") {
+        targetElem = document.getElementById("dballobscb");
+        if (targetElem) {
+          targetElem.checked = true;
+          handleCategoryChunks(true, "Observation");
+          handleHeaderSections(true, "Observation");
+        }
+        return;
+      } else {
+        const prefix = "coll-" + queriedCollection + "-";
+        const candidateTargetElems =
+          document.querySelectorAll(`[id^="${prefix}"]`) || [];
+        if (candidateTargetElems.length > 0) {
+          targetElem = candidateTargetElems[0]; // there should only be one match; get the first one
+        }
       }
     } 
     if(targetElem){
@@ -678,7 +775,7 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
 
 function setSearchForm(frm) {
   if (sessionStorage.querystr) {
-    var urlVar = parseUrlVariables(sessionStorage.querystr.replaceAll('&quot;', '"'));
+    const urlVar = parseUrlVariables(sessionStorage.querystr.replaceAll('&quot;', '"'));
     if (
       typeof urlVar.usethes !== "undefined" &&
       (urlVar.usethes == "" || urlVar.usethes == "0")
@@ -782,7 +879,7 @@ function setSearchForm(frm) {
       frm.elevhigh.value = urlVar.elevhigh;
     }
     if (urlVar.llbound) {
-      var coordArr = urlVar.llbound.split(";");
+      const coordArr = urlVar.llbound.split(";");
       frm.upperlat.value = Math.abs(parseFloat(coordArr[0]));
       frm.upperlat_NS.value = parseFloat(coordArr[0]) > 0 ? "N" : "S";
 
@@ -799,7 +896,7 @@ function setSearchForm(frm) {
       frm.footprintwkt.value = urlVar.footprintGeoJson;
     }
     if (urlVar.llpoint) {
-      var coordArr = urlVar.llpoint.split(";");
+      const coordArr = urlVar.llpoint.split(";");
       frm.pointlat.value = Math.abs(parseFloat(coordArr[0]));
       frm.pointlat_NS.value = parseFloat(coordArr[0]) > 0 ? "N" : "S";
 
@@ -856,9 +953,9 @@ function setSearchForm(frm) {
         checkTheCollectionsThatShouldBeChecked(queriedCollections);
       }
     }
-    for (var i in urlVar) {
+    for (const i in urlVar) {
       if (`${i}`.indexOf("traitid-") == 0) {
-        var traitInput = document.getElementById("traitstateid-" + urlVar[i]);
+        const traitInput = document.getElementById("traitstateid-" + urlVar[i]);
         if (traitInput.type == "checkbox" || traitInput.type == "radio") {
           traitInput.checked = true;
         }
@@ -870,13 +967,13 @@ function setSearchForm(frm) {
 }
 
 function parseUrlVariables(varStr) {
-  var result = {};
+  const result = {};
   varStr.split("&").forEach(function (part) {
     if (!part) return;
     part = part.split("+").join(" ");
-    var eq = part.indexOf("=");
-    var key = eq > -1 ? part.substr(0, eq) : part;
-    var val = eq > -1 ? decodeURIComponent(part.substr(eq + 1)) : "";
+    const eq = part.indexOf("=");
+    const key = eq > -1 ? part.substr(0, eq) : part;
+    const val = eq > -1 ? decodeURIComponent(part.substr(eq + 1)) : "";
     result[key] = val;
   });
   return result;

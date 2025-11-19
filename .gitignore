@@ -6,6 +6,7 @@
 /leftmenu.php
 /index.php
 includes/header.php
+includes/minimalheader.php
 includes/footer.php
 includes/head.php
 includes/leftmenu.php
@@ -15,3 +16,4 @@ includes/citationgbif.php
 includes/citationcollection.php
 includes/citationdataset.php
 includes/citationportal.php
+includes/donationButton.php

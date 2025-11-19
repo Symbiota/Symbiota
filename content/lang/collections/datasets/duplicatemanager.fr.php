@@ -36,5 +36,7 @@ $LANG['DET_BY'] = 'Déterminé par';
 $LANG['NO_DUP_CLUSTERS'] = 'Aucun cluster en double ne correspond à la demande. Envisagez de revenir au menu Dupliquer le cluster et de créer par lots des clusters dupliqués.';
 $LANG['RETURN_MAIN'] = 'Retour au menu principal';
 $LANG['NOT_AUTH'] = 'Vous n\'êtes pas autorisé à accéder à cette page';
+$LANG['BATCH_COPY_GEOREFERENCE_DUPLICATES'] = 'Copie par lots des données de géoréférencement en double';
+$LANG['BATCH_COPY_GEOREFERENCE_DUPLICATES_EXPLANATION'] = 'Outil de copie des données de géoréférencement à partir de doublons liés';
 
 ?>

@@ -2,9 +2,10 @@
 include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceEditorResource.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceDuplicate.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-if($LANG_TAG != 'en' && !file_exists($SERVER_ROOT.'/content/lang/collections/editor/includes/resourcetab.' . $LANG_TAG . '.php')) $LANG_TAG = 'en';
-include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/resourcetab.' . $LANG_TAG . '.php');
+Language::load('collections/editor/includes/resourcetab');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $occid = filter_var($_GET['occid'] ?? 0, FILTER_SANITIZE_NUMBER_INT);

@@ -4,10 +4,9 @@ include_once($SERVER_ROOT . '/classes/OccurrenceDuplicate.php');
 include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT . '/classes/Media.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/editor/occurrenceeditor.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT . '/content/lang/collections/editor/occurrenceeditor.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/editor/occurrenceeditor.en.php');
+Language::load('collections/editor/occurrenceeditor');
 
 class OccurrenceEditorManager {
 
@@ -979,13 +978,6 @@ class OccurrenceEditorManager {
 					//If additional identifiers exist, NULL otherCatalogNumbers
 					if (array_key_exists('idvalue', $postArr) && $postArr['idvalue'][0]) $postArr['othercatalognumbers'] = '';
 
-					//If processing status was "unprocessed" and recordEnteredBy is null, populate with user login
-					$oldProcessingStatus = isset($oldValueArr['omoccurrences']['processingstatus']) ? $oldValueArr['omoccurrences']['processingstatus'] : '';
-					$oldRecordEnteredBy = isset($oldValueArr['omoccurrences']['recordenteredby']) ? $oldValueArr['omoccurrences']['recordenteredby'] : '';
-					if (!$oldRecordEnteredBy && ($oldProcessingStatus == 'unprocessed' || $oldProcessingStatus == 'stage 1')) {
-						$postArr['recordenteredby'] = $GLOBALS['USERNAME'];
-						$editFieldArr['omoccurrences'][] = 'recordenteredby';
-					}
 					//Version edits; add edits to omoccuredits
 					$sqlEditsBase = 'INSERT INTO omoccuredits(occid,reviewstatus,appliedstatus,uid,fieldname,fieldvaluenew,fieldvalueold) ' .
 						'VALUES (' . $this->occid . ',1,' . ($autoCommit ? '1' : '0') . ',' . $GLOBALS['SYMB_UID'] . ',';
