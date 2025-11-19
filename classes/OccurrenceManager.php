@@ -1349,15 +1349,15 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 
 	public function getCharacters(){
 		$characters = [];
-		$allowedCharacters = isset($GLOBALS['ALLOWEDCHARACTERS']) ? $GLOBALS['ALLOWEDCHARACTERS'] : '';
+		$searchableCharacters = isset($GLOBALS['SEARCHABLE_CHARACTERS']) ? $GLOBALS['SEARCHABLE_CHARACTERS'] : '';
 
 		//convert string to array
-		if (!empty($allowedCharacters)) {
-			$allowedCharacters = array_filter(
-				array_map('intval', array_map('trim', explode(',', $allowedCharacters)))
+		if (!empty($searchableCharacters)) {
+			$searchableCharacters = array_filter(
+				array_map('intval', array_map('trim', explode(',', $searchableCharacters)))
 			);
 		} else
-			$allowedCharacters = [];
+			$searchableCharacters = [];
 
 		$sql = "SELECT h.hid, h.headingName, c.cid, c.charName, c.charType, c.sortSequence, cs.cs, cs.charStateName, cs.stateID
 				FROM kmcharacters c
@@ -1373,7 +1373,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$cid = $row['cid'];
 
 			//check if the character is allowed
-			if (empty($allowedCharacters) || !in_array($cid, $allowedCharacters))
+			if (empty($searchableCharacters) || !in_array($cid, $searchableCharacters))
 				continue;
 
 			$cid = $row['cid'];
