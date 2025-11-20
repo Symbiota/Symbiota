@@ -180,6 +180,7 @@ class Media {
 	/**
 	 * @param mixed $url
 	 * @param mixed $text
+	 * @return string
 	 */
 	static function render_media_link($url, $text) {
 		$slash_route = substr($url, 0, 1) == '/';
@@ -190,6 +191,22 @@ class Media {
 		$clean_text = htmlspecialchars($text, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 
 		return '<a href="' . $clean_url . '">'. $clean_text . '</a>';
+	}
+
+	/**
+	 * Creates html option output for users
+	 *
+	 * @param ?int $userId What user id is selected
+	 * @return string
+	 */
+	static function renderCreatorOptions(?int $userId = null): string {
+		$html = '';
+
+		foreach(self::getCreatorArray() as $id => $uname) {
+			$html .= "<option value='" . $id ."' ".($id == $userId ?"SELECTED":"") . ">" . $uname . '</option>';
+		}
+
+		return $html;
 	}
 
 	/**
@@ -530,7 +547,9 @@ class Media {
 					$width = $size[0];
 					$height = $size[1];
 
+
 					$storage->upload($file);
+					$createdFilepaths[] = $storage->getDirPath($file);
 
 					$urls = [
 						'thumbnailUrl' => [
@@ -573,7 +592,9 @@ class Media {
 			mysqli_rollback($conn);
 
 			foreach($createdFilepaths as $filepath) {
-				unlink($filepath);
+				if(file_exists($filepath)) {
+					unlink($filepath);
+				}
 			}
 
 			array_push(self::$errors, $th->getMessage());
@@ -940,6 +961,9 @@ class Media {
 				break;
 			case 'image/gif':
 				$image = imagecreatefromgif($src_path);
+				break;
+			case 'image/bmp':
+				$image = imagecreatefrombmp($src_path);
 				break;
 			default:
 				throw new Exception(

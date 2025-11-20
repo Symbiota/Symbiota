@@ -1,7 +1,6 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/Media.php');
-include_once($SERVER_ROOT . '/classes/ImageDetailManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
@@ -15,7 +14,6 @@ $action = array_key_exists('submitaction', $_REQUEST) ? $_REQUEST['submitaction'
 $eMode = array_key_exists('emode', $_REQUEST) ? filter_var($_REQUEST['emode'], FILTER_SANITIZE_NUMBER_INT) : 0;
 
 $imgArr = Media::getMedia($mediaID);
-$creatorArray = Media::getCreatorArray();
 
 $isEditor = false;
 if ($IS_ADMIN || ($imgArr && ($imgArr['username'] === $USERNAME || ($imgArr['creatorUid'] && $imgArr['creatorUid'] == $SYMB_UID)))) {
@@ -221,13 +219,7 @@ if ($imgArr) {
 								<select name="creatorUid" name="creatorUid">
 									<option value=""><?php echo $LANG['SELECT_CREATOR'] ?></option>
 									<option value="">---------------------------------------</option>
-									<?php
-									foreach ($creatorArray as $id => $uname) {
-										echo '<option value="' . $id . '" >';
-										echo $uname;
-										echo '</option>';
-									}
-									?>
+									<?= Media::renderCreatorOptions($imgArr['creatorUid']) ?>
 								</select>
 								* <?php echo $LANG['USER_REGISTERED_SYSTEM'] ?>
 								<a href="#" onclick="toggle('iepor');return false;" title="<?php echo $LANG['DISPLAY_CREATOR_FIELD'] ?>">
@@ -277,7 +269,7 @@ if ($imgArr) {
 								<b><?php echo $LANG['WEB_IMAGE'] ?>:</b><br />
 								<input name="url" type="text" value="<?php echo $imgArr["url"]; ?>" style="width:90%;" />
 								<?php
-								if (stripos($imgArr["url"], $MEDIA_ROOT_URL) === 0) {
+								if ($imgArr["url"] && stripos($imgArr["url"], $MEDIA_ROOT_URL) === 0) {
 								?>
 									<div style="margin-left:70px;">
 										<input type="checkbox" name="renameweburl" value="1" />
@@ -307,7 +299,7 @@ if ($imgArr) {
 								<b><?php echo $LANG['LARGE_IMAGE'] ?>:</b><br />
 								<input name="originalUrl" type="text" value="<?php echo $imgArr["originalUrl"]; ?>" style="width:90%;" />
 								<?php
-								if (stripos($imgArr["originalUrl"], $MEDIA_ROOT_URL) === 0) {
+								if ($imgArr["originalUrl"] && stripos($imgArr["originalUrl"], $MEDIA_ROOT_URL) === 0) {
 								?>
 									<div style="margin-left:80px;">
 										<input type="checkbox" name="renameorigurl" value="1" />

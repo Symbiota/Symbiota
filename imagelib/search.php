@@ -1,6 +1,7 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/ImageLibrarySearch.php');
+include_once($SERVER_ROOT . '/classes/Media.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load('imagelib/search');
@@ -181,12 +182,7 @@ if($action == 'batchAssignTag'){
 							<label for="phuid"><?= $LANG['CREATOR'] ?></label>:
 							<select id="phuid" name="phuid">
 								<option value="">-----------------------------</option>
-								<?php
-								$uidList = $imgLibManager->getCreatorUidArr();
-								foreach($uidList as $uid => $name){
-									echo '<option value="' . $uid . '" ' . ($imgLibManager->getCreatorUid() == $uid ? 'SELECTED' : '') . '>' . $name . '</option>';
-								}
-								?>
+								<?= Media::renderCreatorOptions($phUid) ?>
 							</select>
 						</div>
 						<?php

@@ -5,6 +5,7 @@ include_once($SERVER_ROOT . '/classes/OccurrenceTaxaManager.php');
 include_once($SERVER_ROOT . '/classes/AssociationManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+Language::load('classes/OccurrenceManager');
 
 class OccurrenceManager extends OccurrenceTaxaManager {
 
@@ -25,13 +26,8 @@ class OccurrenceManager extends OccurrenceTaxaManager {
  		if(array_key_exists('reset',$_REQUEST) && $_REQUEST['reset'])  $this->reset();
 		$this->associationManager = new AssociationManager();
 		$this->readRequestVariables();
-		$langTag = '';
-		if(!empty($GLOBALS['LANG_TAG'])) $langTag = $GLOBALS['LANG_TAG'];
 
-		Language::load('classes/OccurrenceManager');
-
-		global $LANG;
-		$this->LANG = $LANG;
+		$this->LANG = $GLOBALS['LANG'];
  	}
 
 	public function __destruct(){
@@ -147,7 +143,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$sqlWhere = substr_replace($sqlWhere,'',-1);
 			$sqlWhere .= $this->associationManager->getAssociatedRecords($this->searchTermArr, 'association-type') . ')';
 		}
-		
+
 
 		//Country term
 		//Note: $this->displaySearchArr is set within the readRequestVariables function
@@ -756,7 +752,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 	}
 
 	public function getPaleoTimes(){
-		$paleoTimes = []; 
+		$paleoTimes = [];
 		if (!empty($GLOBALS['ACTIVATE_PALEO'])) {
 			$sql = "SELECT gtsterm, myaStart, myaEnd FROM omoccurpaleogts";
 			$rs = $this->conn->query($sql);
@@ -1349,15 +1345,15 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 
 	public function getCharacters(){
 		$characters = [];
-		$allowedCharacters = isset($GLOBALS['ALLOWEDCHARACTERS']) ? $GLOBALS['ALLOWEDCHARACTERS'] : '';
+		$searchableCharacters = isset($GLOBALS['SEARCHABLE_CHARACTERS']) ? $GLOBALS['SEARCHABLE_CHARACTERS'] : '';
 
 		//convert string to array
-		if (!empty($allowedCharacters)) {
-			$allowedCharacters = array_filter(
-				array_map('intval', array_map('trim', explode(',', $allowedCharacters)))
+		if (!empty($searchableCharacters)) {
+			$searchableCharacters = array_filter(
+				array_map('intval', array_map('trim', explode(',', $searchableCharacters)))
 			);
 		} else
-			$allowedCharacters = [];
+			$searchableCharacters = [];
 
 		$sql = "SELECT h.hid, h.headingName, c.cid, c.charName, c.charType, c.sortSequence, cs.cs, cs.charStateName, cs.stateID
 				FROM kmcharacters c
@@ -1373,7 +1369,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$cid = $row['cid'];
 
 			//check if the character is allowed
-			if (empty($allowedCharacters) || !in_array($cid, $allowedCharacters))
+			if (empty($searchableCharacters) || !in_array($cid, $searchableCharacters))
 				continue;
 
 			$cid = $row['cid'];

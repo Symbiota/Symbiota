@@ -2,7 +2,7 @@
 include_once($SERVER_ROOT . '/classes/Manager.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverOccurrence.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverDetermination.php');
-include_once($SERVER_ROOT . '/classes/DwcArchiverImage.php');
+include_once($SERVER_ROOT . '/classes/DwcArchiverMedia.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverAttribute.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverMaterialSample.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverIdentifier.php');
@@ -15,9 +15,8 @@ include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 class DwcArchiverCore extends Manager{
 
-	private $dataConn;
+	private $exportID;
 	private $ts;
-
 	protected $collArr;
 	protected $polygons;
 	private $customWhereSql;
@@ -26,7 +25,7 @@ class DwcArchiverCore extends Manager{
 	protected $conditionArr = array();
 	private $condAllowArr;
 	private $overrideConditionLimit = false;
-	private $observerUid = 0;				//If set, this is a person backup event
+	private $observerUid = 0;				//If set, this is a backup event of personally managed specimens
 
 	private $targetPath;
 	protected $serverDomain;
@@ -38,9 +37,7 @@ class DwcArchiverCore extends Manager{
 	private $delimiter = ',';
 	private $fileExt = '.csv';
 	private $occurrenceFieldArr = array();
-	private $determinationFieldArr = array();
-	private $imageFieldArr = array();
-	private $fieldArrMap = array();
+	private $extensionFieldMap = array();
 	private $isPublicDownload = false;
 	private $publicationGuid;
 	private $requestPortalGuid;
@@ -60,14 +57,9 @@ class DwcArchiverCore extends Manager{
 	private $charSetSource = '';
 	protected $charSetOut = '';
 
-	private $attributeHandler = null;
-	private $materialSampleHandler = null;
-	private $identierHandler = null;
-	private $associationHandler = null;
-
 	private $geolocateVariables = array();
 
-	public function __construct($conType = 'readonly'){
+	public function __construct($conType = 'write'){
 		parent::__construct(null, $conType);
 		//Ensure that PHP DOMDocument class is installed
 		if (!class_exists('DOMDocument')) {
@@ -110,29 +102,6 @@ class DwcArchiverCore extends Manager{
 		parent::__destruct();
 	}
 
-	public function getOccurrenceCnt(){
-		$retStr = 0;
-		$this->applyConditions();
-		if (!$this->conditionSql) return false;
-		$dwcOccurManager = new DwcArchiverOccurrence($this->conn);
-		$dwcOccurManager->setSchemaType($this->schemaType);
-		$dwcOccurManager->setExtended($this->extended);
-		$dwcOccurManager->setIncludeAcceptedNameUsage($this->includeAcceptedNameUsage);
-		if (!$this->occurrenceFieldArr) $this->occurrenceFieldArr = $dwcOccurManager->getOccurrenceArr();
-		$sql = $dwcOccurManager->getSqlOccurrences($this->occurrenceFieldArr['fields'], false);
-		$sql .= $this->getTableJoins() . $this->conditionSql;
-		//if($this->schemaType != 'backup') $sql .= ' LIMIT 1000000';
-		if ($sql) {
-			$sql = 'SELECT COUNT(o.occid) as cnt ' . $sql;
-			$rs = $this->conn->query($sql);
-			while ($r = $rs->fetch_object()) {
-				$retStr = $r->cnt;
-			}
-			$rs->free();
-		}
-		return $retStr;
-	}
-
 	public function setCollArr($collTarget, $collType = ''){
 		$sqlWhere = '';
 		if ($collType == 'specimens') {
@@ -146,11 +115,11 @@ class DwcArchiverCore extends Manager{
 			$sqlWhere .= ($sqlWhere ? 'AND ' : '') . '(c.collid IN(' . $collTarget . ')) ';
 		}
 		if ($sqlWhere) {
-			$sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.fulldescription, c.collectionguid, IFNULL(c.homepage,i.url) AS url, c.contact, c.email, ' .
-				'c.guidtarget, c.dwcaurl, c.latitudedecimal, c.longitudedecimal, c.icon, c.managementtype, c.colltype, c.rights, c.rightsholder, c.usageterm, c.dynamicproperties, ' .
-				'i.address1, i.address2, i.city, i.stateprovince, i.postalcode, i.country, i.phone ' .
-				'FROM omcollections c LEFT JOIN institutions i ON c.iid = i.iid ' .
-				'WHERE ' . $sqlWhere;
+			$sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.fulldescription, c.collectionguid, i.url, c.contact, c.email, c.resourceJson, c.contactJson,
+				c.guidtarget, c.dwcaurl, c.latitudedecimal, c.longitudedecimal, c.icon, c.managementtype, c.colltype, c.rights, c.rightsholder, c.usageterm, c.accessrights,
+				c.dynamicproperties, i.address1, i.address2, i.city, i.stateprovince, i.postalcode, i.country, i.phone
+				FROM omcollections c LEFT JOIN institutions i ON c.iid = i.iid
+				WHERE ' . $sqlWhere;
 			if ($rs = $this->conn->query($sql)) {
 				while ($r = $rs->fetch_object()) {
 					$this->collArr[$r->collid]['instcode'] = $r->institutioncode;
@@ -158,9 +127,29 @@ class DwcArchiverCore extends Manager{
 					$this->collArr[$r->collid]['collname'] = $r->collectionname;
 					$this->collArr[$r->collid]['description'] = $r->fulldescription ?? '';
 					$this->collArr[$r->collid]['collectionguid'] = $r->collectionguid ?? '';
-					$this->collArr[$r->collid]['url'] = $r->url ?? '';
-					$this->collArr[$r->collid]['contact'][0]['individualName']['surName'] = $r->contact ?? '';
-					$this->collArr[$r->collid]['contact'][0]['electronicMailAddress'] = $r->email ?? '';
+					if ($r->resourceJson) {
+						if ($resourceArr = json_decode($r->resourceJson, true)) {
+							$this->collArr[$r->collid]['url'] = $resourceArr[0]['url'];
+						}
+					}
+					elseif($r->url){
+						$this->collArr[$r->collid]['url'] = $r->url;
+					}
+					if ($r->contactJson) {
+						if ($contactArr = json_decode($r->contactJson, true)) {
+							foreach ($contactArr as $key => $cArr) {
+								$this->collArr[$r->collid]['contact'][$key]['individualName']['surName'] = $cArr['lastName'];
+								$this->collArr[$r->collid]['contact'][$key]['individualName']['givenName'] = $cArr['firstName'];
+								if (isset($cArr['role']) && $cArr['role']) $this->collArr[$r->collid]['contact'][$key]['positionName'] = $cArr['role'];
+								if (isset($cArr['email']) && $cArr['email']) $this->collArr[$r->collid]['contact'][$key]['electronicMailAddress'] = $cArr['email'];
+								if (isset($cArr['orcid']) && $cArr['orcid']) $this->collArr[$r->collid]['contact'][$key]['userId'] = 'https://orcid.org/' . $cArr['orcid'];
+							}
+						}
+					}
+					elseif($r->contact){
+						$this->collArr[$r->collid]['contact'][0]['individualName']['surName'] = $r->contact;
+						if($r->email) $this->collArr[$r->collid]['contact'][0]['electronicMailAddress'] = $r->email;
+					}
 					$this->collArr[$r->collid]['guidtarget'] = $r->guidtarget ?? '';
 					$this->collArr[$r->collid]['dwcaurl'] = $r->dwcaurl ?? '';
 					$this->collArr[$r->collid]['lat'] = $r->latitudedecimal ?? '';
@@ -169,8 +158,13 @@ class DwcArchiverCore extends Manager{
 					$this->collArr[$r->collid]['colltype'] = $r->colltype;
 					$this->collArr[$r->collid]['managementtype'] = $r->managementtype;
 					$this->collArr[$r->collid]['rights'] = $r->rights ?? '';
-					$this->collArr[$r->collid]['rightsholder'] = $r->rightsholder ?? '';
+					$rightsHolder = $r->rightsholder;
+					if(!$rightsHolder){
+						$rightsHolder = $r->collectionname . ' (' . $r->institutioncode . ($r->institutioncode ? '-' . $r->institutioncode : '') . ')';
+					}
+					$this->collArr[$r->collid]['rightsholder'] = $rightsHolder;
 					$this->collArr[$r->collid]['usageterm'] = $r->usageterm ?? '';
+					$this->collArr[$r->collid]['accessrights'] = $r->accessrights ?? '';
 					$this->collArr[$r->collid]['address1'] = $r->address1 ?? '';
 					$this->collArr[$r->collid]['address2'] = $r->address2 ?? '';
 					$this->collArr[$r->collid]['city'] = $r->city ?? '';
@@ -203,7 +197,6 @@ class DwcArchiverCore extends Manager{
 					}
 				}
 				$rs->free();
-				$this->setJsonResources();
 			}
 			else{
 				echo 'error: '.$this->conn->error.'<br>';
@@ -212,34 +205,6 @@ class DwcArchiverCore extends Manager{
 		if(!empty($GLOBALS['ACTIVATE_PALEO']) && $this->includePaleo === null){
 			//Paleo module is globally set as true AND all target portals have not explicitly set the paleo module to false
 			$this->includePaleo = 1;
-		}
-	}
-
-	private function setJsonResources(){
-		//Temporary function needed until pending patch is pushed to production
-		if($this->collArr){
-			$sql = 'SELECT collid, resourceJson, contactJson FROM omcollections WHERE collid IN(' . implode(',', array_keys($this->collArr)) . ')';
-			if ($rs = $this->conn->query($sql)) {
-				while ($r = $rs->fetch_object()) {
-					if ($r->resourceJson) {
-						if ($resourceArr = json_decode($r->resourceJson, true)) {
-							$this->collArr[$r->collid]['url'] = $resourceArr[0]['url'];
-						}
-					}
-					if ($r->contactJson) {
-						if ($contactArr = json_decode($r->contactJson, true)) {
-							foreach ($contactArr as $key => $cArr) {
-								$this->collArr[$r->collid]['contact'][$key]['individualName']['surName'] = $cArr['lastName'];
-								$this->collArr[$r->collid]['contact'][$key]['individualName']['givenName'] = $cArr['firstName'];
-								if (isset($cArr['role']) && $cArr['role']) $this->collArr[$r->collid]['contact'][$key]['positionName'] = $cArr['role'];
-								if (isset($cArr['email']) && $cArr['email']) $this->collArr[$r->collid]['contact'][$key]['electronicMailAddress'] = $cArr['email'];
-								if (isset($cArr['orcid']) && $cArr['orcid']) $this->collArr[$r->collid]['contact'][$key]['userId'] = 'https://orcid.org/' . $cArr['orcid'];
-							}
-						}
-					}
-				}
-				$rs->free();
-			}
 		}
 	}
 
@@ -301,7 +266,7 @@ class DwcArchiverCore extends Manager{
 		}
 
 		if($this->includeAcceptedNameUsage) {
-			// TODO (Logan) Should there be a select for this? 
+			// TODO (Logan) Should there be a select for this?
 			$this->conditionSql .= 'AND (ts.taxauthid = 1) ';
 		}
 
@@ -739,8 +704,7 @@ class DwcArchiverCore extends Manager{
 
 		$dwcOccurManager->setUpperTaxonomy();
 		$dwcOccurManager->setTaxonRank();
-		if (!$this->dataConn) $this->dataConn = MySQLiConnectionFactory::getCon('readonly');
-		if ($rs = $this->dataConn->query($sql, MYSQLI_USE_RESULT)) {
+		if ($rs = $this->conn->query($sql)) {
 			$typeArr = null;
 			if ($this->schemaType == 'pensoft') {
 				$typeArr = array('Other material', 'Holotype', 'Paratype', 'Isotype', 'Isoparatype', 'Isolectotype', 'Isoneotype', 'Isosyntype');
@@ -822,8 +786,6 @@ class DwcArchiverCore extends Manager{
 				}
 
 				$dwcOccurManager->appendUpperTaxonomy($r);
-				if ($rankStr = $dwcOccurManager->getTaxonRank($r['rankid'])) $r['t_taxonRank'] = $rankStr;
-				unset($r['rankid']);
 
 				if ($urlPathPrefix) $r['t_references'] = $urlPathPrefix . 'collections/individual/index.php?occid=' . $r['occid'];
 
@@ -836,10 +798,9 @@ class DwcArchiverCore extends Manager{
 			$rs->free();
 			//$retArr[0]['associatedMedia'] = $this->getAssociatedMedia();
 		} else {
-			$this->logOrEcho("ERROR creating occurrence file: " . $this->dataConn->error . "\n");
+			$this->logOrEcho("ERROR creating occurrence file: " . $this->conn->error . "\n");
 			$this->logOrEcho("\tSQL: " . $sql . "\n");
 		}
-		$this->dataConn->close();
 		return $retArr;
 	}
 
@@ -864,8 +825,8 @@ class DwcArchiverCore extends Manager{
 				$this->logOrEcho("FATAL ERROR: PHP ZipArchive class is not installed, please contact your server admin\n");
 				exit('FATAL ERROR: PHP ZipArchive class is not installed, please contact your server admin');
 			}
-			$this->dataConn = MySQLiConnectionFactory::getCon('readonly');
-			$status = $this->writeOccurrenceFile();
+			$occurFile = $this->targetPath . $this->ts . '-occur' . $this->fileExt;
+			$status = $this->writeOccurrenceFile($occurFile);
 			$archiveFile = $this->targetPath . $fileName;
 			if ($status) {
 				if (file_exists($archiveFile)) unlink($archiveFile);
@@ -874,64 +835,90 @@ class DwcArchiverCore extends Manager{
 				if ($status !== true) {
 					exit('FATAL ERROR: unable to create archive file: ' . $status);
 				}
-				//$this->logOrEcho("DWCA created: ".$archiveFile."\n");
-
-				$zipArchive->addFile($this->targetPath . $this->ts . '-occur' . $this->fileExt);
-				$zipArchive->renameName($this->targetPath . $this->ts . '-occur' . $this->fileExt, 'occurrences' . $this->fileExt);
+				$zipArchive->addFile($occurFile);
+				$zipArchive->renameName($occurFile, 'occurrences' . $this->fileExt);
+				$unlinkFileArr = array($occurFile);
+				//Create extension files
 				if ($this->includeDets) {
-					$this->writeDeterminationFile();
-					$zipArchive->addFile($this->targetPath . $this->ts . '-det' . $this->fileExt);
-					$zipArchive->renameName($this->targetPath . $this->ts . '-det' . $this->fileExt, 'identifications' . $this->fileExt);
+					$detFile = $this->targetPath . $this->ts . '-det' . $this->fileExt;
+					if($this->writeDeterminationFile($detFile)){
+						$zipArchive->addFile($detFile);
+						$zipArchive->renameName($detFile, 'identifications' . $this->fileExt);
+					}
+					$unlinkFileArr[] = $detFile;
 				}
 				if ($this->includeImgs) {
-					$this->writeImageFile();
-					$zipArchive->addFile($this->targetPath . $this->ts . '-multimedia' . $this->fileExt);
-					$zipArchive->renameName($this->targetPath . $this->ts . '-multimedia' . $this->fileExt, 'multimedia' . $this->fileExt);
+					$mediaFile = $this->targetPath . $this->ts . '-multimedia' . $this->fileExt;
+					if($this->writeMediaFile($mediaFile)){
+						$zipArchive->addFile($mediaFile);
+						$zipArchive->renameName($mediaFile, 'multimedia' . $this->fileExt);
+					}
+					$unlinkFileArr[] = $mediaFile;
 				}
-				if ($this->includeAttributes && file_exists($this->targetPath . $this->ts . '-attr' . $this->fileExt)) {
-					$zipArchive->addFile($this->targetPath . $this->ts . '-attr' . $this->fileExt);
-					$zipArchive->renameName($this->targetPath . $this->ts . '-attr' . $this->fileExt, 'measurementOrFact' . $this->fileExt);
+				if ($this->includeAttributes) {
+					$attrFile = $this->targetPath . $this->ts . '-attr' . $this->fileExt;
+					if($this->writeAttributeData($attrFile)){
+						$zipArchive->addFile($attrFile);
+						$zipArchive->renameName($attrFile, 'measurementOrFact' . $this->fileExt);
+					}
+					$unlinkFileArr[] = $attrFile;
 				}
-				if ($this->includeMaterialSample && file_exists($this->targetPath . $this->ts . '-matSample' . $this->fileExt)) {
-					$zipArchive->addFile($this->targetPath . $this->ts . '-matSample' . $this->fileExt);
-					$zipArchive->renameName($this->targetPath . $this->ts . '-matSample' . $this->fileExt, 'materialSample' . $this->fileExt);
+				if ($this->includeMaterialSample) {
+					$matSampleFile = $this->targetPath . $this->ts . '-matSample' . $this->fileExt;
+					if($this->writeMaterialSampleData($matSampleFile)){
+						$zipArchive->addFile($matSampleFile);
+						$zipArchive->renameName($matSampleFile, 'materialSample' . $this->fileExt);
+					}
+					$unlinkFileArr[] = $matSampleFile;
 				}
-				if ($this->includeIdentifiers && file_exists($this->targetPath . $this->ts . '-ident' . $this->fileExt)) {
-					$zipArchive->addFile($this->targetPath . $this->ts . '-ident' . $this->fileExt);
-					$zipArchive->renameName($this->targetPath . $this->ts . '-ident' . $this->fileExt, 'identifiers' . $this->fileExt);
+				if ($this->includeIdentifiers) {
+					$identFile = $this->targetPath . $this->ts . '-ident' . $this->fileExt;
+					if($this->writeIdentifierData($identFile)){
+						$zipArchive->addFile($identFile);
+						$zipArchive->renameName($identFile, 'identifiers' . $this->fileExt);
+					}
+					$unlinkFileArr[] = $identFile;
 				}
-				if ($this->includeAssociations && file_exists($this->targetPath . $this->ts . '-assoc' . $this->fileExt)) {
-					$zipArchive->addFile($this->targetPath . $this->ts . '-assoc' . $this->fileExt);
-					$zipArchive->renameName($this->targetPath . $this->ts . '-assoc' . $this->fileExt, 'resourceRelationships' . $this->fileExt);
+				if ($this->includeAssociations) {
+					$assocFile = $this->targetPath . $this->ts . '-assoc' . $this->fileExt;
+					if($this->writeAssociationData($assocFile)){
+						$zipArchive->addFile($assocFile);
+						$zipArchive->renameName($assocFile, 'resourceRelationships' . $this->fileExt);
+					}
+					$unlinkFileArr[] = $assocFile;
 				}
+
 				//Meta file
+				$metaFile = $this->targetPath . $this->ts . '-meta.xml';
 				$this->writeMetaFile();
-				$zipArchive->addFile($this->targetPath . $this->ts . '-meta.xml');
-				$zipArchive->renameName($this->targetPath . $this->ts . '-meta.xml', 'meta.xml');
+				$zipArchive->addFile($metaFile);
+				$zipArchive->renameName($metaFile, 'meta.xml');
+				$unlinkFileArr[] = $metaFile;
+
 				//EML file
+				$emlFile = $this->targetPath . $this->ts . '-eml.xml';
 				$this->writeEmlFile();
-				$zipArchive->addFile($this->targetPath . $this->ts . '-eml.xml');
-				$zipArchive->renameName($this->targetPath . $this->ts . '-eml.xml', 'eml.xml');
+				$zipArchive->addFile($emlFile);
+				$zipArchive->renameName($emlFile, 'eml.xml');
+
 				//Citation file
 				if($this->schemaType != 'backup'){
+					$citeFile = $this->targetPath . $this->ts . '-citation.txt';
 					$this->writeCitationFile();
-					$zipArchive->addFile($this->targetPath . $this->ts . '-citation.txt');
-					$zipArchive->renameName($this->targetPath . $this->ts . '-citation.txt', 'CITEME.txt');
+					$zipArchive->addFile($citeFile);
+					$zipArchive->renameName($citeFile, 'CITEME.txt');
+					$unlinkFileArr[] = $citeFile;
 				}
 
 				$zipArchive->close();
-				unlink($this->targetPath . $this->ts . '-occur' . $this->fileExt);
-				if ($this->includeDets) unlink($this->targetPath . $this->ts . '-det' . $this->fileExt);
-				if ($this->includeImgs) unlink($this->targetPath . $this->ts . '-multimedia' . $this->fileExt);
-				if ($this->includeAttributes && file_exists($this->targetPath . $this->ts . '-attr' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-attr' . $this->fileExt);
-				if ($this->includeMaterialSample && file_exists($this->targetPath . $this->ts . '-matSample' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-matSample' . $this->fileExt);
-				if ($this->includeIdentifiers && file_exists($this->targetPath . $this->ts . '-ident' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-ident' . $this->fileExt);
-				if ($this->includeAssociations && file_exists($this->targetPath . $this->ts . '-assoc' . $this->fileExt)) unlink($this->targetPath . $this->ts . '-assoc' . $this->fileExt);
 
-				unlink($this->targetPath . $this->ts . '-meta.xml');
-				if ($this->schemaType == 'dwc') rename($this->targetPath . $this->ts . '-eml.xml', $this->targetPath . str_replace('.zip', '.eml', $fileName));
-				else unlink($this->targetPath . $this->ts . '-eml.xml');
-				if (file_exists($this->targetPath . $this->ts . '-citation.txt')) unlink($this->targetPath . $this->ts . '-citation.txt');
+				//Clean up temp files, which only can be deleted after the zipArchive is closed
+				if ($this->schemaType == 'dwc') rename($emlFile, $this->targetPath . str_replace('.zip', '.eml', $fileName));
+				else $unlinkFileArr[] = $emlFile;
+				foreach($unlinkFileArr as $deleteFile){
+					if (file_exists($deleteFile)) unlink($deleteFile);
+				}
+				//$this->clearStagingTable();
 			}
 			else {
 				$this->errorMessage = 'FAILED to create archive file due to failure to return occurrence records; check and adjust search variables';
@@ -945,8 +932,6 @@ class DwcArchiverCore extends Manager{
 					}
 				}
 			}
-			$this->logOrEcho("\n-----------------------------------------------------\n");
-			$this->dataConn->close();
 		}
 		else{
 			$this->logOrEcho('ERROR building DwC-Archive: '.$this->getErrorMessage());
@@ -1019,12 +1004,25 @@ class DwcArchiverCore extends Manager{
 		return true;
 	}
 
+	private function clearStagingTable(){
+		$status = false;
+		if($this->exportID){
+			$sql = 'DELETE FROM omexportoccurrences WHERE omExportID = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->exportID);
+				if($stmt->execute()) $status = true;
+				$stmt->close();
+			}
+		}
+		return $status;
+	}
+
 	//Generate DwC support files
 	private function writeMetaFile(){
 		$this->logOrEcho("Creating meta.xml (" . date('h:i:s A') . ")... ");
 
 		//Create new DOM document
-		$newDoc = new DOMDocument('1.0', $this->charSetOut);
+		$newDoc = new DOMDocument('1.0', 'UTF-8');
 
 		//Add root element
 		$rootElem = $newDoc->createElement('archive');
@@ -1070,185 +1068,31 @@ class DwcArchiverCore extends Manager{
 		}
 		$rootElem->appendChild($coreElem);
 
-		//Identification extension
-		if ($this->includeDets) {
-			$extElem1 = $newDoc->createElement('extension');
-			$extElem1->setAttribute('encoding', $this->charSetOut);
-			$extElem1->setAttribute('fieldsTerminatedBy', $this->delimiter);
-			$extElem1->setAttribute('linesTerminatedBy', '\n');
-			$extElem1->setAttribute('fieldsEnclosedBy', '"');
-			$extElem1->setAttribute('ignoreHeaderLines', '1');
-			$extElem1->setAttribute('rowType', 'http://rs.tdwg.org/dwc/terms/Identification');
-
-			$filesElem1 = $newDoc->createElement('files');
-			$filesElem1->appendChild($newDoc->createElement('location', 'identifications' . $this->fileExt));
-			$extElem1->appendChild($filesElem1);
-
-			$coreIdElem1 = $newDoc->createElement('coreid');
-			$coreIdElem1->setAttribute('index', '0');
-			$extElem1->appendChild($coreIdElem1);
-
-
-			//List identification fields
-			$detCnt = 1;
-			$termArr = $this->determinationFieldArr['terms'];
-			unset($termArr['detID']);
-			foreach ($termArr as $v) {
-				$fieldElem = $newDoc->createElement('field');
-				$fieldElem->setAttribute('index', $detCnt);
-				$fieldElem->setAttribute('term', $v);
-				$extElem1->appendChild($fieldElem);
-				$detCnt++;
-			}
-			$rootElem->appendChild($extElem1);
+		if (isset($this->extensionFieldMap['det'])) {
+			//Identification/determination extension
+			$this->setExtensionNode($rootElem, $newDoc, $this->extensionFieldMap['det'], 'http://rs.tdwg.org/dwc/terms/Identification', 'identifications');
 		}
 
-		//Image extension
-		if ($this->includeImgs) {
-			$extElem2 = $newDoc->createElement('extension');
-			$extElem2->setAttribute('encoding', $this->charSetOut);
-			$extElem2->setAttribute('fieldsTerminatedBy', $this->delimiter);
-			$extElem2->setAttribute('linesTerminatedBy', '\n');
-			$extElem2->setAttribute('fieldsEnclosedBy', '"');
-			$extElem2->setAttribute('ignoreHeaderLines', '1');
-			$extElem2->setAttribute('rowType', 'http://rs.tdwg.org/ac/terms/Multimedia');
-
-			$filesElem2 = $newDoc->createElement('files');
-			$filesElem2->appendChild($newDoc->createElement('location', 'multimedia' . $this->fileExt));
-			$extElem2->appendChild($filesElem2);
-
-			$coreIdElem2 = $newDoc->createElement('coreid');
-			$coreIdElem2->setAttribute('index', '0');
-			$extElem2->appendChild($coreIdElem2);
-
-			//List image fields
-			$imgCnt = 1;
-			$termArr = $this->imageFieldArr['terms'];
-			unset($termArr['mediaID']);
-			foreach ($termArr as $v) {
-				$fieldElem = $newDoc->createElement('field');
-				$fieldElem->setAttribute('index', $imgCnt);
-				$fieldElem->setAttribute('term', $v);
-				$extElem2->appendChild($fieldElem);
-				$imgCnt++;
-			}
-			$rootElem->appendChild($extElem2);
+		if (isset($this->extensionFieldMap['media'])) {
+			//Image extension
+			$this->setExtensionNode($rootElem, $newDoc, $this->extensionFieldMap['media'], 'http://rs.tdwg.org/ac/terms/Multimedia', 'multimedia');
 		}
 
-		//MeasurementOrFact extension
-		if ($this->includeAttributes && isset($this->fieldArrMap['attribute'])) {
-			$extElem3 = $newDoc->createElement('extension');
-			$extElem3->setAttribute('encoding', $this->charSetOut);
-			$extElem3->setAttribute('fieldsTerminatedBy', $this->delimiter);
-			$extElem3->setAttribute('linesTerminatedBy', '\n');
-			$extElem3->setAttribute('fieldsEnclosedBy', '"');
-			$extElem3->setAttribute('ignoreHeaderLines', '1');
-			$extElem3->setAttribute('rowType', 'http://rs.iobis.org/obis/terms/ExtendedMeasurementOrFact');
-
-			$filesElem3 = $newDoc->createElement('files');
-			$filesElem3->appendChild($newDoc->createElement('location', 'measurementOrFact' . $this->fileExt));
-			$extElem3->appendChild($filesElem3);
-
-			$coreIdElem3 = $newDoc->createElement('coreid');
-			$coreIdElem3->setAttribute('index', '0');
-			$extElem3->appendChild($coreIdElem3);
-
-			$mofCnt = 1;
-			foreach ($this->fieldArrMap['attribute'] as $term) {
-				$fieldElem = $newDoc->createElement('field');
-				$fieldElem->setAttribute('index', $mofCnt);
-				$fieldElem->setAttribute('term', $term);
-				$extElem3->appendChild($fieldElem);
-				$mofCnt++;
-			}
-			$rootElem->appendChild($extElem3);
+		if (isset($this->extensionFieldMap['attribute'])) {
+			//MeasurementOrFact extension
+			$this->setExtensionNode($rootElem, $newDoc, $this->extensionFieldMap['attribute'], 'http://rs.iobis.org/obis/terms/ExtendedMeasurementOrFact', 'measurementOrFact');
 		}
-
-		//MaterialSample extension
-		if ($this->includeMaterialSample && isset($this->fieldArrMap['materialSample'])) {
-			$extElem3 = $newDoc->createElement('extension');
-			$extElem3->setAttribute('encoding', $this->charSetOut);
-			$extElem3->setAttribute('fieldsTerminatedBy', $this->delimiter);
-			$extElem3->setAttribute('linesTerminatedBy', '\n');
-			$extElem3->setAttribute('fieldsEnclosedBy', '"');
-			$extElem3->setAttribute('ignoreHeaderLines', '1');
-			$extElem3->setAttribute('rowType', 'http://data.ggbn.org/schemas/ggbn/terms/MaterialSample');
-
-			$filesElem3 = $newDoc->createElement('files');
-			$filesElem3->appendChild($newDoc->createElement('location', 'materialSample' . $this->fileExt));
-			$extElem3->appendChild($filesElem3);
-
-			$coreIdElem3 = $newDoc->createElement('coreid');
-			$coreIdElem3->setAttribute('index', '0');
-			$extElem3->appendChild($coreIdElem3);
-
-			$msCnt = 1;
-			foreach ($this->fieldArrMap['materialSample'] as $term) {
-				$fieldElem = $newDoc->createElement('field');
-				$fieldElem->setAttribute('index', $msCnt);
-				$fieldElem->setAttribute('term', $term);
-				$extElem3->appendChild($fieldElem);
-				$msCnt++;
-			}
-			$rootElem->appendChild($extElem3);
+		if (isset($this->extensionFieldMap['materialSample'])) {
+			//MaterialSample extension
+			$this->setExtensionNode($rootElem, $newDoc, $this->extensionFieldMap['materialSample'], 'http://data.ggbn.org/schemas/ggbn/terms/MaterialSample', 'materialSample');
 		}
-
-		//Identifier extension  https://rs.gbif.org/extension/gbif/1.0/identifier.xml
-		if ($this->includeIdentifiers && isset($this->fieldArrMap['identifier'])) {
-			$extElem3 = $newDoc->createElement('extension');
-			$extElem3->setAttribute('encoding', $this->charSetOut);
-			$extElem3->setAttribute('fieldsTerminatedBy', $this->delimiter);
-			$extElem3->setAttribute('linesTerminatedBy', '\n');
-			$extElem3->setAttribute('fieldsEnclosedBy', '"');
-			$extElem3->setAttribute('ignoreHeaderLines', '1');
-			$extElem3->setAttribute('rowType', 'http://rs.gbif.org/terms/1.0/Identifier');
-
-			$filesElem3 = $newDoc->createElement('files');
-			$filesElem3->appendChild($newDoc->createElement('location', 'identifiers' . $this->fileExt));
-			$extElem3->appendChild($filesElem3);
-
-			$coreIdElem3 = $newDoc->createElement('coreid');
-			$coreIdElem3->setAttribute('index', '0');
-			$extElem3->appendChild($coreIdElem3);
-
-			$mofCnt = 1;
-			foreach ($this->fieldArrMap['identifier'] as $term) {
-				$fieldElem = $newDoc->createElement('field');
-				$fieldElem->setAttribute('index', $mofCnt);
-				$fieldElem->setAttribute('term', $term);
-				$extElem3->appendChild($fieldElem);
-				$mofCnt++;
-			}
-			$rootElem->appendChild($extElem3);
+		if (isset($this->extensionFieldMap['identifier'])) {
+			//Identifier extension  https://rs.gbif.org/extension/gbif/1.0/identifier.xml
+			$this->setExtensionNode($rootElem, $newDoc, $this->extensionFieldMap['identifier'], 'http://rs.gbif.org/terms/1.0/Identifier', 'identifiers');
 		}
-
-		//Association/Resource relationship extension  https://rs.gbif.org/extension/resource_relationship_2024-02-19.xml
-		if ($this->includeAssociations && isset($this->fieldArrMap['associations'])) {
-			$extElem3 = $newDoc->createElement('extension');
-			$extElem3->setAttribute('encoding', $this->charSetOut);
-			$extElem3->setAttribute('fieldsTerminatedBy', $this->delimiter);
-			$extElem3->setAttribute('linesTerminatedBy', '\n');
-			$extElem3->setAttribute('fieldsEnclosedBy', '"');
-			$extElem3->setAttribute('ignoreHeaderLines', '1');
-			$extElem3->setAttribute('rowType', 'http://rs.tdwg.org/dwc/terms/ResourceRelationship');
-
-			$filesElem3 = $newDoc->createElement('files');
-			$filesElem3->appendChild($newDoc->createElement('location', 'resourceRelationships' . $this->fileExt));
-			$extElem3->appendChild($filesElem3);
-
-			$coreIdElem3 = $newDoc->createElement('coreid');
-			$coreIdElem3->setAttribute('index', '0');
-			$extElem3->appendChild($coreIdElem3);
-
-			$mofCnt = 1;
-			foreach ($this->fieldArrMap['associations'] as $term) {
-				$fieldElem = $newDoc->createElement('field');
-				$fieldElem->setAttribute('index', $mofCnt);
-				$fieldElem->setAttribute('term', $term);
-				$extElem3->appendChild($fieldElem);
-				$mofCnt++;
-			}
-			$rootElem->appendChild($extElem3);
+		if (isset($this->extensionFieldMap['associations'])) {
+			//Association/Resource relationship extension  https://rs.gbif.org/extension/resource_relationship_2024-02-19.xml
+			$this->setExtensionNode($rootElem, $newDoc, $this->extensionFieldMap['associations'], 'http://rs.tdwg.org/dwc/terms/ResourceRelationship', 'resourceRelationships');
 		}
 
 		$newDoc->save($this->targetPath . $this->ts . '-meta.xml');
@@ -1256,116 +1100,34 @@ class DwcArchiverCore extends Manager{
 		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 1);
 	}
 
-	private function getEmlArr(){
+	private function setExtensionNode(&$rootElem, $newDoc, $fieldMap, $rowType, $fileName){
+		if(isset($fieldMap)){
+			$elem = $newDoc->createElement('extension');
+			$elem->setAttribute('encoding', $this->charSetOut);
+			$elem->setAttribute('fieldsTerminatedBy', $this->delimiter);
+			$elem->setAttribute('linesTerminatedBy', '\n');
+			$elem->setAttribute('fieldsEnclosedBy', '"');
+			$elem->setAttribute('ignoreHeaderLines', '1');
+			$elem->setAttribute('rowType', $rowType);
 
-		$this->setServerDomain();
-		$urlPathPrefix = $this->serverDomain . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) == '/' ? '' : '/');
-		$localDomain = $this->serverDomain;
+			$filesElem = $newDoc->createElement('files');
+			$filesElem->appendChild($newDoc->createElement('location', $fileName . $this->fileExt));
+			$elem->appendChild($filesElem);
 
-		$emlArr = array();
-		if (count($this->collArr) == 1) {
-			$collId = key($this->collArr);
-			$emlArr['alternateIdentifier'][] = $urlPathPrefix . 'collections/misc/collprofiles.php?collid=' . $collId;
-			$emlArr['title'] = $this->collArr[$collId]['collname'];
-			$emlArr['description'] = $this->collArr[$collId]['description'];
+			$coreIdElem = $newDoc->createElement('coreid');
+			$coreIdElem->setAttribute('index', '0');
+			$elem->appendChild($coreIdElem);
 
-			if (isset($this->collArr[$collId]['contact'][0]['givenName'])) $emlArr['contact']['givenName'] = $this->collArr[$collId]['contact'][0]['givenName'];
-			if (isset($this->collArr[$collId]['contact'][0]['surName'])) $emlArr['contact']['surName'] = $this->collArr[$collId]['contact'][0]['surName'];
-			if (isset($this->collArr[$collId]['collname'])) $emlArr['contact']['organizationName'] = $this->collArr[$collId]['collname'];
-			if (isset($this->collArr[$collId]['phone'])) $emlArr['contact']['phone'] = $this->collArr[$collId]['phone'];
-			if (isset($this->collArr[$collId]['contact'][0]['electronicMailAddress'])) $emlArr['contact']['electronicMailAddress'] = $this->collArr[$collId]['contact'][0]['electronicMailAddress'];
-			if (isset($this->collArr[$collId]['contact'][0]['userId'])) $emlArr['contact']['userId'] = $this->collArr[$collId]['contact'][0]['userId'];
-			if ($this->collArr[$collId]['url']) $emlArr['contact']['onlineUrl'] = $this->collArr[$collId]['url'];
-			$addrStr = $this->collArr[$collId]['address1'];
-			if ($this->collArr[$collId]['address2']) $addrStr .= ', ' . $this->collArr[$collId]['address2'];
-			if ($addrStr) $emlArr['contact']['addr']['deliveryPoint'] = $addrStr;
-			if ($this->collArr[$collId]['city']) $emlArr['contact']['addr']['city'] = $this->collArr[$collId]['city'];
-			if ($this->collArr[$collId]['state']) $emlArr['contact']['addr']['administrativeArea'] = $this->collArr[$collId]['state'];
-			if ($this->collArr[$collId]['postalcode']) $emlArr['contact']['addr']['postalCode'] = $this->collArr[$collId]['postalcode'];
-			if ($this->collArr[$collId]['country']) $emlArr['contact']['addr']['country'] = $this->collArr[$collId]['country'];
-			if ($this->collArr[$collId]['rights']) $emlArr['intellectualRights'] = $this->collArr[$collId]['rights'];
-			if (isset($this->collArr[$collId]['project'])) $emlArr['project'] = $this->collArr[$collId]['project'];
-		} else {
-			//Dataset contains multiple collection data
-			$emlArr['title'] = $GLOBALS['DEFAULT_TITLE'] . ' general data extract';
-			if (isset($GLOBALS['SYMB_UID']) && $GLOBALS['SYMB_UID']) {
-				$sql = 'SELECT uid, lastname, firstname, title, institution, department, address, city, state, zip, country, phone, email FROM users WHERE (uid = ' . $GLOBALS['SYMB_UID'] . ')';
-				$rs = $this->conn->query($sql);
-				if ($r = $rs->fetch_object()) {
-					$emlArr['associatedParty'][0]['individualName']['surName'] = $r->lastname;
-					if ($r->firstname) $emlArr['associatedParty'][0]['individualName']['givenName'] = $r->firstname;
-					if ($r->email) $emlArr['associatedParty'][0]['electronicMailAddress'] = $r->email;
-					$emlArr['associatedParty'][0]['role'] = 'datasetOriginator';
-					if ($r->institution) $emlArr['associatedParty'][0]['organizationName'] = $r->institution;
-					if ($r->title) $emlArr['associatedParty'][0]['positionName'] = $r->title;
-					if ($r->phone) $emlArr['associatedParty'][0]['phone'] = $r->phone;
-					if ($r->state) {
-						if ($r->department) $emlArr['associatedParty'][0]['address']['deliveryPoint'][] = $r->department;
-						if ($r->address) $emlArr['associatedParty'][0]['address']['deliveryPoint'][] = $r->address;
-						if ($r->city) $emlArr['associatedParty'][0]['address']['city'] = $r->city;
-						$emlArr['associatedParty'][0]['address']['administrativeArea'] = $r->state;
-						if ($r->zip) $emlArr['associatedParty'][0]['address']['postalCode'] = $r->zip;
-						if ($r->country) $emlArr['associatedParty'][0]['address']['country'] = $r->country;
-					}
-					$rs->free();
-				}
+			$cnt = 1;
+			foreach ($fieldMap as $term) {
+				$fieldElem = $newDoc->createElement('field');
+				$fieldElem->setAttribute('index', $cnt);
+				$fieldElem->setAttribute('term', $term);
+				$elem->appendChild($fieldElem);
+				$cnt++;
 			}
+			$rootElem->appendChild($elem);
 		}
-
-		if (array_key_exists('PORTAL_GUID', $GLOBALS) && $GLOBALS['PORTAL_GUID']) {
-			$emlArr['creator'][0]['attr']['id'] = $GLOBALS['PORTAL_GUID'];
-		}
-		$emlArr['creator'][0]['organizationName'] = $GLOBALS['DEFAULT_TITLE'];
-		$emlArr['creator'][0]['electronicMailAddress'] = $GLOBALS['ADMIN_EMAIL'];
-		$emlArr['creator'][0]['onlineUrl'] = $urlPathPrefix . 'index.php';
-
-		$emlArr['metadataProvider'][0]['organizationName'] = $GLOBALS['DEFAULT_TITLE'];
-		$emlArr['metadataProvider'][0]['electronicMailAddress'] = $GLOBALS['ADMIN_EMAIL'];
-		$emlArr['metadataProvider'][0]['onlineUrl'] = $urlPathPrefix . 'index.php';
-
-		$emlArr['pubDate'] = date("Y-m-d");
-
-		//Append collection metadata
-		foreach ($this->collArr as $id => $collArr) {
-			//Collection metadata section (additionalMetadata)
-			$emlArr['collMetadata'][$id]['attr']['identifier'] = $collArr['collectionguid'];
-			$emlArr['collMetadata'][$id]['attr']['id'] = $id;
-			$emlArr['collMetadata'][$id]['alternateIdentifier'] = $urlPathPrefix . 'collections/misc/collprofiles.php?collid=' . $id;
-			$emlArr['collMetadata'][$id]['parentCollectionIdentifier'] = $collArr['instcode'];
-			$emlArr['collMetadata'][$id]['collectionIdentifier'] = $collArr['collcode'];
-			$emlArr['collMetadata'][$id]['collectionName'] = $collArr['collname'];
-			if ($collArr['icon']) {
-				$imgLink = '';
-				if (substr($collArr['icon'], 0, 17) == 'images/collicons/') {
-					$imgLink = $urlPathPrefix . $collArr['icon'];
-				} elseif (substr($collArr['icon'], 0, 1) == '/') {
-					$imgLink = $localDomain . $collArr['icon'];
-				} else {
-					$imgLink = $collArr['icon'];
-				}
-				$emlArr['collMetadata'][$id]['resourceLogoUrl'] = $imgLink;
-			}
-			$emlArr['collMetadata'][$id]['onlineUrl'] = $collArr['url'];
-			$emlArr['collMetadata'][$id]['intellectualRights'] = $collArr['rights'];
-			if ($collArr['rightsholder']) $emlArr['collMetadata'][$id]['additionalInfo'] = $collArr['rightsholder'];
-			if ($collArr['usageterm']) $emlArr['collMetadata'][$id]['additionalInfo'] = $collArr['usageterm'];
-			$emlArr['collMetadata'][$id]['abstract'] = $collArr['description'];
-			if (isset($collArr['contact'])) {
-				$contactArr = $collArr['contact'];
-				foreach ($contactArr as $cnt => $cArr) {
-					if (count($this->collArr) == 1) {
-						//Set contacts within associated party element
-						$cArr['role'] = 'contentProvider';
-						$emlArr['associatedParty'][] = $cArr;
-					}
-					//Also set info within collMetadata element
-					$keepContactArr = array('userId', 'individualName', 'electronicMailAddress', 'positionName', 'onlineUrl');
-					$emlArr['collMetadata'][$id]['contact'][$cnt] = array_intersect_key($cArr, array_flip($keepContactArr));
-				}
-			}
-		}
-		$this->encodeArr($emlArr);
-		return $emlArr;
 	}
 
 	private function writeEmlFile(){
@@ -1413,9 +1175,8 @@ class DwcArchiverCore extends Manager{
 		);
 
 		if (!$emlArr) $emlArr = $this->getEmlArr();
-
 		//Create new DOM document
-		$newDoc = new DOMDocument('1.0', $this->charSetOut);
+		$newDoc = new DOMDocument('1.0', 'utf-8');
 
 		//Add root element
 		$rootElem = $newDoc->createElement('eml:eml');
@@ -1551,7 +1312,7 @@ class DwcArchiverCore extends Manager{
 		$symbElem->appendChild($citeElem);
 		//Physical
 		$physicalElem = $newDoc->createElement('physical');
-		$physicalElem->appendChild($newDoc->createElement('characterEncoding', $this->charSetOut));
+		$physicalElem->appendChild($newDoc->createElement('characterEncoding', 'UTF-8'));
 		//format
 		$dfElem = $newDoc->createElement('dataFormat');
 		$edfElem = $newDoc->createElement('externallyDefinedFormat');
@@ -1562,7 +1323,6 @@ class DwcArchiverCore extends Manager{
 		//Collection data
 		if (array_key_exists('collMetadata', $emlArr)) {
 			foreach ($emlArr['collMetadata'] as $k => $collArr) {
-				$this->encodeArr($collArr);
 				$collElem = $newDoc->createElement('collection');
 				if (isset($collArr['attr']) && $collArr['attr']) {
 					$attrArr = $collArr['attr'];
@@ -1584,7 +1344,7 @@ class DwcArchiverCore extends Manager{
 						}
 					} else {
 						$collElem2 = $newDoc->createElement($collKey);
-						$collElem2->appendChild($newDoc->createTextNode($collValue));
+						$collElem2->appendChild($newDoc->createTextNode($collValue ?? ''));
 						$collElem->appendChild($collElem2);
 					}
 				}
@@ -1622,7 +1382,6 @@ class DwcArchiverCore extends Manager{
 		$addMetaElem = $newDoc->createElement('additionalMetadata');
 		$addMetaElem->appendChild($metaElem);
 		$rootElem->appendChild($addMetaElem);
-
 		return $newDoc;
 	}
 
@@ -1646,9 +1405,119 @@ class DwcArchiverCore extends Manager{
 		return $newNode;
 	}
 
+	private function getEmlArr(){
+		$this->setServerDomain();
+		$urlPathPrefix = $this->serverDomain . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) == '/' ? '' : '/');
+		$localDomain = $this->serverDomain;
+
+		$emlArr = array();
+		if (count($this->collArr) == 1) {
+			$collId = key($this->collArr);
+			$emlArr['alternateIdentifier'][] = $urlPathPrefix . 'collections/misc/collprofiles.php?collid=' . $collId;
+			$emlArr['title'] = $this->collArr[$collId]['collname'];
+			$emlArr['description'] = $this->collArr[$collId]['description'];
+
+			if (isset($this->collArr[$collId]['contact'][0]['givenName'])) $emlArr['contact']['givenName'] = $this->collArr[$collId]['contact'][0]['givenName'];
+			if (isset($this->collArr[$collId]['contact'][0]['surName'])) $emlArr['contact']['surName'] = $this->collArr[$collId]['contact'][0]['surName'];
+			if (isset($this->collArr[$collId]['collname'])) $emlArr['contact']['organizationName'] = $this->collArr[$collId]['collname'];
+			if (isset($this->collArr[$collId]['phone'])) $emlArr['contact']['phone'] = $this->collArr[$collId]['phone'];
+			if (isset($this->collArr[$collId]['contact'][0]['electronicMailAddress'])) $emlArr['contact']['electronicMailAddress'] = $this->collArr[$collId]['contact'][0]['electronicMailAddress'];
+			if (isset($this->collArr[$collId]['contact'][0]['userId'])) $emlArr['contact']['userId'] = $this->collArr[$collId]['contact'][0]['userId'];
+			if ($this->collArr[$collId]['url']) $emlArr['contact']['onlineUrl'] = $this->collArr[$collId]['url'];
+			$addrStr = $this->collArr[$collId]['address1'];
+			if ($this->collArr[$collId]['address2']) $addrStr .= ', ' . $this->collArr[$collId]['address2'];
+			if ($addrStr) $emlArr['contact']['addr']['deliveryPoint'] = $addrStr;
+			if ($this->collArr[$collId]['city']) $emlArr['contact']['addr']['city'] = $this->collArr[$collId]['city'];
+			if ($this->collArr[$collId]['state']) $emlArr['contact']['addr']['administrativeArea'] = $this->collArr[$collId]['state'];
+			if ($this->collArr[$collId]['postalcode']) $emlArr['contact']['addr']['postalCode'] = $this->collArr[$collId]['postalcode'];
+			if ($this->collArr[$collId]['country']) $emlArr['contact']['addr']['country'] = $this->collArr[$collId]['country'];
+			if ($this->collArr[$collId]['rights']) $emlArr['intellectualRights'] = $this->collArr[$collId]['rights'];
+			if (isset($this->collArr[$collId]['project'])) $emlArr['project'] = $this->collArr[$collId]['project'];
+		} else {
+			//Dataset contains multiple collection data
+			$emlArr['title'] = $GLOBALS['DEFAULT_TITLE'] . ' general data extract';
+			if (isset($GLOBALS['SYMB_UID']) && $GLOBALS['SYMB_UID']) {
+				$sql = 'SELECT uid, lastname, firstname, title, institution, department, address, city, state, zip, country, phone, email FROM users WHERE (uid = ' . $GLOBALS['SYMB_UID'] . ')';
+				$rs = $this->conn->query($sql);
+				if ($r = $rs->fetch_object()) {
+					$emlArr['associatedParty'][0]['individualName']['surName'] = $r->lastname;
+					if ($r->firstname) $emlArr['associatedParty'][0]['individualName']['givenName'] = $r->firstname;
+					if ($r->email) $emlArr['associatedParty'][0]['electronicMailAddress'] = $r->email;
+					$emlArr['associatedParty'][0]['role'] = 'datasetOriginator';
+					if ($r->institution) $emlArr['associatedParty'][0]['organizationName'] = $r->institution;
+					if ($r->title) $emlArr['associatedParty'][0]['positionName'] = $r->title;
+					if ($r->phone) $emlArr['associatedParty'][0]['phone'] = $r->phone;
+					if ($r->state) {
+						if ($r->department) $emlArr['associatedParty'][0]['address']['deliveryPoint'][] = $r->department;
+						if ($r->address) $emlArr['associatedParty'][0]['address']['deliveryPoint'][] = $r->address;
+						if ($r->city) $emlArr['associatedParty'][0]['address']['city'] = $r->city;
+						$emlArr['associatedParty'][0]['address']['administrativeArea'] = $r->state;
+						if ($r->zip) $emlArr['associatedParty'][0]['address']['postalCode'] = $r->zip;
+						if ($r->country) $emlArr['associatedParty'][0]['address']['country'] = $r->country;
+					}
+					$rs->free();
+				}
+			}
+		}
+
+		if (array_key_exists('PORTAL_GUID', $GLOBALS) && $GLOBALS['PORTAL_GUID']) {
+			$emlArr['creator'][0]['attr']['id'] = $GLOBALS['PORTAL_GUID'];
+		}
+		$emlArr['creator'][0]['organizationName'] = $GLOBALS['DEFAULT_TITLE'];
+		$emlArr['creator'][0]['electronicMailAddress'] = $GLOBALS['ADMIN_EMAIL'];
+		$emlArr['creator'][0]['onlineUrl'] = $urlPathPrefix . 'index.php';
+
+		$emlArr['metadataProvider'][0]['organizationName'] = $GLOBALS['DEFAULT_TITLE'];
+		$emlArr['metadataProvider'][0]['electronicMailAddress'] = $GLOBALS['ADMIN_EMAIL'];
+		$emlArr['metadataProvider'][0]['onlineUrl'] = $urlPathPrefix . 'index.php';
+
+		$emlArr['pubDate'] = date("Y-m-d");
+
+		//Append collection metadata
+		foreach ($this->collArr as $id => $collArr) {
+			//Collection metadata section (additionalMetadata)
+			$emlArr['collMetadata'][$id]['attr']['identifier'] = $collArr['collectionguid'];
+			$emlArr['collMetadata'][$id]['attr']['id'] = $id;
+			$emlArr['collMetadata'][$id]['alternateIdentifier'] = $urlPathPrefix . 'collections/misc/collprofiles.php?collid=' . $id;
+			$emlArr['collMetadata'][$id]['parentCollectionIdentifier'] = $collArr['instcode'];
+			$emlArr['collMetadata'][$id]['collectionIdentifier'] = $collArr['collcode'];
+			$emlArr['collMetadata'][$id]['collectionName'] = $collArr['collname'];
+			if ($collArr['icon']) {
+				$imgLink = '';
+				if (substr($collArr['icon'], 0, 17) == 'images/collicons/') {
+					$imgLink = $urlPathPrefix . $collArr['icon'];
+				} elseif (substr($collArr['icon'], 0, 1) == '/') {
+					$imgLink = $localDomain . $collArr['icon'];
+				} else {
+					$imgLink = $collArr['icon'];
+				}
+				$emlArr['collMetadata'][$id]['resourceLogoUrl'] = $imgLink;
+			}
+			$emlArr['collMetadata'][$id]['onlineUrl'] = $collArr['url'] ?? '';
+			$emlArr['collMetadata'][$id]['intellectualRights'] = $collArr['rights'];
+			if ($collArr['rightsholder']) $emlArr['collMetadata'][$id]['additionalInfo'] = $collArr['rightsholder'];
+			if ($collArr['usageterm']) $emlArr['collMetadata'][$id]['additionalInfo'] = $collArr['usageterm'];
+			$emlArr['collMetadata'][$id]['abstract'] = $collArr['description'];
+			if (isset($collArr['contact'])) {
+				$contactArr = $collArr['contact'];
+				foreach ($contactArr as $cnt => $cArr) {
+					if (count($this->collArr) == 1) {
+						//Set contacts within associated party element
+						$cArr['role'] = 'contentProvider';
+						$emlArr['associatedParty'][] = $cArr;
+					}
+					//Also set info within collMetadata element
+					$keepContactArr = array('userId', 'individualName', 'electronicMailAddress', 'positionName', 'onlineUrl');
+					$emlArr['collMetadata'][$id]['contact'][$cnt] = array_intersect_key($cArr, array_flip($keepContactArr));
+				}
+			}
+		}
+		return $emlArr;
+	}
+
 	public function getFullRss(){
 		//Create new document and write out to target
-		$newDoc = new DOMDocument('1.0', $this->charSetOut);
+		$newDoc = new DOMDocument('1.0', 'UTF-8');
 
 		//Add root element
 		$rootElem = $newDoc->createElement('rss');
@@ -1688,7 +1557,6 @@ class DwcArchiverCore extends Manager{
 		$rs = $this->conn->query($sql);
 		while ($r = $rs->fetch_assoc()) {
 			$cArr = $r;
-			$this->encodeArr($cArr);
 			$itemElem = $newDoc->createElement('item');
 			$itemAttr = $newDoc->createAttribute('collid');
 			$itemAttr->value = $cArr['collid'];
@@ -1757,498 +1625,411 @@ class DwcArchiverCore extends Manager{
 	}
 
 	//Generate Data files
-	private function writeOccurrenceFile(){
+	private function writeOccurrenceFile($filePath){
 		$this->logOrEcho('Creating occurrence file (' . date('h:i:s A') . ')... ');
-		$filePath = $this->targetPath . $this->ts . '-occur' . $this->fileExt;
 		$fh = fopen($filePath, 'w');
 		if (!$fh) {
 			$this->logOrEcho('ERROR establishing output file (' . $filePath . '), perhaps target folder is not readable by web server.');
 			return false;
 		}
 		$hasRecords = false;
+		$this->setServerDomain();
 
 		$dwcOccurManager = new DwcArchiverOccurrence($this->conn);
 		$dwcOccurManager->setSchemaType($this->schemaType, $this->observerUid);
 		$dwcOccurManager->setExtended($this->extended);
-		$dwcOccurManager->setIncludeExsiccatae();
-		$dwcOccurManager->setIncludeAssociatedSequences();
 		$dwcOccurManager->setIncludePaleo($this->includePaleo);
 		$dwcOccurManager->setIncludeAcceptedNameUsage($this->includeAcceptedNameUsage);
+		$dwcOccurManager->setServerDomain($this->serverDomain);
 		if (!$this->occurrenceFieldArr) $this->occurrenceFieldArr = $dwcOccurManager->getOccurrenceArr($this->schemaType, $this->extended);
 		//Output records
 		$this->applyConditions();
 		if (!$this->conditionSql) return false;
-		$sql = $dwcOccurManager->getSqlOccurrences($this->occurrenceFieldArr['fields']);
-		$sql .= $this->getTableJoins() . $this->conditionSql;
-		if ($this->paleoWithSql)
-			$sql = $this->paleoWithSql . $sql;
-
-		// Removes duplicate occids that could be introduced from some tables such as `taxstatus`
-		// Requires
-		$sql .= ' GROUP BY o.occid ';
-		if ($this->schemaType != 'backup') $sql .= ' LIMIT 1000000';
-		//Output header
-		$fieldArr = $this->occurrenceFieldArr['fields'];
-		if ($this->schemaType == 'dwc' || $this->schemaType == 'pensoft') {
-			unset($fieldArr['recordSecurity']);
-			unset($fieldArr['collID']);
-			unset($fieldArr['biota']);
-		} elseif ($this->schemaType == 'backup') unset($fieldArr['collID']);
-		$fieldOutArr = array();
-		if ($this->schemaType == 'coge') {
-			//Convert to GeoLocate flavor
-			$glFields = array(
-				'specificEpithet' => 'Species', 'scientificNameAuthorship' => 'ScientificNameAuthor', 'recordedBy' => 'Collector', 'recordNumber' => 'CollectorNumber',
-				'year' => 'YearCollected', 'month' => 'MonthCollected', 'day' => 'DayCollected', 'decimalLatitude' => 'Latitude', 'decimalLongitude' => 'Longitude',
-				'minimumElevationInMeters' => 'MinimumElevation', 'maximumElevationInMeters' => 'MaximumElevation', 'maximumDepthInMeters' => 'MaximumDepth',
-				'minimumDepthInMeters' => 'MinimumDepth','occurrenceRemarks' => 'Notes', 'collID' => 'collId', 'recordID' => 'recordId'
-			);
-			foreach ($fieldArr as $k => $v) {
-				if (array_key_exists($k, $glFields)) $fieldOutArr[] = $glFields[$k];
-				else $fieldOutArr[] = strtoupper(substr($k, 0, 1)) . substr($k, 1);
+		if($this->primeStagingTables()){
+			$dwcOccurManager->setExportID($this->exportID);
+			if ($this->schemaType != 'coge') {
+				$dwcOccurManager->setOtherCatalogNumbers();
+				$dwcOccurManager->setTaxonomy();
+				$dwcOccurManager->setExsiccate();
+				$dwcOccurManager->setAssociatedSequences();
 			}
-		} else $fieldOutArr = array_keys($fieldArr);
-		if ($this->schemaType == 'dwc') unset($fieldOutArr[array_search('eventDate2', $fieldOutArr)]);
-		$this->writeOutRecord($fh, $fieldOutArr);
-
-		if ($this->schemaType != 'coge') {
-			//$dwcOccurManager->setUpperTaxonomy();
-			$dwcOccurManager->setTaxonRank();
-		}
-
-		if ($rs = $this->dataConn->query($sql, MYSQLI_USE_RESULT)) {
-			$this->setServerDomain();
-			$urlPathPrefix = $this->serverDomain . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) == '/' ? '' : '/');
-			$typeArr = null;
-			if ($this->schemaType == 'pensoft') {
-				$typeArr = array('Other material', 'Holotype', 'Paratype', 'Isotype', 'Isoparatype', 'Isolectotype', 'Isoneotype', 'Isosyntype');
-				//$typeArr = array('Other material', 'Holotype', 'Paratype', 'Hapantotype', 'Syntype', 'Isotype', 'Neotype', 'Lectotype', 'Paralectotype', 'Isoparatype', 'Isolectotype', 'Isoneotype', 'Isosyntype');
-			}
-			$portalManager = null;
-			$pubID = 0;
-			if($this->publicationGuid && $this->requestPortalGuid){
-				$portalManager = new PortalIndex();
-				$pubArr = array('pubTitle' => 'Symbiota Portal Index export - '.date('Y-m-d'), 'portalID' => $this->requestPortalGuid, 'direction' => 'export', 'lastDateUpdate' => date('Y-m-d h:i:s'), 'guid' => $this->publicationGuid);
-				$pubID = $portalManager->createPortalPublication($pubArr);
-			}
-			$statsManager = new OccurrenceAccessStats();
-			$sqlFrag = substr($sql, strpos($sql, 'WHERE '));
-			if($p = strpos($sqlFrag, 'LIMIT ')) $sqlFrag = substr($sqlFrag, 0, $p);
-			$occurAccessID = $statsManager->insertAccessEvent('download', $sqlFrag);
-			$batchOccidArr = array();
-			while ($r = $rs->fetch_assoc()) {
-				if ($this->isPublicDownload || $this->limitToGuids) {
-					//Is a download from public interface OR DwC-A publishing event pushed to aggregators, thus skip record if Full Protections apply
-					if($r['recordSecurity'] == 5){
-						if(!strpos($sql, 'recordSecurity != 5')){
-							//But only if protection is not already applied within the SQL string
-							continue;
-						}
-					}
+			$sql = $dwcOccurManager->getSqlOccurrences($this->occurrenceFieldArr['fields']);
+			if ($this->paleoWithSql) $sql = $this->paleoWithSql . $sql;
+			if ($this->schemaType != 'backup') $sql .= ' LIMIT 1000000';
+			//Output header
+			$fieldArr = $this->occurrenceFieldArr['fields'];
+			if ($this->schemaType == 'dwc' || $this->schemaType == 'pensoft') {
+				unset($fieldArr['recordSecurity']);
+				unset($fieldArr['collID']);
+				unset($fieldArr['biota']);
+			} elseif ($this->schemaType == 'backup') unset($fieldArr['collID']);
+			$fieldOutArr = array();
+			if ($this->schemaType == 'coge') {
+				//Convert to GeoLocate flavor
+				$glFields = array(
+					'specificEpithet' => 'Species', 'scientificNameAuthorship' => 'ScientificNameAuthor', 'recordedBy' => 'Collector', 'recordNumber' => 'CollectorNumber',
+					'year' => 'YearCollected', 'month' => 'MonthCollected', 'day' => 'DayCollected', 'decimalLatitude' => 'Latitude', 'decimalLongitude' => 'Longitude',
+					'minimumElevationInMeters' => 'MinimumElevation', 'maximumElevationInMeters' => 'MaximumElevation', 'maximumDepthInMeters' => 'MaximumDepth',
+					'minimumDepthInMeters' => 'MinimumDepth','occurrenceRemarks' => 'Notes', 'collID' => 'collId', 'recordID' => 'recordId'
+				);
+				foreach ($fieldArr as $k => $v) {
+					if (array_key_exists($k, $glFields)) $fieldOutArr[] = $glFields[$k];
+					else $fieldOutArr[] = strtoupper(substr($k, 0, 1)) . substr($k, 1);
 				}
-
-				if(!isset($this->collArr[$r['collID']])){
-					$this->setCollArr($r['collID'], 'internalCall');
+			} else $fieldOutArr = array_keys($fieldArr);
+			if ($this->schemaType == 'dwc') unset($fieldOutArr[array_search('eventDate2', $fieldOutArr)]);
+			$this->writeOutRecord($fh, $fieldOutArr);
+			if ($rs = $this->conn->query($sql)) {
+				$urlPathPrefix = $this->serverDomain . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) == '/' ? '' : '/');
+				$typeArr = null;
+				if ($this->schemaType == 'pensoft') {
+					$typeArr = array('Other material', 'Holotype', 'Paratype', 'Isotype', 'Isoparatype', 'Isolectotype', 'Isoneotype', 'Isosyntype');
+					//$typeArr = array('Other material', 'Holotype', 'Paratype', 'Hapantotype', 'Syntype', 'Isotype', 'Neotype', 'Lectotype', 'Paralectotype', 'Isoparatype', 'Isolectotype', 'Isoneotype', 'Isosyntype');
 				}
-				if (!$r['occurrenceID']) {
-					if($guidTarget = $this->collArr[$r['collID']]['guidtarget']){
-						//Set occurrence GUID based on GUID target, but only if occurrenceID field isn't already populated
-						if ($guidTarget == 'catalogNumber') $r['occurrenceID'] = $r['catalogNumber'];
-						elseif ($guidTarget == 'symbiotaUUID') $r['occurrenceID'] = $r['recordID'];
-					}
+				/*
+				$pubID = 0;
+				if($this->publicationGuid && $this->requestPortalGuid){
+					$portalManager = new PortalIndex();
+					$pubArr = array('pubTitle' => 'Symbiota Portal Index export - '.date('Y-m-d'), 'portalID' => $this->requestPortalGuid, 'direction' => 'export', 'lastDateUpdate' => date('Y-m-d h:i:s'), 'guid' => $this->publicationGuid);
+					$pubID = $portalManager->createPortalPublication($pubArr);
+					if ($pubID && $portalManager) $portalManager->insertPortalOccurrences($pubID);
 				}
-				if ($this->limitToGuids && (!$r['occurrenceID'] || !$r['basisOfRecord'])) {
-					// Skip record because there is no occurrenceID guid
-					continue;
-				}
-				$hasRecords = true;
-				//Protect sensitive records
-				if ($this->redactLocalities && $r['recordSecurity'] == 1 && !in_array($r['collID'], $this->rareReaderArr)) {
-					$protectedFields = array();
-					foreach ($this->securityArr as $v) {
-						if (array_key_exists($v, $r) && $r[$v]) {
-							$r[$v] = '';
-							$protectedFields[] = $v;
-						}
-					}
-					if ($protectedFields) $r['informationWithheld'] = trim($r['informationWithheld'] . '; field values redacted: ' . implode(', ', $protectedFields), ' ;');
-				}
-
-				if ($urlPathPrefix) $r['t_references'] = $urlPathPrefix . 'collections/individual/index.php?occid=' . $r['occid'];
-				//Add collection GUID based on management type
-				$managementType = $this->collArr[$r['collID']]['managementtype'];
-				if ($managementType && $managementType == 'Live Data') {
-					if (array_key_exists('collectionID', $r) && !$r['collectionID']) {
-						$guid = $this->collArr[$r['collID']]['collectionguid'];
-						if (strlen($guid) == 36) $guid = 'urn:uuid:' . $guid;
-						$r['collectionID'] = $guid;
-					}
-				}
-				if ($this->schemaType == 'dwc') {
-					unset($r['recordSecurity']);
-					unset($r['collID']);
-					unset($r['biota']);
-
-					//Format dates
-					if($r['eventDate']){
-						if($r['eventDate'] == '0000-00-00') $r['eventDate'] = '';
-						$r['eventDate'] = str_replace('-00', '', $r['eventDate']);
-					}
-					if($r['eventDate2']){
-						if($r['eventDate2'] == '0000-00-00') $r['eventDate2'] = '';
-						$r['eventDate2'] = str_replace('-00', '', $r['eventDate2']);
-						if(!$r['endDayOfYear'] && preg_match('/\d{4}-\d{2}-\d{2}/', $r['eventDate2'])){
-							if($t = strtotime($r['eventDate2'])) $r['endDayOfYear'] = date('z', $t) + 1;
-						}
-						$r['eventDate'] .= '/'.$r['eventDate2'];
-					}
-					unset($r['eventDate2']);
-				}
-				elseif ($this->schemaType == 'pensoft') {
-					unset($r['recordSecurity']);
-					unset($r['collID']);
-					if ($r['typeStatus']) {
-						$typeValue = strtolower($r['typeStatus']);
-						$typeInvalid = true;
-						$invalidText = '';
-						foreach ($typeArr as $testStr) {
-							if ($typeValue == strtolower($testStr)) {
-								$typeInvalid = false;
-								break;
-							} elseif (stripos($typeValue, $testStr)) {
-								$invalidText = $r['typeStatus'];
-								$r['typeStatus'] = $testStr;
-								$typeInvalid = false;
-								break;
-							}
-						}
-						if ($typeInvalid) {
-							$invalidText = $r['typeStatus'];
-							$r['typeStatus'] = 'Other material';
-						}
-						if ($invalidText) {
-							if ($r['occurrenceRemarks']) $invalidText = $r['occurrenceRemarks'] . '; ' . $invalidText;
-							$r['occurrenceRemarks'] = $invalidText;
-						}
-					}
-					else $r['typeStatus'] = 'Other material';
-				}
-				elseif ($this->schemaType == 'backup') unset($r['collID']);
-
-				if ($ocnStr = $dwcOccurManager->getAdditionalCatalogNumberStr($r['occid'])) $r['otherCatalogNumbers'] = $ocnStr;
-				if ($this->schemaType != 'coge') {
-					/*
-					if ($exsArr = $dwcOccurManager->getExsiccateArr($r['occid'])) {
-						$exsStr = $exsArr['exsStr'];
-						if (isset($r['occurrenceRemarks']) && $r['occurrenceRemarks']) {
-							$exsStr = $r['occurrenceRemarks'] . '; ' . $exsStr;
-						}
-						$r['occurrenceRemarks'] = $exsStr;
-
-						//$dynProp = 'exsiccatae: ' . $exsArr['exsJson'];
-						if (!isset($r['dynamicProperties']) || !is_array($r['dynamicProperties'])) {
-							$r['dynamicProperties'] = [];
-						}
-						$r['dynamicProperties']['exsiccatae'] = $exsArr['exsProps'];
-
-						//$dynProp = $r['dynamicProperties'] . '; ' . $dynProp;
-						//$r['dynamicProperties'] = $dynProp;
-					}
-					*/
-					//if ($assocOccurStr = $dwcOccurManager->getAssociationStr($r['occid'])) $r['t_associatedOccurrences'] = $assocOccurStr;
-					if ($assocSeqStr = $dwcOccurManager->getAssociatedSequencesStr($r['occid'])) $r['t_associatedSequences'] = $assocSeqStr;
-					//if ($assocTaxa = $dwcOccurManager->getAssociationStr($r['occid'], 'observational')) $r['associatedTaxa'] = $assocTaxa;
-				}
-				//$dwcOccurManager->appendUpperTaxonomy($r);
-				$dwcOccurManager->appendUpperTaxonomy2($r);
-				if($this->includePaleo){
-					$dwcOccurManager->appendPaleoTerms($r);
-					if($this->schemaType == 'dwc'){
-						if(!empty($r['biota'])){
-							$r['locality'] .= ($r['locality'] ? '; ' : '') . 'Biota: ' . $r['biota'];
-						}
-					}
-				}
-				if ($rankStr = $dwcOccurManager->getTaxonRank($r['rankid'])) $r['t_taxonRank'] = $rankStr;
-				unset($r['rankid']);
-
-				if(isset($r['dynamicProperties'])) {
-					$r['dynamicProperties'] = json_encode($r['dynamicProperties']);
-				}
-				$this->encodeArr($r);
-				$this->addcslashesArr($r);
-				$this->writeOutRecord($fh, $r);
-
-				$batchOccidArr[] = $r['occid'];
-				if (count($batchOccidArr) > 10000) {
-					if ($this->includeAttributes) $this->writeAttributeData($batchOccidArr);
-					if ($this->includeMaterialSample) $this->writeMaterialSampleData($batchOccidArr);
-					if ($this->includeIdentifiers) $this->writeIdentifierData($batchOccidArr);
-					if ($this->includeAssociations) $this->writeAssociationData($batchOccidArr);
-					if ($pubID && $portalManager) $portalManager->insertPortalOccurrences($pubID, $batchOccidArr);
-					unset($batchOccidArr);
-					$batchOccidArr = array();
-				}
+				*/
+				$statsManager = new OccurrenceAccessStats();
+				$sqlFrag = substr($sql, strpos($sql, 'WHERE '));
+				if($p = strpos($sqlFrag, 'LIMIT ')) $sqlFrag = substr($sqlFrag, 0, $p);
+				$occurAccessID = $statsManager->insertAccessEvent('download', $sqlFrag);
 				//Set access statistics
 				if ($this->isPublicDownload) {
 					if ($this->schemaType == 'dwc' || $this->schemaType == 'symbiota') {
 						//Don't count if dl is backup, GeoLocate transfer, or pensoft
-						$statsManager->insertAccessOccurrence($occurAccessID, $r['occid']);
+						$statsManager->insertDownloadOccurrences($occurAccessID, $this->exportID);
 					}
 				}
-			}
-			$rs->free();
-			if ($batchOccidArr) {
-				if ($pubID && $portalManager) $portalManager->insertPortalOccurrences($pubID, $batchOccidArr);
-			}
-			if ($this->includeAttributes){
-				$this->writeAttributeData($batchOccidArr);
-				$this->attributeHandler = null;
-			}
-			if ($this->includeMaterialSample){
-				$this->writeMaterialSampleData($batchOccidArr);
-				$this->materialSampleHandler = null;
-			}
-			if ($this->includeIdentifiers){
-				$this->writeIdentifierData($batchOccidArr);
-				$this->identierHandler = null;
-			}
-			if ($this->includeAssociations){
-				$this->writeAssociationData($batchOccidArr);
-				$this->associationHandler = null;
-			}
-		}
-		else {
-			$this->errorMessage = 'ERROR creating occurrence file: ' . $this->conn->error;
-			$this->logOrEcho($this->errorMessage);
-			//$this->logOrEcho("\tSQL: ".$sql."\n");
-		}
+				while ($r = $rs->fetch_assoc()) {
+					if ($this->isPublicDownload || $this->limitToGuids) {
+						//Is a download from public interface OR DwC-A publishing event pushed to aggregators, thus skip record if Full Protections apply
+						if($r['recordSecurity'] == 5){
+							if(!strpos($sql, 'recordSecurity != 5')){
+								//But only if protection is not already applied within the SQL string
+								continue;
+							}
+						}
+					}
 
-		fclose($fh);
-		if (!$hasRecords) {
-			$filePath = false;
-			//$this->writeOutRecord($fh,array('No records returned. Modify query variables to be more inclusive.'));
-			$this->errorMessage = 'No records returned. Modify query variables to be more inclusive.';
-			$this->logOrEcho($this->errorMessage);
+					if(!isset($this->collArr[$r['collID']])){
+						$this->setCollArr($r['collID'], 'internalCall');
+					}
+					//Set occurrenceID GUID or skip records if not defined (required output)
+					if(!$r['occurrenceID']) {
+						if($guidTarget = $this->collArr[$r['collID']]['guidtarget']){
+							//Set occurrence GUID based on GUID target, but only if occurrenceID field isn't already populated
+							if($guidTarget == 'catalogNumber') $r['occurrenceID'] = $r['catalogNumber'];
+							elseif($guidTarget == 'symbiotaUUID') $r['occurrenceID'] = $r['recordID'];
+						}
+					}
+					if($this->limitToGuids && (!$r['occurrenceID'] || !$r['basisOfRecord'])) {
+						// Skip record because there is no occurrenceID guid
+						continue;
+					}
+					$hasRecords = true;
+					//Protect sensitive records
+					if ($this->redactLocalities && $r['recordSecurity'] == 1 && !in_array($r['collID'], $this->rareReaderArr)) {
+						$protectedFields = array();
+						foreach ($this->securityArr as $v) {
+							if (array_key_exists($v, $r) && $r[$v]) {
+								$r[$v] = '';
+								$protectedFields[] = $v;
+							}
+						}
+						if ($protectedFields) $r['informationWithheld'] = trim($r['informationWithheld'] . '; field values redacted: ' . implode(', ', $protectedFields), ' ;');
+					}
+
+					if ($urlPathPrefix) $r['t_references'] = $urlPathPrefix . 'collections/individual/index.php?occid=' . $r['occid'];
+					//Add collection GUID based on management type
+					$managementType = $this->collArr[$r['collID']]['managementtype'];
+					if ($managementType && $managementType == 'Live Data') {
+						if (array_key_exists('collectionID', $r) && !$r['collectionID']) {
+							$guid = $this->collArr[$r['collID']]['collectionguid'];
+							if (strlen($guid) == 36) $guid = 'urn:uuid:' . $guid;
+							$r['collectionID'] = $guid;
+						}
+					}
+					if ($this->schemaType == 'dwc') {
+						//Apply DwC output requirements
+						unset($r['recordSecurity']);
+						unset($r['collID']);
+						unset($r['biota']);
+
+						//Format dates
+						if($r['eventDate']){
+							if($r['eventDate'] == '0000-00-00') $r['eventDate'] = '';
+							$r['eventDate'] = str_replace('-00', '', $r['eventDate']);
+						}
+						if($r['eventDate2']){
+							if($r['eventDate2'] == '0000-00-00') $r['eventDate2'] = '';
+							$r['eventDate2'] = str_replace('-00', '', $r['eventDate2']);
+							if(!$r['endDayOfYear'] && preg_match('/\d{4}-\d{2}-\d{2}/', $r['eventDate2'])){
+								if($t = strtotime($r['eventDate2'])) $r['endDayOfYear'] = date('z', $t) + 1;
+							}
+							$r['eventDate'] .= '/'.$r['eventDate2'];
+						}
+						unset($r['eventDate2']);
+					}
+					elseif ($this->schemaType == 'pensoft') {
+						unset($r['recordSecurity']);
+						unset($r['collID']);
+						if ($r['typeStatus']) {
+							$typeValue = strtolower($r['typeStatus']);
+							$typeInvalid = true;
+							$invalidText = '';
+							foreach ($typeArr as $testStr) {
+								if ($typeValue == strtolower($testStr)) {
+									$typeInvalid = false;
+									break;
+								} elseif (stripos($typeValue, $testStr)) {
+									$invalidText = $r['typeStatus'];
+									$r['typeStatus'] = $testStr;
+									$typeInvalid = false;
+									break;
+								}
+							}
+							if ($typeInvalid) {
+								$invalidText = $r['typeStatus'];
+								$r['typeStatus'] = 'Other material';
+							}
+							if ($invalidText) {
+								if ($r['occurrenceRemarks']) $invalidText = $r['occurrenceRemarks'] . '; ' . $invalidText;
+								$r['occurrenceRemarks'] = $invalidText;
+							}
+						}
+						else $r['typeStatus'] = 'Other material';
+					}
+					elseif ($this->schemaType == 'backup') unset($r['collID']);
+					if($this->includePaleo){
+						$dwcOccurManager->appendPaleoTerms($r);
+						if($this->schemaType == 'dwc'){
+							if(!empty($r['biota'])){
+								$r['locality'] .= ($r['locality'] ? '; ' : '') . 'Biota: ' . $r['biota'];
+							}
+						}
+					}
+
+					if(isset($r['dynamicProperties'])) {
+						$r['dynamicProperties'] = json_encode($r['dynamicProperties']);
+					}
+					$this->encodeArr($r);
+					$this->addcslashesArr($r);
+					$this->writeOutRecord($fh, $r);
+				}
+				$rs->free();
+			}
+			else {
+				$this->errorMessage = 'ERROR creating occurrence file: ' . $this->conn->error;
+				$this->logOrEcho($this->errorMessage);
+			}
+			fclose($fh);
+			if (!$hasRecords) {
+				$filePath = false;
+				//$this->writeOutRecord($fh,array('No records returned. Modify query variables to be more inclusive.'));
+				$this->errorMessage = 'No records returned. Modify query variables to be more inclusive.';
+				$this->logOrEcho($this->errorMessage);
+			}
+			$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 1);
 		}
-		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 1);
-		if ($this->includeAttributes) $this->logOrEcho('Occurrence Attributes exported as a MeasurementsOrFact extension file... ');
-		if ($this->includeMaterialSample) $this->logOrEcho('Material Samples exported within a MaterialSample extension file... ');
-		if ($this->includeIdentifiers) $this->logOrEcho('Occurrence Alternative Identifiers exported as a Identifier extension file... ');
-		if ($this->includeAssociations) $this->logOrEcho('Occurrence Associations exported as a Resource Relationship extension file... ');
 		return $filePath;
 	}
 
 	public function getOccurrenceFile(){
 		$this->setTargetPath();
-		$this->dataConn = MySQLiConnectionFactory::getCon('readonly');
-		$filePath = $this->writeOccurrenceFile();
-		$this->dataConn->close();
+		$occurFile = $this->targetPath . $this->ts . '-occur' . $this->fileExt;
+		$filePath = $this->writeOccurrenceFile($occurFile);
 		return $filePath;
 	}
 
-	private function writeDeterminationFile(){
-		$this->logOrEcho("Creating identification extension file (" . date('h:i:s A') . ")... ");
-		$filePath = $this->targetPath . $this->ts . '-det' . $this->fileExt;
-		$fh = fopen($filePath, 'w');
-		if (!$fh) {
-			$this->logOrEcho('ERROR establishing output file (' . $filePath . '), perhaps target folder is not readable by web server.');
-			return false;
-		}
-
-		if (!$this->determinationFieldArr) {
-			$this->determinationFieldArr = DwcArchiverDetermination::getDeterminationArr($this->schemaType, $this->extended);
-		}
-		//Output header
-		$headerArr = array_keys($this->determinationFieldArr['fields']);
-		array_pop($headerArr);
-		$this->writeOutRecord($fh, $headerArr);
-
-		//Output records
-		$sql = DwcArchiverDetermination::getSql($this->determinationFieldArr['fields'], $this->getTableJoins(), $this->conditionSql);
-		if ($this->paleoWithSql)
-			$sql = $this->paleoWithSql . $sql;
-		if ($rs = $this->dataConn->query($sql, MYSQLI_USE_RESULT)) {
-			$previousDetID = 0;
-			while ($r = $rs->fetch_assoc()) {
-				if ($previousDetID == $r['detID']) continue;
-				$previousDetID = $r['detID'];
-				unset($r['detID']);
-				$r['recordID'] = 'urn:uuid:' . $r['recordID'];
-				$this->encodeArr($r);
-				$this->addcslashesArr($r);
-				$this->writeOutRecord($fh, $r);
-			}
-			$rs->free();
-		}
-		else {
-			$this->logOrEcho("ERROR creating identification extension file: " . $this->dataConn->error . "\n");
-			$this->logOrEcho("\tSQL: " . $sql . "\n");
-		}
-
-		fclose($fh);
-		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 1);
-	}
-
-	private function writeImageFile(){
-		$this->logOrEcho("Creating image extension file (" . date('h:i:s A') . ")... ");
-		$filePath = $this->targetPath . $this->ts . '-multimedia' . $this->fileExt;
-		$fh = fopen($filePath, 'w');
-		if (!$fh) {
-			$this->logOrEcho('ERROR establishing output file (' . $filePath . '), perhaps target folder is not readable by web server.');
-			return false;
-		}
-
-		if (!$this->imageFieldArr) $this->imageFieldArr = DwcArchiverImage::getImageArr($this->schemaType);
-
-		//Output header
-		$headerArr = array_keys($this->imageFieldArr['fields']);
-		array_pop($headerArr);
-		$this->writeOutRecord($fh, $headerArr);
-		$tableJoins = $this->getTableJoins();
-		//Output records
-		$sql = DwcArchiverImage::getSqlImages($this->imageFieldArr['fields'], $this->conditionSql, $tableJoins,  $this->redactLocalities, $this->rareReaderArr);
-		if ($this->paleoWithSql)
-			$sql = $this->paleoWithSql . $sql;
-		if ($rs = $this->dataConn->query($sql, MYSQLI_USE_RESULT)) {
-			$this->setServerDomain();
-			$urlPathPrefix = $this->serverDomain . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) == '/' ? '' : '/');
-
-			$localDomain = '';
-			if (isset($GLOBALS['MEDIA_DOMAIN']) && $GLOBALS['MEDIA_DOMAIN']) {
-				$localDomain = $GLOBALS['MEDIA_DOMAIN'];
-			}
-			else {
-				$localDomain = $this->serverDomain;
-			}
-			$previousMediaID = 0;
-			while ($r = $rs->fetch_assoc()) {
-				if ($previousMediaID == $r['mediaID']) continue;
-				$previousMediaID = $r['mediaID'];
-				unset($r['mediaID']);
-				if ($r['identifier'] && substr($r['identifier'], 0, 1) == '/') $r['identifier'] = $localDomain . $r['identifier'];
-				if ($r['accessURI'] && substr($r['accessURI'], 0, 1) == '/') $r['accessURI'] = $localDomain . $r['accessURI'];
-				if ($r['thumbnailAccessURI'] && substr($r['thumbnailAccessURI'], 0, 1) == '/') $r['thumbnailAccessURI'] = $localDomain . $r['thumbnailAccessURI'];
-				if ($r['goodQualityAccessURI'] && substr($r['goodQualityAccessURI'], 0, 1) == '/') $r['goodQualityAccessURI'] = $localDomain . $r['goodQualityAccessURI'];
-
-				if ($r['goodQualityAccessURI'] && ($r['goodQualityAccessURI'] == 'empty' || substr($r['goodQualityAccessURI'], 0, 10) == 'processing')) $r['goodQualityAccessURI'] = '';
-				if ($r['thumbnailAccessURI'] && substr($r['thumbnailAccessURI'], 0, 10) == 'processing') $r['thumbnailAccessURI'] = '';
-				if ($this->schemaType != 'backup') {
-					if ($r['rights'] && stripos($r['rights'], 'creativecommons.org') === 0) {
-						$r['webstatement'] = $r['rights'];
-						$r['rights'] = '';
-						if (!$r['usageterms'] && $r['webstatement']) {
-							if (strpos($r['webstatement'], '/zero/1.0/')) {
-								$r['usageterms'] = 'CC0 1.0 (Public-domain)';
-							}
-							elseif (strpos($r['webstatement'], '/by/')) {
-								$r['usageterms'] = 'CC BY (Attribution)';
-							}
-							elseif (strpos($r['webstatement'], '/by-sa/')) {
-								$r['usageterms'] = 'CC BY-SA (Attribution-ShareAlike)';
-							}
-							elseif (strpos($r['webstatement'], '/by-nc/')) {
-								$r['usageterms'] = 'CC BY-NC (Attribution-NonCommercial-ShareAlike)';
-							}
-							elseif (strpos($r['webstatement'], '/by-nc-sa/')) {
-								$r['usageterms'] = 'CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)';
-							}
-						}
+	private function primeStagingTables(){
+		$status = false;
+		$uid = $GLOBALS['SYMB_UID'] ?? null;
+		$tagName = (!empty($GLOBALS['SYMB_UID']) ? 'UID-' . $GLOBALS['SYMB_UID'] : $_SERVER['REMOTE_ADDR']) . '-' . time();
+		$queryTerms = $this->conditionSql;
+		$fileUrl = $this->dwcaOutputUrl;
+		$domainName = $this->serverDomain;
+		$ipAddress = $_SERVER['REMOTE_ADDR'];
+		$sql = 'INSERT INTO omexport(uid, category, tagName, queryTerms, fileUrl, portalDomain, expiration, ipAddress) VALUES(?, ?, ?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 7 DAY), ?)';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('issssss', $uid, $this->schemaType, $tagName, $queryTerms, $fileUrl, $domainName, $ipAddress);
+			try{
+				if($stmt->execute()){
+					if($stmt->affected_rows || !$stmt->error){
+						$this->exportID = $stmt->insert_id;
+						$status = $this->insertExportOccurrenceRecords();
 					}
-					if (!$r['usageterms']) $r['usageterms'] = 'CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)';
+					else $this->errorMessage = $stmt->error;
 				}
-				$r['providermanagedid'] = 'urn:uuid:' . $r['providermanagedid'];
-				$r['associatedSpecimenReference'] = $urlPathPrefix . 'collections/individual/index.php?occid=' . $r['occid'];
-				/*
-				if($r['type'] '') {
-					$r['type'] = 'StillImage';
-					$r['subtype'] = 'Photograph';
-				} else {
-					$r['type'] = 'Sound';
-					$r['subtype'] = 'Recorded Organism';
-				}
-				*/
-				if($r['accessURI']){
-					$extStr = strtolower(substr($r['accessURI'], strrpos($r['accessURI'], '.') + 1));
-					if ($r['format'] == '') {
-						if ($extStr == 'jpg' || $extStr == 'jpeg') {
-							$r['format'] = 'image/jpeg';
-						}
-						elseif ($extStr == 'gif') {
-							$r['format'] = 'image/gif';
-						}
-						elseif ($extStr == 'png') {
-							$r['format'] = 'image/png';
-						}
-						elseif ($extStr == 'tiff' || $extStr == 'tif') {
-							$r['format'] = 'image/tiff';
-						}
-						else {
-							$r['format'] = '';
-						}
-					}
-				}
-				$r['metadataLanguage'] = 'en';
-				//Load record array into output file
-				//$this->encodeArr($r);
-				//$this->addcslashesArr($r);
-				$this->writeOutRecord($fh, $r);
+			} catch (mysqli_sql_exception $e){
+				$this->errorMessage = $stmt->error;
+			} catch (Exception $e){
+				$this->errorMessage = 'unknown error';
 			}
-			$rs->free();
-		} else {
-			$this->logOrEcho("ERROR creating image extension file: " . $this->dataConn->error . "\n");
-			$this->logOrEcho("\tSQL: " . $sql . "\n");
+			$stmt->close();
 		}
-
-		fclose($fh);
-
-		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 1);
+		return $status;
 	}
 
-	private function writeAttributeData($batchOccidArr){
-		if(!$this->attributeHandler){
-			$this->attributeHandler = new DwcArchiverAttribute($this->conn);
-			$this->attributeHandler->setSchemaType($this->schemaType);
-			$this->attributeHandler->initiateProcess($this->targetPath . $this->ts . '-attr' . $this->fileExt);
-			$this->fieldArrMap['attribute'] = $this->attributeHandler->getFieldArrTerms();
+	private function insertExportOccurrenceRecords(){
+		$status = false;
+		$sql = 'INSERT IGNORE INTO omexportoccurrences(omExportID, occid, collid, taxonID, recordSecurity)
+			SELECT ' . $this->exportID . ' AS omExportID, o.occid, o.collid, o.tidInterpreted, o.recordSecurity FROM omoccurrences o ';
+		$sql .= $this->getTableJoins() . $this->conditionSql;
+		if($stmt = $this->conn->prepare($sql)){
+			try{
+				if($stmt->execute()){
+					if($stmt->affected_rows || !$stmt->error){
+						$status = true;
+					}
+					else $this->errorMessage = $stmt->error;
+				}
+			} catch (mysqli_sql_exception $e){
+				$this->errorMessage = $stmt->error;
+			} catch (Exception $e){
+				$this->errorMessage = 'unknown error';
+			}
+			$stmt->close();
 		}
-		if($this->attributeHandler) $this->attributeHandler->writeOutRecordBlock($batchOccidArr);
+		return $status;
 	}
 
-	private function writeMaterialSampleData($batchOccidArr){
-		if(!$this->materialSampleHandler){
-			$this->materialSampleHandler = new DwcArchiverMaterialSample($this->conn);
-			$this->materialSampleHandler->setSchemaType($this->schemaType);
-			$this->materialSampleHandler->initiateProcess($this->targetPath . $this->ts . '-matSample' . $this->fileExt);
-			$this->fieldArrMap['materialSample'] = $this->materialSampleHandler->getFieldArrTerms();
+	private function writeDeterminationFile($targetFile){
+		$recordCnt = 0;
+		if($this->exportID){
+			$this->logOrEcho('Creating identification (aka determination) extension file (' . date('h:i:s A') . ')...');
+			$detHandler = new DwcArchiverDetermination($this->conn);
+			$detHandler->setSchemaType($this->schemaType);
+			if($this->extended) $detHandler->setExtended(true);
+			$detHandler->initiateProcess($targetFile);
+			$recordCnt = $detHandler->writeOutData($this->exportID);
+			if($recordCnt){
+				$this->extensionFieldMap['det'] = $detHandler->getFieldArrTerms();
+				$msg = $recordCnt . ' records added ';
+				$this->logOrEcho($msg, 1);
+			}
+			else{
+				$msg = 'No records located (file excluded)';
+				$this->logOrEcho($msg, 1);
+			}
 		}
-		if($this->materialSampleHandler) $this->materialSampleHandler->writeOutRecordBlock($batchOccidArr);
+		return $recordCnt;
 	}
 
-	private function writeIdentifierData($batchOccidArr){
-		if(!$this->identierHandler){
-			$this->identierHandler = new DwcArchiverIdentifier($this->conn);
-			$this->identierHandler->setSchemaType($this->schemaType);
-			$this->identierHandler->initiateProcess($this->targetPath . $this->ts . '-ident' . $this->fileExt);
-			$this->fieldArrMap['identifier'] = $this->identierHandler->getFieldArrTerms();
+	private function writeMediaFile($targetFile){
+		$recordCnt = 0;
+		if($this->exportID){
+			$this->logOrEcho('Creating Media extension file (' . date('h:i:s A') . ')...');
+			$mediaHandler = new DwcArchiverMedia($this->conn);
+			$mediaHandler->setSchemaType($this->schemaType);
+			$mediaHandler->setRedactLocalities($this->redactLocalities);
+			$mediaHandler->setRareReaderCollStr($this->rareReaderArr);
+			$mediaHandler->initiateProcess($targetFile);
+			$recordCnt = $mediaHandler->writeOutMediaData($this->exportID, $this->collArr, $this->serverDomain);
+			if($recordCnt){
+				$this->extensionFieldMap['media'] = $mediaHandler->getFieldArrTerms();
+				$msg = $recordCnt . ' records added ';
+				$this->logOrEcho($msg, 1);
+			}
+			else{
+				$msg = 'No records located (file excluded)';
+				$this->logOrEcho($msg, 1);
+			}
 		}
-		if($this->identierHandler) $this->identierHandler->writeOutRecordBlock($batchOccidArr);
+		return $recordCnt;
 	}
 
-	private function writeAssociationData($batchOccidArr){
-		if(!$this->associationHandler){
-			$this->associationHandler = new DwcArchiverResourceRelationship($this->conn);
-			$this->associationHandler->setSchemaType($this->schemaType);
-			$this->associationHandler->initiateProcess($this->targetPath . $this->ts . '-assoc' . $this->fileExt);
-			$this->fieldArrMap['associations'] = $this->associationHandler->getFieldArrTerms();
+	private function writeIdentifierData($targetFile){
+		$recordCnt = 0;
+		if($this->exportID){
+			$this->logOrEcho('Creating alternative Identifiers extension file (' . date('h:i:s A') . ')...');
+			$identierHandler = new DwcArchiverIdentifier($this->conn);
+			$identierHandler->setSchemaType($this->schemaType);
+			$identierHandler->initiateProcess($targetFile);
+			$recordCnt = $identierHandler->writeOutData($this->exportID);
+			if($recordCnt){
+				$this->extensionFieldMap['identifier'] = $identierHandler->getFieldArrTerms();
+				$msg = $recordCnt . ' records added ';
+				$this->logOrEcho($msg, 1);
+			}
+			else{
+				$msg = 'No records located (file excluded)';
+				$this->logOrEcho($msg, 1);
+			}
 		}
-		if($this->associationHandler){
-			$this->associationHandler->writeOutRecordBlock($batchOccidArr, 'oa.occid');
+		return $recordCnt;
+	}
+
+	private function writeAttributeData($targetFile){
+		$recordCnt = 0;
+		if($this->exportID){
+			$this->logOrEcho('Creating MeasurementsOrFact (aka Occurrence Attributes) extension file (' . date('h:i:s A') . ')...');
+			$attributeHandler = new DwcArchiverAttribute($this->conn);
+			$attributeHandler->setSchemaType($this->schemaType);
+			$attributeHandler->initiateProcess($targetFile);
+			$recordCnt = $attributeHandler->writeOutData($this->exportID);
+			if($recordCnt){
+				$this->extensionFieldMap['attribute'] = $attributeHandler->getFieldArrTerms();
+				$msg = $recordCnt . ' records added ';
+				$this->logOrEcho($msg, 1);
+			}
+			else{
+				$msg = 'No records located (file excluded)';
+				$this->logOrEcho($msg, 1);
+			}
+		}
+		return $recordCnt;
+	}
+
+	private function writeMaterialSampleData($targetFile){
+		$recordCnt = 0;
+		if($this->exportID){
+			$this->logOrEcho('Creating MaterialSample extension file (' . date('h:i:s A') . ')...');
+			$materialSampleHandler = new DwcArchiverMaterialSample($this->conn);
+			$materialSampleHandler->setSchemaType($this->schemaType);
+			$materialSampleHandler->initiateProcess($targetFile);
+			$recordCnt = $materialSampleHandler->writeOutData($this->exportID);
+			if($recordCnt){
+				$this->extensionFieldMap['materialSample'] = $materialSampleHandler->getFieldArrTerms();
+				$msg = $recordCnt . ' records added ';
+				$this->logOrEcho($msg, 1);
+			}
+			else{
+				$msg = 'No records located (file excluded)';
+				$this->logOrEcho($msg, 1);
+			}
+		}
+		return $recordCnt;
+	}
+
+	private function writeAssociationData($targetFile){
+		$recordCnt = 0;
+		if($this->exportID){
+			$this->logOrEcho('Creating ResourceRelationship extension file (' . date('h:i:s A') . ')...');
+			$associationHandler = new DwcArchiverResourceRelationship($this->conn);
+			$associationHandler->setSchemaType($this->schemaType);
+			$associationHandler->initiateProcess($targetFile);
+
+			$recordCnt = $associationHandler->writeOutData($this->exportID);
 			//Now add inverse relationships
-			$this->associationHandler->setSqlBase(true);
-			$this->associationHandler->writeOutRecordBlock($batchOccidArr, 'oa.occidAssociate');
-
+			$associationHandler->setSqlInverse();
+			$recordCnt += $associationHandler->writeOutData($this->exportID);
+			if($recordCnt){
+				$this->extensionFieldMap['associations'] = $associationHandler->getFieldArrTerms();
+				$msg = $recordCnt . ' records added ';
+				$this->logOrEcho($msg, 1);
+			}
+			else{
+				$msg = 'No records located (file excluded)';
+				$this->logOrEcho($msg, 1);
+			}
 		}
+		return $recordCnt;
 	}
 
 	private function writeCitationFile(){
@@ -2382,6 +2163,21 @@ class DwcArchiverCore extends Manager{
 
 	public function setObserverUid($uid){
 		if(is_numeric($uid)) $this->observerUid = $uid;
+	}
+
+	public function getOccurrenceCount(){
+		//Used within coge_getCount rpc handler
+		$retStr = 0;
+		$this->applyConditions();
+		if ($this->conditionSql) {
+			$sql = 'SELECT COUNT(DISTINCT o.occid) as cnt FROM omoccurrences o ' . $this->getTableJoins() . $this->conditionSql;
+			$rs = $this->conn->query($sql);
+			while ($r = $rs->fetch_object()) {
+				$retStr = $r->cnt;
+			}
+			$rs->free();
+		}
+		return $retStr;
 	}
 
 	public function setSchemaType($type){

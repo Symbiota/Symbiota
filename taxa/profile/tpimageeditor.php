@@ -193,7 +193,7 @@ if($tid){
 								<select name='creatorUid' name='creatorUid'>
 									<option value=""><?php echo $LANG['SEL_CREATOR']; ?></option>
 									<option value="">---------------------------------------</option>
-									<?php $imageEditor->echoCreatorSelect($PARAMS_ARR["uid"]); ?>
+									<?= Media::renderCreatorOptions($PARAMS_ARR["uid"]) ?>
 								</select>
 								<a href="#" onclick="toggle('photooveridediv');return false;" title="<?php echo $LANG['DISP_CREATOR_OVERRIDE']; ?>">
 									<img src="../../images/editplus.png" style="border:0px;width:1.5em;" />
