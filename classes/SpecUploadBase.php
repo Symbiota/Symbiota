@@ -193,11 +193,11 @@ class SpecUploadBase extends SpecUpload{
 		}
 		$rs->free();
 		//Add additional fields that are used for mapping to other fields just before record is imported into uploadspectemp
+		if($this->paleoSupport) $this->symbFields = array_unique(array_merge($this->symbFields, $this->getPaleoTerms()));
 		$this->symbFields[] = 'coordinateuncertaintyradius';
 		$this->symbFields[] = 'coordinateuncertaintyunits';
 		$this->symbFields[] = 'authorspecies';
 		$this->symbFields[] = 'authorinfraspecific';
-		if($this->paleoSupport) $this->symbFields = array_merge($this->symbFields,$this->getPaleoTerms());
 		sort($this->symbFields);
 		if($this->materialSampleSupport) $this->symbFields = array_merge($this->symbFields,$this->getMaterialSampleTerms());
 
@@ -396,7 +396,7 @@ class SpecUploadBase extends SpecUpload{
 
 		$symbFields = array();
 		foreach($symbFieldsRaw as $sValue){
-			if ($this->paleoSupport && strpos($sValue, 'paleo_') === 0) continue;
+			if (!$this->paleoSupport && strpos($sValue, 'paleo_') === 0) continue;
 			$symbFields[$sValue] = strtolower($sValue);
 		}
 
@@ -425,6 +425,8 @@ class SpecUploadBase extends SpecUpload{
 				if($this->uploadType == $this->NFNUPLOAD && substr($fieldName,0,8) == 'subject_') continue;
 				$isAutoMapped = false;
 				$tranlatedFieldName = str_replace(array('_',' ','.','(',')'),'',$fieldName);
+				if(strpos($fieldName, 'paleo') === 0) 
+					$tranlatedFieldName = substr($tranlatedFieldName, 6);
 				if($autoMap){
 					if(array_key_exists($tranlatedFieldName,$translationMap)) $tranlatedFieldName = strtolower($translationMap[$tranlatedFieldName]);
 					if(in_array($tranlatedFieldName,$symbFields) && !in_array($fieldName,$autoMapExclude)){
@@ -2495,18 +2497,18 @@ class SpecUploadBase extends SpecUpload{
 	}
 
 	private function getPaleoDwcTerms(){
-		$paleoTermArr = array('paleo-earliesteonorlowesteonothem','paleo-latesteonorhighesteonothem','paleo-earliesteraorlowesterathem',
-			'paleo-latesteraorhighesterathem','paleo-earliestperiodorlowestsystem','paleo-latestperiodorhighestsystem','paleo-earliestepochorlowestseries',
-			'paleo-latestepochorhighestseries','paleo-earliestageorloweststage','paleo-latestageorhigheststage','paleo-lowestbiostratigraphiczone','paleo-highestbiostratigraphiczone',
-			'paleo-geologicalcontextid','paleo-formation','paleo-member','paleo-bed','paleo-lithogroup'
+		$paleoTermArr = array('paleo_earliesteonorlowesteonothem','paleo_latesteonorhighesteonothem','paleo_earliesteraorlowesterathem',
+			'paleo_latesteraorhighesterathem','paleo_earliestperiodorlowestsystem','paleo_latestperiodorhighestsystem','paleo_earliestepochorlowestseries',
+			'paleo_latestepochorhighestseries','paleo_earliestageorloweststage','paleo_latestageorhigheststage','paleo_lowestbiostratigraphiczone','paleo_highestbiostratigraphiczone',
+			'paleo_geologicalcontextid','paleo_formation','paleo_member','paleo_bed','paleo_lithogroup'
 		);
 		return $paleoTermArr;
 	}
 
 	private function getPaleoSymbTerms(){
-		$paleoTermArr = array('paleo-eon','paleo-era','paleo-period','paleo-epoch',
-			'paleo-earlyinterval','paleo-lateinterval','paleo-absoluteage','paleo-stage','paleo-localstage','paleo-biota','paleo-biostratigraphy',
-			'paleo-taxonenvironment','paleo-lithology','paleo-stratremarks','paleo-element','paleo-slideproperties');
+		$paleoTermArr = array('paleo_eon','paleo_era','paleo_period','paleo_epoch',
+			'paleo_earlyinterval','paleo_lateinterval','paleo_absoluteage','paleo_stage','paleo_localstage','paleo_biota','paleo_biostratigraphy',
+			'paleo_taxonenvironment','paleo_lithology','paleo_stratremarks','paleo_element','paleo_slideproperties');
 		return $paleoTermArr;
 	}
 

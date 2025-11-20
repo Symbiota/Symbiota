@@ -513,6 +513,7 @@ class SpecUploadDwca extends SpecUploadBase{
 					//Set source array
 					$this->occurSourceArr = array();
 					foreach($this->metaArr['occur']['fields'] as $k => $v){
+						if (strpos($v, 'paleo-') === 0) $v = str_replace('paleo-', 'paleo_', $v);
 						$this->occurSourceArr[$k] = strtolower($v);
 					}
 					//Set custom filters if they haven't yet been set
@@ -639,7 +640,7 @@ class SpecUploadDwca extends SpecUploadBase{
 										$valueStr = trim($recordArr[$index]);
 										if($cset != $this->encoding) $valueStr = $this->encodeString($valueStr);
 										//add paleo fields separately
-										if ($this->paleoSupport && strpos($symbField, 'paleo-') === 0) {
+										if ($this->paleoSupport && strpos($symbField, 'paleo') === 0) {
 											$cleanKey = substr($symbField, 6);
 											$recMapPaleo[$cleanKey] = $valueStr;
 											continue;
