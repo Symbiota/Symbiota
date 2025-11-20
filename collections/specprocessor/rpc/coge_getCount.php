@@ -5,8 +5,9 @@ header("Cache-Control: no-cache, must-revalidate");
 header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 header("Content-Type: text/html; charset=".$CHARSET);
 
-$collid = $_REQUEST["collid"];
-$cntStr = '';
+$collid = filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT);
+
+$cntStr = 0;
 if($collid && is_numeric($collid)){
 	$isEditor = false;
 	if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin']))) $isEditor = true;

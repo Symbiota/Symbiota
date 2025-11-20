@@ -26,7 +26,6 @@ class DwcArchiverCore extends Manager{
 	private $condAllowArr;
 	private $overrideConditionLimit = false;
 	private $observerUid = 0;				//If set, this is a backup event of personally managed specimens
-	private $occurrenceCount = 0;
 
 	private $targetPath;
 	protected $serverDomain;
@@ -2167,7 +2166,18 @@ class DwcArchiverCore extends Manager{
 	}
 
 	public function getOccurrenceCount(){
-		return $this->occurrenceCount;
+		//Used within coge_getCount rpc handler
+		$retStr = 0;
+		$this->applyConditions();
+		if ($this->conditionSql) {
+			$sql = 'SELECT COUNT(DISTINCT o.occid) as cnt FROM omoccurrences o ' . $this->getTableJoins() . $this->conditionSql;
+			$rs = $this->conn->query($sql);
+			while ($r = $rs->fetch_object()) {
+				$retStr = $r->cnt;
+			}
+			$rs->free();
+		}
+		return $retStr;
 	}
 
 	public function setSchemaType($type){

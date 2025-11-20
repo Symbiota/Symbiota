@@ -34,7 +34,6 @@ ALTER TABLE `omexport`
   ADD CONSTRAINT `FK_omexport_uid`  FOREIGN KEY (`uid`)  REFERENCES `users` (`uid`)  ON DELETE RESTRICT  ON UPDATE CASCADE;
 
 CREATE TABLE `omexportoccurrences` (
-  `pmExportOccurID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `omExportID` INT UNSIGNED NOT NULL,
   `occid` INT UNSIGNED NOT NULL,
   `collid` INT UNSIGNED NOT NULL,
@@ -62,7 +61,7 @@ CREATE TABLE `omexportoccurrences` (
   `associatedSequences` TEXT NULL,
   `recordSecurity` INT NULL,
   `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp
-  PRIMARY KEY (`pmExportStagingID`));
+  PRIMARY KEY (`omExportID`,`occid`));
 
 ALTER TABLE `omexportoccurrences` 
   ADD INDEX `FK_omexportoccur_omExportID_idx` (`omExportID` ASC),
@@ -73,7 +72,6 @@ ALTER TABLE `omexportoccurrences`
   ADD CONSTRAINT `FK_omexportoccur_occid`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE;
 
 ALTER TABLE `omexportoccurrences` 
-  ADD UNIQUE INDEX `UQ_omexportoccur_unique` (`omExportID` ASC, `occid` ASC),
   ADD INDEX `IX_omexportoccur_taxonID` (`taxonID` ASC),
   ADD INDEX `IX_omexportoccur_collid` (`collid` ASC);
 
