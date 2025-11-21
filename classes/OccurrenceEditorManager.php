@@ -2060,7 +2060,7 @@ class OccurrenceEditorManager {
 					'SELECT o.occid, "' . $fn . '" AS fieldName, IFNULL(' . $fn . ',"") AS oldValue, IFNULL(' . $nvSqlFrag . ',"") AS newValue, ' .
 					'1 AS appliedStatus, ' . $GLOBALS['SYMB_UID'] . ' AS uid, 1 FROM ' . $targetTable . ' as o ';
 
-				// This Solution is a bit scuffed their isn't a nice way of getting many to one 
+				// This Solution is a bit scuffed their isn't a nice way of getting many to one
 				// tables in the batch update system without rebuilding most of it
 				if ($fn === 'identifierValue' || $fn === 'identifierName') {
 					$sql .= ' JOIN omoccuridentifiers AS id ON id.occid = o.occid ';
@@ -2294,48 +2294,78 @@ class OccurrenceEditorManager {
 	}
 
 	public function editGeneticResource($genArr) {
-		global $LANG;
-		$genId = $genArr['genid'];
-		if (is_numeric($genId)) {
-			$sql = 'UPDATE omoccurgenetic SET ' .
-				'identifier = "' . $this->cleanInStr($genArr['identifier']) . '", ' .
-				'resourcename = "' . $this->cleanInStr($genArr['resourcename']) . '", ' .
-				'locus = ' . ($genArr['locus'] ? '"' . $this->cleanInStr($genArr['locus']) . '"' : 'NULL') . ', ' .
-				'resourceurl = ' . ($genArr['resourceurl'] ? '"' . $genArr['resourceurl'] . '"' : 'NULL') . ', ' .
-				'notes = ' . ($genArr['notes'] ? '"' . $this->cleanInStr($genArr['notes']) . '"' : 'NULL') . ' ' .
-				'WHERE idoccurgenetic = ' . $genArr['genid'];
-			if (!$this->conn->query($sql)) {
-				return $LANG['ERROR_EDITING_GENETIC'] . ' #' . $genArr['genid'] . ': ' . $this->conn->error;
+		$status = false;
+		$sql = 'UPDATE omoccurgenetic SET identifier = ?, resourcename = ?, locus = ?, resourceurl = ?, notes = ? WHERE idoccurgenetic = ?';
+		try{
+			if($stmt = $this->conn->prepare($sql)){
+				$identifier = $genArr['identifier'] ? $genArr['identifier'] : null;
+				$resourceName = $genArr['resourcename'];
+				$locus = $genArr['locus'] ? $genArr['locus'] : null;
+				$resourceUrl = $genArr['resourceurl'] ? $genArr['resourceurl'] : null;
+				$notes = $genArr['notes'] ? $genArr['notes'] : null;
+				$genid = $genArr['genid'];
+				$stmt->bind_param('sssssi', $identifier, $resourceName, $locus, $resourceUrl, $notes, $genid);
+				if($stmt->execute()){
+					$status = true;
+				}
+				else{
+					$this->errorArr[] = $this->conn->error;
+				}
+				$stmt->close();
 			}
-			return $LANG['GEN_RESOURCE_EDIT_SUCCESS'];
 		}
-		return false;
+		catch(mysqli_sql_exception $e){
+			$this->errorArr[] = $e->getMessage();
+		}
+		return $status;
 	}
 
 	public function deleteGeneticResource($id) {
-		global $LANG;
-		if (is_numeric($id)) {
-			$sql = 'DELETE FROM omoccurgenetic WHERE idoccurgenetic = ' . $id;
-			if (!$this->conn->query($sql)) {
-				return $LANG['ERROR_DELETING_GENETIC'] . ' #' . $id . ': ' . $this->conn->error;
+		$status = false;
+		$sql = 'DELETE FROM omoccurgenetic WHERE idoccurgenetic = ?';
+		try{
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $id);
+				if($stmt->execute()){
+					$status = true;
+				}
+				else{
+					$this->errorArr[] = $this->conn->error;
+				}
+				$stmt->close();
 			}
-			return $LANG['GEN_RESOURCE_DEL_SUCCESS'];
 		}
-		return false;
+		catch(mysqli_sql_exception $e){
+			$this->errorArr[] = $e->getMessage();
+		}
+		return $status;
 	}
 
 	public function addGeneticResource($genArr) {
-		global $LANG;
-		$sql = 'INSERT INTO omoccurgenetic(occid, identifier, resourcename, locus, resourceurl, notes) ' .
-			'VALUES(' . $this->cleanInStr($genArr['occid']) . ',"' . $this->cleanInStr($genArr['identifier']) . '","' .
-			$this->cleanInStr($genArr['resourcename']) . '",' .
-			($genArr['locus'] ? '"' . $this->cleanInStr($genArr['locus']) . '"' : 'NULL') . ',' .
-			($genArr['resourceurl'] ? '"' . $this->cleanInStr($genArr['resourceurl']) . '"' : 'NULL') . ',' .
-			($genArr['notes'] ? '"' . $this->cleanInStr($genArr['notes']) . '"' : 'NULL') . ')';
-		if (!$this->conn->query($sql)) {
-			return $LANG['ERROR_ADDING_GEN'] . ': ' . $this->conn->error;
+		$status = false;
+		$sql = 'INSERT INTO omoccurgenetic(occid, identifier, resourcename, locus, resourceurl, notes) VALUES(?,?,?,?,?,?)';
+		try{
+			if($stmt = $this->conn->prepare($sql)){
+				$occid = $genArr['occid'];
+				$identifier = $genArr['identifier'] ? $genArr['identifier'] : null;
+				$resourceName = $genArr['resourcename'];
+				$locus = $genArr['locus'] ? $genArr['locus'] : null;
+				$resourceUrl = $genArr['resourceurl'] ? $genArr['resourceurl'] : null;
+				$notes = $genArr['notes'] ? $genArr['notes'] : null;
+				$stmt->bind_param('isssss', $occid, $identifier, $resourceName, $locus, $resourceUrl, $notes);
+				if($stmt->execute()){
+					$status = true;
+				}
+				else{
+					$this->errorArr[] = $this->conn->error;
+				}
+				$stmt->close();
+			}
 		}
-		return $LANG['GEN_RES_ADD_SUCCESS'];
+		catch(mysqli_sql_exception $e){
+			$this->errorArr[] = $e->getMessage();
+		}
+		return $status;
 	}
 
 	//OCR label processing methods
@@ -2808,7 +2838,7 @@ class OccurrenceEditorManager {
 		if(count($stateIds) > 0) {
 			$sql .= ' where s.stateid in (' . str_repeat('?,', count($stateIds) - 1) . '?' . ')';
 		}
-		
+
 		$retArr = array();
 		$rs = QueryUtil::executeQuery($this->conn, $sql, $stateIds);
 		while($r = $rs->fetch_object()){

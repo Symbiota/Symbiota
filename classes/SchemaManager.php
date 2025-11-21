@@ -107,9 +107,15 @@ class SchemaManager extends Manager{
 								$mysqlError = $this->conn->error;
 								if($mysqlError){
 									$sql = trim($sql,', ') . ';';
-									if(!$this->amendmentFH) $this->amendmentFH = fopen($this->amendmentPath, 'w');
-									fwrite($this->amendmentFH, '# Error: ' . $mysqlError . "\n\n");
-									fwrite($this->amendmentFH, $sql . "\n\n");
+									$logErrorInAdendmentSqlFile = true;
+									if(strpos($mysqlError, 'Duplicate column name') !== false) $logErrorInAdendmentSqlFile = false;
+									if(strpos($mysqlError, 'already exists') !== false) $logErrorInAdendmentSqlFile = false;
+									if(strpos($mysqlError, 'check that it exists') !== false) $logErrorInAdendmentSqlFile = false;
+									if($logErrorInAdendmentSqlFile){
+										if(!$this->amendmentFH) $this->amendmentFH = fopen($this->amendmentPath, 'w');
+										fwrite($this->amendmentFH, '# Error: ' . $mysqlError . "\n\n");
+										fwrite($this->amendmentFH, $sql . "\n\n");
+									}
 									$this->logOrEcho('MySQL Error: ' . $mysqlError, 2);
 								}
 								if($e->getMessage() != $mysqlError){
@@ -167,7 +173,7 @@ class SchemaManager extends Manager{
 					$logUrl = str_replace($GLOBALS['SERVER_ROOT'], $GLOBALS['CLIENT_ROOT'], $this->logPath);
 					$this->logOrEcho('Log file: <a href="' . $logUrl . '" target="_blank">' . $logUrl . '</a>');
 					$amendmentUrl = str_replace($GLOBALS['SERVER_ROOT'], $GLOBALS['CLIENT_ROOT'], $this->amendmentPath);
-					if($this->amendmentFH) $this->logOrEcho('Amendment (failed statements needing to be applied): ' . $amendmentUrl);
+					if($this->amendmentFH) $this->logOrEcho('Amendment (failed statements, some that might require being applied): <a href="' . $amendmentUrl . '" target="_blank">' . $amendmentUrl . '</a>');
 				}
 			}
 		}

@@ -351,13 +351,23 @@ if($SYMB_UID){
 				$statusStr = $occManager->deleteChecklistVoucher($_REQUEST['delclid']);
 			}
 			elseif($action == 'editgeneticsubmit'){
-				$statusStr = $occManager->editGeneticResource($_POST);
+				if($occManager->editGeneticResource($_POST)){
+					$statusStr = $LANG['GEN_RESOURCE_EDIT_SUCCESS'];
+				}
+				else $statusStr = $LANG['ERROR_EDITING_GENETIC'] . ': ' . $occManager->getErrorStr();
 			}
 			elseif($action == 'deletegeneticsubmit'){
-				$statusStr = $occManager->deleteGeneticResource($_POST['genid']);
+				if($occManager->deleteGeneticResource($_POST['genid'])){
+					$statusStr = $LANG['GEN_RESOURCE_DEL_SUCCESS'];
+				}
+				else $statusStr = $LANG['ERROR_DELETING_GENETIC'] . ': ' . $occManager->getErrorStr();
+
 			}
 			elseif($action == 'addgeneticsubmit'){
-				$statusStr = $occManager->addGeneticResource($_POST);
+				if($occManager->addGeneticResource($_POST)){
+					$statusStr = $LANG['GEN_RES_ADD_SUCCESS'];
+				}
+				else $statusStr = $LANG['ERROR_ADDING_GEN'] . ': ' . $occManager->getErrorStr();
 			}
 		}
 	}

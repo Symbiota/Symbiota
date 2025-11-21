@@ -715,7 +715,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 					<div style="margin-left:15px;"><b><?php echo $LANG['IDENTIFIER']; ?>:</b> <?php echo $gArr['id']; ?></div>
 					<div style="margin-left:15px;"><b><?php echo $LANG['LOCUS']; ?>:</b> <?php echo $gArr['locus']; ?></div>
 					<div style="margin-left:15px;">
-						<b><?php echo $LANG['URL']; ?>:</b> <a href="<?php echo htmlspecialchars($gArr['resourceurl'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank"><?php echo htmlspecialchars($gArr['resourceurl'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
+						<b><?php echo $LANG['URL']; ?>:</b> <a href="<?php echo htmlspecialchars($gArr['resourceurl'] ?? '', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank"><?php echo htmlspecialchars($gArr['resourceurl'] ?? '', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 					</div>
 					<div style="margin-left:15px;"><b><?php echo $LANG['NOTES']; ?>:</b> <?php echo $gArr['notes']; ?></div>
 				</div>
