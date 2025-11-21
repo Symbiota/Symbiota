@@ -116,7 +116,7 @@ class Manager  {
 	}
 
 	protected function cleanInStr($str){
-		$newStr = $str? trim($str): '';
+		$newStr = $str ? trim($str) : '';
 		if($newStr){
 			$newStr = preg_replace('/\s\s+/', ' ',$newStr);
 			$newStr = $this->conn->real_escape_string($newStr);

@@ -14,15 +14,6 @@ class TPImageEditorManager extends TPEditorManager{
  		parent::__destruct();
  	}
 
-	public function echoCreatorSelect($userId = 0){
-		$sql = 'SELECT u.uid, CONCAT_WS(", ",u.lastname,u.firstname) AS fullname FROM users u ORDER BY u.lastname, u.firstname ';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			echo '<option value="'.$r->uid.'" '.($r->uid == $userId?'SELECTED':'').'>'.$r->fullname.'</option>';
-		}
-		$rs->free();
-	}
-
 	public function editImageSort($imgSortEdits){
 		$status = "";
 		foreach($imgSortEdits as $editKey => $editValue){

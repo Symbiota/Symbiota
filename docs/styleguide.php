@@ -1,8 +1,9 @@
 <?php
 include_once('../config/symbini.php');
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/templates/accessibility.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT . '/content/lang/templates/accessibility.en.php');
-else include_once($SERVER_ROOT . '/content/lang/templates/accessibility.' . $LANG_TAG . '.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('templates/accessibility');
+
 header("Content-Type: text/html; charset=" . $CHARSET);
 ?>
 <!DOCTYPE html>

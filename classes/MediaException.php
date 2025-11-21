@@ -1,4 +1,6 @@
 <?php
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
 class MediaException extends Exception {
 	public const InvalidMediaType = 'INVALID_MEDIA_TYPE';
 	public const DuplicateMediaFile = 'DUPLICATE_MEDIA_FILE';
@@ -13,11 +15,7 @@ class MediaException extends Exception {
 	function __construct(string $case, string $message = ''){
 		global $LANG, $LANG_TAG, $SERVER_ROOT;
 
-		if(file_exists($SERVER_ROOT.'/content/lang/classes/Media.'.$LANG_TAG.'.php')) {
-			include_once($SERVER_ROOT.'/content/lang/classes/Media.'.$LANG_TAG.'.php');
-		} else {
-			include_once($SERVER_ROOT.'/content/lang/classes/Media.en.php');
-		}
+		Language::load('classes/Media');
 
 		if($message) {
 			parent::__construct($LANG[$case] . ': ' . $message);

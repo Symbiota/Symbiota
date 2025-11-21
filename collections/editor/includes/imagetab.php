@@ -1,8 +1,10 @@
 <?php
 include_once('../../../config/symbini.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/includes/imagetab.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imagetab.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imagetab.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/Media.php');
+
+Language::load('collections/editor/includes/imagetab');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $occId = filter_var($_GET['occid'], FILTER_SANITIZE_NUMBER_INT);

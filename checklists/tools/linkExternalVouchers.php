@@ -3,7 +3,9 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/ChecklistVoucherAdmin.php');
 include_once($SERVER_ROOT . '/classes/ChecklistManager.php');
 include_once($SERVER_ROOT . "/classes/Sanitize.php");
-include_once($SERVER_ROOT . '/content/lang/checklists/tools/linkExternalVoucher.' . $LANG_TAG . '.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('checklists/tools/linkExternalVoucher');
 
 $clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $target_tid = array_key_exists('target_tid', $_REQUEST) ? filter_var($_REQUEST['target_tid'], FILTER_SANITIZE_NUMBER_INT) : 0;

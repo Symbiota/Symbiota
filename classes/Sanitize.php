@@ -8,10 +8,15 @@ class Sanitize {
 	public static function out(Mixed $val): Mixed {
 		if(is_array($val)) {
 			return array_map(fn ($v) => self::out($v), $val);
-		} else if(is_bool($val) || is_numeric($val) || is_string($val)) {
+		} else if (is_numeric($val)) {
+			$intCast = intval($val);
+			$floatCast = floatval($val);
+
+			return $intCast == $floatCast? $intCast: $floatCast;
+		} else if(is_bool($val) || is_string($val)) {
 			return htmlspecialchars($val, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 		} else {
-		  return '';
+		  return null;
 		}
 	}
 

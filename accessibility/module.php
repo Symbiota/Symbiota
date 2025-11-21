@@ -1,7 +1,8 @@
 <?php
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/templates/accessibility.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT . '/content/lang/templates/accessibility.en.php');
-else include_once($SERVER_ROOT . '/content/lang/templates/accessibility.' . $LANG_TAG . '.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('templates/accessibility');
+
 ?>
 <dialog id="accessibility-modal" class="accessibility-dialog" aria-label="<?= $LANG['A_ACCESSIBILITY_OPTIONS']; ?>">
 	<h1><?= $LANG['A_ACCESSIBILITY_OPTIONS']; ?></h1>

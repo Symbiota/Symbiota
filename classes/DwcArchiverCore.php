@@ -235,6 +235,22 @@ class DwcArchiverCore extends Manager{
 		}
 	}
 
+    private function setIncludePaleo(){
+    	if ((!empty($GLOBALS['ACTIVATE_PALEO'])) ||
+    			(!empty($this->conditionSql) && (strpos($this->conditionSql, 'paleo.') !== false || strpos($this->conditionSql, 'early.myaStart') !== false)) ||
+    			(!empty($this->customWhereSql) && (strpos($this->customWhereSql, 'paleo.') !== false || strpos($this->customWhereSql, 'early.myaStart') !== false))){
+    				$this->includePaleo = true;
+    	} elseif (!empty($this->collArr)) {
+    		foreach ($this->collArr as $coll) {
+    			if (!empty($coll['colltype']) && $coll['colltype'] === 'Fossil Specimens'){
+    				//Activate if any one collection manages paleo specimens
+    				$this->includePaleo = true;
+    				break;
+    			}
+    		}
+    	}
+    }
+
 	public function addCondition($field, $cond, $value = ''){
 		$cond = strtoupper(trim($cond));
 		if (!preg_match('/^[A-Za-z]+$/', $field)) return false;
@@ -1699,14 +1715,14 @@ class DwcArchiverCore extends Manager{
 					//$typeArr = array('Other material', 'Holotype', 'Paratype', 'Hapantotype', 'Syntype', 'Isotype', 'Neotype', 'Lectotype', 'Paralectotype', 'Isoparatype', 'Isolectotype', 'Isoneotype', 'Isosyntype');
 				}
 				/*
-				 $pubID = 0;
-				 if($this->publicationGuid && $this->requestPortalGuid){
-				 $portalManager = new PortalIndex();
-				 $pubArr = array('pubTitle' => 'Symbiota Portal Index export - '.date('Y-m-d'), 'portalID' => $this->requestPortalGuid, 'direction' => 'export', 'lastDateUpdate' => date('Y-m-d h:i:s'), 'guid' => $this->publicationGuid);
-				 $pubID = $portalManager->createPortalPublication($pubArr);
-				 if ($pubID && $portalManager) $portalManager->insertPortalOccurrences($pubID);
-				 }
-				 */
+				$pubID = 0;
+				if($this->publicationGuid && $this->requestPortalGuid){
+					$portalManager = new PortalIndex();
+					$pubArr = array('pubTitle' => 'Symbiota Portal Index export - '.date('Y-m-d'), 'portalID' => $this->requestPortalGuid, 'direction' => 'export', 'lastDateUpdate' => date('Y-m-d h:i:s'), 'guid' => $this->publicationGuid);
+					$pubID = $portalManager->createPortalPublication($pubArr);
+					if ($pubID && $portalManager) $portalManager->insertPortalOccurrences($pubID);
+				}
+				*/
 				$statsManager = new OccurrenceAccessStats();
 				$sqlFrag = substr($sql, strpos($sql, 'WHERE '));
 				if($p = strpos($sqlFrag, 'LIMIT ')) $sqlFrag = substr($sqlFrag, 0, $p);

@@ -1,9 +1,12 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecUploadDwca.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/admin/restorebackup.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/admin/restorebackup.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/admin/restorebackup.en.php');
-include_once($SERVER_ROOT.'/content/lang/collections/admin/specupload.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load([
+	'collections/admin/restorebackup',
+	'collections/admin/specupload'
+]);
 
 header("Content-Type: text/html; charset=".$CHARSET);
 ini_set('max_execution_time', 3600);

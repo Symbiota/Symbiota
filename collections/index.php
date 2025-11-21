@@ -1,9 +1,12 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/content/lang/collections/sharedterms.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/index.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/index.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load([
+	'collections/sharedterms',
+	'collections/index'
+]);
 
 header("Content-Type: text/html; charset=".$CHARSET);
 
@@ -11,7 +14,6 @@ header("Content-Type: text/html; charset=".$CHARSET);
 $catId = array_key_exists("catid",$_REQUEST)?$_REQUEST["catid"]:'';
 if(!preg_match('/^[,\d]+$/',$catId)) $catId = '';
 if($catId == '' && isset($DEFAULTCATID)) $catId = $DEFAULTCATID;
-
 
 $collManager = new OccurrenceManager();
 $collManager->reset();

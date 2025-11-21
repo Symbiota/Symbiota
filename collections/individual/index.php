@@ -6,11 +6,14 @@ include_once($SERVER_ROOT . '/classes/utilities/RdfUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 include_once($SERVER_ROOT . '/classes/Media.php');
 include_once($SERVER_ROOT . '/classes/TaxonomyEditorManager.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/classes/OmMaterialSample.php');
 
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/individual/index.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/individual/index.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/individual/index.en.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/fieldterms/materialSampleVars.en.php');
+Language::load([
+	'collections/individual/index',
+	'collections/fieldterms/materialSampleVars'
+]);
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $submit = array_key_exists('formsubmit', $_REQUEST) ? $_REQUEST['formsubmit'] : '';
@@ -998,6 +1001,7 @@ $traitArr = $indManager->getTraitArr();
 							$matSampleArr = $occArr['matSample'];
 							$msCnt = 0;
 							$msKey = 0;
+							$MS_LABEL_ARR = OmMaterialSample::getMsLabels();
 							echo '<fieldset><legend>'.$LANG['MATERIAL_SAMPLES'].'</legend>';
 							do{
 								if($msKey = key($matSampleArr)){

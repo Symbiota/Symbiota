@@ -2,9 +2,10 @@
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/TaxonomyEditorManager.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceListManager.php');
-if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/list.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT . '/content/lang/collections/list.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/list.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/list');
+
 header("Content-Type: text/html; charset=" . $CHARSET);
 
 $taxonFilter = array_key_exists('taxonfilter', $_REQUEST) ? filter_var($_REQUEST['taxonfilter'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -22,7 +23,7 @@ if ($comingFrom != 'harvestparams' && $comingFrom != 'newsearch') {
 	$comingFrom = !empty($SHOULD_USE_HARVESTPARAMS) ? 'harvestparams' : 'newsearch';
 }
 
-$_SESSION['datasetid'] = filter_var($datasetid, FILTER_SANITIZE_NUMBER_INT);
+$_SESSION['datasetid'] = $datasetid;
 
 $collManager = new OccurrenceListManager();
 $searchVar = $collManager->getQueryTermStr();
@@ -375,7 +376,7 @@ $_SESSION['citationvar'] = $searchVar;
 									if (isset($fieldArr['has_image']) && $fieldArr['has_image']) {
 										echo '<div style="float:right;margin:5px 25px;">';
 										echo '<a href="#" onclick="return openIndPU(' . $occid . ',' . ($targetClid ? $targetClid : "0") . ');">';
-										echo '<img src="' . $fieldArr['media']['thumbnail'] . '" style="height:70px" alt="' . (isset($LANG['IMG_OCC']) ? $LANG['IMG_OCC'] : 'Image Associated With the Occurrence') . '" 
+										echo '<img src="' . $fieldArr['media']['thumbnail'] . '" style="height:70px" alt="' . (isset($LANG['IMG_OCC']) ? $LANG['IMG_OCC'] : 'Image Associated With the Occurrence') . '"
 											onerror="this.onerror=null; this.src=\'' . $CLIENT_ROOT . '/images/image-icon.svg\';" />';
 										echo '</a></div>';
 									}

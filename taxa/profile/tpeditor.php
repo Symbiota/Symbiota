@@ -8,10 +8,10 @@ include_once($SERVER_ROOT.'/classes/TPDescEditorManager.php');
 include_once($SERVER_ROOT.'/classes/TPImageEditorManager.php');
 include_once($SERVER_ROOT.'/classes/Media.php');
 include_once($SERVER_ROOT.'/classes/Paginator.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.' . $LANG_TAG . '.php'))
-include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.en.php');
+Language::load('taxa/profile/tpeditor');
+
 header('Content-Type: text/html; charset='.$CHARSET);
 
 $tid = array_key_exists('tid', $_REQUEST) ? filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -167,11 +167,6 @@ if($isEditor && $action){
 				alert("<?php echo $LANG['IMG_TOO_LARGE']; ?>");
 				return false;
 			}
-		}
-
-		function openOccurrenceSearch(target) {
-			occWindow=open("../../collections/misc/occurrencesearch.php?targetid="+target,"occsearch","resizable=1,scrollbars=1,width=700,height=500,left=20,top=20");
-			if (occWindow.opener == null) occWindow.opener = self;
 		}
 	</script>
 	<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>

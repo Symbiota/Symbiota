@@ -1,7 +1,7 @@
 <?php
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/includes/paleoinclude.'.$LANG_TAG.'.php'))
-	include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/paleoinclude.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/paleoinclude.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/editor/includes/paleoinclude');
 
 $gtsTermArr = $occManager->getPaleoGtsTerms();
 

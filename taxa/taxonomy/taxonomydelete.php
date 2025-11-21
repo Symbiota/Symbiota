@@ -2,9 +2,9 @@
 $LANG = array();
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyEditorManager.php');
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT . '/content/lang/taxa/taxonomy/taxonomydelete.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT . '/content/lang/taxa/taxonomy/taxonomydelete.en.php');
-else include_once($SERVER_ROOT . '/content/lang/taxa/taxonomy/taxonomydelete.' . $LANG_TAG . '.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('taxa/taxonomy/taxonomydelete');
 
 $tid = filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT) ?? '';
 $genusStr = $_REQUEST['genusstr'] ?? '';
