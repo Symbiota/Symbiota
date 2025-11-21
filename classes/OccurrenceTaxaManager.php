@@ -1,6 +1,8 @@
 <?php
-include_once($SERVER_ROOT.'/content/lang/collections/harvestparams.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/harvestparams');
 
 abstract class TaxaSearchType {
 	const  ANY_NAME				= 1;
@@ -259,6 +261,7 @@ class OccurrenceTaxaManager {
 		else{
 			$taxaStr = str_replace(';',',',$this->cleanInputStr($_REQUEST['taxa']));
 		}
+		$taxaStr = str_replace('_', ' ',$taxaStr);
 		if($taxaStr){
 			$this->taxaArr['search'] = $taxaStr;
 			//Set usage of taxonomic thesaurus

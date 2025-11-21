@@ -513,6 +513,7 @@ class SpecUploadDwca extends SpecUploadBase{
 					//Set source array
 					$this->occurSourceArr = array();
 					foreach($this->metaArr['occur']['fields'] as $k => $v){
+						if (strpos($v, 'paleo-') === 0) $v = str_replace('paleo-', 'paleo_', $v);
 						$this->occurSourceArr[$k] = strtolower($v);
 					}
 					//Set custom filters if they haven't yet been set
@@ -639,7 +640,7 @@ class SpecUploadDwca extends SpecUploadBase{
 										$valueStr = trim($recordArr[$index]);
 										if($cset != $this->encoding) $valueStr = $this->encodeString($valueStr);
 										//add paleo fields separately
-										if ($this->paleoSupport && strpos($symbField, 'paleo-') === 0) {
+										if ($this->paleoSupport && strpos($symbField, 'paleo') === 0) {
 											$cleanKey = substr($symbField, 6);
 											$recMapPaleo[$cleanKey] = $valueStr;
 											continue;
@@ -784,12 +785,6 @@ class SpecUploadDwca extends SpecUploadBase{
 			}
 			closedir($handle);
 		}
-		//Delete directory
-		/*
-		if(stripos($dirPath, $this->uploadTargetPath) === 0 && !preg_match('#/temp/data/$#', $dirPath)){
-			rmdir($dirPath);
-		}
-		*/
 	}
 
 	private function uploadExtension($targetStr, $fieldMap, $sourceArr){
@@ -980,12 +975,12 @@ class SpecUploadDwca extends SpecUploadBase{
 			$this->errorStr = '<li style="margin-left:10px">Unable to remove bad taxonomic index links</li>';
 		}
 
-		//Remove occurrenceID GUIDs that already match the values in recordID field
-		$this->outputMsg('<li style="margin-left:10px">Syncronizing occurrenceID GUIDs...</li>',1);
-		$sql = 'UPDATE uploadspectemp SET occurrenceID = NULL WHERE (collid = '.$this->collId.') AND (occurrenceID = recordID)';
-		if(!$this->conn->query($sql)){
-			$this->errorStr = '<li style="margin-left:10px">Unable to remove duclicate GUID references</li>';
-		}
+		// //Remove occurrenceID GUIDs that already match the values in recordID field
+		// $this->outputMsg('<li style="margin-left:10px">Syncronizing occurrenceID GUIDs...</li>',1);
+		// $sql = 'UPDATE uploadspectemp SET occurrenceID = NULL WHERE (collid = '.$this->collId.') AND (occurrenceID = recordID)';
+		// if(!$this->conn->query($sql)){
+		// 	$this->errorStr = '<li style="margin-left:10px">Unable to remove duclicate GUID references</li>';
+		// }
 	}
 
 	//Setters and getters

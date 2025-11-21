@@ -4,9 +4,9 @@ include_once($SERVER_ROOT.'/classes/OpenIdProfileManager.php');
 include_once($SERVER_ROOT . '/config/auth_config.php');
 require_once($SERVER_ROOT . '/vendor/autoload.php');
 use Jumbojett\OpenIDConnectClient;
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/profile/authCallback.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/profile/authCallback.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/profile/authCallback.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
+Language::load('profile/authCallback');
 
 $profManager = new OpenIdProfileManager();
 
@@ -27,7 +27,7 @@ if (array_key_exists('code', $_REQUEST) && $_REQUEST['code']) {
   try{
     $status = $oidc->authenticate();
     $claims = $oidc->getVerifiedClaims();
-    $sid = $claims->sid;
+    $sid = isset($claims->sid) ? $claims->sid : false;
   }
   catch (Exception $ex){
     $_SESSION['last_message'] = $LANG['CAUGHT_EXCEPTION'] . ' ' . $ex->getMessage() . ' <ERR/>';

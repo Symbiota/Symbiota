@@ -58,6 +58,10 @@ $LANG['ACCESS_DEF'] = 'Información o un enlace URL a una página con detalles q
 $LANG['DATASET_TYPE'] = 'Tipo de conjunto de datos';
 $LANG['PRES_SPECS'] = 'Especímenes preservados';
 $LANG['FOSSIL_SPECS'] = 'Espécimenes fósiles';
+$LANG['FOSSIL_WARN_1'] = 'Al seleccionar "Espécimenes fósiles", se activará el módulo Paleo para esta colección y se establecerá el valor predeterminado en "FossilSpecimen" para';
+$LANG['FOSSIL_WARN_2'] = 'Seleccione esta opción solo si desea usar este perfil de colección para catalogar fósiles.';
+$LANG['FOSSIL_WARN_3'] = 'Es posible que se requiera la activación de funciones adicionales para que los datos de sus especímenes fósiles sean visibles públicamente en este portal.
+                        Para obtener más información, contacte con el administrador del portal.';
 $LANG['OBSERVATIONS'] = 'Observaciones';
 $LANG['PERS_OBS_MAN'] = 'Gestión de observación personal';
 $LANG['MORE_COL_TYPE'] = 'Más información sobre el tipo de colección';

@@ -1,8 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecUpload.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/admin/uploadreviewer.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/admin/uploadreviewer.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/admin/uploadreviewer.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/admin/uploadreviewer');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
@@ -81,7 +83,7 @@ if($SYMB_UID){
 			//Setup header map
 			$recArr = $uploadManager->getPendingImportData(($recLimit*$pageIndex),$recLimit,$searchVar);
 			if($recArr){
-				$excludeKeys = ['eon', 'era', 'period', 'epoch', 'stage'];
+				$excludeKeys = ['paleo_eon', 'paleo_era', 'paleo_period', 'paleo_epoch', 'paleo_stage'];
 				//Check to see which headers have values
 				$headerArr = array();
 				$matSampleHeaderArr = array();
@@ -94,6 +96,9 @@ if($SYMB_UID){
 										$matSampleHeaderArr[$matKey] = $matKey;
 									}
 								}
+							}
+							elseif (strpos($k, 'paleo_') === 0)
+								$headerArr[$k] = substr($k, 6);
 							else $headerArr[$k] = $k;
 						}
 					}

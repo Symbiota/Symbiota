@@ -1,7 +1,9 @@
 <?php
 include_once('../../config/symbini.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/occurrenceeditor.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrenceeditor.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrenceeditor.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/editor/occurrenceeditor');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $occId = array_key_exists('occid', $_REQUEST) ? filter_var($_REQUEST['occid'], FILTER_SANITIZE_NUMBER_INT) : '';
@@ -42,6 +44,7 @@ $fragArr = array();
 $qryCnt = false;
 $statusStr = '';
 $navStr = '';
+$readOnly = '';
 
 $isEditor = 0;
 $LOCALITY_AUTO_LOOKUP = 1;
@@ -235,7 +238,6 @@ if($SYMB_UID){
 				$tabTarget = 2;
 			}
 			elseif($action == 'Submit New Image') {
-
 				$collMap = $occManager->getCollMap();
 
 				//Ensures correct order on taxon profile page
@@ -251,10 +253,10 @@ if($SYMB_UID){
 						$occur_map['catalognumber']
 					);
 
-					Media::add(
+					Media::uploadAndInsert(
 						$_POST,
-						new LocalStorage($path),
-						$_FILES['imgfile'] ?? null
+						$_FILES['imgfile'],
+						new LocalStorage($path)
 					);
 
 					if($errors = Media::getErrors()) {
@@ -349,13 +351,23 @@ if($SYMB_UID){
 				$statusStr = $occManager->deleteChecklistVoucher($_REQUEST['delclid']);
 			}
 			elseif($action == 'editgeneticsubmit'){
-				$statusStr = $occManager->editGeneticResource($_POST);
+				if($occManager->editGeneticResource($_POST)){
+					$statusStr = $LANG['GEN_RESOURCE_EDIT_SUCCESS'];
+				}
+				else $statusStr = $LANG['ERROR_EDITING_GENETIC'] . ': ' . $occManager->getErrorStr();
 			}
 			elseif($action == 'deletegeneticsubmit'){
-				$statusStr = $occManager->deleteGeneticResource($_POST['genid']);
+				if($occManager->deleteGeneticResource($_POST['genid'])){
+					$statusStr = $LANG['GEN_RESOURCE_DEL_SUCCESS'];
+				}
+				else $statusStr = $LANG['ERROR_DELETING_GENETIC'] . ': ' . $occManager->getErrorStr();
+
 			}
 			elseif($action == 'addgeneticsubmit'){
-				$statusStr = $occManager->addGeneticResource($_POST);
+				if($occManager->addGeneticResource($_POST)){
+					$statusStr = $LANG['GEN_RES_ADD_SUCCESS'];
+				}
+				else $statusStr = $LANG['ERROR_ADDING_GEN'] . ': ' . $occManager->getErrorStr();
 			}
 		}
 	}
@@ -415,6 +427,11 @@ if($SYMB_UID){
 						$isEditor = 1;
 					}
 				}
+			}
+			else if ($collMap && !empty($collMap['guidtarget']) && $collMap['guidtarget'] === "symbiotaUUID" && empty($occArr['occurrenceid'])){
+				$occArr['recordID'] = $occManager->getRecordIdByOccId($occId);
+				$occArr['occurrenceid'] = $occArr['recordID'];
+				$readOnly = 'readonly style="background-color:lightgray"';
 			}
 		}
 	}
@@ -1421,7 +1438,8 @@ else{
 											<div id="occurrenceIdDiv" class="field-div" title="If different than institution code">
 												<?php echo $LANG['OCCURRENCE_ID']; ?>
 												<a href="#" onclick="return dwcDoc('occurrence-id-override')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-												<input type="text" name="occurrenceid" maxlength="255" value="<?php echo array_key_exists('occurrenceid',$occArr)?$occArr['occurrenceid']:''; ?>" onchange="fieldChanged('occurrenceid');" />
+												<input type="text" name="occurrenceid" maxlength="255" value="<?php echo array_key_exists('occurrenceid',$occArr)?$occArr['occurrenceid']:''; ?>" onchange="fieldChanged('occurrenceid');"
+												<?php echo $readOnly; ?> />
 											</div>
 											<div id="fieldNumberDiv" class="field-div" title="An identifier given to the collecting event in the field">
 												<?php echo $LANG['FIELD_NUMBER']; ?>
@@ -1442,6 +1460,11 @@ else{
 												<?php echo $LANG['DUPLICATE_COUNT']; ?>
 												<a href="#" onclick="return dwcDoc('dupe-count')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
 												<input type="text" name="duplicatequantity" value="<?php echo array_key_exists('duplicatequantity',$occArr)?$occArr['duplicatequantity']:''; ?>" onchange="fieldChanged('duplicatequantity');" />
+											</div>
+											<div id="dataGeneralizationsDiv" class="field-div" title="<?php echo $LANG['AKA_GENERAL']; ?>">
+												<?php echo $LANG['DATA_GENERALIZATIONS']; ?>
+												<a href="#" onclick="return dwcDoc('data-generalizations')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+												<input type="text" name="datageneralizations" value="<?php echo array_key_exists('datageneralizations',$occArr)?$occArr['datageneralizations']:''; ?>" onchange="fieldChanged('datageneralizations');" />
 											</div>
 										</div>
 										<div style="padding:3px;clear:both;">
@@ -1471,22 +1494,33 @@ else{
 												<?php echo $LANG['BASIS_OF_RECORD']; ?>
 												<a href="#" onclick="return dwcDoc('basis-of-record')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
 												<?php
-												$borArr = array('FossilSpecimen'=>0,'HumanObservation'=>0,'LivingSpecimen'=>0,'MachineObservation'=>0,'PreservedSpecimen'=>0);
-												if(isset($occArr['basisofrecord']) && $occArr['basisofrecord']){
-													if(in_array($occArr['basisofrecord'],$borArr)) $borArr[$occArr['basisofrecord']] = 1;
-													else $borArr[$occArr['basisofrecord']] = 2;
+												$borArr = array('FossilSpecimen'=>0,'HumanObservation'=>0,'LivingSpecimen'=>0,'MachineObservation'=>0,'PreservedSpecimen'=>0,);
+												if(isset($occArr['basisofrecord'])){
+													if($occArr['basisofrecord']){
+														$borFound = false;
+														foreach($borArr as $borKey => $borValue){
+															if(strtolower($borKey) == strtolower($occArr['basisofrecord'])){
+																$borArr[$borKey] = 1;
+																$borFound = true;
+																break;
+															}
+														}
+														if(!$borFound) $borArr[$occArr['basisofrecord']] = 2;
+													}
 												}
-												if(!isset($occArr['basisofrecord']) || !$occArr['basisofrecord']){
+												else{
 													if($collType == 'obs') $borArr['HumanObservation'] = 1;
 													elseif($collType == 'paleo') $borArr['FossilSpecimen'] = 1;
 													elseif($collType == 'spec') $borArr['PreservedSpecimen'] = 1;
 												}
 												?>
 												<select name="basisofrecord" onchange="fieldChanged('basisofrecord');">
+													<option value="">--------------------------</option>
 													<?php
 													foreach($borArr as $bValue => $statueCode){
-														if($statueCode == 2) echo '<option value="">---'.$LANG['NON_SANCTIONED'].'---</option><option SELECTED>'.$bValue.'</option>';
-														else echo '<option '.($statueCode?'SELECTED':'').'>'.$bValue.'</option>';
+														$borDisplay = $bValue;
+														if($statueCode == 2) $borDisplay .= ' (' . $LANG['NON_SANCTIONED'] . ')';
+														echo '<option ' . ($statueCode ? 'SELECTED' : '') . ' value="' . $bValue . '">' . $borDisplay . '</option>';
 													}
 													?>
 												</select>
@@ -1515,11 +1549,6 @@ else{
 													}
 													?>
 												</select>
-											</div>
-											<div id="dataGeneralizationsDiv" class="field-div" title="<?php echo $LANG['AKA_GENERAL']; ?>">
-												<?php echo $LANG['DATA_GENERALIZATIONS']; ?>
-												<a href="#" onclick="return dwcDoc('data-generalizations')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
-												<input type="text" name="datageneralizations" value="<?php echo array_key_exists('datageneralizations',$occArr)?$occArr['datageneralizations']:''; ?>" onchange="fieldChanged('datageneralizations');" />
 											</div>
 										</div>
 										<?php

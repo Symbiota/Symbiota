@@ -1,6 +1,7 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/UploadUtil.php');
 
 /**
  * Based on code copied from https://www.tiny.cloud/docs/advanced/php-upload-handler/
@@ -57,13 +58,24 @@ if (is_uploaded_file($temp['tmp_name'])) {
         return;
     }
 
+	// Verify file type matches extension
+	try {
+		UploadUtil::checkFileUpload(
+			$temp,
+			['image/jpeg', 'image/png', 'image/gif']
+		);
+	} catch(Exception $e) {
+		header("HTTP/1.1 400 Invalid extension or file type.");
+		return;
+	}
+
     // Accept upload if there was no origin, or if it is an accepted origin
     $filetowrite = $imageFolder . '/' . $temp['name'];
+
     if (!move_uploaded_file($temp['tmp_name'], $filetowrite)) {
         header("HTTP/1.1 500 Server Error");
         return;
     }
-
 
     // Respond to the successful upload with JSON.
     // Use a location key to specify the path to the saved image resource.

@@ -1,6 +1,5 @@
 <?php
 
-use function PHPUnit\Framework\isEmpty;
 
 include_once($SERVER_ROOT.'/classes/OccurrenceTaxaManager.php');
 include_once($SERVER_ROOT.'/classes/utilities/TaxonomyUtil.php');
@@ -48,7 +47,29 @@ class AssociationManager extends OccurrenceTaxaManager{
 		}
 	}
 
-
+	protected function getAcceptedChildren($tid){
+		$returnArr = array();
+		$typeStr1 = '';
+		$bindingArr1 = array();
+		$sql1 = 'SELECT DISTINCT t.tid, t.sciname, t.rankid
+			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
+			INNER JOIN taxaenumtree e ON t.tid = e.tid
+			WHERE (e.parenttid IN(?)) AND (ts.TidAccepted = ts.tid) AND (ts.taxauthid = ?) AND (e.taxauthid = ?)' ;
+		$typeStr1 .= 'iii';
+		array_push($bindingArr1, $tid, 1, 1);
+		if ($statement1 = $this->conn->prepare($sql1)) {
+			$statement1->bind_param($typeStr1,...$bindingArr1);
+			$statement1->execute();
+			$result = $statement1->get_result();
+			if($result->num_rows > 0){
+				while($r1 = $result->fetch_assoc()){
+					$returnArr[] = $r1['tid'];
+				}
+			}
+			$statement1->close();
+		}
+		return $returnArr;
+	}
 
 	public function getAssociatedRecords($associationArr) {
 		$sql = '';
@@ -81,6 +102,12 @@ class AssociationManager extends OccurrenceTaxaManager{
 
 			// External, observational, or resource associations
 			$externalAndObservationalSql = "SELECT oa.occid FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid  LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE (oa.associationType='observational' OR oa.associationType='externalOccurrence' OR oa.associationType='resource') AND oa.relationship " . $relationshipStr . " ";
+			if(isset($associationArr['taxa']) && isset($associationArr['search'])){
+				$mainTid = array_keys($associationArr['taxa'][$associationArr['search']]['tid'])[0];
+				$tIdsNotToMatch = array($mainTid, ...$this->getAcceptedChildren($mainTid));
+				$offTargetStr = "AND o.tidinterpreted NOT IN(" . implode(',', $tIdsNotToMatch) . ") ";
+				$externalAndObservationalSql .= $offTargetStr;
+			}
 			$externalAndObservationalSql .= $this->getAssociatedTaxonWhereFrag($associationArr);
 	
 			if(array_key_exists('search', $associationArr)){

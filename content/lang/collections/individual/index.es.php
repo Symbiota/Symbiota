@@ -91,6 +91,7 @@ $LANG['STRAT_REMARKS'] = 'Comentarios Estratigráficos';
 $LANG['ELEMENT'] = 'Elemento';
 $LANG['SLIDE_PROPS'] = 'Propiedades de Preparaciones';
 $LANG['CONTEXT_ID'] = 'Indentificación del Contexto Geológico';
+$LANG['BASIS_OF_RECORD'] = 'Base del registro';
 $LANG['EXCICCATI_SERIES'] = 'Serie de exsiccata';
 $LANG['MATERIAL_SAMPLES'] = 'Material Samples';
 $LANG['DISPLAY_ALL_MATERIAL_SAMPLES'] = 'Display all Material Sample units';
@@ -175,5 +176,6 @@ $LANG['REPORTED_AS_INAPPROPRIATE'] = 'El siguiente comentario ha sido eliminado 
 $LANG['EMAIL_NOT_DEFINED'] = 'ERROR: El correo electrónico del administrador del portal no está definido en el archivo de configuración central';
 $LANG['UNABLE_TO_VERIFY_TARGET'] = 'ERROR al eliminar el cupón: no se puede verificar la lista de verificación objetivo del cupón';
 $LANG['PERMISSION_ERROR'] = 'ERROR al eliminar el comprobante: error de permiso';
-
+$LANG['CULT_STATUS'] = 'Estado de Cultivo';
+$LANG['CULTIVATED'] = 'Cultivado';
 ?>

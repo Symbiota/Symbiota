@@ -1,5 +1,5 @@
 # Ignore everything in this directory
 *
-# Except this file and labeljson_template.php
+# Except this file and labeldefault.json
 !.gitignore
-!labeljson_template.php
+!labeldefault.json

@@ -5,16 +5,6 @@ include_once($SERVER_ROOT.'/classes/SitemapXMLManager.php');
 $sitemapManager = new SitemapXMLManager();
 $sitemapPath = $SERVER_ROOT . '/content/sitemaps/sitemap.xml';
 $message = "";
-$protocol = 'https';
-
-// check for valid protocol value
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $protocolCheck = $_POST['protocol'] ?? '';
-    if (in_array($protocolCheck, ['http', 'https'], true))
-        $protocol = $protocolCheck;
-}
-
-$sitemapManager->setProtocol($protocol);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($sitemapManager->generateSitemap()) {
@@ -57,19 +47,22 @@ if (file_exists($sitemapPath)) {
         <?php endif; ?>
 
         <form method="post">
-            <label for="protocol">Protocol:
-                <select name="protocol" id="protocol">
-                    <option value="https">https</option>
-                    <option value="http">http</option>
-                </select>
-            </label>
-
             <button type="submit" class="button">Generate Sitemap</button>
         </form>
 
         <?php if (!empty($message)): ?>
             <div class="message"><?php echo $message; ?></div>
         <?php endif; ?>
+        <?php if (!empty($message) && strpos($message,'Sitemap generated') === 0): ?>
+        <div class="info">
+            <h3>Next steps:</h3>
+            <ol>
+                <li class="bottom-breathing-room-rel-sm">Check that the file was saved to <b>/content/sitemaps/sitemap.xml.</b></li>
+                <li class="bottom-breathing-room-rel-sm">Make sure the sitemap link in robots.txt points to the path:</li>
+                <b>Sitemap: <?= GeneralUtil::getDomain() . $CLIENT_ROOT ?>/content/sitemaps/sitemap.xml</b>
+            </ol>
+        </div>
+    <?php endif; ?>
     </div>
     <?php
     include($SERVER_ROOT.'/includes/footer.php');

@@ -392,15 +392,17 @@ class OccurrenceDuplicate {
 		if($eventDate) $queryTerms[] = 'o.eventdate = "'.$this->cleanInStr($eventDate).'"';
 		if($catNum) $queryTerms[] = 'o.catalognumber = "'.$this->cleanInStr($catNum).'"';
 		if(is_numeric($occid)) $queryTerms[] = 'o.occid = '.$occid;
-		$sql = 'SELECT c.institutioncode, c.collectioncode, c.collectionname, o.occid, o.catalognumber,
-			o.recordedby, o.recordnumber, o.eventdate, o.verbatimeventdate, o.country, o.stateprovince, o.county, o.locality
+		$sql = 'SELECT c.institutioncode, c.collectioncode, c.collectionname, o.occid, o.catalognumber, o.recordedby, o.recordnumber,
+			o.eventdate, o.verbatimeventdate, o.country, o.stateprovince, o.county, o.locality, COALESCE(od.sciname, o.sciname) AS sciname
 			FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid
+			LEFT JOIN omoccurdeterminations od ON o.occid = od.occid AND od.isCurrent = 1
 			WHERE o.occid != ' . $currentOccid;
 		if($queryTerms){
 			$sql .= ' AND ('.implode(') AND (', $queryTerms).') ';
 			$sql .= OccurrenceUtil::appendFullProtectionSQL();
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
+				$retArr[$r->occid]['sciname'] = $r->sciname;
 				$retArr[$r->occid]['collname'] = $r->collectionname.' ('.$r->institutioncode.($r->collectioncode?'-'.$r->collectioncode:'').')';
 				$retArr[$r->occid]['catalognumber'] = $r->catalognumber;
 				$retArr[$r->occid]['recordedby'] = $r->recordedby;

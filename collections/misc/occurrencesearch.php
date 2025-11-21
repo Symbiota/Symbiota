@@ -1,8 +1,9 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceSupport.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/misc/occurrencesearch.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/misc/occurrencesearch.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/misc/occurrencesearch.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/misc/occurrencesearch');
 
 header('Content-Type: text/html; charset='.$CHARSET);
 
@@ -103,7 +104,7 @@ $occManager = new OccurrenceSupport();
 	<div role="main" id="innertext">
 		<h1 class="page-heading"><?php echo $LANG['SEARCH_OCCUR']; ?></h1>
 		<?php
-		if($collEditorArr){
+		if($IS_ADMIN || $collEditorArr){
 			$collArr = $occManager->getCollectionArr($IS_ADMIN?null:$collEditorArr);
 			?>
 			<form name="occform" action="occurrencesearch.php" method="post" onsubmit="return verifyOccurSearchForm(this)" >

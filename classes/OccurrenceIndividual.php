@@ -54,8 +54,7 @@ class OccurrenceIndividual extends Manager{
 						if($propArr = json_decode($this->metadataArr['dynamicproperties'], true)) {
 							if(isset($propArr['editorProps']['modules-panel'])) {
 								foreach($propArr['editorProps']['modules-panel'] as $k => $modArr) {
-									if(isset($modArr['paleo']['status'])) $this->activeModules['paleo'] = true;
-									elseif (isset($modArr['matSample']['status'])) $this->activeModules['matSample'] = true;
+									if (isset($modArr['matSample']['status'])) $this->activeModules['matSample'] = true;
 								}
 							}
 						}
@@ -280,9 +279,9 @@ class OccurrenceIndividual extends Manager{
 					$tnUrl = $row->thumbnailurl;
 					$lgUrl = $row->originalurl;
 					if($MEDIA_DOMAIN){
-					    if(substr($url,0,1)=='/') $url = $MEDIA_DOMAIN . $url;
-					    if($lgUrl && substr($lgUrl, 0, 1) == '/') $lgUrl = $MEDIA_DOMAIN . $lgUrl;
-					    if($tnUrl && substr($tnUrl, 0, 1) == '/') $tnUrl = $MEDIA_DOMAIN . $tnUrl;
+						if(substr($url,0,1)=='/') $url = $MEDIA_DOMAIN . $url;
+						if($lgUrl && substr($lgUrl, 0, 1) == '/') $lgUrl = $MEDIA_DOMAIN . $lgUrl;
+						if($tnUrl && substr($tnUrl, 0, 1) == '/') $tnUrl = $MEDIA_DOMAIN . $tnUrl;
 					}
 					if((!$url || $url == 'empty') && $lgUrl) $url = $lgUrl;
 					if(!$tnUrl && $url) $tnUrl = $url;
@@ -765,7 +764,7 @@ class OccurrenceIndividual extends Manager{
 	public function addComment($commentStr){
 		$status = false;
 		if(is_numeric($GLOBALS['SYMB_UID'])){
-	 		$commentStr = strip_tags($commentStr);
+			$commentStr = strip_tags($commentStr);
 			$sql = 'INSERT INTO omoccurcomments(occid, comment, uid, reviewstatus) VALUES(?, ?, ?, 1)';
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param('isi', $this->occid, $commentStr, $GLOBALS['SYMB_UID']);
@@ -1279,7 +1278,7 @@ class OccurrenceIndividual extends Manager{
 			//Restore exsiccati
 			if(isset($recArr['exsiccati']) && $recArr['exsiccati']){
 				$sql = 'INSERT INTO omexsiccatiocclink(omenid, occid, ranking, notes) VALUES(' . $recArr['exsiccati']['ometid'] . ',' . $recArr['exsiccati']['occid'] . ','.
-					(isset($recArr['exsiccati']['ranking']) ? $recArr['exsiccati']['ranking'] : 'NULL') . ','
+					(isset($recArr['exsiccati']['ranking']) ? $recArr['exsiccati']['ranking'] : 'NULL') . ',' .
 					(isset($recArr['exsiccati']['notes']) ? '"' . $this->cleanInStr($recArr['exsiccati']['notes']) . '"' : 'NULL') . ')';
 				if(!$this->conn->query($sql)){
 					$this->errorMessage = $this->conn->error;

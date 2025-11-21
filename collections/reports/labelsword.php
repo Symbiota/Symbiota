@@ -119,8 +119,8 @@ if($isEditor && $action){
 			if($occArr['catalognumber']){
 				$textrun = $section->addTextRun('cnbarcode');
 				$bc = $bcObj->draw(strtoupper($occArr['catalognumber']),"Code39","png",false,40);
-				imagepng($bc,$SERVER_ROOT.'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png');
-				$textrun->addImage($SERVER_ROOT.'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png', array('align'=>'center'));
+				imagepng($bc,$TEMP_DIR_ROOT . '/' . $ses_id.$occArr['catalognumber'] . '.png');
+				$textrun->addImage($TEMP_DIR_ROOT . '/' . $ses_id . $occArr['catalognumber'] . '.png', array('align'=>'center'));
 				imagedestroy($bc);
 			}
 		}
@@ -274,10 +274,10 @@ if($isEditor && $action){
 					if(substr($substrateStr,-1) != '.'){$substrateStr .= '.';}
 					$textrun->addText(htmlspecialchars($substrateStr),'otherFont');
 				}
-				if($occArr['description'] || $occArr['establishmentmeans']){
+				if($occArr['verbatimattributes'] || $occArr['establishmentmeans']){
 					$textrun = $section->addTextRun('other');
-					$textrun->addText(htmlspecialchars($occArr['description']),'otherFont');
-					if($occArr['description'] && $occArr['establishmentmeans']) $textrun->addText('; ','otherFont');
+					$textrun->addText(htmlspecialchars($occArr['verbatimattributes']),'otherFont');
+					if($occArr['verbatimattributes'] && $occArr['establishmentmeans']) $textrun->addText('; ','otherFont');
 					$textrun->addText($occArr['establishmentmeans'], 'otherFont');
 				}
 				if($occArr['associatedtaxa']){
@@ -292,8 +292,8 @@ if($isEditor && $action){
 					$section->addText(htmlspecialchars($occArr['typestatus']),'otherFont','other');
 				}
 				$textrun = $section->addTextRun('collector');
-				$textrun->addText(htmlspecialchars($occArr['collector']),'otherFont');
-				$textrun->addText(htmlspecialchars(' '.$occArr['collectornumber']),'otherFont');
+				$textrun->addText(htmlspecialchars($occArr['recordedby']),'otherFont');
+				$textrun->addText(htmlspecialchars(' '.$occArr['recordnumber']),'otherFont');
 				$section->addText(htmlspecialchars($occArr['eventdate']),'otherFont','other');
 				if($occArr['associatedcollectors']){
 					$section->addText(htmlspecialchars('With: '.$occArr['associatedcollectors']),'otherFont','identified');
@@ -301,8 +301,8 @@ if($isEditor && $action){
 				if($useBarcode && $occArr['catalognumber']){
 					$textrun = $section->addTextRun('cnbarcode');
 					$bc = $bcObj->draw(strtoupper($occArr['catalognumber']),"Code39","png",false,40);
-					imagepng($bc,$SERVER_ROOT.'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png');
-					$textrun->addImage($SERVER_ROOT.'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png', array('align'=>'center','marginTop'=>0.15625));
+					imagepng($bc, $TEMP_DIR_ROOT . '/' . $ses_id . $occArr['catalognumber'] . '.png');
+					$textrun->addImage($TEMP_DIR_ROOT . '/' . $ses_id . $occArr['catalognumber'] . '.png', array('align'=>'center','marginTop'=>0.15625));
 					if($occArr['othercatalognumbers']){
 						$textrun->addTextBreak(1);
 						$textrun->addText(htmlspecialchars($occArr['othercatalognumbers']),'otherFont');
@@ -330,8 +330,8 @@ if($isEditor && $action){
 					$textrun->addLine(array('weight'=>2,'width'=>$lineWidth,'height'=>0,'dash'=>'dash'));
 					$textrun->addTextBreak(1);
 					$bc = $bcObj->draw(strtoupper($occid),"Code39","png",false,40);
-					imagepng($bc,$SERVER_ROOT.'/temp/report/'.$ses_id.$occid.'.png');
-					$textrun->addImage($SERVER_ROOT.'/temp/report/'.$ses_id.$occid.'.png', array('align'=>'center','marginTop'=>0.104166667));
+					imagepng($bc, $TEMP_DIR_ROOT . '/' . $ses_id . $occid . '.png');
+					$textrun->addImage($TEMP_DIR_ROOT . '/' . $ses_id . $occid . '.png', array('align'=>'center','marginTop'=>0.104166667));
 					if($occArr['catalognumber']){
 						$textrun->addTextBreak(1);
 						$textrun->addText(htmlspecialchars($occArr['catalognumber']),'otherFont');
@@ -344,7 +344,7 @@ if($isEditor && $action){
 	}
 }
 
-$targetFile = $SERVER_ROOT.'/temp/report/'.$PARAMS_ARR['un'].'_'.date('Ymd').'_labels_'.$ses_id.'.docx';
+$targetFile = $TEMP_DIR_ROOT . '/' . $PARAMS_ARR['un'] . '_' . date('Ymd') . '_labels_' . $ses_id . '.docx';
 $phpWord->save($targetFile, 'Word2007');
 ob_start();
 ob_clean();
@@ -355,7 +355,7 @@ header('Content-Disposition: attachment; filename='.basename($targetFile));
 header('Content-Transfer-Encoding: binary');
 header('Content-Length: '.filesize($targetFile));
 readfile($targetFile);
-$files = glob($SERVER_ROOT.'/temp/report/*');
+$files = glob($TEMP_DIR_ROOT . '/*');
 foreach($files as $file){
 	if(is_file($file)){
 		if(strpos($file,$ses_id) !== false){

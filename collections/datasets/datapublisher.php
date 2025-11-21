@@ -3,9 +3,10 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverPublisher.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCollectionProfile.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/datasets/datapublisher.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/datasets/datapublisher.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/datasets/datapublisher.en.php');
+Language::load('collections/datasets/datapublisher');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $collid = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0; // @TODO collid is really coming from db in the searchvar attribute of the request, right? So it'll always be incorrect here?
@@ -58,7 +59,7 @@ elseif ($action) {
 	$dwcaManager->setIncludeAssociations($includeAssociations);
 	if (!array_key_exists('redact', $_POST)) $redactLocalities = 0;
 	$dwcaManager->setRedactLocalities($redactLocalities);
-	$dwcaManager->setTargetPath($SERVER_ROOT . (substr($SERVER_ROOT, -1) == '/' ? '' : '/') . 'content/dwca/');
+	$dwcaManager->setTargetPath('dwca-pub');
 }
 
 $idigbioKey = $collManager->getIdigbioKey();
@@ -238,8 +239,8 @@ if ($isEditor) {
 				<?php
 				echo $LANG['DWCA_EXPLAIN_1'] . ' <a href="https://en.wikipedia.org/wiki/Darwin_Core_Archive" target="_blank">' . $LANG['DWCA'] . '</a> ' . $LANG['DWCA_EXPLAIN_2'] .
 					' <a href="http://rs.tdwg.org/dwc/terms/" target="_blank">' . $LANG['DWC'] . '</a> ' . $LANG['DWCA_EXPLAIN_3'] .
-					' <a href="https://docs.symbiota.org/docs/Collection_Manager_Guide/Data_Publishing/publishing_idigbio" target="_blank"> ' . $LANG['PUBLISH_IDIGBIO'] . '</a> &amp;' .
-					' <a href="https://docs.symbiota.org/docs/Collection_Manager_Guide/Data_Publishing/publishing_gbif" target="_blank"> ' . $LANG['PUBLISH_GBIF'] . '</a>.';
+					' <a href="https://docs.symbiota.org/Collection_Manager_Guide/Data_Publishing/publishing_idigbio" target="_blank"> ' . $LANG['PUBLISH_IDIGBIO'] . '</a> &amp;' .
+					' <a href="https://docs.symbiota.org/Collection_Manager_Guide/Data_Publishing/publishing_gbif" target="_blank"> ' . $LANG['PUBLISH_GBIF'] . '</a>.';
 				?>
 			</div>
 			<?php
@@ -287,13 +288,14 @@ if ($isEditor) {
 					$collArr['doi'] = $responseData->doi;
 					$_SESSION['colldata'] = $collArr;
 				}
-				$dwcaManager->createDwcArchive();
-				$dwcaManager->writeRssFile();
-				echo '</ul>';
-				if ($publishGBIF) {
-					echo '<ul>';
-					$collManager->triggerGBIFCrawl($collArr['dwcaurl'], $collid, $collArr['collectionname']);
+				if($dwcaManager->createDwcArchive()){
+					$dwcaManager->writeRssFile();
 					echo '</ul>';
+					if ($publishGBIF) {
+						echo '<ul>';
+						$collManager->triggerGBIFCrawl($collArr['dwcaurl'], $collid, $collArr['collectionname']);
+						echo '</ul>';
+					}
 				}
 			}
 			$dwcUri = '';

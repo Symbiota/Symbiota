@@ -1,8 +1,19 @@
 <?php
 include_once($SERVER_ROOT . '/classes/Manager.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
+include_once($SERVER_ROOT . '/classes/Database.php');
 
 class GeographicThesaurus extends Manager {
+	const US_STATE_LIST = array('AK' => 'Alaska', 'AL' => 'Alabama', 'AZ' => 'Arizona', 'AR' => 'Arkansas', 'CA' => 'California',
+		'CO' => 'Colorado', 'CT' => 'Connecticut', 'DE' => 'Delaware', 'DC' => 'District of Columbia', 'FL' => 'Florida',
+		'GA' => 'Georgia', 'GU' => 'Guam', 'HI' => 'Hawaii', 'ID' => 'Idaho', 'IL' => 'Illinois', 'IN' => 'Indiana', 'IA' =>
+		'Iowa', 'KS' => 'Kansas', 'KY' => 'Kentucky', 'LA' => 'Louisiana', 'ME' => 'Maine', 'MH' => 'Marshall Islands', 'MD' =>
+		'Maryland', 'MA' => 'Massachusetts', 'MI' => 'Michigan', 'MN' => 'Minnesota', 'MS' => 'Mississippi', 'MO' => 'Missouri',
+		'MT' => 'Montana', 'NE' => 'Nebraska', 'NV' => 'Nevada', 'NH' => 'New Hampshire', 'NJ' => 'New Jersey', 'NM' => 'New Mexico',
+		'NY' => 'New York', 'NC' => 'North Carolina', 'ND' => 'North Dakota', 'MP' => 'Northern Mariana Islands', 'OH' => 'Ohio',
+		'OK' => 'Oklahoma', 'OR' => 'Oregon', 'PW' => 'Palau', 'PA' => 'Pennsylvania', 'PR' => 'Puerto Rico', 'RI' => 'Rhode Island',
+		'SC' => 'South Carolina', 'SD' => 'South Dakota', 'TN' => 'Tennessee', 'TX' => 'Texas', 'UT' => 'Utah', 'VT' => 'Vermont',
+		'VI' => 'Virgin Islands', 'VA' => 'Virginia', 'WA' => 'Washington', 'WV' => 'West Virginia', 'WI' => 'Wisconsin', 'WY' =>  'Wyoming');
 
 	const OCEANS = 10;
 	const ISLAND_GROUP = 20;
@@ -56,11 +67,43 @@ class GeographicThesaurus extends Manager {
 		return $retArr;
 	}
 
+	public static function getCountryByState($state, $conn = null) {
+		if(!$state) { 
+			return '';
+		}
+
+		if(in_array(ucwords($state),self::US_STATE_LIST)) {
+			return 'United States';
+		}
+
+		if(!$conn) {
+			$conn = Database::connect('readonly');
+		}
+
+		$countryStr = '';
+		$rs = QueryUtil::executeQuery($conn, 'SELECT c.geoTerm AS countryName FROM geographicthesaurus s INNER JOIN geographicthesaurus c ON s.parentID = c.geoThesID WHERE s.geoTerm = ?', [ $state ]);
+
+		if($r = $rs->fetch_object()) {
+			$countryStr = $r->countryName;
+		}
+		$rs->free();
+
+		return $countryStr;
+	}
+
+	public static function getStateByAbbreviationUs($abbr){
+		$stateStr = '';
+		if(array_key_exists($abbr,self::US_STATE_LIST)){
+			$stateStr = self::US_STATE_LIST[$abbr];
+		}
+		return $stateStr;
+	}
+
 	public function getGeograpicUnit($geoThesID) {
 		$retArr = array();
 		if (is_numeric($geoThesID)) {
 			$sql = 'SELECT t.geoThesID, t.geoTerm, t.abbreviation, t.iso2, t.iso3, t.numCode, t.category, t.geoLevel, t.parentID, p.geoTerm as parentTerm, t.notes, t.termStatus,
-				t.acceptedID, a.geoterm as acceptedTerm, gp.footprintWKT as wkt, gp.geoJSON
+				t.acceptedID, t.isSearchable, a.geoterm as acceptedTerm, gp.footprintWKT as wkt, gp.geoJSON
 				FROM geographicthesaurus t LEFT JOIN geographicthesaurus a ON t.acceptedID = a.geoThesID
 				LEFT JOIN geographicthesaurus p ON t.parentID = p.geoThesID
 				LEFT JOIN geographicpolygon gp ON t.geoThesID = gp.geoThesID
@@ -86,6 +129,7 @@ class GeographicThesaurus extends Manager {
 					$retArr['termStatus'] = $r->termStatus;
 					$retArr['wkt'] = $r->wkt;
 					$retArr['geoJSON'] = $r->geoJSON;
+					$retArr['isSearchable'] = $r->isSearchable;
 				}
 				$rs->free();
 				$stmt->close();
@@ -130,7 +174,7 @@ class GeographicThesaurus extends Manager {
 
 		$sql = <<<'SQL'
 		UPDATE geographicthesaurus SET geoterm = ?, abbreviation = ?, iso2 = ?, iso3 = ?,
-		numcode = ?, geoLevel = ?, acceptedID = ?, parentID = ?, notes = ?
+		numcode = ?, geoLevel = ?, acceptedID = ?, parentID = ?, notes = ?, isSearchable = ?
 		WHERE geoThesID = ?
 		SQL;
 
@@ -145,6 +189,7 @@ class GeographicThesaurus extends Manager {
 				empty($postArr['acceptedID']) ? null : $postArr['acceptedID'],
 				empty($postArr['parentID']) ? null : $postArr['parentID'],
 				empty($postArr['notes']) ? null : $postArr['notes'],
+				empty($postArr['isSearchable']) ? 0 : $postArr['isSearchable'],
 				$postArr['geoThesID']
 			]);
 		} catch (\Throwable $th) {

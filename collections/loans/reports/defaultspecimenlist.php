@@ -2,8 +2,9 @@
 include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLoans.php');
 require_once $SERVER_ROOT.'/vendor/phpoffice/phpword/bootstrap.php';
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/loans/reports/defaultspecimenlist.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/loans/reports/defaultspecimenlist.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/loans/reports/defaultspecimenlist.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/loans/reports/defaultspecimenlist');
 
 $collId = $_REQUEST['collid'];
 $outputMode = $_POST['outputmode'];
@@ -65,7 +66,7 @@ if($outputMode == 'doc'){
 		$table->addCell(6000,$cellStyle)->addText(htmlspecialchars($specArr['sciname']),'colFont','colSpace');
 	}
 
-	$targetFile = $SERVER_ROOT.'/temp/report/'.$loanId.'_specimen_list.docx';
+	$targetFile = $TEMP_DIR_ROOT . '/' . $loanId . '_specimen_list.docx';
 	$phpWord->save($targetFile, 'Word2007');
 
 	ob_start();

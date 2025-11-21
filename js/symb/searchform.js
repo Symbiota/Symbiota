@@ -9,47 +9,6 @@ const formSites = document.getElementById("site-list") || null;
 const searchFormColls = document.getElementById("search-form-colls") || null;
 const searchFormPaleo = document.getElementById("search-form-geocontext") || null;
 
-// list of parameters to be passed to url, modified by getSearchUrl method
-let paramNames = [
-  "db",
-  "datasetid",
-  "catnum",
-  "includeothercatnum",
-  "hasimages",
-  "hasaudio",
-  "typestatus",
-  "hasgenetic",
-  "hascoords",
-  "includecult",
-  "country",
-  "state",
-  "county",
-  "local",
-  "elevlow",
-  "elevhigh",
-  "llbound",
-  "footprintGeoJson",
-  "llpoint",
-  "eventdate1",
-  "eventdate2",
-  "taxa",
-  "usethes",
-  "taxontype",
-  "collnum",
-  "collector",
-  "attr[]",
-  "materialsampletype",
-  "association-type",
-  "associated-taxa",
-  "taxontype-association",
-  "usethes-associations",
-  "earlyInterval",
-  "lateInterval",
-  "lithogroup",
-  "formation",
-  "member",
-  "bed",
-];
 const uLat = document.getElementById("upperlat") || null;
 const uLatNs = document.getElementById("upperlat_NS") || null;
 const bLat = document.getElementById("bottomlat") || null;
@@ -77,8 +36,8 @@ let paramsArr = {};
  * Uses jQuery
  */
 $('input[type="radio"]')?.click(function () {
-  var inputValue = $(this)?.attr("value");
-  var targetBox = $("#" + inputValue);
+  const inputValue = $(this)?.attr("value");
+  const targetBox = $("#" + inputValue);
   $(".box")?.not(targetBox)?.hide();
   $(targetBox)?.show();
   $(this)?.parent()?.addClass("tab-active");
@@ -145,9 +104,32 @@ function addChip(element) {
     };
   }
   else if (element.tagName === "OPTION") {
-    inputChip.id = "chip-" + element.dataset.chip;
-    inputChip.textContent = (element.dataset.chip ? element.dataset.chip + ": " : "") + element.textContent;
-    chipBtn.onclick = () => handleRemoval(element, inputChip);
+    const selectElement = element.closest("select");
+    if (selectElement && selectElement.multiple) {
+        //if multiple options (like polygons)
+        let oldChip = document.getElementById("chip-" + selectElement.dataset.chip);
+        if (oldChip) removeChip(oldChip);
+
+        const selected = Array.from(selectElement.selectedOptions).map(opt => opt.textContent);
+        if (selected.length > 0) {
+            inputChip.id = "chip-" + selectElement.dataset.chip;
+            inputChip.textContent =
+                (selectElement.dataset.chip ? selectElement.dataset.chip + ": " : "") +
+                selected.join(", ");
+
+            chipBtn.onclick = () => {
+                Array.from(selectElement.options).forEach(opt => (opt.selected = false));
+                removeChip(inputChip);
+            };
+        }
+    } else {
+        //if single option
+        inputChip.id = "chip-" + element.dataset.chip;
+        inputChip.textContent = (element.dataset.chip ? element.dataset.chip + ": " : "") + element.textContent;
+
+        chipBtn.onclick = () => handleRemoval(element, inputChip);
+    }
+    inputChip.appendChild(chipBtn);
   }
   else {
     inputChip.id = "chip-" + element.id;
@@ -316,7 +298,17 @@ function updateChip(e) {
           // don't add these chips;
         } else {
           // add chips depending on type of item
-          item.hasAttribute("data-chip") ? addChip(item) : "";
+          const defaultValues = [
+            { id: "usethes", value: "1" },
+            { id: "includeothercatnum", value: "1" },
+            { id: "usethes-associations", value: "1" },
+          ];
+          const isInDefaultValList = defaultValues.some(
+            (val) => val.id === item.id && val.value === item.value
+          );
+          if(!isInDefaultValList && item.hasAttribute("data-chip")) {
+            addChip(item);
+          }
         }
       }
     }
@@ -325,9 +317,19 @@ function updateChip(e) {
 
   // then go through remaining options and find selected items
   const optionElements = document.querySelectorAll(".content option");
+  const defaultValues = [
+    { id: "taxontype-scientific", value: "2" },
+    { id: "association-type-none", value: "none" },
+    { id: "taxontype-association-scientific", value: "2" },
+  ];
   optionElements.forEach((item) => {
     if (item.selected && item.value && item.hasAttribute("data-chip")) {
-      addChip(item);
+      const isInDefaultValList = defaultValues.some(
+        (val) => val.id === item.id && val.value === item.value
+      );
+      if (!isInDefaultValList) {
+        addChip(item);
+      }
     }
   });
 }
@@ -496,137 +498,6 @@ function getTraitsSelected() {
 }
 
 /**
- * Searches specified fields and capture values
- * @param {String} paramName Name of parameter to be looked for in form
- * Passes objects to `paramsArr`
- * Passes default objects
- */
-function getParam(paramName) {
-  //Default country
-  // paramsArr['country'] = 'USA';
-  const elements = document.getElementsByName(paramName);
-  const firstEl = elements[0];
-
-  let elementValues = "";
-
-  // for traits
-  if (paramName === "attr[]") {
-    const selectedTraits = getTraitsSelected();
-    elementValues = selectedTraits?.map((selectedTrait) => selectedTrait.value);
-  }
-
-  // for db and datasetid
-  if (paramName === "db") {
-    const selectedCollections = getCollsSelected();
-    elementValues = selectedCollections?.map(
-      (selectedCollection) => selectedCollection.value
-    );
-  } else if (paramName === "datasetid") {
-    // won't happen in vanilla symbiota
-    let datasetArr = [];
-    elements.forEach((el) => {
-      if (el.checked) {
-        let isSite = el.dataset.domain != undefined;
-        if (isSite) {
-          let isDomainSel = document.getElementById(el.dataset.domain).checked;
-          isDomainSel ? "" : datasetArr.push(el.value);
-        } else {
-          datasetArr.push(el.value);
-        }
-      }
-    });
-    elementValues = datasetArr;
-  } else if (paramName === "llbound") {
-    // Only if inputs aren't empty
-    if (
-      uLat.value != "" &&
-      bLat.value != "" &&
-      lLng.value != "" &&
-      rLng.value != ""
-    ) {
-      let uLatVal = uLatNs.value == "S" ? uLat.value * -1 : uLat.value * 1;
-      let bLatVal = bLatNs.value == "S" ? bLat.value * -1 : bLat.value * 1;
-      let lLngVal = lLngEw.value == "W" ? lLng.value * -1 : lLng.value * 1;
-      let rLngVal = rLngEw.value == "W" ? rLng.value * -1 : rLng.value * 1;
-      elementValues = `${uLatVal};${bLatVal};${lLngVal};${rLngVal}`;
-    }
-  } else if (paramName === "llpoint") {
-    if (
-      pLat.value != "" &&
-      pLng.value != "" &&
-      pRadius.value != "" &&
-      pRadiusUn.value != ""
-    ) {
-      let pLatVal =
-        pLatNs.value == "S"
-          ? Math.round(pLat.value * -1 * 100000) / 100000
-          : Math.round(pLat.value * 100000) / 100000;
-      let pLngVal =
-        pLngEw.value == "W"
-          ? Math.round(pLng.value * -1 * 100000) / 100000
-          : Math.round(pLng.value * 100000) / 100000;
-      let pRadiusVal = pRadius.value + ";" + pRadiusUn.value;
-      elementValues = `${pLatVal};${pLngVal};${pRadiusVal}`;
-    }
-  } else if (paramName === "elevlow" || paramName === "elevhigh") {
-    firstEl.type === "number" && firstEl != ""
-      ? (elementValues = firstEl.value)
-      : "";
-  } else if (elements[0] != undefined) {
-    switch (firstEl.tagName) {
-      case "INPUT":
-        (firstEl.type === "checkbox" && firstEl.checked) ||
-        (firstEl.type === "text" && firstEl != "")
-          ? (elementValues = firstEl.value)
-          : "";
-        break;
-      case "SELECT":
-        elementValues = firstEl.options[firstEl.selectedIndex].value;
-        break;
-      case "TEXTAREA":
-        elementValues = firstEl.value;
-        break;
-    }
-  }
-  elementValues != "" ? (paramsArr[paramName] = elementValues) : "";
-  return paramsArr;
-}
-
-/**
- * Creates search URL with parameters
- * Define parameters to be looked for in `paramNames` array
- */
-function getSearchUrl(appendParams = false) {
-  const formatPreference = document.getElementById("list-button").checked
-    ? "list"
-    : "table";
-  const harvestUrl = location.href.slice(0, location.href.indexOf("search"));
-  const urlSuffix =
-    formatPreference === "list" ? "list.php" : "listtabledisplay.php";
-
-  const baseUrl = new URL(harvestUrl + urlSuffix);
-
-  if(appendParams){
-    // Clears array temporarily to avoid redundancy
-    paramsArr = {};
-  
-    // Grabs params from form for each param name
-    paramNames.forEach((param, i) => {
-      return getParam(paramNames[i]);
-    });
-  
-    // Appends each key value for each param in search url
-    let queryString = Object.keys(paramsArr).map((key) => {
-      baseUrl.searchParams.append(key, paramsArr[key]);
-    });
-  
-    baseUrl.searchParams.append("comingFrom", "newsearch");
-  }
-
-  return baseUrl.href;
-}
-
-/**
  * Form validation functions
  * @returns {Array} errors Array of errors objects with form element it refers to (elId), for highlighting, and errorMsg
  */
@@ -766,24 +637,11 @@ function simpleSearch() {
   errors = validateForm();
   let isValid = errors.length == 0;
   if (isValid) {
-    const searchUrl = shortenSearchUrlIfAllCollectionsAreSearched();
-    sessionStorage.setItem('verbatimSearchUrl', searchUrl);
     const submitForm = document.getElementById("params-form");
-    submitForm.method = "POST"; // if GET is used instead, the URL is too short for complex polygon + many collections queries. Hence, the need for POST.
-    submitForm.action = getSearchUrl();
     submitForm.submit();
   } else {
     handleValErrors(errors);
   }
-}
-
-function shortenSearchUrlIfAllCollectionsAreSearched(){
-  const searchUrlOriginal = getSearchUrl(true);
-    let searchUrl = searchUrlOriginal;
-    if(searchUrlOriginal.includes("db=all")){
-      searchUrl = searchUrlOriginal.replace(/db=all(?:%[^&?]*)*/, "db=all");
-    }
-    return searchUrl;
 }
 
 /**
@@ -820,27 +678,162 @@ function uncheckEverything() {
   });
 }
 
+function uncheckSpecifiedCheckboxes(checkboxIds) {
+  checkboxIds.forEach(id => {
+    const checkbox = document.getElementById(id);
+    if (checkbox) {
+      checkbox.checked = false;
+    }
+  });
+}
+
+function handleCategoryChunks(parentBoxCheckStatus, collectionType) {
+  const categoryChunks = document.querySelectorAll('div[id^="category-chunk-"]');
+  categoryChunks.forEach((chunk) => {
+    const legends = chunk.querySelectorAll('fieldset[name="subcollection-fieldset"] legend');
+    legends.forEach((legend) => {
+      if (legend.textContent.includes(collectionType)) {
+        const categoryCheckbox = chunk.querySelector('input[name="cat[]"]');
+        if (categoryCheckbox) {
+          categoryCheckbox.checked = parentBoxCheckStatus;
+        }
+        
+        const collectionCheckboxes = chunk.querySelectorAll('input[name="db[]"]');
+        collectionCheckboxes.forEach((checkbox) => {
+          checkbox.checked = parentBoxCheckStatus;
+        });
+      }
+    });
+  });
+}
+
+function handleHeaderSections(parentBoxCheckStatus, headerType, stopType = null) {
+  const targetHeader = Array.from(document.querySelectorAll('h2')).find(h => 
+    h.textContent.includes(headerType)
+  );
+  if (targetHeader) {
+    let currentElement = targetHeader.parentElement.nextElementSibling;
+    while (currentElement) {
+      if (stopType) {
+        const headerInSection = currentElement.querySelector('h2');
+        if (headerInSection && headerInSection.textContent.includes(stopType)) {
+          break;
+        }
+      }
+      const checkboxes = currentElement.querySelectorAll('input[name="db[]"][id^="collection-"]');
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = parentBoxCheckStatus;
+      });
+      currentElement = currentElement.nextElementSibling;
+    }
+  }
+}
+
+function selectAllSpec(cb) {
+  const boxCheckedStatus = cb.checked;
+  uncheckSpecifiedCheckboxes(["dballcb", "dballobscb"]);
+  handleCategoryChunks(boxCheckedStatus, translations.SPECIMEN);
+  handleHeaderSections(boxCheckedStatus, translations.SPECIMEN, translations.OBSERVATION);
+}
+
+function selectAllObs(cb) {
+  const boxCheckedStatus = cb.checked;
+  uncheckSpecifiedCheckboxes(["dballcb", "dballspeccb"]);
+  handleCategoryChunks(boxCheckedStatus, translations.OBSERVATION);
+  handleHeaderSections(boxCheckedStatus, translations.OBSERVATION);
+}
+
+
 function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
   queriedCollections.forEach((queriedCollection) => {
     let targetElem = document.getElementById("collection-" + queriedCollection);
     if (!targetElem) {
-      // get elements if categories exist
-      const prefix = "coll-" + queriedCollection + "-";
-      const candidateTargetElems =
-        document.querySelectorAll(`[id^="${prefix}"]`) || [];
-      if (candidateTargetElems.length > 0) {
-        targetElem = candidateTargetElems[0]; // there should only be one match; get the first one
+      if (queriedCollection === "all") {
+        targetElem = document.getElementById("dballcb");
+        if (targetElem) {
+          targetElem.checked = true;
+          const allSpecCheckbox = document.getElementById("dballspeccb");
+          const allObsCheckbox = document.getElementById("dballobscb");
+          if (allSpecCheckbox) allSpecCheckbox.checked = true;
+          if (allObsCheckbox) allObsCheckbox.checked = true;
+          handleCategoryChunks(true, "Specimen");
+          handleHeaderSections(true, "Specimen", "Observation");
+          handleCategoryChunks(true, "Observation");
+          handleHeaderSections(true, "Observation");
+        }
+        return;
+      } else if (queriedCollection === "allspec") {
+        targetElem = document.getElementById("dballspeccb");
+        if (targetElem) {
+          targetElem.checked = true;
+          handleCategoryChunks(true, "Specimen");
+          handleHeaderSections(true, "Specimen", "Observation");
+        }
+        return;
+      } else if (queriedCollection === "allobs") {
+        targetElem = document.getElementById("dballobscb");
+        if (targetElem) {
+          targetElem.checked = true;
+          handleCategoryChunks(true, "Observation");
+          handleHeaderSections(true, "Observation");
+        }
+        return;
+      } else {
+        const prefix = "coll-" + queriedCollection + "-";
+        const candidateTargetElems =
+          document.querySelectorAll(`[id^="${prefix}"]`) || [];
+        if (candidateTargetElems.length > 0) {
+          targetElem = candidateTargetElems[0]; // there should only be one match; get the first one
+        }
       }
     } 
     if(targetElem){
       targetElem.checked = true;
     }
   });
+  
+  updateCategoryCheckboxes();
+  expandCategoriesWithCheckedChildren();
+}
+
+function updateCategoryCheckboxes() {
+  const categoryCheckboxes = document.querySelectorAll('input[name="cat[]"]');
+  categoryCheckboxes.forEach((categoryCheckbox) => {
+    const categoryId = categoryCheckbox.id;
+    const categoryNumberPattern = categoryId.match(/cat-(\d+-\d+)/)?.[1];
+    const childCollections = document.querySelectorAll(`input[id^="coll-"][id*="-${categoryNumberPattern}"]`);
+    if (childCollections.length > 0) {
+      const checkedChildren = Array.from(childCollections).filter(checkbox => checkbox.checked);
+      if (checkedChildren.length === childCollections.length) {
+        categoryCheckbox.checked = true;
+      }
+    }
+  });
+}
+
+function expandCategoriesWithCheckedChildren() {
+  const categoryCheckboxes = document.querySelectorAll('input[name="cat[]"]');
+  categoryCheckboxes.forEach((categoryCheckbox) => {
+    const categoryId = categoryCheckbox.id;
+    const categoryNumberPattern = categoryId.match(/cat-(\d+-\d+)/)?.[1];
+    if (categoryNumberPattern) {
+      const childCollections = document.querySelectorAll(`input[id^="coll-"][id*="-${categoryNumberPattern}"]`);
+      if (childCollections.length > 0) {
+        const checkedChildren = Array.from(childCollections).filter(checkbox => checkbox.checked);
+        if (checkedChildren.length > 0) {
+          const categoryDiv = document.getElementById(`cat-${categoryNumberPattern}`);
+          if (categoryDiv && categoryDiv.style.display !== "block") {
+            toggleCat(categoryNumberPattern);
+          }
+        }
+      }
+    }
+  });
 }
 
 function setSearchForm(frm) {
   if (sessionStorage.querystr) {
-    var urlVar = parseUrlVariables(sessionStorage.querystr.replaceAll('&quot;', '"'));
+    const urlVar = parseUrlVariables(sessionStorage.querystr.replaceAll('&quot;', '"'));
     if (
       typeof urlVar.usethes !== "undefined" &&
       (urlVar.usethes == "" || urlVar.usethes == "0")
@@ -912,6 +905,11 @@ function setSearchForm(frm) {
         frm["bed"].value = urlVar["bed"];
       }
     }
+    if (urlVar["polygons"]) {
+      if (frm["polygons"]) {
+        frm["polygons"].value = urlVar["polygons"];
+      }
+    }
 
     if (urlVar.country) {
       countryStr = urlVar.country;
@@ -939,7 +937,7 @@ function setSearchForm(frm) {
       frm.elevhigh.value = urlVar.elevhigh;
     }
     if (urlVar.llbound) {
-      var coordArr = urlVar.llbound.split(";");
+      const coordArr = urlVar.llbound.split(";");
       frm.upperlat.value = Math.abs(parseFloat(coordArr[0]));
       frm.upperlat_NS.value = parseFloat(coordArr[0]) > 0 ? "N" : "S";
 
@@ -956,7 +954,7 @@ function setSearchForm(frm) {
       frm.footprintwkt.value = urlVar.footprintGeoJson;
     }
     if (urlVar.llpoint) {
-      var coordArr = urlVar.llpoint.split(";");
+      const coordArr = urlVar.llpoint.split(";");
       frm.pointlat.value = Math.abs(parseFloat(coordArr[0]));
       frm.pointlat_NS.value = parseFloat(coordArr[0]) > 0 ? "N" : "S";
 
@@ -1013,9 +1011,9 @@ function setSearchForm(frm) {
         checkTheCollectionsThatShouldBeChecked(queriedCollections);
       }
     }
-    for (var i in urlVar) {
+    for (const i in urlVar) {
       if (`${i}`.indexOf("traitid-") == 0) {
-        var traitInput = document.getElementById("traitstateid-" + urlVar[i]);
+        const traitInput = document.getElementById("traitstateid-" + urlVar[i]);
         if (traitInput.type == "checkbox" || traitInput.type == "radio") {
           traitInput.checked = true;
         }
@@ -1027,13 +1025,13 @@ function setSearchForm(frm) {
 }
 
 function parseUrlVariables(varStr) {
-  var result = {};
+  const result = {};
   varStr.split("&").forEach(function (part) {
     if (!part) return;
     part = part.split("+").join(" ");
-    var eq = part.indexOf("=");
-    var key = eq > -1 ? part.substr(0, eq) : part;
-    var val = eq > -1 ? decodeURIComponent(part.substr(eq + 1)) : "";
+    const eq = part.indexOf("=");
+    const key = eq > -1 ? part.substr(0, eq) : part;
+    const val = eq > -1 ? decodeURIComponent(part.substr(eq + 1)) : "";
     result[key] = val;
   });
   return result;

@@ -1,7 +1,8 @@
 <?php
 include_once('../../config/symbini.php');
-if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/georef/geolocate.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/georef/geolocate.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/georef/geolocate.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/georef/geolocate');
 
 header("Content-Type: text/html; charset=" . $CHARSET);
 

@@ -29,7 +29,6 @@ $LANG['URL_TO_SOURCE'] = 'URL al proyecto fuente. Úselo al vincular a un medio 
 $LANG['SOURCE_URL'] = 'URL de Origen';
 $LANG['COPYRIGHT'] = 'Derechos de Autor';
 $LANG['OCC_REC_NUM'] = 'Registro de Ocurrencia #';
-$LANG['LINK_TO_OCC'] = 'Enlace al registro de sucesos';
 $LANG['LOCALITY'] = 'Localidad';
 $LANG['NOTES'] = 'Notas';
 $LANG['UPLOAD_IMAGE'] = 'Subir medios';
