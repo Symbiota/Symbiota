@@ -677,7 +677,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 						<input type="checkbox" id="geocontext" class="accordion-selector" />
 
 						<!-- Accordion header -->
-						<label for="geocontext" class="accordion-header"><?php echo $LANG['GEO_CONTEXT'] ?></label>
+						<label for="geocontext" class="accordion-header"><?php echo $LANG['GEO_CONTEXT'] ?> <a href="https://docs.symbiota.org//User_Guide/searching_records#geological-context" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
 
 						<!-- Content -->
 						<div id="search-form-geocontext" class="content">

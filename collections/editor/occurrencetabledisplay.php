@@ -52,8 +52,6 @@ $headerMapBase = array( 'institutioncode' => $LANG['INSTITUTION_CODE'], 'collect
 //paleo fields
 $headerMapPaleoBase = array('earlyInterval' => $LANG['INTERVAL_EARLY'], 'lateInterval' => $LANG['INTERVAL_LATE'],
 	'lithogroup' => $LANG['GROUP'],'formation' => $LANG['FORMATION'], 'member' => $LANG['MEMBER'], 'bed' => $LANG['BED']);
-if (!empty($GLOBALS['ACTIVATE_PALEO']))
-	$headerMapBase = array_merge($headerMapBase, $headerMapPaleoBase);
 
 $headMap = array();
 
@@ -68,6 +66,8 @@ if($SYMB_UID){
 	}
 
 	if($collMap && $collMap['colltype']=='General Observations') $isGenObs = 1;
+	if ($collMap['colltype'] == 'Fossil Specimens')
+		$headerMapBase = array_merge($headerMapBase, $headerMapPaleoBase);
 	if(!$isEditor){
 		if($isGenObs){
 			if($collId && array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collId,$USER_RIGHTS['CollEditor'])){

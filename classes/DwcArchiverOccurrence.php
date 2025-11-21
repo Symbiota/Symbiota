@@ -1,5 +1,4 @@
 <?php
-// Only needed for symbiotaAssociations version number.
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 class DwcArchiverOccurrence extends Manager{
@@ -75,17 +74,17 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['terms']['taxonRank'] = 'http://rs.tdwg.org/dwc/terms/taxonRank';
 		$this->occurDefArr['fields']['taxonRank'] = 'x.taxonRank';
 		$this->occurDefArr['terms']['identifiedBy'] = 'http://rs.tdwg.org/dwc/terms/identifiedBy';
- 		$this->occurDefArr['fields']['identifiedBy'] = 'o.identifiedBy';
- 		$this->occurDefArr['terms']['dateIdentified'] = 'http://rs.tdwg.org/dwc/terms/dateIdentified';
- 		$this->occurDefArr['fields']['dateIdentified'] = 'o.dateIdentified';
- 		$this->occurDefArr['terms']['identificationReferences'] = 'http://rs.tdwg.org/dwc/terms/identificationReferences';
- 		$this->occurDefArr['fields']['identificationReferences'] = 'o.identificationReferences';
- 		$this->occurDefArr['terms']['identificationRemarks'] = 'http://rs.tdwg.org/dwc/terms/identificationRemarks';
- 		$this->occurDefArr['fields']['identificationRemarks'] = 'o.identificationRemarks';
- 		$this->occurDefArr['terms']['taxonRemarks'] = 'http://rs.tdwg.org/dwc/terms/taxonRemarks';
- 		$this->occurDefArr['fields']['taxonRemarks'] = 'o.taxonRemarks';
- 		$this->occurDefArr['terms']['identificationQualifier'] = 'http://rs.tdwg.org/dwc/terms/identificationQualifier';
- 		$this->occurDefArr['fields']['identificationQualifier'] = 'o.identificationQualifier';
+		$this->occurDefArr['fields']['identifiedBy'] = 'o.identifiedBy';
+		$this->occurDefArr['terms']['dateIdentified'] = 'http://rs.tdwg.org/dwc/terms/dateIdentified';
+		$this->occurDefArr['fields']['dateIdentified'] = 'o.dateIdentified';
+		$this->occurDefArr['terms']['identificationReferences'] = 'http://rs.tdwg.org/dwc/terms/identificationReferences';
+		$this->occurDefArr['fields']['identificationReferences'] = 'o.identificationReferences';
+		$this->occurDefArr['terms']['identificationRemarks'] = 'http://rs.tdwg.org/dwc/terms/identificationRemarks';
+		$this->occurDefArr['fields']['identificationRemarks'] = 'o.identificationRemarks';
+		$this->occurDefArr['terms']['taxonRemarks'] = 'http://rs.tdwg.org/dwc/terms/taxonRemarks';
+		$this->occurDefArr['fields']['taxonRemarks'] = 'o.taxonRemarks';
+		$this->occurDefArr['terms']['identificationQualifier'] = 'http://rs.tdwg.org/dwc/terms/identificationQualifier';
+		$this->occurDefArr['fields']['identificationQualifier'] = 'o.identificationQualifier';
 		if($this->includeAcceptedNameUsage) {
 			$this->occurDefArr['terms']['acceptedNameUsage'] = 'http://rs.tdwg.org/dwc/terms/acceptedNameUsage';
 			$this->occurDefArr['fields']['acceptedNameUsage'] = 'x.acceptedNameUsage';

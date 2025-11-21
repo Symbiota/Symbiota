@@ -78,7 +78,7 @@ else{
 			'lateInterval'=>$LANG['LATE_INT'],'lithogroup'=>$LANG['GROUP'],'lithology'=>$LANG['LITHOLOGY'],'localStage'=>$LANG['LOCAL_STAGE'],'member'=>$LANG['MEMBER'],
 			'slideProperties'=>$LANG['SLIDE_PROP'],'stage'=>$LANG['STAGE'],'stratRemarks'=>$LANG['STRAT_REMARKS'],'taxonEnvironment'=>$LANG['TAXON_ENVIRONMENT'],);
 		$customFieldArr = array_merge($customFieldArr, $customPaleoFieldArr);
-		ksort($customFieldArr);
+		asort($customFieldArr);
 	}
 }
 $customTermArr = array('EQUALS', 'NOT_EQUALS', 'STARTS_WITH', 'LIKE', 'NOT_LIKE', 'GREATER_THAN', 'LESS_THAN', 'IS_NULL', 'NOT_NULL');

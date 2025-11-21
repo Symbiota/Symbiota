@@ -56,7 +56,11 @@ $LANG['MORE_INFO_ACCESS_RIGHTS'] = "Plus d'informations sur Droits d'Accès";
 $LANG['ACCESS_DEF'] = 'Des informations ou un lien URL vers une page avec des détails expliquant comment utiliser les données. Voir';
 $LANG['DATASET_TYPE'] = 'Type de Jeu de Données';
 $LANG['PRES_SPECS'] = 'Spécimens Conservés';
-$LANG['FOSSIL_SPECS'] = 'Spécimens fossiles';
+$LANG['FOSSIL_SPECS'] = 'Spécimens fossile';
+$LANG['FOSSIL_WARN_1'] = 'Sélectionner «Spécimens fossiles» activera le module Paléo pour cette collection et définira la valeur par défaut sur «FossilSpecimen» pour';
+$LANG['FOSSIL_WARN_2'] = 'Choisissez cette option uniquement si vous prévoyez d\'utiliser ce profil de collection pour cataloguer des fossiles.';
+$LANG['FOSSIL_WARN_3'] = 'Des fonctionnalités supplémentaires peuvent nécessiter l\'activation pour rendre vos données de spécimens fossiles accessibles au public sur ce portail.
+						Contactez votre gestionnaire de portail pour plus d\'informations.';
 $LANG['OBSERVATIONS'] = 'Observations';
 $LANG['PERS_OBS_MAN'] = 'Gestion des Observations Personnelles';
 $LANG['MORE_COL_TYPE'] = "Plus d'informations sur Type de Collection";

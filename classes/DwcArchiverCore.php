@@ -93,7 +93,6 @@ class DwcArchiverCore extends Manager{
 			$this->includeAcceptedNameUsage = true;
 		}
 
-
 		//ini_set('memory_limit','512M');
 		set_time_limit(1800);
 	}
@@ -213,12 +212,28 @@ class DwcArchiverCore extends Manager{
 	}
 
 	public function setPolygons($polygons) {
-        $this->polygons = $polygons;
-    }
+		$this->polygons = $polygons;
+	}
 
-    public function getPolygons() {
-        return $this->polygons;
-    }
+	public function getPolygons() {
+		return $this->polygons;
+	}
+
+	private function setIncludePaleo(){
+		if ((!empty($GLOBALS['ACTIVATE_PALEO'])) ||
+				(!empty($this->conditionSql) && (strpos($this->conditionSql, 'paleo.') !== false || strpos($this->conditionSql, 'early.myaStart') !== false)) ||
+				(!empty($this->customWhereSql) && (strpos($this->customWhereSql, 'paleo.') !== false || strpos($this->customWhereSql, 'early.myaStart') !== false))){
+					$this->includePaleo = true;
+		} elseif (!empty($this->collArr)) {
+			foreach ($this->collArr as $coll) {
+				if (!empty($coll['colltype']) && $coll['colltype'] === 'Fossil Specimens'){
+					//Activate if any one collection manages paleo specimens
+					$this->includePaleo = true;
+					break;
+				}
+			}
+		}
+	}
 
     private function setIncludePaleo(){
     	if ((!empty($GLOBALS['ACTIVATE_PALEO'])) ||
@@ -399,9 +414,9 @@ class DwcArchiverCore extends Manager{
 				$polygonIDs = $this->getPolygons();
 				if (is_string($polygonIDs))
 					$polygonIDs = explode(',', $polygonIDs);
-				$polygonIDs = array_map('intval', $polygonIDs);
-				$sql .= 'INNER JOIN geographicpolygon gpoly ON gpoly.geothesid IN (' . implode(',', $polygonIDs) . ') ';
-				$sql .= 'INNER JOIN geographicthesaurus gth ON gpoly.geothesid = gth.geothesid ';
+					$polygonIDs = array_map('intval', $polygonIDs);
+					$sql .= 'INNER JOIN geographicpolygon gpoly ON gpoly.geothesid IN (' . implode(',', $polygonIDs) . ') ';
+					$sql .= 'INNER JOIN geographicthesaurus gth ON gpoly.geothesid = gth.geothesid ';
 			}
 			if($this->includePaleo){
 				$sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
@@ -1157,29 +1172,29 @@ class DwcArchiverCore extends Manager{
 	public function getEmlDom($emlArr = null){
 		$RIGHTS_TERMS_DEFS = array(
 			'https://creativecommons.org/publicdomain/zero/1.0/' => array(
-				'title' => 'CC0 1.0 (Public-domain)',
-				'url' => 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
-				'def' => 'Users can copy, modify, distribute and perform the work, even for commercial purposes, all without asking permission.'
+					'title' => 'CC0 1.0 (Public-domain)',
+					'url' => 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
+					'def' => 'Users can copy, modify, distribute and perform the work, even for commercial purposes, all without asking permission.'
 			),
 			'https://creativecommons.org/licenses/by/4.0/' => array(
-				'title' => 'CC BY (Attribution)',
-				'url' => 'https://creativecommons.org/licenses/by/4.0/legalcode',
-				'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material for any purpose, even commercially. The licensor cannot revoke these freedoms as long as you follow the license terms.'
+					'title' => 'CC BY (Attribution)',
+					'url' => 'https://creativecommons.org/licenses/by/4.0/legalcode',
+					'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material for any purpose, even commercially. The licensor cannot revoke these freedoms as long as you follow the license terms.'
 			),
 			'https://creativecommons.org/licenses/by-nc/4.0/' => array(
-				'title' => 'CC BY-NC (Attribution-Non-Commercial)',
-				'url' => 'https://creativecommons.org/licenses/by-nc/4.0/legalcode',
-				'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material. The licensor cannot revoke these freedoms as long as you follow the license terms.'
+					'title' => 'CC BY-NC (Attribution-Non-Commercial)',
+					'url' => 'https://creativecommons.org/licenses/by-nc/4.0/legalcode',
+					'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material. The licensor cannot revoke these freedoms as long as you follow the license terms.'
 			),
 			'https://creativecommons.org/licenses/by/4.0/' => array(
-				'title' => 'CC BY (Attribution)',
-				'url' => 'https://creativecommons.org/licenses/by/4.0/legalcode',
-				'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material for any purpose, even commercially. The licensor cannot revoke these freedoms as long as you follow the license terms.'
+					'title' => 'CC BY (Attribution)',
+					'url' => 'https://creativecommons.org/licenses/by/4.0/legalcode',
+					'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material for any purpose, even commercially. The licensor cannot revoke these freedoms as long as you follow the license terms.'
 			),
 			'https://creativecommons.org/licenses/by-nc/4.0/' => array(
-				'title' => 'CC BY-NC (Attribution-Non-Commercial)',
-				'url' => 'https://creativecommons.org/licenses/by-nc/4.0/legalcode',
-				'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material. The licensor cannot revoke these freedoms as long as you follow the license terms.'
+					'title' => 'CC BY-NC (Attribution-Non-Commercial)',
+					'url' => 'https://creativecommons.org/licenses/by-nc/4.0/legalcode',
+					'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material. The licensor cannot revoke these freedoms as long as you follow the license terms.'
 			)
 		);
 
@@ -1305,7 +1320,7 @@ class DwcArchiverCore extends Manager{
 			 * Example EML: http://ipt.gbifbenin.org/eml.do?r=mbi_groupe3_menacees
 			 * $projectArr = array('nodeAttribute' => array( 'id' => 'BID-AF2020-122-NAC'), 'title' => 'The Gabon Biodiversity Portal', 'abstract' => array('para' => 'https://www.gbif.org/project/BID-AF2020-122-NAC/the-gabon-biodiversity-portal'))
 			 * json: {"publicationProps":{"project":{"nodeAttribute":{"id":"BID-AF2020-122-NAC"},"title":"The Gabon Biodiversity Portal","abstract":{"para":"https://www.gbif.org/project/BID-AF2020-122-NAC/the-gabon-biodiversity-portal"}}}}
-			*/
+			 */
 		}
 
 		$symbElem = $newDoc->createElement('symbiota');
@@ -1559,10 +1574,10 @@ class DwcArchiverCore extends Manager{
 		$channelElem->appendChild($languageElem);
 
 		//Create new item for target archives and load into array
-		$sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, c.collectionguid, c.dwcaurl, c.managementtype, s.uploaddate ' .
-			'FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid ' .
-			'WHERE s.recordcnt > 0 ' .
-			'ORDER BY c.SortSeq, c.CollectionName';
+		$sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, c.collectionguid, c.dwcaurl, c.managementtype, s.uploaddate
+			FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid
+			WHERE s.recordcnt > 0
+			ORDER BY c.SortSeq, c.CollectionName';
 		$rs = $this->conn->query($sql);
 		while ($r = $rs->fetch_assoc()) {
 			$cArr = $r;

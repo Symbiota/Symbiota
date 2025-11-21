@@ -208,7 +208,6 @@ class CustomQuery {
 			'sciname'=>$LANG['SCI_NAME'],
 			'sex'=>$LANG['SEX'],
 			'slideProperties'=>$LANG['SLIDE_PROP'],
-			'stage'=>$LANG['STAGE'],
 			'stateProvince'=>$LANG['STATE_PROVINCE'],
 			'stratRemarks'=>$LANG['STRAT_REMARKS'],
 			'substrate'=>$LANG['SUBSTRATE'],

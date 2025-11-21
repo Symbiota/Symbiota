@@ -141,7 +141,7 @@ class SpecUploadFile extends SpecUploadBase{
 						if(strtolower($valueStr) == 'cultivar' && $sMap['field'] == 'taxonrank'){
 							$isCultivar = true;
 						}
-						if($this->paleoSupport && strpos($symbField, 'paleo-') === 0){
+						if($this->paleoSupport && strpos($symbField, 'paleo') === 0){
 							$cleanKey = substr($symbField, 6);
 							$recMapPaleo[$cleanKey] = $valueStr;
 							continue;

@@ -83,7 +83,7 @@ if($SYMB_UID){
 			//Setup header map
 			$recArr = $uploadManager->getPendingImportData(($recLimit*$pageIndex),$recLimit,$searchVar);
 			if($recArr){
-				$excludeKeys = ['eon', 'era', 'period', 'epoch', 'stage'];
+				$excludeKeys = ['paleo_eon', 'paleo_era', 'paleo_period', 'paleo_epoch', 'paleo_stage'];
 				//Check to see which headers have values
 				$headerArr = array();
 				$matSampleHeaderArr = array();
@@ -97,6 +97,8 @@ if($SYMB_UID){
 									}
 								}
 							}
+							elseif (strpos($k, 'paleo_') === 0)
+								$headerArr[$k] = substr($k, 6);
 							else $headerArr[$k] = $k;
 						}
 					}

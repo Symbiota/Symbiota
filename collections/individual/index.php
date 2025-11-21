@@ -982,6 +982,9 @@ $traitArr = $indManager->getTraitArr();
 
 							<?php
 						}
+						if (isset ($collMetadata['colltype']) && $collMetadata['colltype'] == "Fossil Specimens")
+							if($occArr['basisofrecord']) echo '<div class="bottom-breathing-room-rel-sm"><label>'.$LANG['BASIS_OF_RECORD'].':</label> '.$occArr['basisofrecord'].'</div>';
+
 						if(isset($occArr['exs'])){
 							?>
 							<div id="exsiccati-div" class="bottom-breathing-room-rel-sm">

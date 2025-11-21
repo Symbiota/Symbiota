@@ -96,10 +96,6 @@ class OccurrenceEditorManager {
 				$retArr = $propArr['editorProps'];
 				if(isset($retArr['modules-panel'])){
 					foreach($retArr['modules-panel'] as $module){
-						if(isset($module['paleo']['status'])){
-							if($module['paleo']['status']) $this->collMap['paleoActivated'] = true;
-							else $this->collMap['paleoActivated'] = false;
-						}
 						if(isset($module['matSample']['status'])){
 							if($module['matSample']['status']) $this->collMap['matSampleActivated'] = true;
 							else $this->collMap['matSampleActivated'] = false;
@@ -108,7 +104,7 @@ class OccurrenceEditorManager {
 				}
 			}
 		}
-		if(!isset($this->collMap['paleoActivated']) && !empty($GLOBALS['ACTIVATE_PALEO'])) $this->collMap['paleoActivated'] = 1;
+		if(!isset($this->collMap['paleoActivated']) && $this->collMap['colltype'] == 'Fossil Specimens') $this->collMap['paleoActivated'] = 1;
 	}
 
 	public function getDownloadQuery(): string {
@@ -1294,7 +1290,11 @@ class OccurrenceEditorManager {
 			$guid = UuidFactory::getUuidV4();
 			$sql = 'INSERT IGNORE INTO omoccurrences(collid, recordID, ' . implode(',', array_keys($this->fieldArr['omoccurrences'])) . ') VALUES (' . $postArr['collid'] . ', "' . $guid . '"';
 			if (!isset($postArr['dateentered']) || !$postArr['dateentered']) $postArr['dateentered'] = date('Y-m-d H:i:s');
-			if (!isset($postArr['basisofrecord']) || !$postArr['basisofrecord']) $postArr['basisofrecord'] = (strpos($this->collMap['colltype'], 'Observations') !== false ? 'HumanObservation' : 'PreservedSpecimen');
+			if (!isset($postArr['basisofrecord']) || !$postArr['basisofrecord']) {
+				if (isset($this->collMap['colltype']) && $this->collMap['colltype'] === 'Fossil Specimens') $postArr['basisofrecord'] = 'FossilSpecimen';
+				elseif (strpos($this->collMap['colltype'], 'Observations') !== false) $postArr['basisofrecord'] = 'HumanObservation';
+				else $postArr['basisofrecord'] = 'PreservedSpecimen';
+			}
 			if (isset($postArr['institutioncode']) && $postArr['institutioncode'] == $this->collMap['institutioncode']) $postArr['institutionCode'] = '';
 			if (isset($postArr['collectioncode']) && $postArr['collectioncode'] == $this->collMap['collectioncode']) $postArr['collectionCode'] = '';
 

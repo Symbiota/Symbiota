@@ -91,6 +91,7 @@ $LANG['STRAT_REMARKS'] = 'Comentarios Estratigráficos';
 $LANG['ELEMENT'] = 'Elemento';
 $LANG['SLIDE_PROPS'] = 'Propiedades de Preparaciones';
 $LANG['CONTEXT_ID'] = 'Indentificación del Contexto Geológico';
+$LANG['BASIS_OF_RECORD'] = 'Base del registro';
 $LANG['EXCICCATI_SERIES'] = 'Serie de exsiccata';
 $LANG['MATERIAL_SAMPLES'] = 'Material Samples';
 $LANG['DISPLAY_ALL_MATERIAL_SAMPLES'] = 'Display all Material Sample units';
