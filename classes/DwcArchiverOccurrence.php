@@ -1,5 +1,4 @@
 <?php
-// Only needed for symbiotaAssociations version number.
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 class DwcArchiverOccurrence extends Manager{
@@ -325,8 +324,8 @@ class DwcArchiverOccurrence extends Manager{
 		foreach($this->occurDefArr as $k => $vArr){
 			if($this->schemaType == 'dwc' || $this->schemaType == 'pensoft'){
 				$trimArr = array('recordedByID','associatedCollectors','substrate','verbatimAttributes','cultivationStatus',
-						'securityReason','genericcolumn1','genericcolumn2','storageLocation','observerUid','processingStatus',
-						'duplicateQuantity','labelProject','dateEntered','dateLastModified','sourcePrimaryKey-dbpk');
+					'securityReason','genericcolumn1','genericcolumn2','storageLocation','observerUid','processingStatus',
+					'duplicateQuantity','labelProject','dateEntered','dateLastModified','sourcePrimaryKey-dbpk');
 				if($this->includePaleo){
 					$trimArr = array_merge($trimArr, array('absoluteAge','stage','localStage','biostratigraphy','taxonEnvironment','stratRemarks','element','slideProperties', 'lithology'));
 				}
@@ -349,11 +348,11 @@ class DwcArchiverOccurrence extends Manager{
 			}
 			elseif($this->schemaType == 'coge'){
 				$targetArr = array('id','basisOfRecord','institutionCode','collectionCode','catalogNumber','occurrenceID','family','scientificName','scientificNameAuthorship',
-						'kingdom','phylum','class','order','genus','specificEpithet','infraSpecificEpithet','recordedBy','recordNumber','eventDate','year','month','day','fieldNumber',
-						'eventID', 'locationID','continent','waterBody','islandGroup','island','country','stateProvince','county','municipality',
-						'locality','recordSecurity','geodeticDatum','decimalLatitude','decimalLongitude','verbatimCoordinates',
-						'minimumElevationInMeters','maximumElevationInMeters','verbatimElevation','maximumDepthInMeters','minimumDepthInMeters','establishmentMeans',
-						'occurrenceRemarks','dateEntered','dateLastModified','recordID','references','collID');
+					'kingdom','phylum','class','order','genus','specificEpithet','infraSpecificEpithet','recordedBy','recordNumber','eventDate','year','month','day','fieldNumber',
+					'eventID', 'locationID','continent','waterBody','islandGroup','island','country','stateProvince','county','municipality',
+					'locality','recordSecurity','geodeticDatum','decimalLatitude','decimalLongitude','verbatimCoordinates',
+					'minimumElevationInMeters','maximumElevationInMeters','verbatimElevation','maximumDepthInMeters','minimumDepthInMeters','establishmentMeans',
+					'occurrenceRemarks','dateEntered','dateLastModified','recordID','references','collID');
 				$this->occurDefArr[$k] = array_intersect_key($vArr,array_flip($targetArr));
 			}
 		}

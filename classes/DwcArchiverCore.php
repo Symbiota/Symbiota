@@ -76,23 +76,22 @@ class DwcArchiverCore extends Manager{
 		$this->charSetOut = $this->charSetSource;
 
 		$this->condAllowArr = array(
-				'catalognumber', 'othercatalognumbers', 'occurrenceid', 'family', 'sciname', 'country', 'stateprovince', 'county', 'municipality',
-				'recordedby', 'recordnumber', 'eventdate', 'decimallatitude', 'decimallongitude', 'minimumelevationinmeters', 'maximumelevationinmeters', 'cultivationstatus',
-				'datelastmodified', 'dateentered', 'processingstatus', 'dbpk', 'traitid', 'stateid'
+			'catalognumber', 'othercatalognumbers', 'occurrenceid', 'family', 'sciname', 'country', 'stateprovince', 'county', 'municipality',
+			'recordedby', 'recordnumber', 'eventdate', 'decimallatitude', 'decimallongitude', 'minimumelevationinmeters', 'maximumelevationinmeters', 'cultivationstatus',
+			'datelastmodified', 'dateentered', 'processingstatus', 'dbpk', 'traitid', 'stateid'
 		);
 
 		$this->securityArr = array(
-				'eventDate', 'eventDate2', 'month', 'day', 'startDayOfYear', 'endDayOfYear', 'verbatimEventDate',
-				'recordNumber', 'locality', 'locationRemarks', 'minimumElevationInMeters', 'maximumElevationInMeters', 'verbatimElevation',
-				'decimalLatitude', 'decimalLongitude', 'geodeticDatum', 'coordinateUncertaintyInMeters', 'footprintWKT',
-				'verbatimCoordinates', 'georeferenceRemarks', 'georeferencedBy', 'georeferenceProtocol', 'georeferenceSources',
-				'georeferenceVerificationStatus', 'habitat'
+			'eventDate', 'eventDate2', 'month', 'day', 'startDayOfYear', 'endDayOfYear', 'verbatimEventDate',
+			'recordNumber', 'locality', 'locationRemarks', 'minimumElevationInMeters', 'maximumElevationInMeters', 'verbatimElevation',
+			'decimalLatitude', 'decimalLongitude', 'geodeticDatum', 'coordinateUncertaintyInMeters', 'footprintWKT',
+			'verbatimCoordinates', 'georeferenceRemarks', 'georeferencedBy', 'georeferenceProtocol', 'georeferenceSources',
+			'georeferenceVerificationStatus', 'habitat'
 		);
 
 		if(array_key_exists('acceptedNameUsage', $_REQUEST)) {
 			$this->includeAcceptedNameUsage = true;
 		}
-
 
 		//ini_set('memory_limit','512M');
 		set_time_limit(1800);
@@ -1156,31 +1155,31 @@ class DwcArchiverCore extends Manager{
 	 */
 	public function getEmlDom($emlArr = null){
 		$RIGHTS_TERMS_DEFS = array(
-				'https://creativecommons.org/publicdomain/zero/1.0/' => array(
-						'title' => 'CC0 1.0 (Public-domain)',
-						'url' => 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
-						'def' => 'Users can copy, modify, distribute and perform the work, even for commercial purposes, all without asking permission.'
-				),
-				'https://creativecommons.org/licenses/by/4.0/' => array(
-						'title' => 'CC BY (Attribution)',
-						'url' => 'https://creativecommons.org/licenses/by/4.0/legalcode',
-						'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material for any purpose, even commercially. The licensor cannot revoke these freedoms as long as you follow the license terms.'
-				),
-				'https://creativecommons.org/licenses/by-nc/4.0/' => array(
-						'title' => 'CC BY-NC (Attribution-Non-Commercial)',
-						'url' => 'https://creativecommons.org/licenses/by-nc/4.0/legalcode',
-						'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material. The licensor cannot revoke these freedoms as long as you follow the license terms.'
-				),
-				'https://creativecommons.org/licenses/by/4.0/' => array(
-						'title' => 'CC BY (Attribution)',
-						'url' => 'https://creativecommons.org/licenses/by/4.0/legalcode',
-						'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material for any purpose, even commercially. The licensor cannot revoke these freedoms as long as you follow the license terms.'
-				),
-				'https://creativecommons.org/licenses/by-nc/4.0/' => array(
-						'title' => 'CC BY-NC (Attribution-Non-Commercial)',
-						'url' => 'https://creativecommons.org/licenses/by-nc/4.0/legalcode',
-						'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material. The licensor cannot revoke these freedoms as long as you follow the license terms.'
-				)
+			'https://creativecommons.org/publicdomain/zero/1.0/' => array(
+					'title' => 'CC0 1.0 (Public-domain)',
+					'url' => 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
+					'def' => 'Users can copy, modify, distribute and perform the work, even for commercial purposes, all without asking permission.'
+			),
+			'https://creativecommons.org/licenses/by/4.0/' => array(
+					'title' => 'CC BY (Attribution)',
+					'url' => 'https://creativecommons.org/licenses/by/4.0/legalcode',
+					'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material for any purpose, even commercially. The licensor cannot revoke these freedoms as long as you follow the license terms.'
+			),
+			'https://creativecommons.org/licenses/by-nc/4.0/' => array(
+					'title' => 'CC BY-NC (Attribution-Non-Commercial)',
+					'url' => 'https://creativecommons.org/licenses/by-nc/4.0/legalcode',
+					'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material. The licensor cannot revoke these freedoms as long as you follow the license terms.'
+			),
+			'https://creativecommons.org/licenses/by/4.0/' => array(
+					'title' => 'CC BY (Attribution)',
+					'url' => 'https://creativecommons.org/licenses/by/4.0/legalcode',
+					'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material for any purpose, even commercially. The licensor cannot revoke these freedoms as long as you follow the license terms.'
+			),
+			'https://creativecommons.org/licenses/by-nc/4.0/' => array(
+					'title' => 'CC BY-NC (Attribution-Non-Commercial)',
+					'url' => 'https://creativecommons.org/licenses/by-nc/4.0/legalcode',
+					'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material. The licensor cannot revoke these freedoms as long as you follow the license terms.'
+			)
 		);
 
 		if (!$emlArr) $emlArr = $this->getEmlArr();
@@ -1559,10 +1558,10 @@ class DwcArchiverCore extends Manager{
 		$channelElem->appendChild($languageElem);
 
 		//Create new item for target archives and load into array
-		$sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, c.collectionguid, c.dwcaurl, c.managementtype, s.uploaddate ' .
-				'FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid ' .
-				'WHERE s.recordcnt > 0 ' .
-				'ORDER BY c.SortSeq, c.CollectionName';
+		$sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, c.collectionguid, c.dwcaurl, c.managementtype, s.uploaddate
+			FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid
+			WHERE s.recordcnt > 0
+			ORDER BY c.SortSeq, c.CollectionName';
 		$rs = $this->conn->query($sql);
 		while ($r = $rs->fetch_assoc()) {
 			$cArr = $r;
@@ -1680,10 +1679,10 @@ class DwcArchiverCore extends Manager{
 			if ($this->schemaType == 'coge') {
 				//Convert to GeoLocate flavor
 				$glFields = array(
-						'specificEpithet' => 'Species', 'scientificNameAuthorship' => 'ScientificNameAuthor', 'recordedBy' => 'Collector', 'recordNumber' => 'CollectorNumber',
-						'year' => 'YearCollected', 'month' => 'MonthCollected', 'day' => 'DayCollected', 'decimalLatitude' => 'Latitude', 'decimalLongitude' => 'Longitude',
-						'minimumElevationInMeters' => 'MinimumElevation', 'maximumElevationInMeters' => 'MaximumElevation', 'maximumDepthInMeters' => 'MaximumDepth',
-						'minimumDepthInMeters' => 'MinimumDepth','occurrenceRemarks' => 'Notes', 'collID' => 'collId', 'recordID' => 'recordId'
+					'specificEpithet' => 'Species', 'scientificNameAuthorship' => 'ScientificNameAuthor', 'recordedBy' => 'Collector', 'recordNumber' => 'CollectorNumber',
+					'year' => 'YearCollected', 'month' => 'MonthCollected', 'day' => 'DayCollected', 'decimalLatitude' => 'Latitude', 'decimalLongitude' => 'Longitude',
+					'minimumElevationInMeters' => 'MinimumElevation', 'maximumElevationInMeters' => 'MaximumElevation', 'maximumDepthInMeters' => 'MaximumDepth',
+					'minimumDepthInMeters' => 'MinimumDepth','occurrenceRemarks' => 'Notes', 'collID' => 'collId', 'recordID' => 'recordId'
 				);
 				foreach ($fieldArr as $k => $v) {
 					if (array_key_exists($k, $glFields)) $fieldOutArr[] = $glFields[$k];
