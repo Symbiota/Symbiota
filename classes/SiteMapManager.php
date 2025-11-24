@@ -44,7 +44,7 @@ class SiteMapManager extends Manager{
 						$name .= ' (' . $row->institutioncode . ')';
 					}
 					$isCollAdmin = 0;
-					if($IS_ADMIN || in_array($row->collid, $adminArr)) $isCollAdmin = 0;
+					if($IS_ADMIN || in_array($row->collid, $adminArr)) $isCollAdmin = 1;
 					if($row->colltype == 'Observations'){
 						$retArr['o'][$row->collid]['name'] = $name;
 						$retArr['o'][$row->collid]['isadmin'] = $isCollAdmin;
