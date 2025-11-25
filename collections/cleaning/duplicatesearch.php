@@ -1,8 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCleaner.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/cleaning/duplicatesearch.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/cleaning/duplicatesearch.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/cleaning/duplicatesearch.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/cleaning/duplicatesearch');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
@@ -96,7 +98,7 @@ if($collMap){
 		}
 	</script>
 </head>
-<body style="margin-left:10px; width: 100%">
+<body style="width: 100%">
 	<?php
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
@@ -106,7 +108,7 @@ if($collMap){
 		<a href="index.php?collid=<?php echo $collid; ?>"><?php echo $LANG['CLEAN_MOD_INDEX']; ?></a> &gt;&gt;
 		<b><?php echo $LANG['DUP_OCCS']; ?></b>
 	</div>
-	<div role="main" id="innertext" style="background-color:white; margin:10px; width: 100%; max-width: 100%; padding: 0px;">
+	<div role="main" id="innertext" style="margin:10px; width: 100%; max-width: 100%; padding: 0px;">
 		<h1 class="page-heading"><?php echo $LANG['DUPL_CATALOG']; ?></h1>
 		<?php
 		if($collMap && $isEditor){

@@ -1,7 +1,10 @@
 <?php
 require_once('../../config/symbini.php');
 require_once($SERVER_ROOT.'/classes/OccurrenceAssociations.php');
-include_once($SERVER_ROOT.'/content/lang/collections/misc/assocmanagement.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/misc/assocmanagement');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 //Use following ONLY if login is required

@@ -13,6 +13,7 @@ fieldset > legend{
 
 select{ 
 	height: 24px;
+	margin-bottom: 2px;
 }
 
 #innertext{
@@ -120,6 +121,9 @@ select{
 	display: inline;
 }
 
+.field-div{
+	margin: 3px;
+}
 
 /* Field entry styles shared across all display types */
 .idNameInput{
@@ -254,7 +258,6 @@ select{
 	}
 }
 
-
 .icon-button {
 	padding: 6px;
 	border-width: 1px;
@@ -304,14 +307,14 @@ select{
 
 /*Misc styling*/
 .docimg { 
-	border:			0px;
-	width:			11px;
-	margin-bottom:	2px; 
+	border: 0px;
+	width: 11px;
+	margin-bottom: 2px; 
 }
 
 .editimg { 
-	border:			0px;
-	width:			15px;
+	border: 0px;
+	width: 15px;
 }
 
 img[id^="activeimg-"] {

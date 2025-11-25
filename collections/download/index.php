@@ -1,9 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/download/index.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT.'/content/lang/collections/download/index.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/download/index.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/download/index');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 if(empty($OVERRIDE_DOWNLOAD_LOGIN_REQUIREMENT) && !$SYMB_UID){
@@ -111,7 +112,7 @@ $filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIEN
 			}, timeToClose);
 		}
 
-        
+
 	</script>
 	<style>
 		fieldset{ margin:10px; padding:10px }

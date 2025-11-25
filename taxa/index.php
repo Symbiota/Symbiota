@@ -1,10 +1,11 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/TaxonProfile.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('taxa/index');
+
 Header('Content-Type: text/html; charset=' . $CHARSET);
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/taxa/index.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT . '/content/lang/taxa/index.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/taxa/index.en.php');
 
 $taxonValue = array_key_exists('taxon', $_REQUEST) ? $_REQUEST['taxon'] : '';
 $tid = array_key_exists('tid', $_REQUEST) ? $_REQUEST['tid'] : '';

@@ -1,11 +1,14 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/occurrencetabledisplay.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrencetabledisplay.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/editor/occurrencetabledisplay.en.php');
-header('Content-Type: text/html; charset='.$CHARSET);
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-include_once($SERVER_ROOT . '/content/lang/collections/list.'.$LANG_TAG.'.php');
+Language::load([
+	'collections/editor/occurrencetabledisplay',
+	'collections/list'
+]);
+
+header('Content-Type: text/html; charset='.$CHARSET);
 
 $collId = array_key_exists('collid',$_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : false;
 $recLimit = array_key_exists('reclimit', $_REQUEST) ? filter_var($_REQUEST['reclimit'], FILTER_SANITIZE_NUMBER_INT) : 1000;
@@ -49,8 +52,6 @@ $headerMapBase = array( 'institutioncode' => $LANG['INSTITUTION_CODE'], 'collect
 //paleo fields
 $headerMapPaleoBase = array('earlyInterval' => $LANG['INTERVAL_EARLY'], 'lateInterval' => $LANG['INTERVAL_LATE'],
 	'lithogroup' => $LANG['GROUP'],'formation' => $LANG['FORMATION'], 'member' => $LANG['MEMBER'], 'bed' => $LANG['BED']);
-if (!empty($GLOBALS['ACTIVATE_PALEO']))
-	$headerMapBase = array_merge($headerMapBase, $headerMapPaleoBase);
 
 $headMap = array();
 
@@ -65,6 +66,8 @@ if($SYMB_UID){
 	}
 
 	if($collMap && $collMap['colltype']=='General Observations') $isGenObs = 1;
+	if ($collMap['colltype'] == 'Fossil Specimens')
+		$headerMapBase = array_merge($headerMapBase, $headerMapPaleoBase);
 	if(!$isEditor){
 		if($isGenObs){
 			if($collId && array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collId,$USER_RIGHTS['CollEditor'])){
@@ -272,7 +275,7 @@ else{
 				foreach($recArr as $id => $occArr){
 					foreach($occArr as $k => $v){
 						if(!is_array($v)){
-							if(trim($v) !== '' && !array_key_exists($k,$headerArr)){
+							if((trim($v) || $v === 0) && !array_key_exists($k,$headerArr)){
 								$headerArr[$k] = $k;
 							}
 						}

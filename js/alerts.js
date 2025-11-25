@@ -15,7 +15,8 @@ function handleAlerts(alerts, id, limitMessage) {
     alertDiv.classList.remove("visually-hidden");
     let alertP = document.createElement("p");
     alertP.classList.add("alert");
-    alertP.innerHTML = alert.alertMsg + " Click to dismiss.";
+    alertP.innerHTML =
+      alert.alertMsg + " " + translations.CLICK_TO_DISMISS + ".";
     alertP.onclick = function () {
       if (limitMessage) document.cookie = "alertCnt=" + id;
       else

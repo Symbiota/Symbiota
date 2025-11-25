@@ -100,8 +100,6 @@ class SpecUpload{
 
 	private function setCollInfo(){
 		if($this->collId){
-			//Set default paleo activation based on what is set within symbini config file
-			if(!empty($GLOBALS['ACTIVATE_PALEO'])) $this->paleoSupport = true;
 			//Set collection metadata and configurations
 			$sql = 'SELECT DISTINCT c.collid, c.collectionname, c.institutioncode, c.collectioncode, c.collectionguid, c.icon, c.colltype, c.managementtype, '.
 				'cs.uploaddate, c.securitykey, c.guidtarget, c.dynamicproperties '.
@@ -118,6 +116,8 @@ class SpecUpload{
 				$dateStr = ($r->uploaddate?date("d F Y g:i:s", strtotime($r->uploaddate)):"");
 				$this->collMetadataArr["uploaddate"] = $dateStr;
 				$this->collMetadataArr["colltype"] = $r->colltype;
+				if ($this->collMetadataArr["colltype"] == "Fossil Specimens")
+					$this->paleoSupport = true;
 				$this->collMetadataArr["managementtype"] = $r->managementtype;
 				$this->collMetadataArr["securitykey"] = $r->securitykey;
 				$this->collMetadataArr["guidtarget"] = $r->guidtarget;
@@ -125,11 +125,7 @@ class SpecUpload{
 					$propArr = json_decode($r->dynamicproperties,true);
 					if(isset($propArr['editorProps']['modules-panel'])){
 						foreach($propArr['editorProps']['modules-panel'] as $modArr){
-							if(isset($modArr['paleo'])){
-								if($modArr['paleo']['status'] == 1) $this->paleoSupport = true;
-								elseif($modArr['paleo']['status'] == 0) $this->paleoSupport = false;
-							}
-							elseif(isset($modArr['matSample'])){
+							if(isset($modArr['matSample'])){
 								if($modArr['matSample']['status'] == 1) $this->materialSampleSupport = true;
 							}
 						}
@@ -190,7 +186,7 @@ class SpecUpload{
 			$sql = $this->getPendingImportSql($searchVariables) ;
 			//echo "<div>".$sql."</div>";
 			$fieldMap = array();
-			$excludeKeys = ['eon', 'era', 'period', 'epoch', 'stage'];
+			$excludeKeys = ['paleo_eon', 'paleo_era', 'paleo_period', 'paleo_epoch', 'paleo_stage'];
 			$rs = $this->conn->query($sql, MYSQLI_USE_RESULT);
 			//Determine which fields have data
 			while($r = $rs->fetch_assoc()){
@@ -204,7 +200,11 @@ class SpecUpload{
 				$rs = $this->conn->query($sql, MYSQLI_USE_RESULT);
 				while($r = $rs->fetch_assoc()){
 					if($outputHeader){
-						fputcsv($outstream,array_keys(array_intersect_key($r, $fieldMap)));
+						$keys = array_keys(array_intersect_key($r, $fieldMap));
+						$keys = array_map(function($k) {
+							return (strpos($k, 'paleo_') === 0) ? substr($k, 6) : $k;
+						}, $keys);
+						fputcsv($outstream, $keys);
 						$outputHeader = false;
 					}
 					fputcsv($outstream,array_intersect_key($r, $fieldMap));

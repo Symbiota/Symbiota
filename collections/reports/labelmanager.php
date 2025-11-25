@@ -3,7 +3,10 @@ include_once('../../config/symbini.php');
 @include_once('Image/Barcode.php');
 @include_once('Image/Barcode2.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLabel.php');
-include_once($SERVER_ROOT.'/content/lang/collections/reports/labelmanager.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/reports/labelmanager');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/reports/labelmanager.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));

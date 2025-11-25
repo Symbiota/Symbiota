@@ -1,13 +1,12 @@
 <?php
-if(!$displayQuery && array_key_exists('displayquery',$_REQUEST)) $displayQuery = $_REQUEST['displayquery'];
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/includes/queryform.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/queryform.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/queryform.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/specprocessor/exporter.' . $LANG_TAG . '.php')){
-	include_once($SERVER_ROOT . '/content/lang/collections/specprocessor/exporter.' . $LANG_TAG . '.php');
-} else{
-	include_once($SERVER_ROOT . '/content/lang/collections/specprocessor/exporter.en.php');
-}
+Language::load([
+	'collections/editor/includes/queryform', 
+	'collections/specprocessor/exporter'
+]);
+
+if(!$displayQuery && array_key_exists('displayquery',$_REQUEST)) $displayQuery = $_REQUEST['displayquery'];
 
 $qryArr = $occManager->getQueryVariables();
 // Construct a link containing the queryform search parameters
@@ -79,7 +78,7 @@ else{
 			'lateInterval'=>$LANG['LATE_INT'],'lithogroup'=>$LANG['GROUP'],'lithology'=>$LANG['LITHOLOGY'],'localStage'=>$LANG['LOCAL_STAGE'],'member'=>$LANG['MEMBER'],
 			'slideProperties'=>$LANG['SLIDE_PROP'],'stage'=>$LANG['STAGE'],'stratRemarks'=>$LANG['STRAT_REMARKS'],'taxonEnvironment'=>$LANG['TAXON_ENVIRONMENT'],);
 		$customFieldArr = array_merge($customFieldArr, $customPaleoFieldArr);
-		ksort($customFieldArr);
+		asort($customFieldArr);
 	}
 }
 $customTermArr = array('EQUALS', 'NOT_EQUALS', 'STARTS_WITH', 'LIKE', 'NOT_LIKE', 'GREATER_THAN', 'LESS_THAN', 'IS_NULL', 'NOT_NULL');
