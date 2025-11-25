@@ -43,7 +43,7 @@ if($collid && is_numeric($collid)){
 		//Set GeoLocate CoGe variables
 		$dwcaHandler->setGeolocateVariables(array('cogecomm'=>$_POST['cogecomm'],'cogename'=>$_POST['cogename'],'cogedescr'=>$_POST['cogedescr'],));
 
-		$cnt = $dwcaHandler->getOccurrenceCnt();
+		$cnt = $dwcaHandler->getOccurrenceCount();
 		$dwcaHandler->createDwcArchive();
 		$urlPath = $dwcaHandler->getDwcaOutputUrl();
 

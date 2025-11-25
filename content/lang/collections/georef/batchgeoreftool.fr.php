@@ -5,8 +5,9 @@ Language: Français (French)
 ------------------
 */
 
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/occurrencetabledisplay.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrencetabledisplay.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrencetabledisplay.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/editor/occurrencetabledisplay');
 
 $LANG['GEOREF_TOOLS'] = 'Outils de Géoréférencement';
 $LANG['COL_MAN_MENU'] = 'Gestion des Collections';

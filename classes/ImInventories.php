@@ -169,7 +169,7 @@ class ImInventories extends Manager{
 	private function setChecklistFieldMap(){
 		$this->fieldMap = array('name' => 's', 'authors' => 's', 'type' => 's', 'locality' => 's', 'publication' => 's', 'abstract' => 's', 'notes' => 's',
 			'latCentroid' => 'd', 'longCentroid' => 'd', 'pointRadiusMeters' => 'i', 'access' => 's', 'defaultSettings' => 's', 'dynamicSql' => 's',
-			'dynamicProperties' => 's', 'uid' => 'i', 'footprintWkt' => 's', 'sortSequence' => 'i');
+			'dynamicProperties' => 's', 'uid' => 'i', 'footprintWkt' => 's', 'footprintgeoJson' => 's', 'sortSequence' => 'i');
 	}
 
 	public function deleteChecklist(){
@@ -184,7 +184,6 @@ class ImInventories extends Manager{
 				$stmt->execute();
 				if($stmt->affected_rows && !$stmt->error){
 					$status = true;
-					//Delete userpermissions reference once patch is submitted
 					$this->deleteUserRole('ClAdmin', $this->clid, $GLOBALS['SYMB_UID']);
 				}
 				else $this->errorMessage = $stmt->error;
@@ -649,9 +648,6 @@ class ImInventories extends Manager{
 				$returnArr['occurrencesearch'] = $row->occurrencesearch;
 				$returnArr['ispublic'] = $row->ispublic;
 				$returnArr['sortsequence'] = $row->sortsequence;
-				if($row->ispublic == 0){
-					$this->isPublic = 0;
-				}
 			}
 			$rs->free();
 			//Temporarly needed as a separate call until db_schema_patch-1.1.sql is applied

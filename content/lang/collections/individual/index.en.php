@@ -90,6 +90,7 @@ $LANG['STRAT_REMARKS'] = 'Stratigraphic Remarks';
 $LANG['ELEMENT'] = 'Element';
 $LANG['SLIDE_PROPS'] = 'Slide Properties';
 $LANG['CONTEXT_ID'] = 'Geological Context ID';
+$LANG['BASIS_OF_RECORD'] = 'Basis of Record';
 $LANG['EXCICCATI_SERIES'] = 'Exsiccati series';
 $LANG['MATERIAL_SAMPLES'] = 'Material Samples';
 $LANG['DISPLAY_ALL_MATERIAL_SAMPLES'] = 'Display all Material Sample units';

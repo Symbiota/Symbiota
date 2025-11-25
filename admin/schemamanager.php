@@ -11,6 +11,10 @@ $host = MySQLiConnectionFactory::$SERVERS[0]['host'];
 $database = MySQLiConnectionFactory::$SERVERS[0]['database'];
 $port = MySQLiConnectionFactory::$SERVERS[0]['port'];
 
+//Following statements need to be updated for each new release
+$releaseVersion = '3.4';
+$schemaPatchArr = array('1.1', '1.2', '3.0', '3.1', '3.2', '3.3', $releaseVersion);
+
 $schemaManager = new SchemaManager();
 $verHistory = $schemaManager->getVersionHistory();
 $curentVersion = $schemaManager->getCurrentVersion();
@@ -116,11 +120,10 @@ if(!$IS_ADMIN && !$isNewInstall) header('Location: ../profile/index.php?refurl=.
 								<select name="schemaCode">
 									<?php
 									if($curentVersion){
-										$schemaPatchArr = array('1.1', '1.2', '3.0', '3.1', '3.2', '3.3');
 										foreach($schemaPatchArr as $schemaOption){
 											if($schemaOption > $curentVersion) echo '<option value="' . $schemaOption . '">Schema Patch ' . $schemaOption . '</option>';
 										}
-										if($curentVersion == '3.3') echo '<option value="">Schema is Current - nothing to do</option>';
+										if($curentVersion == $releaseVersion) echo '<option value="">Schema is Current - nothing to do</option>';
 									}
 									else{
 										echo '<option value="baseInstall">New Install (ver. 3.0)</option>';

@@ -1,9 +1,10 @@
 <?php
 include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLoans.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/loans/reports/defaultinvoice.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/loans/reports/defaultinvoice.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/loans/reports/defaultinvoice.en.php');
 require_once $SERVER_ROOT.'/vendor/phpoffice/phpword/bootstrap.php';
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/loans/reports/defaultinvoice');
 
 $collId = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $identifier = array_key_exists('identifier',$_REQUEST) ? filter_var($_REQUEST['identifier'], FILTER_SANITIZE_NUMBER_INT) : 0;

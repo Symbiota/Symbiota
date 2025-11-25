@@ -181,6 +181,9 @@ if ($schema == 'backup') {
 				} elseif ($occurManager->getSearchTerm('traitid')) {
 					$dwcaHandler->addCondition('traitid', 'EQUALS', $occurManager->getSearchTerm('traitid'));
 				}
+				if ($occurManager->getSearchTerm('polygons')) {
+					$dwcaHandler->setPolygons($occurManager->getSearchTerm('polygons'));
+				}
 				$dwcaHandler->setPaleoWithSql($occurManager->getPaleoSqlWith());
 			} else {
 				//Request is coming from exporter.php for collection manager tools

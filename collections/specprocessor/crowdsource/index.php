@@ -1,9 +1,10 @@
 <?php
 include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCrowdSource.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/specprocessor/crowdsource/index.'.$LANG_TAG.'.php'))
-	include_once($SERVER_ROOT.'/content/lang/collections/specprocessor/crowdsource/index.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/specprocessor/crowdsource/index.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/specprocessor/crowdsource/index');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $catid = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:'';

@@ -7,8 +7,10 @@ include_once($SERVER_ROOT . '/classes/DatasetsMetadata.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceManager.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceAttributeSearch.php');
 include_once($SERVER_ROOT . '/classes/AssociationManager.php');
-if ($LANG_TAG == 'en' || !file_exists($SERVER_ROOT . '/content/lang/collections/search/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/search/index.en.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/search/index.' . $LANG_TAG . '.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/search/index');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $JS_LANG_FILENAME = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
@@ -31,6 +33,7 @@ $siteData = new DatasetsMetadata();
 
 $catId = array_key_exists("catid", $_REQUEST) ? $_REQUEST["catid"] : '';
 $collList = $collManager->getFullCollectionList($catId);
+$polygonList = $collManager->getSearchablePolygons();
 $specArr = (isset($collList['spec']) ? $collList['spec'] : null);
 $obsArr = (isset($collList['obs']) ? $collList['obs'] : null);
 $associationManager = new AssociationManager();
@@ -53,7 +56,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js?ver=1" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/collections/individual/domManipulationUtils.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/domManipulationUtils.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/localitySuggest.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.list.js?ver=20251002>" type="text/javascript"></script>
 	<script>
@@ -213,6 +216,22 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 									</div>
 								</div>
 							</div>
+							<?php if (!empty($polygonList)): ?>
+							<div class="input-text-container">
+								<label for="polygons" class="input-text--outlined">
+									<span class="screen-reader-only"><?php echo $LANG['POLYGONS'] ?></span>
+									<select style="padding: 0.5rem;" name="polygons[]" id="polygons" data-chip="<?php echo $LANG['POLYGONS'] ?>"> {{/*  add 'multiple' to allow several polygons  */}}
+										<option value=""></option>
+										<?php
+										foreach($polygonList as $row){
+											echo '<option value="'.$row['geoThesID'].'" data-chip="'.$LANG['POLYGONS'].'">'.htmlspecialchars($row['geoterm']).'</option>';
+										}
+										?>
+									</select>
+									<span class="inset-input-label"><?php echo $LANG['POLYGONS'] ?></span>
+								</label>
+							</div>
+							<?php endif; ?>
 						</div>
 					</div>
 				</section>
@@ -458,10 +477,10 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 									<label for="materialsampletype"><?= $LANG['MATERIAL_SAMPLE_TYPE'] ?></label>
 									<select name="materialsampletype" id="materialsampletype">
 										<option id="materialsampletype-none" data-chip="<?php echo $LANG['MATERIAL_SAMPLE'] . ': ---' ?>" value="">---------------</option>
-										<option id="materialsampletype-all-ms" data-chip="<?php echo $LANG['MATERIAL_SAMPLE'] . ': ' . $LANG['ALL_MATERIAL_SAMPLE'] ?>" value="all-ms"><?= $LANG['ALL_MATERIAL_SAMPLE'] ?></option>
+										<option id="materialsampletype-all-ms" data-chip="<?php echo $LANG['MATERIAL_SAMPLE']?>" value="all-ms"><?= $LANG['ALL_MATERIAL_SAMPLE'] ?></option>
 										<?php
 										foreach ($matSampleTypeArr as $matSampeType) {
-											echo '<option id="materialsampletype-' . $matSampeType . '" data-chip="' . $LANG['MATERIAL_SAMPLE'] . ': ' . $matSampeType . '" value="' . $matSampeType . '">' . $matSampeType . '</option>';
+											echo '<option id="materialsampletype-' . $matSampeType . '" data-chip="' . $LANG['MATERIAL_SAMPLE'] . '" value="' . $matSampeType . '">' . $matSampeType . '</option>';
 										}
 										?>
 									</select>
@@ -658,7 +677,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 						<input type="checkbox" id="geocontext" class="accordion-selector" />
 
 						<!-- Accordion header -->
-						<label for="geocontext" class="accordion-header"><?php echo $LANG['GEO_CONTEXT'] ?></label>
+						<label for="geocontext" class="accordion-header"><?php echo $LANG['GEO_CONTEXT'] ?> <a href="https://docs.symbiota.org//User_Guide/searching_records#geological-context" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
 
 						<!-- Content -->
 						<div id="search-form-geocontext" class="content">
@@ -785,7 +804,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 	?>
 </body>
 <script src="<?= $JS_LANG_FILENAME ?>" type="text/javascript"></script>
-<script src="<?= $CLIENT_ROOT ?>/js/searchform.js?ver=2" type="text/javascript"></script>
+<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=2" type="text/javascript"></script>
 <script src="<?= $CLIENT_ROOT ?>/js/alerts.js?v=202107" type="text/javascript"></script>
 <script src="<?= $CLIENT_ROOT ?>/js/symb/api.taxonomy.taxasuggest.js" type="text/javascript"></script>
 <script src="<?= $CLIENT_ROOT ?>/js/symb/collections.index.js?ver=20171215>" type="text/javascript"></script>

@@ -1,8 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceDuplicate.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/datasets/duplicatemanager.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/datasets/duplicatemanager.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/datasets/duplicatemanager.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/datasets/duplicatemanager');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $collId = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -154,6 +156,11 @@ if($isEditor && $formSubmit){
 						<a href="duplicatemanager.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&action=batchlinkdupes">
 							<?php echo $LANG['BATCH_LINK_DUPS']; ?>
 						</a> - <?php echo $LANG['BATCH_LINK_EXPLANATION']; ?>
+					</div>
+					<div style="margin:25px;">
+						<a href="<?= $CLIENT_ROOT . '/collections/editor/batchDuplicateGeorefCopy.php?collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>">
+							<?= $LANG['BATCH_COPY_GEOREFERENCE_DUPLICATES'] ?>
+						</a> - <?= $LANG['BATCH_COPY_GEOREFERENCE_DUPLICATES_EXPLANATION'] ?>
 					</div>
 					<?php
 					if(!empty($ACTIVATE_EXSICCATI) && $collMap['colltype'] == 'Preserved Specimens'){

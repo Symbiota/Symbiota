@@ -5,11 +5,11 @@ if($GLOBALS['HTTPS_ONLY'] ?? true) {
 	header('strict-transport-security: max-age=600');
 }
 date_default_timezone_set('America/Phoenix');
-$CODE_VERSION = '3.3.9';
+$CODE_VERSION = '3.5';
 
 set_include_path(get_include_path() . PATH_SEPARATOR . $SERVER_ROOT . PATH_SEPARATOR . $SERVER_ROOT.'/config/' . PATH_SEPARATOR . $SERVER_ROOT.'/classes/');
 
-session_start(array('gc_maxlifetime'=>3600,'cookie_path'=>$CLIENT_ROOT,'cookie_secure'=> getenv('APP_ENV') != 'testing','cookie_httponly'=>true, 'use_only_cookies' => true));
+session_start(array('gc_maxlifetime'=>3600,'cookie_path'=>$CLIENT_ROOT,'cookie_secure'=>$GLOBALS['HTTPS_ONLY'] ?? true,'cookie_httponly'=>true, 'use_only_cookies' => true));
 
 include_once($SERVER_ROOT . '/classes/utilities/Encryption.php');
 include_once($SERVER_ROOT . '/classes/ProfileManager.php');
@@ -62,7 +62,10 @@ $PORTAL_PRIVATE = $PRIVATE_VIEWING_ONLY ?? false;
 if (!$SYMB_UID && $PORTAL_PRIVATE){
 	$PRIVATE_VIEWING_OVERRIDES = $PRIVATE_VIEWING_OVERRIDES ?? [];
 	$public_pages = [...$PRIVATE_VIEWING_OVERRIDES, ...['/profile/newprofile.php', '/profile/index.php']];
-	$requested_url = explode($CLIENT_ROOT, $_SERVER['PHP_SELF'])[1];
+	if(!empty($CLIENT_ROOT)){
+		$requested_url = explode($CLIENT_ROOT, $_SERVER['PHP_SELF'])[1];
+	}
+	else $requested_url = $_SERVER['PHP_SELF'];
 	if (!in_array($requested_url, $public_pages)){
 		$referringUrl =  $_SERVER['PHP_SELF'] . (!empty($_SERVER['QUERY_STRING']) ? urlencode( '?' . $_SERVER['QUERY_STRING']) : '');
 		header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=' . $referringUrl);
@@ -99,7 +102,11 @@ $AVAILABLE_LANGS = array('en','es','fr','pt');
 $LANG_TAG = 'en';
 if(isset($_REQUEST['lang']) && $_REQUEST['lang']){
 	$LANG_TAG = $_REQUEST['lang'];
-	setcookie('lang', $LANG_TAG, time() + (3600 * 24 * 30),'/');
+	setcookie('lang', $LANG_TAG, [
+		'domain' => '/',
+		'expires' => time() + (3600 * 24 * 30),
+		'secure' => false
+	]);
 }
 else if(isset($_COOKIE['lang']) && $_COOKIE['lang']){
 	$LANG_TAG = $_COOKIE['lang'];
@@ -116,7 +123,7 @@ $CSS_VERSION = '16';
 
 // Used for what media is allowed to be uploaded. Does not restrict external links
 $ALLOWED_MEDIA_MIME_TYPES = [
-	"image/jpeg", "image/png", "image/gif",
+	"image/jpeg", "image/png", "image/gif", 'image/bmp',
 	"audio/mpeg", "audio/wav", "audio/ogg"
 ];
 

@@ -1,7 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceDataset.php');
-include_once($SERVER_ROOT.'/content/lang/collections/datasets/publiclist.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/datasets/publiclist');
+
 header('Content-Type: text/html; charset='.$CHARSET);
 
 $datasetManager = new OccurrenceDataset();
