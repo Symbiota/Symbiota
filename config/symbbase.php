@@ -8,9 +8,15 @@ date_default_timezone_set('America/Phoenix');
 $CODE_VERSION = '3.5';
 
 set_include_path(get_include_path() . PATH_SEPARATOR . $SERVER_ROOT . PATH_SEPARATOR . $SERVER_ROOT.'/config/' . PATH_SEPARATOR . $SERVER_ROOT.'/classes/');
+$secure = true;
+if (getenv('APP_ENV') === 'testing') {
+    $secure = false;
+}
+elseif (isset($GLOBALS['HTTPS_ONLY'])) {
+    $secure = (bool) $GLOBALS['HTTPS_ONLY'];
+}
 
-session_start(array('gc_maxlifetime'=>3600,'cookie_path'=>$CLIENT_ROOT,'cookie_secure'=>$GLOBALS['HTTPS_ONLY'] ?? true,'cookie_httponly'=>true, 'use_only_cookies' => true));
-
+session_start(array('gc_maxlifetime'=>3600,'cookie_path'=>$CLIENT_ROOT,'cookie_secure'=>$secure,'cookie_httponly'=>true, 'use_only_cookies' => true));
 include_once($SERVER_ROOT . '/classes/utilities/Encryption.php');
 include_once($SERVER_ROOT . '/classes/ProfileManager.php');
 
