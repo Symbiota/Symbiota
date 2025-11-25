@@ -1180,7 +1180,7 @@ class Media {
 	 * @param int $tid
 	 * @param string $media_type Should use MediaType Constants
 	 */
-	public static function getByTid(int $tid, ?string $media_type = null, ?Paginator $paginator): Array {
+	public static function getByTid(int $tid, ?string $media_type = null, ?Paginator $paginator = null): Array {
 		if(!$tid) return [];
 		$parameters = [$tid];
 
