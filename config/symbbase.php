@@ -68,10 +68,13 @@ $PORTAL_PRIVATE = $PRIVATE_VIEWING_ONLY ?? false;
 if (!$SYMB_UID && $PORTAL_PRIVATE){
 	$PRIVATE_VIEWING_OVERRIDES = $PRIVATE_VIEWING_OVERRIDES ?? [];
 	$public_pages = [...$PRIVATE_VIEWING_OVERRIDES, ...['/profile/newprofile.php', '/profile/index.php']];
-	if(!empty($CLIENT_ROOT)){
-		$requested_url = explode($CLIENT_ROOT, $_SERVER['PHP_SELF'])[1];
+	if (!empty($CLIENT_ROOT) && strpos($_SERVER['PHP_SELF'], $CLIENT_ROOT) === 0) {
+		// Strip the CLIENT_ROOT prefix from the path
+		$requested_url = substr($_SERVER['PHP_SELF'], strlen($CLIENT_ROOT));
+	} else {
+		// Fallback: use the whole path
+		$requested_url = $_SERVER['PHP_SELF'];
 	}
-	else $requested_url = $_SERVER['PHP_SELF'];
 	if (!in_array($requested_url, $public_pages)){
 		$referringUrl =  $_SERVER['PHP_SELF'] . (!empty($_SERVER['QUERY_STRING']) ? urlencode( '?' . $_SERVER['QUERY_STRING']) : '');
 		header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=' . $referringUrl);
