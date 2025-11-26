@@ -36,7 +36,7 @@ if($IS_ADMIN) $isEditor = 1;
 
 			<?php
 			foreach($indexArr as $pid => $portalObj){
-				echo 'portalObj['.$pid.'] = {"name": "'.$portalObj['portalName'].'","url": "'.$portalObj['urlRoot'].'"};'."\n";
+				echo 'portalObj[' . $pid . '] = {"name": "' . $portalObj['portalName'] . '","url": "' . $portalObj['urlRoot'] . '",symbiotaVersion="' . $portalObj['symbiotaVersion'] . '"};' . "\n";
 			}
 
 			if($portalID) echo 'displayPortalDetails('.$portalID.');';
@@ -86,7 +86,7 @@ if($IS_ADMIN) $isEditor = 1;
 						method: "GET",
 						data: ajaxSearchObj,
 						dataType: "json",
-						url: portalUrl + "/api/v2/occurrence/search"
+						url: portalUrl + "/api/v2/occurrence"
 					})
 					.done(function(jsonRes) {
 						$("#occur-div-"+portalID).append('<div class="occur-sub-div">' + jsonRes.count.toLocaleString() + " occurrences</div>");
@@ -99,7 +99,8 @@ if($IS_ADMIN) $isEditor = 1;
 						}
 					})
 					.fail(function( jqXHR, textStatus ) {
-						$("#occur-div-"+portalID).append(" ERROR ("+textStatus+")");
+						if(textStatus == "error") textStatus = this.url;
+						$("#occur-div-" + portalID).append(" ERROR (" + textStatus + ")");
 					});
 				}
 			}
@@ -124,7 +125,7 @@ if($IS_ADMIN) $isEditor = 1;
 					method: "GET",
 					data: ajaxSearchObj,
 					dataType: "json",
-					url: portalUrl + "/api/v2/occurrence/search"
+					url: portalUrl + "/api/v2/occurrence"
 				})
 				.done(function(jsonRes) {
 					collSpan.textContent = jsonRes.count.toLocaleString();
@@ -165,7 +166,7 @@ if($IS_ADMIN) $isEditor = 1;
 				$.ajax({
 					method: "GET",
 					dataType: "json",
-					url: portalObj[pid].url + "/api/v2/installation/ping"
+					url: portalObj[pid].url + "/api/v2/installation/status"
 				})
 				.done(function(jsonRes) {
 					$("#status-div-"+pid+" span").text("Success, online!");

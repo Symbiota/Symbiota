@@ -30,21 +30,31 @@ class PortalIndex extends OmCollections{
 	public function getPortalIndexArr($portalIdentifier){
 		if(!isset($GLOBALS['ACTIVATE_PORTAL_INDEX'])) return false;
 		$retArr = array();
-		$sql = 'SELECT portalID, portalName, acronym, portalDescription, urlRoot, securityKey, symbiotaVersion,
+		$sql = 'SELECT portalID, portalName, acronym, portalDescription, urlRoot, securityKey, symbiotaVersion, apiVersion,
 			guid, manager, managerEmail, primaryLead, primaryLeadEmail, notes, initialTimestamp
 			FROM portalindex ';
+		$typeStr = 's';
 		if($portalIdentifier){
-			if(is_numeric($portalIdentifier)) $sql .= 'WHERE portalID = '.$portalIdentifier;
+			if(is_numeric($portalIdentifier)){
+				$sql .= 'WHERE portalID = '.$portalIdentifier;
+				$typeStr = 'i';
+			}
 			else $sql .= 'WHERE guid = "'.$portalIdentifier.'" ';
 		}
 		else $sql .= 'ORDER BY portalName';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_assoc()){
-			$retArr[$r['portalID']] = $r;
+		if($stmt = $this->conn->prepare($sql)){
+			if($portalIdentifier) $stmt->bind_param($typeStr, $portalIdentifier);
+			$stmt->execute();
+			$rs = $stmt->get_result();
+			while($r = $rs->fetch_assoc()){
+				$retArr[$r['portalID']] = $r;
+			}
+			$rs->free();
+			$stmt->close();
 		}
-		$rs->free();
 
 		if($retArr){
+			//Add counts to output array
 			$sql = 'SELECT p.portalID, count(o.occid) as cnt
 				FROM portaloccurrences o INNER JOIN portalpublications p ON o.pubid = p.pubid
 				WHERE p.portalID IN('.implode(',',array_keys($retArr)).') GROUP BY p.portalID';
@@ -151,7 +161,7 @@ class PortalIndex extends OmCollections{
 			//$self = $this->getSelfDetails();
 			//$handShakeUrl = $remotePath.'api/v2/installation/'.$self['guid'].'/touch?endpoint='.$self['urlRoot'];
 			//Handshake from local to remote
-			$pingUrl = $remotePath.'api/v2/installation/ping';
+			$pingUrl = $remotePath.'api/v2/installation/status';
 			$remoteArr = $this->getAPIResponce($pingUrl);
 			if($remoteArr){
 				if($remoteArr['guid']){
