@@ -1,10 +1,11 @@
 <?php
 include_once('../../config/symbini.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.en.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCollectionProfile.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/misc/collprofiles');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 unset($_SESSION['editorquery']);
@@ -313,7 +314,7 @@ if ($SYMB_UID) {
 			if ($collData['collectioncode']) $codeStr .= '-' . $collData['collectioncode'];
 			$codeStr .= ')';
 			$_SESSION['colldata'] = $collData;
-			echo '<h1 class="page-heading">' . $LANG['COLL_PROF_FOR'] . ':<br>' . $collData['collectionname'] . $codeStr . '</h1>';
+			echo '<h2 class="page-heading"><span class="screen-reader-only">' . $LANG['COLL_PROF_FOR'] . ':<br></span>' . $collData['collectionname'] . $codeStr . '</h2>';
 			// GBIF citations widget
 			if ($datasetKey) {
 				echo '<div style="margin-left: 10px; margin-bottom: 20px;">';
@@ -642,9 +643,11 @@ if ($SYMB_UID) {
 				</div>
 				<?php
 			}
+			if(isset($collData['fulldescription'])){
 			?>
-			<div class="coll-description bottom-breathing-room-rel"><?= $collData['fulldescription'] ?></div>
+				<div class="coll-description bottom-breathing-room-rel"><?= $collData['fulldescription'] ?></div>
 			<?php
+			}
 			if(isset($collData['resourcejson'])){
 				if($resourceArr = json_decode($collData['resourcejson'], true)){
 					$title = $LANG['HOMEPAGE'];

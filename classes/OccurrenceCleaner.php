@@ -3,6 +3,7 @@ include_once($SERVER_ROOT.'/config/dbconnection.php');
 include_once($SERVER_ROOT.'/classes/Manager.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT.'/classes/AgentManager.php');
+include_once($SERVER_ROOT.'/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT.'/classes/GeographicThesaurus.php');
 
 class OccurrenceCleaner extends Manager{
@@ -592,48 +593,43 @@ class OccurrenceCleaner extends Manager{
 		return $retArr;
 	}
 
-	//Coordinate field verifier
-	public function getCoordStats(){
+	/**
+	 * Gets the counts for occurrences without points, with points, no points with
+	 * verbatim point, no points without verbatim points. Operates on collId set in instance
+	 *
+	 * @return Array Uses following structure [?coord, ?noCoord, ?noCoord_verbatim, ?noCoord_noVerbatim]
+	 **/
+	public function getCoordStats(): Array {
 		$retArr = array();
-		//Get count georeferenced
-		$sql = 'SELECT count(*) AS cnt '.
-			'FROM omoccurrences '.
-			'WHERE (collid IN('.$this->collid.')) AND (decimallatitude IS NOT NULL) AND (decimallongitude IS NOT NULL)';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retArr['coord'] = $r->cnt;
-		}
-		$rs->free();
+		$pointSql = 'SELECT count(*) AS cnt FROM omoccurrences o
+			INNER JOIN omoccurpoints p on p.occid = o.occid
+			WHERE collid IN(?)';
+		$retArr['coord'] = QueryUtil::tryExecuteQuery(
+			$this->conn,
+			$pointSql,
+			[$this->collid]
+		)->fetch_object()->cnt;
 
-		//Get count not georeferenced
-		$sql = 'SELECT count(*) AS cnt '.
-			'FROM omoccurrences '.
-			'WHERE (collid IN('.$this->collid.')) AND (decimallatitude IS NULL) AND (decimallongitude IS NULL)';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retArr['noCoord'] = $r->cnt;
-		}
-		$rs->free();
+		$totalSql = 'SELECT count(*) AS cnt FROM omoccurrences o WHERE collid IN(?)';
+		$totalCount = QueryUtil::tryExecuteQuery(
+			$this->conn,
+			$totalSql,
+			[$this->collid]
+		)->fetch_object()->cnt;
 
-		//Count not georeferenced with verbatimCoordinates info
-		$sql = 'SELECT count(*) AS cnt '.
-			'FROM omoccurrences '.
-			'WHERE (collid IN('.$this->collid.')) AND (decimallatitude IS NULL) AND (decimallongitude IS NULL) AND (verbatimcoordinates IS NOT NULL)';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retArr['noCoord_verbatim'] = $r->cnt;
-		}
-		$rs->free();
+		$retArr['noCoord'] = $totalCount - $retArr['coord'];
 
-		//Count not georeferenced without verbatimCoordinates info
-		$sql = 'SELECT count(*) AS cnt '.
-			'FROM omoccurrences '.
-			'WHERE (collid IN('.$this->collid.')) AND (decimallatitude IS NULL) AND (decimallongitude IS NULL) AND (verbatimcoordinates IS NULL)';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retArr['noCoord_noVerbatim'] = $r->cnt;
-		}
-		$rs->free();
+		$noCoordsVerbatimSql = 'SELECT count(*) as cnt FROM omoccurrences o
+		LEFT JOIN omoccurpoints p on p.occid = o.occid
+		WHERE collid IN(?) and p.occid IS NULL and verbatimCoordinates IS NOT NULL';
+		$retArr['noCoord_verbatim'] = QueryUtil::tryExecuteQuery(
+			$this->conn,
+			$noCoordsVerbatimSql,
+			[$this->collid]
+		)->fetch_object()->cnt;
+
+		$retArr['noCoord_noVerbatim'] = $retArr['noCoord'] - $retArr['noCoord_verbatim'];
+
 		return $retArr;
 	}
 
@@ -666,7 +662,7 @@ class OccurrenceCleaner extends Manager{
 				return $GLOBALS['LANG']['STATE_PROVINCE_DOES_NOT_MATCH_COORDS'];
 			case self::STATE_PROVINCE_VERIFIED:
 				return $GLOBALS['LANG']['COUNTY_DOES_NOT_MATCH_COORDS'];
-			default: 
+			default:
 				return $GLOBALS['LANG']['INVALID_RANK'];
 		}
 	}
@@ -748,9 +744,9 @@ class OccurrenceCleaner extends Manager{
 				SELECT o.occid, country, stateProvince, county from omoccurrences o
 				join omoccurverification as ov on ov.occid = o.occid
 				where ranking = -1 and ov.category = "coordinate" and collid = ?
-			) as missing_coords on 
-			missing_coords.country = g50.geoterm and 
-			missing_coords.stateProvince = g60.geoterm and 
+			) as missing_coords on
+			missing_coords.country = g50.geoterm and
+			missing_coords.stateProvince = g60.geoterm and
 			missing_coords.county = g70.geoterm)';
 
 		$rs = QueryUtil::executeQuery($this->conn, $sql, [self::HAS_POLYGON_FAILED_TO_VERIFY, $this->collid ]);
@@ -763,8 +759,8 @@ class OccurrenceCleaner extends Manager{
 		bool $populateStateProvince = false,
 		bool $populateCounty = false,
 	) {
-		// Does no need offset because occurrences that get pulled out will get saved to 
-		// omoccurverification table which this query is doing a not in select of so it can 
+		// Does no need offset because occurrences that get pulled out will get saved to
+		// omoccurverification table which this query is doing a not in select of so it can
 		// be iterated through with just a function call
 		$coord_query = 'SELECT o.occid, country, stateProvince, county FROM omoccurrences o
 			LEFT JOIN omoccurverification ov ON ov.occid = o.occid AND category="coordinate"
@@ -847,11 +843,11 @@ class OccurrenceCleaner extends Manager{
 				$occid_arr[$row->occid]['county'] = $row->county;
 				$occid_arr[$row->occid]['populatedCounty'] = true;
 			}
-			
+
 			// Build Notes Field
-			$occid_arr[$row->occid]['notes'] = 'Coordinate Verified to: ' . 
-				$row->country . ' | ' . 
-				$row->stateProvince . ' | ' . 
+			$occid_arr[$row->occid]['notes'] = 'Coordinate Verified to: ' .
+				$row->country . ' | ' .
+				$row->stateProvince . ' | ' .
 				$row->county;
 
 			// Determine Verification Level
@@ -883,12 +879,12 @@ class OccurrenceCleaner extends Manager{
 		$last_occid = array_key_last($occid_arr);
 		foreach($occid_arr as $occid => $occurrence) {
 			$values = [
-				$occid, 
-				'"coordinate"', 
-				$occurrence['rank'] ?? self::UNVERIFIABLE_NO_POLYGON, 
-				'"geographicthesaurus"', 
+				$occid,
+				'"coordinate"',
+				$occurrence['rank'] ?? self::UNVERIFIABLE_NO_POLYGON,
+				'"geographicthesaurus"',
 				$GLOBALS['SYMB_UID'],
-				array_key_exists('notes', $occurrence) ? '"' . $occurrence['notes'] .'"': 'NULL' 
+				array_key_exists('notes', $occurrence) ? '"' . $occurrence['notes'] .'"': 'NULL'
 			];
 
 			$batch_verification .= '(' . implode(',', $values) . ')';

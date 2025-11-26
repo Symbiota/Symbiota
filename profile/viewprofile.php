@@ -2,9 +2,10 @@
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
 include_once($SERVER_ROOT.'/classes/Person.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/profile/viewprofile.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT.'/content/lang/profile/viewprofile.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/profile/viewprofile.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('profile/viewprofile');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $userId = array_key_exists('userid', $_REQUEST) ? filter_var($_REQUEST['userid'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -153,8 +154,10 @@ if($isEditor){
 				<ul>
 					<?php
 					if($FLORA_MOD_IS_ACTIVE){
+						$excludeParent = 0;
+						if(!empty($_REQUEST['excludeparent'])) $excludeParent = $_REQUEST['excludeparent'];
 						?>
-						<li><a href="../checklists/checklistadminmeta.php?userid=<?= $userId; ?>"><?= $LANG['SPEC_CHECKLIST'] ?></a></li>
+						<li><a href="../checklists/checklistadminmeta.php?userid=<?= $userId . ($excludeParent ? '&excludeparent=' . $excludeParent : ''); ?>"><?= $LANG['SPEC_CHECKLIST'] ?></a></li>
 						<?php
 					}
 					?>

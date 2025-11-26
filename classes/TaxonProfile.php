@@ -785,7 +785,9 @@ class TaxonProfile extends Manager {
 	//Misc functions
 	private function getChildrenClid($clid){
 		$clidArr = array($clid);
-		$sqlBase = 'SELECT clidchild FROM fmchklstchildren WHERE clid != clidchild AND clid IN(';
+		$sqlBase = 'SELECT ch.clidchild
+			FROM fmchklstchildren ch INNER JOIN fmchecklists cl ON ch.clidchild = cl.clid
+			WHERE (cl.type != "excludespp") AND (ch.clid != ch.clidchild) AND ch.clid IN(';
 		$sql = $sqlBase.$clid.')';
 		do{
 			$childStr = '';
@@ -1044,7 +1046,9 @@ class TaxonProfile extends Manager {
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$this->langArr[strtolower($r->langname)] = $r->langid;
-			$this->langArr[strtolower($r->iso639_1)] = $r->langid;
+			if (!empty($r->iso639_1)) {
+				$this->langArr[strtolower($r->iso639_1)] = $r->langid;
+			}
 		}
 		$rs->free();
 	}

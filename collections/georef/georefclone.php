@@ -1,9 +1,11 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceGeorefTools.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/georef/georefclone');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/collections/georef/georefclone.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/georef/georefclone.en.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/georef/georefclone.' . $LANG_TAG . '.php');
 
 $country = array_key_exists('country',$_REQUEST)?$_REQUEST['country']:'';
 $state = array_key_exists('state',$_REQUEST)?$_REQUEST['state']:'';

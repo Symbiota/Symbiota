@@ -3,8 +3,10 @@ error_reporting(E_ALL);
 ini_set('display_errors', '1');
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCleaner.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/cleaning/coordinatevalidator.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/cleaning/coordinatevalidator.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/cleaning/coordinatevalidator.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/cleaning/coordinatevalidator');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $collId = array_key_exists('collid',$_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : false;

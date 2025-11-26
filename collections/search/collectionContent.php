@@ -1,7 +1,5 @@
-<div class="specimen-header-margin">
-	<h2><?php echo $LANG['SPECIMEN_COLLECTIONS'] ?></h2>
-</div>
-	<div class="select-deselect-input">
+<div id="large-set-collection-toggling" style="text-align: center; margin-bottom: 20px;">
+	<div id="all-collection-select-deselect-input" style="display: inline-block; margin: 0 15px;" class="select-deselect-input">
 		<?php
 			$checkedStatus = $collectionSource == '' ? 'checked' : '';
 		?>
@@ -10,6 +8,22 @@
 			<?php echo $LANG['SELECT_DESELECT'] . ' <a href="' . $CLIENT_ROOT .'/collections/misc/collprofiles.php">' . htmlspecialchars($LANG['ALL_COLLECTIONS_CAP'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>'; ?>
 		</label>
 	</div>
+	<div class="select-deselect-input" style="display: inline-block; margin: 0 15px;">
+		<input data-chip="<?php echo $LANG['ALL_SPECIMEN_COLLECTIONS'] ?>" id="dballspeccb" name="db[]" class="spec" value='allspec' type="checkbox" onclick="selectAllSpec(this);" <?php echo ($collectionSource == '' || $collectionSource == 'allspec') ? 'checked' : ''; ?> />
+		<label for="dballspeccb">
+			<?php echo $LANG['SELECT_DESELECT_ALL_SPECIMENS']; ?>
+		</label>
+	</div>
+	<div class="select-deselect-input" style="display: inline-block; margin: 0 15px;">
+		<input data-chip="<?php echo $LANG['ALL_OBSERVATION_COLLECTIONS'] ?>" id="dballobscb" name="db[]" class="obs" value='allobs' type="checkbox" onclick="selectAllObs(this);" <?php echo ($collectionSource == 'allobs') ? 'checked' : ''; ?> />
+		<label for="dballobscb">
+			<?php echo $LANG['SELECT_DESELECT_ALL_OBSERVATIONS']; ?>
+		</label>
+	</div>
+</div>
+<div class="specimen-header-margin">
+	<h2><?php echo $LANG['SPECIMEN_COLLECTIONS'] ?></h2>
+</div>
 	<?php
 		$catSelArr = array();
 		$collSelArr = array();

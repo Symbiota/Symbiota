@@ -3,7 +3,9 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecUploadDirect.php');
 include_once($SERVER_ROOT.'/classes/SpecUploadFile.php');
 include_once($SERVER_ROOT.'/classes/SpecUploadDwca.php');
-include_once($SERVER_ROOT.'/content/lang/collections/admin/specupload.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/admin/specupload');
 
 header('Content-Type: text/html; charset='.$CHARSET);
 ini_set('max_execution_time', 3600);

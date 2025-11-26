@@ -2,9 +2,9 @@
 
 include_once($SERVER_ROOT.'/traits/TaxonomyTrait.php');
 include_once($SERVER_ROOT.'/classes/Manager.php');
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT . '/content/lang/classes/TaxonomyEditorManager.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT . '/content/lang/classes/TaxonomyEditorManager.en.php');
-else include_once($SERVER_ROOT . '/content/lang/classes/TaxonomyEditorManager.' . $LANG_TAG . '.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('classes/TaxonomyEditorManager');
 
 class TaxonomyEditorManager extends Manager{
 
@@ -612,7 +612,7 @@ class TaxonomyEditorManager extends Manager{
 			((array_key_exists('tradeName', $dataArr) && $dataArr['tradeName']) ? ('"' . $this->cleanInStr($processedTradeName) . '"') : '""') . ',' .
 			($dataArr['source']? '"'.$this->cleanInStr($dataArr['source']).'"':'NULL').','.
 			($dataArr['notes']?'"'.$this->cleanInStr($dataArr['notes']).'"':'NULL').','.
-			$this->cleanInStr($dataArr['securitystatus']).','.
+			($dataArr['securitystatus']? '"' . $this->cleanInStr($dataArr['securitystatus']) . '",' : '0,').
 			$GLOBALS['SYMB_UID'].',"'.
 			date('Y-m-d H:i:s').'")';
 		$insertStatus = false;

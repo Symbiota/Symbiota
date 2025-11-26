@@ -90,15 +90,5 @@ class ImageDetailManager extends Manager {
 		}
 		return $retStr;
 	}
-
-	public function echoCreatorSelect($userId = 0){
-		$sql = "SELECT u.uid, CONCAT_WS(', ',u.lastname,u.firstname) AS fullname ".
-			"FROM users u ORDER BY u.lastname, u.firstname ";
-		$result = $this->conn->query($sql);
-		while($row = $result->fetch_object()){
-			echo "<option value='".$row->uid."' ".($row->uid == $userId?"SELECTED":"").">".$row->fullname."</option>\n";
-		}
-		$result->free();
-	}
 }
 ?>

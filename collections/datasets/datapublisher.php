@@ -3,9 +3,10 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverPublisher.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCollectionProfile.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/datasets/datapublisher.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/datasets/datapublisher.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/datasets/datapublisher.en.php');
+Language::load('collections/datasets/datapublisher');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $collid = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0; // @TODO collid is really coming from db in the searchvar attribute of the request, right? So it'll always be incorrect here?

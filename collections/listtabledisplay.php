@@ -1,9 +1,10 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceListManager.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/listtabledisplay.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT.'/content/lang/collections/listtabledisplay.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/listtabledisplay.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/listtabledisplay');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $page = array_key_exists('page',$_REQUEST) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
@@ -96,8 +97,10 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 										<option value=""></option>
 										<?php
 										$sortFields = array('c.collectionname' => $LANG['COLLECTION'], 'o.catalogNumber' => $LANG['CATALOG_NUMBER'], 'o.family' => $LANG['FAMILY'], 'o.sciname' => $LANG['SCINAME'], 'o.recordedBy' => $LANG['COLLECTOR'],
-											'o.recordNumber' => $LANG['NUMBER'], 'o.eventDate' => $LANG['EVENT_DATE'], 'o.country' => $LANG['COUNTRY'], 'o.StateProvince' => $LANG['STATE_PROVINCE'], 'o.county' => $LANG['COUNTY'], 'o.minimumElevationInMeters' => $LANG['ELEVATION'],
-											'paleo.formation' => (isset($LANG['FORMATION']) ? $LANG['FORMATION'] : 'Formation'), 'paleo.earlyInterval' => (isset($LANG['EARLY_INT']) ? $LANG['EARLY_INT'] : 'Early Interval'), 'paleo.lateInterval' => (isset($LANG['LATE_INT']) ? $LANG['LATE_INT'] : 'Late IntervaL'));
+										'o.recordNumber' => $LANG['NUMBER'], 'o.eventDate' => $LANG['EVENT_DATE'], 'o.country' => $LANG['COUNTRY'], 'o.StateProvince' => $LANG['STATE_PROVINCE'], 'o.county' => $LANG['COUNTY'], 'o.minimumElevationInMeters' => $LANG['ELEVATION']);
+										$sortPaleoFields = array('paleo.formation' => (isset($LANG['FORMATION']) ? $LANG['FORMATION'] : 'Formation'), 'paleo.earlyInterval' => (isset($LANG['EARLY_INT']) ? $LANG['EARLY_INT'] : 'Early Interval'), 'paleo.lateInterval' => (isset($LANG['LATE_INT']) ? $LANG['LATE_INT'] : 'Late IntervaL'));
+										if (!empty($GLOBALS['ACTIVATE_PALEO']))
+											$sortFields = array_merge($sortFields, $sortPaleoFields);
 										foreach($sortFields as $k => $v){
 											echo '<option value="'.$k.'" '.($k==$sortField1?'SELECTED':'').'>'.$v.'</option>';
 										}

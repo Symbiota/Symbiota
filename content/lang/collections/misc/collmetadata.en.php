@@ -58,6 +58,10 @@ $LANG['ACCESS_DEF'] = 'Information or a URL link to page with details explaining
 $LANG['DATASET_TYPE'] = 'Dataset Type';
 $LANG['PRES_SPECS'] = 'Preserved Specimens';
 $LANG['FOSSIL_SPECS'] = 'Fossil Specimens';
+$LANG['FOSSIL_WARN_1'] = 'Selecting “Fossil Specimen” will activate the Paleo Module for this collection and set the default value to “FossilSpecimen” for';
+$LANG['FOSSIL_WARN_2'] = 'Only choose this option if you intend to use this Collection Profile to catalog fossils.';
+$LANG['FOSSIL_WARN_3'] = 'Additional features may require activation to make your fossil specimen data publicly discoverable in this portal.
+						Contact your Portal Manager for more information.';
 $LANG['OBSERVATIONS'] = 'Observations';
 $LANG['PERS_OBS_MAN'] = 'Personal Observation Management';
 $LANG['MORE_COL_TYPE'] = 'More information about Collection Type';

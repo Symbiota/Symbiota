@@ -29,7 +29,6 @@ $LANG['URL_TO_SOURCE'] = 'URL vers le projet source. À utiliser lors de la cré
 $LANG['SOURCE_URL'] = 'URL source';
 $LANG['COPYRIGHT'] = 'Droits d\'Auteur';
 $LANG['OCC_REC_NUM'] = 'Enregistrement d\'Occurrence #';
-$LANG['LINK_TO_OCC'] = 'Lien vers l\'enregistrement d\'occurrence';
 $LANG['LOCALITY'] = 'Localité';
 $LANG['NOTES'] = 'Notes';
 $LANG['UPLOAD_IMAGE'] = 'Télécharger du multimédia';

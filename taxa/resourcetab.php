@@ -1,7 +1,10 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/content/lang/taxa/index.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/TaxonProfile.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('taxa/index');
+
 header('Content-Type: text/html; charset='.$CHARSET);
 
 $tid = $_REQUEST['tid'];
