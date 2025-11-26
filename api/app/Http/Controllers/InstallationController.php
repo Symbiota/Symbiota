@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PortalIndex;
 use Illuminate\Http\Request;
+use App\Helpers\Helper;
 
 class InstallationController extends Controller{
 	/**
@@ -116,10 +117,11 @@ class InstallationController extends Controller{
 		$portalObj = null;
 		if(isset($_ENV['DEFAULT_TITLE']) && isset($_ENV['PORTAL_GUID'])){
 			$portalObj['status'] = true;
+			$portalObj['statusCode'] = 200;
 			$portalObj['portalName'] = $_ENV['DEFAULT_TITLE'];
 			$portalObj['guid'] = $_ENV['PORTAL_GUID'];
 			$portalObj['managerEmail'] = $_ENV['ADMIN_EMAIL'];
-			$portalObj['urlRoot'] = $this->getServerDomain().$_ENV['CLIENT_ROOT'];
+			$portalObj['urlRoot'] = Helper::getDomain().$_ENV['CLIENT_ROOT'];
 			$portalObj['symbiotaVersion'] = $_ENV['SYMBIOTA_VERSION'];
 			$portalObj['apiVersion'] = $_ENV['API_VERSION'];
 		}
@@ -180,11 +182,11 @@ class InstallationController extends Controller{
 			if($baseUrl = $request->input('endpoint')){
 				//Insert portal
 				$urlPing = $baseUrl.'/api/v2/installation/status';
-				if($remote = $this->getAPIResponce($urlPing)){
+				if($remote = Helper::getAPIResponce($urlPing)){
 					if($id == $remote['guid']){
 						//Shake back just to makes sure remote knows about self
-						$remoteHandshake = $baseUrl.'/api/v2/installation/'.$_ENV['PORTAL_GUID'].'/handshake?endpoint='.htmlentities($this->getServerDomain().$_ENV['CLIENT_ROOT']);
-						$this->getAPIResponce($remoteHandshake, true);
+						$remoteHandshake = $baseUrl . '/api/v2/installation/' . $_ENV['PORTAL_GUID'].'/handshake?endpoint=' . htmlentities(Helper::getDomain() . $_ENV['CLIENT_ROOT']);
+						Helper::getAPIResponce($remoteHandshake, true);
 						try {
 							//Register remote
 							$portalObj = PortalIndex::create($remote);
@@ -193,7 +195,7 @@ class InstallationController extends Controller{
 							unset($responseArr['error']);
 							//Register all portals listed within remote, if not alreay registered
 							$urlInstallation = $baseUrl.'/api/v2/installation';
-							if($remoteInstallationArr = $this->getAPIResponce($urlInstallation)){
+							if($remoteInstallationArr = Helper::getAPIResponce($urlInstallation)){
 								$currentRegistered = 0;
 								$newRegistration = 0;
 								foreach($remoteInstallationArr['results'] as $portal){
@@ -201,11 +203,11 @@ class InstallationController extends Controller{
 									elseif($portal['guid'] != $_ENV['PORTAL_GUID']){
 										//If remote exists, add by retriving info directly from source
 										$remotePing = $portal['urlRoot'].'/api/v2/installation/status';
-										if($newRemote = $this->getAPIResponce($remotePing)){
+										if($newRemote = Helper::getAPIResponce($remotePing)){
 											PortalIndex::create($newRemote);
 											//Handshake remote installation but don't wait for a response because propagation across a large network can take awhile
-											$urlHandshake = $portal['urlRoot'].'/api/v2/installation/'.$_ENV['PORTAL_GUID'].'/handshake?endpoint='.htmlentities($this->getServerDomain().$_ENV['CLIENT_ROOT']);
-											$this->getAPIResponce($urlHandshake, true);
+											$urlHandshake = $portal['urlRoot'] . '/api/v2/installation/' . $_ENV['PORTAL_GUID'] . '/handshake?endpoint=' . htmlentities(Helper::getDomain() . $_ENV['CLIENT_ROOT']);
+											Helper::getAPIResponce($urlHandshake, true);
 											$newRegistration++;
 										}
 									}
@@ -337,40 +339,5 @@ class InstallationController extends Controller{
 		PortalIndex::findOrFail($id)->delete();
 		return response('Portal Index deleted successfully', 200);
 		*/
-	}
-
-	//Helper functions
-	private function getAPIResponce($url, $asyc = false){
-		$resJson = false;
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch, CURLOPT_URL, $url);
-		//curl_setopt($ch, CURLOPT_HTTPGET, true);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-		if($asyc) curl_setopt($ch, CURLOPT_TIMEOUT_MS, 500);
-		$resJson = curl_exec($ch);
-		if(!$resJson){
-			$this->errorMessage = 'FATAL CURL ERROR: '.curl_error($ch).' (#'.curl_errno($ch).')';
-			return false;
-			//$header = curl_getinfo($ch);
-		}
-		curl_close($ch);
-		return json_decode($resJson,true);
-	}
-
-	private function getServerDomain(){
-		$domain = 'http://';
-		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $domain = 'https://';
-		if(!empty($GLOBALS['SERVER_HOST'])){
-			if(substr($GLOBALS['SERVER_HOST'], 0, 4) == 'http') $domain = $GLOBALS['SERVER_HOST'];
-			else $domain .= $GLOBALS['SERVER_HOST'];
-		}
-		else $domain .= $_SERVER['SERVER_NAME'];
-		if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443 && !strpos($domain, ':'.$_SERVER['SERVER_PORT'])){
-			$domain .= ':'.$_SERVER['SERVER_PORT'];
-		}
-		$domain = filter_var($domain, FILTER_SANITIZE_URL);
-		return $domain;
 	}
 }

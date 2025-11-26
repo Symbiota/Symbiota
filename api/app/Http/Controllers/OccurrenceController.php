@@ -791,7 +791,7 @@ class OccurrenceController extends Controller {
 					//Get remote occurrence data
 					$urlRoot = PortalIndex::where('portalID', $sourcePortalID)->value('urlRoot');
 					$url = $urlRoot.'/api/v2/occurrence/'.$remoteOccid;
-					if($remoteOccurrence = $this->getAPIResponce($url)){
+					if($remoteOccurrence = Helper::getAPIResponce($url)){
 						$remoteOccurrence['occid'] = $occid;
 						$remoteCollid = $remoteOccurrence['collid'];
 						$sourceDateLastModified = $remoteOccurrence['dateLastModified'];
@@ -851,25 +851,6 @@ class OccurrenceController extends Controller {
 			elseif ($roles['role'] == 'CollEditor' && $roles['tablePK'] == $collid) return true;
 		}
 		return false;
-	}
-
-	protected function getAPIResponce($url, $asyc = false) {
-		$resJson = false;
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch, CURLOPT_URL, $url);
-		//curl_setopt($ch, CURLOPT_HTTPGET, true);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-		if ($asyc) curl_setopt($ch, CURLOPT_TIMEOUT_MS, 500);
-		$resJson = curl_exec($ch);
-		if (!$resJson) {
-			$this->errorMessage = 'FATAL CURL ERROR: ' . curl_error($ch) . ' (#' . curl_errno($ch) . ')';
-			return false;
-			//$header = curl_getinfo($ch);
-		}
-		curl_close($ch);
-		return json_decode($resJson, true);
 	}
 
 	private function getOccurrence($id) {

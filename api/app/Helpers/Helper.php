@@ -22,6 +22,25 @@ class Helper {
 		return $domain;
 	}
 
+	public static function getAPIResponce($url, $asyc = false) {
+		$resJson = false;
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_URL, $url);
+		//curl_setopt($ch, CURLOPT_HTTPGET, true);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		if ($asyc) curl_setopt($ch, CURLOPT_TIMEOUT_MS, 500);
+		$resJson = curl_exec($ch);
+		if (!$resJson) {
+			//$resJson = '{FATAL CURL ERROR: ' . curl_error($ch) . ' (#' . curl_errno($ch) . ')}';
+			return false;
+			//$header = curl_getinfo($ch);
+		}
+		curl_close($ch);
+		return json_decode($resJson, true);
+	}
+
 	public static function getRightsHtml($inputStr){
 		$rightsOutput = '';
 		if($inputStr){
