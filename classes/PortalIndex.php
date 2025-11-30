@@ -36,10 +36,10 @@ class PortalIndex extends OmCollections{
 		$typeStr = 's';
 		if($portalIdentifier){
 			if(is_numeric($portalIdentifier)){
-				$sql .= 'WHERE portalID = '.$portalIdentifier;
+				$sql .= 'WHERE portalID = ?';
 				$typeStr = 'i';
 			}
-			else $sql .= 'WHERE guid = "'.$portalIdentifier.'" ';
+			else $sql .= 'WHERE guid = ?';
 		}
 		else $sql .= 'ORDER BY portalName';
 		if($stmt = $this->conn->prepare($sql)){
@@ -65,6 +65,50 @@ class PortalIndex extends OmCollections{
 			$rs->free();
 		}
 		return $retArr;
+	}
+
+	public function updateInstallation($portalID, $remotePath){
+		$status = false;
+		$remoteArr = $this->getAPIResponce($remotePath . '/api/v2/installation/status');
+		if(!$remoteArr) $remoteArr = $this->getAPIResponce($remotePath . '/api/v2/installation/ping'); //Target portal is prior to version Symbiota 3.4
+		if($remoteArr){
+			if(!empty($remoteArr['status'])){
+				$apiVersion = '';
+				if(!empty($remoteArr['apiVersion'])) $apiVersion = $remoteArr['apiVersion'];
+				$inputArr = array('portalName' => $remoteArr['portalName'], 'guid' => $remoteArr['guid'], 'managerEmail' => $remoteArr['managerEmail'],
+					'symbiotaVersion' => $remoteArr['symbiotaVersion'], 'apiVersion' => $apiVersion, 'statusCode' => 1, 'lastContact' => date('Y-m-d H:i:s'));
+				$status = $this->updatePortalIndex($portalID, $inputArr);
+			}
+		}
+		return $status;
+	}
+
+	private function updatePortalIndex($portalID, $inputArr){
+		$status = false;
+		if($portalID){
+			$fieldArr = array('portalName' => 's', 'symbiotaVersion' => 's', 'apiVersion' => 's', 'guid' => 's', 'manager' => 's', 'managerEmail' => 's',
+				'statusCode' => 's', 'statusRemarks' => 's', 'lastContact' => 's', 'modifiedTimestamp' => 's');
+			$sqlFrag = '';
+			$paramArr = array();
+			$typeStr = '';
+			foreach($inputArr as $fieldName => $value){
+				$sqlFrag .= $fieldName . ' = ?, ';
+				$paramArr[] = $value;
+				$typeStr .= $fieldArr[$fieldName];
+			}
+			$paramArr[] = $portalID;
+			$typeStr .= 'i';
+			$sql = 'UPDATE portalindex SET ' . trim($sqlFrag, ', ') . ', modifiedTimestamp = NOW() WHERE (portalID = ?)';
+			if($stmt = $this->conn->prepare($sql)) {
+				$stmt->bind_param($typeStr, ...$paramArr);
+				$stmt->execute();
+				if($stmt->affected_rows || !$stmt->error) $status = true;
+				else $this->errorMessage = $stmt->error;
+				$stmt->close();
+			}
+			else $this->errorMessage = $this->conn->error;
+		}
+		return $status;
 	}
 
 	public function getCollectionList($urlRoot, $collID=''){
@@ -163,6 +207,10 @@ class PortalIndex extends OmCollections{
 			//Handshake from local to remote
 			$pingUrl = $remotePath.'api/v2/installation/status';
 			$remoteArr = $this->getAPIResponce($pingUrl);
+			if(!$remoteArr){
+				$pingUrl = $remotePath.'api/v2/installation/ping';		//Target portal is prior to version Symbiota 3.4
+				$remoteArr = $this->getAPIResponce($pingUrl);
+			}
 			if($remoteArr){
 				if($remoteArr['guid']){
 					$handShakeUrl = GeneralUtil::getDomain().$GLOBALS['CLIENT_ROOT'].'/api/v2/installation/'.$remoteArr['guid'].'/touch?endpoint='.$remoteArr['urlRoot'];

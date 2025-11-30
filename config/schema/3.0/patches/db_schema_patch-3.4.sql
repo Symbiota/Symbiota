@@ -402,6 +402,11 @@ ALTER TABLE `uploadspectemp`
   DROP COLUMN `paleojson`;
 
 
+ALTER TABLE `portalindex` 
+  ADD COLUMN `statusCode` INT(3) NULL AFTER `notes`,
+  ADD COLUMN `statusRemarks` VARCHAR(45) NULL AFTER `statusCode`;
+
+
 ALTER TABLE `specprocessorrawlabels`
   CHANGE COLUMN `rawstr` `rawStr` TEXT NOT NULL ,
   CHANGE COLUMN `processingvariables` `processingVariables` VARCHAR(250) NULL DEFAULT NULL ,
