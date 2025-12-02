@@ -1,5 +1,19 @@
 /*
 Place your CSS customizations here.
 This stylesheet is defined last and will override all previously loaded sheets. You may reference variables defined in variables.css 
- */
+*/
+
+/* Universal */
  
+/* quicksearch */
+
+form#quicksearch{
+    display: block;
+    margin-top: 0em;
+    margin-block-end: 1em;
+    unicode-bidi: isolate;
+}
+
+#quicksearchbutton{
+	display: inline-block;
+}
