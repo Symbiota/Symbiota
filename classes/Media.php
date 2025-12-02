@@ -401,7 +401,7 @@ class Media {
 		}
 
 		if(!self::getAllowedMime($clean_post_arr['format'])) {
-			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $file['type']);
+			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $clean_post_arr['format']);
 		}
 
 		$keyValuePairs = [
@@ -479,6 +479,11 @@ class Media {
 			if(!self::isValidFile($file) && ($post_arr['copytoserver'] ?? false)) {
 				$file = UploadUtil::downloadFromRemote($post_arr['originalUrl'], $GLOBALS['ALLOWED_MEDIA_MIME_TYPES']);
 				$createdFilepaths[] = $file['tmp_name'];
+			} else {
+				$pathInfo =	pathinfo($file['name']);
+				$pathInfo['filename'] = self::cleanFileName($pathInfo['filename']);
+				$file['name'] = $pathInfo['filename'] . '.' . $pathInfo['extension'];
+				$file['full_path'] = $file['name'];
 			}
 
 			if(self::isValidFile($file)) {

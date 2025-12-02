@@ -118,6 +118,9 @@ $GEO_JSON_LAYERS = [];
 // Do not turn off for production portals
 $HTTPS_ONLY = true;
 
+// Link to portal or organization donation page
+$DONATE_LINK = '';
+
 //Base code shared by all pages; leave as is
 include_once('symbbase.php');
 /* --DO NOT ADD ANY EXTRA SPACES BELOW THIS LINE-- */
