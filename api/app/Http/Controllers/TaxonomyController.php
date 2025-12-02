@@ -357,6 +357,7 @@ class TaxonomyController extends Controller {
 				->where('t.tid', $parenttid)
 				->orWhere('e.tid', $parenttid)
 				->where('t.rankid', 140)
+				->where('e.taxauthid', 1)
 				->first();
 		}
 		if($taxon->rankID == 140){
