@@ -22,7 +22,7 @@ class TaxonomyController extends Controller {
 	 * @OA\Get(
 	 *	 path="/api/v2/taxonomy",
 	 *	 operationId="/api/v2/taxonomy",
-	 *	 tags={""},
+	 *	 tags={"Taxonomy"},
 	 *	 @OA\Parameter(
 	 *		 name="taxon",
 	 *		 in="query",
@@ -90,7 +90,7 @@ class TaxonomyController extends Controller {
 				//Exact match
 				$taxaModel->where('sciname', $request->taxon);
 			}
-	
+
 			$fullCnt = $taxaModel->count();
 			$result = $taxaModel->skip($offset)->take($limit)->get()->transform(function($taxon){
 				return $taxon->makeHidden('sciName');
@@ -117,7 +117,7 @@ class TaxonomyController extends Controller {
 	 * @OA\Get(
 	 *	 path="/api/v2/taxonomy/{identifier}",
 	 *	 operationId="/api/v2/taxonomy/identifier",
-	 *	 tags={""},
+	 *	 tags={"Taxonomy"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
@@ -179,28 +179,6 @@ class TaxonomyController extends Controller {
 
 		if (!$taxonObj->count()) $taxonObj = ['status' => false, 'error' => 'Unable to locate inventory based on identifier'];
 		return response()->json($taxonObj);
-	}
-
-
-	//Support functions
-	public static function getSynonyms(Int $tid) {
-		$synonymResult = DB::table('taxstatus as ts')
-			->join('taxstatus as s', 'ts.tidaccepted', '=', 's.tidaccepted')
-			->where('ts.tid', $tid)->where('ts.taxauthid', 1)->where('s.taxauthid', 1)->pluck('s.tid');
-		return $synonymResult->toArray();
-	}
-
-	public static function getChildren(Int $tid) {
-		//Direct accepted children only
-		$childrenResult = DB::table('taxstatus as c')
-			->join('taxstatus as a', 'c.parenttid', '=', 'a.tidaccepted')
-			->where('a.tid', $tid)->where('c.taxauthid', 1)->where('a.taxauthid', 1)->whereColumn('c.tid', 'c.tidaccepted')->pluck('c.tid');
-		/*
-		SELECT c.tid
-		FROM taxstatus c INNER JOIN taxstatus a ON c.parenttid = a.tidaccepted
-		WHERE a.tid = 61943 AND c.taxauthid = 1 AND a.taxauthid = 1 AND c.tid = c.tidaccepted;
-		*/
-		return $childrenResult->toArray();
 	}
 
 	/**
@@ -343,39 +321,34 @@ class TaxonomyController extends Controller {
 	 * )
 	 */
 	public function create(Request $request){
-		$authenticatedRoles = $this->authenticate($request)['roles'] ?? [];
-		$extractedRoles = array_map(function($elem){
-			return $elem['role'];
-		}, $authenticatedRoles);
-		$rolesPermittedToCreateCollections = array('CollAdmin', 'SuperAdmin');
-		$qualifyingRoles = array_intersect($extractedRoles, $rolesPermittedToCreateCollections);
+		if($this->authenticate($request)){
+			if($this->isAuthorized('SuperAdmin') || $this->isAuthorized('Taxonomy')){
+				try {
+					$inputData = $request->all();
+					$inputData['cultivarEpithet'] = preg_replace('/(^[\'"“”]+)|([\'"“”]+$)/u', '', $inputData['cultivarEpithet']);
+					$inputData['tradeName'] = strtoupper($inputData['tradeName']);
+					$taxon = Taxonomy::create($inputData);
+					$family = $this->getFamily($taxon, $request->parenttid);
 
-		if(count($qualifyingRoles)>0){
-			try {
-				$inputData = $request->all();
-				$inputData['cultivarEpithet'] = preg_replace('/(^[\'"“”]+)|([\'"“”]+$)/u', '', $inputData['cultivarEpithet']);
-				$inputData['tradeName'] = strtoupper($inputData['tradeName']);
-				$taxon = Taxonomy::create($inputData);
-				$family = $this->getFamily($taxon, $request->parenttid);
+					$taxstatus = TaxonomyStatus::create([
+						'tid' => $taxon->tid,
+						'tidaccepted' => $taxon->tid,
+						'taxauthid' => 1, // @TODO is this sufficient?
+						'family' => $family->sciname,
+						'parenttid' => $request->parenttid,
+						'UnacceptabilityReason' => $request->UnacceptabilityReason
+					]);
+				} catch (\Exception $e) {
+					return response()->json(['error' => 'Failed to create new taxon' . $e->getMessage()], 500);
+				}
 
-				$taxstatus = TaxonomyStatus::create([
-					'tid' => $taxon->tid,
-					'tidaccepted' => $taxon->tid,
-					'taxauthid' => 1, // @TODO is this sufficient?
-					'family' => $family->sciname,
-					'parenttid' => $request->parenttid,
-					'UnacceptabilityReason' => $request->UnacceptabilityReason
-				]);
-			} catch (\Exception $e) {
-				return response()->json(['error' => 'Failed to create new taxon' . $e->getMessage()], 500);
+				return response()->json(['taxon'=>$taxon, 'taxstatus'=>$taxstatus], 200);
 			}
-
-			return response()->json(['taxon'=>$taxon, 'taxstatus'=>$taxstatus], 200);
 		}
 		return response()->json(['error' => 'Unauthorized'], 401);
 	}
-	
-	public function getFamily($taxon, $parenttid){
+
+	private function getFamily($taxon, $parenttid){
 		$family = '';
 		if($taxon->rankID > 140){
 			$family = DB::table('taxa as t')
@@ -390,5 +363,33 @@ class TaxonomyController extends Controller {
 			$family = $taxon->sciName;
 		}
 		return $family;
+	}
+
+	//Static support functions
+	public static function getSynonyms(Int $tid) {
+		$synonymResult = DB::table('taxstatus as ts')
+			->join('taxstatus as s', 'ts.tidaccepted', '=', 's.tidaccepted')
+			->where('ts.tid', $tid)
+			->where('ts.taxauthid', 1)
+			->where('s.taxauthid', 1)
+			->pluck('s.tid');
+		return $synonymResult->toArray();
+	}
+
+	public static function getChildren(Int $tid) {
+		//Direct accepted children only
+		$childrenResult = DB::table('taxstatus as c')
+			->join('taxstatus as a', 'c.parenttid', '=', 'a.tidaccepted')
+			->where('a.tid', $tid)
+			->where('c.taxauthid', 1)
+			->where('a.taxauthid', 1)
+			->whereColumn('c.tid', 'c.tidaccepted')
+			->pluck('c.tid');
+		/*
+		 SELECT c.tid
+		 FROM taxstatus c INNER JOIN taxstatus a ON c.parenttid = a.tidaccepted
+		 WHERE a.tid = 61943 AND c.taxauthid = 1 AND a.taxauthid = 1 AND c.tid = c.tidaccepted;
+		 */
+		return $childrenResult->toArray();
 	}
 }

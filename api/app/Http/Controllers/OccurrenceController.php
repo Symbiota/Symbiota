@@ -26,7 +26,7 @@ class OccurrenceController extends Controller {
 	 * @OA\Get(
 	 *	 path="/api/v2/occurrence",
 	 *	 operationId="/api/v2/occurrence",
-	 *	 tags={""},
+	 *	 tags={"Occurrence"},
 	 *	 @OA\Parameter(
 	 *		 name="collid",
 	 *		 in="query",
@@ -328,7 +328,7 @@ class OccurrenceController extends Controller {
 	 * @OA\Get(
 	 *	 path="/api/v2/occurrence/{identifier}",
 	 *	 operationId="/api/v2/occurrence/identifier",
-	 *	 tags={""},
+	 *	 tags={"Occurrence"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
@@ -387,7 +387,7 @@ class OccurrenceController extends Controller {
 	 * @OA\Get(
 	 *	 path="/api/v2/occurrence/{identifier}/identification",
 	 *	 operationId="/api/v2/occurrence/identifier/identification",
-	 *	 tags={""},
+	 *	 tags={"Occurrence"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
@@ -425,7 +425,7 @@ class OccurrenceController extends Controller {
 	 * @OA\Get(
 	 *	 path="/api/v2/occurrence/{identifier}/media",
 	 *	 operationId="/api/v2/occurrence/identifier/media",
-	 *	 tags={""},
+	 *	 tags={"Occurrence"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
@@ -461,15 +461,156 @@ class OccurrenceController extends Controller {
 		return response()->json($media);
 	}
 
-	//Write funcitons
+	/**
+	 * @OA\Post(
+	 *	 path="/api/v2/occurrence/{identifier}",
+	 *	 operationId="insertOccurrence",
+	 *	 tags={"Occurrence"},
+	 *	 @OA\Parameter(
+	 *		 name="apiToken",
+	 *		 in="query",
+	 *		 description="API security token to authenticate POST action",
+	 *		 required=true,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\RequestBody(
+	 *		required=true,
+	 *		description="Occurrence object to be inserted",
+	 *		@OA\MediaType(
+	 *			mediaType="application/json",
+	 *			@OA\Schema(
+	 *				@OA\Property(
+	 *					property="basisOfRecord",
+	 *					type="string",
+	 *					description="The specific nature of the data record (PreservedSpecimen, fossilSpecimen, HumanObservation, MachineObservation, etc)",
+	 *					maxLength=32
+	 *				),
+	 *				@OA\Property(
+	 *					property="catalogNumber",
+	 *					type="string",
+	 *					description="Primary catalog number",
+	 *					maxLength=32
+	 *				),
+	 *				@OA\Property(
+	 *					property="sciname",
+	 *					type="string",
+	 *					description="Scientific name, without the author",
+	 *					maxLength=255
+	 *				),
+	 *				@OA\Property(
+	 *					property="scientificNameAuthorship",
+	 *					type="string",
+	 *					description="The authorship information of scientific name",
+	 *					maxLength=255
+	 *				),
+	 *				@OA\Property(
+	 *					property="family",
+	 *					type="string",
+	 *					description="Taxonomic family of the scientific name",
+	 *					maxLength=255
+	 *				),
+	 *				@OA\Property(
+	 *					property="recordedBy",
+	 *					type="string",
+	 *					description="Primary collector or observer",
+	 *					maxLength=255
+	 *				),
+	 *				@OA\Property(
+	 *					property="recordNumber",
+	 *					type="string",
+	 *					description="Identifier given at the time occurrence was recorded; typically the personal identifier of the primary collector or observer",
+	 *					maxLength=45
+	 *				),
+	 *				@OA\Property(
+	 *					property="associatedCollectors",
+	 *					type="string",
+	 *					description="Secondary collectors/observers",
+	 *					maxLength=255
+	 *				),
+	 *				@OA\Property(
+	 *					property="eventDate",
+	 *					type="string",
+	 *					description="Date the occurrence was collected or observed, or earliest date if a range was provided"
+	 *				),
+	 *				@OA\Property(
+	 *					property="eventDate2",
+	 *					type="string",
+	 *					description="Last date the occurrence was collected or observed. Used when a date range is provided"
+	 *				),
+	 *				@OA\Property(
+	 *					property="verbatimEventDate",
+	 *					type="string",
+	 *					description="Verbatim Event Date"
+	 *				),
+	 *				@OA\Property(
+	 *					property="habitat",
+	 *					type="string",
+	 *					description="Habitat"
+	 *				),
+	 *				@OA\Property(
+	 *					property="substrate",
+	 *					type="string",
+	 *					description="Substrate"
+	 *				),
+	 *				@OA\Property(
+	 *					property="eventID",
+	 *					type="string",
+	 *					description="Event ID"
+	 *				),
+	 *				@OA\Property(
+	 *					property="locationID",
+	 *					type="string",
+	 *					description="Location ID"
+	 *				),
+	 *				@OA\Property(
+	 *					property="country",
+	 *					type="string",
+	 *					description="The name of the country or major administrative unit",
+	 *					maxLength=64
+	 *				),
+	 *				@OA\Property(
+	 *					property="stateProvince",
+	 *					type="string",
+	 *					description="The name of the next smaller administrative region than country (state, province, canton, department, region, etc.)",
+	 *					maxLength=255
+	 *				),
+	 *				@OA\Property(
+	 *					property="county",
+	 *					type="string",
+	 *					description="The full, unabbreviated name of the next smaller administrative region than stateProvince (county, shire, department, etc.",
+	 *					maxLength=255
+	 *				),
+	 *				@OA\Property(
+	 *					property="processingStatus",
+	 *					type="string",
+	 *					description="Processing status of the specimen record",
+	 *					maxLength=45
+	 *				),
+	 *			),
+	 *		)
+	 *	 ),
+	 *	 @OA\Response(
+	 *		 response="201",
+	 *		 description="Success: Returns JSON object of the of media record that was created"
+	 *	 ),
+	 *	 @OA\Response(
+	 *		 response="400",
+	 *		 description="Error: Bad request.",
+	 *	 ),
+	 *	 @OA\Response(
+	 *		 response="401",
+	 *		 description="Unauthorized",
+	 *	 ),
+	 * )
+	 */
 	public function insert(Request $request) {
-		if ($user = $this->authenticate($request)) {
+		if ($this->authenticate($request)) {
 			$this->validate($request, [
 				'collid' => 'required|integer'
 			]);
 			$collid = $request->input('collid');
 			//Check to see if user has the necessary permission edit/add occurrences for target collection
-			if (!$this->isAuthorized($user, $collid)) {
+			if (!$this->isAuthorized($collid)) {
 				return response()->json(['error' => 'Unauthorized to add new records to target collection (collid = ' . $collid . ')'], 401);
 			}
 			$inputArr = $request->all();
@@ -482,32 +623,212 @@ class OccurrenceController extends Controller {
 		return response()->json(['error' => 'Unauthorized'], 401);
 	}
 
+	/**
+	 * @OA\Patch(
+	 *	 path="/api/v2/occurrence/{identifier}",
+	 *	 operationId="updateOccurrence",
+	 *	 tags={"Occurrence"},
+	 *	 @OA\Parameter(
+	 *		 name="apiToken",
+	 *		 in="query",
+	 *		 description="API security token to authenticate PATCH action",
+	 *		 required=true,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="identifier",
+	 *		 in="path",
+	 *		 description="Primary key (occid), occurrenceID GUID, or record GUID (UUID) associated with target occurrence record",
+	 *		 required=true,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\RequestBody(
+	 *		required=true,
+	 *		description="Occurrence object to be updated",
+	 *		@OA\MediaType(
+	 *			mediaType="application/json",
+	 *			@OA\Schema(
+	 *				@OA\Property(
+	 *					property="basisOfRecord",
+	 *					type="string",
+	 *					description="The specific nature of the data record (PreservedSpecimen, fossilSpecimen, HumanObservation, MachineObservation, etc)",
+	 *					maxLength=32
+	 *				),
+	 *				@OA\Property(
+	 *					property="catalogNumber",
+	 *					type="string",
+	 *					description="Primary catalog number",
+	 *					maxLength=32
+	 *				),
+	 *				@OA\Property(
+	 *					property="sciname",
+	 *					type="string",
+	 *					description="Scientific name, without the author",
+	 *					maxLength=255
+	 *				),
+	 *				@OA\Property(
+	 *					property="scientificNameAuthorship",
+	 *					type="string",
+	 *					description="The authorship information of scientific name",
+	 *					maxLength=255
+	 *				),
+	 *				@OA\Property(
+	 *					property="family",
+	 *					type="string",
+	 *					description="Taxonomic family of the scientific name",
+	 *					maxLength=255
+	 *				),
+	 *				@OA\Property(
+	 *					property="recordedBy",
+	 *					type="string",
+	 *					description="Primary collector or observer",
+	 *					maxLength=255
+	 *				),
+	 *				@OA\Property(
+	 *					property="recordNumber",
+	 *					type="string",
+	 *					description="Identifier given at the time occurrence was recorded; typically the personal identifier of the primary collector or observer",
+	 *					maxLength=45
+	 *				),
+	 *				@OA\Property(
+	 *					property="associatedCollectors",
+	 *					type="string",
+	 *					description="Secondary collectors/observers",
+	 *					maxLength=255
+	 *				),
+	 *				@OA\Property(
+	 *					property="eventDate",
+	 *					type="string",
+	 *					description="Date the occurrence was collected or observed, or earliest date if a range was provided"
+	 *				),
+	 *				@OA\Property(
+	 *					property="eventDate2",
+	 *					type="string",
+	 *					description="Last date the occurrence was collected or observed. Used when a date range is provided"
+	 *				),
+	 *				@OA\Property(
+	 *					property="verbatimEventDate",
+	 *					type="string",
+	 *					description="Verbatim Event Date"
+	 *				),
+	 *				@OA\Property(
+	 *					property="habitat",
+	 *					type="string",
+	 *					description="Habitat"
+	 *				),
+	 *				@OA\Property(
+	 *					property="substrate",
+	 *					type="string",
+	 *					description="Substrate"
+	 *				),
+	 *				@OA\Property(
+	 *					property="eventID",
+	 *					type="string",
+	 *					description="Event ID"
+	 *				),
+	 *				@OA\Property(
+	 *					property="locationID",
+	 *					type="string",
+	 *					description="Location ID"
+	 *				),
+	 *				@OA\Property(
+	 *					property="country",
+	 *					type="string",
+	 *					description="The name of the country or major administrative unit",
+	 *					maxLength=64
+	 *				),
+	 *				@OA\Property(
+	 *					property="stateProvince",
+	 *					type="string",
+	 *					description="The name of the next smaller administrative region than country (state, province, canton, department, region, etc.)",
+	 *					maxLength=255
+	 *				),
+	 *				@OA\Property(
+	 *					property="county",
+	 *					type="string",
+	 *					description="The full, unabbreviated name of the next smaller administrative region than stateProvince (county, shire, department, etc.",
+	 *					maxLength=255
+	 *				),
+	 *				@OA\Property(
+	 *					property="processingStatus",
+	 *					type="string",
+	 *					description="Processing status of the specimen record",
+	 *					maxLength=45
+	 *				),
+	 *			),
+	 *		)
+	 *	 ),
+	 *	 @OA\Response(
+	 *		 response="200",
+	 *		 description="Success: Returns full JSON object of the of media record that was edited"
+	 *	 ),
+	 *	 @OA\Response(
+	 *		 response="400",
+	 *		 description="Error: Bad request.",
+	 *	 ),
+	 *	 @OA\Response(
+	 *		 response="401",
+	 *		 description="Unauthorized",
+	 *	 ),
+	 * )
+	 */
 	public function update($id, Request $request) {
-		if ($user = $this->authenticate($request)) {
+		if ($this->authenticate($request)) {
 			$occurrence = Occurrence::find($id);
 			if (!$occurrence) {
 				return response()->json(['status' => 'failure', 'error' => 'Occurrence resource not found'], 400);
 			}
-			if (!$this->isAuthorized($user, $occurrence['collid'])) {
-				return response()->json(['error' => 'Unauthorized to edit target collection (collid = ' . $occurrence['collid'] . ')'], 401);
+			if($this->isAuthorized($occurrence['collid'])) {
+				$occurrence->update($request->all());
+				return response()->json($occurrence, 200);
 			}
-			$occurrence->update($request->all());
-			return response()->json($occurrence, 200);
 		}
 		return response()->json(['error' => 'Unauthorized'], 401);
 	}
 
+	/**
+	 * @OA\Delete(
+	 *	 path="/api/v2/occurrence/{identifier}",
+	 *	 operationId="deleteOccurrence",
+	 *	 tags={"Occurrence"},
+	 *	 @OA\Parameter(
+	 *		 name="apiToken",
+	 *		 in="query",
+	 *		 description="API security token to authenticate DELETE action",
+	 *		 required=true,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="identifier",
+	 *		 in="path",
+	 *		 description="Primary key (occid), occurrenceID GUID, or record GUID (UUID) associated with target occurrence record",
+	 *		 required=true,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Response(
+	 *		 response="204",
+	 *		 description="Success: Record deleted successfully"
+	 *	 ),
+	 *	 @OA\Response(
+	 *		 response="400",
+	 *		 description="Error: Bad request. Occurrence identifier is required.",
+	 *	 ),
+	 *	 @OA\Response(
+	 *		 response="401",
+	 *		 description="Unauthorized",
+	 *	 ),
+	 * )
+	 */
 	public function delete($id, Request $request) {
-		if ($user = $this->authenticate($request)) {
+		if ($this->authenticate($request)) {
 			$occurrence = Occurrence::find($id);
 			if (!$occurrence) {
 				return response()->json(['status' => 'failure', 'error' => 'Occurrence resource not found'], 400);
 			}
-			if (!$this->isAuthorized($user, $occurrence['collid'])) {
-				return response()->json(['error' => 'Unauthorized to delete target collection (collid = ' . $occurrence['collid'] . ')'], 401);
+			if ($this->isAuthorized($occurrence['collid'])) {
+				//$occurrence->delete(); // @TODO why is this disabled?
+				//return response('Occurrence Deleted Successfully', 200);
 			}
-			//$occurrence->delete(); // @TODO why is this disabled?
-			//return response('Occurrence Deleted Successfully', 200);
 		}
 		return response()->json(['error' => 'Unauthorized'], 401);
 	}
@@ -521,7 +842,7 @@ class OccurrenceController extends Controller {
 	 *		If multiple records are returned matching the input identifier, data will be added only to the first record.
 	 *		If an identifier is not provided or a matching record can not be found, a new Skeletal record will be created and primed with input data.
 	 *		Note that catalogNumber or otherCatalogNumber must be provided to create a new skeletal record. If processingStatus is not defined, new skeletal records will be set as 'unprocessed'",
-	 *	 tags={""},
+	 *	 tags={"Occurrence"},
 	 *	 @OA\Parameter(
 	 *		name="apiToken",
 	 *		in="query",
@@ -561,16 +882,16 @@ class OccurrenceController extends Controller {
 	 *			mediaType="application/json",
 	 *			@OA\Schema(
 	 *				@OA\Property(
+	 *					property="basisOfRecord",
+	 *					type="string",
+	 *					description="The specific nature of the data record (PreservedSpecimen, fossilSpecimen, HumanObservation, MachineObservation, etc)",
+	 *					maxLength=32
+	 *				),
+	 *				@OA\Property(
 	 *					property="catalogNumber",
 	 *					type="string",
 	 *					description="Primary catalog number",
 	 *					maxLength=32
-	 *				),
-	 *				@OA\Property(
-	 *					property="otherCatalogNumbers",
-	 *					type="string",
-	 *					description="Additional catalog numbers",
-	 *					maxLength=75
 	 *				),
 	 *				@OA\Property(
 	 *					property="sciname",
@@ -660,73 +981,71 @@ class OccurrenceController extends Controller {
 			'eventDate2' => 'date',
 			'identifierTarget' => 'in:CATALOGNUMBER,IDENTIFIERS,GUID,OCCID,NONE',
 		]);
-		if ($user = $this->authenticate($request)) {
+		if ($this->authenticate($request)) {
 			$collid = $request->input('collid');
 			$identifier = $request->input('identifier');
 			$identifierTarget = $request->input('identifierTarget', 'CATALOGNUMBER');
 
 			//Check to see if user has the necessary permission edit/add occurrences for target collection
-			if (!$this->isAuthorized($user, $collid)) {
-				return response()->json(['error' => 'Unauthorized to edit target collection (collid = ' . $collid . ')'], 401);
-			}
-
-			//Remove fields with empty values and non-approved target fields
-			$updateArr = $request->all();
-			$skeletalFieldsAllowed = array('catalogNumber', 'otherCatalogNumbers', 'sciname', 'scientificNameAuthorship', 'family', 'recordedBy', 'recordNumber', 'eventDate', 'eventDate2', 'country', 'stateProvince', 'county', 'processingStatus');
-			foreach ($updateArr as $fieldName => $fieldValue) {
-				if (!$fieldValue) unset($updateArr[$fieldName]);
-				elseif (!in_array($fieldName, $skeletalFieldsAllowed)) unset($updateArr[$fieldName]);
-			}
-			if (!$updateArr) {
-				return response()->json(['error' => 'Bad request: input data empty or does not contains allowed fields'], 400);
-			}
-
-			//Get target record, if exists
-			$targetOccurrence = null;
-			if ($identifier) {
-				$occurrenceModel = null;
-				if ($identifierTarget == 'OCCID') {
-					$occurrenceModel = Occurrence::where('occid', $identifier);
-				} elseif ($identifierTarget == 'GUID') {
-					$occurrenceModel = Occurrence::where('occurrenceID', $identifier)->orWhere('recordID', $identifier);
-				} elseif ($identifierTarget == 'CATALOGNUMBER') {
-					$occurrenceModel = Occurrence::where('catalogNumber', $identifier);
-				} elseif ($identifierTarget == 'IDENTIFIERS') {
-					$occurrenceModel = Occurrence::where('otherCatalogNumbers', $identifier);
-				}
-				if ($occurrenceModel) {
-					$targetOccurrence = $occurrenceModel->where('collid', $collid)->first();
-				}
-			}
-			if ($targetOccurrence) {
+			if ($this->isAuthorized($collid)) {
+				//Remove fields with empty values and non-approved target fields
+				$updateArr = $request->all();
+				$skeletalFieldsAllowed = array('catalogNumber', 'otherCatalogNumbers', 'sciname', 'scientificNameAuthorship', 'family', 'recordedBy', 'recordNumber', 'eventDate', 'eventDate2', 'country', 'stateProvince', 'county', 'processingStatus');
 				foreach ($updateArr as $fieldName => $fieldValue) {
-					//Remove input if target field already contains data
-					if ($targetOccurrence[$fieldName]) {
-						unset($updateArr[$fieldName]);
+					if (!$fieldValue) unset($updateArr[$fieldName]);
+					elseif (!in_array($fieldName, $skeletalFieldsAllowed)) unset($updateArr[$fieldName]);
+				}
+				if (!$updateArr) {
+					return response()->json(['error' => 'Bad request: input data empty or does not contains allowed fields'], 400);
+				}
+
+				//Get target record, if exists
+				$targetOccurrence = null;
+				if ($identifier) {
+					$occurrenceModel = null;
+					if ($identifierTarget == 'OCCID') {
+						$occurrenceModel = Occurrence::where('occid', $identifier);
+					} elseif ($identifierTarget == 'GUID') {
+						$occurrenceModel = Occurrence::where('occurrenceID', $identifier)->orWhere('recordID', $identifier);
+					} elseif ($identifierTarget == 'CATALOGNUMBER') {
+						$occurrenceModel = Occurrence::where('catalogNumber', $identifier);
+					} elseif ($identifierTarget == 'IDENTIFIERS') {
+						$occurrenceModel = Occurrence::where('otherCatalogNumbers', $identifier);
+					}
+					if ($occurrenceModel) {
+						$targetOccurrence = $occurrenceModel->where('collid', $collid)->first();
 					}
 				}
-				if (!empty($updateArr['eventDate'])) {
-					$updateArr['eventDate'] = OccurrenceHelper::formatDate($updateArr['eventDate']);
+				if ($targetOccurrence) {
+					foreach ($updateArr as $fieldName => $fieldValue) {
+						//Remove input if target field already contains data
+						if ($targetOccurrence[$fieldName]) {
+							unset($updateArr[$fieldName]);
+						}
+					}
+					if (!empty($updateArr['eventDate'])) {
+						$updateArr['eventDate'] = OccurrenceHelper::formatDate($updateArr['eventDate']);
+					}
+					if (!empty($updateArr['eventDate2'])) {
+						$updateArr['eventDate2'] = OccurrenceHelper::formatDate($updateArr['eventDate2']);
+					}
+					$responseObj = ['number of fields affected' => count($updateArr), 'fields affected' => $updateArr];
+					if ($updateArr) {
+						$targetOccurrence->update($updateArr);
+					}
+					return response()->json($responseObj, 200);
+				} else {
+					//Record doesn't exist, thus create a new skeletal records, given that a catalog number exists
+					$updateArr['collid'] = $collid;
+					if (empty($updateArr['catalogNumber']) && empty($updateArr['otherCatalogNumbers'])) {
+						return response()->json(['error' => 'Bad request: catalogNumber or otherCatalogNumbers required when creating a new record'], 400);
+					}
+					if (empty($updateArr['processingStatus'])) $updateArr['processingStatus'] = 'unprocessed';
+					$updateArr['recordID'] = (string) Str::uuid();
+					$updateArr['dateEntered'] = date('Y-m-d H:i:s');
+					$newOccurrence = Occurrence::create($updateArr);
+					return response()->json($newOccurrence, 201);
 				}
-				if (!empty($updateArr['eventDate2'])) {
-					$updateArr['eventDate2'] = OccurrenceHelper::formatDate($updateArr['eventDate2']);
-				}
-				$responseObj = ['number of fields affected' => count($updateArr), 'fields affected' => $updateArr];
-				if ($updateArr) {
-					$targetOccurrence->update($updateArr);
-				}
-				return response()->json($responseObj, 200);
-			} else {
-				//Record doesn't exist, thus create a new skeletal records, given that a catalog number exists
-				$updateArr['collid'] = $collid;
-				if (empty($updateArr['catalogNumber']) && empty($updateArr['otherCatalogNumbers'])) {
-					return response()->json(['error' => 'Bad request: catalogNumber or otherCatalogNumbers required when creating a new record'], 400);
-				}
-				if (empty($updateArr['processingStatus'])) $updateArr['processingStatus'] = 'unprocessed';
-				$updateArr['recordID'] = (string) Str::uuid();
-				$updateArr['dateEntered'] = date('Y-m-d H:i:s');
-				$newOccurrence = Occurrence::create($updateArr);
-				return response()->json($newOccurrence, 201);
 			}
 		}
 		return response()->json(['error' => 'Unauthorized'], 401);
@@ -736,7 +1055,7 @@ class OccurrenceController extends Controller {
 	 * @OA\Get(
 	 *	 path="/api/v2/occurrence/{identifier}/reharvest",
 	 *	 operationId="/api/v2/occurrence/identifier/reharvest",
-	 *	 tags={""},
+	 *	 tags={"Occurrence"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
@@ -844,11 +1163,11 @@ class OccurrenceController extends Controller {
 		return $id;
 	}
 
-	private function isAuthorized($user, $collid) {
-		foreach ($user['roles'] as $roles) {
-			if ($roles['role'] == 'SuperAdmin') return true;
-			elseif ($roles['role'] == 'CollAdmin' && $roles['tablePK'] == $collid) return true;
-			elseif ($roles['role'] == 'CollEditor' && $roles['tablePK'] == $collid) return true;
+	private function isAuthorized($collid) {
+		if ($this->isAuthorized('SuperAdmin')) return true;
+		elseif($collid){
+			if($this->isAuthorized('CollAdmin', $collid)) return true;
+			elseif($this->isAuthorized('CollEditor', $collid)) return true;
 		}
 		return false;
 	}

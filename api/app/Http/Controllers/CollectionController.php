@@ -20,7 +20,7 @@ class CollectionController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/collection",
 	 *	 operationId="/api/v2/collection",
-	 *	 tags={""},
+	 *	 tags={"Collection"},
 	 *	 @OA\Parameter(
 	 *		 name="managementType",
 	 *		 in="query",
@@ -99,7 +99,7 @@ class CollectionController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/collection/{identifier}",
 	 *	 operationId="/api/v2/collection/identifier",
-	 *	 tags={""},
+	 *	 tags={"Collection"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
@@ -131,7 +131,7 @@ class CollectionController extends Controller{
 	 * 	path="/api/v2/collection",
 	 * 	operationId="createCollection",
 	 * 	description="Create a new biocollection entity",
-	 * 	tags={"Collections"},
+	 * 	tags={"Collection"},
 	 * 	@OA\Parameter(
 	 *		name="apiToken",
 	 *		in="query",
@@ -259,31 +259,26 @@ class CollectionController extends Controller{
 	 * )
 	 */
 	public function create(Request $request){
-		$authenticatedRoles = $this->authenticate($request)['roles'] ?? [];
-		$extractedRoles = array_map(function($elem){
-			return $elem['role'];
-		}, $authenticatedRoles);
-		$rolesPermittedToCreateCollections = array('CollAdmin', 'SuperAdmin');
-		$qualifyingRoles = array_intersect($extractedRoles, $rolesPermittedToCreateCollections);
+		if($this->authenticate($request)){
+			if($this->isAuthorized('SuperAdmin')){
+				// @TODO make colleciton GUID?
+				try {
+					$collection = Collection::create($request->all());
+					$collectionStats = CollectionStats::create([
+						'collid' => $collection->collID,
+						'recordcnt' => 0,
+						// 'uploadedby' => $GLOBALS['USERNAME']
+						'uploadedby' => 'TODO'
+					]);
+				} catch (\Exception $e) {
+					return response()->json(['error' => 'Failed to create collection stats' . $e->getMessage()], 500);
+				}
 
-		if(count($qualifyingRoles)>0){
-			// @TODO make colleciton GUID?
-			try {
-				$collection = Collection::create($request->all());
-				$collectionStats = CollectionStats::create([
-					'collid' => $collection->collID,
-					'recordcnt' => 0,
-					// 'uploadedby' => $GLOBALS['USERNAME']
-					'uploadedby' => 'TODO'
-				]);
-			} catch (\Exception $e) {
-				return response()->json(['error' => 'Failed to create collection stats' . $e->getMessage()], 500);
+				return response()->json($collection, 200);
 			}
-
-			return response()->json($collection, 200);
 		}
 		return response()->json(['error' => 'Unauthorized'], 401);
-	}	
+	}
 
 	public function update($id, Request $request){
 		//$collection = Collection::findOrFail($id);

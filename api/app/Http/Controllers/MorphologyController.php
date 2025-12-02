@@ -19,7 +19,7 @@ class MorphologyController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/morphology",
 	 *	 operationId="/api/v2/morphology",
-	 *	 tags={""},
+	 *	 tags={"Morphology"},
 	 *	 @OA\Parameter(
 	 *		 name="includeStates",
 	 *		 in="query",
@@ -84,7 +84,7 @@ class MorphologyController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/morphology/{identifier}",
 	 *	 operationId="/api/v2/morphology/identifier",
-	 *	 tags={""},
+	 *	 tags={"Morphology"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
@@ -114,7 +114,7 @@ class MorphologyController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/morphology/{identifier}/attribute",
 	 *	 operationId="/api/v2/morphology/identifier/attribute",
-	 *	 tags={""},
+	 *	 tags={"Morphology"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",

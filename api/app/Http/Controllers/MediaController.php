@@ -35,7 +35,7 @@ class MediaController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/media",
 	 *	 operationId="showAllMedia",
-	 *	 tags={""},
+	 *	 tags={"Media"},
 	 *	 @OA\Parameter(
 	 *		 name="tid",
 	 *		 in="query",
@@ -126,7 +126,7 @@ class MediaController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/media/{identifier}",
 	 *	 operationId="showOneMedia",
-	 *	 tags={""},
+	 *	 tags={"Media"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
@@ -158,7 +158,7 @@ class MediaController extends Controller{
 	 *	 path="/api/v2/media",
 	 *	 operationId="insertMedia",
 	 *	 summary="Creates a new Media record",
-	 *	 tags={""},
+	 *	 tags={"Media"},
 	 *	 @OA\Parameter(
 	 *		 name="apiToken",
 	 *		 in="query",
@@ -319,7 +319,7 @@ class MediaController extends Controller{
 	 * )
 	 */
 	public function insert(Request $request){
-		if($user = $this->authenticate($request)){
+		if($this->authenticate($request)){
 			$this->validate($request, $this->rulesInsert);
 			$inputArr = $request->all();
 			$this->adjustInputData($inputArr);
@@ -343,18 +343,18 @@ class MediaController extends Controller{
 	 * @OA\Patch(
 	 *	 path="/api/v2/media/{identifier}",
 	 *	 operationId="updateMedia",
-	 *	 tags={""},
+	 *	 tags={"Media"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
-	 *		 description="primary key or record GUID (UUID) associated with target media object",
+	 *		 description="Primary key (mediaID) or record GUID (UUID) associated with target media object",
 	 *		 required=true,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="apiToken",
 	 *		 in="query",
-	 *		 description="API security token to authenticate post action",
+	 *		 description="API security token to authenticate PATCH action",
 	 *		 required=true,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
@@ -510,7 +510,7 @@ class MediaController extends Controller{
 	 * )
 	 */
 	public function update($id, Request $request){
-		if($user = $this->authenticate($request)){
+		if($this->authenticate($request)){
 			$media = Media::find($this->getMediaID($id));
 			if(!$media){
 				return response()->json(['status' => 'failure', 'error' => 'Media resource not found'], 400);
@@ -528,7 +528,7 @@ class MediaController extends Controller{
 	 * @OA\Delete(
 	 *	 path="/api/v2/media/{identifier}",
 	 *	 operationId="deleteMedia",
-	 *	 tags={""},
+	 *	 tags={"Media"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
@@ -558,7 +558,7 @@ class MediaController extends Controller{
 	 * )
 	 */
 	public function delete($id, Request $request){
-		if($user = $this->authenticate($request)){
+		if($this->authenticate($request)){
 			$media = Media::find($this->getMediaID($id));
 			if(!$media){
 				return response()->json(['status' => 'failure', 'error' => 'Media resource not found'], 400);

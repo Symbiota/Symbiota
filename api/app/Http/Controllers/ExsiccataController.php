@@ -22,7 +22,7 @@ class ExsiccataController extends Controller {
 	 * @OA\Get(
 	 *	 path="/api/v2/exsiccata",
 	 *	 operationId="/api/v2/exsiccata",
-	 *	 tags={""},
+	 *	 tags={"Exsiccata"},
 	 *	 @OA\Parameter(
 	 *		 name="limit",
 	 *		 in="query",
@@ -73,7 +73,7 @@ class ExsiccataController extends Controller {
 	 *	 @OA\Get(
 	 *	   path="/api/v2/exsiccata/{identifier}",
 	 *	   operationId="/api/v2/exsiccata/{identifier}",
-	 *	   tags={""},
+	 *	   tags={"Exsiccata"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
@@ -113,7 +113,7 @@ class ExsiccataController extends Controller {
 	 * @OA\Get(
 	 *	 path="/api/v2/exsiccata/{identifier}/number",
 	 *	 operationId="/api/v2/exsiccata/identifier/number",
-	 *	 tags={""},
+	 *	 tags={"Exsiccata"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
@@ -193,7 +193,7 @@ class ExsiccataController extends Controller {
 	 * @OA\Get(
 	 *	 path="/api/v2/exsiccata/{identifier}/number/{numberIdentifier}/",
 	 *	 operationId="/api/v2/exsiccata/identifier/number/{numberIdentifier}/",
-	 *	 tags={""},
+	 *	 tags={"Exsiccata"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
@@ -267,7 +267,7 @@ class ExsiccataController extends Controller {
 	 /**
 	 *	 path="/api/v2/exsiccati/{identifier}/number/{numberIdentifier}/occurrence",
 	 *	 operationId="showOccurrencesByExsiccataNumber",
-	 *	 tags={""},
+	 *	 tags={"Exsiccata"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",

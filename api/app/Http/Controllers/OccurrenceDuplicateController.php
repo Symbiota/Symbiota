@@ -29,7 +29,7 @@ class OccurrenceDuplicateController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/occurrence/duplicate",
 	 *	 operationId="/api/v2/occurrence/duplicate",
-	 *	 tags={""},
+	 *	 tags={"Occurrence"},
 	 *	 @OA\Parameter(
 	 *		 name="recordedBy",
 	 *		 in="query",

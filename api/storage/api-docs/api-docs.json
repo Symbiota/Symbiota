@@ -17,7 +17,7 @@
         "/api/v2/collection": {
             "get": {
                 "tags": [
-                    ""
+                    "Collection"
                 ],
                 "operationId": "/api/v2/collection",
                 "parameters": [
@@ -86,7 +86,7 @@
             },
             "post": {
                 "tags": [
-                    "Collections"
+                    "Collection"
                 ],
                 "description": "Create a new biocollection entity",
                 "operationId": "createCollection",
@@ -227,7 +227,7 @@
         "/api/v2/collection/{identifier}": {
             "get": {
                 "tags": [
-                    ""
+                    "Collection"
                 ],
                 "operationId": "/api/v2/collection/identifier",
                 "parameters": [
@@ -259,7 +259,7 @@
         "/api/v2/exsiccata": {
             "get": {
                 "tags": [
-                    ""
+                    "Exsiccata"
                 ],
                 "operationId": "/api/v2/exsiccata",
                 "parameters": [
@@ -302,7 +302,7 @@
         "/api/v2/exsiccata/{identifier}": {
             "get": {
                 "tags": [
-                    ""
+                    "Exsiccata"
                 ],
                 "operationId": "/api/v2/exsiccata/{identifier}",
                 "parameters": [
@@ -337,7 +337,7 @@
         "/api/v2/exsiccata/{identifier}/number": {
             "get": {
                 "tags": [
-                    ""
+                    "Exsiccata"
                 ],
                 "operationId": "/api/v2/exsiccata/identifier/number",
                 "parameters": [
@@ -392,7 +392,7 @@
         "/api/v2/exsiccata/{identifier}/number/{numberIdentifier}/": {
             "get": {
                 "tags": [
-                    ""
+                    "Exsiccata"
                 ],
                 "operationId": "/api/v2/exsiccata/identifier/number/{numberIdentifier}/",
                 "parameters": [
@@ -456,7 +456,7 @@
         "/api/v2/installation": {
             "get": {
                 "tags": [
-                    ""
+                    "Installation"
                 ],
                 "operationId": "/api/v2/installation",
                 "parameters": [
@@ -499,7 +499,7 @@
         "/api/v2/installation/{identifier}": {
             "get": {
                 "tags": [
-                    ""
+                    "Installation"
                 ],
                 "operationId": "/api/v2/installation/identifier",
                 "parameters": [
@@ -531,7 +531,7 @@
         "/api/v2/installation/status": {
             "get": {
                 "tags": [
-                    ""
+                    "Installation"
                 ],
                 "operationId": "/api/v2/installation/status",
                 "responses": {
@@ -552,7 +552,7 @@
         "/api/v2/installation/{identifier}/handshake": {
             "get": {
                 "tags": [
-                    ""
+                    "Installation"
                 ],
                 "operationId": "/api/v2/installation/identifier/handshake",
                 "parameters": [
@@ -593,7 +593,7 @@
         "/api/v2/installation/{identifier}/occurrence": {
             "get": {
                 "tags": [
-                    ""
+                    "Installation"
                 ],
                 "operationId": "/api/v2/installation/identifier/occurrence",
                 "parameters": [
@@ -645,7 +645,7 @@
         "/api/v2/inventory": {
             "get": {
                 "tags": [
-                    ""
+                    "Inventory"
                 ],
                 "operationId": "/api/v2/inventory",
                 "parameters": [
@@ -688,7 +688,7 @@
         "/api/v2/inventory/{identifier}": {
             "get": {
                 "tags": [
-                    ""
+                    "Inventory"
                 ],
                 "operationId": "/api/v2/inventory/identifier",
                 "parameters": [
@@ -720,7 +720,7 @@
         "/api/v2/inventory/{identifier}/taxa": {
             "get": {
                 "tags": [
-                    ""
+                    "Inventory"
                 ],
                 "operationId": "/api/v2/inventory/identifier/taxa",
                 "parameters": [
@@ -763,7 +763,7 @@
         "/api/v2/media": {
             "get": {
                 "tags": [
-                    ""
+                    "Media"
                 ],
                 "operationId": "showAllMedia",
                 "parameters": [
@@ -833,7 +833,7 @@
             },
             "post": {
                 "tags": [
-                    ""
+                    "Media"
                 ],
                 "summary": "Creates a new Media record",
                 "operationId": "insertMedia",
@@ -991,7 +991,7 @@
         "/api/v2/media/{identifier}": {
             "get": {
                 "tags": [
-                    ""
+                    "Media"
                 ],
                 "operationId": "showOneMedia",
                 "parameters": [
@@ -1023,7 +1023,7 @@
             },
             "delete": {
                 "tags": [
-                    ""
+                    "Media"
                 ],
                 "operationId": "deleteMedia",
                 "parameters": [
@@ -1060,14 +1060,14 @@
             },
             "patch": {
                 "tags": [
-                    ""
+                    "Media"
                 ],
                 "operationId": "updateMedia",
                 "parameters": [
                     {
                         "name": "identifier",
                         "in": "path",
-                        "description": "primary key or record GUID (UUID) associated with target media object",
+                        "description": "Primary key (mediaID) or record GUID (UUID) associated with target media object",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -1076,7 +1076,7 @@
                     {
                         "name": "apiToken",
                         "in": "query",
-                        "description": "API security token to authenticate post action",
+                        "description": "API security token to authenticate PATCH action",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -1223,7 +1223,7 @@
         "/api/v2/morphology": {
             "get": {
                 "tags": [
-                    ""
+                    "Morphology"
                 ],
                 "operationId": "/api/v2/morphology",
                 "parameters": [
@@ -1280,7 +1280,7 @@
         "/api/v2/morphology/{identifier}": {
             "get": {
                 "tags": [
-                    ""
+                    "Morphology"
                 ],
                 "operationId": "/api/v2/morphology/identifier",
                 "parameters": [
@@ -1312,7 +1312,7 @@
         "/api/v2/morphology/{identifier}/attribute": {
             "get": {
                 "tags": [
-                    ""
+                    "Morphology"
                 ],
                 "operationId": "/api/v2/morphology/identifier/attribute",
                 "parameters": [
@@ -1382,7 +1382,7 @@
         "/api/v2/occurrence/annotation": {
             "get": {
                 "tags": [
-                    ""
+                    "Occurrence"
                 ],
                 "operationId": "/api/v2/occurrence/annotation",
                 "parameters": [
@@ -1484,7 +1484,7 @@
         "/api/v2/occurrence/{identifier}/annotation": {
             "get": {
                 "tags": [
-                    ""
+                    "Occurrence"
                 ],
                 "summary": "Edits made to target occurrence",
                 "operationId": "/api/v2/occurrence/{identifier}/annotation",
@@ -1534,7 +1534,7 @@
         "/api/v2/occurrence": {
             "get": {
                 "tags": [
-                    ""
+                    "Occurrence"
                 ],
                 "operationId": "/api/v2/occurrence",
                 "parameters": [
@@ -1775,7 +1775,7 @@
         "/api/v2/occurrence/{identifier}": {
             "get": {
                 "tags": [
-                    ""
+                    "Occurrence"
                 ],
                 "operationId": "/api/v2/occurrence/identifier",
                 "parameters": [
@@ -1825,12 +1825,316 @@
                         "description": "Error: Bad request. Occurrence identifier is required."
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "Occurrence"
+                ],
+                "operationId": "insertOccurrence",
+                "parameters": [
+                    {
+                        "name": "apiToken",
+                        "in": "query",
+                        "description": "API security token to authenticate POST action",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Occurrence object to be inserted",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "basisOfRecord": {
+                                        "description": "The specific nature of the data record (PreservedSpecimen, fossilSpecimen, HumanObservation, MachineObservation, etc)",
+                                        "type": "string",
+                                        "maxLength": 32
+                                    },
+                                    "catalogNumber": {
+                                        "description": "Primary catalog number",
+                                        "type": "string",
+                                        "maxLength": 32
+                                    },
+                                    "sciname": {
+                                        "description": "Scientific name, without the author",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "scientificNameAuthorship": {
+                                        "description": "The authorship information of scientific name",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "family": {
+                                        "description": "Taxonomic family of the scientific name",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "recordedBy": {
+                                        "description": "Primary collector or observer",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "recordNumber": {
+                                        "description": "Identifier given at the time occurrence was recorded; typically the personal identifier of the primary collector or observer",
+                                        "type": "string",
+                                        "maxLength": 45
+                                    },
+                                    "associatedCollectors": {
+                                        "description": "Secondary collectors/observers",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "eventDate": {
+                                        "description": "Date the occurrence was collected or observed, or earliest date if a range was provided",
+                                        "type": "string"
+                                    },
+                                    "eventDate2": {
+                                        "description": "Last date the occurrence was collected or observed. Used when a date range is provided",
+                                        "type": "string"
+                                    },
+                                    "verbatimEventDate": {
+                                        "description": "Verbatim Event Date",
+                                        "type": "string"
+                                    },
+                                    "habitat": {
+                                        "description": "Habitat",
+                                        "type": "string"
+                                    },
+                                    "substrate": {
+                                        "description": "Substrate",
+                                        "type": "string"
+                                    },
+                                    "eventID": {
+                                        "description": "Event ID",
+                                        "type": "string"
+                                    },
+                                    "locationID": {
+                                        "description": "Location ID",
+                                        "type": "string"
+                                    },
+                                    "country": {
+                                        "description": "The name of the country or major administrative unit",
+                                        "type": "string",
+                                        "maxLength": 64
+                                    },
+                                    "stateProvince": {
+                                        "description": "The name of the next smaller administrative region than country (state, province, canton, department, region, etc.)",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "county": {
+                                        "description": "The full, unabbreviated name of the next smaller administrative region than stateProvince (county, shire, department, etc.",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "processingStatus": {
+                                        "description": "Processing status of the specimen record",
+                                        "type": "string",
+                                        "maxLength": 45
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success: Returns JSON object of the of media record that was created"
+                    },
+                    "400": {
+                        "description": "Error: Bad request."
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Occurrence"
+                ],
+                "operationId": "deleteOccurrence",
+                "parameters": [
+                    {
+                        "name": "apiToken",
+                        "in": "query",
+                        "description": "API security token to authenticate DELETE action",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "Primary key (occid), occurrenceID GUID, or record GUID (UUID) associated with target occurrence record",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Success: Record deleted successfully"
+                    },
+                    "400": {
+                        "description": "Error: Bad request. Occurrence identifier is required."
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Occurrence"
+                ],
+                "operationId": "updateOccurrence",
+                "parameters": [
+                    {
+                        "name": "apiToken",
+                        "in": "query",
+                        "description": "API security token to authenticate PATCH action",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "Primary key (occid), occurrenceID GUID, or record GUID (UUID) associated with target occurrence record",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Occurrence object to be updated",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "basisOfRecord": {
+                                        "description": "The specific nature of the data record (PreservedSpecimen, fossilSpecimen, HumanObservation, MachineObservation, etc)",
+                                        "type": "string",
+                                        "maxLength": 32
+                                    },
+                                    "catalogNumber": {
+                                        "description": "Primary catalog number",
+                                        "type": "string",
+                                        "maxLength": 32
+                                    },
+                                    "sciname": {
+                                        "description": "Scientific name, without the author",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "scientificNameAuthorship": {
+                                        "description": "The authorship information of scientific name",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "family": {
+                                        "description": "Taxonomic family of the scientific name",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "recordedBy": {
+                                        "description": "Primary collector or observer",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "recordNumber": {
+                                        "description": "Identifier given at the time occurrence was recorded; typically the personal identifier of the primary collector or observer",
+                                        "type": "string",
+                                        "maxLength": 45
+                                    },
+                                    "associatedCollectors": {
+                                        "description": "Secondary collectors/observers",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "eventDate": {
+                                        "description": "Date the occurrence was collected or observed, or earliest date if a range was provided",
+                                        "type": "string"
+                                    },
+                                    "eventDate2": {
+                                        "description": "Last date the occurrence was collected or observed. Used when a date range is provided",
+                                        "type": "string"
+                                    },
+                                    "verbatimEventDate": {
+                                        "description": "Verbatim Event Date",
+                                        "type": "string"
+                                    },
+                                    "habitat": {
+                                        "description": "Habitat",
+                                        "type": "string"
+                                    },
+                                    "substrate": {
+                                        "description": "Substrate",
+                                        "type": "string"
+                                    },
+                                    "eventID": {
+                                        "description": "Event ID",
+                                        "type": "string"
+                                    },
+                                    "locationID": {
+                                        "description": "Location ID",
+                                        "type": "string"
+                                    },
+                                    "country": {
+                                        "description": "The name of the country or major administrative unit",
+                                        "type": "string",
+                                        "maxLength": 64
+                                    },
+                                    "stateProvince": {
+                                        "description": "The name of the next smaller administrative region than country (state, province, canton, department, region, etc.)",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "county": {
+                                        "description": "The full, unabbreviated name of the next smaller administrative region than stateProvince (county, shire, department, etc.",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "processingStatus": {
+                                        "description": "Processing status of the specimen record",
+                                        "type": "string",
+                                        "maxLength": 45
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success: Returns full JSON object of the of media record that was edited"
+                    },
+                    "400": {
+                        "description": "Error: Bad request."
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
             }
         },
         "/api/v2/occurrence/{identifier}/identification": {
             "get": {
                 "tags": [
-                    ""
+                    "Occurrence"
                 ],
                 "operationId": "/api/v2/occurrence/identifier/identification",
                 "parameters": [
@@ -1862,7 +2166,7 @@
         "/api/v2/occurrence/{identifier}/media": {
             "get": {
                 "tags": [
-                    ""
+                    "Occurrence"
                 ],
                 "operationId": "/api/v2/occurrence/identifier/media",
                 "parameters": [
@@ -1894,9 +2198,9 @@
         "/api/v2/occurrence/skeletal": {
             "post": {
                 "tags": [
-                    ""
+                    "Occurrence"
                 ],
-                "description": "If an existing record can be located within target collection based on matching the input identifier, empty (null) target fields will be updated with Skeletal Data.\n\t *\t\tIf the target field contains data, it will remain unaltered.\n\t *\t\tIf multiple records are returned matching the input identifier, data will be added only to the first record.\n\t *\t\tIf an identifier is not provided or a matching record can not be found, a new Skeletal record will be created and primed with input data.\n\t *\t\tNote that catalogNumber or otherCatalogNumber must be provided to create a new skeletal record. If processingStatus is not defined, new skeletal records will be set as 'unprocessed'",
+                "description": "If an existing record can be located within target collection based on matching the input identifier, empty (null) target fields will be updated with Skeletal Data.\r\n\t *\t\tIf the target field contains data, it will remain unaltered.\r\n\t *\t\tIf multiple records are returned matching the input identifier, data will be added only to the first record.\r\n\t *\t\tIf an identifier is not provided or a matching record can not be found, a new Skeletal record will be created and primed with input data.\r\n\t *\t\tNote that catalogNumber or otherCatalogNumber must be provided to create a new skeletal record. If processingStatus is not defined, new skeletal records will be set as 'unprocessed'",
                 "operationId": "skeletalImport",
                 "parameters": [
                     {
@@ -1951,15 +2255,15 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
+                                    "basisOfRecord": {
+                                        "description": "The specific nature of the data record (PreservedSpecimen, fossilSpecimen, HumanObservation, MachineObservation, etc)",
+                                        "type": "string",
+                                        "maxLength": 32
+                                    },
                                     "catalogNumber": {
                                         "description": "Primary catalog number",
                                         "type": "string",
                                         "maxLength": 32
-                                    },
-                                    "otherCatalogNumbers": {
-                                        "description": "Additional catalog numbers",
-                                        "type": "string",
-                                        "maxLength": 75
                                     },
                                     "sciname": {
                                         "description": "Scientific name, without the author",
@@ -2036,7 +2340,7 @@
         "/api/v2/occurrence/{identifier}/reharvest": {
             "get": {
                 "tags": [
-                    ""
+                    "Occurrence"
                 ],
                 "operationId": "/api/v2/occurrence/identifier/reharvest",
                 "parameters": [
@@ -2071,7 +2375,7 @@
         "/api/v2/occurrence/duplicate": {
             "get": {
                 "tags": [
-                    ""
+                    "Occurrence"
                 ],
                 "operationId": "/api/v2/occurrence/duplicate",
                 "parameters": [
@@ -2157,7 +2461,7 @@
         "/api/v2/taxonomy": {
             "get": {
                 "tags": [
-                    ""
+                    "Taxonomy"
                 ],
                 "operationId": "/api/v2/taxonomy",
                 "parameters": [
@@ -2403,7 +2707,7 @@
         "/api/v2/taxonomy/{identifier}": {
             "get": {
                 "tags": [
-                    ""
+                    "Taxonomy"
                 ],
                 "operationId": "/api/v2/taxonomy/identifier",
                 "parameters": [
@@ -2435,7 +2739,7 @@
         "/api/v2/taxonomy/{identifier}/description": {
             "get": {
                 "tags": [
-                    ""
+                    "Taxonomy"
                 ],
                 "operationId": "/api/v2/taxonomy/identifier/description",
                 "parameters": [
@@ -2487,7 +2791,7 @@
         "/api/v2/taxonomy/{identifier}/description/{identifier}": {
             "get": {
                 "tags": [
-                    ""
+                    "Taxonomy"
                 ],
                 "operationId": "/api/v2/taxonomy/identifier/description/identifier",
                 "parameters": [

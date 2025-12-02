@@ -200,10 +200,9 @@ class PortalIndex extends OmCollections{
 		if($remotePath){
 			if(substr($remotePath,-9) == 'index.php') $remotePath = substr($remotePath, 0, strlen($remotePath)-9);
 			if(substr($remotePath,-1) != '/') $remotePath .= '/';
-			//https://midwestherbaria.org/portal/api/v2/installation/518a57c3-98ce-4977-bb1c-e9eb39d45732/touch?endpoint=https://panamabiota.org/stri
 			//Handshake from remote to local
 			//$self = $this->getSelfDetails();
-			//$handShakeUrl = $remotePath.'api/v2/installation/'.$self['guid'].'/touch?endpoint='.$self['urlRoot'];
+			//$handShakeUrl = $remotePath.'api/v2/installation/'.$self['guid'].'/handshake?endpoint='.$self['urlRoot'];
 			//Handshake from local to remote
 			$pingUrl = $remotePath.'api/v2/installation/status';
 			$remoteArr = $this->getAPIResponce($pingUrl);
@@ -213,8 +212,7 @@ class PortalIndex extends OmCollections{
 			}
 			if($remoteArr){
 				if($remoteArr['guid']){
-					$handShakeUrl = GeneralUtil::getDomain().$GLOBALS['CLIENT_ROOT'].'/api/v2/installation/'.$remoteArr['guid'].'/touch?endpoint='.$remoteArr['urlRoot'];
-					//echo '<div>Handshake URL: '.$handShakeUrl.'</div>';
+					$handShakeUrl = GeneralUtil::getDomain().$GLOBALS['CLIENT_ROOT'].'/api/v2/installation/'.$remoteArr['guid'].'/handshake?endpoint='.$remoteArr['urlRoot'];
 					$respArr = $this->getAPIResponce($handShakeUrl);
 				}
 				else{
@@ -285,8 +283,11 @@ class PortalIndex extends OmCollections{
 		if($asyc) curl_setopt($ch, CURLOPT_TIMEOUT_MS, 500);
 		$resJson = curl_exec($ch);
 		$this->returnHeader = curl_getinfo($ch);
-		if($this->returnHeader['http_code'] == '200') $status = true;
-		elseif($this->returnHeader['http_code'] == '404') $this->errorMessage = '404 ULR Not Found';
+		if($this->returnHeader['http_code'] == '200'){
+			$status = true;
+			$this->errorMessage = '';
+		}
+		elseif($this->returnHeader['http_code'] == '404') $this->errorMessage = '404 URL Not Found';
 		else $this->errorMessage = 'http code '.$this->returnHeader['http_code'];
 		curl_close($ch);
 		if($status) return json_decode($resJson, true);

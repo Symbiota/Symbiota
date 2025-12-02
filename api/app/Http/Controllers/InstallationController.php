@@ -18,7 +18,7 @@ class InstallationController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/installation",
 	 *	 operationId="/api/v2/installation",
-	 *	 tags={""},
+	 *	 tags={"Installation"},
 	 *	 @OA\Parameter(
 	 *		 name="limit",
 	 *		 in="query",
@@ -70,7 +70,7 @@ class InstallationController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/installation/{identifier}",
 	 *	 operationId="/api/v2/installation/identifier",
-	 *	 tags={""},
+	 *	 tags={"Installation"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
@@ -101,7 +101,7 @@ class InstallationController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/installation/status",
 	 *	 operationId="/api/v2/installation/status",
-	 *	 tags={""},
+	 *	 tags={"Installation"},
 	 *	 @OA\Response(
 	 *		 response="200",
 	 *		 description="Returns installation metadata",
@@ -138,7 +138,7 @@ class InstallationController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/installation/{identifier}/handshake",
 	 *	 operationId="/api/v2/installation/identifier/handshake",
-	 *	 tags={""},
+	 *	 tags={"Installation"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
@@ -165,6 +165,9 @@ class InstallationController extends Controller{
 	 * )
 	 */
 	public function portalHandshake($id, Request $request){
+		$this->validate($request, [
+			'endpoint' => 'required'
+		]);
 		$responseArr = array( 'status' => 500, 'error' => 'Unknown error' );
 		$portalObj = PortalIndex::where('guid',$id)->get();
 		if($portalObj->count()){
@@ -182,11 +185,22 @@ class InstallationController extends Controller{
 			if($baseUrl = $request->input('endpoint')){
 				//Insert portal
 				$urlPing = $baseUrl.'/api/v2/installation/status';
-				if($remote = Helper::getAPIResponce($urlPing)){
+				$remote = Helper::getAPIResponce($urlPing);
+				if(!$remote){
+					//Needed to support older versions of API
+					$urlPing = $baseUrl.'/api/v2/installation/ping';
+					$remote = Helper::getAPIResponce($urlPing);
+				}
+				if($remote){
 					if($id == $remote['guid']){
 						//Shake back just to makes sure remote knows about self
 						$remoteHandshake = $baseUrl . '/api/v2/installation/' . $_ENV['PORTAL_GUID'].'/handshake?endpoint=' . htmlentities(Helper::getDomain() . $_ENV['CLIENT_ROOT']);
-						Helper::getAPIResponce($remoteHandshake, true);
+						$handShakeStatus = Helper::getAPIResponce($remoteHandshake, true);
+						if(!$handShakeStatus){
+							//Needed to support older versions of API
+							$remoteHandshake = $baseUrl . '/api/v2/installation/' . $_ENV['PORTAL_GUID'].'/touch?endpoint=' . htmlentities(Helper::getDomain() . $_ENV['CLIENT_ROOT']);
+							$handShakeStatus = Helper::getAPIResponce($remoteHandshake, true);
+						}
 						try {
 							//Register remote
 							$portalObj = PortalIndex::create($remote);
@@ -203,11 +217,22 @@ class InstallationController extends Controller{
 									elseif($portal['guid'] != $_ENV['PORTAL_GUID']){
 										//If remote exists, add by retriving info directly from source
 										$remotePing = $portal['urlRoot'].'/api/v2/installation/status';
-										if($newRemote = Helper::getAPIResponce($remotePing)){
+										$newRemote = Helper::getAPIResponce($remotePing);
+										if(!$newRemote){
+											//Needed to support older versions of API
+											$remotePing = $portal['urlRoot'].'/api/v2/installation/ping';
+											$newRemote = Helper::getAPIResponce($remotePing);
+										}
+										if($newRemote){
 											PortalIndex::create($newRemote);
 											//Handshake remote installation but don't wait for a response because propagation across a large network can take awhile
 											$urlHandshake = $portal['urlRoot'] . '/api/v2/installation/' . $_ENV['PORTAL_GUID'] . '/handshake?endpoint=' . htmlentities(Helper::getDomain() . $_ENV['CLIENT_ROOT']);
-											Helper::getAPIResponce($urlHandshake, true);
+											$handShakeStatus = Helper::getAPIResponce($urlHandshake, true);
+											if(!$handShakeStatus){
+												//Needed to support older versions of API
+												$urlHandshake = $portal['urlRoot'] . '/api/v2/installation/' . $_ENV['PORTAL_GUID'] . '/handshake?endpoint=' . htmlentities(Helper::getDomain() . $_ENV['CLIENT_ROOT']);
+												$handShakeStatus = Helper::getAPIResponce($urlHandshake, true);
+											}
 											$newRegistration++;
 										}
 									}
@@ -245,7 +270,7 @@ class InstallationController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/installation/{identifier}/occurrence",
 	 *	 operationId="/api/v2/installation/identifier/occurrence",
-	 *	 tags={""},
+	 *	 tags={"Installation"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
