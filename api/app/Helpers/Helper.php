@@ -22,7 +22,7 @@ class Helper {
 		return $domain;
 	}
 
-	public static function getAPIResponce($url, $asyc = false) {
+	public static function getAPIResponse($url, $asyc = false) {
 		$resJson = false;
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);

@@ -11,6 +11,7 @@ use App\Helpers\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\QueryException;
 
 class OccurrenceController extends Controller {
 
@@ -463,7 +464,7 @@ class OccurrenceController extends Controller {
 
 	/**
 	 * @OA\Post(
-	 *	 path="/api/v2/occurrence/{identifier}",
+	 *	 path="/api/v2/occurrence",
 	 *	 operationId="insertOccurrence",
 	 *	 tags={"Occurrence"},
 	 *	 @OA\Parameter(
@@ -472,6 +473,13 @@ class OccurrenceController extends Controller {
 	 *		 description="API security token to authenticate POST action",
 	 *		 required=true,
 	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		name="collid",
+	 *		in="query",
+	 *		description="primary key of target collection dataset",
+	 *		required=true,
+	 *		@OA\Schema(type="integer")
 	 *	 ),
 	 *	 @OA\RequestBody(
 	 *		required=true,
@@ -591,7 +599,7 @@ class OccurrenceController extends Controller {
 	 *	 ),
 	 *	 @OA\Response(
 	 *		 response="201",
-	 *		 description="Success: Returns JSON object of the of media record that was created"
+	 *		 description="Success: Returns JSON object of the of occurrence record that was created"
 	 *	 ),
 	 *	 @OA\Response(
 	 *		 response="400",
@@ -610,14 +618,22 @@ class OccurrenceController extends Controller {
 			]);
 			$collid = $request->input('collid');
 			//Check to see if user has the necessary permission edit/add occurrences for target collection
-			if (!$this->isAuthorized($collid)) {
+			if (!$this->isAuthorizedSub($collid)) {
 				return response()->json(['error' => 'Unauthorized to add new records to target collection (collid = ' . $collid . ')'], 401);
 			}
 			$inputArr = $request->all();
 			$inputArr['recordID'] = (string) Str::uuid();
 			$inputArr['dateEntered'] = date('Y-m-d H:i:s');
 
-			$occurrence = Occurrence::create($inputArr);
+			try {
+				$occurrence = Occurrence::create($inputArr);
+			} catch (QueryException $e) {
+				//TODO: need to improve error catching and reporting (e.g. due to bad collid, or other foreign key)
+				return response()->json([
+					'error' => 'Failed to insert record due to SQL error',
+					//'details' => $e->getMessage()
+				], 500);
+			}
 			return response()->json($occurrence, 201);
 		}
 		return response()->json(['error' => 'Unauthorized'], 401);
@@ -761,7 +777,7 @@ class OccurrenceController extends Controller {
 	 *	 ),
 	 *	 @OA\Response(
 	 *		 response="200",
-	 *		 description="Success: Returns full JSON object of the of media record that was edited"
+	 *		 description="Success: Returns full JSON object of the of occurrence record that was edited"
 	 *	 ),
 	 *	 @OA\Response(
 	 *		 response="400",
@@ -780,7 +796,7 @@ class OccurrenceController extends Controller {
 			if (!$occurrence) {
 				return response()->json(['status' => 'failure', 'error' => 'Occurrence resource not found'], 400);
 			}
-			if($this->isAuthorized($occurrence['collid'])) {
+			if($this->isAuthorizedSub($occurrence['collid'])) {
 				//$occurrence->update($request->all());
 				//return response()->json($occurrence, 200);
 			}
@@ -829,7 +845,7 @@ class OccurrenceController extends Controller {
 			if (!$occurrence) {
 				return response()->json(['status' => 'failure', 'error' => 'Occurrence resource not found'], 400);
 			}
-			if ($this->isAuthorized($occurrence['collid'])) {
+			if ($this->isAuthorizedSub($occurrence['collid'])) {
 				//$occurrence->delete(); // @TODO why is this disabled?
 				//return response('Occurrence Deleted Successfully', 200);
 			}
@@ -991,7 +1007,7 @@ class OccurrenceController extends Controller {
 			$identifierTarget = $request->input('identifierTarget', 'CATALOGNUMBER');
 
 			//Check to see if user has the necessary permission edit/add occurrences for target collection
-			if ($this->isAuthorized($collid)) {
+			if ($this->isAuthorizedSub($collid)) {
 				//Remove fields with empty values and non-approved target fields
 				$updateArr = $request->all();
 				$skeletalFieldsAllowed = array('catalogNumber', 'otherCatalogNumbers', 'sciname', 'scientificNameAuthorship', 'family', 'recordedBy', 'recordNumber', 'eventDate', 'eventDate2', 'country', 'stateProvince', 'county', 'processingStatus');
@@ -1114,7 +1130,7 @@ class OccurrenceController extends Controller {
 					//Get remote occurrence data
 					$urlRoot = PortalIndex::where('portalID', $sourcePortalID)->value('urlRoot');
 					$url = $urlRoot.'/api/v2/occurrence/'.$remoteOccid;
-					if($remoteOccurrence = Helper::getAPIResponce($url)){
+					if($remoteOccurrence = Helper::getAPIResponse($url)){
 						$remoteOccurrence['occid'] = $occid;
 						$remoteCollid = $remoteOccurrence['collid'];
 						$sourceDateLastModified = $remoteOccurrence['dateLastModified'];
@@ -1167,7 +1183,7 @@ class OccurrenceController extends Controller {
 		return $id;
 	}
 
-	private function isAuthorized($collid) {
+	private function isAuthorizedSub(int $collid): bool {
 		if ($this->isAuthorized('SuperAdmin')) return true;
 		elseif($collid){
 			if($this->isAuthorized('CollAdmin', $collid)) return true;

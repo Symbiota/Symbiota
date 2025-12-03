@@ -33,6 +33,9 @@ $router->group(['prefix' => 'v2'], function () use ($router) {
 	$router->get('collection/{id}', ['uses' => 'CollectionController@showOneCollection']);
 
 	$router->get('occurrence',  ['uses' => 'OccurrenceController@showAllOccurrences']);
+	$router->post('occurrence', ['uses' => 'OccurrenceController@insert']);
+	//$router->patch('occurrence/{id}', ['uses' => 'OccurrenceController@update']);
+	//$router->delete('occurrence/{id}', ['uses' => 'OccurrenceController@delete']);
 	$router->get('occurrence/annotation', ['uses' => 'OccurrenceAnnotationController@showAllAnnotations']);
 	$router->get('occurrence/duplicate', ['uses' => 'OccurrenceDuplicateController@showDuplicateMatches']);
 	$router->get('occurrence/{id}', ['uses' => 'OccurrenceController@showOneOccurrence']);
@@ -75,5 +78,5 @@ $router->group(['prefix' => 'v2'], function () use ($router) {
 	$router->get('exsiccata/{identifier}/number/{numberIdentifier}', ['uses' => 'ExsiccataController@showOneExsiccataNumbersIdentifier']);
 	$router->get('exsiccati/{identifier}/number/{numberIdentifier}/occurrence', ['uses' => 'ExsiccataController@showOccurrencesByExsiccataNumber']);
 
-	
+
 });

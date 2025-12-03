@@ -185,21 +185,21 @@ class InstallationController extends Controller{
 			if($baseUrl = $request->input('endpoint')){
 				//Insert portal
 				$urlPing = $baseUrl.'/api/v2/installation/status';
-				$remote = Helper::getAPIResponce($urlPing);
+				$remote = Helper::getAPIResponse($urlPing);
 				if(!$remote){
 					//Needed to support older versions of API
 					$urlPing = $baseUrl.'/api/v2/installation/ping';
-					$remote = Helper::getAPIResponce($urlPing);
+					$remote = Helper::getAPIResponse($urlPing);
 				}
 				if($remote){
 					if($id == $remote['guid']){
 						//Shake back just to makes sure remote knows about self
 						$remoteHandshake = $baseUrl . '/api/v2/installation/' . $_ENV['PORTAL_GUID'].'/handshake?endpoint=' . htmlentities(Helper::getDomain() . $_ENV['CLIENT_ROOT']);
-						$handShakeStatus = Helper::getAPIResponce($remoteHandshake, true);
+						$handShakeStatus = Helper::getAPIResponse($remoteHandshake, true);
 						if(!$handShakeStatus){
 							//Needed to support older versions of API
 							$remoteHandshake = $baseUrl . '/api/v2/installation/' . $_ENV['PORTAL_GUID'].'/touch?endpoint=' . htmlentities(Helper::getDomain() . $_ENV['CLIENT_ROOT']);
-							$handShakeStatus = Helper::getAPIResponce($remoteHandshake, true);
+							$handShakeStatus = Helper::getAPIResponse($remoteHandshake, true);
 						}
 						try {
 							//Register remote
@@ -209,7 +209,7 @@ class InstallationController extends Controller{
 							unset($responseArr['error']);
 							//Register all portals listed within remote, if not alreay registered
 							$urlInstallation = $baseUrl.'/api/v2/installation';
-							if($remoteInstallationArr = Helper::getAPIResponce($urlInstallation)){
+							if($remoteInstallationArr = Helper::getAPIResponse($urlInstallation)){
 								$currentRegistered = 0;
 								$newRegistration = 0;
 								foreach($remoteInstallationArr['results'] as $portal){
@@ -217,21 +217,21 @@ class InstallationController extends Controller{
 									elseif($portal['guid'] != $_ENV['PORTAL_GUID']){
 										//If remote exists, add by retriving info directly from source
 										$remotePing = $portal['urlRoot'].'/api/v2/installation/status';
-										$newRemote = Helper::getAPIResponce($remotePing);
+										$newRemote = Helper::getAPIResponse($remotePing);
 										if(!$newRemote){
 											//Needed to support older versions of API
 											$remotePing = $portal['urlRoot'].'/api/v2/installation/ping';
-											$newRemote = Helper::getAPIResponce($remotePing);
+											$newRemote = Helper::getAPIResponse($remotePing);
 										}
 										if($newRemote){
 											PortalIndex::create($newRemote);
 											//Handshake remote installation but don't wait for a response because propagation across a large network can take awhile
 											$urlHandshake = $portal['urlRoot'] . '/api/v2/installation/' . $_ENV['PORTAL_GUID'] . '/handshake?endpoint=' . htmlentities(Helper::getDomain() . $_ENV['CLIENT_ROOT']);
-											$handShakeStatus = Helper::getAPIResponce($urlHandshake, true);
+											$handShakeStatus = Helper::getAPIResponse($urlHandshake, true);
 											if(!$handShakeStatus){
 												//Needed to support older versions of API
 												$urlHandshake = $portal['urlRoot'] . '/api/v2/installation/' . $_ENV['PORTAL_GUID'] . '/handshake?endpoint=' . htmlentities(Helper::getDomain() . $_ENV['CLIENT_ROOT']);
-												$handShakeStatus = Helper::getAPIResponce($urlHandshake, true);
+												$handShakeStatus = Helper::getAPIResponse($urlHandshake, true);
 											}
 											$newRegistration++;
 										}

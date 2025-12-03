@@ -99,7 +99,7 @@ if($IS_ADMIN) $isEditor = 1;
 						}
 					})
 					.fail(function( jqXHR, textStatus ) {
-						if(textStatus == "error") textStatus = this.url;
+						if(textStatus == "error") textStatus = "Undefined error";
 						$("#occur-div-" + portalID).append(" ERROR (" + textStatus + ")");
 					});
 				}

@@ -57,14 +57,17 @@ class Controller extends BaseController{
 			$status = true;
 			//Check user security tokens
 			$this->userArr['uid'] = $uid;
-			$this->userArr['roles'] = UserRole::where('uid', $uid)->get(['role', 'tableName', 'tablePk'])->toArray();
+			$result = UserRole::where('uid', $uid)->groupBy('role')->get(['role', UserRole::raw('GROUP_CONCAT(tablePK) as pks')])->toArray();
+			foreach($result as $roleArr){
+				$this->userArr['roles'][$roleArr['role']] = explode(',', $roleArr['pks']);
+			}
 		}
 		return $status;
 	}
 
 	protected function isAuthorized(string $role, int $roleKey = null): bool{
-		if(!$role) return false;
-		if(!empty($this->userArr['roles'][$role])){
+		if(!$role || !$this->userArr) return false;
+		if(array_key_exists($role, $this->userArr['roles'])){
 			if($roleKey){
 				if(in_array($roleKey, $this->userArr['roles'][$role])) return true;
 			}

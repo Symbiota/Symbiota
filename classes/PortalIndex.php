@@ -69,8 +69,8 @@ class PortalIndex extends OmCollections{
 
 	public function updateInstallation($portalID, $remotePath){
 		$status = false;
-		$remoteArr = $this->getAPIResponce($remotePath . '/api/v2/installation/status');
-		if(!$remoteArr) $remoteArr = $this->getAPIResponce($remotePath . '/api/v2/installation/ping'); //Target portal is prior to version Symbiota 3.4
+		$remoteArr = $this->getAPIResponse($remotePath . '/api/v2/installation/status');
+		if(!$remoteArr) $remoteArr = $this->getAPIResponse($remotePath . '/api/v2/installation/ping'); //Target portal is prior to version Symbiota 3.4
 		if($remoteArr){
 			if(!empty($remoteArr['status'])){
 				$apiVersion = '';
@@ -115,7 +115,7 @@ class PortalIndex extends OmCollections{
 		if(!isset($GLOBALS['ACTIVATE_PORTAL_INDEX'])) return false;
 		$retArr = array();
 		$url = $urlRoot.'/api/v2/collection/'.$collID;
-		if($retArr = $this->getAPIResponce($url)){
+		if($retArr = $this->getAPIResponse($url)){
 			if(!$collID){
 				$retArr = $retArr['results'];
 				foreach($retArr as $id => $collArr){
@@ -159,11 +159,11 @@ class PortalIndex extends OmCollections{
 		$retArr = array();
 		//Get collection identifier
 		$url = $urlRoot.'/api/v2/occurrence/'.$id;
-		$occurArr = $this->getAPIResponce($url);
+		$occurArr = $this->getAPIResponse($url);
 		//Get collection metadata
 		if(isset($occurArr['collID'])){
 			$url = $urlRoot.'/api/v2/collection/'.$occurArr['collID'];
-			$retArr = $this->getAPIResponce($url);
+			$retArr = $this->getAPIResponse($url);
 			if(!$retArr) return false;
 		}
 		return $retArr;
@@ -205,15 +205,15 @@ class PortalIndex extends OmCollections{
 			//$handShakeUrl = $remotePath.'api/v2/installation/'.$self['guid'].'/handshake?endpoint='.$self['urlRoot'];
 			//Handshake from local to remote
 			$pingUrl = $remotePath.'api/v2/installation/status';
-			$remoteArr = $this->getAPIResponce($pingUrl);
+			$remoteArr = $this->getAPIResponse($pingUrl);
 			if(!$remoteArr){
 				$pingUrl = $remotePath.'api/v2/installation/ping';		//Target portal is prior to version Symbiota 3.4
-				$remoteArr = $this->getAPIResponce($pingUrl);
+				$remoteArr = $this->getAPIResponse($pingUrl);
 			}
 			if($remoteArr){
 				if($remoteArr['guid']){
 					$handShakeUrl = GeneralUtil::getDomain().$GLOBALS['CLIENT_ROOT'].'/api/v2/installation/'.$remoteArr['guid'].'/handshake?endpoint='.$remoteArr['urlRoot'];
-					$respArr = $this->getAPIResponce($handShakeUrl);
+					$respArr = $this->getAPIResponse($handShakeUrl);
 				}
 				else{
 					$this->errorMessage = 'Portal GUID not set within target portal: '.$remoteArr['urlRoot'];
@@ -230,7 +230,7 @@ class PortalIndex extends OmCollections{
 		if(!isset($GLOBALS['ACTIVATE_PORTAL_INDEX'])) return false;
 		$portal = $this->getPortalIndexArr($portalID);
 		$url = $portal[$portalID]['urlRoot'].'/api/v2/collection/'.$remoteID;
-		$collArr = $this->getAPIResponce($url);
+		$collArr = $this->getAPIResponse($url);
 		$targetCollid = $collArr['collID'];
 		if(!$collArr['collectionID']){
 			if(isset($collArr['recordID'])) $collArr['collectionID'] = $collArr['recordID'];
@@ -272,7 +272,7 @@ class PortalIndex extends OmCollections{
 		return $collid;
 	}
 
-	private function getAPIResponce($url, $asyc = false){
+	private function getAPIResponse($url, $asyc = false){
 		$status = false;
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);

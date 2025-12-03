@@ -1770,61 +1770,6 @@
                         "description": "Error: Bad request. "
                     }
                 }
-            }
-        },
-        "/api/v2/occurrence/{identifier}": {
-            "get": {
-                "tags": [
-                    "Occurrence"
-                ],
-                "operationId": "/api/v2/occurrence/identifier",
-                "parameters": [
-                    {
-                        "name": "identifier",
-                        "in": "path",
-                        "description": "occid or specimen GUID (occurrenceID) or recordID associated with target occurrence",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "includeMedia",
-                        "in": "query",
-                        "description": "Whether (1) or not (0) to include media within output",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": "0",
-                            "enum": [
-                                0,
-                                1
-                            ]
-                        }
-                    },
-                    {
-                        "name": "includeIdentifications",
-                        "in": "query",
-                        "description": "Whether to include full Identification History within output",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Returns single occurrence record",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Bad request. Occurrence identifier is required."
-                    }
-                }
             },
             "post": {
                 "tags": [
@@ -1839,6 +1784,15 @@
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "name": "collid",
+                        "in": "query",
+                        "description": "primary key of target collection dataset",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],
@@ -1945,13 +1899,68 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Success: Returns JSON object of the of media record that was created"
+                        "description": "Success: Returns JSON object of the of occurrence record that was created"
                     },
                     "400": {
                         "description": "Error: Bad request."
                     },
                     "401": {
                         "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/api/v2/occurrence/{identifier}": {
+            "get": {
+                "tags": [
+                    "Occurrence"
+                ],
+                "operationId": "/api/v2/occurrence/identifier",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "occid or specimen GUID (occurrenceID) or recordID associated with target occurrence",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "includeMedia",
+                        "in": "query",
+                        "description": "Whether (1) or not (0) to include media within output",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": "0",
+                            "enum": [
+                                0,
+                                1
+                            ]
+                        }
+                    },
+                    {
+                        "name": "includeIdentifications",
+                        "in": "query",
+                        "description": "Whether to include full Identification History within output",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns single occurrence record",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request. Occurrence identifier is required."
                     }
                 }
             }
