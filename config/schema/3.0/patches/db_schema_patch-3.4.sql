@@ -2,7 +2,7 @@ INSERT INTO `schemaversion` (versionnumber) VALUES ('3.4');
 
 #field for search by polygons
 ALTER TABLE geographicthesaurus
-  ADD COLUMN isSearchable TINYINT(1) NOT NULL DEFAULT 0;
+  ADD COLUMN isSearchable TINYINT(1) NOT NULL DEFAULT 0 AFTER `parentID`;
 
 ALTER TABLE `geographicthesaurus` 
   ADD INDEX `FK_geothes_geolevel` (`geoLevel` ASC);

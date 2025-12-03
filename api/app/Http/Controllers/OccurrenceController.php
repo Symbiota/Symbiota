@@ -617,12 +617,13 @@ class OccurrenceController extends Controller {
 			$inputArr['recordID'] = (string) Str::uuid();
 			$inputArr['dateEntered'] = date('Y-m-d H:i:s');
 
-			//$occurrence = Occurrence::create($inputArr);
-			//return response()->json($occurrence, 201);
+			$occurrence = Occurrence::create($inputArr);
+			return response()->json($occurrence, 201);
 		}
 		return response()->json(['error' => 'Unauthorized'], 401);
 	}
 
+	private $ignoredPatch = <<<TXT
 	/**
 	 * @OA\Patch(
 	 *	 path="/api/v2/occurrence/{identifier}",
@@ -772,6 +773,7 @@ class OccurrenceController extends Controller {
 	 *	 ),
 	 * )
 	 */
+	TXT;
 	public function update($id, Request $request) {
 		if ($this->authenticate($request)) {
 			$occurrence = Occurrence::find($id);
@@ -779,13 +781,14 @@ class OccurrenceController extends Controller {
 				return response()->json(['status' => 'failure', 'error' => 'Occurrence resource not found'], 400);
 			}
 			if($this->isAuthorized($occurrence['collid'])) {
-				$occurrence->update($request->all());
-				return response()->json($occurrence, 200);
+				//$occurrence->update($request->all());
+				//return response()->json($occurrence, 200);
 			}
 		}
 		return response()->json(['error' => 'Unauthorized'], 401);
 	}
 
+	private $ignoredDelete = <<<TXT
 	/**
 	 * @OA\Delete(
 	 *	 path="/api/v2/occurrence/{identifier}",
@@ -819,6 +822,7 @@ class OccurrenceController extends Controller {
 	 *	 ),
 	 * )
 	 */
+	TXT;
 	public function delete($id, Request $request) {
 		if ($this->authenticate($request)) {
 			$occurrence = Occurrence::find($id);
