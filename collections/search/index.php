@@ -634,13 +634,13 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 										<a href="#" onclick="toggleCharacterGroup('<?php echo $idStr; ?>'); return false;" class="condense-expand">
 											<span class="heading-text"><?php echo htmlspecialchars($heading); ?></span>
 											<span class="icon-wrapper">
-												<img id="plus-<?php echo $idStr; ?>" src="../../images/plus.png" alt="Expand" style="display:inline; width:1em;">
-												<img id="minus-<?php echo $idStr; ?>" src="../../images/minus.png" alt="Collapse" style="display:none; width:1em;">
+												<img id="plus-<?php echo $idStr; ?>" src="../../images/plus.png" alt="Expand" style="display:none; width:1em;">
+												<img id="minus-<?php echo $idStr; ?>" src="../../images/minus.png" alt="Collapse" style="display:inline; width:1em;">
 											</span>
 										</a>
 									</div>
 
-									<div id="char-block-<?php echo $idStr; ?>" style="display:none;">
+									<div id="char-block-<?php echo $idStr; ?>" style="display:block;">
 									<?php foreach ($charGroup as $cid => $char): ?>
 										<div class="character-block">
 											<div class="char-names"><?php echo htmlspecialchars($char['charName']); ?></div>
