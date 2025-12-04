@@ -50,17 +50,44 @@ reset($treePath);
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<link rel="stylesheet" href="../../js/dojo-1.17.3/dijit/themes/claro/claro.css" media="screen">
 	<style>
-		.dijitLeaf,
-		.dijitIconLeaf,
-		.dijitFolderClosed,
-		.dijitIconFolderClosed,
-		.dijitFolderOpened,
-		.dijitIconFolderOpen {
-			background-image: none;
-			width: 0px;
-			height: 0px;
+		/* Tree styles */
+		.tree-container {
+			font-family: Arial, sans-serif;
+			font-size: 14px;
+		}
+		.tree-node {
+			margin-left: 20px;
+			list-style: none;
+		}
+		.tree-node-content {
+			padding: 2px 0;
+			cursor: pointer;
+			user-select: none;
+		}
+		.tree-node-content:hover {
+			background-color: #f0f0f0;
+		}
+		.tree-expand-icon {
+			display: inline-block;
+			width: 16px;
+			height: 16px;
+			margin-right: 4px;
+			cursor: pointer;
+			font-weight: bold;
+			text-align: center;
+			line-height: 16px;
+			font-size: 12px;
+		}
+		.tree-children {
+			padding: 0;
+			margin: 0;
+		}
+		.tree-children.hidden {
+			display: none;
+		}
+		.tree-leaf .tree-expand-icon {
+			visibility: hidden;
 		}
 		.fieldset-size {
 			padding: 10px;
@@ -87,7 +114,6 @@ reset($treePath);
 	</style>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="../../js/dojo-1.17.3/dojo/dojo.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$("#taxontarget").autocomplete({
@@ -97,15 +123,162 @@ reset($treePath);
 				autoFocus: true,
 				minLength: 3 }
 			);
+
+			// Initialize the tree after DOM is ready
+			initializeTaxonTree();
 		});
 
 		function displayTaxomonyMeta(){
 			$("#taxDetailDiv").hide();
 			$("#taxMetaDiv").show();
 		}
+
+		// Vanilla JavaScript Tree Implementation
+		let treeData = {};
+		let treePath = <?php echo json_encode($treePath); ?>;
+		const displayAuthor = <?= $displayAuthor ?>;
+		const limitToOccurrences = <?= $limitToOccurrences ?>;
+		const targetId = <?= $targetId ?>;
+		const editorMode = <?= $editorMode ?>;
+
+		function initializeTaxonTree() {
+			fetchTreeData('root').then(data => {
+				if (data && data.children) {
+					renderTree(data.children, document.getElementById('tree'), true);
+					// Expand to the target path
+					expandToPath(treePath);
+				}
+			}).catch(error => {
+				console.error('Error loading tree:', error);
+			});
+		}
+
+		async function fetchTreeData(id) {
+			if (treeData[id]) {
+				return treeData[id];
+			}
+
+			try {
+				const params = new URLSearchParams({
+					id: id,
+					authors: displayAuthor,
+					limittooccurrences: limitToOccurrences,
+					targetid: targetId,
+					emode: editorMode
+				});
+
+				const response = await fetch(`rpc/getdynamicchildren.php?${params}`);
+				const data = await response.json();
+				treeData[id] = data;
+				return data;
+			} catch (error) {
+				console.error('Error fetching tree data:', error);
+				return null;
+			}
+		}
+
+		function renderTree(nodes, container, isRoot = false) {
+			if (!isRoot) {
+				container.innerHTML = '';
+			}
+
+			const ul = document.createElement('ul');
+			ul.className = isRoot ? 'tree-container' : 'tree-children';
+
+			nodes.forEach(node => {
+				const li = document.createElement('li');
+				li.className = 'tree-node';
+				li.dataset.id = node.id;
+
+				const nodeContent = document.createElement('div');
+				nodeContent.className = 'tree-node-content';
+
+				const hasChildren = node.children && node.children === true;
+				
+				if (hasChildren) {
+					const expandIcon = document.createElement('span');
+					expandIcon.className = 'tree-expand-icon';
+					expandIcon.textContent = '+';
+					expandIcon.onclick = (e) => {
+						e.stopPropagation();
+						toggleNode(li, node.id);
+					};
+					nodeContent.appendChild(expandIcon);
+				} else {
+					li.classList.add('tree-leaf');
+					const expandIcon = document.createElement('span');
+					expandIcon.className = 'tree-expand-icon';
+					nodeContent.appendChild(expandIcon);
+				}
+
+				const label = document.createElement('span');
+				label.innerHTML = node.label || node.name || '';
+				label.onclick = () => {
+					if (node.url) {
+						window.open(node.url, '_blank');
+					}
+				};
+				nodeContent.appendChild(label);
+
+				li.appendChild(nodeContent);
+				ul.appendChild(li);
+			});
+
+			container.appendChild(ul);
+		}
+
+		async function toggleNode(nodeElement, nodeId) {
+			const expandIcon = nodeElement.querySelector('.tree-expand-icon');
+			let childrenContainer = nodeElement.querySelector('.tree-children');
+
+			if (childrenContainer) {
+				// Toggle existing children
+				if (childrenContainer.classList.contains('hidden')) {
+					childrenContainer.classList.remove('hidden');
+					expandIcon.textContent = '-';
+				} else {
+					childrenContainer.classList.add('hidden');
+					expandIcon.textContent = '+';
+				}
+			} else {
+				// Load and display children
+				const data = await fetchTreeData(nodeId);
+				if (data && data.children && Array.isArray(data.children)) {
+					renderTree(data.children, nodeElement);
+					expandIcon.textContent = '-';
+				}
+			}
+		}
+
+		async function expandToPath(pathArray) {
+			for (let i = 0; i < pathArray.length; i++) {
+				const nodeId = pathArray[i];
+				const nodeElement = document.querySelector(`[data-id="${nodeId}"]`);
+				
+				if (nodeElement) {
+					// Expand this node if it has children
+					const expandIcon = nodeElement.querySelector('.tree-expand-icon');
+					if (expandIcon && expandIcon.textContent === '+') {
+						await toggleNode(nodeElement, nodeId);
+					}
+					
+					// If this is the last item in the path, scroll to it
+					if (i === pathArray.length - 1) {
+						nodeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+						nodeElement.style.backgroundColor = '#e6f3ff';
+						setTimeout(() => {
+							nodeElement.style.backgroundColor = '';
+						}, 2000);
+					}
+				}
+				
+				// Small delay to allow DOM updates
+				await new Promise(resolve => setTimeout(resolve, 100));
+			}
+		}
 	</script>
 </head>
-<body class="claro">
+<body>
 	<?php
 	$displayLeftMenu = (isset($taxa_admin_taxonomydisplayMenu)?$taxa_admin_taxonomydisplayMenu:false);
 	include($SERVER_ROOT.'/includes/header.php');
@@ -193,100 +366,6 @@ reset($treePath);
 			</form>
 		</div>
 		<div id="tree"></div>
-		<script type="text/javascript">
-			require([
-				"dojo/window",
-				"dojo/_base/declare",
-				"dojo/dom",
-				"dojo/on",
-				"dijit/Tree",
-				"dijit/tree/ObjectStoreModel",
-				"dijit/tree/dndSource",
-				"dojo/store/JsonRest",
-				"dojo/domReady!"
-			], function(win, declare, dom, on, Tree, ObjectStoreModel, dndSource, JsonRest){
-				// set up the store to get the tree data
-				var taxonTreeStore = new JsonRest({
-					target: "rpc/getdynamicchildren.php",
-					labelAttribute: "label",
-					getChildren: function(object){
-						return this.query({id:object.id, authors:<?= $displayAuthor ?>, limittooccurrences:<?= $limitToOccurrences ?>, targetid:<?= $targetId ?>, emode:<?= $editorMode ?>}).then(function(fullObject){
-							return fullObject.children;
-						});
-					},
-					mayHaveChildren: function(object){
-						return "children" in object;
-					}
-				});
-
-				/*aspect.around(taxonTreeStore, "put", function(originalPut){
-					return function(obj, options){
-						if(options && options.parent){
-							obj.parent = options.parent.id;
-						}
-						return originalPut.call(taxonTreeStore, obj, options);
-					}
-				});
-
-				taxonTreeStore = new Observable(taxonTreeStore);*/
-
-				// set up the model, assigning taxonTreeStore, and assigning method to identify leaf nodes of tree
-				var taxonTreeModel = new ObjectStoreModel({
-					store: taxonTreeStore,
-					deferItemLoadingUntilExpand: true,
-					getRoot: function(onItem){
-						this.store.query({id:"root",authors:<?php echo $displayAuthor; ?>,targetid:<?php echo $targetId; ?>}).then(onItem);
-					},
-					mayHaveChildren: function(object){
-						return "children" in object;
-					}
-				});
-
-				var TaxonTreeNode = declare(Tree._TreeNode, {
-					_setLabelAttr: {node: "labelNode", type: "innerHTML"}
-				});
-
-				// set up the tree, assigning taxonTreeModel;
-				var taxonTree = new Tree({
-					model: taxonTreeModel,
-					showRoot: false,
-					label: "Taxa Tree",
-					//dndController: dndSource,
-					persist: false,
-					_createTreeNode: function(args){
-					   return new TaxonTreeNode(args);
-					},
-					onClick: function(item){
-						// Get the URL from the item, and navigate to it
-						//location.href = item.url;
-						window.open(item.url,'_blank');
-					}
-				}, "tree");
-
-				taxonTree.set("path", <?php echo json_encode($treePath); ?>).then(
-					function(path){
-						if(taxonTree.selectedNode){
-							taxonTree._expandNode(taxonTree.selectedNode);
-							document.getElementById(taxonTree.selectedNode.id).scrollIntoView();
-							//win.scrollIntoView(taxonTree.selectedNode.id);
-						}
-					}
-				);
-				taxonTree.startup();
-
-				/*taxonTree.onLoadDeferred.then(function(){
-					var parentnode = taxonTree.getNodesByItem("<?php echo $targetId; ?>");
-					var lastnodes = parentnode[0].getChildren();
-					for (i in lastnodes) {
-						if(lastnodes[i].isExpanded){
-							 taxonTree._collapseNode(lastnodes[i]);
-						}
-						lastnodes[i].makeExpandable();
-					}
-				});*/
-			});
-
-		</script>
 	</div>
 	<?php
 	include($SERVER_ROOT.'/includes/footer.php');
