@@ -280,7 +280,7 @@ $creatorArray = Media::getCreatorArray();
 									<a href="<?php echo $imgArr["url"]; ?>"  title="<?php echo $imgArr["url"]; ?>" target="_blank">
 										<?php
 										$urlDisplay = $imgArr["url"];
-										if(strlen($urlDisplay) > 60) $urlDisplay = '...'.substr($urlDisplay,-60);
+										if($urlDisplay && strlen($urlDisplay) > 60) $urlDisplay = '...'.substr($urlDisplay,-60);
 										echo $urlDisplay;
 										?>
 									</a>
