@@ -1,7 +1,7 @@
 <?php
 include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLoans.php');
-require_once $SERVER_ROOT.'/vendor/phpoffice/phpword/bootstrap.php';
+require_once $SERVER_ROOT.'/vendor/autoload.php';
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load('collections/loans/reports/defaultmailinglabel');
