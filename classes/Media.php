@@ -494,14 +494,14 @@ class Media {
 		mysqli_begin_transaction($conn);
 
 		try {
-			if(!self::isValidFile($file) && ($post_arr['copytoserver'] ?? false)) {
-				$file = UploadUtil::downloadFromRemote($post_arr['originalUrl'], $GLOBALS['ALLOWED_MEDIA_MIME_TYPES']);
-				$createdFilepaths[] = $file['tmp_name'];
-			} else {
+			if(self::isValidFile($file)) {
 				$pathInfo =	pathinfo($file['name']);
 				$pathInfo['filename'] = self::cleanFileName($pathInfo['filename']);
 				$file['name'] = $pathInfo['filename'] . '.' . $pathInfo['extension'];
 				$file['full_path'] = $file['name'];
+			} else if($post_arr['copytoserver'] ?? false) {
+				$file = UploadUtil::downloadFromRemote($post_arr['originalUrl'], $GLOBALS['ALLOWED_MEDIA_MIME_TYPES']);
+				$createdFilepaths[] = $file['tmp_name'];
 			}
 
 			if(self::isValidFile($file)) {
