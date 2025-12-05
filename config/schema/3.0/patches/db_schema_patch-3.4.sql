@@ -30,9 +30,9 @@ ALTER TABLE `omexsiccatinumbers`
   DROP FOREIGN KEY `FK_exsiccatiTitleNumber`;
 
 ALTER TABLE `omexsiccatinumbers`
-  DROP INDEX `FK_exsiccatiTitle`,
-  DROP INDEX `FK_exsiccatiTitleNumber`,
-  DROP INDEX `Index_omexsiccatinumbers_unique`;
+  DROP INDEX IF EXISTS `FK_exsiccatiTitle`,
+  DROP INDEX IF EXISTS `FK_exsiccatiTitleNumber`,
+  DROP INDEX IF EXISTS `Index_omexsiccatinumbers_unique`;
   
 ALTER TABLE `omexsiccatinumbers`
   ADD INDEX `FK_exsiccatiNumber_ometid_idx` (`ometid` ASC),
