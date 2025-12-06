@@ -7,6 +7,7 @@ Language: Français (French)
 $LANG['LOGIN'] = 'Connexion';
 $LANG['INVALID_LOGIN'] = 'Nom d\'utilisateur invalide';
 $LANG['INVALID_EMAIL'] = 'Email invalide';
+$LANG['PASSWORD_RESET_REQUIRED'] = 'Réinitialisation du mot de passe requise!<br>Cliquez sur le lien &quot;Réinitialiser le mot de passe&quot; situé sous le champ de connexion.';
 $LANG['INCORRECT'] = "Votre nom d'utilisateur ou mot de passe était incorrect. Veuillez réessayer.<br/> Si vous ne parvenez pas à vous souvenir de vos identifiants de connexion, utilisez les commandes ci-dessous pour récupérer votre identifiant ou réinitialiser votre mot de passe.";
 $LANG['EMAIL_ERROR'] = "Erreur lors de l'envoi de l'e-mail, contactez l'administrateur";
 $LANG['LOGIN_EMAILED'] = "Votre nom d'utilisateur sera envoyé par courriel à";
@@ -16,7 +17,7 @@ $LANG['COOKIES'] = 'Les cookies de votre navigateur sont désactivés. Afin de t
 $LANG['ENTER_LOGIN_NO_PWD'] = "Entrez votre nom d'utilisateur et laissez le champ du mot de passe vide";
 $LANG['ENTER_LOGIN'] = "Veuillez s'il vous plaît entrer votre nom d'utilisateur et votre mot de passe.";
 $LANG['PORTAL_LOGIN'] = 'Connexion au Portail';
-$LANG['LOGIN_NAME'] = 'Nom d\'utilisateur ou Email';
+$LANG['LOGIN_NAME'] = 'Nom d\'utilisateur';
 $LANG['PASSWORD'] = 'Mot de Passe';
 $LANG['REMEMBER'] = 'Se souvenir de moi sur cet ordinateur';
 $LANG['SIGNIN'] = 'Se connecter';

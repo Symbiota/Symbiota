@@ -169,7 +169,7 @@ class ImInventories extends Manager{
 	private function setChecklistFieldMap(){
 		$this->fieldMap = array('name' => 's', 'authors' => 's', 'type' => 's', 'locality' => 's', 'publication' => 's', 'abstract' => 's', 'notes' => 's',
 			'latCentroid' => 'd', 'longCentroid' => 'd', 'pointRadiusMeters' => 'i', 'access' => 's', 'defaultSettings' => 's', 'dynamicSql' => 's',
-			'dynamicProperties' => 's', 'uid' => 'i', 'footprintWkt' => 's', 'sortSequence' => 'i');
+			'dynamicProperties' => 's', 'uid' => 'i', 'footprintWkt' => 's', 'footprintgeoJson' => 's', 'sortSequence' => 'i');
 	}
 
 	public function deleteChecklist(){
@@ -184,7 +184,6 @@ class ImInventories extends Manager{
 				$stmt->execute();
 				if($stmt->affected_rows && !$stmt->error){
 					$status = true;
-					//Delete userpermissions reference once patch is submitted
 					$this->deleteUserRole('ClAdmin', $this->clid, $GLOBALS['SYMB_UID']);
 				}
 				else $this->errorMessage = $stmt->error;
@@ -199,7 +198,7 @@ class ImInventories extends Manager{
 
 	public function getChecklistArr($pid = 0){
 		$retArr = Array();
-		$sql = 'SELECT c.clid, c.name, c.latcentroid, c.longcentroid, c.access FROM fmchecklists c ';
+		$sql = 'SELECT c.clid, c.name, c.latcentroid, c.longcentroid, c.access, c.defaultsettings FROM fmchecklists c ';
 		if($pid && is_numeric($pid)) $sql .= 'INNER JOIN fmchklstprojlink pl ON c.clid = pl.clid WHERE (pl.pid = '.$pid.') ';
 		$sql .= 'ORDER BY c.sortSequence, c.name';
 		$rs = $this->conn->query($sql);
@@ -208,6 +207,7 @@ class ImInventories extends Manager{
 			$retArr[$r->clid]['lat'] = $r->latcentroid;
 			$retArr[$r->clid]['lng'] = $r->longcentroid;
 			$retArr[$r->clid]['access'] = $r->access;
+			$retArr[$r->clid]['defaultsettings'] = $r->defaultsettings;
 		}
 		$rs->free();
 		return $retArr;
@@ -451,8 +451,8 @@ class ImInventories extends Manager{
 		if(!$tid){
 			$sql .= 'INNER JOIN fmchklsttaxalink cl ON ts2.tid = cl.tid ';
 		}
-		$sql .= 'SET o.localitysecurity = 1
-			WHERE (o.localitysecurity IS NULL OR o.localitysecurity = 0) AND (cultivationStatus = 0 OR cultivationStatus IS NULL) AND (o.localitySecurityReason IS NULL)
+		$sql .= 'SET o.recordSecurity = 1
+			WHERE (o.recordsecurity = 0) AND (cultivationStatus = 0 OR cultivationStatus IS NULL) AND (o.securityReason IS NULL)
 			AND (ts1.taxauthid = 1) AND (ts2.taxauthid = 1) AND (o.stateprovince = ?) ';
 		if($tid){
 			$sql .= ' AND (ts2.tid = ?) ';
@@ -479,8 +479,8 @@ class ImInventories extends Manager{
 			$sql = 'UPDATE omoccurrences o INNER JOIN taxstatus ts1 ON o.tidinterpreted = ts1.tid
 				INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted
 				INNER JOIN fmchklsttaxalink cl ON ts2.tid = cl.tid
-				SET o.localitysecurity = 0
-				WHERE (o.localitysecurity = 1) AND (o.localitySecurityReason IS NULL) AND (ts1.taxauthid = 1) AND (ts2.taxauthid = 1)
+				SET o.recordSecurity = 0
+				WHERE (o.recordsecurity = 1) AND (o.securityReason IS NULL) AND (ts1.taxauthid = 1) AND (ts2.taxauthid = 1)
 				AND (o.stateprovince = ?) AND (cl.clid = ?)
 				AND o.tidinterpreted NOT IN(SELECT s2.tid FROM taxstatus s2 INNER JOIN taxstatus s1 ON s2.tidaccepted = s1.tidaccepted INNER JOIN taxa t ON s1.tid = t.tid WHERE t.securityStatus > 0)';
 			if($stmt = $this->conn->prepare($sql)){
@@ -509,8 +509,8 @@ class ImInventories extends Manager{
 			if(!$globalStatus){
 				$sqlRare = 'UPDATE omoccurrences o INNER JOIN taxstatus ts1 ON o.tidinterpreted = ts1.tid
 					INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted
-					SET o.localitysecurity = 0
-					WHERE (o.localitysecurity = 1) AND (o.localitySecurityReason IS NULL) AND (ts1.taxauthid = 1) AND (ts2.taxauthid = 1)
+					SET o.recordSecurity = 0
+					WHERE (o.recordsecurity = 1) AND (o.securityReason IS NULL) AND (ts1.taxauthid = 1) AND (ts2.taxauthid = 1)
 					AND o.stateprovince = ? AND ts2.tid = ?';
 				if($stmt = $this->conn->prepare($sqlRare)){
 					$stmt->bind_param('si', $rareLocality, $tid);
@@ -648,9 +648,6 @@ class ImInventories extends Manager{
 				$returnArr['occurrencesearch'] = $row->occurrencesearch;
 				$returnArr['ispublic'] = $row->ispublic;
 				$returnArr['sortsequence'] = $row->sortsequence;
-				if($row->ispublic == 0){
-					$this->isPublic = 0;
-				}
 			}
 			$rs->free();
 			//Temporarly needed as a separate call until db_schema_patch-1.1.sql is applied

@@ -419,7 +419,7 @@ CREATE TABLE `omoccurpaleo` (
   `earlyInterval` VARCHAR(65) NULL,
   `lateInterval` VARCHAR(65) NULL,
   `absoluteAge` VARCHAR(65) NULL,
-  `storageAge` VARCHAR(65) NULL,
+  `storageLoc` VARCHAR(65) NULL,
   `stage` VARCHAR(65) NULL,
   `localStage` VARCHAR(65) NULL,
   `biota` VARCHAR(65) NULL COMMENT 'Flora or Fanua',

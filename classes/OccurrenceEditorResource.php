@@ -1,6 +1,7 @@
 <?php
 include_once 'OccurrenceEditorManager.php';
 include_once 'OmAssociations.php';
+include_once('utilities/OccurrenceUtil.php');
 
 class OccurrenceEditorResource extends OccurrenceEditorManager {
 
@@ -86,10 +87,11 @@ class OccurrenceEditorResource extends OccurrenceEditorManager {
 				'CONCAT_WS("-",c.institutionCode,c.collectionCode) AS collcode, o.sciname, o.tidInterpreted '.
 				'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid WHERE '.substr($sqlWhere, 4);
 			if($collidTarget && is_numeric($collidTarget)) $sql .= ' AND (o.collid = '.$collidTarget.') ';
+			$sql .= OccurrenceUtil::appendFullProtectionSQL();
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$catNum = '';
-				if(strpos($r->catalogNumber,$r->collcode) === false) $catNum = $r->collcode.':';
+				if(!empty($r->catalogNumber) && strpos($r->catalogNumber,$r->collcode) === false) $catNum = $r->collcode.':';
 				$catNum .= $r->catalogNumber;
 				if($r->otherCatalogNumbers){
 					if($catNum) $catNum .= ' ('.$r->otherCatalogNumbers.')';

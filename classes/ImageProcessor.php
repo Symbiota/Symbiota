@@ -2,6 +2,7 @@
 require_once($SERVER_ROOT.'/config/dbconnection.php');
 require_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
 include_once($SERVER_ROOT.'/classes/GuidManager.php');
+include_once($SERVER_ROOT.'/classes/utilities/UploadUtil.php');
 
 class ImageProcessor {
 
@@ -198,7 +199,8 @@ class ImageProcessor {
 		$inFileName = basename($_FILES['uploadfile']['name']);
 		$ext = substr(strrchr($inFileName, '.'), 1);
 		$fileName = 'imageMappingFile_'.time();
-		$fullPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) != '/'?'/':'').'temp/data/';
+		$fullPath = UploadUtil::getTempDir() . 'data/';
+
 		if(move_uploaded_file($_FILES['uploadfile']['tmp_name'],$fullPath.$fileName.'.'.$ext)){
 			if($ext == 'zip'){
 				$zipFilePath = $fullPath.$fileName.'.zip';
@@ -230,7 +232,8 @@ class ImageProcessor {
 
 	public function getHeaderArr($fileName){
 		$retArr = array();
-		$fullPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) != '/'?'/':'').'temp/data/'.$fileName;
+		$fullPath = UploadUtil::getTempDir() . 'data/' . $fileName;
+
 		if($fh = fopen($fullPath,'rb')){
 			$headerArr = fgetcsv($fh,0,',');
 			foreach($headerArr as $i => $sourceField){
@@ -244,7 +247,8 @@ class ImageProcessor {
 	public function loadFileData($postArr){
 		if(isset($postArr['filename']) && isset($postArr['tf'])){
 			$fieldMap = array_flip($postArr['tf']);
-			$fullPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) != '/'?'/':'').'temp/data/'.$postArr['filename'];
+			$fullPath = $fullPath = UploadUtil::getTempDir() . 'data/' . $postArr['filename'];
+
 			if($fh = fopen($fullPath,'rb')){
 				$this->initProcessor('processing/imgmap');
 				$this->logOrEcho('Starting to process image URLs within image mapping file '.$postArr['filename'].' ('.date('Y-m-d H:i:s').')');
@@ -315,8 +319,8 @@ class ImageProcessor {
 						else{
 							if($this->createNewRecord){
 								//Create new occurrence record to link image
-								$sqlIns = 'INSERT INTO omoccurrences(collid,'.($catalogNumber?'catalogNumber':'otherCatalogNumbers').',processingstatus,dateentered) '.
-									'VALUES('.$this->collid.',"'.($catalogNumber?$catalogNumber:$otherCatalogNumbers).'","unprocessed",now())';
+								$sqlIns = 'INSERT INTO omoccurrences(collid,'.($catalogNumber?'catalogNumber':'otherCatalogNumbers').',processingstatus,dateentered, mediaType) '.
+									'VALUES('.$this->collid.',"'.($catalogNumber?$catalogNumber:$otherCatalogNumbers).'","unprocessed",now(), "image")';
 								if($this->conn->query($sqlIns)){
 									$occArr[$this->conn->insert_id] = 0;
 									$this->logOrEcho('Unable to find record with matching '.($catalogNumber?'catalogNumber':'otherCatalogNumbers').'; new occurrence record created',1);
@@ -481,7 +485,9 @@ class ImageProcessor {
 		$status = true;
 		if($occid && $targetFieldArr){
 			$format = 'image/jpeg';
+			$mediaType = 'image';
 			if(!array_key_exists('format', $targetFieldArr) || !$targetFieldArr['format']) $targetFieldArr['format'] = $format;
+			if(!array_key_exists('mediaType', $targetFieldArr) || !$targetFieldArr['mediaType']) $targetFieldArr['mediaType'] = $mediaType;
 
 			$sqlInsert = '';
 			$sqlValues = '';
@@ -658,7 +664,7 @@ class ImageProcessor {
 			}
 		}
 		if($this->logMode == 1 || $this->logMode == 3){
-			echo '<li '.($indent?'style="margin-left:'.($indent*15).'px"':'').'>'.$str."</li>\n";
+			echo '<li '.($indent?'style="margin-left:'.($indent*15).'px"':'').'>'. htmlspecialchars($str, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ."</li>\n";
 			ob_flush();
 			flush();
 		}

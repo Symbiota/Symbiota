@@ -40,10 +40,13 @@ const POLYGON_TEXT_TYPES = Object.freeze({
  */
 function openCoordAid(options) {
 	const default_options = {
-		polygon_output_id: "footprintwkt",
 		title: "Map Coodinate Helper",
 	}
 	const exclude_params = ["client_root", "title"]
+
+	if(!options.map_mode || options.map_mode === MAP_MODES.POLYGON) {
+		default_options.polygon_output_id = 'footprintwkt';
+	}
 
 	options = {
 		...default_options,
@@ -66,4 +69,10 @@ function openCoordAid(options) {
 	);
 	if (mapWindow.opener == null) mapWindow.opener = self;
 	mapWindow.focus();
+}
+
+function cleanPolygon(inputObj){
+	polygon = inputObj.value;
+	polygon = polygon.replace(/\s+/g, " ");
+	inputObj.value = polygon;
 }

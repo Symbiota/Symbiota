@@ -2,8 +2,10 @@
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/glossary/individual.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/glossary/individual.en.php');
-else include_once($SERVER_ROOT.'/content/lang/glossary/individual.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('glossary/individual');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $glossId = array_key_exists('glossid', $_REQUEST) ? filter_var($_REQUEST['glossid'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -72,7 +74,7 @@ if($glossId){
 	<?php
 	if($termArr){
 		$glosManager->remapDescriptionCrossLinks($termArr);
-		if(strpos($_SERVER['HTTP_REFERER'], 'individual.php')){
+		if(array_key_exists('HTTP_REFERER', $_SERVER) && strpos($_SERVER['HTTP_REFERER'], 'individual.php')){
 			echo '<div class="navpath"><a href="#" onclick="history.back();">&lt;&lt; ' . $LANG['RETURN_TO_PREVIOUS'] . '</a></div>';
 		}
 		?>
@@ -225,21 +227,7 @@ if($glossId){
 								?>
 								<fieldset style='clear:both;border:0px;padding:0px;margin-top:10px;'>
 									<div style='width:250px;'>
-										<?php
-										$imgWidth = 0;
-										$imgHeight = 0;
-										if($size = getimagesize(str_replace(' ', '%20', $imgUrl))){
-											if($size[0] > 240){
-												$imgWidth = 240;
-												$imgHeight = 0;
-											}
-											if($size[0] < 245 && $size[1] > 500){
-												$imgWidth = 0;
-												$imgHeight = 500;
-											}
-										}
-										?>
-										<img src='<?php echo $imgUrl; ?>' style="margin:auto;display:block;border:1px;<?php echo ($imgWidth?'width:'.$imgWidth.'px;':'').($imgHeight?'height:'.$imgHeight.'px;':''); ?>" title='<?php echo $imgArr['structures']; ?>'/>
+										<img src='<?php echo $imgUrl; ?>' style="margin:auto;display:block;border:1px;max-width:250px;height:auto;" title='<?php echo $imgArr['structures']; ?>'/>
 									</div>
 									<div style='width:250px;'>
 										<?php

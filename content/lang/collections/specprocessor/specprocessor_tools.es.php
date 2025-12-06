@@ -54,7 +54,7 @@ $LANG['MUST_MAP_CATNUM'] = 'El número de catálogo u otros números de catálog
 $LANG['LARGE_URL_MAPPED'] = 'La URL de imagen grande debe estar asignada a un campo de importación';
 $LANG['IMG_PROCESSOR_EXPLAIN'] = 'Estas herramientas están diseñadas para ayudar a los administradores de colecciones en el procesamiento por lotes de imágenes de muestras. Póngase en contacto con el administrador del portal para obtener ayuda para configurar un nuevo flujo de trabajo.
 			Una vez que se establece un perfil, el administrador de la colección puede usar este formulario para activar manualmente el procesamiento de imágenes. Para obtener más información, consulte la documentación de Symbiota para
-			<b><a href="https://biokic.github.io/symbiota-docs/coll_manager/images/batch/" target="_blank">prácticas recomendadas</a></b> para integrar imágenes.' ;
+			<b><a href="https://docs.symbiota.org/Collection_Manager_Guide/Images/batch_adding" target="_blank">prácticas recomendadas</a></b> para integrar imágenes.' ;
 $LANG['IMG_FILE_UPLOAD_MAP'] = 'Mapa de carga de archivos de imagen';
 $LANG['SOURCE_FIELD'] = 'Campo de origen';
 $LANG['TARGET_FIELD'] = 'Campo de destino';
@@ -73,6 +73,7 @@ $LANG['NEW'] = 'Nuevo';
 $LANG['PROFILE'] = 'Perfil';
 $LANG['CLOSE_EDITOR'] = 'Cerrar editor';
 $LANG['PROC_TYPE'] = 'Tipo de procesamiento';
+$LANG['IMG_PROC_CHANGE_EXPLAIN'] = '<b>¡Las herramientas para cargar archivos URL de imágenes se han movido!</b> Ahora puede cargar archivos URL de medios a través del Importador de Datos Extendido (Panel de Control de Administración > Importar/Actualizar Registros de Especímenes > Datos Extendidos Importación)';
 $LANG['MAP_FROM_SERVER'] = 'Imágenes de mapa desde un servidor local o remoto';
 $LANG['URL_MAP_FILE'] = 'Archivo de mapeo de URL de imagen';
 $LANG['TITLE'] = 'Título';

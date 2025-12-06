@@ -1,6 +1,6 @@
 var imgAssocCleared = false;
 var voucherAssocCleared = false;
-var localitySecurityIsDefault = false;
+var securityIsDefault = false;
 
 $(document).ready(function () {
   var editForm = document.fullform;
@@ -93,14 +93,14 @@ $(document).ready(function () {
       $("#tidinterpreted").val("");
       $("input[name=scientificnameauthorship]").val("");
       $("input[name=family]").val("");
-      if ($("input[name=localitysecurityreason]").val() == "") {
-        $("select[name=localitysecurity]").val(0);
+      if ($("input[name=securityreason]").val() == "") {
+        $("select[name=recordsecurity]").val(0);
       }
       fieldChanged("sciname");
       fieldChanged("tidinterpreted");
       fieldChanged("scientificnameauthorship");
       fieldChanged("family");
-      fieldChanged("localitysecurity");
+      fieldChanged("recordsecurity");
       if ($("#ffsciname").val()) {
         verifyFullFormSciName();
       }
@@ -237,6 +237,8 @@ $(document).ready(function () {
     { autoFocus: true }
   );
 
+  autocompleteTagNames();
+
   $("#catalognumber").keydown(function (evt) {
     var evt = evt ? evt : event ? event : null;
     if (evt.keyCode == 13) return false;
@@ -280,24 +282,24 @@ function verifyFullFormSciName() {
       $("input[name=tradeName]").val(data.tradename);
       $("input[name=scientificnameauthorship]").val(data.author);
       /*
-			if(data.rankid < 220){
-				$( 'select[name=confidenceranking]' ).val(2);
-			}
-			else{
-				$( 'select[name=confidenceranking]' ).val(8);
-			}
-			*/
+      if(data.rankid < 220){
+        $( 'select[name=confidenceranking]' ).val(2);
+      }
+      else{
+        $( 'select[name=confidenceranking]' ).val(8);
+      }
+      */
       if (
         data.status == 1 &&
         !$("input[name=cultivationstatus]").prop("checked")
       ) {
-        $("select[name=localitysecurity]").val(1);
+        $("select[name=recordsecurity]").val(1);
         securityChanged(document.fullform);
       } else {
         if (data.tid) {
           var stateVal = $("input[name=stateprovince]").val();
           if (stateVal != "") {
-            localitySecurityCheck();
+            securityCheck();
           }
         }
       }
@@ -313,9 +315,9 @@ function verifyFullFormSciName() {
 function addIdentifierField(clickedObj) {
   $(clickedObj).hide();
   var identDiv = document.getElementById("identifierBody");
-  var insertHtml =
-    '<div class="divTableRow"><div class="divTableCell"><input name="idkey[]" type="hidden" value="newidentifier" /><input name="idname[]" type="text" value="" onchange="fieldChanged(\'idname\');" autocomplete="off" /></div><div class="divTableCell"><input name="idvalue[]" type="text" value="" onchange="fieldChanged(\'idvalue\');searchOtherCatalogNumbers(this.form);" autocomplete="off" /><a href="#" onclick="addIdentifierField(this);return false"><img src="../../images/plus.png" /></a></div></div>';
-  identDiv.insertAdjacentHTML("beforeend", insertHtml);
+  var insertHtml = '<div class="divTableRow"><div class="divTableCell"><input name="idkey[]" type="hidden" value="newidentifier" /><input class="idNameInput" name="idname[]" type="text" value="" onchange="fieldChanged(\'idname\');" autocomplete="off" /></div><div class="divTableCell"><input class="idValueInput" name="idvalue[]" type="text" value="" onchange="fieldChanged(\'idvalue\');searchOtherCatalogNumbers(this.form);" autocomplete="off" /><a href="#" onclick="addIdentifierField(this);return false"><img src="../../images/plus.png" /></a></div></div>';
+  identDiv.insertAdjacentHTML('beforeend', insertHtml);
+  // Hook jquery-ui autocomplete to the newly inserted inputs
 }
 
 function deleteIdentifier(identID, occid) {
@@ -333,18 +335,18 @@ function deleteIdentifier(identID, occid) {
   }
 }
 
-function localitySecurityCheck() {
+function securityCheck() {
   var tidIn = $("input[name=tidinterpreted]").val();
   var stateIn = $("input[name=stateprovince]").val();
   if (tidIn != "" && stateIn != "") {
     $.ajax({
       type: "POST",
-      url: "rpc/localitysecuritycheck.php",
+      url: "rpc/securitycheck.php",
       dataType: "json",
       data: { tid: tidIn, state: stateIn },
     }).done(function (data) {
       if (data == "1" && !$("input[name=cultivationstatus]").prop("checked")) {
-        $("select[name=localitysecurity]").val(1);
+        $("select[name=recordsecurity]").val(1);
         securityChanged(document.fullform);
       }
     });
@@ -371,14 +373,14 @@ function fieldChanged(fieldName) {
   if (fieldName == "cultivationstatus") {
     if ($("input[name=cultivationstatus]").prop("checked")) {
       if (
-        $("select[name=localitysecurity]").val() == 1 &&
-        $("input[name=localitysecurityreason]").val() == ""
+        $("select[name=recordsecurity]").val() == 1 &&
+        $("input[name=securityreason]").val() == ""
       ) {
-        localitySecurityIsDefault = true;
-        $("select[name=localitysecurity]").val(0);
+        securityIsDefault = true;
+        $("select[name=recordsecurity]").val(0);
       }
-    } else if (localitySecurityIsDefault) {
-      $("select[name=localitysecurity]").val(1);
+    } else if (securityIsDefault) {
+      $("select[name=recordsecurity]").val(1);
     }
   }
 }
@@ -392,26 +394,32 @@ function stateProvinceChanged(stateVal) {
   fieldChanged("stateprovince");
   var tidVal = $("#tidinterpreted").val();
   if (tidVal != "" && stateVal != "") {
-    localitySecurityCheck();
+    securityCheck();
   }
 }
 
 function coordinatesChanged(f, client_root) {
-	verifyDecimalLatitude(f);
-	verifyDecimalLongitude(f);
-	verifyCoordinates(f, client_root);
-	fieldChanged('decimallatitude');
-	fieldChanged('decimallongitude');
+  verifyDecimalLatitude(f);
+  verifyDecimalLongitude(f);
+
+  // Used to fire whether to geocode data in verifyCoordinates
+  // Should be reset if the coordinates change
+  // Reset is here because verifyCoordinates is also called when country
+  f.coordinates_validated = false;
+  verifyCoordinates(f, client_root);
+
+  fieldChanged('decimallatitude');
+  fieldChanged('decimallongitude');
 }
 
 function decimalLatitudeChanged(f) {
-	verifyDecimalLatitude(f);
-	fieldChanged('decimallatitude');
+  verifyDecimalLatitude(f);
+  fieldChanged('decimallatitude');
 }
 
 function decimalLongitudeChanged(f) {
-	verifyDecimalLongitude(f);
-	fieldChanged('decimallongitude');
+  verifyDecimalLongitude(f);
+  fieldChanged('decimallongitude');
 }
 
 function coordinateUncertaintyInMetersChanged(f) {
@@ -689,80 +697,77 @@ function parseVerbatimCoordinates(f, verbose) {
       }
     }
 
-		if (latDec && lngDec) {
-			f.decimallatitude.value = Math.round(latDec * 1000000) / 1000000;
-			f.decimallongitude.value = Math.round(lngDec * 1000000) / 1000000;
-			decimalLatitudeChanged(f);
-			decimalLongitudeChanged(f);	
-		}
-		else {
-			if (verbose) alert("Unable to parse coordinates");
-		}
-	}
+    if (latDec && lngDec) {
+      f.decimallatitude.value = Math.round(latDec * 1000000) / 1000000;
+      f.decimallongitude.value = Math.round(lngDec * 1000000) / 1000000;
+      decimalLatitudeChanged(f);
+      decimalLongitudeChanged(f);
+      f.decimallatitude.dispatchEvent(new Event('input', { bubbles: true }));
+      f.decimallongitude.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    else {
+      if (verbose) alert("Unable to parse coordinates");
+    }
+  }
 }
 
 //Form verification code
 function verifyFullForm(f) {
-  var validformat1 = /^\d{4}-[0]{1}[0-9]{1}-\d{1,2}$/; //Format: yyyy-mm-dd
-  var validformat2 = /^\d{4}-[1]{1}[0-2]{1}-\d{1,2}$/; //Format: yyyy-mm-dd
-  if (
-    f.eventdate.value &&
-    !(
-      validformat1.test(f.eventdate.value) ||
-      validformat2.test(f.eventdate.value)
-    )
-  ) {
-    alert("Event date is invalid");
-    return false;
-  }
-  if (
-    f.ometid &&
-    ((f.ometid.value != "" && f.exsnumber.value == "") ||
-      (f.ometid.value == "" && f.exsnumber.value != ""))
-  ) {
-    alert(
-      "You must have both an exsiccati title and number, or neither. If there is no number, s.n. can be entered."
-    );
-    return false;
-  }
-  if (!verifyDecimalLatitude(f)) {
-    return false;
-  }
-  if (!verifyDecimalLongitude(f)) {
-    return false;
-  }
-  if (!isNumeric(f.coordinateuncertaintyinmeters.value)) {
-    alert("Coordinate uncertainty field must be numeric only");
-    return false;
-  }
-  if (!verifyMinimumElevationInMeters(f)) {
-    return false;
-  }
-  if (!verifyMaximumElevationInMeters(f)) {
-    return false;
-  }
-  if (f.maximumelevationinmeters.value) {
-    if (!f.minimumelevationinmeters.value) {
-      alert(
-        "Maximun elevation field contains a value yet minumum does not. If elevation consists of a single value rather than a range, enter the value in the minimun field."
-      );
-      return false;
-    } else if (
-      parseInt(f.minimumelevationinmeters.value) >
-      parseInt(f.maximumelevationinmeters.value)
-    ) {
-      alert(
-        "Maximun elevation value can not be greater than the minumum value."
-      );
-      return false;
-    }
-  }
-  if (!isNumeric(f.duplicatequantity.value)) {
-    alert("Duplicate Quantity field must be numeric only");
-    return false;
-  }
-  if (searchCatalogNumber(f, false)) return false;
-  return true;
+	if(fullFormErrorMessage != ""){
+		alert(fullFormErrorMessage);
+		return false;
+	}
+	
+	let validformat1 = /^\d{4}-[0]{1}[0-9]{1}-\d{1,2}$/; 
+	let validformat2 = /^\d{4}-[1]{1}[0-2]{1}-\d{1,2}$/; 
+	
+	if (f.eventdate.value != "") {
+		if(!validformat1.test(f.eventdate.value) && !validformat2.test(f.eventdate.value)){
+			alert("Event date is invalid");
+			return false;
+		}
+	}
+
+	if (f.ometid !== undefined && ((f.ometid.value != "" && f.exsnumber.value == "") || (f.ometid.value == "" && f.exsnumber.value != ""))) {
+		alert("You must have both an exsiccati title and number, or neither. If there is no number, s.n. can be entered.");
+		return false;
+	}
+	if (!verifyDecimalLatitude(f)) {
+		return false;
+	}
+	if (!verifyDecimalLongitude(f)) {
+		return false;
+	}
+	if (!isNumeric(f.coordinateuncertaintyinmeters.value)) {
+		alert("Coordinate uncertainty field must be numeric only");
+		return false;
+	}
+	if (!verifyMinimumElevationInMeters(f)) {
+		return false;
+	}
+	if (!verifyMaximumElevationInMeters(f)) {
+		return false;
+	}
+	if (f.maximumelevationinmeters.value) {
+		if (!f.minimumelevationinmeters.value) {
+			alert("Maximun elevation field contains a value yet minumum does not. If elevation consists of a single value rather than a range, enter the value in the minimun field.");
+			return false;
+		}
+		else if (parseInt(f.minimumelevationinmeters.value) > parseInt(f.maximumelevationinmeters.value)) {
+			alert("Maximun elevation value can not be greater than the minumum value.");
+			return false;
+		}
+	}
+	if (!isNumeric(f.duplicatequantity.value)) {
+		alert("Duplicate Quantity field must be numeric only");
+		return false;
+	}
+	if (searchCatalogNumber(f, false)) return false;
+	
+	if (typeof verifyPaleoForm === "function") { 
+		if (!verifyPaleoForm(f)) return false;
+	}
+	return true;
 }
 
 function verifyFullFormEdits(f) {
@@ -1228,13 +1233,13 @@ function dwcDoc(dcTag) {
   var language = getCookie("lang");
   if (language == "es") {
     dwcWindow = open(
-      "https://biokic.github.io/symbiota-docs/es/editor/edit/fields/#" + dcTag,
+      "https://docs.symbiota.org/Editor_Guide/Editing_Searching_Records/symbiota_data_fields#" + dcTag,
       "dwcaid",
       "width=1250,height=300,left=20,top=20,scrollbars=1"
     );
   } else {
     dwcWindow = open(
-      "https://biokic.github.io/symbiota-docs/editor/edit/fields/#" + dcTag,
+      "https://docs.symbiota.org/Editor_Guide/Editing_Searching_Records/symbiota_data_fields#" + dcTag,
       "dwcaid",
       "width=1250,height=300,left=20,top=20,scrollbars=1"
     );
@@ -1258,37 +1263,37 @@ function openOccurrenceSearch(target) {
 
 function securityChangedByUser(f) {
   securityChanged(f);
-  if (f.localitysecurity.value == 1) {
-    f.lockLocalitySecurity.checked = true;
+  if (f.recordsecurity.value > 0) {
+    f.lockSecurity.checked = true;
   } else {
-    f.lockLocalitySecurity.checked = false;
+    f.lockSecurity.checked = false;
   }
-  securityLockChanged(f.lockLocalitySecurity);
+  securityLockChanged(f.lockSecurity);
 }
 
 function securityChanged(f) {
-  fieldChanged("localitysecurity");
+  fieldChanged("recordsecurity");
   $("#locsecreason").show();
 }
 
-function localitySecurityReasonChanged() {
-  fieldChanged("localitysecurityreason");
-  if ($("input[name=localitysecurityreason]").val() == "") {
-    $("input[name=lockLocalitySecurity]").prop("checked", false);
+function securityReasonChanged() {
+  fieldChanged("securityreason");
+  if ($("input[name=securityreason]").val() == "") {
+    $("input[name=lockSecurity]").prop("checked", false);
   } else {
-    $("input[name=lockLocalitySecurity]").prop("checked", true);
+    $("input[name=lockSecurity]").prop("checked", true);
   }
 }
 
 function securityLockChanged(cb) {
   if (cb.checked == true) {
-    if ($("input[name=localitysecurityreason]").val() == "") {
-      $("input[name=localitysecurityreason]").val("[Security Setting Locked]");
-      fieldChanged("localitysecurityreason");
+    if ($("input[name=securityreason]").val() == "") {
+      $("input[name=securityreason]").val("[Security Setting Locked]");
+      fieldChanged("securityreason");
     }
   } else {
-    $("input[name=localitysecurityreason]").val("");
-    fieldChanged("localitysecurityreason");
+    $("input[name=securityreason]").val("");
+    fieldChanged("securityreason");
   }
 }
 
@@ -1337,4 +1342,30 @@ function getCookie(cName) {
       return unescape(y);
     }
   }
+}
+
+// Autocomplete for otherCatalogNumbers tagNames
+// Running as a function so that it can be activated as new rows are added
+function autocompleteTagNames() {
+  $(".idNameInput").autocomplete({
+    minLength: 0,
+    autoFocus: true,
+    source: function( request, response ) {
+      let collId = document.fullform.collid.value;
+      $.ajax({
+        type: "POST",
+        url: "rpc/tagnamesuggest.php",
+        data: {collid: document.fullform.collid.value, term: request.term},
+        success: function( data ){
+          response(data);
+        }
+      });
+    },
+    select: function(event, ui) {
+      fieldChanged('idname');
+    }
+  }).focus(function() {
+    // If the user clicks the tag name box and it's empty, provide possible values
+    if ($(this).val() === '') $(this).autocomplete("search", $(this).val());
+  });
 }

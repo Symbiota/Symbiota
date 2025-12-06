@@ -1,5 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/UploadUtil.php');
 
 class MapSupport extends Manager{
 
@@ -20,15 +22,17 @@ class MapSupport extends Manager{
 		//Following SQL grabs all accepted taxa at species / infraspecific rank that don't yet have a distribution map
 		//Eventually well probably add ability to refresh all maps older than a certain date, and/or by other criteria
 		//Return limit is currently set at 1000 records, which maybe should be variable that is set by user?
-		$sql = 'SELECT DISTINCT t.tid, t.sciname
-			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted
-			INNER JOIN omoccurrences o ON ts.tid = o.tidinterpreted ';
-		if($tidFilter) $sql .= 'INNER JOIN taxaenumtree e ON t.tid = e.tid ';
+		$sql ='SELECT DISTINCT t.tid, t.sciname
+			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted ';
+
 		if($onlyTaxaWithoutMaps) $sql .= 'LEFT JOIN taxamaps m ON t.tid = m.tid ';
+
 		$sql .= 'WHERE t.rankid > 219 AND ts.taxauthid = 1 ';
-		if($tidFilter) $sql .= 'AND e.taxauthid = 1 AND (e.parentTid = ? OR ts.tid = ?) ';
-		if($onlyTaxaWithoutMaps) $sql .= 'AND m.tid IS NULL ';
-		$sql .= ' ORDER BY t.sciname';
+
+		if($tidFilter) {
+			$sql .= 'AND (ts.parenttid = ? OR ts.tid = ?)';
+		}
+
 		if($stmt = $this->conn->prepare($sql)){
 			if($tidFilter) $stmt->bind_param('ii', $tidFilter, $tidFilter);
 			$stmt->execute();
@@ -38,6 +42,7 @@ class MapSupport extends Manager{
 			}
 			$stmt->close();
 		}
+
 		return $retArr;
 	}
 
@@ -55,16 +60,27 @@ class MapSupport extends Manager{
 				$latMax = floatval($boundArr[0]);
 				$lngMin = floatval($boundArr[3]);
 				$lngMax = floatval($boundArr[1]);
-         }
+			}
 
-         //return [$latMin, $latMax, $lngMin, $lngMax];
-         //return ['(' . implode(',', $tidArr) . ')' ];
+			if($latMin > $latMax) {
+				$tmp = $latMax;
+				$latMax = $latMin;
+				$latMin = $tmp;
+			}
+
+			if($lngMin > $lngMax) {
+				$tmp = $lngMax;
+				$lngMax = $lngMin;
+				$lngMin = $tmp;
+			}
+
 			$sql = 'SELECT DISTINCT decimalLatitude, decimalLongitude
 				FROM omoccurrences
 				WHERE (decimalLatitude BETWEEN '.$latMin.' AND '.$latMax.') AND (decimalLongitude BETWEEN '.$lngMin.' AND '.$lngMax.')
-				AND (cultivationStatus IS NULL OR cultivationStatus = 0) AND (localitySecurity IS NULL OR localitySecurity = 0)
+				AND (cultivationStatus IS NULL OR cultivationStatus = 0) AND (recordSecurity = 0)
 				AND (coordinateUncertaintyInMeters IS NULL OR coordinateUncertaintyInMeters < 5000)
 				AND tidinterpreted IN('.implode(',', $tidArr).')';
+			$sql .= str_replace('o.', '', OccurrenceUtil::appendFullProtectionSQL());
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
 					//$retArr[] = $r->decimalLongitude.','.$r->decimalLatitude;
@@ -113,19 +129,29 @@ class MapSupport extends Manager{
 		$status = false;
 		$tid = $portArr['tid'];
 		$title = $portArr['title'];
-      $mapType = 'heatmap';
+		$mapType = 'heatmap';
 
 		if(isset($portArr['maptype'])) $mapType = $portArr['maptype'];
 		if(!empty($_FILES['mapupload']['name'])){
+			try {
+				UploadUtil::checkFileUpload(
+					$_FILES['mapupload'],
+					UploadUtil::ALLOWED_IMAGE_MIMES
+				);
+			} catch(Exception $e) {
+				$this->errorMessage = 'ERROR: ' . $e->getMessage();
+				return false;
+			}
+
 			$ext = substr($_FILES['mapupload']['name'], strrpos($_FILES['mapupload']['name'], '.'));
 			$fileName = $tid.'_'.$mapType.'_'.time() . $ext;
 
-         //Clear Out Old Thumbnails
-         $this->deleteAllTaxonMaps($tid);
+			//Clear Out Old Thumbnails
+			$this->deleteAllTaxonMaps($tid);
 
 			$this->setTargetPaths();
 			if(move_uploaded_file($_FILES['mapupload']['tmp_name'], $this->targetPath.$fileName)){
-		      $this->targetPath;
+				$this->targetPath;
 				$status = $this->insertImage($tid, $title, $this->targetUrl.$fileName);
 			}
 			else{
@@ -133,7 +159,7 @@ class MapSupport extends Manager{
 				return false;
 			}
 		}
-   }
+	}
 
 	private function insertImage($tid, $title, $url){
 		$status = false;

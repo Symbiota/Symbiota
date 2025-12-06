@@ -60,4 +60,4 @@ $LANG['IMAGE_SOURCE'] = 'Fuente medios';
 $LANG['OPEN_MEDIUM_SIZED_IMAGE'] = 'Abrir imagen de tamaño mediano';
 $LANG['OPEN_LARGE_IMAGE'] = 'Abrir imagen grande';
 $LANG['UNABLE_TO_LOCATE'] = 'No se puede localizar el recurso medios';
-
+$LANG['MEDIA_TRANSFER_REQUIRES_TAXON_ID'] = 'La transferencia de medios requiere una identificación taxonómica';

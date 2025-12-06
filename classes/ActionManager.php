@@ -3,7 +3,7 @@
 include_once($SERVER_ROOT.'/config/dbconnection.php');
 include_once($SERVER_ROOT.'/classes/Manager.php');
 include_once($SERVER_ROOT.'/classes/OmOccurrences.php');
-include_once($SERVER_ROOT.'/classes/ImageDetailManager.php');
+include_once($SERVER_ROOT.'/classes/Media.php');
 
 /**
  * Controler class for ActionRequests, may be subclassed for particular action requests.
@@ -436,8 +436,7 @@ class ActionRequest {
          $result = "<a href='../collections/individual/index.php?occid=$this->fk&clid=0'>" . htmlspecialchars($occ->getinstitutionCode(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ":" . htmlspecialchars($occ->getcollectionCode(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . " " . htmlspecialchars($occ->getcatalogNumber(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a>";
       }
       if($this->tablename=="images") {
-         $im = new ImageDetailManager($this->fk);
-         $imArr = $im->getImageMetadata();
+         $imArr = Media::getMedia($this->fk, MediaType::Image);
          if (isset($imArr['sciname'])) {
             $caption .= $imArr['sciname'];
          } elseif (isset($imArr['caption'])) {
@@ -445,7 +444,7 @@ class ActionRequest {
          } elseif (isset($imArr['creator'])) {
             $caption .= $imArr['creator'];
          } else {
-            $caption = $imArr['imagetype'];
+            $caption = $imArr['imageType'];
          }
          $caption .= " " . $imArr['initialtimestamp'];
          $caption = trim($caption);

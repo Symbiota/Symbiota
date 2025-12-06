@@ -1,10 +1,11 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/TaxonomyDisplayManager.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('taxa/taxonomy/taxonomydisplay');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.'.$LANG_TAG.'.php'))
-	include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.'.$LANG_TAG.'.php');
-	else include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomydisplay.en.php');
 
 $target = $_REQUEST['target'] ?? '';
 $displayAuthor = !empty($_REQUEST['displayauthor']) ? 1: 0;

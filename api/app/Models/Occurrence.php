@@ -15,37 +15,41 @@ class Occurrence extends Model{
 		'verbatimEventDate', 'eventTime', 'habitat', 'substrate', 'fieldNotes', 'fieldNumber', 'eventID', 'occurrenceRemarks', 'informationWithheld', 'dataGeneralizations',
 		'associatedTaxa', 'dynamicProperties', 'verbatimAttributes', 'behavior', 'reproductiveCondition', 'cultivationStatus', 'establishmentMeans', 'lifeStage', 'sex', 'individualCount',
 		'samplingProtocol', 'samplingEffort', 'preparations', 'locationID', 'continent', 'parentLocationID', 'country', 'stateProvince', 'county', 'municipality', 'waterBody', 'islandGroup',
-		'island', 'countryCode', 'locality', 'localitySecurity', 'localitySecurityReason', 'decimalLatitude', 'decimalLongitude', 'geodeticDatum', 'coordinateUncertaintyInMeters',
+		'island', 'countryCode', 'locality', 'recordSecurity', 'securityReason', 'decimalLatitude', 'decimalLongitude', 'geodeticDatum', 'coordinateUncertaintyInMeters',
 		'footprintWKT', 'locationRemarks', 'verbatimCoordinates', 'georeferencedBy', 'georeferencedDate', 'georeferenceProtocol', 'georeferenceSources',
 		'georeferenceVerificationStatus', 'georeferenceRemarks', 'minimumElevationInMeters', 'maximumElevationInMeters', 'verbatimElevation', 'minimumDepthInMeters', 'maximumDepthInMeters',
 		'verbatimDepth', 'availability', 'disposition', 'storageLocation', 'modified', 'language', 'processingStatus', 'recordEnteredBy', 'duplicateQuantity', 'labelProject', 'recordID', 'dateEntered'];
-	protected $hidden = [ 'collection', 'scientificName', 'recordedbyid', 'observerUid', 'labelProject', 'recordEnteredBy', 'associatedOccurrences', 'previousIdentifications',
+	protected $hidden = [ 'collectionInternal', 'scientificName', 'recordedbyid', 'observerUid', 'labelProject', 'recordEnteredBy', 'associatedOccurrences', 'previousIdentifications',
 		'verbatimCoordinateSystem', 'coordinatePrecision', 'footprintWKT', 'dynamicFields', 'institutionID', 'collectionID', 'genericColumn1', 'genericColumn2' ];
 	public static $snakeAttributes = false;
 
 	public function getInstitutionCodeAttribute($value){
 		if(!$value){
-			$value = $this->collection->institutionCode;
+			$value = $this->collectionInternal->institutionCode;
 		}
 		return $value;
 	}
 
 	public function getCollectionCodeAttribute($value){
 		if(!$value){
-			$value = $this->collection->collectionCode;
+			$value = $this->collectionInternal->collectionCode;
 		}
 		return $value;
 	}
 
 	public function getOccurrenceIDAttribute($value){
-		if(!$value && $this->collection->guidTarget == 'symbiotaUUID'){
+		if(!$value && $this->collectionInternal->guidTarget == 'symbiotaUUID'){
 			$value = $this->attributes['recordID'];
 		}
 		return $value;
 	}
 
 	public function collection(){
-		return $this->belongsTo(Collection::class, 'collid', 'collid');
+		return $this->belongsTo(Collection::class, 'collid', 'collID');
+	}
+
+	public function collectionInternal(){
+		return $this->collection();
 	}
 
 	public function identification(){
@@ -69,6 +73,7 @@ class Occurrence extends Model{
 	}
 
 	public function portalPublications(){
-		return $this->belongsToMany(PortalPublication::class, 'portaloccurrences', 'occid', 'pubid')->withPivot('remoteOccid');;
+		return $this->belongsToMany(PortalPublication::class, 'portaloccurrences', 'occid', 'pubid')->withPivot('remoteOccid');
 	}
+
 }

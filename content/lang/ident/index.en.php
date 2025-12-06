@@ -5,12 +5,10 @@ Language: English
 ------------------
 */
 
-$LANG['IDKEY'] = ' Identification Keys';
-$LANG['IDKEYLIST'] = 'Identification Key Listing';
-
+$LANG['NAV_HOME'] = 'Home';
 $LANG['IDKEYS'] = 'Identification Keys';
+$LANG['IDKEYLIST'] = 'Identification Key Listing';
 $LANG['SHOWCHECK'] = 'Show checklists on map';
-
 $LANG['CHAR_ADMIN'] = 'Taxon Character Administration';
 $LANG['ALERT_NAME'] = 'Character name must have a value';
 $LANG['ALERT_TYPE'] = 'A character type must be selected';

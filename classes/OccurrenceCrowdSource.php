@@ -1,5 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT . '/config/dbconnection.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 class OccurrenceCrowdSource {
 
@@ -91,6 +92,7 @@ class OccurrenceCrowdSource {
 				FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid
 				LEFT JOIN omcrowdsourcequeue q ON o.occid = q.occid
 				WHERE o.collid = '.$this->collid.' AND (o.processingstatus = "unprocessed") AND q.occid IS NULL ';
+			$sql .= OccurrenceUtil::appendFullProtectionSQL();
 			$toAddCnt = 0;
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
@@ -205,7 +207,7 @@ class OccurrenceCrowdSource {
 		return $retArr;
 	}
 
-	public function addToQueue($omcsid,$family,$taxon,$country,$stateProvince,$limit){
+	public function addToQueue($omcsid, $family, $taxon, $country, $stateProvince, $limit){
 		$statusStr = 'SUCCESS: specimens added to queue';
 		if(!$this->omcsid) return 'ERROR adding to queue, omcsid is null';
 		if(!$this->collid) return 'ERROR adding to queue, collid is null';
@@ -225,6 +227,7 @@ class OccurrenceCrowdSource {
 		if($stateProvince){
 			$sqlFrag .= 'AND (o.stateprovince = "'.$this->cleanInStr($stateProvince).'") ';
 		}
+		$sqlFrag .= OccurrenceUtil::appendFullProtectionSQL();
 		//Get count
 		$sqlCnt = 'SELECT COUNT(DISTINCT o.occid) AS cnt '.$sqlFrag;
 		$rs = $con->query($sqlCnt);

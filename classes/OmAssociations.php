@@ -1,8 +1,8 @@
 <?php
 include_once('Manager.php');
+include_once('AssociationManager.php');
 include_once('utilities/OccurrenceUtil.php');
 include_once('utilities/UuidFactory.php');
-include_once('AssociationManager.php');
 
 class OmAssociations extends Manager{
 
@@ -18,21 +18,18 @@ class OmAssociations extends Manager{
 		parent::__construct(null, 'write', $conn);
 		$this->schemaMap = array('associationType' => 's', 'occidAssociate' => 'i', 'relationship' => 's', 'relationshipID' => 's', 'subType' => 's', 'objectID' => 's',
 			'basisOfRecord' => 's', 'resourceUrl' => 's', 'verbatimSciname' => 's', 'tid' => 'i', 'locationOnHost' => 's', 'conditionOfAssociate' => 's', 'establishedDate' => 's',
-			'imageMapJSON' => 's', 'dynamicProperties' => 's', 'notes' => 's', 'accordingTo' => 's', 'instanceID' => 's', 'recordID' => 's');
+			'imageMapJSON' => 's', 'dynamicProperties' => 's', 'notes' => 's', 'accordingTo' => 's', 'instanceID' => 's', 'recordID' => 's', 'createdUid' => 's');
 	}
 
 	public function __destruct(){
 		parent::__destruct();
 	}
 
-	public function getAssociationArr($filter = null, $excludeScriptGenerated = true){
+	public function getAssociationArr($filter = null){
 		$retArr = array();
 		$relOccidArr = array();
 		$uidArr = array();
 		$sql = 'SELECT assocID, occid, '.implode(', ', array_keys($this->schemaMap)).', modifiedUid, modifiedTimestamp, createdUid, initialTimestamp FROM omoccurassociations WHERE ';
-		if($excludeScriptGenerated){
-			$sql .= "(basisOfRecord IS NULL OR basisOfRecord != 'scriptGenerated') AND ";
-		}
 		if($this->assocID) $sql .= '(assocID = '.$this->assocID.') ';
 		elseif($filter == 'FULL')$sql .= '(occid = '.$this->occid.' OR occidAssociate = '.$this->occid.') ';
 		elseif($this->occid) $sql .= '(occid = '.$this->occid.') ';
@@ -41,7 +38,7 @@ class OmAssociations extends Manager{
 				$sql .= 'AND '.$field.' = "'.$this->cleanInStr($cond).'" ';
 			}
 		}
-
+		// echo 'sql is: ' . $sql;
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_assoc()){
 				$retArr[$r['assocID']] = $r;
@@ -125,7 +122,6 @@ class OmAssociations extends Manager{
 				$paramArr[] = $value;
 			}
 			$sql .= ') VALUES('.trim($sqlValues, ', ').') ';
-			$insertedRecord = null;
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param($this->typeStr, ...$paramArr);
 				try{
@@ -133,19 +129,6 @@ class OmAssociations extends Manager{
 						if($stmt->affected_rows || !$stmt->error){
 							$this->assocID = $stmt->insert_id;
 							$status = true;
-
-							$fetchSql = 'SELECT * FROM omoccurassociations WHERE assocID = ?';
-							if ($fetchStmt = $this->conn->prepare($fetchSql)) {
-								$fetchStmt->bind_param('i', $this->assocID);
-								$fetchStmt->execute();
-								$result = $fetchStmt->get_result();
-								if ($result->num_rows > 0) {
-									$insertedRecord = $result->fetch_assoc();
-								} else {
-									$this->errorMessage = 'Record not found after insertion.';
-								}
-								$fetchStmt->close();
-							}
 						}
 						else $this->errorMessage = $stmt->error;
 					}

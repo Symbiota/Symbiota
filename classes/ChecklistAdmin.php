@@ -43,7 +43,8 @@ class ChecklistAdmin extends Manager{
 				$newPManager->setUserRights();
 				if($postArr['type'] == 'excludespp' && $postArr['excludeparent']){
 					//If is an exclusion checklists, link to parent checklist
-					if(!$inventoryManager->insertChildChecklist($postArr['excludeparent'], $newClid, $GLOBALS['SYMB_UID'])){
+					$inventoryManager->setClid($postArr['excludeparent']);
+					if(!$inventoryManager->insertChildChecklist($newClid, $GLOBALS['SYMB_UID'])){
 						$this->errorMessage = 'ERROR linking exclusion checklist to parent: '.$this->conn->error;
 					}
 				}
@@ -162,35 +163,36 @@ class ChecklistAdmin extends Manager{
 		return $retStr;
 	}
 
-	/* 
-	 * @return array | bool 
+	/*
+	 * @return array | bool
 	 */
 	public function getFootprint() {
 		if(!$this->clid) return false;
+		$sql = <<<'SQL'
+		SELECT footprintWkt, footprintGeoJson FROM fmchecklists WHERE clid = ?;
+		SQL;
 
-		$footPrintArray = [];
-      $sql = <<<'SQL'
-      SELECT footprintWkt, footprintGeoJson FROM fmchecklists WHERE clid = ?;
-      SQL;
-
-      $rs = null;
-      try { 
-         $rs = $this->conn->execute_query($sql, [$this->clid]);
-         $row = $rs->fetch_object();
-
-         if($row->footprintGeoJson) {
-            return ["type" => "geoJson", "footprint" => $row->footprintGeoJson];
-         } else {
-            return ["type" => "wkt", "footprint" => $row->footprintWkt];
-         }
-      } catch (Exception $e) {
-         error_log('ChecklistAdmin->getFootprint on clid ' . $this->clid . ' :' . $e->getMessage(), 0);
-         return false;
-      } finally {
-         if($rs instanceOf mysqli_result) {
-            $rs->free();
-         }
-      }
+		$rs = null;
+		try {
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->clid);
+				$stmt->execute();
+				if($rs = $stmt->get_result()){
+					$row = $rs->fetch_object();
+					$rs->free();
+					$stmt->close();
+					if($row->footprintGeoJson) {
+						return ["type" => "geoJson", "footprint" => $row->footprintGeoJson];
+					} else if($row->footprintWkt) {
+						return ["type" => "wkt", "footprint" => $row->footprintWkt];
+					}
+				}
+			}
+			return false;
+		} catch (Exception $e) {
+			error_log('ChecklistAdmin->getFootprint on clid ' . $this->clid . ' :' . $e->getMessage(), 0);
+			return false;
+		}
 	}
 
 	public function savePolygon($polygonStr){
@@ -210,7 +212,7 @@ class ChecklistAdmin extends Manager{
 		$retArr = Array();
 		$targetStr = $this->clid;
 		do{
-			$sql = 'SELECT c.clid, c.name, child.clid as pclid
+			$sql = 'SELECT c.clid, c.name, c.type, child.clid as pclid
 				FROM fmchklstchildren child INNER JOIN fmchecklists c ON child.clidchild = c.clid
 				WHERE child.clid IN(' . trim($targetStr, ',') . ') AND child.clid != child.clidchild
 				ORDER BY c.name ';
@@ -218,6 +220,7 @@ class ChecklistAdmin extends Manager{
 			$targetStr = '';
 			while($r = $rs->fetch_object()){
 				$retArr[$r->clid]['name'] = $r->name;
+				$retArr[$r->clid]['type'] = $r->type;
 				$retArr[$r->clid]['pclid'] = $r->pclid;
 				$targetStr .= ',' . $r->clid;
 			}
@@ -504,12 +507,9 @@ class ChecklistAdmin extends Manager{
 	public function getManagementLists($uid){
 		$returnArr = Array();
 		if(is_numeric($uid)){
-			//Get project and checklist IDs from userpermissions
 			$clStr = '';
 			$projStr = '';
 			$sql = 'SELECT role,tablepk FROM userroles WHERE (uid = '.$uid.') AND (role = "ClAdmin" OR role = "ProjAdmin") ';
-			//$sql = 'SELECT pname FROM userpermissions '.
-			//	'WHERE (uid = '.$uid.') AND (pname LIKE "ClAdmin-%" OR pname LIKE "ProjAdmin-%") ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				if($r->role == 'ClAdmin') $clStr .= ','.$r->tablepk;

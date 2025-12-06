@@ -40,8 +40,8 @@ $LANG['COUNTY'] = 'Départements';
 $LANG['MUNICIPALITY'] = 'District';
 $LANG['LOCATION_ID'] = 'Localité ID';
 $LANG['LOCALITY'] = 'Localité';
-$LANG['LOCALITY_SECURITY'] = 'Sécurité';
-$LANG['LOCALITY_SECURITY_REASON'] = 'Raison';
+$LANG['SECURITY'] = 'Sécurité';
+$LANG['SECURITY_REASON'] = 'Raison';
 $LANG['DECIMAL_LATITUDE'] = 'Latitude';
 $LANG['DECIMAL_LONGITUDE'] = 'Longitude';
 $LANG['GEODETIC_DATUM'] = 'Datum';
@@ -89,6 +89,7 @@ $LANG['DATA_GENERALIZATIONS'] = 'Généralisations de données';
 $LANG['INSTITUTION_CODE'] = 'Code d\'institution (override)';
 $LANG['COLLECTION_CODE'] = 'Code de collection (override)';
 $LANG['OWNER_INSTITUTION_CODE'] = 'Code du propriétaire (override)';
+$LANG['STORAGELOCATION_CODE'] = 'Storage Location';
 $LANG['PROCESSING_STATUS'] = 'Statut du traitement';
 
 ?>

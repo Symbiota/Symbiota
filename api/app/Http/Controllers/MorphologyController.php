@@ -19,13 +19,13 @@ class MorphologyController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/morphology",
 	 *	 operationId="/api/v2/morphology",
-	 *	 tags={""},
+	 *	 tags={"Morphology"},
 	 *	 @OA\Parameter(
 	 *		 name="includeStates",
 	 *		 in="query",
 	 *		 description="Controls whether character traits are included within output: 0 [default] = do not include state, 1 = include states ",
 	 *		 required=false,
-	 *		 @OA\Schema(type="integer", default=0)
+	 *		 @OA\Schema(type="integer", enum={0, 1}, default=0)
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="limit",
@@ -84,7 +84,7 @@ class MorphologyController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/morphology/{identifier}",
 	 *	 operationId="/api/v2/morphology/identifier",
-	 *	 tags={""},
+	 *	 tags={"Morphology"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
@@ -103,9 +103,8 @@ class MorphologyController extends Controller{
 	 *	 ),
 	 * )
 	 */
-	public function showOneCharacter($id, Request $request){
+	public function showOneCharacter($id){
 		$morphObj = MorphologyCharacter::find($id);
-
 		if($morphObj->count()) $morphObj->states;
 		else $morphObj = ['status'=>false,'error'=>'Unable to locate morphological character based on identifier'];
 		return response()->json($morphObj);
@@ -115,7 +114,7 @@ class MorphologyController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/morphology/{identifier}/attribute",
 	 *	 operationId="/api/v2/morphology/identifier/attribute",
-	 *	 tags={""},
+	 *	 tags={"Morphology"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",

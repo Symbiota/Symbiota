@@ -1,10 +1,9 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistLoaderManager.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/checklistloader.'.$LANG_TAG.'.php'))
-	include_once($SERVER_ROOT.'/content/lang/checklists/checklistloader.'.$LANG_TAG.'.php');
-else
-	include_once($SERVER_ROOT.'/content/lang/checklists/checklistloader.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('checklists/checklistloader');
 
 header("Content-Type: text/html; charset=".$CHARSET);
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../checklists/tools/checklistloader.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));

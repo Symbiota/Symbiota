@@ -83,14 +83,16 @@ async function handleFieldChange(
   submitText,
   originalForm
 ) {
-  document.getElementById("error-display").textContent = "";
+  document.getElementById("error-display").textContent = processTextContent("");
   const submitButton = document.getElementById(submitButtonId);
   submitButton.disabled = true;
   submitButton.textContent = translations.BUTTON_CHECKING;
   const isOk = await verifyLoadForm(form, silent, originalForm);
-  if (!isOk) {
+  const shouldDisableButton = true;
+  if (!isOk && shouldDisableButton) {
     submitButton.textContent = translations.BUTTON_DISABLED;
     submitButton.disabled = true;
+    await updateFullname(form, true);
   } else {
     await updateFullname(form, true);
     submitButton.textContent = submitText;
@@ -103,22 +105,22 @@ async function verifyLoadFormCore(f, silent = false, originalForm) {
   if (entryHasNotChanged) {
     return true;
   }
-  const isUniqueEntry = await checkNameExistence(f, true, originalForm);
-  if (!isUniqueEntry) {
-    return false;
-  }
   if (f.unitname1.value == "") {
     if (!silent) alert(translations.UNIT_NAME_REQUIRED);
     document.getElementById("error-display").textContent =
-      translations.UNIT_NAME_REQUIRED;
+      processTextContent(translations.UNIT_NAME_REQUIRED);
     return false;
   }
   var rankId = f.rankid.value;
   if (rankId == "") {
     if (!silent) alert(translations.TAXON_RANK_REQUIRED);
     document.getElementById("error-display").textContent =
-      translations.TAXON_RANK_REQUIRED;
+      processTextContent(translations.TAXON_RANK_REQUIRED);
     return false;
+  }
+  const isUniqueEntry = await checkNameExistence(f, true);
+  if (!isUniqueEntry) {
+    return true;
   }
   return true;
 }
@@ -126,7 +128,7 @@ async function verifyLoadFormCore(f, silent = false, originalForm) {
 function checkNameExistence(f, silent = false) {
   return new Promise((resolve, reject) => {
     if (!f?.sciname?.value || !f?.rankid?.value) {
-      document.getElementById("error-display").textContent = translations.SCI_NAME_RANK_REQUIRED;
+      document.getElementById("error-display").textContent = processTextContent(translations.SCI_NAME_RANK_REQUIRED);
       resolve(false);
     } else {
       $.ajax({
@@ -152,14 +154,14 @@ function checkNameExistence(f, silent = false) {
               );
             }
             document.getElementById("error-display").textContent =
-              translations.TAXON +
+              processTextContent(translations.TAXON +
               " " +
               f.sciname.value +
               " " +
               f.author.value +
               " (" +
               msg +
-              ") " + translations.ALREADY_EXISTS;
+              ") " + translations.ALREADY_EXISTS);
             resolve(false);
           } else {
             resolve(true);
@@ -198,7 +200,7 @@ async function updateFullnameCore(f, silent = false) {
 function isTheSameEntryAsItStarted(f, originalForm) {
   return new Promise((resolve) => {
     if (f != null && originalForm != null && !hasChanged(f, originalForm)) {
-      document.getElementById("error-display").textContent = "";
+      document.getElementById("error-display").textContent = processTextContent("")
       resolve(true);
       return;
     } else {
@@ -216,6 +218,8 @@ function hasChanged(f, originalForm) {
     "securitystatus",
     "securitystatusstart",
     "author",
+    "taxoneditsubmit",
+    "taxonedits"
   ]);
   return returnVal;
 }
@@ -244,8 +248,9 @@ function shallowEqual(obj1, obj2, exceptionFields = []) {
   const keys1 = Object.keys(obj1);
   const keys2 = Object.keys(obj2);
   const filteredKeys1 = keys1.filter((k) => !exceptionFields.includes(k));
+  const filteredKeys2 = keys2.filter((k) => !exceptionFields.includes(k));
 
-  if (keys1.length !== keys2.length) {
+  if (filteredKeys1.length !== filteredKeys2.length) {
     return false;
   }
 
@@ -256,4 +261,8 @@ function shallowEqual(obj1, obj2, exceptionFields = []) {
   }
 
   return true;
+}
+
+function processTextContent(content){
+  return content?.replace("undefined", "")?.trim();
 }

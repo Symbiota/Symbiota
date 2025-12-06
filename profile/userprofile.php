@@ -1,7 +1,10 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
-@include_once($SERVER_ROOT.'/content/lang/profile/userprofile.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('profile/userprofile');
+
 header('Content-Type: text/html; charset='.$CHARSET);
 
 $userId = $_REQUEST['userid'];
@@ -199,7 +202,7 @@ if($isEditor){
 								<b><?php echo (isset($LANG['NEW_PWORD'])?$LANG['NEW_PWORD']:'New Password'); ?>:</b>
 							</td>
 							<td>
-								<input id="newpwd" name="newpwd" type="password"/>
+								<input id="newpwd" name="newpwd" type="password" minlength="10">
 							</td>
 						</tr>
 						<tr>
@@ -207,7 +210,7 @@ if($isEditor){
 								<b><?php echo (isset($LANG['PWORD_AGAIN'])?$LANG['PWORD_AGAIN']:'New Password Again'); ?>:</b>
 							</td>
 							<td>
-								<input id="newpwd2" name="newpwd2" type="password"/>
+								<input id="newpwd2" name="newpwd2" type="password" minlength="10">
 							</td>
 						</tr>
 						<tr>

@@ -1099,5 +1099,29 @@ class OccurrenceHelper{
 		}
 		return $retStr;
 	}
+
+	public static function parseLastName($collName){
+		$lastName = '';
+		$collName = trim($collName);
+		if(!$collName) return '';
+		$primaryArr = explode(';',$collName);
+		$primaryArr = explode('&',$primaryArr[0]);
+		$primaryArr = explode(' and ',$primaryArr[0]);
+		$lastNameArr = explode(',',$primaryArr[0]);
+		if(count($lastNameArr) > 1){
+			//formats: Last, F.I.; Last, First I.; Last, First Initial
+			$lastName = array_shift($lastNameArr);
+			//$lastName = array_shift(explode(' ',$lastName));
+		}
+		else{
+			//Formats: F.I. Last; First I. Last; First Initial Last
+			$tempArr = explode(' ',$lastNameArr[0]);
+			$lastName = array_pop($tempArr);
+			while($tempArr && (strpos($lastName,'.') || $lastName == 'III' || strlen($lastName)<3)){
+				$lastName = array_pop($tempArr);
+			}
+		}
+		return $lastName;
+	}
 }
 ?>

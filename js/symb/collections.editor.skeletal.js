@@ -85,7 +85,7 @@ function localitySecurityCheck(f){
 	if(tidIn != "" && stateIn != ""){
 		$.ajax({
 			type: "POST",
-			url: "rpc/localitysecuritycheck.php",
+			url: "rpc/securitycheck.php",
 			dataType: "json",
 			data: { tid: tidIn, state: stateIn }
 		}).done(function( data ) {
@@ -132,7 +132,7 @@ function submitDefaultForm(f){
 	
 	if(continueSubmit){
 		/*
-		url = 'rpc/occurAddData.php?sciname='+$( "#fsciname" ).val()+'&scientificnameauthorship='+$( "#fscientificnameauthorship" ).val()+'&family='+$( "#ffamily" ).val()+'&localitysecurity='+($( "#flocalitysecurity" ).prop('checked')?"1":"0");
+		url = 'rpc/occurAddData.php?sciname='+$( "#fsciname" ).val()+'&scientificnameauthorship='+$( "#fscientificnameauthorship" ).val()+'&family='+$( "#ffamily" ).val()+'&recordsecurity='+($( "#flocalitysecurity" ).prop('checked')?"1":"0");
 		url = url + '&country='+$( "#fcountry" ).val()+'&stateprovince='+$( "#fstateprovince" ).val()+'&county='+$( "#fcounty" ).val();
 		url = url + '&processingstatus='+$( "#fprocessingstatus" ).val()+'&recordedby='+$( "#frecordedby" ).val()+'&recordnumber='+$( "#frecordnumber" ).val(); 
 		url = url + '&eventdate='+$( "#feventdate" ).val()+'&language='+$( "#flanguage" ).val()+'&ometid='+$( "#fometid" ).val()+'&exsnumber='+$( "#fexsnumber" ).val()+'&othercatalognumbers='+$( "#fothercatalognumbers" ).val();
@@ -147,9 +147,10 @@ function submitDefaultForm(f){
 			dataType: "json",
 			data: { 
 				sciname: $( "#fsciname" ).val(), 
+				tidinterpreted: $( "#ftidinterpreted" ).val(),
 				scientificnameauthorship: $( "#fscientificnameauthorship" ).val(), 
 				family: $( "#ffamily" ).val(), 
-				localitysecurity: ($( "#flocalitysecurity" ).prop('checked')?"1":"0"),
+				recordsecurity: ($( "#flocalitysecurity" ).prop('checked')?"1":"0"),
 				country: $( "#fcountry" ).val(), 
 				stateprovince: $( "#fstateprovince" ).val(), 
 				county: $( "#fcounty" ).val(), 
@@ -243,12 +244,23 @@ function deleteOccurrence(occid){
 	}
 }
 
-function toggleFieldDiv(divName){
-	toggle(divName);
+function toggleFieldDiv(divName, checked){
+	const elem = document.getElementById(divName);
+	if(elem) {
+		if(checked) {
+			elem.style.display = '';
+		} else {
+			elem.style.display = 'none';
+		}
+	}
+
 	var allInputs = $("#"+divName+" > :input");
 	allInputs.each(function(){
-		if(this.type == "checkbox") $(this).prop("checked", false);
-		else this.value = "";
+		if(this.type == "checkbox") { 
+			$(this).prop("checked", false);
+		} else {
+			this.value = "" 
+		};
 	});
 }
 

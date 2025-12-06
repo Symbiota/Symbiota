@@ -1,10 +1,11 @@
 <?php
 include_once('../../config/symbini.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.en.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCollectionProfile.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/misc/collprofiles');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 unset($_SESSION['editorquery']);
@@ -96,12 +97,20 @@ if ($SYMB_UID) {
 			if(e.submitter.value === "edit") {
 				return processEditQuickSearch('<?php echo $CLIENT_ROOT ?>')
 			} else if(e.submitter.value === "search") {
-				return submitAndRedirectSearchForm('<?php echo $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includecult=' + <?= !empty($SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT) ? '1' : '0' ?> + '&includeothercatnum=1', '&includecult=' + <?php echo $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT ? '1' : '0' ?> + '&usethes=1&taxontype=2 ');
+				return submitAndRedirectSearchForm('<?= $CLIENT_ROOT ?>/collections/list.php?db=','&catnum=', '&taxa=', '&includecult=' + <?= !empty($SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT) ? '1' : '0' ?> + '&includeothercatnum=1', '&includecult=' + <?= !empty($SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT) ? '1' : '0' ?> + '&usethes=1&taxontype=2 ');
 			}
 
 			e.preventDefault();
 			return false;
 		}
+
+		function showItemsList(className) {
+  			const elements = document.getElementsByClassName(className);
+  			for (let i = 0; i < elements.length; i++) {
+				elements[i].style.display = 'list-item';
+			}
+		}
+
 	</script>
 	<style>
 		.importItem { margin-left:10px; display:none; }
@@ -130,6 +139,14 @@ if ($SYMB_UID) {
 		}
 		.bigger-left-margin-rel {
 			margin-left: 3rem;
+		}
+
+		.seemore-icon {
+			width: 13px;
+			height: 13px;
+		}
+		.link-icon {
+			text-decoration: none;
 		}
 
 		#quicksearch-box input {
@@ -297,7 +314,7 @@ if ($SYMB_UID) {
 			if ($collData['collectioncode']) $codeStr .= '-' . $collData['collectioncode'];
 			$codeStr .= ')';
 			$_SESSION['colldata'] = $collData;
-			echo '<h1 class="page-heading">' . $LANG['COLL_PROF_FOR'] . ':<br>' . $collData['collectionname'] . $codeStr . '</h1>';
+			echo '<h2 class="page-heading"><span class="screen-reader-only">' . $LANG['COLL_PROF_FOR'] . ':<br></span>' . $collData['collectionname'] . $codeStr . '</h2>';
 			// GBIF citations widget
 			if ($datasetKey) {
 				echo '<div style="margin-left: 10px; margin-bottom: 20px;">';
@@ -340,7 +357,7 @@ if ($SYMB_UID) {
 								</a><?= $deactivateTag ?>
 							</li>
 							<?php
-							if ($collData['colltype'] == 'Preserved Specimens') {
+							if (strpos($collData['colltype'], 'Specimens')) {
 								?>
 								<li style="margin-left:10px">
 									<a href="../editor/imageoccursubmit.php?collid=<?= $collid ?>" <?= $deactivateStyle ?>>
@@ -360,11 +377,17 @@ if ($SYMB_UID) {
 									<?= $LANG['EDIT_EXISTING'] ?>
 								</a>
 							</li>
-							<li>
-								<a href="../editor/batchdeterminations.php?collid=<?= $collid ?>">
-									<?= $LANG['ADD_BATCH_DETER'] ?>
-								</a>
-							</li>
+							<?php
+							if ($collData['colltype'] != 'General Observations') {
+								?>
+								<li>
+									<a href="../editor/batchdeterminations.php?collid=<?= $collid ?>">
+										<?= $LANG['ADD_BATCH_DETER'] ?>
+									</a>
+								</li>
+								<?php
+							}
+							?>
 							<li>
 								<a href="../reports/labelmanager.php?collid=<?= $collid ?>">
 									<?= $LANG['PRINT_LABELS'] ?>
@@ -376,32 +399,37 @@ if ($SYMB_UID) {
 								</a>
 							</li>
 							<?php
-							if ($collManager->traitCodingActivated()) {
+							if ($collData['colltype'] != 'General Observations') {
+								if ($collManager->traitCodingActivated()) {
+									?>
+									<li>
+										<a href="javascript:void(0)" onclick="showItemsList('traitItem')">
+											<?= $LANG['TRAIT_CODING_TOOLS'] ?>
+										</a>
+										<a onclick="showItemsList('traitItem')"> 
+											<img class = seemore-icon src="../../images/tochild.png">
+										</a>
+									</li>
+									<li class="traitItem" style="margin-left:10px;display:none;">
+										<a href="../traitattr/occurattributes.php?collid=<?= $collid ?>">
+											<?= $LANG['TRAIT_CODING'] ?>
+										</a>
+									</li>
+									<li class="traitItem" style="margin-left:10px;display:none;">
+										<a href="../traitattr/attributemining.php?collid=<?= $collid ?>">
+											<?= $LANG['TRAIT_MINING'] ?>
+										</a>
+									</li>
+									<?php
+								}
 								?>
 								<li>
-									<a href="#" onclick="$('li.traitItem').show(); return false;">
-										<?= $LANG['TRAIT_CODING_TOOLS'] ?>
-									</a>
-								</li>
-								<li class="traitItem" style="margin-left:10px;display:none;">
-									<a href="../traitattr/occurattributes.php?collid=<?= $collid ?>">
-										<?= $LANG['TRAIT_CODING'] ?>
-									</a>
-								</li>
-								<li class="traitItem" style="margin-left:10px;display:none;">
-									<a href="../traitattr/attributemining.php?collid=<?= $collid ?>">
-										<?= $LANG['TRAIT_MINING'] ?>
+									<a href="../georef/batchgeoreftool.php?collid=<?= $collid ?>">
+										<?= $LANG['BATCH_GEOREF'] ?>
 									</a>
 								</li>
 								<?php
 							}
-							?>
-							<li>
-								<a href="../georef/batchgeoreftool.php?collid=<?= $collid ?>">
-									<?= $LANG['BATCH_GEOREF'] ?>
-								</a>
-							</li>
-							<?php
 							if ($collData['colltype'] == 'Preserved Specimens') {
 								?>
 								<li>
@@ -434,8 +462,11 @@ if ($SYMB_UID) {
 								</li>
 								<!--
 								<li>
-									<a href="" onclick="$('li.metadataItem').show(); return false;"  >
+									<a href="javascript:void(0)" onclick="showItemsList('metadataItem')"  >
 										<?= $LANG['OPEN_META'] ?>
+									</a>
+									<a onclick="showItemsList('metadataItem')"> 
+										<img class="seemore-icon" src="../../images/tochild.png">
 									</a>
 								</li>
 								<li class="metadataItem" style="margin-left:10px;display:none;">
@@ -460,12 +491,15 @@ if ($SYMB_UID) {
 									</a>
 								</li>
 								<li>
-									<a href="#" onclick="$('li.importItem').show(); return false;">
+									<a href="javascript:void(0)" onclick="showItemsList('importItem')">
 										<?= $LANG['IMPORT_SPECIMEN'] ?>
 									</a>
-									<a id="importinfo" href="https://biokic.github.io/symbiota-docs/coll_manager/upload/" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>">
+									<a id="importinfo" class="link-icon" href="https://docs.symbiota.org/Collection_Manager_Guide/Importing_Uploading/" target="_blank" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>">
 											<img src="../../images/info.png" style="width:13px;" alt="<?= $LANG['INFO_ALT'] ?>" />
-									</a><br/>
+									</a>
+									<a onclick="showItemsList('importItem')"> 
+										<img class="seemore-icon" src="../../images/tochild.png"">
+									</a>
 								</li>
 								<li class="importItem">
 									<a href="../admin/specupload.php?uploadtype=7&collid=<?php echo $collid; ?>">
@@ -609,9 +643,11 @@ if ($SYMB_UID) {
 				</div>
 				<?php
 			}
+			if(isset($collData['fulldescription'])){
 			?>
-			<div class="coll-description bottom-breathing-room-rel"><?= $collData['fulldescription'] ?></div>
+				<div class="coll-description bottom-breathing-room-rel"><?= $collData['fulldescription'] ?></div>
 			<?php
+			}
 			if(isset($collData['resourcejson'])){
 				if($resourceArr = json_decode($collData['resourcejson'], true)){
 					$title = $LANG['HOMEPAGE'];
@@ -630,7 +666,7 @@ if ($SYMB_UID) {
 					if(!empty($contactArr)){
 						?>
 						<section style="margin-left: 0;">
-							<h1><span><?= $LANG['CONTACT'] ?>: </span></h1>
+							<h2><span><?= $LANG['CONTACT'] ?>: </span></h2>
 							<ul>
 								<?php
 								foreach($contactArr as $cArr){
@@ -781,6 +817,7 @@ if ($SYMB_UID) {
 						//if($extrastatsArr&&$extrastatsArr['TypeCount']) echo '<li>'.number_format($extrastatsArr['TypeCount']) . ' ' . $LANG['TYPE_SPECIMENS'] . '</li>';
 						?>
 					</ul>
+					<p style="margin-left:3em"><?= '(' . $LANG['LAST_UPDATED'] . ' ' . $statsArr['datelastmodified'] . ')'?></p>
 				</div>
 			</section>
 			<section class="fieldset-like no-left-margin">
@@ -997,7 +1034,7 @@ if ($SYMB_UID) {
 										if(!empty($contactArr)){
 											?>
 											<section style="margin-left: 0;">
-												<h1 style="font: 1.5rem normal;"><span><?= $LANG['CONTACT'] ?>: </span></h1>
+												<h4><span><?= $LANG['CONTACT'] ?>: </span></h4>
 												<ul>
 													<?php
 													foreach($contactArr as $cArr){

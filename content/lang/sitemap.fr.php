@@ -88,7 +88,6 @@ $LANG['SYMBDOCU'] = 'Documentation Symbiote';
 $LANG['FORMOREINFO'] = 'pour plus d\'informations sur les capacités de traitement des échantillons. A noter que les projets d\'observation ne sont pas activés sur tous les portails de données Symbiota';
 $LANG['OIVS'] = 'Soumission d’un bon multimédia d’observation';
 $LANG['NOOBSPROJ'] = 'Il n\'y a pas de Projets d\'Observation pour lesquels vous avez des autorisations';
-$LANG['PERSONAL'] = 'Fonctions de Gestion des Échantillons Personnels et d\'Impression d\'Étiquettes';
 $LANG['OPM'] = 'Gestion de Projet d\'Observation';
 $LANG['PLEASE'] = 'S\'il te plaît';
 $LANG['LOGIN'] = 'vous connecter';

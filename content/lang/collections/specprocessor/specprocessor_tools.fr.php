@@ -54,7 +54,7 @@ $LANG['MUST_MAP_CATNUM'] = "Le numéro de catalogue ou d'autres numéros de cata
 $LANG['LARGE_URL_MAPPED'] = "L'URL des grandes images doit être mappée à un champ d'importation";
 $LANG['IMG_PROCESSOR_EXPLAIN'] = 'Ces outils sont conçus pour aider les gestionnaires de collections dans le traitement par lots d\'images d\'échantillons. Contactez le gestionnaire de portail pour obtenir de l\'aide sur la configuration d\'un nouveau flux de travail.
 			Une fois le profil établi, le gestionnaire de collection peut utiliser ce formulaire pour déclencher manuellement le traitement des images. Pour plus d\'informations, consultez la documentation Symbiota pour
-			<b><a href="https://biokic.github.io/symbiota-docs/coll_manager/images/batch/" target="_blank">pratiques recommandées</a></b> pour l\'intégration d\'images.' ;
+			<b><a href="https://docs.symbiota.org/Collection_Manager_Guide/Images/batch_adding" target="_blank">pratiques recommandées</a></b> pour l\'intégration d\'images.' ;
 $LANG['IMG_FILE_UPLOAD_MAP'] = 'Carte de téléchargement de fichier image';
 $LANG['SOURCE_FIELD'] = 'Champ source';
 $LANG['TARGET_FIELD'] = 'Champ cible';
@@ -73,6 +73,7 @@ $LANG['NEW'] = 'Nouveau';
 $LANG['PROFILE'] = 'Profil';
 $LANG['CLOSE_EDITOR'] = 'Fermer l\'éditeur';
 $LANG['PROC_TYPE'] = 'Type de traitement';
+$LANG['IMG_PROC_CHANGE_EXPLAIN'] = "<b>Les outils de téléchargement des fichiers URL d'images ont été déplacés!</b> Vous pouvez désormais télécharger des fichiers d'URL de médias via l'importateur de données étendues (Panneau de Configuration d'Administration > Importer/Mettre à Jour Enregistrements de Spécimens > Importation Données Etendues)";
 $LANG['MAP_FROM_SERVER'] = 'Mapper des images à partir d\'un serveur local ou distant';
 $LANG['URL_MAP_FILE'] = 'Fichier de mappage d\'URL d\'image';
 $LANG['TITLE'] = 'Titre';

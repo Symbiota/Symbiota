@@ -1,8 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLoans.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/loans/loan_langs');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../collections/loans/exchange.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
@@ -360,7 +362,7 @@ if($isEditor){
 									<label><?php echo $LANG['ATTACH_TITLE']; ?>: </label>
 									<input name="uploadtitle" type="text" placeholder=" optional, replaces filename" maxlength="80" size="30" />
 									<input id="uploadfile" name="uploadfile" type="file" size="30" onchange="verifyFileSize(this)">
-									<button name="formsubmit" type="submit" value="saveAttachment"><?php echo $LANG['SAVE_ATTACH']; ?></button>
+									<button class="top-breathing-room-rel-sm" name="formsubmit" type="submit" value="saveAttachment"><?php echo $LANG['SAVE_ATTACH']; ?></button>
 									<div style="margin-left: 10px"><br/>
 									<sup>*</sup><?php echo $LANG['ATTACH_DESCRIPTION']; ?>
 									</div>

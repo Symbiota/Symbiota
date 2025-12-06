@@ -52,7 +52,7 @@ $LANG['MUST_MAP_CATNUM'] = 'Catalog Number or Other Catalog Numbers must be mapp
 $LANG['LARGE_URL_MAPPED'] = 'Large Image URL must both be mapped to an import field';
 $LANG['IMG_PROCESSOR_EXPLAIN'] = 'These tools are designed to aid collection managers in batch processing specimen images. Contact portal manager for help in setting up a new workflow.
 				 Once a profile is established, the collection manager can use this form to manually trigger image processing. For more information, see the Symbiota documentation for
-				 <b><a href="https://biokic.github.io/symbiota-docs/coll_manager/images/batch/" target="_blank">recommended practices</a></b> for integrating images.';
+				 <b><a href="https://docs.symbiota.org/Collection_Manager_Guide/Images/batch_adding" target="_blank">recommended practices</a></b> for integrating images.';
 $LANG['IMG_FILE_UPLOAD_MAP'] = 'Image File Upload Map';
 $LANG['SOURCE_FIELD'] = 'Source Field';
 $LANG['TARGET_FIELD'] = 'Target Field';
@@ -70,6 +70,8 @@ $LANG['EDIT'] = 'Edit';
 $LANG['NEW'] = 'New';
 $LANG['PROFILE'] = 'Profile';
 $LANG['CLOSE_EDITOR'] = 'Close Editor';
+$LANG['IMG_PROC_CHANGE_EXPLAIN'] = '<b>Tools to upload image URL files have moved!</b> You can now upload files of media URLs through the Extended Data Importer 
+	(Administration Control Panel > Import/Update Specimen Records > Extended Data Import';
 $LANG['PROC_TYPE'] = 'Processing Type';
 $LANG['MAP_FROM_SERVER'] = 'Map Images from a Local or Remote Server';
 $LANG['URL_MAP_FILE'] = 'Image URL Mapping File';

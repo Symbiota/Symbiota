@@ -3,7 +3,10 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecUploadDirect.php');
 include_once($SERVER_ROOT.'/classes/SpecUploadFile.php');
 include_once($SERVER_ROOT.'/classes/SpecUploadDwca.php');
-include_once($SERVER_ROOT.'/content/lang/collections/admin/specupload.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/admin/specupload');
+
 header('Content-Type: text/html; charset='.$CHARSET);
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/admin/specupload.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
@@ -314,9 +317,9 @@ include($SERVER_ROOT.'/includes/header.php');
 										<fieldset>
 											<legend><?php echo (isset($LANG['CUSTOM_FILT']) ? $LANG['CUSTOM_FILT'] : 'Custom Occurrence Record Import Filters'); ?></legend>
 											<?php
-											$qArr = json_decode($duManager->getQueryStr(),true);
 											$queryArr = array();
-											if($qArr){
+											if($queryJson = $duManager->getQueryStr()){
+												$qArr = json_decode($queryJson, true);
 												foreach($qArr as $column => $aArr){
 													foreach($aArr as $cond => $bArr){
 														foreach($bArr as $v){

@@ -6,14 +6,47 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 interface IReader
 {
+    /**
+     * Flag used to load the charts.
+     *
+     * This flag is supported only for some formats.
+     */
     public const LOAD_WITH_CHARTS = 1;
 
+    /**
+     * Flag used to read data only, not style or structure information.
+     */
     public const READ_DATA_ONLY = 2;
 
-    public const SKIP_EMPTY_CELLS = 4;
+    /**
+     * @deprecated 3.4.0 use IGNORE_EMPTY_CELLS instead.
+     */
+    public const SKIP_EMPTY_CELLS = self::IGNORE_EMPTY_CELLS;
+
+    /**
+     * Flag used to ignore empty cells when reading.
+     *
+     * The ignored cells will not be instantiated.
+     */
     public const IGNORE_EMPTY_CELLS = 4;
 
+    /**
+     * Flag used to ignore rows without cells.
+     *
+     * This flag is supported only for some formats.
+     * This can heavily improve performance for some files.
+     */
     public const IGNORE_ROWS_WITH_NO_CELLS = 8;
+
+    public const CREATE_BLANK_SHEET_IF_NONE_READ = 64;
+
+    /**
+     * Allow external images. Use with caution.
+     * Improper specification of these within a spreadsheet
+     * can subject the caller to security exploits.
+     */
+    public const ALLOW_EXTERNAL_IMAGES = 16;
+    public const DONT_ALLOW_EXTERNAL_IMAGES = 32;
 
     public function __construct();
 
@@ -106,6 +139,21 @@ interface IReader
     public function getReadFilter(): IReadFilter;
 
     /**
+     * Allow external images. Use with caution.
+     * Improper specification of these within a spreadsheet
+     * can subject the caller to security exploits.
+     */
+    public function setAllowExternalImages(bool $allowExternalImages): self;
+
+    public function getAllowExternalImages(): bool;
+
+    /**
+     * Create a blank sheet if none are read,
+     * possibly due to a typo when using LoadSheetsOnly.
+     */
+    public function setCreateBlankSheetIfNoneRead(bool $createBlankSheetIfNoneRead): self;
+
+    /**
      * Set read filter.
      *
      * @return $this
@@ -119,8 +167,12 @@ interface IReader
      * @param int $flags Flags that can change the behaviour of the Writer:
      *            self::LOAD_WITH_CHARTS    Load any charts that are defined (if the Reader supports Charts)
      *            self::READ_DATA_ONLY      Read only data, not style or structure information, from the file
-     *            self::SKIP_EMPTY_CELLS    Don't read empty cells (cells that contain a null value,
+     *            self::IGNORE_EMPTY_CELLS  Don't read empty cells (cells that contain a null value,
      *                                      empty string, or a string containing only whitespace characters)
+     *            self::IGNORE_ROWS_WITH_NO_CELLS    Don't load any rows that contain no cells.
+     *            self::ALLOW_EXTERNAL_IMAGES    Attempt to fetch images stored outside the spreadsheet.
+     *            self::DONT_ALLOW_EXTERNAL_IMAGES    Don't attempt to fetch images stored outside the spreadsheet.
+     *            self::CREATE_BLANK_SHEET_IF_NONE_READ    If no sheets are read, create a blank one.
      */
     public function load(string $filename, int $flags = 0): Spreadsheet;
 }

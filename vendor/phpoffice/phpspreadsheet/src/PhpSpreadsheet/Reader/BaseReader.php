@@ -2,6 +2,7 @@
 
 namespace PhpOffice\PhpSpreadsheet\Reader;
 
+use PhpOffice\PhpSpreadsheet\Cell\IValueBinder;
 use PhpOffice\PhpSpreadsheet\Exception as PhpSpreadsheetException;
 use PhpOffice\PhpSpreadsheet\Reader\Exception as ReaderException;
 use PhpOffice\PhpSpreadsheet\Reader\Security\XmlScanner;
@@ -19,7 +20,7 @@ abstract class BaseReader implements IReader
 
     /**
      * Read empty cells?
-     * Identifies whether the Reader should read data values for cells all cells, or should ignore cells containing
+     * Identifies whether the Reader should read data values for all cells, or should ignore cells containing
      *         null value or empty string.
      */
     protected bool $readEmptyCells = true;
@@ -47,6 +48,19 @@ abstract class BaseReader implements IReader
     protected bool $ignoreRowsWithNoCells = false;
 
     /**
+     * Allow external images. Use with caution.
+     * Improper specification of these within a spreadsheet
+     * can subject the caller to security exploits.
+     */
+    protected bool $allowExternalImages = false;
+
+    /**
+     * Create a blank sheet if none are read,
+     * possibly due to a typo when using LoadSheetsOnly.
+     */
+    protected bool $createBlankSheetIfNoneRead = false;
+
+    /**
      * IReadFilter instance.
      */
     protected IReadFilter $readFilter;
@@ -55,6 +69,8 @@ abstract class BaseReader implements IReader
     protected $fileHandle;
 
     protected ?XmlScanner $securityScanner = null;
+
+    protected ?IValueBinder $valueBinder = null;
 
     public function __construct()
     {
@@ -144,6 +160,34 @@ abstract class BaseReader implements IReader
         return $this;
     }
 
+    /**
+     * Allow external images. Use with caution.
+     * Improper specification of these within a spreadsheet
+     * can subject the caller to security exploits.
+     */
+    public function setAllowExternalImages(bool $allowExternalImages): self
+    {
+        $this->allowExternalImages = $allowExternalImages;
+
+        return $this;
+    }
+
+    public function getAllowExternalImages(): bool
+    {
+        return $this->allowExternalImages;
+    }
+
+    /**
+     * Create a blank sheet if none are read,
+     * possibly due to a typo when using LoadSheetsOnly.
+     */
+    public function setCreateBlankSheetIfNoneRead(bool $createBlankSheetIfNoneRead): self
+    {
+        $this->createBlankSheetIfNoneRead = $createBlankSheetIfNoneRead;
+
+        return $this;
+    }
+
     public function getSecurityScanner(): ?XmlScanner
     {
         return $this->securityScanner;
@@ -166,11 +210,20 @@ abstract class BaseReader implements IReader
         if (((bool) ($flags & self::READ_DATA_ONLY)) === true) {
             $this->setReadDataOnly(true);
         }
-        if (((bool) ($flags & self::SKIP_EMPTY_CELLS) || (bool) ($flags & self::IGNORE_EMPTY_CELLS)) === true) {
+        if (((bool) ($flags & self::IGNORE_EMPTY_CELLS)) === true) {
             $this->setReadEmptyCells(false);
         }
         if (((bool) ($flags & self::IGNORE_ROWS_WITH_NO_CELLS)) === true) {
             $this->setIgnoreRowsWithNoCells(true);
+        }
+        if (((bool) ($flags & self::ALLOW_EXTERNAL_IMAGES)) === true) {
+            $this->setAllowExternalImages(true);
+        }
+        if (((bool) ($flags & self::DONT_ALLOW_EXTERNAL_IMAGES)) === true) {
+            $this->setAllowExternalImages(false);
+        }
+        if (((bool) ($flags & self::CREATE_BLANK_SHEET_IF_NONE_READ)) === true) {
+            $this->setCreateBlankSheetIfNoneRead(true);
         }
     }
 
@@ -241,5 +294,17 @@ abstract class BaseReader implements IReader
         }
 
         return $returnArray;
+    }
+
+    public function getValueBinder(): ?IValueBinder
+    {
+        return $this->valueBinder;
+    }
+
+    public function setValueBinder(?IValueBinder $valueBinder): self
+    {
+        $this->valueBinder = $valueBinder;
+
+        return $this;
     }
 }

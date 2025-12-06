@@ -983,7 +983,10 @@ class TaxonomyHarvester extends Manager{
 						$taxonArr['author'] = $unitArr['authors'];
 						$rankID = $this->getRankId($unitArr['rank']);
 						if($rankID) $taxonArr['rankid'] = $rankID;
-						$taxonArr['source'] = 'Via fDex: '.$unitArr['recordSource'];
+						$sourceStr = 'Via fDex: '.$unitArr['recordSource'];
+						if(!empty($unitArr['mbNumber'])) $sourceStr .= '; mbNumber: ' . $unitArr['mbNumber'];
+						if(!empty($unitArr['otherID'])) $sourceStr .= '; otherID: ' . $unitArr['otherID'];
+						$taxonArr['source'] = $sourceStr;
 						$taxonArr['notes'] = 'taxonomicStatus: '.$unitArr['taxonomicStatus'].'; currentStatus: '.$unitArr['currentStatus'];
 						if(isset($unitArr['parentTaxon'])){
 							$parentTaxon = $unitArr['parentTaxon'];
@@ -1625,7 +1628,9 @@ class TaxonomyHarvester extends Manager{
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$this->langArr[$r->langname] = $r->langid;
-				$this->langArr[$r->iso639_1] = $r->langid;
+				if (!empty($r->iso639_1)) {
+					$this->langArr[$r->iso639_1] = $r->langid;
+				}
 			}
 			$rs->free();
 		}

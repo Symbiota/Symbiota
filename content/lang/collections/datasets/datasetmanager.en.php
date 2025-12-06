@@ -71,3 +71,4 @@ $LANG['DS_NOT_IDENTIFIED'] = 'ERROR: dataset id not identified';
 $LANG['DROP_ICON'] = 'Drop Icon';
 $LANG['PAGE'] = 'Page';
 $LANG['OF'] = 'of';
+?>

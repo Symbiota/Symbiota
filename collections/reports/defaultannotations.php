@@ -9,7 +9,7 @@ $lHeader = $_POST['lheading'];
 $lFooter = $_POST['lfooter'];
 $detIdArr = $_POST['detid'];
 $action = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
-$rowsPerPage = array_key_exists('rowcount',$_POST)?$_POST['rowcount']:3;;
+$columnsPerPage = array_key_exists('columncount',$_POST)?$_POST['columncount']:3;;
 
 $labelManager = new OccurrenceLabel();
 $labelManager->setCollid($collid);
@@ -33,7 +33,7 @@ if($SYMB_UID){
 			if(array_key_exists('marginsize',$_POST) && $_POST['marginsize']) $marginSize = $_POST['marginsize'];
 			echo 'table.labels {border-spacing:'.$marginSize.'px;}';
 			$widthStr = '600px';
-			if($rowsPerPage > 1) $widthStr = 100/$rowsPerPage.'%';
+			if($columnsPerPage > 1) $widthStr = 100/$columnsPerPage.'%';
 			$borderWidth = 1;
 			if(array_key_exists('borderwidth',$_POST)) $borderWidth = $_POST['borderwidth'];
 			?>
@@ -56,7 +56,8 @@ if($SYMB_UID){
 			if($isEditor){
 				if($action){
 					$speciesAuthors = ((array_key_exists('speciesauthors',$_POST) && $_POST['speciesauthors'])?1:0);
-					$labelArr = $labelManager->getAnnoArray($_POST['detid'], $speciesAuthors);
+					$familyName = ((array_key_exists('print-family',$_POST) && $_POST['print-family'])?1:0);
+					$labelArr = $labelManager->getAnnoArray($_POST['detid'], $speciesAuthors, $familyName);
 					if(array_key_exists('clearqueue',$_POST) && $_POST['clearqueue']){
 						$labelManager->clearAnnoQueue($_POST['detid']);
 					}
@@ -68,7 +69,7 @@ if($SYMB_UID){
 						$dupCnt = $_POST['q-'.$occid];
 						for($i = 0;$i < $dupCnt;$i++){
 							$labelCnt++;
-							if($rowsPerPage == 1 || $labelCnt%$rowsPerPage == 1) echo '<tr>'."\n";
+							if($columnsPerPage == 1 || $labelCnt%$columnsPerPage == 1) echo '<tr>'."\n";
 							?>
 							<td class="" valign="top">
 								<?php
@@ -80,26 +81,29 @@ if($SYMB_UID){
 									<?php
 								}
 								?>
-								<div class="scientificnamediv">
-									<?php
-									if($occArr['identificationqualifier']) echo '<span class="identificationqualifier">'.$occArr['identificationqualifier'].'</span> ';
-									$scinameStr = $occArr['sciname'];
-									$parentAuthor = (array_key_exists('parentauthor',$occArr)?' '.$occArr['parentauthor']:'');
-									$scinameStr = str_replace(' sp. ','</i></b>'.$parentAuthor.' <b>sp.</b>',$scinameStr);
-									$scinameStr = str_replace(' subsp. ','</i></b>'.$parentAuthor.' <b>subsp. <i>',$scinameStr);
-									$scinameStr = str_replace(' ssp. ','</i></b>'.$parentAuthor.' <b>ssp. <i>',$scinameStr);
-									$scinameStr = str_replace(' var. ','</i></b>'.$parentAuthor.' <b>var. <i>',$scinameStr);
-									$scinameStr = str_replace(' variety ','</i></b>'.$parentAuthor.' <b>var. <i>',$scinameStr);
-									$scinameStr = str_replace(' Variety ','</i></b>'.$parentAuthor.' <b>var. <i>',$scinameStr);
-									$scinameStr = str_replace(' v. ','</i></b>'.$parentAuthor.' <b>var. <i>',$scinameStr);
-									$scinameStr = str_replace(' f. ','</i></b>'.$parentAuthor.' <b>f. <i>',$scinameStr);
-									$scinameStr = str_replace(' cf. ','</i></b>'.$parentAuthor.' <b>cf. <i>',$scinameStr);
-									$scinameStr = str_replace(' aff. ','</i></b>'.$parentAuthor.' <b>aff. <i>',$scinameStr);
-									?>
-									<span class="sciname">
-										<b><i><?php echo $scinameStr; ?></i></b>
-									</span>
-									<span class="scientificnameauthorship"><?php echo $occArr['scientificnameauthorship']; ?></span>
+								<div class="scientificnamediv" style="display: flex;">
+									<div class="sciname-group" style="display: flex; gap: 0.5rem; align-items: center;">
+										<?php
+										if($occArr['identificationqualifier']) echo '<span class="identificationqualifier">'.$occArr['identificationqualifier'].'</span> ';
+										$scinameStr = $occArr['sciname'];
+										$parentAuthor = (array_key_exists('parentauthor',$occArr)?' '.$occArr['parentauthor']:'');
+										$scinameStr = str_replace(' sp. ','</i></b>'.$parentAuthor.' <b>sp.</b>',$scinameStr);
+										$scinameStr = str_replace(' subsp. ','</i></b>'.$parentAuthor.' <b>subsp. <i>',$scinameStr);
+										$scinameStr = str_replace(' ssp. ','</i></b>'.$parentAuthor.' <b>ssp. <i>',$scinameStr);
+										$scinameStr = str_replace(' var. ','</i></b>'.$parentAuthor.' <b>var. <i>',$scinameStr);
+										$scinameStr = str_replace(' variety ','</i></b>'.$parentAuthor.' <b>var. <i>',$scinameStr);
+										$scinameStr = str_replace(' Variety ','</i></b>'.$parentAuthor.' <b>var. <i>',$scinameStr);
+										$scinameStr = str_replace(' v. ','</i></b>'.$parentAuthor.' <b>var. <i>',$scinameStr);
+										$scinameStr = str_replace(' f. ','</i></b>'.$parentAuthor.' <b>f. <i>',$scinameStr);
+										$scinameStr = str_replace(' cf. ','</i></b>'.$parentAuthor.' <b>cf. <i>',$scinameStr);
+										$scinameStr = str_replace(' aff. ','</i></b>'.$parentAuthor.' <b>aff. <i>',$scinameStr);
+										?>
+										<span class="sciname">
+											<b><i><?php echo $scinameStr; ?></i></b>
+										</span>
+										<span class="scientificnameauthorship"><?php echo $occArr['scientificnameauthorship']; ?></span>
+									</div>
+									<span style="margin-left: auto;" class="family"><?php echo strtoupper($occArr['family']); ?></span>
 								</div>
 								<?php
 								if($occArr['identifiedby'] || $occArr['dateidentified']){
@@ -149,14 +153,14 @@ if($SYMB_UID){
 								?>
 							</td>
 							<?php
-							if($labelCnt%$rowsPerPage == 0){
+							if($labelCnt%$columnsPerPage == 0){
 								echo '</tr>'."\n";
 							}
 						}
 					}
 					echo '</table>';
-					if($labelCnt%$rowsPerPage){
-						$remaining = $rowsPerPage-($labelCnt%$rowsPerPage);
+					if($labelCnt%$columnsPerPage){
+						$remaining = $columnsPerPage-($labelCnt%$columnsPerPage);
 						for($i = 0;$i < $remaining;$i++){
 							echo '<td></td>';
 						}

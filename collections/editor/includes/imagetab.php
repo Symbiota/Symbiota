@@ -1,8 +1,10 @@
 <?php
 include_once('../../../config/symbini.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/includes/imagetab.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imagetab.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imagetab.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/Media.php');
+
+Language::load('collections/editor/includes/imagetab');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $occId = filter_var($_GET['occid'], FILTER_SANITIZE_NUMBER_INT);
@@ -152,7 +154,7 @@ $creatorArray = Media::getCreatorArray();
 				</div>
 				<div style="margin:0px 0px 5px 10px;">
 					<b><?php echo $LANG['SOURCE_WEBPAGE']; ?>:</b>
-					<input name="sourceurl" type="text" size="40" value="" />
+					<input name="sourceUrl" type="text" size="40" value="" />
 				</div>
 				<div style="margin:0px 0px 5px 10px;">
 					<b><?php echo $LANG['SORT']; ?>:</b>
@@ -174,7 +176,7 @@ $creatorArray = Media::getCreatorArray();
 					<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
 					<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
 					<input type="hidden" name="tabindex" value="1" />
-					<button type="submit" name="submitaction" class="button icon-button" value="Submit New Image"><?php echo $LANG['SUBMIT_NEW']; ?></button>
+					<button type="submit" name="submitaction" class="button" value="Submit New Image"><?php echo $LANG['SUBMIT_NEW']; ?></button>
 				</div>
 			</fieldset>
 		</form>
@@ -196,7 +198,8 @@ $creatorArray = Media::getCreatorArray();
 						<td style="width:300px;text-align:center;padding:20px;">
 							<?php
 							if((!$imgUrl || $imgUrl == 'empty') && $origUrl) $imgUrl = $origUrl;
-							if(!$tnUrl && $imgUrl) $tnUrl = $imgUrl;
+							$displayUrl = $imgArr["thumbnailUrl"] ?? $imgUrl;
+
 							if(array_key_exists('MEDIA_DOMAIN', $GLOBALS)){
 								if(substr($imgUrl, 0, 1) == '/'){
 									$imgUrl = $GLOBALS['MEDIA_DOMAIN'] . $imgUrl;
@@ -213,7 +216,7 @@ $creatorArray = Media::getCreatorArray();
 								echo '<div style="font-weight:bold;font-size:140%">'.$imgArr['error'].'</div>';
 							}
 							else{
-								echo '<img src="'.$imgUrl.'" style="width:250px;" title="'.$imgArr["caption"].'" />';
+								echo '<img src="' . $displayUrl . '" style="width:250px;" title="'.$imgArr["caption"].'" />';
 							}
 							echo '</a>';
 							if($imgUrl != $origUrl) echo '<div><a href="' . $imgUrl .'" target="_blank">' . $LANG['OPEN_MED'] . '</a></div>';
@@ -277,7 +280,7 @@ $creatorArray = Media::getCreatorArray();
 									<a href="<?php echo $imgArr["url"]; ?>"  title="<?php echo $imgArr["url"]; ?>" target="_blank">
 										<?php
 										$urlDisplay = $imgArr["url"];
-										if(strlen($urlDisplay) > 60) $urlDisplay = '...'.substr($urlDisplay,-60);
+										if($urlDisplay && strlen($urlDisplay) > 60) $urlDisplay = '...'.substr($urlDisplay,-60);
 										echo $urlDisplay;
 										?>
 									</a>
@@ -348,7 +351,7 @@ $creatorArray = Media::getCreatorArray();
 										</div>
 										<div>
 											<b><?php echo $LANG['SOURCE_WEBPAGE']; ?>:</b><br/>
-											<input name="sourceurl" type="text" value="<?php echo $imgArr["sourceUrl"]; ?>" style="width:95%;" />
+											<input name="sourceUrl" type="text" value="<?php echo $imgArr["sourceUrl"]; ?>" style="width:95%;" />
 										</div>
 										<div>
 											<b><?php echo $LANG['WEB_URL']; ?>: </b><br/>
@@ -405,7 +408,7 @@ $creatorArray = Media::getCreatorArray();
 											<input type="hidden" name="imgid" value="<?php echo $imgId; ?>" />
 											<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
 											<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
-											<button type="submit" class="button icon-button" name="submitaction" value="Submit Image Edits"><?php echo $LANG['SUBMIT_IMG_EDITS']; ?></button>
+											<button type="submit" class="button" name="submitaction" value="Submit Image Edits"><?php echo $LANG['SUBMIT_IMG_EDITS']; ?></button>
 										</div>
 									</fieldset>
 								</form>
@@ -421,7 +424,7 @@ $creatorArray = Media::getCreatorArray();
 											<?php echo $LANG['RM_DB_NOT_SERVER']; ?>
 										</div>
 										<div style="margin:10px 20px;">
-											<button class="button-danger button icon-button" type="submit" name="submitaction" value="Delete Image"><?php echo $LANG['DEL_IMG']; ?></button>
+											<button class="button-danger button" type="submit" name="submitaction" value="Delete Image"><?php echo $LANG['DEL_IMG']; ?></button>
 										</div>
 									</fieldset>
 								</form>
@@ -442,7 +445,7 @@ $creatorArray = Media::getCreatorArray();
 												<input type="hidden" name="imgid" value="<?php echo $imgId; ?>" />
 												<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
 												<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
-												<button type="submit" name="submitaction" class="button icon-button" value="Remap Image"><?php echo $LANG['REMAP_IMG']; ?></button>
+												<button type="submit" name="submitaction" class="button" value="Remap Image"><?php echo $LANG['REMAP_IMG']; ?></button>
 											</div>
 										</fieldset>
 									</form>
@@ -455,7 +458,7 @@ $creatorArray = Media::getCreatorArray();
 										<div style="margin:10px 20px;">
 											<input name="occid" type="hidden" value="<?php echo $occId; ?>" />
 											<input name="imgid" type="hidden" value="<?php echo $imgId; ?>" />
-											<button name="submitaction" type="submit" class="button icon-button" value="remapImageToNewRecord"><?php echo $LANG['LINK_TO_NEW']; ?></button>
+											<button name="submitaction" type="submit" class="button" value="remapImageToNewRecord"><?php echo $LANG['LINK_TO_NEW']; ?></button>
 										</div>
 									</fieldset>
 								</form>
@@ -467,7 +470,7 @@ $creatorArray = Media::getCreatorArray();
 											<input name="imgid" type="hidden" value="<?php echo $imgId; ?>" />
 											<input name="occindex" type="hidden" value="<?php echo $occIndex; ?>" />
 											<input name="csmode" type="hidden" value="<?php echo $crowdSourceMode; ?>" />
-											<button name="submitaction" type="submit" class="button icon-button" value="Disassociate Image"><?php echo $LANG['DISASSOCIATE_IMG']; ?></button>
+											<button name="submitaction" type="submit" class="button" value="Disassociate Image"><?php echo $LANG['DISASSOCIATE_IMG']; ?></button>
 										</div>
 										<div>
 											* <?php echo $LANG['IMG_FROM_TAXON']; ?>

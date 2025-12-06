@@ -1,6 +1,7 @@
 <?php
 include_once('OccurrenceManager.php');
 include_once('OccurrenceAccessStats.php');
+include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 
 class OccurrenceMapManager extends OccurrenceManager {
 
@@ -45,6 +46,8 @@ class OccurrenceMapManager extends OccurrenceManager {
 				'o.othercatalognumbers, c.institutioncode, c.collectioncode, c.CollectionName '.
 				'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
 
+			if (!empty($GLOBALS['ACTIVATE_PALEO']))
+				$sql = $this->getPaleoSqlWith() . $sql;
 			$this->sqlWhere .= 'AND (ts.taxauthid = 1 OR ts.taxauthid IS NULL) ';
 
 			$sql .= $this->getTableJoins($this->sqlWhere);
@@ -54,11 +57,15 @@ class OccurrenceMapManager extends OccurrenceManager {
 			if(is_numeric($start) && $limit){
 				$sql .= "LIMIT ".$start.",".$limit;
 			}
-			$result = $this->conn->query($sql);
+			$result = QueryUtil::tryExecuteQuery($this->conn, $sql);
+			if(!$result) {
+				$this->errorMessage = 'ERROR executing coordinate query: ' . $this->conn->error;
+				return array();
+			}
 			$color = 'e69e67';
 			$occidArr = array();
 			while($row = $result->fetch_object()){
-				if(!($row->DecimalLongitude <= 180 && $row->DecimalLongitude >= -180) || !($row->DecimalLatitude <= 90 && $row->DecimalLatitude >= -90)) { 
+				if(!($row->DecimalLongitude <= 180 && $row->DecimalLongitude >= -180) || !($row->DecimalLatitude <= 90 && $row->DecimalLatitude >= -90)) {
 					continue;
 				}
 				$occidArr[] = $row->occid;
@@ -72,7 +79,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 				$coordArr[$collName][$row->occid]["sn"] = $row->sciname;
 				$coordArr[$collName][$row->occid]["catalogNumber"] = $row->catalogNumber;
 				$coordArr[$collName][$row->occid]["eventdate"] = $row->eventdate;
-				$coordArr[$collName][$row->occid]["id"] = $this->htmlEntities($row->identifier);
+				$coordArr[$collName][$row->occid]["id"] = $row->identifier;
 				$coordArr[$collName]["c"] = $color;
 			}
 			$statsManager->recordAccessEventByArr($occidArr, 'map');
@@ -103,7 +110,11 @@ class OccurrenceMapManager extends OccurrenceManager {
 			$sql .= $this->sqlWhere;
 			if(is_numeric($start) && $recLimit && is_numeric($recLimit)) $sql .= "LIMIT ".$start.",".$recLimit;
 			//echo '<div>SQL: ' . $sql . '</div>';
-			$rs = $this->conn->query($sql);
+			$rs = QueryUtil::tryExecuteQuery($this->conn, $sql);
+			if(!$rs) {
+				$this->errorMessage = 'ERROR executing mapping data query: ' . $this->conn->error;
+				return array();
+			}
 			$occidArr = array();
 			while($r = $rs->fetch_assoc()){
 				$sciname = $r['sciname'];
@@ -138,9 +149,9 @@ class OccurrenceMapManager extends OccurrenceManager {
 		//Used in occurrence listing tab within dynamic map
 		$retArr = Array();
 		if($this->sqlWhere){
-			$sql = 'SELECT o.occid, c.institutioncode, o.catalognumber, CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector, '.
-				'o.eventdate, o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county) AS locality, o.DecimalLatitude, o.DecimalLongitude, '.
-				'IFNULL(o.LocalitySecurity,0) AS LocalitySecurity, o.localitysecurityreason '.
+			$sql = 'SELECT o.occid, c.institutionCode, o.catalogNumber, CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector, '.
+				'o.eventDate, o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county) AS locality, o.decimalLatitude, o.decimalLongitude, '.
+				'IFNULL(o.recordSecurity,0) AS recordSecurity, o.securityReason '.
 				'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
 			$sql .= $this->getTableJoins($this->sqlWhere);
 			$sql .= $this->sqlWhere;
@@ -150,20 +161,20 @@ class OccurrenceMapManager extends OccurrenceManager {
 			$statement = $this->conn->prepare($sql);
 			$statement->bind_param('ii', $bottomLimit, $cntPerPage);
 			$statement->execute();
-			$statement->bind_result($occid, $institutioncode, $catalognumber, $collector, $eventdate, $family, $sciname, $locality, $DecimalLatitude, $DecimalLongitude, $LocalitySecurity, $localitysecurityreason);
+			$statement->bind_result($occid, $institutionCode, $catalogNumber, $collector, $eventDate, $family, $sciname, $locality, $decimalLatitude, $decimalLongitude, $recordSecurity, $securityReason);
 			while($statement->fetch()){
 				$occId = $occid;
-				$retArr[$occId]['i'] = $this->cleanOutStr($institutioncode);
-				$retArr[$occId]['cat'] = $this->cleanOutStr($catalognumber);
+				$retArr[$occId]['i'] = $this->cleanOutStr($institutionCode);
+				$retArr[$occId]['cat'] = $this->cleanOutStr($catalogNumber);
 				$retArr[$occId]['c'] = $this->cleanOutStr($collector);
-				$retArr[$occId]['e'] = $this->cleanOutStr($eventdate);
+				$retArr[$occId]['e'] = $this->cleanOutStr($eventDate);
 				$retArr[$occId]['f'] = $this->cleanOutStr($family);
 				$retArr[$occId]['s'] = $this->cleanOutStr($sciname);
 				$retArr[$occId]['l'] = $this->cleanOutStr($locality);
-				$retArr[$occId]['lat'] = $this->cleanOutStr($DecimalLatitude);
-				$retArr[$occId]['lon'] = $this->cleanOutStr($DecimalLongitude);
+				$retArr[$occId]['lat'] = $this->cleanOutStr($decimalLatitude);
+				$retArr[$occId]['lon'] = $this->cleanOutStr($decimalLongitude);
 				$retArr[$occId]['l'] = str_replace('.,', ',', $locality);
-				// Do we also want to put LocalitySecurity and localitysecurityreason in this array?
+				// Do we also want to put recordSecurity and securityReason in this array?
 			}
 			$statement->close();
 			//Set access statistics
@@ -178,12 +189,15 @@ class OccurrenceMapManager extends OccurrenceManager {
 	private function setRecordCnt(){
 		if($this->sqlWhere){
 			$sql = "SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences o ".$this->getTableJoins($this->sqlWhere).$this->sqlWhere;
+			if (!empty($GLOBALS['ACTIVATE_PALEO'])) $sql = $this->getPaleoSqlWith() . $sql;
 			$result = $this->conn->query($sql);
 			if($result){
 				if($row = $result->fetch_object()){
 					$this->recordCount = $row->cnt;
 				}
 				$result->free();
+			} else {
+				$this->errorMessage = 'ERROR executing record count query: ' . $this->conn->error;
 			}
 		}
 	}
@@ -195,23 +209,20 @@ class OccurrenceMapManager extends OccurrenceManager {
 	//SQL where functions
 	private function setGeoSqlWhere(){
 		global $USER_RIGHTS;
-		$sqlWhere = $this->getSqlWhere();
-		if($this->searchTermArr) {
-			$sqlWhere = $this->getSqlWhere();
-			$sqlWhere .= ($sqlWhere?' AND ':' WHERE ').'(o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) ';
-			if(array_key_exists('clid',$this->searchTermArr) && $this->searchTermArr['clid']) {
-				//Set Footprint for map to load
-				$this->setSearchTerm('footprintGeoJson', $this->voucherManager->getClFootprint());
-				if(isset($this->searchTermArr['cltype']) && $this->searchTermArr['cltype'] == 'all') {
-					$sqlWhere .= "AND (ST_Within(p.lngLatPoint,ST_GeomFromGeoJSON('". $this->voucherManager->getClFootprint()." '))) ";
-
+		if($sqlWhere = $this->getSqlWhere()){
+			if($this->searchTermArr) {
+				$sqlWhere .= ($sqlWhere?' AND ':' WHERE ').'(o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) ';
+				if(!empty($this->searchTermArr['clid'])) {
+					if($this->voucherManager->getClFootprint()){
+						//Set Footprint for map to load
+						$this->setSearchTerm('footprintGeoJson', $this->voucherManager->getClFootprint());
+						if(isset($this->searchTermArr['cltype']) && $this->searchTermArr['cltype'] == 'all') {
+							$sqlWhere .= "AND (ST_Within(p.lngLatPoint,ST_GeomFromGeoJSON('". $this->voucherManager->getClFootprint()." '))) ";
+						}
+					}
 				}
-
 			}
-		}
 
-		//Only add these if a search is going to be done
-		if($sqlWhere) {
 			//Check and exclude records with sensitive species protections
 			if(array_key_exists('SuperAdmin',$USER_RIGHTS) || array_key_exists('CollAdmin',$USER_RIGHTS) || array_key_exists('RareSppAdmin',$USER_RIGHTS) || array_key_exists('RareSppReadAll',$USER_RIGHTS)){
 				//Is global rare species reader, thus do nothing to sql and grab all records
@@ -220,15 +231,19 @@ class OccurrenceMapManager extends OccurrenceManager {
 				$securityCollArr = array();
 				if(isset($USER_RIGHTS['CollEditor'])) $securityCollArr = $USER_RIGHTS['CollEditor'];
 				if(isset($USER_RIGHTS['RareSppReader'])) $securityCollArr = array_unique(array_merge($securityCollArr, $USER_RIGHTS['RareSppReader']));
-				$sqlWhere .= ($sqlWhere ? ' AND' : ' WHERE' ) . ' (o.CollId IN ('.implode(',',$securityCollArr).') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
+				$sqlWhere .= ($sqlWhere ? ' AND' : ' WHERE' ) . ' (o.CollId IN ('.implode(',',$securityCollArr).') OR (o.recordSecurity = 0)) ';
 			}
 			elseif(!empty($sqlWhere)){
-				$sqlWhere .= ($sqlWhere ? ' AND' : ' WHERE' ) . ' (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL) ';
+				$sqlWhere .= ($sqlWhere ? ' AND' : ' WHERE' ) . ' (o.recordSecurity = 0) ';
 			}
 
 			$sqlWhere .=  ' AND ((o.decimallatitude BETWEEN -90 AND 90) AND (o.decimallongitude BETWEEN -180 AND 180)) ';
+			$this->sqlWhere = $sqlWhere;
 		}
-		$this->sqlWhere = $sqlWhere;
+		else{
+			//Don't allow someone to query all occurrences if there are no conditions
+			$this->sqlWhere = 'WHERE o.occid IS NULL ';
+		}
 	}
 
 	//Shape functions
@@ -295,7 +310,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 					$recUrl = 'http://';
 					if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $recUrl = 'https://';
 					$recUrl .= $_SERVER['SERVER_NAME'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$occid;
-					echo '<Data name="RecordURL">'.$recUrl.'</Data>';
+					echo '<Data name="RecordURL">' . htmlspecialchars($recUrl, ENT_QUOTES) . '</Data>';
 					if(isset($extraFieldArr) && is_array($extraFieldArr)){
 						reset($extraFieldArr);
 						foreach($extraFieldArr as $fieldName){
@@ -324,18 +339,23 @@ class OccurrenceMapManager extends OccurrenceManager {
 				'FROM omoccurrences o LEFT JOIN omoccurdatasetlink dl ON o.occid = dl.occid '.
 				'WHERE dl.datasetid = '.$datasetId.' '.
 				'ORDER BY o.sciname ';
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				$retArr[$r->occid]['occid'] = $r->occid;
-				$retArr[$r->occid]['sciname'] = $r->sciname;
-				$retArr[$r->occid]['catnum'] = $r->catalognumber;
-				$retArr[$r->occid]['coll'] = $r->collector;
-				$retArr[$r->occid]['eventdate'] = $r->eventdate;
-				$retArr[$r->occid]['occid'] = $r->occid;
-				$retArr[$r->occid]['lat'] = $r->DecimalLatitude;
-				$retArr[$r->occid]['long'] = $r->DecimalLongitude;
-			}
-			$rs->free();
+				$rs = QueryUtil::tryExecuteQuery($this->conn, $sql);
+				if(!$rs) {
+					$this->errorMessage = 'ERROR executing coordinate query: ' . $this->conn->error;
+					return array();
+				} else{
+					while($r = $rs->fetch_object()){
+						$retArr[$r->occid]['occid'] = $r->occid;
+						$retArr[$r->occid]['sciname'] = $r->sciname;
+						$retArr[$r->occid]['catnum'] = $r->catalognumber;
+						$retArr[$r->occid]['coll'] = $r->collector;
+						$retArr[$r->occid]['eventdate'] = $r->eventdate;
+						$retArr[$r->occid]['occid'] = $r->occid;
+						$retArr[$r->occid]['lat'] = $r->DecimalLatitude;
+						$retArr[$r->occid]['long'] = $r->DecimalLongitude;
+					}
+				}
+				$rs->free();
 		}
 		if(count($retArr)>1){
 			return $retArr;
@@ -353,23 +373,31 @@ class OccurrenceMapManager extends OccurrenceManager {
 			'FROM omoccurdatasets '.
 			'WHERE (uid = '.$uid.') '.
 			'ORDER BY name';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retArr[$r->datasetid]['datasetid'] = $r->datasetid;
-			$retArr[$r->datasetid]['name'] = $r->name;
-			$retArr[$r->datasetid]['role'] = "DatasetAdmin";
+		try {
+			$rs = QueryUtil::executeQuery($this->conn, $sql);
+			while($r = $rs->fetch_object()){
+				$retArr[$r->datasetid]['datasetid'] = $r->datasetid;
+				$retArr[$r->datasetid]['name'] = $r->name;
+				$retArr[$r->datasetid]['role'] = "DatasetAdmin";
+			}
+		} catch (mysqli_sql_exception $e) {
+			$this->errorMessage = 'ERROR executing personal record sets query: ' . $e->getMessage();
 		}
 		$sql2 = 'SELECT d.datasetid, d.name, r.role '.
 			'FROM omoccurdatasets d LEFT JOIN userroles r ON d.datasetid = r.tablepk '.
 			'WHERE (r.uid = '.$uid.') AND (r.role IN("DatasetAdmin","DatasetEditor","DatasetReader")) '.
 			'ORDER BY sortsequence,name';
-		$rs = $this->conn->query($sql2);
-		while($r = $rs->fetch_object()){
-			$retArr[$r->datasetid]['datasetid'] = $r->datasetid;
-			$retArr[$r->datasetid]['name'] = $r->name;
-			$retArr[$r->datasetid]['role'] = $r->role;
+		try {
+			$rs = QueryUtil::executeQuery($this->conn, $sql2);
+			while($r = $rs->fetch_object()){
+				$retArr[$r->datasetid]['datasetid'] = $r->datasetid;
+				$retArr[$r->datasetid]['name'] = $r->name;
+				$retArr[$r->datasetid]['role'] = $r->role;
+			}
+			$rs->free();
+		} catch (mysqli_sql_exception $e) {
+			$this->errorMessage = 'ERROR executing personal record sets with certain user roles query: ' . $e->getMessage();
 		}
-		$rs->free();
 		return $retArr;
 	}
 
@@ -377,11 +405,15 @@ class OccurrenceMapManager extends OccurrenceManager {
 	public function getObservationIds(){
 		$retVar = array();
 		$sql = 'SELECT collid FROM omcollections WHERE CollType IN("Observations","General Observations") ';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retVar[] = $r->collid;
-		}
-		$rs->free();
+			$rs = QueryUtil::tryExecuteQuery($this->conn, $sql);
+			if(!$rs) {
+				$this->errorMessage = 'ERROR executing observation collections query: ' . $this->conn->error;
+				return array();
+			}
+			while($r = $rs->fetch_object()){
+				$retVar[] = $r->collid;
+			}
+			$rs->free();
 		return $retVar;
 	}
 
