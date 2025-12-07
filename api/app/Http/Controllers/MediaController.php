@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Http\Controllers\TaxonomyController;
+use App\Helpers\Helper;
 
 class MediaController extends Controller{
 
@@ -319,6 +320,10 @@ class MediaController extends Controller{
 	 * )
 	 */
 	public function insert(Request $request){
+		if (!Helper::isValidJson($request->getContent())) {
+			return response()->json(['error' => 'Invalid JSON format in request body'], 400);
+		}
+		
 		if($this->authenticate($request)){
 			$this->validate($request, $this->rulesInsert);
 			$inputArr = $request->all();
