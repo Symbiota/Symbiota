@@ -6,6 +6,7 @@ use App\Models\Occurrence;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use App\Helpers\Helper;
 
 class OccurrenceAnnotationController extends OccurrenceController{
 	/**
@@ -275,6 +276,9 @@ class OccurrenceAnnotationController extends OccurrenceController{
 	 * )
 	 */
 	public function insertAnnotation(Request $request){
+		if (!Helper::isValidJson($request->getContent())) {
+			return response()->json(['error' => 'Invalid JSON format in request body'], 400);
+		}
 		$this->validate($request, [
 			'occid' => 'required|integer',
 			'externalSource' => 'string|max:45',
