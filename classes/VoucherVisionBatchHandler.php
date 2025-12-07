@@ -66,7 +66,7 @@ class VoucherVisionBatchHandler {
     /**
      * Run VoucherVision OCR and transcription on a batch of images
      *
-     * @param array $imageUrls Associative array with occids as keys and image URLs as values
+     * @param array $imageUrls Associative array with occids as keys (with optional '-\d+' to disambiguate if there is more than one image per occid) and image URLs as values
      * @param string $prompt The prompt to use for transcription
      * @param array $engines Array of OCR engines to use
      * @param bool $ocrOnly Whether to only perform OCR without transcription
@@ -75,8 +75,10 @@ class VoucherVisionBatchHandler {
      */
     public function runVoucherVision($imageUrls, $prompt, $engines, $ocrOnly, $llmModel) {
         $results = [];
+        $batchLimit = $VV_BATCH_LIMIT ?? 1000;
+        $limitedImageUrls = count($imageUrls) > $batchLimit ? $imageUrls[0,$batchLimit]: $imageUrls; // @TODO fix the syntax for limiting by the first $VV_BATCH_LIMIT entries
         
-        foreach ($imageUrls as $occid => $imageUrl) {
+        foreach ($limitedImageUrls as $occidLike => $imageUrl) {
             try {
                 // Construct the data object for the API call
                 $vvData = [
@@ -91,21 +93,21 @@ class VoucherVisionBatchHandler {
                 $response = $this->makeVoucherVisionRequest($vvData);
                 
                 if ($response !== false) {
-                    $results[$occid] = [
+                    $results[$occidLike] = [
                         'success' => true,
                         // 'data' => $response,
                         'formatted_json' => $response['formatted_json'] ?? null,
                         'image_url' => $imageUrl
                     ];
                 } else {
-                    $results[$occid] = [
+                    $results[$occidLike] = [
                         'success' => false,
                         'error' => 'Failed to get response from VoucherVision API',
                         'image_url' => $imageUrl
                     ];
                 }
             } catch (Exception $e) {
-                $results[$occid] = [
+                $results[$occidLike] = [
                     'success' => false,
                     'error' => $e->getMessage(),
                     'image_url' => $imageUrl
@@ -138,6 +140,8 @@ class VoucherVisionBatchHandler {
         }
         
         foreach ($results as $occid => $result) {
+            // Some strings that are listed as occids right now might be occid . '-\d+' in order to make the keys unique
+            $correctedOccid = count(explode('-', $occid)) > 0 ? explode('-', $occid)[0] : $occid; 
             if ($result['success'] && isset($result['formatted_json'])) {
                 try {
                     // Get field mapping for the prompt
@@ -157,11 +161,11 @@ class VoucherVisionBatchHandler {
                     
                     // Only create annotation if we have mapped data
                     if (!empty($mappedData)) {
-                        $this->makeAnnotationRequest($occid, $mappedData, $currentUser);
+                        $this->makeAnnotationRequest($correctedOccid, $mappedData, $currentUser);
                     }
                 } catch (Exception $e) {
                     // Log error but don't interrupt the batch process
-                    error_log("Failed to create annotation for occid {$occid}: " . $e->getMessage());
+                    error_log("Failed to create annotation for occid {$correctedOccid}: " . $e->getMessage());
                 }
             }
         }
@@ -282,10 +286,10 @@ class VoucherVisionBatchHandler {
      *
      * @return string The constructed RPC URL
      */
-    protected function constructRpcUrl() { // @TODO decide whether this is necessary
+    protected function constructRpcUrl($endpoint) { // @TODO decide whether this is necessary
         // Determine the correct path to the RPC endpoint
         $serverRoot = $GLOBALS['SERVER_ROOT'] ?? '';
-        $rpcUrl = !empty($serverRoot) ? ($serverRoot . '/collections/editor/rpc/voucherVisionGo.php') : 'collections/editor/rpc/voucherVisionGo.php';
+        $rpcUrl = !empty($serverRoot) ? ($serverRoot . $endpoint) : $endpoint;
         
         // For testing or local development, we might need to construct full URL
         if (!filter_var($rpcUrl, FILTER_VALIDATE_URL)) {
@@ -328,9 +332,9 @@ class VoucherVisionBatchHandler {
      * @param array $vvData Data to send to the API
      * @return array|false Decoded JSON response or false on failure
      */
-    private function makeVoucherVisionRequest($vvData) {
+    private function makeVoucherVisionRequest($vvData) { // @TODO use the new helper function once 3.4_rc is merged in
         // Get the RPC URL using the dedicated method
-        $rpcUrl = $this->constructRpcUrl();
+        $rpcUrl = $this->constructRpcUrl('/collections/editor/rpc/voucherVisionGo.php');
         
         // Initialize cURL
         $curl = curl_init();
@@ -422,6 +426,63 @@ class VoucherVisionBatchHandler {
     }
 
     // @TODO maybe implement OccurrenceEditReview's updateRevisionRecords method?
+
+    /**
+     * Make a request to the media API endpoint to get all of the media assets back
+     *
+     * @param array $vvData Data to send to the API
+     * @return array|false Decoded JSON response or false on failure
+     */
+    public static function makeMediaRequestFromOccid($occid) { // @TODO use the new helper function once 3.4_rc is merged in
+        // Get the RPC URL using the dedicated method
+        $rpcUrl = $this->constructRpcUrl('/api/v2/media/' . $occid); // @TODO does this get typecast to a string?
+        
+        // Initialize cURL
+        $curl = curl_init();
+        
+        // Set cURL options
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $rpcUrl,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => json_encode($vvData),
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/json',
+            ],
+            CURLOPT_TIMEOUT => 300, // 5 minute timeout for long API calls
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_SSL_VERIFYPEER => false, // For development/testing // @TODO change for prod?
+        ]);
+        
+        // Execute the request
+        $response = curl_exec($curl);
+        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($curl);
+        
+        curl_close($curl);
+        
+        // Check for cURL errors
+        if ($curlError) {
+            error_log("API error in VoucherVisionBatchHandler: " . $curlError);
+            return false;
+        }
+        
+        // Check for HTTP errors
+        if ($httpCode !== 200) {
+            error_log("HTTP Error in VoucherVisionBatchHandler: HTTP {$httpCode}");
+            return false;
+        }
+        
+        // Decode and return the JSON response
+        $decodedResponse = json_decode($response, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log("JSON Decode Error in VoucherVisionBatchHandler: " . json_last_error_msg());
+            return false;
+        }
+        
+        return $decodedResponse;
+    }
 }
 
 ?>

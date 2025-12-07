@@ -137,3 +137,6 @@ $DONATE_LINK = '';
 //Base code shared by all pages; leave as is
 include_once('symbbase.php');
 /* --DO NOT ADD ANY EXTRA SPACES BELOW THIS LINE-- */
+
+// VoucherVision config
+$VV_BATCH_LIMIT = 1000;
