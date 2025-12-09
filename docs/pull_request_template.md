@@ -12,6 +12,7 @@
 - [ ] If any files have been reformatted (e.g., by an autoformatter), the reformat is its own, separate commit in the PR
 - [ ] Comment which GitHub issue(s), if any does this PR address
 - [ ] If this PR makes any changes that would require additional configuration of any Symbiota portals outside of the files tracked in this repository, make sure that those changes are detailed in [this document](https://docs.google.com/document/d/1T7xbXEf2bjjm-PMrlXpUBa69aTMAIROPXVqJqa2ow_I/edit?usp=sharing)
+- [ ] If it makes sense to do so, has an analogous PR/change been implemented in [Symbiota-Laravel](https://github.com/Symbiota/Symbiota-Laravel)?
 
 # Post-Approval
 
