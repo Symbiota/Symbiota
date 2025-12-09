@@ -48,37 +48,30 @@ $voucherVisionHandler = new VoucherVisionBatchHandler();
 
 // Run the batch process (Note: This will make actual API calls if the API is configured)
 // For actual testing, you may want to mock the API calls
-$results = $voucherVisionHandler->runVoucherVision(
-    $imageUrlsWithOccids,
-    $prompt,
-    $engines,
-    $ocrOnly,
-    $llmModel
-);
+// $results = $voucherVisionHandler->runVoucherVision(
+//     $imageUrlsWithOccids,
+//     $prompt,
+//     $engines,
+//     $ocrOnly,
+//     $llmModel
+// );
 
-var_dump($results);
+// var_dump($results);
 
 // Case two, where we use occids, with potentially more than one media asset per occid
 $imageUrlsWithOccids2 = [];
-$candidateOccids=['53710','89378','106512','376605','605242','605243','605244','622468','685244']; // @TODO make sure more than one of these has more than one image asset
-foreach ($candidateOccids as $idx => $occid){
+$candidateOccids = ['53710', '89378', '106512', '376605', '605242', '605243', '605244', '622468', '685244']; // @TODO make sure more than one of these has more than one image asset
+foreach ($candidateOccids as $idx => $occid) {
     // @TOOD confirm that this legit gets occids from $candidateOccids
     // @TODO confirm that this gets idx correctly
     $results = VoucherVisionBatchHandler::makeMediaRequestFromOccid($occid);
     // @TODO correctly extract image URLs from results
-    foreach ($results as $result){
+    foreach ($results as $result) {
         // @TODO confirm that a single result gets extracted correctly from this
         // @TODO filter to only those results that represent an image (mediaType attribute === 'image')
-        $currentImageUrl = $result[$imageUrl]; // @TODO do this correctly
+        $currentImageUrl = $result['imageUrl']; // @TODO do this correctly
         $imageUrlsWithOccids2[$occid . '-' . $idx] = $currentImageUrl;
     }
 }
-$results2 = $voucherVisionHandler->runVoucherVision(
-    $imageUrlsWithOccids2,
-    $prompt,
-    $engines,
-    $ocrOnly,
-    $llmModel
-);
-
+$results2 = $voucherVisionHandler->runVoucherVision($imageUrlsWithOccids2, $prompt, $engines, $ocrOnly, $llmModel);
 var_dump($results2);

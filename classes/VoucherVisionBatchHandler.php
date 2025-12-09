@@ -76,7 +76,7 @@ class VoucherVisionBatchHandler {
     public function runVoucherVision($imageUrls, $prompt, $engines, $ocrOnly, $llmModel) {
         $results = [];
         $batchLimit = $VV_BATCH_LIMIT ?? 1000;
-        $limitedImageUrls = count($imageUrls) > $batchLimit ? $imageUrls[0,$batchLimit]: $imageUrls; // @TODO fix the syntax for limiting by the first $VV_BATCH_LIMIT entries
+        $limitedImageUrls = count($imageUrls) > $batchLimit ? array_slice($imageUrls, 0, $batchLimit) : $imageUrls; // @TODO confirm no off-by-one error
         
         foreach ($limitedImageUrls as $occidLike => $imageUrl) {
             try {
@@ -286,7 +286,7 @@ class VoucherVisionBatchHandler {
      *
      * @return string The constructed RPC URL
      */
-    protected function constructRpcUrl($endpoint) { // @TODO decide whether this is necessary
+    public static function constructRpcUrl($endpoint) { // @TODO decide whether this is necessary
         // Determine the correct path to the RPC endpoint
         $serverRoot = $GLOBALS['SERVER_ROOT'] ?? '';
         $rpcUrl = !empty($serverRoot) ? ($serverRoot . $endpoint) : $endpoint;
@@ -435,7 +435,7 @@ class VoucherVisionBatchHandler {
      */
     public static function makeMediaRequestFromOccid($occid) { // @TODO use the new helper function once 3.4_rc is merged in
         // Get the RPC URL using the dedicated method
-        $rpcUrl = $this->constructRpcUrl('/api/v2/media/' . $occid); // @TODO does this get typecast to a string?
+        $rpcUrl = self::constructRpcUrl('/api/v2/media/' . $occid); // @TODO does this get typecast to a string?
         
         // Initialize cURL
         $curl = curl_init();
