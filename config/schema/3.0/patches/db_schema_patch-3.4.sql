@@ -30,7 +30,6 @@ ALTER TABLE `omexsiccatinumbers`
   DROP FOREIGN KEY `FK_exsiccatiTitleNumber`;
 
 ALTER TABLE `omexsiccatinumbers`
-  DROP INDEX `FK_exsiccatiTitle`,
   DROP INDEX `FK_exsiccatiTitleNumber`,
   DROP INDEX `Index_omexsiccatinumbers_unique`;
   
