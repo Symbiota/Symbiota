@@ -12,7 +12,7 @@
 - [ ] If any files have been reformatted (e.g., by an autoformatter), the reformat is its own, separate commit in the PR
 - [ ] Comment which GitHub issue(s), if any does this PR address
 - [ ] If this PR makes any changes that would require additional configuration of any Symbiota portals outside of the files tracked in this repository, make sure that those changes are detailed in [this document](https://docs.google.com/document/d/1T7xbXEf2bjjm-PMrlXpUBa69aTMAIROPXVqJqa2ow_I/edit?usp=sharing)
-
+- [ ] Has the the branch representing this PR been updated with respect to its parent branch (e.g., Development), including merge conflict resolutions?
 # Post-Approval
 
 - [ ] It is the code author's responsibility to merge their own pull request after it has been approved
