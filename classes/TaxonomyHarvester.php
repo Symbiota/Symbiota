@@ -1536,20 +1536,7 @@ class TaxonomyHarvester extends Manager{
 		if(isset($taxonArr['sciname']) && $taxonArr['sciname']) $sciname = $taxonArr['sciname'];
 		if(!$sciname && isset($taxonArr['scientificname']) && $taxonArr['scientificname']) $sciname = $taxonArr['scientificname'];
 		if(!$sciname) return 0;
-		$tidArr = array();
-		//Get tid, author, and rankid
-		$sql = 'SELECT tid, author, rankid FROM taxa WHERE (sciname = "'.$this->cleanInStr($sciname).'") ';
-		if($this->kingdomTid){
-			$sql = 'SELECT t.tid, t.author, t.rankid
-				FROM taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid
-				WHERE (t.sciname = "'.$this->cleanInStr($sciname).'") AND e.taxauthid = 1 AND e.parenttid = '.$this->kingdomTid;
-		}
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$tidArr[$r->tid]['author'] = $r->author;
-			$tidArr[$r->tid]['rankid'] = $r->rankid;
-		}
-		$rs->free();
+		$tidArr = $this->getTaxonArr($sciname);
 		if(!$tidArr) return 0;
 		//Check if homonyms are returned
 		if(count($tidArr) == 1) return key($tidArr);
@@ -1608,6 +1595,29 @@ class TaxonomyHarvester extends Manager{
 			end($goodArr);
 			return key($goodArr);
 		}
+	}
+
+	private function getTaxonArr($sciname){
+		$taxonArr = array();
+		//Get tid, author, and rankid
+		$sql = 'SELECT t.tid, t.author, t.rankid, p.rankid as parentRank, p.sciname as parentName
+			FROM taxa t LEFT JOIN taxaenumtree e ON t.tid = e.tid
+			LEFT JOIN taxa p ON e.parenttid
+			WHERE (t.sciname = "?") AND ((e.taxauthid = 1 AND p.rankid IN(10,140)) OR e.taxauthid IS NULL)';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('s', $sciname);
+			$stmt->execute();
+			$rs = $stmt->get_result();
+			while($r = $rs->fetch_object()){
+				$taxonArr[$r->tid]['author'] = $r->author;
+				$taxonArr[$r->tid]['rankid'] = $r->rankid;
+				if($r->parentRank == 10) $taxonArr[$r->tid]['kingdom'] = $r->parentName;
+				elseif($r->parentRank == 140) $taxonArr[$r->tid]['family'] = $r->parentName;
+			}
+			$rs->free();
+			$stmt->close();
+		}
+		return $taxonArr;
 	}
 
 	private function getTidAccepted($tid){

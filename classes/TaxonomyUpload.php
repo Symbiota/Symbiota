@@ -2,9 +2,9 @@
 include_once($SERVER_ROOT.'/config/dbconnection.php');
 include_once($SERVER_ROOT.'/classes/utilities/TaxonomyUtil.php');
 include_once($SERVER_ROOT.'/classes/utilities/UploadUtil.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyHarvester.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
 include_once($SERVER_ROOT.'/traits/TaxonomyTrait.php');
+include_once($SERVER_ROOT . '/classes/utilities/PortalProperties.php');
 
 class TaxonomyUpload{
 
@@ -1091,10 +1091,7 @@ class TaxonomyUpload{
 	}
 
 	public function getTaxonomicResourceList(){
-		$taArr = array('worms'=>'World Register of Marine Species','col'=>'Catalog of Life');
-		$taArr = array('col'=>'Catalog of Life', 'worms'=>'World Register of Marine Species', 'bryonames' => 'The Bryophyte Nomenclator', 'fdex'=>'Index Fungorum via F-Dex', 'tropicos'=>'TROPICOS', 'eol'=>'Encyclopedia of Life');
-		if(!isset($GLOBALS['TAXONOMIC_AUTHORITIES'])) return $taArr;
-		return array_intersect_key($taArr,array_change_key_case($GLOBALS['TAXONOMIC_AUTHORITIES']));
+		PortalProperties::getTaxonomicAuthorities();
 	}
 
 	//Setters and getters
