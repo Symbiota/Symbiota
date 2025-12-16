@@ -12,8 +12,8 @@
 - [ ] If any files have been reformatted (e.g., by an autoformatter), the reformat is its own, separate commit in the PR
 - [ ] Comment which GitHub issue(s), if any does this PR address
 - [ ] If this PR makes any changes that would require additional configuration of any Symbiota portals outside of the files tracked in this repository, make sure that those changes are detailed in [this document](https://docs.google.com/document/d/1T7xbXEf2bjjm-PMrlXpUBa69aTMAIROPXVqJqa2ow_I/edit?usp=sharing)
-- [ ] Has this feature already been documented in [https://docs.symbiota.org/](https://docs.symbiota.org/)? If not OR if changes are needed to the documentation, create a new github issue in [https://github.com/Symbiota/Symbiota/issues](https://github.com/Symbiota/Symbiota/issues) labeled as documentation.
-
+- [ ] If this feature has not been documented in [https://docs.symbiota.org/](https://docs.symbiota.org/) OR if changes are needed to the documentation, create a new github issue in [https://github.com/Symbiota/Symbiota/issues](https://github.com/Symbiota/Symbiota/issues) labeled as documentation and add a link to it herein.
+- [ ] If there are merge conflicts with this PR's parent branch, resolve them before marking the PR as ready for review.
 # Post-Approval
 
 - [ ] It is the code author's responsibility to merge their own pull request after it has been approved
