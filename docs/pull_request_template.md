@@ -3,6 +3,7 @@
 # Always
 
 ## Pre-Approval
+
 - [ ] Does the PR have a **release-notes-friendly title**?
 - [ ] There is a **description section** in the pull request that details what the proposed changes do. It can be very brief if need be, but it ought to exist.
 - [ ] All new **text** is preferably **internationalized** (i.e., no end-user-visible text is hard-coded on the PHP pages), and the [spreadsheet tracking internationalizations](https://docs.google.com/spreadsheets/d/133fps9w2pUCEjUA6IGCcQotk7dn9KvepMXJ2IWUZsE8/edit?usp=sharing) has been updated either with a new row or with checkmarks to existing rows.
@@ -16,30 +17,31 @@
 - [ ] If there are **merge conflicts** with this PR's **parent branch, resolve** them before marking the PR as ready for review.
 
 ## Post-Approval
+
 - [ ] It is the code author's responsibility to **merge** their own pull request after it has been approved
 - [ ] Don't forget to **delete** your feature **branch** upon merge. Ignore this step as required.
 - [ ] **Close** relevant github **issues** as warranted
 
-# Features/backlogs/bugs
+# Features/backlogs/bug specific
 
 ## Pre-Approval
+
 - [ ] Features and backlog bugs should be merged into the `Development` branch, **NOT** `master`
 
 ## Post-Approval
+
 - [ ] If this PR represents a merge into the `Development` branch, remember to use the **squash & merge** option
-      
-# Hotfix specific
+
+# Hotfix/ Release specific
 
 ## Pre-Approval
+
 - [ ] Hotfixes should be branched off of the `master` branch and PR'd using the **squash & merge** option into the `Hotfix-x.x.x` branch.
 
 ## Post-Approval
-- [ ] If this PR represents a merge into the `hotfix` branch, remember to use the **squash & merge** option
 
-# Release specific
-
-## Post-Approval
 - [ ] If this PR represents a merge from the `Development` branch into the master branch, remember to use the **merge** option
+- [ ] If this PR represents a merge into the `hotfix` branch, remember to use the **squash & merge** option
 - [ ] If this PR represents a **merge from the `hotfix`** branch **into** the **`master`** branch use the **merge** option (not squashed)
   - [ ] a **subsequent PR from `master`** into `Development` should be made with the **merge** option (i.e., no squash)
   - [ ] **Immediately** **delete the `hotfix` branch** and create a new `hotfix` branch
