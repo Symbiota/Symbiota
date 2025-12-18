@@ -19,14 +19,10 @@
 ## Post-Approval
 
 - [ ] It is the code author's responsibility to **merge** their own pull request after it has been approved
-- [ ] Don't forget to **delete** your feature **branch** upon merge. Ignore this step as required.
-- [ ] **Close** relevant github **issues** as warranted
-- [ ] If this PR represents a merge from the `Development` branch into the master branch, remember to use the **merge** option
-- [ ] If this PR represents a merge into the `hotfix` branch, remember to use the **squash & merge** option
-- [ ] If this PR represents a **merge from the `hotfix` or a release candidate** branch **into** the **`master`** branch use the **merge** option (not squashed)
+- [ ] Remember to use the **squash & merge** option for a merge into the `hotfix` branch
+- [ ] Use the **merge** option (not squashed) for merges from the `hotfix` branch into the `master` branch.
   - [ ] a **subsequent PR from `master`** into `Development` should be made with the **merge** option (i.e., no squash)
   - [ ] **Immediately** **delete the `hotfix` branch** and create a new `hotfix` branch
   - [ ] **increment** the Symbiota **version** number in the symbase.php file and commit to the `hotfix` branch
-- [ ] If the dev team has agreed that this PR represents the last PR going into the `Development` branch before a tagged release (i.e., before an imminent merge into the master branch), make sure to notify the team and [**lock the `Development` branch**](https://github.com/BioKIC/Symbiota/settings/branches) to prevent accidental merges while QA takes place. Follow the release protocol [here](https://github.com/BioKIC/Symbiota/blob/master/docs/release-protocol.md)
 
 Thanks for contributing and keeping it clean!

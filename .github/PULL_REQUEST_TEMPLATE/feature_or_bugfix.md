@@ -15,6 +15,7 @@
 - [ ] If this PR makes any changes that would require **additional configuration** of any Symbiota portals outside of the files tracked in this repository, make sure that those changes are **detailed in [this document]**(https://docs.google.com/document/d/1T7xbXEf2bjjm-PMrlXpUBa69aTMAIROPXVqJqa2ow_I/edit?usp=sharing)
 - [ ] If this **feature** has not been **documented** in [https://docs.symbiota.org/](https://docs.symbiota.org/) OR if changes are needed to the documentation, create a new github issue in [https://github.com/Symbiota/Symbiota/issues](https://github.com/Symbiota/Symbiota/issues) **labeled as documentation** and **add a link** to it herein.
 - [ ] If there are **merge conflicts** with this PR's **parent branch, resolve** them before marking the PR as ready for review.
+- [ ] If the dev team has agreed that this PR represents the last PR going into the `Development` branch before a tagged release (i.e., before an imminent merge into the master branch), make sure to notify the team and [**lock the `Development` branch**](https://github.com/BioKIC/Symbiota/settings/branches) to prevent accidental merges while QA takes place. Follow the release protocol [here](https://github.com/BioKIC/Symbiota/blob/master/docs/release-protocol.md)
 
 ## Post-Approval
 
