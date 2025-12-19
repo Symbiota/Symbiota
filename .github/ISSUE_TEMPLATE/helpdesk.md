@@ -14,7 +14,7 @@ assignees: []
 
 - [ ] Populate label (e.g., bug, enhancement, etc.)
 - [ ] Populate the GitHub Projects fields (e.g., status, feature description, priority, affected branch)
-- [ ] Add link to original ticket: 
+- [ ] Add reference to original osTicket: 
 
 # Optional
 
