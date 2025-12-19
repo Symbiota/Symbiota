@@ -1,6 +1,6 @@
 ---
 name: Help Desk Ticket
-about: Technical helpdesk tickets transferred over to github issues
+about: Technical help desk tickets transferred over to github issues
 title: "[HELP] "
 labels: ["help desk", "osTicket"]
 assignees: []
@@ -13,15 +13,19 @@ assignees: []
 ## Github Issue/Projects Fields
 
 - [ ] Populate label (e.g., bug, enhancement, etc.)
-- [ ] Populate the github projects fields (e.g., status, feature description, priority, affected branch)
+- [ ] Populate the GitHub Projects fields (e.g., status, feature description, priority, affected branch)
+- [ ] Add link to original ticket: 
 
 # Optional
 
 ## Environment Details
 
 **Symbiota Portal URL:**
+
 **Browser:**
+
 **Operating System:** <!-- e.g., Windows 11, macOS 14, Ubuntu 22.04 -->
+
 **Device:** <!-- e.g., Desktop, Mobile, Tablet -->
 
 ## Current Behavior
