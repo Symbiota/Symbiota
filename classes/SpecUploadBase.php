@@ -1208,7 +1208,7 @@ class SpecUploadBase extends SpecUpload{
 	private function transferPaleoData(){
 		if (!$this->paleoSupport) return;
 		$this->outputMsg('<li>Linking Paleo data...</li>');
-		$paleoFields = ['eon', 'era', 'period', 'epoch', 'earlyInterval', 'lateInterval','absoluteAge', 'storageLoc', 'stage', 'localStage',
+		$paleoFields = ['eon', 'era', 'period', 'epoch', 'earlyInterval', 'lateInterval','absoluteAge', 'stage', 'localStage',
 			'biota', 'biostratigraphy', 'taxonEnvironment', 'lithogroup', 'formation', 'member', 'bed', 'lithology', 'stratRemarks', 'element',
 			'slideProperties', 'geologicalContextID'
 		];
