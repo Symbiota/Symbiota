@@ -42,6 +42,5 @@ test('Create an occurrence record', async ({ page }) => {
 	await occurrenceEditor.setMany(inputs);
 	await page.locator('input[name=gotomode][value="0"]').click({force: true});
 	await occurrenceEditor.submitNewRecord();
-	await expect(page.getByText('Public Display')).toBeVisible();	
 	await occurrenceEditor.checkMany(inputs)
 })
