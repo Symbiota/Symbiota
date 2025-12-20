@@ -1,35 +1,19 @@
 import { expect, mergeTests } from '@playwright/test';
-import { test as testDB } from './fixtures/db';
 import { test as testWithAdmin } from './fixtures/adminLogin';
+import { test as testCollection } from './fixtures/collection';
+import { OccurrenceEditorPage } from './pages/OccurrenceEditorPage'
 
-const { OccurrenceEditorPage } = require('./pages/OccurrenceEditorPage');
+const test = mergeTests(testWithAdmin, testCollection);
+let collId: number = 0;
 
-const test = mergeTests(testDB, testWithAdmin);
-let collId = null;
-
-test.beforeAll(async ({ DB }, workerinfo) => {
-	const globalCollectionName = workerinfo.project.name + ' CI Global Collection';
-	const workerCode = workerinfo.project.name.slice(0, 4);
-
-	const insert = await DB.execute(
-		"INSERT omcollections (institutionCode, collectionCode, collectionName, managementType) VALUES (?, ?, ?, ?)",
-		['SYMB', workerCode, globalCollectionName, 'Live Data']
-	);
-
-	const [ search ] = await DB.execute("SELECT collId from omcollections where collectionName = ?", [globalCollectionName]);
-
-	if(search.length > 0) {
-		collId = search[0].collId;
-	}
+test.beforeAll(async ({ collection, browserName }) => {
+	collId = await collection.getOrCreate(browserName + ' CI Global Collection');
 })
-
 test.beforeEach(async ({ adminLogin }) => {
-	await adminLogin.expectLoggedIn();
+	await adminLogin.expectLoggedIn()
 });
-
-test.afterAll(async ({ DB }) => {
-	await DB.execute('DELETE from omcollectionstats where collId = ?', [ collId ]);
-	await DB.execute('DELETE from omcollections where collId = ?', [ collId ]);
+test.afterAll(async ({ collection }) => {
+	await collection.deleteByCollId(collId)
 });
 
 test('Create an occurrence record', async ({ page }) => {
