@@ -95,7 +95,11 @@ export class OccurrenceEditorPage {
 	}
 
 	async gotoRecord(collId: number, occId: number) {
-		await this.page.goto(`collections/editor/occurrenceeditor.php?csmode=0&occindex=0&occid=${occid}&collid=${collid}`);
+		await this.page.goto(`collections/editor/occurrenceeditor.php?csmode=0&occindex=0&occid=${occId}&collid=${collId}`);
+	}
+
+	async gotoImageOccurrenceSubmit(collId: number) {
+		await this.page.goto(`/collections/editor/imageoccursubmit.php?collid=${collId}`);
 	}
 
 	async set(fieldName, value) {
