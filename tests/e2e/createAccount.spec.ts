@@ -1,4 +1,10 @@
-const { test, expect } = require('@playwright/test');
+import { expect } from '@playwright/test';
+import { test } from './fixtures/db';
+
+test.afterEach(async ({ DB }) => {
+	// Clean up Users except pre seeded admin user
+	await DB.execute('DELETE from users where uid != 1');
+});
 
 test('Create an Account', async ({ page }, workerInfo) => {
 	await page.goto('./');
