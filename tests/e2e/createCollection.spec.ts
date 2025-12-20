@@ -10,11 +10,13 @@ test.beforeEach(async ({ page, adminLogin }) => {
 	await adminLogin.expectLoggedIn();
 });
 
-test('Create an Collection', async ({ page }, workerInfo) => {
+test('Create an Collection', async ({ page, DB }, workerInfo) => {
+	const collectionName = workerInfo.project.name + ' CI Collection';
+
 	let collData = {
 		institutionCode: 'SYMB',
 		collectionCode: 'CICOL',
-		collectionName: workerInfo.project.name + ' CI Collection',
+		collectionName: collectionName,
 	}
 
 	let collectionCreatePage = new CollectionCreatePage(page);
@@ -25,7 +27,10 @@ test('Create an Collection', async ({ page }, workerInfo) => {
 	await expect(page.getByText('New collection added successfully!')).toBeVisible();	
 })
 
-test.afterEach(async ({ DB }) => {
-	await DB.execute('DELETE from omcollectionstats');
-	await DB.execute('DELETE FROM omcollections');
+test.afterEach(async ({ DB }, workerInfo) => {
+	const [ search ] = await DB.execute("SELECT collId from omcollections where collectionName = ?", [workerInfo.project.name + ' CI Collection']);
+	if(search.length > 0) {
+		await DB.execute('DELETE from omcollectionstats where collId = ?', [ search[0].collId ]);
+		await DB.execute('DELETE from omcollections where collId = ?', [ search[0].collId ]);
+	}
 });
