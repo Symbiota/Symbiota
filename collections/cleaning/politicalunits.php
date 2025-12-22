@@ -207,7 +207,7 @@ if($action && $isEditor){
 					<div style="margin:20px">
 						<div style="margin:5px">
 							<div style="margin-bottom:10px;font-size:120%;">
-								<span style="text-decoration: underline; font-weight:bold"><?php echo $LANG['NULL_COUNTRY_NOT_STATE']; ?>:</span> <?php echo $cleanManager->getFeatureCount().' '.$LANG['POS_ISSUES']; ?>
+								<span style="font-weight:bold"><?php echo $LANG['NULL_COUNTRY_NOT_STATE']; ?>:</span> <?php echo $cleanManager->getFeatureCount().' '.$LANG['POS_ISSUES']; ?>
 							</div>
 							<?php
 							foreach($badCountryArr as $stateName => $stateCnt){
@@ -216,7 +216,7 @@ if($action && $isEditor){
 									<form name="nullcountryform" method="post" action="politicalunits.php" onsubmit="return verifyNullCountryForm(this)">
 										<b><?php echo $stateName; ?></b>
 										<?php echo ' <span title="Number of Specimens">('.$stateCnt.')</span>'; ?>
-										<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=country&q_customtype1=NULL&q_customfield2=stateProvince&q_customtype2=EQUALS&q_customvalue2=<?= urlencode($stateName) . '&collid=' . $collid; ?>" target="_blank"><img src="../../images/edit.png" class="img-icon" ></a>
+										<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=country&q_customtype1=IS_NULL&q_customfield2=stateProvince&q_customtype2=EQUALS&q_customvalue2=<?= urlencode($stateName) . '&collid=' . $collid; ?>" target="_blank"><img src="../../images/edit.png" class="img-icon" ></a>
 										<select name="country" style="width:200px;">
 											<option value=""><?php echo $LANG['ASSIGN_COUNTRY']; ?>...</option>
 											<option value="">-------------------------</option>
@@ -299,7 +299,7 @@ if($action && $isEditor){
 					<div style="margin:20px">
 						<div style="margin:5px">
 							<div style="margin-bottom:10px;font-size:120%;">
-								<span style="text-decoration: underline; font-weight:bold"><?php echo $LANG['NULL_STATE_NOT_COUNTY']; ?>:</span> <?php echo $cleanManager->getFeatureCount().' ' .$LANG['POS_ISSUES']; ?>
+								<span style="font-weight:bold"><?php echo $LANG['NULL_STATE_NOT_COUNTY']; ?>:</span> <?php echo $cleanManager->getFeatureCount().' ' .$LANG['POS_ISSUES']; ?>
 							</div>
 							<?php
 							foreach($badStateArr as $countryName => $countyArr){
@@ -310,7 +310,7 @@ if($action && $isEditor){
 										<form name="nullstateform" method="post" action="politicalunits.php" onsubmit="return verifyNullStateForm(this)">
 											<b><?php echo $countyName; ?></b>
 											<?php echo ' <span title="Number of Specimens">('.$countyCnt.')</span>'; ?>
-											<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=stateProvince&q_customtype1=NULL&q_customfield2=county&q_customtype2=EQUALS&q_customvalue2=<?= urlencode($countyName) . '&collid=' . $collid; ?>" target="_blank"><img src="../../images/edit.png" class="img-icon" ></a>
+											<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=stateProvince&q_customtype1=IS_NULL&q_customfield2=county&q_customtype2=EQUALS&q_customvalue2=<?= urlencode($countyName) . '&collid=' . $collid; ?>" target="_blank"><img src="../../images/edit.png" class="img-icon" ></a>
 											<?php
 											if(array_key_exists($countryName,$goodStateArr)){
 												?>
@@ -428,7 +428,7 @@ if($action && $isEditor){
 					<div style="margin:20px">
 						<div style="margin:5px">
 							<div style="margin-bottom:10px;font-size:120%;">
-								<span style="text-decoration: underline; font-weight:bold"><?php echo $LANG['NULL_COUNTY_NOT_LOCALITY']; ?>:</span> <?php echo $cleanManager->getFeatureCount().' '.$LANG['POS_ISSUES']; ?>
+								<span style="font-weight:bold"><?php echo $LANG['NULL_COUNTY_NOT_LOCALITY']; ?>:</span> <?php echo $cleanManager->getFeatureCount().' '.$LANG['POS_ISSUES']; ?>
 							</div>
 							<?php
 							foreach($badCountyArr as $countryName => $stateArr){
@@ -442,7 +442,7 @@ if($action && $isEditor){
 											<form name="nullstateform" method="post" action="politicalunits.php" onsubmit="return verifyNullCountyForm(this)">
 												<b><?php echo $localityName; ?></b>
 												<?php echo ' <span title="Number of Specimens">('.$localityCnt.')</span>'; ?>
-												<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=county&q_customtype1=NULL&q_customfield2=locality&q_customtype2=EQUALS&q_customvalue2=<?= urlencode($localityName) . '&collid=' . $collid; ?>" target="_blank"><img src="../../images/edit.png"  class="img-icon" ></a>
+												<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=county&q_customtype1=IS_NULL&q_customfield2=locality&q_customtype2=EQUALS&q_customvalue2=<?= urlencode($localityName) . '&collid=' . $collid; ?>" target="_blank"><img src="../../images/edit.png"  class="img-icon" ></a>
 												<?php
 												if(array_key_exists($stateTestStr,$goodCountyArr)){
 													?>

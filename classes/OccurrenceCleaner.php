@@ -1001,12 +1001,14 @@ class OccurrenceCleaner extends Manager{
 	//Misc fucntions
 	public function getCollMap(){
 		$retArr = Array();
-		$sql = 'SELECT collid, CONCAT_WS("-",institutioncode, collectioncode) AS code, collectionname, icon, colltype, managementtype FROM omcollections ';
+		$sql = 'SELECT collid, institutionCode, collectionCode, collectionname, icon, colltype, managementtype FROM omcollections ';
 		if($this->collid) $sql .= 'WHERE (collid IN('.$this->collid.')) ';
 		$sql .= 'ORDER BY collectionname,institutioncode,collectioncode';
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
-			$retArr[$row->collid]['code'] = $row->code;
+			$code = $row->institutionCode;
+			if($row->collectionCode) $code = '-' . $row->collectionCode;
+			$retArr[$row->collid]['code'] = $code;
 			$retArr[$row->collid]['collectionname'] = $row->collectionname;
 			$retArr[$row->collid]['icon'] = $row->icon;
 			$retArr[$row->collid]['colltype'] = $row->colltype;
