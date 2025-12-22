@@ -32,6 +32,7 @@ class Collection {
 	}
 
 	async deleteByCollId(collId) {
+		await this.conn.execute('DELETE from media where occid in (select occid from omoccurrences where collId = ?)', [ collId ]);
 		await this.conn.execute('DELETE from omcollectionstats where collId = ?', [ collId ]);
 		await this.conn.execute('DELETE from omcollections where collId = ?', [ collId ]);
 	}
