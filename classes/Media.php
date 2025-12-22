@@ -203,10 +203,14 @@ class Media {
 	 * @param ?int $userId What user id is selected
 	 * @return string
 	 */
-	static function renderCreatorOptions(?int $userId = null): string {
+	static function renderCreatorOptions(?int $userId = null, array $creators = []): string {
+		if(empty($creators)) {
+			$creators = self::getCreatorArray();
+		}
+
 		$html = '';
 
-		foreach(self::getCreatorArray() as $id => $uname) {
+		foreach($creators as $id => $uname) {
 			$html .= "<option value='" . $id ."' ".($id == $userId ?"SELECTED":"") . ">" . $uname . '</option>';
 		}
 
