@@ -462,12 +462,9 @@ class OccurrenceCleaner extends Manager{
 	}
 
 	private function getBadStateBaseSql(int $countryID = null): string {
-		$sqlFrag = 'FROM omoccurrences o INNER JOIN geographicthesaurus g ON o.country = g.geoterm ';
-		if(!$countryID){
-			//Needed to filter out countries with now state ranks entered into thesaurus
-			$sqlFrag .= 'INNER JOIN geographicthesaurus s ON g.geothesID = s.parentID ';
-		}
-		$sqlFrag .= 'WHERE (o.collid = '.$this->collid.') AND o.stateprovince IS NOT NULL AND g.acceptedID IS NULL ';
+		$sqlFrag = 'FROM omoccurrences o INNER JOIN geographicthesaurus g ON o.country = g.geoterm
+			INNER JOIN geographicthesaurus s ON g.geothesID = s.parentID
+			WHERE (o.collid = '.$this->collid.') AND (o.stateprovince IS NOT NULL) AND (g.acceptedID IS NULL) ';
 		if($countryID) $sqlFrag .= 'AND (g.geoThesID = ' . $countryID . ') ';
 		$sqlFrag .= 'AND NOT EXISTS (
 			SELECT 1
@@ -559,7 +556,7 @@ class OccurrenceCleaner extends Manager{
 		//Returns list of countries and record counts that have bad counties
 		$retArr = array();
 		if(is_numeric($this->collid)){
-			$sql = 'SELECT g.geoThesID, o.country, COUNT(DISTINCT o.stateProvince, o.county) as cnt ' . $this->getBadCountyBaseSql() . 'GROUP BY g.geoThesID, o.country';
+			$sql = 'SELECT g.geoThesID, o.country, COUNT(DISTINCT o.stateProvince, o.county) as cnt ' . $this->getBadCountyBaseSql() . ' GROUP BY g.geoThesID, o.country';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$retArr[$r->geoThesID . ':' . ucwords($r->country)] = $r->cnt;
@@ -587,17 +584,14 @@ class OccurrenceCleaner extends Manager{
 
 	private function getBadCountyBaseSql(int $countryID = null): string {
 		if(!$countryID) $countryID = 'g.geoThesID';
-		$sqlFrag = 'FROM omoccurrences o INNER JOIN geographicthesaurus g ON o.country = g.geoterm ';
-		if(!$countryID){
-			//Needed to filter out countries with now state or county ranks entered into thesaurus
-			$sqlFrag .= 'INNER JOIN geographicthesaurus s ON o.stateProvince = s.geoterm
-				INNER JOIN geographicthesaurus co ON s.geothesID = co.parentID ';
-		}
-		$sqlFrag .= 'WHERE (o.collid = '.$this->collid.') AND o.county IS NOT NULL
+		$sqlFrag = 'FROM omoccurrences o INNER JOIN geographicthesaurus g ON o.country = g.geoterm
+			INNER JOIN geographicthesaurus s ON o.stateProvince = s.geoterm
+			INNER JOIN geographicthesaurus co ON s.geothesID = co.parentID
+			WHERE (o.collid = '.$this->collid.') AND o.county IS NOT NULL
 			AND EXISTS (
 				SELECT 1
-				FROM geographicthesaurus
-				WHERE parentID = ' . $countryID . ' AND geoTerm = o.stateProvince
+				FROM geographicthesaurus c INNER JOIN geographicthesaurus s ON c.geoThesID = s.parentID
+				WHERE c.geoThesID = ' . $countryID . ' AND c.geoTerm = o.country AND s.geoTerm = o.stateProvince
 			)
 			AND NOT EXISTS (
 				SELECT 1
