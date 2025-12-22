@@ -164,7 +164,8 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 						</div>
 						<div>
 							<b><?php echo $LANG['IMAGE_URL']?>:</b><br/>
-							<input type='text' name='imgurl' size='70' />
+							<!-- <input type='text' name='imgurl' size='70' /> -->
+							<input type='text' name='originalUrl' size='70' />
 						</div>
 						<div>
 							<b><?php echo $LANG['MEDIUM_URL']?>:</b><br/>
@@ -172,7 +173,8 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 						</div>
 						<div>
 							<b><?php echo $LANG['THUMBNAIL_URL']?>:</b><br/>
-							<input type='text' name='tnurl' size='70' />
+							<!-- <input type='text' name='tnurl' size='70' /> -->
+							<input type='text' name='thumbnailUrl' size='70' />
 						</div>
 						<div>
 							<input type="checkbox" name="copytoserver" value="1" <?php echo (isset($_POST['copytoserver'])&&$_POST['copytoserver']?'checked':''); ?> />
