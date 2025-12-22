@@ -41,18 +41,28 @@ test.describe('Create Occurrence Record', () => {
 		await occurrenceEditor.gotoImageOccurrenceSubmit(collId);
 		await occurrenceEditor.setMany(inputs);
 		await page.getByText("Enter Url").click({force: true});
-		await page.locator('input[name=imgurl]').fill('http://localhost/images/world.png');
-		await page.locator('input[name=weburl]').fill('http://localhost/images/world.png');
-		await page.locator('input[name=tnurl]').fill('http://localhost/images/world.png');
+
+		const url = 'http://localhost/images/world.png';
+		await page.locator('input[name=originalUrl]').fill(url);
+		await page.locator('input[name=weburl]').fill(url);
+		await page.locator('input[name=thumbnailUrl]').fill(url);
 
 		await page.locator('input[name=action][value="Submit Occurrence"]').click({force: true});
 
-		// const newRecordLink = page.locator('a[href*="occurrenceeditor.php"]');
-		// const occId = parseInt(await newRecordLink.innerText());
-		// await newRecordLink.click({force: true})
-		
-		// await expect(page.getByText('Public Display')).toBeVisible();
-		// await occurrenceEditor.checkMany(inputs)
+		const newRecordLink = page.locator('a[href*="occurrenceeditor.php"]');
+		const occId = parseInt(await newRecordLink.innerText());
+		await occurrenceEditor.gotoRecord(collId, occId)
+		await occurrenceEditor.checkMany(inputs);
+
+		await page.locator('li[id="imgTab"]').click({force: true});
+		await page.getByText('Loading...').waitFor({ state: "detached" });
+
+		const mediaEdit = page.locator('img[src*="/images/edit.png"]');
+		await mediaEdit.click({force: true});
+
+		await expect(page.locator('form[name*="editform"] input[name="originalUrl"]')).toHaveValue(url);
+		await expect(page.locator('form[name*="editform"] input[name="url"]')).toHaveValue(url);
+		await expect(page.locator('form[name*="editform"] input[name="thumbnailUrl"]')).toHaveValue(url);
 	})
 
 })
