@@ -20,6 +20,9 @@ jobs:
     - name: 'Setup Testing Portal Config'
       run : mv config/symbini_testing_template.php config/symbini.php
 
+    - name: 'Setup File permission'
+      run : mkdir ci_temp && chmod -R 765 ci_temp
+
     - name: 'Run Setup Script'
       run : cd config && bash setup.bash
 
