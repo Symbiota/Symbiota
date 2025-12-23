@@ -204,7 +204,7 @@ class Media {
 	 * @return string
 	 */
 	static function renderCreatorOptions(?int $userId = null, array $creators = []): string {
-		if(empty($creators)) {
+		if(count($creators) <= 0) {
 			$creators = self::getCreatorArray();
 		}
 
