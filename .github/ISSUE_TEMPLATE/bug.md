@@ -45,8 +45,6 @@ assignees: []
 3. Enter '...'
 4. See error
 
-# Optional
-
 ## Screenshots/Attachments
 
 <!-- If applicable, add screenshots, error logs, or other files to help explain your problem -->
