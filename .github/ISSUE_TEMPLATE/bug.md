@@ -1,8 +1,8 @@
 ---
-name: Help Desk Ticket
-about: Technical help desk tickets transferred over to github issues
-title: "[HELP] "
-labels: ["help desk", "osTicket"]
+name: Bug Ticket
+about: Follow this template when reporting a new bug
+title: "[BUG] "
+labels: ["bug"]
 assignees: []
 ---
 
@@ -12,9 +12,9 @@ assignees: []
 
 ## Github Issue/Projects Fields
 
-- [ ] Populate label (e.g., bug, enhancement, etc.)
-- [ ] Populate the GitHub Projects fields (e.g., status, feature description, priority, affected branch)
-- [ ] Add reference to original osTicket: 
+- [ ] Populate label(s) (e.g., bug, etc.)
+- [ ] Populate the GitHub Projects fields (e.g., status, priority, affected branch, etc.)
+- [ ] If relevant, add reference to original osTicket: 
 
 # Optional
 
