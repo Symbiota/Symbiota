@@ -69,6 +69,7 @@ test.describe('Create Occurrence Record', () => {
 	})
 	*/
 
+	/* Needs the media root set for this to function
 	test('From image (File)', async ({ page }) => {
 		const inputs = {
 			catalognumber: '000002',
@@ -105,6 +106,7 @@ test.describe('Create Occurrence Record', () => {
 		await page.locator('input[name="removeimg"]').check();
 		await page.locator('button[value="Delete Image"]').click({force: true});
 	})
+	*/
 
 	test('From skeletal', async ({ page }) => {
 		const inputs = {
@@ -125,4 +127,25 @@ test.describe('Create Occurrence Record', () => {
 		await occurrenceEditor.gotoRecord(collId, occId)
 		await occurrenceEditor.checkMany(inputs);
 	})
+
+	// test('Edit record', async ({ page }) => {
+	// 	
+	// 	const inputs = {
+	// 		catalognumber: '000003',
+	// 	};
+	//
+	// 	let occurrenceEditor = new OccurrenceEditorPage(page);
+	// 	await occurrenceEditor.gotoSkeletalSubmit(collId);
+	// 	await occurrenceEditor.setMany(inputs);
+	//
+	// 	await page.locator('button[name=recordsubmit]').click({force: true});
+	// 	const newRecordLink = await page.waitForSelector('div[id=occurlistdiv] a[id*="a-"]', { state: 'attached' });
+	//
+	// 	const id = await newRecordLink.getAttribute('id');
+	// 	expect(id).toBeDefined();
+	//
+	// 	const occId = id? parseInt(id.replace('a-', '')): 0;
+	// 	await occurrenceEditor.gotoRecord(collId, occId)
+	// 	await occurrenceEditor.checkMany(inputs);
+	// })
 })
