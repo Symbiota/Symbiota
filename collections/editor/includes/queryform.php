@@ -231,7 +231,7 @@ else{
 								</div>
 							</div>
 							<div>
-								<select name="q_traitid[]" multiple>
+								<select name="q_traitid[]" multiple style="height: fit-content">
 									<?php
 										foreach($qTraitArr as $traitID => $tArr){
 											echo '<option '. (in_array($traitID, $qTraitIds)? 'selected':'') .' value="'.$traitID.'">'.$tArr['name'].' [ID:'.$traitID.']</option>';
@@ -243,7 +243,7 @@ else{
 							-- <?php echo $LANG['OR_SPEC_ATTRIBUTE']; ?> --
 							</div>
 							<div>
-								<select name="q_stateid[]" multiple>
+								<select name="q_stateid[]" multiple style="height: fit-content">
 									<?php
 									foreach($qTraitArr as $traitID => $tArr){
 										$stateArr = $tArr['state'];
