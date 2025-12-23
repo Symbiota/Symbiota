@@ -636,8 +636,10 @@ class SpecUploadDwca extends SpecUploadBase{
 								if(substr($symbField,0,8) != 'unmapped'){
 									//Apply source filter if they exist
 									$lookupField = $sMap['field'];
-									if ($this->paleoSupport && strpos($lookupField, 'paleo_') === 0)
+									if ($this->paleoSupport && strpos($lookupField, 'paleo_') === 0){
 										$lookupField = substr($lookupField, 6);
+										if ($lookupField =="lithogroup") $lookupField = "group";
+									}
 									$indexArr = array_keys($this->occurSourceArr, $lookupField);
 									$index = array_shift($indexArr);
 									if(array_key_exists($index,$recordArr)){

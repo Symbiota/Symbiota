@@ -76,7 +76,7 @@ else{
 		$customPaleoFieldArr = array('absoluteAge'=>$LANG['ABS_AGE'],'bed'=>$LANG['BED'],'biostratigraphy'=>$LANG['BIOSTRAT'],'biota'=>$LANG['BIOTA'],
 			'earlyInterval'=>$LANG['EARLY_INT'],'element'=>$LANG['ELEMENT'],'formation'=>$LANG['FORMATION'],'geologicalContextID'=>$LANG['GEO_CONTEXT_ID'],
 			'lateInterval'=>$LANG['LATE_INT'],'lithogroup'=>$LANG['GROUP'],'lithology'=>$LANG['LITHOLOGY'],'localStage'=>$LANG['LOCAL_STAGE'],'member'=>$LANG['MEMBER'],
-			'slideProperties'=>$LANG['SLIDE_PROP'],'stage'=>$LANG['STAGE'],'stratRemarks'=>$LANG['STRAT_REMARKS'],'taxonEnvironment'=>$LANG['TAXON_ENVIRONMENT'],);
+			'slideProperties'=>$LANG['SLIDE_PROP'],'stratRemarks'=>$LANG['STRAT_REMARKS'],'taxonEnvironment'=>$LANG['TAXON_ENVIRONMENT'],);
 		$customFieldArr = array_merge($customFieldArr, $customPaleoFieldArr);
 		asort($customFieldArr);
 	}

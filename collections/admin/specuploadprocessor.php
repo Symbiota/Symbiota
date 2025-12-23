@@ -86,6 +86,7 @@ $duManager->setProcessingStatus($processingStatus);
 $isEditor = 0;
 if($IS_ADMIN) $isEditor = 1;
 elseif(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin'])) $isEditor = 1;
+
 if($isEditor && $collid){
 	$duManager->readUploadParameters();
 	$duManager->setFieldMaps($_POST);
@@ -238,6 +239,7 @@ include($SERVER_ROOT.'/includes/header.php');
 						<input type="hidden" name="sourceindex" value="<?php echo $sourceIndex;?>" >
 						<input type="hidden" name="publicationGuid" value="<?php echo $publicationGuid;?>" >
 						<input type="hidden" name="fieldlist" value="<?php echo $duManager->getTargetFieldStr(); ?>" >
+						<input type="hidden" name="paleofieldlist" value="<?php echo $duManager->getPaleoTargetFieldStr(); ?>" >
 						<div style="margin:5px;">
 							<button type="submit" name="action" value="activateOccurrences"><?php echo (isset($LANG['TRANS_RECS']) ? $LANG['TRANS_RECS'] : 'Transfer Records to Central Specimen Table'); ?></button>
 						</div>
@@ -249,6 +251,7 @@ include($SERVER_ROOT.'/includes/header.php');
 		elseif($action == 'activateOccurrences' || $finalTransfer){
 			echo '<ul>';
 			$duManager->setTargetFieldArr($_POST['fieldlist']);
+			$duManager->setPaleoTargetFieldArr($_POST['paleofieldlist']);
 			$duManager->finalTransfer();
 			echo '</ul>';
 		}

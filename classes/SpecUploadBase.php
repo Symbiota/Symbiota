@@ -35,6 +35,7 @@ class SpecUploadBase extends SpecUpload{
 	protected $imageSymbFields = array();
 	protected $filterArr = array();
 	private $targetFieldArr = array();
+	private $paleoTargetFieldArr = array();
 
 	private $sourceCharset;
 	private $targetCharset = 'UTF-8';
@@ -348,7 +349,7 @@ class SpecUploadBase extends SpecUpload{
 			'cf' => 'identificationqualifier','qualifier'=>'identificationqualifier','position'=>'specify:qualifier_position','detby'=>'identifiedby','determinor'=>'identifiedby',
 			'determinationdate'=>'dateidentified','determineddate'=>'dateidentified','determinedremarks'=>'identificationremarks','placecountryname'=>'country',
 			'placestatename'=>'stateprovince','state'=>'stateprovince','placecountyname'=>'county','municipiocounty'=>'county','location'=>'locality','field:localitydescription'=>'locality',
-			'placeguess'=>'locality','localitynotes'=>'locationremarks','latitude'=>'verbatimlatitude','longitude'=>'verbatimlongitude', 'storageLoc'=>'storageLocation',
+			'placeguess'=>'locality','localitynotes'=>'locationremarks','latitude'=>'verbatimlatitude','longitude'=>'verbatimlongitude', 'storageloc'=>'storagelocation',
 			'errorradius'=>'coordinateuncertaintyradius','publicpositionalaccuracy'=>'coordinateuncertaintyinmeters','errorradiusunits'=>'coordinateuncertaintyunits','errorradiusunit'=>'coordinateuncertaintyunits',
 			'datum'=>'geodeticdatum','utmzone'=>'utmzoning','township'=>'trstownship','range'=>'trsrange','section'=>'trssection','georeferencingsource'=>'georeferencesources','georefremarks'=>'georeferenceremarks',
 			'elevationmeters'=>'minimumelevationinmeters','minelevationm'=>'minimumelevationinmeters','maxelevationm'=>'maximumelevationinmeters','verbatimelev'=>'verbatimelevation',
@@ -363,9 +364,13 @@ class SpecUploadBase extends SpecUpload{
 		$autoMapExclude = array('institutioncode','collectioncode');
 
 		if($this->paleoSupport){
+			$paleoMap = ['lithogroup' => 'group'];
 			$paleoArr = $this->getPaleoTerms();
 			foreach($paleoArr as $v){
-				$translationMap[substr($v,6)] = $v;
+				$key = substr($v, 6);
+				$mapKey = $paleoMap[$key] ?? $key;
+				$translationMap[$mapKey] = $v;
+				$translationMap[$key] = $v;
 			}
 		}
 		if($this->materialSampleSupport){
@@ -1059,6 +1064,23 @@ class SpecUploadBase extends SpecUpload{
 						if($r[$field] != $r['old_'.$field]){
 							if($this->uploadType == $this->SKELETAL && $r['old_'.$field]) continue;
 							$this->insertOccurEdit($r['occid'], $field, $r[$field], $r['old_'.$field]);
+						}
+					}
+				}
+				$rs->free();
+			}
+			if($this->paleoSupport && $this->paleoTargetFieldArr){
+				$sqlFrag = '';
+				foreach($this->paleoTargetFieldArr as $field){
+					$sqlFrag .= ',u.paleo_'.$field.',paleo.'.$field.' as old_'.$field;
+				}
+				$sql = 'SELECT paleo.occid'.$sqlFrag.' FROM omoccurpaleo paleo INNER JOIN uploadspectemp u ON paleo.occid = u.occid WHERE u.collid IN('.$this->collId.')';
+				$rs = $this->conn->query($sql);
+				while($r = $rs->fetch_assoc()){
+					foreach($this->paleoTargetFieldArr as $field){
+						if($r['paleo_'.$field] != $r['old_'.$field]){
+							$this->insertOccurEdit($r['occid'],$field,$r['paleo_'.$field],$r['old_'.$field]
+							);
 						}
 					}
 				}
@@ -1843,6 +1865,8 @@ class SpecUploadBase extends SpecUpload{
 
 		//Prime the targetFieldArr
 		if(!$this->targetFieldArr) $this->targetFieldArr = $this->getOccurrenceFieldArr(array_keys($recMap));
+		//targetFieldArr for paleo
+		if(!$this->paleoTargetFieldArr && $this->paleoSupport) $this->paleoTargetFieldArr = $this->getPaleoFieldArr(array_keys($paleoArr));
 		$loadRecord = false;
 		if($this->uploadType == $this->NFNUPLOAD) $loadRecord = true;
 		elseif(isset($recMap['occid']) && $recMap['occid']) $loadRecord = true;
@@ -2556,6 +2580,22 @@ class SpecUploadBase extends SpecUpload{
 		return $retArr;
 	}
 
+	private function getPaleoFieldArr(array $filterArr): array {
+		$retArr = [];
+		$sql = 'SHOW COLUMNS FROM omoccurpaleo';
+		$rs = $this->conn->query($sql);
+
+		while ($row = $rs->fetch_object()) {
+			$field = strtolower($row->Field);
+			if (in_array($field, $filterArr, true)) {
+				$retArr[] = $field;
+			}
+		}
+
+		$rs->free();
+		return $retArr;
+	}
+
 	//Setters and getters
 	public function setIncludeIdentificationHistory($boolIn){
 		$this->includeIdentificationHistory = $boolIn;
@@ -2609,8 +2649,20 @@ class SpecUploadBase extends SpecUpload{
 		}
 	}
 
+	public function setPaleoTargetFieldArr($targetStr){
+		//Need to check field names against database to protect against SQL injection
+		if($targetStr){
+			$paleoTargetFieldArr = explode(',', $targetStr);
+			$this->paleoTargetFieldArr = $this->getPaleoFieldArr($paleoTargetFieldArr);
+		}
+	}
+
 	public function getTargetFieldStr(){
 		return implode(',', $this->targetFieldArr);
+	}
+
+	public function getPaleoTargetFieldStr(){
+		return implode(',', $this->paleoTargetFieldArr);
 	}
 
 	private function getInverseRelationship($relationship){
