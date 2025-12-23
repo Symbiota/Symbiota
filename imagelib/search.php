@@ -183,7 +183,7 @@ $creators = Media::getCreatorArray();
 							<label for="phuid"><?= $LANG['CREATOR'] ?></label>:
 							<select id="phuid" name="phuid">
 								<option value="">-----------------------------</option>
-								<?= Media::renderCreatorOptions($phUid, $creators) ?>
+								<?= Media::renderCreatorOptions(is_numeric($phUid)? intval($phUid): 0, $creators) ?>
 							</select>
 						</div>
 						<?php
