@@ -17,6 +17,9 @@ jobs:
     - name: 'Setup Testing Database Config'
       run : mv config/dbconnection_testing_template.php config/dbconnection.php
 
+    - name: 'Setup Testing Portal Config'
+      run : mv config/symbini_testing_template.php config/symbini.php
+
     - name: 'Run Setup Script'
       run : cd config && bash setup.bash
 
