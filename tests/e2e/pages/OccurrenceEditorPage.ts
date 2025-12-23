@@ -98,8 +98,12 @@ export class OccurrenceEditorPage {
 		await this.page.goto(`collections/editor/occurrenceeditor.php?csmode=0&occindex=0&occid=${occId}&collid=${collId}`);
 	}
 
-	async gotoImageOccurrenceSubmit(collId: number) {
+	async gotoImageSubmit(collId: number) {
 		await this.page.goto(`/collections/editor/imageoccursubmit.php?collid=${collId}`);
+	}
+
+	async gotoSkeletalSubmit(collId: number) {
+		await this.page.goto(`/collections/editor/skeletalsubmit.php?collid=${collId}`);
 	}
 
 	async set(fieldName, value) {
