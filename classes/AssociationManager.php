@@ -179,7 +179,6 @@ class AssociationManager extends OccurrenceTaxaManager{
 							//Return matches that are not linked to thesaurus
 							if($rankid > 179){
 								if($this->exactMatchOnly) $sqlWhereTaxa .= 'OR (o.sciname = "' . $term . '") ';
-								// else $sqlWhereTaxa .= "OR (o.sciname LIKE '" . $term . "%' AND od.isCurrent=1) OR (oa.verbatimsciname LIKE '" . $term . "%') ";
 							}
 						}
 						else{
