@@ -198,9 +198,21 @@ function toggleCategory(categoryId) {
 				onchange="updateParent(this.querySelectorAll(`input[type=checkbox]`), '#<?= $categoryIdentifer ?>')"
 			>
 				<?php foreach($category['collections'] as $collection): ?>
+				<?php
+					$collid = array_key_exists('collid', $collection) ? $collection['collid'] : null;
+					$codeStr = '(';
+					if(array_key_exists('institutioncode', $collection)) {
+						$codeStr .= $collection['institutioncode'];
+					}
+					if(array_key_exists('collectioncode', $collection)) {
+						$codeStr .= '-' . $collection['collectioncode'];
+					}
+					$codeStr .= ')';
+				?>
 				<div style="display:flex; align-items: center; gap: 0.5rem;">
 					<img width="30px" height="30px" src="<?= $collection['icon'] ?>">
 					<input
+						data-chip="Collection: <?= $codeStr ?>" aria-label="select collection <?= $collid ?>" data-role="none"
 						style="margin:0;"
 						id="<?= $category['name'] . '_' . $collection['collid'] ?>"
 						<?= array_key_exists($collection['collid'] ,$checkedCollections)? 'checked': '' ?>

@@ -30,6 +30,7 @@
                 $codeStr .= '-' . $cArr['collcode'];
             } 
             $codeStr .= ')';
+            var_dump($codeStr);
             echo '<input data-chip="Collection: ' . $codeStr . '" aria-label="select collection ' . $collid . '" data-role="none" id="collection-' . $collid . '" name="db[]" value="' . $collid . '" type="checkbox" onclick="uncheckAll()" '.(!$collSelArr || in_array($collid, $collSelArr)?'checked':'').' />';
             ?>
         </div>
