@@ -2,7 +2,9 @@
  * GLOBAL VARIABLES
  */
 const criteriaPanel = document.getElementById("criteria-panel") || null;
-const allCollections = document.getElementById("dballcb") || null;
+const allCollections = document.getElementById("all_collections") || null;
+const allSpecimenCollections = document.getElementById("all_specimen_collections") || null;
+const allObservationCollections = document.getElementById("all_observation_collections") || null;
 const form = document.getElementById("params-form") || null;
 const formColls = document.getElementById("search-form-colls") || null;
 const formSites = document.getElementById("site-list") || null;
@@ -162,7 +164,7 @@ function handleRemoval(element, inputChip) {
         element.selected = false;
       }
     }
-  if (element.getAttribute("id") === "dballcb") {
+  if (element.getAttribute("id") === "all_collections") {
     const targetCategoryCheckboxes =
       document.querySelectorAll('input[id^="cat-"]');
     targetCategoryCheckboxes.forEach((collection) => {
@@ -254,9 +256,9 @@ function updateChip(e) {
     addChip(getDomainsSitesChips());
   }
   // if any collections are selected (except for "all"), then add chip; this logic is alternatively handled in the formInputs for loop below
-  let allCollectionsChecked = document?.getElementById("dballcb")?.checked;
+  let allCollectionsChecked = allCollections?.checked;
   let individualCollectionsChecked = Array.from(
-    document.querySelectorAll(`#search-form-colls input[name="db"]:checked`)
+    document.querySelectorAll(`#search-form-colls input[name="db[]"]:checked`)
   );
   if (!allCollectionsChecked && individualCollectionsChecked.length > 0) {
     addChip(getCollsChips(getCriterionSelected(), "Some Biorepo Colls"));
@@ -293,7 +295,7 @@ function updateChip(e) {
         if (
           allCollectionsChecked &&
           item.name === "db[]" &&
-          item.id !== "dballcb"
+          item.id !== "all_collections"
         ) {
           // don't add these chips;
         } else {
@@ -661,7 +663,7 @@ function hideColCheckbox(collid) {
 }
 
 function uncheckEverything() {
-  const checkUncheckAllElem = document.getElementById("dballcb");
+  const checkUncheckAllElem = document.getElementById("all_collections");
   checkUncheckAllElem.checked = false;
   const categoryCollectionsChecked = Array.from(
     document.querySelectorAll(`#search-form-colls input[name="cat[]"]:checked`)
@@ -729,19 +731,19 @@ function handleHeaderSections(parentBoxCheckStatus, headerType, stopType = null)
   }
 }
 
-function selectAllSpec(cb) {
-  const boxCheckedStatus = cb.checked;
-  uncheckSpecifiedCheckboxes(["dballcb", "dballobscb"]);
-  handleCategoryChunks(boxCheckedStatus, translations.SPECIMEN);
-  handleHeaderSections(boxCheckedStatus, translations.SPECIMEN, translations.OBSERVATION);
-}
+// function selectAllSpec(cb) {
+//   const boxCheckedStatus = cb.checked;
+//   uncheckSpecifiedCheckboxes(["all_collections", "all_observation_collections"]);
+//   handleCategoryChunks(boxCheckedStatus, translations.SPECIMEN);
+//   handleHeaderSections(boxCheckedStatus, translations.SPECIMEN, translations.OBSERVATION);
+// }
 
-function selectAllObs(cb) {
-  const boxCheckedStatus = cb.checked;
-  uncheckSpecifiedCheckboxes(["dballcb", "dballspeccb"]);
-  handleCategoryChunks(boxCheckedStatus, translations.OBSERVATION);
-  handleHeaderSections(boxCheckedStatus, translations.OBSERVATION);
-}
+// function selectAllObs(cb) {
+//   const boxCheckedStatus = cb.checked;
+//   uncheckSpecifiedCheckboxes(["all_collections", "all_specimen_collections"]);
+//   handleCategoryChunks(boxCheckedStatus, translations.OBSERVATION);
+//   handleHeaderSections(boxCheckedStatus, translations.OBSERVATION);
+// }
 
 
 function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
@@ -749,13 +751,15 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
     let targetElem = document.getElementById("collection-" + queriedCollection);
     if (!targetElem) {
       if (queriedCollection === "all") {
-        targetElem = document.getElementById("dballcb");
+        targetElem = document.getElementById("all_collections");
         if (targetElem) {
           targetElem.checked = true;
-          const allSpecCheckbox = document.getElementById("dballspeccb");
-          const allObsCheckbox = document.getElementById("dballobscb");
-          if (allSpecCheckbox) allSpecCheckbox.checked = true;
-          if (allObsCheckbox) allObsCheckbox.checked = true;
+          // const allSpecCheckbox = document.getElementById("all_specimen_collections");
+          // const allObsCheckbox = document.getElementById("all_observation_collections");
+          if(allSpecimenCollections) allSpecimenCollections.checked = true;
+          if(allObservationCollections) allObservationCollections.checked = true;
+          // if (allSpecCheckbox) allSpecCheckbox.checked = true;
+          // if (allObsCheckbox) allObsCheckbox.checked = true;
           handleCategoryChunks(true, "Specimen");
           handleHeaderSections(true, "Specimen", "Observation");
           handleCategoryChunks(true, "Observation");
@@ -763,17 +767,17 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
         }
         return;
       } else if (queriedCollection === "allspec") {
-        targetElem = document.getElementById("dballspeccb");
-        if (targetElem) {
-          targetElem.checked = true;
+        // targetElem = document.getElementById("all_specimen_collections");
+        if (allSpecimenCollections) {
+          allSpecimenCollections.checked = true;
           handleCategoryChunks(true, "Specimen");
           handleHeaderSections(true, "Specimen", "Observation");
         }
         return;
       } else if (queriedCollection === "allobs") {
-        targetElem = document.getElementById("dballobscb");
-        if (targetElem) {
-          targetElem.checked = true;
+        // targetElem = document.getElementById("all_observation_collections");
+        if (allObservationCollections) {
+          allObservationCollections.checked = true;
           handleCategoryChunks(true, "Observation");
           handleHeaderSections(true, "Observation");
         }

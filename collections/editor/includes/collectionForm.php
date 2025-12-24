@@ -59,7 +59,6 @@ $rs = QueryUtil::executeQuery(Database::connect('readonly'), $sql);
 
 <script type="text/javascript">
 function toggleAllCheckboxes(scope, checked) {
-	console.log(scope, checked);
 	for(let input of scope.querySelectorAll('input[type="checkbox"]')) {
 		input.checked = checked ;
 	}
@@ -152,7 +151,10 @@ function toggleCategory(categoryId) {
 	<div style="margin: 0;" id="<?= strtolower($collectionType) . '_collections' ?>">
 		<h2><?= $collectionType === 'Specimens'? $LANG['SPECIMEN_COLLECTIONS']: $LANG['OBSERVATION_COLLECTIONS'] ?></h2>
 		<?php foreach($categories as $category): ?>
-		<?php $categoryIdentifer = $collectionType . '_' . $category['id'] ?>
+		<?php 
+			$categoryIdentifer = $collectionType . '_' . $category['id'];
+			var_dump($categoryIdentifer); 
+		?>
 	
 		<fieldset id="<?=  $categoryIdentifer . '_container' ?>" style="margin-bottom: 1rem;">
 			<legend>

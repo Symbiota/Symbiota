@@ -8,6 +8,9 @@ class CollectionFormManager extends Manager {
     }
 
     public function generateCodeStr($collectionArr){
+        if(!(array_key_exists('instcode', $collectionArr) || array_key_exists('collcode', $collectionArr))){
+            return null;
+        }
         $codeStr = '(';
         if(array_key_exists('instcode', $collectionArr)){
             $codeStr .= $collectionArr['instcode'];
