@@ -3,6 +3,7 @@ global $SERVER_ROOT, $LANG_TAG, $LANG, $CLIENT_ROOT;
 include_once($SERVER_ROOT.'/classes/Database.php');
 include_once($SERVER_ROOT.'/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT.'/classes/utilities/Language.php');
+include_once($SERVER_ROOT.'/classes/CollectionFormManager.php');
 
 Language::load('collections/sharedterms');
 
@@ -199,15 +200,9 @@ function toggleCategory(categoryId) {
 			>
 				<?php foreach($category['collections'] as $collection): ?>
 				<?php
+					$collectionFormManager = new CollectionFormManager();
 					$collid = array_key_exists('collid', $collection) ? $collection['collid'] : null;
-					$codeStr = '(';
-					if(array_key_exists('institutioncode', $collection)) {
-						$codeStr .= $collection['institutioncode'];
-					}
-					if(array_key_exists('collectioncode', $collection)) {
-						$codeStr .= '-' . $collection['collectioncode'];
-					}
-					$codeStr .= ')';
+					$codeStr = $collectionFormManager->generateCodeStr($collection);
 				?>
 				<div style="display:flex; align-items: center; gap: 0.5rem;">
 					<img width="30px" height="30px" src="<?= $collection['icon'] ?>">
