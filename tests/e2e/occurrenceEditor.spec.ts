@@ -3,21 +3,22 @@ import { test as testWithAdmin } from './fixtures/adminLogin';
 import { test as testCollection } from './fixtures/collection';
 import { OccurrenceEditorPage } from './pages/OccurrenceEditorPage'
 import path from 'node:path';
-import { assert } from 'node:console';
 
 const test = mergeTests(testWithAdmin, testCollection);
 
 test.describe('Create Occurrence Record', () => {
 	let collId: number = 0;
 
-	test.beforeAll(async ({ collection, browserName }) => {
-		collId = await collection.getOrCreate('G' + browserName + ' CI Collection');
+	test.beforeAll(async ({ collection, browserName }, workerInfo) => {
+		collId = await collection.getOrCreate(workerInfo.workerIndex + workerInfo.project.name + ' Global CI Collection');
 	})
+
 	test.beforeEach(async ({ adminLogin }) => {
 		await adminLogin.expectLoggedIn()
 	});
-	test.afterAll(async ({ collection }) => {
-		await collection.resetCollection(collId)
+
+	test.afterAll(async ({ collection, browserName }) => {
+		await collection.deleteByCollId(collId)
 	});
 
 	test('From editor', async ({ page }) => {
@@ -69,7 +70,7 @@ test.describe('Create Occurrence Record', () => {
 	})
 	*/
 
-	/* Needs the media root set for this to function
+	/* Needs the media root set for this to function */
 	test('From image (File)', async ({ page }) => {
 		const inputs = {
 			catalognumber: '000002',
@@ -106,7 +107,6 @@ test.describe('Create Occurrence Record', () => {
 		await page.locator('input[name="removeimg"]').check();
 		await page.locator('button[value="Delete Image"]').click({force: true});
 	})
-	*/
 
 	test('From skeletal', async ({ page }) => {
 		const inputs = {
