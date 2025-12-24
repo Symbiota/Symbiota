@@ -9,8 +9,8 @@ const test = mergeTests(testWithAdmin, testCollection);
 test.describe('Create Occurrence Record', () => {
 	let collId: number = 0;
 
-	test.beforeAll(async ({ collection, browserName }, workerInfo) => {
-		collId = await collection.getOrCreate(workerInfo.workerIndex + workerInfo.project.name + ' Global CI Collection');
+	test.beforeAll(async ({ collection }, workerInfo) => {
+		collId = await collection.getOrCreate(workerInfo.parallelIndex + workerInfo.project.name + ' Global CI Collection');
 	})
 
 	test.beforeEach(async ({ adminLogin }) => {
