@@ -766,7 +766,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 							<!-- Open Collections modal -->
 							<div id="specobsdiv">
 								<?php
-								include_once(__DIR__ . '/collectionContent.php');
+								include($SERVER_ROOT . '/collections/editor/includes/collectionForm.php');
 								?>
 							</div>
 						</div>
