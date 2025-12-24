@@ -11,13 +11,13 @@ test.describe('Create Occurrence Record', () => {
 	let collId: number = 0;
 
 	test.beforeAll(async ({ collection, browserName }) => {
-		collId = await collection.getOrCreate(browserName + ' CI Global Collection');
+		collId = await collection.getOrCreate('G' + browserName + ' CI Collection');
 	})
 	test.beforeEach(async ({ adminLogin }) => {
 		await adminLogin.expectLoggedIn()
 	});
 	test.afterAll(async ({ collection }) => {
-		await collection.deleteByCollId(collId)
+		await collection.resetCollection(collId)
 	});
 
 	test('From editor', async ({ page }) => {
@@ -118,7 +118,7 @@ test.describe('Create Occurrence Record', () => {
 		await occurrenceEditor.setMany(inputs);
 
 		await page.locator('button[name=recordsubmit]').click({force: true});
-		const newRecordLink = await page.waitForSelector('div[id=occurlistdiv] a[id*="a-"]', { state: 'attached' });
+		const newRecordLink = await page.waitForSelector('div[id="occurlistdiv"] a[id*="a-"]', { state: 'attached' });
 
 		const id = await newRecordLink.getAttribute('id');
 		expect(id).toBeDefined();
