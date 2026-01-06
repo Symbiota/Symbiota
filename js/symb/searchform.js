@@ -780,7 +780,7 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
   // activateCollectionTypeCheckboxesIfWarranted(allPossibleSpecimenCollections, queriedCollections, "all_specimen_collections");
   // activateCollectionTypeCheckboxesIfWarranted(allPossibleObservationCollections, queriedCollections, "all_observation_collections");
   queriedCollections.forEach((queriedCollection) => {
-    let targetElem = document.querySelector(`[id$="_${queriedCollection}"]:not([id$="Specimens_"]):not([id$="Observations_"])`); // @TODO ensure that this doesn't result in off-target results
+    let targetElem = document.querySelector(`[id$="_${queriedCollection}"]:not([id^="Specimens_"]):not([id^="Observations_"])`);
     if (!targetElem) {
       if (queriedCollection === "all") {
         targetElem = document.getElementById("all_collections");
@@ -805,16 +805,20 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
         }
         return;
       } else {
-        const prefix = "coll-" + queriedCollection + "-"; // @TODO this is likely broken; fix it
-        const candidateTargetElems =
-          document.querySelectorAll(`[id^="${prefix}"]`) || [];
-        if (candidateTargetElems.length > 0) {
-          targetElem = candidateTargetElems[0]; // there should only be one match; get the first one
-        }
+        // Do nothing?
+        // const prefix = "coll-" + queriedCollection + "-"; // @TODO this is likely broken; fix it
+        // const targetElems =
+        //   document.querySelectorAll(`[id="_${queriedCollection}"][name="db[]"]`) || [];
+        // if (targetElems.length > 0) {
+        //   const targetElem = candidateTargetElems[0]; // there should only be one match; get the first one
+        //   if(targetElem){
+        //     targetElem.checked = true;
+        //   }
+        // }
       }
-    } 
-    if(targetElem){
-      targetElem.checked = true;
+    }
+    else {
+      targetElem.checked = true; 
     }
   });
   
