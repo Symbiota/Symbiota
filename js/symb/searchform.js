@@ -256,30 +256,32 @@ function updateChip(e) {
     addChip(getDomainsSitesChips());
   }
   // if any collections are selected (except for "all"), then add chip; this logic is alternatively handled in the formInputs for loop below
-  let allCollectionsChecked = allCollections?.checked || false;
-  let individualCollectionsChecked = Array.from(
+  const allCollectionsChecked = allCollections?.checked || false;
+  const allSpecimenCollectionsChecked = allSpecimenCollections?.checked || false;
+  const allObservationCollectionsChecked = allObservationCollections?.checked || false;
+  const individualCollectionsChecked = Array.from(
     document.querySelectorAll(`#search-form-colls input[name="db[]"]:checked`)
   );
-  if (!allCollectionsChecked && individualCollectionsChecked.length > 0) {
+  if (!allCollectionsChecked && !allSpecimenCollectionsChecked && !allObservationCollectionsChecked && individualCollectionsChecked.length > 0) {
     individualCollectionsChecked.forEach((coll) => {
       getCollsChips(coll.id, coll.id.split("_")[0]);
     });
   }
   // if any additional NEON colls are selected (except for "all"), then add chip
-  let addCols = document.querySelectorAll(
+  const addCols = document.querySelectorAll(
     "#neonext-collections-list input[type=checkbox]"
   );
-  let addColsChecked = document.querySelectorAll(
+  const addColsChecked = document.querySelectorAll(
     "#neonext-collections-list input[type=checkbox]:checked"
   );
   if (addColsChecked.length > 0 && addColsChecked.length < addCols.length) {
     addChip(getCollsChips("neonext-collections-list", "Some Add NEON Colls"));
   }
   // if any external NEON colls are selected (expect for "all"), then add chip
-  let extCols = document.querySelectorAll(
+  const extCols = document.querySelectorAll(
     "#ext-collections-list input[type=checkbox]"
   );
-  let extColsChecked = document.querySelectorAll(
+  const extColsChecked = document.querySelectorAll(
     "#ext-collections-list input[type=checkbox]:checked"
   );
   if (extColsChecked.length > 0 && extColsChecked.length < extCols.length) {
@@ -295,7 +297,7 @@ function updateChip(e) {
         (item.type == "number" && item.value != "")
       ) {
         if (
-          allCollectionsChecked &&
+          (allCollectionsChecked || allSpecimenCollectionsChecked || allObservationCollectionsChecked) &&
           item.name === "db[]" &&
           item.id !== "all_collections"
         ) {
