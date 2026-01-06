@@ -767,18 +767,6 @@ const areSame = (arr1, arr2) => {
 
 
 function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
-  const allPossibleCollections = Array.from(document.querySelectorAll('#search-form-colls input[name="db[]"]')).map(input => {
-    return input.id.split("_")[1];
-  });
-  const allPossibleSpecimenCollections = Array.from(document.querySelectorAll('#specimens_collections input[name="db[]"]')).map(input => {
-    return input.id.split("_")[1];
-  });
-  const allPossibleObservationCollections = Array.from(document.querySelectorAll('#observations_collections input[name="db[]"]')).map(input => {
-    return input.id.split("_")[1];
-  });
-  // activateCollectionTypeCheckboxesIfWarranted(allPossibleCollections, queriedCollections, "all_collections");
-  // activateCollectionTypeCheckboxesIfWarranted(allPossibleSpecimenCollections, queriedCollections, "all_specimen_collections");
-  // activateCollectionTypeCheckboxesIfWarranted(allPossibleObservationCollections, queriedCollections, "all_observation_collections");
   queriedCollections.forEach((queriedCollection) => {
     let targetElem = document.querySelector(`[id$="_${queriedCollection}"]:not([id^="Specimens_"]):not([id^="Observations_"])`);
     if (!targetElem) {
@@ -825,17 +813,6 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
   
   updateCategoryCheckboxes();
   expandCategoriesWithCheckedChildren();
-}
-
-function activateCollectionTypeCheckboxesIfWarranted(referenceCollections, queriedCollections, referenceScopeId) {
-  const didAllCollectionGetSelected = areSame(queriedCollections, referenceCollections);
-  if (didAllCollectionGetSelected) {
-    const referenceCollectionsCheckbox = document.getElementById(referenceScopeId);
-    if (referenceCollectionsCheckbox) {
-      referenceCollectionsCheckbox.checked = true;
-    }
-  }
-
 }
 
 function updateCategoryCheckboxes() {
