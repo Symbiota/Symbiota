@@ -35,7 +35,6 @@ test.describe('Create Occurrence Record', () => {
 		await occurrenceEditor.checkMany(inputs)
 	})
 
-	/* Currently waiting on 3.4_rc to pull into development before this will pass
 	test('From image (Link)', async ({ page }) => {
 		const inputs = {
 			catalognumber: '000002',
@@ -68,7 +67,6 @@ test.describe('Create Occurrence Record', () => {
 		await expect(page.locator('form[name*="editform"] input[name="url"]')).toHaveValue(url);
 		await expect(page.locator('form[name*="editform"] input[name="thumbnailUrl"]')).toHaveValue(url);
 	})
-	*/
 
 	/* Needs the media root set for this to function */
 	test('From image (File)', async ({ page }) => {
