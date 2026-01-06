@@ -776,9 +776,9 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
   const allPossibleObservationCollections = Array.from(document.querySelectorAll('#observations_collections input[name="db[]"]')).map(input => {
     return input.id.split("_")[1];
   });
-  activateCollectionTypeCheckboxesIfWarranted(allPossibleCollections, queriedCollections, "all_collections");
-  activateCollectionTypeCheckboxesIfWarranted(allPossibleSpecimenCollections, queriedCollections, "all_specimen_collections");
-  activateCollectionTypeCheckboxesIfWarranted(allPossibleObservationCollections, queriedCollections, "all_observation_collections");
+  // activateCollectionTypeCheckboxesIfWarranted(allPossibleCollections, queriedCollections, "all_collections");
+  // activateCollectionTypeCheckboxesIfWarranted(allPossibleSpecimenCollections, queriedCollections, "all_specimen_collections");
+  // activateCollectionTypeCheckboxesIfWarranted(allPossibleObservationCollections, queriedCollections, "all_observation_collections");
   queriedCollections.forEach((queriedCollection) => {
     let targetElem = document.querySelector(`[id$="_${queriedCollection}"]:not([id$="Specimens_"]):not([id$="Observations_"])`); // @TODO ensure that this doesn't result in off-target results
     if (!targetElem) {
@@ -786,36 +786,26 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
         targetElem = document.getElementById("all_collections");
         if (targetElem) {
           targetElem.checked = true;
-          // const allSpecCheckbox = document.getElementById("all_specimen_collections");
-          // const allObsCheckbox = document.getElementById("all_observation_collections");
-          // if(allSpecimenCollections) allSpecimenCollections.checked = true;
-          // if(allObservationCollections) allObservationCollections.checked = true;
-          // if (allSpecCheckbox) allSpecCheckbox.checked = true;
-          // if (allObsCheckbox) allObsCheckbox.checked = true;
           handleCategoryChunks(true, "Specimens");
-          // handleHeaderSections(true, "Specimens", "Observations");
           handleCategoryChunks(true, "Observations");
-          // handleHeaderSections(true, "Observations");
         }
         return;
       } else if (queriedCollection === "allspec") {
-        // targetElem = document.getElementById("all_specimen_collections");
-        if (allSpecimenCollections) {
-          allSpecimenCollections.checked = true;
-          handleCategoryChunks(true, "Specimen");
-          handleHeaderSections(true, "Specimen", "Observation");
+        targetElem = document.getElementById("all_specimen_collections");
+        if (targetElem) {
+          targetElem.checked = true;
+          handleCategoryChunks(true, "Specimens");
         }
         return;
       } else if (queriedCollection === "allobs") {
-        // targetElem = document.getElementById("all_observation_collections");
-        if (allObservationCollections) {
-          allObservationCollections.checked = true;
-          handleCategoryChunks(true, "Observation");
-          handleHeaderSections(true, "Observation");
+        targetElem = document.getElementById("all_observation_collections");
+        if (targetElem) {
+          targetElem.checked = true;
+          handleCategoryChunks(true, "Observations");
         }
         return;
       } else {
-        const prefix = "coll-" + queriedCollection + "-";
+        const prefix = "coll-" + queriedCollection + "-"; // @TODO this is likely broken; fix it
         const candidateTargetElems =
           document.querySelectorAll(`[id^="${prefix}"]`) || [];
         if (candidateTargetElems.length > 0) {
@@ -1054,6 +1044,18 @@ function setSearchForm(frm) {
     }
     if (urlVar.db) {
       let queriedCollections = urlVar.db.split(",");
+      const allPossibleSpecimenCollections = Array.from(document.querySelectorAll('#specimens_collections input[name="db[]"]')).map(input => {
+        return input.id.split("_")[1];
+      });
+      const didAllSpecimenCollectionGetSelected = areSame(queriedCollections, allPossibleSpecimenCollections);
+      if(didAllSpecimenCollectionGetSelected) queriedCollections = ["allspec"];
+
+      const allPossibleObservationCollections = Array.from(document.querySelectorAll('#observations_collections input[name="db[]"]')).map(input => {
+        return input.id.split("_")[1];
+      });
+      const didAllObservationCollectionGetSelected = areSame(queriedCollections, allPossibleObservationCollections);
+      if(didAllObservationCollectionGetSelected) queriedCollections = ["allobs"];
+
       const allPossibleCollections = Array.from(document.querySelectorAll('#search-form-colls input[name="db[]"]')).map(input => {
         return input.id.split("_")[1];
       });
