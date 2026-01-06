@@ -256,12 +256,14 @@ function updateChip(e) {
     addChip(getDomainsSitesChips());
   }
   // if any collections are selected (except for "all"), then add chip; this logic is alternatively handled in the formInputs for loop below
-  let allCollectionsChecked = allCollections?.checked;
+  let allCollectionsChecked = allCollections?.checked || false;
   let individualCollectionsChecked = Array.from(
     document.querySelectorAll(`#search-form-colls input[name="db[]"]:checked`)
   );
   if (!allCollectionsChecked && individualCollectionsChecked.length > 0) {
-    addChip(getCollsChips(getCriterionSelected(), "Some Biorepo Colls"));
+    individualCollectionsChecked.forEach((coll) => {
+      getCollsChips(coll.id, coll.id.split("_")[0]);
+    });
   }
   // if any additional NEON colls are selected (except for "all"), then add chip
   let addCols = document.querySelectorAll(

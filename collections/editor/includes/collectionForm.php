@@ -102,7 +102,7 @@ function toggleCategory(categoryId) {
 
 </script>
 <div id="all_collections">
-	<div style="display: inline-block; margin: 0;">
+	<div id="all_collections_checkbox_container" style="display: inline-block; margin: 0;">
 		<input
 			style="margin:0;"
 			onclick="toggleAllCheckboxes(document.getElementById('all_collections'), this.checked)"
@@ -117,7 +117,7 @@ function toggleCategory(categoryId) {
 			<a href="<?= $CLIENT_ROOT ?>/collections/misc/collprofiles.php"><?= $LANG['ALL_COLLECTIONS']?></a>
 		</label>
 	</div>
-	<div style="display: inline-block; margin: 0 15px;">
+	<div id="all_specimen_collections_checkbox_container" style="display: inline-block; margin: 0 15px;">
 		<input
 		data-chip="<?php echo $LANG['ALL_SPECIMEN_COLLECTIONS'] ?>"
 		style="margin:0;"
@@ -132,7 +132,7 @@ function toggleCategory(categoryId) {
 			<?= $LANG['SELECT_DESELECT_ALL_SPECIMENS']; ?>
 		</label>
 	</div>
-	<div style="display: inline-block; margin: 0 15px;">
+	<div id="all_observation_collections_checkbox_container" style="display: inline-block; margin: 0 15px;">
 		<input
 		data-chip="<?php echo $LANG['ALL_OBSERVATION_COLLECTIONS'] ?>"
 		style="margin:0;"
@@ -210,6 +210,7 @@ function toggleCategory(categoryId) {
 					<img width="30px" height="30px" src="<?= $collection['icon'] ?>">
 					<input
 						data-chip="Collection: <?= $codeStr ?>" aria-label="select collection <?= $collid ?>" data-role="none"
+						data-codeStr="<?= $codeStr ?>"
 						style="margin:0;"
 						id="<?= $category['name'] . '_' . $collection['collid'] ?>"
 						<?= array_key_exists($collection['collid'] ,$checkedCollections)? 'checked': '' ?>

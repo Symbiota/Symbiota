@@ -8,12 +8,12 @@ class CollectionFormManager extends Manager {
     }
 
     public function generateCodeStr($collectionArr){
-        if(!(array_key_exists('instcode', $collectionArr) || array_key_exists('collcode', $collectionArr))){
+        if(!(array_key_exists('institutioncode', $collectionArr) || array_key_exists('collcode', $collectionArr))){
             return null;
         }
         $codeStr = '(';
-        if(array_key_exists('instcode', $collectionArr)){
-            $codeStr .= $collectionArr['instcode'];
+        if(array_key_exists('institutioncode', $collectionArr)){
+            $codeStr .= $collectionArr['institutioncode'];
         }
         if(array_key_exists('collcode', $collectionArr)){
             $codeStr .= '-' . $collectionArr['collcode'];
