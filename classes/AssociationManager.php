@@ -102,7 +102,11 @@ class AssociationManager extends OccurrenceTaxaManager{
 
 			// External, observational, or resource associations
 			$externalAndObservationalSql = "SELECT oa.occid FROM omoccurrences o INNER JOIN omoccurassociations oa ON o.occid = oa.occid  LEFT JOIN omoccurdeterminations od ON oa.occid = od.occid " . $familyJoinStr . " WHERE (oa.associationType='observational' OR oa.associationType='externalOccurrence' OR oa.associationType='resource') AND oa.relationship " . $relationshipStr . " ";
-			if(isset($associationArr['taxa']) && isset($associationArr['search'])){
+			$searchTidsExist = isset($associationArr['taxa']) && isset($associationArr['search']) && 
+			   isset($associationArr['taxa'][$associationArr['search']]['tid']) && 
+			   is_array($associationArr['taxa'][$associationArr['search']]['tid']) && 
+			   !empty($associationArr['taxa'][$associationArr['search']]['tid']);
+			if($searchTidsExist){
 				$mainTid = array_keys($associationArr['taxa'][$associationArr['search']]['tid'])[0];
 				$tIdsNotToMatch = array($mainTid, ...$this->getAcceptedChildren($mainTid));
 				$offTargetStr = "AND o.tidinterpreted NOT IN(" . implode(',', $tIdsNotToMatch) . ") ";
@@ -175,7 +179,6 @@ class AssociationManager extends OccurrenceTaxaManager{
 							//Return matches that are not linked to thesaurus
 							if($rankid > 179){
 								if($this->exactMatchOnly) $sqlWhereTaxa .= 'OR (o.sciname = "' . $term . '") ';
-								else $sqlWhereTaxa .= "OR (o.sciname LIKE '" . $term . "%' AND od.isCurrent=1) OR (oa.verbatimsciname LIKE '" . $term . "%') ";
 							}
 						}
 						else{

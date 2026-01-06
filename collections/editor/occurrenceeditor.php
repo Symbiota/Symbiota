@@ -660,7 +660,7 @@ else{
 						</div>
 						<?php if($isEditor && $isEditor != 3):?>
 						<div id="querySymbolDiv" style="margin:5px 5px 5px 0px;">
-							<button class="button-toggle" type="button" onclick="toggleQueryForm(); toggleButtonVisuals(this, 'querydiv', [])">
+							<button class="button-toggle" style="padding: 0.4rem 0.75rem;" type="button" onclick="toggleQueryForm(); toggleButtonVisuals(this, 'querydiv', [])">
 								<?= $LANG['SEARCH_FILTER'] ?>
 							</button>
 						</div>

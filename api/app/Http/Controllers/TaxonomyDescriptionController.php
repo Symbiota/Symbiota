@@ -17,7 +17,7 @@ class TaxonomyDescriptionController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/taxonomy/{identifier}/description",
 	 *	 operationId="/api/v2/taxonomy/identifier/description",
-	 *	 tags={""},
+	 *	 tags={"Taxonomy"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
@@ -77,7 +77,7 @@ class TaxonomyDescriptionController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/taxonomy/{identifier}/description/{identifier}",
 	 *	 operationId="/api/v2/taxonomy/identifier/description/identifier",
-	 *	 tags={""},
+	 *	 tags={"Taxonomy"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",

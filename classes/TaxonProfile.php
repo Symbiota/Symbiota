@@ -386,8 +386,8 @@ class TaxonProfile extends Manager {
 					}
 					if(!isset($retArr[$indexKey]) || !array_key_exists($rowArr['tdbid'],$retArr[$indexKey])){
 						$retArr[$indexKey][$rowArr['tdbid']]['caption'] = htmlspecialchars($rowArr['caption'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
-						$retArr[$indexKey][$rowArr['tdbid']]['source'] = htmlspecialchars($rowArr['source'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
-						$retArr[$indexKey][$rowArr['tdbid']]['url'] = htmlspecialchars($rowArr['sourceurl'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+						$retArr[$indexKey][$rowArr['tdbid']]['source'] = htmlspecialchars($rowArr['source']??'', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+						$retArr[$indexKey][$rowArr['tdbid']]['url'] = htmlspecialchars($rowArr['sourceurl']??'', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 					}
 					$stmtStr = $rowArr['statement'];
 					if($rowArr['displayheader'] && $rowArr['heading']) $stmtStr = '<b>' . htmlspecialchars($rowArr['heading'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</b>: ' . $stmtStr;

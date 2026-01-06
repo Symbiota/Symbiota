@@ -899,7 +899,7 @@ INSERT INTO `geographicthesaurus` (`geoThesID`, `geoterm`, `abbreviation`, `iso2
 (898, "Syddanmark", NULL, NULL, NULL, NULL, NULL, 60, NULL, NULL, 64),
 (899, "Monte Cristi", NULL, NULL, NULL, NULL, NULL, 60, NULL, NULL, 65),
 (900, "Dajabón", NULL, NULL, NULL, NULL, NULL, 60, NULL, NULL, 65),
-(901, "La Estrelleta", NULL, NULL, NULL, NULL, NULL, 60, NULL, NULL, 65),
+(901, "Elías Piña", NULL, NULL, NULL, NULL, NULL, 60, NULL, NULL, 65),
 (902, "Independencia", NULL, NULL, NULL, NULL, NULL, 60, NULL, NULL, 65),
 (903, "Pedernales", NULL, NULL, NULL, NULL, NULL, 60, NULL, NULL, 65),
 (904, "La Altagracia", NULL, NULL, NULL, NULL, NULL, 60, NULL, NULL, 65),

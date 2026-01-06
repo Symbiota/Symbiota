@@ -124,7 +124,16 @@ $PRIVATE_VIEWING_OVERRIDES = ['/index.php', '/misc/contacts.php','/misc/aboutpro
 // label : String - Short text label to describe the overlay toggle
 // popup_template: String - Html string for what label should be generated on a GeoJSON feature. Will replace text like `[Property_name]` with a features property value if present
 // template_properties: Array[String] - List of property names to used in popup generation
-$GEO_JSON_LAYERS = [];
+$GEO_JSON_LAYERS = [
+ [
+  'filename' => 'us_counties.geojson',
+  'label' => 'U.S. Counties',
+  'popup_template' => '<div>[NAME]</div>',
+  'template_properties' => [
+   'NAME',
+  ]
+ ],
+];
 
 // Toggles `strict-transport-security` header
 // Do not turn off for production portals

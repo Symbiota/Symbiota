@@ -67,6 +67,7 @@ if($action == 'batchAssignTag'){
 	}
 }
 
+$creators = Media::getCreatorArray();
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
@@ -182,7 +183,7 @@ if($action == 'batchAssignTag'){
 							<label for="phuid"><?= $LANG['CREATOR'] ?></label>:
 							<select id="phuid" name="phuid">
 								<option value="">-----------------------------</option>
-								<?= Media::renderCreatorOptions($phUid) ?>
+								<?= Media::renderCreatorOptions(is_numeric($phUid)? intval($phUid): 0, $creators) ?>
 							</select>
 						</div>
 						<?php
@@ -469,7 +470,7 @@ if($action == 'batchAssignTag'){
 										$photoAuthor = '';
 										$authorLink = '';
 										if($imgArr['uid']){
-											$photoAuthor = $uidList[$imgArr['uid']];
+											$photoAuthor = $creators[$imgArr['uid']];
 											if(strlen($photoAuthor) > 23){
 												$nameArr = explode(',', $photoAuthor);
 												$photoAuthor = array_shift($nameArr);
