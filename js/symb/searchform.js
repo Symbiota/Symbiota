@@ -815,37 +815,42 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
   expandCategoriesWithCheckedChildren();
 }
 
-function updateCategoryCheckboxes() {
-  const categoryCheckboxes = document.querySelectorAll('input[name="cat[]"]');
-  categoryCheckboxes.forEach((categoryCheckbox) => {
-    const categoryId = categoryCheckbox.id;
-    const categoryNumberPattern = categoryId.match(/cat-(\d+-\d+)/)?.[1];
-    const childCollections = document.querySelectorAll(`input[id^="coll-"][id*="-${categoryNumberPattern}"]`);
-    if (childCollections.length > 0) {
-      const checkedChildren = Array.from(childCollections).filter(checkbox => checkbox.checked);
-      if (checkedChildren.length === childCollections.length) {
-        categoryCheckbox.checked = true;
-      }
+function generateTargetInputElementsForCategory(functionToPerform) {
+  const categoryFieldsets = document.querySelectorAll(
+    'fieldset[id^="Specimens_"][id$="_container"], fieldset[id^="Observations_"][id$="_container"]'
+  );
+  categoryFieldsets.forEach((categoryFieldset) => {
+    const categoryFieldsetId = categoryFieldset.id;
+    const categoryPattern = categoryFieldsetId.match(/(.*)_container/)?.[1];
+    
+    const inputContainer = document.getElementById(categoryPattern+"_inputs");
+    const targetInputElems = inputContainer.querySelectorAll('input');
+    if (targetInputElems.length > 0) {
+      functionToPerform(categoryPattern, targetInputElems);
     }
   });
 }
 
-function expandCategoriesWithCheckedChildren() {
-  const categoryCheckboxes = document.querySelectorAll('input[name="cat[]"]');
-  categoryCheckboxes.forEach((categoryCheckbox) => {
-    const categoryId = categoryCheckbox.id;
-    const categoryNumberPattern = categoryId.match(/cat-(\d+-\d+)/)?.[1];
-    if (categoryNumberPattern) {
-      const childCollections = document.querySelectorAll(`input[id^="coll-"][id*="-${categoryNumberPattern}"]`);
-      if (childCollections.length > 0) {
-        const checkedChildren = Array.from(childCollections).filter(checkbox => checkbox.checked);
-        if (checkedChildren.length > 0) {
-          const categoryDiv = document.getElementById(`cat-${categoryNumberPattern}`);
-          if (categoryDiv && categoryDiv.style.display !== "block") {
-            toggleCat(categoryNumberPattern);
-          }
-        }
+
+function updateCategoryCheckboxes() {
+  generateTargetInputElementsForCategory((categoryPattern, targetInputElems) => {
+    const checkedChildren = Array.from(targetInputElems).filter(checkbox => checkbox.checked);
+      if (checkedChildren.length === targetInputElems.length) {
+        const targetCategoryInput = document.getElementById(categoryPattern);
+        targetCategoryInput.checked = true;
       }
+  });
+}
+
+function expandCategoriesWithCheckedChildren() {
+  generateTargetInputElementsForCategory((categoryPattern, targetInputElems) => {
+    const checkedChildren = Array.from(targetInputElems).filter(checkbox => checkbox.checked);
+    if (checkedChildren.length === targetInputElems.length) {
+      toggleCategory(categoryPattern);
+    }
+    const uncheckedChildren = Array.from(targetInputElems).filter(checkbox => !checkbox.checked);
+    if (uncheckedChildren.length === targetInputElems.length) {
+      toggleCategory(categoryPattern);
     }
   });
 }
