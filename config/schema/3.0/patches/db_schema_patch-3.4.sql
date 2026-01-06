@@ -533,8 +533,10 @@ ALTER TABLE `uploadtaxa`
 
 #Add indexes to accommodate conversion of imported state codes
 ALTER TABLE `uploadspectemp` 
-  ADD INDEX `IX_uploadspectemp_country` (`country` ASC),
-  ADD INDEX `IX_uploadspectemp_stateProvince` (`stateProvince` ASC);
+  ADD INDEX `IX_uploadspectemp_countryCode` (`countryCode`),
+  ADD INDEX `IX_uploadspectemp_country` (`country`),
+  ADD INDEX `IX_uploadspectemp_stateProvince` (`stateProvince`),
+  ADD INDEX `IX_uploadspectemp_collid_state` (`collid`, `stateProvince`);
 
 
 #Increase user password field to accommodate new bcrypt hash 
