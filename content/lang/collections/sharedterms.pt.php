@@ -34,4 +34,5 @@ $LANG['LIST'] = 'Lista';
 $LANG['TABLE'] = 'Tabela de Dados';
 $LANG['ALL_SPECIMEN_COLLECTIONS'] = 'Todas as coleções de amostras';
 $LANG['ALL_OBSERVATION_COLLECTIONS'] = 'Todas as coleções de observações';
+$LANG['ALL_COLLECTIONS'] = 'Todas as coleções';
 ?>

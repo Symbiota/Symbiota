@@ -101,11 +101,12 @@ function toggleCategory(categoryId) {
 }
 
 </script>
-<div id="all_collections">
+<div id="all_collections_parent_container">
 	<div id="all_collections_checkbox_container" style="display: inline-block; margin: 0;">
 		<input
 			style="margin:0;"
-			onclick="toggleAllCheckboxes(document.getElementById('all_collections'), this.checked)"
+			onclick="toggleAllCheckboxes(document.getElementById('collections_container'), this.checked)"
+			data-chip="<?php echo $LANG['ALL_SPECIMEN_COLLECTIONS'] ?>"
 			type="checkbox"
 			id="all_collections"
 			name="all_collections"
@@ -147,86 +148,87 @@ function toggleCategory(categoryId) {
 			<?= $LANG['SELECT_DESELECT_ALL_OBSERVATIONS']; ?>
 		</label>
 	</div>
-	<?php foreach($collectionsByCategory as $collectionType => $categories): ?>
-	<div style="margin: 0;" id="<?= strtolower($collectionType) . '_collections' ?>">
-		<h2><?= $collectionType === 'Specimens'? $LANG['SPECIMEN_COLLECTIONS']: $LANG['OBSERVATION_COLLECTIONS'] ?></h2>
-		<?php foreach($categories as $category): ?>
-		<?php 
-			$categoryIdentifer = $collectionType . '_' . $category['id'];
-			var_dump($categoryIdentifer); 
-		?>
-	
-		<fieldset id="<?=  $categoryIdentifer . '_container' ?>" style="margin-bottom: 1rem;">
-			<legend>
-				<div style="display:flex; align-items: center; gap:0.5rem;">
-					<input
-						data-category
-						onchange="updateParent(document.querySelectorAll('input[data-category]'),'#all_collections')"
-						onclick="toggleAllCheckboxes(document.getElementById(`<?= $categoryIdentifer . '_container' ?>`), this.checked)"
-						style="margin:0;"
-						type="checkbox"
-						id="<?= $categoryIdentifer ?>"
-						name="<?= $categoryIdentifer ?>"
-						value="1"
-						<?= array_key_exists($categoryIdentifer, $_REQUEST)? 'checked': '' ?>
-					>
-					<label for="<?= $categoryIdentifer ?>">
-						<?= $category['name'] ?>
-					</label>
-	
-					<a onclick="toggleCategory(`<?=  $categoryIdentifer ?>`)" style="cursor: pointer;">
-						<span id="<?=  $categoryIdentifer . '_open_toggle' ?>"
-							style="display: none; align-items: center; gap:0.5rem;">
-							<img
-								src="<?= $CLIENT_ROOT ?>/images/plus.png"
-								style="width: 1em; height: 1em; cursor: pointer;"
-							/>
-							<?= $LANG['EXPAND'] ?>
-						</span>
-	
-						<span id="<?=  $categoryIdentifer . '_close_toggle' ?>"
-							style="display: flex; align-items: center; gap:0.5rem;">
-							<img
-								src="<?= $CLIENT_ROOT ?>/images/minus.png"
-								style="width: 1em; height: 1em; cursor: pointer;"
-							/>
-							<?= $LANG['CONDENSE'] ?>
-						</span>
-					</a>
+	<div id="collections_container">
+		<?php foreach($collectionsByCategory as $collectionType => $categories): ?>
+		<div style="margin: 0;" id="<?= strtolower($collectionType) . '_collections' ?>">
+			<h2><?= $collectionType === 'Specimens'? $LANG['SPECIMEN_COLLECTIONS']: $LANG['OBSERVATION_COLLECTIONS'] ?></h2>
+			<?php foreach($categories as $category): ?>
+			<?php 
+				$categoryIdentifer = $collectionType . '_' . $category['id'];
+			?>
+		
+			<fieldset id="<?=  $categoryIdentifer . '_container' ?>" style="margin-bottom: 1rem;">
+				<legend>
+					<div style="display:flex; align-items: center; gap:0.5rem;">
+						<input
+							data-category
+							onchange="updateParent(document.querySelectorAll('input[data-category]'),'#all_collections')"
+							onclick="toggleAllCheckboxes(document.getElementById(`<?= $categoryIdentifer . '_container' ?>`), this.checked)"
+							style="margin:0;"
+							type="checkbox"
+							id="<?= $categoryIdentifer ?>"
+							name="<?= $categoryIdentifer ?>"
+							value="1"
+							<?= array_key_exists($categoryIdentifer, $_REQUEST)? 'checked': '' ?>
+						>
+						<label for="<?= $categoryIdentifer ?>">
+							<?= $category['name'] ?>
+						</label>
+		
+						<a onclick="toggleCategory(`<?=  $categoryIdentifer ?>`)" style="cursor: pointer;">
+							<span id="<?=  $categoryIdentifer . '_open_toggle' ?>"
+								style="display: none; align-items: center; gap:0.5rem;">
+								<img
+									src="<?= $CLIENT_ROOT ?>/images/plus.png"
+									style="width: 1em; height: 1em; cursor: pointer;"
+								/>
+								<?= $LANG['EXPAND'] ?>
+							</span>
+		
+							<span id="<?=  $categoryIdentifer . '_close_toggle' ?>"
+								style="display: flex; align-items: center; gap:0.5rem;">
+								<img
+									src="<?= $CLIENT_ROOT ?>/images/minus.png"
+									style="width: 1em; height: 1em; cursor: pointer;"
+								/>
+								<?= $LANG['CONDENSE'] ?>
+							</span>
+						</a>
+					</div>
+				</legend>
+		
+				<div id="<?=  $categoryIdentifer . '_inputs' ?>"
+					style="display:flex; flex-direction:column; gap:0.5rem;"
+					onchange="updateParent(this.querySelectorAll(`input[type=checkbox]`), '#<?= $categoryIdentifer ?>')"
+				>
+					<?php foreach($category['collections'] as $collection): ?>
+					<?php
+						$collectionFormManager = new CollectionFormManager();
+						$collid = array_key_exists('collid', $collection) ? $collection['collid'] : null;
+						$codeStr = $collectionFormManager->generateCodeStr($collection);
+					?>
+					<div style="display:flex; align-items: center; gap: 0.5rem;">
+						<img width="30px" height="30px" src="<?= $collection['icon'] ?>">
+						<input
+							data-chip="Collection: <?= $codeStr ?>" aria-label="select collection <?= $collid ?>" data-role="none"
+							data-codeStr="<?= $codeStr ?>"
+							style="margin:0;"
+							id="<?= $category['name'] . '_' . $collection['collid'] ?>"
+							<?= array_key_exists($collection['collid'] ,$checkedCollections)? 'checked': '' ?>
+							type="checkbox"
+							name="db[]"
+							value="<?= $collection['collid'] ?>"
+						>
+						<label>
+							<?= $collection['collectionname'] . ' (' . $collection['institutioncode'] . ($collection['collectioncode'] ? '-' . $collection['collectioncode'] : '') . ')' ?>
+						</label>
+						<a target="_blank" href="<?= $CLIENT_ROOT ?>/collections/misc/collprofiles.php?collid=<?= $collection['collid']?>">More Info</a>
+					</div>
+					<?php endforeach ?>
 				</div>
-			</legend>
-	
-			<div id="<?=  $categoryIdentifer . '_inputs' ?>"
-				style="display:flex; flex-direction:column; gap:0.5rem;"
-				onchange="updateParent(this.querySelectorAll(`input[type=checkbox]`), '#<?= $categoryIdentifer ?>')"
-			>
-				<?php foreach($category['collections'] as $collection): ?>
-				<?php
-					$collectionFormManager = new CollectionFormManager();
-					$collid = array_key_exists('collid', $collection) ? $collection['collid'] : null;
-					$codeStr = $collectionFormManager->generateCodeStr($collection);
-				?>
-				<div style="display:flex; align-items: center; gap: 0.5rem;">
-					<img width="30px" height="30px" src="<?= $collection['icon'] ?>">
-					<input
-						data-chip="Collection: <?= $codeStr ?>" aria-label="select collection <?= $collid ?>" data-role="none"
-						data-codeStr="<?= $codeStr ?>"
-						style="margin:0;"
-						id="<?= $category['name'] . '_' . $collection['collid'] ?>"
-						<?= array_key_exists($collection['collid'] ,$checkedCollections)? 'checked': '' ?>
-						type="checkbox"
-						name="db[]"
-						value="<?= $collection['collid'] ?>"
-					>
-					<label>
-						<?= $collection['collectionname'] . ' (' . $collection['institutioncode'] . ($collection['collectioncode'] ? '-' . $collection['collectioncode'] : '') . ')' ?>
-					</label>
-					<a target="_blank" href="<?= $CLIENT_ROOT ?>/collections/misc/collprofiles.php?collid=<?= $collection['collid']?>">More Info</a>
-				</div>
-				<?php endforeach ?>
-			</div>
-		</fieldset>
+			</fieldset>
+			<?php endforeach ?>
+		</div>
 		<?php endforeach ?>
 	</div>
-	<?php endforeach ?>
 </div>

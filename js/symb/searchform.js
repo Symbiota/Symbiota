@@ -749,56 +749,74 @@ function handleHeaderSections(parentBoxCheckStatus, headerType, stopType = null)
 //   handleHeaderSections(boxCheckedStatus, translations.OBSERVATION);
 // }
 
+const areSame = (arr1, arr2) => {
+  if (arr1.length !== arr2.length) return false;
+  const sorted1 = [...arr1].sort();
+  const sorted2 = [...arr2].sort();
+  return sorted1.every((val, index) => val === sorted2[index]);
+};
+
 
 function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
-  queriedCollections.forEach((queriedCollection) => {
-    let targetElem = document.getElementById("collection-" + queriedCollection);
-    if (!targetElem) {
-      if (queriedCollection === "all") {
-        targetElem = document.getElementById("all_collections");
-        if (targetElem) {
-          targetElem.checked = true;
-          // const allSpecCheckbox = document.getElementById("all_specimen_collections");
-          // const allObsCheckbox = document.getElementById("all_observation_collections");
-          if(allSpecimenCollections) allSpecimenCollections.checked = true;
-          if(allObservationCollections) allObservationCollections.checked = true;
-          // if (allSpecCheckbox) allSpecCheckbox.checked = true;
-          // if (allObsCheckbox) allObsCheckbox.checked = true;
-          handleCategoryChunks(true, "Specimen");
-          handleHeaderSections(true, "Specimen", "Observation");
-          handleCategoryChunks(true, "Observation");
-          handleHeaderSections(true, "Observation");
-        }
-        return;
-      } else if (queriedCollection === "allspec") {
-        // targetElem = document.getElementById("all_specimen_collections");
-        if (allSpecimenCollections) {
-          allSpecimenCollections.checked = true;
-          handleCategoryChunks(true, "Specimen");
-          handleHeaderSections(true, "Specimen", "Observation");
-        }
-        return;
-      } else if (queriedCollection === "allobs") {
-        // targetElem = document.getElementById("all_observation_collections");
-        if (allObservationCollections) {
-          allObservationCollections.checked = true;
-          handleCategoryChunks(true, "Observation");
-          handleHeaderSections(true, "Observation");
-        }
-        return;
-      } else {
-        const prefix = "coll-" + queriedCollection + "-";
-        const candidateTargetElems =
-          document.querySelectorAll(`[id^="${prefix}"]`) || [];
-        if (candidateTargetElems.length > 0) {
-          targetElem = candidateTargetElems[0]; // there should only be one match; get the first one
-        }
-      }
-    } 
-    if(targetElem){
-      targetElem.checked = true;
-    }
+  const allPossibleCollections = Array.from(document.querySelectorAll('#search-form-colls input[name="db[]"]')).map(input => {
+    return input.id.split("_")[1];
   });
+  const didAllCollectionGetSelected = areSame(queriedCollections, allPossibleCollections);
+  if (didAllCollectionGetSelected) {
+    const allCollectionsCheckbox = document.getElementById("all_collections"); // @TODO there's more than one
+    if (allCollectionsCheckbox) {
+      allCollectionsCheckbox.checked = true;
+    }
+  } else{
+    queriedCollections.forEach((queriedCollection) => {
+      let targetElem = document.getElementById("collection-" + queriedCollection);
+      if (!targetElem) {
+        if (queriedCollection === "all") {
+          targetElem = document.getElementById("all_collections");
+          if (targetElem) {
+            targetElem.checked = true;
+            // const allSpecCheckbox = document.getElementById("all_specimen_collections");
+            // const allObsCheckbox = document.getElementById("all_observation_collections");
+            if(allSpecimenCollections) allSpecimenCollections.checked = true;
+            if(allObservationCollections) allObservationCollections.checked = true;
+            // if (allSpecCheckbox) allSpecCheckbox.checked = true;
+            // if (allObsCheckbox) allObsCheckbox.checked = true;
+            handleCategoryChunks(true, "Specimen");
+            handleHeaderSections(true, "Specimen", "Observation");
+            handleCategoryChunks(true, "Observation");
+            handleHeaderSections(true, "Observation");
+          }
+          return;
+        } else if (queriedCollection === "allspec") {
+          // targetElem = document.getElementById("all_specimen_collections");
+          if (allSpecimenCollections) {
+            allSpecimenCollections.checked = true;
+            handleCategoryChunks(true, "Specimen");
+            handleHeaderSections(true, "Specimen", "Observation");
+          }
+          return;
+        } else if (queriedCollection === "allobs") {
+          // targetElem = document.getElementById("all_observation_collections");
+          if (allObservationCollections) {
+            allObservationCollections.checked = true;
+            handleCategoryChunks(true, "Observation");
+            handleHeaderSections(true, "Observation");
+          }
+          return;
+        } else {
+          const prefix = "coll-" + queriedCollection + "-";
+          const candidateTargetElems =
+            document.querySelectorAll(`[id^="${prefix}"]`) || [];
+          if (candidateTargetElems.length > 0) {
+            targetElem = candidateTargetElems[0]; // there should only be one match; get the first one
+          }
+        }
+      } 
+      if(targetElem){
+        targetElem.checked = true;
+      }
+    });
+  }
   
   updateCategoryCheckboxes();
   expandCategoriesWithCheckedChildren();
