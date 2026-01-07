@@ -80,7 +80,7 @@ class VoucherLinker {
 		$newest = '';
 		$newestOccid = 0;
 		$sql = 'SELECT DISTINCT o.collid, o.occid, o.recordedby, o.recordnumber, o.eventdate, o.establishmentmeans, o.decimallatitude, c.colltype ';
-		if($this->footprintGeoJson) $sql .= ',ST_Within(p.lngLatPoint,ST_GeomFromGeoJson("'.$this->footprintGeoJson.'")) as inzone ';
+		if($this->footprintGeoJson) $sql .= ',ST_Within(p.lngLatPoint,ST_GeomFromGeoJson("'.$this->footprintGeoJson.'", 1, 0)) as inzone ';
 		$sql .= 'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
 		if($this->footprintGeoJson) $sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
 		$sql .= 'WHERE (o.stateprovince = "New York") AND (o.county LIKE "Bronx%" OR o.county LIKE "Kings%" OR o.county LIKE "New York%" OR o.county LIKE "Queens%" OR o.county LIKE "Richmond%") '.
