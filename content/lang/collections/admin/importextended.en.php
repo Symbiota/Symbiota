@@ -69,3 +69,6 @@ $LANG['BATCH_ADD_OR_UPDATE'] = 'Batch Add or Update';
 $LANG['AUDIO_UPLOAD'] = 'Audio upload';
 $LANG['IMAGE_UPLOAD'] = 'Image upload';
 $LANG['MEDIA_UPLOAD_TYPE'] = 'Media Upload Type';
+$LANG['MISSING_IDENTIFIER'] = 'One or more required identifier fields are missing or invalid; skipping row';
+$LANG['DUPLICATE_ENTRY'] = 'Duplicate entry found in import file; skipping row';
+$LANG['GENERIC_ERROR'] = 'An error occurred while importing this occurrence; skipping row. Contact your administrator';

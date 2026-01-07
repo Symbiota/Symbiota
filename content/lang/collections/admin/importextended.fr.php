@@ -68,3 +68,6 @@ $LANG['BATCH_ADD_OR_UPDATE'] = 'Ajout ou mise à jour par lots';
 $LANG['AUDIO_UPLOAD'] = 'Téléchargement audio';
 $LANG['IMAGE_UPLOAD'] = 'Téléchargement d\'images';
 $LANG['MEDIA_UPLOAD_TYPE'] = 'Type de téléchargement multimédia';
+$LANG['MISSING_IDENTIFIER'] = 'Un ou plusieurs champs d\'identification obligatoires sont manquants ou invalides ; la ligne est ignorée.';
+$LANG['DUPLICATE_ENTRY'] = 'Entrée en double trouvée dans le fichier d\'importation ; la ligne est ignorée.';
+$LANG['GENERIC_ERROR'] = 'Une erreur s\'est produite lors de l\'importation de cette occurrence ; la ligne est ignorée. Contactez votre administrateur.';
