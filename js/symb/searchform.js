@@ -815,10 +815,10 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
   
   
   updateCategoryCheckboxes();
-  expandCategoriesWithCheckedChildren();
+  expandCategoriesWithSomeCheckedChildren();
 }
 
-function generateTargetInputElementsForCategory(functionToPerform) {
+function generateTargetInputElementsForCategory(callbackFn) {
   const categoryFieldsets = document.querySelectorAll(
     'fieldset[id^="Specimens_"][id$="_container"], fieldset[id^="Observations_"][id$="_container"]'
   );
@@ -829,7 +829,7 @@ function generateTargetInputElementsForCategory(functionToPerform) {
     const inputContainer = document.getElementById(categoryPattern+"_inputs");
     const targetInputElems = inputContainer.querySelectorAll('input');
     if (targetInputElems.length > 0) {
-      functionToPerform(categoryPattern, targetInputElems);
+      callbackFn(categoryPattern, targetInputElems);
     }
   });
 }
@@ -845,19 +845,21 @@ function updateCategoryCheckboxes() {
   });
 }
 
-function expandCategoriesWithCheckedChildren() {
+function expandCategoriesWithSomeCheckedChildren() {
   generateTargetInputElementsForCategory((categoryPattern, targetInputElems) => {
+    const container = document.getElementById(categoryPattern + '_inputs');
     const checkedChildren = Array.from(targetInputElems).filter(checkbox => checkbox.checked);
-    if (checkedChildren.length === targetInputElems.length) {
+    if (checkedChildren.length === targetInputElems.length && container.style.display === 'flex') {
       toggleCategory(categoryPattern);
     }
-    const uncheckedChildren = Array.from(targetInputElems).filter(checkbox => !checkbox.checked);
-    if (uncheckedChildren.length === targetInputElems.length) {
-      const container = document.getElementById(categoryPattern + '_inputs');
-      if(container.style.display !== 'none'){
-        toggleCategory(categoryPattern);
-      }
+    else if (checkedChildren.length > 0 && checkedChildren.length < targetInputElems.length && container.style.display === 'none') {
+      toggleCategory(categoryPattern);
+    } else if(checkedChildren.length === 0 && container.style.display === 'flex') {
+      toggleCategory(categoryPattern);
     }
+    // const uncheckedChildren = Array.from(targetInputElems).filter(checkbox => !checkbox.checked);
+    // if (uncheckedChildren.length === targetInputElems.length && container.style.display === 'none') {
+    // }
   });
 }
 
