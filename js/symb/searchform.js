@@ -72,6 +72,7 @@ function closeModal(elementid) {
  * @param {HTMLObjectElement} element Input for which chips are going to be created by default
  */
 function addChip(element) {
+  console.log("Adding chip for element:", element);
   if (!element || (!element.name && element?.tagName !== "OPTION")) return;
   let inputChip = document.createElement("span") || null;
   if (!inputChip) return;
@@ -277,7 +278,7 @@ function updateChip(e) {
   if (addColsChecked.length > 0 && addColsChecked.length < addCols.length) {
     addChip(getCollsChips("neonext-collections-list", "Some Add NEON Colls"));
   }
-  // if any external NEON colls are selected (expect for "all"), then add chip
+  // if any external NEON colls are selected (except for "all"), then add chip
   const extCols = document.querySelectorAll(
     "#ext-collections-list input[type=checkbox]"
   );
@@ -289,6 +290,8 @@ function updateChip(e) {
   }
   // then go through remaining inputs (exclude db and datasetid)
   // go through entire form and find selected items
+  const queriedCollections = calculateAllPossibleCollectionsInScope('search-form-colls', ':checked',true);
+  checkTheCollectionsThatShouldBeChecked(queriedCollections);
   formInputs.forEach((item) => {
     if ((item.name != "db") | (item.name != "datasetid")) {
       if (
@@ -850,10 +853,30 @@ function expandCategoriesWithCheckedChildren() {
     }
     const uncheckedChildren = Array.from(targetInputElems).filter(checkbox => !checkbox.checked);
     if (uncheckedChildren.length === targetInputElems.length) {
-      toggleCategory(categoryPattern);
+      const container = document.getElementById(categoryPattern + '_inputs');
+      if(container.style.display !== 'none'){
+        toggleCategory(categoryPattern);
+      }
     }
   });
 }
+
+// function toggleCategory(categoryId) { // @TODO this is just moved for testing; clean up later
+// 	const container = document.getElementById(categoryId + '_inputs')
+
+// 	const open_toggle = document.getElementById(categoryId + '_open_toggle');
+// 	const close_toggle = document.getElementById(categoryId + '_close_toggle');
+
+// 	if(container.style.display === 'none') {
+// 		open_toggle.style.display = 'none';
+// 		close_toggle.style.display = 'flex';
+// 		container.style.display = 'flex';
+// 	} else {
+// 		open_toggle.style.display = 'flex';
+// 		close_toggle.style.display = 'none';
+// 		container.style.display = 'none';
+// 	}
+// }
 
 function setSearchForm(frm) {
   if (sessionStorage.querystr) {
@@ -1030,21 +1053,15 @@ function setSearchForm(frm) {
     }
     if (urlVar.db) {
       let queriedCollections = urlVar.db.split(",");
-      const allPossibleSpecimenCollections = Array.from(document.querySelectorAll('#specimens_collections input[name="db[]"]')).map(input => {
-        return input.id.split("_")[1];
-      });
+      const allPossibleSpecimenCollections = calculateAllPossibleCollectionsInScope("specimens_collections");
       const didAllSpecimenCollectionGetSelected = areSame(queriedCollections, allPossibleSpecimenCollections);
       if(didAllSpecimenCollectionGetSelected) queriedCollections = ["allspec"];
 
-      const allPossibleObservationCollections = Array.from(document.querySelectorAll('#observations_collections input[name="db[]"]')).map(input => {
-        return input.id.split("_")[1];
-      });
+      const allPossibleObservationCollections = calculateAllPossibleCollectionsInScope("observations_collections");
       const didAllObservationCollectionGetSelected = areSame(queriedCollections, allPossibleObservationCollections);
       if(didAllObservationCollectionGetSelected) queriedCollections = ["allobs"];
 
-      const allPossibleCollections = Array.from(document.querySelectorAll('#search-form-colls input[name="db[]"]')).map(input => {
-        return input.id.split("_")[1];
-      });
+      const allPossibleCollections = calculateAllPossibleCollectionsInScope("search-form-colls");
       const didAllCollectionGetSelected = areSame(queriedCollections, allPossibleCollections);
       if(didAllCollectionGetSelected) queriedCollections = ["all"];
 
@@ -1064,6 +1081,16 @@ function setSearchForm(frm) {
     }
     updateChip();
   }
+}
+
+function calculateAllPossibleCollectionsInScope(scope, modifier = '', shouldSplit=true) {
+  return Array.from(document.querySelectorAll(`#${scope} input[name="db[]"]${modifier}`)).map(input => {
+    if(shouldSplit) {
+      return input.id.split("_")[1];
+    } else{
+      return input.id;
+    }
+  });
 }
 
 function parseUrlVariables(varStr) {
