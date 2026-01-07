@@ -569,7 +569,7 @@ class OccurrenceCleaner extends Manager{
 	public function getBadCountyArr($countryID){
 		$retArr = array();
 		if(is_numeric($this->collid)){
-			$sql = 'SELECT o.country, o.stateprovince, o.county, count(o.occid) as cnt ' . $this->getBadCountyBaseSql($countryID) . ' GROUP BY o.country, o.stateprovince, o.county ';
+			$sql = 'SELECT o.country, o.stateprovince, o.county, count(DISTINCT o.occid) as cnt ' . $this->getBadCountyBaseSql($countryID) . ' GROUP BY o.country, o.stateprovince, o.county ';
 			$rs = $this->conn->query($sql);
 			$cnt = 0;
 			while($r = $rs->fetch_object()){
