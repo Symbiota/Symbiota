@@ -531,6 +531,21 @@ ALTER TABLE `uploadtaxa`
   ADD INDEX `IX_uploadtaxa_acceptance` (`acceptance` ASC);
 
 
+//Reset uploadspectemp indexes to be compound indexes including collid
+ALTER TABLE `uploadspectemp` 
+  DROP INDEX `IX_uploadspectemp_dbpk`,
+  DROP INDEX `IX_uploadspectemp_occurrenceID`,
+  DROP INDEX `IX_uploadspec_sciname`,
+  DROP INDEX `IX_uploadspec_catalognumber`,
+  DROP INDEX `IX_uploadspec_othercatalognumbers`;
+
+ALTER TABLE `uploadspectemp` 
+  ADD INDEX `IX_uploadspectemp_dbpk` (`collid`, `dbpk`),
+  ADD INDEX `IX_uploadspectemp_occurrenceID` (`collid`, `occurrenceID`),
+  ADD INDEX `IX_uploadspectemp_sciname` (`collid`, `sciname`),
+  ADD INDEX `IX_uploadspectemp_catalognumber` (`collid`, `catalogNumber`),
+  ADD INDEX `IX_uploadspectemp_othercatalognumbers` (`collid`, `otherCatalogNumbers`);  
+
 #Add indexes to accommodate conversion of imported state codes
 ALTER TABLE `uploadspectemp` 
   ADD INDEX `IX_uploadspectemp_countryCode` (`collid`, `countryCode`),
