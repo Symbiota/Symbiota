@@ -792,20 +792,6 @@ function handleHeaderSections(parentBoxCheckStatus, headerType, stopType = null)
   }
 }
 
-// function selectAllSpec(cb) {
-//   const boxCheckedStatus = cb.checked;
-//   uncheckSpecifiedCheckboxes(["all_collections", "all_observation_collections"]);
-//   handleCategoryChunks(boxCheckedStatus, translations.SPECIMEN);
-//   handleHeaderSections(boxCheckedStatus, translations.SPECIMEN, translations.OBSERVATION);
-// }
-
-// function selectAllObs(cb) {
-//   const boxCheckedStatus = cb.checked;
-//   uncheckSpecifiedCheckboxes(["all_collections", "all_specimen_collections"]);
-//   handleCategoryChunks(boxCheckedStatus, translations.OBSERVATION);
-//   handleHeaderSections(boxCheckedStatus, translations.OBSERVATION);
-// }
-
 const areSame = (arr1, arr2) => {
   if (arr1.length !== arr2.length) return false;
   const sorted1 = [...arr1].sort();
@@ -818,7 +804,7 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
   queriedCollections.forEach((queriedCollection) => {
     let targetElem = document.querySelector(`[id$="_${queriedCollection}"]:not([id^="Specimens_"]):not([id^="Observations_"])`);
     if (!targetElem) {
-      if (queriedCollection.includes("all")) {
+      if (queriedCollection.includes("all") && !queriedCollection.includes("allspec") && !queriedCollection.includes("allobs")) {
         targetElem = document.getElementById("all_collections");
         if (targetElem) {
           targetElem.checked = true;
