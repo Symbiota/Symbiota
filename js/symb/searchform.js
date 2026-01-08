@@ -333,6 +333,9 @@ function updateChip(e) {
         (item.type == "text" && item.value != "") |
         (item.type == "number" && item.value != "")
       ) {
+        if(didAllCollectionGetSelected && item.id === "all_collections"){
+          addChip(item);
+        }
         if (
           (didAllCollectionGetSelected) &&
           item.name === "db[]" &&
