@@ -768,6 +768,8 @@ class SpecUploadBase extends SpecUpload{
 
 		$sql = 'UPDATE uploadspectemp SET basisOfRecord = "'.$borValue.'" WHERE basisOfRecord IS NULL AND occid IS NULL';
 		$this->conn->query($sql);
+		$sql = 'UPDATE uploadspectemp u JOIN omoccurrences o ON u.occid = o.occid SET u.basisOfRecord = o.basisOfRecord WHERE u.basisOfRecord IS NULL AND u.occid IS NOT NULL;';
+		$this->conn->query($sql);
 	}
 
 	public function getTransferReport(){
