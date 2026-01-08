@@ -290,18 +290,18 @@ function updateChip(e) {
   //   // allCollectionsChip.checked = false;
   // }
   
-  if (!didAllCollectionGetSelected && individualCollectionsChecked.length > 0) {
-    // @TODO remove type-level chips
+  // if (!didAllCollectionGetSelected && individualCollectionsChecked.length > 0) {
+  //   // @TODO remove type-level chips
 
-    individualCollectionsChecked.forEach((coll) => {
-      const shouldDiscludeBecauseInAllSpecimens = didAllSpecimenCollectionGetSelected && (allPossibleSpecimenCollections.includes(coll.value));
-      const shouldDiscludeBecauseInAllObservations = didAllObservationCollectionGetSelected && (allPossibleObservationCollections.includes(coll.value));
-      if(!shouldDiscludeBecauseInAllSpecimens && !shouldDiscludeBecauseInAllObservations){
-        // addChip(item);
-        // getCollsChips(coll.id, coll.id.split("_")[0]);
-      }
-    });
-  }
+  //   // individualCollectionsChecked.forEach((coll) => {
+  //   //   const shouldDiscludeBecauseInAllSpecimens = didAllSpecimenCollectionGetSelected && (allPossibleSpecimenCollections.includes(coll.value));
+  //   //   const shouldDiscludeBecauseInAllObservations = didAllObservationCollectionGetSelected && (allPossibleObservationCollections.includes(coll.value));
+  //   //   if(!shouldDiscludeBecauseInAllSpecimens && !shouldDiscludeBecauseInAllObservations){
+  //   //     // addChip(item);
+  //   //     // getCollsChips(coll.id, coll.id.split("_")[0]);
+  //   //   }
+  //   // });
+  // }
   // if any additional NEON colls are selected (except for "all"), then add chip
   const addCols = document.querySelectorAll(
     "#neonext-collections-list input[type=checkbox]"
@@ -333,16 +333,16 @@ function updateChip(e) {
         (item.type == "text" && item.value != "") |
         (item.type == "number" && item.value != "")
       ) {
-        if(didAllCollectionGetSelected && item.id === "chips-all_collections"){
-          removeChip(item);
+        if(didAllCollectionGetSelected && item.id === "all_collections"){
+          // removeChip(item);
           addChip(item);
         }
-        if(didAllSpecimenCollectionGetSelected && item.id === "chips-all_specimen_collections"){
-          removeChip(item);
+        if(didAllSpecimenCollectionGetSelected && item.id === "all_specimen_collections"){
+          // removeChip(item);
           addChip(item);
         }
-        if(didAllObservationCollectionGetSelected && item.id === "chips-all_observation_collections"){
-          removeChip(item);
+        if(didAllObservationCollectionGetSelected && item.id === "all_observation_collections"){
+          // removeChip(item);
           addChip(item);
         }
         if (
@@ -368,8 +368,8 @@ function updateChip(e) {
             // 1 @TODO deleteMe
             const allSpecimenInputExplicitlySelected = document.getElementById("all_specimen_collections")?.checked || false;
             const allObservationInputExplicitlySelected = document.getElementById("all_observation_collections")?.checked || false;
-            const shouldDiscludeBecauseInAllSpecimens = (didAllSpecimenCollectionGetSelected||allSpecimenInputExplicitlySelected) && (allPossibleSpecimenCollections.includes(item.value));
-            const shouldDiscludeBecauseInAllObservations = (didAllObservationCollectionGetSelected||allObservationInputExplicitlySelected) && (allPossibleObservationCollections.includes(item.value));
+            const shouldDiscludeBecauseInAllSpecimens = ((didAllSpecimenCollectionGetSelected||allSpecimenInputExplicitlySelected) && (allPossibleSpecimenCollections.includes(item.value))) || item.id === "all_specimen_collections";
+            const shouldDiscludeBecauseInAllObservations = ((didAllObservationCollectionGetSelected||allObservationInputExplicitlySelected) && (allPossibleObservationCollections.includes(item.value))) || item.id === "all_observation_collections";
             if(!shouldDiscludeBecauseInAllSpecimens && !shouldDiscludeBecauseInAllObservations){
               addChip(item);
             }
