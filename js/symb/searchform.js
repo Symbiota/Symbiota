@@ -255,10 +255,6 @@ function updateChip(e) {
   ) {
     addChip(getDomainsSitesChips());
   }
-  // if any collections are selected (except for "all"), then add chip; this logic is alternatively handled in the formInputs for loop below
-  // const allCollectionsChecked = allCollections?.checked || false;
-  // const allSpecimenCollectionsChecked = allSpecimenCollections?.checked || false;
-  // const allObservationCollectionsChecked = allObservationCollections?.checked || false;
 
   const individualCollectionsChecked = Array.from(
     document.querySelectorAll(`#search-form-colls input[name="db[]"]:checked`)
@@ -267,41 +263,13 @@ function updateChip(e) {
 
   const allPossibleSpecimenCollections = calculateAllPossibleCollectionsInScope("specimens_collections");
   const didAllSpecimenCollectionGetSelected = contains(individualCollectionsCheckedIds, allPossibleSpecimenCollections);
-  // if(!didAllSpecimenCollectionGetSelected) {
-  //   // const allSpecChip = document.getElementById("chip-all_specimen_collections");
-  //   const allSpecimenCollectionsChip = document.getElementById("all_specimen_collections");
-  //   // removeChip(allObservationCollectionsChip);
-  //   // allSpecimenCollectionsChip.checked = false;
-  // }
 
   const allPossibleObservationCollections = calculateAllPossibleCollectionsInScope("observations_collections");
   const didAllObservationCollectionGetSelected = contains(individualCollectionsCheckedIds, allPossibleObservationCollections);
-  // if(!didAllObservationCollectionGetSelected){
-  //   const allObservationCollectionsChip = document.getElementById("all_observation_collections");
-  //   // allObservationCollectionsChip.checked = false;
-  //   // removeChip(allObservationCollectionsChip);
-  // }
 
   const allPossibleCollections = calculateAllPossibleCollectionsInScope("search-form-colls");
   const didAllCollectionGetSelected = areSame(allPossibleCollections, individualCollectionsCheckedIds);
-  // if(!didAllCollectionGetSelected){
-  //   const allCollectionsChip = document.getElementById("all_collections");
-  //   // removeChip(allCollectionsChip);
-  //   // allCollectionsChip.checked = false;
-  // }
-  
-  // if (!didAllCollectionGetSelected && individualCollectionsChecked.length > 0) {
-  //   // @TODO remove type-level chips
 
-  //   // individualCollectionsChecked.forEach((coll) => {
-  //   //   const shouldDiscludeBecauseInAllSpecimens = didAllSpecimenCollectionGetSelected && (allPossibleSpecimenCollections.includes(coll.value));
-  //   //   const shouldDiscludeBecauseInAllObservations = didAllObservationCollectionGetSelected && (allPossibleObservationCollections.includes(coll.value));
-  //   //   if(!shouldDiscludeBecauseInAllSpecimens && !shouldDiscludeBecauseInAllObservations){
-  //   //     // addChip(item);
-  //   //     // getCollsChips(coll.id, coll.id.split("_")[0]);
-  //   //   }
-  //   // });
-  // }
   // if any additional NEON colls are selected (except for "all"), then add chip
   const addCols = document.querySelectorAll(
     "#neonext-collections-list input[type=checkbox]"
@@ -334,15 +302,12 @@ function updateChip(e) {
         (item.type == "number" && item.value != "")
       ) {
         if(didAllCollectionGetSelected && item.id === "all_collections"){
-          // removeChip(item);
           addChip(item);
         }
         if(didAllSpecimenCollectionGetSelected && item.id === "all_specimen_collections"){
-          // removeChip(item);
           addChip(item);
         }
         if(didAllObservationCollectionGetSelected && item.id === "all_observation_collections"){
-          // removeChip(item);
           addChip(item);
         }
         if (
@@ -364,13 +329,8 @@ function updateChip(e) {
             (val) => val.id === item.id && val.value === item.value
           );
           if(!isInDefaultValList && item.hasAttribute("data-chip")) {
-            // addChip(item);
-            // 1 @TODO deleteMe
-            const allSpecimenInputExplicitlySelected = document.getElementById("all_specimen_collections")?.checked || false;
-            const allObservationInputExplicitlySelected = document.getElementById("all_observation_collections")?.checked || false;
-            const shouldDiscludeBecauseInAllSpecimens = ((didAllSpecimenCollectionGetSelected||allSpecimenInputExplicitlySelected) && (allPossibleSpecimenCollections.includes(item.value))) || item.id === "all_specimen_collections";
-            const shouldDiscludeBecauseInAllObservations = ((didAllObservationCollectionGetSelected||allObservationInputExplicitlySelected) && (allPossibleObservationCollections.includes(item.value))) || item.id === "all_observation_collections";
-            if(!shouldDiscludeBecauseInAllSpecimens && !shouldDiscludeBecauseInAllObservations){
+            const itemIsOutsidePanTypeSelections = calculateWhetherItemIsOutsidePanTypeSelections(item, didAllSpecimenCollectionGetSelected, didAllObservationCollectionGetSelected, allPossibleSpecimenCollections, allPossibleObservationCollections);
+            if(itemIsOutsidePanTypeSelections){
               addChip(item);
             }
           }
@@ -393,17 +353,24 @@ function updateChip(e) {
         (val) => val.id === item.id && val.value === item.value
       );
       if (!isInDefaultValList) {
-        // 2 @TODO deleteMe
-        const allSpecimenInputExplicitlySelected = document.getElementById("all_specimen_collections")?.checked || false;
-        const allObservationInputExplicitlySelected = document.getElementById("all_observation_collections")?.checked || false;
-        const shouldDiscludeBecauseInAllSpecimens = (didAllSpecimenCollectionGetSelected||allSpecimenInputExplicitlySelected) && (allPossibleSpecimenCollections.includes(item.value));
-        const shouldDiscludeBecauseInAllObservations = (didAllObservationCollectionGetSelected||allObservationInputExplicitlySelected) && (allPossibleObservationCollections.includes(item.value));
-        if(!shouldDiscludeBecauseInAllSpecimens && !shouldDiscludeBecauseInAllObservations){
+        const itemIsOutsidePanTypeSelections = calculateWhetherItemIsOutsidePanTypeSelections(item, didAllSpecimenCollectionGetSelected, didAllObservationCollectionGetSelected, allPossibleSpecimenCollections, allPossibleObservationCollections);
+        if(itemIsOutsidePanTypeSelections){
           addChip(item);
         }
       }
     }
   });
+}
+
+function calculateWhetherItemIsOutsidePanTypeSelections(item, didAllSpecimenCollectionGetSelected, didAllObservationCollectionGetSelected, allPossibleSpecimenCollections, allPossibleObservationCollections){
+  if(didAllSpecimenCollectionGetSelected==null || didAllObservationCollectionGetSelected==null || allPossibleSpecimenCollections==null || allPossibleObservationCollections==null){
+    return true;
+  }
+  const allSpecimenInputExplicitlySelected = document.getElementById("all_specimen_collections")?.checked || false;
+  const allObservationInputExplicitlySelected = document.getElementById("all_observation_collections")?.checked || false;
+  const shouldDiscludeBecauseInAllSpecimens = ((didAllSpecimenCollectionGetSelected||allSpecimenInputExplicitlySelected) && (allPossibleSpecimenCollections.includes(item.value))) || item.id === "all_specimen_collections";
+  const shouldDiscludeBecauseInAllObservations = ((didAllObservationCollectionGetSelected||allObservationInputExplicitlySelected) && (allPossibleObservationCollections.includes(item.value))) || item.id === "all_observation_collections";
+  return !shouldDiscludeBecauseInAllSpecimens && !shouldDiscludeBecauseInAllObservations;
 }
 
 /**
@@ -764,31 +731,12 @@ function uncheckSpecifiedCheckboxes(checkboxIds) {
 }
 
 function handleCategoryChunks(parentBoxCheckStatus, collectionType) {
-  // const collectionTypeLowerCase = collectionType.toLowerCase();
   const categoryLevelFieldSets = document.querySelectorAll(`fieldset[id^="${collectionType}_"][id$="_container"]`);
   categoryLevelFieldSets.forEach((categoryFieldset) => {
-    // categoryFieldset.checked = parentBoxCheckStatus;
     const inputElements = categoryFieldset.querySelectorAll('input');
     inputElements.forEach((inputElem) => {
       inputElem.checked = parentBoxCheckStatus;
     })
-
-
-
-    // const legends = categoryFieldset.querySelectorAll('fieldset[name="subcollection-fieldset"] legend');
-    // legends.forEach((legend) => {
-    //   if (legend.textContent.includes(collectionType)) {
-    //     const categoryCheckbox = categoryFieldset.querySelector('input[name="cat[]"]');
-    //     if (categoryCheckbox) {
-    //       categoryCheckbox.checked = parentBoxCheckStatus;
-    //     }
-        
-    //     const collectionCheckboxes = categoryFieldset.querySelectorAll('input[name="db[]"]');
-    //     collectionCheckboxes.forEach((checkbox) => {
-    //       checkbox.checked = parentBoxCheckStatus;
-    //     });
-    //   }
-    // });
   });
 }
 
@@ -856,16 +804,7 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
         }
         return;
       } else {
-        // Do nothing?
-        // const prefix = "coll-" + queriedCollection + "-"; // @TODO this is likely broken; fix it
-        // const targetElems =
-        //   document.querySelectorAll(`[id="_${queriedCollection}"][name="db[]"]`) || [];
-        // if (targetElems.length > 0) {
-        //   const targetElem = candidateTargetElems[0]; // there should only be one match; get the first one
-        //   if(targetElem){
-        //     targetElem.checked = true;
-        //   }
-        // }
+        // Do nothing
       }
     }
     else {
@@ -894,7 +833,6 @@ function generateTargetInputElementsForCategory(callbackFn) {
   });
 }
 
-
 function updateCategoryCheckboxes() {
   generateTargetInputElementsForCategory((categoryPattern, targetInputElems) => {
     const checkedChildren = Array.from(targetInputElems).filter(checkbox => checkbox.checked);
@@ -917,28 +855,8 @@ function expandCategoriesWithSomeCheckedChildren() {
     } else if(checkedChildren.length === 0 && container.style.display === 'flex') {
       toggleCategory(categoryPattern);
     }
-    // const uncheckedChildren = Array.from(targetInputElems).filter(checkbox => !checkbox.checked);
-    // if (uncheckedChildren.length === targetInputElems.length && container.style.display === 'none') {
-    // }
   });
 }
-
-// function toggleCategory(categoryId) { // @TODO this is just moved for testing; clean up later
-// 	const container = document.getElementById(categoryId + '_inputs')
-
-// 	const open_toggle = document.getElementById(categoryId + '_open_toggle');
-// 	const close_toggle = document.getElementById(categoryId + '_close_toggle');
-
-// 	if(container.style.display === 'none') {
-// 		open_toggle.style.display = 'none';
-// 		close_toggle.style.display = 'flex';
-// 		container.style.display = 'flex';
-// 	} else {
-// 		open_toggle.style.display = 'flex';
-// 		close_toggle.style.display = 'none';
-// 		container.style.display = 'none';
-// 	}
-// }
 
 function setSearchForm(frm) {
   if (sessionStorage.querystr) {
@@ -1116,17 +1034,6 @@ function setSearchForm(frm) {
     if (urlVar.db) {
       let queriedCollections = urlVar.db.split(",");
       const updatedQueriedCollections = updateQueryListWithTypeCollections(queriedCollections);
-      // const allPossibleSpecimenCollections = calculateAllPossibleCollectionsInScope("specimens_collections");
-      // const didAllSpecimenCollectionGetSelected = contains(queriedCollections,allPossibleSpecimenCollections);
-      // if(didAllSpecimenCollectionGetSelected) queriedCollections = [...queriedCollections, "allspec"];
-
-      // const allPossibleObservationCollections = calculateAllPossibleCollectionsInScope("observations_collections");
-      // const didAllObservationCollectionGetSelected = contains(queriedCollections, allPossibleObservationCollections);
-      // if(didAllObservationCollectionGetSelected) queriedCollections = [...queriedCollections, "allobs"];
-
-      // const allPossibleCollections = calculateAllPossibleCollectionsInScope("search-form-colls");
-      // const didAllCollectionGetSelected = contains(queriedCollections, allPossibleCollections);
-      // if(didAllCollectionGetSelected) queriedCollections = ["all"];
 
       if (updatedQueriedCollections.length > 0) {
         uncheckEverything();
