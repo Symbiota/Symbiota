@@ -932,7 +932,7 @@ else{
 										</div>
 										<?php
 										if(isset($ACTIVATE_EXSICCATI) && $ACTIVATE_EXSICCATI){
-											$exsArr = $occManager->getExsiccati();
+											$exsArr = $occManager->getExsiccati($occId);
 											?>
 											<div id="exsDiv">
 												<div id="ometidDiv" class="field-div">

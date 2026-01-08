@@ -362,7 +362,7 @@ class ChecklistManager extends Manager{
 					FROM media m INNER JOIN omoccurrences o ON m.occid = o.occid
 					INNER JOIN fmvouchers v ON o.occid = v.occid
 					INNER JOIN fmchklsttaxalink cl ON v.clTaxaID = cl.clTaxaID
-					WHERE (cl.clid = '.$clidStr.') AND (m.tid IN('.implode(',',array_keys($this->taxaList)).'))
+					WHERE (cl.clid IN('.$clidStr.')) AND (m.tid IN('.implode(',',array_keys($this->taxaList)).'))
 					ORDER BY m.sortOccurrence, m.sortSequence';
 				$matchedArr = $this->setImageSubset($sql);
 			}

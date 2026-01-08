@@ -741,7 +741,7 @@ class OccurrenceCollectionProfile extends OmCollections{
 				'c.collectionname, month(m.InitialTimeStamp) as monthEntered, year(m.InitialTimeStamp) as yearEntered, '.
 				'COUNT(m.mediaID) AS imgcnt '.
 				'FROM omoccurrences AS o INNER JOIN omcollections AS c ON o.collid = c.collid '.
-				'LEFT JOIN media AS i ON o.occid = m.occid '.
+				'LEFT JOIN media AS m ON o.occid = m.occid '.
 				'WHERE o.collid in('.$collId.') AND datediff(curdate(), m.InitialTimeStamp) < '.$days.' '.
 				'GROUP BY yearEntered,monthEntered,o.collid ORDER BY c.collectionname ';
 			//echo $sql2;
