@@ -266,29 +266,29 @@ function updateChip(e) {
   const individualCollectionsCheckedIds = individualCollectionsChecked.map(coll => coll.value);
 
   const allPossibleSpecimenCollections = calculateAllPossibleCollectionsInScope("specimens_collections");
-  const didAllSpecimenCollectionGetSelected = areSame(individualCollectionsCheckedIds, allPossibleSpecimenCollections);
-  if(!didAllSpecimenCollectionGetSelected) {
-    // const allSpecChip = document.getElementById("chip-all_specimen_collections");
-    const allSpecimenCollectionsChip = document.getElementById("all_specimen_collections");
-    // removeChip(allObservationCollectionsChip);
-    // allSpecimenCollectionsChip.checked = false;
-  }
+  const didAllSpecimenCollectionGetSelected = contains(individualCollectionsCheckedIds, allPossibleSpecimenCollections);
+  // if(!didAllSpecimenCollectionGetSelected) {
+  //   // const allSpecChip = document.getElementById("chip-all_specimen_collections");
+  //   const allSpecimenCollectionsChip = document.getElementById("all_specimen_collections");
+  //   // removeChip(allObservationCollectionsChip);
+  //   // allSpecimenCollectionsChip.checked = false;
+  // }
 
   const allPossibleObservationCollections = calculateAllPossibleCollectionsInScope("observations_collections");
-  const didAllObservationCollectionGetSelected = areSame(individualCollectionsCheckedIds, allPossibleObservationCollections);
-  if(!didAllObservationCollectionGetSelected){
-    const allObservationCollectionsChip = document.getElementById("all_observation_collections");
-    // allObservationCollectionsChip.checked = false;
-    // removeChip(allObservationCollectionsChip);
-  }
+  const didAllObservationCollectionGetSelected = contains(individualCollectionsCheckedIds, allPossibleObservationCollections);
+  // if(!didAllObservationCollectionGetSelected){
+  //   const allObservationCollectionsChip = document.getElementById("all_observation_collections");
+  //   // allObservationCollectionsChip.checked = false;
+  //   // removeChip(allObservationCollectionsChip);
+  // }
 
   const allPossibleCollections = calculateAllPossibleCollectionsInScope("search-form-colls");
-  const didAllCollectionGetSelected = areSame(individualCollectionsCheckedIds, allPossibleCollections);
-  if(!didAllCollectionGetSelected){
-    const allCollectionsChip = document.getElementById("all_collections");
-    // removeChip(allCollectionsChip);
-    // allCollectionsChip.checked = false;
-  }
+  const didAllCollectionGetSelected = areSame(allPossibleCollections, individualCollectionsCheckedIds);
+  // if(!didAllCollectionGetSelected){
+  //   const allCollectionsChip = document.getElementById("all_collections");
+  //   // removeChip(allCollectionsChip);
+  //   // allCollectionsChip.checked = false;
+  // }
   
   if (!didAllCollectionGetSelected && individualCollectionsChecked.length > 0) {
     // @TODO remove type-level chips
@@ -352,8 +352,10 @@ function updateChip(e) {
           if(!isInDefaultValList && item.hasAttribute("data-chip")) {
             // addChip(item);
             // 1 @TODO deleteMe
-            const shouldDiscludeBecauseInAllSpecimens = didAllSpecimenCollectionGetSelected && (allPossibleSpecimenCollections.includes(item.value));
-            const shouldDiscludeBecauseInAllObservations = didAllObservationCollectionGetSelected && (allPossibleObservationCollections.includes(item.value));
+            const allSpecimenInputExplicitlySelected = document.getElementById("all_specimen_collections")?.checked || false;
+            const allObservationInputExplicitlySelected = document.getElementById("all_observation_collections")?.checked || false;
+            const shouldDiscludeBecauseInAllSpecimens = (didAllSpecimenCollectionGetSelected||allSpecimenInputExplicitlySelected) && (allPossibleSpecimenCollections.includes(item.value));
+            const shouldDiscludeBecauseInAllObservations = (didAllObservationCollectionGetSelected||allObservationInputExplicitlySelected) && (allPossibleObservationCollections.includes(item.value));
             if(!shouldDiscludeBecauseInAllSpecimens && !shouldDiscludeBecauseInAllObservations){
               addChip(item);
             }
@@ -378,8 +380,10 @@ function updateChip(e) {
       );
       if (!isInDefaultValList) {
         // 2 @TODO deleteMe
-        const shouldDiscludeBecauseInAllSpecimens = didAllSpecimenCollectionGetSelected && (allPossibleSpecimenCollections.includes(item.value));
-        const shouldDiscludeBecauseInAllObservations = didAllObservationCollectionGetSelected && (allPossibleObservationCollections.includes(item.value));
+        const allSpecimenInputExplicitlySelected = document.getElementById("all_specimen_collections")?.checked || false;
+        const allObservationInputExplicitlySelected = document.getElementById("all_observation_collections")?.checked || false;
+        const shouldDiscludeBecauseInAllSpecimens = (didAllSpecimenCollectionGetSelected||allSpecimenInputExplicitlySelected) && (allPossibleSpecimenCollections.includes(item.value));
+        const shouldDiscludeBecauseInAllObservations = (didAllObservationCollectionGetSelected||allObservationInputExplicitlySelected) && (allPossibleObservationCollections.includes(item.value));
         if(!shouldDiscludeBecauseInAllSpecimens && !shouldDiscludeBecauseInAllObservations){
           addChip(item);
         }
@@ -717,6 +721,10 @@ function hideColCheckbox(collid) {
 function uncheckEverything() {
   const checkUncheckAllElem = document.getElementById("all_collections");
   checkUncheckAllElem.checked = false;
+  const allSpecimenCollectionsElem = document.getElementById("all_specimen_collections");
+  allSpecimenCollectionsElem.checked = false;
+  const allObservationCollectionsElem = document.getElementById("all_observation_collections");
+  allObservationCollectionsElem.checked = false;
   const categoryCollectionsChecked = Array.from(
     document.querySelectorAll(`#search-form-colls input[name="cat[]"]:checked`)
   );
@@ -792,11 +800,18 @@ function handleHeaderSections(parentBoxCheckStatus, headerType, stopType = null)
   }
 }
 
-const areSame = (arr1, arr2) => {
+function areSame(arr1, arr2) {
   if (arr1.length !== arr2.length) return false;
   const sorted1 = [...arr1].sort();
   const sorted2 = [...arr2].sort();
   return sorted1.every((val, index) => val === sorted2[index]);
+};
+
+function contains(bigger, smaller) {
+  if (bigger.length < smaller.length) return false;
+  const sorted1 = [...bigger].sort();
+  const sorted2 = [...smaller].sort();
+  return sorted2.every((val) => sorted1.includes(val));
 };
 
 
@@ -1086,21 +1101,22 @@ function setSearchForm(frm) {
     }
     if (urlVar.db) {
       let queriedCollections = urlVar.db.split(",");
-      const allPossibleSpecimenCollections = calculateAllPossibleCollectionsInScope("specimens_collections");
-      const didAllSpecimenCollectionGetSelected = areSame(queriedCollections, allPossibleSpecimenCollections);
-      if(didAllSpecimenCollectionGetSelected) queriedCollections = [...queriedCollections, "allspec"];
+      const updatedQueriedCollections = updateQueryListWithTypeCollections(queriedCollections);
+      // const allPossibleSpecimenCollections = calculateAllPossibleCollectionsInScope("specimens_collections");
+      // const didAllSpecimenCollectionGetSelected = contains(queriedCollections,allPossibleSpecimenCollections);
+      // if(didAllSpecimenCollectionGetSelected) queriedCollections = [...queriedCollections, "allspec"];
 
-      const allPossibleObservationCollections = calculateAllPossibleCollectionsInScope("observations_collections");
-      const didAllObservationCollectionGetSelected = areSame(queriedCollections, allPossibleObservationCollections);
-      if(didAllObservationCollectionGetSelected) queriedCollections = [...queriedCollections, "allobs"];
+      // const allPossibleObservationCollections = calculateAllPossibleCollectionsInScope("observations_collections");
+      // const didAllObservationCollectionGetSelected = contains(queriedCollections, allPossibleObservationCollections);
+      // if(didAllObservationCollectionGetSelected) queriedCollections = [...queriedCollections, "allobs"];
 
-      const allPossibleCollections = calculateAllPossibleCollectionsInScope("search-form-colls");
-      const didAllCollectionGetSelected = areSame(queriedCollections, allPossibleCollections);
-      if(didAllCollectionGetSelected) queriedCollections = ["all"];
+      // const allPossibleCollections = calculateAllPossibleCollectionsInScope("search-form-colls");
+      // const didAllCollectionGetSelected = contains(queriedCollections, allPossibleCollections);
+      // if(didAllCollectionGetSelected) queriedCollections = ["all"];
 
-      if (queriedCollections.length > 0) {
+      if (updatedQueriedCollections.length > 0) {
         uncheckEverything();
-        checkTheCollectionsThatShouldBeChecked(queriedCollections);
+        checkTheCollectionsThatShouldBeChecked(updatedQueriedCollections);
       }
     }
     for (const i in urlVar) {
@@ -1114,6 +1130,22 @@ function setSearchForm(frm) {
     }
     updateChip();
   }
+}
+
+function updateQueryListWithTypeCollections(queryList){
+  let newQueryList = queryList;
+  const allPossibleSpecimenCollections = calculateAllPossibleCollectionsInScope("specimens_collections");
+  const didAllSpecimenCollectionGetSelected = contains(newQueryList,allPossibleSpecimenCollections);
+  if(didAllSpecimenCollectionGetSelected) newQueryList = [...newQueryList, "allspec"];
+
+  const allPossibleObservationCollections = calculateAllPossibleCollectionsInScope("observations_collections");
+  const didAllObservationCollectionGetSelected = contains(newQueryList, allPossibleObservationCollections);
+  if(didAllObservationCollectionGetSelected) newQueryList = [...newQueryList, "allobs"];
+
+  const allPossibleCollections = calculateAllPossibleCollectionsInScope("search-form-colls");
+  const didAllCollectionGetSelected = contains(newQueryList, allPossibleCollections);
+  if(didAllCollectionGetSelected) newQueryList = ["all"];
+  return newQueryList;
 }
 
 function calculateAllPossibleCollectionsInScope(scope, modifier = '', shouldSplit=true) {
@@ -1217,7 +1249,14 @@ searchFormColls?.addEventListener("change", autoToggleSelector, false);
 //////// Binds Update chip on event change
 const formInputs = document.querySelectorAll(".content input");
 formInputs.forEach((formInput) => {
-  formInput.addEventListener("change", updateChip);
+  formInput.addEventListener("change", ()=>{
+    const queriedCollections = Array.from(document.querySelectorAll(`#search-form-colls input[name="db[]"]:checked`)).filter(elem=>elem.id.split("_")[1]!==undefined).map(elem=>elem.id.split("_")[1]);
+    const updatedQueriedCollections = updateQueryListWithTypeCollections(queriedCollections);
+    uncheckEverything();
+    checkTheCollectionsThatShouldBeChecked(updatedQueriedCollections);
+    updateChip();
+  }
+);
 });
 
 const selectionElements = document.querySelectorAll(".content select");
