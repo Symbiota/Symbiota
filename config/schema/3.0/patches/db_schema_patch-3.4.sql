@@ -557,7 +557,11 @@ ALTER TABLE `uploadspectemp`
 ALTER TABLE `users` 
   CHANGE COLUMN `password` `password` VARCHAR(255) NULL DEFAULT NULL ;
 
-  
+
 # Add index to improve performance on counts on verbatimCoordinates seen in OccurrenceCleaner
 ALTER TABLE `omoccurrences`
   ADD INDEX `IX_occurrences_verbatimCoordinates` (`collid`,`verbatimCoordinates`);
+
+# Add index to improve performance on basisOfRecord autofill during imports
+ALTER TABLE `uploadspectemp` 
+  ADD INDEX `idx_basisOfRecord` (`basisOfRecord`);
