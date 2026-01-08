@@ -333,13 +333,24 @@ function updateChip(e) {
         (item.type == "text" && item.value != "") |
         (item.type == "number" && item.value != "")
       ) {
-        if(didAllCollectionGetSelected && item.id === "all_collections"){
+        if(didAllCollectionGetSelected && item.id === "chips-all_collections"){
+          removeChip(item);
+          addChip(item);
+        }
+        if(didAllSpecimenCollectionGetSelected && item.id === "chips-all_specimen_collections"){
+          removeChip(item);
+          addChip(item);
+        }
+        if(didAllObservationCollectionGetSelected && item.id === "chips-all_observation_collections"){
+          removeChip(item);
           addChip(item);
         }
         if (
           (didAllCollectionGetSelected) &&
           item.name === "db[]" &&
-          item.id !== "all_collections"
+          item.id !== "all_collections" &&
+          item.id !== "all_specimen_collections" &&
+          item.id !== "all_observation_collections"
         ) {
           // don't add these chips;
         } else {
