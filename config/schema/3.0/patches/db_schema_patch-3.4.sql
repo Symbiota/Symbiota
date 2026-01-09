@@ -54,10 +54,20 @@ UPDATE IGNORE geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parent
   SET c.parentID = (SELECT c.geoThesID FROM geographicthesaurus c INNER JOIN geographicthesaurus p ON c.parentID = p.geoThesID WHERE c.geoTerm = "Montana" AND p.geoTerm = "United States")
   WHERE g.geoTerm IN("Montana") AND p.geoTerm = "Bulgaria";
 
+DELETE c.*
+  FROM geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  WHERE g.geoTerm IN("Montana") AND p.geoTerm = "Bulgaria";
+
 #Fixes issues where Maryland counties were linked to Liberia/Maryland  
 UPDATE IGNORE geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
   INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
   SET c.parentID = (SELECT c.geoThesID FROM geographicthesaurus c INNER JOIN geographicthesaurus p ON c.parentID = p.geoThesID WHERE c.geoTerm = "Maryland" AND p.geoTerm = "United States")
+  WHERE g.geoTerm IN("Maryland") AND p.geoTerm = "Liberia";
+
+DELETE c.*
+  FROM geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
   WHERE g.geoTerm IN("Maryland") AND p.geoTerm = "Liberia";
 
 
