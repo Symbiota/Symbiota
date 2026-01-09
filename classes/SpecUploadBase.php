@@ -1259,9 +1259,6 @@ class SpecUploadBase extends SpecUpload{
 					foreach ($paleoArr as $k => $v) {
 						$updateSQL[] = "$k = VALUES($k)";
 					}
-					// var_dump ('paleo array is: ' . $paleoArr);
-					// var_dump ('update sql is: ' . $updateSQL);
-					// exit;
 					$sql = 'INSERT INTO omoccurpaleo (occid' . $insertSQL . ') VALUES (' . $r->occid . $valueSQL . ') ON DUPLICATE KEY UPDATE ' . implode(', ', $updateSQL);
 					if (!$this->conn->query($sql)) {
 						$this->outputMsg('<li>ERROR adding paleo resources: ' . $this->conn->error . '</li>', 1);
