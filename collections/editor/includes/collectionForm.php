@@ -101,7 +101,14 @@ function toggleCategory(categoryId) {
 }
 
 </script>
-<div id="all_collections_parent_container">
+<div id="all_collections_parent_container" data-config='<?= json_encode([
+		'CATORD' => $CATORD ?? [],
+		'CATCLPSD' => $CATCLPSD ?? [],
+		'CATCHK' => $CATCHK ?? [],
+		'OBSCATORD' => $OBSCATORD ?? [],
+		'OBSCATCLPSD' => $OBSCATCLPSD ?? [],
+		'OBSCATCHK' => $OBSCATCHK ?? [],
+	]) ?>'>
 	<?php 
 	$checkboxConfigs = [
 		[
@@ -146,21 +153,18 @@ function toggleCategory(categoryId) {
 	<?php endforeach; ?>
 	<div id="collections_container">
 		<?php 
-			// var_dump($collectionsByCategory);
 			$collectionFormManager = new CollectionFormManager();
 			$sortedCollectionsByCategory = $collectionFormManager->reorderPortalCategories(
 				$collectionsByCategory,
 				$CATORD ?? [],
 				$OBSCATORD ?? []
 			);
-			// var_dump($sortedCollectionsByCategory);
 		 ?>
 		<?php foreach($sortedCollectionsByCategory as $collectionType => $categories): ?>
 		<div style="margin: 0;" id="<?= strtolower($collectionType) . '_collections' ?>">
 			<h2><?= $collectionType === 'Specimens'? $LANG['SPECIMEN_COLLECTIONS']: $LANG['OBSERVATION_COLLECTIONS'] ?></h2>
 			<?php foreach($categories as $category): ?>
 			<?php 
-				// echo $category['id'];
 				$categoryIdentifer = $collectionType . '_' . $category['id'];
 			?>
 		

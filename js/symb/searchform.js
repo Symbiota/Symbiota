@@ -776,6 +776,66 @@ function contains(bigger, smaller) {
   return sorted2.every((val) => sorted1.includes(val));
 };
 
+function checkTheCollectionsThatShouldBeCheckedBasedOnConfig() {
+  const targetCollectionsSpecimens = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CATORD;
+  const targetSpecimenCollectionsCheckedStatuses = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CATCHK;
+  const targetCollectionsObservations = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.OBSCATORD;
+  const targetObservationCollectionsCheckedStatuses = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.OBSCATCHK;
+  if (targetCollectionsSpecimens.length<1 && targetCollectionsObservations.length<1) return;
+  const queriedCollections = calculateTargetCollections(targetCollectionsSpecimens, targetSpecimenCollectionsCheckedStatuses, targetCollectionsObservations, targetObservationCollectionsCheckedStatuses);
+  queriedCollections.forEach((queriedCollection) => {
+    let targetElem = document.querySelector(`[id$="_${queriedCollection}"]:not([id^="Specimens_"]):not([id^="Observations_"])`); // @TODO this should query CATEGORY inputs
+    if (!targetElem) {
+      if (queriedCollection.includes("all") && !queriedCollection.includes("allspec") && !queriedCollection.includes("allobs")) {
+        targetElem = document.getElementById("all_collections");
+        if (targetElem) {
+          targetElem.checked = true;
+          handleCategoryChunks(true, "Specimens");
+          handleCategoryChunks(true, "Observations");
+        }
+        return;
+      } else if (queriedCollection.includes("allspec")) {
+        targetElem = document.getElementById("all_specimen_collections");
+        if (targetElem) {
+          targetElem.checked = true;
+          handleCategoryChunks(true, "Specimens");
+        }
+        return;
+      } else if (queriedCollection.includes("allobs")) {
+        targetElem = document.getElementById("all_observation_collections");
+        if (targetElem) {
+          targetElem.checked = true;
+          handleCategoryChunks(true, "Observations");
+        }
+        return;
+      } else {
+        // Do nothing
+      }
+    }
+    else {
+      targetElem.checked = true; 
+    }
+  });
+  updateCategoryCheckboxes();
+  expandCategoriesWithSomeCheckedChildren();
+}
+
+function calculateTargetCollections(targetCollectionsSpecimens, targetSpecimenCollectionsCheckedStatuses, targetCollectionsObservations, targetObservationCollectionsCheckedStatuses){
+  const targetCollections = [];
+  for (let i=0; i<targetCollectionsSpecimens.length; i++){
+    if(targetSpecimenCollectionsCheckedStatuses[i] === 1){
+      targetCollections.push(targetCollectionsSpecimens[i]);
+    }
+  }
+  for (let j=0; j<targetCollectionsObservations.length; j++){
+    if(targetObservationCollectionsCheckedStatuses[j] === 1){
+      targetCollections.push(targetCollectionsObservations[j]);
+    }
+  }
+  return targetCollections;
+}
+  
+
 
 function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
   queriedCollections.forEach((queriedCollection) => {
@@ -811,8 +871,6 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
       targetElem.checked = true; 
     }
   });
-  
-  
   updateCategoryCheckboxes();
   expandCategoriesWithSomeCheckedChildren();
 }
@@ -1050,6 +1108,9 @@ function setSearchForm(frm) {
       }
     }
     updateChip();
+  } else{
+    uncheckEverything();
+    checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
   }
 }
 
