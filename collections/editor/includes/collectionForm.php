@@ -102,52 +102,48 @@ function toggleCategory(categoryId) {
 
 </script>
 <div id="all_collections_parent_container">
-	<div id="all_collections_checkbox_container" style="display: inline-block; margin: 0;">
+	<?php 
+	$checkboxConfigs = [
+		[
+			'id' => 'all_collections',
+			'target' => 'collections_container',
+			'data_chip' => $LANG['ALL_SPECIMEN_COLLECTIONS'],
+			'margin' => '0',
+			'label_content' => $LANG['SELECT_DESELECT'] . '<a href="' . $CLIENT_ROOT . '/collections/misc/collprofiles.php">' . ' ' . $LANG['ALL_COLLECTIONS'] . '</a>',
+		],
+		[
+			'id' => 'all_specimen_collections',
+			'target' => 'specimens_collections',
+			'data_chip' => $LANG['ALL_SPECIMEN_COLLECTIONS'],
+			'margin' => '0 15px',
+			'label_content' => $LANG['SELECT_DESELECT_ALL_SPECIMENS'],
+		],
+		[
+			'id' => 'all_observation_collections',
+			'target' => 'observations_collections',
+			'data_chip' => $LANG['ALL_OBSERVATION_COLLECTIONS'],
+			'margin' => '0 15px',
+			'label_content' => $LANG['SELECT_DESELECT_ALL_OBSERVATIONS'],
+		]
+	];
+	?>
+	<?php foreach($checkboxConfigs as $checkboxConfig): ?>
+	<div id="<?= $checkboxConfig['id'] ?>_checkbox_container" style="display: inline-block; margin: <?= $checkboxConfig['margin'] ?>;">
 		<input
 			style="margin:0;"
-			onclick="toggleAllCheckboxes(document.getElementById('collections_container'), this.checked)"
-			data-chip="<?php echo $LANG['ALL_SPECIMEN_COLLECTIONS'] ?>"
+			onclick="toggleAllCheckboxes(document.getElementById('<?= $checkboxConfig['target'] ?>'), this.checked)"
+			data-chip="<?= $checkboxConfig['data_chip'] ?>"
 			type="checkbox"
-			id="all_collections"
-			name="all_collections"
+			id="<?= $checkboxConfig['id'] ?>"
+			name="<?= $checkboxConfig['id'] ?>"
 			value="1"
-			<?= array_key_exists('all_collections', $_REQUEST)? 'checked': '' ?>
+			<?= array_key_exists($checkboxConfig['id'], $_REQUEST)? 'checked': '' ?>
 		>
-		<label for="all_collections">
-			<?= $LANG['SELECT_DESELECT']?>
-			<a href="<?= $CLIENT_ROOT ?>/collections/misc/collprofiles.php"><?= $LANG['ALL_COLLECTIONS']?></a>
+		<label for="<?= $checkboxConfig['id'] ?>">
+			<?= $checkboxConfig['label_content']?>
 		</label>
 	</div>
-	<div id="all_specimen_collections_checkbox_container" style="display: inline-block; margin: 0 15px;">
-		<input
-		data-chip="<?php echo $LANG['ALL_SPECIMEN_COLLECTIONS'] ?>"
-		style="margin:0;"
-		onclick="toggleAllCheckboxes(document.getElementById('specimens_collections'), this.checked)"
-		type="checkbox"
-		id="all_specimen_collections"
-		name="all_specimen_collections"
-		value="1"
-		<?= array_key_exists('all_specimen_collections', $_REQUEST)? 'checked': '' ?>
-	>
-		<label for="all_specimen_collections">
-			<?= $LANG['SELECT_DESELECT_ALL_SPECIMENS']; ?>
-		</label>
-	</div>
-	<div id="all_observation_collections_checkbox_container" style="display: inline-block; margin: 0 15px;">
-		<input
-		data-chip="<?php echo $LANG['ALL_OBSERVATION_COLLECTIONS'] ?>"
-		style="margin:0;"
-		onclick="toggleAllCheckboxes(document.getElementById('observations_collections'), this.checked)"
-		type="checkbox"
-		id="all_observation_collections"
-		name="all_observation_collections"
-		value="1"
-		<?= array_key_exists('all_observation_collections', $_REQUEST)? 'checked': '' ?>
-		>
-		<label for="all_observation_collections">
-			<?= $LANG['SELECT_DESELECT_ALL_OBSERVATIONS']; ?>
-		</label>
-	</div>
+	<?php endforeach; ?>
 	<div id="collections_container">
 		<?php foreach($collectionsByCategory as $collectionType => $categories): ?>
 		<div style="margin: 0;" id="<?= strtolower($collectionType) . '_collections' ?>">
