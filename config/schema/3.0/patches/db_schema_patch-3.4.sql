@@ -548,6 +548,7 @@ ALTER TABLE `uploadspectemp`
 
 #Add indexes to accommodate conversion of imported state codes
 ALTER TABLE `uploadspectemp` 
+  ADD INDEX `IX_uploadspectemp_basisOfRecord` (`collid`, `basisOfRecord`),
   ADD INDEX `IX_uploadspectemp_countryCode` (`collid`, `countryCode`),
   ADD INDEX `IX_uploadspectemp_country` (`collid`, `country`),
   ADD INDEX `IX_uploadspectemp_stateProvince` (`collid`, `stateProvince`);
@@ -562,6 +563,3 @@ ALTER TABLE `users`
 ALTER TABLE `omoccurrences`
   ADD INDEX `IX_occurrences_verbatimCoordinates` (`collid`,`verbatimCoordinates`);
 
-# Add index to improve performance on basisOfRecord autofill during imports
-ALTER TABLE `uploadspectemp` 
-  ADD INDEX `idx_basisOfRecord` (`basisOfRecord`);
