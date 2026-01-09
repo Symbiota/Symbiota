@@ -145,11 +145,22 @@ function toggleCategory(categoryId) {
 	</div>
 	<?php endforeach; ?>
 	<div id="collections_container">
-		<?php foreach($collectionsByCategory as $collectionType => $categories): ?>
+		<?php 
+			// var_dump($collectionsByCategory);
+			$collectionFormManager = new CollectionFormManager();
+			$sortedCollectionsByCategory = $collectionFormManager->reorderPortalCategories(
+				$collectionsByCategory,
+				$CATORD ?? [],
+				$OBSCATORD ?? []
+			);
+			// var_dump($sortedCollectionsByCategory);
+		 ?>
+		<?php foreach($sortedCollectionsByCategory as $collectionType => $categories): ?>
 		<div style="margin: 0;" id="<?= strtolower($collectionType) . '_collections' ?>">
 			<h2><?= $collectionType === 'Specimens'? $LANG['SPECIMEN_COLLECTIONS']: $LANG['OBSERVATION_COLLECTIONS'] ?></h2>
 			<?php foreach($categories as $category): ?>
 			<?php 
+				// echo $category['id'];
 				$categoryIdentifer = $collectionType . '_' . $category['id'];
 			?>
 		
@@ -199,7 +210,6 @@ function toggleCategory(categoryId) {
 				>
 					<?php foreach($category['collections'] as $collection): ?>
 					<?php
-						$collectionFormManager = new CollectionFormManager();
 						$collid = array_key_exists('collid', $collection) ? $collection['collid'] : null;
 						$codeStr = $collectionFormManager->generateCodeStr($collection);
 					?>
