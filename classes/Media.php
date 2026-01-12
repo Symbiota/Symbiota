@@ -278,17 +278,27 @@ class Media {
 			'wma' => 'audio/x-ms-wma',
 		];
 
+		$misc = [
+			'pdf' => 'application/pdf',
+		];
+
 		if($type === MediaType::Image) {
 			return $image[$ext] ?? false;
 		} else if ($type=== MediaType::Audio) {
 			return $audio[$ext] ?? false;
+		} else if ($type=== MediaType::Misc) {
+			return $misc[$ext] ?? false;
 		} else {
 			$audio_result = $audio[$ext] ?? false;
 			$image_result = $image[$ext] ?? false;
-			if($audio_result && !$image_result) {
+			$misc_result = $misc[$ext] ?? false;
+
+			if($audio_result && !$image_result && !$misc_result) {
 				return $audio_result;
-			} else if(!$audio_result && $image_result) {
+			} else if(!$audio_result && $image_result && !$misc_result) {
 				return $image_result;
+			} else if(!$audio_result && !$image_result && $misc_result) {
+				return $misc_result;
 			} else {
 				// There was some mime type ambiguity so return false
 				return false;
