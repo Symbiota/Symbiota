@@ -124,7 +124,7 @@ $CSS_VERSION = '16';
 // Used for what media is allowed to be uploaded. Does not restrict external links
 $ALLOWED_MEDIA_MIME_TYPES = [
 	"image/jpeg", "image/png", "image/gif", 'image/bmp',
-	"audio/mpeg", "audio/wav", "audio/ogg"
+	"audio/mpeg", "audio/wav", "audio/ogg", "application/pdf"
 ];
 
 $MIME_FALL_BACK = 'image/jpeg';
