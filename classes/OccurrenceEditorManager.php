@@ -1763,17 +1763,17 @@ class OccurrenceEditorManager {
 
 			//Remap determinations
 			$sql = <<<'SQL'
-			UPDATE omoccurdeterminations 
-			SET occid = ? WHERE occid = ?
-			AND detid NOT IN (
-				SELECT source.detid FROM omoccurdeterminations source
-				JOIN omoccurdeterminations target ON target.occid = ? 
-				WHERE source.occid = ? 
+			UPDATE omoccurdeterminations,
+				(SELECT source.detid FROM omoccurdeterminations source
+				JOIN omoccurdeterminations target ON target.occid = ?
+				WHERE source.occid = ?
 				AND source.sciname = target.sciname
 				AND source.dateIdentified = target.dateIdentified
-				AND source.identifiedBy = target.identifiedBy
-			);
+				AND source.identifiedBy = target.identifiedBy) AS det
+				SET occid = ? WHERE occid = ?
+				AND omoccurdeterminations.detid != det.detid;
 			SQL;
+
 			QueryUtil::executeQuery($this->conn, $sql, [
 				//Update To This Occid
 				$targetOccid,
