@@ -218,7 +218,7 @@ if($isEditor && $action){
 				?>
 				<div id="tabs" style="margin:10px;">
 					<ul>
-						<li><a href="#commontab"><span><?= $LANG['SYN_VERNAC'] ?></span></a></li>
+						<li><a href="#commontab"><span><?= $LANG['VERNAC_COMMON'] ?></span></a></li>
 					<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&mediaPage=' . $mediaPage . '&mediaSortPage=' . $mediaSortPage?>"><span><?= $LANG['IMAGES'] ?></span></a></li>
 						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&cat=imagequicksort&mediaSortPage=' . $mediaSortPage . '&mediaPage=' . $mediaPage ?> "><span><?= $LANG['IMAGE_SORT'] ?></span></a></li>
 						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&cat=imageadd' . '&mediaSortPage=' . $mediaSortPage . '&mediaPage=' . $mediaPage ?>"><span><?= $LANG['ADD_IMAGE'] ?></span></a></li>
@@ -356,6 +356,7 @@ if($isEditor && $action){
 							}
 							?>
 						</div>
+						<!--
 						<hr/>
 						<fieldset style="width:650px;margin:5px 0px 0px 15px;">
 							<legend><b><?php echo $LANG['SYNONYMS']; ?></b></legend>
@@ -409,6 +410,7 @@ if($isEditor && $action){
 							<div style="margin:10px;">
 								*<?php echo $LANG['MOST_SYN_IN_TAX_THES'] . ' <a href="../../sitemap.php">' . $LANG['SITEMAP'] . '</a>).'; ?>
 							</div>
+							-->
 						</fieldset>
 					</div>
 				</div>
