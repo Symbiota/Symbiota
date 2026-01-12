@@ -258,16 +258,16 @@ if ($imgArr) {
 								<input name="sortSequence" type="text" value="<?php echo $imgArr["sortSequence"] ?? ''; ?>" size="5" />
 							</div>
 							<div style="margin-top:2px;">
-								<b><?php echo $LANG['WEB_IMAGE'] ?>:</b><br />
-								<input name="url" type="text" value="<?php echo $imgArr["url"]; ?>" style="width:90%;" />
+								<b><?php echo $LANG['LARGE_IMAGE'] ?>:</b><br />
+								<input name="originalUrl" type="text" value="<?php echo $imgArr["originalUrl"]; ?>" style="width:90%;" />
 								<?php
-								if ($imgArr["url"] && stripos($imgArr["url"], $MEDIA_ROOT_URL) === 0) {
+								if ($imgArr["originalUrl"] && stripos($imgArr["originalUrl"], $MEDIA_ROOT_URL) === 0) {
 								?>
-									<div style="margin-left:70px;">
-										<input type="checkbox" name="renameweburl" value="1" />
-										<?php echo $LANG['RENAME_WEB_IMAGE_FILE'] ?>
+									<div style="margin-left:80px;">
+										<input type="checkbox" name="renameorigurl" value="1" />
+										<?php echo $LANG['RENAME_LARGE_IMAGE_FILE'] ?>
 									</div>
-									<input name="old_url" type="hidden" value="<?php echo $imgArr["url"]; ?>" />
+									<input name="old_originalurl" type="hidden" value="<?php echo $imgArr["originalUrl"]; ?>" />
 								<?php
 								}
 								?>
@@ -288,16 +288,16 @@ if ($imgArr) {
 								?>
 							</div>
 							<div style="margin-top:2px;">
-								<b><?php echo $LANG['LARGE_IMAGE'] ?>:</b><br />
-								<input name="originalUrl" type="text" value="<?php echo $imgArr["originalUrl"]; ?>" style="width:90%;" />
+								<b><?php echo $LANG['WEB_IMAGE'] ?>:</b><br />
+								<input name="url" type="text" value="<?php echo $imgArr["url"]; ?>" style="width:90%;" />
 								<?php
-								if ($imgArr["originalUrl"] && stripos($imgArr["originalUrl"], $MEDIA_ROOT_URL) === 0) {
+								if ($imgArr["url"] && stripos($imgArr["url"], $MEDIA_ROOT_URL) === 0) {
 								?>
-									<div style="margin-left:80px;">
-										<input type="checkbox" name="renameorigurl" value="1" />
-										<?php echo $LANG['RENAME_LARGE_IMAGE_FILE'] ?>
+									<div style="margin-left:70px;">
+										<input type="checkbox" name="renameweburl" value="1" />
+										<?php echo $LANG['RENAME_WEB_IMAGE_FILE'] ?>
 									</div>
-									<input name="old_originalurl" type="hidden" value="<?php echo $imgArr["originalUrl"]; ?>" />
+									<input name="old_url" type="hidden" value="<?php echo $imgArr["url"]; ?>" />
 								<?php
 								}
 								?>
