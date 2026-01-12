@@ -597,6 +597,8 @@ class Media {
 					self::update_metadata($metadata, $media_metadata['mediaID'], $conn);
 				} elseif($media_type === MediaType::Audio) {
 					$storage->upload($file);
+				} elseif($media_type === MediaType::Misc) {
+					$storage->upload($file);
 				}
 			}
 
