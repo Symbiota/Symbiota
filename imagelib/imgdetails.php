@@ -101,14 +101,6 @@ if ($imgArr) {
 	<script>
 		var clientRoot = "<?php echo $CLIENT_ROOT; ?>";
 
-		function verifyEditForm(f) {
-			if (f.url.value.replace(/\s/g, "") == "") {
-				window.alert("<?php echo $LANG['ERROR_FILE_PATH'] ?>");
-				return false;
-			}
-			return true;
-		}
-
 		function verifyChangeTaxonForm(f) {
 			var sciName = f.targettaxon.value.replace(/^\s+|\s+$/g, "");
 			if (sciName == "") {
@@ -207,7 +199,7 @@ if ($imgArr) {
 			if ($isEditor && !$imgArr['occid']) {
 			?>
 				<div id="imageedit" style="display:<?php echo ($eMode ? 'block' : 'none'); ?>;">
-					<form name="editform" action="imgdetails.php" method="post" target="_self" onsubmit="return verifyEditForm(this);">
+					<form name="editform" action="imgdetails.php" method="post" target="_self">
 						<fieldset style="margin:5px 0px 5px 5px;">
 							<legend><b><?php echo $LANG['EDIT_IMAGE_DETAILS'] ?></b></legend>
 							<div style="margin-top:2px;">
