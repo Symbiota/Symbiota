@@ -61,15 +61,15 @@ if ($imgArr) {
 	$origUrl = $imgArr['originalUrl'];
 	$metaUrl = $imgArr['url'];
 	if (array_key_exists('MEDIA_DOMAIN', $GLOBALS)) {
-		if (substr($imgUrl, 0, 1) == '/') {
+		if ($imgUrl !== null && substr($imgUrl, 0, 1) == '/') {
 			$imgUrl = $GLOBALS['MEDIA_DOMAIN'] . $imgUrl;
 			$metaUrl = $GLOBALS['MEDIA_DOMAIN'] . $metaUrl;
 		}
-		if ($origUrl && substr($origUrl, 0, 1) == '/') {
+		if ($origUrl !== null && $origUrl && substr($origUrl, 0, 1) == '/') {
 			$origUrl = $GLOBALS['MEDIA_DOMAIN'] . $origUrl;
 		}
 	}
-	if (substr($metaUrl, 0, 1) == '/') {
+	if ($metaUrl !== null && substr($metaUrl, 0, 1) == '/') {
 		$metaUrl = $serverPath . $metaUrl;
 	}
 }
