@@ -103,7 +103,7 @@ function toggleCategory(categoryId) {
 </script>
 <div id="all_collections_parent_container" data-config='<?= json_encode([
 		'CATORD' => $CATORD ?? [],
-		'CATCLPSD' => $CATCLPSD ?? [],
+		'CATEXPND' => $CATEXPND ?? [],
 		'CATCHK' => $CATCHK ?? [],
 	]) ?>'>
 	<?php 

@@ -237,7 +237,7 @@ function removeChip(chip) {
  * Updateds chips based on selected options
  * @param {Event} e
  */
-function updateChip(e) {
+function updateChip(e, isInitialConfig=false) {
   document.getElementById("chips").innerHTML = "";
   // first go through collections and sites
 
@@ -292,8 +292,11 @@ function updateChip(e) {
   }
   // then go through remaining inputs (exclude db and datasetid)
   // go through entire form and find selected items
-  const checkedCollections = calculateAllPossibleCollectionsInScope('search-form-colls', ':checked',true);
-  checkTheCollectionsThatShouldBeChecked(checkedCollections);
+  if(!isInitialConfig){
+    const checkedCollections = calculateAllPossibleCollectionsInScope('search-form-colls', ':checked',true);
+    checkTheCollectionsThatShouldBeChecked(checkedCollections);
+  }
+  
   formInputs.forEach((item) => {
     if ((item.name != "db") | (item.name != "datasetid")) {
       if (
@@ -794,8 +797,9 @@ function checkTheCollectionsThatShouldBeCheckedBasedOnConfig() {
     });
   });
   updateCategoryCheckboxes();
-  expandCategoriesWithSomeCheckedChildren();
-  updateChip();
+  expandCategoriesBasedOnConfig();
+  // expandCategoriesWithSomeCheckedChildren();
+  updateChip(null,isInitialConfig=true);
 }
 
 function calculateTargetCollectionCategoriesToCheck(allTargetCollections, targetCollectionsCheckedStatuses){
@@ -879,7 +883,24 @@ function updateCategoryCheckboxes() {
   });
 }
 
-function expandCategoriesWithSomeCheckedChildren() {
+function expandCategoriesBasedOnConfig() {
+  const targetCategoriesToExpandFromConfig = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CATEXPND;
+  targetCategoriesToExpandFromConfig.forEach(targetCategoryToExpand => {
+    const specimenCategoryPattern = "Specimens_" + targetCategoryToExpand;;
+    const specimenInputsForCategory = document.getElementById(specimenCategoryPattern + '_inputs');
+    if (specimenInputsForCategory.style.display === 'none') {
+      toggleCategory(specimenCategoryPattern);
+    }
+    const observationCategoryPattern = "Observations_" + targetCategoryToExpand;
+    const observationInputsForCategory = document.getElementById(observationCategoryPattern + '_inputs');
+    if (observationInputsForCategory.style.display === 'none') {
+      toggleCategory(observationCategoryPattern);
+    }
+  });
+}
+
+function expandCategoriesWithSomeCheckedChildren() { // @TODO this is a good candidate for intervention with the collapsing
+
   generateTargetInputElementsForCategory((categoryPattern, targetInputElems) => {
     const container = document.getElementById(categoryPattern + '_inputs');
     const checkedChildren = Array.from(targetInputElems).filter(checkbox => checkbox.checked);
