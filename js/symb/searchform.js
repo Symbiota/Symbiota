@@ -777,12 +777,11 @@ function contains(bigger, smaller) {
 };
 
 function checkTheCollectionsThatShouldBeCheckedBasedOnConfig() {
-  const targetCollectionsSpecimens = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CATORD;
-  const targetSpecimenCollectionsCheckedStatuses = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CATCHK;
-  const targetCollectionsObservations = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.OBSCATORD;
-  const targetObservationCollectionsCheckedStatuses = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.OBSCATCHK;
-  if (targetCollectionsSpecimens.length<1 && targetCollectionsObservations.length<1) return;
-  const queriedCollectionsCategories = calculateTargetCollections(targetCollectionsSpecimens, targetSpecimenCollectionsCheckedStatuses, targetCollectionsObservations, targetObservationCollectionsCheckedStatuses); // @TODO rename this function?
+  console.log(JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || ''));
+  const targetCollections = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CATORD;
+  const targetCollectionsCheckedStatuses = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CATCHK;
+  if (targetCollections.length<1) return;
+  const queriedCollectionsCategories = calculateTargetCollectionCategoriesToCheck(targetCollections, targetCollectionsCheckedStatuses);
   queriedCollectionsCategories.forEach((queriedCollectionCategory) => {
     const targetElems = document.querySelectorAll(`#Specimens_${queriedCollectionCategory}, #Observations_${queriedCollectionCategory}`);
     targetElems.forEach((targetElem) => {
@@ -799,18 +798,18 @@ function checkTheCollectionsThatShouldBeCheckedBasedOnConfig() {
   updateChip();
 }
 
-function calculateTargetCollections(targetCollectionsSpecimens, targetSpecimenCollectionsCheckedStatuses, targetCollectionsObservations, targetObservationCollectionsCheckedStatuses){
+function calculateTargetCollectionCategoriesToCheck(allTargetCollections, targetCollectionsCheckedStatuses){
   const targetCollections = [];
-  for (let i=0; i<targetCollectionsSpecimens.length; i++){
-    if(targetSpecimenCollectionsCheckedStatuses[i] === 1){
-      targetCollections.push(targetCollectionsSpecimens[i]);
+  for (let i=0; i<allTargetCollections.length; i++){
+    if(targetCollectionsCheckedStatuses[i] === 1){
+      targetCollections.push(allTargetCollections[i]);
     }
   }
-  for (let j=0; j<targetCollectionsObservations.length; j++){
-    if(targetObservationCollectionsCheckedStatuses[j] === 1){
-      targetCollections.push(targetCollectionsObservations[j]);
-    }
-  }
+  // for (let j=0; j<targetCollectionsObservations.length; j++){
+  //   if(targetObservationCollectionsCheckedStatuses[j] === 1){
+  //     targetCollections.push(targetCollectionsObservations[j]);
+  //   }
+  // }
   return targetCollections;
 }
   

@@ -29,12 +29,10 @@ class CollectionFormManager extends Manager {
      * at the end, preserving their original relative order.
      *
      * @param array $data       The original nested array.
-     * @param array $specOrder   Desired order for $data['Specimens'] by category 'id'.
-     * @param array $obsOrder   Desired order for $data['Observations'] by category 'id'.
+     * @param array $order   Desired order for both $data['Specimens'] and $data['Observations'] by category 'id'.
      * @return array            A new array with reordered categories.
      */
-    public function reorderPortalCategories(array $data, array $specOrder = [], array $obsOrder = []): array {
-        // @TOOD possibly add a method to split data into specOrder and obsOrder from one param provided
+    public function reorderPortalCategories(array $data, array $order = []): array {
         // Helper: reorder an associative array of categories by each item's 'id'
         // while preserving original relative order among "unknown" items.
         $reorderByIdOrder = function (array $categoryMap, array $idOrder): array {
@@ -96,11 +94,11 @@ class CollectionFormManager extends Manager {
         $out = $data;
 
         if (isset($out['Specimens']) && is_array($out['Specimens'])) {
-            $out['Specimens'] = $reorderByIdOrder($out['Specimens'], $specOrder);
+            $out['Specimens'] = $reorderByIdOrder($out['Specimens'], $order);
         }
 
         if (isset($out['Observations']) && is_array($out['Observations'])) {
-            $out['Observations'] = $reorderByIdOrder($out['Observations'], $obsOrder);
+            $out['Observations'] = $reorderByIdOrder($out['Observations'], $order);
         }
 
         return $out;
