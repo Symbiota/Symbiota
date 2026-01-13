@@ -154,6 +154,7 @@ function toggleCategory(categoryId) {
 	<div id="collections_container">
 		<?php 
 			$collectionFormManager = new CollectionFormManager();
+			// var_dump($collectionsByCategory); // @TODO deleteMe
 			$sortedCollectionsByCategory = $collectionFormManager->reorderPortalCategories(
 				$collectionsByCategory,
 				$CATORD ?? [],

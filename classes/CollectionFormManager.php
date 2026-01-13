@@ -34,6 +34,7 @@ class CollectionFormManager extends Manager {
      * @return array            A new array with reordered categories.
      */
     public function reorderPortalCategories(array $data, array $specOrder = [], array $obsOrder = []): array {
+        // @TOOD possibly add a method to split data into specOrder and obsOrder from one param provided
         // Helper: reorder an associative array of categories by each item's 'id'
         // while preserving original relative order among "unknown" items.
         $reorderByIdOrder = function (array $categoryMap, array $idOrder): array {

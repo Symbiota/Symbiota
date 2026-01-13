@@ -782,42 +782,21 @@ function checkTheCollectionsThatShouldBeCheckedBasedOnConfig() {
   const targetCollectionsObservations = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.OBSCATORD;
   const targetObservationCollectionsCheckedStatuses = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.OBSCATCHK;
   if (targetCollectionsSpecimens.length<1 && targetCollectionsObservations.length<1) return;
-  const queriedCollections = calculateTargetCollections(targetCollectionsSpecimens, targetSpecimenCollectionsCheckedStatuses, targetCollectionsObservations, targetObservationCollectionsCheckedStatuses);
-  queriedCollections.forEach((queriedCollection) => {
-    let targetElem = document.querySelector(`[id$="_${queriedCollection}"]:not([id^="Specimens_"]):not([id^="Observations_"])`); // @TODO this should query CATEGORY inputs
-    if (!targetElem) {
-      if (queriedCollection.includes("all") && !queriedCollection.includes("allspec") && !queriedCollection.includes("allobs")) {
-        targetElem = document.getElementById("all_collections");
-        if (targetElem) {
-          targetElem.checked = true;
-          handleCategoryChunks(true, "Specimens");
-          handleCategoryChunks(true, "Observations");
-        }
-        return;
-      } else if (queriedCollection.includes("allspec")) {
-        targetElem = document.getElementById("all_specimen_collections");
-        if (targetElem) {
-          targetElem.checked = true;
-          handleCategoryChunks(true, "Specimens");
-        }
-        return;
-      } else if (queriedCollection.includes("allobs")) {
-        targetElem = document.getElementById("all_observation_collections");
-        if (targetElem) {
-          targetElem.checked = true;
-          handleCategoryChunks(true, "Observations");
-        }
-        return;
-      } else {
-        // Do nothing
-      }
-    }
-    else {
-      targetElem.checked = true; 
-    }
+  const queriedCollectionsCategories = calculateTargetCollections(targetCollectionsSpecimens, targetSpecimenCollectionsCheckedStatuses, targetCollectionsObservations, targetObservationCollectionsCheckedStatuses); // @TODO rename this function?
+  queriedCollectionsCategories.forEach((queriedCollectionCategory) => {
+    const targetElems = document.querySelectorAll(`#Specimens_${queriedCollectionCategory}, #Observations_${queriedCollectionCategory}`);
+    targetElems.forEach((targetElem) => {
+      targetElem.checked = true;
+      const divWithChildren = document.getElementById(targetElem.id + "_inputs");
+      const childCheckboxes = divWithChildren.querySelectorAll('input[type="checkbox"]');
+      childCheckboxes.forEach((childCheckbox) => {
+        childCheckbox.checked = true;
+      });
+    });
   });
   updateCategoryCheckboxes();
   expandCategoriesWithSomeCheckedChildren();
+  updateChip();
 }
 
 function calculateTargetCollections(targetCollectionsSpecimens, targetSpecimenCollectionsCheckedStatuses, targetCollectionsObservations, targetObservationCollectionsCheckedStatuses){
@@ -917,7 +896,7 @@ function expandCategoriesWithSomeCheckedChildren() {
 }
 
 function setSearchForm(frm) {
-  if (sessionStorage.querystr) {
+  if (sessionStorage.querystr && sessionStorage.querystr !== "null") {
     const urlVar = parseUrlVariables(sessionStorage.querystr.replaceAll('&quot;', '"'));
     if (
       typeof urlVar.usethes !== "undefined" &&
