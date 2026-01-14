@@ -794,8 +794,6 @@ function checkTheCollectionsThatShouldBeCheckedBasedOnConfig() {
     });
   });
   updateCategoryCheckboxes();
-  expandCategoriesBasedOnConfig();
-  updateChip(null,isInitialConfig=true);
 }
 
 
@@ -1090,6 +1088,8 @@ function setSearchForm(frm) {
   } else{
     uncheckEverything();
     checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
+    expandCategoriesBasedOnConfig();
+    updateChip(null, isInitialConfig=true);
   }
 }
 
@@ -1192,7 +1192,10 @@ document
   .getElementById("reset-btn")
   .addEventListener("click", function (event) {
     document.getElementById("params-form").reset();
-    updateChip();
+    // updateChip();
+    checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
+    expandCategoriesBasedOnConfig();
+    updateChip(null, isInitialConfig=true);
   });
 // When checking "all neon collections" box, toggle checkboxes in modal
 $("#all-neon-colls-quick").click(function () {
