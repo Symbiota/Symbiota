@@ -56,7 +56,6 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 			$(document).ready(function() {
 				setSessionQueryStr();
 				setSearchForm(document.getElementById("params-form"));
-				// toggleTheNonDefaultsClosed(<?php echo $DEFAULTCATID ?>);
 				// closeAllCategories();
 				// expandCategoriesBasedOnConfig();
 				toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
@@ -86,7 +85,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 	<!-- This is inner text! -->
 	<div role="main" id="innertext" class="inntertext-tab pin-things-here">
 		<h1 class="page-heading screen-reader-only"><?php echo $LANG['COLLECTION_LIST']; ?></h1>
-		<form  class="content" id="params-form" method="POST" action="<?php echo $CLIENT_ROOT . "/collections/list.php"; ?>">
+		<form  class="content" id="params-form" action="harvestparams.php" method="post" onsubmit="return validateForm();">
 			<button type="submit" name="action"><?php echo isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search &gt'; ?></button>
 			<fieldset style="margin-top:1rem;">
 				<div id="search-form-colls">

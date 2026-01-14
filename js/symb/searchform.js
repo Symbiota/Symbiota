@@ -151,7 +151,7 @@ function addChip(element) {
   screenReaderSpan?.classList?.add("screen-reader-only");
   chipBtn.appendChild(screenReaderSpan);
   inputChip.appendChild(chipBtn);
-  document.getElementById("chips").appendChild(inputChip);
+  document.getElementById("chips")?.appendChild(inputChip);
 }
 
 function handleRemoval(element, inputChip) {
@@ -869,8 +869,16 @@ function updateCategoryCheckboxes() {
 }
 
 function closeAllCategories() {
-  document.querySelectorAll('input[id^="Specimens_"], input[id^="Observations_"]').forEach((inputDiv) => {
-    const categoryId = inputDiv?.id?.split('_')?.length >1 ? inputDiv.id.split('_')[1] : null;
+  const allCategoryInputElements = Array.from(document.querySelectorAll('input[id^="Specimens_"], input[id^="Observations_"]'));
+  const uniqueCategoryIds = allCategoryInputElements.reduce((acc, inputElem) => {
+    const parts = inputElem?.id?.split('_');
+    const categoryId = parts && parts.length > 1 ? parts[1] : null;
+    if (categoryId && !acc.includes(categoryId)) {
+      acc.push(categoryId);
+    }
+    return acc;
+  }, []);
+  uniqueCategoryIds.forEach((categoryId) => {
     if(!categoryId) return;
     toggleCategory("Specimens_" + categoryId);
     toggleCategory("Observations_" + categoryId);

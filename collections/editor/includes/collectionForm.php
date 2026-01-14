@@ -84,10 +84,13 @@ function updateParent(inputs, parentSelector) {
 }
 
 function toggleCategory(categoryId) {
-	const container = document.getElementById(categoryId + '_inputs')
+	const container = document.getElementById(categoryId + '_inputs');
+	if(!container) return;
 
 	const open_toggle = document.getElementById(categoryId + '_open_toggle');
 	const close_toggle = document.getElementById(categoryId + '_close_toggle');
+
+	if(!open_toggle || !close_toggle) return;
 
 	if(container.style.display === 'none') {
 		open_toggle.style.display = 'none';

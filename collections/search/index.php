@@ -812,7 +812,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 	$(document).ready(function() {
 		setSessionQueryStr();
 		setSearchForm(document.getElementById("params-form"));
-		toggleTheNonDefaultsClosed(<?php echo $DEFAULTCATID ?>);
+		closeAllCategories();
 		toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
 		document.getElementById("params-form").addEventListener("submit", function(event) {
 			event.preventDefault();
