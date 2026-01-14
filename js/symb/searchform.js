@@ -2,9 +2,6 @@
  * GLOBAL VARIABLES
  */
 const criteriaPanel = document.getElementById("criteria-panel") || null;
-const allCollections = document.getElementById("all_collections") || null;
-const allSpecimenCollections = document.getElementById("all_specimen_collections") || null;
-const allObservationCollections = document.getElementById("all_observation_collections") || null;
 const form = document.getElementById("params-form") || null;
 const formColls = document.getElementById("search-form-colls") || null;
 const formSites = document.getElementById("site-list") || null;
@@ -291,7 +288,6 @@ function updateChip(e, isInitialConfig=false) {
     addChip(getCollsChips("ext-collections-list", "Some Ext NEON Colls"));
   }
   // then go through remaining inputs (exclude db and datasetid)
-  // go through entire form and find selected items
   if(!isInitialConfig){
     const checkedCollections = calculateAllPossibleCollectionsInScope('search-form-colls', ':checked',true);
     checkTheCollectionsThatShouldBeChecked(checkedCollections);
