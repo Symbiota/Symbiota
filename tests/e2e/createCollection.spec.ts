@@ -17,7 +17,7 @@ test('Create an Collection', async ({ page, browserName }) => {
 
 	let collData = {
 		institutionCode: 'SYMB',
-		collectionCode: 'CICOL',
+		collectionCode: collectionName.slice(0, 4) + '_CICOL',
 		collectionName: collectionName,
 	}
 
