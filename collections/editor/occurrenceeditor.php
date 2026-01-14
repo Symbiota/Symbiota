@@ -673,7 +673,7 @@ else{
 						<?php if ($occArr || $goToMode == 1 || $goToMode == 2): ?>
 						<div id="occedittabs" style="clear:both;">
 							<ul>
-								<li>
+								<li id="occTab" >
 									<a href="#occdiv">
 										<?php
 										if($occId) echo (isset($LANG['OCC_DATA'])?$LANG['OCC_DATA']:'Occurrence Data');
