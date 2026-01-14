@@ -868,6 +868,16 @@ function updateCategoryCheckboxes() {
   });
 }
 
+function closeAllCategories() {
+  document.querySelectorAll('input[id^="Specimens_"], input[id^="Observations_"]').forEach((inputDiv) => {
+    const categoryId = inputDiv?.id?.split('_')?.length >1 ? inputDiv.id.split('_')[1] : null;
+    if(!categoryId) return;
+    toggleCategory("Specimens_" + categoryId);
+    toggleCategory("Observations_" + categoryId);
+  });
+}
+
+
 function expandCategoriesBasedOnConfig() {
   const targetCategoriesToExpandFromConfig = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CATEXPND;
   targetCategoriesToExpandFromConfig.forEach(targetCategoryToExpand => {
@@ -1095,6 +1105,7 @@ function setSearchForm(frm) {
   } else{
     uncheckEverythingInCollections();
     checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
+    closeAllCategories();
     expandCategoriesBasedOnConfig();
     updateChip(null, isInitialConfig=true);
   }
@@ -1139,18 +1150,18 @@ function parseUrlVariables(varStr) {
   return result;
 }
 
-function toggleTheNonDefaultsClosed(defaultId) {
-  const categoryButtons = document.querySelectorAll('a[id^="condense-"]');
-  categoryButtons.forEach((categoryButton) => {
-    const regexPattern = new RegExp(`^condense-\\d+-${defaultId}$`);
-    if (!regexPattern.test(categoryButton.id)) {
-      const idToToggle = categoryButton.id
-        .replace("condense-", "")
-        .replace("-" + defaultId, "");
-      toggleCat(idToToggle);
-    }
-  });
-}
+// function toggleTheNonDefaultsClosed(defaultId) {
+//   const categoryButtons = document.querySelectorAll('a[id^="condense-"]');
+//   categoryButtons.forEach((categoryButton) => {
+//     const regexPattern = new RegExp(`^condense-\\d+-${defaultId}$`);
+//     if (!regexPattern.test(categoryButton.id)) {
+//       const idToToggle = categoryButton.id
+//         .replace("condense-", "")
+//         .replace("-" + defaultId, "");
+//       toggleCat(idToToggle);
+//     }
+//   });
+// }
 
 function toggleAccordionsFromSessionStorage(accordionIds) {
   const accordions = document.querySelectorAll(

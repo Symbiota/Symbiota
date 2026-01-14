@@ -56,7 +56,9 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 			$(document).ready(function() {
 				setSessionQueryStr();
 				setSearchForm(document.getElementById("params-form"));
-				toggleTheNonDefaultsClosed(<?php echo $DEFAULTCATID ?>);
+				// toggleTheNonDefaultsClosed(<?php echo $DEFAULTCATID ?>);
+				// closeAllCategories();
+				// expandCategoriesBasedOnConfig();
 				toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
 			});
 		</script>
