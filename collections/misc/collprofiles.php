@@ -910,7 +910,7 @@ if ($SYMB_UID) {
 							$rightsHtml = GeneralUtil::getRightsHtml($collData['rights']);
 							?>
 							<div class="bottom-breathing-room-rel">
-								<span class="label"><?= $LANG['USAGE_RIGHTS'] ?>:</span>
+								<span class="label"><?= $LANG['LICENSE'] ?>:</span>
 								<?= $rightsHtml ?>
 							</div>
 							<?php
