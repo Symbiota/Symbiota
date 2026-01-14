@@ -82,7 +82,7 @@ function targetPopup(f) {
 function setSessionQueryStr() {
 	try {
 		const data = document.getElementById('service-container');
-		const searchVar = data.getAttribute('data-search-var');
+		const searchVar = data?.getAttribute('data-search-var');
 		if(searchVar) {
 			sessionStorage.querystr = searchVar;
 		}

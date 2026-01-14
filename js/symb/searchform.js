@@ -235,7 +235,7 @@ function removeChip(chip) {
  * @param {Event} e
  */
 function updateChip(e, isInitialConfig=false) {
-  document.getElementById("chips").innerHTML = "";
+  document.getElementById("chips") ? document.getElementById("chips").innerHTML = "" : "";
   // first go through collections and sites
 
   // No sites in Symbiota, so this stuff just gets ignored

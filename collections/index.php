@@ -38,6 +38,8 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 		<link href="<?= $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 		<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+		<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.list.js?ver=20251002>" type="text/javascript"></script>
+		<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=2" type="text/javascript"></script>
 		<script src="../js/symb/collections.index.js?ver=20171215" type="text/javascript"></script>
 		<script type="text/javascript">
 			$(document).ready(function() {
@@ -51,6 +53,14 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 				});
 				sessionStorage.querystr = null;
 				//document.collections.onkeydown = checkKey;
+			});
+		</script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				setSessionQueryStr();
+				setSearchForm(document.getElementById("params-form"));
+				toggleTheNonDefaultsClosed(<?php echo $DEFAULTCATID ?>);
+				toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
 			});
 		</script>
 	</head>
@@ -77,6 +87,14 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 	<!-- This is inner text! -->
 	<div role="main" id="innertext" class="inntertext-tab pin-things-here">
 		<h1 class="page-heading screen-reader-only"><?php echo $LANG['COLLECTION_LIST']; ?></h1>
+		<form id="params-form" method="POST" action="<?php echo $CLIENT_ROOT . "/collections/list.php"; ?>">
+			<button type="submit" name="action"><?php echo isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search &gt'; ?></button>
+			<fieldset style="margin-top:1rem;">
+				<?php
+					include($SERVER_ROOT . '/collections/editor/includes/collectionForm.php');
+				?>
+			</fieldset>
+		</form>
         <div id="tabs">
 			<ul>
 				<?php
