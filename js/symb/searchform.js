@@ -289,8 +289,11 @@ function updateChip(e, isInitialConfig=false) {
   }
   // then go through remaining inputs (exclude db and datasetid)
   if(!isInitialConfig){
-    const checkedCollections = calculateAllPossibleCollectionsInScope('search-form-colls', ':checked',true);
-    checkTheCollectionsThatShouldBeChecked(checkedCollections);
+    const isCollectionRelated = e?.currentTarget?.name === "db[]" || e?.currentTarget?.name?.startsWith("Specimens_") || e?.currentTarget?.name?.startsWith("Observations_") || e?.currentTarget?.id === "all_collections" || e?.currentTarget?.id === "all_specimen_collections" || e?.currentTarget?.id === "all_observation_collections";
+    if(isCollectionRelated){
+      const checkedCollections = calculateAllPossibleCollectionsInScope('search-form-colls', ':checked',true);
+      checkTheCollectionsThatShouldBeChecked(checkedCollections);
+    }
   }
   
   formInputs.forEach((item) => {
@@ -698,7 +701,7 @@ function hideColCheckbox(collid) {
   });
 }
 
-function uncheckEverything() {
+function uncheckEverythingInCollections() {
   const checkUncheckAllElem = document.getElementById("all_collections");
   checkUncheckAllElem.checked = false;
   const allSpecimenCollectionsElem = document.getElementById("all_specimen_collections");
@@ -1067,7 +1070,7 @@ function setSearchForm(frm) {
       const updatedQueriedCollections = updateQueryListWithTypeCollections(queriedCollections);
 
       if (updatedQueriedCollections.length > 0) {
-        uncheckEverything();
+        uncheckEverythingInCollections();
         checkTheCollectionsThatShouldBeChecked(updatedQueriedCollections);
       }
     }
@@ -1082,7 +1085,7 @@ function setSearchForm(frm) {
     }
     updateChip();
   } else{
-    uncheckEverything();
+    uncheckEverythingInCollections();
     checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
     expandCategoriesBasedOnConfig();
     updateChip(null, isInitialConfig=true);
@@ -1191,7 +1194,7 @@ document
     // updateChip();
     checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
     expandCategoriesBasedOnConfig();
-    updateChip(null, isInitialConfig=true);
+    updateChip(event, isInitialConfig=true);
   });
 // When checking "all neon collections" box, toggle checkboxes in modal
 $("#all-neon-colls-quick").click(function () {
@@ -1209,12 +1212,15 @@ searchFormColls?.addEventListener("change", autoToggleSelector, false);
 //////// Binds Update chip on event change
 const formInputs = document.querySelectorAll(".content input");
 formInputs.forEach((formInput) => {
-  formInput.addEventListener("change", ()=>{
-    const queriedCollections = Array.from(document.querySelectorAll(`#search-form-colls input[name="db[]"]:checked`)).filter(elem=>elem.id.split("_")[1]!==undefined).map(elem=>elem.id.split("_")[1]);
-    const updatedQueriedCollections = updateQueryListWithTypeCollections(queriedCollections);
-    uncheckEverything();
-    checkTheCollectionsThatShouldBeChecked(updatedQueriedCollections);
-    updateChip();
+  formInput.addEventListener("change", (e)=>{
+    const isCollectionRelated = e?.currentTarget?.name === "db[]" || e?.currentTarget?.name?.startsWith("Specimens_") || e?.currentTarget?.name?.startsWith("Observations_") || e?.currentTarget?.id === "all_collections" || e?.currentTarget?.id === "all_specimen_collections" || e?.currentTarget?.id === "all_observation_collections";
+    if(isCollectionRelated) {
+      const queriedCollections = Array.from(document.querySelectorAll(`#search-form-colls input[name="db[]"]:checked`)).filter(elem=>elem.id.split("_")[1]!==undefined).map(elem=>elem.id.split("_")[1]);
+      const updatedQueriedCollections = updateQueryListWithTypeCollections(queriedCollections);
+      uncheckEverythingInCollections();
+      checkTheCollectionsThatShouldBeChecked(updatedQueriedCollections);
+    }
+    updateChip(e);
   }
 );
 });
