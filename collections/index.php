@@ -89,9 +89,11 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 		<form  class="content" id="params-form" method="POST" action="<?php echo $CLIENT_ROOT . "/collections/list.php"; ?>">
 			<button type="submit" name="action"><?php echo isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search &gt'; ?></button>
 			<fieldset style="margin-top:1rem;">
-				<?php
-					include($SERVER_ROOT . '/collections/editor/includes/collectionForm.php');
-				?>
+				<div id="search-form-colls">
+					<?php
+						include($SERVER_ROOT . '/collections/editor/includes/collectionForm.php');
+					?>
+				</div>
 			</fieldset>
 		</form>
         <div id="tabs">
