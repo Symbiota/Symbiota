@@ -1,7 +1,7 @@
 import { expect, mergeTests } from '@playwright/test';
 import { test as testWithAdmin } from './fixtures/adminLogin';
 import { test as testCollection } from './fixtures/collection';
-import { OccurrenceEditorPage } from './pages/OccurrenceEditorPage'
+import { OccurrenceEditorPage, OccurrenceEditorTab } from './pages/OccurrenceEditorPage'
 import path from 'node:path';
 
 const test = mergeTests(testWithAdmin, testCollection);
@@ -57,8 +57,7 @@ test.describe('Create Occurrence Record', () => {
 		await occurrenceEditor.gotoRecord(collId, occId)
 		await occurrenceEditor.checkMany(inputs);
 
-		await page.locator('li[id="imgTab"]').click({force: true});
-		await page.getByText('Loading...').waitFor({ state: "detached" });
+		await occurrenceEditor.gotoTab(OccurrenceEditorTab.Media)
 
 		const mediaEdit = page.locator('img[src*="/images/edit.png"]');
 		await mediaEdit.click({force: true});
@@ -91,8 +90,7 @@ test.describe('Create Occurrence Record', () => {
 		await occurrenceEditor.gotoRecord(collId, occId)
 		await occurrenceEditor.checkMany(inputs);
 
-		await page.locator('li[id="imgTab"]').click({force: true});
-		await page.getByText('Loading...').waitFor({ state: "detached" });
+		await occurrenceEditor.gotoTab(OccurrenceEditorTab.Media)
 
 		const mediaEdit = page.locator('img[src*="/images/edit.png"]');
 		await mediaEdit.click({force: true});
