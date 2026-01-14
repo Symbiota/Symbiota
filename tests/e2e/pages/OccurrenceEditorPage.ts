@@ -1,9 +1,18 @@
 import type { Page, Locator } from '@playwright/test';
 import { expect } from '@playwright/test';
 
+export enum OccurrenceEditorTab {
+	Occurrence = 'occTab',
+	Determinations = 'detTab',
+	Media = 'imgTab',
+	LinkResources = 'resourceTab',
+	Admin = 'adminTab'
+}
+
 export class OccurrenceEditorPage {
 	private readonly submitNewButton: Locator;
 	private readonly submitEditButton: Locator;
+	private activeTab = 'occurrence';
 
 	private fieldLocators = {};
 
@@ -145,7 +154,12 @@ export class OccurrenceEditorPage {
 		await this.submitEditButton.click({force: true});
 	}
 
-	async setGotoMode(value: boolean) {
+	async gotoTab(newTab: OccurrenceEditorTab) {
+		await this.page.locator(`li[id="${newTab}"]`).click({force: true});
 
+		// Wait for ajax to load except for Occurrence tab
+		if(OccurrenceEditorTab.Occurrence != newTab) {
+			await this.page.getByText('Loading...').waitFor({ state: "detached" });
+		}
 	}
 }
