@@ -408,7 +408,6 @@ $creators = Media::getCreatorArray();
 								$collArr = $imageArr['coll'];
 								unset($imageArr['coll']);
 							}
-							$uidList = $imgLibManager->getCreatorUidArr();
 							foreach($imageArr as $mediaId => $imgArr){
 								$imgUrl = $imgArr['url'];
 								$imgTn = $imgArr['thumbnailurl'];
@@ -461,7 +460,6 @@ $creators = Media::getCreatorArray();
 											echo '<div class="editor-div" style="display:none;margin-top:3px;"><input name="mediaId[]" type="checkbox" value="' . $mediaId . '"></div>';
 										}
 										$sciname = $imgArr['sciname'];
-										//if(!$sciname && $imgArr['occid'] && $occArr[$imgArr['occid']]['sciname']) $sciname = $occArr[$imgArr['occid']]['sciname'];
 										if($sciname){
 											if(strpos($imgArr['sciname'], ' ')) $sciname = '<i>' . $sciname . '</i>';
 											if($imgArr['tid']) echo '<a href="#" onclick="openTaxonPopup(' . $imgArr['tid'] . ');return false;" >';

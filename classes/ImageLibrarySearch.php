@@ -65,20 +65,16 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 			$retArr[$imgId]['caption'] = $r->caption;
 			$retArr[$imgId]['occid'] = $r->occid;
 			$retArr[$imgId]['mediaType'] = $r->mediaType;
-			//$retArr[$imgId]['stateprovince'] = $r->stateprovince;
-			//$retArr[$imgId]['catalognumber'] = $r->catalognumber;
-			//$retArr[$imgId]['instcode'] = $r->instcode;
 			if($r->occid) $occArr[$r->occid] = $r->occid;
 		}
 		$result->free();
 		if($occArr){
 			//Get occurrence data
 			$collArr = array();
-			$sql2 = 'SELECT occid, catalognumber, sciname, recordedby, stateprovince, collid FROM omoccurrences WHERE occid IN('.implode(',',$occArr).')';
+			$sql2 = 'SELECT occid, catalognumber, recordedby, stateprovince, collid FROM omoccurrences WHERE occid IN('.implode(',',$occArr).')';
 			$rs2 = $this->conn->query($sql2);
 			while($r2 = $rs2->fetch_object()){
 				$retArr['occ'][$r2->occid]['catnum'] = $r2->catalognumber;
-				//$retArr['occ'][$r2->occid]['sciname'] = $r2->sciname;
 				$retArr['occ'][$r2->occid]['recordedby'] = $r2->recordedby;
 				$retArr['occ'][$r2->occid]['stateprovince'] = $r2->stateprovince;
 				$retArr['occ'][$r2->occid]['collid'] = $r2->collid;
@@ -308,26 +304,6 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 	}
 
 	//Listing functions
-	public function getCreatorUidArr(){
-		$retArr = array();
-		$sql1 = 'SELECT DISTINCT creatorUid FROM media WHERE creatorUid IS NOT NULL';
-		$rs1 = $this->conn->query($sql1);
-		while ($r1 = $rs1->fetch_object()) {
-			$retArr[$r1->creatorUid] = '';
-		}
-		$rs1->free();
-		if($retArr){
-			$sql2 = 'SELECT uid, CONCAT_WS(", ", lastname, firstname) AS fullname FROM users WHERE uid IN(' . implode(',', array_keys($retArr)) . ')';
-			$rs2 = $this->conn->query($sql2);
-			while ($r2 = $rs2->fetch_object()) {
-				$retArr[$r2->uid] = $r2->fullname;
-			}
-			$rs2->free();
-		}
-		asort($retArr, SORT_NATURAL | SORT_FLAG_CASE);
-		return $retArr;
-	}
-
 	public function getTagArr(){
 		$retArr = array();
 		$sql = 'SELECT tagkey, CONCAT_WS(" - ",shortlabel,tagDescription) as displayText FROM imagetagkey ORDER BY tagkey';
