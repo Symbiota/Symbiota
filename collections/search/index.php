@@ -814,6 +814,17 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 		setSearchForm(document.getElementById("params-form"));
 		toggleTheNonDefaultsClosed(<?php echo $DEFAULTCATID ?>);
 		toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
+		document.getElementById("params-form").addEventListener("submit", function(event) {
+			event.preventDefault();
+			simpleSearch();
+		});
+		document.getElementById("reset-btn").addEventListener("click", function (event) {
+			document.getElementById("params-form").reset();
+			// updateChip();
+			checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
+			expandCategoriesBasedOnConfig();
+			updateChip(event, isInitialConfig=true);
+		});
 	});
 </script>
 <script>

@@ -23,6 +23,9 @@ const pLngEw = document.getElementById("pointlong_EW") || null;
 const pRadius = document.getElementById("radius") || null;
 const pRadiusUn = document.getElementById("radiusunits") || null;
 
+// Form inputs for chip functionality
+let formInputs = null;
+
 let paramsArr = {};
 //////////////////////////////////////////////////////////////////////////
 
@@ -294,6 +297,11 @@ function updateChip(e, isInitialConfig=false) {
       const checkedCollections = calculateAllPossibleCollectionsInScope('search-form-colls', ':checked',true);
       checkTheCollectionsThatShouldBeChecked(checkedCollections);
     }
+  }
+  
+  // Ensure formInputs is initialized
+  if (!formInputs) {
+    formInputs = document.querySelectorAll(".content input");
   }
   
   formInputs.forEach((item) => {
@@ -1180,22 +1188,22 @@ function toggleCharacterGroup(charID) {
  * EVENT LISTENERS/INITIALIZERS
  */
 
-document.getElementById("params-form").addEventListener("submit", function(event) {
-  event.preventDefault();
-  simpleSearch();
-});
+// document.getElementById("params-form").addEventListener("submit", function(event) {
+//   event.preventDefault();
+//   simpleSearch();
+// });
 
 
 // Reset button
-document
-  .getElementById("reset-btn")
-  .addEventListener("click", function (event) {
-    document.getElementById("params-form").reset();
-    // updateChip();
-    checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
-    expandCategoriesBasedOnConfig();
-    updateChip(event, isInitialConfig=true);
-  });
+// document
+//   .getElementById("reset-btn")
+//   .addEventListener("click", function (event) {
+//     document.getElementById("params-form").reset();
+//     // updateChip();
+//     checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
+//     expandCategoriesBasedOnConfig();
+//     updateChip(event, isInitialConfig=true);
+//   });
 // When checking "all neon collections" box, toggle checkboxes in modal
 $("#all-neon-colls-quick").click(function () {
   let isChecked = $(this).prop("checked");
@@ -1204,26 +1212,30 @@ $("#all-neon-colls-quick").click(function () {
 });
 // When checking any 'all-selector', toggle children checkboxes
 $(".all-selector").click(toggleAllSelector);
-formColls.addEventListener("click", autoToggleSelector, false);
-formColls.addEventListener("change", autoToggleSelector, false);
+formColls?.addEventListener("click", autoToggleSelector, false);
+formColls?.addEventListener("change", autoToggleSelector, false);
 formSites?.addEventListener("click", autoToggleSelector, false);
 searchFormColls?.addEventListener("click", autoToggleSelector, false);
 searchFormColls?.addEventListener("change", autoToggleSelector, false);
-//////// Binds Update chip on event change
-const formInputs = document.querySelectorAll(".content input");
-formInputs.forEach((formInput) => {
-  formInput.addEventListener("change", (e)=>{
-    const isCollectionRelated = e?.currentTarget?.name === "db[]" || e?.currentTarget?.name?.startsWith("Specimens_") || e?.currentTarget?.name?.startsWith("Observations_") || e?.currentTarget?.id === "all_collections" || e?.currentTarget?.id === "all_specimen_collections" || e?.currentTarget?.id === "all_observation_collections";
-    if(isCollectionRelated) {
-      const queriedCollections = Array.from(document.querySelectorAll(`#search-form-colls input[name="db[]"]:checked`)).filter(elem=>elem.id.split("_")[1]!==undefined).map(elem=>elem.id.split("_")[1]);
-      const updatedQueriedCollections = updateQueryListWithTypeCollections(queriedCollections);
-      uncheckEverythingInCollections();
-      checkTheCollectionsThatShouldBeChecked(updatedQueriedCollections);
-    }
-    updateChip(e);
+
+//////// Initialize form inputs and bind update chip on event change
+function initializeFormInputs() {
+  if (!formInputs) {
+    formInputs = document.querySelectorAll(".content input");
   }
-);
-});
+  formInputs.forEach((formInput) => {
+    formInput.addEventListener("change", (e)=>{
+      const isCollectionRelated = e?.currentTarget?.name === "db[]" || e?.currentTarget?.name?.startsWith("Specimens_") || e?.currentTarget?.name?.startsWith("Observations_") || e?.currentTarget?.id === "all_collections" || e?.currentTarget?.id === "all_specimen_collections" || e?.currentTarget?.id === "all_observation_collections";
+      if(isCollectionRelated) {
+        const queriedCollections = Array.from(document.querySelectorAll(`#search-form-colls input[name="db[]"]:checked`)).filter(elem=>elem.id.split("_")[1]!==undefined).map(elem=>elem.id.split("_")[1]);
+        const updatedQueriedCollections = updateQueryListWithTypeCollections(queriedCollections);
+        uncheckEverythingInCollections();
+        checkTheCollectionsThatShouldBeChecked(updatedQueriedCollections);
+      }
+      updateChip(e);
+    });
+  });
+}
 
 const selectionElements = document.querySelectorAll(".content select");
 selectionElements.forEach((selectionElement) => {
@@ -1265,4 +1277,10 @@ accordions.forEach((accordion) => {
     }
     localStorage.setItem("accordionIds", currentAccordionIds);
   });
+});
+
+// Initialize form inputs when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('deleteMe got here a1');
+  initializeFormInputs();
 });
