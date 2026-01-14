@@ -1,10 +1,11 @@
 import { expect, mergeTests } from '@playwright/test';
 import { test as testWithAdmin } from './fixtures/adminLogin';
 import { test as testCollection } from './fixtures/collection';
+import { test as testOccurrence } from './fixtures/occurrence';
 import { OccurrenceEditorPage, OccurrenceEditorTab } from './pages/OccurrenceEditorPage'
 import path from 'node:path';
 
-const test = mergeTests(testWithAdmin, testCollection);
+const test = mergeTests(testWithAdmin, testCollection, testOccurrence);
 
 test.describe('Create Occurrence Record', () => {
 	let collId: number = 0;
@@ -21,18 +22,28 @@ test.describe('Create Occurrence Record', () => {
 		await collection.deleteByCollId(collId)
 	});
 
-	test('From editor', async ({ page }) => {
+	test.describe('From Editor', () => {
 		const inputs = {
-			catalognumber: '000001',
-		};
+			'Catalog Number Only': {
+				catalognumber: '000001',
+			},
+			'Recorded By': {
+				catalognumber: '000002',
+				recordedby: 'First Last',
+			}
+		}
 
-		let occurrenceEditor = new OccurrenceEditorPage(page);
-		await occurrenceEditor.gotoNew(collId);
-		await occurrenceEditor.setMany(inputs);
-		await page.locator('input[name=gotomode][value="0"]').click({force: true});
-		await occurrenceEditor.submitNewRecord();
-		await expect(page.getByText('Public Display')).toBeVisible();
-		await occurrenceEditor.checkMany(inputs)
+		for(let testName in inputs) {
+			test(testName, async({ page }) => {
+				let occurrenceEditor = new OccurrenceEditorPage(page);
+				await occurrenceEditor.gotoNew(collId);
+				await occurrenceEditor.setMany(inputs[testName]);
+				await page.locator('input[name=gotomode][value="0"]').click({force: true});
+				await occurrenceEditor.submitNewRecord();
+				await expect(page.getByText('Public Display')).toBeVisible();
+				await occurrenceEditor.checkMany(inputs[testName])
+			})
+		}
 	})
 
 	test('From image (Link)', async ({ page }) => {
@@ -124,24 +135,37 @@ test.describe('Create Occurrence Record', () => {
 		await occurrenceEditor.checkMany(inputs);
 	})
 
-	// test('Edit record', async ({ page }) => {
-	// 	
-	// 	const inputs = {
-	// 		catalognumber: '000003',
-	// 	};
-	//
-	// 	let occurrenceEditor = new OccurrenceEditorPage(page);
-	// 	await occurrenceEditor.gotoSkeletalSubmit(collId);
-	// 	await occurrenceEditor.setMany(inputs);
-	//
-	// 	await page.locator('button[name=recordsubmit]').click({force: true});
-	// 	const newRecordLink = await page.waitForSelector('div[id=occurlistdiv] a[id*="a-"]', { state: 'attached' });
-	//
-	// 	const id = await newRecordLink.getAttribute('id');
-	// 	expect(id).toBeDefined();
-	//
-	// 	const occId = id? parseInt(id.replace('a-', '')): 0;
-	// 	await occurrenceEditor.gotoRecord(collId, occId)
-	// 	await occurrenceEditor.checkMany(inputs);
-	// })
+	test('Edit record', async ({ page, occurrenceFactory }) => {	
+		let occId = await occurrenceFactory.getNewRecord(collId);
+
+		const inputs = {
+			catalognumber: '000004',
+		};
+
+		let occurrenceEditor = new OccurrenceEditorPage(page);
+		await occurrenceEditor.gotoRecord(collId, occId)
+		await occurrenceEditor.setMany(inputs);
+		await occurrenceEditor.submitEdits();
+		await expect(page.getByText('SUCCESS')).toBeVisible();
+		await occurrenceEditor.checkMany(inputs);
+	})
+
+
+	test('Add Determination', async ({ page, occurrenceFactory }) => {
+		let occId = await occurrenceFactory.getNewRecord(collId);
+		let occurrenceEditor = new OccurrenceEditorPage(page);
+		await occurrenceEditor.gotoRecord(collId, occId)
+		await occurrenceEditor.gotoTab(OccurrenceEditorTab.Determinations)
+
+		const addForm = page.locator('form[name=detaddform]');
+
+		await addForm.locator('input[name=sciname]').fill('Genus Species');
+		await addForm.locator('input[name=identifiedby]').fill('CI Testing');
+		await addForm.locator('input[name=dateidentified]').fill('1/14/2026');
+		await addForm.locator('button[name=submitaction]').click({force: true});
+
+		await expect(page.getByText('Genus Species')).toBeVisible()
+		await expect(page.getByText('CI TESTING')).toBeVisible()
+		await expect(page.getByText('1/14/2026')).toBeVisible()
+	})
 })
