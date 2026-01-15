@@ -1,7 +1,12 @@
 <?php
 $DEFAULT_LANG = 'en';			//Default language
 $DEFAULT_PROJ_ID = 0;
-$DEFAULTCATID = 0;
+
+// Collection search configuration
+$CATORD = []; // a list of category ids (e.g. [1,2,3]) in the order in which you want them to appear in collection searches. All other categories will appear in their default order after those listed
+$CATEXPND = []; // a list of category ids (e.g. [1,2,3]) that should be expanded by default in collection searches. All others will be collapsed by default.
+$CATCHK = []; // a list of category ids (e.g. [1,2,3]) that will be checked by default in collection searches. All others will be unchecked by default.
+
 $DEFAULT_TITLE = '';
 $EXTENDED_LANG = 'en';		//Add all languages you want to support separated by commas (e.g. en,es); currently supported languages: en,es
 $TID_FOCUS = '';
