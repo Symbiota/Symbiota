@@ -673,7 +673,6 @@ class SpecUploadDwca extends SpecUploadBase{
 								$this->identFieldMap['occid']['field'] = 'coreid';
 								$this->identFieldMap['initialtimestamp']['field'] = 'modified';
 							}
-							$this->identFieldMap['sciname']['field'] = 'sciname,scientificname';
 							foreach($this->metaArr['ident']['fields'] as $k => $v){
 								$this->identSourceArr[$k] = strtolower($v);
 							}

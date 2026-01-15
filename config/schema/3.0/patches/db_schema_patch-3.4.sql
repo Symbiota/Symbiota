@@ -564,6 +564,11 @@ ALTER TABLE `uploadtaxa`
   ADD INDEX `IX_uploadtaxa_acceptance` (`acceptance` ASC);
 
 
+#Add scientificName to determination upload table in order to include author parsing option for input
+ALTER TABLE `uploaddetermtemp` 
+  ADD COLUMN `scientificName` VARCHAR(255) NULL AFTER `higherClassification`;
+
+
 #Reset uploadspectemp indexes to be compound indexes including collid
 ALTER TABLE `uploadspectemp` 
   DROP INDEX `IX_uploadspectemp_dbpk`,

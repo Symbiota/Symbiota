@@ -341,7 +341,7 @@ class SpecUploadBase extends SpecUpload{
 		$symbFieldsRaw = $this->symbFields;
 		$sourceArr = $this->occurSourceArr;
 		$translationMap = array('accession'=>'catalognumber','accessionid'=>'catalognumber','accessionnumber'=>'catalognumber','guid'=>'occurrenceid',
-			'taxonfamilyname'=>'family','scientificname'=>'sciname','fullname'=>'sciname','speciesauthor'=>'authorspecies','species'=>'specificepithet','commonname'=>'taxonremarks',
+			'taxonfamilyname'=>'family','scientificname'=>'sciname','fullname'=>'sciname','speciesauthor'=>'authorspecies','commonname'=>'taxonremarks',
 			'observer'=>'recordedby','collector'=>'recordedby','primarycollector'=>'recordedby','field:collector'=>'recordedby','collectedby'=>'recordedby',
 			'userlogin'=>'recordedby','collectornumber'=>'recordnumber','collectionnumber'=>'recordnumber','field:collectorfieldnumber'=>'recordnumber','collectors'=>'associatedcollectors',
 			'datecollected'=>'eventdate','date'=>'eventdate','collectiondate'=>'eventdate','observedon'=>'eventdate','dateobserved'=>'eventdate','collectionstartdate'=>'eventdate','collectionverbatimdate'=>'verbatimeventdate',
@@ -397,8 +397,12 @@ class SpecUploadBase extends SpecUpload{
 		$symbFields = array();
 		foreach($symbFieldsRaw as $sValue){
 			if (!$this->paleoSupport && strpos($sValue, 'paleo_') === 0) continue;
-			$symbFields[$sValue] = strtolower($sValue);
+			$displayValue = $sValue;
+			if($displayValue == 'sciname') $displayValue = 'scientificName (excluding author)';
+			if($displayValue == 'scientificname') $displayValue = 'scientificName (including author)';
+			$symbFields[$displayValue] = strtolower($sValue);
 		}
+		ksort($symbFields);
 
 		//Build a Source => Symbiota field Map
 		$sourceSymbArr = Array();
@@ -425,7 +429,7 @@ class SpecUploadBase extends SpecUpload{
 				if($this->uploadType == $this->NFNUPLOAD && substr($fieldName,0,8) == 'subject_') continue;
 				$isAutoMapped = false;
 				$tranlatedFieldName = str_replace(array('_',' ','.','(',')'),'',$fieldName);
-				if(strpos($fieldName, 'paleo') === 0) 
+				if(strpos($fieldName, 'paleo') === 0)
 					$tranlatedFieldName = substr($tranlatedFieldName, 6);
 				if($autoMap){
 					if(array_key_exists($tranlatedFieldName,$translationMap)) $tranlatedFieldName = strtolower($translationMap[$tranlatedFieldName]);
@@ -456,7 +460,7 @@ class SpecUploadBase extends SpecUpload{
 				if(array_key_exists($fieldName,$sourceSymbArr)){
 					//Source Field is mapped to Symbiota Field
 					foreach($symbFields as $sFieldDisplay => $sField){
-						echo "<option ".(strtolower($sourceSymbArr[$fieldName])==$sField?"SELECTED":"").">".$sFieldDisplay."</option>\n";
+						echo '<option value="' . $sField . '" ' . (strtolower($sourceSymbArr[$fieldName])==$sField ? 'SELECTED' : '') . '>' . $sFieldDisplay . '</option>';
 					}
 				}
 				elseif($isAutoMapped){
@@ -464,12 +468,12 @@ class SpecUploadBase extends SpecUpload{
 					foreach($symbFields as $sFieldDisplay => $sField){
 						$selStr = '';
 						if($tranlatedFieldName==$sField && !in_array($sField,$autoMapExclude)) $selStr = 'SELECTED';
-						echo '<option '.$selStr.'>'.$sFieldDisplay.'</option>';
+						echo '<option value="' . $sField . '" '.$selStr.'>'.$sFieldDisplay.'</option>';
 					}
 				}
 				else{
 					foreach($symbFields as $sFieldDisplay => $sField){
-						echo '<option>'.$sFieldDisplay.'</option>';
+						echo '<option value="' . $sField . '">'.$sFieldDisplay.'</option>';
 					}
 				}
 				echo "</select></td>\n";
@@ -687,7 +691,7 @@ class SpecUploadBase extends SpecUpload{
 		$this->conn->query($sql);
 
 		//Convert state abbreviations to full spellings
-		$sql = 'UPDATE uploadspectemp u 
+		$sql = 'UPDATE uploadspectemp u
 			INNER JOIN geographicthesaurus s ON u.stateProvince = s.abbreviation AND s.geoLevel = 60
 			INNER JOIN geographicthesaurus c ON s.parentID = c.geoThesID AND c.geoLevel = 50
 			SET u.stateProvince = s.geoTerm
@@ -2082,46 +2086,10 @@ class SpecUploadBase extends SpecUpload{
 				unset($recMap['coreid']);
 			}
 
+			$recMap = OccurrenceUtil::occurrenceArrayCleaning($recMap);
+
 			//Import record only if required fields have data (coreId and a scientificName)
 			if(isset($recMap['dbpk']) && $recMap['dbpk'] && (isset($recMap['sciname']) || isset($recMap['genus']))){
-
-				//Do some cleaning
-				//Populate sciname if null
-				if(!array_key_exists('sciname',$recMap) || !$recMap['sciname']){
-					if(array_key_exists('genus',$recMap) && array_key_exists('specificepithet',$recMap) && array_key_exists('infraspecificepithet',$recMap)){
-						//Build sciname from individual units supplied by source
-						$sciName = $recMap['genus'];
-						if(array_key_exists('specificepithet',$recMap) && $recMap['specificepithet']) $sciName .= ' '.$recMap['specificepithet'];
-						if(array_key_exists('infraspecificepithet',$recMap) && $recMap['infraspecificepithet']){
-							if(array_key_exists('taxonrank',$recMap) && $recMap['taxonrank']){
-								$infraStr = $recMap['taxonrank'];
-								if($infraStr == 'subspecies') $infraStr = 'subsp.';
-								elseif($infraStr == 'ssp.') $infraStr = 'subsp.';
-								elseif($infraStr == 'variety') $infraStr = 'var.';
-								$sciName .= ' '.$infraStr;
-							}
-							$sciName .= ' '.$recMap['infraspecificepithet'];
-						}
-						$recMap['sciname'] = trim($sciName);
-					}
-				}
-				//Remove fields that are not in the omoccurdetermination tables
-				unset($recMap['genus']);
-				unset($recMap['specificepithet']);
-				unset($recMap['taxonrank']);
-				unset($recMap['infraspecificepithet']);
-				//Try to get author, if it's not there
-				/*
-				if(!array_key_exists('scientificnameauthorship',$recMap) || !$recMap['scientificnameauthorship']){
-					//Parse scientific name to see if it has author imbedded
-					$parsedArr = OccurrenceUtil::parseScientificName($recMap['sciname'],$this->conn);
-					if(array_key_exists('author',$parsedArr)){
-						$recMap['scientificnameauthorship'] = $parsedArr['author'];
-						//Load sciname from parsedArr since if appears that author was embedded
-						$recMap['sciname'] = trim($parsedArr['unitname1'].' '.$parsedArr['unitname2'].' '.$parsedArr['unitind3'].' '.$parsedArr['unitname3']);
-					}
-				}
-				*/
 				if(!isset($recMap['sciname']) || !$recMap['sciname']) return false;
 
 				if(!isset($recMap['identifiedby'])) $recMap['identifiedby'] = '';

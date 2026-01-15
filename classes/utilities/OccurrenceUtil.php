@@ -698,7 +698,6 @@ class OccurrenceUtil {
 			if($tr == 'forma') $recMap["taxonrank"] = 'f.';
 		}
 
-		//Populate sciname if null
 		if(array_key_exists('sciname',$recMap) && $recMap['sciname']){
 			if(substr($recMap['sciname'],-4) == ' sp.') $recMap['sciname'] = substr($recMap['sciname'],0,-4);
 			if(substr($recMap['sciname'],-3) == ' sp') $recMap['sciname'] = substr($recMap['sciname'],0,-3);
@@ -713,6 +712,7 @@ class OccurrenceUtil {
 			}
 		}
 		else{
+			//Populate sciname when null
 			if(array_key_exists('genus',$recMap) && array_key_exists('specificepithet',$recMap)){
 				//Build sciname from individual units supplied by source
 				$sciName = trim($recMap['genus'].' '.$recMap['specificepithet']);
