@@ -531,15 +531,13 @@ function uncheckAllChip(element) {
  * Uses active tab in modal
  */
 function getCollsSelected() {
-  let query = 'input[name="db"]:checked';
-  let selectedInForm = Array.from(
+  const selectedInForm = Array.from(
     document.querySelectorAll(
       '#search-form-colls input[name="db"]:checked, ' +
         '#search-form-colls input[name="db[]"]:checked'
     )
   );
-  let collsArr = selectedInForm;
-  return collsArr;
+  return selectedInForm;
 }
 
 function getTraitsSelected() {
@@ -551,9 +549,9 @@ function getTraitsSelected() {
  * @returns {Array} errors Array of errors objects with form element it refers to (elId), for highlighting, and errorMsg
  */
 function validateForm() {
-  errors = [];
+  const errors = [];
   // DB
-  let anyCollsSelected = getCollsSelected();
+  const anyCollsSelected = getCollsSelected();
   if (anyCollsSelected.length === 0) {
     errors.push({
       elId: "search-form-colls",
@@ -561,7 +559,7 @@ function validateForm() {
     });
   }
   // HTML5 built-in validation
-  let invalidInputs = document.querySelectorAll("input:invalid");
+  const invalidInputs = document.querySelectorAll("input:invalid");
   if (invalidInputs.length > 0) {
     invalidInputs.forEach((inp) => {
       errors.push({
@@ -571,15 +569,15 @@ function validateForm() {
     });
   }
   // Bounding Box
-  let bBoxNums = document.querySelectorAll(
+  const bBoxNums = document.querySelectorAll(
     "#bounding-box-form input[type=number]"
   );
-  let bBoxNumArr = [];
+  const bBoxNumArr = [];
   bBoxNums.forEach((el) => {
     el.value != "" ? bBoxNumArr.push(el.value) : false;
   });
-  let bBoxCardinals = document.querySelectorAll("#bounding-box-form select");
-  selectedCardinals = [];
+  const bBoxCardinals = document.querySelectorAll("#bounding-box-form select");
+  const selectedCardinals = [];
   bBoxCardinals.forEach((hItem) => {
     hItem.value != "" ? selectedCardinals.push(hItem.id) : false;
   });
@@ -888,15 +886,15 @@ function closeAllCategories() {
 
 function expandCategoriesBasedOnConfig() {
   const targetCategoriesToExpandFromConfig = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CATEXPND;
-  targetCategoriesToExpandFromConfig.forEach(targetCategoryToExpand => {
+  targetCategoriesToExpandFromConfig?.forEach(targetCategoryToExpand => {
     const specimenCategoryPattern = "Specimens_" + targetCategoryToExpand;;
     const specimenInputsForCategory = document.getElementById(specimenCategoryPattern + '_inputs');
-    if (specimenInputsForCategory.style.display === 'none') {
+    if (specimenInputsForCategory?.style?.display === 'none') {
       toggleCategory(specimenCategoryPattern);
     }
     const observationCategoryPattern = "Observations_" + targetCategoryToExpand;
     const observationInputsForCategory = document.getElementById(observationCategoryPattern + '_inputs');
-    if (observationInputsForCategory.style.display === 'none') {
+    if (observationInputsForCategory?.style?.display === 'none') {
       toggleCategory(observationCategoryPattern);
     }
   });
