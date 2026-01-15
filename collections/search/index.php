@@ -812,7 +812,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 	$(document).ready(function() {
 		setSessionQueryStr();
 		setSearchForm(document.getElementById("params-form"));
-		closeAllCategories();
+		// closeAllCategories();
 		toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
 		document.getElementById("params-form").addEventListener("submit", function(event) {
 			event.preventDefault();
@@ -820,6 +820,8 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 		});
 		document.getElementById("reset-btn").addEventListener("click", function (event) {
 			document.getElementById("params-form").reset();
+			sessionStorage.clear();
+			// localStorage.clear(); // @TODO ?
 			// updateChip();
 			checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
 			expandCategoriesBasedOnConfig();

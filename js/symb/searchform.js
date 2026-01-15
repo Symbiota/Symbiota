@@ -296,6 +296,9 @@ function updateChip(e, isInitialConfig=false) {
     if(isCollectionRelated){
       const checkedCollections = calculateAllPossibleCollectionsInScope('search-form-colls', ':checked',true);
       checkTheCollectionsThatShouldBeChecked(checkedCollections);
+      updateCategoryCheckboxes();
+      closeAllCategories();
+      expandCategoriesWithSomeCheckedChildren();
     }
   }
   
@@ -378,9 +381,9 @@ function calculateWhetherItemIsOutsidePanTypeSelections(item, didAllSpecimenColl
   }
   const allSpecimenInputExplicitlySelected = document.getElementById("all_specimen_collections")?.checked || false;
   const allObservationInputExplicitlySelected = document.getElementById("all_observation_collections")?.checked || false;
-  const shouldDiscludeBecauseInAllSpecimens = ((didAllSpecimenCollectionGetSelected||allSpecimenInputExplicitlySelected) && (allPossibleSpecimenCollections.includes(item.value))) || item.id === "all_specimen_collections";
-  const shouldDiscludeBecauseInAllObservations = ((didAllObservationCollectionGetSelected||allObservationInputExplicitlySelected) && (allPossibleObservationCollections.includes(item.value))) || item.id === "all_observation_collections";
-  return !shouldDiscludeBecauseInAllSpecimens && !shouldDiscludeBecauseInAllObservations;
+  const shouldExcludeBecauseInAllSpecimens = ((didAllSpecimenCollectionGetSelected||allSpecimenInputExplicitlySelected) && (allPossibleSpecimenCollections.includes(item.value))) || item.id === "all_specimen_collections";
+  const shouldExcludeBecauseInAllObservations = ((didAllObservationCollectionGetSelected||allObservationInputExplicitlySelected) && (allPossibleObservationCollections.includes(item.value))) || item.id === "all_observation_collections";
+  return !shouldExcludeBecauseInAllSpecimens && !shouldExcludeBecauseInAllObservations;
 }
 
 /**
@@ -837,7 +840,7 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
     }
   });
   updateCategoryCheckboxes();
-  expandCategoriesWithSomeCheckedChildren();
+  // expandCategoriesWithSomeCheckedChildren();
 }
 
 function generateTargetInputElementsForCategory(callbackFn) {
@@ -1096,6 +1099,8 @@ function setSearchForm(frm) {
       if (updatedQueriedCollections.length > 0) {
         uncheckEverythingInCollections();
         checkTheCollectionsThatShouldBeChecked(updatedQueriedCollections);
+        closeAllCategories();
+        expandCategoriesWithSomeCheckedChildren();
       }
     }
     for (const i in urlVar) {
@@ -1248,6 +1253,8 @@ function initializeFormInputs() {
         const updatedQueriedCollections = updateQueryListWithTypeCollections(queriedCollections);
         uncheckEverythingInCollections();
         checkTheCollectionsThatShouldBeChecked(updatedQueriedCollections);
+        closeAllCategories();
+        expandCategoriesWithSomeCheckedChildren();
       }
       updateChip(e);
     });
