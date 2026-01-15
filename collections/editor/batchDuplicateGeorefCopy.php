@@ -380,25 +380,21 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 				}
 			}
 		}
-		$(document).ready(function() {
-			setSessionQueryStr();
-			setSearchForm(document.getElementById("params-form"));
-			// closeAllCategories();
-			// expandCategoriesBasedOnConfig();
-			// toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
-			document.getElementById("params-form")?.addEventListener("submit", function(event) {
-				event.preventDefault();
-				simpleSearch();
-			});
-			// document.getElementById("reset-btn").addEventListener("click", function (event) {
-			// 	document.getElementById("params-form").reset();
-			// 	// updateChip();
-			// 	checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
-			// 	expandCategoriesBasedOnConfig();
-			// 	updateChip(event, isInitialConfig=true);
-			// });
-		});
 
+		// function openCollectionsDialog() {
+		// 	const dialog = document.getElementById('collections_dialog');
+		// 	dialog.showModal();
+
+		// 	const form = document.getElementById('params-form');
+		// 	if (form) {
+		// 		console.log("deleteMe got here d1");
+		// 		setSearchForm(form);
+		// 		form.addEventListener("submit", function(event) {
+		// 			event.preventDefault();
+		// 			simpleSearch();
+		// 		});
+		// 	}
+		// }
 		</script>
 	</head>
 
@@ -421,7 +417,7 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 			</p>
 			</div>
 			<h2 style="margin-bottom: 0.5rem"><?= $LANG['DUPLICATE_SEARCH_CRITERIA'] ?></h2>
-			<form method="POST" style="margin-bottom: 1rem;">
+			<form id="params-form" method="POST" style="margin-bottom: 1rem;">
 				<div style="margin-bottom: 1rem;">
 					<?php CustomQuery::renderCustomInputs() ?>
 				</div>
@@ -468,14 +464,12 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 						</div>
 						<div id="innertext">
 							<div id="error-msgs" class="errors"></div>
-							<form id="params-form">
-								<div id="search-form-colls">
-									<?php include(__DIR__ . '/includes/collectionForm.php') ?>
-								</div>
-							</form>
+							<div id="search-form-colls">
+								<?php include(__DIR__ . '/includes/collectionForm.php') ?>
+							</div>
 						</div>
 					</dialog>
-					<button class="button" type="button" onclick="document.getElementById('collections_dialog').showModal()"><?= $LANG['FILTER_COLLECTIONS'] ?></button>
+					<button class="button" type="button" onclick="openCollectionsDialog()"><?= $LANG['FILTER_COLLECTIONS'] ?></button>
 					<button class="button"><?= $LANG['SEARCH'] ?></button>
 				</div>
 

@@ -63,6 +63,21 @@ function closeModal(elementid) {
   $(elementid)?.css("display", "none");
 }
 
+function openCollectionsDialog() {
+    const dialog = document.getElementById('collections_dialog');
+    dialog.showModal();
+
+    const form = document.getElementById('params-form');
+    if (form) {
+      console.log("deleteMe got here d1");
+      setSearchForm(form);
+      form.addEventListener("submit", function(event) {
+        event.preventDefault();
+        simpleSearch();
+      });
+    }
+  }
+
 /**
  * Chips
  */
