@@ -1761,19 +1761,18 @@ class OccurrenceEditorManager {
 			//Fetch List of Old Current Determinations
 			$currentDeterminations = $get_current_determinations($targetOccid);
 
-			//Remap determinations
+			//Remap non duplicate determinations
 			$sql = <<<'SQL'
-			UPDATE omoccurdeterminations 
-			SET occid = ? WHERE occid = ?
-			AND detid NOT IN (
-				SELECT source.detid FROM omoccurdeterminations source
-				JOIN omoccurdeterminations target ON target.occid = ? 
-				WHERE source.occid = ? 
+			UPDATE omoccurdeterminations as det
+			JOIN (SELECT source.detid FROM omoccurdeterminations source
+				JOIN omoccurdeterminations target ON target.occid = ?
+				WHERE source.occid = ?
 				AND source.sciname = target.sciname
 				AND source.dateIdentified = target.dateIdentified
-				AND source.identifiedBy = target.identifiedBy
-			);
+				AND source.identifiedBy = target.identifiedBy) AS dups on dups.detid != det.detid
+			SET det.occid = ? WHERE det.occid = ?;
 			SQL;
+
 			QueryUtil::executeQuery($this->conn, $sql, [
 				//Update To This Occid
 				$targetOccid,

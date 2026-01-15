@@ -9,14 +9,14 @@ Language::load('imagelib/search');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $taxonType = isset($_REQUEST['taxontype']) ? filter_var($_REQUEST['taxontype'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$useThes = array_key_exists('usethes',$_REQUEST) ? filter_var($_REQUEST['usethes'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$useThes = !empty($_REQUEST['usethes']) ? filter_var($_REQUEST['usethes'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $taxaStr = isset($_REQUEST['taxa']) ? $_REQUEST['taxa'] : '';
-$phUid = array_key_exists('phuid',$_REQUEST) ? filter_var($_REQUEST['phuid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$phUid = !empty($_REQUEST['phuid']) ? filter_var($_REQUEST['phuid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $tagExistance = array_key_exists('tagExistance',$_REQUEST) ? filter_var($_REQUEST['tagExistance'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $tag = array_key_exists('tag',$_REQUEST) ? $_REQUEST['tag'] : '';
 //$keywords = array_key_exists('keywords',$_REQUEST) ? $_REQUEST['keywords'] : '';
 $imageCount = isset($_REQUEST['imagecount']) ? $_REQUEST['imagecount'] : 'all';
-$imageType = isset($_REQUEST['imagetype']) ? filter_var($_REQUEST['imagetype'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$imageType = !empty($_REQUEST['imagetype']) ? filter_var($_REQUEST['imagetype'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $pageNumber = array_key_exists('page', $_REQUEST) && is_numeric($_REQUEST['page']) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $cntPerPage = array_key_exists('cntperpage', $_REQUEST) && is_numeric($_REQUEST['cntperpage']) ? filter_var($_REQUEST['cntperpage'], FILTER_SANITIZE_NUMBER_INT) : 200;
 $sortBy = !empty($_REQUEST['sortby']) ? $_REQUEST['sortby'] : '';
@@ -50,6 +50,7 @@ $imgLibManager->setImageCount($imageCount);
 $imgLibManager->setImageType($imageType);
 //Setter only takes 'image' and 'audio' as valid values so no need to sanitize
 $imgLibManager->setMediaType($mediaType);
+$imgLibManager->setSortBy($sortBy);
 if(isset($_REQUEST['db'])) $imgLibManager->setCollectionVariables();
 
 $statusStr = '';
@@ -148,7 +149,7 @@ $creators = Media::getCreatorArray();
 				<fieldset>
 					<legend><?= $LANG['SEARCH_CRITERIA'] ?></legend>
 					<div id="criteria-div">
-						<div class="row-div flex-form">
+						<div class="row-div">
 							<?php
 							$isEditor = 0;
 							if($IS_ADMIN) $isEditor = 1;
@@ -459,7 +460,6 @@ $creators = Media::getCreatorArray();
 											echo '<div class="editor-div" style="display:none;margin-top:3px;"><input name="mediaId[]" type="checkbox" value="' . $mediaId . '"></div>';
 										}
 										$sciname = $imgArr['sciname'];
-										if(!$sciname && $imgArr['occid'] && $occArr[$imgArr['occid']]['sciname']) $sciname = $occArr[$imgArr['occid']]['sciname'];
 										if($sciname){
 											if(strpos($imgArr['sciname'], ' ')) $sciname = '<i>' . $sciname . '</i>';
 											if($imgArr['tid']) echo '<a href="#" onclick="openTaxonPopup(' . $imgArr['tid'] . ');return false;" >';

@@ -152,7 +152,7 @@ if(!$IS_ADMIN && !$isNewInstall) header('Location: ../profile/index.php?refurl=.
 								<?= $port; ?>
 							</div>
 							<div class="form-section">
-								<button name="action" type="submit" value="installSchema">Install</button>
+								<button name="action" type="submit" value="installSchema" onclick="return confirm('WARNING: To protect against data loss, back up Symbiota database before installing new patch. Press OK to proceed.');">Install</button>
 							</div>
 						</form>
 					</fieldset>
