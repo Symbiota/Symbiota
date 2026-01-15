@@ -50,6 +50,8 @@ $isEditor = false;
 if($IS_ADMIN || array_key_exists("TaxonProfile",$USER_RIGHTS)) $isEditor = true;
 
 if($isEditor && $action){
+	/*
+	 * Pending deprecation of allowing Taxon Profile Editors to adjust display order of synonyms
 	if($action == 'editSynonymSort'){
 		$synSortArr = Array();
 		foreach($_REQUEST as $sortKey => $sortValue){
@@ -59,7 +61,8 @@ if($isEditor && $action){
 		}
 		$statusStr = $tEditor->editSynonymSort($synSortArr);
 	}
-	elseif($action == "Submit Common Name Edits"){
+	*/
+	if($action == "Submit Common Name Edits"){
 		if(!$tEditor->editVernacular($_POST)) $statusStr = $tEditor->getErrorMessage();
 	}
 	elseif($action == "Add Common Name"){
@@ -356,7 +359,7 @@ if($isEditor && $action){
 							}
 							?>
 						</div>
-						<!--
+						<!-- Deprecation of Taxon Profile Editors ability to adjust display order of synonyms pending user input
 						<hr/>
 						<fieldset style="width:650px;margin:5px 0px 0px 15px;">
 							<legend><b><?php echo $LANG['SYNONYMS']; ?></b></legend>
@@ -410,8 +413,8 @@ if($isEditor && $action){
 							<div style="margin:10px;">
 								*<?php echo $LANG['MOST_SYN_IN_TAX_THES'] . ' <a href="../../sitemap.php">' . $LANG['SITEMAP'] . '</a>).'; ?>
 							</div>
-							-->
 						</fieldset>
+						-->
 					</div>
 				</div>
 				<?php

@@ -37,12 +37,15 @@ $LANG['EDIT_COMMON_NAME'] = 'Editar Nome Comum';
 $LANG['SUBMIT_COMMON_EDITS'] = 'Enviar edições de nomes comuns';
 $LANG['SURE_DELETE_COMMON'] = 'Tem certeza que deseja excluir este nome comum?';
 $LANG['DELETE_COMMON'] = 'Excluir Nome Comum';
+/*
+ * Deprecation of Taxon Profile Editors ability to adjust display order of synonyms pending user input
 $LANG['SYNONYMS'] = 'Sinônimos';
 $LANG['EDIT_SYN_ORDER'] = 'Editar ordem de classificação de sinônimos';
 $LANG['SYN_SORT_ORDER'] = 'Ordem de classificação de sinônimos';
 $LANG['NO_SYN_LINK'] = 'Sem links de sinônimos';
 $LANG['MOST_SYN_IN_TAX_THES'] = 'A maior parte do gerenciamento de sinônimos deve ser feita no módulo de edição do Tesauro Taxonômico (veja';
 $LANG['SITEMAP'] = 'mapa do site';
+*/
 $LANG['NOT_AUTH'] = 'Você não está autorizado a editar esta página';
 $LANG['SCINAME'] = 'Nome Científico';
 $LANG['EDIT_TAXON'] = 'Editar Táxon';
