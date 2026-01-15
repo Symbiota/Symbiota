@@ -920,6 +920,7 @@ function expandCategoriesWithSomeCheckedChildren() { // @TODO this is a good can
 }
 
 function setSearchForm(frm) {
+  if (!frm) return;
   if (sessionStorage.querystr && sessionStorage.querystr !== "null") {
     const urlVar = parseUrlVariables(sessionStorage.querystr.replaceAll('&quot;', '"'));
     if (

@@ -89,7 +89,7 @@ if(array_key_exists('copyInfo', $_POST)) {
 			}
 		}
 	}
-	$_REQUEST = $_SESSION['batchDuplicateGeorefCopyRequest'];
+	$_REQUEST = $_SESSION['batchDuplicateGeorefCopyRequest'] ?? [];
 } else if(array_key_exists('searchDuplicates', $_REQUEST)) {
 	$_SESSION['batchDuplicateGeorefCopyRequest'] = $_REQUEST;
 }
@@ -344,8 +344,14 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 <html lang="en">
 	<head>
 	<?php include_once($SERVER_ROOT.'/includes/head.php') ;?>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<link href="<?= $CSS_BASE_PATH ?>/searchStyles.css?ver=1" type="text/css" rel="stylesheet">
+	<link href="<?= $CSS_BASE_PATH ?>/searchStylesInner.css" type="text/css" rel="stylesheet">
+	<script src="<?= $CLIENT_ROOT ?>/js/alerts.js?v=202107" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=2" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.list.js?ver=20251002>" type="text/javascript"></script>
 
-	<style tyle="text/css">
+	<style type="text/css">
 		.table-scroll {
 			display: block;
 			white-space: nowrap;
@@ -374,6 +380,25 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 				}
 			}
 		}
+		$(document).ready(function() {
+			setSessionQueryStr();
+			setSearchForm(document.getElementById("params-form"));
+			// closeAllCategories();
+			// expandCategoriesBasedOnConfig();
+			// toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
+			document.getElementById("params-form")?.addEventListener("submit", function(event) {
+				event.preventDefault();
+				simpleSearch();
+			});
+			// document.getElementById("reset-btn").addEventListener("click", function (event) {
+			// 	document.getElementById("params-form").reset();
+			// 	// updateChip();
+			// 	checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
+			// 	expandCategoriesBasedOnConfig();
+			// 	updateChip(event, isInitialConfig=true);
+			// });
+		});
+
 		</script>
 	</head>
 
@@ -381,7 +406,7 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 		<?php include_once($SERVER_ROOT.'/includes/header.php') ;?>
 
 		<div role="main" id="record-viewer-innertext">
-
+			<div id="error-msgs" class="errors"></div>
 			<?= Breadcrumbs::renderMany([
 			$LANG['HOME'] => '../../index.php',
 			$LANG['COL_MGMNT'] => '../misc/collprofiles.php?emode=1&collid=' . $collId,
@@ -441,7 +466,14 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 							<button class="button" style="margin-left: auto;" type="button" onclick="document.getElementById('collections_dialog').close()"><?= $LANG['CLOSE'] ?></button>
 							</div>
 						</div>
-						<?php include(__DIR__ . '/includes/collectionForm.php') ?>
+						<div id="innertext">
+							<div id="error-msgs" class="errors"></div>
+							<form id="params-form">
+								<div id="search-form-colls">
+									<?php include(__DIR__ . '/includes/collectionForm.php') ?>
+								</div>
+							</form>
+						</div>
 					</dialog>
 					<button class="button" type="button" onclick="document.getElementById('collections_dialog').showModal()"><?= $LANG['FILTER_COLLECTIONS'] ?></button>
 					<button class="button"><?= $LANG['SEARCH'] ?></button>
@@ -453,7 +485,7 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 
 			<?php foreach($errors as $duplicateId => $error): ?>
 			<div style="margin-bottom:0.5rem">
-<?= 'ERROR: ' . $error ?>
+				<?= 'ERROR: ' . $error ?>
 			</div>
 			<?php endforeach ?>
 
@@ -522,7 +554,6 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 			</form>
 			<br/>
 		</div>
-
 		<?php include_once($SERVER_ROOT.'/includes/footer.php') ;?>
 	</body>
 </html>
