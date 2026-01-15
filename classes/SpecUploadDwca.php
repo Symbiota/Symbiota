@@ -182,13 +182,17 @@ class SpecUploadDwca extends SpecUploadBase{
 			$this->errorStr = 'OccurrencesMissing';
 			return false;
 		}
-		if(!file_exists($this->uploadTargetPath.'multimedia.csv') && !file_exists($this->uploadTargetPath.'images.csv')){
-			$this->errorStr = 'ImagesMissing';
-			return false;
+		if($this->includeImages){
+			if(!file_exists($this->uploadTargetPath . 'multimedia.csv') && !file_exists($this->uploadTargetPath . 'images.csv')){
+				$this->errorStr = 'MediaMissing';
+				return false;
+			}
 		}
-		if(!file_exists($this->uploadTargetPath.'identifications.csv')){
-			$this->errorStr = 'IdentificationsMissing';
-			return false;
+		if($this->includeIdentificationHistory){
+			if(!file_exists($this->uploadTargetPath . 'identifications.csv')){
+				$this->errorStr = 'IdentificationsMissing';
+				return false;
+			}
 		}
 		if(!file_exists($this->uploadTargetPath.'meta.xml')){
 			$this->errorStr = 'MetaMissing';
