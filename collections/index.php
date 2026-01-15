@@ -98,11 +98,11 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 	}
 	?>
 	<!-- This is inner text! -->
-	<div role="main" id="innertext" class="inntertext-tab pin-things-here">
+	<div role="main" id="innertext" class="inntertext-tab pin-things-here inner-search">
 		<h1 class="page-heading screen-reader-only"><?php echo $LANG['COLLECTION_LIST']; ?></h1>
 		<div id="error-msgs" class="errors"></div>
 		<!-- <form  class="content" id="params-form" action="harvestparams.php" method="post" onsubmit="preventDefault(); return validateForm();"> -->
-		<form  class="content" id="params-form" method="post">
+		<form  class="content" id="params-form" method="post" action="harvestparams.php" style="grid-template-columns: none;">
 			<button style="margin-bottom: 1rem;" id="search-btn" type="submit" name="action"><?php echo isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search &gt'; ?></button>
 			<button style="background-color: var(--medium-color);" id="reset-btn" type="button"><?php echo $LANG['RESET'] ?></button>
 			<fieldset style="margin-top:1rem;">
