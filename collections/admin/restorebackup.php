@@ -237,14 +237,14 @@ include($SERVER_ROOT.'/includes/header.php');
 							}
 						}
 						else{
-							echo '<div><span style="color:red">FATAL ERROR:</span> ';
+							echo '<div><span style="color:red">' . $LANG['FATAL_ERROR'] . ':</span> ';
 							$errCode = $duManager->getErrorStr();
-							if($errCode == 'OccurrencesMissing') echo 'Not a valid backup file; occurrences.csv core file is missing';
-							elseif($errCode == 'MetaMissing') echo 'Not a valid backup file; meta.xml file is missing';
-							elseif($errCode == 'MalformedMeta') echo 'Not a valid backup file; malformed meta.xml file';
-							elseif($errCode == 'EmlMissing') echo 'Not a valid backup file; eml.xml file is missing';
-							elseif($errCode == 'MediaMissing') echo 'Media/Images file expected but missing. Please include a multimedia.csv file or uncheck the &quot;Restore Media/Image Links&quot;';
-							elseif($errCode == 'IdentificationsMissing') echo 'Determinations/Identifications file expected but missing. Please include a identifications.csv file or uncheck the &quot;Restore Determination History&quot;';
+							if($errCode == 'OccurrencesMissing') echo $LANG['OCCURRENCES_MISSING_ERROR'];
+							elseif($errCode == 'MetaMissing') echo $LANG['META_MISSING_ERROR'];
+							elseif($errCode == 'MalformedMeta') echo $LANG['MALFORMED_META_ERROR'];
+							elseif($errCode == 'EmlMissing') echo $LANG['EML_MISSING_ERROR'];
+							elseif($errCode == 'MediaMissing') echo $LANG['MEDIA_MISSING_ERROR'];
+							elseif($errCode == 'IdentificationsMissing') echo $LANG['ID_MISSING_ERROR'];
 							echo '</div>';
 						}
 					}
