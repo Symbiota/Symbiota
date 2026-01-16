@@ -417,7 +417,7 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 		<?php include_once($SERVER_ROOT.'/includes/header.php') ;?>
 
 		<div role="main" id="record-viewer-innertext">
-			<div id="error-msgs" class="errors"></div>
+			<div id="error-msgs" class="errors" style="color: var(--danger-color);"></div>
 			<?= Breadcrumbs::renderMany([
 			$LANG['HOME'] => '../../index.php',
 			$LANG['COL_MGMNT'] => '../misc/collprofiles.php?emode=1&collid=' . $collId,
