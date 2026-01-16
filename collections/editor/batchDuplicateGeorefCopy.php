@@ -72,7 +72,8 @@ Language::load([
 	'collections/sharedterms',
 	'collections/misc/sharedterms',
 	'collections/editor/batchDuplicateGeorefCopy',
-	'collections/list'
+	'collections/list',
+	'collections/search/index',
 ]);
 
 $collId = array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid'])? intval($_REQUEST['collid']):0;
@@ -458,8 +459,9 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 					<dialog id="collections_dialog" style="min-width: 900px;">
 						<div style="display:flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
 							<h1 style="margin:0;"><?= $LANG['NAV_COLLECTIONS'] ?></h1>
-							<div style="flex-grow: 1;">
-							<button class="button" style="margin-left: auto;" type="button" onclick="document.getElementById('collections_dialog').close()"><?= $LANG['CLOSE'] ?></button>
+							<div style="display: flex; flex-direction: column; flex-grow: 1; gap: 0.5rem;">
+								<button class="button" style="margin-left: auto;" type="button" onclick="document.getElementById('collections_dialog').close()"><?= $LANG['CLOSE'] ?></button>
+								<button class="button" style="margin-left: auto; background-color: var(--medium-color);" type="button"  id="reset-btn" ><?php echo $LANG['RESET'] ?></button>
 							</div>
 						</div>
 						<div id="innertext">

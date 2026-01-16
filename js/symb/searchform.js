@@ -75,6 +75,13 @@ function openCollectionsDialog() {
         event.preventDefault();
         simpleSearch();
       });
+      document.getElementById("reset-btn").addEventListener("click", function (event) {
+        document.getElementById("params-form").reset();
+        // updateChip();
+        checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
+        expandCategoriesBasedOnConfig();
+        updateChip(event, isInitialConfig=true);
+      });
     }
   }
 
