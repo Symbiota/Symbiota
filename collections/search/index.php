@@ -816,7 +816,6 @@ $requestSuppliedCatChk = array_key_exists('catChk', $_REQUEST) ? explode(',', $_
 	$(document).ready(function() {
 		setSessionQueryStr();
 		setSearchForm(document.getElementById("params-form"));
-		// closeAllCategories();
 		toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
 		document.getElementById("params-form").addEventListener("submit", function(event) {
 			event.preventDefault();
@@ -825,8 +824,6 @@ $requestSuppliedCatChk = array_key_exists('catChk', $_REQUEST) ? explode(',', $_
 		document.getElementById("reset-btn").addEventListener("click", function (event) {
 			document.getElementById("params-form").reset();
 			sessionStorage.clear();
-			// localStorage.clear(); // @TODO ?
-			// updateChip();
 			checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
 			expandCategoriesBasedOnConfig();
 			updateChip(event, isInitialConfig=true);

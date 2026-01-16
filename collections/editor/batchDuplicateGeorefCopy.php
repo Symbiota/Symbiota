@@ -79,6 +79,10 @@ Language::load([
 $collId = array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid'])? intval($_REQUEST['collid']):0;
 UserUtil::isCollectionAdminOrDenyAcess($collId);
 
+$requestSuppliedCatOrd = array_key_exists('catOrd', $_REQUEST) ? explode(',', $_REQUEST['catOrd']) : null;
+$requestSuppliedCatExpnd = array_key_exists('catExpnd', $_REQUEST) ? explode(',', $_REQUEST['catExpnd']) : null;
+$requestSuppliedCatChk = array_key_exists('catChk', $_REQUEST) ? explode(',', $_REQUEST['catChk']) : null;
+
 if(array_key_exists('copyInfo', $_POST)) {
 	foreach($_POST as $targetOccId => $sourceOccId) {
 		if(is_numeric($targetOccId) && is_numeric($sourceOccId)) {
@@ -382,20 +386,6 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 			}
 		}
 
-		// function openCollectionsDialog() {
-		// 	const dialog = document.getElementById('collections_dialog');
-		// 	dialog.showModal();
-
-		// 	const form = document.getElementById('params-form');
-		// 	if (form) {
-		// 		console.log("deleteMe got here d1");
-		// 		setSearchForm(form);
-		// 		form.addEventListener("submit", function(event) {
-		// 			event.preventDefault();
-		// 			simpleSearch();
-		// 		});
-		// 	}
-		// }
 		</script>
 	</head>
 

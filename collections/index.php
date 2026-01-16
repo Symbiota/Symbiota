@@ -24,6 +24,10 @@ $specArr = (isset($collList['spec'])?$collList['spec']:null);
 $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 
 $otherCatArr = $collManager->getOccurVoucherProjects();
+
+$requestSuppliedCatOrd = array_key_exists('catOrd', $_REQUEST) ? explode(',', $_REQUEST['catOrd']) : null;
+$requestSuppliedCatExpnd = array_key_exists('catExpnd', $_REQUEST) ? explode(',', $_REQUEST['catExpnd']) : null;
+$requestSuppliedCatChk = array_key_exists('catChk', $_REQUEST) ? explode(',', $_REQUEST['catChk']) : null;
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -53,15 +57,12 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 					}
 				});
 				sessionStorage.querystr = null;
-				//document.collections.onkeydown = checkKey;
 			});
 		</script>
 		<script type="text/javascript">
 			$(document).ready(function() {
 				setSessionQueryStr();
 				setSearchForm(document.getElementById("params-form"));
-				// closeAllCategories();
-				// expandCategoriesBasedOnConfig();
 				toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
 				document.getElementById("params-form").addEventListener("submit", function(event) {
 					event.preventDefault();
@@ -69,7 +70,6 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 				});
 				document.getElementById("reset-btn").addEventListener("click", function (event) {
 					document.getElementById("params-form").reset();
-					// updateChip();
 					checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
 					expandCategoriesBasedOnConfig();
 					updateChip(event, isInitialConfig=true);
