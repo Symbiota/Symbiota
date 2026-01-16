@@ -104,10 +104,15 @@ function toggleCategory(categoryId) {
 }
 
 </script>
+<?php
+	// $requestSuppliedCatOrd = array_key_exists('catOrd', $_REQUEST) ? explode(',', $_REQUEST['catOrd']) : null;
+	// $requestSuppliedCatExpnd = array_key_exists('catExpnd', $_REQUEST) ? explode(',', $_REQUEST['catExpnd']) : null;
+	// $requestSuppliedCatChk = array_key_exists('catChk', $_REQUEST) ? explode(',', $_REQUEST['catChk']) : null;
+?>
 <div id="all_collections_parent_container" data-config='<?= json_encode([
-		'CATORD' => $CATORD ?? [],
-		'CATEXPND' => $CATEXPND ?? [],
-		'CATCHK' => $CATCHK ?? [],
+		'CATORD' => $requestSuppliedCatOrd ?? $CATORD ?? [],
+		'CATEXPND' =>  $requestSuppliedCatExpnd ?? $CATEXPND ?? [],
+		'CATCHK' => $requestSuppliedCatChk ?? $CATCHK ?? [],
 	]) ?>'>
 	<?php 
 	$checkboxConfigs = [
@@ -158,7 +163,7 @@ function toggleCategory(categoryId) {
 			$collectionFormManager = new CollectionFormManager();
 			$sortedCollectionsByCategory = $collectionFormManager->reorderPortalCategories(
 				$collectionsByCategory,
-				$CATORD ?? [],
+				$requestSuppliedCatOrd ?? $CATORD ?? [],
 			);
 		 ?>
 		<?php foreach($sortedCollectionsByCategory as $collectionType => $categories): ?>

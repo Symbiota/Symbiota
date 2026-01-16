@@ -39,6 +39,10 @@ $obsArr = (isset($collList['obs']) ? $collList['obs'] : null);
 $associationManager = new AssociationManager();
 $characters = $collManager->getCharacters();
 $relationshipTypes = $associationManager->getRelationshipTypes();
+
+$requestSuppliedCatOrd = array_key_exists('catOrd', $_REQUEST) ? explode(',', $_REQUEST['catOrd']) : null;
+$requestSuppliedCatExpnd = array_key_exists('catExpnd', $_REQUEST) ? explode(',', $_REQUEST['catExpnd']) : null;
+$requestSuppliedCatChk = array_key_exists('catChk', $_REQUEST) ? explode(',', $_REQUEST['catChk']) : null;
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
