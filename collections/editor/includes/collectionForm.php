@@ -134,23 +134,25 @@ function toggleCategory(categoryId) {
 		]
 	];
 	?>
-	<?php foreach($checkboxConfigs as $checkboxConfig): ?>
-	<div id="<?= $checkboxConfig['id'] ?>_checkbox_container" style="display: inline-block; margin: <?= $checkboxConfig['margin'] ?>;">
-		<input
-			style="margin:0;"
-			onclick="toggleAllCheckboxes(document.getElementById('<?= $checkboxConfig['target'] ?>'), this.checked)"
-			data-chip="<?= $checkboxConfig['data_chip'] ?>"
-			type="checkbox"
-			id="<?= $checkboxConfig['id'] ?>"
-			name="<?= $checkboxConfig['id'] ?>"
-			value="1"
-			<?= array_key_exists($checkboxConfig['id'], $_REQUEST)? 'checked': '' ?>
-		>
-		<label for="<?= $checkboxConfig['id'] ?>">
-			<?= $checkboxConfig['label_content']?>
-		</label>
+	<div id="type-level-checkboxes" style="display:flex; gap: 15px;">
+		<?php foreach($checkboxConfigs as $checkboxConfig): ?>
+		<div id="<?= $checkboxConfig['id'] ?>_checkbox_container" style="display: inline-block; margin: <?= $checkboxConfig['margin'] ?>;">
+			<input
+				style="margin:0;"
+				onclick="toggleAllCheckboxes(document.getElementById('<?= $checkboxConfig['target'] ?>'), this.checked)"
+				data-chip="<?= $checkboxConfig['data_chip'] ?>"
+				type="checkbox"
+				id="<?= $checkboxConfig['id'] ?>"
+				name="<?= $checkboxConfig['id'] ?>"
+				value="1"
+				<?= array_key_exists($checkboxConfig['id'], $_REQUEST)? 'checked': '' ?>
+			>
+			<label for="<?= $checkboxConfig['id'] ?>">
+				<?= $checkboxConfig['label_content']?>
+			</label>
+		</div>
+		<?php endforeach; ?>
 	</div>
-	<?php endforeach; ?>
 	<div id="collections_container">
 		<?php 
 			$collectionFormManager = new CollectionFormManager();
