@@ -76,6 +76,7 @@ function openCollectionsDialog() {
         simpleSearch();
       });
       document.getElementById("reset-btn").addEventListener("click", function (event) {
+        console.log("deleteMe got here e1");
         document.getElementById("params-form").reset();
         // updateChip();
         checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
@@ -741,10 +742,10 @@ function uncheckEverythingInCollections() {
   const allObservationCollectionsElem = document.getElementById("all_observation_collections");
   allObservationCollectionsElem.checked = false;
   const categoryCollectionsChecked = Array.from(
-    document.querySelectorAll(`#search-form-colls input[name="cat[]"]:checked`)
+    document.querySelectorAll(`#search-form-colls input[id^="Specimens_"]:checked, #search-form-colls input[id^="Observations_"]:checked`)
   );
-  categoryCollectionsChecked.forEach((individualCollectionChecked) => {
-    individualCollectionChecked.checked = false;
+  categoryCollectionsChecked.forEach((individualCategoryChecked) => {
+    individualCategoryChecked.checked = false;
   });
 
   const individualCollectionsChecked = Array.from(
@@ -811,19 +812,23 @@ function contains(bigger, smaller) {
 };
 
 function checkTheCollectionsThatShouldBeCheckedBasedOnConfig() {
-  const targetCollectionsCheckedStatuses = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CATCHK;
-  const queriedCollectionsCategories = targetCollectionsCheckedStatuses;
-  queriedCollectionsCategories.forEach((queriedCollectionCategory) => {
-    const targetElems = document.querySelectorAll(`#Specimens_${queriedCollectionCategory}, #Observations_${queriedCollectionCategory}`);
-    targetElems.forEach((targetElem) => {
-      targetElem.checked = true;
-      const divWithChildren = document.getElementById(targetElem.id + "_inputs");
-      const childCheckboxes = divWithChildren.querySelectorAll('input[type="checkbox"]');
-      childCheckboxes.forEach((childCheckbox) => {
-        childCheckbox.checked = true;
+  const targetCollectionCategoriesCheckedStatuses = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CATCHK;
+  const queriedCollectionsCategories = targetCollectionCategoriesCheckedStatuses;
+  if(queriedCollectionsCategories.length>0){
+    // @TODO uncheckEverything
+    uncheckEverythingInCollections();
+    queriedCollectionsCategories.forEach((queriedCollectionCategory) => {
+      const targetElems = document.querySelectorAll(`#Specimens_${queriedCollectionCategory}, #Observations_${queriedCollectionCategory}`);
+      targetElems.forEach((targetElem) => {
+        targetElem.checked = true;
+        const divWithChildren = document.getElementById(targetElem.id + "_inputs");
+        const childCheckboxes = divWithChildren.querySelectorAll('input[type="checkbox"]');
+        childCheckboxes.forEach((childCheckbox) => {
+          childCheckbox.checked = true;
+        });
       });
     });
-  });
+  }
   updateCategoryCheckboxes();
 }
 
