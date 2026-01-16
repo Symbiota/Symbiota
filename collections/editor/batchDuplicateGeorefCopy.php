@@ -418,7 +418,7 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 			</p>
 			</div>
 			<h2 style="margin-bottom: 0.5rem"><?= $LANG['DUPLICATE_SEARCH_CRITERIA'] ?></h2>
-			<form id="params-form" method="POST" style="margin-bottom: 1rem;">
+			<form class="content" id="params-form" method="POST" style="margin-bottom: 1rem;">
 				<div style="margin-bottom: 1rem;">
 					<?php CustomQuery::renderCustomInputs() ?>
 				</div>

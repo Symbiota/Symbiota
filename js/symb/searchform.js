@@ -321,6 +321,7 @@ function updateChip(e, isInitialConfig=false) {
       updateCategoryCheckboxes();
       closeAllCategories();
       expandCategoriesWithSomeCheckedChildren();
+      
     }
   }
   
@@ -1265,7 +1266,7 @@ searchFormColls?.addEventListener("change", autoToggleSelector, false);
 
 //////// Initialize form inputs and bind update chip on event change
 function initializeFormInputs() {
-  if (!formInputs) {
+  if (!formInputs || formInputs.length === 0) {
     formInputs = document.querySelectorAll(".content input");
   }
   formInputs.forEach((formInput) => {
