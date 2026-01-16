@@ -22,6 +22,25 @@ class Helper {
 		return $domain;
 	}
 
+	public static function getAPIResponse($url, $asyc = false) {
+		$resJson = false;
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_URL, $url);
+		//curl_setopt($ch, CURLOPT_HTTPGET, true);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		if ($asyc) curl_setopt($ch, CURLOPT_TIMEOUT_MS, 500);
+		$resJson = curl_exec($ch);
+		if (!$resJson) {
+			//$resJson = '{FATAL CURL ERROR: ' . curl_error($ch) . ' (#' . curl_errno($ch) . ')}';
+			return false;
+			//$header = curl_getinfo($ch);
+		}
+		curl_close($ch);
+		return json_decode($resJson, true);
+	}
+
 	public static function getRightsHtml($inputStr){
 		$rightsOutput = '';
 		if($inputStr){
@@ -49,5 +68,19 @@ class Helper {
 		}
 		$rightsOutput = '<span class="rights-span">' . $rightsOutput . '</span>';
 		return $rightsOutput;
+	}
+	public static function readyPhraseForBooleanModeFulltextSearch($inputStr){
+		$words = preg_split('/\s+/', trim($inputStr));
+		$booleanModeResult = implode(' ', array_map(fn($w) => '+' . $w, $words));
+		return $booleanModeResult;
+	}
+
+	public static function isValidJson($jsonString) {
+		if (empty($jsonString)) {
+			return false;
+		}
+		
+		json_decode($jsonString);
+		return (json_last_error() === JSON_ERROR_NONE);
 	}
 }

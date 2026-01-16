@@ -1,9 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TPDescEditorManager.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/profile/tpdesceditor.'.$LANG_TAG.'.php'))
-	include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpdesceditor.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpdesceditor.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('taxa/profile/tpdesceditor');
+
 header('Content-Type: text/html; charset='.$CHARSET);
 
 $tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']:0;

@@ -1,8 +1,10 @@
 <?php
 include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/includes/admintab.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/admintab.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/admintab.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/editor/includes/admintab');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $occid = $_GET['occid'];
@@ -164,7 +166,7 @@ $occManager->setOccId($occid);
 				<div id="delapprovediv" style="margin:15px;display:none;">
 					<input name="occid" type="hidden" value="<?php echo $occid; ?>" />
 					<input name="occindex" type="hidden" value="<?php echo $occIndex; ?>" />
-					<button class="button-danger" name="submitaction" type="submit" value="Delete Occurrence"><?php echo $LANG['DEL_OCC']; ?></button>
+					<button class="button button-danger" name="submitaction" type="submit" value="Delete Occurrence"><?php echo $LANG['DEL_OCC']; ?></button>
 				</div>
 			</div>
 		</form>

@@ -9,6 +9,7 @@ Translated by: Google Translate (2025-06-03)
 $LANG['EXTERNAL_VOUCHER_LINKING'] = 'Vinculação de voucher externo';
 $LANG['CHECKLIST_ID_REQUIRED'] = 'É necessário um ID de lista de verificação para que esta ferramenta funcione';
 $LANG['TARGET_TAXON_REQUIRED'] = 'Um ID de táxon de destino é necessário para que esta ferramenta funcione';
+$LANG['EXTERNAL_ID_REQUIRED'] = 'Um ID externo é necessário para que esta ferramenta funcione. Configure no Administrador da lista de verificação.';
 $LANG['LINK_VOUCHER'] = 'Voucher de link';
 $LANG['TAXON_NAME'] = 'Nome do táxon';
 $LANG['LOCALITY'] = 'Localidade';

@@ -35,6 +35,7 @@ class SpecUploadBase extends SpecUpload{
 	protected $imageSymbFields = array();
 	protected $filterArr = array();
 	private $targetFieldArr = array();
+	private $paleoTargetFieldArr = array();
 
 	private $sourceCharset;
 	private $targetCharset = 'UTF-8';
@@ -162,6 +163,7 @@ class SpecUploadBase extends SpecUpload{
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
 			$field = strtolower($row->Field);
+			if (!$this->paleoSupport && strpos($field, 'paleo') === 0) continue;
 			if(!in_array($field,$this->skipOccurFieldArr)){
 				if($autoBuildFieldMap){
 					$this->occurFieldMap[$field]["field"] = $field;
@@ -192,12 +194,12 @@ class SpecUploadBase extends SpecUpload{
 		}
 		$rs->free();
 		//Add additional fields that are used for mapping to other fields just before record is imported into uploadspectemp
+		if($this->paleoSupport) $this->symbFields = array_unique(array_merge($this->symbFields, $this->getPaleoTerms()));
 		$this->symbFields[] = 'coordinateuncertaintyradius';
 		$this->symbFields[] = 'coordinateuncertaintyunits';
 		$this->symbFields[] = 'authorspecies';
 		$this->symbFields[] = 'authorinfraspecific';
 		sort($this->symbFields);
-		if($this->paleoSupport) $this->symbFields = array_merge($this->symbFields,$this->getPaleoTerms());
 		if($this->materialSampleSupport) $this->symbFields = array_merge($this->symbFields,$this->getMaterialSampleTerms());
 
 	/*	//Associated Occurrence fields
@@ -340,14 +342,14 @@ class SpecUploadBase extends SpecUpload{
 		$symbFieldsRaw = $this->symbFields;
 		$sourceArr = $this->occurSourceArr;
 		$translationMap = array('accession'=>'catalognumber','accessionid'=>'catalognumber','accessionnumber'=>'catalognumber','guid'=>'occurrenceid',
-			'taxonfamilyname'=>'family','scientificname'=>'sciname','fullname'=>'sciname','speciesauthor'=>'authorspecies','species'=>'specificepithet','commonname'=>'taxonremarks',
+			'taxonfamilyname'=>'family','scientificname'=>'sciname','fullname'=>'sciname','speciesauthor'=>'authorspecies','commonname'=>'taxonremarks',
 			'observer'=>'recordedby','collector'=>'recordedby','primarycollector'=>'recordedby','field:collector'=>'recordedby','collectedby'=>'recordedby',
 			'userlogin'=>'recordedby','collectornumber'=>'recordnumber','collectionnumber'=>'recordnumber','field:collectorfieldnumber'=>'recordnumber','collectors'=>'associatedcollectors',
 			'datecollected'=>'eventdate','date'=>'eventdate','collectiondate'=>'eventdate','observedon'=>'eventdate','dateobserved'=>'eventdate','collectionstartdate'=>'eventdate','collectionverbatimdate'=>'verbatimeventdate',
 			'cf' => 'identificationqualifier','qualifier'=>'identificationqualifier','position'=>'specify:qualifier_position','detby'=>'identifiedby','determinor'=>'identifiedby',
 			'determinationdate'=>'dateidentified','determineddate'=>'dateidentified','determinedremarks'=>'identificationremarks','placecountryname'=>'country',
 			'placestatename'=>'stateprovince','state'=>'stateprovince','placecountyname'=>'county','municipiocounty'=>'county','location'=>'locality','field:localitydescription'=>'locality',
-			'placeguess'=>'locality','localitynotes'=>'locationremarks','latitude'=>'verbatimlatitude','longitude'=>'verbatimlongitude',
+			'placeguess'=>'locality','localitynotes'=>'locationremarks','latitude'=>'verbatimlatitude','longitude'=>'verbatimlongitude','storageage'=>'storagelocation',
 			'errorradius'=>'coordinateuncertaintyradius','publicpositionalaccuracy'=>'coordinateuncertaintyinmeters','errorradiusunits'=>'coordinateuncertaintyunits','errorradiusunit'=>'coordinateuncertaintyunits',
 			'datum'=>'geodeticdatum','utmzone'=>'utmzoning','township'=>'trstownship','range'=>'trsrange','section'=>'trssection','georeferencingsource'=>'georeferencesources','georefremarks'=>'georeferenceremarks',
 			'elevationmeters'=>'minimumelevationinmeters','minelevationm'=>'minimumelevationinmeters','maxelevationm'=>'maximumelevationinmeters','verbatimelev'=>'verbatimelevation',
@@ -355,7 +357,6 @@ class SpecUploadBase extends SpecUpload{
 			'generalnotes'=>'occurrenceremarks','plantdescription'=>'verbatimattributes','description'=>'verbatimattributes','specimendescription'=>'verbatimattributes',
 			'phenology'=>'reproductivecondition','field:habitat'=>'habitat','habitatdescription'=>'habitat','sitedeschabitat'=>'habitat','captivecultivated'=>'cultivationstatus',
 			'ometid'=>'exsiccatiidentifier','exsiccataeidentifier'=>'exsiccatiidentifier','exsnumber'=>'exsiccatinumber','exsiccataenumber'=>'exsiccatinumber',
-			'group'=>'paleo-lithogroup','lithostratigraphic'=>'paleo-lithology',
 			//'materialsample-materialsampleid'=>'materialsample-guid','preparationdetails'=>'materialsample-preparationprocess','materialsampletype'=>'materialsample-sampletype',
 			'imageurl'=>'associatedmedia','subject_references'=>'tempfield01',
 			'subject_recordid'=>'tempfield02'
@@ -363,9 +364,13 @@ class SpecUploadBase extends SpecUpload{
 		$autoMapExclude = array('institutioncode','collectioncode');
 
 		if($this->paleoSupport){
+			$paleoMap = ['lithogroup' => 'group', 'stage' => 'age'];
 			$paleoArr = $this->getPaleoTerms();
 			foreach($paleoArr as $v){
-				$translationMap[substr($v,6)] = $v;
+				$key = substr($v, 6);
+				$mapKey = $paleoMap[$key] ?? $key;
+				$translationMap[$mapKey] = $v;
+				$translationMap[$key] = $v;
 			}
 		}
 		if($this->materialSampleSupport){
@@ -396,8 +401,13 @@ class SpecUploadBase extends SpecUpload{
 
 		$symbFields = array();
 		foreach($symbFieldsRaw as $sValue){
-			$symbFields[$sValue] = strtolower($sValue);
+			if (!$this->paleoSupport && strpos($sValue, 'paleo_') === 0) continue;
+			$displayValue = $sValue;
+			if($displayValue == 'sciname') $displayValue = 'scientificName (excluding author)';
+			if($displayValue == 'scientificname') $displayValue = 'scientificName (including author)';
+			$symbFields[$displayValue] = strtolower($sValue);
 		}
+		ksort($symbFields);
 
 		//Build a Source => Symbiota field Map
 		$sourceSymbArr = Array();
@@ -424,6 +434,8 @@ class SpecUploadBase extends SpecUpload{
 				if($this->uploadType == $this->NFNUPLOAD && substr($fieldName,0,8) == 'subject_') continue;
 				$isAutoMapped = false;
 				$tranlatedFieldName = str_replace(array('_',' ','.','(',')'),'',$fieldName);
+				if(strpos($fieldName, 'paleo') === 0)
+					$tranlatedFieldName = substr($tranlatedFieldName, 6);
 				if($autoMap){
 					if(array_key_exists($tranlatedFieldName,$translationMap)) $tranlatedFieldName = strtolower($translationMap[$tranlatedFieldName]);
 					if(in_array($tranlatedFieldName,$symbFields) && !in_array($fieldName,$autoMapExclude)){
@@ -453,7 +465,7 @@ class SpecUploadBase extends SpecUpload{
 				if(array_key_exists($fieldName,$sourceSymbArr)){
 					//Source Field is mapped to Symbiota Field
 					foreach($symbFields as $sFieldDisplay => $sField){
-						echo "<option ".(strtolower($sourceSymbArr[$fieldName])==$sField?"SELECTED":"").">".$sFieldDisplay."</option>\n";
+						echo '<option value="' . $sField . '" ' . (strtolower($sourceSymbArr[$fieldName])==$sField ? 'SELECTED' : '') . '>' . $sFieldDisplay . '</option>';
 					}
 				}
 				elseif($isAutoMapped){
@@ -461,12 +473,12 @@ class SpecUploadBase extends SpecUpload{
 					foreach($symbFields as $sFieldDisplay => $sField){
 						$selStr = '';
 						if($tranlatedFieldName==$sField && !in_array($sField,$autoMapExclude)) $selStr = 'SELECTED';
-						echo '<option '.$selStr.'>'.$sFieldDisplay.'</option>';
+						echo '<option value="' . $sField . '" '.$selStr.'>'.$sFieldDisplay.'</option>';
 					}
 				}
 				else{
 					foreach($symbFields as $sFieldDisplay => $sField){
-						echo '<option>'.$sFieldDisplay.'</option>';
+						echo '<option value="' . $sField . '">'.$sFieldDisplay.'</option>';
 					}
 				}
 				echo "</select></td>\n";
@@ -684,9 +696,11 @@ class SpecUploadBase extends SpecUpload{
 		$this->conn->query($sql);
 
 		//Convert state abbreviations to full spellings
-		$sql = 'UPDATE uploadspectemp u INNER JOIN geographicthesaurus s ON u.stateProvince = s.abbreviation
+		$sql = 'UPDATE uploadspectemp u
+			INNER JOIN geographicthesaurus s ON u.stateProvince = s.abbreviation AND s.geoLevel = 60
+			INNER JOIN geographicthesaurus c ON s.parentID = c.geoThesID AND c.geoLevel = 50
 			SET u.stateProvince = s.geoTerm
-			WHERE s.geoLevel = 60 AND u.collid IN('.$this->collId.')';
+			WHERE u.collid IN('.$this->collId.') AND (u.country = c.geoterm OR u.countryCode = c.iso2)';
 		$this->conn->query($sql);
 
 		//Fill null country with state matches
@@ -759,9 +773,11 @@ class SpecUploadBase extends SpecUpload{
 		$this->outputMsg('<li style="margin-left:10px;">Setting basisOfRecord for new records, if not designated within import file...</li>');
 		$borValue = 'PreservedSpecimen';
 		if(strpos($this->collMetadataArr['colltype'], 'Observations') !== false) $borValue = 'HumanObservation';
-		elseif($this->paleoSupport) $borValue = 'FossilSpecimen';
+		elseif(strpos($this->collMetadataArr['colltype'], 'Fossil Specimens') !== false) $borValue = 'FossilSpecimen';
 
 		$sql = 'UPDATE uploadspectemp SET basisOfRecord = "'.$borValue.'" WHERE basisOfRecord IS NULL AND occid IS NULL';
+		$this->conn->query($sql);
+		$sql = 'UPDATE uploadspectemp u JOIN omoccurrences o ON u.occid = o.occid SET u.basisOfRecord = o.basisOfRecord WHERE u.basisOfRecord IS NULL AND u.occid IS NOT NULL  AND o.collid IN ('.$this->collId.');';
 		$this->conn->query($sql);
 	}
 
@@ -1059,6 +1075,23 @@ class SpecUploadBase extends SpecUpload{
 				}
 				$rs->free();
 			}
+			if($this->paleoSupport && $this->paleoTargetFieldArr){
+				$sqlFrag = '';
+				foreach($this->paleoTargetFieldArr as $field){
+					$sqlFrag .= ',u.paleo_'.$field.',paleo.'.$field.' as old_'.$field;
+				}
+				$sql = 'SELECT paleo.occid'.$sqlFrag.' FROM omoccurpaleo paleo INNER JOIN uploadspectemp u ON paleo.occid = u.occid WHERE u.collid IN('.$this->collId.')';
+				$rs = $this->conn->query($sql);
+				while($r = $rs->fetch_assoc()){
+					foreach($this->paleoTargetFieldArr as $field){
+						if($r['paleo_'.$field] != $r['old_'.$field]){
+							$this->insertOccurEdit($r['occid'],$field,$r['paleo_'.$field],$r['old_'.$field]
+							);
+						}
+					}
+				}
+				$rs->free();
+			}
 		}
 	}
 
@@ -1203,19 +1236,22 @@ class SpecUploadBase extends SpecUpload{
 	private function transferPaleoData(){
 		if (!$this->paleoSupport) return;
 		$this->outputMsg('<li>Linking Paleo data...</li>');
-		$paleoFields = ['eon', 'era', 'period', 'epoch', 'earlyInterval', 'lateInterval','absoluteAge', 'storageLoc', 'stage', 'localStage',
+		$paleoFields = ['eon', 'era', 'period', 'epoch', 'earlyInterval', 'lateInterval','absoluteAge', 'stage', 'localStage',
 			'biota', 'biostratigraphy', 'taxonEnvironment', 'lithogroup', 'formation', 'member', 'bed', 'lithology', 'stratRemarks', 'element',
 			'slideProperties', 'geologicalContextID'
 		];
-
-		$sql = 'SELECT occid, catalogNumber, ' . implode(', ', $paleoFields) . ' FROM uploadspectemp WHERE (occid IS NOT NULL) AND collid = ' . $this->collId;
+		$sqlFields = implode(', ', array_map(function($f) {
+			return 'paleo_' . $f;
+		}, $paleoFields));
+		$sql = 'SELECT occid, catalogNumber, ' . $sqlFields . ' FROM uploadspectemp WHERE (occid IS NOT NULL) AND collid = ' . $this->collId;
 		$rs = $this->conn->query($sql);
 		while ($r = $rs->fetch_object()) {
 			try {
 				$paleoArr = [];
 				foreach ($paleoFields as $field) {
-					if (isset($r->$field) && $r->$field !== '') {
-						$paleoArr[$field] = $r->$field;
+					$dbField = 'paleo_' . $field;
+					if (isset($r->$dbField) && $r->$dbField !== '') {
+						$paleoArr[$field] = $r->$dbField;
 					}
 				}
 				if (!empty($paleoArr)) {
@@ -1225,7 +1261,11 @@ class SpecUploadBase extends SpecUpload{
 						$insertSQL .= ',' . $k;
 						$valueSQL .= ',"' . $this->cleanInStr($v) . '"';
 					}
-					$sql = 'REPLACE INTO omoccurpaleo(occid' . $insertSQL . ') VALUES(' . $r->occid . $valueSQL . ')';
+					$updateSQL = [];
+					foreach ($paleoArr as $k => $v) {
+						$updateSQL[] = "$k = VALUES($k)";
+					}
+					$sql = 'INSERT INTO omoccurpaleo (occid' . $insertSQL . ') VALUES (' . $r->occid . $valueSQL . ') ON DUPLICATE KEY UPDATE ' . implode(', ', $updateSQL);
 					if (!$this->conn->query($sql)) {
 						$this->outputMsg('<li>ERROR adding paleo resources: ' . $this->conn->error . '</li>', 1);
 					}
@@ -1266,15 +1306,13 @@ class SpecUploadBase extends SpecUpload{
 
 	public function getPaleoGtsTerms(){
 		$retArr = array();
-		if(!empty($GLOBALS['ACTIVATE_PALEO'])){
-			$sql = 'SELECT gtsterm, rankid FROM omoccurpaleogts ';
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				$retArr[$r->gtsterm] = $r->rankid;
-			}
-			$rs->free();
-			ksort($retArr);
+		$sql = 'SELECT gtsterm, rankid FROM omoccurpaleogts ';
+		$rs = $this->conn->query($sql);
+		while($r = $rs->fetch_object()){
+			$retArr[$r->gtsterm] = $r->rankid;
 		}
+		$rs->free();
+		ksort($retArr);
 		return $retArr;
 	}
 
@@ -1837,6 +1875,8 @@ class SpecUploadBase extends SpecUpload{
 
 		//Prime the targetFieldArr
 		if(!$this->targetFieldArr) $this->targetFieldArr = $this->getOccurrenceFieldArr(array_keys($recMap));
+		//targetFieldArr for paleo
+		if(!$this->paleoTargetFieldArr && $this->paleoSupport) $this->paleoTargetFieldArr = $this->getPaleoFieldArr(array_keys($paleoArr));
 		$loadRecord = false;
 		if($this->uploadType == $this->NFNUPLOAD) $loadRecord = true;
 		elseif(isset($recMap['occid']) && $recMap['occid']) $loadRecord = true;
@@ -2028,8 +2068,24 @@ class SpecUploadBase extends SpecUpload{
 		if (empty($paleoArr['lateinterval']) && !empty($paleoArr['earlyinterval']))
 			$paleoArr['lateinterval'] = $paleoArr['earlyinterval'];
 
+		//if still empty fill early and late period based on stratigraphic levels
+		if (empty($paleoArr['earlyinterval'])) {
+			foreach (['stage', 'epoch', 'period', 'era', 'eon'] as $stratLevel) {
+				if (!empty($paleoArr[$stratLevel])) {
+					$term = strtolower($paleoArr[$stratLevel]);
+					if (isset($lcaseGtsMap[$term])) {
+						$paleoArr['earlyinterval'] = $lcaseGtsMap[$term];
+						$paleoArr['lateinterval'] = $lcaseGtsMap[$term];
+					} else {
+						$paleoArr['earlyinterval'] = $paleoArr[$stratLevel];
+						$paleoArr['lateinterval'] = $paleoArr[$stratLevel];
+					}
+					break;
+				}
+			}
+		}
 		foreach ($paleoArr as $key => $val) {
-			$recMap[$key] = trim($val);
+			$recMap['paleo_' . $key] = trim($val);
 		}
 	}
 
@@ -2060,46 +2116,10 @@ class SpecUploadBase extends SpecUpload{
 				unset($recMap['coreid']);
 			}
 
+			$recMap = OccurrenceUtil::occurrenceArrayCleaning($recMap);
+
 			//Import record only if required fields have data (coreId and a scientificName)
 			if(isset($recMap['dbpk']) && $recMap['dbpk'] && (isset($recMap['sciname']) || isset($recMap['genus']))){
-
-				//Do some cleaning
-				//Populate sciname if null
-				if(!array_key_exists('sciname',$recMap) || !$recMap['sciname']){
-					if(array_key_exists('genus',$recMap) && array_key_exists('specificepithet',$recMap) && array_key_exists('infraspecificepithet',$recMap)){
-						//Build sciname from individual units supplied by source
-						$sciName = $recMap['genus'];
-						if(array_key_exists('specificepithet',$recMap) && $recMap['specificepithet']) $sciName .= ' '.$recMap['specificepithet'];
-						if(array_key_exists('infraspecificepithet',$recMap) && $recMap['infraspecificepithet']){
-							if(array_key_exists('taxonrank',$recMap) && $recMap['taxonrank']){
-								$infraStr = $recMap['taxonrank'];
-								if($infraStr == 'subspecies') $infraStr = 'subsp.';
-								elseif($infraStr == 'ssp.') $infraStr = 'subsp.';
-								elseif($infraStr == 'variety') $infraStr = 'var.';
-								$sciName .= ' '.$infraStr;
-							}
-							$sciName .= ' '.$recMap['infraspecificepithet'];
-						}
-						$recMap['sciname'] = trim($sciName);
-					}
-				}
-				//Remove fields that are not in the omoccurdetermination tables
-				unset($recMap['genus']);
-				unset($recMap['specificepithet']);
-				unset($recMap['taxonrank']);
-				unset($recMap['infraspecificepithet']);
-				//Try to get author, if it's not there
-				/*
-				if(!array_key_exists('scientificnameauthorship',$recMap) || !$recMap['scientificnameauthorship']){
-					//Parse scientific name to see if it has author imbedded
-					$parsedArr = OccurrenceUtil::parseScientificName($recMap['sciname'],$this->conn);
-					if(array_key_exists('author',$parsedArr)){
-						$recMap['scientificnameauthorship'] = $parsedArr['author'];
-						//Load sciname from parsedArr since if appears that author was embedded
-						$recMap['sciname'] = trim($parsedArr['unitname1'].' '.$parsedArr['unitname2'].' '.$parsedArr['unitind3'].' '.$parsedArr['unitname3']);
-					}
-				}
-				*/
 				if(!isset($recMap['sciname']) || !$recMap['sciname']) return false;
 
 				if(!isset($recMap['identifiedby'])) $recMap['identifiedby'] = '';
@@ -2477,18 +2497,18 @@ class SpecUploadBase extends SpecUpload{
 	}
 
 	private function getPaleoDwcTerms(){
-		$paleoTermArr = array('paleo-earliesteonorlowesteonothem','paleo-latesteonorhighesteonothem','paleo-earliesteraorlowesterathem',
-			'paleo-latesteraorhighesterathem','paleo-earliestperiodorlowestsystem','paleo-latestperiodorhighestsystem','paleo-earliestepochorlowestseries',
-			'paleo-latestepochorhighestseries','paleo-earliestageorloweststage','paleo-latestageorhigheststage','paleo-lowestbiostratigraphiczone','paleo-highestbiostratigraphiczone',
-			'paleo-geologicalcontextid','paleo-formation','paleo-member','paleo-bed','paleo-lithogroup'
+		$paleoTermArr = array('paleo_earliesteonorlowesteonothem','paleo_latesteonorhighesteonothem','paleo_earliesteraorlowesterathem',
+			'paleo_latesteraorhighesterathem','paleo_earliestperiodorlowestsystem','paleo_latestperiodorhighestsystem','paleo_earliestepochorlowestseries',
+			'paleo_latestepochorhighestseries','paleo_earliestageorloweststage','paleo_latestageorhigheststage','paleo_lowestbiostratigraphiczone','paleo_highestbiostratigraphiczone',
+			'paleo_geologicalcontextid','paleo_formation','paleo_member','paleo_bed','paleo_lithogroup'
 		);
 		return $paleoTermArr;
 	}
 
 	private function getPaleoSymbTerms(){
-		$paleoTermArr = array('paleo-eon','paleo-era','paleo-period','paleo-epoch',
-			'paleo-earlyinterval','paleo-lateinterval','paleo-absoluteage','paleo-stage','paleo-localstage','paleo-biota','paleo-biostratigraphy',
-			'paleo-taxonenvironment','paleo-lithology','paleo-stratremarks','paleo-element','paleo-slideproperties');
+		$paleoTermArr = array('paleo_eon','paleo_era','paleo_period','paleo_epoch',
+			'paleo_earlyinterval','paleo_lateinterval','paleo_absoluteage','paleo_stage','paleo_localstage','paleo_biota','paleo_biostratigraphy',
+			'paleo_taxonenvironment','paleo_lithology','paleo_stratremarks','paleo_element','paleo_slideproperties');
 		return $paleoTermArr;
 	}
 
@@ -2530,6 +2550,22 @@ class SpecUploadBase extends SpecUpload{
 			$field = strtolower($row->Field);
 			if(in_array($field, $filterArr)) $retArr[] = $field;
 		}
+		$rs->free();
+		return $retArr;
+	}
+
+	private function getPaleoFieldArr(array $filterArr): array {
+		$retArr = [];
+		$sql = 'SHOW COLUMNS FROM omoccurpaleo';
+		$rs = $this->conn->query($sql);
+
+		while ($row = $rs->fetch_object()) {
+			$field = strtolower($row->Field);
+			if (in_array($field, $filterArr, true)) {
+				$retArr[] = $field;
+			}
+		}
+
 		$rs->free();
 		return $retArr;
 	}
@@ -2587,8 +2623,20 @@ class SpecUploadBase extends SpecUpload{
 		}
 	}
 
+	public function setPaleoTargetFieldArr($targetStr){
+		//Need to check field names against database to protect against SQL injection
+		if($targetStr){
+			$paleoTargetFieldArr = explode(',', $targetStr);
+			$this->paleoTargetFieldArr = $this->getPaleoFieldArr($paleoTargetFieldArr);
+		}
+	}
+
 	public function getTargetFieldStr(){
 		return implode(',', $this->targetFieldArr);
+	}
+
+	public function getPaleoTargetFieldStr(){
+		return implode(',', $this->paleoTargetFieldArr);
 	}
 
 	private function getInverseRelationship($relationship){

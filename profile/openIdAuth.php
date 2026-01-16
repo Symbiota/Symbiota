@@ -3,8 +3,9 @@ include_once('../config/symbini.php');
 include_once($SERVER_ROOT . '/vendor/autoload.php');
 include_once($SERVER_ROOT . '/config/auth_config.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
-if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/profile/openIdAuth.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/profile/openIdAuth.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/profile/openIdAuth.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('profile/openIdAuth');
 
 use Jumbojett\OpenIDConnectClient;
 
@@ -14,6 +15,10 @@ $oidc = new OpenIDConnectClient(
   $CLIENT_IDS[$AUTH_PROVIDER],
   $CLIENT_SECRETS[$AUTH_PROVIDER]
 );
+
+$oidc->addAuthParam(array(
+    'prompt' => 'login'
+));
 
 $oidc->addScope(array('openid'));
 $oidc->addScope(array('email'));

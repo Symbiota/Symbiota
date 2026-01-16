@@ -28,18 +28,17 @@ $LANG['REPLACE_COUNTRY'] = 'Remplacer le pays';
 $LANG['NULL_COUNTRY_NOT_STATE'] = 'Pays NULL et état non Null';
 $LANG['ASSIGN_COUNTRY'] = 'Attribuer un pays';
 $LANG['QUESTION_STATES'] = 'États douteux';
+$LANG['QUESTION_STATES_LIST'] = 'Pays avec des états douteux';
 $LANG['REPLACE_STATE'] = 'Remplacer l\'état';
 $LANG['NULL_STATE_NOT_COUNTY'] = 'État/province NULL et comté non Null';
 $LANG['ASSIGN_STATE'] = 'Attribuer un état';
 $LANG['QUESTION_COUNTIES'] = 'Comtés douteux';
+$LANG['QUESTION_COUNTIES_LIST'] = 'Pays avec des comtés douteux';
 $LANG['REPLACE_COUNTY'] = 'Remplacer le comté';
 $LANG['NULL_COUNTY_NOT_LOCALITY'] = 'Comté NULL et localité non Null';
 $LANG['ASSIGN_COUNTY'] = 'Attribuer un comté';
 $LANG['GEN_CLEANING'] = 'Nettoyage général';
-$LANG['LIST_COUNTRIES'] = 'Liste des pays';
-$LANG['LIST_RECORDS'] = 'Liste des enregistrements';
-$LANG['LIST_STATES'] = 'Liste des états';
-$LANG['LIST_COUNTIES'] = 'Liste des comtés';
+$LANG['RECORDS'] = 'enregistrements';
 $LANG['NOT_AUTH'] = 'Vous n\'êtes pas autorisé à accéder à cette page';
 
 ?>

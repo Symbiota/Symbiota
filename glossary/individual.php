@@ -2,8 +2,10 @@
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/glossary/individual.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/glossary/individual.en.php');
-else include_once($SERVER_ROOT.'/content/lang/glossary/individual.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('glossary/individual');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $glossId = array_key_exists('glossid', $_REQUEST) ? filter_var($_REQUEST['glossid'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -72,7 +74,7 @@ if($glossId){
 	<?php
 	if($termArr){
 		$glosManager->remapDescriptionCrossLinks($termArr);
-		if(strpos($_SERVER['HTTP_REFERER'], 'individual.php')){
+		if(array_key_exists('HTTP_REFERER', $_SERVER) && strpos($_SERVER['HTTP_REFERER'], 'individual.php')){
 			echo '<div class="navpath"><a href="#" onclick="history.back();">&lt;&lt; ' . $LANG['RETURN_TO_PREVIOUS'] . '</a></div>';
 		}
 		?>

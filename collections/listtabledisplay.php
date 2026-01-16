@@ -1,9 +1,10 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceListManager.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/listtabledisplay.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT.'/content/lang/collections/listtabledisplay.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/listtabledisplay.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/listtabledisplay');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $page = array_key_exists('page',$_REQUEST) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
@@ -33,18 +34,12 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="../js/symb/collections.list.js?ver=1" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			<?php
-			if($searchVar){
-				?>
-				sessionStorage.querystr = "<?= $searchVar ?>";
-				<?php
-			}
-			?>
+			setSessionQueryStr();
 		});
 	</script>
-	<script src="../js/symb/collections.list.js?ver=1" type="text/javascript"></script>
 	<script src="../js/symb/shared.js?ver=1" type="text/javascript"></script>
 	<style>
 		table.styledtable td { white-space: nowrap; }
@@ -57,6 +52,7 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 	</style>
 </head>
 <body style="margin-left: 0px; margin-right: 0px;background-color:white;">
+	<div id="service-container" data-search-var="<?= $searchVar; ?>"></div>
 	<div>
 		<div style="width:65rem;">
 			<h1 class="page-heading left-breathing-room-rel" style="margin-bottom: 0px"><?= $LANG['SEARCH_RES_TABLE'] ?></h1>
@@ -101,8 +97,10 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 										<option value=""></option>
 										<?php
 										$sortFields = array('c.collectionname' => $LANG['COLLECTION'], 'o.catalogNumber' => $LANG['CATALOG_NUMBER'], 'o.family' => $LANG['FAMILY'], 'o.sciname' => $LANG['SCINAME'], 'o.recordedBy' => $LANG['COLLECTOR'],
-											'o.recordNumber' => $LANG['NUMBER'], 'o.eventDate' => $LANG['EVENT_DATE'], 'o.country' => $LANG['COUNTRY'], 'o.StateProvince' => $LANG['STATE_PROVINCE'], 'o.county' => $LANG['COUNTY'], 'o.minimumElevationInMeters' => $LANG['ELEVATION'],
-											'paleo.formation' => (isset($LANG['FORMATION']) ? $LANG['FORMATION'] : 'Formation'), 'paleo.earlyInterval' => (isset($LANG['EARLY_INT']) ? $LANG['EARLY_INT'] : 'Early Interval'), 'paleo.lateInterval' => (isset($LANG['LATE_INT']) ? $LANG['LATE_INT'] : 'Late IntervaL'));
+										'o.recordNumber' => $LANG['NUMBER'], 'o.eventDate' => $LANG['EVENT_DATE'], 'o.country' => $LANG['COUNTRY'], 'o.StateProvince' => $LANG['STATE_PROVINCE'], 'o.county' => $LANG['COUNTY'], 'o.minimumElevationInMeters' => $LANG['ELEVATION']);
+										$sortPaleoFields = array('paleo.formation' => (isset($LANG['FORMATION']) ? $LANG['FORMATION'] : 'Formation'), 'paleo.earlyInterval' => (isset($LANG['EARLY_INT']) ? $LANG['EARLY_INT'] : 'Early Interval'), 'paleo.lateInterval' => (isset($LANG['LATE_INT']) ? $LANG['LATE_INT'] : 'Late IntervaL'));
+										if (!empty($GLOBALS['ACTIVATE_PALEO']))
+											$sortFields = array_merge($sortFields, $sortPaleoFields);
 										foreach($sortFields as $k => $v){
 											echo '<option value="'.$k.'" '.($k==$sortField1?'SELECTED':'').'>'.$v.'</option>';
 										}

@@ -27,5 +27,9 @@ $LANG['SAVE_OCR'] = 'Save OCR';
 $LANG['NEW'] = 'New';
 $LANG['SAVE_OCR_EDITS'] = 'Save OCR Edits';
 $LANG['DELETE_OCR'] = 'Delete OCR';
+$LANG['VV_OCR_ENGINES'] = 'OCR Engines';
+$LANG['VV_OCR_ONLY'] = 'OCR Only';
+$LANG['VV_TRANSCRIPTION_MODEL'] = 'Transcription Model';
+$LANG['VV_TRANSCRIPTION_PROMPT'] = 'Transcription Prompt';
 
 ?>

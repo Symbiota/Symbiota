@@ -1,6 +1,6 @@
 <section id="cat-<?php echo $idStr ?>" class="bottom-breathing-room-rel">
     <div>
-        <fieldset name="boop">
+        <fieldset name="subcollection-fieldset">
             <legend>
                 <?php 
                 echo $name; 

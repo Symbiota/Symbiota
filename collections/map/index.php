@@ -2,13 +2,12 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceMapManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/map/index.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT.'/content/lang/collections/map/index.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/map/index.en.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/list.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT.'/content/lang/collections/list.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/list.en.php');
+Language::load([
+	'collections/map/index',
+	'collections/list'
+]);
 
 $filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
 
@@ -275,19 +274,29 @@ $serverHost = GeneralUtil::getDomain();
 		}
 
 		#mapSearchRecordsTable th {
-		top: 0;
-		position: sticky;
+			top: 0;
+			position: sticky;
+		}
+
+		#recordstaxaheader, #search_criteria {
+			font-weight: bold;
 		}
 
 		#tabs2 {
-		display:none;
-		padding:0px;
-		display: block;
-		height: 100%;
-		/* overflow: scroll; */
+			display:none;
+			padding:0px;
+			display: block;
+			height: 100%;
+			/* overflow: scroll; */
 		}
+
+		/* Overwrite so it isn't white on gray */
+		.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {
+			color: currentcolor;
+		}
+
 		.cluster text {
-		text-shadow: 0 0 8px white, 0 0 8px white, 0 0 8px white;
+			text-shadow: 0 0 8px white, 0 0 8px white, 0 0 8px white;
 		}
 
 		<?php if($shouldUseMinimalMapHeader){ ?>
@@ -2039,8 +2048,7 @@ $serverHost = GeneralUtil::getDomain();
 
 				externalPortalHosts = JSON.parse(data.getAttribute('data-external-portal-hosts'));
 
-				searchVar = data.getAttribute('data-search-var');
-				if(searchVar) sessionStorage.querystr = searchVar;
+				searchVar = setSessionQueryStr();
 
 				let shapeType;
 
@@ -2113,7 +2121,7 @@ $serverHost = GeneralUtil::getDomain();
 	  	<h1 class="page-heading screen-reader-only">Map Interface</h1>
 		<div
 			id="service-container"
-			data-search-var="<?=htmlspecialchars($searchVar)?>"
+			data-search-var="<?=$searchVar?>"
 			data-map-bounds="<?=htmlspecialchars(json_encode($bounds))?>"
 			data-taxa-map="<?=htmlspecialchars(json_encode($taxaArr))?>"
 			data-coll-map="<?=htmlspecialchars(json_encode($collArr))?>"
@@ -2144,7 +2152,7 @@ $serverHost = GeneralUtil::getDomain();
 			<div class="panel-content">
 				<div id="mapinterface">
 					<div id="accordion">
-						<h3 style="margin-top:0"><?= $LANG['SEARCH_CRITERIA'] ?></h3>
+						<h3 id="search_criteria" style="margin-top:0"><?= $LANG['SEARCH_CRITERIA'] ?></h3>
 						<div id="tabs1" style="padding:0px;height:100%">
 							<form name="mapsearchform" id="mapsearchform" data-ajax="false">
 								<ul>
@@ -2526,7 +2534,7 @@ $serverHost = GeneralUtil::getDomain();
 								<input data-role="none" name="csvreclimit" id="csvreclimit" type="hidden" value="<?= $recLimit; ?>" />
 							</form>
 						</div>
-						<h3 id="recordstaxaheader" style="display:none;padding-left:30px;"><?= $LANG['RECORDS_TAXA'] ?></h3>
+						<h3 id="recordstaxaheader" style="display:none;"><?= $LANG['RECORDS_TAXA'] ?></h3>
 						<div id="tabs2" style="display:none;padding:0px;">
 							<ul>
 								<li><a href='#occurrencelist'><?= $LANG['RECORDS'] ?></a></li>

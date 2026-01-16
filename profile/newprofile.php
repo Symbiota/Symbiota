@@ -1,7 +1,10 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
-@include_once($SERVER_ROOT.'/content/lang/profile/newprofile.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('profile/newprofile');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 header('Cache-Control: no-cache, no-cache="set-cookie", no-store, must-revalidate');
 header('Pragma: no-cache'); // HTTP 1.0.
@@ -176,7 +179,7 @@ if($action == 'Create Login'){
 					<div style="margin:15px">
 						<form name="retrieveLoginForm" method="post" action="index.php">
 							<input name="email" type="hidden" value="<?php echo $emailAddr; ?>" />
-							<button name="action" type="submit" value="Retrieve Login"><?php echo (isset($LANG['RETRIEVE_LOGIN']) ? $LANG['RETRIEVE_LOGIN'] : 'Retrieve Login'); ?></button>
+							<button name="action" type="submit" value="retrieveLogin"><?php echo (isset($LANG['RETRIEVE_LOGIN']) ? $LANG['RETRIEVE_LOGIN'] : 'Retrieve Login'); ?></button>
 						</form>
 					</div>
 				</div>

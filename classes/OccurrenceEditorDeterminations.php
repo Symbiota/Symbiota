@@ -2,9 +2,9 @@
 include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT . '/traits/TaxonomyTrait.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/classes/OccurrenceEditorDeterminations.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/classes/OccurrenceEditorDeterminations.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/classes/OccurrenceEditorDeterminations.en.php');
+Language::load('classes/OccurrenceEditorDeterminations');
 
 class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 

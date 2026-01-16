@@ -14,7 +14,8 @@ class UploadUtil {
 	];
 
 	const ALLOWED_IMAGE_MIMES = [
-		'image/jpeg', 'image/png', 'image/gif'
+		'image/jpeg', 'image/png', 'image/gif', 'image/bmp'
+		// Following cannot be supported in gd currently 'image/tiff', 'image/jp2'
 	];
 
 	const ALLOWED_AUDIO_MIMES = [
@@ -31,6 +32,10 @@ class UploadUtil {
 		'text/x-comma-separated-values',
 		'text/comma-separated-values',
 		'application/vnd.msexcel',
+	];
+
+	const DEPRECATED_MIME_CONVERSION = [
+		'audio/mp3' => 'audio/mpeg'
 	];
 
 	/**
@@ -72,8 +77,8 @@ class UploadUtil {
 		}
 
 		$type_guess = mime_content_type($uploaded_file['tmp_name']);
-
-		if($type_guess != $uploaded_file['type']) {
+;
+		if(!self::mimesEqual($type_guess, $uploaded_file['type'])) {
 			throw new MediaException(MediaException::SuspiciousFile);
 		}
 
@@ -305,6 +310,13 @@ class UploadUtil {
 
 		return $extensionA === $extensionB ||
 			Media::ext2Mime($extensionA) === Media::ext2Mime($extensionB);
+	}
+
+	public static function mimesEqual(string $mimeA, string $mimeB): bool {
+		$mimeA = strtolower($mimeA);
+		$mimeB = strtolower($mimeB);
+
+		return self::mime2ext($mimeA) === self::mime2ext($mimeB);
 	}
 
 	/**

@@ -67,3 +67,6 @@ $LANG['BATCH_ADD_OR_UPDATE'] = 'Adicionar ou atualizar em lote';
 $LANG['AUDIO_UPLOAD'] = 'Upload de áudio';
 $LANG['IMAGE_UPLOAD'] = 'Upload de imagens';
 $LANG['MEDIA_UPLOAD_TYPE'] = 'Tipo de upload de mídia';
+$LANG['MISSING_IDENTIFIER'] = 'Um ou mais campos de identificador obrigatórios estão ausentes ou inválidos; ignorando linha';
+$LANG['DUPLICATE_ENTRY'] = 'Entrada duplicada encontrada no arquivo de importação; ignorando linha';
+$LANG['GENERIC_ERROR'] = 'Ocorreu um erro ao importar esta ocorrência; ignorando linha. Entre em contato com o administrador.';

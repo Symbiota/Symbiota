@@ -4,8 +4,9 @@ include_once($SERVER_ROOT.'/classes/SpecProcessorManager.php');
 include_once($SERVER_ROOT.'/classes/ImageLocalProcessor.php');
 include_once($SERVER_ROOT.'/classes/ImageProcessor.php');
 include_once($SERVER_ROOT.'/classes/SpecProcessorOcr.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/specprocessor/specprocessor_tools.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/specprocessor/specprocessor_tools.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/specprocessor/specprocessor_tools.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/specprocessor/specprocessor_tools');
 
 header("Content-Type: text/html; charset=".$CHARSET);
 

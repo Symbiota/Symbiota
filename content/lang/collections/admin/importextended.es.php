@@ -68,3 +68,6 @@ $LANG['BATCH_ADD_OR_UPDATE'] = 'Agregar o actualizar por lotes';
 $LANG['AUDIO_UPLOAD'] = 'Carga de audio';
 $LANG['IMAGE_UPLOAD'] = 'Carga de imágenes';
 $LANG['MEDIA_UPLOAD_TYPE'] = 'Tipo de carga de medios';
+$LANG['MISSING_IDENTIFIER'] = 'Faltan uno o más campos de identificación obligatorios o son inválidos; se omite la fila.';
+$LANG['DUPLICATE_ENTRY'] = 'Se encontró una entrada duplicada en el archivo de importación; se omite la fila.';
+$LANG['GENERIC_ERROR'] = 'Se produjo un error al importar esta ocurrencia; se omite la fila. Contacte a su administrador.';
