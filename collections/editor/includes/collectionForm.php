@@ -114,7 +114,7 @@ function toggleCategory(categoryId) {
 		[
 			'id' => 'all_collections',
 			'target' => 'collections_container',
-			'data_chip' => $LANG['ALL_SPECIMEN_COLLECTIONS'],
+			'data_chip' => $LANG['ALL_COLLECTIONS'],
 			'margin' => '0',
 			'label_content' => $LANG['SELECT_DESELECT'] . '<a href="' . $CLIENT_ROOT . '/collections/misc/collprofiles.php">' . ' ' . $LANG['ALL_COLLECTIONS'] . '</a>',
 		],
