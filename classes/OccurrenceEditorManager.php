@@ -37,7 +37,7 @@ class OccurrenceEditorManager {
 		$this->fieldArr['omoccurrences'] = array('basisofrecord' => 's','catalognumber' => 's','othercatalognumbers' => 's','occurrenceid' => 's','ownerinstitutioncode' => 's',
 			'institutioncode' => 's','collectioncode' => 's','eventid' => 's','family' => 's','sciname' => 's','tidinterpreted' => 'n','scientificnameauthorship' => 's','identifiedby' => 's',
 			'dateidentified' => 's','identificationreferences' => 's','identificationremarks' => 's','taxonremarks' => 's','identificationqualifier' => 's','typestatus' => 's',
-			'recordedby' => 's','recordnumber' => 's','associatedcollectors' => 's','eventdate' => 'd','eventdate2' => 'd','year' => 'n','month' => 'n','day' => 'n','startdayofyear' => 'n',
+			'recordedby' => 's','recordnumber' => 's','associatedcollectors' => 's','eventdate' => 'd','eventdate2' => 'd','eventtime' => 's', 'year' => 'n','month' => 'n','day' => 'n','startdayofyear' => 'n',
 			'enddayofyear' => 'n','verbatimeventdate' => 's','habitat' => 's','substrate' => 's','fieldnumber' => 's','occurrenceremarks' => 's','datageneralizations' => 's','associatedtaxa' => 's',
 			'verbatimattributes' => 's','behavior' => 's','vitality' => 's','dynamicproperties' => 's','reproductivecondition' => 's','cultivationstatus' => 's','establishmentmeans' => 's',
 			'lifestage' => 's','sex' => 's','individualcount' => 's','samplingprotocol' => 's','preparations' => 's','continent' => 's','waterbody' => 's','islandgroup' => 's',
@@ -1761,19 +1761,18 @@ class OccurrenceEditorManager {
 			//Fetch List of Old Current Determinations
 			$currentDeterminations = $get_current_determinations($targetOccid);
 
-			//Remap determinations
+			//Remap non duplicate determinations
 			$sql = <<<'SQL'
-			UPDATE omoccurdeterminations 
-			SET occid = ? WHERE occid = ?
-			AND detid NOT IN (
-				SELECT source.detid FROM omoccurdeterminations source
-				JOIN omoccurdeterminations target ON target.occid = ? 
-				WHERE source.occid = ? 
+			UPDATE omoccurdeterminations as det
+			JOIN (SELECT source.detid FROM omoccurdeterminations source
+				JOIN omoccurdeterminations target ON target.occid = ?
+				WHERE source.occid = ?
 				AND source.sciname = target.sciname
 				AND source.dateIdentified = target.dateIdentified
-				AND source.identifiedBy = target.identifiedBy
-			);
+				AND source.identifiedBy = target.identifiedBy) AS dups on dups.detid != det.detid
+			SET det.occid = ? WHERE det.occid = ?;
 			SQL;
+
 			QueryUtil::executeQuery($this->conn, $sql, [
 				//Update To This Occid
 				$targetOccid,
@@ -1966,13 +1965,13 @@ class OccurrenceEditorManager {
 		}
 	}
 
-	public function getExsiccati() {
+	public function getExsiccati($occid) {
 		$retArr = array();
-		if (isset($GLOBALS['ACTIVATE_EXSICCATI']) && $GLOBALS['ACTIVATE_EXSICCATI'] && $this->occid) {
+		if (isset($GLOBALS['ACTIVATE_EXSICCATI']) && $GLOBALS['ACTIVATE_EXSICCATI'] && $occid) {
 			$sql = 'SELECT l.notes, l.ranking, l.omenid, n.exsnumber, t.ometid, t.title, t.abbreviation, t.editor ' .
 				'FROM omexsiccatiocclink l INNER JOIN omexsiccatinumbers n ON l.omenid = n.omenid ' .
 				'INNER JOIN omexsiccatititles t ON n.ometid = t.ometid ' .
-				'WHERE l.occid = ' . $this->occid;
+				'WHERE l.occid = ' . $occid;
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			if ($r = $rs->fetch_object()) {

@@ -238,8 +238,8 @@ if ($SYMB_UID) {
 			}
 		}
 	</style>
-	<link href="<?php echo $CLIENT_ROOT ?>/collections/search/css/searchStyles.css?ver=1" type="text/css" rel="stylesheet" />
-	<link href="<?php echo $CLIENT_ROOT ?>/collections/search/css/searchStylesInner.css" type="text/css" rel="stylesheet" />
+	<link href="<?php echo $CLIENT_ROOT ?>/css/searchStyles.css?ver=1" type="text/css" rel="stylesheet" />
+	<link href="<?php echo $CLIENT_ROOT ?>/css/searchStylesInner.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
 	<?php
@@ -910,7 +910,7 @@ if ($SYMB_UID) {
 							$rightsHtml = GeneralUtil::getRightsHtml($collData['rights']);
 							?>
 							<div class="bottom-breathing-room-rel">
-								<span class="label"><?= $LANG['USAGE_RIGHTS'] ?>:</span>
+								<span class="label"><?= $LANG['LICENSE'] ?>:</span>
 								<?= $rightsHtml ?>
 							</div>
 							<?php

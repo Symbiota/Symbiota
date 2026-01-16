@@ -74,4 +74,13 @@ class Helper {
 		$booleanModeResult = implode(' ', array_map(fn($w) => '+' . $w, $words));
 		return $booleanModeResult;
 	}
+
+	public static function isValidJson($jsonString) {
+		if (empty($jsonString)) {
+			return false;
+		}
+		
+		json_decode($jsonString);
+		return (json_last_error() === JSON_ERROR_NONE);
+	}
 }

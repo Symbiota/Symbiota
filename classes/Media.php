@@ -203,10 +203,14 @@ class Media {
 	 * @param ?int $userId What user id is selected
 	 * @return string
 	 */
-	static function renderCreatorOptions(?int $userId = null): string {
+	static function renderCreatorOptions(?int $userId = null, array $creators = []): string {
+		if(count($creators) <= 0) {
+			$creators = self::getCreatorArray();
+		}
+
 		$html = '';
 
-		foreach(self::getCreatorArray() as $id => $uname) {
+		foreach($creators as $id => $uname) {
 			$html .= "<option value='" . $id ."' ".($id == $userId ?"SELECTED":"") . ">" . $uname . '</option>';
 		}
 
@@ -795,7 +799,7 @@ class Media {
 			$current_media_arr = self::getMedia($media_id);
 			// If file is stored locally then check to make sure the extension is not being changed
 			foreach(['url', 'thumbnailUrl', 'originalUrl'] as $url) {
-				if(array_key_exists($url, $data) && $storage->file_exists($current_media_arr[$url])) {
+				if(array_key_exists($url, $data) && !empty($current_media_arr[$url]) && $storage->file_exists($current_media_arr[$url])) {
 					self::check_file_rename(
 						$current_media_arr[$url],
 						$data[$url]

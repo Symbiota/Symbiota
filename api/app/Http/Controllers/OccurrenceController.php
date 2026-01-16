@@ -612,6 +612,9 @@ class OccurrenceController extends Controller {
 	 * )
 	 */
 	public function insert(Request $request) {
+		if (!Helper::isValidJson($request->getContent())) {
+			return response()->json(['error' => 'Invalid JSON format in request body'], 400);
+		}
 		if ($this->authenticate($request)) {
 			$this->validate($request, [
 				'collid' => 'required|integer'
@@ -995,6 +998,9 @@ class OccurrenceController extends Controller {
 	 * )
 	 */
 	public function skeletalImport(Request $request) {
+		if (!Helper::isValidJson($request->getContent())) {
+			return response()->json(['error' => 'Invalid JSON format in request body'], 400);
+		}
 		$this->validate($request, [
 			'collid' => 'required|integer',
 			'eventDate' => 'date',

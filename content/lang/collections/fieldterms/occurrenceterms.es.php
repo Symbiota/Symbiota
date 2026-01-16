@@ -15,6 +15,7 @@ $LANG['RECORD_NUMBER'] = 'Número';
 $LANG['ASSOCIATED_COLLECTORS'] = 'Recopiladores asociados';
 $LANG['EVENT_DATE'] = 'Fecha (inicio)';
 $LANG['EVENT_DATE2'] = 'Fecha de finalización';
+$LANG['EVENT_TIME'] = 'Hora del evento';
 $LANG['YYYY_MM_DD'] = 'YYYY-MM-DD';
 $LANG['VERBATIM_EVENT_DATE'] = 'Fecha literal';
 $LANG['FAMILY'] = 'Familia';

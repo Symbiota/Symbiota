@@ -245,7 +245,26 @@ class OccurrenceImport extends UtilitiesFileImport {
 							$this->logOrEcho($LANG['ASSOC_ADDED'] . ': <a href="../editor/occurrenceeditor.php?occid=' . $occid . '" target="_blank">' . $occid . '</a>', 1);
 							$status = true;
 						} else {
-							$this->logOrEcho($LANG['ERROR_ADDING'] . ': ' . $importManager->getErrorMessage(), 1);
+							$errorMsg = $importManager->getErrorMessage();
+							if (strpos($errorMsg, 'Cannot add or update a child row: a foreign key constraint fails') !== false) {
+								$humanReadableMsg = $LANG['MISSING_IDENTIFIER'];
+								$this->logOrEcho($LANG['ERROR_ADDING'] . ': ' . $humanReadableMsg, 1);
+								$this->setVerboseMode(1);
+								$this->logOrEcho($LANG['ERROR_ADDING'] . ': ' . $errorMsg, 1);
+								$this->setVerboseMode(2);
+							} elseif(strpos($errorMsg, 'Duplicate entry ') !== false) {
+								$humanReadableMsg = $LANG['DUPLICATE_ENTRY'];
+								$this->logOrEcho($LANG['ERROR_ADDING'] . ': ' . $humanReadableMsg, 1);
+								$this->setVerboseMode(1);
+								$this->logOrEcho($LANG['ERROR_ADDING'] . ': ' . $errorMsg, 1);
+								$this->setVerboseMode(2);
+							}else{
+								$humanReadableMsg = $LANG['GENERIC_ERROR'];
+								$this->logOrEcho($LANG['ERROR_ADDING'] . ': ' . $humanReadableMsg, 1);
+								$this->setVerboseMode(1);
+								$this->logOrEcho($LANG['ERROR_ADDING'] . ': ' . $errorMsg, 1);
+								$this->setVerboseMode(2);
+							}
 						}
 					}
 				}

@@ -489,7 +489,7 @@ button.inverse-color {
   float: left;
   text-align: center;
   width: 165px;
-  height: 230px;
+  min-height: 230px;
   page-break-before: auto;
   page-break-inside: avoid;
 }

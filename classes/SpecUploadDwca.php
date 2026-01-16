@@ -182,13 +182,17 @@ class SpecUploadDwca extends SpecUploadBase{
 			$this->errorStr = 'OccurrencesMissing';
 			return false;
 		}
-		if(!file_exists($this->uploadTargetPath.'multimedia.csv') && !file_exists($this->uploadTargetPath.'images.csv')){
-			$this->errorStr = 'ImagesMissing';
-			return false;
+		if($this->includeImages){
+			if(!file_exists($this->uploadTargetPath . 'multimedia.csv') && !file_exists($this->uploadTargetPath . 'images.csv')){
+				$this->errorStr = 'MediaMissing';
+				return false;
+			}
 		}
-		if(!file_exists($this->uploadTargetPath.'identifications.csv')){
-			$this->errorStr = 'IdentificationsMissing';
-			return false;
+		if($this->includeIdentificationHistory){
+			if(!file_exists($this->uploadTargetPath . 'identifications.csv')){
+				$this->errorStr = 'IdentificationsMissing';
+				return false;
+			}
 		}
 		if(!file_exists($this->uploadTargetPath.'meta.xml')){
 			$this->errorStr = 'MetaMissing';
@@ -271,6 +275,7 @@ class SpecUploadDwca extends SpecUploadBase{
 								foreach($fieldElements as $fieldElement){
 									$term = $fieldElement->getAttribute('term');
 									if(strpos($term,'/')) $term = substr($term,strrpos($term,'/')+1);
+									if (strpos($term, 'paleo-') === 0) $term = substr($term, 6); // remove "paleo-"
 									$this->metaArr['occur']['fields'][$fieldElement->getAttribute('index')] = $term;
 								}
 							}
@@ -634,7 +639,12 @@ class SpecUploadDwca extends SpecUploadBase{
 							foreach($this->occurFieldMap as $symbField => $sMap){
 								if(substr($symbField,0,8) != 'unmapped'){
 									//Apply source filter if they exist
-									$indexArr = array_keys($this->occurSourceArr, $sMap['field']);
+									$lookupField = $sMap['field'];
+									if ($this->paleoSupport && strpos($lookupField, 'paleo_') === 0){
+										$lookupField = substr($lookupField, 6);
+										if ($lookupField =="lithogroup") $lookupField = "group";
+									}
+									$indexArr = array_keys($this->occurSourceArr, $lookupField);
 									$index = array_shift($indexArr);
 									if(array_key_exists($index,$recordArr)){
 										$valueStr = trim($recordArr[$index]);
@@ -669,7 +679,6 @@ class SpecUploadDwca extends SpecUploadBase{
 								$this->identFieldMap['occid']['field'] = 'coreid';
 								$this->identFieldMap['initialtimestamp']['field'] = 'modified';
 							}
-							$this->identFieldMap['sciname']['field'] = 'sciname,scientificname';
 							foreach($this->metaArr['ident']['fields'] as $k => $v){
 								$this->identSourceArr[$k] = strtolower($v);
 							}

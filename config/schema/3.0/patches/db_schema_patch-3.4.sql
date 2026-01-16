@@ -1,11 +1,74 @@
 INSERT INTO `schemaversion` (versionnumber) VALUES ('3.4');
 
+#Portal properties and config variables 
+ALTER TABLE `adminconfig` 
+  RENAME TO  `adminproperties`;
+
+ALTER TABLE `adminproperties` 
+  ADD COLUMN `propType` VARCHAR(45) NULL AFTER `category`,
+  ADD COLUMN `tableName` VARCHAR(45) NULL AFTER `propValue`,
+  ADD COLUMN `tablePK` INT NULL AFTER `tableName`,
+  CHANGE COLUMN `configID` `propID` INT(11) NOT NULL AUTO_INCREMENT ,
+  CHANGE COLUMN `attributeName` `propName` VARCHAR(45) NOT NULL ,
+  CHANGE COLUMN `attributeValue` `propValue` TEXT NOT NULL ;
+
+ALTER TABLE `adminproperties` 
+  DROP FOREIGN KEY `FK_adminConfig_uid`;
+
+ALTER TABLE `adminproperties` 
+  DROP INDEX `UQ_adminconfig_name`,
+  DROP INDEX `FK_adminConfig_uid_idx`;
+
+ALTER TABLE `adminproperties` 
+  ADD CONSTRAINT `FK_adminproperties_uid`  FOREIGN KEY (`modifiedUid`)  REFERENCES `users` (`uid`);
+
+ALTER TABLE `adminproperties` 
+  ADD INDEX `FK_adminproperties_uid_idx` (`modifiedUid` ASC),
+  ADD INDEX `IX_adminproperties_category` (`category` ASC),
+  ADD INDEX `IX_adminproperties_type` (`propType` ASC),
+  ADD INDEX `IX_adminproperties_name` (`propName` ASC),
+  ADD INDEX `IX_adminproperties_table` (`tableName` ASC, `tablePK` ASC);
+
+
 #field for search by polygons
 ALTER TABLE geographicthesaurus
   ADD COLUMN isSearchable TINYINT(1) NOT NULL DEFAULT 0 AFTER `parentID`;
 
 ALTER TABLE `geographicthesaurus` 
   ADD INDEX `FK_geothes_geolevel` (`geoLevel` ASC);
+
+#Fixes issues where Florida counties were linked to Uruguay/Florida  
+UPDATE IGNORE geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  SET c.parentID = (SELECT c.geoThesID FROM geographicthesaurus c INNER JOIN geographicthesaurus p ON c.parentID = p.geoThesID WHERE c.geoTerm = "Florida" AND p.geoTerm = "United States")
+  WHERE g.geoTerm IN("Florida") AND p.geoTerm = "Uruguay";
+
+DELETE c.* 
+  FROM geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  WHERE g.geoTerm IN("Florida") AND p.geoTerm = "Uruguay";
+
+#Fixes issues where Montana counties were linked to Bulgaria/Montana  
+UPDATE IGNORE geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  SET c.parentID = (SELECT c.geoThesID FROM geographicthesaurus c INNER JOIN geographicthesaurus p ON c.parentID = p.geoThesID WHERE c.geoTerm = "Montana" AND p.geoTerm = "United States")
+  WHERE g.geoTerm IN("Montana") AND p.geoTerm = "Bulgaria";
+
+DELETE c.*
+  FROM geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  WHERE g.geoTerm IN("Montana") AND p.geoTerm = "Bulgaria";
+
+#Fixes issues where Maryland counties were linked to Liberia/Maryland  
+UPDATE IGNORE geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  SET c.parentID = (SELECT c.geoThesID FROM geographicthesaurus c INNER JOIN geographicthesaurus p ON c.parentID = p.geoThesID WHERE c.geoTerm = "Maryland" AND p.geoTerm = "United States")
+  WHERE g.geoTerm IN("Maryland") AND p.geoTerm = "Liberia";
+
+DELETE c.*
+  FROM geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  WHERE g.geoTerm IN("Maryland") AND p.geoTerm = "Liberia";
 
 
 #Exsiccati field format adjustments to standardize API output
@@ -30,7 +93,6 @@ ALTER TABLE `omexsiccatinumbers`
   DROP FOREIGN KEY `FK_exsiccatiTitleNumber`;
 
 ALTER TABLE `omexsiccatinumbers`
-  DROP INDEX `FK_exsiccatiTitle`,
   DROP INDEX `FK_exsiccatiTitleNumber`,
   DROP INDEX `Index_omexsiccatinumbers_unique`;
   
@@ -138,6 +200,10 @@ ALTER TABLE `omexportoccurrences`
 ALTER TABLE omoccurdeterminations 
   MODIFY COLUMN dateLastModified timestamp DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP;
 
+#Convert locus and notes fields within genetic table to TEXT
+ALTER TABLE `omoccurgenetic` 
+  CHANGE COLUMN `locus` `locus` TEXT NULL DEFAULT NULL ,
+  CHANGE COLUMN `notes` `notes` TEXT NULL DEFAULT NULL ;
 
 #Reset empty values to null
 UPDATE omoccurgenetic 
@@ -414,17 +480,128 @@ ALTER TABLE `specprocessorrawlabels`
   CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
 
 
+ALTER TABLE `taxa` 
+  ADD COLUMN `sourceIdentifier` VARCHAR(150) NULL AFTER `source`;
+
+
+ALTER TABLE `taxaresourcelinks` 
+  CHANGE COLUMN `taxaresourceid` `taxaResourceID` INT(11) NOT NULL AUTO_INCREMENT ,
+  CHANGE COLUMN `sourcename` `sourceName` VARCHAR(150) NOT NULL ,
+  CHANGE COLUMN `sourceidentifier` `sourceIdentifier` VARCHAR(45) NULL DEFAULT NULL ,
+  CHANGE COLUMN `sourceguid` `sourceGUID` VARCHAR(150) NULL DEFAULT NULL ,
+  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
+
+ALTER TABLE `taxaresourcelinks` 
+  DROP FOREIGN KEY `FK_taxaresource_tid`;
+
+ALTER TABLE `taxaresourcelinks` 
+  DROP INDEX `UNIQUE_taxaresource`,
+  DROP INDEX `taxaresource_name`,
+  DROP INDEX `FK_taxaresource_tid_idx`;
+  
+ALTER TABLE `taxaresourcelinks` 
+  ADD UNIQUE INDEX `UQ_taxaResource_tid_source` (`tid` ASC, `sourceName` ASC),
+  ADD INDEX `IX_taxaResource_sourceName` (`sourceName` ASC),
+  ADD INDEX `IX_taxaResource_sourceID` (`sourceIdentifier` ASC),
+  ADD INDEX `FK_taxaResource_tid_idx` (`tid` ASC);
+
+ALTER TABLE `taxaresourcelinks` 
+  ADD CONSTRAINT `FK_taxaResource_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`tid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `uploadtaxa` 
+  ADD COLUMN `sourceIdentifier` VARCHAR(150) NULL AFTER `source`;
+
+ALTER TABLE `uploadtaxa` 
+  CHANGE COLUMN `TID` `tid` INT(10) UNSIGNED NULL DEFAULT NULL ,
+  CHANGE COLUMN `SourceId` `sourceID` INT(10) UNSIGNED NULL DEFAULT NULL ,
+  CHANGE COLUMN `Family` `family` VARCHAR(50) NULL DEFAULT NULL ,
+  CHANGE COLUMN `RankId` `rankID` SMALLINT(5) NULL DEFAULT NULL ,
+  CHANGE COLUMN `RankName` `rankName` VARCHAR(45) NULL DEFAULT NULL ,
+  CHANGE COLUMN `scinameinput` `scinameInput` VARCHAR(250) NOT NULL ,
+  CHANGE COLUMN `SciName` `sciName` VARCHAR(250) NULL DEFAULT NULL ,
+  CHANGE COLUMN `UnitInd1` `unitInd1` VARCHAR(1) NULL DEFAULT NULL ,
+  CHANGE COLUMN `UnitName1` `unitName1` VARCHAR(50) NULL DEFAULT NULL ,
+  CHANGE COLUMN `UnitInd2` `unitInd2` VARCHAR(1) NULL DEFAULT NULL ,
+  CHANGE COLUMN `UnitName2` `unitName2` VARCHAR(50) NULL DEFAULT NULL ,
+  CHANGE COLUMN `UnitInd3` `unitInd3` VARCHAR(45) NULL DEFAULT NULL ,
+  CHANGE COLUMN `UnitName3` `unitName3` VARCHAR(35) NULL DEFAULT NULL ,
+  CHANGE COLUMN `Author` `author` VARCHAR(100) NULL DEFAULT NULL ,
+  CHANGE COLUMN `InfraAuthor` `infraAuthor` VARCHAR(100) NULL DEFAULT NULL ,
+  CHANGE COLUMN `Acceptance` `acceptance` INT(10) UNSIGNED NULL DEFAULT 1 COMMENT '0 = not accepted; 1 = accepted' ,
+  CHANGE COLUMN `TidAccepted` `tidAccepted` INT(10) UNSIGNED NULL DEFAULT NULL ,
+  CHANGE COLUMN `AcceptedStr` `acceptedStr` VARCHAR(250) NULL DEFAULT NULL ,
+  CHANGE COLUMN `SourceAcceptedId` `sourceAcceptedID` INT(10) UNSIGNED NULL DEFAULT NULL ,
+  CHANGE COLUMN `UnacceptabilityReason` `unacceptabilityReason` VARCHAR(24) NULL DEFAULT NULL ,
+  CHANGE COLUMN `ParentTid` `parentTid` INT(10) NULL DEFAULT NULL ,
+  CHANGE COLUMN `ParentStr` `parentStr` VARCHAR(250) NULL DEFAULT NULL ,
+  CHANGE COLUMN `SourceParentId` `sourceParentId` INT(10) UNSIGNED NULL DEFAULT NULL ,
+  CHANGE COLUMN `SecurityStatus` `securityStatus` INT(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 = no security; 1 = hidden locality' ,
+  CHANGE COLUMN `Source` `source` VARCHAR(250) NULL DEFAULT NULL ,
+  CHANGE COLUMN `Notes` `notes` VARCHAR(250) NULL DEFAULT NULL ,
+  CHANGE COLUMN `vernlang` `vernLang` VARCHAR(15) NULL DEFAULT NULL ,
+  CHANGE COLUMN `Hybrid` `hybrid` VARCHAR(50) NULL DEFAULT NULL ,
+  CHANGE COLUMN `ErrorStatus` `errorStatus` VARCHAR(150) NULL DEFAULT NULL ,
+  CHANGE COLUMN `InitialTimeStamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
+
+ALTER TABLE `uploadtaxa` 
+  DROP INDEX `UNIQUE_sciname`,
+  DROP INDEX `sourceID_index`,
+  DROP INDEX `sourceAcceptedId_index`,
+  DROP INDEX `sciname_index`,
+  DROP INDEX `scinameinput_index`,
+  DROP INDEX `parentStr_index`,
+  DROP INDEX `acceptedStr_index`,
+  DROP INDEX `unitname1_index`,
+  DROP INDEX `sourceParentId_index`,
+  DROP INDEX `acceptance_index`;
+
+ALTER TABLE `uploadtaxa` 
+  ADD UNIQUE INDEX `UQ_scinameAuthorRankid` (`rankID` ASC, `sciname` ASC, `author` ASC, `acceptedStr` ASC),
+  ADD INDEX `IX_uploadtaxa_sourceID` (`sourceID` ASC),
+  ADD INDEX `IX_uploadtaxa_sourceAcceptedID` (`sourceAcceptedID` ASC),
+  ADD INDEX `IX_uploadtaxa_sciname` (`sciname` ASC),
+  ADD INDEX `IX_uploadtaxa_scinameInput` (`scinameInput` ASC),
+  ADD INDEX `IX_uploadtaxa_parentStr` (`parentStr` ASC),
+  ADD INDEX `IX_uploadtaxa_acceptedStr` (`acceptedStr` ASC),
+  ADD INDEX `IX_uploadtaxa_unitName1` (`unitName1` ASC),
+  ADD INDEX `IX_uploadtaxa_sourceParentID` (`sourceParentID` ASC),
+  ADD INDEX `IX_uploadtaxa_acceptance` (`acceptance` ASC);
+
+
+#Add scientificName to determination upload table in order to include author parsing option for input
+ALTER TABLE `uploaddetermtemp` 
+  ADD COLUMN `scientificName` VARCHAR(255) NULL AFTER `higherClassification`;
+
+
+#Reset uploadspectemp indexes to be compound indexes including collid
+ALTER TABLE `uploadspectemp` 
+  DROP INDEX `IX_uploadspectemp_dbpk`,
+  DROP INDEX `IX_uploadspectemp_occurrenceID`,
+  DROP INDEX `IX_uploadspec_sciname`,
+  DROP INDEX `IX_uploadspec_catalognumber`,
+  DROP INDEX `IX_uploadspec_othercatalognumbers`;
+
+ALTER TABLE `uploadspectemp` 
+  ADD INDEX `IX_uploadspectemp_dbpk` (`collid`, `dbpk`),
+  ADD INDEX `IX_uploadspectemp_occurrenceID` (`collid`, `occurrenceID`),
+  ADD INDEX `IX_uploadspectemp_sciname` (`collid`, `sciname`),
+  ADD INDEX `IX_uploadspectemp_catalognumber` (`collid`, `catalogNumber`),
+  ADD INDEX `IX_uploadspectemp_othercatalognumbers` (`collid`, `otherCatalogNumbers`);  
+
 #Add indexes to accommodate conversion of imported state codes
 ALTER TABLE `uploadspectemp` 
-  ADD INDEX `IX_uploadspectemp_country` (`country` ASC),
-  ADD INDEX `IX_uploadspectemp_stateProvince` (`stateProvince` ASC);
+  ADD INDEX `IX_uploadspectemp_basisOfRecord` (`collid`, `basisOfRecord`),
+  ADD INDEX `IX_uploadspectemp_countryCode` (`collid`, `countryCode`),
+  ADD INDEX `IX_uploadspectemp_country` (`collid`, `country`),
+  ADD INDEX `IX_uploadspectemp_stateProvince` (`collid`, `stateProvince`);
 
 
 #Increase user password field to accommodate new bcrypt hash 
 ALTER TABLE `users` 
   CHANGE COLUMN `password` `password` VARCHAR(255) NULL DEFAULT NULL ;
 
-  
+
 # Add index to improve performance on counts on verbatimCoordinates seen in OccurrenceCleaner
 ALTER TABLE `omoccurrences`
   ADD INDEX `IX_occurrences_verbatimCoordinates` (`collid`,`verbatimCoordinates`);
+

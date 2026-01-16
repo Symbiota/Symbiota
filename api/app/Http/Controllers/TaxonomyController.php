@@ -6,6 +6,7 @@ use App\Models\Taxonomy;
 use App\Models\TaxonomyStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Helpers\Helper;
 
 class TaxonomyController extends Controller {
 
@@ -321,6 +322,9 @@ class TaxonomyController extends Controller {
 	 * )
 	 */
 	public function create(Request $request){
+		if (!Helper::isValidJson($request->getContent())) {
+			return response()->json(['error' => 'Invalid JSON format in request body'], 400);
+		}
 		if($this->authenticate($request)){
 			if($this->isAuthorized('SuperAdmin') || $this->isAuthorized('Taxonomy')){
 				try {
