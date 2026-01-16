@@ -47,47 +47,6 @@ $('input[type="radio"]')?.click(function () {
 });
 
 /**
- * Opens modal with id selector
- * @param {String} elementid Selector for modal to be opened
- */
-function openModal(elementid) {
-  $(elementid)?.css("display", "block");
-  $(document.body)?.css("overflow: hidden");
-}
-
-/**
- * Closes modal with id selector
- * @param {String} elementid Selector for modal to be opened
- */
-function closeModal(elementid) {
-  $(elementid)?.css("display", "none");
-}
-
-function openCollectionsDialog() {
-    const dialog = document.getElementById('collections_dialog');
-    dialog.showModal();
-
-    const form = document.getElementById('params-form');
-    if (form) {
-      setSearchForm(form);
-      form.addEventListener("submit", function(event) {
-        event.preventDefault();
-        simpleSearch(optionalCallback=()=>{
-          const submitForm = document.getElementById("params-form");
-          submitForm.submit();
-        })
-      });
-      document.getElementById("reset-btn").addEventListener("click", function (event) {
-        document.getElementById("params-form").reset();
-        sessionStorage.clear();
-        checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
-        expandCategoriesBasedOnConfig();
-        updateChip(event, isInitialConfig=true);
-      });
-    }
-  }
-
-/**
  * Chips
  */
 
@@ -327,7 +286,6 @@ function updateChip(e, isInitialConfig=false) {
     }
   }
   
-  // Ensure formInputs is initialized
   if (!formInputs) {
     formInputs = document.querySelectorAll(".content input");
   }
@@ -532,29 +490,6 @@ function autoToggleSelector(e) {
 }
 
 /**
- * Unchecks children of 'all-selector' checkboxes or all checkboxes in list
- * when criterion chip is removed
- * Uses 'data-form-id' property in .php
- * @param {Object} element HTML Node Object
- */
-function uncheckAllChip(element) {
-  let isAllSel = element.classList.contains("specobs");
-  if (isAllSel) {
-    let selChildren = document.querySelectorAll(
-      `#${element.dataset.formId} input[type=checkbox]:checked`
-    );
-    selChildren.forEach((item) => {
-      item.checked = false;
-    });
-  } else {
-    let item = document.querySelector(
-      `input[id^="${element.className}"][name="cat[]"]`
-    );
-    if (item) item.checked = false;
-  }
-}
-
-/**
  * Finds all collections selected
  * Uses active tab in modal
  */
@@ -566,10 +501,6 @@ function getCollsSelected() {
     )
   );
   return selectedInForm;
-}
-
-function getTraitsSelected() {
-  return Array.from(document.querySelectorAll('input[name="attr[]"]:checked'));
 }
 
 /**
@@ -719,9 +650,6 @@ function validateCollections(optionalCallback=null) {
   }
 }
 
-/**
- * Calls methods to validate form and build URL that will redirect search
- */
 function simpleSearch() {
   validateCollections(optionalCallback = ()=>{
     const submitForm = document.getElementById("params-form");
@@ -767,15 +695,6 @@ function uncheckEverythingInCollections() {
   });
 }
 
-function uncheckSpecifiedCheckboxes(checkboxIds) {
-  checkboxIds.forEach(id => {
-    const checkbox = document.getElementById(id);
-    if (checkbox) {
-      checkbox.checked = false;
-    }
-  });
-}
-
 function handleCategoryChunks(parentBoxCheckStatus, collectionType) {
   const categoryLevelFieldSets = document.querySelectorAll(`fieldset[id^="${collectionType}_"][id$="_container"]`);
   categoryLevelFieldSets.forEach((categoryFieldset) => {
@@ -784,28 +703,6 @@ function handleCategoryChunks(parentBoxCheckStatus, collectionType) {
       inputElem.checked = parentBoxCheckStatus;
     })
   });
-}
-
-function handleHeaderSections(parentBoxCheckStatus, headerType, stopType = null) {
-  const targetHeader = Array.from(document.querySelectorAll('h2')).find(h => 
-    h.textContent.includes(headerType)
-  );
-  if (targetHeader) {
-    let currentElement = targetHeader.parentElement.nextElementSibling;
-    while (currentElement) {
-      if (stopType) {
-        const headerInSection = currentElement.querySelector('h2');
-        if (headerInSection && headerInSection.textContent.includes(stopType)) {
-          break;
-        }
-      }
-      const checkboxes = currentElement.querySelectorAll('input[name="db[]"][id^="collection-"]');
-      checkboxes.forEach((checkbox) => {
-        checkbox.checked = parentBoxCheckStatus;
-      });
-      currentElement = currentElement.nextElementSibling;
-    }
-  }
 }
 
 function areSame(arr1, arr2) {
@@ -826,7 +723,6 @@ function checkTheCollectionsThatShouldBeCheckedBasedOnConfig() {
   const targetCollectionCategoriesCheckedStatuses = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CATCHK;
   const queriedCollectionsCategories = targetCollectionCategoriesCheckedStatuses;
   if(queriedCollectionsCategories.length>0){
-    // @TODO uncheckEverything
     uncheckEverythingInCollections();
     queriedCollectionsCategories.forEach((queriedCollectionCategory) => {
       const targetElems = document.querySelectorAll(`#Specimens_${queriedCollectionCategory}, #Observations_${queriedCollectionCategory}`);
@@ -879,7 +775,6 @@ function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
     }
   });
   updateCategoryCheckboxes();
-  // expandCategoriesWithSomeCheckedChildren();
 }
 
 function generateTargetInputElementsForCategory(callbackFn) {
@@ -889,7 +784,6 @@ function generateTargetInputElementsForCategory(callbackFn) {
   categoryFieldsets.forEach((categoryFieldset) => {
     const categoryFieldsetId = categoryFieldset.id;
     const categoryPattern = categoryFieldsetId.match(/(.*)_container/)?.[1];
-    
     const inputContainer = document.getElementById(categoryPattern+"_inputs");
     const targetInputElems = inputContainer.querySelectorAll('input');
     if (targetInputElems.length > 0) {
@@ -942,8 +836,7 @@ function expandCategoriesBasedOnConfig() {
   });
 }
 
-function expandCategoriesWithSomeCheckedChildren() { // @TODO this is a good candidate for intervention with the collapsing
-
+function expandCategoriesWithSomeCheckedChildren() {
   generateTargetInputElementsForCategory((categoryPattern, targetInputElems) => {
     const container = document.getElementById(categoryPattern + '_inputs');
     const checkedChildren = Array.from(targetInputElems).filter(checkbox => checkbox.checked);
@@ -1133,7 +1026,7 @@ function setSearchForm(frm) {
       }
     }
     if (urlVar.db) {
-      let queriedCollections = urlVar.db.split(",");
+      const queriedCollections = urlVar.db.split(",");
       const updatedQueriedCollections = updateQueryListWithTypeCollections(queriedCollections);
 
       if (updatedQueriedCollections.length > 0) {
@@ -1201,19 +1094,6 @@ function parseUrlVariables(varStr) {
   return result;
 }
 
-// function toggleTheNonDefaultsClosed(defaultId) {
-//   const categoryButtons = document.querySelectorAll('a[id^="condense-"]');
-//   categoryButtons.forEach((categoryButton) => {
-//     const regexPattern = new RegExp(`^condense-\\d+-${defaultId}$`);
-//     if (!regexPattern.test(categoryButton.id)) {
-//       const idToToggle = categoryButton.id
-//         .replace("condense-", "")
-//         .replace("-" + defaultId, "");
-//       toggleCat(idToToggle);
-//     }
-//   });
-// }
-
 function toggleAccordionsFromSessionStorage(accordionIds) {
   const accordions = document.querySelectorAll(
     'input[class="accordion-selector"]'
@@ -1250,28 +1130,6 @@ function toggleCharacterGroup(charID) {
  * EVENT LISTENERS/INITIALIZERS
  */
 
-// document.getElementById("params-form").addEventListener("submit", function(event) {
-//   event.preventDefault();
-//   simpleSearch();
-// });
-
-
-// Reset button
-// document
-//   .getElementById("reset-btn")
-//   .addEventListener("click", function (event) {
-//     document.getElementById("params-form").reset();
-//     // updateChip();
-//     checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
-//     expandCategoriesBasedOnConfig();
-//     updateChip(event, isInitialConfig=true);
-//   });
-// When checking "all neon collections" box, toggle checkboxes in modal
-$("#all-neon-colls-quick").click(function () {
-  let isChecked = $(this).prop("checked");
-  $(".all-neon-colls").prop("checked", isChecked);
-  $(".all-neon-colls").siblings().find(".child").prop("checked", isChecked);
-});
 // When checking any 'all-selector', toggle children checkboxes
 $(".all-selector").click(toggleAllSelector);
 formColls?.addEventListener("click", autoToggleSelector, false);
@@ -1280,7 +1138,6 @@ formSites?.addEventListener("click", autoToggleSelector, false);
 searchFormColls?.addEventListener("click", autoToggleSelector, false);
 searchFormColls?.addEventListener("change", autoToggleSelector, false);
 
-//////// Initialize form inputs and bind update chip on event change
 function initializeFormInputs() {
   if (!formInputs || formInputs.length === 0) {
     formInputs = document.querySelectorAll(".content input");
@@ -1320,7 +1177,7 @@ $(".expansion-icon").click(function () {
   }
 });
 // Hides MOSC-BU checkboxes
-hideColCheckbox(58);
+hideColCheckbox(58); // @TODO is this NEON specific? Should I remove?
 
 const accordions = document.querySelectorAll(
   'input[class="accordion-selector"]'
@@ -1343,8 +1200,6 @@ accordions.forEach((accordion) => {
   });
 });
 
-// Initialize form inputs when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('deleteMe got here a1');
   initializeFormInputs();
 });

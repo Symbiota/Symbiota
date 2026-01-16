@@ -386,6 +386,30 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 			}
 		}
 
+		function openCollectionsDialog() {
+			const dialog = document.getElementById('collections_dialog');
+			dialog.showModal();
+
+			const form = document.getElementById('params-form');
+			if (form) {
+				setSearchForm(form);
+				form.addEventListener("submit", function(event) {
+				event.preventDefault();
+				simpleSearch(optionalCallback=()=>{
+					const submitForm = document.getElementById("params-form");
+					submitForm.submit();
+				})
+				});
+				document.getElementById("reset-btn").addEventListener("click", function (event) {
+				document.getElementById("params-form").reset();
+				sessionStorage.clear();
+				checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
+				expandCategoriesBasedOnConfig();
+				updateChip(event, isInitialConfig=true);
+				});
+			}
+		}
+
 		</script>
 	</head>
 
