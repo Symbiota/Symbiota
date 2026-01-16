@@ -472,7 +472,7 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 						</div>
 					</dialog>
 					<button class="button" type="button" onclick="openCollectionsDialog()"><?= $LANG['FILTER_COLLECTIONS'] ?></button>
-					<button class="button"><?= $LANG['SEARCH'] ?></button>
+					<button type="submit" class="button"><?= $LANG['SEARCH'] ?></button>
 				</div>
 
 				<input type="hidden" name="searchDuplicates" value="1"/>

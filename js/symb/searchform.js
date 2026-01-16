@@ -69,16 +69,17 @@ function openCollectionsDialog() {
 
     const form = document.getElementById('params-form');
     if (form) {
-      console.log("deleteMe got here d1");
       setSearchForm(form);
       form.addEventListener("submit", function(event) {
         event.preventDefault();
-        simpleSearch();
+        simpleSearch(optionalCallback=()=>{
+          const submitForm = document.getElementById("params-form");
+          submitForm.submit();
+        })
       });
       document.getElementById("reset-btn").addEventListener("click", function (event) {
-        console.log("deleteMe got here e1");
         document.getElementById("params-form").reset();
-        // updateChip();
+        sessionStorage.clear();
         checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
         expandCategoriesBasedOnConfig();
         updateChip(event, isInitialConfig=true);
@@ -701,21 +702,31 @@ function handleValErrors(errors) {
   });
 }
 
-/**
- * Calls methods to validate form and build URL that will redirect search
- */
-function simpleSearch() {
+function validateCollections(optionalCallback=null) {
   let alerts = document.getElementById("alert-msgs");
   alerts != null ? (alerts.innerHTML = "") : "";
   let errors = [];
   errors = validateForm();
   let isValid = errors.length == 0;
   if (isValid) {
-    const submitForm = document.getElementById("params-form");
-    submitForm.submit();
+    if (optionalCallback && typeof optionalCallback === "function") {
+      optionalCallback();
+    }
+    return true;
   } else {
     handleValErrors(errors);
+    return false;
   }
+}
+
+/**
+ * Calls methods to validate form and build URL that will redirect search
+ */
+function simpleSearch() {
+  validateCollections(optionalCallback = ()=>{
+    const submitForm = document.getElementById("params-form");
+    submitForm.submit();
+  });
 }
 
 /**
