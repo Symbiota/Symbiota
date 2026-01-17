@@ -30,11 +30,10 @@ class TaxonomyMaintenance extends Manager{
 		return $retArr;
 	}
 
-	//Get lists of problematic counts
+	//Taxa entered into taxa table, but without hierarchy or acceptance defined within taxstatus table
 	public function getOrphanedTaxaCount(){
-		//Count of taxa entered into taxa table, but without hierarchy or acceptance defined within taxstatus table
 		$retCnt = 0;
-		$sql = 'SELECT COUNT(*) as cnt FROM taxa WHERE tid NOT IN(SELECT tid FROM taxstatus WHERE taxauthid = ?)';
+		$sql = 'SELECT COUNT(*) as cnt ' . $this->getOrphanedSqlFrag();
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('i', $this->taxAuthID);
 			$stmt->execute();
@@ -45,145 +44,15 @@ class TaxonomyMaintenance extends Manager{
 		return $retCnt;
 	}
 
-	public function getMismatchedFamilyCount(){
-		//Count of taxa with mismatched families (family quick lookup field mismatched with family defined within hierarchy)
-		$retCnt = 0;
-		$sql = 'SELECT COUNT(ts.tid) as cnt
-			FROM taxstatus ts INNER JOIN taxaenumtree e ON ts.tid = e.tid
-			INNER JOIN taxa t ON ts.tid = t.tid
-			INNER JOIN taxa p ON e.parenttid = p.tid
-			WHERE e.taxauthid = ? AND ts.taxauthid = ? AND p.rankid = 140 AND ts.family != p.sciname AND e.parentTid = ?';
-		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param('iii', $this->taxAuthID, $this->taxAuthID, $this->nodeTid);
-			$stmt->execute();
-			$stmt->bind_result($retCnt);
-			$stmt->fetch();
-			$stmt->close();
-		}
-		return $retCnt;
-	}
-
-	public function getIllegalParentRankidCount(){
-		//Taxa whose direct parent is of an equal or higher rankid
-		$retCnt = 0;
-		$sql = 'SELECT COUNT(t.tid) AS cnt
-			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
-			INNER JOIN taxa p ON ts.parenttid = p.tid
-			INNER JOIN taxaenumtree e ON t.tid = e.tid
-			WHERE ts.taxauthid = ? AND t.rankid < p.rankid AND e.taxAuthID = ? AND e.parentTid = ?';
-		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param('iii', $this->taxAuthID, $this->taxAuthID, $this->nodeTid);
-			$stmt->execute();
-			$stmt->bind_result($retCnt);
-			$stmt->fetch();
-			$stmt->close();
-		}
-		return $retCnt;
-	}
-
-	public function getAcceptedNonAcceptedParentCount(){
-		//Accepted taxa with a non-accepted parent
-		$retCnt = 0;
-		$sql = 'SELECT COUNT(t.tid) AS cnt
-			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
-			INNER JOIN taxstatus pts ON ts.parentTid = pts.tid
-			INNER JOIN taxaenumtree e ON t.tid = e.tid
-			WHERE ts.taxauthid = ? AND pts.taxauthid = ? AND ts.tid = ts.tidAccepted AND pts.tid != pts.tidAccepted AND e.taxAuthID = ? AND e.parentTid = ?';
-		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param('iiii', $this->taxAuthID, $this->taxAuthID, $this->taxAuthID, $this->nodeTid);
-			$stmt->execute();
-			$stmt->bind_result($retCnt);
-			$stmt->fetch();
-			$stmt->close();
-		}
-		return $retCnt;
-	}
-
-	public function getNonAcceptedLinkedToNonAcceptedCount(){
-		//Non-accepted taxa linked to another non-accepted taxon as the accepted taxon
-		$retCnt = 0;
-		$sql = 'SELECT COUNT(t.tid) AS cnt
-			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
-			INNER JOIN taxstatus a ON ts.tidAccepted = a.tid
-			INNER JOIN taxaenumtree e ON t.tid = e.tid
-			WHERE ts.taxauthid = ? AND a.taxauthid = ? AND ts.tid != ts.tidAccepted AND e.taxAuthID = ? AND e.parentTid = ?';
-		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param('iiii', $this->taxAuthID, $this->taxAuthID, $this->taxAuthID, $this->nodeTid);
-			$stmt->execute();
-			$stmt->bind_result($retCnt);
-			$stmt->fetch();
-			$stmt->close();
-		}
-		return $retCnt;
-	}
-
-	public function getMislinkedInfraspecificCount(){
-		//Infraspecific taxa linked to a parent of a rank < species rank
-		$retCnt = 0;
-		$sql = 'SELECT COUNT(t.tid) AS cnt
-			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
-			INNER JOIN taxstatus pts ON ts.parentTid = pts.tid
-			INNER JOIN taxa p ON pts.tid = p.tid
-			INNER JOIN taxaenumtree e ON t.tid = e.tid
-			WHERE ts.taxauthid = ? AND pts.taxauthid = ? AND t.rankid > 220 AND p.rankid < 220 AND e.taxAuthID = ? AND e.parentTid = ?';
-		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param('iiii', $this->taxAuthID, $this->taxAuthID, $this->taxAuthID, $this->nodeTid);
-			$stmt->execute();
-			$stmt->bind_result($retCnt);
-			$stmt->fetch();
-			$stmt->close();
-		}
-		return $retCnt;
-	}
-
-	public function getMislinkedSpeciesCount(){
-		//Species ranked taxa (rankid = 220) that are linked to a parent of a rank < genus rank
-		$retCnt = 0;
-		$sql = 'SELECT COUNT(t.tid) AS cnt
-			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
-			INNER JOIN taxstatus pts ON ts.parentTid = pts.tid
-			INNER JOIN taxa p ON pts.tid = p.tid
-			INNER JOIN taxaenumtree e ON t.tid = e.tid
-			WHERE ts.taxauthid = ? AND pts.taxauthid = ? AND t.rankid = 220 AND p.rankid < 180 AND e.taxAuthID = ? AND e.parentTid = ?';
-		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param('iiii', $this->taxAuthID, $this->taxAuthID, $this->taxAuthID, $this->nodeTid);
-			$stmt->execute();
-			$stmt->bind_result($retCnt);
-			$stmt->fetch();
-			$stmt->close();
-		}
-		return $retCnt;
-	}
-
-	public function getMislinkedGeneraCount(){
-		//Genera that are linked to a parent of a rank < family rank (this might not be a problem, but should be checked)
-		$retCnt = 0;
-		$sql = 'SELECT COUNT(t.tid) AS cnt
-			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
-			INNER JOIN taxstatus pts ON ts.parentTid = pts.tid
-			INNER JOIN taxa p ON pts.tid = p.tid
-			INNER JOIN taxaenumtree e ON t.tid = e.tid
-			WHERE ts.taxauthid = ? AND pts.taxauthid = ? AND t.rankid = 180 AND p.rankid < 140 AND e.taxAuthID = ? AND e.parentTid = ?';
-		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param('iiii', $this->taxAuthID, $this->taxAuthID, $this->taxAuthID, $this->nodeTid);
-			$stmt->execute();
-			$stmt->bind_result($retCnt);
-			$stmt->fetch();
-			$stmt->close();
-		}
-		return $retCnt;
-	}
-
-	//Get lists of problematic taxa
 	public function getOrphanedTaxa(){
 		$retArr = array();
 		$this->setRankArr();
-		$sql = 'SELECT tid, sciname, author, rankid FROM taxa WHERE tid NOT IN(SELECT tid FROM taxstatus WHERE taxauthid = ?)';
+		$sql = 'SELECT tid, sciname, author, rankid ' . $this->getOrphanedSqlFrag();
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('i', $this->taxAuthID);
 			$stmt->execute();
 			if($rs = $stmt->get_result()){
-				if($r = $rs->fetch_object()){
+				while($r = $rs->fetch_object()){
 					$retArr[$r->tid]['sciname'] = $this->cleanInStr($r->sciname);
 					$retArr[$r->tid]['author'] = $this->cleanInStr($r->author);
 					$retArr[$r->tid]['rankid'] = $r->rankid;
@@ -196,20 +65,79 @@ class TaxonomyMaintenance extends Manager{
 		return $retArr;
 	}
 
-	public function getIllegalParentRankidTaxa(){
-		//Taxa whose direct parent is of an equal or higher rankid
+	private function getOrphanedSqlFrag(){
+		$sql = 'FROM taxa WHERE tid NOT IN(SELECT tid FROM taxstatus WHERE taxauthid = ?)';
+		return $sql;
+	}
+
+	//Taxa with mismatched families (family quick lookup field mismatched with family defined within hierarchy)
+	public function getMismatchedFamilyCount(){
+		$retCnt = 0;
+		$sql = 'SELECT COUNT(t.tid) as cnt ' . $this->getMismatchedFamilySqlFrag();
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('iii', $this->taxAuthID, $this->taxAuthID, $this->nodeTid);
+			$stmt->execute();
+			$stmt->bind_result($retCnt);
+			$stmt->fetch();
+			$stmt->close();
+		}
+		return $retCnt;
+	}
+
+	public function getMismatchedFamilyTaxa(){
 		$retArr = array();
 		$this->setRankArr();
-		$sql = 'SELECT t.tid, t.sciname, t.author, t.rankid, p.tid AS parentTid, p.sciname as parent, p.rankID AS parentRankID
-			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
-			INNER JOIN taxa p ON ts.parenttid = p.tid
-			INNER JOIN taxaenumtree e ON t.tid = e.tid
-			WHERE ts.taxauthid = ? AND t.rankid < p.rankid AND e.taxAuthID = ? AND e.parentTid = ?';
+		$sql = 'SELECT t.tid, t.sciname, t.author, t.rankid, p.family, ts.family as familyIncorrect ' . $this->getMismatchedFamilySqlFrag();
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('iii', $this->taxAuthID, $this->taxAuthID, $this->nodeTid);
 			$stmt->execute();
 			if($rs = $stmt->get_result()){
-				if($r = $rs->fetch_object()){
+				while($r = $rs->fetch_object()){
+					$retArr[$r->tid]['sciname'] = $this->cleanInStr($r->sciname);
+					$retArr[$r->tid]['author'] = $this->cleanInStr($r->author);
+					$retArr[$r->tid]['rankid'] = $r->rankid;
+					$retArr[$r->tid]['family'] = $this->cleanInStr($r->family);
+					$retArr[$r->tid]['familyIncorrect'] = $this->cleanInStr($r->familyIncorrect);
+					if($this->rankArr[$r->rankid]) $retArr[$r->tid]['rankName'] = $this->rankArr[$r->rankid];
+				}
+				$rs->free();
+			}
+			$stmt->close();
+		}
+		return $retArr;
+	}
+
+	private function getMismatchedFamilySqlFrag(){
+		$sql = 'FROM taxstatus ts INNER JOIN taxaenumtree e ON ts.tid = e.tid
+			INNER JOIN taxa t ON ts.tid = t.tid
+			INNER JOIN taxa p ON e.parenttid = p.tid
+			WHERE e.taxauthid = ? AND ts.taxauthid = ? AND p.rankid = 140 AND ts.family != p.sciname AND e.parentTid = ?';
+		return $sql;
+	}
+
+	//Taxa whose direct parent is of an equal or higher rankid
+	public function getIllegalParentRankidCount(){
+		$retCnt = 0;
+		$sql = 'SELECT COUNT(t.tid) AS cnt ' . $this->getIllegalParentRankidSqlFrag();
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('iii', $this->taxAuthID, $this->taxAuthID, $this->nodeTid);
+			$stmt->execute();
+			$stmt->bind_result($retCnt);
+			$stmt->fetch();
+			$stmt->close();
+		}
+		return $retCnt;
+	}
+
+	public function getIllegalParentRankidTaxa(){
+		$retArr = array();
+		$this->setRankArr();
+		$sql = 'SELECT t.tid, t.sciname, t.author, t.rankid, p.tid AS parentTid, p.sciname as parent, p.rankID AS parentRankID ' . $this->getIllegalParentRankidSqlFrag();
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('iii', $this->taxAuthID, $this->taxAuthID, $this->nodeTid);
+			$stmt->execute();
+			if($rs = $stmt->get_result()){
+				while($r = $rs->fetch_object()){
 					$retArr[$r->tid]['sciname'] = $this->cleanInStr($r->sciname);
 					$retArr[$r->tid]['author'] = $this->cleanInStr($r->author);
 					$retArr[$r->tid]['rankid'] = $r->rankid;
@@ -225,21 +153,37 @@ class TaxonomyMaintenance extends Manager{
 		return $retArr;
 	}
 
+	private function getIllegalParentRankidSqlFrag(){
+		$sql = 'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
+		INNER JOIN taxa p ON ts.parenttid = p.tid
+		INNER JOIN taxaenumtree e ON t.tid = e.tid
+		WHERE ts.taxauthid = ? AND t.rankid < p.rankid AND e.taxAuthID = ? AND e.parentTid = ?';
+		return $sql;
+	}
+
+	//Accepted taxa with a non-accepted parent
+	public function getAcceptedNonAcceptedParentCount(){
+		$retCnt = 0;
+		$sql = 'SELECT COUNT(t.tid) AS cnt ' . $this->getAcceptedNonAcceptedParentSqlFrag();
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('iiii', $this->taxAuthID, $this->taxAuthID, $this->taxAuthID, $this->nodeTid);
+			$stmt->execute();
+			$stmt->bind_result($retCnt);
+			$stmt->fetch();
+			$stmt->close();
+		}
+		return $retCnt;
+	}
+
 	public function getAcceptedNonAcceptedParentTaxa(){
-		//Accepted taxa with a non-accepted parents
 		$retArr = array();
 		$this->setRankArr();
-		$sql = 'SELECT t.tid, t.sciname, t.author, t.rankid, p.tid AS parentTid, p.sciname AS parent, p.rankid AS parentRankID
-			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
-			INNER JOIN taxstatus pts ON ts.parentTid = pts.tid
-			INNER JOIN taxa p ON pts.tid = p.tid
-			INNER JOIN taxaenumtree e ON t.tid = e.tid
-			WHERE ts.taxauthid = ? AND pts.taxauthid = ? AND ts.tid = ts.tidAccepted AND pts.tid != pts.tidAccepted AND e.taxAuthID = ? AND e.parentTid = ?';
+		$sql = 'SELECT t.tid, t.sciname, t.author, t.rankid, p.tid AS parentTid, p.sciname AS parent, p.rankid AS parentRankID ' . $this->getAcceptedNonAcceptedParentSqlFrag();
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('iiii', $this->taxAuthID, $this->taxAuthID, $this->taxAuthID, $this->nodeTid);
 			$stmt->execute();
 			if($rs = $stmt->get_result()){
-				if($r = $rs->fetch_object()){
+				while($r = $rs->fetch_object()){
 					$retArr[$r->tid]['sciname'] = $this->cleanInStr($r->sciname);
 					$retArr[$r->tid]['author'] = $this->cleanInStr($r->author);
 					$retArr[$r->tid]['rankid'] = $r->rankid;
@@ -255,20 +199,38 @@ class TaxonomyMaintenance extends Manager{
 		return $retArr;
 	}
 
+	private function getAcceptedNonAcceptedParentSqlFrag(){
+		$sql = 'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
+			INNER JOIN taxstatus pts ON ts.parentTid = pts.tid
+			INNER JOIN taxa p ON pts.tid = p.tid
+			INNER JOIN taxaenumtree e ON t.tid = e.tid
+			WHERE ts.taxauthid = ? AND pts.taxauthid = ? AND ts.tid = ts.tidAccepted AND pts.tid != pts.tidAccepted AND e.taxAuthID = ? AND e.parentTid = ?';
+		return $sql;
+	}
+
+	//Non-accepted taxa linked to another non-accepted taxon as the accepted taxon
+	public function getNonAcceptedLinkedToNonAcceptedCount(){
+		$retCnt = 0;
+		$sql = 'SELECT COUNT(t.tid) AS cnt ' . $this->getNonAcceptedLinkedToNonAcceptedSqlFrag();
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('iiii', $this->taxAuthID, $this->taxAuthID, $this->taxAuthID, $this->nodeTid);
+			$stmt->execute();
+			$stmt->bind_result($retCnt);
+			$stmt->fetch();
+			$stmt->close();
+		}
+		return $retCnt;
+	}
+
 	public function getNonAcceptedLinkedToNonAcceptedTaxa(){
-		//Non-accepted taxa linked to another non-accepted taxon as the accepted taxon
 		$retArr = array();
 		$this->setRankArr();
-		$sql = 'SELECT t.tid, t.sciname, t.author, t.rankid, p.tid AS parentTid, p.sciname AS parent, p.rankid AS parentRankID
-			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
-			INNER JOIN taxstatus a ON ts.tid = a.tidAccepted
-			INNER JOIN taxaenumtree e ON t.tid = e.tid
-			WHERE ts.taxauthid = ? AND a.taxauthid = ? AND ts.tid != ts.tidAccepted AND e.taxAuthID = ? AND e.parentTid = ?';
+		$sql = 'SELECT t.tid, t.sciname, t.author, t.rankid, p.tid AS parentTid, p.sciname AS parent, p.rankid AS parentRankID ' . $this->getNonAcceptedLinkedToNonAcceptedSqlFrag();
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('iiii', $this->taxAuthID, $this->taxAuthID, $this->taxAuthID, $this->nodeTid);
 			$stmt->execute();
 			if($rs = $stmt->get_result()){
-				if($r = $rs->fetch_object()){
+				while($r = $rs->fetch_object()){
 					$retArr[$r->tid]['sciname'] = $this->cleanInStr($r->sciname);
 					$retArr[$r->tid]['author'] = $this->cleanInStr($r->author);
 					$retArr[$r->tid]['rankid'] = $r->rankid;
@@ -284,21 +246,86 @@ class TaxonomyMaintenance extends Manager{
 		return $retArr;
 	}
 
+	private function getNonAcceptedLinkedToNonAcceptedSqlFrag(){
+		$sql = 'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
+			INNER JOIN taxstatus a ON ts.tidAccepted = a.tid
+			INNER JOIN taxaenumtree e ON t.tid = e.tid
+			WHERE ts.taxauthid = ? AND a.taxauthid = ? AND ts.tid != ts.tidAccepted AND e.taxAuthID = ? AND e.parentTid = ?';
+		return $sql;
+	}
+
+	//Infraspecific taxa linked to a parent of a higher rank of species (rankid < 220)
+	public function getMislinkedInfraspecificCount(){
+		$retCnt = 0;
+		$sql = 'SELECT COUNT(t.tid) AS cnt ' . $this->getMislinkedInfraspecificSqlFrag();
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('iiii', $this->taxAuthID, $this->taxAuthID, $this->taxAuthID, $this->nodeTid);
+			$stmt->execute();
+			$stmt->bind_result($retCnt);
+			$stmt->fetch();
+			$stmt->close();
+		}
+		return $retCnt;
+	}
+
 	public function getMislinkedInfraspecificTaxa(){
-		//Accepted taxa with a non-accepted parent
 		$retArr = array();
 		$this->setRankArr();
-		$sql = 'SELECT t.tid, t.sciname, t.author, t.rankid, ts.tidaccepted, p.tid AS parentTid, p.sciname AS parent, p.rankid AS parentRankid
-			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
+		$sql = 'SELECT t.tid, t.sciname, t.author, t.rankid, ts.tidaccepted, p.tid AS parentTid, p.sciname AS parent, p.rankid AS parentRankid ' . $this->getMislinkedInfraspecificSqlFrag();
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('iiii', $this->taxAuthID, $this->taxAuthID, $this->taxAuthID, $this->nodeTid);
+			$stmt->execute();
+			if($rs = $stmt->get_result()){
+				while($r = $rs->fetch_object()){
+					$acceptance = 1;
+					if($r->tid != $r->tidaccepted) $acceptance = 0;
+					$retArr[$r->tid][$acceptance]['sciname'] = $this->cleanInStr($r->sciname);
+					$retArr[$r->tid][$acceptance]['author'] = $this->cleanInStr($r->author);
+					$retArr[$r->tid][$acceptance]['rankid'] = $r->rankid;
+					if($this->rankArr[$r->rankid]) $retArr[$r->tid]['rankName'] = $this->rankArr[$r->rankid];
+					$retArr[$r->tid][$acceptance]['parentTid'] = $r->parentTid;
+					$retArr[$r->tid][$acceptance]['parent'] = $r->parent;
+					$retArr[$r->tid][$acceptance]['parentRankID'] = $r->parentRankID;
+				}
+				$rs->free();
+			}
+			$stmt->close();
+		}
+		return $retArr;
+	}
+
+	private function getMislinkedInfraspecificSqlFrag(){
+		$sql = 'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
 			INNER JOIN taxstatus pts ON ts.parentTid = pts.tid
 			INNER JOIN taxa p ON pts.tid = p.tid
 			INNER JOIN taxaenumtree e ON t.tid = e.tid
 			WHERE ts.taxauthid = ? AND pts.taxauthid = ? AND t.rankid > 220 AND p.rankid < 220 AND e.taxAuthID = ? AND e.parentTid = ?';
+		return $sql;
+	}
+
+	//Species ranked taxa (rankid = 220) that are linked to a parent of a rank < genus rank
+	public function getMislinkedSpeciesCount(){
+		$retCnt = 0;
+		$sql = 'SELECT COUNT(t.tid) AS cnt ' . $this->getMislinkedSpeciesSqlFrag();
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('iiii', $this->taxAuthID, $this->taxAuthID, $this->taxAuthID, $this->nodeTid);
+			$stmt->execute();
+			$stmt->bind_result($retCnt);
+			$stmt->fetch();
+			$stmt->close();
+		}
+		return $retCnt;
+	}
+
+	public function getMislinkedSpeciesTaxa(){
+		$retArr = array();
+		$this->setRankArr();
+		$sql = 'SELECT t.tid, t.sciname, t.author, t.rankid, ts.tidaccepted, p.tid AS parentTid, p.sciname AS parent, p.rankid AS parentRankid ' . $this->getMislinkedSpeciesSqlFrag();
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('iiii', $this->taxAuthID, $this->taxAuthID, $this->taxAuthID, $this->nodeTid);
 			$stmt->execute();
 			if($rs = $stmt->get_result()){
-				if($r = $rs->fetch_object()){
+				while($r = $rs->fetch_object()){
 					$acceptance = 1;
 					if($r->tid != $r->tidaccepted) $acceptance = 0;
 					$retArr[$r->tid][$acceptance]['sciname'] = $this->cleanInStr($r->sciname);
@@ -316,21 +343,38 @@ class TaxonomyMaintenance extends Manager{
 		return $retArr;
 	}
 
-	public function getMislinkedSpeciesTaxa(){
-		//Species ranked taxa (rankid = 220) that are linked to a parent of a rank < genus rank
-		$retArr = array();
-		$this->setRankArr();
-		$sql = 'SELECT t.tid, t.sciname, t.author, t.rankid, ts.tidaccepted, p.tid AS parentTid, p.sciname AS parent, p.rankid AS parentRankid
-			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
+	private function getMislinkedSpeciesSqlFrag(){
+		$sql = 'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
 			INNER JOIN taxstatus pts ON ts.parentTid = pts.tid
 			INNER JOIN taxa p ON pts.tid = p.tid
 			INNER JOIN taxaenumtree e ON t.tid = e.tid
 			WHERE ts.taxauthid = ? AND pts.taxauthid = ? AND t.rankid = 220 AND p.rankid < 180 AND e.taxAuthID = ? AND e.parentTid = ?';
+		return $sql;
+	}
+
+	//Genera that are linked to a parent of a rank < family rank (this might not be a problem, but should be checked)
+	public function getMislinkedGeneraCount(){
+		$retCnt = 0;
+		$sql = 'SELECT COUNT(t.tid) AS cnt ' . $this->getMislinkedGeneraSqlFrag();
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('iiii', $this->taxAuthID, $this->taxAuthID, $this->taxAuthID, $this->nodeTid);
+			$stmt->execute();
+			$stmt->bind_result($retCnt);
+			$stmt->fetch();
+			$stmt->close();
+		}
+		return $retCnt;
+	}
+
+	public function getMislinkedGeneraTaxa(){
+		$retArr = array();
+		$this->setRankArr();
+		$sql = 'SELECT t.tid, t.sciname, t.author, t.rankid, ts.tidaccepted, p.tid AS parentTid, p.sciname AS parent, p.rankid AS parentRankid ' . $this->getMislinkedGeneraSqlFrag();
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('iiii', $this->taxAuthID, $this->taxAuthID, $this->taxAuthID, $this->nodeTid);
 			$stmt->execute();
 			if($rs = $stmt->get_result()){
-				if($r = $rs->fetch_object()){
+				while($r = $rs->fetch_object()){
 					$acceptance = 1;
 					if($r->tid != $r->tidaccepted) $acceptance = 0;
 					$retArr[$r->tid][$acceptance]['sciname'] = $this->cleanInStr($r->sciname);
@@ -348,36 +392,13 @@ class TaxonomyMaintenance extends Manager{
 		return $retArr;
 	}
 
-	public function getMislinkedGeneraTaxa(){
-		//Species ranked taxa (rankid = 220) that are linked to a parent of a rank < genus rank
-		$retArr = array();
-		$this->setRankArr();
-		$sql = 'SELECT t.tid, t.sciname, t.author, t.rankid, ts.tidaccepted, p.tid AS parentTid, p.sciname AS parent, p.rankid AS parentRankid
-			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
+	private function getMislinkedGeneraSqlFrag(){
+		$sql = 'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
 			INNER JOIN taxstatus pts ON ts.parentTid = pts.tid
 			INNER JOIN taxa p ON pts.tid = p.tid
 			INNER JOIN taxaenumtree e ON t.tid = e.tid
 			WHERE ts.taxauthid = ? AND pts.taxauthid = ? AND t.rankid = 180 AND p.rankid < 140 AND e.taxAuthID = ? AND e.parentTid = ?';
-		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param('iiii', $this->taxAuthID, $this->taxAuthID, $this->taxAuthID, $this->nodeTid);
-			$stmt->execute();
-			if($rs = $stmt->get_result()){
-				if($r = $rs->fetch_object()){
-					$acceptance = 1;
-					if($r->tid != $r->tidaccepted) $acceptance = 0;
-					$retArr[$r->tid][$acceptance]['sciname'] = $this->cleanInStr($r->sciname);
-					$retArr[$r->tid][$acceptance]['author'] = $this->cleanInStr($r->author);
-					$retArr[$r->tid][$acceptance]['rankid'] = $r->rankid;
-					if($this->rankArr[$r->rankid]) $retArr[$r->tid]['rankName'] = $this->rankArr[$r->rankid];
-					$retArr[$r->tid][$acceptance]['parentTid'] = $r->parentTid;
-					$retArr[$r->tid][$acceptance]['parent'] = $r->parent;
-					$retArr[$r->tid][$acceptance]['parentRankID'] = $r->parentRankID;
-				}
-				$rs->free();
-			}
-			$stmt->close();
-		}
-		return $retArr;
+		return $sql;
 	}
 
 	//Data repair functions
@@ -465,12 +486,13 @@ class TaxonomyMaintenance extends Manager{
 
 	//Data set functions
 	private function setRankArr(){
-		if(!$this->rankArr && $this->nodeID){
-			$sql = 'SELECT u.rankID, u.rankName, t.sciname
-				FROM taxonunits u LEFT JOIN taxa t ON u.kingdomName = t.sciname
-				WHERE t.tid = ? ORDER BY t.sciname';
+		if(!$this->rankArr && $this->nodeTid){
+			$sql = 'SELECT u.rankID, u.rankName
+				FROM taxonunits u INNER JOIN taxa t ON u.kingdomName = t.sciname
+				INNER JOIN taxaenumtree e ON t.tid = e.parentTid
+				WHERE e.tid = ? AND e.taxAuthId = ? AND t.rankid = 10';
 			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('i', $this->nodeTid);
+				$stmt->bind_param('ii', $this->nodeTid, $this->taxAuthID);
 				$stmt->execute();
 				$rankID = 0;
 				$rankName = '';
@@ -485,10 +507,10 @@ class TaxonomyMaintenance extends Manager{
 
 	public function getNodeArr(){
 		$retArr = array();
-		$sql = 'SELECT tid, sciname FROM taxa WHERE rankid <= 10 ORDER BY rankid, sciname';
+		$sql = 'SELECT tid, sciname, rankid FROM taxa WHERE rankid <= 140 ORDER BY rankid, sciname';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr[$r->tid] = $r->sciname;
+			$retArr[$r->tid] = $r->sciname . ' (rankid: ' . $r->rankid . ')';
 		}
 		return $retArr;
 	}

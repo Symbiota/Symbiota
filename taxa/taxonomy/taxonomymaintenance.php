@@ -4,6 +4,7 @@ use phpseclib3\Math\BigInteger\Engines\PHP;
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/TaxonomyMaintenance.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/classes/utilities/PortalProperties.php');
 
 Language::load('taxa/taxonomy/taxonomymaintenance');
 
@@ -11,19 +12,20 @@ if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../taxa/taxonomy
 
 $node = array_key_exists('node', $_REQUEST) ? htmlspecialchars($_REQUEST['node']) : '';
 $taxAuthID = array_key_exists('taxauthid', $_REQUEST) ? filter_var($_REQUEST['taxauthid'], FILTER_SANITIZE_NUMBER_INT) : 1;
+$taxonomicAuthority = array_key_exists('taxonomicauthority', $_POST) ? $_POST['taxonomicauthority'] : 0;
 $action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
 
 $taxonomyManager = new TaxonomyMaintenance();
 $taxonomyManager->setNode($node);
 $taxonomyManager->setTaxAuthID($taxAuthID);
+//$taxonomyManager->setTaxonomicAuthority();
 
 $isEditor = false;
 if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)) $isEditor = true;
 
-$reportArr = array();
 $statusStr = '';
 if($isEditor && $action){
-	if($action == 'syncFamilies'){
+	if($action == 'autoSyncFamilies'){
 		if($cnt = $taxonomyManager->synchronizeFamilyQuickLookup()){
 			$statusStr = 'Success batch synchronized ' . $cnt . ' records';
 		}
@@ -33,7 +35,6 @@ if($isEditor && $action){
 			$statusStr = 'Successfully pruned bad nodes';
 		}
 	}
-	$reportArr = $taxonomyManager->getTaxonomyReport();
 }
 ?>
 <!DOCTYPE html>
@@ -59,12 +60,13 @@ if($isEditor && $action){
 		}
 	</script>
 	<style>
-		 .form-section{ margin: 5px 0px; }
+		 .form-section{ margin: 5px 15px; }
 		 .icon{ width: 15px; }
 		 .subsection-div{ margin: 5px 10px }
 		 .desc-div{ margin: 10px }
 		 .listSection-div{ margin-bottom: 5px }
 		 button{ margin: 5px 20px }
+		 fieldset{ padding: 15px; }
 		 legend{ font-weight: bold }
 	</style>
 </head>
@@ -74,7 +76,7 @@ if($isEditor && $action){
 	?>
 	<div class="navpath">
 		<a href="../index.php"><?= $LANG['HOME'] ?></a> &gt;&gt;
-		<b><?= $LANG['TAX_MAINT'] ?></b>
+		<b><a href="taxonomymaintenance.php"><?= $LANG['TAX_MAINT'] ?></a></b>
 	</div>
 	<div role="main" id="innertext">
 		<h1 class="page-heading"><?= $LANG['TAX_MAINT']; ?></h1>
@@ -89,12 +91,13 @@ if($isEditor && $action){
 			<?php
 		}
 		if($isEditor){
-			if($reportArr){
+			if($action){
+				$reportArr = $taxonomyManager->getTaxonomyReport();
 				?>
-				<div>
+				<div style="margin-bottom: 15px">
 					<div class="listSection-div">
 						<label>Orphaned Taxa (across all nodes): </label> <?= $reportArr['orphanedTaxa'] ?> <a href="#" onclick="toggleDetailSection('#orphanedTaxa-div')"><img class="icon" src="../../images/triangledown.png"></a>
-						<div id="orphanedTaxa-div" class="subsection-div" style="display: none">
+						<div id="orphanedTaxa-div" class="subsection-div" style="display: none<?= ($action == 'listOrphanedTaxa' ? 'block' : 'none') ?>">
 							<fieldset>
 								<legend>Details</legend>
 								<div class="desc-div">
@@ -105,27 +108,29 @@ if($isEditor && $action){
 										<li><b>Auto-resolve Taxa (not recommended): </b></li>
 									</ul>
 								</div>
-								<form name="listOrphanedTaxaForm" method="post" action="taxonomymaintenance.php">
-									<input name="action" type="radio" value="listOrphanedTaxa"> <label>List Orphaned Taxa</label>
-									<input name="action" type="radio" value="authorityResolveOrphanedTaxa"> <label>Resolve using Taxonomic Authority</label>
-									<div>
-										<fieldset>
-											<legend>Taxonomic Authorities</legend>
-											<legend> <b><?= $LANG['TAX_RESOURCES'] ?></b> </legend>
-												<?php
-												$taxResourceList = $taxonomyManager->getTaxonomicResourceList();
-												foreach($taxResourceList as $taKey => $taValue){
-													echo '<input name="taxresource[' . $taKey . ']" id="taxresource[' . $taKey . ']" type="checkbox" value="'.$taKey.'" '.(in_array($taKey,$taxResource)?'checked':'').' /> ';
-													echo '<label for="taxresource[' . $taKey . ']">' . $taValue . ' </label><br/>';
-												}
-												?>
-										</fieldset>
-									</div>
-									<input name="action" type="radio" value="autoResolveOrphanedTaxa"> <label>Auto-resolve Taxa</label>
-									<input name="node" type="hidden" value="<?= $node ?>" >
-									<input name="taxauthid" type="hidden" value="<?= $taxAuthID ?>" >
-									<button name="action-button" type="submit">Preform Action</button>
-								</form>
+								<div class="form-section">
+									<form name="listOrphanedTaxaForm" method="post" action="taxonomymaintenance.php">
+										<input name="action" type="radio" value="listOrphanedTaxa" required> <label>List Orphaned Taxa</label><br>
+										<input name="action" type="radio" value="authorityResolveOrphanedTaxa" onclick="toggle('orphaned-taxauth-div');" required> <label>Resolve using Taxonomic Authority</label><br>
+										<div id="orphaned-taxauth-div" style="display:none;margin-left: 15px">
+											<fieldset>
+												<legend>Taxonomic Authorities</legend>
+												<legend><?= $LANG['TAXONOMY_AUTHORITIES'] ?></legend>
+													<?php
+													$taxResourceList = PortalProperties::getTaxonomicAuthorities();
+													foreach($taxResourceList as $taKey => $taValue){
+														echo '<input name="taxonomicauthority" id="taxresource" type="radio" value="' . $taKey . '" ' . ($taKey == $taxonomicAuthority ? 'checked' : '') . ' > ';
+														echo '<label for="taxonomicauthority">' . $taValue . ' </label><br/>';
+													}
+													?>
+											</fieldset>
+										</div>
+										<input name="action" type="radio" value="autoResolveOrphanedTaxa" required> <label>Auto-resolve Taxa</label>
+										<input name="node" type="hidden" value="<?= $node ?>" >
+										<input name="taxauthid" type="hidden" value="<?= $taxAuthID ?>" >
+										<button name="action-button" type="submit">Perform Action</button>
+									</form>
+								</div>
 							</fieldset>
 						</div>
 					</div>
@@ -135,14 +140,18 @@ if($isEditor && $action){
 							<fieldset>
 								<legend>Details</legend>
 								<div class="desc-div">
-									Quick-lookup family field is out of sync with defined hierarchy. The button below will syncronize the quick-lookup field.
+									Quick-lookup family field is out of sync with defined hierarchy. The control options below provides ability to list of auto-synchronize families.
 									If all taxon records fail to update, there is likely an issue with the hierarchy (e.g. taxa linked to multiple families).
 								</div>
-								<form name="mismatchFamilyForm" method="post" action="taxonomymaintenance.php">
-									<button name="action" type="submit" value="syncFamilies">Synchronize Families</button>
-									<input name="node" type="hidden" value="<?= $node ?>" >
-									<input name="taxauthid" type="hidden" value="<?= $taxAuthID ?>" >
-								</form>
+								<div class="form-section">
+									<form name="mismatchFamilyForm" method="post" action="taxonomymaintenance.php">
+										<input name="action" type="radio" value="autoSyncFamilies"> <label>Auto-Synchronize Families</label>
+										<input name="action" type="radio" value="listMismatchedFamilies"> <label>List Mismatched Families</label>
+										<input name="node" type="hidden" value="<?= $node ?>" >
+										<input name="taxauthid" type="hidden" value="<?= $taxAuthID ?>" >
+										<button name="action-button" type="submit">Perform Action</button>
+									</form>
+								</div>
 							</fieldset>
 						</div>
 					</div>
@@ -158,16 +167,18 @@ if($isEditor && $action){
 										<li>Automatically prune out bad nodes</li>
 									</ul>
 								</div>
-								<form name="listIllegalParentRankidForm" method="post" action="taxonomymaintenance.php">
-									<button name="action" type="submit" value="listIllegalParentRankid">List Bad Parents</button>
-									<input name="node" type="hidden" value="<?= $node ?>" >
-									<input name="taxauthid" type="hidden" value="<?= $taxAuthID ?>" >
-								</form>
-								<form name="autoPruneParentNodesForm" method="post" action="taxonomymaintenance.php">
-									<button name="action" type="submit" value="pruneIllegalParentNodes">Automatically Prune Bad Nodes</button>
-									<input name="node" type="hidden" value="<?= $node ?>" >
-									<input name="taxauthid" type="hidden" value="<?= $taxAuthID ?>" >
-								</form>
+								<div class="form-section">
+									<form name="listIllegalParentRankidForm" method="post" action="taxonomymaintenance.php">
+										<button name="action" type="submit" value="listIllegalParentRankid">List Bad Parents</button>
+										<input name="node" type="hidden" value="<?= $node ?>" >
+										<input name="taxauthid" type="hidden" value="<?= $taxAuthID ?>" >
+									</form>
+									<form name="autoPruneParentNodesForm" method="post" action="taxonomymaintenance.php">
+										<button name="action" type="submit" value="pruneIllegalParentNodes">Automatically Prune Bad Nodes</button>
+										<input name="node" type="hidden" value="<?= $node ?>" >
+										<input name="taxauthid" type="hidden" value="<?= $taxAuthID ?>" >
+									</form>
+								</div>
 							</fieldset>
 						</div>
 					</div>
@@ -179,11 +190,13 @@ if($isEditor && $action){
 								<div class="desc-div">
 									Accepted taxa linked to non-accepted parents. List taxa to display cleaning options.
 								</div>
-								<form name="acceptedNonAcceptedParentForm" method="post" action="taxonomymaintenance.php">
-									<button name="action" type="submit" value="listAcceptedNonAcceptedParent">List Taxa</button>
-									<input name="node" type="hidden" value="<?= $node ?>" >
-									<input name="taxauthid" type="hidden" value="<?= $taxAuthID ?>" >
-								</form>
+								<div class="form-section">
+									<form name="acceptedNonAcceptedParentForm" method="post" action="taxonomymaintenance.php">
+										<button name="action" type="submit" value="listAcceptedNonAcceptedParent">List Taxa</button>
+										<input name="node" type="hidden" value="<?= $node ?>" >
+										<input name="taxauthid" type="hidden" value="<?= $taxAuthID ?>" >
+									</form>
+								</div>
 							</fieldset>
 						</div>
 					</div>
@@ -195,11 +208,13 @@ if($isEditor && $action){
 								<div class="desc-div">
 									Non-accepted taxa linked to non-accepted taxa. List taxa to display cleaning options.
 								</div>
-								<form name="nonAcceptedLinkedToNonAcceptedForm" method="post" action="taxonomymaintenance.php">
-									<button name="action" type="submit" value="listNonAcceptedLinkedToNonAccepted">List Taxa</button>
-									<input name="node" type="hidden" value="<?= $node ?>" >
-									<input name="taxauthid" type="hidden" value="<?= $taxAuthID ?>" >
-								</form>
+								<div class="form-section">
+									<form name="nonAcceptedLinkedToNonAcceptedForm" method="post" action="taxonomymaintenance.php">
+										<button name="action" type="submit" value="listNonAcceptedLinkedToNonAccepted">List Taxa</button>
+										<input name="node" type="hidden" value="<?= $node ?>" >
+										<input name="taxauthid" type="hidden" value="<?= $taxAuthID ?>" >
+									</form>
+								</div>
 							</fieldset>
 						</div>
 					</div>
@@ -211,11 +226,13 @@ if($isEditor && $action){
 								<div class="desc-div">
 									Infraspecific taxa linked to non-species ranked taxon. List taxa to display cleaning options.
 								</div>
-								<form name="infraspIssuesForm" method="post" action="taxonomymaintenance.php">
-									<button name="action" type="submit" value="infraspIssues">List Taxa</button>
-									<input name="node" type="hidden" value="<?= $node ?>" >
-									<input name="taxauthid" type="hidden" value="<?= $taxAuthID ?>" >
-								</form>
+								<div class="form-section">
+									<form name="infraspIssuesForm" method="post" action="taxonomymaintenance.php">
+										<button name="action" type="submit" value="infraspIssues">List Taxa</button>
+										<input name="node" type="hidden" value="<?= $node ?>" >
+										<input name="taxauthid" type="hidden" value="<?= $taxAuthID ?>" >
+									</form>
+								</div>
 							</fieldset>
 						</div>
 					</div>
@@ -227,11 +244,13 @@ if($isEditor && $action){
 								<div class="desc-div">
 									Species ranked taxa linked to taxon rank less than genus rank. List taxa to display cleaning options.
 								</div>
-								<form name="speciesIssuesForm" method="post" action="taxonomymaintenance.php">
-									<button name="action" type="submit" value="speciesIssues">List Taxa</button>
-									<input name="node" type="hidden" value="<?= $node ?>" >
-									<input name="taxauthid" type="hidden" value="<?= $taxAuthID ?>" >
-								</form>
+								<div class="form-section">
+									<form name="speciesIssuesForm" method="post" action="taxonomymaintenance.php">
+										<button name="action" type="submit" value="speciesIssues">List Taxa</button>
+										<input name="node" type="hidden" value="<?= $node ?>" >
+										<input name="taxauthid" type="hidden" value="<?= $taxAuthID ?>" >
+									</form>
+								</div>
 							</fieldset>
 						</div>
 					</div>
@@ -243,45 +262,66 @@ if($isEditor && $action){
 								<div class="desc-div">
 									Genera linked to taxon rank less than family. List taxa to display cleaning options.
 								</div>
-								<form name="generaIssuesForm" method="post" action="taxonomymaintenance.php">
-									<button name="action" type="submit" value="generaIssues">List Taxa</button>
-									<input name="node" type="hidden" value="<?= $node ?>" >
-									<input name="taxauthid" type="hidden" value="<?= $taxAuthID ?>" >
-								</form>
+								<div class="form-section">
+									<form name="generaIssuesForm" method="post" action="taxonomymaintenance.php">
+										<button name="action" type="submit" value="generaIssues">List Taxa</button>
+										<input name="node" type="hidden" value="<?= $node ?>" >
+										<input name="taxauthid" type="hidden" value="<?= $taxAuthID ?>" >
+									</form>
+								</div>
 							</fieldset>
 						</div>
 					</div>
 				</div>
+				<hr>
 				<?php
-			}
-			elseif($action){
 				//List problematic taxa
 				$problemTitle = '';
+				$problemDescription = '';
 				$problemCount = 0;
 				$taxaList = null;
 				if($action == 'listOrphanedTaxa'){
 					$taxaList = $taxonomyManager->getOrphanedTaxa();
 					$problemTitle = 'Orphaned Taxa';
+					$problemDescription = 'Clicking on a taxon will open Taxonomic Editor with the taxon set as "accepted".
+						An attempt will also be made to deduce and link parent taxon.
+						Manual adjustments will be necessary if taxon is not accepted or parent linkages fail.';
 					$problemCount = $taxonomyManager->getOrphanedTaxaCount();
+				}
+				elseif($action == 'listMismatchedFamilies'){
+					$taxaList = $taxonomyManager->getMismatchedFamilyTaxa();
+					$problemTitle = '';
+					$problemDescription = '';
+					$problemCount = $taxonomyManager->getMismatchedFamilyCount();
 				}
 				elseif($action == 'listIllegalParentRankid'){
 					$taxaList = $taxonomyManager->getIllegalParentRankidTaxa();
 					$problemTitle = '';
+					$problemDescription = '';
 					$problemCount = $taxonomyManager->getIllegalParentRankidCount();
 				}
 				elseif($action == 'listAcceptedNonAcceptedParent'){
 					$taxaList = $taxonomyManager->getAcceptedNonAcceptedParentTaxa();
 					$problemTitle = '';
+					$problemDescription = '';
 					$problemCount = $taxonomyManager->getAcceptedNonAcceptedParentCount();
 				}
 				elseif($action == 'listNonAcceptedLinkedToNonAccepted'){
 					$taxaList = $taxonomyManager->getNonAcceptedLinkedToNonAcceptedTaxa();
 					$problemTitle = '';
+					$problemDescription = '';
 					$problemCount = $taxonomyManager->getNonAcceptedLinkedToNonAcceptedCount();
 				}
 				if($taxaList){
 					?>
 					<h3><?= $problemTitle . ': ' . $problemCount ?> records</h3>
+					<?php
+					if($problemDescription){
+						?>
+						<div><?= $problemDescription ?></div>
+						<?php
+					}
+					?>
 					<ul>
 						<?php
 						foreach($taxaList as $tid => $taxaArr){
@@ -290,7 +330,7 @@ if($isEditor && $action){
 								<?php
 								$sciname = $taxaArr['sciname'];
 								if($taxaArr['rankid'] > 180) $sciname = '<i>' . $sciname . '</i>';
-								$sciname = '<a href="/taxa/taxonomy/taxoneditor.php?tid=' . $tid . '" target="_blank">' . $sciname . '</a> ' . $taxaArr['author'];
+								echo '<a href="' . $CLIENT_ROOT . '/taxa/taxonomy/taxoneditor.php?tid=' . $tid . '" target="_blank">' . $sciname . '</a> ' . $taxaArr['author'];
 								?>
 							</li>
 							<?php
@@ -304,11 +344,15 @@ if($isEditor && $action){
 				?>
 				<form name="generateReportForm" method="post" action="taxonomymaintenance.php">
 					<fieldset>
-						<legend><?= $LANG[''] ?></legend>
+						<legend>Taxonomic Thesaurus Cleaning Tool</legend>
+						<div class="desc-div" style="margin-bottom: 10px">
+							Select taxonomic node to be evaluated and click Generate Report button
+						</div>
 						<div class="form-section">
 							<label>Taxon Node: </label>
 							<select name="node" required>
-								<option value="0">Select Taxon Node</option>
+								<option value="">Select Taxon Node</option>
+								<option value="">-----------------------</option>
 								<?php
 								$nodeArr = $taxonomyManager->getNodeArr();
 								foreach($nodeArr as $nodeTid => $nodeName){
