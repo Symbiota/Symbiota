@@ -4,6 +4,10 @@
 Language: Español (Spanish)
 ------------------
 */
+$LANG['EDIT_SUCCESS'] = 'Registro editado correctamente.';
+$LANG['EDIT_ERROR'] = 'Error al editar el registro';
+$LANG['DELETE_SUCCESS'] = 'Registro eliminado correctamente';
+$LANG['DELETE_ERROR'] = 'Error al eliminar el registro';
 $LANG['DUPLICATE_MANAGER'] = 'Administrador de Duplicados';
 $LANG['DUP_CLUSTERING'] = 'Agrupación duplicada';
 $LANG['TITLE_VALUE'] = 'El campo de título debe tener un valor';

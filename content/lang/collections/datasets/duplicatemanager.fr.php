@@ -4,6 +4,10 @@
 Language: Français
 ------------------
 */
+$LANG['EDIT_SUCCESS'] = 'Enregistrement modifié avec succès';
+$LANG['EDIT_ERROR'] = "Erreur lors de la modification de l'enregistrement";
+$LANG['DELETE_SUCCESS'] = 'Enregistrement supprimé avec succès';
+$LANG['DELETE_ERROR'] = "Erreur lors de la suppression de l'enregistrement";
 $LANG['DUPLICATE_MANAGER'] = 'Gestionnaire de Duplications';
 $LANG['DUP_CLUSTERING'] = 'Regroupement de Doublons';
 $LANG['TITLE_VALUE'] = 'Le champ Titre doit avoir une valeur';

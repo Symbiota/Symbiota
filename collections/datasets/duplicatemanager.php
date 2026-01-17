@@ -35,13 +35,32 @@ if(isset($collMap['colltype']) && $collMap['colltype'] == 'General Observations'
 
 if($isEditor && $formSubmit){
 	if($formSubmit == 'clusteredit'){
-		$statusStr = $dupManager->editCluster($_POST['dupid'],$_POST['title'],$_POST['description'],$_POST['notes']);
+		$duplicateID = filter_var($_POST['dupid'], FILTER_SANITIZE_NUMBER_INT);
+		if($dupManager->editCluster($duplicateID, $_POST['title'], $_POST['description'], $_POST['notes'])){
+			$statusStr = $LANG['EDIT_SUCCESS'];
+		}
+		else{
+			$statusStr = $LANG['EDIT_ERROR'] . ': ' . $dupManager->getErrorStr();
+		}
 	}
 	elseif($formSubmit == 'clusterdelete'){
-		$statusStr = $dupManager->deleteCluster($_POST['deldupid']);
+		$duplicateID = filter_var($_POST['deldupid'], FILTER_SANITIZE_NUMBER_INT);
+		if($dupManager->deleteCluster($duplicateID)){
+			$statusStr = $LANG['DELETE_SUCCESS'];
+		}
+		else{
+			$statusStr = $LANG['DELETE_ERROR'] . ': ' . $dupManager->getErrorStr();
+		}
 	}
 	elseif($formSubmit == 'occdelete'){
-		$statusStr = $dupManager->deleteOccurFromCluster($_POST['dupid'],$_POST['occid']);
+		$duplicateID = filter_var($_POST['dupid'], FILTER_SANITIZE_NUMBER_INT);
+		$occid = filter_var($_POST['occid'], FILTER_SANITIZE_NUMBER_INT);
+		if($dupManager->deleteOccurFromCluster($duplicateID, $occid)){
+			$statusStr = $LANG['DELETE_SUCCESS'];
+		}
+		else{
+			$statusStr = $LANG['DELETE_ERROR'] . ': ' . $dupManager->getErrorStr();
+		}
 	}
 }
 ?>
@@ -95,7 +114,6 @@ if($isEditor && $formSubmit){
 	</script>
     <style>
 		table.styledtable td { white-space: nowrap; }
-		fieldset{ min-height: 400px }
     </style>
 </head>
 <body>
@@ -104,16 +122,16 @@ if($isEditor && $formSubmit){
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href="../../index.php"> <?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?> </a> &gt;&gt;
+		<a href="../../index.php"> <?php echo $LANG['HOME'] ?> </a> &gt;&gt;
 		<?php
 		if(isset($collMap['colltype']) && $collMap['colltype'] == 'General Observations'){
-			echo '<a href="../../profile/viewprofile.php?tabindex=1">' . htmlspecialchars($LANG['PERS_MANAGE_MENU'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
+			echo '<a href="../../profile/viewprofile.php?tabindex=1">' . $LANG['PERS_MANAGE_MENU'] . '</a> &gt;&gt; ';
 		}
 		else{
-			echo '<a href="../misc/collprofiles.php?collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">' . htmlspecialchars($LANG['COL_MANAGE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
+			echo '<a href="../misc/collprofiles.php?collid=' . $collId . '&emode=1">' . $LANG['COL_MANAGE'] . '</a> &gt;&gt; ';
 		}
 		if($action){
-			echo '<a href="duplicatemanager.php?collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($LANG['DUP_MANAGE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
+			echo '<a href="duplicatemanager.php?collid=' . $collId . '">' . $LANG['DUP_MANAGE'] . '</a> &gt;&gt; ';
 			echo '<b>'.$LANG['DUP_CLUSTERS'].'</b>';
 		}
 		else{
@@ -143,22 +161,22 @@ if($isEditor && $formSubmit){
 						<?php echo $LANG['DUP_EXPLANATION']; ?>
 					</div>
 					<div style="margin:25px;">
-						<a href="duplicatemanager.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&action=listdupes">
+						<a href="duplicatemanager.php?collid=<?php echo $collId; ?>&action=listdupes">
 							<?php echo $LANG['SPEC_DUP_CLUSTERS']; ?>
 						</a>
 					</div>
 					<div style="margin:25px;">
-						<a href="duplicatemanager.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&dupedepth=2&action=listdupeconflicts">
+						<a href="duplicatemanager.php?collid=<?php echo $collId; ?>&dupedepth=2&action=listdupeconflicts">
 							<?php echo $LANG['DUP_CLUSTERS_CONFLICTING']; ?>
 						</a>
 					</div>
 					<div style="margin:25px;">
-						<a href="duplicatemanager.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&action=batchlinkdupes">
+						<a href="duplicatemanager.php?collid=<?php echo $collId; ?>&action=batchlinkdupes">
 							<?php echo $LANG['BATCH_LINK_DUPS']; ?>
 						</a> - <?php echo $LANG['BATCH_LINK_EXPLANATION']; ?>
 					</div>
 					<div style="margin:25px;">
-						<a href="<?= $CLIENT_ROOT . '/collections/editor/batchDuplicateGeorefCopy.php?collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>">
+						<a href="<?= $CLIENT_ROOT . '/collections/editor/batchDuplicateGeorefCopy.php?collid=' . $collId ?>">
 							<?= $LANG['BATCH_COPY_GEOREFERENCE_DUPLICATES'] ?>
 						</a> - <?= $LANG['BATCH_COPY_GEOREFERENCE_DUPLICATES_EXPLANATION'] ?>
 					</div>
@@ -166,12 +184,12 @@ if($isEditor && $formSubmit){
 					if(!empty($ACTIVATE_EXSICCATI) && $collMap['colltype'] == 'Preserved Specimens'){
 						?>
 						<div style="margin:25px;">
-							<a href="../exsiccati/index.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank">
+							<a href="../exsiccati/index.php?collid=<?php echo $collId; ?>" target="_blank">
 								<?php echo $LANG['EXS_DUPS']; ?>
 							</a> - <?php echo $LANG['EXS_DUP_EXPLANATION']; ?>
 						</div>
 						<div style="margin:25px;">
-							<a href="../exsiccati/index.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&formsubmit=dlexs">
+							<a href="../exsiccati/index.php?collid=<?php echo $collId; ?>&formsubmit=dlexs">
 								<?php echo $LANG['EXS_DOWNLOAD']; ?>
 							</a> - <?php echo $LANG['EXS_DOWNLOAD_EXPLANATION']; ?>
 						</div>
@@ -197,13 +215,13 @@ if($isEditor && $formSubmit){
 					unset($clusterArr['cnt']);
 					if($clusterArr){
 						$paginationStr = '<span>';
-						if($start) $paginationStr .= '<a href="duplicatemanager.php?collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&dupeDepth=' . htmlspecialchars($dupeDepth, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&action=' . htmlspecialchars($action, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&start=' . htmlspecialchars(($start - $limit), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&limit=' . htmlspecialchars($limit, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
+						if($start) $paginationStr .= '<a href="duplicatemanager.php?collid=' . $collId . '&dupedepth=' . $dupeDepth . '&action=' . $action . '&start=' . ($start - $limit) . '&limit=' . $limit . '">';
 						$paginationStr .= '&lt;&lt; '.$LANG['PREVIOUS'];
 						if($start) $paginationStr .= '</a>';
 						$paginationStr .= '</span>';
 						$paginationStr .= ' || '.($start+1).' - '.(count($clusterArr)<$limit?$totalCnt:($start + $limit)).' || ';
 						$paginationStr .= '<span>';
-						if($totalCnt >= ($start+$limit)) $paginationStr .= '<a href="duplicatemanager.php?collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&dupeDepth=' . htmlspecialchars($dupeDepth, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&action=' . htmlspecialchars($action, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&start=' . htmlspecialchars(($start + $limit), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&limit=' . htmlspecialchars($limit, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
+						if($totalCnt >= ($start+$limit)) $paginationStr .= '<a href="duplicatemanager.php?collid=' . $collId . '&dupedepth=' . $dupeDepth . '&action=' . $action . '&start=' . ($start + $limit) . '&limit=' . $limit . '">';
 						$paginationStr .= $LANG['NEXT'].' &gt;&gt;';
 						if($totalCnt >= ($start+$limit)) $paginationStr .= '</a>';
 						$paginationStr .= '</span>';
@@ -239,6 +257,7 @@ if($isEditor && $formSubmit){
 												<b>Notes:</b> <input name="notes" type="text" value="<?php echo $dupArr['notes']; ?>" style="width:400px;" /><br/>
 												<input name="dupid" type="hidden" value="<?php echo $dupId; ?>" />
 												<input name="collid" type="hidden" value="<?php echo $collId; ?>" />
+												<input name="dupedepth" type="hidden" value="<?= $dupeDepth ?>" >
 												<input name="start" type="hidden" value="<?php echo $start; ?>" />
 												<input name="limit" type="hidden" value="<?php echo $limit; ?>" />
 												<input name="action" type="hidden" value="<?php echo $action; ?>" />
@@ -248,6 +267,7 @@ if($isEditor && $formSubmit){
 											<form name="dupdelform-<?php echo $dupId; ?>" method="post" action="duplicatemanager.php" onsubmit="return confirm('<?php echo $LANG['SURE_DEL_DUP']; ?>');">
 												<input name="deldupid" type="hidden" value="<?php echo $dupId; ?>" />
 												<input name="collid" type="hidden" value="<?php echo $collId; ?>" />
+												<input name="dupedepth" type="hidden" value="<?= $dupeDepth ?>" >
 												<input name="start" type="hidden" value="<?php echo $start; ?>" />
 												<input name="limit" type="hidden" value="<?php echo $limit; ?>" />
 												<input name="action" type="hidden" value="<?php echo $action; ?>" />
@@ -265,7 +285,7 @@ if($isEditor && $formSubmit){
 											?>
 											<div style="margin:10px">
 												<div style="float:left;">
-													<a href="#" onclick="openOccurPopup(<?php echo htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>); return false;"><b><?php echo htmlspecialchars($oArr['id'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></b></a> =&gt;
+													<a href="#" onclick="openOccurPopup(<?php echo $occid; ?>); return false;"><b><?php echo htmlspecialchars($oArr['id'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></b></a> =&gt;
 													<?php echo $oArr['recby']; ?>
 												</div>
 												<div class="editdiv-<?php echo $dupId; ?>" style="display:none;float:left;" title="<?php echo $LANG['DEL_SPEC_FROM_CLUSTER']; ?>">
@@ -273,6 +293,7 @@ if($isEditor && $formSubmit){
 														<input name="dupid" type="hidden" value="<?php echo $dupId; ?>" />
 														<input name="occid" type="hidden" value="<?php echo $occid; ?>" />
 														<input name="collid" type="hidden" value="<?php echo $collId; ?>" />
+														<input name="dupedepth" type="hidden" value="<?= $dupeDepth ?>" >
 														<input name="start" type="hidden" value="<?php echo $start; ?>" />
 														<input name="limit" type="hidden" value="<?php echo $limit; ?>" />
 														<input name="action" type="hidden" value="<?php echo $action; ?>" />
@@ -305,7 +326,7 @@ if($isEditor && $formSubmit){
 				}
 				?>
 				<div>
-					<a href="duplicatemanager.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars($LANG['RETURN_MAIN'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
+					<a href="duplicatemanager.php?collid=<?php echo $collId; ?>"><?php echo $LANG['RETURN_MAIN']; ?></a>
 				</div>
 				<?php
 			}
