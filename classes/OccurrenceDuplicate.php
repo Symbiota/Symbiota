@@ -157,14 +157,20 @@ class OccurrenceDuplicate {
 
 	public function editCluster($dupId, $title, $description, $notes){
 		$status = true;
-		$sql = 'UPDATE omoccurduplicates SET title = '.($title?'"'.$this->cleanInStr($title).'"':'NULL').', '.
-			'description = '.($description?'"'.$this->cleanInStr($description).'"':'NULL').', '.
-			'notes = '.($notes?'"'.$this->cleanInStr($notes).'"':'NULL').' '.
-			'WHERE (duplicateid = '.$dupId.')';
-		//echo $sql;
-		if(!$this->conn->query($sql)){
-			$this->errorStr = $this->conn->error;
-			$status = false;
+		if($dupId){
+			if(!$title) $title = null;
+			if(!$description) $description = null;
+			if(!$notes) $notes = null;
+			$sql = 'UPDATE omoccurduplicates SET title = ?, description = ?, notes = ? WHERE (duplicateid = ?)';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('sssi', $title, $description, $notes, $dupId);
+				$stmt->execute();
+				if(!$stmt->affected_rows && $stmt->error){
+					$status = false;
+					$this->errorStr = $stmt->error;
+				}
+				$stmt->close();
+			}
 		}
 		return $status;
 	}

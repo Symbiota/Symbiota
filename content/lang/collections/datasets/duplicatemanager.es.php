@@ -10,7 +10,6 @@ $LANG['DELETE_SUCCESS'] = 'Registro eliminado correctamente';
 $LANG['DELETE_ERROR'] = 'Error al eliminar el registro';
 $LANG['DUPLICATE_MANAGER'] = 'Administrador de Duplicados';
 $LANG['DUP_CLUSTERING'] = 'Agrupación duplicada';
-$LANG['TITLE_VALUE'] = 'El campo de título debe tener un valor';
 $LANG['PERS_MANAGE_MENU'] = 'Menú de gestión personal';
 $LANG['COL_MANAGE'] = 'Gestión de colecciones';
 $LANG['DUP_MANAGE'] = 'Gestión de duplicados';

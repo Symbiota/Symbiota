@@ -10,7 +10,6 @@ $LANG['DELETE_SUCCESS'] = 'Enregistrement supprimé avec succès';
 $LANG['DELETE_ERROR'] = "Erreur lors de la suppression de l'enregistrement";
 $LANG['DUPLICATE_MANAGER'] = 'Gestionnaire de Duplications';
 $LANG['DUP_CLUSTERING'] = 'Regroupement de Doublons';
-$LANG['TITLE_VALUE'] = 'Le champ Titre doit avoir une valeur';
 $LANG['PERS_MANAGE_MENU'] = 'Personal Management Menu';
 $LANG['COL_MANAGE'] = 'Menu Gestion Personnelle';
 $LANG['DUP_MANAGE'] = 'Gestion Doublons';

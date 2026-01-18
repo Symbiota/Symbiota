@@ -73,14 +73,6 @@ if($isEditor && $formSubmit){
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 	<script type="text/javascript">
-		function verifyEditForm(f){
-			if(f.title == ""){
-				alert("<?php echo $LANG['TITLE_VALUE']; ?>");
-				return false;
-			}
-			return true;
-		}
-
 		function openOccurPopup(occid) {
 			occWindow=open("../individual/index.php?occid="+occid,"occwin"+occid,"resizable=1,scrollbars=1,toolbar=0,width=900,height=600,left=20,top=20");
 			if(occWindow.opener == null) occWindow.opener = self;
@@ -114,6 +106,7 @@ if($isEditor && $formSubmit){
 	</script>
     <style>
 		table.styledtable td { white-space: nowrap; }
+		button { margin: 10px; }
     </style>
 </head>
 <body>
@@ -251,8 +244,8 @@ if($isEditor && $formSubmit){
 									<div class="editdiv-<?php echo $dupId; ?>" style="display:none;">
 										<fieldset style="margin:20px;padding:15px;">
 											<legend><b>Edit Cluster</b></legend>
-											<form name="dupeditform-<?php echo $dupId; ?>" method="post" action="duplicatemanager.php" onsubmit="return verifyEditForm(this);">
-												<b>Title:</b> <input name="title" type="text" value="<?php echo $dupArr['title']; ?>" style="width:300px;" /><br/>
+											<form name="dupeditform-<?php echo $dupId; ?>" method="post" action="duplicatemanager.php">
+												<b>Title:</b> <input name="title" type="text" value="<?php echo $dupArr['title']; ?>" style="width:300px;" required ><br/>
 												<b>Description:</b> <input name="description" type="text" value="<?php echo $dupArr['desc']; ?>" style="width:400px;" /><br/>
 												<b>Notes:</b> <input name="notes" type="text" value="<?php echo $dupArr['notes']; ?>" style="width:400px;" /><br/>
 												<input name="dupid" type="hidden" value="<?php echo $dupId; ?>" />
