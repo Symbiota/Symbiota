@@ -11,6 +11,7 @@ include_once($SERVER_ROOT . '/classes/OccurrenceCleaner.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT . '/classes/Sanitize.php');
 include_once($SERVER_ROOT . '/classes/CustomQuery.php');
+include_once($SERVER_ROOT . '/classes/CollectionFormManager.php');
 
 // Other fields selected for display and logic purposes
 $otherFields = [
@@ -79,9 +80,10 @@ Language::load([
 $collId = array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid'])? intval($_REQUEST['collid']):0;
 UserUtil::isCollectionAdminOrDenyAcess($collId);
 
-$requestSuppliedCatOrd = array_key_exists('catOrd', $_REQUEST) ? explode(',', $_REQUEST['catOrd']) : null;
-$requestSuppliedCatExpnd = array_key_exists('catExpnd', $_REQUEST) ? explode(',', $_REQUEST['catExpnd']) : null;
-$requestSuppliedCatChk = array_key_exists('catChk', $_REQUEST) ? explode(',', $_REQUEST['catChk']) : null;
+$collectionFormManager = new CollectionFormManager();
+$requestSuppliedCatOrd = (array_key_exists('catOrd', $_REQUEST) && $collectionFormManager->areCollectionIdsValid($_REQUEST['catOrd'])) ? explode(',', $_REQUEST['catOrd']) : null;
+$requestSuppliedCatExpnd = (array_key_exists('catExpnd', $_REQUEST) && $collectionFormManager->areCollectionIdsValid($_REQUEST['catExpnd'])) ? explode(',', $_REQUEST['catExpnd']) : null;
+$requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFormManager->areCollectionIdsValid($_REQUEST['catChk'])) ? explode(',', $_REQUEST['catChk']) : null;
 
 if(array_key_exists('copyInfo', $_POST)) {
 	foreach($_POST as $targetOccId => $sourceOccId) {

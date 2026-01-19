@@ -8,6 +8,7 @@ include_once($SERVER_ROOT . '/classes/OccurrenceManager.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceAttributeSearch.php');
 include_once($SERVER_ROOT . '/classes/AssociationManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/classes/CollectionFormManager.php');
 
 Language::load('collections/search/index');
 
@@ -40,9 +41,11 @@ $associationManager = new AssociationManager();
 $characters = $collManager->getCharacters();
 $relationshipTypes = $associationManager->getRelationshipTypes();
 
-$requestSuppliedCatOrd = array_key_exists('catOrd', $_REQUEST) ? explode(',', $_REQUEST['catOrd']) : null;
-$requestSuppliedCatExpnd = array_key_exists('catExpnd', $_REQUEST) ? explode(',', $_REQUEST['catExpnd']) : null;
-$requestSuppliedCatChk = array_key_exists('catChk', $_REQUEST) ? explode(',', $_REQUEST['catChk']) : null;
+$collectionFormManager = new CollectionFormManager();
+$requestSuppliedCatOrd = (array_key_exists('catOrd', $_REQUEST) && $collectionFormManager->areCollectionIdsValid($_REQUEST['catOrd'])) ? explode(',', $_REQUEST['catOrd']) : null;
+$requestSuppliedCatExpnd = (array_key_exists('catExpnd', $_REQUEST) && $collectionFormManager->areCollectionIdsValid($_REQUEST['catExpnd'])) ? explode(',', $_REQUEST['catExpnd']) : null;
+$requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFormManager->areCollectionIdsValid($_REQUEST['catChk'])) ? explode(',', $_REQUEST['catChk']) : null;
+
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">

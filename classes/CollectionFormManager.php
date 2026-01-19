@@ -103,4 +103,15 @@ class CollectionFormManager extends Manager {
 
         return $out;
     }
+
+    /**
+     * Validates a comma-separated list of collection IDs.
+     *
+     * @param string $catId The collection ID string to validate.
+     * @return bool True if valid, false otherwise.
+     */
+    public function areCollectionIdsValid(string $requestStr): bool {
+        if(!preg_match('/^[,\d]+$/',$requestStr)) return false;
+        return true;
+     }
 }
