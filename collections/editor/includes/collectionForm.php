@@ -230,10 +230,16 @@ function toggleCategory(categoryId) {
 							name="db[]"
 							value="<?= $collection['collid'] ?>"
 						>
-						<label>
-							<?= $collection['collectionname'] . ' (' . $collection['institutioncode'] . ($collection['collectioncode'] ? '-' . $collection['collectioncode'] : '') . ')' ?>
-						</label>
-						<a target="_blank" href="<?= $CLIENT_ROOT ?>/collections/misc/collprofiles.php?collid=<?= $collection['collid']?>">More Info</a>
+						<div>
+							<div>
+								<label for="<?= $category['name'] . '_' . $collection['collid'] ?>">
+									<?= $collection['collectionname'] . ' (' . $collection['institutioncode'] . ($collection['collectioncode'] ? '-' . $collection['collectioncode'] : '') . ')' ?>
+								</label>
+							</div>
+							<div>
+								<a target="_blank" href="<?= $CLIENT_ROOT ?>/collections/misc/collprofiles.php?collid=<?= $collection['collid']?>">More Info</a>
+							</div>
+						</div>
 					</div>
 					<?php endforeach ?>
 				</div>
