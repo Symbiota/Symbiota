@@ -168,4 +168,24 @@ test.describe('Create Occurrence Record', () => {
 		await expect(page.getByText('CI TESTING')).toBeVisible()
 		await expect(page.getByText('1/14/2026')).toBeVisible()
 	})
+
+	test('Add Media', async ({ page, occurrenceFactory }) => {
+		let occId = await occurrenceFactory.getNewRecord(collId);
+		let occurrenceEditor = new OccurrenceEditorPage(page);
+		await occurrenceEditor.gotoRecord(collId, occId)
+
+		await occurrenceEditor.gotoTab(OccurrenceEditorTab.Media)
+
+		const newForm = page.locator('form[name=imgnewform]');
+
+		const fileChooserPromise = page.waitForEvent('filechooser');
+		await newForm.locator('input[name="imgfile"]').click({force: true});
+
+		const fileChooser = await fileChooserPromise;
+		await fileChooser.setFiles(path.join(__dirname, '../../images/world.png'));
+
+		await newForm.locator('button[name="submitaction"]').click({force: true});
+
+		await expect(page.getByText('Media added successfully')).toBeVisible();
+	})
 })
