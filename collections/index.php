@@ -13,16 +13,8 @@ Language::load([
 header("Content-Type: text/html; charset=".$CHARSET);
 
 
-// $catId = array_key_exists("catid",$_REQUEST)?$_REQUEST["catid"]:'';
-// if(!preg_match('/^[,\d]+$/',$catId)) $catId = '';
-// if($catId == '' && isset($DEFAULTCATID)) $catId = $DEFAULTCATID;
-
 $collManager = new OccurrenceManager();
 $collManager->reset();
-
-// $collList = $collManager->getFullCollectionList($catId);
-// $specArr = (isset($collList['spec'])?$collList['spec']:null);
-// $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 
 $otherCatArr = $collManager->getOccurVoucherProjects();
 
