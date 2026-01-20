@@ -371,9 +371,14 @@ class StorageFactory {
 	 * @throws Exception if $STORAGE_DRIVER is not 'local' or 's3'
 	 **/
 	static function make(String $path = ''): StorageStrategy {
-		switch($GLOBALS['STORAGE_DRIVER']) {
+		switch($GLOBALS['STORAGE_DRIVER'] ?? 'local') {
 			case 'local': return new LocalStorage($path);
-			case 's3': return new S3Storage($path);
+			case 's3':
+				if(class_exists('Aws\S3\S3Client')) {
+					return new S3Storage($path);
+				} else {
+					throw new Exception('S3 STORAGE_DRIVER requires Aws\S3\S3Client to to be installed');
+				}
 			default: throw new Exception('STORAGE_DRIVER not configure properly. Use "local" or "s3" as options');
 		}
 
