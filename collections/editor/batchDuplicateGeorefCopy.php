@@ -85,6 +85,7 @@ $requestSuppliedCatOrd = (array_key_exists('catOrd', $_REQUEST) && $collectionFo
 $requestSuppliedCatExpnd = (array_key_exists('catExpnd', $_REQUEST) && $collectionFormManager->areCollectionIdsValid($_REQUEST['catExpnd'])) ? explode(',', $_REQUEST['catExpnd']) : null;
 $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFormManager->areCollectionIdsValid($_REQUEST['catChk'])) ? explode(',', $_REQUEST['catChk']) : null;
 
+
 if(array_key_exists('copyInfo', $_POST)) {
 	foreach($_POST as $targetOccId => $sourceOccId) {
 		if(is_numeric($targetOccId) && is_numeric($sourceOccId)) {
@@ -387,37 +388,11 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 				}
 			}
 		}
-
-		function openCollectionsDialog() {
-			const dialog = document.getElementById('collections_dialog');
-			dialog.showModal();
-
-			const form = document.getElementById('params-form');
-			if (form) {
-				setSearchForm(form);
-				form.addEventListener("submit", function(event) {
-				event.preventDefault();
-				simpleSearch(optionalCallback=()=>{
-					const submitForm = document.getElementById("params-form");
-					submitForm.submit();
-				})
-				});
-				document.getElementById("reset-btn").addEventListener("click", function (event) {
-				document.getElementById("params-form").reset();
-				sessionStorage.clear();
-				checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
-				expandCategoriesBasedOnConfig();
-				updateChip(event, isInitialConfig=true);
-				});
-			}
-		}
-
 		</script>
 	</head>
 
 	<body>
 		<?php include_once($SERVER_ROOT.'/includes/header.php') ;?>
-
 		<div role="main" id="record-viewer-innertext">
 			<div id="error-msgs" class="errors" style="color: var(--danger-color);"></div>
 			<?= Breadcrumbs::renderMany([
@@ -476,7 +451,7 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 						<div style="display:flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
 							<h1 style="margin:0;"><?= $LANG['NAV_COLLECTIONS'] ?></h1>
 							<div style="display: flex; flex-direction: column; flex-grow: 1; gap: 0.5rem;">
-								<button class="button" style="margin-left: auto;" type="button" onclick="document.getElementById('collections_dialog').close()"><?= $LANG['CLOSE'] ?></button>
+								<button class="button" style="margin-left: auto;" type="button" onclick="closeCollectionsDialog()"><?= $LANG['CLOSE'] ?></button>
 								<button class="button" style="margin-left: auto; background-color: var(--medium-color);" type="button"  id="reset-btn" ><?php echo $LANG['RESET'] ?></button>
 							</div>
 						</div>

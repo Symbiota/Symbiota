@@ -814,8 +814,16 @@ function closeAllCategories() {
   }, []);
   uniqueCategoryIds.forEach((categoryId) => {
     if(!categoryId) return;
-    toggleCategory("Specimens_" + categoryId);
-    toggleCategory("Observations_" + categoryId);
+    const specimenCategoryPattern = "Specimens_" + categoryId;
+    const specimenInputsForCategory = document.getElementById(specimenCategoryPattern + '_inputs');
+    if (specimenInputsForCategory?.style?.display !== 'none') {
+      toggleCategory(specimenCategoryPattern);
+    }
+    const observationCategoryPattern = "Observations_" + categoryId;
+    const observationInputsForCategory = document.getElementById(observationCategoryPattern + '_inputs');
+    if (observationInputsForCategory?.style?.display !== 'none') {
+      toggleCategory(observationCategoryPattern);
+    }
   });
 }
 
@@ -851,9 +859,67 @@ function expandCategoriesWithSomeCheckedChildren() {
   });
 }
 
+  function closeCollectionsDialog() {
+    storeLocalFormInputs();
+    const dialog = document.getElementById('collections_dialog');
+    if (dialog) {
+      dialog.close();
+    }
+  }
+
+  function storeLocalFormInputs() {
+    const form = document.getElementById('params-form');
+    if (form) {
+      const formData = new FormData(form);
+      formData.forEach((value, key) => {
+        localStorage.setItem(key, value);
+      });
+    }
+  }
+
+  function openCollectionsDialog() {
+    const dialog = document.getElementById('collections_dialog');
+    dialog.showModal();
+    setSessionQueryStr();
+
+    const form = document.getElementById('params-form');
+    if (form) {
+      setSearchForm(form);
+      form.addEventListener("submit", function(event) {
+        event.preventDefault();
+        simpleSearch();
+      });
+      document.getElementById("reset-btn").addEventListener("click", function (event) {
+        document.getElementById("params-form").reset();
+        sessionStorage.clear();
+        localStorage.clear();
+        checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
+        closeAllCategories();
+        expandCategoriesBasedOnConfig();
+        updateChip(event, isInitialConfig=true);
+      });
+    }
+  }
+
 function setSearchForm(frm) {
   if (!frm) return;
-  if (sessionStorage.querystr && sessionStorage.querystr !== "null") {
+  const localStorageRealValues = Object.values(localStorage).filter(value => value !== null && value !== "null" && value !=='');
+  if(localStorageRealValues.length < 1 && (!sessionStorage.querystr || sessionStorage.querystr === "null")){
+    uncheckEverythingInCollections();
+    checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
+    closeAllCategories();
+    expandCategoriesBasedOnConfig();
+    updateChip(null, isInitialConfig=true);
+  }else if(localStorageRealValues.length > 0  && (!sessionStorage.querystr || sessionStorage.querystr === "null")){
+    Object.keys(localStorage).forEach(key => {
+      if (frm[key]) {
+        frm[key].value = localStorage.getItem(key);
+      }
+      closeAllCategories();
+      expandCategoriesWithSomeCheckedChildren();
+    });
+  } else if((sessionStorage.querystr && sessionStorage.querystr !== "null")){
+    
     const urlVar = parseUrlVariables(sessionStorage.querystr.replaceAll('&quot;', '"'));
     if (
       typeof urlVar.usethes !== "undefined" &&
@@ -1028,7 +1094,6 @@ function setSearchForm(frm) {
     if (urlVar.db) {
       const queriedCollections = urlVar.db.split(",");
       const updatedQueriedCollections = updateQueryListWithTypeCollections(queriedCollections);
-
       if (updatedQueriedCollections.length > 0) {
         uncheckEverythingInCollections();
         checkTheCollectionsThatShouldBeChecked(updatedQueriedCollections);
@@ -1047,11 +1112,7 @@ function setSearchForm(frm) {
     }
     updateChip();
   } else{
-    uncheckEverythingInCollections();
-    checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
-    closeAllCategories();
-    expandCategoriesBasedOnConfig();
-    updateChip(null, isInitialConfig=true);
+   // do nothing
   }
 }
 
@@ -1154,6 +1215,7 @@ function initializeFormInputs() {
         expandCategoriesWithSomeCheckedChildren();
       }
       updateChip(e);
+      setSessionQueryStr();
     });
   });
 }
