@@ -187,7 +187,7 @@ class GeographicThesaurus extends Manager {
 			SELECT * from geographicpolygon WHERE geoThesID = ?
 			SQL;
 
-			$polygon_exists = QueryUtil::executeQuery($this->conn, $sql, [htmlspecialchars($postArr['geoThesID'])]);
+			$polygon_exists = QueryUtil::executeQuery($this->conn, $sql, [$postArr['geoThesID']]);
 
 			if (!$polygon_exists) {
 				$this->errorMessage = 'ERROR saving polygon edits: ' . $this->conn->error;
@@ -195,12 +195,18 @@ class GeographicThesaurus extends Manager {
 			}
 
 			if ($polygon_exists->num_rows <= 0) {
-				$this->addPolygon($postArr['geoThesID'], $postArr['polygon']);
+				if (!$this->addPolygon($postArr['geoThesID'], $postArr['polygon'])) {
+					return false;
+				}
 			} else {
-				$this->updatePolygon($postArr['geoThesID'], $postArr['polygon']);
+				if (!$this->updatePolygon($postArr['geoThesID'], $postArr['polygon'])) {
+					return false;
+				}
 			}
 		} else {
-			$this->deletePolygon($postArr['geoThesID']);
+			if (!$this->deletePolygon($postArr['geoThesID'])) {
+				return false;
+			}
 		}
 
 		return true;
