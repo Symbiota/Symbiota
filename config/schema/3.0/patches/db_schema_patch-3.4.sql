@@ -612,11 +612,10 @@ ALTER TABLE `omoccurrences`
 
 # Add mediaMetadata table to track metadata for media
 CREATE TABLE mediametadata (
-	metaID int UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	mediaID int UNSIGNED NOT NULL,
 	field enum ('originalUrl', 'thumbnailUrl', 'url') NOT NULL,
 	bytes BIGINT UNSIGNED NOT NULL,
 	md5sum varchar(32) NOT NULL,
-	CONSTRAINT UC_MediaField UNIQUE (mediaID, field),
+	PRIMARY KEY (mediaID, field),
 	FOREIGN KEY (mediaID) REFERENCES media(mediaID) ON DELETE CASCADE
 ) ENGINE=INNODB;
