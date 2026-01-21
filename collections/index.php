@@ -100,8 +100,8 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 		<div id="error-msgs" class="errors"></div>
 		<!-- <form  class="content" id="params-form" action="harvestparams.php" method="post" onsubmit="preventDefault(); return validateForm();"> -->
 		<form  class="content" id="params-form" method="post" action="harvestparams.php" style="grid-template-columns: none;">
-			<button style="margin-bottom: 1rem;" id="search-btn" type="submit" name="action"><?php echo isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search &gt'; ?></button>
-			<button style="background-color: var(--medium-color);" id="reset-btn" type="button"><?php echo $LANG['RESET'] ?></button>
+			<button class="sticky-buttons" style="width: 75px" id="search-btn" type="submit" name="action"><?php echo isset($LANG['SEARCH'])?$LANG['SEARCH']:'Search &gt'; ?></button>
+			<button class="sticky-buttons" style="background-color: var(--medium-color); top:4rem; width: 75px;" id="reset-btn" type="button"><?php echo $LANG['RESET'] ?></button>
 			<fieldset style="margin-top:1rem;">
 				<div id="search-form-colls">
 					<?php
