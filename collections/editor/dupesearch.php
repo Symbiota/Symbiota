@@ -109,7 +109,6 @@ if(!$IS_ADMIN){
 			function transferRecord(occId,appendMode){
 				var tArr = occArr[occId];
 				var openerForm = opener.document.fullform;
-				var changed = false;
 				if(document.getElementById("linkdupe-"+occId).checked == true){
 					openerForm.linkdupe.value = occId;
 				}
@@ -121,14 +120,11 @@ if(!$IS_ADMIN){
 							opener.$("button").prop("disabled", false);
 							elem.style.backgroundColor = "lightblue";
 							if(k != "tid") opener.fieldChanged(k);
-							changed = true;
 						}
 					}
 					catch(err){
 					}
 				}
-				if (changed && opener.$)
-        			opener.$("form#fullform").trigger("input");
 				window.close();
 			}
 
