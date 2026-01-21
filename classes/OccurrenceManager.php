@@ -966,6 +966,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$parsedArr = array();
 			$taxaArr = array();
 			$searchVar = str_replace('&amp;', '&', $_REQUEST['searchvar']);
+
 			parse_str($searchVar, $parsedArr);
 
 			if(isset($parsedArr['taxa'])){
@@ -987,6 +988,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 				if($k) $this->searchTermArr[$k] = $v;
 			}
 		}
+
 		//Search will be confinded to a clid vouchers, collid, catid, or will remain open to all collection
 		if(array_key_exists('targetclid',$_REQUEST) && is_numeric($_REQUEST['targetclid'])){
 			$this->searchTermArr['targetclid'] = $_REQUEST['targetclid'];
@@ -1003,6 +1005,9 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			if(!preg_match('/^[0-9,]+$/', $clidStr)) $clidStr = '';
 			$this->setChecklistVariables($clidStr);
 			$this->searchTermArr['clid'] = $clidStr;
+		}
+		elseif(array_key_exists('clid', $this->searchTermArr)){
+			$this->setChecklistVariables($this->searchTermArr['clid']);
 		}
 		elseif(array_key_exists('db',$_REQUEST) && $_REQUEST['db']){
 			$dbStr = $this->cleanInputStr(OccurrenceSearchSupport::getDbRequestVariable());
