@@ -572,7 +572,7 @@ class Media {
 
 
 					$storage->upload($file);
-					$createdFilepaths[] = $storage->getDirPath($file);
+					$createdFilepaths['originalUrl'] = $storage->getDirPath($file);
 
 					$urls = [
 						'thumbnailUrl' => [
@@ -599,11 +599,12 @@ class Media {
 
 							if($storage->file_exists($data['name'])) {
 								$metadata[$url] = $storage->getUrlPath($data['name']);
-								$createdFilepaths[] = $url;
+								$createdFilepaths[$url] = $storage->getDirPath($data['name']);
 							}
 
 						}
 					}
+
 					self::update_metadata($metadata, $media_metadata['mediaID'], $conn);
 				} elseif($media_type === MediaType::Audio) {
 					$storage->upload($file);
@@ -612,11 +613,15 @@ class Media {
 				}
 			}
 
+			foreach($createdFilepaths as $field => $filepath) {
+				self::insertMediaMetadata($media_metadata['mediaID'], $field, filesize($filepath), md5_file($filepath));
+			}
+
 			mysqli_commit($conn);
 		} catch(Throwable $th) {
 			mysqli_rollback($conn);
 
-			foreach($createdFilepaths as $filepath) {
+			foreach($createdFilepaths as $field => $filepath) {
 				if(file_exists($filepath)) {
 					unlink($filepath);
 				}
@@ -624,6 +629,18 @@ class Media {
 
 			array_push(self::$errors, $th->getMessage());
 		}
+	}
+
+	private static function insertMediaMetadata(int $mediaID, string $field, int $bytes, string $md5sum, ?mysqli $conn = null): void{
+		if(!$conn) {
+			$conn = Database::connect('write');
+		}
+
+		QueryUtil::executeQuery(
+			$conn,
+			'INSERT INTO mediametadata (mediaID, field, bytes, md5sum) VALUES (?, ?, ?, ?)', [
+			$mediaID, $field, $bytes, $md5sum
+		]);
 	}
 
 	public static function getMediaTypeStrFromMime(string $mime) {
