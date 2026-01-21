@@ -695,6 +695,28 @@ function uncheckEverythingInCollections() {
   });
 }
 
+function checkEverythingInCollections() {
+  const checkUncheckAllElem = document.getElementById("all_collections");
+  checkUncheckAllElem.checked = true;
+  const allSpecimenCollectionsElem = document.getElementById("all_specimen_collections");
+  allSpecimenCollectionsElem.checked = false;
+  const allObservationCollectionsElem = document.getElementById("all_observation_collections");
+  allObservationCollectionsElem.checked = false;
+  const categoryCollectionsChecked = Array.from(
+    document.querySelectorAll(`#search-form-colls input[id^="Specimens_"]:not(:checked), #search-form-colls input[id^="Observations_"]:not(:checked)`)
+  );
+  categoryCollectionsChecked.forEach((individualCategoryChecked) => {
+    individualCategoryChecked.checked = true;
+  });
+
+  const individualCollectionsChecked = Array.from(
+    document.querySelectorAll(`#search-form-colls input[name="db[]"]:not(:checked)`)
+  );
+  individualCollectionsChecked.forEach((individualCollectionChecked) => {
+    individualCollectionChecked.checked = true;
+  });
+}
+
 function handleCategoryChunks(parentBoxCheckStatus, collectionType) {
   const categoryLevelFieldSets = document.querySelectorAll(`fieldset[id^="${collectionType}_"][id$="_container"]`);
   categoryLevelFieldSets.forEach((categoryFieldset) => {
@@ -735,6 +757,8 @@ function checkTheCollectionsThatShouldBeCheckedBasedOnConfig() {
         });
       });
     });
+  } else{
+    checkEverythingInCollections();
   }
   updateCategoryCheckboxes();
 }
