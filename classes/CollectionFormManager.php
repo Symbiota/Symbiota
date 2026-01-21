@@ -1,4 +1,7 @@
 <?php
+
+use BcMath\Number;
+
 include_once($SERVER_ROOT . '/classes/Manager.php');
 
 class CollectionFormManager extends Manager {
@@ -113,5 +116,32 @@ class CollectionFormManager extends Manager {
     public function areCollectionIdsValid(string $requestStr): bool {
         if(!preg_match('/^[,\d]+$/',$requestStr)) return false;
         return true;
+     }
+
+     private function isAnEmptyString($str): bool {
+        return is_string($str) && trim($str) === '';
+     }
+
+     public function reviseUncategorizedCollections(array $collections): array {
+        $revisedCollections = $collections;
+        $filteredCollections =array_filter($collections, function($key) {
+            return $this->isAnEmptyString($key);
+        }, ARRAY_FILTER_USE_KEY);
+        $filteredCollectionsCount = count($filteredCollections);
+        if ($filteredCollectionsCount === 1) {
+            $uncategorizedKey = array_key_first($filteredCollections);
+            $revisedCollections['Uncategorized'] = $revisedCollections[$uncategorizedKey];
+            unset($revisedCollections[$uncategorizedKey]);
+            $revisedCollections['Uncategorized']['name'] = 'Uncategorized';
+            $allIds = array_column($revisedCollections, 'id');
+            $numericIds = array_map(function($id) {
+                return is_numeric($id) ? (int)$id : null;
+            },$allIds);
+            if (count($numericIds) === count($allIds)) {
+                $maxId = max($numericIds);
+                $revisedCollections['Uncategorized']['id'] = (string)($maxId + 1);
+            }
+        }
+        return $revisedCollections;
      }
 }

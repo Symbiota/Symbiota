@@ -161,10 +161,12 @@ function toggleCategory(categoryId) {
 				$requestSuppliedCatOrd ?? $CATORD ?? [],
 			);
 		 ?>
-		<?php foreach($sortedCollectionsByCategory as $collectionType => $categories): ?>
+		<?php foreach($sortedCollectionsByCategory as $collectionType => $categories):
+				$revisedUncategorizedCategories = $collectionFormManager->reviseUncategorizedCollections($categories);
+			 ?>
 		<div style="margin: 0;" id="<?= strtolower($collectionType) . '_collections' ?>">
 			<h2><?= $collectionType === 'Specimens'? $LANG['SPECIMEN_COLLECTIONS']: $LANG['OBSERVATION_COLLECTIONS'] ?></h2>
-			<?php foreach($categories as $category): ?>
+			<?php foreach($revisedUncategorizedCategories as $category): ?>
 			<?php 
 				$categoryIdentifer = $collectionType . '_' . $category['id'];
 			?>
