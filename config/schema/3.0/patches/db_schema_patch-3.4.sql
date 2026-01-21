@@ -611,11 +611,12 @@ ALTER TABLE `omoccurrences`
   ADD INDEX `IX_occurrences_verbatimCoordinates` (`collid`,`verbatimCoordinates`);
 
 # Add mediaMetadata table to track metadata for media
-CREATE TABLE mediaMetadata (
+CREATE TABLE mediametadata (
+	metaID int UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	mediaID int UNSIGNED NOT NULL,
 	field enum ('originalUrl', 'thumbnailUrl', 'url') NOT NULL,
 	bytes BIGINT UNSIGNED NOT NULL,
 	md5sum varchar(32) NOT NULL,
-	PRIMARY KEY (mediaID, field),
+	CONSTRAINT UC_MediaField UNIQUE (mediaID, field),
 	FOREIGN KEY (mediaID) REFERENCES media(mediaID) ON DELETE CASCADE
 ) ENGINE=INNODB;
