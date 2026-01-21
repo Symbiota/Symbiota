@@ -616,6 +616,8 @@ CREATE TABLE mediametadata (
 	field enum ('originalUrl', 'thumbnailUrl', 'url') NOT NULL,
 	bytes BIGINT UNSIGNED NOT NULL,
 	md5sum varchar(32) NOT NULL,
+	created_at timestamp DEFAULT current_timestamp(),
+	updated_at timestamp DEFAULT NULL ON UPDATE current_timestamp(),
 	PRIMARY KEY (mediaID, field),
 	FOREIGN KEY (mediaID) REFERENCES media(mediaID) ON DELETE CASCADE
 ) ENGINE=INNODB;
