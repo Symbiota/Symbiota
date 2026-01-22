@@ -16,3 +16,4 @@ includes/citationgbif.php
 includes/citationcollection.php
 includes/citationdataset.php
 includes/citationportal.php
+includes/donationButton.php
