@@ -330,7 +330,7 @@ if($SYMB_UID){
 					Media::remap(
 						intval($_POST['imgid']),
 						$target_occid,
-						StorageFactory::make($path),
+						StorageFactory::make($current_path),
 						StorageFactory::make($remap_path)
 					);
 
