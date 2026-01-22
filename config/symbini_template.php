@@ -35,7 +35,15 @@ $PUBLIC_MEDIA_UPLOAD_ROOT = '/content/imglib';
 $MEDIA_DOMAIN = '';				//Domain path to images, if different from portal
 $MEDIA_ROOT_URL = '';			//URL path to images
 $MEDIA_ROOT_PATH = '';			//Writable path to images, especially needed for downloading images
+
 $STORAGE_DRIVER = 'local'; // Can be either 'local' or 's3'. s3 option requires 'Aws\S3\S3Client' composer lib installed
+
+// Variables for s3 storage
+$S3_MEDIA_BUCKET_NAME = '';
+$S3_REGION = '';
+$S3_ENDPOINT = '';
+$S3_ACCESS_KEY_ID = '';
+$S3_SECRET_ID = '';
 
 //Pixel width of web images
 $IMG_WEB_WIDTH = 1400;
