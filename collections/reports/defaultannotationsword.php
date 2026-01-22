@@ -1,4 +1,7 @@
 <?php
+
+use function PHPUnit\Framework\isEmpty;
+
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLabel.php');
 require_once $SERVER_ROOT.'/vendor/autoload.php';
@@ -58,7 +61,6 @@ $phpWord->addFontStyle('familyFont', array('size'=>8,'name'=>'Arial'));
 $phpWord->addFontStyle('identifiedFont', array('size'=>8,'name'=>'Arial'));
 $marginSize = 80;
 if(array_key_exists('marginsize',$_POST) && $_POST['marginsize']) $marginSize = 16 * $_POST['marginsize'];
-$borderWidth = 2;
 $cellLength = 20000;
 
 $sectionStyle = array();
@@ -76,19 +78,16 @@ if($columnsPerPage==3){
 }
 $section = $phpWord->addSection($sectionStyle);
 
-if(array_key_exists('borderwidth',$_POST)) $borderWidth = $_POST['borderwidth'];
-if($borderWidth) $borderWidth++;
-if($borderWidth){
-	$tableStyle['borderColor'] = '000000';
-	$tableStyle['borderSize'] = $borderWidth;
-}
-
+$borderWidth = isset($_POST['borderwidth']) ? (int)$_POST['borderwidth'] : 2;
 $outerStyle = [
   'borderColor' => '000000',
-  'borderSize'  => $borderWidth,
   'borderInsideHSize' => 0,
   'borderInsideVSize' => 0,
 ];
+if ($borderWidth > 0) {
+  $outerStyle['borderSize']  = $borderWidth;
+}
+
 $phpWord->addTableStyle('labelBox', $outerStyle);
 	
 $innerStyle = [
