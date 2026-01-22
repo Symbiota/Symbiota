@@ -263,7 +263,7 @@ class S3Storage extends StorageStrategy {
 			'use_path_style_endpoint' => true,
 			'credentials' => [
 				'key' => $GLOBALS['S3_ACCESS_KEY_ID'],
-				'secret' => $GLOBALS['S3_SECRET_ID']
+				'secret' => $GLOBALS['S3_SECRET_ACCESS_KEY']
 			],
 		]);
 	}

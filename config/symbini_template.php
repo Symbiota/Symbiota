@@ -43,7 +43,8 @@ $S3_MEDIA_BUCKET_NAME = '';
 $S3_REGION = '';
 $S3_ENDPOINT = '';
 $S3_ACCESS_KEY_ID = '';
-$S3_SECRET_ID = '';
+$S3_SECRET_ACCESS_KEY = '';
+
 
 //Pixel width of web images
 $IMG_WEB_WIDTH = 1400;
