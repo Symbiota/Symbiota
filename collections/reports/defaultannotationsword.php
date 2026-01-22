@@ -1,7 +1,5 @@
 <?php
 
-use function PHPUnit\Framework\isEmpty;
-
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLabel.php');
 require_once $SERVER_ROOT.'/vendor/autoload.php';
