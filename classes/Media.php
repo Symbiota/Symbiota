@@ -601,6 +601,8 @@ class Media {
 						]
 					];
 
+					self::insertMediaMetadata($media_metadata['mediaID'], 'originalUrl', $file['size'], md5_file($file['tmp_name']));
+
 					foreach($urls as $url => $data) {
 						if(!($media_metadata[$url] ?? false)) {
 							$temp_path = UploadUtil::getTempDir() . $data['name'];
@@ -626,9 +628,12 @@ class Media {
 								$createdFilepaths[$url] = $storage->getDirPath($data['name']);
 							}
 
+							self::insertMediaMetadata($media_metadata['mediaID'], $url, filesize($temp_path), md5_file($temp_path));
+
 							unlink($temp_path);
 						}
 					}
+
 					$storage->upload($file);
 					$createdFilepaths['originalUrl'] = $storage->getDirPath($file);
 					self::update_metadata($metadata, $media_metadata['mediaID'], $conn);
@@ -641,12 +646,14 @@ class Media {
 				}
 			}
 
+/*
 			foreach($createdFilepaths as $field => $filepath) {
 				if(file_exists($filepath)) {
 					self::insertMediaMetadata($media_metadata['mediaID'], $field, filesize($filepath), md5_file($filepath));
 				}
 			}
 
+*/
 			mysqli_commit($conn);
 		} catch(Throwable $th) {
 			mysqli_rollback($conn);
