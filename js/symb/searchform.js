@@ -359,6 +359,9 @@ function updateChip(e, isInitialConfig=false) {
 }
 
 function calculateWhetherItemIsOutsidePanTypeSelections(item, didAllSpecimenCollectionGetSelected, didAllObservationCollectionGetSelected, allPossibleSpecimenCollections, allPossibleObservationCollections){
+  if(didAllSpecimenCollectionGetSelected && didAllObservationCollectionGetSelected){
+    return false;
+  }
   if(didAllSpecimenCollectionGetSelected==null || didAllObservationCollectionGetSelected==null || allPossibleSpecimenCollections==null || allPossibleObservationCollections==null){
     return true;
   }
