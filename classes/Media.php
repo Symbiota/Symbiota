@@ -634,16 +634,14 @@ class Media {
 						}
 					}
 
-					$storage->upload($file);
 					$createdFilepaths['originalUrl'] = $storage->getDirPath($file);
 					self::update_metadata($metadata, $media_metadata['mediaID'], $conn);
-				} elseif($media_type === MediaType::Audio) {
-					$storage->upload($file);
-					$createdFilepaths['originalUrl'] = $storage->getDirPath($file);
-				} elseif($media_type === MediaType::Misc) {
-					$storage->upload($file);
-					$createdFilepaths['originalUrl'] = $storage->getDirPath($file);
 				}
+
+				// Upload and Cleanup temporary file
+				$storage->upload($file);
+				$createdFilepaths['originalUrl'] = $storage->getDirPath($file);
+				unlink($file['tmp_name']);
 			}
 
 /*

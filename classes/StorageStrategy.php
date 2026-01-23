@@ -123,12 +123,9 @@ class LocalStorage extends StorageStrategy {
 			throw new MediaException(MediaException::DuplicateMediaFile);
 		}
 
-		//If Uploaded from $_POST then move file to new path
-		if(is_uploaded_file($file['tmp_name'])) {
-			move_uploaded_file($file['tmp_name'], $filepath);
-		//If temp path is on server then just move to new location
-		} else if(file_exists($file['tmp_name'])) {
-			rename($file['tmp_name'], $filepath);
+		//If temp path is on server then copy to new location
+		if(file_exists($file['tmp_name'])) {
+			copy($file['tmp_name'], $filepath);
 		//Otherwise assume tmp_name a url and stream file contents over
 		} else {
 			error_log("Moving" . $file['tmp_name'] . ' to ' . $filepath );
