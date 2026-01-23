@@ -1010,7 +1010,7 @@ class SpecUploadBase extends SpecUpload{
 			$cnt = 1;
 			while($insertTarget > 0){
 				$sql = 'INSERT IGNORE INTO omoccurrences (collid, dbpk, dateentered, observerUid, '.implode(', ',$fieldArr).' ) '.
-					'SELECT u.collid, u.dbpk, "'.date('Y-m-d H:i:s').'", '.$obsUidTarget.', u.'.implode(', u.',$fieldArr).' FROM uploadspectemp u '.
+					'SELECT u.collid, u.dbpk, COALESCE(u.dateEntered, "'. date('Y-m-d H:i:s') . '"), '.$obsUidTarget.', u.'.implode(', u.',$fieldArr).' FROM uploadspectemp u '.
 					'WHERE u.occid IS NULL AND u.collid IN('.$this->collId.') LIMIT '.$transactionInterval;
 				$insertCnt = 0;
 				if($this->conn->query($sql)){
