@@ -370,10 +370,13 @@ class StorageFactory {
 	 * @return StorageStrategy
 	 * @throws Exception if $STORAGE_DRIVER is not 'local' or 's3'
 	 **/
-	static function make(String $path = ''): StorageStrategy {
-		switch($GLOBALS['STORAGE_DRIVER'] ?? 'local') {
-			case 'local': return new LocalStorage($path);
-			case 's3':
+	const LOCAL_STORAGE = 'local';
+	const S3_STORAGE = 's3';
+
+	static function make(String $path = '', ?String $driverOverride = null): StorageStrategy {
+		switch($driverOverride ?? $GLOBALS['STORAGE_DRIVER'] ?? self::LOCAL_STORAGE) {
+			case self::LOCAL_STORAGE: return new LocalStorage($path);
+			case self::S3_STORAGE:
 				if(class_exists('Aws\S3\S3Client')) {
 					return new S3Storage($path);
 				} else {
