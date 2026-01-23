@@ -159,4 +159,5 @@ $LANG['STORAGE_LOC'] = 'Storage Location';
 $LANG['BIOTA'] = 'Biota';
 $LANG['MEMBER'] = 'Member';
 $LANG['STAGE'] = 'Stage';
+$LANG['EVENT_TIME'] = 'Event Time';
 ?>
