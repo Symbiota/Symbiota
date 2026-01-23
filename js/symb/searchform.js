@@ -925,16 +925,31 @@ function expandCategoriesWithSomeCheckedChildren() {
     }
   }
 
+function isLocalStorageJustAccordions(localStorageValues){
+  let accordionIds = Array.from(document.querySelectorAll('input.accordion-selector[type="checkbox"]')).map(input => input.id);
+  if (accordionIds.length < 1) accordionIds =["taxonomy", "locality", "lat-long", "coll-event", "sample", "associations", "geocontext","collections"]; // a fallback in case no accordions are found (as might happen if someone uses the new search and then switches to harvestparams)
+  const nonCommaSeparatedStrings = localStorageValues.filter(value => !value.includes(',')); // local storage weirdly stores some values as comma-separated strings rather than their own elements
+  const trueArrayToCompare = [...new Set(nonCommaSeparatedStrings)];
+  const commaSeparatedStringsElevatedToElement = localStorageValues.filter(value => value.includes(',')).map(value => {
+    const cleanedValue = value.replace(/^,|,$/g, '');
+    return cleanedValue.split(',')
+  }).flat();
+  trueArrayToCompare.push(...commaSeparatedStringsElevatedToElement);
+  return contains(accordionIds, trueArrayToCompare);
+}
+
 function setSearchForm(frm) {
   if (!frm) return;
   const localStorageRealValues = Object.values(localStorage).filter(value => value !== null && value !== "null" && value !=='');
-  if(localStorageRealValues.length < 1 && (!sessionStorage.querystr || sessionStorage.querystr === "null")){
+  const localStorageJustAccordions = isLocalStorageJustAccordions(localStorageRealValues);
+  const hasNoSessionInfo = !sessionStorage.querystr || sessionStorage.querystr === "null"
+  if((localStorageRealValues.length < 1 && hasNoSessionInfo) || (localStorageJustAccordions && hasNoSessionInfo)){
     uncheckEverythingInCollections();
     checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
     closeAllCategories();
     expandCategoriesBasedOnConfig();
     updateChip(null, isInitialConfig=true);
-  }else if(localStorageRealValues.length > 0  && (!sessionStorage.querystr || sessionStorage.querystr === "null")){
+  }else if(localStorageRealValues.length > 0  && hasNoSessionInfo){
     Object.keys(localStorage).forEach(key => {
       if (frm[key]) {
         frm[key].value = localStorage.getItem(key);
@@ -1251,6 +1266,7 @@ selectionElements.forEach((selectionElement) => {
 
 // on default (on document load): All Neon Collections, All Domains & Sites, Include other IDs, All Domains & Sites
 document.addEventListener("DOMContentLoaded", updateChip);
+
 // Binds expansion function to plus and minus icons in selectors, uses jQuery
 $(".expansion-icon").click(function () {
   if ($(this).siblings("ul").hasClass("collapsed")) {
