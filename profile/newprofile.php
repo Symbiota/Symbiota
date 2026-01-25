@@ -239,10 +239,7 @@ if($action == 'Create Login'){
 							</section>
 						</div>
 						<span>
-							Do not create shared/group user accounts.<br><br>
-							For security reasons, every individual should have their own unique login and password.<br><br>
-							Create a password that is unique to this portal.<br><br>
-							Do not reuse a password from another website, your email, etc.
+							<?php echo (isset($LANG['PASSWORD_WARNING']) ? $LANG['PASSWORD_WARNING'] : 'Do not create shared/group user accounts.<br><br>For security reasons, every individual should have their own unique login and password.<br><br>Create a password that is unique to this portal.<br><br>Do not reuse a password from another website, your email, etc.'); ?>
 						</span>
 					</div>
 					<section class="bottom-breathing-room gridlike-form-row">
