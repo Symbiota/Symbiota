@@ -153,10 +153,6 @@ class SpecUploadFile extends SpecUploadBase{
 						$recMap[$symbField] = $valueStr;
 					}
 				}
-				if($isCultivar && !$hasCultivarEpithet && !$hasTradeName){
-					global $LANG;
-					echo '<span style="color: var(--danger-color);">'  . $LANG['UPLOAD_ERROR_MSG'] . ': ' . $currentOccId . '</span>'; exit;
-				}
 				if($this->uploadType == $this->SKELETAL && !isset($recMap['catalognumber']) && !isset($recMap['othercatalognumbers'])){
 					//Skip loading record
 					unset($recMap);
