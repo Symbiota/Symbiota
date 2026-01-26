@@ -480,7 +480,7 @@ class OccurrenceMaintenance {
 		//Only protect names on list and synonym of accepted names
 		$sensitiveArr = $this->getSensitiveTaxa();
 		$shouldProtectCultivated = $GLOBALS['SHOULD_PROTECT_CULTIVATED'] ?? false;
-		$cultivationClause = $shouldProtectCultivated ? 'AND (cultivationStatus = 0 OR cultivationStatus IS NULL OR cultivationStatus = 1)' : 'AND (cultivationStatus = 0 OR cultivationStatus IS NULL)';
+		$cultivationClause = $shouldProtectCultivated ? '' : 'AND (cultivationStatus = 0 OR cultivationStatus IS NULL)';
 
 		if($sensitiveArr){
 			$sql = 'UPDATE omoccurrences
