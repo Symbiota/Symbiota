@@ -184,16 +184,19 @@ CREATE TABLE `omexportoccurrences` (
   PRIMARY KEY (`omExportID`,`occid`));
 
 ALTER TABLE `omexportoccurrences` 
-  ADD INDEX `FK_omexportoccur_omExportID_idx` (`omExportID` ASC),
-  ADD INDEX `FK_omexportoccur_occid_idx` (`occid` ASC);
+  ADD INDEX `FK_omexportoccur_omExportID_idx` (`omExportID`),
+  ADD INDEX `FK_omexportoccur_occid_idx` (`occid`);
 
 ALTER TABLE `omexportoccurrences` 
   ADD CONSTRAINT `FK_omexportoccur_omExportID`  FOREIGN KEY (`omExportID`)  REFERENCES `omexport` (`omExportID`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_omexportoccur_occid`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE;
 
 ALTER TABLE `omexportoccurrences` 
-  ADD INDEX `IX_omexportoccur_taxonID` (`taxonID` ASC),
-  ADD INDEX `IX_omexportoccur_collid` (`collid` ASC);
+  ADD INDEX `IX_omexportoccur_occid` (`omExportID`, `occid`),
+  ADD INDEX `IX_omexportoccur_collid` (`omExportID`, `collid`),
+  ADD INDEX `IX_omexportoccur_taxonID` (`omExportID`, `taxonID`),
+  ADD INDEX `IX_omexportoccur_kingdom` (`omExportID`, `kingdom`),
+  ADD INDEX `IX_omexportoccur_recordSecurity` (`omExportID`, `recordSecurity`);
 
 
 #Add update to omoccurdeterminations.dateLastModified tracked any update to the row

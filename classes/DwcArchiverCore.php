@@ -1556,16 +1556,6 @@ class DwcArchiverCore extends Manager{
 					}
 				}
 				while ($r = $rs->fetch_assoc()) {
-					if ($this->isPublicDownload || $this->limitToGuids) {
-						//Is a download from public interface OR DwC-A publishing event pushed to aggregators, thus skip record if Full Protections apply
-						if($r['recordSecurity'] == 5){
-							if(!strpos($sql, 'recordSecurity != 5')){
-								//But only if protection is not already applied within the SQL string
-								continue;
-							}
-						}
-					}
-
 					if(!isset($this->collArr[$r['collID']])){
 						$this->setCollArr($r['collID'], 'internalCall');
 					}
@@ -1774,6 +1764,59 @@ class DwcArchiverCore extends Manager{
 				$this->errorMessage = 'unknown error';
 			}
 			$stmt->close();
+		}
+		if($status) $this->setFullProtections();
+		return $status;
+	}
+
+	private function setFullProtections(){
+		//Function removes records that should be expluded due to full protection status
+		$status = false;
+		$removeAllRecords = true;
+		$collToRemove = array();
+		//Do not remove records if user has one of these permissions: SuperAdmin, CollAdmin, CollEditor
+		if(!empty($GLOBALS['USER_RIGHTS']['SuperAdmin'])){
+			$removeAllRecords = false;
+		}
+		else {
+			$allowedCollArr = array();
+			if(!empty($GLOBALS['USER_RIGHTS']['CollAdmin'])){
+				$allowedCollArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
+			}
+			if(!empty($GLOBALS['USER_RIGHTS']['CollEditor'])){
+				$allowedCollArr = array_merge($this->collArr, $GLOBALS['USER_RIGHTS']['CollEditor']);
+			}
+			if($allowedCollArr){
+				$collToRemove = array_diff($this->collArr, $allowedCollArr);
+				$removeAllRecords = false;
+			}
+		}
+		if(!$removeAllRecords){
+			if($this->isPublicDownload || $this->limitToGuids) {
+				//Download is from public interface OR DwC-A publishing event pushed to aggregators, thus remove full protected records
+				//Even if user is authorized to download these records, records should be excluded to ensure these records are not accidentually pushed to public
+				$removeAllRecords = true;
+			}
+		}
+		$sql = '';
+		if($removeAllRecords){
+			$sql = 'DELETE FROM omexportoccurrences WHERE omExportID = ? AND recordSecurity = 5';
+		}
+		elseif($collToRemove){
+			$sql = 'DELETE FROM omexportoccurrences WHERE omExportID = ? AND recordSecurity = 5 AND collid IN(' . implode(',', $collToRemove) . ')';
+		}
+		if($sql){
+			echo '<br>'.$sql; exit;
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->exportID);
+				if($stmt->execute()){
+					$status = true;
+				}
+				elseif($stmt->error){
+					$this->errorMessage = $stmt->error;
+				}
+				$stmt->close();
+			}
 		}
 		return $status;
 	}
