@@ -109,7 +109,7 @@ class DwcArchiverCore extends Manager{
 			$sqlWhere = '(c.colltype IN("Observations", "General Observations")) ';
 		}
 		if ($collTarget && $collTarget != 'all') {
-			if($collType != 'internalCall') $this->conditionArr['collid'] = $collTarget;
+			$this->conditionArr['collid'] = $collTarget;
 			$sqlWhere .= ($sqlWhere ? 'AND ' : '') . '(c.collid IN(' . $collTarget . ')) ';
 		}
 		if ($sqlWhere) {
@@ -234,8 +234,7 @@ class DwcArchiverCore extends Manager{
 		}
 
 		if($this->includeAcceptedNameUsage) {
-			// TODO (Logan) Should there be a select for this?
-			$this->conditionSql .= 'AND (ts.taxauthid = 1) ';
+			$this->conditionSql .= 'AND (ts.taxauthid = 1 OR ts.taxauthid IS NULL) ';
 		}
 
 		$sqlFrag = '';
@@ -1556,9 +1555,6 @@ class DwcArchiverCore extends Manager{
 					}
 				}
 				while ($r = $rs->fetch_assoc()) {
-					if(!isset($this->collArr[$r['collID']])){
-						$this->setCollArr($r['collID'], 'internalCall');
-					}
 					//Set occurrenceID GUID or skip records if not defined (required output)
 					if(!$r['occurrenceID']) {
 						if($guidTarget = $this->collArr[$r['collID']]['guidtarget']){
@@ -1765,8 +1761,32 @@ class DwcArchiverCore extends Manager{
 			}
 			$stmt->close();
 		}
-		if($status) $this->setFullProtections();
+		if($status){
+			$this->setCollArrViaExportID();
+			$this->setFullProtections();
+		}
 		return $status;
+	}
+
+	private function setCollArrViaExportID(){
+		if(!$this->collArr){
+			$sql = 'SELECT DISTINCT collid FROM omexportoccurrences WHERE omExportID = ?';
+			$outputArr = array();
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->exportID);
+				$stmt->execute();
+				if($rs = $stmt->get_result()){
+					while($r = $rs->fetch_object()){
+						$outputArr[] = $r->collid;
+					}
+				}
+				$stmt->close();
+			}
+			if($outputArr){
+				$targetCollidStr = implode(',', $outputArr);
+				$this->setCollArr($targetCollidStr);
+			}
+		}
 	}
 
 	private function setFullProtections(){
