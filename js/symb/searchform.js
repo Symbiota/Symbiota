@@ -363,6 +363,7 @@ function updateChip(e, isInitialConfig=false) {
 }
 
 function calculateWhetherItemIsOutsidePanTypeSelections(item, didAllSpecimenCollectionGetSelected, didAllObservationCollectionGetSelected, allPossibleSpecimenCollections, allPossibleObservationCollections){
+  if(item?.tagName === 'OPTION' || item?.nodeName === 'OPTION') return true;
   if(didAllSpecimenCollectionGetSelected && didAllObservationCollectionGetSelected){
     return false;
   }
