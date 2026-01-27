@@ -338,7 +338,7 @@ class OccurrenceCollectionProfile extends OmCollections{
 			$cnt = $r->cnt;
 			if($state){
 				$t = trim(str_ireplace(array(' county',' co.',' counties'),'',$t));
-				if(array_key_exists($t, $retArr)) $cnt = $cnt + $retArr[$t];
+				if(array_key_exists($t, $retArr)) $cnt = $cnt + $retArr[$t]['cnt'];
 			}
 			if($t){
 				$retArr[$t]['cnt'] = $cnt;
