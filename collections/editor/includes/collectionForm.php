@@ -108,6 +108,7 @@ function toggleCategory(categoryId) {
 		'CATORD' => $requestSuppliedCatOrd ?? $CATORD ?? [],
 		'CATEXPND' =>  $requestSuppliedCatExpnd ?? $CATEXPND ?? [],
 		'CATCHK' => $requestSuppliedCatChk ?? $CATCHK ?? [],
+		'CURRENT_URL' => $_SERVER['REQUEST_URI'],
 	]) ?>'>
 	<?php 
 	$checkboxConfigs = [

@@ -945,7 +945,8 @@ function setSearchForm(frm) {
   if (!frm) return;
   const localStorageRealValues = Object.values(localStorage).filter(value => value !== null && value !== "null" && value !=='');
   const localStorageJustAccordions = isLocalStorageJustAccordions(localStorageRealValues);
-  const hasNoSessionInfo = !sessionStorage.querystr || sessionStorage.querystr === "null"
+  const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CURRENT_URL;
+  const hasNoSessionInfo = !sessionStorage["querystr" + currentPage] || sessionStorage["querystr" + currentPage] === "null"
   if((localStorageRealValues.length < 1 && hasNoSessionInfo) || (localStorageJustAccordions && hasNoSessionInfo)){
     uncheckEverythingInCollections();
     checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
@@ -960,9 +961,9 @@ function setSearchForm(frm) {
       closeAllCategories();
       expandCategoriesWithSomeCheckedChildren();
     });
-  } else if((sessionStorage.querystr && sessionStorage.querystr !== "null")){
+  } else if((sessionStorage["querystr" + currentPage] && sessionStorage["querystr" + currentPage] !== "null")){
     
-    const urlVar = parseUrlVariables(sessionStorage.querystr.replaceAll('&quot;', '"'));
+    const urlVar = parseUrlVariables(sessionStorage["querystr" + currentPage].replaceAll('&quot;', '"'));
     if (
       typeof urlVar.usethes !== "undefined" &&
       (urlVar.usethes == "" || urlVar.usethes == "0")
