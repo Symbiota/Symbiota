@@ -668,7 +668,8 @@ function simpleSearch() {
       if (
         (formElem.type == "checkbox" && formElem.checked) ||
         (formElem.type == "text" && formElem.value != "") ||
-        (formElem.type == "number" && formElem.value != "")
+        (formElem.type == "number" && formElem.value != "") ||
+        (formElem.tagName === "SELECT" && formElem.value != "")
       ) {
         const revisedFormElemName = (formElem.name == "db[]") ? "db" : formElem.name;
         let previousValue = '';
