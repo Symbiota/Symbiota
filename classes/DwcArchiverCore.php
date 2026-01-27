@@ -1784,10 +1784,10 @@ class DwcArchiverCore extends Manager{
 				$allowedCollArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
 			}
 			if(!empty($GLOBALS['USER_RIGHTS']['CollEditor'])){
-				$allowedCollArr = array_merge($this->collArr, $GLOBALS['USER_RIGHTS']['CollEditor']);
+				$allowedCollArr = array_merge($allowedCollArr, $GLOBALS['USER_RIGHTS']['CollEditor']);
 			}
 			if($allowedCollArr){
-				$collToRemove = array_diff($this->collArr, $allowedCollArr);
+				$collToRemove = array_diff(array_keys($this->collArr), $allowedCollArr);
 				$removeAllRecords = false;
 			}
 		}
@@ -1806,7 +1806,6 @@ class DwcArchiverCore extends Manager{
 			$sql = 'DELETE FROM omexportoccurrences WHERE omExportID = ? AND recordSecurity = 5 AND collid IN(' . implode(',', $collToRemove) . ')';
 		}
 		if($sql){
-			echo '<br>'.$sql; exit;
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param('i', $this->exportID);
 				if($stmt->execute()){
