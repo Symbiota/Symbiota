@@ -55,7 +55,6 @@ $requestPortalGuid = array_key_exists('portalguid', $_REQUEST) ? $_REQUEST['port
 $_SESSION['citationvar'] = 'collid=' . $collid;
 
 $dwcaHandler = new DwcArchiverCore();
-
 $dwcaHandler->setVerboseMode(0);
 $dwcaHandler->setCollArr($collid, $collType);
 
@@ -96,6 +95,11 @@ if ($cond) {
 			}
 		}
 	}
+}
+if(!$collid && !$cond) exit('Filter conditions required');
+if(!$dwcaHandler->isAuthorized()){
+	//Basic lockdown of function to limited number of users until functionality is fully integrated into Symbiota 4.0 API with enhanced security applied
+	exit('Not authorized');
 }
 $dwcaHandler->setSchemaType($schemaType);
 $dwcaHandler->setExtended($extended);
