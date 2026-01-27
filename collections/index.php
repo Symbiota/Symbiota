@@ -15,6 +15,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 
 $collManager = new OccurrenceManager();
 $collManager->reset();
+$currentPage = $_SERVER['REQUEST_URI'];
 
 $otherCatArr = $collManager->getOccurVoucherProjects();
 
@@ -51,14 +52,15 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 						$(ui.panel).html("<p>Loading...</p>");
 					}
 				});
-				sessionStorage.querystr = null;
+				sessionStorage["querystr" + currentPage] = null;
 			});
 		</script>
 		<script type="text/javascript">
 			$(document).ready(function() {
 				setSessionQueryStr();
 				setSearchForm(document.getElementById("params-form"));
-				toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
+				// toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
+				toggleAccordionsFromSessionStorage(sessionStorage.getItem("querystr" + currentPage + "/" + "accordionIds") ?.split(",") || []);
 				document.getElementById("params-form").addEventListener("submit", function(event) {
 					event.preventDefault();
 					simpleSearch();

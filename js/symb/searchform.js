@@ -274,8 +274,9 @@ function updateChip(e, isInitialConfig=false) {
     addChip(getCollsChips("ext-collections-list", "Some Ext NEON Colls"));
   }
   // then go through remaining inputs (exclude db and datasetid)
+  const isCollectionRelated = e?.currentTarget?.name === "db[]" || e?.currentTarget?.name?.startsWith("Specimens_") || e?.currentTarget?.name?.startsWith("Observations_") || e?.currentTarget?.id === "all_collections" || e?.currentTarget?.id === "all_specimen_collections" || e?.currentTarget?.id === "all_observation_collections";
   if(!isInitialConfig){
-    const isCollectionRelated = e?.currentTarget?.name === "db[]" || e?.currentTarget?.name?.startsWith("Specimens_") || e?.currentTarget?.name?.startsWith("Observations_") || e?.currentTarget?.id === "all_collections" || e?.currentTarget?.id === "all_specimen_collections" || e?.currentTarget?.id === "all_observation_collections";
+    // const isCollectionRelated = e?.currentTarget?.name === "db[]" || e?.currentTarget?.name?.startsWith("Specimens_") || e?.currentTarget?.name?.startsWith("Observations_") || e?.currentTarget?.id === "all_collections" || e?.currentTarget?.id === "all_specimen_collections" || e?.currentTarget?.id === "all_observation_collections";
     if(isCollectionRelated){
       const checkedCollections = calculateAllPossibleCollectionsInScope('search-form-colls', ':checked',true);
       checkTheCollectionsThatShouldBeChecked(checkedCollections);
@@ -326,7 +327,8 @@ function updateChip(e, isInitialConfig=false) {
           );
           if(!isInDefaultValList && item.hasAttribute("data-chip")) {
             const itemIsOutsidePanTypeSelections = calculateWhetherItemIsOutsidePanTypeSelections(item, didAllSpecimenCollectionGetSelected, didAllObservationCollectionGetSelected, allPossibleSpecimenCollections, allPossibleObservationCollections);
-            if(itemIsOutsidePanTypeSelections){
+            const itemIsCollectionRelated = item?.id === "db[]" || item?.id?.startsWith("Specimens_") || item?.id?.startsWith("Observations_") || item?.id === "all_collections" || item?.id === "all_specimen_collections" || item?.id === "all_observation_collections";
+            if(itemIsOutsidePanTypeSelections || !itemIsCollectionRelated){
               addChip(item);
             }
           }
@@ -656,6 +658,11 @@ function validateCollections(optionalCallback=null) {
 function simpleSearch() {
   validateCollections(optionalCallback = ()=>{
     const submitForm = document.getElementById("params-form");
+    if(!submitForm || Array.from(submitForm.elements).length < 1) return;
+    // @TODO add to session storage?
+    Array.from(submitForm.elements).forEach(formElem => {
+      sessionStorage.setItem("querystr" + currentPage + "/" + formElem.name, formElem.value);
+    });
     submitForm.submit();
   });
 }
@@ -943,27 +950,37 @@ function isLocalStorageJustAccordions(localStorageValues){
 
 function setSearchForm(frm) {
   if (!frm) return;
-  const localStorageRealValues = Object.values(localStorage).filter(value => value !== null && value !== "null" && value !=='');
-  const localStorageJustAccordions = isLocalStorageJustAccordions(localStorageRealValues);
+  // const localStorageRealValues = Object.values(localStorage).filter(value => value !== null && value !== "null" && value !=='');
+  // const localStorageJustAccordions = isLocalStorageJustAccordions(localStorageRealValues);
   const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CURRENT_URL;
-  const hasNoSessionInfo = !sessionStorage["querystr" + currentPage] || sessionStorage["querystr" + currentPage] === "null"
-  if((localStorageRealValues.length < 1 && hasNoSessionInfo) || (localStorageJustAccordions && hasNoSessionInfo)){
+  // const hasNoSessionInfo = !sessionStorage["querystr" + currentPage] || sessionStorage["querystr" + currentPage] === "null";
+  const sessionStorageKeys = Object.keys(sessionStorage);
+  const hasSessionInfo = sessionStorageKeys.some(key => key.startsWith("querystr" + currentPage) && key !== ("querystr" + currentPage + "/" + "accordionIds") && key.value !== "null");
+  // @TODO check for whether any collection-related info is in the form
+  // if((localStorageRealValues.length < 1 && hasNoSessionInfo) || (localStorageJustAccordions && hasNoSessionInfo)){
+  if(!hasSessionInfo){
     uncheckEverythingInCollections();
     checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
     closeAllCategories();
     expandCategoriesBasedOnConfig();
     updateChip(null, isInitialConfig=true);
-  }else if(localStorageRealValues.length > 0  && hasNoSessionInfo){
-    Object.keys(localStorage).forEach(key => {
-      if (frm[key]) {
-        frm[key].value = localStorage.getItem(key);
-      }
-      closeAllCategories();
-      expandCategoriesWithSomeCheckedChildren();
-    });
-  } else if((sessionStorage["querystr" + currentPage] && sessionStorage["querystr" + currentPage] !== "null")){
-    
-    const urlVar = parseUrlVariables(sessionStorage["querystr" + currentPage].replaceAll('&quot;', '"'));
+  }
+  // else if(localStorageRealValues.length > 0  && hasNoSessionInfo){
+  //   Object.keys(localStorage).forEach(key => {
+  //     if (frm[key]) {
+  //       frm[key].value = localStorage.getItem(key);
+  //     }
+  //     closeAllCategories();
+  //     expandCategoriesWithSomeCheckedChildren();
+  //   });
+  // }
+  // @ TODO if sessionStorage["querystr"+currentPage + foo] has collection info, use that to set collections
+  // @TODO list sessionStorage keys
+  
+  // else if(hasSessionInfo){
+  else {
+    const urlVariablesFromSessionStorage = concatenateUrlVariablesFromSessionStorage();
+    const urlVar = parseUrlVariables(urlVariablesFromSessionStorage.replaceAll('&quot;', '"'));
     if (
       typeof urlVar.usethes !== "undefined" &&
       (urlVar.usethes == "" || urlVar.usethes == "0")
@@ -1154,9 +1171,10 @@ function setSearchForm(frm) {
       }
     }
     updateChip();
-  } else{
-   // do nothing
-  }
+  } 
+  // else{
+  //  // do nothing
+  // }
 }
 
 function updateQueryListWithTypeCollections(queryList){
@@ -1198,13 +1216,28 @@ function parseUrlVariables(varStr) {
   return result;
 }
 
+function concatenateUrlVariablesFromSessionStorage() {
+  let returnVal = '';
+  // const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CURRENT_URL;
+  const sessionStorageKeys = Object.keys(sessionStorage);
+  const relevantKeys = sessionStorageKeys.filter(key => key.startsWith("querystr" + currentPage) && key.value !== "null");
+  relevantKeys.forEach((relevantKey) => {
+    const justFormFieldName = relevantKey.replace("querystr" + currentPage + "/", "");
+    const relevantVal = sessionStorage.getItem(relevantKey);
+    returnVal += justFormFieldName + "=" + encodeURIComponent(relevantVal) + "&"; // @TODO encodeURIComponent may not be necessary here
+  });
+  return returnVal.slice(0, -1);
+}
+
 function toggleAccordionsFromSessionStorage(accordionIds) {
+  const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CURRENT_URL;
   const accordions = document.querySelectorAll(
     'input[class="accordion-selector"]'
   );
   accordions.forEach((accordion) => {
     if(accordion.id !== "taxonomy") accordion.checked = false;
-    if(accordion.id === "taxonomy" && localStorage.getItem("taxonomyAccordionClosed")) accordion.checked = false;
+    // if(accordion.id === "taxonomy" && localStorage.getItem("taxonomyAccordionClosed")) accordion.checked = false;
+    if(accordion.id === "taxonomy" && sessionStorage.getItem("querystr" + currentPage + "/" + "taxonomyAccordionClosed")) accordion.checked = false;
   });
   accordions.forEach((accordion) => {
     const currentId = accordion.getAttribute("id");
@@ -1288,21 +1321,26 @@ hideColCheckbox(58); // @TODO is this NEON specific? Should I remove?
 const accordions = document.querySelectorAll(
   'input[class="accordion-selector"]'
 );
+const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CURRENT_URL;
 accordions.forEach((accordion) => {
   accordion.addEventListener("click", (event) => {
-    const currentAccordionIds = localStorage?.accordionIds?.split(",") || [];
+    // const currentAccordionIds = localStorage?.accordionIds?.split(",") || [];
+    const currentAccordionIds = sessionStorage.getItem("querystr" + currentPage + "/" + "accordionIds") ?.split(",") || [];
     const currentId = event.target.id;
     if (currentAccordionIds.includes(currentId)) {
       const targetIdx = currentAccordionIds.indexOf(currentId);
       currentAccordionIds.splice(targetIdx, 1);
       if(currentId==="taxonomy") {
-        localStorage.setItem("taxonomyAccordionClosed", true);
+        // localStorage.setItem("taxonomyAccordionClosed", true);
+        sessionStorage.setItem("querystr" + currentPage + "/" + "taxonomyAccordionClosed", true);
       }
     } else {
       currentAccordionIds.push(currentId);
-      if(currentId==="taxonomy") localStorage.setItem("taxonomyAccordionClosed", false)
+      // if(currentId==="taxonomy") localStorage.setItem("taxonomyAccordionClosed", false)
+      if(currentId==="taxonomy") sessionStorage.setItem("querystr" + currentPage + "/" + "taxonomyAccordionClosed", false);
     }
-    localStorage.setItem("accordionIds", currentAccordionIds);
+    // localStorage.setItem("accordionIds", currentAccordionIds);
+    sessionStorage.setItem("querystr" + currentPage + "/" + "accordionIds", currentAccordionIds);
   });
 });
 
