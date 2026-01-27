@@ -1271,7 +1271,7 @@ class DwcArchiverCore extends Manager{
 			if (isset($this->collArr[$collId]['phone'])) $emlArr['contact']['phone'] = $this->collArr[$collId]['phone'];
 			if (isset($this->collArr[$collId]['contact'][0]['electronicMailAddress'])) $emlArr['contact']['electronicMailAddress'] = $this->collArr[$collId]['contact'][0]['electronicMailAddress'];
 			if (isset($this->collArr[$collId]['contact'][0]['userId'])) $emlArr['contact']['userId'] = $this->collArr[$collId]['contact'][0]['userId'];
-			if ($this->collArr[$collId]['url']) $emlArr['contact']['onlineUrl'] = $this->collArr[$collId]['url'];
+			if (isset($this->collArr[$collId]['url'])) $emlArr['contact']['onlineUrl'] = $this->collArr[$collId]['url'];
 			$addrStr = $this->collArr[$collId]['address1'];
 			if ($this->collArr[$collId]['address2']) $addrStr .= ', ' . $this->collArr[$collId]['address2'];
 			if ($addrStr) $emlArr['contact']['addr']['deliveryPoint'] = $addrStr;

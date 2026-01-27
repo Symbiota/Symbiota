@@ -364,6 +364,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 														foreach($labelFormatArr as $cat => $catArr){
 															echo '<option value="">---------------------------</option>';
 															foreach($catArr as $k => $labelArr){
+																if (!isset($labelArr['title'])) continue;
 																echo '<option value="'.$cat.'-'.$k.'">'.$labelArr['title'].'</option>';
 															}
 														}
