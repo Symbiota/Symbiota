@@ -621,3 +621,7 @@ CREATE TABLE mediametadata (
 	PRIMARY KEY (mediaID, field),
 	FOREIGN KEY (mediaID) REFERENCES media(mediaID) ON DELETE CASCADE
 ) ENGINE=INNODB;
+
+# ALTER uploadimagetemp to use creator instead of photographer so code uses correct field
+ALTER TABLE uploadimagetemp RENAME COLUMN photographer TO creator;
+ALTER TABLE uploadimagetemp RENAME COLUMN photographerUid TO creatorUid;
