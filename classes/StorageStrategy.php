@@ -287,17 +287,31 @@ class S3Storage extends StorageStrategy {
 	}
 
 	public function upload(array $file): Bool {
+		$tempPath = null;
 		if(!file_exists($file['tmp_name'])) {
-			throw new MediaException(MediaException::FileDoesNotExist, $file['tmp_name']);
+			$parts = UploadUtil::decomposeUrl($file['tmp_name']);
+
+			// If there is a scheme either http or https then download file for s3 upload
+			if($parts['scheme'] ?? false) {
+				$tempPath = UploadUtil::getTempDir() . $this->path . $file['name'];
+				file_put_contents($tempPath, fopen($file['tmp_name'], 'r'));
+			} else {
+				throw new MediaException(MediaException::FileDoesNotExist, $file['tmp_name']);
+			}
 		}
 
-		$this->client->putObject([
-			'Bucket' => $GLOBALS['S3_MEDIA_BUCKET_NAME'],
-			'Key'    => $GLOBALS['MEDIA_ROOT_URL'] . (substr($GLOBALS['MEDIA_ROOT_URL'],-1) != "/"? '/': '') . $this->path . $file['name'],
-			'ContentType' => $file['type'],
-			'Body'   => fopen($file['tmp_name'], "r"),
-			'ACL' => 'public-read'
-		]);
+		try {
+			$this->client->putObject([
+				'Bucket' => $GLOBALS['S3_MEDIA_BUCKET_NAME'],
+				'Key'    => $GLOBALS['MEDIA_ROOT_URL'] . (substr($GLOBALS['MEDIA_ROOT_URL'],-1) != "/"? '/': '') . $this->path . $file['name'],
+				'ContentType' => $file['type'],
+				'Body'   => fopen($tempPath ?? $file['tmp_name'], "r"),
+				'ACL' => 'public-read'
+			]);
+
+		} finally {
+			if($tempPath) unlink($tempPath);
+		}
 
 		return true;
 	}
