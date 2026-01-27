@@ -661,7 +661,25 @@ function simpleSearch() {
     if(!submitForm || Array.from(submitForm.elements).length < 1) return;
     // @TODO add to session storage?
     Array.from(submitForm.elements).forEach(formElem => {
-      sessionStorage.setItem("querystr" + currentPage + "/" + formElem.name, formElem.value);
+      if (
+        (formElem.type == "checkbox" && formElem.checked) ||
+        (formElem.type == "text" && formElem.value != "") ||
+        (formElem.type == "number" && formElem.value != "")
+      ) {
+        const revisedFormElemName = (formElem.name == "db[]") ? "db" : formElem.name;
+        let previousValue = '';
+        let newValue = formElem.value;
+        if(revisedFormElemName === "db"){
+          previousValue = sessionStorage.getItem("querystr" + currentPage + "/" + revisedFormElemName);
+          const existingValues = previousValue ? previousValue.split(",") : [];
+          if(existingValues.includes(formElem.value)){
+            return; // skip adding duplicate collection
+          }else{
+            newValue = previousValue ? previousValue + "," + formElem.value : formElem.value;
+          }
+        }
+        sessionStorage.setItem("querystr" + currentPage + "/" + revisedFormElemName, newValue);
+      }
     });
     submitForm.submit();
   });
@@ -1223,8 +1241,10 @@ function concatenateUrlVariablesFromSessionStorage() {
   const relevantKeys = sessionStorageKeys.filter(key => key.startsWith("querystr" + currentPage) && key.value !== "null");
   relevantKeys.forEach((relevantKey) => {
     const justFormFieldName = relevantKey.replace("querystr" + currentPage + "/", "");
-    const relevantVal = sessionStorage.getItem(relevantKey);
-    returnVal += justFormFieldName + "=" + encodeURIComponent(relevantVal) + "&"; // @TODO encodeURIComponent may not be necessary here
+    if(justFormFieldName){
+      const relevantVal = sessionStorage.getItem(relevantKey);
+      returnVal += justFormFieldName + "=" + encodeURIComponent(relevantVal) + "&"; // @TODO encodeURIComponent may not be necessary here
+    }
   });
   return returnVal.slice(0, -1);
 }
@@ -1302,7 +1322,7 @@ selectionElements.forEach((selectionElement) => {
 });
 
 // on default (on document load): All Neon Collections, All Domains & Sites, Include other IDs, All Domains & Sites
-document.addEventListener("DOMContentLoaded", updateChip);
+// document.addEventListener("DOMContentLoaded", updateChip);
 
 // Binds expansion function to plus and minus icons in selectors, uses jQuery
 $(".expansion-icon").click(function () {
@@ -1346,4 +1366,9 @@ accordions.forEach((accordion) => {
 
 document.addEventListener('DOMContentLoaded', function() {
   initializeFormInputs();
+  const form = document.getElementById('params-form');
+    if (form) {
+      setSearchForm(form);
+    }
+    updateChip();
 });
