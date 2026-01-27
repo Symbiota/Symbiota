@@ -279,7 +279,9 @@ function updateChip(e, isInitialConfig=false) {
     // const isCollectionRelated = e?.currentTarget?.name === "db[]" || e?.currentTarget?.name?.startsWith("Specimens_") || e?.currentTarget?.name?.startsWith("Observations_") || e?.currentTarget?.id === "all_collections" || e?.currentTarget?.id === "all_specimen_collections" || e?.currentTarget?.id === "all_observation_collections";
     if(isCollectionRelated){
       const checkedCollections = calculateAllPossibleCollectionsInScope('search-form-colls', ':checked',true);
-      checkTheCollectionsThatShouldBeChecked(checkedCollections);
+      const updatedQueriedCollections = updateQueryListWithTypeCollections(checkedCollections);
+      // checkTheCollectionsThatShouldBeChecked(checkedCollections);
+      checkTheCollectionsThatShouldBeChecked(updatedQueriedCollections);
       updateCategoryCheckboxes();
       closeAllCategories();
       expandCategoriesWithSomeCheckedChildren();
@@ -327,7 +329,7 @@ function updateChip(e, isInitialConfig=false) {
           );
           if(!isInDefaultValList && item.hasAttribute("data-chip")) {
             const itemIsOutsidePanTypeSelections = calculateWhetherItemIsOutsidePanTypeSelections(item, didAllSpecimenCollectionGetSelected, didAllObservationCollectionGetSelected, allPossibleSpecimenCollections, allPossibleObservationCollections);
-            const itemIsCollectionRelated = item?.id === "db[]" || item?.id?.startsWith("Specimens_") || item?.id?.startsWith("Observations_") || item?.id === "all_collections" || item?.id === "all_specimen_collections" || item?.id === "all_observation_collections";
+            const itemIsCollectionRelated = item?.name === "db[]" || item?.id?.startsWith("Specimens_") || item?.id?.startsWith("Observations_") || item?.id === "all_collections" || item?.id === "all_specimen_collections" || item?.id === "all_observation_collections";
             if(itemIsOutsidePanTypeSelections || !itemIsCollectionRelated){
               addChip(item);
             }
@@ -660,6 +662,7 @@ function simpleSearch() {
     const submitForm = document.getElementById("params-form");
     if(!submitForm || Array.from(submitForm.elements).length < 1) return;
     // @TODO add to session storage?
+    clearPageSpecificSessionStorageItems();
     Array.from(submitForm.elements).forEach(formElem => {
       if (
         (formElem.type == "checkbox" && formElem.checked) ||
@@ -683,6 +686,11 @@ function simpleSearch() {
     });
     submitForm.submit();
   });
+}
+
+function clearPageSpecificSessionStorageItems() {
+  const keysToRemove = Object.keys(sessionStorage).filter(key => key.startsWith("querystr" + currentPage + "/"));
+  keysToRemove.forEach(key => sessionStorage.removeItem(key));
 }
 
 /**
