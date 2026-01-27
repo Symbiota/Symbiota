@@ -218,7 +218,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		}
 		$sql .= $this->getSqlBase(true).$this->sqlWhere;
 		$result = $this->conn->query($sql);
-		if($row = $result->fetch_object()){
+		if($result && ($row = $result->fetch_object())){
 			$this->recordCount = $row->cnt;
 		}
 		$result->free();
