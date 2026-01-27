@@ -661,9 +661,16 @@ function validateCollections(optionalCallback=null) {
 function simpleSearch() {
   validateCollections(optionalCallback = ()=>{
     const submitForm = document.getElementById("params-form");
-    if(!submitForm || Array.from(submitForm.elements).length < 1) return;
+    storeFormDataInSessionStorage(submitForm);
+    submitForm.submit();
+  });
+}
+
+function storeFormDataInSessionStorage(submitForm) {
+  if(!submitForm || Array.from(submitForm.elements).length < 1) return;
     // @TODO add to session storage?
     clearPageSpecificSessionStorageItems();
+    const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CURRENT_URL;
     Array.from(submitForm.elements).forEach(formElem => {
       if (
         (formElem.type == "checkbox" && formElem.checked) ||
@@ -686,11 +693,10 @@ function simpleSearch() {
         sessionStorage.setItem("querystr" + currentPage + "/" + revisedFormElemName, newValue);
       }
     });
-    submitForm.submit();
-  });
 }
 
 function clearPageSpecificSessionStorageItems() {
+  const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CURRENT_URL;
   const keysToRemove = Object.keys(sessionStorage).filter(key => key.startsWith("querystr" + currentPage + "/"));
   keysToRemove.forEach(key => sessionStorage.removeItem(key));
 }
@@ -922,22 +928,24 @@ function expandCategoriesWithSomeCheckedChildren() {
 }
 
   function closeCollectionsDialog() {
-    storeLocalFormInputs();
+    // storeLocalFormInputs();
+    const submitForm = document.getElementById("params-form");
+    storeFormDataInSessionStorage(submitForm);
     const dialog = document.getElementById('collections_dialog');
     if (dialog) {
       dialog.close();
     }
   }
 
-  function storeLocalFormInputs() {
-    const form = document.getElementById('params-form');
-    if (form) {
-      const formData = new FormData(form);
-      formData.forEach((value, key) => {
-        localStorage.setItem(key, value);
-      });
-    }
-  }
+  // function storeLocalFormInputs() {
+  //   const form = document.getElementById('params-form');
+  //   if (form) {
+  //     const formData = new FormData(form);
+  //     formData.forEach((value, key) => {
+  //       localStorage.setItem(key, value);
+  //     });
+  //   }
+  // }
 
   function openCollectionsDialog() {
     const dialog = document.getElementById('collections_dialog');
@@ -1246,7 +1254,7 @@ function parseUrlVariables(varStr) {
 
 function concatenateUrlVariablesFromSessionStorage() {
   let returnVal = '';
-  // const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CURRENT_URL;
+  const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CURRENT_URL;
   const sessionStorageKeys = Object.keys(sessionStorage);
   const relevantKeys = sessionStorageKeys.filter(key => key.startsWith("querystr" + currentPage) && key.value !== "null");
   relevantKeys.forEach((relevantKey) => {
@@ -1348,31 +1356,33 @@ $(".expansion-icon").click(function () {
 // Hides MOSC-BU checkboxes
 hideColCheckbox(58); // @TODO is this NEON specific? Should I remove?
 
-const accordions = document.querySelectorAll(
-  'input[class="accordion-selector"]'
-);
-const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CURRENT_URL;
-accordions.forEach((accordion) => {
-  accordion.addEventListener("click", (event) => {
-    // const currentAccordionIds = localStorage?.accordionIds?.split(",") || [];
-    const currentAccordionIds = sessionStorage.getItem("querystr" + currentPage + "/" + "accordionIds") ?.split(",") || [];
-    const currentId = event.target.id;
-    if (currentAccordionIds.includes(currentId)) {
-      const targetIdx = currentAccordionIds.indexOf(currentId);
-      currentAccordionIds.splice(targetIdx, 1);
-      if(currentId==="taxonomy") {
-        // localStorage.setItem("taxonomyAccordionClosed", true);
-        sessionStorage.setItem("querystr" + currentPage + "/" + "taxonomyAccordionClosed", true);
+function setSessionStorageForAccordions() {
+  const accordions = document.querySelectorAll(
+    'input[class="accordion-selector"]'
+  );
+  const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CURRENT_URL;
+  accordions.forEach((accordion) => {
+    accordion.addEventListener("click", (event) => {
+      // const currentAccordionIds = localStorage?.accordionIds?.split(",") || [];
+      const currentAccordionIds = sessionStorage.getItem("querystr" + currentPage + "/" + "accordionIds") ?.split(",") || [];
+      const currentId = event.target.id;
+      if (currentAccordionIds.includes(currentId)) {
+        const targetIdx = currentAccordionIds.indexOf(currentId);
+        currentAccordionIds.splice(targetIdx, 1);
+        if(currentId==="taxonomy") {
+          // localStorage.setItem("taxonomyAccordionClosed", true);
+          sessionStorage.setItem("querystr" + currentPage + "/" + "taxonomyAccordionClosed", true);
+        }
+      } else {
+        currentAccordionIds.push(currentId);
+        // if(currentId==="taxonomy") localStorage.setItem("taxonomyAccordionClosed", false)
+        if(currentId==="taxonomy") sessionStorage.setItem("querystr" + currentPage + "/" + "taxonomyAccordionClosed", false);
       }
-    } else {
-      currentAccordionIds.push(currentId);
-      // if(currentId==="taxonomy") localStorage.setItem("taxonomyAccordionClosed", false)
-      if(currentId==="taxonomy") sessionStorage.setItem("querystr" + currentPage + "/" + "taxonomyAccordionClosed", false);
-    }
-    // localStorage.setItem("accordionIds", currentAccordionIds);
-    sessionStorage.setItem("querystr" + currentPage + "/" + "accordionIds", currentAccordionIds);
+      // localStorage.setItem("accordionIds", currentAccordionIds);
+      sessionStorage.setItem("querystr" + currentPage + "/" + "accordionIds", currentAccordionIds);
+    });
   });
-});
+}
 
 document.addEventListener('DOMContentLoaded', function() {
   initializeFormInputs();
@@ -1380,5 +1390,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (form) {
       setSearchForm(form);
     }
+    setSessionStorageForAccordions();
     updateChip();
 });
