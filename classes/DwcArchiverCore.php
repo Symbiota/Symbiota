@@ -2113,6 +2113,8 @@ class DwcArchiverCore extends Manager{
 	public function isAuthorized(){
 		if($_SERVER['SERVER_NAME'] == 'localhost'){
 			//Is a dev environment
+			//Note: Under Apache 2, UseCanonicalName = On and ServerName must be set.
+			//Otherwise, this value reflects the hostname supplied by the client, which can be spoofed. It is not safe to rely on this value in security-dependent contexts.
 			return true;
 		}
 
