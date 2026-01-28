@@ -11,7 +11,9 @@ const searchFormPaleo = document.getElementById("search-form-geocontext") || nul
 // Helper function to get currentPage value, initializing if necessary
 function getCurrentPage() {
 	if (typeof window.currentPage === 'undefined') {
-		window.currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || {})?.CURRENT_URL;
+    const deleteMe = document.getElementById("all_collections_parent_container")?.dataset?.config || "{}";
+    console.log(deleteMe);
+		window.currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || "{}")?.CURRENT_URL;
 	}
 	return window.currentPage;
 }
@@ -797,7 +799,7 @@ function contains(bigger, smaller) {
 };
 
 function checkTheCollectionsThatShouldBeCheckedBasedOnConfig() {
-  const targetCollectionCategoriesCheckedStatuses = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || {})?.CATCHK;
+  const targetCollectionCategoriesCheckedStatuses = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || "{}")?.CATCHK;
   const queriedCollectionsCategories = targetCollectionCategoriesCheckedStatuses;
   if(queriedCollectionsCategories.length>0){
     uncheckEverythingInCollections();
@@ -908,7 +910,7 @@ function closeAllCategories() {
 
 
 function expandCategoriesBasedOnConfig() {
-  const targetCategoriesToExpandFromConfig = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || {})?.CATEXPND;
+  const targetCategoriesToExpandFromConfig = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || "{}")?.CATEXPND;
   targetCategoriesToExpandFromConfig?.forEach(targetCategoryToExpand => {
     const specimenCategoryPattern = "Specimens_" + targetCategoryToExpand;;
     const specimenInputsForCategory = document.getElementById(specimenCategoryPattern + '_inputs');
@@ -1392,12 +1394,25 @@ function setSessionStorageForAccordions() {
   });
 }
 
+function harvestParamSearch(){
+  const submitForm = document.getElementById("harvestparams");
+  storeFormDataInSessionStorage(submitForm);
+  const isValid = checkHarvestParamsForm(submitForm);
+  if(!isValid) return;
+  submitForm.submit();
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   initializeFormInputs();
   const form = document.getElementById('params-form');
-    if (form) {
-      setSearchForm(form);
-    }
-    setSessionStorageForAccordions();
-    updateChip();
+  if (form) {
+    setSearchForm(form);
+  }
+  setSessionStorageForAccordions();
+  updateChip();
+
+  document.getElementById("harvestparams")?.addEventListener("submit", function(event) {
+    event.preventDefault();
+    harvestParamSearch();
+  });
 });

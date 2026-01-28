@@ -1,7 +1,7 @@
 // Helper function to get currentPage value, initializing if necessary
 function getCurrentPage() {
 	if (typeof window.currentPage === 'undefined') {
-		window.currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || {})?.CURRENT_URL;
+		window.currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || "{}")?.CURRENT_URL;
 	}
 	return window.currentPage;
 }

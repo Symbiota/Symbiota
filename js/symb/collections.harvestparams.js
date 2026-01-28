@@ -14,7 +14,9 @@ function cleanNumericInput(formElem) {
 }
 
 function checkHarvestParamsForm(frm){
+	console.log("deleteMe got here b1");
 	//make sure they have filled out at least one field.
+	storeFormDataInSessionStorage(frm);
 	let searchDefined = false;
 	let traitInputs = frm.elements;
  	for(var i = 0; i < traitInputs.length; i++) {
@@ -82,7 +84,7 @@ function checkHarvestParamsForm(frm){
 	if (frm.pointlat.value != "" || frm.pointlong.value != "" || frm.radius.value != "") {
 		if ( frm.pointlat.value == "" || frm.pointlong.value == "" || frm.radius.value == "" ) {
 			alert("Error: Please make all Lat/Long point-radius values contain a value or all are empty");
-			return false;
+			// return false;
 		}
 	}
 
@@ -93,21 +95,22 @@ function checkHarvestParamsForm(frm){
 		let late = frm.lateInterval.value;
 		if ((early !== "" && late === "") || (early === "" && late !== "")) {
 			alert(translations.INTERVAL_MISSING);
-			return false;
+			// return false;
 		}
 
 		if (early in paleoTimes && late in paleoTimes && paleoTimes[early].myaStart <= paleoTimes[late].myaEnd) {
 			alert(translations.INTERVALS_WRONG_ORDER);
-			return false;
+			// return false;
 		}
 	}
 
-	return true;
+	// return true;
 }
 
 function setHarvestParamsForm(frm) {
-  if (sessionStorage.querystr) {
-	var urlVar = parseUrlVariables(sessionStorage.querystr);
+  const urlVariablesFromSessionStorage = concatenateUrlVariablesFromSessionStorage();
+  if (urlVariablesFromSessionStorage) {
+	var urlVar = parseUrlVariables(urlVariablesFromSessionStorage);
 
 	if (
 	  typeof urlVar.usethes !== "undefined" &&
