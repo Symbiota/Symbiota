@@ -3868,4 +3868,5 @@ INSERT INTO `taxstatus`(tid,tidAccepted,taxAuthID,parentTid) VALUES (1,1,1,1),(2
 #Update schema table
 INSERT IGNORE INTO `schemaversion` (versionnumber) values ("3.0");
 
-source data/geothesaurus.sql;
+#Install basic Geographic Thesaurus via data script
+SOURCE data/geothesaurus.sql;

@@ -435,43 +435,30 @@ class GeographicThesaurus extends Manager {
 	public function installViaScript(){
 		$status = false;
 		$scriptPath = $GLOBALS['SERVER_ROOT'] . '/config/schema/3.0/data/geothesaurus.sql';
-		if(file_exists($scriptPath)){
-			if($fh = @fopen($scriptPath, 'r')) {
-				$scriptStr = '';
-				while (($buffer = fgets($fh)) !== false) {
-					$scriptStr .= $buffer;
-				}
-				if (!feof($fh)) {
-					$scriptStr = '';
-					$this->errorMessage = 'ERR_FILE_READ';
-				}
-				fclose($fh);
-				if($scriptStr){
-					$sqlArr = explode(';', $scriptStr);
-					foreach($sqlArr as $k => $sql){
-						$sql = trim($sql);
-						if($sql){
-							try{
-								if($this->conn->query($sql)){
-									$status = true;
-								}
-								elseif($this->conn->error){
-									$this->errorMessage = $this->conn->error;
-									$status = false;
-								}
-							} catch (mysqli_sql_exception $e){
-								$this->errorMessage = $this->conn->error;
-							} catch (Exception $e){
-								$this->errorMessage = $this->conn->error;
-							}
+		if(!file_exists($scriptPath)){
+			$this->errorMessage = 'ERR_SCRIPT_MISSING';
+			return false;
+		}
+
+		if($scriptStr = file_get_contents($scriptPath)) {
+			foreach(explode(';', $scriptStr) as $sql){
+				if($sql = trim($sql)){
+					try{
+						if($this->conn->query($sql)){
+							$status = true;
 						}
+						elseif($this->conn->error){
+							$this->errorMessage = $this->conn->error;
+							$status = false;
+						}
+					} catch (mysqli_sql_exception $e){
+						$this->errorMessage = $this->conn->error;
+					} catch (Exception $e){
+						$this->errorMessage = $this->conn->error;
 					}
 				}
-			} else $this->errorMessage = 'ERR_LOADING_FILE';
-		}
-		else{
-			$this->errorMessage = 'ERR_SCRIPT_MISSING';
-		}
+			}
+		} else $this->errorMessage = 'ERR_FILE_READ';
 		return $status;
 	}
 

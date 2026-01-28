@@ -52,6 +52,6 @@ $LANG['NO'] = 'No';
 $LANG['IMG'] = 'IMG'; //como en "imagen"
 $LANG['LINK'] = 'enlace';
 
+$LANG['ERR_FILE_READ'] = 'Error: unexpected fail during read';
 $LANG['ERR_SCRIPT_MISSING'] = 'Faltan scripts SQL (ruta: config/schema/3.0/data/geothesaurus.sql)';
-
 ?>

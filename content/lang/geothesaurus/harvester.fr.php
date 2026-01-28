@@ -52,6 +52,6 @@ $LANG['NON'] = 'Non';
 $LANG['IMG'] = 'IMG'; //comme dans "image"
 $LANG['LIEN'] = 'lien';
 
+$LANG['ERR_FILE_READ'] = 'Error: unexpected fail during read';
 $LANG['ERR_SCRIPT_MISSING'] = "Scripts SQL manquants (chemin d'accès: config/schema/3.0/data/geothesaurus.sql)";
-
 ?>
