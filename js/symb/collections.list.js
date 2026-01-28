@@ -1,3 +1,16 @@
+// Helper function to get currentPage value, initializing if necessary
+function getCurrentPage() {
+	if (typeof window.currentPage === 'undefined') {
+		window.currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || {})?.CURRENT_URL;
+	}
+	return window.currentPage;
+}
+
+// Initialize currentPage when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+	getCurrentPage();
+});
+
 function copyUrl(){
 	host = window.location.protocol + '//' + window.location.host;
 	var $temp = $("<input>");
@@ -82,10 +95,9 @@ function targetPopup(f) {
 function setSessionQueryStr() {
 	try {
 		const data = document.getElementById('service-container');
-		const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || {})?.CURRENT_URL;
 		const searchVar = data?.getAttribute('data-search-var');
 		if(searchVar) {
-			sessionStorage["querystr" + currentPage] = searchVar;
+			sessionStorage["querystr" + getCurrentPage()] = searchVar;
 		}
 		return searchVar;
 	} catch(err) {

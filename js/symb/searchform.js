@@ -8,6 +8,19 @@ const formSites = document.getElementById("site-list") || null;
 const searchFormColls = document.getElementById("search-form-colls") || null;
 const searchFormPaleo = document.getElementById("search-form-geocontext") || null;
 
+// Helper function to get currentPage value, initializing if necessary
+function getCurrentPage() {
+	if (typeof window.currentPage === 'undefined') {
+		window.currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || {})?.CURRENT_URL;
+	}
+	return window.currentPage;
+}
+
+// Initialize currentPage when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+	getCurrentPage();
+});
+
 const uLat = document.getElementById("upperlat") || null;
 const uLatNs = document.getElementById("upperlat_NS") || null;
 const bLat = document.getElementById("bottomlat") || null;
@@ -670,7 +683,6 @@ function storeFormDataInSessionStorage(submitForm) {
   if(!submitForm || Array.from(submitForm.elements).length < 1) return;
     // @TODO add to session storage?
     clearPageSpecificSessionStorageItems();
-    const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || {})?.CURRENT_URL;
     Array.from(submitForm.elements).forEach(formElem => {
       if (
         (formElem.type == "checkbox" && formElem.checked) ||
@@ -682,7 +694,7 @@ function storeFormDataInSessionStorage(submitForm) {
         let previousValue = '';
         let newValue = formElem.value;
         if(revisedFormElemName === "db" ){
-          previousValue = sessionStorage.getItem("querystr" + currentPage + "/" + revisedFormElemName);
+          previousValue = sessionStorage.getItem("querystr" + getCurrentPage() + "/" + revisedFormElemName);
           const existingValues = previousValue ? previousValue.split(",") : [];
           if(existingValues.includes(formElem.value)){
             return; // skip adding duplicate collection
@@ -690,14 +702,13 @@ function storeFormDataInSessionStorage(submitForm) {
             newValue = previousValue ? previousValue + "," + formElem.value : formElem.value;
           }
         }
-        sessionStorage.setItem("querystr" + currentPage + "/" + revisedFormElemName, newValue);
+        sessionStorage.setItem("querystr" + getCurrentPage() + "/" + revisedFormElemName, newValue);
       }
     });
 }
 
 function clearPageSpecificSessionStorageItems() {
-  const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || {})?.CURRENT_URL;
-  const keysToRemove = Object.keys(sessionStorage).filter(key => key.startsWith("querystr" + currentPage + "/"));
+  const keysToRemove = Object.keys(sessionStorage).filter(key => key.startsWith("querystr" + getCurrentPage() + "/"));
   keysToRemove.forEach(key => sessionStorage.removeItem(key));
 }
 
@@ -989,10 +1000,9 @@ function setSearchForm(frm) {
   if (!frm) return;
   // const localStorageRealValues = Object.values(localStorage).filter(value => value !== null && value !== "null" && value !=='');
   // const localStorageJustAccordions = isLocalStorageJustAccordions(localStorageRealValues);
-  const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || {})?.CURRENT_URL;
   // const hasNoSessionInfo = !sessionStorage["querystr" + currentPage] || sessionStorage["querystr" + currentPage] === "null";
   const sessionStorageKeys = Object.keys(sessionStorage);
-  const hasSessionInfo = sessionStorageKeys.some(key => key.startsWith("querystr" + currentPage) && key !== ("querystr" + currentPage + "/" + "accordionIds") && key.value !== "null");
+  const hasSessionInfo = sessionStorageKeys.some(key => key.startsWith("querystr" + getCurrentPage()) && key !== ("querystr" + getCurrentPage() + "/" + "accordionIds") && key.value !== "null");
   // @TODO check for whether any collection-related info is in the form
   // if((localStorageRealValues.length < 1 && hasNoSessionInfo) || (localStorageJustAccordions && hasNoSessionInfo)){
   if(!hasSessionInfo){
@@ -1011,7 +1021,7 @@ function setSearchForm(frm) {
   //     expandCategoriesWithSomeCheckedChildren();
   //   });
   // }
-  // @ TODO if sessionStorage["querystr"+currentPage + foo] has collection info, use that to set collections
+  // @ TODO if sessionStorage["querystr"+getCurrentPage() + foo] has collection info, use that to set collections
   // @TODO list sessionStorage keys
   
   // else if(hasSessionInfo){
@@ -1255,11 +1265,10 @@ function parseUrlVariables(varStr) {
 
 function concatenateUrlVariablesFromSessionStorage() {
   let returnVal = '';
-  const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || {})?.CURRENT_URL;
   const sessionStorageKeys = Object.keys(sessionStorage);
-  const relevantKeys = sessionStorageKeys.filter(key => key.startsWith("querystr" + currentPage) && key.value !== "null");
+  const relevantKeys = sessionStorageKeys.filter(key => key.startsWith("querystr" + getCurrentPage()) && key.value !== "null");
   relevantKeys.forEach((relevantKey) => {
-    const justFormFieldName = relevantKey.replace("querystr" + currentPage + "/", "");
+    const justFormFieldName = relevantKey.replace("querystr" + getCurrentPage() + "/", "");
     if(justFormFieldName){
       const relevantVal = sessionStorage.getItem(relevantKey);
       returnVal += justFormFieldName + "=" + encodeURIComponent(relevantVal) + "&"; // @TODO encodeURIComponent may not be necessary here
@@ -1269,14 +1278,13 @@ function concatenateUrlVariablesFromSessionStorage() {
 }
 
 function toggleAccordionsFromSessionStorage(accordionIds) {
-  const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || {})?.CURRENT_URL;
   const accordions = document.querySelectorAll(
     'input[class="accordion-selector"]'
   );
   accordions.forEach((accordion) => {
     if(accordion.id !== "taxonomy") accordion.checked = false;
     // if(accordion.id === "taxonomy" && localStorage.getItem("taxonomyAccordionClosed")) accordion.checked = false;
-    if(accordion.id === "taxonomy" && sessionStorage.getItem("querystr" + currentPage + "/" + "taxonomyAccordionClosed")) accordion.checked = false;
+    if(accordion.id === "taxonomy" && sessionStorage.getItem("querystr" + getCurrentPage() + "/" + "taxonomyAccordionClosed")) accordion.checked = false;
   });
   accordions.forEach((accordion) => {
     const currentId = accordion.getAttribute("id");
@@ -1361,7 +1369,6 @@ function setSessionStorageForAccordions() {
   const accordions = document.querySelectorAll(
     'input[class="accordion-selector"]'
   );
-  const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || {})?.CURRENT_URL;
   accordions.forEach((accordion) => {
     accordion.addEventListener("click", (event) => {
       // const currentAccordionIds = localStorage?.accordionIds?.split(",") || [];

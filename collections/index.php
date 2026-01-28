@@ -52,7 +52,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 						$(ui.panel).html("<p>Loading...</p>");
 					}
 				});
-				sessionStorage["querystr" + currentPage] = null;
+				sessionStorage["querystr" + getCurrentPage()] = null;
 			});
 		</script>
 		<script type="text/javascript">
@@ -60,7 +60,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 				setSessionQueryStr();
 				setSearchForm(document.getElementById("params-form"));
 				// toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
-				toggleAccordionsFromSessionStorage(sessionStorage.getItem("querystr" + currentPage + "/" + "accordionIds") ?.split(",") || []);
+				toggleAccordionsFromSessionStorage(sessionStorage.getItem("querystr" + getCurrentPage() + "/" + "accordionIds") ?.split(",") || []);
 				document.getElementById("params-form").addEventListener("submit", function(event) {
 					console.log("deleteMe got here a1");
 					event.preventDefault();
