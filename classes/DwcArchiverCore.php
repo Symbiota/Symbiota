@@ -2118,16 +2118,15 @@ class DwcArchiverCore extends Manager{
 			return true;
 		}
 
-		//Check to see if source is one of our Symbiota portals
 		if(empty($_SERVER['REMOTE_ADDR'])){
 			error_log('Unauthorized access to dwcapubhandler: NULL REMOTE_ADDR');
 			return false;
 		}
-		$refererIP = $_SERVER['REMOTE_ADDR'];
-		$authorizedIpPrefixes = array('129.237.92');
-		foreach($authorizedIpPrefixes as $prefix){
-			if(strpos($refererIP, $prefix) === 0){
-				//source IP matches an approved source
+		//Check to see if referrer is within shared network
+		$refererIpPrefix = substr($_SERVER['REMOTE_ADDR'], 0, strrpos($_SERVER['REMOTE_ADDR'], '.'));
+		//error_log('Access to dwcapubhandler - refererIpPrefix: ' . $refererIpPrefix . '; serverIP: ' . $_SERVER['SERVER_ADDR']);
+		if(!empty($_SERVER['SERVER_ADDR']) && $refererIpPrefix){
+			if(strpos($_SERVER['SERVER_ADDR'], $refererIpPrefix) === 0){
 				return true;
 			}
 		}
