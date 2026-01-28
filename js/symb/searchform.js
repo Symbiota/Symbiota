@@ -683,7 +683,6 @@ function simpleSearch() {
 
 function storeFormDataInSessionStorage(submitForm) {
   if(!submitForm || Array.from(submitForm.elements).length < 1) return;
-    // @TODO add to session storage?
     clearPageSpecificSessionStorageItems();
     Array.from(submitForm.elements).forEach(formElem => {
       if (
@@ -1004,7 +1003,10 @@ function setSearchForm(frm) {
   // const localStorageJustAccordions = isLocalStorageJustAccordions(localStorageRealValues);
   // const hasNoSessionInfo = !sessionStorage["querystr" + currentPage] || sessionStorage["querystr" + currentPage] === "null";
   const sessionStorageKeys = Object.keys(sessionStorage);
-  const hasSessionInfo = sessionStorageKeys.some(key => key.startsWith("querystr" + getCurrentPage()) && key !== ("querystr" + getCurrentPage() + "/" + "accordionIds") && key.value !== "null");
+  const hasSessionInfo = sessionStorageKeys.some(key => {
+    const currentVal = sessionStorage.getItem(key);
+    return key.startsWith("querystr" + getCurrentPage()) && key !== ("querystr" + getCurrentPage() + "/" + "accordionIds") && currentVal !== "null"
+  });
   // @TODO check for whether any collection-related info is in the form
   // if((localStorageRealValues.length < 1 && hasNoSessionInfo) || (localStorageJustAccordions && hasNoSessionInfo)){
   if(!hasSessionInfo){
@@ -1394,14 +1396,6 @@ function setSessionStorageForAccordions() {
   });
 }
 
-function harvestParamSearch(){
-  const submitForm = document.getElementById("harvestparams");
-  storeFormDataInSessionStorage(submitForm);
-  const isValid = checkHarvestParamsForm(submitForm);
-  if(!isValid) return;
-  submitForm.submit();
-}
-
 document.addEventListener('DOMContentLoaded', function() {
   initializeFormInputs();
   const form = document.getElementById('params-form');
@@ -1411,8 +1405,4 @@ document.addEventListener('DOMContentLoaded', function() {
   setSessionStorageForAccordions();
   updateChip();
 
-  document.getElementById("harvestparams")?.addEventListener("submit", function(event) {
-    event.preventDefault();
-    harvestParamSearch();
-  });
 });

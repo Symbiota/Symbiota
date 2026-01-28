@@ -13,9 +13,17 @@ function cleanNumericInput(formElem) {
   }
 }
 
-function checkHarvestParamsForm(frm){
-	console.log("deleteMe got here b1");
-	//make sure they have filled out at least one field.
+function checkHarvestParamsForm(frm, currentPage){
+	const newInputElement = document.createElement("input");
+	newInputElement.type = "hidden";
+	newInputElement.id = "db";
+	newInputElement.name = "db";
+	const previousPageKey = 'querystr' + currentPage?.replace('collections/harvestparams.php','collections/index.php') + '/db';
+	const previousPageDbVals = sessionStorage.getItem(previousPageKey);
+	if(previousPageDbVals){
+		newInputElement.value = previousPageDbVals;
+	}
+	frm.appendChild(newInputElement);
 	storeFormDataInSessionStorage(frm);
 	let searchDefined = false;
 	let traitInputs = frm.elements;

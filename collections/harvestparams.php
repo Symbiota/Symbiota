@@ -72,8 +72,7 @@ $searchVar = $collManager->getQueryTermStr();
 	?>
 	<div role="main" id="innertext">
 		<h1 class="page-heading bottom-breathing-room-rel top-breathing-room-rel"><?php echo $LANG['SEARCH']; ?></h1>
-		<!-- <form name="harvestparams" id="harvestparams" action="list.php" method="post" onsubmit="return checkHarvestParamsForm(this)"> -->
-			<form name="harvestparams" id="harvestparams" action="list.php" method="post" >
+		<form name="harvestparams" id="harvestparams" action="list.php" method="post" onsubmit="return checkHarvestParamsForm(this, '<?php echo $_SERVER['REQUEST_URI']; ?>');">
 			<hr/>
 			<div>
 				<div style="float:left">
@@ -430,7 +429,7 @@ $searchVar = $collManager->getQueryTermStr();
 			</div>
 			<div>
 				<input name="comingFrom" type="hidden" value="harvestparams" >
-				<input type="hidden" name="db" value="<?php echo $collManager->getSearchTerm('db'); ?>" />
+				<input type="hidden" name="db" value="<?php echo $collManager->getSearchTerm('db', $_SERVER['REQUEST_URI']); ?>" />
 			</div>
 			<hr/>
 		</form>

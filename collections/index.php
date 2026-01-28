@@ -125,4 +125,15 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.list.js?ver=20251002>" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=2" type="text/javascript"></script>
 	<script src="../js/symb/collections.index.js?ver=20171215" type="text/javascript"></script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+		const searchBtn = document.getElementById("search-btn");
+		searchBtn.addEventListener("click", function(event) {
+			const form = document.getElementById("params-form");
+			event.preventDefault();
+			simpleSearch();
+		});
+		
+	});
+</script>
 </html>
