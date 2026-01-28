@@ -670,7 +670,7 @@ function storeFormDataInSessionStorage(submitForm) {
   if(!submitForm || Array.from(submitForm.elements).length < 1) return;
     // @TODO add to session storage?
     clearPageSpecificSessionStorageItems();
-    const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CURRENT_URL;
+    const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || {})?.CURRENT_URL;
     Array.from(submitForm.elements).forEach(formElem => {
       if (
         (formElem.type == "checkbox" && formElem.checked) ||
@@ -681,7 +681,7 @@ function storeFormDataInSessionStorage(submitForm) {
         const revisedFormElemName = (formElem.name == "db[]") ? "db" : formElem.name;
         let previousValue = '';
         let newValue = formElem.value;
-        if(revisedFormElemName === "db"){
+        if(revisedFormElemName === "db" ){
           previousValue = sessionStorage.getItem("querystr" + currentPage + "/" + revisedFormElemName);
           const existingValues = previousValue ? previousValue.split(",") : [];
           if(existingValues.includes(formElem.value)){
@@ -696,7 +696,7 @@ function storeFormDataInSessionStorage(submitForm) {
 }
 
 function clearPageSpecificSessionStorageItems() {
-  const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CURRENT_URL;
+  const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || {})?.CURRENT_URL;
   const keysToRemove = Object.keys(sessionStorage).filter(key => key.startsWith("querystr" + currentPage + "/"));
   keysToRemove.forEach(key => sessionStorage.removeItem(key));
 }
@@ -786,7 +786,7 @@ function contains(bigger, smaller) {
 };
 
 function checkTheCollectionsThatShouldBeCheckedBasedOnConfig() {
-  const targetCollectionCategoriesCheckedStatuses = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CATCHK;
+  const targetCollectionCategoriesCheckedStatuses = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || {})?.CATCHK;
   const queriedCollectionsCategories = targetCollectionCategoriesCheckedStatuses;
   if(queriedCollectionsCategories.length>0){
     uncheckEverythingInCollections();
@@ -897,7 +897,7 @@ function closeAllCategories() {
 
 
 function expandCategoriesBasedOnConfig() {
-  const targetCategoriesToExpandFromConfig = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CATEXPND;
+  const targetCategoriesToExpandFromConfig = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || {})?.CATEXPND;
   targetCategoriesToExpandFromConfig?.forEach(targetCategoryToExpand => {
     const specimenCategoryPattern = "Specimens_" + targetCategoryToExpand;;
     const specimenInputsForCategory = document.getElementById(specimenCategoryPattern + '_inputs');
@@ -961,8 +961,9 @@ function expandCategoriesWithSomeCheckedChildren() {
       });
       document.getElementById("reset-btn").addEventListener("click", function (event) {
         document.getElementById("params-form").reset();
-        sessionStorage.clear();
-        localStorage.clear();
+        // sessionStorage.clear();
+        // localStorage.clear();
+        clearPageSpecificSessionStorageItems();
         checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
         closeAllCategories();
         expandCategoriesBasedOnConfig();
@@ -988,7 +989,7 @@ function setSearchForm(frm) {
   if (!frm) return;
   // const localStorageRealValues = Object.values(localStorage).filter(value => value !== null && value !== "null" && value !=='');
   // const localStorageJustAccordions = isLocalStorageJustAccordions(localStorageRealValues);
-  const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CURRENT_URL;
+  const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || {})?.CURRENT_URL;
   // const hasNoSessionInfo = !sessionStorage["querystr" + currentPage] || sessionStorage["querystr" + currentPage] === "null";
   const sessionStorageKeys = Object.keys(sessionStorage);
   const hasSessionInfo = sessionStorageKeys.some(key => key.startsWith("querystr" + currentPage) && key !== ("querystr" + currentPage + "/" + "accordionIds") && key.value !== "null");
@@ -1254,7 +1255,7 @@ function parseUrlVariables(varStr) {
 
 function concatenateUrlVariablesFromSessionStorage() {
   let returnVal = '';
-  const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CURRENT_URL;
+  const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || {})?.CURRENT_URL;
   const sessionStorageKeys = Object.keys(sessionStorage);
   const relevantKeys = sessionStorageKeys.filter(key => key.startsWith("querystr" + currentPage) && key.value !== "null");
   relevantKeys.forEach((relevantKey) => {
@@ -1268,7 +1269,7 @@ function concatenateUrlVariablesFromSessionStorage() {
 }
 
 function toggleAccordionsFromSessionStorage(accordionIds) {
-  const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CURRENT_URL;
+  const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || {})?.CURRENT_URL;
   const accordions = document.querySelectorAll(
     'input[class="accordion-selector"]'
   );
@@ -1360,7 +1361,7 @@ function setSessionStorageForAccordions() {
   const accordions = document.querySelectorAll(
     'input[class="accordion-selector"]'
   );
-  const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CURRENT_URL;
+  const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || {})?.CURRENT_URL;
   accordions.forEach((accordion) => {
     accordion.addEventListener("click", (event) => {
       // const currentAccordionIds = localStorage?.accordionIds?.split(",") || [];

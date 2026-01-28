@@ -826,8 +826,9 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 		});
 		document.getElementById("reset-btn").addEventListener("click", function (event) {
 			document.getElementById("params-form").reset();
-			sessionStorage.clear();
-			localStorage.clear();
+			// sessionStorage.clear();
+			// localStorage.clear();
+			clearPageSpecificSessionStorageItems();
 			checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
 			closeAllCategories();
 			expandCategoriesBasedOnConfig();

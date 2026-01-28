@@ -82,7 +82,7 @@ function targetPopup(f) {
 function setSessionQueryStr() {
 	try {
 		const data = document.getElementById('service-container');
-		const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || '')?.CURRENT_URL;
+		const currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || {})?.CURRENT_URL;
 		const searchVar = data?.getAttribute('data-search-var');
 		if(searchVar) {
 			sessionStorage["querystr" + currentPage] = searchVar;

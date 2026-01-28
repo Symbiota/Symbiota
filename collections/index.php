@@ -62,13 +62,15 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 				// toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
 				toggleAccordionsFromSessionStorage(sessionStorage.getItem("querystr" + currentPage + "/" + "accordionIds") ?.split(",") || []);
 				document.getElementById("params-form").addEventListener("submit", function(event) {
+					console.log("deleteMe got here a1");
 					event.preventDefault();
 					simpleSearch();
 				});
 				document.getElementById("reset-btn").addEventListener("click", function (event) {
 					document.getElementById("params-form").reset();
-					sessionStorage.clear();
-					localStorage.clear();
+					clearPageSpecificSessionStorageItems();
+					// sessionStorage.clear();
+					// localStorage.clear();
 					checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
 					closeAllCategories();
 					expandCategoriesBasedOnConfig();
