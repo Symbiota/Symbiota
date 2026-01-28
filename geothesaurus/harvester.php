@@ -110,7 +110,7 @@ if($isEditor && $submitAction) {
       fieldset{ margin: 10px; padding: 15px; }
       legend{ font-weight: bold; }
       label{ text-decoration: underline; }
-      button{ margin: 10px; }
+      button{ margin: 15px; }
       #edit-legend{ display: none }
       .field-div{ margin: 3px 0px }
       .editIcon{  }

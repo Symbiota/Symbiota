@@ -25,7 +25,9 @@ $LANG['INSTALL_VIA_SCRIPT'] = 'The <a href="https://symbiota.org" target="_blank
 	This data file contains place names for all countries, state/provinces for Canada, US, and Mexico, and counties/parishes for US and Canada.
 	Once a base thesaurus is established, it can be extended using the geoBoundary import tools below.';
 $LANG['GEOBOUNDARIES'] = 'geoBoundaries Import Options';
-$LANG['GEOBOUNDARIES_DESCRIPTION'] = 'These function can be used to import geographic boundaries and polygons via the <a href="https://www.geoboundaries.org" target="_blank">geoBoundaries</a> API.';
+$LANG['GEOBOUNDARIES_DESCRIPTION'] = 'These function can be used to import geographic boundaries and polygons via the <a href="https://www.geoboundaries.org" target="_blank">geoBoundaries</a> API.
+	These resources are publicly available through the support and contributions of numerous
+	<a href="https://www.geoboundaries.org/contribute.html" target="_blank">individuals, organizations, and funders</a>.';
 $LANG['ADD_ALL_BOUNDARIES'] = 'Add All International Boundaries';
 $LANG['COUNTRY_LIST_NAV'] = 'Return to Country List';
 $LANG['ADD_BOUNDARIES'] = 'Add Boundaries';

@@ -25,7 +25,9 @@ $LANG['INSTALL_VIA_SCRIPT'] = 'El <a href="https://symbiota.org" target="_blank"
 Este archivo de datos contiene nombres de lugares para todos los países, estados/provincias de Canadá, Estados Unidos y México, y condados/parroquias de Estados Unidos y Canadá.
 Una vez que se haya establecido un tesauro base, se puede ampliar utilizando las herramientas de importación de límites geográficos que se muestran a continuación.';
 $LANG['GEOBOUNDARIES'] = 'geoBoundaries opciones de importación';
-$LANG['GEOBOUNDARIES_DESCRIPTION'] = 'Estas funciones se pueden utilizar para importar límites geográficos y polígonos a través de la API de <a href="https://www.geoboundaries.org" target="_blank">geoBoundaries</a>.';
+$LANG['GEOBOUNDARIES_DESCRIPTION'] = 'Estas funciones se pueden utilizar para importar límites geográficos y polígonos a través de la API de <a href="https://www.geoboundaries.org" target="_blank">geoBoundaries</a>.
+	Los recursos de geoBoundaries están disponibles públicamente gracias al apoyo y las contribuciones de numerosas
+	<a href="https://www.geoboundaries.org/contribute.html" target="_blank">personas, organizaciones y entidades financiadoras</a>';
 $LANG['ADD_ALL_BOUNDARIES'] = 'Agregar todos los límites internacionales';
 $LANG['COUNTRY_LIST_NAV'] = 'Volver a la lista de países';
 $LANG['ADD_BOUNDARIES'] = 'Agregar límites';
