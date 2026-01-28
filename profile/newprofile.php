@@ -238,7 +238,7 @@ if($action == 'Create Login'){
 								<input class="half-gridlike-form-row-input" name="guid" id="guid" type="text" size="40" value="<?php echo (isset($_POST['guid']) ? htmlspecialchars($_POST['guid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?>" />
 							</section>
 						</div>
-						<span>
+						<span style="color:red;">
 							<?php echo (isset($LANG['PASSWORD_WARNING']) ? $LANG['PASSWORD_WARNING'] : 'Do not create shared/group user accounts.<br><br>For security reasons, every individual should have their own unique login and password.<br><br>Create a password that is unique to this portal.<br><br>Do not reuse a password from another website, your email, etc.'); ?>
 						</span>
 					</div>
