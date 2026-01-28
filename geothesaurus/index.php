@@ -224,7 +224,7 @@ function listGeoUnits($arr) {
             <?= $LANG['NAV_HOME'] ?> </a> &gt;&gt;
          <?php if($geoThesID): ?>
          <a href="index.php"><b> <?= $LANG['NAV_GEOTHES'] ?> </b></a>&gt;&gt;
-         <b> <?= $geoUnit["geoTerm"]?> </b>
+         <b> <?= $geoUnit["geoTerm"] ?? '' ?> </b>
          <?php else: ?>
          <b> <?= $LANG['NAV_GEOTHES'] ?> </b>
          <?php endif ?>
@@ -294,7 +294,7 @@ function listGeoUnits($arr) {
                            if($geoThesID){
                            //Grabs the next highest rankid when matched
                            if($defaultGeoLevel == 'getNextRankid') $defaultGeoLevel = $rankID;
-                           if($rankID == $geoUnit['geoLevel']) $defaultGeoLevel = 'getNextRankid';
+                           if($geoUnit && $rankID == $geoUnit['geoLevel']) $defaultGeoLevel = 'getNextRankid';
                            }
                            echo '<option value="' . $rankID . '" '. ($defaultGeoLevel === $rankID?'SELECTED':'') . '>' . $rankValue . '</option>';
                            }
@@ -539,7 +539,13 @@ function listGeoUnits($arr) {
             </span>
          </div >
          <div style="margin: 10px">
-            <?php listGeoUnits($geoUnit? array_filter($geoArr, fn($val) => 10 >= (intval($val['geoLevel']) - $geoUnit['geoLevel'])): $geoArr) ?>
+            <?php
+            if($geoArr){
+               listGeoUnits($geoUnit? array_filter($geoArr, fn($val) => 10 >= (intval($val['geoLevel']) - $geoUnit['geoLevel'])): $geoArr);
+            } else{
+               echo '<div style="margin: 15px; ">' . $LANG['EMPTY_GEOTHESAURUS'] . '</div>';
+            }
+            ?>
          </div>
          <?php endif?>
 

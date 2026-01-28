@@ -44,7 +44,6 @@ $LANG['ADD_UNIT'] = 'Ajouter une unité';
 $LANG['TERMS_WITHIN'] = 'termes géographiques au sein';
 $LANG['ROOT_TERMS'] = 'Termes racines (termes sans parents)';
 $LANG['ENFANTS'] = 'enfants';
-$LANG['NO_RECORDS'] = 'Aucun enregistrement renvoyé';
 $LANG['POLYGONE'] = 'Polygone';
 $LANG['IMG_OF_GLOBE'] = 'Image du globe';
 $LANG['NO_POLYGON'] = 'Non';
@@ -56,5 +55,6 @@ $LANG['RECHERCHE'] = 'Rechercher';
 $LANG['AUTRE'] = 'Autre ';
 $LANG['SEARCH_GEOTHESAURUS'] = 'Rechercher un thésaurus géographique';
 $LANG['ADD_TERM_LIST'] = 'Ajouter un terme à la liste';
+$LANG['EMPTY_GEOTHESAURUS'] = "Le thésaurus géographique est vide.<br>Ajoutez des termes manuellement ou ouvrez l'outil d'extraction géographique pour accéder à d'autres options d'importation.";
 
 ?>

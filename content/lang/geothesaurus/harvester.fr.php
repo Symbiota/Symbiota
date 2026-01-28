@@ -2,19 +2,13 @@
 /*
 ------------------
 Language: Français (French)
-Translated by: Google Translate
-Date Translated: 2024-03-05
+Translated by: Google Translate (2024-03-05)
 ------------------
 */
-
-$LANG['TRANSFERRED_TO_GEOTHESAURUS'] = 'Tables de recherche géographique transférées dans le nouveau thésaurus géographique';
 $LANG['HARVESTER_ISSUE'] = 'La moissonneuse a rencontré un problème';
 $LANG['BATCH_HARVESTER_ISSUE'] = 'La moissonneuse a rencontré un problème';
 $LANG['GEOTHESAURUS_HARVESTER'] = 'Thésaurus géographique Havester';
 $LANG['GEOGRAPHIC_HARVESTER'] = 'Moissonneur géographique';
-$LANG['LOOKUP_TABLES_TITLE'] = 'Tables de recherche géographique - obsolètes';
-$LANG['LOOKUP_TABLES_DESC'] = 'Il semble y avoir des enregistrements dans les tables de recherche géographique obsolètes qui ne sont plus utilisées.<br/>Voulez-vous transférer ces données dans le nouveau thésaurus géographique ?';
-$LANG['TRANSFER_LOOKUP_TABLES'] = 'Transférer les tables de recherche';
 $LANG['ACTIVE_GEOGRAPHIC_THESAURUS'] = 'Thésaurus géographique actif';
 $LANG['SHOW_ALL'] = 'Afficher toutes les limites';
 $LANG['SHOW_NO_POLYGON'] = 'Afficher les limites sans polygone';
@@ -25,13 +19,19 @@ $LANG['STATE/PROVINCE'] = 'État/Province';
 $LANG['MUNICIPALITIES'] = 'Municipalités';
 $LANG['GO_TO_GEOGRAPHIC_THESAURUS'] = 'Aller au thésaurus géographique';
 $LANG['ACTIVE_THES_EMPTY'] = 'Le thésaurus actif est vide';
-$LANG['AVAILABLE_BOUNDARIES'] = 'Limites disponibles';
+$LANG['SCRIPT_INSTALL'] = 'Installation du Script';
+$LANG['RUN_SCRIPT'] = 'Exécuter le script';
+$LANG['INSTALL_VIA_SCRIPT'] = 'Le <a href="https://symbiota.org" target="_blank">Centre d\'assistance Symbiota</a> a fourni un script de données permettant de créer un thésaurus géographique de base.
+	Ce fichier de données contient les noms de lieux de tous les pays, les États/provinces du Canada, des États-Unis et du Mexique, ainsi que les comtés/paroisses des États-Unis et du Canada.
+	Une fois le thésaurus de base établi, il peut être enrichi à l\'aide des outils d\'importation de limites géographiques ci-dessous.';
+$LANG['GEOBOUNDARIES'] = "geoBoundaries options d'importation";
+$LANG['GEOBOUNDARIES_DESCRIPTION'] = 'Ces fonctions peuvent être utilisées pour importer des limites géographiques et des polygones via l\'API <a href="https://www.geoboundaries.org" target="_blank">geoBoundaries</a>.';
 $LANG['ADD_ALL_BOUNDARIES'] = 'Ajouter toutes les frontières internationales';
 $LANG['COUNTRY_LIST_NAV'] = 'Retour à la liste des pays';
 $LANG['ADD_BOUNDARIES'] = 'Ajouter des limites';
 $LANG['LOADING_GEO_DATA_TEXT'] = 'Ce processus peut prendre un certain temps pour traiter les données géographiques';
 $LANG['ADD_IF_GEOUNITS_MISSING'] = 'Ajouter des unités géographiques si manquantes';
-   
+
 $LANG['TABLE_NAME'] = 'Nom';
 $LANG['TABLE_TYPE'] = 'Type';
 $LANG['TABLE_INCOMING_COUNT'] = 'Compte entrant';
@@ -49,5 +49,7 @@ $LANG['OUI'] = 'Oui';
 $LANG['NON'] = 'Non';
 $LANG['IMG'] = 'IMG'; //comme dans "image"
 $LANG['LIEN'] = 'lien';
+
+$LANG['ERR_SCRIPT_MISSING'] = "Scripts SQL manquants (chemin d'accès: config/schema/3.0/data/geothesaurus.sql)";
 
 ?>

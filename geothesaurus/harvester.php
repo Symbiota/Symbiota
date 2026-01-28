@@ -11,16 +11,15 @@ Language::load([
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $geoThesID = array_key_exists('geoThesID', $_REQUEST) ? filter_var($_REQUEST['geoThesID'], FILTER_SANITIZE_NUMBER_INT) : '';
-$gbAction = array_key_exists('gbAction', $_REQUEST) ? htmlspecialchars($_REQUEST['gbAction'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
-$submitAction = array_key_exists('submitaction', $_POST) ? htmlspecialchars($_POST['submitaction'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
-$addIfMissing = array_key_exists('addgeounit', $_POST)? filter_var($_POST['addgeounit'], FILTER_VALIDATE_BOOLEAN) : false;
+$addIfMissing = !empty($_POST['addgeounit']) ? true : false;
 $baseParent = array_key_exists('baseParent', $_POST) && !empty($_POST['baseParent']) ? filter_var($_POST['baseParent'], FILTER_SANITIZE_NUMBER_INT) : null;
+$gbAction = array_key_exists('gbAction', $_REQUEST) ? htmlspecialchars($_REQUEST['gbAction'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
+$submitAction = array_key_exists('submitaction', $_POST) ? $_POST['submitaction'] : '';
 
 $geoManager = new GeographicThesaurus();
 
 $isEditor = false;
-
-if(!isset($IS_ADMIN) || (!$IS_ADMIN && !array_key_exists('CollAdmin',$USER_RIGHTS))) {
+if(!isset($IS_ADMIN) || (!$IS_ADMIN && !array_key_exists('CollAdmin', $USER_RIGHTS))) {
    header("Location: ". $CLIENT_ROOT . '/index.php');
 } else {
    $isEditor = true;
@@ -29,11 +28,19 @@ if(!isset($IS_ADMIN) || (!$IS_ADMIN && !array_key_exists('CollAdmin',$USER_RIGHT
 $statusStr = '';
 
 if($isEditor && $submitAction) {
-   if($submitAction == 'transferDataFromLkupTables'){
-      if($geoManager->transferDeprecatedThesaurus()) $statusStr = '<span style="color:green;">' . $LANG['TRANSFERRED_TO_GEOTHESAURUS'] . '</span>';
-      else $statusStr = '<span style="color:green;">'.implode('<br/>',$geoManager->getWarningArr()).'<span style="color:green;">';
-   }
-   elseif($submitAction == 'submitCountryForm') {
+	if($submitAction == 'installViaScript'){
+		if(!$geoManager->installViaScript()){
+			if($errMsg = $geoManager->getErrorMessage()){
+				if(!empty($LANG[$errMsg])){
+					$statusStr = $LANG[$errMsg];
+				}
+				else{
+					$statusStr = 'ERROR: ' . $errMsg;
+				}
+			}
+		}
+	}
+	elseif($submitAction == 'submitCountryForm') {
       //This Call can Take a very long time depending on the size of the
       //geoJson and how many children are within the feature collection past
       set_time_limit(1200);
@@ -48,7 +55,7 @@ if($isEditor && $submitAction) {
          $potentialParents = array_map(
             fn($val) => $val['geoThesID'],
             array_filter(
-               $geoManager->getChildren([$baseParent]), 
+               $geoManager->getChildren([$baseParent]),
                fn($val) => $val['geoLevel'] === ($geoManager->getGeoLevel($types[0]) - 10)
             )
          );
@@ -103,6 +110,7 @@ if($isEditor && $submitAction) {
       fieldset{ margin: 10px; padding: 15px; }
       legend{ font-weight: bold; }
       label{ text-decoration: underline; }
+      button{ margin: 10px; }
       #edit-legend{ display: none }
       .field-div{ margin: 3px 0px }
       .editIcon{  }
@@ -156,40 +164,36 @@ if($isEditor && $submitAction) {
          if($statusStr){
          echo '<div id="status-div">'.$statusStr.'</div>';
          }
-
-         if($statusReport = $geoManager->getThesaurusStatus()){
-         $geoRankArr = $geoManager->getGeoRankArr();
-         echo '<fieldset style="width: 800px">';
-         echo '<legend>' . $LANG['ACTIVE_GEOGRAPHIC_THESAURUS'] . '</legend>';
-         if(isset($statusReport['active'])){
-         foreach($statusReport['active'] as $geoRank => $cnt){
-         echo '<div><b>'.$geoRankArr[$geoRank].':</b> '.$cnt.'</div>';
-         }
-         echo '<div style="margin-top:20px"><a href="index.php">' . $LANG['GO_TO_GEOGRAPHIC_THESAURUS'] . '</a></div>';
-         }
-         else echo '<div>' . $LANG['ACTIVE_THES_EMPTY'] . '</div>';
-         echo '</fieldset>';
-         }
-         if(isset($statusReport['lkup'])){
-         ?>
-         <fieldset>
-            <legend><?=$LANG['LOOKUP_TABLES_TITLE']?></legend>
-            <p><?=$LANG['LOOKUP_TABLES_DESC']?></p>
-            <?php
-            foreach($statusReport['lkup'] as $k => $v){
-            echo '<div><b>' . $k . ':</b> ' . $v . '</div>';
+         $statusReport = $geoManager->getThesaurusStatus();
+         if($statusReport){
+            $geoRankArr = $geoManager->getGeoRankArr();
+            echo '<fieldset style="width: 800px">';
+            echo '<legend>' . $LANG['ACTIVE_GEOGRAPHIC_THESAURUS'] . '</legend>';
+            if(isset($statusReport['active'])){
+               foreach($statusReport['active'] as $geoRank => $cnt){
+                  echo '<div><b>'.$geoRankArr[$geoRank].':</b> '.$cnt.'</div>';
+               }
+               echo '<div style="margin-top:20px"><a href="index.php">' . $LANG['GO_TO_GEOGRAPHIC_THESAURUS'] . '</a></div>';
             }
+            else echo '<div>' . $LANG['ACTIVE_THES_EMPTY'] . '</div>';
+            echo '</fieldset>';
+         }
+         if(!$statusReport){
+            //If thesaurus is empty, offer option to build thesaurus via script
             ?>
-            <hr/>
-            <form name="transThesForm" action="harvester.php" method="post" style="margin-top:15px">
-               <button name="submitaction" type="submit" value="transferDataFromLkupTables"><?= $LANG['TRANSFER_LOOKUP_TABLES']?></button>
-            </form>
-         </fieldset>
-         <?php
+            <fieldset>
+				<legend><?= $LANG['SCRIPT_INSTALL'] ?></legend>
+				<div><?= $LANG['INSTALL_VIA_SCRIPT'] ?></div>
+				<form method="post" action="harvester.php">
+					<button name="submitaction" type="submit" value="installViaScript"><?= $LANG['RUN_SCRIPT'] ?></button>
+				</form>
+			</fieldset>
+            <?php
          }
          ?>
          <fieldset>
-            <legend><?= $LANG['AVAILABLE_BOUNDARIES']?></legend>
+            <legend><?= $LANG['GEOBOUNDARIES']?></legend>
+				<div><?= $LANG['GEOBOUNDARIES_DESCRIPTION'] ?></div>
             <?php
             if(!$gbAction){
             ?>
@@ -208,7 +212,7 @@ if($isEditor && $submitAction) {
                </span>
                <div id="submit-loading-text" style="display:none; margin-bottom:1.5rem">
                   <?=$LANG['LOADING_GEO_DATA_TEXT']?>
-               </div> 
+               </div>
                <table class="styledtable">
                   <tr>
                      <th><?=$LANG['TABLE_NAME']?></th>
@@ -315,7 +319,7 @@ if($isEditor && $submitAction) {
                </span>
                <div id="submit-loading-text" style="display:none">
                   <?= $LANG['LOADING_GEO_DATA_TEXT'] ?>
-               </div> 
+               </div>
             </form>
             <?php
             }
