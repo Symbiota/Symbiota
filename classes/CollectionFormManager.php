@@ -132,16 +132,26 @@ class CollectionFormManager extends Manager {
             $uncategorizedKey = array_key_first($filteredCollections);
             $revisedCollections['Uncategorized'] = $revisedCollections[$uncategorizedKey];
             unset($revisedCollections[$uncategorizedKey]);
-            $revisedCollections['Uncategorized']['name'] = 'Uncategorized';
             $allIds = array_column($revisedCollections, 'id');
             $numericIds = array_map(function($id) {
                 return is_numeric($id) ? (int)$id : null;
             },$allIds);
+            $allOrphans = count($allIds) === 0;
+            $revisedCollections['Uncategorized']['name'] = $allOrphans ? 'Uncategorized' : 'Specimen and Observation Collections';
             if (count($numericIds) === count($allIds)) {
                 $maxId = max($numericIds);
                 $revisedCollections['Uncategorized']['id'] = (string)($maxId + 1);
             }
         }
         return $revisedCollections;
+     }
+
+     public function areAllCollectionsCategoryless($collectionsHyperCollection): bool {
+        $finalCount = 0;
+        foreach($collectionsHyperCollection as $collectionType => $categories){
+                $allIds = array_column($categories, 'id');
+                $finalCount += count($allIds);
+        }
+        return $finalCount === 1;
      }
 }
