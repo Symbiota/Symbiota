@@ -75,7 +75,7 @@ class DwcArchiverCore extends Manager{
 		$this->charSetOut = $this->charSetSource;
 
 		$this->condAllowArr = array(
-			'catalognumber', 'othercatalognumbers', 'occurrenceid', 'family', 'sciname', 'country', 'stateprovince', 'county', 'municipality',
+			'catalognumber', 'othercatalognumbers', 'occurrenceid', 'family', 'sciname', 'country', 'locality' ,'stateprovince', 'county', 'municipality',
 			'recordedby', 'recordnumber', 'eventdate', 'decimallatitude', 'decimallongitude', 'minimumelevationinmeters', 'maximumelevationinmeters', 'cultivationstatus',
 			'datelastmodified', 'dateentered', 'processingstatus', 'dbpk', 'traitid', 'stateid'
 		);
