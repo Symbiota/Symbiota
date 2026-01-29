@@ -92,7 +92,7 @@ class DwcArchiverCore extends Manager{
 			$this->includeAcceptedNameUsage = true;
 		}
 
-		//ini_set('memory_limit','512M');
+		ini_set('memory_limit','512M');
 		set_time_limit(1800);
 	}
 
@@ -109,7 +109,7 @@ class DwcArchiverCore extends Manager{
 			$sqlWhere = '(c.colltype IN("Observations", "General Observations")) ';
 		}
 		if ($collTarget && $collTarget != 'all') {
-			if($collType != 'internalCall') $this->conditionArr['collid'] = $collTarget;
+			$this->conditionArr['collid'] = $collTarget;
 			$sqlWhere .= ($sqlWhere ? 'AND ' : '') . '(c.collid IN(' . $collTarget . ')) ';
 		}
 		if ($sqlWhere) {
@@ -234,8 +234,7 @@ class DwcArchiverCore extends Manager{
 		}
 
 		if($this->includeAcceptedNameUsage) {
-			// TODO (Logan) Should there be a select for this?
-			$this->conditionSql .= 'AND (ts.taxauthid = 1) ';
+			$this->conditionSql .= 'AND (ts.taxauthid = 1 OR ts.taxauthid IS NULL) ';
 		}
 
 		$sqlFrag = '';
@@ -1271,7 +1270,7 @@ class DwcArchiverCore extends Manager{
 			if (isset($this->collArr[$collId]['phone'])) $emlArr['contact']['phone'] = $this->collArr[$collId]['phone'];
 			if (isset($this->collArr[$collId]['contact'][0]['electronicMailAddress'])) $emlArr['contact']['electronicMailAddress'] = $this->collArr[$collId]['contact'][0]['electronicMailAddress'];
 			if (isset($this->collArr[$collId]['contact'][0]['userId'])) $emlArr['contact']['userId'] = $this->collArr[$collId]['contact'][0]['userId'];
-			if ($this->collArr[$collId]['url']) $emlArr['contact']['onlineUrl'] = $this->collArr[$collId]['url'];
+			if (isset($this->collArr[$collId]['url'])) $emlArr['contact']['onlineUrl'] = $this->collArr[$collId]['url'];
 			$addrStr = $this->collArr[$collId]['address1'];
 			if ($this->collArr[$collId]['address2']) $addrStr .= ', ' . $this->collArr[$collId]['address2'];
 			if ($addrStr) $emlArr['contact']['addr']['deliveryPoint'] = $addrStr;
@@ -1556,19 +1555,6 @@ class DwcArchiverCore extends Manager{
 					}
 				}
 				while ($r = $rs->fetch_assoc()) {
-					if ($this->isPublicDownload || $this->limitToGuids) {
-						//Is a download from public interface OR DwC-A publishing event pushed to aggregators, thus skip record if Full Protections apply
-						if($r['recordSecurity'] == 5){
-							if(!strpos($sql, 'recordSecurity != 5')){
-								//But only if protection is not already applied within the SQL string
-								continue;
-							}
-						}
-					}
-
-					if(!isset($this->collArr[$r['collID']])){
-						$this->setCollArr($r['collID'], 'internalCall');
-					}
 					//Set occurrenceID GUID or skip records if not defined (required output)
 					if(!$r['occurrenceID']) {
 						if($guidTarget = $this->collArr[$r['collID']]['guidtarget']){
@@ -1774,6 +1760,82 @@ class DwcArchiverCore extends Manager{
 				$this->errorMessage = 'unknown error';
 			}
 			$stmt->close();
+		}
+		if($status){
+			$this->setCollArrViaExportID();
+			$this->setFullProtections();
+		}
+		return $status;
+	}
+
+	private function setCollArrViaExportID(){
+		if(!$this->collArr){
+			$sql = 'SELECT DISTINCT collid FROM omexportoccurrences WHERE omExportID = ?';
+			$outputArr = array();
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->exportID);
+				$stmt->execute();
+				if($rs = $stmt->get_result()){
+					while($r = $rs->fetch_object()){
+						$outputArr[] = $r->collid;
+					}
+				}
+				$stmt->close();
+			}
+			if($outputArr){
+				$targetCollidStr = implode(',', $outputArr);
+				$this->setCollArr($targetCollidStr);
+			}
+		}
+	}
+
+	private function setFullProtections(){
+		//Function removes records that should be expluded due to full protection status
+		$status = false;
+		$removeAllRecords = true;
+		$collToRemove = array();
+		//Do not remove records if user has one of these permissions: SuperAdmin, CollAdmin, CollEditor
+		if(!empty($GLOBALS['USER_RIGHTS']['SuperAdmin'])){
+			$removeAllRecords = false;
+		}
+		else {
+			$allowedCollArr = array();
+			if(!empty($GLOBALS['USER_RIGHTS']['CollAdmin'])){
+				$allowedCollArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
+			}
+			if(!empty($GLOBALS['USER_RIGHTS']['CollEditor'])){
+				$allowedCollArr = array_merge($allowedCollArr, $GLOBALS['USER_RIGHTS']['CollEditor']);
+			}
+			if($allowedCollArr){
+				$collToRemove = array_diff(array_keys($this->collArr), $allowedCollArr);
+				$removeAllRecords = false;
+			}
+		}
+		if(!$removeAllRecords){
+			if($this->isPublicDownload || $this->limitToGuids) {
+				//Download is from public interface OR DwC-A publishing event pushed to aggregators, thus remove full protected records
+				//Even if user is authorized to download these records, records should be excluded to ensure these records are not accidentually pushed to public
+				$removeAllRecords = true;
+			}
+		}
+		$sql = '';
+		if($removeAllRecords){
+			$sql = 'DELETE FROM omexportoccurrences WHERE omExportID = ? AND recordSecurity = 5';
+		}
+		elseif($collToRemove){
+			$sql = 'DELETE FROM omexportoccurrences WHERE omExportID = ? AND recordSecurity = 5 AND collid IN(' . implode(',', $collToRemove) . ')';
+		}
+		if($sql){
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->exportID);
+				if($stmt->execute()){
+					$status = true;
+				}
+				elseif($stmt->error){
+					$this->errorMessage = $stmt->error;
+				}
+				$stmt->close();
+			}
 		}
 		return $status;
 	}
@@ -2108,6 +2170,85 @@ class DwcArchiverCore extends Manager{
 		$stmt->close();
 
 		return $bool;
+	}
+
+	public function isAuthorized(){
+		if($_SERVER['SERVER_NAME'] == 'localhost'){
+			//Is a dev environment
+			//Note: Under Apache 2, UseCanonicalName = On and ServerName must be set.
+			//Otherwise, this value reflects the hostname supplied by the client, which can be spoofed. It is not safe to rely on this value in security-dependent contexts.
+			return true;
+		}
+
+		if(empty($_SERVER['REMOTE_ADDR'])){
+			error_log('Unauthorized access to dwcapubhandler: NULL REMOTE_ADDR');
+			return false;
+		}
+		//Check to see if referrer is within shared network
+		$refererIpPrefix = substr($_SERVER['REMOTE_ADDR'], 0, strrpos($_SERVER['REMOTE_ADDR'], '.'));
+		//error_log('Access to dwcapubhandler - refererIpPrefix: ' . $refererIpPrefix . '; serverIP: ' . $_SERVER['SERVER_ADDR']);
+		if(!empty($_SERVER['SERVER_ADDR']) && $refererIpPrefix){
+			if(strpos($_SERVER['SERVER_ADDR'], $refererIpPrefix) === 0){
+				return true;
+			}
+		}
+
+		//Check if referer is registered within portal index
+		if(empty($_SERVER['HTTP_REFERER'])){
+			error_log('Unauthorized access to dwcapubhandler: NULL HTTP_REFERER');
+			return false;
+		}
+		$refererUrl = $_SERVER['HTTP_REFERER'];
+		$refererDomain = str_replace('www.', '', parse_url($refererUrl, PHP_URL_HOST));
+		$portalIndex = $this->getPortalIndex();
+		foreach($portalIndex as $indexDomain){
+			$indexDomain = str_replace('www.', '', parse_url($indexDomain, PHP_URL_HOST));
+			if($refererDomain == $indexDomain) return true;
+		}
+
+		//Check to see if user is logged in or user token is included
+		if($GLOBALS['SYMB_UID']) return true;
+		if(!empty($_REQUEST['token'])){
+			if($this->validateUserToken($_REQUEST['token'])){
+				return true;
+			}
+			else{
+				error_log('Unauthorized access to dwcapubhandler: bad user token (' . $_REQUEST['token'] . '), ' . $refererIP . ' - ' . $refererUrl);
+				return false;
+			}
+		}
+
+		error_log('Unauthorized access to dwcapubhandler: ' . $refererIP . ' - ' . $refererUrl);
+		return false;
+	}
+
+	private function getPortalIndex(){
+		$retArr = array();
+		$sql = 'SELECT urlRoot FROM portalindex ';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->execute();
+			$rs = $stmt->get_result();
+			while($r = $rs->fetch_object()){
+				$retArr[] = $r->urlRoot;
+			}
+			$rs->free();
+			$stmt->close();
+		}
+		return $retArr;
+	}
+
+	private function validateUserToken($userToken){
+		$authorized = false;
+		$userToken = $_REQUEST['token'];
+		$sql = 'SELECT tokenID FROM useraccesstokens WHERE token = ?';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('s', $userToken);
+			$stmt->execute;
+			$stmt->store_result();
+			if($stmt->num_rows) $authorized = true;
+			$stmt->close();
+		}
+		return $authorized;
 	}
 
 	//setters and getters
