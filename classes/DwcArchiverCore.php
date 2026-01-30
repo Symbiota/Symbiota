@@ -23,8 +23,7 @@ class DwcArchiverCore extends Manager{
 	private $paleoWithSql;
 	protected $conditionSql = '';
 	protected $conditionArr = array();
-	private $condAllowArr;
-	private $overrideConditionLimit = false;
+	private $applyConditionLimit = false;
 	private $observerUid = 0;				//If set, this is a backup event of personally managed specimens
 
 	private $targetPath;
@@ -73,12 +72,6 @@ class DwcArchiverCore extends Manager{
 		//Character set
 		$this->charSetSource = strtoupper($GLOBALS['CHARSET']);
 		$this->charSetOut = $this->charSetSource;
-
-		$this->condAllowArr = array(
-			'catalognumber', 'othercatalognumbers', 'occurrenceid', 'family', 'sciname', 'country', 'locality' ,'stateprovince', 'county', 'municipality',
-			'recordedby', 'recordnumber', 'eventdate', 'decimallatitude', 'decimallongitude', 'minimumelevationinmeters', 'maximumelevationinmeters', 'cultivationstatus',
-			'datelastmodified', 'dateentered', 'processingstatus', 'dbpk', 'traitid', 'stateid'
-		);
 
 		$this->securityArr = array(
 			'eventDate', 'eventDate2', 'month', 'day', 'startDayOfYear', 'endDayOfYear', 'verbatimEventDate',
@@ -202,14 +195,24 @@ class DwcArchiverCore extends Manager{
 		if (!preg_match('/^[A-Za-z]+$/', $field)) return false;
 		if (!preg_match('/^[A-Z_]+$/', $cond)) return false;
 		if ($field) {
-			if ($this->overrideConditionLimit || in_array(strtolower($field), $this->condAllowArr)) {
-				if (!$cond) $cond = 'EQUALS';
-				if ($value != '' || ($cond == 'IS_NULL' || $cond == 'NOT_NULL')) {
-					if (is_array($value)) $this->conditionArr[$field][$cond] = $this->cleanInArray($value);
-					else $this->conditionArr[$field][$cond][] = $this->cleanInStr($value);
+			if ($this->applyConditionLimit){
+				//Downloads initiated via the dwcapubhandler.php webservice are limited to being filtered by only subset of indexed fields
+				$condAllowArr = array(
+					'catalognumber', 'othercatalognumbers', 'occurrenceid', 'family', 'sciname', 'country' ,'stateprovince', 'county', 'municipality',
+					'recordedby', 'recordnumber', 'eventdate', 'decimallatitude', 'decimallongitude', 'minimumelevationinmeters', 'maximumelevationinmeters', 'cultivationstatus',
+					'datelastmodified', 'dateentered', 'processingstatus', 'dbpk'
+				);
+				if(!in_array(strtolower($field), $condAllowArr)){
+					return false;
 				}
 			}
+			if (!$cond) $cond = 'EQUALS';
+			if ($value != '' || ($cond == 'IS_NULL' || $cond == 'NOT_NULL')) {
+				if (is_array($value)) $this->conditionArr[$field][$cond] = $this->cleanInArray($value);
+				else $this->conditionArr[$field][$cond][] = $this->cleanInStr($value);
+			}
 		}
+		return true;
 	}
 
 	private function applyConditions(){
@@ -2289,9 +2292,10 @@ class DwcArchiverCore extends Manager{
 		}
 	}
 
-	public function setOverrideConditionLimit($bool){
-		if ($bool) $this->overrideConditionLimit = true;
-		else $this->overrideConditionLimit = false;
+	public function setApplyConditionLimit($bool){
+		//echo 'setting overrideCondition to: ' . ($bool?'true':'false') . '<br>';
+		if ($bool) $this->applyConditionLimit = true;
+		else $this->applyConditionLimit = false;
 	}
 
 	public function setObserverUid($uid){
@@ -2370,8 +2374,9 @@ class DwcArchiverCore extends Manager{
 		}
 	}
 
-	public function setIsPublicDownload(){
-		$this->isPublicDownload = true;
+	public function setIsPublicDownload($bool){
+		if($bool) $this->isPublicDownload = true;
+		else $this->isPublicDownload = false;
 	}
 
 	public function setPublicationGuid($guid){

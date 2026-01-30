@@ -21,7 +21,6 @@ if($collid && is_numeric($collid)){
 		$dwcaHandler = new DwcArchiverCore();
 		$dwcaHandler->setCollArr($collid);
 		$dwcaHandler->setVerboseMode(0);
-		$dwcaHandler->setOverrideConditionLimit(true);
 		$dwcaHandler->addCondition('catalognumber','NOT_NULL');
 		$dwcaHandler->addCondition('locality','NOT_NULL');
 		if($processingStatus) $dwcaHandler->addCondition('processingstatus','EQUALS',$processingStatus);

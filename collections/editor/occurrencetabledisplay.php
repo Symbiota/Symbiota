@@ -262,6 +262,7 @@ else{
 						</button>
 						<input name="searchvar" type="hidden" value="<?= $occManager->getDownloadQuery() ?>" />
 						<input name="dltype" type="hidden" value="specimen" />
+						<input name="publicsearch" type="hidden" value="0" />
 					</form>
 				</div>
 			</div>

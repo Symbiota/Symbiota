@@ -15,6 +15,7 @@ $sourcePage = array_key_exists('sourcepage', $_REQUEST) ? $_REQUEST['sourcepage'
 $downloadType = array_key_exists('dltype', $_REQUEST) ? $_REQUEST['dltype'] : 'specimen';
 $taxonFilterCode = array_key_exists('taxonFilterCode', $_REQUEST) ? filter_var($_REQUEST['taxonFilterCode'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $displayHeader = array_key_exists('displayheader', $_REQUEST) ? filter_var($_REQUEST['displayheader'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$isPublicSearch = (isset($_REQUEST['publicsearch']) && !$_REQUEST['publicsearch']) ? 0 : 1;		//Value is true by default, and only false if explicitly set to false
 $searchVar = array_key_exists('searchvar', $_REQUEST) ? htmlspecialchars($_REQUEST['searchvar'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE| ENT_QUOTES) : '';
 
 $dwcManager = new DwcArchiverCore();
@@ -247,7 +248,7 @@ $filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIEN
 						if($downloadType == 'checklist') echo '<input name="schema" type="hidden" value="checklist" />';
 						elseif($downloadType == 'georef') echo '<input name="schema" type="hidden" value="georef" />';
 						?>
-						<input name="publicsearch" type="hidden" value="1" />
+						<input name="publicsearch" type="hidden" value="<?= $isPublicSearch ?>" />
 						<input name="taxonFilterCode" type="hidden" value="<?= $taxonFilterCode; ?>" />
 						<input name="sourcepage" type="hidden" value="<?= htmlspecialchars($sourcePage); ?>" />
 						<input name="searchvar" type="hidden" value="<?= $searchVar ?>" />

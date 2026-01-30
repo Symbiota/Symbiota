@@ -4,10 +4,10 @@ include_once($SERVER_ROOT . '/classes/OccurrenceDownload.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceMapManager.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverCore.php');
 
-
 $sourcePage = array_key_exists("sourcepage", $_REQUEST) ? $_REQUEST["sourcepage"] : "specimen";
 $schema = array_key_exists("schema", $_REQUEST) ? $_REQUEST["schema"] : "symbiota";
 $cSet = array_key_exists("cset", $_POST) ? $_POST["cset"] : '';
+$isPublicSearch = (empty($_REQUEST['publicsearch'])) ? 0 : 1;		//Value false by default
 
 $token = $_POST['downloadToken'] ?? null;
 if ($token) {
@@ -66,7 +66,6 @@ if ($schema == 'backup') {
 	$formatFromPost = (array_key_exists('format', $_POST) ? $_POST['format'] : 'csv');
 	$format = in_array($formatFromPost, $allowedFormats) ? $formatFromPost : 'csv';
 	$extended = (array_key_exists('extended', $_POST) ? $_POST['extended'] : 0);
-	$overrideConditionLimit = (array_key_exists('overrideconditionlimit', $_POST) ? $_POST['overrideconditionlimit'] : 0);
 
 	$redactLocalities = 1;
 	$rareReaderArr = array();
@@ -89,10 +88,12 @@ if ($schema == 'backup') {
 	} else {
 		$occurManager = new OccurrenceMapManager();
 	}
+	$occurManager->getSearchTerm('customfield');
+	$occurManager->setApplyFullProtections(false); //Full security protections for downloads are handled within the DwcArchiverCore class
 	if ($schema == 'georef') {
 		$dlManager = new OccurrenceDownload();
-		if (array_key_exists('publicsearch', $_POST)) $dlManager->setIsPublicDownload();
-		if (array_key_exists('publicsearch', $_POST) && $_POST["publicsearch"]) {
+		if($isPublicSearch){
+			$dlManager->setIsPublicDownload($isPublicSearch);
 			$dlManager->setSqlWhere($occurManager->getSqlWhere());
 		}
 		$dlManager->setSchemaType($schema);
@@ -114,7 +115,7 @@ if ($schema == 'backup') {
 		$dlManager->downloadData();
 	} elseif ($schema == 'checklist') {
 		$dlManager = new OccurrenceDownload();
-		if (array_key_exists('publicsearch', $_POST) && $_POST['publicsearch']) {
+		if($isPublicSearch){
 			$dlManager->setSqlWhere($occurManager->getSqlWhere());
 		}
 		$dlManager->setSchemaType($schema);
@@ -139,7 +140,6 @@ if ($schema == 'backup') {
 			$dwcaHandler->setIncludeMaterialSample(0);
 			$dwcaHandler->setIncludeIdentifiers(0);
 			$dwcaHandler->setIncludeAssociations(0);
-			$dwcaHandler->setOverrideConditionLimit(true);
 			$dwcaHandler->addCondition('catalognumber', 'NOT_NULL');
 			$dwcaHandler->addCondition('locality', 'NOT_NULL');
 			if (array_key_exists('processingstatus', $_POST) && $_POST['processingstatus']) {
@@ -152,64 +152,58 @@ if ($schema == 'backup') {
 			}
 		} else {
 			//Is an occurrence download
-			if (array_key_exists('publicsearch', $_POST)) $dwcaHandler->setIsPublicDownload();
+			if ($isPublicSearch) $dwcaHandler->setIsPublicDownload($isPublicSearch);
 			$dwcaHandler->setCharSetOut($cSet);
 			$dwcaHandler->setSchemaType($schema);
 			$dwcaHandler->setExtended($extended);
-			$dwcaHandler->setOverrideConditionLimit($overrideConditionLimit);
 			$dwcaHandler->setDelimiter($format);
 			$dwcaHandler->setRedactLocalities($redactLocalities);
 			if ($rareReaderArr) $dwcaHandler->setRareReaderArr($rareReaderArr);
 
-			if (array_key_exists('publicsearch', $_POST) && $_POST['publicsearch']) {
-				$dwcaHandler->setCustomWhereSql($occurManager->getSqlWhere());
-
-				// Added for Occurrence Table Display Editor Download Functionality
-				for ($i = 1; $i  < 10; $i ++) {
-					if ($occurManager->getSearchTerm('customfield' . $i)) {
-						$dwcaHandler->addCondition(
-							$occurManager->getSearchTerm('customfield' . $i), 
-							$occurManager->getSearchTerm('customtype' . $i), 
-							$occurManager->getSearchTerm('customvalue' . $i)
-						);
-					}
-				}
-
-				// Traits Support 
-				if ($occurManager->getSearchTerm('stateid')) {
-					$dwcaHandler->addCondition('stateid', 'EQUALS', $occurManager->getSearchTerm('stateid'));
-				} elseif ($occurManager->getSearchTerm('traitid')) {
-					$dwcaHandler->addCondition('traitid', 'EQUALS', $occurManager->getSearchTerm('traitid'));
-				}
-				if ($occurManager->getSearchTerm('polygons')) {
-					$dwcaHandler->setPolygons($occurManager->getSearchTerm('polygons'));
-				}
-				$dwcaHandler->setPaleoWithSql($occurManager->getPaleoSqlWith());
-			} else {
-				//Request is coming from exporter.php for collection manager tools
-				if(isset($_POST['targetcollid'])) $dwcaHandler->setCollArr($_POST['targetcollid']);
-				if (array_key_exists('processingstatus', $_POST) && $_POST['processingstatus']) {
+			if(isset($_POST['source']) && $_POST['source'] == 'collection_exporter'){
+				//Request is coming from exporter.php, thus we need to do some custom adjustments
+				$dwcaHandler->setCollArr($_POST['targetcollid']);
+				if (!empty($_POST['processingstatus'])) {
 					$dwcaHandler->addCondition('processingstatus', 'EQUALS', $_POST['processingstatus']);
 				}
-				if (array_key_exists('customfield1', $_POST) && $_POST['customfield1']) {
-					$dwcaHandler->addCondition($_POST['customfield1'], $_POST['customtype1'], $_POST['customvalue1']);
+				for ($x = 1; $x < 4; $x++){
+					if (!empty($_POST['customfield' . $x])) {
+						$dwcaHandler->addCondition($_POST['customfield' . $x], $_POST['customtype' . $x], $_POST['customvalue' . $x]);
+					}
 				}
-				if (array_key_exists('customfield2', $_POST) && $_POST['customfield2']) {
-					$dwcaHandler->addCondition($_POST['customfield2'], $_POST['customtype2'], $_POST['customvalue2']);
-				}
-				if (array_key_exists('customfield3', $_POST) && $_POST['customfield3']) {
-					$dwcaHandler->addCondition($_POST['customfield3'], $_POST['customtype3'], $_POST['customvalue3']);
-				}
-				if (array_key_exists('stateid', $_POST) && $_POST['stateid']) {
+				if (!empty($_POST['stateid'])) {
 					$dwcaHandler->addCondition('stateid', 'EQUALS', $_POST['stateid']);
 				} elseif (array_key_exists('traitid', $_POST) && $_POST['traitid']) {
 					$dwcaHandler->addCondition('traitid', 'EQUALS', $_POST['traitid']);
 				}
-				if (array_key_exists('newrecs', $_POST) && $_POST['newrecs'] == 1) {
+				if (isset($_POST['newrecs']) && $_POST['newrecs'] == 1) {
 					$dwcaHandler->addCondition('dbpk', 'IS_NULL');
 					$dwcaHandler->addCondition('catalognumber', 'NOT_NULL');
 				}
 			}
+			$dwcaHandler->setCustomWhereSql($occurManager->getSqlWhere());
+
+			// Added for Occurrence Table Display Editor Download Functionality
+			for ($i = 1; $i  < 10; $i ++) {
+				if ($occurManager->getSearchTerm('customfield' . $i)) {
+					$dwcaHandler->addCondition(
+						$occurManager->getSearchTerm('customfield' . $i),
+						$occurManager->getSearchTerm('customtype' . $i),
+						$occurManager->getSearchTerm('customvalue' . $i)
+					);
+				}
+			}
+
+			// Traits Support
+			if ($occurManager->getSearchTerm('stateid')) {
+				$dwcaHandler->addCondition('stateid', 'EQUALS', $occurManager->getSearchTerm('stateid'));
+			} elseif ($occurManager->getSearchTerm('traitid')) {
+				$dwcaHandler->addCondition('traitid', 'EQUALS', $occurManager->getSearchTerm('traitid'));
+			}
+			if ($occurManager->getSearchTerm('polygons')) {
+				$dwcaHandler->setPolygons($occurManager->getSearchTerm('polygons'));
+			}
+			$dwcaHandler->setPaleoWithSql($occurManager->getPaleoSqlWith());
 		}
 
 		$outputFile = null;
