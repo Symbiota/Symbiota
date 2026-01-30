@@ -167,12 +167,12 @@ function toggleCategory(categoryId) {
 				$revisedUncategorizedCategories = $collectionFormManager->reviseUncategorizedCollections($categories);
 			 ?>
 		<div style="margin: 0;" id="<?= strtolower($collectionType) . '_collections' ?>">
-			<?php if(!$allOrphans){
-				echo "<h2>" . ($collectionType === 'Specimens'? $LANG['SPECIMEN_COLLECTIONS']: $LANG['OBSERVATION_COLLECTIONS']) . "</h2>";
-			}else{
-				echo "<h2></h2>";
-			}
-			 ?>
+			<h2>
+				<?php if(!$allOrphans){
+					echo ($collectionType === 'Specimens'? $LANG['SPECIMEN_COLLECTIONS']: $LANG['OBSERVATION_COLLECTIONS']);
+				}
+				?>
+			</h2>
 			<?php foreach($revisedUncategorizedCategories as $category): ?>
 			<?php 
 				$categoryIdentifer = $collectionType . '_' . $category['id'];

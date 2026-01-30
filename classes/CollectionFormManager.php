@@ -3,6 +3,7 @@
 use BcMath\Number;
 
 include_once($SERVER_ROOT . '/classes/Manager.php');
+Language::load('classes/CollectionFormManager');
 
 class CollectionFormManager extends Manager {
 
@@ -136,8 +137,9 @@ class CollectionFormManager extends Manager {
             $numericIds = array_map(function($id) {
                 return is_numeric($id) ? (int)$id : null;
             },$allIds);
-            $allOrphans = count($allIds) === 0;
-            $revisedCollections['Uncategorized']['name'] = $allOrphans ? 'Uncategorized' : 'Specimen and Observation Collections';
+            $allOrphans = count($allIds) === 1;
+            global $LANG;
+            $revisedCollections['Uncategorized']['name'] = $allOrphans ? $LANG['SPECIMEN_AND_OBSERVATION_COLLECTIONS'] : $LANG['UNCATEGORIZED'];
             if (count($numericIds) === count($allIds)) {
                 $maxId = max($numericIds);
                 $revisedCollections['Uncategorized']['id'] = (string)($maxId + 1);
