@@ -438,7 +438,19 @@ if($action != "Update Statistics"){
 					</ul>
 
 					<div id="specobsdiv" class="pin-things-here">
-							<form name="params-form" id="params-form" action="collstats.php" method="post">
+							<form class="content" name="params-form" id="params-form" action="collstats.php" method="post">
+								<div style="display: flex; justify-content: flex-end; position: sticky; top: 1rem; z-index: 100;">
+									<button style="width: 75px; margin-right: 0.5rem;" id="view-stats" type="submit" name="submitaction" value="Run Statistics"><?php echo $LANG['VIEW_STATS']; ?></button>
+									<button style="margin-right: 0.5rem; background-color: var(--medium-color); width: 75px;" id="reset-btn" type="button"><?php echo $LANG['RESET'] ?></button>
+									<?php
+										if($SYMB_UID && $IS_ADMIN){
+											?>
+											<button id="update-stats" type="submit" name="submitaction" value="Update Statistics"><?php echo $LANG['UPDATE_STATS']; ?></button>
+											<?php
+										}
+									?>
+								</div>
+								<input type="hidden" name="submitaction" id="submitaction-hidden">
 								<div>
 									<?php
 									if($SYMB_UID && ($IS_ADMIN || array_key_exists("CollAdmin",$USER_RIGHTS))){
@@ -473,24 +485,7 @@ if($action != "Update Statistics"){
 										if(isset($specArr['cat'])){
 											$categoryArr = $specArr['cat'];
 											?>
-											<div class="sticky-buttons" id="statistics-button-panel">
-												<div>
-													<button id="view-stats" type="submit" name="submitaction" value="Run Statistics"><?php echo $LANG['VIEW_STATS']; ?></button>
-												</div>
-												<div>
-													<button style="margin-top:0.5rem; margin-right: 0.5rem; background-color: var(--medium-color); width: 75px;" id="reset-btn" type="button"><?php echo $LANG['RESET'] ?></button>
-												</div>
-												<?php
-												if($SYMB_UID && $IS_ADMIN){
-													?>
-													<div class="submit-button-div">
-														<button id="update-stats" type="submit" name="submitaction" value="Update Statistics"><?php echo $LANG['UPDATE_STATS']; ?></button>
-													</div>
-													<?php
-												}
-												?>
-												<input type="hidden" name="submitaction" id="submitaction-hidden">
-											</div>
+											<!--  -->
 											<?php
 										}
 										if(isset($specArr['coll'])){
