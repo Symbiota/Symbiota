@@ -165,7 +165,12 @@ $serverHost = GeneralUtil::getDomain();
 		<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 		<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 		<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />
+		<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.list.js?ver=20251002>" type="text/javascript"></script>
+		<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=2" type="text/javascript"></script>
+		<script src="<?= $CLIENT_ROOT ?>/js/alerts.js?v=202107" type="text/javascript"></script>
 		<link href="../../css/jquery.symbiota.css" type="text/css" rel="stylesheet" />
+		<link href="<?= $CSS_BASE_PATH ?>/searchStyles.css?ver=1" type="text/css" rel="stylesheet">
+		<link href="<?= $CSS_BASE_PATH ?>/searchStylesInner.css" type="text/css" rel="stylesheet">
 		<script src="../../js/jquery.popupoverlay.js" type="text/javascript"></script>
 		<script src="../../js/jscolor/jscolor.js?ver=1" type="text/javascript"></script>
 		<!---	<script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing<?= (!empty($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY != 'DEV' ? 'key=' . $GOOGLE_MAP_KEY : '') ?>&callback=Function.prototype" ></script> -->
@@ -938,11 +943,12 @@ $serverHost = GeneralUtil::getDomain();
 				if(heatmapLayer) map.mapLayer.removeLayer(heatmapLayer);
 			})
 
-			document.getElementById("mapsearchform").addEventListener('submit', async e => {
+			document.getElementById("params-form").addEventListener('submit', async e => {
 				e.preventDefault();
 				if(!verifyCollForm(e.target)) return false;
 
 				showWorking();
+				storeFormDataInSessionStorage(e.target);
 
 				let formData = new FormData(e.target);
 
@@ -1138,7 +1144,7 @@ $serverHost = GeneralUtil::getDomain();
 
 			//Load Data if any with page Load
 			if(recordArr.length > 0) {
-				let formData = new FormData(document.getElementById("mapsearchform"));
+				let formData = new FormData(document.getElementById("params-form"));
 
 				const group = genMapGroups(recordArr, taxaMap, collArr, "<?=$LANG['CURRENT_PORTAL']?>");
 				group.origin = "<?= $serverHost . $CLIENT_ROOT?>";
@@ -1452,7 +1458,7 @@ $serverHost = GeneralUtil::getDomain();
 				if(heatmapLayer) heatmapLayer.setData({data: []})
 			})
 
-			document.getElementById("mapsearchform").addEventListener('submit', async e => {
+			document.getElementById("params-form").addEventListener('submit', async e => {
 				e.preventDefault();
 				if(!verifyCollForm(e.target)) return false;
 
@@ -1696,7 +1702,7 @@ $serverHost = GeneralUtil::getDomain();
 
 			if(recordArr.length > 0) {
 				if(shape) map.drawShape(shape);
-				let formData = new FormData(document.getElementById("mapsearchform"));
+				let formData = new FormData(document.getElementById("params-form"));
 
 				const group = genGroups(recordArr, taxaMap, collArr, "<?= $LANG['CURRENT_PORTAL'] ?>");
 				group.origin = "<?= $serverHost . $CLIENT_ROOT ?>";
@@ -2115,6 +2121,7 @@ $serverHost = GeneralUtil::getDomain();
 		<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
 	</head>
 	<body style='width:100%;max-width:100%;min-width:500px;' <?php echo (!$activateGeolocation?'onload="initialize();"':''); ?>>
+	<div role="main" id="innertext" class="inntertext-tab pin-things-here inner-search">
 		<?php
 		if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimalheader.php');
 		?>
@@ -2154,13 +2161,14 @@ $serverHost = GeneralUtil::getDomain();
 					<div id="accordion">
 						<h3 id="search_criteria" style="margin-top:0"><?= $LANG['SEARCH_CRITERIA'] ?></h3>
 						<div id="tabs1" style="padding:0px;height:100%">
-							<form name="mapsearchform" id="mapsearchform" data-ajax="false">
+							<form name="params-form" id="params-form" data-ajax="false">
 								<ul>
 									<li><a href="#searchcollections"><span><?= $LANG['COLLECTIONS'] ?></span></a></li>
 									<li><a href="#searchcriteria"><span><?= $LANG['CRITERIA'] ?></span></a></li>
 									<li><a href="#mapoptions"><span><?= $LANG['MAP_OPTIONS'] ?></span></a></li>
 								</ul>
 								<div id="searchcollections">
+									<button style="width: 75px;" id="reset-btn" type="button"><?php echo $LANG['RESET'] ?></button>
 									<div >
 										<?php
 										$collList = $mapManager->getFullCollectionList($catId);
@@ -2168,22 +2176,11 @@ $serverHost = GeneralUtil::getDomain();
 										$obsArr = (isset($collList['obs']) ? $collList['obs'] : null);
 										if($specArr || $obsArr){
 										?>
-										<div id="specobsdiv">
-											<div style="margin:0px 0px 10px 5px;">
-												<input id="dballcb" data-role="none" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" <?php echo (!$mapManager->getSearchTerm('db') || $mapManager->getSearchTerm('db')=='all'?'checked':'') ?> />
-												<?= $LANG['SELECT_DESELECT'].' <a href="../misc/collprofiles.php" target="_blank">' . $LANG['ALL_COLLECTIONS'] . '</a>'; ?>
+											<div id="search-form-colls">
+												<?php
+													include($SERVER_ROOT . '/collections/editor/includes/collectionForm.php');
+												?>
 											</div>
-											<?php
-											if($specArr){
-											$mapManager->outputFullCollArr($specArr, $catId, false, false);
-											}
-											if($specArr && $obsArr) echo '<hr style="clear:both;margin:20px 0px;"/>';
-											if($obsArr){
-											$mapManager->outputFullCollArr($obsArr, $catId, false, false);
-											}
-											?>
-											<div style="clear:both;">&nbsp;</div>
-										</div>
 										<?php
 										}
 										?>
@@ -2714,5 +2711,21 @@ $serverHost = GeneralUtil::getDomain();
 				<img style="border:0px;width:100px;height:100px;" src="../../images/ajax-loader.gif" />
 			</div>
 		</div>
+	</div>
 	</body>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			setSessionQueryStr();
+			setSearchForm(document.getElementById("params-form"));
+			toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
+			document.getElementById("reset-btn").addEventListener("click", function (event) {
+				document.getElementById("params-form").reset();
+				clearPageSpecificSessionStorageItems();
+				checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
+				closeAllCategories();
+				expandCategoriesBasedOnConfig();
+				updateChip(event, isInitialConfig=true);
+			});
+		});
+	</script>
 </html>
