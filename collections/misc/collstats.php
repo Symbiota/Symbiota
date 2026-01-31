@@ -3,7 +3,7 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCollectionProfile.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-Language::load('collections/misc/collstats');
+Language::load(['collections/misc/collstats','collections/search/index']);
 
 header("Content-Type: text/html; charset=" . $CHARSET);
 ini_set('max_execution_time', 1200); //1200 seconds = 20 minutes
@@ -240,6 +240,8 @@ if($action != "Update Statistics"){
 			<meta name="keywords" content="Natural history collections statistics" />
 			<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['COL_STATS']; ?></title>
 			<link href="<?php echo $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+			<link href="<?= $CSS_BASE_PATH ?>/searchStyles.css?ver=1" type="text/css" rel="stylesheet">
+			<link href="<?= $CSS_BASE_PATH ?>/searchStylesInner.css" type="text/css" rel="stylesheet">
 			<?php
 			include_once($SERVER_ROOT.'/includes/head.php');
 			?>
@@ -361,28 +363,28 @@ if($action != "Update Statistics"){
 					return false;
 				}
 
-				function changeCollForm(f){
-					var dbElements = document.getElementsByName("db[]");
-					var c = false;
-					var collid = "";
-					for(i = 0; i < dbElements.length; i++){
-						var dbElement = dbElements[i];
-						if(dbElement.checked && !isNaN(dbElement.value)){
-							if(c == true) collid = collid+",";
-							collid = collid + dbElement.value;
-							c = true;
-						}
-					}
-					if(c == true){
-						var collobj = document.getElementById("colltxt");
-						collobj.value = collid;
-						document.getElementById("collform").submit();
-					}
-					else{
-						alert("<?php echo $LANG['CHOOSE_ONE']; ?>");
-						return false;
-					}
-				}
+				// function changeCollForm(f){
+				// 	var dbElements = document.getElementsByName("db[]");
+				// 	var c = false;
+				// 	var collid = "";
+				// 	for(i = 0; i < dbElements.length; i++){
+				// 		var dbElement = dbElements[i];
+				// 		if(dbElement.checked && !isNaN(dbElement.value)){
+				// 			if(c == true) collid = collid+",";
+				// 			collid = collid + dbElement.value;
+				// 			c = true;
+				// 		}
+				// 	}
+				// 	if(c == true){
+				// 		var collobj = document.getElementById("colltxt");
+				// 		collobj.value = collid;
+				// 		document.getElementById("collform").submit();
+				// 	}
+				// 	else{
+				// 		alert("<?php echo $LANG['CHOOSE_ONE']; ?>");
+				// 		return false;
+				// 	}
+				// }
 			</script>
 			<style>
 				.icon-mrgn-rel {
@@ -422,8 +424,9 @@ if($action != "Update Statistics"){
 			}
 			?>
 			<!-- This is inner text! -->
-			<div role="main" id="innertext">
+			<div role="main" id="innertext" class="inntertext-tab pin-things-here inner-search">
 				<h1 class="page-heading"><?= $LANG['SELECT_COLS']; ?></h1>
+				<div id="error-msgs" class="errors"></div>
 				<div id="tabs" class="tabby">
 					<ul class="full-tab">
 						<li><a href="#specobsdiv"><?php echo htmlspecialchars($LANG['COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></li>
@@ -435,10 +438,7 @@ if($action != "Update Statistics"){
 					</ul>
 
 					<div id="specobsdiv" class="pin-things-here">
-						<?php
-						if($specArr || $obsArr){
-							?>
-							<form name="collform" id="collform" action="collstats.php" method="post" onsubmit="return changeCollForm(this);">
+							<form name="params-form" id="params-form" action="collstats.php" method="post">
 								<div>
 									<?php
 									if($SYMB_UID && ($IS_ADMIN || array_key_exists("CollAdmin",$USER_RIGHTS))){
@@ -454,17 +454,18 @@ if($action != "Update Statistics"){
 												<input type="text" id="country" name="country" size="43" value="<?php echo $cCountry; ?>" />
 											</div>
 										</fieldset>
-										<?php
-									}
-									?>
-									<div class="specimen-header-margin">
-										<hr/>
-										<h2><?php echo $LANG['SPECIMEN_COLLECTIONS'] ?></h2>
-									</div>
-									<div>
-										<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" />
-										<label for="dballcb"><?php echo $LANG['SEL_OR_DESEL']; ?> <a href="collprofiles.php"><?php echo htmlspecialchars($LANG['COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></label>
-									</div>
+										<fieldset style="margin-top:1rem;" class="fieldset-padding flex-form">
+											<div class="content">
+												<div id="search-form-colls">
+													<!-- Open Collections modal -->
+													<div id="specobsdiv">
+														<?php
+														include($SERVER_ROOT . '/collections/editor/includes/collectionForm.php');
+														?>
+													</div>
+												</div>
+											</div>
+										</fieldset>
 									<?php
 									$collArrIndex = 0;
 									if($specArr){
@@ -474,135 +475,28 @@ if($action != "Update Statistics"){
 											?>
 											<div class="sticky-buttons" id="statistics-button-panel">
 												<div>
-													<button type="submit" name="submitaction" value="Run Statistics"><?php echo $LANG['VIEW_STATS']; ?></button>
+													<button id="view-stats" type="submit" name="submitaction" value="Run Statistics"><?php echo $LANG['VIEW_STATS']; ?></button>
+												</div>
+												<div>
+													<button style="margin-top:0.5rem; margin-right: 0.5rem; background-color: var(--medium-color); width: 75px;" id="reset-btn" type="button"><?php echo $LANG['RESET'] ?></button>
 												</div>
 												<?php
 												if($SYMB_UID && $IS_ADMIN){
 													?>
 													<div class="submit-button-div">
-														<button type="submit" name="submitaction" value="Update Statistics"><?php echo $LANG['UPDATE_STATS']; ?></button>
+														<button id="update-stats" type="submit" name="submitaction" value="Update Statistics"><?php echo $LANG['UPDATE_STATS']; ?></button>
 													</div>
 													<?php
 												}
 												?>
+												<input type="hidden" name="submitaction" id="submitaction-hidden">
 											</div>
-											<section class="gridlike-form">
-												<?php
-												$cnt = 0;
-												foreach($categoryArr as $catid => $catArr){
-													$name = $catArr['name'];
-													if($catArr['acronym']) $name .= ' ('.$catArr['acronym'].')';
-													$catIcon = $catArr['icon'];
-													unset($catArr['name']);
-													unset($catArr['acronym']);
-													unset($catArr['icon']);
-													$idStr = $collArrIndex.'-'.$catid;
-													?>
-													<section class="gridlike-form-row">
-														<div>
-															<input style="margin:0" id="cat-<?php echo $idStr; ?>-Input" name="cat[]" value="<?php echo $catid; ?>" type="checkbox" onclick="selectAllCat(this,'cat-<?php echo $idStr; ?>')" <?php echo ($collIdArr&&($collIdArr==array_keys($catArr))?'checked':''); ?> />
-															<label for="cat-<?php echo $idStr; ?>-Input">
-																<?php echo $name; ?> (<?php echo isset($LANG['SPECIMEN']) ? $LANG['SPECIMEN'] : "Specimen" ?>) <?php echo $LANG['SELECT_DESELECT'] ?>
-															</label>
-														</div>
-														<div>
-															<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;" class="condense-expand-flex" >
-																<div class="condense-expand-button-set">
-																	<img id="plus-<?php echo $idStr; ?>" src="../../images/plus.png" alt="plus sign to expand menu" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?> width:1em;" />
-																	<img id="minus-<?php echo $idStr; ?>" src="../../images/minus.png" alt="minus sign to condense menu" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?> width:1em;" />
-																	<p id="ptext-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>">
-																		<?php echo $LANG['EXPAND'] ?>
-																	</p>
-																	<p id="mtext-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>" >
-																		<?php echo $LANG['CONDENSE'] ?>
-																	</p>
-																</div>
-															</a>
-														</div>
-													</section>
-													<section class="gridlike-form-row bottom-breathing-room-rel">
-														<div>
-															<div id="cat-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>">
-																<section class="gridlike-form">
-																	<fieldset class="fieldset-padding-rem">
-																		<legend>
-																			<?php echo $name; ?> (<?php echo isset($LANG['SPECIMEN']) ? $LANG['SPECIMEN'] : "Specimen" ?>)
-																		</legend>
-																	<?php
-																	foreach($catArr as $collid => $collName2){
-																		?>
-																		<div class="gridlike-form-row bottom-breathing-room-rel">
-																				<input style="margin:0" id="db-<?php echo $collid?>" name="db[]" value="<?php echo $collid; ?>" type="checkbox" class="cat-<?php echo $idStr; ?>" onclick="unselectCat('cat-<?php echo $idStr; ?>-Input')" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
-																				<label for="db-<?php echo $collid?>">
-																					<a href='collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>'>
-																						<?php
-																						$codeStr = ' ('.$collName2['instcode'];
-																						if($collName2['collcode']) $codeStr .= '-'.$collName2['collcode'];
-																						$codeStr .= ')';
-																						echo $collName2["collname"].$codeStr;
-																						?>
-																						 - <?php echo $LANG['MORE_INFO']; ?>
-																					</a>
-																				</label>
-																			</div>
-																			<?php
-																		$collCnt++;
-																	}
-																	?>
-																	</fieldset>
-																</section>
-															</div>
-														</div>
-													</section>
-													<?php
-													$cnt++;
-												}
-												?>
-											</section>
 											<?php
 										}
 										if(isset($specArr['coll'])){
 											$collArr = $specArr['coll'];
 											?>
 											<section class="gridlike-form">
-												<?php
-												foreach($collArr as $collid => $cArr){
-													?>
-													<div class="gridlike-form-row bottom-breathing-room-rel">
-														<div>
-															<input id="current-collid-<?= $collid; ?>" name="db[]" value="<?php echo $collid; ?>" type="checkbox" onclick="uncheckAll();" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
-															<label class="screen-reader-only" for="current-collid-<?= $collid; ?>"><?= $LANG['COLLECTION'] . '-' . $cArr['instcode']; ?></label>
-														</div>
-														<div>
-															<a href='collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>'>
-																<?php
-																$codeStr = ' ('.$cArr['instcode'];
-																if($cArr['collcode']) $codeStr .= '-'.$cArr['collcode'];
-																$codeStr .= ')';
-																echo $cArr["collname"].$codeStr;
-																?>
-																 - <?php echo $LANG['MORE_INFO']; ?>
-															</a>
-														</div>
-													</div>
-													<?php
-													$collCnt++;
-												}
-												?>
-											<div>
-												<div>
-													<button type="submit" name="submitaction" value="Run Statistics"><?php echo $LANG['VIEW_STATS']; ?></button>
-												</div>
-												<?php
-												if($SYMB_UID && $IS_ADMIN){
-													?>
-													<div class="submit-button-div">
-														<button type="submit" name="submitaction" value="Update Statistics"><?php echo $LANG['UPDATE_OBSERVATION_STATS']; ?></button>
-													</div>
-													<?php
-												}
-												?>
-											</div>
 											<?php
 											if(!isset($specArr['cat'])){
 												echo '</section>';
@@ -610,87 +504,8 @@ if($action != "Update Statistics"){
 										}
 										$collArrIndex++;
 									}
-									if($specArr && $obsArr) echo "<hr style=\"clear:both;margin:20px 0px;\"/><h2>{$LANG['OBSERVATION_COLLECTIONS']}</h2>";
 									if($obsArr){
 										$collCnt = 0;
-										if(isset($obsArr['cat'])){
-											$categoryArr = $obsArr['cat'];
-											?>
-											<section class="gridlike-form">
-												<?php
-												$cnt = 0;
-												foreach($categoryArr as $catid => $catArr){
-													$name = $catArr['name'];
-													if($catArr['acronym']) $name .= ' ('.$catArr['acronym'].')';
-													$catIcon = $catArr['icon'];
-													unset($catArr['name']);
-													unset($catArr['acronym']);
-													unset($catArr['icon']);
-													$idStr = $collArrIndex.'-'.$catid;
-													?>
-													<div class="gridlike-form-row bottom-breathing-room-rel">
-														<div>
-															<input id="cat-<?php echo $idStr; ?>-Input" name="cat[]" value="<?php echo $catid; ?>" type="checkbox" onclick="selectAllCat(this,'cat-<?php echo $idStr; ?>')" <?php echo ($collIdArr&&($collIdArr==array_keys($catArr))?'checked':''); ?> />
-															<label for="cat-<?php echo $idStr; ?>-Input">
-																<?php echo $name; ?> (<?php echo isset($LANG['OBSERVATION']) ? $LANG['OBSERVATION'] : "Observation" ?>)  <?php echo $LANG['SELECT_DESELECT'] ?>
-															</label>
-														</div>
-														<div>
-															<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;" class="condense-expand-flex">
-																<div class="condense-expand-button-set">
-																	<img id="plus-<?php echo $idStr; ?>" src="../../images/plus.png" alt="plus sign to expand menu" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?> width:1em;" />
-																	<img id="minus-<?php echo $idStr; ?>" src="../../images/minus.png" alt="minus sign to condense menu" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?> width:1em;" />
-																	<p id="ptext-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>">
-																		<?php echo $LANG['EXPAND'] ?>
-																	</p>
-																	<p id="mtext-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>" >
-																		<?php echo $LANG['CONDENSE'] ?>
-																	</p>
-																</div>
-															</a>
-														</div>
-													</div>
-													<div>
-														<div class="gridlike-form-row bottom-breathing-room-rel" id="cat-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>">
-															<section class="gridlike-form">
-																<fieldset class="fieldset-observation-padding-rem">
-																	<legend>
-																		<?php echo $name; ?> (<?php echo isset($LANG['OBSERVATION']) ? $LANG['OBSERVATION'] : "Observation" ?>)
-																	</legend>
-																	<?php
-																		foreach($catArr as $collid => $collName2){
-																			?>
-																				<div class="gridlike-form-row bottom-breathing-room-rel">
-																					<div>
-																						<input class="input-margin cat-<?php echo $idStr; ?>" id="db-<?php echo $collid ?>" name="db[]" value="<?php echo $collid; ?>" type="checkbox" onclick="unselectCat('cat-<?php echo $idStr; ?>-Input')" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
-																						<label for="db-<?php echo $collid ?>">
-																							<a href = 'collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>'>
-																								<?php
-																								$codeStr = ' ('.$collName2['instcode'];
-																								if($collName2['collcode']) $codeStr .= '-'.$collName2['collcode'];
-																								$codeStr .= ')';
-																								echo $collName2["collname"].$codeStr;
-																								?>
-																								 - <?php echo $LANG['MORE_INFO']; ?>
-																							</a>
-																						</label>
-																					</div>
-																				</div>
-																			<?php
-																			$collCnt++;
-																		}
-																	?>
-																</fieldset>
-															</section>
-														</div>
-														<?php
-														$cnt++;
-														}
-														?>
-													</div>
-											</section>
-											<?php
-										}
 										if(isset($obsArr['coll'])){
 											$collArr = $obsArr['coll'];
 											?>
@@ -722,20 +537,6 @@ if($action != "Update Statistics"){
 													?>
 												</fieldset>
 											</section>
-											<div class="run-stat-btn">
-												<div>
-													<button type="submit" name="submitaction" value="Run Statistics"><?php echo $LANG['VIEW_STATS']; ?></button>
-												</div>
-												<?php
-												if($SYMB_UID && $IS_ADMIN){
-													?>
-													<div class="submit-button-div">
-														<button type="submit" name="submitaction" value="Update Statistics" /><?php echo $LANG['UPDATE_STATS']; ?></button>
-													</div>
-													<?php
-												}
-												?>
-											</div>
 											<?php
 										}
 										$collArrIndex++;
@@ -1085,7 +886,52 @@ if($action != "Update Statistics"){
 				include($SERVER_ROOT.'/includes/footer.php');
 			?>
 		</body>
+		<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=2" type="text/javascript"></script>
+		<script src="<?= $CLIENT_ROOT ?>/js/alerts.js?v=202107" type="text/javascript"></script>
+		<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.list.js?ver=20171215>" type="text/javascript"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				// setSessionQueryStr();
+				setSearchForm(document.getElementById("params-form"));
+				toggleAccordionsFromSessionStorage(sessionStorage.getItem("querystr" + getCurrentPage() + "/" + "accordionIds") ?.split(",") || []);
+				document.getElementById("params-form").addEventListener("submit", function(event) {
+					const submitter = event.submitter;
+					const submitActionValue = submitter.value;
+					document.getElementById("submitaction-hidden").value = submitActionValue;
+					if (!submitter) return;
+					event.preventDefault();
+					const dbElements = document.getElementsByName("db[]");
+					let hasCollSelected = false;
+					let collIds = "";
+					for(i = 0; i < dbElements.length; i++){
+						const dbElement = dbElements[i];
+						if(dbElement.checked && !isNaN(dbElement.value)){
+							if(hasCollSelected == true) collIds = collIds+",";
+							collIds = collIds + dbElement.value;
+							hasCollSelected = true;
+						}
+					}
+					if(hasCollSelected == true){
+						const collElem = document.getElementById("colltxt");
+						collElem.value = collIds;
+						simpleSearch();
+					}
+					else{
+						alert("<?php echo $LANG['CHOOSE_ONE']; ?>");
+						return false;
+					}
+				});
+				document.getElementById("reset-btn").addEventListener("click", function (event) {
+					document.getElementById("params-form").reset();
+					clearPageSpecificSessionStorageItems();
+					checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
+					closeAllCategories();
+					expandCategoriesBasedOnConfig();
+					updateChip(event, isInitialConfig=true);
+				});
+			});
+		</script>
 	</html>
-	<?php
+<?php
 }
 ?>
