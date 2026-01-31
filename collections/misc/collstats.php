@@ -438,14 +438,14 @@ if($action != "Update Statistics"){
 					</ul>
 
 					<div id="specobsdiv" class="pin-things-here">
-							<form class="content" name="params-form" id="params-form" action="collstats.php" method="post">
+							<form class="content" name="params-form" id="params-form" action="collstats.php" method="post" style="grid-template-columns: none;">
 								<div style="display: flex; justify-content: flex-end; position: sticky; top: 1rem; z-index: 100;">
-									<button style="width: 75px; margin-right: 0.5rem;" id="view-stats" type="submit" name="submitaction" value="Run Statistics"><?php echo $LANG['VIEW_STATS']; ?></button>
-									<button style="margin-right: 0.5rem; background-color: var(--medium-color); width: 75px;" id="reset-btn" type="button"><?php echo $LANG['RESET'] ?></button>
+									<button style="width: 150px; margin-right: 0.5rem;" id="view-stats" type="submit" name="submitaction" value="Run Statistics"><?php echo $LANG['VIEW_STATS']; ?></button>
+									<button style="width: 75px; margin-right: 0.5rem; background-color: var(--medium-color);" id="reset-btn" type="button"><?php echo $LANG['RESET'] ?></button>
 									<?php
 										if($SYMB_UID && $IS_ADMIN){
 											?>
-											<button id="update-stats" type="submit" name="submitaction" value="Update Statistics"><?php echo $LANG['UPDATE_STATS']; ?></button>
+											<button style="width: 180px;" id="update-stats" type="submit" name="submitaction" value="Update Statistics"><?php echo $LANG['UPDATE_STATS']; ?></button>
 											<?php
 										}
 									?>
