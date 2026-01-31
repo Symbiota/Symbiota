@@ -1395,6 +1395,7 @@ function setSessionStorageForAccordions() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+  console.log("deleteMe got here a11");
   initializeFormInputs();
   const form = document.getElementById('params-form');
   if (form) {
@@ -1402,5 +1403,4 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   setSessionStorageForAccordions();
   updateChip();
-
 });

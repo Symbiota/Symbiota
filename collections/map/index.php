@@ -2160,7 +2160,7 @@ $serverHost = GeneralUtil::getDomain();
 				<div id="mapinterface">
 					<div id="accordion">
 						<h3 id="search_criteria" style="margin-top:0"><?= $LANG['SEARCH_CRITERIA'] ?></h3>
-						<div id="tabs1" style="padding:0px;height:100%">
+						<div id="tabs1" class="content" style="padding:0px;height:100%">
 							<form name="params-form" id="params-form" data-ajax="false">
 								<ul>
 									<li><a href="#searchcollections"><span><?= $LANG['COLLECTIONS'] ?></span></a></li>
@@ -2719,7 +2719,6 @@ $serverHost = GeneralUtil::getDomain();
 			setSearchForm(document.getElementById("params-form"));
 			toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
 			document.getElementById("reset-btn").addEventListener("click", function (event) {
-				document.getElementById("params-form").reset();
 				clearPageSpecificSessionStorageItems();
 				checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
 				closeAllCategories();
