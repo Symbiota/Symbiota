@@ -166,8 +166,8 @@ $serverHost = GeneralUtil::getDomain();
 		<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 		<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />
 		<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.list.js?ver=20251002>" type="text/javascript"></script>
-		<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=2" type="text/javascript"></script>
 		<script src="<?= $CLIENT_ROOT ?>/js/alerts.js?v=202107" type="text/javascript"></script>
+		<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=2" type="text/javascript"></script>
 		<link href="../../css/jquery.symbiota.css" type="text/css" rel="stylesheet" />
 		<link href="<?= $CSS_BASE_PATH ?>/searchStyles.css?ver=1" type="text/css" rel="stylesheet">
 		<link href="<?= $CSS_BASE_PATH ?>/searchStylesInner.css" type="text/css" rel="stylesheet">
@@ -945,7 +945,8 @@ $serverHost = GeneralUtil::getDomain();
 
 			document.getElementById("params-form").addEventListener('submit', async e => {
 				e.preventDefault();
-				if(!verifyCollForm(e.target)) return false;
+				// if(!verifyCollForm(e.target)) return false;
+				if(!validateCollections()) return false;
 
 				showWorking();
 				storeFormDataInSessionStorage(e.target);
@@ -2122,6 +2123,7 @@ $serverHost = GeneralUtil::getDomain();
 	</head>
 	<body style='width:100%;max-width:100%;min-width:500px;' <?php echo (!$activateGeolocation?'onload="initialize();"':''); ?>>
 	<div role="main" id="innertext" class="inntertext-tab pin-things-here inner-search">
+		<div style="z-index:999;" id="error-msgs" class="errors"></div>
 		<?php
 		if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimalheader.php');
 		?>
@@ -2167,259 +2169,261 @@ $serverHost = GeneralUtil::getDomain();
 									<li><a href="#searchcriteria"><span><?= $LANG['CRITERIA'] ?></span></a></li>
 									<li><a href="#mapoptions"><span><?= $LANG['MAP_OPTIONS'] ?></span></a></li>
 								</ul>
-								<div id="searchcollections">
-									<button style="width: 75px;" id="reset-btn" type="button"><?php echo $LANG['RESET'] ?></button>
-									<div >
-										<?php
-										$collList = $mapManager->getFullCollectionList($catId);
-										$specArr = (isset($collList['spec']) ? $collList['spec'] : null);
-										$obsArr = (isset($collList['obs']) ? $collList['obs'] : null);
-										if($specArr || $obsArr){
-										?>
-											<div id="search-form-colls">
-												<?php
-													include($SERVER_ROOT . '/collections/editor/includes/collectionForm.php');
-												?>
+								<div id="search-form-colls">
+									<div id="searchcollections">
+										<button style="width: 75px;" id="reset-btn" type="button"><?php echo $LANG['RESET'] ?></button>
+										<div >
+											<?php
+											$collList = $mapManager->getFullCollectionList($catId);
+											$specArr = (isset($collList['spec']) ? $collList['spec'] : null);
+											$obsArr = (isset($collList['obs']) ? $collList['obs'] : null);
+											if($specArr || $obsArr){
+											?>
+												<div id="former-search-form-collections">
+													<?php
+														include($SERVER_ROOT . '/collections/editor/includes/collectionForm.php');
+													?>
+												</div>
+											<?php
+											}
+											?>
+										</div>
+									</div>
+									<div id="searchcriteria" style="padding-top: 0.5rem">
+										<div>
+											<!-- <div style="float:left;<?= (isset($SOLR_MODE) && $SOLR_MODE ? 'display:none;' : '') ?>">
+												Record Limit:
+												<input data-role="none" type="text" id="recordlimit" style="width:75px;" name="recordlimit" value="<?php echo ($recLimit?$recLimit:""); ?>" title="Maximum record amount returned from search." onchange="return checkRecordLimit(this.form);" />
+											</div> -->
+											<div style="display:flex; gap: 1rem; justify-content: right; height: 2rem">
+												<input type="hidden" id="selectedpoints" value="" />
+												<input type="hidden" id="deselectedpoints" value="" />
+												<input type="hidden" id="selecteddspoints" value="" />
+												<input type="hidden" id="deselecteddspoints" value="" />
+												<input type="hidden" id="gridSizeSetting" name="gridSizeSetting" value="<?php echo $gridSize; ?>" />
+												<input type="hidden" id="minClusterSetting" name="minClusterSetting" value="<?php echo $minClusterSize; ?>" />
+												<input type="hidden" id="clusterSwitch" name="clusterSwitch" value="<?php echo $clusterOff; ?>" />
+												<input type="hidden" id="pointlat" name="pointlat" value='<?php echo isset($pointLat)? $pointLat:"" ?>' />
+												<input type="hidden" id="pointlong" name="pointlong" value='<?php echo isset($pointLng)? $pointLng:"" ?>' />
+												<input type="hidden" id="pointunits" name="pointunits" value='<?php echo isset($pointUnit)? $pointUnit:"km" ?>' />
+												<input type="hidden" id="radius" name="radius" value='<?php echo isset($pointRad)? $pointRad:"" ?>' />
+												<input type="hidden" id="upperlat" name="upperlat" value='<?php echo isset($upperLat)? $upperLat:"" ?>' />
+												<input type="hidden" id="rightlong" name="rightlong" value='<?php echo isset($upperLng)? $upperLng:"" ?>' />
+												<input type="hidden" id="bottomlat" name="bottomlat" value='<?php echo isset($lowerLat)? $lowerLat:"" ?>' />
+												<input type="hidden" id="leftlong" name="leftlong" value='<?php echo isset($lowerLng)? $lowerLng:"" ?>' />
+												<input type="hidden" id="footprintGeoJson" name="footprintGeoJson" value='<?php echo $mapManager->getSearchTerm('footprintGeoJson') ?>' />
+												<button data-role="none" type="button" name="resetbutton" onclick="resetQueryForm(this.form)"><?= $LANG['RESET'] ?></button>
+												<button data-role="none" name="submitform" type="submit" ><?= $LANG['SEARCH'] ?></button>
 											</div>
+										</div>
+										<div style="margin:5 0 5 0;"><hr /></div>
+										<div>
+											<span style="">
+												<input data-role="none" id="usethes" type="checkbox" name="usethes" value="1" <?php if($mapManager->getSearchTerm('usethes') || !$submitForm) echo "CHECKED"; ?> >
+											<label for="usethes">
+												<?= $LANG['INCLUDE_SYNONYMS'] ?>
+											</label>
+										</div>
+										<div>
+											<div style="margin-top:5px;">
+												<select data-role="none" id="taxontype" name="taxontype">
+													<?php
+													$taxonType = 2;
+													if(isset($DEFAULT_TAXON_SEARCH) && $DEFAULT_TAXON_SEARCH) $taxonType = $DEFAULT_TAXON_SEARCH;
+													if($mapManager->getSearchTerm('taxontype')) $taxonType = $mapManager->getSearchTerm('taxontype');
+													for($h=1;$h<6;$h++){
+													echo '<option value="'.$h.'" '.($taxonType==$h?'SELECTED':'').'>'.$LANG['SELECT_1-'.$h].'</option>';
+													}
+													?>
+												</select>
+											</div>
+											<div style="margin-top:5px;">
+												<?= $LANG['TAXA'] ?>:
+												<input data-role="none" id="taxa" name="taxa" type="text" style="width:275px;" value="<?= $mapManager->getTaxaSearchTerm(); ?>" title="<?= $LANG['SEPARATE_MULTIPLE'] ?>" />
+											</div>
+										</div>
+										<div style="margin:5 0 5 0;"><hr /></div>
+	
+										<?php if(!empty($ENABLE_CROSS_PORTAL)): ?>
+										<?php include('./portalSelector.php')?>
+										<div style="margin:5 0 5 0;"><hr /></div>
+										<?php endif ?>
 										<?php
+										if($mapManager->getSearchTerm('clid')){
+											?>
+											<div>
+												<div style="clear:both;text-decoration: underline;">Species Checklist:</div>
+												<div style="clear:both;margin:5px 0px">
+													<?= $mapManager->getClName() ?><br/>
+													<input data-role="none" type="hidden" id="checklistname" name="checklistname" value="<?= $mapManager->getClName() ?>" />
+													<input id="clid" name="clid" type="hidden"  value="<?= $mapManager->getSearchTerm('clid') ?>" />
+												</div>
+												<div style="clear:both;margin-top:5px;">
+													<div style="float:left">
+														Display:
+													</div>
+													<div style="float:left;margin-left:10px;">
+														<input data-role="none" name="cltype" type="radio" value="all" <?php if($mapManager->getSearchTerm('cltype') == 'all') echo 'checked'; ?> />
+														all specimens within polygon<br/>
+														<input data-role="none" name="cltype" type="radio" value="vouchers" <?php if(!$mapManager->getSearchTerm('cltype') || $mapManager->getSearchTerm('cltype') == 'vouchers') echo 'checked'; ?> />
+														vouchers only
+													</div>
+													<div style="clear: both"></div>
+												</div>
+											</div>
+											<div style="clear:both;margin:0 0 5 0;"><hr /></div>
+											<?php
 										}
 										?>
-									</div>
-								</div>
-								<div id="searchcriteria" style="padding-top: 0.5rem">
-									<div>
-										<!-- <div style="float:left;<?= (isset($SOLR_MODE) && $SOLR_MODE ? 'display:none;' : '') ?>">
-											Record Limit:
-											<input data-role="none" type="text" id="recordlimit" style="width:75px;" name="recordlimit" value="<?php echo ($recLimit?$recLimit:""); ?>" title="Maximum record amount returned from search." onchange="return checkRecordLimit(this.form);" />
-										</div> -->
-										<div style="display:flex; gap: 1rem; justify-content: right; height: 2rem">
-											<input type="hidden" id="selectedpoints" value="" />
-											<input type="hidden" id="deselectedpoints" value="" />
-											<input type="hidden" id="selecteddspoints" value="" />
-											<input type="hidden" id="deselecteddspoints" value="" />
-											<input type="hidden" id="gridSizeSetting" name="gridSizeSetting" value="<?php echo $gridSize; ?>" />
-											<input type="hidden" id="minClusterSetting" name="minClusterSetting" value="<?php echo $minClusterSize; ?>" />
-											<input type="hidden" id="clusterSwitch" name="clusterSwitch" value="<?php echo $clusterOff; ?>" />
-											<input type="hidden" id="pointlat" name="pointlat" value='<?php echo isset($pointLat)? $pointLat:"" ?>' />
-											<input type="hidden" id="pointlong" name="pointlong" value='<?php echo isset($pointLng)? $pointLng:"" ?>' />
-											<input type="hidden" id="pointunits" name="pointunits" value='<?php echo isset($pointUnit)? $pointUnit:"km" ?>' />
-											<input type="hidden" id="radius" name="radius" value='<?php echo isset($pointRad)? $pointRad:"" ?>' />
-											<input type="hidden" id="upperlat" name="upperlat" value='<?php echo isset($upperLat)? $upperLat:"" ?>' />
-											<input type="hidden" id="rightlong" name="rightlong" value='<?php echo isset($upperLng)? $upperLng:"" ?>' />
-											<input type="hidden" id="bottomlat" name="bottomlat" value='<?php echo isset($lowerLat)? $lowerLat:"" ?>' />
-											<input type="hidden" id="leftlong" name="leftlong" value='<?php echo isset($lowerLng)? $lowerLng:"" ?>' />
-											<input type="hidden" id="footprintGeoJson" name="footprintGeoJson" value='<?php echo $mapManager->getSearchTerm('footprintGeoJson') ?>' />
-											<button data-role="none" type="button" name="resetbutton" onclick="resetQueryForm(this.form)"><?= $LANG['RESET'] ?></button>
-											<button data-role="none" name="submitform" type="submit" ><?= $LANG['SEARCH'] ?></button>
-										</div>
-									</div>
-									<div style="margin:5 0 5 0;"><hr /></div>
-									<div>
-										<span style="">
-											<input data-role="none" id="usethes" type="checkbox" name="usethes" value="1" <?php if($mapManager->getSearchTerm('usethes') || !$submitForm) echo "CHECKED"; ?> >
-										<label for="usethes">
-											<?= $LANG['INCLUDE_SYNONYMS'] ?>
-										</label>
-									</div>
-									<div>
-										<div style="margin-top:5px;">
-											<select data-role="none" id="taxontype" name="taxontype">
-												<?php
-												$taxonType = 2;
-												if(isset($DEFAULT_TAXON_SEARCH) && $DEFAULT_TAXON_SEARCH) $taxonType = $DEFAULT_TAXON_SEARCH;
-												if($mapManager->getSearchTerm('taxontype')) $taxonType = $mapManager->getSearchTerm('taxontype');
-												for($h=1;$h<6;$h++){
-												echo '<option value="'.$h.'" '.($taxonType==$h?'SELECTED':'').'>'.$LANG['SELECT_1-'.$h].'</option>';
-												}
-												?>
-											</select>
-										</div>
-										<div style="margin-top:5px;">
-											<?= $LANG['TAXA'] ?>:
-											<input data-role="none" id="taxa" name="taxa" type="text" style="width:275px;" value="<?= $mapManager->getTaxaSearchTerm(); ?>" title="<?= $LANG['SEPARATE_MULTIPLE'] ?>" />
-										</div>
-									</div>
-									<div style="margin:5 0 5 0;"><hr /></div>
-
-									<?php if(!empty($ENABLE_CROSS_PORTAL)): ?>
-									<?php include('./portalSelector.php')?>
-									<div style="margin:5 0 5 0;"><hr /></div>
-									<?php endif ?>
-									<?php
-									if($mapManager->getSearchTerm('clid')){
-										?>
 										<div>
-											<div style="clear:both;text-decoration: underline;">Species Checklist:</div>
-											<div style="clear:both;margin:5px 0px">
-												<?= $mapManager->getClName() ?><br/>
-												<input data-role="none" type="hidden" id="checklistname" name="checklistname" value="<?= $mapManager->getClName() ?>" />
-												<input id="clid" name="clid" type="hidden"  value="<?= $mapManager->getSearchTerm('clid') ?>" />
-											</div>
-											<div style="clear:both;margin-top:5px;">
-												<div style="float:left">
-													Display:
-												</div>
-												<div style="float:left;margin-left:10px;">
-													<input data-role="none" name="cltype" type="radio" value="all" <?php if($mapManager->getSearchTerm('cltype') == 'all') echo 'checked'; ?> />
-													all specimens within polygon<br/>
-													<input data-role="none" name="cltype" type="radio" value="vouchers" <?php if(!$mapManager->getSearchTerm('cltype') || $mapManager->getSearchTerm('cltype') == 'vouchers') echo 'checked'; ?> />
-													vouchers only
-												</div>
-												<div style="clear: both"></div>
-											</div>
+											<?= $LANG['COUNTRY'] ?>: <input data-role="none" type="text" id="country" style="width:225px;" name="country" value="<?= $mapManager->getSearchTerm('country') ?>" title="<?= $LANG['SEPARATE_MULTIPLE'] ?>" />
 										</div>
-										<div style="clear:both;margin:0 0 5 0;"><hr /></div>
-										<?php
-									}
-									?>
-									<div>
-										<?= $LANG['COUNTRY'] ?>: <input data-role="none" type="text" id="country" style="width:225px;" name="country" value="<?= $mapManager->getSearchTerm('country') ?>" title="<?= $LANG['SEPARATE_MULTIPLE'] ?>" />
-									</div>
-									<div style="margin-top:5px;">
-										<?= $LANG['STATE'] ?>: <input data-role="none" type="text" id="state" style="width:150px;" name="state" value="<?= $mapManager->getSearchTerm('state') ?>" title="<?= $LANG['SEPARATE_MULTIPLE'] ?>" />
-									</div>
-									<div style="margin-top:5px;">
-										<?= $LANG['COUNTY'] ?>: <input data-role="none" type="text" id="county" style="width:225px;"  name="county" value="<?= $mapManager->getSearchTerm('county') ?>" title="<?= $LANG['SEPARATE_MULTIPLE'] ?>" />
-									</div>
-									<div style="margin-top:5px;">
-										<?= $LANG['LOCALITY'] ?>: <input data-role="none" type="text" id="locality" style="width:225px;" name="local" value="<?= $mapManager->getSearchTerm('local') ?>" />
-									</div>
-									<div style="margin:5 0 5 0;"><hr /></div>
-									<div id="shapecriteria">
-										<div id="noshapecriteria" style="display:<?php echo ((!$mapManager->getSearchTerm('footprintGeoJson') && !$mapManager->getSearchTerm('upperlat'))?'block':'none'); ?>;">
-											<div id="geocriteria" style="display:<?php echo ((!$mapManager->getSearchTerm('footprintGeoJson') && !$distFromMe && !$mapManager->getSearchTerm('pointlat') && !$mapManager->getSearchTerm('upperlat'))?'block':'none'); ?>;">
+										<div style="margin-top:5px;">
+											<?= $LANG['STATE'] ?>: <input data-role="none" type="text" id="state" style="width:150px;" name="state" value="<?= $mapManager->getSearchTerm('state') ?>" title="<?= $LANG['SEPARATE_MULTIPLE'] ?>" />
+										</div>
+										<div style="margin-top:5px;">
+											<?= $LANG['COUNTY'] ?>: <input data-role="none" type="text" id="county" style="width:225px;"  name="county" value="<?= $mapManager->getSearchTerm('county') ?>" title="<?= $LANG['SEPARATE_MULTIPLE'] ?>" />
+										</div>
+										<div style="margin-top:5px;">
+											<?= $LANG['LOCALITY'] ?>: <input data-role="none" type="text" id="locality" style="width:225px;" name="local" value="<?= $mapManager->getSearchTerm('local') ?>" />
+										</div>
+										<div style="margin:5 0 5 0;"><hr /></div>
+										<div id="shapecriteria">
+											<div id="noshapecriteria" style="display:<?php echo ((!$mapManager->getSearchTerm('footprintGeoJson') && !$mapManager->getSearchTerm('upperlat'))?'block':'none'); ?>;">
+												<div id="geocriteria" style="display:<?php echo ((!$mapManager->getSearchTerm('footprintGeoJson') && !$distFromMe && !$mapManager->getSearchTerm('pointlat') && !$mapManager->getSearchTerm('upperlat'))?'block':'none'); ?>;">
+													<div>
+														<?= $LANG['SHAPE_TOOLS'] ?>.
+													</div>
+												</div>
+												<div id="distancegeocriteria" style="display:<?php echo ($distFromMe?'block':'none'); ?>;">
+													<div>
+														<?php echo $LANG['WITHIN']; ?>
+														<input data-role="none" type="text" id="distFromMe" style="width:40px;" name="distFromMe" value="<?= $distFromMe ?>" /> miles from me, or
+														<?= strtolower($LANG['SHAPE_TOOLS']) ?>.
+													</div>
+												</div>
+											</div>
+											<div id="polygeocriteria" style="display:<?php echo (($mapManager->getSearchTerm('footprintGeoJson'))?'block':'none'); ?>;">
 												<div>
-													<?= $LANG['SHAPE_TOOLS'] ?>.
+													<?= $LANG['WITHIN_POLYGON'] ?>.
 												</div>
 											</div>
-											<div id="distancegeocriteria" style="display:<?php echo ($distFromMe?'block':'none'); ?>;">
+											<div id="circlegeocriteria" style="display:<?php echo (($mapManager->getSearchTerm('pointlat') && !$distFromMe)?'block':'none'); ?>;">
 												<div>
-													<?php echo $LANG['WITHIN']; ?>
-													<input data-role="none" type="text" id="distFromMe" style="width:40px;" name="distFromMe" value="<?= $distFromMe ?>" /> miles from me, or
-													<?= strtolower($LANG['SHAPE_TOOLS']) ?>.
+													<?= $LANG['WITHIN_CIRCLE'] ?>.
 												</div>
 											</div>
-										</div>
-										<div id="polygeocriteria" style="display:<?php echo (($mapManager->getSearchTerm('footprintGeoJson'))?'block':'none'); ?>;">
-											<div>
-												<?= $LANG['WITHIN_POLYGON'] ?>.
+											<div id="rectgeocriteria" style="display:<?php echo ($mapManager->getSearchTerm('upperlat')?'block':'none'); ?>;">
+												<div>
+													<?= $LANG['WITHIN_RECTANGLE'] ?>.
+												</div>
+											</div>
+											<div id="deleteshapediv" style="margin-top:5px;display:<?php echo (($mapManager->getSearchTerm('pointlat') || $mapManager->getSearchTerm('upperlat') || $mapManager->getSearchTerm('footprintGeoJson'))?'block':'none'); ?>;">
+												<button class="button-danger" data-role="none" type="button" onclick="deleteMapShape()"><?= $LANG['DELETE_SHAPE'] ?></button>
 											</div>
 										</div>
-										<div id="circlegeocriteria" style="display:<?php echo (($mapManager->getSearchTerm('pointlat') && !$distFromMe)?'block':'none'); ?>;">
-											<div>
-												<?= $LANG['WITHIN_CIRCLE'] ?>.
-											</div>
+										<div style="margin:5 0 5 0;"><hr /></div>
+										<div>
+											<?= $LANG['COLLECTOR_LASTNAME'] ?>:
+											<input data-role="none" type="text" id="collector" style="width:125px;" name="collector" value="<?php echo $mapManager->getSearchTerm('collector'); ?>" title="" />
 										</div>
-										<div id="rectgeocriteria" style="display:<?php echo ($mapManager->getSearchTerm('upperlat')?'block':'none'); ?>;">
-											<div>
-												<?= $LANG['WITHIN_RECTANGLE'] ?>.
-											</div>
+										<div style="margin-top:5px;">
+											<?= $LANG['COLLECTOR_NUMBER'] ?>:
+											<input data-role="none" type="text" id="collnum" style="width:125px;" name="collnum" value="<?php echo $mapManager->getSearchTerm('collnum'); ?>" title="Separate multiple terms by commas and ranges by ' - ' (space before and after dash required), e.g.: 3542,3602,3700 - 3750" />
 										</div>
-										<div id="deleteshapediv" style="margin-top:5px;display:<?php echo (($mapManager->getSearchTerm('pointlat') || $mapManager->getSearchTerm('upperlat') || $mapManager->getSearchTerm('footprintGeoJson'))?'block':'none'); ?>;">
-											<button class="button-danger" data-role="none" type="button" onclick="deleteMapShape()"><?= $LANG['DELETE_SHAPE'] ?></button>
+										<div style="margin-top:5px;">
+											<?= $LANG['COLLECTOR_DATE'] ?>:
+											<input data-role="none" type="text" id="eventdate1" style="width:80px;" name="eventdate1" style="width:100px;" value="<?php echo $mapManager->getSearchTerm('eventdate1'); ?>" title="Single date or start date of range" /> -
+											<input data-role="none" type="text" id="eventdate2" style="width:80px;" name="eventdate2" style="width:100px;" value="<?php echo $mapManager->getSearchTerm('eventdate2'); ?>" title="End date of range; leave blank if searching for single date" />
 										</div>
-									</div>
-									<div style="margin:5 0 5 0;"><hr /></div>
-									<div>
-										<?= $LANG['COLLECTOR_LASTNAME'] ?>:
-										<input data-role="none" type="text" id="collector" style="width:125px;" name="collector" value="<?php echo $mapManager->getSearchTerm('collector'); ?>" title="" />
-									</div>
-									<div style="margin-top:5px;">
-										<?= $LANG['COLLECTOR_NUMBER'] ?>:
-										<input data-role="none" type="text" id="collnum" style="width:125px;" name="collnum" value="<?php echo $mapManager->getSearchTerm('collnum'); ?>" title="Separate multiple terms by commas and ranges by ' - ' (space before and after dash required), e.g.: 3542,3602,3700 - 3750" />
-									</div>
-									<div style="margin-top:5px;">
-										<?= $LANG['COLLECTOR_DATE'] ?>:
-										<input data-role="none" type="text" id="eventdate1" style="width:80px;" name="eventdate1" style="width:100px;" value="<?php echo $mapManager->getSearchTerm('eventdate1'); ?>" title="Single date or start date of range" /> -
-										<input data-role="none" type="text" id="eventdate2" style="width:80px;" name="eventdate2" style="width:100px;" value="<?php echo $mapManager->getSearchTerm('eventdate2'); ?>" title="End date of range; leave blank if searching for single date" />
-									</div>
-									<div style="margin:10 0 10 0;"><hr></div>
-									<div>
-										<?= $LANG['CATALOG_NUMBER'] ?>:
-										<input data-role="none" type="text" id="catnum" style="width:150px;" name="catnum" value="<?php echo $mapManager->getSearchTerm('catnum'); ?>" title="" />
-									</div>
-									<div style="margin-left:15px;">
-										<input data-role="none" name="includeothercatnum" type="checkbox" value="1" checked /> <?= $LANG['INCLUDE_OTHER_CATNUM'] ?>
-									</div>
-									<div style="margin-top:10px;">
-										<input data-role="none" type='checkbox' name='typestatus' value='1' <?php if($mapManager->getSearchTerm('typestatus')) echo "CHECKED"; ?> >
-										<?= $LANG['LIMIT_TO_TYPE'] ?>
-									</div>
-									<div style="margin-top:5px;">
-										<input data-role="none" type='checkbox' name='hasimages' value='1' <?php if($mapManager->getSearchTerm('hasimages')) echo "CHECKED"; ?> >
-										<?= $LANG['LIMIT_IMAGES'] ?>
-									</div>
-									<div style="margin-top:5px;">
-										<input data-role="none" type='checkbox' name='hasaudio' value='1' <?php if($mapManager->getSearchTerm('hasaudio')) echo "CHECKED"; ?> >
-										<?= $LANG['LIMIT_AUDIO'] ?>
-									</div>
-									<div style="margin-top:5px;">
-										<input data-role="none" type='checkbox' name='hasgenetic' value='1' <?php if($mapManager->getSearchTerm('hasgenetic')) echo "CHECKED"; ?> >
-										<?= $LANG['LIMIT_GENETIC'] ?>
-									</div>
-									<div style="margin-top:5px;">
-										<input data-role="none" type='checkbox' name='includecult' value='1' <?php if($mapManager->getSearchTerm('includecult')) echo "CHECKED"; ?> >
-										<?= $LANG['INCLUDE_CULTIVATED'] ?>
-									</div>
-									<div><hr></div>
-									<?php
-									if(!empty($GLOBALS['ACTIVATE_PALEO'])){
-										?>
-										<div id="searchFormPaleo">
-											<div style="margin-top:5px; display:flex;">
-												<label for="lithogroup"> <?= $LANG['LITHOGROUP'] ?>: </label>
-												<input data-role="none" type="text" id="lithogroup" style="flex:1;margin-left: 0.5rem;" name="lithogroup" value="<?php echo $mapManager->getSearchTerm('lithogroup'); ?>" />
-											</div>
-											<div style="margin-top:5px; display:flex;">
-												<label for="formation"> <?= $LANG['FORMATION'] ?>: </label>
-												<input data-role="none" type="text" id="formation" style="flex:1;margin-left: 0.5rem;" name="formation" value="<?php echo $mapManager->getSearchTerm('formation'); ?>" />
-											</div>
-											<div style="margin-top:5px; display:flex;">
-												<label for="member"> <?= $LANG['MEMBER'] ?>: </label>
-												<input data-role="none" type="text" id="member" style="flex:1;margin-left: 0.5rem;" name="member" value="<?php echo $mapManager->getSearchTerm('member'); ?>" />
-											</div>
-											<div style="margin-top:5px; display:flex;">
-												<label for="bed"> <?= $LANG['BED'] ?>: </label>
-												<input data-role="none" type="text" id="bed" style="flex:1;margin-left: 0.5rem;" name="bed" value="<?php echo $mapManager->getSearchTerm('bed'); ?>" />
-											</div>
-											<div style="margin-top:5px;">
-												<label for="lateInterval"><?php echo $LANG['LATE_INT']; ?>:</label>
-												<select name="lateInterval" id="lateInterval">
-													<option value=""></option>
-													<?php
-													$lateIntervalTerm = $mapManager->getSearchTerm('lateInterval');
-													if($lateIntervalTerm && !array_key_exists($lateIntervalTerm, $gtsTermArr)){
-														echo '<option value="'.$lateIntervalTerm.'" SELECTED>'.$lateIntervalTerm.' - mismatched term</option>';
-														echo '<option value="">---------------------------</option>';
-													}
-													foreach($gtsTermArr as $term => $rankid){
-														echo '<option value="'.$term.'" '.($lateIntervalTerm==$term?'SELECTED':'').'>'.$term.'</option>';
-													}
-													?>
-												</select>
-											</div>
-											<div style="margin-top:5px;">
-												<label for="earlyInterval"><?php echo $LANG['EARLY_INT']; ?>:</label>
-												<select name="earlyInterval" id="earlyInterval">
-													<option value=""></option>
-													<?php
-													$earlyIntervalTerm = $mapManager->getSearchTerm('earlyInterval');
-													if($earlyIntervalTerm && !array_key_exists($earlyIntervalTerm, $gtsTermArr)){
-														echo '<option value="'.$earlyIntervalTerm.'" SELECTED>'.$earlyIntervalTerm.' - mismatched term</option>';
-														echo '<option value="">---------------------------</option>';
-													}
-													foreach($gtsTermArr as $term => $rankid){
-														echo '<option value="'.$term.'" '.($earlyIntervalTerm==$term?'SELECTED':'').'>'.$term.'</option>';
-													}
-													?>
-												</select>
-											</div>
+										<div style="margin:10 0 10 0;"><hr></div>
+										<div>
+											<?= $LANG['CATALOG_NUMBER'] ?>:
+											<input data-role="none" type="text" id="catnum" style="width:150px;" name="catnum" value="<?php echo $mapManager->getSearchTerm('catnum'); ?>" title="" />
+										</div>
+										<div style="margin-left:15px;">
+											<input data-role="none" name="includeothercatnum" type="checkbox" value="1" checked /> <?= $LANG['INCLUDE_OTHER_CATNUM'] ?>
+										</div>
+										<div style="margin-top:10px;">
+											<input data-role="none" type='checkbox' name='typestatus' value='1' <?php if($mapManager->getSearchTerm('typestatus')) echo "CHECKED"; ?> >
+											<?= $LANG['LIMIT_TO_TYPE'] ?>
+										</div>
+										<div style="margin-top:5px;">
+											<input data-role="none" type='checkbox' name='hasimages' value='1' <?php if($mapManager->getSearchTerm('hasimages')) echo "CHECKED"; ?> >
+											<?= $LANG['LIMIT_IMAGES'] ?>
+										</div>
+										<div style="margin-top:5px;">
+											<input data-role="none" type='checkbox' name='hasaudio' value='1' <?php if($mapManager->getSearchTerm('hasaudio')) echo "CHECKED"; ?> >
+											<?= $LANG['LIMIT_AUDIO'] ?>
+										</div>
+										<div style="margin-top:5px;">
+											<input data-role="none" type='checkbox' name='hasgenetic' value='1' <?php if($mapManager->getSearchTerm('hasgenetic')) echo "CHECKED"; ?> >
+											<?= $LANG['LIMIT_GENETIC'] ?>
+										</div>
+										<div style="margin-top:5px;">
+											<input data-role="none" type='checkbox' name='includecult' value='1' <?php if($mapManager->getSearchTerm('includecult')) echo "CHECKED"; ?> >
+											<?= $LANG['INCLUDE_CULTIVATED'] ?>
 										</div>
 										<div><hr></div>
 										<?php
-									}
-									?>
-									<input type="hidden" name="reset" value="1" />
+										if(!empty($GLOBALS['ACTIVATE_PALEO'])){
+											?>
+											<div id="searchFormPaleo">
+												<div style="margin-top:5px; display:flex;">
+													<label for="lithogroup"> <?= $LANG['LITHOGROUP'] ?>: </label>
+													<input data-role="none" type="text" id="lithogroup" style="flex:1;margin-left: 0.5rem;" name="lithogroup" value="<?php echo $mapManager->getSearchTerm('lithogroup'); ?>" />
+												</div>
+												<div style="margin-top:5px; display:flex;">
+													<label for="formation"> <?= $LANG['FORMATION'] ?>: </label>
+													<input data-role="none" type="text" id="formation" style="flex:1;margin-left: 0.5rem;" name="formation" value="<?php echo $mapManager->getSearchTerm('formation'); ?>" />
+												</div>
+												<div style="margin-top:5px; display:flex;">
+													<label for="member"> <?= $LANG['MEMBER'] ?>: </label>
+													<input data-role="none" type="text" id="member" style="flex:1;margin-left: 0.5rem;" name="member" value="<?php echo $mapManager->getSearchTerm('member'); ?>" />
+												</div>
+												<div style="margin-top:5px; display:flex;">
+													<label for="bed"> <?= $LANG['BED'] ?>: </label>
+													<input data-role="none" type="text" id="bed" style="flex:1;margin-left: 0.5rem;" name="bed" value="<?php echo $mapManager->getSearchTerm('bed'); ?>" />
+												</div>
+												<div style="margin-top:5px;">
+													<label for="lateInterval"><?php echo $LANG['LATE_INT']; ?>:</label>
+													<select name="lateInterval" id="lateInterval">
+														<option value=""></option>
+														<?php
+														$lateIntervalTerm = $mapManager->getSearchTerm('lateInterval');
+														if($lateIntervalTerm && !array_key_exists($lateIntervalTerm, $gtsTermArr)){
+															echo '<option value="'.$lateIntervalTerm.'" SELECTED>'.$lateIntervalTerm.' - mismatched term</option>';
+															echo '<option value="">---------------------------</option>';
+														}
+														foreach($gtsTermArr as $term => $rankid){
+															echo '<option value="'.$term.'" '.($lateIntervalTerm==$term?'SELECTED':'').'>'.$term.'</option>';
+														}
+														?>
+													</select>
+												</div>
+												<div style="margin-top:5px;">
+													<label for="earlyInterval"><?php echo $LANG['EARLY_INT']; ?>:</label>
+													<select name="earlyInterval" id="earlyInterval">
+														<option value=""></option>
+														<?php
+														$earlyIntervalTerm = $mapManager->getSearchTerm('earlyInterval');
+														if($earlyIntervalTerm && !array_key_exists($earlyIntervalTerm, $gtsTermArr)){
+															echo '<option value="'.$earlyIntervalTerm.'" SELECTED>'.$earlyIntervalTerm.' - mismatched term</option>';
+															echo '<option value="">---------------------------</option>';
+														}
+														foreach($gtsTermArr as $term => $rankid){
+															echo '<option value="'.$term.'" '.($earlyIntervalTerm==$term?'SELECTED':'').'>'.$term.'</option>';
+														}
+														?>
+													</select>
+												</div>
+											</div>
+											<div><hr></div>
+											<?php
+										}
+										?>
+										<input type="hidden" name="reset" value="1" />
+									</div>
 								</div>
 							</form>
 							<div id="mapoptions" style="">
@@ -2726,5 +2730,6 @@ $serverHost = GeneralUtil::getDomain();
 				updateChip(event, isInitialConfig=true);
 			});
 		});
+
 	</script>
 </html>

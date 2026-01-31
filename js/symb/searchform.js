@@ -1403,4 +1403,5 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   setSessionStorageForAccordions();
   updateChip();
+
 });
