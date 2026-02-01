@@ -820,7 +820,7 @@ function checkTheCollectionsThatShouldBeCheckedBasedOnConfig() {
 
 function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
   queriedCollections.forEach((queriedCollection) => {
-    let targetElem = document.querySelector(`[id$="_${queriedCollection}"]:not([id^="Specimens_"]):not([id^="Observations_"])`);
+    let targetElem = document.querySelector(`[id$="_${queriedCollection}"]:not([id^="Specimens_"]):not([id^="Observations_"]):not([id="m_all"])`);
     if (!targetElem) {
       if (queriedCollection.includes("all") && !queriedCollection.includes("allspec") && !queriedCollection.includes("allobs")) {
         targetElem = document.getElementById("all_collections");

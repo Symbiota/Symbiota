@@ -4,7 +4,7 @@ include_once($SERVER_ROOT . '/classes/ImageLibrarySearch.php');
 include_once($SERVER_ROOT . '/classes/Media.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-Language::load('imagelib/search');
+Language::load(['imagelib/search', 'collections/search/index']);
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 
@@ -79,6 +79,8 @@ if($action == 'batchAssignTag'){
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
 	<link href="<?= $CSS_BASE_PATH; ?>/symbiota/collections/listdisplay.css" type="text/css" rel="stylesheet" />
 	<link href="<?= $CSS_BASE_PATH; ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />
+	<link href="<?= $CSS_BASE_PATH ?>/searchStyles.css?ver=1" type="text/css" rel="stylesheet">
+	<link href="<?= $CSS_BASE_PATH ?>/searchStylesInner.css" type="text/css" rel="stylesheet">
 	<style>
 		fieldset{ padding: 15px }
 		fieldset legend{ font-weight:bold }
@@ -89,6 +91,9 @@ if($action == 'batchAssignTag'){
 	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="../js/symb/collections.index.js?ver=2" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/alerts.js?v=202107" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=2" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.list.js?ver=20171215>" type="text/javascript"></script>
 	<script type="text/javascript">
 		var clientRoot = "<?= $CLIENT_ROOT; ?>";
 
@@ -135,9 +140,9 @@ if($action == 'batchAssignTag'){
 		<b><?= $LANG['IMAGE_SEARCH'] ?></b>
 	</div>
 	<!-- This is inner text! -->
-	<div role="main" id="innertext">
+	<div role="main" id="innertext" class="inntertext-tab pin-things-here inner-search content">
 		<h1 class="page-heading"><?= $LANG['IMAGE_SEARCH']; ?></h1>
-		<form name="imagesearchform" id="imagesearchform" action="search.php" method="post">
+		<form name="params-form" id="params-form" action="search.php" method="post">
 			<?php
 			if($statusStr){
 				echo '<div id="action-status-div">' . $statusStr . '</div>';
@@ -310,16 +315,16 @@ if($action == 'batchAssignTag'){
 							<div id="collection-div" style="margin:15px; clear:both; display:none">
 								<fieldset>
 									<legend><?= $LANG['COLLECTIONS'] ?></legend>
-									<div id="specobsdiv">
-										<div style="margin:0px 0px 10px 5px;">
-											<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" <?= $allChecked ?> />
-											<?= $LANG['SELECT_ALL'] ?>
+									<div id="error-msgs" class="errors"></div>
+									<div style="display: flex; justify-content: flex-end; position: sticky; top: 1rem; z-index: 100;">
+										<button style="margin-right: 0.5rem; background-color: var(--medium-color); width: 75px;" id="reset-btn" type="button"><?php echo $LANG['RESET'] ?></button>
+									</div>
+									<div id="search-form-colls">
+										<div id="specobsdiv">
+											<?php
+												include($SERVER_ROOT . '/collections/editor/includes/collectionForm.php');
+											?>
 										</div>
-										<?php
-										$imgLibManager->outputFullCollArr($specArr, 9999);
-										if($specArr && $obsArr) echo '<hr style="clear:both;margin:20px 0px;"/>';
-										$imgLibManager->outputFullCollArr($obsArr, 9999);
-										?>
 									</div>
 								</fieldset>
 							</div>
@@ -518,4 +523,24 @@ if($action == 'batchAssignTag'){
 	include($SERVER_ROOT . '/includes/footer.php');
 	?>
 </body>
+<script type="text/javascript">
+	$(document).ready(function() {
+		setSessionQueryStr();
+		setSearchForm(document.getElementById("params-form"));
+		// toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
+		toggleAccordionsFromSessionStorage(sessionStorage.getItem("querystr" + getCurrentPage() + "/" + "accordionIds") ?.split(",") || []);
+		document.getElementById("params-form").addEventListener("submit", function(event) {
+			event.preventDefault();
+			simpleSearch();
+		});
+		document.getElementById("reset-btn").addEventListener("click", function (event) {
+			document.getElementById("params-form").reset();
+			clearPageSpecificSessionStorageItems();
+			checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
+			closeAllCategories();
+			expandCategoriesBasedOnConfig();
+			updateChip(event, isInitialConfig=true);
+		});
+	});
+</script>
 </html>
