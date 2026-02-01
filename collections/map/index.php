@@ -2144,11 +2144,11 @@ $serverHost = GeneralUtil::getDomain();
 		>
 		</div>
 		<div>
-			<button onclick="document.getElementById('defaultpanel').style.width='29rem';  " style="position:absolute;top:0;left:0;margin:0px;z-index:10; gap: 0.2rem">
+			<button id="search-panel-button" onclick="document.getElementById('defaultpanel').style.width='29rem';  " style="position:absolute;top:0;left:0;margin:0px;z-index:10; gap: 0.2rem">
 				<span style="padding-bottom:0.2rem">
 					&#9776;
 				</span>
-				<b>Open Search Panel</b>
+				<b><?= $LANG['OPEN_SEARCH_PANEL'] ?></b>
 			</button>
 		</div>
 		<div id='map' style='width:100vw;height:100vh;z-index:1'></div>

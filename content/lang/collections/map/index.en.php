@@ -67,4 +67,5 @@ $LANG['SOUTH'] = 'S';
 $LANG['EAST'] = 'E';
 $LANG['WEST'] = 'W';
 $LANG['FAILED_TO_LOAD_OCCR_DATA'] = 'Error loading occurrence data';
+$LANG['OPEN_SEARCH_PANEL'] = 'Open Search Panel';
 ?>
