@@ -68,4 +68,5 @@ $LANG['EAST'] = 'E';
 $LANG['WEST'] = 'W';
 $LANG['FAILED_TO_LOAD_OCCR_DATA'] = 'Échec du chargement des données d\'occurrence';
 $LANG['OPEN_SEARCH_PANEL'] = 'Abrir painel de pesquisa';
+$LANG['HIDE_PANEL'] = 'Ocultar painel';
 ?>

@@ -2152,13 +2152,13 @@ $serverHost = GeneralUtil::getDomain();
 			</button>
 		</div>
 		<div id='map' style='width:100vw;height:100vh;z-index:1'></div>
-		<div id="defaultpanel" class="sidepanel"  <?= $menuClosed? 'style="width: 0"': ''?>>
+		<div id="defaultpanel" class="sidepanel"  <?= $menuClosed ? 'style="width: 0"': ''?>>
 			<div class="menu" style="display:flex; align-items: center; background-color: var(--menu-top-bg-color); height: 2rem">
 				<a style="text-decoration: none; margin-left: 0.5rem;" href="<?= $CLIENT_ROOT ?>/index.php">
 					<?= $LANG['HOME'] ?>
 				</a>
 				<span style="display: flex; flex-grow: 1; margin-right:1rem; justify-content: right">
-					<a onclick="document.getElementById('defaultpanel').style.width='0px'">Hide Panel</a>
+					<a onclick="document.getElementById('defaultpanel').style.width='0px'"><?= $LANG['HIDE_PANEL'] ?></a>
 				</span>
 			</div>
 			<div class="panel-content">
