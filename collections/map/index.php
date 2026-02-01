@@ -375,6 +375,9 @@ $serverHost = GeneralUtil::getDomain();
 			setPanels(true);
 			$("#accordion").accordion("option",{active: 1});
 			$("#tabs2").tabs({ active: 0 });
+			if (!$("#tabs1").hasClass("ui-tabs")) {
+				$("#tabs1").tabs({ active: 0 });
+			}
 			buildPortalLegend();
 			buildTaxaLegend();
 			buildCollectionLegend();
@@ -2162,8 +2165,8 @@ $serverHost = GeneralUtil::getDomain();
 				<div id="mapinterface">
 					<div id="accordion">
 						<h3 id="search_criteria" style="margin-top:0"><?= $LANG['SEARCH_CRITERIA'] ?></h3>
-						<div id="tabs1" class="content" style="padding:0px;height:100%">
-							<form name="params-form" id="params-form" data-ajax="false">
+						<form name="params-form" id="params-form" data-ajax="false">
+							<div id="tabs1" class="content" style="padding:0px;height:100%">
 								<ul>
 									<li><a href="#search-form-colls"><span><?= $LANG['COLLECTIONS'] ?></span></a></li>
 									<li><a href="#searchcriteria"><span><?= $LANG['CRITERIA'] ?></span></a></li>
@@ -2425,103 +2428,103 @@ $serverHost = GeneralUtil::getDomain();
 									?>
 									<input type="hidden" name="reset" value="1" />
 								</div>
-							</form>
-							<div id="mapoptions" style="">
-								<fieldset>
-									<legend><?= $LANG['CLUSTERING'] ?></legend>
-									<label><?= $LANG['TURN_OFF_CLUSTERING'] ?>:</label>
-									<input data-role="none" type="checkbox" id="clusteroff" name="clusteroff" value='1' <?= ($clusterOff=="y"?'checked':'') ?>/>
-
-									<span style="display: flex; align-items:center">
-										<label for="cluster-radius"><?= $LANG['CLUSTER_RADIUS'] ?>: 1 </label>
-										<input style="margin: 0 1rem;"type="range" value="1" id="cluster-radius" name="cluster-radius" min="1" max="100">100
-									</span>
-								</fieldset>
-								<br/>
-								<fieldset>
-									<legend><?= $LANG['HEATMAP']; ?></legend>
-									<label><?= $LANG['TURN_ON_HEATMAP'] ?>:</label>
-									<input data-role="none" type="checkbox" id="heatmap_on" name="heatmap_on" value='1'/>
+								<div id="mapoptions" style="">
+									<fieldset>
+										<legend><?= $LANG['CLUSTERING'] ?></legend>
+										<label><?= $LANG['TURN_OFF_CLUSTERING'] ?>:</label>
+										<input data-role="none" type="checkbox" id="clusteroff" name="clusteroff" value='1' <?= ($clusterOff=="y"?'checked':'') ?>/>
+	
+										<span style="display: flex; align-items:center">
+											<label for="cluster-radius"><?= $LANG['CLUSTER_RADIUS'] ?>: 1 </label>
+											<input style="margin: 0 1rem;"type="range" value="1" id="cluster-radius" name="cluster-radius" min="1" max="100">100
+										</span>
+									</fieldset>
 									<br/>
-									<span style="display: flex; align-items:center">
-										<label for="heat-radius"><?= $LANG['HEAT_RADIUS'] ?>: 0.1</label>
-										<input style="margin: 0 1rem;"type="range" value="70" id="heat-radius" name="heat-radius" min="1" max="100">1
-									</span>
-
-									<label for="heat-min-density"><?= $LANG['MIN_DENSITY'] ?>: </label>
-									<input style="margin: 0 1rem; width: 5rem;"value="1" id="heat-min-density" name="heat-min-density">
-
+									<fieldset>
+										<legend><?= $LANG['HEATMAP']; ?></legend>
+										<label><?= $LANG['TURN_ON_HEATMAP'] ?>:</label>
+										<input data-role="none" type="checkbox" id="heatmap_on" name="heatmap_on" value='1'/>
+										<br/>
+										<span style="display: flex; align-items:center">
+											<label for="heat-radius"><?= $LANG['HEAT_RADIUS'] ?>: 0.1</label>
+											<input style="margin: 0 1rem;"type="range" value="70" id="heat-radius" name="heat-radius" min="1" max="100">1
+										</span>
+	
+										<label for="heat-min-density"><?= $LANG['MIN_DENSITY'] ?>: </label>
+										<input style="margin: 0 1rem; width: 5rem;"value="1" id="heat-min-density" name="heat-min-density">
+	
+										<br/>
+										<label for="heat-max-density"><?= $LANG['MAX_DENSITY'] ?>: </label>
+										<input style="margin: 0 1rem; width: 5rem;"value="3" id="heat-max-density" name="heat-max-density">
+										<br/>
+									</fieldset>
 									<br/>
-									<label for="heat-max-density"><?= $LANG['MAX_DENSITY'] ?>: </label>
-									<input style="margin: 0 1rem; width: 5rem;"value="3" id="heat-max-density" name="heat-max-density">
-									<br/>
-								</fieldset>
-								<br/>
-								<fieldset>
-									<legend>
-									   <?= $LANG['ADD_REFERENCE_POINT'] ?>
-									</legend>
-									<div>
+									<fieldset>
+										<legend>
+										   <?= $LANG['ADD_REFERENCE_POINT'] ?>
+										</legend>
 										<div>
-									   <?= $LANG['MARKER_NAME'] ?>:
-											<input name='title' id='title' size='15' type='text' />
-										</div>
-										<div class="latlongdiv">
 											<div>
-											 <div style="float:left;margin-right:5px">
-												<?= $LANG['LATITUDE'] ?>
-												(<?= $LANG['DECIMAL'] ?>):
-												<input name='lat' id='lat' size='10' type='text' /> </div>
-												<div style="float:left;">eg: 34.57</div>
+										   <?= $LANG['MARKER_NAME'] ?>:
+												<input name='title' id='title' size='15' type='text' />
 											</div>
-											<div style="margin-top:5px;clear:both">
-											 <div style="float:left;margin-right:5px">
-												<?= $LANG['LONGITUDE'] ?>
-												(<?= $LANG['DECIMAL'] ?>):
-												<input name='lng' id='lng' size='10' type='text' /> </div>
-												<div style="float:left;">eg: -112.38</div>
+											<div class="latlongdiv">
+												<div>
+												 <div style="float:left;margin-right:5px">
+													<?= $LANG['LATITUDE'] ?>
+													(<?= $LANG['DECIMAL'] ?>):
+													<input name='lat' id='lat' size='10' type='text' /> </div>
+													<div style="float:left;">eg: 34.57</div>
+												</div>
+												<div style="margin-top:5px;clear:both">
+												 <div style="float:left;margin-right:5px">
+													<?= $LANG['LONGITUDE'] ?>
+													(<?= $LANG['DECIMAL'] ?>):
+													<input name='lng' id='lng' size='10' type='text' /> </div>
+													<div style="float:left;">eg: -112.38</div>
+												</div>
+												<div style='font-size:80%;margin-top:5px;clear:both'>
+												 <a href='#' onclick='toggleLatLongDivs();'>
+													<?= $LANG['ENTER_IN_DMS']?>
+												 </a>
+												</div>
 											</div>
-											<div style='font-size:80%;margin-top:5px;clear:both'>
-											 <a href='#' onclick='toggleLatLongDivs();'>
-												<?= $LANG['ENTER_IN_DMS']?>
-											 </a>
+											<div id="useLLDecimal" class='latlongdiv' style='display:none;clear:both'>
+												<div>
+													<?= $LANG['LATITUDE'] ?>:
+													<input name='latdeg' id='latdeg' size='2' type='text' />&deg;
+													<input name='latmin' id='latmin' size='4' type='text' />&prime;
+													<input name='latsec' id='latsec' size='4' type='text' />&Prime;
+													<select name='latns' id='latns'>
+														<option value='N'><?= $LANG['NORTH']; ?></option>
+														<option value='S'><?= $LANG['SOUTH']; ?></option>
+													</select>
+												</div>
+												<div style="margin-top:5px;">
+											  <?= $LANG['LONGITUDE'] ?>:
+													<input name='longdeg' id='longdeg' size='2' type='text' />&deg;
+													<input name='longmin' id='longmin' size='4' type='text' />&prime;
+													<input name='longsec' id='longsec' size='4' type='text' />&Prime;
+													<select name='longew' id='longew'>
+														<option value='E'><?= $LANG['EAST']; ?></option>
+														<option value='W' selected><?= $LANG['WEST']; ?></option>
+													</select>
+												</div>
+												<div style='font-size:80%;margin-top:5px;'>
+												 <a href='#' onclick='toggleLatLongDivs();'>
+													<?= $LANG['ENTER_IN_DECIMAL'] ?>
+												 </a>
+												</div>
+											</div>
+											<div style="margin-top:10px;">
+										   <button onclick='addRefPoint();'>
+											  <?= $LANG['ADD_MARKER'] ?>
+										   </button>
 											</div>
 										</div>
-										<div id="useLLDecimal" class='latlongdiv' style='display:none;clear:both'>
-											<div>
-												<?= $LANG['LATITUDE'] ?>:
-												<input name='latdeg' id='latdeg' size='2' type='text' />&deg;
-												<input name='latmin' id='latmin' size='4' type='text' />&prime;
-												<input name='latsec' id='latsec' size='4' type='text' />&Prime;
-												<select name='latns' id='latns'>
-													<option value='N'><?= $LANG['NORTH']; ?></option>
-													<option value='S'><?= $LANG['SOUTH']; ?></option>
-												</select>
-											</div>
-											<div style="margin-top:5px;">
-										  <?= $LANG['LONGITUDE'] ?>:
-												<input name='longdeg' id='longdeg' size='2' type='text' />&deg;
-												<input name='longmin' id='longmin' size='4' type='text' />&prime;
-												<input name='longsec' id='longsec' size='4' type='text' />&Prime;
-												<select name='longew' id='longew'>
-													<option value='E'><?= $LANG['EAST']; ?></option>
-													<option value='W' selected><?= $LANG['WEST']; ?></option>
-												</select>
-											</div>
-											<div style='font-size:80%;margin-top:5px;'>
-											 <a href='#' onclick='toggleLatLongDivs();'>
-												<?= $LANG['ENTER_IN_DECIMAL'] ?>
-											 </a>
-											</div>
-										</div>
-										<div style="margin-top:10px;">
-									   <button onclick='addRefPoint();'>
-										  <?= $LANG['ADD_MARKER'] ?>
-									   </button>
-										</div>
-									</div>
-								</fieldset>
-							</div>
+									</fieldset>
+								</div>
+							</form>
 							<form style="display:none;" name="csvcontrolform" id="csvcontrolform" action="csvdownloadhandler.php" method="post" onsubmit="">
 								<input data-role="none" name="selectionscsv" id="selectionscsv" type="hidden" value="" />
 								<input data-role="none" name="starrcsv" id="starrcsv" type="hidden" value="" />
