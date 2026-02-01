@@ -2125,7 +2125,7 @@ $serverHost = GeneralUtil::getDomain();
 		<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
 	</head>
 	<body style='width:100%;max-width:100%;min-width:500px;' <?php echo (!$activateGeolocation?'onload="initialize();"':''); ?>>
-	<div role="main" id="innertext" class="inntertext-tab pin-things-here inner-search">
+	<div style="width:100%; max-width:max-content;" role="main" id="innertext" class="inntertext-tab pin-things-here inner-search">
 		<div style="z-index:999;" id="error-msgs" class="errors"></div>
 		<?php
 		if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimalheader.php');
