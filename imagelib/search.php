@@ -140,15 +140,15 @@ if($action == 'batchAssignTag'){
 		<b><?= $LANG['IMAGE_SEARCH'] ?></b>
 	</div>
 	<!-- This is inner text! -->
-	<div style="max-width: 100%;" role="main" id="innertext" class="inntertext-tab pin-things-here inner-search content">
+	<div role="main" id="innertext" class="inntertext-tab pin-things-here inner-search content">
 		<h1 class="page-heading"><?= $LANG['IMAGE_SEARCH']; ?></h1>
-		<form name="params-form" id="params-form" action="search.php" method="post">
+		<form style="display:block;" name="params-form" id="params-form" action="search.php" method="post">
 			<?php
 			if($statusStr){
 				echo '<div id="action-status-div">' . $statusStr . '</div>';
 			}
 			?>
-			<div id="search-div">
+			<div id="search-div" style="width: 100%">
 				<fieldset>
 					<legend><?= $LANG['SEARCH_CRITERIA'] ?></legend>
 					<div id="criteria-div">
