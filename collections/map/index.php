@@ -2144,7 +2144,7 @@ $serverHost = GeneralUtil::getDomain();
 		>
 		</div>
 		<div>
-			<button id="search-panel-button" onclick="document.getElementById('defaultpanel').style.width='29rem';  " style="position:absolute;top:0;left:0;margin:0px;z-index:10; gap: 0.2rem">
+			<button id="search-panel-button" onclick="document.getElementById('defaultpanel').style.width='29rem'; document.getElementById('search-panel-button').style.display='none';" style="position:absolute;top:0;left:0;margin:0px;z-index:10; gap: 0.2rem<?= $menuClosed ? '' : '; display:none'?>">
 				<span style="padding-bottom:0.2rem">
 					&#9776;
 				</span>
@@ -2158,7 +2158,7 @@ $serverHost = GeneralUtil::getDomain();
 					<?= $LANG['HOME'] ?>
 				</a>
 				<span style="display: flex; flex-grow: 1; margin-right:1rem; justify-content: right">
-					<a onclick="document.getElementById('defaultpanel').style.width='0px'"><?= $LANG['HIDE_PANEL'] ?></a>
+					<a onclick="document.getElementById('defaultpanel').style.width='0px'; document.getElementById('search-panel-button').style.display='block';"><?= $LANG['HIDE_PANEL'] ?></a>
 				</span>
 			</div>
 			<div class="panel-content">
