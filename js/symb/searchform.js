@@ -296,8 +296,8 @@ function updateChip(e, isInitialConfig=false) {
       // checkTheCollectionsThatShouldBeChecked(checkedCollections);
       checkTheCollectionsThatShouldBeChecked(updatedQueriedCollections);
       updateCategoryCheckboxes();
-      closeAllCategories();
-      expandCategoriesWithSomeCheckedChildren();
+      // closeAllCategories();
+      // expandCategoriesWithSomeCheckedChildren();
       
     }
   }
@@ -1014,19 +1014,6 @@ function setSearchForm(frm) {
     expandCategoriesBasedOnConfig();
     updateChip(null, isInitialConfig=true);
   }
-  // else if(localStorageRealValues.length > 0  && hasNoSessionInfo){
-  //   Object.keys(localStorage).forEach(key => {
-  //     if (frm[key]) {
-  //       frm[key].value = localStorage.getItem(key);
-  //     }
-  //     closeAllCategories();
-  //     expandCategoriesWithSomeCheckedChildren();
-  //   });
-  // }
-  // @ TODO if sessionStorage["querystr"+getCurrentPage() + foo] has collection info, use that to set collections
-  // @TODO list sessionStorage keys
-  
-  // else if(hasSessionInfo){
   else {
     const urlVariablesFromSessionStorage = concatenateUrlVariablesFromSessionStorage();
     const urlVar = parseUrlVariables(urlVariablesFromSessionStorage.replaceAll('&quot;', '"'));
@@ -1206,8 +1193,8 @@ function setSearchForm(frm) {
       if (updatedQueriedCollections.length > 0) {
         uncheckEverythingInCollections();
         checkTheCollectionsThatShouldBeChecked(updatedQueriedCollections);
-        closeAllCategories();
-        expandCategoriesWithSomeCheckedChildren();
+        // closeAllCategories();
+        // expandCategoriesWithSomeCheckedChildren();
       }
     }
     for (const i in urlVar) {
@@ -1221,9 +1208,6 @@ function setSearchForm(frm) {
     }
     updateChip();
   } 
-  // else{
-  //  // do nothing
-  // }
 }
 
 function updateQueryListWithTypeCollections(queryList){
@@ -1336,8 +1320,8 @@ function initializeFormInputs() {
         const updatedQueriedCollections = updateQueryListWithTypeCollections(queriedCollections);
         uncheckEverythingInCollections();
         checkTheCollectionsThatShouldBeChecked(updatedQueriedCollections);
-        closeAllCategories();
-        expandCategoriesWithSomeCheckedChildren();
+        // closeAllCategories();
+        // expandCategoriesWithSomeCheckedChildren();
       }
       updateChip(e);
       setSessionQueryStr();
