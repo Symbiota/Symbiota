@@ -2165,7 +2165,7 @@ $serverHost = GeneralUtil::getDomain();
 				<div id="mapinterface">
 					<div id="accordion">
 						<h3 id="search_criteria" style="margin-top:0"><?= $LANG['SEARCH_CRITERIA'] ?></h3>
-						<form name="params-form" id="params-form" data-ajax="false">
+						<form style="width: 39rem;" name="params-form" id="params-form" data-ajax="false">
 							<div id="tabs1" class="content" style="padding:0px;height:100%">
 								<ul>
 									<li><a href="#search-form-colls"><span><?= $LANG['COLLECTIONS'] ?></span></a></li>
