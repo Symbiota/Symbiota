@@ -304,8 +304,8 @@ if($action == 'batchAssignTag'){
 								</span>
 							</div>
 						</div>
-						<div class="row-div flex-form" style="padding-top:10px">
-							<button name="submitaction" type="submit" value="search"><?= $LANG['LOAD_IMAGES'] ?></button>
+						<div class="row-div flex-form" style="padding-top:10px; display:flex; justify-content:flex-end;">
+							<button style="width: 112px;" name="submitaction" type="submit" value="search"><?= $LANG['LOAD_IMAGES'] ?></button>
 						</div>
 						<?php
 						if($specArr || $obsArr){
