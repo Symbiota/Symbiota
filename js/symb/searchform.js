@@ -296,8 +296,8 @@ function updateChip(e, isInitialConfig=false) {
       // checkTheCollectionsThatShouldBeChecked(checkedCollections);
       checkTheCollectionsThatShouldBeChecked(updatedQueriedCollections);
       updateCategoryCheckboxes();
-      // closeAllCategories();
-      // expandCategoriesWithSomeCheckedChildren();
+      closeAllCategories();
+      expandCategoriesWithSomeCheckedChildren();
       
     }
   }
@@ -926,12 +926,12 @@ function expandCategoriesWithSomeCheckedChildren() {
   generateTargetInputElementsForCategory((categoryPattern, targetInputElems) => {
     const container = document.getElementById(categoryPattern + '_inputs');
     const checkedChildren = Array.from(targetInputElems).filter(checkbox => checkbox.checked);
-    if (checkedChildren.length === targetInputElems.length && container.style.display === 'flex') {
+    if (checkedChildren.length === targetInputElems.length && container.style.display === 'flex' && !container.classList.contains('explicitly-collapsed')) {
       toggleCategory(categoryPattern);
     }
-    else if (checkedChildren.length > 0 && checkedChildren.length < targetInputElems.length && container.style.display === 'none') {
+    else if (checkedChildren.length > 0 && checkedChildren.length < targetInputElems.length && container.style.display === 'none' && !container.classList.contains('explicitly-collapsed')) {
       toggleCategory(categoryPattern);
-    } else if(checkedChildren.length === 0 && container.style.display === 'flex') {
+    } else if(checkedChildren.length === 0 && container.style.display === 'flex' && !container.classList.contains('explicitly-collapsed')) {
       toggleCategory(categoryPattern);
     }
   });
@@ -1193,8 +1193,8 @@ function setSearchForm(frm) {
       if (updatedQueriedCollections.length > 0) {
         uncheckEverythingInCollections();
         checkTheCollectionsThatShouldBeChecked(updatedQueriedCollections);
-        // closeAllCategories();
-        // expandCategoriesWithSomeCheckedChildren();
+        closeAllCategories();
+        expandCategoriesWithSomeCheckedChildren();
       }
     }
     for (const i in urlVar) {
@@ -1320,8 +1320,8 @@ function initializeFormInputs() {
         const updatedQueriedCollections = updateQueryListWithTypeCollections(queriedCollections);
         uncheckEverythingInCollections();
         checkTheCollectionsThatShouldBeChecked(updatedQueriedCollections);
-        // closeAllCategories();
-        // expandCategoriesWithSomeCheckedChildren();
+        closeAllCategories();
+        expandCategoriesWithSomeCheckedChildren();
       }
       updateChip(e);
       setSessionQueryStr();

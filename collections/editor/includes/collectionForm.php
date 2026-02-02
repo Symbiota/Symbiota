@@ -83,7 +83,7 @@ function updateParent(inputs, parentSelector) {
 	}
 }
 
-function toggleCategory(categoryId) {
+function toggleCategory(categoryId, event=null) {
 	const container = document.getElementById(categoryId + '_inputs');
 	if(!container) return;
 
@@ -95,10 +95,16 @@ function toggleCategory(categoryId) {
 	if(container.style.display === 'none') {
 		open_toggle.style.display = 'none';
 		close_toggle.style.display = 'flex';
+		if(event?.type === 'click'){
+			container.classList.remove('explicitly-collapsed');
+		}
 		container.style.display = 'flex';
 	} else {
 		open_toggle.style.display = 'flex';
 		close_toggle.style.display = 'none';
+		if(event?.type === 'click'){
+			container.classList.add('explicitly-collapsed');
+		}
 		container.style.display = 'none';
 	}
 }
@@ -196,7 +202,7 @@ function toggleCategory(categoryId) {
 							<?= $category['name'] ?>
 						</label>
 		
-						<a onclick="toggleCategory(`<?=  $categoryIdentifer ?>`)" style="cursor: pointer;">
+						<a onclick="toggleCategory(`<?=  $categoryIdentifer ?>`, event)" style="cursor: pointer;">
 							<span id="<?=  $categoryIdentifer . '_open_toggle' ?>"
 								style="display: none; align-items: center; gap:0.5rem;">
 								<img
