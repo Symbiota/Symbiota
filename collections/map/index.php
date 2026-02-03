@@ -947,6 +947,10 @@ $serverHost = GeneralUtil::getDomain();
 					count++;
 				}
 
+				if(recordArr && recordArr.length >= 15000) {
+					alert('<?= $LANG["MAP_RECORD_LIMIT_MESSAGE"] ?>');
+				}
+
 				//build records table
 				buildRecordsPanel(recordArr);
 
