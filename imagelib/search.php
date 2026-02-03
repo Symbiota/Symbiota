@@ -87,6 +87,16 @@ if($action == 'batchAssignTag'){
 		label{ font-weight:bold }
 		.row-div{ clear: both; margin: 3px; }
 		#action-status-div{ padding: 15px; }
+		.inner-search select{
+			width: auto;
+		}
+		#edit-div {
+			margin-left: auto;
+		}
+		#row-1 {
+			overflow: hidden; /* Creates block formatting context to contain floats */
+			margin-bottom: 0.5rem !important; /* override .row-div margin */
+		}
 	</style>
 	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
@@ -152,7 +162,7 @@ if($action == 'batchAssignTag'){
 				<fieldset>
 					<legend><?= $LANG['SEARCH_CRITERIA'] ?></legend>
 					<div id="criteria-div">
-						<div class="row-div flex-form">
+						<div id="row-1" class="row-div">
 							<?php
 							$isEditor = 0;
 							if($IS_ADMIN) $isEditor = 1;
