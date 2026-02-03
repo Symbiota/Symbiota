@@ -2149,10 +2149,6 @@ $serverHost = GeneralUtil::getDomain();
 								</div>
 								<div id="searchcriteria" style="padding-top: 0.5rem">
 									<div>
-										<!-- <div style="float:left;<?= (isset($SOLR_MODE) && $SOLR_MODE ? 'display:none;' : '') ?>">
-											Record Limit:
-											<input data-role="none" type="text" id="recordlimit" style="width:75px;" name="recordlimit" value="<?php echo ($recLimit?$recLimit:""); ?>" title="Maximum record amount returned from search." onchange="return checkRecordLimit(this.form);" />
-										</div> -->
 										<div style="display:flex; gap: 1rem; justify-content: right; height: 2rem">
 											<input type="hidden" id="selectedpoints" value="" />
 											<input type="hidden" id="deselectedpoints" value="" />
