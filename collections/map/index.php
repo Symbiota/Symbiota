@@ -41,8 +41,6 @@ $mapManager = new OccurrenceMapManager();
 $searchVar = $mapManager->getQueryTermStr();
 if($searchVar && $recLimit) $searchVar .= '&reclimit='.$recLimit;
 
-$obsIDs = $mapManager->getObservationIds();
-
 //Sanitation
 if(!is_string($clusterOff) || strlen($clusterOff) > 1) $clusterOff = 'y';
 
@@ -66,68 +64,14 @@ if(!empty($MAPPING_BOUNDARIES)){
 $bounds = [ [$boundLatMax, $boundLngMax], [$boundLatMin, $boundLngMin] ];
 
 //Gets Coordinates
-$coordArr = $mapManager->getCoordinateMap(0,$recLimit);
-$taxaArr = [];
-$recordArr = [];
-$collArr = [];
-
-$recordCnt = 0;
+list(
+	'taxaArr' => $taxaArr,
+	'recordArr' => $recordArr,
+	'collArr' => $collArr
+) = $mapManager->getCoordinateMap(0,$recLimit);
 
 if(empty($EXTERNAL_PORTAL_HOSTS)) {
 	$EXTERNAL_PORTAL_HOSTS = [];
-}
-
-foreach ($coordArr as $collName => $coll) {
-	//Collect all the collections
-	foreach ($coll as $recordId => $record) {
-		if($recordId == 'c') continue;
-
-		//Collect all taxon
-		if(!array_key_exists($record['tid'], $taxaArr)) {
-			$taxaArr[$record['tid']] = [
-				'sn' => $record['sn'],
-				'tid' => $record['tid'],
-				'family' => $record['fam'],
-				'color' => $coll['c'],
-				'records' => [$recordCnt]
-			];
-		} else {
-			array_push($taxaArr[$record['tid']]['records'], $recordCnt);
-		}
-
-		//Collect all Collections
-		if(!array_key_exists($record['collid'], $collArr)) {
-			$collArr[$record['collid']] = [
-				'name' => $collName,
-				'collid' => $record['collid'],
-				'color' => $coll['c'],
-				'records' => [$recordCnt]
-			];
-		} else {
-			array_push($collArr[$record['collid']]['records'], $recordCnt);
-		}
-
-		$llstrArr = explode(',', $record['llStr']);
-		if(count($llstrArr) != 2) continue;
-
-		//Collect all records
-		array_push($recordArr, [
-			'id' => $record['id'],
-			'tid' => $record['tid'],
-			'catalogNumber' => $record['catalogNumber'],
-			'eventdate' => $record['eventdate'],
-			'sciname' => $record['sn'],
-			'collid' => $record['collid'],
-			'family' => $record['fam'],
-			'occid' => $recordId,
-			'collname' => $collName,
-			'type' => in_array($record['collid'], $obsIDs)? 'observation':'specimen',
-			'lat' => floatval($llstrArr[0]),
-			'lng' => floatval($llstrArr[1]),
-		]);
-
-		$recordCnt++;
-	}
 }
 
 if(isset($_REQUEST['llpoint'])) {
@@ -151,8 +95,8 @@ if(isset($_REQUEST['llpoint'])) {
 //Gets the geo context terms
 $gtsTermArr = $mapManager->getPaleoGtsTerms();
 $paleoTimes = $mapManager->getPaleoTimes();
-
 $serverHost = GeneralUtil::getDomain();
+
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">

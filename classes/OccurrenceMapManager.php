@@ -12,7 +12,8 @@ class OccurrenceMapManager extends OccurrenceManager {
 		parent::__construct();
 		$this->readGeoRequestVariables();
 		$this->setGeoSqlWhere();
-		$this->setRecordCnt();
+		// TODO (Logan) before merge figure this out
+		// $this->setRecordCnt();
 	}
 
 	public function __destruct(){
@@ -36,59 +37,109 @@ class OccurrenceMapManager extends OccurrenceManager {
 	}
 
 	//Coordinate retrival functions
-	public function getCoordinateMap($start, $limit){
-		//Used within dynamic map
-		$coordArr = Array();
-		if($this->sqlWhere){
-			$statsManager = new OccurrenceAccessStats();
-			$sql = 'SELECT o.occid, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS identifier, o.eventdate, '.
-				'o.sciname, IF(ts.family IS NULL, o.family, ts.family) as family, o.tidinterpreted, o.DecimalLatitude, o.DecimalLongitude, o.collid, o.catalogNumber, '.
-				'o.othercatalognumbers, c.institutioncode, c.collectioncode, c.CollectionName '.
-				'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
-
-			if (!empty($GLOBALS['ACTIVATE_PALEO']))
-				$sql = $this->getPaleoSqlWith() . $sql;
-			$this->sqlWhere .= 'AND (ts.taxauthid = 1 OR ts.taxauthid IS NULL) ';
-
-			$sql .= $this->getTableJoins($this->sqlWhere);
-
-			$sql .= $this->sqlWhere;
-
-			if(is_numeric($start) && $limit){
-				$sql .= "LIMIT ".$start.",".$limit;
-			}
-			$result = QueryUtil::tryExecuteQuery($this->conn, $sql);
-			if(!$result) {
-				$this->errorMessage = 'ERROR executing coordinate query: ' . $this->conn->error;
-				return array();
-			}
-			$color = 'e69e67';
-			$occidArr = array();
-			while($row = $result->fetch_object()){
-				if(!($row->DecimalLongitude <= 180 && $row->DecimalLongitude >= -180) || !($row->DecimalLatitude <= 90 && $row->DecimalLatitude >= -90)) {
-					continue;
-				}
-				$occidArr[] = $row->occid;
-				$collName = $row->CollectionName;
-				$tidInterpreted = $this->htmlEntities($row->tidinterpreted);
-				$latLngStr = $row->DecimalLatitude.",".$row->DecimalLongitude;
-				$coordArr[$collName][$row->occid]["llStr"] = $latLngStr;
-				$coordArr[$collName][$row->occid]["collid"] = $this->htmlEntities($row->collid);
-				$coordArr[$collName][$row->occid]["tid"] = $tidInterpreted;
-				$coordArr[$collName][$row->occid]["fam"] = ($row->family?strtoupper($row->family):'undefined');
-				$coordArr[$collName][$row->occid]["sn"] = $row->sciname;
-				$coordArr[$collName][$row->occid]["catalogNumber"] = $row->catalogNumber;
-				$coordArr[$collName][$row->occid]["eventdate"] = $row->eventdate;
-				$coordArr[$collName][$row->occid]["id"] = $row->identifier;
-				$coordArr[$collName]["c"] = $color;
-			}
-			$statsManager->recordAccessEventByArr($occidArr, 'map');
-			if(array_key_exists('undefined',$coordArr)){
-				$coordArr['undefined']['c'] = $color;
-			}
-			$result->free();
+	public function getCoordinateMap($start, $limit) {
+		if(!$this->sqlWhere) {
+			return [
+				'taxaArr' => [],
+				'collArr' => [],
+				'recordArr' => []
+			];
 		}
-		return $coordArr;
+		
+		$statsManager = new OccurrenceAccessStats();
+		$sql = 'SELECT o.occid, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS identifier, o.eventdate, '.
+			'o.sciname, IF(ts.family IS NULL, o.family, ts.family) as family, o.tidinterpreted, o.DecimalLatitude, o.DecimalLongitude, o.collid, o.catalogNumber, '.
+			'o.othercatalognumbers '.
+			'FROM omoccurrences o ';
+
+		if (!empty($GLOBALS['ACTIVATE_PALEO'])) {
+			$sql = $this->getPaleoSqlWith() . $sql;
+		}
+
+		$this->sqlWhere .= 'AND (ts.taxauthid = 1 OR ts.taxauthid IS NULL) ';
+		$sql .= $this->getTableJoins($this->sqlWhere);
+		$sql .= $this->sqlWhere;
+
+		if(is_numeric($start) && $limit){
+			$sql .= "LIMIT " . $start . "," . $limit;
+		}
+
+		$result = QueryUtil::tryExecuteQuery($this->conn, $sql);
+		if(!$result) {
+			$this->errorMessage = 'ERROR executing coordinate query: ' . $this->conn->error;
+			echo json_encode([$this->errorMessage]);
+			return array();
+		}
+
+		$color = 'e69e67';
+		$occidArr = [];
+		$recordArr = [];
+		$taxaArr = [];
+		$collArr = [];
+		$colResult= QueryUtil::tryExecuteQuery($this->conn,'SELECT collid, collectionName, CollType IN("Observations","General Observations") as isObservation FROM omcollections');
+		$collections = [];
+
+		$host = GeneralUtil::getDomain() . $GLOBALS['CLIENT_ROOT'];
+
+		while($record = $colResult->fetch_object()) {
+			if (!array_key_exists($record->collid, $collections)) {
+				$collections[$record->collid] = [
+					'name' => $record->collectionName,
+					'collid' => $record->collid,
+					'isObservation' => $record->isObservation
+				];
+			}
+		}
+
+		while($record = $result->fetch_object()) {
+			$collName = $collections[$record->collid]['name'];
+			if (!array_key_exists($record->tidinterpreted, $taxaArr)) {
+				$taxaArr[$record->tidinterpreted] = [
+					'sn' => $record->sciname,
+					'tid' => $record->tidinterpreted,
+					'family' => $record->family,
+					'color' => $color,
+				];
+			}
+
+			//Collect all Collections
+			if (!array_key_exists($record->collid, $collArr)) {
+				$collArr[$record->collid] = [
+					'name' => $collName,
+					'collid' => $record->collid,
+					'color' => $color,
+				];
+			}
+
+			//Collect all records
+			array_push($recordArr, [
+				'id' => $record->identifier, 
+				'tid' => $this->htmlEntities($record->tidinterpreted), 
+				'catalogNumber' => $record->catalogNumber, 
+				'eventdate' => $record->eventdate, 
+				'sciname' => $record->sciname, 
+				'collid' => $record->collid, 
+				'family' => $record->family,
+				'occid' => $record->occid,
+				'host' => $host,
+				'collname' => $collName,
+				'type' => $collections[$record->collid]['isObservation']? 'observation' : 'specimen',
+				'lat' => $record->DecimalLatitude,
+				'lng' => $record->DecimalLongitude,
+			]);
+
+			$occidArr[] = $record->occid;
+		}
+
+		$result->free();
+
+		$statsManager->recordAccessEventByArr($occidArr, 'map');
+
+		return [
+			'taxaArr' => $taxaArr, 
+			'collArr' => $collArr, 
+			'recordArr' => $recordArr
+		];
 	}
 
 	public function getMappingData($recLimit, $extraFieldArr = null){
