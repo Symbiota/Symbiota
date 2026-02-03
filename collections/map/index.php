@@ -1105,6 +1105,9 @@ $serverHost = GeneralUtil::getDomain();
 				group.origin = "<?= $serverHost . $CLIENT_ROOT?>";
 				mapGroups = [group];
 
+				if(recordArr && recordArr.length >= 15000) {
+					alert('<?= $LANG["MAP_RECORD_LIMIT_MESSAGE"] ?>');
+				}
 
 				$( document ).ready(function() {
 					// Build Records Panel
