@@ -12,7 +12,7 @@ $catID = array_key_exists('catid', $_REQUEST) ? filter_var($_REQUEST['catid'], F
 if(!$catID && isset($DEFAULTCATID) && $DEFAULTCATID) $catID = $DEFAULTCATID;
 $collId = array_key_exists('collid', $_REQUEST) ? $_REQUEST['collid'] : 0; // can't sanitize here as int because this could be a comma-delimited set of collIds
 
-$cPartentTaxon = isset($_REQUEST['taxon']) ? htmlspecialchars($_REQUEST['taxon'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
+$cParentTaxon = isset($_REQUEST['taxon']) ? htmlspecialchars($_REQUEST['taxon'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $cCountry = isset($_REQUEST['country']) ? htmlspecialchars($_REQUEST['country'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $days = array_key_exists('days', $_REQUEST) ? filter_var($_REQUEST['days'], FILTER_SANITIZE_NUMBER_INT) : 365;
 $months = array_key_exists('months', $_REQUEST)? filter_var($_REQUEST['months'], FILTER_SANITIZE_NUMBER_INT) : 12;
@@ -38,7 +38,7 @@ $collStr = '';
 if($collId){
 	$collIdArr = explode(",",$collId);
 
-	if($action == "Run Statistics" && (!$cPartentTaxon && !$cCountry)){
+	if($action == "Run Statistics" && (!$cParentTaxon && !$cCountry)){
 		$resultsTemp = $collManager->runStatistics($collId);
 		$results['FamilyCount'] = $resultsTemp['familycnt'];
 		$results['GeneraCount'] = $resultsTemp['genuscnt'];
@@ -138,10 +138,12 @@ if($collId){
 			}
 			$c++;
 		}
-		$results['SpecimensNullLatitude'] = $results['SpecimenCount'] - $results['GeorefCount'];
+		$specimenCount = array_key_exists('SpecimenCount', $results) ? $results['SpecimenCount'] : 0;
+		$georefCount = array_key_exists(	'GeorefCount', $results) ? $results['GeorefCount'] : 0;
+		$results['SpecimensNullLatitude'] = $specimenCount && $georefCount ? $specimenCount - $georefCount : 0;
 	}
-    elseif($action == "Run Statistics" && ($cPartentTaxon || $cCountry)){
-        $resultsTemp = $collManager->runStatisticsQuery($collId,$cPartentTaxon,$cCountry);
+    elseif($action == "Run Statistics" && ($cParentTaxon || $cCountry)){
+        $resultsTemp = $collManager->runStatisticsQuery($collId,$cParentTaxon,$cCountry);
 		if ($resultsTemp){
 			if (array_key_exists('families', $resultsTemp)){
 				$familyArr = $resultsTemp['families'];
@@ -459,7 +461,7 @@ if($action != "Update Statistics"){
 											<legend><b><?php echo $LANG['REC_CRITERIA']; ?></b></legend>
 											<div class="record-criteria-inputs">
 												<label for="taxon"><?php echo $LANG['PARENT_CRITERIA']; ?>: </label>
-												<input type="text" id="taxon" name="taxon" size="43" value="<?php echo $cPartentTaxon; ?>" />
+												<input type="text" id="taxon" name="taxon" size="43" value="<?php echo $cParentTaxon; ?>" />
 											</div>
 											<div class="record-criteria-inputs">
 												<label for="country"><?php echo $LANG['COUNTRY']; ?>: </label>
@@ -570,55 +572,59 @@ if($action != "Update Statistics"){
 											<?php
 												if ($results){
 													echo "<li>";
-													echo ($results['SpecimenCount'] ? number_format($results['SpecimenCount']) : 0) . " " . $LANG['OCC_RECORDS'];
+													$specimenCount = array_key_exists('SpecimenCount', $results) ? $results['SpecimenCount'] : 0;
+													$georefCount = array_key_exists('GeorefCount', $results) ? $results['GeorefCount'] : 0;
+													echo $specimenCount . " " . $LANG['OCC_RECORDS'];
 													echo "</li>";
 													echo "<li>";
 													$percGeo = '';
-													if($results['SpecimenCount'] && $results['GeorefCount'] && $results['SpecimenCount'] !== 0){
+													if($specimenCount && $georefCount && $specimenCount !== 0){
 														try {
 															$percGeo = (100* ($results['GeorefCount'] / $results['SpecimenCount']));
 														} catch (Exception $e) {
 															error_log('Exception: ' . $e->getMessage());
 														}
 													}
-													echo ($results['GeorefCount'] ? number_format($results['GeorefCount']) : 0) . ($percGeo ? " (" . ($percGeo>1 ? round($percGeo) : round($percGeo,2)) . "%)" : '') . " " . $LANG['GEOREFERENCED'];
+													echo (array_key_exists('GeorefCount', $results) ? number_format($results['GeorefCount']) : 0) . ($percGeo ? " (" . ($percGeo>1 ? round($percGeo) : round($percGeo,2)) . "%)" : '') . " " . $LANG['GEOREFERENCED'];
 													echo "</li>";
 													echo "<li>";
 													$percImg = '';
-													if($results['SpecimenCount'] && $results['TotalImageCount'] && $results['SpecimenCount'] !== 0){
+													$totalImageCount = array_key_exists('TotalImageCount', $results) ? $results['TotalImageCount'] : 0;
+													if($specimenCount && $totalImageCount && $specimenCount !== 0){
 														try {
 															$percImg = (100* ($results['TotalImageCount'] / $results['SpecimenCount']));
 														} catch (Exception $e) {
 															error_log('Exception: ' . $e->getMessage());
 														}
 													}
-													echo ($results['TotalImageCount'] ? number_format($results['TotalImageCount']) : 0) . ($percImg ? " (" . ($percImg>1 ? round($percImg) : round($percImg,2)) . "%)" : '') . " " . $LANG['OCCS_IMAGED'];
+													echo (array_key_exists('TotalImageCount', $results) ? number_format($results['TotalImageCount']) : 0) . ($percImg ? " (" . ($percImg>1 ? round($percImg) : round($percImg,2)) . "%)" : '') . " " . $LANG['OCCS_IMAGED'];
 													echo "</li>";
 													echo "<li>";
 													$percId = '';
-													if($results['SpecimenCount'] && $results['SpecimensCountID'] && $results['SpecimenCount'] !== 0){
+													$specimensCountID = array_key_exists('SpecimensCountID', $results) ? $results['SpecimensCountID'] : 0;
+													if($specimenCount && $specimensCountID && $specimenCount !== 0){
 														try {
-															$percId = (100* ($results['SpecimensCountID'] / $results['SpecimenCount']));
+															$percId = (100* ($specimensCountID / $specimenCount));
 														} catch (Exception $e) {
 															error_log('Exception: ' . $e->getMessage());
 														}
 													}
-													echo ($results['SpecimensCountID'] ? number_format($results['SpecimensCountID']) : 0) . ($percId?" (" . ($percId>1 ? round($percId) : round($percId,2)) . "%)" : '') . " " . $LANG['IDED_TO_SP'];
+													echo (array_key_exists('SpecimensCountID', $results) ? number_format($results['SpecimensCountID']) : 0) . ($percId?" (" . ($percId>1 ? round($percId) : round($percId,2)) . "%)" : '') . " " . $LANG['IDED_TO_SP'];
 													echo "</li>";
 													echo "<li>";
-													echo ($results['FamilyCount'] ? number_format($results['FamilyCount']) : 0) . " " . $LANG['FAMILIES'];
+													echo (array_key_exists('FamilyCount', $results) ? number_format($results['FamilyCount']) : 0) . " " . $LANG['FAMILIES'];
 													echo "</li>";
 													echo "<li>";
-													echo ($results['GeneraCount'] ? number_format($results['GeneraCount']) : 0) . " " . $LANG['GENERA'];
+													echo (array_key_exists('GeneraCount', $results) ? number_format($results['GeneraCount']) : 0) . " " . $LANG['GENERA'];
 													echo "</li>";
 													echo "<li>";
-													echo ($results['SpeciesCount'] ? number_format($results['SpeciesCount']) : 0) . " " . $LANG['SPECIES'];
+													echo (array_key_exists('SpeciesCount', $results) ? number_format($results['SpeciesCount']) : 0) . " " . $LANG['SPECIES'];
 													echo "</li>";
 													echo "<li>";
-													echo ($results['TotalTaxaCount'] ? number_format($results['TotalTaxaCount']) : 0) . " " . $LANG['TOTAL_TAXA'];
+													echo (array_key_exists('TotalTaxaCount', $results) ? number_format($results['TotalTaxaCount']) : 0) . " " . $LANG['TOTAL_TAXA'];
 													echo "</li>";
 													/*echo "<li>";
-													echo ($results['TypeCount'] ? number_format($results['TypeCount']) : 0)." type specimens";
+													echo (array_key_exists('TypeCount', $results) ? number_format($results['TypeCount']) : 0)." type specimens";
 													echo "</li>";*/
 												}
 											?>
@@ -634,7 +640,7 @@ if($action != "Update Statistics"){
 													</div>
 													<div class="stat-csv-float-margins icon-mrgn-rel" title="<?php echo $LANG['SAVE_CSV']; ?>">
 														<input type="hidden" name="collids" id="collids" value='<?php echo $collId; ?>' />
-														<input type="hidden" name="taxon" value='<?php echo $cPartentTaxon; ?>' />
+														<input type="hidden" name="taxon" value='<?php echo $cParentTaxon; ?>' />
 														<input type="hidden" name="country" value='<?php echo $cCountry; ?>' />
 														<input type="hidden" name="action" id="action" value='<?php echo $LANG['DOWNLOAD_STATS']; ?>' />
 														<input type="image" name="action" src="../../images/dl.png" style="width:1.3em" onclick="" />
@@ -681,12 +687,13 @@ if($action != "Update Statistics"){
 												</div>
 											</form>
                                             <?php
-                                            if(!$cPartentTaxon && !$cCountry){
+                                            if(!$cParentTaxon && !$cCountry){
+												$specimenCount = array_key_exists('SpecimenCount', $results) ? $results['SpecimenCount'] : 0;
                                                 ?>
                                                 <div class="top-breathing-room-rel">
                                                     <form name="orderstats" class="no-btm-mrgn" action="collorderstats.php" method="post" target="_blank">
                                                         <input type="hidden" name="collid" id="collid" value='<?php echo $collId; ?>'/>
-                                                        <input type="hidden" name="totalcnt" id="totalcnt" value='<?php echo $results['SpecimenCount']; ?>'/>
+                                                        <input type="hidden" name="totalcnt" id="totalcnt" value='<?php echo $specimenCount; ?>'/>
                                                         <button type="submit" name="action" value="Load Order Distribution"><?php echo $LANG['LOAD_ORDER']; ?></button>
                                                     </form>
                                                 </div>
@@ -695,7 +702,7 @@ if($action != "Update Statistics"){
                                             ?>
 										</fieldset>
 										<?php
-										if(!$cPartentTaxon && !$cCountry){
+										if(!$cParentTaxon && !$cCountry){
                                             if ($SYMB_UID && ($IS_ADMIN || array_key_exists("CollAdmin", $USER_RIGHTS))) {
                                                 ?>
                                                 <fieldset id="yearstatsbox" class="yearstatbox-width">
@@ -909,7 +916,9 @@ if($action != "Update Statistics"){
 					if(hasCollSelected == true){
 						const collElem = document.getElementById("colltxt");
 						collElem.value = collIds;
-						simpleSearch();
+						const submitForm = document.getElementById("params-form");
+						storeFormDataInSessionStorage(submitForm);
+						submitForm.submit();
 					}
 					else{
 						alert("<?php echo $LANG['CHOOSE_ONE']; ?>");
