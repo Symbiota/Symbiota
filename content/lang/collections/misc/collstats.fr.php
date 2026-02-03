@@ -74,5 +74,6 @@ $LANG['SPECIMEN'] = 'Spécimens';
 $LANG['SAVE_CSV'] = 'Enregistrer au format CSV';
 $LANG['GENERAL_STATISTICS'] = 'Statistiques générales';
 $LANG['STATS_PER_COL'] = 'Statistiques par collection';
+$LANG['PERSONAL_OBSERVATION_COLLECTIONS'] = 'Collections de Gestion d\'Observations Personnelles';
 
 ?>

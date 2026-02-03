@@ -506,8 +506,10 @@ if($action != "Update Statistics"){
 										if(isset($obsArr['coll'])){
 											$collArr = $obsArr['coll'];
 											?>
-											<section class="gridlike-form-row">
-												<fieldset class="observation-fieldset">
+											<section>
+												<fieldset class="fieldset-padding">
+													<h2 class="section-heading"><?php echo $LANG['PERSONAL_OBSERVATION_COLLECTIONS']; ?></h2>
+													<fieldset class="observation-fieldset">
 													<?php
 													foreach($collArr as $collid => $cArr){
 														?>
@@ -532,6 +534,7 @@ if($action != "Update Statistics"){
 														$collCnt++;
 													}
 													?>
+													</fieldset>
 												</fieldset>
 											</section>
 											<?php
