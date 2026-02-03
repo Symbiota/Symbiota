@@ -365,28 +365,6 @@ if($action != "Update Statistics"){
 					return false;
 				}
 
-				// function changeCollForm(f){
-				// 	var dbElements = document.getElementsByName("db[]");
-				// 	var c = false;
-				// 	var collid = "";
-				// 	for(i = 0; i < dbElements.length; i++){
-				// 		var dbElement = dbElements[i];
-				// 		if(dbElement.checked && !isNaN(dbElement.value)){
-				// 			if(c == true) collid = collid+",";
-				// 			collid = collid + dbElement.value;
-				// 			c = true;
-				// 		}
-				// 	}
-				// 	if(c == true){
-				// 		var collobj = document.getElementById("colltxt");
-				// 		collobj.value = collid;
-				// 		document.getElementById("collform").submit();
-				// 	}
-				// 	else{
-				// 		alert("<?php echo $LANG['CHOOSE_ONE']; ?>");
-				// 		return false;
-				// 	}
-				// }
 			</script>
 			<style>
 				.icon-mrgn-rel {

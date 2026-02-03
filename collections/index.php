@@ -52,14 +52,12 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 						$(ui.panel).html("<p>Loading...</p>");
 					}
 				});
-				sessionStorage["querystr" + getCurrentPage()] = null;
 			});
 		</script>
 		<script type="text/javascript">
 			$(document).ready(function() {
 				setSessionQueryStr();
 				setSearchForm(document.getElementById("params-form"));
-				// toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
 				toggleAccordionsFromSessionStorage(sessionStorage.getItem("querystr" + getCurrentPage() + "/" + "accordionIds") ?.split(",") || []);
 				document.getElementById("params-form").addEventListener("submit", function(event) {
 					event.preventDefault();

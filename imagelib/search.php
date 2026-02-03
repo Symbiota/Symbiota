@@ -538,7 +538,6 @@ $creators = Media::getCreatorArray();
 	$(document).ready(function() {
 		setSessionQueryStr();
 		setSearchForm(document.getElementById("params-form"));
-		// toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
 		toggleAccordionsFromSessionStorage(sessionStorage.getItem("querystr" + getCurrentPage() + "/" + "accordionIds") ?.split(",") || []);
 		document.getElementById("params-form").addEventListener("submit", function(event) {
 			event.preventDefault();

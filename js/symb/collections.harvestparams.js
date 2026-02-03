@@ -92,7 +92,7 @@ function checkHarvestParamsForm(frm, currentPage){
 	if (frm.pointlat.value != "" || frm.pointlong.value != "" || frm.radius.value != "") {
 		if ( frm.pointlat.value == "" || frm.pointlong.value == "" || frm.radius.value == "" ) {
 			alert("Error: Please make all Lat/Long point-radius values contain a value or all are empty");
-			// return false;
+			return false;
 		}
 	}
 
@@ -103,16 +103,16 @@ function checkHarvestParamsForm(frm, currentPage){
 		let late = frm.lateInterval.value;
 		if ((early !== "" && late === "") || (early === "" && late !== "")) {
 			alert(translations.INTERVAL_MISSING);
-			// return false;
+			return false;
 		}
 
 		if (early in paleoTimes && late in paleoTimes && paleoTimes[early].myaStart <= paleoTimes[late].myaEnd) {
 			alert(translations.INTERVALS_WRONG_ORDER);
-			// return false;
+			return false;
 		}
 	}
 
-	// return true;
+	return true;
 }
 
 function setHarvestParamsForm(frm) {

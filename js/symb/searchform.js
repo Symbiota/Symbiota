@@ -35,8 +35,6 @@ const pLng = document.getElementById("pointlong") || null;
 const pLngEw = document.getElementById("pointlong_EW") || null;
 const pRadius = document.getElementById("radius") || null;
 const pRadiusUn = document.getElementById("radiusunits") || null;
-
-// Form inputs for chip functionality
 let formInputs = null;
 
 let paramsArr = {};
@@ -287,18 +285,15 @@ function updateChip(e, isInitialConfig=false) {
     addChip(getCollsChips("ext-collections-list", "Some Ext NEON Colls"));
   }
   // then go through remaining inputs (exclude db and datasetid)
-  const isCollectionRelated = e?.currentTarget?.name === "db[]" || e?.currentTarget?.name?.startsWith("Specimens_") || e?.currentTarget?.name?.startsWith("Observations_") || e?.currentTarget?.id === "all_collections" || e?.currentTarget?.id === "all_specimen_collections" || e?.currentTarget?.id === "all_observation_collections";
   if(!isInitialConfig){
-    // const isCollectionRelated = e?.currentTarget?.name === "db[]" || e?.currentTarget?.name?.startsWith("Specimens_") || e?.currentTarget?.name?.startsWith("Observations_") || e?.currentTarget?.id === "all_collections" || e?.currentTarget?.id === "all_specimen_collections" || e?.currentTarget?.id === "all_observation_collections";
+    const isCollectionRelated = e?.currentTarget?.name === "db[]" || e?.currentTarget?.name?.startsWith("Specimens_") || e?.currentTarget?.name?.startsWith("Observations_") || e?.currentTarget?.id === "all_collections" || e?.currentTarget?.id === "all_specimen_collections" || e?.currentTarget?.id === "all_observation_collections";
     if(isCollectionRelated){
       const checkedCollections = calculateAllPossibleCollectionsInScope('search-form-colls', ':checked',true);
       const updatedQueriedCollections = updateQueryListWithTypeCollections(checkedCollections);
-      // checkTheCollectionsThatShouldBeChecked(checkedCollections);
       checkTheCollectionsThatShouldBeChecked(updatedQueriedCollections);
       updateCategoryCheckboxes();
       closeAllCategories();
       expandCategoriesWithSomeCheckedChildren();
-      
     }
   }
   
@@ -938,7 +933,6 @@ function expandCategoriesWithSomeCheckedChildren() {
 }
 
   function closeCollectionsDialog() {
-    // storeLocalFormInputs();
     const submitForm = document.getElementById("params-form");
     storeFormDataInSessionStorage(submitForm);
     const dialog = document.getElementById('collections_dialog');
@@ -946,16 +940,6 @@ function expandCategoriesWithSomeCheckedChildren() {
       dialog.close();
     }
   }
-
-  // function storeLocalFormInputs() {
-  //   const form = document.getElementById('params-form');
-  //   if (form) {
-  //     const formData = new FormData(form);
-  //     formData.forEach((value, key) => {
-  //       localStorage.setItem(key, value);
-  //     });
-  //   }
-  // }
 
   function openCollectionsDialog() {
     const dialog = document.getElementById('collections_dialog');
@@ -971,8 +955,6 @@ function expandCategoriesWithSomeCheckedChildren() {
       });
       document.getElementById("reset-btn").addEventListener("click", function (event) {
         document.getElementById("params-form").reset();
-        // sessionStorage.clear();
-        // localStorage.clear();
         clearPageSpecificSessionStorageItems();
         checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
         closeAllCategories();
@@ -982,31 +964,13 @@ function expandCategoriesWithSomeCheckedChildren() {
     }
   }
 
-function isLocalStorageJustAccordions(localStorageValues){
-  let accordionIds = Array.from(document.querySelectorAll('input.accordion-selector[type="checkbox"]')).map(input => input.id);
-  if (accordionIds.length < 1) accordionIds =["taxonomy", "locality", "lat-long", "coll-event", "sample", "associations", "geocontext","collections"]; // a fallback in case no accordions are found (as might happen if someone uses the new search and then switches to harvestparams)
-  const nonCommaSeparatedStrings = localStorageValues.filter(value => !value.includes(',')); // local storage weirdly stores some values as comma-separated strings rather than their own elements
-  const trueArrayToCompare = [...new Set(nonCommaSeparatedStrings)];
-  const commaSeparatedStringsElevatedToElement = localStorageValues.filter(value => value.includes(',')).map(value => {
-    const cleanedValue = value.replace(/^,|,$/g, '');
-    return cleanedValue.split(',')
-  }).flat();
-  trueArrayToCompare.push(...commaSeparatedStringsElevatedToElement);
-  return contains(accordionIds, trueArrayToCompare);
-}
-
 function setSearchForm(frm) {
   if (!frm) return;
-  // const localStorageRealValues = Object.values(localStorage).filter(value => value !== null && value !== "null" && value !=='');
-  // const localStorageJustAccordions = isLocalStorageJustAccordions(localStorageRealValues);
-  // const hasNoSessionInfo = !sessionStorage["querystr" + currentPage] || sessionStorage["querystr" + currentPage] === "null";
   const sessionStorageKeys = Object.keys(sessionStorage);
   const hasSessionInfo = sessionStorageKeys.some(key => {
     const currentVal = sessionStorage.getItem(key);
     return key.startsWith("querystr" + getCurrentPage()) && key !== ("querystr" + getCurrentPage() + "/" + "accordionIds") && currentVal !== "null"
   });
-  // @TODO check for whether any collection-related info is in the form
-  // if((localStorageRealValues.length < 1 && hasNoSessionInfo) || (localStorageJustAccordions && hasNoSessionInfo)){
   if(!hasSessionInfo){
     uncheckEverythingInCollections();
     checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
@@ -1269,7 +1233,6 @@ function toggleAccordionsFromSessionStorage(accordionIds) {
   );
   accordions.forEach((accordion) => {
     if(accordion.id !== "taxonomy") accordion.checked = false;
-    // if(accordion.id === "taxonomy" && localStorage.getItem("taxonomyAccordionClosed")) accordion.checked = false;
     if(accordion.id === "taxonomy" && sessionStorage.getItem("querystr" + getCurrentPage() + "/" + "taxonomyAccordionClosed")) accordion.checked = false;
   });
   accordions.forEach((accordion) => {
@@ -1335,7 +1298,7 @@ selectionElements.forEach((selectionElement) => {
 });
 
 // on default (on document load): All Neon Collections, All Domains & Sites, Include other IDs, All Domains & Sites
-// document.addEventListener("DOMContentLoaded", updateChip);
+// document.addEventListener("DOMContentLoaded", updateChip); // @TODO I don't think that this is necessary even in NEON anymore?
 
 // Binds expansion function to plus and minus icons in selectors, uses jQuery
 $(".expansion-icon").click(function () {
@@ -1357,22 +1320,18 @@ function setSessionStorageForAccordions() {
   );
   accordions.forEach((accordion) => {
     accordion.addEventListener("click", (event) => {
-      // const currentAccordionIds = localStorage?.accordionIds?.split(",") || [];
       const currentAccordionIds = sessionStorage.getItem("querystr" + currentPage + "/" + "accordionIds") ?.split(",") || [];
       const currentId = event.target.id;
       if (currentAccordionIds.includes(currentId)) {
         const targetIdx = currentAccordionIds.indexOf(currentId);
         currentAccordionIds.splice(targetIdx, 1);
         if(currentId==="taxonomy") {
-          // localStorage.setItem("taxonomyAccordionClosed", true);
           sessionStorage.setItem("querystr" + currentPage + "/" + "taxonomyAccordionClosed", true);
         }
       } else {
         currentAccordionIds.push(currentId);
-        // if(currentId==="taxonomy") localStorage.setItem("taxonomyAccordionClosed", false)
         if(currentId==="taxonomy") sessionStorage.setItem("querystr" + currentPage + "/" + "taxonomyAccordionClosed", false);
       }
-      // localStorage.setItem("accordionIds", currentAccordionIds);
       sessionStorage.setItem("querystr" + currentPage + "/" + "accordionIds", currentAccordionIds);
     });
   });
@@ -1385,7 +1344,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (form) {
     setSearchForm(form);
   }
-  setSessionStorageForAccordions();
+  setSessionStorageForAccordions(); // @TODO I'm not sure whether this is necessary yet
   updateChip();
 
 });

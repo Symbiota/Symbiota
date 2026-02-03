@@ -375,9 +375,6 @@ $serverHost = GeneralUtil::getDomain();
 			setPanels(true);
 			$("#accordion").accordion("option",{active: 1});
 			$("#tabs2").tabs({ active: 0 });
-			if (!$("#tabs1").hasClass("ui-tabs")) {
-				$("#tabs1").tabs({ active: 0 });
-			}
 			buildPortalLegend();
 			buildTaxaLegend();
 			buildCollectionLegend();
@@ -2182,7 +2179,7 @@ $serverHost = GeneralUtil::getDomain();
 											$obsArr = (isset($collList['obs']) ? $collList['obs'] : null);
 											if($specArr || $obsArr){
 											?>
-												<div id="former-search-form-collections">
+												<div>
 													<?php
 														include($SERVER_ROOT . '/collections/editor/includes/collectionForm.php');
 													?>

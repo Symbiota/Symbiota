@@ -1,6 +1,5 @@
 <?php
 
-use BcMath\Number;
 
 include_once($SERVER_ROOT . '/classes/Manager.php');
 Language::load('classes/CollectionFormManager');
@@ -148,9 +147,9 @@ class CollectionFormManager extends Manager {
         return $revisedCollections;
      }
 
-     public function areAllCollectionsCategoryless($collectionsHyperCollection): bool {
+     public function areAllCollectionsCategoryless($hyperCollection): bool {
         $finalCount = 0;
-        foreach($collectionsHyperCollection as $collectionType => $categories){
+        foreach($hyperCollection as $collectionType => $categories){
                 $allIds = array_column($categories, 'id');
                 $finalCount += count($allIds);
         }
