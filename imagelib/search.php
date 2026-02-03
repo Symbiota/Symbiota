@@ -3,6 +3,7 @@ include_once('../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/ImageLibrarySearch.php');
 include_once($SERVER_ROOT . '/classes/Media.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/classes/CollectionFormManager.php');
 
 Language::load(['imagelib/search', 'collections/search/index']);
 
@@ -20,6 +21,11 @@ $imageType = !empty($_REQUEST['imagetype']) ? filter_var($_REQUEST['imagetype'],
 $pageNumber = array_key_exists('page', $_REQUEST) && is_numeric($_REQUEST['page']) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $cntPerPage = array_key_exists('cntperpage', $_REQUEST) && is_numeric($_REQUEST['cntperpage']) ? filter_var($_REQUEST['cntperpage'], FILTER_SANITIZE_NUMBER_INT) : 200;
 $sortBy = !empty($_REQUEST['sortby']) ? $_REQUEST['sortby'] : '';
+
+$collectionFormManager = new CollectionFormManager();
+$requestSuppliedCatOrd = (array_key_exists('catOrd', $_REQUEST) && $collectionFormManager->areCollectionIdsValid($_REQUEST['catOrd'])) ? explode(',', $_REQUEST['catOrd']) : null;
+$requestSuppliedCatExpnd = (array_key_exists('catExpnd', $_REQUEST) && $collectionFormManager->areCollectionIdsValid($_REQUEST['catExpnd'])) ? explode(',', $_REQUEST['catExpnd']) : null;
+$requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFormManager->areCollectionIdsValid($_REQUEST['catChk'])) ? explode(',', $_REQUEST['catChk']) : null;
 
 $mediaType = null;
 if(isset($_REQUEST['mediaType'])) {
