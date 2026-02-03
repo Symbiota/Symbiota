@@ -138,6 +138,8 @@ class TPEditorManager extends Manager {
 		return $synArr;
 	}
 
+	/*
+	 * Deprecation of Taxon Profile Editors ability to adjust display order of synonyms pending user input
 	public function editSynonymSort($synSort){
 		$status = "";
 		foreach($synSort as $editKey => $editValue){
@@ -152,6 +154,7 @@ class TPEditorManager extends Manager {
 		if($status) $status = "Errors with editVernacularSort method:<br/> ".$status;
 		return $status;
 	}
+	*/
 
 	public function getVernaculars(){
 		$vernArr = Array();

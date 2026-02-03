@@ -94,6 +94,17 @@ select{
 	cursor:pointer;
 }
 
+#eventTimeToggleDiv{
+	padding-top: 1.25rem;
+	float:left;
+	margin-left:15px;
+	cursor:pointer;
+}
+
+#eventTimeDiv{
+	clear:both;
+}
+
 #idrefdiv{
 	clear:both;
 }

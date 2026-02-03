@@ -79,8 +79,8 @@ $LANG['LOCALITY'] = 'Localité';
 $LANG['LATITUDE'] = 'Latitude';
 $LANG['LONGITUDE'] = 'Longitude';
 
-$LANG['ID_TAG_NAME'] = 'Nom de la balise d\'identification';
-$LANG['ID_TAG_VAL'] = 'Valeur de la balise d\'identification';
+$LANG['ID_TAG_NAME'] = 'Nom de l\'étiquette d\'identifiant suppl.';
+$LANG['ID_TAG_VAL'] = 'Valeur de l\'identifiant supplémentaire';
 $LANG['UNCERTAINTY_METERS'] = 'Incertitude en mètres';
 $LANG['VERB_COORDINATES'] = 'Coordonnées verbatim';
 $LANG['DATUM'] = 'Donnée';

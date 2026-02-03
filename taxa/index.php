@@ -108,7 +108,7 @@ $nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 						}
 						?>
 						<div id="scinameDiv">
-							<?php 
+							<?php
 								$splitSciname = $taxonManager->splitSciname();
 								$sciName = $splitSciname['base'];
 								$taxonRankId = $taxonManager->getRankId();
@@ -118,7 +118,7 @@ $nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 								$nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 								$sciName .= $nonItalicizedScinameComponent;
 								$taxonToDisplay = $taxonRankId > 179 ? $sciName : $taxonManager->getTaxonName();
-								echo '<span id="'.($taxonRankId > 179 ? 'sciname':'taxon').'">' . $taxonToDisplay . '</span>'; 
+								echo '<span id="'.($taxonRankId > 179 ? 'sciname':'taxon').'">' . $taxonToDisplay . '</span>';
 							?>
 							<span id="author"><?php echo $taxonManager->getTaxonAuthor(); ?></span>
 							<?php
@@ -393,8 +393,10 @@ $nonItalicizedScinameComponent = $cultivarEpithet . $tradeName;
 													$imgUrl = $GLOBALS['MEDIA_DOMAIN'] . $subArr["thumbnailurl"];
 												}
 											}
-											elseif($image = exif_thumbnail($imgUrl)){
-												$imgUrl = 'data:image/jpeg;base64,' . base64_encode($image);
+											elseif($imgUrl){
+												if($image = exif_thumbnail($imgUrl)){
+													$imgUrl = 'data:image/jpeg;base64,' . base64_encode($image);
+												}
 											}
 											echo '<img src="' . $imgUrl . '" title="' . $subArr['caption'] . '" alt="' . $LANG['IMAGE_OF'] . ' ' . $sciNameKey . '" style="z-index:-1" />';
 											echo '</a>';

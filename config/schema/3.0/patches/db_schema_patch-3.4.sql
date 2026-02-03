@@ -37,6 +37,39 @@ ALTER TABLE geographicthesaurus
 ALTER TABLE `geographicthesaurus` 
   ADD INDEX `FK_geothes_geolevel` (`geoLevel` ASC);
 
+#Fixes issues where Florida counties were linked to Uruguay/Florida  
+UPDATE IGNORE geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  SET c.parentID = (SELECT c.geoThesID FROM geographicthesaurus c INNER JOIN geographicthesaurus p ON c.parentID = p.geoThesID WHERE c.geoTerm = "Florida" AND p.geoTerm = "United States")
+  WHERE g.geoTerm IN("Florida") AND p.geoTerm = "Uruguay";
+
+DELETE c.* 
+  FROM geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  WHERE g.geoTerm IN("Florida") AND p.geoTerm = "Uruguay";
+
+#Fixes issues where Montana counties were linked to Bulgaria/Montana  
+UPDATE IGNORE geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  SET c.parentID = (SELECT c.geoThesID FROM geographicthesaurus c INNER JOIN geographicthesaurus p ON c.parentID = p.geoThesID WHERE c.geoTerm = "Montana" AND p.geoTerm = "United States")
+  WHERE g.geoTerm IN("Montana") AND p.geoTerm = "Bulgaria";
+
+DELETE c.*
+  FROM geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  WHERE g.geoTerm IN("Montana") AND p.geoTerm = "Bulgaria";
+
+#Fixes issues where Maryland counties were linked to Liberia/Maryland  
+UPDATE IGNORE geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  SET c.parentID = (SELECT c.geoThesID FROM geographicthesaurus c INNER JOIN geographicthesaurus p ON c.parentID = p.geoThesID WHERE c.geoTerm = "Maryland" AND p.geoTerm = "United States")
+  WHERE g.geoTerm IN("Maryland") AND p.geoTerm = "Liberia";
+
+DELETE c.*
+  FROM geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  WHERE g.geoTerm IN("Maryland") AND p.geoTerm = "Liberia";
+
 
 #Exsiccati field format adjustments to standardize API output
 ALTER TABLE `omexsiccatititles` 
@@ -112,7 +145,8 @@ CREATE TABLE `omexport` (
   `guiType` VARCHAR(45) NULL,
   `notes` VARCHAR(255) NULL,
   `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp,
-  PRIMARY KEY (`omExportID`));
+  PRIMARY KEY (`omExportID`)
+) ENGINE=InnoDB;
 
 ALTER TABLE `omexport` 
   ADD INDEX `FK_omexport_uid_idx` (`uid` ASC);
@@ -148,25 +182,33 @@ CREATE TABLE `omexportoccurrences` (
   `associatedSequences` TEXT NULL,
   `recordSecurity` INT NULL,
   `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp,
-  PRIMARY KEY (`omExportID`,`occid`));
+  PRIMARY KEY (`omExportID`,`occid`)
+) ENGINE=InnoDB;
 
 ALTER TABLE `omexportoccurrences` 
-  ADD INDEX `FK_omexportoccur_omExportID_idx` (`omExportID` ASC),
-  ADD INDEX `FK_omexportoccur_occid_idx` (`occid` ASC);
+  ADD INDEX `FK_omexportoccur_omExportID_idx` (`omExportID`),
+  ADD INDEX `FK_omexportoccur_occid_idx` (`occid`);
 
 ALTER TABLE `omexportoccurrences` 
   ADD CONSTRAINT `FK_omexportoccur_omExportID`  FOREIGN KEY (`omExportID`)  REFERENCES `omexport` (`omExportID`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_omexportoccur_occid`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE;
 
 ALTER TABLE `omexportoccurrences` 
-  ADD INDEX `IX_omexportoccur_taxonID` (`taxonID` ASC),
-  ADD INDEX `IX_omexportoccur_collid` (`collid` ASC);
+  ADD INDEX `IX_omexportoccur_occid` (`omExportID`, `occid`),
+  ADD INDEX `IX_omexportoccur_collid` (`omExportID`, `collid`),
+  ADD INDEX `IX_omexportoccur_taxonID` (`omExportID`, `taxonID`),
+  ADD INDEX `IX_omexportoccur_kingdom` (`omExportID`, `kingdom`),
+  ADD INDEX `IX_omexportoccur_recordSecurity` (`omExportID`, `recordSecurity`);
 
 
 #Add update to omoccurdeterminations.dateLastModified tracked any update to the row
 ALTER TABLE omoccurdeterminations 
   MODIFY COLUMN dateLastModified timestamp DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP;
 
+#Convert locus and notes fields within genetic table to TEXT
+ALTER TABLE `omoccurgenetic` 
+  CHANGE COLUMN `locus` `locus` TEXT NULL DEFAULT NULL ,
+  CHANGE COLUMN `notes` `notes` TEXT NULL DEFAULT NULL ;
 
 #Reset empty values to null
 UPDATE omoccurgenetic 
@@ -442,9 +484,14 @@ ALTER TABLE `specprocessorrawlabels`
   CHANGE COLUMN `sortsequence` `sortSequence` INT(11) NULL DEFAULT NULL ,
   CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
 
+UPDATE IGNORE taxa
+  SET kingdomName = ""
+  WHERE kingdomName IS NULL;
 
 ALTER TABLE `taxa` 
-  ADD COLUMN `sourceIdentifier` VARCHAR(150) NULL AFTER `source`;
+  ADD COLUMN `sourceIdentifier` VARCHAR(150) NULL AFTER `source`,
+  CHANGE COLUMN `kingdomName` `kingdomName` VARCHAR(45) NOT NULL DEFAULT '',
+  CHANGE COLUMN `unitName2` `unitName2` VARCHAR(50) NULL DEFAULT NULL;
 
 
 ALTER TABLE `taxaresourcelinks` 
@@ -531,17 +578,64 @@ ALTER TABLE `uploadtaxa`
   ADD INDEX `IX_uploadtaxa_acceptance` (`acceptance` ASC);
 
 
+#Add scientificName to determination upload table in order to include author parsing option for input
+ALTER TABLE `uploaddetermtemp` 
+  ADD COLUMN `scientificName` VARCHAR(255) NULL AFTER `higherClassification`;
+
+
+#Reset uploadspectemp indexes to be compound indexes including collid
+ALTER TABLE `uploadspectemp` 
+  DROP INDEX `IX_uploadspectemp_dbpk`,
+  DROP INDEX `IX_uploadspectemp_occurrenceID`,
+  DROP INDEX `IX_uploadspec_sciname`,
+  DROP INDEX `IX_uploadspec_catalognumber`,
+  DROP INDEX `IX_uploadspec_othercatalognumbers`;
+
+ALTER TABLE `uploadspectemp` 
+  ADD INDEX `IX_uploadspectemp_dbpk` (`collid`, `dbpk`),
+  ADD INDEX `IX_uploadspectemp_occurrenceID` (`collid`, `occurrenceID`),
+  ADD INDEX `IX_uploadspectemp_sciname` (`collid`, `sciname`),
+  ADD INDEX `IX_uploadspectemp_catalognumber` (`collid`, `catalogNumber`),
+  ADD INDEX `IX_uploadspectemp_othercatalognumbers` (`collid`, `otherCatalogNumbers`);  
+
 #Add indexes to accommodate conversion of imported state codes
 ALTER TABLE `uploadspectemp` 
-  ADD INDEX `IX_uploadspectemp_country` (`country` ASC),
-  ADD INDEX `IX_uploadspectemp_stateProvince` (`stateProvince` ASC);
+  ADD INDEX `IX_uploadspectemp_basisOfRecord` (`collid`, `basisOfRecord`),
+  ADD INDEX `IX_uploadspectemp_countryCode` (`collid`, `countryCode`),
+  ADD INDEX `IX_uploadspectemp_country` (`collid`, `country`),
+  ADD INDEX `IX_uploadspectemp_stateProvince` (`collid`, `stateProvince`);
 
 
 #Increase user password field to accommodate new bcrypt hash 
 ALTER TABLE `users` 
   CHANGE COLUMN `password` `password` VARCHAR(255) NULL DEFAULT NULL ;
 
-  
+
 # Add index to improve performance on counts on verbatimCoordinates seen in OccurrenceCleaner
 ALTER TABLE `omoccurrences`
   ADD INDEX `IX_occurrences_verbatimCoordinates` (`collid`,`verbatimCoordinates`);
+
+# Add mediaMetadata table to track metadata for media
+CREATE TABLE mediametadata (
+  mediaID int UNSIGNED NOT NULL,
+  field enum ('originalUrl', 'thumbnailUrl', 'url') NOT NULL,
+  bytes BIGINT UNSIGNED NOT NULL,
+  md5sum varchar(32) NOT NULL,
+  created_at timestamp DEFAULT current_timestamp(),
+  updated_at timestamp DEFAULT NULL ON UPDATE current_timestamp(),
+  PRIMARY KEY (mediaID, field),
+  FOREIGN KEY (mediaID) REFERENCES media(mediaID) ON DELETE CASCADE
+) ENGINE=INNODB;
+
+
+# ALTER uploadimagetemp to use creator so that it matches media table
+ALTER TABLE `uploadimagetemp` 
+  CHANGE COLUMN `photographer` `creator` VARCHAR(100) NULL DEFAULT NULL ,
+  CHANGE COLUMN `photographeruid` `creatorUid` INT(10) UNSIGNED NULL DEFAULT NULL ;
+
+
+#redact old placename lookup tables
+DROP TABLE IF EXISTS `lkupmunicipality`;
+DROP TABLE IF EXISTS `lkupcounty`;
+DROP TABLE IF EXISTS `lkupstateprovince`;
+DROP TABLE IF EXISTS `lkupcountry`;

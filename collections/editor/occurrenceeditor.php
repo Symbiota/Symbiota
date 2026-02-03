@@ -877,6 +877,15 @@ else{
 												</div>
 												<input type="text" name="verbatimeventdate" maxlength="255" value="<?php echo array_key_exists('verbatimeventdate',$occArr)?$occArr['verbatimeventdate']:''; ?>" onchange="verbatimEventDateChanged(this)" />
 											</div>
+											<div id="eventTimeToggleDiv" onclick="toggle('eventTimeDiv');" title="<?= $LANG['TOGG_ADD_FIELDS'] ?>">
+												<img class="seemore" src="../../images/tochild.png" style="width:1.3em;height:1.3em">
+											</div>
+											<div id="eventTimeDiv" class="field-div" style="<?= !empty($occArr['eventtime']) ?: 'display:none' ?>" title="Event Time">
+												<?= $LANG['EVENT_TIME']; ?>
+												<a href="#" onclick="return dwcDoc('event-time')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+												<br/>
+												<input type="text" name="eventtime" value="<?= array_key_exists('eventtime',$occArr)?$occArr['eventtime']:''; ?>" onchange="fieldChanged('eventtime');" >
+											</div>
 											<?php
 											if($loanArr = $occManager->getLoanData()){
 												?>
@@ -896,7 +905,7 @@ else{
 										</div>
 										<?php
 										if(isset($ACTIVATE_EXSICCATI) && $ACTIVATE_EXSICCATI){
-											$exsArr = $occManager->getExsiccati();
+											$exsArr = $occManager->getExsiccati($occId);
 											?>
 											<div id="exsDiv">
 												<div id="ometidDiv" class="field-div">
@@ -1487,7 +1496,7 @@ else{
 										<div style="padding:3px;clear:both;">
 											<div id="storageLocationDiv" class="field-div" title="<?php echo $LANG['STORAGELOCATION_EXPLAIN']; ?>">
 												<?php echo $LANG['STORAGELOCATION_CODE']; ?>
-												<a href="#" onclick="return dwcDoc('storageLocation')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+												<a href="#" onclick="return dwcDoc('storage-location')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a><br/>
 												<input type="text" name="storagelocation" maxlength="32" value="<?php echo array_key_exists('storagelocation',$occArr)?$occArr['storagelocation']:''; ?>" onchange="fieldChanged('storagelocation');" />
 											</div>
 											<div id="basisOfRecordDiv" class="field-div">

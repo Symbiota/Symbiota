@@ -138,14 +138,6 @@ $collManager->cleanOutArr($collData);
 		});
 
 		function verifyCollEditForm(f) {
-			if (f.institutionCode.value == '') {
-				alert("<?php echo $LANG['NEED_INST_CODE'] ?>");
-				return false;
-			}
-			if (f.collectionName.value == '') {
-				alert("<?php echo $LANG['NEED_COLL_VALUE'] ?>");
-				return false;
-			}
 			if (f.managementType && f.managementType.value == "Snapshot") {
 				if (f.guidTarget.value == "symbiotaUUID") {
 					alert("<?php echo $LANG['CANNOT_GUID'] ?>");
@@ -512,7 +504,7 @@ $collManager->cleanOutArr($collData);
 								<div class="field-block">
 									<span class="field-elem">
 										<label for="collType"> <?= $LANG['DATASET_TYPE'] ?>: </label>
-										<select id="collType" name="collType" onchange="toggleFossilWarning()">
+										<select id="collType" name="collType" onchange="toggleFossilWarning()" required>
 											<?php if (!empty($GLOBALS['ACTIVATE_PALEO'])): ?> <option value="" <?= ($collTypeValue == '' ? 'SELECTED' : '') ?>><?= $LANG['SELECT_DATASET_TYPE'] ?? '— Select dataset type —' ?></option><?php endif; ?>
 											<option value="Preserved Specimens" <?= ($collTypeValue == 'ps' ? 'SELECTED' : '') ?>><?= $LANG['PRES_SPECS'] ?></option>
 											<option value="Fossil Specimens" <?= ($collTypeValue == 'fs' ? 'SELECTED' : '') ?>><?= $LANG['FOSSIL_SPECS'] ?></option>

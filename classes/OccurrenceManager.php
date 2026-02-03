@@ -20,6 +20,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 	protected $errorMessage;
 	private $LANG;
 	protected $associationManager=null;
+	private $applyFullProtections = true;
 
 	public function __construct($type='readonly'){
 		parent::__construct($type);
@@ -138,7 +139,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$sqlWhere = substr_replace($sqlWhere,'',-1);
 			$sqlWhere .= $this->associationManager->getAssociatedRecords($this->associationArr) . ')';
 		}
-		$hasValidRelationshipFromSearchTermArr = isset(($this->searchTermArr['association-type'])) && $this->searchTermArr['association-type']!=='none' && !$hasValidRelationship;
+		$hasValidRelationshipFromSearchTermArr = isset($this->searchTermArr['association-type']) && $this->searchTermArr['association-type']!=='none' && !$hasValidRelationship;
 		if($hasValidRelationshipFromSearchTermArr){
 			$sqlWhere = substr_replace($sqlWhere,'',-1);
 			$sqlWhere .= $this->associationManager->getAssociatedRecords($this->searchTermArr, 'association-type') . ')';
@@ -613,7 +614,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		}
 
 		if($sqlWhere){
-			$sqlWhere .= OccurrenceUtil::appendFullProtectionSQL();
+			if($this->applyFullProtections) $sqlWhere .= OccurrenceUtil::appendFullProtectionSQL();
 			$this->sqlWhere = 'WHERE '.substr($sqlWhere,4);
 		}
 		else{
@@ -970,6 +971,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$parsedArr = array();
 			$taxaArr = array();
 			$searchVar = str_replace('&amp;', '&', $_REQUEST['searchvar']);
+
 			parse_str($searchVar, $parsedArr);
 
 			if(isset($parsedArr['taxa'])){
@@ -991,6 +993,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 				if($k) $this->searchTermArr[$k] = $v;
 			}
 		}
+
 		//Search will be confinded to a clid vouchers, collid, catid, or will remain open to all collection
 		if(array_key_exists('targetclid',$_REQUEST) && is_numeric($_REQUEST['targetclid'])){
 			$this->searchTermArr['targetclid'] = $_REQUEST['targetclid'];
@@ -1008,6 +1011,9 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$this->setChecklistVariables($clidStr);
 			$this->searchTermArr['clid'] = $clidStr;
 		}
+		elseif(array_key_exists('clid', $this->searchTermArr)){
+			$this->setChecklistVariables($this->searchTermArr['clid']);
+		}
 		elseif(array_key_exists('db',$_REQUEST) && $_REQUEST['db']){
 			$dbStr = $this->cleanInputStr(OccurrenceSearchSupport::getDbRequestVariable());
 			if(preg_match('/^[a-zA-Z0-9,;]+$/', $dbStr)) $this->searchTermArr['db'] = $dbStr;
@@ -1022,14 +1028,8 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		if(array_key_exists('taxa',$_REQUEST) && $_REQUEST['taxa']){
 			$this->setTaxonRequestVariable();
 		}
-		$hasEverythingRequiredForAssociationSearch = (array_key_exists('association-type',$_REQUEST) && $_REQUEST['association-type'] || array_key_exists('associated-taxa',$_REQUEST) && $_REQUEST['associated-taxa']) && array_key_exists('taxontype-association',$_REQUEST) && $_REQUEST['taxontype-association'];
-		if($hasEverythingRequiredForAssociationSearch){
-			$this->setAssociationRequestVariable();
-		}
-		$hasEverythingRequiredForAssociationSearchForDownload = (array_key_exists('association-type', $this->searchTermArr) && $this->searchTermArr['association-type'] || (array_key_exists('associated-taxa', $this->searchTermArr) &&  $this->searchTermArr['associated-taxa']) && array_key_exists('associated-taxon-type',$this->searchTermArr) && $this->searchTermArr['associated-taxon-type']);
-		if($hasEverythingRequiredForAssociationSearchForDownload){
-			$this->setAssociationRequestVariable($this->searchTermArr);
-		}
+
+		$this->setAssociationRequestVariable($this->searchTermArr ?? null);
 		$country = '';
 		if (!empty($_REQUEST['country']))
 			$country = $this->cleanInputStr($_REQUEST['country']);
@@ -1405,6 +1405,11 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 
 	public function getErrorMessage(){
 		return $this->errorMessage;
+	}
+
+	public function setApplyFullProtections($bool){
+		if($bool) $this->applyFullProtections = true;
+		else $this->applyFullProtections = false;
 	}
 }
 ?>

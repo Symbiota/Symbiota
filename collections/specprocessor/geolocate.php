@@ -137,7 +137,6 @@ if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid
 												$dwcaHandler = new DwcArchiverCore();
 												$dwcaHandler->setCollArr($collid);
 												$dwcaHandler->setVerboseMode(0);
-												$dwcaHandler->setOverrideConditionLimit(true);
 												if(!$customArr[1]['f']){
 													$dwcaHandler->addCondition('decimallatitude','IS_NULL');
 													$dwcaHandler->addCondition('decimallongitude','IS_NULL');

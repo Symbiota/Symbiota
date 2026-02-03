@@ -262,6 +262,7 @@ else{
 						</button>
 						<input name="searchvar" type="hidden" value="<?= $occManager->getDownloadQuery() ?>" />
 						<input name="dltype" type="hidden" value="specimen" />
+						<input name="publicsearch" type="hidden" value="0" />
 					</form>
 				</div>
 			</div>
@@ -275,7 +276,7 @@ else{
 				foreach($recArr as $id => $occArr){
 					foreach($occArr as $k => $v){
 						if(!is_array($v)){
-							if((trim($v) || $v === 0) && !array_key_exists($k,$headerArr)){
+							if((trim($v ?? '') || $v === 0) && !array_key_exists($k,$headerArr)){
 								$headerArr[$k] = $k;
 							}
 						}

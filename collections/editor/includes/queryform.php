@@ -56,7 +56,7 @@ else{
 			'decimalLongitude'=>$LANG['DEC_LONG'],'maximumDepthInMeters'=>$LANG['DEPTH_MAX'],'minimumDepthInMeters'=>$LANG['DEPTH_MIN'],
 			'verbatimAttributes'=>$LANG['DESCRIPTION'],'disposition'=>$LANG['DISPOSITION'],'dynamicProperties'=>$LANG['DYNAMIC_PROPS'],
 			'maximumElevationInMeters'=>$LANG['ELEV_MAX_M'],'minimumElevationInMeters'=>$LANG['ELEV_MIN_M'],
-			'establishmentMeans'=>$LANG['ESTAB_MEANS'],'family'=>$LANG['FAMILY'],'fieldNotes'=>$LANG['FIELD_NOTES'],'fieldnumber'=>$LANG['FIELD_NUMBER'],
+			'establishmentMeans'=>$LANG['ESTAB_MEANS'],'eventTime'=>$LANG['EVENT_TIME'],'family'=>$LANG['FAMILY'],'fieldNotes'=>$LANG['FIELD_NOTES'],'fieldnumber'=>$LANG['FIELD_NUMBER'],
 			'geodeticDatum'=>$LANG['GEO_DATUM'],'georeferenceProtocol'=>$LANG['GEO_PROTOCOL'],'georeferenceRemarks'=>$LANG['GEO_REMARKS'],
 			'georeferenceSources'=>$LANG['GEO_SOURCES'],'georeferenceVerificationStatus'=>$LANG['GEO_VERIF_STATUS'],'georeferencedBy'=>$LANG['GEO_BY'],
 			'habitat'=>$LANG['HABITAT'],'identificationQualifier'=>$LANG['ID_QUALIFIER'],'identificationReferences'=>$LANG['ID_REFERENCES'],
@@ -76,7 +76,7 @@ else{
 		$customPaleoFieldArr = array('absoluteAge'=>$LANG['ABS_AGE'],'bed'=>$LANG['BED'],'biostratigraphy'=>$LANG['BIOSTRAT'],'biota'=>$LANG['BIOTA'],
 			'earlyInterval'=>$LANG['EARLY_INT'],'element'=>$LANG['ELEMENT'],'formation'=>$LANG['FORMATION'],'geologicalContextID'=>$LANG['GEO_CONTEXT_ID'],
 			'lateInterval'=>$LANG['LATE_INT'],'lithogroup'=>$LANG['GROUP'],'lithology'=>$LANG['LITHOLOGY'],'localStage'=>$LANG['LOCAL_STAGE'],'member'=>$LANG['MEMBER'],
-			'slideProperties'=>$LANG['SLIDE_PROP'],'stage'=>$LANG['STAGE'],'stratRemarks'=>$LANG['STRAT_REMARKS'],'taxonEnvironment'=>$LANG['TAXON_ENVIRONMENT'],);
+			'slideProperties'=>$LANG['SLIDE_PROP'],'stratRemarks'=>$LANG['STRAT_REMARKS'],'taxonEnvironment'=>$LANG['TAXON_ENVIRONMENT'],);
 		$customFieldArr = array_merge($customFieldArr, $customPaleoFieldArr);
 		asort($customFieldArr);
 	}

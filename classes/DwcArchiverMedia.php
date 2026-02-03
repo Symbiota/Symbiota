@@ -194,6 +194,7 @@ class DwcArchiverMedia extends DwcArchiverBaseManager{
 	//Setters and getters
 	public function setRedactLocalities($bool){
 		if($bool) $this->redactLocalities = true;
+		else $this->redactLocalities = false;
 	}
 
 	public function setRareReaderCollStr($rareReaderArr){

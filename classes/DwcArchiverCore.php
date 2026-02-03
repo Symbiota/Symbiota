@@ -23,8 +23,7 @@ class DwcArchiverCore extends Manager{
 	private $paleoWithSql;
 	protected $conditionSql = '';
 	protected $conditionArr = array();
-	private $condAllowArr;
-	private $overrideConditionLimit = false;
+	private $applyConditionLimit = false;
 	private $observerUid = 0;				//If set, this is a backup event of personally managed specimens
 
 	private $targetPath;
@@ -74,12 +73,6 @@ class DwcArchiverCore extends Manager{
 		$this->charSetSource = strtoupper($GLOBALS['CHARSET']);
 		$this->charSetOut = $this->charSetSource;
 
-		$this->condAllowArr = array(
-			'catalognumber', 'othercatalognumbers', 'occurrenceid', 'family', 'sciname', 'country', 'stateprovince', 'county', 'municipality',
-			'recordedby', 'recordnumber', 'eventdate', 'decimallatitude', 'decimallongitude', 'minimumelevationinmeters', 'maximumelevationinmeters', 'cultivationstatus',
-			'datelastmodified', 'dateentered', 'processingstatus', 'dbpk', 'traitid', 'stateid'
-		);
-
 		$this->securityArr = array(
 			'eventDate', 'eventDate2', 'month', 'day', 'startDayOfYear', 'endDayOfYear', 'verbatimEventDate',
 			'recordNumber', 'locality', 'locationRemarks', 'minimumElevationInMeters', 'maximumElevationInMeters', 'verbatimElevation',
@@ -92,7 +85,7 @@ class DwcArchiverCore extends Manager{
 			$this->includeAcceptedNameUsage = true;
 		}
 
-		//ini_set('memory_limit','512M');
+		ini_set('memory_limit','512M');
 		set_time_limit(1800);
 	}
 
@@ -109,7 +102,7 @@ class DwcArchiverCore extends Manager{
 			$sqlWhere = '(c.colltype IN("Observations", "General Observations")) ';
 		}
 		if ($collTarget && $collTarget != 'all') {
-			if($collType != 'internalCall') $this->conditionArr['collid'] = $collTarget;
+			$this->conditionArr['collid'] = $collTarget;
 			$sqlWhere .= ($sqlWhere ? 'AND ' : '') . '(c.collid IN(' . $collTarget . ')) ';
 		}
 		if ($sqlWhere) {
@@ -202,14 +195,24 @@ class DwcArchiverCore extends Manager{
 		if (!preg_match('/^[A-Za-z]+$/', $field)) return false;
 		if (!preg_match('/^[A-Z_]+$/', $cond)) return false;
 		if ($field) {
-			if ($this->overrideConditionLimit || in_array(strtolower($field), $this->condAllowArr)) {
-				if (!$cond) $cond = 'EQUALS';
-				if ($value != '' || ($cond == 'IS_NULL' || $cond == 'NOT_NULL')) {
-					if (is_array($value)) $this->conditionArr[$field][$cond] = $this->cleanInArray($value);
-					else $this->conditionArr[$field][$cond][] = $this->cleanInStr($value);
+			if ($this->applyConditionLimit){
+				//Downloads initiated via the dwcapubhandler.php webservice are limited to being filtered by only subset of indexed fields
+				$condAllowArr = array(
+					'catalognumber', 'othercatalognumbers', 'occurrenceid', 'family', 'sciname', 'country' ,'stateprovince', 'county', 'municipality',
+					'recordedby', 'recordnumber', 'eventdate', 'decimallatitude', 'decimallongitude', 'minimumelevationinmeters', 'maximumelevationinmeters', 'cultivationstatus',
+					'datelastmodified', 'dateentered', 'processingstatus', 'dbpk'
+				);
+				if(!in_array(strtolower($field), $condAllowArr)){
+					return false;
 				}
 			}
+			if (!$cond) $cond = 'EQUALS';
+			if ($value != '' || ($cond == 'IS_NULL' || $cond == 'NOT_NULL')) {
+				if (is_array($value)) $this->conditionArr[$field][$cond] = $this->cleanInArray($value);
+				else $this->conditionArr[$field][$cond][] = $this->cleanInStr($value);
+			}
 		}
+		return true;
 	}
 
 	private function applyConditions(){
@@ -234,8 +237,7 @@ class DwcArchiverCore extends Manager{
 		}
 
 		if($this->includeAcceptedNameUsage) {
-			// TODO (Logan) Should there be a select for this?
-			$this->conditionSql .= 'AND (ts.taxauthid = 1) ';
+			$this->conditionSql .= 'AND (ts.taxauthid = 1 OR ts.taxauthid IS NULL) ';
 		}
 
 		$sqlFrag = '';
@@ -670,7 +672,7 @@ class DwcArchiverCore extends Manager{
 			$this->logOrEcho('Creating DwC-A file: ' . $fileName . "\n");
 
 			if (!class_exists('ZipArchive')) {
-				$this->logOrEcho("FATAL ERROR: PHP ZipArchive class is not installed, please contact your server admin\n");
+				$this->logOrEcho("FATAL ERROR: PHP ZipArchive class is not installed, please contact your server admin\n", 1);
 				exit('FATAL ERROR: PHP ZipArchive class is not installed, please contact your server admin');
 			}
 			$occurFile = $this->targetPath . $this->ts . '-occur' . $this->fileExt;
@@ -770,7 +772,7 @@ class DwcArchiverCore extends Manager{
 			}
 			else {
 				$this->errorMessage = 'FAILED to create archive file due to failure to return occurrence records; check and adjust search variables';
-				$this->logOrEcho($this->errorMessage);
+				$this->logOrEcho($this->errorMessage, 1);
 				if($this->targetPath && strpos($this->targetPath, 'content/dwca')){
 					//Archive is being published to Dwc-A publishing directory, thus remove from RSS feed since it's an empty archive
 					if($this->collArr){
@@ -782,7 +784,7 @@ class DwcArchiverCore extends Manager{
 			}
 		}
 		else{
-			$this->logOrEcho('ERROR building DwC-Archive: '.$this->getErrorMessage());
+			$this->logOrEcho('ERROR building DwC-Archive: '.$this->getErrorMessage(), 1);
 		}
 		return $archiveFile;
 	}
@@ -813,6 +815,10 @@ class DwcArchiverCore extends Manager{
 			$fileName .=  '_DwC-A.zip';
 
 			//Set URL path to DwC-Archive file
+			if(substr($this->dwcaOutputUrl, -1 != '/')){
+				//Remove previous file name that was added during a batch DwC-A build event
+				$this->dwcaOutputUrl = substr($this->dwcaOutputUrl, 0, strrpos($this->dwcaOutputUrl, '/') + 1);
+			}
 			if($this->dwcaOutputUrl) $this->dwcaOutputUrl .= $fileName;
 		}
 		return $fileName;
@@ -867,7 +873,7 @@ class DwcArchiverCore extends Manager{
 
 	//Generate DwC support files
 	private function writeMetaFile(){
-		$this->logOrEcho("Creating meta.xml (" . date('h:i:s A') . ")... ");
+		$this->logOrEcho("Creating meta.xml (" . date('h:i:s A') . ")... ", 1);
 
 		//Create new DOM document
 		$newDoc = new DOMDocument('1.0', 'UTF-8');
@@ -945,7 +951,7 @@ class DwcArchiverCore extends Manager{
 
 		$newDoc->save($this->targetPath . $this->ts . '-meta.xml');
 
-		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 1);
+		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 2);
 	}
 
 	private function setExtensionNode(&$rootElem, $newDoc, $fieldMap, $rowType, $fileName){
@@ -979,13 +985,13 @@ class DwcArchiverCore extends Manager{
 	}
 
 	private function writeEmlFile(){
-		$this->logOrEcho("Creating eml.xml (" . date('h:i:s A') . ")... ");
+		$this->logOrEcho("Creating eml.xml (" . date('h:i:s A') . ")... ", 1);
 
 		$emlDoc = $this->getEmlDom();
 
 		$emlDoc->save($this->targetPath . $this->ts . '-eml.xml');
 
-		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 1);
+		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 2);
 	}
 
 	/*
@@ -1271,7 +1277,7 @@ class DwcArchiverCore extends Manager{
 			if (isset($this->collArr[$collId]['phone'])) $emlArr['contact']['phone'] = $this->collArr[$collId]['phone'];
 			if (isset($this->collArr[$collId]['contact'][0]['electronicMailAddress'])) $emlArr['contact']['electronicMailAddress'] = $this->collArr[$collId]['contact'][0]['electronicMailAddress'];
 			if (isset($this->collArr[$collId]['contact'][0]['userId'])) $emlArr['contact']['userId'] = $this->collArr[$collId]['contact'][0]['userId'];
-			if ($this->collArr[$collId]['url']) $emlArr['contact']['onlineUrl'] = $this->collArr[$collId]['url'];
+			if (isset($this->collArr[$collId]['url'])) $emlArr['contact']['onlineUrl'] = $this->collArr[$collId]['url'];
 			$addrStr = $this->collArr[$collId]['address1'];
 			if ($this->collArr[$collId]['address2']) $addrStr .= ', ' . $this->collArr[$collId]['address2'];
 			if ($addrStr) $emlArr['contact']['addr']['deliveryPoint'] = $addrStr;
@@ -1479,10 +1485,10 @@ class DwcArchiverCore extends Manager{
 	}
 
 	private function writeOccurrenceFile($filePath){
-		$this->logOrEcho('Creating occurrence file (' . date('h:i:s A') . ')... ');
+		$this->logOrEcho('Creating occurrence file (' . date('h:i:s A') . ')... ', 1);
 		$fh = fopen($filePath, 'w');
 		if (!$fh) {
-			$this->logOrEcho('ERROR establishing output file (' . $filePath . '), perhaps target folder is not readable by web server.');
+			$this->logOrEcho('ERROR establishing output file (' . $filePath . '), perhaps target folder is not readable by web server.', 2);
 			return false;
 		}
 
@@ -1493,9 +1499,9 @@ class DwcArchiverCore extends Manager{
 			$filePath = false;
 			//$this->writeOutRecord($fh,array('No records returned. Modify query variables to be more inclusive.'));
 			$this->errorMessage = 'No records returned. Modify query variables to be more inclusive.';
-			$this->logOrEcho($this->errorMessage);
+			$this->logOrEcho($this->errorMessage, 2);
 		}
-		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 1);
+		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 2);
 		return $filePath;
 	}
 
@@ -1556,19 +1562,6 @@ class DwcArchiverCore extends Manager{
 					}
 				}
 				while ($r = $rs->fetch_assoc()) {
-					if ($this->isPublicDownload || $this->limitToGuids) {
-						//Is a download from public interface OR DwC-A publishing event pushed to aggregators, thus skip record if Full Protections apply
-						if($r['recordSecurity'] == 5){
-							if(!strpos($sql, 'recordSecurity != 5')){
-								//But only if protection is not already applied within the SQL string
-								continue;
-							}
-						}
-					}
-
-					if(!isset($this->collArr[$r['collID']])){
-						$this->setCollArr($r['collID'], 'internalCall');
-					}
 					//Set occurrenceID GUID or skip records if not defined (required output)
 					if(!$r['occurrenceID']) {
 						if($guidTarget = $this->collArr[$r['collID']]['guidtarget']){
@@ -1775,13 +1768,89 @@ class DwcArchiverCore extends Manager{
 			}
 			$stmt->close();
 		}
+		if($status){
+			$this->setCollArrViaExportID();
+			$this->setFullProtections();
+		}
+		return $status;
+	}
+
+	private function setCollArrViaExportID(){
+		if(!$this->collArr){
+			$sql = 'SELECT DISTINCT collid FROM omexportoccurrences WHERE omExportID = ?';
+			$outputArr = array();
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->exportID);
+				$stmt->execute();
+				if($rs = $stmt->get_result()){
+					while($r = $rs->fetch_object()){
+						$outputArr[] = $r->collid;
+					}
+				}
+				$stmt->close();
+			}
+			if($outputArr){
+				$targetCollidStr = implode(',', $outputArr);
+				$this->setCollArr($targetCollidStr);
+			}
+		}
+	}
+
+	private function setFullProtections(){
+		//Function removes records that should be expluded due to full protection status
+		$status = false;
+		$removeAllRecords = true;
+		$collToRemove = array();
+		//Do not remove records if user has one of these permissions: SuperAdmin, CollAdmin, CollEditor
+		if(!empty($GLOBALS['USER_RIGHTS']['SuperAdmin'])){
+			$removeAllRecords = false;
+		}
+		else {
+			$allowedCollArr = array();
+			if(!empty($GLOBALS['USER_RIGHTS']['CollAdmin'])){
+				$allowedCollArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
+			}
+			if(!empty($GLOBALS['USER_RIGHTS']['CollEditor'])){
+				$allowedCollArr = array_merge($allowedCollArr, $GLOBALS['USER_RIGHTS']['CollEditor']);
+			}
+			if($allowedCollArr){
+				$collToRemove = array_diff(array_keys($this->collArr), $allowedCollArr);
+				$removeAllRecords = false;
+			}
+		}
+		if(!$removeAllRecords){
+			if($this->isPublicDownload || $this->limitToGuids) {
+				//Download is from public interface OR DwC-A publishing event pushed to aggregators, thus remove full protected records
+				//Even if user is authorized to download these records, records should be excluded to ensure these records are not accidentually pushed to public
+				$removeAllRecords = true;
+			}
+		}
+		$sql = '';
+		if($removeAllRecords){
+			$sql = 'DELETE FROM omexportoccurrences WHERE omExportID = ? AND recordSecurity = 5';
+		}
+		elseif($collToRemove){
+			$sql = 'DELETE FROM omexportoccurrences WHERE omExportID = ? AND recordSecurity = 5 AND collid IN(' . implode(',', $collToRemove) . ')';
+		}
+		if($sql){
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->exportID);
+				if($stmt->execute()){
+					$status = true;
+				}
+				elseif($stmt->error){
+					$this->errorMessage = $stmt->error;
+				}
+				$stmt->close();
+			}
+		}
 		return $status;
 	}
 
 	private function writeDeterminationFile($targetFile){
 		$recordCnt = 0;
 		if($this->exportID){
-			$this->logOrEcho('Creating identification (aka determination) extension file (' . date('h:i:s A') . ')...');
+			$this->logOrEcho('Creating identification (aka determination) extension file (' . date('h:i:s A') . ')...', 1);
 			$detHandler = new DwcArchiverDetermination($this->conn);
 			$detHandler->setSchemaType($this->schemaType);
 			if($this->extended) $detHandler->setExtended(true);
@@ -1790,11 +1859,11 @@ class DwcArchiverCore extends Manager{
 			if($recordCnt){
 				$this->extensionFieldMap['det'] = $detHandler->getFieldArrTerms();
 				$msg = $recordCnt . ' records added ';
-				$this->logOrEcho($msg, 1);
+				$this->logOrEcho($msg, 2);
 			}
 			else{
 				$msg = 'No records located (file excluded)';
-				$this->logOrEcho($msg, 1);
+				$this->logOrEcho($msg, 2);
 			}
 		}
 		return $recordCnt;
@@ -1803,7 +1872,7 @@ class DwcArchiverCore extends Manager{
 	private function writeMediaFile($targetFile){
 		$recordCnt = 0;
 		if($this->exportID){
-			$this->logOrEcho('Creating Media extension file (' . date('h:i:s A') . ')...');
+			$this->logOrEcho('Creating Media extension file (' . date('h:i:s A') . ')...', 1);
 			$mediaHandler = new DwcArchiverMedia($this->conn);
 			$mediaHandler->setSchemaType($this->schemaType);
 			$mediaHandler->setRedactLocalities($this->redactLocalities);
@@ -1813,11 +1882,11 @@ class DwcArchiverCore extends Manager{
 			if($recordCnt){
 				$this->extensionFieldMap['media'] = $mediaHandler->getFieldArrTerms();
 				$msg = $recordCnt . ' records added ';
-				$this->logOrEcho($msg, 1);
+				$this->logOrEcho($msg, 2);
 			}
 			else{
 				$msg = 'No records located (file excluded)';
-				$this->logOrEcho($msg, 1);
+				$this->logOrEcho($msg, 2);
 			}
 		}
 		return $recordCnt;
@@ -1826,7 +1895,7 @@ class DwcArchiverCore extends Manager{
 	private function writeIdentifierData($targetFile){
 		$recordCnt = 0;
 		if($this->exportID){
-			$this->logOrEcho('Creating alternative Identifiers extension file (' . date('h:i:s A') . ')...');
+			$this->logOrEcho('Creating alternative Identifiers extension file (' . date('h:i:s A') . ')...', 1);
 			$identierHandler = new DwcArchiverIdentifier($this->conn);
 			$identierHandler->setSchemaType($this->schemaType);
 			$identierHandler->initiateProcess($targetFile);
@@ -1834,11 +1903,11 @@ class DwcArchiverCore extends Manager{
 			if($recordCnt){
 				$this->extensionFieldMap['identifier'] = $identierHandler->getFieldArrTerms();
 				$msg = $recordCnt . ' records added ';
-				$this->logOrEcho($msg, 1);
+				$this->logOrEcho($msg, 2);
 			}
 			else{
 				$msg = 'No records located (file excluded)';
-				$this->logOrEcho($msg, 1);
+				$this->logOrEcho($msg, 2);
 			}
 		}
 		return $recordCnt;
@@ -1847,7 +1916,7 @@ class DwcArchiverCore extends Manager{
 	private function writeAttributeData($targetFile){
 		$recordCnt = 0;
 		if($this->exportID){
-			$this->logOrEcho('Creating MeasurementsOrFact (aka Occurrence Attributes) extension file (' . date('h:i:s A') . ')...');
+			$this->logOrEcho('Creating MeasurementsOrFact (aka Occurrence Attributes) extension file (' . date('h:i:s A') . ')...', 1);
 			$attributeHandler = new DwcArchiverAttribute($this->conn);
 			$attributeHandler->setSchemaType($this->schemaType);
 			$attributeHandler->initiateProcess($targetFile);
@@ -1855,11 +1924,11 @@ class DwcArchiverCore extends Manager{
 			if($recordCnt){
 				$this->extensionFieldMap['attribute'] = $attributeHandler->getFieldArrTerms();
 				$msg = $recordCnt . ' records added ';
-				$this->logOrEcho($msg, 1);
+				$this->logOrEcho($msg, 2);
 			}
 			else{
 				$msg = 'No records located (file excluded)';
-				$this->logOrEcho($msg, 1);
+				$this->logOrEcho($msg, 2);
 			}
 		}
 		return $recordCnt;
@@ -1868,7 +1937,7 @@ class DwcArchiverCore extends Manager{
 	private function writeMaterialSampleData($targetFile){
 		$recordCnt = 0;
 		if($this->exportID){
-			$this->logOrEcho('Creating MaterialSample extension file (' . date('h:i:s A') . ')...');
+			$this->logOrEcho('Creating MaterialSample extension file (' . date('h:i:s A') . ')...', 1);
 			$materialSampleHandler = new DwcArchiverMaterialSample($this->conn);
 			$materialSampleHandler->setSchemaType($this->schemaType);
 			$materialSampleHandler->initiateProcess($targetFile);
@@ -1876,11 +1945,11 @@ class DwcArchiverCore extends Manager{
 			if($recordCnt){
 				$this->extensionFieldMap['materialSample'] = $materialSampleHandler->getFieldArrTerms();
 				$msg = $recordCnt . ' records added ';
-				$this->logOrEcho($msg, 1);
+				$this->logOrEcho($msg, 2);
 			}
 			else{
 				$msg = 'No records located (file excluded)';
-				$this->logOrEcho($msg, 1);
+				$this->logOrEcho($msg, 2);
 			}
 		}
 		return $recordCnt;
@@ -1889,7 +1958,7 @@ class DwcArchiverCore extends Manager{
 	private function writeAssociationData($targetFile){
 		$recordCnt = 0;
 		if($this->exportID){
-			$this->logOrEcho('Creating ResourceRelationship extension file (' . date('h:i:s A') . ')...');
+			$this->logOrEcho('Creating ResourceRelationship extension file (' . date('h:i:s A') . ')...', 1);
 			$associationHandler = new DwcArchiverResourceRelationship($this->conn);
 			$associationHandler->setSchemaType($this->schemaType);
 			$associationHandler->initiateProcess($targetFile);
@@ -1901,22 +1970,22 @@ class DwcArchiverCore extends Manager{
 			if($recordCnt){
 				$this->extensionFieldMap['associations'] = $associationHandler->getFieldArrTerms();
 				$msg = $recordCnt . ' records added ';
-				$this->logOrEcho($msg, 1);
+				$this->logOrEcho($msg, 2);
 			}
 			else{
 				$msg = 'No records located (file excluded)';
-				$this->logOrEcho($msg, 1);
+				$this->logOrEcho($msg, 2);
 			}
 		}
 		return $recordCnt;
 	}
 
 	private function writeCitationFile(){
-		$this->logOrEcho("Creating citation file (" . date('h:i:s A') . ")... ");
+		$this->logOrEcho("Creating citation file (" . date('h:i:s A') . ")... ", 1);
 		$filePath = $this->targetPath . $this->ts . '-citation.txt';
 		$fh = fopen($filePath, 'w');
 		if (!$fh) {
-			$this->logOrEcho('ERROR establishing output file (' . $filePath . '), perhaps target folder is not readable by web server.');
+			$this->logOrEcho('ERROR establishing output file (' . $filePath . '), perhaps target folder is not readable by web server.', 2);
 			return false;
 		}
 
@@ -1984,7 +2053,7 @@ class DwcArchiverCore extends Manager{
 
 		fclose($fh);
 
-		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 1);
+		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 2);
 	}
 
 	private function writeOutRecord($fh, $outputArr){
@@ -2110,6 +2179,85 @@ class DwcArchiverCore extends Manager{
 		return $bool;
 	}
 
+	public function isAuthorized(){
+		if($_SERVER['SERVER_NAME'] == 'localhost'){
+			//Is a dev environment
+			//Note: Under Apache 2, UseCanonicalName = On and ServerName must be set.
+			//Otherwise, this value reflects the hostname supplied by the client, which can be spoofed. It is not safe to rely on this value in security-dependent contexts.
+			return true;
+		}
+
+		if(empty($_SERVER['REMOTE_ADDR'])){
+			error_log('Unauthorized access to dwcapubhandler: NULL REMOTE_ADDR');
+			return false;
+		}
+		//Check to see if referrer is within shared network
+		$refererIpPrefix = substr($_SERVER['REMOTE_ADDR'], 0, strrpos($_SERVER['REMOTE_ADDR'], '.'));
+		//error_log('Access to dwcapubhandler - refererIpPrefix: ' . $refererIpPrefix . '; serverIP: ' . $_SERVER['SERVER_ADDR']);
+		if(!empty($_SERVER['SERVER_ADDR']) && $refererIpPrefix){
+			if(strpos($_SERVER['SERVER_ADDR'], $refererIpPrefix) === 0){
+				return true;
+			}
+		}
+
+		//Check if referer is registered within portal index
+		if(empty($_SERVER['HTTP_REFERER'])){
+			error_log('Unauthorized access to dwcapubhandler: NULL HTTP_REFERER');
+			return false;
+		}
+		$refererUrl = $_SERVER['HTTP_REFERER'];
+		$refererDomain = str_replace('www.', '', parse_url($refererUrl, PHP_URL_HOST));
+		$portalIndex = $this->getPortalIndex();
+		foreach($portalIndex as $indexDomain){
+			$indexDomain = str_replace('www.', '', parse_url($indexDomain, PHP_URL_HOST));
+			if($refererDomain == $indexDomain) return true;
+		}
+
+		//Check to see if user is logged in or user token is included
+		if($GLOBALS['SYMB_UID']) return true;
+		if(!empty($_REQUEST['token'])){
+			if($this->validateUserToken($_REQUEST['token'])){
+				return true;
+			}
+			else{
+				error_log('Unauthorized access to dwcapubhandler: bad user token (' . $_REQUEST['token'] . '), ' . $refererIP . ' - ' . $refererUrl);
+				return false;
+			}
+		}
+
+		error_log('Unauthorized access to dwcapubhandler: ' . $refererIP . ' - ' . $refererUrl);
+		return false;
+	}
+
+	private function getPortalIndex(){
+		$retArr = array();
+		$sql = 'SELECT urlRoot FROM portalindex ';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->execute();
+			$rs = $stmt->get_result();
+			while($r = $rs->fetch_object()){
+				$retArr[] = $r->urlRoot;
+			}
+			$rs->free();
+			$stmt->close();
+		}
+		return $retArr;
+	}
+
+	private function validateUserToken($userToken){
+		$authorized = false;
+		$userToken = $_REQUEST['token'];
+		$sql = 'SELECT tokenID FROM useraccesstokens WHERE token = ?';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('s', $userToken);
+			$stmt->execute;
+			$stmt->store_result();
+			if($stmt->num_rows) $authorized = true;
+			$stmt->close();
+		}
+		return $authorized;
+	}
+
 	//setters and getters
 	public function getCollArr($id = 0){
 		if ($id && isset($this->collArr[$id])) return $this->collArr[$id];
@@ -2148,9 +2296,10 @@ class DwcArchiverCore extends Manager{
 		}
 	}
 
-	public function setOverrideConditionLimit($bool){
-		if ($bool) $this->overrideConditionLimit = true;
-		else $this->overrideConditionLimit = false;
+	public function setApplyConditionLimit($bool){
+		//echo 'setting overrideCondition to: ' . ($bool?'true':'false') . '<br>';
+		if ($bool) $this->applyConditionLimit = true;
+		else $this->applyConditionLimit = false;
 	}
 
 	public function setObserverUid($uid){
@@ -2229,8 +2378,9 @@ class DwcArchiverCore extends Manager{
 		}
 	}
 
-	public function setIsPublicDownload(){
-		$this->isPublicDownload = true;
+	public function setIsPublicDownload($bool){
+		if($bool) $this->isPublicDownload = true;
+		else $this->isPublicDownload = false;
 	}
 
 	public function setPublicationGuid($guid){

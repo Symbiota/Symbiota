@@ -149,6 +149,10 @@ table {
 	display:none;
 }
 
+#eventTimeToggleDiv{
+	display:none;
+}
+
 #idrefdiv{
 	clear:both;
 }
