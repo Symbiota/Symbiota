@@ -340,41 +340,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 		echo "</kml>\n";
 	}
 
-	//Dataset functions
-	public function getOccurrences($datasetId){
-		$retArr = array();
-		if($datasetId){
-			$sql = 'SELECT o.occid, o.catalognumber, CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector, o.eventdate, '.
-				'o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county) AS locality, o.DecimalLatitude, o.DecimalLongitude '.
-				'FROM omoccurrences o LEFT JOIN omoccurdatasetlink dl ON o.occid = dl.occid '.
-				'WHERE dl.datasetid = '.$datasetId.' '.
-				'ORDER BY o.sciname ';
-				$rs = QueryUtil::tryExecuteQuery($this->conn, $sql);
-				if(!$rs) {
-					$this->errorMessage = 'ERROR executing coordinate query: ' . $this->conn->error;
-					return array();
-				} else{
-					while($r = $rs->fetch_object()){
-						$retArr[$r->occid]['occid'] = $r->occid;
-						$retArr[$r->occid]['sciname'] = $r->sciname;
-						$retArr[$r->occid]['catnum'] = $r->catalognumber;
-						$retArr[$r->occid]['coll'] = $r->collector;
-						$retArr[$r->occid]['eventdate'] = $r->eventdate;
-						$retArr[$r->occid]['occid'] = $r->occid;
-						$retArr[$r->occid]['lat'] = $r->DecimalLatitude;
-						$retArr[$r->occid]['long'] = $r->DecimalLongitude;
-					}
-				}
-				$rs->free();
-		}
-		if(count($retArr)>1){
-			return $retArr;
-		}
-		else{
-			return;
-		}
-	}
-
+	// TODO (Logan) Not used remove
 	public function getPersonalRecordsets($uid){
 		$retArr = Array();
 		$sql = "";
