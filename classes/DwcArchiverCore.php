@@ -1487,7 +1487,7 @@ class DwcArchiverCore extends Manager{
 	}
 
 	private function writeOccurrenceFile($filePath){
-		$this->logOrEcho('Creating occurrence file (' . date('h:i:s A') . ')... ', 1);
+		$this->logOrEcho('Preparing data (' . date('h:i:s A') . ')... ', 1);
 		$fh = fopen($filePath, 'w');
 		if (!$fh) {
 			$this->logOrEcho('ERROR establishing output file (' . $filePath . '), perhaps target folder is not readable by web server.', 2);
@@ -1522,6 +1522,7 @@ class DwcArchiverCore extends Manager{
 		if (!$this->conditionSql) return false;
 		$dwcOccurManager->setIncludePaleo($this->includePaleo);
 		if($this->primeStagingTables()){
+			$this->logOrEcho('Creating occurrence file (' . date('h:i:s A') . ')... ', 1);
 			$dwcOccurManager->setExportID($this->exportID);
 			if ($this->schemaType != 'coge') {
 				$dwcOccurManager->setOtherCatalogNumbers();
@@ -1686,6 +1687,9 @@ class DwcArchiverCore extends Manager{
 								$outputHandler[$recordOutputCnt][$rKey] = $rValue;
 							}
 						}
+						if($recordOutputCnt % 100000 === 0){
+							$this->logOrEcho(number_format($recordOutputCnt) . ' records added (' . date('h:i:s A') . ')', 2);
+						}
 					}
 					$rs->free();
 				}
@@ -1693,7 +1697,7 @@ class DwcArchiverCore extends Manager{
 					$this->errorMessage = 'ERROR creating occurrence file: ' . $this->conn->error;
 					$this->logOrEcho($this->errorMessage);
 				}
-			} while ($rowCnt === $chunkSize && $recordOutputCnt < 1000000);
+			} while ($rowCnt === $chunkSize && $recordOutputCnt < 2000000);
 		}
 		return $recordOutputCnt;
 	}
