@@ -1693,7 +1693,7 @@ class DwcArchiverCore extends Manager{
 					$this->errorMessage = 'ERROR creating occurrence file: ' . $this->conn->error;
 					$this->logOrEcho($this->errorMessage);
 				}
-			} while ($rowCnt === $chunkSize && $recordOutputCnt < 2000000);
+			} while ($rowCnt === $chunkSize && $recordOutputCnt < 1000000);
 		}
 		return $recordOutputCnt;
 	}
