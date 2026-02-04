@@ -1503,7 +1503,7 @@ class DwcArchiverCore extends Manager{
 			$this->errorMessage = 'No records returned. Modify query variables to be more inclusive.';
 			$this->logOrEcho($this->errorMessage, 2);
 		}
-		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 2);
+		$this->logOrEcho(number_format($recordCount) . ' records added (' . date('h:i:s A') . ")\n", 2);
 		return $filePath;
 	}
 
@@ -1870,7 +1870,7 @@ class DwcArchiverCore extends Manager{
 			$recordCnt = $detHandler->writeOutData($this->exportID);
 			if($recordCnt){
 				$this->extensionFieldMap['det'] = $detHandler->getFieldArrTerms();
-				$msg = $recordCnt . ' records added ';
+				$msg = number_format($recordCnt) . ' records added ';
 				$this->logOrEcho($msg, 2);
 			}
 			else{
@@ -1893,7 +1893,7 @@ class DwcArchiverCore extends Manager{
 			$recordCnt = $mediaHandler->writeOutMediaData($this->exportID, $this->collArr, $this->serverDomain);
 			if($recordCnt){
 				$this->extensionFieldMap['media'] = $mediaHandler->getFieldArrTerms();
-				$msg = $recordCnt . ' records added ';
+				$msg = number_format($recordCnt) . ' records added ';
 				$this->logOrEcho($msg, 2);
 			}
 			else{
@@ -1914,7 +1914,7 @@ class DwcArchiverCore extends Manager{
 			$recordCnt = $identierHandler->writeOutData($this->exportID);
 			if($recordCnt){
 				$this->extensionFieldMap['identifier'] = $identierHandler->getFieldArrTerms();
-				$msg = $recordCnt . ' records added ';
+				$msg = number_format($recordCnt) . ' records added ';
 				$this->logOrEcho($msg, 2);
 			}
 			else{
@@ -1935,7 +1935,7 @@ class DwcArchiverCore extends Manager{
 			$recordCnt = $attributeHandler->writeOutData($this->exportID);
 			if($recordCnt){
 				$this->extensionFieldMap['attribute'] = $attributeHandler->getFieldArrTerms();
-				$msg = $recordCnt . ' records added ';
+				$msg = number_format($recordCnt) . ' records added ';
 				$this->logOrEcho($msg, 2);
 			}
 			else{
@@ -1956,7 +1956,7 @@ class DwcArchiverCore extends Manager{
 			$recordCnt = $materialSampleHandler->writeOutData($this->exportID);
 			if($recordCnt){
 				$this->extensionFieldMap['materialSample'] = $materialSampleHandler->getFieldArrTerms();
-				$msg = $recordCnt . ' records added ';
+				$msg = number_format($recordCnt) . ' records added ';
 				$this->logOrEcho($msg, 2);
 			}
 			else{
@@ -1981,7 +1981,7 @@ class DwcArchiverCore extends Manager{
 			$recordCnt += $associationHandler->writeOutData($this->exportID);
 			if($recordCnt){
 				$this->extensionFieldMap['associations'] = $associationHandler->getFieldArrTerms();
-				$msg = $recordCnt . ' records added ';
+				$msg = number_format($recordCnt) . ' records added ';
 				$this->logOrEcho($msg, 2);
 			}
 			else{
