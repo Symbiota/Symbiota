@@ -1216,27 +1216,27 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		$llPattern = '-?\d+\.{0,1}\d*';
 		if(array_key_exists('upperlat',$_REQUEST)){
 			$upperLat = ''; $bottomlat = ''; $leftLong = ''; $rightlong = '';
-			if(preg_match('/('.$llPattern.')/', trim($_REQUEST['upperlat']), $m1)){
+			if(array_key_exists('upperlat',$_REQUEST) && preg_match('/('.$llPattern.')/', trim($_REQUEST['upperlat']), $m1)){
 				$upperLat = round($m1[1],5);
 				$uLatDir = (isset($_REQUEST['upperlat_NS'])?strtoupper($_REQUEST['upperlat_NS']):'');
 				if(($uLatDir == 'N' && $upperLat < 0) || ($uLatDir == 'S' && $upperLat > 0)) $upperLat *= -1;
 			}
 
-			if(preg_match('/('.$llPattern.')/', trim($_REQUEST['bottomlat']), $m2)){
+			if(array_key_exists('bottomlat',$_REQUEST) && preg_match('/('.$llPattern.')/', trim($_REQUEST['bottomlat']), $m2)){
 				$bottomlat = round($m2[1],5);
-				$bLatDir = (isset($_REQUEST['bottomlat_NS'])?strtoupper($_REQUEST['bottomlat_NS']):'');
+				$bLatDir = (array_key_exists('bottomlat_NS', $_REQUEST) && isset($_REQUEST['bottomlat_NS']) ? strtoupper($_REQUEST['bottomlat_NS']) : '');
 				if(($bLatDir == 'N' && $bottomlat < 0) || ($bLatDir == 'S' && $bottomlat > 0)) $bottomlat *= -1;
 			}
 
-			if(preg_match('/('.$llPattern.')/', trim($_REQUEST['leftlong']), $m3)){
+			if(array_key_exists('leftlong',$_REQUEST) && preg_match('/('.$llPattern.')/', trim($_REQUEST['leftlong']), $m3)){
 				$leftLong = round($m3[1],5);
-				$lLngDir = (isset($_REQUEST['leftlong_EW'])?strtoupper($_REQUEST['leftlong_EW']):'');
+				$lLngDir = (array_key_exists('leftlong_EW', $_REQUEST) && isset($_REQUEST['leftlong_EW']) ? strtoupper($_REQUEST['leftlong_EW']) : '');
 				if(($lLngDir == 'E' && $leftLong < 0) || ($lLngDir == 'W' && $leftLong > 0)) $leftLong *= -1;
 			}
 
-			if(preg_match('/('.$llPattern.')/', trim($_REQUEST['rightlong']), $m4)){
+			if(array_key_exists('rightlong',$_REQUEST) && preg_match('/('.$llPattern.')/', trim($_REQUEST['rightlong']), $m4)){
 				$rightlong = round($m4[1],5);
-				$rLngDir = (isset($_REQUEST['rightlong_EW'])?strtoupper($_REQUEST['rightlong_EW']):'');
+				$rLngDir = ((array_key_exists('rightlong_EW', $_REQUEST) && isset($_REQUEST['rightlong_EW'])) ? strtoupper($_REQUEST['rightlong_EW']) : '');
 				if(($rLngDir == 'E' && $rightlong < 0) || ($rLngDir == 'W' && $rightlong > 0)) $rightlong *= -1;
 			}
 
