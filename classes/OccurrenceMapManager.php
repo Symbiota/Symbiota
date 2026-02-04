@@ -341,42 +341,6 @@ class OccurrenceMapManager extends OccurrenceManager {
 	}
 
 	// TODO (Logan) Not used remove
-	public function getPersonalRecordsets($uid){
-		$retArr = Array();
-		$sql = "";
-		//Get datasets owned by user
-		$sql = 'SELECT datasetid, name '.
-			'FROM omoccurdatasets '.
-			'WHERE (uid = '.$uid.') '.
-			'ORDER BY name';
-		try {
-			$rs = QueryUtil::executeQuery($this->conn, $sql);
-			while($r = $rs->fetch_object()){
-				$retArr[$r->datasetid]['datasetid'] = $r->datasetid;
-				$retArr[$r->datasetid]['name'] = $r->name;
-				$retArr[$r->datasetid]['role'] = "DatasetAdmin";
-			}
-		} catch (mysqli_sql_exception $e) {
-			$this->errorMessage = 'ERROR executing personal record sets query: ' . $e->getMessage();
-		}
-		$sql2 = 'SELECT d.datasetid, d.name, r.role '.
-			'FROM omoccurdatasets d LEFT JOIN userroles r ON d.datasetid = r.tablepk '.
-			'WHERE (r.uid = '.$uid.') AND (r.role IN("DatasetAdmin","DatasetEditor","DatasetReader")) '.
-			'ORDER BY sortsequence,name';
-		try {
-			$rs = QueryUtil::executeQuery($this->conn, $sql2);
-			while($r = $rs->fetch_object()){
-				$retArr[$r->datasetid]['datasetid'] = $r->datasetid;
-				$retArr[$r->datasetid]['name'] = $r->name;
-				$retArr[$r->datasetid]['role'] = $r->role;
-			}
-			$rs->free();
-		} catch (mysqli_sql_exception $e) {
-			$this->errorMessage = 'ERROR executing personal record sets with certain user roles query: ' . $e->getMessage();
-		}
-		return $retArr;
-	}
-
 	//Misc functions
 	public function getObservationIds(){
 		$retVar = array();
