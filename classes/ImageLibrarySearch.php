@@ -47,40 +47,51 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		if($this->sortBy == 'sciname') $sql .= 'ORDER BY t.sciname ';
 		$bottomLimit = ($pageRequest - 1) * $cntPerPage;
 		$sql .= 'LIMIT '.$bottomLimit . ',' . $cntPerPage;
-		//echo '<div>Spec sql: '.$sql.'</div>';
 		$occArr = array();
-		$result = $this->conn->query($sql);
-		$imgId = 0;
-		while($r = $result->fetch_object()){
-			if($imgId == $r->mediaID) continue;
-			$imgId = $r->mediaID;
-			$retArr[$imgId]['mediaID'] = $r->mediaID;
-			//$retArr[$imgId]['tidaccepted'] = $r->tidinterpreted;
-			$retArr[$imgId]['tid'] = $r->tid;
-			$retArr[$imgId]['sciname'] = $r->sciname;
-			$retArr[$imgId]['url'] = $r->url;
-			$retArr[$imgId]['thumbnailurl'] = $r->thumbnailurl;
-			$retArr[$imgId]['originalurl'] = $r->originalurl;
-			$retArr[$imgId]['uid'] = $r->creatorUid;
-			$retArr[$imgId]['caption'] = $r->caption;
-			$retArr[$imgId]['occid'] = $r->occid;
-			$retArr[$imgId]['mediaType'] = $r->mediaType;
-			if($r->occid) $occArr[$r->occid] = $r->occid;
+		try{
+			if($result = $this->conn->query($sql)){
+				$imgId = 0;
+				while($r = $result->fetch_object()){
+					if($imgId == $r->mediaID) continue;
+					$imgId = $r->mediaID;
+					$retArr[$imgId]['mediaID'] = $r->mediaID;
+					//$retArr[$imgId]['tidaccepted'] = $r->tidinterpreted;
+					$retArr[$imgId]['tid'] = $r->tid;
+					$retArr[$imgId]['sciname'] = $r->sciname;
+					$retArr[$imgId]['url'] = $r->url;
+					$retArr[$imgId]['thumbnailurl'] = $r->thumbnailurl;
+					$retArr[$imgId]['originalurl'] = $r->originalurl;
+					$retArr[$imgId]['uid'] = $r->creatorUid;
+					$retArr[$imgId]['caption'] = $r->caption;
+					$retArr[$imgId]['occid'] = $r->occid;
+					$retArr[$imgId]['mediaType'] = $r->mediaType;
+					if($r->occid) $occArr[$r->occid] = $r->occid;
+				}
+				$result->free();
+			}
+		} catch(Exception $e) {
+			error_log('ERROR returning media for image search tool (' . $sql . ') :' . $e->getMessage());
+			return false;
 		}
-		$result->free();
 		if($occArr){
 			//Get occurrence data
 			$collArr = array();
 			$sql2 = 'SELECT occid, catalognumber, recordedby, stateprovince, collid FROM omoccurrences WHERE occid IN('.implode(',',$occArr).')';
-			$rs2 = $this->conn->query($sql2);
-			while($r2 = $rs2->fetch_object()){
-				$retArr['occ'][$r2->occid]['catnum'] = $r2->catalognumber;
-				$retArr['occ'][$r2->occid]['recordedby'] = $r2->recordedby;
-				$retArr['occ'][$r2->occid]['stateprovince'] = $r2->stateprovince;
-				$retArr['occ'][$r2->occid]['collid'] = $r2->collid;
-				$collArr[$r2->collid] = $r2->collid;
+			try{
+				if($rs2 = $this->conn->query($sql2)){
+					while($r2 = $rs2->fetch_object()){
+						$retArr['occ'][$r2->occid]['catnum'] = $r2->catalognumber;
+						$retArr['occ'][$r2->occid]['recordedby'] = $r2->recordedby;
+						$retArr['occ'][$r2->occid]['stateprovince'] = $r2->stateprovince;
+						$retArr['occ'][$r2->occid]['collid'] = $r2->collid;
+						$collArr[$r2->collid] = $r2->collid;
+					}
+					$rs2->free();
+				}
+			} catch(Exception $e) {
+				error_log('ERROR returning media for image search tool (' . $sql2 . ') :' . $e->getMessage());
+				return false;
 			}
-			$rs2->free();
 			//Get collection data
 			$sql3 = 'SELECT collid, CONCAT_WS("-",institutioncode, collectioncode) as instcode FROM omcollections WHERE collid IN('.implode(',',$collArr).')';
 			$rs3 = $this->conn->query($sql3);
