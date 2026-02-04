@@ -195,48 +195,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 		return $coordArr;
 	}
 
-	//Occurrence functions
-	public function getOccurrenceArr($pageRequest,$cntPerPage){
-		//Used in occurrence listing tab within dynamic map
-		$retArr = Array();
-		if($this->sqlWhere){
-			$sql = 'SELECT o.occid, c.institutionCode, o.catalogNumber, CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector, '.
-				'o.eventDate, o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county) AS locality, o.decimalLatitude, o.decimalLongitude, '.
-				'IFNULL(o.recordSecurity,0) AS recordSecurity, o.securityReason '.
-				'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
-			$sql .= $this->getTableJoins($this->sqlWhere);
-			$sql .= $this->sqlWhere;
-			$bottomLimit = ($pageRequest - 1)*$cntPerPage;
-			$sql .= "ORDER BY o.sciname, o.eventdate ";
-			$sql .= "LIMIT ?,?";
-			$statement = $this->conn->prepare($sql);
-			$statement->bind_param('ii', $bottomLimit, $cntPerPage);
-			$statement->execute();
-			$statement->bind_result($occid, $institutionCode, $catalogNumber, $collector, $eventDate, $family, $sciname, $locality, $decimalLatitude, $decimalLongitude, $recordSecurity, $securityReason);
-			while($statement->fetch()){
-				$occId = $occid;
-				$retArr[$occId]['i'] = $this->cleanOutStr($institutionCode);
-				$retArr[$occId]['cat'] = $this->cleanOutStr($catalogNumber);
-				$retArr[$occId]['c'] = $this->cleanOutStr($collector);
-				$retArr[$occId]['e'] = $this->cleanOutStr($eventDate);
-				$retArr[$occId]['f'] = $this->cleanOutStr($family);
-				$retArr[$occId]['s'] = $this->cleanOutStr($sciname);
-				$retArr[$occId]['l'] = $this->cleanOutStr($locality);
-				$retArr[$occId]['lat'] = $this->cleanOutStr($decimalLatitude);
-				$retArr[$occId]['lon'] = $this->cleanOutStr($decimalLongitude);
-				$retArr[$occId]['l'] = str_replace('.,', ',', $locality);
-				// Do we also want to put recordSecurity and securityReason in this array?
-			}
-			$statement->close();
-			//Set access statistics
-			if($retArr){
-				$statsManager = new OccurrenceAccessStats();
-				$statsManager->recordAccessEventByArr(array_keys($retArr),'list');
-			}
-		}
-		return $retArr;
-	}
-
+	// TODO (Logan) Not used Figure out what to do with this
 	private function setRecordCnt(){
 		if($this->sqlWhere){
 			$sql = "SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences o ".$this->getTableJoins($this->sqlWhere).$this->sqlWhere;
