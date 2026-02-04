@@ -599,6 +599,12 @@ $serverHost = GeneralUtil::getDomain();
 			}
 		}
 
+		function setHeatmap(value) {
+			const heatmap_on_el = document.getElementById('heatmap_on');
+			heatmap_on_el.checked = value;
+			heatmap_on_el.dispatchEvent(new Event('change'))
+		}
+
 		function leafletInit() {
 
 			L.DivIcon.CustomColor = L.DivIcon.extend({
@@ -634,6 +640,7 @@ $serverHost = GeneralUtil::getDomain();
 
 			let heatmapLayer;
 			let heatmap;
+			let highRecordMode = false;
 
 			let groupClusters = [];
 
@@ -840,22 +847,24 @@ $serverHost = GeneralUtil::getDomain();
 				let maxDensityInput = document.getElementById('heat-max-density')
 
 				var cfg = {
-					"radius": (radius_input? parseFloat(radius_input.value): 50) / 100.00,
-					"maxOpacity": .9,
-					"scaleRadius": true,
+					"radius": 20, //(radius_input? parseFloat(radius_input.value): 50) / 100), // TODO decide on solution here
+					"minOpacity": 0.2 // Added previously missing,
+					"maxOpacity": 0.9,
+					"scaleRadius": false,
 					"useLocalExtrema": false,
 					latField: 'lat',
 					lngField: 'lng',
 				};
 				heatmapLayer = new HeatmapOverlay(cfg);
 
-				let heatMaxDensity = maxDensityInput? parseInt(maxDensityInput.value) : 3
+				let heatMaxDensity = maxDensityInput? parseInt(maxDensityInput.value) : 1000
 				let heatMinDensity = minDensityInput? parseInt(minDensityInput.value) : 1
 
 				heatmapLayer.addTo(map.mapLayer);
-
 				heatmapLayer.setData({
-					max: heatMaxDensity || 3,
+					// Make max five percent of result
+					max: Math.floor((recordArr.length * .05)),
+					//max: heatMaxDensity || 3,
 					min: heatMinDensity || 1,
 					data: recordArr
 				});
@@ -871,6 +880,15 @@ $serverHost = GeneralUtil::getDomain();
 					map.mapLayer.fitBounds(group.getBounds());
 				} else if(map_bounds) {
 					map.mapLayer.fitBounds(map_bounds);
+				}
+			}
+
+			function setDynamicHeatmap() {
+				zoom =  map.mapLayer.getZoom();
+				if(zoom > 10) {
+					setHeatmap(false);
+				} else if(!heatmap) {
+					setHeatmap(true);
 				}
 			}
 
@@ -947,10 +965,6 @@ $serverHost = GeneralUtil::getDomain();
 					count++;
 				}
 
-				if(recordArr && recordArr.length >= 15000) {
-					alert('<?= $LANG["MAP_RECORD_LIMIT_MESSAGE"] ?>');
-				}
-
 				//build records table
 				buildRecordsPanel(recordArr);
 
@@ -963,8 +977,21 @@ $serverHost = GeneralUtil::getDomain();
 					group.portalMapGroup.genClusters();
 				})
 
-				autoColorTaxa();
+				if(recordArr && recordArr.length >= 15000) {
+					highRecordMode = true;
+					alert('<?= $LANG["MAP_RECORD_LIMIT_MESSAGE"] ?>');
+					setHeatmap(true);
+					map.mapLayer.on('zoomend', setDynamicHeatmap);
+				} else if(highRecordMode) {
+					highRecordMode = false;
+					setHeatmap(false);
+					map.mapLayer.off('zoomend', setDynamicHeatmap);
+				}
 
+				if(cluster_type === 'taxa') {
+					autoColorTaxa();
+				}
+				
 				drawPoints();
 				fitMap();
 				hideWorking();
@@ -1105,14 +1132,9 @@ $serverHost = GeneralUtil::getDomain();
 				group.origin = "<?= $serverHost . $CLIENT_ROOT?>";
 				mapGroups = [group];
 
-				if(recordArr && recordArr.length >= 15000) {
-					alert('<?= $LANG["MAP_RECORD_LIMIT_MESSAGE"] ?>');
-				}
-
 				$( document ).ready(function() {
 					// Build Records Panel
 					buildRecordsPanel(recordArr);
-
 					// Build Taxa | Portal | Collection Panels
 					buildPanels(formData.get('cross_portal_switch'));
 
@@ -1122,10 +1144,22 @@ $serverHost = GeneralUtil::getDomain();
 						group.portalMapGroup.genClusters();
 					})
 
-					autoColorTaxa();
+					if(recordArr && recordArr.length >= 15000) {
+						highRecordMode = true;
+						alert('<?= $LANG["MAP_RECORD_LIMIT_MESSAGE"] ?>');
+						setHeatmap(true);
+						map.mapLayer.on('zoomend', setDynamicHeatmap);
+					} else if(highRecordMode) {
+						highRecordMode = false;
+						setHeatmap(false);
+						map.mapLayer.off('zoomend', setDynamicHeatmap);
+					}
+
+					if(cluster_type === 'taxa') {
+						autoColorTaxa();
+					}
 
 					drawPoints();
-
 					fitMap();
 				})
 			}
