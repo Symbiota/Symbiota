@@ -848,7 +848,7 @@ $serverHost = GeneralUtil::getDomain();
 
 				var cfg = {
 					"radius": 20, //(radius_input? parseFloat(radius_input.value): 50) / 100), // TODO decide on solution here
-					"minOpacity": 0.2 // Added previously missing,
+					"minOpacity": 0.2, // Added previously missing,
 					"maxOpacity": 0.9,
 					"scaleRadius": false,
 					"useLocalExtrema": false,
