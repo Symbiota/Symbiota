@@ -36,11 +36,14 @@ class OccurrenceMapManager extends OccurrenceManager {
 		}
 	}
 
-	private function buildMapSqlQuery($start, $limit) {
-		$sql = 'SELECT o.occid, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS identifier, o.eventdate, '.
-			'o.sciname, IF(ts.family IS NULL, o.family, ts.family) as family, o.tidinterpreted, o.DecimalLatitude, o.DecimalLongitude, o.collid, o.catalogNumber, '.
-			'o.othercatalognumbers '.
-			'FROM omoccurrences o ';
+	public function buildMapSqlQuery($start = null, $limit = null, $select = null) {
+		if(!$select) {
+			$select = 'o.occid, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS identifier, o.eventdate, '.
+				'o.sciname, IF(ts.family IS NULL, o.family, ts.family) as family, o.tidinterpreted, o.DecimalLatitude, o.DecimalLongitude, o.collid, o.catalogNumber, '.
+				'o.othercatalognumbers';
+		}
+
+		$sql = 'SELECT ' . $select . ' FROM omoccurrences o ';
 
 		if (!empty($GLOBALS['ACTIVATE_PALEO'])) {
 			$sql = $this->getPaleoSqlWith() . $sql;
@@ -55,6 +58,18 @@ class OccurrenceMapManager extends OccurrenceManager {
 		}
 
 		return $sql;
+	}
+
+	public function getCollections() {
+		$collections = [];
+		$colResult= QueryUtil::tryExecuteQuery($this->conn,'SELECT collid, institutionCode, collectionCode, collectionName, CollType IN("Observations","General Observations") as isObservation FROM omcollections');
+		while($record = $colResult->fetch_object()) {
+			if (!array_key_exists($record->collid, $collections)) {
+				$collections[$record->collid] = $record;
+			}
+		}
+
+		return $collections;
 	}
 
 	//Coordinate retrival functions
@@ -82,21 +97,10 @@ class OccurrenceMapManager extends OccurrenceManager {
 		$recordArr = [];
 		$taxaArr = [];
 		$collArr = [];
-
-		$collections = [];
-		$colResult= QueryUtil::tryExecuteQuery($this->conn,'SELECT collid, collectionName, CollType IN("Observations","General Observations") as isObservation FROM omcollections');
-		while($record = $colResult->fetch_object()) {
-			if (!array_key_exists($record->collid, $collections)) {
-				$collections[$record->collid] = [
-					'name' => $record->collectionName,
-					'collid' => $record->collid,
-					'isObservation' => $record->isObservation
-				];
-			}
-		}
+		$collections = $this->getCollections();
 
 		while($record = $result->fetch_object()) {
-			$collName = $collections[$record->collid]['name'];
+			$collName = $collections[$record->collid]->collectionName;
 			if (!array_key_exists($record->tidinterpreted, $taxaArr)) {
 				$taxaArr[$record->tidinterpreted] = [
 					'sn' => $record->sciname,
@@ -127,7 +131,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 				'occid' => $record->occid,
 				'host' => $host,
 				'collname' => $collName,
-				'type' => $collections[$record->collid]['isObservation']? 'observation' : 'specimen',
+				'type' => $collections[$record->collid]->isObservation? 'observation' : 'specimen',
 				'lat' => $record->DecimalLatitude,
 				'lng' => $record->DecimalLongitude,
 			]);
@@ -274,74 +278,130 @@ class OccurrenceMapManager extends OccurrenceManager {
 			$fileName = "symbiota";
 		}
 		$fileName .= time().".kml";
-		header ('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-		header ('Content-type: application/vnd.google-earth.kml+xml');
+		
+		header ('Content-type: text/xml');
 		header ('Content-Disposition: attachment; filename="'.$fileName.'"');
-		echo "<?xml version='1.0' encoding='".$GLOBALS['CHARSET']."'?>\n";
-		echo "<kml xmlns='http://www.opengis.net/kml/2.2'>\n";
-		echo "<Document>\n";
-		echo "<Folder>\n<name>".$GLOBALS['DEFAULT_TITLE']." Specimens - ".date('j F Y g:ia')."</name>\n";
 
-		//Get and output data
-		$cnt = 0;
-		$coordArr = $this->getMappingData($recLimit, $extraFieldArr);
-		if($coordArr){
-			$googleIconArr = array('pushpin/ylw-pushpin','pushpin/blue-pushpin','pushpin/grn-pushpin','pushpin/ltblu-pushpin',
-				'pushpin/pink-pushpin','pushpin/purple-pushpin', 'pushpin/red-pushpin','pushpin/wht-pushpin','paddle/blu-blank',
-				'paddle/grn-blank','paddle/ltblu-blank','paddle/pink-blank','paddle/wht-blank','paddle/blu-diamond','paddle/grn-diamond',
-				'paddle/ltblu-diamond','paddle/pink-diamond','paddle/ylw-diamond','paddle/wht-diamond','paddle/red-diamond','paddle/purple-diamond',
-				'paddle/blu-circle','paddle/grn-circle','paddle/ltblu-circle','paddle/pink-circle','paddle/ylw-circle','paddle/wht-circle',
-				'paddle/red-circle','paddle/purple-circle','paddle/blu-square','paddle/grn-square','paddle/ltblu-square','paddle/pink-square',
-				'paddle/ylw-square','paddle/wht-square','paddle/red-square','paddle/purple-square','paddle/blu-stars','paddle/grn-stars',
-				'paddle/ltblu-stars','paddle/pink-stars','paddle/ylw-stars','paddle/wht-stars','paddle/red-stars','paddle/purple-stars');
-			$color = 'e69e67';
-			foreach($coordArr as $sciname => $snArr){
-				unset($snArr['tid']);
-				$cnt++;
-				$iconStr = $googleIconArr[$cnt%44];
-				echo "<Style id='sn_".$iconStr."'>\n";
-				echo "<IconStyle><scale>1.1</scale><Icon>";
-				echo "<href>http://maps.google.com/mapfiles/kml/" . htmlspecialchars($iconStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ".png</href>";
-				echo "</Icon><hotSpot x='20' y='2' xunits='pixels' yunits='pixels'/></IconStyle>\n</Style>\n";
-				echo "<Style id='sh_".$iconStr."'>\n";
-				echo "<IconStyle><scale>1.3</scale><Icon>";
-				echo "<href>http://maps.google.com/mapfiles/kml/".$iconStr.".png</href>";
-				echo "</Icon><hotSpot x='20' y='2' xunits='pixels' yunits='pixels'/></IconStyle>\n</Style>\n";
-				echo "<StyleMap id='".htmlspecialchars(str_replace(" ","_",$sciname), ENT_QUOTES)."'>\n";
-				echo "<Pair><key>normal</key><styleUrl>#sn_".$iconStr."</styleUrl></Pair>";
-				echo "<Pair><key>highlight</key><styleUrl>#sh_".$iconStr."</styleUrl></Pair>";
-				echo "</StyleMap>\n";
-				echo "<Folder><name>".htmlspecialchars($sciname, ENT_QUOTES)."</name>\n";
-				foreach($snArr as $occid => $recArr){
-					echo '<Placemark>';
-					echo '<name>'.htmlspecialchars($recArr['collector'], ENT_QUOTES).'</name>';
-					echo '<ExtendedData>';
-					echo '<Data name="institutioncode">'.htmlspecialchars($recArr['instcode'], ENT_QUOTES).'</Data>';
-					if(isset($recArr['collcode'])) echo '<Data name="collectioncode">'.htmlspecialchars($recArr['collcode'], ENT_QUOTES).'</Data>';
-					echo '<Data name="catalognumber">'.(isset($recArr['catnum'])?htmlspecialchars($recArr['catnum'], ENT_QUOTES):'').'</Data>';
-					if(isset($recArr['ocatnum'])) echo '<Data name="othercatalognumbers">'.htmlspecialchars($recArr['ocatnum'], ENT_QUOTES).'</Data>';
-					echo '<Data name="DataSource">Data retrieved from '.$GLOBALS['DEFAULT_TITLE'].' Data Portal</Data>';
-					$recUrl = 'http://';
-					if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $recUrl = 'https://';
-					$recUrl .= $_SERVER['SERVER_NAME'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$occid;
-					echo '<Data name="RecordURL">' . htmlspecialchars($recUrl, ENT_QUOTES) . '</Data>';
-					if(isset($extraFieldArr) && is_array($extraFieldArr)){
-						reset($extraFieldArr);
-						foreach($extraFieldArr as $fieldName){
-							if(isset($recArr[$fieldName])) echo '<Data name="'.$fieldName.'">'.htmlspecialchars($recArr[$fieldName], ENT_QUOTES).'</Data>';
-						}
-					}
-					echo '</ExtendedData>';
-					echo '<styleUrl>#'.htmlspecialchars(str_replace(' ','_',$sciname), ENT_QUOTES).'</styleUrl>';
-					echo '<Point><coordinates>'.$recArr['lng'].','.$recArr['lat'].'</coordinates></Point>';
-					echo "</Placemark>\n";
-				}
-				echo "</Folder>\n";
+		$kml = tmpfile();
+		
+		fwrite($kml, "<?xml version='1.0' encoding='".$GLOBALS['CHARSET']."'?>\n");
+		fwrite($kml, "<kml xmlns='http://www.opengis.net/kml/2.2'>\n");
+		fwrite($kml, "<Folder>\n<name>".$GLOBALS['DEFAULT_TITLE']." Specimens - ".date('j F Y g:ia')."</name>\n");
+		fwrite($kml, "<Document>\n");
+
+		$googleIconArr = array('pushpin/ylw-pushpin','pushpin/blue-pushpin','pushpin/grn-pushpin','pushpin/ltblu-pushpin',
+			'pushpin/pink-pushpin','pushpin/purple-pushpin', 'pushpin/red-pushpin','pushpin/wht-pushpin','paddle/blu-blank',
+			'paddle/grn-blank','paddle/ltblu-blank','paddle/pink-blank','paddle/wht-blank','paddle/blu-diamond','paddle/grn-diamond',
+			'paddle/ltblu-diamond','paddle/pink-diamond','paddle/ylw-diamond','paddle/wht-diamond','paddle/red-diamond','paddle/purple-diamond',
+			'paddle/blu-circle','paddle/grn-circle','paddle/ltblu-circle','paddle/pink-circle','paddle/ylw-circle','paddle/wht-circle',
+			'paddle/red-circle','paddle/purple-circle','paddle/blu-square','paddle/grn-square','paddle/ltblu-square','paddle/pink-square',
+			'paddle/ylw-square','paddle/wht-square','paddle/red-square','paddle/purple-square','paddle/blu-stars','paddle/grn-stars',
+			'paddle/ltblu-stars','paddle/pink-stars','paddle/ylw-stars','paddle/wht-stars','paddle/red-stars','paddle/purple-stars');
+
+		$CHUNK_SIZE = 40000;
+		$RECORD_CAP = 3000000;
+
+		$collections = $this->getCollections();
+		$previousSciname = false;
+		// Depending on how the kml goes this could get removed
+		$openFolder = false;
+		$keepProcessing = true;
+		$lastOccid = false;
+		$currentCount = 0;
+
+		while($keepProcessing) {
+			$queryTime= microtime(true);
+			$sql = $this->buildMapSqlQuery() . ($lastOccid? ' AND occid > ' . $lastOccid: '') . ' LIMIT ' . $CHUNK_SIZE;
+			$result = QueryUtil::executeQuery($this->conn, $sql);
+
+			$currentCount += $result->num_rows;
+
+			if($currentCount >= $RECORD_CAP) {
+				$keepProcessing = false;
+			} else if($result->num_rows === $CHUNK_SIZE) {
+				$keepProcessing = true;
+			} else {
+				$keepProcessing = false;
 			}
+
+			while($record = $result->fetch_object()) {
+				$lastOccid = $record->occid;
+				$sciname = $record->sciname ?? 'undefined';
+
+				// TODO figure out how to do this with decent performance
+				// count($googleIconArr) === 44?
+				// if($previousSciname != $sciname) {
+				// 	if($openFolder) {
+				// 		fwrite($kml, "</Folder>\n");
+				// 		$openFolder = false;
+				// 	}
+				//
+				// 	$iconStr = $googleIconArr[$currentCount % 44];
+				// 	fwrite($kml, "<Style id='sn_".$iconStr."'>\n");
+				// 	fwrite($kml, "<IconStyle><scale>1.1</scale><Icon>");
+				// 	fwrite($kml, "<href>http://maps.google.com/mapfiles/kml/" . htmlspecialchars($iconStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ".png</href>");
+				// 	fwrite($kml, "</Icon><hotSpot x='20' y='2' xunits='pixels' yunits='pixels'/></IconStyle>\n</Style>\n");
+				// 	fwrite($kml, "<Style id='sh_".$iconStr."'>\n");
+				// 	fwrite($kml, "<IconStyle><scale>1.3</scale><Icon>");
+				// 	fwrite($kml, "<href>http://maps.google.com/mapfiles/kml/".$iconStr.".png</href>");
+				// 	fwrite($kml, "</Icon><hotSpot x='20' y='2' xunits='pixels' yunits='pixels'/></IconStyle>\n</Style>\n");
+				// 	fwrite($kml, "<StyleMap id='".htmlspecialchars(str_replace(" ", "_", $sciname), ENT_QUOTES)."'>\n");
+				// 	fwrite($kml, "<Pair><key>normal</key><styleUrl>#sn_".$iconStr."</styleUrl></Pair>");
+				// 	fwrite($kml, "<Pair><key>highlight</key><styleUrl>#sh_".$iconStr."</styleUrl></Pair>");
+				// 	fwrite($kml, "</StyleMap>\n");
+				// 	fwrite($kml, "<Folder><name>".htmlspecialchars($sciname, ENT_QUOTES)."</name>\n");
+				//
+				// 	$openFolder = true;
+				// }
+
+				fwrite($kml, '<Placemark>');
+				fwrite($kml, '<name>'.htmlspecialchars($record->identifier, ENT_QUOTES).'</name>');
+				fwrite($kml, '<ExtendedData>');
+				if($record->collid) {
+					$collectionCode	= $collections[$record->collid]->collectionCode;
+					$institutionCode = $collections[$record->collid]->collectionCode;
+					if($collectionCode) {
+						fwrite($kml, '<Data name="collectioncode">'.htmlspecialchars($collectionCode, ENT_QUOTES).'</Data>');
+					}
+
+					if($institutionCode) {
+						fwrite($kml, '<Data name="institutioncode">'.htmlspecialchars($institutionCode, ENT_QUOTES).'</Data>');
+					}
+				}
+				fwrite($kml, '<Data name="catalognumber">'.($record->catalogNumber?htmlspecialchars($record->catalogNumber, ENT_QUOTES):'').'</Data>');
+				fwrite($kml, '<Data name="DataSource">Data retrieved from '.$GLOBALS['DEFAULT_TITLE'].' Data Portal</Data>');
+				$recUrl = 'http://';
+				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $recUrl = 'https://';
+				$recUrl .= $_SERVER['SERVER_NAME'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$record->occid;
+				fwrite($kml, '<Data name="RecordURL">' . htmlspecialchars($recUrl, ENT_QUOTES) . '</Data>');
+
+				if(isset($extraFieldArr) && is_array($extraFieldArr)) {
+					reset($extraFieldArr);
+					foreach($extraFieldArr as $fieldName){
+						if(isset($record->$fieldName)) fwrite($kml, '<Data name="'.$fieldName.'">'.htmlspecialchars($record->$fieldName, ENT_QUOTES).'</Data>');
+					}
+				}
+
+				fwrite($kml, '</ExtendedData>');
+				fwrite($kml, '<styleUrl>#'.htmlspecialchars(str_replace(' ','_',$sciname), ENT_QUOTES).'</styleUrl>');
+				fwrite($kml, '<Point><coordinates>'.$record->DecimalLongitude.','.$record->DecimalLatitude.'</coordinates></Point>');
+				fwrite($kml, "</Placemark>\n");
+				$currentCount++;
+				$previousSciname = $sciname;
+			}
+
+			$result->free();
 		}
-		echo "</Folder>\n";
-		echo "</Document>\n";
-		echo "</kml>\n";
+
+		if($openFolder) {
+			fwrite($kml, "</Folder>\n");
+			$openFolder = false;
+		}
+
+		fwrite($kml, "</Document>\n</Folder>\n</kml>\n");
+
+		readfile(stream_get_meta_data($kml)['uri']);
+		fclose($kml);
 	}
 
 	//Misc support functions
