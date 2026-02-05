@@ -8,12 +8,15 @@ class OccurrenceMapManager extends OccurrenceManager {
 	private $recordCount = 0;
 	private $collArrIndex = 0;
 
+	// Default values for request variables
+	private const DEFAULT_GRID_SIZE=60;
+	private const MIN_CLUSTER_SETTING=10;
+	private const MAP_RECORD_LIMIT=15000;
+
 	public function __construct(){
 		parent::__construct();
 		$this->readGeoRequestVariables();
 		$this->setGeoSqlWhere();
-		// TODO (Logan) before merge figure this out
-		// $this->setRecordCnt();
 	}
 
 	public function __destruct(){
@@ -150,6 +153,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 		];
 	}
 
+	// TODO (Logan) Is being used but is like duplicate of `getCoordinateMap`
 	public function getMappingData($recLimit, $extraFieldArr = null){
 		//Used for simple maps occurrence and taxon maps, and also KML download functions
 		$start = 0;
@@ -168,7 +172,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 			$sql .= $this->getTableJoins($this->sqlWhere);
 			$sql .= $this->sqlWhere;
 			if(is_numeric($start) && $recLimit && is_numeric($recLimit)) $sql .= "LIMIT ".$start.",".$recLimit;
-			//echo '<div>SQL: ' . $sql . '</div>';
+			// echo '<div>SQL: ' . $sql . '</div>';
 			$rs = QueryUtil::tryExecuteQuery($this->conn, $sql);
 			if(!$rs) {
 				$this->errorMessage = 'ERROR executing mapping data query: ' . $this->conn->error;
@@ -201,27 +205,6 @@ class OccurrenceMapManager extends OccurrenceManager {
 			$statsManager->recordAccessEventByArr($occidArr, 'map');
 		}
 		return $coordArr;
-	}
-
-	// TODO (Logan) Not used Figure out what to do with this
-	private function setRecordCnt(){
-		if($this->sqlWhere){
-			$sql = "SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences o ".$this->getTableJoins($this->sqlWhere).$this->sqlWhere;
-			if (!empty($GLOBALS['ACTIVATE_PALEO'])) $sql = $this->getPaleoSqlWith() . $sql;
-			$result = $this->conn->query($sql);
-			if($result){
-				if($row = $result->fetch_object()){
-					$this->recordCount = $row->cnt;
-				}
-				$result->free();
-			} else {
-				$this->errorMessage = 'ERROR executing record count query: ' . $this->conn->error;
-			}
-		}
-	}
-
-	public function getRecordCnt(){
-		return $this->recordCount;
 	}
 
 	//SQL where functions
