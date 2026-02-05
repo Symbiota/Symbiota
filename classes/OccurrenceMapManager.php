@@ -340,23 +340,6 @@ class OccurrenceMapManager extends OccurrenceManager {
 		echo "</kml>\n";
 	}
 
-	// TODO (Logan) Not used remove
-	//Misc functions
-	public function getObservationIds(){
-		$retVar = array();
-		$sql = 'SELECT collid FROM omcollections WHERE CollType IN("Observations","General Observations") ';
-			$rs = QueryUtil::tryExecuteQuery($this->conn, $sql);
-			if(!$rs) {
-				$this->errorMessage = 'ERROR executing observation collections query: ' . $this->conn->error;
-				return array();
-			}
-			while($r = $rs->fetch_object()){
-				$retVar[] = $r->collid;
-			}
-			$rs->free();
-		return $retVar;
-	}
-
 	//Misc support functions
 	private function htmlEntities($string){
 		return htmlspecialchars($string ?? '', ENT_XML1 | ENT_QUOTES, 'UTF-8');
