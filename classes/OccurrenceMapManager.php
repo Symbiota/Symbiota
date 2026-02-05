@@ -72,15 +72,14 @@ class OccurrenceMapManager extends OccurrenceManager {
 		}
 
 		$color = 'e69e67';
+		$host = GeneralUtil::getDomain() . $GLOBALS['CLIENT_ROOT'];
 		$occidArr = [];
 		$recordArr = [];
 		$taxaArr = [];
 		$collArr = [];
-		$colResult= QueryUtil::tryExecuteQuery($this->conn,'SELECT collid, collectionName, CollType IN("Observations","General Observations") as isObservation FROM omcollections');
+
 		$collections = [];
-
-		$host = GeneralUtil::getDomain() . $GLOBALS['CLIENT_ROOT'];
-
+		$colResult= QueryUtil::tryExecuteQuery($this->conn,'SELECT collid, collectionName, CollType IN("Observations","General Observations") as isObservation FROM omcollections');
 		while($record = $colResult->fetch_object()) {
 			if (!array_key_exists($record->collid, $collections)) {
 				$collections[$record->collid] = [
