@@ -36,17 +36,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 		}
 	}
 
-	//Coordinate retrival functions
-	public function getCoordinateMap($start, $limit) {
-		if(!$this->sqlWhere) {
-			return [
-				'taxaArr' => [],
-				'collArr' => [],
-				'recordArr' => []
-			];
-		}
-		
-		$statsManager = new OccurrenceAccessStats();
+	private function buildMapSqlQuery($start, $limit) {
 		$sql = 'SELECT o.occid, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS identifier, o.eventdate, '.
 			'o.sciname, IF(ts.family IS NULL, o.family, ts.family) as family, o.tidinterpreted, o.DecimalLatitude, o.DecimalLongitude, o.collid, o.catalogNumber, '.
 			'o.othercatalognumbers '.
@@ -64,7 +54,22 @@ class OccurrenceMapManager extends OccurrenceManager {
 			$sql .= "LIMIT " . $start . "," . $limit;
 		}
 
-		$result = QueryUtil::tryExecuteQuery($this->conn, $sql);
+		return $sql;
+	}
+
+	//Coordinate retrival functions
+	public function getCoordinateMap($start, $limit) {
+		if(!$this->sqlWhere) {
+			return [
+				'taxaArr' => [],
+				'collArr' => [],
+				'recordArr' => []
+			];
+		}
+		
+		$statsManager = new OccurrenceAccessStats();
+
+		$result = QueryUtil::tryExecuteQuery($this->conn, $this->buildMapSqlQuery($start, $limit));
 		if(!$result) {
 			$this->errorMessage = 'ERROR executing coordinate query: ' . $this->conn->error;
 			echo json_encode([$this->errorMessage]);
