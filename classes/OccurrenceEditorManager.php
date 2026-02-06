@@ -1813,7 +1813,7 @@ class OccurrenceEditorManager {
 			$sql = <<<'SQL'
 			UPDATE IGNORE ommaterialsample SET occid = ? WHERE occid = ?;
 			SQL;
-			$stage = $LANG['ERROR_REMAPPING_MATSAMPLE'];
+			$stage = $LANG['ERROR_REMAPPING_MATSAMPLES'];
 			QueryUtil::executeQuery($this->conn, $sql, [$targetOccid, $sourceOccid]);
 
 			//Remap paleo

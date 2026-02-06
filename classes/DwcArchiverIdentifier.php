@@ -59,7 +59,7 @@ class DwcArchiverIdentifier extends DwcArchiverBaseManager{
 			foreach($this->fieldArr['fields'] as $colName){
 				if($colName) $sqlFrag .= ', ' . $colName;
 			}
-			$this->sql = 'SELECT ' . trim($sqlFrag, ', ') . ' FROM omoccuridentifiers i INNER JOIN omexportoccurrences e ON i.occid = e.occid WHERE (e.omExportID = ?) ';
+			$this->sqlArr[] = 'SELECT ' . trim($sqlFrag, ', ') . ' FROM omoccuridentifiers i INNER JOIN omexportoccurrences e ON i.occid = e.occid WHERE (e.omExportID = ?) ';
 		}
 	}
 }

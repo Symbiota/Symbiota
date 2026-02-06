@@ -8,7 +8,7 @@ class DwcArchiverBaseManager extends Manager{
 	protected $fieldArr;
 	protected $charSetSource = '';
 	protected $charSetOut = '';
-	protected $sql;
+	protected $sqlArr = array();
 	private $fileHandler;
 
 	public function __construct($conType, $connOverride){
@@ -34,8 +34,8 @@ class DwcArchiverBaseManager extends Manager{
 
 	public function writeOutData($exportID){
 		$recordCnt = 0;
-		if($this->sql){
-			if($stmt = $this->conn->prepare($this->sql)){
+		foreach($this->sqlArr as $sql){
+			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param('i', $exportID);
 				$stmt->execute();
 				$rs = $stmt->get_result();
@@ -50,7 +50,7 @@ class DwcArchiverBaseManager extends Manager{
 			}
 			else{
 				$this->logOrEcho('ERROR writing out to extension file: ' . $stmt->error . "\n");
-				//$this->logOrEcho("\tSQL: ".$this->sql."\n");
+				//$this->logOrEcho("\tSQL: ".$sql."\n");
 			}
 		}
 		return $recordCnt;

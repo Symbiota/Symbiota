@@ -97,7 +97,7 @@ $LANG['ABOUT'] = 'About Symbiota';
 $LANG['CODE'] = 'Code Version ';
 $LANG['SCHEMA'] = 'Schema Version ';
 $LANG['AUTHO'] = 'You are authorized to access the';
-$LANG['SYN_COM'] = 'Edit Synonyms / Common Names';
+$LANG['VERNAC_COM'] = 'Edit Vernacular / Common Names';
 $LANG['TEXTDESC'] = 'Edit Text Descriptions';
 $LANG['EDITIMG'] = 'Edit Media';
 $LANG['IMGSORTORD'] = 'Edit Media Sorting Order';
@@ -108,5 +108,6 @@ $LANG['DATMANPAG'] = 'Dataset Management Page';
 $LANG['DATA_AUTHORIZED_TO_EDIT'] = 'datasets you are authorized to edit';
 $LANG['MANAGE_TAXON_THUMBNAILS'] = 'Manage Taxon Profile Map Thumbnails';
 $LANG['TAXINTER'] = 'Taxonomic Interest User Permissions ';
+$LANG['OTHER_CAT_TRANSFER'] = 'Other Catalog Number Transfer Tool';
 
 ?>

@@ -1,6 +1,6 @@
 <?php
-
-
+//Due to significant increase in nefarious bot traffic, deactivating tool in preference for integration into Symbiota 4.0 API
+exit;
 ?>
 <!-- The data encoding type, enctype, MUST be specified as below -->
 <form enctype="multipart/form-data" action="dwcaingesthandler.php" method="POST">

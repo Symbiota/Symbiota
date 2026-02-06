@@ -406,7 +406,7 @@ if ($SYMB_UID) {
 										<a href="javascript:void(0)" onclick="showItemsList('traitItem')">
 											<?= $LANG['TRAIT_CODING_TOOLS'] ?>
 										</a>
-										<a onclick="showItemsList('traitItem')"> 
+										<a onclick="showItemsList('traitItem')">
 											<img class = seemore-icon src="../../images/tochild.png">
 										</a>
 									</li>
@@ -465,7 +465,7 @@ if ($SYMB_UID) {
 									<a href="javascript:void(0)" onclick="showItemsList('metadataItem')"  >
 										<?= $LANG['OPEN_META'] ?>
 									</a>
-									<a onclick="showItemsList('metadataItem')"> 
+									<a onclick="showItemsList('metadataItem')">
 										<img class="seemore-icon" src="../../images/tochild.png">
 									</a>
 								</li>
@@ -497,7 +497,7 @@ if ($SYMB_UID) {
 									<a id="importinfo" class="link-icon" href="https://docs.symbiota.org/Collection_Manager_Guide/Importing_Uploading/" target="_blank" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>">
 											<img src="../../images/info.png" style="width:13px;" alt="<?= $LANG['INFO_ALT'] ?>" />
 									</a>
-									<a onclick="showItemsList('importItem')"> 
+									<a onclick="showItemsList('importItem')">
 										<img class="seemore-icon" src="../../images/tochild.png"">
 									</a>
 								</li>
@@ -881,6 +881,7 @@ if ($SYMB_UID) {
 						</div>
 						<?php
 						if($collData['managementtype'] == 'Live Data'){
+							/*  In abundance of cautions, temporarily removing access of this option, with potential full removal in future
 							if($GLOBALS['SYMB_UID']){
 								?>
 								<div class="bottom-breathing-room-rel">
@@ -889,6 +890,7 @@ if ($SYMB_UID) {
 								</div>
 								<?php
 							}
+							*/
 						}
 						elseif($collData['managementtype'] == 'Snapshot'){
 							if($pathArr = $collManager->getDwcaPath($collid)){

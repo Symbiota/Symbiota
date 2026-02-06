@@ -98,7 +98,7 @@ $LANG['ABOUT'] = 'Sobre Simbiota';
 $LANG['CODE'] = 'Versão do Código';
 $LANG['SCHEMA'] = 'Versão do Esquema ';
 $LANG['AUTHO'] = 'Você está autorizado a acessar o';
-$LANG['SYN_COM'] = 'Editar Sinônimos/Nomes Comuns';
+$LANG['VERNAC_COM'] = 'Editar Nomes Vernáculos/Comuns';
 $LANG['TEXTDESC'] = 'Editar Descrições de Texto';
 $LANG['EDITIMG'] = 'Editar multimídia';
 $LANG['IMGSORTORD'] = 'Editar ordem de classificação multimídia';
@@ -109,5 +109,5 @@ $LANG['DATMANPAG'] = 'Página de Gerenciamento de Conjunto de Dados';
 $LANG['DATA_AUTHORIZED_TO_EDIT'] = 'conjuntos de dados yo você está autorizado a editar';
 $LANG['MANAGE_TAXON_THUMBNAILS'] = 'Gerenciar Miniaturas do Mapa de Perfis de Táxons';
 $LANG['TAXINTER'] = 'Permissões de Usuário de Interesse Taxonômico';
-
+$LANG['OTHER_CAT_TRANSFER'] = 'Outra Ferramenta de Transferência de Número de Catálogo';
 ?>

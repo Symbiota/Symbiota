@@ -68,7 +68,7 @@ class GeographicThesaurus extends Manager {
 	}
 
 	public static function getCountryByState($state, $conn = null) {
-		if(!$state) { 
+		if(!$state) {
 			return '';
 		}
 
@@ -417,82 +417,48 @@ class GeographicThesaurus extends Manager {
 		return $rankArr;
 	}
 
-	//Reporting and data transfer functions
+	//Reporting functions
 	public function getThesaurusStatus() {
 		$retArr = [];
-		$fullCnt = 0;
 		$sql = 'SELECT geoLevel, COUNT(*) as cnt FROM geographicthesaurus GROUP BY geoLevel';
 		$rs = $this->conn->query($sql);
 		while ($r = $rs->fetch_object()) {
 			$retArr['active'][$r->geoLevel] = $r->cnt;
-			$fullCnt += $r->cnt;
 		}
 		$rs->free();
-		try {
 
-			if ($this->lkupTablesExist() && $fullCnt < 100) {
-				$sql = 'SELECT COUNT(*) as cnt FROM lkupcountry ';
-				$rs = $this->conn->query($sql);
-				if ($r = $rs->fetch_object()) {
-					$retArr['lkup']['country'] = $r->cnt;
-				}
-				$rs->free();
-
-				$sql = 'SELECT COUNT(*) as cnt FROM lkupstateprovince ';
-				$rs = $this->conn->query($sql);
-				if ($r = $rs->fetch_object()) {
-					$retArr['lkup']['state'] = $r->cnt;
-				}
-				$rs->free();
-
-				$sql = 'SELECT COUNT(*) as cnt FROM lkupcounty ';
-				$rs = $this->conn->query($sql);
-				if ($r = $rs->fetch_object()) {
-					$retArr['lkup']['county'] = $r->cnt;
-				}
-				$rs->free();
-
-				$sql = 'SELECT COUNT(*) as cnt FROM lkupmunicipality ';
-				$rs = $this->conn->query($sql);
-				if ($r = $rs->fetch_object()) {
-					$retArr['lkup']['municipality'] = $r->cnt;
-				}
-				$rs->free();
-			}
-			return !empty($retArr) ? $retArr : false;
-		} catch (Exception $e) {
-			return false;
-		}
+		if($retArr) return $retArr;
+		return false;
 	}
 
-	public function transferDeprecatedThesaurus() {
-		$status = true;
-		if (!$this->lkupTablesExist()) return false;
-		$sqlArr = array();
-		$sqlArr[] = 'INSERT INTO geographicthesaurus(geoterm,iso2,iso3,numcode,category,geoLevel,termstatus)
-		SELECT countryName, iso, iso3, numcode, "Country", 50 as geoLevel, 1 as termStatus FROM lkupcountry WHERE iso IS NOT NULL';
-
-		$sqlArr[] = 'UPDATE geographicthesaurus gt LEFT JOIN geographicthesaurus gtaccept ON gtaccept.geoTerm = "United States" 
-		SET gt.acceptedID = gtaccept.geoThesID WHERE gt.geoterm IN("USA","U.S.A.","United States of America")';
-
-		$sqlArr[] = 'INSERT INTO geographicthesaurus(geoterm,abbreviation,parentID,category,geoLevel,termStatus)
-		SELECT DISTINCT s.stateName, s.abbrev, t.geoThesID, "State", 60 as geoLevel, 1 as termStatus
-		FROM lkupcountry c INNER JOIN lkupstateprovince s ON c.countryid = s.countryid
-		INNER JOIN geographicthesaurus t ON c.iso = t.iso2
-		WHERE t.category = "country" AND t.termstatus = 1 AND t.acceptedID IS NULL';
-
-		$sqlArr[] = 'INSERT INTO geographicthesaurus(geoterm,parentID,category,geoLevel,termStatus)
-		SELECT DISTINCT REPLACE(REPLACE(REPLACE(c.countyName," Co.","")," County","")," Parish",""), t.geoThesID, "County", 70 as geoLevel, 1 as termStatus
-		FROM lkupstateprovince s INNER JOIN lkupcounty c ON s.stateid = c.stateid
-		INNER JOIN geographicthesaurus t ON s.stateName = t.geoterm
-		WHERE t.category = "State" AND t.termstatus = 1';
-
-		foreach ($sqlArr as $sql) {
-			if (!$this->conn->query($sql)) {
-				$status = false;
-				$this->warningArr[] = $this->conn->error;
-			}
+	//Install via scripts
+	public function installViaScript(){
+		$status = false;
+		$scriptPath = $GLOBALS['SERVER_ROOT'] . '/config/schema/3.0/data/geothesaurus.sql';
+		if(!file_exists($scriptPath)){
+			$this->errorMessage = 'ERR_SCRIPT_MISSING';
+			return false;
 		}
+
+		if($scriptStr = file_get_contents($scriptPath)) {
+			foreach(explode(';', $scriptStr) as $sql){
+				if($sql = trim($sql)){
+					try{
+						if($this->conn->query($sql)){
+							$status = true;
+						}
+						elseif($this->conn->error){
+							$this->errorMessage = $this->conn->error;
+							$status = false;
+						}
+					} catch (mysqli_sql_exception $e){
+						$this->errorMessage = $this->conn->error;
+					} catch (Exception $e){
+						$this->errorMessage = $this->conn->error;
+					}
+				}
+			}
+		} else $this->errorMessage = 'ERR_FILE_READ';
 		return $status;
 	}
 
@@ -878,7 +844,7 @@ class GeographicThesaurus extends Manager {
 			$parent = $this->findAcceptedGeoTerm($parent);
 
 		$sql = <<<SQL
-		SELECT g.geoThesID, g.geoterm, g.geoLevel, g.parentID, g2.geoterm AS parentterm, g2.geoLevel AS parentlevel FROM geographicthesaurus g 
+		SELECT g.geoThesID, g.geoterm, g.geoLevel, g.parentID, g2.geoterm AS parentterm, g2.geoLevel AS parentlevel FROM geographicthesaurus g
 		LEFT JOIN geographicthesaurus g2 ON g2.geoThesID = g.parentID
 		WHERE g.geoterm LIKE ?
 		SQL;
@@ -1076,25 +1042,13 @@ class GeographicThesaurus extends Manager {
 	}
 
 	//Mics support functions
-	private function lkupTablesExist() {
-		$bool = false;
-		// Check to see is old deprecated lookup tables exist
-		$sql = 'SHOW tables LIKE "lkupcountry"';
-		$rs = $this->conn->query($sql);
-		if ($rs->num_rows) {
-			$bool = true;
-		}
-		$rs->free();
-		return $bool;
-	}
-
 	public function geocode($lng, $lat) {
 		if (!$lng || !$lat) return [];
 
 		$result = QueryUtil::executeQuery($this->conn, "
 			SELECT g.geoThesID, g.geoterm, g.geoLevel, s.synonyms
-			FROM geographicthesaurus g 
-			JOIN geographicpolygon gp on gp.geoThesID = g.geoThesID 
+			FROM geographicthesaurus g
+			JOIN geographicpolygon gp on gp.geoThesID = g.geoThesID
 			LEFT JOIN (SELECT acceptedID, GROUP_CONCAT(geoterm) as `synonyms` FROM geographicthesaurus WHERE acceptedID IS NOT NULL GROUP BY acceptedID) s ON s.acceptedID = g.geoThesID where ST_Within(Point(?, ?), gp.footprintPolygon) ORDER BY geolevel
 			", [floatval($lng), floatval($lat)]);
 
@@ -1130,8 +1084,8 @@ class GeographicThesaurus extends Manager {
 			return false;
 		}
 
-		$sql = "SELECT g.geoThesID FROM geographicthesaurus g 
-			JOIN geographicpolygon gp ON gp.geoThesID = g.geoThesID 
+		$sql = "SELECT g.geoThesID FROM geographicthesaurus g
+			JOIN geographicpolygon gp ON gp.geoThesID = g.geoThesID
 			WHERE " . implode(" or ", $parameters);
 
 		$result = QueryUtil::executeQuery(

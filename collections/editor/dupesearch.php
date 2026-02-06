@@ -117,6 +117,7 @@ if(!$IS_ADMIN){
 						var elem = openerForm.elements[k];
 						if(elem.disabled == false && (elem.type != 'hidden' || k == "tidinterpreted") && (appendMode == false || elem.value == "")){
 							elem.value = tArr[k];
+							opener.$("button").prop("disabled", false);
 							elem.style.backgroundColor = "lightblue";
 							if(k != "tid") opener.fieldChanged(k);
 						}

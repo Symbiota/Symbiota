@@ -80,12 +80,35 @@ class SchemaManager extends Manager{
 									$this->setActiveTable($targetTable);
 									$sqlIsValid = false;
 								}
-								elseif(strpos($fragment, '/*!') === 0) $stmtType = 'Conditional statement';
+								elseif(strpos($fragment, '/*!') === 0){
+									$stmtType = 'Conditional statement';
+								}
+								elseif(preg_match('/^SOURCE\s+([^\s]+\.sql)$/', $fragment, $m)){
+									//Statements within script file need to be parsed and run as separate statements
+									$this->logOrEcho('Statement prefix: External data script file', 1);
+									$statusArr = $this->runExternalScript($m[1]);
+									$fragment = '';
+									if(!empty($statusArr['ERR'])){
+										$this->logOrEcho('Script failed: ' . $statusArr['ERR'], 1);
+									} else {
+										if(isset($statusArr[1])){
+											$this->logOrEcho(count($statusArr[1]) . ' statements ran successfully!', 1);
+										}
+										if(isset($statusArr[0])){
+											$this->logOrEcho(count($statusArr[0]) . ' statements failed:', 1);
+											foreach($statusArr[0] as $errCnt => $errStr){
+												$this->logOrEcho(($errCnt + 1) . ': ' . $errStr, 2);
+											}
+										}
+									}
+								}
 								elseif(preg_match('/^([A-Z0-9_=\s]+)/', $fragment, $m)){
 									$stmtType = $m[1];
 								}
-								$this->logOrEcho('Statement prefix: ' . $stmtType . ($targetTable ? ' '.$targetTable : ''), 1);
-								$sql = $fragment;
+								if($fragment){
+									$this->logOrEcho('Statement prefix: ' . $stmtType . ($targetTable ? ' '.$targetTable : ''), 1);
+									$sql = $fragment;
+								}
 							}
 							else{
 								if($stmtType == 'ALTER TABLE') $fragment = $this->validateAlterTableFragment($fragment, 'w');
@@ -101,6 +124,9 @@ class SchemaManager extends Manager{
 							try{
 								if($this->conn->query($sql)){
 									$this->logOrEcho('Success!', 1);
+								}
+								else{
+									$this->logOrEcho($sql, 1);
 								}
 							}
 							catch(Exception $e){
@@ -380,6 +406,35 @@ class SchemaManager extends Manager{
 			}
 		}
 		return $fragment;
+	}
+
+	private function runExternalScript($scriptRelativePath){
+		$statusArr = array();
+		$scriptPath = $GLOBALS['SERVER_ROOT'] . '/config/schema/3.0/'. $scriptRelativePath;
+		if(!file_exists($scriptPath)){
+			$statusArr['ERR'] = 'ERR_SCRIPT_MISSING: ' . $scriptPath;
+			return $statusArr;
+		}
+
+		if($scriptStr = file_get_contents($scriptPath)) {
+			foreach(explode(';', $scriptStr) as $sql){
+				if($sql = trim($sql)){
+					try{
+						if($this->conn->query($sql)){
+							$statusArr[1][] = 'Success!';
+						}
+						elseif($this->conn->error){
+							$statusArr[0][] = $this->conn->error;
+						}
+					} catch (mysqli_sql_exception $e){
+						$statusArr[0][] = $this->conn->error;
+					} catch (Exception $e){
+						$statusArr[0][] = $this->conn->error;
+					}
+				}
+			}
+		} else $statusArr['ERR'] = 'ERR_FILE_READ';
+		return $statusArr;
 	}
 
 	//Misc support functions

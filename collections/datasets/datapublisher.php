@@ -311,7 +311,7 @@ if ($isEditor) {
 						<form action="datapublisher.php" method="post" style="display:inline;" onsubmit="return window.confirm('<?php echo $LANG['SURE_DELETE']; ?>');">
 							<input type="hidden" name="colliddel" value="<?php echo $dArr['collid']; ?>">
 							<input type="hidden" name="collid" value="<?php echo $dArr['collid']; ?>">
-							<input type="image" src="../../images/del.png" name="action" alt="<?php echo $LANG['DELETE_ARCHIVE']; ?>" value="DeleteCollid" title="<?php echo $LANG['DELETE_ARCHIVE']; ?>" style="width:1.2em;">
+							<input type="image" src="../../images/del.png" name="action" alt="<?= $LANG['DELETE_ARCHIVE'] ?>" value="DeleteCollid" title="<?= $LANG['DELETE_ARCHIVE'] ?>" style="width:16px;margin-bottom:0px">
 						</form>
 					</div>
 					<div><b><?php echo $LANG['DESCRIPTION']; ?>:</b> <?php echo $dArr['description']; ?></div>
@@ -574,18 +574,20 @@ if ($isEditor) {
 					</tr>
 					<?php
 					foreach ($dwcaArr as $k => $v) {
+						$title = htmlspecialchars($v['title'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+						$link = htmlspecialchars($v['link'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 						?>
 						<tr>
-							<td><?php echo '<a href="../misc/collprofiles.php?collid=' . $v['collid'] . '">' . htmlspecialchars(str_replace(' DwC-Archive', '', $v['title']), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>'; ?></td>
+							<td><?php echo '<a href="../misc/collprofiles.php?collid=' . $v['collid'] . '">' . str_replace(' DwC-Archive', '', $title) . '</a>'; ?></td>
 							<td><?php echo substr($v['description'], 24); ?></td>
 							<td class="nowrap">
 								<?php
-								echo '<a href="' . htmlspecialchars($v['link'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">DwC-A (' . htmlspecialchars($dwcaManager->humanFileSize($v['link']), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ')</a>';
+								echo '<a href="' . $link . '">DwC-A (' . $dwcaManager->humanFileSize($link) . ')</a>';
 								if ($IS_ADMIN) {
 									?>
 									<form action="datapublisher.php" method="post" style="display:inline;" onsubmit="return window.confirm('<?php echo $LANG['SURE_DELETE']; ?>');">
 										<input type="hidden" name="colliddel" value="<?php echo $v['collid']; ?>">
-										<input type="image" src="../../images/del.png" name="action" value="DeleteCollid" title="<?php echo $LANG['DELETE_ARCHIVE']; ?>" style="width:1.2em;" />
+										<input type="image" src="../../images/del.png" name="action" value="DeleteCollid" title="<?= $LANG['DELETE_ARCHIVE'] ?>" style="width:16px;" />
 									</form>
 									<?php
 								}
@@ -611,7 +613,10 @@ if ($isEditor) {
 					echo '<div style="font-weight:bold;font-size:140%;margin:50px 0px 15px 0px;">' . $LANG['ADDIT_SOURCES'] . '</div>';
 					echo '<ul>';
 					foreach ($addDwca as $domanName => $domainArr) {
-						echo '<li><a href="' . htmlspecialchars($domainArr['url'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($domanName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> - ' . htmlspecialchars($domainArr['cnt'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' Archives</li>';
+						$domainUrl = htmlspecialchars($domainArr['url'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+						$domainName = htmlspecialchars($domanName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+						$domainCnt = htmlspecialchars($domainArr['cnt'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+						echo '<li><a href="' . $domainUrl . '" target="_blank">' . $domanName . '</a> - ' . $domainCnt . ' Archives</li>';
 					}
 					echo '</ul>';
 				}

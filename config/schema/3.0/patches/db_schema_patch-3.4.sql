@@ -145,7 +145,8 @@ CREATE TABLE `omexport` (
   `guiType` VARCHAR(45) NULL,
   `notes` VARCHAR(255) NULL,
   `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp,
-  PRIMARY KEY (`omExportID`));
+  PRIMARY KEY (`omExportID`)
+) ENGINE=InnoDB;
 
 ALTER TABLE `omexport` 
   ADD INDEX `FK_omexport_uid_idx` (`uid` ASC);
@@ -181,19 +182,24 @@ CREATE TABLE `omexportoccurrences` (
   `associatedSequences` TEXT NULL,
   `recordSecurity` INT NULL,
   `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp,
-  PRIMARY KEY (`omExportID`,`occid`));
+  PRIMARY KEY (`omExportID`,`occid`)
+) ENGINE=InnoDB;
 
 ALTER TABLE `omexportoccurrences` 
-  ADD INDEX `FK_omexportoccur_omExportID_idx` (`omExportID` ASC),
-  ADD INDEX `FK_omexportoccur_occid_idx` (`occid` ASC);
+  ADD INDEX `FK_omexportoccur_omExportID_idx` (`omExportID`),
+  ADD INDEX `FK_omexportoccur_occid_idx` (`occid`);
 
 ALTER TABLE `omexportoccurrences` 
   ADD CONSTRAINT `FK_omexportoccur_omExportID`  FOREIGN KEY (`omExportID`)  REFERENCES `omexport` (`omExportID`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_omexportoccur_occid`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE;
 
 ALTER TABLE `omexportoccurrences` 
-  ADD INDEX `IX_omexportoccur_taxonID` (`taxonID` ASC),
-  ADD INDEX `IX_omexportoccur_collid` (`collid` ASC);
+  ADD INDEX `IX_omexportoccur_occid` (`omExportID`, `occid`),
+  ADD INDEX `IX_omexportoccur_collid` (`omExportID`, `collid`),
+  ADD INDEX `IX_omexportoccur_taxonID` (`omExportID`, `taxonID`),
+  ADD INDEX `IX_omexportoccur_kingdom` (`omExportID`, `kingdom`),
+  ADD INDEX `IX_omexportoccur_recordSecurity` (`omExportID`, `recordSecurity`),
+  ADD INDEX `IX_omexportoccur_initialTimestamp` (`initialTimestamp`);
 
 
 #Add update to omoccurdeterminations.dateLastModified tracked any update to the row
@@ -479,9 +485,14 @@ ALTER TABLE `specprocessorrawlabels`
   CHANGE COLUMN `sortsequence` `sortSequence` INT(11) NULL DEFAULT NULL ,
   CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
 
+UPDATE IGNORE taxa
+  SET kingdomName = ""
+  WHERE kingdomName IS NULL;
 
 ALTER TABLE `taxa` 
-  ADD COLUMN `sourceIdentifier` VARCHAR(150) NULL AFTER `source`;
+  ADD COLUMN `sourceIdentifier` VARCHAR(150) NULL AFTER `source`,
+  CHANGE COLUMN `kingdomName` `kingdomName` VARCHAR(45) NOT NULL DEFAULT '',
+  CHANGE COLUMN `unitName2` `unitName2` VARCHAR(50) NULL DEFAULT NULL;
 
 
 ALTER TABLE `taxaresourcelinks` 
@@ -605,3 +616,27 @@ ALTER TABLE `users`
 ALTER TABLE `omoccurrences`
   ADD INDEX `IX_occurrences_verbatimCoordinates` (`collid`,`verbatimCoordinates`);
 
+# Add mediaMetadata table to track metadata for media
+CREATE TABLE mediametadata (
+  mediaID int UNSIGNED NOT NULL,
+  field enum ('originalUrl', 'thumbnailUrl', 'url') NOT NULL,
+  bytes BIGINT UNSIGNED NOT NULL,
+  md5sum varchar(32) NOT NULL,
+  created_at timestamp DEFAULT current_timestamp(),
+  updated_at timestamp DEFAULT NULL ON UPDATE current_timestamp(),
+  PRIMARY KEY (mediaID, field),
+  FOREIGN KEY (mediaID) REFERENCES media(mediaID) ON DELETE CASCADE
+) ENGINE=INNODB;
+
+
+# ALTER uploadimagetemp to use creator so that it matches media table
+ALTER TABLE `uploadimagetemp` 
+  CHANGE COLUMN `photographer` `creator` VARCHAR(100) NULL DEFAULT NULL ,
+  CHANGE COLUMN `photographeruid` `creatorUid` INT(10) UNSIGNED NULL DEFAULT NULL ;
+
+
+#redact old placename lookup tables
+DROP TABLE IF EXISTS `lkupmunicipality`;
+DROP TABLE IF EXISTS `lkupcounty`;
+DROP TABLE IF EXISTS `lkupstateprovince`;
+DROP TABLE IF EXISTS `lkupcountry`;
