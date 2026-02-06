@@ -456,7 +456,6 @@ ALTER TABLE `uploadspectemp`
   ADD COLUMN `paleo_earlyInterval` TEXT,
   ADD COLUMN `paleo_lateInterval` TEXT,
   ADD COLUMN `paleo_absoluteAge` TEXT,
-  ADD COLUMN `paleo_storageLoc` TEXT,
   ADD COLUMN `paleo_stage` TEXT,
   ADD COLUMN `paleo_localStage` TEXT,
   ADD COLUMN `paleo_biota` TEXT,
@@ -472,6 +471,9 @@ ALTER TABLE `uploadspectemp`
   ADD COLUMN `paleo_slideProperties` TEXT,
   ADD COLUMN `paleo_geologicalContextID` TEXT,
   DROP COLUMN `paleojson`;
+
+#copy storageAge in omoccurrences.storageLocation
+UPDATE `omoccurrences` o LEFT JOIN `omoccurpaleo` p on o.`occid` = p.`occid` SET o.`storageLocation` = p.`storageAge` WHERE o.`storageLocation` IS NULL and p.`storageAge` IS NOT NULL;
 
 
 ALTER TABLE `portalindex` 
