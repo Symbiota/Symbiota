@@ -13,7 +13,7 @@ $collid = array_key_exists('collid',$_REQUEST) ? filter_var($_REQUEST['collid'],
 $uspid = array_key_exists('uspid',$_REQUEST) ? filter_var($_REQUEST['uspid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $action = array_key_exists('action',$_REQUEST) ? $_REQUEST['action'] : '';
 
-$DIRECTUPLOAD = 1; $FILEUPLOAD = 3; $STOREDPROCEDURE = 4; $SCRIPTUPLOAD = 5; $DWCAUPLOAD = 6; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9; $SYMBIOTA = 13;
+$DIRECTUPLOAD = 1; $FILEUPLOAD_SELECT = 2; $FILEUPLOAD_FULL = 3; $STOREDPROCEDURE = 4; $SCRIPTUPLOAD = 5; $DWCAUPLOAD = 6; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9; $SYMBIOTA = 13;
 
 $duManager = new SpecUpload();
 
@@ -59,7 +59,7 @@ $duManager->readUploadParameters();
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET; ?>">
+	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET ?>">
 	<title><?= $DEFAULT_TITLE . ' ' . $LANG['UP_PROF_MAN'] ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -165,7 +165,7 @@ include($SERVER_ROOT.'/includes/header.php');
 </div>
 <!-- This is inner text! -->
 <div role="main" id="innertext">
-	<h1 class="page-heading"><?= $LANG['DAT_UP_MAN']; ?></h1>
+	<h1 class="page-heading"><?= $LANG['DAT_UP_MAN'] ?></h1>
 	<?php
 	if($statusStr){
 		echo '<hr />';
@@ -195,15 +195,15 @@ include($SERVER_ROOT.'/includes/header.php');
 						 		?>
 						 		<div style="margin:10px;">
 									<input type="radio" id="uspid-<?= $id ?>" name="uspid" value="<?= $id ?>" />
-									<label for="uspid-<?php echo $id ?>"> <?php echo $v['title']; ?> </label>
-									<a href="specuploadmanagement.php?action=editprofile&collid=<?= $collid . '&uspid=' . filter_var($id, FILTER_SANITIZE_NUMBER_INT); ?>" title="<?= $LANG['VIEW_PARS'] ?>" aria-label="<?= $LANG['VIEW_PARS'] ?>">
+									<label for="uspid-<?= $id ?>"> <?= $v['title'] ?> </label>
+									<a href="specuploadmanagement.php?action=editprofile&collid=<?= $collid . '&uspid=' . filter_var($id, FILTER_SANITIZE_NUMBER_INT) ?>" title="<?= $LANG['VIEW_PARS'] ?>" aria-label="<?= $LANG['VIEW_PARS'] ?>">
 										<img src="../../images/edit.png" style="width:1.2em;" alt="<?= $LANG['IMG_EDIT'] ?>"/>
 									</a>
 								</div>
 								<?php
 						 	}
 							?>
-							<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
+							<input type="hidden" name="collid" value="<?= $collid ?>" />
 							<div style="margin:10px;">
 								<input type="submit" name="action" value="Initialize Upload..." />
 							</div>
@@ -244,8 +244,9 @@ include($SERVER_ROOT.'/includes/header.php');
 									echo '<option value="' . $DWCAUPLOAD . '" '.($uploadType==$DWCAUPLOAD ? 'SELECTED':'') . '>' . $LANG['MANUAL_DWCA']  . '</option>';
 									echo '<option value="' . $IPTUPLOAD . '" '.($uploadType==$IPTUPLOAD ? 'SELECTED':'') . '>' . $LANG['IPT_DWCA'] . '</option>';
 									echo '<option value="' . $SYMBIOTA . '" ' . ($uploadType==$SYMBIOTA ? 'SELECTED':'') . '>' . $LANG['SYMBIOTA_DWCA'] . '</option>';
-									echo '<option value="' . $FILEUPLOAD . '" ' . ($uploadType==$FILEUPLOAD ? 'SELECTED' : '') . '>' . $LANG['FILE'] . '</option>';
-									echo '<option value="' . $SKELETAL . '" ' . ($uploadType==$SKELETAL ? 'SELECTED':'') . '>' . $LANG['SKELETAL_FILE'] . '</option>';
+									echo '<option value="' . $FILEUPLOAD_SELECT . '" ' . ($uploadType==$FILEUPLOAD_SELECT ? 'SELECTED' : '') . '>' . $LANG['FILE_SELECT'] . '</option>';
+									echo '<option value="' . $FILEUPLOAD_FULL . '" ' . ($uploadType==$FILEUPLOAD_FULL ? 'SELECTED' : '') . '>' . $LANG['FILE_FULL'] . '</option>';
+									echo '<option value="' . $SKELETAL . '" ' . ($uploadType==$SKELETAL ? 'SELECTED':'') . '>' . $LANG['FILE_SKELETAL'] . '</option>';
 									echo '<option value="' . $NFNUPLOAD . '" ' . ($uploadType==$NFNUPLOAD ? 'SELECTED':'') . '>' . $LANG['NFN_UPLOAD'] . '</option>';
 									echo '<option value="">......................................</option>';
 									echo '<option value="' . $DIRECTUPLOAD . '" ' . ($uploadType==$DIRECTUPLOAD ? 'SELECTED':'') . '>' . $LANG['DIRECT_DB'] . '</option>';
@@ -256,51 +257,51 @@ include($SERVER_ROOT.'/includes/header.php');
 							</div>
 							<div id="titleDiv" style="">
 								<b><?= $LANG['TITLE'] ?>:</b>
-								<input name="title" type="text" value="<?php echo $duManager->getTitle(); ?>" style="width:400px;" maxlength="45" />
+								<input name="title" type="text" value="<?= $duManager->getTitle() ?>" style="width:400px;" maxlength="45" />
 							</div>
 							<div id="platformDiv" style="display:none">
 								<b><?= $LANG['DB_PLATFORM'] ?>:</b>
 								<select name="platform">
 									<option value=""><?= $LANG['NONE_SEL'] ?></option>
 									<option value="">--------------------------------------------</option>
-									<option value="mysql" <?php echo ($duManager->getPlatform()=='mysql'?'SELECTED':''); ?>><?= $LANG['MYSQL'] ?></option>
+									<option value="mysql" <?= ($duManager->getPlatform()=='mysql'?'SELECTED':'') ?>><?= $LANG['MYSQL'] ?></option>
 								</select>
 							</div>
 							<div id="serverDiv" style="display:none">
 								<b><?= $LANG['SERVER'] ?>:</b>
-								<input name="server" type="text" size="50" value="<?php echo $duManager->getServer(); ?>" style="width:400px;" />
+								<input name="server" type="text" size="50" value="<?= $duManager->getServer() ?>" style="width:400px;" />
 							</div>
 							<div id="portDiv" style="display:none">
 								<b><?= $LANG['PORT'] ?>:</b>
-								<input name="port" type="text" value="<?php echo $duManager->getPort(); ?>" />
+								<input name="port" type="text" value="<?= $duManager->getPort() ?>" />
 							</div>
 							<div id="pathDiv" style="display:none">
 								<b><?= $LANG['PATH'] ?>:</b>
-								<input name="path" type="text" size="50" value="<?php echo $duManager->getPath(); ?>" style="width:700px;" />
+								<input name="path" type="text" size="50" value="<?= $duManager->getPath() ?>" style="width:700px;" />
 							</div>
 							<div id="codeDiv" style="display:none">
 								<b><?= $LANG['CODE'] ?>:</b>
-								<input name="code" type="text" value="<?php echo $duManager->getCode(); ?>" />
+								<input name="code" type="text" value="<?= $duManager->getCode() ?>" />
 							</div>
 							<div id="pkfieldDiv" style="display:none">
 								<b><?= $LANG['PRIMARY_KEY'] ?>:</b>
-								<input name="pkfield" type="text" value="<?php echo $duManager->getPKField(); ?>" />
+								<input name="pkfield" type="text" value="<?= $duManager->getPKField() ?>" />
 							</div>
 							<div id="usernameDiv" style="display:none">
 								<b><?= $LANG['USERNAME'] ?>:</b>
-								<input name="username" type="text" value="<?php echo $duManager->getUsername(); ?>" />
+								<input name="username" type="text" value="<?= $duManager->getUsername() ?>" />
 							</div>
 							<div id="passwordDiv" style="display:none">
 								<b><?= $LANG['PWORD'] ?>:</b>
-								<input name="password" type="text" value="<?php echo $duManager->getPassword(); ?>" />
+								<input name="password" type="text" value="<?= $duManager->getPassword() ?>" />
 							</div>
 							<div id="schemanameDiv" style="display:none">
 								<b><?= $LANG['SCHEMA'] ?>:</b>
-								<input name="schemaname" type="text" size="65" value="<?php echo $duManager->getSchemaName(); ?>" />
+								<input name="schemaname" type="text" size="65" value="<?= $duManager->getSchemaName() ?>" />
 							</div>
 							<div id="cleanupspDiv" style="display:none">
 								<b><?= $LANG['STORED_PROC'] ?>:</b>
-								<input name="cleanupsp" type="text" size="40" value="<?php echo $duManager->getStoredProcedure(); ?>" style="width:400px;" />
+								<input name="cleanupsp" type="text" size="40" value="<?= $duManager->getStoredProcedure() ?>" style="width:400px;" />
 							</div>
 							<div id="querystrDiv" style="display:none">
 								<b><?= $LANG['QUERY'] ?>: </b><br/>

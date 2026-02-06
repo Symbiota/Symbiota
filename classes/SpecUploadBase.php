@@ -126,7 +126,8 @@ class SpecUploadBase extends SpecUpload{
 		//Get Field Map for $fieldMap
 		if($this->uspid && !$this->occurFieldMap){
 			switch ($this->uploadType) {
-				case $this->FILEUPLOAD:
+				case $this->FILEUPLOAD_SELECT:
+				case $this->FILEUPLOAD_FULL:
 				case $this->SKELETAL:
 				case $this->DWCAUPLOAD:
 				case $this->IPTUPLOAD:
@@ -255,7 +256,8 @@ class SpecUploadBase extends SpecUpload{
 		$this->symbFields[] = 'specify:cataloged_date';
 
 		switch ($this->uploadType) {
-			case $this->FILEUPLOAD:
+			case $this->FILEUPLOAD_SELECT:
+			case $this->FILEUPLOAD_FULL:
 			case $this->SKELETAL:
 			case $this->DWCAUPLOAD:
 			case $this->IPTUPLOAD:
@@ -957,7 +959,6 @@ class SpecUploadBase extends SpecUpload{
 		$intervalArr = array();
 		$sql = 'SELECT occid FROM ( SELECT @row := @row +1 AS rownum, occid FROM ( SELECT @row :=0) r, uploadspectemp WHERE occid IS NOT NULL AND collid = '.
 			$this->collId.' ORDER BY occid) ranked WHERE rownum % '.$transactionInterval.' = 1';
-		//echo $sql; exit;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$intervalArr[] = $r->occid;
@@ -1068,7 +1069,10 @@ class SpecUploadBase extends SpecUpload{
 					foreach($this->targetFieldArr as $field){
 						if(in_array($field, $excludedFieldArr)) continue;
 						if($r[$field] != $r['old_'.$field]){
-							if($this->uploadType == $this->SKELETAL && $r['old_'.$field]) continue;
+							if($this->uploadType == $this->SKELETAL && $r['old_'.$field]){
+								//Skip versioning because an old value exists, which skipped adding the edit
+								continue;
+							}
 							$this->insertOccurEdit($r['occid'], $field, $r[$field], $r['old_'.$field]);
 						}
 					}
@@ -1164,8 +1168,14 @@ class SpecUploadBase extends SpecUpload{
 			$specArr[strtolower($r2->Field)] = 0;
 		}
 		$rs2->free();
+
+		if($this->uploadType == $this->FILEUPLOAD_SELECT){
+			//Limit transfer fields to only those included within the import file
+			$specArr = array_intersect_key($specArr, array_flip($this->targetFieldArr));
+		}
+
 		//Get union of both tables
-		$fieldArr = array_intersect_assoc($uploadArr,$specArr);
+		$fieldArr = array_intersect_assoc($uploadArr, $specArr);
 		unset($fieldArr['occid']);
 		unset($fieldArr['collid']);
 		if($this->uploadType != $this->RESTOREBACKUP){
@@ -1317,7 +1327,7 @@ class SpecUploadBase extends SpecUpload{
 	}
 
 	private function setOtherCatalogNumbers(){
-		if($this->uploadType == $this->FILEUPLOAD || $this->uploadType == $this->SKELETAL){
+		if($this->uploadType == $this->FILEUPLOAD_SELECT || $this->uploadType == $this->FILEUPLOAD_FULL || $this->uploadType == $this->SKELETAL){
 			$sql = 'INSERT IGNORE INTO omoccuridentifiers (occid, identifiername, identifiervalue, modifiedUid)
 			SELECT u.occid, kv.key as identifiername, kv.value as identifiervalue, kv.uploadUid as modifiedUid
 			FROM uploadkeyvaluetemp kv INNER JOIN uploadspectemp u ON kv.dbpk = u.dbpk AND kv.collid = u.collid
@@ -1334,7 +1344,7 @@ class SpecUploadBase extends SpecUpload{
 
 	private function setDeterminations(){
 		if($this->collId){
-			if($this->uploadType == $this->FILEUPLOAD || $this->uploadType == $this->SKELETAL){
+			if($this->uploadType == $this->FILEUPLOAD_SELECT || $this->uploadType == $this->FILEUPLOAD_FULL || $this->uploadType == $this->SKELETAL){
 				//Reset existing current determinations to match fields in the omoccurrences table (e.g. import data changes, will equal current determinations)
 				$sql = 'UPDATE IGNORE uploadspectemp u INNER JOIN omoccurrences o ON u.occid = o.occid
 					INNER JOIN omoccurdeterminations d ON o.occid = d.occid
@@ -1952,7 +1962,7 @@ class SpecUploadBase extends SpecUpload{
 					$this->outputMsg('<li>FAILED adding record #' . $this->transferCount . ' Error: ' . $e->getMessage() . '</li>');
 				}
 
-				if($this->uploadType == $this->FILEUPLOAD || $this->uploadType == $this->SKELETAL){
+				if($this->uploadType == $this->FILEUPLOAD_SELECT || $this->uploadType == $this->FILEUPLOAD_FULL || $this->uploadType == $this->SKELETAL){
 					if(isset($recMap['othercatalognumbers']) && $recMap['othercatalognumbers']) {
 						$parsedCatalogNumbers = self::parseOtherCatalogNumbers($recMap['othercatalognumbers']);
 						$sql = 'INSERT INTO uploadkeyvaluetemp (`key`, `value`, collid, dbpk, uploadUid, type) VALUES (?, ?, ?, ?, ?, "omoccuridentifiers")';
