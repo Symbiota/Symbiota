@@ -151,30 +151,33 @@ class UtilitiesFileImport extends Manager {
 	protected function getHeaderArr(){
 		$sourceArr = array();
 		if($this->fileName){
-			$this->fileHandler = fopen($this->targetPath . $this->fileName, 'rb') or die('unable to open file');
-			$headerData = fgets($this->fileHandler);
-			//Check to see if we can figure out the delimiter, comma delimited it assumed to be the default
-			if(strpos($headerData, ',') === false){
-				if(strpos($headerData, "\t") !== false){
-					$this->delimiter = "\t";
+			$fullPath = realpath($this->targetPath . $this->fileName);
+			if($fullPath){
+				$this->fileHandler = fopen($fullPath, 'rb') or die('unable to open file');
+				$headerData = fgets($this->fileHandler);
+				//Check to see if we can figure out the delimiter, comma delimited it assumed to be the default
+				if(strpos($headerData, ',') === false){
+					if(strpos($headerData, "\t") !== false){
+						$this->delimiter = "\t";
+					}
+					elseif(strpos($headerData, '|') !== false){
+						$this->delimiter = '|';
+					}
 				}
-				elseif(strpos($headerData, '|') !== false){
-					$this->delimiter = '|';
+				//Grab header terms
+				$headerArr = Array();
+				if($this->delimiter == ','){
+					rewind($this->fileHandler);
+					$headerArr = fgetcsv($this->fileHandler, 0, $this->delimiter);
 				}
-			}
-			//Grab header terms
-			$headerArr = Array();
-			if($this->delimiter == ','){
-				rewind($this->fileHandler);
-				$headerArr = fgetcsv($this->fileHandler, 0, $this->delimiter);
-			}
-			else{
-				$headerArr = explode($this->delimiter, $headerData);
-			}
-			foreach($headerArr as $k => $field){
-				$fieldStr = $this->encodeString(trim($field));
-				if($fieldStr){
-					$sourceArr[$k] = $fieldStr;
+				else{
+					$headerArr = explode($this->delimiter, $headerData);
+				}
+				foreach($headerArr as $k => $field){
+					$fieldStr = $this->encodeString(trim($field));
+					if($fieldStr){
+						$sourceArr[$k] = $fieldStr;
+					}
 				}
 			}
 		}
