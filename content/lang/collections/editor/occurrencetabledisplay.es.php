@@ -57,6 +57,7 @@ $LANG['COLLEC_CODE'] = 'Código de colección (anulación)';
 $LANG['OWNER_CODE'] = 'Código de propietario (anulación)';
 
 $LANG['CATALOG_NUM'] = 'Número de catálogo';
+$LANG['OTHER_CAT_NUMS'] = 'Identificadores Adicionales';
 $LANG['FAMILY'] = 'Familia';
 $LANG['ID_QUALIFIER'] = 'Calificador de ID';
 $LANG['SCI_NAME'] = 'Nombre científico';
@@ -81,8 +82,8 @@ $LANG['LOCALITY'] = 'Localidad';
 $LANG['LATITUDE'] = 'Latitud';
 $LANG['LONGITUDE'] = 'Longitud';
 
-$LANG['ID_TAG_NAME'] = 'Nombre de la etiqueta de identificación';
-$LANG['ID_TAG_VAL'] = 'Valor de etiqueta de identificador';
+$LANG['ID_TAG_NAME'] = 'Nombre de la etiqueta de identificador adic.';
+$LANG['ID_TAG_VAL'] = 'Valor del identificador adicional';
 $LANG['UNCERTAINTY_METERS'] = 'Incertidumbre En Metros';
 $LANG['VERB_COORDINATES'] = 'Coordenadas textuales';
 $LANG['DATUM'] = 'Dato';

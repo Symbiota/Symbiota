@@ -27,7 +27,7 @@ $isGenObs = 0;
 $collMap = array();
 $recArr = array();
 $headerMapBase = array( 'institutioncode' => $LANG['INSTITUTION_CODE'], 'collectioncode' => $LANG['COLLEC_CODE'],
-	'ownerinstitutioncode' => $LANG['OWNER_CODE'], 'catalognumber' => $LANG['CATALOG_NUM'],
+	'ownerinstitutioncode' => $LANG['OWNER_CODE'], 'catalognumber' => $LANG['CATALOG_NUM'], 'othercatalognumbers' => $LANG['OTHER_CAT_NUMS'],
 	'family' => $LANG['FAMILY'], 'identificationqualifier' => $LANG['ID_QUALIFIER'],
 	'sciname' => $LANG['SCI_NAME'], 'scientificnameauthorship' => $LANG['SCI_NAME_AUTHOR'], 'recordedby' => $LANG['RECORD_COLLEC'], 'recordnumber' => $LANG['RECORD_NUM'],
 	'associatedcollectors' => $LANG['ASSOC_COLLEC'], 'eventdate' => $LANG['EVENT_DATE'], 'verbatimeventdate' => $LANG['VERB_EVENT_DATE'],
@@ -256,13 +256,6 @@ else{
 					  <?= $LANG['BATCH_TOOL'] ?>
 				   </button>
 				   <?php endif ?>
-					<form name="download" action="../download/index.php" method="post" target="downloadpopup" onsubmit="window.open('', 'downloadpopup', 'left=100,top=50,width=900,height=700'); f.target = 'downloadpopup';">
-						<button type="submit" class="icon-button" aria-label="<?php echo (isset($LANG['DOWNLOAD_SPECIMEN_DATA']) ? $LANG['DOWNLOAD_SPECIMEN_DATA'] : "Download Specimen Data"); ?>" title="<?php echo (isset($LANG['DOWNLOAD_SPECIMEN_DATA']) ? $LANG['DOWNLOAD_SPECIMEN_DATA'] : "Download Specimen Data"); ?>">
-							<svg style="width:1.3em;height:1.3em" alt="<?php echo $LANG['IMG_DWNL_DATA']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
-						</button>
-						<input name="searchvar" type="hidden" value="<?= $occManager->getDownloadQuery() ?>" />
-						<input name="dltype" type="hidden" value="specimen" />
-					</form>
 				</div>
 			</div>
 			<?php

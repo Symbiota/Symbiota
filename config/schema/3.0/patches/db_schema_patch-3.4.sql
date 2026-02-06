@@ -145,7 +145,8 @@ CREATE TABLE `omexport` (
   `guiType` VARCHAR(45) NULL,
   `notes` VARCHAR(255) NULL,
   `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp,
-  PRIMARY KEY (`omExportID`));
+  PRIMARY KEY (`omExportID`)
+) ENGINE=InnoDB;
 
 ALTER TABLE `omexport` 
   ADD INDEX `FK_omexport_uid_idx` (`uid` ASC);
@@ -181,7 +182,8 @@ CREATE TABLE `omexportoccurrences` (
   `associatedSequences` TEXT NULL,
   `recordSecurity` INT NULL,
   `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp,
-  PRIMARY KEY (`omExportID`,`occid`));
+  PRIMARY KEY (`omExportID`,`occid`)
+) ENGINE=InnoDB;
 
 ALTER TABLE `omexportoccurrences` 
   ADD INDEX `FK_omexportoccur_omExportID_idx` (`omExportID`),
@@ -196,7 +198,8 @@ ALTER TABLE `omexportoccurrences`
   ADD INDEX `IX_omexportoccur_collid` (`omExportID`, `collid`),
   ADD INDEX `IX_omexportoccur_taxonID` (`omExportID`, `taxonID`),
   ADD INDEX `IX_omexportoccur_kingdom` (`omExportID`, `kingdom`),
-  ADD INDEX `IX_omexportoccur_recordSecurity` (`omExportID`, `recordSecurity`);
+  ADD INDEX `IX_omexportoccur_recordSecurity` (`omExportID`, `recordSecurity`),
+  ADD INDEX `IX_omexportoccur_initialTimestamp` (`initialTimestamp`);
 
 
 #Add update to omoccurdeterminations.dateLastModified tracked any update to the row
@@ -615,16 +618,24 @@ ALTER TABLE `omoccurrences`
 
 # Add mediaMetadata table to track metadata for media
 CREATE TABLE mediametadata (
-	mediaID int UNSIGNED NOT NULL,
-	field enum ('originalUrl', 'thumbnailUrl', 'url') NOT NULL,
-	bytes BIGINT UNSIGNED NOT NULL,
-	md5sum varchar(32) NOT NULL,
-	created_at timestamp DEFAULT current_timestamp(),
-	updated_at timestamp DEFAULT NULL ON UPDATE current_timestamp(),
-	PRIMARY KEY (mediaID, field),
-	FOREIGN KEY (mediaID) REFERENCES media(mediaID) ON DELETE CASCADE
+  mediaID int UNSIGNED NOT NULL,
+  field enum ('originalUrl', 'thumbnailUrl', 'url') NOT NULL,
+  bytes BIGINT UNSIGNED NOT NULL,
+  md5sum varchar(32) NOT NULL,
+  created_at timestamp DEFAULT current_timestamp(),
+  updated_at timestamp DEFAULT NULL ON UPDATE current_timestamp(),
+  PRIMARY KEY (mediaID, field),
+  FOREIGN KEY (mediaID) REFERENCES media(mediaID) ON DELETE CASCADE
 ) ENGINE=INNODB;
 
+
+# ALTER uploadimagetemp to use creator so that it matches media table
+ALTER TABLE `uploadimagetemp` 
+  CHANGE COLUMN `photographer` `creator` VARCHAR(100) NULL DEFAULT NULL ,
+  CHANGE COLUMN `photographeruid` `creatorUid` INT(10) UNSIGNED NULL DEFAULT NULL ;
+
+
+#redact old placename lookup tables
 DROP TABLE IF EXISTS `lkupmunicipality`;
 DROP TABLE IF EXISTS `lkupcounty`;
 DROP TABLE IF EXISTS `lkupstateprovince`;

@@ -23,8 +23,7 @@ class DwcArchiverCore extends Manager{
 	private $paleoWithSql;
 	protected $conditionSql = '';
 	protected $conditionArr = array();
-	private $condAllowArr;
-	private $overrideConditionLimit = false;
+	private $applyConditionLimit = false;
 	private $observerUid = 0;				//If set, this is a backup event of personally managed specimens
 
 	private $targetPath;
@@ -73,12 +72,6 @@ class DwcArchiverCore extends Manager{
 		//Character set
 		$this->charSetSource = strtoupper($GLOBALS['CHARSET']);
 		$this->charSetOut = $this->charSetSource;
-
-		$this->condAllowArr = array(
-			'catalognumber', 'othercatalognumbers', 'occurrenceid', 'family', 'sciname', 'country', 'stateprovince', 'county', 'municipality',
-			'recordedby', 'recordnumber', 'eventdate', 'decimallatitude', 'decimallongitude', 'minimumelevationinmeters', 'maximumelevationinmeters', 'cultivationstatus',
-			'datelastmodified', 'dateentered', 'processingstatus', 'dbpk', 'traitid', 'stateid'
-		);
 
 		$this->securityArr = array(
 			'eventDate', 'eventDate2', 'month', 'day', 'startDayOfYear', 'endDayOfYear', 'verbatimEventDate',
@@ -202,14 +195,24 @@ class DwcArchiverCore extends Manager{
 		if (!preg_match('/^[A-Za-z]+$/', $field)) return false;
 		if (!preg_match('/^[A-Z_]+$/', $cond)) return false;
 		if ($field) {
-			if ($this->overrideConditionLimit || in_array(strtolower($field), $this->condAllowArr)) {
-				if (!$cond) $cond = 'EQUALS';
-				if ($value != '' || ($cond == 'IS_NULL' || $cond == 'NOT_NULL')) {
-					if (is_array($value)) $this->conditionArr[$field][$cond] = $this->cleanInArray($value);
-					else $this->conditionArr[$field][$cond][] = $this->cleanInStr($value);
+			if ($this->applyConditionLimit){
+				//Downloads initiated via the dwcapubhandler.php webservice are limited to being filtered by only subset of indexed fields
+				$condAllowArr = array(
+					'catalognumber', 'othercatalognumbers', 'occurrenceid', 'family', 'sciname', 'country' ,'stateprovince', 'county', 'municipality',
+					'recordedby', 'recordnumber', 'eventdate', 'decimallatitude', 'decimallongitude', 'minimumelevationinmeters', 'maximumelevationinmeters', 'cultivationstatus',
+					'datelastmodified', 'dateentered', 'processingstatus', 'dbpk'
+				);
+				if(!in_array(strtolower($field), $condAllowArr)){
+					return false;
 				}
 			}
+			if (!$cond) $cond = 'EQUALS';
+			if ($value != '' || ($cond == 'IS_NULL' || $cond == 'NOT_NULL')) {
+				if (is_array($value)) $this->conditionArr[$field][$cond] = $this->cleanInArray($value);
+				else $this->conditionArr[$field][$cond][] = $this->cleanInStr($value);
+			}
 		}
+		return true;
 	}
 
 	private function applyConditions(){
@@ -669,7 +672,7 @@ class DwcArchiverCore extends Manager{
 			$this->logOrEcho('Creating DwC-A file: ' . $fileName . "\n");
 
 			if (!class_exists('ZipArchive')) {
-				$this->logOrEcho("FATAL ERROR: PHP ZipArchive class is not installed, please contact your server admin\n");
+				$this->logOrEcho("FATAL ERROR: PHP ZipArchive class is not installed, please contact your server admin\n", 1);
 				exit('FATAL ERROR: PHP ZipArchive class is not installed, please contact your server admin');
 			}
 			$occurFile = $this->targetPath . $this->ts . '-occur' . $this->fileExt;
@@ -765,11 +768,10 @@ class DwcArchiverCore extends Manager{
 				foreach($unlinkFileArr as $deleteFile){
 					if (file_exists($deleteFile)) unlink($deleteFile);
 				}
-				//$this->clearStagingTable();
 			}
 			else {
-				$this->errorMessage = 'FAILED to create archive file due to failure to return occurrence records; check and adjust search variables';
-				$this->logOrEcho($this->errorMessage);
+				$this->errorMessage = 'FAILED to create archive file due to failure to return occurrence records';
+				$this->logOrEcho($this->errorMessage, 1);
 				if($this->targetPath && strpos($this->targetPath, 'content/dwca')){
 					//Archive is being published to Dwc-A publishing directory, thus remove from RSS feed since it's an empty archive
 					if($this->collArr){
@@ -779,9 +781,10 @@ class DwcArchiverCore extends Manager{
 					}
 				}
 			}
+			$this->clearStagingTable();
 		}
 		else{
-			$this->logOrEcho('ERROR building DwC-Archive: '.$this->getErrorMessage());
+			$this->logOrEcho('ERROR building DwC-Archive: '.$this->getErrorMessage(), 1);
 		}
 		return $archiveFile;
 	}
@@ -812,7 +815,13 @@ class DwcArchiverCore extends Manager{
 			$fileName .=  '_DwC-A.zip';
 
 			//Set URL path to DwC-Archive file
-			if($this->dwcaOutputUrl) $this->dwcaOutputUrl .= $fileName;
+			if($this->dwcaOutputUrl){
+				if(substr($this->dwcaOutputUrl, -1 != '/')){
+					//Remove previous file name that was added during a batch DwC-A build event
+					$this->dwcaOutputUrl = substr($this->dwcaOutputUrl, 0, strrpos($this->dwcaOutputUrl, '/') + 1);
+				}
+				$this->dwcaOutputUrl .= $fileName;
+			}
 		}
 		return $fileName;
 	}
@@ -854,7 +863,7 @@ class DwcArchiverCore extends Manager{
 	private function clearStagingTable(){
 		$status = false;
 		if($this->exportID){
-			$sql = 'DELETE FROM omexportoccurrences WHERE omExportID = ?';
+			$sql = 'DELETE FROM omexportoccurrences WHERE omExportID = ? OR initialTimestamp < DATE_SUB(NOW(), INTERVAL 3 HOUR)';
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param('i', $this->exportID);
 				if($stmt->execute()) $status = true;
@@ -866,7 +875,7 @@ class DwcArchiverCore extends Manager{
 
 	//Generate DwC support files
 	private function writeMetaFile(){
-		$this->logOrEcho("Creating meta.xml (" . date('h:i:s A') . ")... ");
+		$this->logOrEcho("Creating meta.xml (" . date('h:i:s A') . ")... ", 1);
 
 		//Create new DOM document
 		$newDoc = new DOMDocument('1.0', 'UTF-8');
@@ -944,7 +953,7 @@ class DwcArchiverCore extends Manager{
 
 		$newDoc->save($this->targetPath . $this->ts . '-meta.xml');
 
-		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 1);
+		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 2);
 	}
 
 	private function setExtensionNode(&$rootElem, $newDoc, $fieldMap, $rowType, $fileName){
@@ -978,13 +987,13 @@ class DwcArchiverCore extends Manager{
 	}
 
 	private function writeEmlFile(){
-		$this->logOrEcho("Creating eml.xml (" . date('h:i:s A') . ")... ");
+		$this->logOrEcho("Creating eml.xml (" . date('h:i:s A') . ")... ", 1);
 
 		$emlDoc = $this->getEmlDom();
 
 		$emlDoc->save($this->targetPath . $this->ts . '-eml.xml');
 
-		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 1);
+		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 2);
 	}
 
 	/*
@@ -1478,10 +1487,10 @@ class DwcArchiverCore extends Manager{
 	}
 
 	private function writeOccurrenceFile($filePath){
-		$this->logOrEcho('Creating occurrence file (' . date('h:i:s A') . ')... ');
+		$this->logOrEcho('Preparing data (' . date('h:i:s A') . ')... ', 1);
 		$fh = fopen($filePath, 'w');
 		if (!$fh) {
-			$this->logOrEcho('ERROR establishing output file (' . $filePath . '), perhaps target folder is not readable by web server.');
+			$this->logOrEcho('ERROR establishing output file (' . $filePath . '), perhaps target folder is not readable by web server.', 2);
 			return false;
 		}
 
@@ -1492,14 +1501,14 @@ class DwcArchiverCore extends Manager{
 			$filePath = false;
 			//$this->writeOutRecord($fh,array('No records returned. Modify query variables to be more inclusive.'));
 			$this->errorMessage = 'No records returned. Modify query variables to be more inclusive.';
-			$this->logOrEcho($this->errorMessage);
+			$this->logOrEcho($this->errorMessage, 2);
 		}
-		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 1);
+		$this->logOrEcho(number_format($recordCount) . ' records added (' . date('h:i:s A') . ")\n", 2);
 		return $filePath;
 	}
 
 	private function processOccurrenceData(&$outputHandler, $handlerType = 'fileHandler'){
-		$recordCount = 0;
+		$recordOutputCnt = 0;
 		$this->setServerDomain();
 		$dwcOccurManager = new DwcArchiverOccurrence($this->conn);
 		$dwcOccurManager->setSchemaType($this->schemaType, $this->observerUid);
@@ -1513,6 +1522,7 @@ class DwcArchiverCore extends Manager{
 		if (!$this->conditionSql) return false;
 		$dwcOccurManager->setIncludePaleo($this->includePaleo);
 		if($this->primeStagingTables()){
+			$this->logOrEcho('Creating occurrence file (' . date('h:i:s A') . ')... ', 1);
 			$dwcOccurManager->setExportID($this->exportID);
 			if ($this->schemaType != 'coge') {
 				$dwcOccurManager->setOtherCatalogNumbers();
@@ -1522,161 +1532,174 @@ class DwcArchiverCore extends Manager{
 			}
 			$sql = $dwcOccurManager->getSqlOccurrences($this->occurrenceFieldArr['fields']);
 			if ($this->paleoWithSql) $sql = $this->paleoWithSql . $sql;
-			if ($this->schemaType != 'backup') $sql .= ' LIMIT 1000000';
 			if ($handlerType == 'fileHandler'){
 				$hearderArr = $this->getHeaderArr();
 				if($hearderArr) $this->writeOutRecord($outputHandler, $hearderArr);
 			}
-			if ($rs = $this->conn->query($sql)) {
-				$urlPathPrefix = $this->serverDomain . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) == '/' ? '' : '/');
-				$typeArr = null;
-				if ($this->schemaType == 'pensoft') {
-					$typeArr = array('Other material', 'Holotype', 'Paratype', 'Isotype', 'Isoparatype', 'Isolectotype', 'Isoneotype', 'Isosyntype');
-					//$typeArr = array('Other material', 'Holotype', 'Paratype', 'Hapantotype', 'Syntype', 'Isotype', 'Neotype', 'Lectotype', 'Paralectotype', 'Isoparatype', 'Isolectotype', 'Isoneotype', 'Isosyntype');
-				}
-				/*
-				 $pubID = 0;
-				 if($this->publicationGuid && $this->requestPortalGuid){
-				 $portalManager = new PortalIndex();
-				 $pubArr = array('pubTitle' => 'Symbiota Portal Index export - '.date('Y-m-d'), 'portalID' => $this->requestPortalGuid, 'direction' => 'export', 'lastDateUpdate' => date('Y-m-d h:i:s'), 'guid' => $this->publicationGuid);
-				 $pubID = $portalManager->createPortalPublication($pubArr);
-				 if ($pubID && $portalManager) $portalManager->insertPortalOccurrences($pubID);
-				 }
-				 */
-				$statsManager = new OccurrenceAccessStats();
-				$sqlFrag = substr($sql, strpos($sql, 'WHERE '));
-				if($p = strpos($sqlFrag, 'LIMIT ')) $sqlFrag = substr($sqlFrag, 0, $p);
-				$occurAccessID = $statsManager->insertAccessEvent('download', $sqlFrag);
-				//Set access statistics
-				if ($this->isPublicDownload) {
-					if ($this->schemaType == 'dwc' || $this->schemaType == 'symbiota') {
-						//Don't count if dl is backup, GeoLocate transfer, or pensoft
-						$statsManager->insertDownloadOccurrences($occurAccessID, $this->exportID);
+			$chunkSize = 50000;
+			$lastOccid = 0;
+			$sql .= 'AND o.occid > ? ORDER BY occid LIMIT ?';
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bind_param('ii', $lastOccid, $chunkSize);
+			do {
+				$stmt->execute();
+				$rowCnt = 0;
+				if($rs = $stmt->get_result()){
+					$urlPathPrefix = $this->serverDomain . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) == '/' ? '' : '/');
+					$typeArr = null;
+					if ($this->schemaType == 'pensoft') {
+						$typeArr = array('Other material', 'Holotype', 'Paratype', 'Isotype', 'Isoparatype', 'Isolectotype', 'Isoneotype', 'Isosyntype');
+						//$typeArr = array('Other material', 'Holotype', 'Paratype', 'Hapantotype', 'Syntype', 'Isotype', 'Neotype', 'Lectotype', 'Paralectotype', 'Isoparatype', 'Isolectotype', 'Isoneotype', 'Isosyntype');
 					}
-				}
-				while ($r = $rs->fetch_assoc()) {
-					//Set occurrenceID GUID or skip records if not defined (required output)
-					if(!$r['occurrenceID']) {
-						if($guidTarget = $this->collArr[$r['collID']]['guidtarget']){
-							//Set occurrence GUID based on GUID target, but only if occurrenceID field isn't already populated
-							if($guidTarget == 'catalogNumber') $r['occurrenceID'] = $r['catalogNumber'];
-							elseif($guidTarget == 'symbiotaUUID') $r['occurrenceID'] = $r['recordID'];
+					/*
+					 $pubID = 0;
+					 if($this->publicationGuid && $this->requestPortalGuid){
+					 $portalManager = new PortalIndex();
+					 $pubArr = array('pubTitle' => 'Symbiota Portal Index export - '.date('Y-m-d'), 'portalID' => $this->requestPortalGuid, 'direction' => 'export', 'lastDateUpdate' => date('Y-m-d h:i:s'), 'guid' => $this->publicationGuid);
+					 $pubID = $portalManager->createPortalPublication($pubArr);
+					 if ($pubID && $portalManager) $portalManager->insertPortalOccurrences($pubID);
+					 }
+					 */
+					$statsManager = new OccurrenceAccessStats();
+					$sqlFrag = substr($sql, strpos($sql, 'WHERE '));
+					if($p = strpos($sqlFrag, 'LIMIT ')) $sqlFrag = substr($sqlFrag, 0, $p);
+					$occurAccessID = $statsManager->insertAccessEvent('download', $sqlFrag);
+					//Set access statistics
+					if ($this->isPublicDownload) {
+						if ($this->schemaType == 'dwc' || $this->schemaType == 'symbiota') {
+							//Don't count if dl is backup, GeoLocate transfer, or pensoft
+							$statsManager->insertDownloadOccurrences($occurAccessID, $this->exportID);
 						}
 					}
-					if($this->limitToGuids && (!$r['occurrenceID'] || !$r['basisOfRecord'])) {
-						// Skip record because there is no occurrenceID guid
-						continue;
-					}
-					//Protect sensitive records
-					if ($this->redactLocalities && $r['recordSecurity'] == 1 && !in_array($r['collID'], $this->rareReaderArr)) {
-						$protectedFields = array();
-						foreach ($this->securityArr as $v) {
-							if (array_key_exists($v, $r) && $r[$v]) {
-								$r[$v] = '';
-								$protectedFields[] = $v;
+					while ($r = $rs->fetch_assoc()) {
+						$rowCnt++;
+						$lastOccid = $r['occid'];
+						//Set occurrenceID GUID or skip records if not defined (required output)
+						if(!$r['occurrenceID']) {
+							if($guidTarget = $this->collArr[$r['collID']]['guidtarget']){
+								//Set occurrence GUID based on GUID target, but only if occurrenceID field isn't already populated
+								if($guidTarget == 'catalogNumber') $r['occurrenceID'] = $r['catalogNumber'];
+								elseif($guidTarget == 'symbiotaUUID') $r['occurrenceID'] = $r['recordID'];
 							}
 						}
-						if ($protectedFields) $r['informationWithheld'] = trim($r['informationWithheld'] . '; field values redacted: ' . implode(', ', $protectedFields), ' ;');
-					}
-
-					$r['t_references'] = $urlPathPrefix . 'collections/individual/index.php?occid=' . $r['occid'];
-					//Add collection GUID based on management type
-					$managementType = $this->collArr[$r['collID']]['managementtype'];
-					if ($managementType && $managementType == 'Live Data') {
-						if (array_key_exists('collectionID', $r) && !$r['collectionID']) {
-							$guid = $this->collArr[$r['collID']]['collectionguid'];
-							if (strlen($guid) == 36) $guid = 'urn:uuid:' . $guid;
-							$r['collectionID'] = $guid;
+						if($this->limitToGuids && (!$r['occurrenceID'] || !$r['basisOfRecord'])) {
+							// Skip record because there is no occurrenceID guid
+							continue;
 						}
-					}
-					if ($this->schemaType == 'dwc') {
-						//Apply DwC output requirements
-						unset($r['recordSecurity']);
-						unset($r['collID']);
-
-						//Format dates
-						if($r['eventDate']){
-							if($r['eventDate'] == '0000-00-00') $r['eventDate'] = '';
-							$r['eventDate'] = str_replace('-00', '', $r['eventDate']);
-						}
-						if($r['eventDate2']){
-							if($r['eventDate2'] == '0000-00-00') $r['eventDate2'] = '';
-							$r['eventDate2'] = str_replace('-00', '', $r['eventDate2']);
-							if(!$r['endDayOfYear'] && preg_match('/\d{4}-\d{2}-\d{2}/', $r['eventDate2'])){
-								if($t = strtotime($r['eventDate2'])) $r['endDayOfYear'] = date('z', $t) + 1;
-							}
-							$r['eventDate'] .= '/'.$r['eventDate2'];
-						}
-						unset($r['eventDate2']);
-					}
-					elseif ($this->schemaType == 'pensoft') {
-						unset($r['recordSecurity']);
-						unset($r['collID']);
-						if ($r['typeStatus']) {
-							$typeValue = strtolower($r['typeStatus']);
-							$typeInvalid = true;
-							$invalidText = '';
-							foreach ($typeArr as $testStr) {
-								if ($typeValue == strtolower($testStr)) {
-									$typeInvalid = false;
-									break;
-								} elseif (stripos($typeValue, $testStr)) {
-									$invalidText = $r['typeStatus'];
-									$r['typeStatus'] = $testStr;
-									$typeInvalid = false;
-									break;
+						//Protect sensitive records
+						if ($this->redactLocalities && $r['recordSecurity'] == 1 && !in_array($r['collID'], $this->rareReaderArr)) {
+							$protectedFields = array();
+							foreach ($this->securityArr as $v) {
+								if (array_key_exists($v, $r) && $r[$v]) {
+									$r[$v] = '';
+									$protectedFields[] = $v;
 								}
 							}
-							if ($typeInvalid) {
-								$invalidText = $r['typeStatus'];
-								$r['typeStatus'] = 'Other material';
-							}
-							if ($invalidText) {
-								if ($r['occurrenceRemarks']) $invalidText = $r['occurrenceRemarks'] . '; ' . $invalidText;
-								$r['occurrenceRemarks'] = $invalidText;
-							}
+							if ($protectedFields) $r['informationWithheld'] = trim($r['informationWithheld'] . '; field values redacted: ' . implode(', ', $protectedFields), ' ;');
 						}
-						else $r['typeStatus'] = 'Other material';
-					}
-					elseif ($this->schemaType == 'backup') unset($r['collID']);
-					if($this->includePaleo){
-						$dwcOccurManager->appendPaleoTerms($r);
-						if($this->schemaType == 'dwc'){
-							if(!empty($r['biota'])){
-								$r['locality'] .= ($r['locality'] ? '; ' : '') . 'Biota: ' . $r['biota'];
-							}
-							unset($r['biota']);
-							unset($r['earlyInterval']);
-							unset($r['lateInterval']);
-						}
-					}
 
-					if(isset($r['dynamicProperties'])) {
-						$r['dynamicProperties'] = json_encode($r['dynamicProperties']);
-					}
-					$this->encodeArr($r);
-					$recordCount ++;
-					if ($handlerType == 'fileHandler'){
-						//Stream data to output file
-						$this->addcslashesArr($r);
-						$this->writeOutRecord($outputHandler, $r);
-					}
-					else{
-						//Add data to array
-						foreach ($r as $rKey => $rValue) {
-							if (substr($rKey, 0, 2) == 't_') $rKey = substr($rKey, 2);
-							$outputHandler[$recordCount][$rKey] = $rValue;
+						$r['t_references'] = $urlPathPrefix . 'collections/individual/index.php?occid=' . $r['occid'];
+						//Add collection GUID based on management type
+						$managementType = $this->collArr[$r['collID']]['managementtype'];
+						if ($managementType && $managementType == 'Live Data') {
+							if (array_key_exists('collectionID', $r) && !$r['collectionID']) {
+								$guid = $this->collArr[$r['collID']]['collectionguid'];
+								if (strlen($guid) == 36) $guid = 'urn:uuid:' . $guid;
+								$r['collectionID'] = $guid;
+							}
+						}
+						if ($this->schemaType == 'dwc') {
+							//Apply DwC output requirements
+							unset($r['recordSecurity']);
+							unset($r['collID']);
+
+							//Format dates
+							if($r['eventDate']){
+								if($r['eventDate'] == '0000-00-00') $r['eventDate'] = '';
+								$r['eventDate'] = str_replace('-00', '', $r['eventDate']);
+							}
+							if($r['eventDate2']){
+								if($r['eventDate2'] == '0000-00-00') $r['eventDate2'] = '';
+								$r['eventDate2'] = str_replace('-00', '', $r['eventDate2']);
+								if(!$r['endDayOfYear'] && preg_match('/\d{4}-\d{2}-\d{2}/', $r['eventDate2'])){
+									if($t = strtotime($r['eventDate2'])) $r['endDayOfYear'] = date('z', $t) + 1;
+								}
+								$r['eventDate'] .= '/'.$r['eventDate2'];
+							}
+							unset($r['eventDate2']);
+						}
+						elseif ($this->schemaType == 'pensoft') {
+							unset($r['recordSecurity']);
+							unset($r['collID']);
+							if ($r['typeStatus']) {
+								$typeValue = strtolower($r['typeStatus']);
+								$typeInvalid = true;
+								$invalidText = '';
+								foreach ($typeArr as $testStr) {
+									if ($typeValue == strtolower($testStr)) {
+										$typeInvalid = false;
+										break;
+									} elseif (stripos($typeValue, $testStr)) {
+										$invalidText = $r['typeStatus'];
+										$r['typeStatus'] = $testStr;
+										$typeInvalid = false;
+										break;
+									}
+								}
+								if ($typeInvalid) {
+									$invalidText = $r['typeStatus'];
+									$r['typeStatus'] = 'Other material';
+								}
+								if ($invalidText) {
+									if ($r['occurrenceRemarks']) $invalidText = $r['occurrenceRemarks'] . '; ' . $invalidText;
+									$r['occurrenceRemarks'] = $invalidText;
+								}
+							}
+							else $r['typeStatus'] = 'Other material';
+						}
+						elseif ($this->schemaType == 'backup') unset($r['collID']);
+						if($this->includePaleo){
+							$dwcOccurManager->appendPaleoTerms($r);
+							if($this->schemaType == 'dwc'){
+								if(!empty($r['biota'])){
+									$r['locality'] .= ($r['locality'] ? '; ' : '') . 'Biota: ' . $r['biota'];
+								}
+								unset($r['biota']);
+								unset($r['earlyInterval']);
+								unset($r['lateInterval']);
+							}
+						}
+
+						if(isset($r['dynamicProperties'])) {
+							$r['dynamicProperties'] = json_encode($r['dynamicProperties']);
+						}
+						$this->encodeArr($r);
+						$recordOutputCnt ++;
+						if ($handlerType == 'fileHandler'){
+							//Stream data to output file
+							$this->addcslashesArr($r);
+							$this->writeOutRecord($outputHandler, $r);
+						}
+						else{
+							//Add data to array
+							foreach ($r as $rKey => $rValue) {
+								if (substr($rKey, 0, 2) == 't_') $rKey = substr($rKey, 2);
+								$outputHandler[$recordOutputCnt][$rKey] = $rValue;
+							}
+						}
+						if($recordOutputCnt % 100000 === 0){
+							$this->logOrEcho(number_format($recordOutputCnt) . ' records added (' . date('h:i:s A') . ')', 2);
 						}
 					}
+					$rs->free();
 				}
-				$rs->free();
-			}
-			else {
-				$this->errorMessage = 'ERROR creating occurrence file: ' . $this->conn->error;
-				$this->logOrEcho($this->errorMessage);
-			}
+				else {
+					$this->errorMessage = 'ERROR creating occurrence file: ' . $this->conn->error;
+					$this->logOrEcho($this->errorMessage);
+				}
+			} while ($rowCnt === $chunkSize && $recordOutputCnt < 2000000);
 		}
-		return $recordCount;
+		return $recordOutputCnt;
 	}
 
 	private function getHeaderArr(): array{
@@ -1843,7 +1866,7 @@ class DwcArchiverCore extends Manager{
 	private function writeDeterminationFile($targetFile){
 		$recordCnt = 0;
 		if($this->exportID){
-			$this->logOrEcho('Creating identification (aka determination) extension file (' . date('h:i:s A') . ')...');
+			$this->logOrEcho('Creating identification (aka determination) extension file (' . date('h:i:s A') . ')...', 1);
 			$detHandler = new DwcArchiverDetermination($this->conn);
 			$detHandler->setSchemaType($this->schemaType);
 			if($this->extended) $detHandler->setExtended(true);
@@ -1851,12 +1874,12 @@ class DwcArchiverCore extends Manager{
 			$recordCnt = $detHandler->writeOutData($this->exportID);
 			if($recordCnt){
 				$this->extensionFieldMap['det'] = $detHandler->getFieldArrTerms();
-				$msg = $recordCnt . ' records added ';
-				$this->logOrEcho($msg, 1);
+				$msg = number_format($recordCnt) . ' records added ';
+				$this->logOrEcho($msg, 2);
 			}
 			else{
 				$msg = 'No records located (file excluded)';
-				$this->logOrEcho($msg, 1);
+				$this->logOrEcho($msg, 2);
 			}
 		}
 		return $recordCnt;
@@ -1865,7 +1888,7 @@ class DwcArchiverCore extends Manager{
 	private function writeMediaFile($targetFile){
 		$recordCnt = 0;
 		if($this->exportID){
-			$this->logOrEcho('Creating Media extension file (' . date('h:i:s A') . ')...');
+			$this->logOrEcho('Creating Media extension file (' . date('h:i:s A') . ')...', 1);
 			$mediaHandler = new DwcArchiverMedia($this->conn);
 			$mediaHandler->setSchemaType($this->schemaType);
 			$mediaHandler->setRedactLocalities($this->redactLocalities);
@@ -1874,12 +1897,12 @@ class DwcArchiverCore extends Manager{
 			$recordCnt = $mediaHandler->writeOutMediaData($this->exportID, $this->collArr, $this->serverDomain);
 			if($recordCnt){
 				$this->extensionFieldMap['media'] = $mediaHandler->getFieldArrTerms();
-				$msg = $recordCnt . ' records added ';
-				$this->logOrEcho($msg, 1);
+				$msg = number_format($recordCnt) . ' records added ';
+				$this->logOrEcho($msg, 2);
 			}
 			else{
 				$msg = 'No records located (file excluded)';
-				$this->logOrEcho($msg, 1);
+				$this->logOrEcho($msg, 2);
 			}
 		}
 		return $recordCnt;
@@ -1888,19 +1911,19 @@ class DwcArchiverCore extends Manager{
 	private function writeIdentifierData($targetFile){
 		$recordCnt = 0;
 		if($this->exportID){
-			$this->logOrEcho('Creating alternative Identifiers extension file (' . date('h:i:s A') . ')...');
+			$this->logOrEcho('Creating alternative Identifiers extension file (' . date('h:i:s A') . ')...', 1);
 			$identierHandler = new DwcArchiverIdentifier($this->conn);
 			$identierHandler->setSchemaType($this->schemaType);
 			$identierHandler->initiateProcess($targetFile);
 			$recordCnt = $identierHandler->writeOutData($this->exportID);
 			if($recordCnt){
 				$this->extensionFieldMap['identifier'] = $identierHandler->getFieldArrTerms();
-				$msg = $recordCnt . ' records added ';
-				$this->logOrEcho($msg, 1);
+				$msg = number_format($recordCnt) . ' records added ';
+				$this->logOrEcho($msg, 2);
 			}
 			else{
 				$msg = 'No records located (file excluded)';
-				$this->logOrEcho($msg, 1);
+				$this->logOrEcho($msg, 2);
 			}
 		}
 		return $recordCnt;
@@ -1909,19 +1932,19 @@ class DwcArchiverCore extends Manager{
 	private function writeAttributeData($targetFile){
 		$recordCnt = 0;
 		if($this->exportID){
-			$this->logOrEcho('Creating MeasurementsOrFact (aka Occurrence Attributes) extension file (' . date('h:i:s A') . ')...');
+			$this->logOrEcho('Creating MeasurementsOrFact (aka Occurrence Attributes) extension file (' . date('h:i:s A') . ')...', 1);
 			$attributeHandler = new DwcArchiverAttribute($this->conn);
 			$attributeHandler->setSchemaType($this->schemaType);
 			$attributeHandler->initiateProcess($targetFile);
 			$recordCnt = $attributeHandler->writeOutData($this->exportID);
 			if($recordCnt){
 				$this->extensionFieldMap['attribute'] = $attributeHandler->getFieldArrTerms();
-				$msg = $recordCnt . ' records added ';
-				$this->logOrEcho($msg, 1);
+				$msg = number_format($recordCnt) . ' records added ';
+				$this->logOrEcho($msg, 2);
 			}
 			else{
 				$msg = 'No records located (file excluded)';
-				$this->logOrEcho($msg, 1);
+				$this->logOrEcho($msg, 2);
 			}
 		}
 		return $recordCnt;
@@ -1930,19 +1953,19 @@ class DwcArchiverCore extends Manager{
 	private function writeMaterialSampleData($targetFile){
 		$recordCnt = 0;
 		if($this->exportID){
-			$this->logOrEcho('Creating MaterialSample extension file (' . date('h:i:s A') . ')...');
+			$this->logOrEcho('Creating MaterialSample extension file (' . date('h:i:s A') . ')...', 1);
 			$materialSampleHandler = new DwcArchiverMaterialSample($this->conn);
 			$materialSampleHandler->setSchemaType($this->schemaType);
 			$materialSampleHandler->initiateProcess($targetFile);
 			$recordCnt = $materialSampleHandler->writeOutData($this->exportID);
 			if($recordCnt){
 				$this->extensionFieldMap['materialSample'] = $materialSampleHandler->getFieldArrTerms();
-				$msg = $recordCnt . ' records added ';
-				$this->logOrEcho($msg, 1);
+				$msg = number_format($recordCnt) . ' records added ';
+				$this->logOrEcho($msg, 2);
 			}
 			else{
 				$msg = 'No records located (file excluded)';
-				$this->logOrEcho($msg, 1);
+				$this->logOrEcho($msg, 2);
 			}
 		}
 		return $recordCnt;
@@ -1951,34 +1974,30 @@ class DwcArchiverCore extends Manager{
 	private function writeAssociationData($targetFile){
 		$recordCnt = 0;
 		if($this->exportID){
-			$this->logOrEcho('Creating ResourceRelationship extension file (' . date('h:i:s A') . ')...');
+			$this->logOrEcho('Creating ResourceRelationship extension file (' . date('h:i:s A') . ')...', 1);
 			$associationHandler = new DwcArchiverResourceRelationship($this->conn);
 			$associationHandler->setSchemaType($this->schemaType);
 			$associationHandler->initiateProcess($targetFile);
-
 			$recordCnt = $associationHandler->writeOutData($this->exportID);
-			//Now add inverse relationships
-			$associationHandler->setSqlInverse();
-			$recordCnt += $associationHandler->writeOutData($this->exportID);
 			if($recordCnt){
 				$this->extensionFieldMap['associations'] = $associationHandler->getFieldArrTerms();
-				$msg = $recordCnt . ' records added ';
-				$this->logOrEcho($msg, 1);
+				$msg = number_format($recordCnt) . ' records added ';
+				$this->logOrEcho($msg, 2);
 			}
 			else{
 				$msg = 'No records located (file excluded)';
-				$this->logOrEcho($msg, 1);
+				$this->logOrEcho($msg, 2);
 			}
 		}
 		return $recordCnt;
 	}
 
 	private function writeCitationFile(){
-		$this->logOrEcho("Creating citation file (" . date('h:i:s A') . ")... ");
+		$this->logOrEcho("Creating citation file (" . date('h:i:s A') . ")... ", 1);
 		$filePath = $this->targetPath . $this->ts . '-citation.txt';
 		$fh = fopen($filePath, 'w');
 		if (!$fh) {
-			$this->logOrEcho('ERROR establishing output file (' . $filePath . '), perhaps target folder is not readable by web server.');
+			$this->logOrEcho('ERROR establishing output file (' . $filePath . '), perhaps target folder is not readable by web server.', 2);
 			return false;
 		}
 
@@ -2046,7 +2065,7 @@ class DwcArchiverCore extends Manager{
 
 		fclose($fh);
 
-		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 1);
+		$this->logOrEcho('Done! (' . date('h:i:s A') . ")\n", 2);
 	}
 
 	private function writeOutRecord($fh, $outputArr){
@@ -2289,9 +2308,10 @@ class DwcArchiverCore extends Manager{
 		}
 	}
 
-	public function setOverrideConditionLimit($bool){
-		if ($bool) $this->overrideConditionLimit = true;
-		else $this->overrideConditionLimit = false;
+	public function setApplyConditionLimit($bool){
+		//echo 'setting overrideCondition to: ' . ($bool?'true':'false') . '<br>';
+		if ($bool) $this->applyConditionLimit = true;
+		else $this->applyConditionLimit = false;
 	}
 
 	public function setObserverUid($uid){
@@ -2370,8 +2390,9 @@ class DwcArchiverCore extends Manager{
 		}
 	}
 
-	public function setIsPublicDownload(){
-		$this->isPublicDownload = true;
+	public function setIsPublicDownload($bool){
+		if($bool) $this->isPublicDownload = true;
+		else $this->isPublicDownload = false;
 	}
 
 	public function setPublicationGuid($guid){

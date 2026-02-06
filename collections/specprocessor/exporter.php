@@ -218,8 +218,8 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 												<input name="targetcollid" type="hidden" value="<?php echo $collid; ?>" />
 												<input name="schema" type="hidden" value="georef" />
 												<input name="extended" type="hidden" value="1" />
-												<input name="overrideconditionlimit" type="hidden" value="1" />
-												<input name="submitaction" type="submit" value="Download Records" />
+												<input name="source" type="hidden" value="collection_exporter">
+												<button name="submitaction" type="submit" value="Download Records"><?php echo $LANG['DOWNLOAD_RECORDS']; ?></button>
 											</div>
 										</td>
 									</tr>
@@ -312,7 +312,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 											<input name="targetcollid" type="hidden" value="<?php echo $collid; ?>" />
 											<input name="schema" type="hidden" value="dwc" />
 											<input name="extended" type="hidden" value="1" />
-											<input name="overrideconditionlimit" type="hidden" value="1" />
+											<input name="source" type="hidden" value="collection_exporter">
 											<button name="submitaction" type="submit" value="Download Records"><?php echo $LANG['DOWNLOAD_RECORDS']; ?></button>
 										</div>
 									</td>
@@ -542,7 +542,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 										<div style="margin:10px;">
 											<input name="targetcollid" type="hidden" value="<?php echo $collid; ?>" />
 											<input name="extended" type="hidden" value="1" />
-											<input name="overrideconditionlimit" type="hidden" value="1" />
+											<input name="source" type="hidden" value="collection_exporter">
 											<button name="submitaction" type="submit" value="Download Records"><?php echo $LANG['DOWNLOAD_RECORDS']; ?></button>
 										</div>
 									</td>

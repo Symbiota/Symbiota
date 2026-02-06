@@ -57,6 +57,7 @@ $_SESSION['citationvar'] = 'collid=' . $collid;
 $dwcaHandler = new DwcArchiverCore();
 $dwcaHandler->setVerboseMode(0);
 $dwcaHandler->setCollArr($collid, $collType);
+$dwcaHandler->setApplyConditionLimit(true);
 
 $redactLocalities = 1;
 if ($IS_ADMIN || array_key_exists('CollAdmin', $USER_RIGHTS)) {
@@ -70,6 +71,7 @@ if ($IS_ADMIN || array_key_exists('CollAdmin', $USER_RIGHTS)) {
 }
 $dwcaHandler->setRedactLocalities($redactLocalities);
 
+$conditionApplied = false;
 if ($cond) {
 	//String of cond-key/value pairs (e.g. country:USA,United States;stateprovince:Arizona,New Mexico;county-start:Pima,Eddy
 	$cArr = explode(';', $cond);
@@ -88,15 +90,17 @@ if ($cond) {
 			}
 			if ($valueArr) {
 				foreach ($valueArr as $v) {
-					$dwcaHandler->addCondition($field, $cond, $v);
+					if($dwcaHandler->addCondition($field, $cond, $v)) $conditionApplied = true;
+					else exit('Illegal condition submitted');
 				}
 			} else {
-				$dwcaHandler->addCondition($field, $cond);
+				if($dwcaHandler->addCondition($field, $cond)) $conditionApplied = true;
+				else exit('Illegal condition submitted');
 			}
 		}
 	}
 }
-if(!$collid && !$cond) exit('Filter conditions required');
+if(!$collid && !$conditionApplied) exit('Filter conditions required');
 if(!$dwcaHandler->isAuthorized()){
 	//Basic lockdown of function to limited number of users until functionality is fully integrated into Symbiota 4.0 API with enhanced security applied
 	exit('Not authorized');
