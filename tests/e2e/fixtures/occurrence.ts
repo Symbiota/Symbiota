@@ -4,11 +4,9 @@ import mysql from 'mysql2/promise';
 class OccurrenceFactory {
 	constructor(public readonly conn: mysql.Connection) {}
 
-	async getNewRecord(collId: number): Promise<number>{
-		await this.conn.execute(
-			"INSERT INTO omoccurrences (collId) VALUES (?)",
-			[ collId ]
-		);
+	// Use this only internally
+	async getNewBlank(sql:string, params: any) {
+		await this.conn.execute(sql, params);
 
 		let result = await this.conn.execute("SELECT LAST_INSERT_ID() as id");
 
@@ -19,19 +17,22 @@ class OccurrenceFactory {
 		}
 	}
 
+	async getNewRecord(collId: number): Promise<number>{
+		return this.getNewBlank("INSERT INTO omoccurrences (collId) VALUES (?)", [ collId ]);
+	}
+
 	async newDetermination(occId: number): Promise<number>{
-		await this.conn.execute(
+		return this.getNewBlank(
 			"INSERT INTO omoccurdeterminations (occid, identifiedBy, dateIdentified, sciname) VALUES (?,?,?,?)",
 			[ occId, 'unknown', 'unknown', 'genus species' ]
 		);
+	}
 
-		let result = await this.conn.execute("SELECT LAST_INSERT_ID() as id");
-
-		if(result.length > 0 && result[0].length > 0) {
-			return result[0][0].id;
-		} else {
-			return 0;
-		}
+	async newMedia(occId: number): Promise<number>{
+		return this.getNewBlank(
+			"INSERT INTO media(occid) VALUES (?)",
+			[ occId ]
+		);
 	}
 }
 
