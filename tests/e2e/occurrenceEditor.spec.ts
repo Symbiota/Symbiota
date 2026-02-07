@@ -208,4 +208,22 @@ test.describe('Create Occurrence Record', () => {
 
 		await expect(page.getByText('Media added successfully')).toBeVisible();
 	})
+
+	test('Delete Media', async ({ page, occurrenceFactory }) => {
+		let occId = await occurrenceFactory.getNewRecord(collId);
+		let mediaId = await occurrenceFactory.newMedia(occId);
+
+		let occurrenceEditor = new OccurrenceEditorPage(page);
+		await occurrenceEditor.gotoRecord(collId, occId)
+		await occurrenceEditor.gotoTab(OccurrenceEditorTab.Media)
+
+		await page.locator('div[title="Edit Resource MetaData"]').click({force: true});
+		const mediaForm = page.locator(`div[id=img${mediaId}editdiv]`);
+
+		page.on('dialog', dialog => dialog.accept());
+		await mediaForm.locator('input[name=removeimg]').click({force: true})
+		await mediaForm.locator('button[value="Delete Image"]').click({force: true})
+
+		await expect(page.getByText(' Media deleted successfully')).toBeVisible();
+	})
 })
