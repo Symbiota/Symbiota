@@ -6,14 +6,29 @@ class OccurrenceFactory {
 
 	async getNewRecord(collId: number): Promise<number>{
 		await this.conn.execute(
-			"INSERT omoccurrences (collId) VALUES (?)",
+			"INSERT INTO omoccurrences (collId) VALUES (?)",
 			[ collId ]
 		);
 
-		let id = await this.conn.execute("SELECT LAST_INSERT_ID() as id");
+		let result = await this.conn.execute("SELECT LAST_INSERT_ID() as id");
 
-		if(id.length > 0) {
-			return id[0].id;
+		if(result.length > 0 && result[0].length > 0) {
+			return result[0][0].id;
+		} else {
+			return 0;
+		}
+	}
+
+	async newDetermination(occId: number): Promise<number>{
+		await this.conn.execute(
+			"INSERT INTO omoccurdeterminations (occid, identifiedBy, dateIdentified, sciname) VALUES (?,?,?,?)",
+			[ occId, 'unknown', 'unknown', 'genus species' ]
+		);
+
+		let result = await this.conn.execute("SELECT LAST_INSERT_ID() as id");
+
+		if(result.length > 0 && result[0].length > 0) {
+			return result[0][0].id;
 		} else {
 			return 0;
 		}
