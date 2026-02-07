@@ -169,6 +169,26 @@ test.describe('Create Occurrence Record', () => {
 		await expect(page.getByText('1/14/2026')).toBeVisible()
 	})
 
+	test('Delete Determination', async ({ page, occurrenceFactory }) => {
+		let occId = await occurrenceFactory.getNewRecord(collId);
+		let detId = await occurrenceFactory.newDetermination(occId);
+
+		let occurrenceEditor = new OccurrenceEditorPage(page);
+		await occurrenceEditor.gotoRecord(collId, occId)
+		await occurrenceEditor.gotoTab(OccurrenceEditorTab.Determinations)
+
+		const detDiv = page.locator(`div[id=detdiv-${detId}]`);
+		const editDetDiv = page.locator(`div[id=editdetdiv-${detId}]`);
+
+		await detDiv.locator('a[title="Edit Determination"]').click({force: true});
+
+		page.on('dialog', dialog => dialog.accept());
+		await editDetDiv.locator('button[value="Delete Determination"]').click({force: true});
+
+		await expect(page.getByText('Determination deleted successfully')).toBeVisible();
+		await expect(detDiv).not.toBeAttached();
+	})
+
 	test('Add Media', async ({ page, occurrenceFactory }) => {
 		let occId = await occurrenceFactory.getNewRecord(collId);
 		let occurrenceEditor = new OccurrenceEditorPage(page);
