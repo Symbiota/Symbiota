@@ -139,7 +139,7 @@ test.describe('Create Occurrence Record', () => {
 		let occId = await occurrenceFactory.getNewRecord(collId);
 
 		const inputs = {
-			catalognumber: '000004',
+			catalognumber: occId + '00004',
 		};
 
 		let occurrenceEditor = new OccurrenceEditorPage(page);
