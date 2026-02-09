@@ -14,7 +14,7 @@ $sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, 
 	FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid
 	LEFT JOIN omcollcatlink ccl ON c.collid = ccl.collid
 	LEFT JOIN omcollcategories cat ON ccl.ccpk = cat.ccpk
-	WHERE s.recordcnt > 0 AND (cat.inclusive IS NULL OR cat.inclusive = 1 OR cat.ccpk = 1) 
+	WHERE s.recordcnt > 0 AND (cat.inclusive IS NULL OR cat.inclusive = 1 OR cat.ccpk = 1)
 	order by cat.category, collectionname';
 
 $checkedCollections = [];
@@ -64,7 +64,7 @@ function toggleAllCheckboxes(scope, checked) {
 	}
 }
 
-function updateParent(inputs, parentSelector) {	
+function updateParent(inputs, parentSelector) {
 	const parent = document.querySelector(parentSelector);
 
 	let consensus = null;
@@ -116,10 +116,11 @@ function toggleCategory(categoryId, event=null) {
 		'CATCHK' => $requestSuppliedCatChk ?? $CATCHK ?? [],
 		'CURRENT_URL' => $_SERVER['REQUEST_URI'],
 	]) ?>'>
-	<?php 
+	<?php
 	$checkboxConfigs = [
 		[
 			'id' => 'all_collections',
+			'name' => 'db[]',
 			'target' => 'collections_container',
 			'data_chip' => $LANG['ALL_COLLECTIONS'],
 			'margin' => '0',
@@ -127,6 +128,7 @@ function toggleCategory(categoryId, event=null) {
 		],
 		[
 			'id' => 'all_specimen_collections',
+			'name' => 'all_specimen_collections',
 			'target' => 'specimens_collections',
 			'data_chip' => $LANG['ALL_SPECIMEN_COLLECTIONS'],
 			'margin' => '0 15px',
@@ -134,6 +136,7 @@ function toggleCategory(categoryId, event=null) {
 		],
 		[
 			'id' => 'all_observation_collections',
+			'name' => 'all_observation_collections',
 			'target' => 'observations_collections',
 			'data_chip' => $LANG['ALL_OBSERVATION_COLLECTIONS'],
 			'margin' => '0 15px',
@@ -150,8 +153,8 @@ function toggleCategory(categoryId, event=null) {
 				data-chip="<?= $checkboxConfig['data_chip'] ?>"
 				type="checkbox"
 				id="<?= $checkboxConfig['id'] ?>"
-				name="<?= $checkboxConfig['id'] ?>"
-				value="1"
+				name="<?= $checkboxConfig['name'] ?>"
+				value="all"
 				<?= array_key_exists($checkboxConfig['id'], $_REQUEST)? 'checked': '' ?>
 			>
 			<label for="<?= $checkboxConfig['id'] ?>">
@@ -161,7 +164,7 @@ function toggleCategory(categoryId, event=null) {
 		<?php endforeach; ?>
 	</div>
 	<div id="collections_container">
-		<?php 
+		<?php
 			$collectionFormManager = new CollectionFormManager();
 			$sortedCollectionsByCategory = $collectionFormManager->reorderPortalCategories(
 				$collectionsByCategory,
@@ -180,10 +183,10 @@ function toggleCategory(categoryId, event=null) {
 				?>
 			</h2>
 			<?php foreach($revisedUncategorizedCategories as $category): ?>
-			<?php 
+			<?php
 				$categoryIdentifer = $collectionType . '_' . $category['id'];
 			?>
-		
+
 			<fieldset id="<?=  $categoryIdentifer . '_container' ?>" style="margin-bottom: 1rem;">
 				<legend>
 					<div style="display:flex; align-items: center; gap:0.5rem;">
@@ -201,7 +204,7 @@ function toggleCategory(categoryId, event=null) {
 						<label for="<?= $categoryIdentifer ?>">
 							<?= $category['name'] ?>
 						</label>
-		
+
 						<a onclick="toggleCategory(`<?=  $categoryIdentifer ?>`, event)" style="cursor: pointer;">
 							<span id="<?=  $categoryIdentifer . '_open_toggle' ?>"
 								style="display: none; align-items: center; gap:0.5rem;">
@@ -211,7 +214,7 @@ function toggleCategory(categoryId, event=null) {
 								/>
 								<?= $LANG['EXPAND'] ?>
 							</span>
-		
+
 							<span id="<?=  $categoryIdentifer . '_close_toggle' ?>"
 								style="display: flex; align-items: center; gap:0.5rem;">
 								<img
@@ -223,7 +226,7 @@ function toggleCategory(categoryId, event=null) {
 						</a>
 					</div>
 				</legend>
-		
+
 				<div id="<?=  $categoryIdentifer . '_inputs' ?>"
 					style="display:flex; flex-direction:column; gap:0.5rem;"
 					onchange="updateParent(this.querySelectorAll(`input[type=checkbox]`), '#<?= $categoryIdentifer ?>')"
