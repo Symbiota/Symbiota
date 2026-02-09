@@ -640,3 +640,8 @@ DROP TABLE IF EXISTS `lkupmunicipality`;
 DROP TABLE IF EXISTS `lkupcounty`;
 DROP TABLE IF EXISTS `lkupstateprovince`;
 DROP TABLE IF EXISTS `lkupcountry`;
+
+# Combine Lng and Lat indices
+ALTER TABLE omoccurrences ADD INDEX IX_occurrences_decimalLngLat (decimalLongitude, decimalLatitude);
+ALTER TABLE omoccurrences DROP INDEX IX_occurrences_lat;
+ALTER TABLE omoccurrences DROP INDEX IX_occurrences_lng;
