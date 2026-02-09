@@ -242,6 +242,9 @@ class SpecUploadFile extends SpecUploadBase{
 			if(strpos($headerData,"\t") !== false){
 				$this->delimiter = "\t";
 			}
+			elseif(strpos($headerData, '|') !== false){
+				$this->delimiter = '|';
+			}
 		}
 		//Check to see if file is csv
 		if(substr(strtolower($this->ulFileName),-4) == ".csv" || strpos($headerData,$this->delimiter.'"') !== false){

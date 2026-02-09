@@ -198,7 +198,8 @@ ALTER TABLE `omexportoccurrences`
   ADD INDEX `IX_omexportoccur_collid` (`omExportID`, `collid`),
   ADD INDEX `IX_omexportoccur_taxonID` (`omExportID`, `taxonID`),
   ADD INDEX `IX_omexportoccur_kingdom` (`omExportID`, `kingdom`),
-  ADD INDEX `IX_omexportoccur_recordSecurity` (`omExportID`, `recordSecurity`);
+  ADD INDEX `IX_omexportoccur_recordSecurity` (`omExportID`, `recordSecurity`),
+  ADD INDEX `IX_omexportoccur_initialTimestamp` (`initialTimestamp`);
 
 
 #Add update to omoccurdeterminations.dateLastModified tracked any update to the row

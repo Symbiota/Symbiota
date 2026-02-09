@@ -82,31 +82,32 @@ class DwcArchiverMedia extends DwcArchiverBaseManager{
 			foreach($this->fieldArr['fields'] as $colName){
 				if($colName) $sqlFrag .= ', ' . $colName;
 			}
-			$this->sql = 'SELECT '.trim($sqlFrag,', '). ', x.collid
+			$sql = 'SELECT '.trim($sqlFrag,', '). ', x.collid
 				FROM media m INNER JOIN omexportoccurrences x ON m.occid = x.occid
 				LEFT JOIN imagetag tag ON m.mediaID = tag.mediaID
 				LEFT JOIN users u ON m.creatorUid = u.uid
 				WHERE (x.omExportID = ?) ';
 			if($this->redactLocalities){
 				if($this->rareReaderCollStr){
-					$this->sql .= 'AND (x.recordSecurity = 0 OR x.collid IN(' . $this->rareReaderCollStr . ')) ';
+					$sql .= 'AND (x.recordSecurity = 0 OR x.collid IN(' . $this->rareReaderCollStr . ')) ';
 				}
 				else{
-					$this->sql .= 'AND (x.recordSecurity = 0) ';
+					$sql .= 'AND (x.recordSecurity = 0) ';
 				}
 			}
-			$this->sql .= 'GROUP BY m.mediaID';
+			$sql .= 'GROUP BY m.mediaID';
+			$this->sqlArr[] = $sql;
 		}
 	}
 
 	public function writeOutMediaData($exportID, $collArr, $serverDomain){
 		$recordCnt = 0;
-		if($this->sql){
+		foreach($this->sqlArr as $sql){
 			$urlPathPrefix = $serverDomain . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) == '/' ? '' : '/');
 			if (isset($GLOBALS['MEDIA_DOMAIN']) && $GLOBALS['MEDIA_DOMAIN']) {
 				$serverDomain = $GLOBALS['MEDIA_DOMAIN'];
 			}
-			if($stmt = $this->conn->prepare($this->sql)){
+			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param('i', $exportID);
 				$stmt->execute();
 				$rs = $stmt->get_result();
@@ -185,7 +186,7 @@ class DwcArchiverMedia extends DwcArchiverBaseManager{
 			}
 			else{
 				$this->logOrEcho('ERROR writing out to extension file: ' . $stmt->error . "\n");
-				//$this->logOrEcho("\tSQL: ".$this->sql."\n");
+				//$this->logOrEcho("\tSQL: ".$sql."\n");
 			}
 		}
 		return $recordCnt;

@@ -83,7 +83,7 @@ class DwcArchiverDetermination extends DwcArchiverBaseManager{
 			foreach($this->fieldArr['fields'] as $colName){
 				if($colName) $sqlFrag .= ', ' . $colName;
 			}
-			$this->sql = 'SELECT ' . trim($sqlFrag, ', ') . ' FROM omoccurdeterminations d INNER JOIN omexportoccurrences x ON d.occid = x.occid
+			$this->sqlArr[] = 'SELECT ' . trim($sqlFrag, ', ') . ' FROM omoccurdeterminations d INNER JOIN omexportoccurrences x ON d.occid = x.occid
 				LEFT JOIN taxa t ON d.tidinterpreted = t.tid
 				WHERE x.omExportID = ? AND d.appliedstatus = 1 ';
 		}

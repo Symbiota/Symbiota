@@ -55,6 +55,7 @@ $LANG['COLLEC_CODE'] = 'Collection Code (override)';
 $LANG['OWNER_CODE'] = 'Owner Code (override)';
 
 $LANG['CATALOG_NUM'] = 'Catalog Number';
+$LANG['OTHER_CAT_NUMS'] = 'Additional Identifiers';
 $LANG['FAMILY'] = 'Family';
 $LANG['ID_QUALIFIER'] = 'ID Qualifier';
 $LANG['SCI_NAME'] = 'Scientific Name';

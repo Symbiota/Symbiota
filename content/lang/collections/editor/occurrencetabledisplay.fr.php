@@ -55,6 +55,7 @@ $LANG['COLLEC_CODE'] = 'Code de la collection (remplacer)';
 $LANG['OWNER_CODE'] = 'Code du propriétaire (remplacer)';
 
 $LANG['CATALOG_NUM'] = 'Numéro de catalogue';
+$LANG['OTHER_CAT_NUMS'] = 'Identifiants Supplémentaires';
 $LANG['FAMILY'] = 'Famille';
 $LANG['ID_QUALIFIER'] = 'Qualificateur d\'identification';
 $LANG['SCI_NAME'] = 'Nom scientifique';

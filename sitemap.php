@@ -198,6 +198,11 @@ if(!$schemaVersion){
 							<li>
 								<a href="collections/map/staticmaphandler.php"><?= $LANG['MANAGE_TAXON_THUMBNAILS'] ?></a>
 							</li>
+							<li>
+								<a href="<?= $CLIENT_ROOT ?>/admin/othercatalog.php">
+									<?= $LANG['OTHER_CAT_TRANSFER'] ?>
+								</a>
+							</li>
 						</ul>
 						<?php
 					}

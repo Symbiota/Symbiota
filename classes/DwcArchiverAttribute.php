@@ -63,7 +63,7 @@ class DwcArchiverAttribute extends DwcArchiverBaseManager{
 			foreach($this->fieldArr['fields'] as $colName){
 				if($colName) $sqlFrag .= ', '.$colName;
 			}
-			$this->sql = 'SELECT '.trim($sqlFrag,', ').'
+			$this->sqlArr[] = 'SELECT '.trim($sqlFrag,', ').'
 				FROM tmtraits m INNER JOIN tmstates s ON m.traitid = s.traitid
 				INNER JOIN tmattributes a ON s.stateid = a.stateid
 				INNER JOIN omexportoccurrences e ON a.occid = e.occid

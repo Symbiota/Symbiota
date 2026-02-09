@@ -57,6 +57,7 @@ $LANG['COLLEC_CODE'] = 'Código de colección (anulación)';
 $LANG['OWNER_CODE'] = 'Código de propietario (anulación)';
 
 $LANG['CATALOG_NUM'] = 'Número de catálogo';
+$LANG['OTHER_CAT_NUMS'] = 'Identificadores Adicionales';
 $LANG['FAMILY'] = 'Familia';
 $LANG['ID_QUALIFIER'] = 'Calificador de ID';
 $LANG['SCI_NAME'] = 'Nombre científico';

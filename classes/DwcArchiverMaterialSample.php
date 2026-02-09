@@ -78,7 +78,7 @@ class DwcArchiverMaterialSample extends DwcArchiverBaseManager{
 			foreach($this->fieldArr['fields'] as $colName){
 				if($colName && $colName != 'msDynamicField') $sqlFrag .= ', '.$colName;
 			}
-			$this->sql = 'SELECT '.trim($sqlFrag,', ').' FROM ommaterialsample m
+			$this->sqlArr[] = 'SELECT '.trim($sqlFrag,', ').' FROM ommaterialsample m
 				INNER JOIN omexportoccurrences e ON m.occid = e.occid
 				LEFT JOIN users u ON m.preparedByUid = u.uid
 				WHERE (e.omExportID = ?) ';
