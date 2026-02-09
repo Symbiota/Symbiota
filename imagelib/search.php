@@ -161,6 +161,7 @@ $creators = Media::getCreatorArray();
 	<div role="main" id="innertext" class="inntertext-tab pin-things-here inner-search content">
 		<h1 class="page-heading"><?= $LANG['IMAGE_SEARCH']; ?></h1>
 		<form style="display:block;" name="params-form" id="params-form" action="search.php" method="post">
+			<input type="hidden" name="submitaction" id="submitaction-hidden">
 			<?php
 			if($statusStr){
 				echo '<div id="action-status-div">' . $statusStr . '</div>';
@@ -546,6 +547,10 @@ $creators = Media::getCreatorArray();
 		setSearchForm(document.getElementById("params-form"));
 		toggleAccordionsFromSessionStorage(sessionStorage.getItem("querystr" + getCurrentPage() + "/" + "accordionIds") ?.split(",") || []);
 		document.getElementById("params-form").addEventListener("submit", function(event) {
+			const submitter = event.submitter;
+			const submitActionValue = submitter.value;
+			document.getElementById("submitaction-hidden").value = submitActionValue;
+			if (!submitter) return;
 			event.preventDefault();
 			simpleSearch();
 		});
