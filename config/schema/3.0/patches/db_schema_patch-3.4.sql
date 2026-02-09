@@ -473,7 +473,14 @@ ALTER TABLE `uploadspectemp`
   DROP COLUMN `paleojson`;
 
 #copy storageAge in omoccurrences.storageLocation
-UPDATE `omoccurrences` o LEFT JOIN `omoccurpaleo` p on o.`occid` = p.`occid` SET o.`storageLocation` = p.`storageAge` WHERE o.`storageLocation` IS NULL and p.`storageAge` IS NOT NULL;
+UPDATE `omoccurrences` o LEFT JOIN `omoccurpaleo` p on o.`occid` = p.`occid` 
+  SET o.`storageLocation` = CONCAT_WS("; ", o.`storageLocation`, p.`storageAge`) 
+  WHERE p.`storageAge` IS NOT NULL;
+  
+#Remove deprecated field 'storageAge'
+ALTER TABLE `omoccurpaleo` 
+  DROP COLUMN `storageAge`
+
 
 
 ALTER TABLE `portalindex` 
