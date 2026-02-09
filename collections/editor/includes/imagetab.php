@@ -356,7 +356,7 @@ $creatorArray = Media::getCreatorArray();
 										<div>
 											<b><?php echo $LANG['WEB_URL']; ?>: </b><br/>
 											<input name="url" type="text" value="<?php echo $imgArr["url"]; ?>" style="width:95%;" />
-											<?php if(stripos($imgArr['url'], $MEDIA_ROOT_URL) === 0){ ?>
+											<?php if(stripos($imgArr['url'] ?? '', $MEDIA_ROOT_URL) === 0){ ?>
 												<div style="margin-left:10px;">
 													<input type="checkbox" name="renameweburl" value="1" />
 													<?php echo $LANG['RENAME_FILE']; ?>
