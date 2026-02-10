@@ -1,17 +1,13 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceDownload.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/specprocessor/exporter.' . $LANG_TAG . '.php')){
-	include_once($SERVER_ROOT . '/content/lang/collections/specprocessor/exporter.' . $LANG_TAG . '.php');
-}else{
-	include_once($SERVER_ROOT . '/content/lang/collections/specprocessor/exporter.en.php');
-} 
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/customsearchtype.' . $LANG_TAG . '.php')){
-	include_once($SERVER_ROOT . '/content/lang/collections/customsearchtype.' . $LANG_TAG . '.php');
-}
-else{
-	include_once($SERVER_ROOT . '/content/lang/collections/customsearchtype.en.php');
-}
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load([
+	'collections/specprocessor/exporter',
+	'collections/customsearchtype'
+]);
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
@@ -222,8 +218,8 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 												<input name="targetcollid" type="hidden" value="<?php echo $collid; ?>" />
 												<input name="schema" type="hidden" value="georef" />
 												<input name="extended" type="hidden" value="1" />
-												<input name="overrideconditionlimit" type="hidden" value="1" />
-												<input name="submitaction" type="submit" value="Download Records" />
+												<input name="source" type="hidden" value="collection_exporter">
+												<button name="submitaction" type="submit" value="Download Records"><?php echo $LANG['DOWNLOAD_RECORDS']; ?></button>
 											</div>
 										</td>
 									</tr>
@@ -316,7 +312,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 											<input name="targetcollid" type="hidden" value="<?php echo $collid; ?>" />
 											<input name="schema" type="hidden" value="dwc" />
 											<input name="extended" type="hidden" value="1" />
-											<input name="overrideconditionlimit" type="hidden" value="1" />
+											<input name="source" type="hidden" value="collection_exporter">
 											<button name="submitaction" type="submit" value="Download Records"><?php echo $LANG['DOWNLOAD_RECORDS']; ?></button>
 										</div>
 									</td>
@@ -546,7 +542,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 										<div style="margin:10px;">
 											<input name="targetcollid" type="hidden" value="<?php echo $collid; ?>" />
 											<input name="extended" type="hidden" value="1" />
-											<input name="overrideconditionlimit" type="hidden" value="1" />
+											<input name="source" type="hidden" value="collection_exporter">
 											<button name="submitaction" type="submit" value="Download Records"><?php echo $LANG['DOWNLOAD_RECORDS']; ?></button>
 										</div>
 									</td>

@@ -1,7 +1,8 @@
 <?php
 include_once('../../config/symbini.php');
-if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/reports/labeljsongui.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/reports/labeljsongui.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/reports/labeljsongui.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/reports/labeljsongui');
 
 $customCss = isset($_GET['customCss']) ? $_GET['customCss'] : '';
 $customStyle = isset($_GET['customStyle']) ? $_GET['customStyle'] : '';

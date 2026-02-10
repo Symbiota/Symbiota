@@ -2,7 +2,7 @@
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
-require_once $SERVER_ROOT.'/vendor/phpoffice/phpword/bootstrap.php';
+require_once $SERVER_ROOT.'/vendor/autoload.php';
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 ini_set('max_execution_time', 3600);
@@ -334,7 +334,7 @@ else{
 
 $fileName = str_replace(array(' ', '/'), '_', $fileName);
 $fileName = preg_replace('/[^0-9A-Za-z\-_]/', '', $fileName);
-$targetFile = $SERVER_ROOT.'/temp/report/'.$fileName.'_'.date('Y-m-d').'.docx';
+$targetFile = $TEMP_DIR_ROOT . '/' . $fileName . '_' . date('Y-m-d') . '.docx';
 $phpWord->save($targetFile, 'Word2007');
 
 ob_start();

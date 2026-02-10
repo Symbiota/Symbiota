@@ -99,6 +99,7 @@ class OccurrenceImport extends UtilitiesFileImport {
 			$fields = [
 				 //'tid',
 				'thumbnailUrl',
+				'url',
 				'sourceUrl',
 				'archiveUrl',
 				'referenceUrl',
@@ -128,7 +129,7 @@ class OccurrenceImport extends UtilitiesFileImport {
 				foreach($fields as $key) {
 					$record_idx = $this->fieldMap[$key] ?? $this->fieldMap[strtolower($key)] ?? false;
 					if($record_idx && $recordArr[$record_idx]) {
-						$data[$key] = $recordArr[$record_idx];
+						$data[$key] = $this->encodeString($recordArr[$record_idx]);
 					}
 				}
 
@@ -138,7 +139,7 @@ class OccurrenceImport extends UtilitiesFileImport {
 
 				// Will Not store files on the server unless StorageStrategy is provided which is desired for this use case
 				try {
-					Media::add($data);
+					Media::insert($data);
 					if ($errors = Media::getErrors()) {
 						$this->logOrEcho('ERROR: ' . array_pop($errors));
 					} else {
@@ -165,7 +166,7 @@ class OccurrenceImport extends UtilitiesFileImport {
 				$detArr = array();
 				foreach ($fieldArr as $field) {
 					$fieldLower = strtolower($field);
-					if (isset($this->fieldMap[$fieldLower]) && !empty($recordArr[$this->fieldMap[$fieldLower]])) $detArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
+					if (isset($this->fieldMap[$fieldLower]) && !empty($recordArr[$this->fieldMap[$fieldLower]])) $detArr[$field] = $this->encodeString($recordArr[$this->fieldMap[$fieldLower]]);
 				}
 				if (empty($detArr['sciname'])) {
 					$this->logOrEcho('ERROR loading determination: Scientific name is empty.', 1);
@@ -194,7 +195,7 @@ class OccurrenceImport extends UtilitiesFileImport {
 				$assocArr = array();
 				foreach ($fieldArr as $field) {
 					$fieldLower = strtolower($field);
-					if (isset($this->fieldMap[$fieldLower])) $assocArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
+					if (isset($this->fieldMap[$fieldLower])) $assocArr[$field] = $this->encodeString($recordArr[$this->fieldMap[$fieldLower]]);
 				}
 				if ($assocArr) {
 					if (!empty($postArr['associationType']) && !empty($postArr['relationship'])) {
@@ -244,7 +245,26 @@ class OccurrenceImport extends UtilitiesFileImport {
 							$this->logOrEcho($LANG['ASSOC_ADDED'] . ': <a href="../editor/occurrenceeditor.php?occid=' . $occid . '" target="_blank">' . $occid . '</a>', 1);
 							$status = true;
 						} else {
-							$this->logOrEcho($LANG['ERROR_ADDING'] . ': ' . $importManager->getErrorMessage(), 1);
+							$errorMsg = $importManager->getErrorMessage();
+							if (strpos($errorMsg, 'Cannot add or update a child row: a foreign key constraint fails') !== false) {
+								$humanReadableMsg = $LANG['MISSING_IDENTIFIER'];
+								$this->logOrEcho($LANG['ERROR_ADDING'] . ': ' . $humanReadableMsg, 1);
+								$this->setVerboseMode(1);
+								$this->logOrEcho($LANG['ERROR_ADDING'] . ': ' . $errorMsg, 1);
+								$this->setVerboseMode(2);
+							} elseif(strpos($errorMsg, 'Duplicate entry ') !== false) {
+								$humanReadableMsg = $LANG['DUPLICATE_ENTRY'];
+								$this->logOrEcho($LANG['ERROR_ADDING'] . ': ' . $humanReadableMsg, 1);
+								$this->setVerboseMode(1);
+								$this->logOrEcho($LANG['ERROR_ADDING'] . ': ' . $errorMsg, 1);
+								$this->setVerboseMode(2);
+							}else{
+								$humanReadableMsg = $LANG['GENERIC_ERROR'];
+								$this->logOrEcho($LANG['ERROR_ADDING'] . ': ' . $humanReadableMsg, 1);
+								$this->setVerboseMode(1);
+								$this->logOrEcho($LANG['ERROR_ADDING'] . ': ' . $errorMsg, 1);
+								$this->setVerboseMode(2);
+							}
 						}
 					}
 				}
@@ -257,7 +277,7 @@ class OccurrenceImport extends UtilitiesFileImport {
 				$msArr = array();
 				foreach ($fieldArr as $field) {
 					$fieldLower = strtolower($field);
-					if (isset($this->fieldMap[$fieldLower]) && !empty($recordArr[$this->fieldMap[$fieldLower]])) $msArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
+					if (isset($this->fieldMap[$fieldLower]) && !empty($recordArr[$this->fieldMap[$fieldLower]])) $msArr[$field] = $this->encodeString($recordArr[$this->fieldMap[$fieldLower]]);
 				}
 				if (isset($msArr['ms_catalogNumber']) && $msArr['ms_catalogNumber']) {
 					$msArr['catalogNumber'] = $msArr['ms_catalogNumber'];
@@ -281,7 +301,7 @@ class OccurrenceImport extends UtilitiesFileImport {
 					if ($fieldLower == 'occid') {
 						$identifierArr[$field] = $occid;
 					} else {
-						if (isset($this->fieldMap[$fieldLower])) $identifierArr[$field] = $recordArr[$this->fieldMap[$fieldLower]];
+						if (isset($this->fieldMap[$fieldLower])) $identifierArr[$field] = $this->encodeString($recordArr[$this->fieldMap[$fieldLower]]);
 					}
 				}
 				if (empty($identifierArr['occid'])) {

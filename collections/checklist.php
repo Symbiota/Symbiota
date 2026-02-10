@@ -1,8 +1,9 @@
 <?php
 include_once('../config/symbini.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/checklist.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/checklist.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/checklist.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceChecklistManager.php');
+
+Language::load('collections/checklist');
 
 $taxonFilter = array_key_exists('taxonfilter',$_REQUEST) ? filter_var($_REQUEST['taxonfilter'], FILTER_SANITIZE_NUMBER_INT) : '';
 

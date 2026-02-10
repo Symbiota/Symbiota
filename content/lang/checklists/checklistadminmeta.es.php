@@ -20,6 +20,7 @@ $LANG['NUMERIC_RADIUS'] = 'El radio del punto debe ser un valor numérico única
 $LANG['NEED_STATE'] = 'Los listados de especies raras deben tener un estado, provincia, o departamento ingresado en el campo de localidad';
 $LANG['NEED_PARENT'] = 'Necesita seleccionar un listado superior para crear un Listado de Especies Excluídas';
 $LANG['CREATE_CHECKLIST'] = 'Crear un nuevo Listado de Especies';
+$LANG['FOR_PARENT_LIST'] = 'for parent list';
 $LANG['SELECT_PARENT'] = 'Seleccionar un listado superior';
 $LANG['REFERENCE_CHECK'] = 'Listados de Especies más Inclusivos';
 $LANG['NONE'] = 'Ninguno Seleccionado';

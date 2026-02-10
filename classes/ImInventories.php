@@ -169,7 +169,7 @@ class ImInventories extends Manager{
 	private function setChecklistFieldMap(){
 		$this->fieldMap = array('name' => 's', 'authors' => 's', 'type' => 's', 'locality' => 's', 'publication' => 's', 'abstract' => 's', 'notes' => 's',
 			'latCentroid' => 'd', 'longCentroid' => 'd', 'pointRadiusMeters' => 'i', 'access' => 's', 'defaultSettings' => 's', 'dynamicSql' => 's',
-			'dynamicProperties' => 's', 'uid' => 'i', 'footprintWkt' => 's', 'sortSequence' => 'i');
+			'dynamicProperties' => 's', 'uid' => 'i', 'footprintWkt' => 's', 'footprintgeoJson' => 's', 'sortSequence' => 'i');
 	}
 
 	public function deleteChecklist(){
@@ -184,7 +184,6 @@ class ImInventories extends Manager{
 				$stmt->execute();
 				if($stmt->affected_rows && !$stmt->error){
 					$status = true;
-					//Delete userpermissions reference once patch is submitted
 					$this->deleteUserRole('ClAdmin', $this->clid, $GLOBALS['SYMB_UID']);
 				}
 				else $this->errorMessage = $stmt->error;
@@ -199,7 +198,7 @@ class ImInventories extends Manager{
 
 	public function getChecklistArr($pid = 0){
 		$retArr = Array();
-		$sql = 'SELECT c.clid, c.name, c.latcentroid, c.longcentroid, c.access FROM fmchecklists c ';
+		$sql = 'SELECT c.clid, c.name, c.latcentroid, c.longcentroid, c.access, c.defaultsettings FROM fmchecklists c ';
 		if($pid && is_numeric($pid)) $sql .= 'INNER JOIN fmchklstprojlink pl ON c.clid = pl.clid WHERE (pl.pid = '.$pid.') ';
 		$sql .= 'ORDER BY c.sortSequence, c.name';
 		$rs = $this->conn->query($sql);
@@ -208,6 +207,7 @@ class ImInventories extends Manager{
 			$retArr[$r->clid]['lat'] = $r->latcentroid;
 			$retArr[$r->clid]['lng'] = $r->longcentroid;
 			$retArr[$r->clid]['access'] = $r->access;
+			$retArr[$r->clid]['defaultsettings'] = $r->defaultsettings;
 		}
 		$rs->free();
 		return $retArr;
@@ -648,9 +648,6 @@ class ImInventories extends Manager{
 				$returnArr['occurrencesearch'] = $row->occurrencesearch;
 				$returnArr['ispublic'] = $row->ispublic;
 				$returnArr['sortsequence'] = $row->sortsequence;
-				if($row->ispublic == 0){
-					$this->isPublic = 0;
-				}
 			}
 			$rs->free();
 			//Temporarly needed as a separate call until db_schema_patch-1.1.sql is applied

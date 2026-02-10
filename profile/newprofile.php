@@ -1,7 +1,10 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
-@include_once($SERVER_ROOT.'/content/lang/profile/newprofile.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('profile/newprofile');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 header('Cache-Control: no-cache, no-cache="set-cookie", no-store, must-revalidate');
 header('Pragma: no-cache'); // HTTP 1.0.
@@ -105,8 +108,8 @@ if($action == 'Create Login'){
 				alert("<?php echo (isset($LANG['NO_SPACE'])?$LANG['NO_SPACE']:'Password cannot start or end with a space, but they can include spaces within the password'); ?>");
 				return false;
 			}
-			if(pwd1.length < 7){
-				alert("<?php echo (isset($LANG['GREATER_THAN_SIX'])?$LANG['GREATER_THAN_SIX']:'Password must be greater than 6 characters'); ?>");
+			if(pwd1.length < 10){
+				alert("<?= $LANG['PWD_TOO_SHORT'] ?>");
 				return false;
 			}
 			if(pwd1 != pwd2){
@@ -176,7 +179,7 @@ if($action == 'Create Login'){
 					<div style="margin:15px">
 						<form name="retrieveLoginForm" method="post" action="index.php">
 							<input name="email" type="hidden" value="<?php echo $emailAddr; ?>" />
-							<button name="action" type="submit" value="Retrieve Login"><?php echo (isset($LANG['RETRIEVE_LOGIN']) ? $LANG['RETRIEVE_LOGIN'] : 'Retrieve Login'); ?></button>
+							<button name="action" type="submit" value="retrieveLogin"><?php echo (isset($LANG['RETRIEVE_LOGIN']) ? $LANG['RETRIEVE_LOGIN'] : 'Retrieve Login'); ?></button>
 						</form>
 					</div>
 				</div>
@@ -202,12 +205,12 @@ if($action == 'Create Login'){
 					</section>
 					<section class="bottom-breathing-room gridlike-form-row">
 						<label class="gridlike-form-row-label" for="pwd"><?php echo (isset($LANG['PASSWORD']) ? $LANG['PASSWORD'] : 'Password'); ?>:</label>
-						<input class="gridlike-form-row-input" name="pwd" id="pwd" value="" size="20" type="password" autocomplete="off" required />
+						<input class="gridlike-form-row-input" name="pwd" id="pwd" value="" size="20" type="password" autocomplete="off" required  minlength="10" />
 						<span style="color:red;">*</span>
 					</section>
 					<section class="bottom-breathing-room gridlike-form-row">
 						<label class="gridlike-form-row-label" for="pwd2"><?php echo (isset($LANG['PASSWORD_AGAIN']) ? $LANG['PASSWORD_AGAIN'] : 'Password Again'); ?>:</label>
-						<input class="gridlike-form-row-input" id="pwd2" name="pwd2" value="" size="20" type="password" autocomplete="off" required />
+						<input class="gridlike-form-row-input" id="pwd2" name="pwd2" value="" size="20" type="password" autocomplete="off" required  minlength="10" />
 						<span style="color:red;">*</span>
 					</section>
 					<section class="bottom-breathing-room gridlike-form-row">

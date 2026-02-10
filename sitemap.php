@@ -1,9 +1,10 @@
 <?php
 include_once('config/symbini.php');
 include_once($SERVER_ROOT . '/classes/SiteMapManager.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/sitemap.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT.'/content/lang/sitemap.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT.'/content/lang/sitemap.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('sitemap');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $smManager = new SiteMapManager();
@@ -197,6 +198,11 @@ if(!$schemaVersion){
 							<li>
 								<a href="collections/map/staticmaphandler.php"><?= $LANG['MANAGE_TAXON_THUMBNAILS'] ?></a>
 							</li>
+							<li>
+								<a href="<?= $CLIENT_ROOT ?>/admin/othercatalog.php">
+									<?= $LANG['OTHER_CAT_TRANSFER'] ?>
+								</a>
+							</li>
 						</ul>
 						<?php
 					}
@@ -253,7 +259,7 @@ if(!$schemaVersion){
 					<div id="images">
 						<p class="description">
 							<?= $LANG['SEESYMBDOC'] ?>
-							<a href="https://docs.symbiota.org/docs/Collection_Manager_Guide/Images" target="_blank"><?= $LANG['IMGSUB'] ?></a>
+							<a href="https://docs.symbiota.org/Collection_Manager_Guide/Images" target="_blank"><?= $LANG['IMGSUB'] ?></a>
 							<?= $LANG['FORANOVERVIEW'] ?>
 						</p>
 					</div>
@@ -323,7 +329,7 @@ if(!$schemaVersion){
 							<?= $LANG['THEFOLLOWINGSPEC'] ?>
 					</p>
 						<ul>
-							<li><a href="taxa/profile/tpeditor.php?taxon="><?= $LANG['SYN_COM'] ?></a></li>
+							<li><a href="taxa/profile/tpeditor.php?taxon="><?= $LANG['VERNAC_COM'] ?></a></li>
 							<li><a href="taxa/profile/tpeditor.php?taxon=&tabindex=4"><?= $LANG['TEXTDESC'] ?></a></li>
 							<li><a href="taxa/profile/tpeditor.php?taxon=&tabindex=1"><?= $LANG['EDITIMG'] ?></a></li>
 							<li class="nested-li"><a href="taxa/profile/tpeditor.php?taxon=&category=imagequicksort&tabindex=2"><?= $LANG['IMGSORTORD'] ?></a></li>
@@ -440,7 +446,7 @@ if(!$schemaVersion){
 					</h2>
 					<p class="description">
 						<?= $LANG['PARA2'] ?>
-						<a href="https://docs.symbiota.org/docs/Collector_Observer_Guide/" target="_blank"><?= $LANG['SYMBDOCU'] ?></a> <?= $LANG['FORMOREINFO'] ?>.
+						<a href="https://docs.symbiota.org/Collector_Observer_Guide/" target="_blank"><?= $LANG['SYMBDOCU'] ?></a> <?= $LANG['FORMOREINFO'] ?>.
 					<p class="description">
 					<h3 class="subheader">
 						<span>

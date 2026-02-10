@@ -4,9 +4,12 @@
 Language: Español (Spanish)
 ------------------
 */
+$LANG['EDIT_SUCCESS'] = 'Registro editado correctamente.';
+$LANG['EDIT_ERROR'] = 'Error al editar el registro';
+$LANG['DELETE_SUCCESS'] = 'Registro eliminado correctamente';
+$LANG['DELETE_ERROR'] = 'Error al eliminar el registro';
 $LANG['DUPLICATE_MANAGER'] = 'Administrador de Duplicados';
 $LANG['DUP_CLUSTERING'] = 'Agrupación duplicada';
-$LANG['TITLE_VALUE'] = 'El campo de título debe tener un valor';
 $LANG['PERS_MANAGE_MENU'] = 'Menú de gestión personal';
 $LANG['COL_MANAGE'] = 'Gestión de colecciones';
 $LANG['DUP_MANAGE'] = 'Gestión de duplicados';
@@ -36,5 +39,7 @@ $LANG['DET_BY'] = 'Determinado por';
 $LANG['NO_DUP_CLUSTERS'] = 'Ningún clúster duplicado coincide con la solicitud. Considere volver al menú Duplicar clúster y crear por lotes clústeres duplicados.';
 $LANG['RETURN_MAIN'] = 'Volver al menú principal';
 $LANG['NOT_AUTH'] = 'No estás autorizado a acceder a esta página';
+$LANG['BATCH_COPY_GEOREFERENCE_DUPLICATES'] = 'Copia por lotes de datos de georreferencia duplicados';
+$LANG['BATCH_COPY_GEOREFERENCE_DUPLICATES_EXPLANATION'] = 'Herramienta para copiar datos de georreferencia de duplicados vinculados';
 
 ?>

@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PortalIndex;
 use Illuminate\Http\Request;
+use App\Helpers\Helper;
 
 class InstallationController extends Controller{
 	/**
@@ -17,7 +18,7 @@ class InstallationController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/installation",
 	 *	 operationId="/api/v2/installation",
-	 *	 tags={""},
+	 *	 tags={"Installation"},
 	 *	 @OA\Parameter(
 	 *		 name="limit",
 	 *		 in="query",
@@ -69,7 +70,7 @@ class InstallationController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/installation/{identifier}",
 	 *	 operationId="/api/v2/installation/identifier",
-	 *	 tags={""},
+	 *	 tags={"Installation"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
@@ -92,15 +93,15 @@ class InstallationController extends Controller{
 		$portalObj = null;
 		if(is_numeric($id)) $portalObj = PortalIndex::find($id);
 		else $portalObj = PortalIndex::where('guid',$id)->first();
-		if(!$portalObj->count()) $portalObj = ["status"=>false,"error"=>"Unable to locate installation based on identifier"];
+		if(!$portalObj) $portalObj = ["status"=>false,"error"=>"Unable to locate installation based on identifier"];
 		return response()->json($portalObj);
 	}
 
 	/**
 	 * @OA\Get(
-	 *	 path="/api/v2/installation/ping",
-	 *	 operationId="/api/v2/installation/ping",
-	 *	 tags={""},
+	 *	 path="/api/v2/installation/status",
+	 *	 operationId="/api/v2/installation/status",
+	 *	 tags={"Installation"},
 	 *	 @OA\Response(
 	 *		 response="200",
 	 *		 description="Returns installation metadata",
@@ -112,15 +113,17 @@ class InstallationController extends Controller{
 	 *	 ),
 	 * )
 	 */
-	public function pingPortal(Request $request){
+	public function portalStatus(Request $request){
 		$portalObj = null;
 		if(isset($_ENV['DEFAULT_TITLE']) && isset($_ENV['PORTAL_GUID'])){
 			$portalObj['status'] = true;
+			$portalObj['statusCode'] = 200;
 			$portalObj['portalName'] = $_ENV['DEFAULT_TITLE'];
 			$portalObj['guid'] = $_ENV['PORTAL_GUID'];
 			$portalObj['managerEmail'] = $_ENV['ADMIN_EMAIL'];
-			$portalObj['urlRoot'] = $this->getServerDomain().$_ENV['CLIENT_ROOT'];
+			$portalObj['urlRoot'] = Helper::getDomain().$_ENV['CLIENT_ROOT'];
 			$portalObj['symbiotaVersion'] = $_ENV['SYMBIOTA_VERSION'];
+			$portalObj['apiVersion'] = $_ENV['API_VERSION'];
 		}
 		else{
 			$portalObj['status'] = false;
@@ -133,13 +136,13 @@ class InstallationController extends Controller{
 
 	/**
 	 * @OA\Get(
-	 *	 path="/api/v2/installation/{identifier}/touch",
-	 *	 operationId="/api/v2/installation/identifier/touch",
-	 *	 tags={""},
+	 *	 path="/api/v2/installation/{identifier}/handshake",
+	 *	 operationId="/api/v2/installation/identifier/handshake",
+	 *	 tags={"Installation"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
-	 *		 description="Identifier of the remote installation",
+	 *		 description="Identifier of the remote installation (GUID)",
 	 *		 required=true,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
@@ -162,6 +165,9 @@ class InstallationController extends Controller{
 	 * )
 	 */
 	public function portalHandshake($id, Request $request){
+		$this->validate($request, [
+			'endpoint' => 'required'
+		]);
 		$responseArr = array( 'status' => 500, 'error' => 'Unknown error' );
 		$portalObj = PortalIndex::where('guid',$id)->get();
 		if($portalObj->count()){
@@ -170,7 +176,7 @@ class InstallationController extends Controller{
 			unset($responseArr['error']);
 		}
 		elseif($id == $_ENV['PORTAL_GUID']){
-			//Make sure touch isn't referring to self
+			//Make sure handshake isn't referring to self; portals can't handshake with themselves
 			$responseArr['status'] = 400;
 			$responseArr['error'] = 'Registration failed: handshake is referencing self';
 		}
@@ -178,12 +184,23 @@ class InstallationController extends Controller{
 			//Remote installation not yet in system, thus add and then process list from remote
 			if($baseUrl = $request->input('endpoint')){
 				//Insert portal
-				$urlPing = $baseUrl.'/api/v2/installation/ping';
-				if($remote = $this->getAPIResponce($urlPing)){
+				$urlPing = $baseUrl.'/api/v2/installation/status';
+				$remote = Helper::getAPIResponse($urlPing);
+				if(!$remote){
+					//Needed to support older versions of API
+					$urlPing = $baseUrl.'/api/v2/installation/ping';
+					$remote = Helper::getAPIResponse($urlPing);
+				}
+				if($remote){
 					if($id == $remote['guid']){
 						//Shake back just to makes sure remote knows about self
-						$remoteTouch = $baseUrl.'/api/v2/installation/'.$_ENV['PORTAL_GUID'].'/touch?endpoint='.htmlentities($this->getServerDomain().$_ENV['CLIENT_ROOT']);
-						$this->getAPIResponce($remoteTouch, true);
+						$remoteHandshake = $baseUrl . '/api/v2/installation/' . $_ENV['PORTAL_GUID'].'/handshake?endpoint=' . htmlentities(Helper::getDomain() . $_ENV['CLIENT_ROOT']);
+						$handShakeStatus = Helper::getAPIResponse($remoteHandshake, true);
+						if(!$handShakeStatus){
+							//Needed to support older versions of API
+							$remoteHandshake = $baseUrl . '/api/v2/installation/' . $_ENV['PORTAL_GUID'].'/touch?endpoint=' . htmlentities(Helper::getDomain() . $_ENV['CLIENT_ROOT']);
+							$handShakeStatus = Helper::getAPIResponse($remoteHandshake, true);
+						}
 						try {
 							//Register remote
 							$portalObj = PortalIndex::create($remote);
@@ -192,19 +209,30 @@ class InstallationController extends Controller{
 							unset($responseArr['error']);
 							//Register all portals listed within remote, if not alreay registered
 							$urlInstallation = $baseUrl.'/api/v2/installation';
-							if($remoteInstallationArr = $this->getAPIResponce($urlInstallation)){
+							if($remoteInstallationArr = Helper::getAPIResponse($urlInstallation)){
 								$currentRegistered = 0;
 								$newRegistration = 0;
 								foreach($remoteInstallationArr['results'] as $portal){
 									if(PortalIndex::where('guid',$portal['guid'])->count()) $currentRegistered++;
 									elseif($portal['guid'] != $_ENV['PORTAL_GUID']){
 										//If remote exists, add by retriving info directly from source
-										$remotePing = $portal['urlRoot'].'/api/v2/installation/ping';
-										if($newRemote = $this->getAPIResponce($remotePing)){
+										$remotePing = $portal['urlRoot'].'/api/v2/installation/status';
+										$newRemote = Helper::getAPIResponse($remotePing);
+										if(!$newRemote){
+											//Needed to support older versions of API
+											$remotePing = $portal['urlRoot'].'/api/v2/installation/ping';
+											$newRemote = Helper::getAPIResponse($remotePing);
+										}
+										if($newRemote){
 											PortalIndex::create($newRemote);
-											//Touch remote installation but don't wait for a response because propagation across a large network can take awhile
-											$urlTouch = $portal['urlRoot'].'/api/v2/installation/'.$_ENV['PORTAL_GUID'].'/touch?endpoint='.htmlentities($this->getServerDomain().$_ENV['CLIENT_ROOT']);
-											$this->getAPIResponce($urlTouch, true);
+											//Handshake remote installation but don't wait for a response because propagation across a large network can take awhile
+											$urlHandshake = $portal['urlRoot'] . '/api/v2/installation/' . $_ENV['PORTAL_GUID'] . '/handshake?endpoint=' . htmlentities(Helper::getDomain() . $_ENV['CLIENT_ROOT']);
+											$handShakeStatus = Helper::getAPIResponse($urlHandshake, true);
+											if(!$handShakeStatus){
+												//Needed to support older versions of API
+												$urlHandshake = $portal['urlRoot'] . '/api/v2/installation/' . $_ENV['PORTAL_GUID'] . '/handshake?endpoint=' . htmlentities(Helper::getDomain() . $_ENV['CLIENT_ROOT']);
+												$handShakeStatus = Helper::getAPIResponse($urlHandshake, true);
+											}
 											$newRegistration++;
 										}
 									}
@@ -242,7 +270,7 @@ class InstallationController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/installation/{identifier}/occurrence",
 	 *	 operationId="/api/v2/installation/identifier/occurrence",
-	 *	 tags={""},
+	 *	 tags={"Installation"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
@@ -336,40 +364,5 @@ class InstallationController extends Controller{
 		PortalIndex::findOrFail($id)->delete();
 		return response('Portal Index deleted successfully', 200);
 		*/
-	}
-
-	//Helper functions
-	private function getAPIResponce($url, $asyc = false){
-		$resJson = false;
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch, CURLOPT_URL, $url);
-		//curl_setopt($ch, CURLOPT_HTTPGET, true);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-		if($asyc) curl_setopt($ch, CURLOPT_TIMEOUT_MS, 500);
-		$resJson = curl_exec($ch);
-		if(!$resJson){
-			$this->errorMessage = 'FATAL CURL ERROR: '.curl_error($ch).' (#'.curl_errno($ch).')';
-			return false;
-			//$header = curl_getinfo($ch);
-		}
-		curl_close($ch);
-		return json_decode($resJson,true);
-	}
-
-	private function getServerDomain(){
-		$domain = 'http://';
-		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $domain = 'https://';
-		if(!empty($GLOBALS['SERVER_HOST'])){
-			if(substr($GLOBALS['SERVER_HOST'], 0, 4) == 'http') $domain = $GLOBALS['SERVER_HOST'];
-			else $domain .= $GLOBALS['SERVER_HOST'];
-		}
-		else $domain .= $_SERVER['SERVER_NAME'];
-		if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443 && !strpos($domain, ':'.$_SERVER['SERVER_PORT'])){
-			$domain .= ':'.$_SERVER['SERVER_PORT'];
-		}
-		$domain = filter_var($domain, FILTER_SANITIZE_URL);
-		return $domain;
 	}
 }

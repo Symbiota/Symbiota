@@ -13,9 +13,10 @@ $SECURITY_KEY = '';				//Typically a UUID used to verify access to certain web s
 
 $SERVER_HOST = '';				//fully qualified domain name or IP address of the server. e.g. 'symbiota.org' or 'localhost'
 $CLIENT_ROOT = '';				//URL path to project root folder (relative path w/o domain, e.g. '/seinet')
-$SERVER_ROOT = '';				//Full path to Symbiota project root folder
-$TEMP_DIR_ROOT = $SERVER_ROOT . '/temp';				//Must be writable by Apache; will use system default if not specified
-$LOG_PATH = $SERVER_ROOT . '/content/logs';					//Must be writable by Apache; will use <SYMBIOTA_ROOT>/temp/logs if not specified
+$SERVER_ROOT = '';				//Full path to Symbiota project root folder E.g. /var/www/html/portalname
+//Temp directory must be writable by Apache; it is highly recommended to set this to a path outside of the Apache DocumentRoot to avoid malicous file uploads; will use system default if not specified
+$TEMP_DIR_ROOT = '';		//E.g. /var/www/temp/portalname
+$LOG_PATH = $SERVER_ROOT . '/content/logs';					//Must be writable by Apache; will use <SYMBIOTA_ROOT>/content/logs if not specified
 
 //Path to CSS files
 $CSS_BASE_PATH = $CLIENT_ROOT . '/css';
@@ -25,7 +26,7 @@ $PUBLIC_MEDIA_UPLOAD_ROOT = '/content/imglib';
 
 //the root for the collection image directory
 $MEDIA_DOMAIN = '';				//Domain path to images, if different from portal
-$MEDIA_ROOT_URL = '';				//URL path to images
+$MEDIA_ROOT_URL = '';			//URL path to images
 $MEDIA_ROOT_PATH = '';			//Writable path to images, especially needed for downloading images
 
 
@@ -40,6 +41,10 @@ $IPLANT_IMAGE_IMPORT_PATH = '';		//Path used to map/import images uploaded to th
 $TESSERACT_PATH = ''; 			//Needed for OCR function in the occurrence editor page
 $NLP_LBCC_ACTIVATED = 0;
 $NLP_SALIX_ACTIVATED = 0;
+
+// Vouchervision OCR/Transcription
+$VOUCHERVISION_API_KEY = ''; // API key to use to access Vouchervision API. See https://leafmachine.org/vouchervisiongo/
+$VOUCHERVISION_API_URL = 'https://vouchervision-go-738307415303.us-central1.run.app/process-url'; // URL to the Vouchervision API server
 
 //Module activations
 $OCCURRENCE_MOD_IS_ACTIVE = 1;
@@ -82,7 +87,7 @@ $IGSN_ACTIVATION = 0;
 $WIKIPEDIA_TAXON_TAB = 1;			//Activates wikipedia tab on taxon profile page (wikiMedia API)
 $OVERRIDE_DOWNLOAD_LOGIN_REQUIREMENT = 0;	//0 = Login required for downloading occurrence data (default), 1 = occurrence data download allowed without being logged in
 
-$ALLOWEDCHARACTERS = '';			//List of search allowed characters separated by commas, e.g. '1,6'
+$SEARCHABLE_CHARACTERS = '';			//List of characters that can be searched from the public search, separated by commas, e.g. '1,6'
 
 //$SMTP_ARR = array('host'=>'','port'=>587,'username'=>'','password'=>'','timeout'=>60);  //Host is requiered, others are optional and can be removed
 
@@ -100,6 +105,7 @@ $SHOULD_BE_ABLE_TO_CREATE_PUBLIC_USER = true;
 $SYMBIOTA_LOGIN_ENABLED = true;
 
 $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT=false;
+$SHOULD_PROTECT_CULTIVATED = false; // if true, taxa with locality security that have cultivation status === 1 will have recordSecurity set to 1 in the protectGlobalSpecies function
 $AUTH_PROVIDER = 'oid';
 $LOGIN_ACTION_PAGE = 'openIdAuth.php';
 $SHOULD_USE_HARVESTPARAMS = false;
@@ -110,13 +116,7 @@ $SHOULD_USE_MINIMAL_MAP_HEADER = false;
 $DATE_DEFAULT_TIMEZONE = NULL; // This should be set if server default timezone isn't populated correctly by deafult (e.g., $DATE_DEFAULT_TIMEZONE = 'America/Phoenix';)
 
 $PRIVATE_VIEWING_ONLY = false; // Setting to true sets all content to be password protected besides below pages
-$PRIVATE_VIEWING_OVERRIDES = ['/index.php', '/misc/contacts.php','/misc/aboutproject.php', '/profile/newprofile.php', '/profile/index.php'];  //These pages will always be accessible to public viewing.  Add to as needed. 
-
-$COOKIE_SECURE = false;
-if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) {
-	header('strict-transport-security: max-age=600');
-	$COOKIE_SECURE = true;
-}
+$PRIVATE_VIEWING_OVERRIDES = ['/index.php', '/misc/contacts.php','/misc/aboutproject.php', '/profile/newprofile.php', '/profile/index.php'];  //These pages will always be accessible to public viewing.  Add to as needed.
 
 // Creates Togglable Overlay for GeoJSON file
 // Only Support with Leaflet Map
@@ -125,7 +125,23 @@ if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERV
 // label : String - Short text label to describe the overlay toggle
 // popup_template: String - Html string for what label should be generated on a GeoJSON feature. Will replace text like `[Property_name]` with a features property value if present
 // template_properties: Array[String] - List of property names to used in popup generation
-$GEO_JSON_LAYERS = [];
+$GEO_JSON_LAYERS = [
+ [
+  'filename' => 'us_counties.geojson',
+  'label' => 'U.S. Counties',
+  'popup_template' => '<div>[NAME]</div>',
+  'template_properties' => [
+   'NAME',
+  ]
+ ],
+];
+
+// Toggles `strict-transport-security` header
+// Do not turn off for production portals
+$HTTPS_ONLY = true;
+
+// Link to portal or organization donation page
+$DONATE_LINK = '';
 
 //Base code shared by all pages; leave as is
 include_once('symbbase.php');

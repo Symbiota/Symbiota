@@ -42,6 +42,7 @@ $LANG['OBSERVER'] = 'Observer';
 $LANG['COLLECTOR'] = 'Collector';
 $LANG['NUMBER'] = 'Number';
 $LANG['VERBATIM_DATE'] = 'Verbatim Date';
+$LANG['EVENT_TIME'] = 'Event Time';
 $LANG['ADDITIONAL_COLLECTORS'] = 'Additional Collectors';
 $LANG['LOCALITY'] = 'Locality';
 $LANG['PROTECTED'] = 'details protected';
@@ -90,6 +91,7 @@ $LANG['STRAT_REMARKS'] = 'Stratigraphic Remarks';
 $LANG['ELEMENT'] = 'Element';
 $LANG['SLIDE_PROPS'] = 'Slide Properties';
 $LANG['CONTEXT_ID'] = 'Geological Context ID';
+$LANG['BASIS_OF_RECORD'] = 'Basis of Record';
 $LANG['EXCICCATI_SERIES'] = 'Exsiccati series';
 $LANG['MATERIAL_SAMPLES'] = 'Material Samples';
 $LANG['DISPLAY_ALL_MATERIAL_SAMPLES'] = 'Display all Material Sample units';
@@ -174,5 +176,6 @@ $LANG['REPORTED_AS_INAPPROPRIATE'] = 'The following comment has been reported as
 $LANG['EMAIL_NOT_DEFINED'] = 'ERROR: Portal admin email not defined in central configuration file';
 $LANG['UNABLE_TO_VERIFY_TARGET'] = 'ERROR deleting voucher: unable to verify target checklist for voucher';
 $LANG['PERMISSION_ERROR'] = 'ERROR deleting voucher: permission error';
-
+$LANG['CULT_STATUS'] = 'Cultivation Status';
+$LANG['CULTIVATED'] = 'Cultivated';
 ?>

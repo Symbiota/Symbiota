@@ -1,8 +1,11 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/content/lang/taxa/index.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/TaxonProfile.php');
-Header('Content-Type: text/html; charset='.$CHARSET);
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('taxa/index');
+
+header('Content-Type: text/html; charset='.$CHARSET);
 
 $tid = $_REQUEST['tid'];
 $taxAuthId = array_key_exists('taxauthid',$_REQUEST)?$_REQUEST['taxauthid']:1;

@@ -1,8 +1,10 @@
 <?php
 include_once('../../../config/symbini.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/includes/imagetab.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imagetab.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imagetab.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/Media.php');
+
+Language::load('collections/editor/includes/imagetab');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $occId = filter_var($_GET['occid'], FILTER_SANITIZE_NUMBER_INT);
@@ -278,7 +280,7 @@ $creatorArray = Media::getCreatorArray();
 									<a href="<?php echo $imgArr["url"]; ?>"  title="<?php echo $imgArr["url"]; ?>" target="_blank">
 										<?php
 										$urlDisplay = $imgArr["url"];
-										if(strlen($urlDisplay) > 60) $urlDisplay = '...'.substr($urlDisplay,-60);
+										if($urlDisplay && strlen($urlDisplay) > 60) $urlDisplay = '...'.substr($urlDisplay,-60);
 										echo $urlDisplay;
 										?>
 									</a>
@@ -354,7 +356,7 @@ $creatorArray = Media::getCreatorArray();
 										<div>
 											<b><?php echo $LANG['WEB_URL']; ?>: </b><br/>
 											<input name="url" type="text" value="<?php echo $imgArr["url"]; ?>" style="width:95%;" />
-											<?php if(stripos($imgArr['url'], $MEDIA_ROOT_URL) === 0){ ?>
+											<?php if(stripos($imgArr['url'] ?? '', $MEDIA_ROOT_URL) === 0){ ?>
 												<div style="margin-left:10px;">
 													<input type="checkbox" name="renameweburl" value="1" />
 													<?php echo $LANG['RENAME_FILE']; ?>

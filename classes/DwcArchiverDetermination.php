@@ -1,9 +1,29 @@
 <?php
-class DwcArchiverDetermination{
+include_once($SERVER_ROOT . '/classes/DwcArchiverBaseManager.php');
 
-	public static function getDeterminationArr($schemaType,$extended){
+class DwcArchiverDetermination extends DwcArchiverBaseManager{
+
+	private $extended = false;
+
+	public function __construct($connOverride){
+		parent::__construct('write', $connOverride);
+	}
+
+	public function __destruct(){
+		parent::__destruct();
+	}
+
+	public function initiateProcess($filePath){
+		$this->setFieldArr();
+		$this->setSql();
+
+		$this->setFileHandler($filePath);
+	}
+
+	private function setFieldArr(){
 		$fieldArr = array();
-		$fieldArr['coreid'] = 'o.occid';
+		$termArr = array();
+		$fieldArr['coreid'] = 'x.occid';
 		$termArr['identifiedBy'] = 'http://rs.tdwg.org/dwc/terms/identifiedBy';
 		$fieldArr['identifiedBy'] = 'd.identifiedBy';
 		//$termArr['identifiedByID'] = 'https://symbiota.org/terms/identifiedByID';
@@ -36,49 +56,42 @@ class DwcArchiverDetermination{
 		$fieldArr['recordID'] = 'd.recordID AS recordID';
 		$termArr['modified'] = 'http://purl.org/dc/terms/modified';
 		$fieldArr['modified'] = 'd.initialTimeStamp AS modified';
-		$termArr['detID'] = 'https://symbiota.org/terms/detID';
-		$fieldArr['detID'] = 'd.detID';
 
-		$retArr['terms'] = self::trimBySchemaType($termArr,$schemaType,$extended);
-		$retArr['fields'] = self::trimBySchemaType($fieldArr,$schemaType,$extended);
-		return $retArr;
+		$this->fieldArr['terms'] = $this->trimBySchemaType($termArr);
+		$this->fieldArr['fields'] =  $this->trimBySchemaType($fieldArr);
 	}
 
-	private static function trimBySchemaType($detArr,$schemaType,$extended){
+	private function trimBySchemaType($dataArr){
 		$trimArr = array();
-		if($schemaType == 'dwc'){
+		if($this->schemaType == 'dwc'){
 			$trimArr = array('identifiedByID', 'tidInterpreted', 'identificationIsCurrent');
 		}
-		elseif($schemaType == 'symbiota'){
-			if(!$extended){
+		elseif($this->schemaType == 'symbiota'){
+			if(!$this->extended){
 				$trimArr = array('identifiedByID', 'tidInterpreted');
 			}
 		}
-		elseif($schemaType == 'backup'){
+		elseif($this->schemaType == 'backup'){
 			$trimArr = array();
 		}
-		elseif($schemaType == 'coge'){
-			$trimArr = array();
-		}
-		return array_diff_key($detArr,array_flip($trimArr));
+		return array_diff_key($dataArr, array_flip($trimArr));
 	}
 
-	public static function getSql($fieldArr, $tableJoins, $conditionSql){
-		$sql = '';
-		if($fieldArr && $conditionSql){
-			$sql = 'SELECT ';
-			$delimiter = '';
-			foreach($fieldArr as $fieldSql){
-				if($fieldSql) $sql .= $delimiter.$fieldSql;
-				$delimiter = ', ';
+	private function setSql(){
+		if($this->fieldArr){
+			$sqlFrag = '';
+			foreach($this->fieldArr['fields'] as $colName){
+				if($colName) $sqlFrag .= ', ' . $colName;
 			}
-			$sql .= ' FROM omoccurdeterminations d INNER JOIN omoccurrences o ON d.occid = o.occid LEFT JOIN taxa t ON d.tidinterpreted = t.tid ';
-			$sql .= $tableJoins;
-			$sql .= $conditionSql.' AND d.appliedstatus = 1 ';
-			$sql .= 'ORDER BY o.collid';
-			//echo '<div>'.$sql.'</div>'; exit;
+			$this->sqlArr[] = 'SELECT ' . trim($sqlFrag, ', ') . ' FROM omoccurdeterminations d INNER JOIN omexportoccurrences x ON d.occid = x.occid
+				LEFT JOIN taxa t ON d.tidinterpreted = t.tid
+				WHERE x.omExportID = ? AND d.appliedstatus = 1 ';
 		}
-		return $sql;
+	}
+
+	//Setters and getters
+	public function setExtended($bool){
+		if($bool) $this->extended = true;
 	}
 }
 ?>

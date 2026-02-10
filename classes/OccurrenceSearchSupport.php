@@ -1,5 +1,8 @@
 <?php
-include_once($SERVER_ROOT.'/content/lang/collections/misc/collstats.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/misc/collstats');
+
 class OccurrenceSearchSupport {
 
 	private $conn;
@@ -178,7 +181,7 @@ class OccurrenceSearchSupport {
 									<?php
 									foreach($catArr as $collid => $collName2){
 										?>
-										<section class="gridlike-form-row bottom-breathing-room-rel">
+										<section id="occurrence-search-support-section" class="gridlike-form-row bottom-breathing-room-rel">
 											<?php
 											if($displayIcons){
 												?>
@@ -188,7 +191,7 @@ class OccurrenceSearchSupport {
 														$cIcon = (substr($collName2["icon"],0,6)=='images'?$CLIENT_ROOT:'').$collName2["icon"];
 														?>
 														<a href = '<?= $CLIENT_ROOT ?>/collections/misc/collprofiles.php?collid=<?= $collid ?>'>
-															<img src="<?= $cIcon ?>" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection <?php echo isset($collName2["collname"]) ? substr($collName2["collname"],0, 20) : substr($idStr,0, 20) ?>' />
+															<img src="<?= $cIcon ?>" style="border:0px;width:30px;height:30px;" alt='Icon associated with collection <?php echo isset($collName2["collname"]) ? substr($collName2["collname"],0, 20) : substr($idStr,0, 20) ?>' onerror="this.onerror=null; this.src='<?php echo $CLIENT_ROOT; ?>/images/image-icon.svg'"/>
 														</a>
 														<?php
 													}
@@ -212,7 +215,7 @@ class OccurrenceSearchSupport {
 													$codeStr = ' ('.$collName2['instcode'];
 													if($collName2['collcode']) $codeStr .= '-'.$collName2['collcode'];
 													$codeStr .= ')';
-													echo '<div class="collectionname">'.$collName2["collname"].'</div><div class="collectioncode">'.$codeStr.'</div>';
+													echo '<div class="collectionname">' . $collName2["collname"] . $codeStr . '</div>';
 													?>
 													<a href='<?= $CLIENT_ROOT ?>/collections/misc/collprofiles.php?collid=<?= $collid ?>' target="_blank">
 														<?php echo (isset($LANG['MORE_INFO'])?$LANG['MORE_INFO']:'more info...'); ?>
@@ -242,7 +245,7 @@ class OccurrenceSearchSupport {
 				<?php
 				foreach($collArr as $collid => $cArr){
 					?>
-					<section class="gridlike-form-row bottom-breathing-room-rel">
+					<section id="occurrence-search-support-single-collection-details" class="gridlike-form-row bottom-breathing-room-rel">
 						<?php
 						if($displayIcons){
 							?>
@@ -342,9 +345,9 @@ class OccurrenceSearchSupport {
 		if(isset($_REQUEST['db'])){
 			$dbInput = $_REQUEST['db'];
 			if(is_array($dbInput)){
-				if(in_array('allspec', $dbInput)) $dbStr = 'allspec';
+				if(in_array('all', $dbInput)) $dbStr = 'all';
+				elseif(in_array('allspec', $dbInput)) $dbStr = 'allspec';
 				elseif(in_array('allobs', $dbInput)) $dbStr = 'allobs';
-				elseif(in_array('all', $dbInput)) $dbStr = 'all';
 				else{
 					$dbArr = array_unique($dbInput);
 					$dbStr = implode(',', $dbArr);
@@ -352,9 +355,9 @@ class OccurrenceSearchSupport {
 			}
 			else{
 				//Input is a string
-				if(strpos($dbStr,'allspec') !== false) $dbStr = 'allspec';
+				if(strpos($dbStr,'all') !== false) $dbStr = 'all';
+				elseif(strpos($dbStr,'allspec') !== false) $dbStr = 'allspec';
 				elseif(strpos($dbStr,'allobs') !== false) $dbStr = 'allobs';
-				elseif(strpos($dbStr,'all') !== false) $dbStr = 'all';
 				else $dbStr = $dbInput;
 			}
 		}

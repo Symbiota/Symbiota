@@ -29,7 +29,6 @@ $LANG['URL_TO_SOURCE'] = 'URL to source project. Use when linking to an external
 $LANG['SOURCE_URL'] = 'Source URL';
 $LANG['COPYRIGHT'] = 'Copyright';
 $LANG['OCC_REC_NUM'] = 'Occurrence Record #';
-$LANG['LINK_TO_OCC'] = 'Link to Occurrence Record';
 $LANG['LOCALITY'] = 'Locality';
 $LANG['NOTES'] = 'Notes';
 $LANG['UPLOAD_IMAGE'] = 'Upload Media Resource';

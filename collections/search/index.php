@@ -7,11 +7,13 @@ include_once($SERVER_ROOT . '/classes/DatasetsMetadata.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceManager.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceAttributeSearch.php');
 include_once($SERVER_ROOT . '/classes/AssociationManager.php');
-if ($LANG_TAG == 'en' || !file_exists($SERVER_ROOT . '/content/lang/collections/search/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/search/index.en.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/search/index.' . $LANG_TAG . '.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/search/index');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
-$filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
+$JS_LANG_FILENAME = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
 
 $dbsWithBracketsRemoved = array_key_exists("db", $_GET) ?  str_replace(array('[', ']'), '', $_GET["db"]) : '';
 $explodable = $dbsWithBracketsRemoved;
@@ -31,6 +33,7 @@ $siteData = new DatasetsMetadata();
 
 $catId = array_key_exists("catid", $_REQUEST) ? $_REQUEST["catid"] : '';
 $collList = $collManager->getFullCollectionList($catId);
+$polygonList = $collManager->getSearchablePolygons();
 $specArr = (isset($collList['spec']) ? $collList['spec'] : null);
 $obsArr = (isset($collList['obs']) ? $collList['obs'] : null);
 $associationManager = new AssociationManager();
@@ -46,18 +49,19 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 	<?php
 	include_once($SERVER_ROOT . '/includes/head.php');
 	?>
-	<link href="<?= $CLIENT_ROOT ?>/collections/search/css/searchStyles.css?ver=1" type="text/css" rel="stylesheet">
-	<link href="<?= $CLIENT_ROOT ?>/collections/search/css/searchStylesInner.css" type="text/css" rel="stylesheet">
-	<link href="<?= $CLIENT_ROOT ?>/collections/search/css/tables.css" type="text/css" rel="stylesheet">
+	<link href="<?= $CSS_BASE_PATH ?>/searchStyles.css?ver=1" type="text/css" rel="stylesheet">
+	<link href="<?= $CSS_BASE_PATH ?>/searchStylesInner.css" type="text/css" rel="stylesheet">
+	<link href="<?= $CSS_BASE_PATH ?>/tables.css" type="text/css" rel="stylesheet">
 	<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet">
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT . '/js/jquery-ui.min.js'; ?>" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT . '/collections/individual/domManipulationUtils.js'; ?>" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT . '/js/symb/localitySuggest.js' ?>" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js?ver=1" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/domManipulationUtils.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/localitySuggest.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.list.js?ver=20251002>" type="text/javascript"></script>
 	<script>
 		const clientRoot = '<?php echo $CLIENT_ROOT; ?>';
-		const paleoTimes = <?= json_encode($paleoTimes) ?>;
+		const paleoTimes = <?= json_encode($paleoTimes ?? []) ?>;
 		const handleAccordionExpand = () => {
 			const accordions = document.querySelectorAll('input[class="accordion-selector"]');
 			const accordionIds = [];
@@ -101,18 +105,19 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 </head>
 
 <body>
+	<div id="service-container" data-search-var="<?= $collectionSource; ?>"></div>
 	<?php
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<!-- This is inner text! -->
 	<div role="main" id="innertext" class="inner-search" style="max-width: 1920px">
-		<h1 class="page-heading"><?php echo $LANG['SAMPLE_SEARCH'] ?> <a href="https://docs.symbiota.org/Symbiota-Documentation/docs/User_Guide/searching_records" target="_blank" title="<?= $LANG['HOW_TO_SEARCH'] ?>" alt="<?= $LANG['HOW_TO_SEARCH'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></h1>
+		<h1 class="page-heading"><?php echo $LANG['SAMPLE_SEARCH'] ?> <a href="https://docs.symbiota.org/User_Guide/searching_records" target="_blank" title="<?= $LANG['HOW_TO_SEARCH'] ?>" alt="<?= $LANG['HOW_TO_SEARCH'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></h1>
 		<div id="error-msgs" class="errors"></div>
 		<div style="display: grid; grid-template-columns: 3fr 1fr;">
 			<button onClick="handleAccordionExpand()" class="inner-search button" id="expand-all-button" type="button" style="font-size: 1rem;"><?= $LANG['EXPAND_ALL_SECTIONS']; ?></button>
 			<button onClick="handleAccordionCollapse()" class="inner-search button" id="collapse-all-button" type="button" style="display: none; font-size: 1rem;"><?= $LANG['COLLAPSE_ALL_SECTIONS']; ?></button>
 		</div>
-		<form id="params-form" action="<?php echo $CLIENT_ROOT . "/collections/list.php"; ?>">
+		<form id="params-form" method="POST" action="<?php echo $CLIENT_ROOT . "/collections/list.php"; ?>">
 			<!-- Criteria forms -->
 			<div class="accordions">
 				<!-- Taxonomy -->
@@ -211,6 +216,22 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 									</div>
 								</div>
 							</div>
+							<?php if (!empty($polygonList)): ?>
+							<div class="input-text-container">
+								<label for="polygons" class="input-text--outlined">
+									<span class="screen-reader-only"><?php echo $LANG['POLYGONS'] ?></span>
+									<select style="padding: 0.5rem;" name="polygons[]" id="polygons" data-chip="<?php echo $LANG['POLYGONS'] ?>"> {{/*  add 'multiple' to allow several polygons  */}}
+										<option value=""></option>
+										<?php
+										foreach($polygonList as $row){
+											echo '<option value="'.$row['geoThesID'].'" data-chip="'.$LANG['POLYGONS'].'">'.htmlspecialchars($row['geoterm']).'</option>';
+										}
+										?>
+									</select>
+									<span class="inset-input-label"><?php echo $LANG['POLYGONS'] ?></span>
+								</label>
+							</div>
+							<?php endif; ?>
 						</div>
 					</div>
 				</section>
@@ -298,7 +319,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 								<div class="text-area-container">
 									<label for="footprintwkt" class="text-area--outlined">
 										<span class="screen-reader-only"><?php echo $LANG['POLYGON'] ?></span>
-										<textarea id="footprintwkt" name="footprintGeoJson" class="full-width-pcnt" rows="5"></textarea>
+										<textarea id="footprintwkt" name="footprintGeoJson" class="full-width-pcnt" rows="5" onchange="cleanPolygon(this)"></textarea>
 										<span class="inset-input-label"><?php echo $LANG['POLYGON'] ?></span>
 										<span class="assistive-text"><?= $LANG['GEOJSON_FORMAT'] ?></span>
 									</label>
@@ -456,10 +477,10 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 									<label for="materialsampletype"><?= $LANG['MATERIAL_SAMPLE_TYPE'] ?></label>
 									<select name="materialsampletype" id="materialsampletype">
 										<option id="materialsampletype-none" data-chip="<?php echo $LANG['MATERIAL_SAMPLE'] . ': ---' ?>" value="">---------------</option>
-										<option id="materialsampletype-all-ms" data-chip="<?php echo $LANG['MATERIAL_SAMPLE'] . ': ' . $LANG['ALL_MATERIAL_SAMPLE'] ?>" value="all-ms"><?= $LANG['ALL_MATERIAL_SAMPLE'] ?></option>
+										<option id="materialsampletype-all-ms" data-chip="<?php echo $LANG['MATERIAL_SAMPLE']?>" value="all-ms"><?= $LANG['ALL_MATERIAL_SAMPLE'] ?></option>
 										<?php
 										foreach ($matSampleTypeArr as $matSampeType) {
-											echo '<option id="materialsampletype-' . $matSampeType . '" data-chip="' . $LANG['MATERIAL_SAMPLE'] . ': ' . $matSampeType . '" value="' . $matSampeType . '">' . $matSampeType . '</option>';
+											echo '<option id="materialsampletype-' . $matSampeType . '" data-chip="' . $LANG['MATERIAL_SAMPLE'] . '" value="' . $matSampeType . '">' . $matSampeType . '</option>';
 										}
 										?>
 									</select>
@@ -482,7 +503,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 							<!-- Accordion selector -->
 							<input type="checkbox" id="trait" class="accordion-selector" />
 							<!-- Accordion header -->
-							<label for="trait" class="accordion-header"><?php echo $LANG['TRAIT_CRITERIA'] ?> <a href="https://docs.symbiota.org/Symbiota-Documentation/docs/User_Guide/traits" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
+							<label for="trait" class="accordion-header"><?php echo $LANG['TRAIT_CRITERIA'] ?> <a href="https://docs.symbiota.org/User_Guide/traits" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
 							<!-- Accordion content -->
 							<div class="content">
 								<div id="search-form-trait">
@@ -524,7 +545,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 					<input type="checkbox" id="associations" class="accordion-selector" />
 
 					<!-- Accordion header -->
-					<label for="associations" class="accordion-header"><?php echo $LANG['ASSOCIATIONS'] ?> <a href="https://docs.symbiota.org/Symbiota-Documentation/docs/User_Guide/associations" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
+					<label for="associations" class="accordion-header"><?php echo $LANG['ASSOCIATIONS'] ?> <a href="https://docs.symbiota.org/User_Guide/associations" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
 
 					<!-- Taxonomy -->
 					<div id="search-form-associations" class="content">
@@ -613,13 +634,13 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 										<a href="#" onclick="toggleCharacterGroup('<?php echo $idStr; ?>'); return false;" class="condense-expand">
 											<span class="heading-text"><?php echo htmlspecialchars($heading); ?></span>
 											<span class="icon-wrapper">
-												<img id="plus-<?php echo $idStr; ?>" src="../../images/plus.png" alt="Expand" style="display:inline; width:1em;">
-												<img id="minus-<?php echo $idStr; ?>" src="../../images/minus.png" alt="Collapse" style="display:none; width:1em;">
+												<img id="plus-<?php echo $idStr; ?>" src="../../images/plus.png" alt="Expand" style="display:none; width:1em;">
+												<img id="minus-<?php echo $idStr; ?>" src="../../images/minus.png" alt="Collapse" style="display:inline; width:1em;">
 											</span>
 										</a>
 									</div>
 
-									<div id="char-block-<?php echo $idStr; ?>" style="display:none;">
+									<div id="char-block-<?php echo $idStr; ?>" style="display:block;">
 									<?php foreach ($charGroup as $cid => $char): ?>
 										<div class="character-block">
 											<div class="char-names"><?php echo htmlspecialchars($char['charName']); ?></div>
@@ -650,13 +671,13 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 
 				<!-- Geological Context -->
 				<?php
-				if ($GLOBALS['ACTIVATE_PALEO']) { ?>
+				if (!empty($GLOBALS['ACTIVATE_PALEO'])) { ?>
 					<section>
 						<!-- Accordion selector -->
 						<input type="checkbox" id="geocontext" class="accordion-selector" />
 
 						<!-- Accordion header -->
-						<label for="geocontext" class="accordion-header"><?php echo $LANG['GEO_CONTEXT'] ?></label>
+						<label for="geocontext" class="accordion-header"><?php echo $LANG['GEO_CONTEXT'] ?> <a href="https://docs.symbiota.org//User_Guide/searching_records#geological-context" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
 
 						<!-- Content -->
 						<div id="search-form-geocontext" class="content">
@@ -782,20 +803,14 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 	include($SERVER_ROOT . '/includes/footer.php');
 	?>
 </body>
-<script src="<?php echo $filename ?>" type="text/javascript"></script>
-<script src="js/searchform.js?ver=2" type="text/javascript"></script>
-<script src="<?php echo $CLIENT_ROOT . '/collections/search/js/alerts.js?v=202107'; ?>" type="text/javascript"></script>
-<script src="<?php echo $CLIENT_ROOT . '/js/symb/api.taxonomy.taxasuggest.js'; ?>" type="text/javascript"></script>
-<script src="<?php echo $CLIENT_ROOT . '/js/symb/collections.index.js?ver=20171215' ?>" type="text/javascript"></script>
+<script src="<?= $JS_LANG_FILENAME ?>" type="text/javascript"></script>
+<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=2" type="text/javascript"></script>
+<script src="<?= $CLIENT_ROOT ?>/js/alerts.js?v=202107" type="text/javascript"></script>
+<script src="<?= $CLIENT_ROOT ?>/js/symb/api.taxonomy.taxasuggest.js" type="text/javascript"></script>
+<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.index.js?ver=20171215>" type="text/javascript"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
-		<?php
-		if ($collectionSource) {
-		?>
-			sessionStorage.querystr = "<?php echo $collectionSource; ?>";
-		<?php
-		}
-		?>
+		setSessionQueryStr();
 		setSearchForm(document.getElementById("params-form"));
 		toggleTheNonDefaultsClosed(<?php echo $DEFAULTCATID ?>);
 		toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);

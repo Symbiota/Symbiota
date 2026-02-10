@@ -2,9 +2,10 @@
 include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceEditorResource.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceDuplicate.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-if($LANG_TAG != 'en' && !file_exists($SERVER_ROOT.'/content/lang/collections/editor/includes/resourcetab.' . $LANG_TAG . '.php')) $LANG_TAG = 'en';
-include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/resourcetab.' . $LANG_TAG . '.php');
+Language::load('collections/editor/includes/resourcetab');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $occid = filter_var($_GET['occid'] ?? 0, FILTER_SANITIZE_NUMBER_INT);
@@ -25,6 +26,7 @@ $genticArr = $occManager->getGeneticArr();
 $dupManager = new OccurrenceDuplicate();
 $dupClusterArr = $dupManager->getClusterArr($occid);
 ?>
+<div id="occResourceDiv">
 <script>
 	let defaultRelationships = ["<?= implode('","', $defaultRelationshipArr) ?>"];
 	let resourceRelationships = ["<?= implode('","', $resourceRelationshipArr) ?>"];
@@ -232,7 +234,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 	.resourceTab #subType-div select{ min-width: 130px; }
 	.resourceTab #taxonomy-fieldset{ display: none; }
 </style>
-<div id="voucherdiv" style="width:795px;">
+<div id="voucherdiv">
 	<?php
 	$assocArr = $occManager->getOccurrenceRelationships();
 	$basisOfRecordArr = array('HumanObservation' => $LANG['HUMAN_OBS'], 'LivingSpecimen' => $LANG['LIVING_SPEC'], 'MachineObservation' => $LANG['MACHINE_OBS'], 'FossilSpecimen' => $LANG['FOSSIL_SPEC'],
@@ -373,6 +375,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 						<input name="occid" type="hidden" value="<?php echo $occid; ?>" />
 						<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 						<input name="occindex" type="hidden" value="<?php echo $occIndex ?>" />
+						<input name="createdUid" type="hidden" value="<?php echo $GLOBALS['SYMB_UID'] ?>" />
 						<button name="submitaction" type="submit" class="button" value="createAssociation"><?php echo $LANG['CREATE_ASSOC']; ?></button>
 					</div>
 				</div>
@@ -712,7 +715,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 					<div style="margin-left:15px;"><b><?php echo $LANG['IDENTIFIER']; ?>:</b> <?php echo $gArr['id']; ?></div>
 					<div style="margin-left:15px;"><b><?php echo $LANG['LOCUS']; ?>:</b> <?php echo $gArr['locus']; ?></div>
 					<div style="margin-left:15px;">
-						<b><?php echo $LANG['URL']; ?>:</b> <a href="<?php echo htmlspecialchars($gArr['resourceurl'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank"><?php echo htmlspecialchars($gArr['resourceurl'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
+						<b><?php echo $LANG['URL']; ?>:</b> <a href="<?php echo htmlspecialchars($gArr['resourceurl'] ?? '', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank"><?php echo htmlspecialchars($gArr['resourceurl'] ?? '', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 					</div>
 					<div style="margin-left:15px;"><b><?php echo $LANG['NOTES']; ?>:</b> <?php echo $gArr['notes']; ?></div>
 				</div>
@@ -769,4 +772,5 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 			?>
 		</div>
 	</fieldset>
+</div>
 </div>

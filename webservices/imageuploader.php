@@ -38,7 +38,6 @@ $catnum = array_key_exists('catnum',$_POST)?$_POST['catnum']:'';
 
 $pHandler = new ProfileManager();
 $qHandler = new OccurrenceAPIManager();
-$occManager = new OccurrenceEditorImages();
 $authenticated = false;
 $isEditor = false;
 $size = Array();

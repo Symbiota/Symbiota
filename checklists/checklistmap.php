@@ -1,8 +1,10 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistManager.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/checklistmap.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/checklists/checklistmap.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT.'/content/lang/checklists/checklistmap.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('checklists/checklistmap');
+
 header('Content-Type: text/html; charset='.$CHARSET);
 
 $clid = filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT);
@@ -62,7 +64,11 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
                zoom: 3,
                center: [41,-95],
             };
-            map = new LeafletMap("map_canvas", dmOptions);
+			map = new LeafletMap("map_canvas",
+				dmOptions,
+				JSON.parse(`<?= json_encode($GEO_JSON_LAYERS ?? []) ?>`)
+			);
+
             const leafletSmallPin = img => L.icon({
                iconUrl: img,
                iconSize:     [12, 20],

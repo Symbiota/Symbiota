@@ -16,6 +16,7 @@ $_ENV['DEFAULT_TITLE'] = $DEFAULT_TITLE;
 $_ENV['ADMIN_EMAIL'] = $ADMIN_EMAIL;
 $_ENV['CLIENT_ROOT'] = $CLIENT_ROOT;
 $_ENV['SYMBIOTA_VERSION'] = $CODE_VERSION;
+$_ENV['API_VERSION'] = '2.0';
 
 
 class Controller extends BaseController{
@@ -34,6 +35,8 @@ class Controller extends BaseController{
 	 * @OA\Server(url="../")
 	 */
 
+	protected $userArr = null;
+
 	public function __construct(){
 	}
 
@@ -43,35 +46,36 @@ class Controller extends BaseController{
 	 * Input: security token
 	 * Return: user object with role/permission settings
 	 */
-	public function authenticate(Request $request){
+	protected function authenticate(Request $request): bool{
+		$status = false;
 		$this->validate($request, [
 			'apiToken' => 'required'
 		]);
-		$apiToken = $request->input('apiToken');
 		//TODO: convert to an actual user object
-		$userArr = false;
-
-		if($_ENV['SECURITY_KEY'] == $apiToken){
-			//Matches portal's global security key set by administrator within the symbini.php, which provides administrative level access
-			$userArr = array();
-			$userArr['roles'][] = array('role' => 'SuperAdmin');
+		$this->userArr = array();
+		if($uid = UserAccessToken::where('token', $request->input('apiToken'))->value('uid')){
+			$status = true;
+			//Check user security tokens
+			$this->userArr['uid'] = $uid;
+			$result = UserRole::where('uid', $uid)->groupBy('role')->get(['role', UserRole::raw('GROUP_CONCAT(tablePK) as pks')])->toArray();
+			foreach($result as $roleArr){
+				$this->userArr['roles'][$roleArr['role']] = explode(',', $roleArr['pks']);
+			}
 		}
-		else{
-			//See if security key matches keys associated with collections, if so, request is an admin of collection
-			$collid = Collection::where('securityKey', $apiToken)->value('collid');
-			$userArr = array();
-			if($collid){
-				$userArr['roles'][] = array('role' => 'CollAdmin', 'tableName' => 'omcollections', 'tablePK' => $collid);
+		return $status;
+	}
+
+	protected function isAuthorized(string $role, int $roleKey = null): bool{
+		if(!$role || !$this->userArr) return false;
+		if(array_key_exists($role, $this->userArr['roles'])){
+			if($roleKey){
+				if(in_array($roleKey, $this->userArr['roles'][$role])) return true;
 			}
 			else{
-				$uid = UserAccessToken::where('token', $apiToken)->value('uid');
-				if($uid){
-					//Check user security tokens
-					$userArr['uid'] = $uid;
-					$userArr['roles'] = UserRole::where('uid', $uid)->get(['role', 'tableName', 'tablePk'])->toArray();
-				}
+				//Role key does not have to be verified if null
+				return true;
 			}
 		}
-		return $userArr;
+		return false;
 	}
 }

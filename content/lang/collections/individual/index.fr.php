@@ -41,6 +41,7 @@ $LANG['TYPE_STATUS'] = 'État du type';
 $LANG['OBSERVER'] = 'Observateur';
 $LANG['COLLECTOR'] = 'Collectionneur';
 $LANG['NUMBER'] = 'Numéro';
+$LANG['EVENT_TIME'] = 'Heure de l\'événement';
 $LANG['VERBATIM_DATE'] = 'Date Textuelle';
 $LANG['ADDITIONAL_COLLECTORS'] = 'Collectionneurs Supplémentaires';
 $LANG['LOCALITY'] = 'Localité';
@@ -90,6 +91,7 @@ $LANG['STRAT_REMARKS'] = 'Remarques Stratigraphiques';
 $LANG['ELEMENT'] = 'Élément';
 $LANG['SLIDE_PROPS'] = 'Propriétés de Diapositive';
 $LANG['CONTEXT_ID'] = 'ID de Context Géologique';
+$LANG['BASIS_OF_RECORD'] = "Base d'Enregistrement";
 $LANG['EXCICCATI_SERIES'] = 'Série Exsiccati';
 $LANG['MATERIAL_SAMPLES'] = 'Material Samples';
 $LANG['DISPLAY_ALL_MATERIAL_SAMPLES'] = 'Display all Material Sample units';
@@ -174,5 +176,6 @@ $LANG['REPORTED_AS_INAPPROPRIATE'] = 'Le commentaire suivant a été enregistré
 $LANG['EMAIL_NOT_DEFINED'] = 'ERREUR : adresse e-mail de l\'administrateur du portail non définie dans le fichier de configuration central';
 $LANG['UNABLE_TO_VERIFY_TARGET'] = 'ERREUR lors de la suppression du bon : impossible de vérifier la liste de contrôle cible pour le bon';
 $LANG['PERMISSION_ERROR'] = 'ERREUR lors de la suppression du bon : erreur d\'autorisation';
-
+$LANG['CULT_STATUS'] = 'Statut de Culture';
+$LANG['CULTIVATED'] = 'Cultivé';
 ?>

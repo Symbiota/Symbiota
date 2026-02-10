@@ -44,15 +44,17 @@ $LANG['ADD_UNIT'] = 'Add Unit';
 $LANG['TERMS_WITHIN'] = 'geographic terms within';
 $LANG['ROOT_TERMS'] = 'Root Terms (terms without parents)';
 $LANG['CHILDREN'] = 'children';
-$LANG['NO_RECORDS'] = 'No records returned';
 $LANG['POLYGON'] = 'Polygon';
 $LANG['IMG_OF_GLOBE'] = 'Image of the globe';
 $LANG['NO_POLYGON'] = 'No';
 $LANG['YES_POLYGON'] = 'Yes';
 $LANG['EDIT_POLYGON'] = 'Edit Polygon';
+$LANG['SEARCHABLE'] = 'Is Searchable';
+$LANG['POLYGON_REQUIRED'] = 'Polygon is required before enabling';
 $LANG['SEARCH'] = 'Search';
 $LANG['OTHER'] = 'Other ';
 $LANG['SEARCH_GEOTHESAURUS'] = 'Search Geographic Thesaurus';
 $LANG['ADD_TERM_LIST'] = 'Add term to list';
+$LANG['EMPTY_GEOTHESAURUS'] = 'Geographic Thesaurus is empty.<br>Add terms manually or open Geographic Harvester for additional import options.';
 
 ?>

@@ -1,8 +1,9 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherReport.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/vamissingtaxa.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/checklists/vamissingtaxa.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT.'/content/lang/checklists/vamissingtaxa.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('checklists/vamissingtaxa');
 
 $clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $pid = array_key_exists('pid', $_REQUEST) ? filter_var($_REQUEST['pid'], FILTER_SANITIZE_NUMBER_INT) : 0;

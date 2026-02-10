@@ -17,7 +17,7 @@ class InventoryController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/inventory",
 	 *	 operationId="/api/v2/inventory",
-	 *	 tags={""},
+	 *	 tags={"Inventory"},
 	 *	 @OA\Parameter(
 	 *		 name="limit",
 	 *		 in="query",
@@ -70,7 +70,7 @@ class InventoryController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/inventory/{identifier}",
 	 *	 operationId="/api/v2/inventory/identifier",
-	 *	 tags={""},
+	 *	 tags={"Inventory"},
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
@@ -100,7 +100,7 @@ class InventoryController extends Controller{
 	 * @OA\Get(
 	 *	 path="/api/v2/inventory/{identifier}/taxa",
 	 *	 operationId="/api/v2/inventory/identifier/taxa",
-	 *	 tags={""},
+	 *	 tags={"Inventory"},
 	 *	 @OA\Parameter(
 	 *		 name="limit",
 	 *		 in="query",

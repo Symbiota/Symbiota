@@ -162,7 +162,7 @@ class OccurrenceMaintenance {
 		$geoArr = array();
 		$sql = 'SELECT o.occid, g.iso2
 			FROM omoccurrences o INNER JOIN geographicthesaurus g ON o.country = g.geoterm
-			WHERE (o.countryCode IS NULL OR o.countryCode != g.iso2) ';
+			WHERE (g.geolevel = 50) AND (o.countryCode IS NULL OR o.countryCode != g.iso2) ';
 		//if($this->collidStr) $sql .= 'AND collid IN('.$this->collidStr.')';
 		$rs = $this->conn->query($sql);
 		$cnt = 0;
@@ -479,12 +479,14 @@ class OccurrenceMaintenance {
 		$this->outputMsg('Protecting globally rare species... ',1);
 		//Only protect names on list and synonym of accepted names
 		$sensitiveArr = $this->getSensitiveTaxa();
+		$shouldProtectCultivated = $GLOBALS['SHOULD_PROTECT_CULTIVATED'] ?? false;
+		$cultivationClause = $shouldProtectCultivated ? '' : 'AND (cultivationStatus = 0 OR cultivationStatus IS NULL)';
 
 		if($sensitiveArr){
 			$sql = 'UPDATE omoccurrences
 				SET recordSecurity = 1
 				WHERE (recordSecurity = 0) AND (securityReason IS NULL)
-				AND (cultivationStatus = 0 OR cultivationStatus IS NULL) AND (tidinterpreted IN(' . implode(',', $sensitiveArr) . ')) ';
+				'.$cultivationClause.' AND (tidinterpreted IN(' . implode(',', $sensitiveArr) . ')) ';
 			if($this->collidStr) $sql .= 'AND collid IN('.$this->collidStr.')';
 			if($this->conn->query($sql)){
 				$status += $this->conn->affected_rows;

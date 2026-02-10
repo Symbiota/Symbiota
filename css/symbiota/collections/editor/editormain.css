@@ -13,6 +13,7 @@ fieldset > legend{
 
 select{ 
 	height: 24px;
+	margin-bottom: 2px;
 }
 
 #innertext{
@@ -45,11 +46,12 @@ select{
 	font-size: 1em;
 }
 
-#occdiv{
+#occdiv, #occResourceDiv {
 	width: 900px;
 	resize:both;
 	overflow:auto; /* something other than visible */
 }
+
 
 #admindiv{
 	width: 795px;
@@ -92,8 +94,18 @@ select{
 	cursor:pointer;
 }
 
+#eventTimeToggleDiv{
+	padding-top: 1.25rem;
+	float:left;
+	margin-left:15px;
+	cursor:pointer;
+}
+
+#eventTimeDiv{
+	clear:both;
+}
+
 #idrefdiv{
-	display:none;
 	clear:both;
 }
 
@@ -120,6 +132,9 @@ select{
 	display: inline;
 }
 
+.field-div{
+	margin: 3px;
+}
 
 /* Field entry styles shared across all display types */
 .idNameInput{
@@ -254,7 +269,6 @@ select{
 	}
 }
 
-
 .icon-button {
 	padding: 6px;
 	border-width: 1px;
@@ -304,14 +318,14 @@ select{
 
 /*Misc styling*/
 .docimg { 
-	border:			0px;
-	width:			11px;
-	margin-bottom:	2px; 
+	border: 0px;
+	width: 11px;
+	margin-bottom: 2px; 
 }
 
 .editimg { 
-	border:			0px;
-	width:			15px;
+	border: 0px;
+	width: 15px;
 }
 
 img[id^="activeimg-"] {
@@ -383,4 +397,9 @@ img[id^="activeimg-"] {
 
 button.icon-button svg {
 	fill: var(--light-color);
-  }
+}
+
+form label:has(+ input[required]):after {
+	color: red;
+	content: '*';
+}

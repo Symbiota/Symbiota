@@ -1,9 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/download/index.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT.'/content/lang/collections/download/index.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/download/index.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/download/index');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 if(empty($OVERRIDE_DOWNLOAD_LOGIN_REQUIREMENT) && !$SYMB_UID){
@@ -14,6 +15,7 @@ $sourcePage = array_key_exists('sourcepage', $_REQUEST) ? $_REQUEST['sourcepage'
 $downloadType = array_key_exists('dltype', $_REQUEST) ? $_REQUEST['dltype'] : 'specimen';
 $taxonFilterCode = array_key_exists('taxonFilterCode', $_REQUEST) ? filter_var($_REQUEST['taxonFilterCode'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $displayHeader = array_key_exists('displayheader', $_REQUEST) ? filter_var($_REQUEST['displayheader'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$isPublicSearch = (isset($_REQUEST['publicsearch']) && !$_REQUEST['publicsearch']) ? 0 : 1;		//Value is true by default, and only false if explicitly set to false
 $searchVar = array_key_exists('searchvar', $_REQUEST) ? htmlspecialchars($_REQUEST['searchvar'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE| ENT_QUOTES) : '';
 
 $dwcManager = new DwcArchiverCore();
@@ -34,7 +36,7 @@ $filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIEN
 	<script src="<?php echo $filename ?>" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
-			var dialogArr = new Array("schemanative","schemadwc");
+			var dialogArr = new Array("schemanative","schemadwc", "taxaresolution");
 			var dialogStr = "";
 			for(i=0;i<dialogArr.length;i++){
 				dialogStr = dialogArr[i]+"info";
@@ -111,7 +113,7 @@ $filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIEN
 			}, timeToClose);
 		}
 
-        
+
 	</script>
 	<style>
 		fieldset{ margin:10px; padding:10px }
@@ -137,9 +139,9 @@ $filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIEN
 	}
 	?>
 	<div style="width:100%; background-color:white;">
-		<h1 class="page-heading"><?= $LANG['DATA_GUIDE'] ?></h1>
+		<h1 class="page-heading"><?= $LANG['COLL_SEARCH_DWNL'] ?></h1>
 		<div style="margin:15px 0px;">
-		<?= $LANG['GUIDE_ONE'] ?> <a href="../../includes/usagepolicy.php#images"> <?= $LANG['GUIDE_LINK'] ?> </a>.
+		<?= '<b>' . $LANG['DATA_GUIDE'] . '</b>' ?><?= $LANG['GUIDE_ONE'] ?> <a href="../../includes/usagepolicy.php#images"> <?= $LANG['GUIDE_LINK'] ?> </a>.
 			<?= $LANG['GUIDE_TWO'] ?>
 		</div>
 		<div style='margin:30px 15px;'>
@@ -174,10 +176,24 @@ $filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIEN
 								</a><br/>
 								<div id="schemadwcinfodialog">
 									<?= $LANG['DARWIN_GUIDE'] ?>
-									<a href="http://rs.tdwg.org/dwc/index.htm"target='_blank'> <?= $LANG['DARWIN_GUIDE_LINK'] ?></a>.
+									<a href="http://rs.tdwg.org/dwc/index.htm" target='_blank'> <?= $LANG['DARWIN_GUIDE_LINK'] ?></a>.
 								</div>
 							</div>
 						</fieldset>
+
+						<fieldset class="sectionDiv">
+							<legend>  <?= $LANG['TAXONOMIC_RESOLUTION'] ?>:</legend>
+							<input type="checkbox" name="acceptedNameUsage" id="acceptedNameUsage" value="1" />
+							<label for="acceptedNameUsage"> <?= $LANG['ACCEPTED_NAME_USAGE'] ?></label>
+
+							<a id="taxaresolutioninfo" href="#" title="<?= $LANG['MORE_INFO'] ?>" aria-label="<?= $LANG['MORE_INFO'] ?>">
+								<img src="../../images/info.png" alt=" <?= $LANG['IMG_DARWIN_INFO'] ?>" style="width:1.2em;" />
+							</a><br/>
+							<div id="taxaresolutioninfodialog">
+								<?= $LANG['TAXONOMIC_RESOLUTION_GUIDE'] ?>
+							</div>
+						</fieldset>
+
 						<fieldset class="sectionDiv">
 							<legend>  <?= $LANG['DATA_EXTS'] ?>:</legend>
 							<div class="formElemDiv">
@@ -232,7 +248,7 @@ $filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIEN
 						if($downloadType == 'checklist') echo '<input name="schema" type="hidden" value="checklist" />';
 						elseif($downloadType == 'georef') echo '<input name="schema" type="hidden" value="georef" />';
 						?>
-						<input name="publicsearch" type="hidden" value="1" />
+						<input name="publicsearch" type="hidden" value="<?= $isPublicSearch ?>" />
 						<input name="taxonFilterCode" type="hidden" value="<?= $taxonFilterCode; ?>" />
 						<input name="sourcepage" type="hidden" value="<?= htmlspecialchars($sourcePage); ?>" />
 						<input name="searchvar" type="hidden" value="<?= $searchVar ?>" />

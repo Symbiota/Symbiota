@@ -97,7 +97,7 @@ $LANG['ABOUT'] = 'Acerca de Symbiota';
 $LANG['CODE'] = 'Versión del código';
 $LANG['SCHEMA'] = 'Versión del esquema';
 $LANG['AUTHO'] = 'Usted esta autorizado/a para el acceso a los siguientes paginas';
-$LANG['SYN_COM'] = 'Modificar Sinonimia / Nombres Comunes';
+$LANG['VERNAC_COM'] = 'Editar Nombres Vernáculos/Comunes';
 $LANG['TEXTDESC'] = 'Modificar Descripciones Textuales';
 $LANG['EDITIMG'] = 'Editar medios';
 $LANG['IMGSORTORD'] = 'Editar orden de clasificación medios';
@@ -108,5 +108,6 @@ $LANG['DATMANPAG'] = 'Página de Administración de Conjuntos de Datos';
 $LANG['DATA_AUTHORIZED_TO_EDIT'] = 'conjuntos de datos que está autorizado a editar';
 $LANG['MANAGE_TAXON_THUMBNAILS'] = 'Administrar miniaturas de mapas de perfil de taxonomía';
 $LANG['TAXINTER'] = 'Derechos de usuarios con interés taxonómico';
+$LANG['OTHER_CAT_TRANSFER'] = 'Herramienta de transferencia de otros números de catálogo';
 
 ?>

@@ -1,15 +1,18 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorImages.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/imageoccursubmit.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/imageoccursubmit.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/editor/imageoccursubmit.en.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
+include_once($SERVER_ROOT.'/classes/Media.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/editor/imageoccursubmit');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/imageoccursubmit.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $collid  = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $action = array_key_exists('action',$_POST)?$_POST['action']:'';
 
-$occurManager = new OccurrenceEditorImages();
+$occurManager = new OccurrenceEditorManager();
 $occurManager->setCollid($collid);
 $collMap = $occurManager->getCollMap();
 
@@ -27,12 +30,34 @@ if($collid){
 	}
 }
 if($isEditor){
-	if($action == 'Submit Occurrence'){
-		if($occurManager->addImageOccurrence($_POST)){
-			$occid = $occurManager->getOccid();
-			if($occid) $statusStr = $LANG['NEW_RECORD_CREATED'].': <a href="occurrenceeditor.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank" rel="noopener">' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
-		}
-		else{
+	if($action == 'Submit Occurrence') {
+		if($occurManager->addOccurrence($_POST) && ($occid = $occurManager->getOccid())) {
+			try {
+				$occur_map = $occurManager->getOccurMap()[$occid];
+				$path = get_occurrence_upload_path(
+					$occur_map['institutioncode'],
+					$occur_map['collectioncode'],
+					$occur_map['catalognumber']
+				);
+
+				$_POST['occid'] = $occid;
+
+				Media::uploadAndInsert(
+					$_POST,
+					$_FILES['imgfile'],
+					new LocalStorage($path)
+				);
+
+				if($errors = Media::getErrors()) {
+					$statusStr = "ERROR: " . array_pop($errors);
+				} else {
+					$statusStr = $LANG['NEW_RECORD_CREATED'].': <a href="occurrenceeditor.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank" rel="noopener">' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
+				}
+			} catch(Exception $e) {
+				$statusStr = "ERROR: " . $e->getMessage();
+			}
+
+		} else {
 			$statusStr = $occurManager->getErrorStr();
 		}
 	}
@@ -126,7 +151,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 					<div class="targetdiv">
 						<input type='hidden' name='MAX_FILE_SIZE' value='10000000' />
 						<div>
-							<input name='imgfile' type='file' aria-label="<?php echo (isset($LANG['UPLOAD']) ? $LANG['UPLOAD'] : 'Upload the File'); ?>" />
+							<input name='imgfile' type='file' aria-label="<?php echo (isset($LANG['UPLOAD']) ? $LANG['UPLOAD'] : 'Upload the File'); ?>" accept="<?= implode(",", $ALLOWED_MEDIA_MIME_TYPES) ?>"/>
 						</div>
 						<div id="newimagediv"></div>
 						<div style="margin:10px 0px;">
@@ -139,7 +164,8 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 						</div>
 						<div>
 							<b><?php echo $LANG['IMAGE_URL']?>:</b><br/>
-							<input type='text' name='imgurl' size='70' />
+							<!-- <input type='text' name='imgurl' size='70' /> -->
+							<input type='text' name='originalUrl' size='70' />
 						</div>
 						<div>
 							<b><?php echo $LANG['MEDIUM_URL']?>:</b><br/>
@@ -147,7 +173,8 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 						</div>
 						<div>
 							<b><?php echo $LANG['THUMBNAIL_URL']?>:</b><br/>
-							<input type='text' name='tnurl' size='70' />
+							<!-- <input type='text' name='tnurl' size='70' /> -->
+							<input type='text' name='thumbnailUrl' size='70' />
 						</div>
 						<div>
 							<input type="checkbox" name="copytoserver" value="1" <?php echo (isset($_POST['copytoserver'])&&$_POST['copytoserver']?'checked':''); ?> />

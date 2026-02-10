@@ -1,8 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCleaner.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/cleaning/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/cleaning/index.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/cleaning/index.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/cleaning/index');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $collid = array_key_exists('collid',$_REQUEST) ? $_REQUEST['collid'] : 0;
@@ -11,7 +13,6 @@ if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/c
 
 //Sanitation
 if(!is_numeric($collid)) $collid = 0;
-
 $cleanManager = new OccurrenceCleaner();
 if($collid) $cleanManager->setCollId($collid);
 $collMap = current($cleanManager->getCollMap());
@@ -25,6 +26,7 @@ if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,
 if($collMap['colltype'] == 'General Observations'){
 	$cleanManager->setObsUid($SYMB_UID);
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -123,23 +125,28 @@ if($collMap['colltype'] == 'General Observations'){
 					</ul>
 				</section>
 			</div>
-<!--
 			<h2>Specimen Coordinates</h2>
 			<div style="margin:0px 0px 40px 15px;">
 				<div>
 					These tools are to aid collection managers in verifying, ranking, and managing coordinate information associated with occurrence records.
 				</div>
-				<fieldset style="margin:10px 0px;padding:5px;width:550px">
-					<legend style="font-weight:bold">Statistics and Action Panel</legend>
+
+				<section class="fieldset-like max-width-fit-65 ">
+					<h3>
+						<span>
+							Statistics and Action Panel
+						</span>
+					</h3>
 					<ul>
 						<?php
+
 						$statsArr = $cleanManager->getCoordStats();
 						?>
 						<li>Georeferenced: <?php echo $statsArr['coord']; ?>
 							<?php
 							if($statsArr['coord']){
 								?>
-								<a href="../editor/occurrencetabledisplay.php?collid=<?= $collid ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NOT_NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
+								<a href="../editor/occurrencetabledisplay.php?collid=<?= $collid ?>&occindex=0&q_catalognumber=&q_customfield1=decimalLatitude&q_customtype1=NOT_NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
 									<img src="../../images/edit.png" style="width:10px" />
 								</a>
 								<?php
@@ -150,7 +157,7 @@ if($collMap['colltype'] == 'General Observations'){
 							<?php
 							if($statsArr['noCoord']){
 								?>
-								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=IS_NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
+								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&occindex=0&q_catalognumber=&q_customfield1=decimalLatitude&q_customtype1=IS_NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
 									<img src="../../images/edit.png" style="width:10px" />
 								</a>
 								<a href="../georef/batchgeoreftool.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" style="margin-left:5px;" title="Open Batch Georeference Tool" target="_blank">
@@ -164,7 +171,7 @@ if($collMap['colltype'] == 'General Observations'){
 							<?php
 							if($statsArr['noCoord_verbatim']){
 								?>
-								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=IS_NULL&q_customfield2=verbatimcoordinates&q_customtype2=NOT_NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
+								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&occindex=0&q_catalognumber=&q_customfield1=decimalLatitude&q_customtype1=IS_NULL&q_customfield2=verbatimCoordinates&q_customtype2=NOT_NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
 									<img src="../../images/edit.png" style="width:10px" />
 								</a>
 								<?php
@@ -175,7 +182,7 @@ if($collMap['colltype'] == 'General Observations'){
 							<?php
 							if($statsArr['noCoord_noVerbatim']){
 								?>
-								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL&q_customfield2=verbatimcoordinates&q_customtype2=NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
+								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&occindex=0&q_catalognumber=&q_customfield1=decimalLatitude&q_customtype1=NULL&q_customfield2=verbatimCoordinates&q_customtype2=NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
 									<img src="../../images/edit.png" style="width:10px" />
 								</a>
 								<?php
@@ -186,16 +193,15 @@ if($collMap['colltype'] == 'General Observations'){
 							<a href="coordinatevalidator.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">Verify coordinates against political boundaries</a>
 						</li>
 					</ul>
-				</fieldset>
+				</section>
 			</div>
- -->
 			<h2> <?php echo (isset($LANG['TAXONOMY']) ? $LANG['TAXONOMY'] : 'Taxonomy') ?> </h2>
 			<div style="margin:0px 0px 40px 15px;">
 				<div>
 					<?php echo (isset($LANG['TAXONOMY_DESCR']) ? $LANG['TAXONOMY_DESCR'] : 'These tools are meant to aid in locating and fixing taxonomic errors and inconsistencies.') ?>
 				</div>
 				<section class="fieldset-like max-width-fit-65 ">
-					<h2> <span> <?php echo (isset($LANG['STAT_ACT_PANEL']) ? $LANG['STAT_ACT_PANEL'] : 'Statistics and Action Panel') ?> </span> </h2>
+					<h3> <span> <?php echo (isset($LANG['STAT_ACT_PANEL']) ? $LANG['STAT_ACT_PANEL'] : 'Statistics and Action Panel') ?> </span> </h3>
 					<ul>
 						<li><a href="taxonomycleaner.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"> <?php echo (isset($LANG['ANALYZE_NAMES']) ? $LANG['ANALYZE_NAMES'] : 'Analyze taxonomic names...') ?> </a></li>
 						<li><a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&stat=taxonomy#taxonomystats"> <?php echo (isset($LANG['TAXON_DISTR']) ? $LANG['TAXON_DISTR'] : 'Taxonomic Distributions...') ?> </a></li>

@@ -1,9 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ImageImport.php');
-include_once($SERVER_ROOT.'/content/lang/imagelib/admin/imageloader.en.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/imagelib/admin/imageloader.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/imagelib/admin/imageloader.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT . '/content/lang/imagelib/admin/imageloader.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('imagelib/admin/imageloader');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $action = array_key_exists('action', $_POST) ? $_POST['action'] : '';
