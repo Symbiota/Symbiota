@@ -10,6 +10,47 @@ class CollectionFormManager extends Manager {
         parent::__construct(null, 'write');
     }
 
+    public function getCollectionsByCategory() {
+        $sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, c.colltype, ccl.ccpk,
+            cat.category, cat.icon AS caticon, cat.acronym
+            FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid
+            LEFT JOIN omcollcatlink ccl ON c.collid = ccl.collid
+            LEFT JOIN omcollcategories cat ON ccl.ccpk = cat.ccpk
+            WHERE s.recordcnt > 0 AND (cat.inclusive IS NULL OR cat.inclusive = 1 OR cat.ccpk = 1)
+            order by cat.category, collectionname';
+
+        $collectionsByCategory = [
+            'Specimens' => [],
+            'Observations' => [],
+        ];
+
+        try {
+            $rs = QueryUtil::executeQuery(Database::connect('readonly'), $sql);
+
+            foreach ($rs->fetch_all(MYSQLI_ASSOC) as $collection) {
+                $type = $collection['colltype'] === 'Preserved Specimens' ?
+                    'Specimens' :
+                    'Observations';
+
+                if (!isset($collectionsByCategory[$type][$collection['category']])) {
+                    $collectionsByCategory[$type][$collection['category']] = [
+                        'name' => $collection['category'],
+                        'icon' => $collection['caticon'],
+                        'acronym' => $collection['acronym'],
+                        'id' => $collection['ccpk'],
+                        'collections' => [],
+                    ];
+                }
+
+                $collectionsByCategory[$type][$collection['category']]['collections'][] = $collection;
+            }
+        } catch (Throwable $th) {
+            echo $th->getMessage();
+        }
+
+        return $collectionsByCategory;
+    }
+
     public function generateCodeStr($collectionArr) {
         if (!(array_key_exists('institutioncode', $collectionArr) || array_key_exists('collcode', $collectionArr))) {
             return null;

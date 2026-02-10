@@ -8,14 +8,8 @@ include_once($SERVER_ROOT.'/classes/CollectionFormManager.php');
 Language::load('collections/sharedterms');
 
 $catId = array_key_exists("catid",$_REQUEST)?$_REQUEST["catid"]:'';
-
-$sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, c.colltype, ccl.ccpk,
-	cat.category, cat.icon AS caticon, cat.acronym
-	FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid
-	LEFT JOIN omcollcatlink ccl ON c.collid = ccl.collid
-	LEFT JOIN omcollcategories cat ON ccl.ccpk = cat.ccpk
-	WHERE s.recordcnt > 0 AND (cat.inclusive IS NULL OR cat.inclusive = 1 OR cat.ccpk = 1)
-	order by cat.category, collectionname';
+$collectionFormManager = new CollectionFormManager();
+$collectionsByCategory = $collectionFormManager->getCollectionsByCategory();
 
 $checkedCollections = [];
 
@@ -25,36 +19,6 @@ if(array_key_exists('db', $_REQUEST)) {
 		$checkedCollections[$collId] = true;
 	}
 }
-
-$collectionsByCategory = [
-	'Specimens' => [],
-	'Observations' => [],
-];
-try {
-$rs = QueryUtil::executeQuery(Database::connect('readonly'), $sql);
-
-	foreach($rs->fetch_all(MYSQLI_ASSOC) as $collection) {
-		$type = $collection['colltype'] === 'Preserved Specimens'?
-		'Specimens':
-		'Observations';
-
-		if(!isset($collectionsByCategory[$type][$collection['category']])) {
-			$collectionsByCategory[$type][$collection['category']] = [
-				'name' => $collection['category'],
-				'icon' => $collection['caticon'],
-				'acronym' => $collection['acronym'],
-				'id' => $collection['ccpk'],
-				'collections' => [],
-			];
-		}
-
-		$collectionsByCategory[$type][$collection['category']]['collections'][] = $collection;
-	}
-
-} catch(Throwable $th) {
-	echo $th->getMessage();
-}
-//Icon Name instcode coll code
 ?>
 
 <script type="text/javascript">
@@ -169,7 +133,6 @@ function toggleCategory(categoryId, event=null) {
 	</div>
 	<div id="collections_container">
 		<?php
-			$collectionFormManager = new CollectionFormManager();
 			$sortedCollectionsByCategory = $collectionFormManager->reorderPortalCategories(
 				$collectionsByCategory,
 				$requestSuppliedCatOrd ?? $CATORD ?? [],
