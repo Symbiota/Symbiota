@@ -11,6 +11,7 @@ $LANG['SEARCH'] = 'Search';
 $LANG['PAGE_TITLE'] = 'Collection Search Parameters';
 $LANG['TAXON_HEADER'] = 'Taxonomic Criteria';
 $LANG['INCLUDE_SYNONYMS'] = 'Include Synonyms';
+$LANG['SYNONYM_NOTE'] = 'When searching for higher-order taxonomic units, the result set is limited to accepted child taxa of the specified higher-rank taxon and its synonyms.';
 $LANG['BUTTON_NEXT_LIST'] = 'List Display';
 $LANG['BUTTON_NEXT_TABLE'] = 'Table Display';
 $LANG['SELECT_1-1'] = 'Any Name';
