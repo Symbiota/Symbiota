@@ -204,7 +204,12 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 			if($this->imageType == 1){
 				//Specimen or Vouchered Observations Images
 				if($this->dbStr){
-					$sqlWhere .= OccurrenceSearchSupport::getDbWhereFrag($this->cleanInStr($this->dbStr));
+					$collidSql = OccurrenceSearchSupport::getDbWhereFrag($this->cleanInStr($this->dbStr));
+					if($collidSql){
+						$sqlWhere .= $collidSql;
+					}else{
+						$sqlWhere .= 'AND (m.occid IS NOT NULL) ';
+					}
 				}
 			}
 			elseif($this->imageType == 3){
