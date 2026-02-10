@@ -341,7 +341,7 @@ $creators = Media::getCreatorArray();
 									<div id="search-form-colls">
 										<div id="specobsdiv">
 											<?php
-												include($SERVER_ROOT . '/collections/editor/includes/collectionForm.php');
+												include($SERVER_ROOT . '/collections/collectionForm.php');
 											?>
 										</div>
 									</div>

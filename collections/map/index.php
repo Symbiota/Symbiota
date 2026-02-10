@@ -2187,7 +2187,7 @@ $serverHost = GeneralUtil::getDomain();
 											?>
 												<div>
 													<?php
-														include($SERVER_ROOT . '/collections/editor/includes/collectionForm.php');
+														include($SERVER_ROOT . '/collections/collectionForm.php');
 													?>
 												</div>
 											<?php

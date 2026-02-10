@@ -107,7 +107,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 			<fieldset style="margin-top:1rem;">
 				<div id="search-form-colls">
 					<?php
-						include($SERVER_ROOT . '/collections/editor/includes/collectionForm.php');
+						include($SERVER_ROOT . '/collections/collectionForm.php');
 					?>
 				</div>
 			</fieldset>

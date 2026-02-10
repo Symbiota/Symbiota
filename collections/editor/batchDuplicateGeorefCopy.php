@@ -458,7 +458,7 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 						<div id="innertext">
 							<div id="error-msgs" class="errors"></div>
 							<div id="search-form-colls">
-								<?php include(__DIR__ . '/includes/collectionForm.php') ?>
+								<?php include($SERVER_ROOT . '/collections/collectionForm.php'); ?>
 							</div>
 						</div>
 					</dialog>

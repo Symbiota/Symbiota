@@ -773,7 +773,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 							<!-- Open Collections modal -->
 							<div id="specobsdiv">
 								<?php
-								include($SERVER_ROOT . '/collections/editor/includes/collectionForm.php');
+								include($SERVER_ROOT . '/collections/collectionForm.php');
 								?>
 							</div>
 						</div>
