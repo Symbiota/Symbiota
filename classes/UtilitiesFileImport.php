@@ -130,16 +130,16 @@ class UtilitiesFileImport extends Manager {
 		$sourceFieldArr = $this->getHeaderArr();
 		foreach($sourceFieldArr as $i => $sourceField){
 			$tableHtml .= '<tr><td>';
-			$tableHtml .= $sourceField;
+			$tableHtml .= $this->cleanOutStr($sourceField);
 			$sourceField = strtolower($sourceField);
-			$tableHtml .= '<input type="hidden" name="sf['.$i.']" value="'.$sourceField.'" />';
+			$tableHtml .= '<input type="hidden" name="sf[' . $this->cleanOutStr($i) . ']" value="' . $this->cleanOutStr($sourceField) . '" />';
 			$translatedSourceField = strtolower($this->getTranslation($sourceField));
 			$tableHtml .= '</td><td>';
-			$tableHtml .= '<select name="tf['.$i.']" style="background:'.(array_key_exists($translatedSourceField, $this->targetFieldMap)?'':'yellow').'">';
+			$tableHtml .= '<select name="tf[' . $this->cleanOutStr($i) . ']" style="background:'.(array_key_exists($translatedSourceField, $this->targetFieldMap)?'':'yellow').'">';
 			$tableHtml .= '<option value="">Select Target Field</option>';
 			$tableHtml .= '<option value="">-------------------------</option>';
 			foreach($this->targetFieldMap as $k => $v){
-				$tableHtml .= '<option value="' . $k . '" ' . ($k == $translatedSourceField ? 'SELECTED' : '') . '>' . $v . '</option>';
+				$tableHtml .= '<option value="' . $this->cleanOutStr($k) . '" ' . ($k == $translatedSourceField ? 'SELECTED' : '') . '>' . $this->cleanOutStr($v) . '</option>';
 			}
 			$tableHtml .= '</select>';
 			$tableHtml .= '</td></tr>';
