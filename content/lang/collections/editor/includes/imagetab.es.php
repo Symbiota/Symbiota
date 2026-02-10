@@ -6,7 +6,6 @@ Translated by: Samanta Orellana (2021-10-29)
 Translated by: Google Translate (2024-09-13)
 ------------------
 */
-
 $LANG['SELECT_FILE'] = 'Seleccione un archivo multimedia o ingrese una URL a un recurso existente';
 $LANG['NOT_WEB_OPTIMIZED'] = 'El archivo de entrada debe ser una imagen optimizada para la web (por ejemplo, jpg). El archivo parece ser una imagen de archivo (por ejemplo, tif, png, dng, etc.)';
 $LANG['CONFIRM_IMAGE_DELETE'] = '¿Está seguro de que desea eliminar este recurso? Tenga en cuenta que el recurso físico se eliminará del servidor si se selecciona la casilla de verificación';
@@ -14,7 +13,9 @@ $LANG['SELECT_TARGET'] = 'Seleccionar registro de destino';
 $LANG['ADD_IMG'] = 'Añadir un Nuevo Recurso';
 $LANG['SELECT_IMG'] = 'Seleccionar un archivo multimedia localizado en su computadora que desee subir';
 $LANG['ENTER_URL'] = 'Introducir URL';
-$LANG['ENTER_URL_EXPLAIN'] = 'Introducir una URL a un recurso ya incluída en un servidor web.							Si únicamente hay una versión disponible del recurso, añadir en el campo superior y dejar los otros campos vacíos.							Si íconos y versiones medianas no están disponibles, se crearán derivados locales de la imagen.';
+$LANG['ENTER_URL_EXPLAIN'] = 'Introducir una URL a un recurso ya incluída en un servidor web.
+	Si únicamente hay una versión disponible del recurso, añadir en el campo superior y dejar los otros campos vacíos.
+	Si íconos y versiones medianas no están disponibles, se crearán derivados locales de la imagen.';
 $LANG['IMG_URL'] = 'URL de medios (requerido)';
 $LANG['MED_VERS'] = 'Versión Mediana (opcional';
 $LANG['THUMB_VERS'] = 'Versión de Ícono (opcional';
@@ -49,10 +50,12 @@ $LANG['DEL_IMG'] = 'Eliminar Recurso';
 $LANG['REM_FROM_SERVER'] = 'Remover recurso del servidor';
 $LANG['RM_DB_NOT_SERVER'] = 'Nota: al no seleccionar se remueve el recurso de la base de datos sin removerla del servidor)';
 $LANG['REMAP_TO_ANOTHER'] = 'Remapear a Otro Espécimen';
+$LANG['CANNOT_REMAP_EXPLAIN'] = 'Esta imagen no se puede reasignar a otra instancia porque el nombre de la imagen coincide con el número de catálogo de esta instancia,
+	lo que podría desincronizarla con el proceso de carga por lotes. Descargue manualmente esta imagen, corrija el nombre del archivo y luego cargue la imagen vinculada a la instancia correcta.
+	Después, asegúrese de eliminar la versión de la imagen vinculada a esta instancia.';
 $LANG['TARGET_OCCID'] = 'Registro objetivo';
 $LANG['OPEN_LINK_AID'] = 'Abrir Ayuda para Enlace de Ocurrencias';
 $LANG['REMAP_IMG'] = 'Remapear Recurso';
-$LANG['CANNOT_REMAP_EXPLAIN'] = 'Esta imagen no se puede reasignar a otra instancia porque el nombre de la imagen coincide con el número de catálogo de la instancia. Cargue una nueva versión de la imagen, con el nombre cambiado, a la instancia correcta. Asegúrese de volver a este registro y <b>Eliminar Recurso</b> para desasignarla de esta instancia.';
 $LANG['LINK_TO_BLANK'] = 'Enlazar a Nuevo Registro de Ocurrencia en Blanco entre la Colección';
 $LANG['LINK_TO_NEW'] = 'Enlazar a Nueva Ocurrencia';
 $LANG['DISASSOCIATE_IMG_ALL'] = 'Disociar Recurso de todos los Registros de Espécimen';
