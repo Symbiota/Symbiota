@@ -120,8 +120,9 @@ function toggleCategory(categoryId, event=null) {
 	$checkboxConfigs = [
 		[
 			'id' => 'all_collections',
-			'name' => 'all_collections',
-			// 'name' => 'db[]',
+			// 'name' => 'all_collections',
+			'name' => 'db[]',
+			'value'=> 'all',
 			'target' => 'collections_container',
 			'data_chip' => $LANG['ALL_COLLECTIONS'],
 			'margin' => '0',
@@ -130,6 +131,7 @@ function toggleCategory(categoryId, event=null) {
 		[
 			'id' => 'all_specimen_collections',
 			'name' => 'all_specimen_collections',
+			'value'=> 'all_specimens_collections',
 			'target' => 'specimens_collections',
 			'data_chip' => $LANG['ALL_SPECIMEN_COLLECTIONS'],
 			'margin' => '0 15px',
@@ -138,6 +140,7 @@ function toggleCategory(categoryId, event=null) {
 		[
 			'id' => 'all_observation_collections',
 			'name' => 'all_observation_collections',
+			'value'=> 'all_observations_collections',
 			'target' => 'observations_collections',
 			'data_chip' => $LANG['ALL_OBSERVATION_COLLECTIONS'],
 			'margin' => '0 15px',
@@ -155,7 +158,7 @@ function toggleCategory(categoryId, event=null) {
 				type="checkbox"
 				id="<?= $checkboxConfig['id'] ?>"
 				name="<?= $checkboxConfig['name'] ?>"
-				value="all"
+				value="<?= $checkboxConfig['value'] ?>"
 				<?= array_key_exists($checkboxConfig['id'], $_REQUEST)? 'checked': '' ?>
 			>
 			<label for="<?= $checkboxConfig['id'] ?>">

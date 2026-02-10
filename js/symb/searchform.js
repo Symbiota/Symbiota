@@ -251,7 +251,7 @@ function updateChip(e, isInitialConfig=false) {
   }
 
   const individualCollectionsChecked = Array.from(
-    document.querySelectorAll(`#search-form-colls input[name="db[]"]:checked`)
+    document.querySelectorAll(`#search-form-colls input[name="db[]"]:checked:not(#all_collections)`)
   );
   const individualCollectionsCheckedIds = individualCollectionsChecked.map(coll => coll.value);
 
@@ -513,7 +513,7 @@ function getCollsSelected() {
   const selectedInForm = Array.from(
     document.querySelectorAll(
       '#search-form-colls input[name="db"]:checked, ' +
-        '#search-form-colls input[name="db[]"]:checked'
+        '#search-form-colls input[name="db[]"]:checked:not(#all_collections)'
     )
   );
   return selectedInForm;
@@ -737,7 +737,7 @@ function uncheckEverythingInCollections() {
   });
 
   const individualCollectionsChecked = Array.from(
-    document.querySelectorAll(`#search-form-colls input[name="db[]"]:checked`)
+    document.querySelectorAll(`#search-form-colls input[name="db[]"]:checked:not(#all_collections)`)
   );
   individualCollectionsChecked.forEach((individualCollectionChecked) => {
     individualCollectionChecked.checked = false;
@@ -759,7 +759,7 @@ function checkEverythingInCollections() {
   });
 
   const individualCollectionsChecked = Array.from(
-    document.querySelectorAll(`#search-form-colls input[name="db[]"]:not(:checked)`)
+    document.querySelectorAll(`#search-form-colls input[name="db[]"]:not(:checked):not(#all_collections)`)
   );
   individualCollectionsChecked.forEach((individualCollectionChecked) => {
     individualCollectionChecked.checked = true;
@@ -1191,7 +1191,7 @@ function updateQueryListWithTypeCollections(queryList){
 }
 
 function calculateAllPossibleCollectionsInScope(scope, modifier = '', shouldSplit=true) {
-  return Array.from(document.querySelectorAll(`#${scope} input[name="db[]"]${modifier}`)).map(input => {
+  return Array.from(document.querySelectorAll(`#${scope} input[name="db[]"]:not(#all_collections)${modifier}`)).map(input => {
     if(shouldSplit) {
       return input.id.split("_")[1];
     } else{
@@ -1279,7 +1279,7 @@ function initializeFormInputs() {
     formInput.addEventListener("change", (e)=>{
       const isCollectionRelated = e?.currentTarget?.name === "db[]" || e?.currentTarget?.name?.startsWith("Specimens_") || e?.currentTarget?.name?.startsWith("Observations_") || e?.currentTarget?.id === "all_collections" || e?.currentTarget?.id === "all_specimen_collections" || e?.currentTarget?.id === "all_observation_collections";
       if(isCollectionRelated) {
-        const queriedCollections = Array.from(document.querySelectorAll(`#search-form-colls input[name="db[]"]:checked`)).filter(elem=>elem.id.split("_")[1]!==undefined).map(elem=>elem.id.split("_")[1]);
+        const queriedCollections = Array.from(document.querySelectorAll(`#search-form-colls input[name="db[]"]:checked:not(#all_collections)`)).filter(elem=>elem.id.split("_")[1]!==undefined).map(elem=>elem.id.split("_")[1]);
         const updatedQueriedCollections = updateQueryListWithTypeCollections(queriedCollections);
         uncheckEverythingInCollections();
         checkTheCollectionsThatShouldBeChecked(updatedQueriedCollections);
