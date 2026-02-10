@@ -120,7 +120,8 @@ function toggleCategory(categoryId, event=null) {
 	$checkboxConfigs = [
 		[
 			'id' => 'all_collections',
-			'name' => 'db[]',
+			'name' => 'all_collections',
+			// 'name' => 'db[]',
 			'target' => 'collections_container',
 			'data_chip' => $LANG['ALL_COLLECTIONS'],
 			'margin' => '0',
