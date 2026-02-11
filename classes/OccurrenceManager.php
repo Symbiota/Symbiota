@@ -910,7 +910,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			if($v) $retStr .= '&'. $this->cleanOutStr($k) . '=' . $this->cleanOutStr($v);
 		}
 		if(isset($this->taxaArr['search'])){
-			$patternTaxonChars = '/^[a-zA-Z0-9\s\-\,\.×†]*$/';
+			$patternTaxonChars = '/^[a-zA-Z0-9\s\-\,\.\(\)\'×†]*$/';
 			$taxonSearchTerm = $this->getTaxaSearchTerm();
 			if (preg_match($patternTaxonChars, $taxonSearchTerm)==1) {
 				$retStr .= '&taxa=' . $taxonSearchTerm;
