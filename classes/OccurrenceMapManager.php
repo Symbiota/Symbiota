@@ -153,60 +153,6 @@ class OccurrenceMapManager extends OccurrenceManager {
 		];
 	}
 
-	// TODO (Logan) Is being used but is like duplicate of `getCoordinateMap`
-	public function getMappingData($recLimit, $extraFieldArr = null){
-		//Used for simple maps occurrence and taxon maps, and also KML download functions
-		$start = 0;
-		if(!$this->sqlWhere) $this->setSqlWhere();
-		$coordArr = array();
-		if($this->sqlWhere){
-			$statsManager = new OccurrenceAccessStats();
-			$sql = 'SELECT DISTINCT o.occid, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS collector, o.sciname, o.tidinterpreted,
-				o.decimallatitude, o.decimallongitude, o.catalognumber, o.othercatalognumbers, c.institutioncode, c.collectioncode, c.colltype ';
-			if(isset($extraFieldArr) && is_array($extraFieldArr)){
-				foreach($extraFieldArr as $fieldName){
-					$sql .= ', o.' . $fieldName . ' ';
-				}
-			}
-			$sql .= 'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
-			$sql .= $this->getTableJoins($this->sqlWhere);
-			$sql .= $this->sqlWhere;
-			if(is_numeric($start) && $recLimit && is_numeric($recLimit)) $sql .= "LIMIT ".$start.",".$recLimit;
-			// echo '<div>SQL: ' . $sql . '</div>';
-			$rs = QueryUtil::tryExecuteQuery($this->conn, $sql);
-			if(!$rs) {
-				$this->errorMessage = 'ERROR executing mapping data query: ' . $this->conn->error;
-				return array();
-			}
-			$occidArr = array();
-			while($r = $rs->fetch_assoc()){
-				$sciname = $r['sciname'];
-				if(!$sciname) $sciname = 'undefined';
-				$coordArr[$sciname][$r['occid']]['instcode'] = $r['institutioncode'];
-				if($r['collectioncode']) $coordArr[$sciname][$r['occid']]['collcode'] = $r['collectioncode'];
-				$collType = 'obs';
-				if(stripos($r['colltype'],'specimen')) $collType = 'spec';
-				$coordArr[$sciname][$r['occid']]['colltype'] = $collType;
-				if($r['catalognumber']) $coordArr[$sciname][$r['occid']]['catnum'] = $r['catalognumber'];
-				if($r['othercatalognumbers']) $coordArr[$sciname][$r['occid']]['ocatnum'] = $r['othercatalognumbers'];
-				if($r['tidinterpreted']) $coordArr[$sciname]['tid'] = $r['tidinterpreted'];
-				$coordArr[$sciname][$r['occid']]['collector'] = $r['collector'];
-				$coordArr[$sciname][$r['occid']]['lat'] = $r['decimallatitude'];
-				$coordArr[$sciname][$r['occid']]['lng'] = $r['decimallongitude'];
-				if(isset($extraFieldArr) && is_array($extraFieldArr)){
-					reset($extraFieldArr);
-					foreach($extraFieldArr as $fieldName){
-						if(isset($r[$fieldName])) $coordArr[$sciname][$r['occid']][$fieldName] = $r[$fieldName];
-					}
-				}
-				$occidArr[] = $r['occid'];
-			}
-			$rs->free();
-			$statsManager->recordAccessEventByArr($occidArr, 'map');
-		}
-		return $coordArr;
-	}
-
 	//SQL where functions
 	private function setGeoSqlWhere(){
 		global $USER_RIGHTS;
