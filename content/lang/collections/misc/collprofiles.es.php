@@ -65,7 +65,7 @@ $LANG['MANAGEMENT'] = 'Administración';
 $LANG['LIVE_DATA'] = 'Datos en vivo administrados directamente dentro del portal de datos';
 $LANG['DATA_AGGREGATE'] = 'Datos recolectados de un agregador de datos';
 $LANG['DATA_SNAPSHOT'] = 'Instantánea de datos de un base de datos local';
-$LANG['LAST_UPDATE'] = 'Última Actualización';
+$LANG['LAST_UPDATE'] = 'Última Carga';
 $LANG['GLOBAL_UNIQUE_ID'] = 'Identificador único Global';
 $LANG['DWCA_PUB'] = 'DwC-Archive Access Punto de Acceso';
 $LANG['LIVE_DOWNLOAD'] = 'Descarga de Datos en Vivo';
@@ -118,4 +118,5 @@ $LANG['OCCURENCE_IDENTIFIER'] = 'Número de Catálogo';
 $LANG['TAXON'] = 'Taxón';
 $LANG['OCCURRENCE_EDITOR'] = 'Editar';
 $LANG['INFO_ALT'] = "Icono de información que indica un enlace a información sobre importación/actualización";
+$LANG['LAST_MODIFIED'] = 'Última Modificación';
 ?>

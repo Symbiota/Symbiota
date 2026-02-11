@@ -817,7 +817,6 @@ if ($SYMB_UID) {
 						//if($extrastatsArr&&$extrastatsArr['TypeCount']) echo '<li>'.number_format($extrastatsArr['TypeCount']) . ' ' . $LANG['TYPE_SPECIMENS'] . '</li>';
 						?>
 					</ul>
-					<p style="margin-left:3em"><?= '(' . $LANG['LAST_UPDATED'] . ' ' . $statsArr['datelastmodified'] . ')'?></p>
 				</div>
 			</section>
 			<section class="fieldset-like no-left-margin">
@@ -857,6 +856,10 @@ if ($SYMB_UID) {
 						<div class="bottom-breathing-room-rel">
 							<span class="label"><?= $LANG['LAST_UPDATE'] ?>:</span>
 							<?= $collData['uploaddate'] ?>
+						</div>
+						<div class="bottom-breathing-room-rel">
+							<span class="label"><?= $LANG['LAST_MODIFIED'] ?>:</span>
+							<?= $statsArr['datelastmodified'] ?>
 						</div>
 						<?php endif ?>
 						<?php

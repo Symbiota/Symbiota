@@ -65,7 +65,7 @@ $LANG['MANAGEMENT'] = 'Management';
 $LANG['LIVE_DATA'] = 'Live Data managed directly within data portal';
 $LANG['DATA_AGGREGATE'] = 'Data harvested from a data aggregator';
 $LANG['DATA_SNAPSHOT'] = 'Data snapshot of local collection database';
-$LANG['LAST_UPDATE'] = 'Last Update';
+$LANG['LAST_UPDATE'] = 'Last Upload';
 $LANG['GLOBAL_UNIQUE_ID'] = 'Global Unique Identifier';
 $LANG['DWCA_PUB'] = 'DwC-Archive Access Point';
 $LANG['LIVE_DOWNLOAD'] = 'Live Data Download';
@@ -118,4 +118,5 @@ $LANG['OCCURENCE_IDENTIFIER'] = 'Catalog Number';
 $LANG['TAXON'] = 'Taxon';
 $LANG['OCCURRENCE_EDITOR'] = 'Edit';
 $LANG['INFO_ALT'] = "Info. icon indicating link to information about import/update";
+$LANG['LAST_MODIFIED'] = 'Last Modified';
 ?>
