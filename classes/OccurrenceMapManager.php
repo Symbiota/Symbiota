@@ -284,36 +284,36 @@ class OccurrenceMapManager extends OccurrenceManager {
 				// }
 
 				fwrite($kml, '<Placemark>');
-				fwrite($kml, '<name>'.htmlspecialchars($record->identifier, ENT_QUOTES).'</name>');
+				fwrite($kml, '<name>' . htmlspecialchars($record->identifier, ENT_QUOTES) . '</name>');
 				fwrite($kml, '<ExtendedData>');
 				if($record->collid) {
 					$collectionCode	= $collections[$record->collid]->collectionCode;
 					$institutionCode = $collections[$record->collid]->collectionCode;
 					if($collectionCode) {
-						fwrite($kml, '<Data name="collectioncode">'.htmlspecialchars($collectionCode, ENT_QUOTES).'</Data>');
+						fwrite($kml, '<Data name="collectioncode">' . htmlspecialchars($collectionCode, ENT_QUOTES) . '</Data>');
 					}
 
 					if($institutionCode) {
-						fwrite($kml, '<Data name="institutioncode">'.htmlspecialchars($institutionCode, ENT_QUOTES).'</Data>');
+						fwrite($kml, '<Data name="institutioncode">' . htmlspecialchars($institutionCode, ENT_QUOTES) . '</Data>');
 					}
 				}
-				fwrite($kml, '<Data name="catalognumber">'.($record->catalogNumber?htmlspecialchars($record->catalogNumber, ENT_QUOTES):'').'</Data>');
-				fwrite($kml, '<Data name="DataSource">Data retrieved from '.$GLOBALS['DEFAULT_TITLE'].' Data Portal</Data>');
+				fwrite($kml, '<Data name="catalognumber">' . ($record->catalogNumber? htmlspecialchars($record->catalogNumber, ENT_QUOTES): '') . '</Data>');
+				fwrite($kml, '<Data name="DataSource">Data retrieved from ' . $GLOBALS['DEFAULT_TITLE'] . ' Data Portal</Data>');
 				$recUrl = 'http://';
 				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $recUrl = 'https://';
-				$recUrl .= $_SERVER['SERVER_NAME'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$record->occid;
+				$recUrl .= $_SERVER['SERVER_NAME'] . $GLOBALS['CLIENT_ROOT'] . '/collections/individual/index.php?occid=' .$record->occid;
 				fwrite($kml, '<Data name="RecordURL">' . htmlspecialchars($recUrl, ENT_QUOTES) . '</Data>');
 
 				if(isset($extraFieldArr) && is_array($extraFieldArr)) {
 					reset($extraFieldArr);
 					foreach($extraFieldArr as $fieldName){
-						if(isset($record->$fieldName)) fwrite($kml, '<Data name="'.$fieldName.'">'.htmlspecialchars($record->$fieldName, ENT_QUOTES).'</Data>');
+						if(isset($record->$fieldName)) fwrite($kml, '<Data name="'.$fieldName.'">' . htmlspecialchars($record->$fieldName, ENT_QUOTES).'</Data>');
 					}
 				}
 
 				fwrite($kml, '</ExtendedData>');
-				fwrite($kml, '<styleUrl>#'.htmlspecialchars(str_replace(' ','_',$sciname), ENT_QUOTES).'</styleUrl>');
-				fwrite($kml, '<Point><coordinates>'.$record->DecimalLongitude.','.$record->DecimalLatitude.'</coordinates></Point>');
+				fwrite($kml, '<styleUrl>#' . htmlspecialchars(str_replace(' ','_',$sciname), ENT_QUOTES) . '</styleUrl>');
+				fwrite($kml, '<Point><coordinates>' . $record->DecimalLongitude . ',' . $record->DecimalLatitude . '</coordinates></Point>');
 				fwrite($kml, "</Placemark>\n");
 				$currentCount++;
 				$previousSciname = $sciname;
