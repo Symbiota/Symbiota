@@ -7,7 +7,6 @@ class OccurrenceSearchSupport {
 
 	private $conn;
 	private $collidStr = '';
-	private $collArrIndex = 0;
 
 	public function __construct($conn){
 		$this->conn = $conn;
@@ -84,34 +83,6 @@ class OccurrenceSearchSupport {
 					$retArr[$t][$g][$id] = $idArr;
 				}
 			}
-		}
-		return $retArr;
-	}
-
-	private function getDbRequestArr($target){
-		$input = null;
-		if(isset($_REQUEST['db'])){
-			// input might be an array, single number, or string of integers concatenate by commas
-			$input = $_REQUEST['db'];
-			if(is_array($input)) $input = implode(',', $input);
-			// if semicolon exists, integers before semicolon are db IDs and after are cat IDs
-			$tokens = explode(';', $input);
-			if($target == 'cat'){
-				if(count($tokens) > 1) $input = $tokens[1];
-				else $input = '';
-			}
-			else $input = $tokens[0];
-		}
-		if($target == 'cat' && isset($_REQUEST['cat'])){
-			$catInput = $_REQUEST['cat'];
-			if(is_array($catInput)) $catInput = implode(',', $catInput);
-			$input .= ','.$catInput;
-		}
-		$retArr = array();
-		if($input){
-			$input = trim($input, ',; ');
-			if(!preg_match('/^[a-z0-9,]+$/', $input)) $input = '';
-			$retArr = explode(',', $input);
 		}
 		return $retArr;
 	}
