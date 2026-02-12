@@ -265,10 +265,10 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		return $this->searchSupportManager->getFullCollectionList($catId, true);
 	}
 
-	public function outputFullCollArr($occArr, $targetCatID = 0){
-		if(!$this->searchSupportManager) $this->searchSupportManager = new OccurrenceSearchSupport($this->conn);
-		$this->searchSupportManager->outputFullCollArr($occArr, $targetCatID, false, false);
-	}
+	// public function outputFullCollArr($occArr, $targetCatID = 0){
+	// 	if(!$this->searchSupportManager) $this->searchSupportManager = new OccurrenceSearchSupport($this->conn);
+	// 	$this->searchSupportManager->outputFullCollArr($occArr, $targetCatID, false, false);
+	// }
 
 	//Misc support functions
 	public function getQueryTermStr(){
