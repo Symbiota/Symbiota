@@ -70,4 +70,5 @@ $LANG['FAILED_TO_LOAD_OCCR_DATA'] = 'Échec du chargement des données d\'occurr
 $LANG['OPEN_SEARCH_PANEL'] = 'Ouvrir le panneau de recherche';
 $LANG['HIDE_PANEL'] = 'Masquer le panneau';
 $LANG['MAP_RECORD_LIMIT_MESSAGE'] = 'Limite d\'enregistrements cartographiques dépassée. Avertissement : le résultat a été tronqué.';
+$LANG['DYNAMIC_HEATMAP_AUTO_ENABLED'] = 'Nombre élevé d\'enregistrements de la carte. L\'activation de la carte thermique devrait améliorer les performances.';
 ?>

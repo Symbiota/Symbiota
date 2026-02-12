@@ -70,4 +70,5 @@ $LANG['FAILED_TO_LOAD_OCCR_DATA'] = 'Échec du chargement des données d\'occurr
 $LANG['OPEN_SEARCH_PANEL'] = 'Abrir painel de pesquisa';
 $LANG['HIDE_PANEL'] = 'Ocultar painel';
 $LANG['MAP_RECORD_LIMIT_MESSAGE'] = 'O limite de registros do mapa foi excedido. Aviso: O resultado foi truncado.';
+$LANG['DYNAMIC_HEATMAP_AUTO_ENABLED'] = 'O número de registros no mapa está alto. Habilitar o mapa de calor pode ajudar no desempenho.';
 ?>

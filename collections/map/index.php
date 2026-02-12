@@ -962,11 +962,13 @@ $serverHost = GeneralUtil::getDomain();
 					group.portalMapGroup.genClusters();
 				})
 
-				if(recordArr && recordArr.length >= MAP_RECORD_LIMIT) {
-					alert('<?= $LANG["MAP_RECORD_LIMIT_MESSAGE"] ?>');
-				}
+				if(recordArr && recordArr.length >= map.HIGH_RECORD_THRESHOLD || recordArr.length >= MAP_RECORD_LIMIT ) {
+					if(recordArr.length >= MAP_RECORD_LIMIT) {
+						alert('<?= $LANG["MAP_RECORD_LIMIT_MESSAGE"] ?>');
+					} else {
+						alert('<?= $LANG["DYNAMIC_HEATMAP_AUTO_ENABLED"] ?>');
+					}
 
-				if(recordArr && recordArr.length >= map.HIGH_RECORD_THRESHOLD) {
 					highRecordMode = true;
 					setHeatmap(true);
 					setClusteringOff(false);
@@ -1133,11 +1135,12 @@ $serverHost = GeneralUtil::getDomain();
 						group.portalMapGroup.genClusters();
 					})
 
-					if(recordArr && recordArr.length >= MAP_RECORD_LIMIT) {
-						alert('<?= $LANG["MAP_RECORD_LIMIT_MESSAGE"] ?>');
-					}
-
-					if(recordArr && recordArr.length >= map.HIGH_RECORD_THRESHOLD) {
+					if(recordArr && recordArr.length >= map.HIGH_RECORD_THRESHOLD || recordArr.length >= MAP_RECORD_LIMIT) {
+						if(recordArr.length >= MAP_RECORD_LIMIT) {
+							alert('<?= $LANG["MAP_RECORD_LIMIT_MESSAGE"] ?>');
+						} else {
+							alert('<?= $LANG["DYNAMIC_HEATMAP_AUTO_ENABLED"] ?>');
+						}
 						highRecordMode = true;
 						setHeatmap(true);
 						setClusteringOff(false);
