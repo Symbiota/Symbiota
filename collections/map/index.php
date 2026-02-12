@@ -586,6 +586,12 @@ $serverHost = GeneralUtil::getDomain();
 			heatmap_on_el.dispatchEvent(new Event('change'))
 		}
 
+		function setClusteringOff(value) {
+			const cluster_off_el = document.getElementById('clusteroff');
+			cluster_off_el.checked = value;
+			cluster_off_el.dispatchEvent(new Event('change'))
+		}
+
 		function leafletInit() {
 
 			L.DivIcon.CustomColor = L.DivIcon.extend({
@@ -828,8 +834,8 @@ $serverHost = GeneralUtil::getDomain();
 				let maxDensityInput = document.getElementById('heat-max-density')
 
 				var cfg = {
-					"radius": 20, //(radius_input? parseFloat(radius_input.value): 50) / 100), // TODO decide on solution here
-					"minOpacity": 0.2, // Added previously missing,
+					"radius": radius_input? parseFloat(radius_input.value): 20,
+					"minOpacity": 0.2,
 					"maxOpacity": 0.9,
 					"scaleRadius": false,
 					"useLocalExtrema": false,
@@ -838,15 +844,13 @@ $serverHost = GeneralUtil::getDomain();
 				};
 				heatmapLayer = new HeatmapOverlay(cfg);
 
-				let heatMaxDensity = maxDensityInput? parseInt(maxDensityInput.value) : 1000
-				let heatMinDensity = minDensityInput? parseInt(minDensityInput.value) : 1
+				let heatMaxDensity = maxDensityInput && maxDensityInput.value? parseInt(maxDensityInput.value) : Math.floor((recordArr.length * .05))
+				let heatMinDensity = minDensityInput && minDensityInput.value? parseInt(minDensityInput.value) : 1
 
 				heatmapLayer.addTo(map.mapLayer);
 				heatmapLayer.setData({
-					// Make max five percent of result
-					max: Math.floor((recordArr.length * .05)),
-					//max: heatMaxDensity || 3,
-					min: heatMinDensity || 1,
+					max: heatMaxDensity,
+					min: heatMinDensity,
 					data: recordArr
 				});
 			}
@@ -965,6 +969,7 @@ $serverHost = GeneralUtil::getDomain();
 				if(recordArr && recordArr.length >= map.HIGH_RECORD_THRESHOLD) {
 					highRecordMode = true;
 					setHeatmap(true);
+					setClusteringOff(false);
 					map.mapLayer.on('zoomend', setDynamicHeatmap);
 				} else if(highRecordMode) {
 					highRecordMode = false;
@@ -1135,6 +1140,7 @@ $serverHost = GeneralUtil::getDomain();
 					if(recordArr && recordArr.length >= map.HIGH_RECORD_THRESHOLD) {
 						highRecordMode = true;
 						setHeatmap(true);
+						setClusteringOff(false);
 						map.mapLayer.on('zoomend', setDynamicHeatmap);
 					} else if(highRecordMode) {
 						highRecordMode = false;
@@ -1152,7 +1158,7 @@ $serverHost = GeneralUtil::getDomain();
 			}
 			fitMap();
 		}
-
+	
 		function googleInit() {
 			let map = new GoogleMap('map')
 
@@ -1397,7 +1403,7 @@ $serverHost = GeneralUtil::getDomain();
 				let radius_input = document.getElementById('heat-radius');
 
 				var cfg = {
-					"radius": (radius_input? parseFloat(radius_input.value): 50) / 100.00,
+					"radius": radius_input? parseFloat(radius_input.value): 20,
 					"maxOpacity": .9,
 					"scaleRadius": true,
 					"useLocalExtrema": false,
@@ -1413,12 +1419,12 @@ $serverHost = GeneralUtil::getDomain();
 				let minDensityInput = document.getElementById('heat-min-density')
 				let maxDensityInput = document.getElementById('heat-max-density')
 
-				let heatMaxDensity = maxDensityInput? parseInt(maxDensityInput.value) : 3
-				let heatMinDensity = minDensityInput? parseInt(minDensityInput.value) : 1
+				let heatMaxDensity = maxDensityInput && maxDensityInput.value? parseInt(maxDensityInput.value) : Math.floor((recordArr.length * .05))
+				let heatMinDensity = minDensityInput && minDensityInput.value? parseInt(minDensityInput.value) : 1
 
 				heatmapLayer.setData({
-					max: heatMaxDensity || 3,
-					min: heatMinDensity || 1,
+					max: heatMaxDensity,
+					min: heatMinDensity,
 					data: recordArr
 				});
 			}
@@ -2412,16 +2418,16 @@ $serverHost = GeneralUtil::getDomain();
 										<input data-role="none" type="checkbox" id="heatmap_on" name="heatmap_on" value='1'/>
 										<br/>
 										<span style="display: flex; align-items:center">
-											<label for="heat-radius"><?= $LANG['HEAT_RADIUS'] ?>: 0.1</label>
-											<input style="margin: 0 1rem;"type="range" value="70" id="heat-radius" name="heat-radius" min="1" max="100">1
+											<label for="heat-radius"><?= $LANG['HEAT_RADIUS'] ?>: 10</label>
+											<input style="margin: 0 1rem;"type="range" value="20" id="heat-radius" name="heat-radius" min="10" max="100">100
 										</span>
 	
 										<label for="heat-min-density"><?= $LANG['MIN_DENSITY'] ?>: </label>
-										<input style="margin: 0 1rem; width: 5rem;"value="1" id="heat-min-density" name="heat-min-density">
+										<input style="margin: 0 1rem; width: 5rem;" id="heat-min-density" name="heat-min-density">
 	
 										<br/>
 										<label for="heat-max-density"><?= $LANG['MAX_DENSITY'] ?>: </label>
-										<input style="margin: 0 1rem; width: 5rem;"value="3" id="heat-max-density" name="heat-max-density">
+										<input style="margin: 0 1rem; width: 5rem;" id="heat-max-density" name="heat-max-density">
 										<br/>
 									</fieldset>
 									<br/>
