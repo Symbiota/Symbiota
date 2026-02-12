@@ -32,6 +32,11 @@ if($emailAddr){
 	}
 }
 
+$useCAPtcha = false;
+if(isset($CAPTCHA_ENDPOINT)){
+	$useCAPtcha = true;
+}
+
 $useRecaptcha = false;
 if(isset($RECAPTCHA_PUBLIC_KEY) && $RECAPTCHA_PUBLIC_KEY && isset($RECAPTCHA_PRIVATE_KEY) && $RECAPTCHA_PRIVATE_KEY){
 	$useRecaptcha = true;
@@ -39,9 +44,12 @@ if(isset($RECAPTCHA_PUBLIC_KEY) && $RECAPTCHA_PUBLIC_KEY && isset($RECAPTCHA_PRI
 
 if($action == 'Create Login'){
 	$okToCreateLogin = true;
+	if($useCAPtcha){
+
+	}
 	if($useRecaptcha){
-		$captcha = urlencode($_POST['g-recaptcha-response']);
-		if($captcha){
+		$recaptcha = urlencode($_POST['g-recaptcha-response']);
+		if($recaptcha){
 			//Verify with Google
 			$response = json_decode(file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='.$RECAPTCHA_PRIVATE_KEY.'&response='.$captcha.'&remoteip='.$_SERVER['REMOTE_ADDR']), true);
 			if($response['success'] == false){
@@ -98,6 +106,13 @@ if($action == 'Create Login'){
 				<?php
 			}
 			?>
+			if($useCAPtcha){
+				const widget = document.querySelector("cap-widget");
+				widget.addEventListener("solve", function (e) {
+  					const token = e.detail.token;
+					// Handle the token as needed
+				});
+			}
 			var pwd1 = f.pwd.value.trim();
 			var pwd2 = f.pwd2.value.trim();
 			if(pwd1 == "" || pwd2 == ""){
@@ -128,6 +143,7 @@ if($action == 'Create Login'){
 	</script>
 	<?php
 	if($useRecaptcha) echo '<script src="https://www.google.com/recaptcha/api.js"></script>';
+	if($useCAPtcha) echo '<script src="' . $CLIENT_ROOT . '/js/cap.js/widget/cap.min.js"></script>';
 	?>
 	<style>
 		.gridlike-form-row-label {
@@ -272,6 +288,7 @@ if($action == 'Create Login'){
 							<div style="margin:10px;">
 								<?php
 								if($useRecaptcha) echo '<div class="g-recaptcha" data-sitekey="' . $RECAPTCHA_PUBLIC_KEY . '"></div>';
+								if($useCAPtcha) echo '<cap-widget data-cap-api-endpoint="' . $CAPTCHA_ENDPOINT . '"></cap-widget>';
 								?>
 							</div>
 							<?php if($adminRegister){ ?>
