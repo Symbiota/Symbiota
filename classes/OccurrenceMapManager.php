@@ -8,10 +8,10 @@ class OccurrenceMapManager extends OccurrenceManager {
 	private $recordCount = 0;
 	private $collArrIndex = 0;
 
-	// Default values for request variables
-	private const DEFAULT_GRID_SIZE=60;
-	private const MIN_CLUSTER_SETTING=10;
-	private const MAP_RECORD_LIMIT=15000;
+	public const DEFAULT_GRID_SIZE=60;
+	public const MIN_CLUSTER_SETTING=10;
+	public const MAP_RECORD_LIMIT=15000;
+	public const DEFAULT_CLUSTER_SWITCH='y';
 
 	public function __construct(){
 		parent::__construct();
@@ -26,13 +26,33 @@ class OccurrenceMapManager extends OccurrenceManager {
 	private function readGeoRequestVariables() {
 		if(array_key_exists('gridSizeSetting',$_REQUEST)){
 			$this->searchTermArr['gridSizeSetting'] = $this->cleanInStr($_REQUEST['gridSizeSetting']);
+		} else {
+			$this->searchTermArr['gridSizeSetting'] = self::DEFAULT_GRID_SIZE;
 		}
+
 		if(array_key_exists('minClusterSetting',$_REQUEST)){
 			$this->searchTermArr['minClusterSetting'] = $this->cleanInStr($_REQUEST['minClusterSetting']);
+		} else {
+			$this->searchTermArr['minClusterSetting'] = self::MIN_CLUSTER_SETTING;
 		}
+
 		if(array_key_exists('clusterSwitch',$_REQUEST)){
-			$this->searchTermArr['clusterSwitch'] = $this->cleanInStr($_REQUEST['clusterSwitch']);
+			$this->searchTermArr['clusterSwitch'] = in_array($_REQUEST['clusterSwitch'], ['n', 'y'])?
+				$this->cleanInStr($_REQUEST['clusterSwitch']):
+				self::DEFAULT_CLUSTER_SWITCH;
+		} else {
+			$this->searchTermArr['clusterSwitch'] = self::DEFAULT_CLUSTER_SWITCH;
 		}
+
+		if(array_key_exists('reclimit',$_REQUEST) && is_numeric($_REQUEST['reclimit'])){
+			$recLimit = intval($_REQUEST['reclimit']);
+			$this->searchTermArr['reclimit'] = $recLimit > self::MAP_RECORD_LIMIT? 
+				self::MAP_RECORD_LIMIT: 
+				$recLimit;
+		} else {
+			$this->searchTermArr['reclimit'] = self::MAP_RECORD_LIMIT;
+		}
+
 		if(array_key_exists('cltype',$_REQUEST) && $_REQUEST['cltype']){
 			if($_REQUEST['cltype'] == 'all') $this->searchTermArr['cltype'] = 'all';
 			else $this->searchTermArr['cltype'] = 'vouchers';
@@ -76,7 +96,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 	}
 
 	//Coordinate retrival functions
-	public function getCoordinateMap($start, $limit) {
+	public function getCoordinateMap($start = 0) {
 		if(!$this->sqlWhere) {
 			return [
 				'taxaArr' => [],
@@ -87,7 +107,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 		
 		$statsManager = new OccurrenceAccessStats();
 
-		$result = QueryUtil::tryExecuteQuery($this->conn, $this->buildMapSqlQuery($start, $limit));
+		$result = QueryUtil::tryExecuteQuery($this->conn, $this->buildMapSqlQuery($start, $this->searchTermArr['reclimit']));
 		if(!$result) {
 			$this->errorMessage = 'ERROR executing coordinate query: ' . $this->conn->error;
 			echo json_encode([$this->errorMessage]);

@@ -8,8 +8,6 @@ include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 ob_start();
 
-$recLimit = array_key_exists('recordlimit', $_REQUEST) && is_numeric($_REQUEST['recordlimit'])? $_REQUEST['recordlimit'] : 15000;
-
 $mapManager = new OccurrenceMapManager();
 $searchArray = $mapManager->getQueryTermArr();
 
@@ -21,7 +19,7 @@ $coordArr = [
 ];
 
 try {
-	$coordArr = $mapManager->getCoordinateMap(0, $recLimit);
+	$coordArr = $mapManager->getCoordinateMap();
 } catch(Throwable $th) {
 	$coordArr['error'] = $th->getMessage();
 }
