@@ -69,5 +69,5 @@ $LANG['WEST'] = 'W';
 $LANG['FAILED_TO_LOAD_OCCR_DATA'] = 'Échec du chargement des données d\'occurrence';
 $LANG['OPEN_SEARCH_PANEL'] = 'Ouvrir le panneau de recherche';
 $LANG['HIDE_PANEL'] = 'Masquer le panneau';
-$LANG['MAP_RECORD_LIMIT_MESSAGE'] = 'Record limit cannot exceed 15000. Data has been truncated';
+$LANG['MAP_RECORD_LIMIT_MESSAGE'] = 'Limite d\'enregistrements cartographiques dépassée. Avertissement : le résultat a été tronqué.';
 ?>

@@ -69,5 +69,5 @@ $LANG['WEST'] = 'W';
 $LANG['FAILED_TO_LOAD_OCCR_DATA'] = 'Error loading occurrence data';
 $LANG['OPEN_SEARCH_PANEL'] = 'Open Search Panel';
 $LANG['HIDE_PANEL'] = 'Hide Panel';
-$LANG['MAP_RECORD_LIMIT_MESSAGE'] = 'Record limit cannot exceed 15000. Data has been truncated';
+$LANG['MAP_RECORD_LIMIT_MESSAGE'] = 'Map record limit exceeded. Warning Result has been truncated';
 ?>
