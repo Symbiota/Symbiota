@@ -10,7 +10,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 
 	public const DEFAULT_GRID_SIZE=60;
 	public const MIN_CLUSTER_SETTING=10;
-	public const MAP_RECORD_LIMIT=15000;
+	public const MAP_RECORD_LIMIT=30000;
 	public const DEFAULT_CLUSTER_SWITCH='y';
 
 	public function __construct(){
