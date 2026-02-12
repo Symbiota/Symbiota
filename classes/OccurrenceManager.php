@@ -773,11 +773,6 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		return $this->searchSupportManager->getFullCollectionList($catId);
 	}
 
-	// public function outputFullCollArr($collGrpArr, $targetCatID = 0, $displayIcons = true, $displaySearchButtons = true, $collTypeLabel = '', $uniqGrouping=''){
-	// 	if(!$this->searchSupportManager) $this->searchSupportManager = new OccurrenceSearchSupport($this->conn);
-	// 	$this->searchSupportManager->outputFullCollArr($collGrpArr, $targetCatID, $displayIcons, $displaySearchButtons, $collTypeLabel, $uniqGrouping);
-	// }
-
 	public function getOccurVoucherProjects(){
 		$retArr = Array();
 		$titleArr = Array();
@@ -800,7 +795,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 
 	public function getCollectionSearchStr(){
 		$retStr ="";
-		if(!array_key_exists('db',$this->searchTermArr) || $this->searchTermArr['db'] == 'all'){
+		if(!array_key_exists('db',$this->searchTermArr) || $this->searchTermArr['db'] == 'all' || str_contains($this->searchTermArr['db'], 'all,')){
 			$retStr = "All Collections";
 		}
 		elseif($this->searchTermArr['db'] == 'allspec'){
@@ -811,9 +806,13 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		}
 		else{
 			$cArr = explode(';',$this->cleanInStr($this->searchTermArr['db']));
+			$collIdQueryComponent = '';
+			if(!str_contains($cArr[0], 'all')){
+				$collIdQueryComponent = 'WHERE collid IN(' . $cArr[0] . ') ';
+			}
 			if($cArr[0]){
 				$sql = 'SELECT collid, CONCAT_WS("-",institutioncode,collectioncode) as instcode '.
-					'FROM omcollections WHERE collid IN('.$cArr[0].') ORDER BY institutioncode,collectioncode';
+					'FROM omcollections ' . $collIdQueryComponent . 'ORDER BY institutioncode,collectioncode';
 				$rs = $this->conn->query($sql);
 				while($r = $rs->fetch_object()){
 					$retStr .= '; '.$r->instcode;

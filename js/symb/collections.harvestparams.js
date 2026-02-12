@@ -1,5 +1,6 @@
 function displayTableView(f) {
-  if (checkHarvestParamsForm(f)) {
+  if (checkHarvestParamsForm(f, getCurrentPage())) {
+	setHarvestParamsForm(f);
 	f.action = "listtabledisplay.php";
 	f.submit();
   }
