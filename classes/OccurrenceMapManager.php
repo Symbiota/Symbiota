@@ -247,8 +247,8 @@ class OccurrenceMapManager extends OccurrenceManager {
 			'paddle/ylw-square','paddle/wht-square','paddle/red-square','paddle/purple-square','paddle/blu-stars','paddle/grn-stars',
 			'paddle/ltblu-stars','paddle/pink-stars','paddle/ylw-stars','paddle/wht-stars','paddle/red-stars','paddle/purple-stars');
 
-		$CHUNK_SIZE = 40000;
-		$RECORD_CAP = 3000000;
+		$KML_CHUNK_SIZE = 40000;
+		$KML_RECORD_CAP = 3000000;
 
 		$collections = $this->getCollections();
 		$previousSciname = false;
@@ -260,14 +260,14 @@ class OccurrenceMapManager extends OccurrenceManager {
 
 		while($keepProcessing) {
 			$queryTime= microtime(true);
-			$sql = $this->buildMapSqlQuery() . ($lastOccid? ' AND occid > ' . $lastOccid: '') . ' LIMIT ' . $CHUNK_SIZE;
+			$sql = $this->buildMapSqlQuery() . ($lastOccid? ' AND occid > ' . $lastOccid: '') . ' LIMIT ' . $KML_CHUNK_SIZE;
 			$result = QueryUtil::executeQuery($this->conn, $sql);
 
 			$currentCount += $result->num_rows;
 
-			if($currentCount >= $RECORD_CAP) {
+			if($currentCount >= $KML_RECORD_CAP) {
 				$keepProcessing = false;
-			} else if($result->num_rows === $CHUNK_SIZE) {
+			} else if($result->num_rows === $KML_CHUNK_SIZE) {
 				$keepProcessing = true;
 			} else {
 				$keepProcessing = false;
@@ -276,32 +276,6 @@ class OccurrenceMapManager extends OccurrenceManager {
 			while($record = $result->fetch_object()) {
 				$lastOccid = $record->occid;
 				$sciname = $record->sciname ?? 'undefined';
-
-				// TODO figure out how to do this with decent performance
-				// count($googleIconArr) === 44?
-				// if($previousSciname != $sciname) {
-				// 	if($openFolder) {
-				// 		fwrite($kml, "</Folder>\n");
-				// 		$openFolder = false;
-				// 	}
-				//
-				// 	$iconStr = $googleIconArr[$currentCount % 44];
-				// 	fwrite($kml, "<Style id='sn_".$iconStr."'>\n");
-				// 	fwrite($kml, "<IconStyle><scale>1.1</scale><Icon>");
-				// 	fwrite($kml, "<href>http://maps.google.com/mapfiles/kml/" . htmlspecialchars($iconStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ".png</href>");
-				// 	fwrite($kml, "</Icon><hotSpot x='20' y='2' xunits='pixels' yunits='pixels'/></IconStyle>\n</Style>\n");
-				// 	fwrite($kml, "<Style id='sh_".$iconStr."'>\n");
-				// 	fwrite($kml, "<IconStyle><scale>1.3</scale><Icon>");
-				// 	fwrite($kml, "<href>http://maps.google.com/mapfiles/kml/".$iconStr.".png</href>");
-				// 	fwrite($kml, "</Icon><hotSpot x='20' y='2' xunits='pixels' yunits='pixels'/></IconStyle>\n</Style>\n");
-				// 	fwrite($kml, "<StyleMap id='".htmlspecialchars(str_replace(" ", "_", $sciname), ENT_QUOTES)."'>\n");
-				// 	fwrite($kml, "<Pair><key>normal</key><styleUrl>#sn_".$iconStr."</styleUrl></Pair>");
-				// 	fwrite($kml, "<Pair><key>highlight</key><styleUrl>#sh_".$iconStr."</styleUrl></Pair>");
-				// 	fwrite($kml, "</StyleMap>\n");
-				// 	fwrite($kml, "<Folder><name>".htmlspecialchars($sciname, ENT_QUOTES)."</name>\n");
-				//
-				// 	$openFolder = true;
-				// }
 
 				fwrite($kml, '<Placemark>');
 				fwrite($kml, '<name>' . htmlspecialchars($record->identifier, ENT_QUOTES) . '</name>');
