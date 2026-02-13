@@ -112,6 +112,12 @@ if($isEditor && $submitAction){
 				gap: 8px;
 			}
 
+			.grid-form-2cl {
+				display: grid;
+				grid-template-columns: 80px 400px 1fr;
+				align-items: center;
+			}
+
 			.grid-subform {
 				display: grid;
 				grid-template-columns: auto 75px 1.5em;
@@ -122,7 +128,6 @@ if($isEditor && $submitAction){
 			.grid-item-center {
 				text-align: center;
 				align-self: center;
-				margin-bottom: 0.5rem;
 			}
 		</style>
 	</head>
@@ -442,7 +447,7 @@ if($isEditor && $submitAction){
 													<option ><?php echo $LANG['S']; ?></option>
 												</select>
 											</div>
-											<div class="grid-item-center"> = </div>
+											<div class="grid-item-center bottom-breathing-room-rel-sm"> = </div>
 											<div>
 												<input id="decimallatitude" name="decimallatitude" type="text" value="" style="width:80px;" aria-label="<?php echo $LANG['DECIMAL_LATITUDE'] ?>" />
 												<span style="cursor:pointer;padding:3px;" onclick="openMappingAid();">
@@ -461,18 +466,18 @@ if($isEditor && $submitAction){
 													<option SELECTED><?php echo $LANG['W']; ?></option>
 												</select>
 											</div>
-											<div class="grid-item-center"> = </div>
+											<div class="grid-item-center bottom-breathing-room-rel-sm"> = </div>
 											<div><input id="decimallongitude" name="decimallongitude" type="text" value="" style="width:80px;" aria-label="<?php echo $LANG['DECIMAL_LONGITUDE'] ?>" /></div>
 										</section>
 									</section>
 									<section class="gridlike-form-row">
-										<div style="vertical-align:middle" class="grid-item-center">
+										<div style="vertical-align:middle" class="grid-item-center bottom-breathing-room-rel-sm">
 											<b><?php echo $LANG['ERROR_METERS']; ?>:</b>
 										</div>
 										<div style="vertical-align:middle">
 											<input id="coordinateuncertaintyinmeters" name="coordinateuncertaintyinmeters" type="text" value="" style="width:50px;" aria-label="<?php echo $LANG['ERROR_METERS'] ?>" onchange="verifyCoordUncertainty(this)" />
 										</div>
-										<div style="vertical-align:middle">
+										<div style="vertical-align:middle" class="bottom-breathing-room-rel-sm">
 											<span style="margin-left:20px;font-weight:bold;" class="grid-item-center"><?php echo $LANG['DATUM']; ?>:</span>
 											<input id="geodeticdatum" name="geodeticdatum" type="text" value="" style="width:75px;" aria-label="<?php echo $LANG['DATUM'] ?>" />
 											<span style="cursor:pointer;margin-left:3px;" onclick="toggle('utmdiv');">
@@ -517,24 +522,24 @@ if($isEditor && $submitAction){
 											</div>
 										</div>
 									</section>
-									<section class="gridlike-form-row">
-										<div style="vertical-align:middle">
+									<section class="grid-form-2cl">
+										<div style="vertical-align:middle" class="bottom-breathing-room-rel-sm">
 											<b><?php echo $LANG['SOURCES']; ?>:</b>
 										</div>
 										<div>
 											<input id="georeferencesources" name="georeferencesources" type="text" value="<?php echo $georeferenceSources; ?>" style="width:500px;" aria-label="<?php echo $LANG['SOURCES'] ?>" />
 										</div>
 									</section>
-									<section class="gridlike-form-row">
-										<div style="vertical-align:middle">
+									<section class="grid-form-2cl">
+										<div style="vertical-align:middle" class="bottom-breathing-room-rel-sm">
 											<b><?php echo $LANG['PROTOCOLS']; ?>:</b>
 										</div>
 										<div>
 											<input id="georeferenceprotocol" name="georeferenceprotocol" type="text" value="<?php echo $georeferenceProtocol; ?>" style="width:500px;" aria-label="<?php echo $LANG['PROTOCOLS'] ?>" />
 										</div>
 									</section>
-									<section class="gridlike-form-row">
-										<div style="vertical-align:middle">
+									<section class="grid-form-2cl">
+										<div style="vertical-align:middle" class="bottom-breathing-room-rel-sm">
 											<b><?php echo $LANG['REMARKS']; ?>:</b>
 										</div>
 										<div>
@@ -542,7 +547,7 @@ if($isEditor && $submitAction){
 										</div>
 									</section>
 									<section class="gridlike-form-row">
-										<div style="vertical-align:middle">
+										<div style="vertical-align:middle" class="bottom-breathing-room-rel-sm">
 											<b><?php echo $LANG['VERIF_STATUS']; ?>:</b>
 										</div>
 										<div>
@@ -550,7 +555,7 @@ if($isEditor && $submitAction){
 										</div>
 									</section>
 									<section class="gridlike-form-row">
-										<div style="vertical-align:middle">
+										<div style="vertical-align:middle" class="bottom-breathing-room-rel-sm">
 											<b><?php echo $LANG['ELEVATION']; ?>:</b>
 										</div>
 										<div>
@@ -563,7 +568,7 @@ if($isEditor && $submitAction){
 										</div>
 									</section>
 									<section class="gridlike-form-row">
-										<div>
+										<div class="bottom-breathing-room-rel-sm">
 											<b><?php echo $LANG['PROCESSING_STATUS']; ?>: </b>
 										</div>
 										<div>
