@@ -1,0 +1,16 @@
+{
+    "challengesList": [],
+    "tokensList": {
+        "465ed0043f262b1d:f25d4172c9f59b055e88055130064f56893e87a016720adb499982c40337b4bf": 1770945929000
+    },
+    "rateLimitList": {
+        "rate_limit:::1": {
+            "data": {
+                "count": 1,
+                "window_start": 1770945329,
+                "expires_at": 1770945389
+            },
+            "expires_at": 1770948929
+        }
+    }
+}

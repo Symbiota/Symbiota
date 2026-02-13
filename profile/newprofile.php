@@ -109,8 +109,35 @@ if($action == 'Create Login'){
 			if($useCAPtcha){
 				const widget = document.querySelector("cap-widget");
 				widget.addEventListener("solve", function (e) {
-  					const token = e.detail.token;
-					// Handle the token as needed
+					console.log('✅ Challenge automatically completed');
+            		console.log('Verification token:', e.detail.token);
+
+  					const verificationToken = e.detail.token;
+            
+					// Optional: Validate token
+					fetch('/validate', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({
+							token: verificationToken
+						})
+					})
+					.then(response => response.json())
+					.then(data => {
+						if (data.success) {
+							console.log('✅ Token is valid!');
+							// Allow form submission or next step
+							//enableFormSubmission();
+						} else {
+							console.error('❌ Invalid token!');
+						}
+					});
+				});
+				
+				widget.addEventListener("error", function (e) {
+					console.error('❌ Cap validation failed:', e.detail);
 				});
 			}
 			var pwd1 = f.pwd.value.trim();
