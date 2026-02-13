@@ -110,6 +110,7 @@ if($isEditor && $submitAction){
 				display: grid;
 				grid-template-columns: 80px 30px 50px 50px 32px 20px 1fr;
 				gap: 8px;
+				align-items: center;
 			}
 
 			.grid-form-2cl {
@@ -437,7 +438,7 @@ if($isEditor && $submitAction){
 									</section>
 									<section>
 										<section class="grid-form">
-											<div style="width:62px;"><b><?php echo $LANG['LATITUDE']; ?>:</b> </div>
+											<div style="width:62px;" class="bottom-breathing-room-rel-sm"><b><?php echo $LANG['LATITUDE']; ?>:</b> </div>
 											<div><input name="latdeg" type="text" value="" onchange="updateLatDec(this.form)" style="width:30px;" aria-label="<?php echo $LANG['LATITUDE_DEGREE'] ?>" /></div>
 											<div><input name="latmin" type="text" value="" onchange="updateLatDec(this.form)" style="width:50px;" aria-label="<?php echo $LANG['LATITUDE_MINUTES'] ?>" /></div>
 											<div><input name="latsec" type="text" value="" onchange="updateLatDec(this.form)" style="width:50px;" aria-label="<?php echo $LANG['LATITUDE_SECONDS'] ?>" /></div>
@@ -456,7 +457,7 @@ if($isEditor && $submitAction){
 											</div>
 										</section>
 										<section class="grid-form">
-											<div style="vertical-align:middle"><b><?php echo $LANG['LONGITUDE']; ?>:</b> </div>
+											<div style="vertical-align:middle" class="bottom-breathing-room-rel-sm"><b><?php echo $LANG['LONGITUDE']; ?>:</b> </div>
 											<div><input name="lngdeg" type="text" value="" onchange="updateLngDec(this.form)" style="width:30px;" aria-label="<?php echo $LANG['LONGITUDE_DEGREE'] ?>" /></div>
 											<div><input name="lngmin" type="text" value="" onchange="updateLngDec(this.form)" style="width:50px;" aria-label="<?php echo $LANG['LONGITUDE_MINUTES'] ?>" /></div>
 											<div><input name="lngsec" type="text" value="" onchange="updateLngDec(this.form)" style="width:50px;" aria-label="<?php echo $LANG['LONGITUDE_SECONDS'] ?>" /></div>
