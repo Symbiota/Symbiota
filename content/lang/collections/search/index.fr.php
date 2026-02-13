@@ -142,5 +142,6 @@ $LANG['FORMATION'] = 'Formation';
 $LANG['MEMBER'] = 'Membre';
 $LANG['BED'] = 'Lit';
 $LANG['POLYGONS'] = 'Polygones';
+$LANG['SYNONYM_NOTE'] = "Lors de la recherche d'unités taxonomiques de rang supérieur, l'ensemble des résultats est limité aux taxons enfants reconnus du taxon de rang supérieur spécifié et de ses synonymes.";
 
 ?>

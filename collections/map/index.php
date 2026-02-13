@@ -3,6 +3,7 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceMapManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/classes/CollectionFormManager.php');
 
 Language::load([
 	'collections/map/index',
@@ -30,6 +31,11 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 $topVal = $shouldUseMinimalMapHeader ? '6rem' : '0';
 
 if(!$catId && isset($DEFAULTCATID) && $DEFAULTCATID) $catId = $DEFAULTCATID;
+
+$collectionFormManager = new CollectionFormManager();
+$requestSuppliedCatOrd = (array_key_exists('catOrd', $_REQUEST) && $collectionFormManager->areCollectionIdsValid($_REQUEST['catOrd'])) ? explode(',', $_REQUEST['catOrd']) : null;
+$requestSuppliedCatExpnd = (array_key_exists('catExpnd', $_REQUEST) && $collectionFormManager->areCollectionIdsValid($_REQUEST['catExpnd'])) ? explode(',', $_REQUEST['catExpnd']) : null;
+$requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFormManager->areCollectionIdsValid($_REQUEST['catChk'])) ? explode(',', $_REQUEST['catChk']) : null;
 
 $mapManager = new OccurrenceMapManager();
 $searchVar = $mapManager->getQueryTermStr();
@@ -165,7 +171,12 @@ $serverHost = GeneralUtil::getDomain();
 		<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 		<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 		<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />
+		<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.list.js?ver=20251002>" type="text/javascript"></script>
+		<script src="<?= $CLIENT_ROOT ?>/js/alerts.js?v=202107" type="text/javascript"></script>
+		<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=2" type="text/javascript"></script>
 		<link href="../../css/jquery.symbiota.css" type="text/css" rel="stylesheet" />
+		<link href="<?= $CSS_BASE_PATH ?>/searchStyles.css?ver=1" type="text/css" rel="stylesheet">
+		<link href="<?= $CSS_BASE_PATH ?>/searchStylesInner.css" type="text/css" rel="stylesheet">
 		<script src="../../js/jquery.popupoverlay.js" type="text/javascript"></script>
 		<script src="../../js/jscolor/jscolor.js?ver=1" type="text/javascript"></script>
 		<!---	<script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing<?= (!empty($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY != 'DEV' ? 'key=' . $GOOGLE_MAP_KEY : '') ?>&callback=Function.prototype" ></script> -->
@@ -938,11 +949,13 @@ $serverHost = GeneralUtil::getDomain();
 				if(heatmapLayer) map.mapLayer.removeLayer(heatmapLayer);
 			})
 
-			document.getElementById("mapsearchform").addEventListener('submit', async e => {
+			document.getElementById("params-form").addEventListener('submit', async e => {
 				e.preventDefault();
-				if(!verifyCollForm(e.target)) return false;
+				// if(!verifyCollForm(e.target)) return false;
+				if(!validateCollections()) return false;
 
 				showWorking();
+				storeFormDataInSessionStorage(e.target);
 
 				let formData = new FormData(e.target);
 
@@ -1138,7 +1151,7 @@ $serverHost = GeneralUtil::getDomain();
 
 			//Load Data if any with page Load
 			if(recordArr.length > 0) {
-				let formData = new FormData(document.getElementById("mapsearchform"));
+				let formData = new FormData(document.getElementById("params-form"));
 
 				const group = genMapGroups(recordArr, taxaMap, collArr, "<?=$LANG['CURRENT_PORTAL']?>");
 				group.origin = "<?= $serverHost . $CLIENT_ROOT?>";
@@ -1452,7 +1465,7 @@ $serverHost = GeneralUtil::getDomain();
 				if(heatmapLayer) heatmapLayer.setData({data: []})
 			})
 
-			document.getElementById("mapsearchform").addEventListener('submit', async e => {
+			document.getElementById("params-form").addEventListener('submit', async e => {
 				e.preventDefault();
 				if(!verifyCollForm(e.target)) return false;
 
@@ -1696,7 +1709,7 @@ $serverHost = GeneralUtil::getDomain();
 
 			if(recordArr.length > 0) {
 				if(shape) map.drawShape(shape);
-				let formData = new FormData(document.getElementById("mapsearchform"));
+				let formData = new FormData(document.getElementById("params-form"));
 
 				const group = genGroups(recordArr, taxaMap, collArr, "<?= $LANG['CURRENT_PORTAL'] ?>");
 				group.origin = "<?= $serverHost . $CLIENT_ROOT ?>";
@@ -2115,6 +2128,8 @@ $serverHost = GeneralUtil::getDomain();
 		<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
 	</head>
 	<body style='width:100%;max-width:100%;min-width:500px;' <?php echo (!$activateGeolocation?'onload="initialize();"':''); ?>>
+	<div style="width:100%; max-width:max-content;" role="main" id="innertext" class="inntertext-tab pin-things-here inner-search">
+		<div style="z-index:999;" id="error-msgs" class="errors"></div>
 		<?php
 		if($shouldUseMinimalMapHeader) include_once($SERVER_ROOT . '/includes/minimalheader.php');
 		?>
@@ -2132,61 +2147,53 @@ $serverHost = GeneralUtil::getDomain();
 		>
 		</div>
 		<div>
-			<button onclick="document.getElementById('defaultpanel').style.width='29rem';  " style="position:absolute;top:0;left:0;margin:0px;z-index:10; gap: 0.2rem">
+			<button id="search-panel-button" onclick="document.getElementById('defaultpanel').style.width='29rem'; document.getElementById('search-panel-button').style.display='none';" style="position:absolute;top:0;left:0;margin:0px;z-index:10; gap: 0.2rem<?= $menuClosed ? '' : '; display:none'?>">
 				<span style="padding-bottom:0.2rem">
 					&#9776;
 				</span>
-				<b>Open Search Panel</b>
+				<b><?= $LANG['OPEN_SEARCH_PANEL'] ?></b>
 			</button>
 		</div>
 		<div id='map' style='width:100vw;height:100vh;z-index:1'></div>
-		<div id="defaultpanel" class="sidepanel"  <?= $menuClosed? 'style="width: 0"': ''?>>
+		<div id="defaultpanel" class="sidepanel"  <?= $menuClosed ? 'style="width: 0"': ''?>>
 			<div class="menu" style="display:flex; align-items: center; background-color: var(--menu-top-bg-color); height: 2rem">
 				<a style="text-decoration: none; margin-left: 0.5rem;" href="<?= $CLIENT_ROOT ?>/index.php">
 					<?= $LANG['HOME'] ?>
 				</a>
 				<span style="display: flex; flex-grow: 1; margin-right:1rem; justify-content: right">
-					<a onclick="document.getElementById('defaultpanel').style.width='0px'">Hide Panel</a>
+					<a onclick="document.getElementById('defaultpanel').style.width='0px'; document.getElementById('search-panel-button').style.display='block';"><?= $LANG['HIDE_PANEL'] ?></a>
 				</span>
 			</div>
 			<div class="panel-content">
 				<div id="mapinterface">
 					<div id="accordion">
 						<h3 id="search_criteria" style="margin-top:0"><?= $LANG['SEARCH_CRITERIA'] ?></h3>
-						<div id="tabs1" style="padding:0px;height:100%">
-							<form name="mapsearchform" id="mapsearchform" data-ajax="false">
+						<form style="width: 39rem;" name="params-form" id="params-form" data-ajax="false">
+							<div id="tabs1" class="content" style="padding:0px;height:100%">
 								<ul>
-									<li><a href="#searchcollections"><span><?= $LANG['COLLECTIONS'] ?></span></a></li>
+									<li><a href="#search-form-colls"><span><?= $LANG['COLLECTIONS'] ?></span></a></li>
 									<li><a href="#searchcriteria"><span><?= $LANG['CRITERIA'] ?></span></a></li>
 									<li><a href="#mapoptions"><span><?= $LANG['MAP_OPTIONS'] ?></span></a></li>
 								</ul>
-								<div id="searchcollections">
-									<div >
-										<?php
-										$collList = $mapManager->getFullCollectionList($catId);
-										$specArr = (isset($collList['spec']) ? $collList['spec'] : null);
-										$obsArr = (isset($collList['obs']) ? $collList['obs'] : null);
-										if($specArr || $obsArr){
-										?>
-										<div id="specobsdiv">
-											<div style="margin:0px 0px 10px 5px;">
-												<input id="dballcb" data-role="none" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" <?php echo (!$mapManager->getSearchTerm('db') || $mapManager->getSearchTerm('db')=='all'?'checked':'') ?> />
-												<?= $LANG['SELECT_DESELECT'].' <a href="../misc/collprofiles.php" target="_blank">' . $LANG['ALL_COLLECTIONS'] . '</a>'; ?>
-											</div>
+								<div id="search-form-colls">
+									<div id="searchcollections">
+										<button style="width: 75px;" id="reset-btn" type="button"><?php echo $LANG['RESET'] ?></button>
+										<div >
 											<?php
-											if($specArr){
-											$mapManager->outputFullCollArr($specArr, $catId, false, false);
-											}
-											if($specArr && $obsArr) echo '<hr style="clear:both;margin:20px 0px;"/>';
-											if($obsArr){
-											$mapManager->outputFullCollArr($obsArr, $catId, false, false);
+											$collList = $mapManager->getFullCollectionList($catId);
+											$specArr = (isset($collList['spec']) ? $collList['spec'] : null);
+											$obsArr = (isset($collList['obs']) ? $collList['obs'] : null);
+											if($specArr || $obsArr){
+											?>
+												<div>
+													<?php
+														include($SERVER_ROOT . '/collections/collectionForm.php');
+													?>
+												</div>
+											<?php
 											}
 											?>
-											<div style="clear:both;">&nbsp;</div>
 										</div>
-										<?php
-										}
-										?>
 									</div>
 								</div>
 								<div id="searchcriteria" style="padding-top: 0.5rem">
@@ -2424,103 +2431,103 @@ $serverHost = GeneralUtil::getDomain();
 									?>
 									<input type="hidden" name="reset" value="1" />
 								</div>
-							</form>
-							<div id="mapoptions" style="">
-								<fieldset>
-									<legend><?= $LANG['CLUSTERING'] ?></legend>
-									<label><?= $LANG['TURN_OFF_CLUSTERING'] ?>:</label>
-									<input data-role="none" type="checkbox" id="clusteroff" name="clusteroff" value='1' <?= ($clusterOff=="y"?'checked':'') ?>/>
-
-									<span style="display: flex; align-items:center">
-										<label for="cluster-radius"><?= $LANG['CLUSTER_RADIUS'] ?>: 1 </label>
-										<input style="margin: 0 1rem;"type="range" value="1" id="cluster-radius" name="cluster-radius" min="1" max="100">100
-									</span>
-								</fieldset>
-								<br/>
-								<fieldset>
-									<legend><?= $LANG['HEATMAP']; ?></legend>
-									<label><?= $LANG['TURN_ON_HEATMAP'] ?>:</label>
-									<input data-role="none" type="checkbox" id="heatmap_on" name="heatmap_on" value='1'/>
+								<div id="mapoptions" style="">
+									<fieldset>
+										<legend><?= $LANG['CLUSTERING'] ?></legend>
+										<label><?= $LANG['TURN_OFF_CLUSTERING'] ?>:</label>
+										<input data-role="none" type="checkbox" id="clusteroff" name="clusteroff" value='1' <?= ($clusterOff=="y"?'checked':'') ?>/>
+	
+										<span style="display: flex; align-items:center">
+											<label for="cluster-radius"><?= $LANG['CLUSTER_RADIUS'] ?>: 1 </label>
+											<input style="margin: 0 1rem;"type="range" value="1" id="cluster-radius" name="cluster-radius" min="1" max="100">100
+										</span>
+									</fieldset>
 									<br/>
-									<span style="display: flex; align-items:center">
-										<label for="heat-radius"><?= $LANG['HEAT_RADIUS'] ?>: 0.1</label>
-										<input style="margin: 0 1rem;"type="range" value="70" id="heat-radius" name="heat-radius" min="1" max="100">1
-									</span>
-
-									<label for="heat-min-density"><?= $LANG['MIN_DENSITY'] ?>: </label>
-									<input style="margin: 0 1rem; width: 5rem;"value="1" id="heat-min-density" name="heat-min-density">
-
+									<fieldset>
+										<legend><?= $LANG['HEATMAP']; ?></legend>
+										<label><?= $LANG['TURN_ON_HEATMAP'] ?>:</label>
+										<input data-role="none" type="checkbox" id="heatmap_on" name="heatmap_on" value='1'/>
+										<br/>
+										<span style="display: flex; align-items:center">
+											<label for="heat-radius"><?= $LANG['HEAT_RADIUS'] ?>: 0.1</label>
+											<input style="margin: 0 1rem;"type="range" value="70" id="heat-radius" name="heat-radius" min="1" max="100">1
+										</span>
+	
+										<label for="heat-min-density"><?= $LANG['MIN_DENSITY'] ?>: </label>
+										<input style="margin: 0 1rem; width: 5rem;"value="1" id="heat-min-density" name="heat-min-density">
+	
+										<br/>
+										<label for="heat-max-density"><?= $LANG['MAX_DENSITY'] ?>: </label>
+										<input style="margin: 0 1rem; width: 5rem;"value="3" id="heat-max-density" name="heat-max-density">
+										<br/>
+									</fieldset>
 									<br/>
-									<label for="heat-max-density"><?= $LANG['MAX_DENSITY'] ?>: </label>
-									<input style="margin: 0 1rem; width: 5rem;"value="3" id="heat-max-density" name="heat-max-density">
-									<br/>
-								</fieldset>
-								<br/>
-								<fieldset>
-									<legend>
-									   <?= $LANG['ADD_REFERENCE_POINT'] ?>
-									</legend>
-									<div>
+									<fieldset>
+										<legend>
+										   <?= $LANG['ADD_REFERENCE_POINT'] ?>
+										</legend>
 										<div>
-									   <?= $LANG['MARKER_NAME'] ?>:
-											<input name='title' id='title' size='15' type='text' />
-										</div>
-										<div class="latlongdiv">
 											<div>
-											 <div style="float:left;margin-right:5px">
-												<?= $LANG['LATITUDE'] ?>
-												(<?= $LANG['DECIMAL'] ?>):
-												<input name='lat' id='lat' size='10' type='text' /> </div>
-												<div style="float:left;">eg: 34.57</div>
+										   <?= $LANG['MARKER_NAME'] ?>:
+												<input name='title' id='title' size='15' type='text' />
 											</div>
-											<div style="margin-top:5px;clear:both">
-											 <div style="float:left;margin-right:5px">
-												<?= $LANG['LONGITUDE'] ?>
-												(<?= $LANG['DECIMAL'] ?>):
-												<input name='lng' id='lng' size='10' type='text' /> </div>
-												<div style="float:left;">eg: -112.38</div>
+											<div class="latlongdiv">
+												<div>
+												 <div style="float:left;margin-right:5px">
+													<?= $LANG['LATITUDE'] ?>
+													(<?= $LANG['DECIMAL'] ?>):
+													<input name='lat' id='lat' size='10' type='text' /> </div>
+													<div style="float:left;">eg: 34.57</div>
+												</div>
+												<div style="margin-top:5px;clear:both">
+												 <div style="float:left;margin-right:5px">
+													<?= $LANG['LONGITUDE'] ?>
+													(<?= $LANG['DECIMAL'] ?>):
+													<input name='lng' id='lng' size='10' type='text' /> </div>
+													<div style="float:left;">eg: -112.38</div>
+												</div>
+												<div style='font-size:80%;margin-top:5px;clear:both'>
+												 <a href='#' onclick='toggleLatLongDivs();'>
+													<?= $LANG['ENTER_IN_DMS']?>
+												 </a>
+												</div>
 											</div>
-											<div style='font-size:80%;margin-top:5px;clear:both'>
-											 <a href='#' onclick='toggleLatLongDivs();'>
-												<?= $LANG['ENTER_IN_DMS']?>
-											 </a>
+											<div id="useLLDecimal" class='latlongdiv' style='display:none;clear:both'>
+												<div>
+													<?= $LANG['LATITUDE'] ?>:
+													<input name='latdeg' id='latdeg' size='2' type='text' />&deg;
+													<input name='latmin' id='latmin' size='4' type='text' />&prime;
+													<input name='latsec' id='latsec' size='4' type='text' />&Prime;
+													<select name='latns' id='latns'>
+														<option value='N'><?= $LANG['NORTH']; ?></option>
+														<option value='S'><?= $LANG['SOUTH']; ?></option>
+													</select>
+												</div>
+												<div style="margin-top:5px;">
+											  <?= $LANG['LONGITUDE'] ?>:
+													<input name='longdeg' id='longdeg' size='2' type='text' />&deg;
+													<input name='longmin' id='longmin' size='4' type='text' />&prime;
+													<input name='longsec' id='longsec' size='4' type='text' />&Prime;
+													<select name='longew' id='longew'>
+														<option value='E'><?= $LANG['EAST']; ?></option>
+														<option value='W' selected><?= $LANG['WEST']; ?></option>
+													</select>
+												</div>
+												<div style='font-size:80%;margin-top:5px;'>
+												 <a href='#' onclick='toggleLatLongDivs();'>
+													<?= $LANG['ENTER_IN_DECIMAL'] ?>
+												 </a>
+												</div>
+											</div>
+											<div style="margin-top:10px;">
+										   <button onclick='addRefPoint();'>
+											  <?= $LANG['ADD_MARKER'] ?>
+										   </button>
 											</div>
 										</div>
-										<div id="useLLDecimal" class='latlongdiv' style='display:none;clear:both'>
-											<div>
-												<?= $LANG['LATITUDE'] ?>:
-												<input name='latdeg' id='latdeg' size='2' type='text' />&deg;
-												<input name='latmin' id='latmin' size='4' type='text' />&prime;
-												<input name='latsec' id='latsec' size='4' type='text' />&Prime;
-												<select name='latns' id='latns'>
-													<option value='N'><?= $LANG['NORTH']; ?></option>
-													<option value='S'><?= $LANG['SOUTH']; ?></option>
-												</select>
-											</div>
-											<div style="margin-top:5px;">
-										  <?= $LANG['LONGITUDE'] ?>:
-												<input name='longdeg' id='longdeg' size='2' type='text' />&deg;
-												<input name='longmin' id='longmin' size='4' type='text' />&prime;
-												<input name='longsec' id='longsec' size='4' type='text' />&Prime;
-												<select name='longew' id='longew'>
-													<option value='E'><?= $LANG['EAST']; ?></option>
-													<option value='W' selected><?= $LANG['WEST']; ?></option>
-												</select>
-											</div>
-											<div style='font-size:80%;margin-top:5px;'>
-											 <a href='#' onclick='toggleLatLongDivs();'>
-												<?= $LANG['ENTER_IN_DECIMAL'] ?>
-											 </a>
-											</div>
-										</div>
-										<div style="margin-top:10px;">
-									   <button onclick='addRefPoint();'>
-										  <?= $LANG['ADD_MARKER'] ?>
-									   </button>
-										</div>
-									</div>
-								</fieldset>
-							</div>
+									</fieldset>
+								</div>
+							</form>
 							<form style="display:none;" name="csvcontrolform" id="csvcontrolform" action="csvdownloadhandler.php" method="post" onsubmit="">
 								<input data-role="none" name="selectionscsv" id="selectionscsv" type="hidden" value="" />
 								<input data-role="none" name="starrcsv" id="starrcsv" type="hidden" value="" />
@@ -2562,7 +2569,7 @@ $serverHost = GeneralUtil::getDomain();
 										<input name="searchvar" type="hidden" value="<?= $searchVar ?> " />
 									</form>
 
-									<button class="icon-button" onclick="copyUrl('<?= $serverHost . $CLIENT_ROOT ?>')" title="<?= $LANG['COPY_TO_CLIPBOARD'] ?>">
+									<button style="width: auto;" class="icon-button" onclick="copyUrl('<?= $serverHost . $CLIENT_ROOT ?>')" title="<?= $LANG['COPY_TO_CLIPBOARD'] ?>">
 										<svg alt="Copy as a link." style="width:1.2em;" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg>
 									</button>
 								</div>
@@ -2714,5 +2721,21 @@ $serverHost = GeneralUtil::getDomain();
 				<img style="border:0px;width:100px;height:100px;" src="../../images/ajax-loader.gif" />
 			</div>
 		</div>
+	</div>
 	</body>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			setSessionQueryStr();
+			setSearchForm(document.getElementById("params-form"));
+			toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
+			document.getElementById("reset-btn").addEventListener("click", function (event) {
+				clearPageSpecificSessionStorageItems();
+				checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
+				closeAllCategories();
+				expandCategoriesBasedOnConfig();
+				updateChip(event, isInitialConfig=true);
+			});
+		});
+
+	</script>
 </html>

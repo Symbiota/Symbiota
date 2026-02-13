@@ -52,7 +52,7 @@ class DwcArchiverAttribute extends DwcArchiverBaseManager{
 	private function trimBySchemaType($dataArr){
 		$trimArr = array();
 		if($this->schemaType == 'backup'){
-			//$trimArr = array('Owner', 'UsageTerms', 'WebStatement');
+			//$trimArr = array('Enter-fieldName-to-Remove');
 		}
 		return array_diff_key($dataArr,array_flip($trimArr));
 	}

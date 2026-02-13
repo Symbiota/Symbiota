@@ -249,17 +249,17 @@ if(!$IS_ADMIN){
 						<div style="clear:both;font-weight:bold;font-size:120%;">
 							<?php echo $occObj['institutionCode'].($occObj['collectionCode']?':'.$occObj['collectionCode']:''); ?>
 						</div>
-						<?php if($collId == $occObj['collid'] && ($dupeType == 'exact' || $dupeType == 'exsic')){ ?>
+						<?php if($collId == $occObj['collid'] && ($dupeType == 'exact' || $dupeType == 'exsic')): ?>
 							<div style="color:red;">
 								<?php echo $LANG['NOTICE_EXACT_MATCH']; ?>
 							</div>
-							<div style="font-weight:bold;">
-								<?php
-								if($occObj['catalogNumber']) echo $occObj['catalogNumber'];
-								if($occObj['otherCatalogNumbers']) echo ' ('.$occObj['otherCatalogNumbers'].')';
-								?>
-							</div>
-						<?php } ?>
+						<?php endif ?>
+
+						<div style="font-weight:bold;">
+							<?= $occObj['catalogNumber'] ?? ''?>
+							<?= $occObj['otherCatalogNumbers'] ? ' (' . $occObj['otherCatalogNumbers'] .  ')': ''?>
+						</div>
+
 						<div>
 							<?php
 							echo '<span title="recordedby">'.($occObj['recordedBy']?$occObj['recordedBy']:'Collector field empty').'</span>';

@@ -69,7 +69,7 @@ else{
 			'occurrenceRemarks'=>$LANG['NOTES_REMARKS'],'ocrFragment'=>$LANG['OCR_FRAGMENT'],'otherCatalogNumbers'=>$LANG['OTHER_CAT_NUMS'],
 			'ownerInstitutionCode'=>$LANG['OWNER_CODE'],'preparations'=>$LANG['PREPARATIONS'],'reproductiveCondition'=>$LANG['REP_COND'],
 			'samplingEffort'=>$LANG['SAMP_EFFORT'],'samplingProtocol'=>$LANG['SAMP_PROTOCOL'],'sciname'=>$LANG['SCI_NAME'],'sex'=>$LANG['SEX'],
-			'stateProvince'=>$LANG['STATE_PROVINCE'],'substrate'=>$LANG['SUBSTRATE'],'taxonRemarks'=>$LANG['TAXON_REMARKS'],
+			'stateProvince'=>$LANG['STATE_PROVINCE'],'storageLocation'=>$LANG['STORAGE_LOC'],'substrate'=>$LANG['SUBSTRATE'],'taxonRemarks'=>$LANG['TAXON_REMARKS'],
 			'typeStatus'=>$LANG['TYPE_STATUS'],'verbatimCoordinates'=>$LANG['VERBAT_COORDS'],'verbatimEventDate'=>$LANG['VERBATIM_DATE'],
 			'verbatimDepth'=>$LANG['VERBATIM_DEPTH'],'verbatimElevation'=>$LANG['VERBATIM_ELE'],'waterbody'=> $LANG['WATER_BODY']);
 	if (!empty($qCollMap['paleoActivated'])){

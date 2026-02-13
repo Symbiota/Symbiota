@@ -13,8 +13,18 @@ function cleanNumericInput(formElem) {
   }
 }
 
-function checkHarvestParamsForm(frm){
-	//make sure they have filled out at least one field.
+function checkHarvestParamsForm(frm, currentPage){
+	const newInputElement = document.createElement("input");
+	newInputElement.type = "hidden";
+	newInputElement.id = "db";
+	newInputElement.name = "db";
+	const previousPageKey = 'querystr' + currentPage?.replace('collections/harvestparams.php','collections/index.php') + '/db';
+	const previousPageDbVals = sessionStorage.getItem(previousPageKey);
+	if(previousPageDbVals){
+		newInputElement.value = previousPageDbVals;
+	}
+	frm.appendChild(newInputElement);
+	storeFormDataInSessionStorage(frm);
 	let searchDefined = false;
 	let traitInputs = frm.elements;
  	for(var i = 0; i < traitInputs.length; i++) {
@@ -106,8 +116,9 @@ function checkHarvestParamsForm(frm){
 }
 
 function setHarvestParamsForm(frm) {
-  if (sessionStorage.querystr) {
-	var urlVar = parseUrlVariables(sessionStorage.querystr);
+  const urlVariablesFromSessionStorage = concatenateUrlVariablesFromSessionStorage();
+  if (urlVariablesFromSessionStorage) {
+	var urlVar = parseUrlVariables(urlVariablesFromSessionStorage);
 
 	if (
 	  typeof urlVar.usethes !== "undefined" &&

@@ -844,13 +844,17 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		$this->searchTermArr[$this->cleanInputStr($termKey)] = $this->cleanInputStr($termValue);
 	}
 
-	public function getSearchTerm($k){
+	public function getSearchTerm($k, $currentPage = null){
 		if($k && isset($this->searchTermArr[$k])){
 			if(is_array($this->searchTermArr[$k])) {
 				return $this->cleanOutArray($this->searchTermArr[$k]);
 			} else {
 				return $this->cleanOutStr(trim($this->searchTermArr[$k],' ;'));
 			}
+		}
+		if($k === 'db'){
+			$sessionKey = 'query' . $currentPage . '/db';
+			return $_SESSION[$sessionKey] ?? 'all';
 		}
 		return '';
 	}
@@ -906,9 +910,10 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			if($v) $retStr .= '&'. $this->cleanOutStr($k) . '=' . $this->cleanOutStr($v);
 		}
 		if(isset($this->taxaArr['search'])){
-			$patternTaxonChars = '/^[a-zA-Z0-9\s\-\,\.×†]*$/';
-			if (preg_match($patternTaxonChars, $this->getTaxaSearchTerm())==1) {
-				$retStr .= '&taxa=' . $this->getTaxaSearchTerm();
+			$patternTaxonChars = '/^[a-zA-Z0-9\s\-\,\.\(\)\'×†]*$/';
+			$taxonSearchTerm = $this->getTaxaSearchTerm();
+			if (preg_match($patternTaxonChars, $taxonSearchTerm)==1) {
+				$retStr .= '&taxa=' . $taxonSearchTerm;
 			}
 			if($this->taxaArr['usethes']) $retStr .= '&usethes=1';
 			if(is_numeric($this->taxaArr['taxontype'])) {

@@ -8,6 +8,7 @@ include_once($SERVER_ROOT . '/classes/OccurrenceManager.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceAttributeSearch.php');
 include_once($SERVER_ROOT . '/classes/AssociationManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/classes/CollectionFormManager.php');
 
 Language::load('collections/search/index');
 
@@ -39,6 +40,12 @@ $obsArr = (isset($collList['obs']) ? $collList['obs'] : null);
 $associationManager = new AssociationManager();
 $characters = $collManager->getCharacters();
 $relationshipTypes = $associationManager->getRelationshipTypes();
+
+$collectionFormManager = new CollectionFormManager();
+$requestSuppliedCatOrd = (array_key_exists('catOrd', $_REQUEST) && $collectionFormManager->areCollectionIdsValid($_REQUEST['catOrd'])) ? explode(',', $_REQUEST['catOrd']) : null;
+$requestSuppliedCatExpnd = (array_key_exists('catExpnd', $_REQUEST) && $collectionFormManager->areCollectionIdsValid($_REQUEST['catExpnd'])) ? explode(',', $_REQUEST['catExpnd']) : null;
+$requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFormManager->areCollectionIdsValid($_REQUEST['catChk'])) ? explode(',', $_REQUEST['catChk']) : null;
+
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -155,6 +162,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 							<label for="usethes">
 								<span class="ml-1"><?php echo $LANG['INCLUDE_SYNONYMS'] ?></span>
 							</label>
+							<img src="../../images/info.png" style="width:1em; margin-left:1px;" alt="<?php echo $LANG['SYNONYM_NOTE'] ?>" title="<?php echo $LANG['SYNONYM_NOTE'] ?>" onclick="alert('<?php echo addslashes($LANG['SYNONYM_NOTE']) ?>')"/>
 						</div>
 					</div>
 				</section>
@@ -766,7 +774,7 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 							<!-- Open Collections modal -->
 							<div id="specobsdiv">
 								<?php
-								include_once(__DIR__ . '/collectionContent.php');
+								include($SERVER_ROOT . '/collections/collectionForm.php');
 								?>
 							</div>
 						</div>
@@ -812,8 +820,21 @@ $relationshipTypes = $associationManager->getRelationshipTypes();
 	$(document).ready(function() {
 		setSessionQueryStr();
 		setSearchForm(document.getElementById("params-form"));
-		toggleTheNonDefaultsClosed(<?php echo $DEFAULTCATID ?>);
 		toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
+		document.getElementById("params-form").addEventListener("submit", function(event) {
+			event.preventDefault();
+			simpleSearch();
+		});
+		document.getElementById("reset-btn").addEventListener("click", function (event) {
+			document.getElementById("params-form").reset();
+			// sessionStorage.clear();
+			// localStorage.clear();
+			clearPageSpecificSessionStorageItems();
+			checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
+			closeAllCategories();
+			expandCategoriesBasedOnConfig();
+			updateChip(event, isInitialConfig=true);
+		});
 	});
 </script>
 <script>

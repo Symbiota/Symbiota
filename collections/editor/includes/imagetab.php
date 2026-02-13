@@ -129,10 +129,10 @@ $creatorArray = Media::getCreatorArray();
 						<option value="">---------------------------------------</option>
 						<?php
 						foreach($creatorArray as $id => $uname){
-								echo '<option value="'.$id.'" >';
-								echo $uname;
-								echo '</option>';
-							}
+							echo '<option value="'.$id.'" >';
+							echo $uname;
+							echo '</option>';
+						}
 						?>
 					</select>
 					<a href="#" onclick="toggle('imgaddoverride');return false;" title="<?php echo $LANG['DISPLAY_CREATOR_OVER']; ?>">
@@ -140,7 +140,7 @@ $creatorArray = Media::getCreatorArray();
 					</a>
 				</div>
 				<div id="imgaddoverride" style="margin:0px 0px 5px 10px;display:none;">
-          <b><?php echo $LANG['CREATOR_OVER']; ?>:</b>
+					<b><?php echo $LANG['CREATOR_OVER']; ?>:</b>
 					<input name='creator' type='text' style="width:300px;" maxlength='100' />
 					* <?php echo $LANG['WILL_OVERRIDE']; ?>
 				</div>
@@ -163,14 +163,14 @@ $creatorArray = Media::getCreatorArray();
 				<div style="margin:0px 0px 5px 10px;">
 					<b><?php echo $LANG['DESCRIBE_IMAGE']; ?></b>
 				</div>
-					<?php
-					$imageTagKeys = Media::getMediaTagKeys();
-					foreach($imageTagKeys as $key => $description) {
-						echo '<div style="margin-left:10px;">';
-						echo '<input name="ch_'.$key.'" type="checkbox" value="1" /> '.$description.'</br>';
-						echo '</div>';
-					}
-					?>
+				<?php
+				$imageTagKeys = Media::getMediaTagKeys();
+				foreach($imageTagKeys as $key => $description) {
+					echo '<div style="margin-left:10px;">';
+					echo '<input name="ch_'.$key.'" type="checkbox" value="1" /> '.$description.'</br>';
+					echo '</div>';
+				}
+				?>
 				<div style="margin:10px 0px 10px 20px;">
 					<input type="hidden" name="occid" value="<?php echo $occId; ?>" />
 					<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
@@ -194,42 +194,42 @@ $creatorArray = Media::getCreatorArray();
 					$tnUrl = $imgArr["thumbnailUrl"];
 					?>
 					<tr>
-					<?php if($imgArr['mediaType'] === 'image'):?>
-						<td style="width:300px;text-align:center;padding:20px;">
-							<?php
-							if((!$imgUrl || $imgUrl == 'empty') && $origUrl) $imgUrl = $origUrl;
-							$displayUrl = $imgArr["thumbnailUrl"] ?? $imgUrl;
+						<?php if($imgArr['mediaType'] === 'image'):?>
+							<td style="width:300px;text-align:center;padding:20px;">
+								<?php
+								if((!$imgUrl || $imgUrl == 'empty') && $origUrl) $imgUrl = $origUrl;
+								$displayUrl = $imgArr["thumbnailUrl"] ?? $imgUrl;
 
-							if(array_key_exists('MEDIA_DOMAIN', $GLOBALS)){
-								if(substr($imgUrl, 0, 1) == '/'){
-									$imgUrl = $GLOBALS['MEDIA_DOMAIN'] . $imgUrl;
+								if(array_key_exists('MEDIA_DOMAIN', $GLOBALS)){
+									if(substr($imgUrl, 0, 1) == '/'){
+										$imgUrl = $GLOBALS['MEDIA_DOMAIN'] . $imgUrl;
+									}
+									if($origUrl && substr($origUrl, 0, 1) == '/'){
+										$origUrl = $GLOBALS['MEDIA_DOMAIN'] . $origUrl;
+									}
+									if($tnUrl && substr($tnUrl, 0, 1) == '/'){
+										$tnUrl = $GLOBALS['MEDIA_DOMAIN'] . $tnUrl;
+									}
 								}
-								if($origUrl && substr($origUrl, 0, 1) == '/'){
-									$origUrl = $GLOBALS['MEDIA_DOMAIN'] . $origUrl;
+								echo '<a href="' . $imgUrl . '" target="_blank">';
+								if(array_key_exists('error', $imgArr)){
+									echo '<div style="font-weight:bold;font-size:140%">'.$imgArr['error'].'</div>';
 								}
-								if($tnUrl && substr($tnUrl, 0, 1) == '/'){
-									$tnUrl = $GLOBALS['MEDIA_DOMAIN'] . $tnUrl;
+								else{
+									echo '<img src="' . $displayUrl . '" style="width:250px;" title="'.$imgArr["caption"].'" />';
 								}
-							}
-							echo '<a href="' . $imgUrl . '" target="_blank">';
-							if(array_key_exists('error', $imgArr)){
-								echo '<div style="font-weight:bold;font-size:140%">'.$imgArr['error'].'</div>';
-							}
-							else{
-								echo '<img src="' . $displayUrl . '" style="width:250px;" title="'.$imgArr["caption"].'" />';
-							}
-							echo '</a>';
-							if($imgUrl != $origUrl) echo '<div><a href="' . $imgUrl .'" target="_blank">' . $LANG['OPEN_MED'] . '</a></div>';
-							if($origUrl) echo '<div><a href="' . $origUrl . '" target="_blank">' . $LANG['OPEN_LARGE'] . '</a></div>';
-							?>
-						</td>
+								echo '</a>';
+								if($imgUrl != $origUrl) echo '<div><a href="' . $imgUrl .'" target="_blank">' . $LANG['OPEN_MED'] . '</a></div>';
+								if($origUrl) echo '<div><a href="' . $origUrl . '" target="_blank">' . $LANG['OPEN_LARGE'] . '</a></div>';
+								?>
+							</td>
 						<?php elseif($imgArr['mediaType'] === 'audio'):?>
-						<td style="vertical-align: middle">
-							<audio controls>
-								<source src="<?= $origUrl ?>" type="<?=$imgArr['format']?>">
-								Your browser does not support the audio element.
-							</audio>
-						</td>
+							<td style="vertical-align: middle">
+								<audio controls>
+									<source src="<?= $origUrl ?>" type="<?= $imgArr['format'] ?>">
+									Your browser does not support the audio element.
+								</audio>
+							</td>
 						<?php endif?>
 						<td class="imgInfo" style="text-align:left;padding:10px;">
 							<div style="float:right;cursor:pointer;" onclick="toggle('img<?php echo $imgId; ?>editdiv');" title="<?php echo $LANG['EDIT_METADATA']; ?>">
@@ -298,8 +298,7 @@ $creatorArray = Media::getCreatorArray();
 								<div>
 									<b><?php echo $LANG['THUMB_URL']; ?>: </b>
 									<a href="<?= $tnUrl ?>" title="<?= $tnUrl ?>" target="_blank">
-										<?= $tnUrl && strlen($tnUrl) > 60 ?
-											'...'.substr($tnUrl,-60) : $tnUrl?>
+										<?= $tnUrl && strlen($tnUrl) > 60 ? '...' . substr($tnUrl,-60) : $tnUrl ?>
 									</a>
 								</div>
 								<div>
@@ -429,7 +428,7 @@ $creatorArray = Media::getCreatorArray();
 									</fieldset>
 								</form>
 								<?php
-								if($displayRemapForm = Media::isRemappable($imgArr, $occId)){
+								if(Media::isRemappable($imgArr, $occId)){
 									?>
 									<form name="img<?php echo $imgId; ?>remapform" action="occurrenceeditor.php" method="post" onsubmit="return verifyImgRemapForm(this);">
 										<fieldset style="padding:15px">
@@ -449,6 +448,15 @@ $creatorArray = Media::getCreatorArray();
 											</div>
 										</fieldset>
 									</form>
+									<?php
+								} else {
+									?>
+									<fieldset style="padding:15px">
+										<legend><b><?= $LANG['REMAP_TO_ANOTHER'] ?></b></legend>
+										<div style="margin:10px 20px;">
+											<?= $LANG['CANNOT_REMAP_EXPLAIN'] ?>
+										</div>
+									</fieldset>
 									<?php
 								}
 								?>

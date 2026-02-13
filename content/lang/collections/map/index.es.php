@@ -67,4 +67,6 @@ $LANG['SOUTH'] = 'S';
 $LANG['EAST'] = 'E';
 $LANG['WEST'] = 'W';
 $LANG['FAILED_TO_LOAD_OCCR_DATA'] = 'Error al cargar los datos de ocurrencia';
+$LANG['OPEN_SEARCH_PANEL'] = 'Abrir panel de búsqueda';
+$LANG['HIDE_PANEL'] = 'Ocultar panel';
 ?>

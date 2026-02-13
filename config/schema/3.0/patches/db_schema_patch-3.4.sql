@@ -456,7 +456,6 @@ ALTER TABLE `uploadspectemp`
   ADD COLUMN `paleo_earlyInterval` TEXT,
   ADD COLUMN `paleo_lateInterval` TEXT,
   ADD COLUMN `paleo_absoluteAge` TEXT,
-  ADD COLUMN `paleo_storageLoc` TEXT,
   ADD COLUMN `paleo_stage` TEXT,
   ADD COLUMN `paleo_localStage` TEXT,
   ADD COLUMN `paleo_biota` TEXT,
@@ -472,6 +471,15 @@ ALTER TABLE `uploadspectemp`
   ADD COLUMN `paleo_slideProperties` TEXT,
   ADD COLUMN `paleo_geologicalContextID` TEXT,
   DROP COLUMN `paleojson`;
+
+#copy storageAge in omoccurrences.storageLocation
+UPDATE `omoccurrences` o LEFT JOIN `omoccurpaleo` p on o.`occid` = p.`occid` 
+  SET o.`storageLocation` = CONCAT_WS("; ", o.`storageLocation`, p.`storageAge`) 
+  WHERE p.`storageAge` IS NOT NULL;
+  
+#Remove deprecated field 'storageAge'
+ALTER TABLE `omoccurpaleo` 
+  DROP COLUMN `storageAge`;
 
 
 ALTER TABLE `portalindex` 
@@ -640,3 +648,8 @@ DROP TABLE IF EXISTS `lkupmunicipality`;
 DROP TABLE IF EXISTS `lkupcounty`;
 DROP TABLE IF EXISTS `lkupstateprovince`;
 DROP TABLE IF EXISTS `lkupcountry`;
+
+# Combine Lng and Lat indices
+ALTER TABLE omoccurrences ADD INDEX IX_occurrences_decimalLngLat (decimalLongitude, decimalLatitude);
+ALTER TABLE omoccurrences DROP INDEX IX_occurrences_lat;
+ALTER TABLE omoccurrences DROP INDEX IX_occurrences_lng;
