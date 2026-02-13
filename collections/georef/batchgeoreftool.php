@@ -487,7 +487,7 @@ if($isEditor && $submitAction){
 										</div>
 									</section>
 									<section class="gridlike-form-row">
-										<div style="vertical-align:middle" class="grid-item-center">
+										<div style="vertical-align:middle" class="grid-item-center bottom-breathing-room-rel-sm">
 											<b><?php echo $LANG['FOOTPRINT_WKT']; ?>:</b>
 										</div>
 										<div style="vertical-align:middle">
