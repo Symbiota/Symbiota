@@ -1,44 +1,56 @@
-#Autopopulate earlyInterval and lateInterval
+#Set the early and late intervals to correct gtsterm if present
+UPDATE omoccurpaleo p
+INNER JOIN omoccurpaleogts g
+  ON g.gtsterm = COALESCE(
+        NULLIF(p.stage, ''),
+        NULLIF(p.epoch, ''),
+        NULLIF(p.period, ''),
+        NULLIF(p.era, ''),
+        NULLIF(p.eon, '')
+     )
+SET
+  p.earlyInterval = g.gtsterm,
+  p.lateInterval  = g.gtsterm
+WHERE
+  (p.earlyInterval IS NULL OR p.earlyInterval = '')
+  AND
+  (p.lateInterval IS NULL OR p.lateInterval = '');
+
+
+#Fill earlyInterval from lateInterval
 UPDATE omoccurpaleo
-  SET
-    earlyInterval = COALESCE(
-      NULLIF(stage, ''),
-      NULLIF(epoch, ''),
-      NULLIF(period, ''),
-      NULLIF(era, ''),
-      NULLIF(eon, '')
-    ),
-    lateInterval = COALESCE(
-      NULLIF(stage, ''),
-      NULLIF(epoch, ''),
-      NULLIF(period, ''),
-      NULLIF(era, ''),
-      NULLIF(eon, '')
-    )
-  WHERE
-    (earlyInterval IS NULL OR earlyInterval = '')
-    AND
-    (lateInterval IS NULL OR lateInterval = '')
-    AND
+SET earlyInterval = lateInterval
+WHERE (earlyInterval IS NULL OR earlyInterval = '')
+  AND (lateInterval IS NOT NULL AND lateInterval != '');
+
+#Fill lateInterval from earlyInterval
+UPDATE omoccurpaleo
+SET lateInterval = earlyInterval
+WHERE (lateInterval IS NULL OR lateInterval = '')
+  AND (earlyInterval IS NOT NULL AND earlyInterval != '');
+
+#Store mismatched terms in stratRemarks
+UPDATE omoccurpaleo
+SET stratRemarks = CONCAT_WS(
+  '; ',
+  stratRemarks,
+  CONCAT(
+    'VERBATIM CHRONOSTRATIGRAPHY: ',
     COALESCE(
       NULLIF(stage, ''),
       NULLIF(epoch, ''),
       NULLIF(period, ''),
       NULLIF(era, ''),
       NULLIF(eon, '')
-    ) IS NOT NULL;
-
-UPDATE omoccurpaleo
-  SET
-    earlyInterval = CASE
-      WHEN (earlyInterval IS NULL OR earlyInterval = '')
-          AND (lateInterval IS NOT NULL AND lateInterval != '')
-      THEN lateInterval
-      ELSE earlyInterval
-    END,
-    lateInterval = CASE
-      WHEN (lateInterval IS NULL OR lateInterval = '')
-          AND (earlyInterval IS NOT NULL AND earlyInterval != '')
-      THEN earlyInterval
-      ELSE lateInterval
-    END;
+    )
+  )
+)
+WHERE
+  (earlyInterval IS NULL OR earlyInterval = '')
+  AND COALESCE(
+        NULLIF(stage, ''),
+        NULLIF(epoch, ''),
+        NULLIF(period, ''),
+        NULLIF(era, ''),
+        NULLIF(eon, '')
+      ) IS NOT NULL;
