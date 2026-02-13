@@ -121,6 +121,7 @@ $LANG['MAP_TN_AT_SOURCE'] = 'Mapper vers la vignette à l\'emplacement source (n
 $LANG['EXCLUDE_TN'] = 'Exclure la vignette';
 $LANG['LG_IMG'] = 'Grande image';
 $LANG['IMPORT_LG_SOURCE'] = 'Importer l\'image source en grande version';
+$LANG['WARNING_LG_IMG_RESIZE'] = 'Avertissement: Redimensionnement à une grande largeur d’image';
 $LANG['MAP_TO_LG_SOURCE'] = 'Mapper à l\'image source en version grande taille';
 $LANG['IMPORT_LG_FROM_SOURCE'] = 'Importer une version volumineuse depuis l\'emplacement source (nom de la source avec le suffixe _lg.jpg)';
 $LANG['MAP_LG_AT_SOURCE'] = 'Mapper vers une grande version existante (nom de la source avec suffixe _lg.jpg)';

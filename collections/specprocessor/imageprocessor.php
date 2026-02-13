@@ -488,9 +488,15 @@ if($spprid) $specManager->setProjVariables($spprid);
 									</div>
 									<div id="largeImageDiv" class="profileDiv" style="display:<?php echo ($projectType=='local'?'block':'none'); ?>">
 										<div>
-											<b><?php echo $LANG['LG_IMG']; ?>:</b>
+											<b><?php echo $LANG['LG_IMG']; ?>: </b>
 											<div style="margin:5px 15px;">
-												<input name="createlgimg" type="radio" value="1" <?php echo ($specManager->getCreateLgImg()==1?'CHECKED':''); ?> /> <?php echo $LANG['IMPORT_LG_SOURCE']; ?><br/>
+												<input name="createlgimg" type="radio" value="1" <?php echo ($specManager->getCreateLgImg()==1?'CHECKED':''); ?> />
+												<?php echo $LANG['IMPORT_LG_SOURCE']; ?>
+												<b style="color:var(--danger-color)">
+													(<?= $LANG['WARNING_LG_IMG_RESIZE'] ?? '(Warning: Resizes down to large image width)' ?>)
+												</b>
+												<br/>
+
 												<input name="createlgimg" type="radio" value="2" <?php echo ($specManager->getCreateLgImg()==2?'CHECKED':''); ?> /> <?php echo $LANG['MAP_TO_LG_SOURCE']; ?><br/>
 												<input name="createlgimg" type="radio" value="3" <?php echo ($specManager->getCreateLgImg()==3?'CHECKED':''); ?> /> <?php echo $LANG['IMPORT_LG_FROM_SOURCE']; ?><br/>
 												<input name="createlgimg" type="radio" value="4" <?php echo ($specManager->getCreateLgImg()==4?'CHECKED':''); ?> /> <?php echo $LANG['MAP_LG_AT_SOURCE']; ?><br/>
@@ -670,7 +676,12 @@ if($spprid) $specManager->setProjVariables($spprid);
 												<div>
 													<b><?php echo $LANG['LG_IMG']; ?>:</b>
 													<div style="margin:5px 15px">
-														<input name="createlgimg" type="radio" value="1" <?php echo ($specManager->getCreateLgImg() == 1?'CHECKED':'') ?> /> <?php echo $LANG['IMPORT_LG_SOURCE']; ?><br/>
+														<input name="createlgimg" type="radio" value="1" <?php echo ($specManager->getCreateLgImg() == 1?'CHECKED':'') ?> />
+														<?php echo $LANG['IMPORT_LG_SOURCE']; ?>
+														<b style="color:var(--danger-color)">
+															(<?= $LANG['WARNING_LG_IMG_RESIZE'] ?? '(Warning: Resizes down to large image width)' ?>)
+														</b>
+														<br/>
 														<input name="createlgimg" type="radio" value="2" <?php echo ($specManager->getCreateLgImg() == 2?'CHECKED':'') ?> /> <?php echo $LANG['MAP_TO_LG_SOURCE']; ?><br/>
 														<input name="createlgimg" type="radio" value="3" <?php echo ($specManager->getCreateLgImg() == 3?'CHECKED':'') ?> /> <?php echo $LANG['IMPORT_LG_FROM_SOURCE']; ?><br/>
 														<input name="createlgimg" type="radio" value="4" <?php echo ($specManager->getCreateLgImg() == 4?'CHECKED':'') ?> /> <?php echo $LANG['MAP_LG_AT_SOURCE']; ?><br/>

@@ -120,6 +120,7 @@ $LANG['MAP_TN_AT_SOURCE'] = 'Map to thumbnail at source location (source name wi
 $LANG['EXCLUDE_TN'] = 'Exclude thumbnail';
 $LANG['LG_IMG'] = 'Large Image';
 $LANG['IMPORT_LG_SOURCE'] = 'Import source image as large version';
+$LANG['WARNING_LG_IMG_RESIZE'] = 'Warning: Resizes down to large image width';
 $LANG['MAP_TO_LG_SOURCE'] = 'Map to source image as large version';
 $LANG['IMPORT_LG_FROM_SOURCE'] = 'Import large version from source location (source name with _lg.jpg suffix)';
 $LANG['MAP_LG_AT_SOURCE'] = 'Map to existing large version (source name with _lg.jpg suffix)';
