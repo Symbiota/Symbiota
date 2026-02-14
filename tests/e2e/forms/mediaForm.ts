@@ -10,6 +10,7 @@ const mediaFields = {
 	copyright: 'text',
 	sourceUrl: 'text',
 	url: 'text',
+	weburl: 'text',
 	renameweburl: 'checkbox',
 	originalUrl: 'text',
 	renameorigurl: 'checkbox',
