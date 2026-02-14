@@ -12,12 +12,12 @@ test.afterEach(async ({ collection, browserName }) => {
 	await collection.deleteByCollId(collId);
 });
 
-test('Create an Collection', async ({ page, browserName }) => {
+test('Create an Collection', async ({ page, browserName }, workerInfo) => {
 	const collectionName = browserName + ' CI Collection';
 
 	let collData = {
 		institutionCode: 'SYMB',
-		collectionCode: collectionName.slice(0, 4) + '_CICOL',
+		collectionCode: collectionName.slice(0, 4) + '_CICOL' + workerInfo.parallelIndex,
 		collectionName: collectionName,
 	}
 
