@@ -4,6 +4,7 @@ import { test as testCollection } from './fixtures/collection';
 import { test as testOccurrence } from './fixtures/occurrence';
 import { OccurrenceEditorPage, OccurrenceEditorTab } from './pages/OccurrenceEditorPage'
 import path from 'node:path';
+import { MediaForm } from './forms/mediaForm';
 
 const test = mergeTests(testWithAdmin, testCollection, testOccurrence);
 
@@ -217,13 +218,13 @@ test.describe('Create Occurrence Record', () => {
 		await occurrenceEditor.gotoRecord(collId, occId)
 		await occurrenceEditor.gotoTab(OccurrenceEditorTab.Media)
 
-		await page.locator('div[title="Edit Resource MetaData"]').click({force: true});
-		const mediaForm = page.locator(`div[id=img${mediaId}editdiv]`);
+		let mediaForm = new MediaForm(`div[id=img${mediaId}editdiv]`, page);
+		await mediaForm.openEditForm();
 
 		page.on('dialog', dialog => dialog.accept());
-		await mediaForm.locator('input[name=removeimg]').click({force: true})
-		await mediaForm.locator('button[value="Delete Image"]').click({force: true})
+		await mediaForm.set('removeimg', true);
+		await mediaForm.submitDelete();
 
-		await expect(page.getByText(' Media deleted successfully')).toBeVisible();
+		await expect(page.getByText(mediaForm.DELETE_SUCCESS_MSG)).toBeVisible();
 	})
 })
