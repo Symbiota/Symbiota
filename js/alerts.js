@@ -2,7 +2,7 @@ const main = document.getElementById("innertext");
 let div = document.createElement("div");
 div.id = "alert-msgs";
 div.classList.add("alerts");
-main.appendChild(div);
+main?.appendChild(div);
 
 function handleAlerts(alerts, id, limitMessage) {
   if (limitMessage) {

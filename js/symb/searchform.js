@@ -2,12 +2,24 @@
  * GLOBAL VARIABLES
  */
 const criteriaPanel = document.getElementById("criteria-panel") || null;
-const allCollections = document.getElementById("dballcb") || null;
 const form = document.getElementById("params-form") || null;
 const formColls = document.getElementById("search-form-colls") || null;
 const formSites = document.getElementById("site-list") || null;
 const searchFormColls = document.getElementById("search-form-colls") || null;
 const searchFormPaleo = document.getElementById("search-form-geocontext") || null;
+
+// Helper function to get currentPage value, initializing if necessary
+function getCurrentPage() {
+	if (typeof window.currentPage === 'undefined') {
+		window.currentPage = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || "{}")?.CURRENT_URL;
+	}
+	return window.currentPage;
+}
+
+// Initialize currentPage when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+	getCurrentPage();
+});
 
 const uLat = document.getElementById("upperlat") || null;
 const uLatNs = document.getElementById("upperlat_NS") || null;
@@ -23,6 +35,7 @@ const pLng = document.getElementById("pointlong") || null;
 const pLngEw = document.getElementById("pointlong_EW") || null;
 const pRadius = document.getElementById("radius") || null;
 const pRadiusUn = document.getElementById("radiusunits") || null;
+let formInputs = null;
 
 let paramsArr = {};
 //////////////////////////////////////////////////////////////////////////
@@ -43,23 +56,6 @@ $('input[type="radio"]')?.click(function () {
   $(this)?.parent()?.addClass("tab-active");
   $(this)?.parent()?.siblings()?.removeClass("tab-active");
 });
-
-/**
- * Opens modal with id selector
- * @param {String} elementid Selector for modal to be opened
- */
-function openModal(elementid) {
-  $(elementid)?.css("display", "block");
-  $(document.body)?.css("overflow: hidden");
-}
-
-/**
- * Closes modal with id selector
- * @param {String} elementid Selector for modal to be opened
- */
-function closeModal(elementid) {
-  $(elementid)?.css("display", "none");
-}
 
 /**
  * Chips
@@ -149,7 +145,7 @@ function addChip(element) {
   screenReaderSpan?.classList?.add("screen-reader-only");
   chipBtn.appendChild(screenReaderSpan);
   inputChip.appendChild(chipBtn);
-  document.getElementById("chips").appendChild(inputChip);
+  document.getElementById("chips")?.appendChild(inputChip);
 }
 
 function handleRemoval(element, inputChip) {
@@ -162,7 +158,7 @@ function handleRemoval(element, inputChip) {
         element.selected = false;
       }
     }
-  if (element.getAttribute("id") === "dballcb") {
+  if (element.getAttribute("id") === "all_collections") {
     const targetCategoryCheckboxes =
       document.querySelectorAll('input[id^="cat-"]');
     targetCategoryCheckboxes.forEach((collection) => {
@@ -235,8 +231,8 @@ function removeChip(chip) {
  * Updateds chips based on selected options
  * @param {Event} e
  */
-function updateChip(e) {
-  document.getElementById("chips").innerHTML = "";
+function updateChip(e, isInitialConfig=false) {
+  document.getElementById("chips") ? document.getElementById("chips").innerHTML = "" : "";
   // first go through collections and sites
 
   // No sites in Symbiota, so this stuff just gets ignored
@@ -253,36 +249,58 @@ function updateChip(e) {
   ) {
     addChip(getDomainsSitesChips());
   }
-  // if any collections are selected (except for "all"), then add chip; this logic is alternatively handled in the formInputs for loop below
-  let allCollectionsChecked = document?.getElementById("dballcb")?.checked;
-  let individualCollectionsChecked = Array.from(
-    document.querySelectorAll(`#search-form-colls input[name="db"]:checked`)
+
+  const individualCollectionsChecked = Array.from(
+    document.querySelectorAll(`#search-form-colls input[name="db[]"]:checked:not(#all_collections)`)
   );
-  if (!allCollectionsChecked && individualCollectionsChecked.length > 0) {
-    addChip(getCollsChips(getCriterionSelected(), "Some Biorepo Colls"));
-  }
+  const individualCollectionsCheckedIds = individualCollectionsChecked.map(coll => coll.value);
+
+  const allPossibleSpecimenCollections = calculateAllPossibleCollectionsInScope("specimens_collections");
+  const didAllSpecimenCollectionGetSelected = contains(individualCollectionsCheckedIds, allPossibleSpecimenCollections);
+
+  const allPossibleObservationCollections = calculateAllPossibleCollectionsInScope("observations_collections");
+  const didAllObservationCollectionGetSelected = contains(individualCollectionsCheckedIds, allPossibleObservationCollections);
+
+  const allPossibleCollections = calculateAllPossibleCollectionsInScope("search-form-colls");
+  const didAllCollectionGetSelected = areSame(allPossibleCollections, individualCollectionsCheckedIds);
+
   // if any additional NEON colls are selected (except for "all"), then add chip
-  let addCols = document.querySelectorAll(
+  const addCols = document.querySelectorAll(
     "#neonext-collections-list input[type=checkbox]"
   );
-  let addColsChecked = document.querySelectorAll(
+  const addColsChecked = document.querySelectorAll(
     "#neonext-collections-list input[type=checkbox]:checked"
   );
   if (addColsChecked.length > 0 && addColsChecked.length < addCols.length) {
     addChip(getCollsChips("neonext-collections-list", "Some Add NEON Colls"));
   }
-  // if any external NEON colls are selected (expect for "all"), then add chip
-  let extCols = document.querySelectorAll(
+  // if any external NEON colls are selected (except for "all"), then add chip
+  const extCols = document.querySelectorAll(
     "#ext-collections-list input[type=checkbox]"
   );
-  let extColsChecked = document.querySelectorAll(
+  const extColsChecked = document.querySelectorAll(
     "#ext-collections-list input[type=checkbox]:checked"
   );
   if (extColsChecked.length > 0 && extColsChecked.length < extCols.length) {
     addChip(getCollsChips("ext-collections-list", "Some Ext NEON Colls"));
   }
   // then go through remaining inputs (exclude db and datasetid)
-  // go through entire form and find selected items
+  if(!isInitialConfig){
+    const isCollectionRelated = e?.currentTarget?.name === "db[]" || e?.currentTarget?.name?.startsWith("Specimens_") || e?.currentTarget?.name?.startsWith("Observations_") || e?.currentTarget?.id === "all_collections" || e?.currentTarget?.id === "all_specimen_collections" || e?.currentTarget?.id === "all_observation_collections";
+    if(isCollectionRelated){
+      const checkedCollections = calculateAllPossibleCollectionsInScope('search-form-colls', ':checked',true);
+      const updatedQueriedCollections = updateQueryListWithTypeCollections(checkedCollections);
+      checkTheCollectionsThatShouldBeChecked(updatedQueriedCollections);
+      updateCategoryCheckboxes();
+      closeAllCategories();
+      expandCategoriesWithSomeCheckedChildren();
+    }
+  }
+  
+  if (!formInputs) {
+    formInputs = document.querySelectorAll(".content input");
+  }
+  
   formInputs.forEach((item) => {
     if ((item.name != "db") | (item.name != "datasetid")) {
       if (
@@ -290,10 +308,21 @@ function updateChip(e) {
         (item.type == "text" && item.value != "") |
         (item.type == "number" && item.value != "")
       ) {
+        if(didAllCollectionGetSelected && item.id === "all_collections"){
+          addChip(item);
+        }
+        if(didAllSpecimenCollectionGetSelected && item.id === "all_specimen_collections"){
+          addChip(item);
+        }
+        if(didAllObservationCollectionGetSelected && item.id === "all_observation_collections"){
+          addChip(item);
+        }
         if (
-          allCollectionsChecked &&
+          (didAllCollectionGetSelected) &&
           item.name === "db[]" &&
-          item.id !== "dballcb"
+          item.id !== "all_collections" &&
+          item.id !== "all_specimen_collections" &&
+          item.id !== "all_observation_collections"
         ) {
           // don't add these chips;
         } else {
@@ -307,7 +336,11 @@ function updateChip(e) {
             (val) => val.id === item.id && val.value === item.value
           );
           if(!isInDefaultValList && item.hasAttribute("data-chip")) {
-            addChip(item);
+            const itemIsOutsidePanTypeSelections = calculateWhetherItemIsOutsidePanTypeSelections(item, didAllSpecimenCollectionGetSelected, didAllObservationCollectionGetSelected, allPossibleSpecimenCollections, allPossibleObservationCollections);
+            const itemIsCollectionRelated = item?.name === "db[]" || item?.id?.startsWith("Specimens_") || item?.id?.startsWith("Observations_") || item?.id === "all_collections" || item?.id === "all_specimen_collections" || item?.id === "all_observation_collections";
+            if(itemIsOutsidePanTypeSelections || !itemIsCollectionRelated){
+              addChip(item);
+            }
           }
         }
       }
@@ -328,10 +361,28 @@ function updateChip(e) {
         (val) => val.id === item.id && val.value === item.value
       );
       if (!isInDefaultValList) {
-        addChip(item);
+        const itemIsOutsidePanTypeSelections = calculateWhetherItemIsOutsidePanTypeSelections(item, didAllSpecimenCollectionGetSelected, didAllObservationCollectionGetSelected, allPossibleSpecimenCollections, allPossibleObservationCollections);
+        if(itemIsOutsidePanTypeSelections){
+          addChip(item);
+        }
       }
     }
   });
+}
+
+function calculateWhetherItemIsOutsidePanTypeSelections(item, didAllSpecimenCollectionGetSelected, didAllObservationCollectionGetSelected, allPossibleSpecimenCollections, allPossibleObservationCollections){
+  if(item?.tagName === 'OPTION' || item?.nodeName === 'OPTION') return true;
+  if(didAllSpecimenCollectionGetSelected && didAllObservationCollectionGetSelected){
+    return false;
+  }
+  if(didAllSpecimenCollectionGetSelected==null || didAllObservationCollectionGetSelected==null || allPossibleSpecimenCollections==null || allPossibleObservationCollections==null){
+    return true;
+  }
+  const allSpecimenInputExplicitlySelected = document.getElementById("all_specimen_collections")?.checked || false;
+  const allObservationInputExplicitlySelected = document.getElementById("all_observation_collections")?.checked || false;
+  const shouldExcludeBecauseInAllSpecimens = ((didAllSpecimenCollectionGetSelected||allSpecimenInputExplicitlySelected) && (allPossibleSpecimenCollections.includes(item.value))) || item.id === "all_specimen_collections";
+  const shouldExcludeBecauseInAllObservations = ((didAllObservationCollectionGetSelected||allObservationInputExplicitlySelected) && (allPossibleObservationCollections.includes(item.value))) || item.id === "all_observation_collections";
+  return !shouldExcludeBecauseInAllSpecimens && !shouldExcludeBecauseInAllObservations;
 }
 
 /**
@@ -455,46 +506,17 @@ function autoToggleSelector(e) {
 }
 
 /**
- * Unchecks children of 'all-selector' checkboxes or all checkboxes in list
- * when criterion chip is removed
- * Uses 'data-form-id' property in .php
- * @param {Object} element HTML Node Object
- */
-function uncheckAllChip(element) {
-  let isAllSel = element.classList.contains("specobs");
-  if (isAllSel) {
-    let selChildren = document.querySelectorAll(
-      `#${element.dataset.formId} input[type=checkbox]:checked`
-    );
-    selChildren.forEach((item) => {
-      item.checked = false;
-    });
-  } else {
-    let item = document.querySelector(
-      `input[id^="${element.className}"][name="cat[]"]`
-    );
-    if (item) item.checked = false;
-  }
-}
-
-/**
  * Finds all collections selected
  * Uses active tab in modal
  */
 function getCollsSelected() {
-  let query = 'input[name="db"]:checked';
-  let selectedInForm = Array.from(
+  const selectedInForm = Array.from(
     document.querySelectorAll(
       '#search-form-colls input[name="db"]:checked, ' +
-        '#search-form-colls input[name="db[]"]:checked'
+        '#search-form-colls input[name="db[]"]:checked:not(#all_collections)'
     )
   );
-  let collsArr = selectedInForm;
-  return collsArr;
-}
-
-function getTraitsSelected() {
-  return Array.from(document.querySelectorAll('input[name="attr[]"]:checked'));
+  return selectedInForm;
 }
 
 /**
@@ -502,9 +524,9 @@ function getTraitsSelected() {
  * @returns {Array} errors Array of errors objects with form element it refers to (elId), for highlighting, and errorMsg
  */
 function validateForm() {
-  errors = [];
+  const errors = [];
   // DB
-  let anyCollsSelected = getCollsSelected();
+  const anyCollsSelected = getCollsSelected();
   if (anyCollsSelected.length === 0) {
     errors.push({
       elId: "search-form-colls",
@@ -512,7 +534,7 @@ function validateForm() {
     });
   }
   // HTML5 built-in validation
-  let invalidInputs = document.querySelectorAll("input:invalid");
+  const invalidInputs = document.querySelectorAll("input:invalid");
   if (invalidInputs.length > 0) {
     invalidInputs.forEach((inp) => {
       errors.push({
@@ -522,15 +544,15 @@ function validateForm() {
     });
   }
   // Bounding Box
-  let bBoxNums = document.querySelectorAll(
+  const bBoxNums = document.querySelectorAll(
     "#bounding-box-form input[type=number]"
   );
-  let bBoxNumArr = [];
+  const bBoxNumArr = [];
   bBoxNums.forEach((el) => {
     el.value != "" ? bBoxNumArr.push(el.value) : false;
   });
-  let bBoxCardinals = document.querySelectorAll("#bounding-box-form select");
-  selectedCardinals = [];
+  const bBoxCardinals = document.querySelectorAll("#bounding-box-form select");
+  const selectedCardinals = [];
   bBoxCardinals.forEach((hItem) => {
     hItem.value != "" ? selectedCardinals.push(hItem.id) : false;
   });
@@ -627,21 +649,61 @@ function handleValErrors(errors) {
   });
 }
 
-/**
- * Calls methods to validate form and build URL that will redirect search
- */
-function simpleSearch() {
+function validateCollections(optionalCallback=null) {
   let alerts = document.getElementById("alert-msgs");
   alerts != null ? (alerts.innerHTML = "") : "";
   let errors = [];
   errors = validateForm();
   let isValid = errors.length == 0;
   if (isValid) {
-    const submitForm = document.getElementById("params-form");
-    submitForm.submit();
+    if (optionalCallback && typeof optionalCallback === "function") {
+      optionalCallback();
+    }
+    return true;
   } else {
     handleValErrors(errors);
+    return false;
   }
+}
+
+function simpleSearch() {
+  validateCollections(optionalCallback = ()=>{
+    const submitForm = document.getElementById("params-form");
+    storeFormDataInSessionStorage(submitForm);
+    submitForm.submit();
+  });
+}
+
+function storeFormDataInSessionStorage(submitForm) {
+  if(!submitForm || Array.from(submitForm.elements).length < 1) return;
+    clearPageSpecificSessionStorageItems();
+    Array.from(submitForm.elements).forEach(formElem => {
+      if (
+        (formElem.type == "checkbox" && formElem.checked) ||
+        (formElem.type == "text" && formElem.value != "") ||
+        (formElem.type == "number" && formElem.value != "") ||
+        (formElem.tagName === "SELECT" && formElem.value != "")
+      ) {
+        const revisedFormElemName = (formElem.name == "db[]") ? "db" : formElem.name;
+        let previousValue = '';
+        let newValue = formElem.value;
+        if(revisedFormElemName === "db" ){
+          previousValue = sessionStorage.getItem("querystr" + getCurrentPage() + "/" + revisedFormElemName);
+          const existingValues = previousValue ? previousValue.split(",") : [];
+          if(existingValues.includes(formElem.value)){
+            return; // skip adding duplicate collection
+          }else{
+            newValue = previousValue ? previousValue + "," + formElem.value : formElem.value;
+          }
+        }
+        sessionStorage.setItem("querystr" + getCurrentPage() + "/" + revisedFormElemName, newValue);
+      }
+    });
+}
+
+function clearPageSpecificSessionStorageItems() {
+  const keysToRemove = Object.keys(sessionStorage).filter(key => key.startsWith("querystr" + getCurrentPage() + "/"));
+  keysToRemove.forEach(key => sessionStorage.removeItem(key));
 }
 
 /**
@@ -660,180 +722,265 @@ function hideColCheckbox(collid) {
   });
 }
 
-function uncheckEverything() {
-  const checkUncheckAllElem = document.getElementById("dballcb");
+function uncheckEverythingInCollections() {
+  const checkUncheckAllElem = document.getElementById("all_collections");
   checkUncheckAllElem.checked = false;
+  const allSpecimenCollectionsElem = document.getElementById("all_specimen_collections");
+  allSpecimenCollectionsElem.checked = false;
+  const allObservationCollectionsElem = document.getElementById("all_observation_collections");
+  allObservationCollectionsElem.checked = false;
   const categoryCollectionsChecked = Array.from(
-    document.querySelectorAll(`#search-form-colls input[name="cat[]"]:checked`)
+    document.querySelectorAll(`#search-form-colls input[id^="Specimens_"]:checked, #search-form-colls input[id^="Observations_"]:checked`)
   );
-  categoryCollectionsChecked.forEach((individualCollectionChecked) => {
-    individualCollectionChecked.checked = false;
+  categoryCollectionsChecked.forEach((individualCategoryChecked) => {
+    individualCategoryChecked.checked = false;
   });
 
   const individualCollectionsChecked = Array.from(
-    document.querySelectorAll(`#search-form-colls input[name="db[]"]:checked`)
+    document.querySelectorAll(`#search-form-colls input[name="db[]"]:checked:not(#all_collections)`)
   );
   individualCollectionsChecked.forEach((individualCollectionChecked) => {
     individualCollectionChecked.checked = false;
   });
 }
 
-function uncheckSpecifiedCheckboxes(checkboxIds) {
-  checkboxIds.forEach(id => {
-    const checkbox = document.getElementById(id);
-    if (checkbox) {
-      checkbox.checked = false;
-    }
+function checkEverythingInCollections() {
+  const checkUncheckAllElem = document.getElementById("all_collections");
+  checkUncheckAllElem.checked = true;
+  const allSpecimenCollectionsElem = document.getElementById("all_specimen_collections");
+  allSpecimenCollectionsElem.checked = false;
+  const allObservationCollectionsElem = document.getElementById("all_observation_collections");
+  allObservationCollectionsElem.checked = false;
+  const categoryCollectionsChecked = Array.from(
+    document.querySelectorAll(`#search-form-colls input[id^="Specimens_"]:not(:checked), #search-form-colls input[id^="Observations_"]:not(:checked)`)
+  );
+  categoryCollectionsChecked.forEach((individualCategoryChecked) => {
+    individualCategoryChecked.checked = true;
+  });
+
+  const individualCollectionsChecked = Array.from(
+    document.querySelectorAll(`#search-form-colls input[name="db[]"]:not(:checked):not(#all_collections)`)
+  );
+  individualCollectionsChecked.forEach((individualCollectionChecked) => {
+    individualCollectionChecked.checked = true;
   });
 }
 
 function handleCategoryChunks(parentBoxCheckStatus, collectionType) {
-  const categoryChunks = document.querySelectorAll('div[id^="category-chunk-"]');
-  categoryChunks.forEach((chunk) => {
-    const legends = chunk.querySelectorAll('fieldset[name="subcollection-fieldset"] legend');
-    legends.forEach((legend) => {
-      if (legend.textContent.includes(collectionType)) {
-        const categoryCheckbox = chunk.querySelector('input[name="cat[]"]');
-        if (categoryCheckbox) {
-          categoryCheckbox.checked = parentBoxCheckStatus;
-        }
-        
-        const collectionCheckboxes = chunk.querySelectorAll('input[name="db[]"]');
-        collectionCheckboxes.forEach((checkbox) => {
-          checkbox.checked = parentBoxCheckStatus;
-        });
-      }
-    });
+  const categoryLevelFieldSets = document.querySelectorAll(`fieldset[id^="${collectionType}_"][id$="_container"]`);
+  categoryLevelFieldSets.forEach((categoryFieldset) => {
+    const inputElements = categoryFieldset.querySelectorAll('input');
+    inputElements.forEach((inputElem) => {
+      inputElem.checked = parentBoxCheckStatus;
+    })
   });
 }
 
-function handleHeaderSections(parentBoxCheckStatus, headerType, stopType = null) {
-  const targetHeader = Array.from(document.querySelectorAll('h2')).find(h => 
-    h.textContent.includes(headerType)
-  );
-  if (targetHeader) {
-    let currentElement = targetHeader.parentElement.nextElementSibling;
-    while (currentElement) {
-      if (stopType) {
-        const headerInSection = currentElement.querySelector('h2');
-        if (headerInSection && headerInSection.textContent.includes(stopType)) {
-          break;
-        }
-      }
-      const checkboxes = currentElement.querySelectorAll('input[name="db[]"][id^="collection-"]');
-      checkboxes.forEach((checkbox) => {
-        checkbox.checked = parentBoxCheckStatus;
+function areSame(arr1, arr2) {
+  if (arr1.length !== arr2.length) return false;
+  const sorted1 = [...arr1].sort();
+  const sorted2 = [...arr2].sort();
+  return sorted1.every((val, index) => val === sorted2[index]);
+};
+
+function contains(bigger, smaller) {
+  if (bigger.length < smaller.length) return false;
+  const sorted1 = [...bigger].sort();
+  const sorted2 = [...smaller].sort();
+  return sorted2.every((val) => sorted1.includes(val));
+};
+
+function checkTheCollectionsThatShouldBeCheckedBasedOnConfig() {
+  const targetCollectionCategoriesCheckedStatuses = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || "{}")?.CATCHK;
+  const queriedCollectionsCategories = targetCollectionCategoriesCheckedStatuses;
+  if(queriedCollectionsCategories.length>0){
+    uncheckEverythingInCollections();
+    queriedCollectionsCategories.forEach((queriedCollectionCategory) => {
+      const targetElems = document.querySelectorAll(`#Specimens_${queriedCollectionCategory}, #Observations_${queriedCollectionCategory}`);
+      targetElems.forEach((targetElem) => {
+        targetElem.checked = true;
+        const divWithChildren = document.getElementById(targetElem.id + "_inputs");
+        const childCheckboxes = divWithChildren.querySelectorAll('input[type="checkbox"]');
+        childCheckboxes.forEach((childCheckbox) => {
+          childCheckbox.checked = true;
+        });
       });
-      currentElement = currentElement.nextElementSibling;
-    }
+    });
+  } else{
+    checkEverythingInCollections();
   }
-}
-
-function selectAllSpec(cb) {
-  const boxCheckedStatus = cb.checked;
-  uncheckSpecifiedCheckboxes(["dballcb", "dballobscb"]);
-  handleCategoryChunks(boxCheckedStatus, translations.SPECIMEN);
-  handleHeaderSections(boxCheckedStatus, translations.SPECIMEN, translations.OBSERVATION);
-}
-
-function selectAllObs(cb) {
-  const boxCheckedStatus = cb.checked;
-  uncheckSpecifiedCheckboxes(["dballcb", "dballspeccb"]);
-  handleCategoryChunks(boxCheckedStatus, translations.OBSERVATION);
-  handleHeaderSections(boxCheckedStatus, translations.OBSERVATION);
+  updateCategoryCheckboxes();
 }
 
 
 function checkTheCollectionsThatShouldBeChecked(queriedCollections) {
   queriedCollections.forEach((queriedCollection) => {
-    let targetElem = document.getElementById("collection-" + queriedCollection);
+    let targetElem = document.querySelector(`[id$="_${queriedCollection}"]:not([id^="Specimens_"]):not([id^="Observations_"]):not([id="m_all"])`);
     if (!targetElem) {
-      if (queriedCollection === "all") {
-        targetElem = document.getElementById("dballcb");
+      if (queriedCollection.includes("all") && !queriedCollection.includes("allspec") && !queriedCollection.includes("allobs")) {
+        targetElem = document.getElementById("all_collections");
         if (targetElem) {
           targetElem.checked = true;
-          const allSpecCheckbox = document.getElementById("dballspeccb");
-          const allObsCheckbox = document.getElementById("dballobscb");
-          if (allSpecCheckbox) allSpecCheckbox.checked = true;
-          if (allObsCheckbox) allObsCheckbox.checked = true;
-          handleCategoryChunks(true, "Specimen");
-          handleHeaderSections(true, "Specimen", "Observation");
-          handleCategoryChunks(true, "Observation");
-          handleHeaderSections(true, "Observation");
+          handleCategoryChunks(true, "Specimens");
+          handleCategoryChunks(true, "Observations");
         }
         return;
-      } else if (queriedCollection === "allspec") {
-        targetElem = document.getElementById("dballspeccb");
+      } else if (queriedCollection.includes("allspec")) {
+        targetElem = document.getElementById("all_specimen_collections");
         if (targetElem) {
           targetElem.checked = true;
-          handleCategoryChunks(true, "Specimen");
-          handleHeaderSections(true, "Specimen", "Observation");
+          handleCategoryChunks(true, "Specimens");
         }
         return;
-      } else if (queriedCollection === "allobs") {
-        targetElem = document.getElementById("dballobscb");
+      } else if (queriedCollection.includes("allobs")) {
+        targetElem = document.getElementById("all_observation_collections");
         if (targetElem) {
           targetElem.checked = true;
-          handleCategoryChunks(true, "Observation");
-          handleHeaderSections(true, "Observation");
+          handleCategoryChunks(true, "Observations");
         }
         return;
       } else {
-        const prefix = "coll-" + queriedCollection + "-";
-        const candidateTargetElems =
-          document.querySelectorAll(`[id^="${prefix}"]`) || [];
-        if (candidateTargetElems.length > 0) {
-          targetElem = candidateTargetElems[0]; // there should only be one match; get the first one
-        }
+        // Do nothing
       }
-    } 
-    if(targetElem){
-      targetElem.checked = true;
+    }
+    else {
+      targetElem.checked = true; 
     }
   });
-  
   updateCategoryCheckboxes();
-  expandCategoriesWithCheckedChildren();
+}
+
+function generateTargetInputElementsForCategory(callbackFn) {
+  const categoryFieldsets = document.querySelectorAll(
+    'fieldset[id^="Specimens_"][id$="_container"], fieldset[id^="Observations_"][id$="_container"]'
+  );
+  categoryFieldsets.forEach((categoryFieldset) => {
+    const categoryFieldsetId = categoryFieldset.id;
+    const categoryPattern = categoryFieldsetId.match(/(.*)_container/)?.[1];
+    const inputContainer = document.getElementById(categoryPattern+"_inputs");
+    const targetInputElems = inputContainer.querySelectorAll('input');
+    if (targetInputElems.length > 0) {
+      callbackFn(categoryPattern, targetInputElems);
+    }
+  });
 }
 
 function updateCategoryCheckboxes() {
-  const categoryCheckboxes = document.querySelectorAll('input[name="cat[]"]');
-  categoryCheckboxes.forEach((categoryCheckbox) => {
-    const categoryId = categoryCheckbox.id;
-    const categoryNumberPattern = categoryId.match(/cat-(\d+-\d+)/)?.[1];
-    const childCollections = document.querySelectorAll(`input[id^="coll-"][id*="-${categoryNumberPattern}"]`);
-    if (childCollections.length > 0) {
-      const checkedChildren = Array.from(childCollections).filter(checkbox => checkbox.checked);
-      if (checkedChildren.length === childCollections.length) {
-        categoryCheckbox.checked = true;
+  generateTargetInputElementsForCategory((categoryPattern, targetInputElems) => {
+    const checkedChildren = Array.from(targetInputElems).filter(checkbox => checkbox.checked);
+      if (checkedChildren.length === targetInputElems.length) {
+        const targetCategoryInput = document.getElementById(categoryPattern);
+        targetCategoryInput.checked = true;
       }
+  });
+}
+
+function closeAllCategories() {
+  const allCategoryInputElements = Array.from(document.querySelectorAll('input[id^="Specimens_"], input[id^="Observations_"]'));
+  const uniqueCategoryIds = allCategoryInputElements.reduce((acc, inputElem) => {
+    const parts = inputElem?.id?.split('_');
+    const categoryId = parts && parts.length > 1 ? parts[1] : null;
+    if (categoryId && !acc.includes(categoryId)) {
+      acc.push(categoryId);
+    }
+    return acc;
+  }, []);
+  uniqueCategoryIds.forEach((categoryId) => {
+    if(!categoryId) return;
+    const specimenCategoryPattern = "Specimens_" + categoryId;
+    const specimenInputsForCategory = document.getElementById(specimenCategoryPattern + '_inputs');
+    if (specimenInputsForCategory?.style?.display !== 'none') {
+      toggleCategory(specimenCategoryPattern);
+    }
+    const observationCategoryPattern = "Observations_" + categoryId;
+    const observationInputsForCategory = document.getElementById(observationCategoryPattern + '_inputs');
+    if (observationInputsForCategory?.style?.display !== 'none') {
+      toggleCategory(observationCategoryPattern);
     }
   });
 }
 
-function expandCategoriesWithCheckedChildren() {
-  const categoryCheckboxes = document.querySelectorAll('input[name="cat[]"]');
-  categoryCheckboxes.forEach((categoryCheckbox) => {
-    const categoryId = categoryCheckbox.id;
-    const categoryNumberPattern = categoryId.match(/cat-(\d+-\d+)/)?.[1];
-    if (categoryNumberPattern) {
-      const childCollections = document.querySelectorAll(`input[id^="coll-"][id*="-${categoryNumberPattern}"]`);
-      if (childCollections.length > 0) {
-        const checkedChildren = Array.from(childCollections).filter(checkbox => checkbox.checked);
-        if (checkedChildren.length > 0) {
-          const categoryDiv = document.getElementById(`cat-${categoryNumberPattern}`);
-          if (categoryDiv && categoryDiv.style.display !== "block") {
-            toggleCat(categoryNumberPattern);
-          }
-        }
-      }
+
+function expandCategoriesBasedOnConfig() {
+  const targetCategoriesToExpandFromConfig = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || "{}")?.CATEXPND;
+  targetCategoriesToExpandFromConfig?.forEach(targetCategoryToExpand => {
+    const specimenCategoryPattern = "Specimens_" + targetCategoryToExpand;;
+    const specimenInputsForCategory = document.getElementById(specimenCategoryPattern + '_inputs');
+    if (specimenInputsForCategory?.style?.display === 'none') {
+      toggleCategory(specimenCategoryPattern);
+    }
+    const observationCategoryPattern = "Observations_" + targetCategoryToExpand;
+    const observationInputsForCategory = document.getElementById(observationCategoryPattern + '_inputs');
+    if (observationInputsForCategory?.style?.display === 'none') {
+      toggleCategory(observationCategoryPattern);
     }
   });
 }
+
+function expandCategoriesWithSomeCheckedChildren() {
+  generateTargetInputElementsForCategory((categoryPattern, targetInputElems) => {
+    const container = document.getElementById(categoryPattern + '_inputs');
+    const checkedChildren = Array.from(targetInputElems).filter(checkbox => checkbox.checked);
+    if (checkedChildren.length === targetInputElems.length && container.style.display === 'flex' && !container.classList.contains('explicitly-collapsed')) {
+      toggleCategory(categoryPattern);
+    }
+    else if (checkedChildren.length > 0 && checkedChildren.length < targetInputElems.length && container.style.display === 'none' && !container.classList.contains('explicitly-collapsed')) {
+      toggleCategory(categoryPattern);
+    } else if(checkedChildren.length === 0 && container.style.display === 'flex' && !container.classList.contains('explicitly-collapsed')) {
+      toggleCategory(categoryPattern);
+    }
+  });
+}
+
+  function closeCollectionsDialog() {
+    const submitForm = document.getElementById("params-form");
+    storeFormDataInSessionStorage(submitForm);
+    const dialog = document.getElementById('collections_dialog');
+    if (dialog) {
+      dialog.close();
+    }
+  }
+
+  function openCollectionsDialog() {
+    const dialog = document.getElementById('collections_dialog');
+    dialog.showModal();
+    setSessionQueryStr();
+
+    const form = document.getElementById('params-form');
+    if (form) {
+      setSearchForm(form);
+      form.addEventListener("submit", function(event) {
+        event.preventDefault();
+        simpleSearch();
+      });
+      document.getElementById("reset-btn").addEventListener("click", function (event) {
+        document.getElementById("params-form").reset();
+        clearPageSpecificSessionStorageItems();
+        checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
+        closeAllCategories();
+        expandCategoriesBasedOnConfig();
+        updateChip(event, isInitialConfig=true);
+      });
+    }
+  }
 
 function setSearchForm(frm) {
-  if (sessionStorage.querystr) {
-    const urlVar = parseUrlVariables(sessionStorage.querystr.replaceAll('&quot;', '"'));
+  if (!frm) return;
+  const sessionStorageKeys = Object.keys(sessionStorage);
+  const hasSessionInfo = sessionStorageKeys.some(key => {
+    const currentVal = sessionStorage.getItem(key);
+    return key.startsWith("querystr" + getCurrentPage()) && key !== ("querystr" + getCurrentPage() + "/" + "accordionIds") && currentVal !== "null"
+  });
+  if(!hasSessionInfo){
+    uncheckEverythingInCollections();
+    checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
+    closeAllCategories();
+    expandCategoriesBasedOnConfig();
+    updateChip(null, isInitialConfig=true);
+  }
+  else {
+    const urlVariablesFromSessionStorage = concatenateUrlVariablesFromSessionStorage();
+    const urlVar = parseUrlVariables(urlVariablesFromSessionStorage.replaceAll('&quot;', '"'));
     if (
       typeof urlVar.usethes !== "undefined" &&
       (urlVar.usethes == "" || urlVar.usethes == "0")
@@ -1006,9 +1153,12 @@ function setSearchForm(frm) {
     }
     if (urlVar.db) {
       const queriedCollections = urlVar.db.split(",");
-      if (queriedCollections.length > 0) {
-        uncheckEverything();
-        checkTheCollectionsThatShouldBeChecked(queriedCollections);
+      const updatedQueriedCollections = updateQueryListWithTypeCollections(queriedCollections);
+      if (updatedQueriedCollections.length > 0) {
+        uncheckEverythingInCollections();
+        checkTheCollectionsThatShouldBeChecked(updatedQueriedCollections);
+        closeAllCategories();
+        expandCategoriesWithSomeCheckedChildren();
       }
     }
     for (const i in urlVar) {
@@ -1021,7 +1171,33 @@ function setSearchForm(frm) {
       }
     }
     updateChip();
-  }
+  } 
+}
+
+function updateQueryListWithTypeCollections(queryList){
+  let newQueryList = queryList;
+  const allPossibleSpecimenCollections = calculateAllPossibleCollectionsInScope("specimens_collections");
+  const didAllSpecimenCollectionGetSelected = contains(newQueryList,allPossibleSpecimenCollections);
+  if(didAllSpecimenCollectionGetSelected) newQueryList = [...newQueryList, "allspec"];
+
+  const allPossibleObservationCollections = calculateAllPossibleCollectionsInScope("observations_collections");
+  const didAllObservationCollectionGetSelected = contains(newQueryList, allPossibleObservationCollections);
+  if(didAllObservationCollectionGetSelected) newQueryList = [...newQueryList, "allobs"];
+
+  const allPossibleCollections = calculateAllPossibleCollectionsInScope("search-form-colls");
+  const didAllCollectionGetSelected = contains(newQueryList, allPossibleCollections);
+  if(didAllCollectionGetSelected) newQueryList = ["all"];
+  return newQueryList;
+}
+
+function calculateAllPossibleCollectionsInScope(scope, modifier = '', shouldSplit=true) {
+  return Array.from(document.querySelectorAll(`#${scope} input[name="db[]"]:not(#all_collections)${modifier}`)).map(input => {
+    if(shouldSplit) {
+      return input.id.split("_")[1];
+    } else{
+      return input.id;
+    }
+  });
 }
 
 function parseUrlVariables(varStr) {
@@ -1037,17 +1213,18 @@ function parseUrlVariables(varStr) {
   return result;
 }
 
-function toggleTheNonDefaultsClosed(defaultId) {
-  const categoryButtons = document.querySelectorAll('a[id^="condense-"]');
-  categoryButtons.forEach((categoryButton) => {
-    const regexPattern = new RegExp(`^condense-\\d+-${defaultId}$`);
-    if (!regexPattern.test(categoryButton.id)) {
-      const idToToggle = categoryButton.id
-        .replace("condense-", "")
-        .replace("-" + defaultId, "");
-      toggleCat(idToToggle);
+function concatenateUrlVariablesFromSessionStorage() {
+  let returnVal = '';
+  const sessionStorageKeys = Object.keys(sessionStorage);
+  const relevantKeys = sessionStorageKeys.filter(key => key.startsWith("querystr" + getCurrentPage()) && key.value !== "null");
+  relevantKeys.forEach((relevantKey) => {
+    const justFormFieldName = relevantKey.replace("querystr" + getCurrentPage() + "/", "");
+    if(justFormFieldName){
+      const relevantVal = sessionStorage.getItem(relevantKey);
+      returnVal += justFormFieldName + "=" + encodeURIComponent(relevantVal) + "&"; // @TODO encodeURIComponent may not be necessary here
     }
   });
+  return returnVal.slice(0, -1);
 }
 
 function toggleAccordionsFromSessionStorage(accordionIds) {
@@ -1056,7 +1233,7 @@ function toggleAccordionsFromSessionStorage(accordionIds) {
   );
   accordions.forEach((accordion) => {
     if(accordion.id !== "taxonomy") accordion.checked = false;
-    if(accordion.id === "taxonomy" && localStorage.getItem("taxonomyAccordionClosed")) accordion.checked = false;
+    if(accordion.id === "taxonomy" && sessionStorage.getItem("querystr" + getCurrentPage() + "/" + "taxonomyAccordionClosed")) accordion.checked = false;
   });
   accordions.forEach((accordion) => {
     const currentId = accordion.getAttribute("id");
@@ -1086,37 +1263,34 @@ function toggleCharacterGroup(charID) {
  * EVENT LISTENERS/INITIALIZERS
  */
 
-document.getElementById("params-form").addEventListener("submit", function(event) {
-  event.preventDefault();
-  simpleSearch();
-});
-
-
-// Reset button
-document
-  .getElementById("reset-btn")
-  .addEventListener("click", function (event) {
-    document.getElementById("params-form").reset();
-    updateChip();
-  });
-// When checking "all neon collections" box, toggle checkboxes in modal
-$("#all-neon-colls-quick").click(function () {
-  let isChecked = $(this).prop("checked");
-  $(".all-neon-colls").prop("checked", isChecked);
-  $(".all-neon-colls").siblings().find(".child").prop("checked", isChecked);
-});
 // When checking any 'all-selector', toggle children checkboxes
 $(".all-selector").click(toggleAllSelector);
-formColls.addEventListener("click", autoToggleSelector, false);
-formColls.addEventListener("change", autoToggleSelector, false);
+formColls?.addEventListener("click", autoToggleSelector, false);
+formColls?.addEventListener("change", autoToggleSelector, false);
 formSites?.addEventListener("click", autoToggleSelector, false);
 searchFormColls?.addEventListener("click", autoToggleSelector, false);
 searchFormColls?.addEventListener("change", autoToggleSelector, false);
-//////// Binds Update chip on event change
-const formInputs = document.querySelectorAll(".content input");
-formInputs.forEach((formInput) => {
-  formInput.addEventListener("change", updateChip);
-});
+
+function initializeFormInputs() {
+  if (!formInputs || formInputs.length === 0) {
+    formInputs = document.querySelectorAll(".content input");
+  }
+  formInputs.forEach((formInput) => {
+    formInput.addEventListener("change", (e)=>{
+      const isCollectionRelated = e?.currentTarget?.name === "db[]" || e?.currentTarget?.name?.startsWith("Specimens_") || e?.currentTarget?.name?.startsWith("Observations_") || e?.currentTarget?.id === "all_collections" || e?.currentTarget?.id === "all_specimen_collections" || e?.currentTarget?.id === "all_observation_collections";
+      if(isCollectionRelated) {
+        const queriedCollections = Array.from(document.querySelectorAll(`#search-form-colls input[name="db[]"]:checked:not(#all_collections)`)).filter(elem=>elem.id.split("_")[1]!==undefined).map(elem=>elem.id.split("_")[1]);
+        const updatedQueriedCollections = updateQueryListWithTypeCollections(queriedCollections);
+        uncheckEverythingInCollections();
+        checkTheCollectionsThatShouldBeChecked(updatedQueriedCollections);
+        closeAllCategories();
+        expandCategoriesWithSomeCheckedChildren();
+      }
+      updateChip(e);
+      setSessionQueryStr();
+    });
+  });
+}
 
 const selectionElements = document.querySelectorAll(".content select");
 selectionElements.forEach((selectionElement) => {
@@ -1124,7 +1298,8 @@ selectionElements.forEach((selectionElement) => {
 });
 
 // on default (on document load): All Neon Collections, All Domains & Sites, Include other IDs, All Domains & Sites
-document.addEventListener("DOMContentLoaded", updateChip);
+// document.addEventListener("DOMContentLoaded", updateChip); // @TODO I don't think that this is necessary even in NEON anymore?
+
 // Binds expansion function to plus and minus icons in selectors, uses jQuery
 $(".expansion-icon").click(function () {
   if ($(this).siblings("ul").hasClass("collapsed")) {
@@ -1137,25 +1312,38 @@ $(".expansion-icon").click(function () {
   }
 });
 // Hides MOSC-BU checkboxes
-hideColCheckbox(58);
+hideColCheckbox(58); // @TODO is this NEON specific? Should I remove?
 
-const accordions = document.querySelectorAll(
-  'input[class="accordion-selector"]'
-);
-accordions.forEach((accordion) => {
-  accordion.addEventListener("click", (event) => {
-    const currentAccordionIds = localStorage?.accordionIds?.split(",") || [];
-    const currentId = event.target.id;
-    if (currentAccordionIds.includes(currentId)) {
-      const targetIdx = currentAccordionIds.indexOf(currentId);
-      currentAccordionIds.splice(targetIdx, 1);
-      if(currentId==="taxonomy") {
-        localStorage.setItem("taxonomyAccordionClosed", true);
+function setSessionStorageForAccordions() {
+  const accordions = document.querySelectorAll(
+    'input[class="accordion-selector"]'
+  );
+  accordions.forEach((accordion) => {
+    accordion.addEventListener("click", (event) => {
+      const currentAccordionIds = sessionStorage.getItem("querystr" + currentPage + "/" + "accordionIds") ?.split(",") || [];
+      const currentId = event.target.id;
+      if (currentAccordionIds.includes(currentId)) {
+        const targetIdx = currentAccordionIds.indexOf(currentId);
+        currentAccordionIds.splice(targetIdx, 1);
+        if(currentId==="taxonomy") {
+          sessionStorage.setItem("querystr" + currentPage + "/" + "taxonomyAccordionClosed", true);
+        }
+      } else {
+        currentAccordionIds.push(currentId);
+        if(currentId==="taxonomy") sessionStorage.setItem("querystr" + currentPage + "/" + "taxonomyAccordionClosed", false);
       }
-    } else {
-      currentAccordionIds.push(currentId);
-      if(currentId==="taxonomy") localStorage.setItem("taxonomyAccordionClosed", false)
-    }
-    localStorage.setItem("accordionIds", currentAccordionIds);
+      sessionStorage.setItem("querystr" + currentPage + "/" + "accordionIds", currentAccordionIds);
+    });
   });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  initializeFormInputs();
+  const form = document.getElementById('params-form');
+  if (form) {
+    setSearchForm(form);
+  }
+  setSessionStorageForAccordions(); // @TODO I'm not sure whether this is necessary yet
+  updateChip();
+
 });

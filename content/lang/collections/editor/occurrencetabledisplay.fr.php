@@ -106,6 +106,7 @@ $LANG['GROUP'] = 'Groupe';
 $LANG['FORMATION'] = 'Formation';
 $LANG['MEMBER'] = 'Membre';
 $LANG['BED'] = 'Lit';
+$LANG['STORAGE_LOC'] = 'Emplacement de stockage';
 $LANG['SUBSTRATE'] = 'Substrat';
 $LANG['OCCURR_REMARKS'] = 'Notes (Remarques d\'occurrence)';
 $LANG['ASSOC_TAXA'] = 'Taxons associés';

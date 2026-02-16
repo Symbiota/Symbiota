@@ -13,7 +13,9 @@ $LANG['SELECT_TARGET'] = 'Sélectionnez l\'enregistrement cible';
 $LANG['ADD_IMG'] = 'Ajouter une Nouvelle Ressource';
 $LANG['SELECT_IMG'] = 'Sélectionnez un fichier multimédia situé sur votre ordinateur que vous souhaitez télécharger';
 $LANG['ENTER_URL'] = 'Entrer URL';
-$LANG['ENTER_URL_EXPLAIN'] = 'Entrez une URL vers une ressource déjà située sur un serveur Web.							S\'il n\'y a qu\'une seule version de la ressource disponible, entrez dans le champ supérieur et laissez les autres champs vides.							Si les versions miniature et moyenne ne sont pas disponibles, une image dérivée locale sera créée.';
+$LANG['ENTER_URL_EXPLAIN'] = 'Entrez une URL vers une ressource déjà située sur un serveur Web.
+	S\'il n\'y a qu\'une seule version de la ressource disponible, entrez dans le champ supérieur et laissez les autres champs vides.
+	Si les versions miniature et moyenne ne sont pas disponibles, une image dérivée locale sera créée.';
 $LANG['IMG_URL'] = 'URL du média (obligatoire)';
 $LANG['MED_VERS'] = 'Version moyenne (en option';
 $LANG['THUMB_VERS'] = 'Version miniature (en option';
@@ -48,6 +50,9 @@ $LANG['DEL_IMG'] = 'Supprimer Ressource';
 $LANG['REM_FROM_SERVER'] = 'Supprimer ressource du serveur';
 $LANG['RM_DB_NOT_SERVER'] = 'Remarque: ne pas cocher la case supprime la ressource de la base de données sans la supprimer du serveur)';
 $LANG['REMAP_TO_ANOTHER'] = 'Remapper à Autre Spécimen';
+$LANG['CANNOT_REMAP_EXPLAIN'] = "Cette image ne peut pas être réassociée à une autre occurrence car son nom correspond au numéro de catalogue de cette occurrence, ce qui pourrait la désynchroniser avec le processus de chargement par lots.
+	Veuillez télécharger manuellement cette image, corriger son nom, puis la charger en l'associant à l'occurrence appropriée.
+	Ensuite, assurez-vous de supprimer la version de l'image associée à cette occurrence.";
 $LANG['TARGET_OCCID'] = 'Enregistrement Occurrence #';
 $LANG['OPEN_LINK_AID'] = 'Ouvrir Aide de Liaison d\'Occurrence';
 $LANG['REMAP_IMG'] = 'Remapper Ressource';

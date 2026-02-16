@@ -41,7 +41,7 @@ $headerMapBase = array( 'institutioncode' => $LANG['INSTITUTION_CODE'], 'collect
 	'georeferenceverificationstatus' => $LANG['GEOREF_VERIF_STATUS'], 'georeferenceremarks' => $LANG['GEOREF_REMARKS'],
 	'minimumelevationinmeters' => $LANG['ELEV_MIN_METERS'], 'maximumelevationinmeters' => $LANG['ELEV_MAX_METERS'], 'verbatimelevation' => $LANG['VERB_ELEV'],
 	'minimumdepthinmeters' => $LANG['DEPTH_MIN_METERS'], 'maximumdepthinmeters' => $LANG['DEPTH_MAX_METERS'], 'verbatimdepth' => $LANG['VERB_DEPTH'],
-	'habitat' => $LANG['HABITAT'], 'substrate' => $LANG['SUBSTRATE'],
+	'habitat' => $LANG['HABITAT'], 'substrate' => $LANG['SUBSTRATE'], 'storageLocation' => $LANG['STORAGE_LOC'],
 	'occurrenceremarks' => $LANG['OCCURR_REMARKS'], 'associatedtaxa' => $LANG['ASSOC_TAXA'],
 	'verbatimattributes' => $LANG['VERB_ATTRIBUTES'], 'lifestage' => $LANG['LIFE_STAGE'], 'sex' => $LANG['SEX'], 'individualcount' => $LANG['COUNT'],
 	'samplingprotocol' => $LANG['SAMPLE_PROTOCOL'], 'preparations' => $LANG['PREPARATIONS'], 'reproductivecondition' => $LANG['REPRODUCTIVE_CONDITION'],

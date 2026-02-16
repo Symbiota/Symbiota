@@ -105,9 +105,6 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 
 	private function setSqlWhere(){
 		$sqlWhere = '';
-		if($this->dbStr){
-			$sqlWhere .= OccurrenceSearchSupport::getDbWhereFrag($this->cleanInStr($this->dbStr));
-		}
 		if(isset($this->taxaArr['taxa'])){
 			$sqlWhereTaxa = '';
 			foreach($this->taxaArr['taxa'] as $searchTaxon => $searchArr){
@@ -203,9 +200,12 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		}
 		*/
 		if($this->imageType){
+			//0 = display all images, do not add a collection related condition to SQL
 			if($this->imageType == 1){
 				//Specimen or Vouchered Observations Images
-				$sqlWhere .= 'AND (m.occid IS NOT NULL) ';
+				if($this->dbStr){
+					$sqlWhere .= OccurrenceSearchSupport::getDbWhereFrag($this->cleanInStr($this->dbStr));
+				}
 			}
 			elseif($this->imageType == 3){
 				//Field Images (lacking specific locality details)
@@ -263,11 +263,6 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		if(!$this->searchSupportManager) $this->searchSupportManager = new OccurrenceSearchSupport($this->conn);
 		if($this->dbStr) $this->searchSupportManager->setCollidStr($this->dbStr);
 		return $this->searchSupportManager->getFullCollectionList($catId, true);
-	}
-
-	public function outputFullCollArr($occArr, $targetCatID = 0){
-		if(!$this->searchSupportManager) $this->searchSupportManager = new OccurrenceSearchSupport($this->conn);
-		$this->searchSupportManager->outputFullCollArr($occArr, $targetCatID, false, false);
 	}
 
 	//Misc support functions

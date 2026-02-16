@@ -35,6 +35,7 @@ $LANG['DISPLAY_FORMAT'] = 'Results Display Format';
 $LANG['LIST'] = 'List';
 $LANG['TABLE'] = 'Table';
 $LANG['COLLECTION_LIST'] = 'Collections List';
-$LANG['ALL_SPECIMEN_COLLECTIONS'] = 'all specimen collections';
-$LANG['ALL_OBSERVATION_COLLECTIONS'] = 'all observation collections';
+$LANG['ALL_SPECIMEN_COLLECTIONS'] = 'All specimen collections';
+$LANG['ALL_OBSERVATION_COLLECTIONS'] = 'All observation collections';
+$LANG['ALL_COLLECTIONS'] = 'All collections';
 ?>

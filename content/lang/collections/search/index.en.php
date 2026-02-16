@@ -139,5 +139,6 @@ $LANG['FORMATION'] = 'Formation';
 $LANG['MEMBER'] = 'Member';
 $LANG['BED'] = 'Bed';
 $LANG['POLYGONS'] = 'Polygons';
+$LANG['SYNONYM_NOTE'] = 'When searching for higher-order taxonomic units, the result set is limited to accepted child taxa of the specified higher-rank taxon and its synonyms.';
 
 ?>

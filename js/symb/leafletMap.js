@@ -90,6 +90,8 @@ class LeafletMap {
       drawColor: this.DEFAULT_SHAPE_OPTIONS,
       lang: "en",
    };
+
+   HIGH_RECORD_THRESHOLD=10000;
    
    /* To Hold Reference to Leaflet Map */
    mapLayer;
