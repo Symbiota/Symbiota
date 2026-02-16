@@ -852,15 +852,17 @@ if ($SYMB_UID) {
 							}
 							?>
 						</div>
+						<?php if($collData['managementtype'] == 'Live Data'): ?>
+							<div class="bottom-breathing-room-rel">
+								<span class="label"><?= $LANG['LAST_MODIFIED'] ?>:</span>
+								<?= $statsArr['datelastmodified'] ?>
+							</div>
+						<?php endif ?>
 						<?php if($collData['managementtype'] != 'Live Data'): ?>
-						<div class="bottom-breathing-room-rel">
-							<span class="label"><?= $LANG['LAST_UPDATE'] ?>:</span>
-							<?= $collData['uploaddate'] ?>
-						</div>
-						<div class="bottom-breathing-room-rel">
-							<span class="label"><?= $LANG['LAST_MODIFIED'] ?>:</span>
-							<?= $statsArr['datelastmodified'] ?>
-						</div>
+							<div class="bottom-breathing-room-rel">
+								<span class="label"><?= $LANG['LAST_UPDATE'] ?>:</span>
+								<?= $collData['uploaddate'] ?>
+							</div>
 						<?php endif ?>
 						<?php
 						if($collData['managementtype'] == 'Live Data'){
