@@ -1,5 +1,5 @@
 import type { Page, Locator } from '@playwright/test';
-import { Form } from "./form";
+import { Form } from "./Form";
 
 const occurrenceFields = {
 	catalognumber: 'text',
@@ -81,13 +81,12 @@ export class OccurrenceForm extends Form {
 
 	public readonly EDIT_SUCCESS = "SUCCESS";
 
-	constructor(selector: string, page: Page) {
-		super(selector, page, occurrenceFields);
+	constructor(page: Page) {
+		super(page, occurrenceFields);
 		this.submitNewButton = this.form.locator('button[value=addOccurRecord]');
 		this.submitEditButton = this.form.locator('button[value=saveOccurEdits]');
 		this.submitSkeletalButton = this.form.locator('button[name=recordsubmit]');
 		this.submitSkeletalImageButton = this.form.locator('input[name=action][value="Submit Occurrence"]');
-
 	}
 
 	async submitEdit() { return this.submitEditButton.click({force: true})}

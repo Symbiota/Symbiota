@@ -1,5 +1,5 @@
 import type { Page, Locator } from '@playwright/test';
-import { Form } from "./form";
+import { Form } from "./Form";
 
 const mediaFields = {
 	removeimg: 'checkbox',
@@ -29,25 +29,18 @@ const mediaFields = {
 	ch_ImageOfImmature: 'checkbox',
 }
 
-export class MediaForm extends Form {
-	private readonly submitDeleteButton: Locator;
-	private readonly submitEditButton: Locator;
-	private readonly submitRemapBlankButton: Locator;
-	private readonly submitDisassociateButton: Locator;
-	private readonly submitNewButton: Locator;
+/* Abstract class */
+abstract class MediaForm extends Form {
+	protected submitDeleteButton: Locator;
+	protected submitEditButton: Locator;
+	protected submitRemapBlankButton: Locator;
+	protected submitDisassociateButton: Locator;
+	protected submitNewButton: Locator;
+
+	protected openEditFormToggle: Locator;
 
 	public readonly DELETE_SUCCESS_MSG = "Media deleted successfully";
 	public readonly NEW_SUCCESS_MSG = "Media added successfully";
-
-	constructor(selector: string, page: Page) {
-		super(selector, page, mediaFields);
-
-		this.submitEditButton = this.form.locator('button[value="Submit Image Edits"]');
-		this.submitDeleteButton = this.form.locator('button[value="Delete Image"]');
-		this.submitRemapBlankButton = this.form.locator('button[value="remapImageToNewRecord"]');
-		this.submitDisassociateButton = this.form.locator('button[value="Disassociate Image"]');
-		this.submitNewButton = this.form.locator('button[value="Submit New Image"]');
-	}
 
 	async submitEdit() { return this.submitEditButton.click({force: true})}
 	async submitDelete() { return this.submitDeleteButton.click({force: true})}
@@ -56,7 +49,23 @@ export class MediaForm extends Form {
 	async submitNew() { return this.submitNewButton.click({force: true})}
 
 	// Warning will not work with multiple media because not unique
-	async openEditForm() { 
-		return this.page.locator('div[title="Edit Resource MetaData"]').click({force: true}) 
+	async openEditForm() { return this.openEditFormToggle.click({force: true}) }
+}
+
+export class SymbMediaForm extends MediaForm {
+	public readonly DELETE_SUCCESS_MSG = "Media deleted successfully";
+	public readonly NEW_SUCCESS_MSG = "Media added successfully";
+
+	constructor(page: Page) {
+		super(page, mediaFields);
+
+		this.submitEditButton = this.form.locator('button[value="Submit Image Edits"]');
+		this.submitDeleteButton = this.form.locator('button[value="Delete Image"]');
+		this.submitRemapBlankButton = this.form.locator('button[value="remapImageToNewRecord"]');
+		this.submitDisassociateButton = this.form.locator('button[value="Disassociate Image"]');
+		this.submitNewButton = this.form.locator('button[value="Submit New Image"]');
+
+		// Warning will not work with multiple media because not unique
+		this.openEditFormToggle = page.locator('div[title="Edit Resource MetaData"]');
 	}
 }

@@ -2,35 +2,37 @@ import { type Page, type Locator, expect } from '@playwright/test';
 
 export class Form {
 	public form: Locator;
-	private fieldLocators = {};
 
-	constructor(
-		public readonly selector: string,
-		public readonly page: Page,
-		public readonly fields: Object
-	) {
-		for(let fieldName of Object.keys(this.fields)) {
-			this.form = this.page.locator(selector);
-			this.fieldLocators[fieldName] = this.form.locator('input[name=' + fieldName + ']');
-		}
+	constructor(public readonly page: Page, public readonly fields: Object) {
+		this.form = this.page.locator('body');
 	}
 
-	async set(fieldName: string, value: number|string|boolean) {
+	private getFieldLocator(fieldName: string): Locator {
 		expect(this.fields).toHaveProperty(fieldName);
+
+		return this.form.locator('input[name=' + fieldName + ']');
+	}
+
+	async set(fieldName: string, value: any) {
+		const locator = this.getFieldLocator(fieldName);
 
 		switch (this.fields[fieldName]) {
 			case 'select':
-				await this.fieldLocators[fieldName].selectOption(value);
+				await locator.selectOption(value);
 				break;
 			case 'checkbox':
-				await this.fieldLocators[fieldName].setChecked(value);
+				await locator.setChecked(value);
 				break;
 			case 'text':
-				await this.fieldLocators[fieldName].fill(value);
+				await locator.fill(value);
 				break;
 			default:
 				break;
 		}
+	}
+
+	setScope(selector: string) {
+		this.form = this.page.locator(selector);
 	}
 
 	async setMany(fields: Object) {
@@ -41,8 +43,7 @@ export class Form {
 
 	async checkMany(fields: Object) {
 		for(let [fieldName, value] of Object.entries(fields)) {
-			expect(this.fields).toHaveProperty(fieldName);
-			await expect(this.fieldLocators[fieldName]).toHaveValue(value);
+			await expect(this.getFieldLocator(fieldName)).toHaveValue(value)
 		}
 	}
 

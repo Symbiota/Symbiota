@@ -1,7 +1,7 @@
 import { expect, mergeTests } from '@playwright/test';
 import { test as testCollection } from './fixtures/collection';
 import { test as testWithAdmin } from './fixtures/adminLogin';
-import { CollectionCreatePage } from './pages/CollectionCreatePage';
+import { SymbCollectionCreatePage as CollectionCreatePage } from './pages/CollectionCreatePage';
 
 const test = mergeTests(testCollection, testWithAdmin);
 
