@@ -1,5 +1,6 @@
 import type { Page, Locator } from '@playwright/test';
 import { Form } from "./Form";
+import { getSuite, Suite } from '../types/Suite';
 
 const mediaFields = {
 	removeimg: 'checkbox',
@@ -30,7 +31,7 @@ const mediaFields = {
 }
 
 /* Abstract class */
-abstract class MediaForm extends Form {
+export abstract class MediaForm extends Form {
 	protected submitDeleteButton: Locator;
 	protected submitEditButton: Locator;
 	protected submitRemapBlankButton: Locator;
@@ -42,6 +43,15 @@ abstract class MediaForm extends Form {
 	public readonly DELETE_SUCCESS_MSG = "Media deleted successfully";
 	public readonly NEW_SUCCESS_MSG = "Media added successfully";
 
+	static make(page: Page): MediaForm {
+		switch(getSuite()) {
+			case Suite.Laravel: 
+				throw new Error('ERROR: ' + Suite.Laravel + ' SUITE: NOT IMPLEMENTED');
+			default: 
+				return new SymbMediaForm(page);
+		}
+	}
+
 	async submitEdit() { return this.submitEditButton.click({force: true})}
 	async submitDelete() { return this.submitDeleteButton.click({force: true})}
 	async submitRemapBlank() { return this.submitRemapBlankButton.click({force: true})}
@@ -52,7 +62,7 @@ abstract class MediaForm extends Form {
 	async openEditForm() { return this.openEditFormToggle.click({force: true}) }
 }
 
-export class SymbMediaForm extends MediaForm {
+class SymbMediaForm extends MediaForm {
 	public readonly DELETE_SUCCESS_MSG = "Media deleted successfully";
 	public readonly NEW_SUCCESS_MSG = "Media added successfully";
 
