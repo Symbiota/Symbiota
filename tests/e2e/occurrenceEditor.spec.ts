@@ -4,8 +4,8 @@ import { test as testCollection } from './fixtures/collection';
 import { test as testOccurrence } from './fixtures/occurrence';
 import { OccurrenceEditorPage, OccurrenceEditorTab } from './pages/OccurrenceEditorPage'
 import path from 'node:path';
-import { MediaForm } from './forms/mediaForm';
-import { OccurrenceForm } from './forms/occurrenceForm';
+import { SymbMediaForm as MediaForm } from './forms/MediaForm';
+import { OccurrenceForm } from './forms/OccurrenceForm';
 
 const test = mergeTests(testWithAdmin, testCollection, testOccurrence);
 
@@ -40,7 +40,7 @@ test.describe('From Editor', () => {
 			let occurrenceEditor = new OccurrenceEditorPage(page);
 			await occurrenceEditor.gotoNew(collId);
 
-			let form = new OccurrenceForm('#fullform', page);
+			let form = new OccurrenceForm(page);
 			await form.setMany(inputs[testName]);
 			await page.locator('input[name=gotomode][value="0"]').click({force: true});
 			await form.submitNew();
@@ -65,11 +65,13 @@ test('From image (Link)', async ({ page }) => {
 	let occurrenceEditor = new OccurrenceEditorPage(page);
 	await occurrenceEditor.gotoImageSubmit(collId);
 
-	let skelForm = new OccurrenceForm('#imgoccurform', page);
+	let skelForm = new OccurrenceForm(page);
+	skelForm.setScope('#imgoccurform')
 	await skelForm.setMany(inputs);
 
 	await page.getByText("Enter Url").click({force: true});
-	let skelMediaForm = new MediaForm('#imgoccurform', page);
+	let skelMediaForm = new MediaForm(page);
+	skelMediaForm.setScope('#imgoccurform')
 	await skelMediaForm.setMany(mediaInputs);
 	await skelForm.submitSkeletalImage();
 
@@ -77,12 +79,14 @@ test('From image (Link)', async ({ page }) => {
 	const occId = parseInt(await newRecordLink.innerText());
 	await occurrenceEditor.gotoRecord(collId, occId)
 
-	let occForm = new OccurrenceForm('#fullform', page);
+	let occForm = new OccurrenceForm(page);
 	await occForm.checkMany(inputs);
 
 	await occurrenceEditor.gotoTab(OccurrenceEditorTab.Media)
 
-	let mediaForm = new MediaForm('[id^=img][id*=editdiv]', page);
+	let mediaForm = new MediaForm(page);
+	mediaForm.setScope('[id^=img][id*=editdiv]');
+
 	await mediaForm.openEditForm()
 	await mediaForm.checkMany({
 		originalUrl: url,
@@ -100,7 +104,8 @@ test('From image (File)', async ({ page }) => {
 	let occurrenceEditor = new OccurrenceEditorPage(page);
 	await occurrenceEditor.gotoImageSubmit(collId);
 
-	let skelForm = new OccurrenceForm('#imgoccurform', page);
+	let skelForm = new OccurrenceForm(page);
+	skelForm.setScope('#imgoccurform');
 	await skelForm.setMany(inputs)
 	await skelForm.setFile('imgfile', path.join(__dirname, '../../images/world.png'));
 	await skelForm.submitSkeletalImage()
@@ -109,10 +114,11 @@ test('From image (File)', async ({ page }) => {
 	const occId = parseInt(await newRecordLink.innerText());
 	await occurrenceEditor.gotoRecord(collId, occId)
 
-	let occForm = new OccurrenceForm('#fullform', page);
+	let occForm = new OccurrenceForm(page);
 	await occForm.checkMany(inputs);
 
-	let mediaForm = new MediaForm('[id^=img][id*=editdiv]', page);
+	let mediaForm = new MediaForm(page);
+	mediaForm.setScope('[id^=img][id*=editdiv]');
 	await occurrenceEditor.gotoTab(OccurrenceEditorTab.Media)
 	await mediaForm.openEditForm();
 	await mediaForm.checkMany({
@@ -134,7 +140,7 @@ test('From skeletal', async ({ page }) => {
 	let occurrenceEditor = new OccurrenceEditorPage(page);
 	await occurrenceEditor.gotoSkeletalSubmit(collId);
 
-	let skelForm = new OccurrenceForm('#defaultform', page);
+	let skelForm = new OccurrenceForm(page);
 	await skelForm.setMany(inputs);
 	await skelForm.submitSkeletal();
 
@@ -146,7 +152,7 @@ test('From skeletal', async ({ page }) => {
 	const occId = id? parseInt(id.replace('a-', '')): 0;
 	await occurrenceEditor.gotoRecord(collId, occId)
 
-	let occForm = new OccurrenceForm('#fullform', page);
+	let occForm = new OccurrenceForm(page);
 	await occForm.checkMany(inputs);
 })
 
@@ -160,7 +166,7 @@ test('Edit record', async ({ page, occurrenceFactory }) => {
 	let occurrenceEditor = new OccurrenceEditorPage(page);
 	await occurrenceEditor.gotoRecord(collId, occId)
 
-	let occForm = new OccurrenceForm('#fullform', page);
+	let occForm = new OccurrenceForm(page);
 	await occForm.setMany(inputs);
 	await occForm.submitEdit();
 	await expect(page.getByText(occForm.EDIT_SUCCESS)).toBeVisible();
@@ -214,7 +220,8 @@ test('Add Media', async ({ page, occurrenceFactory }) => {
 	await occurrenceEditor.gotoRecord(collId, occId)
 	await occurrenceEditor.gotoTab(OccurrenceEditorTab.Media)
 
-	let mediaForm = new MediaForm('form[name=imgnewform]', page);
+	let mediaForm = new MediaForm(page);
+	mediaForm.setScope('form[name=imgnewform]');
 	await mediaForm.setFile('imgfile', path.join(__dirname, '../../images/world.png'));
 
 	await mediaForm.submitNew();
@@ -229,7 +236,9 @@ test('Delete Media', async ({ page, occurrenceFactory }) => {
 	await occurrenceEditor.gotoRecord(collId, occId)
 	await occurrenceEditor.gotoTab(OccurrenceEditorTab.Media)
 
-	let mediaForm = new MediaForm(`div[id=img${mediaId}editdiv]`, page);
+	let mediaForm = new MediaForm(page);
+	mediaForm.setScope(`div[id=img${mediaId}editdiv]`);
+
 	await mediaForm.openEditForm();
 
 	page.on('dialog', dialog => dialog.accept());

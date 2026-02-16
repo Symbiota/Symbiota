@@ -1,24 +1,22 @@
 import type { Page, Locator } from '@playwright/test';
 import { expect } from '@playwright/test';
+import { Form } from '../forms/Form';
 
-// function createCollection(institutionCode, collectionCode, collectionName, managementType = 'liveData') {
-//
-// 	return async ({ page }) => {
-// 		//for(let input of ['institutionCode', 'collectionName', ''])
-// 		await page.locator('input[id=institutionCode]').fill(institutionCode);
-// 		await page.locator('input[id=collectionCode]').fill(collectionCode);
-// 		await page.locator('input[id=collectionName]').fill(collectionName);
-// 		await page.locator('input[id=' + managementType + ']').click({force: true});
-// 		await page.locator('button[value=newCollection]').click({force: true});
-// 	};
-//
-// }
+interface CollectionCreatePage {
+	collectionForm: Form
+	setToLiveManaged(): Promise<void>
+	setToSnapshot(): Promise<void>;
+	setToAggregate(): Promise<void>;
+	goto(): Promise<void>;
+}
 
-export class CollectionCreatePage {
+export class SymbCollectionCreatePage implements CollectionCreatePage {
 	private readonly submitButton: Locator;
 	private readonly liveManagedRadio: Locator;
 	private readonly snapshotRadio: Locator;
 	private readonly aggregateRadio: Locator;
+
+	collectionForm: Form
 
 	private fieldLocators = {};
 
