@@ -141,7 +141,7 @@ foreach($labelArr as $occid => $occArr){
 			$currentTxt = htmlspecialchars($scinameStr) . ' ';
 			$textrun->addText($currentTxt, 'scientificnameFont');
 		}
-		$scientificnameauthorshipStr = $occArr['scientificnameauthorship'];
+		$scientificnameauthorshipStr = $occArr['scientificnameauthorship'] . ' ';
 		$familyRun = $rightCell->addTextRun('noSpacing');
 		if($occArr['family']){
 			$currentTxt = strtoupper(htmlspecialchars($occArr['family']));
@@ -159,6 +159,7 @@ foreach($labelArr as $occid => $occArr){
 					$textrun2->addText($occArr['dateidentified'], 'identifiedFont');
 				}
 				$currentTxt = 'Det: ' . htmlspecialchars($identByStr);
+				$textrun = $leftCell->addTextRun('scientificname');
 				$textrun->addText($currentTxt, 'identifiedFont');
 			}
 		}
