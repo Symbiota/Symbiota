@@ -34,6 +34,27 @@ class OccurrenceFactory {
 			[ occId ]
 		);
 	}
+
+	private async getResult(sql, params) {
+		const result = await this.conn.execute(sql, params)
+		if(result && result.length) {
+			return result[0];
+		} else {
+			return [];
+		}
+	}
+
+	async getOccurrence(occId: number) {
+		return this.getResult("SELECT * FROM omoccurrences where occId", [occId]);
+	}
+
+	async getMedia(occId: number) {
+		return this.getResult("SELECT * FROM media where occId = ?", [occId]);
+	}
+
+	async getDeterminations(occId: number) {
+		return this.getResult("SELECT * FROM omoccurdeterminations where occId = ?", [occId]);
+	}
 }
 
 // Extend basic test by providing a "todoPage" fixture.

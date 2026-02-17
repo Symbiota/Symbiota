@@ -2,6 +2,7 @@ import { expect, type Page } from '@playwright/test';
 import { MediaForm } from '../forms/MediaForm';
 import { getSuite, Suite } from '../types/Suite';
 import { OccurrenceForm } from '../forms/OccurrenceForm';
+import { DeterminationForm } from '../forms/DeterminationForm';
 
 export enum OccurrenceEditorTab {
 	Occurrence = 'occTab',
@@ -14,9 +15,15 @@ export enum OccurrenceEditorTab {
 export abstract class OccurrenceEditorPage {
 	occurForm: OccurrenceForm;
 	mediaForm: MediaForm;
+	detForm: DeterminationForm;
+	collId: Number;
+	occId: Number;
+	mediaIds: Array<Number> = [];
+	detIds: Array<Number> = [];
 
 	constructor(public readonly page: Page) {
 		this.mediaForm = MediaForm.make(page);
+		this.detForm= DeterminationForm.make(page);
 		this.occurForm = new OccurrenceForm(page);
 	}
 

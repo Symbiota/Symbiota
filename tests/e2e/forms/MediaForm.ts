@@ -30,7 +30,6 @@ const mediaFields = {
 	ch_ImageOfImmature: 'checkbox',
 }
 
-/* Abstract class */
 export abstract class MediaForm extends Form {
 	protected submitDeleteButton: Locator;
 	protected submitEditButton: Locator;
@@ -45,9 +44,9 @@ export abstract class MediaForm extends Form {
 
 	static make(page: Page): MediaForm {
 		switch(getSuite()) {
-			case Suite.Laravel: 
+			case Suite.Laravel:
 				throw new Error('ERROR: ' + Suite.Laravel + ' SUITE: NOT IMPLEMENTED');
-			default: 
+			default:
 				return new SymbMediaForm(page);
 		}
 	}

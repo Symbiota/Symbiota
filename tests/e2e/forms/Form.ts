@@ -2,6 +2,8 @@ import { type Page, type Locator, expect } from '@playwright/test';
 
 export class Form {
 	public form: Locator;
+	public setFields: Object = {};
+	protected fieldSelectorOverrides: Object = {};
 
 	constructor(public readonly page: Page, public readonly fields: Object) {
 		this.form = this.page.locator('body');
@@ -10,7 +12,11 @@ export class Form {
 	private getFieldLocator(fieldName: string): Locator {
 		expect(this.fields).toHaveProperty(fieldName);
 
-		return this.form.locator('input[name=' + fieldName + ']');
+		if(this.fieldSelectorOverrides.hasOwnProperty(fieldName)) {
+			return this.form.locator(this.fieldSelectorOverrides[fieldName]);
+		} else {
+			return this.form.locator('input[name=' + fieldName + ']');
+		}
 	}
 
 	async set(fieldName: string, value: any) {
@@ -27,8 +33,10 @@ export class Form {
 				await locator.fill(value);
 				break;
 			default:
-				break;
+				return;
 		}
+
+		this.setFields[fieldName] = value;
 	}
 
 	setScope(selector: string) {
@@ -41,10 +49,18 @@ export class Form {
 		}
 	}
 
+	async checkSetFields() {
+		for(let [fieldName, value] of Object.entries(this.setFields)) {
+			await expect(this.getFieldLocator(fieldName)).toHaveValue(value)
+		}
+	}
+
 	async checkMany(fields: Object) {
 		for(let [fieldName, value] of Object.entries(fields)) {
 			await expect(this.getFieldLocator(fieldName)).toHaveValue(value)
 		}
+
+		this.setFields = {};
 	}
 
 	async setFile(name: string, path: string) {
