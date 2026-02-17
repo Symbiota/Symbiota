@@ -26,9 +26,9 @@ class CollectionFormManager extends Manager {
 
         try {
             $rs = QueryUtil::executeQuery(Database::connect('readonly'), $sql);
-
+            $specimenTypes = ['Preserved Specimens', 'Fossil Specimens'];
             foreach ($rs->fetch_all(MYSQLI_ASSOC) as $collection) {
-                $type = $collection['colltype'] === 'Preserved Specimens' ?
+                $type = in_array($collection['colltype'], $specimenTypes) ?
                     'Specimens' :
                     'Observations';
 
