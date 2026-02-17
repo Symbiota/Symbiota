@@ -36,10 +36,10 @@ export abstract class OccurrenceEditorPage {
 		}
 	}
 
-	abstract gotoNew(collId: number): Promise<void>;
-	abstract gotoRecord(collId: number, occId: number): Promise<void>;
-	abstract gotoImageSubmit(collId: number): Promise<void>;
-	abstract gotoSkeletalSubmit(collId: number): Promise<void>;
+	abstract gotoNew(collId: Number): Promise<void>;
+	abstract gotoRecord(collId: Number, occId: Number): Promise<void>;
+	abstract gotoImageSubmit(collId: Number): Promise<void>;
+	abstract gotoSkeletalSubmit(collId: Number): Promise<void>;
 	abstract gotoTab(newTab: OccurrenceEditorTab): Promise<void>;
 	abstract getSkeletalOccid(): Promise<Number>;
 	abstract getSkeletalImageOccid(): Promise<Number>;
@@ -52,19 +52,19 @@ export abstract class OccurrenceEditorPage {
 }
 
 export class SymbOccurrenceEditorPage extends OccurrenceEditorPage {
-	async gotoNew(collId: number) {
+	async gotoNew(collId: Number) {
 		await this.page.goto('collections/editor/occurrenceeditor.php?gotomode=1&collid=' + collId);
 	}
 
-	async gotoRecord(collId: number, occId: number) {
+	async gotoRecord(collId: Number, occId: Number) {
 		await this.page.goto(`collections/editor/occurrenceeditor.php?csmode=0&occindex=0&occid=${occId}&collid=${collId}`);
 	}
 
-	async gotoImageSubmit(collId: number) {
+	async gotoImageSubmit(collId: Number) {
 		await this.page.goto(`/collections/editor/imageoccursubmit.php?collid=${collId}`);
 	}
 
-	async gotoSkeletalSubmit(collId: number) {
+	async gotoSkeletalSubmit(collId: Number) {
 		await this.page.goto(`/collections/editor/skeletalsubmit.php?collid=${collId}`);
 	}
 

@@ -2,7 +2,7 @@ import { expect, mergeTests } from '@playwright/test';
 import { test as testWithAdmin } from './fixtures/adminLogin';
 import { test as testCollection } from './fixtures/collection';
 import { test as testOccurrence } from './fixtures/occurrence';
-import { SymbOccurrenceEditorPage as OccurrenceEditorPage , OccurrenceEditorTab } from './pages/OccurrenceEditorPage'
+import { OccurrenceEditorPage , OccurrenceEditorTab } from './pages/OccurrenceEditorPage'
 import path from 'node:path';
 
 const test = mergeTests(testWithAdmin, testCollection, testOccurrence);
@@ -35,7 +35,7 @@ test.describe('From Editor', () => {
 
 	for(let testName in inputs) {
 		test(testName, async({ page }) => {
-			let occurrenceEditor = new OccurrenceEditorPage(page);
+			let occurrenceEditor = OccurrenceEditorPage.make(page);
 			await occurrenceEditor.gotoNew(collId);
 
 			await occurrenceEditor.occurForm.setMany(inputs[testName]);
@@ -60,7 +60,7 @@ test('From image (Link)', async ({ page }) => {
 		thumbnailUrl: url,
 	};
 
-	let occurrenceEditor = new OccurrenceEditorPage(page);
+	let occurrenceEditor = OccurrenceEditorPage.make(page);
 	await occurrenceEditor.gotoImageSubmit(collId);
 
 	occurrenceEditor.occurForm.setScope('#imgoccurform');
@@ -95,7 +95,7 @@ test('From image (File)', async ({ page }) => {
 		catalognumber: collId + '00002',
 	};
 
-	let occurrenceEditor = new OccurrenceEditorPage(page);
+	let occurrenceEditor = OccurrenceEditorPage.make(page);
 	await occurrenceEditor.gotoImageSubmit(collId);
 
 	occurrenceEditor.occurForm.setScope('#imgoccurform');
@@ -128,7 +128,7 @@ test('From skeletal', async ({ page }) => {
 		catalognumber: collId + '00003',
 	};
 
-	let occurrenceEditor = new OccurrenceEditorPage(page);
+	let occurrenceEditor = OccurrenceEditorPage.make(page);
 	await occurrenceEditor.gotoSkeletalSubmit(collId);
 
 	await occurrenceEditor.occurForm.setMany(inputs);
@@ -147,7 +147,7 @@ test('Edit record', async ({ page, occurrenceFactory }) => {
 		catalognumber: occId + '00004',
 	};
 
-	let occurrenceEditor = new OccurrenceEditorPage(page);
+	let occurrenceEditor =OccurrenceEditorPage.make(page);
 	await occurrenceEditor.gotoRecord(collId, occId)
 
 	await occurrenceEditor.occurForm.setMany(inputs);
@@ -159,7 +159,7 @@ test('Edit record', async ({ page, occurrenceFactory }) => {
 /* DETERMINATIONS TESTS */
 test('Add Determination', async ({ page, occurrenceFactory }) => {
 	let occId = await occurrenceFactory.getNewRecord(collId);
-	let occurrenceEditor = new OccurrenceEditorPage(page);
+	let occurrenceEditor = OccurrenceEditorPage.make(page);
 	await occurrenceEditor.gotoRecord(collId, occId)
 	await occurrenceEditor.gotoTab(OccurrenceEditorTab.Determinations)
 	const inputs = {
@@ -184,11 +184,12 @@ test('Add Determination', async ({ page, occurrenceFactory }) => {
 })
 
 // get occurrence with determinaton -> delete -> check that delete was successful
+
 test('Delete Determination', async ({ page, occurrenceFactory }) => {
 	let occId = await occurrenceFactory.getNewRecord(collId);
 	let detId = await occurrenceFactory.newDetermination(occId);
 
-	let occurrenceEditor = new OccurrenceEditorPage(page);
+	let occurrenceEditor = OccurrenceEditorPage.make(page);
 	await occurrenceEditor.gotoRecord(collId, occId)
 	await occurrenceEditor.gotoTab(OccurrenceEditorTab.Determinations)
 
@@ -202,7 +203,7 @@ test('Delete Determination', async ({ page, occurrenceFactory }) => {
 /* MEDIA TESTS */
 test('Add Media', async ({ page, occurrenceFactory }) => {
 	let occId = await occurrenceFactory.getNewRecord(collId);
-	let occurrenceEditor = new OccurrenceEditorPage(page);
+	let occurrenceEditor = OccurrenceEditorPage.make(page);
 	await occurrenceEditor.gotoRecord(collId, occId)
 	await occurrenceEditor.gotoTab(OccurrenceEditorTab.Media)
 
@@ -217,7 +218,7 @@ test('Delete Media', async ({ page, occurrenceFactory }) => {
 	let occId = await occurrenceFactory.getNewRecord(collId);
 	let mediaId = await occurrenceFactory.newMedia(occId);
 
-	let occurrenceEditor = new OccurrenceEditorPage(page);
+	let occurrenceEditor = OccurrenceEditorPage.make(page);
 	await occurrenceEditor.gotoRecord(collId, occId)
 	await occurrenceEditor.gotoTab(OccurrenceEditorTab.Media)
 
