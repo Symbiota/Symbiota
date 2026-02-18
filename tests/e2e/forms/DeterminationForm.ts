@@ -26,10 +26,10 @@ export abstract class DeterminationForm extends Form {
 	abstract checkDeleteSuccess(): Promise<void>;
 
 	abstract setToNew(): Promise<void>;
-	abstract setToEdit(detId: Number): Promise<void>;
-	abstract setToDelete(detId: Number): Promise<void>;
+	abstract setToEdit(detId: number): Promise<void>;
+	abstract setToDelete(detId: number): Promise<void>;
 
-	abstract openEditForm(detId: Number): Promise<void>;
+	abstract openEditForm(detId: number): Promise<void>;
 }
 
 export class SymbDeterminationForm extends DeterminationForm {
@@ -53,7 +53,7 @@ export class SymbDeterminationForm extends DeterminationForm {
 		await expect(this.page.getByText(this.DELETE_SUCCESS_MSG)).toBeVisible();
 	}
 
-	async openEditForm(detId: Number) {
+	async openEditForm(detId: number) {
 		const detDiv= this.page.locator(`div[id=detdiv-${detId}]`);
 		await detDiv.locator('a[title="Edit Determination"]').click({force: true});
 	}
@@ -63,12 +63,12 @@ export class SymbDeterminationForm extends DeterminationForm {
 		this.submitButton = this.form.locator('button[name=submitaction]')
 	}
 
-	async setToEdit(detId: Number) {
+	async setToEdit(detId: number) {
 		this.setScope(`div[id=editdetdiv-${detId}]`);
 		this.submitButton = this.form.locator('button[name="deteditform"]')
 	}
 
-	async setToDelete(detId: Number) {
+	async setToDelete(detId: number) {
 		this.setScope(`div[id=editdetdiv-${detId}]`);
 		this.submitButton = this.form.locator('button[value="Delete Determination"]')
 	}

@@ -17,11 +17,12 @@ export abstract class OccurrenceEditorPage {
 	mediaForm: MediaForm;
 	detForm: DeterminationForm;
 	collId: Number;
-	occId: Number;
-	mediaIds: Array<Number> = [];
-	detIds: Array<Number> = [];
+	occId: number;
+	mediaIds: Array<number> = [];
+	detIds: Array<number> = [];
 
 	constructor(public readonly page: Page) {
+
 		this.mediaForm = MediaForm.make(page);
 		this.detForm= DeterminationForm.make(page);
 		this.occurForm = new OccurrenceForm(page);
