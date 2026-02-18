@@ -321,7 +321,7 @@ function addIdentifierField(clickedObj) {
 }
 
 function confirmDeleteIdentifier(idKey, occId) {
-    if (confirm('This will permanently delete the identifier. Do you want to proceed?')) {
+    if (confirm(translations.IDENTIFIER_DELETE)) {
         deleteIdentifier(idKey, occId);
         return false;
     }
