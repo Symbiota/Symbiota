@@ -16,6 +16,6 @@ $LANG['ILLEGAL_RENAME_CHANGED_FILE_TYPE'] = 'Illegal rename changed file type';
 $LANG['FILE_TYPE_NOT_ALLOWED'] = 'File type not allowed';
 $LANG['FILEPATH_NOT_WRITABLE'] = 'Filepath is not writable';
 $LANG['NOT_ENOUGH_MEMORY_IMAGE'] = 'Not enough memory to create image';
-$LANG['EXCEED_MAX_SIZE'] = 'The file exceeds the maximum allowed size.';
+$LANG['EXCEED_MAX_SIZE'] = 'The file exceeds the maximum allowed size';
 
 ?>

@@ -131,6 +131,25 @@ class UploadUtil {
 		}
 	}
 
+	public static function getIniMaxSize() {
+		$post = ini_get('post_max_size');
+		$upload = ini_get('upload_max_filesize');
+	    $uploadBytes = self::size2Bytes($upload);
+    	$postBytes   = self::size2Bytes($post);
+
+		$maxBytes = min($uploadBytes, $postBytes);
+		if ($maxBytes >= 1024 * 1024 * 1024)
+			$display = round($maxBytes / 1024 / 1024 / 1024, 1) . ' GB';
+		elseif ($maxBytes >= 1024 * 1024)
+			$display = round($maxBytes / 1024 / 1024, 1) . ' MB';
+		elseif ($maxBytes >= 1024)
+			$display = round($maxBytes / 1024, 1) . ' KB';
+		else
+			$display = $maxBytes . ' bytes';
+
+		return $display;
+	}
+
 	/**
 	 * Utility function to parse out useful information when uploading and processing files.
 	 *
@@ -205,7 +224,8 @@ class UploadUtil {
 
 		$availableMemory = self::getMaximumFileUploadSize() - memory_get_usage();
 		if($availableMemory < intval($info['size'])) {
-			throw new Exception('Error: File is to large to upload');
+			$maxSize = UploadUtil::getIniMaxSize();
+			throw new MediaException(MediaException::ExceedMaxSize, $maxSize);
 		}
 
 		$tempPath = self::getTempDir() . $info['name'];

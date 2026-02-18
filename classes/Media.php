@@ -528,8 +528,10 @@ class Media {
 				}
 			}
 
-			if (isset($file['error']) && $file['error'] === UPLOAD_ERR_INI_SIZE)
-				throw new MediaException(MediaException::ExceedMaxSize);
+			if (isset($file['error']) && $file['error'] === UPLOAD_ERR_INI_SIZE){
+				$maxSize = UploadUtil::getIniMaxSize();
+				throw new MediaException(MediaException::ExceedMaxSize, $maxSize);
+			}
 
 			$media_metadata = self::insert($post_arr, $conn);
 			$media_type = MediaType::tryFrom($media_metadata['mediaType']);
