@@ -1,4 +1,4 @@
-import { expect, mergeTests } from '@playwright/test';
+import { expect, mergeTests, test as base } from '@playwright/test';
 import { test as testWithAdmin } from './fixtures/adminLogin';
 import { test as testCollection } from './fixtures/collection';
 import { test as testOccurrence } from './fixtures/occurrence';
@@ -6,6 +6,25 @@ import { OccurrenceEditorPage , OccurrenceEditorTab } from './pages/OccurrenceEd
 import path from 'node:path';
 
 const test = mergeTests(testWithAdmin, testCollection, testOccurrence);
+
+const withCollId = test.extend<{ collId: number, occId: number, detId: number}>({
+	collId: async ({ collection }, use) => {
+		const workerInfo = occurTest.info();
+		const collectionName = workerInfo.workerIndex
+			+ workerInfo.project.name
+			+ ' CI Collection';
+		const collId = await collection.getOrCreate(collectionName);
+		await use(collId);
+		await collection.deleteByCollId(collId)
+	},
+	occId: async ({ occurrenceFactory, collId }, use) => {
+		const occId = await occurrenceFactory.getNewRecord(collId)
+		await use(occId);
+	},
+	detId: async ({ occurrenceFactory, occId }, use) => {
+		await use(await occurrenceFactory.newDetermination(occId));
+	}
+});
 
 /* TEST COLLECTION SETUP */
 let collId: number = 0;
@@ -23,32 +42,55 @@ test.afterAll(async ({ collection }) => {
 });
 
 /* NEW OCCURRENCES FROM EDITOR TESTS */
-const newOccurTest = test.extend<{ occurrenceEditor: OccurrenceEditorPage}>({
-	occurrenceEditor: async ({ page }, use) => {
-		const occurrenceEditor = OccurrenceEditorPage.make(page)
-		await occurrenceEditor.gotoNew(collId);
+const occurTest = withCollId.extend<{ 
+	occurrenceEditor: OccurrenceEditorPage, 
+	occurrenceEditorEdit: OccurrenceEditorPage, 
+	occurrenceEditorNew: OccurrenceEditorPage,
+	occurrenceEditorDet: OccurrenceEditorPage,
+	occurrenceSkeletalNew: OccurrenceEditorPage
+}>({
+	occurrenceEditor: async ({ collId, page }, use) => {
+		const occurrenceEditor = OccurrenceEditorPage.make(page);
+		occurrenceEditor.collId = collId;
+		await use(occurrenceEditor);
+	},
+	occurrenceEditorEdit: async ({ occurrenceEditor, occId }, use) => {
+		occurrenceEditor.occId = occId;
+		await occurrenceEditor.gotoRecord(occurrenceEditor.collId, occId)
+		await use(occurrenceEditor);
+	},
+	occurrenceEditorNew: async ({ occurrenceEditor }, use) => {
+		await occurrenceEditor.gotoNew(occurrenceEditor.collId);
+		await occurrenceEditor.occurForm.set('catalognumber', occurTest.info().workerIndex + '000001');
 		await use(occurrenceEditor)
 		await occurrenceEditor.setGotoRecord()
 		await occurrenceEditor.occurForm.submitNew();
 		await occurrenceEditor.checkRecordSuccess();
 		await occurrenceEditor.occurForm.checkSetFields()
-	}
+	},
+	occurrenceEditorDet: async ({ occurrenceEditorEdit }, use) => {
+		await occurrenceEditorEdit.gotoTab(OccurrenceEditorTab.Determinations)
+		await use(occurrenceEditorEdit)
+	},
+	occurrenceSkeletalNew: async ({ occurrenceEditor }, use) => {
+		await occurrenceEditor.gotoSkeletalSubmit(occurrenceEditor.collId);
+		await use(occurrenceEditor);
+		await occurrenceEditor.occurForm.submitSkeletal();
+		const occId = await occurrenceEditor.getSkeletalOccid();
+		await occurrenceEditor.gotoRecord(occurrenceEditor.collId, occId)
+		await occurrenceEditor.occurForm.checkSetFields();
+	},
 });
 
 const newOccurrenceTests = {
-	'Catalog Number Only': {
-		catalognumber: '000001',
-	},
-	'Recorded By': {
-		catalognumber: '000002',
-		recordedby: 'First Last',
-	}
+	'Catalog Number Only': { },
+	'Recorded By': { recordedby: 'First Last'}
 }
 
-newOccurTest.describe('Create new occurrence from occurrenceEditor', () => {
+test.describe('Create new occurrence from occurrenceEditor', () => {
 	for(let testName in newOccurrenceTests) {
-		newOccurTest(testName, async({ occurrenceEditor }) => {
-			await occurrenceEditor.occurForm.setMany(newOccurrenceTests[testName]);
+		occurTest(testName, async({ occurrenceEditorNew }) => {
+			await occurrenceEditorNew.occurForm.setMany(newOccurrenceTests[testName]);
 		})
 	}
 });
@@ -128,93 +170,56 @@ test('From image (File)', async ({ page }) => {
 	await occurrenceEditor.mediaForm.submitDelete();
 })
 
-test('From skeletal', async ({ page }) => {
-	const inputs = {
+occurTest('From skeletal', async ({ occurrenceSkeletalNew }) => {
+	await occurrenceSkeletalNew.occurForm.setMany({
 		catalognumber: collId + '00003',
-	};
-
-	let occurrenceEditor = OccurrenceEditorPage.make(page);
-	await occurrenceEditor.gotoSkeletalSubmit(collId);
-
-	await occurrenceEditor.occurForm.setMany(inputs);
-	await occurrenceEditor.occurForm.submitSkeletal();
-
-	const occId = await occurrenceEditor.getSkeletalOccid();
-
-	await occurrenceEditor.gotoRecord(collId, occId)
-	await occurrenceEditor.occurForm.checkMany(inputs);
+	})
 })
 
 /* EDIT OCCURRENCES WITH EDITOR TESTS */
-const editOccurTest = test.extend<{ occurrenceEditor: OccurrenceEditorPage}>({
-	occurrenceEditor: async ({ page, occurrenceFactory }, use) => {
-		let occId = await occurrenceFactory.getNewRecord(collId);
-		let occurrenceEditor = OccurrenceEditorPage.make(page);
-		await occurrenceEditor.gotoRecord(collId, occId)
-		await use(occurrenceEditor);
-		await occurrenceEditor.occurForm.submitEdit();
-		await expect(page.getByText(occurrenceEditor.occurForm.EDIT_SUCCESS)).toBeVisible();
-		await occurrenceEditor.occurForm.checkSetFields();
-	}
-});
-
-editOccurTest.describe('Edit Record from Occurrence Editor', () => {
+occurTest.describe('Edit Record from Occurrence Editor', () => {
 	const tests = {
 		'Catalog Number Only': {
-			catalognumber: collId + '00004',
+			catalognumber: '000004',
 		}	
 	};
 
 	for(let testName in tests) {
-		editOccurTest(testName, async({ occurrenceEditor }) => {
-			await occurrenceEditor.occurForm.setMany(tests[testName]);
+		occurTest(testName, async({ occurrenceEditorEdit, page }) => {
+			await occurrenceEditorEdit.occurForm.setMany(tests[testName]);
+			await occurrenceEditorEdit.occurForm.submitEdit();
+			await expect(page.getByText(occurrenceEditorEdit.occurForm.EDIT_SUCCESS)).toBeVisible();
+			await occurrenceEditorEdit.occurForm.checkSetFields();
 		})
 	}
+
 })
 
 /* DETERMINATIONS TESTS */
-test('Add Determination', async ({ page, occurrenceFactory }) => {
-	let occId = await occurrenceFactory.getNewRecord(collId);
-	let occurrenceEditor = OccurrenceEditorPage.make(page);
-	await occurrenceEditor.gotoRecord(collId, occId)
-	await occurrenceEditor.gotoTab(OccurrenceEditorTab.Determinations)
-	const inputs = {
+occurTest('Add Determination', async ({ occurrenceEditorDet, occurrenceFactory }) => {
+	await occurrenceEditorDet.detForm.setToNew();
+	await occurrenceEditorDet.detForm.setMany({
 		sciname: 'Genus Species',
 		identifiedBy: 'CI TESTING',
 		dateIdentified: '1/14/2026'
-	}
-
-	await occurrenceEditor.detForm.setToNew();
-	await occurrenceEditor.detForm.setMany(inputs);
-	await occurrenceEditor.detForm.submit();
-	await occurrenceEditor.detForm.checkNewSuccess();
-
-	const dets = await occurrenceFactory.getDeterminations(occId);
-
+	})
+	await occurrenceEditorDet.detForm.submit();
+	await occurrenceEditorDet.detForm.checkNewSuccess();
+	const dets = await occurrenceFactory.getDeterminations(occurrenceEditorDet.occId);
 	expect(dets).toBeDefined();
 	expect(dets.length).toBeGreaterThan(0);
-
-	for(let [fieldName, value] of Object.entries(occurrenceEditor.detForm.setFields)) {
+	for(let [fieldName, value] of Object.entries(occurrenceEditorDet.detForm.setFields)) {
 		expect(dets[0][fieldName]).toBe(value);
 	}
-})
+});
 
-// get occurrence with determinaton -> delete -> check that delete was successful
-
-test('Delete Determination', async ({ page, occurrenceFactory }) => {
-	let occId = await occurrenceFactory.getNewRecord(collId);
-	let detId = await occurrenceFactory.newDetermination(occId);
-
-	let occurrenceEditor = OccurrenceEditorPage.make(page);
-	await occurrenceEditor.gotoRecord(collId, occId)
-	await occurrenceEditor.gotoTab(OccurrenceEditorTab.Determinations)
-
-	await occurrenceEditor.detForm.openEditForm(detId);
-	occurrenceEditor.detForm.setToDelete(detId);
+occurTest('Delete Determination', async({ detId, occurrenceEditorDet, page }) => {
+	await occurrenceEditorDet.detForm.openEditForm(detId);
+	occurrenceEditorDet.detForm.setToDelete(detId);
 	page.on('dialog', dialog => dialog.accept());
-	await occurrenceEditor.detForm.submit();
-	await occurrenceEditor.detForm.checkDeleteSuccess();
-})
+	await occurrenceEditorDet.detForm.submit();
+	await occurrenceEditorDet.detForm.checkDeleteSuccess();
+});
 
 /* MEDIA TESTS */
 test('Add Media', async ({ page, occurrenceFactory }) => {
