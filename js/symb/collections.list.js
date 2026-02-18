@@ -11,18 +11,40 @@ document.addEventListener('DOMContentLoaded', function() {
 	getCurrentPage();
 });
 
-function copyUrl(){
+function copyUrl(comingFrom){
 	host = window.location.protocol + '//' + window.location.host;
 	var $temp = $("<input>");
 	$("body").append($temp);
 	let activeLink = host + window.location.pathname;
-	if(sessionStorage.querystr){
-		activeLink = activeLink + "?" + sessionStorage.querystr;
-	}
-
+	const calcualtedQueryStr = calculateQueryStr(comingFrom);
+	activeLink = activeLink + "?" + calcualtedQueryStr;
 	$temp.val(activeLink).select();
 	document.execCommand("copy");
 	$temp.remove();
+}
+
+function calculateQueryStr(comingFrom) {
+  let returnVal = '';
+  const comingFromMap = {
+		"newsearch": "collections/search/index.php",
+		"harvestparams": "collections/harvestparams.php"
+	};
+	if(comingFrom && comingFromMap[comingFrom]){
+		const expectedUrlPart = comingFromMap[comingFrom];
+		const currentPage = getCurrentPage();
+		const targetUrlPart = currentPage.substring("collections/listtabledisplay.php") ? "collections/listtabledisplay.php" : "collections/list.php";
+		const pageKey = 'querystr' + getCurrentPage()?.replace(targetUrlPart, expectedUrlPart);
+		const sessionStorageKeys = Object.keys(sessionStorage);
+		const relevantKeys = sessionStorageKeys.filter(key => key.startsWith(pageKey) && key.value !== "null");
+		relevantKeys.forEach((relevantKey) => {
+		  const justFormFieldName = relevantKey.replace(pageKey + "/", "");
+		  if(justFormFieldName){
+			const relevantVal = sessionStorage.getItem(relevantKey);
+			returnVal += justFormFieldName + "=" + encodeURIComponent(relevantVal) + "&";
+		  }
+		});
+	}
+	return returnVal.slice(0, -1);
 }
 
 function addVoucherToCl(occidIn,clidIn,tidIn){
