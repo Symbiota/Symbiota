@@ -7,6 +7,7 @@ import path from 'node:path';
 
 const test = mergeTests(testWithAdmin, testCollection, testOccurrence);
 
+/* TEST COLLECTION SETUP */
 let collId: number = 0;
 
 test.beforeAll(async ({ collection }, workerInfo) => {
@@ -21,33 +22,38 @@ test.afterAll(async ({ collection }) => {
 	await collection.deleteByCollId(collId)
 });
 
-/* OCCURRENCE TESTS */
-test.describe('From Editor', () => {
-	const inputs = {
-		'Catalog Number Only': {
-			catalognumber: '000001',
-		},
-		'Recorded By': {
-			catalognumber: '000002',
-			recordedby: 'First Last',
-		}
+/* NEW OCCURRENCES FROM EDITOR TESTS */
+const newOccurTest = test.extend<{ occurrenceEditor: OccurrenceEditorPage}>({
+	occurrenceEditor: async ({ page }, use) => {
+		const occurrenceEditor = OccurrenceEditorPage.make(page)
+		await occurrenceEditor.gotoNew(collId);
+		await use(occurrenceEditor)
+		await occurrenceEditor.setGotoRecord()
+		await occurrenceEditor.occurForm.submitNew();
+		await occurrenceEditor.checkRecordSuccess();
+		await occurrenceEditor.occurForm.checkSetFields()
 	}
+});
 
-	for(let testName in inputs) {
-		test(testName, async({ page }) => {
-			let occurrenceEditor = OccurrenceEditorPage.make(page);
-			await occurrenceEditor.gotoNew(collId);
+const newOccurrenceTests = {
+	'Catalog Number Only': {
+		catalognumber: '000001',
+	},
+	'Recorded By': {
+		catalognumber: '000002',
+		recordedby: 'First Last',
+	}
+}
 
-			await occurrenceEditor.occurForm.setMany(inputs[testName]);
-			await occurrenceEditor.setGotoRecord()
-			await occurrenceEditor.occurForm.submitNew();
-			await occurrenceEditor.checkRecordSuccess();
-
-			await occurrenceEditor.occurForm.checkMany(inputs[testName])
+newOccurTest.describe('Create new occurrence from occurrenceEditor', () => {
+	for(let testName in newOccurrenceTests) {
+		newOccurTest(testName, async({ occurrenceEditor }) => {
+			await occurrenceEditor.occurForm.setMany(newOccurrenceTests[testName]);
 		})
 	}
-})
+});
 
+/* NEW OCCURRENCES FROM IMAGE TESTS */
 test('From image (Link)', async ({ page }) => {
 	const inputs = {
 		catalognumber: collId + '00002',
@@ -89,7 +95,6 @@ test('From image (Link)', async ({ page }) => {
 	});
 })
 
-/* Needs the media root set for this to function */
 test('From image (File)', async ({ page }) => {
 	const inputs = {
 		catalognumber: collId + '00002',
@@ -140,20 +145,31 @@ test('From skeletal', async ({ page }) => {
 	await occurrenceEditor.occurForm.checkMany(inputs);
 })
 
-test('Edit record', async ({ page, occurrenceFactory }) => {	
-	let occId = await occurrenceFactory.getNewRecord(collId);
+/* EDIT OCCURRENCES WITH EDITOR TESTS */
+const editOccurTest = test.extend<{ occurrenceEditor: OccurrenceEditorPage}>({
+	occurrenceEditor: async ({ page, occurrenceFactory }, use) => {
+		let occId = await occurrenceFactory.getNewRecord(collId);
+		let occurrenceEditor = OccurrenceEditorPage.make(page);
+		await occurrenceEditor.gotoRecord(collId, occId)
+		await use(occurrenceEditor);
+		await occurrenceEditor.occurForm.submitEdit();
+		await expect(page.getByText(occurrenceEditor.occurForm.EDIT_SUCCESS)).toBeVisible();
+		await occurrenceEditor.occurForm.checkSetFields();
+	}
+});
 
-	const inputs = {
-		catalognumber: occId + '00004',
+editOccurTest.describe('Edit Record from Occurrence Editor', () => {
+	const tests = {
+		'Catalog Number Only': {
+			catalognumber: collId + '00004',
+		}	
 	};
 
-	let occurrenceEditor =OccurrenceEditorPage.make(page);
-	await occurrenceEditor.gotoRecord(collId, occId)
-
-	await occurrenceEditor.occurForm.setMany(inputs);
-	await occurrenceEditor.occurForm.submitEdit();
-	await expect(page.getByText(occurrenceEditor.occurForm.EDIT_SUCCESS)).toBeVisible();
-	await occurrenceEditor.occurForm.checkMany(inputs);
+	for(let testName in tests) {
+		editOccurTest(testName, async({ occurrenceEditor }) => {
+			await occurrenceEditor.occurForm.setMany(tests[testName]);
+		})
+	}
 })
 
 /* DETERMINATIONS TESTS */
