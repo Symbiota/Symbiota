@@ -37,9 +37,16 @@ function calculateQueryStr(comingFrom) {
 		const sessionStorageKeys = Object.keys(sessionStorage);
 		const relevantKeys = sessionStorageKeys.filter(key => key.startsWith(pageKey) && key.value !== "null");
 		relevantKeys.forEach((relevantKey) => {
-		  const justFormFieldName = relevantKey.replace(pageKey + "/", "");
+		  let justFormFieldName = relevantKey.replace(pageKey + "/", "");
 		  if(justFormFieldName){
-			const relevantVal = sessionStorage.getItem(relevantKey);
+			let relevantVal = sessionStorage.getItem(relevantKey);
+			if (relevantVal.includes("db=") || justFormFieldName === "db"){ // it looks like db= is in the value rather than the key for harvestparams but not for search/index.php
+				justFormFieldName = "db";
+				relevantVal = relevantVal.replace("db=", "");
+				if(relevantVal.includes("all")){
+					relevantVal = "all";
+				}
+			}
 			returnVal += justFormFieldName + "=" + encodeURIComponent(relevantVal) + "&";
 		  }
 		});
