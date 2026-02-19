@@ -10,9 +10,9 @@ const test = mergeTests(testWithAdmin, testCollection, testOccurrence);
 const withCollId = test.extend<{ collId: number, occId: number, detId: number}>({
 	collId: async ({ collection }, use) => {
 		const workerInfo = occurTest.info();
-		const collectionName = workerInfo.workerIndex
+		const collectionName = workerInfo.parallelIndex
 			+ workerInfo.project.name
-			+ ' CI Collection';
+			+ ' CI Collection OC';
 		await collection.insertBasic(collectionName);
 		const collId = await collection.getByName(collectionName);
 		await use(collId);
@@ -27,19 +27,8 @@ const withCollId = test.extend<{ collId: number, occId: number, detId: number}>(
 	}
 });
 
-/* TEST COLLECTION SETUP */
-let collId: number = 0;
-
-test.beforeAll(async ({ collection }, workerInfo) => {
-	collId = await collection.getOrCreate(workerInfo.parallelIndex + workerInfo.project.name + ' Global CI Collection');
-})
-
 test.beforeEach(async ({ adminLogin }) => {
 	await adminLogin.expectLoggedIn()
-});
-
-test.afterAll(async ({ collection }) => {
-	await collection.deleteByCollId(collId)
 });
 
 /* NEW OCCURRENCES FROM EDITOR TESTS */
@@ -98,7 +87,7 @@ test.describe('Create new occurrence from occurrenceEditor', () => {
 });
 
 /* NEW OCCURRENCES FROM IMAGE TESTS */
-test('From image (Link)', async ({ page }) => {
+occurTest('From image (Link)', async ({ page, collId }) => {
 	const inputs = {
 		catalognumber: collId + '00002',
 	};
@@ -139,7 +128,7 @@ test('From image (Link)', async ({ page }) => {
 	});
 })
 
-test('From image (File)', async ({ page }) => {
+occurTest('From image (File)', async ({ page, collId }) => {
 	const inputs = {
 		catalognumber: collId + '00002',
 	};
@@ -172,7 +161,7 @@ test('From image (File)', async ({ page }) => {
 	await occurrenceEditor.mediaForm.submitDelete();
 })
 
-occurTest('From skeletal', async ({ occurrenceSkeletalNew }) => {
+occurTest('From skeletal', async ({ occurrenceSkeletalNew, collId }) => {
 	await occurrenceSkeletalNew.occurForm.setMany({
 		catalognumber: collId + '00003',
 	})
@@ -222,7 +211,7 @@ occurTest('Delete Determination', async({ detId, occurrenceEditorDet, page }) =>
 });
 
 /* MEDIA TESTS */
-test('Add Media', async ({ page, occurrenceFactory }) => {
+occurTest('Add Media', async ({ page, occurrenceFactory, collId }) => {
 	let occId = await occurrenceFactory.getNewRecord(collId);
 	let occurrenceEditor = OccurrenceEditorPage.make(page);
 	await occurrenceEditor.gotoRecord(collId, occId)
@@ -235,7 +224,7 @@ test('Add Media', async ({ page, occurrenceFactory }) => {
 	await expect(page.getByText(occurrenceEditor.mediaForm.NEW_SUCCESS_MSG)).toBeVisible();
 })
 
-test('Delete Media', async ({ page, occurrenceFactory }) => {
+occurTest('Delete Media', async ({ page, occurrenceFactory, collId }) => {
 	let occId = await occurrenceFactory.getNewRecord(collId);
 	let mediaId = await occurrenceFactory.newMedia(occId);
 
