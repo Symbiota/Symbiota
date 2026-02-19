@@ -57,6 +57,7 @@ const occurTest = withCollId.extend<{
 	occurrenceEditorEdit: async ({ occurrenceEditor, occId }, use) => {
 		occurrenceEditor.occId = occId;
 		await occurrenceEditor.gotoRecord(occurrenceEditor.collId, occId)
+		await occurrenceEditor.occurForm.set('catalognumber', occurTest.info().workerIndex + '000002');
 		await use(occurrenceEditor);
 	},
 	occurrenceEditorNew: async ({ occurrenceEditor }, use) => {
@@ -179,9 +180,7 @@ occurTest('From skeletal', async ({ occurrenceSkeletalNew }) => {
 /* EDIT OCCURRENCES WITH EDITOR TESTS */
 occurTest.describe('Edit Record from Occurrence Editor', () => {
 	const tests = {
-		'Catalog Number Only': {
-			catalognumber: '000004',
-		}	
+		'Catalog Number Only': {}
 	};
 
 	for(let testName in tests) {
