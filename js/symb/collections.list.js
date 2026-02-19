@@ -32,7 +32,7 @@ function calculateQueryStr(comingFrom) {
 	if(comingFrom && comingFromMap[comingFrom]){
 		const expectedUrlPart = comingFromMap[comingFrom];
 		const currentPage = getCurrentPage();
-		const targetUrlPart = currentPage.substring("collections/listtabledisplay.php") ? "collections/listtabledisplay.php" : "collections/list.php";
+		const targetUrlPart = currentPage.includes("collections/listtabledisplay.php") ? "collections/listtabledisplay.php" : "collections/list.php";
 		const pageKey = 'querystr' + getCurrentPage()?.replace(targetUrlPart, expectedUrlPart);
 		const sessionStorageKeys = Object.keys(sessionStorage);
 		const relevantKeys = sessionStorageKeys.filter(key => key.startsWith(pageKey) && key.value !== "null");
