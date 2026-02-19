@@ -13,7 +13,8 @@ const withCollId = test.extend<{ collId: number, occId: number, detId: number}>(
 		const collectionName = workerInfo.workerIndex
 			+ workerInfo.project.name
 			+ ' CI Collection';
-		const collId = await collection.getOrCreate(collectionName);
+		await collection.insertBasic(collectionName);
+		const collId = await collection.getByName(collectionName);
 		await use(collId);
 		await collection.deleteByCollId(collId)
 	},
