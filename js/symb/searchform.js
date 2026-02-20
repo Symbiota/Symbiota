@@ -797,7 +797,7 @@ function checkTheCollectionsThatShouldBeCheckedBasedOnConfig() {
   if(queriedCollectionsCategories.length>0){
     uncheckEverythingInCollections();
     queriedCollectionsCategories.forEach((queriedCollectionCategory) => {
-      const targetElems = document.querySelectorAll(`#Specimens_${queriedCollectionCategory}, #Observations_${queriedCollectionCategory}`);
+      const targetElems = document.querySelectorAll(`#${queriedCollectionCategory}`);
       targetElems.forEach((targetElem) => {
         targetElem.checked = true;
         const divWithChildren = document.getElementById(targetElem.id + "_inputs");
@@ -905,12 +905,12 @@ function closeAllCategories() {
 function expandCategoriesBasedOnConfig() {
   const targetCategoriesToExpandFromConfig = JSON.parse(document.getElementById("all_collections_parent_container")?.dataset?.config || "{}")?.CATEXPND;
   targetCategoriesToExpandFromConfig?.forEach(targetCategoryToExpand => {
-    const specimenCategoryPattern = "Specimens_" + targetCategoryToExpand;;
+    const specimenCategoryPattern = targetCategoryToExpand;
     const specimenInputsForCategory = document.getElementById(specimenCategoryPattern + '_inputs');
     if (specimenInputsForCategory?.style?.display === 'none') {
       toggleCategory(specimenCategoryPattern);
     }
-    const observationCategoryPattern = "Observations_" + targetCategoryToExpand;
+    const observationCategoryPattern = targetCategoryToExpand;
     const observationInputsForCategory = document.getElementById(observationCategoryPattern + '_inputs');
     if (observationInputsForCategory?.style?.display === 'none') {
       toggleCategory(observationCategoryPattern);

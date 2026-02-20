@@ -4,9 +4,9 @@ $DEFAULT_PROJ_ID = 0;
 
 // Collection search configuration
 // The below will configure default category behavior in collection searches in collections/search/index.php, collections/index.php, and collections/editor/batchDuplicateGeorefCopy.php. Defaults will, in some of these pages, be overridden by session storage of the most recent query.
-$CATORD = []; // a list of category ids (e.g. [1,2,3]) in the order in which you want them to appear in collection searches. All other categories will appear in their default order after those listed
-$CATEXPND = []; // a list of category ids (e.g. [1,2,3]) that should be expanded by default in collection searches. All others will be collapsed by default.
-$CATCHK = []; // a list of category ids (e.g. [1,2,3]) that will be checked by default in collection searches. All others will be unchecked by default.
+$CATORD = []; // a list of category ids (e.g. [1,2,3]) in the order in which you want them to appear in collection searches. All other categories will appear in their default order after those listed. Current assumption is that the same order will be desired for both specimen and observation categories
+$CATEXPND = []; // a list of category ids (e.g. ["Specimens_1","Observations_2"]) that should be expanded by default in collection searches. All others will be collapsed by default.
+$CATCHK = []; // a list of category ids (e.g. ["Specimens_1","Observations_3"]) that will be checked by default in collection searches. All others will be unchecked by default.
 
 $DEFAULT_TITLE = '';
 $EXTENDED_LANG = 'en';		//Add all languages you want to support separated by commas (e.g. en,es); currently supported languages: en,es
