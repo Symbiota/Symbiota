@@ -159,6 +159,14 @@ class CollectionFormManager extends Manager {
         return true;
      }
 
+     public function areCollectionCategoriesValid(string $requestStr): bool {
+        $categories = explode(",", $requestStr);
+        foreach ($categories as $category) {
+            if(!preg_match('/^(Specimens_|Observations_)\d+$/', $category)) return false;
+        }
+        return true;
+     }
+
      private function isAnEmptyString($str): bool {
         return is_string($str) && trim($str) === '';
      }
