@@ -45,10 +45,20 @@ class Collection {
 }
 
 // Extend basic test by providing a "todoPage" fixture.
-const test = base.extend<{ collection: Collection}>({
+const test = base.extend<{ collection: Collection, collId: number  }>({
 	collection: async ({ DB }, use) => {
 		await use(new Collection(DB))
-	}
+	},
+	collId: async ({ collection }, use) => {
+		const workerInfo = test.info();
+		const collectionName = workerInfo.parallelIndex
+			+ workerInfo.project.name
+			+ ' CI Collection OC';
+		await collection.insertBasic(collectionName);
+		const collId = await collection.getByName(collectionName);
+		await use(collId);
+		await collection.deleteByCollId(collId)
+	},
 });
 
 export { test, Collection }; 

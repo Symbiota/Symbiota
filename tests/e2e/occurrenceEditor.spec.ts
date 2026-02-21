@@ -1,93 +1,73 @@
-import { expect, mergeTests, test as base } from '@playwright/test';
+import { expect, mergeTests } from '@playwright/test';
 import { test as testWithAdmin } from './fixtures/adminLogin';
-import { test as testCollection } from './fixtures/collection';
+//import { test as testCollection } from './fixtures/collection';
 import { test as testOccurrence } from './fixtures/occurrence';
-import { OccurrenceEditorPage , OccurrenceEditorTab } from './pages/OccurrenceEditorPage'
+import { OccurrenceEditorPage , OccurrenceEditorTab, test as testOccurrenceEditor } from './pages/OccurrenceEditorPage'
 import path from 'node:path';
 
-const test = mergeTests(testWithAdmin, testCollection, testOccurrence);
-
-const withCollId = test.extend<{ collId: number, occId: number, detId: number}>({
-	collId: async ({ collection }, use) => {
-		const workerInfo = occurTest.info();
-		const collectionName = workerInfo.parallelIndex
-			+ workerInfo.project.name
-			+ ' CI Collection OC';
-		await collection.insertBasic(collectionName);
-		const collId = await collection.getByName(collectionName);
-		await use(collId);
-		await collection.deleteByCollId(collId)
-	},
-	occId: async ({ occurrenceFactory, collId }, use) => {
-		const occId = await occurrenceFactory.getNewRecord(collId)
-		await use(occId);
-	},
-	detId: async ({ occurrenceFactory, occId }, use) => {
-		await use(await occurrenceFactory.newDetermination(occId));
-	}
-});
-
+const test = mergeTests(testWithAdmin, testOccurrenceEditor);
 test.beforeEach(async ({ adminLogin }) => {
 	await adminLogin.expectLoggedIn()
 });
 
-/* NEW OCCURRENCES FROM EDITOR TESTS */
-const occurTest = withCollId.extend<{ 
-	occurrenceEditor: OccurrenceEditorPage, 
-	occurrenceEditorEdit: OccurrenceEditorPage, 
-	occurrenceEditorNew: OccurrenceEditorPage,
-	occurrenceEditorDet: OccurrenceEditorPage,
-	occurrenceSkeletalNew: OccurrenceEditorPage
-}>({
-	occurrenceEditor: async ({ collId, page }, use) => {
-		const occurrenceEditor = OccurrenceEditorPage.make(page);
-		occurrenceEditor.collId = collId;
-		await use(occurrenceEditor);
-	},
-	occurrenceEditorEdit: async ({ occurrenceEditor, occId }, use) => {
-		occurrenceEditor.occId = occId;
-		await occurrenceEditor.gotoRecord(occurrenceEditor.collId, occId)
-		await occurrenceEditor.occurForm.set('catalognumber', occurTest.info().workerIndex + '000002');
-		await use(occurrenceEditor);
-	},
-	occurrenceEditorNew: async ({ occurrenceEditor }, use) => {
-		await occurrenceEditor.gotoNew(occurrenceEditor.collId);
-		await occurrenceEditor.occurForm.set('catalognumber', occurTest.info().workerIndex + '000001');
-		await use(occurrenceEditor)
-		await occurrenceEditor.setGotoRecord()
-		await occurrenceEditor.occurForm.submitNew();
-		await occurrenceEditor.checkRecordSuccess();
-		await occurrenceEditor.occurForm.checkSetFields()
-	},
-	occurrenceEditorDet: async ({ occurrenceEditorEdit }, use) => {
-		await occurrenceEditorEdit.gotoTab(OccurrenceEditorTab.Determinations)
-		await use(occurrenceEditorEdit)
-	},
-	occurrenceSkeletalNew: async ({ occurrenceEditor }, use) => {
-		await occurrenceEditor.gotoSkeletalSubmit(occurrenceEditor.collId);
-		await use(occurrenceEditor);
-		await occurrenceEditor.occurForm.submitSkeletal();
-		const occId = await occurrenceEditor.getSkeletalOccid();
-		await occurrenceEditor.gotoRecord(occurrenceEditor.collId, occId)
-		await occurrenceEditor.occurForm.checkSetFields();
-	},
-});
-
+/* CREATE OCCURRENCES */
 const newOccurrenceTests = {
 	'Catalog Number Only': { },
 	'Recorded By': { recordedby: 'First Last'}
 }
 
-test.describe('Create new occurrence from occurrenceEditor', () => {
+test.describe('Create Occurrence', () => {
 	for(let testName in newOccurrenceTests) {
-		occurTest(testName, async({ occurrenceEditorNew }) => {
-			await occurrenceEditorNew.occurForm.setMany(newOccurrenceTests[testName]);
+		test(testName, async({ createOccurrence }) => {
+			await createOccurrence.occurForm.setMany(newOccurrenceTests[testName]);
 		})
 	}
 });
 
-/* NEW OCCURRENCES FROM IMAGE TESTS */
-occurTest('From image (Link)', async ({ page, collId }) => {
+/* EDIT OCCURRENCES */
+test.describe('Edit Occurrence ', () => {
+	const tests = {
+		'Catalog Number': {}
+	};
+
+	for(let testName in tests) {
+		test(testName, async({ submitEditOccurrence }) => {
+			await submitEditOccurrence.occurForm.setMany(tests[testName])
+		})
+	}
+})
+
+/* DETERMINATIONS */
+test('Add Determination', async ({ newDet }) => {
+	await newDet.detForm.setMany({
+		sciname: 'Genus Species',
+		identifiedBy: 'CI TESTING',
+		dateIdentified: '1/14/2026'
+	})
+});
+
+test('Delete Determination', async({ detId, editDet, page }) => {
+	await editDet.detForm.openEditForm(detId);
+	editDet.detForm.setToDelete(detId);
+	page.on('dialog', dialog => dialog.accept());
+	await editDet.detForm.submit();
+	await editDet.detForm.checkDeleteSuccess();
+});
+
+/* MEDIA */
+test('Add Media (File)', async({ newMedia }) => {
+	await newMedia.mediaForm.setFile('imgfile', path.join(__dirname, '../../images/world.png'));
+});
+
+test('Delete Media', async ({ editMedia, page}) => {
+	page.on('dialog', dialog => dialog.accept());
+	await editMedia.mediaForm.set('removeimg', true);
+	await editMedia.mediaForm.submitDelete();	
+	await expect(page.getByText(editMedia.mediaForm.DELETE_SUCCESS_MSG)).toBeVisible();
+})
+
+/* SKELETAL */
+test('Skeletal image (Link)', async ({ page, collId }) => {
 	const inputs = {
 		catalognumber: collId + '00002',
 	};
@@ -101,25 +81,16 @@ occurTest('From image (Link)', async ({ page, collId }) => {
 
 	let occurrenceEditor = OccurrenceEditorPage.make(page);
 	await occurrenceEditor.gotoImageSubmit(collId);
-
-	occurrenceEditor.occurForm.setScope('#imgoccurform');
 	await occurrenceEditor.occurForm.setMany(inputs);
-
 	await occurrenceEditor.swapToMediaEnterUrl();
-
-	occurrenceEditor.mediaForm.setScope('#imgoccurform');
 	await occurrenceEditor.mediaForm.setMany(mediaInputs);
 	await occurrenceEditor.occurForm.submitSkeletalImage();
 
 	const occId = await occurrenceEditor.getSkeletalImageOccid();
 	await occurrenceEditor.gotoRecord(collId, occId)
-
 	occurrenceEditor.mediaForm.setScope('[id^=img][id*=editdiv]');
-	occurrenceEditor.occurForm.setScope('body');
-
 	await occurrenceEditor.occurForm.checkMany(inputs);
 	await occurrenceEditor.gotoTab(OccurrenceEditorTab.Media)
-
 	await occurrenceEditor.mediaForm.openEditForm();
 	await occurrenceEditor.mediaForm.checkMany({
 		originalUrl: url,
@@ -128,7 +99,7 @@ occurTest('From image (Link)', async ({ page, collId }) => {
 	});
 })
 
-occurTest('From image (File)', async ({ page, collId }) => {
+test('Skeletal image (File)', async ({ page, collId }) => {
 	const inputs = {
 		catalognumber: collId + '00002',
 	};
@@ -161,84 +132,8 @@ occurTest('From image (File)', async ({ page, collId }) => {
 	await occurrenceEditor.mediaForm.submitDelete();
 })
 
-occurTest('From skeletal', async ({ occurrenceSkeletalNew, collId }) => {
+test('Create Skeletal', async ({ occurrenceSkeletalNew, collId }) => {
 	await occurrenceSkeletalNew.occurForm.setMany({
 		catalognumber: collId + '00003',
 	})
-})
-
-/* EDIT OCCURRENCES WITH EDITOR TESTS */
-occurTest.describe('Edit Record from Occurrence Editor', () => {
-	const tests = {
-		'Catalog Number Only': {}
-	};
-
-	for(let testName in tests) {
-		occurTest(testName, async({ occurrenceEditorEdit, page }) => {
-			await occurrenceEditorEdit.occurForm.setMany(tests[testName]);
-			await occurrenceEditorEdit.occurForm.submitEdit();
-			await expect(page.getByText(occurrenceEditorEdit.occurForm.EDIT_SUCCESS)).toBeVisible();
-			await occurrenceEditorEdit.occurForm.checkSetFields();
-		})
-	}
-
-})
-
-/* DETERMINATIONS TESTS */
-occurTest('Add Determination', async ({ occurrenceEditorDet, occurrenceFactory }) => {
-	await occurrenceEditorDet.detForm.setToNew();
-	await occurrenceEditorDet.detForm.setMany({
-		sciname: 'Genus Species',
-		identifiedBy: 'CI TESTING',
-		dateIdentified: '1/14/2026'
-	})
-	await occurrenceEditorDet.detForm.submit();
-	await occurrenceEditorDet.detForm.checkNewSuccess();
-	const dets = await occurrenceFactory.getDeterminations(occurrenceEditorDet.occId);
-	expect(dets).toBeDefined();
-	expect(dets.length).toBeGreaterThan(0);
-	for(let [fieldName, value] of Object.entries(occurrenceEditorDet.detForm.setFields)) {
-		expect(dets[0][fieldName]).toBe(value);
-	}
-});
-
-occurTest('Delete Determination', async({ detId, occurrenceEditorDet, page }) => {
-	await occurrenceEditorDet.detForm.openEditForm(detId);
-	occurrenceEditorDet.detForm.setToDelete(detId);
-	page.on('dialog', dialog => dialog.accept());
-	await occurrenceEditorDet.detForm.submit();
-	await occurrenceEditorDet.detForm.checkDeleteSuccess();
-});
-
-/* MEDIA TESTS */
-occurTest('Add Media', async ({ page, occurrenceFactory, collId }) => {
-	let occId = await occurrenceFactory.getNewRecord(collId);
-	let occurrenceEditor = OccurrenceEditorPage.make(page);
-	await occurrenceEditor.gotoRecord(collId, occId)
-	await occurrenceEditor.gotoTab(OccurrenceEditorTab.Media)
-
-	occurrenceEditor.mediaForm.setScope('form[name=imgnewform]');
-	await occurrenceEditor.mediaForm.setFile('imgfile', path.join(__dirname, '../../images/world.png'));
-
-	await occurrenceEditor.mediaForm.submitNew();
-	await expect(page.getByText(occurrenceEditor.mediaForm.NEW_SUCCESS_MSG)).toBeVisible();
-})
-
-occurTest('Delete Media', async ({ page, occurrenceFactory, collId }) => {
-	let occId = await occurrenceFactory.getNewRecord(collId);
-	let mediaId = await occurrenceFactory.newMedia(occId);
-
-	let occurrenceEditor = OccurrenceEditorPage.make(page);
-	await occurrenceEditor.gotoRecord(collId, occId)
-	await occurrenceEditor.gotoTab(OccurrenceEditorTab.Media)
-
-	occurrenceEditor.mediaForm.setScope(`div[id=img${mediaId}editdiv]`);
-
-	await occurrenceEditor.mediaForm.openEditForm();
-
-	page.on('dialog', dialog => dialog.accept());
-	await occurrenceEditor.mediaForm.set('removeimg', true);
-	await occurrenceEditor.mediaForm.submitDelete();
-
-	await expect(page.getByText(occurrenceEditor.mediaForm.DELETE_SUCCESS_MSG)).toBeVisible();
 })
