@@ -1,4 +1,5 @@
-import {test as base} from './db.ts'
+import { expect } from '@playwright/test';
+import { test as base } from './collection.ts'
 import mysql from 'mysql2/promise';
 
 class OccurrenceFactory {
@@ -45,7 +46,7 @@ class OccurrenceFactory {
 	}
 
 	async getOccurrence(occId: number) {
-		return this.getResult("SELECT * FROM omoccurrences where occId", [occId]);
+		return this.getResult("SELECT * FROM omoccurrences where occId = ?", [occId]);
 	}
 
 	async getMedia(occId: number) {
@@ -58,9 +59,19 @@ class OccurrenceFactory {
 }
 
 // Extend basic test by providing a "todoPage" fixture.
-const test = base.extend<{ occurrenceFactory: OccurrenceFactory}>({
+const test = base.extend<{ occurrenceFactory: OccurrenceFactory, occId: number, detId: number, mediaId: number}>({
 	occurrenceFactory: async ({ DB }, use) => {
 		await use(new OccurrenceFactory(DB))
+	},
+	occId: async ({ occurrenceFactory, collId }, use) => {
+		const occId = await occurrenceFactory.getNewRecord(collId)
+		await use(occId);
+	},
+	detId: async ({ occurrenceFactory, occId }, use) => {
+		await use(await occurrenceFactory.newDetermination(occId));
+	},
+	mediaId: async ({ occurrenceFactory, occId }, use) => {
+		await use(await occurrenceFactory.newMedia(occId));
 	}
 });
 

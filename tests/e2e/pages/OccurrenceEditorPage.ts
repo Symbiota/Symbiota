@@ -1,4 +1,5 @@
 import { expect, type Page } from '@playwright/test';
+import { test as base } from '../fixtures/occurrence';
 import { MediaForm } from '../forms/MediaForm';
 import { getSuite, Suite } from '../types/Suite';
 import { OccurrenceForm } from '../forms/OccurrenceForm';
@@ -16,7 +17,7 @@ export abstract class OccurrenceEditorPage {
 	occurForm: OccurrenceForm;
 	mediaForm: MediaForm;
 	detForm: DeterminationForm;
-	collId: Number;
+	collId: number;
 	occId: number;
 	mediaIds: Array<number> = [];
 	detIds: Array<number> = [];
@@ -37,13 +38,13 @@ export abstract class OccurrenceEditorPage {
 		}
 	}
 
-	abstract gotoNew(collId: Number): Promise<void>;
-	abstract gotoRecord(collId: Number, occId: Number): Promise<void>;
-	abstract gotoImageSubmit(collId: Number): Promise<void>;
-	abstract gotoSkeletalSubmit(collId: Number): Promise<void>;
+	abstract gotoNew(collId: number): Promise<void>;
+	abstract gotoRecord(collId: number, occId: number): Promise<void>;
+	abstract gotoImageSubmit(collId: number): Promise<void>;
+	abstract gotoSkeletalSubmit(collId: number): Promise<void>;
 	abstract gotoTab(newTab: OccurrenceEditorTab): Promise<void>;
-	abstract getSkeletalOccid(): Promise<Number>;
-	abstract getSkeletalImageOccid(): Promise<Number>;
+	abstract getSkeletalOccid(): Promise<number>;
+	abstract getSkeletalImageOccid(): Promise<number>;
 
 	abstract swapToMediaEnterUrl(): Promise<void>;
 
@@ -53,19 +54,19 @@ export abstract class OccurrenceEditorPage {
 }
 
 export class SymbOccurrenceEditorPage extends OccurrenceEditorPage {
-	async gotoNew(collId: Number) {
+	async gotoNew(collId: number) {
 		await this.page.goto('collections/editor/occurrenceeditor.php?gotomode=1&collid=' + collId);
 	}
 
-	async gotoRecord(collId: Number, occId: Number) {
+	async gotoRecord(collId: number, occId: number) {
 		await this.page.goto(`collections/editor/occurrenceeditor.php?csmode=0&occindex=0&occid=${occId}&collid=${collId}`);
 	}
 
-	async gotoImageSubmit(collId: Number) {
+	async gotoImageSubmit(collId: number) {
 		await this.page.goto(`/collections/editor/imageoccursubmit.php?collid=${collId}`);
 	}
 
-	async gotoSkeletalSubmit(collId: Number) {
+	async gotoSkeletalSubmit(collId: number) {
 		await this.page.goto(`/collections/editor/skeletalsubmit.php?collid=${collId}`);
 	}
 
@@ -101,3 +102,93 @@ export class SymbOccurrenceEditorPage extends OccurrenceEditorPage {
 		await expect(this.page.getByText('Public Display')).toBeVisible();
 	}
 }
+
+export const test = base.extend<{
+	occurrenceEditor: OccurrenceEditorPage, 
+
+	occurrenceSkeletalNew: OccurrenceEditorPage,
+
+	editOccurrence: OccurrenceEditorPage
+	submitEditOccurrence: OccurrenceEditorPage
+	createOccurrence: OccurrenceEditorPage
+
+	editDet: OccurrenceEditorPage
+	newDet: OccurrenceEditorPage
+
+	newMedia: OccurrenceEditorPage
+	editMedia: OccurrenceEditorPage
+}>({
+	occurrenceEditor: async ({ collId, page }, use) => {
+		const occurrenceEditor = OccurrenceEditorPage.make(page);
+		occurrenceEditor.collId = collId;
+		await use(occurrenceEditor);
+	},
+	/* OCCURRENCE STATES */
+	createOccurrence: async ({ occurrenceEditor }, use) => {
+		await occurrenceEditor.gotoNew(occurrenceEditor.collId);
+		const catalogNumber = test.info().workerIndex + '000001';
+		await occurrenceEditor.occurForm.set('catalognumber', catalogNumber);
+		await use(occurrenceEditor)
+		await occurrenceEditor.setGotoRecord()
+		await occurrenceEditor.occurForm.submitNew();
+		await occurrenceEditor.checkRecordSuccess();
+		await occurrenceEditor.occurForm.checkSetFields()
+	},
+	editOccurrence: async ({ occurrenceEditor, occId }, use) => {
+		occurrenceEditor.occId = occId;
+		await occurrenceEditor.gotoRecord(occurrenceEditor.collId, occId)
+		await use(occurrenceEditor);
+	},
+	submitEditOccurrence: async ({ editOccurrence, page}, use) => {
+		const catalogNumber = test.info().workerIndex + '000002';
+		await editOccurrence.occurForm.set('catalognumber', catalogNumber);
+		await use(editOccurrence);
+		await editOccurrence.occurForm.submitEdit();
+		await expect(page.getByText(editOccurrence.occurForm.EDIT_SUCCESS)).toBeVisible();
+		await editOccurrence.occurForm.checkSetFields();
+	},
+
+	/* SKELETAL STATES */
+	occurrenceSkeletalNew: async ({ occurrenceEditor }, use) => {
+		await occurrenceEditor.gotoSkeletalSubmit(occurrenceEditor.collId);
+		await use(occurrenceEditor);
+		await occurrenceEditor.occurForm.submitSkeletal();
+		const occId = await occurrenceEditor.getSkeletalOccid();
+		await occurrenceEditor.gotoRecord(occurrenceEditor.collId, occId)
+		await occurrenceEditor.occurForm.checkSetFields();
+	},
+
+	/* DETERMINATION STATES */
+	editDet: async ({ editOccurrence }, use) => {
+		await editOccurrence.gotoTab(OccurrenceEditorTab.Determinations)
+		await use(editOccurrence)
+	},
+	newDet: async ({ editOccurrence, occurrenceFactory }, use) => {
+		await editOccurrence.gotoTab(OccurrenceEditorTab.Determinations);
+		await editOccurrence.detForm.setToNew();
+		await use(editOccurrence);
+		await editOccurrence.detForm.submit();
+		await editOccurrence.detForm.checkNewSuccess();
+		const dets = await occurrenceFactory.getDeterminations(editOccurrence.occId);
+		expect(dets).toBeDefined();
+		expect(dets.length).toBeGreaterThan(0);
+		for(let [fieldName, value] of Object.entries(editOccurrence.detForm.setFields)) {
+			expect(dets[0][fieldName]).toBe(value);
+		}
+	},
+
+	/* MEDIA STATES */
+	newMedia: async ({ editOccurrence, page}, use) => {
+		await editOccurrence.gotoTab(OccurrenceEditorTab.Media)
+		editOccurrence.mediaForm.setScope('form[name=imgnewform]');
+		await use(editOccurrence)
+		await editOccurrence.mediaForm.submitNew();
+		await expect(page.getByText(editOccurrence.mediaForm.NEW_SUCCESS_MSG)).toBeVisible();
+	},
+	editMedia: async ({ editOccurrence, mediaId }, use) => {
+		await editOccurrence.gotoTab(OccurrenceEditorTab.Media)
+		editOccurrence.mediaForm.setScope(`div[id=img${mediaId}editdiv]`)
+		await editOccurrence.mediaForm.openEditForm()
+		await use(editOccurrence);
+	},
+});
