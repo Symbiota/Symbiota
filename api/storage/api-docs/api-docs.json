@@ -286,7 +286,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Returns list of inventories registered within system",
+                        "description": "Returns list of exsiccata titles registered within system",
                         "content": {
                             "application/json": {
                                 "schema": {}
@@ -351,6 +351,15 @@
                         }
                     },
                     {
+                        "name": "exsiccataNumber",
+                        "in": "query",
+                        "description": "Verbatim exsiccata number",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "limit",
                         "in": "query",
                         "description": "Controls the number of results in the page.",
@@ -373,7 +382,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Returns all exsiccata numbers associated with a single exsiccati title corresponding to matching identifier",
+                        "description": "Returns all exsiccata numbers associated with a single title corresponding to matching identifier",
                         "content": {
                             "application/json": {
                                 "schema": {}
@@ -389,55 +398,35 @@
                 }
             }
         },
-        "/api/v2/exsiccata/{identifier}/number/{numberIdentifier}/": {
+        "/api/v2/exsiccata/{identifier}/number/{numberIdentifier}": {
             "get": {
                 "tags": [
                     "Exsiccata"
                 ],
-                "operationId": "/api/v2/exsiccata/identifier/number/{numberIdentifier}/",
+                "operationId": "/api/v2/exsiccata/identifier/number/numberIdentifier",
                 "parameters": [
                     {
                         "name": "identifier",
                         "in": "path",
-                        "description": "Identifier (ometid (PK)) associated with target exsiccata number",
+                        "description": "Exsiccata ID or record ID",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
                         "name": "numberIdentifier",
                         "in": "path",
-                        "description": "Identifier (omenid or recordID in the schema) associated with target exsiccata number",
+                        "description": "Exsiccata number ID (omenid)",
                         "required": true,
                         "schema": {
                             "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "limit",
-                        "in": "query",
-                        "description": "Controls the number of results in the page.",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 100
-                        }
-                    },
-                    {
-                        "name": "offset",
-                        "in": "query",
-                        "description": "Determines the starting point for the search results. A limit of 100 and offset of 200, will display 100 records starting the 200th record.",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 0
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Returns all exsiccata numbers associated with a single exsiccati title corresponding to matching identifier",
+                        "description": "Returns list of occurrences associated with the given exsiccata number",
                         "content": {
                             "application/json": {
                                 "schema": {}
@@ -445,7 +434,7 @@
                         }
                     },
                     "400": {
-                        "description": "Error: Bad request. Exsiccata identifier is required."
+                        "description": "Error: Bad request. Valid Exsiccata identifier and Number identifier required"
                     },
                     "404": {
                         "description": "Record not found"
@@ -1541,7 +1530,7 @@
                     {
                         "name": "collid",
                         "in": "query",
-                        "description": "collid(s) - collection identifier(s) in portal",
+                        "description": "collid - collection identifier (primary key)",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -1575,12 +1564,30 @@
                         }
                     },
                     {
-                        "name": "sciname",
+                        "name": "scientificName",
                         "in": "query",
                         "description": "Scientific Name - binomen only without authorship",
                         "required": false,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tid",
+                        "in": "query",
+                        "description": "Primary identifier of scientific name (aka tid)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "parentTid",
+                        "in": "query",
+                        "description": "Primary identifier of parent taxon (aka tid)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
                         }
                     },
                     {
@@ -1611,90 +1618,18 @@
                         }
                     },
                     {
-                        "name": "eventDate",
+                        "name": "eventDateMinimun",
                         "in": "query",
-                        "description": "Date as YYYY, YYYY-MM or YYYY-MM-DD that the occurrence was collected or observed, or earliest date if a range was provided",
+                        "description": "Date (YYYY-MM-DD) that the occurrence was collected or observed, or earliest date if a range was provided",
                         "required": false,
                         "schema": {
                             "type": "string"
                         }
                     },
                     {
-                        "name": "eventDate2",
+                        "name": "eventDateMaximum",
                         "in": "query",
-                        "description": "Last date as YYYY, YYYY-MM or YYYY-MM-DD that the occurrence was collected or observed. Used when a date range is provided",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "decimalLatitude",
-                        "in": "query",
-                        "description": "Latitude as a decimal",
-                        "required": false,
-                        "schema": {
-                            "type": "number"
-                        }
-                    },
-                    {
-                        "name": "decimalLongitude",
-                        "in": "query",
-                        "description": "Longitude as a decimal",
-                        "required": false,
-                        "schema": {
-                            "type": "number"
-                        }
-                    },
-                    {
-                        "name": "minimumElevationInMeters",
-                        "in": "query",
-                        "description": "Minimum elevation in meters to nearest integer",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "maximumElevationInMeters",
-                        "in": "query",
-                        "description": "Maximum elevation in meters to nearest integer",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "verbatimElevation",
-                        "in": "query",
-                        "description": "Elevation expressed as a string (e.g., '1000 ft')",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "minimumDepthInMeters",
-                        "in": "query",
-                        "description": "Minimum depth in meters to nearest integer",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "maximumDepthInMeters",
-                        "in": "query",
-                        "description": "Maximum depth in meters to nearest integer",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "verbatimDepth",
-                        "in": "query",
-                        "description": "Depth expressed as a string (e.g., '200 ft')",
+                        "description": "Last date (YYYY-MM-DD) that the occurrence was collected or observed. Used when a date range is provided",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -1703,7 +1638,7 @@
                     {
                         "name": "country",
                         "in": "query",
-                        "description": "country(s), separated by comma",
+                        "description": "country",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -1712,7 +1647,7 @@
                     {
                         "name": "stateProvince",
                         "in": "query",
-                        "description": "State(s), Province(s), or second level political unit(s), separated by comma",
+                        "description": "State / Province, or second level political unit",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -1721,10 +1656,82 @@
                     {
                         "name": "county",
                         "in": "query",
-                        "description": "County(s), parish(s), or third level political unit(s), separated by comma",
+                        "description": "County / parish, or third level political unit",
                         "required": false,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "name": "decimalLatitudeMinimum",
+                        "in": "query",
+                        "description": "Minimum latitude as a decimal (e.g lower limit of bounding box)",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "decimalLatitudeMaximum",
+                        "in": "query",
+                        "description": "Maximum latitude as a decimal (e.g upper limit of bounding box)",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "decimalLongitudeMinimum",
+                        "in": "query",
+                        "description": "Minimum longitude as a decimal (e.g lower limit of bounding box)",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "decimalLongitudeMaximum",
+                        "in": "query",
+                        "description": "Maximum longitude as a decimal (e.g upper limit of bounding box)",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "elevationMinimum",
+                        "in": "query",
+                        "description": "Minimum elevation in meters to nearest integer",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "elevationMaximum",
+                        "in": "query",
+                        "description": "Maximum elevation in meters to nearest integer",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "depthMinimum",
+                        "in": "query",
+                        "description": "Minimum depth in meters to nearest integer",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "depthMaximum",
+                        "in": "query",
+                        "description": "Maximum depth in meters to nearest integer",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
                         }
                     },
                     {
@@ -1943,10 +1950,29 @@
                     {
                         "name": "includeIdentifications",
                         "in": "query",
-                        "description": "Whether to include full Identification History within output",
+                        "description": "Whether (1) or not (0) to include full Identification (Determination) History within output",
                         "required": false,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "default": "0",
+                            "enum": [
+                                0,
+                                1
+                            ]
+                        }
+                    },
+                    {
+                        "name": "includeDatasets",
+                        "in": "query",
+                        "description": "Whether (1) or not (0) to include datasets within output",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": "0",
+                            "enum": [
+                                0,
+                                1
+                            ]
                         }
                     }
                 ],
@@ -2067,7 +2093,7 @@
                     {
                         "name": "identifierTarget",
                         "in": "query",
-                        "description": "Target field for matching identifier: catalog number, other identifiers (aka otherCatalogNumbers), GUID (occurrenceID or recordID), occid (primary key for occurrence). If identifier field is null, a new skeletal record will be created, given that a catalog number is provided.",
+                        "description": "Target field for matching identifier: catalog number, other identifiers, GUID (occurrenceID or recordID), occid (primary key for occurrence). If identifier field is null, a new skeletal record will be created, given that a catalog number is provided.",
                         "required": false,
                         "schema": {
                             "type": "string",
@@ -2660,44 +2686,6 @@
                     "400": {
                         "description": "Error: Bad request. Inventory identifier is required."
                     }
-                }
-            }
-        }
-    },
-    "components": {
-        "responses": {
-            "200": {
-                "description": "Returns list of occurrences associated with the given exsiccata number",
-                "content": {
-                    "application/json": {
-                        "schema": {}
-                    }
-                }
-            },
-            "400": {
-                "description": "Error: Bad request. Valid Exsiccata identifier and Number identifier required"
-            },
-            "404": {
-                "description": "Record not found"
-            }
-        },
-        "parameters": {
-            "identifier": {
-                "name": "identifier",
-                "in": "path",
-                "description": "Exsiccata ID or record ID",
-                "required": true,
-                "schema": {
-                    "type": "string"
-                }
-            },
-            "numberIdentifier": {
-                "name": "numberIdentifier",
-                "in": "path",
-                "description": "Exsiccata number ID (omenid)",
-                "required": true,
-                "schema": {
-                    "type": "integer"
                 }
             }
         }

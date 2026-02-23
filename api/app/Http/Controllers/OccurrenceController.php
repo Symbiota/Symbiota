@@ -31,7 +31,7 @@ class OccurrenceController extends Controller {
 	 *	 @OA\Parameter(
 	 *		 name="collid",
 	 *		 in="query",
-	 *		 description="collid(s) - collection identifier(s) in portal",
+	 *		 description="collid - collection identifier (primary key)",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
@@ -57,11 +57,25 @@ class OccurrenceController extends Controller {
 	 *		 @OA\Schema(type="string")
 	 *	 ),
 	 *	 @OA\Parameter(
-	 *		 name="sciname",
+	 *		 name="scientificName",
 	 *		 in="query",
 	 *		 description="Scientific Name - binomen only without authorship",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="tid",
+	 *		 in="query",
+	 *		 description="Primary identifier of scientific name (aka tid)",
+	 *		 required=false,
+	 *		 @OA\Schema(type="integer")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="parentTid",
+	 *		 in="query",
+	 *		 description="Primary identifier of parent taxon (aka tid)",
+	 *		 required=false,
+	 *		 @OA\Schema(type="integer")
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="recordedBy",
@@ -85,95 +99,95 @@ class OccurrenceController extends Controller {
 	 *		 @OA\Schema(type="string")
 	 *	 ),
 	 *	 @OA\Parameter(
-	 *		 name="eventDate",
+	 *		 name="eventDateMinimun",
 	 *		 in="query",
-	 *		 description="Date as YYYY, YYYY-MM or YYYY-MM-DD that the occurrence was collected or observed, or earliest date if a range was provided",
+	 *		 description="Date (YYYY-MM-DD) that the occurrence was collected or observed, or earliest date if a range was provided",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
 	 *	 @OA\Parameter(
-	 *		 name="eventDate2",
+	 *		 name="eventDateMaximum",
 	 *		 in="query",
-	 *		 description="Last date as YYYY, YYYY-MM or YYYY-MM-DD that the occurrence was collected or observed. Used when a date range is provided",
-	 *		 required=false,
-	 *		 @OA\Schema(type="string")
-	 *	 ),
-	 *	 @OA\Parameter(
-	 *		 name="decimalLatitude",
-	 *		 in="query",
-	 *		 description="Latitude as a decimal",
-	 *		 required=false,
-	 *		 @OA\Schema(type="number")
-	 *	 ),
-	 *	 @OA\Parameter(
-	 *		 name="decimalLongitude",
-	 *		 in="query",
-	 *		 description="Longitude as a decimal",
-	 *		 required=false,
-	 *		 @OA\Schema(type="number")
-	 *	 ),
-	 *	 @OA\Parameter(
-	 *		 name="minimumElevationInMeters",
-	 *		 in="query",
-	 *		 description="Minimum elevation in meters to nearest integer",
-	 *		 required=false,
-	 *		 @OA\Schema(type="integer")
-	 *	 ),
-	 *	 @OA\Parameter(
-	 *		 name="maximumElevationInMeters",
-	 *		 in="query",
-	 *		 description="Maximum elevation in meters to nearest integer",
-	 *		 required=false,
-	 *		 @OA\Schema(type="integer")
-	 *	 ),
-	 *	 @OA\Parameter(
-	 *		 name="verbatimElevation",
-	 *		 in="query",
-	 *		 description="Elevation expressed as a string (e.g., '1000 ft')",
-	 *		 required=false,
-	 *		 @OA\Schema(type="string")
-	 *	 ),
-	 *	 @OA\Parameter(
-	 *		 name="minimumDepthInMeters",
-	 *		 in="query",
-	 *		 description="Minimum depth in meters to nearest integer",
-	 *		 required=false,
-	 *		 @OA\Schema(type="integer")
-	 *	 ),
-	 *	 @OA\Parameter(
-	 *		 name="maximumDepthInMeters",
-	 *		 in="query",
-	 *		 description="Maximum depth in meters to nearest integer",
-	 *		 required=false,
-	 *		 @OA\Schema(type="integer")
-	 *	 ),
-	 *	 @OA\Parameter(
-	 *		 name="verbatimDepth",
-	 *		 in="query",
-	 *		 description="Depth expressed as a string (e.g., '200 ft')",
+	 *		 description="Last date (YYYY-MM-DD) that the occurrence was collected or observed. Used when a date range is provided",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="country",
 	 *		 in="query",
-	 *		 description="country(s), separated by comma",
+	 *		 description="country",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="stateProvince",
 	 *		 in="query",
-	 *		 description="State(s), Province(s), or second level political unit(s), separated by comma",
+	 *		 description="State / Province, or second level political unit",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="county",
 	 *		 in="query",
-	 *		 description="County(s), parish(s), or third level political unit(s), separated by comma",
+	 *		 description="County / parish, or third level political unit",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="decimalLatitudeMinimum",
+	 *		 in="query",
+	 *		 description="Minimum latitude as a decimal (e.g lower limit of bounding box)",
+	 *		 required=false,
+	 *		 @OA\Schema(type="number")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="decimalLatitudeMaximum",
+	 *		 in="query",
+	 *		 description="Maximum latitude as a decimal (e.g upper limit of bounding box)",
+	 *		 required=false,
+	 *		 @OA\Schema(type="number")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="decimalLongitudeMinimum",
+	 *		 in="query",
+	 *		 description="Minimum longitude as a decimal (e.g lower limit of bounding box)",
+	 *		 required=false,
+	 *		 @OA\Schema(type="number")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="decimalLongitudeMaximum",
+	 *		 in="query",
+	 *		 description="Maximum longitude as a decimal (e.g upper limit of bounding box)",
+	 *		 required=false,
+	 *		 @OA\Schema(type="number")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="elevationMinimum",
+	 *		 in="query",
+	 *		 description="Minimum elevation in meters to nearest integer",
+	 *		 required=false,
+	 *		 @OA\Schema(type="integer")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="elevationMaximum",
+	 *		 in="query",
+	 *		 description="Maximum elevation in meters to nearest integer",
+	 *		 required=false,
+	 *		 @OA\Schema(type="integer")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="depthMinimum",
+	 *		 in="query",
+	 *		 description="Minimum depth in meters to nearest integer",
+	 *		 required=false,
+	 *		 @OA\Schema(type="integer")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="depthMaximum",
+	 *		 in="query",
+	 *		 description="Maximum depth in meters to nearest integer",
+	 *		 required=false,
+	 *		 @OA\Schema(type="integer")
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="datasetID",
@@ -209,84 +223,85 @@ class OccurrenceController extends Controller {
 	 */
 	public function showAllOccurrences(Request $request) {
 		$this->validate($request, [
-			'collid' => 'regex:/^[\d,]+?$/',
+			'collid' => 'integer',
+			'tid' => 'integer',
+			'eventDateMinimum' => 'date_format:Y-m-d',
+			'eventDateMaximum' => 'date_format:Y-m-d',
+			'decimalLatitudeMinimum' => ['numeric', 'between:-90,90'],
+			'decimalLatitudeMaximum' => ['numeric', 'between:-90,90'],
+			'decimalLongitudeMinimum' => ['numeric', 'between:-180,180'],
+			'decimalLongitudeMaximum' => ['numeric', 'between:-180,180'],
+			'minimumElevationInMeters' => ['integer', 'between:0,8000'],
+			'maximumElevationInMeters' => ['integer', 'between:0,8000'],
+			'minimumDepthInMeters' => ['integer', 'between:0,12000'],
+			'maximumDepthInMeters' => ['integer', 'between:0,12000'],
+			'parentTid' => 'integer',
 			'limit' => ['integer', 'max:300'],
 			'offset' => 'integer'
 		]);
 		$limit = $request->input('limit', 100);
 		$offset = $request->input('offset', 0);
 
-		$occurrenceModel = DB::table('omoccurrences as o')
-			->select('o.*', 't.author', 't.sciName as trueSciName')
-			->leftJoin('taxa as t', 'o.tidInterpreted', '=', 't.tid');
-		$occurrenceModel->where('o.recordSecurity', '=', 0);
+		$occurrenceModel = Occurrence::query();
+		$occurrenceModel->with('identificatier');
+		$occurrenceModel->where('recordSecurity', 0);
+
 		if($request->has('collid')){
-			$occurrenceModel->whereIn('o.collid', explode(',', $request->collid));
+			$occurrenceModel->where('collid', $request->collid);
 		}
 		if ($request->has('catalogNumber')) {
-			$occurrenceModel->where('o.catalogNumber', $request->catalogNumber);
+			$occurrenceModel->where('catalogNumber', $request->catalogNumber);
 		}
 		if ($request->has('occurrenceID')) {
 			$occurrenceID = $request->occurrenceID;
 			$occurrenceModel->where(function ($query) use ($occurrenceID) {
-				$query->where('o.occurrenceID', $occurrenceID)
-					->orWhere('o.recordID', $occurrenceID);
+				$query->where('occurrenceID', $occurrenceID)
+					->orWhere('recordID', $occurrenceID);
 			});
 		}
 		//Taxonomy
 		if ($request->has('family')) {
-			$occurrenceModel->where('o.family', $request->family);
+			$occurrenceModel->where('family', $request->family);
 		}
-		if ($request->has('sciname')) {
-			$occurrenceModel->where('o.sciname', $request->sciname)
-				->orWhere('t.sciName', $request->sciname);
+		if ($request->has('scientificName')) {
+			if(strpos($request->scientificName, '%')){
+				$occurrenceModel->where('sciname', 'LIKE', $request->scientificName);
+			}
+			else{
+				$occurrenceModel->where('sciname', $request->scientificName);
+			}
+		}
+		if ($request->has('tid')) {
+			$occurrenceModel->where('tidInterpreted', $request->tid);
+		}
+		if ($request->has('parentTid')) {
+			$occurrenceModel->join('taxaenumtree as e', 'tidinterpreted', '=', 'e.tid');
+			$occurrenceModel->where('e.taxAuthID', 1)->where('e.parentTid', 127299);
 		}
 		//Collector units
 		if ($request->has('recordedBy')) {
-			// $occurrenceModel->where('o.recordedBy', $request->recordedBy);
-			// $occurrenceModel->whereRaw("MATCH(o.recordedBy) AGAINST (? IN BOOLEAN MODE)", [Helper::readyPhraseForBooleanModeFulltextSearch($request->recordedBy)]);
-			$occurrenceModel->whereRaw("MATCH(o.recordedBy) AGAINST (? IN NATURAL LANGUAGE MODE)", [$request->recordedBy]);
+			// $occurrenceModel->where('recordedBy', $request->recordedBy);
+			// $occurrenceModel->whereRaw("MATCH(recordedBy) AGAINST (? IN BOOLEAN MODE)", [Helper::readyPhraseForBooleanModeFulltextSearch($request->recordedBy)]);
+			$occurrenceModel->whereRaw("MATCH(recordedBy) AGAINST (? IN NATURAL LANGUAGE MODE)", [$request->recordedBy]);
 		}
 		if ($request->has('recordedByLastName')) {
 			// $occurrenceModel->where('o.recordedBy', 'LIKE', '%' . $request->recordedByLastName . '%');
-			// $occurrenceModel->whereRaw("MATCH(o.recordedBy) AGAINST (? IN BOOLEAN MODE)", [Helper::readyPhraseForBooleanModeFulltextSearch($request->recordedByLastName)]);
-			$occurrenceModel->whereRaw("MATCH(o.recordedBy) AGAINST (? IN NATURAL LANGUAGE MODE)", [$request->recordedByLastName]);
+			// $occurrenceModel->whereRaw("MATCH(recordedBy) AGAINST (? IN BOOLEAN MODE)", [Helper::readyPhraseForBooleanModeFulltextSearch($request->recordedByLastName)]);
+			$occurrenceModel->whereRaw("MATCH(recordedBy) AGAINST (? IN NATURAL LANGUAGE MODE)", [$request->recordedByLastName]);
 		}
 		if ($request->has('recordNumber')) {
-			$occurrenceModel->where('o.recordNumber', $request->recordNumber);
+			$occurrenceModel->where('recordNumber', $request->recordNumber);
 		}
-		if ($request->has('eventDate')) {
-			$occurrenceModel->where('o.eventDate', $request->eventDate);
+		if ($request->has('eventDateMinimum')) {
+			if ($request->has('eventDateMaximum')){
+				$occurrenceModel->where('eventDate', '>', $request->eventDateMaximum);
+			}
+			else{
+				$occurrenceModel->where('eventDate', $request->eventDateMaximum);
+			}
 		}
-		if ($request->has('eventDate2')) {
-			$occurrenceModel->where('o.eventDate2', $request->eventDate2);
-		}
-		if ($request->has('decimalLatitude')) {
-			$occurrenceModel->where('o.decimalLatitude', $request->decimalLatitude);
-		}
-		if ($request->has('decimalLongitude')) {
-			$occurrenceModel->where('o.decimalLongitude', $request->decimalLongitude);
-		}
-		if ($request->has('minimumElevationInMeters')) {
-			$occurrenceModel->where('o.minimumElevationInMeters', $request->minimumElevationInMeters);
-		}
-		if ($request->has('maximumElevationInMeters')) {
-			$occurrenceModel->where('o.maximumElevationInMeters', $request->maximumElevationInMeters);
-		}
-		if ($request->has('verbatimElevation')) {
-			$occurrenceModel->where('o.verbatimElevation', $request->verbatimElevation);
-		}
-		if ($request->has('minimumDepthInMeters')) {
-			$occurrenceModel->where('o.minimumDepthInMeters', $request->minimumDepthInMeters);
-		}
-		if ($request->has('maximumDepthInMeters')) {
-			$occurrenceModel->where('o.maximumDepthInMeters', $request->maximumDepthInMeters);
-		}
-		if ($request->has('verbatimDepth')) {
-			$occurrenceModel->where('o.verbatimDepth', $request->verbatimDepth);
-		}
-		if ($request->has('datasetID')) {
-			$occurrenceModel->where('o.datasetID', $request->datasetID);
+		if ($request->has('eventDateMaximum')) {
+			$occurrenceModel->where('eventDate', '<', $request->eventDateMaximum);
 		}
 		//Locality place names
 		if($request->has('country')){
@@ -303,12 +318,50 @@ class OccurrenceController extends Controller {
 			}
 		}
 		if($request->has('stateProvince')){
-			$inputProvinces = array_map('trim', explode(',', $request->stateProvince));
-			$occurrenceModel->whereIn('stateProvince', $inputProvinces);
+			$occurrenceModel->where('stateProvince', $request->stateProvince);
 		}
 		if($request->has('county')){
-			$inputCounties = array_map('trim', explode(',', $request->county));
-			$occurrenceModel->whereIn('county', $inputCounties);
+			$occurrenceModel->where('county', 'LIKE', $request->county . '%');
+		}
+		if ($request->has('decimalLatitudeMinimum')) {
+			$occurrenceModel->where('decimalLatitude', '>', $request->decimalLatitudeMinimum);
+		}
+		if ($request->has('decimalLatitudeMaximum')) {
+			$occurrenceModel->where('decimalLatitude', '<', $request->decimalLatitudeMaximum);
+		}
+		if ($request->has('decimalLongitudeMinimum')) {
+			$occurrenceModel->where('decimalLongitude', '>', $request->decimalLongitudeMinimum);
+		}
+		if ($request->has('decimalLongitudeMaximum')) {
+			$occurrenceModel->where('decimalLongitude', '<', $request->decimalLongitudeMaximum);
+		}
+		if ($request->has('elevationMinimum')) {
+			if($request->has('elevationMaximum')){
+				$occurrenceModel->where('minimumElevationInMeters', '>', $request->elevationMinimum);
+			}
+			else{
+				$occurrenceModel->where('minimumElevationInMeters', $request->elevationMinimum);
+			}
+		}
+		if ($request->has('elevationMaximum')) {
+			$occurrenceModel->whereRaw('IFNULL(maximumElevationInMeters,minimumElevationInMeters) < ?', $request->elevationMaximum);
+		}
+		if ($request->has('depthMinimum')) {
+			if($request->has('depthMaximum')){
+				$occurrenceModel->where('minimumDepthInMeters', '>', $request->depthMinimum);
+			}
+			else{
+				$occurrenceModel->where('minimumDepthInMeters', $request->depthMinimum);
+			}
+		}
+		if ($request->has('depthMaximum')) {
+			$occurrenceModel->whereRaw('IFNULL(maximumDepthInMeters,minimumDepthInMeters)< ?', $request->depthMaximum);
+		}
+		if ($request->has('datasetID')) {
+			$datasetID = $request->datasetID;
+			$occurrenceModel->whereHas('dataset', function ($query) use ($datasetID) {
+				$query->where('omoccurdatasetlink.datasetID', $datasetID);
+			});
 		}
 
 		$fullCnt = $occurrenceModel->count();
@@ -351,9 +404,24 @@ class OccurrenceController extends Controller {
 	 *	 @OA\Parameter(
 	 *		 name="includeIdentifications",
 	 *		 in="query",
-	 *		 description="Whether to include full Identification History within output",
+	 *		 description="Whether (1) or not (0) to include full Identification (Determination) History within output",
 	 *		 required=false,
-	 *		 @OA\Schema(type="integer")
+	 *		 @OA\Schema(
+	 *			type="integer",
+	 *			default="0",
+	 *			enum={0, 1}
+	 *		)
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="includeDatasets",
+	 *		 in="query",
+	 *		 description="Whether (1) or not (0) to include datasets within output",
+	 *		 required=false,
+	 *		 @OA\Schema(
+	 *			type="integer",
+	 *			default="0",
+	 *			enum={0, 1}
+	 *		)
 	 *	 ),
 	 *	 @OA\Response(
 	 *		 response="200",
@@ -369,16 +437,25 @@ class OccurrenceController extends Controller {
 	public function showOneOccurrence($id, Request $request) {
 		$this->validate($request, [
 			'includeMedia' => 'integer',
-			'includeIdentifications' => 'integer'
+			'includeIdentifications' => 'integer',
+			'includeDatasets' => 'integer'
 		]);
-		$occurrence = $this->getOccurrence($id);
-		if (!$occurrence) {
-			return response()->json(['error' => 'Occurrence not found'], 404);
+		$occurrenceModel = null;
+		if(is_numeric($id)){
+			$occurrenceModel = Occurrence::where('occid', $id);
 		}
-		if ($occurrence) {
-			if (!$occurrence->occurrenceID) $occurrence->occurrenceID = $occurrence->recordID;
-			if ($request->input('includeMedia')) $occurrence->media;
-			if ($request->input('includeIdentifications')) $occurrence->identification;
+		else{
+			$occurrenceModel = Occurrence::where(function ($query) use ($id) {
+				$query->where('occurrenceID', $id)->orWhere('recordID', $id);
+			});
+		}
+		$occurrenceModel->with('identificatier');
+		if ($request->input('includeMedia')) $occurrenceModel->with('media');
+		if ($request->input('includeIdentifications')) $occurrenceModel->with('identification');
+		if ($request->input('includeDatasets')) $occurrenceModel->with('dataset');
+		$occurrence = $occurrenceModel->get();
+		if ($occurrence->isEmpty()) {
+			return response()->json(['error' => 'Occurrence not found'], 404);
 		}
 		return response()->json($occurrence);
 	}
@@ -411,12 +488,12 @@ class OccurrenceController extends Controller {
 		$occid = $this->getOccidFromOtherIds($id)->occid ?? null;
 		if (!$occid) return response()->json(['error' => 'Occurrence not found with that ID'], 404);
 		$occurrence = Occurrence::find($occid);
-		if (!$occurrence) {
+		if ($occurrence->isEmpty()) {
 			return response()->json(['error' => 'Occurrence not found'], 404);
 		}
 		$identification = null;
 		$identification = $occurrence->identification;
-		if (!$identification || count($identification) < 1) {
+		if ($identification->isEmpty()) {
 			return response()->json(['error' => 'Occurrence found, but no identification found'], 404);
 		}
 		return response()->json($identification);
@@ -449,14 +526,14 @@ class OccurrenceController extends Controller {
 		$occid = $this->getOccidFromOtherIds($id)->occid ?? null;
 		if (!$occid) return response()->json(['error' => 'Occurrence not found with that ID'], 404);
 		$occurrence = Occurrence::find($occid);
-		if (!$occurrence) {
+		if ($occurrence->isEmpty()) {
 			return response()->json(['error' => 'Occurrence not found'], 404);
 		}
 		$media = null;
 		if ($occurrence) {
 			$media=$occurrence->media;
 		}
-		if (!$media || count($media) < 1) {
+		if ($media->isEmpty()) {
 			return response()->json(['error' => 'Occurrence found, but no media found'], 404);
 		}
 		return response()->json($media);
@@ -890,7 +967,7 @@ class OccurrenceController extends Controller {
 	 *	 @OA\Parameter(
 	 *		name="identifierTarget",
 	 *		in="query",
-	 *		description="Target field for matching identifier: catalog number, other identifiers (aka otherCatalogNumbers), GUID (occurrenceID or recordID), occid (primary key for occurrence). If identifier field is null, a new skeletal record will be created, given that a catalog number is provided.",
+	 *		description="Target field for matching identifier: catalog number, other identifiers, GUID (occurrenceID or recordID), occid (primary key for occurrence). If identifier field is null, a new skeletal record will be created, given that a catalog number is provided.",
 	 *		required=false,
 	 *		@OA\Schema(
 	 *			type="string",
@@ -1016,7 +1093,7 @@ class OccurrenceController extends Controller {
 			if ($this->isAuthorizedSub($collid)) {
 				//Remove fields with empty values and non-approved target fields
 				$updateArr = $request->all();
-				$skeletalFieldsAllowed = array('catalogNumber', 'otherCatalogNumbers', 'sciname', 'scientificNameAuthorship', 'family', 'recordedBy', 'recordNumber', 'eventDate', 'eventDate2', 'country', 'stateProvince', 'county', 'processingStatus');
+				$skeletalFieldsAllowed = array('catalogNumber', 'sciname', 'scientificNameAuthorship', 'family', 'recordedBy', 'recordNumber', 'eventDate', 'eventDate2', 'country', 'stateProvince', 'county', 'processingStatus');
 				foreach ($updateArr as $fieldName => $fieldValue) {
 					if (!$fieldValue) unset($updateArr[$fieldName]);
 					elseif (!in_array($fieldName, $skeletalFieldsAllowed)) unset($updateArr[$fieldName]);
@@ -1036,7 +1113,7 @@ class OccurrenceController extends Controller {
 					} elseif ($identifierTarget == 'CATALOGNUMBER') {
 						$occurrenceModel = Occurrence::where('catalogNumber', $identifier);
 					} elseif ($identifierTarget == 'IDENTIFIERS') {
-						$occurrenceModel = Occurrence::where('otherCatalogNumbers', $identifier);
+						//$occurrenceModel = Occurrence::where('otherCatalogNumbers', $identifier);
 					}
 					if ($occurrenceModel) {
 						$targetOccurrence = $occurrenceModel->where('collid', $collid)->first();
@@ -1141,7 +1218,7 @@ class OccurrenceController extends Controller {
 						$remoteCollid = $remoteOccurrence['collid'];
 						$sourceDateLastModified = $remoteOccurrence['dateLastModified'];
 						$clearFieldArr = array(
-							'collid', 'dbpk', 'otherCatalogNumbers', 'tidInterpreted', 'dynamicProperties', 'processingStatus', 'recordID',
+							'collid', 'dbpk', 'tidInterpreted', 'dynamicProperties', 'processingStatus', 'recordID',
 							'modified', 'dateEntered' ,'dateLastModified', 'genus', 'specificEpithet', 'institutionCode', 'collectionCode',
 							'scientificNameAuthorship', 'identifiedBy', 'dateIdentified', 'verbatimEventDate', 'countryCode', 'localitySecurity'
 						);
@@ -1181,14 +1258,6 @@ class OccurrenceController extends Controller {
 	}
 
 	//Helper functions
-	protected function getOccid($id){
-		if(!is_numeric($id)){
-			$occid = Occurrence::where('occurrenceID', $id)->orWhere('recordID', $id)->value('occid');
-			if(is_numeric($occid)) $id = $occid;
-		}
-		return $id;
-	}
-
 	private function isAuthorizedSub(int $collid): bool {
 		if ($this->isAuthorized('SuperAdmin')) return true;
 		elseif($collid){
@@ -1196,25 +1265,6 @@ class OccurrenceController extends Controller {
 			elseif($this->isAuthorized('CollEditor', $collid)) return true;
 		}
 		return false;
-	}
-
-	private function getOccurrence($id) {
-		$decodedId = urldecode($id);
-		$occurrence = null;
-		if (is_numeric($decodedId)) {
-			$occurrence = DB::table('omoccurrences as o')
-				->select('o.*', 't.author', 't.sciName as trueSciName')
-				->leftJoin('taxa as t', 'o.tidInterpreted', '=', 't.tid')
-				->where('occid', $decodedId)
-				->first();
-		} else {
-			$occurrence = DB::table('omoccurrences as o')->select('o.*', 't.author', 't.sciName as trueSciName')
-				->leftJoin('taxa as t', 'o.tidInterpreted', '=', 't.tid')
-				->where('recordID', (string)$decodedId)
-				->orWhere('occurrenceID', (string)$decodedId)
-				->first();
-		}
-		return $occurrence;
 	}
 
 	protected function getOccidFromOtherIds($id) {
