@@ -670,6 +670,16 @@ function simpleSearch() {
   validateCollections(optionalCallback = ()=>{
     const submitForm = document.getElementById("params-form");
     storeFormDataInSessionStorage(submitForm);
+    const tableButton = document.getElementById("table-button");
+    if(!tableButton){
+      submitForm.submit();
+    }
+    const tableButtonChecked = tableButton.checked;
+    let formAction = getCurrentPage().replace("search/index.php", "list.php");
+    if(tableButtonChecked){
+      formAction = getCurrentPage().replace("search/index.php", "listtabledisplay.php");
+    }
+    submitForm.action = formAction;
     submitForm.submit();
   });
 }
