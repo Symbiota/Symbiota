@@ -15,7 +15,6 @@
 | https://github.com/DarkaOnLine/SwaggerLume
 | Run to regenerate docs: php artisan swagger-lume:generate
 |
-|
 */
 
 $router->get('/', function () use ($router) {
@@ -73,10 +72,8 @@ $router->group(['prefix' => 'v2'], function () use ($router) {
 	//$router->get('taxonomy/{id}/description/{identifier}',  ['uses' => 'TaxonomyDescriptionController@showOneDescription']);
 
 	$router->get('exsiccata', ['uses' => 'ExsiccataController@showAllExsiccata']);
-	$router->get('exsiccata/{identifier}', ['uses' => 'ExsiccataController@showExsiccata']);
-	$router->get('exsiccata/{identifier}/number', ['uses' => 'ExsiccataController@showOneExsiccataNumbers']);
-	$router->get('exsiccata/{identifier}/number/{numberIdentifier}', ['uses' => 'ExsiccataController@showOneExsiccataNumbersIdentifier']);
-	$router->get('exsiccati/{identifier}/number/{numberIdentifier}/occurrence', ['uses' => 'ExsiccataController@showOccurrencesByExsiccataNumber']);
-
+	$router->get('exsiccata/{identifier}', ['uses' => 'ExsiccataController@showOneExsiccata']);
+	$router->get('exsiccata/{identifier}/number', ['uses' => 'ExsiccataController@showExsiccataNumbers']);
+	$router->get('exsiccata/{identifier}/number/{numberIdentifier}', ['uses' => 'ExsiccataController@showOccurrencesByExsiccataNumber']);
 
 });
