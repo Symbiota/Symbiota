@@ -9,7 +9,6 @@ include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 include_once($SERVER_ROOT . '/classes/Database.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCleaner.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
-include_once($SERVER_ROOT . '/classes/Sanitize.php');
 include_once($SERVER_ROOT . '/classes/CustomQuery.php');
 include_once($SERVER_ROOT . '/classes/CollectionFormManager.php');
 
@@ -159,7 +158,7 @@ function mapField($field, $prefix) {
 	return $tableAlias . $prefix . '.' . $field . ($prefix? ' AS ' . $field . $prefix: '');
 };
 
-function getSqlFields(array $fields, string $prefix = '') {	
+function getSqlFields(array $fields, string $prefix = '') {
 	$sql = '';
 
 	for($i = 0; $i < count($fields); $i++) {
@@ -170,12 +169,12 @@ function getSqlFields(array $fields, string $prefix = '') {
 }
 
 function getOccurrences(array $occIds, mysqli $conn) {
-	global $otherFields, $harvestFields; 
+	global $otherFields, $harvestFields;
 	if(count($occIds) <= 0) return [];
 
 	$parameters = str_repeat('?,', count($occIds) - 1) . '?';
 
-	$sql = 'SELECT ' . getSqlFields($otherFields) . ',' .getSqlFields($harvestFields) . 
+	$sql = 'SELECT ' . getSqlFields($otherFields) . ',' .getSqlFields($harvestFields) .
 	' from omoccurrences o where occid in (' . $parameters . ')';
 
 	$rs = QueryUtil::executeQuery($conn, $sql, $occIds);
@@ -239,7 +238,7 @@ function getCollections(mysqli $conn) {
 	$collections = [];
 	foreach($rs->fetch_all(MYSQLI_ASSOC) as $row) {
 		$collections[$row['collid']] = $row;
-	}	
+	}
 
 	return $collections;
 }
@@ -271,7 +270,7 @@ function render_row($row, $checkboxName = false, $shownFields = [], $onlyOption 
 	$html .= '</div></td>';
 
 	$base_url = $GLOBALS['CLIENT_ROOT'] . '/collections/individual/index.php?occid=';
-		
+
 	foreach($shownFields as $key) {
 		$value = $row[$key] ?? null;
 		$hide = array_key_exists('hide_' . $key, $_REQUEST);
@@ -331,7 +330,7 @@ foreach ($duplicates as $dupe) {
 }
 
 foreach (getOccurrences($targetOccids, $conn) as $target) {
-	$target['duplicateid'] = $targets[$target['occid']]; 
+	$target['duplicateid'] = $targets[$target['occid']];
 	$target['institutionCode'] = $collections[$target['collid']]['institutionCode'];
 	$target['collectionCode'] = $collections[$target['collid']]['collectionCode'];
 	$targets[$target['occid']] =  $target;
@@ -374,7 +373,7 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 			background-color: #CCC
 		}
 
-		#record-viewer-innertext { 
+		#record-viewer-innertext {
 			margin-left: 2em;
 			width: calc(100vw - 4em);
 		}

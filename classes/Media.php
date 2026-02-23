@@ -1,9 +1,9 @@
 <?php
 include_once($SERVER_ROOT . "/classes/Database.php");
-include_once($SERVER_ROOT . "/classes/Sanitize.php");
 include_once($SERVER_ROOT . "/classes/StorageStrategy.php");
 include_once($SERVER_ROOT . "/classes/MediaType.php");
 include_once($SERVER_ROOT . "/classes/MediaException.php");
+include_once($SERVER_ROOT . "/classes/utilities/Sanitize.php");
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/UploadUtil.php');
