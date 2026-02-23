@@ -74,7 +74,6 @@ class OccurrenceImport extends UtilitiesFileImport {
 							$status = $this->insertRecord($recordArr, $occidArr, $postArr);
 						}
 						$cnt++;
-						// $recordArr = null;
 					}
 					$occurMain = new OccurrenceMaintenance($this->conn);
 					$this->logOrEcho($LANG['UPDATING_STATS'] . '...');
