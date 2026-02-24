@@ -37,6 +37,13 @@ test.describe('Edit Occurrence ', () => {
 	}
 })
 
+/* DELETE OCCURRENCES */
+test('Delete Occurrence ', async ({ editOccurrence, occurrenceFactory }) => {
+	await editOccurrence.deleteOccurrence();
+	const occurrence = await occurrenceFactory.getOccurrence(editOccurrence.occId);
+	expect(occurrence).toHaveLength(0);
+});
+
 /* DETERMINATIONS */
 test('Add Determination', async ({ newDet }) => {
 	await newDet.detForm.setMany({
