@@ -109,13 +109,20 @@ class UploadUtil {
 	}
 
 	/**
-	 * undocumented function summary
+	  * This function returns the maximum post size in PHP
+	  *
+	  * Reads ini variables post_max_size as int
+	  * @returns int File size in bytes
+	  **/
+	public static function getMaximumPostSize(): int {
+		return self::size2Bytes(ini_get('post_max_size'));
+	}
+
+	/**
+	 * Converts human readable sizes to bytes
 	 *
-	 * Undocumented function long description
-	 *
-	 * @param Type $var Description
-	 * @return type
-	 * @throws conditon
+	 * @param string $size Size string you wish to convert
+	 * @return int
 	 **/
 	public static function size2Bytes(string $size):int {
 		// Remove the non-unit characters from the size.
