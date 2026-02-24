@@ -7,14 +7,14 @@ Language::load('collections/exsiccati/index');
 
 header('Content-Type: text/html; charset='.$CHARSET);
 
-$ometid = array_key_exists('ometid',$_REQUEST) ? filter_var($_REQUEST['ometid'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$omenid = array_key_exists('omenid',$_REQUEST) ? filter_var($_REQUEST['omenid'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$occidToAdd = array_key_exists('occidtoadd',$_REQUEST) ? filter_var($_REQUEST['occidtoadd'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$ometid = array_key_exists('ometid',$_REQUEST) ? Sanitize::int($_REQUEST['ometid']) : 0;
+$omenid = array_key_exists('omenid',$_REQUEST) ? Sanitize::int($_REQUEST['omenid']) : 0;
+$occidToAdd = array_key_exists('occidtoadd',$_REQUEST) ? Sanitize::int($_REQUEST['occidtoadd']) : 0;
 $searchTerm = array_key_exists('searchterm',$_POST) ? $_POST['searchterm'] : '';
-$specimenOnly = array_key_exists('specimenonly',$_REQUEST) ? filter_var($_REQUEST['specimenonly'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$collId = array_key_exists('collid',$_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$imagesOnly = array_key_exists('imagesonly',$_REQUEST) ? filter_var($_REQUEST['imagesonly'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$sortBy = array_key_exists('sortby',$_REQUEST) ? filter_var($_REQUEST['sortby'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$specimenOnly = array_key_exists('specimenonly',$_REQUEST) ? Sanitize::int($_REQUEST['specimenonly']) : 0;
+$collId = array_key_exists('collid',$_REQUEST) ? Sanitize::int($_REQUEST['collid']) : 0;
+$imagesOnly = array_key_exists('imagesonly',$_REQUEST) ? Sanitize::int($_REQUEST['imagesonly']) : 0;
+$sortBy = array_key_exists('sortby',$_REQUEST) ? Sanitize::int($_REQUEST['sortby']) : 0;
 $formSubmit = array_key_exists('formsubmit',$_REQUEST) ? $_REQUEST['formsubmit'] : '';
 
 /*
@@ -261,7 +261,7 @@ if($formSubmit == 'dlexs' || $formSubmit == 'dlexs_titleOnly'){
 		?>
 	</script>
 	<style type="text/css">
-		#option-div { margin: 5px; width: 300px; text-align: left; float: right; min-height: 325px; }
+		#option-div { margin: 5px; width: 320px; text-align: left; float: right; min-height: 325px; }
 		#option-div fieldset { background-color:#f2f2f2; }
 		.field-div { margin: 2px 0px; }
 		.exs-div { margin-bottom: 5px }
@@ -289,7 +289,7 @@ if($formSubmit == 'dlexs' || $formSubmit == 'dlexs_titleOnly'){
 		<?php
 		if($statusStr){
 			echo '<hr/>';
-			echo '<div style="margin:10px;color:' . (strpos($statusStr,'SUCCESS') === false ? 'red' : 'green') . ';">' . htmlspecialchars($statusStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</div>';
+			echo '<div style="margin:10px;color:' . (strpos($statusStr,'SUCCESS') === false ? 'red' : 'green') . ';">' . Sanitize::outString($statusStr) . '</div>';
 			echo '<hr/>';
 		}
 		if(!$ometid && !$omenid){
@@ -300,13 +300,13 @@ if($formSubmit == 'dlexs' || $formSubmit == 'dlexs_titleOnly'){
 					    <legend><b><?= $LANG['OPTIONS'] ?></b></legend>
 				    	<div>
 				    		<b><?= $LANG['SEARCH'] ?>:</b>
-							<input type="text" name="searchterm" value="<?= htmlspecialchars($searchTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" size="20" onchange="this.form.submit()" />
+							<input type="text" name="searchterm" value="<?= Sanitize::outString($searchTerm) ?>" size="20" onchange="this.form.submit()" />
 						</div>
 						<div title="<?= $LANG['INCL_WO_SPECS'] ?>">
-							<input type="checkbox" name="specimenonly" value="1" <?= ($specimenOnly?"CHECKED":"") ?> onchange="specimenOnlyChanged(this)" />
+							<input type="checkbox" name="specimenonly" value="1" <?= ($specimenOnly ? 'CHECKED' : '') ?> onchange="specimenOnlyChanged(this)" />
 							<?= $LANG['DISP_ONLY_W_SPECS'] ?>
 						</div>
-						<div id="qryextradiv" style="margin-left:15px;display:<?= ($specimenOnly?'block':'none') ?>;" title="including without linked specimen records">
+						<div id="qryextradiv" style="margin-left:15px;display:<?= ($specimenOnly ? 'block' : 'none') ?>;" title="including without linked specimen records">
 							<div>
 								<?= $LANG['LIMIT_TO'] ?>:
 								<select name="collid" style="width:230px;" onchange="this.form.submit()">
@@ -315,7 +315,7 @@ if($formSubmit == 'dlexs' || $formSubmit == 'dlexs_titleOnly'){
 									<?php
 									$acroArr = $exsManager->getCollArr('all');
 									foreach($acroArr as $id => $collTitle){
-										echo '<option value="' . $id . '" ' . ($id==$collId?'SELECTED':'') . '>' . $collTitle . '</option>';
+										echo '<option value="' . $id . '" ' . ($id==$collId ? 'SELECTED' : '') . '>' . $collTitle . '</option>';
 									}
 									?>
 								</select>
@@ -330,14 +330,28 @@ if($formSubmit == 'dlexs' || $formSubmit == 'dlexs_titleOnly'){
 							<input type="radio" name="sortby" value="0" <?= ($sortBy == 0?"CHECKED":"") ?> onchange="this.form.submit()"> <?= $LANG['TITLE'] ?>
 							<input type="radio" name="sortby" value="1" <?= ($sortBy == 1?"CHECKED":"") ?> onchange="this.form.submit()"> <?= $LANG['ABB'] ?>
 						</div>
-						<div style="margin-top:5px">
-							<div>
-								<span title="Exsiccata download: titles only"><button name="formsubmit" type="submit" value="dlexs_titleOnly"><img src="../../images/dl.png" style="width:1.2em;margin-right:0.3em" /><?= $LANG['TITLES'] ?></button></span>
-								<span title="Exsiccata download: with numbers and occurrences"><button name="formsubmit" type="submit" value="dlexs"><img src="../../images/dl.png" style="width:1.2em;margin-right:0.3em" /><?= $LANG['OCCS'] ?></button></span>
-							</div>
+						<div style="float:left">
+							<button class="icon-button" name="formsubmit" type="submit" value="rebuildList"><?= $LANG['REBUILD_LIST'] ?></button>
 						</div>
-						<div>
-							<button name="formsubmit" type="submit" value="rebuildList"><?= $LANG['REBUILD_LIST'] ?></button>
+						<div style="float:right">
+							<div>
+								<span title="Exsiccata download: titles only">
+									<button class="icon-button" name="formsubmit" type="submit" value="dlexs_titleOnly">
+										<svg style="width:1.2em;height:1.2em;margin-right:0.3em" " xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+											<path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z" />
+										</svg>
+										<?= $LANG['TITLES'] ?>
+									</button>
+								</span>
+								<span title="Exsiccata download: with numbers and occurrences">
+									<button class="icon-button" name="formsubmit" type="submit" value="dlexs">
+										<svg style="width:1.2em;height:1.2em;margin-right:0.3em" " xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+											<path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z" />
+										</svg>
+										<?= $LANG['OCCS'] ?>
+									</button>
+								</span>
+							</div>
 						</div>
 					</fieldset>
 				</form>
