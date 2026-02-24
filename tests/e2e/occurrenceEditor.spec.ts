@@ -1,4 +1,4 @@
-import { expect, mergeTests } from '@playwright/test';
+import { expect, mergeTests, request } from '@playwright/test';
 import { test as testWithAdmin } from './fixtures/adminLogin';
 //import { test as testCollection } from './fixtures/collection';
 import { test as testOccurrence } from './fixtures/occurrence';
@@ -58,6 +58,36 @@ test('Delete Determination', async({ detId, editDet, page }) => {
 test('Add Media (File)', async({ newMedia }) => {
 	await newMedia.mediaForm.setFile('imgfile', path.join(__dirname, '../../images/world.png'));
 });
+
+const editMediaTests  = {
+	'Caption': { caption: 'caption' },
+	'Source Url': { sourceUrl: 'someSourceUrl' },
+	'Notes': { notes: 'some notes' },
+	'Sort': { sortOccurrence: '6' },
+	'Tags': { 
+		ch_HasOrganism: true,
+		ch_HasLabel: true,
+		ch_HasIDLabel: true,
+		ch_TypedText: true,
+		ch_Handwriting: true,
+		ch_ShowsHabitat: true,
+		ch_HasProblem: true,
+		ch_Diagnostic: true,
+		ch_ImageOfAdult: true,
+		ch_ImageOfImmature: true,
+	},
+}
+
+test.describe('Edit Media', () => {
+	for(let testName in editMediaTests) {
+		test(testName, async({ editMedia }) => {
+			await editMedia.mediaForm.setMany(editMediaTests[testName])
+			await editMedia.mediaForm.submitEdit();	
+			await editMedia.mediaForm.openEditForm();
+			await editMedia.mediaForm.checkSetFields();
+		})
+	}
+})
 
 test('Delete Media', async ({ editMedia, page}) => {
 	page.on('dialog', dialog => dialog.accept());
