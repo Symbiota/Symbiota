@@ -49,9 +49,25 @@ export class Form {
 		}
 	}
 
+	async check(fieldName, value) {
+		const locator = this.getFieldLocator(fieldName);
+		switch (this.fields[fieldName]) {
+			case 'checkbox':
+				if(value) {
+					await expect(locator).toBeChecked(value)
+				} else {
+					await expect(locator).not.toBeChecked(value)
+				}
+				break;
+			default:
+				await expect(locator).toHaveValue(value)
+				return;
+		}
+	}
+
 	async checkSetFields() {
 		for(let [fieldName, value] of Object.entries(this.setFields)) {
-			await expect(this.getFieldLocator(fieldName)).toHaveValue(value)
+			await this.check(fieldName, value);
 		}
 	}
 

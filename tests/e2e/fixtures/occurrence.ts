@@ -30,9 +30,10 @@ class OccurrenceFactory {
 	}
 
 	async newMedia(occId: number): Promise<number>{
+		const testUrl = '/ci_media/url.jpg';
 		return this.getNewBlank(
-			"INSERT INTO media(occid) VALUES (?)",
-			[ occId ]
+			"INSERT INTO media(occid, originalUrl, url, thumbnailUrl) VALUES (?, ?, ?, ?)",
+			[ occId, testUrl, testUrl, testUrl]
 		);
 	}
 
