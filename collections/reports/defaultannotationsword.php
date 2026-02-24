@@ -113,20 +113,27 @@ foreach($labelArr as $occid => $occArr){
 
     	$boxCell = $outer->addCell($cellLength);
 		$table = $boxCell->addTable('labelInner');
-		if($headerStr){
-            $table->addRow();
-            $cell = $table->addCell($cellLength,$cellStyle);
-			$textrun = $cell->addTextRun('header');
-			$currentTxt = htmlspecialchars($headerStr);
-			$textrun->addText($currentTxt, 'headerfooterFont');
-		}
-        $table->addRow();
+		$table->addRow();
 		if($occArr['family']){
+			if($headerStr){
+				$headerCell = $table->addCell($cellLength, ['gridSpan' => 2]);
+				$table->addRow();
+			}
 			$leftCell = $table->addCell(0.55 * $cellLength, $cellStyle);
 			$rightCell = $table->addCell(0.45 * $cellLength, $cellStyle);
 		}else{
 			$leftCell = $table->addCell($cellLength, $cellStyle);
 			$rightCell = null;
+		}
+
+		if($headerStr){
+			if($occArr['family']){
+				$textrun = $headerCell->addTextRun('header');
+			}else {
+				$textrun = $leftCell->addTextRun('header');
+			}
+			$currentTxt = htmlspecialchars($headerStr);
+			$textrun->addText($currentTxt, 'headerfooterFont');
 		}
 
 		$textrun = $leftCell->addTextRun('scientificname');
