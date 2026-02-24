@@ -46,11 +46,13 @@ export abstract class OccurrenceEditorPage {
 	abstract getSkeletalOccid(): Promise<number>;
 	abstract getSkeletalImageOccid(): Promise<number>;
 
+
 	abstract swapToMediaEnterUrl(): Promise<void>;
 
 	abstract setGotoRecord(): Promise<void>;
 
 	abstract checkRecordSuccess(): Promise<void>;
+	abstract deleteOccurrence(): Promise<void>;
 }
 
 export class SymbOccurrenceEditorPage extends OccurrenceEditorPage {
@@ -100,6 +102,13 @@ export class SymbOccurrenceEditorPage extends OccurrenceEditorPage {
 
 	async checkRecordSuccess() {
 		await expect(this.page.getByText('Public Display')).toBeVisible();
+	}
+
+	async deleteOccurrence() {
+		await this.gotoTab(OccurrenceEditorTab.Admin);
+		await this.page.locator('button[name=verifydelete]').click();
+		this.page.on('dialog', dialog => dialog.accept());
+		await this.page.locator('button[value="Delete Occurrence"]').click();
 	}
 }
 
