@@ -39,7 +39,7 @@ $phpWord->addParagraphStyle('firstLine', array('lineHeight'=>.1,'spaceAfter'=>0,
 $phpWord->addParagraphStyle('lastLine', array('spaceAfter'=>50,'lineHeight'=>.1));
 $phpWord->addFontStyle('dividerFont', array('size'=>1));
 $phpWord->addParagraphStyle('header', array('align'=>'center','lineHeight'=>1.0,'spaceAfter'=>40,'keepNext'=>true,'keepLines'=>true));
-$phpWord->addParagraphStyle('footer', array('align'=>'center','lineHeight'=>1.0,'spaceBefore'=>0,'spaceAfter'=>0,'keepNext'=>true,'keepLines'=>true));
+$phpWord->addParagraphStyle('footer', array('align'=>'center','lineHeight'=>1.0,'spaceBefore'=>40,'spaceAfter'=>0,'keepNext'=>true,'keepLines'=>true));
 $phpWord->addFontStyle('headerfooterFont', array('bold'=>true,'size'=>9,'name'=>'Arial'));
 $phpWord->addParagraphStyle('other', array('align'=>'left','lineHeight'=>1.0,'spaceBefore'=>30,'spaceAfter'=>0,'keepNext'=>true,'keepLines'=>true));
 $phpWord->addParagraphStyle('scientificname', array('align'=>'left','lineHeight'=>1.0,'spaceAfter'=>0,'keepNext'=>true,'keepLines'=>true));
@@ -201,11 +201,13 @@ foreach($labelArr as $occid => $occArr){
 			$textrun->addText($currentTxt, 'identifiedFont');
 		}
 		if($footerStr){
-			$table->addRow();
-			// $footerCell = $table->addCell($cellLength, ['gridSpan' => 2]);
-			$footerCell = $table->addCell($cellLength, $cellStyle);
-			$textrun = $footerCell->addTextRun('footer');
-			// $textrun = $footerCell->addTextRun('other');
+			if($occArr['family']){
+				$table->addRow();
+				$footerCell = $table->addCell($cellLength, ['gridSpan' => 2]);
+				$textrun = $footerCell->addTextRun('footer');
+			}else {
+				$textrun = $leftCell->addTextRun('footer');
+			}
 			$currentTxt = htmlspecialchars($footerStr);
 			$textrun->addText($currentTxt, 'headerfooterFont');
 		}
