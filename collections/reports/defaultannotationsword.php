@@ -121,8 +121,13 @@ foreach($labelArr as $occid => $occArr){
 			$textrun->addText($currentTxt, 'headerfooterFont');
 		}
         $table->addRow();
-        $leftCell = $table->addCell(0.55 * $cellLength, $cellStyle);
-		$rightCell = $table->addCell(0.45 * $cellLength, $cellStyle);
+		if($occArr['family']){
+			$leftCell = $table->addCell(0.55 * $cellLength, $cellStyle);
+			$rightCell = $table->addCell(0.45 * $cellLength, $cellStyle);
+		}else{
+			$leftCell = $table->addCell($cellLength, $cellStyle);
+			$rightCell = null;
+		}
 
 		$textrun = $leftCell->addTextRun('scientificname');
 		if($occArr['identificationqualifier']){
@@ -142,42 +147,56 @@ foreach($labelArr as $occid => $occArr){
 			$textrun->addText($currentTxt, 'scientificnameFont');
 		}
 		$scientificnameauthorshipStr = $occArr['scientificnameauthorship'] . ' ';
-		$familyRun = $rightCell->addTextRun('noSpacing');
+		// $familyRun = $rightCell->addTextRun('noSpacing');
 		if($occArr['family']){
+			$familyRun = $rightCell->addTextRun('noSpacing');
 			$currentTxt = strtoupper(htmlspecialchars($occArr['family']));
 			$familyRun->addText($currentTxt, 'scientificnameauthFont');
 		}else{
-			$familyRun->addText('', 'scientificnameauthFont');
+			// $familyRun->addText('', 'scientificnameauthFont');
 		}
 		$currentTxt = htmlspecialchars($scientificnameauthorshipStr);
 		$textrun->addText($currentTxt, 'scientificnameauthFont');
 		if($occArr['identifiedby'] || $occArr['dateidentified']){
 			if($occArr['identifiedby']){
 				$identByStr = $occArr['identifiedby'];
-				if($occArr['dateidentified']){
-					$textrun2 = $rightCell->addTextRun(['alignment' => 'right']);
-					$textrun2->addText($occArr['dateidentified'], 'identifiedFont');
-				}
 				$currentTxt = 'Det: ' . htmlspecialchars($identByStr);
 				$textrun = $leftCell->addTextRun('scientificname');
 				$textrun->addText($currentTxt, 'identifiedFont');
+				// if($occArr['dateidentified']){
+				// 	if($occArr['family']){
+				// 		$textrun2 = $rightCell->addTextRun(['alignment' => 'right']);
+				// 		$textrun2->addText($occArr['dateidentified'], 'identifiedFont');
+				// 	}else{
+				// 		$textrun->addText(' ' . $occArr['dateidentified'], 'identifiedFont');
+				// 	}
+				// }
+				// $currentTxt = 'Det: ' . htmlspecialchars($identByStr);
+				// $textrun = $leftCell->addTextRun('scientificname');
+				// $textrun->addText($currentTxt, 'identifiedFont');
+			}
+			if($occArr['family']){
+				$textrun2 = $rightCell->addTextRun(['alignment' => 'right']);
+				$textrun2->addText($occArr['dateidentified'], 'identifiedFont');
+			}else{
+				$textrun->addText(' ' . $occArr['dateidentified'], 'identifiedFont');
 			}
 		}
 		if(array_key_exists('printcatnum',$_POST) && $_POST['printcatnum'] && $occArr['catalognumber']){
 			$textrun = $leftCell->addTextRun('other');
-            $textrunRt = $rightCell->addTextRun('other');
+            // $textrunRt = $rightCell->addTextRun('other');
 			$currentTxt = 'Catalog #: ' . htmlspecialchars($occArr['catalognumber']).' ';
 			$textrun->addText($currentTxt, 'identifiedFont');
 		}
 		if($occArr['identificationremarks']){
 			$textrun = $leftCell->addTextRun('other');
-            $textrunRt = $rightCell->addTextRun('other');
+            // $textrunRt = $rightCell->addTextRun('other');
 			$currentTxt = htmlspecialchars($occArr['identificationremarks']).' ';
 			$textrun->addText($currentTxt, 'identifiedFont');
 		}
 		if($occArr['identificationreferences']){
 			$textrun = $leftCell->addTextRun('other');
-            $textrunRt = $rightCell->addTextRun('other');
+            // $textrunRt = $rightCell->addTextRun('other');
 			$currentTxt = htmlspecialchars($occArr['identificationreferences']).' ';
 			$textrun->addText($currentTxt, 'identifiedFont');
 		}
