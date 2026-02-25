@@ -1517,6 +1517,8 @@ class DwcArchiverCore extends Manager{
 		$dwcOccurManager->setServerDomain($this->serverDomain);
 		$this->applyConditions();
 		if (!$this->conditionSql) return false;
+		if (strpos($this->conditionSql, "early.myaStart"))
+			$this->includePaleo = true;
 		if($this->primeStagingTables()){
 			$dwcOccurManager->setIncludePaleo($this->includePaleo);
 			if (!$this->occurrenceFieldArr) $this->occurrenceFieldArr = $dwcOccurManager->getOccurrenceArr();
@@ -1764,8 +1766,10 @@ class DwcArchiverCore extends Manager{
 
 	private function insertExportOccurrenceRecords(){
 		$status = false;
-		$sql = 'INSERT IGNORE INTO omexportoccurrences(omExportID, occid, collid, taxonID, recordSecurity)
-			SELECT ' . $this->exportID . ' AS omExportID, o.occid, o.collid, o.tidInterpreted, o.recordSecurity FROM omoccurrences o ';
+		$sql = 'INSERT IGNORE INTO omexportoccurrences(omExportID, occid, collid, taxonID, recordSecurity) ';
+		if (strpos($this->conditionSql,"early.myaStart"))
+			$sql .= $this->paleoWithSql;
+		$sql .= 'SELECT ' . $this->exportID . ' AS omExportID, o.occid, o.collid, o.tidInterpreted, o.recordSecurity FROM omoccurrences o ';
 		$sql .= $this->getTableJoins() . $this->conditionSql;
 		if($stmt = $this->conn->prepare($sql)){
 			try{
