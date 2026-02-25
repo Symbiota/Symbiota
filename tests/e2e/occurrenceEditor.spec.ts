@@ -1,7 +1,5 @@
-import { expect, mergeTests, request } from '@playwright/test';
+import { expect, mergeTests } from '@playwright/test';
 import { test as testWithAdmin } from './fixtures/adminLogin';
-//import { test as testCollection } from './fixtures/collection';
-import { test as testOccurrence } from './fixtures/occurrence';
 import { OccurrenceEditorPage , OccurrenceEditorTab, test as testOccurrenceEditor } from './pages/OccurrenceEditorPage'
 import path from 'node:path';
 
