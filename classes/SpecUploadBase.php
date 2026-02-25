@@ -1084,9 +1084,9 @@ class SpecUploadBase extends SpecUpload{
 				$rs = $this->conn->query($sql);
 				while($r = $rs->fetch_assoc()){
 					foreach($this->paleoTargetFieldArr as $field){
-						if($r['paleo_'.$field] != $r['old_'.$field]){
-							$this->insertOccurEdit($r['occid'],$field,$r['paleo_'.$field],$r['old_'.$field]
-							);
+						if ($r['paleo_'.$field] != $r['old_'.$field]) {
+							$prefixedField = (strpos($field, 'omoccurpaleo:') === 0) ? $field : 'omoccurpaleo:' . $field;
+							$this->insertOccurEdit($r['occid'], $prefixedField, $r['paleo_'.$field], $r['old_'.$field]);
 						}
 					}
 				}
@@ -1250,16 +1250,22 @@ class SpecUploadBase extends SpecUpload{
 				$paleoArr = [];
 				foreach ($paleoFields as $field) {
 					$dbField = 'paleo_' . $field;
-					if (isset($r->$dbField) && $r->$dbField !== '') {
+				if ($this->uploadType == $this->FILEUPLOAD) {
+					$paleoArr[$field] = $r->$dbField;
+				} else {
+					if (isset($r->$dbField) && $r->$dbField !== '')
 						$paleoArr[$field] = $r->$dbField;
-					}
+				}
 				}
 				if (!empty($paleoArr)) {
 					$insertSQL = '';
 					$valueSQL = '';
 					foreach ($paleoArr as $k => $v) {
 						$insertSQL .= ',' . $k;
-						$valueSQL .= ',"' . $this->cleanInStr($v) . '"';
+						    if ($v === null)
+								$valueSQL .= ',NULL';
+							else
+								$valueSQL .= ',"' . $this->cleanInStr($v) . '"';
 					}
 					$updateSQL = [];
 					foreach ($paleoArr as $k => $v) {

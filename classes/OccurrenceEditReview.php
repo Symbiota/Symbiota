@@ -352,7 +352,7 @@ class OccurrenceEditReview extends Manager{
 		$status = true;
 		$sql = 'UPDATE omoccurpaleo SET '.$fieldName.' = NULL WHERE (occid = '.$occid.')';
 		if($value) $sql = 'UPDATE omoccurpaleo SET '.$fieldName.' = '.($value !== ''?'"'.$this->cleanInStr($value).'"':'NULL').' WHERE (occid = '.$occid.')';
-		echo '<div>'.$sql.'</div>';
+		//echo '<div>'.$sql.'</div>';
 		if(!$this->conn->query($sql)){
 			$warningKey = 'ERROR_REVERTING_PALEO';
 			if($applyTask == 'apply') $warningKey = 'ERROR_APPLYING_PALEO';

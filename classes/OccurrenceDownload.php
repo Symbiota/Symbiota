@@ -505,6 +505,10 @@ class OccurrenceDownload{
 			}
 			$sql .= 'FROM omcollections c INNER JOIN omoccurrences o ON c.collid = o.collid LEFT JOIN taxa t ON o.tidinterpreted = t.tid LEFT JOIN taxstatus ts ON t.tid = ts.tid ';
 			$sql .= $this->setTableJoins($this->sqlWhere);
+			if ($this->sqlWhere && strpos($this->sqlWhere,'early.myaStart')){
+				$sql = "COALESCE((SELECT myaEnd FROM omoccurpaleogts WHERE gtsterm = '" . ($this->searchTermArr["lateInterval"] ?? '') ."'), 0) AS searchEnd) " . $sql;
+				$sql = "WITH searchRange AS (SELECT COALESCE((SELECT myaStart FROM omoccurpaleogts WHERE gtsterm = '"  . ($this->searchTermArr["earlyInterval"] ?? '') . "'), 5000) AS searchStart, " . $sql;
+			}
 			$this->applyConditions();
 			if($this->sqlWhere){
 				$sql .= $this->sqlWhere;
@@ -537,6 +541,12 @@ class OccurrenceDownload{
 			if(strpos($sqlWhere,'ctl.clid')) $sqlJoin .= 'INNER JOIN fmvouchers v ON o.occid = v.occid INNER JOIN fmchklsttaxalink ctl ON v.clTaxaID = ctl.clTaxaID ';
 			if(strpos($sqlWhere,'p.lngLatPoint')) $sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
 			if (strpos($sqlWhere, 'ds.datasetid')) $sqlJoin .= 'INNER JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
+			if (strpos($sqlWhere, 'paleo.') || strpos($sqlWhere, 'early.myaStart')) $sqlJoin .= 'INNER JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
+			if(strpos($sqlWhere, 'early.myaStart')){
+				$sqlJoin .= 'JOIN omoccurpaleogts early ON paleo.earlyInterval = early.gtsterm ';
+				$sqlJoin .= 'JOIN omoccurpaleogts late ON paleo.lateInterval = late.gtsterm ';
+				$sqlJoin .= 'CROSS JOIN searchRange search ';
+			}
 		}
 		return $sqlJoin;
 	}
