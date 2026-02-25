@@ -1250,12 +1250,12 @@ class SpecUploadBase extends SpecUpload{
 				$paleoArr = [];
 				foreach ($paleoFields as $field) {
 					$dbField = 'paleo_' . $field;
-				if ($this->uploadType == $this->FILEUPLOAD) {
-					$paleoArr[$field] = $r->$dbField;
-				} else {
-					if (isset($r->$dbField) && $r->$dbField !== '')
+					if ($this->uploadType == $this->FILEUPLOAD) {
 						$paleoArr[$field] = $r->$dbField;
-				}
+					} else {
+						if (isset($r->$dbField) && $r->$dbField !== '')
+							$paleoArr[$field] = $r->$dbField;
+					}
 				}
 				if (!empty($paleoArr)) {
 					$insertSQL = '';
