@@ -99,16 +99,16 @@ class OccurrenceController extends Controller {
 	 *		 @OA\Schema(type="string")
 	 *	 ),
 	 *	 @OA\Parameter(
-	 *		 name="eventDateMinimun",
+	 *		 name="eventDateMin",
 	 *		 in="query",
-	 *		 description="Date (YYYY-MM-DD) that the occurrence was collected or observed, or earliest date if a range was provided",
+	 *		 description="Date (YYYY-MM-DD) when occurrence was collected or observed, or earliest date if eventDateMax is supplied to produce a range",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
 	 *	 @OA\Parameter(
-	 *		 name="eventDateMaximum",
+	 *		 name="eventDateMax",
 	 *		 in="query",
-	 *		 description="Last date (YYYY-MM-DD) that the occurrence was collected or observed. Used when a date range is provided",
+	 *		 description="Last date (YYYY-MM-DD) range that the occurrence was collected or observed.",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
@@ -134,56 +134,56 @@ class OccurrenceController extends Controller {
 	 *		 @OA\Schema(type="string")
 	 *	 ),
 	 *	 @OA\Parameter(
-	 *		 name="decimalLatitudeMinimum",
+	 *		 name="decimalLatitudeMin",
 	 *		 in="query",
 	 *		 description="Minimum latitude as a decimal (e.g lower limit of bounding box)",
 	 *		 required=false,
 	 *		 @OA\Schema(type="number")
 	 *	 ),
 	 *	 @OA\Parameter(
-	 *		 name="decimalLatitudeMaximum",
+	 *		 name="decimalLatitudeMax",
 	 *		 in="query",
 	 *		 description="Maximum latitude as a decimal (e.g upper limit of bounding box)",
 	 *		 required=false,
 	 *		 @OA\Schema(type="number")
 	 *	 ),
 	 *	 @OA\Parameter(
-	 *		 name="decimalLongitudeMinimum",
+	 *		 name="decimalLongitudeMin",
 	 *		 in="query",
 	 *		 description="Minimum longitude as a decimal (e.g lower limit of bounding box)",
 	 *		 required=false,
 	 *		 @OA\Schema(type="number")
 	 *	 ),
 	 *	 @OA\Parameter(
-	 *		 name="decimalLongitudeMaximum",
+	 *		 name="decimalLongitudeMax",
 	 *		 in="query",
 	 *		 description="Maximum longitude as a decimal (e.g upper limit of bounding box)",
 	 *		 required=false,
 	 *		 @OA\Schema(type="number")
 	 *	 ),
 	 *	 @OA\Parameter(
-	 *		 name="elevationMinimum",
+	 *		 name="elevationMin",
 	 *		 in="query",
 	 *		 description="Minimum elevation in meters to nearest integer",
 	 *		 required=false,
 	 *		 @OA\Schema(type="integer")
 	 *	 ),
 	 *	 @OA\Parameter(
-	 *		 name="elevationMaximum",
+	 *		 name="elevationMax",
 	 *		 in="query",
 	 *		 description="Maximum elevation in meters to nearest integer",
 	 *		 required=false,
 	 *		 @OA\Schema(type="integer")
 	 *	 ),
 	 *	 @OA\Parameter(
-	 *		 name="depthMinimum",
+	 *		 name="depthMin",
 	 *		 in="query",
 	 *		 description="Minimum depth in meters to nearest integer",
 	 *		 required=false,
 	 *		 @OA\Schema(type="integer")
 	 *	 ),
 	 *	 @OA\Parameter(
-	 *		 name="depthMaximum",
+	 *		 name="depthMax",
 	 *		 in="query",
 	 *		 description="Maximum depth in meters to nearest integer",
 	 *		 required=false,
@@ -193,6 +193,20 @@ class OccurrenceController extends Controller {
 	 *		 name="datasetID",
 	 *		 in="query",
 	 *		 description="dataset ID within portal",
+	 *		 required=false,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="dateLastModifiedMin",
+	 *		 in="query",
+	 *		 description="Single date that the occurrence was last modified, or minimum date when dateLastModifiedMax supplied to obtain a range (YYYY-MM-DD)",
+	 *		 required=false,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="dateLastModifiedMax",
+	 *		 in="query",
+	 *		 description="Maximum date range that the occurrence was last modified (YYYY-MM-DD) ",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
@@ -225,17 +239,19 @@ class OccurrenceController extends Controller {
 		$this->validate($request, [
 			'collid' => 'integer',
 			'tid' => 'integer',
-			'eventDateMinimum' => 'date_format:Y-m-d',
-			'eventDateMaximum' => 'date_format:Y-m-d',
-			'decimalLatitudeMinimum' => ['numeric', 'between:-90,90'],
-			'decimalLatitudeMaximum' => ['numeric', 'between:-90,90'],
-			'decimalLongitudeMinimum' => ['numeric', 'between:-180,180'],
-			'decimalLongitudeMaximum' => ['numeric', 'between:-180,180'],
-			'minimumElevationInMeters' => ['integer', 'between:0,8000'],
-			'maximumElevationInMeters' => ['integer', 'between:0,8000'],
-			'minimumDepthInMeters' => ['integer', 'between:0,12000'],
-			'maximumDepthInMeters' => ['integer', 'between:0,12000'],
 			'parentTid' => 'integer',
+			'eventDateMin' => 'date_format:Y-m-d',
+			'eventDateMax' => 'date_format:Y-m-d',
+			'decimalLatitudeMin' => ['numeric', 'between:-90,90'],
+			'decimalLatitudeMax' => ['numeric', 'between:-90,90'],
+			'decimalLongitudeMin' => ['numeric', 'between:-180,180'],
+			'decimalLongitudeMax' => ['numeric', 'between:-180,180'],
+			'elevationMin' => ['integer', 'between:0,8000'],
+			'elevationMax' => ['integer', 'between:0,8000'],
+			'depthMin' => ['integer', 'between:0,12000'],
+			'depthMax' => ['integer', 'between:0,12000'],
+			'dateLastModifiedMin' => 'date_format:Y-m-d',
+			'dateLastModifiedMax' => 'date_format:Y-m-d',
 			'limit' => ['integer', 'max:300'],
 			'offset' => 'integer'
 		]);
@@ -292,16 +308,16 @@ class OccurrenceController extends Controller {
 		if ($request->has('recordNumber')) {
 			$occurrenceModel->where('recordNumber', $request->recordNumber);
 		}
-		if ($request->has('eventDateMinimum')) {
-			if ($request->has('eventDateMaximum')){
-				$occurrenceModel->where('eventDate', '>', $request->eventDateMaximum);
+		if ($request->has('eventDateMin')) {
+			if ($request->has('eventDateMax')){
+				$occurrenceModel->where('eventDate', '>=', $request->eventDateMin);
 			}
 			else{
-				$occurrenceModel->where('eventDate', $request->eventDateMaximum);
+				$occurrenceModel->where('eventDate', $request->eventDateMin);
 			}
 		}
-		if ($request->has('eventDateMaximum')) {
-			$occurrenceModel->where('eventDate', '<', $request->eventDateMaximum);
+		if ($request->has('eventDateMax')) {
+			$occurrenceModel->where('eventDate', '<=', $request->eventDateMax);
 		}
 		//Locality place names
 		if($request->has('country')){
@@ -323,45 +339,56 @@ class OccurrenceController extends Controller {
 		if($request->has('county')){
 			$occurrenceModel->where('county', 'LIKE', $request->county . '%');
 		}
-		if ($request->has('decimalLatitudeMinimum')) {
-			$occurrenceModel->where('decimalLatitude', '>', $request->decimalLatitudeMinimum);
+		if ($request->has('decimalLatitudeMin')) {
+			$occurrenceModel->where('decimalLatitude', '>', $request->decimalLatitudeMin);
 		}
-		if ($request->has('decimalLatitudeMaximum')) {
-			$occurrenceModel->where('decimalLatitude', '<', $request->decimalLatitudeMaximum);
+		if ($request->has('decimalLatitudeMax')) {
+			$occurrenceModel->where('decimalLatitude', '<', $request->decimalLatitudeMax);
 		}
-		if ($request->has('decimalLongitudeMinimum')) {
-			$occurrenceModel->where('decimalLongitude', '>', $request->decimalLongitudeMinimum);
+		if ($request->has('decimalLongitudeMin')) {
+			$occurrenceModel->where('decimalLongitude', '>', $request->decimalLongitudeMin);
 		}
-		if ($request->has('decimalLongitudeMaximum')) {
-			$occurrenceModel->where('decimalLongitude', '<', $request->decimalLongitudeMaximum);
+		if ($request->has('decimalLongitudeMax')) {
+			$occurrenceModel->where('decimalLongitude', '<', $request->decimalLongitudeMax);
 		}
-		if ($request->has('elevationMinimum')) {
-			if($request->has('elevationMaximum')){
-				$occurrenceModel->where('minimumElevationInMeters', '>', $request->elevationMinimum);
+		if ($request->has('elevationMin')) {
+			if($request->has('elevationMax')){
+				$occurrenceModel->where('minimumElevationInMeters', '>', $request->elevationMin);
 			}
 			else{
-				$occurrenceModel->where('minimumElevationInMeters', $request->elevationMinimum);
+				$occurrenceModel->where('minimumElevationInMeters', $request->elevationMin);
 			}
 		}
-		if ($request->has('elevationMaximum')) {
-			$occurrenceModel->whereRaw('IFNULL(maximumElevationInMeters,minimumElevationInMeters) < ?', $request->elevationMaximum);
+		if ($request->has('elevationMax')) {
+			$occurrenceModel->whereRaw('IFNULL(maximumElevationInMeters,minimumElevationInMeters) <= ?', $request->elevationMax);
 		}
-		if ($request->has('depthMinimum')) {
-			if($request->has('depthMaximum')){
-				$occurrenceModel->where('minimumDepthInMeters', '>', $request->depthMinimum);
+		if ($request->has('depthMin')) {
+			if($request->has('depthMax')){
+				$occurrenceModel->where('minimumDepthInMeters', '>=', $request->depthMin);
 			}
 			else{
-				$occurrenceModel->where('minimumDepthInMeters', $request->depthMinimum);
+				$occurrenceModel->where('minimumDepthInMeters', $request->depthMin);
 			}
 		}
-		if ($request->has('depthMaximum')) {
-			$occurrenceModel->whereRaw('IFNULL(maximumDepthInMeters,minimumDepthInMeters)< ?', $request->depthMaximum);
+		if ($request->has('depthMax')) {
+			$occurrenceModel->whereRaw('IFNULL(maximumDepthInMeters,minimumDepthInMeters) < ?', $request->depthMax);
 		}
 		if ($request->has('datasetID')) {
 			$datasetID = $request->datasetID;
 			$occurrenceModel->whereHas('dataset', function ($query) use ($datasetID) {
 				$query->where('omoccurdatasetlink.datasetID', $datasetID);
 			});
+		}
+		if ($request->has('dateLastModifiedMin')) {
+			if ($request->has('dateLastModifiedMax')){
+				$occurrenceModel->where('dateLastModified', '>', $request->dateLastModifiedMin);
+			}
+			else{
+				$occurrenceModel->whereRaw('dateLastModified > "' . $request->dateLastModifiedMin . '" AND dateLastModified < "' . $request->dateLastModifiedMin . '" + INTERVAL 1 DAY');
+			}
+		}
+		if ($request->has('dateLastModifiedMax')) {
+			$occurrenceModel->whereRaw('dateLastModified < "' . $request->dateLastModifiedMax . '" + INTERVAL 1 DAY');
 		}
 
 		$fullCnt = $occurrenceModel->count();
