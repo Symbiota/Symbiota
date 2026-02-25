@@ -195,6 +195,9 @@ class UtilitiesFileImport extends Manager {
 				$recordArr = explode($this->delimiter, $record);
 				foreach($recordArr as $k => $v) $recordArr[$k] = trim($v);
 			}
+			else{
+				$recordArr = false;
+			}
 		}
 		return $recordArr;
 	}

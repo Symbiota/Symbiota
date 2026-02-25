@@ -1,10 +1,11 @@
 <?php
 include_once($SERVER_ROOT . "/classes/Database.php");
 
-/*This is 
+/*This is
  * This is a static class used to make santizing variables "in" to the databse and "out" to the client webpage easy to use, compact, and secure
  */
 class Sanitize {
+
 	public static function out(Mixed $val): Mixed {
 		if(is_array($val)) {
 			return array_map(fn ($v) => self::out($v), $val);
@@ -16,7 +17,7 @@ class Sanitize {
 		} else if(is_bool($val) || is_string($val)) {
 			return htmlspecialchars($val, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 		} else {
-		  return null;
+			return null;
 		}
 	}
 
@@ -34,7 +35,7 @@ class Sanitize {
 			if(!$str) return null;
 
 			return mysqli_real_escape_string(
-				Database::connect('readonly'), 
+				Database::connect('readonly'),
 				preg_replace('/\s\s+/', ' ', $str)
 			);
 		} else if(is_bool($val)) {
@@ -42,6 +43,29 @@ class Sanitize {
 		} else {
 			return null;
 		}
+	}
+
+	public static function int(Mixed $val): int|string{
+		if(!$val) return '';
+		return filter_var($val, FILTER_SANITIZE_NUMBER_INT);
+	}
+
+	public static function float(Mixed $val): float {
+		if(is_numeric($val)) return $val;
+	}
+
+	public static function inString(Mixed $val): string|null {
+		if($val === null) return null;
+		$str = trim(preg_replace('/\s\s+/', ' ', $val));
+		return mysqli_real_escape_string(
+			Database::connect('readonly'),
+			preg_replace('/\s\s+/', ' ', $str)
+		);
+	}
+
+	public static function outString(Mixed $val): string {
+		if(!is_string($val) && !is_numeric($val) && !is_bool($val)) return '';
+		return htmlspecialchars($val, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 	}
 }
 ?>
