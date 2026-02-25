@@ -24,6 +24,20 @@ class ExsiccataController extends Controller {
 	 *	 operationId="/api/v2/exsiccata",
 	 *	 tags={"Exsiccata"},
 	 *	 @OA\Parameter(
+	 *		 name="title",
+	 *		 in="query",
+	 *		 description="Term within exsiccata title",
+	 *		 required=false,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="sourceIdentifier",
+	 *		 in="query",
+	 *		 description="Identifier associated with data source of the exsiccata title record",
+	 *		 required=false,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
 	 *		 name="limit",
 	 *		 in="query",
 	 *		 description="Controls the number of results in the page.",
@@ -56,8 +70,21 @@ class ExsiccataController extends Controller {
 		$limit = $request->input('limit', 100);
 		$offset = $request->input('offset', 0);
 
-		$fullCnt = Exsiccata::count();
-		$result = Exsiccata::skip($offset)->take($limit)->get();
+		$exsiccataQuery = Exsiccata::query();
+
+		if ($request->has('title')) {
+			$exsiccataQuery->where('title', 'LIKE', '%' . $request->title . '%');
+		}
+		if ($request->has('sourceIdentifier')) {
+			$sourceIdentifier = $request->sourceIdentifier;
+			$exsiccataQuery->where(function ($query) use ($sourceIdentifier) {
+				$query->where('sourceIdentifier', $sourceIdentifier)
+					->orWhere('sourceIdentifier', 'LIKE', '%=' . $sourceIdentifier);
+			});
+		}
+
+		$fullCnt = $exsiccataQuery->count();
+		$result = $exsiccataQuery->skip($offset)->take($limit)->get();
 
 		$eor = false;
 		$retObj = [
@@ -79,7 +106,7 @@ class ExsiccataController extends Controller {
 	 *		 name="identifier",
 	 *		 in="path",
 	 *		 required=true,
-	 *		 description="Exsiccata ID or record ID",
+	 *		 description="Exsiccata title identifier (ometid) or recordID GUID",
 	 *		 @OA\Schema(type="string")
 	 *	 ),
 	 *	 @OA\Response(
@@ -98,11 +125,15 @@ class ExsiccataController extends Controller {
 	 * )
 	 */
 	public function showOneExsiccata($identifier) {
-		$record = Exsiccata::where('ometid', $identifier)
-			->orWhere('recordID', $identifier)
-			->first();
+		$record = null;
+		if (is_numeric($identifier)){
+			$record = Exsiccata::find($identifier);
+		}
+		else {
+			$record = Exsiccata::where('recordID', $identifier)->first();
+		}
 		if (!$record) {
-			return response()->json(['error' => 'Record not found'], 404);
+			return response()->json(['status' => false, 'error' => 'Record not found'], 404);
 		}
 
 		return response()->json($record);
@@ -116,7 +147,7 @@ class ExsiccataController extends Controller {
 	 *	 @OA\Parameter(
 	 *		 name="identifier",
 	 *		 in="path",
-	 *		 description="Identifier (ometid (PK) - currently does not accommodate recordID) associated with target exsiccata title",
+	 *		 description="Exsiccata title identifier (ometid) or recordID GUID associated with target exsiccata title",
 	 *		 required=true,
 	 *		 @OA\Schema(type="integer")
 	 *	 ),
@@ -124,6 +155,13 @@ class ExsiccataController extends Controller {
 	 *		 name="exsiccataNumber",
 	 *		 in="query",
 	 *		 description="Verbatim exsiccata number",
+	 *		 required=false,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="exsiccataNumberMax",
+	 *		 in="query",
+	 *		 description="The upper range of an exsiccata number. If exsiccataNumber is also supplied, output will be the range between the two numbers.",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
@@ -164,29 +202,32 @@ class ExsiccataController extends Controller {
 		$limit = $request->input('limit', 100);
 		$offset = $request->input('offset', 0);
 
-		$exsiccataQuery = Exsiccata::query();
-
-		$exsiccataQuery->where('ometid', $identifier);
-		if($request->has('exsiccataNumber')){
-			$exsiccataQuery->where('exsNumber', $request->exsiccataNumber);
+		$titleRecord = null;
+		if (is_numeric($identifier)){
+			$titleRecord = Exsiccata::find($identifier);
 		}
-		// @TODO When recordID is added replace the ->where() statement above with this logic block
-		// if(is_numeric($identifier)){
-		//	 $exsiccataQuery->where('ometid', $identifier);
-		// } else{
-		//	 $exsiccataQuery->where('recordID', $identifier);
-		// }
-		$exsiccata = $exsiccataQuery->first();
-
-
-		if (!$exsiccata) {
+		else {
+			$titleRecord = Exsiccata::where('recordID', $identifier)->first();
+		}
+		if (!$titleRecord) {
 			return response()->json(["status" => false, "error" => "Unable to locate exsiccata based on identifier"], 404);
 		}
 
-		$numberQuery = ExsiccataNumber::where('ometid', $exsiccata->ometid)->select('omenid', 'exsnumber', 'notes', 'initialtimestamp')->skip($offset)->take($limit);
+		$numberQuery = ExsiccataNumber::where('ometid', $titleRecord->ometid);
+		if($request->has('exsiccataNumber')){
+			if($request->has('exsiccataNumberMax')){
+				$numberQuery->whereRaw('exsNumber > ' . $request->exsiccataNumber);
+			}
+			else{
+				$numberQuery->where('exsNumber', $request->exsiccataNumber);
+			}
+		}
+		if($request->has('exsiccataNumberMax')){
+			$numberQuery->whereRaw('exsNumber < ' . $request->exsiccataNumberMax);
+		}
 
 		$fullCnt = $numberQuery->count();
-		$result = $numberQuery->get();
+		$result = $numberQuery->orderByRaw('exsnumber + 0')->skip($offset)->take($limit)->get();
 
 		$retObj = [
 			'offset' => (int)$offset,
@@ -206,19 +247,19 @@ class ExsiccataController extends Controller {
 	 *		 name="identifier",
 	 *		 in="path",
 	 *		 required=true,
-	 *		 description="Exsiccata ID or record ID",
+	 *		 description="Exsiccata title identifier (ometid) or recordID GUID",
 	 *		 @OA\Schema(type="string")
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="numberIdentifier",
 	 *		 in="path",
 	 *		 required=true,
-	 *		 description="Exsiccata number ID (omenid)",
+	 *		 description="Exsiccata number identifier (omenid)",
 	 *		 @OA\Schema(type="integer")
 	 *	 ),
 	 *	 @OA\Response(
 	 *		 response="200",
-	 *		 description="Returns list of occurrences associated with the given exsiccata number",
+	 *		 description="Returns single exsiccata number along with list of associated occurrences",
 	 *		 @OA\JsonContent()
 	 *	 ),
 	 *	 @OA\Response(
@@ -232,19 +273,22 @@ class ExsiccataController extends Controller {
 	 * )
 	 */
 	public function showOccurrencesByExsiccataNumber($identifier, $numberIdentifier){
+		//Check to make sure that title exists, and report otherwise
+		//Not really needed becauses omenid are unique, but adding as a second check
+		$titleRecord = null;
+		if (is_numeric($identifier)){
+			$titleRecord = Exsiccata::find($identifier);
+		}
+		else {
+			$titleRecord = Exsiccata::where('recordID', $identifier)->first();
+		}
+		if (!$titleRecord) {
+			return response()->json(["status" => false, "error" => "Unable to locate exsiccata based on identifier"], 404);
+		}
 
-		$occurrenceQuery = DB::table('omexsiccatiocclink as l')
-			->join('omexsiccatinumbers as n', 'l.omenid', '=', 'n.omenid')
-			->select('l.occid', 'l.ranking', 'l.notes');
-		if (is_numeric($identifier)) {
-			//Not really needed becauses omenid are unique, but adding as a second check
-			$occurrenceQuery->where('n.ometid', $identifier);
-		}
-		if (is_numeric($numberIdentifier)) {
-			$occurrenceQuery->where('n.omenid', $numberIdentifier);
-		} else {
-			$occurrenceQuery->where('n.recordID', $numberIdentifier);
-		}
+		//Get list of occurrence associated with exsiccata number
+		$occurrenceQuery = ExsiccataNumber::where('ometid', $titleRecord->ometid)->where('omenid', $numberIdentifier);
+		$occurrenceQuery->with('occurrences');
 		$results = $occurrenceQuery->get();
 
 		if ($results->isEmpty()) {

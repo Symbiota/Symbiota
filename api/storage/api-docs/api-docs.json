@@ -264,6 +264,24 @@
                 "operationId": "/api/v2/exsiccata",
                 "parameters": [
                     {
+                        "name": "title",
+                        "in": "query",
+                        "description": "Term within exsiccata title",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sourceIdentifier",
+                        "in": "query",
+                        "description": "Identifier associated with data source of the exsiccata title record",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "limit",
                         "in": "query",
                         "description": "Controls the number of results in the page.",
@@ -286,7 +304,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Returns list of inventories registered within system",
+                        "description": "Returns list of exsiccata titles registered within system",
                         "content": {
                             "application/json": {
                                 "schema": {}
@@ -309,7 +327,7 @@
                     {
                         "name": "identifier",
                         "in": "path",
-                        "description": "Exsiccata ID or record ID",
+                        "description": "Exsiccata title identifier (ometid) or recordID GUID",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -344,10 +362,28 @@
                     {
                         "name": "identifier",
                         "in": "path",
-                        "description": "Identifier (ometid (PK) - currently does not accommodate recordID) associated with target exsiccata title",
+                        "description": "Exsiccata title identifier (ometid) or recordID GUID associated with target exsiccata title",
                         "required": true,
                         "schema": {
                             "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "exsiccataNumber",
+                        "in": "query",
+                        "description": "Verbatim exsiccata number",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "exsiccataNumberMax",
+                        "in": "query",
+                        "description": "The upper range of an exsiccata number. If exsiccataNumber is also supplied, output will be the range between the two numbers.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {
@@ -373,7 +409,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Returns all exsiccata numbers associated with a single exsiccati title corresponding to matching identifier",
+                        "description": "Returns all exsiccata numbers associated with a single title corresponding to matching identifier",
                         "content": {
                             "application/json": {
                                 "schema": {}
@@ -389,55 +425,35 @@
                 }
             }
         },
-        "/api/v2/exsiccata/{identifier}/number/{numberIdentifier}/": {
+        "/api/v2/exsiccata/{identifier}/number/{numberIdentifier}": {
             "get": {
                 "tags": [
                     "Exsiccata"
                 ],
-                "operationId": "/api/v2/exsiccata/identifier/number/{numberIdentifier}/",
+                "operationId": "/api/v2/exsiccata/identifier/number/numberIdentifier",
                 "parameters": [
                     {
                         "name": "identifier",
                         "in": "path",
-                        "description": "Identifier (ometid (PK)) associated with target exsiccata number",
+                        "description": "Exsiccata title identifier (ometid) or recordID GUID",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
                         "name": "numberIdentifier",
                         "in": "path",
-                        "description": "Identifier (omenid or recordID in the schema) associated with target exsiccata number",
+                        "description": "Exsiccata number identifier (omenid)",
                         "required": true,
                         "schema": {
                             "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "limit",
-                        "in": "query",
-                        "description": "Controls the number of results in the page.",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 100
-                        }
-                    },
-                    {
-                        "name": "offset",
-                        "in": "query",
-                        "description": "Determines the starting point for the search results. A limit of 100 and offset of 200, will display 100 records starting the 200th record.",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 0
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Returns all exsiccata numbers associated with a single exsiccati title corresponding to matching identifier",
+                        "description": "Returns single exsiccata number along with list of associated occurrences",
                         "content": {
                             "application/json": {
                                 "schema": {}
@@ -445,7 +461,7 @@
                         }
                     },
                     "400": {
-                        "description": "Error: Bad request. Exsiccata identifier is required."
+                        "description": "Error: Bad request. Valid Exsiccata identifier and Number identifier required"
                     },
                     "404": {
                         "description": "Record not found"
@@ -2660,44 +2676,6 @@
                     "400": {
                         "description": "Error: Bad request. Inventory identifier is required."
                     }
-                }
-            }
-        }
-    },
-    "components": {
-        "responses": {
-            "200": {
-                "description": "Returns list of occurrences associated with the given exsiccata number",
-                "content": {
-                    "application/json": {
-                        "schema": {}
-                    }
-                }
-            },
-            "400": {
-                "description": "Error: Bad request. Valid Exsiccata identifier and Number identifier required"
-            },
-            "404": {
-                "description": "Record not found"
-            }
-        },
-        "parameters": {
-            "identifier": {
-                "name": "identifier",
-                "in": "path",
-                "description": "Exsiccata ID or record ID",
-                "required": true,
-                "schema": {
-                    "type": "string"
-                }
-            },
-            "numberIdentifier": {
-                "name": "numberIdentifier",
-                "in": "path",
-                "description": "Exsiccata number ID (omenid)",
-                "required": true,
-                "schema": {
-                    "type": "integer"
                 }
             }
         }
