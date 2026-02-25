@@ -1,5 +1,11 @@
 <?php
 include_once('../config/symbini.php');
+
+if(empty($CAPTCHA_ENDPOINT)){
+	header('HTTP/1.0 403 Forbidden');
+    exit();
+}
+
 require_once $SERVER_ROOT . '/vendor/capito/src/Cap.php';
 require_once $SERVER_ROOT . '/vendor/capito/src/Interfaces/StorageInterface.php';
 //require_once $SERVER_ROOT . '/vendor/capito/src/Storage/MysqlStorage.php';
