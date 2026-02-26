@@ -1,5 +1,12 @@
 import { type Page, type Locator, expect } from '@playwright/test';
 
+enum InputTypes {
+	Select='select',
+	Text='text',
+	Area='textarea',
+	Checkbox='checkbox',
+}
+
 export class Form {
 	public form: Locator;
 	public setFields: Object = {};
@@ -15,7 +22,13 @@ export class Form {
 		if(this.fieldSelectorOverrides.hasOwnProperty(fieldName)) {
 			return this.form.locator(this.fieldSelectorOverrides[fieldName]);
 		} else {
-			return this.form.locator('input[name=' + fieldName + ']');
+			if(this.fields[fieldName] == InputTypes.Select) {
+				return this.form.locator('select[name=' + fieldName + ']');
+			} else if(this.fields[fieldName] == InputTypes.Area) {
+				return this.form.locator('textarea[name=' + fieldName + ']');
+			} else {
+				return this.form.locator('input[name=' + fieldName + ']');
+			}
 		}
 	}
 
@@ -23,13 +36,13 @@ export class Form {
 		const locator = this.getFieldLocator(fieldName);
 
 		switch (this.fields[fieldName]) {
-			case 'select':
+			case InputTypes.Select:
 				await locator.selectOption(value);
 				break;
-			case 'checkbox':
+			case InputTypes.Checkbox:
 				await locator.setChecked(value);
 				break;
-			case 'text':
+			case InputTypes.Text:
 				await locator.fill(value);
 				break;
 			default:
@@ -52,7 +65,7 @@ export class Form {
 	async check(fieldName, value) {
 		const locator = this.getFieldLocator(fieldName);
 		switch (this.fields[fieldName]) {
-			case 'checkbox':
+			case InputTypes.Checkbox:
 				if(value) {
 					await expect(locator).toBeChecked(value)
 				} else {
