@@ -45,7 +45,14 @@ class OccurrenceController extends Controller {
 	 *	 @OA\Parameter(
 	 *		 name="occurrenceID",
 	 *		 in="query",
-	 *		 description="occurrenceID",
+	 *		 description="occurrenceID global unique identifier (GUID)",
+	 *		 required=false,
+	 *		 @OA\Schema(type="string")
+	 *	 ),
+	 *	 @OA\Parameter(
+	 *		 name="additionalIdentifier",
+	 *		 in="query",
+	 *		 description="Additional identifier assigned to occurrence, previousy referenced as dwc:otherCatalogNumbers",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
@@ -295,6 +302,13 @@ class OccurrenceController extends Controller {
 					->orWhere('recordID', $occurrenceID);
 			});
 		}
+		if ($request->has('additionalIdentifier')) {
+			$identifier = $request->additionalIdentifier;
+			$occurrenceModel->whereHas('identifier', function ($query) use ($identifier) {
+				$query->where('identifierValue', $identifier);
+			});
+		}
+
 		//Taxonomy
 		if ($request->has('family')) {
 			$occurrenceModel->where('family', $request->family);
@@ -1160,7 +1174,9 @@ class OccurrenceController extends Controller {
 					} elseif ($identifierTarget == 'CATALOGNUMBER') {
 						$occurrenceModel = Occurrence::where('catalogNumber', $identifier);
 					} elseif ($identifierTarget == 'IDENTIFIERS') {
-						//$occurrenceModel = Occurrence::where('otherCatalogNumbers', $identifier);
+						$occurrenceModel = Occurrence::whereHas('identifier', function ($query) use ($identifier) {
+							$query->where('identifierValue', $identifier);
+						});
 					}
 					if ($occurrenceModel) {
 						$targetOccurrence = $occurrenceModel->where('collid', $collid)->first();

@@ -1575,7 +1575,16 @@
                     {
                         "name": "occurrenceID",
                         "in": "query",
-                        "description": "occurrenceID",
+                        "description": "occurrenceID global unique identifier (GUID)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "additionalIdentifier",
+                        "in": "query",
+                        "description": "Additional identifier assigned to occurrence, previousy referenced as dwc:otherCatalogNumbers",
                         "required": false,
                         "schema": {
                             "type": "string"
