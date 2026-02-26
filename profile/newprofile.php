@@ -33,7 +33,7 @@ if($emailAddr){
 }
 
 $useCAPtcha = false;
-if(isset($CAPTCHA_ENDPOINT)){
+if(!empty($CAPTCHA_ENDPOINT)){
 	$useCAPtcha = true;
 }
 
@@ -44,18 +44,30 @@ if(isset($RECAPTCHA_PUBLIC_KEY) && $RECAPTCHA_PUBLIC_KEY && isset($RECAPTCHA_PRI
 
 if($action == 'Create Login'){
 	$okToCreateLogin = true;
-	if($useCAPtcha){
-
-	}
 	if($useRecaptcha){
 		$recaptcha = urlencode($_POST['g-recaptcha-response']);
-		if($recaptcha){
-			//Verify with Google
-			$response = json_decode(file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='.$RECAPTCHA_PRIVATE_KEY.'&response='.$captcha.'&remoteip='.$_SERVER['REMOTE_ADDR']), true);
-			if($response['success'] == false){
-				echo '<h2>'.(isset($LANG['RECAPTCHA_FAILED'])?$LANG['RECAPTCHA_FAILED']:'Recaptcha verification failed').'</h2>';
-				$okToCreateLogin = false;
-			}
+		//Verify with Google
+		$response = json_decode(file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='.$RECAPTCHA_PRIVATE_KEY.'&response='.$captcha.'&remoteip='.$_SERVER['REMOTE_ADDR']), true);
+		if($response['success'] == false){
+			echo '<h2>'.(isset($LANG['RECAPTCHA_FAILED'])?$LANG['RECAPTCHA_FAILED']:'Recaptcha verification failed').'</h2>';
+			$okToCreateLogin = false;
+		}
+		else{
+			$okToCreateLogin = false;
+			$displayStr = '<h2>'.(isset($LANG['PLEASE_CHECK'])?$LANG['PLEASE_CHECK']:'Please check the the captcha form').'</h2>';
+		}
+	}
+
+	if($useCAPtcha){
+		//Verify with CAPtcha
+		// Determine if endpoint is fqdn or local relative
+		if (filter_var($CAPTCHA_ENDPOINT, FILTER_VALIDATE_URL)) {
+			$verify_request_endpoint = $CAPTCHA_ENDPOINT;
+		}
+		elseif(strpos($url, '/') === 0) {
+			//assume relative endoint (should be verified by this server)
+			$verify_request_endpoint = $CAPTCHA_ENDPOINT;
+
 		}
 		else{
 			$okToCreateLogin = false;
@@ -105,41 +117,22 @@ if($action == 'Create Login'){
 				}
 				<?php
 			}
-			?>
+			
 			if($useCAPtcha){
-				const widget = document.querySelector("cap-widget");
-				widget.addEventListener("solve", function (e) {
-					console.log('✅ Challenge automatically completed');
-            		console.log('Verification token:', e.detail.token);
-
-  					const verificationToken = e.detail.token;
-            
-					// Optional: Validate token
-					fetch('/validate', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify({
-							token: verificationToken
-						})
-					})
-					.then(response => response.json())
-					.then(data => {
-						if (data.success) {
-							console.log('✅ Token is valid!');
-							// Allow form submission or next step
-							//enableFormSubmission();
-						} else {
-							console.error('❌ Invalid token!');
-						}
-					});
-				});
+			?>
+				let capToken = document.querySelector('input[name="cap-token"]');
+				if (capToken && capToken.value !== ''){
+					alert(capToken.value);
+					return true;
+				}
+				else{
+					alert("<?php echo (isset($LANG['CHECK_CAPTCHA'])?$LANG['CHECK_CAPTCHA']:"You must first check the box (to prove you are a human)"); ?>");
+					return false;
+				}
 				
-				widget.addEventListener("error", function (e) {
-					console.error('❌ Cap validation failed:', e.detail);
-				});
+				<?php
 			}
+			?>
 			var pwd1 = f.pwd.value.trim();
 			var pwd2 = f.pwd2.value.trim();
 			if(pwd1 == "" || pwd2 == ""){
@@ -336,6 +329,21 @@ if($action == 'Create Login'){
 		<?php
 	}
 	include($SERVER_ROOT.'/includes/footer.php');
+	
+	if($useCAPtcha) {
+		?>
+		<script>
+			const widget = document.querySelector("cap-widget");
+			widget.addEventListener("solve", function (e) {
+				const verificationToken = e.detail.token;
+			});
+			
+			widget.addEventListener("error", function (e) {
+				console.error('❌ Cap validation failed:', e.detail);
+			});
+		</script>
+		<?php
+	}
 	?>
 </body>
 </html>
