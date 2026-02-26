@@ -1764,7 +1764,7 @@
                     {
                         "name": "datasetID",
                         "in": "query",
-                        "description": "dataset ID within portal",
+                        "description": "Dataset identifier associated with groups of occurrences. See [https://docs.symbiota.org/User_Guide/Datasets/](https://docs.symbiota.org/User_Guide/Datasets/)",
                         "required": false,
                         "schema": {
                             "type": "string"

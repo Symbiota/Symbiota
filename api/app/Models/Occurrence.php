@@ -60,7 +60,7 @@ class Occurrence extends Model{
 		return $this->hasMany(Media::class, 'occid', 'occid');
 	}
 
-	public function identificatier(){
+	public function identifier(){
 		return $this->hasMany(OccurrenceIdentifier::class, 'occid', 'occid');
 	}
 

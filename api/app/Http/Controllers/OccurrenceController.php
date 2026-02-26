@@ -192,7 +192,7 @@ class OccurrenceController extends Controller {
 	 *	 @OA\Parameter(
 	 *		 name="datasetID",
 	 *		 in="query",
-	 *		 description="dataset ID within portal",
+	 *		 description="Dataset identifier associated with groups of occurrences. See [https://docs.symbiota.org/User_Guide/Datasets/](https://docs.symbiota.org/User_Guide/Datasets/)",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
@@ -255,11 +255,31 @@ class OccurrenceController extends Controller {
 			'limit' => ['integer', 'max:300'],
 			'offset' => 'integer'
 		]);
+		//custom validation
+		if($request->has('eventDateMin') && $request->has('eventDateMax') && $request->eventDateMin > $request->eventDateMax){
+			return response()->json(['status' => false, 'error' => 'eventDateMin greater than eventDateMax'], 422);
+		}
+		if($request->has('decimalLatitudeMin') && $request->has('decimalLatitudeMax') && $request->decimalLatitudeMin > $request->decimalLatitudeMax){
+			return response()->json(['status' => false, 'error' => 'decimalLatitudeMin greater than decimalLatitudeMax'], 422);
+		}
+		if($request->has('decimalLongitudeMin') && $request->has('decimalLongitudeMax') && $request->decimalLongitudeMin > $request->decimalLongitudeMax){
+			return response()->json(['status' => false, 'error' => 'decimalLongitudeMin greater than decimalLongitudeMax'], 422);
+		}
+		if($request->has('elevationMin') && $request->has('elevationMax') && $request->elevationMin > $request->elevationMax){
+			return response()->json(['status' => false, 'error' => 'elevationMin greater than elevationMax'], 422);
+		}
+		if($request->has('depthMin') && $request->has('depthMax') && $request->depthMin > $request->depthMax){
+			return response()->json(['status' => false, 'error' => 'depthMin greater than depthMax'], 422);
+		}
+		if($request->has('dateLastModifiedMin') && $request->has('dateLastModifiedMax') && $request->dateLastModifiedMin > $request->dateLastModifiedMax){
+			return response()->json(['status' => false, 'error' => 'dateLastModifiedMin greater than dateLastModifiedMax'], 422);
+		}
+
 		$limit = $request->input('limit', 100);
 		$offset = $request->input('offset', 0);
 
 		$occurrenceModel = Occurrence::query();
-		$occurrenceModel->with('identificatier');
+		$occurrenceModel->with('identifier');
 		$occurrenceModel->where('recordSecurity', 0);
 
 		if($request->has('collid')){
@@ -340,20 +360,20 @@ class OccurrenceController extends Controller {
 			$occurrenceModel->where('county', 'LIKE', $request->county . '%');
 		}
 		if ($request->has('decimalLatitudeMin')) {
-			$occurrenceModel->where('decimalLatitude', '>', $request->decimalLatitudeMin);
+			$occurrenceModel->where('decimalLatitude', '>=', $request->decimalLatitudeMin);
 		}
 		if ($request->has('decimalLatitudeMax')) {
-			$occurrenceModel->where('decimalLatitude', '<', $request->decimalLatitudeMax);
+			$occurrenceModel->where('decimalLatitude', '<=', $request->decimalLatitudeMax);
 		}
 		if ($request->has('decimalLongitudeMin')) {
-			$occurrenceModel->where('decimalLongitude', '>', $request->decimalLongitudeMin);
+			$occurrenceModel->where('decimalLongitude', '>=', $request->decimalLongitudeMin);
 		}
 		if ($request->has('decimalLongitudeMax')) {
-			$occurrenceModel->where('decimalLongitude', '<', $request->decimalLongitudeMax);
+			$occurrenceModel->where('decimalLongitude', '<=', $request->decimalLongitudeMax);
 		}
 		if ($request->has('elevationMin')) {
 			if($request->has('elevationMax')){
-				$occurrenceModel->where('minimumElevationInMeters', '>', $request->elevationMin);
+				$occurrenceModel->where('minimumElevationInMeters', '>=', $request->elevationMin);
 			}
 			else{
 				$occurrenceModel->where('minimumElevationInMeters', $request->elevationMin);
@@ -371,7 +391,7 @@ class OccurrenceController extends Controller {
 			}
 		}
 		if ($request->has('depthMax')) {
-			$occurrenceModel->whereRaw('IFNULL(maximumDepthInMeters,minimumDepthInMeters) < ?', $request->depthMax);
+			$occurrenceModel->whereRaw('IFNULL(maximumDepthInMeters,minimumDepthInMeters) <= ?', $request->depthMax);
 		}
 		if ($request->has('datasetID')) {
 			$datasetID = $request->datasetID;
@@ -384,11 +404,11 @@ class OccurrenceController extends Controller {
 				$occurrenceModel->where('dateLastModified', '>', $request->dateLastModifiedMin);
 			}
 			else{
-				$occurrenceModel->whereRaw('dateLastModified > "' . $request->dateLastModifiedMin . '" AND dateLastModified < "' . $request->dateLastModifiedMin . '" + INTERVAL 1 DAY');
+				$occurrenceModel->whereRaw('dateLastModified > ? AND dateLastModified < ? + INTERVAL 1 DAY', $request->dateLastModifiedMin, $request->dateLastModifiedMin);
 			}
 		}
 		if ($request->has('dateLastModifiedMax')) {
-			$occurrenceModel->whereRaw('dateLastModified < "' . $request->dateLastModifiedMax . '" + INTERVAL 1 DAY');
+			$occurrenceModel->whereRaw('dateLastModified < ? + INTERVAL 1 DAY', $request->dateLastModifiedMax);
 		}
 
 		$fullCnt = $occurrenceModel->count();
@@ -476,7 +496,7 @@ class OccurrenceController extends Controller {
 				$query->where('occurrenceID', $id)->orWhere('recordID', $id);
 			});
 		}
-		$occurrenceModel->with('identificatier');
+		$occurrenceModel->with('identifier');
 		if ($request->input('includeMedia')) $occurrenceModel->with('media');
 		if ($request->input('includeIdentifications')) $occurrenceModel->with('identification');
 		if ($request->input('includeDatasets')) $occurrenceModel->with('dataset');
