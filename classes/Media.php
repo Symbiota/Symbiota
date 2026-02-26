@@ -529,7 +529,7 @@ class Media {
 			}
 
 			if (isset($file['error']) && $file['error'] === UPLOAD_ERR_INI_SIZE){
-				$maxSize = UploadUtil::getIniMaxSize();
+				$maxSize = UploadUtil::formatBytes(UploadUtil::getMaximumUploadSize());
 				throw new MediaException(MediaException::ExceedMaxSize, $maxSize);
 			}
 

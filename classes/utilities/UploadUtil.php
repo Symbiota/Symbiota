@@ -119,6 +119,20 @@ class UploadUtil {
 	}
 
 	/**
+	  * This function returns the maximum upload file size in PHP
+	  *
+	  * Reads ini variables upload_max_filesize as int
+	  * @returns int File size in bytes
+	  **/
+	public static function getMaximumUploadSize(): int {
+		return self::size2Bytes(ini_get('upload_max_filesize'));
+	}
+
+	public static function isPostTooLarge(): bool {
+		$contentLength = $_SERVER['CONTENT_LENGTH'] ?? 0;
+		return $contentLength > 0 && $contentLength > self::getMaximumPostSize();
+	}
+	/**
 	 * Converts human readable sizes to bytes
 	 *
 	 * @param string $size Size string you wish to convert
@@ -138,23 +152,21 @@ class UploadUtil {
 		}
 	}
 
-	public static function getIniMaxSize() {
-		$post = ini_get('post_max_size');
-		$upload = ini_get('upload_max_filesize');
-	    $uploadBytes = self::size2Bytes($upload);
-    	$postBytes   = self::size2Bytes($post);
-
-		$maxBytes = min($uploadBytes, $postBytes);
-		if ($maxBytes >= 1024 * 1024 * 1024)
-			$display = round($maxBytes / 1024 / 1024 / 1024, 1) . ' GB';
-		elseif ($maxBytes >= 1024 * 1024)
-			$display = round($maxBytes / 1024 / 1024, 1) . ' MB';
-		elseif ($maxBytes >= 1024)
-			$display = round($maxBytes / 1024, 1) . ' KB';
-		else
-			$display = $maxBytes . ' bytes';
-
-		return $display;
+	/**
+	 * Converts bytes to human readable sizes
+	 *
+	 * @param string $bytes Size int you wish to convert
+	 * @return string
+	 **/
+	public static function formatBytes(int $bytes): string {
+		if ($bytes >= 1024 ** 3) {
+			return round($bytes / 1024 ** 3, 1) . ' GB';
+		} elseif ($bytes >= 1024 ** 2) {
+			return round($bytes / 1024 ** 2, 1) . ' MB';
+		} elseif ($bytes >= 1024) {
+			return round($bytes / 1024, 1) . ' KB';
+		}
+		return $bytes;
 	}
 
 	/**

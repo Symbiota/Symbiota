@@ -4,6 +4,16 @@ include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load('collections/editor/occurrenceeditor');
 
+//file upload handle
+include $SERVER_ROOT . "/classes/Media.php";
+if (isset($_SERVER['CONTENT_LENGTH']) && $_SERVER['CONTENT_LENGTH'] > UploadUtil::getMaximumPostSize() && empty($_POST) && empty($_FILES)) {
+	$max_size = UploadUtil::formatBytes(UploadUtil::getMaximumFileUploadSize());
+	$ex = new MediaException(MediaException::ExceedMaxSize, $max_size);
+	$_SESSION['upload_error'] = $ex->getMessage();
+    header('Location: ' . $_SERVER['HTTP_REFERER']);
+    exit;
+}
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $occId = array_key_exists('occid', $_REQUEST) ? filter_var($_REQUEST['occid'], FILTER_SANITIZE_NUMBER_INT) : '';
@@ -22,9 +32,6 @@ if(strpos($action,'Determination') || strpos($action,'Verification')){
 	include_once($SERVER_ROOT.'/classes/OccurrenceEditorDeterminations.php');
 	$occManager = new OccurrenceEditorDeterminations();
 } else{
-	if(strpos($action,'Image')) {
-		include_once($SERVER_ROOT . "/classes/Media.php");
-	}
 	include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 	$occManager = new OccurrenceEditorManager();
 }
@@ -70,6 +77,12 @@ if($SYMB_UID){
 		if(!empty($collMap['paleoActivated'])){
 			$collType = 'paleo';
 		}
+	}
+
+	//Check for session errors
+	if (!empty($_SESSION['upload_error'])) {
+		$statusStr = 'ERROR: '. $_SESSION['upload_error'];
+		unset($_SESSION['upload_error']);
 	}
 
 	//Set default option variables, will rework later
