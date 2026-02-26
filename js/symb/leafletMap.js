@@ -245,7 +245,7 @@ class LeafletMap {
 				"Satellite": Esri_WorldImagery,
 			};
 			const overlays = {
-				"Macrostrat": L.layerGroup([macro_strat])
+				"Geology": L.layerGroup([macro_strat])
 			}
 
 			for(let layer of geoJSONLayers) {
