@@ -2,6 +2,14 @@
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/vendor/capito/src/Cap.php');
+include_once($SERVER_ROOT . '/vendor/capito/src/Interfaces/StorageInterface.php');
+include_once($SERVER_ROOT . '/vendor/capito/src/Storage/FileStorage.php');
+include_once($SERVER_ROOT . '/vendor/capito/src/RateLimiter.php');
+include_once($SERVER_ROOT . '/vendor/capito/src/Exceptions/CapException.php');
+use Capito\CapPhpServer\Cap;
+use Capito\CapPhpServer\Storage\FileStorage;
+//use Capito\CapPhpServer\Exceptions\CapException;
 
 Language::load('profile/newprofile');
 
@@ -14,6 +22,7 @@ $login = array_key_exists('login', $_POST) ? htmlspecialchars($_POST['login'], E
 $emailAddr = array_key_exists('email',$_POST) ? htmlspecialchars($_POST['email'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $action = array_key_exists('submit', $_POST) ? $_POST['submit'] : '';
 $adminRegister = array_key_exists('adminRegister', $_POST) ? true : false;
+$client_cap_token = array_key_exists('cap-token', $_POST) ? $_POST['cap-token'] : '';
 
 $pHandler = new ProfileManager();
 $displayStr = '';
@@ -45,12 +54,14 @@ if(isset($RECAPTCHA_PUBLIC_KEY) && $RECAPTCHA_PUBLIC_KEY && isset($RECAPTCHA_PRI
 if($action == 'Create Login'){
 	$okToCreateLogin = true;
 	if($useRecaptcha){
-		$recaptcha = urlencode($_POST['g-recaptcha-response']);
-		//Verify with Google
-		$response = json_decode(file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='.$RECAPTCHA_PRIVATE_KEY.'&response='.$captcha.'&remoteip='.$_SERVER['REMOTE_ADDR']), true);
-		if($response['success'] == false){
-			echo '<h2>'.(isset($LANG['RECAPTCHA_FAILED'])?$LANG['RECAPTCHA_FAILED']:'Recaptcha verification failed').'</h2>';
-			$okToCreateLogin = false;
+		$captcha = urlencode($_POST['g-recaptcha-response']);
+		if($captcha){
+			//Verify with Google
+			$response = json_decode(file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='.$RECAPTCHA_PRIVATE_KEY.'&response='.$captcha.'&remoteip='.$_SERVER['REMOTE_ADDR']), true);
+			if($response['success'] == false){
+				echo '<h2>'.(isset($LANG['RECAPTCHA_FAILED'])?$LANG['RECAPTCHA_FAILED']:'Recaptcha verification failed').'</h2>';
+				$okToCreateLogin = false;
+			}
 		}
 		else{
 			$okToCreateLogin = false;
@@ -63,11 +74,18 @@ if($action == 'Create Login'){
 		// Determine if endpoint is fqdn or local relative
 		if (filter_var($CAPTCHA_ENDPOINT, FILTER_VALIDATE_URL)) {
 			$verify_request_endpoint = $CAPTCHA_ENDPOINT;
+			//TODO: make request to remote endpoint
 		}
-		elseif(strpos($url, '/') === 0) {
+		elseif(strpos($CAPTCHA_ENDPOINT, '/') === 0) {
 			//assume relative endoint (should be verified by this server)
 			$verify_request_endpoint = $CAPTCHA_ENDPOINT;
-
+			
+			$capServer = new Cap(['storage' => new FileStorage(['path' => $TEMP_DIR_ROOT . '/cap_storage.json']) ]);
+			$response = $capServer->validateToken($client_cap_token);
+			if($response['success'] == false){
+				echo '<h2>'.(isset($LANG['CAPTCHA_FAILED'])?$LANG['CAPTCHA_FAILED']:'Captcha verification failed').'</h2>';
+				$okToCreateLogin = false;
+			}
 		}
 		else{
 			$okToCreateLogin = false;
@@ -122,7 +140,6 @@ if($action == 'Create Login'){
 			?>
 				let capToken = document.querySelector('input[name="cap-token"]');
 				if (capToken && capToken.value !== ''){
-					alert(capToken.value);
 					return true;
 				}
 				else{
