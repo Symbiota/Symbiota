@@ -11,7 +11,7 @@ class OccurrenceIdentifier extends Model{
 
 	protected $fillable = [];
 
-	protected $hidden = [ 'idomoccuridentifiers', 'format', 'notes', 'sortBy', 'recordID', 'modifiedUid', 'modifiedTimestamp' ];
+	protected $hidden = [ 'format', 'notes', 'sortBy', 'modifiedUid', 'modifiedTimestamp' ];
 
 	public function occurrence() {
 		return $this->belongsTo(Occurrence::class, 'occid', 'occid');
