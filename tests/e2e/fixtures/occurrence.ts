@@ -1,6 +1,33 @@
-import { expect } from '@playwright/test';
 import { test as base } from './collection.ts'
 import mysql from 'mysql2/promise';
+
+export type Taxon = {
+	sciname: string,
+	commons?: Array<string>
+}
+
+export type Occurrence = {
+	sciname?: string,
+	family?: string,
+	country?: string,
+	locality?: string,
+	stateProvince?: string,
+	county?: string,
+	minimumElevationInMeters?: number,
+	maximumElevationInMeters?: number,
+	eventDate?: string,
+	eventDate2?: string,
+	recordedBy?: string,
+	recordNumber?: string,
+	catalogNumber?: string,
+	otherCatalogNumbers?: string,
+	decimalLatitude?: number,
+	decimalLongitude?: number,
+	tidInterpreted?: number,
+
+	// Inserts to external Table
+	//taxon?: Taxon,
+}
 
 class OccurrenceFactory {
 	constructor(public readonly conn: mysql.Connection) {}
@@ -20,6 +47,27 @@ class OccurrenceFactory {
 
 	async getNewRecord(collId: number): Promise<number>{
 		return this.getNewBlank("INSERT INTO omoccurrences (collId) VALUES (?)", [ collId ]);
+	}
+
+	async seedOccurrences(collId: number, occurrences: Array<Occurrence>) {
+		for(let occurrence of occurrences) {
+			let fields: Array<string> = Object.keys(occurrence);
+			fields.push('collId');
+			let values: Array<string|number> = Object.values(occurrence);
+			values.push(collId)
+			await this.getNewBlank(`INSERT INTO omoccurrences (${fields.join(',')}) VALUES (${values.map(v => '?').join(',')})`, values);
+		}
+	}
+
+	async seedTaxa(taxa: Array<Taxon>): Promise<Array<number>> {
+		let tids: Array<number> = [];
+
+		for(let taxon of taxa) {
+			const sql = "INSERT INTO taxa (sciName, unitName1) VALUES (?, ?)"
+			tids.push(await this.getResult(sql, [taxon.sciname, taxon.sciname]));
+		}
+
+		return tids;
 	}
 
 	async newDetermination(occId: number): Promise<number>{
