@@ -45,6 +45,9 @@ export class Form {
 			case InputTypes.Text:
 				await locator.fill(value);
 				break;
+			case InputTypes.Area:
+				await locator.fill(value);
+				break;
 			default:
 				return;
 		}
