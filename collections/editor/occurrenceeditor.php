@@ -5,7 +5,7 @@ include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 Language::load('collections/editor/occurrenceeditor');
 
 //file upload handle
-include $SERVER_ROOT . "/classes/Media.php";
+include_once $SERVER_ROOT . "/classes/Media.php";
 if (isset($_SERVER['CONTENT_LENGTH']) && $_SERVER['CONTENT_LENGTH'] > UploadUtil::getMaximumPostSize() && empty($_POST) && empty($_FILES)) {
 	$max_size = UploadUtil::formatBytes(UploadUtil::getMaximumFileUploadSize());
 	$ex = new MediaException(MediaException::ExceedMaxSize, $max_size);
