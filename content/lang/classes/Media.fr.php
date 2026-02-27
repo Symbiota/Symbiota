@@ -18,5 +18,9 @@ $LANG['FILEPATH_NOT_WRITABLE'] = 'Le chemin du fichier n\'est pas accessible en 
 $LANG['NOT_ENOUGH_MEMORY_IMAGE'] = 'Mémoire insuffisante pour créer une image';
 $LANG['EXCEED_MAX_SIZE'] = 'Le fichier dépasse la taille maximale autorisée';
 $LANG['NO_FILE_UPLOADED'] = 'Aucun fichier téléchargé';
+$LANG['PARTIAL_UPLOAD'] = 'Le fichier n\'a été que partiellement téléchargé';
+$LANG['MISSING_TEMP_DIR'] = 'Dossier temporaire manquant';
+$LANG['UPLOAD_STOPPED_BY_EXTENSION'] = 'Une extension PHP a interrompu le téléchargement du fichier';
+$LANG['UNKNOWN_UPLOAD_ERROR'] = 'Erreur de téléchargement de fichier inconnue';
 
 ?>

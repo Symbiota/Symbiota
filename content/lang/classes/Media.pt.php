@@ -19,5 +19,9 @@ $LANG['FILEPATH_NOT_WRITABLE'] = 'O caminho do arquivo não é gravável';
 $LANG['NOT_ENOUGH_MEMORY_IMAGE'] = 'Não há memória suficiente para criar imagem';
 $LANG['EXCEED_MAX_SIZE'] = 'O ficheiro excede o tamanho máximo permitido';
 $LANG['NO_FILE_UPLOADED'] = 'Nenhum ficheiro enviado';
+$LANG['PARTIAL_UPLOAD'] = 'O ficheiro enviado foi carregado apenas parcialmente';
+$LANG['MISSING_TEMP_DIR'] = 'Pasta temporária em falta';
+$LANG['UPLOAD_STOPPED_BY_EXTENSION'] = 'Uma extensão PHP interrompeu o envio do ficheiro';
+$LANG['UNKNOWN_UPLOAD_ERROR'] = 'Erro desconhecido no envio do ficheiro';
 
 ?>

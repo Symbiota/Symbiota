@@ -527,14 +527,10 @@ class Media {
 					$post_arr['sourceIdentifier'] = 'filename: ' . $file['name'];
 				}
 			}
-
-			if (isset($file['error']) && $file['error'] === UPLOAD_ERR_INI_SIZE){
-				$maxSize = UploadUtil::formatBytes(UploadUtil::getMaximumUploadSize());
-				throw new MediaException(MediaException::ExceedMaxSize, $maxSize);
-			}
-
-			if (isset($file['error']) && $file['error'] === UPLOAD_ERR_NO_FILE){
-				throw new MediaException(MediaException::NoFileUploaded);
+			else{
+				UploadUtil::validateFileError($file);
+				if (empty($post_arr['originalUrl']))
+        			throw new MediaException(MediaException::NoFileUploaded);
 			}
 
 			$media_metadata = self::insert($post_arr, $conn);

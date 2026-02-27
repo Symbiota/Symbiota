@@ -169,6 +169,36 @@ class UploadUtil {
 		return $bytes;
 	}
 
+		/**
+	 * Utility function to validate PHP file upload error codes 
+	 * and throw a MediaException message
+	 *
+	 * @param array $file The uploaded file
+	 * @throws MediaException If the upload failed for any reason
+	 */
+	public static function validateFileError(array $file): void {
+		if (!isset($file['error']) || $file['error'] === UPLOAD_ERR_OK)
+			return;
+
+		switch ($file['error']) {
+			case UPLOAD_ERR_INI_SIZE:
+			case UPLOAD_ERR_FORM_SIZE:
+				$maxSize = self::formatBytes(min(self::getMaximumUploadSize(),$_POST['MAX_FILE_SIZE']));
+				throw new MediaException(MediaException::ExceedMaxSize, $maxSize);
+			case UPLOAD_ERR_NO_FILE:
+				throw new MediaException(MediaException::NoFileUploaded);
+			case UPLOAD_ERR_PARTIAL:
+				throw new MediaException(MediaException::PartialUpload);
+			case UPLOAD_ERR_NO_TMP_DIR:
+				throw new MediaException(MediaException::MissingTempDir);
+			case UPLOAD_ERR_CANT_WRITE:
+				throw new MediaException(MediaException::FilepathNotWritable);
+			case UPLOAD_ERR_EXTENSION:
+				throw new MediaException(MediaException::UploadStoppedByExtension);
+			default:
+				throw new MediaException(MediaException::UnknownUploadError);
+		}
+	}
 	/**
 	 * Utility function to parse out useful information when uploading and processing files.
 	 *

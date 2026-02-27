@@ -13,6 +13,10 @@ class MediaException extends Exception {
 	public const NotEnoughMemoryImage = 'NOT_ENOUGH_MEMORY_IMAGE';
 	public const ExceedMaxSize = 'EXCEED_MAX_SIZE';
 	public const NoFileUploaded = 'NO_FILE_UPLOADED';
+	public const PartialUpload = 'PARTIAL_UPLOAD';
+	public const MissingTempDir = 'MISSING_TEMP_DIR';
+	public const UploadStoppedByExtension = 'UPLOAD_STOPPED_BY_EXTENSION';
+	public const UnknownUploadError = 'UNKNOWN_UPLOAD_ERROR';
 
 	function __construct(string $case, string $message = ''){
 		global $LANG, $LANG_TAG, $SERVER_ROOT;
