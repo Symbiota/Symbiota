@@ -1,7 +1,14 @@
 <?php
 $DEFAULT_LANG = 'en';			//Default language
 $DEFAULT_PROJ_ID = 0;
-$DEFAULTCATID = 0;
+
+// Collection search configuration
+// The below will configure default category behavior in collection searches in collections/search/index.php, collections/index.php, and collections/editor/batchDuplicateGeorefCopy.php. Defaults will, in some of these pages, be overridden by session storage of the most recent query.
+// The below can also be overriden by supplying catOrd, catExpnd, and/or catChk parameters in the URL, e.g., ...catOrd=1,3,4,5&catExpnd=Specimens_4&catChk=Specimens_1,Specimens_4
+$CATORD = []; // a list of category ids (e.g. [1,2,3]) in the order in which you want them to appear in collection searches. All other categories will appear in their default order after those listed. Current assumption is that the same order will be desired for both specimen and observation categories
+$CATEXPND = []; // a list of category ids (e.g. ["Specimens_1","Observations_2"]) that should be expanded by default in collection searches. All others will be collapsed by default.
+$CATCHK = []; // a list of category ids (e.g. ["Specimens_1","Observations_3"]) that will be checked by default in collection searches. All others will be unchecked by default.
+
 $DEFAULT_TITLE = '';
 $EXTENDED_LANG = 'en';		//Add all languages you want to support separated by commas (e.g. en,es); currently supported languages: en,es
 $TID_FOCUS = '';
@@ -44,7 +51,7 @@ $NLP_SALIX_ACTIVATED = 0;
 
 // Vouchervision OCR/Transcription
 $VOUCHERVISION_API_KEY = ''; // API key to use to access Vouchervision API. See https://leafmachine.org/vouchervisiongo/
-$VOUCHERVISION_API_URL = 'https://vouchervision-go-738307415303.us-central1.run.app/process-url'; // URL to the Vouchervision API server
+$VOUCHERVISION_API_URL = 'https://vouchervision-go-xxxxxxxxxxxx.us-central1.run.app/process-url'; // URL to the Vouchervision API server
 
 //Module activations
 $OCCURRENCE_MOD_IS_ACTIVE = 1;
@@ -70,6 +77,7 @@ $GOOGLE_ANALYTICS_KEY = '';			//Needed for setting up Google Analytics
 $GOOGLE_ANALYTICS_TAG_ID = '';		//Needed for setting up Google Analytics 4 Tag ID
 $RECAPTCHA_PUBLIC_KEY = '';			//Now called site key
 $RECAPTCHA_PRIVATE_KEY = '';		//Now called secret key
+$CAPTCHA_ENDPOINT = 0;              //Alternative to Google recaptcha.  Example Value: $CLIENT_ROOT . '/rpc/captcha.php';
 $TAXONOMIC_AUTHORITIES = array('COL' => '', 'WoRMS' => '');		//List of taxonomic authority APIs to use in data cleaning and thesaurus building tools, concatenated with commas and order by preference; E.g.: array('COL'=>'', 'WoRMS'=>'', 'bryonames' => '', 'fdex'=>'', 'TROPICOS'=>'', 'EOL'=>'')
 $QUICK_HOST_ENTRY_IS_ACTIVE = 0;   	//Allows quick entry for host taxa in occurrence editor
 $GLOSSARY_EXPORT_BANNER = '';		//Banner image for glossary exports. Place in images/layout folder.
@@ -105,6 +113,7 @@ $SHOULD_BE_ABLE_TO_CREATE_PUBLIC_USER = true;
 $SYMBIOTA_LOGIN_ENABLED = true;
 
 $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT=false;
+$SHOULD_PROTECT_CULTIVATED = false; // if true, taxa with locality security that have cultivation status === 1 will have recordSecurity set to 1 in the protectGlobalSpecies function
 $AUTH_PROVIDER = 'oid';
 $LOGIN_ACTION_PAGE = 'openIdAuth.php';
 $SHOULD_USE_HARVESTPARAMS = false;

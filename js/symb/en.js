@@ -22,6 +22,7 @@ const translations = {
   TAXON_NAME_MATCH_WARNING: "This taxon name matches another one that exists in the database. Are you sure that you want to create a new one with the same name?",
   SPECIMEN: "Specimen",
   OBSERVATION: "Observation",
+  IDENTIFIER_DELETE: "This will permanently delete the selected identifier and immediately resave this catalog record. Do you want to proceed?",
   // paleo search
   INTERVAL_MISSING: "Both Early Interval and Late Interval need to have a value selected, even if the values are the same.",
   INTERVALS_WRONG_ORDER: "The Early Interval must be geologically older than the Late Interval.",

@@ -30,12 +30,61 @@ ALTER TABLE `adminproperties`
   ADD INDEX `IX_adminproperties_table` (`tableName` ASC, `tablePK` ASC);
 
 
+ALTER TABLE `omoccurdatasets` 
+  ADD COLUMN `recordID` VARCHAR(45) NULL AFTER `collid`,
+  ADD INDEX `IX_omoccurdatasets_name` (`name` ASC),
+  ADD INDEX `IX_omoccurdatasets_isPublic` (`isPublic` ASC),
+  ADD INDEX `IX_omoccurdatasets_datasetIdentifier` (`datasetIdentifier` ASC),
+  ADD INDEX `IX_omoccurdatasets_datasetName` (`datasetName` ASC);
+
+UPDATE omoccurdatasets
+  SET datasetName = name
+  WHERE datasetName IS NULL;
+
+ALTER TABLE `omoccurdatasets` 
+  CHANGE COLUMN `datasetName` `datasetName` VARCHAR(150) NOT NULL ,
+  CHANGE COLUMN `name` `name` VARCHAR(100) NULL ;
+
+
 #field for search by polygons
 ALTER TABLE geographicthesaurus
   ADD COLUMN isSearchable TINYINT(1) NOT NULL DEFAULT 0 AFTER `parentID`;
 
 ALTER TABLE `geographicthesaurus` 
   ADD INDEX `FK_geothes_geolevel` (`geoLevel` ASC);
+
+#Fixes issues where Florida counties were linked to Uruguay/Florida  
+UPDATE IGNORE geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  SET c.parentID = (SELECT c.geoThesID FROM geographicthesaurus c INNER JOIN geographicthesaurus p ON c.parentID = p.geoThesID WHERE c.geoTerm = "Florida" AND p.geoTerm = "United States")
+  WHERE g.geoTerm IN("Florida") AND p.geoTerm = "Uruguay";
+
+DELETE c.* 
+  FROM geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  WHERE g.geoTerm IN("Florida") AND p.geoTerm = "Uruguay";
+
+#Fixes issues where Montana counties were linked to Bulgaria/Montana  
+UPDATE IGNORE geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  SET c.parentID = (SELECT c.geoThesID FROM geographicthesaurus c INNER JOIN geographicthesaurus p ON c.parentID = p.geoThesID WHERE c.geoTerm = "Montana" AND p.geoTerm = "United States")
+  WHERE g.geoTerm IN("Montana") AND p.geoTerm = "Bulgaria";
+
+DELETE c.*
+  FROM geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  WHERE g.geoTerm IN("Montana") AND p.geoTerm = "Bulgaria";
+
+#Fixes issues where Maryland counties were linked to Liberia/Maryland  
+UPDATE IGNORE geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  SET c.parentID = (SELECT c.geoThesID FROM geographicthesaurus c INNER JOIN geographicthesaurus p ON c.parentID = p.geoThesID WHERE c.geoTerm = "Maryland" AND p.geoTerm = "United States")
+  WHERE g.geoTerm IN("Maryland") AND p.geoTerm = "Liberia";
+
+DELETE c.*
+  FROM geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  WHERE g.geoTerm IN("Maryland") AND p.geoTerm = "Liberia";
 
 
 #Exsiccati field format adjustments to standardize API output
@@ -106,13 +155,14 @@ CREATE TABLE `omexport` (
   `portalDomain` VARCHAR(45) NULL,
   `expiration` DATETIME NULL,
   `ipAddress` VARCHAR(45) NULL,
-  `status` ENUM('queued', 'inProcess', 'completed', 'failed') NULL,
+  `status` ENUM('queued', 'inProcess', 'completed', 'failed') NULL DEFAULT 'queued',
   `statusHistory` TEXT NULL,
   `gui` VARCHAR(45) NULL,
   `guiType` VARCHAR(45) NULL,
   `notes` VARCHAR(255) NULL,
-  `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp,
-  PRIMARY KEY (`omExportID`));
+  `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`omExportID`)
+) ENGINE=InnoDB;
 
 ALTER TABLE `omexport` 
   ADD INDEX `FK_omexport_uid_idx` (`uid` ASC);
@@ -147,26 +197,35 @@ CREATE TABLE `omexportoccurrences` (
   `occurrenceRemarks` TEXT NULL,
   `associatedSequences` TEXT NULL,
   `recordSecurity` INT NULL,
-  `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp,
-  PRIMARY KEY (`omExportID`,`occid`));
+  `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`omExportID`,`occid`)
+) ENGINE=InnoDB;
 
 ALTER TABLE `omexportoccurrences` 
-  ADD INDEX `FK_omexportoccur_omExportID_idx` (`omExportID` ASC),
-  ADD INDEX `FK_omexportoccur_occid_idx` (`occid` ASC);
+  ADD INDEX `FK_omexportoccur_omExportID_idx` (`omExportID`),
+  ADD INDEX `FK_omexportoccur_occid_idx` (`occid`);
 
 ALTER TABLE `omexportoccurrences` 
   ADD CONSTRAINT `FK_omexportoccur_omExportID`  FOREIGN KEY (`omExportID`)  REFERENCES `omexport` (`omExportID`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_omexportoccur_occid`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE;
 
 ALTER TABLE `omexportoccurrences` 
-  ADD INDEX `IX_omexportoccur_taxonID` (`taxonID` ASC),
-  ADD INDEX `IX_omexportoccur_collid` (`collid` ASC);
+  ADD INDEX `IX_omexportoccur_occid` (`omExportID`, `occid`),
+  ADD INDEX `IX_omexportoccur_collid` (`omExportID`, `collid`),
+  ADD INDEX `IX_omexportoccur_taxonID` (`omExportID`, `taxonID`),
+  ADD INDEX `IX_omexportoccur_kingdom` (`omExportID`, `kingdom`),
+  ADD INDEX `IX_omexportoccur_recordSecurity` (`omExportID`, `recordSecurity`),
+  ADD INDEX `IX_omexportoccur_initialTimestamp` (`initialTimestamp`);
 
 
 #Add update to omoccurdeterminations.dateLastModified tracked any update to the row
 ALTER TABLE omoccurdeterminations 
   MODIFY COLUMN dateLastModified timestamp DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP;
 
+#Convert locus and notes fields within genetic table to TEXT
+ALTER TABLE `omoccurgenetic` 
+  CHANGE COLUMN `locus` `locus` TEXT NULL DEFAULT NULL ,
+  CHANGE COLUMN `notes` `notes` TEXT NULL DEFAULT NULL ;
 
 #Reset empty values to null
 UPDATE omoccurgenetic 
@@ -406,29 +465,37 @@ INSERT INTO `omoccurpaleogts` VALUES
 
 #Add paleo fields to uploadspectemp
 ALTER TABLE `uploadspectemp`
-  ADD COLUMN `paleo_eon` TEXT,
-  ADD COLUMN `paleo_era` TEXT,
-  ADD COLUMN `paleo_period` TEXT,
-  ADD COLUMN `paleo_epoch` TEXT,
-  ADD COLUMN `paleo_earlyInterval` TEXT,
-  ADD COLUMN `paleo_lateInterval` TEXT,
-  ADD COLUMN `paleo_absoluteAge` TEXT,
-  ADD COLUMN `paleo_storageLoc` TEXT,
-  ADD COLUMN `paleo_stage` TEXT,
-  ADD COLUMN `paleo_localStage` TEXT,
-  ADD COLUMN `paleo_biota` TEXT,
-  ADD COLUMN `paleo_biostratigraphy` TEXT,
-  ADD COLUMN `paleo_taxonEnvironment` TEXT,
-  ADD COLUMN `paleo_lithogroup` TEXT,
-  ADD COLUMN `paleo_formation` TEXT,
-  ADD COLUMN `paleo_member` TEXT,
-  ADD COLUMN `paleo_bed` TEXT,
-  ADD COLUMN `paleo_lithology` TEXT,
-  ADD COLUMN `paleo_stratRemarks` TEXT,
-  ADD COLUMN `paleo_element` TEXT,
-  ADD COLUMN `paleo_slideProperties` TEXT,
-  ADD COLUMN `paleo_geologicalContextID` TEXT,
+  ADD COLUMN `paleo_eon` TEXT AFTER `exsiccatiNotes`,
+  ADD COLUMN `paleo_era` TEXT AFTER `paleo_eon`,
+  ADD COLUMN `paleo_period` TEXT AFTER `paleo_era`,
+  ADD COLUMN `paleo_epoch` TEXT AFTER `paleo_period`,
+  ADD COLUMN `paleo_earlyInterval` TEXT AFTER `paleo_epoch`,
+  ADD COLUMN `paleo_lateInterval` TEXT AFTER `paleo_earlyInterval`,
+  ADD COLUMN `paleo_absoluteAge` TEXT AFTER `paleo_lateInterval`,
+  ADD COLUMN `paleo_stage` TEXT AFTER `paleo_absoluteAge`,
+  ADD COLUMN `paleo_localStage` TEXT AFTER `paleo_stage`,
+  ADD COLUMN `paleo_biota` TEXT AFTER `paleo_localStage`,
+  ADD COLUMN `paleo_biostratigraphy` TEXT AFTER `paleo_biota`,
+  ADD COLUMN `paleo_taxonEnvironment` TEXT AFTER `paleo_biostratigraphy`,
+  ADD COLUMN `paleo_lithogroup` TEXT AFTER `paleo_taxonEnvironment`,
+  ADD COLUMN `paleo_formation` TEXT AFTER `paleo_lithogroup`,
+  ADD COLUMN `paleo_member` TEXT AFTER `paleo_formation`,
+  ADD COLUMN `paleo_bed` TEXT AFTER `paleo_member`,
+  ADD COLUMN `paleo_lithology` TEXT AFTER `paleo_bed`,
+  ADD COLUMN `paleo_stratRemarks` TEXT AFTER `paleo_lithology`,
+  ADD COLUMN `paleo_element` TEXT AFTER `paleo_stratRemarks`,
+  ADD COLUMN `paleo_slideProperties` TEXT AFTER `paleo_element`,
+  ADD COLUMN `paleo_geologicalContextID` TEXT AFTER `paleo_slideProperties`,
   DROP COLUMN `paleojson`;
+
+#copy storageAge in omoccurrences.storageLocation
+UPDATE `omoccurrences` o LEFT JOIN `omoccurpaleo` p on o.`occid` = p.`occid` 
+  SET o.`storageLocation` = CONCAT_WS("; ", o.`storageLocation`, p.`storageAge`) 
+  WHERE p.`storageAge` IS NOT NULL;
+  
+#Remove deprecated field 'storageAge'
+ALTER TABLE `omoccurpaleo` 
+  DROP COLUMN `storageAge`;
 
 
 ALTER TABLE `portalindex` 
@@ -442,9 +509,14 @@ ALTER TABLE `specprocessorrawlabels`
   CHANGE COLUMN `sortsequence` `sortSequence` INT(11) NULL DEFAULT NULL ,
   CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
 
+UPDATE IGNORE taxa
+  SET kingdomName = ""
+  WHERE kingdomName IS NULL;
 
 ALTER TABLE `taxa` 
-  ADD COLUMN `sourceIdentifier` VARCHAR(150) NULL AFTER `source`;
+  ADD COLUMN `sourceIdentifier` VARCHAR(150) NULL AFTER `source`,
+  CHANGE COLUMN `kingdomName` `kingdomName` VARCHAR(45) NOT NULL DEFAULT '',
+  CHANGE COLUMN `unitName2` `unitName2` VARCHAR(50) NULL DEFAULT NULL;
 
 
 ALTER TABLE `taxaresourcelinks` 
@@ -531,6 +603,11 @@ ALTER TABLE `uploadtaxa`
   ADD INDEX `IX_uploadtaxa_acceptance` (`acceptance` ASC);
 
 
+#Add scientificName to determination upload table in order to include author parsing option for input
+ALTER TABLE `uploaddetermtemp` 
+  ADD COLUMN `scientificName` VARCHAR(255) NULL AFTER `higherClassification`;
+
+
 #Reset uploadspectemp indexes to be compound indexes including collid
 ALTER TABLE `uploadspectemp` 
   DROP INDEX `IX_uploadspectemp_dbpk`,
@@ -548,6 +625,7 @@ ALTER TABLE `uploadspectemp`
 
 #Add indexes to accommodate conversion of imported state codes
 ALTER TABLE `uploadspectemp` 
+  ADD INDEX `IX_uploadspectemp_basisOfRecord` (`collid`, `basisOfRecord`),
   ADD INDEX `IX_uploadspectemp_countryCode` (`collid`, `countryCode`),
   ADD INDEX `IX_uploadspectemp_country` (`collid`, `country`),
   ADD INDEX `IX_uploadspectemp_stateProvince` (`collid`, `stateProvince`);
@@ -557,7 +635,36 @@ ALTER TABLE `uploadspectemp`
 ALTER TABLE `users` 
   CHANGE COLUMN `password` `password` VARCHAR(255) NULL DEFAULT NULL ;
 
-  
-# Add index to improve performance on counts on verbatimCoordinates seen in OccurrenceCleaner
+
+# Convert to compound indexes to improve performance 
 ALTER TABLE `omoccurrences`
-  ADD INDEX `IX_occurrences_verbatimCoordinates` (`collid`,`verbatimCoordinates`);
+  ADD INDEX `IX_occurrences_verbatimCoordinates` (`collid`,`verbatimCoordinates`),
+  ADD INDEX `IX_occurrences_decimalLngLat` (`decimalLongitude`, `decimalLatitude`),
+  DROP INDEX `IX_occurrences_lng`;
+
+
+# Add mediaMetadata table to track metadata for media
+CREATE TABLE mediametadata (
+  mediaID int UNSIGNED NOT NULL,
+  field enum ('originalUrl', 'thumbnailUrl', 'url') NOT NULL,
+  bytes BIGINT UNSIGNED NOT NULL,
+  md5sum varchar(32) NOT NULL,
+  created_at timestamp DEFAULT current_timestamp(),
+  updated_at timestamp DEFAULT NULL ON UPDATE current_timestamp(),
+  PRIMARY KEY (mediaID, field),
+  FOREIGN KEY (mediaID) REFERENCES media(mediaID) ON DELETE CASCADE
+) ENGINE=INNODB;
+
+
+# ALTER uploadimagetemp to use creator so that it matches media table
+ALTER TABLE `uploadimagetemp` 
+  CHANGE COLUMN `photographer` `creator` VARCHAR(100) NULL DEFAULT NULL ,
+  CHANGE COLUMN `photographeruid` `creatorUid` INT(10) UNSIGNED NULL DEFAULT NULL ;
+
+
+#redact old placename lookup tables
+DROP TABLE IF EXISTS `lkupmunicipality`;
+DROP TABLE IF EXISTS `lkupcounty`;
+DROP TABLE IF EXISTS `lkupstateprovince`;
+DROP TABLE IF EXISTS `lkupcountry`;
+

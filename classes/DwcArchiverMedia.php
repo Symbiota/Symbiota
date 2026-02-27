@@ -36,31 +36,31 @@ class DwcArchiverMedia extends DwcArchiverBaseManager{
 		$termArr['format'] = 'http://purl.org/dc/terms/format';		//jpg
 		$fieldArr['format'] = 'm.format';
 		$termArr['type'] = 'http://purl.org/dc/terms/type';		//StillImage or Sound
-		$fieldArr['type'] = 'CASE WHEN m.mediaType = "audio" THEN "Sound" ELSE "StillImage" END as type';
+		$fieldArr['type'] = 'CASE WHEN m.mediaType = "audio" THEN "Sound" ELSE "StillImage" END AS type';
 		$termArr['subtype'] = 'http://rs.tdwg.org/ac/terms/subtype';		//Photograph or Recorded Organism
-		$fieldArr['subtype'] = 'CASE WHEN m.mediaType = "audio" THEN "Recorded Organism" ELSE "Photograph" END as subtype';
+		$fieldArr['subtype'] = 'CASE WHEN m.mediaType = "audio" THEN "Recorded Organism" ELSE "Photograph" END AS subtype';
 		$termArr['rights'] = 'http://purl.org/dc/terms/rights';
-		$fieldArr['rights'] = ($this->schemaType == 'backup' ? 'm.copyright' : '');
+		$fieldArr['rights'] = ($this->schemaType == 'backup' ? 'm.copyright AS rights' : '');
 		$termArr['Owner'] = 'http://ns.adobe.com/xap/1.0/rights/Owner';	//Institution name
 		$fieldArr['Owner'] = '';
 		$termArr['creator'] = 'http://purl.org/dc/elements/1.1/creator';
 		$fieldArr['creator'] = 'IF(m.creatorUid IS NOT NULL,CONCAT_WS(" ",u.firstname,u.lastname),m.creator) AS creator';
 		$termArr['UsageTerms'] = 'http://ns.adobe.com/xap/1.0/rights/UsageTerms';	//Creative Commons BY-SA 4.0 license
-		$fieldArr['UsageTerms'] = 'm.copyright AS usageterms';
+		$fieldArr['UsageTerms'] = 'm.copyright AS UsageTerms';
 		$termArr['WebStatement'] = 'http://ns.adobe.com/xap/1.0/rights/WebStatement';	//https://creativecommons.org/licenses/by-nc-sa/4.0/us/
 		$fieldArr['WebStatement'] = '';
 		$termArr['caption'] = 'http://rs.tdwg.org/ac/terms/caption';
 		$fieldArr['caption'] = 'm.caption';
 		$termArr['comments'] = 'http://rs.tdwg.org/ac/terms/comments';
-		$fieldArr['comments'] = 'm.notes';
+		$fieldArr['comments'] = 'm.notes AS comments';
 		$termArr['tag'] = 'http://rs.tdwg.org/ac/terms/tag';
 		$fieldArr['tag'] = 'GROUP_CONCAT( tag.keyValue SEPARATOR " | ") AS tag';
 		$termArr['providerManagedID'] = 'http://rs.tdwg.org/ac/terms/providerManagedID';	//GUID
-		$fieldArr['providerManagedID'] = 'm.recordID AS providermanagedid';
+		$fieldArr['providerManagedID'] = 'm.recordID AS providerManagedID';
 		$termArr['MetadataDate'] = 'http://ns.adobe.com/xap/1.0/MetadataDate';	//timestamp
-		$fieldArr['MetadataDate'] = 'm.initialtimestamp AS metadatadate';
+		$fieldArr['MetadataDate'] = 'm.initialtimestamp AS MetadataDate';
 		$termArr['associatedSpecimenReference'] = 'http://rs.tdwg.org/ac/terms/associatedSpecimenReference';	//reference url in portal
-		$fieldArr['associatedSpecimenReference'] = 'null as associatedSpecimenReference';
+		$fieldArr['associatedSpecimenReference'] = '';
 		$termArr['metadataLanguage'] = 'http://rs.tdwg.org/ac/terms/metadataLanguage';	//en
 		$fieldArr['metadataLanguage'] = '';
 
@@ -79,34 +79,36 @@ class DwcArchiverMedia extends DwcArchiverBaseManager{
 	private function setSql(){
 		if($this->fieldArr){
 			$sqlFrag = '';
-			foreach($this->fieldArr['fields'] as $colName){
+			foreach($this->fieldArr['fields'] as $fieldName =>$colName){
 				if($colName) $sqlFrag .= ', ' . $colName;
+				else  $sqlFrag .= ', "" AS ' . $fieldName;
 			}
-			$this->sql = 'SELECT '.trim($sqlFrag,', '). ', x.collid
+			$sql = 'SELECT '.trim($sqlFrag,', '). ', x.collid
 				FROM media m INNER JOIN omexportoccurrences x ON m.occid = x.occid
 				LEFT JOIN imagetag tag ON m.mediaID = tag.mediaID
 				LEFT JOIN users u ON m.creatorUid = u.uid
 				WHERE (x.omExportID = ?) ';
 			if($this->redactLocalities){
 				if($this->rareReaderCollStr){
-					$this->sql .= 'AND (x.recordSecurity = 0 OR x.collid IN(' . $this->rareReaderCollStr . ')) ';
+					$sql .= 'AND (x.recordSecurity = 0 OR x.collid IN(' . $this->rareReaderCollStr . ')) ';
 				}
 				else{
-					$this->sql .= 'AND (x.recordSecurity = 0) ';
+					$sql .= 'AND (x.recordSecurity = 0) ';
 				}
 			}
-			$this->sql .= 'GROUP BY m.mediaID';
+			$sql .= 'GROUP BY m.mediaID';
+			$this->sqlArr[] = $sql;
 		}
 	}
 
 	public function writeOutMediaData($exportID, $collArr, $serverDomain){
 		$recordCnt = 0;
-		if($this->sql){
+		foreach($this->sqlArr as $sql){
 			$urlPathPrefix = $serverDomain . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) == '/' ? '' : '/');
 			if (isset($GLOBALS['MEDIA_DOMAIN']) && $GLOBALS['MEDIA_DOMAIN']) {
 				$serverDomain = $GLOBALS['MEDIA_DOMAIN'];
 			}
-			if($stmt = $this->conn->prepare($this->sql)){
+			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param('i', $exportID);
 				$stmt->execute();
 				$rs = $stmt->get_result();
@@ -124,34 +126,34 @@ class DwcArchiverMedia extends DwcArchiverBaseManager{
 						}
 						$collid = $r['collid'];
 						unset($r['collid']);
-						$r['rights'] = $collArr[$collid]['rights'];
-						$r['owner'] = $collArr[$collid]['rightsholder'];
-						$r['webstatement'] = $collArr[$collid]['accessrights'];
+						if(!$r['rights']) $r['rights'] = $collArr[$collid]['rights'];
 						if ($this->schemaType != 'backup') {
+							$r['WebStatement'] = $collArr[$collid]['accessrights'];
+							$r['Owner'] = $collArr[$collid]['rightsholder'];
 							if ($r['rights'] && stripos($r['rights'], 'creativecommons.org') === 0) {
-								$r['webstatement'] = $r['rights'];
+								$r['WebStatement'] = $r['rights'];
 								$r['rights'] = '';
-								if (!$r['usageterms'] && $r['webstatement']) {
-									if (strpos($r['webstatement'], '/zero/1.0/')) {
-										$r['usageterms'] = 'CC0 1.0 (Public-domain)';
+								if (!$r['UsageTerms'] && $r['WebStatement']) {
+									if (strpos($r['WebStatement'], '/zero/1.0/')) {
+										$r['UsageTerms'] = 'CC0 1.0 (Public-domain)';
 									}
-									elseif (strpos($r['webstatement'], '/by/')) {
-										$r['usageterms'] = 'CC BY (Attribution)';
+									elseif (strpos($r['WebStatement'], '/by/')) {
+										$r['UsageTerms'] = 'CC BY (Attribution)';
 									}
-									elseif (strpos($r['webstatement'], '/by-sa/')) {
-										$r['usageterms'] = 'CC BY-SA (Attribution-ShareAlike)';
+									elseif (strpos($r['WebStatement'], '/by-sa/')) {
+										$r['UsageTerms'] = 'CC BY-SA (Attribution-ShareAlike)';
 									}
-									elseif (strpos($r['webstatement'], '/by-nc/')) {
-										$r['usageterms'] = 'CC BY-NC (Attribution-NonCommercial-ShareAlike)';
+									elseif (strpos($r['WebStatement'], '/by-nc/')) {
+										$r['UsageTerms'] = 'CC BY-NC (Attribution-NonCommercial-ShareAlike)';
 									}
-									elseif (strpos($r['webstatement'], '/by-nc-sa/')) {
-										$r['usageterms'] = 'CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)';
+									elseif (strpos($r['WebStatement'], '/by-nc-sa/')) {
+										$r['UsageTerms'] = 'CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)';
 									}
 								}
 							}
-							if (!$r['usageterms']) $r['usageterms'] = 'CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)';
+							if (!$r['UsageTerms']) $r['UsageTerms'] = 'CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)';
 						}
-						$r['providermanagedid'] = 'urn:uuid:' . $r['providermanagedid'];
+						$r['providerManagedID'] = 'urn:uuid:' . $r['providerManagedID'];
 						$r['associatedSpecimenReference'] = $urlPathPrefix . 'collections/individual/index.php?occid=' . $r['occid'];
 						if($r['accessURI']){
 							$extStr = strtolower(substr($r['accessURI'], strrpos($r['accessURI'], '.') + 1));
@@ -185,7 +187,7 @@ class DwcArchiverMedia extends DwcArchiverBaseManager{
 			}
 			else{
 				$this->logOrEcho('ERROR writing out to extension file: ' . $stmt->error . "\n");
-				//$this->logOrEcho("\tSQL: ".$this->sql."\n");
+				//$this->logOrEcho("\tSQL: ".$sql."\n");
 			}
 		}
 		return $recordCnt;
@@ -194,6 +196,7 @@ class DwcArchiverMedia extends DwcArchiverBaseManager{
 	//Setters and getters
 	public function setRedactLocalities($bool){
 		if($bool) $this->redactLocalities = true;
+		else $this->redactLocalities = false;
 	}
 
 	public function setRareReaderCollStr($rareReaderArr){

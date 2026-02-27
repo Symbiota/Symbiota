@@ -14,6 +14,9 @@
  * importimage (default = false): 0 = image URLs NOT included for ingestion, 1 = image URLs included for ingestion
  */
 
+//Due to significant increase in nefarious bot traffic, deactivating tool in preference for integration into Symbiota 4.0 API
+exit;
+
 date_default_timezone_set('America/Phoenix');
 include_once('../../config/symbini.php');
 require_once($SERVER_ROOT.'/classes/SpecUploadBase.php');

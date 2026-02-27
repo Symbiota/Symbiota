@@ -96,7 +96,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 
 	public function writeRssFile(){
 
-		$this->logOrEcho('Mapping data to RSS feed... ');
+		$this->logOrEcho('Mapping data to RSS feed... ', 1);
 
 		//Create new document and write out to target
 		$newDoc = new DOMDocument('1.0',$this->charSetOut);
@@ -194,7 +194,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 			//Add path to database
 			$sql = 'UPDATE omcollections SET dwcaUrl = "'.$archivePath.'" WHERE collid = '.$collID;
 			if(!$this->conn->query($sql)){
-				$this->logOrEcho('ERROR updating dwcaUrl while adding new DWCA instance: '.$this->conn->error);
+				$this->logOrEcho('ERROR updating dwcaUrl while adding new DWCA instance: '.$this->conn->error, 2);
 			}
 		}
 
@@ -228,7 +228,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 			$redirectDoc->save($deprecatedPath);
 		}
 
-		$this->logOrEcho('Done!', 1);
+		$this->logOrEcho('Done!', 2);
 	}
 
 	//Misc data retrival functions
@@ -337,7 +337,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 
 			if(file_exists($SERVER_ROOT . $localPath)) {
 				$size = @filesize($SERVER_ROOT . $localPath);
-			} 
+			}
 		}
 
 		return $size;

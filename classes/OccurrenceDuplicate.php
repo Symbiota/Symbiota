@@ -70,7 +70,7 @@ class OccurrenceDuplicate {
 		return $retArr;
 	}
 
-	public function linkDuplicates($occid1,$occidStr,$dupTitle=''){
+	public function linkDuplicates($occid1, $occidStr, $dupTitle=''){
 		$status = true;
 		if($occid1 && $occidStr){
 			$targetDupID = 0;
@@ -90,7 +90,7 @@ class OccurrenceDuplicate {
 				$targetDupID = $this->mergeClusters(array_keys($dupArr));
 			}
 			else{
-				$targetDupID = $this->createCluster($occid1,$dupTitle);
+				$targetDupID = $this->createCluster($occid1, $dupTitle);
 			}
 			if($targetDupID){
 				//Add subject specimens to duplicate cluster
@@ -141,10 +141,11 @@ class OccurrenceDuplicate {
 			$targetId = min($dupArr);
 			//remove value from array
 			unset($dupArr[array_search($targetId, $dupArr)]);
-			$sql = 'UPDATE omoccurduplicatelink SET duplicateid = '.$targetId.' WHERE duplicateid IN('.$dupArr.')';
+			$sql = 'UPDATE IGNORE omoccurduplicatelink SET duplicateid = ' . $targetId . ' WHERE duplicateid IN(' . implode(',', $dupArr) . ')';
 			if($this->conn->query($sql)){
-				if(!$this->conn->query('DELETE FROM omoccurduplicates WHERE duplicateid IN('.$dupArr.')')){
-					$this->errorStr = 'ERROR merging duplicate clusters: '.$this->conn->error;
+				foreach($dupArr as $dupId){
+					//Delete duplicate clusters that failed to merge
+					$this->deleteCluster($dupId);
 				}
 			}
 			else{
@@ -156,14 +157,20 @@ class OccurrenceDuplicate {
 
 	public function editCluster($dupId, $title, $description, $notes){
 		$status = true;
-		$sql = 'UPDATE omoccurduplicates SET title = '.($title?'"'.$this->cleanInStr($title).'"':'NULL').', '.
-			'description = '.($description?'"'.$this->cleanInStr($description).'"':'NULL').', '.
-			'notes = '.($notes?'"'.$this->cleanInStr($notes).'"':'NULL').' '.
-			'WHERE (duplicateid = '.$dupId.')';
-		//echo $sql;
-		if(!$this->conn->query($sql)){
-			$this->errorStr = 'ERROR editing duplicate cluster: '.$this->conn->error;
-			$status = false;
+		if($dupId){
+			if(!$title) $title = null;
+			if(!$description) $description = null;
+			if(!$notes) $notes = null;
+			$sql = 'UPDATE omoccurduplicates SET title = ?, description = ?, notes = ? WHERE (duplicateid = ?)';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('sssi', $title, $description, $notes, $dupId);
+				$stmt->execute();
+				if(!$stmt->affected_rows && $stmt->error){
+					$status = false;
+					$this->errorStr = $stmt->error;
+				}
+				$stmt->close();
+			}
 		}
 		return $status;
 	}
@@ -171,30 +178,50 @@ class OccurrenceDuplicate {
 	public function deleteOccurFromCluster($dupId, $occid){
 		$status = true;
 		//If duplicate cluster only consists of two occurrences, remove whole cluster
-		$rs = $this->conn->query('SELECT duplicateid FROM omoccurduplicatelink WHERE duplicateid = '.$dupId);
-		if($rs->num_rows == 2){
-			$sql = 'DELETE FROM omoccurduplicates WHERE (duplicateid = '.$dupId.')';
-			if(!$this->conn->query($sql)){
-				$this->errorStr = 'ERROR deleting duplicate cluster: '.$this->conn->error;
-				$status = false;
+		$sql = 'SELECT duplicateid FROM omoccurduplicatelink WHERE duplicateid = ?';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $dupId);
+			$stmt->execute();
+			if($rs = $stmt->get_result()){
+				if($rs->num_rows == 2){
+					$status = $this->deleteCluster($dupId);
+				}
+				else{
+					$status = $this->deleteDuplicateLink($dupId, $occid);
+				}
+				$rs->free();
 			}
-		}
-		else{
-			$sql = 'DELETE FROM omoccurduplicatelink WHERE (duplicateid = '.$dupId.') AND (occid = '.$occid.')';
-			if(!$this->conn->query($sql)){
-				$this->errorStr = 'ERROR deleting occurrence from duplicate cluster: '.$this->conn->error;
-				$status = false;
-			}
+			$stmt->close();
 		}
 		return $status;
 	}
 
 	public function deleteCluster($dupId){
 		$status = true;
-		$sql = 'DELETE FROM omoccurduplicates WHERE duplicateid = '.$dupId;
-		if(!$this->conn->query($sql)){
-			$this->errorStr = 'ERROR deleting duplicate cluster: '.$this->conn->error;
-			$status = false;
+		$sql = 'DELETE FROM omoccurduplicates WHERE duplicateid = ?';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $dupId);
+			$stmt->execute();
+			if(!$stmt->affected_rows && $stmt->error){
+				$status = false;
+				$this->errorStr = $stmt->error;
+			}
+			$stmt->close();
+		}
+		return $status;
+	}
+
+	public function deleteDuplicateLink($dupId, $occid){
+		$status = true;
+		$sql = 'DELETE FROM omoccurduplicatelink WHERE (duplicateid = ?) AND (occid = ?)';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('ii', $dupId, $occid);
+			$stmt->execute();
+			if(!$stmt->affected_rows && $stmt->error){
+				$status = false;
+				$this->errorStr = $stmt->error;
+			}
+			$stmt->close();
 		}
 		return $status;
 	}

@@ -163,7 +163,7 @@ class OccurrenceAnnotationController extends OccurrenceController{
 	/**
 	 * @OA\Get(
 	 *	 path="/api/v2/occurrence/{identifier}/annotation",
-	 *	 operationId="/api/v2/occurrence/{identifier}/annotation",
+	 *	 operationId="/api/v2/occurrence/identifier/annotation",
 	 *	 summary="Edits made to target occurrence",
 	 *	 tags={"Occurrence"},
 	 *	 @OA\Parameter(

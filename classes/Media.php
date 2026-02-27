@@ -1,9 +1,9 @@
 <?php global $SERVER_ROOT, $LANG_TAG;
 include_once($SERVER_ROOT . "/classes/Database.php");
-include_once($SERVER_ROOT . "/classes/Sanitize.php");
 include_once($SERVER_ROOT . "/classes/StorageStrategy.php");
 include_once($SERVER_ROOT . "/classes/MediaType.php");
 include_once($SERVER_ROOT . "/classes/MediaException.php");
+include_once($SERVER_ROOT . "/classes/utilities/Sanitize.php");
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/UploadUtil.php');
@@ -278,17 +278,27 @@ class Media {
 			'wma' => 'audio/x-ms-wma',
 		];
 
+		$misc = [
+			'pdf' => 'application/pdf',
+		];
+
 		if($type === MediaType::Image) {
 			return $image[$ext] ?? false;
 		} else if ($type=== MediaType::Audio) {
 			return $audio[$ext] ?? false;
+		} else if ($type=== MediaType::Misc) {
+			return $misc[$ext] ?? false;
 		} else {
 			$audio_result = $audio[$ext] ?? false;
 			$image_result = $image[$ext] ?? false;
-			if($audio_result && !$image_result) {
+			$misc_result = $misc[$ext] ?? false;
+
+			if($audio_result && !$image_result && !$misc_result) {
 				return $audio_result;
-			} else if(!$audio_result && $image_result) {
+			} else if(!$audio_result && $image_result && !$misc_result) {
 				return $image_result;
+			} else if(!$audio_result && !$image_result && $misc_result) {
+				return $misc_result;
 			} else {
 				// There was some mime type ambiguity so return false
 				return false;
@@ -563,7 +573,7 @@ class Media {
 
 
 					$storage->upload($file);
-					$createdFilepaths[] = $storage->getDirPath($file);
+					$createdFilepaths['originalUrl'] = $storage->getDirPath($file);
 
 					$urls = [
 						'thumbnailUrl' => [
@@ -590,22 +600,31 @@ class Media {
 
 							if($storage->file_exists($data['name'])) {
 								$metadata[$url] = $storage->getUrlPath($data['name']);
-								$createdFilepaths[] = $url;
+								$createdFilepaths[$url] = $storage->getDirPath($data['name']);
 							}
 
 						}
 					}
+
 					self::update_metadata($metadata, $media_metadata['mediaID'], $conn);
 				} elseif($media_type === MediaType::Audio) {
 					$storage->upload($file);
+					$createdFilepaths['originalUrl'] = $storage->getDirPath($file);
+				} elseif($media_type === MediaType::Misc) {
+					$storage->upload($file);
+					$createdFilepaths['originalUrl'] = $storage->getDirPath($file);
 				}
+			}
+
+			foreach($createdFilepaths as $field => $filepath) {
+				self::insertMediaMetadata($media_metadata['mediaID'], $field, filesize($filepath), md5_file($filepath));
 			}
 
 			mysqli_commit($conn);
 		} catch(Throwable $th) {
 			mysqli_rollback($conn);
 
-			foreach($createdFilepaths as $filepath) {
+			foreach($createdFilepaths as $field => $filepath) {
 				if(file_exists($filepath)) {
 					unlink($filepath);
 				}
@@ -613,6 +632,18 @@ class Media {
 
 			array_push(self::$errors, $th->getMessage());
 		}
+	}
+
+	private static function insertMediaMetadata(int $mediaID, string $field, int $bytes, string $md5sum, ?mysqli $conn = null): void{
+		if(!$conn) {
+			$conn = Database::connect('write');
+		}
+
+		QueryUtil::executeQuery(
+			$conn,
+			'INSERT INTO mediametadata (mediaID, field, bytes, md5sum) VALUES (?, ?, ?, ?)', [
+			$mediaID, $field, $bytes, $md5sum
+		]);
 	}
 
 	public static function getMediaTypeStrFromMime(string $mime) {
@@ -800,7 +831,7 @@ class Media {
 			$current_media_arr = self::getMedia($media_id);
 			// If file is stored locally then check to make sure the extension is not being changed
 			foreach(['url', 'thumbnailUrl', 'originalUrl'] as $url) {
-				if(array_key_exists($url, $data) && $storage->file_exists($current_media_arr[$url])) {
+				if(array_key_exists($url, $data) && !empty($current_media_arr[$url]) && $storage->file_exists($current_media_arr[$url])) {
 					self::check_file_rename(
 						$current_media_arr[$url],
 						$data[$url]

@@ -320,6 +320,14 @@ function addIdentifierField(clickedObj) {
   // Hook jquery-ui autocomplete to the newly inserted inputs
 }
 
+function confirmDeleteIdentifier(idKey, occId) {
+    if (confirm(translations.IDENTIFIER_DELETE)) {
+        deleteIdentifier(idKey, occId);
+        return false;
+    }
+    return false;
+}
+
 function deleteIdentifier(identID, occid) {
   if (identID != "") {
     //alert("rpc/deleteIdentifier.php?identifierID="+identID+"&occid="+occid);

@@ -279,7 +279,7 @@ class OccurrenceIndividual extends Manager{
 					$tnUrl = $row->thumbnailurl;
 					$lgUrl = $row->originalurl;
 					if($MEDIA_DOMAIN){
-						if(substr($url,0,1)=='/') $url = $MEDIA_DOMAIN . $url;
+						if($url && substr($url,0,1)=='/') $url = $MEDIA_DOMAIN . $url;
 						if($lgUrl && substr($lgUrl, 0, 1) == '/') $lgUrl = $MEDIA_DOMAIN . $lgUrl;
 						if($tnUrl && substr($tnUrl, 0, 1) == '/') $tnUrl = $MEDIA_DOMAIN . $tnUrl;
 					}

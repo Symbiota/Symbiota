@@ -9,8 +9,8 @@ include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 include_once($SERVER_ROOT . '/classes/Database.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCleaner.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
-include_once($SERVER_ROOT . '/classes/Sanitize.php');
 include_once($SERVER_ROOT . '/classes/CustomQuery.php');
+include_once($SERVER_ROOT . '/classes/CollectionFormManager.php');
 
 // Other fields selected for display and logic purposes
 $otherFields = [
@@ -72,11 +72,18 @@ Language::load([
 	'collections/sharedterms',
 	'collections/misc/sharedterms',
 	'collections/editor/batchDuplicateGeorefCopy',
-	'collections/list'
+	'collections/list',
+	'collections/search/index',
 ]);
 
 $collId = array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid'])? intval($_REQUEST['collid']):0;
 UserUtil::isCollectionAdminOrDenyAcess($collId);
+
+$collectionFormManager = new CollectionFormManager();
+$requestSuppliedCatOrd = (array_key_exists('catOrd', $_REQUEST) && $collectionFormManager->areCollectionIdsValid($_REQUEST['catOrd'])) ? explode(',', $_REQUEST['catOrd']) : null;
+$requestSuppliedCatExpnd = (array_key_exists('catExpnd', $_REQUEST) && $collectionFormManager->areCollectionCategoriesValid($_REQUEST['catExpnd'])) ? explode(',', $_REQUEST['catExpnd']) : null;
+$requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFormManager->areCollectionCategoriesValid($_REQUEST['catChk'])) ? explode(',', $_REQUEST['catChk']) : null;
+
 
 if(array_key_exists('copyInfo', $_POST)) {
 	foreach($_POST as $targetOccId => $sourceOccId) {
@@ -89,7 +96,7 @@ if(array_key_exists('copyInfo', $_POST)) {
 			}
 		}
 	}
-	$_REQUEST = $_SESSION['batchDuplicateGeorefCopyRequest'];
+	$_REQUEST = $_SESSION['batchDuplicateGeorefCopyRequest'] ?? [];
 } else if(array_key_exists('searchDuplicates', $_REQUEST)) {
 	$_SESSION['batchDuplicateGeorefCopyRequest'] = $_REQUEST;
 }
@@ -151,7 +158,7 @@ function mapField($field, $prefix) {
 	return $tableAlias . $prefix . '.' . $field . ($prefix? ' AS ' . $field . $prefix: '');
 };
 
-function getSqlFields(array $fields, string $prefix = '') {	
+function getSqlFields(array $fields, string $prefix = '') {
 	$sql = '';
 
 	for($i = 0; $i < count($fields); $i++) {
@@ -162,12 +169,12 @@ function getSqlFields(array $fields, string $prefix = '') {
 }
 
 function getOccurrences(array $occIds, mysqli $conn) {
-	global $otherFields, $harvestFields; 
+	global $otherFields, $harvestFields;
 	if(count($occIds) <= 0) return [];
 
 	$parameters = str_repeat('?,', count($occIds) - 1) . '?';
 
-	$sql = 'SELECT ' . getSqlFields($otherFields) . ',' .getSqlFields($harvestFields) . 
+	$sql = 'SELECT ' . getSqlFields($otherFields) . ',' .getSqlFields($harvestFields) .
 	' from omoccurrences o where occid in (' . $parameters . ')';
 
 	$rs = QueryUtil::executeQuery($conn, $sql, $occIds);
@@ -231,7 +238,7 @@ function getCollections(mysqli $conn) {
 	$collections = [];
 	foreach($rs->fetch_all(MYSQLI_ASSOC) as $row) {
 		$collections[$row['collid']] = $row;
-	}	
+	}
 
 	return $collections;
 }
@@ -263,7 +270,7 @@ function render_row($row, $checkboxName = false, $shownFields = [], $onlyOption 
 	$html .= '</div></td>';
 
 	$base_url = $GLOBALS['CLIENT_ROOT'] . '/collections/individual/index.php?occid=';
-		
+
 	foreach($shownFields as $key) {
 		$value = $row[$key] ?? null;
 		$hide = array_key_exists('hide_' . $key, $_REQUEST);
@@ -323,7 +330,7 @@ foreach ($duplicates as $dupe) {
 }
 
 foreach (getOccurrences($targetOccids, $conn) as $target) {
-	$target['duplicateid'] = $targets[$target['occid']]; 
+	$target['duplicateid'] = $targets[$target['occid']];
 	$target['institutionCode'] = $collections[$target['collid']]['institutionCode'];
 	$target['collectionCode'] = $collections[$target['collid']]['collectionCode'];
 	$targets[$target['occid']] =  $target;
@@ -344,8 +351,14 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 <html lang="en">
 	<head>
 	<?php include_once($SERVER_ROOT.'/includes/head.php') ;?>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<link href="<?= $CSS_BASE_PATH ?>/searchStyles.css?ver=1" type="text/css" rel="stylesheet">
+	<link href="<?= $CSS_BASE_PATH ?>/searchStylesInner.css" type="text/css" rel="stylesheet">
+	<script src="<?= $CLIENT_ROOT ?>/js/alerts.js?v=202107" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=2" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.list.js?ver=20251002>" type="text/javascript"></script>
 
-	<style tyle="text/css">
+	<style type="text/css">
 		.table-scroll {
 			display: block;
 			white-space: nowrap;
@@ -360,7 +373,7 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 			background-color: #CCC
 		}
 
-		#record-viewer-innertext { 
+		#record-viewer-innertext {
 			margin-left: 2em;
 			width: calc(100vw - 4em);
 		}
@@ -379,9 +392,8 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 
 	<body>
 		<?php include_once($SERVER_ROOT.'/includes/header.php') ;?>
-
 		<div role="main" id="record-viewer-innertext">
-
+			<div id="error-msgs" class="errors" style="color: var(--danger-color);"></div>
 			<?= Breadcrumbs::renderMany([
 			$LANG['HOME'] => '../../index.php',
 			$LANG['COL_MGMNT'] => '../misc/collprofiles.php?emode=1&collid=' . $collId,
@@ -396,7 +408,7 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 			</p>
 			</div>
 			<h2 style="margin-bottom: 0.5rem"><?= $LANG['DUPLICATE_SEARCH_CRITERIA'] ?></h2>
-			<form method="POST" style="margin-bottom: 1rem;">
+			<form class="content" id="params-form" method="POST" style="margin-bottom: 1rem;">
 				<div style="margin-bottom: 1rem;">
 					<?php CustomQuery::renderCustomInputs() ?>
 				</div>
@@ -437,14 +449,20 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 					<dialog id="collections_dialog" style="min-width: 900px;">
 						<div style="display:flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
 							<h1 style="margin:0;"><?= $LANG['NAV_COLLECTIONS'] ?></h1>
-							<div style="flex-grow: 1;">
-							<button class="button" style="margin-left: auto;" type="button" onclick="document.getElementById('collections_dialog').close()"><?= $LANG['CLOSE'] ?></button>
+							<div style="display: flex; flex-direction: column; flex-grow: 1; gap: 0.5rem;">
+								<button class="button" style="margin-left: auto;" type="button" onclick="closeCollectionsDialog()"><?= $LANG['CLOSE'] ?></button>
+								<button class="button" style="margin-left: auto; background-color: var(--medium-color);" type="button"  id="reset-btn" ><?php echo $LANG['RESET'] ?></button>
 							</div>
 						</div>
-						<?php include(__DIR__ . '/includes/collectionForm.php') ?>
+						<div id="innertext">
+							<div id="error-msgs" class="errors"></div>
+							<div id="search-form-colls">
+								<?php include($SERVER_ROOT . '/collections/collectionForm.php'); ?>
+							</div>
+						</div>
 					</dialog>
-					<button class="button" type="button" onclick="document.getElementById('collections_dialog').showModal()"><?= $LANG['FILTER_COLLECTIONS'] ?></button>
-					<button class="button"><?= $LANG['SEARCH'] ?></button>
+					<button class="button" type="button" onclick="openCollectionsDialog()"><?= $LANG['FILTER_COLLECTIONS'] ?></button>
+					<button type="submit" class="button"><?= $LANG['SEARCH'] ?></button>
 				</div>
 
 				<input type="hidden" name="searchDuplicates" value="1"/>
@@ -453,7 +471,7 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 
 			<?php foreach($errors as $duplicateId => $error): ?>
 			<div style="margin-bottom:0.5rem">
-<?= 'ERROR: ' . $error ?>
+				<?= 'ERROR: ' . $error ?>
 			</div>
 			<?php endforeach ?>
 
@@ -522,7 +540,6 @@ foreach (getOccurrences(array_keys($optionOccids), $conn) as $option) {
 			</form>
 			<br/>
 		</div>
-
 		<?php include_once($SERVER_ROOT.'/includes/footer.php') ;?>
 	</body>
 </html>

@@ -9,7 +9,7 @@ class Occurrence extends Model{
 	protected $primaryKey = 'occid';
 	public $timestamps = false;
 
-	protected $fillable = [ 'collid', 'dbpk', 'basisOfRecord', 'occurrenceID', 'catalogNumber', 'otherCatalogNumbers', 'family', 'scientificName', 'sciname', 'genus', 'specificEpithet', 'datasetID', 'organismID',
+	protected $fillable = [ 'collid', 'dbpk', 'basisOfRecord', 'occurrenceID', 'catalogNumber', 'family', 'scientificName', 'sciname', 'genus', 'specificEpithet', 'datasetID', 'organismID',
 		'taxonRank', 'infraspecificEpithet', 'institutionCode', 'collectionCode', 'scientificNameAuthorship', 'taxonRemarks', 'identifiedBy', 'dateIdentified', 'identificationReferences',
 		'identificationRemarks', 'identificationQualifier', 'typeStatus', 'recordedBy', 'recordNumber', 'associatedCollectors', 'eventDate', 'eventDate2',
 		'verbatimEventDate', 'eventTime', 'habitat', 'substrate', 'fieldNotes', 'fieldNumber', 'eventID', 'occurrenceRemarks', 'informationWithheld', 'dataGeneralizations',
@@ -19,8 +19,8 @@ class Occurrence extends Model{
 		'footprintWKT', 'locationRemarks', 'verbatimCoordinates', 'georeferencedBy', 'georeferencedDate', 'georeferenceProtocol', 'georeferenceSources',
 		'georeferenceVerificationStatus', 'georeferenceRemarks', 'minimumElevationInMeters', 'maximumElevationInMeters', 'verbatimElevation', 'minimumDepthInMeters', 'maximumDepthInMeters',
 		'verbatimDepth', 'availability', 'disposition', 'storageLocation', 'modified', 'language', 'processingStatus', 'recordEnteredBy', 'duplicateQuantity', 'labelProject', 'recordID', 'dateEntered'];
-	protected $hidden = [ 'collectionInternal', 'scientificName', 'recordedbyid', 'observerUid', 'labelProject', 'recordEnteredBy', 'associatedOccurrences', 'previousIdentifications',
-		'verbatimCoordinateSystem', 'coordinatePrecision', 'footprintWKT', 'dynamicFields', 'institutionID', 'collectionID', 'genericColumn1', 'genericColumn2' ];
+	protected $hidden = [ 'otherCatalogNumbers', 'collectionInternal', 'scientificName', 'recordedbyid', 'observerUid', 'labelProject', 'recordEnteredBy', 'associatedOccurrences',
+		'previousIdentifications', 'verbatimCoordinateSystem', 'coordinatePrecision', 'footprintWKT', 'dynamicFields', 'institutionID', 'collectionID', 'genericColumn1', 'genericColumn2' ];
 	public static $snakeAttributes = false;
 
 	public function getInstitutionCodeAttribute($value){
@@ -58,6 +58,14 @@ class Occurrence extends Model{
 
 	public function media(){
 		return $this->hasMany(Media::class, 'occid', 'occid');
+	}
+
+	public function identifier(){
+		return $this->hasMany(OccurrenceIdentifier::class, 'occid', 'occid');
+	}
+
+	public function dataset(){
+		return $this->belongsToMany(OccurrenceDataset::class, 'omoccurdatasetlink', 'occid', 'datasetID');
 	}
 
 	public function annotationExternal(){

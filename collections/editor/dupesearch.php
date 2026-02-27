@@ -117,6 +117,7 @@ if(!$IS_ADMIN){
 						var elem = openerForm.elements[k];
 						if(elem.disabled == false && (elem.type != 'hidden' || k == "tidinterpreted") && (appendMode == false || elem.value == "")){
 							elem.value = tArr[k];
+							opener.$("button").prop("disabled", false);
 							elem.style.backgroundColor = "lightblue";
 							if(k != "tid") opener.fieldChanged(k);
 						}
@@ -248,17 +249,17 @@ if(!$IS_ADMIN){
 						<div style="clear:both;font-weight:bold;font-size:120%;">
 							<?php echo $occObj['institutionCode'].($occObj['collectionCode']?':'.$occObj['collectionCode']:''); ?>
 						</div>
-						<?php if($collId == $occObj['collid'] && ($dupeType == 'exact' || $dupeType == 'exsic')){ ?>
+						<?php if($collId == $occObj['collid'] && ($dupeType == 'exact' || $dupeType == 'exsic')): ?>
 							<div style="color:red;">
 								<?php echo $LANG['NOTICE_EXACT_MATCH']; ?>
 							</div>
-							<div style="font-weight:bold;">
-								<?php
-								if($occObj['catalogNumber']) echo $occObj['catalogNumber'];
-								if($occObj['otherCatalogNumbers']) echo ' ('.$occObj['otherCatalogNumbers'].')';
-								?>
-							</div>
-						<?php } ?>
+						<?php endif ?>
+
+						<div style="font-weight:bold;">
+							<?= $occObj['catalogNumber'] ?? ''?>
+							<?= $occObj['otherCatalogNumbers'] ? ' (' . $occObj['otherCatalogNumbers'] .  ')': ''?>
+						</div>
+
 						<div>
 							<?php
 							echo '<span title="recordedby">'.($occObj['recordedBy']?$occObj['recordedBy']:'Collector field empty').'</span>';

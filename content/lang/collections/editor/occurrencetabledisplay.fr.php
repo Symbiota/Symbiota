@@ -55,6 +55,7 @@ $LANG['COLLEC_CODE'] = 'Code de la collection (remplacer)';
 $LANG['OWNER_CODE'] = 'Code du propriétaire (remplacer)';
 
 $LANG['CATALOG_NUM'] = 'Numéro de catalogue';
+$LANG['OTHER_CAT_NUMS'] = 'Identifiants Supplémentaires';
 $LANG['FAMILY'] = 'Famille';
 $LANG['ID_QUALIFIER'] = 'Qualificateur d\'identification';
 $LANG['SCI_NAME'] = 'Nom scientifique';
@@ -79,8 +80,8 @@ $LANG['LOCALITY'] = 'Localité';
 $LANG['LATITUDE'] = 'Latitude';
 $LANG['LONGITUDE'] = 'Longitude';
 
-$LANG['ID_TAG_NAME'] = 'Nom de la balise d\'identification';
-$LANG['ID_TAG_VAL'] = 'Valeur de la balise d\'identification';
+$LANG['ID_TAG_NAME'] = 'Nom de l\'étiquette d\'identifiant suppl.';
+$LANG['ID_TAG_VAL'] = 'Valeur de l\'identifiant supplémentaire';
 $LANG['UNCERTAINTY_METERS'] = 'Incertitude en mètres';
 $LANG['VERB_COORDINATES'] = 'Coordonnées verbatim';
 $LANG['DATUM'] = 'Donnée';
@@ -105,6 +106,7 @@ $LANG['GROUP'] = 'Groupe';
 $LANG['FORMATION'] = 'Formation';
 $LANG['MEMBER'] = 'Membre';
 $LANG['BED'] = 'Lit';
+$LANG['STORAGE_LOC'] = 'Emplacement de stockage';
 $LANG['SUBSTRATE'] = 'Substrat';
 $LANG['OCCURR_REMARKS'] = 'Notes (Remarques d\'occurrence)';
 $LANG['ASSOC_TAXA'] = 'Taxons associés';

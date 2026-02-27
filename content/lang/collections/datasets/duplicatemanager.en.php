@@ -4,9 +4,12 @@
 Language: English
 ------------------
 */
+$LANG['EDIT_SUCCESS'] = 'Record edited successfully';
+$LANG['EDIT_ERROR'] = 'ERROR editing record';
+$LANG['DELETE_SUCCESS'] = 'Record deleted successfully';
+$LANG['DELETE_ERROR'] = 'ERROR deleting record';
 $LANG['DUPLICATE_MANAGER'] = 'Duplicate Manager';
 $LANG['DUP_CLUSTERING'] = 'Duplicate Clustering';
-$LANG['TITLE_VALUE'] = 'Title field must have a value';
 $LANG['PERS_MANAGE_MENU'] = 'Personal Management Menu';
 $LANG['COL_MANAGE'] = 'Collection Management';
 $LANG['DUP_MANAGE'] = 'Duplicate Management';

@@ -43,6 +43,19 @@ class OccurrenceImport extends UtilitiesFileImport {
 				if ($this->getHeaderArr()) {		// Advance past header row, set file handler, and define delimiter
 					$cnt = 1;
 					while ($recordArr = $this->getRecordArr()) {
+						// Skip completely empty records (all fields are empty or whitespace)
+						$hasData = false;
+						foreach ($recordArr as $field) {
+							if (trim($field) !== '') {
+								$hasData = true;
+								break;
+							}
+						}
+						if (!$hasData) {
+							$cnt++;
+							continue;
+						}
+
 						$identifierArr = array();
 						if (isset($this->fieldMap['occid'])) {
 							if ($recordArr[$this->fieldMap['occid']]) $identifierArr['occid'] = $recordArr[$this->fieldMap['occid']];
@@ -97,7 +110,7 @@ class OccurrenceImport extends UtilitiesFileImport {
 			}
 
 			$fields = [
-				 //'tid',
+				//'tid',
 				'thumbnailUrl',
 				'url',
 				'sourceUrl',
@@ -126,9 +139,9 @@ class OccurrenceImport extends UtilitiesFileImport {
 					"originalUrl" => $recordArr[$this->fieldMap['originalurl']],
 					"mediaUploadType" => $postArr['mediaUploadType']
 				];
-				foreach($fields as $key) {
+				foreach ($fields as $key) {
 					$record_idx = $this->fieldMap[$key] ?? $this->fieldMap[strtolower($key)] ?? false;
-					if($record_idx && $recordArr[$record_idx]) {
+					if ($record_idx && $recordArr[$record_idx]) {
 						$data[$key] = $this->encodeString($recordArr[$record_idx]);
 					}
 				}
@@ -252,13 +265,13 @@ class OccurrenceImport extends UtilitiesFileImport {
 								$this->setVerboseMode(1);
 								$this->logOrEcho($LANG['ERROR_ADDING'] . ': ' . $errorMsg, 1);
 								$this->setVerboseMode(2);
-							} elseif(strpos($errorMsg, 'Duplicate entry ') !== false) {
+							} elseif (strpos($errorMsg, 'Duplicate entry ') !== false) {
 								$humanReadableMsg = $LANG['DUPLICATE_ENTRY'];
 								$this->logOrEcho($LANG['ERROR_ADDING'] . ': ' . $humanReadableMsg, 1);
 								$this->setVerboseMode(1);
 								$this->logOrEcho($LANG['ERROR_ADDING'] . ': ' . $errorMsg, 1);
 								$this->setVerboseMode(2);
-							}else{
+							} else {
 								$humanReadableMsg = $LANG['GENERIC_ERROR'];
 								$this->logOrEcho($LANG['ERROR_ADDING'] . ': ' . $humanReadableMsg, 1);
 								$this->setVerboseMode(1);

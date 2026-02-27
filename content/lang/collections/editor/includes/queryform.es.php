@@ -112,6 +112,8 @@ $LANG['SELECT_FIELD_NAME'] = 'Seleccione Nombre del Campo';
 $LANG['SHOW_RECS_ALL'] = 'Mostar registros para todos los usuarios (control administrativo)';
 $LANG['COPY_SEARCH'] = 'Copiar búsqueda como enlace';
 $LANG['COPY_LINK'] = 'Copiar Enlace';
+$LANG['DOWNLOAD_SPECIMEN_DATA'] = 'Descargar Datos de Ejemplares';
+$LANG['IMG_DWNL_DATA'] = 'Botón Descargar';
 $LANG['GO_LABEL_PRINT'] = 'Ir a Módulo de Impresión de Etiquetas';
 $LANG['DISPLAY_EDITOR'] = 'Desplegar Editor';
 $LANG['DISPLAY_TABLE'] = 'Desplegar Tabla';
@@ -159,4 +161,5 @@ $LANG['STORAGE_LOC'] = 'Ubicación de almacenamiento';
 $LANG['BIOTA'] = 'Biota';
 $LANG['MEMBER'] = 'Miembro';
 $LANG['STAGE'] = 'Etapa';
+$LANG['EVENT_TIME'] = 'Hora del evento';
 ?>

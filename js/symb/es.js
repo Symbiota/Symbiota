@@ -23,6 +23,7 @@ const translations = {
   TAXON_NAME_MATCH_WARNING: "Este nombre de taxón coincide con otro que existe en la base de datos. ¿Está seguro de que desea crear uno nuevo con el mismo nombre?",
   SPECIMEN: "Especimen",
   OBSERVATION: "Observación",
+  IDENTIFIER_DELETE: "Esto eliminará permanentemente el identificador seleccionado y volverá a guardar este registro de catálogo inmediatamente. ¿Desea continuar?",
   // paleo search
   INTERVAL_MISSING: "Es necesario seleccionar un valor tanto para el Intervalo Temprano como para el Intervalo Tardío, incluso si son iguales.",
   INTERVALS_WRONG_ORDER: "El Intervalo Temprano debe ser geológicamente más antiguo que el Intervalo Tardío.",

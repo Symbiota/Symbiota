@@ -377,7 +377,7 @@ class OccurrenceLabel {
 
 	private function fetchGlobalLabelJson() {
 		$status = false;
-		$sql = 'SELECT dynamicProperties FROM adminconfig WHERE attributeName = ?';
+		$sql = 'SELECT dynamicProperties FROM adminproperties WHERE attributeName = ?';
 		if ($stmt = $this->conn->prepare($sql)) {
 			$attributeName = 'LabelFormatJson';
 			$stmt->bind_param('s', $attributeName);
@@ -675,7 +675,7 @@ class OccurrenceLabel {
 
 		$jsonDynProps = $isAlreadyDecoded ? $dataObj : json_encode($dataObj, JSON_HEX_APOS);
 		$attributeName = 'LabelFormatJson';
-		$checkSql = "SELECT COUNT(*) FROM adminconfig WHERE attributeName = ?";
+		$checkSql = "SELECT COUNT(*) FROM adminproperties WHERE attributeName = ?";
 		if ($checkStmt = $this->conn->prepare($checkSql)) {
 			$checkStmt->bind_param('s', $attributeName);
 			$checkStmt->execute();
@@ -684,7 +684,7 @@ class OccurrenceLabel {
 			$checkStmt->close();
 
 			if ($count > 0) {
-				$updateSql = "UPDATE adminconfig SET dynamicProperties = ? WHERE attributeName = ?";
+				$updateSql = "UPDATE adminproperties SET dynamicProperties = ? WHERE attributeName = ?";
 				if ($updateStmt = $this->conn->prepare($updateSql)) {
 					$updateStmt->bind_param('ss', $jsonDynProps, $attributeName);
 					$updateStmt->execute();
@@ -692,7 +692,7 @@ class OccurrenceLabel {
 					$updateStmt->close();
 				}
 			} else {
-				$insertSql = "INSERT INTO adminconfig (attributeName, attributeValue, dynamicProperties) VALUES (?, ?, ?)";
+				$insertSql = "INSERT INTO adminproperties (attributeName, attributeValue, dynamicProperties) VALUES (?, ?, ?)";
 				if ($insertStmt = $this->conn->prepare($insertSql)) {
 					$insertStmt->bind_param('sss', $attributeName, $attributeName, $jsonDynProps);
 					$insertStmt->execute();

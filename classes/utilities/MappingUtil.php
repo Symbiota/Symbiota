@@ -33,9 +33,16 @@ class MappingUtil  {
 	 * @return array  
 	 **/
 	public static function getMappingBoundary() : array {	
-		$bounds = $GLOBALS['MAPPING_BOUNDARIES'];
-		if(empty($bounds)){
+		if($coords = self::parseBounds($GLOBALS['MAPPING_BOUNDARIES'])) {
+			return $coords;
+		} else {
 			return self::$DEFAULT_BOUNDARY;
+		}
+	}
+
+	public static function parseBounds($bounds): mixed {
+		if(empty($bounds)){
+			return false;
 		}
 
 		if(self::isValidBounds($bounds)) {
@@ -45,16 +52,27 @@ class MappingUtil  {
 		$coorArr = explode(';', $bounds);
 
 		if(!is_array($coorArr) || count($coorArr) != 4) {
-			return self::$DEFAULT_BOUNDARY;
+			return false;
 		}
 
-		//$latCen = ($boundLatMax + $boundLatMin)/2;
-		//$longCen = ($boundLngMax + $boundLngMin)/2;
-
-		// This is [lat, lng]
 		return [
 			['lat' => floatval($coorArr[0]), 'lng' => floatval($coorArr[1])],
 			['lat' => floatval($coorArr[2]), 'lng' => floatval($coorArr[3])]
+		];
+	}
+
+	public static function parsePointRadius(string $pointRadiusStr): mixed {
+		$pointRadiusArr = explode(';', $pointRadiusStr);
+
+		if(!is_array($pointRadiusArr) || count($pointRadiusArr) != 4) {
+			return false;
+		}
+
+		return [
+			'lat' => $pointRadiusArr[0],
+			'lng' => $pointRadiusArr[1],
+			'radius' => $pointRadiusArr[2],
+			'unit' => $pointRadiusArr[3],
 		];
 	}
 

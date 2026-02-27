@@ -90,6 +90,8 @@ class LeafletMap {
       drawColor: this.DEFAULT_SHAPE_OPTIONS,
       lang: "en",
    };
+
+   HIGH_RECORD_THRESHOLD=10000;
    
    /* To Hold Reference to Leaflet Map */
    mapLayer;
@@ -243,7 +245,7 @@ class LeafletMap {
 				"Satellite": Esri_WorldImagery,
 			};
 			const overlays = {
-				"Macrostrat": L.layerGroup([macro_strat])
+				"Geology": L.layerGroup([macro_strat])
 			}
 
 			for(let layer of geoJSONLayers) {

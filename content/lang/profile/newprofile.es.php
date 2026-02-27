@@ -7,12 +7,12 @@ Language: Español (Spanish)
 
 $LANG['INVALID_USERNAME'] = 'Usuario inválido';
 $LANG['INVALID_EMAIL'] = 'Dirección de correo inválida';
-$LANG['RECAPTCHA_FAILED'] = 'Verificación recaptcha falló';
-$LANG['PLEASE_CHECK'] = 'Por favor marque el captcha';
+$LANG['CAPTCHA_FAILED'] = 'Verificación el CAPTCHA falló';
+$LANG['PLEASE_CHECK'] = 'Por favor marque el CAPTCHA';
 $LANG['FAILED_1'] = 'FALLÓ: No fue posible crear usuario';
 $LANG['FAILED_2'] = 'Por favor contacte al administrador del portal para asistencia';
 $LANG['NEW_USER'] = 'Nuevo Perfil de Usuario';
-$LANG['CHECK_CAPTCHA'] = 'Primero debe marcar la casilla de reCAPTCHA (No soy un robot)';
+$LANG['CHECK_CAPTCHA'] = 'Primero debe marcar la casilla de CAPTCHA';
 $LANG['BOTH_PASSWORDS'] = 'Ambos campos para la contraseña deben contener valores';
 $LANG['NO_SPACE'] = 'La contraseña no puede empezar o terminar con un espacio, pero puede incluir espacios entre la contraseña';
 $LANG['PWD_TOO_SHORT'] = 'La contraseña debe contener más de 6 caracteres';

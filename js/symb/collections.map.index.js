@@ -59,33 +59,6 @@ function setHeight() {
   if(loadingOverlay) loadingOverlay.style.height = winHeight + "px";
 }
 
-function checkRecordLimit(f) {
-  var recordLimit = document.getElementById("recordlimit").value;
-  if (!isNaN(recordLimit) && recordLimit > 0) {
-    if (recordLimit > 50000) {
-      alert("Record limit cannot exceed 50000.");
-      document.getElementById("recordlimit").value = 5000;
-      return;
-    }
-    if (recordLimit <= 50000) {
-      if (recordLimit > 5000) {
-        if (
-          confirm(
-            "Increasing the record limit can cause delays in loading the map, or for your browser to crash."
-          )
-        ) {
-          return true;
-        } else {
-          document.getElementById("recordlimit").value = 5000;
-        }
-      }
-    }
-  } else {
-    document.getElementById("recordlimit").value = 5000;
-    alert("Record Limit must be set to a whole number greater than zero.");
-  }
-}
-
 //Generate Random Color with luminance greater than 40 for good contrast on black text
 function generateRandColor() {
 	// How Bright we want the color
