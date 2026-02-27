@@ -632,7 +632,6 @@ ALTER TABLE `users`
 ALTER TABLE `omoccurrences`
   ADD INDEX `IX_occurrences_verbatimCoordinates` (`collid`,`verbatimCoordinates`),
   ADD INDEX `IX_occurrences_decimalLngLat` (`decimalLongitude`, `decimalLatitude`),
-  DROP INDEX `IX_occurrences_lat`,
   DROP INDEX `IX_occurrences_lng`;
 
 
