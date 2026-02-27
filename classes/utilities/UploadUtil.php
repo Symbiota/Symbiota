@@ -273,7 +273,7 @@ class UploadUtil {
 
 		$availableMemory = self::getMaximumFileUploadSize() - memory_get_usage();
 		if($availableMemory < intval($info['size'])) {
-			$maxSize = UploadUtil::getIniMaxSize();
+			$maxSize = self::formatBytes(self::getMaximumFileUploadSize());
 			throw new MediaException(MediaException::ExceedMaxSize, $maxSize);
 		}
 
