@@ -30,6 +30,14 @@ ALTER TABLE `adminproperties`
   ADD INDEX `IX_adminproperties_table` (`tableName` ASC, `tablePK` ASC);
 
 
+ALTER TABLE `omoccurdatasets` 
+  ADD COLUMN `recordID` VARCHAR(45) NULL AFTER `collid`,
+  ADD INDEX `IX_omoccurdatasets_name` (`name` ASC),
+  ADD INDEX `IX_omoccurdatasets_isPublic` (`isPublic` ASC),
+  ADD INDEX `IX_omoccurdatasets_datasetIdentifier` (`datasetIdentifier` ASC),
+  ADD INDEX `IX_omoccurdatasets_datasetName` (`datasetName` ASC);
+
+
 #field for search by polygons
 ALTER TABLE geographicthesaurus
   ADD COLUMN isSearchable TINYINT(1) NOT NULL DEFAULT 0 AFTER `parentID`;
@@ -139,12 +147,12 @@ CREATE TABLE `omexport` (
   `portalDomain` VARCHAR(45) NULL,
   `expiration` DATETIME NULL,
   `ipAddress` VARCHAR(45) NULL,
-  `status` ENUM('queued', 'inProcess', 'completed', 'failed') NULL,
+  `status` ENUM('queued', 'inProcess', 'completed', 'failed') NULL DEFAULT 'queued',
   `statusHistory` TEXT NULL,
   `gui` VARCHAR(45) NULL,
   `guiType` VARCHAR(45) NULL,
   `notes` VARCHAR(255) NULL,
-  `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp,
+  `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`omExportID`)
 ) ENGINE=InnoDB;
 
@@ -181,7 +189,7 @@ CREATE TABLE `omexportoccurrences` (
   `occurrenceRemarks` TEXT NULL,
   `associatedSequences` TEXT NULL,
   `recordSecurity` INT NULL,
-  `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp,
+  `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`omExportID`,`occid`)
 ) ENGINE=InnoDB;
 
@@ -449,27 +457,27 @@ INSERT INTO `omoccurpaleogts` VALUES
 
 #Add paleo fields to uploadspectemp
 ALTER TABLE `uploadspectemp`
-  ADD COLUMN `paleo_eon` TEXT,
-  ADD COLUMN `paleo_era` TEXT,
-  ADD COLUMN `paleo_period` TEXT,
-  ADD COLUMN `paleo_epoch` TEXT,
-  ADD COLUMN `paleo_earlyInterval` TEXT,
-  ADD COLUMN `paleo_lateInterval` TEXT,
-  ADD COLUMN `paleo_absoluteAge` TEXT,
-  ADD COLUMN `paleo_stage` TEXT,
-  ADD COLUMN `paleo_localStage` TEXT,
-  ADD COLUMN `paleo_biota` TEXT,
-  ADD COLUMN `paleo_biostratigraphy` TEXT,
-  ADD COLUMN `paleo_taxonEnvironment` TEXT,
-  ADD COLUMN `paleo_lithogroup` TEXT,
-  ADD COLUMN `paleo_formation` TEXT,
-  ADD COLUMN `paleo_member` TEXT,
-  ADD COLUMN `paleo_bed` TEXT,
-  ADD COLUMN `paleo_lithology` TEXT,
-  ADD COLUMN `paleo_stratRemarks` TEXT,
-  ADD COLUMN `paleo_element` TEXT,
-  ADD COLUMN `paleo_slideProperties` TEXT,
-  ADD COLUMN `paleo_geologicalContextID` TEXT,
+  ADD COLUMN `paleo_eon` TEXT AFTER `exsiccatiNotes`,
+  ADD COLUMN `paleo_era` TEXT AFTER `paleo_eon`,
+  ADD COLUMN `paleo_period` TEXT AFTER `paleo_era`,
+  ADD COLUMN `paleo_epoch` TEXT AFTER `paleo_period`,
+  ADD COLUMN `paleo_earlyInterval` TEXT AFTER `paleo_epoch`,
+  ADD COLUMN `paleo_lateInterval` TEXT AFTER `paleo_earlyInterval`,
+  ADD COLUMN `paleo_absoluteAge` TEXT AFTER `paleo_lateInterval`,
+  ADD COLUMN `paleo_stage` TEXT AFTER `paleo_absoluteAge`,
+  ADD COLUMN `paleo_localStage` TEXT AFTER `paleo_stage`,
+  ADD COLUMN `paleo_biota` TEXT AFTER `paleo_localStage`,
+  ADD COLUMN `paleo_biostratigraphy` TEXT AFTER `paleo_biota`,
+  ADD COLUMN `paleo_taxonEnvironment` TEXT AFTER `paleo_biostratigraphy`,
+  ADD COLUMN `paleo_lithogroup` TEXT AFTER `paleo_taxonEnvironment`,
+  ADD COLUMN `paleo_formation` TEXT AFTER `paleo_lithogroup`,
+  ADD COLUMN `paleo_member` TEXT AFTER `paleo_formation`,
+  ADD COLUMN `paleo_bed` TEXT AFTER `paleo_member`,
+  ADD COLUMN `paleo_lithology` TEXT AFTER `paleo_bed`,
+  ADD COLUMN `paleo_stratRemarks` TEXT AFTER `paleo_lithology`,
+  ADD COLUMN `paleo_element` TEXT AFTER `paleo_stratRemarks`,
+  ADD COLUMN `paleo_slideProperties` TEXT AFTER `paleo_element`,
+  ADD COLUMN `paleo_geologicalContextID` TEXT AFTER `paleo_slideProperties`,
   DROP COLUMN `paleojson`;
 
 #copy storageAge in omoccurrences.storageLocation
@@ -620,9 +628,12 @@ ALTER TABLE `users`
   CHANGE COLUMN `password` `password` VARCHAR(255) NULL DEFAULT NULL ;
 
 
-# Add index to improve performance on counts on verbatimCoordinates seen in OccurrenceCleaner
+# Convert to compound indexes to improve performance 
 ALTER TABLE `omoccurrences`
-  ADD INDEX `IX_occurrences_verbatimCoordinates` (`collid`,`verbatimCoordinates`);
+  ADD INDEX `IX_occurrences_verbatimCoordinates` (`collid`,`verbatimCoordinates`),
+  ADD INDEX `IX_occurrences_decimalLngLat` (`decimalLongitude`, `decimalLatitude`),
+  DROP INDEX `IX_occurrences_lng`;
+
 
 # Add mediaMetadata table to track metadata for media
 CREATE TABLE mediametadata (
@@ -649,7 +660,3 @@ DROP TABLE IF EXISTS `lkupcounty`;
 DROP TABLE IF EXISTS `lkupstateprovince`;
 DROP TABLE IF EXISTS `lkupcountry`;
 
-# Combine Lng and Lat indices
-ALTER TABLE omoccurrences ADD INDEX IX_occurrences_decimalLngLat (decimalLongitude, decimalLatitude);
-ALTER TABLE omoccurrences DROP INDEX IX_occurrences_lat;
-ALTER TABLE omoccurrences DROP INDEX IX_occurrences_lng;

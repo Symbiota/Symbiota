@@ -7,12 +7,12 @@ Language: Français (French)
 
 $LANG['INVALID_USERNAME'] = 'Nom d\'utilisateur invalide';
 $LANG['INVALID_EMAIL'] = 'Email invalide';
-$LANG['RECAPTCHA_FAILED'] = 'Échec de la vérification Recaptcha';
-$LANG['PLEASE_CHECK'] = 'Veuillez vérifier le formulaire captcha';
-$LANG['FAILED_1'] = 'ÉCHEC : impossible de créer l\'utilisateur';
+$LANG['CAPTCHA_FAILED'] = 'La vérification du CAPTCHA a échoué';
+$LANG['PLEASE_CHECK'] = 'Veuillez vérifier le formulaire CAPTCHA';
+$LANG['FAILED_1'] = 'ÉCHEC: impossible de créer l\'utilisateur';
 $LANG['FAILED_2'] = "Veuillez contacter l'administrateur système pour obtenir de l'aide";
 $LANG['NEW_USER'] = 'Nouveau Profil d\'Utilisateur';
-$LANG['CHECK_CAPTCHA'] = "Vous devez d'abord cocher la case reCAPTCHA (je ne suis pas un robot)";
+$LANG['CHECK_CAPTCHA'] = "Vous devez d'abord cocher la case CAPTCHA";
 $LANG['BOTH_PASSWORDS'] = 'Les deux champs de mot de passe doivent contenir une valeur';
 $LANG['NO_SPACE'] = 'Le mot de passe ne peut pas commencer ou se terminer par un espace, mais ils peuvent inclure des espaces dans le mot de passe';
 $LANG['PWD_TOO_SHORT'] = 'Le mot de passe doit comporter plus de 6 caractères';
