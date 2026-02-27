@@ -10,7 +10,12 @@ if (isset($_SERVER['CONTENT_LENGTH']) && $_SERVER['CONTENT_LENGTH'] > UploadUtil
 	$max_size = UploadUtil::formatBytes(UploadUtil::getMaximumFileUploadSize());
 	$ex = new MediaException(MediaException::ExceedMaxSize, $max_size);
 	$_SESSION['upload_error'] = $ex->getMessage();
-    header('Location: ' . $_SERVER['HTTP_REFERER']);
+
+	if($_SESSION['occurrenceEditorFallbackUrl']) {
+		header('Location: ' . $_SESSION['occurrenceEditorFallbackUrl']);
+	} else {
+		header('Location: ' . $_SERVER['HTTP_REFERER']);
+	}
     exit;
 }
 
@@ -59,6 +64,9 @@ $CATNUM_DUPE_CHECK = true;
 $OTHER_CATNUM_DUPE_CHECK = true;
 if($SYMB_UID){
 	//Set variables
+	if($occId && $collId) {
+		$_SESSION['occurrenceEditorFallbackUrl'] = GeneralUtil::getDomain() . '/collections/editor/occurrenceeditor.php?occid=' . $occId . '&collid=' . $collId;
+	}
 	$occManager->setOccId($occId);
 	$occManager->setCollId($collId);
 	$collMap = $occManager->getCollMap();
@@ -500,7 +508,6 @@ if($SYMB_UID){
 
 	$isLocked = false;
 	if($occId) $isLocked = $occManager->getLock();
-
 }
 else{
 	header('Location: ../../profile/index.php?refurl=../collections/editor/occurrenceeditor.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
