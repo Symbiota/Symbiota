@@ -129,7 +129,9 @@ class SymbCollectionSearchPage extends CollectionSearchPage {
 	}
 
 	async selectCollection(collId: number): Promise<void> {
-		await this.page.locator(`input[name="db[]"][value="${collId}"]`).click({force: true})
+		const checkbox = this.page.locator(`input[name="db[]"][value="${collId}"]`);
+		await checkbox.isVisible();
+		await checkbox.setChecked(true, {force: true});
 	}
 
 	async goto(): Promise<void> {
