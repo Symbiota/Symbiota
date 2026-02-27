@@ -13,11 +13,20 @@ class Collection {
 		}
 	}
 
-	async insertBasic(collectionName: string, managementType: string = 'Live Data') {
-		const insert = await this.conn.execute(
-			"INSERT omcollections (institutionCode, collectionCode, collectionName, managementType) VALUES (?, ?, ?, ?)",
-			['SYMB', collectionName.slice(0, 4), collectionName, managementType]
+	async insertBasic(collectionName: string, managementType: string = 'Live Data', collectionType: string = 'Preserved Specimens'): Promise<number> {
+		await this.conn.execute(
+			"INSERT omcollections (institutionCode, collectionCode, collectionName, managementType, collType) VALUES (?, ?, ?, ?, ?)",
+			['SYMB', collectionName.slice(0, 4), collectionName, managementType, collectionType]
 		);
+		const collId = await this.getByName(collectionName);
+
+		// Inserting with recordCnt 1 so it displays where expected
+		await this.conn.execute(
+			"INSERT omcollectionstats(collId, recordCnt) VALUES (?, 1)",
+			[collId]
+		);
+
+		return collId;
 	}
 
 	async getOrCreate(collectionName) {
@@ -54,8 +63,7 @@ const test = base.extend<{ collection: Collection, collId: number  }>({
 		const collectionName = workerInfo.parallelIndex
 			+ workerInfo.project.name
 			+ ' CI Collection OC';
-		await collection.insertBasic(collectionName);
-		const collId = await collection.getByName(collectionName);
+		const collId = await collection.insertBasic(collectionName);
 		await use(collId);
 		await collection.deleteByCollId(collId)
 	},
