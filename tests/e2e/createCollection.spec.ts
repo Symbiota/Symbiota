@@ -8,16 +8,16 @@ const test = mergeTests(testCollection, testWithAdmin);
 test.beforeEach(async ({ adminLogin }) => await adminLogin.expectLoggedIn());
 
 test.afterEach(async ({ collection, browserName }) => {
-	let collId = await collection.getByName(browserName + ' CI Collection')
+	let collId = await collection.getByName(browserName + ' CI Collection NEW')
 	await collection.deleteByCollId(collId);
 });
 
 test('Create an Collection', async ({ page, browserName }, workerInfo) => {
-	const collectionName = browserName + ' CI Collection';
+	const collectionName = browserName + ' CI Collection NEW';
 
 	let collData = {
 		institutionCode: 'SYMB',
-		collectionCode: collectionName.slice(0, 4) + '_CICOL' + workerInfo.parallelIndex,
+		collectionCode: collectionName.slice(0, 4) + '_CICOL_NEW' + workerInfo.parallelIndex,
 		collectionName: collectionName,
 	}
 
