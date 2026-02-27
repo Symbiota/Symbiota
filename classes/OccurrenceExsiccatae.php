@@ -525,7 +525,8 @@ class OccurrenceExsiccatae {
 			$datasetId = '';
 			if(array_key_exists('dataset',$postArr) && $postArr['dataset']){
 				//Create new dataset to link all new records
-				$sqlDs = 'INSERT INTO omoccurdatasets(name, uid) VALUES("'.Sanitize::inString($postArr['dataset']).'",'.$GLOBALS['SYMB_UID'].') ';
+				$datasetName = Sanitize::inString($postArr['dataset']);
+				$sqlDs = 'INSERT INTO omoccurdatasets(datasetName, name, uid) VALUES("' . $datasetName . '","' . $datasetName . '",' . $GLOBALS['SYMB_UID'] . ') ';
 				if($this->conn->query($sqlDs)){
 					$datasetId = $this->conn->insert_id;
 				}

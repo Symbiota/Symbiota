@@ -944,10 +944,10 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 
 	private function getDatasetTitle($dsIdStr){
 		$retStr = '';
-		$sql = 'SELECT name FROM omoccurdatasets WHERE datasetid IN('.$dsIdStr.')';
+		$sql = 'SELECT IFNULL(datasetName, name) as datasetName FROM omoccurdatasets WHERE datasetid IN('.$dsIdStr.')';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retStr .= ', '.$r->name;
+			$retStr .= ', '.$r->datasetName;
 		}
 		$rs->free();
 		return trim($retStr,', ');

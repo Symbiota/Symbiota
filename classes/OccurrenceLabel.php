@@ -830,7 +830,7 @@ class OccurrenceLabel {
 	public function getDatasetProjects() {
 		$retArr = array();
 		if ($this->collid) {
-			$sql = 'SELECT DISTINCT ds.datasetid, ds.name ' .
+			$sql = 'SELECT DISTINCT ds.datasetid, IFNULL(ds.datasetName, ds.name) as datasetName ' .
 				'FROM omoccurdatasets ds INNER JOIN userroles r ON ds.datasetid = r.tablepk ' .
 				'INNER JOIN omoccurdatasetlink dl ON ds.datasetid = dl.datasetid ' .
 				'INNER JOIN omoccurrences o ON dl.occid = o.occid ' .
@@ -838,7 +838,7 @@ class OccurrenceLabel {
 			if ($this->collArr['colltype'] == 'General Observations' && !array_key_exists('extendedsearch', $GLOBALS['_POST'])) $sql .= 'AND (o.observeruid = ' . $GLOBALS['SYMB_UID'] . ') ';
 			$rs = $this->conn->query($sql);
 			while ($r = $rs->fetch_object()) {
-				$retArr[$r->datasetid] = $r->name;
+				$retArr[$r->datasetid] = $r->datasetName;
 			}
 			$rs->free();
 		}
@@ -911,7 +911,7 @@ class OccurrenceLabel {
 				if($parentAuthor){
 					$currentTxt = htmlspecialchars($parentAuthor) . ' ';
 					$textrun->addText($currentTxt, 'scientificnameauthFont');
-				} 
+				}
 				$currentTxt = $queryVal . ' ';
 				$textrun->addText($currentTxt, 'scientificnameinterFont');
 				if($shouldAddNextElement){
@@ -919,7 +919,7 @@ class OccurrenceLabel {
 					$textrun->addText($currentTxt, 'scientificnameFont');
 				}
 			}
-			
+
 		}
 	}
 }
