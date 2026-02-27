@@ -603,7 +603,7 @@ class OccurrenceController extends Controller {
 	/**
 	 * @OA\Post(
 	 *	 path="/api/v2/occurrence",
-	 *	 operationId="insertOccurrence",
+	 *	 operationId="/api/v2/occurrence",
 	 *	 tags={"Occurrence"},
 	 *	 @OA\Parameter(
 	 *		 name="apiToken",
@@ -784,7 +784,7 @@ class OccurrenceController extends Controller {
 	/**
 	 * @OA\Patch(
 	 *	 path="/api/v2/occurrence/{identifier}",
-	 *	 operationId="updateOccurrence",
+	 *	 operationId="/api/v2/occurrence/identifier",
 	 *	 tags={"Occurrence"},
 	 *	 @OA\Parameter(
 	 *		 name="apiToken",
@@ -949,7 +949,7 @@ class OccurrenceController extends Controller {
 	/**
 	 * @OA\Delete(
 	 *	 path="/api/v2/occurrence/{identifier}",
-	 *	 operationId="deleteOccurrence",
+	 *	 operationId="/api/v2/occurrence/identifier",
 	 *	 tags={"Occurrence"},
 	 *	 @OA\Parameter(
 	 *		 name="apiToken",
@@ -997,7 +997,7 @@ class OccurrenceController extends Controller {
 	/**
 	 * @OA\Post(
 	 *	 path="/api/v2/occurrence/skeletal",
-	 *	 operationId="skeletalImport",
+	 *	 operationId="/api/v2/occurrence/skeletal",
 	 *	 description="If an existing record can be located within target collection based on matching the input identifier, empty (null) target fields will be updated with Skeletal Data.
 	 *		If the target field contains data, it will remain unaltered.
 	 *		If multiple records are returned matching the input identifier, data will be added only to the first record.
