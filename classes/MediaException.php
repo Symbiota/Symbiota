@@ -12,6 +12,7 @@ class MediaException extends Exception {
 	public const FilepathNotWritable = 'FILEPATH_NOT_WRITABLE';
 	public const NotEnoughMemoryImage = 'NOT_ENOUGH_MEMORY_IMAGE';
 	public const ExceedMaxSize = 'EXCEED_MAX_SIZE';
+	public const NoFileUploaded = 'NO_FILE_UPLOADED';
 
 	function __construct(string $case, string $message = ''){
 		global $LANG, $LANG_TAG, $SERVER_ROOT;

@@ -533,6 +533,10 @@ class Media {
 				throw new MediaException(MediaException::ExceedMaxSize, $maxSize);
 			}
 
+			if (isset($file['error']) && $file['error'] === UPLOAD_ERR_NO_FILE){
+				throw new MediaException(MediaException::NoFileUploaded);
+			}
+
 			$media_metadata = self::insert($post_arr, $conn);
 			$media_type = MediaType::tryFrom($media_metadata['mediaType']);
 

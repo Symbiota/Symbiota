@@ -17,5 +17,6 @@ $LANG['FILE_TYPE_NOT_ALLOWED'] = 'Tipo de archivo no permitido';
 $LANG['FILEPATH_NOT_WRITABLE'] = 'La ruta del archivo no se puede escribir';
 $LANG['NOT_ENOUGH_MEMORY_IMAGE'] = 'No hay suficiente memoria para crear una imagen';
 $LANG['EXCEED_MAX_SIZE'] = 'El archivo excede el tamaño máximo permitido';
+$LANG['NO_FILE_UPLOADED'] = 'No se cargó ningún archivo';
 
 ?>

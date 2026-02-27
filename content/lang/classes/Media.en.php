@@ -17,5 +17,6 @@ $LANG['FILE_TYPE_NOT_ALLOWED'] = 'File type not allowed';
 $LANG['FILEPATH_NOT_WRITABLE'] = 'Filepath is not writable';
 $LANG['NOT_ENOUGH_MEMORY_IMAGE'] = 'Not enough memory to create image';
 $LANG['EXCEED_MAX_SIZE'] = 'The file exceeds the maximum allowed size';
+$LANG['NO_FILE_UPLOADED'] = 'No file uploaded';
 
 ?>
