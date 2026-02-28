@@ -22,10 +22,29 @@ const test =  base.extend<{ collectionSearchPage: CollectionSearchPage }>({
 		await searchPage.setAllCollections(false);
 		await searchPage.selectCollection(collId);
 		await use(searchPage);
-	}
+	},
 });
 
-// TODO Current testing is wip, but want to get commited
+// Build Taxa enum tree for searching and clean it up after
+// Note Fresh projects in this table are empty.
+test.beforeAll(async ({  DB }) => {
+	let build = `INSERT INTO taxaenumtree(tid,parenttid,taxauthid)
+		SELECT DISTINCT ts.tid, ts.parenttid, ts.taxauthid
+		FROM taxstatus ts
+		WHERE (ts.taxauthid = 1) AND ts.tid NOT IN(SELECT tid FROM taxaenumtree WHERE taxauthid = 1);`;
+
+	let buildParents = `INSERT INTO taxaenumtree(tid,parenttid,taxauthid)
+		SELECT DISTINCT ts.tid, ts.parenttid, ts.taxauthid
+		FROM taxstatus ts LEFT JOIN taxaenumtree e ON ts.tid = e.tid AND ts.parenttid = e.parenttid AND ts.taxauthid = e.taxauthid
+		WHERE (ts.taxauthid = 1) AND (e.tid IS NULL)`;
+
+	await DB.execute(build);
+	await DB.execute(buildParents);
+})
+
+test.afterAll(async ({  DB }) => {
+	await DB.execute('DELETE FROM taxaenumtree');
+})
 
 // Running Searches in parallel runs into lots of false negatives
 test.describe.configure({ mode: 'serial' });
@@ -49,6 +68,18 @@ let tests: Array<OccurrenceSearchTest> = [
 		occurrences: [
 			{ sciname: 'Genus Species' },
 			{ sciname: 'Dont Match' }
+		],
+	},
+	{
+		name: 'Scientific Name by tidInterpreted',
+		fields: {
+			taxa: 'Monera',
+			taxontype: TaxonType.TaxonGroup,
+			usethes: false,
+		},
+		occurrences: [
+			{ tidInterpreted: 2 },
+			{ tidInterpreted: 3 }
 		],
 	},
 	{
@@ -369,7 +400,7 @@ test.describe('List Result', () => {
 	}
 })
 
-/* Currently is failing because is broken
+/* Currently is failing because is broken (Waiting for upstream fix from 3.4_rc)
 test.describe('Table Result', () => {
 	for(let t of tests) {
 		test(t.name, async ({ collectionSearchPage, occurrenceFactory, collId }) => {
