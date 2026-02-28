@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 class ExsiccataOccurrence extends Model{
 
 	protected $table = 'omexsiccatiocclink';
-	protected $primaryKey = 'omexid';
+	//protected $primaryKey = '';
 	protected $fillable = [];
 	protected $visible = [];
 	protected $hidden = [];

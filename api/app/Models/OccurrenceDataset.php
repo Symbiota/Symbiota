@@ -23,5 +23,4 @@ class OccurrenceDataset extends Model{
 	public function occurrence() {
 		return $this->belongsToMany(Occurrence::class, 'omoccurdatasetlink', 'datasetID', 'occid');
 	}
-
 }

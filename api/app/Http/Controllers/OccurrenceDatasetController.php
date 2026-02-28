@@ -62,20 +62,21 @@ class OccurrenceDatasetController extends Controller{
 		$offset = $request->input('offset',0);
 
 		$datasetQuery = OccurrenceDataset::query();
+		//$datasetQuery->join('omoccurdatasetlink', 'omoccurdatasets.datasetID', '=', 'omoccurdatasetlink.datasetID')->distinct();
 		if($request->has('nameSearchTerm')){
 			$datasetQuery->where('name', 'LIKE', '%' . $request->nameSearchTerm . '%');
 		}
 
-		$fullCnt = $datasetQuery->count();
-		$result = $datasetQuery->skip($offset)->take($limit)->get();
+		$fullCnt = (clone $datasetQuery)->count();
+		$result = $datasetQuery->offset($offset)->limit($limit)->get();
 
 		$eor = false;
 		$retObj = [
-			"offset" => (int)$offset,
-			"limit" => (int)$limit,
-			"endOfRecords" => $eor,
-			"count" => $fullCnt,
-			"results" => $result
+			'offset' => (int)$offset,
+			'limit' => (int)$limit,
+			'endOfRecords' => $eor,
+			'count' => $fullCnt,
+			'results' => $result
 		];
 		return response()->json($retObj);
 	}
@@ -107,7 +108,7 @@ class OccurrenceDatasetController extends Controller{
 	public function showOneDataset($id){
 		$query = null;
 		if(is_numeric($id)) {
-			$query = OccurrenceDataset::find($id);
+			$query = OccurrenceDataset::findOrFail($id);
 		}
 		else{
 			$query = OccurrenceDataset::where('datasetIdentifier', $id)->get();
@@ -116,6 +117,10 @@ class OccurrenceDatasetController extends Controller{
 		if(!$query || !$query->count()){
 			$query = ['status' => false, 'error' => 'Unable to locate collection based on identifier', 404];
 		}
+
+		$count = DB::table('omoccurdatasetlink')->where('datasetID', $query->datasetID)->count();
+		$query->occurrenceCount = $count;
+
 		return response()->json($query);
 	}
 
@@ -136,7 +141,7 @@ class OccurrenceDatasetController extends Controller{
 	 *		 in="query",
 	 *		 description="Controls the number of results per page",
 	 *		 required=false,
-	 *		 @OA\Schema(type="integer", default=1000)
+	 *		 @OA\Schema(type="integer", default=100)
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="offset",
@@ -156,33 +161,33 @@ class OccurrenceDatasetController extends Controller{
 	 *	 ),
 	 * )
 	 */
-	public function showDatasetOccurrences($id){
+	public function showDatasetOccurrences($id, Request $request){
 		$this->validate($request, [
-				'limit' => ['integer', 'max:1000'],
-				'offset' => 'integer'
+			'limit' => ['integer', 'max:1000'],
+			'offset' => 'integer'
 		]);
-		$limit = $request->input('limit',1000);
+		$limit = $request->input('limit',100);
 		$offset = $request->input('offset',0);
 
-		$query = null;
+		$dataset = null;
 		if(is_numeric($id)) {
-			$query = OccurrenceDataset::find($id);
+			$dataset = OccurrenceDataset::findOrFail($id);
 		}
 		else{
-			$query = OccurrenceDataset::where('datasetIdentifier', $id)->get();
+			$dataset = OccurrenceDataset::where('datasetIdentifier', $id)->get();
 		}
-		$query->with('occurrence');
+		$occurrenceQuery = $dataset->occurrence();
 
-		$fullCnt = $query->count();
-		$result = $query->skip($offset)->take($limit)->get();
+		$fullCnt = (clone $occurrenceQuery)->count();
+		$result = $occurrenceQuery->offset($offset)->limit($limit)->get();
 
 		$eor = false;
 		$retObj = [
-				"offset" => (int)$offset,
-				"limit" => (int)$limit,
-				"endOfRecords" => $eor,
-				"count" => $fullCnt,
-				"results" => $result
+			'offset' => (int)$offset,
+			'limit' => (int)$limit,
+			'endOfRecords' => $eor,
+			'count' => $fullCnt,
+			'results' => $result
 		];
 		return response()->json($retObj);
 	}
