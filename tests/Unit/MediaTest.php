@@ -130,6 +130,6 @@ final class MediaTest extends TestCase {
 	public function test_mime_str_parse_fail() {
 		$this->expectException(MediaException::class);
 
-		Media::getMediaTypeStrFromMime('text/html');
+		Media::getMediaTypeStrFromMime('type/not');
 	}
 }
