@@ -303,28 +303,26 @@ class OccurrenceDataset {
 				FROM omoccurrences o INNER JOIN omoccurdatasetlink dl ON o.occid = dl.occid
 				WHERE dl.datasetid = ? ';
 			$sql .= OccurrenceUtil::appendFullProtectionSQL();
+			if($retLimit) $sql .= 'LIMIT '. (($pageNumber - 1) * $retLimit) . ',' . $retLimit;
 			$params[] = $datasetId;
 			try {
 				$result = QueryUtil::executeQuery($this->conn, $sql, $params);
 			} catch (\Throwable  $e) {
 				error_log('ERROR fetching count for dataset: ' . $datasetId);
 			}
-			$recordCount = 0;
+			$recordCount = 1;
 			while ($r = $result->fetch_object()) {
-				$recordCount++;
-				if (!$retLimit || ($recordCount >= (($pageNumber - 1) * $retLimit) && $recordCount <= ($pageNumber) * $retLimit)) {
-					if ($r->catalognumber) $retArr[$r->occid]['catnum'] = $r->catalognumber;
-					elseif ($r->occurrenceid) $retArr[$r->occid]['catnum'] = $r->occurrenceid;
-					elseif ($r->othercatalognumbers) $retArr[$r->occid]['catnum'] = $r->othercatalognumbers;
-					else $retArr[$r->occid]['catnum'] = '';
-					$sciname = $r->sciname;
-					if ($r->family) $sciname .= ' (' . $r->family . ')';
-					$retArr[$r->occid]['sciname'] = $sciname;
-					$collStr = $r->recordedby . ' ' . $r->recordnumber;
-					if ($r->eventdate) $collStr .= ' [' . $r->eventdate . ']';
-					$retArr[$r->occid]['coll'] = $collStr;
-					$retArr[$r->occid]['loc'] = trim($r->country . ', ' . $r->stateprovince . ', ' . $r->county . ', ' . $r->locality, ', ');
-				}
+				if ($r->catalognumber) $retArr[$r->occid]['catnum'] = $r->catalognumber;
+				elseif ($r->occurrenceid) $retArr[$r->occid]['catnum'] = $r->occurrenceid;
+				elseif ($r->othercatalognumbers) $retArr[$r->occid]['catnum'] = $r->othercatalognumbers;
+				else $retArr[$r->occid]['catnum'] = '';
+				$sciname = $r->sciname;
+				if ($r->family) $sciname .= ' (' . $r->family . ')';
+				$retArr[$r->occid]['sciname'] = $sciname;
+				$collStr = $r->recordedby . ' ' . $r->recordnumber;
+				if ($r->eventdate) $collStr .= ' [' . $r->eventdate . ']';
+				$retArr[$r->occid]['coll'] = $collStr;
+				$retArr[$r->occid]['loc'] = trim($r->country . ', ' . $r->stateprovince . ', ' . $r->county . ', ' . $r->locality, ', ');
 			}
 			$result->free();
 		}
