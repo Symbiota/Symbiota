@@ -714,11 +714,6 @@ function storeFormDataInSessionStorage(submitForm) {
 }
 
 function clearPageSpecificSessionStorageItems() {
-  // const keysToRemove = Object.keys(sessionStorage);
-  // keysToRemove.forEach(key => sessionStorage.removeItem(key));
-
-  // const keysToRemove = Object.keys(sessionStorage).filter(key => key.startsWith("querystr" + getCurrentPage() + "/"));
-
   const currentPageWithUrlParamsRemoved = getCurrentPage().split("?")[0];
   const keysToRemove = Object.keys(sessionStorage).filter(key => key.startsWith("querystr" + currentPageWithUrlParamsRemoved));
   keysToRemove.forEach(key => sessionStorage.removeItem(key));
@@ -1296,11 +1291,6 @@ function submitAdvancedSearchForm(event, actionPage) {
   event.preventDefault();
   const collId = document?.forms['coll-search-form']['db']?.value;
   const frm = document.getElementById('coll-search-form');
-  // const currentPagePattern = /collections\/misc\/collprofiles\.php(.*$)/;
-  // const currentPage = getCurrentPage();
-  // const sharedPrefix = findSharedPrefix(currentPage, actionPage);
-  // const uniquePartOfActionPage = 'collections/' + actionPage.replace(sharedPrefix, "");
-	// const targetKey = 'querystr' + currentPage?.replace(currentPagePattern, uniquePartOfActionPage) + '/db';
   const targetKey = 'querystr' + actionPage + '/db';
   sessionStorage.setItem(targetKey, collId);
   if(collId){
