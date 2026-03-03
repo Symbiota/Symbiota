@@ -853,11 +853,15 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 	if (collIdsFromUrl && Array.isArray(collIdsFromUrl) && collIdsFromUrl.length > 0) {
 		uncheckEverythingInCollections();
 		checkTheCollectionsThatShouldBeChecked(collIdsFromUrl);
+		closeAllCategories();
+        expandCategoriesWithSomeCheckedChildren();
 	}
 	const sanitizedCollectionSource = collectionSource.replace('db=', '');
 	if (collectionSource) {
 		uncheckEverythingInCollections();
-		checkTheCollectionsThatShouldBeChecked(sanitizedCollectionSource);
+		checkTheCollectionsThatShouldBeChecked([sanitizedCollectionSource]);
+		closeAllCategories();
+        expandCategoriesWithSomeCheckedChildren();
 		updateChip();
 	}
 

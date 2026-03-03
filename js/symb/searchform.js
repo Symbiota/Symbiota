@@ -1227,12 +1227,22 @@ function parseUrlVariables(varStr) {
 function concatenateUrlVariablesFromSessionStorage() {
   let returnVal = '';
   const sessionStorageKeys = Object.keys(sessionStorage);
-  const relevantKeys = sessionStorageKeys.filter(key => key.startsWith("querystr" + getCurrentPage()) && key.value !== "null");
+  const currentPage = getCurrentPage();
+  const relevantKeys = sessionStorageKeys.filter(key => key.startsWith("querystr" + currentPage) && key.value !== "null");
   relevantKeys.forEach((relevantKey) => {
-    const justFormFieldName = relevantKey.replace("querystr" + getCurrentPage() + "/", "");
-    if(justFormFieldName){
+    const justFormFieldName = relevantKey.replace("querystr" + currentPage + "/", "");
+    const urlParamPattern = /\.php(\?.*$)/;
+    const match = justFormFieldName.match(urlParamPattern);
+    const modifiedJustFormFieldName = match ? justFormFieldName.replace(match[1], '') : justFormFieldName;
+    if(modifiedJustFormFieldName){
       const relevantVal = sessionStorage.getItem(relevantKey);
-      returnVal += justFormFieldName + "=" + encodeURIComponent(relevantVal) + "&"; // @TODO encodeURIComponent may not be necessary here
+      const equalPattern = /^(.*)=(.*)$/;
+      const equalPatternMatch = relevantVal.match(equalPattern);
+      const modifiedRelevantVal = equalPatternMatch ? relevantVal.replace(equalPattern, '$2') : relevantVal;
+      const prefixForFormFieldName = equalPatternMatch ? ('/' +relevantVal.replace(equalPattern, '$1')) : '';
+      if(!returnVal.includes(modifiedJustFormFieldName + prefixForFormFieldName)){
+        returnVal += modifiedJustFormFieldName + prefixForFormFieldName + "=" + encodeURIComponent(modifiedRelevantVal) + "&"; // @TODO encodeURIComponent may not be necessary here
+      }
     }
   });
   return returnVal.slice(0, -1);
@@ -1272,13 +1282,36 @@ function submitAdvancedSearchForm(event, actionPage) {
   event.preventDefault();
   const collId = document?.forms['coll-search-form']['db']?.value;
   const frm = document.getElementById('coll-search-form');
-  storeFormDataInSessionStorage(frm);
+  const currentPagePattern = /collections\/misc\/collprofiles\.php.*$/;
+  const currentPage = getCurrentPage();
+  const sharedPrefix = findSharedPrefix(currentPage, actionPage);
+  const uniquePartOfActionPage = 'collections/' + actionPage.replace(sharedPrefix, "");
+	const targetKey = 'querystr' + currentPage?.replace(currentPagePattern, uniquePartOfActionPage) + '/db';
+  sessionStorage.setItem(targetKey, collId);
   if(collId){
-    // @TODO submit the form withouth the ?db=58
     frm.action = actionPage;
     console.log(frm);
     frm.submit();
   }
+}
+
+function findSharedPrefix(str1, str2) {
+  let prefix = "";
+  // Determine the minimum length to avoid out-of-bounds access
+  const minLength = Math.min(str1.length, str2.length);
+
+  for (let i = 0; i < minLength; i++) {
+    // Compare characters at the same index
+    if (str1[i] === str2[i]) {
+      // If they match, add the character to the prefix
+      prefix += str1[i];
+    } else {
+      // If a character mismatch is found, break the loop
+      break;
+    }
+  }
+
+  return prefix;
 }
 
 //////////////////////////////////////////////////////////////////////////
