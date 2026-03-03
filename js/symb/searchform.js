@@ -1268,6 +1268,19 @@ function toggleCharacterGroup(charID) {
   minus.style.display = isVisible ? 'none' : 'inline';
 }
 
+function submitAdvancedSearchForm(event, actionPage) {
+  event.preventDefault();
+  const collId = document?.forms['coll-search-form']['db']?.value;
+  const frm = document.getElementById('coll-search-form');
+  storeFormDataInSessionStorage(frm);
+  if(collId){
+    // @TODO submit the form withouth the ?db=58
+    frm.action = actionPage;
+    console.log(frm);
+    frm.submit();
+  }
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 /**
