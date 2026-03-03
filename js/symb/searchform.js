@@ -698,8 +698,9 @@ function storeFormDataInSessionStorage(submitForm) {
         const revisedFormElemName = (formElem.name == "db[]") ? "db" : formElem.name;
         let previousValue = '';
         let newValue = formElem.value;
+        const currentPageWithUrlParamsRemoved = getCurrentPage().split("?")[0];
         if(revisedFormElemName === "db" ){
-          previousValue = sessionStorage.getItem("querystr" + getCurrentPage() + "/" + revisedFormElemName);
+          previousValue = sessionStorage.getItem("querystr" + currentPageWithUrlParamsRemoved + "/" + revisedFormElemName);
           const existingValues = previousValue ? previousValue.split(",") : [];
           if(existingValues.includes(formElem.value)){
             return; // skip adding duplicate collection
@@ -707,13 +708,19 @@ function storeFormDataInSessionStorage(submitForm) {
             newValue = previousValue ? previousValue + "," + formElem.value : formElem.value;
           }
         }
-        sessionStorage.setItem("querystr" + getCurrentPage() + "/" + revisedFormElemName, newValue);
+        sessionStorage.setItem("querystr" + currentPageWithUrlParamsRemoved + "/" + revisedFormElemName, newValue);
       }
     });
 }
 
 function clearPageSpecificSessionStorageItems() {
-  const keysToRemove = Object.keys(sessionStorage).filter(key => key.startsWith("querystr" + getCurrentPage() + "/"));
+  // const keysToRemove = Object.keys(sessionStorage);
+  // keysToRemove.forEach(key => sessionStorage.removeItem(key));
+
+  // const keysToRemove = Object.keys(sessionStorage).filter(key => key.startsWith("querystr" + getCurrentPage() + "/"));
+
+  const currentPageWithUrlParamsRemoved = getCurrentPage().split("?")[0];
+  const keysToRemove = Object.keys(sessionStorage).filter(key => key.startsWith("querystr" + currentPageWithUrlParamsRemoved));
   keysToRemove.forEach(key => sessionStorage.removeItem(key));
 }
 
@@ -1227,10 +1234,10 @@ function parseUrlVariables(varStr) {
 function concatenateUrlVariablesFromSessionStorage() {
   let returnVal = '';
   const sessionStorageKeys = Object.keys(sessionStorage);
-  const currentPage = getCurrentPage();
-  const relevantKeys = sessionStorageKeys.filter(key => key.startsWith("querystr" + currentPage) && key.value !== "null");
+  const currentPageWithUrlParamsRemoved = getCurrentPage().split("?")[0];
+  const relevantKeys = sessionStorageKeys.filter(key => key.startsWith("querystr" + currentPageWithUrlParamsRemoved) && key.value !== "null");
   relevantKeys.forEach((relevantKey) => {
-    const justFormFieldName = relevantKey.replace("querystr" + currentPage, "");
+    const justFormFieldName = relevantKey.replace("querystr" + currentPageWithUrlParamsRemoved, "");
     const justFormFieldNameInitialSlashRemoved = justFormFieldName.startsWith("/") ? justFormFieldName.slice(1) : justFormFieldName;
     const urlParamPattern = /(\?)(.*)=.*$/;
     const match = justFormFieldNameInitialSlashRemoved.match(urlParamPattern);
@@ -1240,8 +1247,15 @@ function concatenateUrlVariablesFromSessionStorage() {
       const equalPattern = /^(.*)=(.*)$/;
       const equalPatternMatch = relevantVal.match(equalPattern);
       const modifiedRelevantVal = equalPatternMatch ? relevantVal.replace(equalPattern, '$2') : relevantVal;
-      if(!returnVal.includes(modifiedJustFormFieldName)){
-        returnVal += modifiedJustFormFieldName + "=" + encodeURIComponent(modifiedRelevantVal) + "&"; // @TODO encodeURIComponent may not be necessary here
+      if(returnVal.includes(modifiedJustFormFieldName)){
+        const oldVal = returnVal.match(new RegExp(modifiedJustFormFieldName + "=([^&]*)"))?.[1];
+        if(oldVal){
+          const newVal = oldVal + "," + modifiedRelevantVal;
+          const dedupedNewVal = Array.from(new Set(newVal.split(","))).join(",");
+          returnVal = returnVal.replace(modifiedJustFormFieldName + "=" + oldVal, modifiedJustFormFieldName + "=" + encodeURIComponent(dedupedNewVal));
+        }
+      }else{
+        returnVal += modifiedJustFormFieldName + "=" + encodeURIComponent(modifiedRelevantVal) + "&";
       }
     }
   });
@@ -1282,11 +1296,12 @@ function submitAdvancedSearchForm(event, actionPage) {
   event.preventDefault();
   const collId = document?.forms['coll-search-form']['db']?.value;
   const frm = document.getElementById('coll-search-form');
-  const currentPagePattern = /collections\/misc\/collprofiles\.php.*$/;
-  const currentPage = getCurrentPage();
-  const sharedPrefix = findSharedPrefix(currentPage, actionPage);
-  const uniquePartOfActionPage = 'collections/' + actionPage.replace(sharedPrefix, "");
-	const targetKey = 'querystr' + currentPage?.replace(currentPagePattern, uniquePartOfActionPage) + '/db';
+  // const currentPagePattern = /collections\/misc\/collprofiles\.php(.*$)/;
+  // const currentPage = getCurrentPage();
+  // const sharedPrefix = findSharedPrefix(currentPage, actionPage);
+  // const uniquePartOfActionPage = 'collections/' + actionPage.replace(sharedPrefix, "");
+	// const targetKey = 'querystr' + currentPage?.replace(currentPagePattern, uniquePartOfActionPage) + '/db';
+  const targetKey = 'querystr' + actionPage + '/db';
   sessionStorage.setItem(targetKey, collId);
   if(collId){
     frm.action = actionPage;
