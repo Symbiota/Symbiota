@@ -1241,21 +1241,21 @@ function concatenateUrlVariablesFromSessionStorage() {
     const justFormFieldNameInitialSlashRemoved = justFormFieldName.startsWith("/") ? justFormFieldName.slice(1) : justFormFieldName;
     const urlParamPattern = /(\?)(.*)=.*$/;
     const match = justFormFieldNameInitialSlashRemoved.match(urlParamPattern);
-    const modifiedJustFormFieldName = match ? match[2] : justFormFieldNameInitialSlashRemoved;
-    if(modifiedJustFormFieldName){
+    const sanitizedFormFieldName = match ? match[2] : justFormFieldNameInitialSlashRemoved;
+    if(sanitizedFormFieldName){
       const relevantVal = sessionStorage.getItem(relevantKey);
       const equalPattern = /^(.*)=(.*)$/;
       const equalPatternMatch = relevantVal.match(equalPattern);
       const modifiedRelevantVal = equalPatternMatch ? relevantVal.replace(equalPattern, '$2') : relevantVal;
-      if(returnVal.includes(modifiedJustFormFieldName)){
-        const oldVal = returnVal.match(new RegExp(modifiedJustFormFieldName + "=([^&]*)"))?.[1];
+      if(returnVal.includes(sanitizedFormFieldName)){
+        const oldVal = returnVal.match(new RegExp(sanitizedFormFieldName + "=([^&]*)"))?.[1];
         if(oldVal){
           const newVal = oldVal + "," + modifiedRelevantVal;
           const dedupedNewVal = Array.from(new Set(newVal.split(","))).join(",");
-          returnVal = returnVal.replace(modifiedJustFormFieldName + "=" + oldVal, modifiedJustFormFieldName + "=" + encodeURIComponent(dedupedNewVal));
+          returnVal = returnVal.replace(sanitizedFormFieldName + "=" + oldVal, sanitizedFormFieldName + "=" + encodeURIComponent(dedupedNewVal));
         }
       }else{
-        returnVal += modifiedJustFormFieldName + "=" + encodeURIComponent(modifiedRelevantVal) + "&";
+        returnVal += sanitizedFormFieldName + "=" + encodeURIComponent(modifiedRelevantVal) + "&";
       }
     }
   });
