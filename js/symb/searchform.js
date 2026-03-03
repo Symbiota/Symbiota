@@ -1230,18 +1230,18 @@ function concatenateUrlVariablesFromSessionStorage() {
   const currentPage = getCurrentPage();
   const relevantKeys = sessionStorageKeys.filter(key => key.startsWith("querystr" + currentPage) && key.value !== "null");
   relevantKeys.forEach((relevantKey) => {
-    const justFormFieldName = relevantKey.replace("querystr" + currentPage + "/", "");
-    const urlParamPattern = /\.php(\?.*$)/;
-    const match = justFormFieldName.match(urlParamPattern);
-    const modifiedJustFormFieldName = match ? justFormFieldName.replace(match[1], '') : justFormFieldName;
+    const justFormFieldName = relevantKey.replace("querystr" + currentPage, "");
+    const justFormFieldNameInitialSlashRemoved = justFormFieldName.startsWith("/") ? justFormFieldName.slice(1) : justFormFieldName;
+    const urlParamPattern = /(\?)(.*)=.*$/;
+    const match = justFormFieldNameInitialSlashRemoved.match(urlParamPattern);
+    const modifiedJustFormFieldName = match ? match[2] : justFormFieldNameInitialSlashRemoved;
     if(modifiedJustFormFieldName){
       const relevantVal = sessionStorage.getItem(relevantKey);
       const equalPattern = /^(.*)=(.*)$/;
       const equalPatternMatch = relevantVal.match(equalPattern);
       const modifiedRelevantVal = equalPatternMatch ? relevantVal.replace(equalPattern, '$2') : relevantVal;
-      const prefixForFormFieldName = equalPatternMatch ? ('/' +relevantVal.replace(equalPattern, '$1')) : '';
-      if(!returnVal.includes(modifiedJustFormFieldName + prefixForFormFieldName)){
-        returnVal += modifiedJustFormFieldName + prefixForFormFieldName + "=" + encodeURIComponent(modifiedRelevantVal) + "&"; // @TODO encodeURIComponent may not be necessary here
+      if(!returnVal.includes(modifiedJustFormFieldName)){
+        returnVal += modifiedJustFormFieldName + "=" + encodeURIComponent(modifiedRelevantVal) + "&"; // @TODO encodeURIComponent may not be necessary here
       }
     }
   });
