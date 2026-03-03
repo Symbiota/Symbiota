@@ -1299,26 +1299,6 @@ function submitAdvancedSearchForm(event, actionPage) {
     frm.submit();
   }
 }
-
-function findSharedPrefix(str1, str2) {
-  let prefix = "";
-  // Determine the minimum length to avoid out-of-bounds access
-  const minLength = Math.min(str1.length, str2.length);
-
-  for (let i = 0; i < minLength; i++) {
-    // Compare characters at the same index
-    if (str1[i] === str2[i]) {
-      // If they match, add the character to the prefix
-      prefix += str1[i];
-    } else {
-      // If a character mismatch is found, break the loop
-      break;
-    }
-  }
-
-  return prefix;
-}
-
 //////////////////////////////////////////////////////////////////////////
 
 /**
