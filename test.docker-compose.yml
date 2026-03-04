@@ -25,6 +25,8 @@ services:
     ports:
         - '3306:3306'
     volumes:
+      # Setup Geographic thesaurus data file (gets referenced in 3.4)
+      - ./config/schema/3.0/data/geothesaurus.sql:/data/geothesaurus.sql
       # Setup Base Schema
       - ./config/schema/3.0/db_schema-3.0.sql:/docker-entrypoint-initdb.d/3.0.0.sql
       # Setup tables needed to avoid fresh install errors
