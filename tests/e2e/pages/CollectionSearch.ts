@@ -114,6 +114,7 @@ class SymbCollectionSearchPage extends CollectionSearchPage {
 	}
 
 	async expectListCount(count: number): Promise<void> {
+		await this.page.waitForLoadState('networkidle');
 		await expect(this.page.getByText(`of ${count}`).nth(0)).toBeVisible();
 	}
 
@@ -125,6 +126,7 @@ class SymbCollectionSearchPage extends CollectionSearchPage {
 	}
 
 	async setAllCollections(value: boolean): Promise<void> {
+		await this.page.waitForLoadState('networkidle');
 		await this.page.locator('#dballcb').setChecked(value, {force: true});
 	}
 
@@ -135,6 +137,6 @@ class SymbCollectionSearchPage extends CollectionSearchPage {
 	}
 
 	async goto(): Promise<void> {
-		await this.page.goto('http://localhost/collections/search/index.php')
+		await this.page.goto('collections/search/index.php')
 	};
 }

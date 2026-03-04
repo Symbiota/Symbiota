@@ -101,6 +101,7 @@ export class SymbOccurrenceEditorPage extends OccurrenceEditorPage {
 	}
 
 	async checkRecordSuccess() {
+		await this.page.waitForLoadState('networkidle');
 		await expect(this.page.getByText('Public Display')).toBeVisible();
 	}
 
@@ -153,6 +154,7 @@ export const test = base.extend<{
 		await editOccurrence.occurForm.set('catalognumber', catalogNumber);
 		await use(editOccurrence);
 		await editOccurrence.occurForm.submitEdit();
+		await page.waitForLoadState('networkidle');
 		await expect(page.getByText(editOccurrence.occurForm.EDIT_SUCCESS)).toBeVisible();
 		await editOccurrence.occurForm.checkSetFields();
 	},
