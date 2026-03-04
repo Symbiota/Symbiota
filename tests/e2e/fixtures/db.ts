@@ -4,6 +4,7 @@ import mysql from 'mysql2/promise';
 async function getConnection() {
 	return await mysql.createConnection({
 		host: '127.0.0.1',
+		port: 3307,
 		user: 'ci_user',
 		password: 'ci_password',
 		database: 'ci_testing',

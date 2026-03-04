@@ -4,9 +4,10 @@ services:
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     restart: 'always'
+    platform: linux/amd64
     image: 'muchquakz/symbiota-testing:latest'
     ports:
-      - 80:80
+      - 8080:80
     volumes:
       # Binds Symbiota Code to Container
       - .:/var/www/html/
@@ -23,7 +24,7 @@ services:
     expose:
         - 3306
     ports:
-        - '3306:3306'
+        - '3307:3306'
     volumes:
       # Setup Base Schema
       - ./config/schema/3.0/db_schema-3.0.sql:/docker-entrypoint-initdb.d/3.0.0.sql
