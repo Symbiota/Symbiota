@@ -10,7 +10,6 @@ async function getConnection() {
 	});
 }
 
-// Extend basic test by providing a "todoPage" fixture.
 const test = base.extend<{ DB: mysql.Connection }>({
 	DB: async ({}, use) => {
 		let connection = await getConnection();

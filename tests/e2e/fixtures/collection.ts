@@ -15,10 +15,15 @@ class Collection {
 
 	async insertBasic(collectionName: string, managementType: string = 'Live Data', collectionType: string = 'Preserved Specimens'): Promise<number> {
 		await this.conn.execute(
-			"INSERT omcollections (institutionCode, collectionCode, collectionName, managementType, collType) VALUES (?, ?, ?, ?, ?)",
-			['SYMB', collectionName.slice(0, 4), collectionName, managementType, collectionType]
+			"INSERT omcollections (institutionCode, collectionCode, collectionName, managementType, collType) VALUES (?, uuid(), ?, ?, ?)",
+			['SYMB', collectionName, managementType, collectionType]
 		);
-		const collId = await this.getByName(collectionName);
+		let collId = 0;
+
+		let result = await this.conn.execute("SELECT LAST_INSERT_ID() as id");
+		if(result.length > 0 && result[0].length > 0) {
+			collId = result[0][0].id;
+		}
 
 		// Inserting with recordCnt 1 so it displays where expected
 		await this.conn.execute(
@@ -57,15 +62,6 @@ class Collection {
 const test = base.extend<{ collection: Collection, collId: number  }>({
 	collection: async ({ DB }, use) => {
 		await use(new Collection(DB))
-	},
-	collId: async ({ collection }, use) => {
-		const workerInfo = test.info();
-		const collectionName = workerInfo.parallelIndex
-			+ workerInfo.project.name
-			+ ' CI Collection OC';
-		const collId = await collection.insertBasic(collectionName);
-		await use(collId);
-		await collection.deleteByCollId(collId)
 	},
 });
 

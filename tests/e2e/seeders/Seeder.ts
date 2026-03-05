@@ -1,4 +1,5 @@
 import mysql from 'mysql2/promise';
+import {test as base} from './../fixtures/db'
 
 export type Taxon = {
 	tid?: string,
@@ -37,7 +38,7 @@ export type Media = {
 	mediaID?: number,
 	occId?: number,
 	tid?: number,
-	originalUrl: string,
+	originalUrl?: string,
 	url?: string,
 	thumbnailUrl?: string,
 	archiveUrl?: string,
@@ -134,8 +135,21 @@ export class Seeder {
 		return this.lastId(conn);
 	}
 
+	static async uniqueCollection(conn: mysql.Connection): Promise<number> {
+		const sql = "INSERT omcollections (collectionCode, institutionCode, collectionName, managementType, collType) VALUES (uuid(), 'SYMB', uuid(), 'Live Data', 'Preserved Specimens')";
+		await conn.execute(sql);
+		return this.lastId(conn);
+	}
+
 	static async collection(data: Collection, conn: mysql.Connection) {
 		return this.executor(data, Tables.Collection, conn);
+	}
+
+	static async deleteByCollId(collId: number, conn: mysql.Connection) {
+		await conn.execute('DELETE from media where occid in (select occid from omoccurrences where collId = ?)', [ collId ]);
+		await conn.execute('DELETE from omoccurrences where collId = ?', [ collId ]);
+		await conn.execute('DELETE from omcollectionstats where collId = ?', [ collId ]);
+		await conn.execute('DELETE from omcollections where collId = ?', [ collId ]);
 	}
 
 	static async taxon(data: Taxon, conn: mysql.Connection) {
@@ -197,9 +211,57 @@ export class Seeder {
 			}
 		}
 	}
+
+	private static async getResult(sql, params, conn) {
+		const result = await conn.execute(sql, params)
+		if(result && result.length) {
+			return result[0];
+		} else {
+			return [];
+		}
+	}
+
+	static async getOccurrence(occId: number, conn: mysql.Connection) {
+
+		return this.getResult(
+			"SELECT * FROM omoccurrences where occId = ?",  
+			[occId], 
+			conn
+		);
+	}
+
+	static async getDeterminations(occId: number, conn: mysql.Connection) {
+		return this.getResult(
+			"SELECT * FROM omoccurdeterminations where occId = ?", 
+			[occId],
+			conn,
+		);
+	}
 }
 
 export interface SeederParams {
 	DB: mysql.Connection,
 	collId: number,
 }
+
+export const test = base.extend<{collId: number, occId: number, detId: number, mediaId: number }>({
+	collId: async ({ DB }, use) => {
+		const collId = await Seeder.uniqueCollection(DB);
+		await use(collId);
+		await Seeder.deleteByCollId(collId, DB);
+	},
+	occId: async ({ collId, DB }, use) => {
+		await use(await Seeder.occurrence({ collId }, DB));
+	},
+	detId: async ({ occId, DB }, use) => {
+		await use(await Seeder.determination({ 
+			occId, 
+			identifiedBy: 'unknown', 
+			dateIdentified: 'unknown', 
+			sciname: 'genus species'
+		}, DB));
+	},
+	mediaId: async ({ occId, DB }, use) => {
+		await use(await Seeder.media({ occId }, DB));
+	}
+});

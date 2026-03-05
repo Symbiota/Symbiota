@@ -1,5 +1,5 @@
 import { expect, type Page } from '@playwright/test';
-import { test as base } from '../fixtures/occurrence';
+import { test as base, Seeder } from '../seeders/Seeder';
 import { MediaForm } from '../forms/MediaForm';
 import { getSuite, Suite } from '../types/Suite';
 import { OccurrenceForm } from '../forms/OccurrenceForm';
@@ -172,13 +172,14 @@ export const test = base.extend<{
 		await editOccurrence.gotoTab(OccurrenceEditorTab.Determinations)
 		await use(editOccurrence)
 	},
-	newDet: async ({ editOccurrence, occurrenceFactory }, use) => {
+	newDet: async ({ editOccurrence, occId, DB}, use) => {
 		await editOccurrence.gotoTab(OccurrenceEditorTab.Determinations);
 		await editOccurrence.detForm.setToNew();
 		await use(editOccurrence);
 		await editOccurrence.detForm.submit();
 		await editOccurrence.detForm.checkNewSuccess();
-		const dets = await occurrenceFactory.getDeterminations(editOccurrence.occId);
+		const dets = await Seeder.getDeterminations(occId, DB);
+
 		expect(dets).toBeDefined();
 		expect(dets.length).toBeGreaterThan(0);
 		for(let [fieldName, value] of Object.entries(editOccurrence.detForm.setFields)) {

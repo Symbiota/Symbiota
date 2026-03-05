@@ -2,6 +2,7 @@ import { expect, mergeTests } from '@playwright/test';
 import { test as testWithAdmin } from './fixtures/adminLogin';
 import { OccurrenceEditorPage , OccurrenceEditorTab, test as testOccurrenceEditor } from './pages/OccurrenceEditorPage'
 import path from 'node:path';
+import { Seeder } from './seeders/Seeder';
 
 const test = mergeTests(testWithAdmin, testOccurrenceEditor);
 test.beforeEach(async ({ adminLogin }) => {
@@ -36,9 +37,9 @@ test.describe('Edit Occurrence ', () => {
 })
 
 /* DELETE OCCURRENCES */
-test('Delete Occurrence ', async ({ editOccurrence, occurrenceFactory }) => {
+test('Delete Occurrence ', async ({ editOccurrence, occId, DB}) => {
 	await editOccurrence.deleteOccurrence();
-	const occurrence = await occurrenceFactory.getOccurrence(editOccurrence.occId);
+	const occurrence = await Seeder.getOccurrence(occId, DB);
 	expect(occurrence).toHaveLength(0);
 });
 
