@@ -110,13 +110,17 @@ class SymbCollectionSearchPage extends CollectionSearchPage {
 	}
 
 	async setAllCollections(value: boolean): Promise<void> {
-		const checkbox = this.page.locator('#dballcb');
+		const checkbox = this.page.locator('#all_collections');
 		await checkbox.isVisible();
 		await checkbox.isEnabled();
 		await checkbox.setChecked(value, {force: true});
 	}
 
 	async selectCollection(collId: number): Promise<void> {
+		const expand = this.page.locator('span[id*="open_toggle"]');
+		await expand.isVisible();
+		await expand.click({force: true});
+
 		const checkbox = this.page.locator(`input[name="db[]"][value="${collId}"]`);
 		await checkbox.isVisible();
 		await checkbox.setChecked(true, {force: true});
