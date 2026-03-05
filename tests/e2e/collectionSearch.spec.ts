@@ -382,23 +382,20 @@ let tests: Array<OccurrenceSearchTest> = [
 test.describe('List Result', () => {
 	for(let t of tests) {
 		test(t.name, async ({ listResult, collId, DB }) => {
-			console.log(t.name, collId);
 			await Seeder.occurrencesWithCollId(collId, t.occurrences, DB);
 			await listResult.searchForm.setMany(t.fields);
 		});
 	}
 })
 
-/* Currently is failing because is broken (Waiting for upstream fix from 3.4_rc)
 test.describe('Table Result', () => {
 	for(let t of tests) {
-		test(t.name, async ({ tableResult, occurrenceFactory, collId }) => {
+		test(t.name, async ({ tableResult, collId, DB }) => {
 			await Seeder.occurrencesWithCollId(collId, t.occurrences, DB);
 			await tableResult.searchForm.setMany(t.fields);
 		});
 	}
 })
-*/
 
 // SPECIAL CASES
 // test('Common Name', async ({ listResult, collId, DB }) => {
