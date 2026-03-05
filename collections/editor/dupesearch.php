@@ -1,8 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceDuplicate.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/dupesearch.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/dupesearch.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/editor/dupesearch.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/editor/dupesearch');
+
 header('Content-Type: text/html; charset='.$CHARSET);
 
 $occidQuery = array_key_exists('occidquery',$_REQUEST) ? htmlspecialchars($_REQUEST['occidquery'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
@@ -115,6 +117,7 @@ if(!$IS_ADMIN){
 						var elem = openerForm.elements[k];
 						if(elem.disabled == false && (elem.type != 'hidden' || k == "tidinterpreted") && (appendMode == false || elem.value == "")){
 							elem.value = tArr[k];
+							opener.$("button").prop("disabled", false);
 							elem.style.backgroundColor = "lightblue";
 							if(k != "tid") opener.fieldChanged(k);
 						}
@@ -246,30 +249,36 @@ if(!$IS_ADMIN){
 						<div style="clear:both;font-weight:bold;font-size:120%;">
 							<?php echo $occObj['institutionCode'].($occObj['collectionCode']?':'.$occObj['collectionCode']:''); ?>
 						</div>
-						<?php if($collId == $occObj['collid'] && ($dupeType == 'exact' || $dupeType == 'exsic')){ ?>
+						<?php if($collId == $occObj['collid'] && ($dupeType == 'exact' || $dupeType == 'exsic')): ?>
 							<div style="color:red;">
 								<?php echo $LANG['NOTICE_EXACT_MATCH']; ?>
 							</div>
-							<div style="font-weight:bold;">
-								<?php
-								if($occObj['catalogNumber']) echo $occObj['catalogNumber'];
-								if($occObj['otherCatalogNumbers']) echo ' ('.$occObj['otherCatalogNumbers'].')';
-								?>
-							</div>
-						<?php } ?>
+						<?php endif ?>
+
+						<div style="font-weight:bold;">
+							<?= $occObj['catalogNumber'] ?? ''?>
+							<?= $occObj['otherCatalogNumbers'] ? ' (' . $occObj['otherCatalogNumbers'] .  ')': ''?>
+						</div>
+
 						<div>
 							<?php
 							echo '<span title="recordedby">'.($occObj['recordedBy']?$occObj['recordedBy']:'Collector field empty').'</span>';
 							if($occObj['recordNumber']) echo '<span style="margin-left:20px;" title="recordnumber">'.$occObj['recordNumber'].'</span>';
-							if($occObj['eventDate']){
-								echo '<span style="margin-left:20px;" title="eventdate">'.$occObj['eventDate'].'</span>';
+
+							$dateTitle = 'eventDate';
+
+							if(!$occObj['eventDate'] && $occObj['verbatimEventDate']) {
+								$dateTitle = 'verbatimeventdate';
 							}
-							elseif($occObj['verbatimEventDate']){
-								echo '<span style="margin-left:20px;" title="verbatimeventdate">'.$occObj['verbatimEventDate'].'</span>';
+
+							$dateDisplay = $occObj['eventDate'] ?? $occObj['verbatimEventDate'] ?? $LANG['DATE_EMPTY'];
+							echo '<span style="margin-left:20px;">';
+							echo '<span style="margin-left:20px;" title="' . $dateTitle.'">'. $dateDisplay .'</span>';
+							if($occObj['eventDate2']) {
+								echo ' - <span title="eventDate2">' . $occObj['eventDate2'] . '<span>';
 							}
-							else{
-								echo '<span style="margin-left:20px;" title="eventdate">'.$LANG['DATE_EMPTY'].'</span>';
-							}
+							echo '</span>';
+
 							if($occObj['associatedCollectors']) echo '<div style="margin-left:10px;" title="associatedCollectors">'.$LANG['ASSOC_COLL'].': '.$occObj['associatedCollectors'].'</div>';
 							?>
 						</div>

@@ -65,7 +65,7 @@ class VoucherLinker {
 
 		$cnt = 1;
 		foreach($taxaArr as $targetTid => $tidArr){
-			if($this->linkSpecimens) $this->loadVouchers($targetTid,$tidArr,array('Preserved Specimens'));
+			if($this->linkSpecimens) $this->loadVouchers($targetTid,$tidArr,array('Preserved Specimens','Fossil Specimens'));
 			if($this->linkObservations) $this->loadVouchers($targetTid,$tidArr,array('General Observations','Observations'));
 			if($cnt%200 == 0) echo $cnt." taxa processed \n";
 			$cnt++;

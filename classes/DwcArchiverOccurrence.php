@@ -1,19 +1,16 @@
 <?php
-// Only needed for symbiotaAssociations version number.
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
-include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 
 class DwcArchiverOccurrence extends Manager{
 
+	private $exportID;
 	private $occurDefArr = array();
 	private $schemaType;
 	private $extended = false;
 	private $includePaleo = false;
-	private $includeExsiccatae = false;
-	private $includeAssocSeq = false;
+	private $includeAcceptedNameUsage = false;
 	private $relationshipArr;
-	private $upperTaxonomy = array();
-	private $taxonRankArr = array();
+	private $paleoGtsArr = null;
 	private $serverDomain;
 
 	public function __construct($conn){
@@ -43,59 +40,63 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['terms']['otherCatalogNumbers'] = 'http://rs.tdwg.org/dwc/terms/otherCatalogNumbers';
 		$this->occurDefArr['fields']['otherCatalogNumbers'] = 'o.otherCatalogNumbers';
 		$this->occurDefArr['terms']['higherClassification'] = 'http://rs.tdwg.org/dwc/terms/higherClassification';
-		$this->occurDefArr['fields']['higherClassification'] = '';
+		$this->occurDefArr['fields']['higherClassification'] = 'x.higherClassification';
 		$this->occurDefArr['terms']['kingdom'] = 'http://rs.tdwg.org/dwc/terms/kingdom';
-		$this->occurDefArr['fields']['kingdom'] = '';
+		$this->occurDefArr['fields']['kingdom'] = 'x.kingdom';
 		$this->occurDefArr['terms']['phylum'] = 'http://rs.tdwg.org/dwc/terms/phylum';
-		$this->occurDefArr['fields']['phylum'] = '';
+		$this->occurDefArr['fields']['phylum'] = 'x.phylum';
 		$this->occurDefArr['terms']['class'] = 'http://rs.tdwg.org/dwc/terms/class';
-		$this->occurDefArr['fields']['class'] = '';
+		$this->occurDefArr['fields']['class'] = 'x.class';
 		$this->occurDefArr['terms']['order'] = 'http://rs.tdwg.org/dwc/terms/order';
-		$this->occurDefArr['fields']['order'] = '';
+		$this->occurDefArr['fields']['order'] = 'x.order';
 		$this->occurDefArr['terms']['family'] = 'http://rs.tdwg.org/dwc/terms/family';
-		$this->occurDefArr['fields']['family'] = 'o.family';
+		$this->occurDefArr['fields']['family'] = 'IFNULL(o.family,x.family) AS family';
 		$this->occurDefArr['terms']['scientificName'] = 'http://rs.tdwg.org/dwc/terms/scientificName';
 		$this->occurDefArr['fields']['scientificName'] = 'o.sciname AS scientificName';
-		//$this->occurDefArr['terms']['verbatimScientificName'] = 'https://symbiota.org/terms/verbatimScientificName';
-		//$this->occurDefArr['fields']['verbatimScientificName'] = 'o.scientificname AS verbatimScientificName';
 		$this->occurDefArr['terms']['taxonID'] = 'http://rs.tdwg.org/dwc/terms/taxonID';
 		$this->occurDefArr['fields']['taxonID'] = 'o.tidinterpreted as taxonID';
 		$this->occurDefArr['terms']['scientificNameAuthorship'] = 'http://rs.tdwg.org/dwc/terms/scientificNameAuthorship';
-		$this->occurDefArr['fields']['scientificNameAuthorship'] = 'IFNULL(t.author,o.scientificNameAuthorship) AS scientificNameAuthorship';
+		$this->occurDefArr['fields']['scientificNameAuthorship'] = 'IFNULL(o.scientificNameAuthorship, x.scientificNameAuthorship) AS scientificNameAuthorship';
 		$this->occurDefArr['terms']['genus'] = 'http://rs.tdwg.org/dwc/terms/genus';
-		$this->occurDefArr['fields']['genus'] = 'IF(t.rankid >= 180,CONCAT_WS(" ",t.unitind1,t.unitname1),NULL) AS genus';
+		$this->occurDefArr['fields']['genus'] = 'x.genus';
 		$this->occurDefArr['terms']['subgenus'] = 'http://rs.tdwg.org/dwc/terms/subgenus';
-		$this->occurDefArr['fields']['subgenus'] = '';
+		$this->occurDefArr['fields']['subgenus'] = 'x.subgenus';
 		$this->occurDefArr['terms']['specificEpithet'] = 'http://rs.tdwg.org/dwc/terms/specificEpithet';
-		$this->occurDefArr['fields']['specificEpithet'] = 'CONCAT_WS(" ",t.unitind2,t.unitname2) AS specificEpithet';
+		$this->occurDefArr['fields']['specificEpithet'] = 'x.specificEpithet';
 		$this->occurDefArr['terms']['verbatimTaxonRank'] = 'http://rs.tdwg.org/dwc/terms/verbatimTaxonRank';
-		$this->occurDefArr['fields']['verbatimTaxonRank'] = 't.unitind3 AS verbatimTaxonRank';
+		$this->occurDefArr['fields']['verbatimTaxonRank'] = 'x.verbatimTaxonRank';
 		$this->occurDefArr['terms']['infraspecificEpithet'] = 'http://rs.tdwg.org/dwc/terms/infraspecificEpithet';
-		$this->occurDefArr['fields']['infraspecificEpithet'] = 't.unitname3 AS infraspecificEpithet';
+		$this->occurDefArr['fields']['infraspecificEpithet'] = 'x.infraspecificEpithet';
 		$this->occurDefArr['terms']['cultivarEpithet'] = 'http://rs.tdwg.org/dwc/terms/cultivarEpithet';
-		$this->occurDefArr['fields']['cultivarEpithet'] = 't.cultivarEpithet AS cultivarEpithet';
+		$this->occurDefArr['fields']['cultivarEpithet'] = 'x.cultivarEpithet';
 		$this->occurDefArr['terms']['tradeName'] = 'http://rs.tdwg.org/dwc/terms/tradeName';
-		$this->occurDefArr['fields']['tradeName'] = 't.tradeName AS tradeName';
+		$this->occurDefArr['fields']['tradeName'] = 'x.tradeName';
 		$this->occurDefArr['terms']['taxonRank'] = 'http://rs.tdwg.org/dwc/terms/taxonRank';
-		$this->occurDefArr['fields']['taxonRank'] = '';
+		$this->occurDefArr['fields']['taxonRank'] = 'x.taxonRank';
 		$this->occurDefArr['terms']['identifiedBy'] = 'http://rs.tdwg.org/dwc/terms/identifiedBy';
- 		$this->occurDefArr['fields']['identifiedBy'] = 'o.identifiedBy';
- 		$this->occurDefArr['terms']['dateIdentified'] = 'http://rs.tdwg.org/dwc/terms/dateIdentified';
- 		$this->occurDefArr['fields']['dateIdentified'] = 'o.dateIdentified';
- 		$this->occurDefArr['terms']['identificationReferences'] = 'http://rs.tdwg.org/dwc/terms/identificationReferences';
- 		$this->occurDefArr['fields']['identificationReferences'] = 'o.identificationReferences';
- 		$this->occurDefArr['terms']['identificationRemarks'] = 'http://rs.tdwg.org/dwc/terms/identificationRemarks';
- 		$this->occurDefArr['fields']['identificationRemarks'] = 'o.identificationRemarks';
- 		$this->occurDefArr['terms']['taxonRemarks'] = 'http://rs.tdwg.org/dwc/terms/taxonRemarks';
- 		$this->occurDefArr['fields']['taxonRemarks'] = 'o.taxonRemarks';
- 		$this->occurDefArr['terms']['identificationQualifier'] = 'http://rs.tdwg.org/dwc/terms/identificationQualifier';
- 		$this->occurDefArr['fields']['identificationQualifier'] = 'o.identificationQualifier';
+		$this->occurDefArr['fields']['identifiedBy'] = 'o.identifiedBy';
+		$this->occurDefArr['terms']['dateIdentified'] = 'http://rs.tdwg.org/dwc/terms/dateIdentified';
+		$this->occurDefArr['fields']['dateIdentified'] = 'o.dateIdentified';
+		$this->occurDefArr['terms']['identificationReferences'] = 'http://rs.tdwg.org/dwc/terms/identificationReferences';
+		$this->occurDefArr['fields']['identificationReferences'] = 'o.identificationReferences';
+		$this->occurDefArr['terms']['identificationRemarks'] = 'http://rs.tdwg.org/dwc/terms/identificationRemarks';
+		$this->occurDefArr['fields']['identificationRemarks'] = 'o.identificationRemarks';
+		$this->occurDefArr['terms']['taxonRemarks'] = 'http://rs.tdwg.org/dwc/terms/taxonRemarks';
+		$this->occurDefArr['fields']['taxonRemarks'] = 'o.taxonRemarks';
+		$this->occurDefArr['terms']['identificationQualifier'] = 'http://rs.tdwg.org/dwc/terms/identificationQualifier';
+		$this->occurDefArr['fields']['identificationQualifier'] = 'o.identificationQualifier';
+		if($this->includeAcceptedNameUsage) {
+			$this->occurDefArr['terms']['acceptedNameUsage'] = 'http://rs.tdwg.org/dwc/terms/acceptedNameUsage';
+			$this->occurDefArr['fields']['acceptedNameUsage'] = 'x.acceptedNameUsage';
+			$this->occurDefArr['terms']['acceptedNameUsageAuthorship'] = '';
+			$this->occurDefArr['fields']['acceptedNameUsageAuthorship'] = 'x.acceptedNameUsageAuthorship';
+			$this->occurDefArr['terms']['acceptedNameUsageID'] = 'http://rs.tdwg.org/dwc/terms/acceptedNameUsageID';
+			$this->occurDefArr['fields']['acceptedNameUsageID'] = 'x.acceptedNameUsageID';
+		}
 		$this->occurDefArr['terms']['typeStatus'] = 'http://rs.tdwg.org/dwc/terms/typeStatus';
 		$this->occurDefArr['fields']['typeStatus'] = 'o.typeStatus';
 		$this->occurDefArr['terms']['recordedBy'] = 'http://rs.tdwg.org/dwc/terms/recordedBy';
 		$this->occurDefArr['fields']['recordedBy'] = 'o.recordedBy';
-		//$this->occurDefArr['terms']['recordedByID'] = 'https://symbiota.org/terms/recordedByID';
-		//$this->occurDefArr['fields']['recordedByID'] = 'o.recordedById';
 		$this->occurDefArr['terms']['associatedCollectors'] = 'https://symbiota.org/terms/associatedCollectors';
 		$this->occurDefArr['fields']['associatedCollectors'] = 'o.associatedCollectors';
 		$this->occurDefArr['terms']['recordNumber'] = 'http://rs.tdwg.org/dwc/terms/recordNumber';
@@ -104,6 +105,8 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['eventDate'] = 'o.eventDate';
 		$this->occurDefArr['terms']['eventDate2'] = 'https://symbiota.org/terms/eventDate2';
 		$this->occurDefArr['fields']['eventDate2'] = 'o.eventDate2';
+		$this->occurDefArr['terms']['eventtime'] = 'http://rs.tdwg.org/dwc/terms/eventTime';
+		$this->occurDefArr['fields']['eventtime'] = 'o.eventtime';
 		$this->occurDefArr['terms']['year'] = 'http://rs.tdwg.org/dwc/terms/year';
 		$this->occurDefArr['fields']['year'] = 'o.year';
 		$this->occurDefArr['terms']['month'] = 'http://rs.tdwg.org/dwc/terms/month';
@@ -117,8 +120,8 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['terms']['verbatimEventDate'] = 'http://rs.tdwg.org/dwc/terms/verbatimEventDate';
 		$this->occurDefArr['fields']['verbatimEventDate'] = 'o.verbatimEventDate';
 		$this->occurDefArr['terms']['occurrenceRemarks'] = 'http://rs.tdwg.org/dwc/terms/occurrenceRemarks';
-		$this->occurDefArr['terms']['habitat'] = 'http://rs.tdwg.org/dwc/terms/habitat';
 		$this->occurDefArr['fields']['occurrenceRemarks'] = 'o.occurrenceRemarks';
+		$this->occurDefArr['terms']['habitat'] = 'http://rs.tdwg.org/dwc/terms/habitat';
 		$this->occurDefArr['fields']['habitat'] = 'o.habitat';
 		$this->occurDefArr['terms']['substrate'] = 'https://symbiota.org/terms/substrate';
 		$this->occurDefArr['fields']['substrate'] = 'o.substrate';
@@ -225,41 +228,53 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['terms']['verbatimElevation'] = 'http://rs.tdwg.org/dwc/terms/verbatimElevation';
 		$this->occurDefArr['fields']['verbatimElevation'] = 'o.verbatimElevation';
 		if($this->includePaleo){
-			$this->occurDefArr['terms']['eon'] = 'https://symbiota.org/terms/paleo-eon';
-			$this->occurDefArr['fields']['eon'] = 'paleo.eon';
-			$this->occurDefArr['terms']['era'] = 'https://symbiota.org/terms/paleo-era';
-			$this->occurDefArr['fields']['era'] = 'paleo.era';
-			$this->occurDefArr['terms']['period'] = 'https://symbiota.org/terms/paleo-period';
-			$this->occurDefArr['fields']['period'] = 'paleo.period';
-			$this->occurDefArr['terms']['epoch'] = 'https://symbiota.org/terms/paleo-epoch';
-			$this->occurDefArr['fields']['epoch'] = 'paleo.epoch';
+			$this->occurDefArr['terms']['geologicalContextID'] = 'http://rs.tdwg.org/dwc/terms/geologicalContextID';
+			$this->occurDefArr['fields']['geologicalContextID'] = 'paleo.geologicalContextID';
+			$this->occurDefArr['terms']['earliestEonOrLowestEonothem'] = 'http://rs.tdwg.org/dwc/terms/earliestEonOrLowestEonothem';
+			$this->occurDefArr['fields']['earliestEonOrLowestEonothem'] = '';
+			$this->occurDefArr['terms']['earliestEraOrLowestErathem'] = 'http://rs.tdwg.org/dwc/terms/earliestEraOrLowestErathem';
+			$this->occurDefArr['fields']['earliestEraOrLowestErathem'] = '';
+			$this->occurDefArr['terms']['earliestPeriodOrLowestSystem'] = 'http://rs.tdwg.org/dwc/terms/earliestPeriodOrLowestSystem';
+			$this->occurDefArr['fields']['earliestPeriodOrLowestSystem'] = '';
+			$this->occurDefArr['terms']['earliestEpochOrLowestSeries'] = 'http://rs.tdwg.org/dwc/terms/earliestEpochOrLowestSeries';
+			$this->occurDefArr['fields']['earliestEpochOrLowestSeries'] = '';
+			$this->occurDefArr['terms']['earliestAgeOrLowestStage'] = 'http://rs.tdwg.org/dwc/terms/earliestAgeOrLowestStage';
+			$this->occurDefArr['fields']['earliestAgeOrLowestStage'] = '';
 			$this->occurDefArr['terms']['earlyInterval'] = 'https://symbiota.org/terms/paleo-earlyInterval';
 			$this->occurDefArr['fields']['earlyInterval'] = 'paleo.earlyInterval';
+			$this->occurDefArr['terms']['latestEonOrHighestEonothem'] = 'http://rs.tdwg.org/dwc/terms/latestEonOrHighestEonothem';
+			$this->occurDefArr['fields']['latestEonOrHighestEonothem'] = '';
+			$this->occurDefArr['terms']['latestEraOrHighestErathem'] = 'http://rs.tdwg.org/dwc/terms/latestEraOrHighestErathem';
+			$this->occurDefArr['fields']['latestEraOrHighestErathem'] = '';
+			$this->occurDefArr['terms']['latestPeriodOrHighestSystem'] = 'http://rs.tdwg.org/dwc/terms/latestPeriodOrHighestSystem';
+			$this->occurDefArr['fields']['latestPeriodOrHighestSystem'] = '';
+			$this->occurDefArr['terms']['latestEpochOrHighestSeries'] = '	http://rs.tdwg.org/dwc/terms/latestEpochOrHighestSeries';
+			$this->occurDefArr['fields']['latestEpochOrHighestSeries'] = '';
+			$this->occurDefArr['terms']['latestAgeOrHighestStage'] = 'http://rs.tdwg.org/dwc/terms/latestAgeOrHighestStage';
+			$this->occurDefArr['fields']['latestAgeOrHighestStage'] = '';
 			$this->occurDefArr['terms']['lateInterval'] = 'https://symbiota.org/terms/paleo-lateInterval';
 			$this->occurDefArr['fields']['lateInterval'] = 'paleo.lateInterval';
+			$this->occurDefArr['terms']['lowestBiostratigraphicZone'] = 'http://rs.tdwg.org/dwc/terms/lowestBiostratigraphicZone';
+			$this->occurDefArr['fields']['lowestBiostratigraphicZone'] = 'paleo.biostratigraphy AS lowestBiostratigraphicZone';
+			$this->occurDefArr['terms']['highestBiostratigraphicZone'] = 'http://rs.tdwg.org/dwc/terms/highestBiostratigraphicZone';
+			$this->occurDefArr['fields']['highestBiostratigraphicZone'] = 'paleo.biostratigraphy AS highestBiostratigraphicZone';
 			$this->occurDefArr['terms']['absoluteAge'] = 'https://symbiota.org/terms/paleo-absoluteAge';
 			$this->occurDefArr['fields']['absoluteAge'] = 'paleo.absoluteAge';
-			$this->occurDefArr['terms']['storageAge'] = 'https://symbiota.org/terms/paleo-storageAge';
-			$this->occurDefArr['fields']['storageAge'] = 'paleo.storageAge';
-			$this->occurDefArr['terms']['stage'] = 'https://symbiota.org/terms/paleo-stage';
-			$this->occurDefArr['fields']['stage'] = 'paleo.stage';
 			$this->occurDefArr['terms']['localStage'] = 'https://symbiota.org/terms/paleo-localStage';
 			$this->occurDefArr['fields']['localStage'] = 'paleo.localStage';
 			$this->occurDefArr['terms']['biota'] = 'https://symbiota.org/terms/paleo-biota';
 			$this->occurDefArr['fields']['biota'] = 'paleo.biota';
-			$this->occurDefArr['terms']['biostratigraphy'] = 'https://symbiota.org/terms/paleo-biostratigraphy';
-			$this->occurDefArr['fields']['biostratigraphy'] = 'paleo.biostratigraphy';
 			$this->occurDefArr['terms']['taxonEnvironment'] = 'https://symbiota.org/terms/paleo-taxonEnvironment';
 			$this->occurDefArr['fields']['taxonEnvironment'] = 'paleo.taxonEnvironment';
-			$this->occurDefArr['terms']['lithogroup'] = 'http://rs.tdwg.org/dwc/terms/group';
-			$this->occurDefArr['fields']['lithogroup'] = 'paleo.lithogroup';
+			$this->occurDefArr['terms']['group'] = 'http://rs.tdwg.org/dwc/terms/group';
+			$this->occurDefArr['fields']['group'] = 'paleo.lithogroup';
 			$this->occurDefArr['terms']['formation'] = 'http://rs.tdwg.org/dwc/terms/formation';
 			$this->occurDefArr['fields']['formation'] = 'paleo.formation';
 			$this->occurDefArr['terms']['member'] = 'http://rs.tdwg.org/dwc/terms/member';
 			$this->occurDefArr['fields']['member'] = 'paleo.member';
 			$this->occurDefArr['terms']['bed'] = 'http://rs.tdwg.org/dwc/terms/bed';
 			$this->occurDefArr['fields']['bed'] = 'paleo.bed';
-			$this->occurDefArr['terms']['lithology'] = 'http://rs.tdwg.org/dwc/terms/lithostratigraphic';
+			$this->occurDefArr['terms']['lithology'] = 'http://rs.tdwg.org/dwc/terms/lithology';
 			$this->occurDefArr['fields']['lithology'] = 'paleo.lithology';
 			$this->occurDefArr['terms']['stratRemarks'] = 'https://symbiota.org/terms/paleo-stratRemarks';
 			$this->occurDefArr['fields']['stratRemarks'] = 'paleo.stratRemarks';
@@ -267,19 +282,13 @@ class DwcArchiverOccurrence extends Manager{
 			$this->occurDefArr['fields']['element'] = 'paleo.element';
 			$this->occurDefArr['terms']['slideProperties'] = 'https://symbiota.org/terms/paleo-slideProperties';
 			$this->occurDefArr['fields']['slideProperties'] = 'paleo.slideProperties';
-			$this->occurDefArr['terms']['geologicalContextID'] = 'http://rs.tdwg.org/dwc/terms/geologicalContextID';
-			$this->occurDefArr['fields']['geologicalContextID'] = 'paleo.geologicalContextID';
 		}
 		$this->occurDefArr['terms']['disposition'] = 'http://rs.tdwg.org/dwc/terms/disposition';
 		$this->occurDefArr['fields']['disposition'] = 'o.disposition';
 		$this->occurDefArr['terms']['language'] = 'http://purl.org/dc/terms/language';
 		$this->occurDefArr['fields']['language'] = 'o.language';
-		//$this->occurDefArr['terms']['genericcolumn1'] = 'https://symbiota.org/terms/genericcolumn1';
-		//$this->occurDefArr['fields']['genericcolumn1'] = 'o.genericcolumn1';
-		//$this->occurDefArr['terms']['genericcolumn2'] = 'https://symbiota.org/terms/genericcolumn2';
-		//$this->occurDefArr['fields']['genericcolumn2'] = 'o.genericcolumn2';
-		//$this->occurDefArr['terms']['storageLocation'] = 'https://symbiota.org/terms/storageLocation';
-		//$this->occurDefArr['fields']['storageLocation'] = 'o.storageLocation';
+		$this->occurDefArr['terms']['storageLocation'] = 'https://symbiota.org/terms/storageLocation';
+		$this->occurDefArr['fields']['storageLocation'] = 'o.storageLocation';
 		$this->occurDefArr['terms']['observerUid'] = 'https://symbiota.org/terms/observerUid';
 		$this->occurDefArr['fields']['observerUid'] = 'o.observeruid';
 		$this->occurDefArr['terms']['processingStatus'] = 'https://symbiota.org/terms/processingStatus';
@@ -310,42 +319,49 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['recordID'] = 'o.recordID';
 		$this->occurDefArr['terms']['references'] = 'http://purl.org/dc/terms/references';
 		$this->occurDefArr['fields']['references'] = '';
+
 		if($this->schemaType == 'pensoft'){
 			$this->occurDefArr['fields']['occid'] = 'o.occid';
 		}
 
-		foreach($this->occurDefArr as $k => $vArr){
-			if($this->schemaType == 'dwc' || $this->schemaType == 'pensoft'){
-				$trimArr = array('recordedByID','associatedCollectors','substrate','verbatimAttributes','cultivationStatus',
-					'securityReason','genericcolumn1','genericcolumn2','storageLocation','observerUid','processingStatus',
-					'duplicateQuantity','labelProject','dateEntered','dateLastModified','sourcePrimaryKey-dbpk', 'tradeName');
-				// TODO add confirm dialog and look for a notes section in the DWC export to alert end user of loss of the trimmed fields during export.
-				$this->occurDefArr[$k] = array_diff_key($vArr,array_flip($trimArr));
+		//Trim out fields depending on schema settings
+		$trimArr = array();
+		if($this->schemaType == 'dwc' || $this->schemaType == 'pensoft'){
+			$trimArr = array('recordedByID','associatedCollectors','substrate','verbatimAttributes','cultivationStatus','securityReason','genericcolumn1','genericcolumn2',
+				'observerUid','processingStatus','duplicateQuantity','labelProject','dateEntered','dateLastModified','sourcePrimaryKey-dbpk');
+			if($this->includePaleo){
+				$trimArr = array_merge($trimArr, array('absoluteAge','stage','localStage','biostratigraphy','taxonEnvironment','stratRemarks','element','slideProperties', 'lithology'));
 			}
-			elseif($this->schemaType == 'symbiota'){
-				$trimArr = array();
-				if(!$this->extended){
-					$trimArr = array('collectionID','rights','rightsHolder','accessRights','storageLocation','observerUid','processingStatus','duplicateQuantity','labelProject','dateEntered','dateLastModified');
-				}
-				$this->occurDefArr[$k] = array_diff_key($vArr,array_flip($trimArr));
+		}
+		elseif($this->schemaType == 'symbiota'){
+			if(!$this->extended){
+				$trimArr = array('collectionID','rights','rightsHolder','accessRights','observerUid','processingStatus','duplicateQuantity','labelProject','dateEntered','dateLastModified');
 			}
-			elseif($this->schemaType == 'backup'){
-				$trimArr = array('collectionID','rights','rightsHolder','accessRights');
-				$this->occurDefArr[$k] = array_diff_key($vArr,array_flip($trimArr));
-			}
-			elseif($this->schemaType == 'backup-personal'){
-				$trimArr = array('collectionID','rights','rightsHolder','accessRights');
-				$this->occurDefArr[$k] = array_diff_key($vArr,array_flip($trimArr));
-			}
-			elseif($this->schemaType == 'coge'){
-				$targetArr = array('id','basisOfRecord','institutionCode','collectionCode','catalogNumber','occurrenceID','family','scientificName','scientificNameAuthorship',
-					'kingdom','phylum','class','order','genus','specificEpithet','infraSpecificEpithet','recordedBy','recordNumber','eventDate','year','month','day','fieldNumber',
-					'eventID', 'locationID','continent','waterBody','islandGroup','island','country','stateProvince','county','municipality',
-					'locality','recordSecurity','geodeticDatum','decimalLatitude','decimalLongitude','verbatimCoordinates',
-					'minimumElevationInMeters','maximumElevationInMeters','verbatimElevation','maximumDepthInMeters','minimumDepthInMeters','establishmentMeans',
-					'occurrenceRemarks','dateEntered','dateLastModified','recordID','references','collID');
-				$this->occurDefArr[$k] = array_intersect_key($vArr,array_flip($targetArr));
-			}
+		}
+		elseif($this->schemaType == 'backup'){
+			$trimArr = array('collectionID','rights','rightsHolder','accessRights');
+		}
+		elseif($this->schemaType == 'backup-personal'){
+			$trimArr = array('collectionID','rights','rightsHolder','accessRights');
+		}
+		if($this->schemaType != 'backup'){
+			$trimArr[] = 'storageLocation';
+		}
+		if($trimArr){
+			$this->occurDefArr['terms'] = array_diff_key($this->occurDefArr['terms'], array_flip($trimArr));
+			$this->occurDefArr['fields'] = array_diff_key($this->occurDefArr['fields'], array_flip($trimArr));
+		}
+
+		//Set to array to specific field definition
+		if($this->schemaType == 'coge'){
+			$targetArr = array('id','basisOfRecord','institutionCode','collectionCode','catalogNumber','occurrenceID','family','scientificName','scientificNameAuthorship',
+				'kingdom','phylum','class','order','genus','specificEpithet','infraSpecificEpithet','recordedBy','recordNumber','eventDate','year','month','day','fieldNumber',
+				'eventID', 'locationID','continent','waterBody','islandGroup','island','country','stateProvince','county','municipality',
+				'locality','recordSecurity','geodeticDatum','decimalLatitude','decimalLongitude','verbatimCoordinates',
+				'minimumElevationInMeters','maximumElevationInMeters','verbatimElevation','maximumDepthInMeters','minimumDepthInMeters','establishmentMeans',
+				'occurrenceRemarks','dateEntered','dateLastModified','recordID','references','collID');
+			$this->occurDefArr['terms'] = array_intersect_key($this->occurDefArr['terms'], array_flip($targetArr));
+			$this->occurDefArr['fields'] = array_intersect_key($this->occurDefArr['fields'], array_flip($targetArr));
 		}
 
 		if($this->schemaType == 'dwc' || $this->schemaType == 'pensoft'){
@@ -356,81 +372,93 @@ class DwcArchiverOccurrence extends Manager{
 		return $this->occurDefArr;
 	}
 
-	public function getSqlOccurrences($fieldArr, $fullSql = true){
+	public function getSqlOccurrences($fieldArr){
 		$sql = '';
-		if($fullSql){
-			$sqlFrag = '';
-			foreach($fieldArr as $fieldName => $colName){
-				if($colName){
-					$sqlFrag .= ', '.$colName;
+		if($this->exportID){
+			if($fieldArr){
+				$sqlFrag = '';
+				foreach($fieldArr as $fieldName => $colName){
+					if($colName){
+						$sqlFrag .= ', '.$colName;
+					}
+					else{
+						$sqlFrag .= ', "" AS t_'.$fieldName;
+					}
 				}
-				else{
-					$sqlFrag .= ', "" AS t_'.$fieldName;
-				}
+				$sql = 'SELECT '.trim($sqlFrag,', ');
 			}
-			$sqlFrag .= ', t.rankid';
-			$sql = 'SELECT DISTINCT '.trim($sqlFrag,', ');
+			$sql .= ' FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid INNER JOIN omexportoccurrences x ON o.occid = x.occid ';
+			if($this->includePaleo) $sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
+			$sql .= 'WHERE (x.omExportID = ' . $this->exportID . ') ';
+			//if($fullSql) $sql .= ' ORDER BY c.collid ';
+			//echo '<div>'.$sql.'</div>'; exit;
 		}
-		$sql .= ' FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid '.
-			'LEFT JOIN taxa t ON o.tidinterpreted = t.TID ';
-		if($this->includePaleo) $sql .= 'LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
-		//if($fullSql) $sql .= ' ORDER BY c.collid ';
-		//echo '<div>'.$sql.'</div>'; exit;
 		return $sql;
 	}
 
 	//Special functions for appending additional data
-	public function getAdditionalCatalogNumberStr($occid){
-		$retStr = '';
-		if(is_numeric($occid)){
-			$sql = 'SELECT identifierName, identifierValue FROM omoccuridentifiers WHERE occid = '.$occid.' ORDER BY sortBy';
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				if($r->identifierName) $retStr .= $r->identifierName.': ';
-				$retStr .= $r->identifierValue.'; ';
+	public function setOtherCatalogNumbers(){
+		$status = false;
+		$sql = 'UPDATE omexportoccurrences e INNER JOIN
+			(SELECT i.occid, GROUP_CONCAT(CONCAT(i.identifierName, if(i.identifierName != "",": ",""), i.identifierValue) SEPARATOR "; ") as ocn
+			FROM omoccuridentifiers i INNER JOIN omexportoccurrences e2 ON i.occid = e2.occid
+			WHERE e2.omExportID = ?
+			GROUP BY i.occid) intab ON e.occid = intab.occid
+			SET e.otherCatalogNumbers = intab.ocn
+			WHERE e.omExportID = ?';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('ii', $this->exportID, $this->exportID);
+			if($stmt->execute()) $status = true;
+			else{
+				$this->errorMessage = 'ERROR batch linking occurrences from download: ' . $stmt->error;
+				$this->logOrEcho($this->errorMessage);
 			}
-			$rs->free();
+			$stmt->close();
 		}
-		return trim($retStr,'; ');
+		else $this->errorMessage = $this->conn->error;
+		return $status;
 	}
 
-	public function setIncludeExsiccatae(){
-		$sql = 'SELECT occid FROM omexsiccatiocclink LIMIT 1';
-		$rs = $this->conn->query($sql);
-		if($rs->num_rows) $this->includeExsiccatae = true;
-		$rs->free();
-	}
-
-	public function getExsiccateArr($occid){
-		$retArr = array();
-		if($this->includeExsiccatae && is_numeric($occid)){
-			$sql = 'SELECT t.title, t.abbreviation, t.editor, t.exsrange, n.exsnumber, l.notes '.
-				'FROM omexsiccatiocclink l INNER JOIN omexsiccatinumbers n ON l.omenid = n.omenid '.
-				'INNER JOIN omexsiccatititles t ON n.ometid = t.ometid '.
-				'WHERE l.occid = '.$occid;
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				$exsStr = $r->title;
-				if($r->abbreviation) $exsStr .= ' ['.$r->abbreviation.']';
-				if($r->exsrange) $exsStr .= ', '.$r->exsrange;
-				if($r->editor) $exsStr .= ', '.$r->editor;
-				$exsStr .= ', exs #: '.$r->exsnumber;
-				if($r->notes) $exsStr .= ' ('.$r->notes.')';
-				$retArr['exsStr'] = $exsStr;
-				$dynProp = array();
-				$dynProp['exsTitle'] = $r->title;
-				if($r->abbreviation) $dynProp['exsAbbreviation'] = $r->abbreviation;
-				if($r->exsrange) $dynProp['exsRange'] = $r->exsrange;
-				if($r->editor) $dynProp['exsEditor'] = $r->editor;
-				$dynProp['exsNumber'] = $r->exsnumber;
-				if($r->notes) $dynProp['exsNotes'] = $r->notes;
-				$retArr['exsProps'] = $dynProp;
+	public function setExsiccate(){
+		$status = false;
+		$sql = 'UPDATE omexportoccurrences x INNER JOIN omexsiccatiocclink l ON x.occid = l.occid
+			INNER JOIN omexsiccatinumbers n ON l.omenid = n.omenid
+			INNER JOIN omexsiccatititles t ON n.ometid = t.ometid
+			SET x.occurrenceRemarks = CONCAT_WS("; ", x.occurrenceRemarks, CONCAT_WS(" ", t.title, CONCAT("[", t.abbreviation, "]"), CONCAT(", ", t.editor), CONCAT(", ", t.exsrange), CONCAT(", exs #: ", n.exsnumber), CONCAT(" (", l.notes, ")")))
+			WHERE x.omExportID = ?';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $this->exportID);
+			if($stmt->execute()) $status = true;
+			else{
+				$this->errorMessage = 'ERROR batch linking occurrences from download: ' . $stmt->error;
+				$this->logOrEcho($this->errorMessage);
 			}
-			$rs->free();
+			$stmt->close();
 		}
-		return $retArr;
+		else $this->errorMessage = $this->conn->error;
+		return $status;
 	}
 
+	public function setAssociatedSequences(){
+		$status = false;
+		$sql = 'UPDATE omexportoccurrences x INNER JOIN (SELECT occid, GROUP_CONCAT(CONCAT_WS(", ", identifier, resourceName, title, locus, resourceUrl) SEPARATOR " | ") as details
+			FROM omoccurgenetic GROUP BY occid) g ON x.occid = g.occid
+			SET x.associatedSequences = g.details
+			WHERE x.omExportID = ?';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $this->exportID);
+			if($stmt->execute()) $status = true;
+			else{
+				$this->errorMessage = 'ERROR populating associatedSequences: ' . $stmt->error;
+				$this->logOrEcho($this->errorMessage);
+			}
+			$stmt->close();
+		}
+		else $this->errorMessage = $this->conn->error;
+		return $status;
+	}
+
+	//Set Associations Simple DwC elements (e.g. associatedOccurrences, associatedTaxa) - not implimented within 3.4, but might be reimplimented, thus keeping functions in code
 	public function getAssociationStr($occid, $associationType = null){
 		$occid = filter_var($occid, FILTER_SANITIZE_NUMBER_INT);
 		if($occid){
@@ -474,8 +502,6 @@ class DwcArchiverOccurrence extends Manager{
 				}
 				$rs->free();
 			}
-			//Append associations of duplicate specimen
-			$this->appendSpecimenDuplicateAssociations($occid, $assocArr, $internalAssocOccidArr);
 
 			//Append resource URLs to each output record
 			if($internalAssocOccidArr){
@@ -612,23 +638,6 @@ class DwcArchiverOccurrence extends Manager{
 		}
 	}
 
-	private function appendSpecimenDuplicateAssociations($occid, &$assocArr, &$internalAssocOccidArr){
-		$sql = 'SELECT s.occid, l.occid as occidAssociate
-				FROM omoccurduplicatelink s INNER JOIN omoccurduplicates d ON s.duplicateid = d.duplicateid
-				INNER JOIN omoccurduplicatelink l ON d.duplicateid = l.duplicateid
-				WHERE s.occid IN('.$occid.') AND s.occid != l.occid ';
-		$rs = $this->conn->query($sql);
-		if($rs){
-			while($r = $rs->fetch_object()){
-				$assocKey = 'sd-'.$r->occidAssociate;
-				$assocArr[$assocKey]['occidassoc'] = $r->occidAssociate;
-				$assocArr[$assocKey]['relationship'] = 'herbariumSpecimenDuplicate';
-				$internalAssocOccidArr[$r->occidAssociate][] = $assocKey;
-			}
-			$rs->free();
-		}
-	}
-
 	private function getVerbatimTextObject($occid){
 		$verbatimText = array('type' => 'verbatimText', 'verbatimText' => '');
 
@@ -643,7 +652,6 @@ class DwcArchiverOccurrence extends Manager{
 
 	private function getInternalResourceIdentifiers($internalAssocOccidArr){
 		$retArr = array();
-		$this->setServerDomain();
 		//Replace GUID identifiers with occurrenceID values
 		$sql = 'SELECT occid, sciname, occurrenceID, recordID FROM omoccurrences WHERE occid IN('.implode(',',array_keys($internalAssocOccidArr)).')';
 		$rs = $this->conn->query($sql);
@@ -660,32 +668,6 @@ class DwcArchiverOccurrence extends Manager{
 		}
 		$rs->free();
 		return $retArr;
-	}
-
-	public function setIncludeAssociatedSequences(){
-		$sql = 'SELECT occid FROM omoccurgenetic LIMIT 1';
-		$rs = $this->conn->query($sql);
-		if($rs->num_rows) $this->includeAssocSeq = true;
-		$rs->free();
-	}
-
-	public function getAssociatedSequencesStr($occid){
-		$retStr = '';
-		if(is_numeric($occid)){
-			$sql = 'SELECT identifier, resourceName, title, locus, resourceUrl FROM omoccurgenetic WHERE occid = '.$occid;
-			$rs = $this->conn->query($sql);
-			if($rs){
-				while($r = $rs->fetch_object()){
-					$retStr .= '|'.$r->resourceName.', ';
-					if($r->title) $retStr .= $r->title.', ';
-					if($r->identifier) $retStr .= $r->identifier.', ';
-					if($r->locus) $retStr .= $r->locus.', ';
-					$retStr .= $r->resourceUrl;
-				}
-				$rs->free();
-			}
-		}
-		return trim($retStr,' |,');
 	}
 
 	private function getInverseRelationship($relationship){
@@ -707,136 +689,181 @@ class DwcArchiverOccurrence extends Manager{
 		}
 	}
 
-	public function appendUpperTaxonomy(&$targetArr){
-		if($targetArr['family'] && $this->upperTaxonomy){
-			$higherStr = '';
-			$famStr = strtolower($targetArr['family']);
-			if(isset($this->upperTaxonomy[$famStr]['k'])){
-				$targetArr['t_kingdom'] = $this->upperTaxonomy[$famStr]['k'];
-				$higherStr = $targetArr['t_kingdom'];
-			}
-			if(isset($this->upperTaxonomy[$famStr]['p'])){
-				$targetArr['t_phylum'] = $this->upperTaxonomy[$famStr]['p'];
-				$higherStr .= '|'.$targetArr['t_phylum'];
-			}
-			if(isset($this->upperTaxonomy[$famStr]['c'])){
-				$targetArr['t_class'] = $this->upperTaxonomy[$famStr]['c'];
-				$higherStr .= '|'.trim($targetArr['t_class'],'|');
-			}
-			if(isset($this->upperTaxonomy[$famStr]['o'])){
-				$targetArr['t_order'] = $this->upperTaxonomy[$famStr]['o'];
-				$higherStr .= '|'.trim($targetArr['t_class'],'|');
-			}
-			$targetArr['t_higherClassification'] = trim($higherStr,'| ');
-		}
-	}
-
-	public function appendUpperTaxonomy2(&$r){
-		$target = (isset($r['taxonID'])?$r['taxonID']:false);
-		if(!$target && !empty($r['family'])) $target = ucfirst($r['family']);
-		if($target){
-			if(array_key_exists($target, $this->upperTaxonomy)){
-				if(isset($this->upperTaxonomy[$target]['k'])) $r['t_kingdom'] = $this->upperTaxonomy[$target]['k'];
-				if(isset($this->upperTaxonomy[$target]['p'])) $r['t_phylum'] = $this->upperTaxonomy[$target]['p'];
-				if(isset($this->upperTaxonomy[$target]['c'])) $r['t_class'] = $this->upperTaxonomy[$target]['c'];
-				if(isset($this->upperTaxonomy[$target]['o'])) $r['t_order'] = $this->upperTaxonomy[$target]['o'];
-				if(isset($this->upperTaxonomy[$target]['f']) && !$r['family']) $r['family'] = $this->upperTaxonomy[$target]['f'];
-				if(isset($this->upperTaxonomy[$target]['s'])) $r['t_subgenus'] = $this->upperTaxonomy[$target]['s'];
-				if(isset($this->upperTaxonomy[$target]['u'])) $r['t_higherClassification'] = $this->upperTaxonomy[$target]['u'];
-			}
-			else{
-				$higherStr = '';
-				$sql = 'SELECT t.tid, t.sciname, t.rankid FROM taxaenumtree e INNER JOIN taxa t ON e.parentTid = t.tid ';
-				if(!is_numeric($target)) $sql .= 'INNER JOIN taxa t2 ON e.tid = t2.tid WHERE e.taxauthid = 1 AND t2.sciname = "'.$this->cleanInStr($target).'" ORDER BY t.rankid';
-				else $sql .= 'WHERE e.taxauthid = 1 AND e.tid = '.$target.' ORDER BY t.rankid';
-				$rs = $this->conn->query($sql);
-				while($row = $rs->fetch_object()){
-					if($row->rankid == 10) $r['t_kingdom'] = $row->sciname;
-					elseif($row->rankid == 30) $r['t_phylum'] = $row->sciname;
-					elseif($row->rankid == 60) $r['t_class'] = $row->sciname;
-					elseif($row->rankid == 100) $r['t_order'] = $row->sciname;
-					elseif($row->rankid == 140 && !$r['family']) $r['family'] = $row->sciname;
-					elseif($row->rankid == 190) $r['t_subgenus'] = $row->sciname;
-					$higherStr .= '|'.$row->sciname;
-				}
-				$rs->free();
-				if($higherStr && $this->schemaType != 'coge') $r['t_higherClassification'] = trim($higherStr,'| ');
-				if(count($this->upperTaxonomy)<1000 || !is_numeric($target)){
-					if(isset($r['t_kingdom'])) $this->upperTaxonomy[$target]['k'] = $r['t_kingdom'];
-					if(isset($r['t_phylum'])) $this->upperTaxonomy[$target]['p'] = $r['t_phylum'];
-					if(isset($r['t_class'])) $this->upperTaxonomy[$target]['c'] = $r['t_class'];
-					if(isset($r['t_order'])) $this->upperTaxonomy[$target]['o'] = $r['t_order'];
-					if(isset($r['family'])) $this->upperTaxonomy[$target]['f'] = $r['family'];
-					if(isset($r['t_subgenus'])) $this->upperTaxonomy[$target]['s'] = $r['t_subgenus'];
-					if(isset($r['t_higherClassification'])) $this->upperTaxonomy[$target]['u'] = $r['t_higherClassification'];
-				}
-			}
-		}
-	}
-
-	public function setUpperTaxonomy(){
-		if(!$this->upperTaxonomy){
-			$sqlOrder = 'SELECT t.sciname AS family, t2.sciname AS taxonorder '.
-				'FROM taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid '.
-				'INNER JOIN taxa t2 ON e.parenttid = t2.tid '.
-				'WHERE t.rankid = 140 AND t2.rankid = 100';
-			$rsOrder = $this->conn->query($sqlOrder);
-			while($rowOrder = $rsOrder->fetch_object()){
-				$this->upperTaxonomy[strtolower($rowOrder->family)]['o'] = $rowOrder->taxonorder;
-			}
-			$rsOrder->free();
-
-			$sqlClass = 'SELECT t.sciname AS family, t2.sciname AS taxonclass '.
-				'FROM taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid '.
-				'INNER JOIN taxa t2 ON e.parenttid = t2.tid '.
-				'WHERE t.rankid = 140 AND t2.rankid = 60';
-			$rsClass = $this->conn->query($sqlClass);
-			while($rowClass = $rsClass->fetch_object()){
-				$this->upperTaxonomy[strtolower($rowClass->family)]['c'] = $rowClass->taxonclass;
-			}
-			$rsClass->free();
-
-			$sqlPhylum = 'SELECT t.sciname AS family, t2.sciname AS taxonphylum '.
-				'FROM taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid '.
-				'INNER JOIN taxa t2 ON e.parenttid = t2.tid '.
-				'WHERE t.rankid = 140 AND t2.rankid = 30';
-			$rsPhylum = $this->conn->query($sqlPhylum);
-			while($rowPhylum = $rsPhylum->fetch_object()){
-				$this->upperTaxonomy[strtolower($rowPhylum->family)]['p'] = $rowPhylum->taxonphylum;
-			}
-			$rsPhylum->free();
-
-			$sqlKing = 'SELECT t.sciname AS family, t2.sciname AS kingdom '.
-				'FROM taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid '.
-				'INNER JOIN taxa t2 ON e.parenttid = t2.tid '.
-				'WHERE t.rankid = 140 AND t2.rankid = 10';
-			$rsKing = $this->conn->query($sqlKing);
-			while($rowKing = $rsKing->fetch_object()){
-				$this->upperTaxonomy[strtolower($rowKing->family)]['k'] = $rowKing->kingdom;
-			}
-			$rsKing->free();
-		}
-	}
-
-	public function setTaxonRank(){
-		$sql = 'SELECT DISTINCT rankid, rankname FROM taxonunits';
+	private function appendSpecimenDuplicateAssociations($occid, &$assocArr, &$internalAssocOccidArr){
+		$sql = 'SELECT s.occid, l.occid as occidAssociate
+			FROM omoccurduplicatelink s INNER JOIN omoccurduplicates d ON s.duplicateid = d.duplicateid
+			INNER JOIN omoccurduplicatelink l ON d.duplicateid = l.duplicateid
+			WHERE s.occid IN('.$occid.') AND s.occid != l.occid ';
 		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$this->taxonRankArr[$r->rankid] = $r->rankname;
+		if($rs){
+			while($r = $rs->fetch_object()){
+				$assocKey = 'sd-'.$r->occidAssociate;
+				$assocArr[$assocKey]['occidassoc'] = $r->occidAssociate;
+				$assocArr[$assocKey]['relationship'] = 'herbariumSpecimenDuplicate';
+				$internalAssocOccidArr[$r->occidAssociate][] = $assocKey;
+			}
+			$rs->free();
 		}
-		$rs->free();
 	}
 
-	public function getTaxonRank($rankID){
-		if(array_key_exists($rankID, $this->taxonRankArr)) return $this->taxonRankArr[$rankID];
-		else return '';
+	//Append Taxonomic data
+	public function setTaxonomy(){
+		$this->setUpperTaxonomy();
+		$this->setBaseTaxonomy();
+		$this->setSpeciesTaxonomy();
+		$this->setTaxonRank();
+		$this->setAcceptedTaxonomy();
 	}
 
-	public function setServerDomain(){
-		if(!$this->serverDomain) $this->serverDomain = GeneralUtil::getDomain();
+	private function setUpperTaxonomy(){
+		if($this->exportID){
+			//Set parent rank fields for all occurrences
+			$nodeArr = array(10 => 'kingdom', 30 => 'phylum', 60 => 'class', 100 => 'order', 140 => 'family', 180 => 'genus', 190 => 'subgenus');
+			foreach($nodeArr as $rankID => $fieldName){
+				$sql = 'UPDATE omexportoccurrences x INNER JOIN taxaenumtree e ON x.taxonID = e.tid
+					INNER JOIN taxa t ON e.parentTid = t.tid
+					SET x.' . $fieldName . ' = t.sciname
+					WHERE x.omExportID = ? AND t.rankid = ?';
+				if($stmt = $this->conn->prepare($sql)){
+					try{
+						$stmt->bind_param('ii', $this->exportID, $rankID);
+						$stmt->execute();
+					} catch (mysqli_sql_exception $e){
+						$this->errorMessage = $stmt->error;
+					}
+					$stmt->close();
+				}
+			}
+		}
+	}
+
+	private function setBaseTaxonomy(){
+		if($this->exportID){
+			//Set field of the current rank for occurrences ID to higher ranks
+			$nodeArr = array(10 => 'kingdom', 30 => 'phylum', 60 => 'class', 100 => 'order', 140 => 'family');
+			foreach($nodeArr as $rankID => $fieldName){
+				$sql = 'UPDATE omexportoccurrences x INNER JOIN taxa t ON x.taxonID = t.tid
+					SET x.' . $fieldName . ' = t.sciname
+					WHERE x.omExportID = ? AND t.rankid = ?';
+				if($stmt = $this->conn->prepare($sql)){
+					try{
+						$stmt->bind_param('ii', $this->exportID, $rankID);
+						$stmt->execute();
+					} catch (mysqli_sql_exception $e){
+						$this->errorMessage = $stmt->error;
+					}
+					$stmt->close();
+				}
+			}
+		}
+	}
+
+	private function setSpeciesTaxonomy(){
+		if($this->exportID){
+			//Set taxon fields for occurrences ID to species
+			$sql = 'UPDATE omexportoccurrences x INNER JOIN taxa t ON x.taxonID = t.tid
+				SET x.genus = CONCAT_WS(" ", t.unitInd1, t.unitName1),
+				x.specificEpithet = CONCAT_WS(" ", t.unitInd2, t.unitName2),
+				x.verbatimTaxonRank = t.unitInd3,
+				x.infraspecificEpithet = t.unitName3,
+				x.cultivarEpithet = t.cultivarEpithet,
+				x.tradeName = t.tradeName,
+				x.scientificNameAuthorship = t.author
+				WHERE x.omExportID = ? AND t.rankid >= 180';
+			if($stmt = $this->conn->prepare($sql)){
+				try{
+					$stmt->bind_param('i', $this->exportID);
+					$stmt->execute();
+				} catch (mysqli_sql_exception $e){
+					$this->errorMessage = $stmt->error;
+				}
+				$stmt->close();
+			}
+		}
+	}
+
+	private function setTaxonRank(){
+		if($this->exportID){
+			$sql = 'UPDATE omexportoccurrences x INNER JOIN taxa t ON x.taxonID = t.tid
+				INNER JOIN taxonunits u ON t.rankid = u.rankid
+				SET x.taxonRank = u.rankName
+				WHERE x.omExportID = ? AND x.kingdom = u.kingdomName';
+			if($stmt = $this->conn->prepare($sql)){
+				try{
+					$stmt->bind_param('i', $this->exportID);
+					$stmt->execute();
+				} catch (mysqli_sql_exception $e){
+					$this->errorMessage = $stmt->error;
+				}
+				$stmt->close();
+			}
+		}
+	}
+
+	private function setAcceptedTaxonomy(){
+		if($this->includeAcceptedNameUsage && $this->exportID){
+			//Set basic taxon level terms by matching on occurrence tid
+			$sql = 'UPDATE omexportoccurrences x INNER JOIN taxstatus ts ON x.taxonID = ts.tid
+				INNER JOIN taxa t ON ts.tidaccepted = t.tid
+				SET x.acceptedNameUsageID = t.tid, x.acceptedNameUsage = t.sciname, x.acceptedNameUsageAuthorship = t.author
+				WHERE x.omExportID = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				try{
+					$stmt->bind_param('i', $this->exportID);
+					$stmt->execute();
+				} catch (mysqli_sql_exception $e){
+					$this->errorMessage = $stmt->error;
+				}
+				$stmt->close();
+			}
+		}
+	}
+
+	//Paleo data
+	public function appendPaleoTerms(&$r){
+		$this->setPaleoGtsTerms();
+		if($this->paleoGtsArr){
+			if(!empty($r['earlyInterval'])){
+				$targetArr = array(20 => 't_earliestEonOrLowestEonothem', 30 => 't_earliestEraOrLowestErathem', 40 => 't_earliestPeriodOrLowestSystem', 50 => 't_earliestEpochOrLowestSeries', 60 => 't_earliestAgeOrLowestStage');
+				$this->setPaleoTerm($r, $r['earlyInterval'], $targetArr);
+			}
+			if(!empty($r['lateInterval'])){
+				$targetArr = array(20 => 't_latestEonOrHighestEonothem', 30 => 't_latestEraOrHighestErathem', 40 => 't_latestPeriodOrHighestSystem', 50 => 't_latestEpochOrHighestSeries', 60 => 't_latestAgeOrHighestStage');
+				$this->setPaleoTerm($r, $r['lateInterval'], $targetArr);
+			}
+		}
+	}
+
+	private function setPaleoTerm(&$r, $term, $targetArr){
+		if($term && !empty($this->paleoGtsArr[$term])){
+			$rankid = $this->paleoGtsArr[$term]['r'];
+			if ($rankid > 10){
+				$r[$targetArr[$rankid]] = $term;
+				$this->setPaleoTerm($r, $this->paleoGtsArr[$term]['p'], $targetArr);
+			}
+		}
+	}
+
+	private function setPaleoGtsTerms(){
+		if($this->paleoGtsArr === null){
+			//Set paleo GTS terms array
+			$this->paleoGtsArr = array();
+			$sql = 'SELECT g.gtsTerm, g.rankid, p.gtsTerm as parentTerm
+				FROM omoccurpaleogts g LEFT JOIN omoccurpaleogts p ON g.parentGtsID = p.gtsID ';
+			$rs = $this->conn->query($sql);
+			while($r = $rs->fetch_object()){
+				$this->paleoGtsArr[$r->gtsTerm]['r'] = $r->rankid;
+				$this->paleoGtsArr[$r->gtsTerm]['p'] = $r->parentTerm;
+			}
+			$rs->free();
+		}
 	}
 
 	//Setter and getter
+	public function setExportID($id){
+		$this->exportID = $id;
+	}
+
 	public function setSchemaType($t, $observerUid = 0){
 		if($t == 'backup' && $observerUid) $this->schemaType = 'backup-personal';
 		else $this->schemaType = $t;
@@ -846,8 +873,16 @@ class DwcArchiverOccurrence extends Manager{
 		if($e) $this->extended = true;
 	}
 
-	public function setIncludePaleo($bool){
-		if($bool) $this->includePaleo = true;
+	public function setIncludePaleo(bool $bool): void {
+		$this->includePaleo = $bool;
+	}
+
+	public function setIncludeAcceptedNameUsage(bool $bool): void {
+		$this->includeAcceptedNameUsage = $bool;
+	}
+
+	public function setServerDomain($domain){
+		$this->serverDomain = $domain;
 	}
 }
 ?>

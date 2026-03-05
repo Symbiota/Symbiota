@@ -83,7 +83,7 @@ $LANG['PARA1'] = 'Tools for managing data specific to a particular collection ar
 $LANG['COLLLIST'] = 'List of collections you have permissions to edit';
 $LANG['OBSERV'] = 'Observations';
 $LANG['NOEDITCOLL'] = 'You have no explicit editing permissions for a particular collections';
-$LANG['PARA2'] = 'Data management for observation projects is handled in a similar manner to what is described in the Collections paragraph above.                                        One difference is the General Observation project. This project serves two central purposes:                                        1) Allows registered users to submit a media-voucherd field observation.                                        2) Allows collectors to enter their own collection data for label printing and to make the data available                                        to the collections obtaining the physical specimens through donations or exchange. Visit the ';
+$LANG['PARA2'] = 'Data management for observation projects is handled in a similar manner to what is described in the Collections paragraph above.                                        One difference is the General Observation project. This project serves two central purposes:                                        1) Allows registered users to submit a media-vouchered field observation.                                        2) Allows collectors to enter their own collection data for label printing and to make the data available                                        to the collections obtaining the physical specimens through donations or exchange. Visit the ';
 $LANG['SYMBDOCU'] = 'Symbiota Documentation';
 $LANG['FORMOREINFO'] = 'for more information on specimen processing capabilities. Note that observation projects are not activated on all Symbiota data portals';
 $LANG['OIVS'] = 'Observation Media Voucher Submission';
@@ -97,7 +97,7 @@ $LANG['ABOUT'] = 'About Symbiota';
 $LANG['CODE'] = 'Code Version ';
 $LANG['SCHEMA'] = 'Schema Version ';
 $LANG['AUTHO'] = 'You are authorized to access the';
-$LANG['SYN_COM'] = 'Edit Synonyms / Common Names';
+$LANG['VERNAC_COM'] = 'Edit Vernacular / Common Names';
 $LANG['TEXTDESC'] = 'Edit Text Descriptions';
 $LANG['EDITIMG'] = 'Edit Media';
 $LANG['IMGSORTORD'] = 'Edit Media Sorting Order';
@@ -108,5 +108,6 @@ $LANG['DATMANPAG'] = 'Dataset Management Page';
 $LANG['DATA_AUTHORIZED_TO_EDIT'] = 'datasets you are authorized to edit';
 $LANG['MANAGE_TAXON_THUMBNAILS'] = 'Manage Taxon Profile Map Thumbnails';
 $LANG['TAXINTER'] = 'Taxonomic Interest User Permissions ';
+$LANG['OTHER_CAT_TRANSFER'] = 'Other Catalog Number Transfer Tool';
 
 ?>

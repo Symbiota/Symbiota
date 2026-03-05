@@ -6,6 +6,7 @@ include_once($SERVER_ROOT.'/classes/OccurrenceAttributeSearch.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $collManager = new OccurrenceManager();
+$paleoTimes = $collManager->getPaleoTimes();
 $searchVar = $collManager->getQueryTermStr();
 ?>
 <!DOCTYPE html>
@@ -19,20 +20,17 @@ $searchVar = $collManager->getQueryTermStr();
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="../js/symb/collections.harvestparams.js?ver=3" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=3" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/collections.list.js?ver=2" type="text/javascript"></script>
+	<script src="../js/symb/collections.harvestparams.js?ver=5" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js?ver=1" type="text/javascript"></script>
 	<script src="../js/symb/collections.traitsearch.js?ver=8" type="text/javascript"></script> <!-- Contains search-by-trait modifications -->
 	<script src="../js/symb/wktpolygontools.js?ver=1c" type="text/javascript"></script>
 	<script type="text/javascript">
+		const paleoTimes = <?= json_encode($paleoTimes ?? []) ?>;
 		var clientRoot = "<?php echo $CLIENT_ROOT; ?>";
 		$(document).ready(function() {
-			<?php
-			if($searchVar){
-				?>
-				sessionStorage.querystr = "<?php echo $searchVar; ?>";
-				<?php
-			}
-			?>
+			setSessionQueryStr();
 			setHarvestParamsForm(document.harvestparams);
 		});
 	</script>
@@ -50,6 +48,10 @@ $searchVar = $collManager->getQueryTermStr();
 	</style>
 </head>
 <body>
+<div id="service-container" data-search-var="<?= $searchVar; ?>"></div>
+<div id="all_collections_parent_container" data-config='<?= json_encode([
+	'CURRENT_URL' => $_SERVER['REQUEST_URI'],
+]) ?>'></div>
 <?php
 	$displayLeftMenu = (isset($collections_harvestparamsMenu)?$collections_harvestparamsMenu:false);
 	include($SERVER_ROOT.'/includes/header.php');
@@ -73,7 +75,7 @@ $searchVar = $collManager->getQueryTermStr();
 	?>
 	<div role="main" id="innertext">
 		<h1 class="page-heading bottom-breathing-room-rel top-breathing-room-rel"><?php echo $LANG['SEARCH']; ?></h1>
-		<form name="harvestparams" id="harvestparams" action="list.php" method="post" onsubmit="return checkHarvestParamsForm(this)">
+		<form name="harvestparams" id="harvestparams" action="list.php" method="post" onsubmit="return checkHarvestParamsForm(this, '<?php echo $_SERVER['REQUEST_URI']; ?>');">
 			<hr/>
 			<div>
 				<div style="float:left">
@@ -318,6 +320,73 @@ $searchVar = $collManager->getQueryTermStr();
 				</div>
 			</div>
 			<?php
+			if(!empty($ACTIVATE_PALEO)) {
+				$gtsTermArr = $collManager->getPaleoGtsTerms();
+				?>
+				<hr/>
+				<div id="searchFormPaleo" style="float:left">
+					<div>
+						<div class="catHeaderDiv bottom-breathing-room-rel-sm"><?php echo $LANG['GEO_CONTEXT']; ?></div>
+					</div>
+					<div>
+						<div>
+							<div>
+								<div>
+									<label for="lateInterval"><?php echo $LANG['LATE_INT'] ?>:</label>
+									<select name="lateInterval" type="text" id="lateInterval">
+										<option value=""></option>
+										<?php
+										$lateIntervalTerm = '';
+										if(isset($occArr['lateInterval'])) $lateIntervalTerm = $occArr['lateInterval'];
+										if($lateIntervalTerm && !array_key_exists($lateIntervalTerm, $gtsTermArr)){
+											echo '<option value="'.$lateIntervalTerm.'" SELECTED>'.$lateIntervalTerm.' - mismatched term</option>';
+											echo '<option value="">---------------------------</option>';
+										}
+										foreach($gtsTermArr as $term => $rankid){
+											echo '<option value="'.$term.'" '.($lateIntervalTerm==$term?'SELECTED':'').'>'.$term.'</option>';
+										}
+										?>
+									</select>
+								</div>
+								<label for="earlyInterval"><?php echo $LANG['EARLY_INT'] ?>:</label>
+									<select name="earlyInterval" type="text" id="earlyInterval">
+										<option value=""></option>
+										<?php
+										$earlyIntervalTerm = '';
+										if(isset($occArr['earlyInterval'])) $earlyIntervalTerm = $occArr['earlyInterval'];
+										if($earlyIntervalTerm && !array_key_exists($earlyIntervalTerm, $gtsTermArr)){
+											echo '<option value="'.$earlyIntervalTerm.'" SELECTED>'.$earlyIntervalTerm.' - mismatched term</option>';
+											echo '<option value="">---------------------------</option>';
+										}
+										foreach($gtsTermArr as $term => $rankid){
+											echo '<option value="'.$term.'" '.($earlyIntervalTerm==$term?'SELECTED':'').'>'.$term.'</option>';
+										}
+										?>
+									</select>
+								</div>
+						</div>
+						<div>
+							<div>
+								<label for="lithogroup"><?php echo $LANG['LITHOGROUP']?>:</label>
+									<input type="text" name="lithogroup" id="lithogroup"/>
+							</div>
+							<div>
+								<label for="formation"> <?php echo $LANG['FORMATION']?>:</label>
+									<input type="text" name="formation" id="formation"/>
+							</div>
+							<div>
+								<label for="member"><?php echo $LANG['MEMBER']?>:</label>
+									<input type="text" name="member" id="member"/>
+							</div>
+							<div>
+								<label for="bed"><?php echo $LANG['BED']?>:</label>
+									<input type="text" name="bed" id="bed"/>
+							</div>
+						</div>
+					</div>
+				</div>
+				<?php
+			}
 			if(!empty($SEARCH_BY_TRAITS)) {
 				$attribSearch = new OccurrenceAttributeSearch();
 				$traitArr = $attribSearch->getTraitSearchArr($SEARCH_BY_TRAITS);
@@ -355,6 +424,7 @@ $searchVar = $collManager->getQueryTermStr();
 				}
 			}
 			?>
+
 			<div style="float:right;">
 				<div><button type="submit" style="width:100%"><?php echo isset($LANG['BUTTON_NEXT_LIST'])?$LANG['BUTTON_NEXT_LIST']:'List Display'; ?></button></div>
 				<div><button type="button" style="width:100%" onclick="displayTableView(this.form)"><?php echo isset($LANG['BUTTON_NEXT_TABLE'])?$LANG['BUTTON_NEXT_TABLE']:'Table Display'; ?></button></div>
@@ -362,7 +432,7 @@ $searchVar = $collManager->getQueryTermStr();
 			</div>
 			<div>
 				<input name="comingFrom" type="hidden" value="harvestparams" >
-				<input type="hidden" name="db" value="<?php echo $collManager->getSearchTerm('db'); ?>" />
+				<input type="hidden" name="db" value="<?php echo $collManager->getSearchTerm('db', $_SERVER['REQUEST_URI']); ?>" />
 			</div>
 			<hr/>
 		</form>

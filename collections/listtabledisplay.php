@@ -1,9 +1,10 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceListManager.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/listtabledisplay.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT.'/content/lang/collections/listtabledisplay.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/listtabledisplay.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/listtabledisplay');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $page = array_key_exists('page',$_REQUEST) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
@@ -33,18 +34,12 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="../js/symb/collections.list.js?ver=1" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			<?php
-			if($searchVar){
-				?>
-				sessionStorage.querystr = "<?= $searchVar ?>";
-				<?php
-			}
-			?>
+			setSessionQueryStr();
 		});
 	</script>
-	<script src="../js/symb/collections.list.js?ver=1" type="text/javascript"></script>
 	<script src="../js/symb/shared.js?ver=1" type="text/javascript"></script>
 	<style>
 		table.styledtable td { white-space: nowrap; }
@@ -57,6 +52,10 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 	</style>
 </head>
 <body style="margin-left: 0px; margin-right: 0px;background-color:white;">
+	<div id="all_collections_parent_container" data-config='<?= json_encode([
+		'CURRENT_URL' => $_SERVER['REQUEST_URI'],
+	]) ?>'></div>
+	<div id="service-container" data-search-var="<?= $searchVar; ?>"></div>
 	<div>
 		<div style="width:65rem;">
 			<h1 class="page-heading left-breathing-room-rel" style="margin-bottom: 0px"><?= $LANG['SEARCH_RES_TABLE'] ?></h1>
@@ -85,7 +84,7 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 						<input name="dltype" type="hidden" value="specimen" />
 					</form>
 					<div style="float:left">
-						<button class="icon-button" style="margin:5px;padding:5px;" onclick="copyUrl()" title="<?= $LANG['COPY_TO_CLIPBOARD'] ?>" aria-label="<?= $LANG['COPY_TO_CLIPBOARD'] ?>">
+						<button class="icon-button" style="margin:5px;padding:5px;" onclick="copyUrl('<?= htmlspecialchars($comingFrom, ENT_QUOTES, 'UTF-8'); ?>')" title="<?= $LANG['COPY_TO_CLIPBOARD'] ?>" aria-label="<?= $LANG['COPY_TO_CLIPBOARD'] ?>">
 							<svg xmlns="http://www.w3.org/2000/svg" style="width:1.3em;height:1.3em" alt="<?= $LANG['COPY_TO_CLIPBOARD'] ?>" height="24" viewBox="0 -960 960 960" width="24"> <path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg>
 						</button>
 					</div>
@@ -101,7 +100,10 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 										<option value=""></option>
 										<?php
 										$sortFields = array('c.collectionname' => $LANG['COLLECTION'], 'o.catalogNumber' => $LANG['CATALOG_NUMBER'], 'o.family' => $LANG['FAMILY'], 'o.sciname' => $LANG['SCINAME'], 'o.recordedBy' => $LANG['COLLECTOR'],
-											'o.recordNumber' => $LANG['NUMBER'], 'o.eventDate' => $LANG['EVENT_DATE'], 'o.country' => $LANG['COUNTRY'], 'o.StateProvince' => $LANG['STATE_PROVINCE'], 'o.county' => $LANG['COUNTY'], 'o.minimumElevationInMeters' => $LANG['ELEVATION']);
+										'o.recordNumber' => $LANG['NUMBER'], 'o.eventDate' => $LANG['EVENT_DATE'], 'o.country' => $LANG['COUNTRY'], 'o.StateProvince' => $LANG['STATE_PROVINCE'], 'o.county' => $LANG['COUNTY'], 'o.minimumElevationInMeters' => $LANG['ELEVATION']);
+										$sortPaleoFields = array('paleo.formation' => (isset($LANG['FORMATION']) ? $LANG['FORMATION'] : 'Formation'), 'paleo.earlyInterval' => (isset($LANG['EARLY_INT']) ? $LANG['EARLY_INT'] : 'Early Interval'), 'paleo.lateInterval' => (isset($LANG['LATE_INT']) ? $LANG['LATE_INT'] : 'Late IntervaL'));
+										if (!empty($GLOBALS['ACTIVATE_PALEO']))
+											$sortFields = array_merge($sortFields, $sortPaleoFields);
 										foreach($sortFields as $k => $v){
 											echo '<option value="'.$k.'" '.($k==$sortField1?'SELECTED':'').'>'.$v.'</option>';
 										}
@@ -197,12 +199,18 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 							<th><?= $LANG['COLLECTOR'] ?></th>
 							<th><?= $LANG['NUMBER'] ?></th>
 							<th><?= $LANG['EVENT_DATE'] ?></th>
+							<th><?= $LANG['EVENT_TIME'] ?></th>
 							<th><?= $LANG['COUNTRY'] ?></th>
 							<th><?= $LANG['STATE_PROVINCE'] ?></th>
 							<th><?= $LANG['COUNTY'] ?></th>
 							<th><?= $LANG['LOCALITY'] ?></th>
 							<th><?= $LANG['DEC_LAT'] ?></th>
 							<th><?= $LANG['DEC_LONG'] ?></th>
+							<?php if (!empty($ACTIVATE_PALEO)): ?>
+								<th><?= $LANG['FORMATION'] ?></th>
+								<th><?= $LANG['EARLY_INT'] ?></th>
+								<th><?= $LANG['LATE_INT'] ?></th>
+							<?php endif; ?>
 							<th><?= $LANG['HABITAT'] ?></th>
 							<th><?= $LANG['SUBSTRATE'] ?></th>
 							<th><?= $LANG['ELEVATION'] ?></th>
@@ -245,6 +253,7 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 								<td><?= $occArr['collector']; ?></td>
 								<td><?= (array_key_exists('collnum',$occArr) ? $occArr['collnum'] : ''); ?></td>
 								<td><?= (array_key_exists('date',$occArr) ? $occArr['date'] : ''); ?></td>
+								<td><?= $occArr['eventtime']; ?></td>
 								<td><?= $occArr['country']; ?></td>
 								<td><?= $occArr['state']; ?></td>
 								<td><?= $occArr['county']; ?></td>
@@ -256,6 +265,11 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 								?></td>
 								<td><?php if(isset($occArr['declat'])) echo $occArr['declat']; ?></td>
 								<td><?php if(isset($occArr['declong'])) echo $occArr['declong']; ?></td>
+								<?php if (!empty($ACTIVATE_PALEO)): ?>
+									<td><?php if(isset($occArr['formation'])) echo $occArr['formation']; ?></td>
+									<td><?php if(isset($occArr['earlyInterval'])) echo $occArr['earlyInterval']; ?></td>
+									<td><?php if(isset($occArr['lateInterval'])) echo $occArr['lateInterval']; ?></td>
+								<?php endif; ?>
 								<td><?php if(isset($occArr['habitat'])) echo ((strlen($occArr['habitat'])>80) ? substr($occArr['habitat'],0,80).'...':$occArr['habitat']); ?></td>
 								<td><?php if(isset($occArr['substrate'])) echo ((strlen($occArr['substrate'])>80) ? substr($occArr['substrate'],0,80).'...':$occArr['substrate']); ?></td>
 								<td><?= (array_key_exists('elev',$occArr) ? $occArr['elev'] : ''); ?></td>

@@ -57,6 +57,11 @@ $LANG['ACCESS_DEF'] = 'Information or a URL link to page with details explaining
 					how one can use the data. See';
 $LANG['DATASET_TYPE'] = 'Dataset Type';
 $LANG['PRES_SPECS'] = 'Preserved Specimens';
+$LANG['FOSSIL_SPECS'] = 'Fossil Specimens';
+$LANG['FOSSIL_WARN_1'] = 'Selecting “Fossil Specimen” will activate the Paleo Module for this collection and set the default value to “FossilSpecimen” for';
+$LANG['FOSSIL_WARN_2'] = 'Only choose this option if you intend to use this Collection Profile to catalog fossils.';
+$LANG['FOSSIL_WARN_3'] = 'Additional features may require activation to make your fossil specimen data publicly discoverable in this portal.
+						Contact your Portal Manager for more information.';
 $LANG['OBSERVATIONS'] = 'Observations';
 $LANG['PERS_OBS_MAN'] = 'Personal Observation Management';
 $LANG['MORE_COL_TYPE'] = 'More information about Collection Type';
@@ -91,7 +96,7 @@ $LANG['OCCID_DEF_2'] = 'field. The use of the Occurrence Id as the GUID is not r
 						The Symbiota Generated GUID (UUID) option will trigger the Symbiota data portal to automatically
 						generate UUID GUIDs for each record. This option is recommended for many for Live Datasets
 						but not allowed for Snapshot collections that are managed in local management system.';
-$LANG['PUBLISH_TO_AGGS'] = 'Publish to Aggregators';
+$LANG['PUBLISH_TO_AGGS'] = 'Enable Publishing to Aggregators';
 $LANG['MORE_INFO_AGGREGATORS'] = 'More information about Publishing to Aggregators';
 $LANG['ACTIVATE_GBIF'] = 'Activates GBIF publishing tools available within Darwin Core Archive Publishing menu option';
 $LANG['SOURCE_REC_URL'] = 'Source Record URL';
@@ -125,7 +130,7 @@ $LANG['SECURITY_KEY'] = 'Security Key';
 $LANG['RECORDID'] = 'recordID';
 $LANG['SAVE_EDITS'] = 'Save Edits';
 $LANG['CREATE_COLL_2'] = 'Create New Collection';
-$LANG['TINYMCE_INFO'] = 'Collection description. You can access the text editing toolbar for this description 
+$LANG['TINYMCE_INFO'] = 'Collection description. You can access the text editing toolbar for this description
 						by pressing key combination ALT + F10 on Windows or OPTION + F10 on MacOS.';
 
 ?>

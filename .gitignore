@@ -6,6 +6,7 @@
 /leftmenu.php
 /index.php
 includes/header.php
+includes/minimalheader.php
 includes/footer.php
 includes/head.php
 includes/leftmenu.php

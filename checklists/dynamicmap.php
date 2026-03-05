@@ -1,8 +1,10 @@
 <?php
 include_once('../config/symbini.php');
 //include_once($SERVER_ROOT.'/classes/DynamicChecklistManager.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/dynamicmap.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/checklists/dynamicmap.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT.'/content/lang/checklists/dynamicmap.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('checklists/dynamicmap');
+
 header('Content-Type: text/html; charset='.$CHARSET);
 
 $tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']:0;
@@ -107,7 +109,10 @@ if(!$zoomInt){
             center: [latCent, lngCent],
          };
 
-         map = new LeafletMap('map_canvas', dmOptions)
+		  map = new LeafletMap('map_canvas',
+			dmOptions,
+			JSON.parse(`<?= json_encode($GEO_JSON_LAYERS ?? []) ?>`)
+		 )
 
          let markerGroup = new L.layerGroup().addTo(map.mapLayer);
          let latlng;

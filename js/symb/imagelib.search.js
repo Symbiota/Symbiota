@@ -12,15 +12,12 @@ function hideCollections(){
 
 function activateCollectionControl(){
 	$("#collections-control-span").show();
-	$("input[name='db[]']").prop('checked', true);
-	$("input[name='cat[]']").prop('checked', true);
 }
 
 function deactivateCollectionControl(){
 	$("#collections-control-span").hide();
 	$("#collection-div").hide();
-	$("input[name='db[]']").prop('checked', false);
-	$("input[name='cat[]']").prop('checked', false);
+	checkEverythingInCollections();
 }
 
 function openIndPU(occId,clid){

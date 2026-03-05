@@ -1,0 +1,670 @@
+INSERT INTO `schemaversion` (versionnumber) VALUES ('3.4');
+
+#Portal properties and config variables 
+ALTER TABLE `adminconfig` 
+  RENAME TO  `adminproperties`;
+
+ALTER TABLE `adminproperties` 
+  ADD COLUMN `propType` VARCHAR(45) NULL AFTER `category`,
+  ADD COLUMN `tableName` VARCHAR(45) NULL AFTER `propValue`,
+  ADD COLUMN `tablePK` INT NULL AFTER `tableName`,
+  CHANGE COLUMN `configID` `propID` INT(11) NOT NULL AUTO_INCREMENT ,
+  CHANGE COLUMN `attributeName` `propName` VARCHAR(45) NOT NULL ,
+  CHANGE COLUMN `attributeValue` `propValue` TEXT NOT NULL ;
+
+ALTER TABLE `adminproperties` 
+  DROP FOREIGN KEY `FK_adminConfig_uid`;
+
+ALTER TABLE `adminproperties` 
+  DROP INDEX `UQ_adminconfig_name`,
+  DROP INDEX `FK_adminConfig_uid_idx`;
+
+ALTER TABLE `adminproperties` 
+  ADD CONSTRAINT `FK_adminproperties_uid`  FOREIGN KEY (`modifiedUid`)  REFERENCES `users` (`uid`);
+
+ALTER TABLE `adminproperties` 
+  ADD INDEX `FK_adminproperties_uid_idx` (`modifiedUid` ASC),
+  ADD INDEX `IX_adminproperties_category` (`category` ASC),
+  ADD INDEX `IX_adminproperties_type` (`propType` ASC),
+  ADD INDEX `IX_adminproperties_name` (`propName` ASC),
+  ADD INDEX `IX_adminproperties_table` (`tableName` ASC, `tablePK` ASC);
+
+
+ALTER TABLE `omoccurdatasets` 
+  ADD COLUMN `recordID` VARCHAR(45) NULL AFTER `collid`,
+  ADD INDEX `IX_omoccurdatasets_name` (`name` ASC),
+  ADD INDEX `IX_omoccurdatasets_isPublic` (`isPublic` ASC),
+  ADD INDEX `IX_omoccurdatasets_datasetIdentifier` (`datasetIdentifier` ASC),
+  ADD INDEX `IX_omoccurdatasets_datasetName` (`datasetName` ASC);
+
+UPDATE omoccurdatasets
+  SET datasetName = name
+  WHERE datasetName IS NULL;
+
+ALTER TABLE `omoccurdatasets` 
+  CHANGE COLUMN `datasetName` `datasetName` VARCHAR(150) NOT NULL ,
+  CHANGE COLUMN `name` `name` VARCHAR(100) NULL ;
+
+
+#field for search by polygons
+ALTER TABLE geographicthesaurus
+  ADD COLUMN isSearchable TINYINT(1) NOT NULL DEFAULT 0 AFTER `parentID`;
+
+ALTER TABLE `geographicthesaurus` 
+  ADD INDEX `FK_geothes_geolevel` (`geoLevel` ASC);
+
+#Fixes issues where Florida counties were linked to Uruguay/Florida  
+UPDATE IGNORE geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  SET c.parentID = (SELECT c.geoThesID FROM geographicthesaurus c INNER JOIN geographicthesaurus p ON c.parentID = p.geoThesID WHERE c.geoTerm = "Florida" AND p.geoTerm = "United States")
+  WHERE g.geoTerm IN("Florida") AND p.geoTerm = "Uruguay";
+
+DELETE c.* 
+  FROM geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  WHERE g.geoTerm IN("Florida") AND p.geoTerm = "Uruguay";
+
+#Fixes issues where Montana counties were linked to Bulgaria/Montana  
+UPDATE IGNORE geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  SET c.parentID = (SELECT c.geoThesID FROM geographicthesaurus c INNER JOIN geographicthesaurus p ON c.parentID = p.geoThesID WHERE c.geoTerm = "Montana" AND p.geoTerm = "United States")
+  WHERE g.geoTerm IN("Montana") AND p.geoTerm = "Bulgaria";
+
+DELETE c.*
+  FROM geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  WHERE g.geoTerm IN("Montana") AND p.geoTerm = "Bulgaria";
+
+#Fixes issues where Maryland counties were linked to Liberia/Maryland  
+UPDATE IGNORE geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  SET c.parentID = (SELECT c.geoThesID FROM geographicthesaurus c INNER JOIN geographicthesaurus p ON c.parentID = p.geoThesID WHERE c.geoTerm = "Maryland" AND p.geoTerm = "United States")
+  WHERE g.geoTerm IN("Maryland") AND p.geoTerm = "Liberia";
+
+DELETE c.*
+  FROM geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+  WHERE g.geoTerm IN("Maryland") AND p.geoTerm = "Liberia";
+
+
+#Exsiccati field format adjustments to standardize API output
+ALTER TABLE `omexsiccatititles` 
+  CHANGE COLUMN `exsrange` `exsRange` VARCHAR(45) NULL DEFAULT NULL,
+  CHANGE COLUMN `startdate` `startDate` VARCHAR(45) NULL DEFAULT NULL,
+  CHANGE COLUMN `enddate` `endDate` VARCHAR(45) NULL DEFAULT NULL,
+  CHANGE COLUMN `lasteditedby` `lastEditedBy` VARCHAR(45) NULL DEFAULT NULL,
+  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP();
+
+ALTER TABLE `omexsiccatititles` 
+  DROP INDEX `index_exsiccatiTitle` ;
+
+ALTER TABLE `omexsiccatititles` 
+  ADD INDEX `IX_exsiccatititle_title` (`title` ASC);
+
+ALTER TABLE `omexsiccatinumbers` 
+  CHANGE COLUMN `exsnumber` `exsNumber` VARCHAR(45) NOT NULL,
+  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP();
+
+ALTER TABLE `omexsiccatinumbers` 
+  DROP FOREIGN KEY `FK_exsiccatiTitleNumber`;
+
+ALTER TABLE `omexsiccatinumbers`
+  DROP INDEX `FK_exsiccatiTitleNumber`,
+  DROP INDEX `Index_omexsiccatinumbers_unique`;
+  
+ALTER TABLE `omexsiccatinumbers`
+  ADD INDEX `FK_exsiccatiNumber_ometid_idx` (`ometid` ASC),
+  ADD INDEX `FK_exsiccatiNumber_number_idx` (`exsNumber` ASC),
+  ADD UNIQUE INDEX `UQ_exsiccatiNumber_ometid` (`ometid` ASC, `exsNumber` ASC);
+
+ALTER TABLE `omexsiccatinumbers` 
+  ADD CONSTRAINT `FK_exsiccatinumber_ometid` FOREIGN KEY (`ometid`) REFERENCES `omexsiccatititles` (`ometid`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+ALTER TABLE `omexsiccatiocclink`
+  ADD COLUMN `omexid` INT UNSIGNED NOT NULL AUTO_INCREMENT FIRST,
+  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+  DROP PRIMARY KEY,
+  ADD PRIMARY KEY (`omexid`);
+
+ALTER TABLE `omexsiccatiocclink` 
+  DROP FOREIGN KEY `FKExsiccatiNumOccLink1`,
+  DROP FOREIGN KEY `FKExsiccatiNumOccLink2`;
+
+ALTER TABLE `omexsiccatiocclink` 
+  DROP INDEX `UniqueOmexsiccatiOccLink`,
+  DROP INDEX `FKExsiccatiNumOccLink2`,
+  DROP INDEX `FKExsiccatiNumOccLink1`;
+
+ALTER TABLE `omexsiccatiocclink`
+  ADD INDEX `FK_exsiccatiOccLink_omenid_idx` (`omenid` ASC),
+  ADD UNIQUE INDEX `UQ_exsiccatiOccLink_occid` (`occid` ASC);
+
+ALTER TABLE `omexsiccatiocclink` 
+  ADD CONSTRAINT `FK_exsiccatiOccLink_omenid` FOREIGN KEY (`omenid`) REFERENCES `omexsiccatinumbers` (`omenid`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_exsiccatiOccLink_occid`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+
+#Create export staging tables
+CREATE TABLE `omexport` (
+  `omExportID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `uid` INT UNSIGNED NULL,
+  `category` VARCHAR(45) NOT NULL,
+  `tagName` VARCHAR(45) NOT NULL,
+  `queryTerms` MEDIUMTEXT NOT NULL,
+  `fileUrl` VARCHAR(255) NULL,
+  `portalDomain` VARCHAR(45) NULL,
+  `expiration` DATETIME NULL,
+  `ipAddress` VARCHAR(45) NULL,
+  `status` ENUM('queued', 'inProcess', 'completed', 'failed') NULL DEFAULT 'queued',
+  `statusHistory` TEXT NULL,
+  `gui` VARCHAR(45) NULL,
+  `guiType` VARCHAR(45) NULL,
+  `notes` VARCHAR(255) NULL,
+  `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`omExportID`)
+) ENGINE=InnoDB;
+
+ALTER TABLE `omexport` 
+  ADD INDEX `FK_omexport_uid_idx` (`uid` ASC);
+
+ALTER TABLE `omexport` 
+  ADD CONSTRAINT `FK_omexport_uid`  FOREIGN KEY (`uid`)  REFERENCES `users` (`uid`)  ON DELETE RESTRICT  ON UPDATE CASCADE;
+
+CREATE TABLE `omexportoccurrences` (
+  `omExportID` INT UNSIGNED NOT NULL,
+  `occid` INT UNSIGNED NOT NULL,
+  `collid` INT UNSIGNED NOT NULL,
+  `otherCatalogNumbers` TEXT NULL,
+  `higherClassification` TEXT NULL,
+  `kingdom` VARCHAR(50) NULL,
+  `phylum` VARCHAR(50) NULL,
+  `class` VARCHAR(50) NULL,
+  `order` VARCHAR(50) NULL,
+  `family` VARCHAR(50) NULL,
+  `taxonID` INT UNSIGNED NULL,
+  `scientificNameAuthorship` VARCHAR(150) NULL,
+  `genus` VARCHAR(50) NULL,
+  `subgenus` VARCHAR(50) NULL,
+  `specificEpithet` VARCHAR(45) NULL,
+  `taxonRank` VARCHAR(45) NULL,
+  `verbatimTaxonRank` VARCHAR(45) NULL,
+  `infraspecificEpithet` VARCHAR(45) NULL,
+  `cultivarEpithet` VARCHAR(45) NULL,
+  `tradeName` VARCHAR(45) NULL,
+  `acceptedNameUsage` VARCHAR(250) NULL,
+  `acceptedNameUsageAuthorship` VARCHAR(150) NULL,
+  `acceptedNameUsageID` INT NULL,
+  `occurrenceRemarks` TEXT NULL,
+  `associatedSequences` TEXT NULL,
+  `recordSecurity` INT NULL,
+  `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`omExportID`,`occid`)
+) ENGINE=InnoDB;
+
+ALTER TABLE `omexportoccurrences` 
+  ADD INDEX `FK_omexportoccur_omExportID_idx` (`omExportID`),
+  ADD INDEX `FK_omexportoccur_occid_idx` (`occid`);
+
+ALTER TABLE `omexportoccurrences` 
+  ADD CONSTRAINT `FK_omexportoccur_omExportID`  FOREIGN KEY (`omExportID`)  REFERENCES `omexport` (`omExportID`)  ON DELETE CASCADE  ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_omexportoccur_occid`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE;
+
+ALTER TABLE `omexportoccurrences` 
+  ADD INDEX `IX_omexportoccur_occid` (`omExportID`, `occid`),
+  ADD INDEX `IX_omexportoccur_collid` (`omExportID`, `collid`),
+  ADD INDEX `IX_omexportoccur_taxonID` (`omExportID`, `taxonID`),
+  ADD INDEX `IX_omexportoccur_kingdom` (`omExportID`, `kingdom`),
+  ADD INDEX `IX_omexportoccur_recordSecurity` (`omExportID`, `recordSecurity`),
+  ADD INDEX `IX_omexportoccur_initialTimestamp` (`initialTimestamp`);
+
+
+#Add update to omoccurdeterminations.dateLastModified tracked any update to the row
+ALTER TABLE omoccurdeterminations 
+  MODIFY COLUMN dateLastModified timestamp DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP;
+
+#Convert locus and notes fields within genetic table to TEXT
+ALTER TABLE `omoccurgenetic` 
+  CHANGE COLUMN `locus` `locus` TEXT NULL DEFAULT NULL ,
+  CHANGE COLUMN `notes` `notes` TEXT NULL DEFAULT NULL ;
+
+#Reset empty values to null
+UPDATE omoccurgenetic 
+  SET identifier = null 
+  WHERE identifier = "";
+
+#Increase field length to errors due to input exceeding max length
+ALTER TABLE `omoccurduplicates` 
+  CHANGE COLUMN `title` `title` TEXT NOT NULL ;
+
+
+#Paleo schema adjustments
+ALTER TABLE `omoccurpaleo`
+  CHANGE COLUMN `biota` `biota` VARCHAR(100) NULL DEFAULT NULL COMMENT 'Flora or Fauna' ,
+  CHANGE COLUMN `lithology` `lithology` VARCHAR(700) NULL DEFAULT NULL ,
+  CHANGE COLUMN `stratRemarks` `stratRemarks` VARCHAR(1000) NULL DEFAULT NULL ,
+  CHANGE COLUMN `geologicalContextID` `geologicalContextID` VARCHAR(100) NULL DEFAULT NULL ;
+
+#Add paleo indexes
+ALTER TABLE `omoccurpaleo`
+  ADD INDEX `IX_paleo_earlyInterval` (`earlyInterval` ASC),
+  ADD INDEX `IX_paleo_lateInterval` (`lateInterval` ASC),
+  ADD INDEX `IX_paleo_formation` (`formation` ASC),
+  ADD INDEX `IX_paleo_group` (`lithogroup` ASC),
+  ADD INDEX `IX_paleo_member` (`member` ASC),
+  ADD INDEX `IX_paleo_bed` (`bed` ASC);
+
+#Increase the character limit on  biostratigraphy
+ALTER TABLE `omoccurpaleo` 
+  MODIFY COLUMN `biostratigraphy` VARCHAR(100);
+
+
+ALTER TABLE `omoccurpaleogts`
+  ADD COLUMN `myaStart` FLOAT NULL DEFAULT NULL AFTER `rankname`,
+  ADD COLUMN `myaEnd` FLOAT NULL DEFAULT NULL AFTER `myaStart`,
+  ADD COLUMN `errorRange` FLOAT NULL DEFAULT NULL AFTER `myaEnd`,
+  ADD COLUMN `colorCode` VARCHAR(10) NULL DEFAULT NULL AFTER `errorRange`,
+  ADD COLUMN `geoTimeID` INT NULL DEFAULT NULL AFTER `parentgtsid`;
+
+ALTER TABLE `omoccurpaleogts`
+  DROP INDEX `UNIQUE_gtsterm`;
+
+ALTER TABLE `omoccurpaleogts`
+  ADD UNIQUE INDEX `UQ_paleogts_gtsterm` (`gtsterm` ASC),
+  ADD INDEX `IX_paleogts_myaStart` (`myaStart` ASC),
+  ADD INDEX `IX_paleogts_myaEnd` (`myaEnd` ASC);
+
+# Disable foreign key checks temporarily to rename index
+SET FOREIGN_KEY_CHECKS=0;
+
+ALTER TABLE `omoccurpaleogts`
+  DROP INDEX `FK_gtsparent_idx`,
+  ADD INDEX `FK_paleogts_parent_idx` (`parentGtsID` ASC);
+
+SET FOREIGN_KEY_CHECKS=1;
+
+#reset the values within omoccurpaleogts table
+TRUNCATE `omoccurpaleogts`;
+
+INSERT INTO `omoccurpaleogts` VALUES
+(1,'Precambrian',10,'superera',4567,538.8,NULL,'#F74370',NULL,1374,'2024-10-17 19:59:29'),
+(2,'Phanerozoic',20,'eon',538.8,0,NULL,'#9AD9DD',NULL,1376,'2024-10-17 19:59:29'),
+(3,'Proterozoic',20,'eon',2500,538.8,NULL,'#F73563',1,1377,'2024-10-17 19:59:29'),
+(4,'Archean',20,'eon',4031,2500,NULL,'#F0047F',1,1378,'2024-10-17 19:59:29'),
+(5,'Hadean',20,'eon',4567,4031,NULL,'#AE027E',1,1375,'2024-10-17 19:59:29'),
+(6,'Cenozoic',30,'era',66,0,NULL,'#F2F91D',2,1383,'2024-10-17 19:59:29'),
+(7,'Mesozoic',30,'era',251.902,66,NULL,'#67C5CA',2,1385,'2024-10-17 19:59:29'),
+(8,'Paleozoic',30,'era',538.8,251.902,NULL,'#99C08D',2,1388,'2024-10-17 19:59:29'),
+(9,'Neoproterozoic',30,'era',1000,538.8,NULL,'#FEB342',3,1386,'2024-10-17 19:59:29'),
+(10,'Mesoproterozoic',30,'era',1600,1000,NULL,'#FDB462',3,1384,'2024-10-17 19:59:29'),
+(11,'Paleoproterozoic',30,'era',2500,1600,NULL,'#F74370',3,1387,'2024-10-17 19:59:29'),
+(12,'Neoarchean',30,'era',2800,2500,NULL,'#F99BC1',4,1381,'2024-10-17 19:59:29'),
+(13,'Mesoarchean',30,'era',3200,2800,NULL,'#F768A9',4,1380,'2024-10-17 19:59:29'),
+(14,'Paleoarchean',30,'era',3600,3200,NULL,'#F4449F',4,1382,'2024-10-17 19:59:29'),
+(15,'Eoarchean',30,'era',4031,3600,NULL,'#DA037F',4,1379,'2024-10-17 19:59:29'),
+(16,'Quaternary',40,'period',2.58,0,NULL,'#F9F97F',6,1402,'2024-10-17 19:59:29'),
+(17,'Neogene',40,'period',23.03,2.58,NULL,'#FFE619',6,1401,'2024-10-17 19:59:29'),
+(18,'Paleogene',40,'period',66,23.03,NULL,'#FD9A52',6,1406,'2024-10-17 19:59:29'),
+(19,'Cretaceous',40,'period',145,66,NULL,'#7FC64E',7,1400,'2024-10-17 19:59:29'),
+(20,'Jurassic',40,'period',201.4,145,NULL,'#34B2C9',7,1404,'2024-10-17 19:59:29'),
+(21,'Triassic',40,'period',251.902,201.4,NULL,'#812B92',7,1408,'2024-10-17 19:59:29'),
+(22,'Permian',40,'period',298.9,251.902,NULL,'#F04028',8,1407,'2024-10-17 19:59:29'),
+(23,'Carboniferous',40,'period',358.9,298.9,NULL,'#67A599',8,1399,'2024-10-17 19:59:29'),
+(24,'Devonian',40,'period',419.2,358.9,NULL,'#CB8C37',8,1403,'2024-10-17 19:59:29'),
+(25,'Silurian',40,'period',443.8,419.2,NULL,'#B3E1B6',8,1410,'2024-10-17 19:59:29'),
+(26,'Ordovician',40,'period',485.4,443.8,NULL,'#009270',8,1405,'2024-10-17 19:59:29'),
+(27,'Cambrian',40,'period',538.8,485.4,NULL,'#7FA056',8,1409,'2024-10-17 19:59:29'),
+(28,'Ediacaran',40,'period',635,538.8,NULL,'#FED96A',9,1392,'2024-10-17 19:59:29'),
+(29,'Cryogenian',40,'period',720,635,NULL,'',9,1390,'2024-10-17 19:59:29'),
+(30,'Tonian',40,'period',1000,720,NULL,'#FEBF4E',9,1398,'2024-10-17 19:59:29'),
+(31,'Stenian',40,'period',1200,1000,NULL,'#FED99A',10,1397,'2024-10-17 19:59:29'),
+(32,'Ectasian',40,'period',1400,1200,NULL,'#FDCC8A',10,1391,'2024-10-17 19:59:29'),
+(33,'Calymmian',40,'period',1600,1400,NULL,'#FDC07A',10,1389,'2024-10-17 19:59:29'),
+(34,'Statherian',40,'period',1800,1600,NULL,'#F875A7',11,1396,'2024-10-17 19:59:29'),
+(35,'Orosirian',40,'period',2050,1800,NULL,'#F76898',11,1393,'2024-10-17 19:59:29'),
+(36,'Rhyacian',40,'period',2300,2050,NULL,'#F75B89',11,1394,'2024-10-17 19:59:29'),
+(37,'Siderian',40,'period',2500,2300,NULL,'#F74F7C',11,1395,'2024-10-17 19:59:29'),
+(38,'Holocene',50,'epoch',0.0117,0,NULL,'#FEEBD2',16,1432,'2024-10-17 19:59:29'),
+(39,'Pleistocene',50,'epoch',2.58,0.0117,NULL,'#FFEFAF',16,1444,'2024-10-17 19:59:29'),
+(40,'Pliocene',50,'epoch',5.333,2.58,NULL,'#FFFF99',17,1425,'2024-10-17 19:59:29'),
+(41,'Miocene',50,'epoch',23.03,5.333,NULL,'#FFFF00',17,1446,'2024-10-17 19:59:29'),
+(42,'Oligocene',50,'epoch',33.9,23.03,NULL,'#FEC07A',18,1424,'2024-10-17 19:59:29'),
+(43,'Eocene',50,'epoch',56,33.9,NULL,'#FDB46C',18,1441,'2024-10-17 19:59:29'),
+(44,'Paleocene',50,'epoch',66,56,NULL,'#FDA75F',18,1436,'2024-10-17 19:59:29'),
+(45,'Late Cretaceous',50,'epoch',100.5,66,NULL,'',19,1447,'2024-10-17 19:59:29'),
+(46,'Early Cretaceous',50,'epoch',145,100.5,NULL,'',19,1445,'2024-10-17 19:59:29'),
+(47,'Late Jurassic',50,'epoch',161.5,145,NULL,'',20,1437,'2024-10-17 19:59:29'),
+(48,'Middle Jurassic',50,'epoch',174.7,161.5,NULL,'',20,1443,'2024-10-17 19:59:29'),
+(49,'Early Jurassic',50,'epoch',201.4,174.7,NULL,'',20,1442,'2024-10-17 19:59:29'),
+(50,'Late Triassic',50,'epoch',237,201.4,NULL,'',21,1439,'2024-10-17 19:59:29'),
+(51,'Middle Triassic',50,'epoch',247.2,237,NULL,'',21,1423,'2024-10-17 19:59:29'),
+(52,'Early Triassic',50,'epoch',251.902,247.2,NULL,'',21,1419,'2024-10-17 19:59:29'),
+(53,'Lopingian',50,'epoch',259.51,251.902,NULL,'#FBA794',22,1417,'2024-10-17 19:59:29'),
+(54,'Guadalupian',50,'epoch',273.01,259.51,NULL,'#FB745C',22,1431,'2024-10-17 19:59:29'),
+(55,'Cisuralian',50,'epoch',298.9,273.01,NULL,'#EF5845',22,1440,'2024-10-17 19:59:29'),
+(56,'Late Pennsylvanian',50,'epoch',307,298.9,NULL,'',23,1428,'2024-10-17 19:59:29'),
+(57,'Middle Pennsylvanian',50,'epoch',315.2,307,NULL,'',23,1414,'2024-10-17 19:59:29'),
+(58,'Early Pennsylvanian',50,'epoch',323.2,315.2,NULL,'',23,1412,'2024-10-17 19:59:29'),
+(59,'Late Mississippian',50,'epoch',330.9,323.2,NULL,'',23,1415,'2024-10-17 19:59:29'),
+(60,'Middle Mississippian',50,'epoch',346.7,330.9,NULL,'',23,1413,'2024-10-17 19:59:29'),
+(61,'Early Mississippian',50,'epoch',358.9,346.7,NULL,'',23,1411,'2024-10-17 19:59:29'),
+(62,'Late Devonian',50,'epoch',382.7,358.9,NULL,'',24,1427,'2024-10-17 19:59:29'),
+(63,'Middle Devonian',50,'epoch',393.3,382.7,NULL,'',24,1421,'2024-10-17 19:59:29'),
+(64,'Early Devonian',50,'epoch',419.2,393.3,NULL,'',24,1434,'2024-10-17 19:59:29'),
+(65,'Pridoli',50,'epoch',423,419.2,NULL,'#E6F5E1',25,1448,'2024-10-17 19:59:29'),
+(66,'Ludlow',50,'epoch',427.4,423,NULL,'#BFE6CF',25,1420,'2024-10-17 19:59:29'),
+(67,'Wenlock',50,'epoch',433.4,427.4,NULL,'#B3E1C2',25,1429,'2024-10-17 19:59:29'),
+(68,'Llandovery',50,'epoch',443.8,433.4,NULL,'#99D7B3',25,1433,'2024-10-17 19:59:29'),
+(69,'Late Ordovician',50,'epoch',458.4,443.8,NULL,'',26,1438,'2024-10-17 19:59:29'),
+(70,'Middle Ordovician',50,'epoch',470,458.4,NULL,'',26,1422,'2024-10-17 19:59:29'),
+(71,'Early Ordovician',50,'epoch',485.4,470,NULL,'',26,1418,'2024-10-17 19:59:29'),
+(72,'Furongian',50,'epoch',497,485.4,NULL,'',27,1430,'2024-10-17 19:59:29'),
+(73,'Miaolingian',50,'epoch',509,497,NULL,'',27,1435,'2024-10-17 19:59:29'),
+(74,'Cambrian Series 2',50,'epoch',521,509,NULL,'',27,1416,'2024-10-17 19:59:29'),
+(75,'Terreneuvian',50,'epoch',538.8,521,NULL,'',27,1426,'2024-10-17 19:59:29'),
+(76,'Meghalayan',60,'age',0.0042,0,NULL,'',38,1510,'2024-10-17 19:59:29'),
+(77,'Northgrippian',60,'age',0.0082,0.0042,NULL,'',38,1514,'2024-10-17 19:59:29'),
+(78,'Greenlandian',60,'age',0.0117,0.0082,NULL,'',38,1491,'2024-10-17 19:59:29'),
+(79,'Late Pleistocene',60,'age',0.129,0.0117,NULL,'',39,1542,'2024-10-17 19:59:29'),
+(80,'Chibanian',60,'age',0.774,0.129,NULL,'',39,1476,'2024-10-17 19:59:29'),
+(81,'Calabrian',60,'age',1.8,0.774,NULL,'#FFF2BA',39,1464,'2024-10-17 19:59:29'),
+(82,'Gelasian',60,'age',2.58,1.8,NULL,'#FFEDB3',39,1488,'2024-10-17 19:59:29'),
+(83,'Piacenzian',60,'age',3.6,2.58,NULL,'#FFFFBF',40,1518,'2024-10-17 19:59:29'),
+(84,'Zanclean',60,'age',5.333,3.6,NULL,'#FFFFB3',40,1549,'2024-10-17 19:59:29'),
+(85,'Messinian',60,'age',7.246,5.333,NULL,'#FFFF73',41,1511,'2024-10-17 19:59:29'),
+(86,'Tortonian',60,'age',11.63,7.246,NULL,'#FFFF66',41,1538,'2024-10-17 19:59:29'),
+(87,'Serravallian',60,'age',13.82,11.63,NULL,'#FFFF59',41,1531,'2024-10-17 19:59:29'),
+(88,'Langhian',60,'age',15.98,13.82,NULL,'#FFFF4D',41,1505,'2024-10-17 19:59:29'),
+(89,'Burdigalian',60,'age',20.44,15.98,NULL,'#FFFF41',41,1463,'2024-10-17 19:59:29'),
+(90,'Aquitanian',60,'age',23.03,20.44,NULL,'#FFFF33',41,1454,'2024-10-17 19:59:29'),
+(91,'Chattian',60,'age',27.82,23.03,NULL,'#FEE6AA',42,1475,'2024-10-17 19:59:29'),
+(92,'Rupelian',60,'age',33.9,27.82,NULL,'#FED99A',42,1525,'2024-10-17 19:59:29'),
+(93,'Priabonian',60,'age',37.71,33.9,NULL,'#FDCDA1',43,1521,'2024-10-17 19:59:29'),
+(94,'Bartonian',60,'age',41.2,37.71,NULL,'#FDC091',43,1459,'2024-10-17 19:59:29'),
+(95,'Lutetian',60,'age',47.8,41.2,NULL,'#FDB482',43,1508,'2024-10-17 19:59:29'),
+(96,'Ypresian',60,'age',56,47.8,NULL,'#FCA773',43,1548,'2024-10-17 19:59:29'),
+(97,'Thanetian',60,'age',59.2,56,NULL,'#FDBF6F',44,1535,'2024-10-17 19:59:29'),
+(98,'Selandian',60,'age',61.6,59.2,NULL,'#FEBF65',44,1529,'2024-10-17 19:59:29'),
+(99,'Danian',60,'age',66,61.6,NULL,'#FDB462',44,1478,'2024-10-17 19:59:29'),
+(100,'Maastrichtian',60,'age',72.1,66,NULL,'#F2FA8C',45,1509,'2024-10-17 19:59:29'),
+(101,'Campanian',60,'age',83.6,72.1,NULL,'#E6F47F',45,1470,'2024-10-17 19:59:29'),
+(102,'Santonian',60,'age',86.3,83.6,NULL,'#D9EF74',45,1528,'2024-10-17 19:59:29'),
+(103,'Coniacian',60,'age',89.8,86.3,NULL,'#CCE968',45,1477,'2024-10-17 19:59:29'),
+(104,'Turonian',60,'age',93.9,89.8,NULL,'#BFE35D',45,1541,'2024-10-17 19:59:29'),
+(105,'Cenomanian',60,'age',100.5,93.9,NULL,'#B3DE53',45,1473,'2024-10-17 19:59:29'),
+(106,'Albian',60,'age',113,100.5,NULL,'#CCEA97',46,1451,'2024-10-17 19:59:29'),
+(107,'Aptian',60,'age',121.4,113,NULL,'#BFE48A',46,1453,'2024-10-17 19:59:29'),
+(108,'Barremian',60,'age',125.77,121.4,NULL,'#B3DF7F',46,1458,'2024-10-17 19:59:29'),
+(109,'Hauterivian',60,'age',132.6,125.77,NULL,'#A6D975',46,1494,'2024-10-17 19:59:29'),
+(110,'Valanginian',60,'age',139.8,132.6,NULL,'#99D36A',46,1543,'2024-10-17 19:59:29'),
+(111,'Berriasian',60,'age',145,139.8,NULL,'#8CCD60',46,1462,'2024-10-17 19:59:29'),
+(112,'Tithonian',60,'age',149.2,145,NULL,'#D9F1F7',47,1536,'2024-10-17 19:59:29'),
+(113,'Kimmeridgian',60,'age',154.8,149.2,NULL,'#CCECF4',47,1502,'2024-10-17 19:59:29'),
+(114,'Oxfordian',60,'age',161.5,154.8,NULL,'#BFE7F1',47,1516,'2024-10-17 19:59:29'),
+(115,'Callovian',60,'age',165.3,161.5,NULL,'#BFE7E5',48,1465,'2024-10-17 19:59:29'),
+(116,'Bathonian',60,'age',168.2,165.3,NULL,'#B3E2E3',48,1461,'2024-10-17 19:59:29'),
+(117,'Bajocian',60,'age',170.9,168.2,NULL,'#A6DDE0',48,1457,'2024-10-17 19:59:29'),
+(118,'Aalenian',60,'age',174.7,170.9,NULL,'#9AD9DD',48,1449,'2024-10-17 19:59:29'),
+(119,'Toarcian',60,'age',184.2,174.7,NULL,'#99CEE3',49,1537,'2024-10-17 19:59:29'),
+(120,'Pliensbachian',60,'age',192.9,184.2,NULL,'#80C5DD',49,1519,'2024-10-17 19:59:29'),
+(121,'Sinemurian',60,'age',199.5,192.9,NULL,'#67BCD8',49,1533,'2024-10-17 19:59:29'),
+(122,'Hettangian',60,'age',201.4,199.5,NULL,'#4EB3D3',49,1495,'2024-10-17 19:59:29'),
+(123,'Rhaetian',60,'age',208.5,201.4,NULL,'#E3B9DB',50,1522,'2024-10-17 19:59:29'),
+(124,'Norian',60,'age',227,208.5,NULL,'#D6AAD3',50,1513,'2024-10-17 19:59:29'),
+(125,'Carnian',60,'age',237,227,NULL,'#C99BCB',50,1472,'2024-10-17 19:59:29'),
+(126,'Ladinian',60,'age',242,237,NULL,'#C983BF',51,1504,'2024-10-17 19:59:29'),
+(127,'Anisian',60,'age',247.2,242,NULL,'#BC75B7',51,1452,'2024-10-17 19:59:29'),
+(128,'Olenekian',60,'age',251.2,247.2,NULL,'#B051A5',52,1515,'2024-10-17 19:59:29'),
+(129,'Induan',60,'age',251.902,251.2,NULL,'#A4469F',52,1498,'2024-10-17 19:59:29'),
+(130,'Changhsingian',60,'age',254.14,251.902,NULL,'#FCC0B2',53,1474,'2024-10-17 19:59:29'),
+(131,'Wuchiapingian',60,'age',259.51,254.14,NULL,'#FCB4A2',53,1546,'2024-10-17 19:59:29'),
+(132,'Capitanian',60,'age',264.28,259.51,NULL,'#FB9A85',54,1471,'2024-10-17 19:59:29'),
+(133,'Wordian',60,'age',266.9,264.28,NULL,'#FB8D76',54,1545,'2024-10-17 19:59:29'),
+(134,'Roadian',60,'age',273.01,266.9,NULL,'#FB8069',54,1524,'2024-10-17 19:59:29'),
+(135,'Kungurian',60,'age',283.5,273.01,NULL,'#E38776',55,1503,'2024-10-17 19:59:29'),
+(136,'Artinskian',60,'age',290.1,283.5,NULL,'#E37B68',55,1455,'2024-10-17 19:59:29'),
+(137,'Sakmarian',60,'age',293.51,290.1,NULL,'#E36F5C',55,1526,'2024-10-17 19:59:29'),
+(138,'Asselian',60,'age',298.9,293.51,NULL,'#E36350',55,1456,'2024-10-17 19:59:29'),
+(139,'Gzhelian',60,'age',303.7,298.9,NULL,'',56,1493,'2024-10-17 19:59:29'),
+(140,'Kasimovian',60,'age',307,303.7,NULL,'',56,1500,'2024-10-17 19:59:29'),
+(141,'Moscovian',60,'age',315.2,307,NULL,'',57,1512,'2024-10-17 19:59:29'),
+(142,'Bashkirian',60,'age',323.2,315.2,NULL,'',58,1460,'2024-10-17 19:59:29'),
+(143,'Serpukhovian',60,'age',330.9,323.2,NULL,'',59,1530,'2024-10-17 19:59:29'),
+(144,'Visean',60,'age',346.7,330.9,NULL,'',60,1544,'2024-10-17 19:59:29'),
+(145,'Tournaisian',60,'age',358.9,346.7,NULL,'',61,1539,'2024-10-17 19:59:29'),
+(146,'Famennian',60,'age',372.2,358.9,NULL,'#F2EDB3',62,1484,'2024-10-17 19:59:29'),
+(147,'Frasnian',60,'age',382.7,372.2,NULL,'#F2EDAD',62,1487,'2024-10-17 19:59:29'),
+(148,'Givetian',60,'age',387.7,382.7,NULL,'#F1E185',63,1489,'2024-10-17 19:59:29'),
+(149,'Eifelian',60,'age',393.3,387.7,NULL,'#F1D576',63,1482,'2024-10-17 19:59:29'),
+(150,'Emsian',60,'age',407.6,393.3,NULL,'#E5D075',64,1483,'2024-10-17 19:59:29'),
+(151,'Pragian',60,'age',410.8,407.6,NULL,'#E5C468',64,1520,'2024-10-17 19:59:29'),
+(152,'Lochkovian',60,'age',419.2,410.8,NULL,'#E5B75A',64,1506,'2024-10-17 19:59:29'),
+(153,'Ludfordian',60,'age',425.6,423,NULL,'#D9F0DF',66,1507,'2024-10-17 19:59:29'),
+(154,'Gorstian',60,'age',427.4,425.6,NULL,'#CCECDD',66,1490,'2024-10-17 19:59:29'),
+(155,'Homerian',60,'age',430.5,427.4,NULL,'#CCEBD1',67,1497,'2024-10-17 19:59:29'),
+(156,'Sheinwoodian',60,'age',433.4,430.5,NULL,'#BFE6C3',67,1532,'2024-10-17 19:59:29'),
+(157,'Telychian',60,'age',438.5,433.4,NULL,'#BFE6CF',68,1534,'2024-10-17 19:59:29'),
+(158,'Aeronian',60,'age',440.8,438.5,NULL,'#B3E1C2',68,1450,'2024-10-17 19:59:29'),
+(159,'Rhuddanian',60,'age',443.8,440.8,NULL,'#A6DCB5',68,1523,'2024-10-17 19:59:29'),
+(160,'Hirnantian',60,'age',445.2,443.8,NULL,'#A6DBAB',69,1496,'2024-10-17 19:59:29'),
+(161,'Katian',60,'age',453,445.2,NULL,'#99D69F',69,1501,'2024-10-17 19:59:29'),
+(162,'Sandbian',60,'age',458.4,453,NULL,'#8CD094',69,1527,'2024-10-17 19:59:29'),
+(163,'Darriwilian',60,'age',467.3,458.4,NULL,'#74C69C',70,1480,'2024-10-17 19:59:29'),
+(164,'Dapingian',60,'age',470,467.3,NULL,'#66C092',70,1479,'2024-10-17 19:59:29'),
+(165,'Floian',60,'age',477.7,470,NULL,'#41B087',71,1485,'2024-10-17 19:59:29'),
+(166,'Tremadocian',60,'age',485.4,477.7,NULL,'#33A97E',71,1540,'2024-10-17 19:59:29'),
+(167,'Cambrian Stage 10',60,'age',489.5,485.4,NULL,'',72,1466,'2024-10-17 19:59:29'),
+(168,'Jiangshanian',60,'age',494,489.5,NULL,'',72,1499,'2024-10-17 19:59:29'),
+(169,'Paibian',60,'age',497,494,NULL,'',72,1517,'2024-10-17 19:59:29'),
+(170,'Guzhangian',60,'age',500.5,497,NULL,'',73,1492,'2024-10-17 19:59:29'),
+(171,'Drumian',60,'age',504.5,500.5,NULL,'',73,1481,'2024-10-17 19:59:29'),
+(172,'Wuliuan',60,'age',509,504.5,NULL,'',73,1547,'2024-10-17 19:59:29'),
+(173,'Cambrian Stage 4',60,'age',514,509,NULL,'',74,1469,'2024-10-17 19:59:29'),
+(174,'Cambrian Stage 3',60,'age',521,514,NULL,'',74,1468,'2024-10-17 19:59:29'),
+(175,'Cambrian Stage 2',60,'age',529,521,NULL,'',75,1467,'2024-10-17 19:59:29'),
+(176,'Fortunian',60,'age',538.8,529,NULL,'',75,1486,'2024-10-17 19:59:29');
+
+#Add paleo fields to uploadspectemp
+ALTER TABLE `uploadspectemp`
+  ADD COLUMN `paleo_eon` TEXT AFTER `exsiccatiNotes`,
+  ADD COLUMN `paleo_era` TEXT AFTER `paleo_eon`,
+  ADD COLUMN `paleo_period` TEXT AFTER `paleo_era`,
+  ADD COLUMN `paleo_epoch` TEXT AFTER `paleo_period`,
+  ADD COLUMN `paleo_earlyInterval` TEXT AFTER `paleo_epoch`,
+  ADD COLUMN `paleo_lateInterval` TEXT AFTER `paleo_earlyInterval`,
+  ADD COLUMN `paleo_absoluteAge` TEXT AFTER `paleo_lateInterval`,
+  ADD COLUMN `paleo_stage` TEXT AFTER `paleo_absoluteAge`,
+  ADD COLUMN `paleo_localStage` TEXT AFTER `paleo_stage`,
+  ADD COLUMN `paleo_biota` TEXT AFTER `paleo_localStage`,
+  ADD COLUMN `paleo_biostratigraphy` TEXT AFTER `paleo_biota`,
+  ADD COLUMN `paleo_taxonEnvironment` TEXT AFTER `paleo_biostratigraphy`,
+  ADD COLUMN `paleo_lithogroup` TEXT AFTER `paleo_taxonEnvironment`,
+  ADD COLUMN `paleo_formation` TEXT AFTER `paleo_lithogroup`,
+  ADD COLUMN `paleo_member` TEXT AFTER `paleo_formation`,
+  ADD COLUMN `paleo_bed` TEXT AFTER `paleo_member`,
+  ADD COLUMN `paleo_lithology` TEXT AFTER `paleo_bed`,
+  ADD COLUMN `paleo_stratRemarks` TEXT AFTER `paleo_lithology`,
+  ADD COLUMN `paleo_element` TEXT AFTER `paleo_stratRemarks`,
+  ADD COLUMN `paleo_slideProperties` TEXT AFTER `paleo_element`,
+  ADD COLUMN `paleo_geologicalContextID` TEXT AFTER `paleo_slideProperties`,
+  DROP COLUMN `paleojson`;
+
+#copy storageAge in omoccurrences.storageLocation
+UPDATE `omoccurrences` o LEFT JOIN `omoccurpaleo` p on o.`occid` = p.`occid` 
+  SET o.`storageLocation` = CONCAT_WS("; ", o.`storageLocation`, p.`storageAge`) 
+  WHERE p.`storageAge` IS NOT NULL;
+  
+#Remove deprecated field 'storageAge'
+ALTER TABLE `omoccurpaleo` 
+  DROP COLUMN `storageAge`;
+
+
+ALTER TABLE `portalindex` 
+  ADD COLUMN `statusCode` INT(3) NULL AFTER `notes`,
+  ADD COLUMN `statusRemarks` VARCHAR(45) NULL AFTER `statusCode`;
+
+
+ALTER TABLE `specprocessorrawlabels`
+  CHANGE COLUMN `rawstr` `rawStr` TEXT NOT NULL ,
+  CHANGE COLUMN `processingvariables` `processingVariables` VARCHAR(250) NULL DEFAULT NULL ,
+  CHANGE COLUMN `sortsequence` `sortSequence` INT(11) NULL DEFAULT NULL ,
+  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
+
+UPDATE IGNORE taxa
+  SET kingdomName = ""
+  WHERE kingdomName IS NULL;
+
+ALTER TABLE `taxa` 
+  ADD COLUMN `sourceIdentifier` VARCHAR(150) NULL AFTER `source`,
+  CHANGE COLUMN `kingdomName` `kingdomName` VARCHAR(45) NOT NULL DEFAULT '',
+  CHANGE COLUMN `unitName2` `unitName2` VARCHAR(50) NULL DEFAULT NULL;
+
+
+ALTER TABLE `taxaresourcelinks` 
+  CHANGE COLUMN `taxaresourceid` `taxaResourceID` INT(11) NOT NULL AUTO_INCREMENT ,
+  CHANGE COLUMN `sourcename` `sourceName` VARCHAR(150) NOT NULL ,
+  CHANGE COLUMN `sourceidentifier` `sourceIdentifier` VARCHAR(45) NULL DEFAULT NULL ,
+  CHANGE COLUMN `sourceguid` `sourceGUID` VARCHAR(150) NULL DEFAULT NULL ,
+  CHANGE COLUMN `initialtimestamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
+
+ALTER TABLE `taxaresourcelinks` 
+  DROP FOREIGN KEY `FK_taxaresource_tid`;
+
+ALTER TABLE `taxaresourcelinks` 
+  DROP INDEX `UNIQUE_taxaresource`,
+  DROP INDEX `taxaresource_name`,
+  DROP INDEX `FK_taxaresource_tid_idx`;
+  
+ALTER TABLE `taxaresourcelinks` 
+  ADD UNIQUE INDEX `UQ_taxaResource_tid_source` (`tid` ASC, `sourceName` ASC),
+  ADD INDEX `IX_taxaResource_sourceName` (`sourceName` ASC),
+  ADD INDEX `IX_taxaResource_sourceID` (`sourceIdentifier` ASC),
+  ADD INDEX `FK_taxaResource_tid_idx` (`tid` ASC);
+
+ALTER TABLE `taxaresourcelinks` 
+  ADD CONSTRAINT `FK_taxaResource_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`tid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `uploadtaxa` 
+  ADD COLUMN `sourceIdentifier` VARCHAR(150) NULL AFTER `source`;
+
+ALTER TABLE `uploadtaxa` 
+  CHANGE COLUMN `TID` `tid` INT(10) UNSIGNED NULL DEFAULT NULL ,
+  CHANGE COLUMN `SourceId` `sourceID` INT(10) UNSIGNED NULL DEFAULT NULL ,
+  CHANGE COLUMN `Family` `family` VARCHAR(50) NULL DEFAULT NULL ,
+  CHANGE COLUMN `RankId` `rankID` SMALLINT(5) NULL DEFAULT NULL ,
+  CHANGE COLUMN `RankName` `rankName` VARCHAR(45) NULL DEFAULT NULL ,
+  CHANGE COLUMN `scinameinput` `scinameInput` VARCHAR(250) NOT NULL ,
+  CHANGE COLUMN `SciName` `sciName` VARCHAR(250) NULL DEFAULT NULL ,
+  CHANGE COLUMN `UnitInd1` `unitInd1` VARCHAR(1) NULL DEFAULT NULL ,
+  CHANGE COLUMN `UnitName1` `unitName1` VARCHAR(50) NULL DEFAULT NULL ,
+  CHANGE COLUMN `UnitInd2` `unitInd2` VARCHAR(1) NULL DEFAULT NULL ,
+  CHANGE COLUMN `UnitName2` `unitName2` VARCHAR(50) NULL DEFAULT NULL ,
+  CHANGE COLUMN `UnitInd3` `unitInd3` VARCHAR(45) NULL DEFAULT NULL ,
+  CHANGE COLUMN `UnitName3` `unitName3` VARCHAR(35) NULL DEFAULT NULL ,
+  CHANGE COLUMN `Author` `author` VARCHAR(100) NULL DEFAULT NULL ,
+  CHANGE COLUMN `InfraAuthor` `infraAuthor` VARCHAR(100) NULL DEFAULT NULL ,
+  CHANGE COLUMN `Acceptance` `acceptance` INT(10) UNSIGNED NULL DEFAULT 1 COMMENT '0 = not accepted; 1 = accepted' ,
+  CHANGE COLUMN `TidAccepted` `tidAccepted` INT(10) UNSIGNED NULL DEFAULT NULL ,
+  CHANGE COLUMN `AcceptedStr` `acceptedStr` VARCHAR(250) NULL DEFAULT NULL ,
+  CHANGE COLUMN `SourceAcceptedId` `sourceAcceptedID` INT(10) UNSIGNED NULL DEFAULT NULL ,
+  CHANGE COLUMN `UnacceptabilityReason` `unacceptabilityReason` VARCHAR(24) NULL DEFAULT NULL ,
+  CHANGE COLUMN `ParentTid` `parentTid` INT(10) NULL DEFAULT NULL ,
+  CHANGE COLUMN `ParentStr` `parentStr` VARCHAR(250) NULL DEFAULT NULL ,
+  CHANGE COLUMN `SourceParentId` `sourceParentId` INT(10) UNSIGNED NULL DEFAULT NULL ,
+  CHANGE COLUMN `SecurityStatus` `securityStatus` INT(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 = no security; 1 = hidden locality' ,
+  CHANGE COLUMN `Source` `source` VARCHAR(250) NULL DEFAULT NULL ,
+  CHANGE COLUMN `Notes` `notes` VARCHAR(250) NULL DEFAULT NULL ,
+  CHANGE COLUMN `vernlang` `vernLang` VARCHAR(15) NULL DEFAULT NULL ,
+  CHANGE COLUMN `Hybrid` `hybrid` VARCHAR(50) NULL DEFAULT NULL ,
+  CHANGE COLUMN `ErrorStatus` `errorStatus` VARCHAR(150) NULL DEFAULT NULL ,
+  CHANGE COLUMN `InitialTimeStamp` `initialTimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ;
+
+ALTER TABLE `uploadtaxa` 
+  DROP INDEX `UNIQUE_sciname`,
+  DROP INDEX `sourceID_index`,
+  DROP INDEX `sourceAcceptedId_index`,
+  DROP INDEX `sciname_index`,
+  DROP INDEX `scinameinput_index`,
+  DROP INDEX `parentStr_index`,
+  DROP INDEX `acceptedStr_index`,
+  DROP INDEX `unitname1_index`,
+  DROP INDEX `sourceParentId_index`,
+  DROP INDEX `acceptance_index`;
+
+ALTER TABLE `uploadtaxa` 
+  ADD UNIQUE INDEX `UQ_scinameAuthorRankid` (`rankID` ASC, `sciname` ASC, `author` ASC, `acceptedStr` ASC),
+  ADD INDEX `IX_uploadtaxa_sourceID` (`sourceID` ASC),
+  ADD INDEX `IX_uploadtaxa_sourceAcceptedID` (`sourceAcceptedID` ASC),
+  ADD INDEX `IX_uploadtaxa_sciname` (`sciname` ASC),
+  ADD INDEX `IX_uploadtaxa_scinameInput` (`scinameInput` ASC),
+  ADD INDEX `IX_uploadtaxa_parentStr` (`parentStr` ASC),
+  ADD INDEX `IX_uploadtaxa_acceptedStr` (`acceptedStr` ASC),
+  ADD INDEX `IX_uploadtaxa_unitName1` (`unitName1` ASC),
+  ADD INDEX `IX_uploadtaxa_sourceParentID` (`sourceParentID` ASC),
+  ADD INDEX `IX_uploadtaxa_acceptance` (`acceptance` ASC);
+
+
+#Add scientificName to determination upload table in order to include author parsing option for input
+ALTER TABLE `uploaddetermtemp` 
+  ADD COLUMN `scientificName` VARCHAR(255) NULL AFTER `higherClassification`;
+
+
+#Reset uploadspectemp indexes to be compound indexes including collid
+ALTER TABLE `uploadspectemp` 
+  DROP INDEX `IX_uploadspectemp_dbpk`,
+  DROP INDEX `IX_uploadspectemp_occurrenceID`,
+  DROP INDEX `IX_uploadspec_sciname`,
+  DROP INDEX `IX_uploadspec_catalognumber`,
+  DROP INDEX `IX_uploadspec_othercatalognumbers`;
+
+ALTER TABLE `uploadspectemp` 
+  ADD INDEX `IX_uploadspectemp_dbpk` (`collid`, `dbpk`),
+  ADD INDEX `IX_uploadspectemp_occurrenceID` (`collid`, `occurrenceID`),
+  ADD INDEX `IX_uploadspectemp_sciname` (`collid`, `sciname`),
+  ADD INDEX `IX_uploadspectemp_catalognumber` (`collid`, `catalogNumber`),
+  ADD INDEX `IX_uploadspectemp_othercatalognumbers` (`collid`, `otherCatalogNumbers`);  
+
+#Add indexes to accommodate conversion of imported state codes
+ALTER TABLE `uploadspectemp` 
+  ADD INDEX `IX_uploadspectemp_basisOfRecord` (`collid`, `basisOfRecord`),
+  ADD INDEX `IX_uploadspectemp_countryCode` (`collid`, `countryCode`),
+  ADD INDEX `IX_uploadspectemp_country` (`collid`, `country`),
+  ADD INDEX `IX_uploadspectemp_stateProvince` (`collid`, `stateProvince`);
+
+
+#Increase user password field to accommodate new bcrypt hash 
+ALTER TABLE `users` 
+  CHANGE COLUMN `password` `password` VARCHAR(255) NULL DEFAULT NULL ;
+
+
+# Convert to compound indexes to improve performance 
+ALTER TABLE `omoccurrences`
+  ADD INDEX `IX_occurrences_verbatimCoordinates` (`collid`,`verbatimCoordinates`),
+  ADD INDEX `IX_occurrences_decimalLngLat` (`decimalLongitude`, `decimalLatitude`),
+  DROP INDEX `IX_occurrences_lng`;
+
+
+# Add mediaMetadata table to track metadata for media
+CREATE TABLE mediametadata (
+  mediaID int UNSIGNED NOT NULL,
+  field enum ('originalUrl', 'thumbnailUrl', 'url') NOT NULL,
+  bytes BIGINT UNSIGNED NOT NULL,
+  md5sum varchar(32) NOT NULL,
+  created_at timestamp DEFAULT current_timestamp(),
+  updated_at timestamp DEFAULT NULL ON UPDATE current_timestamp(),
+  PRIMARY KEY (mediaID, field),
+  FOREIGN KEY (mediaID) REFERENCES media(mediaID) ON DELETE CASCADE
+) ENGINE=INNODB;
+
+
+# ALTER uploadimagetemp to use creator so that it matches media table
+ALTER TABLE `uploadimagetemp` 
+  CHANGE COLUMN `photographer` `creator` VARCHAR(100) NULL DEFAULT NULL ,
+  CHANGE COLUMN `photographeruid` `creatorUid` INT(10) UNSIGNED NULL DEFAULT NULL ;
+
+
+#redact old placename lookup tables
+DROP TABLE IF EXISTS `lkupmunicipality`;
+DROP TABLE IF EXISTS `lkupcounty`;
+DROP TABLE IF EXISTS `lkupstateprovince`;
+DROP TABLE IF EXISTS `lkupcountry`;
+

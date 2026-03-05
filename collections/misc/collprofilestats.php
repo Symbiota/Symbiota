@@ -1,5 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/content/lang/collections/misc/collprofiles.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/misc/collprofiles');
 
 $statDisplay = array_key_exists('stat', $_REQUEST) ? $_REQUEST['stat'] : '';
 $collid = filter_var($collid, FILTER_SANITIZE_NUMBER_INT);

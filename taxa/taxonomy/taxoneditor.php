@@ -1,9 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/TaxonomyEditorManager.php');
-if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/taxa/taxonomy/taxoneditor.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT . '/content/lang/taxa/taxonomy/taxoneditor.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/taxa/taxonomy/taxoneditor.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('taxa/taxonomy/taxoneditor');
+
 header("Content-Type: text/html; charset=" . $CHARSET);
 
 if (!$SYMB_UID) header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=../taxa/taxonomy/taxoneditor.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
@@ -233,7 +234,16 @@ if ($isEditor) {
 								<select id="unitind1-select" name="unitind1">
 									<option value=""></option>
 									<option value="&#215;" <?php echo ($unitInd1 && (mb_ord($unitInd1) == 215 || strtolower($unitInd1) == 'x') ? 'selected' : ''); ?>>&#215;</option>
-									<option value="&#8224;" <?php echo ($unitInd1 && mb_ord($unitInd1) == 8224 ? 'selected' : ''); ?>>&#8224;</option>
+									<?php
+									if(!empty($GLOBALS['ACTIVATE_PALEO_DAGGER'])) {
+										echo '<option value="&#8224;" ' . ($unitInd1 && mb_ord($unitInd1) == 8224 ? 'selected' : '') . '>&#8224;</option>';
+									}
+									else{
+										if($unitInd1 && mb_ord($unitInd1) == 8224){
+											echo '<option value="&#8224;" selected>&#8224;</option>';
+										}
+									}
+									?>
 								</select>
 								<input type="text" id="unitname1" name="unitname1" style="width:300px;border-style:inset;" value="<?php echo $taxonEditorObj->getUnitName1(); ?>" />
 							</div>

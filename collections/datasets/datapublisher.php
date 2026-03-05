@@ -3,12 +3,13 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverPublisher.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCollectionProfile.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-if ($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/datasets/datapublisher.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/datasets/datapublisher.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/datasets/datapublisher.en.php');
+Language::load('collections/datasets/datapublisher');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
-$collid = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$collid = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0; // @TODO collid is really coming from db in the searchvar attribute of the request, right? So it'll always be incorrect here?
 $emode = array_key_exists('emode', $_REQUEST) ? filter_var($_REQUEST['emode'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $action = array_key_exists('formsubmit', $_REQUEST) ? $_REQUEST['formsubmit'] : '';
 
@@ -25,7 +26,7 @@ if ($collid) {
 	$collManager->setCollid($collid);
 	$dwcaManager->setCollArr($collid);
 	$collArr = current($collManager->getCollectionMetadata());
-	if ($collArr['publishtogbif']) $publishGBIF = true;
+	if ($collArr['publishtogbif'] && !empty($GBIF_ORG_KEY)) $publishGBIF = true;
 }
 
 $_SESSION['citationvar'] = 'archivedcollid=' . $collid;
@@ -36,6 +37,7 @@ $includeImgs = 1;
 $includeAttributes = 1;
 $includeMatSample = 1;
 $includeIdentifiers = 1;
+$includeAssociations = 1;
 $redactLocalities = 1;
 
 if ($action == 'savekey' || (isset($_REQUEST['datasetKey']) && $_REQUEST['datasetKey'])) {
@@ -53,6 +55,8 @@ elseif ($action) {
 	$dwcaManager->setIncludeMaterialSample($includeMatSample);
 	if (!array_key_exists('identifiers', $_POST)) $includeIdentifiers = 0;
 	$dwcaManager->setIncludeIdentifiers($includeIdentifiers);
+	if (!array_key_exists('associations', $_POST)) $includeAssociations = 0;
+	$dwcaManager->setIncludeAssociations($includeAssociations);
 	if (!array_key_exists('redact', $_POST)) $redactLocalities = 0;
 	$dwcaManager->setRedactLocalities($redactLocalities);
 	$dwcaManager->setTargetPath('dwca-pub');
@@ -307,7 +311,7 @@ if ($isEditor) {
 						<form action="datapublisher.php" method="post" style="display:inline;" onsubmit="return window.confirm('<?php echo $LANG['SURE_DELETE']; ?>');">
 							<input type="hidden" name="colliddel" value="<?php echo $dArr['collid']; ?>">
 							<input type="hidden" name="collid" value="<?php echo $dArr['collid']; ?>">
-							<input type="image" src="../../images/del.png" name="action" alt="<?php echo $LANG['DELETE_ARCHIVE']; ?>" value="DeleteCollid" title="<?php echo $LANG['DELETE_ARCHIVE']; ?>" style="width:1.2em;">
+							<input type="image" src="../../images/del.png" name="action" alt="<?= $LANG['DELETE_ARCHIVE'] ?>" value="DeleteCollid" title="<?= $LANG['DELETE_ARCHIVE'] ?>" style="width:16px;margin-bottom:0px">
 						</form>
 					</div>
 					<div><b><?php echo $LANG['DESCRIPTION']; ?>:</b> <?php echo $dArr['description']; ?></div>
@@ -356,7 +360,7 @@ if ($isEditor) {
 					$blockSubmitMsg = $LANG['CANNOT_PUBLISH'] . '<br/>';
 				}
 				if ($recFlagArr['nullBasisRec']) {
-					echo '<div style="margin:10px;font-weight:bold;color:red;" class="font-control top-breathing-room-rel">' . $LANG['THERE_ARE'] . ' ' . $recFlagArr['nullBasisRec'] . $LANG['MISSING_BASISOFRECORD'] . ' ' . ' <a href="../editor/occurrencetabledisplay.php?q_recordedby=&q_recordnumber=&q_catalognumber&collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&csmode=0&occid=&occindex=0">' . $LANG['EDIT_EXISTING'] . '</a> ' . $LANG['TO_CORRECT'] . '</div>';
+					echo '<div style="margin:10px;font-weight:bold;color:red;" class="font-control top-breathing-room-rel">' . $LANG['THERE_ARE'] . ' ' . $recFlagArr['nullBasisRec'] . ' ' . $LANG['MISSING_BASISOFRECORD'] . ' ' . ' <a href="../editor/occurrencetabledisplay.php?q_recordedby=&q_recordnumber=&q_catalognumber&collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&csmode=0&occid=&occindex=0">' . $LANG['EDIT_EXISTING'] . '</a> ' . $LANG['TO_CORRECT'] . '</div>';
 				}
 				if ($publishGBIF && $dwcUri && isset($GBIF_USERNAME) && isset($GBIF_PASSWORD) && isset($GBIF_ORG_KEY) && $GBIF_ORG_KEY) {
 					if ($collManager->getDatasetKey()) {
@@ -439,6 +443,7 @@ if ($isEditor) {
 						if($dwcaManager->hasAttributes($collid)) echo '<input type="checkbox" name="attributes" value="1" '.($includeAttributes ? 'CHECKED' : '').'> '.$LANG['INCLUDE_ATTRIBUTES'].'<br/>';
 						if($dwcaManager->hasMaterialSamples($collid)) echo '<input type="checkbox" name="matsample" value="1" '.($includeMatSample ? 'CHECKED' : '').'> '.$LANG['INCLUDE_MATSAMPLE'].'<br/>';
 						if($dwcaManager->hasIdentifiers($collid)) echo '<input type="checkbox" name="identifiers" value="1" '.($includeIdentifiers ? 'CHECKED' : '').'> '.$LANG['INCLUDE_IDENTIFIERS'].'<br/>';
+						if($dwcaManager->hasAssociations($collid)) echo '<input type="checkbox" name="associations" value="1" '.($includeAssociations ? 'CHECKED' : '').'> '.$LANG['INCLUDE_ASSOCIATIONS'].'<br/>';
 						?>
 					</div>
 					<div style="margin-top:5px;" class="font-control top-breathing-room-rel">
@@ -487,6 +492,10 @@ if ($isEditor) {
 								if($dwcaManager->hasIdentifiers($id)) $dwcaManager->setIncludeIdentifiers(1);
 								else $dwcaManager->setIncludeIdentifiers(0);
 							}
+							if($includeAssociations){
+								if($dwcaManager->hasAssociations($id)) $dwcaManager->setIncludeAssociations(1);
+								else $dwcaManager->setIncludeAssociations(0);
+							}
 							if($dwcaManager->createDwcArchive()){
 								$dwcaManager->writeRssFile();
 								$collManager->batchTriggerGBIFCrawl(array($id));
@@ -495,6 +504,7 @@ if ($isEditor) {
 						$dwcaManager->setIncludeAttributes($includeAttributes);
 						$dwcaManager->setIncludeMaterialSample($includeMatSample);
 						$dwcaManager->setIncludeIdentifiers($includeIdentifiers);
+						$dwcaManager->setIncludeAssociations($includeAssociations);
 						echo '</ul>';
 						echo 'Batch process finished! (' . date('Y-m-d h:i:s A') . ')';
 					}
@@ -536,6 +546,7 @@ if ($isEditor) {
 									if($dwcaManager->hasAttributes()) echo '<input type="checkbox" name="attributes" value="1" '.($includeAttributes ? 'CHECKED' : '').'> '.$LANG['INCLUDE_ATTRIBUTES'].'<br/>';
 									if($dwcaManager->hasMaterialSamples()) echo '<input type="checkbox" name="matsample" value="1" '.($includeMatSample ? 'CHECKED' : '').'> '.$LANG['INCLUDE_MATSAMPLE'].'<br/>';
 									if($dwcaManager->hasIdentifiers()) echo '<input type="checkbox" name="identifiers" value="1" '.($includeIdentifiers ? 'CHECKED' : '').'> '.$LANG['INCLUDE_IDENTIFIERS'].'<br/>';
+									if($dwcaManager->hasAssociations()) echo '<input type="checkbox" name="associations" value="1" '.($includeAssociations ? 'CHECKED' : '').'> '.$LANG['INCLUDE_ASSOCIATIONS'].'<br/>';
 									?>
 								</div>
 								<div style="margin-top:5px;">
@@ -563,18 +574,20 @@ if ($isEditor) {
 					</tr>
 					<?php
 					foreach ($dwcaArr as $k => $v) {
+						$title = htmlspecialchars($v['title'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+						$link = htmlspecialchars($v['link'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 						?>
 						<tr>
-							<td><?php echo '<a href="../misc/collprofiles.php?collid=' . $v['collid'] . '">' . htmlspecialchars(str_replace(' DwC-Archive', '', $v['title']), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>'; ?></td>
+							<td><?php echo '<a href="../misc/collprofiles.php?collid=' . $v['collid'] . '">' . str_replace(' DwC-Archive', '', $title) . '</a>'; ?></td>
 							<td><?php echo substr($v['description'], 24); ?></td>
 							<td class="nowrap">
 								<?php
-								echo '<a href="' . htmlspecialchars($v['link'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">DwC-A (' . htmlspecialchars($dwcaManager->humanFileSize($v['link']), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ')</a>';
+								echo '<a href="' . $link . '">DwC-A (' . $dwcaManager->humanFileSize($link) . ')</a>';
 								if ($IS_ADMIN) {
 									?>
 									<form action="datapublisher.php" method="post" style="display:inline;" onsubmit="return window.confirm('<?php echo $LANG['SURE_DELETE']; ?>');">
 										<input type="hidden" name="colliddel" value="<?php echo $v['collid']; ?>">
-										<input type="image" src="../../images/del.png" name="action" value="DeleteCollid" title="<?php echo $LANG['DELETE_ARCHIVE']; ?>" style="width:1.2em;" />
+										<input type="image" src="../../images/del.png" name="action" value="DeleteCollid" title="<?= $LANG['DELETE_ARCHIVE'] ?>" style="width:16px;" />
 									</form>
 									<?php
 								}
@@ -600,7 +613,10 @@ if ($isEditor) {
 					echo '<div style="font-weight:bold;font-size:140%;margin:50px 0px 15px 0px;">' . $LANG['ADDIT_SOURCES'] . '</div>';
 					echo '<ul>';
 					foreach ($addDwca as $domanName => $domainArr) {
-						echo '<li><a href="' . htmlspecialchars($domainArr['url'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($domanName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> - ' . htmlspecialchars($domainArr['cnt'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' Archives</li>';
+						$domainUrl = htmlspecialchars($domainArr['url'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+						$domainName = htmlspecialchars($domanName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+						$domainCnt = htmlspecialchars($domainArr['cnt'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+						echo '<li><a href="' . $domainUrl . '" target="_blank">' . $domanName . '</a> - ' . $domainCnt . ' Archives</li>';
 					}
 					echo '</ul>';
 				}

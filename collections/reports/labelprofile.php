@@ -90,7 +90,13 @@ $isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General
 			*/
 			function openJsonEditorPopup(classTag){
 				activeProfileCode = classTag;
-				let editorWindow = window.open('labeljsongui.php','scrollbars=1,toolbar=0,resizable=1,width=1000,height=700,left=20,top=20');
+
+				const container = document.querySelector(`#edit-${classTag}`);
+				const customCss = encodeURIComponent(container.querySelector('[name="customCss"]')?.value || '');
+				const customStyle = encodeURIComponent(container.querySelector('[name="customStyles"]')?.value || '');
+
+				let url = `labeljsongui.php?customCss=${customCss}&customStyle=${customStyle}`;
+				let editorWindow = window.open(url, 'scrollbars=1,toolbar=0,resizable=1,width=1000,height=700,left=20,top=20');
 				(editorWindow.opener == null) ? editorWindow.opener = self : '';
 				let formatId = "#json-"+classTag;
 				let currJson = $("#json-"+classTag).val();
@@ -301,12 +307,6 @@ $isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General
 								<div class="label">Custom Styles:</div>
 								<div class="field-block">
 									<input name="customStyles" type="text" value="<?php echo (isset($formatArr['customStyles'])?$formatArr['customStyles']:''); ?>" />
-								</div>
-							</div>
-							<div class="field-block">
-								<div class="label">Default CSS:</div>
-								<div class="field-block">
-									<input name="defaultCss" type="text" value="<?php echo (isset($formatArr['defaultCss']) ? $formatArr['defaultCss'] : $CSS_BASE_PATH . '/symbiota/collections/reports/labelhelpers.css'); ?>" />
 								</div>
 							</div>
 							<div class="field-block">

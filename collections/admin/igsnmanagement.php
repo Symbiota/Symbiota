@@ -1,10 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceSesar.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/admin/igsnmanagement.'.$LANG_TAG.'.php'))
-	include_once($SERVER_ROOT.'/content/lang/collections/admin/igsnmanagement.'.$LANG_TAG.'.php');
-else
-	include_once($SERVER_ROOT.'/content/lang/collections/admin/igsnmanagement.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/admin/igsnmanagement');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 ini_set('max_execution_time', 3600);
 

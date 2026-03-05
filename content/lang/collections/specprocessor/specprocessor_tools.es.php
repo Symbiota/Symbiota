@@ -121,6 +121,7 @@ $LANG['MAP_TN_AT_SOURCE'] = 'Asignar a la miniatura en la ubicación de origen (
 $LANG['EXCLUDE_TN'] = 'Excluir miniatura';
 $LANG['LG_IMG'] = 'Imagen grande';
 $LANG['IMPORT_LG_SOURCE'] = 'Importar imagen fuente como versión grande';
+$LANG['WARNING_LG_IMG_RESIZE'] = 'Advertencia: Se reduce el tamaño a un ancho de imagen grande.';
 $LANG['MAP_TO_LG_SOURCE'] = 'Asignar a la imagen de origen como versión grande';
 $LANG['IMPORT_LG_FROM_SOURCE'] = 'Importar versión grande desde la ubicación de origen (nombre de origen con sufijo _lg.jpg)';
 $LANG['MAP_LG_AT_SOURCE'] = 'Asignar a la versión grande existente (nombre de fuente con sufijo _lg.jpg)';

@@ -1200,7 +1200,7 @@ class TaxonomyHarvester extends Manager{
 		}
 		//Check to see sciname is in taxon table, but perhaps not linked to current thesaurus
 		$sql = 'SELECT tid FROM taxa WHERE (sciname = "'.$this->cleanInStr($taxonArr['sciname']).'") ';
-		if($this->kingdomName) $sql .= 'AND (kingdomname = "'.$this->kingdomName.'" OR kingdomname = "") ';
+		if($this->kingdomName) $sql .= 'AND (kingdomName = "'.$this->kingdomName.'" OR kingdomName = "" OR kingdomName IS NULL) ORDER BY kingdomName DESC';
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){
 			$newTid = $r->tid;
@@ -1628,7 +1628,9 @@ class TaxonomyHarvester extends Manager{
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$this->langArr[$r->langname] = $r->langid;
-				$this->langArr[$r->iso639_1] = $r->langid;
+				if (!empty($r->iso639_1)) {
+					$this->langArr[$r->iso639_1] = $r->langid;
+				}
 			}
 			$rs->free();
 		}

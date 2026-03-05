@@ -67,4 +67,8 @@ $LANG['SOUTH'] = 'S';
 $LANG['EAST'] = 'E';
 $LANG['WEST'] = 'W';
 $LANG['FAILED_TO_LOAD_OCCR_DATA'] = 'Error al cargar los datos de ocurrencia';
+$LANG['OPEN_SEARCH_PANEL'] = 'Abrir panel de búsqueda';
+$LANG['HIDE_PANEL'] = 'Ocultar panel';
+$LANG['MAP_RECORD_LIMIT_MESSAGE'] = 'Se superó el límite de registros del mapa. Advertencia: El resultado se ha truncado.';
+$LANG['DYNAMIC_HEATMAP_AUTO_ENABLED'] = 'Alto número de registros del mapa. Activar la configuración del mapa de calor para mejorar el rendimiento.';
 ?>

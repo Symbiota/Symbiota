@@ -1,9 +1,10 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistManager.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/ident/index.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT . '/content/lang/ident/index.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT.'/content/lang/ident/index.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('ident/index');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $pid = array_key_exists('pid', $_REQUEST) ? filter_var($_REQUEST['pid'], FILTER_SANITIZE_NUMBER_INT) : '';

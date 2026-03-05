@@ -15,6 +15,7 @@ $LANG['RECORD_NUMBER'] = 'Numéro';
 $LANG['ASSOCIATED_COLLECTORS'] = 'Collecteurs associés';
 $LANG['EVENT_DATE'] = 'Date (de début)';
 $LANG['EVENT_DATE2'] = 'Date de fin';
+$LANG['EVENT_TIME'] = 'Heure de l\'événement';
 $LANG['YYYY_MM_DD'] = 'YYYY-MM-DD';
 $LANG['ASSOCIATED_COLLECTORS'] = 'Collecteurs associés' ;
 $LANG['VERBATIM_EVENT_DATE'] = 'Verbatim Date de l\'événement';
@@ -89,6 +90,7 @@ $LANG['DATA_GENERALIZATIONS'] = 'Généralisations de données';
 $LANG['INSTITUTION_CODE'] = 'Code d\'institution (override)';
 $LANG['COLLECTION_CODE'] = 'Code de collection (override)';
 $LANG['OWNER_INSTITUTION_CODE'] = 'Code du propriétaire (override)';
+$LANG['STORAGELOCATION_CODE'] = 'Storage Location';
 $LANG['PROCESSING_STATUS'] = 'Statut du traitement';
 
 ?>

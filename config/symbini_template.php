@@ -1,7 +1,14 @@
 <?php
 $DEFAULT_LANG = 'en';			//Default language
 $DEFAULT_PROJ_ID = 0;
-$DEFAULTCATID = 0;
+
+// Collection search configuration
+// The below will configure default category behavior in collection searches in collections/search/index.php, collections/index.php, and collections/editor/batchDuplicateGeorefCopy.php. Defaults will, in some of these pages, be overridden by session storage of the most recent query.
+// The below can also be overriden by supplying catOrd, catExpnd, and/or catChk parameters in the URL, e.g., ...catOrd=1,3,4,5&catExpnd=Specimens_4&catChk=Specimens_1,Specimens_4
+$CATORD = []; // a list of category ids (e.g. [1,2,3]) in the order in which you want them to appear in collection searches. All other categories will appear in their default order after those listed. Current assumption is that the same order will be desired for both specimen and observation categories
+$CATEXPND = []; // a list of category ids (e.g. ["Specimens_1","Observations_2"]) that should be expanded by default in collection searches. All others will be collapsed by default.
+$CATCHK = []; // a list of category ids (e.g. ["Specimens_1","Observations_3"]) that will be checked by default in collection searches. All others will be unchecked by default.
+
 $DEFAULT_TITLE = '';
 $EXTENDED_LANG = 'en';		//Add all languages you want to support separated by commas (e.g. en,es); currently supported languages: en,es
 $TID_FOCUS = '';
@@ -42,6 +49,10 @@ $TESSERACT_PATH = ''; 			//Needed for OCR function in the occurrence editor page
 $NLP_LBCC_ACTIVATED = 0;
 $NLP_SALIX_ACTIVATED = 0;
 
+// Vouchervision OCR/Transcription
+$VOUCHERVISION_API_KEY = ''; // API key to use to access Vouchervision API. See https://leafmachine.org/vouchervisiongo/
+$VOUCHERVISION_API_URL = 'https://vouchervision-go-xxxxxxxxxxxx.us-central1.run.app/process-url'; // URL to the Vouchervision API server
+
 //Module activations
 $OCCURRENCE_MOD_IS_ACTIVE = 1;
 $FLORA_MOD_IS_ACTIVE = 1;
@@ -66,6 +77,7 @@ $GOOGLE_ANALYTICS_KEY = '';			//Needed for setting up Google Analytics
 $GOOGLE_ANALYTICS_TAG_ID = '';		//Needed for setting up Google Analytics 4 Tag ID
 $RECAPTCHA_PUBLIC_KEY = '';			//Now called site key
 $RECAPTCHA_PRIVATE_KEY = '';		//Now called secret key
+$CAPTCHA_ENDPOINT = 0;              //Alternative to Google recaptcha.  Example Value: $CLIENT_ROOT . '/rpc/captcha.php';
 $TAXONOMIC_AUTHORITIES = array('COL' => '', 'WoRMS' => '');		//List of taxonomic authority APIs to use in data cleaning and thesaurus building tools, concatenated with commas and order by preference; E.g.: array('COL'=>'', 'WoRMS'=>'', 'bryonames' => '', 'fdex'=>'', 'TROPICOS'=>'', 'EOL'=>'')
 $QUICK_HOST_ENTRY_IS_ACTIVE = 0;   	//Allows quick entry for host taxa in occurrence editor
 $GLOSSARY_EXPORT_BANNER = '';		//Banner image for glossary exports. Place in images/layout folder.
@@ -76,6 +88,14 @@ $ACTIVATE_EXSICCATI = 0;			//Activates exsiccati fields within data entry pages;
 $ACTIVATE_GEOLOCATE_TOOLKIT = 0;	//Activates GeoLocate Toolkit located within the Processing Toolkit menu items
 $SEARCH_BY_TRAITS = 0;				//Activates search fields for searching by traits (if trait data have been encoded): 0 = trait search off; any number of non-zeros separated by commas (e.g., '1,6') = trait search on for the traits with these id numbers in table tmtraits.
 $CALENDAR_TRAIT_PLOTS = 0;			//Activates polar plots, in taxon profile, of the trait states listed: 0 = no plot; any number of non-zeros separated by commas (e.g., '1,6') = plots appear for the trait states with these id numbers (in table tmstates).
+
+$ACTIVATE_PALEO = 0; 				//Activates Paleo management (e.g. Geological Context fields)
+//$AUTH_PROVIDER = 'oid';           //Activate Third Party Authentication using openID Connect (Addiotnal paramters defined in auth_config.php).  Leave this commented out if not in use;
+$IGSN_ACTIVATION = 0;
+$WIKIPEDIA_TAXON_TAB = 1;			//Activates wikipedia tab on taxon profile page (wikiMedia API)
+$OVERRIDE_DOWNLOAD_LOGIN_REQUIREMENT = 0;	//0 = Login required for downloading occurrence data (default), 1 = occurrence data download allowed without being logged in
+
+$SEARCHABLE_CHARACTERS = '';			//List of characters that can be searched from the public search, separated by commas, e.g. '1,6'
 
 //$SMTP_ARR = array('host'=>'','port'=>587,'username'=>'','password'=>'','timeout'=>60);  //Host is requiered, others are optional and can be removed
 
@@ -93,6 +113,7 @@ $SHOULD_BE_ABLE_TO_CREATE_PUBLIC_USER = true;
 $SYMBIOTA_LOGIN_ENABLED = true;
 
 $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT=false;
+$SHOULD_PROTECT_CULTIVATED = false; // if true, taxa with locality security that have cultivation status === 1 will have recordSecurity set to 1 in the protectGlobalSpecies function
 $AUTH_PROVIDER = 'oid';
 $LOGIN_ACTION_PAGE = 'openIdAuth.php';
 $SHOULD_USE_HARVESTPARAMS = false;
@@ -112,7 +133,16 @@ $PRIVATE_VIEWING_OVERRIDES = ['/index.php', '/misc/contacts.php','/misc/aboutpro
 // label : String - Short text label to describe the overlay toggle
 // popup_template: String - Html string for what label should be generated on a GeoJSON feature. Will replace text like `[Property_name]` with a features property value if present
 // template_properties: Array[String] - List of property names to used in popup generation
-$GEO_JSON_LAYERS = [];
+$GEO_JSON_LAYERS = [
+ [
+  'filename' => 'us_counties.geojson',
+  'label' => 'U.S. Counties',
+  'popup_template' => '<div>[NAME]</div>',
+  'template_properties' => [
+   'NAME',
+  ]
+ ],
+];
 
 // Toggles `strict-transport-security` header
 // Do not turn off for production portals

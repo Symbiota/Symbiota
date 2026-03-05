@@ -1,8 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditReview.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/editreviewer.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/editreviewer.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/editor/editreviewer.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/editor/editreviewer');
+
 header('Content-Type: text/html; charset='.$CHARSET);
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/editreviewer.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
@@ -333,7 +335,7 @@ $navStr .= '</div>';
 							</div>
 							<div style="clear:both;margin:15px 0px;">
 								<hr/>
-								<a href="#" onclick="toggle('additional')"><b><?php echo $LANG['ADDITIONAL_ACTIONS']; ?></b></a>
+								<a href="#" onclick="toggle('additional');return false;"><b><?php echo $LANG['ADDITIONAL_ACTIONS']; ?></b></a>
 							</div>
 							<div id="additional" style="display:none">
 								<div style="margin:10px 15px;">

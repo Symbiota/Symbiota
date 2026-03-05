@@ -41,3 +41,4 @@ $LANG['NOT_FOUND'] = 'não encontrado';
 $LANG['DID_YOU_MEAN'] = 'Você quis dizer?';
 $LANG['CALENDAR_TRAIT_PLOT'] = 'Plotagens de Características';
 
+?>

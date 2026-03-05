@@ -1,9 +1,9 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyEditorManager.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomychildren.'.$LANG_TAG.'.php'))
-	include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomychildren.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomychildren.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('taxa/taxonomy/taxonomychildren');
 
 $tid = filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT);
 $taxAuthId = array_key_exists('taxauthid', $_REQUEST) ? filter_var($_REQUEST['taxauthid'], FILTER_SANITIZE_NUMBER_INT) : 1;

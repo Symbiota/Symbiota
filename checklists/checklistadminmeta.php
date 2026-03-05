@@ -1,9 +1,10 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistAdmin.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/checklistadminmeta.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT . '/content/lang/checklists/checklistadminmeta.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT.'/content/lang/checklists/checklistadminmeta.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('checklists/checklistadminmeta');
+
 header('Content-Type: text/html; charset='.$CHARSET);
 
 $clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -282,8 +283,8 @@ if($clid || !empty($_REQUEST['excludeparent'])) $displayform = true;
 					<span id="polyNotDefDiv" style="display:<?php echo ($clArray && $clArray["hasfootprintwkt"]?'none':'inline'); ?>;">
 						<?php echo $LANG['POLYGON_NOT_DEFINED']; ?>
 					</span>
-					<span style="margin:10px;"><a href="#" onclick="openCoordAid({map_mode:MAP_MODES.POLYGON, client_root: '<?= $CLIENT_ROOT?>', polygon_text_type: POLYGON_TEXT_TYPES.<?=$footprint['type'] === 'geoJson' ? 'GEOJSON': 'WKT'?>});return false;" title="<?php echo $LANG['CREATE_EDIT_POLYGON']; ?>"><img src="../images/world.png" style="width:1em;" /></a></span>
-					<input type="hidden" id="footprintwkt" name="footprint<?=htmlspecialchars($footprint['type'])?>" value="<?=htmlspecialchars($footprint['footprint'])?>" />
+					<span style="margin:10px;"><a href="#" onclick="openCoordAid({map_mode:MAP_MODES.POLYGON, client_root: '<?= $CLIENT_ROOT?>', polygon_text_type: POLYGON_TEXT_TYPES.<?= isset($footprint['type']) && $footprint['type'] === 'wkt' ? 'WKT': 'GEOJSON' ?>});return false;" title="<?php echo $LANG['CREATE_EDIT_POLYGON']; ?>"><img src="../images/world.png" style="width:1em;" /></a></span>
+					<input type="hidden" id="footprintwkt" name="footprint<?=htmlspecialchars($footprint['type'] ?? 'geoJson')?>" value="<?= htmlspecialchars($footprint['footprint'] ?? '')?>" />
 				</fieldset>
 			</div>
 			<div style="clear:both;" class="top-breathing-room-rel">

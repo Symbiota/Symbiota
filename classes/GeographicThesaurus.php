@@ -15,6 +15,19 @@ class GeographicThesaurus extends Manager {
 		'SC' => 'South Carolina', 'SD' => 'South Dakota', 'TN' => 'Tennessee', 'TX' => 'Texas', 'UT' => 'Utah', 'VT' => 'Vermont',
 		'VI' => 'Virgin Islands', 'VA' => 'Virginia', 'WA' => 'Washington', 'WV' => 'West Virginia', 'WI' => 'Wisconsin', 'WY' =>  'Wyoming');
 
+	const OCEANS = 10;
+	const ISLAND_GROUP = 20;
+	const ISLAND = 30;
+	const CONTINENT_REGION = 40;
+	const COUNTRY = 50;
+	const STATE_PROVINCE = 60;
+	const COUNTY = 70;
+	const MUNICIPALITY = 80;
+	const CITY_TOWN = 100;
+	const PLACE_NAME = 110;
+	const LAKE_POND = 150;
+	const RIVER_CREEK = 160;
+
 	function __construct() {
 		parent::__construct(null, 'write');
 	}
@@ -55,7 +68,7 @@ class GeographicThesaurus extends Manager {
 	}
 
 	public static function getCountryByState($state, $conn = null) {
-		if(!$state) { 
+		if(!$state) {
 			return '';
 		}
 
@@ -90,7 +103,7 @@ class GeographicThesaurus extends Manager {
 		$retArr = array();
 		if (is_numeric($geoThesID)) {
 			$sql = 'SELECT t.geoThesID, t.geoTerm, t.abbreviation, t.iso2, t.iso3, t.numCode, t.category, t.geoLevel, t.parentID, p.geoTerm as parentTerm, t.notes, t.termStatus,
-				t.acceptedID, a.geoterm as acceptedTerm, gp.footprintWKT as wkt, gp.geoJSON
+				t.acceptedID, t.isSearchable, a.geoterm as acceptedTerm, gp.footprintWKT as wkt, gp.geoJSON
 				FROM geographicthesaurus t LEFT JOIN geographicthesaurus a ON t.acceptedID = a.geoThesID
 				LEFT JOIN geographicthesaurus p ON t.parentID = p.geoThesID
 				LEFT JOIN geographicpolygon gp ON t.geoThesID = gp.geoThesID
@@ -116,6 +129,7 @@ class GeographicThesaurus extends Manager {
 					$retArr['termStatus'] = $r->termStatus;
 					$retArr['wkt'] = $r->wkt;
 					$retArr['geoJSON'] = $r->geoJSON;
+					$retArr['isSearchable'] = $r->isSearchable;
 				}
 				$rs->free();
 				$stmt->close();
@@ -160,7 +174,7 @@ class GeographicThesaurus extends Manager {
 
 		$sql = <<<'SQL'
 		UPDATE geographicthesaurus SET geoterm = ?, abbreviation = ?, iso2 = ?, iso3 = ?,
-		numcode = ?, geoLevel = ?, acceptedID = ?, parentID = ?, notes = ?
+		numcode = ?, geoLevel = ?, acceptedID = ?, parentID = ?, notes = ?, isSearchable = ?
 		WHERE geoThesID = ?
 		SQL;
 
@@ -175,6 +189,7 @@ class GeographicThesaurus extends Manager {
 				empty($postArr['acceptedID']) ? null : $postArr['acceptedID'],
 				empty($postArr['parentID']) ? null : $postArr['parentID'],
 				empty($postArr['notes']) ? null : $postArr['notes'],
+				empty($postArr['isSearchable']) ? 0 : $postArr['isSearchable'],
 				$postArr['geoThesID']
 			]);
 		} catch (\Throwable $th) {
@@ -385,98 +400,65 @@ class GeographicThesaurus extends Manager {
 			$rankArr = $GLOBALS['GEO_THESAURUS_RANKING'];
 		} else {
 			$rankArr = array(
-				10 => 'Oceans',
-				20 => 'Island Group',
-				30 => 'Island',
-				40 => 'Continent/Region',
-				50 => 'Country',
-				60 => 'State/Province',
-				70 => 'County',
-				80 => 'Municipality',
-				100 => 'City/Town',
-				110 => 'Place Name',
-				150 => 'Lake/Pond',
-				160 => 'River/Creek'
+				self::OCEANS => 'Oceans',
+				self::ISLAND_GROUP => 'Island Group',
+				self::ISLAND => 'Island',
+				self::CONTINENT_REGION => 'Continent/Region',
+				self::COUNTRY => 'Country',
+				self::STATE_PROVINCE => 'State/Province',
+				self::COUNTY => 'County',
+				self::MUNICIPALITY => 'Municipality',
+				self::CITY_TOWN => 'City/Town',
+				self::PLACE_NAME  => 'Place Name',
+				self::LAKE_POND => 'Lake/Pond',
+				self::RIVER_CREEK => 'River/Creek'
 			);
 		}
 		return $rankArr;
 	}
 
-	//Reporting and data transfer functions
+	//Reporting functions
 	public function getThesaurusStatus() {
 		$retArr = [];
-		$fullCnt = 0;
 		$sql = 'SELECT geoLevel, COUNT(*) as cnt FROM geographicthesaurus GROUP BY geoLevel';
 		$rs = $this->conn->query($sql);
 		while ($r = $rs->fetch_object()) {
 			$retArr['active'][$r->geoLevel] = $r->cnt;
-			$fullCnt += $r->cnt;
 		}
 		$rs->free();
-		try {
 
-			if ($this->lkupTablesExist() && $fullCnt < 100) {
-				$sql = 'SELECT COUNT(*) as cnt FROM lkupcountry ';
-				$rs = $this->conn->query($sql);
-				if ($r = $rs->fetch_object()) {
-					$retArr['lkup']['country'] = $r->cnt;
-				}
-				$rs->free();
-
-				$sql = 'SELECT COUNT(*) as cnt FROM lkupstateprovince ';
-				$rs = $this->conn->query($sql);
-				if ($r = $rs->fetch_object()) {
-					$retArr['lkup']['state'] = $r->cnt;
-				}
-				$rs->free();
-
-				$sql = 'SELECT COUNT(*) as cnt FROM lkupcounty ';
-				$rs = $this->conn->query($sql);
-				if ($r = $rs->fetch_object()) {
-					$retArr['lkup']['county'] = $r->cnt;
-				}
-				$rs->free();
-
-				$sql = 'SELECT COUNT(*) as cnt FROM lkupmunicipality ';
-				$rs = $this->conn->query($sql);
-				if ($r = $rs->fetch_object()) {
-					$retArr['lkup']['municipality'] = $r->cnt;
-				}
-				$rs->free();
-			}
-			return !empty($retArr) ? $retArr : false;
-		} catch (Exception $e) {
-			return false;
-		}
+		if($retArr) return $retArr;
+		return false;
 	}
 
-	public function transferDeprecatedThesaurus() {
-		$status = true;
-		if (!$this->lkupTablesExist()) return false;
-		$sqlArr = array();
-		$sqlArr[] = 'INSERT INTO geographicthesaurus(geoterm,iso2,iso3,numcode,category,geoLevel,termstatus)
-		SELECT countryName, iso, iso3, numcode, "Country", 50 as geoLevel, 1 as termStatus FROM lkupcountry WHERE iso IS NOT NULL';
-
-		$sqlArr[] = 'UPDATE geographicthesaurus SET acceptedID = (SELECT geoThesID FROM geographicthesaurus WHERE geoTerm = "United States") WHERE geoterm IN("USA","U.S.A.","United States of America")';
-
-		$sqlArr[] = 'INSERT INTO geographicthesaurus(geoterm,abbreviation,parentID,category,geoLevel,termStatus)
-		SELECT DISTINCT s.stateName, s.abbrev, t.geoThesID, "State", 60 as geoLevel, 1 as termStatus
-		FROM lkupcountry c INNER JOIN lkupstateprovince s ON c.countryid = s.countryid
-		INNER JOIN geographicthesaurus t ON c.iso = t.iso2
-		WHERE t.category = "country" AND t.termstatus = 1 AND t.acceptedID IS NULL';
-
-		$sqlArr[] = 'INSERT INTO geographicthesaurus(geoterm,parentID,category,geoLevel,termStatus)
-		SELECT DISTINCT REPLACE(REPLACE(REPLACE(c.countyName," Co.","")," County","")," Parish",""), t.geoThesID, "County", 70 as geoLevel, 1 as termStatus
-		FROM lkupstateprovince s INNER JOIN lkupcounty c ON s.stateid = c.stateid
-		INNER JOIN geographicthesaurus t ON s.stateName = t.geoterm
-		WHERE t.category = "State" AND t.termstatus = 1';
-
-		foreach ($sqlArr as $sql) {
-			if (!$this->conn->query($sql)) {
-				$status = false;
-				$this->warningArr[] = $this->conn->error;
-			}
+	//Install via scripts
+	public function installViaScript(){
+		$status = false;
+		$scriptPath = $GLOBALS['SERVER_ROOT'] . '/config/schema/3.0/data/geothesaurus.sql';
+		if(!file_exists($scriptPath)){
+			$this->errorMessage = 'ERR_SCRIPT_MISSING';
+			return false;
 		}
+
+		if($scriptStr = file_get_contents($scriptPath)) {
+			foreach(explode(';', $scriptStr) as $sql){
+				if($sql = trim($sql)){
+					try{
+						if($this->conn->query($sql)){
+							$status = true;
+						}
+						elseif($this->conn->error){
+							$this->errorMessage = $this->conn->error;
+							$status = false;
+						}
+					} catch (mysqli_sql_exception $e){
+						$this->errorMessage = $this->conn->error;
+					} catch (Exception $e){
+						$this->errorMessage = $this->conn->error;
+					}
+				}
+			}
+		} else $this->errorMessage = 'ERR_FILE_READ';
 		return $status;
 	}
 
@@ -862,7 +844,7 @@ class GeographicThesaurus extends Manager {
 			$parent = $this->findAcceptedGeoTerm($parent);
 
 		$sql = <<<SQL
-		SELECT g.geoThesID, g.geoterm, g.geoLevel, g.parentID, g2.geoterm AS parentterm, g2.geoLevel AS parentlevel FROM geographicthesaurus g 
+		SELECT g.geoThesID, g.geoterm, g.geoLevel, g.parentID, g2.geoterm AS parentterm, g2.geoLevel AS parentlevel FROM geographicthesaurus g
 		LEFT JOIN geographicthesaurus g2 ON g2.geoThesID = g.parentID
 		WHERE g.geoterm LIKE ?
 		SQL;
@@ -1060,25 +1042,13 @@ class GeographicThesaurus extends Manager {
 	}
 
 	//Mics support functions
-	private function lkupTablesExist() {
-		$bool = false;
-		// Check to see is old deprecated lookup tables exist
-		$sql = 'SHOW tables LIKE "lkupcountry"';
-		$rs = $this->conn->query($sql);
-		if ($rs->num_rows) {
-			$bool = true;
-		}
-		$rs->free();
-		return $bool;
-	}
-
 	public function geocode($lng, $lat) {
 		if (!$lng || !$lat) return [];
 
 		$result = QueryUtil::executeQuery($this->conn, "
 			SELECT g.geoThesID, g.geoterm, g.geoLevel, s.synonyms
-			FROM geographicthesaurus g 
-			JOIN geographicpolygon gp on gp.geoThesID = g.geoThesID 
+			FROM geographicthesaurus g
+			JOIN geographicpolygon gp on gp.geoThesID = g.geoThesID
 			LEFT JOIN (SELECT acceptedID, GROUP_CONCAT(geoterm) as `synonyms` FROM geographicthesaurus WHERE acceptedID IS NOT NULL GROUP BY acceptedID) s ON s.acceptedID = g.geoThesID where ST_Within(Point(?, ?), gp.footprintPolygon) ORDER BY geolevel
 			", [floatval($lng), floatval($lat)]);
 
@@ -1114,8 +1084,8 @@ class GeographicThesaurus extends Manager {
 			return false;
 		}
 
-		$sql = "SELECT g.geoThesID FROM geographicthesaurus g 
-			JOIN geographicpolygon gp ON gp.geoThesID = g.geoThesID 
+		$sql = "SELECT g.geoThesID FROM geographicthesaurus g
+			JOIN geographicpolygon gp ON gp.geoThesID = g.geoThesID
 			WHERE " . implode(" or ", $parameters);
 
 		$result = QueryUtil::executeQuery(
@@ -1125,5 +1095,16 @@ class GeographicThesaurus extends Manager {
 		);
 
 		return $result->fetch_assoc() ? true : false;
+	}
+
+	static function unitsEqual(String $inputString, String $geoterm, int $rank) {
+		$inputString = strtolower(trim($inputString));
+		$geoterm = strtolower(trim($geoterm));
+
+		if($rank === self::COUNTY) {
+			$inputString = trim(str_replace(array('county','parish'), '', $inputString));
+		}
+
+		return $inputString === $geoterm;
 	}
 }

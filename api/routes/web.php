@@ -15,7 +15,6 @@
 | https://github.com/DarkaOnLine/SwaggerLume
 | Run to regenerate docs: php artisan swagger-lume:generate
 |
-|
 */
 
 $router->get('/', function () use ($router) {
@@ -29,24 +28,27 @@ $router->get('/v2', function () use ($router) {
 $router->group(['prefix' => 'v2'], function () use ($router) {
 
 	$router->get('collection',  ['uses' => 'CollectionController@showAllCollections']);
+	$router->post('collection',  ['uses' => 'CollectionController@create']);
 	$router->get('collection/{id}', ['uses' => 'CollectionController@showOneCollection']);
 
-	$router->get('occurrence/search',  ['uses' => 'OccurrenceController@showAllOccurrences']);
-	//Temporarily keep following route until new documentation is created. The one above will be keep so that I follows GBIF API layout
 	$router->get('occurrence',  ['uses' => 'OccurrenceController@showAllOccurrences']);
+	$router->post('occurrence', ['uses' => 'OccurrenceController@insert']);
+	//$router->patch('occurrence/{id}', ['uses' => 'OccurrenceController@update']);
+	//$router->delete('occurrence/{id}', ['uses' => 'OccurrenceController@delete']);
+	$router->get('occurrence/annotation', ['uses' => 'OccurrenceAnnotationController@showAllAnnotations']);
+	$router->get('occurrence/duplicate', ['uses' => 'OccurrenceDuplicateController@showDuplicateMatches']);
 	$router->get('occurrence/{id}', ['uses' => 'OccurrenceController@showOneOccurrence']);
 	$router->get('occurrence/{id}/media', ['uses' => 'OccurrenceController@showOneOccurrenceMedia']);
 	$router->get('occurrence/{id}/identification', ['uses' => 'OccurrenceController@showOneOccurrenceIdentifications']);
 	$router->get('occurrence/{id}/annotation', ['uses' => 'OccurrenceAnnotationController@showOccurrenceAnnotations']);
 	$router->get('occurrence/{id}/reharvest', ['uses' => 'OccurrenceController@oneOccurrenceReharvest']);
-	$router->get('occurrence/annotation/search', ['uses' => 'OccurrenceAnnotationController@showAllAnnotations']);
 	$router->post('occurrence/skeletal', ['uses' => 'OccurrenceController@skeletalImport']);
 
 	$router->get('installation',  ['uses' => 'InstallationController@showAllPortals']);
-	$router->get('installation/ping', ['uses' => 'InstallationController@pingPortal']);
+	$router->get('installation/status', ['uses' => 'InstallationController@portalStatus']);
 	$router->get('installation/{id}', ['uses' => 'InstallationController@showOnePortal']);
-	$router->get('installation/{id}/touch',  ['uses' => 'InstallationController@portalHandshake']);
-	$router->get('installation/{id}/occurrence',  ['uses' => 'InstallationController@showOccurrences']);
+	$router->get('installation/{id}/handshake',  ['uses' => 'InstallationController@portalHandshake']);
+	// $router->get('installation/{id}/occurrence',  ['uses' => 'InstallationController@showOccurrences']);
 
 	$router->get('inventory',  ['uses' => 'InventoryController@showAllInventories']);
 	$router->get('inventory/{id}', ['uses' => 'InventoryController@showOneInventory']);
@@ -63,11 +65,15 @@ $router->group(['prefix' => 'v2'], function () use ($router) {
 	$router->get('morphology/{id}', ['uses' => 'MorphologyController@showOneCharacter']);
 	$router->get('morphology/{id}/attribute', ['uses' => 'MorphologyController@showCharacterAttributes']);
 
-	$router->get('taxonomy', ['uses' => 'TaxonomyController@showAllTaxa']);
-	$router->get('taxonomy/search', ['uses' => 'TaxonomyController@showAllTaxaSearch']);
+	$router->get('taxonomy', ['uses' => 'TaxonomyController@showAllTaxaSearch']);
 	$router->get('taxonomy/{id}', ['uses' => 'TaxonomyController@showOneTaxon']);
+	$router->post('taxonomy',  ['uses' => 'TaxonomyController@create']);
 	//$router->get('taxonomy/{id}/description',  ['uses' => 'TaxonomyController@showAllDescriptions']);
-	//$router->get('taxonomy/{id}/description/{id}',  ['uses' => 'TaxonomyDescriptionController@showOneDescription']);
+	//$router->get('taxonomy/{id}/description/{identifier}',  ['uses' => 'TaxonomyDescriptionController@showOneDescription']);
 
 	$router->get('exsiccata', ['uses' => 'ExsiccataController@showAllExsiccata']);
+	$router->get('exsiccata/{identifier}', ['uses' => 'ExsiccataController@showOneExsiccata']);
+	$router->get('exsiccata/{identifier}/number', ['uses' => 'ExsiccataController@showExsiccataNumbers']);
+	$router->get('exsiccata/{identifier}/number/{numberIdentifier}', ['uses' => 'ExsiccataController@showOccurrencesByExsiccataNumber']);
+
 });

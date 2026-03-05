@@ -1,12 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceProtectedSpecies.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/misc/protectedspecies.' . $LANG_TAG . '.php')){
-	include_once($SERVER_ROOT.'/content/lang/collections/misc/protectedspecies.' . $LANG_TAG . '.php');
-}
-else{
-	include_once($SERVER_ROOT.'/content/lang/collections/misc/protectedspecies.en.php');
-}
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/misc/protectedspecies');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $searchTaxon = array_key_exists('searchtaxon', $_REQUEST) ? $_REQUEST['searchtaxon'] : '';

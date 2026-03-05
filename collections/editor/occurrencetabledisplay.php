@@ -1,8 +1,13 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/occurrencetabledisplay.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrencetabledisplay.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/editor/occurrencetabledisplay.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load([
+	'collections/editor/occurrencetabledisplay',
+	'collections/list'
+]);
+
 header('Content-Type: text/html; charset='.$CHARSET);
 
 $collId = array_key_exists('collid',$_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : false;
@@ -21,27 +26,33 @@ $displayQuery = 0;
 $isGenObs = 0;
 $collMap = array();
 $recArr = array();
-$headerMapBase = array('institutioncode'=>'Institution Code (override)','collectioncode'=>'Collection Code (override)',
-	'ownerinstitutioncode'=>'Owner Code (override)','catalognumber' => 'Catalog Number',
-	'othercatalognumbers' => 'Other Catalog #','family' => 'Family','identificationqualifier' => 'ID Qualifier',
-	'sciname' => 'Scientific Name','scientificnameauthorship'=>'Author','recordedby' => 'Collector','recordnumber' => 'Collector Number',
-	'associatedcollectors' => 'Associated Collectors','eventdate' => 'Event Date','verbatimeventdate' => 'Verbatim Date',
-	'identificationremarks' => 'Identification Remarks','taxonremarks' => 'Taxon Remarks','identifiedby' => 'Identified By',
-	'dateidentified' => 'Date Identified', 'identificationreferences' => 'Identification References',
-	'country' => 'Country','stateprovince' => 'State/Province','county' => 'County','municipality' => 'Municipality',
-	'locality' => 'Locality','decimallatitude' => 'Latitude', 'decimallongitude' => 'Longitude',
-	'coordinateuncertaintyinmeters' => 'Uncertainty In Meters', 'verbatimcoordinates' => 'Verbatim Coordinates','geodeticdatum' => 'Datum',
-	'georeferencedby' => 'Georeferenced By','georeferenceprotocol' => 'Georeference Protocol','georeferencesources' => 'Georeference Sources',
-	'georeferenceverificationstatus' => 'Georef Verification Status','georeferenceremarks' => 'Georef Remarks',
-	'minimumelevationinmeters' => 'Elev. Min. (m)','maximumelevationinmeters' => 'Elev. Max. (m)','verbatimelevation' => 'Verbatim Elev.',
-	'minimumdepthinmeters' => 'Depth. Min. (m)','maximumdepthinmeters' => 'Depth. Max. (m)','verbatimdepth' => 'Verbatim Depth',
-	'habitat' => 'Habitat','substrate' => 'Substrate','occurrenceremarks' => 'Notes (Occurrence Remarks)','associatedtaxa' => 'Associated Taxa',
-	'verbatimattributes' => 'Description','lifestage' => 'Life Stage', 'sex' => 'Sex', 'individualcount' => 'Individual Count',
-	'samplingprotocol' => 'Sampling Protocol', 'preparations' => 'Preparations', 'reproductivecondition' => 'Reproductive Condition',
-	'typestatus' => 'Type Status','cultivationstatus' => 'Cultivation Status','establishmentmeans' => 'Establishment Means','datageneralizations' => 'Data Generalizations',
-	'disposition' => 'Disposition','duplicatequantity' => 'Duplicate Qty','datelastmodified' => 'Date Last Modified', 'labelproject' => 'Label Project',
-	'processingstatus' => 'Processing Status','recordenteredby' => 'Entered By','dbpk' => 'dbpk','basisofrecord' => 'Basis Of Record',
-	'language' => 'Language','continent' => 'Continent','islandgroup' => 'Island Group','island' => 'Island', 'waterbody' => 'Water Body');
+$headerMapBase = array( 'institutioncode' => $LANG['INSTITUTION_CODE'], 'collectioncode' => $LANG['COLLEC_CODE'],
+	'ownerinstitutioncode' => $LANG['OWNER_CODE'], 'catalognumber' => $LANG['CATALOG_NUM'], 'othercatalognumbers' => $LANG['OTHER_CAT_NUMS'],
+	'family' => $LANG['FAMILY'], 'identificationqualifier' => $LANG['ID_QUALIFIER'],
+	'sciname' => $LANG['SCI_NAME'], 'scientificnameauthorship' => $LANG['SCI_NAME_AUTHOR'], 'recordedby' => $LANG['RECORD_COLLEC'], 'recordnumber' => $LANG['RECORD_NUM'],
+	'associatedcollectors' => $LANG['ASSOC_COLLEC'], 'eventdate' => $LANG['EVENT_DATE'], 'verbatimeventdate' => $LANG['VERB_EVENT_DATE'],
+	'identificationremarks' => $LANG['ID_REMARKS'], 'taxonremarks' => $LANG['TAXON_REMARKS'], 'identifiedby' => $LANG['ID_BY'],
+	'dateidentified' => $LANG['DATE_IDENTIFIED'], 'identificationreferences' => $LANG['ID_REF'],
+	'country' => $LANG['COUNTRY'], 'stateprovince' => $LANG['STATE_PROVINCE'], 'county' => $LANG['COUNTY'], 'municipality' => $LANG['MUNICIPALITY'],
+ 	'locality' => $LANG['LOCALITY'], 'decimallatitude' => $LANG['LATITUDE'], 'decimallongitude' => $LANG['LONGITUDE'],
+	'identifierName' => $LANG['ID_TAG_NAME'], 'identifierValue' => $LANG['ID_TAG_VAL'],
+	'coordinateuncertaintyinmeters' => $LANG['UNCERTAINTY_METERS'], 'verbatimcoordinates' => $LANG['VERB_COORDINATES'], 'geodeticdatum' => $LANG['DATUM'],
+	'georeferencedby' => $LANG['GEOREF_BY'], 'georeferenceprotocol' => $LANG['GEOREF_PROTOCOL'], 'georeferencesources' => $LANG['GEOREF_SOURCE'],
+	'georeferenceverificationstatus' => $LANG['GEOREF_VERIF_STATUS'], 'georeferenceremarks' => $LANG['GEOREF_REMARKS'],
+	'minimumelevationinmeters' => $LANG['ELEV_MIN_METERS'], 'maximumelevationinmeters' => $LANG['ELEV_MAX_METERS'], 'verbatimelevation' => $LANG['VERB_ELEV'],
+	'minimumdepthinmeters' => $LANG['DEPTH_MIN_METERS'], 'maximumdepthinmeters' => $LANG['DEPTH_MAX_METERS'], 'verbatimdepth' => $LANG['VERB_DEPTH'],
+	'habitat' => $LANG['HABITAT'], 'substrate' => $LANG['SUBSTRATE'], 'storageLocation' => $LANG['STORAGE_LOC'],
+	'occurrenceremarks' => $LANG['OCCURR_REMARKS'], 'associatedtaxa' => $LANG['ASSOC_TAXA'],
+	'verbatimattributes' => $LANG['VERB_ATTRIBUTES'], 'lifestage' => $LANG['LIFE_STAGE'], 'sex' => $LANG['SEX'], 'individualcount' => $LANG['COUNT'],
+	'samplingprotocol' => $LANG['SAMPLE_PROTOCOL'], 'preparations' => $LANG['PREPARATIONS'], 'reproductivecondition' => $LANG['REPRODUCTIVE_CONDITION'],
+	'typestatus' => $LANG['TYPE_STATUS'], 'cultivationstatus' => $LANG['CULTIVATION_STATUS'], 'establishmentmeans' => $LANG['ESTABLISHMENT_MEANS'], 'datageneralizations' => $LANG['DATA_GENERALIZATIONS'],
+	'disposition' => $LANG['DISPOSITION'], 'duplicatequantity' => $LANG['DUPE_QUANTITY'], 'datelastmodified' => $LANG['DATE_LAST_MODIFIED'], 'labelproject' => $LANG['LABEL_PROJECT'],
+	'processingstatus' => $LANG['PROCESS_STATUS'], 'recordenteredby' => $LANG['RECORD_ENTERED_BY'], 'dbpk' => $LANG['DBPK'], 'basisofrecord' => $LANG['BASIS_REC'],
+	'language' => $LANG['LANG'], 'continent' => $LANG['CONTINENT'], 'islandgroup' => $LANG['ISLAND_GROUP'], 'island' => $LANG['ISLAND'], 'waterbody' => $LANG['WATER_BODY']);
+//paleo fields
+$headerMapPaleoBase = array('earlyInterval' => $LANG['INTERVAL_EARLY'], 'lateInterval' => $LANG['INTERVAL_LATE'],
+	'lithogroup' => $LANG['GROUP'],'formation' => $LANG['FORMATION'], 'member' => $LANG['MEMBER'], 'bed' => $LANG['BED']);
+
 $headMap = array();
 
 $qryCnt = 0;
@@ -55,6 +66,8 @@ if($SYMB_UID){
 	}
 
 	if($collMap && $collMap['colltype']=='General Observations') $isGenObs = 1;
+	if ($collMap['colltype'] == 'Fossil Specimens')
+		$headerMapBase = array_merge($headerMapBase, $headerMapPaleoBase);
 	if(!$isEditor){
 		if($isGenObs){
 			if($collId && array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collId,$USER_RIGHTS['CollEditor'])){
@@ -94,7 +107,6 @@ if($SYMB_UID){
 	$recArr = $occManager->getOccurMap($recStart, $recLimit);
 	$navStr = '<div class="navpath">';
 
-
 	if($recStart >= $recLimit){
 		$navStr .= '<a href="#" onclick="return submitQueryForm(0);" title="'.(isset($LANG['FIRST'])?$LANG['FIRST']:'First').' '.$recLimit.' '.(isset($LANG['RECORDS'])?$LANG['RECORDS']:'records').'">|&lt;</a>&nbsp;&nbsp;&nbsp;&nbsp;';
 		$navStr .= '<a href="#" onclick="return submitQueryForm('.($recStart-$recLimit).');" title="'.(isset($LANG['PREVIOUS'])?$LANG['PREVIOUS']:'Previous').' '.$recLimit.' '.(isset($LANG['RECORDS'])?$LANG['RECORDS']:'records').'">&lt;&lt;</a>';
@@ -126,6 +138,7 @@ else{
 	<link href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/js/datatables/datatables.min.css" type="text/css" rel="stylesheet">
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/collections.list.js" type="text/javascript"></script>
 	<script src="../../js/datatables/datatables.min.js?ver=1" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(document).ready(
@@ -255,7 +268,7 @@ else{
 				foreach($recArr as $id => $occArr){
 					foreach($occArr as $k => $v){
 						if(!is_array($v)){
-							if(trim($v) !== '' && !array_key_exists($k,$headerArr)){
+							if((trim($v ?? '') || $v === 0) && !array_key_exists($k,$headerArr)){
 								$headerArr[$k] = $k;
 							}
 						}

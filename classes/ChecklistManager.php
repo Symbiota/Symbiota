@@ -205,8 +205,8 @@ class ChecklistManager extends Manager{
 	public function getTaxaList($pageNumber = 1,$retLimit = 500){
 		if(!$this->clid && !$this->dynClid) return array();
 		//Get species list
-		$speciesPrev="";
-		$taxonPrev="";
+		$speciesPrev = '';
+		$taxonPrev = '';
 		$genusCntArr = Array();
 		$familyCntArr = Array();
 		$speciesRankNeededArr = array();
@@ -221,10 +221,10 @@ class ChecklistManager extends Manager{
 			if($this->showAlphaTaxa) $taxonGroup = $row->unitname1;
 			$tid = $row->tid;
 			$sciName = $this->cleanOutStr($row->sciname);
-			$taxonTokens = explode(" ",$sciName);
-			if(in_array("x",$taxonTokens) || in_array("X",$taxonTokens)){
-				if(in_array("x",$taxonTokens)) unset($taxonTokens[array_search("x",$taxonTokens)]);
-				if(in_array("X",$taxonTokens)) unset($taxonTokens[array_search("X",$taxonTokens)]);
+			$taxonTokens = explode(' ', $sciName);
+			if(in_array('x', $taxonTokens) || in_array('X', $taxonTokens)){
+				if(in_array('x', $taxonTokens)) unset($taxonTokens[array_search('x', $taxonTokens)]);
+				if(in_array('X', $taxonTokens)) unset($taxonTokens[array_search('X', $taxonTokens)]);
 				$newArr = array();
 				foreach($taxonTokens as $v){
 					$newArr[] = $v;
@@ -232,27 +232,27 @@ class ChecklistManager extends Manager{
 				$taxonTokens = $newArr;
 			}
 			if(!$retLimit || ($this->taxaCount >= (($pageNumber-1)*$retLimit) && $this->taxaCount <= ($pageNumber)*$retLimit)){
-			    if(isset($row->morphospecies) && $row->morphospecies) $sciName .= ' '.$row->morphospecies;
-				elseif($row->rankid == 180) $sciName .= " sp.";
+			    if(isset($row->morphospecies) && $row->morphospecies) $sciName .= ' ' . $row->morphospecies;
+				elseif($row->rankid == 180) $sciName .= ' sp.';
 				if($row->rankid > 220 && $this->clMetadata['type'] != 'rarespp' && !array_key_exists($row->parenttid, $this->taxaList)){
-					$this->taxaList[$row->parenttid]['taxongroup'] = '<i>'.$taxonGroup.'</i>';
+					$this->taxaList[$row->parenttid]['taxongroup'] = '<i>' . $taxonGroup . '</i>';
 					$this->taxaList[$row->parenttid]['family'] = $family;
 					//$this->taxaList[$row->parenttid]['clid'] = $row->clid;
 					$speciesRankNeededArr[] = $row->parenttid;
 				}
 				if($this->showVouchers){
-					$clStr = "";
-					if($row->habitat) $clStr = ", ".$row->habitat;
-					if($row->abundance) $clStr .= ", ".$row->abundance;
-					if($row->notes) $clStr .= ", ".$row->notes;
-					if($row->source) $clStr .= ", <u>source</u>: ".$row->source;
-					if($clStr) $this->taxaList[$tid]["notes"] = substr($clStr,2);
+					$clStr = '';
+					if($row->habitat) $clStr = ', ' . $row->habitat;
+					if($row->abundance) $clStr .= ', ' . $row->abundance;
+					if($row->notes) $clStr .= ', ' . $row->notes;
+					if($row->source) $clStr .= ', <u>source</u>: ' . $row->source;
+					if($clStr) $this->taxaList[$tid]['notes'] = substr($clStr,2);
 				}
 				$this->taxaList[$tid]['sciname'] = $sciName;
 				$this->taxaList[$tid]['family'] = $family;
-				$this->taxaList[$tid]['taxongroup'] = '<i>'.$taxonGroup.'</i>';
+				$this->taxaList[$tid]['taxongroup'] = '<i>' . $taxonGroup . '</i>';
 				if(isset($this->taxaList[$tid]['clid'])){
-					if($this->taxaList[$tid]['clid'] != $row->clid) $this->taxaList[$tid]['clid'] = $this->taxaList[$tid]['clid'].','.$row->clid;
+					if($this->taxaList[$tid]['clid'] != $row->clid) $this->taxaList[$tid]['clid'] = $this->taxaList[$tid]['clid'] . ',' . $row->clid;
 				}
 				else $this->taxaList[$tid]['clid'] = $row->clid;
 				if($this->showAuthors) $this->taxaList[$tid]['author'] = $this->cleanOutStr($row->author);
@@ -263,15 +263,15 @@ class ChecklistManager extends Manager{
 			if(!in_array($taxonTokens[0],$genusCntArr)){
 				$genusCntArr[] = $taxonTokens[0];
 			}
-			$this->filterArr[$taxonTokens[0]] = "";
-			if(count($taxonTokens) > 1 && $taxonTokens[0]." ".$taxonTokens[1] != $speciesPrev){
+			$this->filterArr[$taxonTokens[0]] = '';
+			if(count($taxonTokens) > 1 && $taxonTokens[0] . ' ' . $taxonTokens[1] != $speciesPrev){
 				$this->speciesCount++;
-				$speciesPrev = $taxonTokens[0]." ".$taxonTokens[1];
+				$speciesPrev = $taxonTokens[0] . ' ' . $taxonTokens[1];
 			}
-			if(!$taxonPrev || strpos($sciName,$taxonPrev) === false){
+			if(!$taxonPrev || ($sciName != $taxonPrev && strpos($sciName, $taxonPrev . ' ') === false)){
 				$this->taxaCount++;
 			}
-			$taxonPrev = implode(" ",$taxonTokens);
+			$taxonPrev = implode(' ', $taxonTokens);
 		}
 		$this->familyCount = count($familyCntArr);
 		$this->genusCount = count($genusCntArr);
@@ -332,7 +332,7 @@ class ChecklistManager extends Manager{
 			if($this->showSynonyms) $this->setSynonyms();
 			if($speciesRankNeededArr && $this->clMetadata['type'] != 'rarespp'){
 				//Get species ranked taxa that are not explicited linked into checklist
-				$sql = 'SELECT tid, sciname, author FROM taxa WHERE tid IN('.implode(',',$speciesRankNeededArr).')';
+				$sql = 'SELECT tid, sciname, author FROM taxa WHERE rankid = 220 AND tid IN('.implode(',', $speciesRankNeededArr).')';
 				$rs = $this->conn->query($sql);
 				while($r = $rs->fetch_object()){
 					$this->taxaList[$r->tid]['sciname'] = $r->sciname;
@@ -454,39 +454,50 @@ class ChecklistManager extends Manager{
 		}
 	}
 
-  public function getExternalVoucherArr(){
+  /**
+   * Gets all external vouchers, currently only supports iNaturalist.
+   * If given a $tid param then only get vouchers associated to that tid.
+   * Requires $taxaList be set or a $tid to be passed in.
+   *
+   * @param int|null $tid Optional Taxonomic id that will give only vouchers of the associated id
+   * @return array with the key structure of [ (tid) => [[ (clCoordID) => [ display => string, url => string, id => int|string] ]]]
+   **/
+  public function getExternalVoucherArr($tid = null) {
 		$externalVoucherArr = array();
-		if($this->taxaList){
+
+		if(is_numeric($tid) || $this->taxaList) {
+			$taxaList = is_numeric($tid)? [ $tid ]: array_keys($this->taxaList);
 			$clidStr = $this->clid;
 			if($this->childClidArr){
 				$clidStr .= ','.implode(',',array_keys($this->childClidArr));
 			}
 			$sql = 'SELECT clCoordID, clid, tid, sourceIdentifier, referenceUrl, dynamicProperties
 				FROM fmchklstcoordinates
-				WHERE (clid IN ('.$clidStr.')) AND (tid IN('.implode(',',array_keys($this->taxaList)).')) AND sourceName = "EXTERNAL_VOUCHER"';
+				WHERE (clid IN (' . $clidStr . ')) AND (tid IN(' . implode(',', $taxaList) . ')) AND sourceName = "EXTERNAL_VOUCHER"';
+
 			$rs = $this->conn->query($sql);
 			while ($r = $rs->fetch_object()){
-				$dynPropArr = json_decode($r->dynamicProperties);
-				foreach($dynPropArr as $vouch) {
-					$displayStr = '';
-					if(!empty($vouch->user)) $displayStr = $vouch->user;
-					if(strlen($displayStr) > 25){
-						//Collector string is too big, thus reduce
-						$strPos = strpos($displayStr,';');
-						if(!$strPos) $strPos = strpos($displayStr,',');
-						if(!$strPos) $strPos = strpos($displayStr,' ',10);
-						if($strPos) $displayStr = substr($displayStr,0,$strPos).'...';
-					}
-					if($vouch->date) $displayStr .= ' '.$vouch->date;
-					if(!trim($displayStr)) $displayStr = 'undefined voucher';
-					$displayStr .= ' ['.$vouch->repository.($vouch->id?'-'.$vouch->id:'').']';
-					$externalVoucherArr[$r->tid][$r->clCoordID]['display'] = trim($displayStr);
-					$url = 'https://www.inaturalist.org/observations/'.$r->sourceIdentifier;
-					$externalVoucherArr[$r->tid][$r->clCoordID]['url'] = $url;
+				$dynVoucher = json_decode($r->dynamicProperties);
+				$displayStr = '';
+				if(!empty($dynVoucher->user)) $displayStr = $dynVoucher->user;
+				if(strlen($displayStr) > 25){
+					//Collector string is too big, thus reduce
+					$strPos = strpos($displayStr,';');
+					if(!$strPos) $strPos = strpos($displayStr,',');
+					if(!$strPos) $strPos = strpos($displayStr,' ',10);
+					if($strPos) $displayStr = substr($displayStr,0,$strPos).'...';
 				}
+				if($dynVoucher->date) $displayStr .= ' '.$dynVoucher->date;
+				if(!trim($displayStr)) $displayStr = 'undefined voucher';
+				$displayStr .= ' ['.$dynVoucher->repository.($dynVoucher->id?'-'.$dynVoucher->id:'').']';
+				$externalVoucherArr[$r->tid][$r->clCoordID]['display'] = trim($displayStr);
+				$url = 'https://www.inaturalist.org/observations/'.$r->sourceIdentifier;
+				$externalVoucherArr[$r->tid][$r->clCoordID]['url'] = $url;
+				$externalVoucherArr[$r->tid][$r->clCoordID]['id'] = $dynVoucher->id;
 			}
 			$rs->free();
 		}
+
 		return $externalVoucherArr;
 	}
 
@@ -583,15 +594,15 @@ class ChecklistManager extends Manager{
 			if($this->childClidArr){
 				$clidStr .= ','.implode(',',array_keys($this->childClidArr));
 			}
-			$this->basicSql = 'SELECT t.tid, ctl.clid, t.sciname, t.author, ctl.morphospecies, t.unitname1, t.rankid, ctl.habitat, ctl.abundance, ctl.notes, ctl.source, ts.parenttid, ';
+			$this->basicSql = 'SELECT t.tid, ctl.clid, t.sciname, t.author, ctl.morphospecies, t.unitname1, t.rankid, ctl.habitat, ctl.abundance, ctl.notes, ctl.source, ';
 			if($this->thesFilter){
-				$this->basicSql .= 'ts2.family FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted '.
-					'INNER JOIN fmchklsttaxalink ctl ON ts.tid = ctl.tid '.
-					'INNER JOIN taxstatus ts2 ON ts.tidaccepted = ts2.tid '.
-			  		'WHERE (ts.taxauthid = '.$this->thesFilter.') AND (ctl.clid IN ('.$clidStr.')) ';
+				$this->basicSql .= 'ts2.parenttid, ts2.family FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted
+					INNER JOIN fmchklsttaxalink ctl ON ts.tid = ctl.tid
+					INNER JOIN taxstatus ts2 ON ts.tidaccepted = ts2.tid
+			  		WHERE (ts.taxauthid = '.$this->thesFilter.') AND (ts2.taxauthid = '.$this->thesFilter.') AND (ctl.clid IN ('.$clidStr.')) ';
 			}
 			else{
-				$this->basicSql .= 'IFNULL(ctl.familyoverride,ts.family) AS family FROM taxa t INNER JOIN fmchklsttaxalink ctl ON t.tid = ctl.tid '.
+				$this->basicSql .= 'ts.parenttid, IFNULL(ctl.familyoverride,ts.family) AS family FROM taxa t INNER JOIN fmchklsttaxalink ctl ON t.tid = ctl.tid '.
 					'INNER JOIN taxstatus ts ON t.tid = ts.tid '.
 			  		'WHERE (ts.taxauthid = 1) AND (ctl.clid IN ('.$clidStr.')) ';
 			}

@@ -179,15 +179,16 @@ class ChecklistAdmin extends Manager{
 				$stmt->execute();
 				if($rs = $stmt->get_result()){
 					$row = $rs->fetch_object();
+					$rs->free();
+					$stmt->close();
 					if($row->footprintGeoJson) {
 						return ["type" => "geoJson", "footprint" => $row->footprintGeoJson];
-					} else {
+					} else if($row->footprintWkt) {
 						return ["type" => "wkt", "footprint" => $row->footprintWkt];
 					}
-					$rs->free();
 				}
-				$stmt->close();
 			}
+			return false;
 		} catch (Exception $e) {
 			error_log('ChecklistAdmin->getFootprint on clid ' . $this->clid . ' :' . $e->getMessage(), 0);
 			return false;

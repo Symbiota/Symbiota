@@ -1,21 +1,21 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceGeorefTools.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/georef/batchgeoreftool.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/georef/batchgeoreftool.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/georef/batchgeoreftool.en.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-if(!$SYMB_UID) header('Location: ../profile/index.php?refurl=../collections/georef/batchgeoreftool.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+Language::load('collections/georef/batchgeoreftool');
 
-$collid = array_key_exists('collid',$_REQUEST) ? $_REQUEST['collid' ] : 0;
-$submitAction = array_key_exists('submitaction',$_POST) ? htmlspecialchars($_POST['submitaction'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
+if(!$SYMB_UID) header('Location: ../profile/index.php?refurl=../collections/georef/batchgeoreftool.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+
+$collid = array_key_exists('collid', $_REQUEST) ? $_REQUEST['collid' ] : 0;
+$submitAction = array_key_exists('submitaction', $_POST) ? $_POST['submitaction'] : '';
 
 $qCountry = array_key_exists('qcountry',$_POST) ? htmlspecialchars($_POST['qcountry'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $qState = array_key_exists('qstate',$_POST) ? htmlspecialchars($_POST['qstate'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $qCounty = array_key_exists('qcounty',$_POST) ? htmlspecialchars($_POST['qcounty'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $qMunicipality = array_key_exists('qmunicipality',$_POST) ? htmlspecialchars($_POST['qmunicipality'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $qLocality = array_key_exists('qlocality',$_POST) ? htmlspecialchars($_POST['qlocality'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
-$qDisplayAll = array_key_exists('qdisplayall',$_POST) ? $_POST['qdisplayall' ] :0;
+$qDisplayAll = array_key_exists('qdisplayall', $_POST) ? 1 :0;
 $qVStatus = array_key_exists('qvstatus',$_POST) ? htmlspecialchars($_POST['qvstatus'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $qSciname = array_key_exists('qsciname',$_POST) ? htmlspecialchars($_POST['qsciname'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $qProcessingStatus = array_key_exists('qprocessingstatus',$_POST) ? htmlspecialchars($_POST['qprocessingstatus'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
@@ -48,21 +48,8 @@ if(is_array($collid)) $collid = implode(',',$collid);
 
 //Sanitation
 if(!preg_match('/^[,\d]+$/',$collid)) $collid = 0;
-$submitAction = htmlspecialchars($submitAction, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
-$qCountry = htmlspecialchars($qCountry, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
-$qState = htmlspecialchars($qState, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
-$qCounty = htmlspecialchars($qCounty, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
-$qMunicipality = htmlspecialchars($qMunicipality, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
-$qLocality = htmlspecialchars($qLocality, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
-$qDisplayAll = htmlspecialchars($qDisplayAll, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
-$qVStatus = htmlspecialchars($qVStatus, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
-$qSciname = htmlspecialchars($qSciname, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
-$qProcessingStatus = htmlspecialchars($qProcessingStatus, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
-$georeferenceSources = htmlspecialchars($georeferenceSources, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
-$georeferenceProtocol = htmlspecialchars($georeferenceProtocol, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
-$georeferenceVerificationStatus = htmlspecialchars($georeferenceVerificationStatus, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 
-if(!$georeferenceSources) $georeferenceSources = 'georef batch tool '.date('Y-m-d');
+if(!$georeferenceSources) $georeferenceSources = 'Symbiota batch georeferencing tool on ' . date('Y-m-d');
 //if(!$georeferenceVerificationStatus) $georeferenceVerificationStatus = 'reviewed - high confidence';
 
 $geoManager = new OccurrenceGeorefTools();
@@ -72,7 +59,7 @@ foreach($activeCollArr as $k => $id){
 		unset($activeCollArr[$k]);
 	}
 }
-$geoManager->setCollId($IS_ADMIN?$collid:implode(',',$activeCollArr));
+$geoManager->setCollId($IS_ADMIN ? $collid:implode(',', $activeCollArr));
 $collMap = $geoManager->getCollMap();
 
 $isEditor = false;
@@ -105,6 +92,32 @@ if($isEditor && $submitAction){
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/collections.georef.js?ver=1" type="text/javascript"></script>
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/collections.georef.batchgeoreftool.js?ver=201912" type="text/javascript"></script>
+		<style>
+			.grid-form {
+				display: grid;
+				grid-template-columns: 80px 30px 50px 50px 32px 20px 1fr;
+				gap: 8px;
+				align-items: center;
+			}
+
+			.grid-form-2cl {
+				display: grid;
+				grid-template-columns: 80px 400px 1fr;
+				align-items: center;
+			}
+
+			.grid-subform {
+				display: grid;
+				grid-template-columns: auto 75px 1.5em;
+				align-items: center;
+				gap: 6px;
+			}
+
+			.grid-item-center {
+				text-align: center;
+				align-self: center;
+			}
+		</style>
 	</head>
 	<body>
 		<a class="screen-reader-only" href="#queryform-section"><?php echo $LANG['SKIP_NAV'] ?></a>
@@ -401,72 +414,74 @@ if($isEditor && $submitAction){
 							<div style="margin:15px;">
 							    <span id="tableContent" style="display: none;"><?php echo $LANG['TABLE_CONTENT'] ?></span>
 								<section class="gridlike-form" aria-describedby="tableContent">
-								    <section class="gridlike-form-row bottom-breathing-room-rel">
+								    <section class="grid-form bottom-breathing-room-rel-sm">
 										<div style="width:65px;"></div>
-										<div style="width:30px;"><b><?php echo $LANG['DEG']; ?>.</b></div>
-										<div style="width:50px;"><b><?php echo $LANG['MIN']; ?>.</b></div>
-										<div style="width:55px;"><b><?php echo $LANG['SEC']; ?>.</b></div>
+										<div style="width:30px;" class="grid-item-center"><b><?php echo $LANG['DEG']; ?>.</b></div>
+										<div style="width:50px;" class="grid-item-center"><b><?php echo $LANG['MIN']; ?>.</b></div>
+										<div style="width:55px;" class="grid-item-center"><b><?php echo $LANG['SEC']; ?>.</b></div>
 										<div style="width:20px;">&nbsp;</div>
 										<div style="width:15px;">&nbsp;</div>
 										<div><b><?php echo $LANG['DECIMAL']; ?></b></div>
 									</section>
-									<section class="gridlike-form-row bottom-breathing-room-rel">
-										<div style="width:62px;"><b><?php echo $LANG['LATITUDE']; ?>:</b> </div>
-										<div><input name="latdeg" type="text" value="" onchange="updateLatDec(this.form)" style="width:30px;" aria-label="<?php echo $LANG['LATITUDE_DEGREE'] ?>" /></div>
-										<div><input name="latmin" type="text" value="" onchange="updateLatDec(this.form)" style="width:50px;" aria-label="<?php echo $LANG['LATITUDE_MINUTES'] ?>" /></div>
-										<div><input name="latsec" type="text" value="" onchange="updateLatDec(this.form)" style="width:50px;" aria-label="<?php echo $LANG['LATITUDE_SECONDS'] ?>" /></div>
-										<div>
-											<select name="latns" aria-label="<?php echo $LANG['LATITUDE_NORTH_SOUTH'] ?>" onchange="updateLatDec(this.form)">
-												<option><?php echo $LANG['N']; ?></option>
-												<option ><?php echo $LANG['S']; ?></option>
-											</select>
-										</div>
-										<div> = </div>
-										<div>
-											<input id="decimallatitude" name="decimallatitude" type="text" value="" style="width:80px;" aria-label="<?php echo $LANG['DECIMAL_LATITUDE'] ?>" />
-											<span style="cursor:pointer;padding:3px;" onclick="openMappingAid();">
-												<img src="../../images/world.png" alt="<?php echo $LANG['WORLD_ICON'] ?>" style="border:0px;width:1.2em;" aria-label="<?php echo $LANG['WORLD_ICON'] ?>" />
-											</span>
-										</div>
+									<section>
+										<section class="grid-form">
+											<div style="width:62px;" class="bottom-breathing-room-rel-sm"><b><?php echo $LANG['LATITUDE']; ?>:</b> </div>
+											<div><input name="latdeg" type="text" value="" onchange="updateLatDec(this.form)" style="width:30px;" aria-label="<?php echo $LANG['LATITUDE_DEGREE'] ?>" /></div>
+											<div><input name="latmin" type="text" value="" onchange="updateLatDec(this.form)" style="width:50px;" aria-label="<?php echo $LANG['LATITUDE_MINUTES'] ?>" /></div>
+											<div><input name="latsec" type="text" value="" onchange="updateLatDec(this.form)" style="width:50px;" aria-label="<?php echo $LANG['LATITUDE_SECONDS'] ?>" /></div>
+											<div>
+												<select name="latns" aria-label="<?php echo $LANG['LATITUDE_NORTH_SOUTH'] ?>" onchange="updateLatDec(this.form)">
+													<option><?php echo $LANG['N']; ?></option>
+													<option ><?php echo $LANG['S']; ?></option>
+												</select>
+											</div>
+											<div class="grid-item-center bottom-breathing-room-rel-sm"> = </div>
+											<div>
+												<input id="decimallatitude" name="decimallatitude" type="text" value="" style="width:80px;" aria-label="<?php echo $LANG['DECIMAL_LATITUDE'] ?>" />
+												<span style="cursor:pointer;padding:3px;" onclick="openMappingAid();">
+													<img src="../../images/world.png" alt="<?php echo $LANG['WORLD_ICON'] ?>" style="border:0px;width:1.2em;" aria-label="<?php echo $LANG['WORLD_ICON'] ?>" />
+												</span>
+											</div>
+										</section>
+										<section class="grid-form">
+											<div style="vertical-align:middle" class="bottom-breathing-room-rel-sm"><b><?php echo $LANG['LONGITUDE']; ?>:</b> </div>
+											<div><input name="lngdeg" type="text" value="" onchange="updateLngDec(this.form)" style="width:30px;" aria-label="<?php echo $LANG['LONGITUDE_DEGREE'] ?>" /></div>
+											<div><input name="lngmin" type="text" value="" onchange="updateLngDec(this.form)" style="width:50px;" aria-label="<?php echo $LANG['LONGITUDE_MINUTES'] ?>" /></div>
+											<div><input name="lngsec" type="text" value="" onchange="updateLngDec(this.form)" style="width:50px;" aria-label="<?php echo $LANG['LONGITUDE_SECONDS'] ?>" /></div>
+											<div style="width:32px;">
+												<select name="lngew" aria-label="<?php echo $LANG['LONGITUDE_EAST_WEST'] ?>" onchange="updateLngDec(this.form)">
+													<option><?php echo $LANG['E']; ?></option>
+													<option SELECTED><?php echo $LANG['W']; ?></option>
+												</select>
+											</div>
+											<div class="grid-item-center bottom-breathing-room-rel-sm"> = </div>
+											<div><input id="decimallongitude" name="decimallongitude" type="text" value="" style="width:80px;" aria-label="<?php echo $LANG['DECIMAL_LONGITUDE'] ?>" /></div>
+										</section>
 									</section>
-									<section class="gridlike-form-row bottom-breathing-room-rel">
-										<div style="vertical-align:middle"><b><?php echo $LANG['LONGITUDE']; ?>:</b> </div>
-										<div><input name="lngdeg" type="text" value="" onchange="updateLngDec(this.form)" style="width:30px;" aria-label="<?php echo $LANG['LONGITUDE_DEGREE'] ?>" /></div>
-										<div><input name="lngmin" type="text" value="" onchange="updateLngDec(this.form)" style="width:50px;" aria-label="<?php echo $LANG['LONGITUDE_MINUTES'] ?>" /></div>
-										<div><input name="lngsec" type="text" value="" onchange="updateLngDec(this.form)" style="width:50px;" aria-label="<?php echo $LANG['LONGITUDE_SECONDS'] ?>" /></div>
-										<div style="width:32px;">
-											<select name="lngew" aria-label="<?php echo $LANG['LONGITUDE_EAST_WEST'] ?>" onchange="updateLngDec(this.form)">
-												<option><?php echo $LANG['E']; ?></option>
-												<option SELECTED><?php echo $LANG['W']; ?></option>
-											</select>
-										</div>
-										<div> = </div>
-										<div><input id="decimallongitude" name="decimallongitude" type="text" value="" style="width:80px;" aria-label="<?php echo $LANG['DECIMAL_LONGITUDE'] ?>" /></div>
-									</section>
-									<section class="gridlike-form-row bottom-breathing-room-rel">
-										<div style="vertical-align:middle">
+									<section class="gridlike-form-row">
+										<div style="vertical-align:middle" class="grid-item-center bottom-breathing-room-rel-sm">
 											<b><?php echo $LANG['ERROR_METERS']; ?>:</b>
 										</div>
 										<div style="vertical-align:middle">
 											<input id="coordinateuncertaintyinmeters" name="coordinateuncertaintyinmeters" type="text" value="" style="width:50px;" aria-label="<?php echo $LANG['ERROR_METERS'] ?>" onchange="verifyCoordUncertainty(this)" />
 										</div>
-										<div style="vertical-align:middle">
-											<span style="margin-left:20px;font-weight:bold;"><?php echo $LANG['DATUM']; ?>:</span>
+										<div style="vertical-align:middle" class="bottom-breathing-room-rel-sm">
+											<span style="margin-left:20px;font-weight:bold;" class="grid-item-center"><?php echo $LANG['DATUM']; ?>:</span>
 											<input id="geodeticdatum" name="geodeticdatum" type="text" value="" style="width:75px;" aria-label="<?php echo $LANG['DATUM'] ?>" />
 											<span style="cursor:pointer;margin-left:3px;" onclick="toggle('utmdiv');">
 												<img src="../../images/editplus.png" alt="<?php echo $LANG['EDIT_PLUS_ICON']; ?>" style="border:0px;width:1.5em;" aria-label="<?php echo $LANG['EDIT_PLUS_ICON']; ?>" />
 											</span>
 										</div>
 									</section>
-									<section class="gridlike-form-row bottom-breathing-room-rel">
-										<div style="vertical-align:middle">
+									<section class="gridlike-form-row">
+										<div style="vertical-align:middle" class="grid-item-center bottom-breathing-room-rel-sm">
 											<b><?php echo $LANG['FOOTPRINT_WKT']; ?>:</b>
 										</div>
 										<div style="vertical-align:middle">
 											<input id="footprintwkt" name="footprintwkt" type="text" value="" style="width:500px;" aria-label="<?php echo $LANG['FOOTPRINT_WKT'] ?>" onchange="verifyFootprintWKT(this)" />
 										</div>
 									</section>
-									<section class="gridlike-form-row bottom-breathing-room-rel">
+									<section class="gridlike-form-row">
 										<div>
 											<div id="utmdiv" class="fieldset-like-box">
 												<div>
@@ -495,40 +510,40 @@ if($isEditor && $submitAction){
 											</div>
 										</div>
 									</section>
-									<section class="gridlike-form-row bottom-breathing-room-rel">
-										<div style="vertical-align:middle">
+									<section class="grid-form-2cl">
+										<div style="vertical-align:middle" class="bottom-breathing-room-rel-sm">
 											<b><?php echo $LANG['SOURCES']; ?>:</b>
 										</div>
 										<div>
 											<input id="georeferencesources" name="georeferencesources" type="text" value="<?php echo $georeferenceSources; ?>" style="width:500px;" aria-label="<?php echo $LANG['SOURCES'] ?>" />
 										</div>
 									</section>
-									<section class="gridlike-form-row bottom-breathing-room-rel">
-										<div style="vertical-align:middle">
+									<section class="grid-form-2cl">
+										<div style="vertical-align:middle" class="bottom-breathing-room-rel-sm">
 											<b><?php echo $LANG['PROTOCOLS']; ?>:</b>
 										</div>
 										<div>
 											<input id="georeferenceprotocol" name="georeferenceprotocol" type="text" value="<?php echo $georeferenceProtocol; ?>" style="width:500px;" aria-label="<?php echo $LANG['PROTOCOLS'] ?>" />
 										</div>
 									</section>
-									<section class="gridlike-form-row bottom-breathing-room-rel">
-										<div style="vertical-align:middle">
+									<section class="grid-form-2cl">
+										<div style="vertical-align:middle" class="bottom-breathing-room-rel-sm">
 											<b><?php echo $LANG['REMARKS']; ?>:</b>
 										</div>
 										<div>
 											<input name="georeferenceremarks" type="text" value="" style="width:500px;" aria-label="<?php echo $LANG['REMARKS'] ?>" />
 										</div>
 									</section>
-									<section class="gridlike-form-row bottom-breathing-room-rel">
-										<div style="vertical-align:middle">
+									<section class="gridlike-form-row">
+										<div style="vertical-align:middle" class="bottom-breathing-room-rel-sm">
 											<b><?php echo $LANG['VERIF_STATUS']; ?>:</b>
 										</div>
 										<div>
 											<input id="georeferenceverificationstatus" name="georeferenceverificationstatus" type="text" value="<?php echo $georeferenceVerificationStatus; ?>" style="width:400px;" aria-label="<?php echo $LANG['VERIF_STATUS'] ?>" />
 										</div>
 									</section>
-									<section class="gridlike-form-row bottom-breathing-room-rel">
-										<div style="vertical-align:middle">
+									<section class="gridlike-form-row">
+										<div style="vertical-align:middle" class="bottom-breathing-room-rel-sm">
 											<b><?php echo $LANG['ELEVATION']; ?>:</b>
 										</div>
 										<div>
@@ -540,8 +555,8 @@ if($isEditor && $submitAction){
 											</span>
 										</div>
 									</section>
-									<section class="gridlike-form-row bottom-breathing-room-rel">
-										<div>
+									<section class="gridlike-form-row">
+										<div class="bottom-breathing-room-rel-sm">
 											<b><?php echo $LANG['PROCESSING_STATUS']; ?>: </b>
 										</div>
 										<div>

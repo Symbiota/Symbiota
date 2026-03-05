@@ -1,7 +1,7 @@
 <?php
-if($LANG_TAG == 'en' || !file_exists($SERVER_ROOT.'/content/lang/templates/donationButton.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT . '/content/lang/templates/donationButton.en.php');
-else include_once($SERVER_ROOT . '/content/lang/templates/donationButton.' . $LANG_TAG . '.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+Language::load('templates/donationButton');
+
 ?>
 
 <div style="position:fixed; right:2rem; bottom:2rem;">

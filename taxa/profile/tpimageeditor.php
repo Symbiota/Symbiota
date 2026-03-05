@@ -2,9 +2,11 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TPImageEditorManager.php');
 include_once($SERVER_ROOT . '/classes/Media.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/profile/tpimageeditor.' . $LANG_TAG . '.php'))
-	include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpimageeditor.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpimageeditor.en.php');
+include_once($SERVER_ROOT . '/classes/Paginator.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('taxa/profile/tpimageeditor');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $tid = filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT);
@@ -40,8 +42,17 @@ if($tid){
 		<?php
 		if($isEditor && $tid){
 			if($category == "imagequicksort"){
-				if($images = $imageEditor->getImages()){
+				$sortPaginator = new Paginator(
+					Media::countByTid($tid), 10, 'mediaSortPage',
+					'tpeditor.php', [
+						'tid' => $tid,
+						'tabindex' => 2,
+						'mediaPage' => Paginator::getPageRequestVar('mediaPage')
+					]
+				);
+				if($images = Media::getByTid($tid, null, $sortPaginator) ){
 					?>
+					<?php echo $sortPaginator->renderPagination() ?>
 					<div style='clear:both;'>
 						<form action='tpeditor.php' method='post' target='_self'>
 							<input name='tid' type='hidden' value='<?php echo $imageEditor->getTid(); ?>'>
@@ -182,7 +193,7 @@ if($tid){
 								<select name='creatorUid' name='creatorUid'>
 									<option value=""><?php echo $LANG['SEL_CREATOR']; ?></option>
 									<option value="">---------------------------------------</option>
-									<?php $imageEditor->echoCreatorSelect($PARAMS_ARR["uid"]); ?>
+									<?= Media::renderCreatorOptions($PARAMS_ARR["uid"]) ?>
 								</select>
 								<a href="#" onclick="toggle('photooveridediv');return false;" title="<?php echo $LANG['DISP_CREATOR_OVERRIDE']; ?>">
 									<img src="../../images/editplus.png" style="border:0px;width:1.5em;" />
@@ -228,8 +239,17 @@ if($tid){
 				<?php
 			}
 			else{
-				if($images = $imageEditor->getImages()){
+				$paginator = new Paginator(
+					Media::countByTid($tid), 10, 'mediaPage',
+					'tpeditor.php', [
+						'tid' => $tid,
+						'tabindex' => 1,
+						'mediaSortPage' => Paginator::getPageRequestVar('mediaSortPage')
+					]
+				);
+				if($images = Media::getByTid($tid, null, $paginator)){
 					?>
+				<?php echo $paginator->renderPagination() ?>
 					<div style='clear:both;'>
 						<section class="gridlike-form">
 							<?php
