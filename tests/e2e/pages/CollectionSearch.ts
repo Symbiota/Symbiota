@@ -76,22 +76,6 @@ export abstract class CollectionSearchPage {
 	}
 }
 
-interface CollectionListResultPage {
-	collectionForm: Form
-	setToLiveManaged(): Promise<void>
-	setToSnapshot(): Promise<void>;
-	setToAggregate(): Promise<void>;
-	goto(): Promise<void>;
-}
-
-interface CollectionTableResultPage {
-	collectionForm: Form
-	setToLiveManaged(): Promise<void>
-	setToSnapshot(): Promise<void>;
-	setToAggregate(): Promise<void>;
-	goto(): Promise<void>;
-}
-
 class SymbCollectionSearchPage extends CollectionSearchPage {
 	async search(): Promise<void> {
 		await this.page.locator('#search-btn').click({force: true})
@@ -118,6 +102,7 @@ class SymbCollectionSearchPage extends CollectionSearchPage {
 	}
 
 	async expectTableCount(count: number): Promise<void> {
+		await expect(this.page.getByText(`of ${count}`).nth(0)).toBeVisible();
 	}
 
 	async expandAll(): Promise<void> {
@@ -125,7 +110,10 @@ class SymbCollectionSearchPage extends CollectionSearchPage {
 	}
 
 	async setAllCollections(value: boolean): Promise<void> {
-		await this.page.locator('#dballcb').setChecked(value, {force: true});
+		const checkbox = this.page.locator('#dballcb');
+		await checkbox.isVisible();
+		await checkbox.isEnabled();
+		await checkbox.setChecked(value, {force: true});
 	}
 
 	async selectCollection(collId: number): Promise<void> {

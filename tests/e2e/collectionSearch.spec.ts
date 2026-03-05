@@ -1,5 +1,6 @@
 import { CollectionSearchPage } from './pages/CollectionSearch';
-import { test as base, Taxon, type Occurrence } from './fixtures/occurrence';
+import { test as base } from './fixtures/occurrence';
+import { Seeder, type Occurrence } from './seeders/Seeder';
 
 enum TaxonType {
 	ScientificName = '2',
@@ -13,9 +14,13 @@ enum AssociationType {
 	Any = 'any'
 }
 
-const test =  base.extend<{ collectionSearchPage: CollectionSearchPage }>({
-	collectionSearchPage: async ({ page, occurrenceFactory, collId }, use) => {
-		await occurrenceFactory.getNewRecord(collId)
+const test = base.extend<{
+	collectionSearchPage: CollectionSearchPage,
+	listResult: CollectionSearchPage,
+	tableResult: CollectionSearchPage
+}>({
+	collectionSearchPage: async ({ page, collId, DB }, use) => {
+		await Seeder.occurrence({ collId }, DB);
 		const searchPage = CollectionSearchPage.make(page);
 		await searchPage.goto();
 		await searchPage.expandAll();
@@ -23,11 +28,24 @@ const test =  base.extend<{ collectionSearchPage: CollectionSearchPage }>({
 		await searchPage.selectCollection(collId);
 		await use(searchPage);
 	},
+	listResult: async ({ collectionSearchPage }, use) => {
+		await use(collectionSearchPage)
+		await collectionSearchPage.search();
+		await collectionSearchPage.expectListResult();
+		await collectionSearchPage.expectListCount(1);
+	},
+	tableResult: async ({ collectionSearchPage }, use) => {
+		await use(collectionSearchPage);
+		await collectionSearchPage.setTableResult();
+		await collectionSearchPage.search();
+		await collectionSearchPage.expectTableResult();
+		await collectionSearchPage.expectTableCount(1);
+	},
 });
 
 // Build Taxa enum tree for searching and clean it up after
 // Note Fresh projects in this table are empty.
-test.beforeAll(async ({  DB }) => {
+test.beforeAll(async ({ DB }) => {
 	let build = `INSERT INTO taxaenumtree(tid,parenttid,taxauthid)
 		SELECT DISTINCT ts.tid, ts.parenttid, ts.taxauthid
 		FROM taxstatus ts
@@ -53,8 +71,6 @@ interface OccurrenceSearchTest {
 	name: string,
 	fields: Object,
 	occurrences: Array<Occurrence>,
-	taxa?: Array<Taxon>,
-	taxaLink?: Array<number>,
 }
 
 let tests: Array<OccurrenceSearchTest> = [
@@ -66,20 +82,8 @@ let tests: Array<OccurrenceSearchTest> = [
 			usethes: false,
 		},
 		occurrences: [
-			{ sciname: 'Genus Species' },
+			{ sciname: 'Genus Species'},
 			{ sciname: 'Dont Match' }
-		],
-	},
-	{
-		name: 'Scientific Name by tidInterpreted',
-		fields: {
-			taxa: 'Monera',
-			taxontype: TaxonType.TaxonGroup,
-			usethes: false,
-		},
-		occurrences: [
-			{ tidInterpreted: 2 },
-			{ tidInterpreted: 3 }
 		],
 	},
 	{
@@ -94,28 +98,18 @@ let tests: Array<OccurrenceSearchTest> = [
 			{ family: 'dontmatch' }
 		]
 	},
-	/*  Requires taxa seeding
-	 * {
-		name: 'Taxon Group',
+	{
+		name: 'Scientific Name by tidInterpreted',
 		fields: {
-			taxa: 'tgroup',
+			taxa: 'Monera',
 			taxontype: TaxonType.TaxonGroup,
 			usethes: false,
 		},
 		occurrences: [
-			{ family: 'tgroup' },
-			{ family: 'dontmatch' }
-		]
+			{ tidInterpreted: 2 },
+			{ tidInterpreted: 3 }
+		],
 	},
-	{
-		name: 'Common Name',
-		fields: {
-			taxa: 'common',
-			taxontype: TaxonType.Common,
-			usethes: false,
-		},
-		occurrences: []
-	},*/
 	{
 		name: 'Country',
 		fields: {
@@ -384,18 +378,13 @@ let tests: Array<OccurrenceSearchTest> = [
 	Requires seeding of associations  */
 ];
 
+// Occurrence tests
 test.describe('List Result', () => {
 	for(let t of tests) {
-		test(t.name, async ({ collectionSearchPage, occurrenceFactory, collId }) => {
-			await occurrenceFactory.seedOccurrences(
-				collId, 
-				t.occurrences
-			);
-			await collectionSearchPage.searchForm.setMany(t.fields);
-			await collectionSearchPage.setListResult();
-			await collectionSearchPage.search();
-			await collectionSearchPage.expectListResult();
-			await collectionSearchPage.expectListCount(1);
+		test(t.name, async ({ listResult, collId, DB }) => {
+			console.log(t.name, collId);
+			await Seeder.occurrencesWithCollId(collId, t.occurrences, DB);
+			await listResult.searchForm.setMany(t.fields);
 		});
 	}
 })
@@ -403,17 +392,58 @@ test.describe('List Result', () => {
 /* Currently is failing because is broken (Waiting for upstream fix from 3.4_rc)
 test.describe('Table Result', () => {
 	for(let t of tests) {
-		test(t.name, async ({ collectionSearchPage, occurrenceFactory, collId }) => {
-			await occurrenceFactory.seedOccurrences(
-				collId, 
-				t.occurrences
-			);
-			await collectionSearchPage.searchForm.setMany(t.fields);
-			await collectionSearchPage.setTableResult();
-			await collectionSearchPage.search();
-			await collectionSearchPage.expectTableResult();
-			await collectionSearchPage.expectTableCount(1);
+		test(t.name, async ({ tableResult, occurrenceFactory, collId }) => {
+			await Seeder.occurrencesWithCollId(collId, t.occurrences, DB);
+			await tableResult.searchForm.setMany(t.fields);
 		});
 	}
 })
 */
+
+// SPECIAL CASES
+// test('Common Name', async ({ listResult, collId, DB }) => {
+// 	const fields = {
+// 		taxa: 'common',
+// 		taxontype: TaxonType.Common,
+// 		usethes: false,
+// 	};
+//
+// 	const matchTid = await Seeder.taxon({
+// 		sciname: 'placeholder',
+// 		unitName1: 'placeholder'
+// 	}, DB);
+// 	const matchVid = await Seeder.taxonVernacular({
+// 		tid: matchTid,
+// 		vernacularName: 'common'
+// 	}, DB);
+//
+// 	const notMatchTid = await Seeder.taxon({
+// 		sciname: 'notmatch',
+// 		unitName1: 'notmatch'
+// 	}, DB);
+// 	const notMatchVid = await Seeder.taxonVernacular({
+// 		tid: notMatchTid,
+// 		vernacularName: 'notmatch'
+// 	}, DB);
+//
+// 	const occurrences = [
+// 		{ tidInterpreted: matchTid },
+// 		{ tidInterpreted: notMatchTid },
+// 	];
+//
+// 	let build = `INSERT INTO taxaenumtree(tid,parenttid,taxauthid)
+// 		SELECT DISTINCT ts.tid, ts.parenttid, ts.taxauthid
+// 		FROM taxstatus ts
+// 		WHERE (ts.taxauthid = 1) AND ts.tid NOT IN(SELECT tid FROM taxaenumtree WHERE taxauthid = 1);`;
+//
+// 	let buildParents = `INSERT INTO taxaenumtree(tid,parenttid,taxauthid)
+// 		SELECT DISTINCT ts.tid, ts.parenttid, ts.taxauthid
+// 		FROM taxstatus ts LEFT JOIN taxaenumtree e ON ts.tid = e.tid AND ts.parenttid = e.parenttid AND ts.taxauthid = e.taxauthid
+// 		WHERE (ts.taxauthid = 1) AND (e.tid IS NULL)`;
+//
+// 	await DB.execute(build);
+// 	await DB.execute(buildParents);
+//
+// 	await Seeder.occurrencesWithCollId(collId, occurrences, DB);
+// 	await listResult.searchForm.setMany(fields);
+// })
