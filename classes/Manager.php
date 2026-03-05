@@ -37,19 +37,19 @@ class Manager  {
 		}
 	}
 
-	protected function getConfigAttribute($attrName){
-		$attrValue = '';
-		if($attrName){
-			$sql = 'SELECT attributeValue FROM adminconfig WHERE attributeName = ?';
+	protected function getConfigAttribute($propName){
+		$propValue = '';
+		if($propName){
+			$sql = 'SELECT propName FROM adminproperties WHERE propName = ?';
 			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('s', $attrName);
+				$stmt->bind_param('s', $propName);
 				$stmt->execute();
-				$stmt->bind_result($attrValue);
+				$stmt->bind_result($propValue);
 				$stmt->fetch();
 				$stmt->close();
 			}
 		}
-		return $attrValue;
+		return $propValue;
 	}
 
 	protected function setLogFH($logPath){
