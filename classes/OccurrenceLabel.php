@@ -231,7 +231,7 @@ class OccurrenceLabel {
 	private function appendTaxonomy(&$labelArr, $tidArr){
 		if($tidArr){
 			$taxonArr = array();
-			$parentArr = array(60 => 'taxonclass', 100 => 'taxonorder');
+			$parentArr = array(30 => 'taxonphylum', 60 => 'taxonclass', 100 => 'taxonorder');
 			//Extract higher taxonomy from database
 			foreach($parentArr as $rankID => $rankName){
 				$sql = 'SELECT e.tid, p.sciname
@@ -326,6 +326,7 @@ class OccurrenceLabel {
 				'scientificNameAuthorship'=>'o.scientificnameauthorship',
 				'parentAuthor'=>'pt.author AS parentauthor',
 				'kingdom' => 't.kingdomName as kingdom',
+				'taxonPhylum' => '"" as taxonphylum',
 				'taxonClass' => '"" as taxonclass',
 				'taxonOrder' => '"" as taxonorder',
 				'identifiedBy'=>'o.identifiedby',
