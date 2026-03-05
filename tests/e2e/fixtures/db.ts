@@ -15,6 +15,7 @@ const test = base.extend<{ DB: mysql.Connection }>({
 	DB: async ({}, use) => {
 		let connection = await getConnection();
 		await use(connection);
+		connection.end();
 	}
 });
 
