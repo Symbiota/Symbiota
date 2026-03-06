@@ -60,10 +60,6 @@ test.beforeAll(async ({ DB }) => {
 	await DB.execute(buildParents);
 })
 
-test.afterAll(async ({  DB }) => {
-	await DB.execute('DELETE FROM taxaenumtree');
-})
-
 // Running Searches in parallel runs into lots of false negatives
 test.describe.configure({ mode: 'serial' });
 
