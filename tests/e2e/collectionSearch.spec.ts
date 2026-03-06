@@ -1,5 +1,5 @@
 import { CollectionSearchPage } from './pages/CollectionSearch';
-import { test as base } from './fixtures/occurrence';
+import { test as base } from './seeders/Seeder';
 import { Seeder, type Occurrence } from './seeders/Seeder';
 
 enum TaxonType {

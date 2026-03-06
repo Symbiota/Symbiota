@@ -138,7 +138,12 @@ export class Seeder {
 	static async uniqueCollection(conn: mysql.Connection): Promise<number> {
 		const sql = "INSERT omcollections (collectionCode, institutionCode, collectionName, managementType, collType) VALUES (uuid(), 'SYMB', uuid(), 'Live Data', 'Preserved Specimens')";
 		await conn.execute(sql);
-		return this.lastId(conn);
+		const collId = await this.lastId(conn);
+		await conn.execute(
+			"INSERT omcollectionstats(collId, recordCnt) VALUES (?, 1)",
+			[collId]
+		);
+		return collId;
 	}
 
 	static async collection(data: Collection, conn: mysql.Connection) {
