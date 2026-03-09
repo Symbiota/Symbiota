@@ -29,7 +29,7 @@ class Sanitize {
 			}
 			return $arr;
 		} else if (is_numeric($val)) {
-			return filter_var($val, FILTER_SANITIZE_NUMBER_INT);
+			return floatval($val);
 		} else if(is_string($val)){
 			$str = trim($val);
 			if(!$str) return null;
@@ -45,13 +45,13 @@ class Sanitize {
 		}
 	}
 
-	public static function int(Mixed $val): int|string{
-		if(!$val) return '';
+	public static function int(Mixed $val): int|null{
+		if(!$val) return null;
 		return filter_var($val, FILTER_SANITIZE_NUMBER_INT);
 	}
 
 	public static function float(Mixed $val): float {
-		if(is_numeric($val)) return $val;
+		if(is_numeric($val)) return floatval($val);
 	}
 
 	public static function inString(Mixed $val): string|null {
