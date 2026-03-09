@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT . "/classes/Database.php");
+include_once($SERVER_ROOT . "/classes/utilities/Database.php");
 
 /*This is
  * This is a static class used to make santizing variables "in" to the databse and "out" to the client webpage easy to use, compact, and secure

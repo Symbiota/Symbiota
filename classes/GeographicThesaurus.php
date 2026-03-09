@@ -1,7 +1,7 @@
 <?php
 include_once($SERVER_ROOT . '/classes/Manager.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
-include_once($SERVER_ROOT . '/classes/Database.php');
+include_once($SERVER_ROOT . '/classes/utilities/Database.php');
 
 class GeographicThesaurus extends Manager {
 	const US_STATE_LIST = array('AK' => 'Alaska', 'AL' => 'Alabama', 'AZ' => 'Arizona', 'AR' => 'Arkansas', 'CA' => 'California',

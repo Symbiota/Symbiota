@@ -1,6 +1,6 @@
 <?php
 global $SERVER_ROOT, $LANG_TAG, $LANG, $CLIENT_ROOT;
-include_once($SERVER_ROOT.'/classes/Database.php');
+include_once($SERVER_ROOT.'/classes/utilities/Database.php');
 include_once($SERVER_ROOT.'/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT.'/classes/utilities/Language.php');
 include_once($SERVER_ROOT.'/classes/CollectionFormManager.php');

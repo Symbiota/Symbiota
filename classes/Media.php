@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT . "/classes/Database.php");
+include_once($SERVER_ROOT . "/classes/utilities/Database.php");
 include_once($SERVER_ROOT . "/classes/StorageStrategy.php");
 include_once($SERVER_ROOT . "/classes/MediaType.php");
 include_once($SERVER_ROOT . "/classes/MediaException.php");
