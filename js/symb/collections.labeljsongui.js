@@ -28,6 +28,7 @@ const fieldProps = [
     id: "othercatalognumbers",
     group: "specimen",
   },
+  { block: "labelBlock", name: "Taxon Order", id: "taxonorder", group: "taxon" },
   { block: "labelBlock", name: "Family", id: "family", group: "taxon" },
   {
     block: "labelBlock",
