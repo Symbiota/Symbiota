@@ -380,7 +380,8 @@ class OccurrenceLabel {
 				'disposition' => 'o.disposition',
 				'storageLocation' => 'storagelocation',
 				'duplicateQuantity' => 'o.duplicatequantity',
-				'dateLastModified' => 'o.datelastmodified'
+				'dateLastModified' => 'o.datelastmodified',
+				'labelProject' => 'o.labelproject'
 			);
 		}
 	}
