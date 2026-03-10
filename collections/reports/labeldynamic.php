@@ -179,7 +179,7 @@ if($SYMB_UID){
 							echo '<div class="row">';
 							$rowCnt++;
 						}
-						echo '<div class="label'.(isset($targetLabelFormatArr['labelDiv']['className'])?' '.$targetLabelFormatArr['labelDiv']['className']:'').'">';
+						echo '<div style="position:relative;" class="label'.(isset($targetLabelFormatArr['labelDiv']['className'])?' '.$targetLabelFormatArr['labelDiv']['className']:'').'">';
 						$attrStr = 'class="label-header';
 						if(isset($targetLabelFormatArr['labelHeader']['className'])) $attrStr .= ' '.$targetLabelFormatArr['labelHeader']['className'];
 						$attrStr .= '"';
