@@ -231,7 +231,7 @@ class OccurrenceLabel {
 	private function appendTaxonomy(&$labelArr, $tidArr){
 		if($tidArr){
 			$taxonArr = array();
-			$parentArr = array(30 => 'taxonphylum', 60 => 'taxonclass', 100 => 'taxonorder');
+			$parentArr = array(30 => 'phylum', 60 => 'class', 70 => 'subclass', 100 => 'order', 150 => 'subfamily');
 			//Extract higher taxonomy from database
 			foreach($parentArr as $rankID => $rankName){
 				$sql = 'SELECT e.tid, p.sciname
@@ -313,7 +313,6 @@ class OccurrenceLabel {
 				'collid' => 'o.collid',
 				'catalogNumber' => 'o.catalognumber',
 				'otherCatalogNumbers' => 'o.othercatalognumbers',
-				'family' => 'o.family',
 				'scientificName' => 'o.sciname AS scientificname',
 				'scientificName_with_author' => 'CONCAT_WS(" ",o.sciname,o.scientificnameauthorship) AS scientificname_with_author',
 				'tidInterpreted' => 'o.tidInterpreted',
@@ -326,9 +325,12 @@ class OccurrenceLabel {
 				'scientificNameAuthorship'=>'o.scientificnameauthorship',
 				'parentAuthor'=>'pt.author AS parentauthor',
 				'kingdom' => 't.kingdomName as kingdom',
-				'taxonPhylum' => '"" as taxonphylum',
-				'taxonClass' => '"" as taxonclass',
-				'taxonOrder' => '"" as taxonorder',
+				'phylum' => '"" as phylum',
+				'class' => '"" as class',
+				'subclass' => '"" as subclass',
+				'order' => '"" as order',
+				'family' => 'o.family',
+				'subfamily' => '"" as subfamily',
 				'identifiedBy'=>'o.identifiedby',
 				'dateIdentified' => 'o.dateidentified',
 				'identificationReferences' => 'o.identificationreferences',
