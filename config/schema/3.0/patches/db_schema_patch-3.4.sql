@@ -54,10 +54,19 @@ ALTER TABLE `geographicthesaurus`
   ADD INDEX `FK_geothes_geolevel` (`geoLevel` ASC);
 
 #Fixes issues where Florida counties were linked to Uruguay/Florida  
-UPDATE IGNORE geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
-  INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
-  SET c.parentID = (SELECT c.geoThesID FROM geographicthesaurus c INNER JOIN geographicthesaurus p ON c.parentID = p.geoThesID WHERE c.geoTerm = "Florida" AND p.geoTerm = "United States")
-  WHERE g.geoTerm IN("Florida") AND p.geoTerm = "Uruguay";
+UPDATE geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
+INNER JOIN geographicthesaurus c ON g.geoThesID = c.parentID
+SET c.parentID = (
+    SELECT geoThesID
+    FROM (
+        SELECT c.geoThesID
+        FROM geographicthesaurus c
+        INNER JOIN geographicthesaurus p ON c.parentID = p.geoThesID
+        WHERE c.geoTerm = 'Florida' AND p.geoTerm = 'United States'
+    ) AS t
+)
+WHERE g.geoTerm = 'Florida'
+AND p.geoTerm = 'Uruguay';
 
 DELETE c.* 
   FROM geographicthesaurus g INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
