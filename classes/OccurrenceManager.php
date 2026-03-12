@@ -21,7 +21,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 	private $LANG;
 	protected $associationManager=null;
 	private $applyFullProtections = true;
-	protected $fullTextMinTokenLength = 3; //default for MariaDB
+	protected $fullTextMinTokenLength = 3; //default for MariaDB. TODO: make this configurable at runtime.
 
 	public function __construct($type='readonly'){
 		parent::__construct($type);
