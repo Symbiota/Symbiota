@@ -191,8 +191,6 @@ class UploadUtil {
 					throw new Exception($message);
 				}
 				throw new MediaException(MediaException::ExceedMaxSize, $maxSize);
-			case UPLOAD_ERR_NO_FILE:
-				throw new MediaException(MediaException::NoFileUploaded);
 			case UPLOAD_ERR_PARTIAL:
 				throw new MediaException(MediaException::PartialUpload);
 			case UPLOAD_ERR_NO_TMP_DIR:
@@ -201,8 +199,6 @@ class UploadUtil {
 				throw new MediaException(MediaException::FilepathNotWritable);
 			case UPLOAD_ERR_EXTENSION:
 				throw new MediaException(MediaException::UploadStoppedByExtension);
-			default:
-				throw new MediaException(MediaException::UnknownUploadError);
 		}
 	}
 	/**
