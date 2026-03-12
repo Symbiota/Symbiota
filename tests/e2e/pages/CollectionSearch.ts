@@ -127,6 +127,6 @@ class SymbCollectionSearchPage extends CollectionSearchPage {
 	}
 
 	async goto(): Promise<void> {
-		await this.page.goto('http://localhost/collections/search/index.php')
+		await this.page.goto('/collections/search/index.php')
 	};
 }
