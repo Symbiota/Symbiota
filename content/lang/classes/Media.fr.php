@@ -22,5 +22,7 @@ $LANG['PARTIAL_UPLOAD'] = 'Le fichier n\'a été que partiellement téléchargé
 $LANG['MISSING_TEMP_DIR'] = 'Dossier temporaire manquant';
 $LANG['UPLOAD_STOPPED_BY_EXTENSION'] = 'Une extension PHP a interrompu le téléchargement du fichier';
 $LANG['UNKNOWN_UPLOAD_ERROR'] = 'Erreur de téléchargement de fichier inconnue';
+$LANG["FILE_SIZE"] = 'Votre fichier pèse';
+$LANG["EXCEEDS"] = 'ce qui dépasse la taille maximale autorisée de';
 
 ?>

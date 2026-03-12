@@ -22,5 +22,7 @@ $LANG['PARTIAL_UPLOAD'] = 'El archivo subido solo se cargó parcialmente';
 $LANG['MISSING_TEMP_DIR'] = 'Falta una carpeta temporal';
 $LANG['UPLOAD_STOPPED_BY_EXTENSION'] = 'Una extensión PHP detuvo la carga del archivo';
 $LANG['UNKNOWN_UPLOAD_ERROR'] = 'Error desconocido al cargar el archivo';
+$LANG["FILE_SIZE"] = 'Su archivo es de';
+$LANG["EXCEEDS"] = 'lo que excede el tamaño máximo permitido de';
 
 ?>

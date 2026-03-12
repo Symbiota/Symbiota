@@ -22,5 +22,7 @@ $LANG['PARTIAL_UPLOAD'] = 'The uploaded file was only partially uploaded';
 $LANG['MISSING_TEMP_DIR'] = 'Missing a temporary folder';
 $LANG['UPLOAD_STOPPED_BY_EXTENSION'] = 'A PHP extension stopped the file upload';
 $LANG['UNKNOWN_UPLOAD_ERROR'] = 'Unknown file upload error';
+$LANG["FILE_SIZE"] = 'Your file is';
+$LANG["EXCEEDS"] = 'which exceeds the maximum allowed size of';
 
 ?>

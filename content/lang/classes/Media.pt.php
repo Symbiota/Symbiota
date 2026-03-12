@@ -23,5 +23,7 @@ $LANG['PARTIAL_UPLOAD'] = 'O ficheiro enviado foi carregado apenas parcialmente'
 $LANG['MISSING_TEMP_DIR'] = 'Pasta temporária em falta';
 $LANG['UPLOAD_STOPPED_BY_EXTENSION'] = 'Uma extensão PHP interrompeu o envio do ficheiro';
 $LANG['UNKNOWN_UPLOAD_ERROR'] = 'Erro desconhecido no envio do ficheiro';
+$LANG["FILE_SIZE"] = 'O seu ficheiro tem';
+$LANG["EXCEEDS"] = 'o que excede o tamanho máximo permitido de';
 
 ?>

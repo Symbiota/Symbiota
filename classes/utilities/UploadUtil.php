@@ -184,6 +184,12 @@ class UploadUtil {
 			case UPLOAD_ERR_INI_SIZE:
 			case UPLOAD_ERR_FORM_SIZE:
 				$maxSize = self::formatBytes(min(self::getMaximumUploadSize(),$_POST['MAX_FILE_SIZE']));
+				if ($_POST['file_size']){
+					global $LANG;
+					$fileSize = self::formatBytes($_POST['file_size']);
+					$message = $LANG["FILE_SIZE"] . " " . $fileSize . ", " . $LANG["EXCEEDS"] . " " . $maxSize . ".";
+					throw new Exception($message);
+				}
 				throw new MediaException(MediaException::ExceedMaxSize, $maxSize);
 			case UPLOAD_ERR_NO_FILE:
 				throw new MediaException(MediaException::NoFileUploaded);
