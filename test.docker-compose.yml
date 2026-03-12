@@ -4,9 +4,10 @@ services:
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     restart: 'always'
+    platform: linux/amd64
     image: 'muchquakz/symbiota-testing:latest'
     ports:
-      - 80:80
+      - 8080:80
     volumes:
       # Binds Symbiota Code to Container
       - .:/var/www/html/
@@ -23,7 +24,7 @@ services:
     expose:
         - 3306
     ports:
-        - '3306:3306'
+        - '3307:3306'
     volumes:
       # Setup Geographic thesaurus data file (gets referenced in 3.4)
       - ./config/schema/3.0/data/geothesaurus.sql:/data/geothesaurus.sql
