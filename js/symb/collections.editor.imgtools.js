@@ -187,10 +187,7 @@ async function ocrVV(ocrButton, imgCnt){
 	// Get user-selected parameters
 	const prompt = $('#prompt').val();
 	const llm_model = $('#llm-model').val();
-    const engines = [];
-    $('input[name="engines"]:checked').each(function() {
-        engines.push($(this).attr('id'));
-    });
+    const engines = $('#engines').val();
     const ocrOnly = $('#ocrOnly').is(':checked');
 
     // Show busy indicator
