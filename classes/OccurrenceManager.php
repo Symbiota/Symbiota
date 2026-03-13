@@ -21,6 +21,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 	private $LANG;
 	protected $associationManager=null;
 	private $applyFullProtections = true;
+	protected $fullTextMinTokenLength = 3; //default for MariaDB. TODO: make this configurable at runtime.
 
 	public function __construct($type='readonly'){
 		parent::__construct($type);
@@ -214,7 +215,15 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 				else{
 					//$tempSqlArr[] = '(o.municipality LIKE "'.$value.'%")';
 					if(strpos($value, ' ')){
-						$tempSqlArr[] = '(MATCH(o.locality) AGAINST("+'.str_replace(' ', ' +', $value).'" IN BOOLEAN MODE) AND o.locality LIKE "%'.$value.'%")';
+						//BUGFIX: MySQL fullltext index does not include strings shorter than a configurable length (likely < 3)  Need to remove these sub strings from the AGAINST clause
+						$against_values  = preg_replace('/\b[\w]{1,' . ($this->fullTextMinTokenLength-1) . '}\b/u', ' ', $value);
+						$against_values  = trim(preg_replace('/\s+/', ' ', $against_values));
+						if($against_values){
+							$tempSqlArr[] = '(MATCH(o.locality) AGAINST("+' . str_replace(' ', ' +', $against_values) . '" IN BOOLEAN MODE) AND o.locality LIKE "%' . $value . '%")';
+						}
+						else{
+							$tempSqlArr[] = '(o.locality LIKE "%' . $value . '%")';
+						}
 					}
 					else{
 						$singleWords[] = $value;
@@ -222,6 +231,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 					$tempTermArr[] = $value;
 				}
 			}
+			//TODO: should we handle single words that are 2 characters or less
 			if($singleWords) $tempSqlArr[] = '(MATCH(o.locality) AGAINST("'.implode(' ', $singleWords).'"))';
 			$sqlWhere .= 'AND ('.implode(' OR ', $tempSqlArr).') ';
 			if($tempTermArr) $this->displaySearchArr[] = implode(' OR ', $tempTermArr);
@@ -944,10 +954,10 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 
 	private function getDatasetTitle($dsIdStr){
 		$retStr = '';
-		$sql = 'SELECT name FROM omoccurdatasets WHERE datasetid IN('.$dsIdStr.')';
+		$sql = 'SELECT IFNULL(datasetName, name) as datasetName FROM omoccurdatasets WHERE datasetid IN('.$dsIdStr.')';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retStr .= ', '.$r->name;
+			$retStr .= ', '.$r->datasetName;
 		}
 		$rs->free();
 		return trim($retStr,', ');

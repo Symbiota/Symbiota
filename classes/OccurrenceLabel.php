@@ -147,67 +147,117 @@ class OccurrenceLabel {
 	public function getLabelArray($occidArr, $speciesAuthors = false) {
 		$retArr = array();
 		if ($occidArr) {
-			$authorArr = array();
 			$occidStr = implode(',', $occidArr);
 			if (!preg_match('/^[,\d]+$/', $occidStr)) return null;
-			$sqlWhere = 'WHERE (o.occid IN(' . $occidStr . ')) ';
-			//Get species authors for infraspecific taxa
-			$sql1 = 'SELECT o.occid, t2.author ' .
-				'FROM taxa t INNER JOIN omoccurrences o ON t.tid = o.tidinterpreted ' .
-				'INNER JOIN taxstatus ts ON t.tid = ts.tid ' .
-				'INNER JOIN taxa t2 ON ts.parenttid = t2.tid ' .
-				$sqlWhere . ' AND t.rankid > 220 AND ts.taxauthid = 1 ';
-			if (!$speciesAuthors) $sql1 .= 'AND t.unitname2 = t.unitname3 ';
-			if ($rs1 = $this->conn->query($sql1)) {
-				while ($row1 = $rs1->fetch_object()) {
-					$authorArr[$row1->occid] = $row1->author ?? '';
-				}
-				$rs1->free();
-			}
+			$authorArr = $this->getParentAuthors($occidStr, $speciesAuthors);
+			$tidArr = array();
+
 			//Get occurrence records
 			$this->setLabelFieldArr();
-			$sql2 = 'SELECT ' . implode(',', $this->labelFieldArr) . ' FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.tid LEFT JOIN taxstatus ts ON ts.tid = o.tidinterpreted LEFT JOIN taxstatus pts ON ts.parenttid = pts.tid LEFT JOIN taxa pt ON pts.tid = pt.tid '.$sqlWhere;
-			if($rs2 = $this->conn->query($sql2)){
-				while($row2 = $rs2->fetch_assoc()){
-					$occid = $row2['occid'];
-					foreach ($row2 as $fieldName => $fieldValue) {
+			$sql = 'SELECT ' . implode(',', $this->labelFieldArr) . '
+				FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.tid
+				LEFT JOIN taxstatus ts ON ts.tid = o.tidinterpreted
+				LEFT JOIN taxstatus pts ON ts.parenttid = pts.tid
+				LEFT JOIN taxa pt ON pts.tid = pt.tid
+				WHERE (o.occid IN(' . $occidStr . ')) ';
+			if($rs = $this->conn->query($sql)){
+				while($r = $rs->fetch_assoc()){
+					$occid = $r['occid'];
+					foreach ($r as $fieldName => $fieldValue) {
 						$retArr[$occid][strtolower($fieldName)] = $fieldValue ?? '';
 					}
 					if (array_key_exists($occid, $authorArr)) {
 						$retArr[$occid]['parentauthor'] = $authorArr[$occid];
 					}
+					if($r['tidInterpreted']) $tidArr[$r['tidInterpreted']] = $r['tidInterpreted'];
 				}
-				$rs2->free();
+				$rs->free();
 			}
-			//Append identifiers indexed within omoccurridentifier
-			if ($retArr) {
-				$sql = 'SELECT occid, identifiername, identifiervalue FROM omoccuridentifiers WHERE occid IN(' . implode(',', array_keys($retArr)) . ') ORDER BY sortBy';
+			$this->appendIdentifiers($retArr);
+			$this->appendTaxonomy($retArr, $tidArr);
+		}
+		return $retArr;
+	}
+
+	private function getParentAuthors($occidStr, $speciesAuthors){
+		//Get species authors for infraspecific taxa
+		$retArr = array();
+		$sql = 'SELECT o.occid, t2.author
+			FROM taxa t INNER JOIN omoccurrences o ON t.tid = o.tidinterpreted
+			INNER JOIN taxstatus ts ON t.tid = ts.tid
+			INNER JOIN taxa t2 ON ts.parenttid = t2.tid
+			WHERE (o.occid IN(' . $occidStr . '))  AND t.rankid > 220 AND ts.taxauthid = 1 ';
+		if (!$speciesAuthors) $sql .= 'AND t.unitname2 = t.unitname3 ';
+		if ($rs = $this->conn->query($sql)) {
+			while ($r = $rs->fetch_object()) {
+				$retArr[$r->occid] = $r->author ?? '';
+			}
+			$rs->free();
+		}
+		return $retArr;
+	}
+
+	private function appendIdentifiers(&$labelArr){
+		//Append identifiers indexed within omoccurridentifier
+		if ($labelArr) {
+			$sql = 'SELECT occid, identifiername, identifiervalue FROM omoccuridentifiers WHERE occid IN(' . implode(',', array_keys($labelArr)) . ') ORDER BY sortBy';
+			if ($rs = $this->conn->query($sql)) {
+				$otherCatArr = array();
+				$cnt = 0;
+				while ($r = $rs->fetch_object()) {
+					$otherCatArr[$r->occid][$cnt]['v'] = $r->identifiervalue;
+					$otherCatArr[$r->occid][$cnt]['n'] = $r->identifiername ?? '';
+					$cnt++;
+				}
+				$rs->free();
+				foreach ($otherCatArr as $occid => $ocnArr) {
+					$verbIdStr = '';
+					if(!empty($labelArr[$occid]['othercatalognumbers'])) $verbIdStr = $labelArr[$occid]['othercatalognumbers'];
+					$ocnStr = '';
+					foreach ($ocnArr as $idArr) {
+						$ocnStr .= '; ' . ($idArr['n'] ? $idArr['n'] . ': ' : '') . $idArr['v'];
+						$verbIdStr = str_ireplace($idArr['n'], '', $verbIdStr);
+						$verbIdStr = str_ireplace($idArr['v'], '', $verbIdStr);
+					}
+					$ocnStr = trim($ocnStr, ';,: ');
+					$verbIdStr = trim($verbIdStr, ';,: ');
+					if ($verbIdStr) $ocnStr = $ocnStr . '; ' . $verbIdStr;
+					$labelArr[$occid]['othercatalognumbers'] = $ocnStr;
+				}
+			}
+		}
+	}
+
+	private function appendTaxonomy(&$labelArr, $tidArr){
+		if($tidArr){
+			$taxonArr = array();
+			$parentArr = array(30 => 'phylum', 60 => 'class', 70 => 'subclass', 100 => 'order', 150 => 'subfamily');
+			//Extract higher taxonomy from database
+			foreach($parentArr as $rankID => $rankName){
+				$sql = 'SELECT e.tid, p.sciname
+					FROM taxaenumtree e INNER JOIN taxa p ON e.parentTid = p.tid
+					WHERE e.tid IN(' . implode(',', $tidArr) . ') AND e.taxAuthID = 1 AND p.rankid = ' . $rankID;
 				if ($rs = $this->conn->query($sql)) {
-					$otherCatArr = array();
-					$cnt = 0;
 					while ($r = $rs->fetch_object()) {
-						$otherCatArr[$r->occid][$cnt]['v'] = $r->identifiervalue;
-						$otherCatArr[$r->occid][$cnt]['n'] = $r->identifiername ?? '';
-						$cnt++;
+						$taxonArr[$r->tid][$rankName] = $r->sciname;
 					}
 					$rs->free();
-					foreach ($otherCatArr as $occid => $ocnArr) {
-						$verbIdStr = $retArr[$occid]['othercatalognumbers'] ?? '';
-						$ocnStr = '';
-						foreach ($ocnArr as $idArr) {
-							$ocnStr .= '; ' . ($idArr['n'] ? $idArr['n'] . ': ' : '') . $idArr['v'];
-							$verbIdStr = str_ireplace($idArr['n'], '', $verbIdStr);
-							$verbIdStr = str_ireplace($idArr['v'], '', $verbIdStr);
+				}
+			}
+			if($taxonArr){
+				//Insert higher taxonomy into label output array
+				foreach($labelArr as $occid => $occurArr){
+					if($occurArr['tidinterpreted']){
+						$tid = $occurArr['tidinterpreted'];
+						if(!empty($taxonArr[$tid])){
+							foreach($taxonArr[$tid] as $rankName => $sciname){
+								$labelArr[$occid][$rankName] = $sciname;
+							}
 						}
-						$ocnStr = trim($ocnStr, ';,: ');
-						$verbIdStr = trim($verbIdStr, ';,: ');
-						if ($verbIdStr) $ocnStr = $ocnStr . '; ' . $verbIdStr;
-						$retArr[$occid]['othercatalognumbers'] = $ocnStr;
 					}
 				}
 			}
 		}
-		return $retArr;
 	}
 
 	public function exportLabelCsvFile($postArr) {
@@ -263,9 +313,9 @@ class OccurrenceLabel {
 				'collid' => 'o.collid',
 				'catalogNumber' => 'o.catalognumber',
 				'otherCatalogNumbers' => 'o.othercatalognumbers',
-				'family' => 'o.family',
 				'scientificName' => 'o.sciname AS scientificname',
 				'scientificName_with_author' => 'CONCAT_WS(" ",o.sciname,o.scientificnameauthorship) AS scientificname_with_author',
+				'tidInterpreted' => 'o.tidInterpreted',
 				'genus'=>'t.unitName1 AS genus',
 				'speciesName' => 'TRIM(CONCAT_WS(" ",t.unitind1,t.unitname1,t.unitind2,t.unitname2)) AS speciesname',
 				'taxonRank' => 't.unitind3 AS taxonrank',
@@ -274,6 +324,13 @@ class OccurrenceLabel {
 				'infraSpecificEpithet'=>'t.unitname3 AS infraspecificepithet',
 				'scientificNameAuthorship'=>'o.scientificnameauthorship',
 				'parentAuthor'=>'pt.author AS parentauthor',
+				'kingdom' => 't.kingdomName as kingdom',
+				'phylum' => '"" as phylum',
+				'class' => '"" as `class`',
+				'subclass' => '"" as subclass',
+				'order' => '"" as `order`',
+				'family' => 'o.family',
+				'subfamily' => '"" as subfamily',
 				'identifiedBy'=>'o.identifiedby',
 				'dateIdentified' => 'o.dateidentified',
 				'identificationReferences' => 'o.identificationreferences',
@@ -325,7 +382,8 @@ class OccurrenceLabel {
 				'disposition' => 'o.disposition',
 				'storageLocation' => 'storagelocation',
 				'duplicateQuantity' => 'o.duplicatequantity',
-				'dateLastModified' => 'o.datelastmodified'
+				'dateLastModified' => 'o.datelastmodified',
+				'labelProject' => 'o.labelproject'
 			);
 		}
 	}
@@ -377,10 +435,10 @@ class OccurrenceLabel {
 
 	private function fetchGlobalLabelJson() {
 		$status = false;
-		$sql = 'SELECT dynamicProperties FROM adminproperties WHERE attributeName = ?';
+		$sql = 'SELECT dynamicProperties FROM adminproperties WHERE propName = ?';
 		if ($stmt = $this->conn->prepare($sql)) {
-			$attributeName = 'LabelFormatJson';
-			$stmt->bind_param('s', $attributeName);
+			$propName = 'LabelFormatJson';
+			$stmt->bind_param('s', $propName);
 			$stmt->execute();
 			$stmt->bind_result($jsonResult);
 			$stmt->fetch();
@@ -674,27 +732,27 @@ class OccurrenceLabel {
 		$status = false;
 
 		$jsonDynProps = $isAlreadyDecoded ? $dataObj : json_encode($dataObj, JSON_HEX_APOS);
-		$attributeName = 'LabelFormatJson';
-		$checkSql = "SELECT COUNT(*) FROM adminproperties WHERE attributeName = ?";
+		$propName = 'LabelFormatJson';
+		$checkSql = "SELECT COUNT(*) FROM adminproperties WHERE propName = ?";
 		if ($checkStmt = $this->conn->prepare($checkSql)) {
-			$checkStmt->bind_param('s', $attributeName);
+			$checkStmt->bind_param('s', $propName);
 			$checkStmt->execute();
 			$checkStmt->bind_result($count);
 			$checkStmt->fetch();
 			$checkStmt->close();
 
 			if ($count > 0) {
-				$updateSql = "UPDATE adminproperties SET dynamicProperties = ? WHERE attributeName = ?";
+				$updateSql = "UPDATE adminproperties SET dynamicProperties = ? WHERE propName = ?";
 				if ($updateStmt = $this->conn->prepare($updateSql)) {
-					$updateStmt->bind_param('ss', $jsonDynProps, $attributeName);
+					$updateStmt->bind_param('ss', $jsonDynProps, $propName);
 					$updateStmt->execute();
 					$status = !$updateStmt->error;
 					$updateStmt->close();
 				}
 			} else {
-				$insertSql = "INSERT INTO adminproperties (attributeName, attributeValue, dynamicProperties) VALUES (?, ?, ?)";
+				$insertSql = "INSERT INTO adminproperties (propName, propValue, dynamicProperties) VALUES (?, ?, ?)";
 				if ($insertStmt = $this->conn->prepare($insertSql)) {
-					$insertStmt->bind_param('sss', $attributeName, $attributeName, $jsonDynProps);
+					$insertStmt->bind_param('sss', $propName, $propName, $jsonDynProps);
 					$insertStmt->execute();
 					$status = !$insertStmt->error;
 					$insertStmt->close();
@@ -830,7 +888,7 @@ class OccurrenceLabel {
 	public function getDatasetProjects() {
 		$retArr = array();
 		if ($this->collid) {
-			$sql = 'SELECT DISTINCT ds.datasetid, ds.name ' .
+			$sql = 'SELECT DISTINCT ds.datasetid, IFNULL(ds.datasetName, ds.name) as datasetName ' .
 				'FROM omoccurdatasets ds INNER JOIN userroles r ON ds.datasetid = r.tablepk ' .
 				'INNER JOIN omoccurdatasetlink dl ON ds.datasetid = dl.datasetid ' .
 				'INNER JOIN omoccurrences o ON dl.occid = o.occid ' .
@@ -838,7 +896,7 @@ class OccurrenceLabel {
 			if ($this->collArr['colltype'] == 'General Observations' && !array_key_exists('extendedsearch', $GLOBALS['_POST'])) $sql .= 'AND (o.observeruid = ' . $GLOBALS['SYMB_UID'] . ') ';
 			$rs = $this->conn->query($sql);
 			while ($r = $rs->fetch_object()) {
-				$retArr[$r->datasetid] = $r->name;
+				$retArr[$r->datasetid] = $r->datasetName;
 			}
 			$rs->free();
 		}
@@ -911,7 +969,7 @@ class OccurrenceLabel {
 				if($parentAuthor){
 					$currentTxt = htmlspecialchars($parentAuthor) . ' ';
 					$textrun->addText($currentTxt, 'scientificnameauthFont');
-				} 
+				}
 				$currentTxt = $queryVal . ' ';
 				$textrun->addText($currentTxt, 'scientificnameinterFont');
 				if($shouldAddNextElement){
@@ -919,7 +977,7 @@ class OccurrenceLabel {
 					$textrun->addText($currentTxt, 'scientificnameFont');
 				}
 			}
-			
+
 		}
 	}
 }

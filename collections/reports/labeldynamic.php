@@ -48,7 +48,7 @@ if($outputType == 'word'){
 	header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 	header("content-disposition: attachment;filename=labels.doc");
 }
-elseif($action == 'Export to CSV'){
+elseif($action == 'csvExport'){
 	$labelManager->exportLabelCsvFile($_POST);
 	exit;
 }

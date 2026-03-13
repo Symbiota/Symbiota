@@ -619,7 +619,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 					<input type="checkbox" id="characters" class="accordion-selector" />
 
 					<!-- Character header -->
-					<label for="characters" class="accordion-header"><?php echo $LANG['CHARACTERS'] ?> <a href="https://docs.symbiota.org/docs/User_Guide/searching_records#taxon-character-criteria" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
+					<label for="characters" class="accordion-header"><?php echo $LANG['CHARACTERS'] ?> <a href="https://docs.symbiota.org/User_Guide/searching_records/#taxon-character-criteria" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
 
 					<div id="search-form-characters" class="content">
 						<div>
@@ -851,13 +851,17 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 	const collectionSource = <?php echo isset($collectionSource) ? json_encode($collectionSource) : 'null'; ?>;
 	const collIdsFromUrl = <?php echo isset($collIdsFromUrl) ? json_encode($collIdsFromUrl) : 'null'; ?>;
 	if (collIdsFromUrl && Array.isArray(collIdsFromUrl) && collIdsFromUrl.length > 0) {
-		uncheckEverything();
+		uncheckEverythingInCollections();
 		checkTheCollectionsThatShouldBeChecked(collIdsFromUrl);
+		closeAllCategories();
+        expandCategoriesWithSomeCheckedChildren();
 	}
 	const sanitizedCollectionSource = collectionSource.replace('db=', '');
 	if (collectionSource) {
-		uncheckEverything();
-		checkTheCollectionsThatShouldBeChecked(sanitizedCollectionSource);
+		uncheckEverythingInCollections();
+		checkTheCollectionsThatShouldBeChecked([sanitizedCollectionSource]);
+		closeAllCategories();
+        expandCategoriesWithSomeCheckedChildren();
 		updateChip();
 	}
 

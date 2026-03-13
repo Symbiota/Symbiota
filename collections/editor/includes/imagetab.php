@@ -66,6 +66,13 @@ $creatorArray = Media::getCreatorArray();
 		}
 		return true;
 	}
+
+	document.getElementById("imgfile").addEventListener("change", function () {
+		const file = this.files[0];
+		if (file) {
+			document.getElementById("file_size").value = file.size;
+		}
+	});
 </script>
 <div id="imagediv" style="width:795px;">
 	<div style="float:right;cursor:pointer;" onclick="toggle('addimgdiv');" title="<?php echo $LANG['ADD_IMG']; ?>">
@@ -83,7 +90,8 @@ $creatorArray = Media::getCreatorArray();
 						<!-- following line sets MAX_FILE_SIZE (must precede the file input field)  -->
 						<input type='hidden' name='MAX_FILE_SIZE' value='20000000' />
 						<div>
-							<input name='imgfile' type='file' accept="<?= implode(",", $ALLOWED_MEDIA_MIME_TYPES) ?>" size='70'/>
+							<input name='imgfile' id="imgfile" type='file' accept="<?= implode(",", $ALLOWED_MEDIA_MIME_TYPES) ?>" size='70'/>
+							<input type="hidden" name="file_size" id="file_size">
 						</div>
 						<div style="float:right;text-decoration:underline;font-weight:bold;">
 							<a href="#" onclick="toggle('targetdiv');return false;"><?php echo $LANG['ENTER_URL']; ?></a>

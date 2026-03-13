@@ -46,6 +46,8 @@ if ($SYMB_UID) {
 	?>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=3" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/collections.list.js?ver=2" type="text/javascript"></script>
 	<script>
 
 		function toggleById(target) {
@@ -251,6 +253,9 @@ if ($SYMB_UID) {
 		<b><?= $LANG['COLL_PROFILE'] ?></b>
 	</div>
 	<div role="main" id="innertext" style="padding-top:0">
+		<div id="all_collections_parent_container" data-config='<?= json_encode([
+		'CURRENT_URL' => $_SERVER['REQUEST_URI'],
+		]) ?>'></div>
 		<?php
 		if ($collid && !$collid == 0){
 			?>
@@ -934,7 +939,7 @@ if ($SYMB_UID) {
 			}
 			?>
 			<div style="margin-bottom: 2rem;">
-				<form name="coll-search-form" action="<?= $actionPage ?>" method="get">
+				<form id="coll-search-form" name="coll-search-form" action="<?= $actionPage ?>" method="get" onsubmit="submitAdvancedSearchForm(event, '<?= $actionPage ?>')">
 					<input name="db" value="<?= $collid ?>" type="hidden">
 					<button type="submit" class="button button-primary">
 						<?= $LANG['ADVANCED_SEARCH_THIS_COLLECTION'] ?>
