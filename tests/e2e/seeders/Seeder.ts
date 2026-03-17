@@ -2,14 +2,56 @@ import mysql from 'mysql2/promise';
 import {test as base} from './../fixtures/db'
 
 export type Taxon = {
-	tid?: string,
-	sciname: string,
+	tid?: number,
+	kingdomName: string,
+	rankID: number,
+	sciName: string,
+	unitInd1?: string,
 	unitName1: string,
+	unitInd2?: string,
+	unitName2?: string,
+	unitInd3?: string,
+	unitName3?: string,
+	cultivarEpithet?: string,
+	tradeName?: string,
+	author: string,
+	phyloSortSequence?: number,
+	reviewStatus?: number,
+	displayStatus?: number,
+	isLegitimate?: number,
+	nomenclaturalStatus?: string,
+	nomenclaturalCode?: string,
+	statusNotes?: string,
+	source?: string,
+	sourceIdentifier?: string,
+	notes?: string,
+	hybrid?: string,
+	securityStatus: number,
+	modifiedUid?: number,
+	modifiedTimeStamp?: string,
+	initialTimeStamp?: string,
 }
 
 export type TaxonVernacular = {
 	tid?: number,
 	vernacularName: string,
+}
+
+export type TaxStatus = {
+	tid: number,
+	tidaccepted: number,
+	taxauthid: number,
+	parenttid?: number,
+	family?: string,
+	taxonomicStatus?: string,
+	taxonomicSource?: string,
+	sourceIdentifier?: string,
+	unacceptabilityReason?: string,
+	notes?: string,
+	sortSequence?: number,
+	modifiedUid?: number,
+	modifiedTimeStamp?: string,
+	initialTimeStamp?: string,
 }
 
 export type Occurrence = {
@@ -95,6 +137,7 @@ export enum Tables {
 	Taxa = 'taxa',
 	TaxaEnumTree = 'taxaenumtree',
 	TaxaVernaculars = 'taxavernaculars',
+	TaxStatus = 'taxstatus',
 	Media = 'media',
 }
 
@@ -119,6 +162,9 @@ export class Seeder {
 			case Tables.TaxaVernaculars:
 				idField = 'vid';
 				break;
+			case Tables.TaxStatus:
+				idField = 'tid';
+				break;
 			default:
 				return;
 		}
@@ -128,8 +174,13 @@ export class Seeder {
 	}
 
 	private static async executor(model: Object, table: Tables, conn: mysql.Connection) {
-		const fields: Array<string> = Object.keys(model);
-		const values: Array<string|number|boolean> = Object.values(model);
+		// Filter out undefined values (e.g., when parenttid is not provided for [kingdom-level] taxon creation) and only include defined fields
+		const cleanedModel = Object.fromEntries(
+			Object.entries(model).filter(([_, value]) => value !== undefined)
+		);
+		
+		const fields: Array<string> = Object.keys(cleanedModel);
+		const values: Array<string|number|boolean|null> = Object.values(cleanedModel);
 		const sql = `INSERT INTO ${table} (${fields.join(',')}) VALUES (${'?, '.repeat(fields.length - 1) + '?'})`
 		await conn.execute(sql, values);
 		return this.lastId(conn);
@@ -159,6 +210,55 @@ export class Seeder {
 
 	static async taxon(data: Taxon, conn: mysql.Connection) {
 		return this.executor(data, Tables.Taxa, conn);
+	}
+
+	static async taxonStatus(data: TaxStatus, conn: mysql.Connection) {
+		return this.executor(data, Tables.TaxStatus, conn);
+	}
+
+	static async taxonWithStatus(taxonData: Taxon, parentTid?: number, conn?: mysql.Connection) {
+		try {
+			const tid = await this.taxon(taxonData, conn);
+			
+			const taxStatusData: TaxStatus = {
+				tid: tid,
+				tidaccepted: tid, // For accepted taxa, this is the same as tid
+				taxauthid: 1, // Default taxonomy authority
+				parenttid: parentTid || null,
+				family: taxonData.rankID === 140 ? taxonData.sciName : null // Set family if this is a family rank
+			};
+			
+			await this.taxonStatus(taxStatusData, conn);
+			return tid;
+		} catch (error: any) {
+			// If taxon already exists, try to find its ID
+			if (error.message && error.message.includes('Duplicate entry')) {
+				const [rows] = await conn.execute(
+					'SELECT tid FROM taxa WHERE sciname = ? AND rankid = ? AND kingdomname = ?',
+					[taxonData.sciName, taxonData.rankID, taxonData.kingdomName]
+				);
+				if (Array.isArray(rows) && rows.length > 0) {
+					return (rows[0] as any).tid;
+				}
+			}
+			throw error;
+		}
+	}
+
+	static async deleteTaxonIfExists(sciName: string, rankID: number, kingdomName: string, conn: mysql.Connection) {
+		try {
+			const [rows] = await conn.execute(
+				'SELECT tid FROM taxa WHERE sciname = ? AND rankid = ? AND kingdomname = ?',
+				[sciName, rankID, kingdomName]
+			);
+			if (Array.isArray(rows) && rows.length > 0) {
+				const tid = (rows[0] as any).tid;
+				await conn.execute('DELETE FROM taxstatus WHERE tid = ?', [tid]);
+				await conn.execute('DELETE FROM taxa WHERE tid = ?', [tid]);
+			}
+		} catch (error) {
+			// Ignore cleanup errors
+		}
 	}
 
 	static async taxonVernacular(data: TaxonVernacular, conn: mysql.Connection) {
