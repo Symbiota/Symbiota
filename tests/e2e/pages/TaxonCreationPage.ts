@@ -50,6 +50,19 @@ export abstract class TaxonCreationPage {
         return new SymbTaxonCreationPage(page);
     }
   }
+
+  async getElementByLabel(label: string): Promise<Locator> {
+    return (
+      this.page.locator(`[aria-label="${label}"]`) ||
+      this.page
+        .locator(`label:has-text("${label}")`)
+        .locator("input, select, textarea")
+    );
+  }
+
+  async getElementById(id: string): Promise<Locator> {
+    return this.page.locator(`#${id}`);
+  }
 }
 
 class SymbTaxonCreationPage extends TaxonCreationPage {
