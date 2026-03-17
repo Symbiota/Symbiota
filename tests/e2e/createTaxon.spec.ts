@@ -14,7 +14,9 @@ test("Quick parser populates species", async ({ page }) => {
     quickparser: "Testus taxonus",
   });
   await taxonCreationPage.parseButton.click({ force: true });
-  await expect(taxonCreationPage.taxonCreationForm.getFieldLocator('unitname3')).not.toBeVisible();
+  await expect(
+    taxonCreationPage.taxonCreationForm.getFieldLocator("unitname3"),
+  ).not.toBeVisible();
   const expectedPopulatedFields = {
     quickparser: "",
     rankid: "220",
@@ -36,10 +38,12 @@ test("Quick parser populates subspecies and the unitnam3 field appears", async (
     quickparser: "Testus taxonus testensis",
   });
   await taxonCreationPage.parseButton.click({ force: true });
-  await expect(taxonCreationPage.taxonCreationForm.getFieldLocator('unitname3')).toBeVisible();
+  await expect(
+    taxonCreationPage.taxonCreationForm.getFieldLocator("unitname3"),
+  ).toBeVisible();
   const expectedPopulatedFields = {
     quickparser: "",
-    rankid: "220",
+    rankid: "230",
     unitname1: "Testus",
     unitname2: "taxonus",
     unitname3: "testensis",
