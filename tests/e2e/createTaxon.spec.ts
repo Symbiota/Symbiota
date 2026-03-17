@@ -1,5 +1,27 @@
 import { expect, mergeTests } from "@playwright/test";
-import { test as testTaxonomyCreation } from "./fixtures/collection";
+// import { test as testTaxonomyCreation } from "./fixtures/collection";
 import { test as testWithAdmin } from "./fixtures/adminLogin";
+import { TaxonCreationPage } from "./pages/TaxonCreationPage";
 
-const test = mergeTests(testCollection, testWithAdmin);
+const test = mergeTests(testWithAdmin);
+
+test.beforeEach(async ({ adminLogin }) => await adminLogin.expectLoggedIn());
+
+test("Quick parser populates species", async ({ page }) => {
+  const taxonCreationPage = TaxonCreationPage.make(page);
+  await taxonCreationPage.goto();
+  await taxonCreationPage.taxonCreationForm.setMany({
+    quickparser: "Testus taxonus",
+  });
+  await taxonCreationPage.parseButton.click({ force: true });
+  const expectedPopulatedFields = {
+    quickparser: "",
+    taxonrankid: "220",
+    unit1name: "Testus",
+    unit2name: "taxonus",
+  };
+  await taxonCreationPage.taxonCreationForm.checkMany(
+    expectedPopulatedFields,
+    false,
+  );
+});

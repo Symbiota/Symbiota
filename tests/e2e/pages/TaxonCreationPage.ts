@@ -30,6 +30,7 @@ const taxonCreationFields = {
 export abstract class TaxonCreationPage {
   taxonCreationForm: Form;
   submitButton: Locator;
+  parseButton: Locator;
   abstract submitCreateTaxon(): Promise<void>;
   abstract expectSuccess(): Promise<void>;
   abstract expectError(): Promise<void>;
@@ -38,6 +39,7 @@ export abstract class TaxonCreationPage {
   constructor(public readonly page: Page) {
     this.taxonCreationForm = new Form(this.page, taxonCreationFields);
     this.submitButton = this.page.locator("button[value=submitNewName]");
+    this.parseButton = this.page.locator("button[id=quick-parse-button]");
   }
 
   static make(page: Page): TaxonCreationPage {
