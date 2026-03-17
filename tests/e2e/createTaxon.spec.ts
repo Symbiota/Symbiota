@@ -16,9 +16,9 @@ test("Quick parser populates species", async ({ page }) => {
   await taxonCreationPage.parseButton.click({ force: true });
   const expectedPopulatedFields = {
     quickparser: "",
-    taxonrankid: "220",
-    unit1name: "Testus",
-    unit2name: "taxonus",
+    rankid: "220",
+    unitname1: "Testus",
+    unitname2: "taxonus",
   };
   await taxonCreationPage.taxonCreationForm.checkMany(
     expectedPopulatedFields,
