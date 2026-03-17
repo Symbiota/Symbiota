@@ -19,7 +19,7 @@ export class Form {
     this.form = this.page.locator("body");
   }
 
-  private getFieldLocator(fieldName: string): Locator {
+  public getFieldLocator(fieldName: string): Locator {
     expect(this.fields).toHaveProperty(fieldName);
 
     if (this.fieldSelectorOverrides.hasOwnProperty(fieldName)) {
