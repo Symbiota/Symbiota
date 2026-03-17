@@ -1,7 +1,7 @@
 // @ts-check
 const { defineConfig, devices } = require('@playwright/test');
 
-const APP_URL = 'http://localhost:80';
+const APP_URL = 'http://localhost:8080';
 
 /**
  * Read environment variables from file.
