@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT.'/classes/Media.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
@@ -278,7 +278,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 		}
 		?>
 	</div>
-		<script>		
+		<script>
 			window.initLocalitySuggest({
 				country: {
 					id: 'country',
