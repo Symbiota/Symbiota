@@ -5,7 +5,7 @@ Language: Spanish
 ------------------
 */
 
-$LANG['DATA_USAGE_GUIDELINES'] = 'Directrices para el uso de datos';
+$LANG['DATA_USAGE_GUIDELINES'] = 'Lineamientos para el Uso Aceptable de los Datos';
 $LANG['HOME'] = 'Inicio';
 $LANG['GUIDE_ACCESSIBLE'] = 'Directrices para el uso aceptable de datos';
 $LANG['REC_CITATION'] = 'Formatos de cita recomendados';
