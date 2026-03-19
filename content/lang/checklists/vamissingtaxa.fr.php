@@ -34,4 +34,5 @@ $LANG['NOT_IN_CHECKLIST'] = 'Ci-dessous sont listés les noms de taxon introuvab
 	par un ou plusieurs spécimens qui ont une localité correspondant au terme de recherche ci-dessus.';
 $LANG['LINK_VOUCHERS'] = 'Lier les Échantillons';
 $LANG['NOVOUCHERS'] = 'Aucun échantillon localisé';
+$LANG['DEFINE_SEARCH_CRITERIA'] = 'Utilisez le formulaire ci-dessus pour définir les critères de recherche';
 ?>

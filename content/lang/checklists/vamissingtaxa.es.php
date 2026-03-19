@@ -34,5 +34,5 @@ $LANG['NOT_IN_CHECKLIST'] = 'Listados abajo están los nombres de taxa no encont
                             pero que están representados por uno o más especímenes que tienen una localidad que encaja con la búsqueda realizada.';
 $LANG['LINK_VOUCHERS'] = 'Enlazar Especímenes Voucher';
 $LANG['NOVOUCHERS'] = 'No se localizaron vouchers';
-
+$LANG['DEFINE_SEARCH_CRITERIA'] = 'Utilice el formulario anterior para definir los criterios de búsqueda';
 ?>
