@@ -342,12 +342,6 @@ if($clid && $isEditor){
 						<li><a href="<?= $CLIENT_ROOT ?>/collections/list.php?targetclid=<?= $clid ?>" target="_blank"><?= $LANG['FULLSPECLISTALLOCCUR'] ?></a></li>
 						<?php
 					}
-					if($vouchersExist){
-						?>
-						<li><a href="voucherreporthandler.php?rtype=missingoccurcsv&clid=<?= $clid ?>"><?= $LANG['SPECMISSTAXA'] ?></a></li>
-						<li><a href="voucherreporthandler.php?rtype=problemtaxacsv&clid=<?= $clid ?>"><?= $LANG['SPECMISSPELLED'] ?></a></li>
-						<?php
-					}
 					?>
 				</ul>
 			</div>

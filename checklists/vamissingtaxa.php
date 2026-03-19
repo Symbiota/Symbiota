@@ -108,13 +108,25 @@ if($isEditor){
 								}
 								?>
 							</table>
-							<div style="margin-top:8px;">
-								<input name="usecurrent" type="checkbox" value="1" type="checkbox" checked /> <?php echo $LANG['ADD_CURRENT']; ?>
+							<div style="margin-top:8px; display: flex;justify-content: space-between;">
+								<div stlye="">
+									<div><input name="usecurrent" type="checkbox" value="1" type="checkbox" checked /> <?php echo $LANG['ADD_CURRENT']; ?></div>
+									<div><input name="excludevouchers" type="checkbox" value="1" <?php echo ($_REQUEST['excludevouchers']?'checked':''); ?>/> <?php echo $LANG['NO_VOUCHERS']; ?></div>
+								</div>
+								<div stlye="">
+									<div><?= $LANG['SPEC_COUNT'] ?>: <?= $recCnt ?></div>
+									<div style="width: 45px;margin-left: auto; margin-top: 5px;">
+										<a href="voucherreporthandler.php?rtype=missingoccurcsv&clid=<?= $clid ?>">
+											<button type="button" class="icon-button" aria-label="<?= $LANG['DOWNLOAD_SPECIMEN_DATA'] ?>" title="<?= $LANG['DOWNLOAD_SPECIMEN_DATA'] ?>">
+												<svg style="width:1.3em;height:1.3em" alt="<?= $LANG['IMG_DWNL_DATA'] ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+													<path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z" />
+												</svg>
+											</button>
+										</a>
+									</div>
+								</div>
 							</div>
-							<div style="margin-top:3px;">
-								<input name="excludevouchers" type="checkbox" value="1" <?php echo ($_REQUEST['excludevouchers']?'checked':''); ?>/> <?php echo $LANG['NO_VOUCHERS']; ?>
-							</div>
-							<div style="margin-top:8px;">
+							<div style="margin-left:15px;">
 								<input name="tabindex" value="1" type="hidden" />
 								<input name="clid" value="<?php echo $clid; ?>" type="hidden" />
 								<input name="pid" value="<?php echo $pid; ?>" type="hidden" />
@@ -124,14 +136,22 @@ if($isEditor){
 							</div>
 						</form>
 						<?php
-						echo '<div style="float:left">' . $LANG['SPEC_COUNT'] . ' ' . $recCnt . '</div>';
 						$queryStr = 'tabindex=1&displaymode=1&clid=' . $clid . '&pid=' . $pid . '&start=' . (++$startIndex);
 						if($recCnt > $limitRange) echo '<div style="float:right;margin-right:30px;"><a style="margin-left:10px;" href="voucheradmin.php?' . $queryStr . '">' . $LANG['VIEW_NEXT'] . ' ' . $limitRange . '</a></div>';
 					}
 					elseif($displayMode==2){
 						?>
 						<div style="clear:both;margin:10px;">
-						<?php echo $LANG['MISSING_TAXA_EXPL']; ?>
+							<?php echo $LANG['MISSING_TAXA_EXPL']; ?>
+							<div style="width: 45px; float: right;">
+								<a href="voucherreporthandler.php?rtype=problemtaxacsv&clid=<?= $clid ?>">
+									<button type="button" class="icon-button" aria-label="<?= $LANG['DOWNLOAD_SPECIMEN_DATA'] ?>" title="<?= $LANG['DOWNLOAD_SPECIMEN_DATA'] ?>">
+										<svg style="width:1.3em;height:1.3em" alt="<?= $LANG['IMG_DWNL_DATA'] ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+											<path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z" />
+										</svg>
+									</button>
+								</a>
+							</div>
 						</div>
 						<table class="styledtable" style="width: 100%">
 							<tr>
