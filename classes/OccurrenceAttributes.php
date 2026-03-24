@@ -503,7 +503,7 @@ class OccurrenceAttributes extends Manager {
 		if($stateArr){
 			$this->reviewSqlBase = 'FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid '.
 				'INNER JOIN tmattributes a ON m.occid = a.occid '.
-				'WHERE (a.stateid IN('.implode(',',$stateArr).')) AND (o.collid = '.$this->collidStr.') ';
+				'WHERE (a.stateid IN('.implode(',',$stateArr).')) AND (o.collid = '.$this->collidStr.') AND (m.mediaType = "'. MediaType::Image .'") ';
 			if(isset($this->filterArr['reviewuid']) && $this->filterArr['reviewuid']){
 				$this->reviewSqlBase .= 'AND (a.createduid = '.$this->filterArr['reviewuid'].') ';
 			}
