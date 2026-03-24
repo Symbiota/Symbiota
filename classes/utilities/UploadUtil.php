@@ -58,6 +58,36 @@ class UploadUtil {
 	}
 
 	/**
+	 * This is a backup function for when mime_content_type fails.
+	 * Do not use this function willy nilly. This is only to be used a backup
+	 * in the production servers when the existing functions cannot determine
+	 * the mime for a case in which it should be able to do so.
+	 *
+	 * This function will not work on windows systems as seen in the function name
+	 * and is not intented to.
+	 *
+	 * @param $filepath Absolute path to file you wish to run the check on
+	 * @return ?string
+	 **/
+	public static function linux_mime_content_type(string $filepath) {
+		if(PHP_OS !== 'Linux') return;
+
+		if(file_exists($filepath)) {
+			// This is sort of a hokey fix to deal with clrf files
+			exec("sed -i 's/\r$//' " . escapeshellarg($filepath));
+			// At time of comment, we don't deal with any files that would
+			// be impacted by empty line removal in a negative way
+			exec("sed -i '/^$/d' "  . escapeshellarg($filepath));
+
+			exec('file --mime-type ' . escapeshellarg($filepath), $output);
+			if(is_array($output) && count($output) > 0)  {
+				$mimeOutput = trim(substr($output[0], strpos($output[0],':') + 1));
+				return $mimeOutput;
+			}
+		}
+	}
+
+	/**
 	 * Cross checks file type and extension to make sure they match.
 	 * Also ensures file's mimetype matches $allowed_mimes which
 	 * defaults to self::ALLOWED_IMAGE_MIMES
@@ -77,9 +107,17 @@ class UploadUtil {
 		}
 
 		$type_guess = mime_content_type($uploaded_file['tmp_name']);
-;
+
 		if(!self::mimesEqual($type_guess, $uploaded_file['type'])) {
-			throw new MediaException(MediaException::SuspiciousFile);
+			if($type_guess === 'text/plain') {
+				$linux_guess = self::linux_mime_content_type($uploaded_file['tmp_name']);
+				if(!self::mimesEqual($linux_guess , $uploaded_file['type'])) {
+					throw new MediaException(MediaException::SuspiciousFile);
+				}
+				$type_guess = $linux_guess;
+			} else {
+				throw new MediaException(MediaException::SuspiciousFile);
+			}
 		}
 
 		$guess_ext = self::mime2ext($type_guess);
