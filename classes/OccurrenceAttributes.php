@@ -220,7 +220,7 @@ class OccurrenceAttributes extends Manager {
 	}
 
 	private function setSqlBody(){
-		$this->sqlBody = 'FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid '.
+		$this->sqlBody = 'FROM omoccurrences o INNER JOIN media m ON m.mediaType = "' . MediaType::Image . '" AND o.occid = m.occid ' .
 			'LEFT JOIN tmattributes a ON m.occid = a.occid '.
 			'WHERE (a.occid IS NULL) AND (o.collid = '.$this->collidStr.') ';
 		if(isset($this->filterArr['tidfilter']) && $this->filterArr['tidfilter']){
