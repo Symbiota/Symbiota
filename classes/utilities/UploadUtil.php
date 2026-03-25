@@ -111,7 +111,7 @@ class UploadUtil {
 		if(!self::mimesEqual($type_guess, $uploaded_file['type'])) {
 			if($type_guess === 'text/plain') {
 				$linux_guess = self::linux_mime_content_type($uploaded_file['tmp_name']);
-				if(!self::mimesEqual($linux_guess , $uploaded_file['type'])) {
+				if(!linux_guess || !self::mimesEqual($linux_guess , $uploaded_file['type'])) {
 					throw new MediaException(MediaException::SuspiciousFile);
 				}
 				$type_guess = $linux_guess;
