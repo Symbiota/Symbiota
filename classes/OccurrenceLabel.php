@@ -194,6 +194,7 @@ class OccurrenceLabel {
 					if(array_key_exists($r->tid, $parentAuthorArr)){
 						foreach($parentAuthorArr[$r->tid] as $occid){
 							$labelArr[$occid]['parentauthor'] = $r->author;
+							$labelArr[$occid]['scientificname_with_author'] = trim($labelArr[$occid]['speciesname'] . ' ' . trim($labelArr[$occid]['parentauthor'] . ' ' . $labelArr[$occid]['taxonrank']) . ' ' . $labelArr[$occid]['infraspecificepithet'] . ' ' . $labelArr[$occid]['scientificnameauthorship']);
 						}
 					}
 				}
@@ -297,9 +298,6 @@ class OccurrenceLabel {
 				//Output records
 				foreach ($labelArr as $occid => $occArr) {
 					$dupCnt = $postArr['q-' . $occid];
-					if (isset($occArr['parentauthor']) && $occArr['parentauthor']) {
-						$occArr['scientificname_with_author'] = trim($occArr['speciesname'] . ' ' . trim($occArr['parentauthor'] . ' ' . $occArr['taxonrank']) . ' ' . $occArr['infraspecificepithet'] . ' ' . $occArr['scientificnameauthorship']);
-					}
 					for ($i = 0; $i < $dupCnt; $i++) {
 						fputcsv($fh, array_intersect_key($occArr, $headerLcArr));
 					}
