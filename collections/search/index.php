@@ -95,6 +95,19 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 			const expandButton = document.getElementById("expand-all-button");
 			expandButton.removeAttribute('style', 'display: none;');
 		};
+
+		document.addEventListener('DOMContentLoaded', () => {			
+			document.querySelectorAll('.accordion-header').forEach(accordion => {
+				accordion.setAttribute('tabindex', '0');
+				accordion.addEventListener('keydown', (e) => {
+					if (e.keyCode === 13 || e.keyCode === 32) {
+						e.preventDefault();
+						const selector = accordion.previousElementSibling;
+						selector.checked = !selector.checked;
+					}
+				});
+			});
+		});
 	</script>
 
 	<?php include_once($SERVER_ROOT . '/includes/googleanalytics.php'); ?>
