@@ -149,33 +149,35 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 					<label for="taxonomy" class="accordion-header"><?php echo $LANG['TAXONOMY'] ?></label>
 
 					<!-- Taxonomy -->
-					<div id="search-form-taxonomy" class="content">
-						<div id="taxa-text" class="input-text-container">
-							<label for="taxa" class="input-text--outlined">
-								<span class="screen-reader-only"><?php echo $LANG['TAXON'] ?></span>
-								<input type="text" name="taxa" id="taxa" data-chip="<?php echo $LANG['TAXON'] ?>" />
-								<span class="inset-input-label"><?php echo $LANG['TAXON'] ?></span>
-							</label>
-						</div>
-						<span class="assistive-text"><?php echo $LANG['TYPE_CHAR_FOR_SUGGESTIONS'] ?></span>
-						<div style="padding-top:14px">
-							<div class="select-container" style="position: relative">
-								<label for="taxontype" class="screen-reader-only"><?php echo $LANG['TAXON_TYPE'] ?></label>
-								<select name="taxontype" id="taxontype" style="margin-top:0;padding-top:0; margin-bottom: 0.5rem">
-									<option id="taxontype-scientific" value="2" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['SCIENTIFIC_NAME'] ?></option>
-									<option id="taxontype-family" value="3" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['FAMILY'] ?></option>
-									<option id="taxontype-group" value="4" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['TAXONOMIC_GROUP'] ?></option>
-									<option id="taxontype-common" value="5" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['COMMON_NAME'] ?></option>
-								</select>
-								<span class="inset-input-label"><?php echo $LANG['TAXON_TYPE'] ?></span>
+					<div class="content">
+						<div id="search-form-taxonomy" >
+							<div id="taxa-text" class="input-text-container">
+								<label for="taxa" class="input-text--outlined">
+									<span class="screen-reader-only"><?php echo $LANG['TAXON'] ?></span>
+									<input type="text" name="taxa" id="taxa" data-chip="<?php echo $LANG['TAXON'] ?>" />
+									<span class="inset-input-label"><?php echo $LANG['TAXON'] ?></span>
+								</label>
 							</div>
-						</div>
-						<div>
-							<input type="checkbox" name="usethes" id="usethes" data-chip="<?php echo $LANG['INCLUDE_SYNONYMS'] ?>" value="1" checked />
-							<label for="usethes">
-								<span class="ml-1"><?php echo $LANG['INCLUDE_SYNONYMS'] ?></span>
-							</label>
-							<img src="../../images/info.png" style="width:1em; margin-left:1px;" alt="<?php echo $LANG['SYNONYM_NOTE'] ?>" title="<?php echo $LANG['SYNONYM_NOTE'] ?>" onclick="alert('<?php echo addslashes($LANG['SYNONYM_NOTE']) ?>')"/>
+							<span class="assistive-text"><?php echo $LANG['TYPE_CHAR_FOR_SUGGESTIONS'] ?></span>
+							<div style="padding-top:14px">
+								<div class="select-container" style="position: relative">
+									<label for="taxontype" class="screen-reader-only"><?php echo $LANG['TAXON_TYPE'] ?></label>
+									<select name="taxontype" id="taxontype" style="margin-top:0;padding-top:0; margin-bottom: 0.5rem">
+										<option id="taxontype-scientific" value="2" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['SCIENTIFIC_NAME'] ?></option>
+										<option id="taxontype-family" value="3" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['FAMILY'] ?></option>
+										<option id="taxontype-group" value="4" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['TAXONOMIC_GROUP'] ?></option>
+										<option id="taxontype-common" value="5" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['COMMON_NAME'] ?></option>
+									</select>
+									<span class="inset-input-label"><?php echo $LANG['TAXON_TYPE'] ?></span>
+								</div>
+							</div>
+							<div>
+								<input type="checkbox" name="usethes" id="usethes" data-chip="<?php echo $LANG['INCLUDE_SYNONYMS'] ?>" value="1" checked />
+								<label for="usethes">
+									<span class="ml-1"><?php echo $LANG['INCLUDE_SYNONYMS'] ?></span>
+								</label>
+								<img src="../../images/info.png" style="width:1em; margin-left:1px;" alt="<?php echo $LANG['SYNONYM_NOTE'] ?>" title="<?php echo $LANG['SYNONYM_NOTE'] ?>" onclick="alert('<?php echo addslashes($LANG['SYNONYM_NOTE']) ?>')"/>
+							</div>
 						</div>
 					</div>
 				</section>
