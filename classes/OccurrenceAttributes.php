@@ -1,5 +1,7 @@
 <?php
 include_once($SERVER_ROOT.'/classes/Manager.php');
+include_once($SERVER_ROOT.'/classes/Media.php');
+include_once($SERVER_ROOT.'/classes/utilities/QueryUtil.php');
 
 class OccurrenceAttributes extends Manager {
 
@@ -180,13 +182,15 @@ class OccurrenceAttributes extends Manager {
 		if($this->collidStr){
 			if(!$this->sqlBody) $this->setSqlBody();
 			$sql = 'SELECT m.occid, IFNULL(o.catalognumber, o.othercatalognumbers) AS catnum '.$this->sqlBody.'ORDER BY RAND() LIMIT 1';
+
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
 				$retArr[$r->occid]['catnum'] = $r->catnum;
+
 				$sql2 = 'SELECT m.mediaID, m.url, m.originalurl, m.occid '.
 					'FROM media m '.
-					'WHERE (m.occid = '.$r->occid.') ';
-				$rs2 = $this->conn->query($sql2);
+					'WHERE (m.occid = ?) and mediaType = ?';
+				$rs2 = QueryUtil::tryExecuteQuery($this->conn, $sql2, [$r->occid, MediaType::Image]);
 				$cnt = 1;
 				while($r2 = $rs2->fetch_object()){
 					$retArr[$r2->occid][$cnt]['web'] = $r2->url;
@@ -216,7 +220,7 @@ class OccurrenceAttributes extends Manager {
 	}
 
 	private function setSqlBody(){
-		$this->sqlBody = 'FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid '.
+		$this->sqlBody = 'FROM omoccurrences o INNER JOIN media m ON m.mediaType = "' . MediaType::Image . '" AND o.occid = m.occid ' .
 			'LEFT JOIN tmattributes a ON m.occid = a.occid '.
 			'WHERE (a.occid IS NULL) AND (o.collid = '.$this->collidStr.') ';
 		if(isset($this->filterArr['tidfilter']) && $this->filterArr['tidfilter']){
@@ -499,7 +503,7 @@ class OccurrenceAttributes extends Manager {
 		if($stateArr){
 			$this->reviewSqlBase = 'FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid '.
 				'INNER JOIN tmattributes a ON m.occid = a.occid '.
-				'WHERE (a.stateid IN('.implode(',',$stateArr).')) AND (o.collid = '.$this->collidStr.') ';
+				'WHERE (a.stateid IN('.implode(',',$stateArr).')) AND (o.collid = '.$this->collidStr.') AND (m.mediaType = "'. MediaType::Image .'") ';
 			if(isset($this->filterArr['reviewuid']) && $this->filterArr['reviewuid']){
 				$this->reviewSqlBase .= 'AND (a.createduid = '.$this->filterArr['reviewuid'].') ';
 			}
