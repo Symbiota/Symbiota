@@ -146,7 +146,7 @@ if(isset($SYMB_UID) && $SYMB_UID){
 										</td>
 									</tr>
 									<tr>
-										<td><b><?= $LANG['ZIP'] ?>:</b></td>
+										<td><b><?= $LANG['ZIP_CODE'] ?>:</b></td>
 										<td>
 											<div>
 												<input name="zip" size="40" value="<?= $person->getZip();?>">
@@ -182,7 +182,7 @@ if(isset($SYMB_UID) && $SYMB_UID){
 					</div>
 					<div id="pwdeditdiv" style="display:none;margin:15px;">
 						<form name="changepwdform" action="viewprofile.php" method="post" onsubmit="return verifyPwdForm(this);">
-							<fieldset style='padding:15px;width:500px;'>
+							<fieldset style='padding:15px;width:550px;'>
 								<legend><b><?= $LANG['CHANGE_PASSWORD'] ?></b></legend>
 								<table>
 									<?php
@@ -226,7 +226,7 @@ if(isset($SYMB_UID) && $SYMB_UID){
 						</form>
 					</div>
 					<div id="logineditdiv" style="display:none;margin:15px;">
-						<fieldset style='padding:15px;width:500px;'>
+						<fieldset style='padding:15px;width:550px;'>
 							<legend><b><?= $LANG['CHANGE_USERNAME'] ?></b></legend>
 							<form name="modifyloginform" action="viewprofile.php" method="post" onsubmit="return verifyModifyLoginForm(this);">
 								<div><b><?= $LANG['NEW_USERNAME'] ?>:</b> <input name="newlogin" type="text" /></div>
@@ -245,7 +245,7 @@ if(isset($SYMB_UID) && $SYMB_UID){
 						</fieldset>
 					</div>
 					<div id="managetokensdiv" style="display:none;margin:15px;">
-						<fieldset style='padding:15px;width:500px;'>
+						<fieldset style='padding:15px;width:550px;'>
 							<legend><b><?= (isset($LANG['MANAGE_TOKENS'])?$LANG['MANAGE_TOKENS']:'Manage Access Tokens'); ?></b></legend>
 							<form name="cleartokenform" action="viewprofile.php" method="post" onsubmit="">
 								<div>
