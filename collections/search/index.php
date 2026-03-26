@@ -99,8 +99,9 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 		document.addEventListener('DOMContentLoaded', () => {			
 			document.querySelectorAll('.accordion-header').forEach(accordionHeader => {
 				accordionHeader.setAttribute('tabindex', '0');
+				accordionHeader.setAttribute('role', 'button');
 				accordionHeader.addEventListener('keydown', (e) => {
-					if (e.keyCode === 13) {
+					if (e.key === 'Enter') {
 						const selector = accordionHeader.previousElementSibling;
 						selector.checked = !selector.checked;
 					}
@@ -149,7 +150,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 
 					<!-- Taxonomy -->
 					<div class="content">
-						<div id="search-form-taxonomy" >
+						<div id="search-form-taxonomy">
 							<div id="taxa-text" class="input-text-container">
 								<label for="taxa" class="input-text--outlined">
 									<span class="screen-reader-only"><?php echo $LANG['TAXON'] ?></span>
