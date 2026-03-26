@@ -97,12 +97,11 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 		};
 
 		document.addEventListener('DOMContentLoaded', () => {			
-			document.querySelectorAll('.accordion-header').forEach(accordion => {
-				accordion.setAttribute('tabindex', '0');
-				accordion.addEventListener('keydown', (e) => {
-					if (e.keyCode === 13 || e.keyCode === 32) {
-						e.preventDefault();
-						const selector = accordion.previousElementSibling;
+			document.querySelectorAll('.accordion-header').forEach(accordionHeader => {
+				accordionHeader.setAttribute('tabindex', '0');
+				accordionHeader.addEventListener('keydown', (e) => {
+					if (e.keyCode === 13) {
+						const selector = accordionHeader.previousElementSibling;
 						selector.checked = !selector.checked;
 					}
 				});
