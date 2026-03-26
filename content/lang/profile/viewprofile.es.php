@@ -21,10 +21,22 @@ $LANG['CONTACT_ADMIN'] = 'Por favor contacte al administrador del sistema.';
 $LANG['HOME'] = 'Inicio';
 $LANG['MY_PROFILE'] = 'Mi Perfil';
 $LANG['VIEW_PROFILE'] = 'Ver Perfil del Usuario';
-$LANG['SPEC_CHECKLIST'] = 'Listados de Especies';
+$LANG['SPECIES_INVENTORIES'] = 'Inventarios de especies';
+$LANG['ADMIN'] = 'Admin';
 $LANG['OCC_MGMNT'] = 'Manejo de Ocurrencias';
 $LANG['USER_PROFILE'] = 'Perfil de Usuarios';
 $LANG['IDS_NEEDED'] = 'Identificaciones Necesarias';
 $LANG['IMAGES_ID'] = 'Imágenes para Identificación';
 
+//Admin menu
+$LANG['ADMIN_MENU'] = 'Menú de superadministrador';
+$LANG['USER_PERMISSIONS'] = 'Derechos de usuarios';
+$LANG['CREATE_NEW_COLLECTION'] = 'Crear nuevo perfil de colección o observación';
+$LANG['GEO_THESAURUS'] = 'Tesauro Geográfico';
+$LANG['THUMBNAIL_BUILDER'] = 'Creador de miniaturas de imágenes';
+$LANG['GUID_MAPPER'] = 'Mapeador de GUID';
+$LANG['SALIX'] = 'Gestor de SALIX WordStat';
+$LANG['GLOSSARY'] = 'Glosario';
+$LANG['MANAGE_TAXON_MAP_THUMBNAIL'] = 'Administrar miniaturas de mapas de perfil de taxonomía';
+$LANG['OTHER_CAT_TRANSFER'] = 'Herramienta de transferencia de otros números de catálogo';
 ?>
