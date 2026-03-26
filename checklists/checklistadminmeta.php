@@ -286,7 +286,7 @@ if($clid || !empty($_REQUEST['excludeparent'])) $displayform = true;
 						<?= $LANG['POLYGON_NOT_DEFINED']; ?>
 					</span>
 					<span style="margin:10px;"><a href="#" onclick="openCoordAid({map_mode:MAP_MODES.POLYGON, client_root: '<?= $CLIENT_ROOT?>', polygon_text_type: POLYGON_TEXT_TYPES.<?= isset($footprint['type']) && $footprint['type'] === 'wkt' ? 'WKT': 'GEOJSON' ?>});return false;" title="<?= $LANG['CREATE_EDIT_POLYGON']; ?>"><img src="../images/world.png" style="width:1em;" /></a></span>
-					<input type="hidden" id="footprintwkt" name="footprint<?= Sanitize::outString($footprint['type']) ?? 'geoJson' ?>" value="<?= Sanitize::outString($footprint['footprint']) ?>" />
+					<input type="hidden" id="footprintwkt" name="footprint<?= Sanitize::outString($footprint['type'] ?? 'geoJson') ?>" value="<?= Sanitize::outString($footprint['footprint'] ?? '') ?>" />
 				</fieldset>
 			</div>
 			<div style="clear:both;" class="top-breathing-room-rel">
