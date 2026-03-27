@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OpenIdProfileManager.php');
 include_once($SERVER_ROOT . '/config/auth_config.php');
 require_once($SERVER_ROOT . '/vendor/autoload.php');
@@ -23,7 +23,7 @@ if(isset($SHOULD_VERIFY_PEERS)){
 
 
 if (array_key_exists('code', $_REQUEST) && $_REQUEST['code']) {
-  
+
   try{
     $status = $oidc->authenticate();
     $claims = $oidc->getVerifiedClaims();
@@ -33,7 +33,7 @@ if (array_key_exists('code', $_REQUEST) && $_REQUEST['code']) {
     $_SESSION['last_message'] = $LANG['CAUGHT_EXCEPTION'] . ' ' . $ex->getMessage() . ' <ERR/>';
     header('Location:' . $CLIENT_ROOT . '/profile/index.php');
     exit();
-  }  
+  }
   if($status){
     $sub = $oidc->requestUserInfo('sub');
     $_SESSION['AUTH_PROVIDER'] = $AUTH_PROVIDER;
@@ -73,7 +73,7 @@ if (array_key_exists('code', $_REQUEST) && $_REQUEST['code']) {
           $_SESSION['last_message'] = $LANG['ERROR'] . " <ERR/>";
           header('Location:'. $CLIENT_ROOT . '/profile/index.php');
         }
-        
+
       }
       else{
         $_SESSION['last_message'] = $LANG['UNABLE_RETRIEVE_EMAIL'] . " <ERR/>";
