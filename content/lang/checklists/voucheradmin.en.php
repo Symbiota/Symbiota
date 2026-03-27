@@ -65,18 +65,17 @@ $LANG['ADDNAMECURRTAX'] = ' Add name using current taxonomy';
 $LANG['ADD_VOUCHERS'] = 'Add Vouchers';
 $LANG['NOVOUCHLOCA'] = 'No vouchers located';
 $LANG['LISTEDBELOWARESPECINSTRUC'] = 'Listed below are species from the checklist that do not have linked specimen vouchers.
-Click on name to use the search statement above to dynamically query the occurrence dataset for
-possible voucher specimens. Use the pulldown to the right to display the specimens in a table format.';
+	Click on name to use the search statement above to dynamically query the occurrence dataset for
+	possible voucher specimens. Use the pulldown to the right to display the specimens in a table format.';
 $LANG['LISTEDBELOWEXTERNAL'] = "Listed below are species from the checklist. Using the search functions from the external website, locate an observation that will serve as a possible voucher for each taxon. Copy the observation's ID (for example, from the last portion of the URL) and paste it in the corresponding text box. Multiple vouchers may be added for each taxon. Use commas to separate the ID numbers. Symbiota will search the external service for possible matches, these will appear as white text boxes and the species name will link to the external service. Click 'Retrieve external voucher information' to load voucher data for each species. When ready, click 'Save external vouchers to checklist' to commit the voucher information to Symbiota.";
 $LANG['ALLTAXACONTAINVOUCH'] = 'All taxa contain voucher links';
 $LANG['ADDITIONAL'] = 'See the Option Panel on the central page for more versatile export and print options that dynamically incorporate option selections';
-$LANG['FULLSPECLIST'] = 'Full species list (CSV)';
-$LANG['FULLSPECLISTVOUCHER'] = 'Full species list with linked vouchers (CSV)';
-$LANG['VOUCHERONLY'] = 'Linked occurrence vouchers only (DwC-A, CSV, Tab-delimited)';
-$LANG['FULLSPECLISTALLOCCUR'] = 'Full species list with all occurrences matching search terms (CSV)';
+$LANG['FULLSPECLIST'] = 'Download full species list (CSV)';
+$LANG['FULLSPECLISTVOUCHER'] = 'Download full species list with linked vouchers (CSV)';
+$LANG['VOUCHERONLY'] = 'Download linked occurrence vouchers only (DwC-A, CSV, Tab-delimited)';
+$LANG['LISTALLVOUCHERS'] = 'List all linked vouchers';
+$LANG['FULLSPECLISTALLOCCUR'] = 'List occurrences matching search terms';
 $LANG['PENSOFT_XLSX_EXPORT'] = 'Pensoft Excel Export';
-$LANG['SPECMISSTAXA'] = 'Specimens of taxa missing from checklist (CSV)';
-$LANG['SPECMISSPELLED'] = 'Specimens with misspelled, illegal, and problematic scientific names (CSV)';
 $LANG['CHECKIDNOTSET'] = 'Checklist identifier not set';
 $LANG['NOADMINPERM'] = 'You do not have administrative permission for this checklist';
 $LANG['DELETEVARIABLES'] = 'Delete Query Variables';

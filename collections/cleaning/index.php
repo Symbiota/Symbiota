@@ -60,7 +60,10 @@ if($collMap['colltype'] == 'General Observations'){
 		if($isEditor){
 			echo '<h1 class="page-heading">' . $LANG['DATA_CLEANING_TOOL'] . ': ' . $collMap['collectionname'] .' (' . $collMap['code'] . ')</h1>';
 			?>
-			<div style="color:orange;margin:20px 0px"> <?php echo (isset($LANG['DOWNLOAD_BACKUP']) ? $LANG['DOWNLOAD_BACKUP'] : 'Downloading a backup of your collection data before running any batch updates is strongly recommended') ?> </div>
+			<div style="color: var(--danger-color);margin:20px 0px; font-size:1.2rem;">
+				<strong><?php echo (isset($LANG['DOWNLOAD_BACKUP']) ? $LANG['DOWNLOAD_BACKUP'] : 'Downloading a backup of your collection data before running any batch updates is strongly recommended') ?></strong>
+				(<a href="https://docs.symbiota.org/Collection_Manager_Guide/Downloading/downloading_copy/" style="color: var(--danger-color)" target="_blank" ><?php echo $LANG["BACKUP_INSTRUCTIONS"]?></a>).
+			</div>
 			<?php
 			if($collMap['colltype'] != 'General Observations'){
 				?>

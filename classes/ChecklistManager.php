@@ -779,6 +779,22 @@ class ChecklistManager extends Manager{
 		return $retArr;
 	}
 
+	//Misc support functions
+	public function getVoucherCount(){
+		$voucherCnt = 0;
+		if($this->clid){
+			$sql = 'SELECT COUNT(v.occid) as cnt FROM fmchklsttaxalink c INNER JOIN fmvouchers v ON c.clTaxaID = v.clTaxaID WHERE c.clid = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->clid);
+				$stmt->execute();
+				$stmt->bind_result($voucherCnt);
+				$stmt->fetch();
+				$stmt->close();
+			}
+		}
+		return $voucherCnt;
+	}
+
 	//Setters and getters
 	public function setThesFilter($filt){
 		if(is_numeric($filt)) $this->thesFilter = $filt;

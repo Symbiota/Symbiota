@@ -449,37 +449,6 @@ class ChecklistVoucherReport extends ChecklistVoucherAdmin {
 		}
 	}
 
-	public function downloadAllOccurrenceCsv(){
-		if($this->clid){
-			$fileName = $this->getExportFileName().'.csv';
-			if($sqlFrag = $this->getSqlFrag()){
-				$fieldArr = array('t.tid AS taxonID');
-				$fieldArr[] = 'IFNULL(ctl.familyoverride,ts.family) AS family';
-				$fieldArr[] = 't.sciname AS scientificNameBase';
-				$fieldArr[] = 'TRIM(CONCAT_WS(" ", t.sciname, ctl.morphoSpecies)) as sciname';
-				$fieldArr[] = 't.author AS scientificNameAuthorship';
-				$fieldArr[] = 'ctl.habitat AS cl_habitat';
-				$fieldArr[] = 'ctl.abundance';
-				$fieldArr[] = 'ctl.notes';
-				$fieldArr[] = 'ctl.source';
-				$fieldArr[] = 'ctl.internalnotes';
-				$fieldArr = array_merge($fieldArr,$this->getOccurrenceFieldArr());
-
-				$clidStr = $this->getClidFullStr();
-				$sql = 'SELECT DISTINCT '.implode(',',$fieldArr).', o.recordSecurity, o.collid '.
-					'FROM fmchklsttaxalink ctl INNER JOIN taxa t ON ctl.tid = t.tid '.
-					'INNER JOIN taxstatus ts ON ctl.tid = ts.tid '.
-					'LEFT JOIN taxstatus ts2 ON ts.tidaccepted = ts2.tidaccepted '.
-					'LEFT JOIN omoccurrences o ON ts2.tid = o.tidinterpreted '.
-					'LEFT JOIN omcollections c ON o.collid = c.collid '.
-					$this->getTableJoinFrag($sqlFrag).
-					'WHERE ('.$sqlFrag.') AND (ts.taxauthid = 1) AND (ts2.taxauthid = 1) AND (ctl.clid IN('.$clidStr.')) ';
-				$sql .= OccurrenceUtil::appendFullProtectionSQL();
-				$this->exportCsv($fileName, $sql);
-			}
-		}
-	}
-
 	private function exportCsv($fileName, $sql){
 		header ('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 		header ('Content-Type: text/csv');

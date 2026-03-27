@@ -149,52 +149,58 @@ class OccurrenceLabel {
 		if ($occidArr) {
 			$occidStr = implode(',', $occidArr);
 			if (!preg_match('/^[,\d]+$/', $occidStr)) return null;
-			$authorArr = $this->getParentAuthors($occidStr, $speciesAuthors);
 			$tidArr = array();
+			$parentAuthorArr = array();
 
 			//Get occurrence records
 			$this->setLabelFieldArr();
-			$sql = 'SELECT ' . implode(',', $this->labelFieldArr) . '
+			$sql = 'SELECT ' . implode(',', $this->labelFieldArr) . ', t.rankid
 				FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.tid
-				LEFT JOIN taxstatus ts ON ts.tid = o.tidinterpreted
-				LEFT JOIN taxstatus pts ON ts.parenttid = pts.tid
-				LEFT JOIN taxa pt ON pts.tid = pt.tid
 				WHERE (o.occid IN(' . $occidStr . ')) ';
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_assoc()){
 					$occid = $r['occid'];
 					foreach ($r as $fieldName => $fieldValue) {
-						$retArr[$occid][strtolower($fieldName)] = $fieldValue ?? '';
+						if($fieldName != 'rankid'){
+							$retArr[$occid][strtolower($fieldName)] = $fieldValue ?? '';
+						}
 					}
-					if (array_key_exists($occid, $authorArr)) {
-						$retArr[$occid]['parentauthor'] = $authorArr[$occid];
+					if($speciesAuthors){
+						if ($r['rankid'] && $r['rankid'] > 220) {
+							//Keep track of the taxa we want to include parent names
+							$parentAuthorArr[$r['tidInterpreted']][] = $occid;
+						}
 					}
 					if($r['tidInterpreted']) $tidArr[$r['tidInterpreted']] = $r['tidInterpreted'];
 				}
 				$rs->free();
 			}
+			$this->appendParentAuthors($retArr, $parentAuthorArr);
 			$this->appendIdentifiers($retArr);
 			$this->appendTaxonomy($retArr, $tidArr);
 		}
 		return $retArr;
 	}
 
-	private function getParentAuthors($occidStr, $speciesAuthors){
-		//Get species authors for infraspecific taxa
-		$retArr = array();
-		$sql = 'SELECT o.occid, t2.author
-			FROM taxa t INNER JOIN omoccurrences o ON t.tid = o.tidinterpreted
-			INNER JOIN taxstatus ts ON t.tid = ts.tid
-			INNER JOIN taxa t2 ON ts.parenttid = t2.tid
-			WHERE (o.occid IN(' . $occidStr . '))  AND t.rankid > 220 AND ts.taxauthid = 1 ';
-		if (!$speciesAuthors) $sql .= 'AND t.unitname2 = t.unitname3 ';
-		if ($rs = $this->conn->query($sql)) {
-			while ($r = $rs->fetch_object()) {
-				$retArr[$r->occid] = $r->author ?? '';
+	private function appendParentAuthors(&$labelArr, $parentAuthorArr){
+		//Append parent authors for infraspecific taxa only
+		if($parentAuthorArr){
+			$tidStr = implode(',', array_keys($parentAuthorArr));
+			$sql = 'SELECT ts.tid, p.author
+				FROM taxa p INNER JOIN taxstatus ts ON p.tid = ts.parentTid
+				WHERE (ts.tid IN(' . $tidStr . ')) AND (p.rankid = 220) AND (ts.taxauthid = 1) AND (p.author IS NOT NULL) ';
+			if ($rs = $this->conn->query($sql)) {
+				while ($r = $rs->fetch_object()) {
+					if(array_key_exists($r->tid, $parentAuthorArr)){
+						foreach($parentAuthorArr[$r->tid] as $occid){
+							$labelArr[$occid]['parentauthor'] = $r->author;
+							$labelArr[$occid]['scientificname_with_author'] = trim($labelArr[$occid]['speciesname'] . ' ' . trim($labelArr[$occid]['parentauthor'] . ' ' . $labelArr[$occid]['taxonrank']) . ' ' . $labelArr[$occid]['infraspecificepithet'] . ' ' . $labelArr[$occid]['scientificnameauthorship']);
+						}
+					}
+				}
+				$rs->free();
 			}
-			$rs->free();
 		}
-		return $retArr;
 	}
 
 	private function appendIdentifiers(&$labelArr){
@@ -292,9 +298,6 @@ class OccurrenceLabel {
 				//Output records
 				foreach ($labelArr as $occid => $occArr) {
 					$dupCnt = $postArr['q-' . $occid];
-					if (isset($occArr['parentauthor']) && $occArr['parentauthor']) {
-						$occArr['scientificname_with_author'] = trim($occArr['speciesname'] . ' ' . trim($occArr['parentauthor'] . ' ' . $occArr['taxonrank']) . ' ' . $occArr['infraspecificepithet'] . ' ' . $occArr['scientificnameauthorship']);
-					}
 					for ($i = 0; $i < $dupCnt; $i++) {
 						fputcsv($fh, array_intersect_key($occArr, $headerLcArr));
 					}
@@ -318,12 +321,11 @@ class OccurrenceLabel {
 				'tidInterpreted' => 'o.tidInterpreted',
 				'genus'=>'t.unitName1 AS genus',
 				'speciesName' => 'TRIM(CONCAT_WS(" ",t.unitind1,t.unitname1,t.unitind2,t.unitname2)) AS speciesname',
-				'taxonRank' => 't.unitind3 AS taxonrank',
 				'specificepithet'=>'t.unitname2 AS specificepithet',
-				'fieldnumber'=>'o.fieldnumber',
+				'taxonRank' => 't.unitind3 AS taxonrank',
 				'infraSpecificEpithet'=>'t.unitname3 AS infraspecificepithet',
 				'scientificNameAuthorship'=>'o.scientificnameauthorship',
-				'parentAuthor'=>'pt.author AS parentauthor',
+				'parentAuthor'=>'"" AS parentauthor',
 				'kingdom' => 't.kingdomName as kingdom',
 				'phylum' => '"" as phylum',
 				'class' => '"" as `class`',
@@ -347,6 +349,7 @@ class OccurrenceLabel {
 				'day' => 'o.day',
 				'monthName' => 'DATE_FORMAT(o.eventdate,"%M") AS monthname',
 				'verbatimEventDate' => 'o.verbatimeventdate',
+				'fieldnumber'=>'o.fieldnumber',
 				'habitat' => 'o.habitat',
 				'substrate' => 'o.substrate',
 				'occurrenceRemarks' => 'o.occurrenceremarks',

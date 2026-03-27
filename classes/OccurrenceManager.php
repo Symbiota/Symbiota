@@ -294,14 +294,23 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			else{
 				$singleWordArr = array();
 				foreach($collectorArr as $value){
-					$value = $this->cleanInStr(str_replace(array('"', '+', '%'), '', $value));
+					$value = $this->cleanInStr(str_replace(array('"', '+'), '', $value));
 					if($value == 'NULL'){
 						$tempCollSqlArr[] = '(o.recordedby IS NULL)';
 						$tempCollTextArr[] = 'Collector IS NULL';
 					}
 					else{
 						if(strpos($value, ' ')){
-							$tempCollSqlArr[] = '(MATCH(o.recordedby) AGAINST("+'.str_replace(' ', ' +', $value).'" IN BOOLEAN MODE) AND o.recordedby LIKE "%'.$value.'%")';
+							$againstValueArr = explode(' ', $value);
+							foreach($againstValueArr as $k => $v){
+								if(!$v || strpos($v, '.') || strlen($v) < $this->fullTextMinTokenLength) unset($againstValueArr[$k]);
+							}
+							if($againstValueArr){
+								$tempCollSqlArr[] = '(MATCH(o.recordedby) AGAINST("+' . implode(' +', $againstValueArr) . '" IN BOOLEAN MODE) AND o.recordedby LIKE "%' . $value . '%")';
+							}
+							else{
+								$tempSqlArr[] = '(o.recordedby LIKE "%' . $value . '%")';
+							}
 						}
 						else{
 							if(strlen($value) < 3) $singleWordArr['sm'][] = $value;
@@ -1128,7 +1137,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		}
 		if(array_key_exists('collector',$_REQUEST)){
 			$collector = $this->cleanInputStr($_REQUEST['collector']);
-			$collector = str_replace('%', '', $collector);
+			//$collector = str_replace('%', '', $collector);
 			if($collector){
 				$str = str_replace(',',';',$collector);
 				$this->searchTermArr['collector'] = $str;

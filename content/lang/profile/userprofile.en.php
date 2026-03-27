@@ -30,6 +30,7 @@ $LANG['SUBMIT_EDITS'] = 'Submit Edits';
 $LANG['SURE_DELETE'] = 'Are you sure you want to delete profile?';
 $LANG['DELETE_PROF'] = 'Delete Profile';
 $LANG['CURRENT_PWORD'] = 'Current Password';
+$LANG['NEW_PWORD'] = 'New Password';
 $LANG['PWORD_AGAIN'] = 'New Password Again';
 $LANG['CHANGE_USERNAME'] = 'Change Username';
 $LANG['NEW_USERNAME'] = 'New Username';
@@ -41,17 +42,17 @@ $LANG['TAXON_RELS'] = 'Taxonomic Relationships';
 $LANG['ADD_TAXON_REL'] = 'Add a New Taxonomic Relationship';
 $LANG['NEW_TAX_REGION'] = 'New Taxonomic Region of Interest';
 $LANG['TAX_FORM'] = 'Use this form to define a new taxon-based region of interest. Contact portal administrators for assignment of new taxon specific Occurrence Identification and Taxonomic Thesaurus editing status.';
+$LANG['TAXON'] = 'Taxon';
 $LANG['SCOPE_OF_REL'] = 'Scope of Relationship';
 $LANG['REGION'] = 'Region of Interest';
 $LANG['SCOPE_LIMITS'] = 'Geographic Scope Limits';
+$LANG['NOTES'] = 'Notes';
 $LANG['ADD_TAX'] = 'Add Taxonomic Relationship';
 $LANG['OCC_EDIT'] = 'Occurrence Editor';
 $LANG['TAX_THES'] = 'Taxonomic Thesaurus Editor';
 $LANG['NO_RELS'] = 'No relationships defined';
 $LANG['ACCESSIBILITY_PREF'] = 'Accessibility Preference';
 $LANG['ACCESSIBILITY_PREF_DESC'] = 'Check to indicate a preference for accessibility-optimized styles';
-
 $LANG['CREATE_TAXON_REL'] = 'Create a New Taxonomic Relationship';
 $LANG['ADD_ICON'] = 'Add Icon';
-
 ?>
