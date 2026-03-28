@@ -98,8 +98,6 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 
 		document.addEventListener('DOMContentLoaded', () => {			
 			document.querySelectorAll('.accordion-header').forEach(accordionHeader => {
-				accordionHeader.setAttribute('tabindex', '0');
-				accordionHeader.setAttribute('role', 'button');
 				accordionHeader.addEventListener('keydown', (e) => {
 					if (e.key === 'Enter') {
 						const selector = accordionHeader.previousElementSibling;
@@ -146,7 +144,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 					<input type="checkbox" id="taxonomy" class="accordion-selector" checked />
 
 					<!-- Accordion header -->
-					<label for="taxonomy" class="accordion-header"><?php echo $LANG['TAXONOMY'] ?></label>
+					<label for="taxonomy" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['TAXONOMY'] ?></label>
 
 					<!-- Taxonomy -->
 					<div class="content">
@@ -187,7 +185,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 					<!-- Accordion selector -->
 					<input type="checkbox" id="locality" name="locality" class="accordion-selector" />
 					<!-- Accordion header -->
-					<label for="locality" class="accordion-header"><?php echo $LANG['LOCALITY'] ?></label>
+					<label for="locality" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['LOCALITY'] ?></label>
 					<!-- Accordion content -->
 					<div class="content">
 						<div id="search-form-locality">
@@ -264,7 +262,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 					<!-- Accordion selector -->
 					<input type="checkbox" id="lat-long" class="accordion-selector" />
 					<!-- Accordion header -->
-					<label for="lat-long" class="accordion-header"><?php echo $LANG['LATITUDE_LONGITUDE'] ?></label>
+					<label for="lat-long" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['LATITUDE_LONGITUDE'] ?></label>
 					<!-- Accordion content -->
 					<div class="content">
 						<p class="assistive-text"><?= $LANG['LAT_LONG_SEARCH_EXPLAIN'] ?></p>
@@ -406,7 +404,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 					<!-- Accordion selector -->
 					<input type="checkbox" id="coll-event" class="accordion-selector" />
 					<!-- Accordion header -->
-					<label for="coll-event" class="accordion-header"><?php echo $LANG['COLLECTING_EVENT'] ?></label>
+					<label for="coll-event" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['COLLECTING_EVENT'] ?></label>
 					<!-- Accordion content -->
 					<div class="content">
 						<div id="search-form-coll-event">
@@ -449,7 +447,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 					<!-- Accordion selector -->
 					<input type="checkbox" id="sample" class="accordion-selector" />
 					<!-- Accordion header -->
-					<label for="sample" class="accordion-header"><?php echo $LANG['SAMPLE_PROPERTIES'] ?></label>
+					<label for="sample" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['SAMPLE_PROPERTIES'] ?></label>
 					<!-- Accordion content -->
 					<div class="content">
 						<div id="search-form-sample">
@@ -526,7 +524,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 							<!-- Accordion selector -->
 							<input type="checkbox" id="trait" class="accordion-selector" />
 							<!-- Accordion header -->
-							<label for="trait" class="accordion-header"><?php echo $LANG['TRAIT_CRITERIA'] ?> <a href="https://docs.symbiota.org/User_Guide/traits" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
+							<label for="trait" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['TRAIT_CRITERIA'] ?> <a href="https://docs.symbiota.org/User_Guide/traits" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
 							<!-- Accordion content -->
 							<div class="content">
 								<div id="search-form-trait">
@@ -568,7 +566,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 					<input type="checkbox" id="associations" class="accordion-selector" />
 
 					<!-- Accordion header -->
-					<label for="associations" class="accordion-header"><?php echo $LANG['ASSOCIATIONS'] ?> <a href="https://docs.symbiota.org/User_Guide/associations" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
+					<label for="associations" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['ASSOCIATIONS'] ?> <a href="https://docs.symbiota.org/User_Guide/associations" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
 
 					<!-- Taxonomy -->
 					<div id="search-form-associations" class="content">
@@ -634,7 +632,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 					<input type="checkbox" id="characters" class="accordion-selector" />
 
 					<!-- Character header -->
-					<label for="characters" class="accordion-header"><?php echo $LANG['CHARACTERS'] ?> <a href="https://docs.symbiota.org/docs/User_Guide/searching_records#taxon-character-criteria" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
+					<label for="characters" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['CHARACTERS'] ?> <a href="https://docs.symbiota.org/docs/User_Guide/searching_records#taxon-character-criteria" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
 
 					<div id="search-form-characters" class="content">
 						<div>
@@ -700,7 +698,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 						<input type="checkbox" id="geocontext" class="accordion-selector" />
 
 						<!-- Accordion header -->
-						<label for="geocontext" class="accordion-header"><?php echo $LANG['GEO_CONTEXT'] ?> <a href="https://docs.symbiota.org//User_Guide/searching_records#geological-context" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
+						<label for="geocontext" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['GEO_CONTEXT'] ?> <a href="https://docs.symbiota.org//User_Guide/searching_records#geological-context" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
 
 						<!-- Content -->
 						<div id="search-form-geocontext" class="content">
@@ -782,7 +780,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 					<!-- Accordion selector -->
 					<input type="checkbox" id="collections" class="accordion-selector" />
 					<!-- Accordion header -->
-					<label for="collections" class="accordion-header"><?php echo $LANG['COLLECTIONS'] ?></label>
+					<label for="collections" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['COLLECTIONS'] ?></label>
 					<!-- Accordion content -->
 					<div class="content">
 						<div id="search-form-colls">
