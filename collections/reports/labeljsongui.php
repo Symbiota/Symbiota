@@ -427,6 +427,6 @@ header("Content-Type: text/html; charset=" . $CHARSET);
     </div>
   </main>
 </body>
-<script src="../../js/symb/collections.labeljsongui.js"></script>
+<script src="../../js/symb/collections.labeljsongui.js?ver=1"></script>
 
 </html>

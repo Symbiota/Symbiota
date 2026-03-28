@@ -189,6 +189,7 @@ class ChecklistVoucherAdmin extends Manager {
 	}
 
 	public function getQueryVariableArr(){
+		if(!$this->queryVariablesArr) $this->setCollectionVariables();
 		return $this->queryVariablesArr;
 	}
 
@@ -431,7 +432,7 @@ class ChecklistVoucherAdmin extends Manager {
 		// EG suggested storing external (e.g., iNaturalist) voucher records in the `fmchklstcoordinates` table as this table
 		//   was un- or under-used as of schema 3.0. The `notes` column serves as a flag for these vouchers. --CDT 2023-08-21
 		$status = false;
-		if(!is_numeric($tid)) { 
+		if(!is_numeric($tid)) {
 			return $status;
 		}
 
@@ -440,18 +441,18 @@ class ChecklistVoucherAdmin extends Manager {
 			// for single vouchers, add ll, for multiple use zero :(.
 			// we could try averaging ll for multiples, but then the software would be introducing non-real data, which is bad.
 			// not that zero/zero is real data either... CDT 8/2023
-			
+
 			if(!is_numeric($dataAsJson['lat']) || !is_numeric($dataAsJson['lng'])) {
 				continue;
 			}
 
 			$inputArr = [
-				'tid' => $tid, 
-				'decimalLatitude' => $dataAsJson['lng'], 
-				'decimalLongitude' => $dataAsJson['lat'], 
+				'tid' => $tid,
+				'decimalLatitude' => $dataAsJson['lng'],
+				'decimalLongitude' => $dataAsJson['lat'],
 				'sourceName' => 'EXTERNAL_VOUCHER',
-				'sourceIdentifier' => $dataAsJson['id'], 
-				'referenceUrl' => null, 
+				'sourceIdentifier' => $dataAsJson['id'],
+				'referenceUrl' => null,
 			];
 
 			if($dataAsJson['repository'] === 'iNat') {

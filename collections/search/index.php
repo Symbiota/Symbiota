@@ -635,7 +635,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 					<input type="checkbox" id="characters" class="accordion-selector" />
 
 					<!-- Character header -->
-					<label for="characters" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['CHARACTERS'] ?> <a href="https://docs.symbiota.org/docs/User_Guide/searching_records#taxon-character-criteria" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
+					<label for="characters" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['CHARACTERS'] ?> <a href="https://docs.symbiota.org/User_Guide/searching_records/#taxon-character-criteria" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
 
 					<div id="search-form-characters" class="content">
 						<div>

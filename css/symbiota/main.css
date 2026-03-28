@@ -245,6 +245,10 @@ span[class="link"]:hover {
   max-width: 100%;
 }
 
+#service-container, #all_collections_parent_container {
+  display: none;
+}
+
 #tabs {
   font-family: var(--body-font-family);
   font-size: var(--body-font-size);

@@ -2110,6 +2110,14 @@ $serverHost = GeneralUtil::getDomain();
 		<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
 	</head>
 	<body style='width:100%;max-width:100%;min-width:500px;' <?php echo (!$activateGeolocation?'onload="initialize();"':''); ?>>
+	<div>
+		<button id="search-panel-button" onclick="document.getElementById('defaultpanel').style.width='29rem'; document.getElementById('search-panel-button').style.display='none';" style="position:absolute;top:0;left:0;margin:0px;z-index:10; gap: 0.2rem<?= $menuClosed ? '' : '; display:none'?>">
+			<span style="padding-bottom:0.2rem">
+				&#9776;
+			</span>
+			<b><?= $LANG['OPEN_SEARCH_PANEL'] ?></b>
+		</button>
+	</div>
 	<div style="width:100%; max-width:max-content;" role="main" id="innertext" class="inntertext-tab pin-things-here inner-search">
 		<div style="z-index:999;" id="error-msgs" class="errors"></div>
 		<?php
@@ -2128,14 +2136,6 @@ $serverHost = GeneralUtil::getDomain();
 			data-external-portal-hosts="<?=htmlspecialchars(json_encode($EXTERNAL_PORTAL_HOSTS))?>"
 			class="service-container"
 		>
-		</div>
-		<div>
-			<button id="search-panel-button" onclick="document.getElementById('defaultpanel').style.width='29rem'; document.getElementById('search-panel-button').style.display='none';" style="position:absolute;top:0;left:0;margin:0px;z-index:10; gap: 0.2rem<?= $menuClosed ? '' : '; display:none'?>">
-				<span style="padding-bottom:0.2rem">
-					&#9776;
-				</span>
-				<b><?= $LANG['OPEN_SEARCH_PANEL'] ?></b>
-			</button>
 		</div>
 		<div id='map' style='width:100vw;height:100vh;z-index:1'></div>
 		<div id="defaultpanel" class="sidepanel"  <?= $menuClosed ? 'style="width: 0"': ''?>>

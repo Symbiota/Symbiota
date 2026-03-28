@@ -527,6 +527,11 @@ class Media {
 					$post_arr['sourceIdentifier'] = 'filename: ' . $file['name'];
 				}
 			}
+			else{
+				UploadUtil::validateFileError($file);
+				if (empty($post_arr['originalUrl']))
+        			throw new MediaException(MediaException::NoFileUploaded);
+			}
 
 			$media_metadata = self::insert($post_arr, $conn);
 			$media_type = MediaType::tryFrom($media_metadata['mediaType']);

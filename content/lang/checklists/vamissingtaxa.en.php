@@ -20,6 +20,8 @@ $LANG['SPEC_ID'] = 'Specimen ID';
 $LANG['COLLECTOR'] = 'Collector';
 $LANG['LOCALITY'] = 'Locality';
 $LANG['ADD_CURRENT'] = 'Add name using current taxonomy';
+$LANG['DOWNLOAD_SPECIMEN_DATA'] = 'Download Specimen Data';
+$LANG['IMG_DWNL_DATA'] = 'Download Button';
 $LANG['NO_VOUCHERS'] = 'Add names without linking vouchers';
 $LANG['SUBMIT_VOUCHERS'] = 'Submit Vouchers';
 $LANG['SPEC_COUNT'] = 'Specimen Count';
@@ -34,5 +36,5 @@ $LANG['NOT_IN_CHECKLIST'] = 'Listed below are taxon names not found in the check
                             but are represented by one or more specimens that have a locality matching the above search term.';
 $LANG['LINK_VOUCHERS'] = 'Link Voucher Specimens';
 $LANG['NOVOUCHERS'] = 'No vouchers found';
-
+$LANG['DEFINE_SEARCH_CRITERIA'] = 'Use above form to define search criteria';
 ?>

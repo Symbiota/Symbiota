@@ -336,6 +336,15 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 							echo '<span class="screen-reader-only">.</span>';
 							?>
 						</div>
+						<div style="margin:3px;">
+							<?php
+							if($showVouchers){
+								echo '<b>' . $LANG['VOUCHER_COUNT'] . '</b>: ';
+								echo $clManager->getVoucherCount();
+								echo '<span class="screen-reader-only">.</span>';
+							}
+							?>
+						</div>
 					</div>
 					<hr />
 					<div style="display:flex; justify-content:space-between;" class="printoff">

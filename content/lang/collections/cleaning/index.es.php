@@ -9,6 +9,7 @@ $LANG['OCC_CLEANER'] = 'Limpiador de ocurrencias';
 $LANG['COLL_MNGMT'] = 'Gestión de colecciones';
 $LANG['DATA_CLEAN'] = 'Módulo de limpieza de datos';
 $LANG['DOWNLOAD_BACKUP'] = 'Se recomienda descargar una copia de seguridad de los datos de su colección antes de ejecutar cualquier actualización por lotes';
+$LANG['BACKUP_INSTRUCTIONS'] = 'instrucciones';
 $LANG['DUPLICATE_RECS'] = 'Registros duplicados';
 $LANG['DUPL_REC_DESCR'] = 'Estas herramientas ayudarán a buscar en esta colección de registros registros duplicados del mismo espécimen.
                              Si existen registros duplicados, esta función ofrece la posibilidad de fusionar valores de registros, imágenes,
