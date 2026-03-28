@@ -99,7 +99,10 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 		document.addEventListener('DOMContentLoaded', () => {			
 			document.querySelectorAll('.accordion-header').forEach(accordionHeader => {
 				accordionHeader.addEventListener('keydown', (e) => {
-					if (e.key === 'Enter') {
+					if (e.key === 'Enter' || e.key === ' ') {
+						if (e.key === ' ') {
+							e.preventDefault();
+						}
 						const selector = accordionHeader.previousElementSibling;
 						selector.checked = !selector.checked;
 					}
