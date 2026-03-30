@@ -34,7 +34,7 @@ class OccurrenceEditorManager {
 			$this->conn = $conn;
 			$this->isShareConn = true;
 		} else $this->conn = MySQLiConnectionFactory::getCon("write");
-		$this->fieldArr['omoccurrences'] = array('basisofrecord' => 's','catalognumber' => 's','othercatalognumbers' => 's','occurrenceid' => 's','ownerinstitutioncode' => 's',
+		$this->fieldArr['omoccurrences'] = array('basisofrecord' => 's','catalognumber' => 's','occurrenceid' => 's','ownerinstitutioncode' => 's',
 			'institutioncode' => 's','collectioncode' => 's','eventid' => 's','family' => 's','sciname' => 's','tidinterpreted' => 'n','scientificnameauthorship' => 's','identifiedby' => 's',
 			'dateidentified' => 's','identificationreferences' => 's','identificationremarks' => 's','taxonremarks' => 's','identificationqualifier' => 's','typestatus' => 's',
 			'recordedby' => 's','recordnumber' => 's','associatedcollectors' => 's','eventdate' => 'd','eventdate2' => 'd','eventtime' => 's', 'year' => 'n','month' => 'n','day' => 'n','startdayofyear' => 'n',
@@ -276,7 +276,7 @@ class OccurrenceEditorManager {
 		$this->otherCatNumIsNum = false;
 		if (array_key_exists('ocn', $this->qryArr)) {
 			if (strtolower($this->qryArr['ocn']) == 'is null') {
-				$sqlWhere .= 'AND (o.othercatalognumbers IS NULL) AND (id.identifierValue IS NULL) ';
+				$sqlWhere .= 'AND (id.identifierValue IS NULL) ';
 			} else {
 				$ocnArr = explode(',', $this->qryArr['ocn']);
 				$ocnBetweenFrag = array();
@@ -288,16 +288,14 @@ class OccurrenceEditorManager {
 						$v = str_ireplace(array('>', ' and ', '<'), array('', ' - ', ''), $v);
 					}
 					if (strpos('%', $v) !== false) {
-						$ocnBetweenFrag[] = '((o.othercatalognumbers LIKE "' . $v . '") OR (id.identifierValue LIKE "' . $v . '"))';
+						$ocnBetweenFrag[] = '(id.identifierValue LIKE "' . $v . '")';
 					} elseif ($p = strpos($v, ' - ')) {
 						$term1 = trim(substr($v, 0, $p));
 						$term2 = trim(substr($v, $p + 3));
 						if (is_numeric($term1) && is_numeric($term2)) {
 							$this->otherCatNumIsNum = true;
-							$ocnBetweenFrag[] = '((o.othercatalognumbers BETWEEN ' . $term1 . ' AND ' . $term2 . ') OR (id.identifierValue BETWEEN ' . $term1 . ' AND ' . $term2 . '))';
+							$ocnBetweenFrag[] = '(id.identifierValue BETWEEN ' . $term1 . ' AND ' . $term2 . ')';
 						} else {
-							$ocnTerm = '(o.othercatalognumbers BETWEEN "' . $term1 . '" AND "' . $term2 . '"';
-							if (strlen($term1) == strlen($term2)) $ocnTerm .= ' AND length(o.othercatalognumbers) = ' . strlen($term2);
 							$ocnTerm .= ') OR (id.identifierValue BETWEEN "' . $term1 . '" AND "' . $term2 . '"';
 							if (strlen($term1) == strlen($term2)) $ocnTerm .= ' AND length(id.identifierValue) = ' . strlen($term2);
 							$ocnTerm .= ')';
@@ -323,11 +321,11 @@ class OccurrenceEditorManager {
 						if (substr($term, 0, 1) == '<' || substr($term, 0, 1) == '>') {
 							$tStr = trim(substr($term, 1));
 							if (!is_numeric($tStr)) $tStr = '"' . $tStr . '"';
-							$ocnWhere .= 'OR (o.othercatalognumbers ' . substr($term, 0, 1) . ' ' . $tStr . ') OR (id.identifierValue ' . substr($term, 0, 1) . ' ' . $tStr . ') ';
+							$ocnWhere .= 'OR (id.identifierValue ' . substr($term, 0, 1) . ' ' . $tStr . ') ';
 						} elseif (strpos($term, '%') !== false) {
-							$ocnWhere .= 'OR (o.othercatalognumbers LIKE "' . $term . '") OR (id.identifierValue LIKE "' . $term . '") ';
+							$ocnWhere .= 'OR (id.identifierValue LIKE "' . $term . '") ';
 						} else {
-							$ocnWhere .= 'OR (o.othercatalognumbers = "' . $term . '") OR (id.identifierValue = "' . $term . '") ';
+							$ocnWhere .= 'OR (id.identifierValue = "' . $term . '") ';
 						}
 					}
 				}
@@ -549,7 +547,7 @@ class OccurrenceEditorManager {
 				else{
 					$customField = 'o.' . $customField;
 				}
-				if ($customField == 'o.otherCatalogNumbers') {
+				if ($customField == 'id.identifierName' || $customField == 'id.identifierValue') {
 					$customWhere .= $cao . ' (' . substr($this->setCustomSqlFragment($customField, $customTerm, $customValue, $cao, $cop, $ccp), 3) . ' ';
 					if ($customTerm != 'NOT_EQUALS' && $customTerm != 'NOT_LIKE') {
 						$caoOverride = 'OR';
@@ -578,6 +576,7 @@ class OccurrenceEditorManager {
 		if ($this->collId) $sqlWhere .= 'AND (o.collid =' . $this->collId . ') ';
 		if ($sqlWhere) $sqlWhere = 'WHERE ' . substr($sqlWhere, 4);
 		$this->sqlWhere = $sqlWhere;
+		echo $this->sqlWhere;
 	}
 
 	private function setCustomSqlFragment($customField, $customTerm, $customValue, $cao, $cop, $ccp) {
@@ -619,9 +618,9 @@ class OccurrenceEditorManager {
 				}
 			} elseif ($orderBy == 'othercatalognumbers') {
 				if ($this->otherCatNumIsNum) {
-					$sqlOrderBy = 'othercatalognumbers+1';
+					$sqlOrderBy = 'identifierValue+1';
 				} else {
-					$sqlOrderBy = 'othercatalognumbers';
+					$sqlOrderBy = 'identifierValue';
 				}
 			} elseif ($orderBy == 'recordnumber') {
 				$sqlOrderBy = 'recordnumber+1';
@@ -796,7 +795,11 @@ class OccurrenceEditorManager {
 			'LEFT JOIN tmstates tms ON tms.stateid = tma.stateid ';
 		}
 		if (strpos($this->sqlWhere, 'id.identifierValue') || strpos($this->sqlWhere, 'id.identifierName')) {
-			$sql .= 'LEFT JOIN omoccuridentifiers id ON o.occid = id.occid ';
+			if (strpos($this->sqlWhere, 'id.identifierValue IS NULL')){
+				$sql .= 'LEFT JOIN omoccuridentifiers id ON o.occid = id.occid ';
+			} else{
+				$sql .= 'INNER JOIN omoccuridentifiers id ON o.occid = id.occid ';
+			}
 		}
 		if (strpos($this->sqlWhere, 'u.username')) {
 			$sql .= 'LEFT JOIN omoccuredits ome ON o.occid = ome.occid LEFT JOIN users u ON ome.uid = u.uid ';
@@ -1626,7 +1629,7 @@ class OccurrenceEditorManager {
 		if (isset($postArr['clonecount']) && $postArr['clonecount']) {
 			$postArr['recordenteredby'] = $GLOBALS['USERNAME'];
 			$sourceOccid = $this->occid;
-			$clearAllArr = array('ownerinstitutioncode', 'institutioncode', 'collectioncode', 'catalognumber', 'othercatalognumbers', 'occurrenceid', 'individualcount', 'duplicatequantity', 'processingstatus', 'dateentered');
+			$clearAllArr = array('ownerinstitutioncode', 'institutioncode', 'collectioncode', 'catalognumber', 'occurrenceid', 'individualcount', 'duplicatequantity', 'processingstatus', 'dateentered');
 			$postArr = array_diff_key($postArr, array_flip($clearAllArr));
 			if (isset($postArr['targetcollid']) && $postArr['targetcollid'] && $postArr['targetcollid'] != $this->collId) {
 				$clearCollArr = array('basisofrecord');
