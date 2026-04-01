@@ -983,3 +983,23 @@
 .hidden {
   display: none;
 }
+
+/* Rotation */
+.rotated-header {
+  transform: rotate(-90deg) translate(-100%);
+  transform-origin: top left;
+  position: absolute;
+  left: 0; /* Adjust as needed */
+  display: block;
+  text-align: right;
+  margin-bottom: 2px;
+  font:
+    bold arial,
+    sans-serif;
+  clear: both;
+  white-space: nowrap;
+}
+
+.label:has(.rotated-header) {
+  position: relative;
+}

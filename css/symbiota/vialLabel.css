@@ -1,0 +1,43 @@
+body {
+  font-size: 4pt;
+}
+.catalognumber {
+  font-weight: bold;
+  font-size: 6pt;
+  margin-right: 1rem;
+}
+.family {
+  font-size: 6pt;
+}
+.eventdate {
+  display: flex;
+  justify-content: flex-start;
+  flex: 1;
+}
+.labelproject {
+  display: flex;
+  justify-content: flex-end;
+  flex: 1;
+}
+.labelheader {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 5px;
+  font:
+    bold 7pt arial,
+    sans-serif;
+  transform: rotate(-90deg);
+  clear: both;
+}
+.scientificname {
+  font-weight: bold;
+}
+
+.vial-footer {
+  text-align: center;
+  margin-top: 10px;
+  font:
+    bold 10pt arial,
+    sans-serif;
+  clear: both;
+}
