@@ -461,25 +461,25 @@ if($SYMB_UID){
 
 	if($qryCnt !== false){
 		$navStr = '<b>';
-		if($occIndex > 0) $navStr .= '<a href="#" onclick="return submitQueryForm(0);" title="'.(isset($LANG['FIRST_REC'])?$LANG['FIRST_REC']:'First Record').'">';
+		if($occIndex > 0) $navStr .= '<a href="#" onclick="return submitQueryForm(0);" title="'.(isset($LANG['FIRST_REC']) ? $LANG['FIRST_REC'] : 'First Record').'" aria-label="'.(isset($LANG['FIRST_REC']) ? $LANG['FIRST_REC'] : 'First Record').'">';
 		$navStr .= '|&lt;';
 		if($occIndex > 0) $navStr .= '</a>';
 		$navStr .= '&nbsp;&nbsp;&nbsp;&nbsp;';
-		if($occIndex > 0) $navStr .= '<a href="#" onclick="return submitQueryForm(\'back\');" title="'.(isset($LANG['PREV_REC'])?$LANG['PREV_REC']:'Previous Record').'">';
+		if($occIndex > 0) $navStr .= '<a href="#" onclick="return submitQueryForm(\'back\');" title="'.(isset($LANG['PREV_REC']) ? $LANG['PREV_REC'] : 'Previous Record').'" aria-label="'.(isset($LANG['PREV_REC']) ? $LANG['PREV_REC'] : 'Previous Record').'">';
 		$navStr .= '&lt;&lt;';
 		if($occIndex > 0) $navStr .= '</a>';
 		$recIndex = ($occIndex<$qryCnt?($occIndex + 1):'*');
 		$navStr .= '&nbsp;&nbsp;| '.$recIndex.' of '.$qryCnt.' |&nbsp;&nbsp;';
-		if($occIndex<$qryCnt-1) $navStr .= '<a href="#" onclick="return submitQueryForm(\'forward\');"  title="'.(isset($LANG['NEXT_REC'])?$LANG['NEXT_REC']:'Next Record').'">';
+		if($occIndex<$qryCnt-1) $navStr .= '<a href="#" onclick="return submitQueryForm(\'forward\');"  title="'.(isset($LANG['NEXT_REC']) ? $LANG['NEXT_REC'] : 'Next Record').'" aria-label="'.(isset($LANG['NEXT_REC']) ? $LANG['NEXT_REC'] : 'Next Record').'">';
 		$navStr .= '&gt;&gt;';
 		if($occIndex<$qryCnt-1) $navStr .= '</a>';
 		$navStr .= '&nbsp;&nbsp;&nbsp;&nbsp;';
-		if($occIndex<$qryCnt-1) $navStr .= '<a href="#" onclick="return submitQueryForm('.($qryCnt-1).');" title="'.(isset($LANG['LAST_REC'])?$LANG['LAST_REC']:'Last Record').'">';
+		if($occIndex<$qryCnt-1) $navStr .= '<a href="#" onclick="return submitQueryForm('.($qryCnt-1).');" title="'.(isset($LANG['LAST_REC']) ? $LANG['LAST_REC'] : 'Last Record').'" aria-label="'.(isset($LANG['LAST_REC']) ? $LANG['LAST_REC'] : 'Last Record').'">';
 		$navStr .= '&gt;|';
 		if($occIndex<$qryCnt-1) $navStr .= '</a> ';
 		if(!$crowdSourceMode){
 			$navStr .= '&nbsp;&nbsp;&nbsp;&nbsp;';
-			$navStr .= '<a href="occurrenceeditor.php?gotomode=1&collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" onclick="return verifyLeaveForm()" title="' . htmlspecialchars((isset($LANG['NEW_REC'])?$LANG['NEW_REC']:'New Record'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">&gt;*</a>';
+			$navStr .= '<a href="occurrenceeditor.php?gotomode=1&collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" onclick="return verifyLeaveForm()" title="' . htmlspecialchars((isset($LANG['NEW_REC']) ? $LANG['NEW_REC'] : 'New Record'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" aria-label="' . htmlspecialchars((isset($LANG['NEW_REC']) ? $LANG['NEW_REC'] : 'New Record'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">&gt;*</a>';
 		}
 		$navStr .= '</b>';
 	}
