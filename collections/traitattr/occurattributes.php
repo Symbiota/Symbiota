@@ -64,7 +64,7 @@ $catNum = '';
 if ($traitID) {
 	$imgRetArr = array();
 	if ($mode == 1) {
-		$imgRetArr = $attrManager->getImageUrls();
+		$imgRetArr = $attrManager->getImageUrls($traitID);
 		$imgArr = current($imgRetArr);
 	} elseif ($mode == 2) {
 		$imgRetArr = $attrManager->getReviewUrls($traitID);
@@ -112,11 +112,14 @@ if ($traitID) {
 
 		$(document).ready(function() {
 			setImgRes();
+
 			$("#specimg").imagetool({
 				maxWidth: 6000,
 				viewportWidth: <?= $paneX ?>,
-				viewportHeight: <?= $paneY ?>
+				viewportHeight: <?= $paneY ?>,
+				edgeSensitivity: 25
 			});
+
 		});
 
 		function setImgRes() {
@@ -272,7 +275,7 @@ if ($traitID) {
 								echo '</span>';
 							}
 							$imgTotal = count($imgArr);
-							if ($imgTotal > 1) echo '<span id="labelcnt" style="margin-left:60px;">1</span> of ' . $imgTotal . ' images ' . ($imgTotal > 1 ? '<a href="#" onclick="nextImage()">&gt;&gt; ' . $LANG['NEXT'] . '</a>' : '');
+							if ($imgTotal > 1) echo '<span id="labelcnt" style="margin-left:60px;">1</span> of ' . $imgTotal . ' images ' . ($imgTotal > 1 ? '<a href="#" onclick="nextImage();return false;">&gt;&gt; ' . $LANG['NEXT'] . '</a>' : '');
 							if ($occid && $mode != 2) echo '<span style="margin-left:80px" title="' . $LANG['SKIP_SPECIMEN'] . '"><a href="#" onclick="skipSpecimen()">' . $LANG['SKIP'] . ' &gt;&gt;</a></span>';
 							?>
 						</div>
@@ -309,7 +312,7 @@ if ($traitID) {
 					if ($mode == 1) {
 						?>
 						<form id="filterform" name="filterform" method="post" action="occurattributes.php" onsubmit="return verifyFilterForm(this)">
-							<fieldset style="margin-top:25px">
+							<fieldset>
 								<legend><b><?= $LANG['FILTER'] ?></b></legend>
 								<div>
 									<select name="traitid">
@@ -353,7 +356,7 @@ if ($traitID) {
 									<span id="notvalid-span" style="display:none;font-weight:bold;color:red;"><?= $LANG['TAXON_NOT_VALID'] ?></span>
 								</div>
 								<div style="margin:10px">
-									<?php if ($traitID) echo '<b> ' . $LANG['TARGET_SPECIMEN'] . '</b> ' . $attrManager->getSpecimenCount() ?>
+									<?php if ($traitID) echo '<b> ' . $LANG['TARGET_SPECIMEN'] . '</b> ' . $attrManager->getSpecimenCount($traitID) ?>
 								</div>
 								<?php
 								if ($isEditor == 2){
@@ -371,7 +374,7 @@ if ($traitID) {
 					} elseif ($mode == 2) {
 						?>
 						<form id="reviewform" name="reviewform" method="post" action="occurattributes.php" onsubmit="return verifyFilterForm(this)">
-							<fieldset style="margin-top:25px">
+							<fieldset>
 								<legend><b><?= $LANG['REVIEWER'] ?></b></legend>
 								<div>
 									<select name="traitid">
@@ -494,7 +497,7 @@ if ($traitID) {
 						?>
 						<div id="traitdiv">
 							<form name="submitform" method="post" action="occurattributes.php" onsubmit="return verifySubmitForm(this)">
-								<fieldset style="margin-top:20px">
+								<fieldset>
 									<legend><b><?= $traitArr[$traitID]['name'] ?></b></legend>
 									<div style="float:right;margin-right:10px">
 										<div class="trianglediv" style="margin:4px 3px;float:right;cursor:pointer" onclick="setAttributeTree(this)" title="<?= $LANG['TOGGLE_ATTRI_TREE'] ?>">
