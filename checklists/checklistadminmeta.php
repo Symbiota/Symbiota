@@ -30,14 +30,14 @@ if(!empty($clArray['type'])) $clType = $clArray['type'];
 elseif($excludeParent) $clType = 'excludespp';
 ?>
 <script type="text/javascript" src="../js/tinymce/tinymce.min.js"></script>
-<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js" type="text/javascript"></script>
+<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js?ver=1" type="text/javascript"></script>
 <script type="text/javascript">
 	<?php
 	if($excludeParent) echo 'setExclusionChecklistMode();';
 	?>
 
 	tinymce.init({
-		selector: "textarea",
+		selector: "#abstract",
 		width: "100%",
 		height: 300,
 		menubar: false,
@@ -50,6 +50,10 @@ elseif($excludeParent) $clType = 'excludespp';
 	function validateChecklistForm(f){
 		if(f.name.value == ""){
 			alert("<?= $LANG['NEED_NAME']; ?>");
+			return false;
+		}
+		if(!verifyFootprint('footprintwkt')){
+			alert("<?= $LANG['ERROR_INVALID_JSON'] ?>");
 			return false;
 		}
 		if(f.latcentroid.value != ""){
@@ -125,6 +129,14 @@ elseif($excludeParent) $clType = 'excludespp';
 	function openMappingPointAid() {
 		mapWindow=open("<?= $CLIENT_ROOT; ?>/collections/tools/mappointaid.php","mapaid","resizable=0,width=1000,height=800,left=20,top=20");
 	    if(mapWindow.opener == null) mapWindow.opener = self;
+	}
+
+	function openMappingCoordAid(){
+		if(!verifyFootprint('footprintwkt')){
+			alert("<?= $LANG['ERROR_INVALID_JSON'] ?>");
+			return false;
+		}
+		openCoordAid({map_mode:MAP_MODES.POLYGON, client_root: '<?= $CLIENT_ROOT?>', polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON});
 	}
 
 	function enableDisableExtServiceFields() {
@@ -240,7 +252,7 @@ if($clid || !empty($_REQUEST['excludeparent'])) $displayform = true;
 			</div>
 			<div class="top-breathing-room-rel">
 				<label><?= $LANG['ABSTRACT']; ?></label>
-				<textarea name="abstract" style="width:95%" rows="6"><?= ($clArray?$clArray["abstract"]:''); ?></textarea>
+				<textarea id="abstract" name="abstract" style="width:95%" rows="6"><?= ($clArray?$clArray["abstract"]:''); ?></textarea>
 			</div>
 			<div class="top-breathing-room-rel">
 				<label><?= $LANG['NOTES']; ?></label>
@@ -277,17 +289,15 @@ if($clid || !empty($_REQUEST['excludeparent'])) $displayform = true;
 				</div>
 			</div>
 			<div id="polygon-div" style="clear:both" class="top-breathing-room-rel">
-				<fieldset style="width:350px;">
-					<legend><b><?= $LANG['POLYFOOT']; ?></b></legend>
-					<span id="polyDefDiv" style="display:<?= ($clArray && $clArray["hasfootprintwkt"]?'inline':'none'); ?>;">
-						<?= $LANG['POLYGON_DEFINED']; ?>
-					</span>
-					<span id="polyNotDefDiv" style="display:<?= ($clArray && $clArray["hasfootprintwkt"]?'none':'inline'); ?>;">
-						<?= $LANG['POLYGON_NOT_DEFINED']; ?>
-					</span>
-					<span style="margin:10px;"><a href="#" onclick="openCoordAid({map_mode:MAP_MODES.POLYGON, client_root: '<?= $CLIENT_ROOT?>', polygon_text_type: POLYGON_TEXT_TYPES.<?= isset($footprint['type']) && $footprint['type'] === 'wkt' ? 'WKT': 'GEOJSON' ?>});return false;" title="<?= $LANG['CREATE_EDIT_POLYGON']; ?>"><img src="../images/world.png" style="width:1em;" /></a></span>
-					<input type="hidden" id="footprintwkt" name="footprint<?= Sanitize::outString($footprint['type'] ?? 'geoJson') ?>" value="<?= Sanitize::outString($footprint['footprint'] ?? '') ?>" />
-				</fieldset>
+				<?php
+				$footprintExists = false;
+				if(!empty($clArray['hasfootprintwkt'])) $footprintExists = true;
+				?>
+				<label for="footprint"><?= $LANG['GEOJSON_FOOTPRINT'] ?>
+					<span style="margin:10px;"><a href="#" onclick="openMappingCoordAid();return false;" title="<?= $LANG['CREATE_EDIT_POLYGON']; ?>"><img src="../images/world.png" style="width:1em;" /></a></span>
+				</label>
+				<textarea onchange="verifyFootprint('footprintwkt')" id="footprintwkt" name='footprintgeoJson' style="width:100%"><?= Sanitize::outString($footprint['footprint'] ?? '') ?></textarea>
+				<div id="footprintwkt-error" style="display:none; color: var(--danger-color); margin-bottom: 0.25rem"><?= $LANG['ERROR_INVALID_JSON'] ?></div>
 			</div>
 			<div style="clear:both;" class="top-breathing-room-rel">
 				<fieldset style="width:600px;">

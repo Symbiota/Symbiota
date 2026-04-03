@@ -295,8 +295,11 @@ function renderValidateCoordinates($cleanManager, $targetRank) {
 								<td>
 									<div style="display: flex; align-items: center; gap: 0.5rem">
 									<?= $country ?>
-									<a style="display: flex; flex-grow: 1; justify-content: end" href="../editor/occurrencetabledisplay.php?collid=<?= $collId ?>&ffcountry=<?= htmlspecialchars($country, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE)?>" target="_blank">
-										<img src="../../images/list.png" title="<?= $LANG['VIEW_SPECIMENS'] ?>"/>
+									<?php
+									$href= '../editor/occurrencetabledisplay.php?q_catalognumber=&collid=' . $collId . '&q_customfield1=country&q_customvalue1=' . htmlspecialchars($country, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&q_customfield2=decimalLatitude&q_customtype2=NOT_NULL';
+									?>
+									<a style="display: flex; flex-grow: 1; justify-content: end" href="<?= $href ?>" target="_blank">
+										<img src="../../images/list.png" title="<?= $LANG['VIEW_SPECIMENS'] ?>" style="width:1em;"/>
 									</a>
 									</div>
 								</td>

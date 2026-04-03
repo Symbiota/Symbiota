@@ -95,6 +95,20 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 			const expandButton = document.getElementById("expand-all-button");
 			expandButton.removeAttribute('style', 'display: none;');
 		};
+
+		document.addEventListener('DOMContentLoaded', () => {			
+			document.querySelectorAll('.accordion-header').forEach(accordionHeader => {
+				accordionHeader.addEventListener('keydown', (e) => {
+					if (e.key === 'Enter' || e.key === ' ') {
+						if (e.key === ' ') {
+							e.preventDefault();
+						}
+						const selector = accordionHeader.previousElementSibling;
+						selector.checked = !selector.checked;
+					}
+				});
+			});
+		});
 	</script>
 
 	<?php include_once($SERVER_ROOT . '/includes/googleanalytics.php'); ?>
@@ -133,36 +147,38 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 					<input type="checkbox" id="taxonomy" class="accordion-selector" checked />
 
 					<!-- Accordion header -->
-					<label for="taxonomy" class="accordion-header"><?php echo $LANG['TAXONOMY'] ?></label>
+					<label for="taxonomy" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['TAXONOMY'] ?></label>
 
 					<!-- Taxonomy -->
-					<div id="search-form-taxonomy" class="content">
-						<div id="taxa-text" class="input-text-container">
-							<label for="taxa" class="input-text--outlined">
-								<span class="screen-reader-only"><?php echo $LANG['TAXON'] ?></span>
-								<input type="text" name="taxa" id="taxa" data-chip="<?php echo $LANG['TAXON'] ?>" />
-								<span class="inset-input-label"><?php echo $LANG['TAXON'] ?></span>
-							</label>
-						</div>
-						<span class="assistive-text"><?php echo $LANG['TYPE_CHAR_FOR_SUGGESTIONS'] ?></span>
-						<div style="padding-top:14px">
-							<div class="select-container" style="position: relative">
-								<label for="taxontype" class="screen-reader-only"><?php echo $LANG['TAXON_TYPE'] ?></label>
-								<select name="taxontype" id="taxontype" style="margin-top:0;padding-top:0; margin-bottom: 0.5rem">
-									<option id="taxontype-scientific" value="2" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['SCIENTIFIC_NAME'] ?></option>
-									<option id="taxontype-family" value="3" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['FAMILY'] ?></option>
-									<option id="taxontype-group" value="4" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['TAXONOMIC_GROUP'] ?></option>
-									<option id="taxontype-common" value="5" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['COMMON_NAME'] ?></option>
-								</select>
-								<span class="inset-input-label"><?php echo $LANG['TAXON_TYPE'] ?></span>
+					<div class="content">
+						<div id="search-form-taxonomy">
+							<div id="taxa-text" class="input-text-container">
+								<label for="taxa" class="input-text--outlined">
+									<span class="screen-reader-only"><?php echo $LANG['TAXON'] ?></span>
+									<input type="text" name="taxa" id="taxa" data-chip="<?php echo $LANG['TAXON'] ?>" />
+									<span class="inset-input-label"><?php echo $LANG['TAXON'] ?></span>
+								</label>
 							</div>
-						</div>
-						<div>
-							<input type="checkbox" name="usethes" id="usethes" data-chip="<?php echo $LANG['INCLUDE_SYNONYMS'] ?>" value="1" checked />
-							<label for="usethes">
-								<span class="ml-1"><?php echo $LANG['INCLUDE_SYNONYMS'] ?></span>
-							</label>
-							<img src="../../images/info.png" style="width:1em; margin-left:1px;" alt="<?php echo $LANG['SYNONYM_NOTE'] ?>" title="<?php echo $LANG['SYNONYM_NOTE'] ?>" onclick="alert('<?php echo addslashes($LANG['SYNONYM_NOTE']) ?>')"/>
+							<span class="assistive-text"><?php echo $LANG['TYPE_CHAR_FOR_SUGGESTIONS'] ?></span>
+							<div style="padding-top:14px">
+								<div class="select-container" style="position: relative">
+									<label for="taxontype" class="screen-reader-only"><?php echo $LANG['TAXON_TYPE'] ?></label>
+									<select name="taxontype" id="taxontype" style="margin-top:0;padding-top:0; margin-bottom: 0.5rem">
+										<option id="taxontype-scientific" value="2" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['SCIENTIFIC_NAME'] ?></option>
+										<option id="taxontype-family" value="3" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['FAMILY'] ?></option>
+										<option id="taxontype-group" value="4" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['TAXONOMIC_GROUP'] ?></option>
+										<option id="taxontype-common" value="5" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['COMMON_NAME'] ?></option>
+									</select>
+									<span class="inset-input-label"><?php echo $LANG['TAXON_TYPE'] ?></span>
+								</div>
+							</div>
+							<div>
+								<input type="checkbox" name="usethes" id="usethes" data-chip="<?php echo $LANG['INCLUDE_SYNONYMS'] ?>" value="1" checked />
+								<label for="usethes">
+									<span class="ml-1"><?php echo $LANG['INCLUDE_SYNONYMS'] ?></span>
+								</label>
+								<img src="../../images/info.png" style="width:1em; margin-left:1px;" alt="<?php echo $LANG['SYNONYM_NOTE'] ?>" title="<?php echo $LANG['SYNONYM_NOTE'] ?>" onclick="alert('<?php echo addslashes($LANG['SYNONYM_NOTE']) ?>')"/>
+							</div>
 						</div>
 					</div>
 				</section>
@@ -172,7 +188,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 					<!-- Accordion selector -->
 					<input type="checkbox" id="locality" name="locality" class="accordion-selector" />
 					<!-- Accordion header -->
-					<label for="locality" class="accordion-header"><?php echo $LANG['LOCALITY'] ?></label>
+					<label for="locality" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['LOCALITY'] ?></label>
 					<!-- Accordion content -->
 					<div class="content">
 						<div id="search-form-locality">
@@ -249,7 +265,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 					<!-- Accordion selector -->
 					<input type="checkbox" id="lat-long" class="accordion-selector" />
 					<!-- Accordion header -->
-					<label for="lat-long" class="accordion-header"><?php echo $LANG['LATITUDE_LONGITUDE'] ?></label>
+					<label for="lat-long" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['LATITUDE_LONGITUDE'] ?></label>
 					<!-- Accordion content -->
 					<div class="content">
 						<p class="assistive-text"><?= $LANG['LAT_LONG_SEARCH_EXPLAIN'] ?></p>
@@ -391,7 +407,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 					<!-- Accordion selector -->
 					<input type="checkbox" id="coll-event" class="accordion-selector" />
 					<!-- Accordion header -->
-					<label for="coll-event" class="accordion-header"><?php echo $LANG['COLLECTING_EVENT'] ?></label>
+					<label for="coll-event" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['COLLECTING_EVENT'] ?></label>
 					<!-- Accordion content -->
 					<div class="content">
 						<div id="search-form-coll-event">
@@ -434,7 +450,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 					<!-- Accordion selector -->
 					<input type="checkbox" id="sample" class="accordion-selector" />
 					<!-- Accordion header -->
-					<label for="sample" class="accordion-header"><?php echo $LANG['SAMPLE_PROPERTIES'] ?></label>
+					<label for="sample" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['SAMPLE_PROPERTIES'] ?></label>
 					<!-- Accordion content -->
 					<div class="content">
 						<div id="search-form-sample">
@@ -511,7 +527,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 							<!-- Accordion selector -->
 							<input type="checkbox" id="trait" class="accordion-selector" />
 							<!-- Accordion header -->
-							<label for="trait" class="accordion-header"><?php echo $LANG['TRAIT_CRITERIA'] ?> <a href="https://docs.symbiota.org/User_Guide/traits" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
+							<label for="trait" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['TRAIT_CRITERIA'] ?> <a href="https://docs.symbiota.org/User_Guide/traits" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
 							<!-- Accordion content -->
 							<div class="content">
 								<div id="search-form-trait">
@@ -553,7 +569,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 					<input type="checkbox" id="associations" class="accordion-selector" />
 
 					<!-- Accordion header -->
-					<label for="associations" class="accordion-header"><?php echo $LANG['ASSOCIATIONS'] ?> <a href="https://docs.symbiota.org/User_Guide/associations" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
+					<label for="associations" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['ASSOCIATIONS'] ?> <a href="https://docs.symbiota.org/User_Guide/associations" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
 
 					<!-- Taxonomy -->
 					<div id="search-form-associations" class="content">
@@ -619,7 +635,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 					<input type="checkbox" id="characters" class="accordion-selector" />
 
 					<!-- Character header -->
-					<label for="characters" class="accordion-header"><?php echo $LANG['CHARACTERS'] ?> <a href="https://docs.symbiota.org/User_Guide/searching_records/#taxon-character-criteria" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
+					<label for="characters" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['CHARACTERS'] ?> <a href="https://docs.symbiota.org/User_Guide/searching_records/#taxon-character-criteria" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
 
 					<div id="search-form-characters" class="content">
 						<div>
@@ -685,7 +701,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 						<input type="checkbox" id="geocontext" class="accordion-selector" />
 
 						<!-- Accordion header -->
-						<label for="geocontext" class="accordion-header"><?php echo $LANG['GEO_CONTEXT'] ?> <a href="https://docs.symbiota.org//User_Guide/searching_records#geological-context" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
+						<label for="geocontext" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['GEO_CONTEXT'] ?> <a href="https://docs.symbiota.org//User_Guide/searching_records#geological-context" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
 
 						<!-- Content -->
 						<div id="search-form-geocontext" class="content">
@@ -767,7 +783,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 					<!-- Accordion selector -->
 					<input type="checkbox" id="collections" class="accordion-selector" />
 					<!-- Accordion header -->
-					<label for="collections" class="accordion-header"><?php echo $LANG['COLLECTIONS'] ?></label>
+					<label for="collections" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['COLLECTIONS'] ?></label>
 					<!-- Accordion content -->
 					<div class="content">
 						<div id="search-form-colls">

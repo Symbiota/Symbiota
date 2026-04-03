@@ -76,3 +76,20 @@ function cleanPolygon(inputObj){
 	polygon = polygon.replace(/\s+/g, " ");
 	inputObj.value = polygon;
 }
+
+function verifyFootprint(footprint_id) {
+	const error_msg_box = document.getElementById('footprintwkt-error');
+
+	error_msg_box.style.display="none";
+
+	let footprint_json = document.getElementById(footprint_id).value;
+	if(footprint_json) {
+		try {
+			footprint_json = JSON.parse(footprint_json);
+		} catch(err) {
+			error_msg_box.style.display="block";
+			return false;
+		}
+	}
+	return true;
+}

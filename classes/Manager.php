@@ -116,13 +116,12 @@ class Manager  {
 	}
 
 	protected function cleanInStr($str){
-		$newStr = $str ? trim($str) : '';
-		if($newStr){
-			$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-			$newStr = $this->conn->real_escape_string($newStr);
+		if($str){
+			$str = trim($str);
+			$str = preg_replace('/\s\s+/', ' ', $str);
+			$str = $this->conn->real_escape_string($str);
 		}
-
-		return $newStr;
+		return $str;
 	}
 
 	protected function cleanInArray($arr){

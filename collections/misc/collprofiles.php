@@ -113,6 +113,20 @@ if ($SYMB_UID) {
 			}
 		}
 
+		document.addEventListener('DOMContentLoaded', () => {			
+			document.querySelectorAll('.accordion-header').forEach(accordionHeader => {
+				accordionHeader.addEventListener('keydown', (e) => {
+					if (e.key === 'Enter' || e.key === ' ') {
+						if (e.key === ' ') {
+							e.preventDefault();
+						}
+						const selector = accordionHeader.previousElementSibling;
+						selector.checked = !selector.checked;
+					}
+				});
+			});
+		});
+
 	</script>
 	<style>
 		.importItem { margin-left:10px; display:none; }
@@ -811,7 +825,7 @@ if ($SYMB_UID) {
 			<div class="accordions" style="margin-bottom: 1.5rem;">
 				<section>
 					<input type="checkbox" id="more-details" class="accordion-selector" />
-					<label for="more-details" class="accordion-header"><?= $LANG['MORE_INFO'] ?></label>
+					<label for="more-details" class="accordion-header" tabindex="0" role="button"><?= $LANG['MORE_INFO'] ?></label>
 					<div id="collection-type" class="content">
 						<div class="bottom-breathing-room-rel">
 							<span class="label"><?= $LANG['COLLECTION_TYPE'] ?>:</span> <?= $collData['colltype'] ?>

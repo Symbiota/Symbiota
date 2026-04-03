@@ -121,9 +121,9 @@ if($IS_ADMIN){
 				?>
 				<h1>
 					<?php
-						echo $user["firstname"]." ".$user["lastname"]." (#".$user["uid"].") ";
-						echo "<a href='viewprofile.php?emode=1&tabindex=2&&userid=" . htmlspecialchars($user["uid"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'><img src='../images/edit.png' style='border:0px;width:0.8em;' /></a>";
-					?>
+						echo $user['firstname'] . ' ' . $user['lastname'] . ' (#' . $user['uid'] . ') ';
+						?>
+						<a href="viewprofile.php?emode=1&tabindex=3&userid=<?= $user['uid'] ?>"><img src="../images/edit.png" style="border:0px;width:0.8em;" ></a>
 				</h1>
 				<div style="margin-left:10px;">
 					<div style="clear:left;">

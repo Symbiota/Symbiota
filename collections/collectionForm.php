@@ -50,6 +50,8 @@ function updateParent(inputs, parentSelector) {
 function toggleCategory(categoryId, event=null) {
 	const container = document.getElementById(categoryId + '_inputs');
 	if(!container) return;
+	if (event.key === 'Tab') return;
+	if (event.key === ' ') event.preventDefault();
 
 	const open_toggle = document.getElementById(categoryId + '_open_toggle');
 	const close_toggle = document.getElementById(categoryId + '_close_toggle');
@@ -173,7 +175,7 @@ function toggleCategory(categoryId, event=null) {
 							<?= $category['name'] ?>
 						</label>
 
-						<a onclick="toggleCategory(`<?=  $categoryIdentifer ?>`, event)" style="cursor: pointer;">
+						<a onclick="toggleCategory(`<?=  $categoryIdentifer ?>`, event)" onkeydown="toggleCategory(`<?=  $categoryIdentifer ?>`, event)" style="cursor: pointer;" tabindex="0" role="button">
 							<span id="<?=  $categoryIdentifer . '_open_toggle' ?>"
 								style="display: none; align-items: center; gap:0.5rem;">
 								<img
