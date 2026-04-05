@@ -133,7 +133,7 @@ else{
 				if($qDateLastModified) $qryStr .= '&datelastmodified='.$qDateLastModified;
 				if($qryStr){
 					?>
-					<a class="button button-primary icon-button" style="display: inline-flex; padding: 7px" title="<?php echo $LANG['GO_LABEL_PRINT']; ?>" href="../reports/labelmanager.php?collid=<?= $collId . htmlspecialchars($qryStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank">
+					<a class="button button-primary icon-button" style="display: inline-flex; padding: 7px" title="<?php echo $LANG['GO_LABEL_PRINT']; ?>" aria-label="<?= $LANG['GO_LABEL_PRINT'] . $LANG['OPENS_NEW_TAB'] ?>" href="../reports/labelmanager.php?collid=<?= $collId . htmlspecialchars($qryStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank">
 						<img src="../../images/list.png" style="width:1.3em" />
 					</a>
 					<?php
