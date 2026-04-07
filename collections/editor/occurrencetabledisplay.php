@@ -66,7 +66,7 @@ if($SYMB_UID){
 	}
 
 	if($collMap && $collMap['colltype']=='General Observations') $isGenObs = 1;
-	if ($collMap['colltype'] == 'Fossil Specimens')
+	if ($collMap && $collMap['colltype'] == 'Fossil Specimens')
 		$headerMapBase = array_merge($headerMapBase, $headerMapPaleoBase);
 	if(!$isEditor){
 		if($isGenObs){
