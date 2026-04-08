@@ -50,8 +50,8 @@ function updateParent(inputs, parentSelector) {
 function toggleCategory(categoryId, event=null) {
 	const container = document.getElementById(categoryId + '_inputs');
 	if(!container) return;
-	if (event.key === 'Tab') return;
-	if (event.key === ' ') event.preventDefault();
+	if (event?.key === 'Tab') return;
+	if (event?.key === ' ') event.preventDefault();
 
 	const open_toggle = document.getElementById(categoryId + '_open_toggle');
 	const close_toggle = document.getElementById(categoryId + '_close_toggle');

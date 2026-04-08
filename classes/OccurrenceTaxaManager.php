@@ -260,6 +260,8 @@ class OccurrenceTaxaManager {
 		}
 		else{
 			$taxaStr = str_replace(';',',',$this->cleanInputStr($_REQUEST['taxa']));
+			//Strip out illegal and problematic characters
+			$taxaStr = preg_replace("/[^a-zA-Z0-9\s,\-\.()'×†]/u", '', $taxaStr);
 		}
 		$taxaStr = str_replace('_', ' ',$taxaStr);
 		if($taxaStr){

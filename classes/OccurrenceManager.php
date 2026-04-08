@@ -915,11 +915,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			if($v) $retStr .= '&'. $this->cleanOutStr($k) . '=' . $this->cleanOutStr($v);
 		}
 		if(isset($this->taxaArr['search'])){
-			$patternTaxonChars = '/^[a-zA-Z0-9\s\-\,\.\(\)\'×†]*$/';
-			$taxonSearchTerm = $this->getTaxaSearchTerm();
-			if (preg_match($patternTaxonChars, $taxonSearchTerm)==1) {
-				$retStr .= '&taxa=' . $taxonSearchTerm;
-			}
+			$retStr .= '&taxa=' . $this->getTaxaSearchTerm();
 			if($this->taxaArr['usethes']) $retStr .= '&usethes=1';
 			if(is_numeric($this->taxaArr['taxontype'])) {
 				$retStr .= '&taxontype=' . intval($this->taxaArr['taxontype']);
