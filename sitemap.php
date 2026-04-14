@@ -497,7 +497,9 @@ if(!$schemaVersion){
 			?>
 			</section>
 			<div id="symbiotaschema">
-				<img style="height:1.85rem" src="https://img.shields.io/badge/Symbiota-v<?= $CODE_VERSION ?>-blue.svg" alt="a blue badge depicting Symbiota software version" />
+				<a href="https://github.com/Symbiota/Symbiota/releases/tag/v<?= $CODE_VERSION ?>" target="_blank">
+					<img style="height:1.85rem" src="https://img.shields.io/badge/Symbiota-v<?= $CODE_VERSION ?>-blue.svg" alt="a blue badge depicting Symbiota software version" />
+				</a>
 				<img style="height:1.85rem" src="https://img.shields.io/badge/Schema-v<?= $schemaVersion ?>-blue.svg" alt="a blue badge depicting Symbiota database schema version" />
 			</div>
 		</div>

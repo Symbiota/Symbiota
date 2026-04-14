@@ -21,6 +21,8 @@ $LANG['COLLECTOR'] = 'Collectionneur';
 $LANG['LOCALITY'] = 'Localité';
 $LANG['ADD_CURRENT'] = 'Ajouter nom en utilisant la taxonomie actuelle';
 $LANG['NO_VOUCHERS'] = 'Ajouter noms sans lier èchantillons';
+$LANG['DOWNLOAD_SPECIMEN_DATA'] = "Télécharger les données de l'échantillon";
+$LANG['IMG_DWNL_DATA'] = 'Bouton de téléchargement';
 $LANG['SUBMIT_VOUCHERS'] = 'Soumettre des Échantillons';
 $LANG['SPEC_COUNT'] = 'Nombre d\'Échantillons';
 $LANG['VIEW_NEXT'] = 'Voir Suivant';
@@ -34,4 +36,5 @@ $LANG['NOT_IN_CHECKLIST'] = 'Ci-dessous sont listés les noms de taxon introuvab
 	par un ou plusieurs spécimens qui ont une localité correspondant au terme de recherche ci-dessus.';
 $LANG['LINK_VOUCHERS'] = 'Lier les Échantillons';
 $LANG['NOVOUCHERS'] = 'Aucun échantillon localisé';
+$LANG['DEFINE_SEARCH_CRITERIA'] = 'Utilisez le formulaire ci-dessus pour définir les critères de recherche';
 ?>

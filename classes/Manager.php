@@ -37,19 +37,19 @@ class Manager  {
 		}
 	}
 
-	protected function getConfigAttribute($attrName){
-		$attrValue = '';
-		if($attrName){
-			$sql = 'SELECT attributeValue FROM adminconfig WHERE attributeName = ?';
+	protected function getConfigAttribute($propName){
+		$propValue = '';
+		if($propName){
+			$sql = 'SELECT propName FROM adminproperties WHERE propName = ?';
 			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('s', $attrName);
+				$stmt->bind_param('s', $propName);
 				$stmt->execute();
-				$stmt->bind_result($attrValue);
+				$stmt->bind_result($propValue);
 				$stmt->fetch();
 				$stmt->close();
 			}
 		}
-		return $attrValue;
+		return $propValue;
 	}
 
 	protected function setLogFH($logPath){
@@ -116,13 +116,12 @@ class Manager  {
 	}
 
 	protected function cleanInStr($str){
-		$newStr = $str ? trim($str) : '';
-		if($newStr){
-			$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-			$newStr = $this->conn->real_escape_string($newStr);
+		if($str){
+			$str = trim($str);
+			$str = preg_replace('/\s\s+/', ' ', $str);
+			$str = $this->conn->real_escape_string($str);
 		}
-
-		return $newStr;
+		return $str;
 	}
 
 	protected function cleanInArray($arr){

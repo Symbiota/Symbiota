@@ -9,6 +9,7 @@ $LANG['OCC_CLEANER'] = 'Nettoyeur d\'occurrences';
 $LANG['COLL_MNGMT'] = 'Gestion des collections';
 $LANG['DATA_CLEAN'] = 'Module de nettoyage des données';
 $LANG['DOWNLOAD_BACKUP'] = 'Il est fortement recommandé de télécharger une sauvegarde des données de votre collection avant d\'exécuter des mises à jour par lots';
+$LANG['BACKUP_INSTRUCTIONS'] = 'instructions';
 $LANG['DUPLICATE_RECS'] = 'Enregistrements en double';
 $LANG['DUPL_REC_DESCR'] = 'Ces outils aideront à rechercher dans cette collection d\'enregistrements des enregistrements en double du même spécimen.
                              S\'il existe des enregistrements en double, cette fonctionnalité offre la possibilité de fusionner les valeurs d\'enregistrement, les images,

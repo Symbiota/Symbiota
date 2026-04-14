@@ -100,7 +100,7 @@ $clMetaArr = $clManager->getClMetadata();
 					footprint_json = JSON.parse(footprint_json);
 				} catch(err) {
 					footprint_json = false;
-					error_msg_box.innerHTML = "<?= $LANG['ERROR_INVALID_JSON'] ?>"; 
+					error_msg_box.innerHTML = "<?= $LANG['ERROR_INVALID_JSON'] ?>";
 					error_msg_box.style.display="block";
 				}
 			}
@@ -159,7 +159,7 @@ if($statusStr){
 		<?= $statusStr; ?>
 	</div>
 	<hr />
-<?php
+	<?php
 }
 if($clid && $isEditor){
 	$termArr = $clManager->getQueryVariableArr();
@@ -306,49 +306,48 @@ if($clid && $isEditor){
 		}
 		?>
 	</div>
-	<?php
-	if($termArr){
-		?>
-		<div id="tabs" style="margin-top:25px;">
-			<ul>
-
-				<li><a href="nonvoucheredtab.php?clid=<?= $clid . '&pid=' . $pid . '&start=' . $startPos . '&displaymode=' . $displayMode; ?>"><span><?= $LANG['NON_VOUCHERED'];?></span></a></li>
-				<li><a href="vamissingtaxa.php?clid=<?= $clid . '&pid=' . $pid . '&start=' . $startPos . '&displaymode=' . ($tabIndex==1?$displayMode:0) . '&excludevouchers=' . $excludeVouchers; ?>"><span><?= $LANG['MISSINGTAXA'];?></span></a></li>
-				<li><a href="vaconflicts.php?clid=<?= $clid . '&pid=' . $pid . '&start=' . $startPos; ?>"><span><?= $LANG['VOUCHCONF'];?></span></a></li>
-				<?php
-				if($clManager->getAssociatedExternalService()) echo '<li><a href="externalvouchers.php?clid=' . $clid . '&pid=' . $pid . '"><span>' . $LANG['EXTERNALVOUCHERS'] . '</span></a></li>';
-				if($clManager->hasVoucherProjects()) echo '<li><a href="imgvouchertab.php?clid=' . $clid . '">' . $LANG['ADDIMGVOUCHER'] . '</a></li>';
-				?>
-				<li><a href="#reportDiv"><span><?= $LANG['REPORTS'] ?></span></a></li>
-			</ul>
-			<div id="reportDiv">
-				<div style="margin:25px;height:400px;">
-					<div style="margin:10px 5px;"><?php echo $LANG['ADDITIONAL'];?>.</div>
-					<ul>
-						<li><a href="voucherreporthandler.php?rtype=fullcsv&clid=<?= $clid ?>"><?= $LANG['FULLSPECLIST'] ?></a></li>
-						<?php
-						$vouchersExist = $clManager->vouchersExist();
-						if($vouchersExist){
-							?>
-							<li><a href="voucherreporthandler.php?rtype=fullvoucherscsv&clid=<?= $clid ?>"><?= $LANG['FULLSPECLISTVOUCHER'] ?></a></li>
-							<li>
-								<a href="#" onclick="openPopup('../collections/download/index.php?searchvar=<?php echo urlencode('clid=' . $clManager->getClidFullStr()); ?>&noheader=1','repvouchers');return false;">
-									<?php echo $LANG['VOUCHERONLY']; ?>
-								</a>
-							</li>
-							<?php
-						}
+	<div id="tabs" style="margin-top:25px;">
+		<ul>
+			<li><a href="nonvoucheredtab.php?clid=<?= $clid . '&pid=' . $pid . '&start=' . $startPos . '&displaymode=' . $displayMode; ?>"><span><?= $LANG['NON_VOUCHERED'];?></span></a></li>
+			<li><a href="vamissingtaxa.php?clid=<?= $clid . '&pid=' . $pid . '&start=' . $startPos . '&displaymode=' . ($tabIndex==1?$displayMode:0) . '&excludevouchers=' . $excludeVouchers; ?>"><span><?= $LANG['MISSINGTAXA'];?></span></a></li>
+			<li><a href="vaconflicts.php?clid=<?= $clid . '&pid=' . $pid . '&start=' . $startPos; ?>"><span><?= $LANG['VOUCHCONF'];?></span></a></li>
+			<?php
+			if($clManager->getAssociatedExternalService()) echo '<li><a href="externalvouchers.php?clid=' . $clid . '&pid=' . $pid . '"><span>' . $LANG['EXTERNALVOUCHERS'] . '</span></a></li>';
+			if($clManager->hasVoucherProjects()) echo '<li><a href="imgvouchertab.php?clid=' . $clid . '">' . $LANG['ADDIMGVOUCHER'] . '</a></li>';
+			?>
+			<li><a href="#reportDiv"><span><?= $LANG['REPORTS'] ?></span></a></li>
+		</ul>
+		<div id="reportDiv">
+			<div style="margin:25px;height:400px;">
+				<div style="margin:10px 5px;"><?php echo $LANG['ADDITIONAL'];?>.</div>
+				<ul>
+					<li><a href="voucherreporthandler.php?rtype=fullcsv&clid=<?= $clid ?>"><?= $LANG['FULLSPECLIST'] ?></a></li>
+					<!--  <li><a href="voucherreporthandler.php?rtype=pensoftxlsx&clid=<?= $clid ?>" target="_blank"><?= $LANG['PENSOFT_XLSX_EXPORT'] ?></a></li> -->
+					<?php
+					$termArr = $clManager->getQueryVariableArr();
+					$vouchersExist = $clManager->vouchersExist();
+					if($vouchersExist){
 						?>
-						<li><a href="voucherreporthandler.php?rtype=fullalloccurcsv&clid=<?= $clid ?>"><?= $LANG['FULLSPECLISTALLOCCUR'] ?></a></li>
-						<li><a href="voucherreporthandler.php?rtype=pensoftxlsx&clid=<?= $clid ?>" target="_blank"><?= $LANG['PENSOFT_XLSX_EXPORT'] ?></a></li>
-						<li><a href="voucherreporthandler.php?rtype=missingoccurcsv&clid=<?= $clid ?>"><?= $LANG['SPECMISSTAXA'] ?></a></li>
-						<li><a href="voucherreporthandler.php?rtype=problemtaxacsv&clid=<?= $clid ?>"><?= $LANG['SPECMISSPELLED'] ?></a></li>
-					</ul>
-				</div>
+						<li><a href="voucherreporthandler.php?rtype=fullvoucherscsv&clid=<?= $clid ?>"><?= $LANG['FULLSPECLISTVOUCHER'] ?></a></li>
+						<li>
+							<a href="#" onclick="openPopup('../collections/download/index.php?searchvar=<?php echo urlencode('clid=' . $clManager->getClidFullStr()); ?>&noheader=1','repvouchers');return false;">
+								<?php echo $LANG['VOUCHERONLY']; ?>
+							</a>
+						</li>
+						<li><a href="<?= $CLIENT_ROOT ?>/collections/list.php?clid=<?= $clid ?>" target="_blank"><?= $LANG['LISTALLVOUCHERS'] ?></a></li>
+						<?php
+					}
+					if($termArr){
+						?>
+						<li><a href="<?= $CLIENT_ROOT ?>/collections/list.php?targetclid=<?= $clid ?>" target="_blank"><?= $LANG['FULLSPECLISTALLOCCUR'] ?></a></li>
+						<?php
+					}
+					?>
+				</ul>
 			</div>
 		</div>
+	</div>
 	<?php
-	}
 }
 else{
 	if(!$clid){

@@ -501,7 +501,6 @@ class TaxonomyEditorManager extends Manager{
 		}while($targetTid && $parCnt < 16);
 
 		//Add hierarchy to taxaenumtree table
-		$trueHierarchyStr = implode(",",array_reverse($parentArr));
 		if($parentArr != $this->hierarchyArr){
 			//Reset hierarchy for all children
 			$branchTidArr = array($tid);
@@ -594,11 +593,11 @@ class TaxonomyEditorManager extends Manager{
 				$stmnt->fetch();
 			}
 		}
-		
+
 
 		$sqlTaxa = 'INSERT INTO taxa(kingdomName, sciname, author, rankid, unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, cultivarEpithet, tradeName, '.
 			'source, notes, securitystatus, modifiedUid, modifiedTimeStamp) '.
-			'VALUES (' . ($kingdomName ? ('"' . $this->cleanInStr($kingdomName) . '"') : '""') . ', 
+			'VALUES (' . ($kingdomName ? ('"' . $this->cleanInStr($kingdomName) . '"') : '""') . ',
 			"'.$this->cleanInStr($processedSciname).'","'.
 			($dataArr['author']? ($this->cleanInStr($dataArr['author'])) : '').'",'.
 			(isset($dataArr['rankid'])?$dataArr['rankid']:0).','.
@@ -767,8 +766,8 @@ class TaxonomyEditorManager extends Manager{
 		}
 		$rs->free();
 
-		//Field images
-		$sql ='SELECT COUNT(mediaID) AS cnt FROM media WHERE tid = '.$this->tid;
+		//Field images that are not linked to an occurrence
+		$sql ='SELECT COUNT(mediaID) AS cnt FROM media WHERE occid IS NULL AND tid = '.$this->tid;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr['img'] = $r->cnt;
@@ -849,7 +848,7 @@ class TaxonomyEditorManager extends Manager{
 		if(is_numeric($targetTid)){
 			//Set occurrence and determination tids to NULL within delete function function below
 
-			//Field images; specimen images set to null within delete function
+			//Field images only; specimen images tid set to null within delete function, which will be reset appropriately by collection
 			$sql ='UPDATE IGNORE media SET tid = '.$targetTid.' WHERE occid IS NULL AND tid = '.$this->tid;
 			if(!$this->conn->query($sql)) $this->warningArr[] = (isset($this->langArr['ERROR_TRANSFER_IMGS'])?$this->langArr['ERROR_TRANSFER_IMGS']:'ERROR transferring image links').' ('.$this->conn->error.')';
 
@@ -901,11 +900,6 @@ class TaxonomyEditorManager extends Manager{
 		//Specimen images
 		$sql ='UPDATE media SET tid = NULL WHERE occid IS NOT NULL AND tid = '.$this->tid;
 		if(!$this->conn->query($sql)) $this->warningArr[] = (isset($this->langArr['ERROR_SETTING_NULL'])?$this->langArr['ERROR_SETTING_NULL']:'ERROR setting tid to NULL for occurrence images in deleteTaxon method').' ('.$this->conn->error.')';
-
-		/*
-		$sql ='DELETE FROM media WHERE tid = '.$this->tid;
-		if(!$this->conn->query($sql)) $this->warningArr[] = 'ERROR deleting remaining links in deleteTaxon method ('.$this->conn->error.')';
-		*/
 
 		//Taxon maps
 		$sql ='DELETE FROM taxamaps WHERE tid = '.$this->tid;

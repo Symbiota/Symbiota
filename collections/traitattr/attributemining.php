@@ -165,6 +165,11 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 		</script>
 		<script src="../../js/symb/collections.traitattr.js" type="text/javascript"></script>
 		<script src="../../js/symb/shared.js" type="text/javascript"></script>
+		<style>
+			button{ margin-bottom: 5px; }
+			fieldset{ margin:15px; padding:15px; }
+			legend{ font-weight: bold; }
+		</style>
 	</head>
 	<body>
 		<?php
@@ -215,8 +220,8 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 						<?php echo $LANG['OCC_TRAITS_MAPPING'] ?><span id="moreSpan">.. <a href="#" onclick="displayDetailDiv(this)"><?php echo $LANG['MORE'] ?></a></span>
 						<div id="detailDiv" style="display:none"><?php echo $LANG['PHENOLOGY_TRAIT_MAPPING'] ?><a href="https://tools.gbif.org/dwca-validator/extension.do?id=http://rs.iobis.org/obis/terms/ExtendedMeasurementOrFact" target="_blank"><?php echo $LANG['MEASUREMENT_OR_FACT'] ?></a> <?php echo $LANG['DWC_EXTENSION_FILE'] ?></div>
 					</div>
-					<fieldset style="margin:15px;padding:15px;">
-						<legend><b><?php echo $LANG['HARVESTING_FILTER'] ?></b></legend>
+					<fieldset>
+						<legend><?php echo $LANG['HARVESTING_FILTER'] ?></legend>
 						<form name="filterform" method="post" action="attributemining.php" onsubmit="return verifyFilterForm(this)" >
 							<div>
 							<?php echo $LANG['OCC_TRAIT'] ?>
@@ -271,8 +276,8 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 					$valueArr = $attrManager->getFieldValueArr($traitID, $fieldName, $tidFilter, $stringFilter);
 					?>
 					<div id="traitdiv" style="width:700px">
-						<fieldset style="margin:15px;padding:15px">
-							<legend><b><?php echo $fieldArr[$fieldName]; ?></b></legend>
+						<fieldset>
+							<legend><?php echo $fieldArr[$fieldName]; ?></legend>
 							<form name="miningform" method="post" action="attributemining.php" onsubmit="return verifyMiningForm(this)">
 								<b><?php echo $LANG['SELECT_SOURCE_FIELD_VALUES'] ?></b><?php echo $LANG['HOLD_DOWN_BUTTONS_TO_SELECT'] ?><br/>
 								<div style="margin:5px;border:2px solid;width:100%;height:200px;resize: both;overflow: auto">
