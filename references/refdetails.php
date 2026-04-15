@@ -76,6 +76,13 @@ if(isset($_POST['addauthor']) && $_POST['addauthor'] == '1'){
         $statusStr = $refManager->addAuthor($refId, $refAuthId);
     }
 }
+if(isset($_POST['addreflink']) && $_POST['addreflink'] == '1'){
+    $targetid = intval($_POST['targetid']);
+	$type = $_POST['type'];
+    if($targetid && $type){
+        $statusStr = $refManager->addRefLink($refId,$targetid,$type);
+    }
+}
 $refGroup = 0;
 $refRank = 0;
 $parentChild = 0;
@@ -255,7 +262,8 @@ else{
 			<div id="tabs" style="margin:0px;">
 				<ul>
 					<li><a href="#refdetaildiv">Reference Details</a></li>
-					<li><a href="#reflinksdiv">Links</a></li>
+					<li><a href="#refoccdiv">Linked Occurrences</a></li>
+					<li><a href="#reflinksdiv">Other Linked Resources</a></li>
 					<li><a href="#refadmindiv">Admin</a></li>
 				</ul>
 
@@ -565,35 +573,157 @@ else{
 					</div>
 				</div>
 
+				<div id='refoccdiv' style="">
+					<?php
+						echo '<div id="referenceoccurlink">';
+						if($refOccArr){
+							?>
+							<form name="sampleListingForm">
+								<fieldset id="samplePanel">
+								<legend>Sample Listing</legend>
+								<div style="float:left">Records displayed: <?php echo count($refOccArr); ?></div>
+								<div>
+									<table id="sampletable" class="styledtable">
+										<thead>
+											<tr>
+												<?php
+												$headerOutArr = current($refOccArr);
+												echo '<th><input name="selectall" type="checkbox" onclick="selectAll(this)" /></th>';
+												$headerArr = array('collectionCode' => 'Collection',
+															'catalogNumber' =>'Catalog Number','sciname'=>'Scientific Name', 
+															'recordedBy'=>'Collector', 'eventDate'=>'Collection Date', 
+															'occid'=> 'occid');
+												$rowCnt = 1;
+												foreach($headerArr as $fieldName => $headerTitle){
+													if(array_key_exists($fieldName, $headerOutArr) || $fieldName == 'occid'){
+														echo '<th>'.$headerTitle.'</th>';
+														$rowCnt++;
+													}
+												}
+												?>
+											</tr>
+										</thead>
+										<tbody>
+											<?php
+											$tagArr = array();
+											foreach($refOccArr as $id => $sampleArr){
+												echo '<tr>';
+
+												echo '<td>';
+												echo '<input id="scbox-'.$sampleArr['occid'].'" name="scbox[]" type="checkbox" value="'.$sampleArr['occid'].'" />';
+												echo '</td>';
+
+												echo '<td>'.$sampleArr['collectionCode'].'</td>';
+												echo '<td>'.$sampleArr['catalogNumber'].'</td>';
+												echo '<td>'.$sampleArr['sciname'].'</td>';
+												echo '<td>'.$sampleArr['recordedBy'].'</td>';
+												echo '<td>'.$sampleArr['eventDate'].'</td>';
+
+												echo '<td style="text-align:center">';
+												echo '<a href="'.$CLIENT_ROOT.'/collections/individual/index.php?occid='.$sampleArr['occid'].'" target="_blank">'.$sampleArr['occid'].'</a><br><br>';
+												echo '<a href="'.$CLIENT_ROOT.'/collections/editor/occurrenceeditor.php?occid='.$sampleArr['occid'].'" target="_blank"><img src="../images/edit.png" style="width:13px" /></a>';
+												echo '</td>';
+
+												echo '</tr>';
+											}
+											?>
+										</tbody>
+									</table>
+								</fieldset>
+							</form>
+							<?php
+						}
+						else{
+							echo 'There are no occurrences linked with this reference';
+						}
+						?>
+						</div>
+						<div id="batchOcc-div">
+							<fieldset>
+								<legend><?php echo 'Batch add occurrences'; ?></legend>
+								<div  class="info-div"><?php echo 'Batch add multiple occurrences by entering a list of catalog numbers on separate lines or delimited by commas.'; ?></div>
+								<form name="batchaddform" action="refdetails.php" method="post">
+									<div class="field-div">
+										<label><?php echo $LANG['CATNUMS']; ?>:</label><br/>
+										<textarea name="catalogNumbers" cols="6" style="width:700px"></textarea>
+									</div>
+									<div class="field-div">
+										<label>Target:</label>
+										<span class="radio-span"><input name="targetidentifier" type="radio" value="allid" /> <?php echo $LANG['ALL_IDS']; ?></span>
+										<span class="radio-span"><input name="targetidentifier" type="radio" value="catnum" checked /> <?php echo $LANG['CATNO']; ?></span>
+										<span class="radio-span"><input name="targetidentifier" type="radio" value="other" /> <?php echo $LANG['OTHER_CATNUMS'] . '  (Review multiple match warnings)'; ?></span>
+									</div>
+									<div class="field-div">
+										<input name="refid" type="hidden" value="<?php echo $refId; ?>" />
+										<div style="float:left;margin-top:15px;margin-left:15px">
+											<button name="formsubmit" type="submit" value="batchAddLink"><?php echo 'Add Occurrences'; ?></button>
+										</div>
+									</div>
+								</form>
+							</fieldset>
+				</div>
+				</div>
 				<div id="reflinksdiv" style="">
 					<div style="width:100%;">
 						<?php
-						if($refChecklistArr || $refCollArr || $refOccArr || $refTaxaArr){
-							echo '<h2>Reference Links:</h2>';
+						if($refChecklistArr || $refDatasetArr || $refCollArr || $refTaxaArr){
+						?>
+							<div style="width:100%;">
+								<form name='checklistform' id='checklistform' action='refdetails.php' method='post'>
+									<input type="hidden" name="refid" value="<?php echo $refId; ?>">
+									<fieldset>
+										<legend><b>Checklists</b></legend>
+										<div>
+											<div>
+												<b>Add Checklist By Name: </b>
+											</div>
+											<div>
+										<select name="targetid" id="refchecklistid" style="width:220px;">
+											<option value="">Select Checklist</option>
+											<?php
+											$allChecklists = $refManager->getChecklists();
 
-							echo '<b>Checklist links:</b>';
-							echo '<div id="referencechecklistlink">';
-							if($refChecklistArr){
-								echo '<ul>';
-								foreach($refChecklistArr as $k => $v){
-									echo '<li style="display:flex; align-items:center; gap:6px;">';
-
-									echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($k) . '&pid=" target="_blank">';
-									echo $v;
-									echo '</a>';
-
-									echo '<img src="../images/del.png" 
-											style="width:14px; cursor:pointer;" 
-											onclick="deleteRefLink('.$refId.','.$k.',\'checklist\')" 
-											title="Delete link">';
-									echo '</li>';
-								}
-								echo '</ul>';
-							}
-							else{
-								echo 'There are no checklists linked with this reference';
-							}
-							echo '</div><br />';
+											foreach($allChecklists as $clid => $checkArr){
+												echo '<option value="'.htmlspecialchars($clid, ENT_QUOTES).'">'
+													. htmlspecialchars($checkArr['name'], ENT_QUOTES) .
+													'</option>';
+											}
+											
+											?>
+										</select>
+											<input type="hidden" name="addreflink" value="1">
+											<input name="refid" type="hidden" value="<?php echo $refId; ?>" />
+											<input name="type" type="hidden" value="<?php echo 'checklist'; ?>" />
+											<button type="submit">Add</button>
+											</div>
+										</div>
+										<hr />
+										<div id="checklistlistdiv">
+											<?php
+											if($refChecklistArr){
+												echo '<ul>';
+												foreach($refChecklistArr as $k => $v){
+													echo '<li>';
+													echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($k, ENT_QUOTES) . '">' 
+														. htmlspecialchars($v, ENT_QUOTES) . 
+														'</a>';													
+														echo '<img src="../images/del.png" 
+															style="width:14px; cursor:pointer;" 
+															onclick="deleteRefLink('.$refId.','.$k.',\'checklist\')" 
+															title="Delete link">';
+													echo '</li>';
+												}
+												echo '</ul>';
+											}
+											else{
+												echo '<div><b>There are currently no checklists linked to this reference.</b></div>';
+											}
+											?>
+										</div>
+									</fieldset>
+								</form>
+							</div><br />
+						<?php	
 
 							echo '<b>Dataset links:</b>';
 							echo '<div id="referencedatasetlink">';
@@ -670,100 +800,9 @@ else{
 								echo 'There are no taxa linked with this reference';
 							}
 							echo '</div>';
-							echo '</div><br />';
-
-							echo '<b>Occurrence links:</b>';
-							echo '<div id="referenceoccurlink">';
-							if($refOccArr){
-								?>
-								<form name="sampleListingForm">
-									<fieldset id="samplePanel">
-									<legend>Sample Listing</legend>
-									<div style="float:left">Records displayed: <?php echo count($refOccArr); ?></div>
-									<div>
-										<table id="sampletable" class="styledtable">
-											<thead>
-												<tr>
-													<?php
-													$headerOutArr = current($refOccArr);
-													echo '<th><input name="selectall" type="checkbox" onclick="selectAll(this)" /></th>';
-													$headerArr = array('collectionCode' => 'Collection',
-																'catalogNumber' =>'Catalog Number','sciname'=>'Scientific Name', 
-																'recordedBy'=>'Collector', 'eventDate'=>'Collection Date', 
-																'occid'=> 'occid');
-													$rowCnt = 1;
-													foreach($headerArr as $fieldName => $headerTitle){
-														if(array_key_exists($fieldName, $headerOutArr) || $fieldName == 'occid'){
-															echo '<th>'.$headerTitle.'</th>';
-															$rowCnt++;
-														}
-													}
-													?>
-												</tr>
-											</thead>
-											<tbody>
-												<?php
-												$tagArr = array();
-												foreach($refOccArr as $id => $sampleArr){
-													echo '<tr>';
-
-													echo '<td>';
-													echo '<input id="scbox-'.$sampleArr['occid'].'" name="scbox[]" type="checkbox" value="'.$sampleArr['occid'].'" />';
-													echo '</td>';
-
-													echo '<td>'.$sampleArr['collectionCode'].'</td>';
-													echo '<td>'.$sampleArr['catalogNumber'].'</td>';
-													echo '<td>'.$sampleArr['sciname'].'</td>';
-													echo '<td>'.$sampleArr['recordedBy'].'</td>';
-													echo '<td>'.$sampleArr['eventDate'].'</td>';
-
-													echo '<td style="text-align:center">';
-													echo '<a href="'.$CLIENT_ROOT.'/collections/individual/index.php?occid='.$sampleArr['occid'].'" target="_blank">'.$sampleArr['occid'].'</a><br><br>';
-													echo '<a href="'.$CLIENT_ROOT.'/collections/editor/occurrenceeditor.php?occid='.$sampleArr['occid'].'" target="_blank"><img src="../images/edit.png" style="width:13px" /></a>';
-													echo '</td>';
-
-													echo '</tr>';
-												}
-												?>
-											</tbody>
-										</table>
-
-									</form>
-									</fieldset>
-									<?php
-							}
-							else{
-								echo 'There are no occurrences linked with this reference';
-							}
-							?>
-							<div id="batchOcc-div">
-								<fieldset>
-									<legend><?php echo 'Batch add occurrences'; ?></legend>
-									<div  class="info-div"><?php echo 'Batch add multiple occurrences by entering a list of catalog numbers on separate lines or delimited by commas.'; ?></div>
-									<form name="batchaddform" action="refdetails.php" method="post">
-										<div class="field-div">
-											<label><?php echo $LANG['CATNUMS']; ?>:</label><br/>
-											<textarea name="catalogNumbers" cols="6" style="width:700px"></textarea>
-										</div>
-										<div class="field-div">
-											<label>Target:</label>
-											<span class="radio-span"><input name="targetidentifier" type="radio" value="allid" /> <?php echo $LANG['ALL_IDS']; ?></span>
-											<span class="radio-span"><input name="targetidentifier" type="radio" value="catnum" checked /> <?php echo $LANG['CATNO']; ?></span>
-											<span class="radio-span"><input name="targetidentifier" type="radio" value="other" /> <?php echo $LANG['OTHER_CATNUMS'] . '  (Review multiple match warnings)'; ?></span>
-										</div>
-										<div class="field-div">
-											<input name="refid" type="hidden" value="<?php echo $refId; ?>" />
-											<div style="float:left;margin-top:15px;margin-left:15px">
-												<button name="formsubmit" type="submit" value="batchAddLink"><?php echo 'Add Occurrences'; ?></button>
-											</div>
-										</div>
-									</form>
-								</fieldset>
-							</div>
-							<?php
 						}
 						else{
-							echo '<h2>There are no records linked with this reference</h2>';
+							echo '<h2>There are no resources linked with this reference</h2>';
 						}
 						?>
 					</div>
@@ -774,7 +813,7 @@ else{
 						<fieldset style="width:350px;margin:20px;padding:20px;">
 							<legend><b>Delete Reference</b></legend>
 							<?php
-							if($refChecklistArr || $refCollArr || $refOccArr || $refTaxaArr){
+							if($refChecklistArr || $refDatasetArr ||$refCollArr || $refOccArr || $refTaxaArr){
 								echo '<div style="font-weight:bold;margin-bottom:15px;">';
 								echo 'Reference cannot be deleted until all linked records are removed.';
 								echo '</div>';
@@ -785,7 +824,7 @@ else{
 								echo '</div>';
 							}
 							?>
-							<input name="formsubmit" type="submit" value="Delete Reference" <?php if($childArr || $refChecklistArr || $refCollArr || $refOccArr || $refTaxaArr) echo 'DISABLED'; ?> />
+							<input name="formsubmit" type="submit" value="Delete Reference" <?php if($childArr || $refChecklistArr || $refCollArr || $refDatasetArr || $refOccArr || $refTaxaArr) echo 'DISABLED'; ?> />
 							<input name="refid" type="hidden" value="<?php echo $refId; ?>" />
 						</fieldset>
 					</form>

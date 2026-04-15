@@ -69,6 +69,20 @@ class ReferenceManager{
 		}
 		return $retArr;
 	}
+
+	public function getChecklists(){
+		$retArr = array();
+		$sql = 'SELECT a.clid, a.name '.
+			'FROM fmchecklists AS a '.
+			'ORDER BY name';
+		if($rs = $this->conn->query($sql)){
+			while($r = $rs->fetch_object()){
+				$retArr[$r->clid]['name'] = $r->name;
+			}
+			$rs->close();
+		}
+		return $retArr;
+	}
 	
 	public function getAuthInfo($authId){
 		$retArr = array();
@@ -351,6 +365,47 @@ class ReferenceManager{
 		}
 		return $statusStr;
 	}
+
+	public function addRefLink($refid,$targetid,$type){
+		$statusStr = '';
+
+		$sql = '';
+		
+		switch($type){
+			case 'checklist':
+				$sql = 'INSERT IGNORE INTO referencechecklistlink(refid,clid) VALUES (?,?)';
+				break;
+
+			case 'collection':
+				$sql = 'INSERT IGNORE INTO referencecollectionlink(refid,collid) VALUES (?,?)';
+				break;
+
+			case 'dataset':
+				$sql = 'INSERT IGNORE INTO referencedatasetlink(refid,datasetid) VALUES (?,?)';
+				break;
+
+			case 'taxon':
+				$sql = 'INSERT IGNORE INTO referencetaxalink(refid,tid) VALUES (?,?)';
+				break;
+
+			default:
+				return 'ERROR: Invalid link type';
+		}
+
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('ii', $refid, $targetid);
+
+			if($stmt->execute()){
+				$statusStr = 'Success adding reference link';
+			} else {
+				$statusStr = 'ERROR: '.$stmt->error;
+			}
+
+			$stmt->close();
+		}
+
+		return $statusStr;
+	}
 	
 	public function deleteRefAuthor($refid,$refAuthId){
 		$statusStr = '';
@@ -404,11 +459,9 @@ class ReferenceManager{
 	
 	public function deleteRefLink($refid, $targetid, $type){
 
-		echo $refid; echo $targetid; echo $type;
 		$statusStr = '';
 
 		$sql = '';
-		$paramTypes = '';
 		
 		switch($type){
 			case 'checklist':
