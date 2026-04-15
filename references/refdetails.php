@@ -1,7 +1,14 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ReferenceManager.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 header("Content-Type: text/html; charset=".$CHARSET);
+
+
+Language::load([
+	'collections/loans/loan_langs',
+	'collections/editor/includes/determinationtab',
+]);
 
 $refId = array_key_exists('refid',$_REQUEST)?$_REQUEST['refid']:0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
@@ -26,6 +33,41 @@ if($formSubmit){
 			$statusStr = $refManager->editReference($_POST);
 		}
 	}
+	elseif($formSubmit == 'batchAddLink'){
+		$result = $refManager->batchAddLink($_POST);
+
+		$statusStr = '';
+
+		if($result['success']){
+			$statusStr .= '<div style="color:green;">'.$result['success'].' specimens processed successfully</div>';
+		}
+
+		if(!empty($result['missing'])){
+			$statusStr .= '<div style="color:red;">Unable to locate following catalog numbers:<br/>'.
+				implode('<br/>', $result['missing']).'</div>';
+		}
+
+		if(!empty($result['duplicate'])){
+			$statusStr .= '<div style="color:orange;">Duplicates skipped:<br/>'.
+				implode('<br/>', $result['duplicate']).'</div>';
+		}
+
+		if(!empty($result['multiple'])){
+			$statusStr .= '<div style="color:orange;">Multiple matches found:<br/>'.
+				implode('<br/>', $result['multiple']).'</div>';
+		}
+
+		if(!empty($result['errors'])){
+			$statusStr .= '<div style="color:red;">Errors:<br/>'.
+				implode('<br/>', $result['errors']).'</div>';
+		}
+	}
+}
+if(isset($_POST['addauthor']) && $_POST['addauthor'] == '1'){
+    $refAuthId = intval($_POST['refauthorid']);
+    if($refAuthId){
+        $statusStr = $refManager->addAuthor($refId, $refAuthId);
+    }
 }
 $refGroup = 0;
 $refRank = 0;
@@ -98,6 +140,72 @@ else{
 		}
 		?>
 	</script>
+	<style type="text/css">
+		#sampletable {
+			width: 100%;
+			table-layout: auto;
+		}
+		
+		#innertext{ max-width: 1400px; }
+		.fieldGroupDiv { clear:both; margin-top:2px; height: 25px; }
+		.fieldDiv { float:left; margin-left: 10px}
+		.displayFieldDiv { margin-bottom: 3px }
+		fieldset legend { font-weight: bold; }
+		.sample-row td { white-space: break-spaces; }
+		.sorting_1 {
+		  background-color: #c0c0c0a6 !important;
+		}
+
+		.input-group {
+		  display: flex;
+		  align-items: stretch;
+		  width: fit-content;
+		}
+
+		.input-addon {
+		  padding-left: 0.5em;
+		  padding-right: 0.5em;
+		  background-color: #eee;
+		  border: 1px solid #ccc;
+		  border-right: none;
+		  display: flex;
+		  align-items: center;
+		}
+
+		.input-addon.suffix {
+		  border-left: none;
+		  border-right: 1px solid #ccc;
+		}
+
+		#prefix {
+			width: 120px;
+		}
+
+		#suffix {
+			width: 60px;
+		}
+
+		.input-addon input {
+		  border: none !important;
+		  background: transparent;
+		  padding: 0;
+		  margin: 0;
+		  outline: none;
+		  font-family: inherit;
+		}
+
+		.main-input {
+		  border: 1px solid #ccc;
+		  width: 350px;
+		  outline: none;
+		  margin-top: 0;
+		}
+
+		.input-group input:focus {
+		  outline: 2px solid #88f;
+		}
+
+	</style>
 </head>
 <body>
 	<?php
@@ -145,7 +253,8 @@ else{
 
 				<div id="refdetaildiv" style="">
 					<div style="width:300px;float:right;">
-						<form name='authorform' id='authorform' action='index.php' method='post'>
+						<form name='authorform' id='authorform' action='refdetails.php' method='post'>
+							<input type="hidden" name="refid" value="<?php echo $refId; ?>">
 							<fieldset>
 								<legend><b>Authors</b></legend>
 								<div>
@@ -153,8 +262,20 @@ else{
 										<b>Add Author By Last Name: </b>
 									</div>
 									<div>
-										<input type="text" name="addauthorsearch" id="addauthorsearch" style="width:200px;" value="" size="20" />
-										<input id="refauthorid" name="refauthorid" type="hidden" value="" />
+								<select name="refauthorid" id="refauthorid" style="width:220px;">
+									<option value="">Select Author</option>
+									<?php
+									$allAuthors = $refManager->getAuthList();
+
+									foreach($allAuthors as $id => $authorArr){
+										echo '<option value="'.htmlspecialchars($id, ENT_QUOTES).'">'.
+											htmlspecialchars($authorArr['authorName'], ENT_QUOTES).
+											'</option>';
+									}
+									?>
+								</select>
+									<input type="hidden" name="addauthor" value="1">
+									<button type="submit">Add</button>
 									</div>
 								</div>
 								<hr />
@@ -175,6 +296,9 @@ else{
 									}
 									?>
 								</div>
+								<button type="button" onclick="window.location.href='authoreditor.php';">
+									Manage Authors
+								</button>
 							</fieldset>
 						</form>
 					</div>
@@ -434,7 +558,7 @@ else{
 				</div>
 
 				<div id="reflinksdiv" style="">
-					<div style="width:600px;">
+					<div style="width:100%;">
 						<?php
 						if($refChecklistArr || $refCollArr || $refOccArr || $refTaxaArr){
 							echo '<h2>Reference Links:</h2>';
@@ -475,24 +599,6 @@ else{
 							}
 							echo '</div><br />';
 
-							echo '<b>Occurrence links:</b>';
-							echo '<div id="referenceoccurlink">';
-							if($refOccArr){
-								echo '<ul>';
-								foreach($refOccArr as $k => $v){
-									echo '<li>';
-									echo '<a href="../collections/individual/index.php?occid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&clid=0" target="_blank" >';
-									echo $v;
-									echo '</a>';
-									echo '</li>';
-								}
-								echo '</ul>';
-							}
-							else{
-								echo 'There are no occurrences linked with this reference';
-							}
-							echo '</div><br />';
-
 							echo '<b>Taxa links:</b>';
 							echo '<div id="referencetaxalink">';
 							if($refTaxaArr){
@@ -511,6 +617,97 @@ else{
 								echo 'There are no taxa linked with this reference';
 							}
 							echo '</div>';
+							echo '</div><br />';
+
+							echo '<b>Occurrence links:</b>';
+							echo '<div id="referenceoccurlink">';
+							if($refOccArr){
+								?>
+								<form name="sampleListingForm">
+									<fieldset id="samplePanel">
+									<legend>Sample Listing</legend>
+									<div style="float:left">Records displayed: <?php echo count($refOccArr); ?></div>
+									<div>
+										<table id="sampletable" class="styledtable">
+											<thead>
+												<tr>
+													<?php
+													$headerOutArr = current($refOccArr);
+													echo '<th><input name="selectall" type="checkbox" onclick="selectAll(this)" /></th>';
+													$headerArr = array('collectionCode' => 'Collection',
+																'catalogNumber' =>'Catalog Number','sciname'=>'Scientific Name', 
+																'recordedBy'=>'Collector', 'eventDate'=>'Collection Date', 
+																'occid'=> 'occid');
+													$rowCnt = 1;
+													foreach($headerArr as $fieldName => $headerTitle){
+														if(array_key_exists($fieldName, $headerOutArr) || $fieldName == 'occid'){
+															echo '<th>'.$headerTitle.'</th>';
+															$rowCnt++;
+														}
+													}
+													?>
+												</tr>
+											</thead>
+											<tbody>
+												<?php
+												$tagArr = array();
+												foreach($refOccArr as $id => $sampleArr){
+													echo '<tr>';
+
+													echo '<td>';
+													echo '<input id="scbox-'.$sampleArr['occid'].'" name="scbox[]" type="checkbox" value="'.$sampleArr['occid'].'" />';
+													echo '</td>';
+
+													echo '<td>'.$sampleArr['collectionCode'].'</td>';
+													echo '<td>'.$sampleArr['catalogNumber'].'</td>';
+													echo '<td>'.$sampleArr['sciname'].'</td>';
+													echo '<td>'.$sampleArr['recordedBy'].'</td>';
+													echo '<td>'.$sampleArr['eventDate'].'</td>';
+
+													echo '<td style="text-align:center">';
+													echo '<a href="'.$CLIENT_ROOT.'/collections/individual/index.php?occid='.$sampleArr['occid'].'" target="_blank">'.$sampleArr['occid'].'</a><br><br>';
+													echo '<a href="'.$CLIENT_ROOT.'/collections/editor/occurrenceeditor.php?occid='.$sampleArr['occid'].'" target="_blank"><img src="../../images/edit.png" style="width:13px" /></a>';
+													echo '</td>';
+
+													echo '</tr>';
+												}
+												?>
+											</tbody>
+										</table>
+
+									</form>
+									</fieldset>
+									<?php
+							}
+							else{
+								echo 'There are no occurrences linked with this reference';
+							}
+							?>
+							<div id="batchOcc-div">
+								<fieldset>
+									<legend><?php echo 'Batch add occurrences'; ?></legend>
+									<div  class="info-div"><?php echo 'Batch add multiple occurrences by entering a list of catalog numbers on separate lines or delimited by commas.'; ?></div>
+									<form name="batchaddform" action="refdetails.php" method="post">
+										<div class="field-div">
+											<label><?php echo $LANG['CATNUMS']; ?>:</label><br/>
+											<textarea name="catalogNumbers" cols="6" style="width:700px"></textarea>
+										</div>
+										<div class="field-div">
+											<label>Target:</label>
+											<span class="radio-span"><input name="targetidentifier" type="radio" value="allid" /> <?php echo $LANG['ALL_IDS']; ?></span>
+											<span class="radio-span"><input name="targetidentifier" type="radio" value="catnum" checked /> <?php echo $LANG['CATNO']; ?></span>
+											<span class="radio-span"><input name="targetidentifier" type="radio" value="other" /> <?php echo $LANG['OTHER_CATNUMS']; ?></span>
+										</div>
+										<div class="field-div">
+											<input name="refid" type="hidden" value="<?php echo $refId; ?>" />
+											<div style="float:left;margin-top:15px;margin-left:15px">
+												<button name="formsubmit" type="submit" value="batchAddLink"><?php echo 'Add Occurrences'; ?></button>
+											</div>
+										</div>
+									</form>
+								</fieldset>
+							</div>
+							<?php
 						}
 						else{
 							echo '<h2>There are no records linked with this reference</h2>';

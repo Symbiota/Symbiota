@@ -4,10 +4,29 @@ $(document).ready(function() {
 	}
 
 	$('#tabs').tabs({
-		beforeLoad: function( event, ui ) {
+		active: getTabFromHash(),
+		beforeLoad: function(event, ui) {
 			$(ui.panel).html("<p>Loading...</p>");
 		}
 	});
+
+	$('form').on('submit', function() {
+		var active = $('#tabs').tabs('option', 'active');
+		var href = $('#tabs a').eq(active).attr('href');
+
+		this.action = this.action.replace(/#.*$/, '') + href;
+	});
+
+	function getTabFromHash() {
+		var hash = window.location.hash;
+		if (!hash) return 0;
+
+		var index = $('#tabs a').map(function(i, el) {
+			return $(el).attr('href');
+		}).get().indexOf(hash);
+
+		return index >= 0 ? index : 0;
+	}
 	
 	if(parentChild){
 		var url = '';
