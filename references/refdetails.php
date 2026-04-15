@@ -62,6 +62,13 @@ if($formSubmit){
 				implode('<br/>', $result['errors']).'</div>';
 		}
 	}
+	elseif($formSubmit == 'deleteRefLink'){
+		$statusStr = $refManager->deleteRefLink(
+			$_POST['refid'],
+			$_POST['targetid'],
+			$_POST['type']
+    );
+}
 }
 if(isset($_POST['addauthor']) && $_POST['addauthor'] == '1'){
     $refAuthId = intval($_POST['refauthorid']);
@@ -78,6 +85,7 @@ if($refId){
 	$authArr = $refManager->getRefAuthArr($refId);
 	$fieldArr = $refManager->getRefTypeFieldArr($refArr["ReferenceTypeId"]);
 	$refChecklistArr = $refManager->getRefChecklistArr($refId);
+	$refDatasetArr = $refManager->getRefDatasetArr($refId);
 	$refCollArr = $refManager->getRefCollArr($refId);
 	$refOccArr = $refManager->getRefOccArr($refId);
 	$refTaxaArr = $refManager->getRefTaxaArr($refId);
@@ -546,8 +554,8 @@ else{
 							</div>
 							<div style="clear:both;padding-top:8px;float:left;">
 								<input name="refid" type="hidden" value="<?php echo $refId; ?>" />
-								<input name="parentRefId" id="parentRefId" type="hidden" value="<?php echo $refArr['parentRefId']; ?>" />
-								<input name="parentRefId2" id="parentRefId2" type="hidden" value="<?php echo $refArr['parentRefId2']; ?>" />
+								<input name="parentRefId" id="parentRefId" type="hidden" value="<?php echo $refArr['parentrefid']; ?>" />
+								<input name="parentRefId2" id="parentRefId2" type="hidden" value="<?php echo $refArr['parentrefid2']; ?>" />
 								<input name="refGroup" id="refGroup" type="hidden" value="<?php echo $refGroup; ?>" />
 								<input name="ispublished" id="ispublished" type="hidden" value="<?php echo $refArr['ispublished']; ?>" />
 								<div id="dynamicInput"></div>
@@ -568,10 +576,41 @@ else{
 							if($refChecklistArr){
 								echo '<ul>';
 								foreach($refChecklistArr as $k => $v){
-									echo '<li>';
-									echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&pid=" target="_blank" >';
+									echo '<li style="display:flex; align-items:center; gap:6px;">';
+
+									echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($k) . '&pid=" target="_blank">';
 									echo $v;
 									echo '</a>';
+
+									echo '<img src="../images/del.png" 
+											style="width:14px; cursor:pointer;" 
+											onclick="deleteRefLink('.$refId.','.$k.',\'checklist\')" 
+											title="Delete link">';
+									echo '</li>';
+								}
+								echo '</ul>';
+							}
+							else{
+								echo 'There are no checklists linked with this reference';
+							}
+							echo '</div><br />';
+
+							echo '<b>Dataset links:</b>';
+							echo '<div id="referencedatasetlink">';
+							if($refDatasetArr){
+								echo '<ul>';
+								foreach($refDatasetArr as $k => $v){
+									echo '<li style="display:flex; align-items:center; gap:6px;">';
+
+									echo '<a href="../collections/datasets/datasetmanager.php?datasetid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) .'" target="_blank" >';
+									echo $v;
+									echo '</a>';
+
+									echo '<img src="../images/del.png" 
+											style="width:14px; cursor:pointer;" 
+											onclick="deleteRefLink('.$refId.', '.$k.', \'dataset\')" 
+											title="Delete link">';
+
 									echo '</li>';
 								}
 								echo '</ul>';
@@ -586,10 +625,17 @@ else{
 							if($refCollArr){
 								echo '<ul>';
 								foreach($refCollArr as $k => $v){
-									echo '<li>';
+									echo '<li style="display:flex; align-items:center; gap:6px;">';
+
 									echo '<a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank" >';
 									echo $v;
 									echo '</a>';
+
+									echo '<img src="../images/del.png" 
+											style="width:14px; cursor:pointer;" 
+											onclick="deleteRefLink('.$refId.', '.$k.', \'collection\')" 
+											title="Delete link">';
+
 									echo '</li>';
 								}
 								echo '</ul>';
@@ -604,11 +650,18 @@ else{
 							if($refTaxaArr){
 								echo '<ul>';
 								foreach($refTaxaArr as $k => $v){
-									$name = str_replace(' ','%20',$v);
-									echo '<li>';
-									echo '<a href="../taxa/index.php?taxon=' . htmlspecialchars($name, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank" >';
+
+									echo '<li style="display:flex; align-items:center; gap:6px;">';
+
+									echo '<a href="../taxa/index.php?taxon=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank" >';
 									echo $v;
 									echo '</a>';
+
+									echo '<img src="../images/del.png" 
+											style="width:14px; cursor:pointer;" 
+											onclick="deleteRefLink('.$refId.', '.$k.', \'taxon\')" 
+											title="Delete link">';
+
 									echo '</li>';
 								}
 								echo '</ul>';
@@ -666,7 +719,7 @@ else{
 
 													echo '<td style="text-align:center">';
 													echo '<a href="'.$CLIENT_ROOT.'/collections/individual/index.php?occid='.$sampleArr['occid'].'" target="_blank">'.$sampleArr['occid'].'</a><br><br>';
-													echo '<a href="'.$CLIENT_ROOT.'/collections/editor/occurrenceeditor.php?occid='.$sampleArr['occid'].'" target="_blank"><img src="../../images/edit.png" style="width:13px" /></a>';
+													echo '<a href="'.$CLIENT_ROOT.'/collections/editor/occurrenceeditor.php?occid='.$sampleArr['occid'].'" target="_blank"><img src="../images/edit.png" style="width:13px" /></a>';
 													echo '</td>';
 
 													echo '</tr>';
@@ -696,7 +749,7 @@ else{
 											<label>Target:</label>
 											<span class="radio-span"><input name="targetidentifier" type="radio" value="allid" /> <?php echo $LANG['ALL_IDS']; ?></span>
 											<span class="radio-span"><input name="targetidentifier" type="radio" value="catnum" checked /> <?php echo $LANG['CATNO']; ?></span>
-											<span class="radio-span"><input name="targetidentifier" type="radio" value="other" /> <?php echo $LANG['OTHER_CATNUMS']; ?></span>
+											<span class="radio-span"><input name="targetidentifier" type="radio" value="other" /> <?php echo $LANG['OTHER_CATNUMS'] . '  (Review multiple match warnings)'; ?></span>
 										</div>
 										<div class="field-div">
 											<input name="refid" type="hidden" value="<?php echo $refId; ?>" />

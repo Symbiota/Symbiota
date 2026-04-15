@@ -266,6 +266,21 @@ class ReferenceManager{
 		}
 		return $retArr;
 	}
+
+	public function getRefDatasetArr($refid){
+		$retArr = array();
+		$sql = 'SELECT l.datasetid, a.name '.
+			'FROM referencedatasetlink AS l LEFT JOIN omoccurdatasets AS a ON l.datasetid = a.datasetID '.
+			'WHERE l.refid = '.$refid.' '.
+			'ORDER BY a.Name';
+		if($rs = $this->conn->query($sql)){
+			while($r = $rs->fetch_object()){
+				$retArr[$r->datasetid] = $r->name;
+			}
+			$rs->close();
+		}
+		return $retArr;
+	}
 	
 	public function getRefCollArr($refid){
 		$retArr = array();
@@ -387,18 +402,47 @@ class ReferenceManager{
 		return $statusStr;
 	}
 	
-	public function deleteRefLink($refid,$table,$field,$id){
+	public function deleteRefLink($refid, $targetid, $type){
+
+		echo $refid; echo $targetid; echo $type;
 		$statusStr = '';
-		$sql = 'DELETE FROM '.$table.' '.
-				'WHERE (refid = '.$refid.') AND ('.$field.' = '.$id.')';
-		//echo $sql;
-		if($this->conn->query($sql)){
-			$statusStr = 'Success!';
+
+		$sql = '';
+		$paramTypes = '';
+		
+		switch($type){
+			case 'checklist':
+				$sql = 'DELETE FROM referencechecklistlink WHERE refid=? AND clid=?';
+				break;
+
+			case 'collection':
+				$sql = 'DELETE FROM referencecollectionlink WHERE refid=? AND collid=?';
+				break;
+
+			case 'dataset':
+				$sql = 'DELETE FROM referencedatasetlink WHERE refid=? AND datasetid=?';
+				break;
+
+			case 'taxon':
+				$sql = 'DELETE FROM referencetaxalink WHERE refid=? AND taxon=?';
+				break;
+
+			default:
+				return 'ERROR: Invalid link type';
 		}
-		else{
-			$statusStr = 'ERROR: Deletion of reference link failed: '.$this->conn->error.'<br/>';
-			$statusStr .= 'SQL: '.$sql;
+
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('ii', $refid, $targetid);
+
+			if($stmt->execute()){
+				$statusStr = 'Success deleting reference link';
+			} else {
+				$statusStr = 'ERROR: '.$stmt->error;
+			}
+
+			$stmt->close();
 		}
+
 		return $statusStr;
 	}
 	

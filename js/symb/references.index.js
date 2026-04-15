@@ -217,26 +217,32 @@ function deleteRefAuthor(refauthid){
 	}
 }
 
-function deleteRefLink(table,field,type,id){
-	if (confirm("Are you sure you would like to remove this link from this reference?")) {
-		var sutXmlHttp=GetXmlHttpObject();
-		if (sutXmlHttp==null){
-			alert ("Your browser does not support AJAX!");
-			return;
-		}
-		
-		var url="rpc/authormanager.php?refid="+refid+"&action=deletereflink&table="+table+"&field="+field+"&id="+id+"&type="+type;
-		
-		var authorList = '';
-		sutXmlHttp.onreadystatechange=function(){
-			if(sutXmlHttp.readyState==4 && sutXmlHttp.status==200){
-				authorList = sutXmlHttp.responseText;
-			}
-		};
-		sutXmlHttp.open("POST",url,false);
-		sutXmlHttp.send(null);
-		document.getElementById(table).innerHTML = authorList;
-	}
+function deleteRefLink(refid, targetid, type){
+    if(!confirm("Are you sure you would like to remove this link from this reference?")) {
+        return;
+    }
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function(){
+        if(xhr.readyState === 4){
+            if(xhr.status === 200){
+                location.reload();
+            } else {
+                alert("Error removing link");
+            }
+        }
+    };
+
+    xhr.open("POST", "refdetails.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    var params = "formsubmit=deleteRefLink" +
+                 "&refid=" + encodeURIComponent(refid) +
+                 "&targetid=" + encodeURIComponent(targetid) + 
+				"&type=" + encodeURIComponent(type);
+
+    xhr.send(params);
 }
 
 function openNewAuthorWindow(){
