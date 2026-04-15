@@ -723,57 +723,117 @@ else{
 									</fieldset>
 								</form>
 							</div><br />
-						<?php	
+							<div style="width:100%;">
+								<form name='datasetform' id='datasetform' action='refdetails.php' method='post'>
+									<input type="hidden" name="refid" value="<?php echo $refId; ?>">
+									<fieldset>
+										<legend><b>Datasets</b></legend>
+										<div>
+											<div>
+												<b>Add Dataset By Name: </b>
+											</div>
+											<div>
+										<select name="targetid" id="refdatasetid" style="width:220px;">
+											<option value="">Select Dataset</option>
+											<?php
+											$allDatasets = $refManager->getDatasets();
 
-							echo '<b>Dataset links:</b>';
-							echo '<div id="referencedatasetlink">';
-							if($refDatasetArr){
-								echo '<ul>';
-								foreach($refDatasetArr as $k => $v){
-									echo '<li style="display:flex; align-items:center; gap:6px;">';
+											foreach($allDatasets as $datasetID => $datasetArr){
+												echo '<option value="'.htmlspecialchars($datasetID, ENT_QUOTES).'">'
+													. htmlspecialchars($datasetArr['name'], ENT_QUOTES) .
+													'</option>';
+											}
+											
+											?>
+										</select>
+											<input type="hidden" name="addreflink" value="1">
+											<input name="refid" type="hidden" value="<?php echo $refId; ?>" />
+											<input name="type" type="hidden" value="<?php echo 'dataset'; ?>" />
+											<button type="submit">Add</button>
+											</div>
+										</div>
+										<hr />
+										<div id="datasetlistdiv">
+											<?php
+											if($refDatasetArr){
+												echo '<ul>';
+												foreach($refDatasetArr as $k => $v){
+													echo '<li>';
+													echo '<a href="../collections/datasets/datasetmanager.php?datasetid=' . htmlspecialchars($k, ENT_QUOTES) . '">' 
+														. htmlspecialchars($v, ENT_QUOTES) . 
+														'</a>';															
+													echo '<img src="../images/del.png" 
+															style="width:14px; cursor:pointer;" 
+															onclick="deleteRefLink('.$refId.','.$k.',\'dataset\')" 
+															title="Delete link">';
+													echo '</li>';
+												}
+												echo '</ul>';
+											}
+											else{
+												echo '<div><b>There are currently no datasets linked to this reference.</b></div>';
+											}
+											?>
+										</div>
+									</fieldset>
+								</form>
+							</div><br />
+								<div style="width:100%;">
+								<form name='collectionform' id='collectionform' action='refdetails.php' method='post'>
+									<input type="hidden" name="refid" value="<?php echo $refId; ?>">
+									<fieldset>
+										<legend><b>Collections</b></legend>
+										<div>
+											<div>
+												<b>Add Collection By Name: </b>
+											</div>
+											<div>
+										<select name="targetid" id="collID" style="width:220px;">
+											<option value="">Select Collection</option>
+											<?php
+											$allCollections = $refManager->getCollections();
 
-									echo '<a href="../collections/datasets/datasetmanager.php?datasetid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) .'" target="_blank" >';
-									echo $v;
-									echo '</a>';
-
-									echo '<img src="../images/del.png" 
-											style="width:14px; cursor:pointer;" 
-											onclick="deleteRefLink('.$refId.', '.$k.', \'dataset\')" 
-											title="Delete link">';
-
-									echo '</li>';
-								}
-								echo '</ul>';
-							}
-							else{
-								echo 'There are no checklists linked with this reference';
-							}
-							echo '</div><br />';
-
-							echo '<b>Collection links:</b>';
-							echo '<div id="referencecollectionlink">';
-							if($refCollArr){
-								echo '<ul>';
-								foreach($refCollArr as $k => $v){
-									echo '<li style="display:flex; align-items:center; gap:6px;">';
-
-									echo '<a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank" >';
-									echo $v;
-									echo '</a>';
-
-									echo '<img src="../images/del.png" 
-											style="width:14px; cursor:pointer;" 
-											onclick="deleteRefLink('.$refId.', '.$k.', \'collection\')" 
-											title="Delete link">';
-
-									echo '</li>';
-								}
-								echo '</ul>';
-							}
-							else{
-								echo 'There are no collections linked with this reference';
-							}
-							echo '</div><br />';
+											foreach($allCollections as $collID => $collArr){
+												echo '<option value="'.htmlspecialchars($collID, ENT_QUOTES).'">'
+													. htmlspecialchars($collArr['collectionName'], ENT_QUOTES) .
+													'</option>';
+											}
+											
+											?>
+										</select>
+											<input type="hidden" name="addreflink" value="1">
+											<input name="refid" type="hidden" value="<?php echo $refId; ?>" />
+											<input name="type" type="hidden" value="<?php echo 'collection'; ?>" />
+											<button type="submit">Add</button>
+											</div>
+										</div>
+										<hr />
+										<div id="collectionlistdiv">
+											<?php
+											if($refCollArr){
+												echo '<ul>';
+												foreach($refCollArr as $k => $v){
+													echo '<li>';
+													echo '<a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, ENT_QUOTES) . '">' 
+														. htmlspecialchars($v, ENT_QUOTES) . 
+														'</a>';															
+													echo '<img src="../images/del.png" 
+															style="width:14px; cursor:pointer;" 
+															onclick="deleteRefLink('.$refId.', '.$k.', \'collection\')" 
+															title="Delete link">';
+													echo '</li>';
+												}
+												echo '</ul>';
+											}
+											else{
+												echo '<div><b>There are currently no collections linked to this reference.</b></div>';
+											}
+											?>
+										</div>
+									</fieldset>
+								</form>
+							</div><br />
+						<?php
 
 							echo '<b>Taxa links:</b>';
 							echo '<div id="referencetaxalink">';

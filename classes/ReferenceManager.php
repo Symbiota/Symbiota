@@ -83,6 +83,34 @@ class ReferenceManager{
 		}
 		return $retArr;
 	}
+
+	public function getDatasets(){
+		$retArr = array();
+		$sql = 'SELECT a.datasetID, a.name '.
+			'FROM omoccurdatasets AS a '.
+			'ORDER BY name';
+		if($rs = $this->conn->query($sql)){
+			while($r = $rs->fetch_object()){
+				$retArr[$r->datasetID]['name'] = $r->name;
+			}
+			$rs->close();
+		}
+		return $retArr;
+	}
+
+	public function getCollections(){
+		$retArr = array();
+		$sql = 'SELECT a.collID, a.collectionName '.
+			'FROM omcollections AS a '.
+			'ORDER BY collectionName';
+		if($rs = $this->conn->query($sql)){
+			while($r = $rs->fetch_object()){
+				$retArr[$r->collID]['collectionName'] = $r->collectionName;
+			}
+			$rs->close();
+		}
+		return $retArr;
+	}
 	
 	public function getAuthInfo($authId){
 		$retArr = array();
@@ -298,13 +326,13 @@ class ReferenceManager{
 	
 	public function getRefCollArr($refid){
 		$retArr = array();
-		$sql = 'SELECT l.collid, a.CollectionName '.
-			'FROM referencecollectionlink AS l LEFT JOIN omcollections AS a ON l.collid = a.CollID '.
+		$sql = 'SELECT l.collid, a.collectionName '.
+			'FROM referencecollectionlink AS l LEFT JOIN omcollections AS a ON l.collid = a.collID '.
 			'WHERE l.refid = '.$refid.' '.
-			'ORDER BY a.CollectionName';
+			'ORDER BY a.collectionName';
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
-				$retArr[$r->collid] = $r->CollectionName;
+				$retArr[$r->collid] = $r->collectionName;
 			}
 			$rs->close();
 		}
