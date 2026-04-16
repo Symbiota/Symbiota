@@ -301,53 +301,15 @@ function verifyNewAuthForm(f){
 }
 
 function verifyEditRefForm(f){
-	if(document.getElementById("title")){
-		if(document.getElementById("title").value == ""){
-			alert("Please enter the title of the reference.");
-			return false;
-		}
-	}
-	if(document.getElementById("ReferenceTypeId").selectedIndex < 2){
-		alert("Please select the type of reference.");
-		return false;
-	}
-	if(document.getElementById("ReferenceTypeId").value == 4){
-		if(document.getElementById("secondarytitle").value == '' && document.getElementById("tertiarytitle").value == ''){
-			alert("Please enter either a book title or book series title.");
-			return false;
-		}
-		if(document.getElementById("tertiarytitle").value != '' && document.getElementById("volume").value == '' && document.getElementById("number").value == ''){
-			alert("Please enter either the volume or number in the series.");
-			return false;
-		}
-	}
-	if(document.getElementById("ReferenceTypeId").value == 2 || document.getElementById("ReferenceTypeId").value == 7){
-		if(document.getElementById("secondarytitle").value == ''){
-			alert("Please enter a periodical title.");
-			return false;
-		}
-		if(document.getElementById("volume").value == '' && document.getElementById("number").value == ''){
-			alert("Please enter a volume or number for the periodical.");
-			return false;
-		}
-	}
-	if(document.getElementById("ReferenceTypeId").value == 8){
-		if(document.getElementById("secondarytitle").value == ''){
-			alert("Please enter a periodical title.");
-			return false;
-		}
-		if(document.getElementById("edition").value == '' || document.getElementById("pubdate").value == ''){
-			alert("Please enter the date or edition for the periodical.");
-			return false;
-		}
-	}
-	if(document.getElementById("ReferenceTypeId").value == 3 || document.getElementById("ReferenceTypeId").value == 6){
-		if(document.getElementById("secondarytitle").value != '' && document.getElementById("volume").value == '' && document.getElementById("number").value == ''){
-			alert("Please enter either the volume or number in the series.");
-			return false;
-		}
-	}
-	return true;
+	if(!document.getElementById("bibliographicCitation").value){
+        alert("Please enter the title of the reference.");
+        return false;
+    }
+    if(!document.getElementById("title").value){
+        alert("Please enter the title of the reference.");
+        return false;
+    }
+    return true;
 }
 
 function verifyRefTypeChange(){

@@ -22,18 +22,18 @@ if($formSubmit && $isEditor){
 		$statusStr = $refManager->deleteReference($refId);
 	}
 	elseif($formSubmit == 'Search References'){
-		$refArr = $refManager->getRefList($_POST['searchtitlekeyword'],$_POST['searchauthor']);
+		$refArr = $refManager->getRefList($_POST['searchcitation']);
 		foreach($refArr as $refName => $valueArr){
-			if($valueArr["title"]){
+			if($valueArr["bibliographicCitation"]){
 				$refExist = true;
 			}
 		}
 	}
 }
 if(!$formSubmit || $formSubmit != 'Search References'){
-	$refArr = $refManager->getRefList('','');
+	$refArr = $refManager->getRefList('');
 	foreach($refArr as $refName => $valueArr){
-		if($valueArr["title"]){
+		if($valueArr["bibliographicCitation"]){
 			$refExist = true;
 		}
 	}
@@ -57,10 +57,6 @@ if(!$formSubmit || $formSubmit != 'Search References'){
 		function verifyNewRefForm(f){
 			if(document.getElementById("newreftitle").value == ""){
 				alert("Please enter the title of the reference.");
-				return false;
-			}
-			if(document.getElementById("newreftype").selectedIndex < 2){
-				alert("Please select the type of reference.");
 				return false;
 			}
 			return true;
@@ -96,12 +92,8 @@ if(!$formSubmit || $formSubmit != 'Search References'){
 				    <legend><b>Filter List</b></legend>
 			    	<div>
 						<div>
-							<b>Title Keyword:</b>
-							<input type="text" autocomplete="off" name="searchtitlekeyword" id="searchtitlekeyword" size="25" value="<?php echo ($formSubmit == 'Search References'?$_POST['searchtitlekeyword']:''); ?>" />
-						</div>
-						<div>
-							<b>Author's Last Name:</b>
-							<input type="text" name="searchauthor" id="searchauthor" size="25" value="<?php echo ($formSubmit == 'Search References'?$_POST['searchauthor']:''); ?>" />
+							<b>Citation</b>
+							<input type="text" autocomplete="off" name="searchcitation" id="searchcitation" size="25" value="<?php echo ($formSubmit == 'Search References'?$_POST['searchcitation']:''); ?>" />
 						</div>
 						<div style="padding-top:8px;float:right;">
 							<button name="formsubmit" type="submit" value="Search References">Filter List</button>
@@ -128,24 +120,6 @@ if(!$formSubmit || $formSubmit != 'Search References'){
 								<textarea name="newreftitle" id="newreftitle" rows="10" style="width:380px;height:40px;resize:vertical;" ></textarea>
 							</div>
 						</div>
-						<div style="clear:both;padding-top:6px;float:left;">
-							<span>
-								<b>Reference Type: </b><select name="newreftype" id="newreftype" style="width:400px;">
-									<option value="">Select Reference Type</option>
-									<option value="">------------------------------------------</option>
-									<?php
-									$typeArr = $refManager->getRefTypeArr();
-									foreach($typeArr as $k => $v){
-										echo '<option value="'.$k.'">'.$v.'</option>';
-									}
-									?>
-								</select>
-							</span>
-						</div>
-						<div style="clear:both;padding-top:8px;float:right;">
-							<input name="ispublished" type="hidden" value="1" />
-							<button name="formsubmit" type="submit" value="Create Reference">Create Reference</button>
-						</div>
 					</fieldset>
 				</form>
 			</div>
@@ -155,21 +129,7 @@ if(!$formSubmit || $formSubmit != 'Search References'){
 				echo '<div><ul>';
 				foreach($refArr as $refId => $recArr){
 					echo '<li>';
-					echo '<a href="refdetails.php?refid=' . htmlspecialchars($refId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><b>' . htmlspecialchars($recArr["title"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</b></a>';
-					if($recArr["ReferenceTypeId"] == 27){
-						echo ' series.';
-					}
-					if($recArr["tertiarytitle"] != $recArr["title"]){
-						echo ($recArr["tertiarytitle"]?', '.$recArr["tertiarytitle"]:'');
-					}
-					echo ($recArr["volume"]?' Vol. '.$recArr["volume"].'.':'');
-					echo ($recArr["number"]?' No. '.$recArr["number"].'.':'');
-					if(($recArr["tertiarytitle"] != $recArr["secondarytitle"]) && ($recArr["title"] != $recArr["secondarytitle"])){
-						echo ($recArr["secondarytitle"]?', '.$recArr["secondarytitle"].'.':'.');
-					}
-					echo ($recArr["edition"]?' '.$recArr["edition"].' Ed.':'');
-					echo ($recArr["pubdate"]?' '.$recArr["pubdate"].'.':'');
-					echo ($recArr["authline"]?' '.$recArr["authline"]:'');
+					echo '<a href="refdetails.php?refid=' . htmlspecialchars($refId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><b>' . htmlspecialchars($recArr["bibliographicCitation"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</b></a>';
 					echo '</li>';
 				}
 				echo '</ul></div>';
