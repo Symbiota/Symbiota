@@ -8,6 +8,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 Language::load([
 	'collections/loans/loan_langs',
 	'collections/editor/includes/determinationtab',
+	'collections/search/index'
 ]);
 
 $refId = array_key_exists('refid',$_REQUEST)?$_REQUEST['refid']:0;
@@ -164,6 +165,7 @@ else{
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/symb/references.index.js"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/api.taxonomy.taxasuggest.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		var refid = <?php echo $refId; ?>;
 		var parentChild = false;
@@ -692,39 +694,79 @@ else{
 							</fieldset>
 				</div>
 				</div>
-				<div id="reftaxadiv" style="">
-					<?php
+				<div id="reftaxadiv">
 
-							echo '<b>Taxa links:</b>';
-							echo '<div id="referencetaxalink">';
-							if($refTaxaArr){
-								echo '<ul>';
-								foreach($refTaxaArr as $k => $v){
+					<fieldset>
+						<legend><b>Linked Taxa</b></legend>
 
-									echo '<li style="display:flex; align-items:center; gap:6px;">';
+						<div id="referencetaxalink">
+							<?php if($refTaxaArr): ?>
+								<ul>
+									<?php foreach($refTaxaArr as $k => $v): ?>
+										<li style="display:flex; align-items:center; gap:6px;">
 
-									echo '<a href="../taxa/index.php?taxon=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank" >';
-									echo $v;
-									echo '</a>';
+											<a href="../taxa/index.php?taxon=<?= htmlspecialchars($k) ?>" target="_blank">
+												<?= htmlspecialchars($v) ?>
+											</a>
 
-									echo '<form method="post" action="refdetails.php" style="display:inline;margin:0;padding:0;">
-										<input type="hidden" name="refid" value="'.$refId.'">
-										<input type="hidden" name="targetid" value="'.$k.'">
-										<input type="hidden" name="type" value="taxon">
-										<input type="hidden" name="action" value="deletereflink">
-										<button type="submit" style="border:none;background:none;padding:0;margin:0;display:inline;">
-											<img src="../images/del.png" style="width:14px;vertical-align:middle;" title="Delete link">
-										</button>
-										</form>';
-									echo '</li>';
-								}
-								echo '</ul>';
-							}
-							else{
-								echo 'There are no taxa linked with this reference';
-							}
-							echo '</div>';
-						?>
+											<form method="post" action="refdetails.php" style="margin:0;">
+												<input type="hidden" name="refid" value="<?= $refId ?>">
+												<input type="hidden" name="targetid" value="<?= $k ?>">
+												<input type="hidden" name="type" value="taxon">
+												<input type="hidden" name="action" value="deletereflink">
+												<button type="submit" style="border:none;background:none;padding:0;">
+													<img src="../images/del.png" style="width:14px;" title="Delete link">
+												</button>
+											</form>
+
+										</li>
+									<?php endforeach; ?>
+								</ul>
+							<?php else: ?>
+								<div><b>No taxa linked to this reference.</b></div>
+							<?php endif; ?>
+						</div>
+					</fieldset>
+
+					<br>
+					<form method="post" action="refdetails.php">
+						<fieldset>
+							<legend><b>Add Taxon</b></legend>
+
+							<input type="hidden" name="refid" value="<?= $refId ?>">
+							<input type="hidden" name="action" value="addreflink">
+							<input type="hidden" name="type" value="taxon">
+
+							<input type="hidden" name="targetid" id="taxa_targetid">
+
+							<div>
+								<label><b>Search Taxon:</b></label><br>
+								<input type="text" id="taxa" style="width:350px;">
+							</div>
+
+							<div style="margin-top:10px;">
+								<label>Type:</label>
+								<select id="taxontype" name="taxontype">
+									<option value="2">Scientific Name</option>
+									<option value="3">Family</option>
+									<option value="4">Taxonomic Group</option>
+								</select>
+							</div>
+
+							<div style="margin-top:10px;">
+								<label>
+								<input type="checkbox" id="usethes" name="usethes" value="1" checked>
+									Include synonyms
+								</label>
+							</div>
+
+							<div style="margin-top:12px;">
+								<button type="submit">Add Taxon</button>
+							</div>
+
+						</fieldset>
+					</form>
+
 				</div>
 				<div id="reflinksdiv" style="">
 					<div style="width:100%;">

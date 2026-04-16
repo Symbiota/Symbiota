@@ -110,6 +110,10 @@ $(document).ready(function() {
 				}
 			},{});
 	}
+
+	$("#taxa").on("autocompleteselect", function(event, ui) {
+            $("#taxa_targetid").val(ui.item.id);
+    });
 });
 
 function selectAll(source) {
