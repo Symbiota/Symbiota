@@ -282,6 +282,7 @@ else{
 				<ul>
 					<li><a href="#refdetaildiv">Reference Details</a></li>
 					<li><a href="#refoccdiv">Linked Occurrences</a></li>
+					<li><a href="#reftaxadiv">Linked Taxa</a></li>
 					<li><a href="#reflinksdiv">Other Linked Resources</a></li>
 					<li><a href="#refadmindiv">Admin</a></li>
 				</ul>
@@ -691,6 +692,40 @@ else{
 							</fieldset>
 				</div>
 				</div>
+				<div id="reftaxadiv" style="">
+					<?php
+
+							echo '<b>Taxa links:</b>';
+							echo '<div id="referencetaxalink">';
+							if($refTaxaArr){
+								echo '<ul>';
+								foreach($refTaxaArr as $k => $v){
+
+									echo '<li style="display:flex; align-items:center; gap:6px;">';
+
+									echo '<a href="../taxa/index.php?taxon=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank" >';
+									echo $v;
+									echo '</a>';
+
+									echo '<form method="post" action="refdetails.php" style="display:inline;margin:0;padding:0;">
+										<input type="hidden" name="refid" value="'.$refId.'">
+										<input type="hidden" name="targetid" value="'.$k.'">
+										<input type="hidden" name="type" value="taxon">
+										<input type="hidden" name="action" value="deletereflink">
+										<button type="submit" style="border:none;background:none;padding:0;margin:0;display:inline;">
+											<img src="../images/del.png" style="width:14px;vertical-align:middle;" title="Delete link">
+										</button>
+										</form>';
+									echo '</li>';
+								}
+								echo '</ul>';
+							}
+							else{
+								echo 'There are no taxa linked with this reference';
+							}
+							echo '</div>';
+						?>
+				</div>
 				<div id="reflinksdiv" style="">
 					<div style="width:100%;">
 							<div style="width:100%;">
@@ -879,41 +914,8 @@ else{
 									</fieldset>
 								</form>
 							</div><br />
-						<?php
-
-							echo '<b>Taxa links:</b>';
-							echo '<div id="referencetaxalink">';
-							if($refTaxaArr){
-								echo '<ul>';
-								foreach($refTaxaArr as $k => $v){
-
-									echo '<li style="display:flex; align-items:center; gap:6px;">';
-
-									echo '<a href="../taxa/index.php?taxon=' . htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank" >';
-									echo $v;
-									echo '</a>';
-
-									echo '<form method="post" action="refdetails.php" style="display:inline;margin:0;padding:0;">
-										<input type="hidden" name="refid" value="'.$refId.'">
-										<input type="hidden" name="targetid" value="'.$k.'">
-										<input type="hidden" name="type" value="taxon">
-										<input type="hidden" name="action" value="deletereflink">
-										<button type="submit" style="border:none;background:none;padding:0;margin:0;display:inline;">
-											<img src="../images/del.png" style="width:14px;vertical-align:middle;" title="Delete link">
-										</button>
-										</form>';
-									echo '</li>';
-								}
-								echo '</ul>';
-							}
-							else{
-								echo 'There are no taxa linked with this reference';
-							}
-							echo '</div>';
-						?>
 					</div>
 				</div>
-
 				<div id="refadmindiv" style="">
 					<form name="delrefform" action="index.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this reference?')">
 						<fieldset style="width:350px;margin:20px;padding:20px;">
