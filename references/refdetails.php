@@ -1,7 +1,9 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ReferenceManager.php');
+include_once($SERVER_ROOT . '/classes/ReferenceManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 
@@ -11,8 +13,8 @@ Language::load([
 	'collections/search/index'
 ]);
 
-$refId = array_key_exists('refid',$_REQUEST)?$_REQUEST['refid']:0;
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
+$refId = array_key_exists('refid', $_REQUEST) ? Sanitize::int($_REQUEST['refid']) : 0;
+$formSubmit = array_key_exists('formsubmit', $_POST) ? $_POST['formsubmit'] : '';
 
 $refManager = new ReferenceManager();
 $refArr = '';
@@ -65,7 +67,7 @@ if($formSubmit){
 	}
 }
 if(isset($_POST['addauthor']) && $_POST['addauthor'] == '1'){
-    $refAuthId = intval($_POST['refauthorid']);
+	$refAuthId = Sanitize::int($_POST['refauthorid']);
     if($refAuthId){
         $statusStr = $refManager->addAuthor($refId, $refAuthId);
     }
@@ -75,7 +77,7 @@ $action = $_POST['action'] ?? '';
 
 switch($action){
     case 'addreflink':
-        $targetid = intval($_POST['targetid']);
+    	$targetid = Sanitize::int($_POST['targetid']);
 		$type = $_POST['type'];
 		if($targetid && $type){
 			$statusStr = $refManager->addRefLink($refId,$targetid,$type);
@@ -83,7 +85,7 @@ switch($action){
         break;
 
     case 'deletereflink':
-		$targetid = intval($_POST['targetid']);
+    	$targetid = Sanitize::int($_POST['targetid']);
 		$type = $_POST['type'];
 		if($targetid && $type){
 			$statusStr = $refManager->deleteRefLink($refId,$targetid,$type);
@@ -92,7 +94,7 @@ switch($action){
 	case 'deleteoccurrences':
 		if(!empty($_POST['scbox']) && is_array($_POST['scbox'])){
 			foreach($_POST['scbox'] as $occid){
-				$occid = intval($occid);
+				$occid = Sanitize::int($occid);
 				if($occid){
 					$refManager->deleteRefLink($refId, $occid, 'occurrence');
 				}
@@ -181,7 +183,7 @@ else{
 			width: 100%;
 			table-layout: auto;
 		}
-		
+
 		#innertext{ max-width: 1400px; }
 		.fieldGroupDiv { clear:both; margin-top:2px; height: 25px; }
 		.fieldDiv { float:left; margin-left: 10px}
@@ -612,8 +614,8 @@ else{
 												$headerOutArr = current($refOccArr);
 												echo '<th><input name="selectall" type="checkbox" onclick="selectAll(this)" /></th>';
 												$headerArr = array('collectionCode' => 'Collection',
-															'catalogNumber' =>'Catalog Number','sciname'=>'Scientific Name', 
-															'recordedBy'=>'Collector', 'eventDate'=>'Collection Date', 
+															'catalogNumber' =>'Catalog Number','sciname'=>'Scientific Name',
+															'recordedBy'=>'Collector', 'eventDate'=>'Collection Date',
 															'occid'=> 'occid');
 												$rowCnt = 1;
 												foreach($headerArr as $fieldName => $headerTitle){
@@ -658,7 +660,7 @@ else{
 									echo '<button type="submit" onclick="return confirm(\'Delete links to selected samples?\')">
        					 				Delete Links to Selected Samples
       									</button>';
-									echo '</div>'; 
+									echo '</div>';
 									?>
 								</fieldset>
 							</form>
@@ -790,7 +792,7 @@ else{
 													. htmlspecialchars($checkArr['name'], ENT_QUOTES) .
 													'</option>';
 											}
-											
+
 											?>
 										</select>
 											<form method="post" action="refdetails.php">
@@ -854,7 +856,7 @@ else{
 													. htmlspecialchars($datasetArr['name'], ENT_QUOTES) .
 													'</option>';
 											}
-											
+
 											?>
 										</select>
 											<form method="post" action="refdetails.php">
@@ -871,9 +873,9 @@ else{
 												echo '<ul>';
 												foreach($refDatasetArr as $k => $v){
 													echo '<li>';
-													echo '<a href="../collections/datasets/datasetmanager.php?datasetid=' . htmlspecialchars($k, ENT_QUOTES) . '">' 
-														. htmlspecialchars($v, ENT_QUOTES) . 
-														'</a>';															
+													echo '<a href="../collections/datasets/datasetmanager.php?datasetid=' . htmlspecialchars($k, ENT_QUOTES) . '">'
+														. htmlspecialchars($v, ENT_QUOTES) .
+														'</a>';
 													echo '<form method="post" action="refdetails.php" style="display:inline;margin:0;padding:0;">
 														<input type="hidden" name="refid" value="'.$refId.'">
 														<input type="hidden" name="targetid" value="'.$k.'">
@@ -915,7 +917,7 @@ else{
 													. htmlspecialchars($collArr['collectionName'], ENT_QUOTES) .
 													'</option>';
 											}
-											
+
 											?>
 										</select>
 											<form method="post" action="refdetails.php">
@@ -932,9 +934,9 @@ else{
 												echo '<ul>';
 												foreach($refCollArr as $k => $v){
 													echo '<li>';
-													echo '<a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, ENT_QUOTES) . '">' 
-														. htmlspecialchars($v, ENT_QUOTES) . 
-														'</a>';															
+													echo '<a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, ENT_QUOTES) . '">'
+														. htmlspecialchars($v, ENT_QUOTES) .
+														'</a>';
 													echo '<form method="post" action="refdetails.php" style="display:inline;margin:0;padding:0;">
 														<input type="hidden" name="refid" value="'.$refId.'">
 														<input type="hidden" name="targetid" value="'.$k.'">

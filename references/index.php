@@ -1,11 +1,13 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ReferenceManager.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 if(!$SYMB_UID) header('Location: ../profile/index.php?refurl=../references/index.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$refId = array_key_exists('refid',$_REQUEST)?$_REQUEST['refid']:0;
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
+$refId = array_key_exists('refid', $_REQUEST) ? Sanitize::int($_REQUEST['refid']) : 0;
+$formSubmit = array_key_exists('formsubmit', $_POST) ? $_POST['formsubmit'] : '';
 
 $refManager = new ReferenceManager();
 $refArr = '';

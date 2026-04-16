@@ -13,7 +13,7 @@ class ReferenceManager{
 	function __construct() {
 		$this->conn = MySQLiConnectionFactory::getCon("write");
 	}
-	
+
 	function __destruct(){
  		if($this->conn) $this->conn->close();
 	}
@@ -55,7 +55,7 @@ class ReferenceManager{
 		}
 		return $retArr;
 	}
-	
+
 	public function getAuthList(){
 		$retArr = array();
 		$sql = 'SELECT a.refauthorid, CONCAT_WS(", ",a.lastname,CONCAT_WS(" ",a.firstname,a.middlename)) AS authorName '.
@@ -111,7 +111,7 @@ class ReferenceManager{
 		}
 		return $retArr;
 	}
-	
+
 	public function getAuthInfo($authId){
 		$retArr = array();
 		$sql = 'SELECT a.refauthorid, a.firstname, a.middlename, a.lastname '.
@@ -128,29 +128,34 @@ class ReferenceManager{
 		}
 		return $retArr;
 	}
-	
+
 	public function getAuthPubList($authId){
 		$retArr = array();
-		$sql = 'SELECT a.refid, a.title, a.secondarytitle, a.shorttitle, a.pubdate '.
-			'FROM referenceauthorlink AS l LEFT JOIN referenceobject AS a ON l.refid = a.refid '.
-			'WHERE l.refauthid = '.$authId.' '.
-			'ORDER BY a.title';
-		if($rs = $this->conn->query($sql)){
-			while($r = $rs->fetch_object()){
-				$retArr[$r->refid]['refid'] = $r->refid;
-				$retArr[$r->refid]['title'] = $r->title;
-				$retArr[$r->refid]['secondarytitle'] = $r->secondarytitle;
-				$retArr[$r->refid]['shorttitle'] = $r->shorttitle;
-				$retArr[$r->refid]['pubdate'] = $r->pubdate;
+		$sql = 'SELECT a.refid, a.title, a.secondarytitle, a.shorttitle, a.pubdate
+			FROM referenceauthorlink AS l LEFT JOIN referenceobject AS a ON l.refid = a.refid
+			WHERE l.refauthid = ?
+			ORDER BY a.title';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $authId);
+			$stmt->execute();
+			if($rs = $stmt->get_result()){
+				while($r = $rs->fetch_object()){
+					$retArr[$r->refid]['refid'] = $r->refid;
+					$retArr[$r->refid]['title'] = $r->title;
+					$retArr[$r->refid]['secondarytitle'] = $r->secondarytitle;
+					$retArr[$r->refid]['shorttitle'] = $r->shorttitle;
+					$retArr[$r->refid]['pubdate'] = $r->pubdate;
+				}
+				$rs->free();
 			}
-			$rs->close();
+			$stmt->close();
 		}
 		return $retArr;
 	}
 
 	public function getRefTypeArr(){
 		$retArr = array();
-		$sql = 'SELECT ReferenceTypeId, ReferenceType '. 
+		$sql = 'SELECT ReferenceTypeId, ReferenceType '.
 			'FROM referencetype '.
 			'ORDER BY ReferenceType';
 		if($rs = $this->conn->query($sql)){
@@ -160,7 +165,7 @@ class ReferenceManager{
 		}
 		return $retArr;
 	}
-	
+
 	public function createReference($pArr){
 		global $SYMB_UID;
 		$statusStr = '';
@@ -176,10 +181,10 @@ class ReferenceManager{
 		}
 		return $statusStr;
 	}
-	
+
 	public function getRefArr($refid){
 		$retArr = array();
-		$sql = 'SELECT o.refid, o.parentrefid, o.title, o.secondarytitle, o.shorttitle, o.tertiarytitle, o.alternativetitle, o.typework, o.figures, '. 
+		$sql = 'SELECT o.refid, o.parentrefid, o.title, o.secondarytitle, o.shorttitle, o.tertiarytitle, o.alternativetitle, o.typework, o.figures, '.
 			'o.pubdate, o.edition, o.volume, o.numbervolumnes, o.number, o.pages, o.section, o.placeofpublication, o.publisher, o.isbn_issn, o.url, '.
 			'o.guid, o.ispublished, o.notes, t.ReferenceType, t.ReferenceTypeId '.
 			'FROM referenceobject AS o LEFT JOIN referencetype AS t ON o.ReferenceTypeId = t.ReferenceTypeId '.
@@ -223,7 +228,7 @@ class ReferenceManager{
 			$rs->close();
 		}
 		if($retArr['parentrefid']){
-			$sql = 'SELECT o.parentrefid, o.title, o.shorttitle, o.alternativetitle, '. 
+			$sql = 'SELECT o.parentrefid, o.title, o.shorttitle, o.alternativetitle, '.
 				'o.pubdate, o.edition, o.volume, o.number, o.placeofpublication, o.publisher, o.isbn_issn '.
 				'FROM referenceobject AS o LEFT JOIN referencetype AS t ON o.ReferenceTypeId = t.ReferenceTypeId '.
 				'WHERE o.refid = '.$retArr['parentrefid'];
@@ -246,7 +251,7 @@ class ReferenceManager{
 			}
 		}
 		if($retArr['parentrefid2']){
-			$sql = 'SELECT o.title, o.edition, o.numbervolumnes, o.placeofpublication, o.publisher '. 
+			$sql = 'SELECT o.title, o.edition, o.numbervolumnes, o.placeofpublication, o.publisher '.
 				'FROM referenceobject AS o LEFT JOIN referencetype AS t ON o.ReferenceTypeId = t.ReferenceTypeId '.
 				'WHERE o.refid = '.$retArr['parentrefid2'];
 			//echo $sql;
@@ -263,7 +268,7 @@ class ReferenceManager{
 		}
 		return $retArr;
 	}
-	
+
 	public function getChildArr($refid){
 		$retArr = array();
 		$sql = 'SELECT o.refid '.
@@ -278,7 +283,7 @@ class ReferenceManager{
 		}
 		return $retArr;
 	}
-	
+
 	public function getRefAuthArr($refid){
 		$retArr = array();
 		$sql = 'SELECT a.refauthorid, CONCAT_WS(" ",a.firstname,a.middlename,a.lastname) AS authorName '.
@@ -293,7 +298,7 @@ class ReferenceManager{
 		}
 		return $retArr;
 	}
-	
+
 	public function getRefChecklistArr($refid){
 		$retArr = array();
 		$sql = 'SELECT l.clid, a.Name '.
@@ -323,7 +328,7 @@ class ReferenceManager{
 		}
 		return $retArr;
 	}
-	
+
 	public function getRefCollArr($refid){
 		$retArr = array();
 		$sql = 'SELECT l.collid, a.collectionName '.
@@ -338,11 +343,11 @@ class ReferenceManager{
 		}
 		return $retArr;
 	}
-	
+
 	public function getRefOccArr($refid){
 		$retArr = array();
-		$sql = 'SELECT c.collectionCode, a.catalogNumber, a.sciname, a.recordedBy, a.eventDate, l.occid 
-			FROM referenceoccurlink AS l LEFT JOIN omoccurrences AS a ON l.occid = a.occid LEFT JOIN omcollections AS c ON a.collid = c.collid 
+		$sql = 'SELECT c.collectionCode, a.catalogNumber, a.sciname, a.recordedBy, a.eventDate, l.occid
+			FROM referenceoccurlink AS l LEFT JOIN omoccurrences AS a ON l.occid = a.occid LEFT JOIN omcollections AS c ON a.collid = c.collid
 			WHERE l.refid = ?';
 
         $stmt = $this->conn->prepare($sql);
@@ -363,7 +368,7 @@ class ReferenceManager{
 
         return $retArr;
 	}
-	
+
 	public function getRefTaxaArr($refid){
 		$retArr = array();
 		$sql = 'SELECT l.tid, a.SciName '.
@@ -378,7 +383,7 @@ class ReferenceManager{
 		}
 		return $retArr;
 	}
-	
+
 	public function addAuthor($refid,$refAuthId){
 		$statusStr = '';
 		$sql = 'INSERT INTO referenceauthorlink(refid,refauthid) '.
@@ -398,7 +403,7 @@ class ReferenceManager{
 		$statusStr = '';
 
 		$sql = '';
-		
+
 		switch($type){
 			case 'checklist':
 				$sql = 'INSERT IGNORE INTO referencechecklistlink(refid,clid) VALUES (?,?)';
@@ -434,7 +439,7 @@ class ReferenceManager{
 
 		return $statusStr;
 	}
-	
+
 	public function deleteRefAuthor($refid,$refAuthId){
 		$statusStr = '';
 		$sql = 'DELETE FROM referenceauthorlink '.
@@ -449,7 +454,7 @@ class ReferenceManager{
 		}
 		return $statusStr;
 	}
-	
+
 	public function deleteReference($refid){
 		$statusStr = '';
 		$sql = 'DELETE FROM referenceauthorlink '.
@@ -469,7 +474,7 @@ class ReferenceManager{
 		}
 		return $statusStr;
 	}
-	
+
 	public function deleteAuthor($authId){
 		$statusStr = '';
 		$sql = 'DELETE FROM referenceauthors '.
@@ -484,13 +489,13 @@ class ReferenceManager{
 		}
 		return $statusStr;
 	}
-	
+
 	public function deleteRefLink($refid, $targetid, $type){
 
 		$statusStr = '';
 
 		$sql = '';
-		
+
 		switch($type){
 			case 'checklist':
 				$sql = 'DELETE FROM referencechecklistlink WHERE refid=? AND clid=?';
@@ -530,7 +535,7 @@ class ReferenceManager{
 
 		return $statusStr;
 	}
-	
+
 	public function createAuthor($firstName,$middleName,$lastName){
 		global $SYMB_UID;
 		$statusStr = '';
@@ -546,7 +551,7 @@ class ReferenceManager{
 		}
 		return $statusStr;
 	}
-	
+
 	public function getRefTypeFieldArr($refTypeId){
 		$retArr = array();
 		$sql = 'SELECT ReferenceTypeId, ReferenceType, Title, SecondaryTitle, PlacePublished, '.
@@ -579,7 +584,7 @@ class ReferenceManager{
 		}
 		return $retArr;
 	}
-	
+
 	public function editReference($pArr){
 		global $SYMB_UID;
 		$statusStr = '';
@@ -606,7 +611,7 @@ class ReferenceManager{
 		}
 		return $statusStr;
 	}
-	
+
 	public function editBookReference($pArr){
 		global $SYMB_UID;
 		$statusStr = '';
@@ -814,7 +819,7 @@ class ReferenceManager{
 		}
 		return $statusStr;
 	}
-	
+
 	public function editPerReference($pArr){
 		global $SYMB_UID;
 		$statusStr = '';
@@ -918,7 +923,7 @@ class ReferenceManager{
 		}
 		return $statusStr;
 	}
-	
+
 	public function formatInArr($pArr){
 		if(!array_key_exists('secondarytitle',$pArr)){
 			$pArr['secondarytitle'] = '';
@@ -970,7 +975,7 @@ class ReferenceManager{
 		}
 		return $pArr;
 	}
-	
+
 	public function editAuthor($pArr){
 		global $SYMB_UID;
 		$statusStr = '';
@@ -994,30 +999,30 @@ class ReferenceManager{
 		}
 		return $statusStr;
 	}
-	
-	//Get and set functions 
+
+	//Get and set functions
 	public function getrefid(){
 		return $this->refid;
 	}
-	
+
 	public function getRefAuthId(){
 		return $this->refAuthId;
 	}
-	
+
 	private function cleanOutStr($str){
 		$newStr = str_replace('"',"&quot;",$str);
 		$newStr = str_replace("'","&apos;",$newStr);
 		//$newStr = $this->conn->real_escape_string($newStr);
 		return $newStr;
 	}
-	
+
 	private function cleanInStr($str){
 		$newStr = trim($str);
 		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
 		$newStr = $this->conn->real_escape_string($newStr);
 		return $newStr;
 	}
-	
+
 	private function cleanTxtStr($str){
 		if($str){
 			$newStr = trim($str);
