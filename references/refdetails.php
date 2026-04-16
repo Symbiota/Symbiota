@@ -304,7 +304,19 @@ else{
 
 							<div class="fieldGroupDiv">
 								<b>Language:</b>
-								<input type="text" name="language" value="<?php echo $refArr['language']; ?>">
+								<select name="language">
+									<?php $l = $refArr['language']; ?>
+									<option value="">-- Select Language --</option>
+									<option value="en" <?= $l=='en'?'selected':'' ?>>English</option>
+									<option value="es" <?= $l=='es'?'selected':'' ?>>Spanish</option>
+									<option value="fr" <?= $l=='fr'?'selected':'' ?>>French</option>
+									<option value="de" <?= $l=='de'?'selected':'' ?>>German</option>
+									<option value="ja" <?= $l=='ja'?'selected':'' ?>>Japanese</option>
+									<option value="zh" <?= $l=='zh'?'selected':'' ?>>Chinese</option>
+									<option value="ru" <?= $l=='ru'?'selected':'' ?>>Russian</option>
+									<option value="pt" <?= $l=='pt'?'selected':'' ?>>Portuguese</option>
+									<option value="ar" <?= $l=='ar'?'selected':'' ?>>Arabic</option>
+								</select>
 							</div>
 
 							<div class="fieldGroupDiv">
@@ -314,7 +326,19 @@ else{
 
 							<div class="fieldGroupDiv">
 								<b>Reference Type:</b>
-								<input type="text" name="type" value="<?php echo $refArr['type']; ?>">
+								<select name="type" style="width:300px;">
+									<?php $t = $refArr['type']; ?>
+									<option value="">-- Select Type --</option>
+									<option value="journal-article" <?= $t=='journal-article'?'selected':'' ?>>Journal Article</option>
+									<option value="book" <?= $t=='book'?'selected':'' ?>>Book</option>
+									<option value="book-chapter" <?= $t=='book-chapter'?'selected':'' ?>>Book Chapter</option>
+									<option value="proceedings-article" <?= $t=='proceedings-article'?'selected':'' ?>>Proceedings Article</option>
+									<option value="posted-content" <?= $t=='posted-content'?'selected':'' ?>>Posted Content (Preprint, etc.)</option>
+									<option value="report" <?= $t=='report'?'selected':'' ?>>Report</option>
+									<option value="dataset" <?= $t=='dataset'?'selected':'' ?>>Dataset</option>
+									<option value="peer-review" <?= $t=='peer-review'?'selected':'' ?>>Peer Review</option>
+									<option value="grant" <?= $t=='grant'?'selected':'' ?>>Grant</option>
+								</select>
 							</div>
 
 							<div class="fieldGroupDiv">
