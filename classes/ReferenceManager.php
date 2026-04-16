@@ -4,8 +4,11 @@ include_once($SERVER_ROOT.'/config/dbconnection.php');
 class ReferenceManager{
 
 	private $conn;
-	private $refId = 0;
+	private $refid = 0;
 	private $refAuthId = 0;
+
+	public $errorMessage = '';
+    public $warningArr = [];
 
 	function __construct() {
 		$this->conn = MySQLiConnectionFactory::getCon("write");
@@ -61,6 +64,48 @@ class ReferenceManager{
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
 				$retArr[$r->refauthorid]['authorName'] = $r->authorName;
+			}
+			$rs->close();
+		}
+		return $retArr;
+	}
+
+	public function getChecklists(){
+		$retArr = array();
+		$sql = 'SELECT a.clid, a.name '.
+			'FROM fmchecklists AS a '.
+			'ORDER BY name';
+		if($rs = $this->conn->query($sql)){
+			while($r = $rs->fetch_object()){
+				$retArr[$r->clid]['name'] = $r->name;
+			}
+			$rs->close();
+		}
+		return $retArr;
+	}
+
+	public function getDatasets(){
+		$retArr = array();
+		$sql = 'SELECT a.datasetID, a.name '.
+			'FROM omoccurdatasets AS a '.
+			'ORDER BY name';
+		if($rs = $this->conn->query($sql)){
+			while($r = $rs->fetch_object()){
+				$retArr[$r->datasetID]['name'] = $r->name;
+			}
+			$rs->close();
+		}
+		return $retArr;
+	}
+
+	public function getCollections(){
+		$retArr = array();
+		$sql = 'SELECT a.collID, a.collectionName '.
+			'FROM omcollections AS a '.
+			'ORDER BY collectionName';
+		if($rs = $this->conn->query($sql)){
+			while($r = $rs->fetch_object()){
+				$retArr[$r->collID]['collectionName'] = $r->collectionName;
 			}
 			$rs->close();
 		}
@@ -123,7 +168,7 @@ class ReferenceManager{
 			'VALUES("'.$this->cleanInStr($pArr['newreftitle']).'","'.$this->cleanInStr($pArr['newreftype']).'","'.$this->cleanInStr($pArr['ispublished']).'",'.$SYMB_UID.',now()) ';
 		//echo $sql;
 		if($this->conn->query($sql)){
-			$this->refId = $this->conn->insert_id;
+			$this->refid = $this->conn->insert_id;
 		}
 		else{
 			$statusStr = 'ERROR: Creation of new reference failed: '.$this->conn->error.'<br/>';
@@ -132,24 +177,24 @@ class ReferenceManager{
 		return $statusStr;
 	}
 	
-	public function getRefArr($refId){
+	public function getRefArr($refid){
 		$retArr = array();
-		$sql = 'SELECT o.refid, o.parentRefId, o.title, o.secondarytitle, o.shorttitle, o.tertiarytitle, o.alternativetitle, o.typework, o.figures, '. 
+		$sql = 'SELECT o.refid, o.parentrefid, o.title, o.secondarytitle, o.shorttitle, o.tertiarytitle, o.alternativetitle, o.typework, o.figures, '. 
 			'o.pubdate, o.edition, o.volume, o.numbervolumnes, o.number, o.pages, o.section, o.placeofpublication, o.publisher, o.isbn_issn, o.url, '.
 			'o.guid, o.ispublished, o.notes, t.ReferenceType, t.ReferenceTypeId '.
 			'FROM referenceobject AS o LEFT JOIN referencetype AS t ON o.ReferenceTypeId = t.ReferenceTypeId '.
-			'WHERE o.refid = '.$refId;
+			'WHERE o.refid = '.$refid;
 		//echo $sql;
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
 				$retArr['refid'] = $r->refid;
 				if($r->ReferenceTypeId == 3 || $r->ReferenceTypeId == 6){
-					$retArr['parentRefId'] = '';
-					$retArr['parentRefId2'] = $r->parentRefId;
+					$retArr['parentrefid'] = '';
+					$retArr['parentrefid2'] = $r->parentrefid;
 				}
 				else{
-					$retArr['parentRefId'] = $r->parentRefId;
-					$retArr['parentRefId2'] = '';
+					$retArr['parentrefid'] = $r->parentrefid;
+					$retArr['parentrefid2'] = '';
 				}
 				$retArr['title'] = $r->title;
 				$retArr['secondarytitle'] = $r->secondarytitle;
@@ -177,15 +222,15 @@ class ReferenceManager{
 			}
 			$rs->close();
 		}
-		if($retArr['parentRefId']){
-			$sql = 'SELECT o.parentRefId, o.title, o.shorttitle, o.alternativetitle, '. 
+		if($retArr['parentrefid']){
+			$sql = 'SELECT o.parentrefid, o.title, o.shorttitle, o.alternativetitle, '. 
 				'o.pubdate, o.edition, o.volume, o.number, o.placeofpublication, o.publisher, o.isbn_issn '.
 				'FROM referenceobject AS o LEFT JOIN referencetype AS t ON o.ReferenceTypeId = t.ReferenceTypeId '.
-				'WHERE o.refid = '.$retArr['parentRefId'];
+				'WHERE o.refid = '.$retArr['parentrefid'];
 			//echo $sql;
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
-					$retArr['parentRefId2'] = $r->parentRefId;
+					$retArr['parentrefid2'] = $r->parentrefid;
 					$retArr['secondarytitle'] = $r->title;
 					$retArr['alternativetitle'] = $r->alternativetitle;
 					$retArr['shorttitle'] = $r->shorttitle;
@@ -200,10 +245,10 @@ class ReferenceManager{
 				$rs->close();
 			}
 		}
-		if($retArr['parentRefId2']){
+		if($retArr['parentrefid2']){
 			$sql = 'SELECT o.title, o.edition, o.numbervolumnes, o.placeofpublication, o.publisher '. 
 				'FROM referenceobject AS o LEFT JOIN referencetype AS t ON o.ReferenceTypeId = t.ReferenceTypeId '.
-				'WHERE o.refid = '.$retArr['parentRefId2'];
+				'WHERE o.refid = '.$retArr['parentrefid2'];
 			//echo $sql;
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
@@ -219,11 +264,11 @@ class ReferenceManager{
 		return $retArr;
 	}
 	
-	public function getChildArr($refId){
+	public function getChildArr($refid){
 		$retArr = array();
 		$sql = 'SELECT o.refid '.
 			'FROM referenceobject AS o '.
-			'WHERE o.parentRefId = '.$refId;
+			'WHERE o.parentrefid = '.$refid;
 		//echo $sql;
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
@@ -234,11 +279,11 @@ class ReferenceManager{
 		return $retArr;
 	}
 	
-	public function getRefAuthArr($refId){
+	public function getRefAuthArr($refid){
 		$retArr = array();
 		$sql = 'SELECT a.refauthorid, CONCAT_WS(" ",a.firstname,a.middlename,a.lastname) AS authorName '.
 			'FROM referenceauthorlink AS l LEFT JOIN referenceauthors AS a ON l.refauthid = a.refauthorid '.
-			'WHERE l.refid = '.$refId.' '.
+			'WHERE l.refid = '.$refid.' '.
 			'ORDER BY authorName';
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
@@ -249,11 +294,11 @@ class ReferenceManager{
 		return $retArr;
 	}
 	
-	public function getRefChecklistArr($refId){
+	public function getRefChecklistArr($refid){
 		$retArr = array();
 		$sql = 'SELECT l.clid, a.Name '.
 			'FROM referencechecklistlink AS l LEFT JOIN fmchecklists AS a ON l.clid = a.CLID '.
-			'WHERE l.refid = '.$refId.' '.
+			'WHERE l.refid = '.$refid.' '.
 			'ORDER BY a.Name';
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
@@ -263,42 +308,67 @@ class ReferenceManager{
 		}
 		return $retArr;
 	}
-	
-	public function getRefCollArr($refId){
+
+	public function getRefDatasetArr($refid){
 		$retArr = array();
-		$sql = 'SELECT l.collid, a.CollectionName '.
-			'FROM referencecollectionlink AS l LEFT JOIN omcollections AS a ON l.collid = a.CollID '.
-			'WHERE l.refid = '.$refId.' '.
-			'ORDER BY a.CollectionName';
+		$sql = 'SELECT l.datasetid, a.name '.
+			'FROM referencedatasetlink AS l LEFT JOIN omoccurdatasets AS a ON l.datasetid = a.datasetID '.
+			'WHERE l.refid = '.$refid.' '.
+			'ORDER BY a.Name';
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
-				$retArr[$r->collid] = $r->CollectionName;
+				$retArr[$r->datasetid] = $r->name;
 			}
 			$rs->close();
 		}
 		return $retArr;
 	}
 	
-	public function getRefOccArr($refId){
+	public function getRefCollArr($refid){
 		$retArr = array();
-		$sql = 'SELECT l.occid, CONCAT_WS("; ",a.sciname, a.catalognumber, CONCAT_WS(" ",a.recordedby,IFNULL(a.recordnumber,a.eventdate))) AS identifier '.
-			'FROM referenceoccurlink AS l LEFT JOIN omoccurrences AS a ON l.occid = a.occid '.
-			'WHERE l.refid = '.$refId.' '.
-			'ORDER BY a.sciname';
+		$sql = 'SELECT l.collid, a.collectionName '.
+			'FROM referencecollectionlink AS l LEFT JOIN omcollections AS a ON l.collid = a.collID '.
+			'WHERE l.refid = '.$refid.' '.
+			'ORDER BY a.collectionName';
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
-				$retArr[$r->occid] = $r->identifier;
+				$retArr[$r->collid] = $r->collectionName;
 			}
 			$rs->close();
 		}
 		return $retArr;
 	}
 	
-	public function getRefTaxaArr($refId){
+	public function getRefOccArr($refid){
+		$retArr = array();
+		$sql = 'SELECT c.collectionCode, a.catalogNumber, a.sciname, a.recordedBy, a.eventDate, l.occid 
+			FROM referenceoccurlink AS l LEFT JOIN omoccurrences AS a ON l.occid = a.occid LEFT JOIN omcollections AS c ON a.collid = c.collid 
+			WHERE l.refid = ?';
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            $this->errorMessage = "Dababase error: " . $this->conn->error;
+            return $retArr;
+        }
+
+        $stmt->bind_param("i", $refid);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        while ($row = $result->fetch_assoc()) {
+            $retArr[] = $row;
+        }
+
+        $stmt->close();
+
+        return $retArr;
+	}
+	
+	public function getRefTaxaArr($refid){
 		$retArr = array();
 		$sql = 'SELECT l.tid, a.SciName '.
 			'FROM referencetaxalink AS l LEFT JOIN taxa AS a ON l.tid = a.TID '.
-			'WHERE l.refid = '.$refId.' '.
+			'WHERE l.refid = '.$refid.' '.
 			'ORDER BY a.SciName';
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
@@ -309,10 +379,10 @@ class ReferenceManager{
 		return $retArr;
 	}
 	
-	public function addAuthor($refId,$refAuthId){
+	public function addAuthor($refid,$refAuthId){
 		$statusStr = '';
 		$sql = 'INSERT INTO referenceauthorlink(refid,refauthid) '.
-			'VALUES('.$refId.','.$refAuthId.') ';
+			'VALUES('.$refid.','.$refAuthId.') ';
 		//echo $sql;
 		if($this->conn->query($sql)){
 			$statusStr = 'Success!';
@@ -323,11 +393,52 @@ class ReferenceManager{
 		}
 		return $statusStr;
 	}
+
+	public function addRefLink($refid,$targetid,$type){
+		$statusStr = '';
+
+		$sql = '';
+		
+		switch($type){
+			case 'checklist':
+				$sql = 'INSERT IGNORE INTO referencechecklistlink(refid,clid) VALUES (?,?)';
+				break;
+
+			case 'collection':
+				$sql = 'INSERT IGNORE INTO referencecollectionlink(refid,collid) VALUES (?,?)';
+				break;
+
+			case 'dataset':
+				$sql = 'INSERT IGNORE INTO referencedatasetlink(refid,datasetid) VALUES (?,?)';
+				break;
+
+			case 'taxon':
+				$sql = 'INSERT IGNORE INTO referencetaxalink(refid,tid) VALUES (?,?)';
+				break;
+
+			default:
+				return 'ERROR: Invalid link type';
+		}
+
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('ii', $refid, $targetid);
+
+			if($stmt->execute()){
+				$statusStr = 'Success adding reference link';
+			} else {
+				$statusStr = 'ERROR: '.$stmt->error;
+			}
+
+			$stmt->close();
+		}
+
+		return $statusStr;
+	}
 	
-	public function deleteRefAuthor($refId,$refAuthId){
+	public function deleteRefAuthor($refid,$refAuthId){
 		$statusStr = '';
 		$sql = 'DELETE FROM referenceauthorlink '.
-				'WHERE (refid = '.$refId.') AND (refauthid = '.$refAuthId.')';
+				'WHERE (refid = '.$refid.') AND (refauthid = '.$refAuthId.')';
 		//echo $sql;
 		if($this->conn->query($sql)){
 			$statusStr = 'Reference author deleted.';
@@ -339,14 +450,14 @@ class ReferenceManager{
 		return $statusStr;
 	}
 	
-	public function deleteReference($refId){
+	public function deleteReference($refid){
 		$statusStr = '';
 		$sql = 'DELETE FROM referenceauthorlink '.
-				'WHERE (refid = '.$refId.')';
+				'WHERE (refid = '.$refid.')';
 		//echo $sql;
 		if($this->conn->query($sql)){
 			$sql = 'DELETE FROM referenceobject '.
-					'WHERE (refid = '.$refId.')';
+					'WHERE (refid = '.$refid.')';
 			//echo $sql;
 			if($this->conn->query($sql)){
 				$statusStr = 'Reference deleted.';
@@ -374,18 +485,49 @@ class ReferenceManager{
 		return $statusStr;
 	}
 	
-	public function deleteRefLink($refId,$table,$field,$id){
+	public function deleteRefLink($refid, $targetid, $type){
+
 		$statusStr = '';
-		$sql = 'DELETE FROM '.$table.' '.
-				'WHERE (refid = '.$refId.') AND ('.$field.' = '.$id.')';
-		//echo $sql;
-		if($this->conn->query($sql)){
-			$statusStr = 'Success!';
+
+		$sql = '';
+		
+		switch($type){
+			case 'checklist':
+				$sql = 'DELETE FROM referencechecklistlink WHERE refid=? AND clid=?';
+				break;
+
+			case 'collection':
+				$sql = 'DELETE FROM referencecollectionlink WHERE refid=? AND collid=?';
+				break;
+
+			case 'dataset':
+				$sql = 'DELETE FROM referencedatasetlink WHERE refid=? AND datasetid=?';
+				break;
+
+			case 'taxon':
+				$sql = 'DELETE FROM referencetaxalink WHERE refid=? AND tid=?';
+				break;
+
+			case 'occurrence':
+				$sql = 'DELETE FROM referenceoccurlink WHERE refid=? AND occid=?';
+				break;
+
+			default:
+				return 'ERROR: Invalid link type';
 		}
-		else{
-			$statusStr = 'ERROR: Deletion of reference link failed: '.$this->conn->error.'<br/>';
-			$statusStr .= 'SQL: '.$sql;
+
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('ii', $refid, $targetid);
+
+			if($stmt->execute()){
+				$statusStr = 'Success deleting reference link';
+			} else {
+				$statusStr = 'ERROR: '.$stmt->error;
+			}
+
+			$stmt->close();
 		}
+
 		return $statusStr;
 	}
 	
@@ -441,18 +583,18 @@ class ReferenceManager{
 	public function editReference($pArr){
 		global $SYMB_UID;
 		$statusStr = '';
-		$refId = $pArr['refid'];
-		unset($pArr['parentRefId2']);
+		$refid = $pArr['refid'];
+		unset($pArr['parentrefid2']);
 		unset($pArr['refGroup']);
 		$pArr = $this->formatInArr($pArr);
-		if(is_numeric($refId)){
+		if(is_numeric($refid)){
 			$sql = '';
 			foreach($pArr as $k => $v){
 				if($k != 'formsubmit' && $k != 'refid'){
 					$sql .= ','.$k.'='.($v?'"'.$this->cleanInStr($v).'"':'NULL');
 				}
 			}
-			$sql = 'UPDATE referenceobject SET '.substr($sql,1).',modifieduid='.$SYMB_UID.',modifiedtimestamp=now() WHERE (refid = '.$refId.')';
+			$sql = 'UPDATE referenceobject SET '.substr($sql,1).',modifieduid='.$SYMB_UID.',modifiedtimestamp=now() WHERE (refid = '.$refid.')';
 			//echo $sql;
 			if($this->conn->query($sql)){
 				$statusStr = 'SUCCESS: information saved';
@@ -468,13 +610,13 @@ class ReferenceManager{
 	public function editBookReference($pArr){
 		global $SYMB_UID;
 		$statusStr = '';
-		$refId = $pArr['refid'];
-		$parentRefId = '';
-		$parentRefId2 = '';
-		unset($pArr['parentRefId2']);
+		$refid = $pArr['refid'];
+		$parentrefid = '';
+		$parentrefid2 = '';
+		unset($pArr['parentrefid2']);
 		unset($pArr['refGroup']);
 		$pArr = $this->formatInArr($pArr);
-		if(is_numeric($refId)){
+		if(is_numeric($refid)){
 			if($pArr['ReferenceTypeId'] == 4){
 				$serTitle = '';
 				if($pArr['volume'] || $pArr['number']){
@@ -492,15 +634,15 @@ class ReferenceManager{
 						"LIMIT 1 ";
 					if($result = $this->conn->query($sql)){
 						while($row = $result->fetch_object()){
-							$parentRefId2 = $row->refid;
+							$parentrefid2 = $row->refid;
 						}
 					}
-					if($parentRefId2){
+					if($parentrefid2){
 						$sql = "";
 						$sql = 'UPDATE referenceobject '.
 							'SET placeofpublication = '.$this->cleanTxtStr($pArr['placeofpublication']).',numbervolumnes = '.$this->cleanTxtStr($pArr['numbervolumnes']).','.
 							'edition = '.$this->cleanTxtStr($pArr['edition']).',ispublished = '.$this->cleanTxtStr($pArr['ispublished']).',modifieduid='.$SYMB_UID.',modifiedtimestamp=now() '.
-							'WHERE refid = '.$parentRefId2;
+							'WHERE refid = '.$parentrefid2;
 						if($this->conn->query($sql)){
 							$statusStr = 'SUCCESS: information saved';
 						}
@@ -511,7 +653,7 @@ class ReferenceManager{
 							'VALUES(27,'.$this->cleanTxtStr($serTitle).','.$this->cleanTxtStr($pArr['placeofpublication']).','.$this->cleanTxtStr($pArr['publisher']).','.
 							$this->cleanTxtStr($pArr['numbervolumnes']).','.$this->cleanTxtStr($pArr['edition']).','.$this->cleanTxtStr($pArr['ispublished']).','.$SYMB_UID.',now()) ';
 						if($this->conn->query($sql)){
-							$parentRefId2 = $this->conn->insert_id;
+							$parentrefid2 = $this->conn->insert_id;
 						}
 					}
 				}
@@ -540,22 +682,22 @@ class ReferenceManager{
 				//echo $sql;
 				if($result = $this->conn->query($sql)){
 					while ($row = $result->fetch_object()){
-						$parentRefId = $row->refid;
+						$parentrefid = $row->refid;
 					}
 				}
-				if($parentRefId){
+				if($parentrefid){
 					$sql = "";
-					if($parentRefId2){
+					if($parentrefid2){
 						$sql = 'UPDATE referenceobject '.
-							'SET parentRefId = '.$parentRefId2.',secondarytitle = '.$this->cleanTxtStr($serTitle).',pubdate = '.$this->cleanTxtStr($pArr['pubdate']).',shorttitle = '.$this->cleanTxtStr($pArr['shorttitle']).','.
+							'SET parentrefid = '.$parentrefid2.',secondarytitle = '.$this->cleanTxtStr($serTitle).',pubdate = '.$this->cleanTxtStr($pArr['pubdate']).',shorttitle = '.$this->cleanTxtStr($pArr['shorttitle']).','.
 							'isbn_issn = '.$this->cleanTxtStr($pArr['isbn_issn']).',ispublished = '.$this->cleanTxtStr($pArr['ispublished']).',modifieduid='.$SYMB_UID.',modifiedtimestamp=now() '.
-							'WHERE refid = '.$parentRefId;
+							'WHERE refid = '.$parentrefid;
 					}
 					else{
 						$sql = 'UPDATE referenceobject '.
 							'SET pubdate = '.$this->cleanTxtStr($pArr['pubdate']).',edition = '.$this->cleanTxtStr($pArr['edition']).',shorttitle = '.$this->cleanTxtStr($pArr['shorttitle']).','.
 							'publisher = '.$this->cleanTxtStr($pArr['publisher']).',ispublished = '.$this->cleanTxtStr($pArr['ispublished']).',placeofpublication = '.$this->cleanTxtStr($pArr['placeofpublication']).',isbn_issn = '.$this->cleanTxtStr($pArr['isbn_issn']).',modifieduid='.$SYMB_UID.',modifiedtimestamp=now() '.
-							'WHERE refid = '.$parentRefId;
+							'WHERE refid = '.$parentrefid;
 					}
 					//echo $sql;
 					if($this->conn->query($sql)){
@@ -564,9 +706,9 @@ class ReferenceManager{
 				}
 				else{
 					$sql = "";
-					if($parentRefId2){
-						$sql = 'INSERT INTO referenceobject(parentRefId,ReferenceTypeId,title,secondarytitle,volume,number,pubdate,ispublished,shorttitle,isbn_issn,modifieduid,modifiedtimestamp) '.
-							'VALUES('.$parentRefId2.',3,'.$this->cleanTxtStr($bookTitle).','.$this->cleanTxtStr($serTitle).','.$this->cleanTxtStr($pArr['volume']).','.$this->cleanTxtStr($pArr['number']).','.
+					if($parentrefid2){
+						$sql = 'INSERT INTO referenceobject(parentrefid,ReferenceTypeId,title,secondarytitle,volume,number,pubdate,ispublished,shorttitle,isbn_issn,modifieduid,modifiedtimestamp) '.
+							'VALUES('.$parentrefid2.',3,'.$this->cleanTxtStr($bookTitle).','.$this->cleanTxtStr($serTitle).','.$this->cleanTxtStr($pArr['volume']).','.$this->cleanTxtStr($pArr['number']).','.
 							$this->cleanTxtStr($pArr['pubdate']).','.$this->cleanTxtStr($pArr['ispublished']).','.$this->cleanTxtStr($pArr['shorttitle']).','.$this->cleanTxtStr($pArr['isbn_issn']).','.$SYMB_UID.',now()) ';
 					}
 					else{
@@ -576,15 +718,15 @@ class ReferenceManager{
 					}
 					//echo $sql;
 					if($this->conn->query($sql)){
-						$parentRefId = $this->conn->insert_id;
+						$parentrefid = $this->conn->insert_id;
 					}
 				}
 				$sql = "";
 				$sql = 'UPDATE referenceobject '.
-					'SET parentRefId = '.($parentRefId?$parentRefId:($parentRefId2?$parentRefId2:'NULL')).',ReferenceTypeId = '.$this->cleanTxtStr($pArr['ReferenceTypeId']).','.
+					'SET parentrefid = '.($parentrefid?$parentrefid:($parentrefid2?$parentrefid2:'NULL')).',ReferenceTypeId = '.$this->cleanTxtStr($pArr['ReferenceTypeId']).','.
 					'title = '.$this->cleanTxtStr($pArr['title']).',secondarytitle = '.$this->cleanTxtStr($bookTitle).',tertiarytitle = '.$this->cleanTxtStr($serTitle).',pages = '.$this->cleanTxtStr($pArr['pages']).',guid = '.$this->cleanTxtStr($pArr['guid']).',url = '.$this->cleanTxtStr($pArr['url']).',notes = '.$this->cleanTxtStr($pArr['notes']).','.
 					'modifieduid='.$SYMB_UID.',modifiedtimestamp=now() '.
-					'WHERE refid = '.$refId;
+					'WHERE refid = '.$refid;
 				if($this->conn->query($sql)){
 					$statusStr = 'SUCCESS: information saved';
 				}
@@ -600,15 +742,15 @@ class ReferenceManager{
 						"LIMIT 1 ";
 					if($result = $this->conn->query($sql)){
 						while($row = $result->fetch_object()){
-							$parentRefId = $row->refid;
+							$parentrefid = $row->refid;
 						}
 					}
-					if($parentRefId){
+					if($parentrefid){
 						$sql = "";
 						$sql = 'UPDATE referenceobject '.
 							'SET placeofpublication = '.$this->cleanTxtStr($pArr['placeofpublication']).',numbervolumnes = '.$this->cleanTxtStr($pArr['numbervolumnes']).','.
 							'edition = '.$this->cleanTxtStr($pArr['edition']).',ispublished = '.$this->cleanTxtStr($pArr['ispublished']).',modifieduid='.$SYMB_UID.',modifiedtimestamp=now() '.
-							'WHERE refid = '.$parentRefId;
+							'WHERE refid = '.$parentrefid;
 						if($this->conn->query($sql)){
 							$statusStr = 'SUCCESS: information saved';
 						}
@@ -619,17 +761,17 @@ class ReferenceManager{
 							'VALUES(27,'.$this->cleanTxtStr($serTitle).','.$this->cleanTxtStr($pArr['placeofpublication']).','.$this->cleanTxtStr($pArr['publisher']).','.
 							$this->cleanTxtStr($pArr['numbervolumnes']).','.$this->cleanTxtStr($pArr['edition']).','.$this->cleanTxtStr($pArr['ispublished']).','.$SYMB_UID.',now()) ';
 						if($this->conn->query($sql)){
-							$parentRefId = $this->conn->insert_id;
+							$parentrefid = $this->conn->insert_id;
 						}
 					}
 					$sql = "";
 					$sql = "";
 					$sql = 'UPDATE referenceobject '.
-						'SET parentRefId = '.($parentRefId?$parentRefId:'NULL').',ReferenceTypeId = '.$this->cleanTxtStr($pArr['ReferenceTypeId']).',title = '.$this->cleanTxtStr($pArr['title']).','.
+						'SET parentrefid = '.($parentrefid?$parentrefid:'NULL').',ReferenceTypeId = '.$this->cleanTxtStr($pArr['ReferenceTypeId']).',title = '.$this->cleanTxtStr($pArr['title']).','.
 						'secondarytitle = '.$this->cleanTxtStr($serTitle).',volume = '.$this->cleanTxtStr($pArr['volume']).',number = '.$this->cleanTxtStr($pArr['number']).','.
 						'pages = '.$this->cleanTxtStr($pArr['pages']).',pubdate = '.$this->cleanTxtStr($pArr['pubdate']).',shorttitle = '.$this->cleanTxtStr($pArr['shorttitle']).','.
 						'isbn_issn = '.$this->cleanTxtStr($pArr['isbn_issn']).',ispublished = '.$this->cleanTxtStr($pArr['ispublished']).',modifieduid='.$SYMB_UID.',modifiedtimestamp=now() '.
-						'WHERE refid = '.$refId;
+						'WHERE refid = '.$refid;
 					if($this->conn->query($sql)){
 						$statusStr = 'SUCCESS: information saved';
 					}
@@ -641,7 +783,7 @@ class ReferenceManager{
 							$sql .= ','.$k.'='.($v?'"'.$this->cleanInStr($v).'"':'NULL');
 						}
 					}
-					$sql = 'UPDATE referenceobject SET '.substr($sql,1).',modifieduid='.$SYMB_UID.',modifiedtimestamp=now() WHERE (refid = '.$refId.')';
+					$sql = 'UPDATE referenceobject SET '.substr($sql,1).',modifieduid='.$SYMB_UID.',modifiedtimestamp=now() WHERE (refid = '.$refid.')';
 					//echo $sql;
 					if($this->conn->query($sql)){
 						$statusStr = 'SUCCESS: information saved';
@@ -659,7 +801,7 @@ class ReferenceManager{
 						$sql .= ','.$k.'='.($v?'"'.$this->cleanInStr($v).'"':'NULL');
 					}
 				}
-				$sql = 'UPDATE referenceobject SET '.substr($sql,1).',modifieduid='.$SYMB_UID.',modifiedtimestamp=now() WHERE (refid = '.$refId.')';
+				$sql = 'UPDATE referenceobject SET '.substr($sql,1).',modifieduid='.$SYMB_UID.',modifiedtimestamp=now() WHERE (refid = '.$refid.')';
 				//echo $sql;
 				if($this->conn->query($sql)){
 					$statusStr = 'SUCCESS: information saved';
@@ -676,13 +818,13 @@ class ReferenceManager{
 	public function editPerReference($pArr){
 		global $SYMB_UID;
 		$statusStr = '';
-		$refId = $pArr['refid'];
-		$parentRefId = '';
-		$parentRefId2 = '';
-		unset($pArr['parentRefId2']);
+		$refid = $pArr['refid'];
+		$parentrefid = '';
+		$parentrefid2 = '';
+		unset($pArr['parentrefid2']);
 		unset($pArr['refGroup']);
 		$pArr = $this->formatInArr($pArr);
-		if(is_numeric($refId)){
+		if(is_numeric($refid)){
 			if($pArr['ReferenceTypeId'] == 2 || $pArr['ReferenceTypeId'] == 7 || $pArr['ReferenceTypeId'] == 8){
 				if($pArr['volume'] || $pArr['number'] || $pArr['edition']){
 					$sql = "";
@@ -705,15 +847,15 @@ class ReferenceManager{
 						"LIMIT 1 ";
 					if($result = $this->conn->query($sql)){
 						while($row = $result->fetch_object()){
-							$parentRefId = $row->refid;
+							$parentrefid = $row->refid;
 						}
 					}
-					if($parentRefId){
+					if($parentrefid){
 						$sql = "";
 						$sql = 'UPDATE referenceobject '.
 							'SET placeofpublication = '.$this->cleanTxtStr($pArr['placeofpublication']).',pubdate = '.$this->cleanTxtStr($pArr['pubdate']).',ispublished = '.$this->cleanTxtStr($pArr['ispublished']).','.
 							'shorttitle = '.$this->cleanTxtStr($pArr['shorttitle']).',alternativetitle = '.$this->cleanTxtStr($pArr['alternativetitle']).',modifieduid='.$SYMB_UID.',modifiedtimestamp=now() '.
-							'WHERE refid = '.$parentRefId;
+							'WHERE refid = '.$parentrefid;
 						if($this->conn->query($sql)){
 							$statusStr = 'SUCCESS: information saved';
 						}
@@ -724,16 +866,16 @@ class ReferenceManager{
 							'VALUES(30,'.$this->cleanTxtStr($pArr['ispublished']).','.$this->cleanTxtStr($pArr['secondarytitle']).','.$this->cleanTxtStr($pArr['placeofpublication']).','.$this->cleanTxtStr($pArr['pubdate']).','.$this->cleanTxtStr($pArr['volume']).','.
 							$this->cleanTxtStr($pArr['number']).','.$this->cleanTxtStr($pArr['edition']).','.$this->cleanTxtStr($pArr['shorttitle']).','.$this->cleanTxtStr($pArr['alternativetitle']).','.$SYMB_UID.',now()) ';
 						if($this->conn->query($sql)){
-							$parentRefId = $this->conn->insert_id;
+							$parentrefid = $this->conn->insert_id;
 						}
 					}
 					$sql = "";
 					$sql = "";
 					$sql = 'UPDATE referenceobject '.
-						'SET parentRefId = '.($parentRefId?$parentRefId:'NULL').',ReferenceTypeId = '.$this->cleanTxtStr($pArr['ReferenceTypeId']).',ispublished = '.$this->cleanTxtStr($pArr['ispublished']).',title = '.$this->cleanTxtStr($pArr['title']).','.
+						'SET parentrefid = '.($parentrefid?$parentrefid:'NULL').',ReferenceTypeId = '.$this->cleanTxtStr($pArr['ReferenceTypeId']).',ispublished = '.$this->cleanTxtStr($pArr['ispublished']).',title = '.$this->cleanTxtStr($pArr['title']).','.
 						'pages = '.$this->cleanTxtStr($pArr['pages']).',section = '.$this->cleanTxtStr($pArr['section']).',url = '.$this->cleanTxtStr($pArr['url']).',guid = '.$this->cleanTxtStr($pArr['guid']).','.
 						'notes = '.$this->cleanTxtStr($pArr['notes']).',secondarytitle = '.$this->cleanTxtStr($pArr['secondarytitle']).',typework = '.$this->cleanTxtStr($pArr['typework']).',modifieduid='.$SYMB_UID.',modifiedtimestamp=now() '.
-						'WHERE refid = '.$refId;
+						'WHERE refid = '.$refid;
 					if($this->conn->query($sql)){
 						$statusStr = 'SUCCESS: information saved';
 					}
@@ -745,7 +887,7 @@ class ReferenceManager{
 							$sql .= ','.$k.'='.($v?'"'.$this->cleanInStr($v).'"':'NULL');
 						}
 					}
-					$sql = 'UPDATE referenceobject SET '.substr($sql,1).',modifieduid='.$SYMB_UID.',modifiedtimestamp=now() WHERE (refid = '.$refId.')';
+					$sql = 'UPDATE referenceobject SET '.substr($sql,1).',modifieduid='.$SYMB_UID.',modifiedtimestamp=now() WHERE (refid = '.$refid.')';
 					//echo $sql;
 					if($this->conn->query($sql)){
 						$statusStr = 'SUCCESS: information saved';
@@ -763,7 +905,7 @@ class ReferenceManager{
 						$sql .= ','.$k.'='.($v?'"'.$this->cleanInStr($v).'"':'NULL');
 					}
 				}
-				$sql = 'UPDATE referenceobject SET '.substr($sql,1).',modifieduid='.$SYMB_UID.',modifiedtimestamp=now() WHERE (refid = '.$refId.')';
+				$sql = 'UPDATE referenceobject SET '.substr($sql,1).',modifieduid='.$SYMB_UID.',modifiedtimestamp=now() WHERE (refid = '.$refid.')';
 				//echo $sql;
 				if($this->conn->query($sql)){
 					$statusStr = 'SUCCESS: information saved';
@@ -854,8 +996,8 @@ class ReferenceManager{
 	}
 	
 	//Get and set functions 
-	public function getRefId(){
-		return $this->refId;
+	public function getrefid(){
+		return $this->refid;
 	}
 	
 	public function getRefAuthId(){
@@ -887,6 +1029,92 @@ class ReferenceManager{
 			$newStr = 'NULL';
 		}
 		return $newStr;
+	}
+
+	public function batchAddLink($postArr){
+		$cnt = 0;
+		if($postArr['catalogNumbers']){
+			$catNumStr = str_replace(array("\n", "\r\n", ";"), ",", $postArr['catalogNumbers']);
+			$catArr = array_unique(explode(',',$catNumStr));
+			foreach($catArr as $catStr){
+				$catStr = trim($catStr);
+
+				if(!$catStr) continue;
+
+				$occArr = $this->getOccid($catStr, $postArr['targetidentifier']);
+
+				if($occArr && count($occArr)){
+					if(count($occArr) > 1){
+						$this->warningArr['multiple'][] = $catStr;
+					}
+
+					foreach($occArr as $occid){
+						if($this->addOccurrence($postArr['refid'], $occid)){
+							$cnt++;
+						}
+						else{
+							if(strpos($this->errorMessage,'Duplicate entry') === 0){
+								$this->warningArr['dupe'][] = $catStr;
+							}
+							else{
+								$this->warningArr['error'][] = $this->errorMessage;
+							}
+						}
+					}
+				}
+				else{
+					$this->warningArr['missing'][] = $catStr;
+				}
+			}
+		}
+		return [
+			'success' => $cnt,
+			'missing' => $this->warningArr['missing'] ?? [],
+			'duplicate' => $this->warningArr['dupe'] ?? [],
+			'multiple' => $this->warningArr['multiple'] ?? [],
+			'errors' => $this->warningArr['error'] ?? []
+		];
+	}
+
+	private function getOccid($catNum, $method){
+		$occArr = array();
+		if(!$method || !in_array($method,array('allid','catnum','other'))) $method = 'allid';
+		$sql = 'SELECT DISTINCT o.occid FROM omoccurrences o ';
+		$sqlWhere = '';
+		if($method == 'allid' || $method == 'other'){
+			$sql .= 'LEFT JOIN omoccuridentifiers i ON o.occid = i.occid ';
+			$catNum = $this->cleanInStr($catNum);
+			$sqlWhere = 'OR (o.othercatalognumbers = "'.$catNum.'") OR (i.identifierValue = "'.$catNum.'") ';
+		}
+		if($method == 'allid' || $method == 'catnum') $sqlWhere .= 'OR (o.catalognumber = "'.$this->cleanInStr($catNum).'") ';
+		if($sqlWhere){
+			$sql .= 'WHERE ('.substr($sqlWhere,2).') ';
+			$rs = $this->conn->query($sql);
+			while($r = $rs->fetch_object()) {
+				$occArr[] = $r->occid;
+			}
+			$rs->free();
+		}
+		return $occArr;
+	}
+
+	private function addOccurrence($refid,$occid){
+		$status = false;
+		$sql = 'INSERT INTO referenceoccurlink(refid,occid) VALUES (?,?) ';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('ii', $refid, $occid);
+			try{
+				if($stmt->execute()){
+					$status = true;
+				}
+			} catch (mysqli_sql_exception $e){
+				$this->errorMessage = $stmt->error;
+			} catch (Exception $e){
+				$this->errorMessage = 'unknown error';
+			}
+			$stmt->close();
+		}
+		return $status;
 	}
 }
 ?>

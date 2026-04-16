@@ -4,10 +4,29 @@ $(document).ready(function() {
 	}
 
 	$('#tabs').tabs({
-		beforeLoad: function( event, ui ) {
+		active: getTabFromHash(),
+		beforeLoad: function(event, ui) {
 			$(ui.panel).html("<p>Loading...</p>");
 		}
 	});
+
+	$('form').on('submit', function() {
+		var active = $('#tabs').tabs('option', 'active');
+		var href = $('#tabs a').eq(active).attr('href');
+
+		this.action = this.action.replace(/#.*$/, '') + href;
+	});
+
+	function getTabFromHash() {
+		var hash = window.location.hash;
+		if (!hash) return 0;
+
+		var index = $('#tabs a').map(function(i, el) {
+			return $(el).attr('href');
+		}).get().indexOf(hash);
+
+		return index >= 0 ? index : 0;
+	}
 	
 	if(parentChild){
 		var url = '';
@@ -91,7 +110,18 @@ $(document).ready(function() {
 				}
 			},{});
 	}
+
+	$("#taxa").on("autocompleteselect", function(event, ui) {
+            $("#taxa_targetid").val(ui.item.id);
+    });
 });
+
+function selectAll(source) {
+	const checkboxes = document.querySelectorAll('input[name="scbox[]"]');
+	checkboxes.forEach(cb => {
+		cb.checked = source.checked;
+	});
+}
 
 function getParentInfo(refid){
 	var sutXmlHttp=GetXmlHttpObject();
@@ -198,28 +228,6 @@ function deleteRefAuthor(refauthid){
 	}
 }
 
-function deleteRefLink(table,field,type,id){
-	if (confirm("Are you sure you would like to remove this link from this reference?")) {
-		var sutXmlHttp=GetXmlHttpObject();
-		if (sutXmlHttp==null){
-			alert ("Your browser does not support AJAX!");
-			return;
-		}
-		
-		var url="rpc/authormanager.php?refid="+refid+"&action=deletereflink&table="+table+"&field="+field+"&id="+id+"&type="+type;
-		
-		var authorList = '';
-		sutXmlHttp.onreadystatechange=function(){
-			if(sutXmlHttp.readyState==4 && sutXmlHttp.status==200){
-				authorList = sutXmlHttp.responseText;
-			}
-		};
-		sutXmlHttp.open("POST",url,false);
-		sutXmlHttp.send(null);
-		document.getElementById(table).innerHTML = authorList;
-	}
-}
-
 function openNewAuthorWindow(){
 	var urlStr = 'authoreditor.php?refid='+refid+'&addauth=1';
 	newWindow = window.open(urlStr,'popup','scrollbars=1,toolbar=0,resizable=1,width=470,height=300');
@@ -256,18 +264,6 @@ function processNewAuthor(f){
 	opener.document.getElementById("addauthorsearch").value = '';
 	opener.document.getElementById("refauthorid").value = '';
 	self.close();
-}
-
-function selectAll(cb){
-	boxesChecked = true;
-	if(!cb.checked){
-		boxesChecked = false;
-	}
-	var dbElements = document.getElementsByName("occid[]");
-	for(i = 0; i < dbElements.length; i++){
-		var dbElement = dbElements[i];
-		dbElement.checked = boxesChecked;
-	}
 }
 
 function toggle(target){
