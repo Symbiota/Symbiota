@@ -1,23 +1,19 @@
 <?php
 include_once('../config/symbini.php');
 //include_once($SERVER_ROOT.'/classes/DynamicChecklistManager.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load('checklists/dynamicmap');
 
 header('Content-Type: text/html; charset='.$CHARSET);
 
-$tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']:0;
-$taxa = array_key_exists('taxa',$_REQUEST)?$_REQUEST['taxa']:'';
-$interface = array_key_exists('interface',$_REQUEST)&&$_REQUEST['interface']?$_REQUEST['interface']:'checklist';
-$latCen = array_key_exists('lat',$_REQUEST)?$_REQUEST['lat']:'';
-$longCen = array_key_exists('long',$_REQUEST)?$_REQUEST['long']:'';
-$zoomInt = array_key_exists('zoom',$_REQUEST)?$_REQUEST['zoom']:'';
-
-//Sanitation
-if(!is_numeric($tid)) $tid = 0;
-$taxa = htmlspecialchars($taxa, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
-if($interface && $interface != 'key') $interface = 'checklist';
+$tid = array_key_exists('tid', $_REQUEST) ? Sanitize::int($_REQUEST['tid']) : 0;
+$taxa = array_key_exists('taxa',$_REQUEST) ? Sanitize::inString($_REQUEST['taxa']) : '';
+$interface = !empty($_REQUEST['interface']) ? Sanitize::inString($_REQUEST['interface']) : 'checklist';
+$latCen = array_key_exists('lat',$_REQUEST) ? Sanitize::float($_REQUEST['lat']) : '';
+$longCen = array_key_exists('long', $_REQUEST) ? Sanitize::float($_REQUEST['long']) : '';
+$zoomInt = array_key_exists('zoom', $_REQUEST) ? Sanitize::int($_REQUEST['zoom']) : 5;
 
 //$dynClManager = new DynamicChecklistManager();
 if(!$latCen || !$longCen){
@@ -45,202 +41,202 @@ if(!$zoomInt){
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
-   include_once($SERVER_ROOT.'/includes/leafletMap.php');
+	include_once($SERVER_ROOT.'/includes/leafletMap.php');
 	?>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="//maps.googleapis.com/maps/api/js?<?= (!empty($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY != 'DEV' ? 'key=' . $GOOGLE_MAP_KEY : '') ?>"></script>
 
-   <script type="text/javascript">
-      var map;
-      var currentMarker;
-      var zoomLevel = 5;
-      var submitCoord = false;
+	<script type="text/javascript">
+		var map;
+		var currentMarker;
+		var zoomLevel = 5;
+		var submitCoord = false;
 
-      //Map Global Vars from php
-      let latCent;
-      let lngCent;
-      let mapZoom;
+		//Map Global Vars from php
+		let latCent;
+		let lngCent;
+		let mapZoom;
 
-      $(document).ready(function() {
-         $( "#taxa" ).autocomplete({
-            source: function( request, response ) {
-               $.getJSON( "../rpc/taxasuggest.php", { term: request.term, rankhigh: 180 }, response );
-            },
-            minLength: 2,
-            autoFocus: true,
-            select: function( event, ui ) {
-               if(ui.item){
-                  $( "#tid" ).val(ui.item.id);
-               }
-            }
-         });
-      });
+		$(document).ready(function() {
+			$( "#taxa" ).autocomplete({
+				source: function( request, response ) {
+					$.getJSON( "../rpc/taxasuggest.php", { term: request.term, rankhigh: 180 }, response );
+				},
+				minLength: 2,
+				autoFocus: true,
+				select: function( event, ui ) {
+					if(ui.item){
+						$( "#tid" ).val(ui.item.id);
+					}
+				}
+			});
+		});
 
-      function getRadius() {
-         const radius = document.getElementById('radius').value;
-         const radiusUnits = document.getElementById('radiusunits').value;
+		function getRadius() {
+			const radius = document.getElementById('radius').value;
+			const radiusUnits = document.getElementById('radiusunits').value;
 
-         if(radiusUnits === "km") return radius * 1000;
+			if(radiusUnits === "km") return radius * 1000;
 
-         const MILES_TO_METERS = 1609.344;
+			const MILES_TO_METERS = 1609.344;
 
-         return radius * MILES_TO_METERS;
-      }
+			return radius * MILES_TO_METERS;
+		}
 
-      function onRadiusChange(eventFunction) {
-         let radiusInput = document.getElementById('radius');
-         if(radiusInput) {
-            radiusInput.addEventListener('change', eventFunction);
-            //Need because input clears on focus
-            radiusInput.addEventListener('focus', eventFunction);
-         }
+		function onRadiusChange(eventFunction) {
+			let radiusInput = document.getElementById('radius');
+			if(radiusInput) {
+				radiusInput.addEventListener('change', eventFunction);
+				//Need because input clears on focus
+				radiusInput.addEventListener('focus', eventFunction);
+			}
 
-         let radiusUnits = document.getElementById('radiusunits');
-         if(radiusUnits) {
-            radiusUnits.addEventListener('change', eventFunction);
-         }
-      }
+			let radiusUnits = document.getElementById('radiusunits');
+			if(radiusUnits) {
+				radiusUnits.addEventListener('change', eventFunction);
+			}
+		}
 
-      function leafletInit() {
+		function leafletInit() {
 
-         let dmOptions = {
-            zoom: mapZoom,
-            center: [latCent, lngCent],
-         };
+			let dmOptions = {
+				zoom: mapZoom,
+				center: [latCent, lngCent],
+			};
 
 		  map = new LeafletMap('map_canvas',
 			dmOptions,
 			JSON.parse(`<?= json_encode($GEO_JSON_LAYERS ?? []) ?>`)
 		 )
 
-         let markerGroup = new L.layerGroup().addTo(map.mapLayer);
-         let latlng;
+			let markerGroup = new L.layerGroup().addTo(map.mapLayer);
+			let latlng;
 
-         function drawMarker(center) {
-            //Clear Layers In Between Clicks
-            if(markerGroup) markerGroup.clearLayers();
+			function drawMarker(center) {
+				//Clear Layers In Between Clicks
+				if(markerGroup) markerGroup.clearLayers();
 
-            latlng = center;
+				latlng = center;
 
-            //Render Marker
-            L.marker(center).addTo(markerGroup);
+				//Render Marker
+				L.marker(center).addTo(markerGroup);
 
-            //Render Radius if Input
-            let radius = getRadius();
-            if(radius > 0) {
-               let circle = L.circle(center, radius)
-               .setStyle(map.DEFAULT_SHAPE_OPTIONS)
-               .addTo(markerGroup);
-            }
-         }
+				//Render Radius if Input
+				let radius = getRadius();
+				if(radius > 0) {
+					let circle = L.circle(center, radius)
+					.setStyle(map.DEFAULT_SHAPE_OPTIONS)
+					.addTo(markerGroup);
+				}
+			}
 
-         map.mapLayer.on('click', e => {
-            drawMarker(e.latlng);
-            updateMarkerPosition(e.latlng.lat, e.latlng.lng);
-         });
+			map.mapLayer.on('click', e => {
+				drawMarker(e.latlng);
+				updateMarkerPosition(e.latlng.lat, e.latlng.lng);
+			});
 
-         onRadiusChange(e => {
-            if(latlng) drawMarker(latlng);
-         });
-      }
+			onRadiusChange(e => {
+				if(latlng) drawMarker(latlng);
+			});
+		}
 
-      function googleInit() {
-         var dmLatLng = new google.maps.LatLng(latCent, lngCent);
-         var dmOptions = {
-            zoom: mapZoom,
-            center: dmLatLng,
-            mapTypeId: google.maps.MapTypeId.TERRAIN
-         };
+		function googleInit() {
+			var dmLatLng = new google.maps.LatLng(latCent, lngCent);
+			var dmOptions = {
+				zoom: mapZoom,
+				center: dmLatLng,
+				mapTypeId: google.maps.MapTypeId.TERRAIN
+			};
 
-         map = new google.maps.Map(document.getElementById("map_canvas"), dmOptions);
+			map = new google.maps.Map(document.getElementById("map_canvas"), dmOptions);
 
-         let marker;
-         let circle;
-         let latlng;
+			let marker;
+			let circle;
+			let latlng;
 
-         google.maps.event.addListener(map, 'click', function(event) {
-            if(marker) marker.setMap();
-            if(circle) circle.setMap();
-            latlng = event.latLng;
+			google.maps.event.addListener(map, 'click', function(event) {
+				if(marker) marker.setMap();
+				if(circle) circle.setMap();
+				latlng = event.latLng;
 
-            marker = new google.maps.Marker({
-               position: event.latLng,
-               map: map
-            });
+				marker = new google.maps.Marker({
+					position: event.latLng,
+					map: map
+				});
 
-            let radius = getRadius();
-            if(radius > 0) {
-               circle = new google.maps.Circle({
-                  center: event.latLng,
-                  radius: radius,
-                  clickable: false,
-                  map: map
-               });
-            }
+				let radius = getRadius();
+				if(radius > 0) {
+					circle = new google.maps.Circle({
+						center: event.latLng,
+						radius: radius,
+						clickable: false,
+						map: map
+					});
+				}
 
-            updateMarkerPosition(event.latLng.lat(), event.latLng.lng());
-         });
+				updateMarkerPosition(event.latLng.lat(), event.latLng.lng());
+			});
 
-         onRadiusChange(e => {
-            if(circle) circle.setMap();
-            if(!latlng) return;
+			onRadiusChange(e => {
+				if(circle) circle.setMap();
+				if(!latlng) return;
 
-            const new_radius = getRadius();
-            if(new_radius > 0) {
-               circle = new google.maps.Circle({
-                  center: latlng,
-                  clickable: false,
-                  radius: new_radius,
-                  map: map
-               });
-            }
-         });
-      }
+				const new_radius = getRadius();
+				if(new_radius > 0) {
+					circle = new google.maps.Circle({
+						center: latlng,
+						clickable: false,
+						radius: new_radius,
+						map: map
+					});
+				}
+			});
+		}
 
-      function initialize(){
-         try {
-            const data = document.getElementById('service-container');
-            latCent = parseFloat(data.getAttribute('data-latCen'))
-            lngCent = parseFloat(data.getAttribute('data-lngCen'))
-            mapZoom = parseInt(data.getAttribute('data-mapZoom'))
-         } catch {
-            alert("Failed to load map centering");
-         }
+		function initialize(){
+			try {
+				const data = document.getElementById('service-container');
+				latCent = parseFloat(data.getAttribute('data-latCen'))
+				lngCent = parseFloat(data.getAttribute('data-lngCen'))
+				mapZoom = parseInt(data.getAttribute('data-mapZoom'))
+			} catch {
+				alert("Failed to load map centering");
+			}
 
-         <?php if(empty($GOOGLE_MAP_KEY)) { ?>
-            leafletInit();
-         <?php } else { ?>
-         googleInit();
-      <?php } ?>
-      }
+			<?php if(empty($GOOGLE_MAP_KEY)) { ?>
+				leafletInit();
+			<?php } else { ?>
+			googleInit();
+		<?php } ?>
+		}
 
-      function updateMarkerPosition(lat, lng) {
-         lat = lat.toFixed(5);
-         lng = lng.toFixed(5);
+		function updateMarkerPosition(lat, lng) {
+			lat = lat.toFixed(5);
+			lng = lng.toFixed(5);
 
-         document.getElementById("latbox").value = lat;
-         document.getElementById("lngbox").value = lng;
-         document.getElementById("latlngspan").innerHTML = lat + ", " + lng;
-         document.mapForm.buildchecklistbutton.disabled = false;
-         submitCoord = true;
-      }
+			document.getElementById("latbox").value = lat;
+			document.getElementById("lngbox").value = lng;
+			document.getElementById("latlngspan").innerHTML = lat + ", " + lng;
+			document.mapForm.buildchecklistbutton.disabled = false;
+			submitCoord = true;
+		}
 
-      function checkForm(){
-         if(submitCoord) return true;
-         alert("<?php echo $LANG['CLICK_MAP']; ?>");
-         return false;
-      }
-   </script>
+		function checkForm(){
+			if(submitCoord) return true;
+			alert("<?php echo $LANG['CLICK_MAP']; ?>");
+			return false;
+		}
+	</script>
 </head>
 <body style="background-color:#ffffff;" onload="initialize()">
-   <div
-      id="service-container"
-      class="service-container"
-      data-latCen="<?=htmlspecialchars($latCen) ?>"
-      data-lngCen="<?=htmlspecialchars($longCen) ?>"
-      data-mapZoom="<?=htmlspecialchars($zoomInt) ?>"
-   />
+	<div
+		id="service-container"
+		class="service-container"
+		data-latCen="<?= $latCen ?>"
+		data-lngCen="<?= $longCen ?>"
+		data-mapZoom="<?= $zoomInt ?>"
+	></div>
 	<?php
 		$displayLeftMenu = false;
 		include($SERVER_ROOT.'/includes/header.php');
@@ -263,7 +259,7 @@ if(!$zoomInt){
 		}
 		?>
 		<div class="flex-form" id='innertext'>
-         <h1 class="page-heading screen-reader-only"><?php echo $LANG['DYNAMIC_MAP']; ?></h1>
+			<h1 class="page-heading screen-reader-only"><?php echo $LANG['DYNAMIC_MAP']; ?></h1>
 			<div style="margin-left: 2rem; margin-bottom: 1rem;">
 				<?php echo $LANG['CAPTURE_COORDS']; ?>
 				<span id="moredetails" style="cursor:pointer;color:blue;font-size:80%;" onclick="this.style.display='none';document.getElementById('moreinfo').style.display='inline';document.getElementById('lessdetails').style.display='inline';">
@@ -305,7 +301,7 @@ if(!$zoomInt){
 					</div>
 				</form>
 			</div>
-			<div id='map_canvas' style='width:100%; height:650px; clear:both;'></div>
+			<div id='map_canvas' style='width:100%; height:650px; clear:both; z-index: 1'></div>
 		</div>
 	<?php
 	include_once($SERVER_ROOT.'/includes/footer.php');
