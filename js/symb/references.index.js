@@ -112,6 +112,13 @@ $(document).ready(function() {
 	}
 });
 
+function selectAll(source) {
+	const checkboxes = document.querySelectorAll('input[name="scbox[]"]');
+	checkboxes.forEach(cb => {
+		cb.checked = source.checked;
+	});
+}
+
 function getParentInfo(refid){
 	var sutXmlHttp=GetXmlHttpObject();
 	if (sutXmlHttp==null){
@@ -253,18 +260,6 @@ function processNewAuthor(f){
 	opener.document.getElementById("addauthorsearch").value = '';
 	opener.document.getElementById("refauthorid").value = '';
 	self.close();
-}
-
-function selectAll(cb){
-	boxesChecked = true;
-	if(!cb.checked){
-		boxesChecked = false;
-	}
-	var dbElements = document.getElementsByName("occid[]");
-	for(i = 0; i < dbElements.length; i++){
-		var dbElement = dbElements[i];
-		dbElement.checked = boxesChecked;
-	}
 }
 
 function toggle(target){

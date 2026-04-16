@@ -508,6 +508,10 @@ class ReferenceManager{
 				$sql = 'DELETE FROM referencetaxalink WHERE refid=? AND tid=?';
 				break;
 
+			case 'occurrence':
+				$sql = 'DELETE FROM referenceoccurlink WHERE refid=? AND occid=?';
+				break;
+
 			default:
 				return 'ERROR: Invalid link type';
 		}

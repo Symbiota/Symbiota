@@ -88,6 +88,17 @@ switch($action){
 			$statusStr = $refManager->deleteRefLink($refId,$targetid,$type);
 		}
         break;
+	case 'deleteoccurrences':
+		if(!empty($_POST['scbox']) && is_array($_POST['scbox'])){
+			foreach($_POST['scbox'] as $occid){
+				$occid = intval($occid);
+				if($occid){
+					$refManager->deleteRefLink($refId, $occid, 'occurrence');
+				}
+			}
+			$statusStr = 'Selected samples removed successfully';
+		}
+		break;
 }
 
 
@@ -586,7 +597,7 @@ else{
 						echo '<div id="referenceoccurlink">';
 						if($refOccArr){
 							?>
-							<form name="sampleListingForm">
+							<form name="sampleListingForm" method="post" action="refdetails.php">
 								<fieldset id="samplePanel">
 								<legend>Sample Listing</legend>
 								<div style="float:left">Records displayed: <?php echo count($refOccArr); ?></div>
@@ -637,6 +648,15 @@ else{
 											?>
 										</tbody>
 									</table>
+									<?php
+									echo '<div style="margin-top:10px;">';
+									echo '<input type="hidden" name="action" value="deleteoccurrences">';
+									echo '<input type="hidden" name="refid" value="'.$refId.'">';
+									echo '<button type="submit" onclick="return confirm(\'Delete links to selected samples?\')">
+       					 				Delete Links to Selected Samples
+      									</button>';
+									echo '</div>'; 
+									?>
 								</fieldset>
 							</form>
 							<?php
