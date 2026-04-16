@@ -505,7 +505,7 @@ class ReferenceManager{
 				break;
 
 			case 'taxon':
-				$sql = 'DELETE FROM referencetaxalink WHERE refid=? AND taxon=?';
+				$sql = 'DELETE FROM referencetaxalink WHERE refid=? AND tid=?';
 				break;
 
 			default:

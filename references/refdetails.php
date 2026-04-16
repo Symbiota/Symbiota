@@ -62,13 +62,6 @@ if($formSubmit){
 				implode('<br/>', $result['errors']).'</div>';
 		}
 	}
-	elseif($formSubmit == 'deleteRefLink'){
-		$statusStr = $refManager->deleteRefLink(
-			$_POST['refid'],
-			$_POST['targetid'],
-			$_POST['type']
-    );
-}
 }
 if(isset($_POST['addauthor']) && $_POST['addauthor'] == '1'){
     $refAuthId = intval($_POST['refauthorid']);
@@ -76,13 +69,28 @@ if(isset($_POST['addauthor']) && $_POST['addauthor'] == '1'){
         $statusStr = $refManager->addAuthor($refId, $refAuthId);
     }
 }
-if(isset($_POST['addreflink']) && $_POST['addreflink'] == '1'){
-    $targetid = intval($_POST['targetid']);
-	$type = $_POST['type'];
-    if($targetid && $type){
-        $statusStr = $refManager->addRefLink($refId,$targetid,$type);
-    }
+
+$action = $_POST['action'] ?? '';
+
+switch($action){
+    case 'addreflink':
+        $targetid = intval($_POST['targetid']);
+		$type = $_POST['type'];
+		if($targetid && $type){
+			$statusStr = $refManager->addRefLink($refId,$targetid,$type);
+		}
+        break;
+
+    case 'deletereflink':
+		$targetid = intval($_POST['targetid']);
+		$type = $_POST['type'];
+		if($targetid && $type){
+			$statusStr = $refManager->deleteRefLink($refId,$targetid,$type);
+		}
+        break;
 }
+
+
 $refGroup = 0;
 $refRank = 0;
 $parentChild = 0;
@@ -665,9 +673,6 @@ else{
 				</div>
 				<div id="reflinksdiv" style="">
 					<div style="width:100%;">
-						<?php
-						if($refChecklistArr || $refDatasetArr || $refCollArr || $refTaxaArr){
-						?>
 							<div style="width:100%;">
 								<form name='checklistform' id='checklistform' action='refdetails.php' method='post'>
 									<input type="hidden" name="refid" value="<?php echo $refId; ?>">
@@ -691,11 +696,12 @@ else{
 											
 											?>
 										</select>
-											<input type="hidden" name="addreflink" value="1">
-											<input name="refid" type="hidden" value="<?php echo $refId; ?>" />
-											<input name="type" type="hidden" value="<?php echo 'checklist'; ?>" />
-											<button type="submit">Add</button>
-											</div>
+											<form method="post" action="refdetails.php">
+												<input type="hidden" name="action" value="addreflink">
+												<input type="hidden" name="type" value="checklist">
+												<input type="hidden" name="refid" value="<?= $refId ?>">
+												<button type="submit">Add</button>
+											</form>
 										</div>
 										<hr />
 										<div id="checklistlistdiv">
@@ -703,14 +709,22 @@ else{
 											if($refChecklistArr){
 												echo '<ul>';
 												foreach($refChecklistArr as $k => $v){
-													echo '<li>';
-													echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($k, ENT_QUOTES) . '">' 
-														. htmlspecialchars($v, ENT_QUOTES) . 
-														'</a>';													
-														echo '<img src="../images/del.png" 
-															style="width:14px; cursor:pointer;" 
-															onclick="deleteRefLink('.$refId.','.$k.',\'checklist\')" 
-															title="Delete link">';
+													echo '<li style="display:flex; align-items:center; gap:6px;">';
+
+													echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($k, ENT_QUOTES) . '">'
+														. htmlspecialchars($v, ENT_QUOTES) .
+														'</a>';
+
+													echo '<form method="post" action="refdetails.php" style="margin:0;">';
+													echo '<input type="hidden" name="refid" value="'.$refId.'">';
+													echo '<input type="hidden" name="targetid" value="'.$k.'">';
+													echo '<input type="hidden" name="type" value="checklist">';
+													echo '<input type="hidden" name="action" value="deletereflink">';
+													echo '<button type="submit" style="border:none;background:none;padding:0;">';
+													echo '<img src="../images/del.png" style="width:14px;">';
+													echo '</button>';
+													echo '</form>';
+
 													echo '</li>';
 												}
 												echo '</ul>';
@@ -746,11 +760,12 @@ else{
 											
 											?>
 										</select>
-											<input type="hidden" name="addreflink" value="1">
-											<input name="refid" type="hidden" value="<?php echo $refId; ?>" />
-											<input name="type" type="hidden" value="<?php echo 'dataset'; ?>" />
-											<button type="submit">Add</button>
-											</div>
+											<form method="post" action="refdetails.php">
+												<input type="hidden" name="action" value="addreflink">
+												<input type="hidden" name="type" value="dataset">
+												<input type="hidden" name="refid" value="<?= $refId ?>">
+												<button type="submit">Add</button>
+											</form>
 										</div>
 										<hr />
 										<div id="datasetlistdiv">
@@ -762,10 +777,15 @@ else{
 													echo '<a href="../collections/datasets/datasetmanager.php?datasetid=' . htmlspecialchars($k, ENT_QUOTES) . '">' 
 														. htmlspecialchars($v, ENT_QUOTES) . 
 														'</a>';															
-													echo '<img src="../images/del.png" 
-															style="width:14px; cursor:pointer;" 
-															onclick="deleteRefLink('.$refId.','.$k.',\'dataset\')" 
-															title="Delete link">';
+													echo '<form method="post" action="refdetails.php" style="display:inline;margin:0;padding:0;">
+														<input type="hidden" name="refid" value="'.$refId.'">
+														<input type="hidden" name="targetid" value="'.$k.'">
+														<input type="hidden" name="type" value="dataset">
+														<input type="hidden" name="action" value="deletereflink">
+														<button type="submit" style="border:none;background:none;padding:0;margin:0;display:inline;">
+															<img src="../images/del.png" style="width:14px;vertical-align:middle;" title="Delete link">
+														</button>
+													</form>';
 													echo '</li>';
 												}
 												echo '</ul>';
@@ -801,11 +821,12 @@ else{
 											
 											?>
 										</select>
-											<input type="hidden" name="addreflink" value="1">
-											<input name="refid" type="hidden" value="<?php echo $refId; ?>" />
-											<input name="type" type="hidden" value="<?php echo 'collection'; ?>" />
-											<button type="submit">Add</button>
-											</div>
+											<form method="post" action="refdetails.php">
+												<input type="hidden" name="action" value="addreflink">
+												<input type="hidden" name="type" value="collection">
+												<input type="hidden" name="refid" value="<?= $refId ?>">
+												<button type="submit">Add</button>
+											</form>
 										</div>
 										<hr />
 										<div id="collectionlistdiv">
@@ -817,10 +838,15 @@ else{
 													echo '<a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, ENT_QUOTES) . '">' 
 														. htmlspecialchars($v, ENT_QUOTES) . 
 														'</a>';															
-													echo '<img src="../images/del.png" 
-															style="width:14px; cursor:pointer;" 
-															onclick="deleteRefLink('.$refId.', '.$k.', \'collection\')" 
-															title="Delete link">';
+													echo '<form method="post" action="refdetails.php" style="display:inline;margin:0;padding:0;">
+														<input type="hidden" name="refid" value="'.$refId.'">
+														<input type="hidden" name="targetid" value="'.$k.'">
+														<input type="hidden" name="type" value="collection">
+														<input type="hidden" name="action" value="deletereflink">
+														<button type="submit" style="border:none;background:none;padding:0;margin:0;display:inline;">
+															<img src="../images/del.png" style="width:14px;vertical-align:middle;" title="Delete link">
+														</button>
+													</form>';
 													echo '</li>';
 												}
 												echo '</ul>';
@@ -847,11 +873,15 @@ else{
 									echo $v;
 									echo '</a>';
 
-									echo '<img src="../images/del.png" 
-											style="width:14px; cursor:pointer;" 
-											onclick="deleteRefLink('.$refId.', '.$k.', \'taxon\')" 
-											title="Delete link">';
-
+									echo '<form method="post" action="refdetails.php" style="display:inline;margin:0;padding:0;">
+										<input type="hidden" name="refid" value="'.$refId.'">
+										<input type="hidden" name="targetid" value="'.$k.'">
+										<input type="hidden" name="type" value="taxon">
+										<input type="hidden" name="action" value="deletereflink">
+										<button type="submit" style="border:none;background:none;padding:0;margin:0;display:inline;">
+											<img src="../images/del.png" style="width:14px;vertical-align:middle;" title="Delete link">
+										</button>
+										</form>';
 									echo '</li>';
 								}
 								echo '</ul>';
@@ -860,10 +890,6 @@ else{
 								echo 'There are no taxa linked with this reference';
 							}
 							echo '</div>';
-						}
-						else{
-							echo '<h2>There are no resources linked with this reference</h2>';
-						}
 						?>
 					</div>
 				</div>

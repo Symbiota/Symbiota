@@ -217,34 +217,6 @@ function deleteRefAuthor(refauthid){
 	}
 }
 
-function deleteRefLink(refid, targetid, type){
-    if(!confirm("Are you sure you would like to remove this link from this reference?")) {
-        return;
-    }
-
-    var xhr = new XMLHttpRequest();
-
-    xhr.onreadystatechange = function(){
-        if(xhr.readyState === 4){
-            if(xhr.status === 200){
-                location.reload();
-            } else {
-                alert("Error removing link");
-            }
-        }
-    };
-
-    xhr.open("POST", "refdetails.php", true);
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-    var params = "formsubmit=deleteRefLink" +
-                 "&refid=" + encodeURIComponent(refid) +
-                 "&targetid=" + encodeURIComponent(targetid) + 
-				"&type=" + encodeURIComponent(type);
-
-    xhr.send(params);
-}
-
 function openNewAuthorWindow(){
 	var urlStr = 'authoreditor.php?refid='+refid+'&addauth=1';
 	newWindow = window.open(urlStr,'popup','scrollbars=1,toolbar=0,resizable=1,width=470,height=300');
