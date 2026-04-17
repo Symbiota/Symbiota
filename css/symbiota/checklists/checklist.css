@@ -175,3 +175,56 @@ div.button:hover {
 #taxonfilterdiv {
   margin: 3px;
 }
+
+.accordions {
+  margin-top: 10px;
+}
+
+.accordions input.accordion-selector {
+  display: none;
+}
+
+.accordions label.accordion-header {
+  font-size: 1rem;
+  font-weight: bold;
+  display: block;
+  padding: 8px 12px;
+  cursor: pointer;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: inherit;
+  position: relative;
+}
+
+.accordions label.accordion-header:hover {
+  background: #f5f5f5;
+}
+
+.accordions label.accordion-header::after {
+  content: "▼";
+  font-size: 0.8em;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+.accordions .content {
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-top: none;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+}
+
+.accordions .accordion-selector + label + .content {
+  display: none;
+}
+
+.accordions .accordion-selector:checked + label + .content {
+  display: block;
+}
+
+.accordions .accordion-selector:checked + label::after {
+  content: "▲";
+}

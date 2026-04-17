@@ -107,6 +107,7 @@ $LANG['ALL_IMG'] = 'todas las imágenes';
 $LANG['LINKED_IMG'] = 'sólo imágenes de vales vinculadas';
 $LANG['SELECT_TAXON'] = 'Por favor seleccione un taxón de la lista';
 $LANG['NAME_BLANK'] = 'El campo de nombre científico está vacío';
+$LANG['ASSOC_REF'] = 'Referencias Asociadas';
 
 //from dynamicchecklist.php
 $LANG['ERROR_GEN_CHECK'] = 'ERROR al generar lista';

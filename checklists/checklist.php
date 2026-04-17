@@ -840,7 +840,34 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 						</div>
 						<?php
 					}
+					$refArr = $clManager->getReferences();
+					if ($refArr){
 					?>
+					<div id="references-box" style="flex: 0 0 100%; margin-top: 10px;">
+						<div class="accordions">
+
+							<input type="checkbox" id="ref-accordion" class="accordion-selector" />
+
+							<label for="ref-accordion" class="accordion-header">
+								<?php echo $LANG['ASSOC_REF'] ?? 'Associated References'; ?>
+							</label>
+
+							<div class="content">
+								<ul>
+									<?php
+									foreach($refArr as $referenceObj){
+										echo '<li><a href="'.$referenceObj['url'].'" target="_blank">'.$referenceObj['display'].'</a></li>';
+									}
+									?>
+								</ul>
+							</div>
+
+						</div>
+					</div>
+					<?php
+					}
+					?>
+				</div>
 				</div>
 			</div>
 			<?php

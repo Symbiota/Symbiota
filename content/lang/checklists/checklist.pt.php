@@ -105,6 +105,7 @@ $LANG['SKIP_LINK'] = 'Pular para Lista de Táxons';
 $LANG['IMAGE_SRC'] = 'Fonte da imagem';
 $LANG['ALL_IMG'] = 'todas as imagens';
 $LANG['LINKED_IMG'] = 'somente imagens de vouchers vinculados';
+$LANG['ASSOC_REF'] = 'Referências Associadas';
 
 //de lista de verificação dinâmica.php
 $LANG['ERROR_GEN_CHECK'] = 'ERRO ao gerar checklist';

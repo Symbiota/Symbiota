@@ -779,6 +779,37 @@ class ChecklistManager extends Manager{
 		return $retArr;
 	}
 
+	// Associated References
+	public function getReferences(){
+		$sql = 'SELECT r.refid, r.bibliographicCitation,
+				CONCAT("https://doi.org/",r.identifier) AS url
+				FROM referenceobject r
+				INNER JOIN referencechecklistlink l ON r.refid = l.refid
+				WHERE (l.clid = ?)
+				ORDER BY r.bibliographicCitation';
+
+		$results = [];
+
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $this->clid);
+			$stmt->execute();
+
+			if($rs = $stmt->get_result()){
+				while($r = $rs->fetch_object()){
+					$results[$r->refid] = [
+						'display' => $r->bibliographicCitation,
+						'url' => $r->url
+					];
+				}
+				$rs->free();
+			}
+
+			$stmt->close();
+		}
+
+		return $results;
+	}
+
 	//Setters and getters
 	public function setThesFilter($filt){
 		if(is_numeric($filt)) $this->thesFilter = $filt;
