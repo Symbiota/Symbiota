@@ -803,6 +803,37 @@ class OccurrenceCollectionProfile extends OmCollections{
 		return $statsArr;
 	}
 
+	// Associated References
+	public function getReferences(){
+		$sql = 'SELECT r.refid, r.bibliographicCitation,
+				CONCAT("https://doi.org/",r.identifier) AS url
+				FROM referenceobject r
+				INNER JOIN referencecollectionlink l ON r.refid = l.refid
+				WHERE (l.collid = ?)
+				ORDER BY r.bibliographicCitation';
+
+		$results = [];
+
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $this->collid);
+			$stmt->execute();
+
+			if($rs = $stmt->get_result()){
+				while($r = $rs->fetch_object()){
+					$results[$r->refid] = [
+						'display' => $r->bibliographicCitation,
+						'url' => $r->url
+					];
+				}
+				$rs->free();
+			}
+
+			$stmt->close();
+		}
+
+		return $results;
+	}
+
 	//Misc functions
 	public function unreviewedCommentsExist(){
 		$retCnt = 0;

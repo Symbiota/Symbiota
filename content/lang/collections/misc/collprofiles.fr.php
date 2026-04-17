@@ -117,4 +117,5 @@ $LANG['TAXON'] = 'Taxon';
 $LANG['OCCURRENCE_EDITOR'] = 'Modifier';
 $LANG['INFO_ALT'] = "Icône d'information indiquant un lien vers des informations sur l'importation/mise à jour";
 $LANG['LAST_MODIFIED'] = 'Dernière Modification';
+$LANG['ASSOC_REF'] = 'Références associées';
 ?>

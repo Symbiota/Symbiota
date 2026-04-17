@@ -71,7 +71,7 @@ if($SYMB_UID){
 		echo '<div class="ref-title">'.(isset($LANG['TAXONOMIC_REFERENCES'])?$LANG['TAXONOMIC_REFERENCES']:'Associated References').'</div>';
 		echo '<ul>';
 		foreach($referenceArr as $referenceObj){
-			echo '<li><a href="'.$resourceObj['url'].'" target="_blank">'.$referenceObj['bibliographicCitation'].'</a></li>';
+			echo '<li><a href="'.$referenceObj['url'].'" target="_blank">'.$referenceObj['bibliographicCitation'].'</a></li>';
 		}
 		echo '</ul>';
 		echo '</div>';

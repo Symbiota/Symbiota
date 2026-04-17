@@ -808,7 +808,30 @@ if ($SYMB_UID) {
 					<a href="collprofiles.php?collid=<?= $collid ?>&stat=taxonomy#taxonomystats"><?= $LANG['SHOW_FAMILY_DIST'] ?></a>
 				</div>
 			</section>
-			<div class="accordions" style="margin-bottom: 1.5rem;">
+				<div class="accordions" style="margin-bottom: 1.5rem;">
+				<?php				
+				//Collection References
+				$refArr = $collManager->getReferences();
+				if($refArr){
+				?>
+					<section>
+						<input type="checkbox" id="assoc-ref" class="accordion-selector" />
+						<label for="assoc-ref" class="accordion-header"><?= $LANG['ASSOC_REF'] ?></label>
+						<div id="collection-type" class="content">
+							<div class="bottom-breathing-room-rel">
+								<ul>
+									<?php
+									foreach($refArr as $referenceObj){
+										echo '<li><a href="'.$referenceObj['url'].'" target="_blank">'.$referenceObj['display'].'</a></li>';
+									}
+									?>
+								</ul>
+							</div>
+						</div>
+					</section>
+			<?php
+			}
+			?>
 				<section>
 					<input type="checkbox" id="more-details" class="accordion-selector" />
 					<label for="more-details" class="accordion-header"><?= $LANG['MORE_INFO'] ?></label>
