@@ -68,19 +68,24 @@ $action = $_POST['action'] ?? '';
 
 switch($action){
     case 'addreflink':
-    	$targetid = Sanitize::int($_POST['targetid']);
-		$type = $_POST['type'];
-		if($targetid && $type){
-			$statusStr = $refManager->addRefLink($refId,$targetid,$type);
-		}
+        $targetid = Sanitize::int($_POST['targetid'] ?? 0);
+        $type = $_POST['type'] ?? '';
+
+        error_log("ADDREFLINK HIT: targetid=$targetid type=$type");
+
+        if($targetid && $type){
+            $statusStr = $refManager->addRefLink($refId,$targetid,$type);
+            error_log("RESULT: " . $statusStr);
+        } else {
+            error_log("MISSING targetid or type");
+        }
         break;
 
     case 'deletereflink':
-    	$targetid = Sanitize::int($_POST['targetid']);
-		$type = $_POST['type'];
-		if($targetid && $type){
-			$statusStr = $refManager->deleteRefLink($refId,$targetid,$type);
-		}
+        $targetid = Sanitize::int($_POST['targetid'] ?? 0);
+        $type = $_POST['type'] ?? '';
+
+        error_log("DELETE REF LINK: targetid=$targetid type=$type");
         break;
 	case 'deleteoccurrences':
 		if(!empty($_POST['scbox']) && is_array($_POST['scbox'])){
