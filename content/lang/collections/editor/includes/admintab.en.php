@@ -52,5 +52,6 @@ $LANG['CHECKLIST_IS_LINKED'] = 'This occurrence serves as an occurrence voucher 
 						Deleting this occurrence will remove these associations.
 						You may want to first verify this action with the checklist administrators';
 $LANG['DEL_OCC'] = 'Delete Occurrence';
+$LANG['OPENS_NEW_TAB'] = ' (opens in new tab)';
 
 ?>

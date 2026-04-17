@@ -240,7 +240,7 @@ if(!$zoomInt){
       data-latCen="<?=htmlspecialchars($latCen) ?>"
       data-lngCen="<?=htmlspecialchars($longCen) ?>"
       data-mapZoom="<?=htmlspecialchars($zoomInt) ?>"
-   />
+   ></div>
 	<?php
 		$displayLeftMenu = false;
 		include($SERVER_ROOT.'/includes/header.php');

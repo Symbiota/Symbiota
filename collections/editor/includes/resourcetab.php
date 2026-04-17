@@ -588,7 +588,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 	<fieldset>
 		<legend><?php echo $LANG['SPEC_DUPES']; ?></legend>
 		<div style="float:right;margin-right:15px;">
-			<button class="button" onclick="openDupeWindow();return false;"><?php echo $LANG['SEARCH_RECS']; ?></button>
+			<button class="button" onclick="openDupeWindow();return false;" aria-label="<?=$LANG['SEARCH_RECS'] . $LANG['OPENS_NEW_TAB']?>"><?php echo $LANG['SEARCH_RECS']; ?></button>
 		</div>
 		<div style="clear:both;">
 			<form id="dupeRefreshForm" name="dupeRefreshForm" method="post" target="occurrenceeditor.php">

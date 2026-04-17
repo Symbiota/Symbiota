@@ -26,7 +26,7 @@ $occManager->setOccId($occid);
 				<?php
 				if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId,$USER_RIGHTS['CollAdmin']))){
 					?>
-					<div style="float:right;" title="<?php echo $LANG['MANAGE_HISTORY']; ?>">
+					<div style="float:right;" title="<?php echo $LANG['MANAGE_HISTORY']; ?>" aria-label="<?= $LANG['MANAGE_HISTORY'] . $LANG['OPENS_NEW_TAB'] ?>">
 						<a href="../editor/editreviewer.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank"><img src="../../images/edit.png" style="border:0px;width:14px;" /></a>
 					</div>
 					<?php
@@ -122,7 +122,7 @@ $occManager->setOccId($occid);
 				<div style="margin:10px;">
 					<input name="occindex" type="hidden" value="<?php echo $occIndex; ?>" />
 					<input name="occid" type="hidden" value="<?php echo $occid; ?>" />
-					<button name="submitaction" class="button" type="submit" value="Transfer Record" ><?php echo $LANG['TRANSFER_RECORD']; ?></button>
+					<button name="submitaction" class="button" type="submit" value="Transfer Record" aria-label="<?= $LANG['TRANSFER_RECORD'] . $LANG['OPENS_NEW_TAB'] ?>"><?php echo $LANG['TRANSFER_RECORD']; ?></button>
 				</div>
 			</form>
 		</fieldset>
