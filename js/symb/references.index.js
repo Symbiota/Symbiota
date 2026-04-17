@@ -27,6 +27,18 @@ $(document).ready(function() {
 
 		return index >= 0 ? index : 0;
 	}
+
+    $('#occurrenceSampleTable').DataTable({
+        paging: true,
+        searching: true,
+        ordering: true,
+        pageLength: 25,
+        lengthMenu: [10, 25, 50, 100],
+        stripeClasses: ['odd', 'even'],
+		autoWidth: false,
+		dom: 'frtip',
+		className: 'compact'
+	});
 	
 	if(parentChild){
 		var url = '';

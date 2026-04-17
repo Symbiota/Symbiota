@@ -149,9 +149,8 @@ else{
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/symb/references.index.js"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/api.taxonomy.taxasuggest.js" type="text/javascript"></script>
-	<link rel="stylesheet" href="../../js/datatables/datatables.css" />
-	<script src="../../js/jquery-3.7.1.min.js"></script>
-	<script src="../../js/datatables/datatables.js"></script>
+	<link rel="stylesheet" href="../js/datatables/datatables.css" />
+	<script src="../js/datatables/datatables.js"></script>
 	<script type="text/javascript">
 		var refid = <?php echo $refId; ?>;
 
@@ -278,9 +277,12 @@ else{
 
 	</script>
 	<style type="text/css">
-		#sampletable {
+
+		#occurrenceSampleTable {
+			font-size: 12px;
 			width: 100%;
 			table-layout: auto;
+			border: 1.5px solid #c0c0c0a6;
 		}
 
 		#innertext{ max-width: 1400px; }
@@ -526,8 +528,8 @@ else{
 								?>
 								<div style="float:left">Linked Occurrences: <?php echo count($refOccArr); ?></div>
 								<div>
-									<table id="sampletable" class="styledtable">
-										<thead>
+										<table id="occurrenceSampleTable" class="cell-border stripe hover">										
+											<thead>
 											<tr>
 												<?php
 												$headerOutArr = current($refOccArr);
@@ -563,7 +565,7 @@ else{
 												echo '<td>'.$sampleArr['eventDate'].'</td>';
 
 												echo '<td style="text-align:center">';
-												echo '<a href="'.$CLIENT_ROOT.'/collections/individual/index.php?occid='.$sampleArr['occid'].'" target="_blank">'.$sampleArr['occid'].'</a><br><br>';
+												echo '<a href="'.$CLIENT_ROOT.'/collections/individual/index.php?occid='.$sampleArr['occid'].'" target="_blank">'.$sampleArr['occid'].'</a>    ';
 												echo '<a href="'.$CLIENT_ROOT.'/collections/editor/occurrenceeditor.php?occid='.$sampleArr['occid'].'" target="_blank"><img src="../images/edit.png" style="width:13px" /></a>';
 												echo '</td>';
 
