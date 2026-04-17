@@ -493,8 +493,7 @@ class OccurrenceIndividual extends Manager{
 	}
 
 	private function setReferences(){
-		$sql = 'SELECT r.refid, r.title, r.secondarytitle, r.shorttitle, r.tertiarytitle, r.pubdate, r.edition, r.volume, r.numbervolumnes, r.number,
-			r.pages, r.section, r.placeofpublication, r.publisher, r.isbn_issn, r.url, r.guid, r.cheatauthors, r.cheatcitation
+		$sql = 'SELECT r.refid, r.bibliographicCitation,CONCAT("https://doi.org/",r.identifier) AS url
 			FROM referenceobject r INNER JOIN referenceoccurlink l ON r.refid = l.refid
 			WHERE (l.occid = ?)';
 		if($stmt = $this->conn->prepare($sql)){
@@ -502,7 +501,7 @@ class OccurrenceIndividual extends Manager{
 			$stmt->execute();
 			if($rs = $stmt->get_result()){
 				while($r = $rs->fetch_object()){
-					$this->occArr['ref'][$r->refid]['display'] = $r->cheatcitation;
+					$this->occArr['ref'][$r->refid]['display'] = $r->bibliographicCitation;
 					$this->occArr['ref'][$r->refid]['url'] = $r->url;
 				}
 				$rs->free();
