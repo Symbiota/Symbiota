@@ -1,6 +1,5 @@
 <?php
 include_once('../config/symbini.php');
-//include_once($SERVER_ROOT.'/classes/DynamicChecklistManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
@@ -15,7 +14,6 @@ $latCen = array_key_exists('lat',$_REQUEST) ? Sanitize::float($_REQUEST['lat']) 
 $longCen = array_key_exists('long', $_REQUEST) ? Sanitize::float($_REQUEST['long']) : '';
 $zoomInt = array_key_exists('zoom', $_REQUEST) ? Sanitize::int($_REQUEST['zoom']) : 5;
 
-//$dynClManager = new DynamicChecklistManager();
 if(!$latCen || !$longCen){
 	$latCen = 41.0;
 	$longCen = -95.0;
