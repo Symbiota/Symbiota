@@ -495,7 +495,8 @@ class OccurrenceIndividual extends Manager{
 	private function setReferences(){
 		$sql = 'SELECT r.refid, r.bibliographicCitation,CONCAT("https://doi.org/",r.identifier) AS url
 			FROM referenceobject r INNER JOIN referenceoccurlink l ON r.refid = l.refid
-			WHERE (l.occid = ?)';
+			WHERE (l.occid = ?)
+			ORDER BY r.bibliographicCitation';
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('i', $this->occid);
 			$stmt->execute();

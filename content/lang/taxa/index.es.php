@@ -40,5 +40,6 @@ $LANG['ACCEPTED_TAXA'] = 'Taxones aceptados';
 $LANG['NOT_FOUND'] = 'no encontrado';
 $LANG['DID_YOU_MEAN'] = '¿Quiso decir?';
 $LANG['CALENDAR_TRAIT_PLOT'] = 'Gráficos de Rasgos';
+$LANG['TAXONOMIC_REFERENCES'] = 'Referencias Asociadas';
 
 ?>

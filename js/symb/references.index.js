@@ -83,11 +83,7 @@ function toggle(target){
 
 function verifyEditRefForm(f){
 	if(!document.getElementById("bibliographicCitation").value){
-        alert("Please enter the title of the reference.");
-        return false;
-    }
-    if(!document.getElementById("title").value){
-        alert("Please enter the title of the reference.");
+        alert("Please enter a citation for the reference.");
         return false;
     }
     return true;

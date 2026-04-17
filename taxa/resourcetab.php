@@ -66,5 +66,15 @@ if($SYMB_UID){
 		echo '</ul>';
 		echo '</div>';
 	}
+	if($referenceArr = $taxonManager->getReferenceLinkArr()){
+		echo '<div class="ref-div">';
+		echo '<div class="ref-title">'.(isset($LANG['TAXONOMIC_REFERENCES'])?$LANG['TAXONOMIC_REFERENCES']:'Associated References').'</div>';
+		echo '<ul>';
+		foreach($referenceArr as $referenceObj){
+			echo '<li><a href="'.$resourceObj['url'].'" target="_blank">'.$referenceObj['bibliographicCitation'].'</a></li>';
+		}
+		echo '</ul>';
+		echo '</div>';
+	}
 	?>
 </div>

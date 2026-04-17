@@ -677,6 +677,24 @@ class TaxonProfile extends Manager {
 		return $retArr;
 	}
 
+	public function getReferenceLinkArr(){
+		$retArr = array();
+		if($this->tid){
+			$sql = 'SELECT r.refid,r.bibliographicCitation,CONCAT("https://doi.org/",r.identifier) AS url
+			FROM referencetaxalink t
+			LEFT JOIN referenceobject r
+			ON t.refid=r.refid
+			WHERE t.tid = '.$this->tid.' ORDER BY r.bibliographicCitation';
+			$rs = $this->conn->query($sql);
+			while($r = $rs->fetch_object()){
+				$retArr[$r->refid]['bibliographicCitation'] = $r->bibliographicCitation;
+				$retArr[$r->refid]['url'] = $r->url;
+			}
+			$rs->free();
+		}
+		return $retArr;
+	}
+
 	//Set children data for taxon higher than species level
 	public function getSppArray($page, $taxaLimit, $pid, $clid){
 		if(!$this->sppArray && $this->tid){
