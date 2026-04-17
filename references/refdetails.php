@@ -149,8 +149,132 @@ else{
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/symb/references.index.js"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/api.taxonomy.taxasuggest.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="../../js/datatables/datatables.css" />
+	<script src="../../js/jquery-3.7.1.min.js"></script>
+	<script src="../../js/datatables/datatables.js"></script>
 	<script type="text/javascript">
 		var refid = <?php echo $refId; ?>;
+
+	function fetchDOI(){
+		const doi = document.getElementById("doiInput").value.trim();
+
+		if(!doi){
+			alert("Enter a DOI");
+			return;
+		}
+
+		fetch("https://api.crossref.org/works/" + encodeURIComponent(doi))
+			.then(res => res.json())
+			.then(data => {
+				if(!data.message){
+					alert("Reference not found, ensure that you are using the full DOI and not a URL");
+					return;
+				}
+
+				const d = data.message;
+
+				if(d.title && d.title.length){
+					document.getElementById("title").value = d.title[0];
+				}
+
+				if(d.language){
+					document.querySelector('[name="language"]').value = d.language;
+				}
+
+				if(d.author){
+					let authors = d.author.map(a => 
+						(a.given ? a.given + " " : "") + (a.family || "")
+					);
+					document.getElementById("creator").value = authors.join(", ");
+				}
+
+				if(d.issued && d.issued["date-parts"]){
+					document.querySelector('[name="date"]').value =
+						d.issued["date-parts"][0].join("-");
+				}
+
+				if(d["container-title"] && d["container-title"].length){
+					document.querySelector('[name="source"]').value =  decodeHTML(d["container-title"][0])
+				}
+
+				if(d.license && d.license.length){
+					let licenseObj = d.license.find(l => l["content-version"] === "vor") || d.license[0];
+
+					if(licenseObj && licenseObj.URL){
+						document.querySelector('[name="rights"]').value = licenseObj.URL;
+					}
+				}
+
+				document.querySelector('[name="identifier"]').value = d.DOI || doi;
+
+				if(d.type){
+					document.querySelector('[name="type"]').value = d.type;
+				}
+
+				let citation = "";
+
+				if(d.author && d.author.length){
+					let authors = d.author.slice(0, 20).map(a => {
+						let initials = "";
+						if(a.given){
+							initials = a.given.split(" ")
+								.map(n => n.charAt(0).toUpperCase() + ".")
+								.join(" ");
+						}
+						return (a.family || "") + ", " + initials;
+					});
+					if(d.author.length > 20){
+						authors.push("...");
+					}
+					citation += authors.join(", ") + ". ";
+				}
+
+				if(d.issued && d.issued["date-parts"]){
+					let year = d.issued["date-parts"][0][0];
+					if(year){
+						citation += "(" + year + "). ";
+					}
+				}
+
+				if(d.title && d.title.length){
+					let title = d.title[0];
+					title = title.charAt(0).toUpperCase() + title.slice(1).toLowerCase();
+					citation += title + ". ";
+				}
+
+				if(d["container-title"] && d["container-title"].length){
+					let journal = decodeHTML(d["container-title"][0]);
+					citation += journal;
+				}
+
+				if(d.volume){
+					citation += ", " + d.volume;
+				}
+
+				if(d.issue){
+					citation += "(" + d.issue + ")";
+				}
+
+				if(d.page){
+					citation += ": " + d.page;
+				}
+
+				if(d.volume || d.issue || d.page){
+					citation += ". ";
+				}
+
+				if(d.DOI){
+					citation += "https://doi.org/" + d.DOI;
+				}
+
+				document.getElementById("bibliographicCitation").value = citation;
+
+			})
+			.catch(err => {
+				console.error(err);
+				alert("Error fetching DOI data");
+			});
+	}
 
 	</script>
 	<style type="text/css">
@@ -290,6 +414,12 @@ else{
 							<input type="hidden" name="refid" value="<?php echo $refId; ?>" />
 
 							<a href="https://rs.gbif.org/extension/gbif/1.0/references.xml"><h1>Literature References Extension Fields</h1></a>
+
+							<div style="margin-bottom:15px;">
+								<b>Import details from DOI:</b><br>
+								<input type="text" id="doiInput" placeholder="Enter DOI (e.g. 10.1000/xyz123)" style="width:300px;">
+								<button type="button" onclick="fetchDOI()">Fetch</button>
+							</div>
 
 							<div class="fieldGroupDiv">
 								<b>Bibliographic Citation:</b>
