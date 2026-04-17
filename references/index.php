@@ -53,15 +53,6 @@ if(!$formSubmit || $formSubmit != 'Search References'){
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/symb/references.index.js"></script>
-	<script type="text/javascript">
-		function verifyNewRefForm(f){
-			if(document.getElementById("newreftitle").value == ""){
-				alert("Please enter the title of the reference.");
-				return false;
-			}
-			return true;
-		}
-	</script>
 
 </head>
 <body>
@@ -104,24 +95,9 @@ if(!$formSubmit || $formSubmit != 'Search References'){
 		</div>
 		<div id="reflistdiv" style="min-height:200px;">
 			<div style="float:right;margin:10px;">
-				<a href="#" onclick="toggle('newreferencediv');">
+				<a href="refdetails.php">
 					<img src="../images/add.png" style="width:1.3em" alt="Create New Reference" />
 				</a>
-			</div>
-			<div id="newreferencediv" style="display:none;">
-				<form name="newreferenceform" action="refdetails.php" method="post" onsubmit="return verifyNewRefForm(this.form);">
-					<fieldset>
-						<legend><b>Add New Reference</b></legend>
-						<div style="clear:both;padding-top:4px;float:left;">
-							<div style="">
-								<b>Title: </b>
-							</div>
-							<div style="margin-left:35px;margin-top:-14px;">
-								<textarea name="newreftitle" id="newreftitle" rows="10" style="width:380px;height:40px;resize:vertical;" ></textarea>
-							</div>
-						</div>
-					</fieldset>
-				</form>
 			</div>
 			<?php
 			if($refExist){

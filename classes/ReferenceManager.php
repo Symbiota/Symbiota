@@ -91,16 +91,56 @@ class ReferenceManager{
 	public function createReference($pArr){
 		global $SYMB_UID;
 		$statusStr = '';
-		$sql = 'INSERT INTO referenceobject(title,ReferenceTypeId,ispublished,modifieduid,modifiedtimestamp) '.
-			'VALUES("'.$this->cleanInStr($pArr['newreftitle']).'","'.$this->cleanInStr($pArr['newreftype']).'","'.$this->cleanInStr($pArr['ispublished']).'",'.$SYMB_UID.',now()) ';
-		//echo $sql;
-		if($this->conn->query($sql)){
-			$this->refid = $this->conn->insert_id;
+
+		$sql = 'INSERT INTO referenceobject (
+			bibliographicCitation,
+			identifier,
+			title,
+			creator,
+			date,
+			source,
+			description,
+			subject,
+			language,
+			rights,
+			`type`,
+			taxonRemarks,
+			modifiedByUid,
+			modifiedtimestamp
+		) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())';
+
+		if($stmt = $this->conn->prepare($sql)){
+
+			$stmt->bind_param(
+				"ssssssssssssi",
+				$pArr['bibliographicCitation'],
+				$pArr['identifier'],
+				$pArr['title'],
+				$pArr['creator'],
+				$pArr['date'],
+				$pArr['source'],
+				$pArr['description'],
+				$pArr['subject'],
+				$pArr['language'],
+				$pArr['rights'],
+				$pArr['type'],
+				$pArr['taxonRemarks'],
+				$SYMB_UID
+			);
+
+			if($stmt->execute()){
+				$this->refid = $stmt->insert_id;
+			}
+			else{
+				$statusStr = 'ERROR: Creation failed: '.$stmt->error;
+			}
+
+			$stmt->close();
 		}
 		else{
-			$statusStr = 'ERROR: Creation of new reference failed: '.$this->conn->error.'<br/>';
-			$statusStr .= 'SQL: '.$sql;
+			$statusStr = 'ERROR: Prepare failed: '.$this->conn->error;
 		}
+
 		return $statusStr;
 	}
 
@@ -343,81 +383,77 @@ class ReferenceManager{
 	public function editReference($pArr){
 		global $SYMB_UID;
 		$statusStr = '';
-		$refid = $pArr['refid'];
-		unset($pArr['parentrefid2']);
-		unset($pArr['refGroup']);
-		$pArr = $this->formatInArr($pArr);
-		if(is_numeric($refid)){
-			$sql = '';
-			foreach($pArr as $k => $v){
-				if($k != 'formsubmit' && $k != 'refid'){
-					$sql .= ','.$k.'='.($v?'"'.$this->cleanInStr($v).'"':'NULL');
-				}
-			}
-			$sql = 'UPDATE referenceobject SET '.substr($sql,1).',modifieduid='.$SYMB_UID.',modifiedtimestamp=now() WHERE (refid = '.$refid.')';
-			//echo $sql;
-			if($this->conn->query($sql)){
+
+		$refid = isset($pArr['refid']) ? (int)$pArr['refid'] : 0;
+
+		if(!$refid){
+			return 'ERROR: Invalid reference ID';
+		}
+
+		$bibliographicCitation = $pArr['bibliographicCitation'] ?? '';
+		$identifier = $pArr['identifier'] ?? '';
+		$title = $pArr['title'] ?? '';
+		$creator = $pArr['creator'] ?? '';
+		$date = $pArr['date'] ?? '';
+		$source = $pArr['source'] ?? '';
+		$description = $pArr['description'] ?? '';
+		$subject = $pArr['subject'] ?? '';
+		$language = $pArr['language'] ?? '';
+		$rights = $pArr['rights'] ?? '';
+		$type = $pArr['type'] ?? '';
+		$taxonRemarks = $pArr['taxonRemarks'] ?? '';
+
+		$sql = 'UPDATE referenceobject SET
+			bibliographicCitation = ?,
+			identifier = ?,
+			title = ?,
+			creator = ?,
+			date = ?,
+			source = ?,
+			description = ?,
+			subject = ?,
+			language = ?,
+			rights = ?,
+			`type` = ?,
+			taxonRemarks = ?,
+			modifiedByUid = ?,
+			modifiedtimestamp = NOW()
+			WHERE refid = ?';
+
+		if($stmt = $this->conn->prepare($sql)){
+
+			$stmt->bind_param(
+				"ssssssssssssii",
+				$bibliographicCitation,
+				$identifier,
+				$title,
+				$creator,
+				$date,
+				$source,
+				$description,
+				$subject,
+				$language,
+				$rights,
+				$type,
+				$taxonRemarks,
+				$SYMB_UID,
+				$refid
+			);
+
+			if($stmt->execute()){
 				$statusStr = 'SUCCESS: information saved';
 			}
 			else{
-				$statusStr = 'ERROR: Editing of reference failed: '.$this->conn->error.'<br/>';
-				$statusStr .= 'SQL: '.$sql;
+				$statusStr = 'ERROR: Editing failed: '.$stmt->error;
 			}
+
+			$stmt->close();
 		}
+		else{
+			$statusStr = 'ERROR: Prepare failed: '.$this->conn->error;
+		}
+
 		return $statusStr;
-	}
-
-
-	public function formatInArr($pArr){
-		if(!array_key_exists('secondarytitle',$pArr)){
-			$pArr['secondarytitle'] = '';
-		}
-		if(!array_key_exists('shorttitle',$pArr)){
-			$pArr['shorttitle'] = '';
-		}
-		if(!array_key_exists('tertiarytitle',$pArr)){
-			$pArr['tertiarytitle'] = '';
-		}
-		if(!array_key_exists('alternativetitle',$pArr)){
-			$pArr['alternativetitle'] = '';
-		}
-		if(!array_key_exists('typework',$pArr)){
-			$pArr['typework'] = '';
-		}
-		if(!array_key_exists('pubdate',$pArr)){
-			$pArr['pubdate'] = '';
-		}
-		if(!array_key_exists('figures',$pArr)){
-			$pArr['figures'] = '';
-		}
-		if(!array_key_exists('edition',$pArr)){
-			$pArr['edition'] = '';
-		}
-		if(!array_key_exists('volume',$pArr)){
-			$pArr['volume'] = '';
-		}
-		if(!array_key_exists('numbervolumnes',$pArr)){
-			$pArr['numbervolumnes'] = '';
-		}
-		if(!array_key_exists('number',$pArr)){
-			$pArr['number'] = '';
-		}
-		if(!array_key_exists('pages',$pArr)){
-			$pArr['pages'] = '';
-		}
-		if(!array_key_exists('section',$pArr)){
-			$pArr['section'] = '';
-		}
-		if(!array_key_exists('placeofpublication',$pArr)){
-			$pArr['placeofpublication'] = '';
-		}
-		if(!array_key_exists('publisher',$pArr)){
-			$pArr['publisher'] = '';
-		}
-		if(!array_key_exists('isbn_issn',$pArr)){
-			$pArr['isbn_issn'] = '';
-		}
-		return $pArr;
 	}
 
 	//Get and set functions

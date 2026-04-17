@@ -23,7 +23,12 @@ $statusStr = '';
 if($formSubmit){
 	if($formSubmit == 'Create Reference'){
 		$statusStr = $refManager->createReference($_POST);
-		$refId = $refManager->getRefId();
+		$newRefId = $refManager->getRefId();
+
+		if($newRefId){
+			header("Location: refdetails.php?refid=".$newRefId);
+			exit;
+		}
 	}
 	elseif($formSubmit == 'Edit Reference'){
 			$statusStr = $refManager->editReference($_POST);
@@ -100,7 +105,26 @@ if($refId){
 	$refTaxaArr = $refManager->getRefTaxaArr($refId);
 }
 else{
-	header("Location: index.php");
+	$refArr = [
+		'bibliographicCitation' => '',
+		'identifier' => '',
+		'title' => '',
+		'creator' => '',
+		'date' => '',
+		'source' => '',
+		'description' => '',
+		'subject' => '',
+		'language' => '',
+		'rights' => '',
+		'type' => '',
+		'taxonRemarks' => ''
+	];
+
+	$refChecklistArr = [];
+	$refDatasetArr = [];
+	$refCollArr = [];
+	$refOccArr = [];
+	$refTaxaArr = [];
 }
 
 ?>
@@ -194,7 +218,7 @@ else{
 		  outline: 2px solid #88f;
 		}
 
-		#refdetails { max-width: 1200px; } 
+		#refdetails { max-width: 1000px; } 
 
 		.fieldGroupDiv input {
 			width: 500px;
@@ -247,10 +271,13 @@ else{
 			<div id="tabs" style="margin:0px;">
 				<ul>
 					<li><a href="#refdetaildiv">Reference Details</a></li>
-					<li><a href="#refoccdiv">Linked Occurrences</a></li>
-					<li><a href="#reftaxadiv">Linked Taxa</a></li>
-					<li><a href="#reflinksdiv">Other Linked Resources</a></li>
-					<li><a href="#refadmindiv">Admin</a></li>
+					<?php if($refId) { ?>
+						<li><a href="#refoccdiv">Linked Occurrences</a></li>
+						<li><a href="#reftaxadiv">Linked Taxa</a></li>
+						<li><a href="#reflinksdiv">Other Linked Resources</a></li>
+						<li><a href="#refadmindiv">Admin</a></li>
+					<?php } ?>
+
 				</ul>
 
 				<div id="refdetaildiv">
@@ -262,13 +289,15 @@ else{
 
 							<input type="hidden" name="refid" value="<?php echo $refId; ?>" />
 
+							<a href="https://rs.gbif.org/extension/gbif/1.0/references.xml"><h1>Literature References Extension Fields</h1></a>
+
 							<div class="fieldGroupDiv">
 								<b>Bibliographic Citation:</b>
 								<textarea name="bibliographicCitation" id="bibliographicCitation"><?php echo $refArr['bibliographicCitation']; ?></textarea>
 							</div>
 
 							<div class="fieldGroupDiv">
-								<b>Identifier:</b>
+								<b>Identifier (DOI):</b>
 								<input type="text" name="identifier" value="<?php echo $refArr['identifier']; ?>">
 							</div>
 
@@ -288,7 +317,7 @@ else{
 							</div>
 
 							<div class="fieldGroupDiv">
-								<b>Source:</b>
+								<b>Source (e.g., Journal):</b>
 								<input type="text" name="source" value="<?php echo $refArr['source']; ?>">
 							</div>
 
@@ -347,24 +376,25 @@ else{
 							</div>
 
 							<div style="margin-top:30px;">
-								<button name="formsubmit" type="submit" value="Edit Reference">
-									Save Edits
+								<button name="formsubmit" type="submit" value="<?php echo $refId ? 'Edit Reference' : 'Create Reference'; ?>">
+									<?php echo $refId ? 'Save Edits' : 'Create Reference'; ?>
 								</button>
 							</div>
 						</form>
 					</div>
 				</div>
+				<?php if ($refId) { ?>
 				<div id='refoccdiv' style="">
-					<legend><b>Linked Occurrences:</b></legend></br>
-
 					<?php
 						echo '<div id="referenceoccurlink">';
-						if($refOccArr){
 							?>
 							<form name="sampleListingForm" method="post" action="refdetails.php">
 								<fieldset id="samplePanel">
 								<legend>Sample Listing</legend>
-								<div style="float:left">Records displayed: <?php echo count($refOccArr); ?></div>
+								<?php
+								if($refOccArr){
+								?>
+								<div style="float:left">Linked Occurrences: <?php echo count($refOccArr); ?></div>
 								<div>
 									<table id="sampletable" class="styledtable">
 										<thead>
@@ -420,15 +450,14 @@ else{
        					 				Delete Links to Selected Samples
       									</button>';
 									echo '</div>';
-									?>
+								}
+								else{
+									echo 'There are no occurrences linked with this reference. </br></br>';
+								}
+								?>
 								</fieldset>
 							</form>
-							<?php
-						}
-						else{
-							echo 'There are no occurrences linked with this reference. </br></br>';
-						}
-						?>
+						</br>
 						</div>
 						<div id="batchOcc-div">
 							<fieldset>
@@ -735,8 +764,10 @@ else{
 						</fieldset>
 					</form>
 				</div>
+				<?php } ?> 
 			</div>
 			<?php
+
 		}
 		else{
 			if(!$SYMB_UID){
