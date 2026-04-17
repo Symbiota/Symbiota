@@ -1536,7 +1536,7 @@ class DwcArchiverCore extends Manager{
 				$hearderArr = $this->getHeaderArr();
 				if($hearderArr) $this->writeOutRecord($outputHandler, $hearderArr);
 			}
-			$chunkSize = 50000;
+			$chunkSize = 100000;
 			$lastOccid = 0;
 			$sql .= 'AND o.occid > ? ORDER BY occid LIMIT ?';
 			$stmt = $this->conn->prepare($sql);
@@ -1771,6 +1771,7 @@ class DwcArchiverCore extends Manager{
 			$sql .= $this->paleoWithSql;
 		$sql .= 'SELECT ' . $this->exportID . ' AS omExportID, o.occid, o.collid, o.tidInterpreted, o.recordSecurity FROM omoccurrences o ';
 		$sql .= $this->getTableJoins() . $this->conditionSql;
+		$sql .= 'LIMIT 1000000';
 		if($stmt = $this->conn->prepare($sql)){
 			try{
 				if($stmt->execute()){
