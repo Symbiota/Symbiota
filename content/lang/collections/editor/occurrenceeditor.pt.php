@@ -198,5 +198,6 @@ $LANG['ERROR_ARCHIVING_ASSOC'] = 'ERRO - Arquivando informações de associaçõ
 $LANG['ERROR_ARCHIVING_MAT_SAMPLE'] = 'ERRO - Arquivando informações de amostra de material';
 $LANG['ERROR_CREATING_ARCHIVE'] = 'ERRO - Criando Arquivo';
 $LANG['ERROR_DELETING_OCCURRENCE'] = 'ERRO - Falha ao excluir a ocorrência de origem';
+$LANG['OPENS_NEW_TAB'] = ' (abre em nova guia)';
 
 ?>

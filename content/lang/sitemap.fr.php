@@ -75,20 +75,21 @@ $LANG['BATCHTAXA'] = 'Téléchargement par lots d\'un Fichier de Données Taxono
 $LANG['EOLLINK'] = 'Gérer Liens avec Encyclopédia of Life';
 $LANG['NOTEDITTAXA'] = 'Vous n\'êtes pas autorisé à modifier la taxonomie';
 $LANG['CHECKLISTS'] = 'Listes';
-$LANG['TOOLSFORMANAGE'] = 'Des outils de gestion des listes sont disponibles à partir de chaque page d\'affichage des listes.						Symboles d\'édition situés dans le coin supérieur droit de la page afficheront les options d\'édition						pour cette liste.						Vous trouverez ci-dessous une liste des listes que vous êtes autorisé à modifier.';
+$LANG['TOOLSFORMANAGE'] = 'Des outils de gestion des listes sont disponibles à partir de chaque page d\'affichage des listes. Symboles d\'édition situés dans le coin supérieur droit de la
+	page afficheront les options d\'édition pour cette liste. Vous trouverez ci-dessous une liste des listes que vous êtes autorisé à modifier.';
 $LANG['EXSICCATII'] = 'Exsiccati';
-$LANG['ESCMOD'] = 'Le Module Exsiccati est activé pour ce portail..					L\'index exsiccati (listé ci-dessous) peut être consulté ou recherché par tout le monde.					Cependant, pour ajouter ou modifier des titres ou des séries exsiccati,					l\'utilisateur doit être administrateur pour au moins une collection.';
+$LANG['ESCMOD'] = 'Le Module Exsiccati est activé pour ce portail. L\'index exsiccati (listé ci-dessous) peut être consulté ou recherché par tout le monde. Cependant, pour
+	ajouter ou modifier des titres ou des séries exsiccati, l\'utilisateur doit être administrateur pour au moins une collection.';
 $LANG['NOTEDITCHECK'] = 'Vous n\'êtes autorisé à modifier aucune des listes';
-$LANG['PARA1'] = 'Des outils de gestion des données spécifiques à une collection particulière sont disponibles via la page de profil de la collection.					Cliquer sur un nom de collection dans la liste ci-dessous vous amènera à cette page pour cette collection donnée.					Une méthode supplémentaire pour accéder à cette page consiste à cliquer sur le nom de la collection dans le moteur de recherche de spécimens.					Le symbole d\'édition situé en haut à droite de la page Profil de la collection s\'ouvrira					le volet d\'édition et afficher une liste d\'options d\'édition.';
-$LANG['COLLLIST'] = 'Liste des collections que vous êtes autorisé à modifier';
-$LANG['OBSERV'] = 'Observations';
-$LANG['NOEDITCOLL'] = 'Vous n\'avez pas d\'autorisations d\'édition explicites pour une collection particulière';
-$LANG['PARA2'] = 'La gestion des données pour les projets d’observation est similaire à celle décrite dans le paragraphe précédent des collections.                                        Une différence est le projet d’observation générale. Ce projet a les propositions centrales : 1) Permettre aux utilisateurs enregistrés d\'envoyer une observation de terrain avec valeur multimédia.                                        2) Permettre aux récolecteurs d\'entrer les données de leur propre collection pour imprimer les étiquettes et de mettre les données à disposition des collections en obtenant les détails physiques au moyen de dons ou d\'échanges. Visitez le ';
+$LANG['COLLECTION_DESCRIPTION'] = "Les collections sont organisées par type (par ex. : spécimens conservés, spécimens fossiles, observations et observations de terrain issues de la recherche).
+	Les observations de terrain issues de la recherche constituent un type de collection spécialisé qui permet aux chercheurs de terrain de gérer leurs données et de
+	générer des étiquettes pour les spécimens ou les observations, le tout étant étroitement lié à leur compte utilisateur. Pour plus d'informations, consultez la";
 $LANG['SYMBDOCU'] = 'Documentation Symbiote';
-$LANG['FORMOREINFO'] = 'pour plus d\'informations sur les capacités de traitement des échantillons. A noter que les projets d\'observation ne sont pas activés sur tous les portails de données Symbiota';
-$LANG['OIVS'] = 'Soumission d’un bon multimédia d’observation';
-$LANG['NOOBSPROJ'] = 'Il n\'y a pas de Projets d\'Observation pour lesquels vous avez des autorisations';
-$LANG['OPM'] = 'Gestion de Projet d\'Observation';
+$LANG['PRESERVED_SPECIMENS'] = 'Spécimens conservés';
+$LANG['FOSSIL_SPECIMENS'] = 'Spécimens fossiles';
+$LANG['OBSERVATIONS'] = 'Observations';
+$LANG['GENERAL_OBSERVATIONS'] = 'Observations de terrain';
+$LANG['NOEDITCOLL'] = 'Vous n\'avez pas d\'autorisations d\'édition explicites pour une collection particulière';
 $LANG['PLEASE'] = 'S\'il te plaît';
 $LANG['LOGIN'] = 'vous connecter';
 $LANG['TOACCESS'] = ' pour accéder aux outils d\'édition.';
@@ -109,5 +110,4 @@ $LANG['DATA_AUTHORIZED_TO_EDIT'] = 'ensembles de données que vous êtes autoris
 $LANG['MANAGE_TAXON_THUMBNAILS'] = 'Gérer les miniatures de la carte du profil de taxonomie';
 $LANG['TAXINTER'] = 'Autorisations des Utilisateurs d\'Intérêt Taxonomique';
 $LANG['OTHER_CAT_TRANSFER'] = 'Outil de transfert de numéro de catalogue autre';
-
 ?>

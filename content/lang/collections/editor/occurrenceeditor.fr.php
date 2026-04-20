@@ -199,5 +199,6 @@ $LANG['ERROR_ARCHIVING_ASSOC'] = 'ERREUR - Archivage des informations sur les as
 $LANG['ERROR_ARCHIVING_MAT_SAMPLE'] = 'ERREUR - Archivage des informations sur l\'échantillon de matériau';
 $LANG['ERROR_CREATING_ARCHIVE'] = 'ERREUR – Création d\'une archive';
 $LANG['ERROR_DELETING_OCCURRENCE'] = 'ERREUR – Échec de la suppression de l\'occurrence source';
+$LANG['OPENS_NEW_TAB'] = ' (s\'ouvre dans un nouvel onglet)';
 
 ?>

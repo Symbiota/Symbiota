@@ -35,24 +35,8 @@ class SiteMapManager extends Manager{
 			$sql .= 'ORDER BY collectionname';
 			$rs = $this->conn->query($sql);
 			if($rs){
-				while($row = $rs->fetch_object()){
-					$name = $row->collectionname;
-					if ($row->collectioncode){ // If there's a collection code add it after institution code
-						$name .= ' (' . $row->institutioncode . ':' . $row->collectioncode . ')';
-					}
-					else{
-						$name .= ' (' . $row->institutioncode . ')';
-					}
-					$isCollAdmin = 0;
-					if($IS_ADMIN || in_array($row->collid, $adminArr)) $isCollAdmin = 0;
-					if($row->colltype == 'Observations'){
-						$retArr['o'][$row->collid]['name'] = $name;
-						$retArr['o'][$row->collid]['isadmin'] = $isCollAdmin;
-					}
-					else{
-						$retArr['s'][$row->collid]['name'] = $name;
-						$retArr['s'][$row->collid]['isadmin'] = $isCollAdmin;
-					}
+				while($r = $rs->fetch_object()){
+					$retArr[$r->colltype][$r->collid] = $r->collectionname . ' (' . $r->institutioncode . ($r->collectioncode ? ':' . $r->collectioncode : '') . ')';
 				}
 				$rs->free();
 			}

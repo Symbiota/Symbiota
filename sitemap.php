@@ -24,7 +24,7 @@ if(!$schemaVersion){
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<link href="<?= $CSS_BASE_PATH ?>/symbiota/sitemap.css" type="text/css" rel="stylesheet">
+	<link href="<?= $CSS_BASE_PATH ?>/symbiota/sitemap.css?ver=1" type="text/css" rel="stylesheet">
 	<script type="text/javascript" src="js/symb/shared.js"></script>
 	<style>
 		.nested-li {
@@ -412,82 +412,32 @@ if(!$schemaVersion){
 						</span>
 					</h2>
 					<p class="description">
-						<?= $LANG['PARA1'] ?>
+						<?= $LANG['COLLECTION_DESCRIPTION'] ?>
+						<a href="https://docs.symbiota.org/Collector_Observer_Guide/" target="_blank"><?= $LANG['SYMBDOCU'] ?></a>.
 					</p>
-					<h3 class="subheader">
-						<span>
-							<?= $LANG['COLLLIST'] ?>
-						</span>
-					</h3>
 					<div>
-						<ul>
 						<?php
+						$collTypeArr = array('Preserved Specimens','Fossil Specimens','Observations','General Observations');
 						$collArr = $smManager->getCollectionList();
-						if(isset($collArr['s'])){
-							foreach($collArr['s'] as $k => $cArr){
-								echo '<li>';
-								echo '<a href="' . $CLIENT_ROOT . '/collections/misc/collprofiles.php?collid=' . $k . '&emode=1">';
-								echo $cArr['name'];
-								echo '</a>';
-								echo '</li>';
+						if($collArr){
+							foreach($collTypeArr as $collTypeStr){
+								if(isset($collArr[$collTypeStr])){
+									$headerStr = $collTypeStr;
+									$langKey = str_replace(' ', '_', strtoupper($headerStr));
+									if(isset($LANG[$langKey])) $headerStr = $LANG[$langKey];
+									echo '<h3 class="subheader"><span>' . $headerStr . '</span></h3>';
+									echo '<ul>';
+									foreach($collArr[$collTypeStr] as $collid => $collName){
+										echo '<li><a href="' . $CLIENT_ROOT . '/collections/misc/collprofiles.php?collid=' . $collid . '&emode=1" >' .$collName. '</a></li>';
+									}
+									echo '</ul>';
+								}
 							}
 						}
 						else{
-							echo "<li>".$LANG['NOEDITCOLL']."</li>";
+							echo '<li>' . $LANG['NOEDITCOLL'] . '</li>';
 						}
 						?>
-						</ul>
-					</div>
-
-					<h2 class="subheader">
-						<span>
-							<?= $LANG['OBSERV'] ?>
-						</span>
-					</h2>
-					<p class="description">
-						<?= $LANG['PARA2'] ?>
-						<a href="https://docs.symbiota.org/Collector_Observer_Guide/" target="_blank"><?= $LANG['SYMBDOCU'] ?></a> <?= $LANG['FORMOREINFO'] ?>.
-					<p class="description">
-					<h3 class="subheader">
-						<span>
-							<?= $LANG['OIVS'] ?>
-						</span>
-					</h3>
-					<div>
-						<ul>
-							<?php
-							$obsManagementStr = '';
-							if(isset($collArr['o'])){
-								foreach($collArr['o'] as $k => $oArr){
-									?>
-									<li>
-										<a href="collections/editor/observationsubmit.php?collid=<?= $k ?>">
-											<?= $oArr['name'] ?>
-										</a>
-									</li>
-									<?php
-									if($oArr['isadmin']) $obsManagementStr .= '<li><a href="collections/misc/collprofiles.php?collid=' . $k . '&emode=1">' . htmlspecialchars($oArr['name'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a></li>\n";
-								}
-							}
-							else{
-								echo '<li>' . $LANG['NOOBSPROJ'] . '</li>';
-							}
-							?>
-						</ul>
-						<?php
-						if($obsManagementStr){
-							?>
-							<h3 class="subheader">
-								<span>
-									<?= $LANG['OPM'] ?>
-								</span>
-							</h3>
-							<ul>
-								<?= $obsManagementStr ?>
-							</ul>
-						<?php
-						}
-					?>
 					</div>
 					<?php
 				}
