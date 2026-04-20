@@ -12,14 +12,23 @@ class DynamicChecklistManager extends Manager {
 		parent::__destruct();
 	}
 
-	public function createChecklist($lat, $lng, $tidFilter, $radius){
+	public function createChecklist($lat, $lng, $taxon, $radius){
 		$dynPk = 0;
-		$sciname = '';
 		$radiusDisplay = 'RADIUS';
 		if($radius) $radiusDisplay = round($radius, 1);
-		if($tidFilter) $sciname = $this->getSciname($tidFilter) . ' within ';
-		$name = round($lat,5) . ' ' . round($lng,5) . ' &pm; ' . $radiusDisplay . ' km';
-		$detailStr = $sciname . $name;
+		$name =  round($lat,5) . ' ' . round($lng,5) . ' radius ' . $radiusDisplay . 'km';
+		$detailStr = $name;
+		$tidFilter = 0;
+		if($taxon){
+			if(is_numeric($taxon)){
+				$tidFilter = $taxon;
+				$detailStr = $this->getSciname($tidFilter) . ' ' . $name;
+			}
+			else{
+				$tidFilter = $this->getTid($taxon);
+				$detailStr = $taxon . ' ' . $name;
+			}
+		}
 		$expiration = date('Y-m-d',mktime(0, 0, 0, date('m'), date('d') + 7, date('Y')));
 		$uid = ($GLOBALS['SYMB_UID'] ? $GLOBALS['SYMB_UID'] : null);
 		$sql = 'INSERT INTO fmdynamicchecklists(name,details,expiration,uid) VALUES (?,?,?,?)';
@@ -33,11 +42,12 @@ class DynamicChecklistManager extends Manager {
 				}
 				else{
 					$specCnt = 0;
-					$radius = $GLOBALS['DYN_CHECKLIST_RADIUS'] ?? 10;
+					$radiusUnit = $GLOBALS['DYN_CHECKLIST_RADIUS'] ?? 10;
+					$radius = $radiusUnit;
 					$loopCnt = 1;
 					while($specCnt < 2500 && $loopCnt < 10){
-						$radius = $radius * $loopCnt;
-						$specCnt .+ $this->addTaxaChecklist($dynPk, $lat, $lng, $radius, $tidFilter);
+						$radius += $radiusUnit;
+						$specCnt += $this->addTaxaChecklist($dynPk, $lat, $lng, $radius, $tidFilter);
 						$loopCnt++;
 					}
 					$this->updateTitle($dynPk, $radius);
@@ -58,10 +68,10 @@ class DynamicChecklistManager extends Manager {
 			$lng1 = $lng - $lngRadius;
 			$lng2 = $lng + $lngRadius;
 
-			$typeStr = 'idddd';
-			$paramArr = array($dynPk, $lat1, $lat2, $lng1, $lng2);
+			$typeStr = 'dddd';
+			$paramArr = array($lat1, $lat2, $lng1, $lng2);
 			$sql = 'INSERT IGNORE INTO fmdyncltaxalink (dynclid, tid)
-				SELECT DISTINCT ? AS dynpk, IF(t.rankid=220,t.tid,ts2.parenttid) as tid
+				SELECT DISTINCT ' . $dynPk . ' AS dynpk, IF(t.rankid=220,t.tid,ts2.parenttid) as tid
 				FROM omoccurgeoindex o INNER JOIN taxstatus ts ON o.tid = ts.tid
 				INNER JOIN taxstatus ts2 ON ts.tidaccepted = ts2.tid
 				INNER JOIN taxa t ON ts2.tid = t.tid ';
@@ -73,7 +83,7 @@ class DynamicChecklistManager extends Manager {
 			if($tidFilter){
 				$typeStr .= 'i';
 				$paramArr[] = $tidFilter;
-				$sql .= 'AND e.parentTid = ?';
+				$sql .= 'AND e.taxauthid = 1 AND e.parentTid = ?';
 			}
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param($typeStr, ...$paramArr);
@@ -83,7 +93,6 @@ class DynamicChecklistManager extends Manager {
 				$stmt->close();
 			}
 		}
-		echo 'cnt: ' . $recordCnt; exit;
 		return $recordCnt;
 	}
 
@@ -101,7 +110,7 @@ class DynamicChecklistManager extends Manager {
 	}
 
 	private function updateTitle($dynPk, $radius){
-		$sql = 'UPDATE fmdynamicchecklists SET name = REPLACE(name, " RADIUS ", " ' . $radius . ' "), details = REPLACE(details, " 0 ", " 30 ") WHERE dynclid = ?';
+		$sql = 'UPDATE fmdynamicchecklists SET name = REPLACE(name, "RADIUS", "' . $radius . '"), details = REPLACE(details, "RADIUS", "' . $radius . '") WHERE dynclid = ?';
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('i', $dynPk);
 			$stmt->execute();
@@ -109,7 +118,7 @@ class DynamicChecklistManager extends Manager {
 		}
 	}
 
-	public function getTid($sciname){
+	private function getTid($sciname){
 		$tid = 0;
 		$sql = 'SELECT tid FROM taxa WHERE sciname = ?';
 		if($stmt = $this->conn->prepare($sql)){

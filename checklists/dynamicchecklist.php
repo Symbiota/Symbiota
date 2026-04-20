@@ -12,15 +12,13 @@ $lng = filter_var($_POST['lng'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW
 $radius = $_POST['radius'] ? filter_var($_POST['radius'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $radiusUnits = $_POST['radiusunits'];
 $interface = $_POST['interface'];
-$taxa = $_POST['taxa'];
-$tid = filter_var($_POST['tid'], FILTER_SANITIZE_NUMBER_INT);
-
+$taxon = $_POST['taxa'];
+if(!empty($_POST['tid'])) $taxon = filter_var($_POST['tid'], FILTER_SANITIZE_NUMBER_INT);
 if($radius && $radiusUnits == 'mi') $radius = round($radius * 1.6);
-if(!$tid && $taxa) $tid = $dynClManager->getTid($taxa);
 
 $dynClManager = new DynamicChecklistManager();
 
-if($dynClid = $dynClManager->createChecklist($lat, $lng, $tid, $radius)){
+if($dynClid = $dynClManager->createChecklist($lat, $lng, $taxon, $radius)){
 	if($interface == 'key'){
 		header('Location: ' . $CLIENT_ROOT . '/ident/key.php?dynclid=' . $dynClid . '&taxon=All Species');
 	}
