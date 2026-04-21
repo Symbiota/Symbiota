@@ -1148,6 +1148,22 @@ $traitArr = $indManager->getTraitArr();
 							</fieldset>
 							<?php
 						}
+						if(array_key_exists('ref',$occArr)){
+							?>
+							<fieldset>
+								<legend><?php echo $LANG['ASSOCIATED_REFS']; ?></legend>
+								<?php
+								foreach($occArr['ref'] as $refid => $refArr){
+									echo '<div id="occur-ref" class="occur-ref">';
+									if($refArr['url']) echo '<a href="' . $refArr['url'] . '" target="_blank">';
+									echo $refArr['display'];
+									if($refArr['url']) echo '</a>';
+									echo '</div>';
+								}
+								?>
+							</fieldset>
+							<?php
+						}
 						?>
 						<div id="contact-div">
 							<?php
@@ -1191,22 +1207,6 @@ $traitArr = $indManager->getTraitArr();
 								}
 								?>
 							</div>
-							<?php
-						}
-						if(array_key_exists('ref',$occArr)){
-							?>
-							<fieldset>
-								<legend><?php echo $LANG['ASSOCIATED_REFS']; ?></legend>
-								<?php
-								foreach($occArr['ref'] as $refid => $refArr){
-									echo '<div id="occur-ref" class="occur-ref">';
-									if($refArr['url']) echo '<a href="' . $refArr['url'] . '" target="_blank">';
-									echo $refArr['display'];
-									if($refArr['url']) echo '</a>';
-									echo '</div>';
-								}
-								?>
-							</fieldset>
 							<?php
 						}
 						?>
