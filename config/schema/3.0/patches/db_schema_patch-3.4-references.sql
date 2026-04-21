@@ -14,6 +14,7 @@ CREATE TABLE referenceobject_new (
     type VARCHAR(100),
     taxonRemarks TEXT,
     datasetID INT(11),
+    url VARCHAR(255),
     modifiedByUid INT(11),
     modifiedTimestamp DATETIME,
     initialTimestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -28,6 +29,7 @@ INSERT INTO referenceobject_new (
     source,
     bibliographicCitation,
     identifier,
+    url,
 	modifiedByUid,
     modifiedTimestamp,
     initialTimestamp
@@ -40,6 +42,7 @@ SELECT
     secondarytitle,
     cheatcitation,
     guid,
+    url,
     modifieduid,
     modifiedtimestamp,
     initialtimestamp
