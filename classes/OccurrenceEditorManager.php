@@ -2379,6 +2379,28 @@ class OccurrenceEditorManager {
 		return false; 
 	}
 
+	// Delete reference
+	public function deleteReferenceLink($occid,$refid) {
+		$status = false;
+		$sql = 'DELETE FROM referenceoccurlink WHERE occid = ? AND refid = ?';
+		try{
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('ii', $occid,$refid);
+				if($stmt->execute()){
+					$status = true;
+				}
+				else{
+					$this->errorArr[] = $this->conn->error;
+				}
+				$stmt->close();
+			}
+		}
+		catch(mysqli_sql_exception $e){
+			$this->errorArr[] = $e->getMessage();
+		}
+		return $status;
+	}
+
 	//OCR label processing methods
 	public function getRawTextFragments() {
 		$retArr = array();

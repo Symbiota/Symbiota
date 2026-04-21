@@ -397,6 +397,13 @@ if($SYMB_UID){
 				}
 				else $statusStr = 'Error adding reference' . ': ' . $occManager->getErrorStr();
 			}
+			elseif($action == 'deleteReferenceLink'){
+				$refid = filter_var($_POST['refid'] ?? null, FILTER_SANITIZE_NUMBER_INT);
+				if($occManager->deleteReferenceLink($occId, $refid)){
+					$statusStr = 'Reference deleted successfully';
+				}
+				else $statusStr = 'Error deleting reference' . ': ' . $occManager->getErrorStr();
+			}
 		}
 	}
 

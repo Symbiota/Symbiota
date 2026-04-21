@@ -815,18 +815,34 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 		<div style="clear:both;">
 			<?php
 			foreach($referenceArr as $refId => $rArr){
-				?>
-				<div style="margin:15px;">
-					<ul>
-					<li>
-				<div style="font-weight:bold;margin-bottom:5px;">
-					<?php echo $rArr['display']; ?>
-					<a href="<?php echo $CLIENT_ROOT; ?>/references/refdetails.php?refid=<?php echo $refId; ?>">
-						<img class="icon-img" src="../../images/edit.png">
-					</a>
-				</div>
-				</div>
-				<?php
+
+				echo '<div style="margin:15px;">';
+
+				echo '<div style="font-weight:bold;margin-bottom:5px;">';
+				echo $rArr['display'];
+				echo '</div>';
+
+				echo '<div style="display:inline-flex; align-items:center; gap:6px;">';
+
+				echo '<a href="' . $CLIENT_ROOT . '/references/refdetails.php?refid=' . htmlspecialchars($refId, ENT_QUOTES) . '">
+						<img class="icon-img" src="../../images/edit.png" style="width:14px;">
+					</a>';
+
+				echo '<form method="post" action="occurrenceeditor.php" style="margin:0;">
+						<input type="hidden" name="refid" value="'.htmlspecialchars($refId, ENT_QUOTES).'">
+						<input type="hidden" name="occid" value="'.htmlspecialchars($occid, ENT_QUOTES).'">
+						<input type="hidden" name="submitaction" value="deleteReferenceLink">
+
+						<button type="submit"
+							style="border:none;background:none;padding:0;cursor:pointer;"
+							onclick="return confirm(\'Remove this reference link?\')">
+							<img src="../../images/del.png" style="width:14px;">
+						</button>
+					</form>';
+
+				echo '</div>';
+
+				echo '</div>';
 			}
 			?>
 		</div>
