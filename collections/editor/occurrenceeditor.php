@@ -390,6 +390,13 @@ if($SYMB_UID){
 				}
 				else $statusStr = $LANG['ERROR_ADDING_GEN'] . ': ' . $occManager->getErrorStr();
 			}
+			elseif($action == 'addReference'){
+				$refid = filter_var($_POST['refid'] ?? null, FILTER_SANITIZE_NUMBER_INT);
+				if($occManager->addReferenceLink($occId, $refid)){
+					$statusStr = 'Reference added successfully';
+				}
+				else $statusStr = 'Error adding reference' . ': ' . $occManager->getErrorStr();
+			}
 		}
 	}
 

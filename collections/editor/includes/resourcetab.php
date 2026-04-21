@@ -22,6 +22,8 @@ $defaultRelationshipArr = $occManager->getRelationshipArr();
 $resourceRelationshipArr = $occManager->getResourceRelationshipArr();
 
 $genticArr = $occManager->getGeneticArr();
+$referenceArr = $occManager->getReferenceArr();
+$allRefsArr = $occManager->getAllReferences();
 
 $dupManager = new OccurrenceDuplicate();
 $dupClusterArr = $dupManager->getClusterArr($occid);
@@ -766,6 +768,63 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 							</div>
 						</form>
 					</fieldset>
+				</div>
+				<?php
+			}
+			?>
+		</div>
+	</fieldset>
+</div>
+<div id="referencediv">
+	<fieldset>
+		<legend><?php echo 'References'; ?></legend>
+		<?php if(!$referenceArr){
+			echo '<div>No Linked References</div>';
+		} ?>
+		<div style="float:right; display:<?php echo ($referenceArr?'block':'none'); ?>;">
+			<a href="#" onclick="toggle('refadddiv');return false;" title="<?php echo 'Add new reference'; ?>" ><img class="icon-img" src="../../images/add.png"></a>
+		</div>
+		<div id="refadddiv" style="display:<?php echo ($referenceArr?'none':'block'); ?>;">
+			<fieldset>
+				<legend><b><?php echo 'Add New Reference'; ?></b></legend>
+				<form name="addrefform" method="post" action="occurrenceeditor.php">
+					<div style="margin:2px;">
+						<label for="ref-resourcename"><?php echo $LANG['NAME']; ?>:</label><br/>
+						<select name="refid" id="refid" style="width:300px;">
+							<option value="">Select Reference</option>
+							<?php
+							foreach($allRefsArr as $id => $ref){
+								echo '<option value="'.htmlspecialchars($id, ENT_QUOTES).'">'
+									. htmlspecialchars($ref['display'], ENT_QUOTES) .
+									'</option>';
+							}
+							?>
+						</select>
+					</div>
+					<div style="margin:2px;">
+						<input name="submitaction" type="hidden" value="addReference" />
+						<input name="tabtarget" type="hidden" value="4" />
+						<button name="subbut" type="submit" class="button">
+							Add Link to Reference
+						</button>
+						<input name="occid" type="hidden" value="<?php echo $occid; ?>" />
+					</div>
+				</form>
+			</fieldset>
+		</div>
+		<div style="clear:both;">
+			<?php
+			foreach($referenceArr as $refId => $rArr){
+				?>
+				<div style="margin:15px;">
+					<ul>
+					<li>
+				<div style="font-weight:bold;margin-bottom:5px;">
+					<?php echo $rArr['display']; ?>
+					<a href="<?php echo $CLIENT_ROOT; ?>/references/refdetails.php?refid=<?php echo $refId; ?>">
+						<img class="icon-img" src="../../images/edit.png">
+					</a>
+				</div>
 				</div>
 				<?php
 			}

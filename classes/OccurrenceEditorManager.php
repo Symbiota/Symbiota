@@ -2367,6 +2367,18 @@ class OccurrenceEditorManager {
 		return $status;
 	}
 
+	// Add reference
+	public function addReferenceLink($occid, $refid) { 
+		$sql = "INSERT IGNORE INTO referenceoccurlink (refid, occid) VALUES (?, ?)"; 
+		
+		if($stmt = $this->conn->prepare($sql)) { 
+			$stmt->bind_param("ii", $refid, $occid); 
+			$result = $stmt->execute(); 
+			$stmt->close(); return $result;
+		} 
+		return false; 
+	}
+
 	//OCR label processing methods
 	public function getRawTextFragments() {
 		$retArr = array();

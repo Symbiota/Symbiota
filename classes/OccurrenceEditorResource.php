@@ -145,5 +145,62 @@ class OccurrenceEditorResource extends OccurrenceEditorManager {
 		}
 		return $retArr;
 	}
+
+	//Reference link functions
+	public function getReferenceArr(){
+		$sql = 'SELECT r.refid, r.bibliographicCitation,
+				CONCAT("https://doi.org/",r.identifier) AS url
+				FROM referenceobject r
+				INNER JOIN referenceoccurlink l ON r.refid = l.refid
+				WHERE (l.occid = ?)
+				ORDER BY r.bibliographicCitation';
+
+		$results = [];
+
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $this->occid);
+			$stmt->execute();
+
+			if($rs = $stmt->get_result()){
+				while($r = $rs->fetch_object()){
+					$results[$r->refid] = [
+						'display' => $r->bibliographicCitation,
+						'url' => $r->url
+					];
+				}
+				$rs->free();
+			}
+
+			$stmt->close();
+		}
+
+		return $results;
+	}
+
+	public function getAllReferences(){
+		$sql = 'SELECT r.refid, r.bibliographicCitation
+				FROM referenceobject r
+				ORDER BY r.bibliographicCitation';
+
+		$results = [];
+
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->execute();
+
+			if($rs = $stmt->get_result()){
+				while($r = $rs->fetch_object()){
+					$results[$r->refid] = [
+						'display' => $r->bibliographicCitation
+					];
+				}
+				$rs->free();
+			}
+
+			$stmt->close();
+		}
+
+		return $results;
+	}
+
 }
 ?>
