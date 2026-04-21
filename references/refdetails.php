@@ -80,22 +80,39 @@ switch($action){
             error_log("MISSING targetid or type");
         }
         break;
+    case 'linkoccur':
+        $targetid = Sanitize::int($_POST['targetid'] ?? 0);
+        $type = $_POST['type'] ?? '';
 
+        error_log("LINKOCCUR HIT: targetid=$targetid type=$type");
+
+        if($targetid && $type){
+            $statusStr = $refManager->linkOccurFromResource($refId,$targetid,$type);
+            error_log("RESULT: " . $statusStr);
+        } else {
+            error_log("MISSING targetid or type");
+        }
+        break;
     case 'deletereflink':
         $targetid = Sanitize::int($_POST['targetid'] ?? 0);
         $type = $_POST['type'] ?? '';
 
+		$statusStr = $refManager->deleteRefLink($refId, $targetid, $type);
         error_log("DELETE REF LINK: targetid=$targetid type=$type");
+        break;
+	case 'collocclink':
+		$statusStr = $refManager->linkCollFromOccur($refId);
+		error_log("ADD REF LINK FROM COLL: " . $statusStr);
         break;
 	case 'deleteoccurrences':
 		if(!empty($_POST['scbox']) && is_array($_POST['scbox'])){
 			foreach($_POST['scbox'] as $occid){
 				$occid = Sanitize::int($occid);
 				if($occid){
-					$refManager->deleteRefLink($refId, $occid, 'occurrence');
+					$statusStr = $refManager->deleteRefLink($refId, $occid, 'occurrence');
 				}
 			}
-			$statusStr = 'Selected samples removed successfully';
+			error_log("STATUS: " . $statusStr);
 		}
 		break;
 }
@@ -700,6 +717,8 @@ else{
 							<div style="width:100%;">
 								<form name='checklistform' id='checklistform' action='refdetails.php' method='post'>
 									<input type="hidden" name="refid" value="<?php echo $refId; ?>">
+									<input type="hidden" name="action" value="addreflink">
+									<input type="hidden" name="type" value="checklist">
 									<fieldset>
 										<legend><b>Checklists</b></legend>
 										<div>
@@ -720,12 +739,8 @@ else{
 
 											?>
 										</select>
-											<form method="post" action="refdetails.php">
-												<input type="hidden" name="action" value="addreflink">
-												<input type="hidden" name="type" value="checklist">
-												<input type="hidden" name="refid" value="<?= $refId ?>">
-												<button type="submit">Add</button>
-											</form>
+											<button type="submit">Add</button>
+										</form>
 										</div>
 										<hr />
 										<div id="checklistlistdiv">
@@ -749,6 +764,17 @@ else{
 													echo '</button>';
 													echo '</form>';
 
+													echo '<form method="post" action="refdetails.php" style="margin:0;">';
+													echo '<input type="hidden" name="refid" value="'.$refId.'">';
+													echo '<input type="hidden" name="targetid" value="'.$k.'">';
+													echo '<input type="hidden" name="type" value="checklist">';
+													echo '<input type="hidden" name="action" value="linkoccur">';
+													echo '<button type="submit"
+														onclick="return confirm(\'Link ALL occurrences from this checklist to the reference?\')">
+														Link Associated Occurrences To Reference
+														</button>';	
+													echo '</form>';
+
 													echo '</li>';
 												}
 												echo '</ul>';
@@ -764,6 +790,9 @@ else{
 							<div style="width:100%;">
 								<form name='datasetform' id='datasetform' action='refdetails.php' method='post'>
 									<input type="hidden" name="refid" value="<?php echo $refId; ?>">
+									<input type="hidden" name="action" value="addreflink">
+									<input type="hidden" name="type" value="dataset">
+
 									<fieldset>
 										<legend><b>Datasets</b></legend>
 										<div>
@@ -784,12 +813,8 @@ else{
 
 											?>
 										</select>
-											<form method="post" action="refdetails.php">
-												<input type="hidden" name="action" value="addreflink">
-												<input type="hidden" name="type" value="dataset">
-												<input type="hidden" name="refid" value="<?= $refId ?>">
-												<button type="submit">Add</button>
-											</form>
+											<button type="submit">Add</button>
+										</form>
 										</div>
 										<hr />
 										<div id="datasetlistdiv">
@@ -797,19 +822,33 @@ else{
 											if($refDatasetArr){
 												echo '<ul>';
 												foreach($refDatasetArr as $k => $v){
-													echo '<li>';
+													echo '<li style="display:flex; align-items:center; gap:6px;">';
+
 													echo '<a href="../collections/datasets/datasetmanager.php?datasetid=' . htmlspecialchars($k, ENT_QUOTES) . '">'
 														. htmlspecialchars($v, ENT_QUOTES) .
-														'</a>';
-													echo '<form method="post" action="refdetails.php" style="display:inline;margin:0;padding:0;">
-														<input type="hidden" name="refid" value="'.$refId.'">
-														<input type="hidden" name="targetid" value="'.$k.'">
-														<input type="hidden" name="type" value="dataset">
-														<input type="hidden" name="action" value="deletereflink">
-														<button type="submit" style="border:none;background:none;padding:0;margin:0;display:inline;">
-															<img src="../images/del.png" style="width:14px;vertical-align:middle;" title="Delete link">
-														</button>
-													</form>';
+														'</a>';	
+
+													echo '<form method="post" action="refdetails.php" style="margin:0;">';
+													echo '<input type="hidden" name="refid" value="'.$refId.'">';
+													echo '<input type="hidden" name="targetid" value="'.$k.'">';
+													echo '<input type="hidden" name="type" value="dataset">';
+													echo '<input type="hidden" name="action" value="deletereflink">';
+													echo '<button type="submit" style="border:none;background:none;padding:0;">';
+													echo '<img src="../images/del.png" style="width:14px;">';
+													echo '</button>';
+													echo '</form>';
+													
+													echo '<form method="post" action="refdetails.php" style="margin:0;">';
+													echo '<input type="hidden" name="refid" value="'.$refId.'">';
+													echo '<input type="hidden" name="targetid" value="'.$k.'">';
+													echo '<input type="hidden" name="type" value="dataset">';
+													echo '<input type="hidden" name="action" value="linkoccur">';
+													echo '<button type="submit"
+														onclick="return confirm(\'Link ALL occurrences from this dataset to the reference?\')">
+														Link Associated Occurrences To Reference
+														</button>';													
+													echo '</form>';
+
 													echo '</li>';
 												}
 												echo '</ul>';
@@ -825,6 +864,8 @@ else{
 								<div style="width:100%;">
 								<form name='collectionform' id='collectionform' action='refdetails.php' method='post'>
 									<input type="hidden" name="refid" value="<?php echo $refId; ?>">
+									<input type="hidden" name="action" value="addreflink">
+									<input type="hidden" name="type" value="collection">
 									<fieldset>
 										<legend><b>Collections</b></legend>
 										<div>
@@ -845,12 +886,8 @@ else{
 
 											?>
 										</select>
-											<form method="post" action="refdetails.php">
-												<input type="hidden" name="action" value="addreflink">
-												<input type="hidden" name="type" value="collection">
-												<input type="hidden" name="refid" value="<?= $refId ?>">
-												<button type="submit">Add</button>
-											</form>
+											<button type="submit">Add</button>
+										</form>
 										</div>
 										<hr />
 										<div id="collectionlistdiv">
@@ -879,6 +916,16 @@ else{
 												echo '<div><b>There are currently no collections linked to this reference.</b></div>';
 											}
 											?>
+										</div>
+										<div id="collectionoccurlinkdiv">
+											<form method="post" action="refdetails.php" style="margin:0;">
+													<input type="hidden" name="refid" value="<?php echo $refId; ?>">
+													<input type="hidden" name="action" value="collocclink">
+													<button type="submit"
+														onclick="return confirm('This will link all collections associated with linked occurrences. Continue?')">
+														Link Collections to Reference Based on Occurrences
+													</button>
+											</form>
 										</div>
 									</fieldset>
 								</form>

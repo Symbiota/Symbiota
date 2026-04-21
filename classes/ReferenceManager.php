@@ -456,38 +456,6 @@ class ReferenceManager{
 		return $statusStr;
 	}
 
-	//Get and set functions
-	public function getrefid(){
-		return $this->refid;
-	}
-
-	private function cleanOutStr($str){
-		$newStr = str_replace('"',"&quot;",$str);
-		$newStr = str_replace("'","&apos;",$newStr);
-		//$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
-	}
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
-	}
-
-	private function cleanTxtStr($str){
-		if($str){
-			$newStr = trim($str);
-			$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-			$newStr = $this->conn->real_escape_string($newStr);
-			$newStr = '"'.$newStr.'"';
-		}
-		else{
-			$newStr = 'NULL';
-		}
-		return $newStr;
-	}
-
 	public function batchAddLink($postArr){
 		$cnt = 0;
 		if($postArr['catalogNumbers']){
@@ -533,6 +501,46 @@ class ReferenceManager{
 		];
 	}
 
+	public function linkOccurFromResource($refid, $targetid, $type){
+		$statusStr = '';
+
+		switch($type){
+			case 'checklist':
+				$sql = 'INSERT IGNORE INTO referenceoccurlink (refid, occid)
+					SELECT ?, occid
+					FROM fmvouchers
+					WHERE clid = ?';
+				break;
+
+			case 'dataset':
+				$sql = 'INSERT IGNORE INTO referenceoccurlink (refid, occid)
+					SELECT ?, occid
+					FROM omoccurdatasetlink
+					WHERE datasetid = ?';
+				break;
+
+			default:
+				return 'ERROR: Invalid link type';
+		}
+
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('ii', $refid, $targetid);
+
+			if($stmt->execute()){
+				$affected = $stmt->affected_rows;
+				$statusStr = "Success: $affected occurrence links added";
+			} else {
+				$statusStr = 'ERROR: ' . $stmt->error;
+			}
+
+			$stmt->close();
+		} else {
+			$statusStr = 'ERROR: Failed to prepare statement';
+		}
+
+		return $statusStr;
+	}
+
 	private function getOccid($catNum, $method){
 		$occArr = array();
 		if(!$method || !in_array($method,array('allid','catnum','other'))) $method = 'allid';
@@ -572,6 +580,64 @@ class ReferenceManager{
 			$stmt->close();
 		}
 		return $status;
+	}
+
+	public function linkCollFromOccur($refid){
+
+		$sql = 'INSERT IGNORE INTO referencecollectionlink (refid, collid)
+			SELECT DISTINCT ?, o.collid
+			FROM referenceoccurlink r
+			JOIN omoccurrences o ON r.occid = o.occid
+			WHERE r.refid = ?';
+
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('ii', $refid, $refid);
+
+			if($stmt->execute()){
+				$affected = $stmt->affected_rows;
+				$statusStr = "Success: $affected collection links added";
+			} else {
+				$statusStr = 'ERROR: ' . $stmt->error;
+			}
+
+			$stmt->close();
+		} else {
+			$statusStr = 'ERROR: Failed to prepare statement';
+		}
+
+		return $statusStr;
+	}
+
+		//Get and set functions
+	public function getrefid(){
+		return $this->refid;
+	}
+
+	private function cleanOutStr($str){
+		$newStr = str_replace('"',"&quot;",$str);
+		$newStr = str_replace("'","&apos;",$newStr);
+		//$newStr = $this->conn->real_escape_string($newStr);
+		return $newStr;
+	}
+
+	private function cleanInStr($str){
+		$newStr = trim($str);
+		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
+		$newStr = $this->conn->real_escape_string($newStr);
+		return $newStr;
+	}
+
+	private function cleanTxtStr($str){
+		if($str){
+			$newStr = trim($str);
+			$newStr = preg_replace('/\s\s+/', ' ',$newStr);
+			$newStr = $this->conn->real_escape_string($newStr);
+			$newStr = '"'.$newStr.'"';
+		}
+		else{
+			$newStr = 'NULL';
+		}
+		return $newStr;
 	}
 }
 ?>
