@@ -34,12 +34,13 @@ class OccurrenceDataset {
 		$retArr = array();
 		if ($dsid) {
 			//Get and return individual dataset
-			$sql = 'SELECT datasetid, IFNULL(datasetName, name) as datasetName, notes, description, uid, sortsequence, initialtimestamp FROM omoccurdatasets WHERE (datasetid = ' . $dsid . ') AND ispublic=1';
+			$sql = 'SELECT datasetid, IFNULL(datasetName, name) as datasetName, notes, description, bibliographicCitation, uid, sortsequence, initialtimestamp FROM omoccurdatasets WHERE (datasetid = ' . $dsid . ') AND ispublic=1';
 			$rs = $this->conn->query($sql);
 			while ($r = $rs->fetch_object()) {
 				$retArr['name'] = $r->datasetName;
 				$retArr['notes'] = $r->notes;
 				$retArr['description'] = $r->description;
+				$retArr['bibliographicCitation'] = $r->bibliographicCitation;
 				$retArr['uid'] = $r->uid;
 				$retArr['sort'] = $r->sortsequence;
 				$retArr['ts'] = $r->initialtimestamp;
@@ -53,12 +54,13 @@ class OccurrenceDataset {
 		$retArr = array();
 		if ($GLOBALS['SYMB_UID'] && $dsid) {
 			//Get and return individual dataset
-			$sql = 'SELECT datasetid, IFNULL(datasetName, name) as datasetName, notes, description, uid, sortsequence, initialtimestamp, ispublic FROM omoccurdatasets WHERE (datasetid = ' . $dsid . ') ';
+			$sql = 'SELECT datasetid, IFNULL(datasetName, name) as datasetName, notes, description, bibliographicCitation, uid, sortsequence, initialtimestamp, ispublic FROM omoccurdatasets WHERE (datasetid = ' . $dsid . ') ';
 			$rs = $this->conn->query($sql);
 			while ($r = $rs->fetch_object()) {
 				$retArr['name'] = $r->datasetName;
 				$retArr['notes'] = $r->notes;
 				$retArr['description'] = $r->description;
+				$retArr['bibliographicCitation'] = $r->bibliographicCitation;
 				$retArr['uid'] = $r->uid;
 				$retArr['sort'] = $r->sortsequence;
 				$retArr['ts'] = $r->initialtimestamp;
@@ -110,6 +112,37 @@ class OccurrenceDataset {
 			$rs1->free();
 		}
 		return $retArr;
+	}
+
+	// Associated References
+	public function getReferences($datasetID){
+		$sql = 'SELECT r.refid, r.bibliographicCitation,
+				CONCAT("https://doi.org/",r.identifier) AS url
+				FROM referenceobject r
+				INNER JOIN referencedatasetlink l ON r.refid = l.refid
+				WHERE (l.datasetid = ?)
+				ORDER BY r.bibliographicCitation';
+
+		$results = [];
+
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $datasetID);
+			$stmt->execute();
+
+			if($rs = $stmt->get_result()){
+				while($r = $rs->fetch_object()){
+					$results[$r->refid] = [
+						'display' => $r->bibliographicCitation,
+						'url' => $r->url
+					];
+				}
+				$rs->free();
+			}
+
+			$stmt->close();
+		}
+
+		return $results;
 	}
 
 	public function editDataset($dsid, $name, $notes, $description, $ispublic) {

@@ -43,13 +43,44 @@ $ocArr = $datasetManager->getOccurrences($datasetid);
     <ul>
       <!-- Metadata -->
       <div><?php echo $dArr['description'] ;?></div>
+
+	 <!-- Citation Summary -->
+		<?php 
+		
+		if ($dArr['bibliographicCitation']) {
+			?>
+			<div><h2><b> Dataset citation: </b></h2><?php echo $dArr['bibliographicCitation'];?></div>
+		<?php
+		}
+		?>
+
       <!-- Occurrences Summary -->
+	   	<div><h2><b> Associated Occurrences: </b></h2>
+
       <p><?php echo $LANG['INCLUDES']; ?> <?php echo count($ocArr); ?> <?php echo $LANG['RECORDS']; ?></p>
 
       <p><a class="btn" href="<?php echo htmlspecialchars($searchUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ;?>"><?php echo $LANG['VIEW_AND_DOWNLOAD']; ?></a></p>
       <p><a class="btn" href="<?php echo htmlspecialchars($tableUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ;?>"><?php echo $LANG['VIEW_SAMPLE']; ?></a></p>
       <p><a class="btn" href="<?php echo htmlspecialchars($taxaUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ;?>"><?php echo $LANG['VIEW_LIST']; ?></a></p>
       <!-- <p><a href="#">Download this Dataset</a></p> -->
+
+	<!-- Associated References -->
+		<?php 
+		$referenceArr = $datasetManager -> getReferences($datasetid);
+		if ($dArr['bibliographicCitation']) {
+			?>
+		<div><h2><b> Associated References: </b></h2></div>
+			<?php
+								foreach($referenceArr as $refid => $refArr){
+									echo '<div id="occur-ref" class="occur-ref">';
+									if($refArr['url']) echo '<a href="' . $refArr['url'] . '" target="_blank">';
+									echo $refArr['display'];
+									if($refArr['url']) echo '</a>';
+									echo '</div>';
+								}
+		}
+		?>
+
     </ul>
 		</div>
 		<?php
