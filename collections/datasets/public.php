@@ -67,17 +67,17 @@ $ocArr = $datasetManager->getOccurrences($datasetid);
 	<!-- Associated References -->
 		<?php 
 		$referenceArr = $datasetManager -> getReferences($datasetid);
-		if ($dArr['bibliographicCitation']) {
+		if ($referenceArr) {
 			?>
 		<div><h2><b> Associated References: </b></h2></div>
 			<?php
-								foreach($referenceArr as $refid => $refArr){
-									echo '<div id="occur-ref" class="occur-ref">';
-									if($refArr['url']) echo '<a href="' . $refArr['url'] . '" target="_blank">';
-									echo $refArr['display'];
-									if($refArr['url']) echo '</a>';
-									echo '</div>';
-								}
+			foreach($referenceArr as $refid => $refArr){
+				echo '<div id="occur-ref" class="occur-ref">';
+				if($refArr['url']) echo '<a href="' . $refArr['url'] . '" target="_blank">';
+				echo $refArr['display'];
+				if($refArr['url']) echo '</a>';
+				echo '</div>';
+			}
 		}
 		?>
 

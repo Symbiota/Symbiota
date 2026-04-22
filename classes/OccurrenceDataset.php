@@ -116,8 +116,7 @@ class OccurrenceDataset {
 
 	// Associated References
 	public function getReferences($datasetID){
-		$sql = 'SELECT r.refid, r.bibliographicCitation,
-				CONCAT("https://doi.org/",r.identifier) AS url
+		$sql = 'SELECT r.refid, r.bibliographicCitation, r.url
 				FROM referenceobject r
 				INNER JOIN referencedatasetlink l ON r.refid = l.refid
 				WHERE (l.datasetid = ?)
