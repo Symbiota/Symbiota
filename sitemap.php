@@ -118,6 +118,12 @@ if(!$schemaVersion){
 			<ul>
 				<li><a href="collections/datasets/publiclist.php"><?= $LANG['ALLPUBDAT'] ?></a></li>
 			</ul>
+			<div id="references">
+				<h2><?= $LANG['REFERENCES'] ?></h2>
+			</div>
+			<ul>
+				<li><a href="references/index.php"><?= $LANG['ALLPUBREF'] ?></a></li>
+			</ul>
 			<div id="dynamiclists"><h2><?= $LANG['DYNAMIC'] ?></h2></div>
 			<ul>
 				<li>

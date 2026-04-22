@@ -449,7 +449,7 @@ else{
 							</div>
 
 							<div class="fieldGroupDiv">
-								<b>Bibliographic Citation:</b>
+								<b>Bibliographic Citation (required):</b>
 								<textarea name="bibliographicCitation" id="bibliographicCitation"><?php echo $refArr['bibliographicCitation']; ?></textarea>
 							</div>
 

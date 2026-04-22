@@ -109,5 +109,7 @@ $LANG['DATA_AUTHORIZED_TO_EDIT'] = 'datasets you are authorized to edit';
 $LANG['MANAGE_TAXON_THUMBNAILS'] = 'Manage Taxon Profile Map Thumbnails';
 $LANG['TAXINTER'] = 'Taxonomic Interest User Permissions ';
 $LANG['OTHER_CAT_TRANSFER'] = 'Other Catalog Number Transfer Tool';
+$LANG['REFERENCES'] = 'References';
+$LANG['ALLPUBREF'] = 'All References';
 
 ?>
