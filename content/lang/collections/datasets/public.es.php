@@ -14,4 +14,7 @@ $LANG['RECORDS'] = 'registros.';
 $LANG['VIEW_AND_DOWNLOAD'] = 'Ver y descargar muestras en este conjunto de Datos (vista de Lista)';
 $LANG['VIEW_SAMPLE'] = 'Ver muestras en este conjunto de Datos (vista de Tabla)';
 $LANG['VIEW_LIST'] = 'Ver lista de taxones en este conjunto de Datos';
+$LANG['ASSOC_OCCUR'] = 'Muestras Asociadas';
+$LANG['ASSOC_REFS'] = 'Referencias Asociadas';
+$LANG['CITATION'] = 'Cita del conjunto de datos';
 ?>

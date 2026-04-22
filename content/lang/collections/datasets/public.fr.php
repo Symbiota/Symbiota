@@ -14,4 +14,7 @@ $LANG['RECORDS'] = 'enregistrements.';
 $LANG['VIEW_AND_DOWNLOAD'] = 'Afficher et télécharger des échantillons dans cet ensemble de Données (vue Liste)';
 $LANG['VIEW_SAMPLE'] = 'Afficher les échantillons de cet ensemble de Données (vue Tableau)';
 $LANG['VIEW_LIST'] = 'Afficher la liste des taxons dans cet ensemble de Données';
+$LANG['ASSOC_OCCUR'] = 'échantillons associés';
+$LANG['ASSOC_REFS'] = 'Références associées';
+$LANG['CITATION'] = 'Citation du ensemble de données';
 ?>

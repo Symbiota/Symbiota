@@ -49,13 +49,13 @@ $ocArr = $datasetManager->getOccurrences($datasetid);
 		
 		if ($dArr['bibliographicCitation']) {
 			?>
-			<div><h2><b> Dataset citation: </b></h2><?php echo $dArr['bibliographicCitation'];?></div>
+			<div><h2><b> <?php echo $LANG['CITATION'] ?? 'Dataset Citation' ?>: </b></h2><?php echo $dArr['bibliographicCitation'];?></div>
 		<?php
 		}
 		?>
 
       <!-- Occurrences Summary -->
-	   	<div><h2><b> Associated Occurrences: </b></h2>
+		<div><h2><b> <?php echo $LANG['ASSOC_OCCUR'] ?? 'Associated Occurrences' ?>:</b></h2></div>
 
       <p><?php echo $LANG['INCLUDES']; ?> <?php echo count($ocArr); ?> <?php echo $LANG['RECORDS']; ?></p>
 
@@ -69,7 +69,7 @@ $ocArr = $datasetManager->getOccurrences($datasetid);
 		$referenceArr = $datasetManager -> getReferences($datasetid);
 		if ($referenceArr) {
 			?>
-		<div><h2><b> Associated References: </b></h2></div>
+		<div><h2><b> <?php echo $LANG['ASSOC_REFS'] ?? 'Associated References' ?>:</b></h2></div>
 			<?php
 			foreach($referenceArr as $refid => $refArr){
 				echo '<div id="occur-ref" class="occur-ref">';
