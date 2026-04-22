@@ -680,7 +680,7 @@ class TaxonProfile extends Manager {
 	public function getReferenceLinkArr(){
 		$retArr = array();
 		if($this->tid){
-			$sql = 'SELECT r.refid,r.bibliographicCitation,CONCAT("https://doi.org/",r.identifier) AS url
+			$sql = 'SELECT r.refid,r.bibliographicCitation,r.url
 			FROM referencetaxalink t
 			LEFT JOIN referenceobject r
 			ON t.refid=r.refid

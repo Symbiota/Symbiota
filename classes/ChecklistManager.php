@@ -781,8 +781,7 @@ class ChecklistManager extends Manager{
 
 	// Associated References
 	public function getReferences(){
-		$sql = 'SELECT r.refid, r.bibliographicCitation,
-				CONCAT("https://doi.org/",r.identifier) AS url
+		$sql = 'SELECT r.refid, r.bibliographicCitation,r.url
 				FROM referenceobject r
 				INNER JOIN referencechecklistlink l ON r.refid = l.refid
 				WHERE (l.clid = ?)
