@@ -200,5 +200,9 @@ $LANG['ERROR_ARCHIVING_ASSOC'] = 'ERROR - Archiving associations info';
 $LANG['ERROR_ARCHIVING_MAT_SAMPLE'] = 'ERROR - Archiving material sample info';
 $LANG['ERROR_CREATING_ARCHIVE'] = 'ERROR - Creating Archive';
 $LANG['ERROR_DELETING_OCCURRENCE'] = 'ERROR - Failed to delete the source occurrence';
+$LANG['REF_ADD_SUCCESS'] = 'Reference added successfully';
+$LANG['REF_ADD_ERROR'] = 'Error adding reference';
+$LANG['REF_DEL_SUCCESS'] = 'Reference deleted successfully';
+$LANG['REF_DEL_ERROR'] = 'Error deleting reference';
 
 ?>
