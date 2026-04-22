@@ -10,7 +10,8 @@ header("Content-Type: text/html; charset=".$CHARSET);
 Language::load([
 	'collections/loans/loan_langs',
 	'collections/editor/includes/determinationtab',
-	'collections/search/index'
+	'collections/search/index',
+	'references/index'
 ]);
 
 $refId = array_key_exists('refid', $_REQUEST) ? Sanitize::int($_REQUEST['refid']) : 0;
@@ -156,7 +157,7 @@ else{
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-	<title><?php echo $DEFAULT_TITLE; ?> Reference Management</title>
+	<title><?php echo $DEFAULT_TITLE . ' ' . ($LANG['REF_MGMT'] ?? 'Reference Management'); ?></title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -392,7 +393,7 @@ else{
 			<div class='navpath'>
 				<a href='../index.php'>Home</a> &gt;&gt;
 				<?php echo $reference_indexCrumbs; ?>
-				<a href='index.php'> <b>Reference Management</b></a>
+				<a href='index.php'> <b><?= htmlspecialchars($LANG['REF_MGMT'] ?? 'Reference Management'); ?></b></a>
 			</div>
 			<?php
 		}
@@ -401,14 +402,14 @@ else{
 		?>
 		<div class='navpath'>
 			<a href='../index.php'>Home</a> &gt;&gt;
-			<a href='index.php'> <b>Reference Management</b></a>
+			<a href='index.php'> <b><?= htmlspecialchars($LANG['REF_MGMT'] ?? 'Reference Management'); ?></b></a>
 		</div>
 		<?php
 	}
 	?>
 	<!-- This is inner text! -->
 	<div role="main" id="innertext">
-		<h1 class="page-heading">Reference Management</h1>
+		<h1 class="page-heading"><?= htmlspecialchars($LANG['REF_MGMT'] ?? 'Reference Management'); ?></h1>		
 		<?php
 		if($SYMB_UID){
 			if($statusStr){
@@ -421,12 +422,13 @@ else{
 			?>
 			<div id="tabs" style="margin:0px;">
 				<ul>
-					<li><a href="#refdetaildiv">Reference Details</a></li>
-					<?php if($refId) { ?>
-						<li><a href="#refoccdiv">Linked Occurrences</a></li>
-						<li><a href="#reftaxadiv">Linked Taxa</a></li>
-						<li><a href="#reflinksdiv">Other Linked Resources</a></li>
-						<li><a href="#refadmindiv">Admin</a></li>
+						<li><a href="#refdetaildiv"><?= $LANG['REF_DETAILS'] ?? 'Reference Details' ?></a></li>
+					<?php if($refId) { 
+						?>
+						<li><a href="#refoccdiv"><?= $LANG['LINKED_OCC'] ?? 'Linked Occurrences' ?></a></li>
+						<li><a href="#reftaxadiv"><?= $LANG['LINKED_TAXA'] ?? 'Linked Taxa' ?></a></li>
+						<li><a href="#reflinksdiv"><?= $LANG['OTHER_LINKS'] ?? 'Other Linked Resources' ?></a></li>
+						<li><a href="#refadmindiv"><?= $LANG['ADMIN'] ?? 'Admin' ?></a></li>
 					<?php } ?>
 
 				</ul>
@@ -443,58 +445,60 @@ else{
 							<a href="https://rs.gbif.org/extension/gbif/1.0/references.xml"><h1>Literature References Extension Fields</h1></a>
 
 							<div style="margin-bottom:15px;">
-								<b>Import details from DOI:</b><br>
-								<input type="text" id="doiInput" placeholder="Enter DOI (e.g. 10.1000/xyz123)" style="width:300px;">
-								<button type="button" onclick="fetchDOI()">Fetch</button>
+								<b><?= $LANG['IMPORT_DOI'] ?? 'Import details from DOI:' ?></b><br>
+								<input type="text" id="doiInput" placeholder="<?= $LANG['DOI_PLACEHOLDER'] ?? 'Enter DOI (e.g. 10.1000/xyz123)' ?>">
+								<button type="button" onclick="fetchDOI()">
+									<?= $LANG['FETCH'] ?? 'Fetch' ?>
+								</button>
 							</div>
 
 							<div class="fieldGroupDiv">
-								<b>Bibliographic Citation (required):</b>
+								<b><?= $LANG['BIB_CIT_REQ'] ?? 'Bibliographic Citation (required):' ?></b>
 								<textarea name="bibliographicCitation" id="bibliographicCitation"><?php echo $refArr['bibliographicCitation']; ?></textarea>
 							</div>
 
 							<div class="fieldGroupDiv">
-								<b>Identifier (DOI):</b>
+								<b><?= $LANG['IDENTIFIER'] ?? 'Identifier (DOI):' ?></b>
 								<input type="text" name="identifier" value="<?php echo $refArr['identifier']; ?>">
 							</div>
 							
 							<div class="fieldGroupDiv">
-								<b>URL:</b>
+								<b><?= $LANG['URL'] ?? 'URL:' ?></b>
 								<input type="text" name="url" value="<?php echo $refArr['url']; ?>">
 							</div>
 
 							<div class="fieldGroupDiv">
-								<b>Title:</b></br>
+								<b><?= $LANG['TITLE'] ?? 'Title:' ?></b></br>
 								<textarea name="title" id="title"><?php echo $refArr['title']; ?></textarea>
 							</div>
 
 							<div class="fieldGroupDiv">
-								<b>Creator(s):</b>
+								<b><?= $LANG['CREATOR'] ?? 'Creator(s):' ?></b>
 								<textarea name="creator" id="creator"><?php echo $refArr['creator']; ?></textarea>
 							</div>
 
 							<div class="fieldGroupDiv">
-								<b>Date:</b>
+								<b><?= $LANG['DATE'] ?? 'Date:' ?></b>
 								<input type="text" name="date" value="<?php echo $refArr['date']; ?>">
 							</div>
 
 							<div class="fieldGroupDiv">
-								<b>Source (e.g., Journal):</b>
+								<b><?= $LANG['SOURCE'] ?? 'Source (e.g., Journal):' ?></b>
 								<input type="text" name="source" value="<?php echo $refArr['source']; ?>">
 							</div>
 
 							<div class="fieldGroupDiv">
-								<b>Description:</b></br>
+								<b><?= $LANG['DESCRIPTION'] ?? 'Description:' ?></b>
 								<textarea name="description"><?php echo $refArr['description']; ?></textarea>
 							</div>
 
 							<div class="fieldGroupDiv">
-								<b>Subject:</b>
+								<b><?= $LANG['SUBJECT'] ?? 'Subject:' ?></b>
 								<input type="text" name="subject" value="<?php echo $refArr['subject']; ?>">
 							</div>
 
 							<div class="fieldGroupDiv">
-								<b>Language:</b>
+								<b><?= $LANG['LANGUAGE'] ?? 'Language:' ?></b>
 								<select name="language">
 									<?php $l = $refArr['language']; ?>
 									<option value="">-- Select Language --</option>
@@ -511,12 +515,12 @@ else{
 							</div>
 
 							<div class="fieldGroupDiv">
-								<b>Rights:</b>
+								<b><?= $LANG['RIGHTS'] ?? 'Rights:' ?></b>
 								<input type="text" name="rights" value="<?php echo $refArr['rights']; ?>">
 							</div>
 
 							<div class="fieldGroupDiv">
-								<b>Reference Type:</b>
+								<b><?= $LANG['REF_TYPE'] ?? 'Reference Type:' ?></b>
 								<select name="type" style="width:300px;">
 									<?php $t = $refArr['type']; ?>
 									<option value="">-- Select Type --</option>
@@ -533,13 +537,16 @@ else{
 							</div>
 
 							<div class="fieldGroupDiv">
-								<b>Taxon Remarks:</b></br>
+								<b><?= $LANG['TAXON_REMARKS'] ?? 'Taxon Remarks:' ?></b></br>
 								<textarea name="taxonRemarks"><?php echo $refArr['taxonRemarks']; ?></textarea>
 							</div>
 
 							<div style="margin-top:30px;">
-								<button name="formsubmit" type="submit" value="<?php echo $refId ? 'Edit Reference' : 'Create Reference'; ?>">
-									<?php echo $refId ? 'Save Edits' : 'Create Reference'; ?>
+								<button name="formsubmit" type="submit"
+									value="<?= $refId ? 'Edit Reference' : 'Create Reference'; ?>">
+									<?= $refId
+										? ($LANG['SAVE_EDITS'] ?? 'Save Edits')
+										: ($LANG['CREATE_REF'] ?? 'Create Reference'); ?>
 								</button>
 							</div>
 						</form>
@@ -552,7 +559,7 @@ else{
 							?>
 							<form name="sampleListingForm" method="post" action="refdetails.php">
 								<fieldset id="samplePanel">
-								<legend>Sample Listing</legend>
+								<legend><?= $LANG['SAMPLE_LISTING'] ?? 'Sample Listing' ?></legend>
 								<?php
 								if($refOccArr){
 								?>
@@ -614,7 +621,7 @@ else{
 									echo '</div>';
 								}
 								else{
-									echo 'There are no occurrences linked with this reference. </br></br>';
+									echo $LANG['NO_OCC_LINKED'] ?? 'There are no occurrences linked with this reference.<br><br>';
 								}
 								?>
 								</fieldset>
@@ -623,8 +630,10 @@ else{
 						</div>
 						<div id="batchOcc-div">
 							<fieldset>
-								<legend><?php echo 'Batch add occurrences'; ?></legend>
-								<div  class="info-div"><?php echo 'Batch add multiple occurrences by entering a list of catalog numbers on separate lines or delimited by commas.'; ?></div>
+							<legend><?= $LANG['BATCH_ADD_OCC'] ?? 'Batch add occurrences' ?></legend>
+								<div class="info-div">
+									<?= $LANG['BATCH_ADD_DESC'] ?? 'Batch add multiple occurrences by entering a list of catalog numbers...' ?>
+								</div>								
 								<form name="batchaddform" action="refdetails.php" method="post">
 									<div class="field-div">
 										<label><?php echo $LANG['CATNUMS']; ?>:</label><br/>
@@ -634,12 +643,12 @@ else{
 										<label>Target:</label>
 										<span class="radio-span"><input name="targetidentifier" type="radio" value="allid" /> <?php echo $LANG['ALL_IDS']; ?></span>
 										<span class="radio-span"><input name="targetidentifier" type="radio" value="catnum" checked /> <?php echo $LANG['CATNO']; ?></span>
-										<span class="radio-span"><input name="targetidentifier" type="radio" value="other" /> <?php echo $LANG['OTHER_CATNUMS'] . '  (Review multiple match warnings)'; ?></span>
+										<span class="radio-span"><input name="targetidentifier" type="radio" value="other" /> <?php echo $LANG['OTHER_CATNUMS']; ?></span>
 									</div>
 									<div class="field-div">
 										<input name="refid" type="hidden" value="<?php echo $refId; ?>" />
 										<div style="float:left;margin-top:15px;margin-left:15px">
-											<button name="formsubmit" type="submit" value="batchAddLink"><?php echo 'Add Occurrences'; ?></button>
+											<button name="formsubmit" type="submit" value="batchAddLink"><?php echo $LANG['ADD_OCC'] ?? 'Add Occurrences';?></button>
 										</div>
 									</div>
 								</form>
@@ -649,8 +658,7 @@ else{
 				<div id="reftaxadiv">
 
 					<fieldset>
-						<legend><b>Linked Taxa</b></legend>
-
+						<legend><b><?= $LANG['LINKED_TAXA'] ?? 'Linked Taxa' ?></b></legend>
 						<div id="referencetaxalink">
 							<?php if($refTaxaArr): ?>
 								<ul>
@@ -675,7 +683,7 @@ else{
 									<?php endforeach; ?>
 								</ul>
 							<?php else: ?>
-								<div><b>No taxa linked to this reference.</b></div>
+							<div><b><?= $LANG['NO_TAXA'] ?? 'No taxa linked to this reference.' ?></b></div>
 							<?php endif; ?>
 						</div>
 					</fieldset>
@@ -683,7 +691,7 @@ else{
 					<br>
 					<form method="post" action="refdetails.php">
 						<fieldset>
-							<legend><b>Add Taxon</b></legend>
+						<legend><b><?= $LANG['ADD_TAXON'] ?? 'Add Taxon' ?></b></legend>
 
 							<input type="hidden" name="refid" value="<?= $refId ?>">
 							<input type="hidden" name="action" value="addreflink">
@@ -692,7 +700,7 @@ else{
 							<input type="hidden" name="targetid" id="taxa_targetid">
 
 							<div>
-								<label><b>Search Taxon:</b></label><br>
+							<label><b><?= $LANG['SEARCH_TAXON'] ?? 'Search Taxon:' ?></b></label>
 								<input type="text" id="taxa" style="width:350px;">
 							</div>
 
@@ -713,7 +721,7 @@ else{
 							</div>
 
 							<div style="margin-top:12px;">
-								<button type="submit">Add Taxon</button>
+								<button type="submit"><?= $LANG['ADD'] ?? 'Add' ?></button>
 							</div>
 
 						</fieldset>
@@ -728,14 +736,14 @@ else{
 									<input type="hidden" name="action" value="addreflink">
 									<input type="hidden" name="type" value="checklist">
 									<fieldset>
-										<legend><b>Checklists</b></legend>
+									<legend><b><?= $LANG['CHECKLISTS'] ?? 'Checklists' ?></b></legend>
 										<div>
 											<div>
-												<b>Add Checklist By Name: </b>
+												<b><?= $LANG['ADD_CHECKLIST'] ?? 'Add Checklists By Name' ?></b>
 											</div>
 											<div>
 										<select name="targetid" id="refchecklistid" style="width:220px;">
-											<option value="">Select Checklist</option>
+											<option value=""><?= $LANG['SELECT_CHECKLIST'] ?? 'Select Checklist' ?></option>
 											<?php
 											$allChecklists = $refManager->getChecklists();
 
@@ -809,7 +817,7 @@ else{
 											</div>
 											<div>
 										<select name="targetid" id="refdatasetid" style="width:220px;">
-											<option value="">Select Dataset</option>
+											<option value=""><?= $LANG['SELECT_DATASET'] ?? 'Select Dataset' ?></option>
 											<?php
 											$allDatasets = $refManager->getDatasets();
 
@@ -882,7 +890,7 @@ else{
 											</div>
 											<div>
 										<select name="targetid" id="collID" style="width:220px;">
-											<option value="">Select Collection</option>
+											<option value=""><?= $LANG['SELECT_COLLECTION'] ?? 'Select Collection' ?></option>
 											<?php
 											$allCollections = $refManager->getCollections();
 
@@ -943,11 +951,11 @@ else{
 				<div id="refadmindiv" style="">
 					<form name="delrefform" action="index.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this reference?')">
 						<fieldset style="width:350px;margin:20px;padding:20px;">
-							<legend><b>Delete Reference</b></legend>
+							<legend><b><?= $LANG['DELETE_REF'] ?? 'Delete Reference' ?></b></legend>
 							<?php
 							if($refChecklistArr || $refDatasetArr ||$refCollArr || $refOccArr || $refTaxaArr){
 								echo '<div style="font-weight:bold;margin-bottom:15px;">';
-								echo 'Reference cannot be deleted until all linked records are removed.';
+								echo $LANG['DELETE_BLOCKED'] ?? 'Reference cannot be deleted until all linked records are removed.';
 								echo '</div>';
 							}
 							?>
