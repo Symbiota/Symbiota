@@ -139,7 +139,8 @@ else{
 		'language' => '',
 		'rights' => '',
 		'type' => '',
-		'taxonRemarks' => ''
+		'taxonRemarks' => '',
+		'url' => ''
 	];
 
 	$refChecklistArr = [];
@@ -227,6 +228,8 @@ else{
 				}
 
 				document.querySelector('[name="identifier"]').value = d.DOI || doi;
+
+				document.querySelector('[name="url"]').value = d.DOI ? "https://doi.org/" + d.DOI.trim().toLowerCase() : "";
 
 				if(d.type){
 					document.querySelector('[name="type"]').value = d.type;
@@ -453,6 +456,11 @@ else{
 							<div class="fieldGroupDiv">
 								<b>Identifier (DOI):</b>
 								<input type="text" name="identifier" value="<?php echo $refArr['identifier']; ?>">
+							</div>
+							
+							<div class="fieldGroupDiv">
+								<b>URL:</b>
+								<input type="text" name="url" value="<?php echo $refArr['url']; ?>">
 							</div>
 
 							<div class="fieldGroupDiv">
