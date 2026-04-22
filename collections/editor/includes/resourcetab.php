@@ -777,21 +777,21 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 </div>
 <div id="referencediv">
 	<fieldset>
-		<legend><?php echo 'References'; ?></legend>
+		<legend><?php echo $LANG['REFERENCES']; ?></legend>
 		<?php if(!$referenceArr){
-			echo '<div>No Linked References</div>';
+			echo '<div>' . $LANG['NO_REFS'] .'</div>';
 		} ?>
 		<div style="float:right; display:<?php echo ($referenceArr?'block':'none'); ?>;">
-			<a href="#" onclick="toggle('refadddiv');return false;" title="<?php echo 'Add new reference'; ?>" ><img class="icon-img" src="../../images/add.png"></a>
+			<a href="#" onclick="toggle('refadddiv');return false;" title="<?php echo $LANG['ADD_REFS']; ?>" ><img class="icon-img" src="../../images/add.png"></a>
 		</div>
 		<div id="refadddiv" style="display:<?php echo ($referenceArr?'none':'block'); ?>;">
 			<fieldset>
-				<legend><b><?php echo 'Add New Reference'; ?></b></legend>
+				<legend><b><?php echo $LANG['ADD_REFS']; ?></b></legend>
 				<form name="addrefform" method="post" action="occurrenceeditor.php">
 					<div style="margin:2px;">
 						<label for="ref-resourcename"><?php echo $LANG['NAME']; ?>:</label><br/>
 						<select name="refid" id="refid" style="width:300px;">
-							<option value="">Select Reference</option>
+							<option value=""><?php echo $LANG['SEL_REFS']; ?></option>
 							<?php
 							foreach($allRefsArr as $id => $ref){
 								echo '<option value="'.htmlspecialchars($id, ENT_QUOTES).'">'
@@ -805,7 +805,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 						<input name="submitaction" type="hidden" value="addReference" />
 						<input name="tabtarget" type="hidden" value="4" />
 						<button name="subbut" type="submit" class="button">
-							Add Link to Reference
+							<?php echo $LANG['ADD_REFS']; ?>
 						</button>
 						<input name="occid" type="hidden" value="<?php echo $occid; ?>" />
 					</div>

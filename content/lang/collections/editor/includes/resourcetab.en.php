@@ -50,6 +50,11 @@ $LANG['DEL_GEN_RES'] = 'Delete Genetic Resource';
 $LANG['DEL_RES'] = 'Delete Resource';
 $LANG['NO_CHECKLISTS'] = 'No checklist voucher linkages have been established';
 $LANG['NO_GENETIC_RESOURCES'] = 'No genetics linkages have been established';
+$LANG['REFERENCES'] = 'References';
+$LANG['NO_REFS'] = 'No references have been linked';
+$LANG['ADD_REFS'] = 'Add Link to Reference';
+$LANG['SEL_REFS'] = 'Select Reference';
+
 
 include_once($SERVER_ROOT.'/content/lang/collections/associations.en.php');
 ?>

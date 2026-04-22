@@ -50,6 +50,10 @@ $LANG['DEL_GEN_RES'] = 'Eliminar Recurso Genético';
 $LANG['DEL_RES'] = 'Eliminar Recurso';
 $LANG['NO_CHECKLISTS'] = 'No se han establecido vínculos con los vales de la lista de verificación';
 $LANG['NO_GENETIC_RESOURCES'] = 'No se han establecido vínculos genéticos.';
+$LANG['REFERENCES'] = 'Referencias';
+$LANG['NO_REFS'] = 'No se han vinculado referencias';
+$LANG['ADD_REFS'] = 'Añadir enlace a la referencia';
+$LANG['SEL_REFS'] = 'Seleccionar referencia';
 
 include_once($SERVER_ROOT.'/content/lang/collections/associations.es.php');
 ?>
