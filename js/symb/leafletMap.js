@@ -90,6 +90,8 @@ class LeafletMap {
       drawColor: this.DEFAULT_SHAPE_OPTIONS,
       lang: "en",
    };
+
+   HIGH_RECORD_THRESHOLD=10000;
    
    /* To Hold Reference to Leaflet Map */
    mapLayer;
@@ -112,7 +114,10 @@ class LeafletMap {
 
    defaultBounds = [];
 
-   constructor(map_id, map_options={}) {
+   /* Map of GeoJson Files desired as overlays with layer name as keys */
+   geoJSONLayers = {};
+
+   constructor(map_id, map_options={}, geoJSONLayers = []) {
 
 	  map_options = {
 		 ...this.DEFAULT_MAP_OPTIONS,
@@ -203,7 +208,7 @@ class LeafletMap {
 				if(macro_strat_data.mapData[0].ref) {
 					content += `<div style="font-size:0.8rem">
 						<span style="font-weight:bold">Source:</span>
-						${macro_strat_data.mapData[0].ref.authors}, ${macro_strat_data.mapData[0].ref.ref_title}: ${macro_strat_data.mapData[0].ref.ref_source}, ${macro_strat_data.mapData[0].ref.isbn_doi} ${macro_strat_data.mapData[0].ref.source_id} / ${macro_strat_data.mapData[0].map_id}
+						${macro_strat_data.mapData[0].ref.authors}, ${macro_strat_data.mapData[0].ref.ref_year}, ${macro_strat_data.mapData[0].ref.ref_title}: ${macro_strat_data.mapData[0].ref.ref_source}, ${macro_strat_data.mapData[0].ref.isbn_doi} ${macro_strat_data.mapData[0].ref.source_id} / ${macro_strat_data.mapData[0].map_id}
 					</div>`;
 				}
 
@@ -224,40 +229,6 @@ class LeafletMap {
 			}
 		}
 
-
-		/* Alternative to using the api. Uses color inference. Back if we don't want to use macrostrat api*/
-		const macro_strat_color = (e) => {
-			const zoom = e.target._zoom;
-
-			let coords = this.mapLayer.project(e.latlng, zoom).floor();
-
-			let pX = coords.x / 256;
-			let pY = coords.y / 256;
-
-			coords.x = Math.floor(pX);
-			coords.y = Math.floor(pY);
-			coords.z = zoom
-
-			const tile = new Image();
-			tile.crossOrigin = "anonymous";
-			tile.src = `https://macrostrat.org/api/v2/maps/burwell/emphasized/${coords.z}/${coords.x}/${coords.y}/tile.png`;
-
-			const canvas = document.createElement("canvas");
-			const ctx = canvas.getContext("2d");
-
-			tile.addEventListener('load', function() {
-				ctx.drawImage(tile, 0, 0);
-				const dX = Math.floor((pX - coords.x) * 512);
-				const dY = Math.floor((pY - coords.y) * 512);
-				const pixel = ctx.getImageData(dX, dY, 1, 1);	
-
-				ctx.fillRect(dX, dY, 10, 10);
-
-				const data = pixel.data;
-				console.log(`rgb(${data[0]} ${data[1]} ${data[2]} / ${data[3] / 255})`);
-			});
-		}
-
 		macro_strat.on('add', (e) => {
 			this.mapLayer.on('click', macro_strat_info)
 		})
@@ -274,8 +245,20 @@ class LeafletMap {
 				"Satellite": Esri_WorldImagery,
 			};
 			const overlays = {
-				"Macrostrat": L.layerGroup([macro_strat])
+				"Geology": L.layerGroup([macro_strat])
 			}
+
+			for(let layer of geoJSONLayers) {
+				const layerGroup = L.layerGroup();
+				overlays[layer.label] = layerGroup;
+				this.geoJSONLayers[layer.label] = {
+					...layer,
+					layer: layerGroup
+				};
+
+				this.loadGeoJSONLayer(layer.label);
+			}
+
       this.mapLayer.layerControl = L.control.layers(layers, overlays).addTo(this.mapLayer);
       }
 
@@ -284,6 +267,8 @@ class LeafletMap {
       }
 
       this.setLang(map_options.lang);
+
+      L.Path.mergeOptions(this.DEFAULT_DRAW_OPTIONS.drawColor);
 
       this.mapLayer._onResize();
    }
@@ -307,6 +292,54 @@ class LeafletMap {
 			return false;
 		}
    }
+
+	async loadGeoJSONLayer(layerName) {
+		const layerObj = this.geoJSONLayers[layerName];
+
+		if(!layerObj || !layerObj.filepath) return false;
+
+		const res = await fetch(window.location.origin + '/' + layerObj.filepath);
+
+		if(!res.ok) return false;
+
+		const json_data = await res.json()
+
+		if(!json_data.type) return false;
+
+		function onEachFeature(feature, layer) {
+			// does this feature have a property named popupContent?
+			if (feature.properties && layerObj.popup_template) {
+				let popup = layerObj.popup_template;
+				if(layerObj.template_properties) {
+					for(let property of layerObj.template_properties) {
+						const value = feature.properties[property];
+						popup = popup.replaceAll(
+							"[" + property + "]", 
+							value? value: 'Unknown'
+						);
+					}
+				}
+				layer.bindPopup(popup);
+			}
+		}
+
+		function featureStyle(feature) {
+			let style = {}
+			const supported_styles = ['fillColor', 'opacity', 'color', 'weight'];
+
+			for(let style_prop of supported_styles) {
+				if(feature.properties && feature.properties[style_prop]) {
+					style[style_prop] = feature.properties[style_prop];
+				}
+			}
+
+			return style;
+		}
+
+        L.geoJSON(json_data, {onEachFeature, style: featureStyle}).addTo(layerObj.layer);
+
+		return true;
+	}
 
    setLang(lang) {
       switch(lang) {

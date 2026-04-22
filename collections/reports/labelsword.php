@@ -1,9 +1,9 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLabel.php');
 @include_once("Image/Barcode.php");
 @include_once("Image/Barcode2.php");
-require_once $SERVER_ROOT.'/vendor/phpoffice/phpword/bootstrap.php';
+require_once $SERVER_ROOT.'/vendor/autoload.php';
 
 header("Content-Type: text/html; charset=".$CHARSET);
 ini_set('max_execution_time', 180); //180 seconds = 3 minutes
@@ -119,8 +119,8 @@ if($isEditor && $action){
 			if($occArr['catalognumber']){
 				$textrun = $section->addTextRun('cnbarcode');
 				$bc = $bcObj->draw(strtoupper($occArr['catalognumber']),"Code39","png",false,40);
-				imagepng($bc,$SERVER_ROOT.'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png');
-				$textrun->addImage($SERVER_ROOT.'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png', array('align'=>'center'));
+				imagepng($bc,$TEMP_DIR_ROOT . '/' . $ses_id.$occArr['catalognumber'] . '.png');
+				$textrun->addImage($TEMP_DIR_ROOT . '/' . $ses_id . $occArr['catalognumber'] . '.png', array('align'=>'center'));
 				imagedestroy($bc);
 			}
 		}
@@ -148,80 +148,25 @@ if($isEditor && $action){
 				$textrun = $section->addTextRun('scientificname');
 				if($occArr['identificationqualifier']) $textrun->addText(htmlspecialchars($occArr['identificationqualifier']).' ','scientificnameauthFont');
 				$scinameStr = htmlspecialchars($occArr['scientificname']);
-				$parentAuthor = (array_key_exists('parentauthor',$occArr)?' ' . htmlspecialchars($occArr['parentauthor']) : '');
-				if(strpos($scinameStr,' sp.') !== false){
-					$scinameArr = explode(" sp. ",$scinameStr);
-					$textrun->addText($scinameArr[0] . ' ', 'scientificnameFont');
-					if($parentAuthor) $textrun->addText($parentAuthor.' ','scientificnameauthFont');
-					$textrun->addText('sp.','scientificnameinterFont');
+				$parentAuthor = (array_key_exists('parentauthor',$occArr) ? htmlspecialchars($occArr['parentauthor']) : '');
+
+				$taxonRankArr = array('sp.','subsp.','ssp.','var.','variety','Variety','v.','f.','cf.','aff.');
+				$matchMade = false;
+				foreach($taxonRankArr as $taxonRank){
+					$taxonRankTest = ' ' . $taxonRank . ' ';
+					if(strpos($scinameStr, $taxonRankTest) !== false){
+						$scinameArr = explode($taxonRankTest, $scinameStr);
+						$textrun->addText(trim($scinameArr[0]), 'scientificnameFont');
+						if($parentAuthor) $textrun->addText(' ' . $parentAuthor, 'scientificnameauthFont');
+						$textrun->addText(' ' . $taxonRank, 'scientificnameinterFont');
+						if(!empty($scinameArr[1])) $textrun->addText(' ' . $scinameArr[1], 'scientificnameFont');
+						$matchMade = true;
+					}
 				}
-				elseif(strpos($scinameStr,'subsp.') !== false){
-					$scinameArr = explode(" subsp. ", $scinameStr);
-					$textrun->addText($scinameArr[0] . ' ', 'scientificnameFont');
-					if($parentAuthor) $textrun->addText($parentAuthor . ' ', 'scientificnameauthFont');
-					$textrun->addText('subsp. ','scientificnameinterFont');
-					$textrun->addText($scinameArr[1] . ' ', 'scientificnameFont');
+				if(!$matchMade){
+					$textrun->addText(' ' . $scinameStr, 'scientificnameFont');
 				}
-				elseif(strpos($scinameStr,'ssp.') !== false){
-					$scinameArr = explode(" ssp. ",$scinameStr);
-					$textrun->addText($scinameArr[0] . ' ', 'scientificnameFont');
-					if($parentAuthor) $textrun->addText($parentAuthor . ' ', 'scientificnameauthFont');
-					$textrun->addText('ssp. ','scientificnameinterFont');
-					$textrun->addText($scinameArr[1] . ' ', 'scientificnameFont');
-				}
-				elseif(strpos($scinameStr,'var.') !== false){
-					$scinameArr = explode(" var. ",$scinameStr);
-					$textrun->addText($scinameArr[0] . ' ', 'scientificnameFont');
-					if($parentAuthor) $textrun->addText($parentAuthor . ' ', 'scientificnameauthFont');
-					$textrun->addText('var. ','scientificnameinterFont');
-					$textrun->addText($scinameArr[1] . ' ', 'scientificnameFont');
-				}
-				elseif(strpos($scinameStr,'variety') !== false){
-					$scinameArr = explode(" variety ",$scinameStr);
-					$textrun->addText($scinameArr[0] . ' ', 'scientificnameFont');
-					if($parentAuthor) $textrun->addText($parentAuthor . ' ', 'scientificnameauthFont');
-					$textrun->addText('var. ','scientificnameinterFont');
-					$textrun->addText($scinameArr[1] . ' ', 'scientificnameFont');
-				}
-				elseif(strpos($scinameStr,'Variety') !== false){
-					$scinameArr = explode(" Variety ", $scinameStr);
-					$textrun->addText($scinameArr[0] . ' ', 'scientificnameFont');
-					if($parentAuthor) $textrun->addText($parentAuthor . ' ', 'scientificnameauthFont');
-					$textrun->addText('var. ','scientificnameinterFont');
-					$textrun->addText($scinameArr[1] . ' ', 'scientificnameFont');
-				}
-				elseif(strpos($scinameStr,'v.') !== false){
-					$scinameArr = explode(" v. ",$scinameStr);
-					$textrun->addText($scinameArr[0] . ' ', 'scientificnameFont');
-					if($parentAuthor) $textrun->addText($parentAuthor . ' ', 'scientificnameauthFont');
-					$textrun->addText('var. ','scientificnameinterFont');
-					$textrun->addText($scinameArr[1] . ' ', 'scientificnameFont');
-				}
-				elseif(strpos($scinameStr,' f.') !== false){
-					$scinameArr = explode(" f. ",$scinameStr);
-					$textrun->addText($scinameArr[0] . ' ', 'scientificnameFont');
-					if($parentAuthor) $textrun->addText($parentAuthor . ' ', 'scientificnameauthFont');
-					$textrun->addText('f. ','scientificnameinterFont');
-					$textrun->addText($scinameArr[1] . ' ', 'scientificnameFont');
-				}
-				elseif(strpos($scinameStr,'cf.') !== false){
-					$scinameArr = explode(" cf. ",$scinameStr);
-					$textrun->addText($scinameArr[0] . ' ', 'scientificnameFont');
-					if($parentAuthor) $textrun->addText($parentAuthor . ' ', 'scientificnameauthFont');
-					$textrun->addText('cf. ','scientificnameinterFont');
-					$textrun->addText($scinameArr[1] . ' ', 'scientificnameFont');
-				}
-				elseif(strpos($scinameStr,'aff.') !== false){
-					$scinameArr = explode(" aff. ",$scinameStr);
-					$textrun->addText($scinameArr[0] . ' ', 'scientificnameFont');
-					if($parentAuthor) $textrun->addText($parentAuthor . ' ', 'scientificnameauthFont');
-					$textrun->addText('aff. ','scientificnameinterFont');
-					$textrun->addText($scinameArr[1] . ' ', 'scientificnameFont');
-				}
-				else{
-					$textrun->addText($scinameStr . ' ', 'scientificnameFont');
-				}
-				$textrun->addText(htmlspecialchars($occArr['scientificnameauthorship']),'scientificnameauthFont');
+				$textrun->addText(htmlspecialchars(' ' . $occArr['scientificnameauthorship']), 'scientificnameauthFont');
 				if($occArr['identifiedby']){
 					$textrun = $section->addTextRun('identified');
 					$textrun->addText('Det by: '.htmlspecialchars($occArr['identifiedby']).' ','identifiedFont');
@@ -301,8 +246,8 @@ if($isEditor && $action){
 				if($useBarcode && $occArr['catalognumber']){
 					$textrun = $section->addTextRun('cnbarcode');
 					$bc = $bcObj->draw(strtoupper($occArr['catalognumber']),"Code39","png",false,40);
-					imagepng($bc,$SERVER_ROOT.'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png');
-					$textrun->addImage($SERVER_ROOT.'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png', array('align'=>'center','marginTop'=>0.15625));
+					imagepng($bc, $TEMP_DIR_ROOT . '/' . $ses_id . $occArr['catalognumber'] . '.png');
+					$textrun->addImage($TEMP_DIR_ROOT . '/' . $ses_id . $occArr['catalognumber'] . '.png', array('align'=>'center','marginTop'=>0.15625));
 					if($occArr['othercatalognumbers']){
 						$textrun->addTextBreak(1);
 						$textrun->addText(htmlspecialchars($occArr['othercatalognumbers']),'otherFont');
@@ -330,8 +275,8 @@ if($isEditor && $action){
 					$textrun->addLine(array('weight'=>2,'width'=>$lineWidth,'height'=>0,'dash'=>'dash'));
 					$textrun->addTextBreak(1);
 					$bc = $bcObj->draw(strtoupper($occid),"Code39","png",false,40);
-					imagepng($bc,$SERVER_ROOT.'/temp/report/'.$ses_id.$occid.'.png');
-					$textrun->addImage($SERVER_ROOT.'/temp/report/'.$ses_id.$occid.'.png', array('align'=>'center','marginTop'=>0.104166667));
+					imagepng($bc, $TEMP_DIR_ROOT . '/' . $ses_id . $occid . '.png');
+					$textrun->addImage($TEMP_DIR_ROOT . '/' . $ses_id . $occid . '.png', array('align'=>'center','marginTop'=>0.104166667));
 					if($occArr['catalognumber']){
 						$textrun->addTextBreak(1);
 						$textrun->addText(htmlspecialchars($occArr['catalognumber']),'otherFont');
@@ -344,7 +289,7 @@ if($isEditor && $action){
 	}
 }
 
-$targetFile = $SERVER_ROOT.'/temp/report/'.$PARAMS_ARR['un'].'_'.date('Ymd').'_labels_'.$ses_id.'.docx';
+$targetFile = $TEMP_DIR_ROOT . '/' . $PARAMS_ARR['un'] . '_' . date('Ymd') . '_labels_' . $ses_id . '.docx';
 $phpWord->save($targetFile, 'Word2007');
 ob_start();
 ob_clean();
@@ -355,7 +300,7 @@ header('Content-Disposition: attachment; filename='.basename($targetFile));
 header('Content-Transfer-Encoding: binary');
 header('Content-Length: '.filesize($targetFile));
 readfile($targetFile);
-$files = glob($SERVER_ROOT.'/temp/report/*');
+$files = glob($TEMP_DIR_ROOT . '/*');
 foreach($files as $file){
 	if(is_file($file)){
 		if(strpos($file,$ses_id) !== false){

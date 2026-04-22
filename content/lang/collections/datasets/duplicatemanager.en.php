@@ -4,9 +4,12 @@
 Language: English
 ------------------
 */
+$LANG['EDIT_SUCCESS'] = 'Record edited successfully';
+$LANG['EDIT_ERROR'] = 'ERROR editing record';
+$LANG['DELETE_SUCCESS'] = 'Record deleted successfully';
+$LANG['DELETE_ERROR'] = 'ERROR deleting record';
 $LANG['DUPLICATE_MANAGER'] = 'Duplicate Manager';
 $LANG['DUP_CLUSTERING'] = 'Duplicate Clustering';
-$LANG['TITLE_VALUE'] = 'Title field must have a value';
 $LANG['PERS_MANAGE_MENU'] = 'Personal Management Menu';
 $LANG['COL_MANAGE'] = 'Collection Management';
 $LANG['DUP_MANAGE'] = 'Duplicate Management';
@@ -36,5 +39,7 @@ $LANG['DET_BY'] = 'Determined by';
 $LANG['NO_DUP_CLUSTERS'] = 'No Duplicate Clusters match the request. Consider returning to the Duplicate Cluster menu and batch building duplicate clusters.';
 $LANG['RETURN_MAIN'] = 'Return to main menu';
 $LANG['NOT_AUTH'] = 'You are not authorized to access this page';
+$LANG['BATCH_COPY_GEOREFERENCE_DUPLICATES'] = 'Batch copy duplicate georeference data';
+$LANG['BATCH_COPY_GEOREFERENCE_DUPLICATES_EXPLANATION'] = 'tool for copying georeference data from linked duplicates';
 
 ?>

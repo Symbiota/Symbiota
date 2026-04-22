@@ -25,7 +25,7 @@
  *
  */
 
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceAPIManager.php');
 
@@ -38,7 +38,6 @@ $catnum = array_key_exists('catnum',$_POST)?$_POST['catnum']:'';
 
 $pHandler = new ProfileManager();
 $qHandler = new OccurrenceAPIManager();
-$occManager = new OccurrenceEditorImages();
 $authenticated = false;
 $isEditor = false;
 $size = Array();

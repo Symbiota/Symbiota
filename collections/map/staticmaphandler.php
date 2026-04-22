@@ -1,12 +1,13 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/MapSupport.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/map/staticmaphandler.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/map/staticmaphandler.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/map/staticmaphandler.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/map/staticmaphandler');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $mapManager = new MapSupport();
-$taxaList = $mapManager->getTaxaList();
 
 //Set default bounding box for portal
 $boundLatMin = -90;
@@ -43,7 +44,7 @@ if(!isset($IS_ADMIN) || !$IS_ADMIN || !isset($SYMB_UID) || !$SYMB_UID) {
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/leafletMap.php');
       ?>
-<script 
+<script
    src="<?php echo $CLIENT_ROOT?>/js/dom-to-image/dist/dom-to-image.min.js"
    type="text/javascript">
 </script>
@@ -85,7 +86,7 @@ if(!isset($IS_ADMIN) || !$IS_ADMIN || !isset($SYMB_UID) || !$SYMB_UID) {
 
             const data = document.getElementById('service-container');
 
-            let taxon_groups = []; 
+            let taxon_groups = [];
 
             const leafletControls = document.querySelector('.leaflet-control-container')
             leafletControls.style.display = "none";
@@ -106,7 +107,7 @@ if(!isset($IS_ADMIN) || !$IS_ADMIN || !isset($SYMB_UID) || !$SYMB_UID) {
 
             let maxCount = taxon_groups.reduce((max, tg) => max + tg.taxa_list.length, 0);
 
-            document.getElementById('loading-bar-max').innerHTML = `/ ${maxCount}`; 
+            document.getElementById('loading-bar-max').innerHTML = `/ ${maxCount}`;
             let autoSnap = document.getElementById('auto-snap-coords').checked;
 
             let basebounds = getMapBounds();
@@ -119,7 +120,7 @@ if(!isset($IS_ADMIN) || !$IS_ADMIN || !isset($SYMB_UID) || !$SYMB_UID) {
                   let coords = await getTaxaCoordinates(taxa.tid, basebounds);
                   count++;
 
-                  if(coords && coords.length > 0) { 
+                  if(coords && coords.length > 0) {
                      coordLayer = generateMap({maptype, coordinates: coords});
                      if(autoSnap) {
                         //Fits bounds within our search bounds for a better image
@@ -139,24 +140,24 @@ if(!isset($IS_ADMIN) || !$IS_ADMIN || !isset($SYMB_UID) || !$SYMB_UID) {
                         //Wait for Map to Render and Pan to Points
                         await new Promise(r => setTimeout(r, 1000));
 
-                        let map_blob = await getMapImage(); 
+                        let map_blob = await getMapImage();
                         map.mapLayer.removeLayer(coordLayer);
                         postImage({
-                           tid: taxa.tid, 
-                           title: taxa.sciname, 
+                           tid: taxa.tid,
+                           title: taxa.sciname,
                            map_blob,
-                           maptype, 
+                           maptype,
                         }).then(res => addResultTableEntry({
-                              tid: taxa.tid, 
-                              taxon: taxa.sciname, 
+                              tid: taxa.tid,
+                              taxon: taxa.sciname,
                               status: res.status === 200?
                                  `<?php echo isset($LANG['SUCCESS'])? $LANG['SUCCESS']: 'Success'?>`:
                                  `<?php echo isset($LANG['FAILURE'])? $LANG['Failure']: 'Failure'?>`
                            }))
-                     } 
+                     }
                   } else if (preview && count >= taxon_group.taxa_list.length) {
                      alert(`There are no records of ${taxa.scimane} within your bounds!`)
-                  } 
+                  }
 
                   if(!preview) {
                      incrementLoadingBar(maxCount);
@@ -238,7 +239,7 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
                min: parseInt(heatMinDensity) || 1,
                data: coordinates
             });
- 
+
             return heatmapLayer;
          }
 
@@ -261,15 +262,15 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
 
          async function incrementLoadingBar(maxCount) {
             let count = parseInt(document.getElementById('loading-bar-count').innerHTML) + 1;
-            document.getElementById('loading-bar-count').innerHTML = count; 
+            document.getElementById('loading-bar-count').innerHTML = count;
 
             let new_percent = (count / maxCount) * 100;
             document.getElementById('loading-bar').style.width = `${new_percent}%`;
 
             if(count === maxCount) {
                document.getElementById('loading-bar').style.width = `0%`;
-               document.getElementById('loading-bar-count').innerHTML = 0; 
-            } 
+               document.getElementById('loading-bar-count').innerHTML = 0;
+            }
          }
 
          function updateMapBounds(new_bounds) {
@@ -298,7 +299,7 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
             document.getElementById("lower_lng").value = bindValue(lowerBound[lng].toFixed(6), 180);
          }
 
-         function getMapBounds() { 
+         function getMapBounds() {
             return [
                [parseFloat(document.getElementById("upper_lat").value), parseFloat(document.getElementById("upper_lng").value)],
                [parseFloat(document.getElementById("lower_lat").value), parseFloat(document.getElementById("lower_lng").value)]
@@ -344,9 +345,9 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
             const state = getState();
 
             map = new LeafletMap('map', {
-               center: state.latlng, 
-               zoom: state.latlng[0] === 0 && state.latlng[0] === 0? 1 : 6, 
-               scale: false, 
+               center: state.latlng,
+               zoom: state.latlng[0] === 0 && state.latlng[0] === 0? 1 : 6,
+               scale: false,
                lang: "<?php echo $LANG_TAG; ?>"
             });
 
@@ -361,7 +362,7 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
                }
             });
 
-			   map.mapLayer.addControl(drawControl);
+			map.mapLayer.addControl(drawControl);
 
             map.mapLayer.on('draw:created', function(e) {
                if(e.layerType === "rectangle") {
@@ -390,7 +391,7 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
             document.getElementById("upper_lng").addEventListener("input", e => {
                inputChanged = true;
                let lng = parseFloat(e.target.value);
-               if(lng <= 180 && lng >= -180) { 
+               if(lng <= 180 && lng >= -180) {
                   let new_bounds = getMapBounds()
                   new_bounds[0][1] = lng;
                   updateMapBounds(new_bounds);
@@ -408,7 +409,7 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
             document.getElementById("lower_lng").addEventListener("input", e => {
                inputChanged = true;
                let lng = parseFloat(e.target.value);
-               if(lng <= 180 && lng >= -180) { 
+               if(lng <= 180 && lng >= -180) {
                   let new_bounds = getMapBounds()
                   new_bounds[1][1] = lng;
                   updateMapBounds(new_bounds);
@@ -430,7 +431,6 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
    <body onload="initialize()">
       <?php include($SERVER_ROOT . '/includes/header.php');?>
       <div id="service-container"
-         data-taxa-list="<?= htmlspecialchars(json_encode($taxaList))?>"
          data-bounds="<?= htmlspecialchars(json_encode($bounds))?>"
          data-lat="<?= htmlspecialchars($latCen)?>"
          data-lng="<?= htmlspecialchars($longCen)?>"
@@ -448,7 +448,7 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
             <div style="text-align: center; padding-top:0.5rem">
                <?php echo $LANG['MAPS_GENERATED'] ?>
                <span id="loading-bar-count">0</span>
-               <span id="loading-bar-max">/ <?php echo count($taxaList)?></span>
+               <span id="loading-bar-max">/1</span>
             </div>
          </div>
          <form id="thumbnailBuilder" name="thumbnailBuilder" method="post" action="">

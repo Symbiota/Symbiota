@@ -1,6 +1,6 @@
 <?php
 //error_reporting(E_ALL);
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/config/dbconnection.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
@@ -135,7 +135,7 @@ class VerifyPaths{
 							}
 							else{
 								$this->orphanedImgCnt++;
-								echo "<div>Orphaned #$this->orphanedImgCnt: $urlPath$file</div>";
+								echo '<div>Orphaned #' . htmlspecialchars($this->orphanedImgCnt, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ':' . htmlspecialchars($urlPath, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . htmlspecialchars($file, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</div>';
 								fwrite($this->absentDbRecordsFH, "Orphaned #$this->orphanedImgCnt: ".$urlPath.$file."\n");
 							}
 						}

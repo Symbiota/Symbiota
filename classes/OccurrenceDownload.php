@@ -218,7 +218,7 @@ class OccurrenceDownload{
 	 th.startElement("","","SpecimenRecord",ai);
 	 for(int x = 1;x <= columnCnt;++x){
 	 String columnName = rsmd.getColumnName(x);
-	 if(this.isAdmin || rs.getInt("LocalitySecurity") == 1 || !this.securityColumns.contains(columnName) || (this.userRights != null && this.userRights.contains(rs.getString("CollectionCode")))){
+	 if(this.isAdmin || rs.getInt("recordSecurity") == 1 || !this.securityColumns.contains(columnName) || (this.userRights != null && this.userRights.contains(rs.getString("CollectionCode")))){
 	 String outStr = rs.getString(x);
 	 if(outStr != null && !outStr.equals("")){
 	 char[] charArr = outStr.toCharArray();
@@ -303,8 +303,8 @@ class OccurrenceDownload{
 			'IFNULL(m.thumbnailurl,m.url) AS thumbnailurl, o.processingstatus '.
 			'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid '.
 			'INNER JOIN media m ON o.occid = m.occid '.
-			'WHERE c.colltype = "Preserved Specimens" '.
-			'AND o.processingstatus IN("pending review","reviewed", "closed") AND (o.localitysecurity IS NULL OR o.localitysecurity = 0) ';
+			'WHERE c.colltype IN("Preserved Specimens","Fossil Specimens") '.
+			'AND o.processingstatus IN("pending review","reviewed","closed") AND (o.recordSecurity = 0) ';
 		if($days && is_numeric($days)) $sql .= 'AND (o.datelastmodified > DATE_SUB(NOW(), INTERVAL '.$days.' DAY)) ';
 		$sql .= 'ORDER BY o.datelastmodified DESC ';
 		if(!$days && !$limit) $limit = '100';
@@ -461,12 +461,13 @@ class OccurrenceDownload{
 				$sql .= $this->sqlWhere.'AND t.RankId > 140 AND (ts.taxauthid = '.$this->taxonFilter.') ';
 				if($this->redactLocalities){
 					if($this->rareReaderArr){
-						$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL OR c.collid IN('.implode(',',$this->rareReaderArr).')) ';
+						$sql .= 'AND (o.recordSecurity = 0 OR c.collid IN('.implode(',',$this->rareReaderArr).')) ';
 					}
 					else{
-						$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL) ';
+						$sql .= 'AND (o.recordSecurity = 0) ';
 					}
 				}
+				$sql .= OccurrenceUtil::appendFullProtectionSQL();
 				$sql .= 'ORDER BY ts.family, t.SciName ';
 			}
 			else{
@@ -477,12 +478,13 @@ class OccurrenceDownload{
 				$sql .= $this->sqlWhere.'AND o.SciName NOT LIKE "%aceae" AND o.SciName NOT LIKE "%idea" AND o.SciName NOT IN ("Plantae","Polypodiophyta") ';
 				if($this->redactLocalities){
 					if($this->rareReaderArr){
-						$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL OR c.collid IN('.implode(',',$this->rareReaderArr).')) ';
+						$sql .= 'AND (o.recordSecurity = 0 OR c.collid IN('.implode(',',$this->rareReaderArr).')) ';
 					}
 					else{
-						$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL) ';
+						$sql .= 'AND (o.recordSecurity = 0) ';
 					}
 				}
+				$sql .= OccurrenceUtil::appendFullProtectionSQL();
 				$sql .= 'ORDER BY IFNULL(IFNULL(ts.family, o.family),"not entered"), o.SciName ';
 			}
 		}
@@ -493,7 +495,7 @@ class OccurrenceDownload{
 			if($this->extended){
 				$sql .= 'o.georeferencedBy, o.georeferenceProtocol, o.georeferenceSources, o.georeferenceVerificationStatus, '.
 					'o.georeferenceRemarks, o.minimumElevationInMeters, o.maximumElevationInMeters, o.verbatimElevation, '.
-					'o.localitySecurity, o.localitySecurityReason, IFNULL(o.modified,o.datelastmodified) AS modified, '.
+					'o.recordSecurity, o.securityReason, IFNULL(o.modified,o.datelastmodified) AS modified, '.
 					'o.processingStatus, o.collId, o.dbpk AS sourcePrimaryKey, o.occid, CONCAT("urn:uuid:", o.recordID) AS recordID ';
 			}
 			else{
@@ -503,17 +505,30 @@ class OccurrenceDownload{
 			}
 			$sql .= 'FROM omcollections c INNER JOIN omoccurrences o ON c.collid = o.collid LEFT JOIN taxa t ON o.tidinterpreted = t.tid LEFT JOIN taxstatus ts ON t.tid = ts.tid ';
 			$sql .= $this->setTableJoins($this->sqlWhere);
-			$this->applyConditions();
-			$sql .= $this->sqlWhere;
-			if($this->redactLocalities){
-				if($this->rareReaderArr){
-					$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL OR c.collid IN('.implode(',',$this->rareReaderArr).')) ';
-				}
-				else{
-					$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL) ';
-				}
+			if ($this->sqlWhere && strpos($this->sqlWhere,'early.myaStart')){
+				$sql = "COALESCE((SELECT myaEnd FROM omoccurpaleogts WHERE gtsterm = '" . ($this->searchTermArr["lateInterval"] ?? '') ."'), 0) AS searchEnd) " . $sql;
+				$sql = "WITH searchRange AS (SELECT COALESCE((SELECT myaStart FROM omoccurpaleogts WHERE gtsterm = '"  . ($this->searchTermArr["earlyInterval"] ?? '') . "'), 5000) AS searchStart, " . $sql;
 			}
-			$sql .= 'ORDER BY o.collid';
+			$this->applyConditions();
+			if($this->sqlWhere){
+				$sql .= $this->sqlWhere;
+				if(empty($_REQUEST['source']) || $_REQUEST['source'] != 'collection_exporter'){
+					if($this->redactLocalities){
+						if($this->rareReaderArr){
+							$sql .= 'AND (o.recordSecurity = 0 OR c.collid IN('.implode(',',$this->rareReaderArr).')) ';
+						}
+						else{
+							$sql .= 'AND (o.recordSecurity = 0) ';
+						}
+					}
+					$sql .= OccurrenceUtil::appendFullProtectionSQL();
+				}
+				$sql .= 'ORDER BY o.collid';
+			}
+			else{
+				//Don't allow someone to query all occurrences if there are no conditions
+				$sql .= 'WHERE o.occid IS NULL ';
+			}
 		}
 		//echo $sql; exit;
 		return $sql;
@@ -521,23 +536,26 @@ class OccurrenceDownload{
 
 	private function setTableJoins($sqlWhere){
 		$sqlJoin = '';
-		if(strpos($sqlWhere,'e.taxauthid')) $sqlJoin .= 'INNER JOIN taxaenumtree e ON o.tidinterpreted = e.tid ';
-		if(strpos($sqlWhere,'ctl.clid')) $sqlJoin .= 'INNER JOIN fmvouchers v ON o.occid = v.occid INNER JOIN fmchklsttaxalink ctl ON v.clTaxaID = ctl.clTaxaID ';
-		if(strpos($sqlWhere,'p.lngLatPoint')) $sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
-		if (strpos($sqlWhere, 'ds.datasetid')) $sqlJoin .= 'INNER JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
+		if($sqlWhere){
+			if(strpos($sqlWhere,'e.taxauthid')) $sqlJoin .= 'INNER JOIN taxaenumtree e ON o.tidinterpreted = e.tid ';
+			if(strpos($sqlWhere,'ctl.clid')) $sqlJoin .= 'INNER JOIN fmvouchers v ON o.occid = v.occid INNER JOIN fmchklsttaxalink ctl ON v.clTaxaID = ctl.clTaxaID ';
+			if(strpos($sqlWhere,'p.lngLatPoint')) $sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
+			if (strpos($sqlWhere, 'ds.datasetid')) $sqlJoin .= 'INNER JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
+			if (strpos($sqlWhere, 'paleo.') || strpos($sqlWhere, 'early.myaStart')) $sqlJoin .= 'INNER JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
+			if(strpos($sqlWhere, 'early.myaStart')){
+				$sqlJoin .= 'JOIN omoccurpaleogts early ON paleo.earlyInterval = early.gtsterm ';
+				$sqlJoin .= 'JOIN omoccurpaleogts late ON paleo.lateInterval = late.gtsterm ';
+				$sqlJoin .= 'CROSS JOIN searchRange search ';
+			}
+		}
 		return $sqlJoin;
 	}
 
 	private function getOutputFilePath(){
 		$retStr = $GLOBALS['TEMP_DIR_ROOT'];
-		if(!$retStr){
-			$retStr = $GLOBALS['SERVER_ROOT'];
-			if(substr($retStr,-1) != '/' && substr($retStr,-1) != "\\") $retStr .= '/';
-			$retStr .= 'temp/';
-		}
 		if(substr($retStr,-1) != '/' && substr($retStr,-1) != "\\") $retStr .= '/';
-		if(file_exists($retStr.'downloads/')){
-			$retStr .= 'downloads/';
+		if(file_exists($retStr.'exports/')){
+			$retStr .= 'exports/';
 		}
 		return $retStr;
 	}
@@ -715,7 +733,7 @@ class OccurrenceDownload{
 
 	//Misc functions
 	private function stripSensitiveFields(&$row){
-		if($row["localitySecurity"] == 1 && $this->redactLocalities && !in_array($row["collid"],$this->rareReaderArr)){
+		if($row['recordSecurity'] == 1 && $this->redactLocalities && !in_array($row["collid"],$this->rareReaderArr)){
 			foreach($this->securityArr as $fieldName){
 				$row[$fieldName] = '[redacted]';
 			}

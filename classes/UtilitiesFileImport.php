@@ -1,5 +1,6 @@
 <?php
 include_once('Manager.php');
+include_once($SERVER_ROOT . '/classes/utilities/UploadUtil.php');
 
 class UtilitiesFileImport extends Manager {
 
@@ -91,10 +92,8 @@ class UtilitiesFileImport extends Manager {
 
 	protected function setTargetPath(){
 		if($this->targetPath) return true;
-		$path = $GLOBALS['TEMP_DIR_ROOT'];
-		if(!$path) $path = ini_get('upload_tmp_dir');
-		if(!$path) $path = $GLOBALS['SERVER_ROOT'].'/temp';
-		if(substr($path,-1) != '/') $path .= '/';
+		$path = UploadUtil::getTempDir();
+
 		if(is_dir($path.'data')) $path .= 'data/';
 		if(!is_writable($path)){
 			$this->errorMessage = 'FATAL ERROR: target directory does not exist or is not writable by web server ('.$this->targetPath.')';
@@ -131,16 +130,16 @@ class UtilitiesFileImport extends Manager {
 		$sourceFieldArr = $this->getHeaderArr();
 		foreach($sourceFieldArr as $i => $sourceField){
 			$tableHtml .= '<tr><td>';
-			$tableHtml .= $sourceField;
+			$tableHtml .= $this->cleanOutStr($sourceField);
 			$sourceField = strtolower($sourceField);
-			$tableHtml .= '<input type="hidden" name="sf['.$i.']" value="'.$sourceField.'" />';
+			$tableHtml .= '<input type="hidden" name="sf[' . $this->cleanOutStr($i) . ']" value="' . $this->cleanOutStr($sourceField) . '" />';
 			$translatedSourceField = strtolower($this->getTranslation($sourceField));
 			$tableHtml .= '</td><td>';
-			$tableHtml .= '<select name="tf['.$i.']" style="background:'.(array_key_exists($translatedSourceField, $this->targetFieldMap)?'':'yellow').'">';
+			$tableHtml .= '<select name="tf[' . $this->cleanOutStr($i) . ']" style="background:'.(array_key_exists($translatedSourceField, $this->targetFieldMap)?'':'yellow').'">';
 			$tableHtml .= '<option value="">Select Target Field</option>';
 			$tableHtml .= '<option value="">-------------------------</option>';
 			foreach($this->targetFieldMap as $k => $v){
-				$tableHtml .= '<option value="' . $k . '" ' . ($k == $translatedSourceField ? 'SELECTED' : '') . '>' . $v . '</option>';
+				$tableHtml .= '<option value="' . $this->cleanOutStr($k) . '" ' . ($k == $translatedSourceField ? 'SELECTED' : '') . '>' . $this->cleanOutStr($v) . '</option>';
 			}
 			$tableHtml .= '</select>';
 			$tableHtml .= '</td></tr>';
@@ -152,30 +151,33 @@ class UtilitiesFileImport extends Manager {
 	protected function getHeaderArr(){
 		$sourceArr = array();
 		if($this->fileName){
-			$this->fileHandler = fopen($this->targetPath . $this->fileName, 'rb') or die('unable to open file');
-			$headerData = fgets($this->fileHandler);
-			//Check to see if we can figure out the delimiter, comma delimited it assumed to be the default
-			if(strpos($headerData, ',') === false){
-				if(strpos($headerData, "\t") !== false){
-					$this->delimiter = "\t";
+			$fullPath = realpath($this->targetPath . $this->fileName);
+			if($fullPath){
+				$this->fileHandler = fopen($fullPath, 'rb') or die('unable to open file');
+				$headerData = fgets($this->fileHandler);
+				//Check to see if we can figure out the delimiter, comma delimited it assumed to be the default
+				if(strpos($headerData, ',') === false){
+					if(strpos($headerData, "\t") !== false){
+						$this->delimiter = "\t";
+					}
+					elseif(strpos($headerData, '|') !== false){
+						$this->delimiter = '|';
+					}
 				}
-				elseif(strpos($headerData, '|') !== false){
-					$this->delimiter = '|';
+				//Grab header terms
+				$headerArr = Array();
+				if($this->delimiter == ','){
+					rewind($this->fileHandler);
+					$headerArr = fgetcsv($this->fileHandler, 0, $this->delimiter);
 				}
-			}
-			//Grab header terms
-			$headerArr = Array();
-			if($this->delimiter == ','){
-				rewind($this->fileHandler);
-				$headerArr = fgetcsv($this->fileHandler, 0, $this->delimiter);
-			}
-			else{
-				$headerArr = explode($this->delimiter, $headerData);
-			}
-			foreach($headerArr as $k => $field){
-				$fieldStr = $this->encodeString(trim($field));
-				if($fieldStr){
-					$sourceArr[$k] = $fieldStr;
+				else{
+					$headerArr = explode($this->delimiter, $headerData);
+				}
+				foreach($headerArr as $k => $field){
+					$fieldStr = $this->encodeString(trim($field));
+					if($fieldStr){
+						$sourceArr[$k] = $fieldStr;
+					}
 				}
 			}
 		}
@@ -192,6 +194,9 @@ class UtilitiesFileImport extends Manager {
 			if($record){
 				$recordArr = explode($this->delimiter, $record);
 				foreach($recordArr as $k => $v) $recordArr[$k] = trim($v);
+			}
+			else{
+				$recordArr = false;
 			}
 		}
 		return $recordArr;

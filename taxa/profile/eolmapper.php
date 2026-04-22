@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/EOLManager.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
@@ -115,7 +115,7 @@ include($SERVER_ROOT.'/includes/header.php');
 						Up to 5 images will be automatically linked in the mapping procedure.
 					</div>
 					<div style="margin:10px;">
-						Number of accpeted taxa without images:
+						Number of accepted taxa without images:
 						<b><?php echo $eolManager->getImageDeficiencyCount(); ?></b>
 						<div style="margin:10px;">
 							<form name="imagemappingform" action="eolmapper.php" method="post">

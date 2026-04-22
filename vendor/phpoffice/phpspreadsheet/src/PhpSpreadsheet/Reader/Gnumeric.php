@@ -11,7 +11,6 @@ use PhpOffice\PhpSpreadsheet\Reader\Gnumeric\Styles;
 use PhpOffice\PhpSpreadsheet\Reader\Security\XmlScanner;
 use PhpOffice\PhpSpreadsheet\ReferenceHelper;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
-use PhpOffice\PhpSpreadsheet\Settings;
 use PhpOffice\PhpSpreadsheet\Shared\File;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
@@ -104,7 +103,7 @@ class Gnumeric extends BaseReader
 
         $xml = new XMLReader();
         $contents = $this->gzfileGetContents($filename);
-        $xml->xml($contents, null, Settings::getLibXmlLoaderOptions());
+        $xml->xml($contents);
         $xml->setParserProperty(2, true);
 
         $worksheetNames = [];
@@ -133,7 +132,7 @@ class Gnumeric extends BaseReader
 
         $xml = new XMLReader();
         $contents = $this->gzfileGetContents($filename);
-        $xml->xml($contents, null, Settings::getLibXmlLoaderOptions());
+        $xml->xml($contents);
         $xml->setParserProperty(2, true);
 
         $worksheetInfo = [];
@@ -226,6 +225,7 @@ class Gnumeric extends BaseReader
     {
         // Create new Spreadsheet
         $spreadsheet = new Spreadsheet();
+        $spreadsheet->setValueBinder($this->valueBinder);
         $spreadsheet->removeSheetByIndex(0);
 
         // Load into this instance
@@ -247,13 +247,14 @@ class Gnumeric extends BaseReader
 
         /** @var XmlScanner */
         $securityScanner = $this->securityScanner;
-        $xml2 = simplexml_load_string($securityScanner->scan($gFileData), 'SimpleXMLElement', Settings::getLibXmlLoaderOptions());
+        $xml2 = simplexml_load_string($securityScanner->scan($gFileData));
         $xml = self::testSimpleXml($xml2);
 
         $gnmXML = $xml->children(self::NAMESPACE_GNM);
         (new Properties($this->spreadsheet))->readProperties($xml, $gnmXML);
 
         $worksheetID = 0;
+        $sheetCreated = false;
         foreach ($gnmXML->Sheets->Sheet as $sheetOrNull) {
             $sheet = self::testSimpleXml($sheetOrNull);
             $worksheetName = (string) $sheet->Name;
@@ -265,6 +266,7 @@ class Gnumeric extends BaseReader
 
             // Create new Worksheet
             $this->spreadsheet->createSheet();
+            $sheetCreated = true;
             $this->spreadsheet->setActiveSheetIndex($worksheetID);
             //    Use false for $updateFormulaCellReferences to prevent adjustment of worksheet references in formula
             //        cells... during the load, all formulae should be correct, and we're simply bringing the worksheet
@@ -315,6 +317,9 @@ class Gnumeric extends BaseReader
 
             $this->setSelectedCells($sheet);
             ++$worksheetID;
+        }
+        if ($this->createBlankSheetIfNoneRead && !$sheetCreated) {
+            $this->spreadsheet->createSheet();
         }
 
         $this->processDefinedNames($gnmXML);

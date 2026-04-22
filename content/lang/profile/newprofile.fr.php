@@ -7,15 +7,15 @@ Language: Français (French)
 
 $LANG['INVALID_USERNAME'] = 'Nom d\'utilisateur invalide';
 $LANG['INVALID_EMAIL'] = 'Email invalide';
-$LANG['RECAPTCHA_FAILED'] = 'Échec de la vérification Recaptcha';
-$LANG['PLEASE_CHECK'] = 'Veuillez vérifier le formulaire captcha';
-$LANG['FAILED_1'] = 'ÉCHEC : impossible de créer l\'utilisateur';
+$LANG['CAPTCHA_FAILED'] = 'La vérification du CAPTCHA a échoué';
+$LANG['PLEASE_CHECK'] = 'Veuillez vérifier le formulaire CAPTCHA';
+$LANG['FAILED_1'] = 'ÉCHEC: impossible de créer l\'utilisateur';
 $LANG['FAILED_2'] = "Veuillez contacter l'administrateur système pour obtenir de l'aide";
 $LANG['NEW_USER'] = 'Nouveau Profil d\'Utilisateur';
-$LANG['CHECK_CAPTCHA'] = "Vous devez d'abord cocher la case reCAPTCHA (je ne suis pas un robot)";
+$LANG['CHECK_CAPTCHA'] = "Vous devez d'abord cocher la case CAPTCHA";
 $LANG['BOTH_PASSWORDS'] = 'Les deux champs de mot de passe doivent contenir une valeur';
 $LANG['NO_SPACE'] = 'Le mot de passe ne peut pas commencer ou se terminer par un espace, mais ils peuvent inclure des espaces dans le mot de passe';
-$LANG['GREATER_THAN_SIX'] = 'Le mot de passe doit comporter plus de 6 caractères';
+$LANG['PWD_TOO_SHORT'] = 'Le mot de passe doit comporter plus de 6 caractères';
 $LANG['NO_MATCH'] = 'Les mots de passe ne correspondent pas, veuillez saisir à nouveau';
 $LANG['NEED_NAME'] = "Le nom d'utilisateur doit contenir une valeur";
 $LANG['NO_SPECIAL_CHARS'] = "Le nom d'utilisateur ne doit contenir que 0-9A-Za-z_.!@ (les espaces ne sont pas autorisés)";
@@ -55,4 +55,5 @@ $LANG['CREATE_LOGIN'] = 'Créer une Compte';
 $LANG['ACCESSIBILITY_PREF'] = 'Préférences d\'accessibilité';
 $LANG['ACCESSIBILITY_PREF_DESC'] = 'Cochez pour indiquer une préférence pour les styles optimisés pour l\'accessibilité';
 $LANG['PROFILE_CREATION_DISABLED'] = 'La création d\'utilisateurs publics a été désactivée sur ce portail.';
+$LANG['PASSWORD_WARNING'] = 'Ne créez pas de comptes utilisateurs partagés/de groupe.<br><br>Pour des raisons de sécurité, chaque personne doit disposer d\'un identifiant et d\'un mot de passe uniques.<br><br>Créez un mot de passe unique pour ce portail.<br><br>Ne réutilisez pas un mot de passe utilisé sur un autre site web, pour votre messagerie électronique, etc.'
 ?>

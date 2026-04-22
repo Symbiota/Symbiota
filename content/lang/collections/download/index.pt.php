@@ -10,7 +10,7 @@ $LANG['HOME'] = 'Lar';
 $LANG['COLL_SEARCH_DWNL'] = 'Download da pesquisa de coleções';
 $LANG['RETURN'] = 'Retornar à página de pesquisa';
 $LANG['OCC_DOWNLOAD'] = 'Download do Registro de Ocorrência';
-$LANG['DATA_GUIDE'] = 'Diretrizes de uso de dados';
+$LANG['DATA_GUIDE'] = 'Diretrizes de Uso de Dados: ';
 $LANG['GUIDE_ONE'] = 'Ao baixar os dados, o usuário confirma que leu e concorda com os termos gerais';
 $LANG['GUIDE_LINK'] = 'termos de uso de dados';
 $LANG['GUIDE_TWO'] = 'Observe que termos de uso adicionais específicos para coleções individuais podem ser distribuídos com o download dos dados. Quando presentes, os termos fornecidos pela instituição proprietária deverão prevalecer sobre os termos gerais divulgados no site.';
@@ -26,6 +26,11 @@ $LANG['DARWIN_CORE'] = 'Núcleo Darwin';
 $LANG['IMG_DARWIN_INFO'] = 'Ícone de informações: DwC é um padrão endossado pelo TDWG para biodados. Link para o guia de referência rápida do DwC na caixa de diálogo.';
 $LANG['DARWIN_GUIDE'] = 'Darwin Core (DwC) é um padrão de intercâmbio endossado pelo TDWG especificamente para conjuntos de dados de biodiversidade.                        Para obter mais informações sobre quais campos de dados estão incluídos no DwC, visite o';
 $LANG['DARWIN_GUIDE_LINK'] = 'Guia de referência rápida DwC';
+$LANG['TAXONOMIC_RESOLUTION'] = 'Resolução taxonômica';
+$LANG['ACCEPTED_NAME_USAGE'] = 'Incluir nome científico aceito e autoria';
+$LANG['TAXONOMIC_RESOLUTION_GUIDE']= 'Marcar esta caixa adicionará três campos ao seu arquivo de ocorrências: acceptedNameUsage, acceptedNameUsageAuthorship
+        e acceptedNameUsageID. Esses campos conterão o nome, a autoria e o taxonID do nome do táxon "aceito" do nome científico do registro,
+        de acordo com o tesauro taxonômico do portal no momento do download.';
 $LANG['WHAT_IS_DARWIN_LINK'] = 'O que é Darwin Core?';
 $LANG['DATA_EXTS'] = 'Extensões de dados';
 $LANG['INCLUDE_HISTORY'] = 'incluir histórico de determinação';

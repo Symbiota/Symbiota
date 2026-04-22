@@ -1,5 +1,5 @@
 <?php
-include_once('../../../config/symbini.php');
+include_once(__DIR__ . '/../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/APITaxonomy.php');
 include_once($SERVER_ROOT.'/classes/MapSupport.php');
 
@@ -21,8 +21,8 @@ if($IS_ADMIN) {
             $taxa_list = $mapManager->getTaxaList($tid);
             if(!empty($taxa_list)) {
                array_push($retArr, [
-                  "tid" => $tid, 
-                  "sciname" => $taxon_info['sciname'], 
+                  "tid" => $tid,
+                  "sciname" => $taxon_info['sciname'],
                   'taxa_list' => $taxa_list
                ]);
             }

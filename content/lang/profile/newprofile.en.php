@@ -7,15 +7,15 @@ Language: English
 
 $LANG['INVALID_USERNAME'] = 'Invalid username';
 $LANG['INVALID_EMAIL'] = 'Invalid email address';
-$LANG['RECAPTCHA_FAILED'] = 'Recaptcha verification failed';
-$LANG['PLEASE_CHECK'] = 'Please check the the captcha form';
+$LANG['CAPTCHA_FAILED'] = 'CAPTCHA verification failed';
+$LANG['PLEASE_CHECK'] = 'Please check the the CAPTCHA form';
 $LANG['FAILED_1'] = 'FAILED: Unable to create user';
 $LANG['FAILED_2'] = 'Please contact system administrator for assistance';
 $LANG['NEW_USER'] = 'New User Profile';
-$LANG['CHECK_CAPTCHA'] = 'You must first check the reCAPTCHA checkbox (I\'m not a robot)';
+$LANG['CHECK_CAPTCHA'] = 'You must first check the CAPTCHA checkbox';
 $LANG['BOTH_PASSWORDS'] = 'Both password fields must contain a value';
 $LANG['NO_SPACE'] = 'Password cannot start or end with a space, but they can include spaces within the password';
-$LANG['GREATER_THAN_SIX'] = 'Password must be greater than 6 characters';
+$LANG['PWD_TOO_SHORT'] = 'Password must be 10 characters or greater';
 $LANG['NO_MATCH'] = 'Passwords do not match, please enter again';
 $LANG['NEED_NAME'] = 'Username must contain a value';
 $LANG['NO_SPECIAL_CHARS'] = 'Username should only contain 0-9A-Za-z_.!@ (spaces are not allowed)';
@@ -55,5 +55,6 @@ $LANG['CREATE_LOGIN'] = 'Create Login';
 $LANG['ACCESSIBILITY_PREF'] = 'Accessibility Preference';
 $LANG['ACCESSIBILITY_PREF_DESC'] = 'Check to indicate a preference for accessibility-optimized styles';
 $LANG['PROFILE_CREATION_DISABLED'] = 'Public user creation has been disabled on this portal.';
+$LANG['PASSWORD_WARNING'] = 'Do not create shared/group user accounts.<br><br>For security reasons, every individual should have their own unique login and password.<br><br>Create a password that is unique to this portal.<br><br>Do not reuse a password from another website, your email, etc.'
 
 ?>

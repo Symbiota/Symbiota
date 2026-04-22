@@ -1,6 +1,8 @@
 <?php
-include_once($SERVER_ROOT.'/content/lang/collections/harvestparams.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/harvestparams');
 
 abstract class TaxaSearchType {
 	const  ANY_NAME				= 1;
@@ -54,15 +56,15 @@ class OccurrenceTaxaManager {
 		if($exactMatchOnly) $this->exactMatchOnly = true;
 
 		//sanitize
-		$associationTypeStr = $this->cleanAndAssignGeneric('association-type', $inputArr);
-		$associatedTaxonStr = $this->cleanAndAssignGeneric('associated-taxa', $inputArr);
+		$associationTypeStr = $this->cleanAndAssignGeneric('association-type', $inputArr) ?? $this->cleanInputStr($_REQUEST['association-type']);
+		$associatedTaxonStr = $this->cleanAndAssignGeneric('associated-taxa', $inputArr) ?? $this->cleanInputStr($_REQUEST['associated-taxa']);
 		if($associationTypeStr){
 			$this->associationArr['relationship'] = $associationTypeStr;
 		}
 
 		if($associatedTaxonStr){
 			$this->associationArr['search'] = $associatedTaxonStr;
-			$this->setAssociationUseThes($inputArr, 'usethes-associations');
+			$this->setAssociationUseThes($inputArr, 'usethes-associations') ?? $this->setAssociationUseThes(null, 'usethes-associations');
 			$defaultTaxaType = $this->setAndGetAssociationDefaultTaxaType($inputArr);
 
 			$this->associationTaxaSearchTerms = explode(',',$associatedTaxonStr);
@@ -258,7 +260,10 @@ class OccurrenceTaxaManager {
 		}
 		else{
 			$taxaStr = str_replace(';',',',$this->cleanInputStr($_REQUEST['taxa']));
+			//Strip out illegal and problematic characters
+			$taxaStr = preg_replace("/[^a-zA-Z0-9\s,\-\.()'×†]/u", '', $taxaStr);
 		}
+		$taxaStr = str_replace('_', ' ',$taxaStr);
 		if($taxaStr){
 			$this->taxaArr['search'] = $taxaStr;
 			//Set usage of taxonomic thesaurus
@@ -478,15 +483,16 @@ class OccurrenceTaxaManager {
 					}
 					else{
 						$term = $this->cleanInStr(trim($searchTaxon,'%'));
-						$term = preg_replace(array('/\s{1}x\s{1}/','/\s{1}X\s{1}/','/\s{1}\x{00D7}\s{1}/u'), ' _ ', $term);
+						//$term = preg_replace(array('/\s{1}x\s{1}/','/\s{1}X\s{1}/','/\s{1}\x{00D7}\s{1}/u'), ' _ ', $term);
 						if(array_key_exists('tid',$searchArr)){
+							//Term was located within the taxonomic thesaurus
 							$rankid = current($searchArr['tid']);
 							$tidArr = array_keys($searchArr['tid']);
 							$tidInArr = array_merge($tidInArr, $tidArr);
-							//Return matches that are not linked to thesaurus
 							if($rankid > 179){
-								if($this->exactMatchOnly) $sqlWhereTaxa .= 'OR (o.sciname = "' . $term . '") ';
-								else $sqlWhereTaxa .= 'OR (o.sciname LIKE "' . $term . '%") ';
+								//Return matches that are not linked to thesaurus
+								//if($this->exactMatchOnly) $sqlWhereTaxa .= 'OR (o.sciname = "' . $term . '") ';
+								//else $sqlWhereTaxa .= 'OR (o.sciname LIKE "' . $term . '%") ';
 							}
 						}
 						else{
@@ -506,11 +512,13 @@ class OccurrenceTaxaManager {
 							}
 							else{
 								$sqlWhereTaxa .= 'OR (o.sciname LIKE "' . $term . '%") ';
+								/*
 								if(!strpos($term,' _ ')){
 									//Accommodate for formats of hybrid designations within input and target data (e.g. x, multiplication sign, etc)
-									$term2 = preg_replace('/^([^\s]+\s{1})/', '$1 _ ', $term);
-									$sqlWhereTaxa .= 'OR (o.sciname LIKE "' . $term2 . '%") ';
+									//$term2 = preg_replace('/^([^\s]+\s{1})/', '$1 _ ', $term);
+									//$sqlWhereTaxa .= 'OR (o.sciname LIKE "' . $term2 . '%") ';
 								}
+								*/
 							}
 						}
 					}
@@ -634,6 +642,7 @@ class OccurrenceTaxaManager {
 		$str = preg_replace('/%%+/', '%',$str);
 		$str = preg_replace('/^[\s%]+/', '',$str);
 		$str = trim($str,' ,;');
+		$str = preg_replace('/\s\s+/', ' ',$str);
 		if($str == '%') $str = '';
 		$str = strip_tags($str);
 		//$str = htmlspecialchars($str, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML401);

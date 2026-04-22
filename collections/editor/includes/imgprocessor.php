@@ -1,6 +1,8 @@
 <?php
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/includes/imgprocessor.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imgprocessor.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imgprocessor.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/editor/includes/imgprocessor');
+
 ?>
 
 <script>
@@ -70,9 +72,9 @@ else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imgpro
 				<div id="anchorImgDiv" style="float:left;margin-left:10px;display:none" title="<?php echo $LANG['ANCHOR_IMG']; ?>"><a href="#" onclick="anchorImgPanel()"><img src="../../images/anchor.png" style="width:1.3em" /></a></div>
 			</div>
 			<div style="float:left;;padding-right:10px;margin:2px 20px 0px 0px;"><?php echo $LANG['ROTATE']; ?>: <a href="#" onclick="rotateImage(-90)">&nbsp;L&nbsp;</a> &lt;&gt; <a href="#" onclick="rotateImage(90)">&nbsp;R&nbsp;</a></div>
-			<div style="float:right;margin:0px 3px;">
-				<div><input id="imgresmed" name="resradio"  type="radio" checked onchange="changeImgRes('med')" /><?php echo $LANG['MED_RES']; ?>.</div>
-				<div><input id="imgreslg" name="resradio" type="radio" onchange="changeImgRes('lg')" /><?php echo $LANG['HIGH_RES']; ?>.</div>
+			<div id="imgres" style="float:right;margin:0px 3px;">
+				<div><input id="imgresmed" name="resradio"  type="radio" value="med" checked onchange="changeImgRes('med')" /><?php echo $LANG['MED_RES']; ?>.</div>
+				<div><input id="imgreslg" name="resradio" type="radio" value="lg" onchange="changeImgRes('lg')" /><?php echo $LANG['HIGH_RES']; ?>.</div>
 			</div>
 		</div>
 		<div id="labelprocessingdiv" style="clear:both;">
@@ -97,7 +99,7 @@ else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imgpro
 							<input type="checkbox" id="ocrfull-tess" value="1" /> <?php echo $LANG['OCR_WHOLE_IMG']; ?><br/>
 							<input type="checkbox" id="ocrbest" value="1" /> <?php echo $LANG['OCR_ANALYSIS']; ?>
 							<div>
-								<button value="OCR Image" onclick="ocrImage(this,'tess', <?php echo $imgId.','.$imgCnt; ?>);" ><?php echo $LANG['OCR_IMAGE']; ?></button>
+								<button class="button icon-button" value="OCR Image" onclick="ocrImage(this,'tess', <?php echo $imgId.','.$imgCnt; ?>);" ><?php echo $LANG['OCR_IMAGE']; ?></button>
 								<img id="workingcircle-tess-<?php echo $imgCnt; ?>" src="../../images/workingcircle.gif" style="display:none;" />
 							</div>
 						</fieldset>
@@ -108,13 +110,13 @@ else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/imgpro
 								<legend>DigiLeap OCR</legend>
 								<input type="checkbox" id="ocrfull-digi" value="1" /> <?php echo $LANG['OCR_WHOLE_IMG']; ?><br/>
 								<div>
-									<button value="OCR Image" onclick="ocrImage(this,'digi', <?php echo $imgId.','.$imgCnt; ?>);" ><?php echo $LANG['OCR_IMAGE']; ?></button>
+									<button class="button icon-button" value="OCR Image" onclick="ocrImage(this,'digi', <?php echo $imgId.','.$imgCnt; ?>);" ><?php echo $LANG['OCR_IMAGE']; ?></button>
 									<img id="workingcircle-digi-<?php echo $imgCnt; ?>" src="../../images/workingcircle.gif" style="display:none;" />
 								</div>
 							</fieldset>
 							<?php
 						}
-						if(!empty($VOUCHERVISION_OCR_ACTIVATED)){
+						if(!empty($VOUCHERVISION_API_KEY)){
 						?>
 						<fieldset class="ocr-box">
 							<legend>VoucherVision OCR</legend>

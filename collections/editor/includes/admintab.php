@@ -1,8 +1,10 @@
 <?php
-include_once('../../../config/symbini.php');
+include_once(__DIR__ . '/../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/includes/admintab.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/admintab.'.$LANG_TAG.'.php');
-else include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/admintab.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/editor/includes/admintab');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $occid = $_GET['occid'];
@@ -24,7 +26,7 @@ $occManager->setOccId($occid);
 				<?php
 				if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId,$USER_RIGHTS['CollAdmin']))){
 					?>
-					<div style="float:right;" title="<?php echo $LANG['MANAGE_HISTORY']; ?>">
+					<div style="float:right;" title="<?php echo $LANG['MANAGE_HISTORY']; ?>" aria-label="<?= $LANG['MANAGE_HISTORY'] . $LANG['OPENS_NEW_TAB'] ?>">
 						<a href="../editor/editreviewer.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank"><img src="../../images/edit.png" style="border:0px;width:14px;" /></a>
 					</div>
 					<?php
@@ -120,7 +122,7 @@ $occManager->setOccId($occid);
 				<div style="margin:10px;">
 					<input name="occindex" type="hidden" value="<?php echo $occIndex; ?>" />
 					<input name="occid" type="hidden" value="<?php echo $occid; ?>" />
-					<button name="submitaction" type="submit" value="Transfer Record" ><?php echo $LANG['TRANSFER_RECORD']; ?></button>
+					<button name="submitaction" class="button" type="submit" value="Transfer Record" aria-label="<?= $LANG['TRANSFER_RECORD'] . $LANG['OPENS_NEW_TAB'] ?>"><?php echo $LANG['TRANSFER_RECORD']; ?></button>
 				</div>
 			</form>
 		</fieldset>
@@ -133,7 +135,7 @@ $occManager->setOccId($occid);
 			<div style="margin:15px">
 				<?php echo $LANG['REC_MUST_EVALUATE']; ?>
 				<div style="margin:15px;display:block;">
-					<button class="button-danger" name="verifydelete" type="button" value="Evaluate record for deletion" onclick="verifyDeletion(this.form);" ><?php echo $LANG['EVALUATE_FOR_DEL']; ?></button>
+					<button class="button button-danger" name="verifydelete" type="button" value="Evaluate record for deletion" onclick="verifyDeletion(this.form);" ><?php echo $LANG['EVALUATE_FOR_DEL']; ?></button>
 				</div>
 				<div id="delverimgdiv" style="margin:15px;">
 					<b><?php echo $LANG['MEDIA_LINKS']; ?>: </b>
@@ -164,7 +166,7 @@ $occManager->setOccId($occid);
 				<div id="delapprovediv" style="margin:15px;display:none;">
 					<input name="occid" type="hidden" value="<?php echo $occid; ?>" />
 					<input name="occindex" type="hidden" value="<?php echo $occIndex; ?>" />
-					<button class="button-danger" name="submitaction" type="submit" value="Delete Occurrence"><?php echo $LANG['DEL_OCC']; ?></button>
+					<button class="button button-danger" name="submitaction" type="submit" value="Delete Occurrence"><?php echo $LANG['DEL_OCC']; ?></button>
 				</div>
 			</div>
 		</form>

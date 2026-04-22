@@ -1,6 +1,8 @@
 <?php
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/loans/loan_langs');
+
 ?>
 
 <form name="reportsform" onsubmit="return ProcessReport();" method="post" target="_blank">
@@ -22,15 +24,15 @@ else include_once($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.en.
 		<input name="loantype" type="hidden" value="<?php echo $loanType; ?>" />
 		<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 		<input name="identifier" type="hidden" value="<?php echo $identifier; ?>" />
-		<button name="formsubmit" type="submit" onclick="this.form.action ='reports/defaultinvoice.php'" value="invoice"><?php echo $LANG['INVOICE']; ?></button>
+		<button class="bottom-breathing-room-rel-sm" name="formsubmit" type="submit" onclick="this.form.action ='reports/defaultinvoice.php'" value="invoice"><?php echo $LANG['INVOICE']; ?></button>
 		<?php
 		if(isset($specimenTotal) && $specimenTotal){
 			?>
-			<button name="formsubmit" type="submit" onclick="this.form.action ='reports/defaultspecimenlist.php'" value="spec"><?php echo $LANG['SPEC_LIST']; ?></button>
+			<button class="bottom-breathing-room-rel-sm" name="formsubmit" type="submit" onclick="this.form.action ='reports/defaultspecimenlist.php'" value="spec"><?php echo $LANG['SPEC_LIST']; ?></button>
 			<?php
 		}
 		?>
-		<button name="formsubmit" type="submit" onclick="this.form.action ='reports/defaultmailinglabel.php'" value="label"><?php echo $LANG['MAILING_LABEL']; ?></button>
+		<button class="bottom-breathing-room-rel-sm" name="formsubmit" type="submit" onclick="this.form.action ='reports/defaultmailinglabel.php'" value="label"><?php echo $LANG['MAILING_LABEL']; ?></button>
 		<button name="formsubmit" type="submit" onclick="this.form.action ='reports/defaultenvelope.php'" value="envelope"><?php echo $LANG['ENVELOPE']; ?></button>
 	</fieldset>
 </form>

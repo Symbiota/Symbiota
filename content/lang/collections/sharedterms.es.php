@@ -14,6 +14,8 @@ $LANG['TAB_OCCURRENCES'] = 'Registros de Ocurrencia';
 $LANG['TAB_MAP'] = 'Mapas';
 
 $LANG['SPECIMEN_COLLECTIONS'] = 'Colecciones de Especímenes';
+$LANG['OBSERVATION_COLLECTIONS'] = 'Colecciones de Observación';
+
 $LANG['EXPAND'] = 'Expandir';
 $LANG['CONDENSE'] = 'Condensar';
 
@@ -32,4 +34,8 @@ $LANG['SEARCH'] = 'Buscar';
 $LANG['DISPLAY_FORMAT'] = 'Formato de Visualización de Resultados';
 $LANG['LIST'] = 'Lista';
 $LANG['TABLE'] = 'Tabla de Datos';
+$LANG['COLLECTION_LIST'] = 'Lista de Colecciones';
+$LANG['ALL_SPECIMEN_COLLECTIONS'] = 'Todas las colecciones de ejemplares';
+$LANG['ALL_OBSERVATION_COLLECTIONS'] = 'Todas las colecciones de observaciones';
+$LANG['ALL_COLLECTIONS'] = 'Todas las colecciones';
 ?>

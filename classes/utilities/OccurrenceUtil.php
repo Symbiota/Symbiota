@@ -185,7 +185,7 @@ class OccurrenceUtil {
 
 		/*
 		 *	Supported Formats
-		 *	Space must exist between units and numbers. 
+		 *	Space must exist between units and numbers.
 		 *	No units assumes meters.
 		 *
 		 *	Numbers: 100, 100-200, 1,000-2,000
@@ -213,16 +213,16 @@ class OccurrenceUtil {
 			$max_elev = str_replace(',', '', $max_elev);
 
 			if(is_numeric($min_elev)) {
-				$retArr['minelev'] = round($min_elev * $meter_conversion); 
+				$retArr['minelev'] = round($min_elev * $meter_conversion);
 			}
 			if(is_numeric($max_elev)) {
-				$retArr['maxelev'] = round($max_elev * $meter_conversion); 
+				$retArr['maxelev'] = round($max_elev * $meter_conversion);
 			}
-		} 
+		}
 
 		if(array_key_exists('minelev',$retArr) && ($retArr['minelev'] > 8000 || $retArr['minelev'] < 0)) unset($retArr['minelev']);
 		if(array_key_exists('maxelev',$retArr) && ($retArr['maxelev'] > 8000 || $retArr['maxelev'] < 0)) unset($retArr['maxelev']);
-	
+
 		return $retArr;
 	}
 
@@ -385,6 +385,9 @@ class OccurrenceUtil {
 			$recMap[$k] = trim($v);
 		}
 		//Date cleaning
+		if(isset($recMap['recordsecurity']) && !is_numeric($recMap['recordsecurity'])){
+			$recMap['recordsecurity'] = 0;
+		}
 		if(isset($recMap['eventdate']) && $recMap['eventdate']){
 			if(!preg_match('/\d{4}-\d{2}-\d{2}/', $recMap['eventdate'])){
 				if(is_numeric($recMap['eventdate'])){
@@ -695,8 +698,7 @@ class OccurrenceUtil {
 			if($tr == 'forma') $recMap["taxonrank"] = 'f.';
 		}
 
-		//Populate sciname if null
-		if(array_key_exists('sciname',$recMap) && $recMap['sciname']){
+		if(!empty($recMap['sciname'])){
 			if(substr($recMap['sciname'],-4) == ' sp.') $recMap['sciname'] = substr($recMap['sciname'],0,-4);
 			if(substr($recMap['sciname'],-3) == ' sp') $recMap['sciname'] = substr($recMap['sciname'],0,-3);
 
@@ -710,69 +712,70 @@ class OccurrenceUtil {
 			}
 		}
 		else{
-			if(array_key_exists('genus',$recMap) && array_key_exists('specificepithet',$recMap)){
+			//Populate sciname when null
+			if(!empty($recMap['genus']) && !empty($recMap['specificepithet'])){
 				//Build sciname from individual units supplied by source
 				$sciName = trim($recMap['genus'].' '.$recMap['specificepithet']);
-				if(array_key_exists('infraspecificepithet',$recMap)){
-					if(array_key_exists('taxonrank',$recMap) && strtolower($recMap['taxonrank'])!== 'cultivar') $sciName .= ' '.$recMap['taxonrank'];
+				if(!empty($recMap['infraspecificepithet'])){
+					if(!empty($recMap['taxonrank']) && strtolower($recMap['taxonrank'])!== 'cultivar') $sciName .= ' '.$recMap['taxonrank'];
 					$sciName .= ' '.$recMap['infraspecificepithet'];
 				}
-				if(array_key_exists('cultivarepithet',$recMap) && !empty($recMap['cultivarepithet']) ){
-					$sciName .= " " . self::standardizeCultivarEpithet($recMap['cultivarepithet']);
+				if(!empty($recMap['cultivarepithet']) ){
+					$sciName .= ' ' . self::standardizeCultivarEpithet($recMap['cultivarepithet']);
 				}
-				if(array_key_exists('tradename',$recMap) && !empty($recMap['tradename'])){
+				if(!empty($recMap['tradename'])){
 					$sciName .= ' ' . self::standardizeTradeName($recMap['tradename']);
 				}
 				$recMap['sciname'] = trim($sciName);
 			}
-			elseif(array_key_exists('scientificname',$recMap)){
+			elseif(!empty($recMap['scientificname'])){
 				//Clean and parse scientific name
 				$parsedArr = TaxonomyUtil::parseScientificName($recMap['scientificname']);
 				$scinameStr = '';
-				if(array_key_exists('unitind1', $parsedArr)){
+				if(!empty($parsedArr['unitind1'])){
 					$scinameStr .= $parsedArr['unitind1'];
 					if($parsedArr['unitind1'] != '×' || $parsedArr['unitind1'] != '†') $scinameStr .= ' ';
 				}
-				if(array_key_exists('unitname1',$parsedArr)){
+				if(!empty($parsedArr['unitname1'])){
 					$scinameStr = $parsedArr['unitname1'].' ';
-					if(!array_key_exists('genus',$recMap) || $recMap['genus']){
+					if(empty($recMap['genus'])){
 						$recMap['genus'] = $parsedArr['unitname1'];
 					}
 				}
-				if(array_key_exists('unitind2', $parsedArr)){
+				if(!empty($parsedArr['unitind2'])){
 					$scinameStr .= $parsedArr['unitind2'];
 					if($parsedArr['unitind2'] != '×') $scinameStr .= ' ';
 				}
-				if(array_key_exists('unitname2',$parsedArr)){
+				if(!empty($parsedArr['unitname2'])){
 					$scinameStr .= $parsedArr['unitname2'].' ';
-					if(!array_key_exists('specificepithet',$recMap) || !$recMap['specificepithet']){
+					if(empty($recMap['specificepithet'])){
 						$recMap['specificepithet'] = $parsedArr['unitname2'];
 					}
 				}
-				if(array_key_exists('unitind3',$parsedArr)){
+				if(!empty($parsedArr['unitind3'])){
 					$scinameStr .= $parsedArr['unitind3'].' ';
-					if((!array_key_exists('taxonrank',$recMap) || !$recMap['taxonrank'])){
+					if(empty($recMap['taxonrank'])){
 						$recMap['taxonrank'] = $parsedArr['unitind3'];
 					}
 				}
-				if(array_key_exists('unitname3',$parsedArr)){
+				if(!empty($parsedArr['unitname3'])){
 					$scinameStr .= $parsedArr['unitname3'];
-					if(!array_key_exists('infraspecificepithet',$recMap) || !$recMap['infraspecificepithet']){
+					if(empty($recMap['infraspecificepithet'])){
 						$recMap['infraspecificepithet'] = $parsedArr['unitname3'];
 					}
 				}
-				if(array_key_exists('author',$parsedArr)){
-					if(!array_key_exists('scientificnameauthorship',$recMap) || !$recMap['scientificnameauthorship']){
+				if(!empty($parsedArr['author'])){
+					if(empty($recMap['scientificnameauthorship'])){
 						$recMap['scientificnameauthorship'] = $parsedArr['author'];
 					}
 				}
 				$recMap['sciname'] = trim($scinameStr);
 			}
 		}
-		if(isset($recMap['authorinfraspecific']) && $recMap['authorinfraspecific']){
+		if(!empty($recMap['authorinfraspecific'])){
 			$recMap['scientificnameauthorship'] = $recMap['authorinfraspecific'];
 		}
-		elseif(isset($recMap['authorspecies']) && $recMap['authorspecies']){
+		elseif(!empty($recMap['authorspecies'])){
 			$recMap['scientificnameauthorship'] = $recMap['authorspecies'];
 		}
 		unset($recMap['authorinfraspecific']);
@@ -1107,6 +1110,31 @@ class OccurrenceUtil {
 		}
 		elseif($inStr > 19000000){
 			$retStr = substr($inStr,0,4).'-'.substr($inStr,4,2).'-'.substr($inStr,6,2);
+		}
+		return $retStr;
+	}
+
+	public static function appendFullProtectionSQL($allowNull=false){
+		//Protect by default
+		$retStr = 'AND (o.recordSecurity != 5 ';
+		if($allowNull) $retStr .= 'OR o.recordSecurity IS NULL ';
+		//User needs Collection Admin or Collection Editor status to view full hidden records
+		$collStr = self::getFullProtectionPermission();
+		if($collStr){
+			$retStr .= 'OR o.collid IN(' . $collStr . ')';
+		}
+		$retStr .= ') ';
+		return $retStr;
+	}
+
+	public static function getFullProtectionPermission(){
+		$retStr = false;
+		$collArr = array();
+		if(!empty($GLOBALS['USER_RIGHTS']['CollAdmin'])) $collArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
+		if(!empty($GLOBALS['USER_RIGHTS']['CollEditor'])) $collArr = array_merge($collArr, $GLOBALS['USER_RIGHTS']['CollEditor']);
+		if($collArr){
+			$collArr = array_unique($collArr);
+			$retStr = implode(',', $collArr);
 		}
 		return $retStr;
 	}

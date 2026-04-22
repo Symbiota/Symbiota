@@ -7,7 +7,7 @@ Language: English
 
 $LANG['NO_RESULTS'] = 'No results returned';
 $LANG['ERROR_UNABLE_RESULTS'] = 'ERROR: Unable to get results';
-$LANG['SELECT_INTERNAL_REL'] = 'You need to search for an select an internal occurrence instance';
+$LANG['SELECT_INTERNAL_REL'] = 'You need to search for and select an internal occurrence instance';
 $LANG['VERB_SCINAME_EMPTY'] = 'Verbatim Scientific Name needs a value';
 $LANG['RESOURCE_EMPTY'] = 'Resource URL needs needs a value';
 $LANG['SELECT_CHECKLIST'] = 'Select a checklist to which you want to link the voucher';
@@ -16,6 +16,7 @@ $LANG['SURE_UNLINK'] = 'Are you sure you want to unlink the record as a duplicat
 $LANG['ERROR_DELETING'] = 'ERROR deleting duplicate';
 $LANG['GEN_RES_NOT_BLANK'] = 'Genetic resource name must not be blank';
 $LANG['PERM_REMOVE_RES'] = 'Are you sure you want to permanently remove this resource?';
+$LANG['DELETE_ASSOC'] = 'Are you sure you want to delete this association?';
 
 $LANG['CHECKLIST_LINKS'] = 'Checklist Voucher Linkages';
 $LANG['LINK_TO_CHECKLIST'] = 'Link Specimen to Checklist as Voucher';
@@ -28,7 +29,7 @@ $LANG['SPEC_DUPES'] = 'Specimen Duplicates';
 $LANG['SEARCH_RECS'] = 'Search for Records to Link';
 $LANG['CLUSTER_TITLE'] = 'Cluster Title';
 $LANG['UNLINK_BUT_MAINTAIN'] = 'Unlink this occurrences from duplicate cluster but maintain other specimens as a valid duplicate cluster';
-$LANG['REM_FROM_CLUSTER'] = 'Remove this Occurrence from Cluster';
+$LANG['REM_FROM_CLUSTER'] = 'Remove from Cluster';
 $LANG['UNLINK'] = 'Unlink';
 $LANG['CAT_NUM'] = 'Catalog Number';
 $LANG['GUID'] = 'GUID';
@@ -49,6 +50,7 @@ $LANG['DEL_GEN_RES'] = 'Delete Genetic Resource';
 $LANG['DEL_RES'] = 'Delete Resource';
 $LANG['NO_CHECKLISTS'] = 'No checklist voucher linkages have been established';
 $LANG['NO_GENETIC_RESOURCES'] = 'No genetics linkages have been established';
+$LANG['OPENS_NEW_TAB'] = ' (opens in new tab)';
 
 include_once($SERVER_ROOT.'/content/lang/collections/associations.en.php');
 ?>

@@ -32,11 +32,11 @@ $LANG['OCCURRENCE_RECORD'] = 'Enregistrement d\'Occurrence';
 $LANG['LINK_OCCUR_RECORD'] = 'Lien vers l\'enregistrement d\'occurrence';
 $LANG['NOTES'] = 'Notes';
 $LANG['SORT_SEQUENCE'] = 'Séquence de Tri';
-$LANG['WEB_IMAGE'] = 'Web Multimédia';
+$LANG['WEB_IMAGE'] = 'Version moyenne';
 $LANG['RENAME_WEB_IMAGE_FILE'] = 'Renommez le fichier multimédia Web sur le serveur pour qu\'il corresponde à la modification ci-dessus (privilèges d\'édition de fichiers du serveur Web requis)';
-$LANG['THUMBNAIL'] = 'Vignette';
+$LANG['THUMBNAIL'] = 'Version miniature';
 $LANG['RENAME_THUMBNAIL_IMAGE_FILE'] = 'Renommer le fichier d\'image miniature sur le serveur pour qu\'il corresponde à la modification ci-dessus (privilèges d\'édition de fichiers du serveur Web requis)';
-$LANG['LARGE_IMAGE'] = 'Grande Image';
+$LANG['LARGE_IMAGE'] = 'Image originale (grande) (obligatoire)';
 $LANG['RENAME_LARGE_IMAGE_FILE'] = 'Renommer le fichier image volumineux sur le serveur pour qu\'il corresponde à la modification ci-dessus (privilèges d\'édition de fichiers du serveur Web requis)';
 $LANG['TRANSFER_IMAGE_TO_DIFF_NAME'] = 'Transférer l\'image vers un autre nom scientifique';
 $LANG['TRANSFER_TO_TAXON'] = 'Transfert vers le taxon';
@@ -59,5 +59,6 @@ $LANG['IMAGE_SOURCE'] = 'Source multimédia';
 $LANG['OPEN_MEDIUM_SIZED_IMAGE'] = 'Ouvrir une image de taille moyenne';
 $LANG['OPEN_LARGE_IMAGE'] = 'Ouvrir une grande image';
 $LANG['UNABLE_TO_LOCATE'] = 'Impossible de localiser la ressource multimédia';
+$LANG['MEDIA_TRANSFER_REQUIRES_TAXON_ID'] = 'Le transfert de média nécessite un identifiant taxonomique';
 
 ?>

@@ -7,7 +7,7 @@ $(document).ready(function() {
 			$( "#tidinterpreted" ).val("");
 			$( 'input[name=scientificnameauthorship]' ).val("");
 			$( 'input[name=family]' ).val("");
-			$( 'input[name=localitysecurity]' ).prop('checked', false);
+			$( 'input[name=recordsecurity]' ).prop('checked', false);
 			if($( "#sciname" ).val()){
 				verifySciName();
 			}
@@ -15,7 +15,7 @@ $(document).ready(function() {
 				$( "#tidinterpreted" ).val("");
 				$( 'input[name=scientificnameauthorship]' ).val("");
 				$( 'input[name=family]' ).val("");
-				$( 'input[name=localitysecurity]' ).prop('checked', false);
+				$( 'input[name=recordsecurity]' ).prop('checked', false);
 			}
 		}
 	});
@@ -39,7 +39,7 @@ function verifySciName(){
 			$( 'input[name=family]' ).val(data.family);
 			$( 'input[name=scientificnameauthorship]' ).val(data.author);
 			if(data.status == 1){ 
-				$( 'input[name=localitysecurity]' ).prop('checked', true);
+				$( 'input[name=recordsecurity]' ).prop('checked', true);
 			}
 			else{
 				if(data.tid){
@@ -62,12 +62,12 @@ function localitySecurityCheck(f){
 	if(tidIn != "" && stateIn != ""){
 		$.ajax({
 			type: "POST",
-			url: "rpc/localitysecuritycheck.php",
+			url: "rpc/securitycheck.php",
 			dataType: "json",
 			data: { tid: tidIn, state: stateIn }
 		}).done(function( data ) {
 			if(data == "1"){
-				$( 'input[name=localitysecurity]' ).prop('checked', true);
+				$( 'input[name=recordsecurity]' ).prop('checked', true);
 			}
 		});
 	}
@@ -85,7 +85,7 @@ function validateImgOccurForm(f){
 
 //Misc
 function dwcDoc(dcTag){
-	dwcWindow=open("https://biokic.github.io/symbiota-docs/editor/edit/fields/#"+dcTag,"dwcaid","width=1250,height=300,left=20,top=20,scrollbars=1");
+	dwcWindow=open("https://docs.symbiota.org/Editor_Guide/Editing_Searching_Records/symbiota_data_fields#"+dcTag,"dwcaid","width=1250,height=300,left=20,top=20,scrollbars=1");
 	//dwcWindow=open("http://rs.tdwg.org/dwc/terms/index.htm#"+dcTag,"dwcaid","width=1250,height=300,left=20,top=20,scrollbars=1");
 	if(dwcWindow.opener == null) dwcWindow.opener = self;
 	dwcWindow.focus();

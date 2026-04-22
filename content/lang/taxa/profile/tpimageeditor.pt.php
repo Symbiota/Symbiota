@@ -6,7 +6,6 @@ Translated by: Google Translate (2024-09-16)
 ------------------
 */
 
-$LANG['LINKED_FROM'] = 'Vinculado de';
 $LANG['SORT_SEQUENCE'] = 'Classificar sequência';
 $LANG['NEW_VALUE'] = 'Novo Valor';
 $LANG['SUBMIT_SORT_EDITS'] = 'Enviar edições de classificação de mídia';
@@ -30,16 +29,14 @@ $LANG['URL_TO_SOURCE'] = 'URL para o projeto de origem. Use ao vincular a uma m�
 $LANG['SOURCE_URL'] = 'URL de Origem';
 $LANG['COPYRIGHT'] = 'Direitos Autorais';
 $LANG['OCC_REC_NUM'] = 'Registro de Ocorrência #';
-$LANG['LINK_TO_OCC'] = 'Link para registro de ocorrência';
 $LANG['LOCALITY'] = 'Localidade';
 $LANG['NOTES'] = 'Notas';
 $LANG['UPLOAD_IMAGE'] = 'Carregar mídia';
 $LANG['OPEN_LARGE_IMAGE'] = 'Abrir arquivo grande';
 $LANG['MUST_HAVE_EDIT_PERM'] = 'Deve ter privilégios de edição para a coleção que gerencia este arquivo de mídia';
-$LANG['IMAGE_LINKED_FROM'] = 'Mídia vinculada de';
+$LANG['IMAGE_LINKED_TO'] = 'Mídia vinculada a';
 $LANG['TP_IMAGE_EDITOR'] = 'Editor de mídia de perfil de táxon';
 $LANG['CREATOR'] = 'criador';
 $LANG['NOT_SPECIFIED'] = 'Não especificado';
 $LANG['NOT_SET'] = 'Não definido';
-
 ?>

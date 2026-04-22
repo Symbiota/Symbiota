@@ -52,7 +52,7 @@ $LANG['MUST_MAP_CATNUM'] = 'Catalog Number or Other Catalog Numbers must be mapp
 $LANG['LARGE_URL_MAPPED'] = 'Large Image URL must both be mapped to an import field';
 $LANG['IMG_PROCESSOR_EXPLAIN'] = 'These tools are designed to aid collection managers in batch processing specimen images. Contact portal manager for help in setting up a new workflow.
 				 Once a profile is established, the collection manager can use this form to manually trigger image processing. For more information, see the Symbiota documentation for
-				 <b><a href="https://biokic.github.io/symbiota-docs/coll_manager/images/batch/" target="_blank">recommended practices</a></b> for integrating images.';
+				 <b><a href="https://docs.symbiota.org/Collection_Manager_Guide/Images/batch_adding" target="_blank">recommended practices</a></b> for integrating images.';
 $LANG['IMG_FILE_UPLOAD_MAP'] = 'Image File Upload Map';
 $LANG['SOURCE_FIELD'] = 'Source Field';
 $LANG['TARGET_FIELD'] = 'Target Field';
@@ -70,6 +70,8 @@ $LANG['EDIT'] = 'Edit';
 $LANG['NEW'] = 'New';
 $LANG['PROFILE'] = 'Profile';
 $LANG['CLOSE_EDITOR'] = 'Close Editor';
+$LANG['IMG_PROC_CHANGE_EXPLAIN'] = '<b>Tools to upload image URL files have moved!</b> You can now upload files of media URLs through the Extended Data Importer 
+	(Administration Control Panel > Import/Update Specimen Records > Extended Data Import';
 $LANG['PROC_TYPE'] = 'Processing Type';
 $LANG['MAP_FROM_SERVER'] = 'Map Images from a Local or Remote Server';
 $LANG['URL_MAP_FILE'] = 'Image URL Mapping File';
@@ -118,6 +120,7 @@ $LANG['MAP_TN_AT_SOURCE'] = 'Map to thumbnail at source location (source name wi
 $LANG['EXCLUDE_TN'] = 'Exclude thumbnail';
 $LANG['LG_IMG'] = 'Large Image';
 $LANG['IMPORT_LG_SOURCE'] = 'Import source image as large version';
+$LANG['WARNING_LG_IMG_RESIZE'] = 'Warning: Resizes down to large image width';
 $LANG['MAP_TO_LG_SOURCE'] = 'Map to source image as large version';
 $LANG['IMPORT_LG_FROM_SOURCE'] = 'Import large version from source location (source name with _lg.jpg suffix)';
 $LANG['MAP_LG_AT_SOURCE'] = 'Map to existing large version (source name with _lg.jpg suffix)';

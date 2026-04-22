@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OpenIdProfileManager.php');
 
 $profManager = new OpenIdProfileManager();
@@ -8,7 +8,7 @@ $sid = array_key_exists('sid', $_REQUEST) ? htmlspecialchars($_REQUEST['sid'], E
 $localSessionID = $profManager->lookupLocalSessionIDWithThirdPartySid($sid);
 
 if($localSessionID){
-	$profManager->forceLogout($localSessionID);
+	$profManager->forceLogout($localSessionID, $sid);
 	header("HTTP/",true,200);
 }
 else{

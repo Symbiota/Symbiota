@@ -15,9 +15,9 @@ $LANG['H_MAP'] = 'Mapa';
 $LANG['H_MAP_SEARCH'] = 'Pesquisa no mapa';
 $LANG['H_TAXONOMIC_EXPLORER'] = 'Explorar Taxonomia';
 
-$LANG['H_IMAGES'] = 'Imagens';
-$LANG['H_IMAGE_BROWSER'] = 'Navegador de imagens';
-$LANG['H_IMAGE_SEARCH'] = 'Pesquisa de imagens';
+$LANG['H_IMAGES'] = 'Multimídia';
+$LANG['H_IMAGE_BROWSER'] = 'Navegador de Multimídia';
+$LANG['H_IMAGE_SEARCH'] = 'Busca de Multimídia';
 
 $LANG['H_INVENTORIES'] = 'Inventários Taxonômicos';
 $LANG['H_PROJECT_1'] = 'Inventários Taxonômicos do projeto 1';
@@ -32,6 +32,9 @@ $LANG['H_INVERTEBRATES'] = 'Invertebrados';
 $LANG['H_MAMMALIA'] = 'Mamíferos';
 $LANG['H_PLANTA'] = 'Plantas';
 $LANG['H_REPTILIA'] = 'Répteis';
+
+$LANG['H_GLOSSARY'] = 'Glossário';
+$LANG['H_GLOSSARY_SEARCH'] = 'Pesquisar glossário';
 
 $LANG['H_MORE_INFO'] = 'Mais Informações';
 $LANG['H_ABOUT_PROJECT'] = 'Sobre o Projeto';
@@ -52,14 +55,19 @@ $LANG['H_CONTACT_US'] = 'Entre em Contato Conosco';
 $LANG['H_SKIP_NAV'] = 'Pular Navegação';
 
 //Footer variables
+$LANG['F_NSF'] = 'NSF dos EUA';
 $LANG['F_VISIT_NSF'] = 'Visite o site da U.S. National Science Foundation';
 $LANG['F_NSF_LOGO'] = 'Logo da U.S. National Science Foundation';
 $LANG['F_VISIT_IDIGBIO'] = 'Visite o site do iDigBio';
 $LANG['F_IDIGBIO_LOGO'] = 'Logo da iDigBio, or, Integrated Digitized Biocollections';
 $LANG['F_BIOKIC'] = 'Biodiversity Knowledge Integration Center';
 $LANG['F_BIOKIC_LOGO'] = 'Logo da Biodiversity Knowledge Integration Center';
+$LANG['F_KU-BI'] = 'KU Biodiversity Institute and Natural History Museum';
+$LANG['F_KU-BI_LOGO'] = 'Logotipo do KU Biodiversity Institute and Natural History Museum';
 $LANG['F_SSH'] = 'Symbiota Support Hub';
 $LANG['F_SSH_LOGO'] = 'Logotipo do Symbiota Support Hub';
+$LANG['F_GBIF'] = 'Global Biodiversity Information Facility (GBIF)';
+$LANG['F_GBIF_LOGO'] = 'Logotipo do Global Biodiversity Information Facility (GBIF)';
 $LANG['F_NSF_AWARDS'] = 'Este projeto foi possível graças ao U.S. National Science Foundation Awards';
 $LANG['F_MORE_INFO'] = 'Para mais informações sobre Symbiota';
 $LANG['F_READ_DOCS'] = 'leia os documentos';

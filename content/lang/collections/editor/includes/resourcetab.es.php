@@ -16,6 +16,7 @@ $LANG['SURE_UNLINK'] = '¿Está seguro que quiere desvincular el registro como d
 $LANG['ERROR_DELETING'] = 'ERROR eliminando duplicado';
 $LANG['GEN_RES_NOT_BLANK'] = 'Nombre de recurso genético no debe estar vacío';
 $LANG['PERM_REMOVE_RES'] = '¿Está seguro que quiere remover este recurso permanentemente?';
+$LANG['DELETE_ASSOC'] = '¿Está seguro que quiere eliminar esta asociación?';
 
 $LANG['CHECKLIST_LINKS'] = 'Enlaces a Vouchers de Listados de Especies';
 $LANG['LINK_TO_CHECKLIST'] = 'Enlazar Espécimen como Voucher a Listado de Especies';
@@ -28,7 +29,7 @@ $LANG['SPEC_DUPES'] = 'Duplicados de Especímenes';
 $LANG['SEARCH_RECS'] = 'Buscar Registros para enlazar';
 $LANG['CLUSTER_TITLE'] = 'Título del Grupo';
 $LANG['UNLINK_BUT_MAINTAIN'] = 'Desenlazar estas ocurrencias de grupos duplicados pero mantener otros especímenes como un grupo duplicado válido';
-$LANG['REM_FROM_CLUSTER'] = 'Remover esta Ocurrencia del Grupo';
+$LANG['REM_FROM_CLUSTER'] = 'Remover del Grupo';
 $LANG['UNLINK'] = 'Desenlazar';
 $LANG['CAT_NUM'] = 'Número de Catálogo';
 $LANG['GUID'] = 'GUID';
@@ -49,6 +50,7 @@ $LANG['DEL_GEN_RES'] = 'Eliminar Recurso Genético';
 $LANG['DEL_RES'] = 'Eliminar Recurso';
 $LANG['NO_CHECKLISTS'] = 'No se han establecido vínculos con los vales de la lista de verificación';
 $LANG['NO_GENETIC_RESOURCES'] = 'No se han establecido vínculos genéticos.';
+$LANG['OPENS_NEW_TAB'] = ' (se abre en una nueva pestaña)';
 
 include_once($SERVER_ROOT.'/content/lang/collections/associations.es.php');
 ?>

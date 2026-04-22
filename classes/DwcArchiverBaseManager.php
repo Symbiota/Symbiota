@@ -8,7 +8,7 @@ class DwcArchiverBaseManager extends Manager{
 	protected $fieldArr;
 	protected $charSetSource = '';
 	protected $charSetOut = '';
-	protected $sqlBase;
+	protected $sqlArr = array();
 	private $fileHandler;
 
 	public function __construct($conType, $connOverride){
@@ -32,25 +32,31 @@ class DwcArchiverBaseManager extends Manager{
 		$this->writeOutRecord(array_keys($this->fieldArr['fields']));
 	}
 
-	public function writeOutRecordBlock($occidArr){
-		if($occidArr){
-			$sql = $this->sqlBase.' WHERE occid IN('.implode(',',$occidArr).') ';
-			if($rs = $this->conn->query($sql)){
+	public function writeOutData($exportID){
+		$recordCnt = 0;
+		foreach($this->sqlArr as $sql){
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $exportID);
+				$stmt->execute();
+				$rs = $stmt->get_result();
 				while($r = $rs->fetch_assoc()){
 					$this->encodeArr($r);
 					$this->addcslashesArr($r);
 					$this->writeOutRecord($r);
+					$recordCnt++;
 				}
 				$rs->free();
+				$stmt->close();
 			}
 			else{
-				$this->logOrEcho('ERROR writing out to extension file: '.$this->conn->error."\n");
-				$this->logOrEcho("\tSQL: ".$sql."\n");
+				$this->logOrEcho('ERROR writing out to extension file: ' . $stmt->error . "\n");
+				//$this->logOrEcho("\tSQL: ".$sql."\n");
 			}
 		}
+		return $recordCnt;
 	}
 
-	private function writeOutRecord($outputArr){
+	protected function writeOutRecord($outputArr){
 		if($this->fileHandler){
 			if($this->delimiter == ","){
 				fputcsv($this->fileHandler, $outputArr);
@@ -121,6 +127,10 @@ class DwcArchiverBaseManager extends Manager{
 
 	public function setDelimiter($d){
 		return $this->delimiter = $d;
+	}
+
+	public function setExportID($id){
+		$this->exportID = $id;
 	}
 }
 ?>

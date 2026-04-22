@@ -8,12 +8,12 @@ Language: English
 $LANG['CROWDSOURCING_ADMIN'] = 'Crowdsourcing Administration';
 $LANG['CROWDSOURCE_EXPLAIN'] = 'This module can be used to submit and manage records for data entry by the
 							general public. For more information, see the 
-							<a href="https://biokic.github.io/symbiota-docs/coll_manager/crowdsource/edit/">
+							<a href="https://docs.symbiota.org/Collection_Manager_Guide/Crowdsourcing/adding_crowdsourcing" target="_blank">
 							Symbiota documentation on crowdsourcing</a>';
 $LANG['EDIT_PROJECT'] = 'Edit Project';
 $LANG['GENERAL_INSTRUCTIONS'] = 'General Instructions';
 $LANG['TRAINING_URL'] = 'Training Url';
-$LANG['EDIT_CROWD_PROJ'] = 'Edit Crowdsource Project';
+$LANG['EDIT_CROWD_PROJ'] = 'Save Edits';
 $LANG['TOTAL_COUNTS'] = 'Total Counts';
 $LANG['RECS_IN_QUEUE'] = 'Records in Queue';
 $LANG['DEL_UNPROCESSED'] = 'Delete all unprocessed records from queue';

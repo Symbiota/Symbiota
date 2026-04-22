@@ -16,3 +16,12 @@ radioGUID.forEach(radioGUID => {
         }
     });
 });
+
+function toggleFossilWarning() {
+	const select = document.getElementById('collType');
+	const warning = document.getElementById('fossilWarning');
+	if (select && warning)
+		warning.style.display = select.value === 'Fossil Specimens' ? 'block' : 'none';
+}
+
+document.addEventListener('DOMContentLoaded', toggleFossilWarning);

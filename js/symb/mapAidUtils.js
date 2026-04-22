@@ -40,10 +40,13 @@ const POLYGON_TEXT_TYPES = Object.freeze({
  */
 function openCoordAid(options) {
 	const default_options = {
-		polygon_output_id: "footprintwkt",
 		title: "Map Coodinate Helper",
 	}
 	const exclude_params = ["client_root", "title"]
+
+	if(!options.map_mode || options.map_mode === MAP_MODES.POLYGON) {
+		default_options.polygon_output_id = 'footprintwkt';
+	}
 
 	options = {
 		...default_options,
@@ -66,4 +69,27 @@ function openCoordAid(options) {
 	);
 	if (mapWindow.opener == null) mapWindow.opener = self;
 	mapWindow.focus();
+}
+
+function cleanPolygon(inputObj){
+	polygon = inputObj.value;
+	polygon = polygon.replace(/\s+/g, " ");
+	inputObj.value = polygon;
+}
+
+function verifyFootprint(footprint_id) {
+	const error_msg_box = document.getElementById('footprintwkt-error');
+
+	error_msg_box.style.display="none";
+
+	let footprint_json = document.getElementById(footprint_id).value;
+	if(footprint_json) {
+		try {
+			footprint_json = JSON.parse(footprint_json);
+		} catch(err) {
+			error_msg_box.style.display="block";
+			return false;
+		}
+	}
+	return true;
 }

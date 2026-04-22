@@ -3,6 +3,7 @@
 namespace PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use SimpleXMLElement;
 
@@ -25,7 +26,7 @@ class DataValidations
             $range = strtoupper((string) $dataValidation['sqref']);
             $rangeSet = explode(' ', $range);
             foreach ($rangeSet as $range) {
-                if (preg_match('/^[A-Z]{1,3}\\d{1,7}/', $range, $matches) === 1) {
+                if (preg_match('/^[A-Z]{1,3}\d{1,7}/', $range, $matches) === 1) {
                     // Ensure left/top row of range exists, thereby
                     // adjusting high row/column.
                     $this->worksheet->getCell($matches[0]);
@@ -55,8 +56,8 @@ class DataValidations
                     $docValidation->setError((string) $dataValidation['error']);
                     $docValidation->setPromptTitle((string) $dataValidation['promptTitle']);
                     $docValidation->setPrompt((string) $dataValidation['prompt']);
-                    $docValidation->setFormula1((string) $dataValidation->formula1);
-                    $docValidation->setFormula2((string) $dataValidation->formula2);
+                    $docValidation->setFormula1(Xlsx::replacePrefixes((string) $dataValidation->formula1));
+                    $docValidation->setFormula2(Xlsx::replacePrefixes((string) $dataValidation->formula2));
                     $docValidation->setSqref($range);
                 }
             }

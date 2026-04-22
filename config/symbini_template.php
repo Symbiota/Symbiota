@@ -1,7 +1,14 @@
 <?php
 $DEFAULT_LANG = 'en';			//Default language
 $DEFAULT_PROJ_ID = 0;
-$DEFAULTCATID = 0;
+
+// Collection search configuration
+// The below will configure default category behavior in collection searches in collections/search/index.php, collections/index.php, and collections/editor/batchDuplicateGeorefCopy.php. Defaults will, in some of these pages, be overridden by session storage of the most recent query.
+// The below can also be overriden by supplying catOrd, catExpnd, and/or catChk parameters in the URL, e.g., ...catOrd=1,3,4,5&catExpnd=Specimens_4&catChk=Specimens_1,Specimens_4
+$CATORD = []; // a list of category ids (e.g. [1,2,3]) in the order in which you want them to appear in collection searches. All other categories will appear in their default order after those listed. Current assumption is that the same order will be desired for both specimen and observation categories
+$CATEXPND = []; // a list of category ids (e.g. ["Specimens_1","Observations_2"]) that should be expanded by default in collection searches. All others will be collapsed by default.
+$CATCHK = []; // a list of category ids (e.g. ["Specimens_1","Observations_3"]) that will be checked by default in collection searches. All others will be unchecked by default.
+
 $DEFAULT_TITLE = '';
 $EXTENDED_LANG = 'en';		//Add all languages you want to support separated by commas (e.g. en,es); currently supported languages: en,es
 $TID_FOCUS = '';
@@ -11,11 +18,12 @@ $CHARSET = 'UTF-8';					//ISO-8859-1 or UTF-8
 $PORTAL_GUID = '';				//Typically a UUID
 $SECURITY_KEY = '';				//Typically a UUID used to verify access to certain web service
 
-$SERVER_HOST = '';				//fully qualified domain name or IP address of the server. e.g. 'symbiota.org' or 'localhost'
+$SERVER_HOST = 'localhost:80';				//fully qualified domain name or IP address of the server. e.g. 'symbiota.org' or 'localhost'
 $CLIENT_ROOT = '';				//URL path to project root folder (relative path w/o domain, e.g. '/seinet')
-$SERVER_ROOT = '';				//Full path to Symbiota project root folder
-$TEMP_DIR_ROOT = $SERVER_ROOT . '/temp';				//Must be writable by Apache; will use system default if not specified
-$LOG_PATH = $SERVER_ROOT . '/content/logs';					//Must be writable by Apache; will use <SYMBIOTA_ROOT>/temp/logs if not specified
+$SERVER_ROOT = '/var/www/html';				//Full path to Symbiota project root folder E.g. /var/www/html/portalname
+//Temp directory must be writable by Apache; it is highly recommended to set this to a path outside of the Apache DocumentRoot to avoid malicous file uploads; will use system default if not specified
+$TEMP_DIR_ROOT = '';		//E.g. /var/www/temp/portalname
+$LOG_PATH = $SERVER_ROOT . '/content/logs';					//Must be writable by Apache; will use <SYMBIOTA_ROOT>/content/logs if not specified
 
 //Path to CSS files
 $CSS_BASE_PATH = $CLIENT_ROOT . '/css';
@@ -25,7 +33,7 @@ $PUBLIC_MEDIA_UPLOAD_ROOT = '/content/imglib';
 
 //the root for the collection image directory
 $MEDIA_DOMAIN = '';				//Domain path to images, if different from portal
-$MEDIA_ROOT_URL = '';				//URL path to images
+$MEDIA_ROOT_URL = '';			//URL path to images
 $MEDIA_ROOT_PATH = '';			//Writable path to images, especially needed for downloading images
 
 
@@ -42,7 +50,6 @@ $NLP_LBCC_ACTIVATED = 0;
 $NLP_SALIX_ACTIVATED = 0;
 
 // Vouchervision OCR/Transcription
-$VOUCHERVISION_OCR_ACTIVATED = 0;
 $VOUCHERVISION_API_KEY = ''; // API key to use to access Vouchervision API. See https://leafmachine.org/vouchervisiongo/
 $VOUCHERVISION_API_URL = 'https://vouchervision-go-738307415303.us-central1.run.app/process-url'; // URL to the Vouchervision API server
 
@@ -70,6 +77,7 @@ $GOOGLE_ANALYTICS_KEY = '';			//Needed for setting up Google Analytics
 $GOOGLE_ANALYTICS_TAG_ID = '';		//Needed for setting up Google Analytics 4 Tag ID
 $RECAPTCHA_PUBLIC_KEY = '';			//Now called site key
 $RECAPTCHA_PRIVATE_KEY = '';		//Now called secret key
+$CAPTCHA_ENDPOINT = 0;              //Alternative to Google recaptcha.  Example Value: $CLIENT_ROOT . '/rpc/captcha.php';
 $TAXONOMIC_AUTHORITIES = array('COL' => '', 'WoRMS' => '');		//List of taxonomic authority APIs to use in data cleaning and thesaurus building tools, concatenated with commas and order by preference; E.g.: array('COL'=>'', 'WoRMS'=>'', 'bryonames' => '', 'fdex'=>'', 'TROPICOS'=>'', 'EOL'=>'')
 $QUICK_HOST_ENTRY_IS_ACTIVE = 0;   	//Allows quick entry for host taxa in occurrence editor
 $GLOSSARY_EXPORT_BANNER = '';		//Banner image for glossary exports. Place in images/layout folder.
@@ -78,10 +86,16 @@ $DISPLAY_COMMON_NAMES = 1;			//Display common names in species profile page and 
 $ACTIVATE_DUPLICATES = 0;			//Activates Specimen Duplicate listings and support features. Mainly relavent for herabrium collections
 $ACTIVATE_EXSICCATI = 0;			//Activates exsiccati fields within data entry pages; adding link to exsiccati search tools to portal menu is recommended
 $ACTIVATE_GEOLOCATE_TOOLKIT = 0;	//Activates GeoLocate Toolkit located within the Processing Toolkit menu items
-$SEARCH_BY_TRAITS = 0;			//Activates search fields for searching by traits (if trait data have been encoded): 0 = trait search off; any number of non-zeros separated by commas (e.g., '1,6') = trait search on for the traits with these id numbers in table tmtraits.
+$SEARCH_BY_TRAITS = 0;				//Activates search fields for searching by traits (if trait data have been encoded): 0 = trait search off; any number of non-zeros separated by commas (e.g., '1,6') = trait search on for the traits with these id numbers in table tmtraits.
 $CALENDAR_TRAIT_PLOTS = 0;			//Activates polar plots, in taxon profile, of the trait states listed: 0 = no plot; any number of non-zeros separated by commas (e.g., '1,6') = plots appear for the trait states with these id numbers (in table tmstates).
+
+$ACTIVATE_PALEO = 0; 				//Activates Paleo management (e.g. Geological Context fields)
 //$AUTH_PROVIDER = 'oid';           //Activate Third Party Authentication using openID Connect (Addiotnal paramters defined in auth_config.php).  Leave this commented out if not in use;
 $IGSN_ACTIVATION = 0;
+$WIKIPEDIA_TAXON_TAB = 1;			//Activates wikipedia tab on taxon profile page (wikiMedia API)
+$OVERRIDE_DOWNLOAD_LOGIN_REQUIREMENT = 0;	//0 = Login required for downloading occurrence data (default), 1 = occurrence data download allowed without being logged in
+
+$SEARCHABLE_CHARACTERS = '';			//List of characters that can be searched from the public search, separated by commas, e.g. '1,6'
 
 //$SMTP_ARR = array('host'=>'','port'=>587,'username'=>'','password'=>'','timeout'=>60);  //Host is requiered, others are optional and can be removed
 
@@ -99,6 +113,7 @@ $SHOULD_BE_ABLE_TO_CREATE_PUBLIC_USER = true;
 $SYMBIOTA_LOGIN_ENABLED = true;
 
 $SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT=false;
+$SHOULD_PROTECT_CULTIVATED = false; // if true, taxa with locality security that have cultivation status === 1 will have recordSecurity set to 1 in the protectGlobalSpecies function
 $AUTH_PROVIDER = 'oid';
 $LOGIN_ACTION_PAGE = 'openIdAuth.php';
 $SHOULD_USE_HARVESTPARAMS = false;
@@ -106,11 +121,36 @@ $THIRD_PARTY_OID_AUTH_ENABLED = false;
 
 $SHOULD_USE_MINIMAL_MAP_HEADER = false;
 
-$COOKIE_SECURE = false;
-if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) {
-	header('strict-transport-security: max-age=600');
-	$COOKIE_SECURE = true;
-}
+$DATE_DEFAULT_TIMEZONE = NULL; // This should be set if server default timezone isn't populated correctly by deafult (e.g., $DATE_DEFAULT_TIMEZONE = 'America/Phoenix';)
+
+$PRIVATE_VIEWING_ONLY = false; // Setting to true sets all content to be password protected besides below pages
+$PRIVATE_VIEWING_OVERRIDES = ['/index.php', '/misc/contacts.php','/misc/aboutproject.php', '/profile/newprofile.php', '/profile/index.php'];  //These pages will always be accessible to public viewing.  Add to as needed.
+
+// Creates Togglable Overlay for GeoJSON file
+// Only Support with Leaflet Map
+// Supports of an area with the following properties:
+// filename : String - should be the name of the geoJSON located in the `content/geoJSON` directory.
+// label : String - Short text label to describe the overlay toggle
+// popup_template: String - Html string for what label should be generated on a GeoJSON feature. Will replace text like `[Property_name]` with a features property value if present
+// template_properties: Array[String] - List of property names to used in popup generation
+$GEO_JSON_LAYERS = [
+ [
+  'filename' => 'us_counties.geojson',
+  'label' => 'U.S. Counties',
+  'popup_template' => '<div>[NAME]</div>',
+  'template_properties' => [
+   'NAME',
+  ]
+ ],
+];
+
+// Toggles `strict-transport-security` header
+// Do not turn off for production portals
+$HTTPS_ONLY = true;
+$USE_BCRYPT = true;
+
+// Link to portal or organization donation page
+$DONATE_LINK = '';
 
 //Base code shared by all pages; leave as is
 include_once('symbbase.php');

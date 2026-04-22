@@ -7,15 +7,15 @@ Language: Español (Spanish)
 
 $LANG['INVALID_USERNAME'] = 'Usuario inválido';
 $LANG['INVALID_EMAIL'] = 'Dirección de correo inválida';
-$LANG['RECAPTCHA_FAILED'] = 'Verificación recaptcha falló';
-$LANG['PLEASE_CHECK'] = 'Por favor marque el captcha';
+$LANG['CAPTCHA_FAILED'] = 'Verificación el CAPTCHA falló';
+$LANG['PLEASE_CHECK'] = 'Por favor marque el CAPTCHA';
 $LANG['FAILED_1'] = 'FALLÓ: No fue posible crear usuario';
 $LANG['FAILED_2'] = 'Por favor contacte al administrador del portal para asistencia';
 $LANG['NEW_USER'] = 'Nuevo Perfil de Usuario';
-$LANG['CHECK_CAPTCHA'] = 'Primero debe marcar la casilla de reCAPTCHA (No soy un robot)';
+$LANG['CHECK_CAPTCHA'] = 'Primero debe marcar la casilla de CAPTCHA';
 $LANG['BOTH_PASSWORDS'] = 'Ambos campos para la contraseña deben contener valores';
 $LANG['NO_SPACE'] = 'La contraseña no puede empezar o terminar con un espacio, pero puede incluir espacios entre la contraseña';
-$LANG['GREATER_THAN_SIX'] = 'La contraseña debe contener más de 6 caracteres';
+$LANG['PWD_TOO_SHORT'] = 'La contraseña debe contener más de 6 caracteres';
 $LANG['NO_MATCH'] = 'Las contraseñas no coinciden, por favor introduzca nuevamente';
 $LANG['NEED_NAME'] = 'El campo de usuario debe contener un valor';
 $LANG['NO_SPECIAL_CHARS'] = 'El usuario debe contener solamente los siguientes caracteres 0-9A-Za-z_.!@ (los espacios no son permitidos)';
@@ -55,4 +55,6 @@ $LANG['CREATE_LOGIN'] = 'Crear Usuario';
 $LANG['ACCESSIBILITY_PREF'] = 'Preferencias de accesibilidad';
 $LANG['ACCESSIBILITY_PREF_DESC'] = 'Marque para indicar una preferencia por estilos optimizados para accesibilidad';
 $LANG['PROFILE_CREATION_DISABLED'] = 'Se ha deshabilitado la creación de usuarios públicos en este portal.';
+$LANG['PASSWORD_WARNING'] = 'No cree cuentas de usuario compartidas/grupales.<br><br>Por motivos de seguridad, cada persona debe tener su propio nombre de usuario y contraseña únicos.<br><br>Cree una contraseña que sea exclusiva para este portal.<br><br>No reutilice una contraseña de otro sitio web, su correo electrónico, etc.'
+
 ?>

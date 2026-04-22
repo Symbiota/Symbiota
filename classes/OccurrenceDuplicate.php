@@ -1,6 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
+include_once($SERVER_ROOT . '/config/dbconnection.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
+include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 class OccurrenceDuplicate {
 
@@ -43,7 +44,8 @@ class OccurrenceDuplicate {
 				'FROM omoccurduplicatelink d INNER JOIN omoccurrences o ON d.occid = o.occid '.
 				'INNER JOIN omcollections c ON o.collid = c.collid '.
 			 	'LEFT JOIN media m ON o.occid = m.occid '.
-				'WHERE (d.duplicateid IN('.implode(',',array_keys($retArr)).'))';
+			 	'WHERE (d.duplicateid IN('.implode(',',array_keys($retArr)).')) AND (o.occid != ' . $occid . ') ';
+			$sql .= OccurrenceUtil::appendFullProtectionSQL();
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
 					$retArr[$r->duplicateid]['o'][$r->occid] = array('instcode' => $r->institutioncode, 'collcode' => $r->collectioncode,
@@ -59,10 +61,16 @@ class OccurrenceDuplicate {
 				$retArr = false;
 			}
 		}
+		foreach($retArr as $dupID => $dupArr){
+			//Remove any duplicates clusters that don't have occurrences (e.g occurrences have full-hide protection)
+			if(!array_key_exists('o', $dupArr)){
+				unset($retArr[$dupID]);
+			}
+		}
 		return $retArr;
 	}
 
-	public function linkDuplicates($occid1,$occidStr,$dupTitle=''){
+	public function linkDuplicates($occid1, $occidStr, $dupTitle=''){
 		$status = true;
 		if($occid1 && $occidStr){
 			$targetDupID = 0;
@@ -82,7 +90,7 @@ class OccurrenceDuplicate {
 				$targetDupID = $this->mergeClusters(array_keys($dupArr));
 			}
 			else{
-				$targetDupID = $this->createCluster($occid1,$dupTitle);
+				$targetDupID = $this->createCluster($occid1, $dupTitle);
 			}
 			if($targetDupID){
 				//Add subject specimens to duplicate cluster
@@ -133,10 +141,11 @@ class OccurrenceDuplicate {
 			$targetId = min($dupArr);
 			//remove value from array
 			unset($dupArr[array_search($targetId, $dupArr)]);
-			$sql = 'UPDATE omoccurduplicatelink SET duplicateid = '.$targetId.' WHERE duplicateid IN('.$dupArr.')';
+			$sql = 'UPDATE IGNORE omoccurduplicatelink SET duplicateid = ' . $targetId . ' WHERE duplicateid IN(' . implode(',', $dupArr) . ')';
 			if($this->conn->query($sql)){
-				if(!$this->conn->query('DELETE FROM omoccurduplicates WHERE duplicateid IN('.$dupArr.')')){
-					$this->errorStr = 'ERROR merging duplicate clusters: '.$this->conn->error;
+				foreach($dupArr as $dupId){
+					//Delete duplicate clusters that failed to merge
+					$this->deleteCluster($dupId);
 				}
 			}
 			else{
@@ -148,14 +157,20 @@ class OccurrenceDuplicate {
 
 	public function editCluster($dupId, $title, $description, $notes){
 		$status = true;
-		$sql = 'UPDATE omoccurduplicates SET title = '.($title?'"'.$this->cleanInStr($title).'"':'NULL').', '.
-			'description = '.($description?'"'.$this->cleanInStr($description).'"':'NULL').', '.
-			'notes = '.($notes?'"'.$this->cleanInStr($notes).'"':'NULL').' '.
-			'WHERE (duplicateid = '.$dupId.')';
-		//echo $sql;
-		if(!$this->conn->query($sql)){
-			$this->errorStr = 'ERROR editing duplicate cluster: '.$this->conn->error;
-			$status = false;
+		if($dupId){
+			if(!$title) $title = null;
+			if(!$description) $description = null;
+			if(!$notes) $notes = null;
+			$sql = 'UPDATE omoccurduplicates SET title = ?, description = ?, notes = ? WHERE (duplicateid = ?)';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('sssi', $title, $description, $notes, $dupId);
+				$stmt->execute();
+				if(!$stmt->affected_rows && $stmt->error){
+					$status = false;
+					$this->errorStr = $stmt->error;
+				}
+				$stmt->close();
+			}
 		}
 		return $status;
 	}
@@ -163,30 +178,50 @@ class OccurrenceDuplicate {
 	public function deleteOccurFromCluster($dupId, $occid){
 		$status = true;
 		//If duplicate cluster only consists of two occurrences, remove whole cluster
-		$rs = $this->conn->query('SELECT duplicateid FROM omoccurduplicatelink WHERE duplicateid = '.$dupId);
-		if($rs->num_rows == 2){
-			$sql = 'DELETE FROM omoccurduplicates WHERE (duplicateid = '.$dupId.')';
-			if(!$this->conn->query($sql)){
-				$this->errorStr = 'ERROR deleting duplicate cluster: '.$this->conn->error;
-				$status = false;
+		$sql = 'SELECT duplicateid FROM omoccurduplicatelink WHERE duplicateid = ?';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $dupId);
+			$stmt->execute();
+			if($rs = $stmt->get_result()){
+				if($rs->num_rows == 2){
+					$status = $this->deleteCluster($dupId);
+				}
+				else{
+					$status = $this->deleteDuplicateLink($dupId, $occid);
+				}
+				$rs->free();
 			}
-		}
-		else{
-			$sql = 'DELETE FROM omoccurduplicatelink WHERE (duplicateid = '.$dupId.') AND (occid = '.$occid.')';
-			if(!$this->conn->query($sql)){
-				$this->errorStr = 'ERROR deleting occurrence from duplicate cluster: '.$this->conn->error;
-				$status = false;
-			}
+			$stmt->close();
 		}
 		return $status;
 	}
 
 	public function deleteCluster($dupId){
 		$status = true;
-		$sql = 'DELETE FROM omoccurduplicates WHERE duplicateid = '.$dupId;
-		if(!$this->conn->query($sql)){
-			$this->errorStr = 'ERROR deleting duplicate cluster: '.$this->conn->error;
-			$status = false;
+		$sql = 'DELETE FROM omoccurduplicates WHERE duplicateid = ?';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $dupId);
+			$stmt->execute();
+			if(!$stmt->affected_rows && $stmt->error){
+				$status = false;
+				$this->errorStr = $stmt->error;
+			}
+			$stmt->close();
+		}
+		return $status;
+	}
+
+	public function deleteDuplicateLink($dupId, $occid){
+		$status = true;
+		$sql = 'DELETE FROM omoccurduplicatelink WHERE (duplicateid = ?) AND (occid = ?)';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('ii', $dupId, $occid);
+			$stmt->execute();
+			if(!$stmt->affected_rows && $stmt->error){
+				$status = false;
+				$this->errorStr = $stmt->error;
+			}
+			$stmt->close();
 		}
 		return $status;
 	}
@@ -223,11 +258,12 @@ class OccurrenceDuplicate {
 
 	private function getDupesExsiccati($ometid, $exsNumber, $currentOccid){
 		$retArr = array();
-		$sql = 'SELECT el.occid '.
-			'FROM omexsiccatiocclink el INNER JOIN omexsiccatinumbers en ON el.omenid = en.omenid '.
-			'WHERE (en.ometid = '.$ometid.') AND (en.exsnumber = "'.$exsNumber.'") ';
-		if($currentOccid) $sql .= 'AND (occid != '.$currentOccid.') ';
-		//echo $sql;
+		$sql = 'SELECT el.occid
+				FROM omexsiccatiocclink el INNER JOIN omexsiccatinumbers en ON el.omenid = en.omenid
+				INNER JOIN omoccurrences o ON el.occid = o.occid
+				WHERE (en.ometid = '.$ometid.') AND (en.exsnumber = "'.$exsNumber.'") ';
+		if($currentOccid) $sql .= 'AND (el.occid != '.$currentOccid.') ';
+		$sql .= OccurrenceUtil::appendFullProtectionSQL();
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr[$r->occid] = $r->occid;
@@ -249,7 +285,7 @@ class OccurrenceDuplicate {
 			else $sql .= 'WHERE MATCH(o.recordedby) AGAINST("'.$lastName.'" IN BOOLEAN MODE) ';
 			$sql .= 'AND (o.recordnumber = "'.$collNum.'") ';
 			if($skipOccid) $sql .= 'AND (o.occid != '.$skipOccid.') ';
-			//echo $sql;
+			$sql .= OccurrenceUtil::appendFullProtectionSQL();
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$retArr[$r->occid] = $r->occid;
@@ -271,6 +307,7 @@ class OccurrenceDuplicate {
 			else $sql .= 'WHERE (MATCH(o.recordedby) AGAINST("'.$lastName.'" IN BOOLEAN MODE)) ';
 			$sql .= 'AND (o.processingstatus IS NULL OR o.processingstatus != "unprocessed" OR o.locality IS NOT NULL) ';
 			if($skipOccid) $sql .= 'AND (o.occid != '.$skipOccid.') ';
+			$sql .= OccurrenceUtil::appendFullProtectionSQL();
 
 			$runQry = true;
 			if($collNum){
@@ -324,7 +361,6 @@ class OccurrenceDuplicate {
 				$runQry = false;
 			}
 			if($runQry){
-				//echo $sql;
 				$result = $this->conn->query($sql);
 				while ($r = $result->fetch_object()) {
 					$retArr[$r->occid] = $r->occid;
@@ -340,7 +376,7 @@ class OccurrenceDuplicate {
 		if($occidQuery){
 			$targetFields = array('family', 'sciname', 'scientificNameAuthorship',
 				'identifiedBy', 'dateIdentified', 'identificationReferences', 'identificationRemarks', 'taxonRemarks', 'identificationQualifier',
-				'recordedBy', 'recordNumber', 'associatedCollectors', 'eventDate', 'verbatimEventDate',
+				'recordedBy', 'recordNumber', 'associatedCollectors', 'eventDate', 'eventDate2', 'verbatimEventDate',
 				'country', 'stateProvince', 'county', 'municipality', 'locality', 'locationID', 'decimalLatitude', 'decimalLongitude', 'geodeticDatum',
 				'coordinateUncertaintyInMeters', 'verbatimCoordinates', 'georeferencedBy', 'georeferenceProtocol',
 				'georeferenceSources', 'georeferenceVerificationStatus', 'georeferenceRemarks',
@@ -350,9 +386,9 @@ class OccurrenceDuplicate {
 			$relArr = array();
 			$sql = 'SELECT c.collectionName, c.institutionCode, c.collectionCode, o.occid, o.collid, o.tidinterpreted, o.catalogNumber, o.otherCatalogNumbers, o.'.implode(',o.',$targetFields).
 				' FROM omcollections c INNER JOIN omoccurrences o ON c.collid = o.collid '.
-				'WHERE (o.occid IN('.$occidQuery.')) '.
-				'ORDER BY recordnumber LIMIT 20';
-			//echo $sql;
+				'WHERE (o.occid IN('.$occidQuery.')) ';
+			$sql .= OccurrenceUtil::appendFullProtectionSQL();
+			$sql .= 'ORDER BY recordnumber LIMIT 20';
 			$result = $this->conn->query($sql);
 			while($row = $result->fetch_assoc()) {
 				foreach($row as $k => $v){
@@ -383,15 +419,17 @@ class OccurrenceDuplicate {
 		if($eventDate) $queryTerms[] = 'o.eventdate = "'.$this->cleanInStr($eventDate).'"';
 		if($catNum) $queryTerms[] = 'o.catalognumber = "'.$this->cleanInStr($catNum).'"';
 		if(is_numeric($occid)) $queryTerms[] = 'o.occid = '.$occid;
-		$sql = 'SELECT c.institutioncode, c.collectioncode, c.collectionname, o.occid, o.catalognumber, '.
-			'o.recordedby, o.recordnumber, o.eventdate, o.verbatimeventdate, o.country, o.stateprovince, o.county, o.locality '.
-			'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
-		$sql .= 'WHERE o.occid != '.$currentOccid;
+		$sql = 'SELECT c.institutioncode, c.collectioncode, c.collectionname, o.occid, o.catalognumber, o.recordedby, o.recordnumber,
+			o.eventdate, o.verbatimeventdate, o.country, o.stateprovince, o.county, o.locality, COALESCE(od.sciname, o.sciname) AS sciname
+			FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid
+			LEFT JOIN omoccurdeterminations od ON o.occid = od.occid AND od.isCurrent = 1
+			WHERE o.occid != ' . $currentOccid;
 		if($queryTerms){
 			$sql .= ' AND ('.implode(') AND (', $queryTerms).') ';
-			//echo $sql;
+			$sql .= OccurrenceUtil::appendFullProtectionSQL();
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
+				$retArr[$r->occid]['sciname'] = $r->sciname;
 				$retArr[$r->occid]['collname'] = $r->collectionname.' ('.$r->institutioncode.($r->collectioncode?'-'.$r->collectioncode:'').')';
 				$retArr[$r->occid]['catalognumber'] = $r->catalognumber;
 				$retArr[$r->occid]['recordedby'] = $r->recordedby;
@@ -517,7 +555,7 @@ class OccurrenceDuplicate {
 					'INNER JOIN omoccurrences o ON dl1.occid = o.occid '.
 					'INNER JOIN omoccurduplicatelink dl2 ON d.duplicateid = dl2.duplicateid '.
 					'INNER JOIN omoccurrences o2 ON dl2.occid = o2.occid '.
-					'INNER JOIN omoccurdeterminations i ON o2.occid = m.occid '.
+					'INNER JOIN omoccurdeterminations i ON o2.occid = i.occid '.
 					'WHERE o.collid = '.$collid.($this->obsUid?' AND o.observeruid = '.$this->obsUid:'').' AND o.tidinterpreted <> o2.tidinterpreted '.
 					'AND (o2.dateidentified IS NOT NULL OR o2.identifiedBy IS NOT NULL) ';
 			}
@@ -553,7 +591,7 @@ class OccurrenceDuplicate {
 					'FROM omoccurduplicatelink dl INNER JOIN omoccurrences o ON dl.occid = o.occid '.
 					'INNER JOIN omcollections c ON o.collid = c.collid '.
 					'WHERE dl.duplicateid IN ('.implode(',',array_keys($retArr)).')';
-				//echo $sql;
+				$sql .= OccurrenceUtil::appendFullProtectionSQL();
 				$rs = $this->conn->query($sql);
 				while($r = $rs->fetch_object()){
 					$idStr = $r->identifier;
@@ -727,11 +765,7 @@ class OccurrenceDuplicate {
 	public function getCollMap($collid){
 		$returnArr = Array();
 		if($collid){
-			$sql = 'SELECT c.institutioncode, c.collectioncode, c.collectionname, '.
-				'c.icon, c.colltype, c.managementtype '.
-				'FROM omcollections c '.
-				'WHERE (c.collid = '.$collid.') ';
-			//echo $sql;
+			$sql = 'SELECT institutioncode, collectioncode, collectionname, icon, colltype, managementtype FROM omcollections WHERE (collid = '.$collid.') ';
 			$rs = $this->conn->query($sql);
 			while($row = $rs->fetch_object()){
 				$returnArr['institutioncode'] = $row->institutioncode;

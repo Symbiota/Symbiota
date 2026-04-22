@@ -10,7 +10,7 @@ $LANG['HOME'] = 'Inicio';
 $LANG['COLL_SEARCH_DWNL'] = 'Descarga de búsqueda de colecciones';
 $LANG['RETURN'] = 'Volver a la página de búsqueda';
 $LANG['OCC_DOWNLOAD'] = 'Descarga de registros de ocurrencia';
-$LANG['DATA_GUIDE'] = 'Pautas de uso de datos';
+$LANG['DATA_GUIDE'] = 'Pautas de Uso de Datos: ';
 $LANG['GUIDE_ONE'] = 'Al descargar los datos, el usuario confirma que ha leído y está de acuerdo con los';
 $LANG['GUIDE_LINK'] = 'términos generales de uso de datos';
 $LANG['GUIDE_TWO'] = 'Tenga en cuenta que los términos de uso adicionales específicos de las colecciones individuales pueden distribuirse con la descarga de datos. Cuando están presentes, los términos                         proporcionadas por la institución propietaria deben prevalecer sobre las condiciones generales publicadas en el sitio web.';
@@ -26,6 +26,11 @@ $LANG['DARWIN_CORE'] = 'Darwin Core';
 $LANG['IMG_DARWIN_INFO'] = 'ícono de información que aclara que Darwin Core (DwC) es un estándar de intercambio respaldado por el TDWG específicamente para conjuntos de datos de biodiversidad. En el cuadro de diálogo aparece un enlace a la guía de referencia rápida de DwC.';
 $LANG['DARWIN_GUIDE'] = 'Darwin Core (DwC) es un estándar de intercambio respaldado por el TDWG específicamente para conjuntos de datos sobre biodiversidad.                         Para obtener más información sobre qué campos de datos se incluyen en DwC, visite el';
 $LANG['DARWIN_GUIDE_LINK'] = 'Guía de referencia rápida de DwC';
+$LANG['TAXONOMIC_RESOLUTION'] = 'Resolución taxonómica';
+$LANG['ACCEPTED_NAME_USAGE'] = 'Incluya el nombre científico y la autoría aceptados';
+$LANG['TAXONOMIC_RESOLUTION_GUIDE']= 'Al marcar esta casilla, se añadirán tres campos a su 
+    archivo de ocurrencias: acceptNameUsage, acceptNameUsageAuthorship y acceptNameUsageID. Estos campos contendrán el nombre, la autoría y el 
+    taxonID del nombre de taxón "aceptado" del nombre científico del registro, según el tesauro taxonómico del portal en el momento de la descarga.';
 $LANG['DATA_EXTS'] = 'Extensiones de datos';
 $LANG['INCLUDE_HISTORY'] = 'incluir Historial de Determinación';
 $LANG['INCLUDE_IMG'] = 'incluir registros medios';
@@ -43,5 +48,6 @@ $LANG['COMPRESSION'] = 'Compresión';
 $LANG['COMPRESSED_ZIP'] = 'Archivo ZIP comprimido';
 $LANG['DOWNLOAD_DATA'] = 'Descargar datos';
 $LANG['LIMIT_NOTE'] = '* Hay un límite de 1.000.000 de registros para descargas de ocurrencias';
+$LANG['INCLUDE_ASSOCIATIONS'] = 'incluir Relaciones de Recursos (asociaciones y recursos vinculados)';
 
 ?>

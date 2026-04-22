@@ -16,7 +16,7 @@
  *   usethes (0 [default] or 1): when searching on a taxonomic name, setting usethes to 1 will run search term through the taxonomic thesaurus to include synonym within the search
  *   schema (dwc [default], symbiota): schema type
  *   extended (0 [default], 1): true outputs extended data fields such as: collectionID,rights fields, storageLocation, observerUid, processingStatus, duplicateQuantity, dateEntered, dateLastModified
- *   imgs (0, 1 [default]): Output image URLs within an media extension file
+ *   imgs (0, 1 [default]): Output image URLs within a media extension file
  *   dets (0, 1 [default]): Output determination history within an identification extension file
  *   attr (0 [default], 1): Output occurrence attribute values within a MeasurementOrFact extension file
  *   ident (0 [default], 1): Output occurrence identifiers values within an Alternative Identifiers extension file
@@ -35,7 +35,7 @@
  *
  */
 
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverCore.php');
 
 $collid = array_key_exists('collid', $_REQUEST) ? $_REQUEST['collid'] : 0;
@@ -48,15 +48,16 @@ $includeImgs = isset($_REQUEST['imgs']) && !$_REQUEST['imgs'] ? 0 : 1;
 $includeAttributes = !empty($_REQUEST['attr']) ? 1 : 0;
 $includeMaterialSample = !empty($_REQUEST['matsample']) ? 1 : 0;
 $includeIdentifiers = !empty($_REQUEST['ident']) ? 1 : 0;
+$includeAssociations = !empty($_REQUEST['assoc']) ? 1 : 0;
 $pubGuid = array_key_exists('publicationguid', $_REQUEST) ? $_REQUEST['publicationguid'] : 0;
 $requestPortalGuid = array_key_exists('portalguid', $_REQUEST) ? $_REQUEST['portalguid'] : 0;
 
 $_SESSION['citationvar'] = 'collid=' . $collid;
 
 $dwcaHandler = new DwcArchiverCore();
-
 $dwcaHandler->setVerboseMode(0);
 $dwcaHandler->setCollArr($collid, $collType);
+$dwcaHandler->setApplyConditionLimit(true);
 
 $redactLocalities = 1;
 if ($IS_ADMIN || array_key_exists('CollAdmin', $USER_RIGHTS)) {
@@ -70,6 +71,7 @@ if ($IS_ADMIN || array_key_exists('CollAdmin', $USER_RIGHTS)) {
 }
 $dwcaHandler->setRedactLocalities($redactLocalities);
 
+$conditionApplied = false;
 if ($cond) {
 	//String of cond-key/value pairs (e.g. country:USA,United States;stateprovince:Arizona,New Mexico;county-start:Pima,Eddy
 	$cArr = explode(';', $cond);
@@ -88,13 +90,20 @@ if ($cond) {
 			}
 			if ($valueArr) {
 				foreach ($valueArr as $v) {
-					$dwcaHandler->addCondition($field, $cond, $v);
+					if($dwcaHandler->addCondition($field, $cond, $v)) $conditionApplied = true;
+					else exit('Illegal condition submitted');
 				}
 			} else {
-				$dwcaHandler->addCondition($field, $cond);
+				if($dwcaHandler->addCondition($field, $cond)) $conditionApplied = true;
+				else exit('Illegal condition submitted');
 			}
 		}
 	}
+}
+if(!$collid && !$conditionApplied) exit('Filter conditions required');
+if(!$dwcaHandler->isAuthorized()){
+	//Basic lockdown of function to limited number of users until functionality is fully integrated into Symbiota 4.0 API with enhanced security applied
+	exit('Not authorized');
 }
 $dwcaHandler->setSchemaType($schemaType);
 $dwcaHandler->setExtended($extended);
@@ -103,6 +112,7 @@ $dwcaHandler->setIncludeImgs($includeImgs);
 $dwcaHandler->setIncludeAttributes($includeAttributes);
 $dwcaHandler->setIncludeMaterialSample($includeMaterialSample);
 $dwcaHandler->setIncludeIdentifiers($includeIdentifiers);
+$dwcaHandler->setIncludeAssociations($includeAssociations);
 $dwcaHandler->setPublicationGuid($pubGuid);
 $dwcaHandler->setRequestPortalGuid($requestPortalGuid);
 

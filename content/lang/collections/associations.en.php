@@ -6,7 +6,7 @@
  Used by: editor/includes/resourcetab.en.php, admin/importextended.en.php
  */
 
-$LANG['ASSOC_OCC'] = 'Associated Occurrences';
+$LANG['ASSOCIATIONS'] = 'Associations';
 $LANG['CREATE_NEW_ASSOC'] = 'Create New Association';
 $LANG['ASSOCIATION_TYPE'] = 'Association Type (required)';
 $LANG['RESOURCE_LINK'] = 'Non-occurrence Resource Link';
@@ -19,6 +19,7 @@ $LANG['BASIS_OF_RECORD'] = 'Basis of Record';
 $LANG['HUMAN_OBS'] = 'Human Observation';
 $LANG['LIVING_SPEC'] = 'Living Specimen';
 $LANG['MACHINE_OBS'] = 'Machine Observation';
+$LANG['FOSSIL_SPEC'] = 'Fossil Specimen';
 $LANG['MAT_SAMPLE'] = 'Material Sample';
 $LANG['PRES_SAMPLE'] = 'Preserved Specimen';
 $LANG['REF_CITATION'] = 'Reference Citation';

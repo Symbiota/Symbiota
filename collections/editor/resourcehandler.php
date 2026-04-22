@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceEditorResource.php');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
@@ -25,7 +25,7 @@ if($occid && $SYMB_UID){
 		elseif($action == 'editAssociation'){
 			$occManager->updateAssociation($_POST);
 		}
-		elseif(array_key_exists('delassocid', $_POST)){
+		elseif($action == 'submitDeleteAssociation'){
 			$occManager->deleteAssociation($_POST['delassocid']);
 		}
 	}

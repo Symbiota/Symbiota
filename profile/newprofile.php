@@ -1,7 +1,18 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
-@include_once($SERVER_ROOT.'/content/lang/profile/newprofile.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/vendor/capito/src/Cap.php');
+include_once($SERVER_ROOT . '/vendor/capito/src/Interfaces/StorageInterface.php');
+include_once($SERVER_ROOT . '/vendor/capito/src/Storage/FileStorage.php');
+include_once($SERVER_ROOT . '/vendor/capito/src/RateLimiter.php');
+include_once($SERVER_ROOT . '/vendor/capito/src/Exceptions/CapException.php');
+use Capito\CapPhpServer\Cap;
+use Capito\CapPhpServer\Storage\FileStorage;
+//use Capito\CapPhpServer\Exceptions\CapException;
+
+Language::load('profile/newprofile');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 header('Cache-Control: no-cache, no-cache="set-cookie", no-store, must-revalidate');
 header('Pragma: no-cache'); // HTTP 1.0.
@@ -11,6 +22,7 @@ $login = array_key_exists('login', $_POST) ? htmlspecialchars($_POST['login'], E
 $emailAddr = array_key_exists('email',$_POST) ? htmlspecialchars($_POST['email'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $action = array_key_exists('submit', $_POST) ? $_POST['submit'] : '';
 $adminRegister = array_key_exists('adminRegister', $_POST) ? true : false;
+$client_cap_token = array_key_exists('cap-token', $_POST) ? $_POST['cap-token'] : '';
 
 $pHandler = new ProfileManager();
 $displayStr = '';
@@ -29,6 +41,11 @@ if($emailAddr){
 	}
 }
 
+$useCAPtcha = false;
+if(!empty($CAPTCHA_ENDPOINT)){
+	$useCAPtcha = true;
+}
+
 $useRecaptcha = false;
 if(isset($RECAPTCHA_PUBLIC_KEY) && $RECAPTCHA_PUBLIC_KEY && isset($RECAPTCHA_PRIVATE_KEY) && $RECAPTCHA_PRIVATE_KEY){
 	$useRecaptcha = true;
@@ -43,6 +60,30 @@ if($action == 'Create Login'){
 			$response = json_decode(file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='.$RECAPTCHA_PRIVATE_KEY.'&response='.$captcha.'&remoteip='.$_SERVER['REMOTE_ADDR']), true);
 			if($response['success'] == false){
 				echo '<h2>'.(isset($LANG['RECAPTCHA_FAILED'])?$LANG['RECAPTCHA_FAILED']:'Recaptcha verification failed').'</h2>';
+				$okToCreateLogin = false;
+			}
+		}
+		else{
+			$okToCreateLogin = false;
+			$displayStr = '<h2>'.(isset($LANG['PLEASE_CHECK'])?$LANG['PLEASE_CHECK']:'Please check the the captcha form').'</h2>';
+		}
+	}
+
+	if($useCAPtcha){
+		//Verify with CAPtcha
+		// Determine if endpoint is fqdn or local relative
+		if (filter_var($CAPTCHA_ENDPOINT, FILTER_VALIDATE_URL)) {
+			$verify_request_endpoint = $CAPTCHA_ENDPOINT;
+			//TODO: make request to remote endpoint
+		}
+		elseif(strpos($CAPTCHA_ENDPOINT, '/') === 0) {
+			//assume relative endoint (should be verified by this server)
+			$verify_request_endpoint = $CAPTCHA_ENDPOINT;
+			
+			$capServer = new Cap(['storage' => new FileStorage(['path' => $TEMP_DIR_ROOT . '/cap_storage.json']) ]);
+			$response = $capServer->validateToken($client_cap_token);
+			if($response['success'] == false){
+				echo '<h2>'.(isset($LANG['CAPTCHA_FAILED'])?$LANG['CAPTCHA_FAILED']:'Captcha verification failed').'</h2>';
 				$okToCreateLogin = false;
 			}
 		}
@@ -89,7 +130,17 @@ if($action == 'Create Login'){
 			if($useRecaptcha){
 				?>
 				if(grecaptcha.getResponse() == ""){
-					alert("<?php echo (isset($LANG['CHECK_CAPTCHA'])?$LANG['CHECK_CAPTCHA']:"You must first check the reCAPTCHA checkbox (I'm not a robot)"); ?>");
+					alert("<?php echo (isset($LANG['CHECK_CAPTCHA'])?$LANG['CHECK_CAPTCHA']:"You must first check the CAPTCHA checkbox (to prove you are a human)"); ?>");
+					return false;
+				}
+				<?php
+			}
+			
+			if($useCAPtcha){
+			?>
+				let capToken = document.querySelector('input[name="cap-token"]');
+				if (!(capToken && capToken.value !== '')){
+					alert("<?php echo (isset($LANG['CHECK_CAPTCHA'])?$LANG['CHECK_CAPTCHA']:"You must first check the CAPTCHA checkbox (to prove you are a human)"); ?>");
 					return false;
 				}
 				<?php
@@ -105,8 +156,8 @@ if($action == 'Create Login'){
 				alert("<?php echo (isset($LANG['NO_SPACE'])?$LANG['NO_SPACE']:'Password cannot start or end with a space, but they can include spaces within the password'); ?>");
 				return false;
 			}
-			if(pwd1.length < 7){
-				alert("<?php echo (isset($LANG['GREATER_THAN_SIX'])?$LANG['GREATER_THAN_SIX']:'Password must be greater than 6 characters'); ?>");
+			if(pwd1.length < 10){
+				alert("<?= $LANG['PWD_TOO_SHORT'] ?>");
 				return false;
 			}
 			if(pwd1 != pwd2){
@@ -125,6 +176,7 @@ if($action == 'Create Login'){
 	</script>
 	<?php
 	if($useRecaptcha) echo '<script src="https://www.google.com/recaptcha/api.js"></script>';
+	if($useCAPtcha) echo '<script src="' . $CLIENT_ROOT . '/js/cap.js/widget/cap.min.js"></script>';
 	?>
 	<style>
 		.gridlike-form-row-label {
@@ -136,6 +188,9 @@ if($action == 'Create Login'){
 		.small-header {
 			font-size: 1.3em;
 			font-weight: bold;
+		}
+		.half-gridlike-form-row-input {
+			width: 68.965%
 		}
 	</style>
 </head>
@@ -176,7 +231,7 @@ if($action == 'Create Login'){
 					<div style="margin:15px">
 						<form name="retrieveLoginForm" method="post" action="index.php">
 							<input name="email" type="hidden" value="<?php echo $emailAddr; ?>" />
-							<button name="action" type="submit" value="Retrieve Login"><?php echo (isset($LANG['RETRIEVE_LOGIN']) ? $LANG['RETRIEVE_LOGIN'] : 'Retrieve Login'); ?></button>
+							<button name="action" type="submit" value="retrieveLogin"><?php echo (isset($LANG['RETRIEVE_LOGIN']) ? $LANG['RETRIEVE_LOGIN'] : 'Retrieve Login'); ?></button>
 						</form>
 					</div>
 				</div>
@@ -195,40 +250,47 @@ if($action == 'Create Login'){
 			<fieldset style='margin:10px;width:95%;'>
 				<legend><b><?php echo (isset($LANG['LOGIN_DETAILS']) ? $LANG['LOGIN_DETAILS'] : 'Login Details'); ?></b></legend>
 				<div class="gridlike-form">
-					<section class="bottom-breathing-room gridlike-form-row">
-						<label class="gridlike-form-row-label" for="login"><?php echo (isset($LANG['USERNAME']) ? $LANG['USERNAME'] : 'Username'); ?>:</label>
-						<input class="gridlike-form-row-input" name="login" id="login" value="<?php echo $login; ?>" type="text" size="20" required />
-						<span style="color:red;">*</span>
-					</section>
-					<section class="bottom-breathing-room gridlike-form-row">
-						<label class="gridlike-form-row-label" for="pwd"><?php echo (isset($LANG['PASSWORD']) ? $LANG['PASSWORD'] : 'Password'); ?>:</label>
-						<input class="gridlike-form-row-input" name="pwd" id="pwd" value="" size="20" type="password" autocomplete="off" required />
-						<span style="color:red;">*</span>
-					</section>
-					<section class="bottom-breathing-room gridlike-form-row">
-						<label class="gridlike-form-row-label" for="pwd2"><?php echo (isset($LANG['PASSWORD_AGAIN']) ? $LANG['PASSWORD_AGAIN'] : 'Password Again'); ?>:</label>
-						<input class="gridlike-form-row-input" id="pwd2" name="pwd2" value="" size="20" type="password" autocomplete="off" required />
-						<span style="color:red;">*</span>
-					</section>
-					<section class="bottom-breathing-room gridlike-form-row">
-						<label class="gridlike-form-row-label" for="firstname"><?php echo (isset($LANG['FIRST_NAME']) ? $LANG['FIRST_NAME'] : 'First Name'); ?>:</label>
-						<input class="gridlike-form-row-input" id="firstname" name="firstname" type="text" size="40" value="<?php echo (isset($_POST['firstname']) ? htmlspecialchars($_POST['firstname'],ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?>" required />
-						<span style="color:red;">*</span>
-					</section>
-					<section class="bottom-breathing-room gridlike-form-row">
-						<label class="gridlike-form-row-label" for="lastname"><?php echo (isset($LANG['LAST_NAME'])?$LANG['LAST_NAME']:'Last Name'); ?>:</label>
-						<input class="gridlike-form-row-input" id="lastname" name="lastname" type="text" size="40" value="<?php echo (isset($_POST['lastname']) ? htmlspecialchars($_POST['lastname'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?>" required />
-						<span style="color:red;">*</span>
-					</section>
-					<section class="bottom-breathing-room gridlike-form-row">
-						<label class="gridlike-form-row-label" for="email"><?php echo (isset($LANG['EMAIL']) ? $LANG['EMAIL'] : 'Email Address'); ?>:</label>
-						<input class="gridlike-form-row-input" name="email" id="email" type="email" size="40" value="<?php echo $emailAddr; ?>" required />
-						<span style="color:red;">*</span>
-					</section>
-					<section class="bottom-breathing-room gridlike-form-row">
-						<label class="gridlike-form-row-label" for="guid"><?php echo (isset($LANG['ORCID']) ? $LANG['ORCID'] : 'ORCID or other GUID'); ?>:</label>
-						<input class="gridlike-form-row-input" name="guid" id="guid" type="text" size="40" value="<?php echo (isset($_POST['guid']) ? htmlspecialchars($_POST['guid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?>" />
-					</section>
+					<div style="display:flex;">
+						<div style="flex:0 0 58%;">
+							<section class="bottom-breathing-room gridlike-form-row">
+								<label class="gridlike-form-row-label" for="login"><?php echo (isset($LANG['USERNAME']) ? $LANG['USERNAME'] : 'Username'); ?>:</label>
+								<input class="half-gridlike-form-row-input"" name="login" id="login" value="<?php echo $login; ?>" type="text" size="20" required />
+								<span style="color:red;">*</span>
+							</section>
+							<section class="bottom-breathing-room gridlike-form-row">
+								<label class="gridlike-form-row-label" for="pwd"><?php echo (isset($LANG['PASSWORD']) ? $LANG['PASSWORD'] : 'Password'); ?>:</label>
+								<input class="half-gridlike-form-row-input"" name="pwd" id="pwd" value="" size="20" type="password" autocomplete="off" required  minlength="10" />
+								<span style="color:red;">*</span>
+							</section>
+							<section class="bottom-breathing-room gridlike-form-row">
+								<label class="gridlike-form-row-label" for="pwd2"><?php echo (isset($LANG['PASSWORD_AGAIN']) ? $LANG['PASSWORD_AGAIN'] : 'Password Again'); ?>:</label>
+								<input class="half-gridlike-form-row-input"" id="pwd2" name="pwd2" value="" size="20" type="password" autocomplete="off" required  minlength="10" />
+								<span style="color:red;">*</span>
+							</section>
+							<section class="bottom-breathing-room gridlike-form-row">
+								<label class="gridlike-form-row-label" for="firstname"><?php echo (isset($LANG['FIRST_NAME']) ? $LANG['FIRST_NAME'] : 'First Name'); ?>:</label>
+								<input class="half-gridlike-form-row-input"" id="firstname" name="firstname" type="text" size="40" value="<?php echo (isset($_POST['firstname']) ? htmlspecialchars($_POST['firstname'],ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?>" required />
+								<span style="color:red;">*</span>
+							</section>
+							<section class="bottom-breathing-room gridlike-form-row">
+								<label class="gridlike-form-row-label" for="lastname"><?php echo (isset($LANG['LAST_NAME'])?$LANG['LAST_NAME']:'Last Name'); ?>:</label>
+								<input class="half-gridlike-form-row-input" id="lastname" name="lastname" type="text" size="40" value="<?php echo (isset($_POST['lastname']) ? htmlspecialchars($_POST['lastname'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?>" required />
+								<span style="color:red;">*</span>
+							</section>
+							<section class="bottom-breathing-room gridlike-form-row">
+								<label class="gridlike-form-row-label" for="email"><?php echo (isset($LANG['EMAIL']) ? $LANG['EMAIL'] : 'Email Address'); ?>:</label>
+								<input class="half-gridlike-form-row-input" name="email" id="email" type="email" size="40" value="<?php echo $emailAddr; ?>" required />
+								<span style="color:red;">*</span>
+							</section>
+							<section class="bottom-breathing-room gridlike-form-row">
+								<label class="gridlike-form-row-label" for="guid"><?php echo (isset($LANG['ORCID']) ? $LANG['ORCID'] : 'ORCID or other GUID'); ?>:</label>
+								<input class="half-gridlike-form-row-input" name="guid" id="guid" type="text" size="40" value="<?php echo (isset($_POST['guid']) ? htmlspecialchars($_POST['guid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?>" />
+							</section>
+						</div>
+						<span style="color:red;">
+							<?php echo (isset($LANG['PASSWORD_WARNING']) ? $LANG['PASSWORD_WARNING'] : 'Do not create shared/group user accounts.<br><br>For security reasons, every individual should have their own unique login and password.<br><br>Create a password that is unique to this portal.<br><br>Do not reuse a password from another website, your email, etc.'); ?>
+						</span>
+					</div>
 					<section class="bottom-breathing-room gridlike-form-row">
 							<span class="gridlike-form-row-label"><?php echo (isset($LANG['ACCESSIBILITY_PREF']) ? $LANG['ACCESSIBILITY_PREF'] : 'Accessibility Preferences'); ?>:</span>
 							<input type="checkbox" name="accessibility-pref" id="accessibility-pref" value="1" />
@@ -269,6 +331,7 @@ if($action == 'Create Login'){
 							<div style="margin:10px;">
 								<?php
 								if($useRecaptcha) echo '<div class="g-recaptcha" data-sitekey="' . $RECAPTCHA_PUBLIC_KEY . '"></div>';
+								if($useCAPtcha) echo '<cap-widget data-cap-api-endpoint="' . $CAPTCHA_ENDPOINT . '"></cap-widget>';
 								?>
 							</div>
 							<?php if($adminRegister){ ?>
@@ -289,6 +352,21 @@ if($action == 'Create Login'){
 		<?php
 	}
 	include($SERVER_ROOT.'/includes/footer.php');
+	
+	if($useCAPtcha) {
+		?>
+		<script>
+			const widget = document.querySelector("cap-widget");
+			widget.addEventListener("solve", function (e) {
+				const verificationToken = e.detail.token;
+			});
+			
+			widget.addEventListener("error", function (e) {
+				console.error('❌ Cap validation failed:', e.detail);
+			});
+		</script>
+		<?php
+	}
 	?>
 </body>
 </html>

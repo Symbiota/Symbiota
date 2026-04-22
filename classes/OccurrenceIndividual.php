@@ -4,6 +4,7 @@ include_once('OccurrenceAccessStats.php');
 include_once('ChecklistVoucherAdmin.php');
 include_once('utilities/GeneralUtil.php');
 include_once('utilities/QueryUtil.php');
+include_once('utilities/OccurrenceUtil.php');
 
 class OccurrenceIndividual extends Manager{
 
@@ -53,8 +54,7 @@ class OccurrenceIndividual extends Manager{
 						if($propArr = json_decode($this->metadataArr['dynamicproperties'], true)) {
 							if(isset($propArr['editorProps']['modules-panel'])) {
 								foreach($propArr['editorProps']['modules-panel'] as $k => $modArr) {
-									if(isset($modArr['paleo']['status'])) $this->activeModules['paleo'] = true;
-									elseif (isset($modArr['matSample']['status'])) $this->activeModules['matSample'] = true;
+									if (isset($modArr['matSample']['status'])) $this->activeModules['matSample'] = true;
 								}
 							}
 						}
@@ -125,7 +125,7 @@ class OccurrenceIndividual extends Manager{
 			o.occurrenceid, o.catalognumber, o.occurrenceremarks, o.tidinterpreted, o.family, o.sciname,
 			o.scientificnameauthorship, o.identificationqualifier, o.identificationremarks, o.identificationreferences, o.taxonremarks,
 			o.identifiedby, o.dateidentified, o.eventid, o.recordedby, o.associatedcollectors, o.recordnumber, o.eventdate, o.eventdate2, MAKEDATE(YEAR(o.eventDate),o.enddayofyear) AS eventdateend,
-			o.verbatimeventdate, o.country, o.stateprovince, o.locationid, o.county, o.municipality, o.locality, o.localitysecurity, o.localitysecurityreason,
+			o.verbatimeventdate, o.country, o.stateprovince, o.locationid, o.county, o.municipality, o.locality, o.recordsecurity, o.securityreason,
 			o.decimallatitude, o.decimallongitude, o.geodeticdatum, o.coordinateuncertaintyinmeters, o.verbatimcoordinates, o.georeferenceremarks,
 			o.minimumelevationinmeters, o.maximumelevationinmeters, o.verbatimelevation, o.minimumdepthinmeters, o.maximumdepthinmeters, o.verbatimdepth,
 			o.verbatimattributes, o.locationremarks, o.lifestage, o.sex, o.individualcount, o.samplingprotocol, o.preparations, o.typestatus, o.dbpk, o.habitat,
@@ -210,7 +210,7 @@ class OccurrenceIndividual extends Manager{
 			 }
 			 */
 			$protectLocality = false;
-			if($this->occArr['localitysecurity'] == 1 && !$isSecuredReader){
+			if($this->occArr['recordsecurity'] == 1 && !$isSecuredReader){
 				$protectLocality = true;
 				$retBool = true;
 				$this->occArr['localsecure'] = 1;
@@ -279,9 +279,9 @@ class OccurrenceIndividual extends Manager{
 					$tnUrl = $row->thumbnailurl;
 					$lgUrl = $row->originalurl;
 					if($MEDIA_DOMAIN){
-					    if(substr($url,0,1)=='/') $url = $MEDIA_DOMAIN . $url;
-					    if($lgUrl && substr($lgUrl, 0, 1) == '/') $lgUrl = $MEDIA_DOMAIN . $lgUrl;
-					    if($tnUrl && substr($tnUrl, 0, 1) == '/') $tnUrl = $MEDIA_DOMAIN . $tnUrl;
+						if($url && substr($url,0,1)=='/') $url = $MEDIA_DOMAIN . $url;
+						if($lgUrl && substr($lgUrl, 0, 1) == '/') $lgUrl = $MEDIA_DOMAIN . $lgUrl;
+						if($tnUrl && substr($tnUrl, 0, 1) == '/') $tnUrl = $MEDIA_DOMAIN . $tnUrl;
 					}
 					if((!$url || $url == 'empty') && $lgUrl) $url = $lgUrl;
 					if(!$tnUrl && $url) $tnUrl = $url;
@@ -330,22 +330,48 @@ class OccurrenceIndividual extends Manager{
 	}
 
 	private function setPaleo(){
-		if(isset($this->activeModules['paleo']) && $this->activeModules['paleo']){
-			$sql = 'SELECT paleoid, eon, era, period, epoch, earlyinterval, lateinterval, absoluteage, storageage, stage, localstage, biota,
-				biostratigraphy, lithogroup, formation, taxonenvironment, member, bed, lithology, stratremarks, element, slideproperties, geologicalcontextid
-				FROM omoccurpaleo WHERE occid = ?';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('i', $this->occid);
-				$stmt->execute();
-				if($rs = $stmt->get_result()){
-					while($r = $rs->fetch_assoc()){
-						$this->occArr = array_merge($this->occArr, $r);
-					}
-					$rs->free();
+		$sql = 'SELECT paleoid, eon, era, period, epoch, earlyInterval, lateInterval, absoluteAge, stage, localStage, biota,
+			biostratigraphy, lithogroup, formation, taxonEnvironment, member, bed, lithology, stratRemarks, element, slideProperties, geologicalContextID
+			FROM omoccurpaleo WHERE occid = ?';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $this->occid);
+			$stmt->execute();
+			if($rs = $stmt->get_result()){
+				while($r = $rs->fetch_assoc()){
+					$this->occArr = array_merge($this->occArr, $r);
 				}
-				$stmt->close();
+				$rs->free();
 			}
+			$stmt->close();
 		}
+		if (isset($this->occArr['earlyInterval']))
+			$this->occArr['earlyIntervalHieararchy'] = $this->getPaleoGtsParents($this->occArr['earlyInterval']);
+		if (isset($this->occArr['lateInterval']))
+			$this->occArr['lateIntervalHieararchy'] = $this->getPaleoGtsParents($this->occArr['lateInterval']);
+	}
+
+	public function getPaleoGtsParents($term){
+		$retArr = [];
+		$sql = 'SELECT gtsid, gtsterm, rankid, rankname, parentgtsid FROM omoccurpaleogts WHERE rankid > 10 AND gtsterm = "'.$this->cleanInStr($term).'"';
+		$parentId = '';
+		do{
+			$rs = $this->conn->query($sql);
+			if($r = $rs->fetch_object()){
+				if($parentId == $r->parentgtsid){
+					$parentId = 0;
+				}
+				else{
+					$retArr[] = $r->gtsterm	;
+					$parentId = $r->parentgtsid;
+				}
+			}
+			else $parentId = 0;
+			$rs->free();
+			$sql = 'SELECT gtsid, gtsterm, rankid, rankname, parentgtsid FROM omoccurpaleogts WHERE rankid > 10 AND gtsid = '.$parentId;
+		}while($parentId);
+		$retArr = array_reverse($retArr);
+		$retStr = implode(' | ', $retArr);
+		return trim($retStr);
 	}
 
 	private function setLoan(){
@@ -395,9 +421,10 @@ class OccurrenceIndividual extends Manager{
 
 	private function setOccurrenceRelationships(){
 		$relOccidArr = array();
-		$sql = 'SELECT assocID, occid, occidAssociate, relationship, subType, resourceUrl, objectID, dynamicProperties, verbatimSciname, tid
-			FROM omoccurassociations
-			WHERE occid = ? OR occidAssociate = ?';
+		$sql = 'SELECT a.assocID, a.occid, a.occidAssociate, a.relationship, a.subType, a.resourceUrl, a.objectID, a.dynamicProperties, a.verbatimSciname, a.tid
+			FROM omoccurassociations a LEFT JOIN omoccurrences o ON a.occidAssociate = o.occid
+			WHERE (a.occid = ? OR a.occidAssociate = ?) ';
+		$sql .= OccurrenceUtil::appendFullProtectionSQL(true);
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('ii', $this->occid, $this->occid);
 			$stmt->execute();
@@ -618,6 +645,7 @@ class OccurrenceIndividual extends Manager{
 			INNER JOIN omcollections c ON o.collid = c.collid
 			LEFT JOIN media i ON o.occid = i.occid
 			WHERE (d.occid = ?) AND (d.occid != d2.occid) ';
+		$sql .= OccurrenceUtil::appendFullProtectionSQL();
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('i', $this->occid);
 			$stmt->execute();
@@ -736,7 +764,7 @@ class OccurrenceIndividual extends Manager{
 	public function addComment($commentStr){
 		$status = false;
 		if(is_numeric($GLOBALS['SYMB_UID'])){
-	 		$commentStr = strip_tags($commentStr);
+			$commentStr = strip_tags($commentStr);
 			$sql = 'INSERT INTO omoccurcomments(occid, comment, uid, reviewstatus) VALUES(?, ?, ?, 1)';
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param('isi', $this->occid, $commentStr, $GLOBALS['SYMB_UID']);
@@ -1039,17 +1067,17 @@ class OccurrenceIndividual extends Manager{
 			}
 		}
 
-		$sql2 = 'SELECT datasetid, name, uid FROM omoccurdatasets ';
+		$sql2 = 'SELECT datasetid, IFNULL(datasetName, name) as datasetName, uid FROM omoccurdatasets ';
 		if(!$GLOBALS['IS_ADMIN'] && is_numeric($GLOBALS['SYMB_UID'])){
 			//Only get datasets for current user. Once we have appied isPublic tag, we can extend display to all public datasets
 			$sql2 .= 'WHERE (uid = '.$GLOBALS['SYMB_UID'].') ';
 			if($roleArr) $sql2 .= 'OR (datasetid IN('.implode(',',array_keys($roleArr)).')) ';
 		}
-		$sql2 .= 'ORDER BY name';
+		$sql2 .= 'ORDER BY datasetName, name';
 		$rs2 = $this->conn->query($sql2);
 		if($rs2){
 			while($r2 = $rs2->fetch_object()){
-				$retArr[$r2->datasetid]['name'] = $r2->name;
+				$retArr[$r2->datasetid]['name'] = $r2->datasetName;
 				$roleStr = '';
 				if(isset($GLOBALS['SYMB_UID']) && $GLOBALS['SYMB_UID'] == $r2->uid) $roleStr = 'owner';
 				elseif(isset($roleArr[$r2->datasetid]) && $roleArr[$r2->datasetid])  $roleStr = $roleArr[$r2->datasetid];
@@ -1127,6 +1155,10 @@ class OccurrenceIndividual extends Manager{
 		if($archiveObject){
 			$retArr['obj'] = json_decode($archiveObject, true);
 			$retArr['notes'] = $notes;
+		}
+		if(isset($retArr['recordSecurity']) && $retArr['recordSecurity'] == 5 && OccurrenceUtil::getFullProtectionPermission()){
+			unset($retArr);
+			$retArr = array();
 		}
 		return $this->cleanOutArray($retArr);
 	}
@@ -1246,7 +1278,7 @@ class OccurrenceIndividual extends Manager{
 			//Restore exsiccati
 			if(isset($recArr['exsiccati']) && $recArr['exsiccati']){
 				$sql = 'INSERT INTO omexsiccatiocclink(omenid, occid, ranking, notes) VALUES(' . $recArr['exsiccati']['ometid'] . ',' . $recArr['exsiccati']['occid'] . ','.
-					(isset($recArr['exsiccati']['ranking']) ? $recArr['exsiccati']['ranking'] : 'NULL') . ','
+					(isset($recArr['exsiccati']['ranking']) ? $recArr['exsiccati']['ranking'] : 'NULL') . ',' .
 					(isset($recArr['exsiccati']['notes']) ? '"' . $this->cleanInStr($recArr['exsiccati']['notes']) . '"' : 'NULL') . ')';
 				if(!$this->conn->query($sql)){
 					$this->errorMessage = $this->conn->error;

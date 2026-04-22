@@ -1,6 +1,9 @@
 function displayTableView(f) {
-  f.action = "listtabledisplay.php";
-  f.submit();
+  if (checkHarvestParamsForm(f, getCurrentPage())) {
+	setHarvestParamsForm(f);
+	f.action = "listtabledisplay.php";
+	f.submit();
+  }
 }
 
 function cleanNumericInput(formElem) {
@@ -11,8 +14,18 @@ function cleanNumericInput(formElem) {
   }
 }
 
-function checkHarvestParamsForm(frm){
-	//make sure they have filled out at least one field.
+function checkHarvestParamsForm(frm, currentPage){
+	const newInputElement = document.createElement("input");
+	newInputElement.type = "hidden";
+	newInputElement.id = "db";
+	newInputElement.name = "db";
+	const previousPageKey = 'querystr' + currentPage?.replace('collections/harvestparams.php','collections/index.php') + '/db';
+	const previousPageDbVals = sessionStorage.getItem(previousPageKey);
+	if(previousPageDbVals){
+		newInputElement.value = previousPageDbVals;
+	}
+	frm.appendChild(newInputElement);
+	storeFormDataInSessionStorage(frm);
 	let searchDefined = false;
 	let traitInputs = frm.elements;
  	for(var i = 0; i < traitInputs.length; i++) {
@@ -22,7 +35,7 @@ function checkHarvestParamsForm(frm){
 				break;
 			}
 		}
-		else if(traitInputs[i].name == "materialsampletype"){
+		else if(traitInputs[i].name == "materialsampletype" || traitInputs[i].name == "earlyInterval" || traitInputs[i].name == "lateInterval" ){
 			if(traitInputs[i].value.trim() != ""){
 				searchDefined = true;
 				break;
@@ -84,12 +97,29 @@ function checkHarvestParamsForm(frm){
 		}
 	}
 
+	// Geo Context
+	const searchFormPaleo = document.getElementById("searchFormPaleo") || null;
+	if (searchFormPaleo) {
+		let early = frm.earlyInterval.value;
+		let late = frm.lateInterval.value;
+		if ((early !== "" && late === "") || (early === "" && late !== "")) {
+			alert(translations.INTERVAL_MISSING);
+			return false;
+		}
+
+		if (early in paleoTimes && late in paleoTimes && paleoTimes[early].myaStart <= paleoTimes[late].myaEnd) {
+			alert(translations.INTERVALS_WRONG_ORDER);
+			return false;
+		}
+	}
+
 	return true;
 }
 
 function setHarvestParamsForm(frm) {
-  if (sessionStorage.querystr) {
-	var urlVar = parseUrlVariables(sessionStorage.querystr);
+  const urlVariablesFromSessionStorage = concatenateUrlVariablesFromSessionStorage();
+  if (urlVariablesFromSessionStorage) {
+	var urlVar = parseUrlVariables(urlVariablesFromSessionStorage);
 
 	if (
 	  typeof urlVar.usethes !== "undefined" &&

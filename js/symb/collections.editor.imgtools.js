@@ -65,11 +65,11 @@ function setPortXY(portWidth,portHeight){
 	document.cookie = "symbimgport=" + portWidth + ":" + portHeight;
 }
 
-function initImgRes(){
+function initImgRes() {
 	var imgObj = document.getElementById("activeimg-"+activeImgIndex);
 	if(imgObj){
 		if(imgLgArr[activeImgIndex]){
-			var imgRes = getCookie("symbimgres");
+			var imgRes = getImgRes(); 
 			if(imgRes == 'lg') changeImgRes('lg');
 		}
 		else{
@@ -187,16 +187,16 @@ async function ocrVV(ocrButton, imgCnt){
 	// Get user-selected parameters
 	const prompt = $('#prompt').val();
 	const llm_model = $('#llm-model').val();
-    const engines = $('#engines').val();
-    const ocrOnly = $('#ocrOnly').is(':checked');
+  const engines = $('#engines').val();
+  const ocrOnly = $('#ocrOnly').is(':checked');
 
-    // Show busy indicator
-    busy.show();
+  // Show busy indicator
+  busy.show();
 
-    // Disable additional OCR Image button presses
-    $(ocrButton).prop('disabled', true);
+  // Disable additional OCR Image button presses
+  $(ocrButton).prop('disabled', true);
 
-    // Symbiota field mappings for data returned by various prompts
+  // Symbiota field mappings for data returned by various prompts
 	const vvMapping = {
 		SLTPvM_default: {
 			// James Note: Catch-all field: Turning this off may be preferred, it accumulates a lot of junk.
@@ -490,6 +490,11 @@ function pushDwcArrToForm(msg,bgColor){
 	
 }
 
+function getImgRes() {
+	const resRadio = document.querySelector('#imgres input[name="resradio"]:checked');
+	return resRadio? resRadio.value: getCookie("symbimgres");
+}
+
 function nextLabelProcessingImage(imgCnt){
 	document.getElementById("labeldiv-"+(imgCnt-1)).style.display = "none";
 	var imgObj = document.getElementById("labeldiv-"+imgCnt);
@@ -499,8 +504,9 @@ function nextLabelProcessingImage(imgCnt){
 	}
 	imgObj.style.display = "block";
 	
-	initImageTool("activeimg-"+imgCnt);
 	activeImgIndex = imgCnt;
+	initImageTool("activeimg-"+imgCnt);
+	initImgRes()
 	
 	return false;
 }

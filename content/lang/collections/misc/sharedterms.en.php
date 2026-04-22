@@ -20,9 +20,8 @@ $LANG['SORT_NUMERIC'] = 'Sort sequence must be numeric only';
 $LANG['AGG_GUID'] = 'An Aggregate dataset (e.g. specimens coming from multiple collections) can only have occurrenceID selected for the GUID source';
 $LANG['NEED_GUID'] = 'You must select a GUID source in order to publish to data aggregators.';
 $LANG['SEL_INST'] = 'Select an institution to be linked';
-$LANG['NOT_SUPP'] = 'The file you have uploaded is not a supported image file. Please upload a jpg, png, or gif file.';
 $LANG['MUST_SMALL'] = 'The image file must be less than 350 pixels in both width and height.';
-$LANG['NOT_SUPP_URL'] = 'The url you have entered is not for a supported image file. Please enter a url for a jpg, png, or gif file.';
+$LANG['NOT_SUPPORTED'] = 'File not supported. Accepted extensions include: jpg, png, or gif file.';
 $LANG['EDIT_ADDRESS'] = 'Edit institution address';
 $LANG['UNLINK_ADDRESS'] = 'Unlink institution address';
 $LANG['NO_ADDRESS'] = 'No addresses linked';
@@ -31,5 +30,6 @@ $LANG['LINK_ADDRESS'] = 'Link Address';
 $LANG['ADD_ADDRESS'] = 'Add a new address not on the list';
 $LANG['ADD_INST'] = 'Add an institution not on list';
 $LANG['LINK_URL_REQ'] = 'Link URL and title is required';
+$LANG['CLOSE'] = 'Close';
 
 ?>

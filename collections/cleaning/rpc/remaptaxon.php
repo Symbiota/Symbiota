@@ -1,5 +1,5 @@
 <?php
-include_once('../../../config/symbini.php');
+include_once(__DIR__ . '/../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyCleaner.php');
 header("Content-Type: text/html; charset=UTF-8");
 

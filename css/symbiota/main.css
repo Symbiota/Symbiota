@@ -245,6 +245,10 @@ span[class="link"]:hover {
   max-width: 100%;
 }
 
+#service-container, #all_collections_parent_container {
+  display: none;
+}
+
 #tabs {
   font-family: var(--body-font-family);
   font-size: var(--body-font-size);
@@ -334,6 +338,11 @@ fieldset {
   border-image: initial;
 }
 
+form label:has(+ input[required]):after {
+  color: red;
+  content: '*';
+}
+
 /* Base Button Button CSS
 ========================================================================== */
 button {
@@ -387,7 +396,7 @@ button.icon-button {
   border-color: buttonborder;
 }
 
-button.icon-button > svg {
+button.icon-button svg {
   fill: var(--light-color);
 }
 
@@ -484,7 +493,7 @@ button.inverse-color {
   float: left;
   text-align: center;
   width: 165px;
-  height: 230px;
+  min-height: 230px;
   page-break-before: auto;
   page-break-inside: avoid;
 }

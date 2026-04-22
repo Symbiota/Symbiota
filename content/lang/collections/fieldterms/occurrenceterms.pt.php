@@ -38,8 +38,8 @@ $LANG['COUNTY'] = 'Condado';
 $LANG['MUNICIPALITY'] = 'Município';
 $LANG['LOCATION_ID'] = 'ID do local';
 $LANG['LOCALITY'] = 'Localidade';
-$LANG['LOCALITY_SECURITY'] = 'Segurança';
-$LANG['LOCALITY_SECURITY_REASON'] = 'Razão';
+$LANG['SECURITY'] = 'Segurança';
+$LANG['SECURITY_REASON'] = 'Razão';
 $LANG['DECIMAL_LATITUDE'] = 'Latitude';
 $LANG['DECIMAL_LONGITUDE'] = 'Longitude';
 $LANG['GEODETIC_DATUM'] = 'Dado';
@@ -87,6 +87,7 @@ $LANG['DATA_GENERALIZATIONS'] = 'Generalizações de dados';
 $LANG['INSTITUTION_CODE'] = 'Código da Instituição (substituir)';
 $LANG['COLLECTION_CODE'] = 'Código de coleção (substituir)';
 $LANG['OWNER_INSTITUTION_CODE'] = 'Código do proprietário (substituir)';
+$LANG['STORAGELOCATION_CODE'] = 'Storage Location';
 $LANG['PROCESSING_STATUS'] = 'Status de processamento';
 
 ?>

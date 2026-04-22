@@ -1,9 +1,11 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherReport.php');
 include_once($SERVER_ROOT.'/classes/ChecklistAdmin.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/voucheradmin.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/checklists/voucheradmin.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT.'/content/lang/checklists/voucheradmin.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('checklists/voucheradmin');
+
 header('Content-Type: text/html; charset='.$CHARSET);
 if(!$SYMB_UID) header('Location: ../profile/index.php?refurl=../checklists/voucheradmin.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
@@ -54,7 +56,7 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USE
 			if(substr($key, 0, 2) == 'i-') {
 				$tid = substr($key, 2);
 				if(is_numeric($tid) && !empty($_POST[$tid])) {
-					if($clManager->addExternalVouchers($tid, urldecode($_POST[$tid]))){
+					if($clManager->addExternalVouchers($tid, json_decode($_POST[$tid], true))){
 						$cnt++;
 					}
 					else{
@@ -84,6 +86,31 @@ $clMetaArr = $clManager->getClMetadata();
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js" type="text/javascript"></script>
 	<script type="text/javascript">
+		function checkSearchFootprint(e) {
+			const checkbox = document.getElementById('search_footprint');
+			const error_msg_box = document.getElementById('footprintwkt-error');
+
+			error_msg_box.innerHTML = "";
+			error_msg_box.style.display="none";
+
+			let footprint_json = e.target.value;
+
+			if(footprint_json) {
+				try {
+					footprint_json = JSON.parse(footprint_json);
+				} catch(err) {
+					footprint_json = false;
+					error_msg_box.innerHTML = "<?= $LANG['ERROR_INVALID_JSON'] ?>";
+					error_msg_box.style.display="block";
+				}
+			}
+
+			if(footprint_json && !checkbox.checked) {
+				checkbox.checked = true;
+			} else if(!footprint_json && checkbox.checked) {
+				checkbox.checked = false;
+			}
+		}
 		var clid = <?php echo $clid; ?>;
 		var tabIndex = <?php echo $tabIndex; ?>;
 		var footprintExists = <?php echo ($clManager->getClFootprint()?'true':'false') ?>;
@@ -132,7 +159,7 @@ if($statusStr){
 		<?= $statusStr; ?>
 	</div>
 	<hr />
-<?php
+	<?php
 }
 if($clid && $isEditor){
 	$termArr = $clManager->getQueryVariableArr();
@@ -228,9 +255,14 @@ if($clid && $isEditor){
 									<?php echo $LANG['ONLYCOORD'];?>
 								</div>
 								<div>
-									<input name="includewkt" value="1" type="checkbox" <?php if(isset($termArr['includewkt'])) echo 'CHECKED'; ?> onclick="coordInputSelected(this)" />
+									<input id="search_footprint" name="includewkt" value="1" type="checkbox" <?php if(isset($termArr['includewkt'])) echo 'CHECKED'; ?> onclick="coordInputSelected(this)" />
 									<?php echo $LANG['POLYGON_SEARCH']; ?>
 									<a href="#"  onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root:'<?=$CLIENT_ROOT?>', map_mode_strict: true, latdef: '<?= $latDef ?>', lngdef: '<?= $lngDef ?>' });return false;" title="<?php echo $LANG['EDIT_META_POLYGON'] ?>"><img src="../images/edit.png" style="width:1.2em" /></a>
+								</div>
+								<div>
+									<label style="display:block; margin-bottom:0.25rem" for="footprintwkt"><b><?= $LANG['GEOJSON_FOOTPRINT'] ?>:</b></label>
+									<textarea onchange="checkSearchFootprint(event)" id="footprintwkt" name='footprint' style="width:100%"><?= htmlspecialchars($clManager->getClFootprint() ?? ''); ?></textarea>
+									<div id="footprintwkt-error" style="display:none; color: var(--danger-color); margin-bottom: 0.25rem"></div>
 								</div>
 								<div>
 									<input name="excludecult" value="1" type="checkbox" <?php if(isset($termArr['excludecult'])) echo 'CHECKED'; ?> />
@@ -248,7 +280,6 @@ if($clid && $isEditor){
 								<input type="hidden" name="submitaction" value="SaveSearch" />
 								<input type='hidden' name='clid' value='<?php echo $clid; ?>' />
 								<input type='hidden' name='pid' value='<?php echo $pid; ?>' />
-								<input type='hidden' id="footprintwkt" name='footprint' value='<?php echo htmlspecialchars($clManager->getClFootprint()); ?>' />
 							</div>
 						</td>
 					</tr>
@@ -275,49 +306,48 @@ if($clid && $isEditor){
 		}
 		?>
 	</div>
-	<?php
-	if($termArr){
-		?>
-		<div id="tabs" style="margin-top:25px;">
-			<ul>
-
-				<li><a href="nonvoucheredtab.php?clid=<?= $clid . '&pid=' . $pid . '&start=' . $startPos . '&displaymode=' . $displayMode; ?>"><span><?= $LANG['NON_VOUCHERED'];?></span></a></li>
-				<li><a href="vamissingtaxa.php?clid=<?= $clid . '&pid=' . $pid . '&start=' . $startPos . '&displaymode=' . ($tabIndex==1?$displayMode:0) . '&excludevouchers=' . $excludeVouchers; ?>"><span><?= $LANG['MISSINGTAXA'];?></span></a></li>
-				<li><a href="vaconflicts.php?clid=<?= $clid . '&pid=' . $pid . '&start=' . $startPos; ?>"><span><?= $LANG['VOUCHCONF'];?></span></a></li>
-				<?php
-				if($clManager->getAssociatedExternalService()) echo '<li><a href="externalvouchers.php?clid=' . $clid . '&pid=' . $pid . '"><span>' . $LANG['EXTERNALVOUCHERS'] . '</span></a></li>';
-				if($clManager->hasVoucherProjects()) echo '<li><a href="imgvouchertab.php?clid=' . $clid . '">' . $LANG['ADDIMGVOUCHER'] . '</a></li>';
-				?>
-				<li><a href="#reportDiv"><span><?= $LANG['REPORTS'] ?></span></a></li>
-			</ul>
-			<div id="reportDiv">
-				<div style="margin:25px;height:400px;">
-					<div style="margin:10px 5px;"><?php echo $LANG['ADDITIONAL'];?>.</div>
-					<ul>
-						<li><a href="voucherreporthandler.php?rtype=fullcsv&clid=<?= $clid ?>"><?= $LANG['FULLSPECLIST'] ?></a></li>
-						<?php
-						$vouchersExist = $clManager->vouchersExist();
-						if($vouchersExist){
-							?>
-							<li><a href="voucherreporthandler.php?rtype=fullvoucherscsv&clid=<?= $clid ?>"><?= $LANG['FULLSPECLISTVOUCHER'] ?></a></li>
-							<li>
-								<a href="#" onclick="openPopup('../collections/download/index.php?searchvar=<?php echo urlencode('clid=' . $clManager->getClidFullStr()); ?>&noheader=1','repvouchers');return false;">
-									<?php echo $LANG['VOUCHERONLY']; ?>
-								</a>
-							</li>
-							<?php
-						}
+	<div id="tabs" style="margin-top:25px;">
+		<ul>
+			<li><a href="nonvoucheredtab.php?clid=<?= $clid . '&pid=' . $pid . '&start=' . $startPos . '&displaymode=' . $displayMode; ?>"><span><?= $LANG['NON_VOUCHERED'];?></span></a></li>
+			<li><a href="vamissingtaxa.php?clid=<?= $clid . '&pid=' . $pid . '&start=' . $startPos . '&displaymode=' . ($tabIndex==1?$displayMode:0) . '&excludevouchers=' . $excludeVouchers; ?>"><span><?= $LANG['MISSINGTAXA'];?></span></a></li>
+			<li><a href="vaconflicts.php?clid=<?= $clid . '&pid=' . $pid . '&start=' . $startPos; ?>"><span><?= $LANG['VOUCHCONF'];?></span></a></li>
+			<?php
+			if($clManager->getAssociatedExternalService()) echo '<li><a href="externalvouchers.php?clid=' . $clid . '&pid=' . $pid . '"><span>' . $LANG['EXTERNALVOUCHERS'] . '</span></a></li>';
+			if($clManager->hasVoucherProjects()) echo '<li><a href="imgvouchertab.php?clid=' . $clid . '">' . $LANG['ADDIMGVOUCHER'] . '</a></li>';
+			?>
+			<li><a href="#reportDiv"><span><?= $LANG['REPORTS'] ?></span></a></li>
+		</ul>
+		<div id="reportDiv">
+			<div style="margin:25px;height:400px;">
+				<div style="margin:10px 5px;"><?php echo $LANG['ADDITIONAL'];?>.</div>
+				<ul>
+					<li><a href="voucherreporthandler.php?rtype=fullcsv&clid=<?= $clid ?>"><?= $LANG['FULLSPECLIST'] ?></a></li>
+					<!--  <li><a href="voucherreporthandler.php?rtype=pensoftxlsx&clid=<?= $clid ?>" target="_blank"><?= $LANG['PENSOFT_XLSX_EXPORT'] ?></a></li> -->
+					<?php
+					$termArr = $clManager->getQueryVariableArr();
+					$vouchersExist = $clManager->vouchersExist();
+					if($vouchersExist){
 						?>
-						<li><a href="voucherreporthandler.php?rtype=fullalloccurcsv&clid=<?= $clid ?>"><?= $LANG['FULLSPECLISTALLOCCUR'] ?></a></li>
-						<li><a href="voucherreporthandler.php?rtype=pensoftxlsx&clid=<?= $clid ?>" target="_blank"><?= $LANG['PENSOFT_XLSX_EXPORT'] ?></a></li>
-						<li><a href="voucherreporthandler.php?rtype=missingoccurcsv&clid=<?= $clid ?>"><?= $LANG['SPECMISSTAXA'] ?></a></li>
-						<li><a href="voucherreporthandler.php?rtype=problemtaxacsv&clid=<?= $clid ?>"><?= $LANG['SPECMISSPELLED'] ?></a></li>
-					</ul>
-				</div>
+						<li><a href="voucherreporthandler.php?rtype=fullvoucherscsv&clid=<?= $clid ?>"><?= $LANG['FULLSPECLISTVOUCHER'] ?></a></li>
+						<li>
+							<a href="#" onclick="openPopup('../collections/download/index.php?searchvar=<?php echo urlencode('clid=' . $clManager->getClidFullStr()); ?>&noheader=1','repvouchers');return false;">
+								<?php echo $LANG['VOUCHERONLY']; ?>
+							</a>
+						</li>
+						<li><a href="<?= $CLIENT_ROOT ?>/collections/list.php?clid=<?= $clid ?>" target="_blank"><?= $LANG['LISTALLVOUCHERS'] ?></a></li>
+						<?php
+					}
+					if($termArr){
+						?>
+						<li><a href="<?= $CLIENT_ROOT ?>/collections/list.php?targetclid=<?= $clid ?>" target="_blank"><?= $LANG['FULLSPECLISTALLOCCUR'] ?></a></li>
+						<?php
+					}
+					?>
+				</ul>
 			</div>
 		</div>
+	</div>
 	<?php
-	}
 }
 else{
 	if(!$clid){
