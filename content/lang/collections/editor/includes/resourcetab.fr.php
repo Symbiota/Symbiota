@@ -54,5 +54,6 @@ $LANG['REFERENCES'] = 'Références';
 $LANG['NO_REFS'] = "Aucune référence n'a été liée";
 $LANG['ADD_REFS'] = 'Ajouter un lien à la référence';
 $LANG['SEL_REFS'] = 'Sélectionner une référence';
+$LANG['REM_REF'] = 'Supprimer ce lien de référence ?';
 include_once($SERVER_ROOT.'/content/lang/collections/associations.fr.php');
 ?>

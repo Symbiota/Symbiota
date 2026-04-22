@@ -829,16 +829,16 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 					</a>';
 
 				echo '<form method="post" action="occurrenceeditor.php" style="margin:0;">
-						<input type="hidden" name="refid" value="'.htmlspecialchars($refId, ENT_QUOTES).'">
-						<input type="hidden" name="occid" value="'.htmlspecialchars($occid, ENT_QUOTES).'">
-						<input type="hidden" name="submitaction" value="deleteReferenceLink">
+					<input type="hidden" name="refid" value="'.htmlspecialchars($refId, ENT_QUOTES).'">
+					<input type="hidden" name="occid" value="'.htmlspecialchars($occid, ENT_QUOTES).'">
+					<input type="hidden" name="submitaction" value="deleteReferenceLink">
 
-						<button type="submit"
-							style="border:none;background:none;padding:0;cursor:pointer;"
-							onclick="return confirm(\'Remove this reference link?\')">
-							<img src="../../images/del.png" style="width:14px;">
-						</button>
-					</form>';
+					<button type="submit"
+						style="border:none;background:none;padding:0;cursor:pointer;"
+						onclick="return confirm(\''.htmlspecialchars($LANG['REM_REF'] ?? 'Remove this reference link?', ENT_QUOTES).'\')">
+						<img src="../../images/del.png" style="width:14px;">
+					</button>
+				</form>';
 
 				echo '</div>';
 
