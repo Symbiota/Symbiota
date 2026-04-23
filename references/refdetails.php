@@ -195,9 +195,9 @@ else{
 				}
 
 				const d = data.message;
-
+				
 				if(d.title && d.title.length){
-					document.getElementById("title").value = d.title[0];
+					document.getElementById("title").value = stripHTML(d.title[0]);
 				}
 
 				if(d.language){
@@ -205,9 +205,11 @@ else{
 				}
 
 				if(d.author){
-					let authors = d.author.map(a => 
-						(a.given ? a.given + " " : "") + (a.family || "")
-					);
+					let authors = d.author.map(a => {
+						let given = a.given ? toTitleCase(a.given) : "";
+						let family = a.family ? toTitleCase(a.family) : "";
+						return (given ? given + " " : "") + family;
+					});
 					document.getElementById("creator").value = authors.join(", ");
 				}
 
@@ -240,13 +242,17 @@ else{
 
 				if(d.author && d.author.length){
 					let authors = d.author.slice(0, 20).map(a => {
+						let family = a.family ? toTitleCase(a.family) : "";
+
 						let initials = "";
 						if(a.given){
-							initials = a.given.split(" ")
+							initials = toTitleCase(a.given)
+								.split(" ")
 								.map(n => n.charAt(0).toUpperCase() + ".")
 								.join(" ");
 						}
-						return (a.family || "") + ", " + initials;
+
+						return family + ", " + initials;
 					});
 					if(d.author.length > 20){
 						authors.push("...");
@@ -262,7 +268,7 @@ else{
 				}
 
 				if(d.title && d.title.length){
-					let title = d.title[0];
+					let title = stripHTML(d.title[0]);
 					title = title.charAt(0).toUpperCase() + title.slice(1).toLowerCase();
 					citation += title + ". ";
 				}
@@ -563,7 +569,7 @@ else{
 								<?php
 								if($refOccArr){
 								?>
-								<div style="float:left">Linked Occurrences: <?php echo count($refOccArr); ?></div>
+								<div style="float:left"><?php echo $LANG['LINKED_OCC']. ': ' . count($refOccArr); ?></div>
 								<div>
 										<table id="occurrenceSampleTable" class="cell-border stripe hover">										
 											<thead>
@@ -615,9 +621,11 @@ else{
 									echo '<div style="margin-top:10px;">';
 									echo '<input type="hidden" name="action" value="deleteoccurrences">';
 									echo '<input type="hidden" name="refid" value="'.$refId.'">';
-									echo '<button type="submit" onclick="return confirm(\'Delete links to selected samples?\')">
-       					 				Delete Links to Selected Samples
-      									</button>';
+									echo "<button type='submit' onclick=\"return confirm('"
+										. htmlspecialchars($LANG['CONFIRM_DEL_OCC'] ?? 'Delete links to selected occurrences?', ENT_QUOTES)
+										. "')\">
+										" . htmlspecialchars($LANG['DELETE_SELECTED_OCC'] ?? 'Delete Links to Selected occurrences', ENT_QUOTES) . "
+										</button>";
 									echo '</div>';
 								}
 								else{
@@ -674,11 +682,12 @@ else{
 												<input type="hidden" name="targetid" value="<?= $k ?>">
 												<input type="hidden" name="type" value="taxon">
 												<input type="hidden" name="action" value="deletereflink">
-												<button type="submit" style="border:none;background:none;padding:0;">
-													<img src="../images/del.png" style="width:14px;" title="Delete link">
+												<button type="submit"
+													onclick="return confirm('<?= htmlspecialchars($LANG['CONFIRM_DELETE_LINK'] ?? 'Delete this link?', ENT_QUOTES) ?>')"
+													style="border:none;background:none;padding:0;">
+													 <img src="../images/del.png" style="width:14px;">
 												</button>
 											</form>
-
 										</li>
 									<?php endforeach; ?>
 								</ul>
@@ -715,8 +724,8 @@ else{
 
 							<div style="margin-top:10px;">
 								<label>
-								<input type="checkbox" id="usethes" name="usethes" value="1" checked>
-									Include synonyms
+									<input type="checkbox" id="usethes" name="usethes" value="1" checked>
+									<?php echo htmlspecialchars($LANG['INCLUDE_SYN'] ?? 'Include Synonyms', ENT_QUOTES); ?>
 								</label>
 							</div>
 
@@ -755,7 +764,7 @@ else{
 
 											?>
 										</select>
-											<button type="submit">Add</button>
+											<button type="submit"><?= $LANG['ADD'] ?? 'Add' ?></button>
 										</form>
 										</div>
 										<hr />
@@ -786,9 +795,9 @@ else{
 													echo '<input type="hidden" name="type" value="checklist">';
 													echo '<input type="hidden" name="action" value="linkoccur">';
 													echo '<button type="submit"
-														onclick="return confirm(\'Link ALL occurrences from this checklist to the reference?\')">
-														Link Associated Occurrences To Reference
-														</button>';	
+														onclick="return confirm(\''. $LANG['CONFIRM_LINK_CHECKLIST'] . '\')">'
+														. $LANG['LINK_OCC_FROM_CHECKLIST'] .
+														'</button>';	
 													echo '</form>';
 
 													echo '</li>';
@@ -796,8 +805,7 @@ else{
 												echo '</ul>';
 											}
 											else{
-												echo '<div><b>There are currently no checklists linked to this reference.</b></div>';
-											}
+												echo '<div><b>' . ($LANG['NO_CHECKLIST'] ?? 'No checklists linked.') . '</b></div>';											}
 											?>
 										</div>
 									</fieldset>
@@ -810,10 +818,10 @@ else{
 									<input type="hidden" name="type" value="dataset">
 
 									<fieldset>
-										<legend><b>Datasets</b></legend>
+										<legend><b><?=$LANG['DATASETS'] ?? 'Datasets' ?></b></legend>
 										<div>
 											<div>
-												<b>Add Dataset By Name: </b>
+												<b><?=$LANG['ADD_DATASET'] ?? 'Add Dataset' ?> </b>
 											</div>
 											<div>
 										<select name="targetid" id="refdatasetid" style="width:220px;">
@@ -829,7 +837,7 @@ else{
 
 											?>
 										</select>
-											<button type="submit">Add</button>
+											<button type="submit"><?= $LANG['ADD'] ?? 'Add' ?></button>
 										</form>
 										</div>
 										<hr />
@@ -860,9 +868,9 @@ else{
 													echo '<input type="hidden" name="type" value="dataset">';
 													echo '<input type="hidden" name="action" value="linkoccur">';
 													echo '<button type="submit"
-														onclick="return confirm(\'Link ALL occurrences from this dataset to the reference?\')">
-														Link Associated Occurrences To Reference
-														</button>';													
+														onclick="return confirm(\''. $LANG['CONFIRM_LINK_DATASET'] . '\')">'
+														. $LANG['LINK_OCC_FROM_DATASET'] .
+														'</button>';												
 													echo '</form>';
 
 													echo '</li>';
@@ -870,7 +878,7 @@ else{
 												echo '</ul>';
 											}
 											else{
-												echo '<div><b>There are currently no datasets linked to this reference.</b></div>';
+												echo '<div><b>' . $LANG['NO_DATASET'] . '</b></div>';
 											}
 											?>
 										</div>
@@ -883,10 +891,10 @@ else{
 									<input type="hidden" name="action" value="addreflink">
 									<input type="hidden" name="type" value="collection">
 									<fieldset>
-										<legend><b>Collections</b></legend>
+										<legend><b><?=$LANG['COLLECTIONS'] ?? 'Collections'?></b></legend>
 										<div>
 											<div>
-												<b>Add Collection By Name: </b>
+												<b><?=$LANG['ADD_COLLECTION'] ?? 'Add Collection By Name'?></b>
 											</div>
 											<div>
 										<select name="targetid" id="collID" style="width:220px;">
@@ -902,7 +910,7 @@ else{
 
 											?>
 										</select>
-											<button type="submit">Add</button>
+											<button type="submit"><?= $LANG['ADD'] ?? 'Add' ?></button>
 										</form>
 										</div>
 										<hr />
@@ -911,7 +919,7 @@ else{
 											if($refCollArr){
 												echo '<ul>';
 												foreach($refCollArr as $k => $v){
-													echo '<li>';
+													echo '<li style="display:flex; align-items:center; gap:6px;">';
 													echo '<a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($k, ENT_QUOTES) . '">'
 														. htmlspecialchars($v, ENT_QUOTES) .
 														'</a>';
@@ -919,17 +927,19 @@ else{
 														<input type="hidden" name="refid" value="'.$refId.'">
 														<input type="hidden" name="targetid" value="'.$k.'">
 														<input type="hidden" name="type" value="collection">
-														<input type="hidden" name="action" value="deletereflink">
-														<button type="submit" style="border:none;background:none;padding:0;margin:0;display:inline;">
-															<img src="../images/del.png" style="width:14px;vertical-align:middle;" title="Delete link">
-														</button>
-													</form>';
+														<input type="hidden" name="action" value="deletereflink">';
+													echo '<button type="submit"
+														onclick="return confirm(\'' . htmlspecialchars($LANG['CONFIRM_DELETE_LINK'] ?? 'Delete this link?', ENT_QUOTES) . '\')"
+														style="border:none;background:none;padding:0;">';
+													echo '<img src="../images/del.png" style="width:14px;">';
+													echo '</button>';
+													echo '</form>';
 													echo '</li>';
 												}
 												echo '</ul>';
 											}
 											else{
-												echo '<div><b>There are currently no collections linked to this reference.</b></div>';
+												echo '<div><b>' . $LANG['NO_COLLECTION'] . '</b></div>';
 											}
 											?>
 										</div>
@@ -938,8 +948,8 @@ else{
 													<input type="hidden" name="refid" value="<?php echo $refId; ?>">
 													<input type="hidden" name="action" value="collocclink">
 													<button type="submit"
-														onclick="return confirm('This will link all collections associated with linked occurrences. Continue?')">
-														Link Collections to Reference Based on Occurrences
+														onclick="return confirm('<?= htmlspecialchars($LANG['CONFIRM_LINK_COLLECTION'] ?? 'This will link all collections associated with linked occurrences. Continue?', ENT_QUOTES) ?>')">
+														<?= htmlspecialchars($LANG['LINK_COLLECTION_FROM_OCC'] ?? 'Link Collections to Reference Based on Occurrences') ?>
 													</button>
 											</form>
 										</div>
@@ -949,7 +959,7 @@ else{
 					</div>
 				</div>
 				<div id="refadmindiv" style="">
-					<form name="delrefform" action="index.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this reference?')">
+					<form name="delrefform" action="index.php" method="post" onsubmit="return confirm($LANG['CONFIRM_DELETE_REF'])">
 						<fieldset style="width:350px;margin:20px;padding:20px;">
 							<legend><b><?= $LANG['DELETE_REF'] ?? 'Delete Reference' ?></b></legend>
 							<?php

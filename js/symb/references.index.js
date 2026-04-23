@@ -112,3 +112,13 @@ function decodeHTML(str){
 	txt.innerHTML = str;
 	return txt.value;
 }
+
+function stripHTML(html){
+    let tmp = document.createElement("div");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
+}
+
+function toTitleCase(str){
+    return str.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+}

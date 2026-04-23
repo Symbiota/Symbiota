@@ -54,8 +54,8 @@ $LANG['SAMPLE_LISTING'] = 'Sample Listing';
 $LANG['LINKED_OCC_COUNT'] = 'Linked Occurrences:';
 $LANG['NO_OCC_LINKED'] = 'There are no occurrences linked with this reference.';
 
-$LANG['DELETE_SELECTED_OCC'] = 'Delete Links to Selected Samples';
-$LANG['CONFIRM_DEL_SAMPLES'] = 'Delete links to selected samples?';
+$LANG['DELETE_SELECTED_OCC'] = 'Delete Links to Selected Occurrences';
+$LANG['CONFIRM_DEL_OCC'] = 'Delete links to selected occurrences?';
 
 $LANG['BATCH_ADD_OCC'] = 'Batch add occurrences';
 $LANG['BATCH_ADD_DESC'] = 'Batch add multiple occurrences by entering a list of catalog numbers on separate lines or delimited by commas.';
@@ -66,14 +66,17 @@ $LANG['INCLUDE_SYNONYMS'] = 'Include synonyms';
 
 $LANG['CHECKLISTS'] = 'Checklists';
 $LANG['ADD_CHECKLIST'] = 'Add Checklist By Name:';
+$LANG['SELECT_CHECKLIST'] = 'Select Checklist';
 $LANG['NO_CHECKLIST'] = 'There are currently no checklists linked to this reference.';
 
 $LANG['DATASETS'] = 'Datasets';
 $LANG['ADD_DATASET'] = 'Add Dataset By Name:';
+$LANG['SELECT_DATASET'] = 'Select Dataset';
 $LANG['NO_DATASET'] = 'There are currently no datasets linked to this reference.';
 
 $LANG['COLLECTIONS'] = 'Collections';
 $LANG['ADD_COLLECTION'] = 'Add Collection By Name:';
+$LANG['SELECT_COLLECTION'] = 'Select Collection';
 $LANG['NO_COLLECTION'] = 'There are currently no collections linked to this reference.';
 
 $LANG['LINK_OCC_FROM_CHECKLIST'] = 'Link Associated Occurrences To Reference';
@@ -91,5 +94,9 @@ $LANG['DELETE_BLOCKED'] = 'Reference cannot be deleted until all linked records 
 
 $LANG['LIT_REF_FIELDS'] = 'Literature References Extension Fields';
 $LANG['TARGET'] = 'Target';
+
+$LANG['INCLUDE_SYN'] = 'Include Synonyms';
+
+$LANG['CONFIRM_DELETE_LINK'] = 'Delete Link?';
 
 ?>
