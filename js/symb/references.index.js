@@ -113,12 +113,29 @@ function decodeHTML(str){
 	return txt.value;
 }
 
-function stripHTML(html){
-    let tmp = document.createElement("div");
-    tmp.innerHTML = html;
-    return tmp.textContent || tmp.innerText || "";
+function stripHTML(str){
+    if(!str || typeof str !== "string") return "";
+
+    try {
+        const div = document.createElement("div");
+        div.innerHTML = str;
+        let text = div.textContent || div.innerText || "";
+
+        if(text) return text.trim();
+    } catch(e){
+        console.warn("DOM parse failed, falling back:", str);
+    }
+
+    return str.replace(/<[^>]*>/g, "").trim();
 }
 
 function toTitleCase(str){
     return str.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function cleanTitle(raw){
+	return raw
+		.replace(/[\r\n]+/g, ' ')
+		.replace(/\s+/g, ' ')
+		.trim();
 }

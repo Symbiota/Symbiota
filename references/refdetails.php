@@ -197,7 +197,10 @@ else{
 				const d = data.message;
 				
 				if(d.title && d.title.length){
-					document.getElementById("title").value = stripHTML(d.title[0]);
+					let rawTitle = stripHTML(d.title[0]);
+					rawTitle = cleanTitle(rawTitle);
+
+					document.getElementById("title").value = rawTitle;
 				}
 
 				if(d.language){
@@ -257,7 +260,7 @@ else{
 					if(d.author.length > 20){
 						authors.push("...");
 					}
-					citation += authors.join(", ") + ". ";
+					citation += authors.join(", ") + " ";
 				}
 
 				if(d.issued && d.issued["date-parts"]){
@@ -268,9 +271,9 @@ else{
 				}
 
 				if(d.title && d.title.length){
-					let title = stripHTML(d.title[0]);
-					title = title.charAt(0).toUpperCase() + title.slice(1).toLowerCase();
-					citation += title + ". ";
+					let rawTitle = stripHTML(d.title[0]);
+					rawTitle = cleanTitle(rawTitle);
+					citation += rawTitle + ". ";
 				}
 
 				if(d["container-title"] && d["container-title"].length){
