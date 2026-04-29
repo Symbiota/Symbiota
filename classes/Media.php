@@ -226,12 +226,12 @@ class Media {
 			return is_array($mime) && count($mime) > 0? $mime[0]: $mime;
 		} else if(is_array($mime)) {
 			foreach($mime as $type) {
-				if(in_array($type, $GLOBALS['ALLOWED_MEDIA_MIME_TYPES'])) {
+				if(UploadUtil::mimeAllowed($type, $GLOBALS['ALLOWED_MEDIA_MIME_TYPES'])) {
 					return $type;
 				}
 			}
 		} else {
-			if(in_array($mime, $GLOBALS['ALLOWED_MEDIA_MIME_TYPES'])) {
+			if(UploadUtil::mimeAllowed($mime, $GLOBALS['ALLOWED_MEDIA_MIME_TYPES'])) {
 				return $mime;
 			}
 		}
