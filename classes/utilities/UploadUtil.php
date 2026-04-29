@@ -383,11 +383,35 @@ class UploadUtil {
 			Media::ext2Mime($extensionA) === Media::ext2Mime($extensionB);
 	}
 
+	/**
+	 * @param string $mime
+	 * @param array $allowed_mimes
+	 * @return bool
+	 */
+	public static function mimeAllowed(string $mime, array $allowed_mimes): bool {
+		foreach($allowed_mimes as $allowed_mime) {
+			if(self::mimesEqual($mime, $allowed_mime)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param string $mimeA
+	 * @param string $mimeB
+	 * @return bool
+	 */
 	public static function mimesEqual(string $mimeA, string $mimeB): bool {
-		$mimeA = strtolower($mimeA);
-		$mimeB = strtolower($mimeB);
+		$mimeA = self::stripCharset(strtolower($mimeA));
+		$mimeB = self::stripCharset(strtolower($mimeB));
 
 		return self::mime2ext($mimeA) === self::mime2ext($mimeB);
+	}
+
+	private static function stripCharset(string $mime): string {
+		$parts = explode(';', $mime);
+		return trim($parts[0]);
 	}
 
 	/**
