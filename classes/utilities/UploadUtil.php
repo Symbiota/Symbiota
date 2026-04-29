@@ -72,7 +72,7 @@ class UploadUtil {
 			$allowed_mimes = self::ALLOWED_IMAGE_MIMES;
 		}
 
-		if(!in_array($uploaded_file['type'], $allowed_mimes)) {
+		if(!self::mimeAllowed($uploaded_file['type'], $allowed_mimes)) {
 			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $uploaded_file['type']);
 		}
 
@@ -267,7 +267,7 @@ class UploadUtil {
 		// Sanity Check files extension and claimed type before uploading
 		// This does not guarantee the file is safe but weeds out simple
 		// malicous file upload attempts. Actual file should also be checked after download.
-		if(!in_array($info['type'], $allowed_mimes)) {
+		if(!self::mimeAllowed($info['type'], $allowed_mimes)) {
 			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $info['type']);
 		} else if(self::mime2ext($info['type']) !== $info['extension']) {
 			throw new MediaException(MediaException::SuspiciousFile);
