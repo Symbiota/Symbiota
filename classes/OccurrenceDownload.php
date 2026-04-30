@@ -427,25 +427,25 @@ class OccurrenceDownload{
 		elseif($cond == 'NOT_EQUALS'){
 			$sqlFrag .= 'OR o.'.$field.' NOT IN("'.implode('","',$valueArr).'") OR o.'.$field.' IS NULL ';
 		}
-		else{
-			foreach($valueArr as $value){
-				if($cond == 'STARTS_WITH'){
-					$sqlFrag .= 'OR o.'.$field.' LIKE "'.$value.'%" ';
-				}
-				elseif($cond == 'LIKE'){
-					$sqlFrag .= 'OR o.'.$field.' LIKE "%'.$value.'%" ';
-				}
-				elseif($cond == 'NOT_LIKE'){
-					$sqlFrag .= 'OR o.'.$field.' NOT LIKE "%'.$value.'%" OR o.'.$field.' IS NULL ';
-				}
-				elseif($cond == 'LESS_THAN'){
-					$sqlFrag .= 'OR o.'.$field.' < "'.$value.'" ';
-				}
-				elseif($cond == 'GREATER_THAN'){
-					$sqlFrag .= 'OR o.'.$field.' > "'.$value.'" ';
-				}
-			}
-		}
+		// else{
+		// 	foreach($valueArr as $value){
+		// 		if($cond == 'STARTS_WITH'){
+		// 			$sqlFrag .= 'OR o.'.$field.' LIKE "'.$value.'%" ';
+		// 		}
+		// 		elseif($cond == 'LIKE'){
+		// 			$sqlFrag .= 'OR o.'.$field.' LIKE "%'.$value.'%" ';
+		// 		}
+		// 		elseif($cond == 'NOT_LIKE'){
+		// 			$sqlFrag .= 'OR o.'.$field.' NOT LIKE "%'.$value.'%" OR o.'.$field.' IS NULL ';
+		// 		}
+		// 		elseif($cond == 'LESS_THAN'){
+		// 			$sqlFrag .= 'OR o.'.$field.' < "'.$value.'" ';
+		// 		}
+		// 		elseif($cond == 'GREATER_THAN'){
+		// 			$sqlFrag .= 'OR o.'.$field.' > "'.$value.'" ';
+		// 		}
+		// 	}
+		// }
 		return $sqlFrag;
 	}
 
