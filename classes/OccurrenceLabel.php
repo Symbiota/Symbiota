@@ -919,7 +919,7 @@ class OccurrenceLabel {
 	}
 
 	public function getCollName() {
-		return $this->collArr['collname'] . ' (' . $this->collArr['instcode'] . ($this->collArr['collcode'] ? ':' . $this->collArr['collcode'] : '') . ')';
+		return $this->collArr['collname'] ?? '' . ' (' . ($this->collArr['instcode'] ?? 'Missing Institution') . (($this->collArr['collcode'] ?? '') ? ':' . $this->collArr['collcode'] : '') . ')';
 	}
 
 	public function getAnnoCollName() {

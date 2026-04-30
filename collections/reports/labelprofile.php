@@ -117,7 +117,7 @@ $isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General
 			button{ display: inline; margin-top: 10px; }
 			hr{ margin:15px 0px; }
 			.fieldset-block{ width:700px }
-			.field-block{ margin:3px 0px }
+			.field-block{ margin:3px 0px; }
 			.label{ font-weight: bold; }
 			.label-inline{ font-weight: bold; }
 			.field-value{  }

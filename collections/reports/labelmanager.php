@@ -12,7 +12,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/reports/labelmanager.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$collid = Sanitize::int($_REQUEST['collid']);
+$collid = Sanitize::int($_REQUEST['collid'] ?? 0);
 $action = array_key_exists('submitaction', $_REQUEST) ? $_REQUEST['submitaction'] : '';
 
 $labelManager = new OccurrenceLabel();
@@ -180,7 +180,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 	<div class='navpath'>
 		<a href='../../index.php'> <?= $LANG['NAV_HOME'] ?> </a> &gt;&gt;
 		<?php
-		if(stripos(strtolower($labelManager->getMetaDataTerm('colltype')), "observation") !== false){
+		if(stripos(strtolower($labelManager->getMetaDataTerm('colltype') ?? ''), "observation") !== false){
 			echo '<a href="../../profile/viewprofile.php?tabindex=1">' . $LANG['PERS_MANAG_MENU'] . '</a> &gt;&gt; ';
 		}
 		else{
