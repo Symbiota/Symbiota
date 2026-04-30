@@ -427,7 +427,7 @@ class OccurrenceDownload{
 		elseif($cond == 'NOT_EQUALS'){
 			$sqlFrag .= 'OR o.'.$field.' NOT IN("'.implode('","',$valueArr).'") OR o.'.$field.' IS NULL ';
 		}
-		// else{
+		// else{ // @TODO if it's October 29, 2026 or later, remove this block of code
 		// 	foreach($valueArr as $value){
 		// 		if($cond == 'STARTS_WITH'){
 		// 			$sqlFrag .= 'OR o.'.$field.' LIKE "'.$value.'%" ';
