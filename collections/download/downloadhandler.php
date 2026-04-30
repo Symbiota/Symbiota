@@ -90,7 +90,7 @@ if ($schema == 'backup') {
 	}
 	$occurManager->getSearchTerm('customfield');
 	$occurManager->setApplyFullProtections(false); //Full security protections for downloads are handled within the DwcArchiverCore class
-	if ($schema == 'georef') { // I don't know how to get into this condition
+	if ($schema == 'georef') { // I don't think this would get custom search criteria
 		$dlManager = new OccurrenceDownload();
 		if($isPublicSearch){
 			$dlManager->setIsPublicDownload($isPublicSearch);
@@ -113,7 +113,7 @@ if ($schema == 'backup') {
 			$dlManager->addCondition($_POST['customfield1'], $_POST['customtype1'], $_POST['customvalue1']);
 		}
 		$dlManager->downloadData();
-	} elseif ($schema == 'checklist') { // I don't know how to get into this condition
+	} elseif ($schema == 'checklist') { // I don't think this would get custom search criteria
 		$dlManager = new OccurrenceDownload();
 		if($isPublicSearch){
 			$dlManager->setSqlWhere($occurManager->getSqlWhere());
