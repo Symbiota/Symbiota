@@ -1187,7 +1187,7 @@ class GlossaryManager extends Manager {
 		return $retArr;
 	}
 
-	//Misc data retrival functions
+	//Misc data retrieval functions
 	public function getStats() {
 		/*
 

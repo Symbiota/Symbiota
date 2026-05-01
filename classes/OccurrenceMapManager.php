@@ -46,8 +46,8 @@ class OccurrenceMapManager extends OccurrenceManager {
 
 		if(array_key_exists('reclimit',$_REQUEST) && is_numeric($_REQUEST['reclimit'])){
 			$recLimit = intval($_REQUEST['reclimit']);
-			$this->searchTermArr['reclimit'] = $recLimit > self::MAP_RECORD_LIMIT? 
-				self::MAP_RECORD_LIMIT: 
+			$this->searchTermArr['reclimit'] = $recLimit > self::MAP_RECORD_LIMIT?
+				self::MAP_RECORD_LIMIT:
 				$recLimit;
 		} else {
 			$this->searchTermArr['reclimit'] = self::MAP_RECORD_LIMIT;
@@ -95,7 +95,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 		return $collections;
 	}
 
-	//Coordinate retrival functions
+	//Coordinate retrieval functions
 	public function getCoordinateMap($start = 0) {
 		if(!$this->sqlWhere) {
 			return [
@@ -104,7 +104,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 				'recordArr' => []
 			];
 		}
-		
+
 		$statsManager = new OccurrenceAccessStats();
 
 		$result = QueryUtil::tryExecuteQuery($this->conn, $this->buildMapSqlQuery($start, $this->searchTermArr['reclimit']));
@@ -144,12 +144,12 @@ class OccurrenceMapManager extends OccurrenceManager {
 
 			//Collect all records
 			array_push($recordArr, [
-				'id' => $record->identifier, 
-				'tid' => $this->htmlEntities($record->tidinterpreted), 
-				'catalogNumber' => $record->catalogNumber, 
-				'eventdate' => $record->eventdate, 
-				'sciname' => $record->sciname, 
-				'collid' => $record->collid, 
+				'id' => $record->identifier,
+				'tid' => $this->htmlEntities($record->tidinterpreted),
+				'catalogNumber' => $record->catalogNumber,
+				'eventdate' => $record->eventdate,
+				'sciname' => $record->sciname,
+				'collid' => $record->collid,
 				'family' => $record->family,
 				'occid' => $record->occid,
 				'host' => $host,
@@ -167,8 +167,8 @@ class OccurrenceMapManager extends OccurrenceManager {
 		$statsManager->recordAccessEventByArr($occidArr, 'map');
 
 		return [
-			'taxaArr' => $taxaArr, 
-			'collArr' => $collArr, 
+			'taxaArr' => $taxaArr,
+			'collArr' => $collArr,
 			'recordArr' => $recordArr
 		];
 	}
@@ -227,12 +227,12 @@ class OccurrenceMapManager extends OccurrenceManager {
 			$fileName = "symbiota";
 		}
 		$fileName .= time().".kml";
-		
+
 		header ('Content-type: text/xml');
 		header ('Content-Disposition: attachment; filename="'.$fileName.'"');
 
 		$kml = tmpfile();
-		
+
 		fwrite($kml, "<?xml version='1.0' encoding='".$GLOBALS['CHARSET']."'?>\n");
 		fwrite($kml, "<kml xmlns='http://www.opengis.net/kml/2.2'>\n");
 		fwrite($kml, "<Folder>\n<name>".$GLOBALS['DEFAULT_TITLE']." Specimens - ".date('j F Y g:ia')."</name>\n");

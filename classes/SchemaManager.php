@@ -458,7 +458,7 @@ class SchemaManager extends Manager{
 		return true;
 	}
 
-	//Misc data retrival functions
+	//Misc data retrieval functions
 	public function getVersionHistory(){
 		$this->conn = MySQLiConnectionFactory::getCon('readonly');
 		if(!$this->conn && isset($_POST['password']) && $_POST['password']){

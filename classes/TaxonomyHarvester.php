@@ -1687,7 +1687,7 @@ class TaxonomyHarvester extends Manager{
 		}
 	}
 
-	//Data retrival functions
+	//Data retrieval functions
 	public function getKingdomArr(){
 		$retArr = array();
 		$sql = 'SELECT tid, sciname FROM taxa WHERE rankid = 10 ';

@@ -231,7 +231,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		$this->logOrEcho('Done!', 2);
 	}
 
-	//Misc data retrival functions
+	//Misc data retrieval functions
 	public function getDwcaItems($collid = 0){
 		$retArr = Array();
 		$rssFile = $GLOBALS['SERVER_ROOT'].'/content/dwca/rss.xml';
