@@ -780,6 +780,7 @@ class DwcArchiverCore extends Manager{
 						unset($this->collArr[$collid]);
 					}
 				}
+				if (file_exists($occurFile)) unlink($occurFile);
 			}
 			$this->clearStagingTable();
 		}
@@ -825,9 +826,17 @@ class DwcArchiverCore extends Manager{
 		}
 		return $fileName;
 	}
+	public function getOccurrenceFile(){
+		$this->setTargetPath();
+		$occurFile = $this->targetPath . $this->ts . '-occur' . $this->fileExt;
+		$filePath = $this->writeOccurrenceFile($occurFile);
+		return $filePath;
+	}
+
 
 	public function getOccurrenceFileExport($zipFile){
 		$status = false;
+		$this->setTargetPath();
 		$outputFile = $this->targetPath . 'occurrences-' . $this->ts;
 		$occurFile = $outputFile . $this->fileExt;
 		$this->logOrEcho('Creating output file: ' . $occurFile . "\n");
@@ -844,11 +853,11 @@ class DwcArchiverCore extends Manager{
 					exit('FATAL ERROR: unable to create zip file: ' . $status);
 				}
 				$zipArchive->addFile($occurFile);
+				$zipArchive->renameName($occurFile, 'occurrences' . $this->fileExt);
 				$zipArchive->close();
-				if (file_exists($occurFile)) unlink($occurFile);
 			}
 			else{
-				return $outputFile = $occurFile;
+				$outputFile = $occurFile;
 			}
 		}
 		else {
@@ -1510,13 +1519,6 @@ class DwcArchiverCore extends Manager{
 			$channelElem->appendChild($itemElem);
 		}
 		return $newDoc->saveXML();
-	}
-
-	public function getOccurrenceFile(){
-		$this->setTargetPath();
-		$occurFile = $this->targetPath . $this->ts . '-occur' . $this->fileExt;
-		$filePath = $this->writeOccurrenceFile($occurFile);
-		return $filePath;
 	}
 
 	private function writeOccurrenceFile($filePath){
