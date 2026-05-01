@@ -38,6 +38,15 @@ class UploadUtil {
 		'audio/mp3' => 'audio/mpeg'
 	];
 
+	const ALLOWED_TEXT_PLAIN_EQUAL = [
+		'text/csv'
+	];
+
+	public static function canBePlainText(string $mime): ?string {
+		$pos = array_search($mime, self::ALLOWED_TEXT_PLAIN_EQUAL);
+		return self::ALLOWED_TEXT_PLAIN_EQUAL[$pos] ?? null;
+	}
+
 	/**
 	 * Gets temporary file storage path for portal.
 	 *
@@ -77,9 +86,13 @@ class UploadUtil {
 		}
 
 		$type_guess = mime_content_type($uploaded_file['tmp_name']);
-;
+
 		if(!self::mimesEqual($type_guess, $uploaded_file['type'])) {
-			throw new MediaException(MediaException::SuspiciousFile);
+			if($type_guess === 'text/plain' && ($text_mime = self::canBePlainText($uploaded_file['type']))) {
+				$type_guess = $text_mime;
+			} else {
+				throw new MediaException(MediaException::SuspiciousFile);
+			}
 		}
 
 		$guess_ext = self::mime2ext($type_guess);
