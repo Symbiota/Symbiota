@@ -1,6 +1,6 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceDownload.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceExportSupport.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load([
@@ -20,7 +20,7 @@ for($h=1;$h<4;$h++){
 	$customValue[$h] = array_key_exists('customvalue'.$h,$_REQUEST)?$_REQUEST['customvalue'.$h]:'';
 }
 
-$dlManager = new OccurrenceDownload();
+$dlManager = new OccurrenceExportSupport();
 $collMeta = $dlManager->getCollectionMetadata($collid);
 
 $isEditor = false;
@@ -134,7 +134,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 				if($displayMode == 1){
 					if($collMeta['manatype'] == 'Snapshot'){
 						?>
-						<form name="exportgeorefform" action="../download/downloadhandler.php" method="post" onsubmit="return validateExportGeorefForm(this);">
+						<form name="exportgeorefform" action="../download/downloadhandler.php" method="post">
 							<fieldset>
 								<legend><b><?php echo $LANG['EXPORT_BATCH_GEO']; ?></b></legend>
 								<div style="margin:15px;">
@@ -211,6 +211,10 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 												<input name="customfield1" type="hidden" value="georeferenceSources" />
 												<input name="customtype1" type="hidden" value="LIKE" />
 												<input name="customvalue1" type="hidden" value="batch" />
+												<input name="customfield2" type="hidden" value="decimalLatitude" />
+												<input name="customtype2" type="hidden" value="NOT_NULL" />
+												<input name="customfield3" type="hidden" value="decimalLongitude" />
+												<input name="customtype3" type="hidden" value="NOT_NULL" />
 												<input name="targetcollid" type="hidden" value="<?php echo $collid; ?>" />
 												<input name="schema" type="hidden" value="georef" />
 												<input name="extended" type="hidden" value="1" />
@@ -226,7 +230,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 					}
 					//Export for georeferencing (e.g. GeoLocate)
 					?>
-					<form name="expgeoform" action="../download/downloadhandler.php" method="post" onsubmit="return validateExpGeoForm(this);">
+					<form name="expgeoform" action="../download/downloadhandler.php" method="post">
 						<fieldset>
 							<legend><b><?php echo $LANG['EXPORT_LACKING_GEO']; ?></b></legend>
 							<div style="margin:15px;">
@@ -306,7 +310,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 											<input name="cset" type="hidden" value="utf-8" />
 											<input name="zip" type="hidden" value="1" />
 											<input name="targetcollid" type="hidden" value="<?php echo $collid; ?>" />
-											<input name="schema" type="hidden" value="dwc" />
+											<input name="schema" type="hidden" value="georef" />
 											<input name="extended" type="hidden" value="1" />
 											<input name="source" type="hidden" value="collection_exporter">
 											<button name="submitaction" type="submit" value="Download Records"><?php echo $LANG['DOWNLOAD_RECORDS']; ?></button>

@@ -30,7 +30,7 @@ class DwcArchiverCore extends Manager{
 	protected $serverDomain;
 	private $dwcaOutputUrl;
 
-	private $schemaType = 'dwc';			//dwc, symbiota, backup, coge, pensoft
+	private $schemaType = 'dwc';			//dwc, symbiota, backup, georef, coge, pensoft
 	private $limitToGuids = false;			//Limit output to only records with GUIDs
 	private $extended = 0;
 	private $delimiter = ',';
@@ -824,6 +824,39 @@ class DwcArchiverCore extends Manager{
 			}
 		}
 		return $fileName;
+	}
+
+	public function getOccurrenceFileExport($zipFile){
+		$status = false;
+		$outputFile = $this->targetPath . 'occurrences-' . $this->ts;
+		$occurFile = $outputFile . $this->fileExt;
+		$this->logOrEcho('Creating output file: ' . $occurFile . "\n");
+		if($status = $this->writeOccurrenceFile($occurFile)){
+			if($zipFile){
+				if (!class_exists('ZipArchive')) {
+					$this->logOrEcho("FATAL ERROR: PHP ZipArchive class is not installed, please contact your server admin\n", 1);
+					exit('FATAL ERROR: PHP ZipArchive class is not installed, please contact your server admin');
+				}
+				$outputFile .= '.zip';
+				$zipArchive = new ZipArchive;
+				$status = $zipArchive->open($outputFile, ZipArchive::CREATE);
+				if ($status !== true) {
+					exit('FATAL ERROR: unable to create zip file: ' . $status);
+				}
+				$zipArchive->addFile($occurFile);
+				$zipArchive->close();
+				if (file_exists($occurFile)) unlink($occurFile);
+			}
+			else{
+				return $outputFile = $occurFile;
+			}
+		}
+		else {
+			$this->errorMessage = 'FAILED to create Occurrence file due to failure to return occurrence records';
+			$this->logOrEcho($this->errorMessage, 1);
+		}
+		$this->clearStagingTable();
+		return $outputFile;
 	}
 
 	public function setTargetPath($target=''){
@@ -2307,7 +2340,7 @@ class DwcArchiverCore extends Manager{
 
 	public function setSchemaType($type){
 		//dwc, symbiota, backup, coge
-		if (in_array($type, array('dwc', 'backup', 'coge', 'pensoft'))) {
+		if (in_array($type, array('dwc','backup','coge','pensoft','georef'))) {
 			$this->schemaType = $type;
 		} else {
 			$this->schemaType = 'symbiota';
