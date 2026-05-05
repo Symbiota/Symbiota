@@ -222,6 +222,18 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 		}
 	}
 
+	$(document).ready(function () {
+		$("#refsearch").autocomplete({
+			source: "includes/reference_suggest.php",
+			minLength: 3,
+			select: function(event, ui){
+				$("#refsearch").val(ui.item.label);
+				$("#refid").val(ui.item.refid);
+				return false;
+			}
+		});
+	});
+
 </script>
 <style type="text/css">
 	.resourceTab fieldset{ clear:both; margin:10px; padding:10px; }
@@ -790,16 +802,8 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 				<form name="addrefform" method="post" action="occurrenceeditor.php">
 					<div style="margin:2px;">
 						<label for="ref-resourcename"><?php echo $LANG['NAME']; ?>:</label><br/>
-						<select name="refid" id="refid" style="width:300px;">
-							<option value=""><?php echo $LANG['SEL_REFS']; ?></option>
-							<?php
-							foreach($allRefsArr as $id => $ref){
-								echo '<option value="'.htmlspecialchars($id, ENT_QUOTES).'">'
-									. htmlspecialchars($ref['display'], ENT_QUOTES) .
-									'</option>';
-							}
-							?>
-						</select>
+							<input type="text" id="refsearch" style="width:300px;" placeholder="Search references...">
+							<input type="hidden" name="refid" id="refid">
 					</div>
 					<div style="margin:2px;">
 						<input name="submitaction" type="hidden" value="addReference" />
