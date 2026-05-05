@@ -13,20 +13,20 @@ if(strlen($term) < 2){
 
 switch($type){
     case 'checklist':
-        $table = 'checklists';
+        $table = 'fmchecklists';
         $idCol = 'clid';
         $nameCol = 'name';
         break;
 
     case 'dataset':
-        $table = 'datasets';
+        $table = 'omoccurdatasets';
         $idCol = 'datasetID';
         $nameCol = 'name';
         break;
 
     case 'collection':
-        $table = 'collections';
-        $idCol = 'collid';
+        $table = 'omcollections';
+        $idCol = 'collID';
         $nameCol = 'collectionName';
         break;
 

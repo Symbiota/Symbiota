@@ -794,23 +794,8 @@ else{
 											<input type="hidden" name="targetid" id="checklist_targetid">
 											<button type="submit">Add</button>
 										</div>
-
-										<div id="selectedChecklist" style="margin-top:5px; font-size:0.9em;"></div>
-											<option value=""><?= $LANG['SELECT_CHECKLIST'] ?? 'Select Checklist' ?></option>
-											<?php
-											$allChecklists = $refManager->getChecklists();
-
-											foreach($allChecklists as $clid => $checkArr){
-												echo '<option value="'.htmlspecialchars($clid, ENT_QUOTES).'">'
-													. htmlspecialchars($checkArr['name'], ENT_QUOTES) .
-													'</option>';
-											}
-
-											?>
 										</select>
-											<button type="submit"><?= $LANG['ADD'] ?? 'Add' ?></button>
 										</form>
-										</div>
 										<hr />
 										<div id="checklistlistdiv">
 											<?php
@@ -868,22 +853,13 @@ else{
 												<b><?=$LANG['ADD_DATASET'] ?? 'Add Dataset' ?> </b>
 											</div>
 											<div>
-										<select name="targetid" id="refdatasetid" style="width:220px;">
-											<option value=""><?= $LANG['SELECT_DATASET'] ?? 'Select Dataset' ?></option>
-											<?php
-											$allDatasets = $refManager->getDatasets();
-
-											foreach($allDatasets as $datasetID => $datasetArr){
-												echo '<option value="'.htmlspecialchars($datasetID, ENT_QUOTES).'">'
-													. htmlspecialchars($datasetArr['name'], ENT_QUOTES) .
-													'</option>';
-											}
-
-											?>
-										</select>
-											<button type="submit"><?= $LANG['ADD'] ?? 'Add' ?></button>
-										</form>
+										<div>
+											<input type="text" id="dataset_search" placeholder="Search dataset..." style="width:300px;">
+											<input type="hidden" name="targetid" id="dataset_targetid">
+											<button type="submit">Add</button>
 										</div>
+										</select>
+										</form>
 										<hr />
 										<div id="datasetlistdiv">
 											<?php
@@ -941,20 +917,11 @@ else{
 												<b><?=$LANG['ADD_COLLECTION'] ?? 'Add Collection By Name'?></b>
 											</div>
 											<div>
-										<select name="targetid" id="collID" style="width:220px;">
-											<option value=""><?= $LANG['SELECT_COLLECTION'] ?? 'Select Collection' ?></option>
-											<?php
-											$allCollections = $refManager->getCollections();
-
-											foreach($allCollections as $collID => $collArr){
-												echo '<option value="'.htmlspecialchars($collID, ENT_QUOTES).'">'
-													. htmlspecialchars($collArr['collectionName'], ENT_QUOTES) .
-													'</option>';
-											}
-
-											?>
-										</select>
-											<button type="submit"><?= $LANG['ADD'] ?? 'Add' ?></button>
+																						<div>
+											<input type="text" id="collection_search" placeholder="Search collections..." style="width:300px;">
+											<input type="hidden" name="targetid" id="collection_targetid">
+											<button type="submit">Add</button>
+										</div>
 										</form>
 										</div>
 										<hr />

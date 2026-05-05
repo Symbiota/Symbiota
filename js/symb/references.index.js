@@ -47,6 +47,64 @@ $(document).ready(function() {
     });
 });
 
+$(function(){
+
+    $("#checklist_search").autocomplete({
+        source: function(request, response){
+            $.getJSON("resource_suggest.php", {
+                type: "checklist",
+                term: request.term
+            }, response);
+        },
+        minLength: 2,
+        select: function(event, ui){
+            $("#checklist_search").val(ui.item.label);
+            $("#checklist_targetid").val(ui.item.value);
+
+            $("#selectedChecklist").text("Selected: " + ui.item.label);
+
+            return false;
+        }
+    });
+
+	$("#dataset_search").autocomplete({
+        source: function(request, response){
+            $.getJSON("resource_suggest.php", {
+                type: "dataset",
+                term: request.term
+            }, response);
+        },
+        minLength: 2,
+        select: function(event, ui){
+            $("#dataset_search").val(ui.item.label);
+            $("#dataset_targetid").val(ui.item.value);
+
+            $("#selectedDataset").text("Selected: " + ui.item.label);
+
+            return false;
+        }
+    });
+
+	$("#collection_search").autocomplete({
+        source: function(request, response){
+            $.getJSON("resource_suggest.php", {
+                type: "collection",
+                term: request.term
+            }, response);
+        },
+        minLength: 2,
+        select: function(event, ui){
+            $("#collection_search").val(ui.item.label);
+            $("#collection_targetid").val(ui.item.value);
+
+            $("#selectedCollection").text("Selected: " + ui.item.label);
+
+            return false;
+        }
+    });
+
+});
+
 function selectAll(source) {
 	const checkboxes = document.querySelectorAll('input[name="scbox[]"]');
 	checkboxes.forEach(cb => {
