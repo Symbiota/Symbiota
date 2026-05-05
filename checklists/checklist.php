@@ -302,7 +302,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 				<?php
 			}
 			?>
-			<div style="clear:both">
+			<div style="clear:both; padding-top: 3px">
 				<hr/>
 			</div>
 			<div id="checklist-container" style="display:flex; gap: 0.5rem">
