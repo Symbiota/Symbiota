@@ -20,7 +20,8 @@ $LANG['CREATE_EXCLUSION_LIST'] = 'Create an Exclusion child checklist';
 $LANG['PARENTS'] = 'Listes des Parents';
 $LANG['NO_PARENTS'] = "Il n'y a pas de Liste des Parents";
 $LANG['BATCH_PARSE_SP_LIST'] = "Outil de transfert et d'analyse de listes d'espèces";
-$LANG['BATCH_PARSE_DESCRIBE'] = "Utilisez l'outil suivant pour transférer, copier et découper la liste actuelle en plusieurs sous-listes de contrôle";
+$LANG['BATCH_PARSE_DESCRIBE'] = "Utilisez l'outil suivant pour transférer, copier et découper la liste actuelle en plusieurs sous-listes de contrôle.
+	L'outil ne fonctionne qu'à partir de la liste de contrôle actuelle et ne transférera ni les taxons, ni les spécimens de référence, ni les propriétés issus des listes de contrôle filles.";
 $LANG['TAXONOMICNODE'] = "Nom de la Science";
 $LANG['PARSETID'] = "Identifiant Taxonomique";
 $LANG['TARGETCHECKLIST'] = "Liste des Cibles";

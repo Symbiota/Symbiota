@@ -20,7 +20,8 @@ $LANG['CREATE_EXCLUSION_LIST'] = 'Create a Species Exclusion List';
 $LANG['PARENTS'] = 'Parent Checklists';
 $LANG['NO_PARENTS'] = 'There are no Parent Checklists';
 $LANG['BATCH_PARSE_SP_LIST'] = 'Species List Transfer and Parsing Tool';
-$LANG['BATCH_PARSE_DESCRIBE'] = 'Use the following tool to transfer, copy, and parse the current list into multiple child checklists';
+$LANG['BATCH_PARSE_DESCRIBE'] = 'Use the following tool to transfer, copy, and parse the current list into multiple child checklists.
+	Tool only works from current checklist and will not transfer taxa, vouchers, and properties from child checklists.';
 $LANG['TAXONOMICNODE'] = "Sci name";
 $LANG['PARSETID'] = "Taxon ID";
 $LANG['TARGETCHECKLIST'] = "Target checklist";

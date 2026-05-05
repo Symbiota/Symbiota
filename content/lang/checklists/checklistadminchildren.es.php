@@ -20,7 +20,8 @@ $LANG['CREATE_EXCLUSION_LIST'] = 'Create an Exclusion child checklist';
 $LANG['PARENTS'] = 'Listados Superiores';
 $LANG['NO_PARENTS'] = 'No hay Listados Superiores';
 $LANG['BATCH_PARSE_SP_LIST'] = 'Herramienta de transferencia y análisis de listas de especies';
-$LANG['BATCH_PARSE_DESCRIBE'] = 'Utilice la siguiente herramienta para transferir, copiar y dividir la lista actual en múltiples sublistas de verificación';
+$LANG['BATCH_PARSE_DESCRIBE'] = 'Utilice la siguiente herramienta para transferir, copiar y dividir la lista actual en múltiples sublistas de verificación.
+	La herramienta solo opera a partir de la lista de verificación actual y no transferirá taxones, ejemplares de referencia ni propiedades de las listas de verificación secundarias.';
 $LANG['TAXONOMICNODE'] = "Sci name";
 $LANG['PARSETID'] = "Identificación taxonómica";
 $LANG['TARGETCHECKLIST'] = "Lista de verificación de objetivos";

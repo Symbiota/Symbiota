@@ -158,7 +158,7 @@ $childArr = $clManager->getChildrenChecklist()
 <div style="margin:20px 0px;">
 	<fieldset>
 		<legend><?= $LANG['BATCH_PARSE_SP_LIST']; ?></legend>
-		<div style="margin:10px 0px 20px 0px; "><?= $LANG['BATCH_PARSE_DESCRIBE']; ?></div>
+		<div style="margin:10px 0px 20px 0px; "><?= $LANG['BATCH_PARSE_DESCRIBE'] ?></div>
 		<form name="parsechecklistform" target="checklistadmin.php" method="post" onsubmit="return validateParseChecklistForm(this)">
 			<div class="section-div">
 				<label for="taxon"><?= $LANG['TAXONOMICNODE'] ?>:</label>
