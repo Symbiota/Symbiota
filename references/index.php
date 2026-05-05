@@ -101,9 +101,13 @@ if(!$formSubmit || $formSubmit != 'Search References'){
 			</form>
 		</div>
 		<div id="reflistdiv" style="min-height:200px;">
-			<div style="float:right;margin:10px;"><a href="refdetails.php"><img src="../images/add.png" style="width:1.3em" alt="<?= htmlspecialchars($LANG['CREATE_NEW_REF'] ?? 'Create New Reference'); ?>" /></a>
-			</div>
-			<?php
+			<?php 
+			if ($isEditor){
+			?>
+				<div style="float:right;margin:10px;"><a href="refdetails.php"><img src="../images/add.png" style="width:1.3em" alt="<?= htmlspecialchars($LANG['CREATE_NEW_REF'] ?? 'Create New Reference'); ?>" /></a>
+				</div>
+			<?php	
+			}
 			if($refExist){
 					echo '<div style="font-weight:bold;font-size:120%;">'
 						. htmlspecialchars($LANG['REFERENCES'] ?? 'References')

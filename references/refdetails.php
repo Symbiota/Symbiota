@@ -14,6 +14,10 @@ Language::load([
 	'references/index'
 ]);
 
+$isEditor = false;
+if($IS_ADMIN) $isEditor = true;
+elseif(array_key_exists('SuperAdmin',$USER_RIGHTS) || array_key_exists('SuperAdmin',$USER_RIGHTS)) $isEditor = true;
+
 $refId = array_key_exists('refid', $_REQUEST) ? Sanitize::int($_REQUEST['refid']) : 0;
 $formSubmit = array_key_exists('formsubmit', $_POST) ? $_POST['formsubmit'] : '';
 
@@ -421,7 +425,7 @@ else{
 	<div role="main" id="innertext">
 		<h1 class="page-heading"><?= htmlspecialchars($LANG['REF_MGMT'] ?? 'Reference Management'); ?></h1>		
 		<?php
-		if($SYMB_UID){
+		if($isEditor){
 			if($statusStr){
 				?>
 				<div style="margin:15px;color:red;">
@@ -987,13 +991,11 @@ else{
 			<?php
 
 		}
-		else{
-			if(!$SYMB_UID){
+		elseif(!$SYMB_UID){
 				echo 'Please <a href="../profile/index.php?refurl=../references/index.php">login</a>';
-			}
-			else{
-				echo '<h2>ERROR: unknown error, please contact system administrator</h2>';
-			}
+		}
+		else {
+			echo 'You do not have permissions to view this page';
 		}
 		?>
 	</div>
