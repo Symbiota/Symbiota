@@ -18,16 +18,40 @@ $isEditor = false;
 if($IS_ADMIN) $isEditor = true;
 elseif(array_key_exists('SuperAdmin',$USER_RIGHTS) || array_key_exists('SuperAdmin',$USER_RIGHTS)) $isEditor = true;
 
+function post_str($key, $maxLen = 1000){
+    return isset($_POST[$key])
+        ? substr(trim($_POST[$key]), 0, $maxLen)
+        : '';
+}
+
+$data = [
+    'bibliographicCitation' => post_str('bibliographicCitation', 5000),
+    'identifier'            => post_str('identifier', 255),
+    'url'                   => post_str('url', 500),
+    'title'                 => post_str('title', 2000),
+    'creator'               => post_str('creator', 2000),
+    'date'                  => post_str('date', 50),
+    'source'                => post_str('source', 500),
+    'description'           => post_str('description', 5000),
+    'subject'               => post_str('subject', 500),
+    'language'              => post_str('language', 20),
+    'rights'                => post_str('rights', 500),
+    'type'                  => post_str('type', 50),
+    'taxonRemarks'          => post_str('taxonRemarks', 2000),
+    'datasetID'             => post_str('datasetID', 255),
+];
+
 $refId = array_key_exists('refid', $_REQUEST) ? Sanitize::int($_REQUEST['refid']) : 0;
 $formSubmit = array_key_exists('formsubmit', $_POST) ? $_POST['formsubmit'] : '';
 
 $refManager = new ReferenceManager();
 $refArr = '';
 
+
 $statusStr = '';
 if($formSubmit){
-	if($formSubmit == 'Create Reference'){
-		$statusStr = $refManager->createReference($_POST);
+	if($formSubmit === 'Create Reference'){
+		$statusStr = $refManager->createReference($data);
 		$newRefId = $refManager->getRefId();
 
 		if($newRefId){
@@ -35,8 +59,9 @@ if($formSubmit){
 			exit;
 		}
 	}
-	elseif($formSubmit == 'Edit Reference'){
-			$statusStr = $refManager->editReference($_POST);
+	elseif($formSubmit === 'Edit Reference'){
+		$data['refid'] = $refId;
+		$statusStr = $refManager->editReference($data);
 	}
 	elseif($formSubmit == 'batchAddLink'){
 		$result = $refManager->batchAddLink($_POST);
@@ -468,47 +493,48 @@ else{
 
 							<div class="fieldGroupDiv">
 								<b><?= $LANG['BIB_CIT_REQ'] ?? 'Bibliographic Citation (required):' ?></b>
-								<textarea name="bibliographicCitation" id="bibliographicCitation"><?php echo $refArr['bibliographicCitation']; ?></textarea>
+								<textarea name="bibliographicCitation" id="bibliographicCitation"><?php echo htmlspecialchars($refArr['bibliographicCitation'] ?? '', ENT_QUOTES) ?></textarea>
 							</div>
 
 							<div class="fieldGroupDiv">
 								<b><?= $LANG['IDENTIFIER'] ?? 'Identifier (DOI):' ?></b>
-								<input type="text" name="identifier" value="<?php echo $refArr['identifier']; ?>">
+								<input type="text" name="identifier" value="<?= htmlspecialchars($refArr['identifier'] ?? '', ENT_QUOTES) ?>">
+
 							</div>
 							
 							<div class="fieldGroupDiv">
 								<b><?= $LANG['URL'] ?? 'URL:' ?></b>
-								<input type="text" name="url" value="<?php echo $refArr['url']; ?>">
+								<input type="text" name="url" value="<?= htmlspecialchars($refArr['url'] ?? '', ENT_QUOTES) ?>">
 							</div>
 
 							<div class="fieldGroupDiv">
 								<b><?= $LANG['TITLE'] ?? 'Title:' ?></b></br>
-								<textarea name="title" id="title"><?php echo $refArr['title']; ?></textarea>
+								<textarea name="title" id="title"><?php echo htmlspecialchars($refArr['title'] ?? '', ENT_QUOTES) ?></textarea>
 							</div>
 
 							<div class="fieldGroupDiv">
 								<b><?= $LANG['CREATOR'] ?? 'Creator(s):' ?></b>
-								<textarea name="creator" id="creator"><?php echo $refArr['creator']; ?></textarea>
+								<textarea name="creator" id="creator"><?php echo htmlspecialchars($refArr['creator'] ?? '', ENT_QUOTES) ?></textarea>
 							</div>
 
 							<div class="fieldGroupDiv">
 								<b><?= $LANG['DATE'] ?? 'Date:' ?></b>
-								<input type="text" name="date" value="<?php echo $refArr['date']; ?>">
+								<input type="text" name="date" value="<?php echo htmlspecialchars($refArr['date'] ?? '', ENT_QUOTES) ?>">
 							</div>
 
 							<div class="fieldGroupDiv">
 								<b><?= $LANG['SOURCE'] ?? 'Source (e.g., Journal):' ?></b>
-								<input type="text" name="source" value="<?php echo $refArr['source']; ?>">
+								<input type="text" name="source" value="<?php echo htmlspecialchars($refArr['source'] ?? '', ENT_QUOTES) ?>">
 							</div>
 
 							<div class="fieldGroupDiv">
 								<b><?= $LANG['DESCRIPTION'] ?? 'Description:' ?></b>
-								<textarea name="description"><?php echo $refArr['description']; ?></textarea>
+								<textarea name="description"><?php echo htmlspecialchars($refArr['description'] ?? '', ENT_QUOTES) ?></textarea>
 							</div>
 
 							<div class="fieldGroupDiv">
 								<b><?= $LANG['SUBJECT'] ?? 'Subject:' ?></b>
-								<input type="text" name="subject" value="<?php echo $refArr['subject']; ?>">
+								<input type="text" name="subject" value="<?php echo htmlspecialchars($refArr['subject'] ?? '', ENT_QUOTES) ?>">
 							</div>
 
 							<div class="fieldGroupDiv">
@@ -530,7 +556,7 @@ else{
 
 							<div class="fieldGroupDiv">
 								<b><?= $LANG['RIGHTS'] ?? 'Rights:' ?></b>
-								<input type="text" name="rights" value="<?php echo $refArr['rights']; ?>">
+								<input type="text" name="rights" value="<?php echo htmlspecialchars($refArr['rights'] ?? '', ENT_QUOTES) ?>">
 							</div>
 
 							<div class="fieldGroupDiv">
@@ -552,11 +578,11 @@ else{
 
 							<div class="fieldGroupDiv">
 								<b><?= $LANG['TAXON_REMARKS'] ?? 'Taxon Remarks:' ?></b></br>
-								<textarea name="taxonRemarks"><?php echo $refArr['taxonRemarks']; ?></textarea>
+								<textarea name="taxonRemarks"><?php echo htmlspecialchars($refArr['taxonRemarks'] ?? '', ENT_QUOTES) ?></textarea>
 							</div>
 							<div class="fieldGroupDiv">
 								<b><?= $LANG['DATASET_ID'] ?? 'DatasetID:' ?></b></br>
-								<textarea name="datasetID"><?php echo $refArr['datasetID']; ?></textarea>
+								<textarea name="datasetID"><?php echo htmlspecialchars($refArr['datasetID'] ?? '', ENT_QUOTES) ?></textarea>
 							</div>
 
 							<div style="margin-top:30px;">
@@ -763,7 +789,13 @@ else{
 												<b><?= $LANG['ADD_CHECKLIST'] ?? 'Add Checklists By Name' ?></b>
 											</div>
 											<div>
-										<select name="targetid" id="refchecklistid" style="width:220px;">
+										<div>
+											<input type="text" id="checklist_search" placeholder="Search checklist..." style="width:300px;">
+											<input type="hidden" name="targetid" id="checklist_targetid">
+											<button type="submit">Add</button>
+										</div>
+
+										<div id="selectedChecklist" style="margin-top:5px; font-size:0.9em;"></div>
 											<option value=""><?= $LANG['SELECT_CHECKLIST'] ?? 'Select Checklist' ?></option>
 											<?php
 											$allChecklists = $refManager->getChecklists();
