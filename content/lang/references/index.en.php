@@ -43,6 +43,7 @@ $LANG['LANGUAGE'] = 'Language:';
 $LANG['RIGHTS'] = 'Rights:';
 $LANG['REF_TYPE'] = 'Reference Type:';
 $LANG['TAXON_REMARKS'] = 'Taxon Remarks:';
+$LANG['DATASET_ID'] = 'Dataset Identifier:';
 
 $LANG['SAVE_EDITS'] = 'Save Edits';
 $LANG['CREATE_REF'] = 'Create Reference';

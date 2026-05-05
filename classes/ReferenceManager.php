@@ -105,15 +105,18 @@ class ReferenceManager{
 			rights,
 			`type`,
 			taxonRemarks,
+			datasetID,
 			url,
 			modifiedByUid,
 			modifiedtimestamp
-		) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())';
+		) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())';
+
+		print_r($pArr);
 
 		if($stmt = $this->conn->prepare($sql)){
 
 			$stmt->bind_param(
-				"sssssssssssssi",
+				"ssssssssssssssi",
 				$pArr['bibliographicCitation'],
 				$pArr['identifier'],
 				$pArr['title'],
@@ -126,6 +129,7 @@ class ReferenceManager{
 				$pArr['rights'],
 				$pArr['type'],
 				$pArr['taxonRemarks'],
+				$pArr['datasetID'],
 				$pArr['url'],
 				$SYMB_UID
 			);
@@ -158,7 +162,7 @@ class ReferenceManager{
 		$stmt = $this->conn->prepare($sql);
 
 		if(!$stmt){
-			return $retArr; // or log error
+			return $retArr;
 		}
 
 		$stmt->bind_param("i", $refid);
@@ -406,6 +410,7 @@ class ReferenceManager{
 		$rights = $pArr['rights'] ?? '';
 		$type = $pArr['type'] ?? '';
 		$taxonRemarks = $pArr['taxonRemarks'] ?? '';
+		$datasetID = $pArr['datasetID'] ?? '';
 		$url = $pArr['url'] ?? '';
 
 		$sql = 'UPDATE referenceobject SET
@@ -421,6 +426,7 @@ class ReferenceManager{
 			rights = ?,
 			`type` = ?,
 			taxonRemarks = ?,
+			datasetID = ?,
 			url = ?,
 			modifiedByUid = ?,
 			modifiedtimestamp = NOW()
@@ -429,7 +435,7 @@ class ReferenceManager{
 		if($stmt = $this->conn->prepare($sql)){
 
 			$stmt->bind_param(
-				"sssssssssssssii",
+				"ssssssssssssssii",
 				$bibliographicCitation,
 				$identifier,
 				$title,
@@ -442,6 +448,7 @@ class ReferenceManager{
 				$rights,
 				$type,
 				$taxonRemarks,
+				$datasetID,
 				$url,
 				$SYMB_UID,
 				$refid

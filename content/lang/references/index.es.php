@@ -64,6 +64,8 @@ $LANG['REF_TYPE'] = 'Tipo de referencia:';
 
 $LANG['TAXON_REMARKS'] = 'Comentarios sobre el taxón:';
 
+$LANG['DATASET_ID'] = 'Identificador del conjunto de datos:';
+
 $LANG['SAVE_EDITS'] = 'Guardar ediciones';
 
 $LANG['CREATE_REF'] = 'Crear referencia';

@@ -13,7 +13,7 @@ CREATE TABLE referenceobject_new (
     rights VARCHAR(255),
     type VARCHAR(100),
     taxonRemarks TEXT,
-    datasetID INT(11),
+    datasetID VARCHAR(255),
     url VARCHAR(255),
     modifiedByUid INT(11),
     modifiedTimestamp DATETIME,

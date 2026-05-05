@@ -46,31 +46,33 @@ $LANG["DOI_NOT_FOUND"] = "Référence introuvable. Assurez-vous d'utiliser le DO
 
 $LANG["FETCH_ERROR"] = "Erreur lors de la récupération des données DOI";
 
-$LANG["BIB_CIT_REQ"] = "Citation bibliographique (obligatoire) :";
+$LANG["BIB_CIT_REQ"] = "Citation bibliographique (obligatoire):";
 
-$LANG["IDENTIFIER"] = "Identifiant (DOI) :";
+$LANG["IDENTIFIER"] = "Identifiant (DOI):";
 
-$LANG["URL"] = "URL :";
+$LANG["URL"] = "URL:";
 
-$LANG["TITLE"] = "Titre :";
+$LANG["TITLE"] = "Titre:";
 
-$LANG["CREATOR"] = "Auteur(s) :";
+$LANG["CREATOR"] = "Auteur(s):";
 
-$LANG["DATE"] = "Date :";
+$LANG["DATE"] = "Date:";
 
-$LANG["SOURCE"] = "Source (ex. : revue) :";
+$LANG["SOURCE"] = "Source (ex.: revue):";
 
-$LANG["DESCRIPTION"] = "Description :";
+$LANG["DESCRIPTION"] = "Description:";
 
-$LANG["SUBJECT"] = "Sujet :";
+$LANG["SUBJECT"] = "Sujet:";
 
-$LANG["LANGUAGE"] = "Langue :";
+$LANG["LANGUAGE"] = "Langue:";
 
-$LANG["RIGHTS"] = "Droits :";
+$LANG["RIGHTS"] = "Droits:";
 
-$LANG["REF_TYPE"] = "Type de référence :";
+$LANG["REF_TYPE"] = "Type de référence:";
 
-$LANG["TAXON_REMARKS"] = "Remarques sur le taxon :";
+$LANG["TAXON_REMARKS"] = "Remarques sur le taxon:";
+
+$LANG['DATASET_ID'] = "Identifiant de l'ensemble de données:";
 
 $LANG["SAVE_EDITS"] = "Enregistrer les modifications";
 

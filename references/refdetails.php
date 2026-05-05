@@ -141,6 +141,7 @@ else{
 		'rights' => '',
 		'type' => '',
 		'taxonRemarks' => '',
+		'datasetID' => '',
 		'url' => ''
 	];
 
@@ -548,6 +549,10 @@ else{
 							<div class="fieldGroupDiv">
 								<b><?= $LANG['TAXON_REMARKS'] ?? 'Taxon Remarks:' ?></b></br>
 								<textarea name="taxonRemarks"><?php echo $refArr['taxonRemarks']; ?></textarea>
+							</div>
+							<div class="fieldGroupDiv">
+								<b><?= $LANG['DATASET_ID'] ?? 'DatasetID:' ?></b></br>
+								<textarea name="datasetID"><?php echo $refArr['datasetID']; ?></textarea>
 							</div>
 
 							<div style="margin-top:30px;">
