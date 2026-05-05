@@ -348,10 +348,7 @@ class UploadUtil {
 		}
 
 		$parsed_file['name'] = Media::cleanFileName($parsed_file['name']);
-
-		if(!$parsed_file['extension'] && $file_type_mime) {
-			$parsed_file['extension'] = self::mime2ext($file_type_mime);
-		}
+		$parsed_file['extension'] = self::mime2ext($file_type_mime);
 
 		return [
 			'name' => $parsed_file['name'] . ($parsed_file['extension'] ? '.' .$parsed_file['extension']: ''),
