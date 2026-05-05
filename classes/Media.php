@@ -621,7 +621,9 @@ class Media {
 			}
 
 			foreach($createdFilepaths as $field => $filepath) {
-				self::insertMediaMetadata($media_metadata['mediaID'], $field, filesize($filepath), md5_file($filepath));
+				if(file_exists($filepath)) {
+					self::insertMediaMetadata($media_metadata['mediaID'], $field, filesize($filepath), md5_file($filepath));
+				}
 			}
 
 			mysqli_commit($conn);
