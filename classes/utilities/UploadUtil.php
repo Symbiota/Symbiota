@@ -403,8 +403,8 @@ class UploadUtil {
 	 * @return bool
 	 */
 	public static function mimesEqual(string $mimeA, string $mimeB): bool {
-		$mimeA = self::stripCharset(strtolower($mimeA));
-		$mimeB = self::stripCharset(strtolower($mimeB));
+		$mimeA = strtolower($mimeA);
+		$mimeB = strtolower($mimeB);
 
 		return self::mime2ext($mimeA) === self::mime2ext($mimeB);
 	}
@@ -419,6 +419,7 @@ class UploadUtil {
 	 * @return string | bool
 	 */
 	public static function mime2ext(string $mime) {
+		$mime = self::stripCharset($mime);
 		$mime_map = [
 			'video/3gpp2' => '3g2',
 			'video/3gp'=> '3gp',
