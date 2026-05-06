@@ -620,11 +620,11 @@ class ChecklistAdmin extends Manager{
 
 	private function transferTaxa($targetClid, $tidNode){
 		$status = false;
-		$sql = 'UPDATE fmchklsttaxalink SET clid = ? WHERE clid = ?';
+		$sql = 'UPDATE IGNORE fmchklsttaxalink SET clid = ? WHERE clid = ?';
 		$typeStr = 'ii';
 		$paramArr = array($targetClid, $this->clid);
 		if($tidNode){
-			$sql = 'UPDATE fmchklsttaxalink c INNER JOIN taxaenumtree e ON c.tid = e.tid
+			$sql = 'UPDATE IGNORE fmchklsttaxalink c INNER JOIN taxaenumtree e ON c.tid = e.tid
 				SET c.clid = ?
 				WHERE e.taxauthid = 1 AND c.clid = ? AND e.parenttid = ?';
 			$typeStr = 'iii';
@@ -645,14 +645,14 @@ class ChecklistAdmin extends Manager{
 
 	private function copyTaxa($targetClid, $tidNode){
 		$status = false;
-		$sql = 'INSERT INTO fmchklsttaxalink(tid, clid, morphoSpecies, familyOverride, habitat, abundance, notes, explicitExclude, source, nativity, endemic, invasive, internalnotes, dynamicProperties)
+		$sql = 'INSERT IGNORE INTO fmchklsttaxalink(tid, clid, morphoSpecies, familyOverride, habitat, abundance, notes, explicitExclude, source, nativity, endemic, invasive, internalnotes, dynamicProperties)
 			SELECT tid, ?, morphoSpecies, familyOverride, habitat, abundance, notes, explicitExclude, source, nativity, endemic, invasive, internalnotes, dynamicProperties
 			FROM fmchklsttaxalink
 			WHERE clid = ? ';
 		$typeStr = 'ii';
 		$paramArr = array($targetClid, $this->clid);
 		if($tidNode){
-			$sql = 'INSERT INTO fmchklsttaxalink(tid, clid, morphoSpecies, familyOverride, habitat, abundance, notes, explicitExclude, source, nativity, endemic, invasive, internalnotes, dynamicProperties)
+			$sql = 'INSERT IGNORE INTO fmchklsttaxalink(tid, clid, morphoSpecies, familyOverride, habitat, abundance, notes, explicitExclude, source, nativity, endemic, invasive, internalnotes, dynamicProperties)
 				SELECT c.tid, ?, c.morphoSpecies, c.familyOverride, c.habitat, c.abundance, c.notes, c.explicitExclude, c.source, c.nativity, c.endemic, c.invasive, c.internalnotes, c.dynamicProperties
 				FROM fmchklsttaxalink c INNER JOIN taxa t ON c.tid = t.tid
 				INNER JOIN taxaenumtree e ON c.tid = e.tid
@@ -673,7 +673,7 @@ class ChecklistAdmin extends Manager{
 
 		if($status){
 			//Copy voucher links to new checklist (vouchers are automatcially included with transfers, thus no extra action needed)
-			$sql = 'INSERT INTO fmvouchers(clTaxaID, occid, notes)
+			$sql = 'INSERT IGNORE INTO fmvouchers(clTaxaID, occid, notes)
 				SELECT t.clTaxaID, v.occid, v.notes
 				FROM fmchklsttaxalink c INNER JOIN fmvouchers v ON c.clTaxaID = v.clTaxaID
 				INNER JOIN fmchklsttaxalink t ON c.tid = t.tid
