@@ -9,7 +9,7 @@ const test = base.extend<{ adminLogin: LoginPage}>({
 		await loginPage.fillUsername('Admin');
 		await loginPage.fillPassword('admin');
 		await loginPage.attemptLogin();
-		use(loginPage);
+		await use(loginPage);
 	}
 });
 

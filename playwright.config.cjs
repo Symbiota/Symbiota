@@ -42,6 +42,7 @@ module.exports = defineConfig({
 	    ...devices['Desktop Chrome'],
 		viewport: { width: 1920, height: 1080 },
 	  },
+      teardown: 'teardown',
     },
 
     {
@@ -50,6 +51,7 @@ module.exports = defineConfig({
 	    ...devices['Desktop Firefox'],
 		viewport: { width: 1920, height: 1080 }
 	  },
+      teardown: 'teardown',
     },
 
     {
@@ -58,6 +60,16 @@ module.exports = defineConfig({
 		...devices['Desktop Safari'],
 	    viewport: { width: 1920, height: 1080 }
 	  },
+      teardown: 'teardown',
+    },
+
+    {
+      name: 'teardown',
+      testMatch: /zz_deleteAdmin\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1920, height: 1080 },
+      },
     },
   ],
 });
