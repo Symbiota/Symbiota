@@ -33,61 +33,6 @@ class ReferenceManager{
 		return $retArr;
 	}
 
-	public function getChecklists(){
-		$retArr = array();
-		$sql = 'SELECT a.clid, a.name '.
-			'FROM fmchecklists AS a '.
-			'ORDER BY name';
-		if($rs = $this->conn->query($sql)){
-			while($r = $rs->fetch_object()){
-				$retArr[$r->clid]['name'] = $r->name;
-			}
-			$rs->close();
-		}
-		return $retArr;
-	}
-
-	public function getDatasets(){
-		$retArr = array();
-		$sql = 'SELECT a.datasetID, a.name '.
-			'FROM omoccurdatasets AS a '.
-			'ORDER BY name';
-		if($rs = $this->conn->query($sql)){
-			while($r = $rs->fetch_object()){
-				$retArr[$r->datasetID]['name'] = $r->name;
-			}
-			$rs->close();
-		}
-		return $retArr;
-	}
-
-	public function getCollections(){
-		$retArr = array();
-		$sql = 'SELECT a.collID, a.collectionName '.
-			'FROM omcollections AS a '.
-			'ORDER BY collectionName';
-		if($rs = $this->conn->query($sql)){
-			while($r = $rs->fetch_object()){
-				$retArr[$r->collID]['collectionName'] = $r->collectionName;
-			}
-			$rs->close();
-		}
-		return $retArr;
-	}
-
-	public function getRefTypeArr(){
-		$retArr = array();
-		$sql = 'SELECT ReferenceTypeId, ReferenceType '.
-			'FROM referencetype '.
-			'ORDER BY ReferenceType';
-		if($rs = $this->conn->query($sql)){
-			while($r = $rs->fetch_object()){
-				$retArr[$r->ReferenceTypeId] = $r->ReferenceType;
-			}
-		}
-		return $retArr;
-	}
-
 	public function createReference($pArr){
 		global $SYMB_UID;
 		$statusStr = '';
