@@ -3,6 +3,7 @@ include_once($SERVER_ROOT . '/classes/OccurrenceSearchSupport.php');
 include_once($SERVER_ROOT . '/classes/ChecklistVoucherAdmin.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceTaxaManager.php');
 include_once($SERVER_ROOT . '/classes/AssociationManager.php');
+include_once($SERVER_ROOT . '/classes/OccurrencePolygonIndex.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 Language::load('classes/OccurrenceManager');
@@ -627,9 +628,17 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		}
 
 		if(!empty($this->searchTermArr['polygons'])){
-			$sqlWhere .= 'AND gth.isSearchable = 1 ';
-			$sqlWhere .= 'AND MBRContains(gpoly.footprintPolygon, p.lngLatPoint) ';
-			$sqlWhere .= 'AND ST_Contains(gpoly.footprintPolygon, p.lngLatPoint) ';
+			$polygonIDs = OccurrencePolygonIndex::sanitizePolygonIds($this->searchTermArr['polygons']);
+			if($polygonIDs && $this->canUseGeographicPolygonIndex($polygonIDs)){
+				$this->searchTermArr['usePolygonIndex'] = 1;
+				$sqlWhere .= 'AND o.occid IN(SELECT opi.occid FROM occurrencepolygonindex opi WHERE opi.polygonType = "geographic" AND opi.polygonID IN('.implode(',', $polygonIDs).')) ';
+			}
+			else{
+				unset($this->searchTermArr['usePolygonIndex']);
+				$sqlWhere .= 'AND gth.isSearchable = 1 ';
+				$sqlWhere .= 'AND MBRContains(gpoly.footprintPolygon, p.lngLatPoint) ';
+				$sqlWhere .= 'AND ST_Contains(gpoly.footprintPolygon, p.lngLatPoint) ';
+			}
 		}
 
 		if($sqlWhere){
@@ -667,6 +676,11 @@ class OccurrenceManager extends OccurrenceTaxaManager {
         }
         return $results;
     }
+
+	private function canUseGeographicPolygonIndex($polygonIDs){
+		$polygonIndex = new OccurrencePolygonIndex($this->conn);
+		return $polygonIndex->areGeographicPolygonsReady($polygonIDs);
+	}
 
 	private function getAdditionIdentifiers($identFrag){
 		$retArr = array();
@@ -729,10 +743,10 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			if(strpos($sqlWhere,'ds.datasetid')){
 				$sqlJoin .= 'INNER JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
 			}
-			if(array_key_exists('footprintGeoJson',$this->searchTermArr) || strpos($sqlWhere,'p.lngLatPoint') || array_key_exists('polygons',$this->searchTermArr)){
+			if(array_key_exists('footprintGeoJson',$this->searchTermArr) || strpos($sqlWhere,'p.lngLatPoint') || (array_key_exists('polygons',$this->searchTermArr) && empty($this->searchTermArr['usePolygonIndex']))){
 				$sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
 			}
-			if(array_key_exists('polygons',$this->searchTermArr)){
+			if(array_key_exists('polygons',$this->searchTermArr) && empty($this->searchTermArr['usePolygonIndex'])){
 				$polygonIDs = $this->searchTermArr['polygons'];
 				if (is_string($polygonIDs))
 					$polygonIDs = explode(',', $polygonIDs);
