@@ -303,6 +303,7 @@ else{
 										asort($batchUpdateHeaderMapBase);
 										foreach($batchUpdateHeaderMapBase as $k => $v){
 											//Scientific name fields are excluded because batch updates will not update tidinterpreted index and authors
+											//Scientific name updates should happen within
 											if($k != 'scientificnameauthorship' && $k != 'sciname'){
 												echo '<option value="'.$k.'" '.($buFieldName==$k?'SELECTED':'').'>'.$v.'</option>';
 											}
