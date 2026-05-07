@@ -642,6 +642,13 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		}
 	}
 
+	protected function setGeoJsonBoundingBoxWhere() {
+		if(!empty($this->searchTermArr['footprintGeoJson'])) {
+			$geoJson = $this->searchTermArr['footprintGeoJson'];
+			$this->sqlWhere .= " AND (MBRCONTAINS(ST_GeomFromGeoJSON('" . $geoJson . "'), p.lngLatPoint)) ";
+		}
+	}
+
 	protected function setPaleoSqlWith() {
 		$paleoSqlWith = '';
 		if (array_key_exists("earlyInterval",$this->searchTermArr) || array_key_exists("lateInterval",$this->searchTermArr)) {
