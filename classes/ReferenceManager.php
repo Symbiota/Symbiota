@@ -175,15 +175,25 @@ class ReferenceManager{
 		$retArr = array();
 		$sql = 'SELECT l.collid, a.collectionName '.
 			'FROM referencecollectionlink AS l LEFT JOIN omcollections AS a ON l.collid = a.collID '.
-			'WHERE l.refid = '.$refid.' '.
+			'WHERE l.refid = ? '.
 			'ORDER BY a.collectionName';
-		if($rs = $this->conn->query($sql)){
-			while($r = $rs->fetch_object()){
-				$retArr[$r->collid] = $r->collectionName;
-			}
-			$rs->close();
-		}
-		return $retArr;
+
+		$stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            $this->errorMessage = "Database error: " . $this->conn->error;
+            return $retArr;
+        }
+        $stmt->bind_param("i", $refid);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        while ($row = $result->fetch_assoc()) {
+            $retArr[] = $row['collectionName'];
+        }
+
+        $stmt->close();
+
+        return $retArr;
 	}
 
 	public function getRefOccArr($refid){
@@ -194,7 +204,7 @@ class ReferenceManager{
 
         $stmt = $this->conn->prepare($sql);
         if (!$stmt) {
-            $this->errorMessage = "Dababase error: " . $this->conn->error;
+            $this->errorMessage = "Database error: " . $this->conn->error;
             return $retArr;
         }
 
@@ -215,15 +225,25 @@ class ReferenceManager{
 		$retArr = array();
 		$sql = 'SELECT l.tid, a.SciName '.
 			'FROM referencetaxalink AS l LEFT JOIN taxa AS a ON l.tid = a.TID '.
-			'WHERE l.refid = '.$refid.' '.
+			'WHERE l.refid = ? '.
 			'ORDER BY a.SciName';
-		if($rs = $this->conn->query($sql)){
-			while($r = $rs->fetch_object()){
-				$retArr[$r->tid] = $r->SciName;
-			}
-			$rs->close();
-		}
-		return $retArr;
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            $this->errorMessage = "Database error: " . $this->conn->error;
+            return $retArr;
+        }
+
+        $stmt->bind_param("i", $refid);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        while ($row = $result->fetch_assoc()) {
+        	$retArr[] = $row['SciName'];
+        }
+
+        $stmt->close();
+
+        return $retArr;
 	}
 
 	public function addRefLink($refid,$targetid,$type){
