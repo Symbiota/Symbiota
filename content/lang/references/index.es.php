@@ -78,6 +78,14 @@ $LANG['TARGET'] = 'Destino';
 $LANG['INCLUDE_SYN'] = 'Incluir sinónimos';
 $LANG['CONFIRM_DELETE_LINK'] = 'Supprimer le lien?';
 
+$LANG['VIEW_AND_DOWNLOAD'] = "Ver y descargar ocurrencias (vista en lista)";
+$LANG['VIEW_SAMPLE'] = "Ver ocurrencias (vista de tabla)";
+$LANG['TAXA'] = "Taxones";
+$LANG['OCCUR'] = "Ocurrencias";
+$LANG['RECORDS'] = "registros.";
+$LANG['INCLUDES'] = "Esta referencia está asociada con ";
+$LANG['REF'] = "Referencia";
+
 
 
 ?>

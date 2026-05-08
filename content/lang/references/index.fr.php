@@ -81,4 +81,12 @@ $LANG["TAXON_REMARKS"] = "Remarques sur le taxon:";
 $LANG["TITLE"] = "Titre:";
 $LANG["URL"] = "URL:";
 
+$LANG['VIEW_AND_DOWNLOAD'] = "Voir et télécharger les occurrences (vue en liste)";
+$LANG['VIEW_SAMPLE'] = "Voir les occurrences (vue tableau)";
+$LANG['TAXA'] = "Taxons";
+$LANG['OCCUR'] = "Occurrences";
+$LANG['RECORDS'] = "enregistrements.";
+$LANG['INCLUDES'] = "Cette référence est associée à ";
+$LANG['REF'] = "Référence";
+
 ?>
