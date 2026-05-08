@@ -23,6 +23,11 @@ $taxArr = $refManager -> getRefTaxaArr($refid);
 $collArr = $refManager -> getRefCollArr($refid);
 $checklistArr = $refManager -> getRefChecklistArr($refid);
 
+$isEditor = false;
+if($IS_ADMIN) $isEditor = true;
+elseif(array_key_exists('SuperAdmin',$USER_RIGHTS) || array_key_exists('SuperAdmin',$USER_RIGHTS)) $isEditor = true;
+
+
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -31,6 +36,10 @@ $checklistArr = $refManager -> getRefChecklistArr($refid);
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
+		<link rel="stylesheet" href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css">
+		<link href="<?= $CSS_BASE_PATH ?>/symbiota/checklists/checklist.css" type="text/css" rel="stylesheet" />
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js"></script>
+		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js"></script>
 	</head>
 	<body>
 		<?php
@@ -44,6 +53,13 @@ $checklistArr = $refManager -> getRefChecklistArr($refid);
 		<!-- This is inner text! -->
 		<div role="main" id="innertext">
     	<h1 class="page-heading"><?php echo $rArr['title'] ;?></h1>
+		<?php
+		if ($isEditor){
+			echo '<b><a href="../references/refdetails.php?refid=' . htmlspecialchars($refid, ENT_QUOTES) . '">'
+				. htmlspecialchars('Edit Reference', ENT_QUOTES) .
+				'</a></b>';	
+		}
+		?>
     <ul>
       <!-- Metadata -->
       <div><?php echo $rArr['description'] ;?></div>
@@ -65,89 +81,98 @@ $checklistArr = $refManager -> getRefChecklistArr($refid);
 		?>
 	<div><h2><b><?php echo $LANG['ASSOC_REC_RES'] ?? 'Associated Records and Resources'?>:</b><h2></div>	
 
-      <!-- Occurrences -->
-		<div><h3><b> <?php echo $LANG['OCCUR'] ?? 'Associated Occurrences' ?>:</b></h3></div>
+	<div class="accordions">
 
-      <p><?php echo $LANG['INCLUDES']; ?> <?php echo count($ocArr); ?> <?php echo $LANG['RECORDS']; ?></p>
+		<!-- Occurrences -->
+		<input type="checkbox" id="acc-occurrences" class="accordion-selector" />
+		<label for="acc-occurrences" class="accordion-header">
+			<?php echo $LANG['OCCUR'] ?? 'Occurrences'; ?>
+		</label>
+		<div class="content">
+			<p>
+				<?php echo $LANG['INCLUDES']; ?>
+				<?php echo count($ocArr); ?>
+				<?php echo $LANG['RECORDS']; ?>
+			</p>
 
-      <a class="btn" href="<?php echo htmlspecialchars($searchUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ;?>"><?php echo $LANG['VIEW_AND_DOWNLOAD']; ?></a></br>
-      <a class="btn" href="<?php echo htmlspecialchars($tableUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ;?>"><?php echo $LANG['VIEW_SAMPLE']; ?></a>
-      <!-- <p><a href="#">Download this Dataset</a></p> -->
+			<a class="btn" href="<?php echo htmlspecialchars($searchUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+				<?php echo $LANG['VIEW_AND_DOWNLOAD']; ?>
+			</a>
+			<br>
+			<a class="btn" href="<?php echo htmlspecialchars($tableUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+				<?php echo $LANG['VIEW_SAMPLE']; ?>
+			</a>
+		</div>
 
-	<!-- Associated Datasets -->
-		<?php 
-		if ($datasetArr) {
-			?>
-			<div><h3><b><?php echo $LANG['DATASETS'] ?? 'Datasets' ?>:</b></h3></div>
-		<?php
+		<!-- Datasets -->
+		<?php if ($datasetArr) { ?>
+			<input type="checkbox" id="acc-datasets" class="accordion-selector" />
+			<label for="acc-datasets" class="accordion-header">
+				<?php echo $LANG['DATASETS'] ?? 'Datasets'; ?>
+			</label>
+			<div class="content">
+				<?php foreach ($datasetArr as $datasetid => $datasetName) { ?>
+					<div>
+						<a href="../collections/datasets/public.php?datasetid=<?php echo $datasetid; ?>">
+							<?php echo htmlspecialchars($datasetName, ENT_QUOTES); ?>
+						</a>
+					</div>
+				<?php } ?>
+			</div>
+		<?php } ?>
 
-			foreach($datasetArr as $datasetid => $datasetName){
-				echo '<div id="occur-ref" class="occur-ref">';
-				echo '<a href="../collections/datasets/public.php?datasetid=' . htmlspecialchars($datasetid, ENT_QUOTES) . '">'
-					. htmlspecialchars($datasetName, ENT_QUOTES) .
-					'</a>';	
-				echo '</div>';
-			}
-		}
-		?>
+		<!-- Taxa -->
+		<?php if ($taxArr) { ?>
+			<input type="checkbox" id="acc-taxa" class="accordion-selector" />
+			<label for="acc-taxa" class="accordion-header">
+				<?php echo $LANG['TAXA'] ?? 'Taxa'; ?>
+			</label>
+			<div class="content">
+				<?php foreach ($taxArr as $tid => $taxon) { ?>
+					<div>
+						<a href="../taxa/index.php?taxon=<?php echo $tid; ?>">
+							<?php echo htmlspecialchars($taxon, ENT_QUOTES); ?>
+						</a>
+					</div>
+				<?php } ?>
+			</div>
+		<?php } ?>
 
-	<!-- Associated Taxa -->
-		<?php 
-		if ($taxArr) {
-			?>
-		<div><h3><b> <?php echo $LANG['TAXA'] ?? 'Taxa' ?>:</b></h3></div>
-			<?php
-			foreach($taxArr as $tid => $taxon){
-				echo '<div id="occur-ref" class="occur-ref">';
-				echo '<a href="../taxa/index.php?taxon=' . htmlspecialchars($tid, ENT_QUOTES) . '">'
-					. htmlspecialchars($taxon, ENT_QUOTES) .
-					'</a>';	
-				echo '</div>';
-			}
-		}
-		?>
+		<!-- Checklists -->
+		<?php if ($checklistArr) { ?>
+			<input type="checkbox" id="acc-checklists" class="accordion-selector" />
+			<label for="acc-checklists" class="accordion-header">
+				<?php echo $LANG['CHECKLISTS'] ?? 'Checklists'; ?>
+			</label>
+			<div class="content">
+				<?php foreach ($checklistArr as $clid => $checklist) { ?>
+					<div>
+						<a href="../checklists/checklist.php?clid=<?php echo $clid; ?>">
+							<?php echo htmlspecialchars($checklist, ENT_QUOTES); ?>
+						</a>
+					</div>
+				<?php } ?>
+			</div>
+		<?php } ?>
 
-	<!-- Associated Checklists -->
-		<?php 
-		if ($checklistArr) {
-			?>
-		<div><h3><b> <?php echo $LANG['CHECKLISTS'] ?? 'Checklists' ?>:</b></h3></div>
-			<?php
-			foreach($checklistArr as $clid => $checklist){
-				echo '<div id="occur-ref" class="occur-ref">';
-				// NEON Customization
-				// echo '<a href="../neon/checklists/checklist.php?clid=' . htmlspecialchars($clid, ENT_QUOTES) . '">'
-				// 	. htmlspecialchars($checklist, ENT_QUOTES) .
-				// 	'</a>';	
-				// END NEON Customization
-				echo '<a href="../checklists/checklist.php?clid=' . htmlspecialchars($clid, ENT_QUOTES) . '">'
-					. htmlspecialchars($checklist, ENT_QUOTES) .
-					'</a>';	
-				echo '</div>';
-			}
-		}
-		?>
+		<!-- Collections -->
+		<?php if ($collArr) { ?>
+			<input type="checkbox" id="acc-collections" class="accordion-selector" />
+			<label for="acc-collections" class="accordion-header">
+				<?php echo $LANG['COLLECTIONS'] ?? 'Collections'; ?>
+			</label>
+			<div class="content">
+				<?php foreach ($collArr as $collid => $collection) { ?>
+					<div>
+						<a href="../collections/misc/collprofiles.php?collid=<?php echo $collid; ?>">
+							<?php echo htmlspecialchars($collection, ENT_QUOTES); ?>
+						</a>
+					</div>
+				<?php } ?>
+			</div>
+		<?php } ?>
 
-	<!-- Associated Collections -->
-		<?php 
-		if ($collArr) {
-			?>
-		<div><h3><b> <?php echo $LANG['COLLECTIONs'] ?? 'Collections' ?>:</b></h3></div>
-			<?php
-			foreach($collArr as $collid => $collection){
-				echo '<div id="occur-ref" class="occur-ref">';
-				// NEON customization
-				// echo '<a href="../collections/misc/neoncollprofiles.php?collid=' . htmlspecialchars($collid, ENT_QUOTES) . '">'
-				// 	. htmlspecialchars($collection, ENT_QUOTES) .
-				// 	'</a>';	
-				// END NEON customization
-				echo '<a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($collid, ENT_QUOTES) . '">'
-				 	. htmlspecialchars($collection, ENT_QUOTES) .
-				 	'</a>';	
-				echo '</div>';
-			}
-		}
-		?>
+	</div>
 
     </ul>
 		</div>

@@ -100,4 +100,12 @@ $LANG['INCLUDE_SYN'] = 'Include Synonyms';
 
 $LANG['CONFIRM_DELETE_LINK'] = 'Delete Link?';
 
+$LANG['VIEW_AND_DOWNLOAD'] = "View and Download Occurrences (List View)";
+$LANG['VIEW_SAMPLE'] = "View Occurrences (Table View)"; 
+$LANG['TAXA'] = "Taxa";
+$LANG['OCCUR'] = "Occurrences";
+$LANG['RECORDS'] = "records.";
+$LANG['INCLUDES'] = "This reference is associated with ";
+$LANG['REF'] = "Reference";
+
 ?>
