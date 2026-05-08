@@ -483,6 +483,11 @@ else{
 
 							<a href="https://rs.gbif.org/extension/gbif/1.0/references.xml"><h1>Literature References Extension Fields</h1></a>
 
+							<?php if ($refId) {
+								echo '<h2><a href="../references/publicref.php?refid=' . htmlspecialchars($refId, ENT_QUOTES) . '">'
+									. htmlspecialchars('Public Reference Page', ENT_QUOTES) .
+									'</a></h2>';	
+							} ?>
 							<div style="margin-bottom:15px;">
 								<b><?= $LANG['IMPORT_DOI'] ?? 'Import details from DOI:' ?></b><br>
 								<input type="text" id="doiInput" placeholder="<?= $LANG['DOI_PLACEHOLDER'] ?? 'Enter DOI (e.g. 10.1000/xyz123)' ?>">
@@ -582,7 +587,7 @@ else{
 							</div>
 							<div class="fieldGroupDiv">
 								<b><?= $LANG['DATASET_ID'] ?? 'DatasetID:' ?></b></br>
-								<textarea name="datasetID"><?php echo htmlspecialchars($refArr['datasetID'] ?? '', ENT_QUOTES) ?></textarea>
+								<input type="text" name="datasetID" value="<?php echo htmlspecialchars($refArr['datasetID'] ?? '', ENT_QUOTES) ?>">
 							</div>
 
 							<div style="margin-top:30px;">
