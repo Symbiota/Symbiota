@@ -167,45 +167,115 @@ class ReferenceManager{
 
 	public function getRefChecklistArr($refid){
 		$retArr = array();
-		$sql = 'SELECT l.clid, a.Name '.
-			'FROM referencechecklistlink AS l LEFT JOIN fmchecklists AS a ON l.clid = a.CLID '.
-			'WHERE l.refid = '.$refid.' '.
-			'ORDER BY a.Name';
-		if($rs = $this->conn->query($sql)){
-			while($r = $rs->fetch_object()){
-				$retArr[$r->clid] = $r->Name;
+
+		$sql = 'SELECT l.clid, a.Name
+			FROM referencechecklistlink AS l
+			LEFT JOIN fmchecklists AS a ON l.clid = a.CLID
+			WHERE l.refid = ?
+			ORDER BY a.Name';
+
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $refid);
+
+			if($stmt->execute()){
+				$rs = $stmt->get_result();
+
+				while($r = $rs->fetch_object()){
+					$retArr[$r->clid] = $r->Name;
+				}
+
+				$rs->close();
 			}
-			$rs->close();
+
+			$stmt->close();
 		}
+
+		return $retArr;
+	}
+
+	public function getPublicRefChecklistArr($refid){
+		$retArr = array();
+
+		$sql = 'SELECT l.clid, a.Name
+			FROM referencechecklistlink AS l
+			LEFT JOIN fmchecklists AS a ON l.clid = a.CLID
+			WHERE access = ? AND l.refid = ?
+			ORDER BY a.Name';
+
+		if($stmt = $this->conn->prepare($sql)){
+			$access = 'public';
+
+			$stmt->bind_param('si', $access, $refid);
+
+			if($stmt->execute()){
+				$rs = $stmt->get_result();
+
+				while($r = $rs->fetch_object()){
+					$retArr[$r->clid] = $r->Name;
+				}
+
+				$rs->close();
+			}
+
+			$stmt->close();
+		}
+
 		return $retArr;
 	}
 
 	public function getRefDatasetArr($refid){
 		$retArr = array();
-		$sql = 'SELECT l.datasetid, a.name '.
-			'FROM referencedatasetlink AS l LEFT JOIN omoccurdatasets AS a ON l.datasetid = a.datasetID '.
-			'WHERE l.refid = '.$refid.' '.
-			'ORDER BY a.Name';
-		if($rs = $this->conn->query($sql)){
-			while($r = $rs->fetch_object()){
-				$retArr[$r->datasetid] = $r->name;
+
+		$sql = 'SELECT l.datasetid, a.name
+			FROM referencedatasetlink AS l
+			LEFT JOIN omoccurdatasets AS a ON l.datasetid = a.datasetID
+			WHERE l.refid = ?
+			ORDER BY a.name';
+
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $refid);
+
+			if($stmt->execute()){
+				$rs = $stmt->get_result();
+
+				while($r = $rs->fetch_object()){
+					$retArr[$r->datasetid] = $r->name;
+				}
+
+				$rs->close();
 			}
-			$rs->close();
+
+			$stmt->close();
 		}
+
 		return $retArr;
 	}
 
 	public function getPublicRefDatasetArr($refid){
 		$retArr = array();
-		$sql = 'SELECT l.datasetid, a.name '.
-			'FROM referencedatasetlink AS l LEFT JOIN omoccurdatasets AS a ON l.datasetid = a.datasetID '.
-			'WHERE isPublic = 1 AND l.refid = '.$refid.' '.
-			'ORDER BY a.Name';
-		if($rs = $this->conn->query($sql)){
-			while($r = $rs->fetch_object()){
-				$retArr[$r->datasetid] = $r->name;
+
+		$sql = 'SELECT l.datasetid, a.name
+			FROM referencedatasetlink AS l
+			LEFT JOIN omoccurdatasets AS a ON l.datasetid = a.datasetID
+			WHERE isPublic = ? AND l.refid = ?
+			ORDER BY a.name';
+
+		if($stmt = $this->conn->prepare($sql)){
+			$isPublic = 1;
+
+			$stmt->bind_param('ii', $isPublic, $refid);
+
+			if($stmt->execute()){
+				$rs = $stmt->get_result();
+
+				while($r = $rs->fetch_object()){
+					$retArr[$r->datasetid] = $r->name;
+				}
+
+				$rs->close();
 			}
-			$rs->close();
+
+			$stmt->close();
 		}
 		return $retArr;
 	}
