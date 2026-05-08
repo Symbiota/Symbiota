@@ -522,23 +522,55 @@ class ReferenceManager{
 
 	private function getOccid($catNum, $method){
 		$occArr = array();
-		if(!$method || !in_array($method,array('allid','catnum','other'))) $method = 'allid';
+
+		if(!$method || !in_array($method, array('allid','catnum','other'))){
+			$method = 'allid';
+		}
 		$sql = 'SELECT DISTINCT o.occid FROM omoccurrences o ';
-		$sqlWhere = '';
+		$params = array();
+		$types = '';
+
 		if($method == 'allid' || $method == 'other'){
 			$sql .= 'LEFT JOIN omoccuridentifiers i ON o.occid = i.occid ';
-			$catNum = $this->cleanInStr($catNum);
-			$sqlWhere = 'OR (o.othercatalognumbers = "'.$catNum.'") OR (i.identifierValue = "'.$catNum.'") ';
 		}
-		if($method == 'allid' || $method == 'catnum') $sqlWhere .= 'OR (o.catalognumber = "'.$this->cleanInStr($catNum).'") ';
-		if($sqlWhere){
-			$sql .= 'WHERE ('.substr($sqlWhere,2).') ';
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()) {
+
+		$where = array();
+
+		if($method == 'allid' || $method == 'other'){
+			$where[] = 'o.othercatalognumbers = ?';
+			$types .= 's';
+			$params[] = $catNum;
+
+			$where[] = 'i.identifierValue = ?';
+			$types .= 's';
+			$params[] = $catNum;
+		}
+
+		if($method == 'allid' || $method == 'catnum'){
+			$where[] = 'o.catalognumber = ?';
+			$types .= 's';
+			$params[] = $catNum;
+		}
+
+		if(!empty($where)){
+			$sql .= 'WHERE (' . implode(' OR ', $where) . ')';
+			$stmt = $this->conn->prepare($sql);
+
+			if(!$stmt){
+				$this->errorMessage = 'Database error: ' . $this->conn->error;
+				return $occArr;
+			}
+			if(!empty($params)){
+				$stmt->bind_param($types, ...$params);
+			}
+			$stmt->execute();
+			$result = $stmt->get_result();
+			while($r = $result->fetch_object()){
 				$occArr[] = $r->occid;
 			}
-			$rs->free();
+			$stmt->close();
 		}
+
 		return $occArr;
 	}
 
