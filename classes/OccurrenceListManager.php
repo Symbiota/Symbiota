@@ -28,7 +28,7 @@ class OccurrenceListManager extends OccurrenceManager{
 
 		if(!$this->recordCount || $this->reset) $this->setRecordCnt($sqlWhere);
 
-		$this->setGeoJsonBoundingBoxWhere();
+		$sqlWhere .= $this->getGeoJsonBoundingBoxWhere();
 
 		$sql = "";
 		if (array_key_exists("earlyInterval",$this->searchTermArr) || array_key_exists("lateInterval",$this->searchTermArr)) {

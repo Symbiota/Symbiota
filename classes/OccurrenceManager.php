@@ -642,11 +642,13 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		}
 	}
 
-	protected function setGeoJsonBoundingBoxWhere() {
+	protected function getGeoJsonBoundingBoxWhere() {
 		if(!empty($this->searchTermArr['footprintGeoJson'])) {
 			$geoJson = $this->searchTermArr['footprintGeoJson'];
-			$this->sqlWhere .= " AND (MBRCONTAINS(ST_GeomFromGeoJSON('" . $geoJson . "'), p.lngLatPoint)) ";
+			return " AND (MBRCONTAINS(ST_GeomFromGeoJSON('" . $geoJson . "'), p.lngLatPoint)) ";
 		}
+
+		return '';
 	}
 
 	protected function setPaleoSqlWith() {
