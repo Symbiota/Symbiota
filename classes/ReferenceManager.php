@@ -187,9 +187,9 @@ class ReferenceManager{
         $stmt->execute();
         $result = $stmt->get_result();
 
-        while ($row = $result->fetch_assoc()) {
-            $retArr[] = $row['collectionName'];
-        }
+		while($r = $result->fetch_object()){
+			$retArr[$r->collid] = $r->collectionName;
+		}
 
         $stmt->close();
 
@@ -237,9 +237,9 @@ class ReferenceManager{
         $stmt->execute();
         $result = $stmt->get_result();
 
-        while ($row = $result->fetch_assoc()) {
-        	$retArr[] = $row['SciName'];
-        }
+		while($row = $result->fetch_assoc()) {
+			$retArr[$row['tid']] = $row['SciName'];
+		}
 
         $stmt->close();
 

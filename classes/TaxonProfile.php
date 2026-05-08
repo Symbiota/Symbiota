@@ -680,19 +680,34 @@ class TaxonProfile extends Manager {
 	public function getReferenceLinkArr(){
 		$retArr = array();
 		if($this->tid){
-			$sql = 'SELECT r.refid,r.bibliographicCitation,r.url
-			FROM referencetaxalink t
-			LEFT JOIN referenceobject r
-			ON t.refid=r.refid
-			WHERE t.tid = '.$this->tid.' ORDER BY r.bibliographicCitation';
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
+
+			$sql = 'SELECT r.refid, r.bibliographicCitation, r.url
+				FROM referencetaxalink t
+				LEFT JOIN referenceobject r
+					ON t.refid = r.refid
+				WHERE t.tid = ?
+				ORDER BY r.bibliographicCitation';
+
+			$stmt = $this->conn->prepare($sql);
+
+			if(!$stmt){
+				$this->errorMessage = 'Database error: ' . $this->conn->error;
+				return $retArr;
+			}
+
+			$stmt->bind_param('i', $this->tid);
+			$stmt->execute();
+
+			$result = $stmt->get_result();
+
+			while($r = $result->fetch_object()){
 				$retArr[$r->refid]['bibliographicCitation'] = $r->bibliographicCitation;
 				$retArr[$r->refid]['url'] = $r->url;
 			}
-			$rs->free();
+
+			$stmt->close();
+			return $retArr;
 		}
-		return $retArr;
 	}
 
 	//Set children data for taxon higher than species level
