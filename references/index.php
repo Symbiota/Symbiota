@@ -49,7 +49,7 @@ if(!$formSubmit || $formSubmit != 'Search References'){
 <html lang="<?php echo $LANG_TAG ?>">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-	<title><?php echo $DEFAULT_TITLE; ?> Reference Management</title>
+	<title><?php echo $DEFAULT_TITLE; ?> Reference List</title>
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -67,11 +67,11 @@ if(!$formSubmit || $formSubmit != 'Search References'){
 	?>
 	<div class="navpath">
 		<a href="../index.php"><?= htmlspecialchars($LANG['HOME'] ?? 'Home'); ?></a> &gt;&gt;
-		<a href="index.php"><b><?= htmlspecialchars($LANG['REF_MGMT'] ?? 'Reference Management'); ?></b></a>
+		<a href="index.php"><b><?= htmlspecialchars($LANG['REFERENCES'] ?? 'References'); ?></b></a>
 	</div>
 	<!-- This is inner text! -->
 	<div role="main" id="innertext">
-		<h1 class="page-heading"><?= htmlspecialchars($LANG['REF_MGMT'] ?? 'Reference Management'); ?></h1>
+		<h1 class="page-heading"><?= htmlspecialchars($LANG['REFERENCES'] ?? 'References'); ?></h1>
 		<?php
 		if($statusStr){
 			?>
@@ -109,13 +109,9 @@ if(!$formSubmit || $formSubmit != 'Search References'){
 			<?php	
 			}
 			if($refExist){
-					echo '<div style="font-weight:bold;font-size:120%;">'
-						. htmlspecialchars($LANG['REFERENCES'] ?? 'References')
-						. '</div>';
-					echo '<div><ul>';
 				foreach($refArr as $refId => $recArr){
 					echo '<li>';
-					echo '<a href="refdetails.php?refid=' . htmlspecialchars($refId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><b>' . htmlspecialchars($recArr["bibliographicCitation"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</b></a>';
+					echo '<a href="publicref.php?refid=' . htmlspecialchars($refId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><b>' . htmlspecialchars($recArr["bibliographicCitation"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</b></a>';
 					echo '</li>';
 				}
 				echo '</ul></div>';

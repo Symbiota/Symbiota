@@ -195,6 +195,21 @@ class ReferenceManager{
 		return $retArr;
 	}
 
+	public function getPublicRefDatasetArr($refid){
+		$retArr = array();
+		$sql = 'SELECT l.datasetid, a.name '.
+			'FROM referencedatasetlink AS l LEFT JOIN omoccurdatasets AS a ON l.datasetid = a.datasetID '.
+			'WHERE isPublic = 1 AND l.refid = '.$refid.' '.
+			'ORDER BY a.Name';
+		if($rs = $this->conn->query($sql)){
+			while($r = $rs->fetch_object()){
+				$retArr[$r->datasetid] = $r->name;
+			}
+			$rs->close();
+		}
+		return $retArr;
+	}
+
 	public function getRefCollArr($refid){
 		$retArr = array();
 		$sql = 'SELECT l.collid, a.collectionName '.
@@ -459,6 +474,60 @@ class ReferenceManager{
 		return $statusStr;
 	}
 
+	public function getReferenceMetadata($refid) {
+		$retArr = array();
+
+		if($refid) {
+
+			$sql = 'SELECT 
+						refid,
+						bibliographicCitation,
+						creator,
+						date,
+						title,
+						source,
+						rights,
+						subject,
+						description,
+						datasetID,
+						taxonRemarks,
+						url
+					FROM referenceobject
+					WHERE refid = ?';
+
+			if($stmt = $this->conn->prepare($sql)) {
+
+				$stmt->bind_param('i', $refid);
+
+				if($stmt->execute()) {
+
+					$result = $stmt->get_result();
+
+					while($r = $result->fetch_object()) {
+
+						$retArr['bibliographicCitation'] = $r->bibliographicCitation;
+						$retArr['creator'] = $r->creator;
+						$retArr['date'] = $r->date;
+						$retArr['title'] = $r->title;
+						$retArr['source'] = $r->source;
+						$retArr['rights'] = $r->rights;
+						$retArr['subject'] = $r->subject;
+						$retArr['description'] = $r->description;
+						$retArr['datasetID'] = $r->datasetID;
+						$retArr['taxonRemarks'] = $r->taxonRemarks;
+						$retArr['url'] = $r->url;
+					}
+
+					$result->free();
+				}
+
+				$stmt->close();
+			}
+		}
+
+		return $retArr;
+	}
+
 	public function batchAddLink($postArr){
 		$cnt = 0;
 		if($postArr['catalogNumbers']){
@@ -641,6 +710,40 @@ class ReferenceManager{
 		}
 
 		return $statusStr;
+	}
+
+	public function getOccurrences($refid) {
+		$retArr = array();
+		if ($refid) {
+			$sql = 'SELECT o.occid, o.catalognumber, o.occurrenceid ,o.othercatalognumbers,
+				o.sciname, o.family, o.recordedby, o.recordnumber, o.eventdate,
+				o.country, o.stateprovince, o.county, o.locality, o.decimallatitude, o.decimallongitude
+				FROM omoccurrences o INNER JOIN referenceoccurlink rl ON o.occid = rl.occid
+				WHERE rl.refid = ? ';
+			$sql .= OccurrenceUtil::appendFullProtectionSQL();
+			$params[] = $refid;
+			try {
+				$result = QueryUtil::executeQuery($this->conn, $sql, $params);
+			} catch (\Throwable  $e) {
+				error_log('ERROR fetching count for dataset: ' . $refid);
+			}
+			$recordCount = 1;
+			while ($r = $result->fetch_object()) {
+				if ($r->catalognumber) $retArr[$r->occid]['catnum'] = $r->catalognumber;
+				elseif ($r->occurrenceid) $retArr[$r->occid]['catnum'] = $r->occurrenceid;
+				elseif ($r->othercatalognumbers) $retArr[$r->occid]['catnum'] = $r->othercatalognumbers;
+				else $retArr[$r->occid]['catnum'] = '';
+				$sciname = $r->sciname;
+				if ($r->family) $sciname .= ' (' . $r->family . ')';
+				$retArr[$r->occid]['sciname'] = $sciname;
+				$collStr = $r->recordedby . ' ' . $r->recordnumber;
+				if ($r->eventdate) $collStr .= ' [' . $r->eventdate . ']';
+				$retArr[$r->occid]['coll'] = $collStr;
+				$retArr[$r->occid]['loc'] = trim($r->country . ', ' . $r->stateprovince . ', ' . $r->county . ', ' . $r->locality, ', ');
+			}
+			$result->free();
+		}
+		return $retArr;
 	}
 
 		//Get and set functions
