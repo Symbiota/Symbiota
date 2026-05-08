@@ -65,7 +65,7 @@ class OccurrencePolygonIndex {
 		if(!is_numeric($geoThesID)) return false;
 		try {
 			QueryUtil::executeQuery($this->conn,
-				'DELETE FROM occurrencepolygonindex WHERE polygonType = "geographic" AND polygonID = ?',
+				'DELETE FROM occurrencepolygonindex WHERE geoThesID = ?',
 				[(int)$geoThesID]
 			);
 			return true;
@@ -91,8 +91,8 @@ class OccurrencePolygonIndex {
 			$this->deleteGeographicPolygonIndex($geoThesID);
 
 			QueryUtil::executeQuery($this->conn,
-				'INSERT IGNORE INTO occurrencepolygonindex(polygonType, polygonID, occid, indexedAt) '.
-				'SELECT "geographic", gp.geoThesID, p.occid, NOW() '.
+				'INSERT IGNORE INTO occurrencepolygonindex(geoThesID, occid, indexedAt) '.
+				'SELECT gp.geoThesID, p.occid, NOW() '.
 				'FROM geographicpolygon gp '.
 				'INNER JOIN geographicthesaurus gth ON gp.geoThesID = gth.geoThesID '.
 				'INNER JOIN omoccurpoints p ON TRUE '.
@@ -103,7 +103,9 @@ class OccurrencePolygonIndex {
 				[$geoThesID]
 			);
 
+			//example for quicker count:
 			$count = $this->getGeographicPolygonIndexCount($geoThesID);
+
 			QueryUtil::executeQuery($this->conn,
 				'UPDATE geographicpolygon '.
 				'SET polygonIndexStatus = "ready", polygonIndexedAt = NOW(), polygonIndexRecordCount = ?, polygonIndexError = NULL '.
@@ -163,13 +165,13 @@ class OccurrencePolygonIndex {
 
 		try {
 			QueryUtil::executeQuery($this->conn,
-				'DELETE FROM occurrencepolygonindex WHERE polygonType = "geographic" AND occid = ?',
+				'DELETE FROM occurrencepolygonindex WHERE occid = ?',
 				[$occid]
 			);
 
 			QueryUtil::executeQuery($this->conn,
-				'INSERT IGNORE INTO occurrencepolygonindex(polygonType, polygonID, occid, indexedAt) '.
-				'SELECT "geographic", gp.geoThesID, p.occid, NOW() '.
+				'INSERT IGNORE INTO occurrencepolygonindex(geoThesID, occid, indexedAt) '.
+				'SELECT gp.geoThesID, p.occid, NOW() '.
 				'FROM omoccurpoints p '.
 				'INNER JOIN geographicpolygon gp ON TRUE '.
 				'INNER JOIN geographicthesaurus gth ON gp.geoThesID = gth.geoThesID '.
@@ -190,7 +192,7 @@ class OccurrencePolygonIndex {
 
 	private function getGeographicPolygonIndexCount($geoThesID){
 		$rs = QueryUtil::executeQuery($this->conn,
-			'SELECT COUNT(*) AS cnt FROM occurrencepolygonindex WHERE polygonType = "geographic" AND polygonID = ?',
+			'SELECT COUNT(*) AS cnt FROM occurrencepolygonindex WHERE geoThesID = ?',
 			[(int)$geoThesID]
 		);
 		$row = $rs ? $rs->fetch_object() : null;

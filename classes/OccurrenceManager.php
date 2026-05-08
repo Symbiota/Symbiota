@@ -631,7 +631,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$polygonIDs = OccurrencePolygonIndex::sanitizePolygonIds($this->searchTermArr['polygons']);
 			if($polygonIDs && $this->canUseGeographicPolygonIndex($polygonIDs)){
 				$this->searchTermArr['usePolygonIndex'] = 1;
-				$sqlWhere .= 'AND o.occid IN(SELECT opi.occid FROM occurrencepolygonindex opi WHERE opi.polygonType = "geographic" AND opi.polygonID IN('.implode(',', $polygonIDs).')) ';
+				$sqlWhere .= 'AND o.occid IN(SELECT opi.occid FROM occurrencepolygonindex opi WHERE opi.geoThesID IN('.implode(',', $polygonIDs).')) ';
 			}
 			else{
 				unset($this->searchTermArr['usePolygonIndex']);
