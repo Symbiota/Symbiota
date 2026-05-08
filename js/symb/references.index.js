@@ -10,11 +10,13 @@ $(document).ready(function() {
 		}
 	});
 
-	$('form').on('submit', function() {
+	$('#tabs form').on('submit', function() {
 		var active = $('#tabs').tabs('option', 'active');
 		var href = $('#tabs a').eq(active).attr('href');
 
-		this.action = this.action.replace(/#.*$/, '') + href;
+		if(href){
+			this.action = this.action.replace(/#.*$/, '') + href;
+		}
 	});
 
 	function getTabFromHash() {

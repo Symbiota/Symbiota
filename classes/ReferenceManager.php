@@ -20,16 +20,42 @@ class ReferenceManager{
 
 	public function getRefList($keyword){
 		$retArr = array();
-		$sql = 'SELECT r.refid, r.bibliographicCitation '.
-			'FROM referenceobject AS r ORDER BY r.bibliographicCitation';
 
-			if($rs = $this->conn->query($sql)){
-			while($r = $rs->fetch_object()){
-				$retArr[$r->refid]['refid'] = $r->refid;
-				$retArr[$r->refid]['bibliographicCitation'] = $r->bibliographicCitation;
-			}
-			$rs->close();
+		$sql = 'SELECT r.refid, r.bibliographicCitation
+			FROM referenceobject AS r';
+
+		$params = [];
+		$types = '';
+
+		if($keyword){
+			$sql .= ' WHERE r.bibliographicCitation LIKE ?';
+			$types = 's';
+			$params[] = '%' . $keyword . '%';
 		}
+
+		$sql .= ' ORDER BY r.bibliographicCitation';
+
+		$stmt = $this->conn->prepare($sql);
+
+		if(!$stmt){
+			$this->errorMessage = $this->conn->error;
+			return $retArr;
+		}
+
+		if($params){
+			$stmt->bind_param($types, ...$params);
+		}
+
+		$stmt->execute();
+
+		$result = $stmt->get_result();
+
+		while($r = $result->fetch_assoc()){
+			$retArr[$r['refid']] = $r;
+		}
+
+		$stmt->close();
+
 		return $retArr;
 	}
 
@@ -55,8 +81,6 @@ class ReferenceManager{
 			modifiedByUid,
 			modifiedtimestamp
 		) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())';
-
-		print_r($pArr);
 
 		if($stmt = $this->conn->prepare($sql)){
 
