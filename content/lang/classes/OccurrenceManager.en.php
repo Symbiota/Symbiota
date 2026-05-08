@@ -8,6 +8,7 @@ Language: English
 $LANG['OCCURRENCES_WITH_COORDS'] = 'Only include occurrences with coordinates';
 $LANG['CHECKLIST_ID'] = 'Checklist ID';
 $LANG['DATASETS'] = 'Dataset(s)';
+$LANG['REFERENCES'] = 'Reference(s)';
 $LANG['OR'] = 'or';
 $LANG['ELEV'] = 'Elev';
 $LANG['LAT'] = 'Lat';

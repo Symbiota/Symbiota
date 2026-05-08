@@ -198,6 +198,20 @@ class OccurrenceListManager extends OccurrenceManager{
 		return $retArr;
 	}
 
+	public function getReferenceArr(){
+		$retArr = array();
+		if($symbUid){
+			$sql = 'SELECT DISTINCT refid, title FROM referenceobject';
+			//echo "<div>Count sql: ".$sql."</div>";
+			$rs = $this->conn->query($sql);
+			while($r = $rs->fetch_object()){
+				$retArr[$r->refid] = $r->title;
+			}
+			$rs->free();
+		}
+		return $retArr;
+	}
+
 	public function getCloseTaxaMatch($name){
 		$retArr = array();
 		$searchName = trim($name);

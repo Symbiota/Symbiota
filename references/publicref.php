@@ -15,8 +15,8 @@ if(!is_numeric($refid)) $refid = 0;
 
 $refManager = new ReferenceManager();
 $rArr = $refManager->getReferenceMetadata($refid);
-$searchUrl = '../../collections/list.php?refid='.$refid;
-$tableUrl = '../../collections/listtabledisplay.php?refid='.$refid;
+$searchUrl = '../collections/list.php?refid='.$refid;
+$tableUrl = '../collections/listtabledisplay.php?refid='.$refid;
 $ocArr = $refManager->getOccurrences($refid);
 $datasetArr = $refManager -> getPublicRefDatasetArr($refid);
 $taxArr = $refManager -> getRefTaxaArr($refid);

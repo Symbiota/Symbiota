@@ -134,6 +134,11 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$sqlWhere .= 'AND (ds.datasetid IN('.$this->searchTermArr['datasetid'].')) ';
 			$this->displaySearchArr[] = $this->LANG['DATASETS'] . ': ' . $this->getDatasetTitle($this->searchTermArr['datasetid']);
 		}
+		if(array_key_exists('refid',$this->searchTermArr)){
+
+			$sqlWhere .= 'AND (rl.refid IN('.$this->searchTermArr['refid'].')) ';
+			$this->displaySearchArr[] = $this->LANG['REFERENCES'] . ': ' . $this->getReferenceTitle($this->searchTermArr['refid']);
+		}
 		$sqlWhere .= $this->getTaxonWhereFrag();
 		$hasValidRelationship = isset($this->associationArr['relationship']) && $this->associationArr['relationship']!=='none';
 		if($hasValidRelationship){
@@ -720,6 +725,9 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			if(strpos($sqlWhere,'ds.datasetid')){
 				$sqlJoin .= 'INNER JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
 			}
+			if(strpos($sqlWhere,'rl.refid')){
+				$sqlJoin .= 'INNER JOIN referenceoccurlink rl ON o.occid = rl.occid ';
+			}
 			if(array_key_exists('footprintGeoJson',$this->searchTermArr) || strpos($sqlWhere,'p.lngLatPoint') || array_key_exists('polygons',$this->searchTermArr)){
 				$sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
 			}
@@ -963,6 +971,17 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		return trim($retStr,', ');
 	}
 
+	private function getReferenceTitle($refIdStr){
+		$retStr = '';
+		$sql = 'SELECT title FROM referenceobject WHERE refid IN('.$refIdStr.')';
+		$rs = $this->conn->query($sql);
+		while($r = $rs->fetch_object()){
+			$retStr .= ', '.$r->title;
+		}
+		$rs->free();
+		return trim($retStr,', ');
+	}
+
 	protected function readRequestVariables(){
 		if(array_key_exists('searchvar',$_REQUEST)){
 			$parsedArr = array();
@@ -1021,6 +1040,13 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 				if(preg_match('/^[\d,]+$/',$dsStr)) $this->searchTermArr['datasetid'] = $dsStr;
 			}
 			elseif(preg_match('/^[\d,]+$/',$_REQUEST['datasetid'])) $this->searchTermArr['datasetid'] = $_REQUEST['datasetid'];
+		}
+		if(array_key_exists('refid',$_REQUEST) && $_REQUEST['refid']){
+			if(is_array($_REQUEST['refid'])){
+				$refStr = implode(',',$_REQUEST['refid']);
+				if(preg_match('/^[\d,]+$/',$refStr)) $this->searchTermArr['refid'] = $refStr;
+			}
+			elseif(preg_match('/^[\d,]+$/',$_REQUEST['refid'])) $this->searchTermArr['refid'] = $_REQUEST['refid'];
 		}
 		if(array_key_exists('taxa',$_REQUEST) && $_REQUEST['taxa']){
 			$this->setTaxonRequestVariable();

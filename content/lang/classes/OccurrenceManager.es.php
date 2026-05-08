@@ -8,6 +8,7 @@ Language: Español (Spanish)
 $LANG['OCCURRENCES_WITH_COORDS'] = 'Incluir solo ocurrencias con coordenadas';
 $LANG['CHECKLIST_ID'] = 'Lista de especies';
 $LANG['DATASETS'] = 'Conjunto(s) de datos';
+$LANG['REFERENCES'] = 'Referencia(s)';
 $LANG['OR'] = 'o';
 $LANG['ELEV'] = 'Elevación';
 $LANG['LAT'] = 'Latitud';

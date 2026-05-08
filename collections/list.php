@@ -14,6 +14,7 @@ $tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabi
 $cntPerPage = array_key_exists('cntperpage', $_REQUEST) ? filter_var($_REQUEST['cntperpage'], FILTER_SANITIZE_NUMBER_INT) : 100;
 $pageNumber = array_key_exists('page', $_REQUEST) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $datasetid = array_key_exists('datasetid', $_REQUEST) ? filter_var($_REQUEST['datasetid'], FILTER_SANITIZE_NUMBER_INT) : '';
+$refid = array_key_exists('refid', $_REQUEST) ? filter_var($_REQUEST['refid'], FILTER_SANITIZE_NUMBER_INT) : '';
 $sortField1 = array_key_exists('sortfield1', $_REQUEST) ? $_REQUEST['sortfield1'] : '';
 $sortField2 = array_key_exists('sortfield2', $_REQUEST) ? $_REQUEST['sortfield2'] : '';
 $sortOrder = !empty($_REQUEST['sortorder']) ? 'desc' : '';
