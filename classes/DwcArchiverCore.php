@@ -311,7 +311,7 @@ class DwcArchiverCore extends Manager{
 				} elseif ($cond == 'LIKE') {
 					$sqlFrag .= 'OR (' . $field . ' LIKE "%' . $value . '%") ';
 				} elseif ($cond == 'NOT_LIKE') {
-					$sqlFrag .= 'OR (' . $field . ' NOT LIKE "%' . $value . '%" OR ' . $field . ' IS NULL) ';
+					$sqlFrag .= 'AND (' . $field . ' NOT LIKE "%' . $value . '%" OR ' . $field . ' IS NULL) ';
 				} elseif ($cond == 'LESS_THAN') {
 					$sqlFrag .= 'OR (' . $field . ' < "' . $value . '") ';
 				} elseif ($cond == 'GREATER_THAN') {

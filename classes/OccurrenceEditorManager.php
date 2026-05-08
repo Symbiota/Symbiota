@@ -2023,7 +2023,6 @@ class OccurrenceEditorManager {
 			$this->sqlWhere = $this->getBatchUpdateWhere($fn, $ov, $buMatch);
 			$this->addTableJoins($sqlOccid);
 			$sqlOccid .= $this->sqlWhere;
-			// echo $sqlOccid.'<br/>';
 			$rs = $this->conn->query($sqlOccid);
 			while ($r = $rs->fetch_object()) {
 				$occidArr[] = $r->occid;
@@ -2054,31 +2053,41 @@ class OccurrenceEditorManager {
 				}
 
 				//Insert data from target table into omoccuredits
-				$sqlWhere = 'WHERE occid IN(' . implode(',', $occidArr) . ')';
-				$sql = 'INSERT INTO omoccuredits(occid,fieldName,fieldValueOld,fieldValueNew,appliedStatus,uid,editType) ' .
+				$sqlEdits = 'INSERT INTO omoccuredits(occid,fieldName,fieldValueOld,fieldValueNew,appliedStatus,uid,editType) ' .
 					'SELECT o.occid, "' . $fn . '" AS fieldName, IFNULL(' . $fn . ',"") AS oldValue, IFNULL(' . $nvSqlFrag . ',"") AS newValue, ' .
 					'1 AS appliedStatus, ' . $GLOBALS['SYMB_UID'] . ' AS uid, 1 FROM ' . $targetTable . ' as o ';
+				$sqlWhere = 'WHERE occid IN(' . implode(',', $occidArr) . ')';
 
 				// This Solution is a bit scuffed their isn't a nice way of getting many to one
 				// tables in the batch update system without rebuilding most of it
 				if ($fn === 'identifierValue' || $fn === 'identifierName') {
-					$sql .= ' JOIN omoccuridentifiers AS id ON id.occid = o.occid ';
-					$sqlWhere = 'WHERE id.occid IN(' . implode(',', $occidArr) . ')' . ' AND ' . $fn . ' = ' . '"' . $ov . '" ';
+					$sqlEdits .= ' JOIN omoccuridentifiers id ON id.occid = o.occid ';
+					$sqlEdits .= 'WHERE id.occid IN(' . implode(',', $occidArr) . ') ';
+					if (!$buMatch || $ov === '') {
+						//Match whole field
+						$sqlEdits .= 'AND ' . $fn . ' = ' . '"' . $ov . '" ';
+					}
+					else{
+						//Match any part of field
+						$sqlEdits .= 'AND ' . $fn . ' LIKE ' . '"%' . $ov . '%" ';
+					}
 				}
-
-				$sql .= $sqlWhere;
-
-				if (!$this->conn->query($sql)) {
+				else{
+					$sqlEdits .= $sqlWhere;
+				}
+				if (!$this->conn->query($sqlEdits)) {
 					$statusStr = $LANG['ERROR_ADDING_UPDATE'] . ': ' . $this->conn->error;
 				}
+
 				//Apply edits to core tables
 				if ((empty($this->collMap) || !empty($this->collMap['paleoActivated'])) && in_array($fn, $this->fieldArr['omoccurpaleo'])) {
 					$sql = 'UPDATE omoccurpaleo SET ' . $fn . ' = ' . $nvSqlFrag . ' ' . $sqlWhere;
 				} else if ($fn === 'identifierValue' || $fn === 'identifierName') {
-					$sql = 'UPDATE omoccuridentifiers as id SET ' . $fn . ' = ' . $nvSqlFrag . ' ' . $sqlWhere;
+					$sql = 'UPDATE omoccuridentifiers SET ' . $fn . ' = ' . $nvSqlFrag . ' ' . $sqlWhere;
 				} else {
 					$sql = 'UPDATE omoccurrences SET ' . $fn . ' = ' . $nvSqlFrag . ' ' . $sqlWhere;
 				}
+
 				if (!$this->conn->query($sql)) {
 					$statusStr = $LANG['ERROR_APPLYING_BATCH_EDITS'] . ': ' . $this->conn->error;
 				}
@@ -2119,12 +2128,13 @@ class OccurrenceEditorManager {
 		}
 
 		if (!$buMatch || $ov === '') {
+			//Match whole field
 			if (in_array($fn, $this->fieldArr['omoccurpaleo']))
 				$sql .= ' AND (paleo.'.$fn.' '.($ov===''?'IS NULL':'= "'.$ov.'"').') ';
 			else
 				$sql .= ' AND (' . $tablePrefix . $fn . ' ' . ($ov === '' ? 'IS NULL' : '= "' . $ov . '"') . ') ';
 		} else {
-			//Selected "Match any part of field"
+			//Match any part of field
 			if (in_array($fn, $this->fieldArr['omoccurpaleo']))
 				$sql .= ' AND (paleo.'.$fn.' LIKE "%'.$ov.'%") ';
 			else

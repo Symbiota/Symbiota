@@ -17,7 +17,6 @@ $LANG['TARGET_CHECKLIST'] = 'Target checklist';
 $LANG['PARENT_CHECKLIST'] = 'Parent checklist';
 $LANG['SELECTPROJECT'] = 'Select a project';
 $LANG['RETURNCHECK'] = 'Return to Checklist';
-$LANG['ERROR'] = 'ERROR';
 $LANG['ADMIN'] = 'Admin';
 $LANG['DESCRIPTION'] = 'Description';
 $LANG['RELATEDCHECK'] = 'Related Checklists';

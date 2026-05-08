@@ -20,7 +20,6 @@ $LANG['RETURNCHECK'] = 'Volver al Listado de Comprobación';
 $LANG['ADMIN'] = 'Admin';
 $LANG['DESCRIPTION'] = 'Descripción';
 $LANG['RELATEDCHECK'] = 'Listados de Comprobación Relacionados';
-$LANG['ERROR'] = 'ERROR';
 $LANG['ADDIMGVOUCHER'] = 'Agregar Imágen Voucher';
 $LANG['NOEDITOR'] = 'Nadie ha sido asignado explícitamente como un editor';
 $LANG['ADDNEWUSER'] = 'Agregar Usuario Nuevo';

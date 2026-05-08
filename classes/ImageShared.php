@@ -153,7 +153,7 @@ class ImageShared {
 		$this->errArr = array();
 	}
 
-	// TODO (Logan) deprecate function 
+	// TODO (Logan) deprecate function
 	// commenting out as instructed
 	// public function uploadImage($imgFile = 'imgfile') {
 	// 	if ($this->targetPath) {
@@ -179,7 +179,7 @@ class ImageShared {
 	// 	return false;
 	// }
 
-	// TODO (Logan) deprecate function 
+	// TODO (Logan) deprecate function
 	// commenting out as instructed
 	// public function copyImageFromUrl() {
 	// 	//Returns full path
@@ -337,7 +337,7 @@ class ImageShared {
 		return true;
 	}
 
-	// TODO (Logan) deprecate function 
+	// TODO (Logan) deprecate function
 	// commenting out as instructed
 	// public function processImage() {
 	// 	if (!$this->imgName) {
@@ -1078,116 +1078,59 @@ class ImageShared {
 		return $exists;
 	}
 
-	public static function getImgDim($imgUrl) {
-		if (!$imgUrl) return false;
-		$imgDim = false;
-
-		$urlPrefix = 'http://';
-		if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = 'https://';
-		$urlPrefix .= $_SERVER['SERVER_NAME'];
-		if ($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443) $urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
-
-		if (strpos($imgUrl, $urlPrefix . $GLOBALS['MEDIA_ROOT_URL']) === 0) {
-			$imgUrl = substr($imgUrl, strlen($urlPrefix));
-		}
-		if (substr($imgUrl, 0, 1) == '/') {
-			if ($GLOBALS['MEDIA_ROOT_URL'] && strpos($imgUrl, $GLOBALS['MEDIA_ROOT_URL']) === 0) {
-				$imgUrl = str_replace($GLOBALS['MEDIA_ROOT_URL'], $GLOBALS['MEDIA_ROOT_PATH'], $imgUrl);
-			}
-			$imgDim = @getimagesize($imgUrl);
-		}
-		if (!$imgDim) {
-			$imgDim = self::getImgDim1($imgUrl);
-			if (!$imgDim) $imgDim = self::getImgDim2($imgUrl);
-			if (!$imgDim) $imgDim = @getimagesize($imgUrl);
-		}
-		return $imgDim;
-	}
-
-	// Retrieve JPEG width and height without downloading/reading entire image.
-	private static function getImgDim1($imgUrl) {
-		$opts = array(
-			'http' => array(
-				'user_agent' => $GLOBALS['DEFAULT_TITLE'],
-				'method' => "GET",
-				'header' => implode("\r\n", array('Content-type: text/plain;'))
-			),
-			'ssl' => array(
-				'verify_peer' => false,
-				'verify_peer_name' => false,
-			)
-		);
-		$context = stream_context_create($opts);
-		if ($handle = fopen($imgUrl, "rb", false, $context)) {
-			$new_block = NULL;
-			if (!feof($handle)) {
-				$new_block = fread($handle, 32);
-				$i = 0;
-				if ($new_block[$i] == "\xFF" && $new_block[$i + 1] == "\xD8" && $new_block[$i + 2] == "\xFF" && $new_block[$i + 3] == "\xE0") {
-					$i += 4;
-					if ($new_block[$i + 2] == "\x4A" && $new_block[$i + 3] == "\x46" && $new_block[$i + 4] == "\x49" && $new_block[$i + 5] == "\x46" && $new_block[$i + 6] == "\x00") {
-						// Read block size and skip ahead to begin cycling through blocks in search of SOF marker
-						$block_size = unpack("H*", $new_block[$i] . $new_block[$i + 1]);
-						$block_size = hexdec($block_size[1]);
-						while (!feof($handle)) {
-							$i += $block_size;
-							if (!$block_size) return false;
-							$new_block .= fread($handle, $block_size);
-							if (isset($new_block[$i]) && $new_block[$i] == "\xFF") {
-								// New block detected, check for SOF marker
-								$sof_marker = array("\xC0", "\xC1", "\xC2", "\xC3", "\xC5", "\xC6", "\xC7", "\xC8", "\xC9", "\xCA", "\xCB", "\xCD", "\xCE", "\xCF");
-								if (in_array($new_block[$i + 1], $sof_marker)) {
-									// SOF marker detected. Width and height information is contained in bytes 4-7 after this byte.
-									//$size_data = $new_block[$i+2] . $new_block[$i+3] . $new_block[$i+4] . $new_block[$i+5] . $new_block[$i+6] . $new_block[$i+7] . $new_block[$i+8];
-									$size_data = null;
-									for ($x = 2; $x < 9; $x++) {
-										if (isset($new_block[$i + $x])) $size_data .= $new_block[$i + $x];
-									}
-									$unpacked = unpack("H*", $size_data);
-									$unpacked = $unpacked[1];
-									if (!is_array($unpacked) || count($unpacked) < 13) return false;
-									$height = hexdec($unpacked[6] . $unpacked[7] . $unpacked[8] . $unpacked[9]);
-									$width = hexdec($unpacked[10] . $unpacked[11] . $unpacked[12] . $unpacked[13]);
-									return array($width, $height);
-								} else {
-									// Skip block marker and read block size
-									$i += 2;
-									$block_size = unpack("H*", $new_block[$i] . $new_block[$i + 1]);
-									$block_size = hexdec($block_size[1]);
-								}
-							} else {
-								return FALSE;
-							}
-						}
-					}
-				}
+	public static function getImgDim($imgPath) {
+		if(strtolower(substr($imgPath, 4) == 'http')){
+			$urlPrefix = 'http://';
+			if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = 'https://';
+			$urlPrefix .= $_SERVER['SERVER_NAME'];
+			if ($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443) $urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
+			if (strpos($imgPath, $urlPrefix . $GLOBALS['MEDIA_ROOT_URL']) === 0) {
+				//Input is a URL of a local image, thus remove domain so that we can more efficiently access the file locally
+				$imgPath = substr($imgPath, strlen($urlPrefix));
 			}
 		}
-		return FALSE;
-	}
+		if (substr($imgPath, 0, 1) == '/') {
+			if ($GLOBALS['MEDIA_ROOT_URL'] && strpos($imgPath, $GLOBALS['MEDIA_ROOT_URL']) === 0) {
+				//Path is a locally accessible file, but with a web path defined, thus we need to convert to media root path
+				$imgPath = str_replace($GLOBALS['MEDIA_ROOT_URL'], $GLOBALS['MEDIA_ROOT_PATH'], $imgPath);
+			}
+		}
 
-	private static function getImgDim2($imgUrl) {
-		$curl = curl_init($imgUrl);
-		curl_setopt($curl, CURLOPT_HTTPHEADER, array("Range: bytes=0-65536"));
-		//curl_setopt($curl, CURLOPT_HTTPHEADER, array( "Range: bytes=0-32768" ));
-		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36');
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
-		curl_setopt($curl, CURLOPT_TIMEOUT, 10);
+		// Local file
+		if (is_file($imgPath)) {
+			$opts = [
+				'http' => [	'method' => 'GET', 'timeout' => 5, 'user_agent' => $GLOBALS['DEFAULT_TITLE'] ],
+				'ssl' => [ 'verify_peer' => false, 'verify_peer_name' => false ]
+			];
+			$context = stream_context_create($opts);
+			return @getimagesize(imgPath, false, $context);
+		}
+
+		// Remote URL
+		$curl = curl_init($imgPath);
+		curl_setopt_array($curl, [
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_TIMEOUT => 5,
+			CURLOPT_CONNECTTIMEOUT => 3,
+			CURLOPT_SSL_VERIFYPEER => false,
+			CURLOPT_USERAGENT => $GLOBALS['DEFAULT_TITLE'],
+			CURLOPT_RANGE => '0-65535'
+		]);
+
 		$data = curl_exec($curl);
-		curl_close($curl);
-		$width = 0;
-		$height = 0;
-
-		$im = @imagecreatefromstring($data);
-		if ($im) {
-			$width = @imagesx($im);
-			$height = @imagesy($im);
-			imagedestroy($im);
+		if ($data === false) {
+			curl_close($curl);
+			return false;
 		}
-		if (!$width || !$height) return false;
-		return array($width, $height);
+
+		$httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
+		if ($httpCode >= 400) {
+			return false;
+		}
+
+		return @getimagesizefromstring($data);
 	}
 
 	private function cleanInStr($str) {

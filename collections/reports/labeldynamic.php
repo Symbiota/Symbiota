@@ -73,6 +73,7 @@ if($SYMB_UID){
 		<link rel="stylesheet" type="text/css" href="<?= $CSS_BASE_PATH ?>/symbiota/collections/reports/labelhelpers.css">
 
 		<style type="text/css">
+			.field-block{ clear:both; }
 			.row { display: flex; flex-wrap: nowrap; margin-left: auto; margin-right: auto;}
 			.label { page-break-before: auto; page-break-inside: avoid; }
 			.screen-reader-only {
