@@ -15,30 +15,28 @@ $refId = array_key_exists('refid', $_REQUEST) ? Sanitize::int($_REQUEST['refid']
 $formSubmit = array_key_exists('formsubmit', $_POST) ? $_POST['formsubmit'] : '';
 
 $refManager = new ReferenceManager();
-$refArr = '';
+
+$refArr = [];
 $refExist = false;
 
 $isEditor = false;
 if($IS_ADMIN) $isEditor = true;
 
 $statusStr = '';
-if($formSubmit && $isEditor){
-	if($formSubmit == 'Delete Reference'){
-		$statusStr = $refManager->deleteReference($refId);
-	}
-	elseif($formSubmit == 'Search References'){
-		$refArr = $refManager->getRefList($_POST['searchcitation']);
-		foreach($refArr as $refName => $valueArr){
-			if($valueArr["bibliographicCitation"]){
-				$refExist = true;
-			}
+
+if(!$formSubmit || $formSubmit != 'Search References'){
+	$refArr = $refManager->getRefList('');
+	foreach($refArr as $valueArr){
+		if(!empty($valueArr["bibliographicCitation"])){
+			$refExist = true;
 		}
 	}
 }
-if(!$formSubmit || $formSubmit != 'Search References'){
-	$refArr = $refManager->getRefList('');
-	foreach($refArr as $refName => $valueArr){
-		if($valueArr["bibliographicCitation"]){
+
+if($formSubmit == 'Search References'){
+	$refArr = $refManager->getRefList($_POST['searchcitation'] ?? '');
+	foreach($refArr as $valueArr){
+		if(!empty($valueArr["bibliographicCitation"])){
 			$refExist = true;
 		}
 	}
@@ -55,10 +53,100 @@ if(!$formSubmit || $formSubmit != 'Search References'){
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
+	<link href="<?= $CSS_BASE_PATH ?>/searchStyles.css" rel="stylesheet" type="text/css">
+	<link href="<?= $CSS_BASE_PATH ?>/searchStylesInner.css" rel="stylesheet" type="text/css">
+	<link href="<?= $CSS_BASE_PATH ?>/tables.css" rel="stylesheet" type="text/css">
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/symb/references.index.js"></script>
 
+	<style>
+		.reference-layout{
+			display:grid;
+			grid-template-columns: 1fr 320px;
+			gap:1.5rem;
+			align-items:start;
+		}
+
+		.reference-sidebar{
+			position:sticky;
+			top:1rem;
+		}
+
+		.reference-panel{
+			background:#fff;
+			border:1px solid #d2d2d2;
+			border-radius:10px;
+			padding:1rem;
+			box-shadow:0 1px 4px rgba(0,0,0,0.05);
+		}
+
+		.reference-list{
+			list-style:none;
+			padding:0;
+			margin:0;
+		}
+
+		.reference-item{
+			padding:0.9rem 1rem;
+			border-bottom:1px solid #d2d2d2;
+			transition:background-color 0.15s ease;
+		}
+
+		.reference-item:last-child{
+			border-bottom:none;
+		}
+
+		.reference-item:hover{
+			background:#f8fafc;
+		}
+
+		.reference-item a{
+			text-decoration:none;
+			font-size:1rem;
+			line-height:1.5;
+			display:block;
+		}
+
+		.reference-item a:hover{
+			text-decoration:underline;
+		}
+
+		.status-msg{
+			padding:1rem;
+			margin-bottom:1rem;
+			border-radius:8px;
+			background:#fff3f3;
+			color:#9f3a38;
+		}
+
+		.empty-state{
+			padding:2rem;
+			text-align:center;
+			font-size:1.1rem;
+			color:#666;
+		}
+
+		.sidebar-button-link{
+			display:block;
+			width:100%;
+			text-decoration:none;
+		}
+
+		.sidebar-button-link button{
+			width:100%;
+		}
+
+		@media(max-width:900px){
+			.reference-layout{
+				grid-template-columns:1fr;
+			}
+
+			.reference-sidebar{
+				position:static;
+			}
+		}
+	</style>
 </head>
 <body>
 	<?php
@@ -69,66 +157,87 @@ if(!$formSubmit || $formSubmit != 'Search References'){
 		<a href="../index.php"><?= htmlspecialchars($LANG['HOME'] ?? 'Home'); ?></a> &gt;&gt;
 		<a href="index.php"><b><?= htmlspecialchars($LANG['REFERENCES'] ?? 'References'); ?></b></a>
 	</div>
-	<!-- This is inner text! -->
-	<div role="main" id="innertext">
+	<div role="main" id="innertext" class="inner-search" style="max-width:1400px;">
 		<h1 class="page-heading"><?= htmlspecialchars($LANG['REFERENCES'] ?? 'References'); ?></h1>
-		<?php
-		if($statusStr){
-			?>
-			<hr/>
-			<div style="margin:15px;color:red;">
-				<?php echo $statusStr; ?>
+
+		<?php if($statusStr){ ?>
+			<div class="status-msg">
+				<?= htmlspecialchars($statusStr); ?>
 			</div>
-			<?php
-		}
-		?>
-		<div id="" style="float:right;width:240px;">
-			<form name="filterrefform" action="index.php" method="post">
-				<fieldset style="background-color:#f2f2f2;">
-					<legend><b><?= htmlspecialchars($LANG['FILTER_LIST'] ?? 'Filter List'); ?></b></legend>
-			    	<div>
-						<div>
-							<b><?= htmlspecialchars($LANG['CITATION'] ?? 'Citation'); ?></b>
-							<input type="text" autocomplete="off" name="searchcitation" id="searchcitation" size="25" value="<?php echo ($formSubmit == 'Search References'?$_POST['searchcitation']:''); ?>" />
+		<?php } ?>
+
+		<div class="reference-layout">
+			<section>
+				<div class="reference-panel">
+					<?php if($refExist) { ?>
+						<ul class="reference-list">
+							<?php foreach($refArr as $refId => $recArr) { ?>
+								<li class="reference-item">
+									<a href="publicref.php?refid=<?= (int)$refId; ?>">
+										<?= htmlspecialchars(
+											$recArr["bibliographicCitation"],
+											ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE
+										); ?>
+									</a>
+								</li>
+							<?php }; ?>
+						</ul>
+					<?php } elseif(($formSubmit == 'Search References') && !$refExist) { ?>
+						<div class="empty-state">
+							<?= htmlspecialchars($LANG['NO_REF_MATCH'] ?? 'There were no references matching your criteria.'); ?>
 						</div>
-						<div style="padding-top:8px;float:right;">
-							<button name="formsubmit" type="submit" value="Search References">
-								<?= htmlspecialchars($LANG['FILTER_LIST'] ?? 'Filter List'); ?>
-							</button>						
+					<?php } else { ?>
+						<div class="empty-state">
+							<?= htmlspecialchars($LANG['NO_REF_EXIST'] ?? 'There are currently no references in the database.'); ?>
 						</div>
-					</div>
-				</fieldset>
-			</form>
-		</div>
-		<div id="reflistdiv" style="min-height:200px;">
-			<?php 
-			if ($isEditor){
-			?>
-				<div style="float:right;margin:10px;"><a href="refdetails.php"><img src="../images/add.png" style="width:1.3em" alt="<?= htmlspecialchars($LANG['CREATE_NEW_REF'] ?? 'Create New Reference'); ?>" /></a>
+					<?php }; ?>
 				</div>
-			<?php	
-			}
-			if($refExist){
-				foreach($refArr as $refId => $recArr){
-					echo '<li>';
-					echo '<a href="publicref.php?refid=' . htmlspecialchars($refId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><b>' . htmlspecialchars($recArr["bibliographicCitation"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</b></a>';
-					echo '</li>';
-				}
-				echo '</ul></div>';
-			}
-			elseif(($formSubmit && $formSubmit == 'Search References') && !$refExist){
-				echo '<div style="margin-top:10px;">
-					<div style="font-weight:bold;font-size:120%;">'
-					. htmlspecialchars($LANG['NO_REF_MATCH'] ?? 'There were no references matching your criteria.')
-					. '</div></div>';
-				}
-			else{
-				echo '<div style="margin-top:10px;">
-					<div style="font-weight:bold;font-size:120%;">'
-					. htmlspecialchars($LANG['NO_REF_EXIST'] ?? 'There are currently no references in the database.')
-					. '</div></div>';
-				}
-			?>
+			</section>
+
+			<!-- Sidebar -->
+			<aside class="reference-sidebar">
+				<div class="reference-panel">
+					<form name="filterrefform" action="index.php" method="post">
+						<h2 style="margin-top:0;">
+							<?= htmlspecialchars($LANG['FILTER_LIST'] ?? 'Filter List'); ?>
+						</h2>
+						<div class="input-text-container">
+							<label for="searchcitation" class="input-text--outlined">
+								<span class="screen-reader-only">
+									<?= htmlspecialchars($LANG['CITATION'] ?? 'Citation'); ?>
+								</span>
+								<input
+									type="text"
+									name="searchcitation"
+									id="searchcitation"
+									value="<?=($formSubmit == 'Search References') ? htmlspecialchars($_POST['searchcitation'] ?? '') : ''?>"
+								/>
+								<span class="inset-input-label">
+									<?= htmlspecialchars($LANG['CITATION'] ?? 'Citation'); ?>
+								</span>
+							</label>
+						</div>
+						<button
+							class="inner-search button"
+							name="formsubmit"
+							type="submit"
+							value="Search References"
+							style="width:100%;margin-top:1rem;"
+						>
+							<?= htmlspecialchars($LANG['FILTER_LIST'] ?? 'Filter List'); ?>
+						</button>
+					</form>
+				</div>
+				<?php if($isEditor) { ?>
+					<div class="reference-panel" style="margin-top:1rem;">
+						<a href="refdetails.php" class="sidebar-button-link">
+							<button type="button" class="inner-search button">
+								<?= htmlspecialchars($LANG['CREATE_NEW_REF'] ?? 'Create New Reference'); ?>
+							</button>
+						</a>
+					</div>
+				<?php }; ?>
+			</aside>
 		</div>
 	</div>
 	<?php
