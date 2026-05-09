@@ -24,6 +24,10 @@ if($IS_ADMIN) $isEditor = true;
 
 $statusStr = '';
 
+// Pagination
+$page = array_key_exists('page', $_REQUEST) ? max(1, Sanitize::int($_REQUEST['page'])) : 1;
+$perPage = 25;
+
 if(!$formSubmit || $formSubmit != 'Search References'){
 	$refArr = $refManager->getRefList('');
 	foreach($refArr as $valueArr){
@@ -41,6 +45,14 @@ if($formSubmit == 'Search References'){
 		}
 	}
 }
+
+// Paginate after loading results
+$totalRefs = count($refArr);
+$totalPages = max(1, ceil($totalRefs / $perPage));
+$page = min($page, $totalPages);
+$offset = ($page - 1) * $perPage;
+
+$refArr = array_slice($refArr, $offset, $perPage, true);
 
 ?>
 <!DOCTYPE HTML>
@@ -137,6 +149,28 @@ if($formSubmit == 'Search References'){
 			width:100%;
 		}
 
+		.pagination{
+			display:flex;
+			justify-content:center;
+			align-items:center;
+			gap:0.5rem;
+			margin-top:1.5rem;
+			flex-wrap:wrap;
+		}
+
+		.pagination a,
+		.pagination span{
+			padding:0.45rem 0.8rem;
+			border:1px solid #d2d2d2;
+			border-radius:6px;
+			text-decoration:none;
+		}
+
+		.pagination .current-page{
+			font-weight:bold;
+			background:#f3f3f3;
+		}
+
 		@media(max-width:900px){
 			.reference-layout{
 				grid-template-columns:1fr;
@@ -182,6 +216,30 @@ if($formSubmit == 'Search References'){
 								</li>
 							<?php }; ?>
 						</ul>
+
+						<?php if($totalPages > 1){ ?>
+							<div class="pagination">
+								<?php if($page > 1){ ?>
+									<a href="?page=<?= ($page - 1); ?>">
+										&laquo; Prev
+									</a>
+								<?php } ?>
+								<?php for($i = 1; $i <= $totalPages; $i++){ ?>
+									<?php if($i == $page){ ?>
+										<span class="current-page">
+											<?= $i; ?>
+										</span>
+									<?php } else { ?>
+										<a href="?page=<?= $i; ?>"> <?= $i; ?></a>
+									<?php } ?>
+								<?php } ?>
+								<?php if($page < $totalPages){ ?>
+									<a href="?page=<?= ($page + 1); ?>">
+										Next &raquo;
+									</a>
+								<?php } ?>
+							</div>
+						<?php } ?>
 					<?php } elseif(($formSubmit == 'Search References') && !$refExist) { ?>
 						<div class="empty-state">
 							<?= htmlspecialchars($LANG['NO_REF_MATCH'] ?? 'There were no references matching your criteria.'); ?>
