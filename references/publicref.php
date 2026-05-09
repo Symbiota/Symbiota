@@ -9,7 +9,7 @@ Language::load('references/index');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 // References
-$refid = array_key_exists('refid',$_REQUEST)?$_REQUEST['refid']:0;
+$refid = array_key_exists('refid', $_REQUEST) ? Sanitize::int($_REQUEST['refid']) : 0;
 
 if(!is_numeric($refid)) $refid = 0;
 
