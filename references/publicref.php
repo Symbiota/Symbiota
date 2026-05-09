@@ -17,7 +17,7 @@ $refManager = new ReferenceManager();
 $rArr = $refManager->getReferenceMetadata($refid);
 $searchUrl = '../collections/list.php?refid='.$refid;
 $tableUrl = '../collections/listtabledisplay.php?refid='.$refid;
-$ocArr = $refManager->getOccurrences($refid);
+$occArr = $refManager->getOccurrences($refid);
 $datasetArr = $refManager -> getPublicRefDatasetArr($refid);
 $taxArr = $refManager -> getRefTaxaArr($refid);
 $collArr = $refManager -> getRefCollArr($refid);
@@ -78,32 +78,34 @@ elseif(array_key_exists('SuperAdmin',$USER_RIGHTS) || array_key_exists('SuperAdm
 			</div>
 			<?php
 		}
+	if ($occArr || $collArr || $checklistArr || $datasetArr || $taxArr) { 
 		?>
 	<div><h2><b><?php echo $LANG['ASSOC_REC_RES'] ?? 'Associated Records and Resources'?>:</b><h2></div>	
-
+	<?php } ?>
 	<div class="accordions">
 
 		<!-- Occurrences -->
-		<input type="checkbox" id="acc-occurrences" class="accordion-selector" />
-		<label for="acc-occurrences" class="accordion-header">
-			<?php echo $LANG['OCCUR'] ?? 'Occurrences'; ?>
-		</label>
-		<div class="content">
-			<p>
-				<?php echo $LANG['INCLUDES']; ?>
-				<?php echo count($ocArr); ?>
-				<?php echo $LANG['RECORDS']; ?>
-			</p>
+		 <?php if ($occArr) { ?>
+			<input type="checkbox" id="acc-occurrences" class="accordion-selector" />
+			<label for="acc-occurrences" class="accordion-header">
+				<?php echo $LANG['OCCUR'] ?? 'Occurrences'; ?>
+			</label>
+			<div class="content">
+				<p>
+					<?php echo $LANG['INCLUDES']; ?>
+					<?php echo count($occArr); ?>
+					<?php echo $LANG['RECORDS']; ?>
+				</p>
 
-			<a class="btn" href="<?php echo htmlspecialchars($searchUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
-				<?php echo $LANG['VIEW_AND_DOWNLOAD']; ?>
-			</a>
-			<br>
-			<a class="btn" href="<?php echo htmlspecialchars($tableUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
-				<?php echo $LANG['VIEW_SAMPLE']; ?>
-			</a>
-		</div>
-
+				<a class="btn" href="<?php echo htmlspecialchars($searchUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+					<?php echo $LANG['VIEW_AND_DOWNLOAD']; ?>
+				</a>
+				<br>
+				<a class="btn" href="<?php echo htmlspecialchars($tableUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
+					<?php echo $LANG['VIEW_SAMPLE']; ?>
+				</a>
+			</div>
+		<?php } ?>
 		<!-- Datasets -->
 		<?php if ($datasetArr) { ?>
 			<input type="checkbox" id="acc-datasets" class="accordion-selector" />
