@@ -52,11 +52,11 @@ jobs:
           docker exec symbiota-testing-web-1 mysqldump ci_testing | mariadb ci_testing_chromium
           #GRANT SELECT,EXECUTE ON `symbdb`.* TO `symbreader`@localhost;
           #GRANT SELECT,UPDATE,INSERT,DELETE,EXECUTE ON `symbdb`.* TO `symbwriter`@localhost;
-        else if [ "${{ matrix.browser }}" == "firefox" ]; then
+        elif [ "${{ matrix.browser }}" == "firefox" ]; then
           echo "DB_DATABASE=ci_testing_firefox" >> $GITHUB_ENV
           docker exec symbiota-testing-mariadb-1 echo "CREATE DATABASE ci_testing_firefox;" | mariadb
           docker exec symbiota-testing-web-1 mysqldump ci_testing | mariadb ci_testing_firefox
-         else if [ "${{ matrix.browser }}" == "webkit" ]; then
+        elif [ "${{ matrix.browser }}" == "webkit" ]; then
           echo "DB_DATABASE=ci_testing_webkit" >> $GITHUB_ENV
           docker exec symbiota-testing-mariadb-1 echo "CREATE DATABASE ci_testing_webkit;" | mariadb
           docker exec symbiota-testing-web-1 mysqldump ci_testing | mariadb ci_testing_webkit
@@ -69,7 +69,7 @@ jobs:
       run: docker exec symbiota-testing-web-1 ./vendor/bin/phpunit
 
     - name: 'Run Playwright Tests'
-      run: docker run --rm -v .:/var/www/html --network=host --ipc=host mcr.microsoft.com/playwright:v1.56.0-noble /bin/bash -c "cd /var/www/html && npm install @playwright/test@1.56.0 mysql2@3.16.0 --save-dev && npx playwright test"
+      run: docker run --rm -v .:/var/www/html --network=host --ipc=host mcr.microsoft.com/playwright:v1.56.0-noble /bin/bash -c "cd /var/www/html && npm install @playwright/test@1.56.0 mysql2@3.16.0 --save-dev && npx playwright test --project=${{ matrix.browser }}"
 
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
