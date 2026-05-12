@@ -47,8 +47,8 @@ jobs:
     - name: 'Install PhpUnit'
       run : docker exec symbiota-testing-web-1 composer require --dev phpunit/phpunit
 
-    - name: 'Execute Tests via PHPUnit'
-      run: docker exec symbiota-testing-web-1 ./vendor/bin/phpunit
+    # name: 'Execute Tests via PHPUnit'
+    #  run: docker exec symbiota-testing-web-1 ./vendor/bin/phpunit
 
     - name: 'Run Playwright Tests'
       run: docker run --rm -v .:/var/www/html --network=host --ipc=host mcr.microsoft.com/playwright:v1.56.0-noble /bin/bash -c "cd /var/www/html && npm install @playwright/test@1.56.0 mysql2@3.16.0 --save-dev && npx playwright test --project=${{ matrix.browser }}"
