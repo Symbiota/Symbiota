@@ -252,7 +252,7 @@ $creatorArray = Media::getCreatorArray();
 							</td>
 						<?php endif?>
 						<td class="imgInfo" style="text-align:left;padding:10px;">
-							<div style="float:right;cursor:pointer;" onclick="toggle('img<?php echo $imgId; ?>editdiv');" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggle('img<?php echo $imgId; ?>editdiv');}" title="<?php echo $LANG['EDIT_METADATA']; ?> " role="button" tabindex="0">
+							<div style="float:right;cursor:pointer;" onclick="toggle('img<?php echo $imgId; ?>editdiv');" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggle('img<?php echo $imgId; ?>editdiv');}" title="<?php echo $LANG['EDIT_METADATA']; ?>" role="button" tabindex="0">
 								<img style="border:0px;width:1.2em;" src="../../images/edit.png" />
 							</div>
 							<div style="margin-top:30px;overflow-wrap: anywhere;">
