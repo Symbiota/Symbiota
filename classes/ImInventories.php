@@ -738,7 +738,7 @@ class ImInventories extends Manager{
 	public function insertChecklistProjectLink($clid){
 		$status = true;
 		if(is_numeric($clid)){
-			$sql = 'INSERT INTO fmchklstprojlink(pid,clid) VALUES('.$this->pid.', '.$clid.') ';
+			$sql = 'INSERT IGNORE INTO fmchklstprojlink(pid,clid) VALUES('.$this->pid.', '.$clid.') ';
 			if(!$this->conn->query($sql)){
 				$this->errorMessage = 'ERROR adding checklist to project: '.$this->conn->error;
 			}

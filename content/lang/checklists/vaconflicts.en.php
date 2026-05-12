@@ -12,13 +12,13 @@ $LANG['EXPLAIN_PARAGRAPH'] = 'List of specimen vouchers where the current identi
 $LANG['CONFLICT_COUNT'] = 'Conflict Count';
 $LANG['CHECK_ID'] = 'Checklist ID';
 $LANG['VOUCHER_SPEC'] = 'Voucher Specimen';
-$LANG['CORRECTED_ID'] = 'Corrected Specimen ID';
+$LANG['SPECIMEN_ID'] = 'Specimen ID';
 $LANG['IDED_BY'] = 'Identified By';
 $LANG['FROM_CHILD'] = '(from child checklists)';
 $LANG['REMOVE_TAXA'] = 'Remove taxa from checklist if all vouchers are removed';
-$LANG['LINK_VOUCHERS'] = 'Link Vouchers to Corrected Identification';
+$LANG['TRANSFER_VOUCHERS'] = 'Transfer Vouchers to Specimen Identification';
 $LANG['BATCH_ACTION'] = 'Batch Action';
-$LANG['CORRECTED_WILL_ADD'] = 'Corrected taxon will be added to checklist if not yet present';
+$LANG['SPECIMEN_ID_WILL_ADD'] = 'Taxon associated with Specimen ID will be added to checklist if not yet present';
 $LANG['NO_CONFLICTS'] = 'No conflicts exist';
 
 ?>

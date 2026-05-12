@@ -1925,18 +1925,13 @@ class SpecUploadBase extends SpecUpload{
 			}
 
 			//Add the paleo fields
-			if (!empty($paleoArr))
-				$this->buildPaleoFields($recMap, $paleoArr);
-			try {
-				$this->buildMaterialSampleJSON($recMap);
-			} catch (Exception $e){
-				$this->outputMsg('<li>Error JSON encoding material sample data for record #'.$this->transferCount.'</li>');
-				$this->outputMsg('<li style="margin-left:10px;">Error: '.$e->getMessage().'</li>');
-			}
+			if (!empty($paleoArr)) $this->buildPaleoFields($recMap, $paleoArr);
 
-			$sqlFragments = $this->getSqlFragments($recMap,$this->occurFieldMap);
+			$this->buildMaterialSampleJSON($recMap);
+
+			$sqlFragments = $this->getSqlFragments($recMap, $this->occurFieldMap);
 			if($sqlFragments){
-				$sql = 'INSERT INTO uploadspectemp(collid'.$sqlFragments['fieldstr'].') VALUES('.$this->collId.$sqlFragments['valuestr'].')';
+				$sql = 'INSERT INTO uploadspectemp(`collid`,' . $sqlFragments['fieldstr'] . ') VALUES(' . $this->collId . ',' . $sqlFragments['valuestr'] . ')';
 				try {
 					if($this->conn->query($sql)){
 						$this->transferCount++;
@@ -1948,16 +1943,15 @@ class SpecUploadBase extends SpecUpload{
 					else{
 						$sql = Encoding::fixUTF8($sql);
 						if(!$this->conn->query($sql)){
-							$this->outputMsg('<li>FAILED adding record #'.$this->transferCount.'</li>');
+							$this->outputMsg('<li>FAILED adding record #' . ($this->transferCount+1) . '</li>');
 							$this->outputMsg('<li style="margin-left:10px;">Error: '.$this->conn->error.'</li>');
-							$this->outputMsg('<li style="margin:0px 0px 10px 10px;">SQL: '.$sql.'</li>');
 						}
 					}
 				}
 				catch(mysqli_sql_exception $e){
-					$this->outputMsg('<li>FAILED adding record #' . $this->transferCount . ' Error: ' . $e->getMessage() . '</li>');
+					$this->outputMsg('<li>FAILED adding record #' . ($this->transferCount+1) . '</li>');
+					$this->outputMsg('<li style="margin-left:10px;">Error: ' . $e->getMessage() . '</li>');
 				}
-
 				if($this->uploadType == $this->FILEUPLOAD || $this->uploadType == $this->SKELETAL){
 					if(isset($recMap['othercatalognumbers']) && $recMap['othercatalognumbers']) {
 						$parsedCatalogNumbers = self::parseOtherCatalogNumbers($recMap['othercatalognumbers']);
@@ -2100,15 +2094,20 @@ class SpecUploadBase extends SpecUpload{
 			$msTermArr = $this->getMaterialSampleTerms();
 			$msArr = array();
 			foreach($msTermArr as $fieldName){
+				$fieldName = strtolower($fieldName);
 				if(isset($recMap[$fieldName])){
 					if($recMap[$fieldName] !== '') $msArr[substr($fieldName,15)] = $recMap[$fieldName];
 					unset($recMap[$fieldName]);
 				}
 			}
 			if($msArr){
-				$recMap['materialSampleJSON'] = json_encode($msArr);
-				if(json_last_error() !== JSON_ERROR_NONE){
-					throw new Exception("JSON encoding error: ".json_last_error_msg());
+				if($materialSampleJSON = json_encode($msArr)){
+					$recMap['materialSampleJSON'] = $materialSampleJSON;
+				}
+				else{
+					if(json_last_error() !== JSON_ERROR_NONE){
+						throw new Exception("JSON encoding error: ".json_last_error_msg());
+					}
 				}
 			}
 		}
@@ -2132,7 +2131,7 @@ class SpecUploadBase extends SpecUpload{
 				if(!isset($recMap['dateidentified'])) $recMap['dateidentified'] = '';
 				$sqlFragments = $this->getSqlFragments($recMap, $this->identFieldMap);
 				if($sqlFragments){
-					$sql = 'INSERT INTO uploaddetermtemp(collid'.$sqlFragments['fieldstr'].') VALUES('.$this->collId.$sqlFragments['valuestr'].')';
+					$sql = 'INSERT INTO uploaddetermtemp(`collid`,' . $sqlFragments['fieldstr'] . ') VALUES(' . $this->collId . ',' . $sqlFragments['valuestr'] . ')';
 					//echo '<div>SQL: '.$sql.'</div>'; exit;
 					if($this->conn->query($sql)){
 						$this->identTransferCount++;
@@ -2244,9 +2243,9 @@ class SpecUploadBase extends SpecUpload{
 					$recMap['sourceidentifier'] = $m[1];
 				}
 			}
-			$sqlFragments = $this->getSqlFragments($recMap,$this->imageFieldMap);
+			$sqlFragments = $this->getSqlFragments($recMap, $this->imageFieldMap);
 			if($sqlFragments){
-				$sql = 'INSERT INTO uploadimagetemp(collid'.$sqlFragments['fieldstr'].') VALUES('.$this->collId.$sqlFragments['valuestr'].')';
+				$sql = 'INSERT INTO uploadimagetemp(`collid`,' . $sqlFragments['fieldstr'] . ') VALUES(' . $this->collId . ',' . $sqlFragments['valuestr'] . ')';
 				if($this->conn->query($sql)){
 					$this->imageTransferCount++;
 					$repInt = 1000;
@@ -2264,11 +2263,11 @@ class SpecUploadBase extends SpecUpload{
 
 	private function getSqlFragments($recMap,$fieldMap){
 		$hasValue = false;
-		$sqlFields = '';
-		$sqlValues = '';
+		$sqlFields = array();
+		$sqlValues = array();
 		foreach($recMap as $symbField => $valueStr){
 			if(substr($symbField,0,8) != 'unmapped' && $symbField != 'collid'){
-				$sqlFields .= ','.$symbField;
+				$sqlFields[] = '`' . $symbField . '`';
 				$valueStr = $this->encodeString($valueStr);
 				$valueStr = $this->cleanInStr($valueStr ?? '');
 				$valueStr = $this->removeEmoji($valueStr);
@@ -2288,18 +2287,18 @@ class SpecUploadBase extends SpecUpload{
 					case "numeric":
 						if(is_numeric($valueStr)){
 							if($symbField == 'coordinateuncertaintyinmeters' && $valueStr < 0) $valueStr = abs($valueStr);
-							$sqlValues .= ",".$valueStr;
+							$sqlValues[] = $valueStr;
 						}
-						elseif(is_numeric(str_replace(',',"",$valueStr))){
-							$sqlValues .= ",".str_replace(',',"",$valueStr);
+						elseif(is_numeric(str_replace(',', '', $valueStr))){
+							$sqlValues[] = str_replace(',', '', $valueStr);
 						}
 						else{
-							$sqlValues .= ",NULL";
+							$sqlValues[] = 'NULL';
 						}
 						break;
 					case "decimal":
-						if(strpos($valueStr,',')){
-							$sqlValues = str_replace(',','',$valueStr);
+						if(strpos($valueStr, ',')){
+							$sqlValues[] = str_replace(',', '', $valueStr);
 						}
 						if($valueStr && $size && strpos($size,',') !== false){
 							$tok = explode(',',$size);
@@ -2328,19 +2327,19 @@ class SpecUploadBase extends SpecUpload{
 							}
 						}
 						if(is_numeric($valueStr)){
-							$sqlValues .= ",".$valueStr;
+							$sqlValues[] = $valueStr;
 						}
 						else{
-							$sqlValues .= ",NULL";
+							$sqlValues[] = 'NULL';
 						}
 						break;
 					case "date":
 						$dateStr = OccurrenceUtil::formatDate($valueStr);
 						if($dateStr){
-							$sqlValues .= ',"'.$dateStr.'"';
+							$sqlValues[] = '"' . $dateStr . '"';
 						}
 						else{
-							$sqlValues .= ",NULL";
+							$sqlValues[] = 'NULL';
 						}
 						break;
 					default:	//string
@@ -2351,19 +2350,19 @@ class SpecUploadBase extends SpecUpload{
 							$valueStr = rtrim($valueStr,"\\");
 						}
 						if($valueStr){
-							$sqlValues .= ',"'.$valueStr.'"';
+							$sqlValues[] = '"' . $valueStr . '"';
 						}
 						elseif($symbField == 'identifiedby' || $symbField == 'dateidentified'){
-							$sqlValues .= ',""';
+							$sqlValues[] = '""';
 						}
 						else{
-							$sqlValues .= ",NULL";
+							$sqlValues[] = 'NULL';
 						}
 				}
 			}
 		}
 		if(!$hasValue) return false;
-		return array('fieldstr' => $sqlFields,'valuestr' => $sqlValues);
+		return array('fieldstr' => implode(',', $sqlFields), 'valuestr' => implode(',', $sqlValues));
 	}
 
 	public function getTransferCount(){

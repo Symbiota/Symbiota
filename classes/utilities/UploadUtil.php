@@ -38,6 +38,15 @@ class UploadUtil {
 		'audio/mp3' => 'audio/mpeg'
 	];
 
+	const ALLOWED_TEXT_PLAIN_EQUAL = [
+		'text/csv'
+	];
+
+	public static function canBePlainText(string $mime): ?string {
+		$pos = array_search($mime, self::ALLOWED_TEXT_PLAIN_EQUAL);
+		return self::ALLOWED_TEXT_PLAIN_EQUAL[$pos] ?? null;
+	}
+
 	/**
 	 * Gets temporary file storage path for portal.
 	 *
@@ -72,14 +81,18 @@ class UploadUtil {
 			$allowed_mimes = self::ALLOWED_IMAGE_MIMES;
 		}
 
-		if(!in_array($uploaded_file['type'], $allowed_mimes)) {
+		if(!self::mimeAllowed($uploaded_file['type'], $allowed_mimes)) {
 			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $uploaded_file['type']);
 		}
 
 		$type_guess = mime_content_type($uploaded_file['tmp_name']);
-;
+
 		if(!self::mimesEqual($type_guess, $uploaded_file['type'])) {
-			throw new MediaException(MediaException::SuspiciousFile);
+			if($type_guess === 'text/plain' && ($text_mime = self::canBePlainText($uploaded_file['type']))) {
+				$type_guess = $text_mime;
+			} else {
+				throw new MediaException(MediaException::SuspiciousFile);
+			}
 		}
 
 		$guess_ext = self::mime2ext($type_guess);
@@ -109,13 +122,34 @@ class UploadUtil {
 	}
 
 	/**
-	 * undocumented function summary
+	  * This function returns the maximum post size in PHP
+	  *
+	  * Reads ini variables post_max_size as int
+	  * @returns int File size in bytes
+	  **/
+	public static function getMaximumPostSize(): int {
+		return self::size2Bytes(ini_get('post_max_size'));
+	}
+
+	/**
+	  * This function returns the maximum upload file size in PHP
+	  *
+	  * Reads ini variables upload_max_filesize as int
+	  * @returns int File size in bytes
+	  **/
+	public static function getMaximumUploadSize(): int {
+		return self::size2Bytes(ini_get('upload_max_filesize'));
+	}
+
+	public static function isPostTooLarge(): bool {
+		$contentLength = $_SERVER['CONTENT_LENGTH'] ?? 0;
+		return $contentLength > 0 && $contentLength > self::getMaximumPostSize();
+	}
+	/**
+	 * Converts human readable sizes to bytes
 	 *
-	 * Undocumented function long description
-	 *
-	 * @param Type $var Description
-	 * @return type
-	 * @throws conditon
+	 * @param string $size Size string you wish to convert
+	 * @return int
 	 **/
 	public static function size2Bytes(string $size):int {
 		// Remove the non-unit characters from the size.
@@ -131,6 +165,55 @@ class UploadUtil {
 		}
 	}
 
+	/**
+	 * Converts bytes to human readable sizes
+	 *
+	 * @param string $bytes Size int you wish to convert
+	 * @return string
+	 **/
+	public static function formatBytes(int $bytes): string {
+		if ($bytes >= 1024 ** 3) {
+			return round($bytes / 1024 ** 3, 1) . ' GB';
+		} elseif ($bytes >= 1024 ** 2) {
+			return round($bytes / 1024 ** 2, 1) . ' MB';
+		} elseif ($bytes >= 1024) {
+			return round($bytes / 1024, 1) . ' KB';
+		}
+		return $bytes;
+	}
+
+		/**
+	 * Utility function to validate PHP file upload error codes 
+	 * and throw a MediaException message
+	 *
+	 * @param array $file The uploaded file
+	 * @throws MediaException If the upload failed for any reason
+	 */
+	public static function validateFileError(array $file): void {
+		if (!isset($file['error']) || $file['error'] === UPLOAD_ERR_OK)
+			return;
+
+		switch ($file['error']) {
+			case UPLOAD_ERR_INI_SIZE:
+			case UPLOAD_ERR_FORM_SIZE:
+				$maxSize = self::formatBytes(min(self::getMaximumUploadSize(),$_POST['MAX_FILE_SIZE']));
+				if ($_POST['file_size']){
+					global $LANG;
+					$fileSize = self::formatBytes($_POST['file_size']);
+					$message = $LANG["FILE_SIZE"] . " " . $fileSize . ", " . $LANG["EXCEEDS"] . " " . $maxSize . ".";
+					throw new Exception($message);
+				}
+				throw new MediaException(MediaException::ExceedMaxSize, $maxSize);
+			case UPLOAD_ERR_PARTIAL:
+				throw new MediaException(MediaException::PartialUpload);
+			case UPLOAD_ERR_NO_TMP_DIR:
+				throw new MediaException(MediaException::MissingTempDir);
+			case UPLOAD_ERR_CANT_WRITE:
+				throw new MediaException(MediaException::FilepathNotWritable);
+			case UPLOAD_ERR_EXTENSION:
+				throw new MediaException(MediaException::UploadStoppedByExtension);
+		}
+	}
 	/**
 	 * Utility function to parse out useful information when uploading and processing files.
 	 *
@@ -197,7 +280,7 @@ class UploadUtil {
 		// Sanity Check files extension and claimed type before uploading
 		// This does not guarantee the file is safe but weeds out simple
 		// malicous file upload attempts. Actual file should also be checked after download.
-		if(!in_array($info['type'], $allowed_mimes)) {
+		if(!self::mimeAllowed($info['type'], $allowed_mimes)) {
 			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $info['type']);
 		} else if(self::mime2ext($info['type']) !== $info['extension']) {
 			throw new MediaException(MediaException::SuspiciousFile);
@@ -205,7 +288,8 @@ class UploadUtil {
 
 		$availableMemory = self::getMaximumFileUploadSize() - memory_get_usage();
 		if($availableMemory < intval($info['size'])) {
-			throw new Exception('Error: File is to large to upload');
+			$maxSize = self::formatBytes(self::getMaximumFileUploadSize());
+			throw new MediaException(MediaException::ExceedMaxSize, $maxSize);
 		}
 
 		$tempPath = self::getTempDir() . $info['name'];
@@ -277,10 +361,7 @@ class UploadUtil {
 		}
 
 		$parsed_file['name'] = Media::cleanFileName($parsed_file['name']);
-
-		if(!$parsed_file['extension'] && $file_type_mime) {
-			$parsed_file['extension'] = self::mime2ext($file_type_mime);
-		}
+		$parsed_file['extension'] = self::mime2ext($file_type_mime);
 
 		return [
 			'name' => $parsed_file['name'] . ($parsed_file['extension'] ? '.' .$parsed_file['extension']: ''),
@@ -312,6 +393,25 @@ class UploadUtil {
 			Media::ext2Mime($extensionA) === Media::ext2Mime($extensionB);
 	}
 
+	/**
+	 * @param string $mime
+	 * @param array $allowed_mimes
+	 * @return bool
+	 */
+	public static function mimeAllowed(string $mime, array $allowed_mimes): bool {
+		foreach($allowed_mimes as $allowed_mime) {
+			if(self::mimesEqual($mime, $allowed_mime)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param string $mimeA
+	 * @param string $mimeB
+	 * @return bool
+	 */
 	public static function mimesEqual(string $mimeA, string $mimeB): bool {
 		$mimeA = strtolower($mimeA);
 		$mimeB = strtolower($mimeB);
@@ -319,11 +419,17 @@ class UploadUtil {
 		return self::mime2ext($mimeA) === self::mime2ext($mimeB);
 	}
 
+	private static function stripCharset(string $mime): string {
+		$parts = explode(';', $mime);
+		return trim($parts[0]);
+	}
+
 	/**
 	 * @param string $mime
 	 * @return string | bool
 	 */
 	public static function mime2ext(string $mime) {
+		$mime = self::stripCharset($mime);
 		$mime_map = [
 			'video/3gpp2' => '3g2',
 			'video/3gp'=> '3gp',

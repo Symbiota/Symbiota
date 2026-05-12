@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 //include_once($SERVER_ROOT.'/classes/DynamicChecklistManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
@@ -240,7 +240,7 @@ if(!$zoomInt){
       data-latCen="<?=htmlspecialchars($latCen) ?>"
       data-lngCen="<?=htmlspecialchars($longCen) ?>"
       data-mapZoom="<?=htmlspecialchars($zoomInt) ?>"
-   />
+   ></div>
 	<?php
 		$displayLeftMenu = false;
 		include($SERVER_ROOT.'/includes/header.php');

@@ -50,6 +50,9 @@ $LANG['LOOKUPEXT'] = 'Recuperar información de vouchers externos';
 $LANG['SAVEEXTVOUCH'] = 'Guardar vouchers externos en la lista';
 $LANG['EMPTY_LIST'] = 'La lista está vacía';
 $LANG['REPORTS'] = 'Reportes';
+
+// nonvoucheredtab.php
+
 $LANG['NONVOUCHTAX'] = 'Listado de Taxa sin vouchers';
 $LANG['OCCURNONVOUCH'] = 'Ocurrencias para taxa sin vouchers';
 $LANG['NEWOCCUR'] = 'Ocurrencias nuevas para todos los taxa';
@@ -62,18 +65,17 @@ $LANG['ADDNAMECURRTAX'] = ' Agregar nombre utilizando la taxonomía actual';
 $LANG['ADD_VOUCHERS'] = 'Agregar Vales';
 $LANG['NOVOUCHLOCA'] = 'No se localizaron vouchers';
 $LANG['LISTEDBELOWARESPECINSTRUC'] = 'A continuación se enumeran las especies de la lista de control que no han sido vinculadas a espécimenes voucher.
-Haga clic en el nombre para utilizar la instrucción de búsqueda de arriba para consultar de forma dinámica el conjunto de datos de ocurrencia de
-especímenes voucher posibles. Utilice la lista desplegable a la derecha para mostrar los especímenes en un formato de tabla.';
+	Haga clic en el nombre para utilizar la instrucción de búsqueda de arriba para consultar de forma dinámica el conjunto de datos de ocurrencia de
+	especímenes voucher posibles. Utilice la lista desplegable a la derecha para mostrar los especímenes en un formato de tabla.';
 $LANG['LISTEDBELOWEXTERNAL'] = "A continuación se enumeran las especies de la lista. Usando las funciones de búsqueda del sitio web externo, localice una observación que le sirva como posible comprobante para cada taxón. Copie el ID de la observación (por ejemplo, de la última parte de la URL) y péguelo en el cuadro de texto correspondiente. Se pueden agregar múltiples comprobantes para cada taxón. Utilice comas para separar los números de identificación. Symbiota buscará en el servicio externo posibles coincidencias, estas aparecerán como cuadros de texto blancos y el nombre de la especie se vinculará con el servicio externo. Haga clic en 'Recuperar información de vouchers externos' para cargar los datos del voucher para cada especie. Cuando esté listo, haga clic en 'Guardar vouchers externos en la lista' para enviar la información de los vouchers a Symbiota.";
 $LANG['ALLTAXACONTAINVOUCH'] = 'Todos los taxones contienen enlaces a vouchers';
 $LANG['ADDITIONAL'] = 'Consulte el Panel de opciones en la página central para obtener opciones adicionales de exportación e impresión que incorporan dinámicamente selecciones de opciones.';
-$LANG['FULLSPECLIST'] = 'Listado de especies completo (CSV)';
-$LANG['FULLSPECLISTVOUCHER'] = 'Listado de especies completo con vouchers vinculados (CSV)';
-$LANG['VOUCHERONLY'] = 'Vouchers vinculados solomente (DwC-A, CSV, Tab-delimited)';
-$LANG['FULLSPECLISTALLOCCUR'] = 'Listado de especies completo con todos ocurrencias (CSV)';
+$LANG['FULLSPECLIST'] = 'Descargar el listado de especies completo (CSV)';
+$LANG['FULLSPECLISTVOUCHER'] = 'Descargar el listado de especies completo con vouchers vinculados (CSV)';
+$LANG['VOUCHERONLY'] = 'Descargar les vouchers vinculados solomente (DwC-A, CSV, Tab-delimited)';
+$LANG['LISTALLVOUCHERS'] = 'Listar todos los vales vinculados';
+$LANG['FULLSPECLISTALLOCCUR'] = 'Listar las coincidencias con los términos de búsqueda';
 $LANG['PENSOFT_XLSX_EXPORT'] = 'Listado de especies en el formato del Pensoft';
-$LANG['SPECMISSTAXA'] = 'Especímenes de taxa faltantes del listado de Comprobación (CSV)';
-$LANG['SPECMISSPELLED'] = 'Especímenes con nombres científicos mal escritos, ilegales, y problemáticos (CSV)';
 $LANG['CHECKIDNOTSET'] = 'Identificador de listado de Comprobación no establecido';
 $LANG['NOADMINPERM'] = 'Usted no tiene permiso administrativo para esta lista de Comprobación';
 $LANG['DELETEVARIABLES'] = 'Eliminar Variables de Consulta';

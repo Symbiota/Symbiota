@@ -243,9 +243,13 @@ function listGeoUnits($arr) {
 				</autocomplete-input>
 				<button type="button" style="margin:0.5rem 2rem" onclick="navigateGeothesaursSearch()"><?=$LANG["SEARCH"]?></button>
 			</fieldset>
+
+			<?php if($isEditor): ?>
 			<div>
 				<a href="harvester.php"><?= $LANG['GOTO_HARVESTER']?></a>
 			</div>
+			<?php endif ?>
+
 			<?php
 			if($statusStr){
 				echo '<div id="status-div">'.$statusStr.'</div>';
@@ -361,9 +365,11 @@ function listGeoUnits($arr) {
 					<form id="unitEditForm" name="unitEditForm" action="index.php<?= $geoThesID? '?geoThesID=' . $geoThesID: '' ?>" method="post">
 						<fieldset id="edit-fieldset">
 							<legend><span id="edit-legend"><?= $LANG['EDIT'] ?></span> <?= $LANG['GEO_UNIT'] ?> </legend>
+							<?php if($isEditor): ?>
 							<div style="float:right">
 								<span class="editIcon" title="<?= $LANG['EDIT_TERM'] ?>"><a href="#" onclick="toggleEditor()"><img class="editimg" src="../images/edit.png" alt="<?= $LANG['EDIT']; ?>"></a></span>
 							</div>
+							<?php endif ?>
 							<div class="field-div">
 								<label> <?= $LANG['GEO_UNIT_NAME'] ?></label>:
 								<span class="editTerm"><?= $geoUnit['geoTerm']; ?></span>
@@ -532,12 +538,16 @@ function listGeoUnits($arr) {
 			}
 
 			if(!empty($childrenTitleStr) && empty($geoUnit['acceptedTerm'])):?>
+
+			<?php if($isEditor): ?>
 			<div style="font-size:1.3em;margin: 10px 0px">
 				<?= $childrenTitleStr ?>
 				<span class="editIcon" title="<?= $LANG['ADD_TERM_LIST'] ?>">
 					<a href="#" onclick="toggle('#addGeoUnit-div');"><img class="editimg" src="../images/add.png" alt="<?= $LANG['EDIT'] ?>" /></a>
 				</span>
-			</div >
+			</div>
+			<?php endif ?>
+			
 			<div style="margin: 10px">
 				<?php
 				if($geoArr){

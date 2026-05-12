@@ -498,18 +498,14 @@ class TaxonProfile extends Manager {
 
 		$options = [
 			"http" => [
-				"header" => "User-Agent: Symbiota (" . $GLOBALS['SERVER_HOST'] . $GLOBALS['CLIENT_ROOT'] . ")\r\n"
+				"header" => "User-Agent: Symbiota (" . $GLOBALS['SERVER_HOST'] . $GLOBALS['CLIENT_ROOT'] . ")\r\n",
+				"ignore_errors" => true,
+				"timeout" => 5
 			]
 		];
 		$this->header = stream_context_create($options);
-		$response = @file_get_contents($url, false, $this->header);
-		if (!$response) {
-			error_log("Wikipedia API request failed: " . $url);
-			return null;
-		}
-		$data = json_decode($response, true);
+		$data = $this->getWikipediaApiData($url);
 		if (empty($data['parse']['sections'])) {
-			error_log("Wikipedia sections not found for: " . $sciName);
 			return null;
 		}
 
@@ -519,15 +515,13 @@ class TaxonProfile extends Manager {
 		//total char limit
 		$maxLength = 2000;
 
-		$summaryUrl = "https://en.wikipedia.org/w/api.php?action=query&redirects=1&format=json&prop=extracts&titles={$formattedName}&exintro=true&explaintext=true";
-		$summaryResponse = @file_get_contents($summaryUrl, false, $this->header);
-		if (!$summaryResponse) {
-			error_log("Wikipedia summary request failed: " . $summaryUrl);
+		$summaryUrl = "https://en.wikipedia.org/w/api.php?action=query&redirects=1&format=json&prop=extracts|pageprops&titles={$formattedName}&exintro=true&explaintext=true";
+		$summaryData = $this->getWikipediaApiData($summaryUrl);
+		$page = (!empty($summaryData['query']['pages']) ? reset($summaryData['query']['pages']) : []);
+		if (is_array($page) && !empty($page['pageprops']['disambiguation'])) {
 			return null;
 		}
-		$summaryData = json_decode($summaryResponse, true);
-		$page = reset($summaryData['query']['pages']);
-		$summary = $page['extract'] ?? '';
+		$summary = (is_array($page) && !empty($page['extract']) ? $page['extract'] : '');
 
 		if ($summary) {
 			$totalCharCount += strlen($summary);
@@ -577,20 +571,24 @@ class TaxonProfile extends Manager {
 
 	private function getSectionContent($page, $section) {
 		$url = "https://en.wikipedia.org/w/api.php?action=parse&page={$page}&redirects=1&format=json&prop=text&section={$section}";
-		$response = @file_get_contents($url, false, $this->header);
-		if (!$response) {
-			error_log("Wikipedia section request failed: " . $url);
-			return '';
-		}
-		$data = json_decode($response, true);
+		$data = $this->getWikipediaApiData($url);
 		if (empty($data['parse']['text']['*'])) {
-			error_log("Wikipedia returned empty section content for: " . $page . " (Section: " . $section . ")");
 			return '';
 		}
 
 		$cleanText = $this->cleanWikipediaText($data['parse']['text']['*']);
 
 		return $cleanText;
+	}
+
+	private function getWikipediaApiData($url) {
+		$response = @file_get_contents($url, false, $this->header);
+		if (!$response) return null;
+
+		$data = json_decode($response, true);
+		if (!is_array($data) || !empty($data['error'])) return null;
+
+		return $data;
 	}
 
 	private function cleanWikipediaText($html) {

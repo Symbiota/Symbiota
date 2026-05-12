@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceMapManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/MappingUtil.php');
@@ -26,6 +26,11 @@ $submitForm = array_key_exists('submitform', $_REQUEST) ? $_REQUEST['submitform'
 
 $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 $topVal = $shouldUseMinimalMapHeader ? '6rem' : '0';
+$comingFrom =  (array_key_exists('comingFrom', $_REQUEST) ? $_REQUEST['comingFrom'] : '');
+if ($comingFrom != 'harvestparams' && $comingFrom != 'newsearch') {
+	//If not set via a valid input variable, use setting set within symbini
+	$comingFrom = !empty($SHOULD_USE_HARVESTPARAMS) ? 'harvestparams' : 'newsearch';
+}
 
 if(!$catId && isset($DEFAULTCATID) && $DEFAULTCATID) $catId = $DEFAULTCATID;
 
@@ -94,7 +99,7 @@ $serverHost = GeneralUtil::getDomain();
 		<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 		<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 		<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />
-		<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.list.js?ver=20251002>" type="text/javascript"></script>
+		<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.list.js?ver=20251003>" type="text/javascript"></script>
 		<script src="<?= $CLIENT_ROOT ?>/js/alerts.js?v=202107" type="text/javascript"></script>
 		<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=2" type="text/javascript"></script>
 		<link href="../../css/jquery.symbiota.css" type="text/css" rel="stylesheet" />
@@ -116,7 +121,6 @@ $serverHost = GeneralUtil::getDomain();
 		<script src="../../js/symb/wktpolygontools.js" type="text/javascript"></script>
 		<script src="../../js/symb/MapShapeHelper.js" type="text/javascript"></script>
 		<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
-		<script src="../../js/symb/collections.list.js?ver=2" type="text/javascript"></script>
 
 		<style type="text/css">
 		.ui-front {
@@ -606,7 +610,7 @@ $serverHost = GeneralUtil::getDomain();
 			let map = new LeafletMap('map', {
 				lang: "<?= $LANG_TAG ?>",
 				default_bounds: [],
-			}, 
+			},
 				JSON.parse(`<?= json_encode($GEO_JSON_LAYERS ?? []) ?>`)
 			);
 
@@ -2110,6 +2114,14 @@ $serverHost = GeneralUtil::getDomain();
 		<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
 	</head>
 	<body style='width:100%;max-width:100%;min-width:500px;' <?php echo (!$activateGeolocation?'onload="initialize();"':''); ?>>
+	<div>
+		<button id="search-panel-button" onclick="document.getElementById('defaultpanel').style.width='29rem'; document.getElementById('search-panel-button').style.display='none';" style="position:absolute;top:0;left:0;margin:0px;z-index:10; gap: 0.2rem<?= $menuClosed ? '' : '; display:none'?>">
+			<span style="padding-bottom:0.2rem">
+				&#9776;
+			</span>
+			<b><?= $LANG['OPEN_SEARCH_PANEL'] ?></b>
+		</button>
+	</div>
 	<div style="width:100%; max-width:max-content;" role="main" id="innertext" class="inntertext-tab pin-things-here inner-search">
 		<div style="z-index:999;" id="error-msgs" class="errors"></div>
 		<?php
@@ -2128,14 +2140,6 @@ $serverHost = GeneralUtil::getDomain();
 			data-external-portal-hosts="<?=htmlspecialchars(json_encode($EXTERNAL_PORTAL_HOSTS))?>"
 			class="service-container"
 		>
-		</div>
-		<div>
-			<button id="search-panel-button" onclick="document.getElementById('defaultpanel').style.width='29rem'; document.getElementById('search-panel-button').style.display='none';" style="position:absolute;top:0;left:0;margin:0px;z-index:10; gap: 0.2rem<?= $menuClosed ? '' : '; display:none'?>">
-				<span style="padding-bottom:0.2rem">
-					&#9776;
-				</span>
-				<b><?= $LANG['OPEN_SEARCH_PANEL'] ?></b>
-			</button>
 		</div>
 		<div id='map' style='width:100vw;height:100vh;z-index:1'></div>
 		<div id="defaultpanel" class="sidepanel"  <?= $menuClosed ? 'style="width: 0"': ''?>>
@@ -2224,7 +2228,7 @@ $serverHost = GeneralUtil::getDomain();
 									<div style="margin:5 0 5 0;"><hr /></div>
 
 									<?php if(!empty($ENABLE_CROSS_PORTAL)): ?>
-									<?php include('./portalSelector.php')?>
+									<?php include(__DIR__ . '/portalSelector.php')?>
 									<div style="margin:5 0 5 0;"><hr /></div>
 									<?php endif ?>
 									<?php
@@ -2541,7 +2545,7 @@ $serverHost = GeneralUtil::getDomain();
 										<input name="searchvar" type="hidden" value="<?= $searchVar ?> " />
 									</form>
 
-									<button style="width: auto;" class="icon-button" onclick="copyUrl('<?= $serverHost . $CLIENT_ROOT ?>')" title="<?= $LANG['COPY_TO_CLIPBOARD'] ?>">
+									<button style="width: auto;" class="icon-button" onclick="copyUrl('<?= $comingFrom ?>')" title="<?= $LANG['COPY_TO_CLIPBOARD'] ?>">
 										<svg alt="Copy as a link." style="width:1.2em;" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg>
 									</button>
 								</div>

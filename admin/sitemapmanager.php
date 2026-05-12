@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SitemapXMLManager.php');
 
 $sitemapManager = new SitemapXMLManager();
@@ -22,6 +22,7 @@ if (file_exists($sitemapPath)) {
 ?>
 
 <!DOCTYPE html>
+<html lang="<?= $LANG_TAG ?>">
 <head>
     <meta charset="UTF-8">
     <?php
