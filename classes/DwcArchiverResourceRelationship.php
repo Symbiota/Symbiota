@@ -142,6 +142,16 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 				WHERE (e.omExportID = ?) ';
 		}
 	}
+
+	private function setSqlSpecimenDuplicates(){
+		$this->sqlArr[] = 'SELECT s.occid, l.occid as occidAssociate
+			FROM omexportoccurrences x INNER JOIN omoccurduplicatelink s ON x.occid = s.occid
+			INNER JOIN omoccurduplicates d ON s.duplicateid = d.duplicateid
+			INNER JOIN omoccurduplicatelink l ON d.duplicateid = l.duplicateid
+			WHERE (x.omExportID = ?) AND s.occid != l.occid ';
+	}
+
+
 }
 
 ?>

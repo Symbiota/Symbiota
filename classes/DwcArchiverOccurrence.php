@@ -689,23 +689,6 @@ class DwcArchiverOccurrence extends Manager{
 		}
 	}
 
-	private function appendSpecimenDuplicateAssociations($occid, &$assocArr, &$internalAssocOccidArr){
-		$sql = 'SELECT s.occid, l.occid as occidAssociate
-			FROM omoccurduplicatelink s INNER JOIN omoccurduplicates d ON s.duplicateid = d.duplicateid
-			INNER JOIN omoccurduplicatelink l ON d.duplicateid = l.duplicateid
-			WHERE s.occid IN('.$occid.') AND s.occid != l.occid ';
-		$rs = $this->conn->query($sql);
-		if($rs){
-			while($r = $rs->fetch_object()){
-				$assocKey = 'sd-'.$r->occidAssociate;
-				$assocArr[$assocKey]['occidassoc'] = $r->occidAssociate;
-				$assocArr[$assocKey]['relationship'] = 'herbariumSpecimenDuplicate';
-				$internalAssocOccidArr[$r->occidAssociate][] = $assocKey;
-			}
-			$rs->free();
-		}
-	}
-
 	//Append Taxonomic data
 	public function setTaxonomy(){
 		$this->setUpperTaxonomy();
