@@ -86,6 +86,28 @@ class OccurrenceCollectionProfile extends OmCollections{
 		return $retArr;
 	}
 
+	public function getDwcaPubDate(int $collid): string {
+		$pubDate = '';
+		if($collid){
+			$rssFile = $GLOBALS['SERVER_ROOT'].'/content/dwca/rss.xml';
+			if(file_exists($rssFile)){
+				try{
+					$xmlDoc = new DOMDocument();
+					$xmlDoc->load($rssFile);
+					$xpath = new DOMXPath($xmlDoc);
+
+					$query = '//item[@collid="' . intval($collid) . '"]/pubDate';
+					if($pubDateNode = $xpath->query($query)->item(0)){
+						$pubDate = $pubDateNode->nodeValue;
+					}
+				}
+				catch(Exception $e){
+				}
+			}
+		}
+		return $pubDate;
+	}
+
 	//Publishing functions
 	public function batchTriggerGBIFCrawl($collIdArr){
 		$sql = 'SELECT collid, collectionname, publishToGbif, dwcaUrl, aggKeysStr FROM omcollections WHERE CollID IN('.implode(',',$collIdArr).') ';

@@ -113,7 +113,7 @@ if ($SYMB_UID) {
 			}
 		}
 
-		document.addEventListener('DOMContentLoaded', () => {			
+		document.addEventListener('DOMContentLoaded', () => {
 			document.querySelectorAll('.accordion-header').forEach(accordionHeader => {
 				accordionHeader.addEventListener('keydown', (e) => {
 					if (e.key === 'Enter' || e.key === ' ') {
@@ -869,7 +869,7 @@ if ($SYMB_UID) {
 						if($collData['dwcaurl']){
 							?>
 							<div class="bottom-breathing-room-rel">
-							<a href="<?= $collData['dwcaurl'] ?>"><?= $LANG['DWCA_PUB'] ?></a>
+								<a href="<?= $collData['dwcaurl'] ?>"><?= $LANG['DWCA_PUB'] ?></a> <span>(<?= $LANG['LAST_UPDATED'] . ' ' . $collManager->getDwcaPubDate($collid); ?>)</span>
 							</div>
 							<?php
 						}
@@ -880,7 +880,6 @@ if ($SYMB_UID) {
 						</div>
 						<?php
 						if($collData['managementtype'] == 'Live Data'){
-							/*  In abundance of cautions, temporarily removing access of this option, with potential full removal in future
 							if($GLOBALS['SYMB_UID']){
 								?>
 								<div class="bottom-breathing-room-rel">
@@ -889,7 +888,6 @@ if ($SYMB_UID) {
 								</div>
 								<?php
 							}
-							*/
 						}
 						elseif($collData['managementtype'] == 'Snapshot'){
 							if($pathArr = $collManager->getDwcaPath($collid)){

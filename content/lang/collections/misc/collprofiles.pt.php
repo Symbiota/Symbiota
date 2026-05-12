@@ -7,7 +7,7 @@ Translated by: Google Translate (2024-09-16)
 */
 
 include_once($SERVER_ROOT.'/content/lang/collections/misc/sharedterms.pt.php');
-
+$LANG['COLLEC_PROFILE'] = 'Perfil de Colección para';
 $LANG['RSS_FEED'] = 'Feed RSS';
 $LANG['CONTACT'] = 'Contatos';
 $LANG['HOMEPAGE'] = 'Página inicial';
@@ -65,7 +65,7 @@ $LANG['DATA_AGGREGATE'] = 'Dados coletados de um agregador de dados';
 $LANG['DATA_SNAPSHOT'] = 'Instantâneo de dados do banco de dados de coleção local';
 $LANG['LAST_UPDATE'] = 'Última Carga';
 $LANG['GLOBAL_UNIQUE_ID'] = 'Identificador Único Global';
-$LANG['DWCA_PUB'] = 'Ponto de acesso DwC-Archive';
+$LANG['DWCA_PUB'] = 'Download de Dados do Arquivo DwC';
 $LANG['LIVE_DOWNLOAD'] = 'Download de dados ao vivo';
 $LANG['FULL_DATA'] = 'Arquivo de arquivo DwC';
 $LANG['IPT_SOURCE'] = 'Fonte IPT/DwC-A';
