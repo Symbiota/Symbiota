@@ -679,7 +679,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 
 	private function canUseGeographicPolygonIndex($polygonIDs){
 		$polygonIndex = new OccurrencePolygonIndex($this->conn);
-		return $polygonIndex->areGeographicPolygonsReady($polygonIDs);
+		return $polygonIndex->isPolygonReady($polygonIDs);
 	}
 
 	private function getAdditionIdentifiers($identFrag){

@@ -13,7 +13,7 @@ class OccurrencePolygonIndex {
 	public function getErrorMessage(){
 		return $this->errorMessage;
 	}
-
+	//sanitize id array
 	public static function sanitizePolygonIds($polygonIDs){
 		if(!is_array($polygonIDs)) $polygonIDs = [$polygonIDs];
 		$idArr = array();
@@ -23,7 +23,7 @@ class OccurrencePolygonIndex {
 		return array_values(array_unique(array_filter($idArr)));
 	}
 
-	public function areGeographicPolygonsReady($polygonIDs){
+	public function isPolygonReady($polygonIDs){
 		$polygonIDs = self::sanitizePolygonIds($polygonIDs);
 		if(!$polygonIDs) return false;
 
@@ -64,10 +64,7 @@ class OccurrencePolygonIndex {
 	public function deleteGeographicPolygonIndex($geoThesID){
 		if(!is_numeric($geoThesID)) return false;
 		try {
-			QueryUtil::executeQuery($this->conn,
-				'DELETE FROM occurrencepolygonindex WHERE geoThesID = ?',
-				[(int)$geoThesID]
-			);
+			$this->deleteGeographicPolygonIndexInBatches((int)$geoThesID);
 			return true;
 		}
 		catch(Throwable $e){
@@ -76,61 +73,68 @@ class OccurrencePolygonIndex {
 		}
 	}
 
-	public function rebuildGeographicPolygonIndex($geoThesID){
+	public function rebuildGeographicPolygonIndex($geoThesID, $batchSize = 50000){
 		if(!is_numeric($geoThesID)) return false;
 		$geoThesID = (int)$geoThesID;
+		$batchSize = (int)$batchSize;
+		if($batchSize < 1) $batchSize = 50000;
+		$lockName = 'occurrencepolygonindex:'.$geoThesID;
+		$stage = 'acquiring polygon index lock';
+		$buildTimestamp = date('Y-m-d H:i:s');
 
 		try {
-			QueryUtil::executeQuery($this->conn,
-				'UPDATE geographicpolygon '.
-				'SET polygonIndexStatus = "building", polygonIndexedAt = NULL, polygonIndexRecordCount = NULL, polygonIndexError = NULL '.
-				'WHERE geoThesID = ?',
-				[$geoThesID]
-			);
+			$rs = QueryUtil::executeQuery($this->conn, 'SELECT GET_LOCK(?, 0) AS lockAcquired', [$lockName]);
+			$row = $rs ? $rs->fetch_object() : null;
+			if($rs) $rs->free();
+			if(!$row || (int)$row->lockAcquired !== 1){
+				$this->errorMessage = 'Polygon index is already building for geoThesID: '.$geoThesID;
+				return false;
+			}
 
-			$this->deleteGeographicPolygonIndex($geoThesID);
+			$lastOccid = 0;
+			while($pointBatch = $this->getNextOccurrencePointBatch($lastOccid, $batchSize)){
+				$stage = 'building polygon index rows for occurrence points '.$pointBatch['startOccid'].'-'.$pointBatch['endOccid'];
+				$this->insertGeographicPolygonIndexBatch($geoThesID, $pointBatch['startOccid'], $pointBatch['endOccid'], $buildTimestamp);
+				$lastOccid = $pointBatch['endOccid'];
+			}
 
-			QueryUtil::executeQuery($this->conn,
-				'INSERT IGNORE INTO occurrencepolygonindex(geoThesID, occid, indexedAt) '.
-				'SELECT gp.geoThesID, p.occid, NOW() '.
-				'FROM geographicpolygon gp '.
-				'INNER JOIN geographicthesaurus gth ON gp.geoThesID = gth.geoThesID '.
-				'INNER JOIN omoccurpoints p ON TRUE '.
-				'WHERE gp.geoThesID = ? '.
-				'AND gth.isSearchable = 1 '.
-				'AND MBRContains(gp.footprintPolygon, p.lngLatPoint) '.
-				'AND ST_Contains(gp.footprintPolygon, p.lngLatPoint)',
-				[$geoThesID]
-			);
+			$stage = 'removing stale polygon index rows';
+			$this->deleteStaleGeographicPolygonIndexRows($geoThesID, $buildTimestamp, $batchSize);
+			$indexedCnt = $this->getGeographicPolygonIndexCount($geoThesID);
 
-			//example for quicker count:
-			$count = $this->getGeographicPolygonIndexCount($geoThesID);
-
+			$stage = 'marking polygon index as ready';
 			QueryUtil::executeQuery($this->conn,
 				'UPDATE geographicpolygon '.
 				'SET polygonIndexStatus = "ready", polygonIndexedAt = NOW(), polygonIndexRecordCount = ?, polygonIndexError = NULL '.
 				'WHERE geoThesID = ?',
-				[$count, $geoThesID]
+				[$indexedCnt, $geoThesID]
 			);
+			$this->releasePolygonIndexLock($lockName);
 			return true;
 		}
 		catch(Throwable $e){
-			$this->errorMessage = $e->getMessage();
-			$error = substr($this->errorMessage, 0, 255);
-			try {
-				QueryUtil::executeQuery($this->conn,
-					'UPDATE geographicpolygon SET polygonIndexStatus = "failed", polygonIndexError = ? WHERE geoThesID = ?',
-					[$error, $geoThesID]
-				);
+			$this->errorMessage = $stage.': '.$e->getMessage();
+			if($stage !== 'marking polygon index as ready'){
+				$error = substr($this->errorMessage, 0, 255);
+				try {
+					QueryUtil::executeQuery($this->conn,
+						'UPDATE geographicpolygon SET polygonIndexStatus = "failed", polygonIndexError = ? WHERE geoThesID = ?',
+						[$error, $geoThesID]
+					);
+				}
+				catch(Throwable $ignored){
+				}
 			}
-			catch(Throwable $ignored){
-			}
+			$this->releasePolygonIndexLock($lockName);
 			return false;
 		}
 	}
 
-	public function rebuildPendingGeographicPolygonIndexes($limit = 10){
-		$limit = is_numeric($limit) ? max(1, (int)$limit) : 10;
+	public function rebuildPendingGeographicPolygonIndexes($limit = 10, $batchSize = 50000){
+		$limit = (int)$limit;
+		if($limit < 1) $limit = 10;
+		$batchSize = (int)$batchSize;
+		if($batchSize < 1) $batchSize = 50000;
 		$rebuiltCnt = 0;
 
 		$sql = 'SELECT gp.geoThesID '.
@@ -149,7 +153,7 @@ class OccurrencePolygonIndex {
 			if($rs) $rs->free();
 
 			foreach($geoThesIDs as $geoThesID){
-				if($this->rebuildGeographicPolygonIndex($geoThesID)) $rebuiltCnt++;
+				if($this->rebuildGeographicPolygonIndex($geoThesID, $batchSize)) $rebuiltCnt++;
 			}
 		}
 		catch(Throwable $e){
@@ -190,6 +194,52 @@ class OccurrencePolygonIndex {
 		}
 	}
 
+	private function releasePolygonIndexLock($lockName){
+		try {
+			QueryUtil::executeQuery($this->conn, 'SELECT RELEASE_LOCK(?)', [$lockName]);
+		}
+		catch(Throwable $ignored){
+		}
+	}
+
+	private function deleteGeographicPolygonIndexInBatches($geoThesID, $batchSize = 50000){
+		do {
+			QueryUtil::executeQuery($this->conn,
+				'DELETE FROM occurrencepolygonindex WHERE geoThesID = ? LIMIT '.$batchSize,
+				[(int)$geoThesID]
+			);
+			$deletedCnt = max(0, (int)$this->conn->affected_rows);
+		} while($deletedCnt === $batchSize);
+	}
+
+	private function deleteStaleGeographicPolygonIndexRows($geoThesID, $buildTimestamp, $batchSize = 50000){
+		do {
+			QueryUtil::executeQuery($this->conn,
+				'DELETE FROM occurrencepolygonindex WHERE geoThesID = ? AND indexedAt <> ? LIMIT '.$batchSize,
+				[(int)$geoThesID, $buildTimestamp]
+			);
+			$deletedCnt = max(0, (int)$this->conn->affected_rows);
+		} while($deletedCnt === $batchSize);
+	}
+
+	private function getNextOccurrencePointBatch($lastOccid, $batchSize){
+		$rs = QueryUtil::executeQuery($this->conn,
+			'SELECT MIN(occid) AS startOccid, MAX(occid) AS endOccid, COUNT(*) AS pointCnt '.
+			'FROM ('.
+			'SELECT occid FROM omoccurpoints WHERE occid > ? ORDER BY occid LIMIT '.$batchSize.
+			') pointBatch',
+			[(int)$lastOccid]
+		);
+		$row = $rs ? $rs->fetch_object() : null;
+		if($rs) $rs->free();
+		if(!$row || !(int)$row->pointCnt) return null;
+		return array(
+			'startOccid' => (int)$row->startOccid,
+			'endOccid' => (int)$row->endOccid,
+			'pointCnt' => (int)$row->pointCnt
+		);
+	}
+
 	private function getGeographicPolygonIndexCount($geoThesID){
 		$rs = QueryUtil::executeQuery($this->conn,
 			'SELECT COUNT(*) AS cnt FROM occurrencepolygonindex WHERE geoThesID = ?',
@@ -198,6 +248,23 @@ class OccurrencePolygonIndex {
 		$row = $rs ? $rs->fetch_object() : null;
 		if($rs) $rs->free();
 		return ($row ? (int)$row->cnt : 0);
+	}
+
+	private function insertGeographicPolygonIndexBatch($geoThesID, $startOccid, $endOccid, $buildTimestamp){
+		QueryUtil::executeQuery($this->conn,
+			'INSERT INTO occurrencepolygonindex(geoThesID, occid, indexedAt) '.
+			'SELECT gp.geoThesID, p.occid, ? '.
+			'FROM geographicpolygon gp '.
+			'INNER JOIN geographicthesaurus gth ON gp.geoThesID = gth.geoThesID '.
+			'INNER JOIN omoccurpoints p ON p.occid BETWEEN ? AND ? '.
+			'WHERE gp.geoThesID = ? '.
+			'AND gth.isSearchable = 1 '.
+			'AND MBRContains(gp.footprintPolygon, p.lngLatPoint) '.
+			'AND ST_Contains(gp.footprintPolygon, p.lngLatPoint) '.
+			'ON DUPLICATE KEY UPDATE indexedAt = VALUES(indexedAt)',
+			[$buildTimestamp, (int)$startOccid, (int)$endOccid, (int)$geoThesID]
+		);
+		return max(0, (int)$this->conn->affected_rows);
 	}
 }
 ?>
