@@ -75,6 +75,6 @@ class SymbMediaForm extends MediaForm {
 		this.submitNewButton = this.form.locator('button[value="Submit New Image"]');
 
 		// Warning will not work with multiple media because not unique
-		this.openEditFormToggle = page.locator('div[title="Edit Resource MetaData"]');
+		this.openEditFormToggle = page.locator('div[title="Edit Resource MetaData "]');
 	}
 }
