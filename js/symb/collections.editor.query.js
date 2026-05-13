@@ -1,3 +1,43 @@
+const channel = new BroadcastChannel('editor-query-tab');
+
+const tabId = crypto.randomUUID();
+
+// Announce that this tab exists
+channel.postMessage({
+  type: 'tab-opened',
+  tabId
+});
+
+// Listen for messages
+channel.onmessage = (event) => {
+  const msg = event.data;
+
+  switch (msg.type) {
+    case 'tab-opened':
+      // Ignore ourselves
+      if (msg.tabId === tabId) return;
+
+      alert('Another editor query session detected: ' + msg.tabId + ' This could case a very bad time.');
+
+      // Respond so the new tab knows we exist
+      channel.postMessage({
+        type: 'tab-alive',
+        tabId
+      });
+
+      break;
+
+    case 'tab-alive':
+      if (msg.tabId === tabId) return;
+
+
+      alert('Another editor query session detected: ' + msg.tabId + ' This could case a very bad time.');
+
+      break;
+  }
+};
+
+
 //Query form 
 function verifyQueryForm(f){
 	//if(f.q_catalognumber.value == "" && f.q_othercatalognumbers.value == ""  
