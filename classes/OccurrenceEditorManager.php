@@ -1146,7 +1146,7 @@ class OccurrenceEditorManager {
 										$status = $LANG['ERROR_ADDING_EXS_NO'] . ': ' . $this->conn->error . ' ';
 									}
 								}
-								//Exsiccati was editted
+								//Exsiccati was edited
 								if ($exsNumberId) {
 									//Use REPLACE rather than INSERT so that if record with occid already exists, it will be removed before insert
 									$sql1 = 'REPLACE INTO omexsiccatiocclink(omenid, occid) VALUES(' . $exsNumberId . ',' . $this->occid . ')';
