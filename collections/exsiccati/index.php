@@ -265,11 +265,11 @@ if($formSubmit == 'dlexs' || $formSubmit == 'dlexs_titleOnly'){
 		#option-div fieldset { background-color:#f2f2f2; }
 		.field-div { margin: 2px 0px; }
 		.exs-div { margin-bottom: 5px }
+		.img-icon { width: 1.2em; border: 0px; }
 	</style>
 </head>
 <body>
 	<?php
-	$displayLeftMenu = (isset($collections_exsiccati_index)?$collections_exsiccati_index:false);
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class='navpath'>
@@ -438,10 +438,10 @@ if($formSubmit == 'dlexs' || $formSubmit == 'dlexs_titleOnly'){
 						?>
 						<div style="float:right;">
 							<span style="cursor:pointer;" onclick="toggleExsEditDiv('exseditdiv');" title="<?= $LANG['EDIT_EXS'] ?>">
-								<img style="width:1.5em;border:0px;" src="../../images/edit.png" />
+								<img class="img-icon" src="../../images/edit.png" />
 							</span>
 							<span style="cursor:pointer;" onclick="toggleNumAddDiv('numadddiv');" title="<?= $LANG['ADD_EXS_NUM'] ?>">
-								<img style="width:1.5em;border:0px;" src="../../images/add.png" />
+								<img class="img-icon" src="../../images/add.png" />
 							</span>
 						</div>
 						<?php
@@ -582,10 +582,10 @@ if($formSubmit == 'dlexs' || $formSubmit == 'dlexs_titleOnly'){
 					?>
 					<div style="float:right;">
 						<span style="cursor:pointer;" onclick="toggleNumEditDiv('numeditdiv');" title="<?= $LANG['EDIT_EXS_NUM'] ?>">
-							<img style="width:1.5em;border:0px;" src="../../images/edit.png"/>
+							<img class="img-icon" src="../../images/edit.png"/>
 						</span>
 						<span style="cursor:pointer;" onclick="toggleOccAddDiv('occadddiv');" title="<?= $LANG['ADD_OCC_TO_EXS_NUM'] ?>">
-							<img style="width:1.5em;border:0px;" src="../../images/add.png" />
+							<img class="img-icon" src="../../images/add.png" />
 						</span>
 					</div>
 					<?php
@@ -716,18 +716,20 @@ if($formSubmit == 'dlexs' || $formSubmit == 'dlexs_titleOnly'){
 									<td>
 										<div style="font-weight:bold;">
 											<?= $occArr['collname'] ?>
+											<?php
+											if($isEditor){
+												?>
+												<span style="margin-left: 10px;" title="<?= $LANG['EDIT_OCC_LINK'] ?>">
+													<a href="#" onclick="toggle('occeditdiv-<?= $k ?>')"><img class="img-icon" src="../../images/edit.png" ></a>
+												</span>
+												<?php
+											}
+											?>
 										</div>
 										<div style="">
 											<div style="">
 												<?= $LANG['CATNUM'] ?>: <?= $occArr['catalognumber'] ?>
 											</div>
-											<?php
-											if($occArr['occurrenceid']){
-												echo '<div style="float:right;">';
-												echo $occArr['occurrenceid'];
-												echo '</div>';
-											}
-											?>
 										</div>
 										<div style="clear:both;">
 											<?php
@@ -767,13 +769,6 @@ if($formSubmit == 'dlexs' || $formSubmit == 'dlexs_titleOnly'){
 											<a href="<?= $imgArr['url'] ?>">
 												<img src="<?= $imgArr['tnurl'] ?>" style="width:75px;" />
 											</a>
-											<?php
-										}
-										if($isEditor){
-											?>
-											<div style="cursor:pointer;float:right;" onclick="toggle('occeditdiv-<?= $k ?>');" title="<?= $LANG['EDIT_OCC_LINK'] ?>">
-												<img style="border:0px;" src="../../images/edit.png"/>
-											</div>
 											<?php
 										}
 										?>
