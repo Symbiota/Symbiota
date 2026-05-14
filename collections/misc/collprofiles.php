@@ -869,7 +869,8 @@ if ($SYMB_UID) {
 						if($collData['dwcaurl']){
 							?>
 							<div class="bottom-breathing-room-rel">
-								<a href="<?= $collData['dwcaurl'] ?>"><?= $LANG['DWCA_PUB'] ?></a> <span>(<?= $LANG['LAST_UPDATED'] . ' ' . $collManager->getDwcaPubDate($collid); ?>)</span>
+								<span class="label"><?= $LANG['DWCA_PUB'] ?>:</span>
+								<a href="<?= $collData['dwcaurl'] ?>"><?= $LANG['FULL_DATA'] ?></a> <span>(<?= $LANG['LAST_UPDATED'] . ' ' . $collManager->getDwcaPubDate($collid); ?>)</span>
 							</div>
 							<?php
 						}
