@@ -15,6 +15,8 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 		$this->setSqlBase();
 		$this->setSqlInternal();
 		$this->setSqlInternalInverse();
+		$this->setSqlSpecimenDuplicates();
+		$this->setSqlExsicateDuplicates();
 		$this->setFileHandler($filePath);
 	}
 
@@ -96,9 +98,9 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 	private function setSqlBase(){
 		if($this->fieldArr){
 			$sqlFrag = '';
-			foreach($this->fieldArr['fields'] as $colName){
-				if(is_array($colName)) $colName = $colName[0];
-				if($colName) $sqlFrag .= ', ' . $colName;
+			foreach($this->fieldArr['fields'] as $fieldValue){
+				if(is_array($fieldValue)) $fieldValue = $fieldValue[0];
+				if($fieldValue) $sqlFrag .= ', ' . $fieldValue;
 			}
 			$this->sqlArr[] = 'SELECT DISTINCT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o
 				INNER JOIN omexportoccurrences e ON o.occid = e.occid
@@ -110,9 +112,9 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 	private function setSqlInternal(){
 		if($this->fieldArr){
 			$sqlFrag = '';
-			foreach($this->fieldArr['fields'] as $colName){
-				if(is_array($colName)) $colName = $colName[1];
-				if($colName) $sqlFrag .= ', ' . $colName;
+			foreach($this->fieldArr['fields'] as $fieldValue){
+				if(is_array($fieldValue)) $fieldValue = $fieldValue[1];
+				if($fieldValue) $sqlFrag .= ', ' . $fieldValue;
 			}
 			$this->sqlArr[] = 'SELECT DISTINCT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o
 				INNER JOIN omexportoccurrences e ON o.occid = e.occid
@@ -127,9 +129,9 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 		if($this->fieldArr){
 			$sqlFrag = '';
 			$this->fieldArr['fields']['relationshipOfResource'] = 'terms.inverseRelationship';
-			foreach($this->fieldArr['fields'] as $colName){
-				if(is_array($colName)) $colName = $colName[1];
-				if($colName) $sqlFrag .= ', ' . $colName;
+			foreach($this->fieldArr['fields'] as $fieldValue){
+				if(is_array($fieldValue)) $fieldValue = $fieldValue[1];
+				if($fieldValue) $sqlFrag .= ', ' . $fieldValue;
 			}
 			$this->sqlArr[] = 'SELECT DISTINCT ' . trim($sqlFrag, ', ') . ' FROM omoccurrences o
 				INNER JOIN omexportoccurrences e ON o.occid = e.occid
@@ -144,14 +146,79 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 	}
 
 	private function setSqlSpecimenDuplicates(){
-		$this->sqlArr[] = 'SELECT s.occid, l.occid as occidAssociate
-			FROM omexportoccurrences x INNER JOIN omoccurduplicatelink s ON x.occid = s.occid
-			INNER JOIN omoccurduplicates d ON s.duplicateid = d.duplicateid
-			INNER JOIN omoccurduplicatelink l ON d.duplicateid = l.duplicateid
-			WHERE (x.omExportID = ?) AND s.occid != l.occid ';
+		if($this->fieldArr){
+			$modArr = array();
+			$modArr['coreid'] = 'x.occid';
+			$modArr['resourceID'] = 'IFNULL(o.occurrenceID, o.recordID) AS resourceID';
+			$modArr['relatedResourceID'] = 'IFNULL(oa.occurrenceID, oa.recordID) AS relatedResourceID';
+			$modArr['relationshipOfResource'] = '"Duplicate of" AS relationshipOfResource';
+			$modArr['scientificName'] = 'oa.sciName';
+			$modArr['basisOfRecord'] = 'oa.basisOfRecord';
+			$modArr['relationshipEstablishedDate'] = 'l.initialtimestamp AS relationshipEstablishedDate';
+			$modArr['subType'] = '"herbariumSpecimenDuplicate" AS subType';
+			$modArr['relationshipRemarks'] = '"Herbarium Specimen Duplicate" AS relationshipRemarks';
+
+			$selectArr = array();
+			foreach($this->fieldArr['fields'] as $termName => $fieldValue){
+				if(is_array($fieldValue)) $fieldValue = $fieldValue[0];
+				if(isset($modArr[$termName])){
+					$selectArr[] = $modArr[$termName];
+				}
+				else{
+					//Default to empty output for that column, which is needed to maintain column alignment within output file
+					$selectArr[] = '"" AS ' . $termName;
+				}
+			}
+
+			//Append all specimen duplicates, excluding those linked to an exsiccati
+			$this->sqlArr[] = 'SELECT ' . implode(',', $selectArr) .
+				' FROM omexportoccurrences x INNER JOIN omoccurrences o ON x.occid = o.occid
+				INNER JOIN omoccurduplicatelink s ON x.occid = s.occid
+				INNER JOIN omoccurduplicates d ON s.duplicateid = d.duplicateid
+				INNER JOIN omoccurduplicatelink l ON d.duplicateid = l.duplicateid
+				INNER JOIN omoccurrences oa ON l.occid = oa.occid
+				LEFT JOIN omexsiccatiocclink e ON l.occid = e.occid
+				WHERE (x.omExportID = ?) AND e.occid IS NULL AND s.occid != l.occid ';
+		}
 	}
 
+	private function setSqlExsicateDuplicates(){
+		if($this->fieldArr){
+			$modArr = array();
+			$modArr['coreid'] = 'x.occid';
+			$modArr['resourceID'] = 'IFNULL(o.occurrenceID, o.recordID) AS resourceID';
+			$modArr['relatedResourceID'] = 'IFNULL(oa.occurrenceID, oa.recordID) AS relatedResourceID';
+			$modArr['relationshipOfResource'] = '"Duplicate of" AS relationshipOfResource';
+			$modArr['scientificName'] = 'oa.sciName';
+			$modArr['basisOfRecord'] = 'oa.basisOfRecord';
+			$modArr['relationshipEstablishedDate'] = 'l2.initialtimestamp AS relationshipEstablishedDate';
+			$modArr['dynamicProperties'] = 'JSON_OBJECT("title", t.title, "abbreviation", t.abbreviation, "editor", t.editor, "range", t.exsrange, "number", n.exsnumber, "notes", l.notes) AS dynamicProperties';
+			$modArr['subType'] = '"exsiccataeSpecimenDuplicate" AS subType';
+			$modArr['relationshipRemarks'] = '"Exsiccatae Specimen Duplicate" AS relationshipRemarks';
 
+			$selectArr = array();
+			foreach($this->fieldArr['fields'] as $termName => $fieldValue){
+				if(is_array($fieldValue)) $fieldValue = $fieldValue[0];
+				if(isset($modArr[$termName])){
+					$selectArr[] = $modArr[$termName];
+				}
+				else{
+					//Default to empty output for that column, which is needed to maintain column alignment within output file
+					$selectArr[] = '"" AS ' . $termName;
+				}
+			}
+
+			//Append all exsiccati records
+			$this->sqlArr[] = 'SELECT ' . implode(',', $selectArr) .
+			' FROM omexportoccurrences x INNER JOIN omoccurrences o ON x.occid = o.occid
+			INNER JOIN omexsiccatiocclink l ON x.occid = l.occid
+			INNER JOIN omexsiccatinumbers n ON l.omenid = n.omenid
+			INNER JOIN omexsiccatititles t ON n.ometid = t.ometid
+			INNER JOIN omexsiccatiocclink l2 ON n.omenid = l2.omenid
+			INNER JOIN omoccurrences oa ON l2.occid = oa.occid
+			WHERE x.omExportID = ? AND o.occid != oa.occid';
+		}
+	}
 }
 
 ?>

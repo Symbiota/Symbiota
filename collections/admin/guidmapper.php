@@ -5,25 +5,26 @@ include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load('collections/admin/guidmapper');
 
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' . $CHARSET);
 ini_set('max_execution_time', 3600);
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/admin/guidmapper.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$collId = array_key_exists("collid",$_REQUEST)?$_REQUEST["collid"]:0;
-$action = array_key_exists("formsubmit",$_POST)?$_POST["formsubmit"]:'';
+$collid = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$action = array_key_exists('formsubmit', $_POST) ? $_POST['formsubmit'] : '';
 
 $isEditor = 0;
-if($IS_ADMIN || array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"])){
+if($IS_ADMIN || array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'])){
 	$isEditor = 1;
 }
 
 $guidManager = new GuidManager();
+$guidManager->setCollid($collid);
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $LANG_TAG ?>">
+<html lang="<?= $LANG_TAG ?>">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
+	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET; ?>">
 	<title><?= $LANG['UID_MAP'] ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -55,16 +56,6 @@ $guidManager = new GuidManager();
 			}
 			return false;
 		}
-
-		function verifyGuidForm(f){
-
-			return true;
-    	}
-
-		function verifyGuidAdminForm(f){
-
-			return true;
-    	}
     </script>
 </head>
 <body>
@@ -73,20 +64,20 @@ $displayLeftMenu = (isset($admin_guidmapperMenu)?$admin_guidmapperMenu:"true");
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class="navpath">
-	<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo htmlspecialchars($LANG['COL_MGMNT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-	<b><?php echo $LANG['UID_MAP']; ?></b>
+	<a href="../../index.php"><?= $LANG['HOME'] ?></a> &gt;&gt;
+	<a href="../misc/collprofiles.php?collid=<?= $collid ?>&emode=1"><?= $LANG['COL_MGMNT'] ?></a> &gt;&gt;
+	<b><?= $LANG['UID_MAP']; ?></b>
 </div>
 <!-- This is inner text! -->
 <div role="main" id="innertext">
 	<div style="margin:10px;">
-		<h1 class="page-heading"><?php echo $LANG['GUID_CP']; ?></h1>
+		<h1 class="page-heading"><?= $LANG['GUID_CP']; ?></h1>
 	</div>
 	<?php
 	if($isEditor){
 		if($action == 'populateCollectionGUIDs'){
 			echo '<ul>';
-			$guidManager->populateGuids($collId);
+			$guidManager->populateGuids();
 			echo '</ul>';
 		}
 		elseif($action == 'populateGUIDs'){
@@ -95,47 +86,35 @@ include($SERVER_ROOT.'/includes/header.php');
 			echo '</ul>';
 		}
 
-		//$collCnt = $guidManager->getCollectionCount();
-		$occCnt = $guidManager->getOccurrenceCount($collId);
-		$detCnt = $guidManager->getDeterminationCount($collId);
-		$imgCnt = $guidManager->getImageCount($collId);
+		$occCnt = $guidManager->getOccurrenceCount();
+		if($collid){
+			echo '<h3>' . $guidManager->getCollectionName() . '</h3>';
+		}
 		?>
-		<?php if($collId) echo '<h3>'.$guidManager->getCollectionName($collId).'</h3>'; ?>
 		<div style="font-weight:bold;"><?= $LANG['REC_WO_GUIDS']; ?></div>
 		<div style="margin:10px;">
-			<div><?php echo '<b>' . $LANG['OCCS'] . ': </b>' . $occCnt; ?></div>
-			<div><?php echo '<b>' . $LANG['DETS'] . ': </b>' . $detCnt; ?></div>
-			<div><?php echo '<b>' . $LANG['IMGS'] . ': </b>' . $imgCnt; ?></div>
-		</div>
-		<?php
-		if($collId){
+			<div><?= '<b>' . $LANG['OCCS'] . ': </b>' . $occCnt; ?></div>
+			<?php
+			$extArr = $guidManager->getExtensionCounts();
+			foreach($extArr as $extName => $extCnt){
+				?>
+				<div><?= '<b>' . $LANG[strtoupper($extName)] . ': </b>' . $extCnt; ?></div>
+				<?php
+			}
 			?>
-			<form name="guidform" action="guidmapper.php" method="post" onsubmit="return verifyGuidForm(this)">
+		</div>
+		<div id="guidadmindiv">
+			<form name="dwcaguidform" action="guidmapper.php" method="post">
 				<fieldset style="padding:15px;">
-					<legend><b><?php echo $LANG['UID_MAP']; ?></b></legend>
-					<div style="clear:both;">
-						<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
-						<button type="submit" name="formsubmit" value="populateCollectionGUIDs" ><?php echo $LANG['POP_COLL_GUID']; ?></button>
+					<legend><b><?= $LANG['UID_MAP']; ?></b></legend>
+					<div style="clear:both;margin:10px;">
+						<input type="hidden" name="collid" value="<?= $collid; ?>" />
+						<button type="submit" name="formsubmit" value="populateGUIDs" ><?= $LANG['POP_GUID']; ?></button>
 					</div>
 				</fieldset>
 			</form>
-			<?php
-		}
-		elseif($IS_ADMIN){
-			?>
-			<div id="guidadmindiv">
-				<form name="dwcaguidform" action="guidmapper.php" method="post" onsubmit="return verifyGuidAdminForm(this)">
-					<fieldset style="padding:15px;">
-						<legend><b><?php echo $LANG['UID_MAP']; ?></b></legend>
-						<div style="clear:both;margin:10px;">
-							<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
-							<button type="submit" name="formsubmit" value="populateGUIDs" ><?php echo $LANG['POP_GUID']; ?></button>
-						</div>
-					</fieldset>
-				</form>
-			</div>
-			<?php
-		}
+		</div>
+		<?php
 	}
 	else{
 		echo '<h2>' . $LANG['NOT_AUTH'] . '</h2>';
