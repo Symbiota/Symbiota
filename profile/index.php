@@ -103,22 +103,18 @@ elseif($action == 'login'){
 }
 elseif($action == 'retrieveLogin'){
 	if($emailAddr){
-		if($pHandler->lookupUserName($emailAddr)){
-			$statusStr = $LANG['LOGIN_EMAILED'] . ': ' . $emailAddr;
+		if(!($pHandler->lookupUserName($emailAddr))){
+			error_log("Login lookup failed for $emailAddr" . ' (' . $pHandler->getErrorMessage() . ')');
 		}
-		else{
-			$statusStr = $LANG['EMAIL_ERROR'] . ' (' . $pHandler->getErrorMessage() . ')<ERR/>';
-		}
+		$statusStr = $LANG['RETRIEVE_RESET_MSG'];
 	}
 }
 elseif($resetPwd){
-	if($email = $pHandler->resetPassword($login)){
-		$statusStr = $LANG['PWD_EMAILED'] . ': ' . $email . '<ERR/>';
+	if(!($email = $pHandler->resetPassword($login))){
+		
+		if($pHandler->getErrorMessage()) error_log('Password reset failed:' . '('.$pHandler->getErrorMessage().')');
 	}
-	else{
-		$statusStr = $LANG['RESET_FAILED'] . '<ERR/>';
-		if($pHandler->getErrorMessage()) $statusStr .= ' ('.$pHandler->getErrorMessage().')';
-	}
+	$statusStr = $LANG['RETRIEVE_RESET_MSG'];
 }
 else{
 	$statusStr = $pHandler->getErrorMessage();
