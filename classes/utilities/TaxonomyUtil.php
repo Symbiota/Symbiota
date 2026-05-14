@@ -81,14 +81,18 @@ class TaxonomyUtil {
 					}
 					elseif(strpos($sciNameArr[0],'.') !== false){
 						//It is assumed that Author has been reached, thus stop process
-						$retArr['author'] = implode(' ',$sciNameArr);
+						if($rankId < 300){
+							$retArr['author'] = implode(' ',$sciNameArr);
+						}
 						unset($sciNameArr);
 					}
 					else{
 						if(strpos($sciNameArr[0],'(') !== false){
 							//Assumed subgenus exists, but keep a author incase an epithet does exist
-							$retArr['author'] = implode(' ',$sciNameArr);
-							array_shift($sciNameArr);
+							if($rankId < 300){
+								$retArr['author'] = implode(' ',$sciNameArr);
+								array_shift($sciNameArr);
+							}
 						}
 						//Specific Epithet
 						$retArr['unitname2'] = array_shift($sciNameArr);
@@ -104,7 +108,9 @@ class TaxonomyUtil {
 							}
 							else{
 								//Second word is likely author, thus assume assume author has been reach and stop process
-								$retArr['author'] = trim($retArr['unitname2'].' '.implode(' ', $sciNameArr));
+								if($rankId < 300){
+									$retArr['author'] = trim($retArr['unitname2'].' '.implode(' ', $sciNameArr));
+								}
 								$retArr['unitname2'] = '';
 								unset($sciNameArr);
 							}
@@ -114,7 +120,9 @@ class TaxonomyUtil {
 							$retArr['unitname2'] = strtolower($retArr['unitname2']);
 							if(!preg_match('/^[\-\'a-z]+$/',$retArr['unitname2'])){
 								//Second word unlikely an epithet
-								$retArr['author'] = trim($retArr['unitname2'].' '.implode(' ', $sciNameArr));
+								if($rankId < 300){
+									$retArr['author'] = trim($retArr['unitname2'].' '.implode(' ', $sciNameArr));
+								}
 								$retArr['unitname2'] = '';
 								unset($sciNameArr);
 							}

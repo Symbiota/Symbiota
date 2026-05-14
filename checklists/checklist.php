@@ -302,7 +302,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 				<?php
 			}
 			?>
-			<div style="clear:both">
+			<div style="clear:both; padding-top: 3px">
 				<hr/>
 			</div>
 			<div id="checklist-container" style="display:flex; gap: 0.5rem">
@@ -379,6 +379,9 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 					<?php
 					if($showImages){
 						$prevfam = '';
+						?>
+						<div class="checklist-image-grid">
+						<?php
 						foreach($taxaArray as $tid => $sppArr){
 							$tu = (array_key_exists('tnurl',$sppArr) ? $sppArr['tnurl'] : '');
 							$u = (array_key_exists('url',$sppArr) ? $sppArr['url'] : '');
@@ -443,6 +446,9 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 							</div>
 							<?php
 						}
+						?>
+						</div>
+						<?php
 					}
 					else{
 						//Display taxa

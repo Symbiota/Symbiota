@@ -25,7 +25,11 @@ class OccurrenceListManager extends OccurrenceManager{
 		}
 		$occArr = array();
 		$sqlWhere = $this->getSqlWhere();
+
 		if(!$this->recordCount || $this->reset) $this->setRecordCnt($sqlWhere);
+
+		$sqlWhere .= $this->getGeoJsonBoundingBoxWhere();
+
 		$sql = "";
 		if (array_key_exists("earlyInterval",$this->searchTermArr) || array_key_exists("lateInterval",$this->searchTermArr)) {
 			$sql .= "WITH searchRange AS (SELECT COALESCE((SELECT myaStart FROM omoccurpaleogts WHERE gtsterm = '"  . ($this->searchTermArr["earlyInterval"] ?? '') . "'), 5000) AS searchStart,";

@@ -66,7 +66,7 @@ else{
 			'labelProject'=>$LANG['LAB_PROJECT'],'language'=>$LANG['LANGUAGE'],'lifeStage'=>$LANG['LIFE_STAGE'],
 			'locationid'=>$LANG['LOCATION_ID'],'locality'=>$LANG['LOCALITY'],'recordSecurity'=>$LANG['SECURITY'],'securityReason'=>$LANG['SECURITY_REASON'],
 			'locationRemarks'=>$LANG['LOC_REMARKS'],'username'=>$LANG['MODIFIED_BY'],'municipality'=>$LANG['MUNICIPALITY'],
-			'occurrenceRemarks'=>$LANG['NOTES_REMARKS'],'ocrFragment'=>$LANG['OCR_FRAGMENT'],'otherCatalogNumbers'=>$LANG['OTHER_CAT_NUMS'],
+			'occurrenceRemarks'=>$LANG['NOTES_REMARKS'],'ocrFragment'=>$LANG['OCR_FRAGMENT'],
 			'ownerInstitutionCode'=>$LANG['OWNER_CODE'],'preparations'=>$LANG['PREPARATIONS'],'reproductiveCondition'=>$LANG['REP_COND'],
 			'samplingEffort'=>$LANG['SAMP_EFFORT'],'samplingProtocol'=>$LANG['SAMP_PROTOCOL'],'sciname'=>$LANG['SCI_NAME'],'sex'=>$LANG['SEX'],
 			'stateProvince'=>$LANG['STATE_PROVINCE'],'storageLocation'=>$LANG['STORAGE_LOC'],'substrate'=>$LANG['SUBSTRATE'],'taxonRemarks'=>$LANG['TAXON_REMARKS'],

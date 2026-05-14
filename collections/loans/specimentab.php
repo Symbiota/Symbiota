@@ -66,22 +66,6 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 		});
 	}
 
-	function verifyLoanDet(){
-		if(document.getElementById('dafsciname').value == ""){
-			alert("<?php echo $LANG['SCINAME_NEEDS_VALUE']; ?>");
-			return false;
-		}
-		if(document.getElementById('identifiedby').value == ""){
-			alert("<?php echo $LANG['DET_NEEDS_VALUE']; ?>");
-			return false;
-		}
-		if(document.getElementById('dateidentified').value == ""){
-			alert("<?php echo $LANG['DET_DATE_NEEDS_VALUE']; ?>");
-			return false;
-		}
-		return true;
-	}
-
 	function verifySpecEditForm(f){
 		var cbChecked = false;
 		var dbElements = document.getElementsByName("occid[]");
@@ -217,9 +201,11 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 		if(mode){
 			hideAll();
 			$(".form-checkbox").css("display", "revert");
+			$('#newdet-fieldset').prop('disabled', false);
 			$('#newdet-div').show();
 		}
 		else{
+			$('#newdet-fieldset').prop('disabled', true);
 			$(".form-checkbox").hide();
 			$('#newdet-div').hide();
 		}
@@ -337,7 +323,7 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 	<div id="speclist-div" style="<?php echo (!$specList?'display:none;':''); ?>">
 		<form name="speceditform" action="outgoing.php" method="post" onsubmit="return verifySpecEditForm(this)" >
 			<div id="newdet-div" style="display:none;">
-				<fieldset>
+				<fieldset id="newdet-fieldset">
 					<legend><b><?php echo $LANG['ADD_A_DET']; ?></b></legend>
 					<div style='margin:3px;'>
 						<b><?php echo $LANG['ID_QUALIFIER']; ?>:</b>
@@ -385,7 +371,7 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 					</div>
 					<div style='margin:15px;'>
 						<div style="float:left;">
-							<button type="submit" name="formsubmit" value="addDeterminations" onclick="return verifyLoanDet();"><?php echo $LANG['ADD_NEW_DET']; ?></button>
+							<button type="submit" name="formsubmit" value="addDeterminations"><?php echo $LANG['ADD_NEW_DET']; ?></button>
 						</div>
 					</div>
 				</fieldset>

@@ -78,6 +78,7 @@ if(!$schemaVersion){
 				<h2><?= $LANG['ADDITIONAL_RESOURCES'] ?></h2>
 			</div>
 			<ul>
+				<li><a href="<?= $CLIENT_ROOT ?>/geothesaurus/index.php"><?= $LANG['GEOTHESAURUS'] ?></a></li>
 				<?php
 				if($smManager->hasGlossary()){
 					?>

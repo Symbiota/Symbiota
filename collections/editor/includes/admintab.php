@@ -7,14 +7,29 @@ Language::load('collections/editor/includes/admintab');
 
 header("Content-Type: text/html; charset=".$CHARSET);
 
-$occid = $_GET['occid'];
-$occIndex = $_GET['occindex'];
-$collId = $_GET['collid'];
+$occid = filter_var($_GET['occid'], FILTER_SANITIZE_NUMBER_INT);
+$occIndex = filter_var($_GET['occindex'], FILTER_SANITIZE_NUMBER_INT);
+$collId = filter_var($_GET['collid'], FILTER_SANITIZE_NUMBER_INT);
 
 $occManager = new OccurrenceEditorManager();
 $occManager->setOccId($occid);
 ?>
 <div id="admindiv">
+	<?php
+	$modArr = $occManager->getModDates();
+	?>
+	<div style="margin: 20px 10px">
+		<div><label><?= $LANG['ENTERED_BY'] ?>:</label> <?= $modArr['recordEnteredBy'] ? $modArr['recordEnteredBy'] : $LANG['NOT_RECORDED'] ?></div>
+		<div><label><?= $LANG['DATE_ENTERED'] ?>:</label> <?= $modArr['dateEntered'] ? $modArr['dateEntered'] : $LANG['NOT_RECORDED'] ?></div>
+		<div><label><?= $LANG['DATE_MODIFIED'] ?>:</label> <?= $modArr['dateLastModified'] ?></div>
+		<?php
+		if($modArr['modified']){
+			?>
+			<div><label><?= $LANG['SOURCE_DATE_MODIFIED'] ?>:</label> <?= $modArr['modified'] ?></div>
+			<?php
+		}
+		?>
+	</div>
 	<?php
 	$editArr = $occManager->getEditArr();
 	$externalEdits = $occManager->getExternalEditArr();
@@ -27,7 +42,7 @@ $occManager->setOccId($occid);
 				if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId,$USER_RIGHTS['CollAdmin']))){
 					?>
 					<div style="float:right;" title="<?php echo $LANG['MANAGE_HISTORY']; ?>" aria-label="<?= $LANG['MANAGE_HISTORY'] . $LANG['OPENS_NEW_TAB'] ?>">
-						<a href="../editor/editreviewer.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank"><img src="../../images/edit.png" style="border:0px;width:14px;" /></a>
+						<a href="../editor/editreviewer.php?collid=<?= $collId . '&occid=' . $occid ?>" target="_blank"><img src="../../images/edit.png" style="border:0px;width:14px;" /></a>
 					</div>
 					<?php
 				}
@@ -97,7 +112,7 @@ $occManager->setOccId($occid);
 		}
 	}
 	else{
-		echo '<div style="margin:10px">'.$LANG['NO_PREV_EDITS'].'</div>';
+		echo '<div style="margin:20px 10px">'.$LANG['NO_PREV_EDITS'].'</div>';
 	}
 	$collAdminList = $occManager->getCollectionList();
 	unset($collAdminList[$collId]);
