@@ -26,5 +26,6 @@ const translations = {
   // paleo search
   INTERVAL_MISSING: "Both Early Interval and Late Interval need to have a value selected, even if the values are the same.",
   INTERVALS_WRONG_ORDER: "The Early Interval must be geologically older than the Late Interval.",
-  DOWNLOAD_IN_PROGRESS: "Download in progress..."
+  DOWNLOAD_IN_PROGRESS: "Download in progress...",
+  OCCURENCE_EDITOR_COLLISION_WARNING: "Another editor query session has been detected. This could result in off-target results in your current query. Please close all tabs but one and conduct your query anew."
 };

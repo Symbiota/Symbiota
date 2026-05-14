@@ -2,18 +2,15 @@ const channel = new BroadcastChannel('editor-query-tab');
 
 const tabId = crypto.randomUUID();
 
-// Listen for messages
 channel.onmessage = (event) => {
   const msg = event.data;
 
   switch (msg.type) {
     case 'tab-opened':
-      // Ignore ourselves
       if (msg.tabId === tabId) return;
 
-      alert('1Another editor query session has been detected. This could result in off-target results in your current query. Please close the other tab and conduct your query anew here.');
+      alert(translations.OCCURENCE_EDITOR_COLLISION_WARNING);
       document.getElementById('batchUpdateButton').disabled = true;
-      // Respond so the new tab knows we exist
       channel.postMessage({
         type: 'tab-alive',
         tabId
@@ -23,13 +20,12 @@ channel.onmessage = (event) => {
 
     case 'tab-alive':
       if (msg.tabId === tabId) return;
-      alert('2Another editor query session has been detected. This could result in off-target results in your current query. Please close the other tab and conduct your query anew here.');
+      alert(translations.OCCURENCE_EDITOR_COLLISION_WARNING);
       document.getElementById('batchUpdateButton').disabled = true;
       break;
   }
 };
 
-// Announce that this tab exists
 channel.postMessage({
   type: 'tab-opened',
   tabId

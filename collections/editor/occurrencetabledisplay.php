@@ -125,6 +125,7 @@ if($SYMB_UID){
 else{
 	header('Location: ../../profile/index.php?refurl=../collections/editor/occurrencetabledisplay.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 }
+$filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -153,8 +154,9 @@ else{
 			}
 		);
 	</script>
-	<script defer src="../../js/symb/collections.editor.table.js?ver=2" type="text/javascript" ></script>
-	<script defer src="../../js/symb/collections.editor.query.js?ver=6" type="text/javascript" ></script>
+	<script defer src="../../js/symb/collections.editor.table.js?ver=7" type="text/javascript" ></script>
+	<script defer src="../../js/symb/collections.editor.query.js?ver=7" type="text/javascript" ></script>
+	<script defer src="<?php echo $filename ?>" type="text/javascript"></script>
 	<style>
 		#titleDiv{margin-bottom: 1rem}
 		table.styledtable td { white-space: nowrap; }
