@@ -16,8 +16,29 @@ ALTER TABLE `geographicpolygon`
 DROP TRIGGER IF EXISTS `occurrencepolygonindex_point_insert`;
 DROP TRIGGER IF EXISTS `occurrencepolygonindex_point_update`;
 DROP TRIGGER IF EXISTS `occurrencepolygonindex_point_delete`;
+DROP TRIGGER IF EXISTS `omoccurrences_update`;
 
 DELIMITER //
+# changing the old trigger since it only updates on both lat and long changes.
+CREATE TRIGGER `omoccurrences_update` AFTER UPDATE ON `omoccurrences`
+FOR EACH ROW BEGIN
+  IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL THEN
+    IF OLD.`decimalLatitude` IS NULL OR OLD.`decimalLongitude` IS NULL OR NOT (NEW.`decimalLatitude` <=> OLD.`decimalLatitude`) OR NOT (NEW.`decimalLongitude` <=> OLD.`decimalLongitude`) THEN
+      IF EXISTS (SELECT `occid` FROM omoccurpoints WHERE `occid`=NEW.`occid`) THEN
+        UPDATE omoccurpoints
+        SET `point` = Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`), `lngLatPoint` = Point(NEW.`decimalLongitude`, NEW.`decimalLatitude`)
+        WHERE `occid` = NEW.`occid`;
+      ELSE
+        INSERT INTO omoccurpoints (`occid`,`point`,`lngLatPoint`)
+        VALUES (NEW.`occid`, Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`), Point(NEW.`decimalLongitude`, NEW.`decimalLatitude`));
+      END IF;
+    END IF;
+  ELSE
+    IF OLD.`decimalLatitude` IS NOT NULL OR OLD.`decimalLongitude` IS NOT NULL THEN
+      DELETE FROM omoccurpoints WHERE `occid` = NEW.`occid`;
+    END IF;
+  END IF;
+END//
 
 CREATE TRIGGER `occurrencepolygonindex_point_insert` AFTER INSERT ON `omoccurpoints`
 FOR EACH ROW BEGIN
@@ -51,19 +72,3 @@ FOR EACH ROW BEGIN
 END//
 
 DELIMITER ;
-
-  -- CREATE TABLE `occurrencepolygonindex` (
---   `geoThesID` int(11) NOT NULL,
---   `occid` int(11) NOT NULL,
---   `indexedAt` timestamp NOT NULL DEFAULT current_timestamp(),
---   PRIMARY KEY (`geoThesID`, `occid`),
---   KEY `IX_occurrencepolygonindex_occid` (`occid`),
---   CONSTRAINT `FK_occurrencepolygonindex_geothes` FOREIGN KEY (`geoThesID`) REFERENCES `geographicthesaurus` (`geoThesID`) ON DELETE CASCADE ON UPDATE CASCADE,
---   CONSTRAINT `FK_occurrencepolygonindex_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
--- ) ENGINE=InnoDB;
-
--- ALTER TABLE `geographicpolygon`
---   ADD COLUMN `polygonIndexStatus` enum('pending','building','ready','failed') NOT NULL DEFAULT 'pending' AFTER `geoJSON`,
---   ADD COLUMN `polygonIndexedAt` datetime DEFAULT NULL AFTER `polygonIndexStatus`,
---   ADD COLUMN `polygonIndexRecordCount` int unsigned DEFAULT NULL AFTER `polygonIndexedAt`,
---   ADD COLUMN `polygonIndexError` varchar(255) DEFAULT NULL AFTER `polygonIndexRecordCount`;
