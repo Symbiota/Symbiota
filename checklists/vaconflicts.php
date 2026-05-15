@@ -58,7 +58,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 					<th><input type="checkbox" onclick="selectAll(this)" /></th>
 					<th><b><?php echo $LANG['CHECK_ID']; ?></b></th>
 					<th><b><?php echo $LANG['VOUCHER_SPEC']; ?></b></th>
-					<th><b><?php echo $LANG['CORRECTED_ID']; ?></b></th>
+					<th><b><?php echo $LANG['SPECIMEN_ID']; ?></b></th>
 					<th><b><?php echo $LANG['IDED_BY']; ?></b></th>
 				</tr>
 				<?php
@@ -102,8 +102,8 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 				<input name="tabindex" type="hidden" value="2" />
 				<input name="submitaction" type="hidden" value="resolveconflicts" />
 				<b><?php echo $LANG['BATCH_ACTION']; ?>:</b>
-				<button name="submitbutton" type="button" value="Link Vouchers to Corrected Identification" onclick="return validateBatchConflictForm(this.form)"><?php echo $LANG['LINK_VOUCHERS']; ?></button><br/>
-				<div>* <?php echo $LANG['CORRECTED_WILL_ADD']; ?></div>
+				<button name="submitbutton" type="button" value="transferVouchers" onclick="return validateBatchConflictForm(this.form)"><?php echo $LANG['TRANSFER_VOUCHERS']; ?></button><br/>
+				<div>* <?php echo $LANG['SPECIMEN_ID_WILL_ADD']; ?></div>
 			</div>
 		</form>
 		<?php

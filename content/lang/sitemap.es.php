@@ -41,7 +41,7 @@ $LANG['TAXONOMIC_CLEANER'] = 'Limpiador global de taxonomía';
 $LANG['CREATENEWCOLL'] = 'Crear nuevo perfil de colección o observación';
 $LANG['GEOTHESAURUS'] = 'Tesauro Geográfico';
 $LANG['COORDVALIDATOR'] = 'Verificar las coordenadas contra los límites políticos';
-$LANG['GUIDMAP'] = 'Mapeador de GUID para colecciones';
+$LANG['GUIDMAP'] = 'Mapeador de GUID';
 $LANG['THUMBNAIL_BUILDER'] = 'Creador de miniaturas de imágenes';
 $LANG['SALIX'] = 'Gestor de SALIX WordStat';
 $LANG['IDKEYS'] = 'Claves de identificación';
@@ -75,20 +75,21 @@ $LANG['BATCHTAXA'] = 'Carga masiva de un archivo taxonómico';
 $LANG['EOLLINK'] = 'Gestión de enlaces al Encyclopedia of Life';
 $LANG['NOTEDITTAXA'] = 'Usted no esta autorizado/a de editar la taxonomía';
 $LANG['CHECKLISTS'] = 'Listados de especies';
-$LANG['TOOLSFORMANAGE'] = 'Herramientas para gestionar listados de especies están disponibles directamente de las páginas individuales de cada lista.Con el símbolo de editar ubicado en la esquina derecha encima de cada pagina se puede verlas opciones disponibles para editar esta lista de especies.A bajo hay un listado con todos sus derechos individuales de las listas de especies que usted esta autorizado/a de modificar';
+$LANG['TOOLSFORMANAGE'] = 'Herramientas para gestionar listados de especies están disponibles directamente de las páginas individuales de cada lista. Con el símbolo de editar ubicado en la
+	esquina derecha encima de cada pagina se puede verlas opciones disponibles para editar esta lista de especies. A bajo hay un listado con todos sus derechos individuales de las listas de especies que usted esta autorizado/a de modificar';
 $LANG['EXSICCATII'] = 'Exsiccati';
-$LANG['ESCMOD'] = 'El módulo de Exsiccati es activado para este portal.Cualquier usuario puede ver o navegar el índice de exsiccati (listado abajo) The exsiccati index (listed below).No es posible aunque añadir o modificar el título del exsiccati o de la serie,por lo menos el usuario tiene que ser administrador para una colección especifica para tener estos derechos';
+$LANG['ESCMOD'] = 'El módulo de Exsiccati es activado para este portal.Cualquier usuario puede ver o navegar el índice de exsiccati (listado abajo) The exsiccati index (listed below).
+	No es posible aunque añadir o modificar el título del exsiccati o de la serie,por lo menos el usuario tiene que ser administrador para una colección especifica para tener estos derechos';
 $LANG['NOTEDITCHECK'] = 'Usted no esta autorizado/a para editar ninguna de las listas de especies.';
-$LANG['PARA1'] = 'Herramientas para manejar datos específicos para una colección particular están disponibles por la pagina del perfil de esta colección.Hacer clic en el nombre en el listado abajo va a llevarse directamente a la pagina principal de esta colección.Alternativamente se puede acceder esta pagina es por el clic del nombre de la colección desde de la pagina de búsqueda.Con el símbolo de editar ubicado en la esquina derecha encima de cada pagina se puede abriruna ventana para modificar esta página con diferentes opciones disponibles.';
-$LANG['COLLLIST'] = 'Listado de colecciones para los cuales usted tiene derechos de modificarlos';
-$LANG['OBSERV'] = 'Observaciones';
-$LANG['NOEDITCOLL'] = 'Usted no tiene derecho explícito para editar una colección específica';
-$LANG['PARA2'] = 'La gestión de datos para proyectos de observación se maneja de manera similar a lo que se describe en el párrafo anterior sobre Colecciones.                                        Una diferencia es el proyecto de Observación General. Este proyecto tiene dos propósitos centrales: 1) Permite a los usuarios registrados enviar una observación de campo con vale medios.                                        2) Permite a los recolectores ingresar los datos de su propia colección para imprimir etiquetas y poner los datos a disposición de las colecciones obteniendo los especímenes físicos mediante donaciones o intercambio. Visita el ';
+$LANG['COLLECTION_DESCRIPTION'] = 'Las colecciones se organizan por tipo (por ejemplo: especímenes conservados, especímenes fósiles, observaciones y observaciones de campo de investigación).
+	Las observaciones de campo de investigación constituyen un tipo de colección especializado que permite a los investigadores de campo gestionar sus datos y generar etiquetas para
+	especímenes u observaciones, todo ello estrechamente vinculado a su cuenta de usuario. Para más información, visite el';
 $LANG['SYMBDOCU'] = 'documentación de Symbiota ';
-$LANG['FORMOREINFO'] = 'para más información detallada como manejar la información de muestras. Aviso importante: la funcionalidad de manejar proyectos de observaciones no es necesariamente activado para cada portal de Symbiota';
-$LANG['OIVS'] = 'Envío de vale medios de observación';
-$LANG['NOOBSPROJ'] = 'No hay proyectos de observación para los que usted posea permisos de manejo';
-$LANG['OPM'] = 'Manejo de proyectos de observaciones';
+$LANG['PRESERVED_SPECIMENS'] = 'Especímenes conservados';
+$LANG['FOSSIL_SPECIMENS'] = 'Ejemplares fósiles';
+$LANG['OBSERVATIONS'] = 'Observaciones';
+$LANG['GENERAL_OBSERVATIONS'] = 'Observaciones de campo de la investigación';
+$LANG['NOEDITCOLL'] = 'Usted no tiene derecho explícito para editar una colección específica';
 $LANG['PLEASE'] = 'Por favor';
 $LANG['LOGIN'] = 'Inicie Sesión';
 $LANG['TOACCESS'] = 'para acceder las herramientas de edición.';
@@ -109,5 +110,4 @@ $LANG['DATA_AUTHORIZED_TO_EDIT'] = 'conjuntos de datos que está autorizado a ed
 $LANG['MANAGE_TAXON_THUMBNAILS'] = 'Administrar miniaturas de mapas de perfil de taxonomía';
 $LANG['TAXINTER'] = 'Derechos de usuarios con interés taxonómico';
 $LANG['OTHER_CAT_TRANSFER'] = 'Herramienta de transferencia de otros números de catálogo';
-
 ?>

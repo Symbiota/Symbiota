@@ -1,7 +1,8 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ProfileManager.php');
+include_once($SERVER_ROOT . '/classes/ProfileManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
 Language::load('profile/occurrencemenu');
 
@@ -22,23 +23,23 @@ foreach($collArr as $id => $collectionArr){
 }
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $LANG_TAG ?>">
+<html lang="<?= $LANG_TAG ?>">
 	<head>
-		<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['OCCURRENCE_MENU'];?></title>
+		<title><?= $DEFAULT_TITLE . ' ' . $LANG['OCCURRENCE_MENU'];?></title>
 	</head>
 	<div style="margin:10px;">
-		<h1 class="page-heading screen-reader-only"><?php echo $LANG['OCCURRENCE_MENU']; ?></h1>
+		<h1 class="page-heading screen-reader-only"><?= $LANG['OCCURRENCE_MENU']; ?></h1>
 		<?php
 		if($SYMB_UID){
 			if(!$collArr) echo '<div style="margin:40px 15px;font-weight:bold">' . $LANG['NO_PROJECTS'] . '</div>';
 			foreach($genArr as $collId => $secArr){
-				$collId = filter_var($collId, FILTER_SANITIZE_NUMBER_INT); //This really is not needed because DB output is an int, but may be needed to satisfy scanners
-				$cName = $secArr['collectionname'] . ' (' . $secArr['institutioncode'] . ($secArr['collectioncode']?'-' . $secArr['collectioncode']:'') . ')';
+				//All collection output variables are sanitized within ProfileManager class
+				$cName = $secArr['collectionname'] . ' (' . $secArr['institutioncode'] . ($secArr['collectioncode'] ? '-' . $secArr['collectioncode'] : '') . ')';
 				?>
 				<section class="fieldset-like">
 					<h2>
-						<span>
-							<?php echo $cName; ?>
+						<span title="<?= $cName ?>">
+							<?= $secArr['collectionname']; ?>
 						</span>
 					</h2>
 					<div style="margin-left:10px">
@@ -120,14 +121,14 @@ foreach($collArr as $id => $collectionArr){
 				<section class="fieldset-like">
 					<h2>
 						<span>
-							<?php echo $LANG['COL_MANAGE']; ?>
+							<?= $LANG['COL_MANAGE']; ?>
 						</span>
 					</h2>
 					<ul>
 						<?php
 						foreach($cArr as $collId => $secArr){
 							$cName = $secArr['collectionname'] . ' (' . $secArr['institutioncode'] . ($secArr['collectioncode'] ? '-' . $secArr['collectioncode'] : '') . ')';
-							echo '<li><a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">' . htmlspecialchars($cName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></li>';
+							echo '<li><a href="../collections/misc/collprofiles.php?collid=' . $collId . '&emode=1">' . $cName . '</a></li>';
 						}
 						?>
 					</ul>
@@ -137,12 +138,12 @@ foreach($collArr as $id => $collectionArr){
 			if($oArr){
 				?>
 				<section class="fieldset-like">
-					<h2><span><?php echo $LANG['OBS_MANAGEMENT'] ?></span></h2>
+					<h2><span><?= $LANG['OBS_MANAGEMENT'] ?></span></h2>
 					<ul>
 						<?php
 						foreach($oArr as $collId => $secArr){
 							$cName = $secArr['collectionname'] . ' (' . $secArr['institutioncode'] . ($secArr['collectioncode'] ? '-' . $secArr['collectioncode'] : '') . ')';
-							echo '<li><a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">' . htmlspecialchars($cName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></li>';
+							echo '<li><a href="../collections/misc/collprofiles.php?collid=' . $collId . '&emode=1">' . $cName . '</a></li>';
 						}
 						?>
 					</ul>
@@ -155,12 +156,12 @@ foreach($collArr as $id => $collectionArr){
 				if($genAdminArr){
 					?>
 					<section class="fieldset-like">
-						<h2><span><?php echo $LANG['GEN_OBS_ADMIN'] ?></span></h2>
+						<h2><span><?= $LANG['GEN_OBS_ADMIN'] ?></span></h2>
 						<ul>
 							<?php
 							foreach($genAdminArr as $id => $secArr){
 								$cName = $secArr['collectionname'] . ' (' . $secArr['institutioncode'] . ($secArr['collectioncode'] ? '-' . $secArr['collectioncode'] : '') . ')';
-								echo '<li><a href="../collections/misc/collprofiles.php?collid=' . htmlspecialchars($id, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&emode=1">' . htmlspecialchars($cName, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></li>';
+								echo '<li><a href="../collections/misc/collprofiles.php?collid=' . $id . '&emode=1">' . $cName . '</a></li>';
 							}
 							?>
 						</ul>
@@ -170,7 +171,7 @@ foreach($collArr as $id => $collectionArr){
 			}
 			?>
 			<section class="fieldset-like">
-				<h2><span><?php echo $LANG['MISC_TOOLS'] ?></span></h2>
+				<h2><span><?= $LANG['MISC_TOOLS'] ?></span></h2>
 				<ul>
 					<li><a href="../collections/datasets/index.php"><?= $LANG['DATASET_MANAGEMENT'] ?></a></li>
 					<?php

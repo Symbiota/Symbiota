@@ -162,4 +162,5 @@ $LANG['BIOTA'] = 'Biota';
 $LANG['MEMBER'] = 'Miembro';
 $LANG['STAGE'] = 'Etapa';
 $LANG['EVENT_TIME'] = 'Hora del evento';
+$LANG['OPENS_NEW_TAB'] = ' (se abre en una nueva pestaña)';
 ?>

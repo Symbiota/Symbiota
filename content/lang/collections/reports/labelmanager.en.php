@@ -6,8 +6,14 @@ Language: English
 */
 
 $LANG['SPEC_LABEL_MANAGER'] = 'Specimen Label Manager';
+$LANG['ALERT_DATE'] = 'Date entered must follow the format YYYY-MM-DD';
+$LANG['ALERT_SPEC'] = 'At least one specimen checkbox needs to be selected with a label quantity greater than 0';
+$LANG['ALERT_LABEL'] = 'Please select a Label Format Profile';
+$LANG['ALERT_PACKET_LABEL'] = 'Packet labels are not yet available as a Word document';
+$LANG['NAV_HOME'] = 'Home';
 $LANG['PERS_MANAG_MENU'] = 'Personal Management Menu';
-$LANG['CONTACT_ADMIN'] = 'Please contact the site administrator to make TEMP_DIR_ROOT folder writable in order to export to docx files.';
+$LANG['COLL_MANAG_PANEL'] = 'Collection Management Panel';
+$LANG['LABEL_PRINT'] = 'Label Printing';
 $LANG['DEF_SPEC_REC'] = 'Define Specimen Recordset';
 $LANG['SCI_NAME'] = 'Scientific Name: ';
 $LANG['FULL_NAME'] = 'Full or last name of collector as entered in database.';
@@ -19,7 +25,8 @@ $LANG['ENTER_BY'] = 'Entered by:';
 $LANG['LOG_NAME'] = 'login name of data entry person';
 $LANG['DATE_RANGE'] = 'Date range:';
 $LANG['TO'] = 'to';
-$LANG['DATE_ENTER'] = 'Date Entered';
+$LANG['TYPE_OF_DATE'] = 'Type of date';
+$LANG['DATE_ENTERED'] = 'Date Entered';
 $LANG['DATE_MOD'] = 'Date Modified';
 $LANG['DATE_COLL'] = 'Date Collected';
 $LANG['LABEL_PROJ'] = 'Label Projects:';
@@ -31,7 +38,6 @@ $LANG['SPEC_LIM'] = 'Specimen record return is limited to';
 $LANG['QTY'] = 'Qty';
 $LANG['LOCALITY'] = 'Locality';
 $LANG['LABEL_QTY'] = 'Label quantity';
-$LANG['LABEL_PRINT'] = 'Label Printing';
 $LANG['LABEL_PROFILE'] = 'Label Profiles:';
 $LANG['SEL_LABEL_FORMAT'] = 'Select a Label Format';
 $LANG['LABEL_NOT_SET'] = 'label profiles have not yet been set within portal';
@@ -53,21 +59,16 @@ $LANG['LABEL_TYPE'] = 'Label Type:';
 $LANG['COLL_PAGE'] = 'columns per page';
 $LANG['PACKET_LABEL'] = 'Packet labels';
 $LANG['CONTACT_ADMIN'] = 'Browser based label printing has not been activated within the portal. Contact Portal Manager to activate this feature.';
-$LANG['NOTE'] = 'Note:';
-$LANG['NOTE_1'] = 'Currently, Word (DOCX) output only generates the old static label format.';
-$LANG['NOTE_2'] = 'Output of variable Label Formats (pulldown options) as a Word document is not yet supported.';
-$LANG['NOTE_3'] = 'A possible work around is to print labels as PDF and then convert to a Word doc using Adobe tools.';
-$LANG['NOTE_4'] = 'Another alternative is to output the data as CSV and then setup a Mail Merge Word document.';
+$LANG['NOTE'] = 'Note';
+$LANG['NOTE_DETAILS'] = 'Currently, Word (DOCX) output only generates the old static label format.
+	Output of variable Label Formats (pulldown options) as a Word document is not yet supported.
+	A possible work around is to print labels as PDF and then convert to a Word doc using Adobe tools.
+	Another alternative is to output the data as CSV and then setup a Mail Merge Word document.';
 $LANG['NO_DATA'] = 'Query returned no data!';
-$LANG['NO_PERM'] = 'You do not have permissions to print labels for this collection.
-            Please contact the site administrator to obtain the necessary permissions.';
+$LANG['NO_PERM'] = 'You do not have permissions to print labels for this collection. Please contact the site administrator to obtain the necessary permissions.';
 $LANG['PRINT_BROWSER'] = 'Print in Browser';
+$LANG['CONTACT_ADMIN'] = 'Please contact the site administrator to make TEMP_DIR_ROOT folder writable in order to export to docx files.';
 $LANG['EXP_CSV'] = 'Export to CSV';
 $LANG['EXP_DOCX'] = 'Export to DOCX';
-$LANG['ALERT_DATE'] = 'Date entered must follow the format YYYY-MM-DD';
-$LANG['ALERT_SPEC'] = 'At least one specimen checkbox needs to be selected with a label quantity greater than 0';
-$LANG['ALERT_LABEL'] = 'Please select a Label Format Profile';
-$LANG['ALERT_PACKET_LABEL'] = 'Packet labels are not yet available as a Word document';
-$LANG['TYPE_OF_DATE'] = 'Type of date';
 
 ?>

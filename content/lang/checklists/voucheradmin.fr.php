@@ -50,6 +50,9 @@ $LANG['LOOKUPEXT'] = 'Récupérer les informations des échantillons externes';
 $LANG['SAVEEXTVOUCH'] = 'Enregistrer les échantillons externes dans la liste';
 $LANG['EMPTY_LIST'] = 'La liste est vide';
 $LANG['REPORTS'] = 'Rapports';
+
+// nonvoucheredtab.php
+
 $LANG['NONVOUCHTAX'] = 'Liste des Taxons sans Échantillons';
 $LANG['OCCURNONVOUCH'] = 'Occurrences pour les Taxons sans Échantillons';
 $LANG['NEWOCCUR'] = 'Nouvelles occurrences pour tous les taxons';
@@ -62,18 +65,17 @@ $LANG['ADDNAMECURRTAX'] = 'Ajouter nom en utilisant la taxonomie actuelle';
 $LANG['ADD_VOUCHERS'] = 'Ajouter des Bons';
 $LANG['NOVOUCHLOCA'] = 'Aucun échantillon localisé';
 $LANG['LISTEDBELOWARESPECINSTRUC'] = "Ci-dessous figurent les espèces de la liste qui n'ont pas d'échantillons liés..
-Cliquez sur le nom pour utiliser l'instruction de recherche ci-dessus pour interroger dynamiquement l'ensemble de données
-pour des échantillons possibles. Utilisez le menu déroulant à droite pour afficher les échantillons sous forme de tableau.";
+	Cliquez sur le nom pour utiliser l'instruction de recherche ci-dessus pour interroger dynamiquement l'ensemble de données
+	pour des échantillons possibles. Utilisez le menu déroulant à droite pour afficher les échantillons sous forme de tableau.";
 $LANG['LISTEDBELOWEXTERNAL'] = "Vous trouverez ci-dessous les espèces de la liste. À l'aide des fonctions de recherche du site Web externe, localisez une observation qui servira de référence possible pour chaque taxon. Copiez l'ID de l'observation (par exemple, à partir de la dernière partie de l'URL) et collez-le dans la zone de texte correspondante. Plusieurs bons peuvent être ajoutés pour chaque taxon. Utilisez des virgules pour séparer les numéros d'identification. Symbiota recherchera dans le service externe les correspondances possibles, celles-ci apparaîtront sous forme de zones de texte blanches et le nom de l'espèce sera lié au service externe. Cliquez sur 'Récupérer les informations des échantillons externes' pour charger les données du échantillon pour chaque espèce. Lorsque vous êtes prêt, cliquez sur 'Enregistrer les échantillons externes dans la liste' pour valider les informations du échantillon dans Symbiota.";
 $LANG['ALLTAXACONTAINVOUCH'] = 'Tous les taxons contiennent des échantillons';
 $LANG['ADDITIONAL'] = "Voir le panneau d'options sur la page centrale pour des options d'exportation et d'impression supplémentaires qui intègrent dynamiquement des sélections d'options";
-$LANG['FULLSPECLIST'] = 'Liste complète des espèces (CSV)';
-$LANG['FULLSPECLISTVOUCHER'] = 'Liste complète des espèces avec des échantillons liés (CSV)';
-$LANG['VOUCHERONLY'] = 'Échantillons liés uniquement (DwC-A, CSV, délimité par des tabulations)';
-$LANG['FULLSPECLISTALLOCCUR'] = 'Liste complète des espèces avec toutes les occurrences correspondant aux termes de recherche (CSV)';
+$LANG['FULLSPECLIST'] = 'Télécharger liste complète des espèces (CSV)';
+$LANG['FULLSPECLISTVOUCHER'] = 'Télécharger liste complète des espèces avec des échantillons liés (CSV)';
+$LANG['VOUCHERONLY'] = "Télécharger l'échantillon liés uniquement (DwC-A, CSV, délimité par des tabulations)";
+$LANG['LISTALLVOUCHERS'] = 'Lister tous les bons liés';
+$LANG['FULLSPECLISTALLOCCUR'] = 'Lister les occurrences correspondant aux termes de recherche';
 $LANG['PENSOFT_XLSX_EXPORT'] = 'Exportation Pensoft Excel';
-$LANG['SPECMISSTAXA'] = 'Spécimens de taxons absents de la liste (CSV)';
-$LANG['SPECMISSPELLED'] = 'Spécimens avec des noms scientifiques mal orthographiés, illégaux et problématiques (CSV)';
 $LANG['CHECKIDNOTSET'] = 'Identifiant de liste non défini';
 $LANG['NOADMINPERM'] = "Vous n'avez pas d'autorisation administrative pour cette liste";
 $LANG['DELETEVARIABLES'] = 'Supprimer Variables de Requête';

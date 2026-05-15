@@ -53,14 +53,17 @@ if($collMap['colltype'] == 'General Observations'){
 		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"> <?php echo (isset($LANG['COLL_MNGMT']) ? $LANG['COLL_MNGMT'] : 'Collection Management') ?> </a> &gt;&gt;
 		<b> <?php echo (isset($LANG['DATA_CLEAN']) ? $LANG['DATA_CLEAN'] : 'Data Cleaning Module') ?> </b>
 	</div>
-	
+
 	<!-- inner text -->
 	<div role="main" id="innertext" style="background-color:white;">
 		<?php
 		if($isEditor){
 			echo '<h1 class="page-heading">' . $LANG['DATA_CLEANING_TOOL'] . ': ' . $collMap['collectionname'] .' (' . $collMap['code'] . ')</h1>';
 			?>
-			<div style="color:orange;margin:20px 0px"> <?php echo (isset($LANG['DOWNLOAD_BACKUP']) ? $LANG['DOWNLOAD_BACKUP'] : 'Downloading a backup of your collection data before running any batch updates is strongly recommended') ?> </div>
+			<div style="color: var(--danger-color);margin:20px 0px; font-size:1.2rem;">
+				<strong><?php echo (isset($LANG['DOWNLOAD_BACKUP']) ? $LANG['DOWNLOAD_BACKUP'] : 'Downloading a backup of your collection data before running any batch updates is strongly recommended') ?></strong>
+				(<a href="https://docs.symbiota.org/Collection_Manager_Guide/Downloading/downloading_copy/" style="color: var(--danger-color)" target="_blank" ><?php echo $LANG["BACKUP_INSTRUCTIONS"]?></a>).
+			</div>
 			<?php
 			if($collMap['colltype'] != 'General Observations'){
 				?>

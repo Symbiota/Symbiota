@@ -41,7 +41,7 @@ $LANG['TAXONOMIC_CLEANER'] = 'Global Taxonomic Name Cleaner';
 $LANG['CREATENEWCOLL'] = 'Create a New Collection or Observation Profile';
 $LANG['GEOTHESAURUS'] = 'Geographic Thesaurus';
 $LANG['COORDVALIDATOR'] = 'Verify coordinates against political boundaries';
-$LANG['GUIDMAP'] = 'Collection GUID Mapper';
+$LANG['GUIDMAP'] = 'GUID Mapper';
 $LANG['THUMBNAIL_BUILDER'] = 'Thumbnail Builder Tool';
 $LANG['SALIX'] = 'SALIX WordStat Manager';
 $LANG['IDKEYS'] = 'Identification Keys';
@@ -63,7 +63,7 @@ $LANG['CLICKEDIT'] = '(click to edit)';
 $LANG['NOPROJ'] = 'There are no projects in the system';
 $LANG['NOTEDITPROJ'] = 'You are not authorized to edit any of the Projects';
 $LANG['TAXONPROF'] = 'Taxon Profile Page';
-$LANG['THEFOLLOWINGSPEC'] = 'The following Species Profile page editing features are also available to editors via an							editing link located in the upper right of each Species Profile page.';
+$LANG['THEFOLLOWINGSPEC'] = 'The following Species Profile page editing features are also available to editors via an editing link located in the upper right of each Species Profile page.';
 $LANG['NOTAUTHOTAXONPAGE'] = 'You are not yet authorized to edit the Taxon Profile';
 $LANG['TAXONOMY'] = 'Taxonomy';
 $LANG['TAXTREE'] = 'Taxonomic Tree Viewer';
@@ -75,20 +75,21 @@ $LANG['BATCHTAXA'] = 'Batch Upload a Taxonomic Data File';
 $LANG['EOLLINK'] = 'Encyclopedia of Life Linkage Manager';
 $LANG['NOTEDITTAXA'] = 'You are not authorized to edit taxonomy';
 $LANG['CHECKLISTS'] = 'Checklists';
-$LANG['TOOLSFORMANAGE'] = 'Tools for managing Checklists are available from each checklist display page.						Editing symbols located in the upper right of the page will display						editing options for that checklist.						Below is a list of the checklists you are authorized to edit';
+$LANG['TOOLSFORMANAGE'] = 'Tools for managing Checklists are available from each checklist display page.
+	Editing symbols located in the upper right of the page will display editing options for that checklist. Below is a list of the checklists you are authorized to edit';
 $LANG['EXSICCATII'] = 'Exsiccati';
-$LANG['ESCMOD'] = 'The Exsiccati module is activated for this portal.					The exsiccati index (listed below) can be browsed or searched by everyone.					However, to add or modify exsiccati titles or series,					the user must be an administrator for at least one collection';
+$LANG['ESCMOD'] = 'The Exsiccati module is activated for this portal. The exsiccati index (listed below) can be browsed or searched by everyone.
+	However, to add or modify exsiccati titles or series, the user must be an administrator for at least one collection';
 $LANG['NOTEDITCHECK'] = 'You are not authorized to edit any of the Checklists';
-$LANG['PARA1'] = 'Tools for managing data specific to a particular collection are available through the collection\'s profile page.					Clicking on a collection name in the list below will take you to this page for that given collection.					An additional method to reach this page is by clicking on the collection name within the specimen search engine.					The editing symbol located in the upper right of Collection Profile page will open					the editing pane and display a list of editing options.';
-$LANG['COLLLIST'] = 'List of collections you have permissions to edit';
-$LANG['OBSERV'] = 'Observations';
-$LANG['NOEDITCOLL'] = 'You have no explicit editing permissions for a particular collections';
-$LANG['PARA2'] = 'Data management for observation projects is handled in a similar manner to what is described in the Collections paragraph above.                                        One difference is the General Observation project. This project serves two central purposes:                                        1) Allows registered users to submit a media-vouchered field observation.                                        2) Allows collectors to enter their own collection data for label printing and to make the data available                                        to the collections obtaining the physical specimens through donations or exchange. Visit the ';
+$LANG['COLLECTION_DESCRIPTION'] = 'Collections are organized by type (e.g., preserved specimens, fossil specimens, observations, and research field observations).
+	Research field observations represent a specialized collection type that enables field researchers to manage their data and generate labels for specimens or observations,
+	all closely linked to their user account. For more information, visit the ';
 $LANG['SYMBDOCU'] = 'Symbiota Documentation';
-$LANG['FORMOREINFO'] = 'for more information on specimen processing capabilities. Note that observation projects are not activated on all Symbiota data portals';
-$LANG['OIVS'] = 'Observation Media Voucher Submission';
-$LANG['NOOBSPROJ'] = 'There are no Observation Projects to which you have permissions';
-$LANG['OPM'] = 'Observation Project Management';
+$LANG['PRESERVED_SPECIMENS'] = 'Preserved Specimens';
+$LANG['FOSSIL_SPECIMENS'] = 'Fossil Specimens';
+$LANG['OBSERVATIONS'] = 'Observations';
+$LANG['GENERAL_OBSERVATIONS'] = 'Research Field Observations';
+$LANG['NOEDITCOLL'] = 'There are no collection for which you have editing permissions';
 $LANG['PLEASE'] = 'Please';
 $LANG['LOGIN'] = 'login';
 $LANG['TOACCESS'] = ' to access editing tools.';
@@ -109,5 +110,4 @@ $LANG['DATA_AUTHORIZED_TO_EDIT'] = 'datasets you are authorized to edit';
 $LANG['MANAGE_TAXON_THUMBNAILS'] = 'Manage Taxon Profile Map Thumbnails';
 $LANG['TAXINTER'] = 'Taxonomic Interest User Permissions ';
 $LANG['OTHER_CAT_TRANSFER'] = 'Other Catalog Number Transfer Tool';
-
 ?>

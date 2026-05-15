@@ -169,7 +169,7 @@ include($SERVER_ROOT.'/includes/header.php');
 	<?php
 	if($statusStr){
 		$statusColor = 'green';
-		if(strpos($statusStr, $LANG['ERROR']) !== false) $statusColor = 'red';
+		if(strpos($statusStr, 'ERR') !== false) $statusColor = 'red';
 		?>
 		<hr />
 		<div style="margin:20px;font-weight:bold;color:<?php echo $statusColor;?>;">

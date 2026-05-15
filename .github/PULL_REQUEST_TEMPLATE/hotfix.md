@@ -4,7 +4,7 @@
 
 - [ ] Does the PR have a **release-notes-friendly title**?
 - [ ] There is a **description section** in the pull request that details what the proposed changes do. It can be very brief if need be, but it ought to exist.
-- [ ] Hotfixes should be branched off of the `master` branch and PR'd using the **squash & merge** option into the `Hotfix-x.x.x` branch.
+- [ ] Hotfixes should be branched off of the the current `Hotfix-x.x.x` branch and PR'd into the same using the **squash & merge** option.
 
 - [ ] All new **text** is preferably **internationalized** (i.e., no end-user-visible text is hard-coded on the PHP pages), and the [spreadsheet tracking internationalizations](https://docs.google.com/spreadsheets/d/133fps9w2pUCEjUA6IGCcQotk7dn9KvepMXJ2IWUZsE8/edit?usp=sharing) has been updated either with a new row or with checkmarks to existing rows.
 - [ ] There are **no linter errors**
@@ -19,10 +19,10 @@
 ## Post-Approval
 
 - [ ] It is the code author's responsibility to **merge** their own pull request after it has been approved
-- [ ] Remember to use the **squash & merge** option for a merge into the `hotfix` branch
+- [ ] Remember to use the **squash & merge** option for a merge into the `Hotfix-x.x.x` branch
 - [ ] Use the **merge** option (not squashed) for merges from the `hotfix` branch into the `master` branch.
   - [ ] a **subsequent PR from `master`** into `Development` should be made with the **merge** option (i.e., no squash)
-  - [ ] **Immediately** **delete the `hotfix` branch** and create a new `hotfix` branch
-  - [ ] **increment** the Symbiota **version** number in the symbase.php file and commit to the `hotfix` branch
+  - [ ] **Immediately** **delete the `Hotfix-x.x.x` branch** and create a new `Hotfix-x.x.x+1` branch
+  - [ ] **increment** the Symbiota **version** number in the symbase.php file and commit to the `Hotfix-x.x.x+1` branch
 
 Thanks for contributing and keeping it clean!

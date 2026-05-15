@@ -22,6 +22,7 @@ if (file_exists($sitemapPath)) {
 ?>
 
 <!DOCTYPE html>
+<html lang="<?= $LANG_TAG ?>">
 <head>
     <meta charset="UTF-8">
     <?php

@@ -4,6 +4,7 @@ include_once('Person.php');
 include_once('utilities/Encryption.php');
 include_once('utilities/GeneralUtil.php');
 include_once('utilities/QueryUtil.php');
+include_once('utilities/Sanitize.php');
 @include_once 'Mail.php';
 
 class ProfileManager extends Manager{
@@ -1148,10 +1149,10 @@ class ProfileManager extends Manager{
 		$sql = 'SELECT collid, institutioncode, collectioncode, collectionname, colltype FROM omcollections WHERE collid IN('.$collidStr.') ORDER BY collectionname';
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
-				$retArr[$r->collid]['collectionname'] = $r->collectionname;
-				$retArr[$r->collid]['collectioncode'] = $r->collectioncode;
-				$retArr[$r->collid]['institutioncode'] = $r->institutioncode;
-				$retArr[$r->collid]['colltype'] = $r->colltype;
+				$retArr[$r->collid]['collectionname'] = Sanitize::outString($r->collectionname);
+				$retArr[$r->collid]['collectioncode'] = Sanitize::outString($r->collectioncode);
+				$retArr[$r->collid]['institutioncode'] = Sanitize::outString($r->institutioncode);
+				$retArr[$r->collid]['colltype'] = Sanitize::outString($r->colltype);
 			}
 			$rs->free();
 		}

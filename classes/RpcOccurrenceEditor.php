@@ -174,34 +174,24 @@ class RpcOccurrenceEditor extends RpcBase{
 	//Used by /collections/editor/rpc/getspeciessuggest.php,
 	public function getSpeciesSuggest($term){
 		$retArr = Array();
-		$term = preg_replace('/[^a-zA-Z()\-. ]+/', '', $term);
-		$term = preg_replace('/\s{1}x{1}\s{0,1}$/i', ' _ ', $term);
-		$term = preg_replace('/\s{1}x{1}\s{1}/i', ' _ ', $term);
+		$fullterm = preg_replace('/[^a-zA-Z()\-. ]+/', '', $term);
+		$fullterm = preg_replace('/\s{1}x{1}\s{0,1}$/i', ' _ ', $fullterm);
+		$fullterm = preg_replace('/\s{1}x{1}\s{1}/i', ' _ ', $fullterm);
+
+		$sql = 'SELECT DISTINCT tid, sciname FROM taxa WHERE sciname LIKE "' . $fullterm . '%" ';
 
 		// Enable scientific name entry shortcuts: 2-3 letter codes separated by spaces, e.g. "pse men"
 		// Split the search string by spaces if there are any.
-		$str1 = ''; $str2 = ''; $str3 = '';
-		$strArr = explode(' ',$term);
-		$strCnt = count($strArr);
-		$str1 = $strArr[0];
-		if($strCnt > 1){
-			$str2 = $strArr[1];
-		}
-		if($strCnt > 2){
-			$str3 = $strArr[2];
+		$strArr = explode(' ', $term);
+		if(count($strArr) > 1){
+			$sql .= 'OR (unitname1 LIKE "' . $strArr[0] . '%" AND unitname2 LIKE "' . $strArr[1] . '%" ';
+			if(!empty($strArr[2])){
+				$sql .= 'AND unitname3 LIKE "' . $strArr[2] . '%" ';
+			}
+			$sql .= ') ';
 		}
 
-		$sql = 'SELECT DISTINCT tid, sciname FROM taxa WHERE unitname1 LIKE "' . $str1 . '%" ';
-		if($str2){
-			$sql .= 'AND unitname2 LIKE "'.$str2.'%" ';
-		}
-		if($str3){
-			$sql .= 'AND unitname3 LIKE "'.$str3.'%" ';
-		}
 		$sql .= 'ORDER BY sciname';
-
-		// If the search term has an infraspecific separator, use the old version of the SQL, otherwise, no matches will be returned
-		if(array_intersect($strArr, array("var.", "ssp.", "nothossp.", "f.", "×", "x", "†"))) $sql = 'SELECT DISTINCT tid, sciname FROM taxa WHERE sciname LIKE "'.$term.'%" ';
 
 		$rs = $this->conn->query($sql);
 		while ($r = $rs->fetch_object()){

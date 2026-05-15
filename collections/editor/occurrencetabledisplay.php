@@ -66,7 +66,7 @@ if($SYMB_UID){
 	}
 
 	if($collMap && $collMap['colltype']=='General Observations') $isGenObs = 1;
-	if ($collMap['colltype'] == 'Fossil Specimens')
+	if ($collMap && $collMap['colltype'] == 'Fossil Specimens')
 		$headerMapBase = array_merge($headerMapBase, $headerMapPaleoBase);
 	if(!$isEditor){
 		if($isGenObs){
@@ -286,6 +286,8 @@ else{
 			}
 			if($isEditor == 1 || $isGenObs){
 				$buFieldName = (array_key_exists('bufieldname',$_REQUEST)?$_REQUEST['bufieldname']:'');
+				$batchUpdateHeaderMapBase = $headerMapBase;
+				unset($batchUpdateHeaderMapBase['othercatalognumbers']);
 				?>
 				<div id="batchupdatediv" style="width:600px;clear:both;display:<?php echo ($buFieldName?'block':'none'); ?>;">
 					<form name="batchupdateform" action="occurrencetabledisplay.php" method="post" onsubmit="return false;">
@@ -298,8 +300,8 @@ else{
 										<option value=""><?php echo (isset($LANG['SELECT_FIELD'])?$LANG['SELECT_FIELD']:'Select Field Name'); ?></option>
 										<option value="">----------------------</option>
 										<?php
-										asort($headerMapBase);
-										foreach($headerMapBase as $k => $v){
+										asort($batchUpdateHeaderMapBase);
+										foreach($batchUpdateHeaderMapBase as $k => $v){
 											//Scientific name fields are excluded because batch updates will not update tidinterpreted index and authors
 											//Scientific name updates should happen within
 											if($k != 'scientificnameauthorship' && $k != 'sciname'){

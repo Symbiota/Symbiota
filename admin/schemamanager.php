@@ -27,6 +27,15 @@ elseif(isset($verHistory['1.0'])){
 	if(strpos($verHistory['1.0'], date('Y-m-d')) === 0) $isNewInstall = true;
 }
 
+if($IS_ADMIN || $isNewInstall){
+	if($action){
+		setcookie('schemaApplied', true, [
+			'samesite' => 'Strict'
+		]);
+		$_COOKIE['schemaApplied'] = true;
+	}
+}
+
 if(!$IS_ADMIN && !$isNewInstall) header('Location: ../profile/index.php?refurl=../admin/schemamanager.php');
 ?>
 <html lang="en">
@@ -117,7 +126,7 @@ if(!$IS_ADMIN && !$isNewInstall) header('Location: ../profile/index.php?refurl=.
 						<form name="databaseMaintenanceForm" action="schemamanager.php" method="post">
 							<div class="form-section">
 								<label>Schema: </label>
-								<select name="schemaCode">
+								<select id="schemaCode" name="schemaCode">
 									<?php
 									if($curentVersion){
 										foreach($schemaPatchArr as $schemaOption){
@@ -152,7 +161,7 @@ if(!$IS_ADMIN && !$isNewInstall) header('Location: ../profile/index.php?refurl=.
 								<?= $port; ?>
 							</div>
 							<div class="form-section">
-								<button name="action" type="submit" value="installSchema" onclick="return confirm('WARNING: To protect against data loss, back up Symbiota database before installing new patch. Press OK to proceed.');">Install</button>
+								<button name="action" type="submit" value="installSchema" onclick="<?php if(!isset($_COOKIE['schemaApplied'])) echo 'return schemaWarning();'?>">Install</button>
 							</div>
 						</form>
 					</fieldset>
@@ -167,5 +176,14 @@ if(!$IS_ADMIN && !$isNewInstall) header('Location: ../profile/index.php?refurl=.
 		<?php
 		include($SERVER_ROOT.'/includes/footer.php');
 		?>
+		<script>
+			function schemaWarning() {
+				const schemaCodeSelect = document.getElementById("schemaCode");
+				const selectedSchema = schemaCodeSelect.value;
+				if (selectedSchema !== '' && selectedSchema !== 'baseInstall') {
+					return confirm('WARNING: To protect against data loss, back up Symbiota database before installing new patch. Press OK to proceed.');
+				}
+			}
+		</script>
 	</body>
 </html>

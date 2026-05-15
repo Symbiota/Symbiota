@@ -43,9 +43,10 @@ class TaxonomyUtil {
 				$inStr = str_ireplace(' sp.','',$inStr);
 			}
 			//Remove extra spaces
-			$inStr = preg_replace('/\s\s+/',' ',$inStr);
+			$inStr = trim(str_replace(["\xA0", "\xC2\xA0"], ' ', $inStr));	//Normalize string by removing non-breaking spaces, plus trim spaces
+			$inStr = preg_replace('/\s\s+/',' ',$inStr);				//Remove multiple spaces
 			if(!$inStr) return $retArr;
-			$sciNameArr = explode(' ',trim($inStr));
+			$sciNameArr = explode(' ', $inStr);
 			$okToCloseConn = true;
 			if($conn !== null) $okToCloseConn = false;
 			if(count($sciNameArr)){
