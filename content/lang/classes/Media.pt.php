@@ -11,10 +11,11 @@ $LANG['DUPLICATE_MEDIA_FILE'] = 'Arquivo de mídia duplicado';
 $LANG['FILE_DOES_NOT_EXIST'] = 'O arquivo não existe';
 $LANG['FILE_ALREADY_EXISTS'] = 'O arquivo já existe';
 $LANG['UNKNOWN_MEDIA_TYPE_MSG'] = 'Tipo de mídia desconhecido';
-
 $LANG['SUSPICIOUS_FILE'] = 'Ficheiro suspeito';
 $LANG['ILLEGAL_RENAME_CHANGED_FILE_TYPE'] = 'Renomeação ilegal alterou o tipo de arquivo';
 $LANG['FILE_TYPE_NOT_ALLOWED'] = 'Tipo de arquivo não permitido';
+$LANG['FILE_EXTENSION_NOT_SUPPORTED'] = 'A extensão de arquivo não é suportada';
+$LANG['FILE_EXTENSION_IS_REQUIRED'] = 'O arquivo deve ter uma extensão';
 $LANG['FILEPATH_NOT_WRITABLE'] = 'O caminho do arquivo não é gravável';
 $LANG['NOT_ENOUGH_MEMORY_IMAGE'] = 'Não há memória suficiente para criar imagem';
 $LANG['EXCEED_MAX_SIZE'] = 'O ficheiro excede o tamanho máximo permitido';
