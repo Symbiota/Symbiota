@@ -28,13 +28,13 @@ if($mode !== 'pending' && isset($argv[2])) $batchSize = $argv[2];
 $indexManager = new OccurrencePolygonIndex(MySQLiConnectionFactory::getCon('write'));
 
 if($mode === 'pending'){
-	$count = $indexManager->rebuildPendingGeographicPolygonIndexes($pendingLimit, $batchSize);
+	$count = $indexManager->rebuildPendingPolygons($pendingLimit, $batchSize);
 	echo 'Rebuilt '.$count.' pending polygon indexes'."\n";
 }
 else{
 	$geoThesIDs = OccurrencePolygonIndex::sanitizePolygonIds(explode(',', $mode));
 	foreach($geoThesIDs as $geoThesID){
-		if($indexManager->rebuildGeographicPolygonIndex($geoThesID, $batchSize)){
+		if($indexManager->rebuildPolygons($geoThesID, $batchSize)){
 			echo 'Rebuilt polygon index for geoThesID: '.$geoThesID."\n";
 		}
 		else{
