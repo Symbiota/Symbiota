@@ -17,7 +17,7 @@ $limit = array_key_exists('limit',$_REQUEST)?$_REQUEST['limit']:500;
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 
 $csManager = new OccurrenceCrowdSource();
-//If collid is null, it will be assumed that current user wants to review their own specimens (they can still edit pending, closed specimen can't be editted)
+//If collid is null, it will be assumed that current user wants to review their own specimens (they can still edit pending, closed specimen can't be edited)
 $csManager->setCollid($collid);
 
 $isEditor = 0;

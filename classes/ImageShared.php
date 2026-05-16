@@ -1079,7 +1079,7 @@ class ImageShared {
 	}
 
 	public static function getImgDim($imgPath) {
-		if(strtolower(substr($imgPath, 4) == 'http')){
+		if(stripos($imgPath, 'http') === 0){
 			$urlPrefix = 'http://';
 			if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = 'https://';
 			$urlPrefix .= $_SERVER['SERVER_NAME'];
@@ -1098,12 +1098,7 @@ class ImageShared {
 
 		// Local file
 		if (is_file($imgPath)) {
-			$opts = [
-				'http' => [	'method' => 'GET', 'timeout' => 5, 'user_agent' => $GLOBALS['DEFAULT_TITLE'] ],
-				'ssl' => [ 'verify_peer' => false, 'verify_peer_name' => false ]
-			];
-			$context = stream_context_create($opts);
-			return @getimagesize(imgPath, false, $context);
+			return @getimagesize($imgPath);
 		}
 
 		// Remote URL

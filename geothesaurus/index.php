@@ -254,8 +254,8 @@ function listGeoUnits($arr) {
 			if($statusStr){
 				echo '<div id="status-div">'.$statusStr.'</div>';
 			}
-			?>
 
+			?>
 			<!-- Add Form  -->
 			<div id="addGeoUnit-div" style="clear:both;margin-bottom:10px;display:none">
 				<form id="unitAddForm" name="unitAddForm" action="<?= $geoThesID? '' : 'index.php' ?>" method="post">
@@ -308,7 +308,7 @@ function listGeoUnits($arr) {
 						<div class="field-div">
 							<label> <?= $LANG['NOTES'] ?></label>:
 							<span>
-								<textarea  type="text" maxlength="250" name="notes" style="margin-top: 0.5rem; width:98%;height:45px;"></textarea>
+								<textarea maxlength="250" name="notes" style="margin-top: 0.5rem; width:98%;height:45px;"></textarea>
 							</span>
 						</div>
 						<div class="field-div">
@@ -416,7 +416,7 @@ function listGeoUnits($arr) {
 								<label> <?= $LANG['NOTES'] ?></label>:
 								<span class="editTerm"><?= $geoUnit['notes']; ?></span>
 								<span class="editFormElem">
-									<textarea  type="text" maxlength="250" name="notes" style="margin-top: 0.5rem; width:98%;height:45px;"><?= $geoUnit['notes']?></textarea>
+									<textarea maxlength="250" name="notes" style="margin-top: 0.5rem; width:98%;height:45px;"><?= $geoUnit['notes']?></textarea>
 								</span>
 							</div>
 							<?php
@@ -533,21 +533,19 @@ function listGeoUnits($arr) {
 						</fieldset>
 					</form>
 				</div>
-
 				<?php
 			}
 
 			if(!empty($childrenTitleStr) && empty($geoUnit['acceptedTerm'])):?>
 
-			<?php if($isEditor): ?>
 			<div style="font-size:1.3em;margin: 10px 0px">
 				<?= $childrenTitleStr ?>
-				<span class="editIcon" title="<?= $LANG['ADD_TERM_LIST'] ?>">
-					<a href="#" onclick="toggle('#addGeoUnit-div');"><img class="editimg" src="../images/add.png" alt="<?= $LANG['EDIT'] ?>" /></a>
-				</span>
+				<?php if($isEditor): ?>
+					<span class="editIcon" title="<?= $LANG['ADD_TERM_LIST'] ?>">
+						<a href="#" onclick="toggle('#addGeoUnit-div');"><img class="editimg" src="../images/add.png" alt="<?= $LANG['EDIT'] ?>" /></a>
+					</span>
+				<?php endif ?>
 			</div>
-			<?php endif ?>
-			
 			<div style="margin: 10px">
 				<?php
 				if($geoArr){

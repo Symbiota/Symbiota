@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Occurrence;
 use App\Models\PortalIndex;
 use App\Models\PortalOccurrence;
+use App\Models\Taxonomy;
 use App\Helpers\OccurrenceHelper;
 use App\Helpers\GeoThesaurusHelper;
 use App\Helpers\Helper;
@@ -78,11 +79,11 @@ class OccurrenceController extends Controller {
 	 *		 @OA\Schema(type="integer")
 	 *	 ),
 	 *	 @OA\Parameter(
-	 *		 name="parentTid",
+	 *		 name="includeChildTaxa",
 	 *		 in="query",
-	 *		 description="Primary identifier of parent taxon (aka tid)",
+	 *		 description="Setting to true will include occurrences identified to child taxa (accepted values: true/false or 1/0)",
 	 *		 required=false,
-	 *		 @OA\Schema(type="integer")
+	 *		 @OA\Schema(type="boolean",default=false)
 	 *	 ),
 	 *	 @OA\Parameter(
 	 *		 name="recordedBy",
@@ -246,7 +247,6 @@ class OccurrenceController extends Controller {
 		$this->validate($request, [
 			'collid' => 'integer',
 			'tid' => 'integer',
-			'parentTid' => 'integer',
 			'eventDateMin' => 'date_format:Y-m-d',
 			'eventDateMax' => 'date_format:Y-m-d',
 			'decimalLatitudeMin' => ['numeric', 'between:-90,90'],
@@ -262,6 +262,7 @@ class OccurrenceController extends Controller {
 			'limit' => ['integer', 'max:300'],
 			'offset' => 'integer'
 		]);
+
 		//custom validation
 		if($request->has('eventDateMin') && $request->has('eventDateMax') && $request->eventDateMin > $request->eventDateMax){
 			return response()->json(['status' => false, 'error' => 'eventDateMin greater than eventDateMax'], 422);
@@ -286,6 +287,7 @@ class OccurrenceController extends Controller {
 		$offset = $request->input('offset', 0);
 
 		$occurrenceModel = Occurrence::query();
+		$occurrenceModel->select('omoccurrences.*');
 		$occurrenceModel->with('identifier');
 		$occurrenceModel->where('recordSecurity', 0);
 
@@ -308,26 +310,42 @@ class OccurrenceController extends Controller {
 				$query->where('identifierValue', $identifier);
 			});
 		}
-
 		//Taxonomy
 		if ($request->has('family')) {
 			$occurrenceModel->where('family', $request->family);
 		}
-		if ($request->has('scientificName')) {
-			if(strpos($request->scientificName, '%')){
-				$occurrenceModel->where('sciname', 'LIKE', $request->scientificName);
+		$parentTid = 0;
+		$includeChildTaxa = filter_var( $request->includeChildTaxa, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE );
+		if($includeChildTaxa){
+			if ($request->has('tid')){
+				$parentTid = $request->tid;
 			}
-			else{
-				$occurrenceModel->where('sciname', $request->scientificName);
+			elseif ($request->has('scientificName')) {
+				$parentTid = Taxonomy::where('sciname', $request->scientificName)->value('tid');
+			}
+			if ($parentTid) {
+				$occurrenceModel->join('taxaenumtree as e', 'tidinterpreted', '=', 'e.tid');
+				$occurrenceModel->where('e.taxAuthID', 1)
+				->where(function ($query) use ($parentTid) {
+					$query->where('e.parentTid', $parentTid)
+					->orWhere('e.tid', $parentTid);
+				})->distinct('occid');
 			}
 		}
-		if ($request->has('tid')) {
-			$occurrenceModel->where('tidInterpreted', $request->tid);
+		if(!$parentTid){
+			if ($request->has('tid')) {
+				$occurrenceModel->where('tidInterpreted', $request->tid);
+			}
+			elseif ($request->has('scientificName')) {
+				if(strpos($request->scientificName, '%')){
+					$occurrenceModel->where('sciname', 'LIKE', $request->scientificName);
+				}
+				else{
+					$occurrenceModel->where('sciname', $request->scientificName);
+				}
+			}
 		}
-		if ($request->has('parentTid')) {
-			$occurrenceModel->join('taxaenumtree as e', 'tidinterpreted', '=', 'e.tid');
-			$occurrenceModel->where('e.taxAuthID', 1)->where('e.parentTid', 127299);
-		}
+
 		//Collector units
 		if ($request->has('recordedBy')) {
 			// $occurrenceModel->where('recordedBy', $request->recordedBy);

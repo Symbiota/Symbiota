@@ -6,13 +6,11 @@ include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 Language::load('taxa/taxonomy/taxonomyloader');
 
 header('Content-Type: text/html; charset='.$CHARSET);
-$filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
 
 if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../taxa/taxonomy/taxonomyloader.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $tid = array_key_exists('tid',$_REQUEST) ? $_REQUEST['tid'] : '';
 $status = '';
-$filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
 
 //Sanitation
 if(!is_numeric($tid)) $tid = 0;
@@ -41,6 +39,7 @@ if($isEditor){
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
+	include_once($SERVER_ROOT.'/includes/javascript_lang_tags.php');
 	?>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
@@ -63,7 +62,6 @@ if($isEditor){
 	</style>
 </head>
 <body>
-<script src="<?php echo $filename ?>" type="text/javascript"></script>
 <script type="text/javascript">
 	document.addEventListener("DOMContentLoaded", function() {
 		const form = document.getElementById("loaderform");

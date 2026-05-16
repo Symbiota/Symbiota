@@ -134,6 +134,7 @@ else{
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
+	include_once($SERVER_ROOT.'/includes/javascript_lang_tags.php');
 	?>
 	<link href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/js/datatables/datatables.min.css" type="text/css" rel="stylesheet">
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
@@ -153,8 +154,8 @@ else{
 			}
 		);
 	</script>
-	<script src="../../js/symb/collections.editor.table.js?ver=2" type="text/javascript" ></script>
-	<script src="../../js/symb/collections.editor.query.js?ver=6" type="text/javascript" ></script>
+	<script defer src="../../js/symb/collections.editor.table.js?ver=7" type="text/javascript" ></script>
+	<script defer src="../../js/symb/collections.editor.query.js?ver=7" type="text/javascript" ></script>
 	<style>
 		#titleDiv{margin-bottom: 1rem}
 		table.styledtable td { white-space: nowrap; }
@@ -356,7 +357,7 @@ else{
 									<input name="collid" type="hidden" value="<?php echo $collId; ?>" />
 									<input name="occid" type="hidden" value="0" />
 									<input name="occindex" type="hidden" value="0" />
-									<button name="submitaction" type="submit" value="Batch Update Field" onclick="submitBatchUpdate(this.form); return false;"><?php echo (isset($LANG['BATCH_UP_FIELD'])?$LANG['BATCH_UP_FIELD']:'Batch Update Field'); ?></button>
+									<button id="batchUpdateButton" name="submitaction" type="submit" value="Batch Update Field" onclick="submitBatchUpdate(this.form); return false;"><?php echo (isset($LANG['BATCH_UP_FIELD'])?$LANG['BATCH_UP_FIELD']:'Batch Update Field'); ?></button>
 								</div>
 							</div>
 						</fieldset>

@@ -512,7 +512,7 @@ class Media {
 			if(self::isValidFile($file)) {
 				$pathInfo =	pathinfo($file['name']);
 				$pathInfo['filename'] = self::cleanFileName($pathInfo['filename']);
-				$file['name'] = $pathInfo['filename'] . '.' . $pathInfo['extension'];
+				$file['name'] = $pathInfo['filename'] . '.' . ($pathInfo['extension'] ?? '');
 				$file['full_path'] = $file['name'];
 			} else if($post_arr['copytoserver'] ?? false) {
 				$file = UploadUtil::downloadFromRemote($post_arr['originalUrl'], $GLOBALS['ALLOWED_MEDIA_MIME_TYPES']);

@@ -482,14 +482,16 @@ class ProfileManager extends Manager{
 		return $status;
 	}
 
-	private function generateNewPassword(){
-		// generate new random password
-		$newPassword = "";
-		$alphabet = str_split("0123456789abcdefghijklmnopqrstuvwxyz");
-		for($i = 0; $i<10; $i++) {
-			$newPassword .= $alphabet[rand(0,count($alphabet)-1)];
+	private function generateNewPassword(int $length = 13): string {
+		$alphabet = '23456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ!#%&';
+		$alphabetLength = strlen($alphabet);
+
+		$password = '';
+		for ($i = 0; $i < $length; $i++) {
+			$password .= $alphabet[random_int(0, $alphabetLength - 1)];
 		}
-		return $newPassword;
+
+		return $password;
 	}
 
 	/**

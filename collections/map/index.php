@@ -11,8 +11,6 @@ Language::load([
 	'collections/list'
 ]);
 
-$filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
-
 header('Content-Type: text/html; charset='.$CHARSET);
 header("Accept-Encoding: gzip, deflate, br");
 ob_start('ob_gzhandler');
@@ -116,8 +114,9 @@ $serverHost = GeneralUtil::getDomain();
 		} else {
 			include_once($SERVER_ROOT.'/includes/googleMap.php');
 		}
+
+		include_once($SERVER_ROOT.'/includes/javascript_lang_tags.php');
 		?>
-		<script src="<?php echo $filename ?>" type="text/javascript"></script>
 		<script src="../../js/symb/wktpolygontools.js" type="text/javascript"></script>
 		<script src="../../js/symb/MapShapeHelper.js" type="text/javascript"></script>
 		<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>

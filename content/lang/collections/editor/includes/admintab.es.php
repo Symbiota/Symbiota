@@ -2,11 +2,14 @@
 /*
 ------------------
 Language: Español
-Translated by: Samanta Orellana
-Date Translated: 2021-10-29
+Translated by: Samanta Orellana (2021-10-29)
 ------------------
 */
-
+$LANG['ENTERED_BY'] = 'Ingresado Por';
+$LANG['DATE_ENTERED'] = 'Fecha ingresada';
+$LANG['DATE_MODIFIED'] = 'Fecha modificada';
+$LANG['SOURCE_DATE_MODIFIED'] = 'Fecha original modificada';
+$LANG['NOT_ENTERED'] = 'no ingresado';
 $LANG['EDIT_HISTORY_INT'] = 'Historia de Ediciones Internas';
 $LANG['MANAGE_HISTORY'] = 'Manejar Historia de Ediciones';
 $LANG['OPEN'] = 'ABIERTO';
@@ -24,7 +27,7 @@ $LANG['NEW_VALUE'] = 'Valor Nuevo';
 $LANG['CURRENT'] = 'actual';
 $LANG['EDIT_HISTORY_EXT'] = 'Historia de Ediciones Externas';
 $LANG['SOURCE'] = 'Fuente';
-$LANG['NO_PREV_EDITS'] = 'Sin ediciones previas registradas';
+$LANG['NO_PREV_EDITS'] = 'Historial de ediciones vacío';
 $LANG['TRANSFER_SPEC'] = 'Transferir Espécimen';
 $LANG['TARGET_COL'] = 'Colección Destino';
 $LANG['SEL_COL'] = 'Seleccionar Colección';

@@ -85,6 +85,15 @@ class UploadUtil {
 			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $uploaded_file['type']);
 		}
 
+		$provided_file_data = pathinfo($uploaded_file['name']);
+		$extension = $provided_file_data['extension'] ?? false;
+
+		if(!$extension) {
+			throw new MediaException(MediaException::FileExtensionIsRequired);
+		} else if(!Media::ext2Mime($extension)) {
+			throw new MediaException(MediaException::FileExtensionNotSupported, ' ' . $extension);
+		}
+
 		$type_guess = mime_content_type($uploaded_file['tmp_name']);
 
 		if(!self::mimesEqual($type_guess, $uploaded_file['type'])) {
@@ -96,9 +105,8 @@ class UploadUtil {
 		}
 
 		$guess_ext = self::mime2ext($type_guess);
-		$provided_file_data = pathinfo($uploaded_file['name']);
 
-		if(!$guess_ext || !$provided_file_data['extension'] || !self::extensionsEqual($guess_ext, $provided_file_data['extension'])) {
+		if(!$guess_ext || !$extension || !self::extensionsEqual($guess_ext, $provided_file_data['extension'])) {
 			throw new MediaException(MediaException::SuspiciousFile);
 		}
 

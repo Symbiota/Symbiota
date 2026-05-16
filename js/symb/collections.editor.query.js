@@ -1,3 +1,37 @@
+const channel = new BroadcastChannel('editor-query-tab');
+
+const tabId = crypto.randomUUID();
+
+channel.onmessage = (event) => {
+  const msg = event.data;
+
+  switch (msg.type) {
+    case 'tab-opened':
+      if (msg.tabId === tabId) return;
+
+      alert(translations.OCCURENCE_EDITOR_COLLISION_WARNING);
+      document.getElementById('batchUpdateButton').disabled = true;
+      channel.postMessage({
+        type: 'tab-alive',
+        tabId
+      });
+
+      break;
+
+    case 'tab-alive':
+      if (msg.tabId === tabId) return;
+      alert(translations.OCCURENCE_EDITOR_COLLISION_WARNING);
+      document.getElementById('batchUpdateButton').disabled = true;
+      break;
+  }
+};
+
+channel.postMessage({
+  type: 'tab-opened',
+  tabId
+});
+
+
 //Query form 
 function verifyQueryForm(f){
 	//if(f.q_catalognumber.value == "" && f.q_othercatalognumbers.value == ""  

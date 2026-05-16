@@ -507,45 +507,50 @@ if($IS_ADMIN) $isEditor = 1;
 									<?php
 								}
 								else{
-									?>
-									<div id="table-div">
-										<div><label>Collection Count</label>: <?= count($collList) ?></div>
-										<table class="styledtable">
-											<tr>
-												<th>ID</th>
-												<th>Institution Code</th>
-												<th>Collection Code</th>
-												<th>Collection Name</th>
-												<th>Dataset Type</th>
-												<th>Management</th>
-												<th>Mapped Internally</th>
-												<th>Occurrence Count</th>
-											</tr>
-											<?php
-											foreach($collList as $collArr){
-												?>
+									if($collList){
+										?>
+										<div id="table-div">
+											<div><label>Collection Count</label>: <?= count($collList) ?></div>
+											<table class="styledtable">
 												<tr>
-													<td><a href="#" onclick="displayCollectionDetails(<?= $collArr['collID'] ?>)"><?= $collArr['collID'] ?></a></td>
-													<td><?= $collArr['institutionCode'] ?></td>
-													<td><?= $collArr['collectionCode'] ?></td>
-													<td><?= $collArr['collectionName'] ?></td>
-													<td><?= $collArr['collType'] ?></td>
-													<td><?= $collArr['managementType'] ?></td>
-													<?php
-													$internal = 'No';
-													if(isset($collArr['internal']) && $collArr['internal']){
-														$internal = '<a href="'.$CLIENT_ROOT.'/collections/misc/collprofiles.php?collid='.key($collArr['internal']).'" target="_blank">Yes</a>';
-													}
-													?>
-													<td><?= $internal ?></td>
-													<td><span class="occur-count"><?= $collArr['collID'] ?></span></td>
+													<th>ID</th>
+													<th>Institution Code</th>
+													<th>Collection Code</th>
+													<th>Collection Name</th>
+													<th>Dataset Type</th>
+													<th>Management</th>
+													<th>Mapped Internally</th>
+													<th>Occurrence Count</th>
 												</tr>
 												<?php
-											}
-											?>
-										</table>
-									</div>
-									<?php
+												foreach($collList as $collArr){
+													?>
+													<tr>
+														<td><a href="#" onclick="displayCollectionDetails(<?= $collArr['collID'] ?>)"><?= $collArr['collID'] ?></a></td>
+														<td><?= $collArr['institutionCode'] ?></td>
+														<td><?= $collArr['collectionCode'] ?></td>
+														<td><?= $collArr['collectionName'] ?></td>
+														<td><?= $collArr['collType'] ?></td>
+														<td><?= $collArr['managementType'] ?></td>
+														<?php
+														$internal = 'No';
+														if(isset($collArr['internal']) && $collArr['internal']){
+															$internal = '<a href="'.$CLIENT_ROOT.'/collections/misc/collprofiles.php?collid='.key($collArr['internal']).'" target="_blank">Yes</a>';
+														}
+														?>
+														<td><?= $internal ?></td>
+														<td><span class="occur-count"><?= $collArr['collID'] ?></span></td>
+													</tr>
+													<?php
+												}
+												?>
+											</table>
+										</div>
+										<?php
+									}
+									else{
+										echo '<h3>Unable to retrieve list of collections</h3>';
+									}
 								}
 							}
 						}

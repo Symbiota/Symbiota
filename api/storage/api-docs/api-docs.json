@@ -1618,12 +1618,13 @@
                         }
                     },
                     {
-                        "name": "parentTid",
+                        "name": "includeChildTaxa",
                         "in": "query",
-                        "description": "Primary identifier of parent taxon (aka tid)",
+                        "description": "Setting to true will include all child taxa within return (accepted values: true/false or 1/0)",
                         "required": false,
                         "schema": {
-                            "type": "integer"
+                            "type": "boolean",
+                            "default": false
                         }
                     },
                     {
@@ -2393,7 +2394,7 @@
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "default": 1000
+                            "default": 100
                         }
                     },
                     {

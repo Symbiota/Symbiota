@@ -1766,10 +1766,10 @@ class DwcArchiverCore extends Manager{
 
 	private function insertExportOccurrenceRecords(){
 		$status = false;
-		$sql = 'INSERT IGNORE INTO omexportoccurrences(omExportID, occid, collid, taxonID, recordSecurity) ';
+		$sql = 'INSERT IGNORE INTO omexportoccurrences(omExportID, occid, collid, taxonID, family, scientificNameAuthorship, occurrenceRemarks, recordSecurity) ';
 		if (strpos($this->conditionSql,"early.myaStart"))
 			$sql .= $this->paleoWithSql;
-		$sql .= 'SELECT ' . $this->exportID . ' AS omExportID, o.occid, o.collid, o.tidInterpreted, o.recordSecurity FROM omoccurrences o ';
+		$sql .= 'SELECT ' . $this->exportID . ' AS omExportID, o.occid, o.collid, o.tidInterpreted, o.family, o.scientificNameAuthorship, o.occurrenceRemarks, o.recordSecurity FROM omoccurrences o ';
 		$sql .= $this->getTableJoins() . $this->conditionSql;
 		$sql .= 'LIMIT 1000000';
 		if($stmt = $this->conn->prepare($sql)){

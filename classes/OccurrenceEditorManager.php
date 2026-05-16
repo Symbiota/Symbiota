@@ -1146,7 +1146,7 @@ class OccurrenceEditorManager {
 										$status = $LANG['ERROR_ADDING_EXS_NO'] . ': ' . $this->conn->error . ' ';
 									}
 								}
-								//Exsiccati was editted
+								//Exsiccati was edited
 								if ($exsNumberId) {
 									//Use REPLACE rather than INSERT so that if record with occid already exists, it will be removed before insert
 									$sql1 = 'REPLACE INTO omexsiccatiocclink(omenid, occid) VALUES(' . $exsNumberId . ',' . $this->occid . ')';
@@ -2500,10 +2500,10 @@ class OccurrenceEditorManager {
 	public function getEditArr() {
 		$retArr = array();
 		$this->setOccurArr();
-		$sql = 'SELECT e.ocedid, e.fieldname, e.fieldvalueold, e.fieldvaluenew, e.reviewstatus, e.appliedstatus, ' .
-			'CONCAT_WS(", ",u.lastname,u.firstname) as editor, e.initialtimestamp ' .
-			'FROM omoccuredits e INNER JOIN users u ON e.uid = u.uid ' .
-			'WHERE e.occid = ' . $this->occid . ' ORDER BY e.initialtimestamp DESC ';
+		$sql = 'SELECT e.ocedid, e.fieldname, e.fieldvalueold, e.fieldvaluenew, e.reviewstatus, e.appliedstatus,
+			CONCAT_WS(", ",u.lastname,u.firstname) as editor, e.initialtimestamp
+			FROM omoccuredits e INNER JOIN users u ON e.uid = u.uid
+			WHERE e.occid = ' . $this->occid . ' ORDER BY e.initialtimestamp DESC ';
 		$result = $this->conn->query($sql);
 		if ($result) {
 			while ($r = $result->fetch_object()) {
@@ -2525,6 +2525,27 @@ class OccurrenceEditorManager {
 				$retArr[$k]['edits'][$r->appliedstatus][$r->ocedid]['current'] = $currentCode;
 			}
 			$result->free();
+		}
+
+		return $retArr;
+	}
+
+	public function getModDates(){
+		$retArr = array();
+		//Add date entered, modifed, and by whom
+		$sql = 'SELECT dateEntered, modified, dateLastModified, recordEnteredBy FROM omoccurrences WHERE occid = ?';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $this->occid);
+			$stmt->execute();
+			$rs = $stmt->get_result();
+			if($r = $rs->fetch_object()){
+				$retArr['dateEntered'] = $r->dateEntered;
+				$retArr['modified'] = $r->modified;
+				$retArr['dateLastModified'] = $r->dateLastModified;
+				$retArr['recordEnteredBy'] = $r->recordEnteredBy;
+			}
+			$rs->free();
+			$stmt->close();
 		}
 		return $retArr;
 	}

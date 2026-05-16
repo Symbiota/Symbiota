@@ -194,7 +194,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		global $LANG;
 		if(isset($detArr['detid']) && $detArr['detid']){
 			if(!array_key_exists('printqueue',$detArr)) $detArr['printqueue'] = 0;
-			$status = 'Determination editted successfully!';
+			$status = 'Determination edited successfully!';
 			//Update determination table
 			$sql = 'UPDATE omoccurdeterminations '.
 				'SET identifiedBy = "'.$this->cleanInStr($detArr['identifiedby']).'", '.

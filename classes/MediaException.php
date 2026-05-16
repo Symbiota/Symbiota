@@ -9,6 +9,8 @@ class MediaException extends Exception {
 	public const SuspiciousFile = 'SUSPICIOUS_FILE';
 	public const IllegalRenameChangedFileType = 'ILLEGAL_RENAME_CHANGED_FILE_TYPE';
 	public const FileTypeNotAllowed = 'FILE_TYPE_NOT_ALLOWED';
+	public const FileExtensionNotSupported = 'FILE_EXTENSION_NOT_SUPPORTED';
+	public const FileExtensionIsRequired = 'FILE_EXTENSION_IS_REQUIRED';
 	public const FilepathNotWritable = 'FILEPATH_NOT_WRITABLE';
 	public const NotEnoughMemoryImage = 'NOT_ENOUGH_MEMORY_IMAGE';
 	public const ExceedMaxSize = 'EXCEED_MAX_SIZE';

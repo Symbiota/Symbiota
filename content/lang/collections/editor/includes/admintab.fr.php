@@ -5,6 +5,11 @@ Language: Français (French)
 ------------------
 */
 
+$LANG['ENTERED_BY'] = 'Entré par';
+$LANG['DATE_ENTERED'] = 'Date entrée';
+$LANG['DATE_MODIFIED'] = 'Date modifiée';
+$LANG['SOURCE_DATE_MODIFIED'] = 'Date source modifiée';
+$LANG['NOT_ENTERED'] = 'non saisi';
 $LANG['EDIT_HISTORY_INT'] = 'Historique des Nodifications Internes';
 $LANG['MANAGE_HISTORY'] = 'Gérer Historique des Modifications';
 $LANG['OPEN'] = 'OUVERT';
@@ -22,7 +27,7 @@ $LANG['NEW_VALUE'] = 'Nouvelle Valeur';
 $LANG['CURRENT'] = 'actuel';
 $LANG['EDIT_HISTORY_EXT'] = 'Historique des Modifications Externes';
 $LANG['SOURCE'] = 'Source';
-$LANG['NO_PREV_EDITS'] = 'Aucune Modification Précédente Enregistrée';
+$LANG['NO_PREV_EDITS'] = 'Historique des modifications vide';
 $LANG['TRANSFER_SPEC'] = 'Transférer Spécimen';
 $LANG['TARGET_COL'] = 'Collection Cible';
 $LANG['SEL_COL'] = 'Sélectionnez Collection';
