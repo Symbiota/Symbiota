@@ -10,11 +10,12 @@ class PortalOccurrence extends Model{
 	protected $fillable = ['occid', 'pubid', 'remoteOccid', 'verification', 'refreshTimestamp' ];
 	public $timestamps = false;
 
-	public function portalIndex() {
-		return $this->belongsTo(PortalIndex::class, 'portalID', 'portalID');
+	public function portalPublication() {
+		return $this->belongsTo(PortalPublication::class, 'pubid', 'pubid');
 	}
 
 	public function occurrence() {
 		return $this->belongsTo(Occurrence::class, 'occid', 'occid');
 	}
 }
+?>

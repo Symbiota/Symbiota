@@ -11,11 +11,8 @@ class PortalIndex extends Model {
 	protected $hidden = ['securityKey'];
 	public $timestamps = false;
 
-	public function portalOccurrences(){
-		return $this->hasMany(PortalOccurrence::class, 'portalID', 'portalID');
-	}
-
 	public function portalPublications(){
 		return $this->hasMany(PortalPublication::class, 'portalID', 'portalID');
 	}
 }
+?>
