@@ -54,7 +54,7 @@ if($IS_ADMIN) $isEditor = 1;
 				if(validateSearchForm(f)){
 					$("[id^=occur-div-]").text("");
 					let searchObj = {};
-					if(f.sciname.value != "") searchObj.sciname = f.sciname.value.trim();
+					if(f.sciname.value != "") searchObj.scientificName = f.sciname.value.trim();
 					if(f.country.value != "") searchObj.country = f.country.value.trim();
 					if(f.stateProvince.value != "") searchObj.stateProvince = f.stateProvince.value.trim();
 					if(f.county.value != "") searchObj.county = f.county.value.trim();
@@ -69,11 +69,13 @@ if($IS_ADMIN) $isEditor = 1;
 
 			function portalQuery(portalID, portalName, portalUrl, searchObj){
 				let urlFrag = "";
+				let urlApiVars = "";
 				let searchStr = "";
 				Object.keys(searchObj).forEach(function(key, index) {
 					let fieldName = key;
 					searchStr = searchStr + ", " + fieldName + ": " + searchObj[key];
-					if(fieldName == "sciname") fieldName = "taxa";
+					urlApiVars = urlApiVars + "&" + fieldName + "=" + searchObj[key];
+					if(fieldName == "scientificName") fieldName = "taxa";
 					urlFrag = urlFrag + "&" + fieldName + "=" + searchObj[key];
 				});
 				if(urlFrag != ""){
@@ -93,6 +95,7 @@ if($IS_ADMIN) $isEditor = 1;
 						if(jsonRes.count > 0){
 							addLink(portalID, portalUrl + "/collections/list.php?usethes=1&taxontype=2" + urlFrag, "Query Results");
 							addLink(portalID, portalUrl + "/collections/map/index.php?gridSizeSetting=60" + urlFrag, "Dynamic Map");
+							addLink(portalID, portalUrl + "/api/v2/occurrence?" + urlApiVars, "API endpoint");
 							urlFrag = encodeURIComponent(urlFrag.substring(1));
 							let downloadUrl = portalUrl + "/collections/download/index.php?searchvar=" + urlFrag;
 							$("#occur-div-"+portalID).append('<div class="occur-sub-div"><a href="#" onclick="openPopup(\''+downloadUrl+'\');return false;">Download Results</a></div>');
