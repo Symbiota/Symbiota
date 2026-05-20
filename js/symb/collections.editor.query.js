@@ -10,7 +10,7 @@ channel.onmessage = (event) => {
       if (msg.tabId === tabId) return;
 
       // alert(translations.OCCURENCE_EDITOR_COLLISION_WARNING); // @TODO figure out alternative
-      document.getElementById('batchUpdateButton').disabled = true;
+      // document.getElementById('batchUpdateButton').disabled = true;
       channel.postMessage({
         type: 'tab-alive',
         tabId
@@ -21,7 +21,7 @@ channel.onmessage = (event) => {
     case 'tab-alive':
       if (msg.tabId === tabId) return;
       // alert(translations.OCCURENCE_EDITOR_COLLISION_WARNING); // @TODO figure out alternative
-      document.getElementById('batchUpdateButton').disabled = true;
+      // document.getElementById('batchUpdateButton').disabled = true;
       break;
   }
 };
