@@ -244,6 +244,9 @@ class Media {
 	 * @return string | bool
 	 */
 	public static function ext2Mime(string $ext, string $type = '') {
+		$ext = strtolower($ext);
+		$type = strtolower($type);
+
 		$image = [
 			'bmp' => ['image/bmp', 'image/x-bmp', 'image/x-bitmap', 'image/x-xbitmap', 'image/x-win-bitmap', 'image/x-windows-bmp', 'image/ms-bmp', 'image/x-ms-bmp'],
 			'cdr' => ['image/cdr', 'image/x-cdr'],
