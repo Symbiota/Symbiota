@@ -6,9 +6,49 @@ channel.onmessage = (event) => {
   const msg = event.data;
 
   function disableBatchUpdateButton(){
-    // alert(translations.OCCURENCE_EDITOR_COLLISION_WARNING); // @TODO figure out alternative & make accessible
-    document.getElementById('batchUpdateButton').disabled = true;
-    document.getElementById('batchUpdateButton').title = translations.OCCURENCE_EDITOR_COLLISION_WARNING || "Batch update disabled due to potential conflicting query activity in another tab.";
+    const batchUpdateButton = document.getElementById('batchUpdateButton');
+    if(!batchUpdateButton) return;
+
+    const disabledMessage = translations.OCCURENCE_EDITOR_COLLISION_WARNING || "Batch update disabled due to potential conflicting query activity in another tab.";
+
+    // Keep the button keyboard-focusable while exposing disabled semantics.
+    batchUpdateButton.removeAttribute('disabled');
+    batchUpdateButton.setAttribute('aria-disabled', 'true');
+    batchUpdateButton.setAttribute('title', disabledMessage);
+    batchUpdateButton.setAttribute('tabindex', '0');
+
+    const descriptionId = 'batchUpdateButtonDisabledReason';
+    let descriptionNode = document.getElementById(descriptionId);
+    if(!descriptionNode){
+      descriptionNode = document.createElement('span');
+      descriptionNode.id = descriptionId;
+      descriptionNode.style.position = 'absolute';
+      descriptionNode.style.left = '-9999px';
+      descriptionNode.style.width = '1px';
+      descriptionNode.style.height = '1px';
+      descriptionNode.style.overflow = 'hidden';
+      batchUpdateButton.insertAdjacentElement('afterend', descriptionNode);
+    }
+    descriptionNode.textContent = disabledMessage;
+    batchUpdateButton.setAttribute('aria-describedby', descriptionId);
+
+    if(!batchUpdateButton.dataset.ariaDisabledHandlersBound){
+      batchUpdateButton.addEventListener('click', function(event){
+        if(this.getAttribute('aria-disabled') === 'true'){
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }, true);
+
+      batchUpdateButton.addEventListener('keydown', function(event){
+        if(this.getAttribute('aria-disabled') === 'true' && (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar')){
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }, true);
+
+      batchUpdateButton.dataset.ariaDisabledHandlersBound = 'true';
+    }
   }
 
   switch (msg.type) {
