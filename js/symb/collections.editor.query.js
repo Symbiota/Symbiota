@@ -5,23 +5,25 @@ const tabId = crypto.randomUUID();
 channel.onmessage = (event) => {
   const msg = event.data;
 
+  function disableBatchUpdateButton(){
+    // alert(translations.OCCURENCE_EDITOR_COLLISION_WARNING); // @TODO figure out alternative & make accessible
+    document.getElementById('batchUpdateButton').disabled = true;
+    document.getElementById('batchUpdateButton').title = translations.OCCURENCE_EDITOR_COLLISION_WARNING || "Batch update disabled due to potential conflicting query activity in another tab.";
+  }
+
   switch (msg.type) {
     case 'tab-opened':
       if (msg.tabId === tabId) return;
-
-      // alert(translations.OCCURENCE_EDITOR_COLLISION_WARNING); // @TODO figure out alternative
-      // document.getElementById('batchUpdateButton').disabled = true;
+      disableBatchUpdateButton();
       channel.postMessage({
         type: 'tab-alive',
         tabId
       });
-
       break;
 
     case 'tab-alive':
       if (msg.tabId === tabId) return;
-      // alert(translations.OCCURENCE_EDITOR_COLLISION_WARNING); // @TODO figure out alternative
-      // document.getElementById('batchUpdateButton').disabled = true;
+      disableBatchUpdateButton();
       break;
   }
 };
