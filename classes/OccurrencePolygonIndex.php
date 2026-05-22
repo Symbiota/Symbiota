@@ -6,24 +6,15 @@ class OccurrencePolygonIndex {
 	private $conn;
 	private $errorMessage = '';
 
-	public function __construct($conn){
+	public function __construct(mysqli $conn){
 		$this->conn = $conn;
 	}
 
-	public function getErrorMessage(){
+	public function getErrorMessage(): string{
 		return $this->errorMessage;
 	}
-	public static function sanitizePolygonIds($polygonIDs){
-		if(!is_array($polygonIDs)) $polygonIDs = [$polygonIDs];
-		$idArr = array();
-		foreach($polygonIDs as $id){
-			if(is_numeric($id)) $idArr[] = (int)$id;
-		}
-		return array_values(array_unique(array_filter($idArr)));
-	}
 
-	public function isPolygonReady($polygonIDs){
-		$polygonIDs = self::sanitizePolygonIds($polygonIDs);
+	public function isPolygonReady(array $polygonIDs): bool{
 		if(!$polygonIDs) return false;
 
 		$sql = 'SELECT COUNT(*) AS readyCnt '.
@@ -43,14 +34,13 @@ class OccurrencePolygonIndex {
 		}
 	}
 
-	public function markGeographicPolygonPending($geoThesID){
-		if(!is_numeric($geoThesID)) return false;
+	public function markGeographicPolygonPending(int $geoThesID): bool{
 		try {
 			QueryUtil::executeQuery($this->conn,
 				'UPDATE geographicpolygon '.
 				'SET polygonIndexStatus = "pending", polygonIndexedAt = NULL, polygonIndexRecordCount = NULL, polygonIndexError = NULL '.
 				'WHERE geoThesID = ?',
-				[(int)$geoThesID]
+				[$geoThesID]
 			);
 			return true;
 		}
@@ -60,10 +50,9 @@ class OccurrencePolygonIndex {
 		}
 	}
 
-	public function deleteGeographicPolygonIndex($geoThesID){
-		if(!is_numeric($geoThesID)) return false;
+	public function deleteGeographicPolygonIndex(int $geoThesID): bool{
 		try {
-			$this->deleteGeographicPolygonIndexInBatches((int)$geoThesID);
+			$this->deleteGeographicPolygonIndexInBatches($geoThesID);
 			return true;
 		}
 		catch(Throwable $e){
@@ -72,11 +61,8 @@ class OccurrencePolygonIndex {
 		}
 	}
 
-	public function rebuildPolygons($geoThesID, $batchSize = 50000){
-		if(!is_numeric($geoThesID)) return false;
-		$geoThesID = (int)$geoThesID;
-		$batchSize = (int)$batchSize;
-		if($batchSize < 1) $batchSize = 50000;
+	public function rebuildPolygons(int $geoThesID, int $batchSize = 10000): bool{
+		if($batchSize < 1) $batchSize = 10000;
 		$stage = 'building polygon index';
 		$timeStamp = date('Y-m-d H:i:s');
 
@@ -117,12 +103,10 @@ class OccurrencePolygonIndex {
 			return false;
 		}
 	}
-	//current default limit is 20
-	public function rebuildPendingPolygons($limit = 20, $batchSize = 50000){
-		$limit = (int)$limit;
+
+	public function rebuildPendingPolygons(int $limit = 20, int $batchSize = 10000): int{
 		if($limit < 1) $limit = 20;
-		$batchSize = (int)$batchSize;
-		if($batchSize < 1) $batchSize = 50000;
+		if($batchSize < 1) $batchSize = 10000;
 		$rebuiltCnt = 0;
 
 		$sql = 'SELECT gp.geoThesID '.
@@ -151,33 +135,33 @@ class OccurrencePolygonIndex {
 		return $rebuiltCnt;
 	}
 
-	private function deleteGeographicPolygonIndexInBatches($geoThesID, $batchSize = 50000){
+	private function deleteGeographicPolygonIndexInBatches(int $geoThesID, int $batchSize = 10000): void{
 		do {
 			QueryUtil::executeQuery($this->conn,
 				'DELETE FROM occurrencepolygonindex WHERE geoThesID = ? LIMIT '.$batchSize,
-				[(int)$geoThesID]
+				[$geoThesID]
 			);
 			$deletedCnt = max(0, (int)$this->conn->affected_rows);
 		} while($deletedCnt === $batchSize);
 	}
 
-	private function deleteStalePolygons($geoThesID, $timeStamp, $batchSize = 50000){
+	private function deleteStalePolygons(int $geoThesID, string $timeStamp, int $batchSize = 10000): void{
 		do {
 			QueryUtil::executeQuery($this->conn,
 				'DELETE FROM occurrencepolygonindex WHERE geoThesID = ? AND indexedAt <> ? LIMIT '.$batchSize,
-				[(int)$geoThesID, $timeStamp]
+				[$geoThesID, $timeStamp]
 			);
 			$deletedCnt = max(0, (int)$this->conn->affected_rows);
 		} while($deletedCnt === $batchSize);
 	}
 
-	private function getNextOccurrencePointBatch($lastOccid, $batchSize){
+	private function getNextOccurrencePointBatch(int $lastOccid, int $batchSize): ?array{
 		$rs = QueryUtil::executeQuery($this->conn,
 			'SELECT MIN(occid) AS startOccid, MAX(occid) AS endOccid, COUNT(*) AS pointCnt '.
 			'FROM ('.
 			'SELECT occid FROM omoccurpoints WHERE occid > ? ORDER BY occid LIMIT '.$batchSize.
 			') pointBatch',
-			[(int)$lastOccid]
+			[$lastOccid]
 		);
 		$row = $rs ? $rs->fetch_object() : null;
 		if($rs) $rs->free();
@@ -189,17 +173,17 @@ class OccurrencePolygonIndex {
 		);
 	}
 
-	private function getGeographicPolygonIndexCount($geoThesID){
+	private function getGeographicPolygonIndexCount(int $geoThesID): int{
 		$rs = QueryUtil::executeQuery($this->conn,
 			'SELECT COUNT(*) AS cnt FROM occurrencepolygonindex WHERE geoThesID = ?',
-			[(int)$geoThesID]
+			[$geoThesID]
 		);
 		$row = $rs ? $rs->fetch_object() : null;
 		if($rs) $rs->free();
 		return ($row ? (int)$row->cnt : 0);
 	}
 
-	private function insertGeographicPolygonIndexBatch($geoThesID, $startOccid, $endOccid, $timeStamp){
+	private function insertGeographicPolygonIndexBatch(int $geoThesID, int $startOccid, int $endOccid, string $timeStamp): int{
 		QueryUtil::executeQuery($this->conn,
 			'INSERT INTO occurrencepolygonindex(geoThesID, occid, indexedAt) '.
 			'SELECT gp.geoThesID, p.occid, ? '.
@@ -211,7 +195,7 @@ class OccurrencePolygonIndex {
 			'AND MBRContains(gp.footprintPolygon, p.lngLatPoint) '.
 			'AND ST_Contains(gp.footprintPolygon, p.lngLatPoint) '.
 			'ON DUPLICATE KEY UPDATE indexedAt = VALUES(indexedAt)',
-			[$timeStamp, (int)$startOccid, (int)$endOccid, (int)$geoThesID]
+			[$timeStamp, $startOccid, $endOccid, $geoThesID]
 		);
 		return max(0, (int)$this->conn->affected_rows);
 	}
