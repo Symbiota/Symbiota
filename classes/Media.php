@@ -1351,12 +1351,17 @@ class Media {
 	/**
 	 * @return array<string>
 	 */
-	public static function getCreatorArray(): array {
+	public static function getCreatorArray(bool $with_media = true): array {
 		$sql = <<< SQL
-		SELECT u.uid, CONCAT_WS(', ',u.lastname,u.firstname) AS fullname 
+		SELECT DISTINCT u.uid, CONCAT_WS(', ',u.lastname,u.firstname) AS fullname
 		FROM users u 
-		ORDER BY u.lastname, u.firstname 
 		SQL;
+
+		if($with_media) {
+			$sql .= ' WHERE u.uid in (select DISTINCT creatorUid from media)';
+		}
+
+		$sql .= ' ORDER BY u.lastname, u.firstname';
 
 		$result = QueryUtil::executeQuery(Database::connect('readonly'), $sql);
 		$creators = array();
