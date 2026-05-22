@@ -6,6 +6,7 @@ include_once($SERVER_ROOT . '/classes/AssociationManager.php');
 include_once($SERVER_ROOT . '/classes/OccurrencePolygonIndex.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 Language::load('classes/OccurrenceManager');
 
 class OccurrenceManager extends OccurrenceTaxaManager {
@@ -628,7 +629,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		}
 
 		if(!empty($this->searchTermArr['polygons'])){
-			$polygonIDs = OccurrencePolygonIndex::sanitizePolygonIds($this->searchTermArr['polygons']);
+			$polygonIDs = $this->searchTermArr['polygons'];
 			if($polygonIDs && $this->canUseGeographicPolygonIndex($polygonIDs)){
 				$this->searchTermArr['usePolygonIndex'] = 1;
 				$sqlWhere .= 'AND o.occid IN(SELECT opi.occid FROM occurrencepolygonindex opi WHERE opi.geoThesID IN('.implode(',', $polygonIDs).')) ';
@@ -677,7 +678,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
         return $results;
     }
 
-	private function canUseGeographicPolygonIndex($polygonIDs){
+	private function canUseGeographicPolygonIndex(array $polygonIDs): bool{
 		$polygonIndex = new OccurrencePolygonIndex($this->conn);
 		return $polygonIndex->isPolygonReady($polygonIDs);
 	}
@@ -1313,13 +1314,16 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			else unset($this->searchTermArr['characters']);
 		}
 		if(array_key_exists('polygons',$_REQUEST)){
-			$polygons = $_REQUEST['polygons'];
-			if (!is_array($polygons))
-				$polygons = [$polygons];
-			$polygons = array_filter($polygons, function($val) {
-				return trim($val) !== '';
-			});
-			if (!empty($polygons))
+			$polygonInput = is_array($_REQUEST['polygons']) ? $_REQUEST['polygons'] : array($_REQUEST['polygons']);
+			$polygons = array();
+			foreach($polygonInput as $polygonID){
+				if(is_array($polygonID)) continue;
+				foreach(explode(',', $polygonID) as $id){
+					$id = Sanitize::int($id);
+					if(is_numeric($id) && $id > 0) $polygons[] = (int)$id;
+				}
+			}
+			if($polygons)
 				$this->searchTermArr['polygons'] = $polygons;
 			else
 				unset($this->searchTermArr['polygons']);
