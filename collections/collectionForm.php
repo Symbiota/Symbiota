@@ -15,8 +15,8 @@ $checkedCollections = [];
 
 if(array_key_exists('db', $_REQUEST)) {
 	$collIds = is_array($_REQUEST['db'])? $_REQUEST['db']: [$_REQUEST['db']];
-	foreach($collIds as $collId) {
-		$checkedCollections[$collId] = true;
+	foreach($collIds as $localCollId) {
+		$checkedCollections[$localCollId] = true;
 	}
 }
 ?>
@@ -203,13 +203,13 @@ function toggleCategory(categoryId, event=null) {
 				>
 					<?php foreach($category['collections'] as $collection): ?>
 					<?php
-						$collid = array_key_exists('collid', $collection) ? $collection['collid'] : null;
+						$ariaCollid = array_key_exists('collid', $collection) ? $collection['collid'] : null;
 						$codeStr = $collectionFormManager->generateCodeStr($collection);
 					?>
 					<div style="display:flex; align-items: center; gap: 0.5rem;">
 						<img width="30px" height="30px" src="<?= $collection['icon'] ?>">
 						<input
-							data-chip="Collection: <?= $codeStr ?>" aria-label="select collection <?= $collid ?>" data-role="none"
+							data-chip="Collection: <?= $codeStr ?>" aria-label="select collection <?= $ariaCollid ?>" data-role="none"
 							data-codeStr="<?= $codeStr ?>"
 							style="margin:0;"
 							id="<?= $category['name'] . '_' . $collection['collid'] ?>"
