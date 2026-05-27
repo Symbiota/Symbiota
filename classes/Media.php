@@ -644,14 +644,6 @@ class Media {
 				unlink($file['tmp_name']);
 			}
 
-/*
-			foreach($createdFilepaths as $field => $filepath) {
-				if(file_exists($filepath)) {
-					self::insertMediaMetadata($media_metadata['mediaID'], $field, filesize($filepath), md5_file($filepath));
-				}
-			}
-
-*/
 			mysqli_commit($conn);
 		} catch(Throwable $th) {
 			mysqli_rollback($conn);
