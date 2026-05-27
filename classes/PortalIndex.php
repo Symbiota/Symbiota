@@ -272,7 +272,7 @@ class PortalIndex extends OmCollections{
 		return $collid;
 	}
 
-	private function getAPIResponse($url, $asyc = false){
+	private function getAPIResponse($url){
 		$status = false;
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -280,7 +280,7 @@ class PortalIndex extends OmCollections{
 		//curl_setopt($ch, CURLOPT_HTTPGET, true);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-		if($asyc) curl_setopt($ch, CURLOPT_TIMEOUT_MS, 500);
+		curl_setopt($ch, CURLOPT_TIMEOUT_MS, 500);
 		$resJson = curl_exec($ch);
 		$this->returnHeader = curl_getinfo($ch);
 		if($this->returnHeader['http_code'] == '200'){
