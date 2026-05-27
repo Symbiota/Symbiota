@@ -114,16 +114,7 @@ if($IS_ADMIN) $isEditor = 1;
 
 			function appendAllCollectionCounts(portalUrl, searchObj){
 				let ajaxSearchObj = structuredClone(searchObj);
-				ajaxSearchObj.limit = 1;
-				ajaxSearchObj.offset = 0;
-				const collElements = document.querySelectorAll(".occur-count");
-				for (var i = 0; i < collElements.length; i++) {
-					ajaxSearchObj.collid = collElements[i].textContent;
-					appendCollectionCount(portalUrl, ajaxSearchObj, collElements[i]);
-				}
-			}
-
-			function appendCollectionCount(portalUrl, ajaxSearchObj, collSpan){
+				ajaxSearchObj.returnStatistics = 1;
 				$.ajax({
 					method: "GET",
 					data: ajaxSearchObj,
@@ -131,11 +122,21 @@ if($IS_ADMIN) $isEditor = 1;
 					url: portalUrl + "/api/v2/occurrence"
 				})
 				.done(function(jsonRes) {
-					collSpan.textContent = jsonRes.count.toLocaleString();
-					collSpan.style.display = "inline";
+
+					const collElements = document.querySelectorAll(".occur-count");
+					for (var i = 0; i < collElements.length; i++) {
+						let occurrenceCount = 0;
+						for (var j = 0; j < jsonRes.results.length; j++) {
+							if(jsonRes.results[j].collid == collElements[i].textContent){
+								occurrenceCount = jsonRes.results[j].occurrenceCount;
+							}
+						}
+						collElements[i].textContent = occurrenceCount;
+						collElements[i].style.display = "inline";
+					}
 				})
 				.fail(function( jqXHR, textStatus ) {
-					collSpan.textContent = "?";
+					alert("Unable to obtain collection statistics from remote portal");
 				});
 			}
 
