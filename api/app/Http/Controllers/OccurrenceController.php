@@ -67,7 +67,7 @@ class OccurrenceController extends Controller {
 	 *	 @OA\Parameter(
 	 *		 name="scientificName",
 	 *		 in="query",
-	 *		 description="Scientific Name - binomen only without authorship",
+	 *		 description="Scientific Name, without authorship",
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
@@ -219,6 +219,13 @@ class OccurrenceController extends Controller {
 	 *		 @OA\Schema(type="string")
 	 *	 ),
 	 *	 @OA\Parameter(
+	 *		 name="returnStatistics",
+	 *		 in="query",
+	 *		 description="If set to true, outputs only specimen and media counts across all collection IDs (aka collid). (accepted values: true/false or 1/0)",
+	 *		 required=false,
+	 *		 @OA\Schema(type="boolean",default=false)
+	 *	 ),
+	 *	 @OA\Parameter(
 	 *		 name="limit",
 	 *		 in="query",
 	 *		 description="Controls the number of results per page",
@@ -283,12 +290,19 @@ class OccurrenceController extends Controller {
 			return response()->json(['status' => false, 'error' => 'dateLastModifiedMin greater than dateLastModifiedMax'], 422);
 		}
 
+		$returnStatistics = filter_var( $request->returnStatistics, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE );
 		$limit = $request->input('limit', 100);
 		$offset = $request->input('offset', 0);
 
 		$occurrenceModel = Occurrence::query();
-		$occurrenceModel->select('omoccurrences.*');
-		$occurrenceModel->with('identifier');
+		if($returnStatistics){
+			$occurrenceModel->select('collid', DB::raw('count(omoccurrences.occid) as occurrenceCount'), DB::raw('count(m.mediaID) as mediaCount'));
+			$occurrenceModel->leftJoin('media as m', 'omoccurrences.occid', '=', 'm.occid');
+		}
+		else{
+			$occurrenceModel->select('omoccurrences.*');
+			$occurrenceModel->with('identifier');
+		}
 		$occurrenceModel->where('recordSecurity', 0);
 
 		if($request->has('collid')){
@@ -329,7 +343,10 @@ class OccurrenceController extends Controller {
 				->where(function ($query) use ($parentTid) {
 					$query->where('e.parentTid', $parentTid)
 					->orWhere('e.tid', $parentTid);
-				})->distinct('occid');
+				});
+				if(!$returnStatistics){
+					$occurrenceModel->distinct('occid');
+				}
 			}
 		}
 		if(!$parentTid){
@@ -441,6 +458,12 @@ class OccurrenceController extends Controller {
 		}
 		if ($request->has('dateLastModifiedMax')) {
 			$occurrenceModel->whereRaw('dateLastModified < ? + INTERVAL 1 DAY', $request->dateLastModifiedMax);
+		}
+
+		if($returnStatistics){
+			$result = $occurrenceModel->groupBy('collid')->get();
+			$retObj = [ 'results' => $result ];
+			return response()->json($retObj);
 		}
 
 		$fullCnt = $occurrenceModel->count();

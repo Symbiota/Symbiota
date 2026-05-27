@@ -1602,7 +1602,7 @@
                     {
                         "name": "scientificName",
                         "in": "query",
-                        "description": "Scientific Name - binomen only without authorship",
+                        "description": "Scientific Name, without authorship",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -1620,7 +1620,7 @@
                     {
                         "name": "includeChildTaxa",
                         "in": "query",
-                        "description": "Setting to true will include all child taxa within return (accepted values: true/false or 1/0)",
+                        "description": "Setting to true will include occurrences identified to child taxa (accepted values: true/false or 1/0)",
                         "required": false,
                         "schema": {
                             "type": "boolean",
@@ -1796,6 +1796,16 @@
                         "required": false,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "name": "returnStatistics",
+                        "in": "query",
+                        "description": "If set to true, outputs only specimen and media counts across all collection IDs (aka collid). (accepted values: true/false or 1/0)",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
                         }
                     },
                     {
