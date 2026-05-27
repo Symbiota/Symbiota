@@ -607,6 +607,10 @@ class Media {
 						if(!($media_metadata[$url] ?? false)) {
 							$temp_path = UploadUtil::getTempDir() . $data['name'];
 
+							if(!is_writable($temp_path)) {
+								throw new MediaException(MediaException::FilepathNotWritable, $temp_path);
+							}
+
 							self::create_image(
 								$file['tmp_name'],
 								$temp_path,
