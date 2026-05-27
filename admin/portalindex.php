@@ -122,16 +122,18 @@ if($IS_ADMIN) $isEditor = 1;
 					url: portalUrl + "/api/v2/occurrence"
 				})
 				.done(function(jsonRes) {
-
 					const collElements = document.querySelectorAll(".occur-count");
 					for (var i = 0; i < collElements.length; i++) {
 						let occurrenceCount = 0;
+						let mediaCount = 0;
 						for (var j = 0; j < jsonRes.results.length; j++) {
-							if(jsonRes.results[j].collid == collElements[i].textContent){
+							if(jsonRes.results[j].collid == collElements[i].id){
 								occurrenceCount = jsonRes.results[j].occurrenceCount;
+								mediaCount = jsonRes.results[j].mediaCount;
+								break;
 							}
 						}
-						collElements[i].textContent = occurrenceCount;
+						collElements[i].innerHTML =  occurrenceCount + " occurrences;<br>" + mediaCount + " media";
 						collElements[i].style.display = "inline";
 					}
 				})
@@ -249,6 +251,7 @@ if($IS_ADMIN) $isEditor = 1;
 			}
 
 			function validateSearchForm(f){
+				return true;	//Remove line to enforce at least on search term submitted
 				let formIsValid = false;
 				if(f.sciname.value != ""){
 					formIsValid = true;
@@ -524,7 +527,7 @@ if($IS_ADMIN) $isEditor = 1;
 													<th>Dataset Type</th>
 													<th>Management</th>
 													<th>Mapped Internally</th>
-													<th>Occurrence Count</th>
+													<th>Record Counts</th>
 												</tr>
 												<?php
 												foreach($collList as $collArr){
@@ -543,7 +546,7 @@ if($IS_ADMIN) $isEditor = 1;
 														}
 														?>
 														<td><?= $internal ?></td>
-														<td><span class="occur-count"><?= $collArr['collID'] ?></span></td>
+														<td><span class="occur-count" id="<?= $collArr['collID'] ?>"></span></td>
 													</tr>
 													<?php
 												}

@@ -296,7 +296,7 @@ class OccurrenceController extends Controller {
 
 		$occurrenceModel = Occurrence::query();
 		if($returnStatistics){
-			$occurrenceModel->select('collid', DB::raw('count(omoccurrences.occid) as occurrenceCount'), DB::raw('count(m.mediaID) as mediaCount'));
+			$occurrenceModel->select('collid', DB::raw('COUNT(DISTINCT omoccurrences.occid) as occurrenceCount'), DB::raw('COUNT(DISTINCT m.mediaID) as mediaCount'));
 			$occurrenceModel->leftJoin('media as m', 'omoccurrences.occid', '=', 'm.occid');
 		}
 		else{
@@ -351,7 +351,12 @@ class OccurrenceController extends Controller {
 		}
 		if(!$parentTid){
 			if ($request->has('tid')) {
-				$occurrenceModel->where('tidInterpreted', $request->tid);
+				if($request->tid){
+					$occurrenceModel->where('tidInterpreted', $request->tid);
+				} else {
+					//tid = 0, thus translate to null
+					$occurrenceModel->whereNull('tidInterpreted');
+				}
 			}
 			elseif ($request->has('scientificName')) {
 				if(strpos($request->scientificName, '%')){
