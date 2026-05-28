@@ -536,6 +536,7 @@ if($action != "Update Statistics"){
                         }
 						else{
 							echo '<div class="top-marg"><div class="heavy-txt">' . $LANG['NO_COLLECTIONS'] . '</div></div>';
+							echo '</div></form>';
 						}
 						?>
 					</div>
