@@ -1,6 +1,7 @@
 <?php
 include_once ($SERVER_ROOT . '/classes/OmCollections.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
+include_once($SERVER_ROOT.'/classes/tmp.php');
 
 class OccurrenceCollectionProfile extends OmCollections{
 
@@ -585,6 +586,57 @@ class OccurrenceCollectionProfile extends OmCollections{
 				$returnArr['TotalImageCount'] = $r->TotalImageCount;
 			}
 			$rs->free();
+			// DynamicPropertiesRestorer::restoreLabelFormatsOnly();
+
+			$dateLastRun = date('Y-m-d H:i:s');
+			$writeConn = MySQLiConnectionFactory::getCon("write");
+			foreach($returnArr as $collStats){
+				if(!is_array($collStats) || !isset($collStats['collid']) || !is_numeric($collStats['collid'])) continue;
+				$mostRecentStatisticsArr = array();
+				$dynamicPropertiesArr = array();
+				$speciesIdCnt = 0;
+				$existingMostRecentStatisticsArr = null;
+				if(!empty($collStats['dynamicProperties'])){
+					$decodedProps = json_decode($collStats['dynamicProperties'], true);
+					if(is_array($decodedProps)){
+						$dynamicPropertiesArr = $decodedProps;
+						if(isset($decodedProps['SpecimensCountID']) && is_numeric($decodedProps['SpecimensCountID'])){
+							$speciesIdCnt = (int)$decodedProps['SpecimensCountID'];
+						}
+						if(isset($decodedProps['mostRecentStatistics']) && is_array($decodedProps['mostRecentStatistics'])){
+							$existingMostRecentStatisticsArr = $decodedProps['mostRecentStatistics'];
+						}
+					}
+				}
+				$mostRecentStatisticsArr = array(
+					'dateLastRun' => $dateLastRun,
+					'collid' => (int)$collStats['collid'],
+					'CollectionName' => (isset($collStats['CollectionName']) ? $collStats['CollectionName'] : ''),
+					'recordcnt' => (isset($collStats['recordcnt']) ? (int)$collStats['recordcnt'] : 0),
+					'georefcnt' => (isset($collStats['georefcnt']) ? (int)$collStats['georefcnt'] : 0),
+					'OccurrenceImageCount' => (isset($collStats['OccurrenceImageCount']) ? (int)$collStats['OccurrenceImageCount'] : 0),
+					'speciesID' => $speciesIdCnt,
+					'familycnt' => (isset($collStats['familycnt']) ? (int)$collStats['familycnt'] : 0),
+					'genuscnt' => (isset($collStats['genuscnt']) ? (int)$collStats['genuscnt'] : 0),
+					'speciescnt' => (isset($collStats['speciescnt']) ? (int)$collStats['speciescnt'] : 0),
+					'TotalTaxaCount' => (isset($collStats['TotalTaxaCount']) ? (int)$collStats['TotalTaxaCount'] : 0)
+				);
+				if(is_array($existingMostRecentStatisticsArr) && $existingMostRecentStatisticsArr == $mostRecentStatisticsArr) continue;
+				$dynamicPropertiesArr['mostRecentStatistics'] = $mostRecentStatisticsArr;
+				$dynamicPropertiesJson = json_encode($dynamicPropertiesArr);
+				if($writeConn && $dynamicPropertiesJson !== false){
+					$sqlUpdate = 'UPDATE omcollections SET dynamicProperties = "'.$this->cleanInStr($dynamicPropertiesJson).'" WHERE collid = '.(int)$collStats['collid'];
+					try{
+						if(!$writeConn->query($sqlUpdate)){
+							error_log('runStatistics dynamicProperties update failed for collid '.(int)$collStats['collid'].': '.$writeConn->error);
+						}
+					}
+					catch(mysqli_sql_exception $e){
+						error_log('runStatistics dynamicProperties update exception for collid '.(int)$collStats['collid'].': '.$e->getMessage());
+					}
+				}
+			}
+			if($writeConn) $writeConn->close();
 		}
 		return $returnArr;
 	}
