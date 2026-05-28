@@ -61,8 +61,24 @@ test('Delete Determination', async({ detId, editDet, page }) => {
 });
 
 /* MEDIA */
-test('Add Media (File)', async({ newMedia }) => {
-	await newMedia.mediaForm.setFile('imgfile', path.join(__dirname, '../../images/world.png'));
+const addMediaTests = {
+	'Jpg': '../files/image.jpg',
+	'Jpeg': '../files/image.jpeg',
+	'Png': '../files/image.png',
+	'Bmp': '../files/image.bmp',
+	'Uppercase Ext': '../files/uppercase_image.JPG',
+	'Mp3': '../files/audio.mp3',
+	'Wav': '../files/audio.wav',
+	'Ogg': '../files/audio.ogg',
+	'Pdf': '../files/text.pdf',
+}
+
+test.describe('Upload Media', () => {
+	for(let testName in addMediaTests) {
+		test(testName, async({ newMedia }) => {
+			await newMedia.mediaForm.setFile('imgfile', path.join(__dirname, addMediaTests[testName]));
+		});
+	}
 });
 
 const editMediaTests  = {
