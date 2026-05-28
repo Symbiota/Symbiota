@@ -118,8 +118,10 @@ class SymbCollectionSearchPage extends CollectionSearchPage {
 
 	async selectCollection(collId: number): Promise<void> {
 		const expand = this.page.locator('span[id*="open_toggle"]');
-		await expand.isVisible();
-		await expand.click({force: true});
+		for (const el of await expand.all()) {
+			await el.isVisible();
+			await el.click({force: true});
+		}
 
 		const checkbox = this.page.locator(`input[name="db[]"][value="${collId}"]`);
 		await checkbox.isVisible();
