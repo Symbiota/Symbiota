@@ -110,4 +110,5 @@ $LANG['DATA_AUTHORIZED_TO_EDIT'] = 'ensembles de données que vous êtes autoris
 $LANG['MANAGE_TAXON_THUMBNAILS'] = 'Gérer les miniatures de la carte du profil de taxonomie';
 $LANG['TAXINTER'] = 'Autorisations des Utilisateurs d\'Intérêt Taxonomique';
 $LANG['OTHER_CAT_TRANSFER'] = 'Outil de transfert de numéro de catalogue autre';
+$LANG['BATCH_UPDATE_STATS'] = 'Outil de mise à jour en masse des statistiques de collection';
 ?>
