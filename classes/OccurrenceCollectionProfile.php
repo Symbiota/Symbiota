@@ -589,6 +589,32 @@ class OccurrenceCollectionProfile extends OmCollections{
 		return $returnArr;
 	}
 
+	public function getDedupedTaxaCounts($collId){
+		$returnArr = array(
+			'FamilyCount' => 0,
+			'GeneraCount' => 0,
+			'SpeciesCount' => 0,
+			'TotalTaxaCount' => 0
+		);
+		if(preg_match('/^[0-9,]+$/',$collId)){
+			$sql = 'SELECT COUNT(DISTINCT o.family) AS FamilyCount, '.
+				'COUNT(DISTINCT CASE WHEN t.RankId >= 180 THEN t.UnitName1 ELSE NULL END) AS GeneraCount, '.
+				'COUNT(DISTINCT CASE WHEN t.RankId = 220 THEN t.SciName ELSE NULL END) AS SpeciesCount, '.
+				'COUNT(DISTINCT CASE WHEN t.RankId >= 220 THEN t.SciName ELSE NULL END) AS TotalTaxaCount '.
+				'FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.TID '.
+				'WHERE o.collid IN('.$collId.') ';
+			$rs = $this->conn->query($sql);
+			if($r = $rs->fetch_object()){
+				$returnArr['FamilyCount'] = (int)$r->FamilyCount;
+				$returnArr['GeneraCount'] = (int)$r->GeneraCount;
+				$returnArr['SpeciesCount'] = (int)$r->SpeciesCount;
+				$returnArr['TotalTaxaCount'] = (int)$r->TotalTaxaCount;
+			}
+			$rs->free();
+		}
+		return $returnArr;
+	}
+
 	public function runStatisticsQuery($collId,$taxon,$country){
 		$returnArr = Array();
 		if(preg_match('/^[0-9,]+$/',$collId)){

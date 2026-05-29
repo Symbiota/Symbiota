@@ -278,6 +278,12 @@ if($collId){
 		ksort($familyArr, SORT_STRING | SORT_FLAG_CASE);
 		ksort($countryArr, SORT_STRING | SORT_FLAG_CASE);
 
+		$dedupTaxaCounts = $collManager->getDedupedTaxaCounts($collId);
+		$results['FamilyCount'] = array_key_exists('FamilyCount', $dedupTaxaCounts) ? (int)$dedupTaxaCounts['FamilyCount'] : 0;
+		$results['GeneraCount'] = array_key_exists('GeneraCount', $dedupTaxaCounts) ? (int)$dedupTaxaCounts['GeneraCount'] : 0;
+		$results['SpeciesCount'] = array_key_exists('SpeciesCount', $dedupTaxaCounts) ? (int)$dedupTaxaCounts['SpeciesCount'] : 0;
+		$results['TotalTaxaCount'] = array_key_exists('TotalTaxaCount', $dedupTaxaCounts) ? (int)$dedupTaxaCounts['TotalTaxaCount'] : 0;
+
 		$specimenCount = array_key_exists('SpecimenCount', $results) ? $results['SpecimenCount'] : 0;
 		$georefCount = array_key_exists('GeorefCount', $results) ? $results['GeorefCount'] : 0;
 		$results['SpecimensNullLatitude'] = $specimenCount && $georefCount ? $specimenCount - $georefCount : 0;
