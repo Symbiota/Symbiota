@@ -235,7 +235,7 @@ if($collId){
     }
 	if($action == "Update Statistics"){
 		$collManager->batchUpdateStatistics($collId);
-		echo '<script type="text/javascript">window.location="collstats.php?collid='.$collId.'"</script>';
+		echo '<script type="text/javascript">window.location="admincollstats.php?collid='.$collId.'"</script>';
 	}
     $_SESSION['statsFamilyArr'] = $familyArr;
     $_SESSION['statsCountryArr'] = $countryArr;
@@ -424,7 +424,7 @@ if($action != "Update Statistics"){
 					</ul>
 
 					<div id="specobsdiv" class="pin-things-here">
-							<form class="content" name="params-form" id="params-form" action="collstats.php" method="post" style="grid-template-columns: none;">
+							<form class="content" name="params-form" id="params-form" action="admincollstats.php" method="post" style="grid-template-columns: none;">
 								<div style="display: flex; justify-content: flex-end; position: sticky; top: 1rem;">
 									<button style="width: 150px; margin-right: 0.5rem;" id="view-stats" type="submit" name="submitaction" value="Run Statistics"><?php echo $LANG['VIEW_STATS']; ?></button>
 									<button style="width: 75px; margin-right: 0.5rem; background-color: var(--medium-color);" id="reset-btn" type="button"><?php echo $LANG['RESET'] ?></button>
