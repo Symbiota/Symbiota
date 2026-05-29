@@ -547,15 +547,13 @@ class OccurrenceController extends Controller {
 			'includeIdentifications' => 'integer',
 			'includeDatasets' => 'integer'
 		]);
-		$occurrenceModel = null;
-		if(is_numeric($id)){
-			$occurrenceModel = Occurrence::where('occid', $id);
+		if(!is_numeric($id)){
+			$id = Occurrence::where('recordID', $id)->orWhere('occurrenceID', $id)->value('occid');
+			if (!$id){
+				return response()->json(['error' => 'Occurrence not found with that ID'], 404);
+			}
 		}
-		else{
-			$occurrenceModel = Occurrence::where(function ($query) use ($id) {
-				$query->where('occurrenceID', $id)->orWhere('recordID', $id);
-			});
-		}
+		$occurrenceModel = Occurrence::where('occid', $id);
 		$occurrenceModel->with('identifier');
 		if ($request->input('includeMedia')) $occurrenceModel->with('media');
 		if ($request->input('includeIdentifications')) $occurrenceModel->with('identification');
@@ -592,9 +590,13 @@ class OccurrenceController extends Controller {
 	 * )
 	 */
 	public function showOneOccurrenceIdentifications($id, Request $request) {
-		$occid = $this->getOccidFromOtherIds($id)->occid ?? null;
-		if (!$occid) return response()->json(['error' => 'Occurrence not found with that ID'], 404);
-		$occurrence = Occurrence::find($occid);
+		if(!is_numeric($id)){
+			$id = Occurrence::where('recordID', $id)->orWhere('occurrenceID', $id)->value('occid');
+			if (!$id){
+				return response()->json(['error' => 'Occurrence not found with that ID'], 404);
+			}
+		}
+		$occurrence = Occurrence::find($id);
 		if ($occurrence->isEmpty()) {
 			return response()->json(['error' => 'Occurrence not found'], 404);
 		}
@@ -630,9 +632,13 @@ class OccurrenceController extends Controller {
 	 * )
 	 */
 	public function showOneOccurrenceMedia($id, Request $request) {
-		$occid = $this->getOccidFromOtherIds($id)->occid ?? null;
-		if (!$occid) return response()->json(['error' => 'Occurrence not found with that ID'], 404);
-		$occurrence = Occurrence::find($occid);
+		if(!is_numeric($id)){
+			$id = Occurrence::where('recordID', $id)->orWhere('occurrenceID', $id)->value('occid');
+			if (!$id){
+				return response()->json(['error' => 'Occurrence not found with that ID'], 404);
+			}
+		}
+		$occurrence = Occurrence::find($id);
 		if ($occurrence->isEmpty()) {
 			return response()->json(['error' => 'Occurrence not found'], 404);
 		}
@@ -979,6 +985,12 @@ class OccurrenceController extends Controller {
 	TXT;
 	public function update($id, Request $request) {
 		if ($this->authenticate($request)) {
+			if(!is_numeric($id)){
+				$id = Occurrence::where('recordID', $id)->orWhere('occurrenceID', $id)->value('occid');
+				if (!$id){
+					return response()->json(['error' => 'Occurrence not found with that ID'], 404);
+				}
+			}
 			$occurrence = Occurrence::find($id);
 			if (!$occurrence) {
 				return response()->json(['status' => 'failure', 'error' => 'Occurrence resource not found'], 400);
@@ -1028,6 +1040,12 @@ class OccurrenceController extends Controller {
 	TXT;
 	public function delete($id, Request $request) {
 		if ($this->authenticate($request)) {
+			if(!is_numeric($id)){
+				$id = Occurrence::where('recordID', $id)->orWhere('occurrenceID', $id)->value('occid');
+				if (!$id){
+					return response()->json(['error' => 'Occurrence not found with that ID'], 404);
+				}
+			}
 			$occurrence = Occurrence::find($id);
 			if (!$occurrence) {
 				return response()->json(['status' => 'failure', 'error' => 'Occurrence resource not found'], 400);
@@ -1291,27 +1309,29 @@ class OccurrenceController extends Controller {
 	 * )
 	 */
 	public function oneOccurrenceReharvest($id, Request $request) {
-		$responseArr = array();
 		$host = '';
 		if (!empty($GLOBALS['SERVER_HOST'])) $host = $GLOBALS['SERVER_HOST'];
 		else $host = $_SERVER['SERVER_NAME'];
 		if ($host && $request->getHttpHost() != $host) {
-			$responseArr['status'] = 400;
-			$responseArr['error'] = 'At this time, API call can only be triggered locally';
-			return response()->json($responseArr);
+			return response()->json(['error' => 'At this time, API call can only be triggered locally'], 400);
 		}
-		$occid = $this->getOccidFromOtherIds($id)->occid ?? null;
-		if (!$occid) return response()->json(['error' => 'Occurrence not found with that ID'], 404);
+		if(!is_numeric($id)){
+			$id = Occurrence::where('recordID', $id)->orWhere('occurrenceID', $id)->value('occid');
+			if (!$id){
+				return response()->json(['error' => 'Occurrence not found with that ID'], 404);
+			}
+		}
+		return $this->occurrenceReharvest($id);
+	}
+
+	public function occurrenceReharvest(int $occid): array {
+		$responseArr = array();
 		$occurrence = Occurrence::find($occid);
 		if (!$occurrence) {
-			$responseArr['status'] = 500;
-			$responseArr['error'] = 'Unable to locate occurrence record (occid = '.$occid.')';
-			return response()->json($responseArr);
+			return array('status' => 404, 'error' => 'unable to locate occurrence record');
 		}
 		if ($occurrence->collection->managementType == 'Live Data') {
-			$responseArr['status'] = 400;
-			$responseArr['error'] = 'Updating a Live Managed record is not allowed ';
-			return response()->json($responseArr);
+			return array('status' => 400, 'error' => 'updating a Live Managed record is not allowed');
 		}
 		$publications = $occurrence->portalPublications;
 		foreach ($publications as $pub) {
@@ -1323,20 +1343,19 @@ class OccurrenceController extends Controller {
 					$urlRoot = PortalIndex::where('portalID', $sourcePortalID)->value('urlRoot');
 					$url = $urlRoot.'/api/v2/occurrence/'.$remoteOccid;
 					if($remoteOccurrence = Helper::getAPIResponse($url)){
-						$remoteOccurrence['occid'] = $occid;
+						$remoteOccurrence['occid'] = $id;
 						$remoteCollid = $remoteOccurrence['collid'];
 						$sourceDateLastModified = $remoteOccurrence['dateLastModified'];
 						$clearFieldArr = array(
-							'collid', 'dbpk', 'tidInterpreted', 'dynamicProperties', 'processingStatus', 'recordID',
-							'modified', 'dateEntered' ,'dateLastModified', 'genus', 'specificEpithet', 'institutionCode', 'collectionCode',
-							'scientificNameAuthorship', 'identifiedBy', 'dateIdentified', 'verbatimEventDate', 'countryCode', 'localitySecurity'
+								'collid', 'dbpk', 'tidInterpreted', 'dynamicProperties', 'processingStatus', 'recordID',
+								'modified', 'dateEntered' ,'dateLastModified', 'genus', 'specificEpithet', 'institutionCode', 'collectionCode',
+								'scientificNameAuthorship', 'identifiedBy', 'dateIdentified', 'verbatimEventDate', 'countryCode', 'localitySecurity'
 						);
 						foreach($clearFieldArr as $field){
 							unset($remoteOccurrence[$field]);
 						}
 						//Update local occurrence record with remote data
 						if($occurrence->update($remoteOccurrence)){
-							//print_r($occurrence); exit;
 							$ts = date('Y-m-d H:i:s');
 							$changeArr = $occurrence->getChanges();
 							$responseArr['status'] = 200;
@@ -1347,7 +1366,7 @@ class OccurrenceController extends Controller {
 							$responseArr['sourceCollectionUrl'] = $urlRoot . '/collections/misc/collprofiles.php?collid=' . $remoteCollid;
 							$responseArr['sourceRecordUrl'] = $urlRoot . '/collections/individual/index.php?occid=' . $remoteOccid;
 							//Reset Portal Occurrence refreshDate
-							$portalOccur = PortalOccurrence::where('occid', $occid)->where('pubid', $pub->pubid)->first();
+							$portalOccur = PortalOccurrence::where('occid', $id)->where('pubid', $pub->pubid)->first();
 							$portalOccur->refreshTimestamp = $ts;
 							$portalOccur->save();
 						}
@@ -1357,13 +1376,13 @@ class OccurrenceController extends Controller {
 					}
 					else {
 						$responseArr['status'] = 400;
-						$responseArr['error'] = 'Unable to locate remote/source occurrence (sourceID = '.$occid.')';
+						$responseArr['error'] = 'Unable to locate remote/source occurrence';
 						$responseArr['sourceUrl'] = $url;
 					}
 				}
 			}
 		}
-		return response()->json($responseArr);
+		return $responseArr;
 	}
 
 	//Helper functions
@@ -1374,22 +1393,5 @@ class OccurrenceController extends Controller {
 			elseif($this->isAuthorized('CollEditor', $collid)) return true;
 		}
 		return false;
-	}
-
-	protected function getOccidFromOtherIds($id) {
-		$decodedId = urldecode($id);
-		$occid = null;
-		if (is_numeric($decodedId)) {
-			$occid = DB::table('omoccurrences as o')
-				->select('o.occid')
-				->where('occid', $decodedId)
-				->first();
-		} else {
-			$occid = DB::table('omoccurrences as o')->select('o.occid')
-				->where('recordID', (string)$decodedId)
-				->orWhere('occurrenceID', (string)$decodedId)
-				->first();
-		}
-		return $occid;
 	}
 }
