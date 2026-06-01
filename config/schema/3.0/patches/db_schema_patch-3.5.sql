@@ -14,3 +14,9 @@ ALTER TABLE `uploadspectemp`
   CHANGE COLUMN `scientificNameAuthorship` `scientificNameAuthorship` VARCHAR(255) NULL DEFAULT NULL AFTER `sciname`;
 
 
+#Ensure that there are no geothes terms that contain double spaces, which has been an issue
+UPDATE geographicthesaurus
+SET geoterm = replace(geoterm, "  ", " ") 
+WHERE geoterm LIKE "%  %";
+
+
