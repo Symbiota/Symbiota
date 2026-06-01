@@ -46,10 +46,11 @@ if(isset($ACTIVATE_GEOLOCATION) && $ACTIVATE_GEOLOCATION == 1) $activateGeolocat
 $bounds = MappingUtil::getMappingBoundary();
 
 //Gets Coordinates
-$coordArr = $mapManager->getCoordinateMap();
-$taxaArr = $coordArr['taxaArr'] ?? [];
-$recordArr = $coordArr['recordArr'] ?? [];
-$collArr = $coordArr['collArr'] ?? [];
+list(
+	'taxaArr' => $taxaArr,
+	'recordArr' => $recordArr,
+	'collArr' => $collArr
+) = $mapManager->getCoordinateMap();
 
 if(empty($EXTERNAL_PORTAL_HOSTS)) {
 	$EXTERNAL_PORTAL_HOSTS = [];
