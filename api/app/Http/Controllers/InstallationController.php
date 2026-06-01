@@ -133,28 +133,17 @@ class InstallationController extends Controller{
 	 *		 required=false,
 	 *		 @OA\Schema(type="string")
 	 *	 ),
-	 *	 @OA\Parameter(
-	 *		 name="limit",
-	 *		 in="query",
-	 *		 description="Pagination parameter: maximum number of records per page",
-	 *		 required=false,
-	 *		 @OA\Schema(type="integer", default=100)
-	 *	 ),
-	 *	 @OA\Parameter(
-	 *		 name="offset",
-	 *		 in="query",
-	 *		 description="Pagination parameter: page number",
-	 *		 required=false,
-	 *		 @OA\Schema(type="integer", default=0)
-	 *	 ),
 	 *	 @OA\Response(
-	 *		 response="200",
-	 *		 description="Returns list of occurrences associated with an installations",
-	 *		 @OA\JsonContent()
+	 *		 response="201",
+	 *		 description="Success: Registration of event was successful",
 	 *	 ),
 	 *	 @OA\Response(
 	 *		 response="400",
-	 *		 description="Error: Bad request. Identifier of remote installation is required.",
+	 *		 description="Error: Bad request.",
+	 *	 ),
+	 *	 @OA\Response(
+	 *		 response="401",
+	 *		 description="Unauthorized",
 	 *	 ),
 	 * )
 	 */
@@ -165,9 +154,10 @@ class InstallationController extends Controller{
 		]);
 		$portalObj = PortalIndex::where('guid',$id)->get();
 		print_r($portalObj); exit;
+		$responseArr = array( 'status' => 404, 'error' => 'Resouce not found' );
 		if($portalObj->count()){
 			if($portalObj->securityKey || $portalObj->securityKey != $request->securityKey){
-				//TODO: make security key match a requirement
+				//Security key match is a requirement
 				$responseArr = array( 'status' => 422, 'error' => 'Invalid security key' );
 				return response()->json($responseArr);
 			}
@@ -206,6 +196,7 @@ class InstallationController extends Controller{
 					//Trigger reharvest of remote snapshot
 					$occurController = new OccurrenceController();
 					$occurController->occurrenceReharvest($portalOccurrenceResult->occid);
+					$responseArr = array( 'status' => 201, 'error' => 'Resouce not found' );
 				}
 			}
 		}
@@ -213,7 +204,6 @@ class InstallationController extends Controller{
 			$responseArr['status'] = 422;
 			$responseArr['error'] = 'Remote installation is not registed';
 		}
-		$responseArr['results'] = $portalObj;
 		return response()->json($responseArr);
 	}
 
@@ -244,6 +234,10 @@ class InstallationController extends Controller{
 	 *	 @OA\Response(
 	 *		 response="400",
 	 *		 description="Error: Bad request. Identifier of remote installation is required.",
+	 *	 ),
+	 *	 @OA\Response(
+	 *		 response="422",
+	 *		 description="Error: Bad request.",
 	 *	 ),
 	 * )
 	 */

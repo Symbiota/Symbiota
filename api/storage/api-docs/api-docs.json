@@ -544,15 +544,73 @@
                 }
             }
         },
-        "/api/v2/installation/status": {
-            "get": {
+        "/api/v2/installation/{identifier}/event": {
+            "post": {
                 "tags": [
                     "Installation"
                 ],
-                "operationId": "/api/v2/installation/status",
+                "operationId": "/api/v2/installation/identifier/event",
+                "parameters": [
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "description": "Identifier (guid) of the remote installation",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "securityKey",
+                        "in": "query",
+                        "description": "Registered security key of remote portal",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "eventCode",
+                        "in": "query",
+                        "description": "Code of event",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "remoteIdentifier",
+                        "in": "query",
+                        "description": "Identifier of remote object (remote PK or GUID)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Pagination parameter: maximum number of records per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 100
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Pagination parameter: page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Returns installation metadata",
+                        "description": "Returns list of occurrences associated with an installations",
                         "content": {
                             "application/json": {
                                 "schema": {}
@@ -560,7 +618,7 @@
                         }
                     },
                     "400": {
-                        "description": "Error: Bad request. "
+                        "description": "Error: Bad request. Identifier of remote installation is required."
                     }
                 }
             }
@@ -606,46 +664,15 @@
                 }
             }
         },
-        "/api/v2/installation/{identifier}/occurrence": {
+        "/api/v2/installation/status": {
             "get": {
                 "tags": [
                     "Installation"
                 ],
-                "operationId": "/api/v2/installation/identifier/occurrence",
-                "parameters": [
-                    {
-                        "name": "identifier",
-                        "in": "path",
-                        "description": "Identifier of the remote installation",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "limit",
-                        "in": "query",
-                        "description": "Pagination parameter: maximum number of records per page",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 100
-                        }
-                    },
-                    {
-                        "name": "offset",
-                        "in": "query",
-                        "description": "Pagination parameter: page number",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 0
-                        }
-                    }
-                ],
+                "operationId": "/api/v2/installation/status",
                 "responses": {
                     "200": {
-                        "description": "Returns list of occurrences associated with an installations",
+                        "description": "Returns installation metadata",
                         "content": {
                             "application/json": {
                                 "schema": {}
@@ -653,7 +680,7 @@
                         }
                     },
                     "400": {
-                        "description": "Error: Bad request. Identifier of remote installation is required."
+                        "description": "Error: Bad request. "
                     }
                 }
             }
