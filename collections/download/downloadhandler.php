@@ -30,9 +30,9 @@ if ($schema == 'backup') {
 			$dwcaHandler->setIncludeDets(1);
 			$dwcaHandler->setIncludeImgs(1);
 			$dwcaHandler->setIncludeAttributes(1);
-			if ($dwcaHandler->hasMaterialSamples($collid)) $dwcaHandler->setIncludeMaterialSample(1);
-			if ($dwcaHandler->hasIdentifiers($collid)) $dwcaHandler->setIncludeIdentifiers(1);
-			if ($dwcaHandler->hasAssociations($collid)) $dwcaHandler->setIncludeAssociations(1);
+			$dwcaHandler->setIncludeMaterialSample(1);
+			$dwcaHandler->setIncludeIdentifiers(1);
+			$dwcaHandler->setIncludeAssociations(1);
 			$dwcaHandler->setRedactLocalities(0);
 			$dwcaHandler->setCollArr($collid);
 

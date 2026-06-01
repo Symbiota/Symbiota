@@ -2172,25 +2172,30 @@ class DwcArchiverCore extends Manager{
 
 	public function hasAssociations($collid = false){
 		$bool = false;
-		$sql = 'SELECT occid FROM omoccurassociations LIMIT 1';
-		if(is_numeric($collid)){
-			$sql = "(SELECT o.occid FROM omoccurrences o INNER JOIN omoccurassociations a ON o.occid = a.occid WHERE o.collid = ?) UNION (SELECT o.occid FROM omoccurrences o INNER JOIN omoccurassociations a ON o.occid = a.occidAssociate WHERE o.collid = ?) LIMIT 1;";
+		$sqlArr = array();
+		if($collid){
+			$sqlArr[] = 'SELECT o.occid FROM omoccurrences o INNER JOIN omoccurassociations a ON o.occid = a.occid WHERE o.collid = ? LIMIT 1';
+			$sqlArr[] = 'SELECT o.occid FROM omoccurrences o INNER JOIN omoccurassociations a ON o.occid = a.occidAssociate WHERE o.collid = ? LIMIT 1';
+			$sqlArr[] = 'SELECT o.occid FROM omoccurrences o INNER JOIN omexsiccatiocclink e ON o.occid = e.occid WHERE o.collid = ? LIMIT 1';
+			$sqlArr[] = 'SELECT o.occid FROM omoccurrences o INNER JOIN omoccurduplicatelink d ON o.occid = d.occid WHERE o.collid = ? LIMIT 1';
 		}
-		$stmt = $this->conn->stmt_init();
-		if (!$stmt->prepare($sql)) {
-			throw new Exception("SQL Error: " . $stmt->error);
+		else{
+			$sqlArr[] = 'SELECT occid FROM omoccurassociations LIMIT 1';
+			$sqlArr[] = 'SELECT occid FROM omexsiccatiocclink LIMIT 1';
+			$sqlArr[] = 'SELECT occid FROM omoccurduplicatelink LIMIT 1';
 		}
-		if (is_numeric($collid)) {
-			$stmt->bind_param('ii',$collid,$collid);
+		while($sql = array_shift($sqlArr)){
+			if($stmt = $this->conn->prepare($sql)){
+				if($collid) $stmt->bind_param('i', $collid);
+				$stmt->execute();
+				$stmt->store_result();
+				if($stmt->num_rows){
+					$bool = true;
+					break;
+				}
+				$stmt->close();
+			}
 		}
-		$stmt->execute();
-		$result = $stmt->get_result();
-		if ($result && $result->num_rows > 0) {
-			$bool = true;
-		}
-		$result->free();
-		$stmt->close();
-
 		return $bool;
 	}
 
