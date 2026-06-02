@@ -44,7 +44,9 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 		$termArr['scientificName'] = 'http://rs.tdwg.org/dwc/terms/scientificName';
 		$columnArr['scientificName'][0] = 'oa.verbatimSciName AS sciname';
 		$columnArr['scientificName'][1] = 'CASE WHEN oa.associationType = "observational" THEN oa.verbatimSciName ELSE IFNULL(t.sciname, oo.sciname) END AS sciname'; // Note that t.sciname delivers the subject sciname; hence, o.sciname
-
+		$termArr['references'] = 'http://purl.org/dc/terms/references';
+		$columnArr['references'][0] = '"" as `references`';
+		$columnArr['references'][1] = 'CONCAT("'.$this->serverPath . '/collections/individual/index.php?guid=", oo.recordID) AS `references`';
 		$termArr['associd'] = 'https://symbiota.org/terms/associd';
 		$columnArr['associd'] = 'oa.associd';
 		$termArr['associationType'] = 'https://symbiota.org/terms/associationType';
@@ -96,6 +98,7 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 	}
 
 	private function setSqlBase(){
+		//External, observation, and resource associations
 		if($this->fieldArr){
 			$sqlFrag = '';
 			foreach($this->fieldArr['fields'] as $fieldValue){
@@ -110,6 +113,7 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 	}
 
 	private function setSqlInternal(){
+		//Internal associations
 		if($this->fieldArr){
 			$sqlFrag = '';
 			foreach($this->fieldArr['fields'] as $fieldValue){
@@ -126,6 +130,7 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 	}
 
 	private function setSqlInternalInverse(){
+		//Inverse of internal associations
 		if($this->fieldArr){
 			$sqlFrag = '';
 			$this->fieldArr['fields']['relationshipOfResource'] = 'terms.inverseRelationship';
@@ -151,6 +156,7 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 			$modArr['coreid'] = 'x.occid';
 			$modArr['resourceID'] = 'IFNULL(o.occurrenceID, o.recordID) AS resourceID';
 			$modArr['relatedResourceID'] = 'IFNULL(oa.occurrenceID, oa.recordID) AS relatedResourceID';
+			$modArr['references'] = 'CONCAT("'.$this->serverPath . '/collections/individual/index.php?guid=",oa.recordID) AS `references`';
 			$modArr['relationshipOfResource'] = '"Duplicate of" AS relationshipOfResource';
 			$modArr['scientificName'] = 'oa.sciName';
 			$modArr['basisOfRecord'] = 'oa.basisOfRecord';
@@ -188,6 +194,7 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 			$modArr['coreid'] = 'x.occid';
 			$modArr['resourceID'] = 'IFNULL(o.occurrenceID, o.recordID) AS resourceID';
 			$modArr['relatedResourceID'] = 'IFNULL(oa.occurrenceID, oa.recordID) AS relatedResourceID';
+			$modArr['references'] = 'CONCAT("'.$this->serverPath . '/collections/individual/index.php?guid=",oa.recordID) AS `references`';
 			$modArr['relationshipOfResource'] = '"Duplicate of" AS relationshipOfResource';
 			$modArr['scientificName'] = 'oa.sciName';
 			$modArr['basisOfRecord'] = 'oa.basisOfRecord';

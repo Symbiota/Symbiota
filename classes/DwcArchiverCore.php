@@ -1980,6 +1980,7 @@ class DwcArchiverCore extends Manager{
 			$this->logOrEcho('Creating ResourceRelationship extension file (' . date('h:i:s A') . ')...', 1);
 			$associationHandler = new DwcArchiverResourceRelationship($this->conn);
 			$associationHandler->setSchemaType($this->schemaType);
+			$associationHandler->setServerPath($this->serverDomain . $GLOBALS['CLIENT_ROOT']);
 			$associationHandler->initiateProcess($targetFile);
 			$recordCnt = $associationHandler->writeOutData($this->exportID);
 			if($recordCnt){
