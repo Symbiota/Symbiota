@@ -409,7 +409,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 								<div style="clear:both">
 									<?php
 									echo '<a href="' . $spUrl . '" target="_blank">';
-									echo '<b>' . $sppArr['sciname'] . '</b>';
+									echo '<b>' . ($sppArr['sciname'] ?? '') . '</b>';
 									echo '</a>';
 									?>
 									<div class="editspp printoff" style="float:left;display:none;">
@@ -483,10 +483,10 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 							echo '<div id="tid-'.$tid.'" class="taxon-container">';
 							//Edit species name display style here
 							echo '<div class="taxon-div">';
-							if(!preg_match('/\ssp\d/',$sppArr["sciname"])) echo '<a href="../taxa/index.php?taxauthid=1&taxon=' . $tid . '&clid=' . $clid . '" target="_blank">';
-							echo '<span class="taxon-span">' . $sppArr['sciname'] . '</span> ';
+							if(!preg_match('/\ssp\d/',$sppArr["sciname"] ?? '')) echo '<a href="../taxa/index.php?taxauthid=1&taxon=' . $tid . '&clid=' . $clid . '" target="_blank">';
+							echo '<span class="taxon-span">' . ($sppArr['sciname'] ?? '') . '</span> ';
 							if(array_key_exists("author",$sppArr)) echo $sppArr["author"];
-							if(!preg_match('/\ssp\d/',$sppArr["sciname"])) echo "</a>";
+							if(!preg_match('/\ssp\d/',$sppArr["sciname"] ?? '')) echo "</a>";
 							if(array_key_exists('vern',$sppArr)){
 								echo ' - <span class="vern-span">'.$sppArr['vern'] . '</span>';
 							}
@@ -498,10 +498,10 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 									</a>
 									<?php
 									if(isset($dynamPropsArr) && isset($dynamPropsArr['externalservice']) && $dynamPropsArr['externalservice'] == 'inaturalist'){
-										$scinameasid = str_replace(" ", "-", $sppArr['sciname']);
+										$scinameasid = str_replace(" ", "-", $sppArr['sciname'] ?? '');
 										$arrForExternalServiceApi .= ($arrForExternalServiceApi?',' : '') . "'" . $scinameasid . "'";
 										$url = 'tools/linkExternalVouchers.php?' . http_build_query([
-											'taxon_name' => $sppArr['sciname'],
+											'taxon_name' => $sppArr['sciname'] ?? '',
 											'target_tid' => $tid,
 											'clid' => $clid,
 											'external_id' => $dynamPropsArr['externalserviceid'] ?? null,
