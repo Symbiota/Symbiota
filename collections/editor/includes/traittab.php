@@ -119,7 +119,7 @@ if($isEditor){
 					}
 				}
 				?>
-				<fieldset style="margin-top:20px">
+				<fieldset style="clear:both;margin-top:20px">
 					<legend><b><?php echo $LANG['TRAIT'].': '.$traitData['name']; ?></b></legend>
 					<div style="float:right">
 						<div style="margin:0px 3px;float:right" title="<?php echo $LANG['HARD_REFRESH'];?>">

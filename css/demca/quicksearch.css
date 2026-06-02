@@ -1,0 +1,26 @@
+#quicksearchdiv{
+	float: right;
+	width: 350px;
+	margin: 10px;
+	margin-right: 5px;
+	padding: 5px 5px 0px 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border: 1px solid black;	
+}
+
+#quicksearchtext{
+	font-weight: bold;
+}
+
+#quicksearch input{
+	width: 225px;
+	float: left;
+	margin-right: 10px;
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+#quicksearchbutton{
+}

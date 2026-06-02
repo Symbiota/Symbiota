@@ -463,6 +463,35 @@ if ($SYMB_UID) {
 						<?= $deactivateMsg ?>
 					</section>
 					<?php
+					if($ETHNOBIOLOGY_MOD_IS_ACTIVE){
+						?>
+						<fieldset style="padding:10px;padding-left:25px;">
+							<legend><b>Ethnobiological Control Panel</b></legend>
+							<ul>
+								<li>
+									<a href="../../ethno/manager/index.php?collid=<?php echo $collid; ?>">
+										Manage Project
+									</a>
+								</li>
+								<li>
+									<a href="../../ethno/manager/dataeventlist.php?collid=<?php echo $collid; ?>">
+										Manage Data
+									</a>
+								</li>
+								<li>
+									<a href="../../ethno/manager/ethnoloader.php?collid=<?php echo $collid; ?>">
+										Upload Data
+									</a>
+								</li>
+								<li>
+									<a href="../../ethno/eaf/index.php?collid=<?php echo $collid; ?>">
+										Manage EAF files
+									</a>
+								</li>
+							</ul>
+						</fieldset>
+						<?php
+					}
 					if ($editCode > 1) {
 						?>
 						<section class="fieldset-like no-left-margin">

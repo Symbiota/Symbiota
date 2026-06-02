@@ -9,6 +9,18 @@
  e.g. override: $LANG['H_COLLECTIONS'] = 'Search Lichen Collections';
 */
 
+$LANG['H_COLLECTIONS'] = 'Collections';
+
+$LANG['H_IMAGES'] = 'Images';
+$LANG['H_IMAGE_BROWSER'] = "Vavigateur d'Images";
+$LANG['H_IMAGE_SEARCH'] = "Rechercher d'Images";
+
+$LANG['H_TOOLS'] = 'Tools';
+
+$LANG['H_ABOUT_PROJECT'] = "Information du DEMCA";
+$LANG['H_USER_GUIDE'] = "Guide de l'utilisateur";
+$LANG['H_RESOURCES'] = 'Ressources';
+$LANG['H_ACKNOWLEDGEMENTS'] = 'Remerciements';
 
 
 ?>

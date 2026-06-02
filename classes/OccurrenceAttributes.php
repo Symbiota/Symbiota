@@ -250,14 +250,14 @@ class OccurrenceAttributes extends Manager {
 		$retArr = array();
 		$sql = 'SELECT t.traitid, t.traitname '.
 			'FROM tmtraits t LEFT JOIN tmtraitdependencies d ON t.traitid = d.traitid '.
-			'WHERE t.traittype IN("UM","OM","TF","NU") AND d.traitid IS NULL';
+			'WHERE t.traittype IN("UM","OM","TF","NU","GR") AND d.traitid IS NULL';
 		/*
 		if(isset($this->filterArr['tidfilter']) && $this->filterArr['tidfilter']){
 			$sql = 'SELECT DISTINCT t.traitid, t.traitname '.
 				'FROM tmtraits t INNER JOIN tmtraittaxalink l ON t.traitid = l.traitid '.
 				'INNER JOIN taxaenumtree e ON l.tid = e.parenttid '.
 				'LEFT JOIN tmtraitdependencies d ON t.traitid = d.traitid '.
-				'WHERE traittype IN("UM","OM","TF","NU") AND e.taxauthid = 1 AND d.traitid IS NULL AND e.tid = '.$this->filterArr['tidfilter'];
+				'WHERE traittype IN("UM","OM","TF","NU","GR") AND e.taxauthid = 1 AND d.traitid IS NULL AND e.tid = '.$this->filterArr['tidfilter'];
 		}
 		*/
 		//echo $sql;
@@ -281,21 +281,25 @@ class OccurrenceAttributes extends Manager {
 	}
 
 	private function setTraitArr($traitID){
-		$sql = 'SELECT traitid, traitname, traittype, units, description, refurl, notes, dynamicproperties FROM tmtraits WHERE traittype IN("UM","OM","TF","NU") ';
+		$sql = 'SELECT traitID, traitName, traitType, units, description, refUrl, projectGroup, notes, dynamicProperties FROM tmtraits WHERE traittype IN("UM","OM","TF","NU","GR") ';
+		//$sql = 'SELECT traitID, traitName, displayName, traitType, units, description, refUrl, projectGroup, notes, dynamicProperties FROM tmtraits WHERE traittype IN("UM","OM","TF","NU","GR") ';
 		if($traitID) $sql .= 'AND (traitid = '.$traitID.')';
 		//echo $sql.'<br/>';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			if(!isset($this->traitArr[$r->traitid])){
-				$this->traitArr[$r->traitid]['name'] = $r->traitname;
-				$this->traitArr[$r->traitid]['type'] = $r->traittype;
-				$this->traitArr[$r->traitid]['units'] = $r->units;
-				$this->traitArr[$r->traitid]['description'] = $r->description;
-				$this->traitArr[$r->traitid]['refurl'] = $r->refurl;
-				$this->traitArr[$r->traitid]['notes'] = $r->notes;
-				$this->traitArr[$r->traitid]['props'] = $r->dynamicproperties;
+			if(!isset($this->traitArr[$r->traitID])){
+				$this->traitArr[$r->traitID]['name'] = $r->traitName;
+				//$this->traitArr[$r->traitID]['displayName'] = $r->displayName;
+				$this->traitArr[$r->traitID]['displayName'] = $r->traitName;
+				$this->traitArr[$r->traitID]['type'] = $r->traitType;
+				$this->traitArr[$r->traitID]['units'] = $r->units;
+				$this->traitArr[$r->traitID]['description'] = $r->description;
+				$this->traitArr[$r->traitID]['refurl'] = $r->refUrl;
+				$this->traitArr[$r->traitID]['group'] = $r->projectGroup;
+				$this->traitArr[$r->traitID]['notes'] = $r->notes;
+				$this->traitArr[$r->traitID]['props'] = $r->dynamicProperties;
 				//Get dependent traits and append to return array
-				$this->setDependentTraits($r->traitid);
+				$this->setDependentTraits($r->traitID);
 			}
 		}
 		$rs->free();
@@ -355,19 +359,21 @@ class OccurrenceAttributes extends Manager {
 	}
 
 	public function echoFormTraits($traitID){
-		echo $this->getTraitUnitString($traitID,true);
+		echo $this->getTraitUnitString($traitID, true);
 	}
 
-	private function getTraitUnitString($traitID,$display,$classStr=''){
+	private function getTraitUnitString($traitID, $display, $classStr = ''){
 		$controlType = '';
 		if($this->traitArr[$traitID]['props']){
-			$propArr = json_decode($this->traitArr[$traitID]['props'],true);
+			$propArr = json_decode($this->traitArr[$traitID]['props'], true);
 			if(isset($propArr[0]['controlType'])) $controlType = $propArr[0]['controlType'];
 		}
 		$innerStr = '<div style="clear:both">';
 		if(isset($this->traitArr[$traitID]['states'])){
-			if($this->traitArr[$traitID]['type']=='TF'){
-				$innerStr .= '<div style="float:left;margin-left: 15px">'.$this->traitArr[$traitID]['name'].':</div>';
+			$displayName = $this->traitArr[$traitID]['displayName'];
+			if(!$classStr) $displayName = '';
+			if($displayName){
+				$innerStr .= '<div style="float:left;margin-left: 15px">'.$displayName.':</div>';
 				$innerStr .= '<div style="clear:both;margin-left: 25px">';
 			}
 			else $innerStr .= '<div style="float:left;">';
@@ -384,17 +390,18 @@ class OccurrenceAttributes extends Manager {
 				if($this->traitArr[$traitID]['type']=='NU'){
 					$innerStr .= '<div title="'.$sArr['description'].'" style="clear:both">';
 					$innerStr .= $sArr['name'].
-					$innerStr .= ': <input name="traitid-'.$traitID.'[]" class="'.$classStr.'" type="text" value="'.$sid.'-'.($isCoded!==false?$isCoded:'').'" onchange="traitChanged(this)" style="width:50px" /> ';
+					$innerStr .= ': <input name="traitid-'.$traitID.'[]" class="'.$classStr.'" type="text" value="'.$sid.'-'.($isCoded!==false?$isCoded:'').'" onchange="traitChanged(this)" style="width:50px"> ';
 					if($depTraitIdArr){
 						foreach($depTraitIdArr as $depTraitId){
-							$innerStr .= $this->getTraitUnitString($depTraitId,$isCoded,trim($classStr.' child-'.$sid));
+							$innerStr .= $this->getTraitUnitString($depTraitId, $isCoded, trim($classStr.' child-'.$sid));
 						}
 					}
+					$innerStr .= '</div>';
 				}
 				else{
 					if($controlType == 'checkbox' || $controlType == 'radio'){
 						$innerStr .= '<div title="'.$sArr['description'].'" style="clear:both">';
-						$innerStr .= '<input name="traitid-'.$traitID.'[]" class="'.$classStr.'" type="'.$controlType.'" value="'.$sid.'" '.($isCoded?'checked':'').' onchange="traitChanged(this)" /> ';
+						$innerStr .= '<input name="traitid-'.$traitID.'[]" class="'.$classStr.'" type="'.$controlType.'" value="'.$sid.'" '.($isCoded?'checked':'').' onchange="traitChanged(this)"> ';
 						$innerStr .= $sArr['name'];
 					}
 					elseif($controlType == 'select'){
@@ -402,10 +409,12 @@ class OccurrenceAttributes extends Manager {
 					}
 					if($depTraitIdArr){
 						foreach($depTraitIdArr as $depTraitId){
-							$innerStr .= $this->getTraitUnitString($depTraitId,$isCoded,trim($classStr.' child-'.$sid));
+							$displayTrait = $isCoded;
+							if($this->traitArr[$traitID]['type'] == 'GR') $displayTrait = true;
+							$innerStr .= $this->getTraitUnitString($depTraitId, $displayTrait, trim($classStr.' child-'.$sid));
 						}
 					}
-					if($controlType != 'select') $innerStr .= '</div>';
+					if($controlType == 'checkbox' || $controlType == 'radio') $innerStr .= '</div>';
 				}
 			}
 			$innerStr .= '</div>';

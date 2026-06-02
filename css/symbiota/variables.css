@@ -1,18 +1,18 @@
 /* Variables
    ========================================================================== */
 :root {
-  --header-bg-image: url("../../images/layout/jonathan-borba-Ui73wdp0wok-unsplash.jpg");
-  --header-bg-color: #2f6e5378; /** Transparent color if adding header bg-image **/
-  --header-font-color: #fff;
+  --header-bg-image: url("../../images/layout/demcaheader.jpg");
+  --header-bg-color: transparent; /** Transparent color if adding header bg-image **/
+  --header-font-color: #000000;
   --brand-font-size: 1.5rem;
   --logo-width: 120px;
-  --menu-top-bg-color: #1b3d2f;
+  --menu-top-bg-color: #dcdcdc;
   --menu-font-size: 1rem;
   --body-bg-color: #fafafa;
   --body-text-color: #000000;
   --body-font-size: 1rem;
   --body-font-family: "Open Sans", sans-serif;
-  --footer-bg-color: #f2f0e9;
+  --footer-bg-color: #ffffff;
   --heading-font-family: "Open Sans", sans-serif;
   --link-color: #126c00;
   --darkest-color: #1b3d2f;
@@ -20,5 +20,5 @@
   --light-color: #f2f0e9;
   --bright-color: #b9d432;
   --danger-color: #b31b1b;
-  --max-innertext-width: 1024px;
+  --max-innertext-width: ;
 }

@@ -37,8 +37,11 @@ $occManager = new OccurrenceSupport();
 			if(opener.document.getElementById("imgdisplay-<?php echo $targetId;?>")){
 				opener.document.getElementById("imgdisplay-<?php echo $targetId;?>").value = occId;
 			}
-			if(opener.document.getElementById("imgoccid-<?php echo $targetId;?>")){
+			else if(opener.document.getElementById("imgoccid-<?php echo $targetId;?>")){
 				opener.document.getElementById("imgoccid-<?php echo $targetId;?>").value = occId;
+			}
+			else if(opener.document.getElementById("associateoccid")){
+				opener.document.getElementById("associateoccid").value = occId;
 			}
 			self.close();
 			return false;

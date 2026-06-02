@@ -3,7 +3,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
 @import "normalize.slim.css";
-@import "variables.css";
+@import "variables.css?var=1";
 
 
 /* Global styles
@@ -14,6 +14,7 @@ html {
 }
 
 body {
+  max-width: 1600px;
   background-color: var(--body-bg-color);
   color: var(--body-text-color);
   margin: 0;
@@ -107,9 +108,10 @@ hr {
 }
 
 #innertext {
-  margin: 0 auto;
-  background-color: var(--body-bg-color);
-  width: 90%;
+  margin: 0px;
+  padding: 0px 15px;
+  background-color: #ffffff;
+  width: 100%;
 }
 
 #innertext p {
@@ -122,7 +124,8 @@ hr {
 }
 
 .navpath {
-  margin: 10px auto;
+  background-color: #ffffff;
+  padding: 10px;
   width: 100%;
   max-width: var(--max-innertext-width);
   color: #000000;
@@ -617,7 +620,10 @@ table.styledtable tr.alt td {
 /* Medium screens and up */
 @media (min-width: 768px) {
   body {
-    display: grid;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+	display: grid;
     grid-template-rows: auto auto 1fr auto; /* header, breadcrumbs, main, footer */
   }
 }
@@ -625,8 +631,7 @@ table.styledtable tr.alt td {
 /* Medium-large screens only */
 @media screen and (min-width: 1024px) {
   #innertext {
-    width: 90%;
-    max-width: var(--max-innertext-width);
+    width: 100%;
   }
 }
 

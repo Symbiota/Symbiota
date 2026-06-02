@@ -1,0 +1,641 @@
+/* Modify styles within this file to override styles within base.css file 
+ * 
+ **/
+body{
+	width: 80%;
+	min-width:1000px;
+	margin-top:0px;
+	font-family: Verdana, Geneva, sans-serif;
+	background-color:#465A91;
+}
+
+/*Main table framework*/
+#maintable{
+	width: 100%;
+	background-color:#FFFFFF;
+	border:1px solid black;
+}
+
+#maintable td{
+}
+
+td.header{
+	color:#FFFFFF;
+	background-color:#f2f0e6;
+	text-align:left;
+	padding: 0px;
+	padding-bottom: 0px;
+	border-bottom:1px solid #333333;
+}
+
+td.header a{
+
+}
+
+td.header a:hover{
+
+}
+
+td.middleleft{
+}
+
+td.middleleftnomenu{
+}
+
+td.middlecenter{
+	padding: 0px;
+}
+
+td.middleright{
+}
+
+td.footer{
+}
+
+/*Left menu components*/
+div.menu {
+	background-color:   white;
+	margin:				15px;
+	border:   			1px solid #CCCCFF;
+	padding-bottom:   	25px;
+	overflow:   		hidden;
+	width:   			150px;
+	border-radius:		0.5em 0.5em 1.5em 0.5em;
+	-moz-border-radius:	0.5em 0.5em 1.5em 0.5em;
+	-khtml-border-radius: 0.5em 0.5em 1.5em 0.5em;
+}
+
+div.menuheader{
+	background-color:   #C0C0C0;
+	font-family:   		Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size:   		13px;
+	color:   			white;
+	overflow:   		hidden;
+	text-align:   		center;
+	padding:   			3px;
+	margin:			   	0px;
+}
+
+div.menuheader a{
+
+}
+
+div.menuheader a:hover {
+
+}
+
+div.menusubheader{
+
+}
+
+div.menusubheader a{
+
+}
+
+div.menusubheader a:hover {
+
+}
+
+div.menuitem {
+
+}
+
+div.menuitem a {
+	color: #669999;
+}
+
+div.menuitem a:hover {
+	color: 	#00008B;
+}
+
+/*Central div in the middle center table div */
+#innertext{
+	font-size: 14px;
+	min-height:400px;
+	margin-left:auto;
+	margin-right:auto;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	padding-top: 10px;
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-bottom: 15px;
+}
+
+#innertext a{
+
+}
+#innertext a:hover{
+
+}
+
+div.navpath {
+	padding-top: 8px;
+	padding-bottom: 0px;
+	padding-left: 10px;
+	margin-bottom: 0px;
+}
+
+/* Image thumbnails   */
+div.tndiv{
+
+}
+
+div.tnimg{
+
+}
+
+div.tnimg a{
+
+}
+
+div.tnimg img{
+
+}
+
+/*Misc general items*/
+table{
+
+}
+
+h1{
+	font-family: Georgia, Times, 'Times New Roman', serif;
+	font-weight: normal;
+}
+
+h2{
+	font-family: Georgia, Times, 'Times New Roman', serif;
+	font-weight: normal;
+}
+
+h3{
+	font-family: Georgia, Times, 'Times New Roman', serif;
+	font-weight: normal;
+}
+#top_navbar{
+	clear:both;
+	height:33px;
+	background-image:url(images/menu_pri_background.jpg);
+	background-repeat:repeat-x;
+	background-position:top;
+}
+#right_navbarlinks{
+	clear:both;
+	font-size:11px;
+	float:right;
+	color:#000000;
+	margin-top:9px;
+}
+ul#hor_dropdown{
+	list-style:none;
+	float:left;
+	position:relative;
+	font-size:12px;
+	width:auto;
+	height:31px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-left:0px;
+	background-image:url(images/menu_pri_background.jpg);
+	background-repeat:repeat-x;
+	background-position:top;
+}
+ul#hor_dropdown li{
+	float:left;
+	position:relative;
+	padding:0;
+	margin:0;
+}
+ul#hor_dropdown a{
+	display:block;
+	color:#000000;
+	text-decoration:none;
+	padding-top:8px;
+	padding-bottom:10px;
+	padding-left:10px;
+	padding-right:10px;
+	background-image: url(images/menu-item_divider.jpg);
+	background-repeat: no-repeat;
+	background-position: right bottom;
+}
+ul#hor_dropdown a:hover{
+	background-color:#999999;
+	color:#FFFFFF;
+	padding-top:8px;
+	padding-bottom:10px;
+	padding-left:10px;
+	padding-right:10px;
+	background-image:none;
+}
+/* Submenu */
+ul#hor_dropdown ul {
+	list-style:none;
+	position:absolute;
+	left:-9999px;
+	top:-9999px;
+	background-color:#dcdcdc;
+	z-index:1000;
+}
+ul#hor_dropdown ul li{
+	float:none;
+}
+ul#hor_dropdown ul a{
+	white-space:nowrap;
+}
+ul#hor_dropdown li:hover ul {
+	left:0;
+	top:33px;
+	padding:0px;
+	z-index:1000;
+}
+ul#hor_dropdown li:hover ul a {
+	padding:5px;
+	text-decoration:none;
+	text-indent:8px;
+	padding-right:8px;
+	background-image: none;
+	background-color:#dcdcdc;
+	z-index:1000;
+}
+ul#hor_dropdown li:hover ul li a:hover {
+	background:#999999;
+}
+
+/* Quick Search Plugin */
+#quicksearchtext{
+	margin-top:0px;
+	padding-bottom:0px;
+	float: left;
+}
+
+#quicksearchbutton{
+	margin-left:10px;
+	margin-top:0px;
+	margin-bottom:0px;
+	padding-bottom:0px;
+	float: left;
+}
+
+#quicksearchtaxon{
+	width: 250px;
+	float: left;
+	margin-bottom:0px;
+	padding-bottom:0px;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+.footer{
+	padding:0px;
+}
+
+/* New Fields */
+
+#idConsultantIndigenousDiv {
+	margin:3px;
+	width: 60%;
+}
+#sexConsultantIndigenousDiv{
+	float:left;
+	margin:3px;
+	width: 30%;
+}
+#dobConsultantIndigenousDiv{
+	float:left;
+	margin:3px;
+	width: 30%;
+}
+#idConsultantIndigenousDiv input {
+	width: 150px;
+}
+#sexConsultantIndigenousDiv input {
+	width: 95%;
+}
+#dobConsultantIndigenousDiv input {
+	width: 95%;
+}
+#nameFirstConsultantIndigenousDiv{
+	float:left;
+	margin:3px;
+}
+#nameLastConsultantIndigenousDiv{
+	float:left;
+	margin:3px;
+}
+#linkLanguageConsultantIndigenousDiv{
+	clear: both;
+	float:left;
+	margin:3px;
+	width: 90%;
+}
+#linkLanguageConsultantIndigenousDiv input {
+	width: 100%;
+}
+#selectFamilyLanguageConsultantIndigenousDiv{
+	clear: left;
+	float:left;
+	margin:3px;
+	width: 55%;
+}
+#familyLanguageConsultantIndigenousDiv{
+	clear: left;
+	float:left;
+	margin:3px;
+	width: 30%;
+}
+#groupLanguageConsultantIndigenousDiv{
+	float:left;
+	width: 30%;
+	margin:3px;
+}
+#subgroupLanguageConsultantIndigenousDiv{
+	float:left;
+	width: 30%;
+	margin:3px;
+}
+#familyLanguageConsultantIndigenousDiv input {
+	width: 150px;
+}
+#groupLanguageConsultantIndigenousDiv input {
+	width: 95%;
+}
+#subgroupLanguageConsultantIndigenousDiv input {
+	width: 95%;
+}
+#villageConsultantIndigenousDiv{
+	float:left;
+	margin:3px;
+	width: 53%;
+}
+#municipalityConsultantIndigenousDiv{
+	float:left;
+	margin:3px;
+	width: 45%;
+}
+#stateConsultantIndigenousDiv{
+	float:left;
+	margin:3px;
+	width: 45%;
+}
+#countryConsultantIndigenousDiv input {
+	width: 95%;
+}
+#villageConsultantIndigenousDiv input {
+	width: 150px;
+}
+#municipalityConsultantIndigenousDiv input {
+	width: 95%;
+}
+#stateConsultantIndigenousDiv input {
+	width: 95%;
+}
+#countryConsultantIndigenousDiv{
+	float:left;
+	margin:3px;
+	width: 45%;
+}
+#isoLanguageConsultantIndigenousDiv{
+	float:left;
+	margin:3px;
+	width: 30%;
+}
+#isoLanguageConsultantIndigenousDiv input {
+	width: 95%;
+}
+#vernacularLexiconIndigenousDiv{
+	margin:3px;
+	width: 60%;
+}
+#glossLexiconIndigenousDiv{
+	float:left;
+	margin:3px;
+	width: 30%;
+}
+#parseLexiconIndigenousDiv{
+	float:left;
+	width: 30%;
+	margin:3px;
+}
+#parentTaxonIndigenousDiv{
+	clear: left;
+	width: 30%;
+	float:left;
+	margin:3px;
+	margin-top: 15px !important;
+}
+#siblingTaxaIndigenousDiv{
+	float:left;
+	width: 30%;
+	margin:3px;
+	margin-top: 15px !important;
+}
+#childTaxaIndigenousDiv{
+	float:left;
+	width: 30%;
+	margin:3px;
+	margin-top: 15px !important;
+}
+#vernacularLexiconIndigenousDiv input {
+	width: 150px;
+}
+#glossLexiconIndigenousDiv input {
+	width: 95%;
+}
+#parseLexiconIndigenousDiv input {
+	width: 95%;
+}
+#parentTaxonIndigenousDiv textarea{
+	width: 80%;
+}
+#siblingTaxaIndigenousDiv textarea{
+	width: 80%;
+}
+#childTaxaIndigenousDiv textarea{
+	width: 80%;
+}
+#otherTaxaUseIndigenousDiv{
+	float:left;
+	margin:3px;
+	width: 100%;
+}
+#otherTaxaUseIndigenousDiv textarea{
+	width: 90%;
+}
+#typologyLexiconIndigenousDiv{
+	float:left;
+	width: 40%;
+	clear: left;
+	margin:3px;
+}
+#semanticsLexiconIndigenousDiv{
+	float:left;
+	width: 40%;
+	margin:3px;
+}
+#typologyLexiconIndigenousDiv select {
+	width: 95%;
+}
+#semanticsLexiconIndigenousDiv select {
+	width: 95%;
+}
+#notesIndigenousDiv{
+	float:left;
+	margin:3px;
+	width: 90%;
+	clear: both;
+}
+
+#notesIndigenousDiv textarea {
+	width: 100%;
+	min-height: 40px !important;
+}
+#categoryUseIndigenousDiv{
+	float:left;
+	margin:3px;
+	width: 30%;
+}
+#specificUseIndigenousDiv{
+	float:left;
+	margin:3px;
+	width: 30%;
+}
+#partUseIndigenousDiv{
+	float: left;
+	margin:3px;
+	width: 30%;
+}
+#categoryUseIndigenousDiv input {
+	width: 95%;
+}
+#specificUseIndigenousDiv input {
+	width: 95%;
+}
+#partUseIndigenousDiv select {
+	width: 95%;
+}
+#notesUseIndigenousDiv {
+	clear: both;
+	width: 90%;
+	float:left;
+	margin:3px;
+}
+#notesUseIndigenousDiv textarea {
+	width: 100%;
+	min-height: 40px !important;
+}
+
+.clearfix {
+	clear: both;
+	display: block;
+	float: left;
+	width: 100%;
+}
+
+
+/*nameFirstConsultantIndigenous*/
+#nameFirstConsultantIndigenousDiv{
+	display:none;
+}
+/*nameLastConsultantIndigenous*/
+#nameLastConsultantIndigenousDiv{
+	display:none;
+}
+/*linkLanguageConsultantIndigenous*/
+#linkLanguageConsultantIndigenousDiv{
+	display:none;
+}
+/*familyLanguageConsultantIndigenous*/
+#familyLanguageConsultantIndigenousDiv{
+	display:none;
+}
+/*groupLanguageConsultantIndigenous*/
+#groupLanguageConsultantIndigenousDiv{
+	display:none;
+}
+/*subgroupLanguageConsultantIndigenous*/
+#subgroupLanguageConsultantIndigenousDiv{
+	display:none;
+}
+/*villageConsultantIndigenous*/
+#villageConsultantIndigenousDiv{
+	display:none;
+}
+/*municipalityConsultantIndigenous*/
+#municipalityConsultantIndigenousDiv{
+	display:none;
+}
+/*stateConsultantIndigenous*/
+#stateConsultantIndigenousDiv{
+	display:none;
+}
+/*countryConsultantIndigenous*/
+#countryConsultantIndigenousDiv{
+	display:none;
+}
+/*isoLanguageConsultantIndigenous*/
+#isoLanguageConsultantIndigenousDiv{
+	display:none;
+}
+/*vernacularLexiconIndigenous*/
+#vernacularLexiconIndigenousDiv{
+	display:none;
+}
+/*glossLexiconIndigenous*/
+#glossLexiconIndigenousDiv{
+	display:none;
+}
+/*parseLexiconIndigenous*/
+#parseLexiconIndigenousDiv{
+	display:none;
+}
+/*parentTaxonIndigenous*/
+#parentTaxonIndigenousDiv{
+	display:none;
+}
+/*siblingTaxaIndigenous*/
+#siblingTaxaIndigenousDiv{
+	display:none;
+}
+/*childTaxaIndigenous*/
+#childTaxaIndigenousDiv{
+	display:none;
+}
+/*otherTaxaUseIndigenous*/
+#otherTaxaUseIndigenousDiv{
+	display:none;
+}
+/*typologyLexiconIndigenous*/
+#typologyLexiconIndigenousDiv{
+	display:none;
+}
+/*semanticsLexiconIndigenous*/
+#semanticsLexiconIndigenousDiv{
+	display:none;
+}
+/*notesIndigenous*/
+#notesIndigenousDiv{
+	display:none;
+}
+/*categoryUseIndigenous*/
+#categoryUseIndigenousDiv{
+	display:none;
+}
+/*specificUseIndigenous*/
+#specificUseIndigenousDiv{
+	display:none;
+}
+/*partUseIndigenous*/
+#partUseIndigenousDiv{
+	display:none;
+}
+/*notesUseIndigenous*/
+#notesUseIndigenousDiv{
+	display:none;
+}
+
+#occurrenceIdDiv{
+	display:none;
+}
+
+#fieldNumberDiv{
+	display:none;
+}
