@@ -531,7 +531,7 @@ class OccurrenceCollectionProfile extends OmCollections{
 		}
 	}
 
-	public function runStatistics($collId){
+	public function runStatistics($collId, $ignoreUpdate = false){
 		$returnArr = Array();
 		if(preg_match('/^[0-9,]+$/',$collId)){
 			$sql = 'SELECT c.collid, c.CollectionName, IFNULL(s.recordcnt,0) AS recordcnt, IFNULL(s.georefcnt,0) AS georefcnt, s.dynamicProperties '.
