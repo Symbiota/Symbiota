@@ -199,7 +199,7 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 			$modArr['scientificName'] = 'oa.sciName';
 			$modArr['basisOfRecord'] = 'oa.basisOfRecord';
 			$modArr['relationshipEstablishedDate'] = 'l2.initialtimestamp AS relationshipEstablishedDate';
-			$modArr['dynamicProperties'] = 'JSON_OBJECT("title", t.title, "abbreviation", t.abbreviation, "editor", t.editor, "range", t.exsrange, "number", n.exsnumber, "notes", l.notes) AS dynamicProperties';
+			$modArr['dynamicProperties'] = 'JSON_OBJECT("title", REPLACE(t.title,\'"\',"\'"), "abbreviation", t.abbreviation, "editor", t.editor, "range", t.exsrange, "number", n.exsnumber, "notes", l.notes) AS dynamicProperties';
 			$modArr['subType'] = '"exsiccataeSpecimenDuplicate" AS subType';
 			$modArr['relationshipRemarks'] = '"Exsiccatae Specimen Duplicate" AS relationshipRemarks';
 
