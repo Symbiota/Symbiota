@@ -51,12 +51,64 @@ function initImageTool(imgId){
 			portWidth = parseInt(portXyCookie.substr(0,portXyCookie.indexOf(":")));
 			portHeight = parseInt(portXyCookie.substr(portXyCookie.indexOf(":")+1));
 		}
+
+		// Save image zoom/pan settings before unloading the page
+		// This allows the settings to persist when a user enters data (e.g., determinations)
+		// and submits it in the editor. It's ignored when they go to a new record. 
+		$(window).on('beforeunload', function() {
+
+			// Get imagetool properties
+		    if (data = $(img).imagetool("properties")) {
+
+				// Create a settings object
+				let settings = {
+					height: data._height,
+					width: data._width,
+					x: data._absx,
+					y: data._absy,
+					occid: $("input[name='occid']").val()
+				}
+				// Save settings
+				localStorage.setItem('imageSettings', JSON.stringify(settings));
+		    }
+		});
+
 		$(function() {
 			$(img).imagetool({
-				maxWidth: 6000
-				,viewportWidth: portWidth
-		        ,viewportHeight: portHeight
+				maxWidth: 6000,
+				viewportWidth: portWidth,
+				viewportHeight: portHeight,
+				ready: function(event, o){
+
+					// Get any saved zoom/pan image settings
+					const imgState = JSON.parse(localStorage.getItem("imageSettings")) || {};
+
+					// Get the occid of the current record
+					const occid = $("input[name='occid']").val();
+
+					// Only restore the view if it's the same record that was previously saved
+					if(imgState.occid == occid) {
+
+		                o._height = imgState.height;
+		                o._width = imgState.width;
+
+		                o._absx = imgState.x;
+		                o._absy = imgState.y;
+
+						// Update the image position
+		                if (instance = $(img).data('ui-imagetool')) {
+		                    instance._zoom();
+		                }
+
+					} else {
+						// Delete the previous image settings as it's another record
+						localStorage.removeItem("imageSettings");
+					}
+
+				}
 			});
+			// Need to also call this for some reason
+			$(img).imagetool('reset');
 		});
 	}
 }
