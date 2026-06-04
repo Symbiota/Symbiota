@@ -12,7 +12,7 @@ $LANG['COLLECTIONS'] = 'Collections';
 $LANG['SEARCHENGINE'] = 'Search Engine';
 $LANG['SEARCH_COLL'] = 'search collections';
 $LANG['LISTOFCOLL'] = 'list of collections participating in project';
-$LANG['COLLSTATS'] = 'View Collection Statistics';
+$LANG['COLLSTATS'] = 'View Public Collection Statistics';
 $LANG['EXSICC'] = 'Exsiccatae Index';
 $LANG['DATA_PUBLISHING'] = 'Data Publishing';
 $LANG['COLLECTIONS_RSS'] = 'RSS Feed for Natural History Collections and Observation Projects';
@@ -110,5 +110,5 @@ $LANG['DATA_AUTHORIZED_TO_EDIT'] = 'datasets you are authorized to edit';
 $LANG['MANAGE_TAXON_THUMBNAILS'] = 'Manage Taxon Profile Map Thumbnails';
 $LANG['TAXINTER'] = 'Taxonomic Interest User Permissions ';
 $LANG['OTHER_CAT_TRANSFER'] = 'Other Catalog Number Transfer Tool';
-$LANG['BATCH_UPDATE_STATS'] = 'Batch Update Collection Statistics Tool';
+$LANG['BATCH_UPDATE_STATS'] = 'Update Portal-wide Collection Statistics';
 ?>

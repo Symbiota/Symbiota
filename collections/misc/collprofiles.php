@@ -5,7 +5,7 @@ include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-Language::load('collections/misc/collprofiles');
+Language::load(['collections/misc/collprofiles', 'sitemap']);
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 unset($_SESSION['editorquery']);
@@ -627,6 +627,11 @@ if ($SYMB_UID) {
 								<li style="margin-left:10px;">
 									<a href="collprofiles.php?collid=<?= $collid ?>&action=UpdateStatistics">
 										<?= $LANG['UPDATE_STATS'] ?>
+									</a>
+								</li>
+								<li style="margin-left:10px;">
+									<a href="<?= $CLIENT_ROOT ?>/admin/batchupdatestats.php">
+										<?= $LANG['BATCH_UPDATE_STATS'] ?>
 									</a>
 								</li>
 							</ul>

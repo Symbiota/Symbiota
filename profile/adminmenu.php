@@ -4,7 +4,7 @@ include_once($SERVER_ROOT . '/classes/ProfileManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
-Language::load('profile/viewprofile');
+Language::load(['profile/viewprofile', 'sitemap']);
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 
@@ -48,6 +48,11 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 					</li>
 					<li>
 						<a href="<?= $CLIENT_ROOT ?>/collections/specprocessor/salix/salixhandler.php"><?= $LANG['SALIX'] ?></a>
+					</li>
+					<li>
+						<a href="<?= $CLIENT_ROOT ?>/admin/batchupdatestats.php">
+							<?= $LANG['BATCH_UPDATE_STATS'] ?>
+						</a>
 					</li>
 				</ul>
 			</section>

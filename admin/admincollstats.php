@@ -4,7 +4,7 @@ include_once($SERVER_ROOT.'/classes/OccurrenceCollectionProfile.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/CollectionFormManager.php');
 
-Language::load(['collections/misc/collstats','collections/search/index']);
+Language::load(['collections/misc/collstats','collections/search/index', 'sitemap']);
 
 header("Content-Type: text/html; charset=" . $CHARSET);
 ini_set('max_execution_time', 1200); //1200 seconds = 20 minutes
@@ -393,18 +393,18 @@ if($action != "Update Statistics"){
 			if(isset($collections_misc_collstatsCrumbs)){
 				if($collections_misc_collstatsCrumbs){
 					echo "<div class='navpath'>";
-					echo "<a href='../../index.php'>Home</a> &gt;&gt; ";
+					echo "<a href='" . $CLIENT_ROOT . "/index.php'>Home</a> &gt;&gt; ";
 					echo $collections_misc_collstatsCrumbs.' &gt;&gt; ';
-					echo "<b>" . $LANG['COL_STATS'] . "</b>";
+					echo "<b>" . $LANG['BATCH_UPDATE_STATS'] . "</b>";
 					echo "</div>";
 				}
 			}
 			else{
 				?>
 				<div class='navpath'>
-					<a href='../../index.php'><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-					<a href='collprofiles.php'><?php echo htmlspecialchars($LANG['COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-					<b><?php echo $LANG['COL_STATS']; ?></b>
+					<a href='<?php echo $CLIENT_ROOT; ?>/index.php'><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+					<a href='<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php'><?php echo htmlspecialchars($LANG['COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+					<b><?php echo $LANG['BATCH_UPDATE_STATS']; ?></b>
 				</div>
 				<?php
 			}
@@ -426,11 +426,11 @@ if($action != "Update Statistics"){
 					<div id="specobsdiv" class="pin-things-here">
 							<form class="content" name="params-form" id="params-form" action="admincollstats.php" method="post" style="grid-template-columns: none;">
 								<div style="display: flex; justify-content: flex-end; position: sticky; top: 1rem;">
-									<button style="width: 150px; margin-right: 0.5rem;" id="view-stats" type="submit" name="submitaction" value="Run Statistics"><?php echo $LANG['VIEW_STATS']; ?></button>
-									<button style="width: 75px; margin-right: 0.5rem; background-color: var(--medium-color);" id="reset-btn" type="button"><?php echo $LANG['RESET'] ?></button>
 									<?php
 										if($SYMB_UID && $IS_ADMIN){
 											?>
+											<button style="width: 300px; margin-right: 0.5rem;" id="view-stats" type="submit" name="submitaction" value="Run Statistics"><?php echo $LANG['VIEW_STATS']; ?></button>
+											<button style="width: 75px; margin-right: 0.5rem; background-color: var(--medium-color);" id="reset-btn" type="button"><?php echo $LANG['RESET'] ?></button>
 											<button style="width: 180px;" id="update-stats" type="submit" name="submitaction" value="Update Statistics"><?php echo $LANG['UPDATE_STATS']; ?></button>
 											<?php
 										}
@@ -617,7 +617,7 @@ if($action != "Update Statistics"){
 												}
 											?>
 										</ul>
-										<form name="statscsv" id="statscsv" action="collstatscsv.php" method="post" onsubmit="">
+										<form name="statscsv" id="statscsv" action="<?php echo $CLIENT_ROOT . '/collections/misc/collstatscsv.php'; ?>" method="post" onsubmit="">
 											<div class="stat-csv-margin gridlike-form-no-margin">
 												<div class="gridlike-form-row">
 													<div id="showstatspercoll" class="float-and-block" >
@@ -631,7 +631,7 @@ if($action != "Update Statistics"){
 														<input type="hidden" name="taxon" value='<?php echo $cParentTaxon; ?>' />
 														<input type="hidden" name="country" value='<?php echo $cCountry; ?>' />
 														<input type="hidden" name="action" id="action" value='<?php echo $LANG['DOWNLOAD_STATS']; ?>' />
-														<input type="image" name="action" src="../../images/dl.png" style="width:1.3em" onclick="" />
+														<input type="image" name="action" src="../images/dl.png" style="width:1.3em" onclick="" />
 														<!--input type="submit" name="action" value="Download Stats per Coll" src="../../images/dl.png" / -->
 													</div>
 												</div>
@@ -640,7 +640,7 @@ if($action != "Update Statistics"){
 									</fieldset>
 										<fieldset class="extra-stats bottom-breathing-room-rel">
 											<legend><?php echo $LANG['EXTRA_STATS']; ?></legend>
-											<form name="famstatscsv" id="famstatscsv" action="collstatscsv.php" method="post" onsubmit="">
+											<form name="famstatscsv" id="famstatscsv" action="<?php echo $CLIENT_ROOT . '/collections/misc/collstatscsv.php'; ?>" method="post" onsubmit="">
 												<!-- <div class='legend'> -->
 												<!-- </div> -->
 												<div class="gridlike-form-no-margin">
@@ -653,12 +653,12 @@ if($action != "Update Statistics"){
 														</div>
 														<div class="stat-csv-float-margins icon-mrgn-rel" title="<?php echo $LANG['SAVE_CSV']; ?>">
 															<input type="hidden" name="action" value='Download Family Dist'/>
-															<input type="image" name="action" src="../../images/dl.png" style="width:1.3em" onclick="" />
+															<input type="image" name="action" src="../images/dl.png" style="width:1.3em" onclick="" />
 														</div>
 													</div>
 												</div>
 											</form>
-											<form name="geostatscsv" id="geostatscsv" action="collstatscsv.php" method="post" onsubmit="">
+											<form name="geostatscsv" id="geostatscsv" action="<?php echo $CLIENT_ROOT . '/collections/misc/collstatscsv.php'; ?>" method="post" onsubmit="">
 												<div class="clr gridlike-form-no-margin">
 													<div class="gridlike-form-row">
 														<div id="showgeodist" class="float-and-block" >
@@ -669,7 +669,7 @@ if($action != "Update Statistics"){
 														</div>
 														<div class="stat-csv-float-margins icon-mrgn-rel" title="<?php echo $LANG['SAVE_CSV']; ?>">
 															<input type="hidden" name="action" value='Download Geo Dist' />
-															<input type="image" name="action" src="../../images/dl.png" style="width:1.3em" onclick="" />
+															<input type="image" name="action" src="../images/dl.png" style="width:1.3em" onclick="" />
 														</div>
 													</div>
 												</div>

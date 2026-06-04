@@ -342,14 +342,14 @@ if($action != "Update Statistics"){
 
 					<div id="specobsdiv" class="pin-things-here">
 							<form class="content" name="params-form" id="params-form" action="collstats.php" method="post" style="grid-template-columns: none;">
-								<div style="display: flex; justify-content: flex-end; position: sticky; top: 1rem;">
-									<button style="width: 312px; margin-right: 0.5rem;" id="view-stats" type="submit" name="submitaction" value="Show Coll Stats"><?php echo $LANG['VIEW_STATS']; ?></button>
-								</div>
 								<input type="hidden" name="submitaction" id="submitaction-hidden">
 								<div>
 									<?php
 									if($SYMB_UID && ($IS_ADMIN || array_key_exists("CollAdmin",$USER_RIGHTS))){
 										?>
+										<div style="display: flex; justify-content: flex-end; position: sticky; top: 1rem;">
+											<button style="width: 312px; margin-right: 0.5rem;" id="view-stats" type="submit" name="submitaction" value="Show Coll Stats"><?php echo $LANG['VIEW_STATS']; ?></button>
+										</div>
 										<fieldset class="fieldset-padding flex-form">
 											<legend><b><?php echo $LANG['REC_CRITERIA']; ?></b></legend>
 											<div class="record-criteria-inputs">
@@ -468,10 +468,10 @@ if($action != "Update Statistics"){
 										<form name="statscsv" id="statscsv" action="collstatscsv.php" method="post" onsubmit="">
 											<div class="stat-csv-margin gridlike-form-no-margin">
 												<div class="gridlike-form-row">
-													<div id="showstatspercoll" class="float-and-block" >
+													<div id="showstatspercoll" class="float-and-no-display" >
 														<a href="#" onclick="return toggleStatsPerColl()"><?php echo $LANG['SHOW_PER_COL']; ?></a>
 													</div>
-													<div id="hidestatspercoll" class="float-and-no-display" >
+													<div id="hidestatspercoll" class="float-and-block" >
 														<a href="#" onclick="return toggleStatsPerColl()"><?php echo $LANG['HIDE_STATS']; ?></a>
 													</div>
 													<div class="stat-csv-float-margins icon-mrgn-rel" title="<?php echo $LANG['SAVE_CSV']; ?>">
