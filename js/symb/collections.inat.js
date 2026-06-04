@@ -590,58 +590,62 @@ function getAnnotations(annotations, callback){
 	let sex = [];
 	let vitality = [];
 
-	// Parse out each annotation into the correct fields
-	annotations.map(function(annot){
+	// Make sure there are annotations to map first
+	if(annotations){
 
-		// Life Stage
-		if (annot.controlled_attribute_id == 1) {
-			// 1: Life Stage - 2: Adult, 3: Teneral, 4: Pupa, 5: Nymph, 6: Larva, 7: Egg, 8: Juvenile, 16: Subimago
+		// Parse out each annotation into the correct fields
+		annotations.map(function(annot){
 
-			if(annot.controlled_value_id == 2) stage.push("adult");
-			if(annot.controlled_value_id == 3) stage.push("teneral");
-			if(annot.controlled_value_id == 4) stage.push("pupa");
-			if(annot.controlled_value_id == 5) stage.push("nymph");
-			if(annot.controlled_value_id == 6) stage.push("larva");
-			if(annot.controlled_value_id == 7) stage.push("egg");
-			if(annot.controlled_value_id == 8) stage.push("juvenile");
-			if(annot.controlled_value_id == 16) stage.push("subimago");
+			// Life Stage
+			if (annot.controlled_attribute_id == 1) {
+				// 1: Life Stage - 2: Adult, 3: Teneral, 4: Pupa, 5: Nymph, 6: Larva, 7: Egg, 8: Juvenile, 16: Subimago
 
-			annotObj.lifeStage = stage.join(',');
+				if(annot.controlled_value_id == 2) stage.push("adult");
+				if(annot.controlled_value_id == 3) stage.push("teneral");
+				if(annot.controlled_value_id == 4) stage.push("pupa");
+				if(annot.controlled_value_id == 5) stage.push("nymph");
+				if(annot.controlled_value_id == 6) stage.push("larva");
+				if(annot.controlled_value_id == 7) stage.push("egg");
+				if(annot.controlled_value_id == 8) stage.push("juvenile");
+				if(annot.controlled_value_id == 16) stage.push("subimago");
 
-		// Sex
-		} else if (annot.controlled_attribute_id == 9) {
-			// 9: Sex - 10: Female, 11: Male, 20: Cannot be Determined
+				annotObj.lifeStage = stage.join(',');
 
-			if(annot.controlled_value_id == 10) sex.push("female");
-			if(annot.controlled_value_id == 11) sex.push("male");
+			// Sex
+			} else if (annot.controlled_attribute_id == 9) {
+				// 9: Sex - 10: Female, 11: Male, 20: Cannot be Determined
 
-			annotObj.sex = sex.join(',');
+				if(annot.controlled_value_id == 10) sex.push("female");
+				if(annot.controlled_value_id == 11) sex.push("male");
 
-		// Plant Phenology
-		} else if (annot.controlled_attribute_id == 12) {
-			// 12: Plant phenology - 13: Flowering, 14: Fruiting, 15: Flower Budding, 21: No evidence of flowering
+				annotObj.sex = sex.join(',');
 
-			if(annot.controlled_value_id == 13) phenology.push("flowering");
-			if(annot.controlled_value_id == 14) phenology.push("fruiting");
-			if(annot.controlled_value_id == 15) phenology.push("budding");
-			if(annot.controlled_value_id == 21) phenology.push("sterile");
+			// Plant Phenology
+			} else if (annot.controlled_attribute_id == 12) {
+				// 12: Plant phenology - 13: Flowering, 14: Fruiting, 15: Flower Budding, 21: No evidence of flowering
 
-			annotObj.reproductiveCondition = phenology.join(',');
+				if(annot.controlled_value_id == 13) phenology.push("flowering");
+				if(annot.controlled_value_id == 14) phenology.push("fruiting");
+				if(annot.controlled_value_id == 15) phenology.push("budding");
+				if(annot.controlled_value_id == 21) phenology.push("sterile");
 
-		// Alive or Dead
-		} else if (annot.controlled_attribute_id == 17) {
-			if(annot.controlled_value_id == 18) vitality.push("alive");
-			if(annot.controlled_value_id == 19) vitality.push("dead");
-			if(annot.controlled_value_id == 20) vitality.push("uncertain"); // Cannot be Determined
+				annotObj.reproductiveCondition = phenology.join(',');
 
-			annotObj.vitality = vitality.join(',');
-		}
-		
-		// Other annotations on iNaturalist
-		// 22: Evidence of Presence - 23: Feather, 24: Organism, 25: Scat, 26: Track, 27: Bone, 28: Molt, 29: Gall
-		// 36: Leaves - 37: Breaking Leaf Buds, 38: Green Leaves, 39: Colored Leaves, 40: No Live Leaves
+			// Alive or Dead
+			} else if (annot.controlled_attribute_id == 17) {
+				if(annot.controlled_value_id == 18) vitality.push("alive");
+				if(annot.controlled_value_id == 19) vitality.push("dead");
+				if(annot.controlled_value_id == 20) vitality.push("uncertain"); // Cannot be Determined
 
-	});
+				annotObj.vitality = vitality.join(',');
+			}
+			
+			// Other annotations on iNaturalist
+			// 22: Evidence of Presence - 23: Feather, 24: Organism, 25: Scat, 26: Track, 27: Bone, 28: Molt, 29: Gall
+			// 36: Leaves - 37: Breaking Leaf Buds, 38: Green Leaves, 39: Colored Leaves, 40: No Live Leaves
+
+		});
+	}
 	callback(annotObj);
 }
 
