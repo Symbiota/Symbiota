@@ -2349,7 +2349,10 @@ class SpecUploadBase extends SpecUpload{
 	protected function updateOccidMatchingDbpk(){
 		$status = false;
 		$sql = 'UPDATE uploadspectemp u INNER JOIN omoccurrences o ON u.dbpk = o.dbpk AND u.collid = o.collid
-			SET u.occid = o.occid
+			SET u.occid = o.occid,
+			# When updating records, set basisOfRecord from the existing record if it is not set in uploadspectemp.
+			# Otherwise, that field is lost, and it is normally set on import, See end of recordCleaningStage1()
+			u.basisOfRecord = IFNULL(u.basisOfRecord, o.basisOfRecord)
 			WHERE u.occid IS NULL AND u.dbpk IS NOT NULL AND o.collid = ?';
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('i', $this->collId);
