@@ -7,10 +7,6 @@ Language::load('collections/download/index');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 
-if(empty($OVERRIDE_DOWNLOAD_LOGIN_REQUIREMENT) && !$SYMB_UID){
-	header('Location: ../../profile/index.php?refurl=../collections/download/index.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
-}
-
 $sourcePage = array_key_exists('sourcepage', $_REQUEST) ? $_REQUEST['sourcepage'] : 'specimen';
 $downloadType = array_key_exists('dltype', $_REQUEST) ? $_REQUEST['dltype'] : 'specimen';
 $taxonFilterCode = array_key_exists('taxonFilterCode', $_REQUEST) ? filter_var($_REQUEST['taxonFilterCode'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -18,6 +14,15 @@ $displayHeader = array_key_exists('displayheader', $_REQUEST) ? filter_var($_REQ
 $isPublicSearch = (isset($_REQUEST['publicsearch']) && !$_REQUEST['publicsearch']) ? 0 : 1;		//Value is true by default, and only false if explicitly set to false
 $searchVar = array_key_exists('searchvar', $_REQUEST) ? htmlspecialchars($_REQUEST['searchvar'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE| ENT_QUOTES) : '';
 
+if(empty($OVERRIDE_DOWNLOAD_LOGIN_REQUIREMENT) && !$SYMB_UID){
+	$_SESSION['searchvar'] = $searchVar;
+	$queryStr = 'sourcepage=' . $sourcePage . '&dltype=' . $downloadType . '&taxonFilterCode=' . $taxonFilterCode;
+	header('Location: ../../profile/index.php?refurl=../collections/download/index.php?' . $queryStr);
+}
+if(!$searchVar && !empty($_SESSION['searchvar'])){
+	$searchVar = $_SESSION['searchvar'];
+	unset($_SESSION['searchvar']);
+}
 $dwcManager = new DwcArchiverCore();
 ?>
 <!DOCTYPE html>
