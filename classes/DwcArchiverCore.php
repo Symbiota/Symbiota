@@ -860,19 +860,6 @@ class DwcArchiverCore extends Manager{
 		return true;
 	}
 
-	private function clearStagingTable(){
-		$status = false;
-		if($this->exportID){
-			$sql = 'DELETE FROM omexportoccurrences WHERE omExportID = ? OR initialTimestamp < DATE_SUB(NOW(), INTERVAL 3 HOUR)';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('i', $this->exportID);
-				if($stmt->execute()) $status = true;
-				$stmt->close();
-			}
-		}
-		return $status;
-	}
-
 	//Generate DwC support files
 	private function writeMetaFile(){
 		$this->logOrEcho("Creating meta.xml (" . date('h:i:s A') . ")... ", 1);
@@ -1766,6 +1753,7 @@ class DwcArchiverCore extends Manager{
 
 	private function insertExportOccurrenceRecords(){
 		$status = false;
+		$this->updateExportStatus('inProcess');
 		$sql = 'INSERT IGNORE INTO omexportoccurrences(omExportID, occid, collid, taxonID, family, scientificNameAuthorship, occurrenceRemarks, recordSecurity) ';
 		if (strpos($this->conditionSql,"early.myaStart"))
 			$sql .= $this->paleoWithSql;
@@ -1860,6 +1848,35 @@ class DwcArchiverCore extends Manager{
 				elseif($stmt->error){
 					$this->errorMessage = $stmt->error;
 				}
+				$stmt->close();
+			}
+		}
+		return $status;
+	}
+
+	private function clearStagingTable(){
+		$status = false;
+		if($this->exportID){
+			$sql = 'DELETE FROM omexportoccurrences WHERE omExportID = ? OR initialTimestamp < DATE_SUB(NOW(), INTERVAL 3 HOUR)';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->exportID);
+				if($stmt->execute()) $status = true;
+				$stmt->close();
+			}
+			$this->updateExportStatus('completed');
+		}
+		return $status;
+	}
+
+	private function updateExportStatus($statusValue){
+		$status = false;
+		$allowedValues = array('queued', 'inProcess', 'completed', 'failed');
+		if(!in_array($statusValue, $allowedValues)) return false;
+		if($this->exportID){
+			$sql = 'UPDATE omexport SET status = ? WHERE omExportID = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('si', $statusValue, $this->exportID);
+				if($stmt->execute()) $status = true;
 				$stmt->close();
 			}
 		}
