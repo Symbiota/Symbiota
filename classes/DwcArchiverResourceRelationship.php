@@ -161,8 +161,8 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 			$modArr['scientificName'] = 'oa.sciName';
 			$modArr['basisOfRecord'] = 'oa.basisOfRecord';
 			$modArr['relationshipEstablishedDate'] = 'l.initialtimestamp AS relationshipEstablishedDate';
-			$modArr['subType'] = '"herbariumSpecimenDuplicate" AS subType';
-			$modArr['relationshipRemarks'] = '"Herbarium Specimen Duplicate" AS relationshipRemarks';
+			$modArr['subType'] = '"specimenDuplicate" AS subType';
+			$modArr['relationshipRemarks'] = '"Specimen Duplicate" AS relationshipRemarks';
 
 			$selectArr = array();
 			foreach($this->fieldArr['fields'] as $termName => $fieldValue){
