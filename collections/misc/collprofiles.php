@@ -880,17 +880,23 @@ if ($SYMB_UID) {
 							<a href="../datasets/emlhandler.php?collid=<?= $collData['collid'] ?>" target="_blank">EML File</a>
 						</div>
 						<?php
-						if($collData['managementtype'] == 'Live Data'){
-							if($GLOBALS['SYMB_UID']){
-								?>
-								<div class="bottom-breathing-room-rel">
-									<span class="label"><?= $LANG['LIVE_DOWNLOAD'] ?>:</span>
-									<a href="../../webservices/dwc/dwcapubhandler.php?collid=<?= $collData['collid'] ?>"><?= $LANG['FULL_DATA'] ?></a>
-								</div>
-								<?php
-							}
+						if($GLOBALS['SYMB_UID']){
+							?>
+							<div class="bottom-breathing-room-rel">
+								<span class="label"><?= $LANG['LIVE_DOWNLOAD'] ?>:</span>
+								<form class="button-form" action="../download/index.php" method="post" onsubmit="targetPopup(this)" style="display: inline-block">
+									<button class="icon-button" aria-label="<?= $LANG['FULL_DATA'] ?>" title="<?= $LANG['FULL_DATA'] ?>">
+										<svg style="width:1.3em;height:1.3em" alt="<?= $LANG['FULL_DATA'] ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+											<path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z" />
+										</svg>
+									</button>
+									<input name="searchvar" type="hidden" value="db=<?= $collData['collid'] ?>" />
+									<input name="dltype" type="hidden" value="specimen" />
+								</form>
+							</div>
+							<?php
 						}
-						elseif($collData['managementtype'] == 'Snapshot'){
+						if($collData['managementtype'] == 'Snapshot'){
 							if($pathArr = $collManager->getDwcaPath($collid)){
 								?>
 								<div class="bottom-breathing-room-rel">

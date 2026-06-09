@@ -69,7 +69,6 @@ $filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIEN
         	form.addEventListener('submit', function(event) {
 				const token = 'dl_' + Date.now();
 				document.getElementById('downloadTokenInput').value = token;
-				spinner.style.display = 'block';
 				downloadButton.disabled = true;
 				spinnerSpan.textContent = translations.DOWNLOAD_IN_PROGRESS;
 				const interval = setInterval(() => {
@@ -253,10 +252,10 @@ $filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIEN
 						<input name="sourcepage" type="hidden" value="<?= htmlspecialchars($sourcePage); ?>" />
 						<input name="searchvar" type="hidden" value="<?= $searchVar ?>" />
 						<button type="submit" name="submitaction" id="submitaction"><?= $LANG['DOWNLOAD_DATA'] ?></button>
-						<div id="spinner-div" class="top-breathing-room-rel">
+						<span id="spinner-div">
 							<span id="spinner-span"></span>
 							<img id="workingcircle" src="../../images/ajax-loader_sm.gif" style="margin-bottom:-4px;width:20px;display:none;" />
-						</div>
+						</span>
 					</div>
 					<div class="sectionDiv">
 						*  <?= $LANG['LIMIT_NOTE'] ?>
