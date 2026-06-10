@@ -283,6 +283,12 @@ class Media {
 
 		$misc = [
 			'pdf' => 'application/pdf',
+			'txt' => 'text/plain',
+			'csv' => ['text/csv', 'text/x-comma-separated-values', 'text/comma-separated-values', 'application/vnd.msexcel', 'text/plain'],
+			'zip' => [
+				'application/zip', 'application/x-zip', 'application/x-zip-compressed', 'application/s-compressed', 'multipart/x-zip'],
+			'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+			'xlsx' => ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel']
 		];
 
 		if($type === MediaType::Image) {
