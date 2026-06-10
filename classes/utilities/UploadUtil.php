@@ -4,6 +4,7 @@ include_once($SERVER_ROOT . "/classes/MediaException.php");
 
 class UploadUtil {
 
+	// Permissable mimetypes, see http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types
 	const ALLOWED_LOAN_MIMES = [
 		'text/plain',
 		'image/jpeg', 'image/png',
