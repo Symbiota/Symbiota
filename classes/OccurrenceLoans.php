@@ -1021,16 +1021,17 @@ class OccurrenceLoans extends Manager{
 		} else if ($file['size'] > 10000000) {
 			$this->errorMessage = 'Error: File size is too large: max size is 10 MB';
 			return false;
-
-		// Check the mimetype of the file, don't rely on the file extension
-		} else if (!in_array(mime_content_type($file['tmp_name']), UploadUtil::ALLOWED_LOAN_MIMES)) {
-			$this->errorMessage = 'Error: File type does not match extension. File must be a PDF (.pdf), MS Word document (.doc or .docx), MS Excel file (.xls or .xlsx), image (.jpg, .jpeg, or .png). or a text file (.txt, .csv).';
-			return false;
 		}
 
-		// Ensure that the file type matches the mimetype
+		// Ensure that the file type matches the mimetype and ext
 		try {
 			UploadUtil::checkFileUpload($file, UploadUtil::ALLOWED_LOAN_MIMES);
+		} catch(MediaException $e) {
+			if($e->case == MediaException::FileTypeNotAllowed) {
+				$this->errorMessage = 'Error: File type does not match extension. File must be a PDF (.pdf), MS Word document (.doc or .docx), MS Excel file (.xls or .xlsx), image (.jpg, .jpeg, or .png). or a text file (.txt, .csv).';
+			}
+			$this->errorMessage = 'Error: ' . $e->getMessage();
+			return false;
 		} catch(Exception $e) {
 			$this->errorMessage = 'Error: ' . $e->getMessage();
 			return false;
