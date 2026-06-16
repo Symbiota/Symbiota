@@ -6,7 +6,7 @@ class UploadUtil {
 
 	// Permissable mimetypes, see http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types
 	const ALLOWED_LOAN_MIMES = [
-		'text/plain',
+		'text/plain', 'text/csv',
 		'image/jpeg', 'image/png',
 		'application/pdf', 'application/msword',
 		'application/vnd.ms-excel',
