@@ -1347,9 +1347,9 @@ class OccurrenceController extends Controller {
 						$remoteCollid = $remoteOccurrence['collid'];
 						$sourceDateLastModified = $remoteOccurrence['dateLastModified'];
 						$clearFieldArr = array(
-								'collid', 'dbpk', 'tidInterpreted', 'dynamicProperties', 'processingStatus', 'recordID',
-								'modified', 'dateEntered' ,'dateLastModified', 'genus', 'specificEpithet', 'institutionCode', 'collectionCode',
-								'scientificNameAuthorship', 'identifiedBy', 'dateIdentified', 'verbatimEventDate', 'countryCode', 'localitySecurity'
+							'collid', 'dbpk', 'tidInterpreted', 'dynamicProperties', 'processingStatus', 'recordID',
+							'modified', 'dateEntered' ,'dateLastModified', 'genus', 'specificEpithet', 'institutionCode', 'collectionCode',
+							'scientificNameAuthorship', 'identifiedBy', 'dateIdentified', 'verbatimEventDate', 'countryCode', 'localitySecurity'
 						);
 						foreach($clearFieldArr as $field){
 							unset($remoteOccurrence[$field]);
