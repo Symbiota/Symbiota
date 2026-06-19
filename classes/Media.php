@@ -457,8 +457,6 @@ class Media {
 			"anatomy" => $post_arr["anatomy"] ?? null,
 			"notes" => $post_arr["notes"] ?? null,
 			"username" => $GLOBALS['USERNAME'],
-			// check if its is_numeric?
-			"sortOccurrence" => $post_arr['sortOccurrence'] ?? null,
 			"sourceIdentifier" => $post_arr['sourceIdentifier'] ?? null,
 			"rights" => $post_arr['rights'] ?? null,
 			"accessRights" => $post_arr['accessRights'] ?? null,
@@ -470,8 +468,16 @@ class Media {
 			"mediaType" => self::getMediaTypeStrFromMime($post_arr['format']),
 		];
 
-		$sort_sequence = $post_arr['sortsequence'] ?? $post_arr['sortSequence'] ?? false;
-		$keyValuePairs["sortsequence"] = is_numeric($sort_sequence)? $sort_sequence: 50;
+		//Will correctly match whether input is camel or lower case
+		$sortFields = array('sortOccurrence','sortSequence');
+		foreach($sortFields as $field){
+			$inputField = '';
+			if(isset($post_arr[$field])) $inputField = $field;
+			elseif(isset($post_arr[strtolower($field)])) $inputField = strtolower($field);
+			if($inputField && is_numeric($post_arr[$inputField])){
+				$keyValuePairs[$field] = $post_arr[$inputField];
+			}
+		}
 
 		$keys = implode(",", array_keys($keyValuePairs));
 		$parameters = str_repeat('?,', count($keyValuePairs) - 1) . '?';
