@@ -8,6 +8,7 @@ include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 Language::load(['collections/misc/collprofiles', 'sitemap']);
 
 header('Content-Type: text/html; charset=' . $CHARSET);
+
 unset($_SESSION['editorquery']);
 
 $collManager = new OccurrenceCollectionProfile();
@@ -22,6 +23,17 @@ $collManager->setCollid($collid);
 
 $collectionData = $collManager->getCollectionMetadata();
 $datasetKey = $collManager->getDatasetKey();
+
+// GBIF citations widget
+if ($datasetKey) {
+	$allowedOrigins = [
+    	'https://*.gbif.org'
+	];
+	header(
+		"Content-Security-Policy: frame-ancestors 'self' " .
+		implode(' ', $allowedOrigins)
+	);
+}
 
 $editCode = 0;		//0 = no permissions; 1 = CollEditor; 2 = CollAdmin; 3 = SuperAdmin
 if ($SYMB_UID) {
