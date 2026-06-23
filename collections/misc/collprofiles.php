@@ -210,7 +210,7 @@ if ($SYMB_UID) {
 
 		#gbif-citations{
 			display:inline-flex;
-			height:23.5px;
+			height:24px;
 			font-family:Verdana,Geneva,sans-serif;
 			font-size:13px;
 			color:#fff;
