@@ -495,7 +495,7 @@ class KeyCharAdmin{
 		return $statusStr;
 	}
 
-	//Data retrival functions
+	//Data retrieval functions
 	public function getGlossaryList(){
 		$retArr = array();
 		$sql = 'SELECT glossid, term, language FROM glossary';

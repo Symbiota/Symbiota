@@ -944,7 +944,7 @@ class TaxonomyUpload{
 		$rs->free();
 	}
 
-	//Misc data retrival functions
+	//Misc data retrieval functions
 	private function setTaxonUnitArr(){
 		if($this->kingdomName){
 			$sql = 'SELECT rankid, rankname FROM taxonunits WHERE (kingdomname = "'.$this->kingdomName.'") ';

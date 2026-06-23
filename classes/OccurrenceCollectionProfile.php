@@ -818,7 +818,7 @@ class OccurrenceCollectionProfile extends OmCollections{
 		return $retCnt;
 	}
 
-	//General data retrival functions
+	//General data retrieval functions
 	public function getInstitutionArr(){
 		$retArr = array();
 		$sql = 'SELECT iid,institutionname,institutioncode FROM institutions ORDER BY institutionname,institutioncode ';

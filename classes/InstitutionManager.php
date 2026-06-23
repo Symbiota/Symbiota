@@ -199,7 +199,7 @@ class InstitutionManager extends Manager{
 		return $status;
 	}
 
-	//Misc data retrival functions
+	//Misc data retrieval functions
 	public function getInstitutionList(){
 		$retArr = Array();
 		$sql = 'SELECT i.iid, c.collid, i.institutioncode, i.institutionname

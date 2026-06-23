@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceDownload.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceExportSupport.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
@@ -16,8 +16,7 @@ for($h = 1; $h < 4; $h++){
 	$customArr[$h]['v'] = array_key_exists('customvalue' . $h, $_REQUEST) ? htmlspecialchars($_REQUEST['customvalue'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . $h : '';
 }
 
-$dlManager = new OccurrenceDownload();
-$collMeta = $dlManager->getCollectionMetadata($collid);
+$dlManager = new OccurrenceExportSupport();
 
 $isEditor = false;
 if($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin']))){

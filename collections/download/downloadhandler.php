@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT . '/classes/OccurrenceDownload.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceExportSupport.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceMapManager.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverCore.php');
 
@@ -17,7 +17,6 @@ if ($token) {
 		'samesite' => 'Lax'
 	]);
 }
-
 if ($schema == 'backup') {
 	$collid = $_POST['collid'];
 	if ($collid && is_numeric($collid)) {
@@ -90,31 +89,8 @@ if ($schema == 'backup') {
 	}
 	$occurManager->getSearchTerm('customfield');
 	$occurManager->setApplyFullProtections(false); //Full security protections for downloads are handled within the DwcArchiverCore class
-	if ($schema == 'georef') {
-		$dlManager = new OccurrenceDownload();
-		if($isPublicSearch){
-			$dlManager->setIsPublicDownload($isPublicSearch);
-			$dlManager->setSqlWhere($occurManager->getSqlWhere());
-		}
-		$dlManager->setSchemaType($schema);
-		$dlManager->setExtended($extended);
-		$dlManager->setCharSetOut($cSet);
-		$dlManager->setDelimiter($format);
-		$dlManager->setZipFile($zip);
-		$dlManager->addCondition('decimalLatitude', 'NOT_NULL', '');
-		$dlManager->addCondition('decimalLongitude', 'NOT_NULL', '');
-		if (array_key_exists('targetcollid', $_POST) && $_POST['targetcollid']) {
-			$dlManager->addCondition('collid', 'EQUALS', $_POST['targetcollid']);
-		}
-		if (array_key_exists('processingstatus', $_POST) && $_POST['processingstatus']) {
-			$dlManager->addCondition('processingstatus', 'EQUALS', $_POST['processingstatus']);
-		}
-		if (array_key_exists('customfield1', $_POST) && $_POST['customfield1']) {
-			$dlManager->addCondition($_POST['customfield1'], $_POST['customtype1'], $_POST['customvalue1']);
-		}
-		$dlManager->downloadData();
-	} elseif ($schema == 'checklist') {
-		$dlManager = new OccurrenceDownload();
+	if ($schema == 'checklist') {
+		$dlManager = new OccurrenceExportSupport();
 		if($isPublicSearch){
 			$dlManager->setSqlWhere($occurManager->getSqlWhere());
 		}
@@ -123,7 +99,7 @@ if ($schema == 'backup') {
 		$dlManager->setDelimiter($format);
 		$dlManager->setZipFile($zip);
 		$dlManager->setTaxonFilter(array_key_exists("taxonFilterCode", $_POST) ? $_POST["taxonFilterCode"] : 0);
-		$dlManager->downloadData();
+		$dlManager->downloadChecklist();
 	} else {
 		$dwcaHandler = new DwcArchiverCore();
 		$dwcaHandler->setVerboseMode(0);
@@ -153,6 +129,14 @@ if ($schema == 'backup') {
 		} else {
 			//Is an occurrence download
 			if ($isPublicSearch) $dwcaHandler->setIsPublicDownload($isPublicSearch);
+			if ($schema == 'georef') {
+				if (!empty($_POST['targetcollid']) && is_numeric($_POST['targetcollid'])) {
+					$dwcaHandler->addCondition('collid', 'EQUALS', $_POST['targetcollid']);
+				}
+				if (!empty($_POST['processingstatus'])) {
+					$dwcaHandler->addCondition('processingstatus', 'EQUALS', $_POST['processingstatus']);
+				}
+			}
 			$dwcaHandler->setCharSetOut($cSet);
 			$dwcaHandler->setSchemaType($schema);
 			$dwcaHandler->setExtended($extended);
@@ -168,7 +152,9 @@ if ($schema == 'backup') {
 				}
 				for ($x = 1; $x < 4; $x++){
 					if (!empty($_POST['customfield' . $x])) {
-						$dwcaHandler->addCondition($_POST['customfield' . $x], $_POST['customtype' . $x], $_POST['customvalue' . $x]);
+						$v = '';
+						if(!empty($_POST['customvalue' . $x])) $v = $_POST['customvalue' . $x];
+						$dwcaHandler->addCondition($_POST['customfield' . $x], $_POST['customtype' . $x], $v);
 					}
 				}
 				if (!empty($_POST['stateid'])) {
@@ -207,8 +193,10 @@ if ($schema == 'backup') {
 		}
 
 		$outputFile = null;
-		if ($zip) {
-			//Ouput file is a zip file
+		if (!$zip || $schema == 'georef') {
+			$outputFile = $dwcaHandler->getOccurrenceFileExport($zip);
+		} else {
+			//Ouput file is a zipped DwC-A
 			$includeIdent = (array_key_exists('identifications', $_POST) ? 1 : 0);
 			$dwcaHandler->setIncludeDets($includeIdent);
 			$includeImages = (array_key_exists('images', $_POST) ? 1 : 0);
@@ -223,9 +211,6 @@ if ($schema == 'backup') {
 			$dwcaHandler->setIncludeAssociations($includeAssociations);
 
 			$outputFile = $dwcaHandler->createDwcArchive();
-		} else {
-			//Output file is a flat occurrence file (not a zip file)
-			$outputFile = $dwcaHandler->getOccurrenceFile();
 		}
 		if ($outputFile) {
 			// ob_start();

@@ -207,6 +207,8 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['verbatimCoordinates'] = 'o.verbatimCoordinates';
 		$this->occurDefArr['terms']['georeferencedBy'] = 'http://rs.tdwg.org/dwc/terms/georeferencedBy';
 		$this->occurDefArr['fields']['georeferencedBy'] = 'o.georeferencedBy';
+		$this->occurDefArr['terms']['georeferencedDate'] = 'http://rs.tdwg.org/dwc/terms/georeferencedDate';
+		$this->occurDefArr['fields']['georeferencedDate'] = 'o.georeferencedDate';
 		$this->occurDefArr['terms']['georeferenceProtocol'] = 'http://rs.tdwg.org/dwc/terms/georeferenceProtocol';
 		$this->occurDefArr['fields']['georeferenceProtocol'] = 'o.georeferenceProtocol';
 		$this->occurDefArr['terms']['georeferenceSources'] = 'http://rs.tdwg.org/dwc/terms/georeferenceSources';
@@ -352,7 +354,8 @@ class DwcArchiverOccurrence extends Manager{
 			$this->occurDefArr['fields'] = array_diff_key($this->occurDefArr['fields'], array_flip($trimArr));
 		}
 
-		//Set to array to specific field definition
+		//Set to array to specific field definition, rather than trim
+		$targetArr = null;
 		if($this->schemaType == 'coge'){
 			$targetArr = array('id','basisOfRecord','institutionCode','collectionCode','catalogNumber','occurrenceID','family','scientificName','scientificNameAuthorship',
 				'kingdom','phylum','class','order','genus','specificEpithet','infraSpecificEpithet','recordedBy','recordNumber','eventDate','year','month','day','fieldNumber',
@@ -360,6 +363,14 @@ class DwcArchiverOccurrence extends Manager{
 				'locality','recordSecurity','geodeticDatum','decimalLatitude','decimalLongitude','verbatimCoordinates',
 				'minimumElevationInMeters','maximumElevationInMeters','verbatimElevation','maximumDepthInMeters','minimumDepthInMeters','establishmentMeans',
 				'occurrenceRemarks','dateEntered','dateLastModified','recordID','references','collID');
+		}
+		elseif($this->schemaType == 'georef'){
+			$targetArr = array('id','institutionCode','collectionCode','catalogNumber','occurrenceID','scientificName','scientificNameAuthorship','recordedBy','recordNumber','eventDate',
+				'decimalLatitude','decimalLongitude','geodeticDatum','coordinateUncertaintyInMeters',
+				'georeferencedBy','georeferencedDate','georeferenceProtocol','georeferenceSources','georeferenceVerificationStatus','georeferenceRemarks',
+				'minimumElevationInMeters','maximumElevationInMeters','verbatimElevation','modified','recordID','references','collID');
+		}
+		if($targetArr){
 			$this->occurDefArr['terms'] = array_intersect_key($this->occurDefArr['terms'], array_flip($targetArr));
 			$this->occurDefArr['fields'] = array_intersect_key($this->occurDefArr['fields'], array_flip($targetArr));
 		}
