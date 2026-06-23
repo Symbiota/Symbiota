@@ -19,7 +19,6 @@ UPDATE geographicthesaurus
 SET geoterm = replace(geoterm, "  ", " ") 
 WHERE geoterm LIKE "%  %";
 
-
 #Add indexed table for polygon search
 CREATE TABLE `occurrencepolygonindex` (
   `geoThesID` int(11) NOT NULL,
@@ -98,3 +97,24 @@ FOR EACH ROW BEGIN
 END//
 
 DELIMITER ;
+
+#Add definitions for omoccurrences processingStatus controlled vocabularies 
+INSERT INTO `ctcontrolvocab` (`title`, `tableName`, `fieldName`) 
+  VALUES ('Occurrence Processing Status terms', 'omoccurrences', 'processingStatus');
+INSERT INTO `ctcontrolvocabterm` (`cvID`, `term`) 
+  SELECT cvID, "Unprocessed" FROM ctcontrolvocab WHERE tableName = "omoccurrences" AND fieldName = "processingStatus";
+INSERT INTO `ctcontrolvocabterm` (`cvID`, `term`) 
+  SELECT cvID, "Stage 1" FROM ctcontrolvocab WHERE tableName = "omoccurrences" AND fieldName = "processingStatus";
+INSERT INTO `ctcontrolvocabterm` (`cvID`, `term`) 
+  SELECT cvID, "Stage 2" FROM ctcontrolvocab WHERE tableName = "omoccurrences" AND fieldName = "processingStatus";
+INSERT INTO `ctcontrolvocabterm` (`cvID`, `term`) 
+  SELECT cvID, "Stage 3" FROM ctcontrolvocab WHERE tableName = "omoccurrences" AND fieldName = "processingStatus";
+INSERT INTO `ctcontrolvocabterm` (`cvID`, `term`) 
+  SELECT cvID, "Pending Review" FROM ctcontrolvocab WHERE tableName = "omoccurrences" AND fieldName = "processingStatus";
+INSERT INTO `ctcontrolvocabterm` (`cvID`, `term`) 
+  SELECT cvID, "Expert Required" FROM ctcontrolvocab WHERE tableName = "omoccurrences" AND fieldName = "processingStatus";
+INSERT INTO `ctcontrolvocabterm` (`cvID`, `term`) 
+  SELECT cvID, "Reviewed" FROM ctcontrolvocab WHERE tableName = "omoccurrences" AND fieldName = "processingStatus";
+INSERT INTO `ctcontrolvocabterm` (`cvID`, `term`) 
+  SELECT cvID, "Closed" FROM ctcontrolvocab WHERE tableName = "omoccurrences" AND fieldName = "processingStatus";
+
