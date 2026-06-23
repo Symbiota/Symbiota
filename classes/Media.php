@@ -956,7 +956,7 @@ class Media {
 			$qualityRating = self::DEFAULT_JPG_COMPRESSION;
 
 			if($new_width < 300) {
-				$ct = system('convert '. $src_path . ' -thumbnail ' . $new_width .' x ' . ($new_width * 1.5).' '.$new_path);
+				$ct = system('convert '. $src_path . ' -thumbnail ' . $new_width .'x' . ($new_width * 1.5).' '.$new_path);
 			} else {
 				$ct = system('convert '. $src_path . ' -resize ' . $new_width.'x' . ($new_width * 1.5) . ($qualityRating?' -quality '.$qualityRating:'').' '.$new_path);
 			}
