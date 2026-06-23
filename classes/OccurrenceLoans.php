@@ -1029,8 +1029,9 @@ class OccurrenceLoans extends Manager{
 		} catch(MediaException $e) {
 			if($e->case == MediaException::FileTypeNotAllowed) {
 				$this->errorMessage = 'Error: File type does not match extension. File must be a PDF (.pdf), MS Word document (.doc or .docx), MS Excel file (.xls or .xlsx), image (.jpg, .jpeg, or .png). or a text file (.txt, .csv).';
+			} else {
+				$this->errorMessage = 'Error: ' . $e->getMessage();
 			}
-			$this->errorMessage = 'Error: ' . $e->getMessage();
 			return false;
 		} catch(Exception $e) {
 			$this->errorMessage = 'Error: ' . $e->getMessage();
