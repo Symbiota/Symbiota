@@ -332,48 +332,48 @@ if ($SYMB_UID) {
 		if ($collid && !$collid == 0){
 			?>
 			<div class="quicksearch-container">
-			<section id="quicksearch-box" class="fieldset-like" >
-				<h3><span><?= $LANG['QUICK_SEARCH'] ?></span></h3>
-				<div id="dialogContainer" style="position: relative;">
-					<form id="quicksearch" name="quicksearch" style="display: flex; align-items:center; gap:0.5rem; flex-wrap: wrap" action="javascript:void(0);" onsubmit="directSubmitAction(event)">
-						<div class="quicksearch-input-container">
+				<section id="quicksearch-box" class="fieldset-like" >
+					<h3><span><?= $LANG['QUICK_SEARCH'] ?></span></h3>
+					<div id="dialogContainer" style="position: relative;">
+						<form id="quicksearch" name="quicksearch" style="display: flex; align-items:center; gap:0.5rem; flex-wrap: wrap" action="javascript:void(0);" onsubmit="directSubmitAction(event)">
+							<div class="quicksearch-input-container">
 								<label style="display:flex; align-items: center; position: relative; margin-right: 1.5rem" for="catalog-number"><?= $LANG['OCCURENCE_IDENTIFIER'] ?>
-						<a href="#" id="q_catalognumberinfo" style="text-decoration:none; position: absolute; right: -1.5rem">
-							<img src="../../images/info.png" style="width:1.3em;" alt="<?= $LANG['MORE_INFO_ALT']; ?>" title="<?= $LANG['MORE_INFO']; ?>" aria-label="<?= $LANG['MORE_INFO']; ?>"/>
-						</a>
+									<a href="#" id="q_catalognumberinfo" style="text-decoration:none; position: absolute; right: -1.5rem">
+										<img src="../../images/info.png" style="width:1.3em;" alt="<?= $LANG['MORE_INFO_ALT']; ?>" title="<?= $LANG['MORE_INFO']; ?>" aria-label="<?= $LANG['MORE_INFO']; ?>"/>
+									</a>
 								</label>
-						<span class="screen-reader-only">
-							<?= $LANG['IDENTIFIER_PLACEHOLDER_LIST'] . ' ' ?>
-						</span>
-						<input style="margin-bottom: 0" name="catalog-number" id="catalog-number" type="text" />
-						<dialog id="dialogEl" aria-live="polite" aria-label="Catalog number search dialog">
-							<?= $LANG['IDENTIFIER_PLACEHOLDER_LIST'] . ' ' ?>
-							<button id="closeDialog" value="search">Close</button>
-						</dialog>
-						</div>
-						<input name="collid" type="hidden" value="<?= $collid; ?>" />
-						<input name="occindex" type="hidden" value="0" />
-						<div class="quicksearch-input-container">
-						<label for="taxon-search"><?= $LANG['TAXON'] ?></label>
-						<input style="margin-bottom: 0" name="taxon-search" id="taxon-search" type="text" />
-						</div>
-						<div id="quicksearch-btn-container" style="display:flex; gap: 0.5rem; flex-grow:1">
-							<?php
-							if($editCode == 1 || $editCode == 2 || $editCode == 3){
-								?>
-								<button type="submit" id="search-by-catalog-number-admin-btn" value="edit">
-									<?= $LANG['OCCURRENCE_EDITOR'] ?>
-								</button>
+								<span class="screen-reader-only">
+									<?= $LANG['IDENTIFIER_PLACEHOLDER_LIST'] . ' ' ?>
+								</span>
+								<input style="margin-bottom: 0" name="catalog-number" id="catalog-number" type="text" />
+								<dialog id="dialogEl" aria-live="polite" aria-label="Catalog number search dialog">
+									<?= $LANG['IDENTIFIER_PLACEHOLDER_LIST'] . ' ' ?>
+									<button id="closeDialog" value="search">Close</button>
+								</dialog>
+							</div>
+							<input name="collid" type="hidden" value="<?= $collid; ?>" />
+							<input name="occindex" type="hidden" value="0" />
+							<div class="quicksearch-input-container">
+								<label for="taxon-search"><?= $LANG['TAXON'] ?></label>
+								<input style="margin-bottom: 0" name="taxon-search" id="taxon-search" type="text" />
+							</div>
+							<div id="quicksearch-btn-container" style="display:flex; gap: 0.5rem; flex-grow:1">
 								<?php
-							}
-							?>
-							<button type="submit" value='search' id="search-by-catalog-number-btn" title="<?= $LANG['IDENTIFIER_PLACEHOLDER_LIST'] ?>">
-								<?= $LANG['SEARCH'] ?>
-							</button>
-						</div>
-					</form>
-				</div>
-			</section>
+								if($editCode == 1 || $editCode == 2 || $editCode == 3){
+									?>
+									<button type="submit" id="search-by-catalog-number-admin-btn" value="edit">
+										<?= $LANG['OCCURRENCE_EDITOR'] ?>
+									</button>
+									<?php
+								}
+								?>
+								<button type="submit" value='search' id="search-by-catalog-number-btn" title="<?= $LANG['IDENTIFIER_PLACEHOLDER_LIST'] ?>">
+									<?= $LANG['SEARCH'] ?>
+								</button>
+							</div>
+						</form>
+					</div>
+				</section>
 			</div>
 		<?php
 		}
@@ -398,8 +398,8 @@ if ($SYMB_UID) {
 				<div style="margin-left: 10px; margin-bottom: 20px;">
 					<a href="https://www.gbif.org/resource/search?contentType=literature&gbifDatasetKey=<?= $datasetKey ?>" target="_blank" style="text-decoration:none;">
 						<span id="gbif-citations">
-							<img src="../../images/gbif-mark-white-logo.svg" alt="GBIF">
-							<span id="gbif-text">GBIF citations</span>
+							<img src="../../images/gbif-mark-white-logo.svg" alt="GBIF logo">
+							<span id="gbif-text"><?= $LANG['GBIF_CITATIONS'] ?></span>
 							<span id="gbif-count"></span>
 						</span>
 					</a>
@@ -1158,7 +1158,6 @@ if ($SYMB_UID) {
 		showDialogLink.addEventListener('click', (e) => {
 			e.preventDefault();
 			dialogEl.showModal();
-
 			dialogContainer.style.position = 'relative';
 			dialogContainer.appendChild(dialogEl);
 

@@ -18,6 +18,7 @@ $LANG['DEACTIVATED'] = 'Deactivated';
 $LANG['DEACTIVATED_MESSAGE'] = 'Certaines options de gestion ne sont disponibles que pour les ensembles de données gérés en direct. Contactez l\'administrateur du portail si la collection doit être reclassée.';
 $LANG['TOGGLE_MAN'] = 'Basculer Panneau de Configuration du Gestionnaire';
 $LANG['COLL_PROF_FOR'] = 'Profil de Collecte pour';
+$LANG['GBIF_CITATIONS'] = 'Citations du GBIF';
 $LANG['DAT_EDIT'] = 'Panneau de Configuration de l\'Éditeur de Données';
 $LANG['SUBMIT_IMAGE_V'] = 'Soumettre un coupon multimédia (observation appuyée par une photo)';
 $LANG['ADD_NEW_OCCUR'] = 'Ajouter Nouvel Échantillon d\'Occurrence';

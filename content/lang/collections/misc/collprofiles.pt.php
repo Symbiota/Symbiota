@@ -18,6 +18,7 @@ $LANG['DEACTIVATED'] = 'Desativado';
 $LANG['DEACTIVATED_MESSAGE'] = 'Certas opções de gerenciamento estão disponíveis apenas para conjuntos de dados gerenciados em tempo real. Entre em contato com o administrador do portal se a coleção precisar ser reclassificada.';
 $LANG['TOGGLE_MAN'] = 'Alternar painel de controle do gerenciador';
 $LANG['COLL_PROF_FOR'] = 'Perfil de coleção para';
+$LANG['GBIF_CITATIONS'] = 'Citações do GBIF';
 $LANG['DAT_EDIT'] = 'Painel de controle do editor de dados';
 $LANG['SUBMIT_IMAGE_V'] = 'Envie um Voucher Multimédia (observação apoiada por fotografia)';
 $LANG['ADD_NEW_OCCUR'] = 'Adicionar novo registro de ocorrência';
