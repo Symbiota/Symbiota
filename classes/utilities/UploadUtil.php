@@ -667,13 +667,13 @@ class UploadUtil {
 		$ext_target = strtolower($ext_target);
 		$type = strtolower($type);
 
-		foreach(self::MIME_MAP as $mime => $ext_target) {
-			$mime_type = strtolower(explode($ext_target, '/')[0] ?? '');
+		foreach(self::MIME_MAP as $mime => $ext) {
+			$mime_type = strtolower(explode('/', $ext)[0]);
 			if($type && $mime_type !== $type) {
 				continue;
 			}
 
-			if($ext_target === $ext_target) {
+			if($ext === $ext_target) {
 				return $mime;
 			}
 		}
