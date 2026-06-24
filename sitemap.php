@@ -211,6 +211,11 @@ if(!$schemaVersion){
 									<?= $LANG['OTHER_CAT_TRANSFER'] ?>
 								</a>
 							</li>
+							<li>
+								<a href="<?= $CLIENT_ROOT ?>/admin/batchupdatestats.php">
+									<?= $LANG['BATCH_UPDATE_STATS'] ?>
+								</a>
+							</li>
 						</ul>
 						<?php
 					}

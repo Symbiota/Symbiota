@@ -270,7 +270,9 @@ class TaxonomyDisplayManager extends Manager{
 					$taxonRankId = $this->taxaArr[$key]['rankid'];
 					if($this->taxaArr[$key]['rankid'] >= 180){
 						$author = ($this->displayAuthor) ? $this->taxaArr[$key]['author'] : '';
-						$sciNameParts = $this->splitScinameByProvided($this->taxaArr[$key]['sciname'], $this->taxaArr[$key]['cultivarEpithet'], $this->taxaArr[$key]['tradeName'], $author);
+						$cultivarEp = $this->taxaArr[$key]['cultivarEpithet'] ?? '';
+						$tradeNm = $this->taxaArr[$key]['tradeName'] ?? '';
+						$sciNameParts = $this->splitScinameByProvided($this->taxaArr[$key]['sciname'], $cultivarEp, $tradeNm, $author);
 						$sciName = $sciNameParts['base'];
 						if($taxonRankId >= 180) $sciName = '<i>'.$sciName.'</i>';
 						if(!empty($sciNameParts['cultivarEpithet'])) $sciName .= " '" . $sciNameParts['cultivarEpithet'] . "'";

@@ -126,6 +126,7 @@ class SchemaManager extends Manager{
 									$this->logOrEcho('Success!', 1);
 								}
 								else{
+									$this->logOrEcho($this->conn->error, 2);
 									$this->logOrEcho($sql, 1);
 								}
 							}
@@ -455,7 +456,45 @@ class SchemaManager extends Manager{
 			$this->logOrEcho('Connection error: ' . $this->conn->connect_error);
 			return false;
 		}
+		if(!$this->checkPermissions()){
+			$this->logOrEcho('Error: Login has insignificant permissions - missing: ' . implode(', ', $this->warningArr));
+			$this->conn = null;
+			return false;
+		}
 		return true;
+	}
+
+	private function checkPermissions(){
+		$status = 0;
+		$requiredPerms = array('SELECT', 'INSERT', 'UPDATE', 'DELETE', 'EXECUTE', 'ALTER', 'CREATE', 'DROP', 'EVENT', 'TRIGGER');
+		$sql = 'SHOW GRANTS FOR CURRENT_USER';
+		if($rs = $this->conn->query($sql)){
+			while($r = $rs->fetch_assoc()){
+				$perm = current($r);
+				if(strpos($perm, 'ON *.* TO') || strpos($perm, 'ON `' . $this->database . '`.* TO')){
+					if(strpos($perm, 'GRANT ALL PRIVILEGES') !== false){
+						unset($requiredPerms);
+						$requiredPerms = false;
+					}
+					else{
+						foreach($requiredPerms as $k => $permTest){
+							if(strpos($perm, $permTest)){
+								unset($requiredPerms[$k]);
+							}
+						}
+					}
+					if($requiredPerms){
+						$this->warningArr = $requiredPerms;
+					}
+					else{
+						$status = true;
+						break;
+					}
+				}
+			}
+			$rs->free();
+		}
+		return $status;
 	}
 
 	//Misc data retrival functions

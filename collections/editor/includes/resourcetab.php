@@ -622,7 +622,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 								echo '<div style="float:left;margin:5px 15px">';
 								if($dArr['recordedby']) echo '<div>'.$dArr['recordedby'].' '.$dArr['recordnumber'].'<span style="margin-left:40px;">'.$dArr['eventdate'].'</span></div>';
 								if($dArr['catnum']) echo '<div><b>'.$LANG['CAT_NUM'].':</b> '.$dArr['catnum'].'</div>';
-								if($dArr['occurrenceid']) echo '<div><b>'.$LANG['GUID'].':</b> '.$dArr['occurrenceid'].'</div>';
+								if($dArr['occurrenceid']) echo '<div><b>'.$LANG['OCCURRENCE_ID'].':</b> '.$dArr['occurrenceid'].'</div>';
 								if($dArr['sciname']) echo '<div><b>'.$LANG['LATEST_ID'].':</b> '.$dArr['sciname'].'</div>';
 								if($dArr['identifiedby']) echo '<div><b>'.$LANG['IDED_BY'].':</b> '.$dArr['identifiedby'].'<span stlye="margin-left:30px;">'.$dArr['dateidentified'].'</span></div>';
 								if($dArr['notes']) echo '<div>'.$dArr['notes'].'</div>';

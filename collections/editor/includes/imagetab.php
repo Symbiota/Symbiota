@@ -25,7 +25,7 @@ try {
 	error_log($e->getMessage());
 }
 
-$creatorArray = Media::getCreatorArray();
+$creatorArray = Media::getCreatorArray(false);
 ?>
 <script type="text/javascript">
 	function verifyImgAddForm(f){

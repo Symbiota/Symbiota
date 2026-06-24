@@ -112,7 +112,7 @@ else{
 				</span>
 			</button>
 			<form name="download" action="../download/index.php" method="post" target="downloadpopup" onsubmit="window.open('', 'downloadpopup', 'left=100,top=50,width=900,height=700'); f.target = 'downloadpopup';" style="display:inline-flex;">
-				<button type="submit" class="icon-button" aria-label="<?= $LANG['DOWNLOAD_SPECIMEN_DATA'] . $LANG['OPENS_NEW_TAB'] ?>" title="<?= $LANG['DOWNLOAD_SPECIMEN_DATA'] ?>" style="width: 36px;height: 36px;padding-top:8px">
+				<button  id="downloadButton" type="submit" class="icon-button" aria-label="<?= $LANG['DOWNLOAD_SPECIMEN_DATA'] . $LANG['OPENS_NEW_TAB'] ?>" title="<?= $LANG['DOWNLOAD_SPECIMEN_DATA'] ?>" style="width: 36px;height: 36px;padding-top:8px">
 					<svg style="width:1.3em;height:1.3em" alt="<?= $LANG['IMG_DWNL_DATA']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
 				</button>
 				<input name="" type="hidden" value="<?= $occManager->getDownloadQuery() ?>" />
@@ -388,7 +388,7 @@ else{
 						<button name="submitaction" type="submit" onclick="submitQueryEditor(this.form)" ><?php echo $LANG['DISPLAY_EDITOR']; ?></button>
 					</div>
 					<div style="margin-left: 0;">
-						<button name="submitaction" type="submit" onclick="submitQueryTable(this.form)" ><?php echo $LANG['DISPLAY_TABLE']; ?></button>
+						<button id="displayTableButton" name="submitaction" type="submit" onclick="submitQueryTable(this.form)" ><?php echo $LANG['DISPLAY_TABLE']; ?></button>
 					</div>
 					<div style="margin-left: 0;">
 						<button type="button" name="reset" value="Reset Form" onclick="resetQueryForm(this.form)">Reset Form</button>

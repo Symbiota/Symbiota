@@ -12,7 +12,7 @@ $LANG['COLLECTIONS'] = 'Colecciones';
 $LANG['SEARCHENGINE'] = 'Búsqueda';
 $LANG['SEARCH_COLL'] = 'Búsqueda de colecciones';
 $LANG['LISTOFCOLL'] = 'Listado de colecciones participando en el proyecto';
-$LANG['COLLSTATS'] = 'Estadísticas de Colecciones';
+$LANG['COLLSTATS'] = 'Ver estadísticas públicas de colecciones';
 $LANG['EXSICC'] = 'Índice de Exsiccatae';
 $LANG['DATA_PUBLISHING'] = 'Publicar Datos';
 $LANG['COLLECTIONS_RSS'] = 'Lector de RSS para colecciones de historia natural y proyectos de observaciones';
@@ -110,6 +110,7 @@ $LANG['DATA_AUTHORIZED_TO_EDIT'] = 'conjuntos de datos que está autorizado a ed
 $LANG['MANAGE_TAXON_THUMBNAILS'] = 'Administrar miniaturas de mapas de perfil de taxonomía';
 $LANG['TAXINTER'] = 'Derechos de usuarios con interés taxonómico';
 $LANG['OTHER_CAT_TRANSFER'] = 'Herramienta de transferencia de otros números de catálogo';
+$LANG['BATCH_UPDATE_STATS'] = 'Actualizar estadísticas de colección a nivel de portal';
 $LANG['POLICIES'] = 'Políticas';
 
 ?>

@@ -50,8 +50,8 @@ $router->group(['prefix' => 'v2'], function () use ($router) {
 	$router->get('installation',  ['uses' => 'InstallationController@showAllPortals']);
 	$router->get('installation/status', ['uses' => 'InstallationController@portalStatus']);
 	$router->get('installation/{id}', ['uses' => 'InstallationController@showOnePortal']);
+	$router->get('installation/{id}/event',  ['uses' => 'InstallationController@registerEvent']);
 	$router->get('installation/{id}/handshake',  ['uses' => 'InstallationController@portalHandshake']);
-	// $router->get('installation/{id}/occurrence',  ['uses' => 'InstallationController@showOccurrences']);
 
 	$router->get('inventory',  ['uses' => 'InventoryController@showAllInventories']);
 	$router->get('inventory/{id}', ['uses' => 'InventoryController@showOneInventory']);

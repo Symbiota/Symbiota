@@ -36,7 +36,7 @@ if($thesFilter) $clManager->setThesFilter($thesFilter);
 if($taxonFilter) $clManager->setTaxonFilter($taxonFilter);
 if($searchCommon){
 	$showCommon = 1;
-	$clManager->setSearchCommon();
+	$clManager->setSearchCommon(true);
 }
 if($searchSynonyms) $clManager->setSearchSynonyms(true);
 if($showAuthors) $clManager->setShowAuthors(true);
@@ -176,8 +176,12 @@ if($showImages){
 	}
 }
 else{
-	$voucherArr = $clManager->getVoucherArr();
-	$externalVouchers = $clManager->getExternalVoucherArr();
+	$voucherArr = array();
+	$externalVouchers = array();
+	if($showVouchers){
+		$voucherArr = $clManager->getVoucherArr();
+		$externalVouchers = $clManager->getExternalVoucherArr();
+	}
 
 	foreach($taxaArray as $tid => $sppArr){
 		if(!$showAlphaTaxa){

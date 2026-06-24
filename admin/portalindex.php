@@ -54,7 +54,7 @@ if($IS_ADMIN) $isEditor = 1;
 				if(validateSearchForm(f)){
 					$("[id^=occur-div-]").text("");
 					let searchObj = {};
-					if(f.sciname.value != "") searchObj.sciname = f.sciname.value.trim();
+					if(f.sciname.value != "") searchObj.scientificName = f.sciname.value.trim();
 					if(f.country.value != "") searchObj.country = f.country.value.trim();
 					if(f.stateProvince.value != "") searchObj.stateProvince = f.stateProvince.value.trim();
 					if(f.county.value != "") searchObj.county = f.county.value.trim();
@@ -69,11 +69,13 @@ if($IS_ADMIN) $isEditor = 1;
 
 			function portalQuery(portalID, portalName, portalUrl, searchObj){
 				let urlFrag = "";
+				let urlApiVars = "";
 				let searchStr = "";
 				Object.keys(searchObj).forEach(function(key, index) {
 					let fieldName = key;
 					searchStr = searchStr + ", " + fieldName + ": " + searchObj[key];
-					if(fieldName == "sciname") fieldName = "taxa";
+					urlApiVars = urlApiVars + "&" + fieldName + "=" + searchObj[key];
+					if(fieldName == "scientificName") fieldName = "taxa";
 					urlFrag = urlFrag + "&" + fieldName + "=" + searchObj[key];
 				});
 				if(urlFrag != ""){
@@ -93,6 +95,7 @@ if($IS_ADMIN) $isEditor = 1;
 						if(jsonRes.count > 0){
 							addLink(portalID, portalUrl + "/collections/list.php?usethes=1&taxontype=2" + urlFrag, "Query Results");
 							addLink(portalID, portalUrl + "/collections/map/index.php?gridSizeSetting=60" + urlFrag, "Dynamic Map");
+							addLink(portalID, portalUrl + "/api/v2/occurrence?" + urlApiVars, "API endpoint");
 							urlFrag = encodeURIComponent(urlFrag.substring(1));
 							let downloadUrl = portalUrl + "/collections/download/index.php?searchvar=" + urlFrag;
 							$("#occur-div-"+portalID).append('<div class="occur-sub-div"><a href="#" onclick="openPopup(\''+downloadUrl+'\');return false;">Download Results</a></div>');
@@ -111,16 +114,7 @@ if($IS_ADMIN) $isEditor = 1;
 
 			function appendAllCollectionCounts(portalUrl, searchObj){
 				let ajaxSearchObj = structuredClone(searchObj);
-				ajaxSearchObj.limit = 1;
-				ajaxSearchObj.offset = 0;
-				const collElements = document.querySelectorAll(".occur-count");
-				for (var i = 0; i < collElements.length; i++) {
-					ajaxSearchObj.collid = collElements[i].textContent;
-					appendCollectionCount(portalUrl, ajaxSearchObj, collElements[i]);
-				}
-			}
-
-			function appendCollectionCount(portalUrl, ajaxSearchObj, collSpan){
+				ajaxSearchObj.returnStatistics = 1;
 				$.ajax({
 					method: "GET",
 					data: ajaxSearchObj,
@@ -128,11 +122,23 @@ if($IS_ADMIN) $isEditor = 1;
 					url: portalUrl + "/api/v2/occurrence"
 				})
 				.done(function(jsonRes) {
-					collSpan.textContent = jsonRes.count.toLocaleString();
-					collSpan.style.display = "inline";
+					const collElements = document.querySelectorAll(".occur-count");
+					for (var i = 0; i < collElements.length; i++) {
+						let occurrenceCount = 0;
+						let mediaCount = 0;
+						for (var j = 0; j < jsonRes.results.length; j++) {
+							if(jsonRes.results[j].collid == collElements[i].id){
+								occurrenceCount = jsonRes.results[j].occurrenceCount;
+								mediaCount = jsonRes.results[j].mediaCount;
+								break;
+							}
+						}
+						collElements[i].innerHTML =  occurrenceCount + " occurrences;<br>" + mediaCount + " media";
+						collElements[i].style.display = "inline";
+					}
 				})
 				.fail(function( jqXHR, textStatus ) {
-					collSpan.textContent = "?";
+					alert("Unable to obtain collection statistics from remote portal");
 				});
 			}
 
@@ -245,6 +251,7 @@ if($IS_ADMIN) $isEditor = 1;
 			}
 
 			function validateSearchForm(f){
+				return true;	//Remove line to enforce at least on search term submitted
 				let formIsValid = false;
 				if(f.sciname.value != ""){
 					formIsValid = true;
@@ -520,7 +527,7 @@ if($IS_ADMIN) $isEditor = 1;
 													<th>Dataset Type</th>
 													<th>Management</th>
 													<th>Mapped Internally</th>
-													<th>Occurrence Count</th>
+													<th>Record Counts</th>
 												</tr>
 												<?php
 												foreach($collList as $collArr){
@@ -539,7 +546,7 @@ if($IS_ADMIN) $isEditor = 1;
 														}
 														?>
 														<td><?= $internal ?></td>
-														<td><span class="occur-count"><?= $collArr['collID'] ?></span></td>
+														<td><span class="occur-count" id="<?= $collArr['collID'] ?>"></span></td>
 													</tr>
 													<?php
 												}

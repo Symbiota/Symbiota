@@ -86,6 +86,28 @@ class OccurrenceCollectionProfile extends OmCollections{
 		return $retArr;
 	}
 
+	public function getDwcaPubDate(int $collid): string {
+		$pubDate = '';
+		if($collid){
+			$rssFile = $GLOBALS['SERVER_ROOT'].'/content/dwca/rss.xml';
+			if(file_exists($rssFile)){
+				try{
+					$xmlDoc = new DOMDocument();
+					$xmlDoc->load($rssFile);
+					$xpath = new DOMXPath($xmlDoc);
+
+					$query = '//item[@collid="' . intval($collid) . '"]/pubDate';
+					if($pubDateNode = $xpath->query($query)->item(0)){
+						$pubDate = $pubDateNode->nodeValue;
+					}
+				}
+				catch(Exception $e){
+				}
+			}
+		}
+		return $pubDate;
+	}
+
 	//Publishing functions
 	public function batchTriggerGBIFCrawl($collIdArr){
 		$sql = 'SELECT collid, collectionname, publishToGbif, dwcaUrl, aggKeysStr FROM omcollections WHERE CollID IN('.implode(',',$collIdArr).') ';
@@ -428,22 +450,26 @@ class OccurrenceCollectionProfile extends OmCollections{
 			echo '<ul>';
 			$occurMaintenance->setVerbose(true);
 			echo '<li>General cleaning in preparation for collecting stats...</li>';
-			flush();
-			ob_flush();
+			$this->flushOutput();
 		}
 		$occurMaintenance->generalOccurrenceCleaning();
 		//$occurMaintenance->batchUpdateGeoreferenceIndex();
 		if($verbose){
 			echo '<li>Updating statistics...</li>';
-			flush();
-			ob_flush();
+			$this->flushOutput();
 		}
 		$occurMaintenance->updateCollectionStatsFull();
 		if($verbose){
 			echo '<li>Finished updating collection statistics</li>';
-			flush();
+			$this->flushOutput();
+		}
+	}
+
+	private function flushOutput(){
+		if(ob_get_level() > 0){
 			ob_flush();
 		}
+		flush();
 	}
 
 	public function getStatCollectionList($catId = ""){
@@ -509,8 +535,7 @@ class OccurrenceCollectionProfile extends OmCollections{
 			echo 'Updating collection statistics...';
 			echo '<ul>';
 			//echo '<li>General cleaning in preparation for collecting stats... </li>';
-			flush();
-			ob_flush();
+			$this->flushOutput();
 			$occurMaintenance = new OccurrenceMaintenance();
 			//$occurMaintenance->generalOccurrenceCleaning();
 			$sql = 'SELECT collid, collectionname FROM omcollections WHERE collid IN('.$collId.') ';
@@ -518,20 +543,18 @@ class OccurrenceCollectionProfile extends OmCollections{
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				echo '<li style="margin-left:15px;">Cleaning statistics for: '.$r->collectionname.'</li>';
-				flush();
-				ob_flush();
+				$this->flushOutput();
 				$occurMaintenance->setCollidStr($r->collid);
 				$occurMaintenance->updateCollectionStatsFull();
 			}
 			$rs->free();
 			echo '<li>Statistics update complete!</li>';
 			echo '</ul>';
-			flush();
-			ob_flush();
+			$this->flushOutput();
 		}
 	}
 
-	public function runStatistics($collId){
+	public function runStatistics($collId, $ignoreUpdate = false){
 		$returnArr = Array();
 		if(preg_match('/^[0-9,]+$/',$collId)){
 			$sql = 'SELECT c.collid, c.CollectionName, IFNULL(s.recordcnt,0) AS recordcnt, IFNULL(s.georefcnt,0) AS georefcnt, s.dynamicProperties '.
@@ -583,6 +606,32 @@ class OccurrenceCollectionProfile extends OmCollections{
 				$returnArr['speciescnt'] = $r->SpeciesCount;
 				$returnArr['TotalTaxaCount'] = $r->TotalTaxaCount;
 				$returnArr['TotalImageCount'] = $r->TotalImageCount;
+			}
+			$rs->free();
+		}
+		return $returnArr;
+	}
+
+	public function getDedupedTaxaCounts($collId){
+		$returnArr = array(
+			'FamilyCount' => 0,
+			'GeneraCount' => 0,
+			'SpeciesCount' => 0,
+			'TotalTaxaCount' => 0
+		);
+		if(preg_match('/^[0-9,]+$/',$collId)){
+			$sql = 'SELECT COUNT(DISTINCT o.family) AS FamilyCount, '.
+				'COUNT(DISTINCT CASE WHEN t.RankId >= 180 THEN t.UnitName1 ELSE NULL END) AS GeneraCount, '.
+				'COUNT(DISTINCT CASE WHEN t.RankId = 220 THEN t.SciName ELSE NULL END) AS SpeciesCount, '.
+				'COUNT(DISTINCT CASE WHEN t.RankId >= 220 THEN t.SciName ELSE NULL END) AS TotalTaxaCount '.
+				'FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.TID '.
+				'WHERE o.collid IN('.$collId.') ';
+			$rs = $this->conn->query($sql);
+			if($r = $rs->fetch_object()){
+				$returnArr['FamilyCount'] = (int)$r->FamilyCount;
+				$returnArr['GeneraCount'] = (int)$r->GeneraCount;
+				$returnArr['SpeciesCount'] = (int)$r->SpeciesCount;
+				$returnArr['TotalTaxaCount'] = (int)$r->TotalTaxaCount;
 			}
 			$rs->free();
 		}
