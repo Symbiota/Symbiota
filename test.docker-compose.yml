@@ -1,0 +1,60 @@
+name: symbiota-testing
+services:
+  web:
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    restart: 'always'
+    image: 'muchquakz/symbiota-testing:latest'
+    ports:
+      - 80:80
+    volumes:
+      # Binds Symbiota Code to Container
+      - .:/var/www/html/
+    environment:
+        APP_ENV: 'testing'
+    networks:
+      - symbiota
+    depends_on:
+        mariadb:
+            condition: 'service_healthy'
+            restart: true
+  mariadb:
+    image: 'mariadb:11'
+    expose:
+        - 3306
+    ports:
+        - '3306:3306'
+    volumes:
+      # Setup Geographic thesaurus data file (gets referenced in 3.4)
+      - ./config/schema/3.0/data/geothesaurus.sql:/data/geothesaurus.sql
+      # Setup Base Schema
+      - ./config/schema/3.0/db_schema-3.0.sql:/docker-entrypoint-initdb.d/3.0.0.sql
+      # Setup tables needed to avoid fresh install errors
+      - ./config/schema/3.0/ci_table_setup.sql:/docker-entrypoint-initdb.d/3.0.1.sql
+      # Run Schema Patches
+      - ./config/schema/3.0/patches/db_schema_patch-3.1.sql:/docker-entrypoint-initdb.d/3.1.sql
+      - ./config/schema/3.0/patches/db_schema_patch-3.2.sql:/docker-entrypoint-initdb.d/3.2.sql
+      - ./config/schema/3.0/patches/db_schema_patch-3.3.sql:/docker-entrypoint-initdb.d/3.3.sql
+      - ./config/schema/3.0/patches/db_schema_patch-3.4.sql:/docker-entrypoint-initdb.d/3.4.sql
+    environment:
+        MYSQL_ROOT_PASSWORD: 'ci_root_password'
+        MYSQL_ROOT_HOST: '%'
+        MYSQL_DATABASE: 'ci_testing'
+        MYSQL_USER: 'ci_user'
+        MYSQL_PASSWORD: 'ci_password'
+        MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    networks:
+      - symbiota
+    healthcheck:
+        test:
+            - CMD
+            - healthcheck.sh
+            - '--connect'
+            - '--innodb_initialized'
+        retries: 3
+        interval: 10s
+        start_period: 30s
+        timeout: 10s
+networks:
+  symbiota:
+    driver: bridge

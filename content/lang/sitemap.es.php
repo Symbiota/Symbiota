@@ -111,4 +111,6 @@ $LANG['MANAGE_TAXON_THUMBNAILS'] = 'Administrar miniaturas de mapas de perfil de
 $LANG['TAXINTER'] = 'Derechos de usuarios con interés taxonómico';
 $LANG['OTHER_CAT_TRANSFER'] = 'Herramienta de transferencia de otros números de catálogo';
 $LANG['BATCH_UPDATE_STATS'] = 'Actualizar estadísticas de colección a nivel de portal';
+$LANG['POLICIES'] = 'Políticas';
+
 ?>

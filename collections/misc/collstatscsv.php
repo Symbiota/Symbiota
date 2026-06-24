@@ -1,6 +1,6 @@
 <?php
 ini_set('max_execution_time', 1200); //1200 seconds = 20 minutes
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCollectionProfile.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
 

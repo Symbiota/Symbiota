@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceDownload.php');
 
 $format = isset($_REQUEST['format'])&&$_REQUEST['format']?$_REQUEST['format']:'rss';

@@ -8,6 +8,9 @@
     </a>
 </p>
 
+![testing workflow](https://github.com/Symbiota/Symbiota/actions/workflows/ci-cd.yml/badge.svg)
+[![License: GPL v2](https://img.shields.io/badge/License-GPL_v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+
 This fork of the Symbiota code is actively being developed by the Symbiota Support Hub (SSH, https://symbiota.org/about-us) development team at the University of Kansas Biodiversity Institute.
 Even though SSH code developments are regularly pushed back to this repository, we recommend that you download/fork code directly from the
 Symbiota/Symbiota repository (https://github.com/Symbiota/Symbiota) to ensure that you obtain the most recently code changes.
