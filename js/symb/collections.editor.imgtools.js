@@ -195,6 +195,7 @@ async function ocrVV(ocrButton, imgCnt){
 	const llm_model = vvPanel.find('#llm-model').val();
 	const engines = vvPanel.find('#engines').val();
 	const ocrOnly = vvPanel.find('#ocrOnly').is(':checked');
+	const debugMode = vvPanel.find('#vv-debug').is(':checked');
 	const authToken = $.trim(vvPanel.find('#vv-auth-token').val());
 	const geminiApiKey = $.trim(vvPanel.find('#vv-gemini-api-key').val());
 	const sharedKeyEnabled = vvPanel.find('#vv-shared-key-enabled').val() === '1';
@@ -316,6 +317,9 @@ async function ocrVV(ocrButton, imgCnt){
 	}
 	if(geminiApiKey){
 		vvData.gemini_api_key = geminiApiKey;
+	}
+	if(debugMode){
+		vvData.vv_debug = true;
 	}
 
 	// Start a timer to check how long the API call took

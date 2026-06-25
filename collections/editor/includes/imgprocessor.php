@@ -123,6 +123,7 @@ Language::load('collections/editor/includes/imgprocessor');
 							<legend>VoucherVision OCR</legend>
 							<input type="hidden" id="vv-shared-key-enabled" value="<?php echo ($vvSharedKeyAvailable?1:0); ?>" />
 							<input type="checkbox" id="ocrOnly" value="1" /> <?php echo $LANG['VV_OCR_ONLY']; ?><br/>
+							<!-- <input type="checkbox" id="vv-debug" value="1" /> Debug Mode<br/> -->
 							<div style="font-weight: bold; position: relative; left: -6px; margin: 5px 0px;"><?php echo $LANG['VV_AUTH_TOKEN']; ?></div>
 							<input id="vv-auth-token" type="password" value="" autocomplete="off" style="width: 97%;" />
 							<div style="font-size: 0.9em; margin: 3px 0px 8px;">

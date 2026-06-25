@@ -28,10 +28,15 @@ if(!is_array($requestData)){
 }
 
 $authToken = '';
+$geminiApiKey = '';
 if(array_key_exists('auth_token', $requestData) && is_string($requestData['auth_token'])){
     $authToken = trim($requestData['auth_token']);
 }
+if(array_key_exists('gemini_api_key', $requestData) && is_string($requestData['gemini_api_key'])){
+    $geminiApiKey = trim($requestData['gemini_api_key']);
+}
 unset($requestData['auth_token']);
+unset($requestData['gemini_api_key']);
 $debugEnabled = !empty($requestData['vv_debug']);
 unset($requestData['vv_debug']);
 
@@ -79,6 +84,11 @@ else{
     exit;
 }
 
+// Add Gemini API key as header if provided
+if($geminiApiKey){
+    $headers[] = 'X-Gemini-API-Key: ' . $geminiApiKey;
+}
+
 // Set up the API request
 $curl_req = curl_init($voucherVisionUrl);
 curl_setopt($curl_req, CURLOPT_POST, true);
@@ -86,6 +96,8 @@ curl_setopt($curl_req, CURLOPT_RETURNTRANSFER, true);
 
 if($debugEnabled){
     error_log('[VoucherVisionGo RPC] upstream_url=' . $voucherVisionUrl . '; image_url=' . ($requestData['image_url'] ?? ''));
+    error_log('[VoucherVisionGo RPC] Request headers: ' . json_encode($headers));
+    error_log('[VoucherVisionGo RPC] Request body size: ' . strlen($jsonData) . ' bytes');
 }
 
 // Add headers to the request
@@ -100,6 +112,11 @@ $statusCode = curl_getinfo($curl_req, CURLINFO_HTTP_CODE);
 $contentType = curl_getinfo($curl_req, CURLINFO_CONTENT_TYPE);
 $curlError = curl_error($curl_req);
 curl_close($curl_req);
+
+if($debugEnabled || $statusCode >= 400){
+    error_log('[VoucherVisionGo] Response status: ' . $statusCode);
+    error_log('[VoucherVisionGo] Response body: ' . (is_string($response) ? substr($response, 0, 500) : '(non-string)'));
+}
 
 if($response === false){
     http_response_code(502);
