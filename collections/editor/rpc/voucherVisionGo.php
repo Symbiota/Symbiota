@@ -4,12 +4,12 @@
 
 include_once('../../../config/symbini.php');
 
-if(empty($VOUCHERVISION_API_URL)){
-    http_response_code(500);
-    header('Content-Type: application/json');
-    echo json_encode(['error' => 'VoucherVision API URL is not configured.']);
-    exit;
-}
+// if(empty($VOUCHERVISION_API_URL)){
+//     http_response_code(500);
+//     header('Content-Type: application/json');
+//     echo json_encode(['error' => 'VoucherVision API URL is not configured.']);
+//     exit;
+// }
 
 $voucherVisionUrl = trim($VOUCHERVISION_API_URL);
 if(!preg_match('/\/process-url\/?$/', $voucherVisionUrl)){
