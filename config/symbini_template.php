@@ -50,7 +50,7 @@ $NLP_LBCC_ACTIVATED = 0;
 $NLP_SALIX_ACTIVATED = 0;
 
 // Vouchervision OCR/Transcription
-$VOUCHERVISION_API_KEY = ''; // API key to use to access Vouchervision API. See https://leafmachine.org/vouchervisiongo/
+$VOUCHERVISION_API_KEY = ''; // Optional shared API key for VoucherVisionGO. Leave empty to require user-provided auth token.
 $VOUCHERVISION_API_URL = 'https://vouchervision-go-738307415303.us-central1.run.app/process-url'; // URL to the Vouchervision API server
 
 //Module activations

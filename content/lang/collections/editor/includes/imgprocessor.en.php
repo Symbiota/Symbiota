@@ -29,6 +29,11 @@ $LANG['SAVE_OCR_EDITS'] = 'Save OCR Edits';
 $LANG['DELETE_OCR'] = 'Delete OCR';
 $LANG['VV_OCR_ENGINES'] = 'OCR Engines';
 $LANG['VV_OCR_ONLY'] = 'OCR Only';
+$LANG['VV_AUTH_TOKEN'] = 'Authorization Token (Optional)';
+$LANG['VV_AUTH_TOKEN_HINT'] = 'Get from VoucherVisionGO login. Required if shared Symbiota credentials are not configured.';
+$LANG['VV_AUTH_TOKEN_LOGIN_LINK'] = 'Login';
+$LANG['VV_GEMINI_API_KEY'] = 'Gemini API Key (Optional)';
+$LANG['VV_GEMINI_API_KEY_HINT'] = 'Use your own Gemini API key to run at your own cost.';
 $LANG['VV_TRANSCRIPTION_MODEL'] = 'Transcription Model';
 $LANG['VV_TRANSCRIPTION_PROMPT'] = 'Transcription Prompt';
 

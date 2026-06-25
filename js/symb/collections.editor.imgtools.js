@@ -182,19 +182,42 @@ async function ocrVV(ocrButton, imgCnt){
 
 	// Get the busy indicator and image url
 	const busy = $('#workingcircle-vv-' + imgCnt);
-	const imgurl = $('#activeimg-' + imgCnt).attr('src');
+	const imgurlRaw = $('#activeimg-' + imgCnt).attr('src');
+	if(!imgurlRaw){
+		alert("Unable to determine image URL for VoucherVision request.");
+		return;
+	}
+	const imgurl = (new URL(imgurlRaw, window.location.origin)).toString();
+	const vvPanel = $('#labeldiv-' + imgCnt);
 
 	// Get user-selected parameters
-	const prompt = $('#prompt').val();
-	const llm_model = $('#llm-model').val();
-  const engines = $('#engines').val();
-  const ocrOnly = $('#ocrOnly').is(':checked');
+	const prompt = vvPanel.find('#prompt').val();
+	const llm_model = vvPanel.find('#llm-model').val();
+	const engines = vvPanel.find('#engines').val();
+	const ocrOnly = vvPanel.find('#ocrOnly').is(':checked');
+	const authToken = $.trim(vvPanel.find('#vv-auth-token').val());
+	const geminiApiKey = $.trim(vvPanel.find('#vv-gemini-api-key').val());
+	const sharedKeyEnabled = vvPanel.find('#vv-shared-key-enabled').val() === '1';
 
   // Show busy indicator
   busy.show();
 
   // Disable additional OCR Image button presses
   $(ocrButton).prop('disabled', true);
+
+	if(!engines || engines.length === 0){
+		alert("Please select at least one OCR engine.");
+		busy.hide();
+		$(ocrButton).prop('disabled', false);
+		return;
+	}
+
+	if(!authToken && !sharedKeyEnabled){
+		alert("Authorization token required. Get one from the VoucherVisionGO login page and try again.");
+		busy.hide();
+		$(ocrButton).prop('disabled', false);
+		return;
+	}
 
   // Symbiota field mappings for data returned by various prompts
 	const vvMapping = {
@@ -288,6 +311,13 @@ async function ocrVV(ocrButton, imgCnt){
 		ocr_only: ocrOnly
 	};
 
+	if(authToken){
+		vvData.auth_token = authToken;
+	}
+	if(geminiApiKey){
+		vvData.gemini_api_key = geminiApiKey;
+	}
+
 	// Start a timer to check how long the API call took
 	var start = Date.now();
 
@@ -344,6 +374,7 @@ async function ocrVV(ocrButton, imgCnt){
 			let sourceStr = 'Vouchervision-Go: ' + yyyy + '-' + mm + '-' + dd;
 			sourceStr += '; OCR Model(s): ' + engines.join("+");
 			sourceStr += '; Transcription Model: ' + llm_model + "; Prompt: " + prompt;
+			sourceStr += '; Billing: ' + ((authToken || geminiApiKey) ? 'User credentials' : 'Shared credentials');
 
 			// Put the source string in the OCR source field
 			$('input[name="rawsource"]').val(sourceStr);

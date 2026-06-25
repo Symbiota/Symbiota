@@ -116,11 +116,24 @@ Language::load('collections/editor/includes/imgprocessor');
 							</fieldset>
 							<?php
 						}
-						if(!empty($VOUCHERVISION_API_KEY)){
+						if(!empty($VOUCHERVISION_API_URL)){
+							$vvSharedKeyAvailable = !empty($VOUCHERVISION_API_KEY);
 						?>
 						<fieldset class="ocr-box">
 							<legend>VoucherVision OCR</legend>
+							<input type="hidden" id="vv-shared-key-enabled" value="<?php echo ($vvSharedKeyAvailable?1:0); ?>" />
 							<input type="checkbox" id="ocrOnly" value="1" /> <?php echo $LANG['VV_OCR_ONLY']; ?><br/>
+							<div style="font-weight: bold; position: relative; left: -6px; margin: 5px 0px;"><?php echo $LANG['VV_AUTH_TOKEN']; ?></div>
+							<input id="vv-auth-token" type="password" value="" autocomplete="off" style="width: 97%;" />
+							<div style="font-size: 0.9em; margin: 3px 0px 8px;">
+								<?php echo $LANG['VV_AUTH_TOKEN_HINT']; ?>
+								<a href="https://vouchervision-go-738307415303.us-central1.run.app/login" target="_blank" rel="noopener"><?php echo $LANG['VV_AUTH_TOKEN_LOGIN_LINK']; ?></a>
+							</div>
+							<div style="font-weight: bold; position: relative; left: -6px; margin: 5px 0px;"><?php echo $LANG['VV_GEMINI_API_KEY']; ?></div>
+							<input id="vv-gemini-api-key" type="password" value="" autocomplete="off" style="width: 97%;" />
+							<div style="font-size: 0.9em; margin: 3px 0px 8px;">
+								<?php echo $LANG['VV_GEMINI_API_KEY_HINT']; ?>
+							</div>
 							<div style="font-weight: bold; position: relative; left: -6px; margin: 5px 0px;"> <?php echo $LANG['VV_OCR_ENGINES']; ?></div>
 							<select id="engines" size=2 multiple>
 								<option value="gemini-3.1-flash-lite-preview" selected>Gemini 3.1 Flash Lite</option>
