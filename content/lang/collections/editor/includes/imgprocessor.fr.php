@@ -29,12 +29,13 @@ $LANG['SAVE_OCR_EDITS'] = 'Enregistrer Modifications OCR';
 $LANG['DELETE_OCR'] = 'Effacer OCR';
 $LANG['VV_OCR_ENGINES'] = 'OCR Engines';
 $LANG['VV_OCR_ONLY'] = 'OCR Only';
-$LANG['VV_AUTH_TOKEN'] = 'Jeton d’autorisation (optionnel)';
+$LANG['VV_AUTH_TOKEN'] = 'Jeton d’autorisation';
 $LANG['VV_AUTH_TOKEN_HINT'] = 'Obtenez-le depuis la page de connexion VoucherVisionGO. Requis si les identifiants partagés de Symbiota ne sont pas configurés.';
-$LANG['VV_AUTH_TOKEN_LOGIN_LINK'] = 'Login';
+$LANG['VV_AUTH_TOKEN_LOGIN_LINK'] = 'Inscrivez-vous pour obtenir un jeton d’autorisation ici';
 $LANG['VV_GEMINI_API_KEY'] = 'Clé API Gemini (optionnelle)';
 $LANG['VV_GEMINI_API_KEY_HINT'] = 'Utilisez votre propre clé API Gemini pour exécuter à vos frais.';
 $LANG['VV_TRANSCRIPTION_MODEL'] = 'Modèle de transcription';
 $LANG['VV_TRANSCRIPTION_PROMPT'] = 'Prompt de transcription';
+$LANG['VV_SYMBIOTA_CREDENTIALS_DISABLED'] = 'Les identifiants partagés de Symbiota sont actuellement désactivés.';
 
 ?>

@@ -127,8 +127,13 @@ Language::load('collections/editor/includes/imgprocessor');
 							<div style="font-weight: bold; position: relative; left: -6px; margin: 5px 0px;"><?php echo $LANG['VV_AUTH_TOKEN']; ?></div>
 							<input id="vv-auth-token" type="password" value="" autocomplete="off" style="width: 97%;" />
 							<div style="font-size: 0.9em; margin: 3px 0px 8px;">
-								<?php echo $LANG['VV_AUTH_TOKEN_HINT']; ?>
-								<a href="https://vouchervision-go-738307415303.us-central1.run.app/login" target="_blank" rel="noopener"><?php echo $LANG['VV_AUTH_TOKEN_LOGIN_LINK']; ?></a>
+								<?= $LANG['VV_AUTH_TOKEN_HINT']; ?>
+								<span style="color: var(--danger-color)">
+									<?= $LANG['VV_SYMBIOTA_CREDENTIALS_DISABLED']; ?>
+								</span>
+								<a href="https://vouchervision-go-738307415303.us-central1.run.app/signup" target="_blank" rel="noopener">
+									<?= $LANG['VV_AUTH_TOKEN_LOGIN_LINK']; ?>
+								</a>
 							</div>
 							<div style="font-weight: bold; position: relative; left: -6px; margin: 5px 0px;"><?php echo $LANG['VV_GEMINI_API_KEY']; ?></div>
 							<input id="vv-gemini-api-key" type="password" value="" autocomplete="off" style="width: 97%;" />
