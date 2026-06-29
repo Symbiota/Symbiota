@@ -110,7 +110,6 @@ class OccurrenceEditorManager {
 	public function getDownloadQuery(): string {
 		$queryArr = $this->getQueryVariables();
 		$retArr = [ 'db' => $this->collId ];
-		$includeCultivated = false;
 
 		$map = 	['rb' => 'collector','rn' => 'collnum','ed' => 'eventdate1','cn' => 'catnum','ocn' => 'othercatalognumbers','eb' => 'recordenteredby','de' => 'dateentered',
 				'dm' => 'datelastmodified','ps' => 'processingstatus','traitid' => 'traitid','stateid' => 'stateid','exsid' => 'exsiccatiid'];
@@ -122,35 +121,22 @@ class OccurrenceEditorManager {
 			$retArr['hasimages'] = 0;
 		}
 
-		$custom_fields = [];
-		for ($i=1; $i < 11; $i++) {
-			$custom_fields['cf' . $i] = 'customfield' . $i;
-			$custom_fields['ct' . $i] = 'customtype' . $i;
-			$custom_fields['cv' . $i] = 'customvalue' . $i;
-		}
-
 		foreach($queryArr as $name => $value) {
 			if(array_key_exists($name, $map)) {
 				$retArr[$map[$name]] = $value;
-			} else if(array_key_exists($name, $custom_fields)) {
-				$retArr[$custom_fields[$name]] = $value;
-			}
-		}
-
-		for ($i = 1; $i < 11; $i++) {
-			if (($queryArr['cf' . $i] ?? '') === 'cultivationStatus') {
-				$customValue = trim((string)($queryArr['cv' . $i] ?? ''));
-				if ($customValue !== '' && $customValue !== '0') {
-					$includeCultivated = true;
-					break;
+			} elseif(preg_match('/^cf(\d+)$/', $name, $m)) {
+				if($value !== ''){
+					if($value == 'cultivationStatus') $value = 'includecult';		//Accommodate differences in field mapping
+					$i = $m[1];
+					$retArr['customfield' . $i] = $value;
+					if(isset($queryArr['ct' . $i])) $retArr['customtype' . $i] = $queryArr['ct' . $i];
+					if(isset($queryArr['cv' . $i])) $retArr['customvalue' . $i] = $queryArr['cv' . $i];
 				}
 			}
 		}
-		if ($includeCultivated) {
-			$retArr['includecult'] = 1;
-		}
 
-		return http_build_query($retArr, '', '&');
+		//return http_build_query($retArr, '', '&');
+		return http_build_query($retArr, "&amp");
 	}
 
 	//Query functions

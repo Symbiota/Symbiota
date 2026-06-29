@@ -55,15 +55,11 @@ $dwcManager = new DwcArchiverCore();
 				});
 			}
 
-			<?php
-			if(!$searchVar){
-				?>
-				if(sessionStorage.querystr){
-					window.location = "index.php?searchvar="+encodeURIComponent(sessionStorage.querystr);
+			if(sessionStorage.querystr){
+				if(document.getElementById("searchVar-input").value == ""){
+					document.getElementById("searchVar-input").value = sessionStorage.querystr;
 				}
-				<?php
 			}
-			?>
 
 			const form = document.getElementById('downloadform');
 			const spinnerSpan = document.getElementById('spinner-span');
@@ -254,7 +250,7 @@ $dwcManager = new DwcArchiverCore();
 						<input name="publicsearch" type="hidden" value="<?= $isPublicSearch ?>" />
 						<input name="taxonFilterCode" type="hidden" value="<?= $taxonFilterCode; ?>" />
 						<input name="sourcepage" type="hidden" value="<?= htmlspecialchars($sourcePage); ?>" />
-						<input name="searchvar" type="hidden" value="<?= $searchVar ?>" />
+						<input id="searchVar-input" name="searchvar" type="hidden" value="<?= $searchVar ?>" />
 						<button type="submit" name="submitaction" id="submitaction"><?= $LANG['DOWNLOAD_DATA'] ?></button>
 						<span id="spinner-div">
 							<span id="spinner-span"></span>
