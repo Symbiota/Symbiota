@@ -1,5 +1,7 @@
 var activeImgIndex = 1;
 var ocrFragIndex = 1;
+var vvAuthTokenStorageKey = 'vv-auth-token';
+var vvGeminiApiKeyStorageKey = 'vv-gemini-api-key';
 
 $(document).ready(function() {
 	//Remember image popout status 
@@ -7,7 +9,41 @@ $(document).ready(function() {
 	if(imgTd != "close") toggleImageTdOn();
 	//if(imgTd == "open" || csMode == 1) toggleImageTdOn();
 	initImgRes();
+	restoreVVCredentialsFromSession();
 });
+
+function getVVFieldValue(fieldId){
+	var $visibleField = $('#labelprocessingdiv [id="' + fieldId + '"]:visible').first();
+	if($visibleField.length) return $visibleField.val();
+	var $field = $('[id="' + fieldId + '"]').first();
+	return ($field.length ? $field.val() : '');
+}
+
+function setVVFieldValue(fieldId, value){
+	$('[id="' + fieldId + '"]').val(value);
+}
+
+function saveVVCredentialsToSession(){
+	try {
+		if(!window.sessionStorage) return;
+		sessionStorage.setItem(vvAuthTokenStorageKey, getVVFieldValue('vv-auth-token') || '');
+		sessionStorage.setItem(vvGeminiApiKeyStorageKey, getVVFieldValue('vv-gemini-api-key') || '');
+	}
+	catch(err) {
+	}
+}
+
+function restoreVVCredentialsFromSession(){
+	try {
+		if(!window.sessionStorage) return;
+		var authToken = sessionStorage.getItem(vvAuthTokenStorageKey);
+		var geminiApiKey = sessionStorage.getItem(vvGeminiApiKeyStorageKey);
+		if(authToken) setVVFieldValue('vv-auth-token', authToken);
+		if(geminiApiKey) setVVFieldValue('vv-gemini-api-key', geminiApiKey);
+	}
+	catch(err) {
+	}
+}
 
 function toggleImageTdOn(){
 	var imgSpan = document.getElementById("imgProcOnSpan");
@@ -179,6 +215,7 @@ function ocrImage(ocrButton, target, imgidVar, imgCnt){
 
 // Function to run OCR via Vouchervision-Go API
 async function ocrVV(ocrButton, imgCnt){
+	saveVVCredentialsToSession();
 
 	// Get the busy indicator and image url
 	const busy = $('#workingcircle-vv-' + imgCnt);

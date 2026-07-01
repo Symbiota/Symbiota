@@ -207,10 +207,13 @@ Language::load('collections/editor/includes/imgprocessor');
 								<option value="SLTPvM_default">SLTPvM_default</option>
 							</select><br/>
 							<div>
-									<button value="OCR Image" onclick="ocrVV(this, '<?php echo $imgCnt; ?>');" ><?php echo $LANG['OCR_IMAGE']; ?></button>
+													<button value="OCR Image" onclick="ocrVV(this, '<?php echo $imgCnt; ?>');" ><?php echo $LANG['OCR_IMAGE']; ?></button>
 									<img id="workingcircle-vv-<?php echo $imgCnt; ?>" src="../../images/workingcircle.gif" style="display:none;" />
 								</div>
 						</fieldset>
+						<script type="text/javascript">
+							restoreVVCredentialsFromSession();
+						</script>
 						<div style="float:right;margin-right:20px;font-weight:bold;">
 							<?php echo $LANG['IMAGE'].' '.$imgCnt.' '.$LANG['OF'].' ';
 							echo count($imgArr);
