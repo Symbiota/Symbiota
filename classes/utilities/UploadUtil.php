@@ -23,7 +23,10 @@ class UploadUtil {
 		'audio/mpeg', 'audio/wav', 'audio/ogg'
 	];
 
-	const ALLOWED_ZIP_MIMES = [
+	// Often a CSV or Zipped CSV(s)
+	// Used:
+	// - Taxonomy Upload
+	const ALLOWED_BATCH_PROCESSING_MIMES = [
 		'application/x-zip',
 		'application/zip',
 		'application/x-zip-compressed',
