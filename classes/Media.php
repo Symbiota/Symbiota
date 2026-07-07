@@ -1368,7 +1368,7 @@ class Media {
 		SQL;
 
 		if($with_media) {
-			$sql .= ' LEFT JOIN media m on u.uid = m.creatorUid WHERE m.mediaID IS NOT NULL';
+			$sql .= ' LEFT JOIN media m on u.uid = m.creatorUid WHERE m.creatorUid IS NOT NULL';
 		}
 
 		$sql .= ' ORDER BY u.lastname, u.firstname';
