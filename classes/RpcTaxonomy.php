@@ -1,9 +1,12 @@
 <?php
-include_once($SERVER_ROOT.'/classes/RpcBase.php');
-include_once($SERVER_ROOT.'/traits/TaxonomyTrait.php');
-class RpcTaxonomy extends RpcBase{
+include_once($SERVER_ROOT . '/classes/RpcBase.php');
+include_once($SERVER_ROOT . '/traits/TaxonomyTrait.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+use TaxonomyTrait;
 
-	use TaxonomyTrait;
+Language::load('collections/harvestparams');
+
+class RpcTaxonomy extends RpcBase{
 
 	private $taxAuthID = 1;
 
@@ -15,36 +18,192 @@ class RpcTaxonomy extends RpcBase{
 		parent::__destruct();
 	}
 
-	public function getTaxaSuggest($term, $rankLimit, $rankLow, $rankHigh){
+	public function getTaxaSuggest($queryString, $rankLow = 0, $rankHigh = 0){
 		$retArr = Array();
-		//sanitation
-		if(!is_numeric($rankLimit)) $rankLimit = 0;
-		if(!is_numeric($rankLow)) $rankLow = 0;
-		if(!is_numeric($rankHigh)) $rankHigh = 0;
-
-		if($term){
-			$term = $this->cleanInStr($term);
-			$termArr = explode(' ',$term);
-			foreach($termArr as $k => $v){
-				if(mb_strlen($v) == 1) unset($termArr[$k]);
+		if($queryString){
+			$this->cleanQueryString($queryString);
+			$taxonType = 0;
+			if(!empty($GLOBALS['DEFAULT_TAXON_SEARCH'])) $taxonType = $GLOBALS['DEFAULT_TAXON_SEARCH'];
+			$sql = '';
+			$paramArr = array();
+			$typeStr = '';
+			if($taxonType == 1){	//ANY_NAME search
+				global $LANG;
+				$sql = 'SELECT DISTINCT tid, CONCAT("' . $LANG['SELECT_1-5'] . ': ", v.vernacularname) AS label, v.vernacularname AS sciname, "" as author, "" as kingdomName
+				FROM taxavernaculars v WHERE v.vernacularname LIKE ?
+				UNION
+				SELECT DISTINCT tid, CONCAT("' . $LANG['SELECT_1-2'] . ': ", sciname) AS label, sciname AS value, author, kingdomName
+				FROM taxa WHERE sciname LIKE ? AND rankid > 179
+				UNION
+				SELECT DISTINCT tid, CONCAT("' . $LANG['SELECT_1-3'] . ': ", sciname) AS label, sciname AS value, author, kingdomName
+				FROM taxa WHERE sciname LIKE ? AND rankid = 140
+				UNION
+				SELECT tid, CONCAT("' . $LANG['SELECT_1-4'] . ': ",sciname) AS label, sciname AS value, author, kingdomName
+				FROM taxa WHERE sciname LIKE ? AND rankid > 20 AND rankid < 180 AND rankid != 140 ';
+				$paramArr[] = '%' . $queryString . '%';
+				$paramArr[] = '%' . $queryString . '%';
+				$paramArr[] = $queryString . '%';
+				$paramArr[] = $queryString . '%';
+				$typeStr = 'ssss';
 			}
-			$sql = 'SELECT DISTINCT t.tid, t.sciname, t.cultivarEpithet, t.tradeName, t.author FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid WHERE ts.taxauthid = '.$this->taxAuthID.' AND (t.sciname LIKE "'.$term.'%" ';
-			$sqlFrag = '';
-			if($unit1 = array_shift($termArr)) $sqlFrag =  't.unitname1 LIKE "' . $unit1 . '%" ';
-			if($unit2 = array_shift($termArr)) $sqlFrag .=  'AND t.unitname2 LIKE "' . $unit2 . '%" ';
-			if($sqlFrag) $sql .= 'OR ('.$sqlFrag.')';
-			$sql .= ') ';
-			if($rankLimit) $sql .= 'AND (t.rankid = '.$rankLimit.') ';
+			elseif($taxonType == 5){
+				//COMMON_NAME
+				$sql = 'SELECT DISTINCT v.tid, CONCAT(v.vernacularname, " (", t.sciname, ")") AS sciname, "" as author, t.kingdomName
+					FROM taxavernaculars v INNER JOIN taxa t ON v.tid = t.tid
+					WHERE v.vernacularname LIKE ? ';
+				$paramArr[] = '%' . $queryString . '%';
+				$typeStr = 's';
+			}
 			else{
-				if($rankLow) $sql .= 'AND (t.rankid > '.$rankLow.' OR t.rankid IS NULL) ';
-				if($rankHigh) $sql .= 'AND (t.rankid <= '.$rankHigh.' OR t.rankid IS NULL) ';
+				//SCIENTIFIC_NAME - default
+				$sql = 'SELECT tid, sciname, cultivarEpithet, tradeName, author, kingdomName FROM taxa WHERE sciname LIKE ? ';
+				$paramArr[] = $queryString . '%';
+				$typeStr = 's';
 			}
-			$sql .= 'ORDER BY t.sciname';
-			$rs = $this->conn->query($sql);
-			$sciname = null;
-			while($r = $rs->fetch_object()) {
-				$sciname = $r->sciname;
+			if($taxonType == 3){
+				//FAMILY_ONLY
+				$rankLow = 140;
+				$rankHigh = 140;
+			}
+			elseif($taxonType == 4){
+				//TAXONOMIC_GROUP
+				$rankLow = 11;
+				$rankHigh = 179;
+			}
+			if($rankLow || $rankHigh){
+				if(is_numeric($rankLow) || is_numeric($rankHigh)){
+					if($rankLow == $rankHigh){
+						$sql .= 'AND rankid = ? ';
+						$paramArr[] = $rankLow;
+						$typeStr .= 'i';
+					}
+					else{
+						if($rankLow){
+							$sql .= 'AND (rankid >= ?) ';
+							$paramArr[] = $rankLow;
+							$typeStr .= 'i';
+						}
+						if($rankHigh){
+							$sql .= 'AND (rankid <= ?) ';
+							$paramArr[] = $rankHigh;
+							$typeStr .= 'i';
+						}
+					}
+				}
+			}
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param($typeStr, ...$paramArr);
+				$stmt->execute();
+				$rs = $stmt->get_result();
+				while ($r = $rs->fetch_object()) {
+					$label = $r->sciname;
+					if(!empty($r->tradeName)){
+						$label = str_replace($r->tradeName, '', $label);
+					}
+					if(!empty($r->cultivarEpithet)){
+						// @TODO could possibly replace off-target if cultivarEpithet matches some parent taxon exactly. We think extremely unlikely edge case, so ignoring for now.
+						$label = str_replace("'" . $r->cultivarEpithet . "'", '', trim($label));
+					}
+					if(!empty($r->author)){
+						if($GLOBALS['HOMONYM_SUPPORT'] == 1 || $GLOBALS['HOMONYM_SUPPORT'] == 3){
+							$label = trim($label) . ' ' . $r->author;
+						}
+					}
+					if(!empty($r->cultivarEpithet)){
+						$label .= ' ' . $this->standardizeCultivarEpithet($r->cultivarEpithet);
+					}
+					if(!empty($r->tradeName)){
+						$label .= ' ' . $this->standardizeTradeName($r->tradeName);
+					}
+					if(!empty($r->kingdomName)){
+						if($GLOBALS['HOMONYM_SUPPORT'] == 2 || $GLOBALS['HOMONYM_SUPPORT'] == 3){
+							$label .= ' [' . $r->kingdomName . ']';
+						}
+					}
+					if (!empty($r->label)){
+						$label = $r->label;
+					}
+					$keys = ['id' => $r->tid, 'value' => $r->sciname, 'label' => $label];
+					$retArr[] = $keys;
+				}
+				$rs->free();
+				$stmt->close();
+			}
+		}
+		return $retArr;
+	}
 
+	public function getTaxon($sciname){
+		$retArr = array();
+		$sciname = preg_replace('/[^a-zA-Z\-\.× ()]+/', '', $sciname);
+		$sql = 'SELECT tid, sciname, author FROM taxa WHERE (sciname = "'.$sciname.'")';
+		if(preg_match('/\s{1}\D{1}\s{1}/i',$sciname)){
+			$sciname = preg_replace('/\s{1}x{1}\s{1}|\s{1}×{1}\s{1}/i', ' _ ', $sciname);
+			$sql = 'SELECT tid, sciname, author FROM taxa WHERE (sciname LIKE "'.$sciname.'")';
+		}
+		$rs = $this->conn->query($sql);
+		while($r = $rs->fetch_object()){
+			$retArr[$r->tid]['sciname'] = $r->sciname;
+			$retArr[$r->tid]['author'] = $r->author;
+			$retArr[$r->tid]['tid'] = $r->tid;
+		}
+		$rs->free();
+		if(count($retArr) > 1){
+			//Is a Homonym, thus get kingdom
+			$sql = 'SELECT e.tid, t.sciname FROM taxa t INNER JOIN taxaenumtree e ON t.tid = e.parenttid '.
+					'WHERE (e.taxauthid = 1) AND (t.rankid = 10) AND (e.tid IN("'.implode(',',array_keys($retArr)).'"))';
+			$rs = $this->conn->query($sql);
+			while($r = $rs->fetch_object()){
+				$retArr[$r->tid]['kingdom'] = $r->sciname;
+			}
+			$rs->free();
+		}
+		return $retArr;
+	}
+
+	public function getTid($sciName, $rankid, $author){
+		$tid = 0;
+		//Sanitation
+		if(!is_numeric($rankid)) $rankid = 0;
+		$paramArr = array($this->taxAuthID, $sciName, $sciName);
+		$typeStr = 'iss';
+		$sql = 'SELECT t.tid FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid WHERE (ts.taxauthid = ?) AND (t.sciname = ? OR CONCAT(t.sciname," ",t.author) = ?) ';
+		if($rankid){
+			$sql .= 'AND t.rankid = ? ';
+			$paramArr[] = $rankid;
+			$typeStr .= 'i';
+		}
+		if($author){
+			$sql .= 'AND t.author = ? ';
+			$paramArr[] = $author;
+			$typeStr .= 's';
+		}
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param($typeStr, ...$paramArr);
+			$stmt->execute();
+			$rs = $stmt->get_result();
+			while($r = $rs->fetch_object()){
+				$tid = $r->tid;
+			}
+			$rs->free();
+			$stmt->close();
+		}
+		return $tid;
+	}
+
+	public function getAcceptedTaxa($queryTerm){
+		$retArr = Array();
+		$queryTerm .= '%';
+		$sql = 'SELECT t.tid, t.sciname, t.cultivarEpithet, t.tradeName, t.author
+			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
+			WHERE (ts.taxauthid = ?) AND (ts.tid = ts.tidaccepted) AND (t.sciname LIKE ?)
+			ORDER BY t.sciname LIMIT 20';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('is', $this->taxAuthID, $queryTerm);
+			$stmt->execute();
+			$rs = $stmt->get_result();
+			while($r = $rs->fetch_object()){
+				$sciname = $r->sciname; //.' '.$r->author;
 				if(!empty($r->tradeName)){
 					$sciname = str_replace($r->tradeName, '', $sciname);
 				}
@@ -65,56 +224,9 @@ class RpcTaxonomy extends RpcBase{
 				$retArr[] = array('id' => $r->tid,'label' => $sciname);
 			}
 			$rs->free();
+			$stmt->close();
 		}
 		return $retArr;
-	}
-
-	public function getAcceptedTaxa($queryTerm){
-		$retArr = Array();
-		$sql = 'SELECT t.tid, t.sciname, t.cultivarEpithet, t.tradeName, t.author '.
-			'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-			'WHERE (ts.taxauthid = '.$this->taxAuthID.') AND (ts.tid = ts.tidaccepted) AND (t.sciname LIKE "'.$this->cleanInStr($queryTerm).'%") '.
-			'ORDER BY t.sciname LIMIT 20';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$sciname = $r->sciname; //.' '.$r->author;
-			if(!empty($r->tradeName)){
-				$sciname = str_replace($r->tradeName, '', $sciname);
-			}
-
-			if(!empty($r->cultivarEpithet)){
-				$sciname = str_replace("'" . $r->cultivarEpithet . "'", '', trim($sciname)); // @TODO could possibly replace off-target if cultivarEpithet matches some parent taxon exactly. We think extremely unlikely edge case, so ignoring for now.
-			}
-
-			if(!empty($r->author)){
-				$sciname = trim($sciname) . ' ' . $r->author;
-			}
-			if(!empty($r->cultivarEpithet)){
-				$sciname .= " " . $this->standardizeCultivarEpithet($r->cultivarEpithet);
-			}
-			if(!empty($r->tradeName)){
-				$sciname .= ' ' . $this->standardizeTradeName($r->tradeName);
-			}
-			$retArr[] = array('id' => $r->tid,'label' => $sciname);
-		}
-		$rs->free();
-		return $retArr;
-	}
-
-	public function getTid($sciName, $rankid, $author){
-		$retStr = 0;
-		//Sanitation
-		if(!is_numeric($rankid)) $rankid = 0;
-		$sql = 'SELECT t.tid FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-			'WHERE (ts.taxauthid = '.$this->taxAuthID.') AND (t.sciname = "'.$this->cleanInStr($sciName).'" OR CONCAT(t.sciname," ",t.author) = "'.$this->cleanInStr($sciName).'") ';
-		if($rankid) $sql .= ' AND t.rankid = '.$rankid;
-		if($author) $sql .= ' AND t.author = "'.$this->cleanInStr($author).'" ';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retStr = $r->tid;
-		}
-		$rs->free();
-		return $retStr;
 	}
 
 	public function getDynamicChildren($objId, $targetId, $displayAuthor, $limitToOccurrences, $isEditor){

@@ -67,7 +67,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/localitySuggest.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.list.js?ver=20251002>" type="text/javascript"></script>
 	<script>
-		const clientRoot = '<?php echo $CLIENT_ROOT; ?>';
+		const clientRoot = '<?= $CLIENT_ROOT; ?>';
 		const paleoTimes = <?= json_encode($paleoTimes ?? []) ?>;
 		const handleAccordionExpand = () => {
 			const accordions = document.querySelectorAll('input[class="accordion-selector"]');
@@ -96,7 +96,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 			expandButton.removeAttribute('style', 'display: none;');
 		};
 
-		document.addEventListener('DOMContentLoaded', () => {			
+		document.addEventListener('DOMContentLoaded', () => {
 			document.querySelectorAll('.accordion-header').forEach(accordionHeader => {
 				accordionHeader.addEventListener('keydown', (e) => {
 					if (e.key === 'Enter' || e.key === ' ') {

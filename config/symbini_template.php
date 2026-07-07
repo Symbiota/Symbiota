@@ -94,6 +94,7 @@ $ACTIVATE_PALEO = 0; 				//Activates Paleo management (e.g. Geological Context f
 $IGSN_ACTIVATION = 0;
 $WIKIPEDIA_TAXON_TAB = 1;			//Activates wikipedia tab on taxon profile page (wikiMedia API)
 $OVERRIDE_DOWNLOAD_LOGIN_REQUIREMENT = 0;	//0 = Login required for downloading occurrence data (default), 1 = occurrence data download allowed without being logged in
+$HOMONYM_SUPPORT = 0; 		//0 = no extra support, 1 = include authors within autocompletes, 2 = include kingdom, 3 = include authors and kingdom
 
 $SEARCHABLE_CHARACTERS = '';			//List of characters that can be searched from the public search, separated by commas, e.g. '1,6'
 
