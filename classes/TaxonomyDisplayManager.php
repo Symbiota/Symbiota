@@ -448,16 +448,21 @@ class TaxonomyDisplayManager extends Manager{
 
 	//Setters and getters
 	public function setTargetStr($target){
-		if(is_numeric($target)){
-			$this->targetTid = filter_var($target, FILTER_SANITIZE_NUMBER_INT);
-			$sql = 'SELECT sciname FROM taxa WHERE tid = '.$this->targetTid;
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				$this->targetStr = $r->sciname;
+		$this->targetStr = ucfirst(trim($target));
+	}
+
+	public function setTargetTid($tid){
+		if(is_numeric($tid)){
+			$this->targetTid = filter_var($tid, FILTER_SANITIZE_NUMBER_INT);
+			$sql = 'SELECT sciname FROM taxa WHERE tid = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $tid);
+				$stmt->execute();
+				$stmt->bind_result($this->targetStr);
+				$stmt->fetch();
+				$stmt->close();
 			}
-			$rs->free();
 		}
-		elseif($target) $this->targetStr = ucfirst(trim($target));
 	}
 
 	public function setTaxAuthId($id){

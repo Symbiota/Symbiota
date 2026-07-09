@@ -2,13 +2,14 @@
 include_once($SERVER_ROOT . '/classes/RpcBase.php');
 include_once($SERVER_ROOT . '/traits/TaxonomyTrait.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
-use TaxonomyTrait;
+//use TaxonomyTrait;
 
 Language::load('collections/harvestparams');
 
 class RpcTaxonomy extends RpcBase{
 
 	private $taxAuthID = 1;
+	private $taxonSearchType = 0;
 
 	function __construct(){
 		parent::__construct();
@@ -22,12 +23,13 @@ class RpcTaxonomy extends RpcBase{
 		$retArr = Array();
 		if($queryString){
 			$this->cleanQueryString($queryString);
-			$taxonType = 0;
-			if(!empty($GLOBALS['DEFAULT_TAXON_SEARCH'])) $taxonType = $GLOBALS['DEFAULT_TAXON_SEARCH'];
+			if(!$this->taxonSearchType && !empty($GLOBALS['DEFAULT_TAXON_SEARCH'])){
+				$this->taxonSearchType = $GLOBALS['DEFAULT_TAXON_SEARCH'];
+			}
 			$sql = '';
 			$paramArr = array();
 			$typeStr = '';
-			if($taxonType == 1){	//ANY_NAME search
+			if($this->taxonSearchType == 1){	//ANY_NAME search
 				global $LANG;
 				$sql = 'SELECT DISTINCT tid, CONCAT("' . $LANG['SELECT_1-5'] . ': ", v.vernacularname) AS label, v.vernacularname AS sciname, "" as author, "" as kingdomName
 				FROM taxavernaculars v WHERE v.vernacularname LIKE ?
@@ -46,7 +48,7 @@ class RpcTaxonomy extends RpcBase{
 				$paramArr[] = $queryString . '%';
 				$typeStr = 'ssss';
 			}
-			elseif($taxonType == 5){
+			elseif($this->taxonSearchType == 5){
 				//COMMON_NAME
 				$sql = 'SELECT DISTINCT v.tid, CONCAT(v.vernacularname, " (", t.sciname, ")") AS sciname, "" as author, t.kingdomName
 					FROM taxavernaculars v INNER JOIN taxa t ON v.tid = t.tid
@@ -60,12 +62,12 @@ class RpcTaxonomy extends RpcBase{
 				$paramArr[] = $queryString . '%';
 				$typeStr = 's';
 			}
-			if($taxonType == 3){
+			if($this->taxonSearchType == 3){
 				//FAMILY_ONLY
 				$rankLow = 140;
 				$rankHigh = 140;
 			}
-			elseif($taxonType == 4){
+			elseif($this->taxonSearchType == 4){
 				//TAXONOMIC_GROUP
 				$rankLow = 11;
 				$rankHigh = 179;
@@ -92,6 +94,8 @@ class RpcTaxonomy extends RpcBase{
 				}
 			}
 			if($stmt = $this->conn->prepare($sql)){
+				$homonymSupportIndex = 0;
+				if(!empty($GLOBALS['HOMONYM_SUPPORT'])) $homonymSupportIndex = $GLOBALS['HOMONYM_SUPPORT'];
 				$stmt->bind_param($typeStr, ...$paramArr);
 				$stmt->execute();
 				$rs = $stmt->get_result();
@@ -105,7 +109,7 @@ class RpcTaxonomy extends RpcBase{
 						$label = str_replace("'" . $r->cultivarEpithet . "'", '', trim($label));
 					}
 					if(!empty($r->author)){
-						if($GLOBALS['HOMONYM_SUPPORT'] == 1 || $GLOBALS['HOMONYM_SUPPORT'] == 3){
+						if($homonymSupportIndex == 1 || $homonymSupportIndex == 3){
 							$label = trim($label) . ' ' . $r->author;
 						}
 					}
@@ -116,7 +120,7 @@ class RpcTaxonomy extends RpcBase{
 						$label .= ' ' . $this->standardizeTradeName($r->tradeName);
 					}
 					if(!empty($r->kingdomName)){
-						if($GLOBALS['HOMONYM_SUPPORT'] == 2 || $GLOBALS['HOMONYM_SUPPORT'] == 3){
+						if($homonymSupportIndex == 2 || $homonymSupportIndex == 3){
 							$label .= ' [' . $r->kingdomName . ']';
 						}
 					}
@@ -133,30 +137,38 @@ class RpcTaxonomy extends RpcBase{
 		return $retArr;
 	}
 
+	private function cleanQueryString(&$queryString){
+		$queryString = preg_replace('/[\+\=@$%]+/i', '', $queryString);
+		if(strpos($queryString, ' ')){
+			//Function replaces hybrid and other poorly standardized input to wildcard single character matches to improve return options
+			$queryString = str_ireplace(array('"', "'"), '_', $queryString);
+			$queryString = preg_replace('/\s{1}x{1}$/i', ' _', $queryString);
+			$queryString = preg_replace('/\s{1}x{1}\s{1}/i', ' _ ', $queryString);
+			$queryString = str_ireplace(' x ', ' _ ', $queryString);
+			$queryString = str_ireplace(' x', ' _', $queryString);
+		}
+	}
+
 	public function getTaxon($sciname){
 		$retArr = array();
-		$sciname = preg_replace('/[^a-zA-Z\-\.× ()]+/', '', $sciname);
-		$sql = 'SELECT tid, sciname, author FROM taxa WHERE (sciname = "'.$sciname.'")';
+		$sql = 'SELECT tid, sciname, author, kingdomName FROM taxa WHERE (sciname = ?)';
 		if(preg_match('/\s{1}\D{1}\s{1}/i',$sciname)){
+			//Replace various formats of hybrid designation with a wildcard single character search
 			$sciname = preg_replace('/\s{1}x{1}\s{1}|\s{1}×{1}\s{1}/i', ' _ ', $sciname);
-			$sql = 'SELECT tid, sciname, author FROM taxa WHERE (sciname LIKE "'.$sciname.'")';
+			$sql = 'SELECT tid, sciname, author, kingdomName FROM taxa WHERE (sciname LIKE ?)';
 		}
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retArr[$r->tid]['sciname'] = $r->sciname;
-			$retArr[$r->tid]['author'] = $r->author;
-			$retArr[$r->tid]['tid'] = $r->tid;
-		}
-		$rs->free();
-		if(count($retArr) > 1){
-			//Is a Homonym, thus get kingdom
-			$sql = 'SELECT e.tid, t.sciname FROM taxa t INNER JOIN taxaenumtree e ON t.tid = e.parenttid '.
-					'WHERE (e.taxauthid = 1) AND (t.rankid = 10) AND (e.tid IN("'.implode(',',array_keys($retArr)).'"))';
-			$rs = $this->conn->query($sql);
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('s', $sciname);
+			$stmt->execute();
+			$rs = $stmt->get_result();
 			while($r = $rs->fetch_object()){
-				$retArr[$r->tid]['kingdom'] = $r->sciname;
+				$retArr[$r->tid]['tid'] = $r->tid;
+				$retArr[$r->tid]['sciname'] = $r->sciname;
+				$retArr[$r->tid]['author'] = $r->author;
+				$retArr[$r->tid]['kingdom'] = $r->kingdomName;
 			}
 			$rs->free();
+			$stmt->close();
 		}
 		return $retArr;
 	}
@@ -429,6 +441,10 @@ class RpcTaxonomy extends RpcBase{
 	//Setters and getters
 	public function setTaxAuthId($id){
 		if(is_numeric($id)) $this->taxAuthID = $id;
+	}
+
+	public function setTaxonSearchType($searchType){
+		if(is_numeric($searchType)) $this->taxonSearchType = $searchType;
 	}
 
 	public function isValidApiCall(){

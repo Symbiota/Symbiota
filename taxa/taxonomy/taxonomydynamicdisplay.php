@@ -90,13 +90,8 @@ reset($treePath);
 	<script src="../../js/dojo-1.17.3/dojo/dojo.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$("#taxontarget").autocomplete({
-				source: function( request, response ) {
-					$.getJSON( "rpc/gettaxasuggest.php", { term: request.term, taid: document.tdform.taxauthid.value }, response );
-				},
-				autoFocus: true,
-				minLength: 3 }
-			);
+			setTaxaSuggestRootPath("<?= $CLIENT_ROOT ?>");
+			initiateTaxaSuggest("taxontarget", "tid");
 		});
 
 		function displayTaxomonyMeta(){
@@ -138,7 +133,7 @@ reset($treePath);
 		?>
 		<div>
 			<?php
-			
+
 			if(count($taxMetaArr) > 1){
 				//echo '<div id="taxDetailDiv" class="tax-detail-div"><a href="#" onclick="displayTaxomonyMeta()">(more details)</a></div>';
 				echo '<div id="taxMetaDiv" class="tax-meta-div">';

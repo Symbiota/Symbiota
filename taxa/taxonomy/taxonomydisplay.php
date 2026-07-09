@@ -1,6 +1,7 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/TaxonomyDisplayManager.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load('taxa/taxonomy/taxonomydisplay');
@@ -8,17 +9,23 @@ Language::load('taxa/taxonomy/taxonomydisplay');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $target = $_REQUEST['target'] ?? '';
+$tid = !empty($_REQUEST['tid']) ? Sanitize::int($_REQUEST['tid']) : '';
 $displayAuthor = !empty($_REQUEST['displayauthor']) ? 1: 0;
 $matchOnWords = !empty($_POST['matchonwords']) ? 1 : 0;
 $displayFullTree = !empty($_REQUEST['displayfulltree']) ? 1 : 0;
 $displaySubGenera = !empty($_REQUEST['displaysubgenera']) ? 1 : 0;
 $limitToOccurrences = !empty($_REQUEST['limittooccurrences']) ? 1 : 0;
-$taxAuthId = array_key_exists('taxauthid', $_REQUEST) ? filter_var($_REQUEST['taxauthid'], FILTER_SANITIZE_NUMBER_INT) : 1;
+$taxAuthId = array_key_exists('taxauthid', $_REQUEST) ? Sanitize::int($_REQUEST['taxauthid']) : 1;
 $statusStr = array_key_exists('statusstr', $_REQUEST) ? $_REQUEST['statusstr'] : '';
 $submitAction = array_key_exists('tdsubmit', $_POST) ? $_POST['tdsubmit'] : '';
 
 if(!$target) $matchOnWords = 1;
+if(is_numeric($target)){
+	$tid = $target;
+	$target = '';
+}
 $taxonDisplayObj = new TaxonomyDisplayManager();
+$taxonDisplayObj->setTargetTid($tid);
 $taxonDisplayObj->setTargetStr($target);
 $taxonDisplayObj->setTaxAuthId($taxAuthId);
 $taxonDisplayObj->setDisplayAuthor($displayAuthor);
@@ -42,25 +49,20 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['TAX_DISPLAY'] . ': ' . $taxonDisplayObj->getTargetStr(); ?></title>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
+	<title><?= $DEFAULT_TITLE . ' ' . $LANG['TAX_DISPLAY'] . ': ' . $taxonDisplayObj->getTargetStr(); ?></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET ?>"/>
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxonomy.taxasuggest.js?ver=2" type="text/javascript"></script>
 	<script type="text/javascript">
-
 		$(document).ready(function() {
-			$("#taxontarget").autocomplete({
-				source: function( request, response ) {
-					$.getJSON( "rpc/gettaxasuggest.php", { term: request.term, taid: document.tdform.taxauthid.value }, response );
-				},
-				autoFocus: true,
-				minLength: 3 }
-			);
+			setTaxaSuggestRootPath("<?= $CLIENT_ROOT ?>");
+			initiateTaxaSuggest("taxontarget", "tid");
 
 			$('form input').keydown(function(event) {
 				if (event.keyCode === 13) {
@@ -97,7 +99,7 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 			$statusStr = str_replace(';', '<br/>', htmlspecialchars($statusStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE));
 			?>
 			<hr/>
-			<div style="color:<?php echo (stripos($statusStr,'SUCCESS') !== false?'green':'red'); ?>;margin:15px;">
+			<div style="color:<?= (stripos($statusStr,'SUCCESS') !== false?'green':'red'); ?>;margin:15px;">
 				<?= $statusStr; ?>
 			</div>
 			<hr/>
@@ -144,6 +146,7 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 						<div>
 							<label for="taxontarget"> <?= $LANG['TAXON'] ?>: </label>
 							<input id="taxontarget" class="search-bar" name="target" type="text" value="<?= $taxonDisplayObj->getTargetStr(); ?>" />
+							<input id="tid" name="tid" type="hidden" value="<?= $tid ?>" />
 						</div>
 						<div>
 							<input id="displayauthor" name="displayauthor" type="checkbox" value="1" <?= ($displayAuthor ? 'checked' : '') ?> />
