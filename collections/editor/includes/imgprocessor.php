@@ -118,6 +118,9 @@ Language::load('collections/editor/includes/imgprocessor');
 					<a class="vvAuthTokenSignupLink" href="https://vouchervision-go-738307415303.us-central1.run.app/signup" target="_blank" rel="noopener">
 						<?= $LANG['VV_AUTH_TOKEN_LOGIN_LINK']; ?>
 					</a>
+					<span>
+						<?= $LANG['VV_TOKEN_REFRESH_NOTE']; ?>
+					</span>
 				</div>
 			</div>
 			<div style="float:left;margin-right:15px">

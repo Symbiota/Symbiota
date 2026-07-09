@@ -31,7 +31,7 @@ $LANG['SAVE_OCR_EDITS'] = 'Guardar Ediciones de OCR';
 $LANG['DELETE_OCR'] = 'Eliminar OCR';
 $LANG['VV_OCR_ENGINES'] = 'Motores OCR';
 $LANG['VV_OCR_ONLY'] = 'Solo OCR';
-$LANG['VV_AUTH_TOKEN'] = 'Token de autorización';
+$LANG['VV_AUTH_TOKEN'] = 'Token de autenticación de API';
 $LANG['VV_AUTH_TOKEN_HINT'] = 'Es obligatorio si no están configuradas las credenciales compartidas de Symbiota.';
 $LANG['VV_AUTH_TOKEN_LOGIN_LINK'] = 'Regístrate para obtener un token de autorización aquí';
 $LANG['VV_GEMINI_API_KEY'] = 'Clave de API de Gemini (opcional)';
@@ -39,5 +39,5 @@ $LANG['VV_GEMINI_API_KEY_HINT'] = 'Usa tu propia clave de API de Gemini para eje
 $LANG['VV_TRANSCRIPTION_MODEL'] = 'Modelo de transcripción';
 $LANG['VV_TRANSCRIPTION_PROMPT'] = 'Prompt de transcripción';
 $LANG['VV_SYMBIOTA_CREDENTIALS_DISABLED'] = 'Las credenciales compartidas de Symbiota están actualmente deshabilitadas.';
-
+$LANG['VV_TOKEN_REFRESH_NOTE'] = 'Tenga en cuenta que el token de autenticación de API se actualiza cada hora.';
 ?>
