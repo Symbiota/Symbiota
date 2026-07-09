@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecUpload.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
@@ -205,7 +205,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							?>
 							<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
 							<div style="margin:10px;">
-								<button type="submit" name="action"><?= $LANG['INIT_UPLOAD'] ?></button>
+								<input type="submit" name="action" value="Initialize Upload..." />
 							</div>
 							<?php
 						}

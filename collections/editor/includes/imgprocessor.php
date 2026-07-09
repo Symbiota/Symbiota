@@ -120,18 +120,17 @@ Language::load('collections/editor/includes/imgprocessor');
 						?>
 						<fieldset class="ocr-box">
 							<legend>VoucherVision OCR</legend>
+
 							<input type="checkbox" id="ocrOnly" value="1" /> <?php echo $LANG['VV_OCR_ONLY']; ?><br/>
 							<div style="font-weight: bold; position: relative; left: -6px; margin: 5px 0px;"> <?php echo $LANG['VV_OCR_ENGINES']; ?></div>
-							<select id="engines" size=2 multiple>
-								<option value="gemini-3.1-flash-lite-preview" selected>Gemini 3.1 Flash Lite</option>
-								<option value="gemini-3-flash-preview">Gemini 3.0 Flash</option>
-								<option value="gemini-3.1-pro-preview">Gemini 3.1 Pro</option>
-							</select>
+							<input type="checkbox" name="engines" id="gemini-1.5-pro" value="1" /> Gemini 1.5 Pro<br/>
+							<input type="checkbox" name="engines" id="gemini-2.0-flash" value="1" checked/> Gemini 2.0 Flash<br/>
 							<div style="font-weight: bold; position: relative; left: -6px; margin: 5px 0px;"> <?php echo $LANG['VV_TRANSCRIPTION_MODEL']; ?></div>
 							<select id="llm-model">
-								<option value="gemini-3.1-flash-lite-preview">Gemini 3.1 Flash Lite</option>
-								<option value="gemini-3-flash-preview">Gemini 3.0 Flash</option>
-								<option value="gemini-3.1-pro-preview">Gemini 3.1 Pro</option>
+								<option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+								<option value="gemini-2.0-pro">Gemini 1.5 Pro</option>
+								<option value="gemini-2.5-pro">Gemini 2.5 Flash</option>
+								<option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
 							</select><br/>
 							<div style="font-weight: bold; position: relative; left: -6px; margin: 5px 0px;"> <?php echo $LANG['VV_TRANSCRIPTION_PROMPT']; ?></div>
 							<select id="prompt">

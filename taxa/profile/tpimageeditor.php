@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TPImageEditorManager.php');
 include_once($SERVER_ROOT . '/classes/Media.php');
 include_once($SERVER_ROOT . '/classes/Paginator.php');

@@ -187,16 +187,19 @@ async function ocrVV(ocrButton, imgCnt){
 	// Get user-selected parameters
 	const prompt = $('#prompt').val();
 	const llm_model = $('#llm-model').val();
-  const engines = $('#engines').val();
-  const ocrOnly = $('#ocrOnly').is(':checked');
+    const engines = [];
+    $('input[name="engines"]:checked').each(function() {
+        engines.push($(this).attr('id'));
+    });
+    const ocrOnly = $('#ocrOnly').is(':checked');
 
-  // Show busy indicator
-  busy.show();
+    // Show busy indicator
+    busy.show();
 
-  // Disable additional OCR Image button presses
-  $(ocrButton).prop('disabled', true);
+    // Disable additional OCR Image button presses
+    $(ocrButton).prop('disabled', true);
 
-  // Symbiota field mappings for data returned by various prompts
+    // Symbiota field mappings for data returned by various prompts
 	const vvMapping = {
 		SLTPvM_default: {
 			// James Note: Catch-all field: Turning this off may be preferred, it accumulates a lot of junk.

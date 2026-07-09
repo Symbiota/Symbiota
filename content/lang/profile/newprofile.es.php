@@ -55,6 +55,4 @@ $LANG['CREATE_LOGIN'] = 'Crear Usuario';
 $LANG['ACCESSIBILITY_PREF'] = 'Preferencias de accesibilidad';
 $LANG['ACCESSIBILITY_PREF_DESC'] = 'Marque para indicar una preferencia por estilos optimizados para accesibilidad';
 $LANG['PROFILE_CREATION_DISABLED'] = 'Se ha deshabilitado la creación de usuarios públicos en este portal.';
-$LANG['PASSWORD_WARNING'] = 'No cree cuentas de usuario compartidas/grupales.<br><br>Por motivos de seguridad, cada persona debe tener su propio nombre de usuario y contraseña únicos.<br><br>Cree una contraseña que sea exclusiva para este portal.<br><br>No reutilice una contraseña de otro sitio web, su correo electrónico, etc.'
-
 ?>

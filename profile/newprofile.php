@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../config/symbini.php');
+include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/vendor/capito/src/Cap.php');
@@ -189,9 +189,6 @@ if($action == 'Create Login'){
 			font-size: 1.3em;
 			font-weight: bold;
 		}
-		.half-gridlike-form-row-input {
-			width: 68.965%
-		}
 	</style>
 </head>
 <body>
@@ -250,47 +247,40 @@ if($action == 'Create Login'){
 			<fieldset style='margin:10px;width:95%;'>
 				<legend><b><?php echo (isset($LANG['LOGIN_DETAILS']) ? $LANG['LOGIN_DETAILS'] : 'Login Details'); ?></b></legend>
 				<div class="gridlike-form">
-					<div style="display:flex;">
-						<div style="flex:0 0 58%;">
-							<section class="bottom-breathing-room gridlike-form-row">
-								<label class="gridlike-form-row-label" for="login"><?php echo (isset($LANG['USERNAME']) ? $LANG['USERNAME'] : 'Username'); ?>:</label>
-								<input class="half-gridlike-form-row-input"" name="login" id="login" value="<?php echo $login; ?>" type="text" size="20" required />
-								<span style="color:red;">*</span>
-							</section>
-							<section class="bottom-breathing-room gridlike-form-row">
-								<label class="gridlike-form-row-label" for="pwd"><?php echo (isset($LANG['PASSWORD']) ? $LANG['PASSWORD'] : 'Password'); ?>:</label>
-								<input class="half-gridlike-form-row-input"" name="pwd" id="pwd" value="" size="20" type="password" autocomplete="off" required  minlength="10" />
-								<span style="color:red;">*</span>
-							</section>
-							<section class="bottom-breathing-room gridlike-form-row">
-								<label class="gridlike-form-row-label" for="pwd2"><?php echo (isset($LANG['PASSWORD_AGAIN']) ? $LANG['PASSWORD_AGAIN'] : 'Password Again'); ?>:</label>
-								<input class="half-gridlike-form-row-input"" id="pwd2" name="pwd2" value="" size="20" type="password" autocomplete="off" required  minlength="10" />
-								<span style="color:red;">*</span>
-							</section>
-							<section class="bottom-breathing-room gridlike-form-row">
-								<label class="gridlike-form-row-label" for="firstname"><?php echo (isset($LANG['FIRST_NAME']) ? $LANG['FIRST_NAME'] : 'First Name'); ?>:</label>
-								<input class="half-gridlike-form-row-input"" id="firstname" name="firstname" type="text" size="40" value="<?php echo (isset($_POST['firstname']) ? htmlspecialchars($_POST['firstname'],ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?>" required />
-								<span style="color:red;">*</span>
-							</section>
-							<section class="bottom-breathing-room gridlike-form-row">
-								<label class="gridlike-form-row-label" for="lastname"><?php echo (isset($LANG['LAST_NAME'])?$LANG['LAST_NAME']:'Last Name'); ?>:</label>
-								<input class="half-gridlike-form-row-input" id="lastname" name="lastname" type="text" size="40" value="<?php echo (isset($_POST['lastname']) ? htmlspecialchars($_POST['lastname'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?>" required />
-								<span style="color:red;">*</span>
-							</section>
-							<section class="bottom-breathing-room gridlike-form-row">
-								<label class="gridlike-form-row-label" for="email"><?php echo (isset($LANG['EMAIL']) ? $LANG['EMAIL'] : 'Email Address'); ?>:</label>
-								<input class="half-gridlike-form-row-input" name="email" id="email" type="email" size="40" value="<?php echo $emailAddr; ?>" required />
-								<span style="color:red;">*</span>
-							</section>
-							<section class="bottom-breathing-room gridlike-form-row">
-								<label class="gridlike-form-row-label" for="guid"><?php echo (isset($LANG['ORCID']) ? $LANG['ORCID'] : 'ORCID or other GUID'); ?>:</label>
-								<input class="half-gridlike-form-row-input" name="guid" id="guid" type="text" size="40" value="<?php echo (isset($_POST['guid']) ? htmlspecialchars($_POST['guid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?>" />
-							</section>
-						</div>
-						<span style="color:red;">
-							<?php echo (isset($LANG['PASSWORD_WARNING']) ? $LANG['PASSWORD_WARNING'] : 'Do not create shared/group user accounts.<br><br>For security reasons, every individual should have their own unique login and password.<br><br>Create a password that is unique to this portal.<br><br>Do not reuse a password from another website, your email, etc.'); ?>
-						</span>
-					</div>
+					<section class="bottom-breathing-room gridlike-form-row">
+						<label class="gridlike-form-row-label" for="login"><?php echo (isset($LANG['USERNAME']) ? $LANG['USERNAME'] : 'Username'); ?>:</label>
+						<input class="gridlike-form-row-input" name="login" id="login" value="<?php echo $login; ?>" type="text" size="20" required />
+						<span style="color:red;">*</span>
+					</section>
+					<section class="bottom-breathing-room gridlike-form-row">
+						<label class="gridlike-form-row-label" for="pwd"><?php echo (isset($LANG['PASSWORD']) ? $LANG['PASSWORD'] : 'Password'); ?>:</label>
+						<input class="gridlike-form-row-input" name="pwd" id="pwd" value="" size="20" type="password" autocomplete="off" required  minlength="10" />
+						<span style="color:red;">*</span>
+					</section>
+					<section class="bottom-breathing-room gridlike-form-row">
+						<label class="gridlike-form-row-label" for="pwd2"><?php echo (isset($LANG['PASSWORD_AGAIN']) ? $LANG['PASSWORD_AGAIN'] : 'Password Again'); ?>:</label>
+						<input class="gridlike-form-row-input" id="pwd2" name="pwd2" value="" size="20" type="password" autocomplete="off" required  minlength="10" />
+						<span style="color:red;">*</span>
+					</section>
+					<section class="bottom-breathing-room gridlike-form-row">
+						<label class="gridlike-form-row-label" for="firstname"><?php echo (isset($LANG['FIRST_NAME']) ? $LANG['FIRST_NAME'] : 'First Name'); ?>:</label>
+						<input class="gridlike-form-row-input" id="firstname" name="firstname" type="text" size="40" value="<?php echo (isset($_POST['firstname']) ? htmlspecialchars($_POST['firstname'],ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?>" required />
+						<span style="color:red;">*</span>
+					</section>
+					<section class="bottom-breathing-room gridlike-form-row">
+						<label class="gridlike-form-row-label" for="lastname"><?php echo (isset($LANG['LAST_NAME'])?$LANG['LAST_NAME']:'Last Name'); ?>:</label>
+						<input class="gridlike-form-row-input" id="lastname" name="lastname" type="text" size="40" value="<?php echo (isset($_POST['lastname']) ? htmlspecialchars($_POST['lastname'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?>" required />
+						<span style="color:red;">*</span>
+					</section>
+					<section class="bottom-breathing-room gridlike-form-row">
+						<label class="gridlike-form-row-label" for="email"><?php echo (isset($LANG['EMAIL']) ? $LANG['EMAIL'] : 'Email Address'); ?>:</label>
+						<input class="gridlike-form-row-input" name="email" id="email" type="email" size="40" value="<?php echo $emailAddr; ?>" required />
+						<span style="color:red;">*</span>
+					</section>
+					<section class="bottom-breathing-room gridlike-form-row">
+						<label class="gridlike-form-row-label" for="guid"><?php echo (isset($LANG['ORCID']) ? $LANG['ORCID'] : 'ORCID or other GUID'); ?>:</label>
+						<input class="gridlike-form-row-input" name="guid" id="guid" type="text" size="40" value="<?php echo (isset($_POST['guid']) ? htmlspecialchars($_POST['guid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : ''); ?>" />
+					</section>
 					<section class="bottom-breathing-room gridlike-form-row">
 							<span class="gridlike-form-row-label"><?php echo (isset($LANG['ACCESSIBILITY_PREF']) ? $LANG['ACCESSIBILITY_PREF'] : 'Accessibility Preferences'); ?>:</span>
 							<input type="checkbox" name="accessibility-pref" id="accessibility-pref" value="1" />

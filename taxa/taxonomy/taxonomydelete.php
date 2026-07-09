@@ -1,6 +1,6 @@
 <?php
 $LANG = array();
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyEditorManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 

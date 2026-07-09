@@ -268,7 +268,7 @@ class ChecklistVoucherAdmin extends Manager {
 		}
 		if(isset($this->queryVariablesArr['includewkt']) && $this->queryVariablesArr['includewkt'] && $this->footprintGeoJson){
 			//Searh based on polygon
-			$sqlFrag .= "AND (ST_Within(p.lngLatPoint,ST_GeomFromGeoJson('" . $this->footprintGeoJson . "', 1, 0))) ";
+			$sqlFrag .= "AND (ST_Within(p.lngLatPoint,ST_GeomFromGeoJson('" . $this->footprintGeoJson . "'))) ";
 			$llStr = false;
 		}
 		if(isset($this->queryVariablesArr['latlngor']) && $this->queryVariablesArr['latlngor'] && $locStr && $llStr){

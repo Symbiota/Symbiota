@@ -18,7 +18,7 @@
 exit;
 
 date_default_timezone_set('America/Phoenix');
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once('../../config/symbini.php');
 require_once($SERVER_ROOT.'/classes/SpecUploadBase.php');
 require_once($SERVER_ROOT.'/classes/SpecUploadFile.php');
 require_once($SERVER_ROOT.'/classes/SpecUploadDwca.php');

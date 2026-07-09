@@ -55,6 +55,5 @@ $LANG['CREATE_LOGIN'] = 'Create Login';
 $LANG['ACCESSIBILITY_PREF'] = 'Accessibility Preference';
 $LANG['ACCESSIBILITY_PREF_DESC'] = 'Check to indicate a preference for accessibility-optimized styles';
 $LANG['PROFILE_CREATION_DISABLED'] = 'Public user creation has been disabled on this portal.';
-$LANG['PASSWORD_WARNING'] = 'Do not create shared/group user accounts.<br><br>For security reasons, every individual should have their own unique login and password.<br><br>Create a password that is unique to this portal.<br><br>Do not reuse a password from another website, your email, etc.'
 
 ?>

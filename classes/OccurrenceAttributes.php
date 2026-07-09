@@ -1,7 +1,5 @@
 <?php
 include_once($SERVER_ROOT.'/classes/Manager.php');
-include_once($SERVER_ROOT.'/classes/Media.php');
-include_once($SERVER_ROOT.'/classes/utilities/QueryUtil.php');
 
 class OccurrenceAttributes extends Manager {
 
@@ -188,17 +186,17 @@ class OccurrenceAttributes extends Manager {
 					$retArr[$r->occid]['catnum'] = $r->catnum;
 					$sql2 = 'SELECT m.mediaID, m.url, m.originalurl, m.occid '.
 						'FROM media m '.
-						'WHERE (m.occid = ?) and mediaType = ?';
-					$rs2 = QueryUtil::tryExecuteQuery($this->conn, $sql2, [$r->occid, MediaType::Image]);
+						'WHERE (m.occid = '.$r->occid.') ';
+					$rs2 = $this->conn->query($sql2);
 					$cnt = 1;
 					while($r2 = $rs2->fetch_object()){
 						$retArr[$r2->occid][$cnt]['web'] = $r2->url;
 						$retArr[$r2->occid][$cnt]['lg'] = $r2->originalurl;
 						$cnt++;
-						$rs->free();
 					}
 					$rs2->free();
 				}
+				$rs->free();
 			}
 		}
 		return $retArr;
@@ -223,14 +221,14 @@ class OccurrenceAttributes extends Manager {
 
 	private function setSqlBody($traitID){
 		if(is_numeric($traitID)){
-			$this->sqlBody = 'FROM omoccurrences o INNER JOIN media m ON m.mediaType = "' . MediaType::Image . '" AND o.occid = m.occid
+			$this->sqlBody = 'FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid
 				WHERE (o.collid = '.$this->collidStr.') ';
 			if(isset($this->filterArr['tidfilter']) && $this->filterArr['tidfilter']){
 				//Get Synonyms
 				$tidArr = array();
-				$sql = 'SELECT ts1.tid '.
-					'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-					'WHERE ts2.tid = '.$this->filterArr['tidfilter'].' AND ts1.taxauthid = 1 AND ts2.taxauthid = 1';
+				$sql = 'SELECT ts1.tid
+					FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted
+					WHERE ts2.tid = '.$this->filterArr['tidfilter'].' AND ts1.taxauthid = 1 AND ts2.taxauthid = 1';
 				$rs = $this->conn->query($sql);
 				while($r = $rs->fetch_object()){
 					$tidArr[] = $r->tid;
@@ -506,7 +504,7 @@ class OccurrenceAttributes extends Manager {
 		if($stateArr){
 			$this->reviewSqlBase = 'FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid '.
 				'INNER JOIN tmattributes a ON m.occid = a.occid '.
-				'WHERE (a.stateid IN('.implode(',',$stateArr).')) AND (o.collid = '.$this->collidStr.') AND (m.mediaType = "'. MediaType::Image .'") ';
+				'WHERE (a.stateid IN('.implode(',',$stateArr).')) AND (o.collid = '.$this->collidStr.') ';
 			if(isset($this->filterArr['reviewuid']) && $this->filterArr['reviewuid']){
 				$this->reviewSqlBase .= 'AND (a.createduid = '.$this->filterArr['reviewuid'].') ';
 			}

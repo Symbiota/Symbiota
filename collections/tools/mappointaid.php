@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/utilities/MappingUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
@@ -8,7 +8,7 @@ Language::load('collections/tools/mapaids');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $bounds = MappingUtil::getMappingBoundary();
-$centerPoint = MappingUtil::getBoundsCentroid($bounds);
+$centerPoint = MappingUtil::getBoundsCentroid($bounds); 
 
 $errMode = array_key_exists("errmode",$_REQUEST)?$_REQUEST["errmode"]:1;
 $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
@@ -278,7 +278,7 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 					const lat = e.layer._latlng.lat;
 					const lng = e.layer._latlng.lng;
 					createMarker(lat, lng)
-				}
+				} 
 			})
 
 			//Draw marker if one exists
@@ -407,7 +407,7 @@ $shouldUseMinimalMapHeader = $SHOULD_USE_MINIMAL_MAP_HEADER ?? false;
 				mapBounds = JSON.parse(data.getAttribute('data-map-bounds'));
 			}
 
-			<?php if(empty($GOOGLE_MAP_KEY)): ?>
+			<?php if(empty($GOOGLE_MAP_KEY)): ?> 
 			leafletInit();
 			<?php else: ?>
 			googleInit();

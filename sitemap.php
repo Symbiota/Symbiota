@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/config/symbini.php');
+include_once('config/symbini.php');
 include_once($SERVER_ROOT . '/classes/SiteMapManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
@@ -45,14 +45,6 @@ if(!$schemaVersion){
 	<div role="main" id="innertext">
 		<h1 class="page-heading"><?= $LANG['SITEMAP'] ?></h1>
 		<div id="sitemap">
-
-			<div id="policies">
-				<h2><?= $LANG['POLICIES'] ?></h2>
-			</div>
-			<ul>
-				<li><a href="includes/usagepolicy.php"><?= $LANG['USAGEPOLICY'] ?></a></li>
-			</ul>
-
 			<h2><?= $LANG['COLLECTIONS'] ?></h2>
 			<ul>
 				<?php
@@ -79,6 +71,7 @@ if(!$schemaVersion){
 				<li><a href="imagelib/index.php"><?= $LANG['IMGLIB'] ?></a></li>
 				<li><a href="imagelib/search.php"><?= $LANG['IMAGE_SEARCH'] ?></a></li>
 				<li><a href="imagelib/contributors.php"><?= $LANG['CONTRIB'] ?></a></li>
+				<li><a href="includes/usagepolicy.php"><?= $LANG['USAGEPOLICY'] ?></a></li>
 			</ul>
 
 			<div id="resources">

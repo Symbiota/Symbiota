@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyUpload.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyHarvester.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
