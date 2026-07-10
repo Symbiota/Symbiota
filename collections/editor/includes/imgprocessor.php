@@ -57,7 +57,6 @@ Language::load('collections/editor/includes/imgprocessor');
 <style>
 	.ocr-box{ padding: 10px; float:left; }
 	.top-breathing-room-rel { margin-top: 0.5rem; }
-	/* .ocr-box button{ margin: 5px; } */
 	.vv-help-icon{
 		display:inline-block;
 		width:1.1em;
@@ -73,12 +72,12 @@ Language::load('collections/editor/includes/imgprocessor');
 	}
 	.vvAuthTokenSignupLink,
 	.vvAuthTokenSignupLink:visited{
-		color:#0645AD;
+		color: var(--secondary-color);
 		text-decoration:underline;
 	}
 	.vvAuthTokenSignupLink:hover,
 	.vvAuthTokenSignupLink:focus{
-		color:#0B0080;
+		color: var(--primary-color);
 	}
 </style>
 <div id="labelProcDiv" style="width:100%;height:1050px;position:relative">

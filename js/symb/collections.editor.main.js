@@ -378,7 +378,7 @@ function fieldChanged(fieldName) {
     document.fullform.editedfields.value =
       document.fullform.editedfields.value + fieldName + ";";
   } catch (ex) {}
-  var saveEditsButton = document.getElementById("saveEditsButton");
+  const saveEditsButton = document.getElementById("saveEditsButton");
   if (saveEditsButton) {
     saveEditsButton.disabled = false;
   }
