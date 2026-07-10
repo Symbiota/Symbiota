@@ -77,7 +77,8 @@ Language::load('collections/editor/includes/imgprocessor');
 </script>
 <style>
 	.ocr-box{ padding: 10px; float:left; }
-	.ocr-box button{ margin: 5px; }
+	.top-breathing-room-rel { margin-top: 0.5rem; }
+	/* .ocr-box button{ margin: 5px; } */
 	.vv-help-icon{
 		display:inline-block;
 		width:1.1em;
@@ -156,7 +157,7 @@ Language::load('collections/editor/includes/imgprocessor');
 							<input type="checkbox" id="ocrfull-tess" value="1" /> <?php echo $LANG['OCR_WHOLE_IMG']; ?><br/>
 							<input type="checkbox" id="ocrbest" value="1" /> <?php echo $LANG['OCR_ANALYSIS']; ?>
 							<div>
-								<button class="button icon-button" value="OCR Image" onclick="ocrImage(this,'tess', <?php echo $imgId.','.$imgCnt; ?>);" ><?php echo $LANG['OCR_IMAGE']; ?></button>
+								<button class="button icon-button top-breathing-room-rel" value="OCR Image" onclick="ocrImage(this,'tess', <?php echo $imgId.','.$imgCnt; ?>);" ><?php echo $LANG['OCR_IMAGE']; ?></button>
 								<img id="workingcircle-tess-<?php echo $imgCnt; ?>" src="../../images/workingcircle.gif" style="display:none;" />
 							</div>
 						</fieldset>
@@ -210,7 +211,7 @@ Language::load('collections/editor/includes/imgprocessor');
 								<option value="SLTPvM_default">SLTPvM_default</option>
 							</select><br/>
 							<div>
-													<button value="OCR Image" onclick="ocrVV(this, '<?php echo $imgCnt; ?>');" ><?php echo $LANG['OCR_IMAGE']; ?></button>
+									<button class="button icon-button top-breathing-room-rel" value="OCR Image" onclick="ocrVV(this, '<?php echo $imgCnt; ?>');" ><?php echo $LANG['OCR_IMAGE']; ?></button>
 									<img id="workingcircle-vv-<?php echo $imgCnt; ?>" src="../../images/workingcircle.gif" style="display:none;" />
 								</div>
 						</fieldset>
@@ -252,7 +253,7 @@ Language::load('collections/editor/includes/imgprocessor');
 									<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
 									<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
 									<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
-									<button name="submitaction" type="submit" value="Save OCR" ><?php echo $LANG['SAVE_OCR']; ?></button>
+									<button id="save-ocr-btn" class="button icon-button top-breathing-room-rel" name="submitaction" type="submit" value="Save OCR" ><?php echo $LANG['SAVE_OCR']; ?></button>
 								</div>
 							</form>
 							<div style="font-weight:bold;float:right;"><?php echo '&lt;'.$LANG['NEW'].'&gt; '.$LANG['OF'].' '.count($fArr); ?></div>
@@ -294,7 +295,7 @@ Language::load('collections/editor/includes/imgprocessor');
 												<input type="hidden" name="occid" value="<?php echo $occId; ?>" />
 												<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
 												<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
-												<button name="submitaction" type="submit" value="Save OCR Edits" ><?php echo $LANG['SAVE_OCR_EDITS']; ?></button>
+												<button class="button button-icon top-breathing-room-rel" name="submitaction" type="submit" value="Save OCR Edits" ><?php echo $LANG['SAVE_OCR_EDITS']; ?></button>
 											</div>
 											<div style="float:left;margin-left:20px;">
 												<input type="hidden" name="iurl" value="<?php echo $iUrl; ?>" />
@@ -328,7 +329,7 @@ Language::load('collections/editor/includes/imgprocessor');
 												<input type="hidden" name="occid" value="<?php echo $occId; ?>" /><br/>
 												<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
 												<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
-												<button name="submitaction" type="submit" value="Delete OCR" ><?php echo $LANG['DELETE_OCR']; ?></button>
+												<button style="width: 15rem;" class="button button-icon" name="submitaction" type="submit" value="Delete OCR" ><?php echo $LANG['DELETE_OCR']; ?></button>
 											</form>
 										</div>
 									</div>
