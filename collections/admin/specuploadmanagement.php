@@ -205,7 +205,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							?>
 							<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
 							<div style="margin:10px;">
-								<input type="submit" name="action" value="Initialize Upload..." />
+								<button type="submit" name="action"><?= $LANG['INIT_UPLOAD'] ?></button>
 							</div>
 							<?php
 						}
