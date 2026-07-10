@@ -15,11 +15,6 @@ Language::load('collections/editor/includes/imgprocessor');
 		$( "#zoomInfoDiv" ).click(function() {
 			$( "#zoomInfoDialog" ).dialog( "open" );
 		});
-
-		$( "#vvAuthTokenHelpDialog" ).dialog({
-			autoOpen: false,
-			position: { my: "left top", at: "right bottom", of: window }
-		});
 	});
 
 	function floatImgPanel(){

@@ -3,6 +3,16 @@ var ocrFragIndex = 1;
 var vvAuthTokenStorageKey = 'vv-auth-token';
 var vvGeminiApiKeyStorageKey = 'vv-gemini-api-key';
 
+document.addEventListener('DOMContentLoaded', function() {
+	var helpDialog = document.getElementById('vvAuthTokenHelpDialog');
+	if(!helpDialog || !window.jQuery || !$.fn.dialog) return;
+
+	$("#vvAuthTokenHelpDialog").dialog({
+		autoOpen: false,
+		position: { my: "left top", at: "right bottom", of: window }
+	});
+});
+
 document.addEventListener('click', function(e) {
 	var signupLink = e.target.closest('.vvAuthTokenSignupLink');
 	if(!signupLink) return;
