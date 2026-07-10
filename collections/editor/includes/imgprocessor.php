@@ -30,12 +30,6 @@ Language::load('collections/editor/includes/imgprocessor');
 			});
 			$( "#vvAuthTokenHelpDialog" ).dialog( "open" );
 		});
-
-		$(document).on('click', '.vvAuthTokenSignupLink', function(e) {
-			e.preventDefault();
-			e.stopPropagation();
-			window.open(this.href, '_blank', 'noopener');
-		});
 	});
 
 	function floatImgPanel(){
