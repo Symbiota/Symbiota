@@ -12,6 +12,19 @@ document.addEventListener('click', function(e) {
 	window.open(signupLink.href, '_blank', 'noopener');
 });
 
+document.addEventListener('click', function(e) {
+	var helpBtn = e.target.closest('.vvAuthTokenHelpBtn');
+	if(!helpBtn) return;
+
+	e.preventDefault();
+	$("#vvAuthTokenHelpDialog").dialog('option', 'position', {
+		my: "left top",
+		at: "right bottom",
+		of: helpBtn
+	});
+	$("#vvAuthTokenHelpDialog").dialog("open");
+});
+
 $(document).ready(function() {
 	//Remember image popout status 
 	var imgTd = getCookie("symbimgtd");

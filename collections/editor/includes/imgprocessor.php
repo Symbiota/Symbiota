@@ -20,16 +20,6 @@ Language::load('collections/editor/includes/imgprocessor');
 			autoOpen: false,
 			position: { my: "left top", at: "right bottom", of: window }
 		});
-
-		$(document).on('click', '.vvAuthTokenHelpBtn', function(e) {
-			e.preventDefault();
-			$( "#vvAuthTokenHelpDialog" ).dialog('option', 'position', {
-				my: "left top",
-				at: "right bottom",
-				of: this
-			});
-			$( "#vvAuthTokenHelpDialog" ).dialog( "open" );
-		});
 	});
 
 	function floatImgPanel(){
