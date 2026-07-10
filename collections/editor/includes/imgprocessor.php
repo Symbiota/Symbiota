@@ -180,7 +180,7 @@ Language::load('collections/editor/includes/imgprocessor');
 							<legend>VoucherVision OCR</legend>
 							<input type="hidden" id="vv-shared-key-enabled" value="<?php echo ($vvSharedKeyAvailable?1:0); ?>" />
 							<input type="checkbox" id="ocrOnly" value="1" /> <?php echo $LANG['VV_OCR_ONLY']; ?><br/>
-							<input type="checkbox" id="vv-debug" value="1" /> Debug Mode<br/>
+							<!-- <input type="checkbox" id="vv-debug" value="1" /> Debug Mode<br/> -->
 							<div style="font-weight: bold; position: relative; left: -6px; margin: 5px 0px;">
 								<?php echo $LANG['VV_AUTH_TOKEN']; ?>
 								<a class="vvAuthTokenHelpBtn" href="#" style="cursor: pointer; margin-left: 5px;" aria-label="Authorization token help">
@@ -188,10 +188,12 @@ Language::load('collections/editor/includes/imgprocessor');
 								</a>
 							</div>
 							<input id="vv-auth-token" type="password" value="" autocomplete="off" style="width: 97%;" />
-							<div style="font-weight: bold; position: relative; left: -6px; margin: 5px 0px;"><?php echo $LANG['VV_GEMINI_API_KEY']; ?></div>
-							<input id="vv-gemini-api-key" type="password" value="" autocomplete="off" style="width: 97%;" />
-							<div style="font-size: 0.9em; margin: 3px 0px 8px; color: var(--danger-color);">
-								<?php echo $LANG['VV_GEMINI_API_KEY_HINT']; ?>
+							<div id="gemini-api-key-container" style="display:<?php echo (($HAS_GEMINI_CURL_BEEN_FIXED ?? false) ?'block':'none'); ?>;">
+								<div style="font-weight: bold; position: relative; left: -6px; margin: 5px 0px;"><?php echo $LANG['VV_GEMINI_API_KEY']; ?></div>
+								<input id="vv-gemini-api-key" type="password" value="" autocomplete="off" style="width: 97%;" />
+								<div style="font-size: 0.9em; margin: 3px 0px 8px; color: var(--danger-color);">
+									<?php echo $LANG['VV_GEMINI_API_KEY_HINT']; ?>
+								</div>
 							</div>
 							<div style="font-weight: bold; position: relative; left: -6px; margin: 5px 0px;"> <?php echo $LANG['VV_OCR_ENGINES']; ?></div>
 							<select id="engines" size=2 multiple>

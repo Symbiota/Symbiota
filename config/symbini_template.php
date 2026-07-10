@@ -52,6 +52,7 @@ $NLP_SALIX_ACTIVATED = 0;
 // Vouchervision OCR/Transcription
 $VOUCHERVISION_API_KEY = ''; // Optional shared API key for VoucherVisionGO. Leave empty to require user-provided auth token.
 $VOUCHERVISION_API_URL = 'https://vouchervision-go-738307415303.us-central1.run.app/'; // URL to the Vouchervision API server (note that this should be populated even if Symbiota is not using its own VV server). The current value points to the public VoucherVisionGO deployment hosted by the University of Michigan.
+$HAS_GEMINI_CURL_BEEN_FIXED = false; // Set to true if the VoucherVisionGO server has been updated to use the Gemini API for authentication. See github issue: https://github.com/Gene-Weaver/VoucherVisionGO-client/issues/3
 
 //Module activations
 $OCCURRENCE_MOD_IS_ACTIVE = 1;
