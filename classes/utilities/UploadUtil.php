@@ -1,4 +1,4 @@
-<?php
+<?php global $SERVER_ROOT;
 include_once($SERVER_ROOT . "/classes/Media.php");
 include_once($SERVER_ROOT . "/classes/MediaException.php");
 
@@ -23,7 +23,10 @@ class UploadUtil {
 		'audio/mpeg', 'audio/wav', 'audio/ogg'
 	];
 
-	const ALLOWED_ZIP_MIMES = [
+	// Often a CSV or Zipped CSV(s)
+	// Used:
+	// - Taxonomy Upload
+	const ALLOWED_BATCH_PROCESSING_MIMES = [
 		'application/x-zip',
 		'application/zip',
 		'application/x-zip-compressed',
@@ -64,6 +67,20 @@ class UploadUtil {
 		]
 	];
 
+	const CAN_BE_EXT_LOOKUP = [
+		'jpg' => [
+			'jpeg',
+			'pjpeg',
+		],
+	];
+
+	/**
+	 * If you need to add an entry here check if there already is a mime type. If
+	 * there is add it as a synonym in CAN_BE_EXT_LOOKUP so it used in equality
+	 * checks and ext to mime type resolutions.
+	 *
+	 * @var array<string, string> $MIME_MAP Map of mime types to possible extensions
+	 **/
 	const MIME_MAP = [
 		'video/3gpp2' => '3g2',
 		'video/3gp'=> '3gp',
@@ -307,7 +324,7 @@ class UploadUtil {
 
 		if(!$extension) {
 			throw new MediaException(MediaException::FileExtensionIsRequired);
-		} else if(!UploadUtil::ext2Mime($extension)) {
+		} else if(!self::ext2Mime($extension)) {
 			throw new MediaException(MediaException::FileExtensionNotSupported, ' ' . $extension);
 		}
 
@@ -614,8 +631,21 @@ class UploadUtil {
 		$extensionA = strtolower($extensionA);
 		$extensionB = strtolower($extensionB);
 
-		return $extensionA === $extensionB ||
-			self::ext2Mime($extensionA) === self::ext2Mime($extensionB);
+		if($extensionA === $extensionB) {
+			return true;
+
+		} else if(array_key_exists($extensionA, self::CAN_BE_EXT_LOOKUP)) {
+			return in_array($extensionB, self::CAN_BE_EXT_LOOKUP[$extensionA]);
+
+		} else if(array_key_exists($extensionB, self::CAN_BE_EXT_LOOKUP)) {
+			return in_array($extensionA, self::CAN_BE_EXT_LOOKUP[$extensionB]);
+
+		} else if(self::ext2Mime($extensionA) === self::ext2Mime($extensionB)) {
+			return true;
+
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -668,12 +698,14 @@ class UploadUtil {
 		$type = strtolower($type);
 
 		foreach(self::MIME_MAP as $mime => $ext) {
-			$mime_type = strtolower(explode('/', $ext)[0]);
+			$mime_type = strtolower(explode('/', $mime)[0]);
 			if($type && $mime_type !== $type) {
 				continue;
 			}
 
 			if($ext === $ext_target) {
+				return $mime;
+			} else if (array_key_exists($ext, self::CAN_BE_EXT_LOOKUP) && in_array($ext_target, self::CAN_BE_EXT_LOOKUP[$ext])) {
 				return $mime;
 			}
 		}
