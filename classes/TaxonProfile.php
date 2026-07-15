@@ -840,7 +840,7 @@ class TaxonProfile extends Manager {
 			$sql2 = 'SELECT e.tid, t.tid AS parenttid, t.sciname, t.rankid, ts.parenttid AS directparenttid '.
 				'FROM taxa t INNER JOIN taxaenumtree e ON t.tid = e.parenttid '.
 				'INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-				'WHERE (e.taxauthid = '.$this->taxAuthId.') AND (ts.taxauthid = '.$this->taxAuthId.') AND (e.tid IN('.implode(array_keys($retArr),',').'))';
+				'WHERE (e.taxauthid = '.$this->taxAuthId.') AND (ts.taxauthid = '.$this->taxAuthId.') AND (e.tid IN('.implode(',', array_keys($retArr)).'))';
 			$rs2 = $this->conn->query($sql2);
 			while($r2 = $rs2->fetch_object()){
 				$retArr[$tid]['parent'][$parentTid] = array('sciname' => $r2->sciname, 'rankid' => $r2->rankid, 'directparenttid' => $r2->directparenttid);
