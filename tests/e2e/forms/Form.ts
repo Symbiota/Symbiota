@@ -27,10 +27,11 @@ export class Form {
     } else {
       if (this.fields[fieldName] == InputTypes.Select) {
         return this.form.locator("select[name=" + fieldName + "]");
-      } else if (this.fields[fieldName] == InputTypes.Area) {
-        return this.form.locator("textarea[name=" + fieldName + "]");
       } else {
-        return this.form.locator("input[name=" + fieldName + "]");
+        const area = this.form.locator("textarea[name=" + fieldName + "]")
+        const input = this.form.locator("input[name=" + fieldName + "]")
+
+        return input.or(area).nth(0);
       }
     }
   }

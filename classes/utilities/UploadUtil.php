@@ -236,6 +236,7 @@ class UploadUtil {
 		'audio/x-wav' => 'wav',
 		'audio/wave' => 'wav',
 		'audio/wav' => 'wav',
+		'audio/vnd.wave' => 'wav',
 		'application/wbxml' => 'wbxml',
 		'video/webm' => 'webm',
 		'image/webp' => 'webp',

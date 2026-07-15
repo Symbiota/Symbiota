@@ -61,8 +61,24 @@ test('Delete Determination', async({ detId, editDet, page }) => {
 });
 
 /* MEDIA */
-test('Add Media (File)', async({ newMedia }) => {
-	await newMedia.mediaForm.setFile('imgfile', path.join(__dirname, '../../images/world.png'));
+const addMediaTests = {
+	'Jpg': '../files/image.jpg',
+	'Jpeg': '../files/image.jpeg',
+	'Png': '../files/image.png',
+	'Bmp': '../files/image.bmp',
+	'Uppercase Ext': '../files/uppercase_image.JPG',
+	'Mp3': '../files/audio.mp3',
+	'Wav': '../files/audio.wav',
+	'Ogg': '../files/audio.ogg',
+	'Pdf': '../files/text.pdf',
+}
+
+test.describe('Upload Media', () => {
+	for(let testName in addMediaTests) {
+		test(testName, async({ newMedia }) => {
+			await newMedia.mediaForm.setFile('imgfile', path.join(__dirname, addMediaTests[testName]));
+		});
+	}
 });
 
 const editMediaTests  = {
@@ -172,4 +188,53 @@ test('Create Skeletal', async ({ occurrenceSkeletalNew, collId }) => {
 	await occurrenceSkeletalNew.occurForm.setMany({
 		catalognumber: collId + '00003',
 	})
+})
+
+test('Observation Image Submit (File)', async ({ page, collId }) => {
+	const inputs = {
+		sciname: 'genus species',
+		eventdate: '2025-05-27',
+		country: 'United States',
+		stateprovince: 'Kansas',
+		decimallatitude: '38.95911',
+		decimallongitude: '-95.24571',
+		locality: 'park'
+	};
+
+	const check = {
+		sciname: 'genus species',
+		eventdate: '2025-05-27',
+		country: 'United States',
+		stateprovince: 'Kansas',
+		decimallatitude: '38.95911',
+		decimallongitude: '-95.24571',
+		locality: 'park'
+	}
+
+	let occurrenceEditor = OccurrenceEditorPage.make(page);
+	await occurrenceEditor.gotoObservationImageSubmit(collId);
+	
+	occurrenceEditor.occurForm.setScope('#obsform');
+	await occurrenceEditor.occurForm.setMany(inputs)
+	await occurrenceEditor.occurForm.setFile('imgfile1', path.join(__dirname, '../../images/world.png'));
+	await occurrenceEditor.occurForm.submitObservationImage();
+
+	const occId = await occurrenceEditor.getObservationImageOccid();	
+	await occurrenceEditor.gotoRecord(collId, occId)
+
+	occurrenceEditor.occurForm.setScope('body');
+	await occurrenceEditor.occurForm.checkMany(inputs)
+
+	occurrenceEditor.mediaForm.setScope('[id^=img][id*=editdiv]');
+	await occurrenceEditor.gotoTab(OccurrenceEditorTab.Media)
+	await occurrenceEditor.mediaForm.openEditForm();
+	await occurrenceEditor.mediaForm.checkMany({
+		originalUrl: /.*world\.png/,
+		url: /.*world_lg\.png/,
+		thumbnailUrl: /.*world_tn\.png/
+	});
+
+	page.on('dialog', dialog => dialog.accept());
+	await occurrenceEditor.mediaForm.set('removeimg', true);
+	await occurrenceEditor.mediaForm.submitDelete();
 })
