@@ -1,8 +1,9 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherReport.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/vaconflicts.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/checklists/vaconflicts.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT.'/content/lang/checklists/vaconflicts.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('checklists/vaconflicts');
 
 $clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $pid = array_key_exists('pid', $_REQUEST) ? filter_var($_REQUEST['pid'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -57,7 +58,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 					<th><input type="checkbox" onclick="selectAll(this)" /></th>
 					<th><b><?php echo $LANG['CHECK_ID']; ?></b></th>
 					<th><b><?php echo $LANG['VOUCHER_SPEC']; ?></b></th>
-					<th><b><?php echo $LANG['CORRECTED_ID']; ?></b></th>
+					<th><b><?php echo $LANG['SPECIMEN_ID']; ?></b></th>
 					<th><b><?php echo $LANG['IDED_BY']; ?></b></th>
 				</tr>
 				<?php
@@ -101,8 +102,8 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 				<input name="tabindex" type="hidden" value="2" />
 				<input name="submitaction" type="hidden" value="resolveconflicts" />
 				<b><?php echo $LANG['BATCH_ACTION']; ?>:</b>
-				<button name="submitbutton" type="button" value="Link Vouchers to Corrected Identification" onclick="return validateBatchConflictForm(this.form)"><?php echo $LANG['LINK_VOUCHERS']; ?></button><br/>
-				<div>* <?php echo $LANG['CORRECTED_WILL_ADD']; ?></div>
+				<button name="submitbutton" type="button" value="transferVouchers" onclick="return validateBatchConflictForm(this.form)"><?php echo $LANG['TRANSFER_VOUCHERS']; ?></button><br/>
+				<div>* <?php echo $LANG['SPECIMEN_ID_WILL_ADD']; ?></div>
 			</div>
 		</form>
 		<?php

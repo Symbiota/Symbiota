@@ -2,9 +2,10 @@
 include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceEditorResource.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceDuplicate.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-if($LANG_TAG != 'en' && !file_exists($SERVER_ROOT.'/content/lang/collections/editor/includes/resourcetab.' . $LANG_TAG . '.php')) $LANG_TAG = 'en';
-include_once($SERVER_ROOT.'/content/lang/collections/editor/includes/resourcetab.' . $LANG_TAG . '.php');
+Language::load('collections/editor/includes/resourcetab');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $occid = filter_var($_GET['occid'] ?? 0, FILTER_SANITIZE_NUMBER_INT);
@@ -25,6 +26,7 @@ $genticArr = $occManager->getGeneticArr();
 $dupManager = new OccurrenceDuplicate();
 $dupClusterArr = $dupManager->getClusterArr($occid);
 ?>
+<div id="occResourceDiv">
 <script>
 	let defaultRelationships = ["<?= implode('","', $defaultRelationshipArr) ?>"];
 	let resourceRelationships = ["<?= implode('","', $resourceRelationshipArr) ?>"];
@@ -211,6 +213,13 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 			f.submit();
 		}
 	}
+
+	function checkDeleteAssociation(f){
+		if(confirm("<?php echo $LANG['DELETE_ASSOC']; ?>")){
+			f.submit();
+		}
+	}
+
 </script>
 <style type="text/css">
 	.resourceTab fieldset{ clear:both; margin:10px; padding:10px; }
@@ -225,10 +234,10 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 	.resourceTab #subType-div select{ min-width: 130px; }
 	.resourceTab #taxonomy-fieldset{ display: none; }
 </style>
-<div id="voucherdiv" style="width:795px;">
+<div id="voucherdiv">
 	<?php
 	$assocArr = $occManager->getOccurrenceRelationships();
-	$basisOfRecordArr = array('HumanObservation' => $LANG['HUMAN_OBS'], 'LivingSpecimen' => $LANG['LIVING_SPEC'], 'MachineObservation' => $LANG['MACHINE_OBS'],
+	$basisOfRecordArr = array('HumanObservation' => $LANG['HUMAN_OBS'], 'LivingSpecimen' => $LANG['LIVING_SPEC'], 'MachineObservation' => $LANG['MACHINE_OBS'], 'FossilSpecimen' => $LANG['FOSSIL_SPEC'],
 		'MaterialSample' => $LANG['MAT_SAMPLE'], 'PreservedSpecimen' => $LANG['PRES_SAMPLE'], 'ReferenceCitation' => $LANG['REF_CITATION']);
 	?>
 	<fieldset class="resourceTab">
@@ -381,11 +390,12 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 						<div><label><?= $LANG['ASSOCIATION_TYPE'] ?>:</label>
 							<?= $assocUnit['associationType'] ?>
 							<form action="resourcehandler.php" method="post" style="display:inline; margin: 0px; padding: 0px">
+								<input name="submitaction" type="hidden" value="submitDeleteAssociation">
+								<input class="icon-img" type="image" src="../../images/del.png" style="margin: 0px" onclick="checkDeleteAssociation(this.form); return false;">
 								<input name="occid" type="hidden" value="<?php echo $occid; ?>">
 								<input name="collid" type="hidden" value="<?php echo $collid; ?>">
 								<input name="occindex" type="hidden" value="<?php echo $occIndex; ?>">
 								<input name="delassocid" type="hidden" value="<?php echo $assocID; ?>">
-								<input class="icon-img" type="image" src="../../images/del.png" style="margin: 0px">
 							</form>
 							<a href="#" onclick="toggle('edit-assoc-div-<?= $assocID ?>')"><img class="icon-img" src="../../images/edit.png"></a>
 						</div>
@@ -578,7 +588,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 	<fieldset>
 		<legend><?php echo $LANG['SPEC_DUPES']; ?></legend>
 		<div style="float:right;margin-right:15px;">
-			<button class="button" onclick="openDupeWindow();return false;"><?php echo $LANG['SEARCH_RECS']; ?></button>
+			<button class="button" onclick="openDupeWindow();return false;" aria-label="<?=$LANG['SEARCH_RECS'] . $LANG['OPENS_NEW_TAB']?>"><?php echo $LANG['SEARCH_RECS']; ?></button>
 		</div>
 		<div style="clear:both;">
 			<form id="dupeRefreshForm" name="dupeRefreshForm" method="post" target="occurrenceeditor.php">
@@ -612,7 +622,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 								echo '<div style="float:left;margin:5px 15px">';
 								if($dArr['recordedby']) echo '<div>'.$dArr['recordedby'].' '.$dArr['recordnumber'].'<span style="margin-left:40px;">'.$dArr['eventdate'].'</span></div>';
 								if($dArr['catnum']) echo '<div><b>'.$LANG['CAT_NUM'].':</b> '.$dArr['catnum'].'</div>';
-								if($dArr['occurrenceid']) echo '<div><b>'.$LANG['GUID'].':</b> '.$dArr['occurrenceid'].'</div>';
+								if($dArr['occurrenceid']) echo '<div><b>'.$LANG['OCCURRENCE_ID'].':</b> '.$dArr['occurrenceid'].'</div>';
 								if($dArr['sciname']) echo '<div><b>'.$LANG['LATEST_ID'].':</b> '.$dArr['sciname'].'</div>';
 								if($dArr['identifiedby']) echo '<div><b>'.$LANG['IDED_BY'].':</b> '.$dArr['identifiedby'].'<span stlye="margin-left:30px;">'.$dArr['dateidentified'].'</span></div>';
 								if($dArr['notes']) echo '<div>'.$dArr['notes'].'</div>';
@@ -705,7 +715,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 					<div style="margin-left:15px;"><b><?php echo $LANG['IDENTIFIER']; ?>:</b> <?php echo $gArr['id']; ?></div>
 					<div style="margin-left:15px;"><b><?php echo $LANG['LOCUS']; ?>:</b> <?php echo $gArr['locus']; ?></div>
 					<div style="margin-left:15px;">
-						<b><?php echo $LANG['URL']; ?>:</b> <a href="<?php echo htmlspecialchars($gArr['resourceurl'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank"><?php echo htmlspecialchars($gArr['resourceurl'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
+						<b><?php echo $LANG['URL']; ?>:</b> <a href="<?php echo htmlspecialchars($gArr['resourceurl'] ?? '', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank"><?php echo htmlspecialchars($gArr['resourceurl'] ?? '', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
 					</div>
 					<div style="margin-left:15px;"><b><?php echo $LANG['NOTES']; ?>:</b> <?php echo $gArr['notes']; ?></div>
 				</div>
@@ -762,4 +772,5 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 			?>
 		</div>
 	</fieldset>
+</div>
 </div>

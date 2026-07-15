@@ -67,6 +67,7 @@ $LANG['FAMILIES'] = 'Familias';
 $LANG['GENERA'] = 'Géneros';
 $LANG['SPECIES'] = 'Especies';
 $LANG['TOTAL_TAXA'] = 'Total de Taxa';
+$LANG['VOUCHER_COUNT'] = 'Vouchers Vinculados';
 $LANG['DETAILS'] = 'detalles';
 $LANG['IMAGE'] = 'Imágen';
 $LANG['NOTY'] = 'aún no';

@@ -1,9 +1,9 @@
 <?php
 include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceDuplicate.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/rpc/editor_rpc.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/editor/rpc/editor_rpc.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/editor/rpc/editor_rpc.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
+Language::load('collections/editor/rpc/editor_rpc');
 
 $recordedBy = array_key_exists('recordedby',$_REQUEST)?trim(urldecode($_REQUEST['recordedby'])):'';
 $recordNumber = array_key_exists('recordnumber',$_REQUEST)?trim($_REQUEST['recordnumber']):'';
@@ -86,9 +86,10 @@ $dupArr = $dupeManager->getDupeList($recordedBy, $recordNumber, $eventDate, $cat
 					?>
 					<div style="margin:30px 10px">
 						<div>
-							<?php 
-							echo $occArr['collname'];
-							?>
+							<b><?php echo $occArr['sciname'];?></b>
+						</div>
+						<div>
+							<?php echo $occArr['collname'];?>
 						</div>
 						<div>
 							<?php 

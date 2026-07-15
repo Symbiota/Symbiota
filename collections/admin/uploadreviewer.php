@@ -1,8 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecUpload.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/admin/uploadreviewer.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/admin/uploadreviewer.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/admin/uploadreviewer.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/admin/uploadreviewer');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
@@ -81,12 +83,13 @@ if($SYMB_UID){
 			//Setup header map
 			$recArr = $uploadManager->getPendingImportData(($recLimit*$pageIndex),$recLimit,$searchVar);
 			if($recArr){
+				$excludeKeys = ['paleo_eon', 'paleo_era', 'paleo_period', 'paleo_epoch', 'paleo_stage'];
 				//Check to see which headers have values
 				$headerArr = array();
 				$matSampleHeaderArr = array();
 				foreach($recArr as $occurArr){
 					foreach($occurArr as $k => $v){
-						if($v && trim($v) && !array_key_exists($k,$headerArr)){
+						if($v && trim($v) && !array_key_exists($k,$headerArr) && !in_array($k, $excludeKeys)){
 							if($k == 'materialsamplejson'){
 								if($matSampleObj = json_decode($v)){
 									foreach($matSampleObj as $matKey => $matValue){
@@ -94,6 +97,8 @@ if($SYMB_UID){
 									}
 								}
 							}
+							elseif (strpos($k, 'paleo_') === 0)
+								$headerArr[$k] = substr($k, 6);
 							else $headerArr[$k] = $k;
 						}
 					}
@@ -103,7 +108,7 @@ if($SYMB_UID){
 					$headerArr[$matFieldName] = $matFieldName;
 				}
 				$translationMap = array('catalognumber' => 'catalogNumber','occurrenceid' => 'occurrenceID','othercatalognumbers' => 'otherCatalogNumbers',
-					'identificationqualifier' => 'identificationQualifier','sciname' => 'scientificName','scientificnameauthorship'=>'scientificNameAuthorship',
+					'identificationqualifier' => 'identificationQualifier','scientificname' => 'scientificName-input','sciname' => 'scientificName','scientificnameauthorship'=>'scientificNameAuthorship',
 					'recordedby' => 'recordedBy (collector)','recordnumber' => 'Number','associatedcollectors' => 'associatedCollectors','eventdate' => 'eventDate',
 					'verbatimeventdate' => 'verbatimEventDate','identificationremarks' => 'identificationRemarks','taxonremarks' => 'taxonRemarks','identifiedby' => 'identifiedBy',
 					'dateidentified' => 'dateIdentified','identificationreferences' => 'identificationReferences','stateprovince' => 'stateProvince',

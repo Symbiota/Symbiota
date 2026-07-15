@@ -245,6 +245,10 @@ span[class="link"]:hover {
   max-width: 100%;
 }
 
+#service-container, #all_collections_parent_container {
+  display: none;
+}
+
 #tabs {
   font-family: var(--body-font-family);
   font-size: var(--body-font-size);
@@ -332,6 +336,11 @@ fieldset {
   border-style: groove;
   border-color: rgb(192, 192, 192);
   border-image: initial;
+}
+
+form label:has(+ input[required]):after {
+  color: red;
+  content: '*';
 }
 
 /* Base Button Button CSS
@@ -484,7 +493,7 @@ button.inverse-color {
   float: left;
   text-align: center;
   width: 165px;
-  height: 230px;
+  min-height: 230px;
   page-break-before: auto;
   page-break-inside: avoid;
 }

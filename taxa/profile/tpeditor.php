@@ -7,15 +7,19 @@ include_once($SERVER_ROOT.'/classes/TPEditorManager.php');
 include_once($SERVER_ROOT.'/classes/TPDescEditorManager.php');
 include_once($SERVER_ROOT.'/classes/TPImageEditorManager.php');
 include_once($SERVER_ROOT.'/classes/Media.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.' . $LANG_TAG . '.php'))
-include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT.'/content/lang/taxa/profile/tpeditor.en.php');
+include_once($SERVER_ROOT.'/classes/Paginator.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('taxa/profile/tpeditor');
+
 header('Content-Type: text/html; charset='.$CHARSET);
 
 $tid = array_key_exists('tid', $_REQUEST) ? filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $taxon = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']:'';
 $tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
+$mediaPage = Paginator::getPageRequestVar('mediaPage');
+$mediaSortPage = Paginator::getPageRequestVar('mediaSortPage');
 
 $tEditor = null;
 if($tabIndex == 1 || $tabIndex == 2){
@@ -46,6 +50,8 @@ $isEditor = false;
 if($IS_ADMIN || array_key_exists("TaxonProfile",$USER_RIGHTS)) $isEditor = true;
 
 if($isEditor && $action){
+	/*
+	 * Pending deprecation of allowing Taxon Profile Editors to adjust display order of synonyms
 	if($action == 'editSynonymSort'){
 		$synSortArr = Array();
 		foreach($_REQUEST as $sortKey => $sortValue){
@@ -55,7 +61,8 @@ if($isEditor && $action){
 		}
 		$statusStr = $tEditor->editSynonymSort($synSortArr);
 	}
-	elseif($action == "Submit Common Name Edits"){
+	*/
+	if($action == "Submit Common Name Edits"){
 		if(!$tEditor->editVernacular($_POST)) $statusStr = $tEditor->getErrorMessage();
 	}
 	elseif($action == "Add Common Name"){
@@ -131,9 +138,8 @@ if($isEditor && $action){
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
-	$filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
+	include_once($SERVER_ROOT.'/includes/javascript_lang_tags.php');
 	?>
-	<script src="<?php echo $filename ?>" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/symb/shared.js"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
@@ -163,11 +169,6 @@ if($isEditor && $action){
 				alert("<?php echo $LANG['IMG_TOO_LARGE']; ?>");
 				return false;
 			}
-		}
-
-		function openOccurrenceSearch(target) {
-			occWindow=open("../../collections/misc/occurrencesearch.php?targetid="+target,"occsearch","resizable=1,scrollbars=1,width=700,height=500,left=20,top=20");
-			if (occWindow.opener == null) occWindow.opener = self;
 		}
 	</script>
 	<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
@@ -219,11 +220,11 @@ if($isEditor && $action){
 				?>
 				<div id="tabs" style="margin:10px;">
 					<ul>
-						<li><a href="#commontab"><span><?= $LANG['SYN_VERNAC'] ?></span></a></li>
-						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() ?>"><span><?= $LANG['IMAGES'] ?></span></a></li>
-						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&cat=imagequicksort' ?>"><span><?= $LANG['IMAGE_SORT'] ?></span></a></li>
-						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&cat=imageadd' ?>"><span><?= $LANG['ADD_IMAGE'] ?></span></a></li>
-						<li><a href="tpdesceditor.php?tid=<?= $tEditor->getTid() . '&action=' . htmlspecialchars($action, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>"><span><?= $LANG['DESCRIPTIONS'] ?></span></a></li>
+						<li><a href="#commontab"><span><?= $LANG['VERNAC_COMMON'] ?></span></a></li>
+					<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&mediaPage=' . $mediaPage . '&mediaSortPage=' . $mediaSortPage?>"><span><?= $LANG['IMAGES'] ?></span></a></li>
+						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&cat=imagequicksort&mediaSortPage=' . $mediaSortPage . '&mediaPage=' . $mediaPage ?> "><span><?= $LANG['IMAGE_SORT'] ?></span></a></li>
+						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&cat=imageadd' . '&mediaSortPage=' . $mediaSortPage . '&mediaPage=' . $mediaPage ?>"><span><?= $LANG['ADD_IMAGE'] ?></span></a></li>
+						<li><a href="tpdesceditor.php?tid=<?= $tEditor->getTid() . '&action=' . htmlspecialchars($action, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&mediaSortPage=' . $mediaSortPage . '&mediaPage=' . $mediaPage?>"><span><?= $LANG['DESCRIPTIONS'] ?></span></a></li>
 					</ul>
 					<div id="commontab">
 						<?php
@@ -357,22 +358,23 @@ if($isEditor && $action){
 							}
 							?>
 						</div>
+						<!-- Deprecation of Taxon Profile Editors ability to adjust display order of synonyms pending user input
 						<hr/>
 						<fieldset style="width:650px;margin:5px 0px 0px 15px;">
-							<legend><b><?php echo $LANG['SYNONYMS']; ?></b></legend>
+							<legend><b><?php //echo $LANG['SYNONYMS']; ?></b></legend>
 							<?php
 							//Display Synonyms
-							if($synonymArr = $tEditor->getSynonym()){
+							//if($synonymArr = $tEditor->getSynonym()){
 								?>
-								<div style="float:right;" title="<?php echo $LANG['EDIT_SYN_ORDER']; ?>">
+								<div style="float:right;" title="<?php //echo $LANG['EDIT_SYN_ORDER']; ?>">
 									<a href="#"  onclick="toggle('synsort');return false;"><img class="icon-img" src="../../images/edit.png"/></a>
 								</div>
 								<div style="font-weight:bold;margin-left:15px;">
 									<ul>
 										<?php
-										foreach($synonymArr as $tidKey => $valueArr){
-											 echo '<li>' . $valueArr["sciname"] . '</li>';
-										}
+										// foreach($synonymArr as $tidKey => $valueArr){
+										// 	 //echo '<li>' . $valueArr["sciname"] . '</li>';
+										// }
 										?>
 									</ul>
 								</div>
@@ -380,37 +382,38 @@ if($isEditor && $action){
 									<form name="synsortform" action="tpeditor.php" method="post">
 										<input type="hidden" name="tid" value="<?php echo $tEditor->getTid(); ?>" />
 										<fieldset style='margin:5px 0px 5px 5px;margin-left:20px;width:350px;'>
-										<legend><b><?php echo $LANG['SYN_SORT_ORDER']; ?></b></legend>
+										<legend><b><?php //echo $LANG['SYN_SORT_ORDER']; ?></b></legend>
 										<?php
-										foreach($synonymArr as $tidKey => $valueArr){
+										// foreach($synonymArr as $tidKey => $valueArr){
 											?>
 												<div>
-													<b><?php echo $valueArr["sortsequence"]; ?></b> -
-													<?php echo $valueArr["sciname"]; ?>
+													<b><?php //echo $valueArr["sortsequence"]; ?></b> -
+													<?php //echo $valueArr["sciname"]; ?>
 												</div>
 												<div style="margin:0px 0px 5px 10px;">
 													new sort value:
-													<input type="text" name="syn-<?php echo $tidKey; ?>" style="width:35px;border:inset;" />
+													<input type="text" name="syn-<?php //echo $tidKey; ?>" style="width:35px;border:inset;" />
 												</div>
 												<?php
-											}
+											//}
 											?>
 											<div>
-												<button type="submit" name="action" value="editSynonymSort"><?php echo $LANG['EDIT_SYN_ORDER']; ?></button>
+												<button type="submit" name="action" value="editSynonymSort"><?php //echo $LANG['EDIT_SYN_ORDER']; ?></button>
 											</div>
 										</fieldset>
 									</form>
 								</div>
 								<?php
-							}
-							else{
-								echo '<div style="margin:20px 0px"><b>' . $LANG['NO_SYN_LINK'] . '</b></div>';
-							}
+							// }
+							// else{
+								//echo '<div style="margin:20px 0px"><b>' . $LANG['NO_SYN_LINK'] . '</b></div>';
+							// }
 							?>
 							<div style="margin:10px;">
-								*<?php echo $LANG['MOST_SYN_IN_TAX_THES'] . ' <a href="../../sitemap.php">' . $LANG['SITEMAP'] . '</a>).'; ?>
+								*<?php //echo $LANG['MOST_SYN_IN_TAX_THES'] . ' <a href="../../sitemap.php">' . $LANG['SITEMAP'] . '</a>).'; ?>
 							</div>
 						</fieldset>
+						-->
 					</div>
 				</div>
 				<?php

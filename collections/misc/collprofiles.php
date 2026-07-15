@@ -1,10 +1,11 @@
 <?php
 include_once('../../config/symbini.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/collections/misc/collprofiles.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/misc/collprofiles.en.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCollectionProfile.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load(['collections/misc/collprofiles', 'sitemap']);
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 unset($_SESSION['editorquery']);
@@ -45,6 +46,8 @@ if ($SYMB_UID) {
 	?>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=3" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/collections.list.js?ver=2" type="text/javascript"></script>
 	<script>
 
 		function toggleById(target) {
@@ -102,6 +105,54 @@ if ($SYMB_UID) {
 			e.preventDefault();
 			return false;
 		}
+
+		function showItemsList(className) {
+  			const elements = document.getElementsByClassName(className);
+  			for (let i = 0; i < elements.length; i++) {
+				elements[i].style.display = 'list-item';
+			}
+		}
+
+		document.addEventListener('DOMContentLoaded', () => {
+			document.querySelectorAll('.accordion-header').forEach(accordionHeader => {
+				accordionHeader.addEventListener('keydown', (e) => {
+					if (e.key === 'Enter' || e.key === ' ') {
+						if (e.key === ' ') {
+							e.preventDefault();
+						}
+						const selector = accordionHeader.previousElementSibling;
+						selector.checked = !selector.checked;
+					}
+				});
+			});
+		});
+
+		<?php
+		if($datasetKey){
+			?>
+			async function loadGbifCount() {
+				const url = 'https://api.gbif.org/v1/literature/search?gbifDatasetKey=<?= $datasetKey ?>&limit=0';
+
+				try {
+					const response = await fetch(url);
+
+					if (!response.ok) {
+						throw new Error(`HTTP error: ${response.status}`);
+					}
+
+					const data = await response.json();
+
+					document.getElementById('gbif-count').textContent = data.count.toLocaleString();
+				} catch (error) {
+					console.error('Error retrieving GBIF count:', error);
+				}
+			}
+
+			// Run when the page loads
+			document.addEventListener('DOMContentLoaded', loadGbifCount);
+			<?php
+		}
+		?>
 	</script>
 	<style>
 		.importItem { margin-left:10px; display:none; }
@@ -132,6 +183,14 @@ if ($SYMB_UID) {
 			margin-left: 3rem;
 		}
 
+		.seemore-icon {
+			width: 13px;
+			height: 13px;
+		}
+		.link-icon {
+			text-decoration: none;
+		}
+
 		#quicksearch-box input {
 			width: 100%;
 		}
@@ -147,6 +206,38 @@ if ($SYMB_UID) {
 			width: 100vw;
 			margin-left: calc(50% - 50vw);
 			z-index: 1;
+		}
+
+		#gbif-citations{
+			display:inline-flex;
+			height:24px;
+			font-family:Verdana,Geneva,sans-serif;
+			font-size:13px;
+			color:#fff;
+			line-height:24px;
+			border-radius:4px;
+			overflow:hidden;
+			box-shadow: inset 0 -1px 0 rgba(0,0,0,.1);
+		}
+		#gbif-citations img{
+			width:24px;
+			height:24px;
+			background:#396e36;
+			display:flex;
+			align-items:center;
+			justify-content:center;
+		}
+		#gbif-count{
+			background:#26a644;
+			padding:0 8px;
+			font-weight:200;
+			text-shadow: 0 1.25px 0 rgb(32, 129, 53);
+		}
+		#gbif-text{
+			background:#5a5a5a;
+			padding:0 8px;
+			font-weight:175;
+			text-shadow: 0 1.25px 0 rgb(66, 66, 66);
 		}
 
 		@media (max-width: 1424px) {
@@ -221,8 +312,8 @@ if ($SYMB_UID) {
 			}
 		}
 	</style>
-	<link href="<?php echo $CLIENT_ROOT ?>/collections/search/css/searchStyles.css?ver=1" type="text/css" rel="stylesheet" />
-	<link href="<?php echo $CLIENT_ROOT ?>/collections/search/css/searchStylesInner.css" type="text/css" rel="stylesheet" />
+	<link href="<?php echo $CLIENT_ROOT ?>/css/searchStyles.css?ver=1" type="text/css" rel="stylesheet" />
+	<link href="<?php echo $CLIENT_ROOT ?>/css/searchStylesInner.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
 	<?php
@@ -234,52 +325,55 @@ if ($SYMB_UID) {
 		<b><?= $LANG['COLL_PROFILE'] ?></b>
 	</div>
 	<div role="main" id="innertext" style="padding-top:0">
+		<div id="all_collections_parent_container" data-config='<?= json_encode([
+		'CURRENT_URL' => $_SERVER['REQUEST_URI'],
+		]) ?>'></div>
 		<?php
 		if ($collid && !$collid == 0){
 			?>
 			<div class="quicksearch-container">
-			<section id="quicksearch-box" class="fieldset-like" >
-				<h3><span><?= $LANG['QUICK_SEARCH'] ?></span></h3>
-				<div id="dialogContainer" style="position: relative;">
-					<form id="quicksearch" name="quicksearch" style="display: flex; align-items:center; gap:0.5rem; flex-wrap: wrap" action="javascript:void(0);" onsubmit="directSubmitAction(event)">
-						<div class="quicksearch-input-container">
+				<section id="quicksearch-box" class="fieldset-like" >
+					<h3><span><?= $LANG['QUICK_SEARCH'] ?></span></h3>
+					<div id="dialogContainer" style="position: relative;">
+						<form id="quicksearch" name="quicksearch" style="display: flex; align-items:center; gap:0.5rem; flex-wrap: wrap" action="javascript:void(0);" onsubmit="directSubmitAction(event)">
+							<div class="quicksearch-input-container">
 								<label style="display:flex; align-items: center; position: relative; margin-right: 1.5rem" for="catalog-number"><?= $LANG['OCCURENCE_IDENTIFIER'] ?>
-						<a href="#" id="q_catalognumberinfo" style="text-decoration:none; position: absolute; right: -1.5rem">
-							<img src="../../images/info.png" style="width:1.3em;" alt="<?= $LANG['MORE_INFO_ALT']; ?>" title="<?= $LANG['MORE_INFO']; ?>" aria-label="<?= $LANG['MORE_INFO']; ?>"/>
-						</a>
+									<a href="#" id="q_catalognumberinfo" style="text-decoration:none; position: absolute; right: -1.5rem">
+										<img src="../../images/info.png" style="width:1.3em;" alt="<?= $LANG['MORE_INFO_ALT']; ?>" title="<?= $LANG['MORE_INFO']; ?>" aria-label="<?= $LANG['MORE_INFO']; ?>"/>
+									</a>
 								</label>
-						<span class="screen-reader-only">
-							<?= $LANG['IDENTIFIER_PLACEHOLDER_LIST'] . ' ' ?>
-						</span>
-						<input style="margin-bottom: 0" name="catalog-number" id="catalog-number" type="text" />
-						<dialog id="dialogEl" aria-live="polite" aria-label="Catalog number search dialog">
-							<?= $LANG['IDENTIFIER_PLACEHOLDER_LIST'] . ' ' ?>
-							<button id="closeDialog" value="search">Close</button>
-						</dialog>
-						</div>
-						<input name="collid" type="hidden" value="<?= $collid; ?>" />
-						<input name="occindex" type="hidden" value="0" />
-						<div class="quicksearch-input-container">
-						<label for="taxon-search"><?= $LANG['TAXON'] ?></label>
-						<input style="margin-bottom: 0" name="taxon-search" id="taxon-search" type="text" />
-						</div>
-						<div id="quicksearch-btn-container" style="display:flex; gap: 0.5rem; flex-grow:1">
-							<?php
-							if($editCode == 1 || $editCode == 2 || $editCode == 3){
-								?>
-								<button type="submit" id="search-by-catalog-number-admin-btn" value="edit">
-									<?= $LANG['OCCURRENCE_EDITOR'] ?>
-								</button>
+								<span class="screen-reader-only">
+									<?= $LANG['IDENTIFIER_PLACEHOLDER_LIST'] . ' ' ?>
+								</span>
+								<input style="margin-bottom: 0" name="catalog-number" id="catalog-number" type="text" />
+								<dialog id="dialogEl" aria-live="polite" aria-label="Catalog number search dialog">
+									<?= $LANG['IDENTIFIER_PLACEHOLDER_LIST'] . ' ' ?>
+									<button id="closeDialog" value="search">Close</button>
+								</dialog>
+							</div>
+							<input name="collid" type="hidden" value="<?= $collid; ?>" />
+							<input name="occindex" type="hidden" value="0" />
+							<div class="quicksearch-input-container">
+								<label for="taxon-search"><?= $LANG['TAXON'] ?></label>
+								<input style="margin-bottom: 0" name="taxon-search" id="taxon-search" type="text" />
+							</div>
+							<div id="quicksearch-btn-container" style="display:flex; gap: 0.5rem; flex-grow:1">
 								<?php
-							}
-							?>
-							<button type="submit" value='search' id="search-by-catalog-number-btn" title="<?= $LANG['IDENTIFIER_PLACEHOLDER_LIST'] ?>">
-								<?= $LANG['SEARCH'] ?>
-							</button>
-						</div>
-					</form>
-				</div>
-			</section>
+								if($editCode == 1 || $editCode == 2 || $editCode == 3){
+									?>
+									<button type="submit" id="search-by-catalog-number-admin-btn" value="edit">
+										<?= $LANG['OCCURRENCE_EDITOR'] ?>
+									</button>
+									<?php
+								}
+								?>
+								<button type="submit" value='search' id="search-by-catalog-number-btn" title="<?= $LANG['IDENTIFIER_PLACEHOLDER_LIST'] ?>">
+									<?= $LANG['SEARCH'] ?>
+								</button>
+							</div>
+						</form>
+					</div>
+				</section>
 			</div>
 		<?php
 		}
@@ -297,13 +391,23 @@ if ($SYMB_UID) {
 			if ($collData['collectioncode']) $codeStr .= '-' . $collData['collectioncode'];
 			$codeStr .= ')';
 			$_SESSION['colldata'] = $collData;
-			echo '<h1 class="page-heading">' . $LANG['COLL_PROF_FOR'] . ':<br>' . $collData['collectionname'] . $codeStr . '</h1>';
+			echo '<h2 class="page-heading"><span class="screen-reader-only">' . $LANG['COLL_PROF_FOR'] . ':<br></span>' . $collData['collectionname'] . $codeStr . '</h2>';
 			// GBIF citations widget
 			if ($datasetKey) {
-				echo '<div style="margin-left: 10px; margin-bottom: 20px;">';
-				echo '<iframe title="GBIF citation" src="https://www.gbif.org/api/widgets/literature/button?gbifDatasetKey=' . $datasetKey . '" frameborder="0" allowtransparency="true" style="width: 140px; height: 24px;"></iframe>';
-    			echo '<a href="https://bionomia.net/dataset/' . $datasetKey . '"><img src="https://api.bionomia.net/dataset/' . $datasetKey . '/badge.svg" onerror="this.style.display=\'none\'" alt="Bionomia dataset badge" style="width:262px; height:24px; padding-left:10px;"></a>';
-				echo '</div>';
+				?>
+				<div style="margin-left: 10px; margin-bottom: 20px;">
+					<a href="https://www.gbif.org/resource/search?contentType=literature&gbifDatasetKey=<?= $datasetKey ?>" target="_blank" style="text-decoration:none;">
+						<span id="gbif-citations">
+							<img src="../../images/gbif-mark-white-logo.svg" alt="GBIF logo">
+							<span id="gbif-text"><?= $LANG['GBIF_CITATIONS'] ?></span>
+							<span id="gbif-count"></span>
+						</span>
+					</a>
+					<a href="https://bionomia.net/dataset/<?= $datasetKey ?>">
+						<img src="https://api.bionomia.net/dataset/<?= $datasetKey ?>/badge.svg" onerror="this.style.display='none'" alt="Bionomia dataset badge" style="width:262px; height:24px; padding-left:10px;">
+					</a>
+				</div>
+				<?php
 			}
 
 			if ($editCode) {
@@ -340,7 +444,7 @@ if ($SYMB_UID) {
 								</a><?= $deactivateTag ?>
 							</li>
 							<?php
-							if ($collData['colltype'] == 'Preserved Specimens') {
+							if (strpos($collData['colltype'], 'Specimens')) {
 								?>
 								<li style="margin-left:10px">
 									<a href="../editor/imageoccursubmit.php?collid=<?= $collid ?>" <?= $deactivateStyle ?>>
@@ -386,8 +490,11 @@ if ($SYMB_UID) {
 								if ($collManager->traitCodingActivated()) {
 									?>
 									<li>
-										<a href="#" onclick="$('li.traitItem').show(); return false;">
+										<a href="javascript:void(0)" onclick="showItemsList('traitItem')">
 											<?= $LANG['TRAIT_CODING_TOOLS'] ?>
+										</a>
+										<a onclick="showItemsList('traitItem')">
+											<img class = seemore-icon src="../../images/tochild.png">
 										</a>
 									</li>
 									<li class="traitItem" style="margin-left:10px;display:none;">
@@ -440,40 +547,21 @@ if ($SYMB_UID) {
 										<?= $LANG['EDIT_META'] ?>
 									</a>
 								</li>
-								<!--
-								<li>
-									<a href="" onclick="$('li.metadataItem').show(); return false;"  >
-										<?= $LANG['OPEN_META'] ?>
-									</a>
-								</li>
-								<li class="metadataItem" style="margin-left:10px;display:none;">
-									<a href="collmetadata.php?collid=<?= $collid ?>">
-										<?= $LANG['EDIT_META'] ?>
-									</a>
-								</li>
-								<li class="metadataItem" style="margin-left:10px;display:none;">
-									<a href="colladdress.php?collid=<?= $collid ?>">
-										<?= $LANG['EDIT_ADDRESS'] ?>
-									</a>
-								</li>
-								<li class="metadataItem" style="margin-left:10px;display:none;">
-									<a href="collproperties.php?collid=<?= $collid ?>">
-										<?= $LANG['EDIT_COLL_PROPS'] ?>
-									</a>
-								</li>
-								 -->
 								<li>
 									<a href="collpermissions.php?collid=<?= $collid ?>">
 										<?= $LANG['MANAGE_PERMISSIONS'] ?>
 									</a>
 								</li>
 								<li>
-									<a href="#" onclick="$('li.importItem').show(); return false;">
+									<a href="javascript:void(0)" onclick="showItemsList('importItem')">
 										<?= $LANG['IMPORT_SPECIMEN'] ?>
 									</a>
-									<a id="importinfo" href="https://docs.symbiota.org/Collection_Manager_Guide/Importing_Uploading/" target="_blank" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>">
+									<a id="importinfo" class="link-icon" href="https://docs.symbiota.org/Collection_Manager_Guide/Importing_Uploading/" target="_blank" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>">
 											<img src="../../images/info.png" style="width:13px;" alt="<?= $LANG['INFO_ALT'] ?>" />
-									</a><br/>
+									</a>
+									<a onclick="showItemsList('importItem')">
+										<img class="seemore-icon" src="../../images/tochild.png"">
+									</a>
 								</li>
 								<li class="importItem">
 									<a href="../admin/specupload.php?uploadtype=7&collid=<?php echo $collid; ?>">
@@ -609,6 +697,11 @@ if ($SYMB_UID) {
 										<?= $LANG['UPDATE_STATS'] ?>
 									</a>
 								</li>
+								<li style="margin-left:10px;">
+									<a href="<?= $CLIENT_ROOT ?>/admin/batchupdatestats.php">
+										<?= $LANG['BATCH_UPDATE_STATS'] ?>
+									</a>
+								</li>
 							</ul>
 						</section>
 						<?php
@@ -617,9 +710,11 @@ if ($SYMB_UID) {
 				</div>
 				<?php
 			}
+			if(isset($collData['fulldescription'])){
 			?>
-			<div class="coll-description bottom-breathing-room-rel"><?= $collData['fulldescription'] ?></div>
+				<div class="coll-description bottom-breathing-room-rel"><?= $collData['fulldescription'] ?></div>
 			<?php
+			}
 			if(isset($collData['resourcejson'])){
 				if($resourceArr = json_decode($collData['resourcejson'], true)){
 					$title = $LANG['HOMEPAGE'];
@@ -803,7 +898,7 @@ if ($SYMB_UID) {
 			<div class="accordions" style="margin-bottom: 1.5rem;">
 				<section>
 					<input type="checkbox" id="more-details" class="accordion-selector" />
-					<label for="more-details" class="accordion-header"><?= $LANG['MORE_INFO'] ?></label>
+					<label for="more-details" class="accordion-header" tabindex="0" role="button"><?= $LANG['MORE_INFO'] ?></label>
 					<div id="collection-type" class="content">
 						<div class="bottom-breathing-room-rel">
 							<span class="label"><?= $LANG['COLLECTION_TYPE'] ?>:</span> <?= $collData['colltype'] ?>
@@ -824,11 +919,17 @@ if ($SYMB_UID) {
 							}
 							?>
 						</div>
+						<?php if($collData['managementtype'] == 'Live Data'): ?>
+							<div class="bottom-breathing-room-rel">
+								<span class="label"><?= $LANG['LAST_MODIFIED'] ?>:</span>
+								<?= $statsArr['datelastmodified'] ?>
+							</div>
+						<?php endif ?>
 						<?php if($collData['managementtype'] != 'Live Data'): ?>
-						<div class="bottom-breathing-room-rel">
-							<span class="label"><?= $LANG['LAST_UPDATE'] ?>:</span>
-							<?= $collData['uploaddate'] ?>
-						</div>
+							<div class="bottom-breathing-room-rel">
+								<span class="label"><?= $LANG['LAST_UPDATE'] ?>:</span>
+								<?= $collData['uploaddate'] ?>
+							</div>
 						<?php endif ?>
 						<?php
 						if($collData['managementtype'] == 'Live Data'){
@@ -841,7 +942,8 @@ if ($SYMB_UID) {
 						if($collData['dwcaurl']){
 							?>
 							<div class="bottom-breathing-room-rel">
-							<a href="<?= $collData['dwcaurl'] ?>"><?= $LANG['DWCA_PUB'] ?></a>
+								<span class="label"><?= $LANG['DWCA_PUB'] ?>:</span>
+								<a href="<?= $collData['dwcaurl'] ?>"><?= $LANG['FULL_DATA'] ?></a> <span>(<?= $LANG['LAST_UPDATED'] . ' ' . $collManager->getDwcaPubDate($collid); ?>)</span>
 							</div>
 							<?php
 						}
@@ -851,17 +953,23 @@ if ($SYMB_UID) {
 							<a href="../datasets/emlhandler.php?collid=<?= $collData['collid'] ?>" target="_blank">EML File</a>
 						</div>
 						<?php
-						if($collData['managementtype'] == 'Live Data'){
-							if($GLOBALS['SYMB_UID']){
-								?>
-								<div class="bottom-breathing-room-rel">
-									<span class="label"><?= $LANG['LIVE_DOWNLOAD'] ?>:</span>
-									<a href="../../webservices/dwc/dwcapubhandler.php?collid=<?= $collData['collid'] ?>"><?= $LANG['FULL_DATA'] ?></a>
-								</div>
-								<?php
-							}
+						if($GLOBALS['SYMB_UID']){
+							?>
+							<div class="bottom-breathing-room-rel">
+								<span class="label"><?= $LANG['LIVE_DOWNLOAD'] ?>:</span>
+								<form class="button-form" action="../download/index.php" method="post" onsubmit="targetPopup(this)" style="display: inline-block">
+									<button class="icon-button" aria-label="<?= $LANG['FULL_DATA'] ?>" title="<?= $LANG['FULL_DATA'] ?>">
+										<svg style="width:1.3em;height:1.3em" alt="<?= $LANG['FULL_DATA'] ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+											<path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z" />
+										</svg>
+									</button>
+									<input name="searchvar" type="hidden" value="db=<?= $collData['collid'] ?>" />
+									<input name="dltype" type="hidden" value="specimen" />
+								</form>
+							</div>
+							<?php
 						}
-						elseif($collData['managementtype'] == 'Snapshot'){
+						if($collData['managementtype'] == 'Snapshot'){
 							if($pathArr = $collManager->getDwcaPath($collid)){
 								?>
 								<div class="bottom-breathing-room-rel">
@@ -881,7 +989,7 @@ if ($SYMB_UID) {
 							$rightsHtml = GeneralUtil::getRightsHtml($collData['rights']);
 							?>
 							<div class="bottom-breathing-room-rel">
-								<span class="label"><?= $LANG['USAGE_RIGHTS'] ?>:</span>
+								<span class="label"><?= $LANG['LICENSE'] ?>:</span>
 								<?= $rightsHtml ?>
 							</div>
 							<?php
@@ -923,7 +1031,7 @@ if ($SYMB_UID) {
 			}
 			?>
 			<div style="margin-bottom: 2rem;">
-				<form name="coll-search-form" action="<?= $actionPage ?>" method="get">
+				<form id="coll-search-form" name="coll-search-form" action="<?= $actionPage ?>" method="get" onsubmit="submitAdvancedSearchForm(event, '<?= $actionPage ?>')">
 					<input name="db" value="<?= $collid ?>" type="hidden">
 					<button type="submit" class="button button-primary">
 						<?= $LANG['ADVANCED_SEARCH_THIS_COLLECTION'] ?>
@@ -1060,17 +1168,16 @@ if ($SYMB_UID) {
 		showDialogLink.addEventListener('click', (e) => {
 			e.preventDefault();
 			dialogEl.showModal();
-
 			dialogContainer.style.position = 'relative';
 			dialogContainer.appendChild(dialogEl);
 
 		});
+
 		document.getElementById('quicksearch').addEventListener('keypress', e => {
 			if (e.key === 'Enter') {
-			e.preventDefault();
-			const editEnabled = <?php echo ($editCode == 1 || $editCode == 2 || $editCode == 3); ?>;
-			const newSubmitObj= {submitter:{value: editEnabled ? 'edit': 'search'}};
-			directSubmitAction(newSubmitObj);
+				e.preventDefault();
+				const newSubmitObj = {submitter:{value: '<?= ($editCode ? 'edit' : 'search') ?>'}};
+				directSubmitAction(newSubmitObj);
 			}
 		});
 

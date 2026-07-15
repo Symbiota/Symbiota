@@ -7,7 +7,7 @@ Translated by: Google Translate (2024-09-16)
 */
 
 include_once($SERVER_ROOT.'/content/lang/collections/misc/sharedterms.pt.php');
-
+$LANG['COLLEC_PROFILE'] = 'Perfil de Colección para';
 $LANG['RSS_FEED'] = 'Feed RSS';
 $LANG['CONTACT'] = 'Contatos';
 $LANG['HOMEPAGE'] = 'Página inicial';
@@ -18,6 +18,7 @@ $LANG['DEACTIVATED'] = 'Desativado';
 $LANG['DEACTIVATED_MESSAGE'] = 'Certas opções de gerenciamento estão disponíveis apenas para conjuntos de dados gerenciados em tempo real. Entre em contato com o administrador do portal se a coleção precisar ser reclassificada.';
 $LANG['TOGGLE_MAN'] = 'Alternar painel de controle do gerenciador';
 $LANG['COLL_PROF_FOR'] = 'Perfil de coleção para';
+$LANG['GBIF_CITATIONS'] = 'Citações do GBIF';
 $LANG['DAT_EDIT'] = 'Painel de controle do editor de dados';
 $LANG['SUBMIT_IMAGE_V'] = 'Envie um Voucher Multimédia (observação apoiada por fotografia)';
 $LANG['ADD_NEW_OCCUR'] = 'Adicionar novo registro de ocorrência';
@@ -36,8 +37,6 @@ $LANG['ADMIN_CONTROL'] = 'Painel de controle de administração';
 $LANG['VIEW_COMMENTS'] = 'Ver comentários postados';
 $LANG['UNREVIEWED_COMMENTS'] = 'comentários não revisados';
 $LANG['EDIT_META'] = 'Editar metadados';
-$LANG['OPEN_META'] = 'Editar metadados';
-$LANG['EDIT_COLL_PROPS'] = 'Propriedades Especiais';
 $LANG['MANAGE_PERMISSIONS'] = 'Gerenciar permissões';
 $LANG['IMPORT_SPECIMEN'] = 'Importar/atualizar registros de amostras';
 $LANG['SKELETAL_FILE_IMPORT'] = 'Importação de arquivo de texto esquelético';
@@ -65,14 +64,14 @@ $LANG['MANAGEMENT'] = 'Gerenciamento';
 $LANG['LIVE_DATA'] = 'Live Data gerenciado diretamente no portal de dados';
 $LANG['DATA_AGGREGATE'] = 'Dados coletados de um agregador de dados';
 $LANG['DATA_SNAPSHOT'] = 'Instantâneo de dados do banco de dados de coleção local';
-$LANG['LAST_UPDATE'] = 'Última atualização';
+$LANG['LAST_UPDATE'] = 'Última Carga';
 $LANG['GLOBAL_UNIQUE_ID'] = 'Identificador Único Global';
-$LANG['DWCA_PUB'] = 'Ponto de acesso DwC-Archive';
+$LANG['DWCA_PUB'] = 'Cache de dados';
 $LANG['LIVE_DOWNLOAD'] = 'Download de dados ao vivo';
 $LANG['FULL_DATA'] = 'Arquivo de arquivo DwC';
 $LANG['IPT_SOURCE'] = 'Fonte IPT/DwC-A';
 $LANG['DIGITAL_METADATA'] = 'Metadados Digitais';
-$LANG['USAGE_RIGHTS'] = 'Direitos de uso';
+$LANG['LICENSE'] = 'licença';
 $LANG['USAGE_POLICY'] = 'Política de uso';
 $LANG['RIGHTS_HOLDER'] = 'Detentor de direitos';
 $LANG['ACCESS_RIGHTS'] = 'Direitos de acesso';
@@ -96,6 +95,7 @@ $LANG['GENERA'] = 'gêneros';
 $LANG['SPECIES'] = 'espécies';
 $LANG['TOTAL_TAXA'] = 'táxons totais (incluindo subsp. e var.)';
 $LANG['TYPE_SPECIMENS'] = 'espécimes de tipo';
+$LANG['LAST_UPDATED'] = 'última atualização do dia';
 $LANG['EXTRA_STATS'] = 'Estatísticas extras';
 $LANG['SHOW_FAMILY_DIST'] = 'Mostrar distribuição familiar';
 $LANG['HIDE_FAMILY_DIST'] = 'Ocultar distribuição familiar';
@@ -116,5 +116,6 @@ $LANG['SEARCH_BY_TAXON'] = 'Pesquisa por táxon';
 $LANG['OCCURENCE_IDENTIFIER'] = 'Número de catálogo';
 $LANG['TAXON'] = 'Táxon';
 $LANG['OCCURRENCE_EDITOR'] = 'Editar';
-
+$LANG['INFO_ALT'] = "Ícone de informação indicando link para informações sobre importação/atualização";
+$LANG['LAST_MODIFIED'] = 'Última modificação';
 ?>

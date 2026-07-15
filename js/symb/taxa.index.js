@@ -6,7 +6,7 @@ $(document).ready(function() {
 	$("#desctabs").show();
 
 	var imgDiv = document.getElementById("img-div");
-	if(imgDiv.scrollHeight > imgDiv.clientHeight) document.getElementById("img-tab-div").style.display = 'block'; 
+	if(imgDiv && imgDiv.scrollHeight > imgDiv.clientHeight) document.getElementById("img-tab-div").style.display = 'block'; 
 
 });
 

@@ -2,7 +2,10 @@
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/PermissionsManager.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
-@include_once($SERVER_ROOT.'/content/lang/profile/usermanagement.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('profile/usermanagement');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $loginAs = array_key_exists("loginas",$_REQUEST) ? htmlspecialchars($_REQUEST["loginas"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : "";
@@ -118,9 +121,9 @@ if($IS_ADMIN){
 				?>
 				<h1>
 					<?php
-						echo $user["firstname"]." ".$user["lastname"]." (#".$user["uid"].") ";
-						echo "<a href='viewprofile.php?emode=1&tabindex=2&&userid=" . htmlspecialchars($user["uid"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'><img src='../images/edit.png' style='border:0px;width:0.8em;' /></a>";
-					?>
+						echo $user['firstname'] . ' ' . $user['lastname'] . ' (#' . $user['uid'] . ') ';
+						?>
+						<a href="viewprofile.php?emode=1&tabindex=3&userid=<?= $user['uid'] ?>"><img src="../images/edit.png" style="border:0px;width:0.8em;" ></a>
 				</h1>
 				<div style="margin-left:10px;">
 					<div style="clear:left;">
@@ -526,7 +529,7 @@ if($IS_ADMIN){
 						</div>
 						<?php
 						//Collection projects
-						$collArr = $userManager->getCollectionMetadata('Preserved Specimens');
+						$collArr = $userManager->getCollectionMetadata('Preserved Specimens,Fossil Specimens');
 						$obsArr = $userManager->getCollectionMetadata('Observations');
 						$personalObsArr = $userManager->getCollectionMetadata('General Observations');
 						if(array_key_exists("CollAdmin",$userPermissions)){

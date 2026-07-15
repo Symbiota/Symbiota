@@ -18,6 +18,7 @@ $LANG['NUMERIC_RADIUS'] = 'Le rayon du point doit être une valeur numérique un
 $LANG['NEED_STATE'] = "Les listes d'espèces rares doivent avoir une valeur d'état entrée dans le champ de localité";
 $LANG['NEED_PARENT'] = 'Vous devez sélectionner une liste parentale pour créer une liste d\'exclusion des espèces';
 $LANG['CREATE_CHECKLIST'] = 'Créer une Nouvelle Liste';
+$LANG['FOR_PARENT_LIST'] = 'for parent list';
 $LANG['SELECT_PARENT'] = 'Sélectionnez une liste d\'parent';
 $LANG['REFERENCE_CHECK'] = 'Liste de Référence plus Inclusive';
 $LANG['NONE'] = 'Aucun sélectionné';

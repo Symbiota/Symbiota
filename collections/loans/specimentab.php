@@ -1,10 +1,13 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceLoans.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/loans/loan_langs.en.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/collections/editor/includes/determinationtab.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/collections/editor/includes/determinationtab.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/collections/editor/includes/determinationtab.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load([
+	'collections/loans/loan_langs',
+	'collections/editor/includes/determinationtab',
+]);
+
 header("Content-Type: text/html; charset=" . $CHARSET);
 if(!$SYMB_UID) header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=../collections/loans/outgoing.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
@@ -61,22 +64,6 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 				f.tidtoadd.value = "";
 			}
 		});
-	}
-
-	function verifyLoanDet(){
-		if(document.getElementById('dafsciname').value == ""){
-			alert("<?php echo $LANG['SCINAME_NEEDS_VALUE']; ?>");
-			return false;
-		}
-		if(document.getElementById('identifiedby').value == ""){
-			alert("<?php echo $LANG['DET_NEEDS_VALUE']; ?>");
-			return false;
-		}
-		if(document.getElementById('dateidentified').value == ""){
-			alert("<?php echo $LANG['DET_DATE_NEEDS_VALUE']; ?>");
-			return false;
-		}
-		return true;
 	}
 
 	function verifySpecEditForm(f){
@@ -214,9 +201,11 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 		if(mode){
 			hideAll();
 			$(".form-checkbox").css("display", "revert");
+			$('#newdet-fieldset').prop('disabled', false);
 			$('#newdet-div').show();
 		}
 		else{
+			$('#newdet-fieldset').prop('disabled', true);
 			$(".form-checkbox").hide();
 			$('#newdet-div').hide();
 		}
@@ -334,15 +323,15 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 	<div id="speclist-div" style="<?php echo (!$specList?'display:none;':''); ?>">
 		<form name="speceditform" action="outgoing.php" method="post" onsubmit="return verifySpecEditForm(this)" >
 			<div id="newdet-div" style="display:none;">
-				<fieldset>
+				<fieldset id="newdet-fieldset">
 					<legend><b><?php echo $LANG['ADD_A_DET']; ?></b></legend>
 					<div style='margin:3px;'>
 						<b><?php echo $LANG['ID_QUALIFIER']; ?>:</b>
 						<input type="text" name="identificationqualifier" title="<?php echo $LANG['ID_QUALIFIER_EX']; ?>" />
 					</div>
 					<div style='margin:3px;'>
-						<b><?php echo $LANG['SCI_NAME']; ?>:</b>
-						<input type="text" id="dafsciname" name="sciname" style="background-color:lightyellow;width:350px;" onfocus="initLoanDetAutocomplete(this.form)" />
+						<label for="dafsciname"><b><?php echo $LANG['SCI_NAME']; ?></b></label>:
+						<input type="text" id="dafsciname" name="sciname" required style="width:350px;" onfocus="initLoanDetAutocomplete(this.form)" />
 						<input type="hidden" id="daftidtoadd" name="tidtoadd" value="" />
 						<input type="hidden" name="family" value="" />
 					</div>
@@ -359,12 +348,12 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 						</select>
 					</div>
 					<div style='margin:3px;'>
-						<b><?php echo $LANG['DETERMINER']; ?>:</b>
-						<input type="text" name="identifiedby" id="identifiedby" style="background-color:lightyellow;width:200px;" />
+						<label for="identifiedby"><b><?php echo $LANG['DETERMINER']; ?></b></label>:
+						<input type="text" name="identifiedby" id="identifiedby" required style="width:200px;" />
 					</div>
 					<div style='margin:3px;'>
-						<b><?php echo $LANG['DATE']; ?>:</b>
-						<input type="text" name="dateidentified" id="dateidentified" style="background-color:lightyellow;" onchange="detDateChanged(this.form);" />
+						<label for="dateidentified"><b><?php echo $LANG['DATE']; ?></b></label>:
+						<input type="text" name="dateidentified" id="dateidentified" required onchange="detDateChanged(this.form);" />
 					</div>
 					<div style='margin:3px;'>
 						<b><?php echo $LANG['REFERENCE']; ?>:</b>
@@ -382,7 +371,7 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 					</div>
 					<div style='margin:15px;'>
 						<div style="float:left;">
-							<button type="submit" name="formsubmit" value="addDeterminations" onclick="return verifyLoanDet();"><?php echo $LANG['ADD_NEW_DET']; ?></button>
+							<button type="submit" name="formsubmit" value="addDeterminations"><?php echo $LANG['ADD_NEW_DET']; ?></button>
 						</div>
 					</div>
 				</fieldset>

@@ -303,8 +303,8 @@ class OccurrenceDownload{
 			'IFNULL(m.thumbnailurl,m.url) AS thumbnailurl, o.processingstatus '.
 			'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid '.
 			'INNER JOIN media m ON o.occid = m.occid '.
-			'WHERE c.colltype = "Preserved Specimens" '.
-			'AND o.processingstatus IN("pending review","reviewed", "closed") AND (o.recordSecurity = 0) ';
+			'WHERE c.colltype IN("Preserved Specimens","Fossil Specimens") '.
+			'AND o.processingstatus IN("pending review","reviewed","closed") AND (o.recordSecurity = 0) ';
 		if($days && is_numeric($days)) $sql .= 'AND (o.datelastmodified > DATE_SUB(NOW(), INTERVAL '.$days.' DAY)) ';
 		$sql .= 'ORDER BY o.datelastmodified DESC ';
 		if(!$days && !$limit) $limit = '100';
@@ -505,18 +505,24 @@ class OccurrenceDownload{
 			}
 			$sql .= 'FROM omcollections c INNER JOIN omoccurrences o ON c.collid = o.collid LEFT JOIN taxa t ON o.tidinterpreted = t.tid LEFT JOIN taxstatus ts ON t.tid = ts.tid ';
 			$sql .= $this->setTableJoins($this->sqlWhere);
+			if ($this->sqlWhere && strpos($this->sqlWhere,'early.myaStart')){
+				$sql = "COALESCE((SELECT myaEnd FROM omoccurpaleogts WHERE gtsterm = '" . ($this->searchTermArr["lateInterval"] ?? '') ."'), 0) AS searchEnd) " . $sql;
+				$sql = "WITH searchRange AS (SELECT COALESCE((SELECT myaStart FROM omoccurpaleogts WHERE gtsterm = '"  . ($this->searchTermArr["earlyInterval"] ?? '') . "'), 5000) AS searchStart, " . $sql;
+			}
+			$this->applyConditions();
 			if($this->sqlWhere){
-				$this->applyConditions();
 				$sql .= $this->sqlWhere;
-				if($this->redactLocalities){
-					if($this->rareReaderArr){
-						$sql .= 'AND (o.recordSecurity = 0 OR c.collid IN('.implode(',',$this->rareReaderArr).')) ';
+				if(empty($_REQUEST['source']) || $_REQUEST['source'] != 'collection_exporter'){
+					if($this->redactLocalities){
+						if($this->rareReaderArr){
+							$sql .= 'AND (o.recordSecurity = 0 OR c.collid IN('.implode(',',$this->rareReaderArr).')) ';
+						}
+						else{
+							$sql .= 'AND (o.recordSecurity = 0) ';
+						}
 					}
-					else{
-						$sql .= 'AND (o.recordSecurity = 0) ';
-					}
+					$sql .= OccurrenceUtil::appendFullProtectionSQL();
 				}
-				$sql .= OccurrenceUtil::appendFullProtectionSQL();
 				$sql .= 'ORDER BY o.collid';
 			}
 			else{
@@ -535,6 +541,12 @@ class OccurrenceDownload{
 			if(strpos($sqlWhere,'ctl.clid')) $sqlJoin .= 'INNER JOIN fmvouchers v ON o.occid = v.occid INNER JOIN fmchklsttaxalink ctl ON v.clTaxaID = ctl.clTaxaID ';
 			if(strpos($sqlWhere,'p.lngLatPoint')) $sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
 			if (strpos($sqlWhere, 'ds.datasetid')) $sqlJoin .= 'INNER JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
+			if (strpos($sqlWhere, 'paleo.') || strpos($sqlWhere, 'early.myaStart')) $sqlJoin .= 'INNER JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
+			if(strpos($sqlWhere, 'early.myaStart')){
+				$sqlJoin .= 'JOIN omoccurpaleogts early ON paleo.earlyInterval = early.gtsterm ';
+				$sqlJoin .= 'JOIN omoccurpaleogts late ON paleo.lateInterval = late.gtsterm ';
+				$sqlJoin .= 'CROSS JOIN searchRange search ';
+			}
 		}
 		return $sqlJoin;
 	}

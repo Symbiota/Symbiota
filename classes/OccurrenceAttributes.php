@@ -175,69 +175,74 @@ class OccurrenceAttributes extends Manager {
 	}
 
 	//Get data functions
-	public function getImageUrls(){
+	public function getImageUrls($traitID){
 		$retArr = array();
 		if($this->collidStr){
-			if(!$this->sqlBody) $this->setSqlBody();
-			$sql = 'SELECT m.occid, IFNULL(o.catalognumber, o.othercatalognumbers) AS catnum '.$this->sqlBody.'ORDER BY RAND() LIMIT 1';
-			$rs = $this->conn->query($sql);
-			if($r = $rs->fetch_object()){
-				$retArr[$r->occid]['catnum'] = $r->catnum;
-				$sql2 = 'SELECT m.mediaID, m.url, m.originalurl, m.occid '.
-					'FROM media m '.
-					'WHERE (m.occid = '.$r->occid.') ';
-				$rs2 = $this->conn->query($sql2);
-				$cnt = 1;
-				while($r2 = $rs2->fetch_object()){
-					$retArr[$r2->occid][$cnt]['web'] = $r2->url;
-					$retArr[$r2->occid][$cnt]['lg'] = $r2->originalurl;
-					$cnt++;
+			if(!$this->sqlBody) $this->setSqlBody($traitID);
+			if($this->sqlBody){
+				$sql = 'SELECT m.occid, IFNULL(o.catalognumber, o.othercatalognumbers) AS catnum '.$this->sqlBody.'ORDER BY RAND() LIMIT 1';
+				$rs = $this->conn->query($sql);
+				if($r = $rs->fetch_object()){
+					$retArr[$r->occid]['catnum'] = $r->catnum;
+					$sql2 = 'SELECT m.mediaID, m.url, m.originalurl, m.occid '.
+						'FROM media m '.
+						'WHERE (m.occid = '.$r->occid.') ';
+					$rs2 = $this->conn->query($sql2);
+					$cnt = 1;
+					while($r2 = $rs2->fetch_object()){
+						$retArr[$r2->occid][$cnt]['web'] = $r2->url;
+						$retArr[$r2->occid][$cnt]['lg'] = $r2->originalurl;
+						$cnt++;
+					}
+					$rs2->free();
 				}
-				$rs2->free();
+				$rs->free();
 			}
-			$rs->free();
 		}
 		return $retArr;
 	}
 
-	public function getSpecimenCount(){
+	public function getSpecimenCount($traitID){
 		$retCnt = 0;
 		if($this->collidStr){
-			if(!$this->sqlBody) $this->setSqlBody();
-			$sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt '.$this->sqlBody;
-			//echo $sql;
-			$rs = $this->conn->query($sql);
-			if($r = $rs->fetch_object()){
-				$retCnt = $r->cnt;
+			if(!$this->sqlBody) $this->setSqlBody($traitID);
+			if($this->sqlBody){
+				$sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt ' . $this->sqlBody;
+				//echo $sql;
+				$rs = $this->conn->query($sql);
+				if($r = $rs->fetch_object()){
+					$retCnt = $r->cnt;
+				}
+				$rs->free();
 			}
-			$rs->free();
 		}
 		return $retCnt;
 	}
 
-	private function setSqlBody(){
-		$this->sqlBody = 'FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid '.
-			'LEFT JOIN tmattributes a ON m.occid = a.occid '.
-			'WHERE (a.occid IS NULL) AND (o.collid = '.$this->collidStr.') ';
-		if(isset($this->filterArr['tidfilter']) && $this->filterArr['tidfilter']){
-			//Get Synonyms
-			$tidArr = array();
-			$sql = 'SELECT ts1.tid '.
-				'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-				'WHERE ts2.tid = '.$this->filterArr['tidfilter'].' AND ts1.taxauthid = 1 AND ts2.taxauthid = 1';
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				$tidArr[] = $r->tid;
+	private function setSqlBody($traitID){
+		if(is_numeric($traitID)){
+			$this->sqlBody = 'FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid
+				WHERE (o.collid = '.$this->collidStr.') ';
+			if(isset($this->filterArr['tidfilter']) && $this->filterArr['tidfilter']){
+				//Get Synonyms
+				$tidArr = array();
+				$sql = 'SELECT ts1.tid
+					FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted
+					WHERE ts2.tid = '.$this->filterArr['tidfilter'].' AND ts1.taxauthid = 1 AND ts2.taxauthid = 1';
+				$rs = $this->conn->query($sql);
+				while($r = $rs->fetch_object()){
+					$tidArr[] = $r->tid;
+				}
+				$rs->free();
+				$this->sqlBody = 'FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid
+					INNER JOIN taxaenumtree e ON m.tid = e.tid
+					WHERE (e.parenttid IN('.$this->filterArr['tidfilter'].') OR e.tid IN('.implode(',',$tidArr).'))
+					AND (o.collid = '.$this->collidStr.') AND (e.taxauthid = 1) ';
 			}
-			$rs->free();
-			$this->sqlBody = 'FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid '.
-				'INNER JOIN taxaenumtree e ON m.tid = e.tid '.
-				'LEFT JOIN tmattributes a ON m.occid = a.occid '.
-				'WHERE (e.parenttid IN('.$this->filterArr['tidfilter'].') OR e.tid IN('.implode(',',$tidArr).')) '.
-				'AND (a.occid IS NULL) AND (o.collid = '.$this->collidStr.') AND (e.taxauthid = 1) ';
-		}
-		if(isset($this->filterArr['localfilter']) && $this->filterArr['localfilter']){
-			$this->sqlBody .= 'AND (o.country = "'.$this->filterArr['localfilter'].'" OR o.stateProvince = "'.$this->filterArr['localfilter'].'") ';
+			if(isset($this->filterArr['localfilter']) && $this->filterArr['localfilter']){
+				$this->sqlBody .= 'AND (o.country = "'.$this->filterArr['localfilter'].'" OR o.stateProvince = "'.$this->filterArr['localfilter'].'") ';
+			}
+			$this->sqlBody .= 'AND o.occid NOT IN(SELECT a.occid FROM tmattributes a INNER JOIN tmstates s ON a.stateid = s.stateid WHERE s.traitid = ' . $traitID . ') ';
 		}
 	}
 
@@ -606,16 +611,29 @@ class OccurrenceAttributes extends Manager {
 			//Add notes, source, and editor uid
 			$occidChuckArr = array_chunk($occArr, '200000');
 			foreach($occidChuckArr as $oArr){
-				$sqlUpdate = 'UPDATE tmattributes SET source = "verbatimTextMining:'.$this->cleanInStr($fieldName).'", createduid = '.$GLOBALS['SYMB_UID'];
-				if($notes) $sqlUpdate .= ', notes = "'.$this->cleanInStr($notes).'"';
-				if(is_numeric($reviewStatus)) $sqlUpdate .= ', statuscode = "'.$this->cleanInStr($reviewStatus).'"';
-				$sqlUpdate .= ' WHERE stateid IN('.implode(',',$stateIDArr).') AND occid IN('.implode(',',$oArr).')';
-				//echo $sqlUpdate;
-				if(!$this->conn->query($sqlUpdate)){
-					$this->errorMessage .= 'ERROR saving batch occurrence attributes(2): '.$this->conn->error.'; ';
-					$status = false;
-				}
+				$source = 'verbatimTextMining:' . $fieldName;
+				$status = $this->updateAttribute($source, $notes, $reviewStatus, $stateIDArr, $oArr);
 			}
+		}
+		return $status;
+	}
+
+	private function updateAttribute($source, $notes, $statusCode, $stateIDArr, $occidArr){
+		$status = false;
+		$stateIdStr = implode(',', $stateIDArr);
+		if(!preg_match('/^[0-9,]+$/', $stateIdStr)) return false;
+		$occidStr = implode(',', $occidArr);
+		if(!preg_match('/^[0-9,]+$/', $occidStr)) return false;
+		$createdUid = $GLOBALS['SYMB_UID'];
+		if($notes === '') $notes = null;
+		if(!is_numeric($statusCode)) return false;
+		$sql = 'UPDATE tmattributes SET source = ?, createduid = ?, notes = ?, statuscode = ? WHERE stateid IN(' . $stateIdStr . ') AND occid IN(' . $occidStr . ')';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('sisi', $source, $createdUid, $notes, $statusCode);
+			$stmt->execute();
+			if ($stmt->affected_rows || !$stmt->error) $status = true;
+			else $this->errorMessage = 'ERROR: ' . $stmt->error;
+			$stmt->close();
 		}
 		return $status;
 	}

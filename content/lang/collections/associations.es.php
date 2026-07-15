@@ -6,7 +6,7 @@
  Used by: editor/includes/resourcetab.es.php, admin/importextended.es.php
  */
 
- $LANG['ASOCIACIONES'] = 'Asociaciones';
+ $LANG['ASSOCIATIONS'] = 'Asociaciones';
  $LANG['CREATE_NEW_ASSOC'] = 'Crear Nueva Asociación';
 $LANG['ASSOCIATION_TYPE'] = 'Typo de Asociación (requerido)';
 $LANG['RESOURCE_LINK'] = 'Enlace de recursos';
@@ -19,6 +19,7 @@ $LANG['BASIS_OF_RECORD'] = 'Base del registro';
 $LANG['HUMAN_OBS'] = 'Observación humana';
 $LANG['LIVING_SPEC'] = 'Espécimen vivo';
 $LANG['MACHINE_OBS'] = 'Observación de máquina';
+$LANG['FOSSIL_SPEC'] = 'Espécimen fósil';
 $LANG['MAT_SAMPLE'] = 'Muestra material';
 $LANG['PRES_SAMPLE'] = 'Espécimen preservado';
 $LANG['REF_CITATION'] = 'Citación de referencia';

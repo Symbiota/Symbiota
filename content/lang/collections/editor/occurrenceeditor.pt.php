@@ -76,6 +76,8 @@ $LANG['LOC_AND_TAX_SECURITY'] = 'Localidade e segurança taxonômica';
 $LANG['FULL_SECURITY'] = 'Segurança Total';
 $LANG['SECURITY_SETTINGS'] = 'Configurações de segurança';
 $LANG['SECURITY_NOT_APPLIED'] = 'Segurança não aplicada';
+$LANG['LOCALITY_SECURITY_APPLIED'] = 'Segurança de localidade aplicada';
+$LANG['FULL_SECURITY_APPLIED'] = 'Segurança total aplicada';
 $LANG['SECURITY_APPLIED'] = 'Segurança aplicada';
 $LANG['LOCK_SEC_SETTING'] = 'Bloquear configuração de segurança';
 $LANG['EXPLAIN_SEC_STATUS'] = 'Inserir qualquer texto ativará ou desativará o status de segurança; deixe em branco para aceitar o status de segurança padrão';
@@ -99,6 +101,7 @@ $LANG['NON_SANCTIONED'] = 'Valor não sancionado';
 $LANG['INST_CODE_EXPLAIN'] = 'Substitui o código da instituição definido no formulário de metadados da coleção';
 $LANG['COLL_CODE_EXPLAIN'] = 'Substitui o código da coleção definido no formulário de metadados da coleção';
 $LANG['OWNER_CODE_EXPLAIN'] = 'Se for diferente do código da instituição';
+$LANG['STORAGELOCATION_EXPLAIN'] = 'Localização dentro do local onde o espécime é armazenado';
 $LANG['NO_SET_STATUS'] = 'Nenhum status definido';
 $LANG['AKA_GENERAL'] = 'também conhecido como generalizações de dados';
 $LANG['PRIMARY_KEY'] = 'Registro de ocorrência interna Chave Primária (occid)';
@@ -197,5 +200,6 @@ $LANG['ERROR_ARCHIVING_ASSOC'] = 'ERRO - Arquivando informações de associaçõ
 $LANG['ERROR_ARCHIVING_MAT_SAMPLE'] = 'ERRO - Arquivando informações de amostra de material';
 $LANG['ERROR_CREATING_ARCHIVE'] = 'ERRO - Criando Arquivo';
 $LANG['ERROR_DELETING_OCCURRENCE'] = 'ERRO - Falha ao excluir a ocorrência de origem';
+$LANG['OPENS_NEW_TAB'] = ' (abre em nova guia)';
 
 ?>

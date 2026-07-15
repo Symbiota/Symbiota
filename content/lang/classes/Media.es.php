@@ -14,7 +14,17 @@ $LANG['UNKNOWN_MEDIA_TYPE_MSG'] = 'Tipo de medio desconocido';
 $LANG['SUSPICIOUS_FILE'] = 'Archivo sospechoso';
 $LANG['ILLEGAL_RENAME_CHANGED_FILE_TYPE'] = 'Cambio de nombre ilegal Tipo de archivo cambiado';
 $LANG['FILE_TYPE_NOT_ALLOWED'] = 'Tipo de archivo no permitido';
+$LANG['FILE_EXTENSION_NOT_SUPPORTED'] = 'La extensión de archivo no es compatible';
+$LANG['FILE_EXTENSION_IS_REQUIRED'] = 'El archivo debe tener una extensión';
 $LANG['FILEPATH_NOT_WRITABLE'] = 'La ruta del archivo no se puede escribir';
 $LANG['NOT_ENOUGH_MEMORY_IMAGE'] = 'No hay suficiente memoria para crear una imagen';
+$LANG['EXCEED_MAX_SIZE'] = 'El archivo excede el tamaño máximo permitido';
+$LANG['NO_FILE_UPLOADED'] = 'No se cargó ningún archivo';
+$LANG['PARTIAL_UPLOAD'] = 'El archivo subido solo se cargó parcialmente';
+$LANG['MISSING_TEMP_DIR'] = 'Falta una carpeta temporal';
+$LANG['UPLOAD_STOPPED_BY_EXTENSION'] = 'Una extensión PHP detuvo la carga del archivo';
+$LANG['UNKNOWN_UPLOAD_ERROR'] = 'Error desconocido al cargar el archivo';
+$LANG["FILE_SIZE"] = 'Su archivo es de';
+$LANG["EXCEEDS"] = 'lo que excede el tamaño máximo permitido de';
 
 ?>

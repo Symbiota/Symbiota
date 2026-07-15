@@ -5,6 +5,11 @@ Language: English
 ------------------
 */
 
+$LANG['ENTERED_BY'] = 'Entered By';
+$LANG['DATE_ENTERED'] = 'Date entered';
+$LANG['DATE_MODIFIED'] = 'Date modified';
+$LANG['SOURCE_DATE_MODIFIED'] = 'Source date modified';
+$LANG['NOT_ENTERED'] = 'not entered';
 $LANG['EDIT_HISTORY_INT'] = 'History of Internal Edits';
 $LANG['MANAGE_HISTORY'] = 'Manage Edit History';
 $LANG['OPEN'] = 'OPEN';
@@ -22,7 +27,7 @@ $LANG['NEW_VALUE'] = 'New Value';
 $LANG['CURRENT'] = 'current';
 $LANG['EDIT_HISTORY_EXT'] = 'History of External Edits';
 $LANG['SOURCE'] = 'Source';
-$LANG['NO_PREV_EDITS'] = 'No previous edits recorded';
+$LANG['NO_PREV_EDITS'] = 'Edit History Empty';
 $LANG['TRANSFER_SPEC'] = 'Transfer Specimen';
 $LANG['TARGET_COL'] = 'Target Collection';
 $LANG['SEL_COL'] = 'Select Collection';
@@ -52,5 +57,6 @@ $LANG['CHECKLIST_IS_LINKED'] = 'This occurrence serves as an occurrence voucher 
 						Deleting this occurrence will remove these associations.
 						You may want to first verify this action with the checklist administrators';
 $LANG['DEL_OCC'] = 'Delete Occurrence';
+$LANG['OPENS_NEW_TAB'] = ' (opens in new tab)';
 
 ?>

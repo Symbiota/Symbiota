@@ -1,16 +1,16 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyEditorManager.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomyloader.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT . '/content/lang/taxa/taxonomy/taxonomyloader.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxonomyloader.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('taxa/taxonomy/taxonomyloader');
+
 header('Content-Type: text/html; charset='.$CHARSET);
-$filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
 
 if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../taxa/taxonomy/taxonomyloader.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $tid = array_key_exists('tid',$_REQUEST) ? $_REQUEST['tid'] : '';
 $status = '';
-$filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
 
 //Sanitation
 if(!is_numeric($tid)) $tid = 0;
@@ -39,6 +39,7 @@ if($isEditor){
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
+	include_once($SERVER_ROOT.'/includes/javascript_lang_tags.php');
 	?>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
@@ -61,7 +62,6 @@ if($isEditor){
 	</style>
 </head>
 <body>
-<script src="<?php echo $filename ?>" type="text/javascript"></script>
 <script type="text/javascript">
 	document.addEventListener("DOMContentLoaded", function() {
 		const form = document.getElementById("loaderform");
@@ -96,8 +96,8 @@ if($isEditor){
 					<div style="display: flex; flex-direction: column;">
 						<div class="gridlike-form-row" style="gap:0;">
 							<div class="left-column">
-								<label for="sciname"> 
-									<?php echo $LANG['TAXON_NAME']; ?>: 
+								<label for="sciname">
+									<?php echo $LANG['TAXON_NAME']; ?>:
 								</label>
 							</div>
 							<input class='search-bar-long' style="margin-bottom: 0;" type="text" id="quickparser" name="quickparser" value="" onchange="parseName(this.form)"/>
@@ -110,9 +110,9 @@ if($isEditor){
 				<fieldset>
 					<legend><b><?php echo $LANG['ADD_NEW_TAXON']; ?></b></legend>
 					<div style="clear:both;">
-						<div class="left-column"> 
+						<div class="left-column">
 							<label for="rankid">
-								 <?php echo $LANG['TAXON_RANK'] . ' *'; ?>: 
+								 <?php echo $LANG['TAXON_RANK'] . ' *'; ?>:
 								</label>
 						</div>
 						<select id="rankid" name="rankid" title="Rank ID" class='search-bar-short bottom-breathing-room-rel-sm'>
@@ -137,7 +137,7 @@ if($isEditor){
 						</div>
 						<input type='text' id='author' name='author' class='search-bar-long' />
 					</div> -->
-					
+
 					<div style="clear:both;" id="genus-div">
 						<div class="left-column">
 							<label id="unitind1label" for="unitind1">
@@ -147,7 +147,13 @@ if($isEditor){
 						<select id="unitind1" name="unitind1" onchange="updateFullname(this.form, true)">
 							<option value=""></option>
 							<option value="&#215;">&#215;</option>
-							<option value="&#8224;">&#8224;</option>
+							<?php
+							if(!empty($GLOBALS['ACTIVATE_PALEO_DAGGER'])) {
+								?>
+								<option value="&#8224;">&#8224;</option>
+								<?php
+							}
+							?>
 						</select>
 						<input type='text' id='unitname1' name='unitname1' class='search-bar' aria-label="<?php echo $LANG['GENUS_OR_BASE']; ?>" title="<?php echo $LANG['GENUS_OR_BASE']; ?>"/>
 					</div>
@@ -290,7 +296,7 @@ if($isEditor){
 			</div>
 			<?php
 		}
-		
+
 		?>
 	</div>
 	<?php

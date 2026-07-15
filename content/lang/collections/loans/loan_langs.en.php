@@ -171,9 +171,6 @@ $LANG['ENVELOPE'] = 'Envelope';
 
 //from specimentab.php
 $LANG['TAXON_NOT_FOUND'] = 'WARNING: Taxon not found. It may be misspelled or needs to be added to taxonomic thesaurus by a taxonomic editor.';
-$LANG['SCINAME_NEEDS_VALUE'] = 'Scientific Name field must have a value';
-$LANG['DET_NEEDS_VALUE'] = "Determiner field must have a value (enter 'unknown' if not defined)";
-$LANG['DET_DATE_NEEDS_VALUE'] = "Determination Date field must have a value (enter 's.d.' if not defined)";
 $LANG['PLS_SEL_SPECIMENS'] = 'Please select specimens to which you wish to apply the action';
 $LANG['PLS_ENTER_CATNO'] = 'Please enter a catalog number!';
 $LANG['ERROR_NO_SPECS'] = 'ERROR: No specimens found with that catalog number';

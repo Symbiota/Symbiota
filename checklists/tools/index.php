@@ -1,7 +1,8 @@
 <?php
 include_once('../../config/symbini.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/checklists/tools/index.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/checklists/tools/index.' . $LANG_TAG . '.php');
-else include_once($SERVER_ROOT . '/content/lang/checklists/tools/index.en.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('checklists/tools/index');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 header('Location: '.$CLIENT_ROOT.'/index.php');

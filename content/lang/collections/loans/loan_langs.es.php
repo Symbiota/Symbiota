@@ -171,9 +171,6 @@ $LANG['ENVELOPE'] = 'Sobre';
 
 //from specimentab.php
 $LANG['TAXON_NOT_FOUND'] = 'ADVERTENCIA: Taxón no encontrado. Puede estar mal escrito o necesita ser añadido en el tesauro taxonómico por un editor taxonómico.';
-$LANG['SCINAME_NEEDS_VALUE'] = 'Campo de Nombre Científico debe tener un valor';
-$LANG['DET_NEEDS_VALUE'] = "Campo de Determinador debe tener un valor (añada 'desconocido' si no está definido)";
-$LANG['DET_DATE_NEEDS_VALUE'] = "Campo de Fecha de Determinación debe tener un valor (añada 's.d.' si no está definido)";
 $LANG['PLS_SEL_SPECIMENS'] = 'Por favor seleccione especímenes a los que le gustaría aplicar esta acción';
 $LANG['PLS_ENTER_CATNO'] = '¡Por favor ingrese un número de catálogo!';
 $LANG['ERROR_NO_SPECS'] = 'ERROR: No se encontraron especímenes con ese número de catálogo';

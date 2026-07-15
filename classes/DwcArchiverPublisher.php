@@ -19,6 +19,8 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		$this->setCollArr($id);
 		$this->conditionArr['collid'] = $id;
 		$this->conditionSql = '';
+		unset($this->extensionFieldMap);
+		$this->extensionFieldMap = array();
 	}
 
 	public function verifyCollRecords($collId){
@@ -56,6 +58,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		$includeAttributes = $this->includeAttributes;
 		$includeMatSample = $this->includeMaterialSample;
 		$includeIdentifiers = $this->includeIdentifiers;
+		$includeAssociations = $this->includeAssociations;
 		foreach($collIdArr as $id){
 			//Create a separate DWCA object for each collection
 			if($includeAttributes){
@@ -70,6 +73,10 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 				if($this->hasIdentifiers($id)) $this->includeIdentifiers = true;
 				else $this->includeIdentifiers = false;
 			}
+			if($includeAssociations){
+				if($this->hasAssociations($id)) $this->includeAssociations = true;
+				else $this->includeAssociations = false;
+			}
 			$this->resetCollArr($id);
 			$this->conditionArr['collid'] = $id;
 			$this->conditionSql = '';
@@ -81,6 +88,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		$this->includeAttributes = $includeAttributes;
 		$this->includeMaterialSample = $includeMatSample;
 		$this->includeIdentifiers = $includeIdentifiers;
+		$this->includeAssociations = $includeAssociations;
 		//Reset $this->collArr with all the collections ran successfully and then rebuild the RSS feed
 		$this->resetCollArr(implode(',',$successArr));
 		$this->writeRssFile();
@@ -90,7 +98,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 
 	public function writeRssFile(){
 
-		$this->logOrEcho('Mapping data to RSS feed... ');
+		$this->logOrEcho('Mapping data to RSS feed... ', 1);
 
 		//Create new document and write out to target
 		$newDoc = new DOMDocument('1.0',$this->charSetOut);
@@ -188,7 +196,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 			//Add path to database
 			$sql = 'UPDATE omcollections SET dwcaUrl = "'.$archivePath.'" WHERE collid = '.$collID;
 			if(!$this->conn->query($sql)){
-				$this->logOrEcho('ERROR updating dwcaUrl while adding new DWCA instance: '.$this->conn->error);
+				$this->logOrEcho('ERROR updating dwcaUrl while adding new DWCA instance: '.$this->conn->error, 2);
 			}
 		}
 
@@ -222,8 +230,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 			$redirectDoc->save($deprecatedPath);
 		}
 
-		$this->logOrEcho('Done!', 1);
-		$this->logOrEcho('-----------------------------------------------------');
+		$this->logOrEcho('Done!', 2);
 	}
 
 	//Misc data retrival functions
@@ -265,7 +272,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		$sql = 'SELECT c.collid, c.collectionname, CONCAT_WS("-",c.institutioncode,c.collectioncode) as instcode, c.guidtarget, c.dwcaurl, c.managementtype, c.dynamicProperties '.
 			'FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid '.
 			'LEFT JOIN omcollcatlink l ON c.collid = l.collid '.
-			'WHERE (c.colltype = "Preserved Specimens") AND (s.recordcnt > 0) ';
+			'WHERE (c.colltype IN("Preserved Specimens","Fossil Specimens")) AND (s.recordcnt > 0) ';
 		if($catID && preg_match('/^[,\d]+$/', $catID)) $sql .= 'AND (l.ccpk IN('.$catID.')) ';
 		$sql .= 'ORDER BY c.collectionname';
 		$rs = $this->conn->query($sql);
@@ -287,7 +294,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		if($catID && preg_match('/^[,\d]+$/', $catID)){
 			$sql = 'SELECT substring_index(c.dwcaurl,"/content/",1)  as portalDomain, count(c.collid) as cnt '.
 				'FROM omcollections c LEFT JOIN omcollcatlink l ON c.collid = l.collid '.
-				'WHERE (c.colltype = "Preserved Specimens") AND (c.dwcaurl IS NOT NULL) AND (l.ccpk IS NULL OR l.ccpk NOT IN('.$catID.')) '.
+				'WHERE (c.colltype IN("Preserved Specimens","Fossil Specimens")) AND (c.dwcaurl IS NOT NULL) AND (l.ccpk IS NULL OR l.ccpk NOT IN('.$catID.')) '.
 				'GROUP BY portalDomain';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
@@ -328,28 +335,10 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		$size = false;
 
 		if($fileParts = UploadUtil::decomposeUrl($filePath)) {
-			$host = $fileParts['host'] . (isset($fileParts['port'])? ':' . $fileParts['port']: '');
+			$localPath = $CLIENT_ROOT? str_replace($CLIENT_ROOT, '', $fileParts['path']): $fileParts['path'];
 
-			if($host !== $SERVER_HOST) {
-				if($headerArr = @get_headers($filePath, 1)){
-					$size = array_change_key_case($headerArr, CASE_LOWER);
-					if( strcasecmp($size[0], 'HTTP/1.1 200 OK') != 0 ) {
-						$size = $size['content-length'][1];
-					}
-					else {
-						$size = $size['content-length'];
-					}
-				}
-			} else {
-				$path = $fileParts['path'];
-
-				// If $CLIENT_ROOT is present remove from path to prevent
-				// double up as it is already in $SERVER_ROOT
-				if($CLIENT_ROOT) {
-					$path = str_replace($CLIENT_ROOT, '',$path);
-				}
-
-				$size = @filesize($SERVER_ROOT . $path);
+			if(file_exists($SERVER_ROOT . $localPath)) {
+				$size = @filesize($SERVER_ROOT . $localPath);
 			}
 		}
 

@@ -9,6 +9,7 @@ $LANG['OCC_CLEANER'] = 'Occurrence Cleaner';
 $LANG['COLL_MNGMT'] = 'Collection Management';
 $LANG['DATA_CLEAN'] = 'Data Cleaning Module';
 $LANG['DOWNLOAD_BACKUP'] = 'Downloading a backup of your collection data before running any batch updates is strongly recommended';
+$LANG['BACKUP_INSTRUCTIONS'] = 'instructions';
 $LANG['DUPLICATE_RECS'] = 'Duplicate Records';
 $LANG['DUPL_REC_DESCR'] = 'These tools will assist in searching this collection of records for duplicate records of the same specimen.
                             If duplicate records exist, this feature offers the ability to merge record values, images,

@@ -41,7 +41,7 @@ class OccurrenceLoans extends Manager{
 		if($extLoanArr) $sql .= 'OR l.loanid IN('.implode(',',$extLoanArr).')';
 		$sql .= ') ';
 		if(!$displayAll) $sql .= 'AND l.dateclosed IS NULL ';
-		$sql .= 'ORDER BY l.loanidentifierown + 1 DESC';
+		$sql .= 'ORDER BY l.loanidentifierown';
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
 				if(!$searchTerm || stripos($r->instcode1,$searchTerm) !== false || stripos($r->instcode2,$searchTerm) !== false || stripos($r->forwhom,$searchTerm) !== false){
@@ -161,7 +161,7 @@ class OccurrenceLoans extends Manager{
 			'LEFT JOIN omcollections c ON l.collidown = c.collid '.
 			'WHERE l.collidborr = '.$this->collid.' ';
 		if(!$displayAll) $sql .= 'AND l.dateclosed IS NULL ';
-		$sql .= 'ORDER BY l.loanidentifierborr + 1';
+		$sql .= 'ORDER BY l.loanidentifierborr';
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
 				if(!$searchTerm || stripos($r->instcode1,$searchTerm) !== false || stripos($r->instcode2,$searchTerm) !== false || stripos($r->forwhom,$searchTerm) !== false){
@@ -181,11 +181,11 @@ class OccurrenceLoans extends Manager{
 	public function getLoanInDetails($loanid){
 		$retArr = array();
 		if(is_numeric($loanid)){
-			$sql = 'SELECT loanid, loanidentifierown, loanidentifierborr, collidown, iidowner, datesentreturn, totalboxesreturned, '.
-				'shippingmethodreturn, datedue, datereceivedborr, dateclosed, forwhom, description, numspecimens, '.
-				'notes, createdbyborr, processedbyborr, processedbyreturnborr, invoicemessageborr '.
-				'FROM omoccurloans '.
-				'WHERE loanid = '.$loanid;
+			$sql = 'SELECT loanid, loanidentifierown, loanidentifierborr, collidown, iidowner, datesentreturn, totalboxesreturned,
+				shippingmethodreturn, datedue, datereceivedborr, dateclosed, forwhom, description, numspecimens,
+				notes, createdbyborr, createdbyown, processedbyborr, processedbyreturnborr, invoicemessageborr
+				FROM omoccurloans
+				WHERE loanid = '.$loanid;
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
 					$retArr['loanidentifierown'] = $r->loanidentifierown;
@@ -203,6 +203,7 @@ class OccurrenceLoans extends Manager{
 					$retArr['numspecimens'] = $r->numspecimens;
 					$retArr['notes'] = $r->notes;
 					$retArr['createdbyborr'] = $r->createdbyborr;
+					$retArr['createdbyown'] = $r->createdbyown;
 					$retArr['processedbyborr'] = $r->processedbyborr;
 					$retArr['processedbyreturnborr'] = $r->processedbyreturnborr;
 					$retArr['invoicemessageborr'] = $r->invoicemessageborr;
@@ -486,7 +487,7 @@ class OccurrenceLoans extends Manager{
 				CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS collector, CONCAT_WS(", ",stateprovince,county,locality) AS locality
 				FROM omoccurloanslink l INNER JOIN omoccurrences o ON l.occid = o.occid
 				WHERE l.loanid = '.$loanid.'
-				ORDER BY o.catalognumber+1, o.othercatalognumbers+1';
+				ORDER BY o.catalognumber, o.othercatalognumbers';
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
 					$retArr[$r->occid]['collid'] = $r->collid;
@@ -1010,12 +1011,6 @@ class OccurrenceLoans extends Manager{
 
 	// Correspondence attachments management functions
 	public function uploadAttachment($collid, $type, $transid, $identifier, $title, $file) {
-
-		// Permissable mimetypes, see http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types
-		$mimetypes = array('text/plain', 'image/jpeg', 'image/png', 'application/pdf', 'application/msword',
-			'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-
 		// File checking
 		// Check to make sure it is an uploaded file and not spoofed
 		if (!is_uploaded_file($file['tmp_name'])) {
@@ -1026,16 +1021,18 @@ class OccurrenceLoans extends Manager{
 		} else if ($file['size'] > 10000000) {
 			$this->errorMessage = 'Error: File size is too large: max size is 10 MB';
 			return false;
-
-		// Check the mimetype of the file, don't rely on the file extension
-		} else if (!in_array(mime_content_type($file['tmp_name']), $mimetypes)) {
-			$this->errorMessage = 'Error: File type does not match extension. File must be a PDF (.pdf), MS Word document (.doc or .docx), MS Excel file (.xls or .xlsx), image (.jpg, .jpeg, or .png). or a text file (.txt, .csv).';
-			return false;
 		}
 
-		// Ensure that the file type matches the mimetype
+		// Ensure that the file type matches the mimetype and ext
 		try {
-			UploadUtil::checkFileUpload($file, $mimetypes);
+			UploadUtil::checkFileUpload($file, UploadUtil::ALLOWED_LOAN_MIMES);
+		} catch(MediaException $e) {
+			if($e->case == MediaException::FileTypeNotAllowed) {
+				$this->errorMessage = 'Error: File type does not match extension. File must be a PDF (.pdf), MS Word document (.doc or .docx), MS Excel file (.xls or .xlsx), image (.jpg, .jpeg, or .png). or a text file (.txt, .csv).';
+			} else {
+				$this->errorMessage = 'Error: ' . $e->getMessage();
+			}
+			return false;
 		} catch(Exception $e) {
 			$this->errorMessage = 'Error: ' . $e->getMessage();
 			return false;
@@ -1165,7 +1162,7 @@ class OccurrenceLoans extends Manager{
 		$retArr = array();
 		$sql = 'SELECT i.iid, IFNULL(c.institutioncode,i.institutioncode) as institutioncode, i.institutionname '.
 			'FROM institutions i LEFT JOIN (SELECT iid, institutioncode, collectioncode, collectionname '.
-			'FROM omcollections WHERE colltype = "Preserved Specimens") c ON i.iid = c.iid '.
+			'FROM omcollections WHERE colltype IN("Preserved Specimens","Fossil Specimens")) c ON i.iid = c.iid '.
 			'ORDER BY i.institutioncode,c.institutioncode,c.collectionname,i.institutionname';
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){

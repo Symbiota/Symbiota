@@ -25,7 +25,7 @@ class PluginsManager extends Manager {
 		return $showHtml;
 	}
 
-	public function initiateSlideShow($ssid,$numSlides,$numDays,$imageType,$clid,$dayInterval){
+	private function initiateSlideShow($ssid,$numSlides,$numDays,$imageType,$clid,$dayInterval){
 		global $SERVER_ROOT;
 		$previousFile = $SERVER_ROOT.'/content/slideshow/'.$ssid.'_previous.json';
 		$infoFile = $SERVER_ROOT.'/content/slideshow/'.$ssid.'_info.json';
@@ -167,7 +167,7 @@ class PluginsManager extends Manager {
 		}
 	}
 
-	public function getSlideshowStyle($width){
+	private function getSlideshowStyle($width){
 		$html = '<link rel="stylesheet" href="' . htmlspecialchars($GLOBALS['CLIENT_ROOT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/css/slideshowstyle.css">
 			<style>
 				@font-face{
@@ -200,7 +200,7 @@ class PluginsManager extends Manager {
 		return $html;
 	}
 
-	public function getSlideshowScript($width,$interval){
+	private function getSlideshowScript($width,$interval){
 		$html = '<script type="text/javascript">
 				$(function() {
 					$("#slides").slidesjs({
@@ -218,7 +218,7 @@ class PluginsManager extends Manager {
 		return $html;
 	}
 
-	public function getImageList($ssid){
+	private function getImageList($ssid){
 		global $LANG;
 		$infoArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/content/slideshow/'.$ssid.'_info.json'), true);
 		//echo json_encode($infoArr);
