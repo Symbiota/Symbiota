@@ -100,6 +100,7 @@ class RpcTaxonomy extends RpcBase{
 				$stmt->execute();
 				$rs = $stmt->get_result();
 				while ($r = $rs->fetch_object()) {
+					$value = $r->sciname;
 					$label = $r->sciname;
 					if(!empty($r->tradeName)){
 						$label = str_replace($r->tradeName, '', $label);
@@ -111,6 +112,7 @@ class RpcTaxonomy extends RpcBase{
 					if(!empty($r->author)){
 						if($homonymSupportIndex == 1 || $homonymSupportIndex == 3){
 							$label = trim($label) . ' ' . $r->author;
+							$value = $label . ' [' . $r->tid . ']';
 						}
 					}
 					if(!empty($r->cultivarEpithet)){
@@ -121,13 +123,14 @@ class RpcTaxonomy extends RpcBase{
 					}
 					if(!empty($r->kingdomName)){
 						if($homonymSupportIndex == 2 || $homonymSupportIndex == 3){
-							$label .= ' [' . $r->kingdomName . ']';
+							$label .= ' - ' . $r->kingdomName;
+							$value = $label . ' [' . $r->tid . ']';
 						}
 					}
 					if (!empty($r->label)){
 						$label = $r->label;
 					}
-					$keys = ['id' => $r->tid, 'value' => $r->sciname, 'label' => $label];
+					$keys = ['id' => $r->tid, 'value' => $value, 'label' => $label];
 					$retArr[] = $keys;
 				}
 				$rs->free();

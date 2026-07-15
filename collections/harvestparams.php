@@ -26,7 +26,7 @@ $searchVar = $collManager->getQueryTermStr();
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js?ver=1" type="text/javascript"></script>
 	<script src="../js/symb/collections.traitsearch.js?ver=8" type="text/javascript"></script> <!-- Contains search-by-trait modifications -->
 	<script src="../js/symb/wktpolygontools.js?ver=1c" type="text/javascript"></script>
-	<script src="../js/symb/taxonomy.taxasuggest.js?ver=r" type="text/javascript"></script>
+	<script src="../js/symb/taxonomy.taxasuggest.js?ver=e1" type="text/javascript"></script>
 	<script type="text/javascript">
 		const paleoTimes = <?= json_encode($paleoTimes ?? []) ?>;
 		$(document).ready(function() {
@@ -96,7 +96,6 @@ $searchVar = $collManager->getQueryTermStr();
 						<div>
 							<label for="taxa"><?= $LANG['TYPE_TAXON'] ?>:</label>
 							<input id="taxa" type="text" size="60" name="taxa" id="taxa" value="" title="<?= $LANG['SEPARATE_MULTIPLE']; ?>">
-							<br><input id="tid" name="tid" type="hidden" value="">
 						</div>
 					</div>
 					<div>

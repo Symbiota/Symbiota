@@ -2,7 +2,7 @@ var clientRoot = "";
 var multipleTermSupport = false;
 var minLength = 3;
 
-function initiateTaxaSuggest(inputID, tidID = null, taxonSearchType = 2) {
+function initiateTaxaSuggest(inputID, taxonSearchType = 2) {
 	const inputElem = $("#" + inputID);
 	inputElem
 		// don't navigate away from the field on tab when selecting an item
@@ -45,33 +45,11 @@ function initiateTaxaSuggest(inputID, tidID = null, taxonSearchType = 2) {
 					// Replace last term with select item
 					terms[targetIndex] = ui.item.value;
 					this.value = terms.join(", ");
-					if(tidID){
-						let tids = $("#" + tidID).val().split(/,\s*/);
-						tids[targetIndex] = ui.item.id;
-						$("#" + tidID).val(tids.join(","));
-					}
 				}
 				else{
 					this.value = ui.item.value;
-					if(tidID) $("#" + tidID).val(ui.item.id);
 				}
 				return false;
-			},
-			change(event, ui) {
-				if(!ui.item || this.value == ""){
-					if(tidID){
-					if(multipleTermSupport){
-							let terms = this.value.split(/,\s*/);
-							let targetIndex = terms.length - 1;
-							let tids = $("#" + tidID).val().split(/,\s*/);
-							tids[targetIndex] = "";
-							$("#" + tidID).val(tids.join(","));
-						}
-					}
-					else{
-						$("#" + tidID).val("");						
-					}
-				}
 			}
 		}
 	);
