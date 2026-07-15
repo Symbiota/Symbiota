@@ -111,8 +111,8 @@ class SymbCollectionSearchPage extends CollectionSearchPage {
 
 	async setAllCollections(value: boolean): Promise<void> {
 		const checkbox = this.page.locator('#all_collections');
-		await checkbox.isVisible();
-		await checkbox.isEnabled();
+		await expect(checkbox).toBeVisible();
+		await expect(checkbox).toBeEnabled();
 		await checkbox.setChecked(value, {force: true});
 	}
 
