@@ -1,6 +1,6 @@
 import { expect, mergeTests } from '@playwright/test';
 import { test as testWithAdmin } from './fixtures/adminLogin';
-import { test as testTaxonomyEditor } from './pages/TaxonomyEditor';
+import { test as testTaxonomyEditor } from './pages/TaxonomyEditorPage';
 import path from 'node:path';
 
 const test = mergeTests(testWithAdmin, testTaxonomyEditor);

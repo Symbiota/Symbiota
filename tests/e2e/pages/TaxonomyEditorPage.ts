@@ -14,7 +14,7 @@ export enum TaxonomyEditorTab {
 	Admin = 'Admin'
 };
 
-export abstract class TaxonomyEditor {
+export abstract class TaxonomyEditorPage {
   mediaSubmit: Locator;
 
   MEDIA_ADD_SUCESS_MSG: string = '';
@@ -42,7 +42,7 @@ export abstract class TaxonomyEditor {
   abstract hasMedia(): Promise<void>;
 }
 
-export class SymbTaxonCreationPage extends TaxonomyEditor {
+export class SymbTaxonCreationPage extends TaxonomyEditorPage {
   constructor(public readonly page: Page) {
 	  super(page, {
 		  [TaxonomyEditorTab.CommonName]: page.locator('#ui-id-1'),
@@ -61,11 +61,11 @@ export class SymbTaxonCreationPage extends TaxonomyEditor {
 }
 
 export const test = base.extend<{
-	taxonomyEditor: TaxonomyEditor,
+	taxonomyEditor: TaxonomyEditorPage,
 	addMedia: MediaForm,
 }>({
 	taxonomyEditor: async({ page, tid }, use) => {
-		const taxonomyEditor = TaxonomyEditor.make(page);
+		const taxonomyEditor = TaxonomyEditorPage.make(page);
 		await taxonomyEditor.goto(tid);
 		await use(taxonomyEditor);
 	},
