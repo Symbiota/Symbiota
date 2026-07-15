@@ -698,8 +698,9 @@ function storeFormDataInSessionStorage(submitForm) {
         const revisedFormElemName = (formElem.name == "db[]") ? "db" : formElem.name;
         let previousValue = '';
         let newValue = formElem.value;
+        const currentPageWithUrlParamsRemoved = getCurrentPage().split("?")[0];
         if(revisedFormElemName === "db" ){
-          previousValue = sessionStorage.getItem("querystr" + getCurrentPage() + "/" + revisedFormElemName);
+          previousValue = sessionStorage.getItem("querystr" + currentPageWithUrlParamsRemoved + "/" + revisedFormElemName);
           const existingValues = previousValue ? previousValue.split(",") : [];
           if(existingValues.includes(formElem.value)){
             return; // skip adding duplicate collection
@@ -707,13 +708,14 @@ function storeFormDataInSessionStorage(submitForm) {
             newValue = previousValue ? previousValue + "," + formElem.value : formElem.value;
           }
         }
-        sessionStorage.setItem("querystr" + getCurrentPage() + "/" + revisedFormElemName, newValue);
+        sessionStorage.setItem("querystr" + currentPageWithUrlParamsRemoved + "/" + revisedFormElemName, newValue);
       }
     });
 }
 
 function clearPageSpecificSessionStorageItems() {
-  const keysToRemove = Object.keys(sessionStorage).filter(key => key.startsWith("querystr" + getCurrentPage() + "/"));
+  const currentPageWithUrlParamsRemoved = getCurrentPage().split("?")[0];
+  const keysToRemove = Object.keys(sessionStorage).filter(key => key.startsWith("querystr" + currentPageWithUrlParamsRemoved));
   keysToRemove.forEach(key => sessionStorage.removeItem(key));
 }
 
@@ -1227,12 +1229,29 @@ function parseUrlVariables(varStr) {
 function concatenateUrlVariablesFromSessionStorage() {
   let returnVal = '';
   const sessionStorageKeys = Object.keys(sessionStorage);
-  const relevantKeys = sessionStorageKeys.filter(key => key.startsWith("querystr" + getCurrentPage()) && key.value !== "null");
+  const currentPageWithUrlParamsRemoved = getCurrentPage().split("?")[0];
+  const relevantKeys = sessionStorageKeys.filter(key => key.startsWith("querystr" + currentPageWithUrlParamsRemoved) && key.value !== "null");
   relevantKeys.forEach((relevantKey) => {
-    const justFormFieldName = relevantKey.replace("querystr" + getCurrentPage() + "/", "");
-    if(justFormFieldName){
+    const justFormFieldName = relevantKey.replace("querystr" + currentPageWithUrlParamsRemoved, "");
+    const justFormFieldNameInitialSlashRemoved = justFormFieldName.startsWith("/") ? justFormFieldName.slice(1) : justFormFieldName;
+    const urlParamPattern = /(\?)(.*)=.*$/;
+    const match = justFormFieldNameInitialSlashRemoved.match(urlParamPattern);
+    const sanitizedFormFieldName = match ? match[2] : justFormFieldNameInitialSlashRemoved;
+    if(sanitizedFormFieldName){
       const relevantVal = sessionStorage.getItem(relevantKey);
-      returnVal += justFormFieldName + "=" + encodeURIComponent(relevantVal) + "&"; // @TODO encodeURIComponent may not be necessary here
+      const equalPattern = /^(.*)=(.*)$/;
+      const equalPatternMatch = relevantVal.match(equalPattern);
+      const modifiedRelevantVal = equalPatternMatch ? relevantVal.replace(equalPattern, '$2') : relevantVal;
+      if(returnVal.includes(sanitizedFormFieldName)){
+        const oldVal = returnVal.match(new RegExp(sanitizedFormFieldName + "=([^&]*)"))?.[1];
+        if(oldVal){
+          const newVal = oldVal + "," + modifiedRelevantVal;
+          const dedupedNewVal = Array.from(new Set(newVal.split(","))).join(",");
+          returnVal = returnVal.replace(sanitizedFormFieldName + "=" + oldVal, sanitizedFormFieldName + "=" + encodeURIComponent(dedupedNewVal));
+        }
+      }else{
+        returnVal += sanitizedFormFieldName + "=" + encodeURIComponent(modifiedRelevantVal) + "&";
+      }
     }
   });
   return returnVal.slice(0, -1);
@@ -1268,6 +1287,18 @@ function toggleCharacterGroup(charID) {
   minus.style.display = isVisible ? 'none' : 'inline';
 }
 
+function submitAdvancedSearchForm(event, actionPage) {
+  event.preventDefault();
+  const collId = document?.forms['coll-search-form']['db']?.value;
+  const frm = document.getElementById('coll-search-form');
+  const targetKey = 'querystr' + actionPage + '/db';
+  sessionStorage.setItem(targetKey, collId);
+  if(collId){
+    frm.action = actionPage;
+    console.log(frm);
+    frm.submit();
+  }
+}
 //////////////////////////////////////////////////////////////////////////
 
 /**

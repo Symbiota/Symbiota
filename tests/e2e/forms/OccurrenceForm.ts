@@ -11,6 +11,7 @@ const occurrenceFields = {
 	verbatimeventdate: 'text',
 
 	ffsciname: 'text',
+	sciname: 'text',
 	scientificnameauthorship: 'text',
 	identificationqualifier: 'text',
 	family: 'text',
@@ -23,6 +24,9 @@ const occurrenceFields = {
 	ffmunicipality: 'text',
 	locationid: 'text',
 	fflocality: 'text',
+	country: 'text',
+	stateprovince: 'text',
+	locality: 'text',
 	recordsecurity: 'checkbox',
 	localautodeactivated: 'text',
 	decimallatitude: 'text',
@@ -78,6 +82,7 @@ export class OccurrenceForm extends Form {
 	private readonly submitEditButton: Locator;
 	private readonly submitSkeletalButton: Locator;
 	private readonly submitSkeletalImageButton: Locator;
+	private readonly submitObservationImageButton: Locator;
 
 	public readonly EDIT_SUCCESS = "SUCCESS";
 
@@ -87,10 +92,12 @@ export class OccurrenceForm extends Form {
 		this.submitEditButton = this.form.locator('button[value=saveOccurEdits]');
 		this.submitSkeletalButton = this.form.locator('button[name=recordsubmit]');
 		this.submitSkeletalImageButton = this.form.locator('input[name=action][value="Submit Occurrence"]');
+		this.submitObservationImageButton = this.form.locator('button[name=action][value="Submit"]');
 	}
 
 	async submitEdit() { return this.submitEditButton.click({force: true})}
 	async submitNew() { return this.submitNewButton.click({force: true})}
 	async submitSkeletal() { return this.submitSkeletalButton.click({force: true})}
 	async submitSkeletalImage() { return this.submitSkeletalImageButton.click({force: true})}
+	async submitObservationImage() { return this.submitObservationImageButton.click({force: true})}
 }

@@ -1,11 +1,12 @@
-<?php
+<?php global $SERVER_ROOT;
 include_once($SERVER_ROOT . "/classes/Media.php");
 include_once($SERVER_ROOT . "/classes/MediaException.php");
 
 class UploadUtil {
 
+	// Permissable mimetypes, see http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types
 	const ALLOWED_LOAN_MIMES = [
-		'text/plain',
+		'text/plain', 'text/csv',
 		'image/jpeg', 'image/png',
 		'application/pdf', 'application/msword',
 		'application/vnd.ms-excel',
@@ -22,7 +23,10 @@ class UploadUtil {
 		'audio/mpeg', 'audio/wav', 'audio/ogg'
 	];
 
-	const ALLOWED_ZIP_MIMES = [
+	// Often a CSV or Zipped CSV(s)
+	// Used:
+	// - Taxonomy Upload
+	const ALLOWED_BATCH_PROCESSING_MIMES = [
 		'application/x-zip',
 		'application/zip',
 		'application/x-zip-compressed',
@@ -37,6 +41,246 @@ class UploadUtil {
 	const DEPRECATED_MIME_CONVERSION = [
 		'audio/mp3' => 'audio/mpeg'
 	];
+
+	const CAN_BE_MIME_LOOKUP = [
+		'application/octet-stream' => [
+			// Zips
+			'application/x-zip',
+			'application/zip',
+			'application/x-zip-compressed',
+			'application/s-compressed',
+			'multipart/x-zip',
+			// Other
+			'application/pdf',
+			'application/msword',
+			'application/msexcel',
+			// .xls
+			'application/x-msexcel',
+			'application/x-ms-excel',
+			'application/x-excel',
+			'application/x-dos_ms_excel',
+			'application/xls',
+			'application/x-xls',
+		],
+		'text/plain' => [
+			'text/csv'
+		]
+	];
+
+	const CAN_BE_EXT_LOOKUP = [
+		'jpg' => [
+			'jpeg',
+			'pjpeg',
+		],
+	];
+
+	/**
+	 * If you need to add an entry here check if there already is a mime type. If
+	 * there is add it as a synonym in CAN_BE_EXT_LOOKUP so it used in equality
+	 * checks and ext to mime type resolutions.
+	 *
+	 * @var array<string, string> $MIME_MAP Map of mime types to possible extensions
+	 **/
+	const MIME_MAP = [
+		'video/3gpp2' => '3g2',
+		'video/3gp'=> '3gp',
+		'video/3gpp'=> '3gp',
+		'application/x-compressed'=> '7zip',
+		'audio/x-acc'=> 'aac',
+		'audio/ac3'=> 'ac3',
+		'application/postscript' => 'ai',
+		'audio/x-aiff' => 'aif',
+		'audio/aiff' => 'aif',
+		'audio/x-au' => 'au',
+		'video/x-msvideo' => 'avi',
+		'video/msvideo' => 'avi',
+		'video/avi' => 'avi',
+		'application/x-troff-msvideo' => 'avi',
+		'application/macbinary' => 'bin',
+		'application/mac-binary' => 'bin',
+		'application/x-binary' => 'bin',
+		'application/x-macbinary' => 'bin',
+		'image/bmp' => 'bmp',
+		'image/x-bmp' => 'bmp',
+		'image/x-bitmap' => 'bmp',
+		'image/x-xbitmap' => 'bmp',
+		'image/x-win-bitmap' => 'bmp',
+		'image/x-windows-bmp' => 'bmp',
+		'image/ms-bmp' => 'bmp',
+		'image/x-ms-bmp' => 'bmp',
+		'application/bmp' => 'bmp',
+		'application/x-bmp' => 'bmp',
+		'application/x-win-bitmap' => 'bmp',
+		'application/cdr' => 'cdr',
+		'application/coreldraw' => 'cdr',
+		'application/x-cdr' => 'cdr',
+		'application/x-coreldraw' => 'cdr',
+		'image/cdr' => 'cdr',
+		'image/x-cdr' => 'cdr',
+		'zz-application/zz-winassoc-cdr' => 'cdr',
+		'application/mac-compactpro' => 'cpt',
+		'application/pkix-crl' => 'crl',
+		'application/pkcs-crl' => 'crl',
+		'application/x-x509-ca-cert' => 'crt',
+		'application/pkix-cert' => 'crt',
+		'text/css' => 'css',
+		'text/csv' => 'csv',
+		'text/x-comma-separated-values' => 'csv',
+		'text/comma-separated-values' => 'csv',
+		'application/vnd.msexcel' => 'csv',
+		'application/x-director' => 'dcr',
+		'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
+		'application/x-dvi' => 'dvi',
+		'message/rfc822' => 'eml',
+		'application/x-msdownload' => 'exe',
+		'video/x-f4v' => 'f4v',
+		'audio/x-flac' => 'flac',
+		'video/x-flv' => 'flv',
+		'image/gif' => 'gif',
+		'application/gpg-keys' => 'gpg',
+		'application/x-gtar' => 'gtar',
+		'application/x-gzip' => 'gzip',
+		'application/mac-binhex40' => 'hqx',
+		'application/mac-binhex' => 'hqx',
+		'application/x-binhex40' => 'hqx',
+		'application/x-mac-binhex40' => 'hqx',
+		'text/html' => 'html',
+		'image/x-icon' => 'ico',
+		'image/x-ico' => 'ico',
+		'image/vnd.microsoft.icon' => 'ico',
+		'text/calendar' => 'ics',
+		'application/java-archive' => 'jar',
+		'application/x-java-application' => 'jar',
+		'application/x-jar' => 'jar',
+		'image/jp2' => 'jp2',
+		'video/mj2' => 'jp2',
+		'image/jpx' => 'jp2',
+		'image/jpm' => 'jp2',
+		'image/jpeg' => 'jpg',
+		'image/pjpeg' => 'jpg',
+		'application/x-javascript' => 'js',
+		'application/json' => 'json',
+		'text/json' => 'json',
+		'application/vnd.google-earth.kml+xml' => 'kml',
+		'application/vnd.google-earth.kmz' => 'kmz',
+		'text/x-log' => 'log',
+		'audio/x-m4a' => 'm4a',
+		'audio/mp4' => 'm4a',
+		'application/vnd.mpegurl' => 'm4u',
+		'audio/midi' => 'mid',
+		'application/vnd.mif' => 'mif',
+		'video/quicktime' => 'mov',
+		'video/x-sgi-movie' => 'movie',
+		'audio/mpeg' => 'mp3',
+		'audio/mpg' => 'mp3',
+		'audio/mpeg3' => 'mp3',
+		'audio/mp3' => 'mp3',
+		'video/mp4' => 'mp4',
+		'video/mpeg' => 'mpeg',
+		'application/oda' => 'oda',
+		'audio/ogg' => 'ogg',
+		'video/ogg' => 'ogg',
+		'application/ogg' => 'ogg',
+		'font/otf' => 'otf',
+		'application/x-pkcs10' => 'p10',
+		'application/pkcs10' => 'p10',
+		'application/x-pkcs12' => 'p12',
+		'application/x-pkcs7-signature' => 'p7a',
+		'application/pkcs7-mime' => 'p7c',
+		'application/x-pkcs7-mime' => 'p7c',
+		'application/x-pkcs7-certreqresp' => 'p7r',
+		'application/pkcs7-signature' => 'p7s',
+		'application/pdf' => 'pdf',
+		'application/octet-stream' => 'pdf',
+		'application/x-x509-user-cert' => 'pem',
+		'application/x-pem-file' => 'pem',
+		'application/pgp' => 'pgp',
+		'application/x-httpd-php' => 'php',
+		'application/php' => 'php',
+		'application/x-php' => 'php',
+		'text/php' => 'php',
+		'text/x-php' => 'php',
+		'application/x-httpd-php-source' => 'php',
+		'image/png' => 'png',
+		'image/x-png' => 'png',
+		'application/powerpoint' => 'ppt',
+		'application/vnd.ms-powerpoint' => 'ppt',
+		'application/vnd.ms-office' => 'ppt',
+		'application/msword' => 'doc',
+		'application/vnd.openxmlformats-officedocument.presentationml.presentation' => 'pptx',
+		'application/x-photoshop' => 'psd',
+		'image/vnd.adobe.photoshop' => 'psd',
+		'audio/x-realaudio' => 'ra',
+		'audio/x-pn-realaudio' => 'ram',
+		'application/x-rar' => 'rar',
+		'application/rar' => 'rar',
+		'application/x-rar-compressed' => 'rar',
+		'audio/x-pn-realaudio-plugin' => 'rpm',
+		'application/x-pkcs7' => 'rsa',
+		'text/rtf' => 'rtf',
+		'text/richtext' => 'rtx',
+		'video/vnd.rn-realvideo' => 'rv',
+		'application/x-stuffit' => 'sit',
+		'application/smil' => 'smil',
+		'text/srt' => 'srt',
+		'image/svg+xml' => 'svg',
+		'application/x-shockwave-flash' => 'swf',
+		'application/x-tar' => 'tar',
+		'application/x-gzip-compressed' => 'tgz',
+		'image/tiff' => 'tiff',
+		'font/ttf' => 'ttf',
+		'text/plain' => 'txt',
+		'text/x-vcard' => 'vcf',
+		'application/videolan' => 'vlc',
+		'text/vtt' => 'vtt',
+		'audio/x-wav' => 'wav',
+		'audio/wave' => 'wav',
+		'audio/wav' => 'wav',
+		'audio/vnd.wave' => 'wav',
+		'application/wbxml' => 'wbxml',
+		'video/webm' => 'webm',
+		'image/webp' => 'webp',
+		'audio/x-ms-wma' => 'wma',
+		'application/wmlc' => 'wmlc',
+		'video/x-ms-wmv' => 'wmv',
+		'video/x-ms-asf' => 'wmv',
+		'font/woff' => 'woff',
+		'font/woff2' => 'woff2',
+		'application/xhtml+xml' => 'xhtml',
+		'application/excel' => 'xl',
+		'application/msexcel' => 'xls',
+		'application/x-msexcel' => 'xls',
+		'application/x-ms-excel' => 'xls',
+		'application/x-excel' => 'xls',
+		'application/x-dos_ms_excel' => 'xls',
+		'application/xls' => 'xls',
+		'application/x-xls' => 'xls',
+		'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx',
+		'application/vnd.ms-excel' => 'xlsx',
+		'application/xml' => 'xml',
+		'text/xml' => 'xml',
+		'text/xsl' => 'xsl',
+		'application/xspf+xml' => 'xspf',
+		'application/x-compress' => 'z',
+		'application/x-zip' => 'zip',
+		'application/zip' => 'zip',
+		'application/x-zip-compressed' => 'zip',
+		'application/s-compressed' => 'zip',
+		'multipart/x-zip' => 'zip',
+		'text/x-scriptzsh' => 'zsh',
+	];
+
+	public static function mimeCanBe(string $mime, string $target): ?string {
+		$mime = strtolower($mime);
+		$target = strtolower($target);
+
+		if($lookup = self::CAN_BE_MIME_LOOKUP[$target] ?? false) {
+			$pos = array_search($mime, $lookup);
+			return $lookup[$pos] ?? null;
+		} else {
+			return false;
+		}
+	}
 
 	/**
 	 * Gets temporary file storage path for portal.
@@ -72,20 +316,32 @@ class UploadUtil {
 			$allowed_mimes = self::ALLOWED_IMAGE_MIMES;
 		}
 
-		if(!in_array($uploaded_file['type'], $allowed_mimes)) {
+		if(!self::mimeAllowed($uploaded_file['type'], $allowed_mimes)) {
 			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $uploaded_file['type']);
 		}
 
+		$provided_file_data = pathinfo($uploaded_file['name']);
+		$extension = $provided_file_data['extension'] ?? false;
+
+		if(!$extension) {
+			throw new MediaException(MediaException::FileExtensionIsRequired);
+		} else if(!self::ext2Mime($extension)) {
+			throw new MediaException(MediaException::FileExtensionNotSupported, ' ' . $extension);
+		}
+
 		$type_guess = mime_content_type($uploaded_file['tmp_name']);
-;
+
 		if(!self::mimesEqual($type_guess, $uploaded_file['type'])) {
-			throw new MediaException(MediaException::SuspiciousFile);
+			if($resolved_mime = self::mimeCanBe($uploaded_file['type'], $type_guess)) {
+				$type_guess = $resolved_mime;
+			} else {
+				throw new MediaException(MediaException::SuspiciousFile);
+			}
 		}
 
 		$guess_ext = self::mime2ext($type_guess);
-		$provided_file_data = pathinfo($uploaded_file['name']);
 
-		if(!$guess_ext || !$provided_file_data['extension'] || !self::extensionsEqual($guess_ext, $provided_file_data['extension'])) {
+		if(!$guess_ext || !$extension || !self::extensionsEqual($guess_ext, $provided_file_data['extension'])) {
 			throw new MediaException(MediaException::SuspiciousFile);
 		}
 
@@ -109,13 +365,34 @@ class UploadUtil {
 	}
 
 	/**
-	 * undocumented function summary
+	  * This function returns the maximum post size in PHP
+	  *
+	  * Reads ini variables post_max_size as int
+	  * @returns int File size in bytes
+	  **/
+	public static function getMaximumPostSize(): int {
+		return self::size2Bytes(ini_get('post_max_size'));
+	}
+
+	/**
+	  * This function returns the maximum upload file size in PHP
+	  *
+	  * Reads ini variables upload_max_filesize as int
+	  * @returns int File size in bytes
+	  **/
+	public static function getMaximumUploadSize(): int {
+		return self::size2Bytes(ini_get('upload_max_filesize'));
+	}
+
+	public static function isPostTooLarge(): bool {
+		$contentLength = $_SERVER['CONTENT_LENGTH'] ?? 0;
+		return $contentLength > 0 && $contentLength > self::getMaximumPostSize();
+	}
+	/**
+	 * Converts human readable sizes to bytes
 	 *
-	 * Undocumented function long description
-	 *
-	 * @param Type $var Description
-	 * @return type
-	 * @throws conditon
+	 * @param string $size Size string you wish to convert
+	 * @return int
 	 **/
 	public static function size2Bytes(string $size):int {
 		// Remove the non-unit characters from the size.
@@ -131,6 +408,55 @@ class UploadUtil {
 		}
 	}
 
+	/**
+	 * Converts bytes to human readable sizes
+	 *
+	 * @param string $bytes Size int you wish to convert
+	 * @return string
+	 **/
+	public static function formatBytes(int $bytes): string {
+		if ($bytes >= 1024 ** 3) {
+			return round($bytes / 1024 ** 3, 1) . ' GB';
+		} elseif ($bytes >= 1024 ** 2) {
+			return round($bytes / 1024 ** 2, 1) . ' MB';
+		} elseif ($bytes >= 1024) {
+			return round($bytes / 1024, 1) . ' KB';
+		}
+		return $bytes;
+	}
+
+		/**
+	 * Utility function to validate PHP file upload error codes 
+	 * and throw a MediaException message
+	 *
+	 * @param array $file The uploaded file
+	 * @throws MediaException If the upload failed for any reason
+	 */
+	public static function validateFileError(array $file): void {
+		if (!isset($file['error']) || $file['error'] === UPLOAD_ERR_OK)
+			return;
+
+		switch ($file['error']) {
+			case UPLOAD_ERR_INI_SIZE:
+			case UPLOAD_ERR_FORM_SIZE:
+				$maxSize = self::formatBytes(min(self::getMaximumUploadSize(),$_POST['MAX_FILE_SIZE']));
+				if ($_POST['file_size']){
+					global $LANG;
+					$fileSize = self::formatBytes($_POST['file_size']);
+					$message = $LANG["FILE_SIZE"] . " " . $fileSize . ", " . $LANG["EXCEEDS"] . " " . $maxSize . ".";
+					throw new Exception($message);
+				}
+				throw new MediaException(MediaException::ExceedMaxSize, $maxSize);
+			case UPLOAD_ERR_PARTIAL:
+				throw new MediaException(MediaException::PartialUpload);
+			case UPLOAD_ERR_NO_TMP_DIR:
+				throw new MediaException(MediaException::MissingTempDir);
+			case UPLOAD_ERR_CANT_WRITE:
+				throw new MediaException(MediaException::FilepathNotWritable);
+			case UPLOAD_ERR_EXTENSION:
+				throw new MediaException(MediaException::UploadStoppedByExtension);
+		}
+	}
 	/**
 	 * Utility function to parse out useful information when uploading and processing files.
 	 *
@@ -197,7 +523,7 @@ class UploadUtil {
 		// Sanity Check files extension and claimed type before uploading
 		// This does not guarantee the file is safe but weeds out simple
 		// malicous file upload attempts. Actual file should also be checked after download.
-		if(!in_array($info['type'], $allowed_mimes)) {
+		if(!self::mimeAllowed($info['type'], $allowed_mimes)) {
 			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $info['type']);
 		} else if(self::mime2ext($info['type']) !== $info['extension']) {
 			throw new MediaException(MediaException::SuspiciousFile);
@@ -205,7 +531,8 @@ class UploadUtil {
 
 		$availableMemory = self::getMaximumFileUploadSize() - memory_get_usage();
 		if($availableMemory < intval($info['size'])) {
-			throw new Exception('Error: File is to large to upload');
+			$maxSize = self::formatBytes(self::getMaximumFileUploadSize());
+			throw new MediaException(MediaException::ExceedMaxSize, $maxSize);
 		}
 
 		$tempPath = self::getTempDir() . $info['name'];
@@ -277,10 +604,7 @@ class UploadUtil {
 		}
 
 		$parsed_file['name'] = Media::cleanFileName($parsed_file['name']);
-
-		if(!$parsed_file['extension'] && $file_type_mime) {
-			$parsed_file['extension'] = self::mime2ext($file_type_mime);
-		}
+		$parsed_file['extension'] = self::mime2ext($file_type_mime);
 
 		return [
 			'name' => $parsed_file['name'] . ($parsed_file['extension'] ? '.' .$parsed_file['extension']: ''),
@@ -308,10 +632,42 @@ class UploadUtil {
 		$extensionA = strtolower($extensionA);
 		$extensionB = strtolower($extensionB);
 
-		return $extensionA === $extensionB ||
-			Media::ext2Mime($extensionA) === Media::ext2Mime($extensionB);
+		if($extensionA === $extensionB) {
+			return true;
+
+		} else if(array_key_exists($extensionA, self::CAN_BE_EXT_LOOKUP)) {
+			return in_array($extensionB, self::CAN_BE_EXT_LOOKUP[$extensionA]);
+
+		} else if(array_key_exists($extensionB, self::CAN_BE_EXT_LOOKUP)) {
+			return in_array($extensionA, self::CAN_BE_EXT_LOOKUP[$extensionB]);
+
+		} else if(self::ext2Mime($extensionA) === self::ext2Mime($extensionB)) {
+			return true;
+
+		} else {
+			return false;
+		}
 	}
 
+	/**
+	 * @param string $mime
+	 * @param array $allowed_mimes
+	 * @return bool
+	 */
+	public static function mimeAllowed(string $mime, array $allowed_mimes): bool {
+		foreach($allowed_mimes as $allowed_mime) {
+			if(self::mimesEqual($mime, $allowed_mime)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param string $mimeA
+	 * @param string $mimeB
+	 * @return bool
+	 */
 	public static function mimesEqual(string $mimeA, string $mimeB): bool {
 		$mimeA = strtolower($mimeA);
 		$mimeB = strtolower($mimeB);
@@ -319,199 +675,42 @@ class UploadUtil {
 		return self::mime2ext($mimeA) === self::mime2ext($mimeB);
 	}
 
+	private static function stripCharset(string $mime): string {
+		$parts = explode(';', $mime);
+		return trim($parts[0]);
+	}
+
 	/**
 	 * @param string $mime
 	 * @return string | bool
 	 */
 	public static function mime2ext(string $mime) {
-		$mime_map = [
-			'video/3gpp2' => '3g2',
-			'video/3gp'=> '3gp',
-			'video/3gpp'=> '3gp',
-			'application/x-compressed'=> '7zip',
-			'audio/x-acc'=> 'aac',
-			'audio/ac3'=> 'ac3',
-			'application/postscript' => 'ai',
-			'audio/x-aiff' => 'aif',
-			'audio/aiff' => 'aif',
-			'audio/x-au' => 'au',
-			'video/x-msvideo' => 'avi',
-			'video/msvideo' => 'avi',
-			'video/avi' => 'avi',
-			'application/x-troff-msvideo' => 'avi',
-			'application/macbinary' => 'bin',
-			'application/mac-binary' => 'bin',
-			'application/x-binary' => 'bin',
-			'application/x-macbinary' => 'bin',
-			'image/bmp' => 'bmp',
-			'image/x-bmp' => 'bmp',
-			'image/x-bitmap' => 'bmp',
-			'image/x-xbitmap' => 'bmp',
-			'image/x-win-bitmap' => 'bmp',
-			'image/x-windows-bmp' => 'bmp',
-			'image/ms-bmp' => 'bmp',
-			'image/x-ms-bmp' => 'bmp',
-			'application/bmp' => 'bmp',
-			'application/x-bmp' => 'bmp',
-			'application/x-win-bitmap' => 'bmp',
-			'application/cdr' => 'cdr',
-			'application/coreldraw' => 'cdr',
-			'application/x-cdr' => 'cdr',
-			'application/x-coreldraw' => 'cdr',
-			'image/cdr' => 'cdr',
-			'image/x-cdr' => 'cdr',
-			'zz-application/zz-winassoc-cdr' => 'cdr',
-			'application/mac-compactpro' => 'cpt',
-			'application/pkix-crl' => 'crl',
-			'application/pkcs-crl' => 'crl',
-			'application/x-x509-ca-cert' => 'crt',
-			'application/pkix-cert' => 'crt',
-			'text/css' => 'css',
-			'text/csv' => 'csv',
-			'text/x-comma-separated-values' => 'csv',
-			'text/comma-separated-values' => 'csv',
-			'application/vnd.msexcel' => 'csv',
-			'application/x-director' => 'dcr',
-			'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
-			'application/x-dvi' => 'dvi',
-			'message/rfc822' => 'eml',
-			'application/x-msdownload' => 'exe',
-			'video/x-f4v' => 'f4v',
-			'audio/x-flac' => 'flac',
-			'video/x-flv' => 'flv',
-			'image/gif' => 'gif',
-			'application/gpg-keys' => 'gpg',
-			'application/x-gtar' => 'gtar',
-			'application/x-gzip' => 'gzip',
-			'application/mac-binhex40' => 'hqx',
-			'application/mac-binhex' => 'hqx',
-			'application/x-binhex40' => 'hqx',
-			'application/x-mac-binhex40' => 'hqx',
-			'text/html' => 'html',
-			'image/x-icon' => 'ico',
-			'image/x-ico' => 'ico',
-			'image/vnd.microsoft.icon' => 'ico',
-			'text/calendar' => 'ics',
-			'application/java-archive' => 'jar',
-			'application/x-java-application' => 'jar',
-			'application/x-jar' => 'jar',
-			'image/jp2' => 'jp2',
-			'video/mj2' => 'jp2',
-			'image/jpx' => 'jp2',
-			'image/jpm' => 'jp2',
-			'image/jpeg' => 'jpg',
-			'image/pjpeg' => 'jpg',
-			'application/x-javascript' => 'js',
-			'application/json' => 'json',
-			'text/json' => 'json',
-			'application/vnd.google-earth.kml+xml' => 'kml',
-			'application/vnd.google-earth.kmz' => 'kmz',
-			'text/x-log' => 'log',
-			'audio/x-m4a' => 'm4a',
-			'audio/mp4' => 'm4a',
-			'application/vnd.mpegurl' => 'm4u',
-			'audio/midi' => 'mid',
-			'application/vnd.mif' => 'mif',
-			'video/quicktime' => 'mov',
-			'video/x-sgi-movie' => 'movie',
-			'audio/mpeg' => 'mp3',
-			'audio/mpg' => 'mp3',
-			'audio/mpeg3' => 'mp3',
-			'audio/mp3' => 'mp3',
-			'video/mp4' => 'mp4',
-			'video/mpeg' => 'mpeg',
-			'application/oda' => 'oda',
-			'audio/ogg' => 'ogg',
-			'video/ogg' => 'ogg',
-			'application/ogg' => 'ogg',
-			'font/otf' => 'otf',
-			'application/x-pkcs10' => 'p10',
-			'application/pkcs10' => 'p10',
-			'application/x-pkcs12' => 'p12',
-			'application/x-pkcs7-signature' => 'p7a',
-			'application/pkcs7-mime' => 'p7c',
-			'application/x-pkcs7-mime' => 'p7c',
-			'application/x-pkcs7-certreqresp' => 'p7r',
-			'application/pkcs7-signature' => 'p7s',
-			'application/pdf' => 'pdf',
-			'application/octet-stream' => 'pdf',
-			'application/x-x509-user-cert' => 'pem',
-			'application/x-pem-file' => 'pem',
-			'application/pgp' => 'pgp',
-			'application/x-httpd-php' => 'php',
-			'application/php' => 'php',
-			'application/x-php' => 'php',
-			'text/php' => 'php',
-			'text/x-php' => 'php',
-			'application/x-httpd-php-source' => 'php',
-			'image/png' => 'png',
-			'image/x-png' => 'png',
-			'application/powerpoint' => 'ppt',
-			'application/vnd.ms-powerpoint' => 'ppt',
-			'application/vnd.ms-office' => 'ppt',
-			'application/msword' => 'doc',
-			'application/vnd.openxmlformats-officedocument.presentationml.presentation' => 'pptx',
-			'application/x-photoshop' => 'psd',
-			'image/vnd.adobe.photoshop' => 'psd',
-			'audio/x-realaudio' => 'ra',
-			'audio/x-pn-realaudio' => 'ram',
-			'application/x-rar' => 'rar',
-			'application/rar' => 'rar',
-			'application/x-rar-compressed' => 'rar',
-			'audio/x-pn-realaudio-plugin' => 'rpm',
-			'application/x-pkcs7' => 'rsa',
-			'text/rtf' => 'rtf',
-			'text/richtext' => 'rtx',
-			'video/vnd.rn-realvideo' => 'rv',
-			'application/x-stuffit' => 'sit',
-			'application/smil' => 'smil',
-			'text/srt' => 'srt',
-			'image/svg+xml' => 'svg',
-			'application/x-shockwave-flash' => 'swf',
-			'application/x-tar' => 'tar',
-			'application/x-gzip-compressed' => 'tgz',
-			'image/tiff' => 'tiff',
-			'font/ttf' => 'ttf',
-			'text/plain' => 'txt',
-			'text/x-vcard' => 'vcf',
-			'application/videolan' => 'vlc',
-			'text/vtt' => 'vtt',
-			'audio/x-wav' => 'wav',
-			'audio/wave' => 'wav',
-			'audio/wav' => 'wav',
-			'application/wbxml' => 'wbxml',
-			'video/webm' => 'webm',
-			'image/webp' => 'webp',
-			'audio/x-ms-wma' => 'wma',
-			'application/wmlc' => 'wmlc',
-			'video/x-ms-wmv' => 'wmv',
-			'video/x-ms-asf' => 'wmv',
-			'font/woff' => 'woff',
-			'font/woff2' => 'woff2',
-			'application/xhtml+xml' => 'xhtml',
-			'application/excel' => 'xl',
-			'application/msexcel' => 'xls',
-			'application/x-msexcel' => 'xls',
-			'application/x-ms-excel' => 'xls',
-			'application/x-excel' => 'xls',
-			'application/x-dos_ms_excel' => 'xls',
-			'application/xls' => 'xls',
-			'application/x-xls' => 'xls',
-			'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx',
-			'application/vnd.ms-excel' => 'xlsx',
-			'application/xml' => 'xml',
-			'text/xml' => 'xml',
-			'text/xsl' => 'xsl',
-			'application/xspf+xml' => 'xspf',
-			'application/x-compress' => 'z',
-			'application/x-zip' => 'zip',
-			'application/zip' => 'zip',
-			'application/x-zip-compressed' => 'zip',
-			'application/s-compressed' => 'zip',
-			'multipart/x-zip' => 'zip',
-			'text/x-scriptzsh' => 'zsh',
-		];
+		$mime = self::stripCharset($mime);
+		
+		return isset(self::MIME_MAP[$mime]) ? self::MIME_MAP[$mime] : false;
+	}
 
-		return isset($mime_map[$mime]) ? $mime_map[$mime] : false;
+	/**
+	 * @param string $ext_target
+	 * @return string | bool
+	 */
+	public static function ext2Mime(string $ext_target, string $type = '') {
+		$ext_target = strtolower($ext_target);
+		$type = strtolower($type);
+
+		foreach(self::MIME_MAP as $mime => $ext) {
+			$mime_type = strtolower(explode('/', $mime)[0]);
+			if($type && $mime_type !== $type) {
+				continue;
+			}
+
+			if($ext === $ext_target) {
+				return $mime;
+			} else if (array_key_exists($ext, self::CAN_BE_EXT_LOOKUP) && in_array($ext_target, self::CAN_BE_EXT_LOOKUP[$ext])) {
+				return $mime;
+			}
+		}
+
+		return false;
 	}
 }

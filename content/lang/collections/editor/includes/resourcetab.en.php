@@ -32,7 +32,7 @@ $LANG['UNLINK_BUT_MAINTAIN'] = 'Unlink this occurrences from duplicate cluster b
 $LANG['REM_FROM_CLUSTER'] = 'Remove from Cluster';
 $LANG['UNLINK'] = 'Unlink';
 $LANG['CAT_NUM'] = 'Catalog Number';
-$LANG['GUID'] = 'GUID';
+$LANG['OCCURRENCE_ID'] = 'Occurrence ID';
 $LANG['LATEST_ID'] = 'Latest Identification';
 $LANG['IDED_BY'] = 'Identified by';
 $LANG['SHOW_FULL_DETS'] = 'Show Full Details';
@@ -50,6 +50,7 @@ $LANG['DEL_GEN_RES'] = 'Delete Genetic Resource';
 $LANG['DEL_RES'] = 'Delete Resource';
 $LANG['NO_CHECKLISTS'] = 'No checklist voucher linkages have been established';
 $LANG['NO_GENETIC_RESOURCES'] = 'No genetics linkages have been established';
+$LANG['OPENS_NEW_TAB'] = ' (opens in new tab)';
 
 include_once($SERVER_ROOT.'/content/lang/collections/associations.en.php');
 ?>

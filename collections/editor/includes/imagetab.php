@@ -1,5 +1,5 @@
 <?php
-include_once('../../../config/symbini.php');
+include_once(__DIR__ . '/../../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/Media.php');
 
@@ -25,7 +25,7 @@ try {
 	error_log($e->getMessage());
 }
 
-$creatorArray = Media::getCreatorArray();
+$creatorArray = Media::getCreatorArray(false);
 ?>
 <script type="text/javascript">
 	function verifyImgAddForm(f){
@@ -66,9 +66,16 @@ $creatorArray = Media::getCreatorArray();
 		}
 		return true;
 	}
+
+	document.getElementById("imgfile").addEventListener("change", function () {
+		const file = this.files[0];
+		if (file) {
+			document.getElementById("file_size").value = file.size;
+		}
+	});
 </script>
 <div id="imagediv" style="width:795px;">
-	<div style="float:right;cursor:pointer;" onclick="toggle('addimgdiv');" title="<?php echo $LANG['ADD_IMG']; ?>">
+	<div style="float:right;cursor:pointer;" onclick="toggle('addimgdiv');" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggle('addimgdiv');}" title="<?php echo $LANG['ADD_IMG']; ?>" role="button" tabindex="0">
 		<img style="border:0px;width:1.5em;" src="../../images/add.png" />
 	</div>
 	<div id="addimgdiv" style="display:<?php echo ($specImgArr?'none':''); ?>;">
@@ -83,7 +90,8 @@ $creatorArray = Media::getCreatorArray();
 						<!-- following line sets MAX_FILE_SIZE (must precede the file input field)  -->
 						<input type='hidden' name='MAX_FILE_SIZE' value='20000000' />
 						<div>
-							<input name='imgfile' type='file' accept="<?= implode(",", $ALLOWED_MEDIA_MIME_TYPES) ?>" size='70'/>
+							<input name='imgfile' id="imgfile" type='file' accept="<?= implode(",", $ALLOWED_MEDIA_MIME_TYPES) ?>" size='70'/>
+							<input type="hidden" name="file_size" id="file_size">
 						</div>
 						<div style="float:right;text-decoration:underline;font-weight:bold;">
 							<a href="#" onclick="toggle('targetdiv');return false;"><?php echo $LANG['ENTER_URL']; ?></a>
@@ -216,7 +224,19 @@ $creatorArray = Media::getCreatorArray();
 									echo '<div style="font-weight:bold;font-size:140%">'.$imgArr['error'].'</div>';
 								}
 								else{
-									echo '<img src="' . $displayUrl . '" style="width:250px;" title="'.$imgArr["caption"].'" />';
+									$matchedTags = [];
+									foreach ($imageTagKeys as $tagKey => $tagDescr) {
+										if (isset($imgArr['tags'][$tagKey]) && $tagKey !== 'HasProblem') {
+											$matchedTags[] = rtrim(preg_replace('/^image\s+\S+\s+/i', '', $tagDescr), '.'); // Removes "Image shows/has/contains" from beginning
+										}
+									}
+
+									echo '<img src="' . $displayUrl . '" style="width:250px;overflow-wrap:anywhere;" title="'.$imgArr['caption'].'"
+									alt="Link of image '. $displayUrl .
+									'; Caption: ' . $imgArr['caption'] . 
+									'; Notes: ' . $imgArr['notes'] . 
+									'; Tags: '. (isset($imgArr['tags']['HasProblem']) ? str_replace('.', ', ', $imageTagKeys['HasProblem']) : '') . 
+									'Image contains ' . implode(', ', $matchedTags) . '.' . '"/>';
 								}
 								echo '</a>';
 								if($imgUrl != $origUrl) echo '<div><a href="' . $imgUrl .'" target="_blank">' . $LANG['OPEN_MED'] . '</a></div>';
@@ -232,7 +252,7 @@ $creatorArray = Media::getCreatorArray();
 							</td>
 						<?php endif?>
 						<td class="imgInfo" style="text-align:left;padding:10px;">
-							<div style="float:right;cursor:pointer;" onclick="toggle('img<?php echo $imgId; ?>editdiv');" title="<?php echo $LANG['EDIT_METADATA']; ?>">
+							<div style="float:right;cursor:pointer;" onclick="toggle('img<?php echo $imgId; ?>editdiv');" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggle('img<?php echo $imgId; ?>editdiv');}" title="<?php echo $LANG['EDIT_METADATA']; ?> " role="button" tabindex="0">
 								<img style="border:0px;width:1.2em;" src="../../images/edit.png" />
 							</div>
 							<div style="margin-top:30px;overflow-wrap: anywhere;">

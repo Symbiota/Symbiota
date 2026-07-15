@@ -174,9 +174,6 @@ $LANG['ENVELOPE'] = 'Enveloppe';
 
 //from specimentab.php
 $LANG['TAXON_NOT_FOUND'] = 'ATTENTION : Taxon introuvable. Il peut être mal orthographié ou doit être ajouté au thésaurus taxonomique par un éditeur taxonomique.';
-$LANG['SCINAME_NEEDS_VALUE'] = 'Le champ Nom scientifique doit avoir une valeur';
-$LANG['DET_NEEDS_VALUE'] = "Le champ déterminant doit avoir une valeur (entrez 'inconnu' s'il n'est pas défini)";
-$LANG['DET_DATE_NEEDS_VALUE'] = "Le champ Date de détermination doit avoir une valeur (entrez 's.d.' s'il n'est pas défini)";
 $LANG['PLS_SEL_SPECIMENS'] = 'Veuillez sélectionner les spécimens auxquels vous souhaitez appliquer l\'action';
 $LANG['PLS_ENTER_CATNO'] = 'Veuillez saisir un numéro de catalogue !';
 $LANG['ERROR_NO_SPECS'] = 'ERREUR : Aucun spécimen trouvé avec ce numéro de catalogue';

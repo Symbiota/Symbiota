@@ -104,14 +104,18 @@ class OccurrenceMapManager extends OccurrenceManager {
 				'recordArr' => []
 			];
 		}
-		
+
 		$statsManager = new OccurrenceAccessStats();
 
 		$result = QueryUtil::tryExecuteQuery($this->conn, $this->buildMapSqlQuery($start, $this->searchTermArr['reclimit']));
 		if(!$result) {
 			$this->errorMessage = 'ERROR executing coordinate query: ' . $this->conn->error;
 			echo json_encode([$this->errorMessage]);
-			return array();
+			return [
+				'taxaArr' => [],
+				'collArr' => [],
+				'recordArr' => []
+			];
 		}
 
 		$color = 'e69e67';

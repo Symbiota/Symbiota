@@ -1,5 +1,5 @@
 <?php
-include_once('../../../config/symbini.php');
+include_once(__DIR__ . '/../../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceEditorResource.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceDuplicate.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
@@ -588,7 +588,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 	<fieldset>
 		<legend><?php echo $LANG['SPEC_DUPES']; ?></legend>
 		<div style="float:right;margin-right:15px;">
-			<button class="button" onclick="openDupeWindow();return false;"><?php echo $LANG['SEARCH_RECS']; ?></button>
+			<button class="button" onclick="openDupeWindow();return false;" aria-label="<?=$LANG['SEARCH_RECS'] . $LANG['OPENS_NEW_TAB']?>"><?php echo $LANG['SEARCH_RECS']; ?></button>
 		</div>
 		<div style="clear:both;">
 			<form id="dupeRefreshForm" name="dupeRefreshForm" method="post" target="occurrenceeditor.php">
@@ -622,7 +622,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 								echo '<div style="float:left;margin:5px 15px">';
 								if($dArr['recordedby']) echo '<div>'.$dArr['recordedby'].' '.$dArr['recordnumber'].'<span style="margin-left:40px;">'.$dArr['eventdate'].'</span></div>';
 								if($dArr['catnum']) echo '<div><b>'.$LANG['CAT_NUM'].':</b> '.$dArr['catnum'].'</div>';
-								if($dArr['occurrenceid']) echo '<div><b>'.$LANG['GUID'].':</b> '.$dArr['occurrenceid'].'</div>';
+								if($dArr['occurrenceid']) echo '<div><b>'.$LANG['OCCURRENCE_ID'].':</b> '.$dArr['occurrenceid'].'</div>';
 								if($dArr['sciname']) echo '<div><b>'.$LANG['LATEST_ID'].':</b> '.$dArr['sciname'].'</div>';
 								if($dArr['identifiedby']) echo '<div><b>'.$LANG['IDED_BY'].':</b> '.$dArr['identifiedby'].'<span stlye="margin-left:30px;">'.$dArr['dateidentified'].'</span></div>';
 								if($dArr['notes']) echo '<div>'.$dArr['notes'].'</div>';

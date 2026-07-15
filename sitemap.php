@@ -1,5 +1,5 @@
 <?php
-include_once('config/symbini.php');
+include_once(__DIR__ . '/config/symbini.php');
 include_once($SERVER_ROOT . '/classes/SiteMapManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
@@ -24,7 +24,7 @@ if(!$schemaVersion){
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<link href="<?= $CSS_BASE_PATH ?>/symbiota/sitemap.css" type="text/css" rel="stylesheet">
+	<link href="<?= $CSS_BASE_PATH ?>/symbiota/sitemap.css?ver=1" type="text/css" rel="stylesheet">
 	<script type="text/javascript" src="js/symb/shared.js"></script>
 	<style>
 		.nested-li {
@@ -45,6 +45,14 @@ if(!$schemaVersion){
 	<div role="main" id="innertext">
 		<h1 class="page-heading"><?= $LANG['SITEMAP'] ?></h1>
 		<div id="sitemap">
+
+			<div id="policies">
+				<h2><?= $LANG['POLICIES'] ?></h2>
+			</div>
+			<ul>
+				<li><a href="includes/usagepolicy.php"><?= $LANG['USAGEPOLICY'] ?></a></li>
+			</ul>
+
 			<h2><?= $LANG['COLLECTIONS'] ?></h2>
 			<ul>
 				<?php
@@ -71,13 +79,13 @@ if(!$schemaVersion){
 				<li><a href="imagelib/index.php"><?= $LANG['IMGLIB'] ?></a></li>
 				<li><a href="imagelib/search.php"><?= $LANG['IMAGE_SEARCH'] ?></a></li>
 				<li><a href="imagelib/contributors.php"><?= $LANG['CONTRIB'] ?></a></li>
-				<li><a href="includes/usagepolicy.php"><?= $LANG['USAGEPOLICY'] ?></a></li>
 			</ul>
 
 			<div id="resources">
 				<h2><?= $LANG['ADDITIONAL_RESOURCES'] ?></h2>
 			</div>
 			<ul>
+				<li><a href="<?= $CLIENT_ROOT ?>/geothesaurus/index.php"><?= $LANG['GEOTHESAURUS'] ?></a></li>
 				<?php
 				if($smManager->hasGlossary()){
 					?>
@@ -201,6 +209,11 @@ if(!$schemaVersion){
 							<li>
 								<a href="<?= $CLIENT_ROOT ?>/admin/othercatalog.php">
 									<?= $LANG['OTHER_CAT_TRANSFER'] ?>
+								</a>
+							</li>
+							<li>
+								<a href="<?= $CLIENT_ROOT ?>/admin/batchupdatestats.php">
+									<?= $LANG['BATCH_UPDATE_STATS'] ?>
 								</a>
 							</li>
 						</ul>
@@ -412,82 +425,32 @@ if(!$schemaVersion){
 						</span>
 					</h2>
 					<p class="description">
-						<?= $LANG['PARA1'] ?>
+						<?= $LANG['COLLECTION_DESCRIPTION'] ?>
+						<a href="https://docs.symbiota.org/Collector_Observer_Guide/" target="_blank"><?= $LANG['SYMBDOCU'] ?></a>.
 					</p>
-					<h3 class="subheader">
-						<span>
-							<?= $LANG['COLLLIST'] ?>
-						</span>
-					</h3>
 					<div>
-						<ul>
 						<?php
+						$collTypeArr = array('Preserved Specimens','Fossil Specimens','Observations','General Observations');
 						$collArr = $smManager->getCollectionList();
-						if(isset($collArr['s'])){
-							foreach($collArr['s'] as $k => $cArr){
-								echo '<li>';
-								echo '<a href="' . $CLIENT_ROOT . '/collections/misc/collprofiles.php?collid=' . $k . '&emode=1">';
-								echo $cArr['name'];
-								echo '</a>';
-								echo '</li>';
+						if($collArr){
+							foreach($collTypeArr as $collTypeStr){
+								if(isset($collArr[$collTypeStr])){
+									$headerStr = $collTypeStr;
+									$langKey = str_replace(' ', '_', strtoupper($headerStr));
+									if(isset($LANG[$langKey])) $headerStr = $LANG[$langKey];
+									echo '<h3 class="subheader"><span>' . $headerStr . '</span></h3>';
+									echo '<ul>';
+									foreach($collArr[$collTypeStr] as $collid => $collName){
+										echo '<li><a href="' . $CLIENT_ROOT . '/collections/misc/collprofiles.php?collid=' . $collid . '&emode=1" >' .$collName. '</a></li>';
+									}
+									echo '</ul>';
+								}
 							}
 						}
 						else{
-							echo "<li>".$LANG['NOEDITCOLL']."</li>";
+							echo '<li>' . $LANG['NOEDITCOLL'] . '</li>';
 						}
 						?>
-						</ul>
-					</div>
-
-					<h2 class="subheader">
-						<span>
-							<?= $LANG['OBSERV'] ?>
-						</span>
-					</h2>
-					<p class="description">
-						<?= $LANG['PARA2'] ?>
-						<a href="https://docs.symbiota.org/Collector_Observer_Guide/" target="_blank"><?= $LANG['SYMBDOCU'] ?></a> <?= $LANG['FORMOREINFO'] ?>.
-					<p class="description">
-					<h3 class="subheader">
-						<span>
-							<?= $LANG['OIVS'] ?>
-						</span>
-					</h3>
-					<div>
-						<ul>
-							<?php
-							$obsManagementStr = '';
-							if(isset($collArr['o'])){
-								foreach($collArr['o'] as $k => $oArr){
-									?>
-									<li>
-										<a href="collections/editor/observationsubmit.php?collid=<?= $k ?>">
-											<?= $oArr['name'] ?>
-										</a>
-									</li>
-									<?php
-									if($oArr['isadmin']) $obsManagementStr .= '<li><a href="collections/misc/collprofiles.php?collid=' . $k . '&emode=1">' . htmlspecialchars($oArr['name'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a></li>\n";
-								}
-							}
-							else{
-								echo '<li>' . $LANG['NOOBSPROJ'] . '</li>';
-							}
-							?>
-						</ul>
-						<?php
-						if($obsManagementStr){
-							?>
-							<h3 class="subheader">
-								<span>
-									<?= $LANG['OPM'] ?>
-								</span>
-							</h3>
-							<ul>
-								<?= $obsManagementStr ?>
-							</ul>
-						<?php
-						}
-					?>
 					</div>
 					<?php
 				}
@@ -497,7 +460,9 @@ if(!$schemaVersion){
 			?>
 			</section>
 			<div id="symbiotaschema">
-				<img style="height:1.85rem" src="https://img.shields.io/badge/Symbiota-v<?= $CODE_VERSION ?>-blue.svg" alt="a blue badge depicting Symbiota software version" />
+				<a href="https://github.com/Symbiota/Symbiota/releases/tag/v<?= $CODE_VERSION ?>" target="_blank">
+					<img style="height:1.85rem" src="https://img.shields.io/badge/Symbiota-v<?= $CODE_VERSION ?>-blue.svg" alt="a blue badge depicting Symbiota software version" />
+				</a>
 				<img style="height:1.85rem" src="https://img.shields.io/badge/Schema-v<?= $schemaVersion ?>-blue.svg" alt="a blue badge depicting Symbiota database schema version" />
 			</div>
 		</div>

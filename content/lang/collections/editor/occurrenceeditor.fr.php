@@ -76,6 +76,8 @@ $LANG['LOC_AND_TAX_SECURITY'] = 'Localité & Sécurité Taxonomique';
 $LANG['FULL_SECURITY'] = 'Sécurité Totale';
 $LANG['SECURITY_SETTINGS'] = 'Paramètres de Sécurité';
 $LANG['SECURITY_NOT_APPLIED'] = 'Security not applied';
+$LANG['LOCALITY_SECURITY_APPLIED'] = 'Sécurité locale appliquée';
+$LANG['FULL_SECURITY_APPLIED'] = 'Sécurité complète appliquée';
 $LANG['SECURITY_APPLIED'] = 'Security applied';
 $LANG['LOCK_SEC_SETTING'] = 'Verrouiller Paramètre de Sécurité';
 $LANG['EXPLAIN_SEC_STATUS'] = 'La saisie de n\'importe quel texte verrouillera l\'état de sécurité activé ou désactivé; laisser vide pour accepter l\'état de sécurité par défaut';
@@ -199,5 +201,6 @@ $LANG['ERROR_ARCHIVING_ASSOC'] = 'ERREUR - Archivage des informations sur les as
 $LANG['ERROR_ARCHIVING_MAT_SAMPLE'] = 'ERREUR - Archivage des informations sur l\'échantillon de matériau';
 $LANG['ERROR_CREATING_ARCHIVE'] = 'ERREUR – Création d\'une archive';
 $LANG['ERROR_DELETING_OCCURRENCE'] = 'ERREUR – Échec de la suppression de l\'occurrence source';
+$LANG['OPENS_NEW_TAB'] = ' (s\'ouvre dans un nouvel onglet)';
 
 ?>

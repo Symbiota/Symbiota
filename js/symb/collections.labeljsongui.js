@@ -28,7 +28,13 @@ const fieldProps = [
     id: "othercatalognumbers",
     group: "specimen",
   },
+  { block: "labelBlock", name: "Kingdom", id: "kingdom", group: "taxon" },
+  { block: "labelBlock", name: "Phylum", id: "phylum", group: "taxon" },
+  { block: "labelBlock", name: "Class", id: "class", group: "taxon" },
+  { block: "labelBlock", name: "Subclass", id: "subclass", group: "taxon" },
+  { block: "labelBlock", name: "Order", id: "order", group: "taxon" },
   { block: "labelBlock", name: "Family", id: "family", group: "taxon" },
+  { block: "labelBlock", name: "Subfamily", id: "subfamily", group: "taxon" },
   {
     block: "labelBlock",
     name: "Scientific Name",
@@ -162,7 +168,7 @@ const fieldProps = [
   {
     block: 'labelBlock',
     name: 'Description',
-    id: 'verbatimAttributes',
+    id: 'verbatimattributes',
     group: 'specimen',
   },
   { block: "labelBlock", name: "Behavior", id: "behavior", group: "specimen" },
@@ -187,7 +193,7 @@ const fieldProps = [
   {
     block: "labelBlock",
     name: "Life Stage",
-    id: "lifeStage",
+    id: "lifestage",
     group: "specimen",
   },
   { block: "labelBlock", name: "Sex", id: "sex", group: "specimen" },
@@ -1215,7 +1221,7 @@ function saveJson() {
   let formatId = dummy.dataset.formatId;
   let formatTextArea = window.opener.document.querySelector(formatId);
   let list = refreshPreview();
-  let isEmpty = list[0].length == 0;
+  let isEmpty = list.length == 0;
   let message = "";
   if (isEmpty) {
     alert(

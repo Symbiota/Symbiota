@@ -1,5 +1,5 @@
 <?php
-include_once('../../../config/symbini.php');
+include_once(__DIR__ . '/../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
@@ -7,14 +7,29 @@ Language::load('collections/editor/includes/admintab');
 
 header("Content-Type: text/html; charset=".$CHARSET);
 
-$occid = $_GET['occid'];
-$occIndex = $_GET['occindex'];
-$collId = $_GET['collid'];
+$occid = filter_var($_GET['occid'], FILTER_SANITIZE_NUMBER_INT);
+$occIndex = filter_var($_GET['occindex'], FILTER_SANITIZE_NUMBER_INT);
+$collId = filter_var($_GET['collid'], FILTER_SANITIZE_NUMBER_INT);
 
 $occManager = new OccurrenceEditorManager();
 $occManager->setOccId($occid);
 ?>
 <div id="admindiv">
+	<?php
+	$modArr = $occManager->getModDates();
+	?>
+	<div style="margin: 20px 10px">
+		<div><label><?= $LANG['ENTERED_BY'] ?>:</label> <?= $modArr['recordEnteredBy'] ? $modArr['recordEnteredBy'] : $LANG['NOT_RECORDED'] ?></div>
+		<div><label><?= $LANG['DATE_ENTERED'] ?>:</label> <?= $modArr['dateEntered'] ? $modArr['dateEntered'] : $LANG['NOT_RECORDED'] ?></div>
+		<div><label><?= $LANG['DATE_MODIFIED'] ?>:</label> <?= $modArr['dateLastModified'] ?></div>
+		<?php
+		if($modArr['modified']){
+			?>
+			<div><label><?= $LANG['SOURCE_DATE_MODIFIED'] ?>:</label> <?= $modArr['modified'] ?></div>
+			<?php
+		}
+		?>
+	</div>
 	<?php
 	$editArr = $occManager->getEditArr();
 	$externalEdits = $occManager->getExternalEditArr();
@@ -26,8 +41,8 @@ $occManager->setOccId($occid);
 				<?php
 				if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId,$USER_RIGHTS['CollAdmin']))){
 					?>
-					<div style="float:right;" title="<?php echo $LANG['MANAGE_HISTORY']; ?>">
-						<a href="../editor/editreviewer.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank"><img src="../../images/edit.png" style="border:0px;width:14px;" /></a>
+					<div style="float:right;" title="<?php echo $LANG['MANAGE_HISTORY']; ?>" aria-label="<?= $LANG['MANAGE_HISTORY'] . $LANG['OPENS_NEW_TAB'] ?>">
+						<a href="../editor/editreviewer.php?collid=<?= $collId . '&occid=' . $occid ?>" target="_blank"><img src="../../images/edit.png" style="border:0px;width:14px;" /></a>
 					</div>
 					<?php
 				}
@@ -97,7 +112,7 @@ $occManager->setOccId($occid);
 		}
 	}
 	else{
-		echo '<div style="margin:10px">'.$LANG['NO_PREV_EDITS'].'</div>';
+		echo '<div style="margin:20px 10px">'.$LANG['NO_PREV_EDITS'].'</div>';
 	}
 	$collAdminList = $occManager->getCollectionList();
 	unset($collAdminList[$collId]);
@@ -122,7 +137,7 @@ $occManager->setOccId($occid);
 				<div style="margin:10px;">
 					<input name="occindex" type="hidden" value="<?php echo $occIndex; ?>" />
 					<input name="occid" type="hidden" value="<?php echo $occid; ?>" />
-					<button name="submitaction" class="button" type="submit" value="Transfer Record" ><?php echo $LANG['TRANSFER_RECORD']; ?></button>
+					<button name="submitaction" class="button" type="submit" value="Transfer Record" aria-label="<?= $LANG['TRANSFER_RECORD'] . $LANG['OPENS_NEW_TAB'] ?>"><?php echo $LANG['TRANSFER_RECORD']; ?></button>
 				</div>
 			</form>
 		</fieldset>

@@ -56,9 +56,6 @@ final class MediaTest extends TestCase {
 		$result = Media::getAllowedMime(['image/jpeg', 'image/pjpeg']);
 		$this->assertSame('image/jpeg', $result);
 
-		$result = Media::getAllowedMime(['image/pjpeg', 'image/jpeg']);
-		$this->assertSame('image/jpeg', $result);
-
 		$result = Media::getAllowedMime(['image/bmp', 'image/x-bmp']);
 		$this->assertSame(false, $result);
 

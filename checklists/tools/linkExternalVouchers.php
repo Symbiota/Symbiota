@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/ChecklistVoucherAdmin.php');
 include_once($SERVER_ROOT . '/classes/ChecklistManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
@@ -25,8 +25,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
 	if($_POST['external_voucher_link_json_data'] ?? false) {
 		$voucher_json_data = json_decode($_POST['external_voucher_link_json_data'], true) ?? [];
 		if($voucher_json_data) {
-			$clean_data = Sanitize::in($voucher_json_data);
-			$status = $voucherManager->addExternalVouchers($target_tid, $clean_data);
+			$status = $voucherManager->addExternalVouchers($target_tid, $voucher_json_data);
 		}
 	}
 }

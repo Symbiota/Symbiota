@@ -1,9 +1,9 @@
 <?php
 include_once($SERVER_ROOT . '/config/dbconnection.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceDuplicate.php');
+include_once($SERVER_ROOT . '/classes/Media.php');
 include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
-include_once($SERVER_ROOT . '/classes/Media.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load('collections/editor/occurrenceeditor');
@@ -110,6 +110,7 @@ class OccurrenceEditorManager {
 	public function getDownloadQuery(): string {
 		$queryArr = $this->getQueryVariables();
 		$retArr = [ 'db' => $this->collId ];
+		$includeCultivated = false;
 
 		$map = 	['rb' => 'collector','rn' => 'collnum','ed' => 'eventdate1','cn' => 'catnum','ocn' => 'othercatalognumbers','eb' => 'recordenteredby','de' => 'dateentered',
 				'dm' => 'datelastmodified','ps' => 'processingstatus','traitid' => 'traitid','stateid' => 'stateid','exsid' => 'exsiccatiid'];
@@ -136,7 +137,20 @@ class OccurrenceEditorManager {
 			}
 		}
 
-		return http_build_query($retArr, "&amp");
+		for ($i = 1; $i < 11; $i++) {
+			if (($queryArr['cf' . $i] ?? '') === 'cultivationStatus') {
+				$customValue = trim((string)($queryArr['cv' . $i] ?? ''));
+				if ($customValue !== '' && $customValue !== '0') {
+					$includeCultivated = true;
+					break;
+				}
+			}
+		}
+		if ($includeCultivated) {
+			$retArr['includecult'] = 1;
+		}
+
+		return http_build_query($retArr, '', '&');
 	}
 
 	//Query functions
@@ -1146,7 +1160,7 @@ class OccurrenceEditorManager {
 										$status = $LANG['ERROR_ADDING_EXS_NO'] . ': ' . $this->conn->error . ' ';
 									}
 								}
-								//Exsiccati was editted
+								//Exsiccati was edited
 								if ($exsNumberId) {
 									//Use REPLACE rather than INSERT so that if record with occid already exists, it will be removed before insert
 									$sql1 = 'REPLACE INTO omexsiccatiocclink(omenid, occid) VALUES(' . $exsNumberId . ',' . $this->occid . ')';
@@ -2023,7 +2037,6 @@ class OccurrenceEditorManager {
 			$this->sqlWhere = $this->getBatchUpdateWhere($fn, $ov, $buMatch);
 			$this->addTableJoins($sqlOccid);
 			$sqlOccid .= $this->sqlWhere;
-			// echo $sqlOccid.'<br/>';
 			$rs = $this->conn->query($sqlOccid);
 			while ($r = $rs->fetch_object()) {
 				$occidArr[] = $r->occid;
@@ -2054,31 +2067,41 @@ class OccurrenceEditorManager {
 				}
 
 				//Insert data from target table into omoccuredits
-				$sqlWhere = 'WHERE occid IN(' . implode(',', $occidArr) . ')';
-				$sql = 'INSERT INTO omoccuredits(occid,fieldName,fieldValueOld,fieldValueNew,appliedStatus,uid,editType) ' .
+				$sqlEdits = 'INSERT INTO omoccuredits(occid,fieldName,fieldValueOld,fieldValueNew,appliedStatus,uid,editType) ' .
 					'SELECT o.occid, "' . $fn . '" AS fieldName, IFNULL(' . $fn . ',"") AS oldValue, IFNULL(' . $nvSqlFrag . ',"") AS newValue, ' .
 					'1 AS appliedStatus, ' . $GLOBALS['SYMB_UID'] . ' AS uid, 1 FROM ' . $targetTable . ' as o ';
+				$sqlWhere = 'WHERE occid IN(' . implode(',', $occidArr) . ')';
 
 				// This Solution is a bit scuffed their isn't a nice way of getting many to one
 				// tables in the batch update system without rebuilding most of it
 				if ($fn === 'identifierValue' || $fn === 'identifierName') {
-					$sql .= ' JOIN omoccuridentifiers AS id ON id.occid = o.occid ';
-					$sqlWhere = 'WHERE id.occid IN(' . implode(',', $occidArr) . ')' . ' AND ' . $fn . ' = ' . '"' . $ov . '" ';
+					$sqlEdits .= ' JOIN omoccuridentifiers id ON id.occid = o.occid ';
+					$sqlEdits .= 'WHERE id.occid IN(' . implode(',', $occidArr) . ') ';
+					if (!$buMatch || $ov === '') {
+						//Match whole field
+						$sqlEdits .= 'AND ' . $fn . ' = ' . '"' . $ov . '" ';
+					}
+					else{
+						//Match any part of field
+						$sqlEdits .= 'AND ' . $fn . ' LIKE ' . '"%' . $ov . '%" ';
+					}
 				}
-
-				$sql .= $sqlWhere;
-
-				if (!$this->conn->query($sql)) {
+				else{
+					$sqlEdits .= $sqlWhere;
+				}
+				if (!$this->conn->query($sqlEdits)) {
 					$statusStr = $LANG['ERROR_ADDING_UPDATE'] . ': ' . $this->conn->error;
 				}
+
 				//Apply edits to core tables
 				if ((empty($this->collMap) || !empty($this->collMap['paleoActivated'])) && in_array($fn, $this->fieldArr['omoccurpaleo'])) {
 					$sql = 'UPDATE omoccurpaleo SET ' . $fn . ' = ' . $nvSqlFrag . ' ' . $sqlWhere;
 				} else if ($fn === 'identifierValue' || $fn === 'identifierName') {
-					$sql = 'UPDATE omoccuridentifiers as id SET ' . $fn . ' = ' . $nvSqlFrag . ' ' . $sqlWhere;
+					$sql = 'UPDATE omoccuridentifiers SET ' . $fn . ' = ' . $nvSqlFrag . ' ' . $sqlWhere;
 				} else {
 					$sql = 'UPDATE omoccurrences SET ' . $fn . ' = ' . $nvSqlFrag . ' ' . $sqlWhere;
 				}
+
 				if (!$this->conn->query($sql)) {
 					$statusStr = $LANG['ERROR_APPLYING_BATCH_EDITS'] . ': ' . $this->conn->error;
 				}
@@ -2119,12 +2142,13 @@ class OccurrenceEditorManager {
 		}
 
 		if (!$buMatch || $ov === '') {
+			//Match whole field
 			if (in_array($fn, $this->fieldArr['omoccurpaleo']))
 				$sql .= ' AND (paleo.'.$fn.' '.($ov===''?'IS NULL':'= "'.$ov.'"').') ';
 			else
 				$sql .= ' AND (' . $tablePrefix . $fn . ' ' . ($ov === '' ? 'IS NULL' : '= "' . $ov . '"') . ') ';
 		} else {
-			//Selected "Match any part of field"
+			//Match any part of field
 			if (in_array($fn, $this->fieldArr['omoccurpaleo']))
 				$sql .= ' AND (paleo.'.$fn.' LIKE "%'.$ov.'%") ';
 			else
@@ -2490,10 +2514,10 @@ class OccurrenceEditorManager {
 	public function getEditArr() {
 		$retArr = array();
 		$this->setOccurArr();
-		$sql = 'SELECT e.ocedid, e.fieldname, e.fieldvalueold, e.fieldvaluenew, e.reviewstatus, e.appliedstatus, ' .
-			'CONCAT_WS(", ",u.lastname,u.firstname) as editor, e.initialtimestamp ' .
-			'FROM omoccuredits e INNER JOIN users u ON e.uid = u.uid ' .
-			'WHERE e.occid = ' . $this->occid . ' ORDER BY e.initialtimestamp DESC ';
+		$sql = 'SELECT e.ocedid, e.fieldname, e.fieldvalueold, e.fieldvaluenew, e.reviewstatus, e.appliedstatus,
+			CONCAT_WS(", ",u.lastname,u.firstname) as editor, e.initialtimestamp
+			FROM omoccuredits e INNER JOIN users u ON e.uid = u.uid
+			WHERE e.occid = ' . $this->occid . ' ORDER BY e.initialtimestamp DESC ';
 		$result = $this->conn->query($sql);
 		if ($result) {
 			while ($r = $result->fetch_object()) {
@@ -2515,6 +2539,27 @@ class OccurrenceEditorManager {
 				$retArr[$k]['edits'][$r->appliedstatus][$r->ocedid]['current'] = $currentCode;
 			}
 			$result->free();
+		}
+
+		return $retArr;
+	}
+
+	public function getModDates(){
+		$retArr = array();
+		//Add date entered, modifed, and by whom
+		$sql = 'SELECT dateEntered, modified, dateLastModified, recordEnteredBy FROM omoccurrences WHERE occid = ?';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $this->occid);
+			$stmt->execute();
+			$rs = $stmt->get_result();
+			if($r = $rs->fetch_object()){
+				$retArr['dateEntered'] = $r->dateEntered;
+				$retArr['modified'] = $r->modified;
+				$retArr['dateLastModified'] = $r->dateLastModified;
+				$retArr['recordEnteredBy'] = $r->recordEnteredBy;
+			}
+			$rs->free();
+			$stmt->close();
 		}
 		return $retArr;
 	}
@@ -2675,6 +2720,66 @@ class OccurrenceEditorManager {
 			}
 		}
 		return $isEditor;
+	}
+
+	//Portal Index functions
+	public function triggerRemoteUpdates(){
+		if($this->occid && $GLOBALS['PORTAL_GUID'] && $GLOBALS['SECURITY_KEY']){
+			//Get list of remote occurrences and trigger API reharvesting events
+			$apiCallArr = array();
+			$sql = 'SELECT i.urlRoot, o.remoteOccid, o.portalOccurrencesID
+				FROM portalindex i INNER JOIN portalpublications p ON i.portalID = p.portalID
+				INNER JOIN portaloccurrences o ON p.pubid = o.pubid
+				WHERE p.direction = "export" AND i.securityKey IS NOT NULL AND o.occid = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->occid);
+				$stmt->execute();
+				$rs = $stmt->get_result();
+				while($r = $rs->fetch_object()){
+					$apiCallArr[$r->portalOccurrencesID] = $r->urlRoot . '/api/v2/installation/' . $GLOBALS['PORTAL_GUID'] .
+						'?eventCode=triggerHarvest&securityKey=' . $GLOBALS['SECURITY_KEY'] . '&remoteIdentifier=' . $r->remoteOccid;
+				}
+				$rs->free();
+				$stmt->close();
+			}
+			$this->processApiCalls($apiCallArr);
+		}
+	}
+
+	private function processApiCalls($apiCallArr){
+		//Uses the cURL Multi option to asynchronously trigger remote reharvest events
+		$channelArr = array();
+		$mh = curl_multi_init();
+		foreach ($apiCallArr as $key => $callArr) {
+			$url = $callArr['url'];
+			$channelArr[$key] = curl_init();
+
+			curl_setopt($channelArr[$key], CURLOPT_URL, $url);
+			curl_setopt($channelArr[$key], CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($channelArr[$key], CURLOPT_TIMEOUT, 10);
+
+			curl_multi_add_handle($mh, $channelArr[$key]);
+		}
+
+		// Execute requests simultaneously
+		$active = null;
+		do {
+			$status = curl_multi_exec($mh, $active);
+
+			if ($active) {
+				// Pause briefly to avoid maxing out your server's CPU
+				curl_multi_select($mh);
+			}
+		} while ($active && $status == CURLM_OK);
+
+		// Collect responses and clean up memory
+		foreach ($channelArr as $key => $ch) {
+			// Remove handle from manager and close
+			curl_multi_remove_handle($mh, $ch);
+			curl_close($ch);
+		}
+
+		curl_multi_close($mh);
 	}
 
 	//Misc data support functions

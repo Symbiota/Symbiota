@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverPublisher.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCollectionProfile.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
@@ -480,31 +480,11 @@ if ($isEditor) {
 						$dwcaManager->setLimitToGuids(true);
 						foreach($collIdArr as $id){
 							$dwcaManager->resetCollArr($id);
-							if($includeAttributes){
-								if($dwcaManager->hasAttributes($id)) $dwcaManager->setIncludeAttributes(1);
-								else $dwcaManager->setIncludeAttributes(0);
-							}
-							if($includeMatSample){
-								if($dwcaManager->hasMaterialSamples($id)) $dwcaManager->setIncludeMaterialSample(1);
-								else  $dwcaManager->setIncludeMaterialSample(0);
-							}
-							if($includeIdentifiers){
-								if($dwcaManager->hasIdentifiers($id)) $dwcaManager->setIncludeIdentifiers(1);
-								else $dwcaManager->setIncludeIdentifiers(0);
-							}
-							if($includeAssociations){
-								if($dwcaManager->hasAssociations($id)) $dwcaManager->setIncludeAssociations(1);
-								else $dwcaManager->setIncludeAssociations(0);
-							}
 							if($dwcaManager->createDwcArchive()){
 								$dwcaManager->writeRssFile();
 								$collManager->batchTriggerGBIFCrawl(array($id));
 							}
 						}
-						$dwcaManager->setIncludeAttributes($includeAttributes);
-						$dwcaManager->setIncludeMaterialSample($includeMatSample);
-						$dwcaManager->setIncludeIdentifiers($includeIdentifiers);
-						$dwcaManager->setIncludeAssociations($includeAssociations);
 						echo '</ul>';
 						echo 'Batch process finished! (' . date('Y-m-d h:i:s A') . ')';
 					}

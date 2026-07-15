@@ -109,6 +109,17 @@ div.button:hover {
   font-weight: bold;
 }
 
+.checklist-image-grid {
+  display: grid;
+  gap: 0.75rem 0.5rem;
+  grid-template-columns: repeat(auto-fill, 10rem);
+}
+
+.checklist-image-grid .tndiv {
+  margin: 0;
+  width: 10rem;
+}
+
 /* Species list component */
 #taxalist-div {
   line-height: 1em;

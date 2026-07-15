@@ -1,15 +1,11 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load('collections/download/index');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
-
-if(empty($OVERRIDE_DOWNLOAD_LOGIN_REQUIREMENT) && !$SYMB_UID){
-	header('Location: ../../profile/index.php?refurl=../collections/download/index.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
-}
 
 $sourcePage = array_key_exists('sourcepage', $_REQUEST) ? $_REQUEST['sourcepage'] : 'specimen';
 $downloadType = array_key_exists('dltype', $_REQUEST) ? $_REQUEST['dltype'] : 'specimen';
@@ -18,8 +14,16 @@ $displayHeader = array_key_exists('displayheader', $_REQUEST) ? filter_var($_REQ
 $isPublicSearch = (isset($_REQUEST['publicsearch']) && !$_REQUEST['publicsearch']) ? 0 : 1;		//Value is true by default, and only false if explicitly set to false
 $searchVar = array_key_exists('searchvar', $_REQUEST) ? htmlspecialchars($_REQUEST['searchvar'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE| ENT_QUOTES) : '';
 
+if(empty($OVERRIDE_DOWNLOAD_LOGIN_REQUIREMENT) && !$SYMB_UID){
+	$_SESSION['searchvar'] = $searchVar;
+	$queryStr = 'sourcepage=' . $sourcePage . '&dltype=' . $downloadType . '&taxonFilterCode=' . $taxonFilterCode;
+	header('Location: ../../profile/index.php?refurl=../collections/download/index.php?' . $queryStr);
+}
+if(!$searchVar && !empty($_SESSION['searchvar'])){
+	$searchVar = $_SESSION['searchvar'];
+	unset($_SESSION['searchvar']);
+}
 $dwcManager = new DwcArchiverCore();
-$filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $LANG_TAG ?>">
@@ -30,10 +34,10 @@ $filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIEN
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
+	include_once($SERVER_ROOT.'/includes/javascript_lang_tags.php');
 	?>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="<?php echo $filename ?>" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
 			var dialogArr = new Array("schemanative","schemadwc", "taxaresolution");
@@ -69,7 +73,6 @@ $filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIEN
         	form.addEventListener('submit', function(event) {
 				const token = 'dl_' + Date.now();
 				document.getElementById('downloadTokenInput').value = token;
-				spinner.style.display = 'block';
 				downloadButton.disabled = true;
 				spinnerSpan.textContent = translations.DOWNLOAD_IN_PROGRESS;
 				const interval = setInterval(() => {
@@ -253,10 +256,10 @@ $filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIEN
 						<input name="sourcepage" type="hidden" value="<?= htmlspecialchars($sourcePage); ?>" />
 						<input name="searchvar" type="hidden" value="<?= $searchVar ?>" />
 						<button type="submit" name="submitaction" id="submitaction"><?= $LANG['DOWNLOAD_DATA'] ?></button>
-						<div id="spinner-div" class="top-breathing-room-rel">
+						<span id="spinner-div">
 							<span id="spinner-span"></span>
 							<img id="workingcircle" src="../../images/ajax-loader_sm.gif" style="margin-bottom:-4px;width:20px;display:none;" />
-						</div>
+						</span>
 					</div>
 					<div class="sectionDiv">
 						*  <?= $LANG['LIMIT_NOTE'] ?>

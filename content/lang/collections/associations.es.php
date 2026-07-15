@@ -6,7 +6,7 @@
  Used by: editor/includes/resourcetab.es.php, admin/importextended.es.php
  */
 
- $LANG['ASOCIACIONES'] = 'Asociaciones';
+ $LANG['ASSOCIATIONS'] = 'Asociaciones';
  $LANG['CREATE_NEW_ASSOC'] = 'Crear Nueva Asociación';
 $LANG['ASSOCIATION_TYPE'] = 'Typo de Asociación (requerido)';
 $LANG['RESOURCE_LINK'] = 'Enlace de recursos';

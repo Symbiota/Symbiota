@@ -32,7 +32,7 @@ $LANG['UNLINK_BUT_MAINTAIN'] = 'Desenlazar estas ocurrencias de grupos duplicado
 $LANG['REM_FROM_CLUSTER'] = 'Remover del Grupo';
 $LANG['UNLINK'] = 'Desenlazar';
 $LANG['CAT_NUM'] = 'Número de Catálogo';
-$LANG['GUID'] = 'GUID';
+$LANG['OCCURRENCE_ID'] = 'Occurrence ID';
 $LANG['LATEST_ID'] = 'Última Identificación';
 $LANG['IDED_BY'] = 'Identificado Por';
 $LANG['SHOW_FULL_DETS'] = 'Mostrar Detalles Completos';
@@ -50,6 +50,7 @@ $LANG['DEL_GEN_RES'] = 'Eliminar Recurso Genético';
 $LANG['DEL_RES'] = 'Eliminar Recurso';
 $LANG['NO_CHECKLISTS'] = 'No se han establecido vínculos con los vales de la lista de verificación';
 $LANG['NO_GENETIC_RESOURCES'] = 'No se han establecido vínculos genéticos.';
+$LANG['OPENS_NEW_TAB'] = ' (se abre en una nueva pestaña)';
 
 include_once($SERVER_ROOT.'/content/lang/collections/associations.es.php');
 ?>

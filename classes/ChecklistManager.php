@@ -465,7 +465,7 @@ class ChecklistManager extends Manager{
   public function getExternalVoucherArr($tid = null) {
 		$externalVoucherArr = array();
 
-		if(is_numeric($tid) || $this->taxaList) {
+		if((is_numeric($tid) || $this->taxaList) && $this->clid) {
 			$taxaList = is_numeric($tid)? [ $tid ]: array_keys($this->taxaList);
 			$clidStr = $this->clid;
 			if($this->childClidArr){
@@ -777,6 +777,25 @@ class ChecklistManager extends Manager{
 			$rs->free();
 		}
 		return $retArr;
+	}
+
+	//Misc support functions
+	public function getVoucherCount(){
+		$voucherCnt = 0;
+		if($this->clid){
+			$clidStr = $this->clid;
+			if($this->childClidArr){
+				$clidStr .= ','.implode(',',array_keys($this->childClidArr));
+			}
+			$sql = 'SELECT COUNT(v.occid) as cnt FROM fmchklsttaxalink c INNER JOIN fmvouchers v ON c.clTaxaID = v.clTaxaID WHERE c.clid IN(' . $clidStr . ')';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->execute();
+				$stmt->bind_result($voucherCnt);
+				$stmt->fetch();
+				$stmt->close();
+			}
+		}
+		return $voucherCnt;
 	}
 
 	//Setters and getters

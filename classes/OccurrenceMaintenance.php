@@ -485,7 +485,7 @@ class OccurrenceMaintenance {
 		if($sensitiveArr){
 			$sql = 'UPDATE omoccurrences
 				SET recordSecurity = 1
-				WHERE (recordSecurity = 0) AND (securityReason IS NULL)
+				WHERE (securityReason IS NULL)
 				'.$cultivationClause.' AND (tidinterpreted IN(' . implode(',', $sensitiveArr) . ')) ';
 			if($this->collidStr) $sql .= 'AND collid IN('.$this->collidStr.')';
 			if($this->conn->query($sql)){

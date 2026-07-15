@@ -32,7 +32,7 @@ $LANG['UNLINK_BUT_MAINTAIN'] = 'Dissociez ces occurrences du cluster en double m
 $LANG['REM_FROM_CLUSTER'] = 'Supprimer du Cluster';
 $LANG['UNLINK'] = 'Dissocier';
 $LANG['CAT_NUM'] = 'Numéros de Catalogue';
-$LANG['GUID'] = 'GUID';
+$LANG['OCCURRENCE_ID'] = 'Occurrence ID';
 $LANG['LATEST_ID'] = 'Dernière Identification';
 $LANG['IDED_BY'] = 'Identifié par';
 $LANG['SHOW_FULL_DETS'] = 'Afficher Tous Détails';
@@ -50,6 +50,7 @@ $LANG['DEL_GEN_RES'] = 'Supprimer Ressource Génétique';
 $LANG['DEL_RES'] = 'Supprimer Ressource';
 $LANG['NO_CHECKLISTS'] = "Aucun lien entre les bons de vérification et les listes de contrôle n'a été établi";
 $LANG['NO_GENETIC_RESOURCES'] = 'Aucun lien génétique n’a été établi';
+$LANG['OPENS_NEW_TAB'] = ' (s\'ouvre dans un nouvel onglet)';
 
 include_once($SERVER_ROOT.'/content/lang/collections/associations.fr.php');
 ?>

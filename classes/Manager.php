@@ -17,6 +17,8 @@ class Manager  {
 	protected $logFH;
 	protected $verboseMode = 0;
 
+	protected $cliOutput = false;
+
 	public function __construct($id=null, $conType='readonly', $connOverride = null){
 		if($connOverride){
 			$this->conn = $connOverride;
@@ -37,19 +39,19 @@ class Manager  {
 		}
 	}
 
-	protected function getConfigAttribute($attrName){
-		$attrValue = '';
-		if($attrName){
-			$sql = 'SELECT attributeValue FROM adminconfig WHERE attributeName = ?';
+	protected function getConfigAttribute($propName){
+		$propValue = '';
+		if($propName){
+			$sql = 'SELECT propName FROM adminproperties WHERE propName = ?';
 			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('s', $attrName);
+				$stmt->bind_param('s', $propName);
 				$stmt->execute();
-				$stmt->bind_result($attrValue);
+				$stmt->bind_result($propValue);
 				$stmt->fetch();
 				$stmt->close();
 			}
 		}
-		return $attrValue;
+		return $propValue;
 	}
 
 	protected function setLogFH($logPath){
@@ -65,7 +67,10 @@ class Manager  {
 				}
 			}
 			if($this->verboseMode == 3 || $this->verboseMode == 2){
-				echo '<'.$tag.' style="'.($indexLevel?'margin-left:'.($indexLevel*15).'px':'').'">'.$str.'</'.$tag.'>';
+				if ($this->cliOutput) echo strip_tags($str) . PHP_EOL;
+				else {
+					echo '<'.$tag.' style="'.($indexLevel?'margin-left:'.($indexLevel*15).'px':'').'">'.$str.'</'.$tag.'>';
+				}
 				if (ob_get_level() > 0) {
 					ob_flush();
 				}
@@ -116,13 +121,12 @@ class Manager  {
 	}
 
 	protected function cleanInStr($str){
-		$newStr = $str ? trim($str) : '';
-		if($newStr){
-			$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-			$newStr = $this->conn->real_escape_string($newStr);
+		if($str){
+			$str = trim($str);
+			$str = preg_replace('/\s\s+/', ' ', $str);
+			$str = $this->conn->real_escape_string($str);
 		}
-
-		return $newStr;
+		return $str;
 	}
 
 	protected function cleanInArray($arr){

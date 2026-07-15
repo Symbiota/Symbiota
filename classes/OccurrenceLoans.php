@@ -1011,12 +1011,6 @@ class OccurrenceLoans extends Manager{
 
 	// Correspondence attachments management functions
 	public function uploadAttachment($collid, $type, $transid, $identifier, $title, $file) {
-
-		// Permissable mimetypes, see http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types
-		$mimetypes = array('text/plain', 'image/jpeg', 'image/png', 'application/pdf', 'application/msword',
-			'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-			'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-
 		// File checking
 		// Check to make sure it is an uploaded file and not spoofed
 		if (!is_uploaded_file($file['tmp_name'])) {
@@ -1027,16 +1021,18 @@ class OccurrenceLoans extends Manager{
 		} else if ($file['size'] > 10000000) {
 			$this->errorMessage = 'Error: File size is too large: max size is 10 MB';
 			return false;
-
-		// Check the mimetype of the file, don't rely on the file extension
-		} else if (!in_array(mime_content_type($file['tmp_name']), $mimetypes)) {
-			$this->errorMessage = 'Error: File type does not match extension. File must be a PDF (.pdf), MS Word document (.doc or .docx), MS Excel file (.xls or .xlsx), image (.jpg, .jpeg, or .png). or a text file (.txt, .csv).';
-			return false;
 		}
 
-		// Ensure that the file type matches the mimetype
+		// Ensure that the file type matches the mimetype and ext
 		try {
-			UploadUtil::checkFileUpload($file, $mimetypes);
+			UploadUtil::checkFileUpload($file, UploadUtil::ALLOWED_LOAN_MIMES);
+		} catch(MediaException $e) {
+			if($e->case == MediaException::FileTypeNotAllowed) {
+				$this->errorMessage = 'Error: File type does not match extension. File must be a PDF (.pdf), MS Word document (.doc or .docx), MS Excel file (.xls or .xlsx), image (.jpg, .jpeg, or .png). or a text file (.txt, .csv).';
+			} else {
+				$this->errorMessage = 'Error: ' . $e->getMessage();
+			}
+			return false;
 		} catch(Exception $e) {
 			$this->errorMessage = 'Error: ' . $e->getMessage();
 			return false;

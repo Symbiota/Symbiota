@@ -8,6 +8,7 @@ class DwcArchiverBaseManager extends Manager{
 	protected $fieldArr;
 	protected $charSetSource = '';
 	protected $charSetOut = '';
+	protected $serverPath;
 	protected $sqlArr = array();
 	private $fileHandler;
 
@@ -129,8 +130,8 @@ class DwcArchiverBaseManager extends Manager{
 		return $this->delimiter = $d;
 	}
 
-	public function setExportID($id){
-		$this->exportID = $id;
+	public function setServerPath($path){
+		$this->serverPath = $path;
 	}
 }
 ?>

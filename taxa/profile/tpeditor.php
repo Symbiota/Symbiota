@@ -2,7 +2,7 @@
 
 use PHPUnit\Exception;
 
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TPEditorManager.php');
 include_once($SERVER_ROOT.'/classes/TPDescEditorManager.php');
 include_once($SERVER_ROOT.'/classes/TPImageEditorManager.php');
@@ -138,9 +138,8 @@ if($isEditor && $action){
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
-	$filename = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
+	include_once($SERVER_ROOT.'/includes/javascript_lang_tags.php');
 	?>
-	<script src="<?php echo $filename ?>" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/symb/shared.js"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
@@ -362,20 +361,20 @@ if($isEditor && $action){
 						<!-- Deprecation of Taxon Profile Editors ability to adjust display order of synonyms pending user input
 						<hr/>
 						<fieldset style="width:650px;margin:5px 0px 0px 15px;">
-							<legend><b><?php echo $LANG['SYNONYMS']; ?></b></legend>
+							<legend><b><?php //echo $LANG['SYNONYMS']; ?></b></legend>
 							<?php
 							//Display Synonyms
-							if($synonymArr = $tEditor->getSynonym()){
+							//if($synonymArr = $tEditor->getSynonym()){
 								?>
-								<div style="float:right;" title="<?php echo $LANG['EDIT_SYN_ORDER']; ?>">
+								<div style="float:right;" title="<?php //echo $LANG['EDIT_SYN_ORDER']; ?>">
 									<a href="#"  onclick="toggle('synsort');return false;"><img class="icon-img" src="../../images/edit.png"/></a>
 								</div>
 								<div style="font-weight:bold;margin-left:15px;">
 									<ul>
 										<?php
-										foreach($synonymArr as $tidKey => $valueArr){
-											 echo '<li>' . $valueArr["sciname"] . '</li>';
-										}
+										// foreach($synonymArr as $tidKey => $valueArr){
+										// 	 //echo '<li>' . $valueArr["sciname"] . '</li>';
+										// }
 										?>
 									</ul>
 								</div>
@@ -383,35 +382,35 @@ if($isEditor && $action){
 									<form name="synsortform" action="tpeditor.php" method="post">
 										<input type="hidden" name="tid" value="<?php echo $tEditor->getTid(); ?>" />
 										<fieldset style='margin:5px 0px 5px 5px;margin-left:20px;width:350px;'>
-										<legend><b><?php echo $LANG['SYN_SORT_ORDER']; ?></b></legend>
+										<legend><b><?php //echo $LANG['SYN_SORT_ORDER']; ?></b></legend>
 										<?php
-										foreach($synonymArr as $tidKey => $valueArr){
+										// foreach($synonymArr as $tidKey => $valueArr){
 											?>
 												<div>
-													<b><?php echo $valueArr["sortsequence"]; ?></b> -
-													<?php echo $valueArr["sciname"]; ?>
+													<b><?php //echo $valueArr["sortsequence"]; ?></b> -
+													<?php //echo $valueArr["sciname"]; ?>
 												</div>
 												<div style="margin:0px 0px 5px 10px;">
 													new sort value:
-													<input type="text" name="syn-<?php echo $tidKey; ?>" style="width:35px;border:inset;" />
+													<input type="text" name="syn-<?php //echo $tidKey; ?>" style="width:35px;border:inset;" />
 												</div>
 												<?php
-											}
+											//}
 											?>
 											<div>
-												<button type="submit" name="action" value="editSynonymSort"><?php echo $LANG['EDIT_SYN_ORDER']; ?></button>
+												<button type="submit" name="action" value="editSynonymSort"><?php //echo $LANG['EDIT_SYN_ORDER']; ?></button>
 											</div>
 										</fieldset>
 									</form>
 								</div>
 								<?php
-							}
-							else{
-								echo '<div style="margin:20px 0px"><b>' . $LANG['NO_SYN_LINK'] . '</b></div>';
-							}
+							// }
+							// else{
+								//echo '<div style="margin:20px 0px"><b>' . $LANG['NO_SYN_LINK'] . '</b></div>';
+							// }
 							?>
 							<div style="margin:10px;">
-								*<?php echo $LANG['MOST_SYN_IN_TAX_THES'] . ' <a href="../../sitemap.php">' . $LANG['SITEMAP'] . '</a>).'; ?>
+								*<?php //echo $LANG['MOST_SYN_IN_TAX_THES'] . ' <a href="../../sitemap.php">' . $LANG['SITEMAP'] . '</a>).'; ?>
 							</div>
 						</fieldset>
 						-->

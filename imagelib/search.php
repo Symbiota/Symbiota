@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/ImageLibrarySearch.php');
 include_once($SERVER_ROOT . '/classes/Media.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
@@ -335,7 +335,7 @@ $creators = Media::getCreatorArray();
 								<fieldset>
 									<legend><?= $LANG['COLLECTIONS'] ?></legend>
 									<div id="error-msgs" class="errors"></div>
-									<div style="display: flex; justify-content: flex-end; position: sticky; top: 1rem; z-index: 100;">
+									<div style="display: flex; justify-content: flex-end; position: sticky; top: 1rem;">
 										<button style="margin-right: 0.5rem; background-color: var(--medium-color); width: 75px;" id="reset-btn" type="button"><?php echo $LANG['RESET'] ?></button>
 									</div>
 									<div id="search-form-colls">

@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load('collections/reports/labeljsongui');
@@ -427,6 +427,6 @@ header("Content-Type: text/html; charset=" . $CHARSET);
     </div>
   </main>
 </body>
-<script src="../../js/symb/collections.labeljsongui.js"></script>
+<script src="../../js/symb/collections.labeljsongui.js?ver=2"></script>
 
 </html>

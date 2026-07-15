@@ -226,12 +226,12 @@ class Media {
 			return is_array($mime) && count($mime) > 0? $mime[0]: $mime;
 		} else if(is_array($mime)) {
 			foreach($mime as $type) {
-				if(in_array($type, $GLOBALS['ALLOWED_MEDIA_MIME_TYPES'])) {
+				if(UploadUtil::mimeAllowed($type, $GLOBALS['ALLOWED_MEDIA_MIME_TYPES'])) {
 					return $type;
 				}
 			}
 		} else {
-			if(in_array($mime, $GLOBALS['ALLOWED_MEDIA_MIME_TYPES'])) {
+			if(UploadUtil::mimeAllowed($mime, $GLOBALS['ALLOWED_MEDIA_MIME_TYPES'])) {
 				return $mime;
 			}
 		}
@@ -244,6 +244,9 @@ class Media {
 	 * @return string | bool
 	 */
 	public static function ext2Mime(string $ext, string $type = '') {
+		$ext = strtolower($ext);
+		$type = strtolower($type);
+
 		$image = [
 			'bmp' => ['image/bmp', 'image/x-bmp', 'image/x-bitmap', 'image/x-xbitmap', 'image/x-win-bitmap', 'image/x-windows-bmp', 'image/ms-bmp', 'image/x-ms-bmp'],
 			'cdr' => ['image/cdr', 'image/x-cdr'],
@@ -280,6 +283,12 @@ class Media {
 
 		$misc = [
 			'pdf' => 'application/pdf',
+			'txt' => 'text/plain',
+			'csv' => ['text/csv', 'text/x-comma-separated-values', 'text/comma-separated-values', 'application/vnd.msexcel', 'text/plain'],
+			'zip' => [
+				'application/zip', 'application/x-zip', 'application/x-zip-compressed', 'application/s-compressed', 'multipart/x-zip'],
+			'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+			'xlsx' => ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel']
 		];
 
 		if($type === MediaType::Image) {
@@ -338,15 +347,15 @@ class Media {
 	}
 
 	/* Internal Function for creating a file array for media that doesn't need to be uploaded. Primarly used for media upload */
-	private static function parse_map_only_file(array $clean_post_arr): array {
+	private static function parse_map_only_file(array $post_arr): array {
 		// Map only files must have format and a url
-		if(!(isset($clean_post_arr['originalUrl']) || isset($clean_post_arr['url']))) {
+		if(!(isset($post_arr['originalUrl']) || isset($post_arr['url']))) {
 			return [];
 		}
 
-		$url = $clean_post_arr['originalUrl'] ?? $clean_post_arr['url'];
-		$file_type_mime = $clean_post_arr['format'] ?? '';
-		$media_upload_type = $clean_post_arr['mediaUploadType'] ?? '';
+		$url = $post_arr['originalUrl'] ?? $post_arr['url'];
+		$file_type_mime = $post_arr['format'] ?? '';
+		$media_upload_type = $post_arr['mediaUploadType'] ?? '';
 
 		if($media_upload_type) {
 			$media_upload_type = MediaType::tryFrom($media_upload_type);
@@ -391,12 +400,10 @@ class Media {
 			$conn = Database::connect('write');
 		}
 
-		$clean_post_arr = Sanitize::in($post_arr);
-
 		//Not Sure if I Need
-		$mapLargeImg = !($clean_post_arr['nolgimage']?? true);
+		$mapLargeImg = !($post_arr['nolgimage']?? true);
 
-		if(empty($clean_post_arr['tid']) && !empty($clean_post_arr['occid'])){
+		if(empty($post_arr['tid']) && !empty($post_arr['occid'])){
 			$sql = <<< SQL
 			SELECT tidinterpreted 
 			FROM omoccurrences 
@@ -406,72 +413,78 @@ class Media {
 			$taxon_result = QueryUtil::executeQuery(
 				$conn,
 				$sql,
-				[$clean_post_arr['occid']]
+				[$post_arr['occid']]
 			);
 
 			if($row = $taxon_result->fetch_object()) {
-				$clean_post_arr['tid'] = $row->tidinterpreted;
+				$post_arr['tid'] = $row->tidinterpreted;
 			}
 		}
 
-		if(!($clean_post_arr['copytoserver'] ?? false) && !($clean_post_arr['format'] ?? false)) {
-			$file = self::parse_map_only_file($clean_post_arr);
+		if(!($post_arr['copytoserver'] ?? false) && !($post_arr['format'] ?? false)) {
+			$file = self::parse_map_only_file($post_arr);
 
 			if( (!self::isValidFile($file) || !$file['type']) ) {
-				$file = UploadUtil::getRemoteFileInfo($clean_post_arr['originalUrl']);
+				$file = UploadUtil::getRemoteFileInfo($post_arr['originalUrl']);
 			}
 
-			$clean_post_arr['format'] = $file['type'] ?? null;
+			$post_arr['format'] = $file['type'] ?? null;
 
-			if(!isset($clean_post_arr['sourceIdentifier'])) {
-				$clean_post_arr['sourceIdentifier'] = 'filename: ' . $file['name'];
+			if(!isset($post_arr['sourceIdentifier'])) {
+				$post_arr['sourceIdentifier'] = 'filename: ' . $file['name'];
 			}
 		}
 
 		// Converts Deprecated mimes to proper mime type
-		if($real_mime = UploadUtil::DEPRECATED_MIME_CONVERSION[$clean_post_arr['format']] ?? false) {
-			$clean_post_arr['format'] = $real_mime;
+		if($real_mime = UploadUtil::DEPRECATED_MIME_CONVERSION[$post_arr['format']] ?? false) {
+			$post_arr['format'] = $real_mime;
 		}
 
-		if(!self::getAllowedMime($clean_post_arr['format'])) {
-			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $clean_post_arr['format']);
+		if(!self::getAllowedMime($post_arr['format'])) {
+			throw new MediaException(MediaException::FileTypeNotAllowed, ' ' . $post_arr['format']);
 		}
 
 		$keyValuePairs = [
-			"tid" => $clean_post_arr["tid"] ?? null,
-			"occid" => $clean_post_arr["occid"] ?? null,
-			"url" => $clean_post_arr['weburl'] ?? $clean_post_arr['url'] ?? null,
-			"thumbnailUrl" => $clean_post_arr["thumbnailUrl"] ?? null,
+			"tid" => $post_arr["tid"] ?? null,
+			"occid" => $post_arr["occid"] ?? null,
+			"url" => $post_arr['weburl'] ?? $post_arr['url'] ?? null,
+			"thumbnailUrl" => $post_arr["thumbnailUrl"] ?? null,
 			// Will get popluated below
-			"originalUrl" => $clean_post_arr['originalUrl'],
-			"archiveUrl" => $clean_post_arr["archiveUrl"] ?? null,// Only Occurrence import
+			"originalUrl" => $post_arr['originalUrl'],
+			"archiveUrl" => $post_arr["archiveUrl"] ?? null,// Only Occurrence import
 			// This is a very bad name that refers to source or downloaded url
-			"sourceUrl" => $clean_post_arr["sourceUrl"] ?? null,// TPImageEditorManager / Occurrence import
-			"referenceUrl" => $clean_post_arr["referenceUrl"] ?? null,// check keys again might not be one,
-			"creator" => $clean_post_arr["creator"] ?? null,
-			"creatorUid" => OccurrenceUtil::verifyUser($clean_post_arr["creatorUid"] ?? null, $conn),
-			"format" =>  $clean_post_arr['format'],
-			"caption" => $clean_post_arr["caption"] ?? null,
-			"owner" => $clean_post_arr["owner"] ?? null,
-			"locality" => $clean_post_arr["locality"] ?? null,
-			"anatomy" => $clean_post_arr["anatomy"] ?? null,
-			"notes" => $clean_post_arr["notes"] ?? null,
-			"username" => Sanitize::in($GLOBALS['USERNAME']),
-			// check if its is_numeric?
-			"sortOccurrence" => $clean_post_arr['sortOccurrence'] ?? null,
-			"sourceIdentifier" => $clean_post_arr['sourceIdentifier'] ?? null,
-			"rights" => $clean_post_arr['rights'] ?? null,
-			"accessRights" => $clean_post_arr['accessRights'] ?? null,
-			"copyright" => $clean_post_arr['copyright'] ?? null,
-			"hashFunction" => $clean_post_arr['hashFunction'] ?? null,
-			"hashValue" => $clean_post_arr['hashValue'] ?? null,
-			"mediaMD5" => $clean_post_arr['mediaMD5'] ?? null,
-			"recordID" => $clean_post_arr['recordID'] ?? UuidFactory::getUuidV4(),
-			"mediaType" => self::getMediaTypeStrFromMime($clean_post_arr['format']),
+			"sourceUrl" => $post_arr["sourceUrl"] ?? null,// TPImageEditorManager / Occurrence import
+			"referenceUrl" => $post_arr["referenceUrl"] ?? null,// check keys again might not be one,
+			"creator" => $post_arr["creator"] ?? null,
+			"creatorUid" => OccurrenceUtil::verifyUser($post_arr["creatorUid"] ?? null, $conn),
+			"format" =>  $post_arr['format'],
+			"caption" => $post_arr["caption"] ?? null,
+			"owner" => $post_arr["owner"] ?? null,
+			"locality" => $post_arr["locality"] ?? null,
+			"anatomy" => $post_arr["anatomy"] ?? null,
+			"notes" => $post_arr["notes"] ?? null,
+			"username" => $GLOBALS['USERNAME'],
+			"sourceIdentifier" => $post_arr['sourceIdentifier'] ?? null,
+			"rights" => $post_arr['rights'] ?? null,
+			"accessRights" => $post_arr['accessRights'] ?? null,
+			"copyright" => $post_arr['copyright'] ?? null,
+			"hashFunction" => $post_arr['hashFunction'] ?? null,
+			"hashValue" => $post_arr['hashValue'] ?? null,
+			"mediaMD5" => $post_arr['mediaMD5'] ?? null,
+			"recordID" => $post_arr['recordID'] ?? UuidFactory::getUuidV4(),
+			"mediaType" => self::getMediaTypeStrFromMime($post_arr['format']),
 		];
 
-		$sort_sequence = $clean_post_arr['sortsequence'] ?? $clean_post_arr['sortSequence'] ?? false;
-		$keyValuePairs["sortsequence"] = is_numeric($sort_sequence)? $sort_sequence: 50;
+		//Will correctly match whether input is camel or lower case
+		$sortFields = array('sortOccurrence','sortSequence');
+		foreach($sortFields as $field){
+			$inputField = '';
+			if(isset($post_arr[$field])) $inputField = $field;
+			elseif(isset($post_arr[strtolower($field)])) $inputField = strtolower($field);
+			if($inputField && is_numeric($post_arr[$inputField])){
+				$keyValuePairs[$field] = $post_arr[$inputField];
+			}
+		}
 
 		$keys = implode(",", array_keys($keyValuePairs));
 		$parameters = str_repeat('?,', count($keyValuePairs) - 1) . '?';
@@ -484,7 +497,7 @@ class Media {
 		//Insert to other tables as needed like imagetags...
 
 		$media_id = $conn->insert_id;
-		self::update_tags($media_id, $clean_post_arr, $conn);
+		self::update_tags($media_id, $post_arr, $conn);
 
 		// Attach created id to metadata
 		$keyValuePairs['mediaID'] = $media_id;
@@ -512,7 +525,7 @@ class Media {
 			if(self::isValidFile($file)) {
 				$pathInfo =	pathinfo($file['name']);
 				$pathInfo['filename'] = self::cleanFileName($pathInfo['filename']);
-				$file['name'] = $pathInfo['filename'] . '.' . $pathInfo['extension'];
+				$file['name'] = $pathInfo['filename'] . '.' . ($pathInfo['extension'] ?? '');
 				$file['full_path'] = $file['name'];
 			} else if($post_arr['copytoserver'] ?? false) {
 				$file = UploadUtil::downloadFromRemote($post_arr['originalUrl'], $GLOBALS['ALLOWED_MEDIA_MIME_TYPES']);
@@ -527,6 +540,11 @@ class Media {
 				if(!isset($post_arr['sourceIdentifier'])) {
 					$post_arr['sourceIdentifier'] = 'filename: ' . $file['name'];
 				}
+			}
+			else{
+				UploadUtil::validateFileError($file);
+				if (empty($post_arr['originalUrl']))
+        			throw new MediaException(MediaException::NoFileUploaded);
 			}
 
 			$media_metadata = self::insert($post_arr, $conn);
@@ -617,7 +635,9 @@ class Media {
 			}
 
 			foreach($createdFilepaths as $field => $filepath) {
-				self::insertMediaMetadata($media_metadata['mediaID'], $field, filesize($filepath), md5_file($filepath));
+				if(file_exists($filepath)) {
+					self::insertMediaMetadata($media_metadata['mediaID'], $field, filesize($filepath), md5_file($filepath));
+				}
 			}
 
 			mysqli_commit($conn);
@@ -937,7 +957,7 @@ class Media {
 			$qualityRating = self::DEFAULT_JPG_COMPRESSION;
 
 			if($new_width < 300) {
-				$ct = system('convert '. $src_path . ' -thumbnail ' . $new_width .' x ' . ($new_width * 1.5).' '.$new_path);
+				$ct = system('convert '. $src_path . ' -thumbnail ' . $new_width .'x' . ($new_width * 1.5).' '.$new_path);
 			} else {
 				$ct = system('convert '. $src_path . ' -resize ' . $new_width.'x' . ($new_width * 1.5) . ($qualityRating?' -quality '.$qualityRating:'').' '.$new_path);
 			}
@@ -1344,12 +1364,17 @@ class Media {
 	/**
 	 * @return array<string>
 	 */
-	public static function getCreatorArray(): array {
+	public static function getCreatorArray(bool $with_media = true): array {
 		$sql = <<< SQL
-		SELECT u.uid, CONCAT_WS(', ',u.lastname,u.firstname) AS fullname 
+		SELECT DISTINCT u.uid, CONCAT_WS(', ',u.lastname,u.firstname) AS fullname
 		FROM users u 
-		ORDER BY u.lastname, u.firstname 
 		SQL;
+
+		if($with_media) {
+			$sql .= ' LEFT JOIN media m on u.uid = m.creatorUid WHERE m.creatorUid IS NOT NULL';
+		}
+
+		$sql .= ' ORDER BY u.lastname, u.firstname';
 
 		$result = QueryUtil::executeQuery(Database::connect('readonly'), $sql);
 		$creators = array();

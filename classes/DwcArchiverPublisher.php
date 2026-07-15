@@ -19,6 +19,8 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		$this->setCollArr($id);
 		$this->conditionArr['collid'] = $id;
 		$this->conditionSql = '';
+		unset($this->extensionFieldMap);
+		$this->extensionFieldMap = array();
 	}
 
 	public function verifyCollRecords($collId){

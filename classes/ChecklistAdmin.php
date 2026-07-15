@@ -538,98 +538,155 @@ class ChecklistAdmin extends Manager{
 		return $returnArr;
 	}
 
-	public function parseChecklist($tidNode, $taxa, $targetClid, $parentClid, $targetPid, $transferMethod, $copyAttributes){
-		$statusArr = false;
-		if(is_numeric($tidNode)){
-			$inventoryManager = new ImInventories();
-			$fieldArr = array();
-			$clMeta = $this->getMetaData();
-			if($copyAttributes){
-				$extraArr = array('authors','type','locality','publication','abstract','notes','latcentroid','longcentroid','pointradiusmeters','access','defaultsettings','dynamicsql','uid','type','sortsequence');
-				foreach($extraArr as $fieldName){
-					$fieldArr[$fieldName] = $clMeta[$fieldName];
+	public function parseChecklist($tidNode, $taxa, $targetClid, $parentClid, $targetPid, $copyTaxaToTarget, $copyAttributes){
+		$statusArr = array();
+		$inventoryManager = new ImInventories();
+		$fieldArr = array();
+		$clMeta = $this->getMetaData();
+		if($copyAttributes){
+			$extraArr = array('authors','type','locality','publication','abstract','notes','latcentroid','longcentroid','pointradiusmeters','access','defaultsettings','dynamicsql','uid','type','sortsequence');
+			foreach($extraArr as $fieldName){
+				$fieldArr[$fieldName] = $clMeta[$fieldName];
+			}
+		}
+		$clManagerArr = array();
+		if($copyAttributes) $clManagerArr = $inventoryManager->getManagers('ClAdmin', 'fmchecklists', $this->clid);
+		if(!array_key_exists($GLOBALS['SYMB_UID'], $clManagerArr)) $clManagerArr[$GLOBALS['SYMB_UID']] = '';
+		if(!$targetClid){
+			//Create a new checklist that will serve as target checklist
+			$fieldArr['name'] = $clMeta['name'] . ($taxa ? ' - ' . $taxa : '') . ' - Copy';
+			$inventoryManager->insertChecklist($fieldArr);
+			$targetClid = $inventoryManager->getPrimaryKey();
+			if($targetClid){
+				foreach($clManagerArr as $managerUid => $managerArr){
+					$inventoryManager->insertUserRole($managerUid, 'ClAdmin', 'fmchecklists', $targetClid, $GLOBALS['SYMB_UID']);
 				}
 			}
-			$clManagerArr = array();
-			if($copyAttributes) $clManagerArr = $inventoryManager->getManagers('ClAdmin', 'fmchecklists', $this->clid);
-			if(!array_key_exists($GLOBALS['SYMB_UID'], $clManagerArr)) $clManagerArr[$GLOBALS['SYMB_UID']] = '';
-			if(!$targetClid){
-				$fieldArr['name'] = 'Copy ' . $clMeta['name'] . ' - ' . $taxa;
-				$inventoryManager->insertChecklist($fieldArr);
-				$targetClid = $inventoryManager->getPrimaryKey();
-				if($targetClid && $copyAttributes){
-					foreach($clManagerArr as $managerUid => $managerArr){
-						$inventoryManager->insertUserRole($managerUid, 'ClAdmin', 'fmchecklists', $targetClid, $GLOBALS['SYMB_UID']);
+		}
+		if($targetClid && is_numeric($targetClid)){
+			$transerStatus = false;
+			if($copyTaxaToTarget){
+				$transerStatus = $this->copyTaxa($targetClid, $tidNode);
+			}
+			else{
+				$transerStatus = $this->transferTaxa($targetClid, $tidNode);
+			}
+			if($transerStatus){
+				$statusArr['targetClid'] = $targetClid;
+				if($targetPid === '0'){
+					$projectFieldArr = array(
+						'projname' => $clMeta['name'] . ' project',
+						'managers' => $clMeta['authors'],
+						'ispublic' => ($clMeta['access'] == 'private'?0:1));
+					$targetPid = $inventoryManager->insertProject($projectFieldArr);
+					if($targetPid){
+						foreach($clManagerArr as $managerUid => $managerArr){
+							$inventoryManager->insertUserRole($managerUid, 'ProjAdmin', 'fmprojects', $targetPid, $GLOBALS['SYMB_UID']);
+						}
 					}
 				}
-			}
-			if($targetClid && is_numeric($targetClid)){
-				if($this->transferTaxa($targetClid, $tidNode, $transferMethod)){
-					$statusArr['targetClid'] = $targetClid;
-					if($targetPid === '0'){
-						$projectFieldArr = array(
-							'projname' => $clMeta['name'] . ' project',
-							'managers' => $clMeta['authors'],
-							'ispublic' => ($clMeta['access'] == 'private'?0:1));
-						$targetPid = $inventoryManager->insertProject($projectFieldArr);
-						if($targetPid && $copyAttributes){
-							foreach($clManagerArr as $managerUid => $managerArr){
-								$inventoryManager->insertUserRole($managerUid, 'ProjAdmin', 'fmprojects', $targetPid, $GLOBALS['SYMB_UID']);
-							}
+				if($targetPid && is_numeric($targetPid)){
+					$inventoryManager->setPid($targetPid);
+					$inventoryManager->insertChecklistProjectLink($targetClid);
+					$statusArr['targetPid'] = $targetPid;
+				}
+				if($parentClid === '0'){
+					//Create a new parent checklist
+					$fieldArr['name'] = 'Parent: ' . $clMeta['name'];
+					$inventoryManager->insertChecklist($fieldArr);
+					$parentClid = $inventoryManager->getPrimaryKey();
+					if($parentClid){
+						foreach($clManagerArr as $managerUid => $managerArr){
+							$inventoryManager->insertUserRole($managerUid, 'ClAdmin', 'fmchecklists', $parentClid, $GLOBALS['SYMB_UID']);
 						}
 					}
 					if($targetPid && is_numeric($targetPid)){
-						$inventoryManager->setPid($targetPid);
-						$inventoryManager->insertChecklistProjectLink($targetClid);
-						$statusArr['targetPid'] = $targetPid;
-					}
-					if($parentClid === '0'){
-						$fieldArr['name'] = 'Parent: ' . $clMeta['name'];
-						$inventoryManager->insertChecklist($fieldArr);
-						$parentClid = $inventoryManager->getPrimaryKey();
-						if($parentClid && $copyAttributes){
-							foreach($clManagerArr as $managerUid => $managerArr){
-								$inventoryManager->insertUserRole($managerUid, 'ClAdmin', 'fmchecklists', $parentClid, $GLOBALS['SYMB_UID']);
-							}
-						}
-					}
-					if($parentClid && is_numeric($parentClid)){
-						$inventoryManager->setClid($parentClid);
-						$inventoryManager->insertChildChecklist($targetClid, $GLOBALS['SYMB_UID']);
-						if($targetPid && is_numeric($targetPid)){
-							$inventoryManager->insertChecklistProjectLink($parentClid);
-						}
-						$statusArr['parentClid'] = $parentClid;
+						//Link new parent checklist to target project
+						$inventoryManager->insertChecklistProjectLink($parentClid);
 					}
 				}
-				if($copyAttributes  ){
-					$newPManager = new ProfileManager();
-					$newPManager->setUserName($GLOBALS['USERNAME']);
-					$newPManager->authenticate();
+				if($parentClid && is_numeric($parentClid)){
+					$inventoryManager->setClid($parentClid);
+					$inventoryManager->insertChildChecklist($targetClid, $GLOBALS['SYMB_UID']);
+					$statusArr['parentClid'] = $parentClid;
 				}
 			}
+			$newPManager = new ProfileManager();
+			$newPManager->setUserName($GLOBALS['USERNAME']);
+			$newPManager->authenticate();
 		}
 		return $statusArr;
 	}
 
-	private function transferTaxa($targetClid, $tidNode, $transferMethod){
-		$status = true;
-		if($tidNode && is_numeric($tidNode)){
-			$sql = 'UPDATE fmchklsttaxalink c INNER JOIN taxa t ON c.tid = t.tid
-				INNER JOIN taxaenumtree e ON c.tid = e.tid
-				SET c.clid = '.$targetClid.'
-				WHERE e.taxauthid = 1 AND c.clid = '.$this->clid.' AND e.parenttid = '.$tidNode;
-			if($transferMethod){
-				$sql = 'INSERT INTO fmchklsttaxalink(tid, clid, morphoSpecies, familyOverride, habitat, abundance, notes, explicitExclude, source, nativity, endemic, invasive, internalnotes, dynamicProperties)
-					SELECT c.tid, '.$targetClid.', c.morphoSpecies, c.familyOverride, c.habitat, c.abundance, c.notes, c.explicitExclude, c.source,
-					c.nativity, c.endemic, c.invasive, c.internalnotes, c.dynamicProperties
-					FROM fmchklsttaxalink c INNER JOIN taxa t ON c.tid = t.tid
-					INNER JOIN taxaenumtree e ON c.tid = e.tid
-					WHERE e.taxauthid = 1 AND c.clid = '.$this->clid.' AND e.parenttid = '.$tidNode;
+	private function transferTaxa($targetClid, $tidNode){
+		$status = false;
+		$sql = 'UPDATE IGNORE fmchklsttaxalink SET clid = ? WHERE clid = ?';
+		$typeStr = 'ii';
+		$paramArr = array($targetClid, $this->clid);
+		if($tidNode){
+			$sql = 'UPDATE IGNORE fmchklsttaxalink c INNER JOIN taxaenumtree e ON c.tid = e.tid
+				SET c.clid = ?
+				WHERE e.taxauthid = 1 AND c.clid = ? AND e.parenttid = ?';
+			$typeStr = 'iii';
+			$paramArr[] = $tidNode;
+		}
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param($typeStr, ...$paramArr);
+			if($stmt->execute()){
+				$status = true;
 			}
-			if(!$this->conn->query($sql)){
-				$this->errorMessage = 'ERROR transferring taxa to checklist: '.$this->conn->error;
-				$status = false;
+			else{
+				$this->errorMessage = $stmt->error;
+			}
+			$stmt->close();
+		}
+		return $status;
+	}
+
+	private function copyTaxa($targetClid, $tidNode){
+		$status = false;
+		$sql = 'INSERT IGNORE INTO fmchklsttaxalink(tid, clid, morphoSpecies, familyOverride, habitat, abundance, notes, explicitExclude, source, nativity, endemic, invasive, internalnotes, dynamicProperties)
+			SELECT tid, ?, morphoSpecies, familyOverride, habitat, abundance, notes, explicitExclude, source, nativity, endemic, invasive, internalnotes, dynamicProperties
+			FROM fmchklsttaxalink
+			WHERE clid = ? ';
+		$typeStr = 'ii';
+		$paramArr = array($targetClid, $this->clid);
+		if($tidNode){
+			$sql = 'INSERT IGNORE INTO fmchklsttaxalink(tid, clid, morphoSpecies, familyOverride, habitat, abundance, notes, explicitExclude, source, nativity, endemic, invasive, internalnotes, dynamicProperties)
+				SELECT c.tid, ?, c.morphoSpecies, c.familyOverride, c.habitat, c.abundance, c.notes, c.explicitExclude, c.source, c.nativity, c.endemic, c.invasive, c.internalnotes, c.dynamicProperties
+				FROM fmchklsttaxalink c INNER JOIN taxa t ON c.tid = t.tid
+				INNER JOIN taxaenumtree e ON c.tid = e.tid
+				WHERE e.taxauthid = 1 AND c.clid = ? AND e.parenttid = ?';
+			$typeStr = 'iii';
+			$paramArr[] = $tidNode;
+		}
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param($typeStr, ...$paramArr);
+			if($stmt->execute()){
+				$status = true;
+			}
+			else{
+				$this->errorMessage = $stmt->error;
+			}
+			$stmt->close();
+		}
+
+		if($status){
+			//Copy voucher links to new checklist (vouchers are automatcially included with transfers, thus no extra action needed)
+			$sql = 'INSERT IGNORE INTO fmvouchers(clTaxaID, occid, notes)
+				SELECT t.clTaxaID, v.occid, v.notes
+				FROM fmchklsttaxalink c INNER JOIN fmvouchers v ON c.clTaxaID = v.clTaxaID
+				INNER JOIN fmchklsttaxalink t ON c.tid = t.tid
+				WHERE c.clid = ? AND t.clid = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('ii', $this->clid, $targetClid);
+				if($stmt->execute()){
+					$status = true;
+				}
+				else{
+					$this->errorMessage = $stmt->error;
+				}
+				$stmt->close();
 			}
 		}
 		return $status;

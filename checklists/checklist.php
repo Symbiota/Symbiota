@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistManager.php');
 include_once($SERVER_ROOT.'/classes/MapSupport.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
@@ -302,7 +302,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 				<?php
 			}
 			?>
-			<div style="clear:both">
+			<div style="clear:both; padding-top: 3px">
 				<hr/>
 			</div>
 			<div id="checklist-container" style="display:flex; gap: 0.5rem">
@@ -334,6 +334,15 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 							echo '<b>' . $LANG['TOTAL_TAXA'] . '</b>: ';
 							echo $clManager->getTaxaCount();
 							echo '<span class="screen-reader-only">.</span>';
+							?>
+						</div>
+						<div style="margin:3px;">
+							<?php
+							if($showVouchers){
+								echo '<b>' . $LANG['VOUCHER_COUNT'] . '</b>: ';
+								echo $clManager->getVoucherCount();
+								echo '<span class="screen-reader-only">.</span>';
+							}
 							?>
 						</div>
 					</div>
@@ -370,6 +379,9 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 					<?php
 					if($showImages){
 						$prevfam = '';
+						?>
+						<div class="checklist-image-grid">
+						<?php
 						foreach($taxaArray as $tid => $sppArr){
 							$tu = (array_key_exists('tnurl',$sppArr) ? $sppArr['tnurl'] : '');
 							$u = (array_key_exists('url',$sppArr) ? $sppArr['url'] : '');
@@ -397,7 +409,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 								<div style="clear:both">
 									<?php
 									echo '<a href="' . $spUrl . '" target="_blank">';
-									echo '<b>' . $sppArr['sciname'] . '</b>';
+									echo '<b>' . ($sppArr['sciname'] ?? '') . '</b>';
 									echo '</a>';
 									?>
 									<div class="editspp printoff" style="float:left;display:none;">
@@ -434,6 +446,9 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 							</div>
 							<?php
 						}
+						?>
+						</div>
+						<?php
 					}
 					else{
 						//Display taxa
@@ -468,10 +483,10 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 							echo '<div id="tid-'.$tid.'" class="taxon-container">';
 							//Edit species name display style here
 							echo '<div class="taxon-div">';
-							if(!preg_match('/\ssp\d/',$sppArr["sciname"])) echo '<a href="../taxa/index.php?taxauthid=1&taxon=' . $tid . '&clid=' . $clid . '" target="_blank">';
-							echo '<span class="taxon-span">' . $sppArr['sciname'] . '</span> ';
+							if(!preg_match('/\ssp\d/',$sppArr["sciname"] ?? '')) echo '<a href="../taxa/index.php?taxauthid=1&taxon=' . $tid . '&clid=' . $clid . '" target="_blank">';
+							echo '<span class="taxon-span">' . ($sppArr['sciname'] ?? '') . '</span> ';
 							if(array_key_exists("author",$sppArr)) echo $sppArr["author"];
-							if(!preg_match('/\ssp\d/',$sppArr["sciname"])) echo "</a>";
+							if(!preg_match('/\ssp\d/',$sppArr["sciname"] ?? '')) echo "</a>";
 							if(array_key_exists('vern',$sppArr)){
 								echo ' - <span class="vern-span">'.$sppArr['vern'] . '</span>';
 							}
@@ -483,10 +498,10 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 									</a>
 									<?php
 									if(isset($dynamPropsArr) && isset($dynamPropsArr['externalservice']) && $dynamPropsArr['externalservice'] == 'inaturalist'){
-										$scinameasid = str_replace(" ", "-", $sppArr['sciname']);
+										$scinameasid = str_replace(" ", "-", $sppArr['sciname'] ?? '');
 										$arrForExternalServiceApi .= ($arrForExternalServiceApi?',' : '') . "'" . $scinameasid . "'";
 										$url = 'tools/linkExternalVouchers.php?' . http_build_query([
-											'taxon_name' => $sppArr['sciname'],
+											'taxon_name' => $sppArr['sciname'] ?? '',
 											'target_tid' => $tid,
 											'clid' => $clid,
 											'external_id' => $dynamPropsArr['externalserviceid'] ?? null,

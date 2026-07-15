@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/TaxonProfile.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
@@ -67,7 +67,7 @@ if($SYMB_UID){
 	?>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="../js/symb/taxa.index.js?ver=202101" type="text/javascript"></script>
+	<script src="../js/symb/taxa.index.js?ver=202606" type="text/javascript"></script>
 	<script src="../js/symb/taxa.editor.js?ver=202101" type="text/javascript"></script>
 	<style type="text/css">
 		.resource-title{ font-weight: bold; }

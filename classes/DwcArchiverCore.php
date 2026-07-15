@@ -36,7 +36,7 @@ class DwcArchiverCore extends Manager{
 	private $delimiter = ',';
 	private $fileExt = '.csv';
 	private $occurrenceFieldArr = array();
-	private $extensionFieldMap = array();
+	protected $extensionFieldMap = array();
 	private $isPublicDownload = false;
 	private $publicationGuid;
 	private $requestPortalGuid;
@@ -311,7 +311,7 @@ class DwcArchiverCore extends Manager{
 				} elseif ($cond == 'LIKE') {
 					$sqlFrag .= 'OR (' . $field . ' LIKE "%' . $value . '%") ';
 				} elseif ($cond == 'NOT_LIKE') {
-					$sqlFrag .= 'OR (' . $field . ' NOT LIKE "%' . $value . '%" OR ' . $field . ' IS NULL) ';
+					$sqlFrag .= 'AND (' . $field . ' NOT LIKE "%' . $value . '%" OR ' . $field . ' IS NULL) ';
 				} elseif ($cond == 'LESS_THAN') {
 					$sqlFrag .= 'OR (' . $field . ' < "' . $value . '") ';
 				} elseif ($cond == 'GREATER_THAN') {
@@ -858,19 +858,6 @@ class DwcArchiverCore extends Manager{
 			}
 		}
 		return true;
-	}
-
-	private function clearStagingTable(){
-		$status = false;
-		if($this->exportID){
-			$sql = 'DELETE FROM omexportoccurrences WHERE omExportID = ? OR initialTimestamp < DATE_SUB(NOW(), INTERVAL 3 HOUR)';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('i', $this->exportID);
-				if($stmt->execute()) $status = true;
-				$stmt->close();
-			}
-		}
-		return $status;
 	}
 
 	//Generate DwC support files
@@ -1536,7 +1523,7 @@ class DwcArchiverCore extends Manager{
 				$hearderArr = $this->getHeaderArr();
 				if($hearderArr) $this->writeOutRecord($outputHandler, $hearderArr);
 			}
-			$chunkSize = 50000;
+			$chunkSize = 100000;
 			$lastOccid = 0;
 			$sql .= 'AND o.occid > ? ORDER BY occid LIMIT ?';
 			$stmt = $this->conn->prepare($sql);
@@ -1766,11 +1753,13 @@ class DwcArchiverCore extends Manager{
 
 	private function insertExportOccurrenceRecords(){
 		$status = false;
-		$sql = 'INSERT IGNORE INTO omexportoccurrences(omExportID, occid, collid, taxonID, recordSecurity) ';
+		$this->updateExportStatus('inProcess');
+		$sql = 'INSERT IGNORE INTO omexportoccurrences(omExportID, occid, collid, taxonID, family, scientificNameAuthorship, occurrenceRemarks, recordSecurity) ';
 		if (strpos($this->conditionSql,"early.myaStart"))
 			$sql .= $this->paleoWithSql;
-		$sql .= 'SELECT ' . $this->exportID . ' AS omExportID, o.occid, o.collid, o.tidInterpreted, o.recordSecurity FROM omoccurrences o ';
+		$sql .= 'SELECT ' . $this->exportID . ' AS omExportID, o.occid, o.collid, o.tidInterpreted, o.family, o.scientificNameAuthorship, o.occurrenceRemarks, o.recordSecurity FROM omoccurrences o ';
 		$sql .= $this->getTableJoins() . $this->conditionSql;
+		$sql .= 'LIMIT 1000000';
 		if($stmt = $this->conn->prepare($sql)){
 			try{
 				if($stmt->execute()){
@@ -1859,6 +1848,35 @@ class DwcArchiverCore extends Manager{
 				elseif($stmt->error){
 					$this->errorMessage = $stmt->error;
 				}
+				$stmt->close();
+			}
+		}
+		return $status;
+	}
+
+	private function clearStagingTable(){
+		$status = false;
+		if($this->exportID){
+			$sql = 'DELETE FROM omexportoccurrences WHERE omExportID = ? OR initialTimestamp < DATE_SUB(NOW(), INTERVAL 3 HOUR)';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->exportID);
+				if($stmt->execute()) $status = true;
+				$stmt->close();
+			}
+			$this->updateExportStatus('completed');
+		}
+		return $status;
+	}
+
+	private function updateExportStatus($statusValue){
+		$status = false;
+		$allowedValues = array('queued', 'inProcess', 'completed', 'failed');
+		if(!in_array($statusValue, $allowedValues)) return false;
+		if($this->exportID){
+			$sql = 'UPDATE omexport SET status = ? WHERE omExportID = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('si', $statusValue, $this->exportID);
+				if($stmt->execute()) $status = true;
 				$stmt->close();
 			}
 		}
@@ -1979,6 +1997,7 @@ class DwcArchiverCore extends Manager{
 			$this->logOrEcho('Creating ResourceRelationship extension file (' . date('h:i:s A') . ')...', 1);
 			$associationHandler = new DwcArchiverResourceRelationship($this->conn);
 			$associationHandler->setSchemaType($this->schemaType);
+			$associationHandler->setServerPath($this->serverDomain . $GLOBALS['CLIENT_ROOT']);
 			$associationHandler->initiateProcess($targetFile);
 			$recordCnt = $associationHandler->writeOutData($this->exportID);
 			if($recordCnt){
@@ -2171,25 +2190,30 @@ class DwcArchiverCore extends Manager{
 
 	public function hasAssociations($collid = false){
 		$bool = false;
-		$sql = 'SELECT occid FROM omoccurassociations LIMIT 1';
-		if(is_numeric($collid)){
-			$sql = "(SELECT o.occid FROM omoccurrences o INNER JOIN omoccurassociations a ON o.occid = a.occid WHERE o.collid = ?) UNION (SELECT o.occid FROM omoccurrences o INNER JOIN omoccurassociations a ON o.occid = a.occidAssociate WHERE o.collid = ?) LIMIT 1;";
+		$sqlArr = array();
+		if($collid){
+			$sqlArr[] = 'SELECT o.occid FROM omoccurrences o INNER JOIN omoccurassociations a ON o.occid = a.occid WHERE o.collid = ? LIMIT 1';
+			$sqlArr[] = 'SELECT o.occid FROM omoccurrences o INNER JOIN omoccurassociations a ON o.occid = a.occidAssociate WHERE o.collid = ? LIMIT 1';
+			$sqlArr[] = 'SELECT o.occid FROM omoccurrences o INNER JOIN omexsiccatiocclink e ON o.occid = e.occid WHERE o.collid = ? LIMIT 1';
+			$sqlArr[] = 'SELECT o.occid FROM omoccurrences o INNER JOIN omoccurduplicatelink d ON o.occid = d.occid WHERE o.collid = ? LIMIT 1';
 		}
-		$stmt = $this->conn->stmt_init();
-		if (!$stmt->prepare($sql)) {
-			throw new Exception("SQL Error: " . $stmt->error);
+		else{
+			$sqlArr[] = 'SELECT occid FROM omoccurassociations LIMIT 1';
+			$sqlArr[] = 'SELECT occid FROM omexsiccatiocclink LIMIT 1';
+			$sqlArr[] = 'SELECT occid FROM omoccurduplicatelink LIMIT 1';
 		}
-		if (is_numeric($collid)) {
-			$stmt->bind_param('ii',$collid,$collid);
+		while($sql = array_shift($sqlArr)){
+			if($stmt = $this->conn->prepare($sql)){
+				if($collid) $stmt->bind_param('i', $collid);
+				$stmt->execute();
+				$stmt->store_result();
+				if($stmt->num_rows){
+					$bool = true;
+					break;
+				}
+				$stmt->close();
+			}
 		}
-		$stmt->execute();
-		$result = $stmt->get_result();
-		if ($result && $result->num_rows > 0) {
-			$bool = true;
-		}
-		$result->free();
-		$stmt->close();
-
 		return $bool;
 	}
 

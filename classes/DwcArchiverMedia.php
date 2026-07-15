@@ -40,15 +40,15 @@ class DwcArchiverMedia extends DwcArchiverBaseManager{
 		$termArr['subtype'] = 'http://rs.tdwg.org/ac/terms/subtype';		//Photograph or Recorded Organism
 		$fieldArr['subtype'] = 'CASE WHEN m.mediaType = "audio" THEN "Recorded Organism" ELSE "Photograph" END AS subtype';
 		$termArr['rights'] = 'http://purl.org/dc/terms/rights';
-		$fieldArr['rights'] = ($this->schemaType == 'backup' ? 'm.copyright AS rights' : '');
+		$fieldArr['rights'] = 'm.rights';
 		$termArr['Owner'] = 'http://ns.adobe.com/xap/1.0/rights/Owner';	//Institution name
-		$fieldArr['Owner'] = '';
+		$fieldArr['Owner'] = 'IFNULL(m.owner,m.copyright) as Owner';
 		$termArr['creator'] = 'http://purl.org/dc/elements/1.1/creator';
 		$fieldArr['creator'] = 'IF(m.creatorUid IS NOT NULL,CONCAT_WS(" ",u.firstname,u.lastname),m.creator) AS creator';
 		$termArr['UsageTerms'] = 'http://ns.adobe.com/xap/1.0/rights/UsageTerms';	//Creative Commons BY-SA 4.0 license
-		$fieldArr['UsageTerms'] = 'm.copyright AS UsageTerms';
+		$fieldArr['UsageTerms'] = '';
 		$termArr['WebStatement'] = 'http://ns.adobe.com/xap/1.0/rights/WebStatement';	//https://creativecommons.org/licenses/by-nc-sa/4.0/us/
-		$fieldArr['WebStatement'] = '';
+		$fieldArr['WebStatement'] = 'm.accessRights as WebStatement';
 		$termArr['caption'] = 'http://rs.tdwg.org/ac/terms/caption';
 		$fieldArr['caption'] = 'm.caption';
 		$termArr['comments'] = 'http://rs.tdwg.org/ac/terms/comments';
@@ -128,51 +128,52 @@ class DwcArchiverMedia extends DwcArchiverBaseManager{
 						unset($r['collid']);
 						if(!$r['rights']) $r['rights'] = $collArr[$collid]['rights'];
 						if ($this->schemaType != 'backup') {
-							$r['WebStatement'] = $collArr[$collid]['accessrights'];
-							$r['Owner'] = $collArr[$collid]['rightsholder'];
-							if ($r['rights'] && stripos($r['rights'], 'creativecommons.org') === 0) {
-								$r['WebStatement'] = $r['rights'];
-								$r['rights'] = '';
-								if (!$r['UsageTerms'] && $r['WebStatement']) {
-									if (strpos($r['WebStatement'], '/zero/1.0/')) {
+							if(empty($r['WebStatement'])) $r['WebStatement'] = $collArr[$collid]['accessrights'];
+							if(empty($r['Owner'])) $r['Owner'] = $collArr[$collid]['rightsholder'];
+							if ($r['rights'] && stripos($r['rights'], 'creativecommons.org') !== false) {
+								$rights = $r['rights'];
+								if(empty($r['WebStatement'])){
+									$r['WebStatement'] = $r['rights'];
+									$r['rights'] = '';
+								}
+								if (!$r['UsageTerms'] && $rights) {
+									if (strpos($rights, '/zero/1.0/')) {
 										$r['UsageTerms'] = 'CC0 1.0 (Public-domain)';
 									}
-									elseif (strpos($r['WebStatement'], '/by/')) {
+									elseif (strpos($rights, '/by/')) {
 										$r['UsageTerms'] = 'CC BY (Attribution)';
 									}
-									elseif (strpos($r['WebStatement'], '/by-sa/')) {
+									elseif (strpos($rights, '/by-sa/')) {
 										$r['UsageTerms'] = 'CC BY-SA (Attribution-ShareAlike)';
 									}
-									elseif (strpos($r['WebStatement'], '/by-nc/')) {
-										$r['UsageTerms'] = 'CC BY-NC (Attribution-NonCommercial-ShareAlike)';
+									elseif (strpos($rights, '/by-nc/')) {
+										$r['UsageTerms'] = 'CC BY-NC (Attribution-NonCommercial)';
 									}
-									elseif (strpos($r['WebStatement'], '/by-nc-sa/')) {
+									elseif (strpos($rights, '/by-nc-sa/')) {
 										$r['UsageTerms'] = 'CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)';
 									}
 								}
 							}
-							if (!$r['UsageTerms']) $r['UsageTerms'] = 'CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)';
+							if (empty($r['UsageTerms'])) $r['UsageTerms'] = 'CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)';
 						}
 						$r['providerManagedID'] = 'urn:uuid:' . $r['providerManagedID'];
 						$r['associatedSpecimenReference'] = $urlPathPrefix . 'collections/individual/index.php?occid=' . $r['occid'];
-						if($r['accessURI']){
+						if(!$r['format'] && $r['accessURI']){
 							$extStr = strtolower(substr($r['accessURI'], strrpos($r['accessURI'], '.') + 1));
-							if ($r['format'] == '') {
-								if ($extStr == 'jpg' || $extStr == 'jpeg') {
-									$r['format'] = 'image/jpeg';
-								}
-								elseif ($extStr == 'gif') {
-									$r['format'] = 'image/gif';
-								}
-								elseif ($extStr == 'png') {
-									$r['format'] = 'image/png';
-								}
-								elseif ($extStr == 'tiff' || $extStr == 'tif') {
-									$r['format'] = 'image/tiff';
-								}
-								else {
-									$r['format'] = '';
-								}
+							if ($extStr == 'jpg' || $extStr == 'jpeg') {
+								$r['format'] = 'image/jpeg';
+							}
+							elseif ($extStr == 'gif') {
+								$r['format'] = 'image/gif';
+							}
+							elseif ($extStr == 'png') {
+								$r['format'] = 'image/png';
+							}
+							elseif ($extStr == 'tiff' || $extStr == 'tif') {
+								$r['format'] = 'image/tiff';
+							}
+							else {
+								$r['format'] = '';
 							}
 						}
 						$r['metadataLanguage'] = 'en';

@@ -7,8 +7,7 @@ on:
     branches: [ "master", "Development" ]
 
 jobs:
-  tests:
-
+  phpunit:
     runs-on: 'ubuntu-latest'
 
     steps:
@@ -46,13 +45,53 @@ jobs:
     - name: 'Execute Tests via PHPUnit'
       run: docker exec symbiota-testing-web-1 ./vendor/bin/phpunit
 
+  playwright:
+    strategy:
+      matrix:
+        browser: [chromium, firefox, webkit]
+
+    runs-on: 'ubuntu-latest'
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: 'Setup Testing Database Config'
+      run : mv config/dbconnection_testing_template.php config/dbconnection.php
+
+    - name: 'Setup Testing Portal Config'
+      run : mv config/symbini_testing_template.php config/symbini.php
+
+    - name: 'Setup File permission'
+      run : mkdir ci_temp && chmod -R 777 ci_temp
+
+    - name: 'Run Setup Script'
+      run : cd config && bash setup.bash
+
+    - name: 'Build Docker Resources'
+      run : |
+        echo --- Building and Starting up docker ---
+        docker compose --file test.docker-compose.yml pull
+        docker compose --file test.docker-compose.yml up -d --no-build
+        echo --- Containers Up ---
+
+    - name: Debugging Container Failure
+      if: failure()
+      run: |
+        docker ps
+        docker logs symbiota-testing-web-1
+        docker logs symbiota-testing-mariadb-1
+
     - name: 'Run Playwright Tests'
+<<<<<<< HEAD
       run: docker run --rm -v .:/var/www/html --network=host --ipc=host mcr.microsoft.com/playwright:v1.56.0-noble /bin/bash -c "cd /var/www/html && npm install @playwright/test@1.56.0 mysql2@3.16.0 --save-dev && npx playwright test"
+=======
+      run: docker run --rm -v .:/var/www/html --network=host --ipc=host mcr.microsoft.com/playwright:v1.56.0-noble /bin/bash -c "cd /var/www/html && npm install @playwright/test@1.56.0 mysql2@3.16.0 --save-dev && npx playwright test --project=${{ matrix.browser }}"
+>>>>>>> Development
 
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
-        name: playwright-report
+        name: playwright-report-${{ matrix.browser }}
         path: playwright-report/
         retention-days: 30
 

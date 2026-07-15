@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/InstitutionManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
@@ -176,6 +176,12 @@ include($SERVER_ROOT.'/includes/header.php');
 <!-- This is inner text! -->
 <div role="main" id="innertext">
 	<h1 class="page-heading"><?php echo $LANG['INSTITUTION_EDITOR']; ?></h1>
+	<!-- Used by GSciColl Button jQuery UI -->
+	<div id="dialog" title="" style="display: none;">
+	<div id="dialogmsg"></div>
+	<select id="getresult">
+	</select>
+</div>
 	<?php
 	if($statusStr){
 		?>

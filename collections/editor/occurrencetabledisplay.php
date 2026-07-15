@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
@@ -66,7 +66,7 @@ if($SYMB_UID){
 	}
 
 	if($collMap && $collMap['colltype']=='General Observations') $isGenObs = 1;
-	if ($collMap['colltype'] == 'Fossil Specimens')
+	if ($collMap && $collMap['colltype'] == 'Fossil Specimens')
 		$headerMapBase = array_merge($headerMapBase, $headerMapPaleoBase);
 	if(!$isEditor){
 		if($isGenObs){
@@ -134,6 +134,7 @@ else{
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
+	include_once($SERVER_ROOT.'/includes/javascript_lang_tags.php');
 	?>
 	<link href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/js/datatables/datatables.min.css" type="text/css" rel="stylesheet">
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
@@ -153,8 +154,8 @@ else{
 			}
 		);
 	</script>
-	<script src="../../js/symb/collections.editor.table.js?ver=2" type="text/javascript" ></script>
-	<script src="../../js/symb/collections.editor.query.js?ver=6" type="text/javascript" ></script>
+	<script defer src="../../js/symb/collections.editor.table.js?ver=7" type="text/javascript" ></script>
+	<script defer src="../../js/symb/collections.editor.query.js?ver=7" type="text/javascript" ></script>
 	<style>
 		#titleDiv{margin-bottom: 1rem}
 		table.styledtable td { white-space: nowrap; }
@@ -286,6 +287,8 @@ else{
 			}
 			if($isEditor == 1 || $isGenObs){
 				$buFieldName = (array_key_exists('bufieldname',$_REQUEST)?$_REQUEST['bufieldname']:'');
+				$batchUpdateHeaderMapBase = $headerMapBase;
+				unset($batchUpdateHeaderMapBase['othercatalognumbers']);
 				?>
 				<div id="batchupdatediv" style="width:600px;clear:both;display:<?php echo ($buFieldName?'block':'none'); ?>;">
 					<form name="batchupdateform" action="occurrencetabledisplay.php" method="post" onsubmit="return false;">
@@ -298,8 +301,8 @@ else{
 										<option value=""><?php echo (isset($LANG['SELECT_FIELD'])?$LANG['SELECT_FIELD']:'Select Field Name'); ?></option>
 										<option value="">----------------------</option>
 										<?php
-										asort($headerMapBase);
-										foreach($headerMapBase as $k => $v){
+										asort($batchUpdateHeaderMapBase);
+										foreach($batchUpdateHeaderMapBase as $k => $v){
 											//Scientific name fields are excluded because batch updates will not update tidinterpreted index and authors
 											//Scientific name updates should happen within
 											if($k != 'scientificnameauthorship' && $k != 'sciname'){
@@ -354,7 +357,7 @@ else{
 									<input name="collid" type="hidden" value="<?php echo $collId; ?>" />
 									<input name="occid" type="hidden" value="0" />
 									<input name="occindex" type="hidden" value="0" />
-									<button name="submitaction" type="submit" value="Batch Update Field" onclick="submitBatchUpdate(this.form); return false;"><?php echo (isset($LANG['BATCH_UP_FIELD'])?$LANG['BATCH_UP_FIELD']:'Batch Update Field'); ?></button>
+									<button id="batchUpdateButton" name="submitaction" type="submit" value="Batch Update Field" onclick="submitBatchUpdate(this.form); return false;"><?php echo (isset($LANG['BATCH_UP_FIELD'])?$LANG['BATCH_UP_FIELD']:'Batch Update Field'); ?></button>
 								</div>
 							</div>
 						</fieldset>

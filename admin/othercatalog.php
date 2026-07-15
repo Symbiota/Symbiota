@@ -1,4 +1,7 @@
 <?php
+header('Content-Type: text/html; charset=UTF-8');
+header('Cache-Control: no-cache');
+header('X-Accel-Buffering: no');
 include_once('../config/symbini.php');
 //Manual Permission Check
 if($LANG_TAG != 'en' && file_exists($SERVER_ROOT . '/content/lang/prohibit.' . $LANG_TAG . '.php')) include_once($SERVER_ROOT.'/content/lang/prohibit.' . $LANG_TAG . '.php');
@@ -13,23 +16,33 @@ include_once($SERVER_ROOT . '/classes/OtherCatalog.php');
 ini_set('max_execution_time', 300);
 
 //allow partial bufferring, real-time updates on progress
-@apache_setenv('no-gzip', 1);
 @ini_set('zlib.output_compression', 0);
 @ini_set('implicit_flush', 1);
 ob_implicit_flush(1);
 while (ob_get_level() > 0) ob_end_flush();
+echo str_repeat(' ', 4096);
+flush();
 $message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['run_copy'])) {
+
+    echo "<h3>Processing started...</h3>";
+    echo str_repeat(' ', 1024);
+    flush();
+
     $conn = MySQLiConnectionFactory::getCon("write");
 
     if (!$conn) {
-        $message = "Failed to connect to the database.";
+        echo "Failed to connect to the database.<br>";
+        flush();
     } else {
         $catalogCopier = new OtherCatalog($conn, $GLOBALS['SYMB_UID']);
         $result = $catalogCopier->copyOtherCatalogNumbers();
 
         $message = "Processed {$result['processed']} records. Inserted {$result['inserted']} new row(s) into omoccuridentifiers.<br>{$result['time']}";
+        echo str_repeat(' ', 1024);
+        flush();
+
         $conn->close();
     }
 }
