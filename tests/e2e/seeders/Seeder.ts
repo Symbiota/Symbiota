@@ -208,7 +208,16 @@ export class Seeder {
 		await conn.execute('DELETE from omcollections where collId = ?', [ collId ]);
 	}
 
+
+	static async deleteByTid(tid: number, conn: mysql.Connection) {
+		await conn.execute('DELETE from media where tid = ?', [ tid ]);
+		await conn.execute('DELETE from taxstatus where tid = ?', [ tid ]);
+		await conn.execute('DELETE from taxa where tid = ?', [ tid ]);
+	}
+
 	static async taxon(data: Taxon, conn: mysql.Connection) {
+		const tid = await this.executor(data, Tables.Taxa, conn);
+		await this.executor({ tid, tidaccepted: tid, taxauthid: 1}, Tables.TaxStatus, conn);
 		return this.executor(data, Tables.Taxa, conn);
 	}
 
@@ -349,7 +358,7 @@ export interface SeederParams {
 	collId: number,
 }
 
-export const test = base.extend<{collId: number, occId: number, detId: number, mediaId: number }>({
+export const test = base.extend<{collId: number, occId: number, tid: number, detId: number, mediaId: number }>({
 	collId: async ({ DB }, use) => {
 		const collId = await Seeder.uniqueCollection(DB);
 		await use(collId);
@@ -358,11 +367,25 @@ export const test = base.extend<{collId: number, occId: number, detId: number, m
 	occId: async ({ collId, DB }, use) => {
 		await use(await Seeder.occurrence({ collId }, DB));
 	},
+	tid: async ({ DB }, use) => {
+		const unique_sci = test.info().testId
+
+		const tid = await Seeder.taxonWithStatus({
+			kingdomName: 'Plantae',
+			rankID: 40,
+			sciName: unique_sci,
+			unitName1: unique_sci,
+			author: 'author',
+			securityStatus: 0
+		}, 0, DB);
+		await use(tid);
+		await Seeder.deleteByTid(tid, DB);
+	},
 	detId: async ({ occId, DB }, use) => {
-		await use(await Seeder.determination({ 
-			occId, 
-			identifiedBy: 'unknown', 
-			dateIdentified: 'unknown', 
+		await use(await Seeder.determination({
+			occId,
+			identifiedBy: 'unknown',
+			dateIdentified: 'unknown',
 			sciname: 'genus species'
 		}, DB));
 	},
