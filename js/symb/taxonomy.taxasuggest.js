@@ -27,6 +27,7 @@ function initiateTaxaSuggest(inputID, tidID = null, taxonSearchType = 2) {
 				);
 			},
 			autoFocus: true,
+			delay: 200,
 			search() {
 				//Sets minLength even when there is support for multiple terms	
 				const term = extractLast(this.value);
@@ -40,28 +41,36 @@ function initiateTaxaSuggest(inputID, tidID = null, taxonSearchType = 2) {
 			select(event, ui) {
 				if(multipleTermSupport){
 					let terms = this.value.split(/,\s*/);
+					let targetIndex = terms.length - 1;
 					// Replace last term with select item
-					terms[terms.length - 1] = ui.item.value;
+					terms[targetIndex] = ui.item.value;
 					this.value = terms.join(", ");
+					if(tidID){
+						let tids = $("#" + tidID).val().split(/,\s*/);
+						tids[targetIndex] = ui.item.id;
+						$("#" + tidID).val(tids.join(","));
+					}
 				}
 				else{
 					this.value = ui.item.value;
+					if(tidID) $("#" + tidID).val(ui.item.id);
 				}
-				if(tidID){
-					if(multipleTermSupport){
-						let tids = this.value.split(/,\s*/);
-						tids[tids.length - 1] = ui.item.value;
-						this.value = tids.join(", ");
-					}
-					else{
-						$("#" + tidID).val(ui.item.id);
-					}
-				}  
 				return false;
 			},
 			change(event, ui) {
 				if(!ui.item || this.value == ""){
-					$("#" + tidID).val("");
+					if(tidID){
+					if(multipleTermSupport){
+							let terms = this.value.split(/,\s*/);
+							let targetIndex = terms.length - 1;
+							let tids = $("#" + tidID).val().split(/,\s*/);
+							tids[targetIndex] = "";
+							$("#" + tidID).val(tids.join(","));
+						}
+					}
+					else{
+						$("#" + tidID).val("");						
+					}
 				}
 			}
 		}

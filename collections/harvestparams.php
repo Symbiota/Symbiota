@@ -3,38 +3,43 @@ include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/content/lang/collections/harvestparams.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceAttributeSearch.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' . $CHARSET);
 
 $collManager = new OccurrenceManager();
 $paleoTimes = $collManager->getPaleoTimes();
 $searchVar = $collManager->getQueryTermStr();
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $LANG_TAG ?>">
+<html lang="<?= $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.' '.$LANG['PAGE_TITLE']; ?></title>
+	<title><?= $DEFAULT_TITLE.' '.$LANG['PAGE_TITLE']; ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
     include_once($SERVER_ROOT.'/includes/googleanalytics.php');
     ?>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<link href="<?= $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=3" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/collections.list.js?ver=2" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT; ?>/js/symb/collections.list.js?ver=2" type="text/javascript"></script>
 	<script src="../js/symb/collections.harvestparams.js?ver=5" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js?ver=1" type="text/javascript"></script>
 	<script src="../js/symb/collections.traitsearch.js?ver=8" type="text/javascript"></script> <!-- Contains search-by-trait modifications -->
 	<script src="../js/symb/wktpolygontools.js?ver=1c" type="text/javascript"></script>
+	<script src="../js/symb/taxonomy.taxasuggest.js?ver=r" type="text/javascript"></script>
 	<script type="text/javascript">
 		const paleoTimes = <?= json_encode($paleoTimes ?? []) ?>;
-		var clientRoot = "<?php echo $CLIENT_ROOT; ?>";
 		$(document).ready(function() {
 			setSessionQueryStr();
 			setHarvestParamsForm(document.harvestparams);
+
+			//Set and initiate Autcomplete
+			setTaxaSuggestRootPath("<?= $CLIENT_ROOT ?>");
+			setMultipleTermSupport(true);
+			initiateTaxaSuggest("taxa", "tid", document.getElementById("taxontype").value);
 		});
 	</script>
-	<script src="../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
+
 	<style type="text/css">
 		hr{ clear:both; margin: 10px 0px }
 		button{ margin: 2px }
@@ -53,40 +58,29 @@ $searchVar = $collManager->getQueryTermStr();
 	'CURRENT_URL' => $_SERVER['REQUEST_URI'],
 ]) ?>'></div>
 <?php
-	$displayLeftMenu = (isset($collections_harvestparamsMenu)?$collections_harvestparamsMenu:false);
 	include($SERVER_ROOT.'/includes/header.php');
-	if(isset($collections_harvestparamsCrumbs)){
-		if($collections_harvestparamsCrumbs){
-			echo '<div class="navpath">';
-			echo $collections_harvestparamsCrumbs.' &gt;&gt; ';
-			echo '<b>'.$LANG['NAV_SEARCH'].'</b>';
-			echo '</div>';
-		}
-	}
-	else{
-		?>
-		<div class='navpath'>
-			<a href="../index.php"><?php echo htmlspecialchars($LANG['NAV_HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-			<a href="index.php"><?php echo htmlspecialchars($LANG['NAV_COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-			<b><?php echo $LANG['NAV_SEARCH']; ?></b>
-		</div>
-		<?php
-	}
 	?>
+	<div class='navpath'>
+		<a href="../index.php"><?= $LANG['NAV_HOME'] ?></a> &gt;&gt;
+		<a href="index.php"><?= $LANG['NAV_COLLECTIONS'] ?></a> &gt;&gt;
+		<b><?= $LANG['NAV_SEARCH']; ?></b>
+	</div>
 	<div role="main" id="innertext">
-		<h1 class="page-heading bottom-breathing-room-rel top-breathing-room-rel"><?php echo $LANG['SEARCH']; ?></h1>
-		<form name="harvestparams" id="harvestparams" action="list.php" method="post" onsubmit="return checkHarvestParamsForm(this, '<?php echo $_SERVER['REQUEST_URI']; ?>');">
+		<h1 class="page-heading bottom-breathing-room-rel top-breathing-room-rel"><?= $LANG['SEARCH']; ?></h1>
+		<form name="harvestparams" id="harvestparams" action="list.php" method="post" onsubmit="return checkHarvestParamsForm(this, '<?= $_SERVER['REQUEST_URI']; ?>');">
 			<hr/>
 			<div>
-				<div style="float:left">
+				<div>
+					<div class="catHeaderDiv"><?= $LANG['TAXON_HEADER']; ?></div>
+				</div>
+				<section class="flex-form">
 					<div>
-						<div class="catHeaderDiv"><?php echo $LANG['TAXON_HEADER']; ?></div>
-						<div style="margin:10px 0px 0px 5px;"><input type='checkbox' name='usethes' id='usethes' value='1' CHECKED />
-						<label for="usethes"><?php echo $LANG['INCLUDE_SYNONYMS']; ?></div></label>
-					</div>
-					<section class="flex-form">
 						<div>
-							<label for="taxontype"><?php echo $LANG['SELECT_TAXON_TYPE'] ?>:</label>
+							<input type='checkbox' name='usethes' id='usethes' value='1' CHECKED />
+							<label for="usethes" style="margin:10px 0px 0px 5px;"><?= $LANG['INCLUDE_SYNONYMS']; ?></label>
+						</div>
+						<div>
+							<label for="taxontype"><?= $LANG['SELECT_TAXON_TYPE'] ?>:</label>
 							<select id="taxontype" name="taxontype">
 								<?php
 								$taxonType = 1;
@@ -100,92 +94,93 @@ $searchVar = $collManager->getQueryTermStr();
 							</select>
 						</div>
 						<div>
-							<label for="taxa"><?php echo $LANG['TYPE_TAXON'] ?>:</label>
-							<input id="taxa" type="text" size="60" name="taxa" id="taxa" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
+							<label for="taxa"><?= $LANG['TYPE_TAXON'] ?>:</label>
+							<input id="taxa" type="text" size="60" name="taxa" id="taxa" value="" title="<?= $LANG['SEPARATE_MULTIPLE']; ?>">
+							<br><input id="tid" name="tid" type="hidden" value="">
 						</div>
-					</section>
-				</div>
-				<div style='float:right;margin:0px 10px;'>
-					<div><button type="submit" style="width:100%"><?php echo isset($LANG['BUTTON_NEXT_LIST'])?$LANG['BUTTON_NEXT_LIST']:'List Display'; ?></button></div>
-					<div><button type="button" style="width:100%" onclick="displayTableView(this.form)"><?php echo isset($LANG['BUTTON_NEXT_TABLE'])?$LANG['BUTTON_NEXT_TABLE']:'Table Display'; ?></button></div>
-					<div><button type="reset" style="width:100%" onclick="resetHarvestParamsForm()"><?php echo isset($LANG['BUTTON_RESET'])?$LANG['BUTTON_RESET']:'Reset Form'; ?></button></div>
-				</div>
+					</div>
+					<div>
+						<div><button type="submit" style="width:100%"><?= $LANG['BUTTON_NEXT_LIST'] ?></button></div>
+						<div><button type="button" style="width:100%" onclick="displayTableView(this.form)"><?= $LANG['BUTTON_NEXT_TABLE'] ?></button></div>
+						<div><button type="reset" style="width:100%" onclick="resetHarvestParamsForm()"><?= $LANG['BUTTON_RESET'] ?></button></div>
+					</div>
+				</section>
 			</div>
 			<hr/>
 			<div>
-				<div class="catHeaderDiv"><?php echo $LANG['LOCALITY_CRITERIA']; ?></div>
+				<div class="catHeaderDiv"><?= $LANG['LOCALITY_CRITERIA']; ?></div>
 			</div>
 			<div>
-				<label for="country"><?php echo $LANG['COUNTRY']; ?>:</label>
-				<input type="text" id="country" size="43" name="country" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
+				<label for="country"><?= $LANG['COUNTRY']; ?>:</label>
+				<input type="text" id="country" size="43" name="country" value="" title="<?= $LANG['SEPARATE_MULTIPLE']; ?>" />
 			</div>
 			<div>
-				<label for="state"><?php echo $LANG['STATE']; ?>:</label>
-				<input type="text" id="state" size="37" name="state" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
+				<label for="state"><?= $LANG['STATE']; ?>:</label>
+				<input type="text" id="state" size="37" name="state" value="" title="<?= $LANG['SEPARATE_MULTIPLE']; ?>" />
 			</div>
 			<div>
-				<label for="county"><?php echo $LANG['COUNTY']; ?>:</label>
-				<input type="text" id="county" size="37"  name="county" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
+				<label for="county"><?= $LANG['COUNTY']; ?>:</label>
+				<input type="text" id="county" size="37"  name="county" value="" title="<?= $LANG['SEPARATE_MULTIPLE']; ?>" />
 			</div>
 			<div>
-				<label for="locality"><?php echo $LANG['LOCALITY']; ?>:</label>
+				<label for="locality"><?= $LANG['LOCALITY']; ?>:</label>
 				<input type="text" id="locality" size="43" name="local" value="" />
 			</div>
 			<section class="flex-form">
 				<div>
-					<label for="elevlow"><?php echo $LANG['ELEV_INPUT_1']; ?>:</label>
+					<label for="elevlow"><?= $LANG['ELEV_INPUT_1']; ?>:</label>
 					<input type="text" id="elevlow" size="10" name="elevlow" value="" onchange="cleanNumericInput(this);" />
 				</div>
 				<div>
-					<label for="elevhigh"><?php echo $LANG['ELEV_INPUT_2']; ?>:</label>
+					<label for="elevhigh"><?= $LANG['ELEV_INPUT_2']; ?>:</label>
 					<input type="text" id="elevhigh" size="10" name="elevhigh" value="" onchange="cleanNumericInput(this);" />
 				</div>
 			</section>
 			<hr>
-			<div class="catHeaderDiv"><?php echo $LANG['LAT_LNG_HEADER']; ?></div>
+			<div class="catHeaderDiv"><?= $LANG['LAT_LNG_HEADER']; ?></div>
 			<div>
 				<div class="coordBoxDiv">
 					<div class="labelDiv">
-						<?php echo $LANG['LL_BOUND_TEXT']; ?>
+						<?= $LANG['LL_BOUND_TEXT']; ?>
 					</div>
 					<div class="iconDiv">
-						<a href="#" onclick="openCoordAid({map_mode: MAP_MODES.RECTANGLE, client_root: '<?= $CLIENT_ROOT?>'});return false;"><img src="../images/map.png" title="<?php echo htmlspecialchars((isset($LANG['MAP_AID'])?$LANG['MAP_AID']:'Mapping Aid'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" /></a>
+						<a href="#" onclick="openCoordAid({map_mode: MAP_MODES.RECTANGLE, client_root: '<?= $CLIENT_ROOT?>'});return false;"><img src="../images/map.png" title="<?= $LANG['MAP_AID'] ?>" /></a>
 					</div>
 					<div class="elemDiv">
 						<div>
-							<label for="upperlat"><?php echo $LANG['LL_BOUND_NLAT']; ?>:</label>
+							<label for="upperlat"><?= $LANG['LL_BOUND_NLAT']; ?>:</label>
 							<input type="text" id="upperlat" name="upperlat" size="7" value="" onchange="cleanNumericInput(this);">
-							<label for="upperlat_NS"><?php echo $LANG['DIRECTION'] ?>:</label>
+							<label for="upperlat_NS"><?= $LANG['DIRECTION'] ?>:</label>
 							<select id="upperlat_NS" name="upperlat_NS">
-								<option id="ulN" value="N"><?php echo $LANG['LL_N_SYMB']; ?></option>
-								<option id="ulS" value="S"><?php echo $LANG['LL_S_SYMB']; ?></option>
+								<option id="ulN" value="N"><?= $LANG['LL_N_SYMB']; ?></option>
+								<option id="ulS" value="S"><?= $LANG['LL_S_SYMB']; ?></option>
 							</select>
 						</div>
 						<div>
-							<label for="bottomlat"><?php echo $LANG['LL_BOUND_SLAT']; ?>:</label>
+							<label for="bottomlat"><?= $LANG['LL_BOUND_SLAT']; ?>:</label>
 							<input type="text" id="bottomlat" name="bottomlat" size="7" value="" onchange="cleanNumericInput(this);">
-							<label for="bottomlat_NS"><?php echo $LANG['DIRECTION'] ?>:</label>
+							<label for="bottomlat_NS"><?= $LANG['DIRECTION'] ?>:</label>
 							<select id="bottomlat_NS" name="bottomlat_NS">
-								<option id="blN" value="N"><?php echo $LANG['LL_N_SYMB']; ?></option>
-								<option id="blS" value="S"><?php echo $LANG['LL_S_SYMB']; ?></option>
+								<option id="blN" value="N"><?= $LANG['LL_N_SYMB']; ?></option>
+								<option id="blS" value="S"><?= $LANG['LL_S_SYMB']; ?></option>
 							</select>
 						</div>
 						<div>
-							<label for="leftlong"><?php echo $LANG['LL_BOUND_WLNG']; ?>:</label>
+							<label for="leftlong"><?= $LANG['LL_BOUND_WLNG']; ?>:</label>
 							<input type="text" id="leftlong" name="leftlong" size="7" value="" onchange="cleanNumericInput(this);">
-							<label for="leftlong_EW"><?php echo $LANG['DIRECTION'] ?>:</label>
+							<label for="leftlong_EW"><?= $LANG['DIRECTION'] ?>:</label>
 							<select id="leftlong_EW" name="leftlong_EW">
-								<option id="llW" value="W"><?php echo $LANG['LL_W_SYMB']; ?></option>
-								<option id="llE" value="E"><?php echo $LANG['LL_E_SYMB']; ?></option>
+								<option id="llW" value="W"><?= $LANG['LL_W_SYMB']; ?></option>
+								<option id="llE" value="E"><?= $LANG['LL_E_SYMB']; ?></option>
 							</select>
 						</div>
 						<div>
-							<label for="rightlong"><?php echo $LANG['LL_BOUND_ELNG']; ?>:</label>
+							<label for="rightlong"><?= $LANG['LL_BOUND_ELNG']; ?>:</label>
 							<input type="text" id="rightlong" name="rightlong" size="7" value="" onchange="cleanNumericInput(this);" style="margin-left:3px;">
-							<label for="rightlong_EW"><?php echo $LANG['DIRECTION'] ?>:</label>
+							<label for="rightlong_EW"><?= $LANG['DIRECTION'] ?>:</label>
 							<select id="rightlong_EW" name="rightlong_EW">
-								<option id="rlW" value="W"><?php echo $LANG['LL_W_SYMB']; ?></option>
-								<option id="rlE" value="E"><?php echo $LANG['LL_E_SYMB']; ?></option>
+								<option id="rlW" value="W"><?= $LANG['LL_W_SYMB']; ?></option>
+								<option id="rlE" value="E"><?= $LANG['LL_E_SYMB']; ?></option>
 							</select>
 						</div>
 					</div>
@@ -193,11 +188,11 @@ $searchVar = $collManager->getQueryTermStr();
 				<div class="coordBoxDiv">
 					<div class="labelDiv">
 						<label for="footprintwkt">
-							<?php echo isset($LANG['LL_POLYGON_TEXT'])?$LANG['LL_POLYGON_TEXT']:''; ?>
+							<?= $LANG['LL_POLYGON_TEXT'] ?>
 						</label>
 					</div>
 					<div class="iconDiv">
-						&nbsp;<a href="#" onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root: '<?= $CLIENT_ROOT?>'});return false;"><img src="../images/map.png" title="<?php echo htmlspecialchars((isset($LANG['MAP_AID'])?$LANG['MAP_AID']:'Mapping Aid'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" /></a>
+						&nbsp;<a href="#" onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root: '<?= $CLIENT_ROOT?>'});return false;"><img src="../images/map.png" title="<?= $LANG['MAP_AID'] ?>" /></a>
 					</div>
 					<div class="elemDiv">
 						<textarea id="footprintwkt" name="footprintGeoJson" style="zIndex:999;width:100%;height:90px" onchange="cleanPolygon(this)"></textarea>
@@ -205,44 +200,44 @@ $searchVar = $collManager->getQueryTermStr();
 				</div>
 				<div class="coordBoxDiv">
 					<div class="labelDiv">
-						<?php echo $LANG['LL_P-RADIUS_TEXT']; ?>
+						<?= $LANG['LL_P-RADIUS_TEXT']; ?>
 					</div>
 					<div class="iconDiv">
-						<a href="#" onclick="openCoordAid({map_mode: MAP_MODES.CIRCLE, client_root: '<?= $CLIENT_ROOT?>'});return false;"><img src="../images/map.png" title="<?php echo (isset($LANG['MAP_AID'])?$LANG['MAP_AID']:'Mapping Aid'); ?>" /></a>
+						<a href="#" onclick="openCoordAid({map_mode: MAP_MODES.CIRCLE, client_root: '<?= $CLIENT_ROOT?>'});return false;"><img src="../images/map.png" title="<?= $LANG['MAP_AID'] ?>" /></a>
 					</div>
 					<div class="elemDiv">
 						<section class="flex-form">
 							<div>
-								<label for="pointlat"><?php echo $LANG['LL_P-RADIUS_LAT']; ?>:</label>
+								<label for="pointlat"><?= $LANG['LL_P-RADIUS_LAT']; ?>:</label>
 								<input type="text" id="pointlat" name="pointlat" size="7" value="" onchange="cleanNumericInput(this);">
-								<label for="pointlat_NS"><?php echo $LANG['DIRECTION'] ?>:</label>
+								<label for="pointlat_NS"><?= $LANG['DIRECTION'] ?>:</label>
 								<select id="pointlat_NS" name="pointlat_NS">
-									<option id="N" value="N"><?php echo $LANG['LL_N_SYMB']; ?></option>
-									<option id="S" value="S"><?php echo $LANG['LL_S_SYMB']; ?></option>
+									<option id="N" value="N"><?= $LANG['LL_N_SYMB']; ?></option>
+									<option id="S" value="S"><?= $LANG['LL_S_SYMB']; ?></option>
 								</select>
 							</div>
 						</section>
 						<section class="flex-form">
 							<div>
-								<label for="pointlong"><?php echo $LANG['LL_P-RADIUS_LNG']; ?>:</label>
+								<label for="pointlong"><?= $LANG['LL_P-RADIUS_LNG']; ?>:</label>
 								<input type="text" id="pointlong" name="pointlong" size="7" value="" onchange="cleanNumericInput(this);">
-								<label for="pointlong_EW"><?php echo $LANG['DIRECTION'] ?>:</label>
+								<label for="pointlong_EW"><?= $LANG['DIRECTION'] ?>:</label>
 								<select id="pointlong_EW" name="pointlong_EW">
-									<option id="W" value="W"><?php echo $LANG['LL_W_SYMB']; ?></option>
-									<option id="E" value="E"><?php echo $LANG['LL_E_SYMB']; ?></option>
+									<option id="W" value="W"><?= $LANG['LL_W_SYMB']; ?></option>
+									<option id="E" value="E"><?= $LANG['LL_E_SYMB']; ?></option>
 								</select>
 							</div>
 						</section>
 						<section class="flex-form">
 							<div>
-								<label for="radius"><?php echo $LANG['LL_P-RADIUS_RADIUS']; ?>:</label>
+								<label for="radius"><?= $LANG['LL_P-RADIUS_RADIUS']; ?>:</label>
 								<input type="text" id="radius" name="radius" size="5" value="" onchange="cleanNumericInput(this);">
 							</div>
 							<div>
-								<label for="radiusunits"><?php echo $LANG['DISTANCE_UNIT'] ?>:</label>
+								<label for="radiusunits"><?= $LANG['DISTANCE_UNIT'] ?>:</label>
 								<select id="radiusunits" name="radiusunits">
-									<option value="km"><?php echo $LANG['LL_P-RADIUS_KM']; ?></option>
-									<option value="mi"><?php echo $LANG['LL_P-RADIUS_MI']; ?></option>
+									<option value="km"><?= $LANG['LL_P-RADIUS_KM']; ?></option>
+									<option value="mi"><?= $LANG['LL_P-RADIUS_MI']; ?></option>
 								</select>
 							</div>
 						</section>
@@ -250,35 +245,35 @@ $searchVar = $collManager->getQueryTermStr();
 				</div>
 			</div>
 			<hr/>
-			<div class="catHeaderDiv"><?php echo $LANG['COLLECTOR_HEADER']; ?></div>
+			<div class="catHeaderDiv"><?= $LANG['COLLECTOR_HEADER']; ?></div>
 			<div>
-				<label for="collector"><?php echo $LANG['COLLECTOR_LASTNAME']; ?>:</label>
-				<input type="text" id="collector" size="32" name="collector" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
+				<label for="collector"><?= $LANG['COLLECTOR_LASTNAME']; ?>:</label>
+				<input type="text" id="collector" size="32" name="collector" value="" title="<?= $LANG['SEPARATE_MULTIPLE']; ?>" />
 			</div>
 			<div>
-				<label for="collnum"><?php echo $LANG['COLLECTOR_NUMBER']; ?>:</label>
-				<input type="text" id="collnum" size="31" name="collnum" value="" title="<?php echo $LANG['TITLE_TEXT_2']; ?>" />
+				<label for="collnum"><?= $LANG['COLLECTOR_NUMBER']; ?>:</label>
+				<input type="text" id="collnum" size="31" name="collnum" value="" title="<?= $LANG['TITLE_TEXT_2']; ?>" />
 			</div>
 			<section class="flex-form">
 				<div>
-					<label for="eventdate1"><?php echo $LANG['COLLECTOR_DATE']; ?>:</label>
-					<input type="text" id="eventdate1" size="32" name="eventdate1" style="width:100px;" value="" title="<?php echo $LANG['TITLE_TEXT_3']; ?>" /> -
+					<label for="eventdate1"><?= $LANG['COLLECTOR_DATE']; ?>:</label>
+					<input type="text" id="eventdate1" size="32" name="eventdate1" style="width:100px;" value="" title="<?= $LANG['TITLE_TEXT_3']; ?>" /> -
 				</div>
 				<div>
-					<label for="eventdate2"><?php echo $LANG['COLLECTOR_DATE_END']; ?>:</label>
-					<input type="text" id="eventdate2" size="32" name="eventdate2" style="width:100px;" value="" title="<?php echo $LANG['TITLE_TEXT_4']; ?>" />
+					<label for="eventdate2"><?= $LANG['COLLECTOR_DATE_END']; ?>:</label>
+					<input type="text" id="eventdate2" size="32" name="eventdate2" style="width:100px;" value="" title="<?= $LANG['TITLE_TEXT_4']; ?>" />
 				</div>
 			</section>
 			<hr/>
 			<div style="float:left">
 				<div>
-					<div class="catHeaderDiv"><?php echo $LANG['SPECIMEN_HEADER']; ?></div>
+					<div class="catHeaderDiv"><?= $LANG['SPECIMEN_HEADER']; ?></div>
 				</div>
 				<div>
-					<label for="catnum"><?php echo $LANG['CATALOG_NUMBER']; ?>:</label>
-					<input type="text" id="catnum" size="32" name="catnum" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
+					<label for="catnum"><?= $LANG['CATALOG_NUMBER']; ?>:</label>
+					<input type="text" id="catnum" size="32" name="catnum" value="" title="<?= $LANG['SEPARATE_MULTIPLE']; ?>" />
 					<input name="includeothercatnum" id="includeothercatnum" type="checkbox" value="1" checked />
-					<label for="includeothercatnum"><?php echo $LANG['INCLUDE_OTHER_CATNUM']?></label>
+					<label for="includeothercatnum"><?= $LANG['INCLUDE_OTHER_CATNUM']?></label>
 				</div>
 				<?php
 				if($matSampleTypeArr = $collManager->getMaterialSampleTypeArr()){
@@ -300,23 +295,23 @@ $searchVar = $collManager->getQueryTermStr();
 				?>
 				<div>
 					<input type='checkbox' name='typestatus' id='typestatus' value='1' />
-					<label for="typestatus"><?php echo isset($LANG['TYPE'])?$LANG['TYPE']:'Limit to Type Specimens Only'; ?></label>
+					<label for="typestatus"><?= $LANG['TYPE'] ?></label>
 				</div>
 				<div>
 					<input type='checkbox' name='hasimages' id='hasimages' value='1' />
-					<label for="hasimages"><?php echo isset($LANG['HAS_IMAGE'])?$LANG['HAS_IMAGE']:'Limit to Specimens with Images Only'; ?></label>
+					<label for="hasimages"><?= $LANG['HAS_IMAGE'] ?></label>
 				</div>
 				<div>
 					<input type='checkbox' name='hasgenetic' id='hasgenetic' value='1' />
-					<label for="hasgenetic"><?php echo isset($LANG['HAS_GENETIC'])?$LANG['HAS_GENETIC']:'Limit to Specimens with Genetic Data Only'; ?></label>
+					<label for="hasgenetic"><?= $LANG['HAS_GENETIC'] ?></label>
 				</div>
 				<div>
 					<input type='checkbox' name='hascoords' id='hascoords' value='1' />
-					<label for="hascoords"><?php echo isset($LANG['HAS_COORDS'])?$LANG['HAS_COORDS']:'Limit to Specimens with Geocoordinates Only'; ?></label>
+					<label for="hascoords"><?= $LANG['HAS_COORDS'] ?></label>
 				</div>
 				<div>
 					<input type='checkbox' name='includecult' id='includecult' value='1' <?= !empty($SHOULD_INCLUDE_CULTIVATED_AS_DEFAULT) ? 'checked' : '' ?> />
-					<label for="includecult"><?php echo isset($LANG['INCLUDE_CULTIVATED'])?$LANG['INCLUDE_CULTIVATED']:'Include cultivated/captive occurrences'; ?></label>
+					<label for="includecult"><?= $LANG['INCLUDE_CULTIVATED'] ?></label>
 				</div>
 			</div>
 			<?php
@@ -326,13 +321,13 @@ $searchVar = $collManager->getQueryTermStr();
 				<hr/>
 				<div id="searchFormPaleo" style="float:left">
 					<div>
-						<div class="catHeaderDiv bottom-breathing-room-rel-sm"><?php echo $LANG['GEO_CONTEXT']; ?></div>
+						<div class="catHeaderDiv bottom-breathing-room-rel-sm"><?= $LANG['GEO_CONTEXT']; ?></div>
 					</div>
 					<div>
 						<div>
 							<div>
 								<div>
-									<label for="lateInterval"><?php echo $LANG['LATE_INT'] ?>:</label>
+									<label for="lateInterval"><?= $LANG['LATE_INT'] ?>:</label>
 									<select name="lateInterval" type="text" id="lateInterval">
 										<option value=""></option>
 										<?php
@@ -348,7 +343,7 @@ $searchVar = $collManager->getQueryTermStr();
 										?>
 									</select>
 								</div>
-								<label for="earlyInterval"><?php echo $LANG['EARLY_INT'] ?>:</label>
+								<label for="earlyInterval"><?= $LANG['EARLY_INT'] ?>:</label>
 									<select name="earlyInterval" type="text" id="earlyInterval">
 										<option value=""></option>
 										<?php
@@ -367,19 +362,19 @@ $searchVar = $collManager->getQueryTermStr();
 						</div>
 						<div>
 							<div>
-								<label for="lithogroup"><?php echo $LANG['LITHOGROUP']?>:</label>
+								<label for="lithogroup"><?= $LANG['LITHOGROUP']?>:</label>
 									<input type="text" name="lithogroup" id="lithogroup"/>
 							</div>
 							<div>
-								<label for="formation"> <?php echo $LANG['FORMATION']?>:</label>
+								<label for="formation"> <?= $LANG['FORMATION']?>:</label>
 									<input type="text" name="formation" id="formation"/>
 							</div>
 							<div>
-								<label for="member"><?php echo $LANG['MEMBER']?>:</label>
+								<label for="member"><?= $LANG['MEMBER']?>:</label>
 									<input type="text" name="member" id="member"/>
 							</div>
 							<div>
-								<label for="bed"><?php echo $LANG['BED']?>:</label>
+								<label for="bed"><?= $LANG['BED']?>:</label>
 									<input type="text" name="bed" id="bed"/>
 							</div>
 						</div>
@@ -395,8 +390,8 @@ $searchVar = $collManager->getQueryTermStr();
 					<hr/>
 					<div style="float:left">
 						<div>
-							<div class="catHeaderDiv"><?php echo $LANG['TRAIT_HEADER']; ?></div>
-							<div><?php echo $LANG['TRAIT_DESCRIPTION']; ?></div>
+							<div class="catHeaderDiv"><?= $LANG['TRAIT_HEADER']; ?></div>
+							<div><?= $LANG['TRAIT_DESCRIPTION']; ?></div>
 							<input type="hidden" id="SearchByTraits" value="true">
 						</div>
 						<?php
@@ -404,7 +399,7 @@ $searchVar = $collManager->getQueryTermStr();
 							if(!isset($traitData['dependentTrait'])) {
 								?>
 								<fieldset style="margin-top:10px;display:inline;min-width:500px">
-									<legend><b>Trait: <?php echo $traitData['name']; ?></b></legend>
+									<legend><b>Trait: <?= $traitData['name']; ?></b></legend>
 									<div style="float:right">
 										<div class="trianglediv" style="margin:4px 3px;float:right;cursor:pointer" onclick="setAttributeTree(this)" title="Toggle attribute tree open/close">
 											<img class="triangleright" src="../images/triangleright.png" style="width:1.3em;display:none" />
@@ -426,13 +421,13 @@ $searchVar = $collManager->getQueryTermStr();
 			?>
 
 			<div style="float:right;">
-				<div><button type="submit" style="width:100%"><?php echo isset($LANG['BUTTON_NEXT_LIST'])?$LANG['BUTTON_NEXT_LIST']:'List Display'; ?></button></div>
-				<div><button type="button" style="width:100%" onclick="displayTableView(this.form)"><?php echo isset($LANG['BUTTON_NEXT_TABLE'])?$LANG['BUTTON_NEXT_TABLE']:'Table Display'; ?></button></div>
-				<div><button type="reset" style="width:100%" onclick="resetHarvestParamsForm()"><?php echo isset($LANG['BUTTON_RESET'])?$LANG['BUTTON_RESET']:'Reset Form'; ?></button></div>
+				<div><button type="submit" style="width:100%"><?= $LANG['BUTTON_NEXT_LIST'] ?></button></div>
+				<div><button type="button" style="width:100%" onclick="displayTableView(this.form)"><?= $LANG['BUTTON_NEXT_TABLE'] ?></button></div>
+				<div><button type="reset" style="width:100%" onclick="resetHarvestParamsForm()"><?= $LANG['BUTTON_RESET'] ?></button></div>
 			</div>
 			<div>
 				<input name="comingFrom" type="hidden" value="harvestparams" >
-				<input type="hidden" name="db" value="<?php echo $collManager->getSearchTerm('db', $_SERVER['REQUEST_URI']); ?>" />
+				<input type="hidden" name="db" value="<?= $collManager->getSearchTerm('db', $_SERVER['REQUEST_URI']); ?>" />
 			</div>
 			<hr/>
 		</form>

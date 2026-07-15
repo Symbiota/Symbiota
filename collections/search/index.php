@@ -65,9 +65,42 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/domManipulationUtils.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/localitySuggest.js" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.list.js?ver=20251002>" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.list.js?ver=1>" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.index.js?ver=1>" type="text/javascript"></script>
+	<script src="<?= $JS_LANG_FILENAME ?>" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=2" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxonomy.taxasuggest.js?ver=1" type="text/javascript"></script>
 	<script>
-		const clientRoot = '<?= $CLIENT_ROOT; ?>';
+		$(document).ready(function() {
+			//setup taxonomic autocompletes
+			setTaxaSuggestRootPath("<?= $CLIENT_ROOT ?>");
+			setMultipleTermSupport(true);
+			initiateTaxaSuggest("taxa", null, document.getElementById("taxontype").value);
+			initiateTaxaSuggest("associated-taxa", null, "taxontype-association");
+
+			setSessionQueryStr();
+			setSearchForm(document.getElementById("params-form"));
+			toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
+			document.getElementById("params-form").addEventListener("submit", function(event) {
+				event.preventDefault();
+				simpleSearch();
+			});
+			document.getElementById("reset-btn").addEventListener("click", function (event) {
+				document.getElementById("params-form").reset();
+				// sessionStorage.clear();
+				// localStorage.clear();
+				clearPageSpecificSessionStorageItems();
+				checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
+				closeAllCategories();
+				expandCategoriesBasedOnConfig();
+				updateChip(event, isInitialConfig=true);
+			});
+		});
+
+		function taxonTypeChanged(selectElem){
+			initiateTaxaSuggest("taxa", null, selectElem.value);
+		}
+
 		const paleoTimes = <?= json_encode($paleoTimes ?? []) ?>;
 		const handleAccordionExpand = () => {
 			const accordions = document.querySelectorAll('input[class="accordion-selector"]');
@@ -163,7 +196,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 							<div style="padding-top:14px">
 								<div class="select-container" style="position: relative">
 									<label for="taxontype" class="screen-reader-only"><?php echo $LANG['TAXON_TYPE'] ?></label>
-									<select name="taxontype" id="taxontype" style="margin-top:0;padding-top:0; margin-bottom: 0.5rem">
+									<select name="taxontype" id="taxontype" style="margin-top:0;padding-top:0; margin-bottom: 0.5rem" onchange="taxonTypeChanged(this)">
 										<option id="taxontype-scientific" value="2" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['SCIENTIFIC_NAME'] ?></option>
 										<option id="taxontype-family" value="3" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['FAMILY'] ?></option>
 										<option id="taxontype-group" value="4" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['TAXONOMIC_GROUP'] ?></option>
@@ -827,11 +860,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 	include($SERVER_ROOT . '/includes/footer.php');
 	?>
 </body>
-<script src="<?= $JS_LANG_FILENAME ?>" type="text/javascript"></script>
-<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=2" type="text/javascript"></script>
 <script src="<?= $CLIENT_ROOT ?>/js/alerts.js?v=202107" type="text/javascript"></script>
-<script src="<?= $CLIENT_ROOT ?>/js/symb/api.taxonomy.taxasuggest.js" type="text/javascript"></script>
-<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.index.js?ver=20171215>" type="text/javascript"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
 		setSessionQueryStr();
@@ -852,8 +881,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 			updateChip(event, isInitialConfig=true);
 		});
 	});
-</script>
-<script>
+
 	let alerts = [{
 		'alertMsg': '<?php echo $LANG['ALERT_MSG_PREVIOUS_SEARCH_FORM'] ?> <a href="<?php echo $CLIENT_ROOT ?>/collections/index.php" alt="Traditional Sample Search Form"><?= $LANG['PREVIOUS_SAMPLE_SEARCH']; ?></a>.'
 	}];
