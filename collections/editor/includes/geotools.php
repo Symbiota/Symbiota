@@ -32,9 +32,9 @@ Language::load('collections/editor/includes/geotools');
 		</div>
 	</div>
 	<div id="utmAidDiv">
-		<?php echo $LANG['ZONE']; ?>: <input id="utmzone" style="width:40px;" /><br/>
-		<?php echo $LANG['EAST']; ?>: <input id="utmeast" type="text" style="width:100px;" /><br/>
-		<?php echo $LANG['NORTH']; ?>: <input id="utmnorth" type="text" style="width:100px;" /><br/>
+		<label for="utmzone"><?php echo $LANG['ZONE']; ?>:</label> <input id="utmzone" style="width:40px;" /><br/>
+		<label for="utmeast"><?php echo $LANG['EAST']; ?>:</label> <input id="utmeast" type="text" style="width:100px;" /><br/>
+		<label for="utmnorth"><?php echo $LANG['NORTH']; ?>:</label> <input id="utmnorth" type="text" style="width:100px;" /><br/>
 		<?php echo $LANG['HEMISPHERE']; ?>: <select id="hemisphere" title="<?php echo $LANG['USE_HEMI_DESIGN']; ?> ">
 			<option value="N"><?php echo $LANG['NORTH']; ?></option>
 			<option value="S"><?php echo $LANG['SOUTH']; ?></option>
