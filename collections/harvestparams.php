@@ -73,7 +73,7 @@ $searchVar = $collManager->getQueryTermStr();
 				<div>
 					<div class="catHeaderDiv"><?= $LANG['TAXON_HEADER']; ?></div>
 				</div>
-				<section class="flex-form">
+				<section class="flex-form" style="justify-content: space-between">
 					<div>
 						<div>
 							<input type='checkbox' name='usethes' id='usethes' value='1' CHECKED />
@@ -99,9 +99,9 @@ $searchVar = $collManager->getQueryTermStr();
 						</div>
 					</div>
 					<div>
-						<div><button type="submit" style="width:100%"><?= $LANG['BUTTON_NEXT_LIST'] ?></button></div>
-						<div><button type="button" style="width:100%" onclick="displayTableView(this.form)"><?= $LANG['BUTTON_NEXT_TABLE'] ?></button></div>
-						<div><button type="reset" style="width:100%" onclick="resetHarvestParamsForm()"><?= $LANG['BUTTON_RESET'] ?></button></div>
+						<div><button type="submit" style="width:150px"><?= $LANG['BUTTON_NEXT_LIST'] ?></button></div>
+						<div><button type="button" style="width:150px" onclick="displayTableView(this.form)"><?= $LANG['BUTTON_NEXT_TABLE'] ?></button></div>
+						<div><button type="reset" style="width:150px" onclick="resetHarvestParamsForm()"><?= $LANG['BUTTON_RESET'] ?></button></div>
 					</div>
 				</section>
 			</div>

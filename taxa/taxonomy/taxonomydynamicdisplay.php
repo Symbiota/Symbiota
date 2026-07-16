@@ -91,7 +91,7 @@ reset($treePath);
 	<script type="text/javascript">
 		$(document).ready(function() {
 			setTaxaSuggestRootPath("<?= $CLIENT_ROOT ?>");
-			initiateTaxaSuggest("taxontarget", "tid");
+			initiateTaxaSuggest("taxontarget");
 		});
 
 		function displayTaxomonyMeta(){

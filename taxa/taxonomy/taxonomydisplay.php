@@ -62,7 +62,7 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 	<script type="text/javascript">
 		$(document).ready(function() {
 			setTaxaSuggestRootPath("<?= $CLIENT_ROOT ?>");
-			initiateTaxaSuggest("taxontarget", "tid");
+			initiateTaxaSuggest("taxontarget");
 
 			$('form input').keydown(function(event) {
 				if (event.keyCode === 13) {
@@ -146,7 +146,6 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 						<div>
 							<label for="taxontarget"> <?= $LANG['TAXON'] ?>: </label>
 							<input id="taxontarget" class="search-bar" name="target" type="text" value="<?= $taxonDisplayObj->getTargetStr(); ?>" />
-							<input id="tid" name="tid" type="hidden" value="<?= $tid ?>" />
 						</div>
 						<div>
 							<input id="displayauthor" name="displayauthor" type="checkbox" value="1" <?= ($displayAuthor ? 'checked' : '') ?> />
