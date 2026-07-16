@@ -39,12 +39,13 @@ $MEDIA_ROOT_PATH = '';			//Writable path to images, especially needed for downlo
 $STORAGE_DRIVER = 'local'; // Can be either 'local' or 's3'. s3 option requires 'Aws\S3\S3Client' composer lib installed
 
 // Variables for s3 storage
-$S3_MEDIA_BUCKET_NAME = '';
+$S3_MEDIA_BUCKET_NAME = ''; // Note if you are migrating to s3 from local then the bucket name should be the first part in your path.
 $S3_REGION = '';
-$S3_ENDPOINT = '';
-$S3_ACCESS_KEY_ID = '';
-$S3_SECRET_ACCESS_KEY = '';
-
+$S3_PUBLIC_ENDPOINT = ''; // Endpoint for showing assets to public. This could differ from the s3 endpoint depending on how things are setup.
+$S3_ENDPOINT = ''; // Endpoint to the s3 instance. This is seperated from the public access end point as it may be an internal ip or apart of container network.
+$S3_ACCESS_KEY_ID = ''; // S3 Credential ID
+$S3_SECRET_ACCESS_KEY = ''; // S3 Credential Password
+$S3_MEDIA_PATH = ''; // This can be blank. If you are supporting multiple portals with one s3 instance Recommendation is to split them into seperate buckets instead of at the path level in order to isolate the systems.
 
 //Pixel width of web images
 $IMG_WEB_WIDTH = 1400;

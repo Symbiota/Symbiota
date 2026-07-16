@@ -238,8 +238,26 @@ class LocalStorage extends StorageStrategy {
  * If possible this is the recomended driver to use because it is more secure
  * by default.
  *
+ * Note this class should only rely on the following symbini vars:
+ * $S3_REGION: region
+ * $S3_PUBLIC_ENDPOINT: This endpoint is shown publicly in asset urls.
+ * $S3_ENDPOINT: This endpoint used for connecting to the s3 instance and will often be the same as the public one. There are some edge cases where this is not true.
+ * $S3_ACCESS_KEY_ID: credentials => key
+ * $S3_SECRET_ID: credentials => secret
+ * $S3_MEDIA_PATH: '/your_media_path';
+ *
+ * Do not use these options within this class they are only used in the local storage strategy.
+ *
+ * $MEDIA_ROOT_URL
+ * $MEDIA_ROOT_PATH
+ * $MEDIA_DOMAIN
+ *
+ * The reasoning fore keeping this out is simply because they are used in other parts of the
+ * codebase that do not use this pattern so coupling them is going to lead to avoidable
+ * problems. In the future this may not be the case, if so feel free to re-evaluate
+ *
  * All technologies that support s3 client interface should work. However
- * the follow are onces we aim to support.
+ * the follow are ones we aim to support.
  * - CEPH
  */
 class S3Storage extends StorageStrategy {
@@ -277,15 +295,14 @@ class S3Storage extends StorageStrategy {
 	public function getDirPath($file = ''): String {
 		$file_name = is_array($file)? $file['name']: $file;
 
-		return $GLOBALS['MEDIA_ROOT_URL'] .
-			(substr($GLOBALS['MEDIA_ROOT_URL'],-1) != "/"? '/': '') .
+		return $GLOBALS['S3_MEDIA_PATH'] .
+			(substr($GLOBALS['S3_MEDIA_PATH'],-1) != "/"? '/': '') .
 			$this->path . $file_name;
 	}
 
 	public function getUrlPath($file = ''): String {
 		$file_name = is_array($file)? $file['name']: $file;
-		return $GLOBALS['MEDIA_DOMAIN'] . $GLOBALS['MEDIA_ROOT_URL'] .
-		   	(substr($GLOBALS['MEDIA_ROOT_URL'],-1) != "/"? '/': '') .
+		return $GLOBALS['S3_PUBLIC_ENDPOINT'] . '/' . $GLOBALS['S3_MEDIA_BUCKET_NAME'] . $GLOBALS['S3_MEDIA_PATH'] . (substr($GLOBALS['S3_MEDIA_PATH'],-1) != "/"? '/': '') .
 		   	$this->path . $file_name;
 	}
 
@@ -312,7 +329,7 @@ class S3Storage extends StorageStrategy {
 		try {
 			$this->client->putObject([
 				'Bucket' => $GLOBALS['S3_MEDIA_BUCKET_NAME'],
-				'Key'    => $GLOBALS['MEDIA_ROOT_URL'] . (substr($GLOBALS['MEDIA_ROOT_URL'],-1) != "/"? '/': '') . $this->path . $file['name'],
+				'Key'    => $GLOBALS['S3_MEDIA_PATH'] . (substr($GLOBALS['S3_MEDIA_PATH'],-1) != "/"? '/': '') . $this->path . $file['name'],
 				'ContentType' => $file['type'],
 				'Body'   => fopen($tempPath ?? $file['tmp_name'], "r"),
 				'ACL' => 'public-read'
@@ -350,7 +367,7 @@ class S3Storage extends StorageStrategy {
 
 	public function remove($file): Bool {
 		$filename = is_array($file)? $file['name']: $file;
-		$trimed_file_name = str_replace($GLOBALS['MEDIA_DOMAIN'] . $GLOBALS['S3_MEDIA_BUCKET_NAME'],'', $filename);
+		$trimed_file_name = str_replace($GLOBALS['S3_ENDPOINT'] . '/' . $GLOBALS['S3_MEDIA_BUCKET_NAME'],'', $filename);
 
 		$result = $this->client->deleteObject([
 			'Bucket' => $GLOBALS['S3_MEDIA_BUCKET_NAME'],
@@ -376,20 +393,20 @@ class S3Storage extends StorageStrategy {
 	}
 }
 
+/**
+ * Static Factory for creating correct storage driver based
+ * on symbini config.
+ *
+ * Requires $STORAGE_DRIVER be set in the config/symbini.php
+ * to either 'local' or 's3'.
+ *
+ * @param String $path Path is String filepath starting with no slash and ending
+ * with a slash. It serves as an extension of the root storage path to limit
+ * where files can be stored.
+ * @return StorageStrategy
+ * @throws Exception if $STORAGE_DRIVER is not 'local' or 's3'
+ **/
 class StorageFactory {
-	/**
-	 * Static Factory for creating correct storage driver based
-	 * on symbini config.
-	 *
-	 * Requires $STORAGE_DRIVER be set in the config/symbini.php
-	 * to either 'local' or 's3'.
-	 *
-	 * @param String $path Path is String filepath starting with no slash and ending
-	 * with a slash. It serves as an extension of the root storage path to limit
-	 * where files can be stored.
-	 * @return StorageStrategy
-	 * @throws Exception if $STORAGE_DRIVER is not 'local' or 's3'
-	 **/
 	const LOCAL_STORAGE = 'local';
 	const S3_STORAGE = 's3';
 
