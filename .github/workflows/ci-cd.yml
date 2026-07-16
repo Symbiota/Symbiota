@@ -47,6 +47,7 @@ jobs:
 
   playwright:
     strategy:
+      max-parallel: 1
       matrix:
         browser: [chromium, firefox, webkit]
 
