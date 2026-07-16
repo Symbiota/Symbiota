@@ -349,7 +349,7 @@ class S3Storage extends StorageStrategy {
 	 * @param String $url s3 url either with s3:// url or only path url or filepath
 	 * @return Bool|String
 	 **/
-	function getPathFromUrl(String $url) {
+	private function getPathFromUrl(String $url) {
 		$url_parts = UploadUtil::decomposeUrl($url);
 		$bucket_path = '/' . $GLOBALS['S3_MEDIA_BUCKET_NAME'];
 		$path = $url_parts['path'];
