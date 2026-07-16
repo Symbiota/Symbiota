@@ -17,6 +17,8 @@ class Manager  {
 	protected $logFH;
 	protected $verboseMode = 0;
 
+	protected $cliOutput = false;
+
 	public function __construct($id=null, $conType='readonly', $connOverride = null){
 		if($connOverride){
 			$this->conn = $connOverride;
@@ -65,7 +67,10 @@ class Manager  {
 				}
 			}
 			if($this->verboseMode == 3 || $this->verboseMode == 2){
-				echo '<'.$tag.' style="'.($indexLevel?'margin-left:'.($indexLevel*15).'px':'').'">'.$str.'</'.$tag.'>';
+				if ($this->cliOutput) echo strip_tags($str) . PHP_EOL;
+				else {
+					echo '<'.$tag.' style="'.($indexLevel?'margin-left:'.($indexLevel*15).'px':'').'">'.$str.'</'.$tag.'>';
+				}
 				if (ob_get_level() > 0) {
 					ob_flush();
 				}

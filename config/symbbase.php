@@ -5,11 +5,11 @@ if($GLOBALS['HTTPS_ONLY'] ?? true) {
 	header('strict-transport-security: max-age=600');
 }
 date_default_timezone_set('America/Phoenix');
-$CODE_VERSION = '3.4.12';
+$CODE_VERSION = '3.5';
 
 set_include_path(get_include_path() . PATH_SEPARATOR . $SERVER_ROOT . PATH_SEPARATOR . $SERVER_ROOT.'/config/' . PATH_SEPARATOR . $SERVER_ROOT.'/classes/');
 
-session_start(array('gc_maxlifetime'=>3600,'cookie_path'=>$CLIENT_ROOT,'cookie_secure'=>$GLOBALS['HTTPS_ONLY'] ?? true,'cookie_httponly'=>true, 'use_only_cookies' => true));
+session_start(array('gc_maxlifetime'=>3600,'cookie_path'=>$CLIENT_ROOT? $CLIENT_ROOT: '/','cookie_secure'=> getenv('APP_ENV') === 'testing'? false: ($GLOBALS['HTTPS_ONLY'] ?? true),'cookie_httponly'=>true, 'use_only_cookies' => true));
 
 include_once($SERVER_ROOT . '/classes/utilities/Encryption.php');
 include_once($SERVER_ROOT . '/classes/ProfileManager.php');
