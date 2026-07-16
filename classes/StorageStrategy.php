@@ -80,8 +80,20 @@ class LocalStorage extends StorageStrategy {
 		$this->path = $path ?? '';
 	}
 
+	private function strip_media_path_info(string $filepath) {
+		if(str_contains($filepath, $GLOBALS['MEDIA_ROOT_PATH'])) {
+			$filepath = str_replace($GLOBALS['MEDIA_ROOT_URL'], '', $filepath);
+		} else if(str_contains($filepath, $GLOBALS['MEDIA_ROOT_URL'])) {
+			$filepath = str_replace($GLOBALS['MEDIA_ROOT_URL'], '', $filepath);
+		}
+
+		return $filepath;
+	}
+
 	public function getDirPath($file = ''): String {
 		$filename = is_array($file)? $file['name']: $file;
+		$filename = $this->strip_media_path_info($filename);
+
 		return $GLOBALS['MEDIA_ROOT_PATH'] .
 			(substr($GLOBALS['MEDIA_ROOT_PATH'],-1) != "/"? '/': '') .
 			$this->path . $filename;
@@ -89,6 +101,8 @@ class LocalStorage extends StorageStrategy {
 
 	public function getUrlPath($file = ''): String {
 		$filename = is_array($file)? $file['name']: $file;
+		$filename = $this->strip_media_path_info($filename);
+
 		return $GLOBALS['MEDIA_ROOT_URL'] .
 		   	(substr($GLOBALS['MEDIA_ROOT_URL'],-1) != "/"? '/': '') .
 			$this->path . $filename;
@@ -99,11 +113,7 @@ class LocalStorage extends StorageStrategy {
 
 		if($filename === null) return false;
 
-		if(str_contains($filename, $this->getUrlPath())) {
-			$filename = str_replace($this->getUrlPath(), '', $filename);
-		}
-
-		return file_exists($this->getDirPath() . $filename);
+		return file_exists($this->getDirPath($filename));
 	}
 
 	public function upload(array $file): Bool {
@@ -134,7 +144,6 @@ class LocalStorage extends StorageStrategy {
 
 		return true;
 	}
-
 
 	/**
 	 * Checks if a given path leads to a file on system.
