@@ -1,6 +1,6 @@
 <?php
 //TODO: add code to automatically select hide locality details when taxon/state match name on list
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT.'/classes/Media.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');

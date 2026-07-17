@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
@@ -191,7 +191,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 							</div>
 							<div style="margin-bottom:8px;">
 								<div>
-									<input name="exporttype" type="radio" value="singlelanguage" checked /> <?php echo (isset($LANG['SING_LANG'])?$LANG['SING_LANG']:'Single Language'); ?> 
+									<input name="exporttype" type="radio" value="singlelanguage" checked /> <?php echo (isset($LANG['SING_LANG'])?$LANG['SING_LANG']:'Single Language'); ?>
 								</div>
 								<div style="margin-left:25px;">
 									<input name="images" type="checkbox" value="images" /> <?php echo (isset($LANG['INCL_IMG'])?$LANG['INCL_IMG']:'Include Images'); ?>

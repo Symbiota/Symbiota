@@ -1,4 +1,4 @@
-<?php
+<?php global $SERVER_ROOT, $LANG_TAG;
 include_once($SERVER_ROOT . "/classes/Database.php");
 include_once($SERVER_ROOT . "/classes/StorageStrategy.php");
 include_once($SERVER_ROOT . "/classes/MediaType.php");
@@ -325,12 +325,13 @@ class Media {
 		$file_name = str_replace(".","", $file_name);
 		$file_name = str_replace(array("%20","%23"," ","__"),"_",$file_name);
 		$file_name = str_replace("__","_",$file_name);
-		$file_name = str_replace(array(chr(231),chr(232),chr(233),chr(234),chr(260)),"a",$file_name);
-		$file_name = str_replace(array(chr(230),chr(236),chr(237),chr(238)),"e",$file_name);
-		$file_name = str_replace(array(chr(239),chr(240),chr(241),chr(261)),"i",$file_name);
-		$file_name = str_replace(array(chr(247),chr(248),chr(249),chr(262)),"o",$file_name);
-		$file_name = str_replace(array(chr(250),chr(251),chr(263)),"u", $file_name);
-		$file_name = str_replace(array(chr(264),chr(265)),"n",$file_name);
+		$file_name = str_replace(["à","á","â","ã","ä","å","æ"],"a", $file_name);
+		$file_name = str_replace(["è","é","ê","ë"],"e",$file_name);
+		$file_name = str_replace(["ì","í","î","ï"],"i",$file_name);
+		$file_name = str_replace(["ò","ó","ô","õ","ö"],"o",$file_name);
+		$file_name = str_replace(["ù","ú","û","ü"],"u",$file_name);
+		$file_name = str_replace("ñ","n",$file_name);
+
 		$file_name = preg_replace("/[^a-zA-Z0-9\-_]/", "", $file_name);
 		$file_name = trim($file_name,' _-');
 
@@ -1116,10 +1117,12 @@ class Media {
 	 * This function is assumes clean data because it is interal
 	 *
 	 * @param array $metadata_arr Key value array of Media table attributes
+	 * @param array $media_id Id of media function updates
+	 * @param ?Mysqli $conn Nullable Mysqli connection
 	 * @return void
 	 * @throws Exception
 	 **/
-	private static function update_metadata(array $metadata_arr, int $media_id, mysqli $conn = null): void {
+	private static function update_metadata(array $metadata_arr, int $media_id, ?Mysqli $conn = null): void {
 		$values = [];
 		$parameter_str = '';
 
@@ -1186,7 +1189,7 @@ class Media {
 	 * @param int $media_id
 	 * @param string mediaType Should use MediaType Constants
 	 */
-	public static function getMedia(int $media_id, string $media_type = null): Array {
+	public static function getMedia(int $media_id, ?string $media_type = null): Array {
 		if(!$media_id) return [];
 		$parameters = [$media_id];
 		$sql ='SELECT ' . implode(', ', self::MEDIA_ITEM_SELECT_SCHEMA) .' FROM media m ' .
@@ -1213,7 +1216,7 @@ class Media {
 	 * @param int $tid
 	 * @param string $media_type Should use MediaType Constants
 	 */
-	public static function getByTid(int $tid, string $media_type = null, ?Paginator $paginator): Array {
+	public static function getByTid(int $tid, ?string $media_type = null, ?Paginator $paginator = null): Array {
 		if(!$tid) return [];
 		$parameters = [$tid];
 
@@ -1263,9 +1266,9 @@ class Media {
 
 	/**
 	 * @param int $occid
-	 * @param string $media_type Should use MediaType constants
+	 * @param ?string $media_type Should use MediaType constants
 	 */
-	public static function fetchOccurrenceMedia(int $occid, string $media_type = null): Array {
+	public static function fetchOccurrenceMedia(int $occid, ?string $media_type = null): Array {
 		if(!$occid) return [];
 
 		$parameters = [$occid];
@@ -1303,10 +1306,10 @@ class Media {
 
 	/**
 	 * @param int|array $media_id
-	 * @param Mysqli $conn
+	 * @param ?Mysqli $conn
 	 * @return array<string>
 	 */
-	public static function getMediaTags($media_id, mysqli $conn = null): array {
+	public static function getMediaTags($media_id, ?Mysqli $conn = null): array {
 		$sql = 'SELECT t.mediaID, k.tagkey, k.shortlabel, k.description_en FROM imagetag t
 		INNER JOIN imagetagkey k ON t.keyvalue = k.tagkey
 		WHERE t.mediaID ';
