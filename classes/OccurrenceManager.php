@@ -3,8 +3,10 @@ include_once($SERVER_ROOT . '/classes/OccurrenceSearchSupport.php');
 include_once($SERVER_ROOT . '/classes/ChecklistVoucherAdmin.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceTaxaManager.php');
 include_once($SERVER_ROOT . '/classes/AssociationManager.php');
+include_once($SERVER_ROOT . '/classes/OccurrencePolygonIndex.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 Language::load('classes/OccurrenceManager');
 
 class OccurrenceManager extends OccurrenceTaxaManager {
@@ -627,9 +629,17 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		}
 
 		if(!empty($this->searchTermArr['polygons'])){
-			$sqlWhere .= 'AND gth.isSearchable = 1 ';
-			$sqlWhere .= 'AND MBRContains(gpoly.footprintPolygon, p.lngLatPoint) ';
-			$sqlWhere .= 'AND ST_Contains(gpoly.footprintPolygon, p.lngLatPoint) ';
+			$polygonIDs = $this->searchTermArr['polygons'];
+			if($polygonIDs && $this->canUseGeographicPolygonIndex($polygonIDs)){
+				$this->searchTermArr['usePolygonIndex'] = 1;
+				$sqlWhere .= 'AND o.occid IN(SELECT opi.occid FROM occurrencepolygonindex opi WHERE opi.geoThesID IN('.implode(',', $polygonIDs).')) ';
+			}
+			else{
+				unset($this->searchTermArr['usePolygonIndex']);
+				$sqlWhere .= 'AND gth.isSearchable = 1 ';
+				$sqlWhere .= 'AND MBRContains(gpoly.footprintPolygon, p.lngLatPoint) ';
+				$sqlWhere .= 'AND ST_Contains(gpoly.footprintPolygon, p.lngLatPoint) ';
+			}
 		}
 
 		if($sqlWhere){
@@ -676,6 +686,11 @@ class OccurrenceManager extends OccurrenceTaxaManager {
         }
         return $results;
     }
+
+	private function canUseGeographicPolygonIndex(array $polygonIDs): bool{
+		$polygonIndex = new OccurrencePolygonIndex($this->conn);
+		return $polygonIndex->isPolygonReady($polygonIDs);
+	}
 
 	private function getAdditionIdentifiers($identFrag){
 		$retArr = array();
@@ -738,10 +753,10 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			if(strpos($sqlWhere,'ds.datasetid')){
 				$sqlJoin .= 'INNER JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
 			}
-			if(array_key_exists('footprintGeoJson',$this->searchTermArr) || strpos($sqlWhere,'p.lngLatPoint') || array_key_exists('polygons',$this->searchTermArr)){
+			if(array_key_exists('footprintGeoJson',$this->searchTermArr) || strpos($sqlWhere,'p.lngLatPoint') || (array_key_exists('polygons',$this->searchTermArr) && empty($this->searchTermArr['usePolygonIndex']))){
 				$sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
 			}
-			if(array_key_exists('polygons',$this->searchTermArr)){
+			if(array_key_exists('polygons',$this->searchTermArr) && empty($this->searchTermArr['usePolygonIndex'])){
 				$polygonIDs = $this->searchTermArr['polygons'];
 				if (is_string($polygonIDs))
 					$polygonIDs = explode(',', $polygonIDs);
@@ -1308,13 +1323,16 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			else unset($this->searchTermArr['characters']);
 		}
 		if(array_key_exists('polygons',$_REQUEST)){
-			$polygons = $_REQUEST['polygons'];
-			if (!is_array($polygons))
-				$polygons = [$polygons];
-			$polygons = array_filter($polygons, function($val) {
-				return trim($val) !== '';
-			});
-			if (!empty($polygons))
+			$polygonInput = is_array($_REQUEST['polygons']) ? $_REQUEST['polygons'] : array($_REQUEST['polygons']);
+			$polygons = array();
+			foreach($polygonInput as $polygonID){
+				if(is_array($polygonID)) continue;
+				foreach(explode(',', $polygonID) as $id){
+					$id = Sanitize::int($id);
+					if(is_numeric($id) && $id > 0) $polygons[] = (int)$id;
+				}
+			}
+			if($polygons)
 				$this->searchTermArr['polygons'] = $polygons;
 			else
 				unset($this->searchTermArr['polygons']);
