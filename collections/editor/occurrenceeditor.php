@@ -595,6 +595,15 @@ else{
 	<script src="../../js/symb/collections.editor.imgtools.js?ver=4" type="text/javascript"></script>
 	<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
 	<script defer src="../../js/symb/collections.editor.query.js?ver=7" type="text/javascript"></script>
+	<style>
+	.seemore {
+		background: none;
+		border: none;
+		padding: 0;
+    	margin: 0;
+		cursor: pointer;
+	}
+	</style>
 </head>
 <body>
 	<div role="main" id="innertext">
@@ -901,9 +910,10 @@ else{
 												</div>
 												<input type="text" id="verbatimeventdate" name="verbatimeventdate" maxlength="255" value="<?php echo array_key_exists('verbatimeventdate',$occArr)?$occArr['verbatimeventdate']:''; ?>" onchange="verbatimEventDateChanged(this)" />
 											</div>
-											<div id="eventTimeToggleDiv" onclick="toggle('eventTimeDiv');" title="<?= $LANG['TOGG_ADD_FIELDS'] ?>">
-												<img class="seemore" src="../../images/tochild.png" style="width:1.3em;height:1.3em">
-											</div>
+											<button id="eventTimeToggleDiv" onclick="toggle('eventTimeDiv');" 
+												type="button" class="seemore" style="padding-top: 1.25rem; margin-left: 15px;" title="<?= $LANG['TOGG_ADD_FIELDS'] ?>" aria-label="<?= $LANG['TOGG_ADD_FIELDS'] ?>">
+												<img src="../../images/tochild.png" style="width:1.3em;height:1.3em" alt="">
+											</button>
 											<div id="eventTimeDiv" class="field-div" style="<?= !empty($occArr['eventtime']) ?: 'display:none' ?>" title="Event Time">
 												<label for="eventtime"><?= $LANG['EVENT_TIME']; ?></label>
 												<a href="#" onclick="return dwcDoc('event-time')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
@@ -1009,9 +1019,9 @@ else{
 												<a href="#" onclick="return dwcDoc('date-identified')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 												<input type="text" id="dateidentified" name="dateidentified" maxlength="45" value="<?php echo array_key_exists('dateidentified',$occArr)?$occArr['dateidentified']:''; ?>" onchange="fieldChanged('dateidentified');" />
 											</div>
-											<div id="idrefToggleDiv" onclick="toggle('idrefdiv');" title="<?php echo $LANG['TOGG_ADD_FIELDS'] ?>">
-												<img class="seemore" src="../../images/tochild.png" style="width:1.3em;height:1.3em">
-											</div>
+											<button id="idrefToggleDiv" onclick="toggle('idrefdiv');" type="button" class="seemore" title="<?= $LANG['TOGG_ADD_FIELDS'] ?>" aria-label="<?= $LANG['TOGG_ADD_FIELDS'] ?>">
+												<img src="../../images/tochild.png" style="width:1.3em;height:1.3em" alt="">
+											</button>
 										</div>
 										<?php
 											$identificationreferences = $occArr['identificationreferences'] ?? '';
@@ -1103,9 +1113,9 @@ else{
 												<a href="#" onclick="return dwcDoc('location-id')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 												<br/>
 												<input type="text" id="locationid" name="locationid" value="<?php echo array_key_exists('locationid',$occArr)?$occArr['locationid']:''; ?>" onchange="fieldChanged('locationid');" autocomplete="off" />
-												<a id="geography1Toggle" onclick="toggle('geography1-div', 'flex');" title="<?php echo $LANG['TOGG_ADD_FIELDS'] ?>">
-													<img class="seemore" src="../../images/toparent.png" style="width:1.3em;height:1.3em">
-												</a>
+												<button id="geography1Toggle" onclick="toggle('geography1-div', 'flex');" type="button" class="seemore" title="<?= $LANG['TOGG_ADD_FIELDS'] ?>" aria-label="<?= $LANG['TOGG_ADD_FIELDS'] ?>">
+													<img src="../../images/toparent.png" style="width:1.3em;height:1.3em" alt="">
+												</button>
 											</div>
 										</div>
 										<div id="localityDiv" class="fieldGroup-div">
@@ -1113,9 +1123,9 @@ else{
 											<a href="#" onclick="return dwcDoc('locality')" tabindex="-1"><img class="docimg" src="../../images/qmark.png"></a>
 											<br />
 											<textarea id="fflocality" name="locality" onchange="fieldChanged('locality');"><?php echo array_key_exists('locality',$occArr)?$occArr['locality']:''; ?></textarea>
-											<a id="localityExtraToggle" onclick="toggle('localityExtraDiv');" title="<?php echo $LANG['TOGG_ADD_FIELDS'] ?>">
-												<img class="seemore" src="../../images/tochild.png" style="width:1.3em" />
-											</a>
+											<button id="localityExtraToggle" onclick="toggle('localityExtraDiv');" type="button" class="seemore" title="<?= $LANG['TOGG_ADD_FIELDS'] ?>" aria-label="<?= $LANG['TOGG_ADD_FIELDS'] ?>">
+												<img src="../../images/tochild.png" style="width:1.3em;height:1.3em" alt="">
+											</button>
 										</div>
 										<?php
 										$localityExtraDiv = 'none';
@@ -1254,9 +1264,9 @@ else{
 													<input type="text" id="verbatimdepth" name="verbatimdepth" maxlength="255" value="<?php echo array_key_exists('verbatimdepth',$occArr)?$occArr['verbatimdepth']:''; ?>" onchange="fieldChanged('verbatimdepth');" />
 												</div>
 											</div>
-											<div id="georefExtraToggleDiv" onclick="toggle('georefExtraDiv');">
-												<img class="seemore" src="../../images/tochild.png" style="width:1.3em;height:1.3em" title="<?php echo $LANG['TOGG_ADD_FIELDS'] ?>" >
-											</div>
+											<button id="georefExtraToggleDiv" onclick="toggle('georefExtraDiv');" type="button" class="seemore" title="<?= $LANG['TOGG_ADD_FIELDS'] ?>" aria-label="<?= $LANG['TOGG_ADD_FIELDS'] ?>">
+												<img src="../../images/tochild.png" style="width:1.3em;height:1.3em" alt="">
+											</button>
 										</div>
 										<?php
 										include_once('includes/geotools.php');
@@ -1375,9 +1385,9 @@ else{
 											<a href="#" onclick="return dwcDoc('notes')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 											<br/>
 											<input type="text" id="occurrenceremarks" name="occurrenceremarks" value="<?php echo array_key_exists('occurrenceremarks',$occArr)?$occArr['occurrenceremarks']:''; ?>" onchange="fieldChanged('occurrenceremarks');" title="<?php echo $LANG['OCC_REMARKS']; ?>" />
-											<span id="dynPropToggleSpan" onclick="toggle('dynamicPropertiesDiv');" title="<?php echo $LANG['TOGG_ADD_FIELDS'] ?>" >
-												<img class="seemore" src="../../images/tochild.png" style="width:1.3em;height:1.3em">
-											</span>
+											<button id="dynPropToggleSpan" onclick="toggle('dynamicPropertiesDiv');" type="button" class="seemore" title="<?= $LANG['TOGG_ADD_FIELDS'] ?>" aria-label="<?= $LANG['TOGG_ADD_FIELDS'] ?>">
+												<img src="../../images/tochild.png" style="width:1.3em;height:1.3em" alt="">
+											</button>
 										</div>
 										<div id="dynamicPropertiesDiv" class="field-div" style="display:<?= empty($occArr['dynamicproperties']) ? 'none' : '' ?>">
 											<label for="dynamicproperties"><?php echo $LANG['DYNAMIC_PROPERTIES']; ?></label>
