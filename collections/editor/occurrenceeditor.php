@@ -839,7 +839,9 @@ else{
 																	</div>
 																	<div class="divTableCell">
 																		<input class="idValueInput" name="idvalue[]" type="text" value="<?php echo $idArr['value']; ?>" onchange="fieldChanged('idvalue');" autocomplete="off" aria-label="<?php echo $LANG['IDENT_VALUE']; ?>"/>
-																		<a href="#" onclick="confirmDeleteIdentifier(<?php echo "'".$idKey."',".$occId; ?>);return false" tabindex="-1"><img src="../../images/del.png" /></a>
+																		<button class="seemore" onclick="confirmDeleteIdentifier(<?php echo "'".$idKey."',".$occId; ?>);return false" aria-label="<?= $LANG['DELETE_VALUE'] ?>">
+																			<img src="../../images/del.png" style="width:1em; height:1em;" alt=""/>
+																		</button>
 																	</div>
 																</div>
 																<?php
@@ -853,7 +855,9 @@ else{
 															</div>
 															<div class="divTableCell">
 																<input class="idValueInput" name="idvalue[]" type="text" value="" onchange="fieldChanged('idvalue');" autocomplete="off" aria-label="<?php echo $LANG['IDENT_VALUE']; ?>"/>
-																<a href="#" onclick="addIdentifierField(this);return false" tabindex="-1"><img src="../../images/plus.png" style="width:1em;" /></a>
+																<button class="seemore" onclick="addIdentifierField(this);return false" aria-label="<?= $LANG['ADD_VALUE'] ?>">
+																	<img src="../../images/plus.png" style="width:1em; height:1em;" alt=""/>
+																</button>
 															</div>
 														</div>
 													</div>

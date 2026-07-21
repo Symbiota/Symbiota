@@ -315,7 +315,7 @@ function verifyFullFormSciName() {
 function addIdentifierField(clickedObj) {
   $(clickedObj).hide();
   var identDiv = document.getElementById("identifierBody");
-  var insertHtml = '<div class="divTableRow"><div class="divTableCell"><input name="idkey[]" type="hidden" value="newidentifier" /><input class="idNameInput" name="idname[]" type="text" value="" onchange="fieldChanged(\'idname\');" autocomplete="off" /></div><div class="divTableCell"><input class="idValueInput" name="idvalue[]" type="text" value="" onchange="fieldChanged(\'idvalue\');searchOtherCatalogNumbers(this.form);" autocomplete="off" /><a href="#" onclick="addIdentifierField(this);return false"><img src="../../images/plus.png" /></a></div></div>';
+  var insertHtml = '<div class="divTableRow"><div class="divTableCell"><input name="idkey[]" type="hidden" value="newidentifier" /><input class="idNameInput" name="idname[]" type="text" value="" onchange="fieldChanged(\'idname\');" autocomplete="off" /></div><div class="divTableCell"><input class="idValueInput" name="idvalue[]" type="text" value="" onchange="fieldChanged(\'idvalue\');searchOtherCatalogNumbers(this.form);" autocomplete="off" /><button class="seemore" onclick="addIdentifierField(this);return false" aria-label="Add Identifier Value and Tag Name pair"><img src="../../images/plus.png" style="width:1em; height:1em;" alt=""/></button></div></div>';
   identDiv.insertAdjacentHTML('beforeend', insertHtml);
   // Hook jquery-ui autocomplete to the newly inserted inputs
 }
