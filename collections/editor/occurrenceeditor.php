@@ -835,10 +835,11 @@ else{
 																<div id="idRow-<?php echo $idKey; ?>" class="divTableRow">
 																	<div class="divTableCell">
 																		<input name="idkey[]" type="hidden" value="<?php echo $idKey; ?>" />
-																		<input class="idNameInput" id="tagName" name="idname[]" type="text" value="<?php echo $idArr['name']; ?>" onchange="fieldChanged('idname');" autocomplete="off" />
+																		<input class="idNameInput" name="idname[]" type="text" value="<?php echo $idArr['name']; ?>" onchange="fieldChanged('idname');" autocomplete="off" aria-label="<?php echo $LANG['IDENT_NAME']?>"/>
 																	</div>
 																	<div class="divTableCell">
-																		<input class="idValueInput" name="idvalue[]" type="text" value="<?php echo $idArr['value']; ?>" onchange="fieldChanged('idvalue');" autocomplete="off" /><a href="#" onclick="confirmDeleteIdentifier(<?php echo "'".$idKey."',".$occId; ?>);return false" tabindex="-1"><img src="../../images/del.png" /></a>
+																		<input class="idValueInput" name="idvalue[]" type="text" value="<?php echo $idArr['value']; ?>" onchange="fieldChanged('idvalue');" autocomplete="off" aria-label="<?php echo $LANG['IDENT_VALUE']; ?>"/>
+																		<a href="#" onclick="confirmDeleteIdentifier(<?php echo "'".$idKey."',".$occId; ?>);return false" tabindex="-1"><img src="../../images/del.png" /></a>
 																	</div>
 																</div>
 																<?php
@@ -848,10 +849,11 @@ else{
 														<div class="divTableRow">
 															<div class="divTableCell">
 																<input name="idkey[]" type="hidden" value="newidentifier" />
-																<input class="idNameInput" name="idname[]" type="text" value="" onchange="fieldChanged('idname');" autocomplete="off" />
+																<input class="idNameInput" name="idname[]" type="text" value="" onchange="fieldChanged('idname');" autocomplete="off" aria-label="<?php echo $LANG['IDENT_NAME']?>"/>
 															</div>
 															<div class="divTableCell">
-																<input class="idValueInput" name="idvalue[]" type="text" value="" onchange="fieldChanged('idvalue');" autocomplete="off" /><a href="#" onclick="addIdentifierField(this);return false" tabindex="-1"><img src="../../images/plus.png" style="width:1em;" /></a>
+																<input class="idValueInput" name="idvalue[]" type="text" value="" onchange="fieldChanged('idvalue');" autocomplete="off" aria-label="<?php echo $LANG['IDENT_VALUE']; ?>"/>
+																<a href="#" onclick="addIdentifierField(this);return false" tabindex="-1"><img src="../../images/plus.png" style="width:1em;" /></a>
 															</div>
 														</div>
 													</div>
