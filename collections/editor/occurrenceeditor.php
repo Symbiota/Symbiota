@@ -1162,7 +1162,7 @@ else{
 												$securityCode = array_key_exists('recordsecurity',$occArr)&&$occArr['recordsecurity']?$occArr['recordsecurity']:0;
 												$lsrValue = array_key_exists('securityreason',$occArr)?$occArr['securityreason']:'';
 												?>:
-												<select name="recordsecurity" onchange="securityChangedByUser(this.form);" title="<?= $LANG['SECURITY_SETTINGS'] ?>" tabindex="-1">
+												<select name="recordsecurity" onchange="securityChangedByUser(this.form);" title="<?= $LANG['SECURITY_SETTINGS'] ?>" aria-label="<?= $LANG['SECURITY_SETTINGS'] ?>">
 													<option value="0"><?= $LANG['SECURITY_NOT_APPLIED'] ?></option>
 													<option value="1" ' <?= ($securityCode == 1 ? 'SELECTED' : '') ?>><?= $LANG['LOCALITY_SECURITY_APPLIED'] ?></option>
 													<option value="5" ' <?= ($securityCode == 5 ? 'SELECTED' : '') ?>><?= $LANG['FULL_SECURITY_APPLIED'] ?></option>
@@ -1241,8 +1241,8 @@ else{
 												<?php echo $LANG['ELEVATION_IN_METERS']; ?>
 												<a href="#" onclick="return dwcDoc('elevation-in-meters')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 												<br/>
-												<input type="text" name="minimumelevationinmeters" maxlength="6" value="<?php echo array_key_exists('minimumelevationinmeters',$occArr)?$occArr['minimumelevationinmeters']:''; ?>" onchange="minimumElevationInMetersChanged(this.form);" title="<?php echo (isset($LANG['MIN_ELEVATION'])?$LANG['MIN_ELEVATION']:'Minimum Elevation in Meters'); ?>" /> -
-												<input type="text" name="maximumelevationinmeters" maxlength="6" value="<?php echo array_key_exists('maximumelevationinmeters',$occArr)?$occArr['maximumelevationinmeters']:''; ?>" onchange="maximumElevationInMetersChanged(this.form);" title="<?php echo (isset($LANG['MAX_ELEVATION'])?$LANG['MAX_ELEVATION']:'Maximum Elevation in Meters'); ?>" />
+												<input type="text" name="minimumelevationinmeters" maxlength="6" value="<?php echo array_key_exists('minimumelevationinmeters',$occArr)?$occArr['minimumelevationinmeters']:''; ?>" onchange="minimumElevationInMetersChanged(this.form);" title="<?php echo (isset($LANG['MIN_ELEVATION'])?$LANG['MIN_ELEVATION']:'Minimum Elevation in Meters'); ?>" aria-label="<?php echo (isset($LANG['MIN_ELEVATION'])?$LANG['MIN_ELEVATION']:'Minimum Elevation in Meters'); ?>"/> -
+												<input type="text" name="maximumelevationinmeters" maxlength="6" value="<?php echo array_key_exists('maximumelevationinmeters',$occArr)?$occArr['maximumelevationinmeters']:''; ?>" onchange="maximumElevationInMetersChanged(this.form);" title="<?php echo (isset($LANG['MAX_ELEVATION'])?$LANG['MAX_ELEVATION']:'Maximum Elevation in Meters'); ?>" aria-label="<?php echo (isset($LANG['MAX_ELEVATION'])?$LANG['MAX_ELEVATION']:'Maximum Elevation in Meters'); ?>"/>
 											</div>
 											<div id="verbatimElevationDiv" class="field-div">
 												<div style="float:left;margin:18px 2px 0px 2px" title="<?php echo (isset($LANG['RECALCULATE_ELEV'])?$LANG['RECALCULATE_ELEV']:'Recalculate Elevation in Meters'); ?>">
@@ -1259,8 +1259,8 @@ else{
 												<?php echo $LANG['DEPTH_IN_METERS']; ?>
 												<a href="#" onclick="return dwcDoc('depth-in-meters')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 												<br/>
-												<input type="text" name="minimumdepthinmeters" maxlength="6" value="<?php echo array_key_exists('minimumdepthinmeters',$occArr)?$occArr['minimumdepthinmeters']:''; ?>" onchange="minimumDepthInMetersChanged(this.form);" title="<?php echo $LANG['MIN_DEPTH']; ?>" /> -
-												<input type="text" name="maximumdepthinmeters" maxlength="6" value="<?php echo array_key_exists('maximumdepthinmeters',$occArr)?$occArr['maximumdepthinmeters']:''; ?>" onchange="maximumDepthInMetersChanged(this.form);" title="<?php echo $LANG['MAX_DEPTH']; ?>" />
+												<input type="text" name="minimumdepthinmeters" maxlength="6" value="<?php echo array_key_exists('minimumdepthinmeters',$occArr)?$occArr['minimumdepthinmeters']:''; ?>" onchange="minimumDepthInMetersChanged(this.form);" title="<?php echo $LANG['MIN_DEPTH']; ?>" aria-label="<?php echo $LANG['MIN_DEPTH']; ?>" /> -
+												<input type="text" name="maximumdepthinmeters" maxlength="6" value="<?php echo array_key_exists('maximumdepthinmeters',$occArr)?$occArr['maximumdepthinmeters']:''; ?>" onchange="maximumDepthInMetersChanged(this.form);" title="<?php echo $LANG['MAX_DEPTH']; ?>" aria-label="<?php echo $LANG['MAX_DEPTH']; ?>" />
 											</div>
 											<div id="verbatimDepthDiv" class="field-div">
 												<div style="float:left;">
@@ -1659,8 +1659,8 @@ else{
 										if($occId){
 											?>
 											<div style="float:left">
-												<?php echo $LANG['STATUS_AUTO_SET']; ?>:
-												<select name="autoprocessingstatus" onchange="autoProcessingStatusChanged(this)">
+												<label for="autoprocessingstatus"><?php echo $LANG['STATUS_AUTO_SET']; ?>:</label>
+												<select id="autoprocessingstatus" name="autoprocessingstatus" onchange="autoProcessingStatusChanged(this)">
 													<option value=''><?php echo $LANG['NOT_ACTIVATED']; ?></option>
 													<option value=''>-------------------</option>
 													<?php
