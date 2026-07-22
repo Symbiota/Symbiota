@@ -203,4 +203,5 @@ $LANG['ERROR_DELETING_OCCURRENCE'] = 'ERRO - Falha ao excluir a ocorrência de o
 $LANG['OPENS_NEW_TAB'] = ' (abre em nova guia)';
 $LANG['DELETE_VALUE'] = 'Excluir par de Valor do Identificador e Nome da Tag';
 $LANG['ADD_VALUE'] = 'Adicionar par de Valor do Identificador e Nome da Tag';
+
 ?>
