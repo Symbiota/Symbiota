@@ -120,6 +120,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
+		toggleSppEditControls();
 		<?php
 		if($clid) echo 'var clid = '.$clid.';'."\n";
 		echo 'var taxaCount = '.count($taxaArray).';'."\n";
@@ -494,7 +495,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 								?>
 								<span class="view-specimen-span printoff">
 									<a href="../collections/list.php?usethes=1&taxontype=2&taxa=<?php echo $tid . "&targetclid=" . $clid . "&targettid=" . $tid;?>" target="_blank" style="text-decoration:none;">
-										<img src="../images/list.png" style="width:1.2em;" title="<?php echo $LANG['VIEW_RELATED']; ?>" />
+										<img src="../images/list.png" style="width:1.2em;" title="<?php echo $LANG['VIEW_RELATED'] . $LANG['OPENS_NEW_TAB']; ?>" />
 									</a>
 									<?php
 									if(isset($dynamPropsArr) && isset($dynamPropsArr['externalservice']) && $dynamPropsArr['externalservice'] == 'inaturalist'){
@@ -509,7 +510,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 										]);
 
 										echo '<a class="editspp" style="display: none" href="#" onclick="openPopup(`' . $url . '`, `External iNaturalist Vouchers`)" >';
-										echo '<img src="../images/icons/inaturalist.png" style="width:1.2em;" title="'. $LANG['LINKTOINAT'] . '" />';
+										echo '<img src="../images/icons/inaturalist.png" style="width:1.2em;" title="'. $LANG['LINKTOINAT'] . $LANG['OPENS_NEW_TAB']. '" />';
 										echo '</a>';
 									}
 									?>
@@ -523,7 +524,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 									foreach($clidArr as $id){
 										?>
 										<span class="editspp" style="display:none;">
-											<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo $tid . '&clid=' . $id; ?>','editorwindow');"><img src="../images/edit.png" style="width:1.2em;" title="<?php echo $LANG['EDIT_DETAILS']; ?> (clid = <?php echo $id; ?>)" /></a>
+											<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo $tid . '&clid=' . $id; ?>','editorwindow');"><img src="../images/edit.png" style="width:1.2em;" title="<?php echo $LANG['EDIT_DETAILS']; ?> (clid = <?php echo $id; ?>) <?php echo $LANG['OPENS_NEW_TAB']; ?>" /></a>
 										</span>
 										<?php
 									}
