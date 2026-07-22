@@ -9,9 +9,9 @@ Language::load('collections/editor/includes/geotools');
 	<div id="dmsAidDiv">
 		<div>
 			<?php echo $LANG['LAT']; ?>:
-			<input id="latdeg" style="width:35px;" title="<?php echo $LANG['LAT_DEG']; ?>" />&deg;
-			<input id="latmin" style="width:50px;" title="<?php echo $LANG['LAT_MIN']; ?>" />'
-			<input id="latsec" style="width:50px;" title="<?php echo $LANG['LAT_SEC']; ?>" />&quot;
+			<input id="latdeg" style="width:35px;" title="<?php echo $LANG['LAT_DEG']; ?>" aria-label="<?php echo $LANG['LAT_DEG']; ?>"/>&deg;
+			<input id="latmin" style="width:50px;" title="<?php echo $LANG['LAT_MIN']; ?>" aria-label="<?php echo $LANG['LAT_MIN']; ?>"/>'
+			<input id="latsec" style="width:50px;" title="<?php echo $LANG['LAT_SEC']; ?>" aria-label="<?php echo $LANG['LAT_SEC']; ?>"/>&quot;
 			<select id="latns">
 				<option><?php echo $LANG['N']; ?></option>
 				<option><?php echo $LANG['S']; ?></option>
@@ -19,9 +19,9 @@ Language::load('collections/editor/includes/geotools');
 		</div>
 		<div>
 			<?php echo $LANG['LONG']; ?>:
-			<input id="lngdeg" style="width:35px;" title="<?php echo $LANG['LONG_DEG']; ?>" />&deg;
-			<input id="lngmin" style="width:50px;" title="<?php echo $LANG['LONG_MIN']; ?>" />'
-			<input id="lngsec" style="width:50px;" title="<?php echo $LANG['LONG_SEC']; ?>" />&quot;
+			<input id="lngdeg" style="width:35px;" title="<?php echo $LANG['LONG_DEG']; ?>" aria-label="<?php echo $LANG['LONG_DEG']; ?>"/>&deg;
+			<input id="lngmin" style="width:50px;" title="<?php echo $LANG['LONG_MIN']; ?>" aria-label="<?php echo $LANG['LONG_MIN']; ?>" />'
+			<input id="lngsec" style="width:50px;" title="<?php echo $LANG['LONG_SEC']; ?>" aria-label="<?php echo $LANG['LONG_SEC']; ?>"/>&quot;
 			<select id="lngew">
 				<option><?php echo $LANG['E']; ?></option>
 				<option SELECTED><?php echo $LANG['W']; ?></option>
@@ -32,9 +32,9 @@ Language::load('collections/editor/includes/geotools');
 		</div>
 	</div>
 	<div id="utmAidDiv">
-		<?php echo $LANG['ZONE']; ?>: <input id="utmzone" style="width:40px;" /><br/>
-		<?php echo $LANG['EAST']; ?>: <input id="utmeast" type="text" style="width:100px;" /><br/>
-		<?php echo $LANG['NORTH']; ?>: <input id="utmnorth" type="text" style="width:100px;" /><br/>
+		<label for="utmzone"><?php echo $LANG['ZONE']; ?>:</label> <input id="utmzone" style="width:40px;" /><br/>
+		<label for="utmeast"><?php echo $LANG['EAST']; ?>:</label> <input id="utmeast" type="text" style="width:100px;" /><br/>
+		<label for="utmnorth"><?php echo $LANG['NORTH']; ?>:</label> <input id="utmnorth" type="text" style="width:100px;" /><br/>
 		<?php echo $LANG['HEMISPHERE']; ?>: <select id="hemisphere" title="<?php echo $LANG['USE_HEMI_DESIGN']; ?> ">
 			<option value="N"><?php echo $LANG['NORTH']; ?></option>
 			<option value="S"><?php echo $LANG['SOUTH']; ?></option>
@@ -44,21 +44,21 @@ Language::load('collections/editor/includes/geotools');
 		</div>
 	</div>
 	<div id="trsAidDiv">
-		<?php echo $LANG['T']; ?><input id="township" style="width:30px;" title="<?php echo $LANG['TOWNSHIP']; ?>" />
+		<?php echo $LANG['T']; ?><input id="township" style="width:30px;" title="<?php echo $LANG['TOWNSHIP']; ?>" aria-label="<?php echo $LANG['TOWNSHIP']; ?>"/>
 		<select id="townshipNS">
 			<option><?php echo $LANG['N']; ?></option>
 			<option><?php echo $LANG['S']; ?></option>
 		</select>&nbsp;&nbsp;&nbsp;&nbsp;
-		<?php echo $LANG['R']; ?><input id="range" style="width:30px;" title="<?php echo $LANG['RANGE']; ?>" />
+		<?php echo $LANG['R']; ?><input id="range" style="width:30px;" title="<?php echo $LANG['RANGE']; ?>" aria-label="<?php echo $LANG['RANGE']; ?>"/>
 		<select id="rangeEW">
 			<option><?php echo $LANG['E']; ?></option>
 			<option><?php echo $LANG['W']; ?></option>
 		</select><br/>
 		<?php echo $LANG['SEC']; ?>:
-		<input id="section" style="width:30px;" title="<?php echo $LANG['SECTION']; ?>" />&nbsp;&nbsp;&nbsp;
+		<input id="section" style="width:30px;" title="<?php echo $LANG['SECTION']; ?>" aria-label="<?php echo $LANG['SECTION']; ?>"/>&nbsp;&nbsp;&nbsp;
 		<?php echo $LANG['DETAILS']; ?>:
-		<input id="secdetails" style="width:90px;" title="<?php echo $LANG['SECTION_DETAILS']; ?>" /><br/>
-		<select id="meridian" title="Meridian">
+		<input id="secdetails" style="width:90px;" title="<?php echo $LANG['SECTION_DETAILS']; ?>" aria-label="<?php echo $LANG['SECTION_DETAILS']; ?>"/><br/>
+		<select id="meridian" title="Meridian" aria-label="Meridian">
 			<option value=""><?php echo $LANG['MERIDIAN_SEL']; ?></option>
 			<option value="">----------------------------------</option>
 			<option value="G-AZ">Arizona, Gila &amp; Salt River</option>

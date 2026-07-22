@@ -120,6 +120,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
+		toggleSppEditControls();
 		<?php
 		if($clid) echo 'var clid = '.$clid.';'."\n";
 		echo 'var taxaCount = '.count($taxaArray).';'."\n";
@@ -190,8 +191,8 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 							<img src="../images/editvoucher.png" style="height:1.3em" alt="<?php echo $LANG['IMG_MANAGE_VOUCHERS']; ?>" /></a>
 					</span>
 					<span style="" onclick="toggleSppEditControls();return false;">
-						<a href="#" title="<?php echo $LANG['EDIT_LIST']; ?>">
-							<img src="../images/editspp.png" style="height:1.3em" alt="<?php echo $LANG['IMG_EDIT_LIST']; ?>"/><span id="editsppon">-ON</span></a>
+						<a href="#" title="<?php echo $LANG['EDIT_LIST']; ?>" role="button">
+							<img src="../images/editspp.png" style="height:1.3em" alt=""/><span id="editsppon">-ON</span></a>
 					</span>
 				</div>
 				<?php
@@ -494,7 +495,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 								?>
 								<span class="view-specimen-span printoff">
 									<a href="../collections/list.php?usethes=1&taxontype=2&taxa=<?php echo $tid . "&targetclid=" . $clid . "&targettid=" . $tid;?>" target="_blank" style="text-decoration:none;">
-										<img src="../images/list.png" style="width:1.2em;" title="<?php echo $LANG['VIEW_RELATED']; ?>" />
+										<img src="../images/list.png" style="width:1.2em;" title="<?php echo $LANG['VIEW_RELATED'] . $LANG['OPENS_NEW_TAB']; ?>" />
 									</a>
 									<?php
 									if(isset($dynamPropsArr) && isset($dynamPropsArr['externalservice']) && $dynamPropsArr['externalservice'] == 'inaturalist'){
@@ -509,7 +510,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 										]);
 
 										echo '<a class="editspp" style="display: none" href="#" onclick="openPopup(`' . $url . '`, `External iNaturalist Vouchers`)" >';
-										echo '<img src="../images/icons/inaturalist.png" style="width:1.2em;" title="'. $LANG['LINKTOINAT'] . '" />';
+										echo '<img src="../images/icons/inaturalist.png" style="width:1.2em;" title="'. $LANG['LINKTOINAT'] . $LANG['OPENS_NEW_TAB']. '" />';
 										echo '</a>';
 									}
 									?>
@@ -523,7 +524,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 									foreach($clidArr as $id){
 										?>
 										<span class="editspp" style="display:none;">
-											<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo $tid . '&clid=' . $id; ?>','editorwindow');"><img src="../images/edit.png" style="width:1.2em;" title="<?php echo $LANG['EDIT_DETAILS']; ?> (clid = <?php echo $id; ?>)" /></a>
+											<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo $tid . '&clid=' . $id; ?>','editorwindow');"><img src="../images/edit.png" style="width:1.2em;" title="<?php echo $LANG['EDIT_DETAILS']; ?> (clid = <?php echo $id; ?>) <?php echo $LANG['OPENS_NEW_TAB']; ?>" /></a>
 										</span>
 										<?php
 									}
@@ -638,7 +639,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 											<a href="../ident/key.php?clid=<?php echo $clid . "&pid=" . $pid . "&dynclid=" . $dynClid; ?>&taxon=All+Species">
 												<div style="display: flex; align-items: center;">
 													<?= $LANG['OPEN_KEY']; ?>
-													<img src='../images/key.png' style="margin-left: 0.5rem; width:1.3em;" aria-label="<?php echo $LANG['IMG_OPEN_KEY']; ?>" alt="<?php echo $LANG['IMG_OPEN_KEY']; ?>" title='<?php echo $LANG['OPEN_KEY']; ?>' />
+													<img src='../images/key.png' style="margin-left: 0.5rem; width:1.3em;" alt=""/>
 												</div>
 											</a>
 										</div>
@@ -650,7 +651,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 											<ul id="game-dropdown">
 												<li>
 													<span style="display: flex; align-items: center;" onmouseover="mopen('m1')" onmouseout="mclosetime()" onfocus="mopen('m1')" onblur="mclosetime()" tabindex="0">
-														<span style=" color: var(--link-color); font-size:1rem; text-decoration: underline;"><?= $LANG['GAMES'] ?></span> <img src="../images/games/games.png" style="width:2em" alt="<?php echo $LANG['GAMES']; ?>"/>
+														<span style=" color: var(--link-color); font-size:1rem; text-decoration: underline;"><?= $LANG['GAMES'] ?></span> <img src="../images/games/games.png" style="width:2em" alt=""/>
 													</span>
 													<div id="m1" onmouseover="mcancelclosetime()" onmouseout="mclosetime()">
 														<?php
@@ -764,7 +765,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 								<fieldset class="fieldset-like-box">
 									<legend><b><?php echo $LANG['NEWSPECIES']; ?></b></legend>
 									<div>
-										<?php echo $LANG['TAXON']; ?>:<br/>
+										<label for="speciestoadd"><?php echo $LANG['TAXON']; ?>:</label><br/>
 										<input type="text" id="speciestoadd" name="speciestoadd" style="width:174px;" />
 										<input type="hidden" id="tid" name="tid" />
 									</div>
@@ -775,28 +776,28 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 									</div>
 									-->
 									<div>
-										<?php echo $LANG['FAMILYOVERRIDE']; ?>:<br/>
-										<input type="text" name="familyoverride" style="width:122px;" title="<?php echo $LANG['FAMILYOVERRIDE_DESCR']; ?>" />
+										<label for="familyoverride"><?php echo $LANG['FAMILYOVERRIDE']; ?>:</label><br/>
+										<input type="text" id="familyoverride" name="familyoverride" style="width:122px;" title="<?php echo $LANG['FAMILYOVERRIDE_DESCR']; ?>" />
 									</div>
 									<div>
-										<?php echo $LANG['HABITAT']; ?>:<br/>
-										<input type="text" name="habitat" style="width:170px;" />
+										<label for="habitat"><?php echo $LANG['HABITAT']; ?>:</label><br/>
+										<input type="text" id="habitat" name="habitat" style="width:170px;" />
 									</div>
 									<div>
-										<?php echo $LANG['ABUNDANCE']; ?>:<br/>
-										<input type="text" name="abundance" style="width:145px;" />
+										<label for="abundance"><?php echo $LANG['ABUNDANCE']; ?>:</label><br/>
+										<input type="text" id="abundance" name="abundance" style="width:145px;" />
 									</div>
 									<div>
-										<?php echo $LANG['NOTES']; ?>:<br/>
-										<input type="text" name="notes" style="width:175px;" />
+										<label for="notes"><?php echo $LANG['NOTES']; ?>:</label><br/>
+										<input type="text" id="notes" name="notes" style="width:175px;" />
 									</div>
 									<div style="padding:2px;">
-										<?php echo $LANG['INTNOTES']; ?>:<br/>
-										<input type="text" name="internalnotes" style="width:126px;" title="<?php echo $LANG['ADMIN_ONLY']; ?>" />
+										<label for="internalnotes"><?php echo $LANG['INTNOTES']; ?>:</label><br/>
+										<input type="text" id="internalnotes" name="internalnotes" style="width:126px;" title="<?php echo $LANG['ADMIN_ONLY']; ?>" />
 									</div>
 									<div>
-										<?php echo $LANG['SOURCE']; ?>:<br/>
-										<input type="text" name="source" style="width:167px;" />
+										<label for="source"><?php echo $LANG['SOURCE']; ?>:</label><br/>
+										<input type="text" id="source" name="source" style="width:167px;" />
 									</div>
 									<div style="margin-top:5px">
 										<input type="hidden" name="clid" value="<?php echo $clid; ?>" />
