@@ -1,7 +1,6 @@
 var activeImgIndex = 1;
 var ocrFragIndex = 1;
 var vvAuthTokenStorageKey = 'vv-auth-token';
-var vvGeminiApiKeyStorageKey = 'vv-gemini-api-key';
 
 document.addEventListener('DOMContentLoaded', function() {
 	var helpDialog = document.getElementById('vvAuthTokenHelpDialog');
@@ -59,7 +58,6 @@ function saveVVCredentialsToSession(){
 	try {
 		if(!window.sessionStorage) return;
 		sessionStorage.setItem(vvAuthTokenStorageKey, getVVFieldValue('vv-auth-token') || '');
-		sessionStorage.setItem(vvGeminiApiKeyStorageKey, getVVFieldValue('vv-gemini-api-key') || '');
 	}
 	catch(err) {
 	}
@@ -69,9 +67,7 @@ function restoreVVCredentialsFromSession(){
 	try {
 		if(!window.sessionStorage) return;
 		var authToken = sessionStorage.getItem(vvAuthTokenStorageKey);
-		var geminiApiKey = sessionStorage.getItem(vvGeminiApiKeyStorageKey);
 		if(authToken) setVVFieldValue('vv-auth-token', authToken);
-		if(geminiApiKey) setVVFieldValue('vv-gemini-api-key', geminiApiKey);
 	}
 	catch(err) {
 	}

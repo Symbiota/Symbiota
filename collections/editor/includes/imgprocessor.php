@@ -1,7 +1,15 @@
 <?php
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/classes/OmCollections.php');
 
 Language::load('collections/editor/includes/imgprocessor');
+
+$vvGeminiApiKey = '';
+if(!empty($collId) && is_numeric($collId)){
+	$collManager = new OmCollections('readonly');
+	$collManager->setCollid($collId);
+	$vvGeminiApiKey = $collManager->getCollectionGeminiApiKey();
+}
 
 ?>
 
@@ -166,13 +174,7 @@ Language::load('collections/editor/includes/imgprocessor');
 								</a>
 							</div>
 							<input id="vv-auth-token" type="password" value="" autocomplete="off" style="width: 97%;" />
-							<div id="gemini-api-key-container" style="display:<?php echo (($HAS_GEMINI_CURL_BEEN_FIXED ?? false) ?'block':'none'); ?>;">
-								<div style="font-weight: bold; position: relative; left: -6px; margin: 5px 0px;"><?php echo $LANG['VV_GEMINI_API_KEY']; ?></div>
-								<input id="vv-gemini-api-key" type="password" value="" autocomplete="off" style="width: 97%;" />
-								<div style="font-size: 0.9em; margin: 3px 0px 8px; color: var(--danger-color);">
-									<?php echo $LANG['VV_GEMINI_API_KEY_HINT']; ?>
-								</div>
-							</div>
+							<input id="vv-gemini-api-key" type="hidden" value="<?php echo htmlspecialchars($vvGeminiApiKey, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" autocomplete="off" />
 							<div style="font-weight: bold; position: relative; left: -6px; margin: 5px 0px;"> <?php echo $LANG['VV_OCR_ENGINES']; ?></div>
 							<select id="engines" size=2 multiple>
 								<option value="gemini-3.1-flash-lite-preview" selected>Gemini 3.1 Flash Lite</option>

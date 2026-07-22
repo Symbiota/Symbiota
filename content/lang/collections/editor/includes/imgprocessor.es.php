@@ -35,7 +35,6 @@ $LANG['VV_AUTH_TOKEN'] = 'Token de autenticación de API';
 $LANG['VV_AUTH_TOKEN_HINT'] = 'Es obligatorio si no están configuradas las credenciales compartidas de Symbiota.';
 $LANG['VV_AUTH_TOKEN_LOGIN_LINK'] = 'Regístrate para obtener un token de autorización aquí';
 $LANG['VV_GEMINI_API_KEY'] = 'Clave de API de Gemini (opcional)';
-$LANG['VV_GEMINI_API_KEY_HINT'] = 'Usa tu propia clave de API de Gemini para ejecutar por tu cuenta. De lo contrario, la Universidad de Michigan actualmente permite el acceso gratuito a VoucherVision.';
 $LANG['VV_TRANSCRIPTION_MODEL'] = 'Modelo de transcripción';
 $LANG['VV_TRANSCRIPTION_PROMPT'] = 'Prompt de transcripción';
 $LANG['VV_SYMBIOTA_CREDENTIALS_DISABLED'] = 'Las credenciales compartidas de Symbiota están actualmente deshabilitadas.';
