@@ -91,9 +91,9 @@ final class ApiKeyEncryption
 
     private static function getEncryptionKey(): string
     {
-        $encodedKey = getenv('API_ENCRYPTION_KEY');
+        $encodedKey = $GLOBALS['API_ENCRYPTION_KEY'] ?? null;
 
-        if ($encodedKey === false || $encodedKey === '') {
+        if (!is_string($encodedKey) || $encodedKey === '') {
             throw new RuntimeException(
                 'API_ENCRYPTION_KEY is not configured.'
             );

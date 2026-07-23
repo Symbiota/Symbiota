@@ -5,6 +5,7 @@ include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
 include_once($SERVER_ROOT . '/classes/utilities/UploadUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/ApiKeyEncryption.php');
 
 class OmCollections extends Manager{
 
@@ -207,6 +208,7 @@ class OmCollections extends Manager{
 		if($collid !== null && is_numeric($collid)) $targetCollid = (int)$collid;
 		if(!$targetCollid) return '';
 		$ecodedValue = $this->getAdminPropertyValue('collectionConfig', 'GEMINI_API_KEY', 'GEMINI_API_KEY', 'omcollections', $targetCollid);
+		if(!$ecodedValue) return '';
 		return ApiKeyEncryption::decrypt($ecodedValue, 'collection:' . $targetCollid . ':gemini');
 	}
 
