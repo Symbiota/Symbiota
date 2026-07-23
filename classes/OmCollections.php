@@ -199,14 +199,15 @@ class OmCollections extends Manager{
 		if(!$this->collid) return false;
 		$apiKey = trim((string)$apiKey);
 		if($apiKey === '') return false;
-		return $this->setAdminPropertyValue('collectionConfig', 'GEMINI_API_KEY', 'GEMINI_API_KEY', $apiKey, 'omcollections', $this->collid);
+		return $this->setAdminPropertyValue('collectionConfig', 'GEMINI_API_KEY', 'GEMINI_API_KEY', ApiKeyEncryption::encrypt($apiKey, 'collection:' . $this->collid . ':gemini'), 'omcollections', $this->collid);
 	}
 
 	public function getCollectionGeminiApiKey($collid = null){
 		$targetCollid = $this->collid;
 		if($collid !== null && is_numeric($collid)) $targetCollid = (int)$collid;
 		if(!$targetCollid) return '';
-		return $this->getAdminPropertyValue('collectionConfig', 'GEMINI_API_KEY', 'GEMINI_API_KEY', 'omcollections', $targetCollid);
+		$ecodedValue = $this->getAdminPropertyValue('collectionConfig', 'GEMINI_API_KEY', 'GEMINI_API_KEY', 'omcollections', $targetCollid);
+		return ApiKeyEncryption::decrypt($ecodedValue, 'collection:' . $targetCollid . ':gemini');
 	}
 
 	private function addIconImageFile($postArr){
