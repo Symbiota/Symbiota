@@ -23,13 +23,19 @@ $LANG['IMAGE'] = 'Image';
 $LANG['OF'] = 'sur'; //as in, image 1 of 2
 $LANG['NOTES'] = 'Remarques';
 $LANG['SOURCE'] = 'Source';
-$LANG['SAVE_OCR'] = 'Enregistrer OCR';
+$LANG['SAVE_OCR'] = 'Enregistrer les résultats OCR bruts';
 $LANG['NEW'] = 'Nouveau';
-$LANG['SAVE_OCR_EDITS'] = 'Enregistrer Modifications OCR';
-$LANG['DELETE_OCR'] = 'Effacer OCR';
-$LANG['VV_OCR_ENGINES'] = 'OCR Engines';
-$LANG['VV_OCR_ONLY'] = 'OCR Only';
-$LANG['VV_TRANSCRIPTION_MODEL'] = 'Transcription Model';
-$LANG['VV_TRANSCRIPTION_PROMPT'] = 'Transcription Prompt';
+$LANG['SAVE_OCR_EDITS'] = 'Mettre à jour les résultats OCR bruts';
+$LANG['DELETE_OCR'] = 'Supprimer les résultats OCR bruts';
+$LANG['VV_OCR_ENGINES'] = 'Moteurs OCR';
+$LANG['VV_OCR_ONLY'] = 'OCR Seulement';
+$LANG['VV_AUTH_TOKEN'] = 'Jeton d\'authentification API';
+$LANG['VV_AUTH_TOKEN_HINT'] = 'Requis si les identifiants partagés de Symbiota ne sont pas configurés.';
+$LANG['VV_AUTH_TOKEN_LOGIN_LINK'] = 'Inscrivez-vous pour obtenir un jeton d’autorisation ici';
+$LANG['VV_GEMINI_API_KEY'] = 'Clé API Gemini (optionnelle)';
+$LANG['VV_TRANSCRIPTION_MODEL'] = 'Modèle de transcription';
+$LANG['VV_TRANSCRIPTION_PROMPT'] = 'Prompt de transcription';
+$LANG['VV_SYMBIOTA_CREDENTIALS_DISABLED'] = 'Les identifiants partagés de Symbiota sont actuellement désactivés.';
+$LANG['VV_TOKEN_REFRESH_NOTE'] = "Notez que le jeton d'authentification API est actualisé toutes les heures.";
 
 ?>

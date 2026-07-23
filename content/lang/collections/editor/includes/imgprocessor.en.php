@@ -23,13 +23,19 @@ $LANG['IMAGE'] = 'Image';
 $LANG['OF'] = 'of'; //as in, image 1 of 2
 $LANG['NOTES'] = 'Notes';
 $LANG['SOURCE'] = 'Source';
-$LANG['SAVE_OCR'] = 'Save OCR';
+$LANG['SAVE_OCR'] = 'Save Raw OCR Results';
 $LANG['NEW'] = 'New';
-$LANG['SAVE_OCR_EDITS'] = 'Save OCR Edits';
-$LANG['DELETE_OCR'] = 'Delete OCR';
+$LANG['SAVE_OCR_EDITS'] = 'Update Raw OCR Results';
+$LANG['DELETE_OCR'] = 'Delete Raw OCR Results';
 $LANG['VV_OCR_ENGINES'] = 'OCR Engines';
 $LANG['VV_OCR_ONLY'] = 'OCR Only';
+$LANG['VV_AUTH_TOKEN'] = 'API Authenthication Token';
+$LANG['VV_AUTH_TOKEN_HINT'] = 'Required if shared Symbiota credentials are not configured.';
+$LANG['VV_AUTH_TOKEN_LOGIN_LINK'] = 'Sign Up for Auth Token Here';
+$LANG['VV_GEMINI_API_KEY'] = 'Gemini API Key (Optional)';
 $LANG['VV_TRANSCRIPTION_MODEL'] = 'Transcription Model';
 $LANG['VV_TRANSCRIPTION_PROMPT'] = 'Transcription Prompt';
+$LANG['VV_SYMBIOTA_CREDENTIALS_DISABLED'] = 'Shared Symbiota credentials are currently disabled.';
+$LANG['VV_TOKEN_REFRESH_NOTE'] = "Note that the API authentication token gets refreshed hourly."
 
 ?>
