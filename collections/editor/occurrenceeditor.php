@@ -1686,10 +1686,10 @@ else{
 													<fieldset class="optionBox">
 														<legend><?php echo $LANG['RECORD_CLONING']; ?></legend>
 														<div class="fieldGroup-div">
-															<label><?php echo $LANG['CARRY_OVER']; ?>:</label>
+															<?php echo $LANG['CARRY_OVER']; ?>:
 															<span>
-																<input name="carryover" type="radio" value="1" checked /><?php echo $LANG['COLL_EVENT_FIELDS']; ?>
-																<input name="carryover" type="radio" value="0" /><?php echo $LANG['ALL_FIELDS']; ?>
+																<input name="carryover" type="radio" value="1" aria-label="<?php echo $LANG['CARRY_OVER'] . ' ' . $LANG['COLL_EVENT_FIELDS'] ?>" checked /><?php echo $LANG['COLL_EVENT_FIELDS']; ?>
+																<input name="carryover" type="radio" value="0" aria-label="<?php echo $LANG['CARRY_OVER'] . ' ' . $LANG['ALL_FIELDS'] ?>" /><?php echo $LANG['ALL_FIELDS']; ?>
 															</span>
 														</div>
 														<div class="fieldGroup-div">
