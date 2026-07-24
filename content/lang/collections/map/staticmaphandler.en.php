@@ -27,7 +27,7 @@ $LANG['GLOBAL_BOUNDS'] = 'Global Bounds';
 
 $LANG['PREVIEW_MAP'] = 'Preview Map';
 $LANG['TYPE_TAXON'] = 'Taxon Name';
-$LANG['SEPARATE_MULTIPLE'] = 'Separate multiple terms w/ commas';
+$LANG['SEPARATE_MULTIPLE'] = 'Separate multiple terms with commas';
 
 $LANG['TID'] = 'Tid';
 $LANG['TAXON'] = 'Taxon';

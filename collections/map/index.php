@@ -2220,7 +2220,7 @@ $serverHost = GeneralUtil::getDomain();
 											</select>
 										</div>
 										<div style="margin-top:5px;">
-											<?= $LANG['TAXA'] ?>:
+											<label for="taxa"><?= $LANG['TAXA'] ?>:</label>
 											<input data-role="none" id="taxa" name="taxa" type="text" style="width:275px;" value="<?= $mapManager->getTaxaSearchTerm(); ?>" title="<?= $LANG['SEPARATE_MULTIPLE'] ?>" />
 										</div>
 									</div>
@@ -2258,16 +2258,16 @@ $serverHost = GeneralUtil::getDomain();
 									}
 									?>
 									<div>
-										<?= $LANG['COUNTRY'] ?>: <input data-role="none" type="text" id="country" style="width:225px;" name="country" value="<?= $mapManager->getSearchTerm('country') ?>" title="<?= $LANG['SEPARATE_MULTIPLE'] ?>" />
+										<label for="country"><?= $LANG['COUNTRY'] ?>:</label> <input data-role="none" type="text" id="country" style="width:225px;" name="country" value="<?= $mapManager->getSearchTerm('country') ?>" title="<?= $LANG['SEPARATE_MULTIPLE'] ?>" />
 									</div>
 									<div style="margin-top:5px;">
-										<?= $LANG['STATE'] ?>: <input data-role="none" type="text" id="state" style="width:150px;" name="state" value="<?= $mapManager->getSearchTerm('state') ?>" title="<?= $LANG['SEPARATE_MULTIPLE'] ?>" />
+										<label for="state"><?= $LANG['STATE'] ?>:</label> <input data-role="none" type="text" id="state" style="width:150px;" name="state" value="<?= $mapManager->getSearchTerm('state') ?>" title="<?= $LANG['SEPARATE_MULTIPLE'] ?>" />
 									</div>
 									<div style="margin-top:5px;">
-										<?= $LANG['COUNTY'] ?>: <input data-role="none" type="text" id="county" style="width:225px;"  name="county" value="<?= $mapManager->getSearchTerm('county') ?>" title="<?= $LANG['SEPARATE_MULTIPLE'] ?>" />
+										<label for="county"><?= $LANG['COUNTY'] ?>:</label> <input data-role="none" type="text" id="county" style="width:225px;"  name="county" value="<?= $mapManager->getSearchTerm('county') ?>" title="<?= $LANG['SEPARATE_MULTIPLE'] ?>" />
 									</div>
 									<div style="margin-top:5px;">
-										<?= $LANG['LOCALITY'] ?>: <input data-role="none" type="text" id="locality" style="width:225px;" name="local" value="<?= $mapManager->getSearchTerm('local') ?>" />
+										<label for="locality"><?= $LANG['LOCALITY'] ?>:</label> <input data-role="none" type="text" id="locality" style="width:225px;" name="local" value="<?= $mapManager->getSearchTerm('local') ?>" />
 									</div>
 									<div style="margin:5 0 5 0;"><hr /></div>
 									<div id="shapecriteria">
@@ -2306,11 +2306,11 @@ $serverHost = GeneralUtil::getDomain();
 									</div>
 									<div style="margin:5 0 5 0;"><hr /></div>
 									<div>
-										<?= $LANG['COLLECTOR_LASTNAME'] ?>:
+										<label for="collector"><?= $LANG['COLLECTOR_LASTNAME'] ?>:</label>
 										<input data-role="none" type="text" id="collector" style="width:125px;" name="collector" value="<?php echo $mapManager->getSearchTerm('collector'); ?>" title="" />
 									</div>
 									<div style="margin-top:5px;">
-										<?= $LANG['COLLECTOR_NUMBER'] ?>:
+										<label for="collnum"><?= $LANG['COLLECTOR_NUMBER'] ?>:</label>
 										<input data-role="none" type="text" id="collnum" style="width:125px;" name="collnum" value="<?php echo $mapManager->getSearchTerm('collnum'); ?>" title="Separate multiple terms by commas and ranges by ' - ' (space before and after dash required), e.g.: 3542,3602,3700 - 3750" />
 									</div>
 									<div style="margin-top:5px;">
@@ -2320,31 +2320,32 @@ $serverHost = GeneralUtil::getDomain();
 									</div>
 									<div style="margin:10 0 10 0;"><hr></div>
 									<div>
-										<?= $LANG['CATALOG_NUMBER'] ?>:
+										<label for="catnum"><?= $LANG['CATALOG_NUMBER'] ?>:</label>
 										<input data-role="none" type="text" id="catnum" style="width:150px;" name="catnum" value="<?php echo $mapManager->getSearchTerm('catnum'); ?>" title="" />
 									</div>
 									<div style="margin-left:15px;">
-										<input data-role="none" name="includeothercatnum" type="checkbox" value="1" checked /> <?= $LANG['INCLUDE_OTHER_CATNUM'] ?>
+										<input data-role="none" id="includeothercatnum" name="includeothercatnum" type="checkbox" value="1" checked />
+										<label for="includeothercatnum"><?= $LANG['INCLUDE_OTHER_CATNUM'] ?></label>
 									</div>
 									<div style="margin-top:10px;">
-										<input data-role="none" type='checkbox' name='typestatus' value='1' <?php if($mapManager->getSearchTerm('typestatus')) echo "CHECKED"; ?> >
-										<?= $LANG['LIMIT_TO_TYPE'] ?>
+										<input data-role="none" type='checkbox' id="typestatus" name='typestatus' value='1' <?php if($mapManager->getSearchTerm('typestatus')) echo "CHECKED"; ?> >
+										<label for="typestatus"><?= $LANG['LIMIT_TO_TYPE'] ?></label>
 									</div>
 									<div style="margin-top:5px;">
-										<input data-role="none" type='checkbox' name='hasimages' value='1' <?php if($mapManager->getSearchTerm('hasimages')) echo "CHECKED"; ?> >
-										<?= $LANG['LIMIT_IMAGES'] ?>
+										<input data-role="none" type='checkbox' id="hasimages" name='hasimages' value='1' <?php if($mapManager->getSearchTerm('hasimages')) echo "CHECKED"; ?> >
+										<label for="hasimages"><?= $LANG['LIMIT_IMAGES'] ?></label>
 									</div>
 									<div style="margin-top:5px;">
-										<input data-role="none" type='checkbox' name='hasaudio' value='1' <?php if($mapManager->getSearchTerm('hasaudio')) echo "CHECKED"; ?> >
-										<?= $LANG['LIMIT_AUDIO'] ?>
+										<input data-role="none" type='checkbox' id="hasaudio" name='hasaudio' value='1' <?php if($mapManager->getSearchTerm('hasaudio')) echo "CHECKED"; ?> >
+										<label for="hasaudio"><?= $LANG['LIMIT_AUDIO'] ?></label>
 									</div>
 									<div style="margin-top:5px;">
-										<input data-role="none" type='checkbox' name='hasgenetic' value='1' <?php if($mapManager->getSearchTerm('hasgenetic')) echo "CHECKED"; ?> >
-										<?= $LANG['LIMIT_GENETIC'] ?>
+										<input data-role="none" type='checkbox' id="hasgenetic" name='hasgenetic' value='1' <?php if($mapManager->getSearchTerm('hasgenetic')) echo "CHECKED"; ?> >
+										<label for="hasgenetic"><?= $LANG['LIMIT_GENETIC'] ?></label>
 									</div>
 									<div style="margin-top:5px;">
-										<input data-role="none" type='checkbox' name='includecult' value='1' <?php if($mapManager->getSearchTerm('includecult')) echo "CHECKED"; ?> >
-										<?= $LANG['INCLUDE_CULTIVATED'] ?>
+										<input data-role="none" type='checkbox' id="includecult" name='includecult' value='1' <?php if($mapManager->getSearchTerm('includecult')) echo "CHECKED"; ?> >
+										<label for="includecult"><?= $LANG['INCLUDE_CULTIVATED'] ?></label>
 									</div>
 									<div><hr></div>
 									<?php
@@ -2409,7 +2410,7 @@ $serverHost = GeneralUtil::getDomain();
 								<div id="mapoptions" style="">
 									<fieldset>
 										<legend><?= $LANG['CLUSTERING'] ?></legend>
-										<label><?= $LANG['TURN_OFF_CLUSTERING'] ?>:</label>
+										<label for="clusteroff"><?= $LANG['TURN_OFF_CLUSTERING'] ?>:</label>
 										<input data-role="none" type="checkbox" id="clusteroff" name="clusteroff" value='1' <?= ($mapManager->getSearchTerm('clusterSwitch') == "y"? 'checked':'') ?>/>
 	
 										<span style="display: flex; align-items:center">
@@ -2420,7 +2421,7 @@ $serverHost = GeneralUtil::getDomain();
 									<br/>
 									<fieldset>
 										<legend><?= $LANG['HEATMAP']; ?></legend>
-										<label><?= $LANG['TURN_ON_HEATMAP'] ?>:</label>
+										<label for="heatmap_on"><?= $LANG['TURN_ON_HEATMAP'] ?>:</label>
 										<input data-role="none" type="checkbox" id="heatmap_on" name="heatmap_on" value='1'/>
 										<br/>
 										<span style="display: flex; align-items:center">
@@ -2443,21 +2444,19 @@ $serverHost = GeneralUtil::getDomain();
 										</legend>
 										<div>
 											<div>
-										   <?= $LANG['MARKER_NAME'] ?>:
+										   		<label for="title"><?= $LANG['MARKER_NAME'] ?>:</label>
 												<input name='title' id='title' size='15' type='text' />
 											</div>
 											<div class="latlongdiv">
 												<div>
 												 <div style="float:left;margin-right:5px">
-													<?= $LANG['LATITUDE'] ?>
-													(<?= $LANG['DECIMAL'] ?>):
+													<label for="lat"><?= $LANG['LATITUDE'] ?> (<?= $LANG['DECIMAL'] ?>):</label>
 													<input name='lat' id='lat' size='10' type='text' /> </div>
 													<div style="float:left;">eg: 34.57</div>
 												</div>
 												<div style="margin-top:5px;clear:both">
 												 <div style="float:left;margin-right:5px">
-													<?= $LANG['LONGITUDE'] ?>
-													(<?= $LANG['DECIMAL'] ?>):
+													<label for="lng"><?= $LANG['LONGITUDE'] ?> (<?= $LANG['DECIMAL'] ?>):</label>
 													<input name='lng' id='lng' size='10' type='text' /> </div>
 													<div style="float:left;">eg: -112.38</div>
 												</div>
