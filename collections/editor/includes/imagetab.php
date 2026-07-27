@@ -175,7 +175,7 @@ $creatorArray = Media::getCreatorArray(false);
 				$imageTagKeys = Media::getMediaTagKeys();
 				foreach($imageTagKeys as $key => $description) {
 					echo '<div style="margin-left:10px;">';
-					echo '<input name="ch_'.$key.'" type="checkbox" value="1" /> '.$description.'</br>';
+					echo '<input id="ch_'.$key.'" name="ch_'.$key.'" type="checkbox" value="1" /> <label for="ch_'.$key.'">'.$description.'</label></br>';
 					echo '</div>';
 				}
 				?>
@@ -417,7 +417,7 @@ $creatorArray = Media::getCreatorArray(false);
 												echo '<div style="margin-left:10px;">';
 												$value = 0;
 												if(isset($imgArr['tags'][$tagKey])) $value = 1;
-												echo '<input name="ch_'.$tagKey.'" type="checkbox" '.($value?'checked':'').' value="1" /> '.$tagDescr;
+												echo '<input id="ch_'.$tagKey.'-'.$imgId.'" name="ch_'.$tagKey.'" type="checkbox" '.($value?'checked':'').' value="1" /> <label for="ch_'.$tagKey.'-'.$imgId.'">'.$tagDescr.'</label>';
 												echo '<input name="hidden_'.$tagKey.'" type="hidden" value="'.$value.'" />';
 												echo '</div>';
 											}
@@ -438,7 +438,7 @@ $creatorArray = Media::getCreatorArray(false);
 										<input type="hidden" name="imgid" value="<?php echo $imgId; ?>" />
 										<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
 										<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
-										<input name="removeimg" type="checkbox" value="1" /> <?php echo $LANG['REM_FROM_SERVER']; ?>
+										<input id="removeimg-<?php echo $imgId; ?>" name="removeimg" type="checkbox" value="1" /> <label for="removeimg-<?php echo $imgId; ?>"><?php echo $LANG['REM_FROM_SERVER']; ?></label>
 										<div style="margin-left:20px;">
 											<?php echo $LANG['RM_DB_NOT_SERVER']; ?>
 										</div>
@@ -454,7 +454,7 @@ $creatorArray = Media::getCreatorArray(false);
 										<fieldset style="padding:15px">
 											<legend><b><?php echo $LANG['REMAP_TO_ANOTHER']; ?></b></legend>
 											<div>
-												<b><?php echo $LANG['TARGET_OCCID']; ?>:</b>
+												<label for="imgdisplay-<?php echo $imgId; ?>"><b><?php echo $LANG['TARGET_OCCID']; ?>:</b></label>
 												<input id="imgdisplay-<?php echo $imgId; ?>" name="displayoccid" type="text" value="" disabled style="width:70px" />
 												<span onclick="openOccurrenceSearch('<?php echo $imgId; ?>');return false"><a href="#"><?php echo $LANG['OPEN_LINK_AID']; ?></a></span>
 											</div>
