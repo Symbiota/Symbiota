@@ -153,8 +153,8 @@ $creatorArray = Media::getCreatorArray(false);
 					* <?php echo $LANG['WILL_OVERRIDE']; ?>
 				</div>
 				<div style="margin:0px 0px 5px 10px;">
-					<label for="notes"><b><?php echo $LANG['NOTES']; ?>:</b></label>
-					<input id="notes" name="notes" type="text" size="40" value="" />
+					<label for="imgtab_notes"><b><?php echo $LANG['NOTES']; ?>:</b></label>
+					<input id="imgtab_notes" name="notes" type="text" size="40" value="" />
 				</div>
 				<div style="margin:0px 0px 5px 10px;">
 					<label for="copyright"><b><?php echo $LANG['COPYRIGHT']; ?>:</b></label>

@@ -69,8 +69,8 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 						</select>
 					</div>
 					<div style='margin:3px;'>
-						<label for="notes"><b><?php echo $LANG['NOTES']; ?>:</b></label>
-						<input id="notes" name="notes" type="text" value="<?php echo ($idRanking?$idRanking['notes']:''); ?>" style="width:90%;" />
+						<label for="dettab_notes"><b><?php echo $LANG['NOTES']; ?>:</b></label>
+						<input id="dettab_notes" name="notes" type="text" value="<?php echo ($idRanking?$idRanking['notes']:''); ?>" style="width:90%;" />
 					</div>
 					<div style='margin:15px;'>
 						<input type="hidden" name="occid" value="<?php echo $occId; ?>" />
