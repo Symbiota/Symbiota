@@ -58,7 +58,15 @@ elseif($action == 'addAllToDataset'){
 				toolbar: ['undo redo | bold italic underline | link | alignleft aligncenter alignright | formatselect | bullist numlist | indent outdent | blockquote | image'],
 				branding: false,
         		default_link_target: "_blank",
-				paste_as_text: true
+				paste_as_text: true,
+				setup: function (editor) {
+					editor.on('init', function () {
+					editor.iframeElement.setAttribute(
+						'aria-label',
+						'Description (Displayed publicly)'
+					);
+				});
+			}
 			});
 		</script>
 		<script type="text/javascript">
@@ -131,23 +139,23 @@ elseif($action == 'addAllToDataset'){
 				<legend><b> <?php echo (isset($LANG['CRT_NEW_DAT']) ? $LANG['CRT_NEW_DAT'] : 'Create New Dataset') ?> </b></legend>
 				<form name="adminform" action="index.php" method="post" onsubmit="return validateEditForm(this)">
 					<div>
-						<p><b> <?php echo (isset($LANG['NAME']) ? $LANG['NAME'] : 'Name') ?> </b></p>
-						<input name="name" type="text" style="width:90%" />
+						<p><label for="name"><b><?php echo (isset($LANG['NAME']) ? $LANG['NAME'] : 'Name') ?></b></label></p>
+						<input id="name" name="name" type="text" style="width:90%" />
 					</div>
-          <div>
-            <p>
-              <input type="checkbox" name="ispublic" id="ispublic" value="1" />
-            <b> <?php echo (isset($LANG['PUB_VIS']) ? $LANG['PUB_VIS'] : 'Publicly Visible') ?> </b>
-            </p>
-          </div>
 					<div>
-						<p><b> <?php echo (isset($LANG['NOTES']) ? $LANG['NOTES'] : 'Notes (Internal usage, not displayed publicly)') ?></b></p>
-						<input name="notes" type="text" style="width:90%;" />
+						<p>
+						<input type="checkbox" name="ispublic" id="ispublic" value="1" />
+						<label for="ispublic"><b><?php echo (isset($LANG['PUB_VIS']) ? $LANG['PUB_VIS'] : 'Publicly Visible') ?></b></label>
+						</p>
 					</div>
-          <div>
-            <p><b> <?php echo (isset($LANG['DESCR']) ? $LANG['DESCR'] : 'Description (Displayed publicly)') ?> </b> </p>
-            <textarea name="description" id="description" cols="100" rows="10"></textarea>
-          </div>
+					<div>
+						<p><label for="notes"><b><?php echo (isset($LANG['NOTES']) ? $LANG['NOTES'] : 'Notes (Internal usage, not displayed publicly)') ?></b></label></p>
+						<input id="notes" name="notes" type="text" style="width:90%;" />
+					</div>
+					<div>
+						<p><b> <?php echo (isset($LANG['DESCR']) ? $LANG['DESCR'] : 'Description (Displayed publicly)') ?> </b> </p>
+						<textarea name="description" id="description" cols="100" rows="10"></textarea>
+					</div>
 					<div style="margin:15px">
 						<button name="submitaction" type="submit" value="createNewDataset"> <?php echo (isset($LANG['CRT_NEW_DAT']) ? $LANG['CRT_NEW_DAT'] : 'Create New Dataset') ?> </button>
 					</div>
