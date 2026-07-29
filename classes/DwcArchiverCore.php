@@ -1723,8 +1723,13 @@ class DwcArchiverCore extends Manager{
 		$uid = $GLOBALS['SYMB_UID'];
 		$tagName = 'UID-' . $uid;
 		if(!$uid){
-			$uid = null;
-			$tagName = $_SERVER['REMOTE_ADDR'] . '-' . time();
+			if(preg_match('/uid:\s(\d+)/', $this->remotePubDetails, $m)){
+				$uid = $m[1];
+			}
+			else{
+				$uid = null;
+				$tagName = $_SERVER['REMOTE_ADDR'] . '-' . time();
+			}
 		}
 		$tagName .= '-' . time();
 		$queryTerms = $this->conditionSql;
@@ -2220,6 +2225,7 @@ class DwcArchiverCore extends Manager{
 
 	public function isAuthorized($source){
 		$this->remotePubDetails = 'source: ' . $source;
+
 		if($_SERVER['SERVER_NAME'] == 'localhost'){
 			//Is a dev environment
 			//Note: Under Apache 2, UseCanonicalName = On and ServerName must be set.
@@ -2243,18 +2249,16 @@ class DwcArchiverCore extends Manager{
 		}
 
 		//Check if referer is registered within portal index
-		if(empty($_SERVER['HTTP_REFERER'])){
-			error_log('Unauthorized access to dwcapubhandler: NULL HTTP_REFERER');
-			return false;
-		}
-		$refererUrl = $_SERVER['HTTP_REFERER'];
-		$refererDomain = str_replace('www.', '', parse_url($refererUrl, PHP_URL_HOST));
-		$portalIndex = $this->getPortalIndex();
-		foreach($portalIndex as $indexDomain){
-			$indexDomain = str_replace('www.', '', parse_url($indexDomain, PHP_URL_HOST));
-			if($refererDomain == $indexDomain){
-				$this->remotePubDetails .= ', referer: ' . $refererUrl;
-				return true;
+		if(!empty($_SERVER['HTTP_REFERER'])){
+			$refererUrl = $_SERVER['HTTP_REFERER'];
+			$refererDomain = str_replace('www.', '', parse_url($refererUrl, PHP_URL_HOST));
+			$portalIndex = $this->getPortalIndex();
+			foreach($portalIndex as $indexDomain){
+				$indexDomain = str_replace('www.', '', parse_url($indexDomain, PHP_URL_HOST));
+				if($refererDomain == $indexDomain){
+					$this->remotePubDetails .= ', referer: ' . $refererUrl;
+					return true;
+				}
 			}
 		}
 
@@ -2292,11 +2296,10 @@ class DwcArchiverCore extends Manager{
 
 	private function validateUserToken($userToken){
 		$uid = 0;
-		$userToken = $_REQUEST['token'];
 		$sql = 'SELECT uid FROM useraccesstokens WHERE token = ?';
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('s', $userToken);
-			$stmt->execute;
+			$stmt->execute();
 			$stmt->bind_result($uid);
 			$stmt->fetch();
 			$stmt->close();
