@@ -244,8 +244,8 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 						<b><?= (isset($LANG['PLEASE'])?$LANG['PLEASE']:'Please') . ' ' . "<a href=" . $CLIENT_ROOT . "/includes/usagepolicy.php" . ">" . (isset($LANG['CITE_GLOSSARY'])?$LANG['CITE_GLOSSARY']:'cite this glossary') . "</a>"; ?></b>
 				</div>
 				<div style="clear:both;">
-					<b><?php echo (isset($LANG['SEARCH_TERM'])?$LANG['SEARCH_TERM']:'Search Term'); ?>:</b>
-					<input type="text" autocomplete="off" name="searchterm" size="25" value="<?php echo htmlspecialchars($searchTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" />
+					<label for="searchterm"><b><?php echo (isset($LANG['SEARCH_TERM'])?$LANG['SEARCH_TERM']:'Search Term'); ?>:</b></label>
+					<input type="text" autocomplete="off" id="searchterm" name="searchterm" size="25" value="<?php echo htmlspecialchars($searchTerm, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" />
 				</div>
 				<div style="margin-left:40px">
 					<input id="deepsearch" name="deepsearch" type="checkbox" value="1" <?php echo $deepSearch?'checked':''; ?> />
@@ -256,7 +256,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 					if($taxaArr){
 						?>
 						<div style="float:left;">
-							<b><?php echo (isset($LANG['TAX_GROUP'])?$LANG['TAX_GROUP']:'Taxonomic Group'); ?>:</b>
+							<label for="searchtaxa"><b><?php echo (isset($LANG['TAX_GROUP'])?$LANG['TAX_GROUP']:'Taxonomic Group'); ?>:</b></label>
 							<select id="searchtaxa" name="searchtaxa" style="margin-top:2px;width:300px;" onchange="resetLanguageSelect(this.form)">
 								<option value=""><?php echo (isset($LANG['ALL_GROUPS'])?$LANG['ALL_GROUPS']:'Show terms for all groups'); ?></option>
 								<?php
@@ -271,7 +271,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 					if(count($langArr) > 1){
 						?>
 						<div style="float:left;margin-left:10px;">
-							<b><?php echo (isset($LANG['LANG'])?$LANG['LANG']:'Language'); ?>:</b>
+							<label for="searchlanguage"><b><?php echo (isset($LANG['LANG'])?$LANG['LANG']:'Language'); ?>:</b></label>
 							<select id="searchlanguage" name="searchlanguage" style="margin-top:2px;" onchange="">
 								<?php
 								foreach($langArr as $k => $v){
