@@ -164,7 +164,7 @@ if($isEditor){
 					}
 					if($IS_ADMIN){
 						?>
-						<li><a href="adminmenu.php"><?= $LANG['ADMIN'] ?></a></li>
+						<li><a href="#admin-menu"><?= $LANG['ADMIN'] ?></a></li>
 						<?php
 					}
 					?>
@@ -176,6 +176,14 @@ if($isEditor){
 					}
 					?>
 				</ul>
+				<div id="admin-menu">
+					<section class="fieldset-like">
+					<h2><span class="subheader"><?= $LANG['ADMIN_MENU']; ?></span></h2>
+					<?php
+					include('adminmenu.php');
+					?>
+					</section>
+				</div>
 			</div>
 			<?php
 		}

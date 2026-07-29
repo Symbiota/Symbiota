@@ -27,16 +27,6 @@ $LANG['OCC_MGMNT'] = 'Occurrence Management';
 $LANG['USER_PROFILE'] = 'User Profile';
 $LANG['IDS_NEEDED'] = 'IDs Needed';
 $LANG['IMAGES_ID'] = 'Images for ID';
+$LANG['ADMIN_MENU'] = 'Administrative Functions (Super Admins only)';
 
-//Admin menu
-$LANG['ADMIN_MENU'] = 'Super Administrator Menu';
-$LANG['USER_PERMISSIONS'] = 'User Permissions';
-$LANG['CREATE_NEW_COLLECTION'] = 'Create a New Collection or Observation Profile';
-$LANG['GEO_THESAURUS'] = 'Geographic Thesaurus';
-$LANG['THUMBNAIL_BUILDER'] = 'Thumbnail Builder Tool';
-$LANG['GUID_MAPPER'] = 'GUID Mapper';
-$LANG['SALIX'] = 'SALIX WordStat Manager';
-$LANG['GLOSSARY'] = 'Glossary';
-$LANG['MANAGE_TAXON_MAP_THUMBNAIL'] = 'Manage Taxon Profile Map Thumbnails';
-$LANG['OTHER_CAT_TRANSFER'] = 'Other Catalog Number Transfer Tool';
 ?>
