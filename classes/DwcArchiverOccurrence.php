@@ -475,7 +475,7 @@ class DwcArchiverOccurrence extends Manager{
 				$sql = 'UPDATE omexportoccurrences x INNER JOIN taxaenumtree e ON x.taxonID = e.tid
 					INNER JOIN taxa t ON e.parentTid = t.tid
 					SET x.' . $fieldName . ' = t.sciname
-					WHERE x.omExportID = ? AND t.rankid = ?';
+					WHERE e.taxAuthID = 1 AND x.omExportID = ? AND t.rankid = ?';
 				if($stmt = $this->conn->prepare($sql)){
 					try{
 						$stmt->bind_param('ii', $this->exportID, $rankID);
@@ -558,7 +558,7 @@ class DwcArchiverOccurrence extends Manager{
 			$sql = 'UPDATE omexportoccurrences x INNER JOIN taxstatus ts ON x.taxonID = ts.tid
 				INNER JOIN taxa t ON ts.tidaccepted = t.tid
 				SET x.acceptedNameUsageID = t.tid, x.acceptedNameUsage = t.sciname, x.acceptedNameUsageAuthorship = t.author
-				WHERE x.omExportID = ?';
+				WHERE ts.taxAuthID = 1 AND x.omExportID = ?';
 			if($stmt = $this->conn->prepare($sql)){
 				try{
 					$stmt->bind_param('i', $this->exportID);

@@ -2452,6 +2452,11 @@ class DwcArchiverCore extends Manager{
 		return $this->dwcaOutputUrl;
 	}
 
+	public function getTargetPath(){
+		if(!$this->targetPath) $this->setTargetPath();
+		return $this->targetPath;
+	}
+
 	//Output cleaning functions
 	protected function encodeArr(&$inArr){
 		if ($this->charSetSource && $this->charSetOut != $this->charSetSource) {
