@@ -59,8 +59,8 @@ if($collMap){
 						'notes' => $_POST['notes' . $i] ?? null,
 						'occid' => $occid
 					],
-					$file,
-					new LocalStorage($path)
+					$file, 
+					StorageFactory::make($path)
 				);
 
 				if($errors = Media::getErrors()) {

@@ -1,7 +1,7 @@
 <?php
 include_once($SERVER_ROOT.'/config/dbconnection.php');
 include_once($SERVER_ROOT.'/traits/TaxonomyTrait.php');
-include_once($SERVER_ROOT.'/classes/Sanitize.php');
+include_once($SERVER_ROOT.'/classes/utilities/Sanitize.php');
 
 class TaxonomyUtil {
 
