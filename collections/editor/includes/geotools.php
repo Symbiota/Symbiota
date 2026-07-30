@@ -12,7 +12,7 @@ Language::load('collections/editor/includes/geotools');
 			<input id="latdeg" style="width:35px;" title="<?php echo $LANG['LAT_DEG']; ?>" aria-label="<?php echo $LANG['LAT_DEG']; ?>"/>&deg;
 			<input id="latmin" style="width:50px;" title="<?php echo $LANG['LAT_MIN']; ?>" aria-label="<?php echo $LANG['LAT_MIN']; ?>"/>'
 			<input id="latsec" style="width:50px;" title="<?php echo $LANG['LAT_SEC']; ?>" aria-label="<?php echo $LANG['LAT_SEC']; ?>"/>&quot;
-			<select id="latns">
+			<select id="latns" aria-label="<?php echo $LANG['HEMISPHERE']; ?>">
 				<option><?php echo $LANG['N']; ?></option>
 				<option><?php echo $LANG['S']; ?></option>
 			</select>
@@ -22,7 +22,7 @@ Language::load('collections/editor/includes/geotools');
 			<input id="lngdeg" style="width:35px;" title="<?php echo $LANG['LONG_DEG']; ?>" aria-label="<?php echo $LANG['LONG_DEG']; ?>"/>&deg;
 			<input id="lngmin" style="width:50px;" title="<?php echo $LANG['LONG_MIN']; ?>" aria-label="<?php echo $LANG['LONG_MIN']; ?>" />'
 			<input id="lngsec" style="width:50px;" title="<?php echo $LANG['LONG_SEC']; ?>" aria-label="<?php echo $LANG['LONG_SEC']; ?>"/>&quot;
-			<select id="lngew">
+			<select id="lngew" aria-label="<?php echo $LANG['HEMISPHERE']; ?>">
 				<option><?php echo $LANG['E']; ?></option>
 				<option SELECTED><?php echo $LANG['W']; ?></option>
 			</select>
@@ -35,7 +35,7 @@ Language::load('collections/editor/includes/geotools');
 		<label for="utmzone"><?php echo $LANG['ZONE']; ?>:</label> <input id="utmzone" style="width:40px;" /><br/>
 		<label for="utmeast"><?php echo $LANG['EAST']; ?>:</label> <input id="utmeast" type="text" style="width:100px;" /><br/>
 		<label for="utmnorth"><?php echo $LANG['NORTH']; ?>:</label> <input id="utmnorth" type="text" style="width:100px;" /><br/>
-		<?php echo $LANG['HEMISPHERE']; ?>: <select id="hemisphere" title="<?php echo $LANG['USE_HEMI_DESIGN']; ?> ">
+		<label for="hemisphere"><?php echo $LANG['HEMISPHERE']; ?>:</label> <select id="hemisphere" title="<?php echo $LANG['USE_HEMI_DESIGN']; ?> ">
 			<option value="N"><?php echo $LANG['NORTH']; ?></option>
 			<option value="S"><?php echo $LANG['SOUTH']; ?></option>
 		</select><br/>
@@ -45,12 +45,12 @@ Language::load('collections/editor/includes/geotools');
 	</div>
 	<div id="trsAidDiv">
 		<?php echo $LANG['T']; ?><input id="township" style="width:30px;" title="<?php echo $LANG['TOWNSHIP']; ?>" aria-label="<?php echo $LANG['TOWNSHIP']; ?>"/>
-		<select id="townshipNS">
+		<select id="townshipNS" aria-label="<?php echo $LANG['HEMISPHERE']; ?>">
 			<option><?php echo $LANG['N']; ?></option>
 			<option><?php echo $LANG['S']; ?></option>
 		</select>&nbsp;&nbsp;&nbsp;&nbsp;
 		<?php echo $LANG['R']; ?><input id="range" style="width:30px;" title="<?php echo $LANG['RANGE']; ?>" aria-label="<?php echo $LANG['RANGE']; ?>"/>
-		<select id="rangeEW">
+		<select id="rangeEW" aria-label="<?php echo $LANG['HEMISPHERE']; ?>">
 			<option><?php echo $LANG['E']; ?></option>
 			<option><?php echo $LANG['W']; ?></option>
 		</select><br/>
