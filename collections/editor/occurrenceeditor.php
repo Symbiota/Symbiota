@@ -940,13 +940,13 @@ else{
 											?>
 											<div id="exsDiv">
 												<div id="ometidDiv" class="field-div">
-													<?php echo (isset($LANG['EXS_TITLE'])?$LANG['EXS_TITLE']:'Exsiccati Title'); ?><br/>
+													<label for="exstitleinput"><?php echo (isset($LANG['EXS_TITLE'])?$LANG['EXS_TITLE']:'Exsiccati Title'); ?></label><br/>
 													<input id="exstitleinput" name="exstitle" value="<?php echo (isset($exsArr['exstitle'])?htmlspecialchars($exsArr['exstitle']):''); ?>" />
 													<input id="ometidinput" name="ometid" type="text" style="display: none;" value="<?php echo (isset($exsArr['ometid'])?$exsArr['ometid']:''); ?>" onchange="fieldChanged('ometid')" />
 												</div>
 												<div id="exsnumberDiv" class="field-div">
-													<?php echo (isset($LANG['NUMBER'])?$LANG['NUMBER']:'Number'); ?><br/>
-													<input name="exsnumber" type="text" value="<?php echo isset($exsArr['exsnumber'])?$exsArr['exsnumber']:''; ?>" onchange="fieldChanged('exsnumber')" />
+													<label for="exsnumberinput"><?php echo (isset($LANG['NUMBER'])?$LANG['NUMBER']:'Number'); ?></label><br/>
+													<input id="exsnumberinput" name="exsnumber" type="text" value="<?php echo isset($exsArr['exsnumber'])?$exsArr['exsnumber']:''; ?>" onchange="fieldChanged('exsnumber')" />
 												</div>
 											</div>
 											<?php
