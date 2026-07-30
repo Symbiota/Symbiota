@@ -96,7 +96,7 @@ if($isEditor){
 					<div style="display: flex; flex-direction: column;">
 						<div class="gridlike-form-row" style="gap:0;">
 							<div class="left-column">
-								<label for="sciname">
+								<label for="quickparser">
 									<?php echo $LANG['TAXON_NAME']; ?>:
 								</label>
 							</div>

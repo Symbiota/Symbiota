@@ -196,7 +196,7 @@ if ($isEditor) {
 					<form id="taxoneditform" name="taxoneditform" action="taxoneditor.php" method="post" onsubmit="return validateTaxonEditForm(this, originalForm)">
 						<input type="hidden" id="sciname" name="sciname" class="search-bar-long" value="" />
 						<div class="editDiv">
-							<div class="editLabel"><?= $LANG['RANK_NAME'] ?>: </div>
+							<div class="editLabel"><label for="rankid"><?= $LANG['RANK_NAME'] ?>:</label> </div>
 							<div class="editfield">
 								<?php echo ($taxonEditorObj->getRankName() ? $taxonEditorObj->getRankName() : $LANG['NON_RANKED_NODE']); ?>
 							</div>
@@ -218,7 +218,7 @@ if ($isEditor) {
 						<div class="editDiv" id="genus-div">
 							<div class="editLabel">
 								<!-- <?php echo $LANG['UNITNAME1']; ?>:  -->
-								<label id="unitind1label" for="unitind1">
+								<label id="unitind1label" for="unitname1">
 									<?php echo $LANG['GENUS_NAME']; ?>
 								</label>
 							</div>
@@ -297,7 +297,7 @@ if ($isEditor) {
 							</div>
 						</div>
 						<div id="author-div" class="editDiv">
-							<div class="editLabel"><?php echo $LANG['AUTHOR']; ?>: </div>
+							<div class="editLabel"><label for="author"><?php echo $LANG['AUTHOR']; ?>:</label> </div>
 							<div class="editfield">
 								<?php echo $taxonEditorObj->getAuthor(); ?>
 							</div>
@@ -314,7 +314,7 @@ if ($isEditor) {
 							</div>
 						</div>
 						<div class="editDiv">
-							<div class="editLabel"><?php echo $LANG['NOTES']; ?>: </div>
+							<div class="editLabel"><label for="notes"><?php echo $LANG['NOTES']; ?>:</label> </div>
 							<div class="editfield">
 								<?php echo $taxonEditorObj->getNotes(); ?>
 							</div>
@@ -323,7 +323,7 @@ if ($isEditor) {
 							</div>
 						</div>
 						<div class="editDiv">
-							<div class="editLabel"><?php echo $LANG['SOURCE']; ?>: </div>
+							<div class="editLabel"><label for="source"><?php echo $LANG['SOURCE']; ?>:</label> </div>
 							<div class="editfield">
 								<?php
 								$safeSource = $taxonEditorObj->getSource() ?? '';
@@ -336,7 +336,7 @@ if ($isEditor) {
 							</div>
 						</div>
 						<div class="editDiv">
-							<div class="editLabel"><?php echo $LANG['LOC_SECURITY']; ?>: </div>
+							<div class="editLabel"><label for="securitystatus"><?php echo $LANG['LOC_SECURITY']; ?>:</label> </div>
 							<div class="editfield">
 								<?php
 								switch ($taxonEditorObj->getSecurityStatus()) {
@@ -431,7 +431,7 @@ if ($isEditor) {
 									}
 									?>
 									<div class="editDiv">
-										<div class="editLabel"><?php echo $LANG['PARENT_TAXON']; ?>: </div>
+										<div class="editLabel"><label for="parentstr"><?php echo $LANG['PARENT_TAXON']; ?>:</label> </div>
 										<div class="tsedit">
 											<?php echo '<a href="taxoneditor.php?tid=' . $taxonEditorObj->getParentTid() . '">' . '<i>' . $taxonEditorObj->getParentNameFull() . '</i></a>'; ?>
 										</div>
@@ -604,17 +604,17 @@ if ($isEditor) {
 										<fieldset style="width:90%px;">
 											<legend><b><?php echo $LANG['CHANGE_NOT_ACCEPTED']; ?></b></legend>
 											<div style="margin:5px;">
-												<?php echo $LANG['ACCEPTED_NAME']; ?>:
+												<label for="ctnafacceptedstr"><?php echo $LANG['ACCEPTED_NAME']; ?>:</label>
 												<input id="ctnafacceptedstr" name="acceptedstr" type="text" style="width:550px;" />
 												<input name="tidaccepted" type="hidden" value="" />
 											</div>
 											<div style="margin:5px;">
-												<?php echo $LANG['REASON']; ?>:
-												<input name="unacceptabilityreason" type="text" style="width:90%;" />
+												<label for="unacceptabilityreason"><?php echo $LANG['REASON']; ?>:</label>
+												<input id="unacceptabilityreason" name="unacceptabilityreason" type="text" style="width:90%;" />
 											</div>
 											<div style="margin:5px;">
-												<?php echo $LANG['NOTES']; ?>:
-												<input name="notes" type="text" style="width:90%;" />
+												<label for="notes"><?php echo $LANG['NOTES']; ?>:</label>
+												<input id="notes" name="notes" type="text" style="width:90%;" />
 											</div>
 											<div style="margin:5px;">
 												<input name="tid" type="hidden" value="<?php echo $taxonEditorObj->getTid(); ?>" />
