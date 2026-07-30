@@ -36,6 +36,6 @@ $LANG['VV_GEMINI_API_KEY'] = 'Clé API Gemini (optionnelle)';
 $LANG['VV_TRANSCRIPTION_MODEL'] = 'Modèle de transcription';
 $LANG['VV_TRANSCRIPTION_PROMPT'] = 'Prompt de transcription';
 $LANG['VV_SYMBIOTA_CREDENTIALS_DISABLED'] = 'Les identifiants partagés de Symbiota sont actuellement désactivés.';
-$LANG['VV_TOKEN_REFRESH_NOTE'] = "Notez que le jeton d'authentification API est actualisé toutes les heures.";
+$LANG['VV_TOKEN_REFRESH_NOTE'] = "Notez que le jeton d'authentification API est actualisé toutes les heures et doit être saisi à nouveau à ce moment-là.";
 
 ?>
