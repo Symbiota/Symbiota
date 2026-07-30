@@ -475,7 +475,7 @@ rowTemplate.innerHTML = `<tr><td><a target="_blank" href=\"<?php echo $CLIENT_RO
                <label for="dotmap">
                   <?php echo $LANG['DOT_MAP'] ?>:
                   <div style="display:flex">
-                     <label for="dotColor"><?php echo $LANG['COLOR'] ?>: </label>
+                     <label for="dot-color"><?php echo $LANG['COLOR'] ?>: </label>
                      <input data-role="none" id="dot-color" name="dot-color" class="color" style="margin-left: 0.5rem;cursor:pointer;border:1px black solid;height:12px;width:12px;margin-bottom:-2px;font-size:0px;" value="B2BEB5"/>
                   </div>
                </label><br/>

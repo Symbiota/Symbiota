@@ -2279,7 +2279,7 @@ $serverHost = GeneralUtil::getDomain();
 											</div>
 											<div id="distancegeocriteria" style="display:<?php echo ($distFromMe?'block':'none'); ?>;">
 												<div>
-													<?php echo $LANG['WITHIN']; ?>
+													<label for="distFromMe"><?php echo $LANG['WITHIN']; ?></label>
 													<input data-role="none" type="text" id="distFromMe" style="width:40px;" name="distFromMe" value="<?= $distFromMe ?>" /> miles from me, or
 													<?= strtolower($LANG['SHAPE_TOOLS']) ?>.
 												</div>
