@@ -314,12 +314,12 @@ if ($isEditor) {
 							</div>
 						</div>
 						<div class="editDiv">
-							<div class="editLabel"><label for="notes"><?php echo $LANG['NOTES']; ?>:</label> </div>
+							<div class="editLabel"><label for="notes_1"><?php echo $LANG['NOTES']; ?>:</label> </div>
 							<div class="editfield">
 								<?php echo $taxonEditorObj->getNotes(); ?>
 							</div>
 							<div class="editfield" style="display:none;width:90%;">
-								<input type="text" id="notes" name="notes" style="width:100%;" value="<?php echo $taxonEditorObj->getNotes(); ?>" />
+								<input type="text" id="notes_1" name="notes_1" style="width:100%;" value="<?php echo $taxonEditorObj->getNotes(); ?>" />
 							</div>
 						</div>
 						<div class="editDiv">
@@ -613,8 +613,8 @@ if ($isEditor) {
 												<input id="unacceptabilityreason" name="unacceptabilityreason" type="text" style="width:90%;" />
 											</div>
 											<div style="margin:5px;">
-												<label for="notes"><?php echo $LANG['NOTES']; ?>:</label>
-												<input id="notes" name="notes" type="text" style="width:90%;" />
+												<label for="notes_2"><?php echo $LANG['NOTES']; ?>:</label>
+												<input id="notes_2" name="notes_2" type="text" style="width:90%;" />
 											</div>
 											<div style="margin:5px;">
 												<input name="tid" type="hidden" value="<?php echo $taxonEditorObj->getTid(); ?>" />
