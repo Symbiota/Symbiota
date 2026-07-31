@@ -34,6 +34,19 @@ if($tid){
 			position: absolute;
 			left: -10000px;
 		}
+		.line-button {
+			all:unset;
+			background:none;
+			border:none;
+			padding:0;
+			margin:10px 0px 0px 350px;
+			cursor:pointer;
+			text-decoration: underline;
+			font-weight:bold;
+		}
+		.line-button:focus-visible {
+			outline: 2px solid blue !important;
+		}
 	</style>
 </head>
 <body>
@@ -162,9 +175,9 @@ if($tid){
 										<input type="checkbox" id="createlargeimg" name="createlargeimg" value="1" /> <label for="createlargeimg" name="createlargeimg"><?php echo $LANG['KEEP_LARGE_IMG']; ?></label>
 									</div>
 									<div style="margin-left:10px;"><?php echo $LANG['IMG_SIZE_NO_GREATER']; ?></div>
-									<div style="margin:10px 0px 0px 350px;cursor:pointer;text-decoration:underline;font-weight:bold;" onclick="toggle('targetdiv')">
+									<button type="button" class="line-button" onclick="toggle('targetdiv')">
 										<?php echo $LANG['LINK_TO_EXTERNAL']; ?>
-									</div>
+									</button>
 								</div>
 								<div class="targetdiv" style="display:none;">
 									<div style="font-weight:bold;margin-bottom:5px;">
@@ -177,9 +190,9 @@ if($tid){
 									<div style="margin-left:10px;">
 										<input type="checkbox" id="importurl" name="importurl" value="1" /> <label for="importurl"><?php echo $LANG['IMPORT_IMG_LOCAL']; ?></label>
 									</div>
-									<div style="margin:10px 0px 0px 350px;cursor:pointer;text-decoration:underline;font-weight:bold;" onclick="toggle('targetdiv')">
+									<button type="button" class="line-button" onclick="toggle('targetdiv')">
 										<?php echo $LANG['UPLOAD_LOCAL']; ?>
-									</div>
+									</button>
 								</div>
 							</div>
 
