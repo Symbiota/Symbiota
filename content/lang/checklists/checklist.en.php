@@ -108,6 +108,7 @@ $LANG['ALL_IMG'] = 'all images';
 $LANG['LINKED_IMG'] = 'linked voucher images only';
 $LANG['SELECT_TAXON'] = 'Please select a taxon from the list';
 $LANG['NAME_BLANK'] = 'Scientific name field is blank';
+$LANG['OPENS_NEW_TAB'] = ' (opens in new tab)';
 
 //from dynamicchecklist.php
 $LANG['ERROR_GEN_CHECK'] = 'ERROR generating checklist';
