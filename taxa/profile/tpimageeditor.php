@@ -103,8 +103,8 @@ if($tid){
 												?>
 												</div>
 												<div>
-													<?php echo $LANG['NEW_VALUE']; ?>:
-													<input name="imgid-<?= $mediaID ?>" type="text" size="5" maxlength="5" />
+													<label for="imgid-<?= $mediaID ?>"><?php echo $LANG['NEW_VALUE']; ?>:</label>
+													<input id="imgid-<?= $mediaID ?>" name="imgid-<?= $mediaID ?>" type="text" size="5" maxlength="5" />
 												</div>
 											</td>
 											<?php
@@ -156,10 +156,10 @@ if($tid){
 									<!-- following line sets MAX_FILE_SIZE (must precede the file input field)  -->
 									<input type='hidden' name='MAX_FILE_SIZE' value='4000000' />
 									<div>
-										<input name='imgfile' id='imgfile' type='file' size='70'/>
+										<input name='imgfile' type='file' size='70' aria-label="<?php echo $LANG['SELECT_IMAGE_TO_UPLOAD']; ?>"/>
 									</div>
 									<div style="margin-left:10px;">
-										<input type="checkbox" name="createlargeimg" value="1" /> <?php echo $LANG['KEEP_LARGE_IMG']; ?>
+										<input type="checkbox" id="createlargeimg" name="createlargeimg" value="1" /> <label for="createlargeimg" name="createlargeimg"><?php echo $LANG['KEEP_LARGE_IMG']; ?></label>
 									</div>
 									<div style="margin-left:10px;"><?php echo $LANG['IMG_SIZE_NO_GREATER']; ?></div>
 									<div style="margin:10px 0px 0px 350px;cursor:pointer;text-decoration:underline;font-weight:bold;" onclick="toggle('targetdiv')">
@@ -168,14 +168,14 @@ if($tid){
 								</div>
 								<div class="targetdiv" style="display:none;">
 									<div style="font-weight:bold;margin-bottom:5px;">
-										<?php echo $LANG['ENTER_URL_IMG']; ?>:
+										<label for="originalUrl"><?php echo $LANG['ENTER_URL_IMG']; ?>:</label>
 									</div>
 									<div>
 										URL:
-										<input type='text' name='originalUrl' size='70'/>
+										<input type='text' id='originalUrl' name='originalUrl' size='70'/>
 									</div>
 									<div style="margin-left:10px;">
-										<input type="checkbox" name="importurl" value="1" /> <?php echo $LANG['IMPORT_IMG_LOCAL']; ?>
+										<input type="checkbox" id="importurl" name="importurl" value="1" /> <label for="importurl"><?php echo $LANG['IMPORT_IMG_LOCAL']; ?></label>
 									</div>
 									<div style="margin:10px 0px 0px 350px;cursor:pointer;text-decoration:underline;font-weight:bold;" onclick="toggle('targetdiv')">
 										<?php echo $LANG['UPLOAD_LOCAL']; ?>
@@ -185,12 +185,12 @@ if($tid){
 
 							<!-- Image metadata -->
 							<div style='margin-top:2px;'>
-								<b><?php echo $LANG['CAPTION']; ?>:</b>
-								<input name='caption' type='text' value='' size='25' maxlength='100'>
+								<label for="tpimageeditor_caption"><b><?php echo $LANG['CAPTION']; ?>:</b></label>
+								<input id='tpimageeditor_caption' name='caption' type='text' value='' size='25' maxlength='100'>
 							</div>
 							<div style='margin-top:2px;'>
-								<b><?php echo $LANG['CREATOR']; ?>:</b>
-								<select name='creatorUid' name='creatorUid'>
+								<label for="creatorUid"><b><?php echo $LANG['CREATOR']; ?>:</b></label>
+								<select id='creatorUid' name='creatorUid'>
 									<option value=""><?php echo $LANG['SEL_CREATOR']; ?></option>
 									<option value="">---------------------------------------</option>
 									<?= Media::renderCreatorOptions($PARAMS_ARR["uid"]) ?>
@@ -200,33 +200,33 @@ if($tid){
 								</a>
 							</div>
 							<div id="photooveridediv" style='margin:2px 0px 5px 10px;display:none;'>
-								<b><?php echo $LANG['CREATOR_OVERRIDE']; ?>:</b>
-								<input name='creator' type='text' value='' size='37' maxlength='100'><br/>
+								<label for="creatoroverride"><b><?php echo $LANG['CREATOR_OVERRIDE']; ?>:</b></label>
+								<input id='creatoroverride' name='creator' type='text' value='' size='37' maxlength='100'><br/>
 								* <?php echo $LANG['CREATOR_OVERRIDE_EXPLAIN']; ?>
 							</div>
 							<div style="margin-top:2px;" title="Use if manager is different than creator">
-								<b><?php echo $LANG['MANAGER']; ?>:</b>
-								<input name='owner' type='text' value='' size='35' maxlength='100'>
+								<label for="owner"><b><?php echo $LANG['MANAGER'] ?>:</b></label>
+								<input id='owner' name='owner' type='text' value='' size='35' maxlength='100'>
 							</div>
 							<div style='margin-top:2px;' title="<?php echo $LANG['URL_TO_SOURCE']; ?>">
-								<b><?php echo $LANG['SOURCE_URL']; ?>:</b>
-								<input name='sourceUrl' type='text' value='' size='70' maxlength='250'>
+								<label for="sourceUrl"><b><?php echo $LANG['SOURCE_URL'] ?>:</b></label>
+								<input id='sourceUrl' name='sourceUrl' type='text' value='' size='70' maxlength='250'>
 							</div>
 							<div style='margin-top:2px;'>
-								<b><?php echo $LANG['COPYRIGHT']; ?>:</b>
-								<input name='copyright' type='text' value='' size='70' maxlength='250'>
+								<label for="copyright"><b><?php echo $LANG['COPYRIGHT'] ?>:</b></label>
+								<input id='copyright' name='copyright' type='text' value='' size='70' maxlength='250'>
 							</div>
 							<div style='margin-top:2px;'>
-								<b><?php echo $LANG['LOCALITY']; ?>:</b>
-								<input name='locality' type='text' value='' size='70' maxlength='250'>
+								<label for="locality"><b><?php echo $LANG['LOCALITY']; ?>:</b></label>
+								<input id='locality' name='locality' type='text' value='' size='70' maxlength='250'>
 							</div>
 							<div style='margin-top:2px;'>
-								<b><?php echo $LANG['NOTES']; ?>:</b>
-								<input name='notes' type='text' value='' size='70' maxlength='250'>
+								<label for="tpimageeditor_notes"><b><?php echo $LANG['NOTES']; ?>:</b></label>
+								<input id='tpimageeditor_notes' name='notes' type='text' value='' size='70' maxlength='250'>
 							</div>
 							<div style='margin-top:2px;'>
-								<b><?php echo $LANG['SORT_SEQUENCE']; ?>:</b>
-								<input name='sortSequence' type='text' value='' size='5' maxlength='5'>
+								<label for="sortSequence"><b><?php echo $LANG['SORT_SEQUENCE']; ?>:</b></label>
+								<input id='sortSequence' name='sortSequence' type='text' value='' size='5' maxlength='5'>
 							</div>
 							<input name="tid" type="hidden" value="<?php echo $imageEditor->getTid();?>">
 							<input type="hidden" name="tabindex" value="1" />
