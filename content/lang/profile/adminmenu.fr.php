@@ -12,6 +12,7 @@ $LANG['GEO_THESAURUS'] = 'Geographic Thesaurus';
 $LANG['GLOSSARY'] = 'Glossaire';
 $LANG['GUID_MAPPER'] = 'Mappeur de GUID';
 $LANG['THUMBNAIL_BUILDER'] = 'Outil de Création de Vignettes';
+$LANG['MEDIA_MIGRATION'] = 'Outils de migration de médias';
 $LANG['MANAGE_TAXON_MAP_THUMBNAIL'] = 'Gérer les miniatures de la carte du profil de taxonomie';
 $LANG['OTHER_CAT_TRANSFER'] = 'Outil de transfert de numéro de catalogue autre';
 $LANG['SALIX'] = 'Gestionnaire WordStat SALIX';

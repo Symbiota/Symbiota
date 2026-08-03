@@ -28,6 +28,9 @@ if($IS_ADMIN){
 			<a href="<?= $CLIENT_ROOT ?>/imagelib/admin/thumbnailbuilder.php"><?= $LANG['THUMBNAIL_BUILDER'] ?></a>
 		</li>
 		<li>
+			<a href="<?= $CLIENT_ROOT ?>/imagelib/admin/mediatools.php"><?= $LANG['MEDIA_MIGRATION'] ?></a>
+		</li>
+		<li>
 			<a href="<?= $CLIENT_ROOT ?>/collections/map/staticmaphandler.php"><?= $LANG['MANAGE_TAXON_MAP_THUMBNAIL'] ?></a>
 		</li>
 		<li>
