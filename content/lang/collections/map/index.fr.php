@@ -71,4 +71,11 @@ $LANG['OPEN_SEARCH_PANEL'] = 'Ouvrir le panneau de recherche';
 $LANG['HIDE_PANEL'] = 'Masquer le panneau';
 $LANG['MAP_RECORD_LIMIT_MESSAGE'] = 'Limite d\'enregistrements cartographiques dépassée. Avertissement : le résultat a été tronqué.';
 $LANG['DYNAMIC_HEATMAP_AUTO_ENABLED'] = 'Nombre élevé d\'enregistrements de la carte. L\'activation de la carte thermique devrait améliorer les performances.';
+$LANG['HEMISPHERE'] = 'Hémisphère';
+$LANG['LAT_DEG'] = 'Degrés de Latitude';
+$LANG['LAT_MIN'] = 'Minutes de Latitude';
+$LANG['LAT_SEC'] = 'Secondes de Latitude';
+$LANG['LONG_DEG'] = 'Degrés de Longitude';
+$LANG['LONG_MIN'] = 'Minutes de Longitude';
+$LANG['LONG_SEC'] = 'Secondes de Longitude';
 ?>

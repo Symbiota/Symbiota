@@ -2208,7 +2208,7 @@ $serverHost = GeneralUtil::getDomain();
 									</div>
 									<div>
 										<div style="margin-top:5px;">
-											<select data-role="none" id="taxontype" name="taxontype">
+											<select data-role="none" id="taxontype" name="taxontype" aria-label="<?php echo $LANG['SCINAME']; ?>">
 												<?php
 												$taxonType = 2;
 												if(isset($DEFAULT_TAXON_SEARCH) && $DEFAULT_TAXON_SEARCH) $taxonType = $DEFAULT_TAXON_SEARCH;
@@ -2315,8 +2315,8 @@ $serverHost = GeneralUtil::getDomain();
 									</div>
 									<div style="margin-top:5px;">
 										<?= $LANG['COLLECTOR_DATE'] ?>:
-										<input data-role="none" type="text" id="eventdate1" style="width:80px;" name="eventdate1" style="width:100px;" value="<?php echo $mapManager->getSearchTerm('eventdate1'); ?>" title="Single date or start date of range" /> -
-										<input data-role="none" type="text" id="eventdate2" style="width:80px;" name="eventdate2" style="width:100px;" value="<?php echo $mapManager->getSearchTerm('eventdate2'); ?>" title="End date of range; leave blank if searching for single date" />
+										<input data-role="none" type="text" id="eventdate1" style="width:80px;" name="eventdate1" style="width:100px;" value="<?php echo $mapManager->getSearchTerm('eventdate1'); ?>" title="Single date or start date of range" aria-label="<?php echo $LANG['COLLECTOR_DATE']; ?>" /> -
+										<input data-role="none" type="text" id="eventdate2" style="width:80px;" name="eventdate2" style="width:100px;" value="<?php echo $mapManager->getSearchTerm('eventdate2'); ?>" title="End date of range; leave blank if searching for single date" aria-label="<?php echo $LANG['COLLECTOR_DATE_END']; ?>" />
 									</div>
 									<div style="margin:10 0 10 0;"><hr></div>
 									<div>
@@ -2469,20 +2469,20 @@ $serverHost = GeneralUtil::getDomain();
 											<div id="useLLDecimal" class='latlongdiv' style='display:none;clear:both'>
 												<div>
 													<?= $LANG['LATITUDE'] ?>:
-													<input name='latdeg' id='latdeg' size='2' type='text' />&deg;
-													<input name='latmin' id='latmin' size='4' type='text' />&prime;
-													<input name='latsec' id='latsec' size='4' type='text' />&Prime;
-													<select name='latns' id='latns'>
+													<input name='latdeg' id='latdeg' size='2' type='text' aria-label='<?php echo $LANG['LAT_DEG']; ?>' title='<?php echo $LANG['LAT_DEG']; ?>' />&deg;
+													<input name='latmin' id='latmin' size='4' type='text' aria-label='<?php echo $LANG['LAT_MIN']; ?>' title='<?php echo $LANG['LAT_MIN']; ?>' />&prime;
+													<input name='latsec' id='latsec' size='4' type='text' aria-label='<?php echo $LANG['LAT_SEC']; ?>' title='<?php echo $LANG['LAT_SEC']; ?>' />&Prime;
+													<select name='latns' id='latns' aria-label='<?php echo $LANG['HEMISPHERE']; ?>'>
 														<option value='N'><?= $LANG['NORTH']; ?></option>
 														<option value='S'><?= $LANG['SOUTH']; ?></option>
 													</select>
 												</div>
 												<div style="margin-top:5px;">
 											  <?= $LANG['LONGITUDE'] ?>:
-													<input name='longdeg' id='longdeg' size='2' type='text' />&deg;
-													<input name='longmin' id='longmin' size='4' type='text' />&prime;
-													<input name='longsec' id='longsec' size='4' type='text' />&Prime;
-													<select name='longew' id='longew'>
+													<input name='longdeg' id='longdeg' size='2' type='text' aria-label='<?php echo $LANG['LONG_DEG']; ?>' title='<?php echo $LANG['LONG_DEG']; ?>' />&deg;
+													<input name='longmin' id='longmin' size='4' type='text' aria-label='<?php echo $LANG['LONG_MIN']; ?>' title='<?php echo $LANG['LONG_MIN']; ?>' />&prime;
+													<input name='longsec' id='longsec' size='4' type='text' aria-label='<?php echo $LANG['LONG_SEC']; ?>' title='<?php echo $LANG['LONG_SEC']; ?>' />&Prime;
+													<select name='longew' id='longew' aria-label='<?php echo $LANG['HEMISPHERE']; ?>'>
 														<option value='E'><?= $LANG['EAST']; ?></option>
 														<option value='W' selected><?= $LANG['WEST']; ?></option>
 													</select>
