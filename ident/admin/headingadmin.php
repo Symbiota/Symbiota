@@ -77,16 +77,16 @@ $headingArr = $charManager->getHeadingArr();
 					<fieldset>
 						<legend>New Group</legend>
 						<div>
-							Group Title<br />
-							<input type="text" name="headingname" maxlength="255" style="width:400px;" />
+							<label for="headingname">Group Title</label><br />
+							<input type="text" id="headingname" name="headingname" maxlength="255" style="width:400px;" />
 						</div>
 						<div style="padding-top:6px;">
-							Notes<br />
-							<input name="notes" type="text" style="width:500px;" />
+							<label for="notes">Notes</label><br />
+							<input type="text" id="notes" name="notes" style="width:500px;" />
 						</div>
 						<div style="padding-top:6px;">
-							Sort Sequence<br />
-							<input type="text" name="sortsequence" style="width:80px" />
+							<label for="sortsequence">Sort Sequence</label><br />
+							<input type="text" id="sortsequence" name="sortsequence" style="width:80px" />
 						</div>
 						<div style="width:100%;padding-top:6px;">
 							<button name="action" type="submit" value="Create">Create Group</button>
@@ -110,16 +110,16 @@ $headingArr = $charManager->getHeadingArr();
 										<legend>Editor</legend>
 										<form name="headingeditform" action="headingadmin.php" method="post" onsubmit="return validateHeadingForm(this)">
 											<div style="margin:2px;">
-												Group Title<br/>
-												<input name="headingname" type="text" value="<?php echo $headArr['name']; ?>" style="width:400px;" />
+												<label for="headingname-<?php echo $headingId; ?>"">Group Title<br/>
+												<input id="headingname" name="headingname" type="text" value="<?php echo $headArr['name']; ?>" style="width:400px;" />
 											</div>
 											<div style="margin:2px;">
-												Notes<br/>
-												<input name="notes" type="text" value="<?php echo $headArr['notes']; ?>" style="width:500px;" />
+												<label for="notes-<?php echo $headingId; ?>"">Notes<br/>
+												<input id="notes" name="notes" type="text" value="<?php echo $headArr['notes']; ?>" style="width:500px;" />
 											</div>
 											<div style="margin:2px;">
-												Sort Sequence<br/>
-												<input name="sortsequence" type="text" value="<?php echo $headArr['sortsequence']; ?>" style="width:80px" />
+												<label for="sortsequence-<?php echo $headingId; ?>">Sort Sequence<br/>
+												<input id="sortsequence" name="sortsequence" type="text" value="<?php echo $headArr['sortsequence']; ?>" style="width:80px" />
 											</div>
 											<div>
 												<input name="hid" type="hidden" value="<?php echo $headingId; ?>" />

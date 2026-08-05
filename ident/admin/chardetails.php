@@ -281,12 +281,12 @@ if(!$cid) header('Location: index.php');
 						<fieldset>
 							<legend><b>Character Details</b></legend>
 							<div style="padding-top:4px;">
-								<b>Character Name</b><br />
-								<input type="text" name="charname" maxlength="150" style="width:400px;" value="<?php echo $charArr['charname']; ?>" />
+								<label for="charname"><b>Character Name</b></label><br />
+								<input type="text" id="charname" name="charname" maxlength="150" style="width:400px;" value="<?php echo $charArr['charname']; ?>" />
 							</div>
 							<div style="padding-top:8px;float:left;">
 								<div style="float:left;">
-									<b>Type</b><br />
+									<label for="type"><b>Type</b></label><br />
 									<select id="type" name="chartype" style="width:180px;" onchange="updateUnits(this);">
 										<option value="UM">Multi-state</option>
 										<option value="IN" <?php echo ($charArr['chartype']=='IN'?'SELECTED':'');?>>Integer</option>
@@ -294,12 +294,12 @@ if(!$cid) header('Location: index.php');
 									</select>
 								</div>
 								<div id="units" style="display:<?php echo ((($charArr['chartype']=='IN')||($charArr['chartype']=='RN'))?'block':'none');?>;margin-left:15px;float:left;">
-									<b>Units</b><br />
-									<input type="text" name="units" maxlength="45" style="width:100px;" value="<?php echo $charArr['units']; ?>" title="" />
+									<label for="units"><b>Units</b></label><br />
+									<input type="text" id="units" name="units" maxlength="45" style="width:100px;" value="<?php echo $charArr['units']; ?>" title="" />
 								</div>
 								<div style="margin-left:15px;float:left;">
-									<b>Difficulty</b><br />
-									<select name="difficultyrank" style="width:100px;">
+									<label for="difficultyrank"><b>Difficulty</b></label><br />
+									<select id="difficultyrank" name="difficultyrank" style="width:100px;">
 										<option value="1">Easy</option>
 										<option value="2" <?php echo ($charArr['difficultyrank']=='2'?'SELECTED':'');?>>Intermediate</option>
 										<option value="3" <?php echo ($charArr['difficultyrank']=='3'?'SELECTED':'');?>>Advanced</option>
@@ -307,8 +307,8 @@ if(!$cid) header('Location: index.php');
 									</select>
 								</div>
 								<div style="float:left;margin-left:15px;">
-									<b>Grouping</b><br />
-									<select name="hid">
+									<label for="hid"><b>Grouping</b></label><br />
+									<select id="hid" name="hid">
 										<option value="">Not Assigned</option>
 										<option value="">---------------------</option>
 										<?php
@@ -323,8 +323,8 @@ if(!$cid) header('Location: index.php');
 								</div>
 							</div>
 							<div style="padding-top:8px;clear:both;">
-								<b>Help URL</b><br />
-								<input type="text" name="helpurl" maxlength="500" style="width:90%;" value="<?php echo $charArr['helpurl']; ?>" />
+								<label for="helpurl"><b>Help URL</b></label><br />
+								<input type="text" id="helpurl" name="helpurl" maxlength="500" style="width:90%;" value="<?php echo $charArr['helpurl']; ?>" />
 								<?php
 								if($charArr['helpurl'] && substr($charArr['helpurl'],0,4) == 'http') echo '<a href="' . $charArr['helpurl'] . '" target="_blank"><img src="../../images/link2.png" style="width:1em" ></a>';
 								?>
@@ -334,8 +334,8 @@ if(!$cid) header('Location: index.php');
 							if($glossaryArr){
 								?>
 								<div style="padding-top:8px;clear:both;">
-									<b>Glossary link</b><br />
-									<select name="glossid" style="max-width: 90%">
+									<label for="glossid"><b>Glossary link</b></label><br />
+									<select id="glossid" name="glossid" style="max-width: 90%">
 										<option value="">------------------------</option>
 										<?php
 										foreach($glossaryArr as $glossArr){
@@ -353,16 +353,16 @@ if(!$cid) header('Location: index.php');
 							}
 							?>
 							<div style="padding-top:8px;">
-								<b>Description</b><br />
-								<input type="text" name="description" maxlength="255" style="width:90%;" value="<?php echo $charArr['description']; ?>" />
+								<label for="description"><b>Description</b></label><br />
+								<input type="text" id="description" name="description" maxlength="255" style="width:90%;" value="<?php echo $charArr['description']; ?>" />
 							</div>
 							<div style="padding-top:8px;">
-								<b>Notes</b><br />
-								<input type="text" name="notes" maxlength="255" style="width:90%;" value="<?php echo $charArr['notes']; ?>" />
+								<label for="notes"><b>Notes</b></label><br />
+								<input type="text" id="notes" name="notes" maxlength="255" style="width:90%;" value="<?php echo $charArr['notes']; ?>" />
 							</div>
 							<div style="padding-top:8px;">
-								<b>Sort Sequence</b><br />
-								<input type="text" name="sortsequence" style="width:80px;" value="<?php echo $charArr['sortsequence']; ?>" />
+								<label for="sortsequence"><b>Sort Sequence</b></label><br />
+								<input type="text" id="sortsequence" name="sortsequence" style="width:80px;" value="<?php echo $charArr['sortsequence']; ?>" />
 							</div>
 							<div style="width:100%;padding-top:6px;">
 								<div style="float:left;">
@@ -370,8 +370,8 @@ if(!$cid) header('Location: index.php');
 									<button name="formsubmit" type="submit" value="Save Char">Save</button>
 								</div>
 								<div style="float:right;">
-									Entered By:
-									<input type="text" name="enteredby" tabindex="96" maxlength="32" style="width:100px;" value="<?php echo $charArr['enteredby']; ?>" onchange=" " disabled />
+									<label for="enteredby">Entered By:</label>
+									<input type="text" id="enteredby" name="enteredby" tabindex="96" maxlength="32" style="width:100px;" value="<?php echo $charArr['enteredby']; ?>" onchange=" " disabled />
 								</div>
 							</div>
 						</fieldset>
@@ -388,19 +388,19 @@ if(!$cid) header('Location: index.php');
 							<fieldset>
 								<legend><b>Add Character State</b></legend>
 								<div style="padding-top:4px;">
-									<b>Character State Name</b><br />
-									<input type="text" name="charstatename" maxlength="255" style="width:400px;" />
+									<label for="charstatename"><b>Character State Name</b></label><br />
+									<input type="text" id="charstatename" name="charstatename" maxlength="255" style="width:400px;" />
 								</div>
 								<div style="padding-top:4px;">
-									<b>Description</b><br />
-									<input type="text" name="description" maxlength="255" style="width:90%;" />
+									<label for="add_description"><b>Description</b></label><br />
+									<input type="text" id="add_description" name="description" maxlength="255" style="width:90%;" />
 								</div>
 								<?php
 								if($glossaryArr){
 									?>
 									<div style="padding-top:8px;clear:both;">
-										<b>Glossary link</b><br />
-										<select name="glossid">
+										<label for="glossid"><b>Glossary link</b></label><br />
+										<select id="glossid" name="glossid">
 											<option value="">------------------------</option>
 											<?php
 											foreach($glossaryArr as $glossArr){
@@ -415,12 +415,12 @@ if(!$cid) header('Location: index.php');
 								}
 								?>
 								<div style="padding-top:4px;">
-									<b>Notes</b><br />
-									<input type="text" name="notes" style="width:90%;" />
+									<label for="add_notes"><b>Notes</b></label><br />
+									<input type="text" id="add_notes" name="notes" style="width:90%;" />
 								</div>
 								<div style="padding-top:4px;">
-									<b>Sort Sequence</b><br />
-									<input type="text" name="sortsequence" style="width:80px" />
+									<label for="add_sortsequence"><b>Sort Sequence</b></label><br />
+									<input type="text" id="add_sortsequence" name="sortsequence" style="width:80px" />
 								</div>
 								<div style="width:100%;padding-top:6px;">
 									<input name="cid" type="hidden" value="<?php echo $cid; ?>" />
@@ -452,19 +452,19 @@ if(!$cid) header('Location: index.php');
 										<fieldset>
 											<legend><b>Character State Details</b></legend>
 											<div>
-												<b>Character State Name</b><br />
-												<input type="text" name="charstatename" maxlength="255" style="width:300px;" value="<?php echo $stateArr['charstatename']; ?>" />
+												<label for="charstatename-<?php echo $cs; ?>"><b>Character State Name</b></label><br />
+												<input type="text" id="charstatename-<?php echo $cs; ?>" name="charstatename" maxlength="255" style="width:300px;" value="<?php echo $stateArr['charstatename']; ?>" />
 											</div>
 											<div style="padding-top:2px;">
-												<b>Description</b><br />
-												<input type="text" name="description" maxlength="255" style="width:90%;" value="<?php echo $stateArr['description']; ?>"/>
+												<label for="description-<?php echo $cs; ?>"><b>Description</b></label><br />
+												<input type="text" id="description-<?php echo $cs; ?>" name="description" maxlength="255" style="width:90%;" value="<?php echo $stateArr['description']; ?>"/>
 											</div>
 											<?php
 											if($glossaryArr){
 												?>
 												<div style="padding-top:8px;clear:both;">
-													<b>Glossary link</b><br />
-													<select name="glossid" style="max-width: 90%">
+													<label for="glossid-<?php echo $cs; ?>"><b>Glossary link</b></label><br />
+													<select id="glossid-<?php echo $cs; ?>" name="glossid" style="max-width: 90%">
 														<option value="">------------------------</option>
 														<?php
 														foreach($glossaryArr as $glossArr){
@@ -482,17 +482,17 @@ if(!$cid) header('Location: index.php');
 											}
 											?>
 											<div style="padding-top:2px;">
-												<b>Notes</b><br />
-												<input type="text" name="notes" style="width:90%;" value="<?php echo $stateArr['notes']; ?>" />
+												<label for="notes-<?php echo $cs; ?>"><b>Notes</b></label><br />
+												<input type="text" id="notes-<?php echo $cs; ?>" name="notes" style="width:90%;" value="<?php echo $stateArr['notes']; ?>" />
 											</div>
 											<div style="padding-top:2px;">
 												<div style="float:right;">
-													Entered By:<br/>
-													<input type="text" name="enteredby" value="<?php echo $stateArr['enteredby']; ?>" disabled />
+													<label for="enteredby-<?php echo $cs; ?>">Entered By:</label><br/>
+													<input type="text" id="enteredby-<?php echo $cs; ?>" name="enteredby" value="<?php echo $stateArr['enteredby']; ?>" disabled />
 												</div>
 												<div>
-													<b>Sort Sequence</b><br />
-													<input type="text" name="sortsequence" value="<?php echo $stateArr['sortsequence']; ?>" style="width:80px" />
+													<label for="sortsequence-<?php echo $cs; ?>"><b>Sort Sequence</b></label><br />
+													<input type="text" id="sortsequence-<?php echo $cs; ?>" name="sortsequence" value="<?php echo $stateArr['sortsequence']; ?>" style="width:80px" />
 												</div>
 											</div>
 											<div style="width:100%;margin:20px 0px 10px 20px;">
@@ -524,17 +524,17 @@ if(!$cid) header('Location: index.php');
 											?>
 											<form name="stateillustform-<?php echo $cs; ?>" action="chardetails.php" method="post" enctype="multipart/form-data" onsubmit="return verifyStateIllustForm(this)" >
 												<div style="padding-top:2px;">
-													<b>File Upload: </b>
-													<input name="urlupload" type="file" size="50" />
+													<label for="urlupload-<?php echo $cs; ?>"><b>File Upload: </b>
+													<input id="urlupload-<?php echo $cs; ?>" name="urlupload" type="file" size="50" />
 													<input name="MAX_FILE_SIZE" type="hidden" value="1000000" />
 												</div>
 												<div style="padding-top:2px;">
-													<b>Notes:</b>
-													<input name="notes" type="text" style="width:90%" />
+													<label for="imgnotes-<?php echo $cs; ?>"><b>Notes:</b>
+													<input id="imgnotes-<?php echo $cs; ?>" name="notes" type="text" style="width:90%" />
 												</div>
 												<div style="padding-top:2px;">
-													<b>Sort:</b>
-													<input name="sortsequence" type="text" />
+													<label for="imgsortsequence-<?php echo $cs; ?>""><b>Sort:</b>
+													<input id="imgsortsequence-<?php echo $cs; ?>" name="sortsequence" type="text" />
 												</div>
 												<div style="padding-top:2px;">
 													<input name="cid" type="hidden" value="<?php echo $cid; ?>" />
