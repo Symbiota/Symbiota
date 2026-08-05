@@ -69,14 +69,15 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.index.js?ver=1>" type="text/javascript"></script>
 	<script src="<?= $JS_LANG_FILENAME ?>" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=2" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxonomy.taxasuggest.js?ver=1" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxonomy.taxasuggest.js?ver=2d" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
 			//setup taxonomic autocompletes
 			setTaxaSuggestRootPath("<?= $CLIENT_ROOT ?>");
 			setMultipleTermSupport(true);
-			initiateTaxaSuggest("taxa", null, document.getElementById("taxontype").value);
-			initiateTaxaSuggest("associated-taxa", null, "taxontype-association");
+			let taxonType = document.getElementById("taxontype").value;
+			initiateTaxaSuggest("taxa", taxonType);
+			initiateTaxaSuggest("associated-taxa", taxonType);
 
 			setSessionQueryStr();
 			setSearchForm(document.getElementById("params-form"));
@@ -98,7 +99,9 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 		});
 
 		function taxonTypeChanged(selectElem){
-			initiateTaxaSuggest("taxa", null, selectElem.value);
+			let taxonType = selectElem.value;
+			initiateTaxaSuggest("taxa", taxonType);
+			initiateTaxaSuggest("associated-taxa", taxonType);
 		}
 
 		const paleoTimes = <?= json_encode($paleoTimes ?? []) ?>;

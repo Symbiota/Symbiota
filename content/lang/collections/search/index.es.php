@@ -2,8 +2,7 @@
 /*
 ------------------
 Language: Español (Spanish)
-Translated by: Google Translate
-Date Translated: 2024/02/12
+Translated by: Google Translate (2024/02/12)
 ------------------
 */
 include_once($SERVER_ROOT . '/content/lang/collections/sharedterms.es.php');
@@ -12,7 +11,7 @@ $LANG['SAMPLE_SEARCH'] = 'Búsqueda de Registros';
 $LANG['HOW_TO_SEARCH'] = 'Cómo Buscar';
 $LANG['TAXONOMY'] = 'Taxonomía';
 $LANG['TAXON'] = 'Taxón';
-$LANG['TYPE_CHAR_FOR_SUGGESTIONS'] = 'Escriba al menos 4 caracteres para sugerencias rápidas. Separe varios con comas.';
+$LANG['TYPE_CHAR_FOR_SUGGESTIONS'] = 'Escriba al menos 4 caracteres para sugerencias rápidas. Separe varios con puntos y coma.';
 $LANG['TAXON_TYPE'] = 'Tipo de taxón';
 $LANG['ANY_NAME'] = 'Cualquier nombre';
 $LANG['SCIENTIFIC_NAME'] ='Nombre científico';

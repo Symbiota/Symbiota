@@ -64,34 +64,21 @@ class OccurrenceTaxaManager {
 			if(!$defaultTaxaType) $defaultTaxaType = TaxaSearchType::SCIENTIFIC_NAME;
 			$this->taxaArr['taxontype'] = $defaultTaxaType;
 			//Initerate through taxa and process
-			$taxaSearchTerms = explode(',', $taxaStr);
+			$taxaSearchTerms = explode(';', $taxaStr);
 			foreach($taxaSearchTerms as $k => $term){
 				$searchTerm = $this->cleanInputStr($term);
 				if(!$searchTerm){
 					unset($taxaSearchTerms[$k]);
 					continue;
 				}
-				$this->setTaxonDetails($this->taxaArr, $defaultTaxaType, $searchTerm);
+				$this->setTaxonAttributes($this->taxaArr, $defaultTaxaType, $searchTerm);
 			}
 			if($this->taxaArr['usethes']){
-				$this->setSynonyms();
+				$this->appendAcceptedChildren($this->taxaArr);
+				$this->appendSynonyms($this->taxaArr);
 			}
-		}
-	}
-
-	private function setSynonyms(){
-		if(isset($this->taxaArr['taxa'])){
-			foreach($this->taxaArr['taxa'] as $searchStr => $searchArr){
-				if(isset($searchArr['tid']) && $searchArr['tid']){
-					foreach($searchArr['tid'] as $tid => $rankid){
-						$acceptedTidArr = array($tid);
-						if($rankid >= 180 && $rankid <= 220){
-							$this->taxaArr['taxa'] = $this->getAcceptedChildren($acceptedTidArr, $rankid, $searchStr);
-						}
-						$this->taxaArr['taxa'] = $this->getSynonymForAllAcceptedTaxa($acceptedTidArr, $rankid, $searchStr);
-					}
-				}
-			}
+			echo 'setTaxonRequestVariable<br>';
+			echo '<pre>'; print_r($this->taxaArr); echo '</pre>';
 		}
 	}
 
@@ -138,7 +125,7 @@ class OccurrenceTaxaManager {
 					else{
 						$term = $this->cleanInStr(trim($searchTaxon,'%'));
 						//$term = preg_replace(array('/\s{1}x\s{1}/','/\s{1}X\s{1}/','/\s{1}\x{00D7}\s{1}/u'), ' _ ', $term);
-						if(array_key_exists('tid',$searchArr)){
+						if(array_key_exists('tid', $searchArr)){
 							//Term was located within the taxonomic thesaurus
 							$rankid = current($searchArr['tid']);
 							$tidArr = array_keys($searchArr['tid']);
@@ -197,6 +184,7 @@ class OccurrenceTaxaManager {
 			if(strpos($sqlWhereTaxa,'e.parenttid')) $sqlWhereTaxa .= 'AND (e.taxauthid = '.$this->taxAuthId.') ';
 			if(strpos($sqlWhereTaxa,'ts.family')) $sqlWhereTaxa .= 'AND (ts.taxauthid = '.$this->taxAuthId.') ';
 		}
+		echo 'sql: ' . $sqlWhereTaxa . '<br><br>'; exit;
 		if($sqlWhereTaxa) return $sqlWhereTaxa;
 		else return false;
 	}
@@ -258,23 +246,11 @@ class OccurrenceTaxaManager {
 				}
 				//Process Single Term
 				$associationTaxaSearchTerms[$searchTermkey] = $searchTerm;
-				$this->setTaxonDetails($this->associationArr, $defaultTaxaType, $searchTerm);
+				$this->setTaxonAttributes($this->associationArr, $defaultTaxaType, $searchTerm);
 			}
 			if($this->associationArr['usethes-associations']){
-				//Set Association Synonyms
-				if(isset($this->associationArr['taxa'])){
-					foreach($this->associationArr['taxa'] as $searchStr => $searchArr){
-						if(isset($searchArr['tid']) && $searchArr['tid']){
-							foreach($searchArr['tid'] as $tid => $rankid){
-								$acceptedTidArr = array($tid);
-								if($rankid >= 180 && $rankid <= 220){
-									$this->associationArr['taxa'] = $this->getAcceptedChildren($acceptedTidArr, $rankid, $searchStr);
-								}
-								$this->associationArr['taxa'] = $this->getSynonymForAllAcceptedTaxa($acceptedTidArr, $rankid, $searchStr);
-							}
-						}
-					}
-				}
+				$this->appendAcceptedChildren($this->associationArr);
+				$this->appendSynonyms($this->associationArr);
 			}
 		}
 	}
@@ -286,7 +262,7 @@ class OccurrenceTaxaManager {
 			$taxaStr = $inputArr[$variableName];
 		}
 		elseif(!empty($_REQUEST[$variableName])){
-			$taxaStr = str_replace(';', ',', $_REQUEST[$variableName]);
+			$taxaStr = $_REQUEST[$variableName];
 		}
 		$taxaStr = str_replace('_', ' ',$taxaStr);
 		return $taxaStr;
@@ -302,10 +278,12 @@ class OccurrenceTaxaManager {
 		return 0;
 	}
 
-	private function setTaxonDetails($targetTaxaArr, $defaultTaxaType, $searchTerm){
+	private function setTaxonAttributes(&$targetTaxaArr, $defaultTaxaType, $searchTerm){
+		//Iterates through individual search terms and populates tid, rankid, etc
 		$useThes = $targetTaxaArr['usethes'];
 		$taxaType = $defaultTaxaType;
 		if($defaultTaxaType == TaxaSearchType::ANY_NAME) {
+			//Extract search term from label tags
 			$n = explode(': ',$searchTerm);
 			if (count($n) > 1) {
 				$taxaType = TaxaSearchType::taxaSearchTypeFromAnyNameSearchTag($n[0]);
@@ -320,19 +298,23 @@ class OccurrenceTaxaManager {
 		}
 		$tid = 0;
 		if(is_numeric($searchTerm)){
+			//Tid was supplied as search term
 			$tid = $searchTerm;
 			$searchTerm = '';
 		}
-		elseif(preg_match('/[(\d+)]/', $searchTerm, $m)){
+		elseif(preg_match('/\[(\d+)\]/', $searchTerm, $m)){
+			//Tid supplied via autocomplete output
 			$tid = $m[1];
-			$searchTerm = trim(str_replace('[' . $tid . ']', '', $searchTerm));
+			$searchTerm = '';
 		}
 		$paramArr = array();
 		$typeStr = '';
 		$sql = 'SELECT t.sciname, t.tid, t.rankid FROM taxa t ';
 		if($tid){
 			if($useThes){
-				$sql .= 'INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted WHERE (ts.taxauthid = ?) AND (ts.tid = ?)';
+				//Use the accepted name as output on matched term
+				$sql .= 'INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted
+					WHERE (ts.taxauthid = ?) AND (ts.tid = ?)';
 				$paramArr[] = $this->taxAuthId;
 				$typeStr = 'i';
 			}
@@ -344,9 +326,10 @@ class OccurrenceTaxaManager {
 		}
 		else{
 			if($useThes){
+				//Use the accepted name as output on matched term
 				$sql .= 'INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted
 					INNER JOIN taxa t2 ON ts.tid = t2.tid
-					WHERE (ts.taxauthid = '.$this->taxAuthId.') AND (t2.sciname = ?)';
+					WHERE (ts.taxauthid = ?) AND (t2.sciname = ?)';
 				$paramArr[] = $this->taxAuthId;
 				$typeStr = 'i';
 			}
@@ -413,89 +396,64 @@ class OccurrenceTaxaManager {
 		}
 	}
 
-	private function getAcceptedChildren(&$acceptedTidArr, $rankid, $searchStr){
-		$retArr = array();
+	private function appendAcceptedChildren(&$taxaArr){
 		//Get accepted children
-		$tid = $acceptedTidArr[0];
-		$sql = 'SELECT DISTINCT t.tid, t.sciname, t.rankid
-			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
-			INNER JOIN taxaenumtree e ON t.tid = e.tid
-			WHERE (e.parenttid = ?) AND (ts.TidAccepted = ts.tid) AND (ts.taxauthid = ?) AND (e.taxauthid = ?)' ;
-		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param('iii', $tid, $this->taxAuthId, $this->taxAuthId);
-			$stmt->execute();
-			$rs = $stmt->get_result();
-			while($r = $rs->fetch_object()){
-				$acceptedTidArr[] = $r->tid;
-				if(!isset($this->taxaArr['taxa'][$r->sciname])){
-					if($rankid == 220){
-						$retArr[$r->sciname]['tid'][$r->tid] = $r->rankid;
-					}
-					else{
-						$retArr[$searchStr]['TID_BATCH'][$r->tid] = '';
-					}
-				}
-			}
-			$rs->free();
-			$stmt->close();
-		}
-		return $retArr;
-	}
-
-	private function addSynonymsOfAcceptedTaxaToArray($accArr, $rankid, $searchStr){
-		$bindingArr = array();
-		$bindingArr = array_merge([$this->taxAuthId], $accArr);
-		$typeStr = str_repeat('s', count($bindingArr));
-		$placeholders = implode(',', array_fill(0, count($accArr), '?'));
-
-		$sql = "SELECT DISTINCT t.tid, t.sciname, t2.sciname as accepted
-			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
-			INNER JOIN taxa t2 ON ts.tidaccepted = t2.tid
-			WHERE (ts.TidAccepted != ts.tid) AND (ts.taxauthid = ?) AND (ts.tidaccepted IN($placeholders)) ";
-		if ($stmt = $this->conn->prepare($sql)) {
-			$stmt->bind_param($typeStr, ...$bindingArr);
-			$stmt->execute();
-			$result = $stmt->get_result();
-			if($result->num_rows > 0){
-				while($r = $result->fetch_assoc()){
-					if($rankid >= 220){
-						$this->associationArr['taxa'][$r['accepted']]['synonyms'][$r['tid']] = $r['sciname'];
-					}
-					else{
-						$this->associationArr['taxa'][$searchStr]['TID_BATCH'][$r['tid']] = '';
+		if(isset($taxaArr['taxa'])){
+			foreach($taxaArr['taxa'] as $taxonTerm => $taxonUnitArr){
+				if(isset($taxonUnitArr['tid']) && isset($taxonUnitArr['taxontype']) && $taxonUnitArr['taxontype'] == 2){
+					$sql = 'SELECT DISTINCT t.tid, t.sciname, t.rankid
+						FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
+						INNER JOIN taxaenumtree e ON t.tid = e.tid
+						WHERE t.rankid >= 220 AND (ts.TidAccepted = ts.tid) AND (e.parenttid IN(' . trim(str_repeat('?,', count($taxonUnitArr['tid'])), ', ') . ')) AND (ts.taxauthid = ?) AND (e.taxauthid = ?)' ;
+					$paramArr = array_keys($taxonUnitArr['tid']);
+					$typeStr = trim(str_repeat('i', count($taxonUnitArr['tid'])));
+					$paramArr[] = $this->taxAuthId;
+					$paramArr[] = $this->taxAuthId;
+					$typeStr .= 'ii';
+					if($stmt = $this->conn->prepare($sql)){
+						$stmt->bind_param($typeStr, ...$paramArr);
+						$stmt->execute();
+						$rs = $stmt->get_result();
+						while($r = $rs->fetch_object()){
+							if(!isset($taxaArr['taxa'][$r->sciname])){
+								$taxaArr['taxa'][$r->sciname]['tid'][$r->tid] = $r->rankid;
+								$taxaArr['taxa'][$r->sciname]['taxontype'] = 2;
+							}
+						}
+						$rs->free();
+						$stmt->close();
 					}
 				}
 			}
-			$stmt->close();
 		}
 	}
 
-	private function getSynonymForAllAcceptedTaxa($acceptedTidArr, $rankid, $searchStr){
-		$retArr = array();
+	private function appendSynonyms(&$taxaArr){
 		//Get synonyms of all accepted taxa
-		$sql = 'SELECT DISTINCT t.tid, t.sciname, t2.sciname as accepted
-			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
-			INNER JOIN taxa t2 ON ts.tidaccepted = t2.tid
-			WHERE (ts.TidAccepted != ts.tid) AND (ts.tidaccepted IN(' . implode(',', array_fill(0, count($acceptedTidArr), '?')) . ')) AND (ts.taxauthid = ?) ';
-		$paramArr = $acceptedTidArr;
-		$paramArr[] = $this->taxAuthId;
-		$typeStr = str_repeat('i', count($acceptedTidArr)) . 'i';
-		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param($typeStr, ...$paramArr);
-			$stmt->execute();
-			$rs = $stmt->get_result();
-			while($r = $rs->fetch_object()) {
-				if($rankid >= 220){
-					$retArr[$r->accepted]['synonyms'][$r->tid] = $r->sciname;
-				}
-				else{
-					$retArr[$searchStr]['TID_BATCH'][$r->tid] = '';
+		if(isset($taxaArr['taxa'])){
+			foreach($taxaArr['taxa'] as $taxonTerm => $taxonUnitArr){
+				if(isset($taxonUnitArr['tid']) && isset($taxonUnitArr['taxontype']) && $taxonUnitArr['taxontype'] == 2){
+					$sql = 'SELECT DISTINCT t.tid, t.sciname, t2.sciname as accepted
+						FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
+						INNER JOIN taxa t2 ON ts.tidaccepted = t2.tid
+						WHERE (ts.TidAccepted != ts.tid) AND (ts.tidaccepted IN(' . trim(str_repeat('?,', count($taxonUnitArr['tid'])), ', ') . ')) AND (ts.taxauthid = ?) ';
+					$paramArr = array_keys($taxonUnitArr['tid']);
+					$typeStr = trim(str_repeat('i', count($taxonUnitArr['tid'])));
+					$paramArr[] = $this->taxAuthId;
+					$typeStr .= 'i';
+					if($stmt = $this->conn->prepare($sql)){
+						$stmt->bind_param($typeStr, ...$paramArr);
+						$stmt->execute();
+						$rs = $stmt->get_result();
+						while($r = $rs->fetch_object()) {
+							$taxaArr['taxa'][$taxonTerm]['synonyms'][$r->tid] = $r->sciname;
+						}
+						$rs->free();
+						$stmt->close();
+					}
 				}
 			}
-			$rs->free();
-			$stmt->close();
 		}
-		return $retArr;
 	}
 
 	public function getTaxaSearchStr(){
@@ -505,16 +463,16 @@ class OccurrenceTaxaManager {
 				$str = '';
 				if(isset($taxonArr['taxontype']) && $this->taxaArr['taxontype'] == TaxaSearchType::ANY_NAME) $str .= TaxaSearchType::anyNameSearchTag($taxonArr['taxontype']).': ';
 				$str .= $taxonName;
-				if(array_key_exists("scinames",$taxonArr)){
-					$str .= " => ".implode(",",$taxonArr["scinames"]);
+				if(array_key_exists('scinames', $taxonArr)){
+					$str .= " => ".implode(',' ,$taxonArr['scinames']);
 				}
-				if(array_key_exists("synonyms",$taxonArr)){
-					$str .= " (".implode(", ",$taxonArr["synonyms"]).")";
+				if(array_key_exists('synonyms', $taxonArr)){
+					$str .= ' (' . implode(', ', $taxonArr['synonyms']) . ')';
 				}
 				$returnArr[] = $str;
 			}
 		}
-		return implode(", ", $returnArr);
+		return implode(', ', $returnArr);
 	}
 
 	public function getAssociationSearchStr(){

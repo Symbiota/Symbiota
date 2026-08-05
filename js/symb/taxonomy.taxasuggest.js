@@ -40,11 +40,11 @@ function initiateTaxaSuggest(inputID, taxonSearchType = 2) {
 			},
 			select(event, ui) {
 				if(multipleTermSupport){
-					let terms = this.value.split(/,\s*/);
+					let terms = this.value.replace("],", "];").split(/;\s*/);
 					let targetIndex = terms.length - 1;
 					// Replace last term with select item
 					terms[targetIndex] = ui.item.value;
-					this.value = terms.join(", ");
+					this.value = terms.join("; ");
 				}
 				else{
 					this.value = ui.item.value;
@@ -57,8 +57,8 @@ function initiateTaxaSuggest(inputID, taxonSearchType = 2) {
 
 function extractLast(term) {
 	//Returns the last search term whenever mulitple are entered separeted by a commas
-		if(multipleTermSupport) return term.split(/,\s*/).pop();
-		return term;
+	if(multipleTermSupport) return term.split(/[;,]{1}\s*/).pop();
+	return term;
 }
 
 //Set base values and options

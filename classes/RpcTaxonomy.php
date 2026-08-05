@@ -22,6 +22,9 @@ class RpcTaxonomy extends RpcBase{
 	public function getTaxaSuggest($queryString, $rankLow = 0, $rankHigh = 0){
 		$retArr = Array();
 		if($queryString){
+			$homonymSupportIndex = 0;
+			if(!empty($GLOBALS['HOMONYM_SUPPORT'])) $homonymSupportIndex = $GLOBALS['HOMONYM_SUPPORT'];
+
 			$this->cleanQueryString($queryString);
 			if(!$this->taxonSearchType && !empty($GLOBALS['DEFAULT_TAXON_SEARCH'])){
 				$this->taxonSearchType = $GLOBALS['DEFAULT_TAXON_SEARCH'];
@@ -50,8 +53,11 @@ class RpcTaxonomy extends RpcBase{
 			}
 			elseif($this->taxonSearchType == 5){
 				//COMMON_NAME
-				$sql = 'SELECT DISTINCT v.tid, CONCAT(v.vernacularname, " (", t.sciname, ")") AS sciname, "" as author, t.kingdomName
-					FROM taxavernaculars v INNER JOIN taxa t ON v.tid = t.tid
+				$sql = 'SELECT DISTINCT v.tid, CONCAT(v.vernacularname, " (", t.sciname, ';
+				if($homonymSupportIndex == 1 || $homonymSupportIndex == 3) $sql .= '" ", t.author, ';
+				$sql .= '")") AS sciname, "" as author';
+				if($homonymSupportIndex > 1) $sql .= ', t.kingdomName';
+				$sql .= ' FROM taxavernaculars v INNER JOIN taxa t ON v.tid = t.tid
 					WHERE v.vernacularname LIKE ? ';
 				$paramArr[] = '%' . $queryString . '%';
 				$typeStr = 's';
@@ -94,8 +100,6 @@ class RpcTaxonomy extends RpcBase{
 				}
 			}
 			if($stmt = $this->conn->prepare($sql)){
-				$homonymSupportIndex = 0;
-				if(!empty($GLOBALS['HOMONYM_SUPPORT'])) $homonymSupportIndex = $GLOBALS['HOMONYM_SUPPORT'];
 				$stmt->bind_param($typeStr, ...$paramArr);
 				$stmt->execute();
 				$rs = $stmt->get_result();
