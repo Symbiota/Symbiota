@@ -502,7 +502,7 @@ if ($SYMB_UID) {
 								if ($collManager->traitCodingActivated()) {
 									?>
 									<li>
-										<a href="javascript:void(0)" onclick="showItemsList('traitItem', document.getElementById('showTrait'))">
+										<a href="javascript:void(0)" onclick="showItemsList('traitItem', document.getElementById('showTrait'))" role="button">
 											<?= $LANG['TRAIT_CODING_TOOLS'] ?>
 										</a>
 										<button id="showTrait" class="clear-icon-button" onclick="showItemsList('traitItem', this)" aria-label="<?php echo $LANG['SHOW_OPTIONS']; ?>">
@@ -565,7 +565,7 @@ if ($SYMB_UID) {
 									</a>
 								</li>
 								<li>
-									<a href="javascript:void(0)" onclick="showItemsList('importItem', document.getElementById('showImport'))">
+									<a href="javascript:void(0)" onclick="showItemsList('importItem', document.getElementById('showImport'))" role="button">
 										<?= $LANG['IMPORT_SPECIMEN'] ?>
 									</a>
 									<a id="importinfo" class="link-icon" href="https://docs.symbiota.org/Collection_Manager_Guide/Importing_Uploading/" target="_blank" title="<?php echo $LANG['MORE_INFO'] . $LANG['OPENS_NEW_TAB']; ?>" aria-label="<?php echo $LANG['MORE_INFO'] . $LANG['OPENS_NEW_TAB']; ?>">
