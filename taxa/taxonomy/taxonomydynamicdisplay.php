@@ -2,6 +2,7 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyDisplayManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
 Language::load('taxa/taxonomy/taxonomydisplay');
 
@@ -10,7 +11,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 $target = $_REQUEST['target'] ?? '';
 $displayAuthor = !empty($_REQUEST['displayauthor']) ? 1: 0;
 $limitToOccurrences = !empty($_REQUEST['limittooccurrences']) ? 1 : 0;
-$taxAuthId = array_key_exists('taxauthid', $_REQUEST) ? filter_var($_REQUEST['taxauthid'], FILTER_SANITIZE_NUMBER_INT) : 1;
+$taxAuthId = array_key_exists('taxauthid', $_REQUEST) ? Sanitize::int($_REQUEST['taxauthid']) : 1;
 $editorMode = !empty($_REQUEST['emode']) ? 1 : 0;
 $submitAction = array_key_exists('tdsubmit', $_POST) ? $_POST['tdsubmit'] : '';
 $statusStr = $_REQUEST['statusstr'] ?? '';
@@ -41,11 +42,11 @@ reset($treePath);
 //echo json_encode($treePath);
 ?>
 <!Doctype html>
-<html lang="<?php echo $LANG_TAG ?>">
+<html lang="<?= $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['TAX_EXPLORE'] . ': ' . $taxonDisplayObj->getTargetStr(); ?></title>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<title><?= $DEFAULT_TITLE . ' ' . $LANG['TAX_EXPLORE'] . ': ' . Sanitize::outString($taxonDisplayObj->getTargetStr()) ?></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET; ?>"/>
+	<link href="<?= $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
@@ -85,9 +86,10 @@ reset($treePath);
 			clear: both;
 		}
 	</style>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="../../js/dojo-1.17.3/dojo/dojo.js"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/dojo-1.17.3/dojo/dojo.js"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxonomy.taxasuggest.js?ver=1" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			setTaxaSuggestRootPath("<?= $CLIENT_ROOT ?>");
@@ -106,19 +108,19 @@ reset($treePath);
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-		<a href="taxonomydynamicdisplay.php"><b><?php echo htmlspecialchars($LANG['TAX_EXPLORE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></b></a>
+		<a href="../../index.php"><?= $LANG['HOME'] ?></a> &gt;&gt;
+		<a href="taxonomydynamicdisplay.php"><b><?= $LANG['TAX_EXPLORE'] ?></b></a>
 	</div>
 	<!-- This is inner text! -->
 	<div role="main" id="innertext">
 		<?php $taxMetaArr = $taxonDisplayObj->getTaxonomyMeta(); ?>
-		<h1 class="page-heading"><?php echo $LANG['TAX_EXPLORE'] . ': ' . (array_key_exists('name', $taxMetaArr) ? $taxMetaArr['name'] : $LANG['CENTRAL_THESAURUS']); ?></h1>
+		<h1 class="page-heading"><?= $LANG['TAX_EXPLORE'] . ': ' . (array_key_exists('name', $taxMetaArr) ? $taxMetaArr['name'] : $LANG['CENTRAL_THESAURUS']); ?></h1>
 		<?php
 		if($statusStr){
 			?>
 			<hr/>
-			<div style="color:<?php echo (strpos($statusStr,'SUCCESS') !== false?'green':'red'); ?>;margin:15px;">
-				<?= $taxonDisplayObj->cleanOutStr($statusStr); ?>
+			<div style="color:<?= (strpos($statusStr,'SUCCESS') !== false ? 'green' : 'red') ?>;margin:15px;">
+				<?= Sanitize::outString($statusStr) ?>
 			</div>
 			<hr/>
 			<?php
@@ -150,14 +152,14 @@ reset($treePath);
 		<div style="clear:both;">
 			<form id="tdform" name="tdform" action="taxonomydynamicdisplay.php" method='POST'>
 				<fieldset class="fieldset-size">
-					<legend><b><?php echo $LANG['TAX_SEARCH']; ?></b></legend>
+					<legend><b><?= $LANG['TAX_SEARCH']; ?></b></legend>
                     <div>
 						<label for="taxontarget"> <?= $LANG['TAXON'] ?>: </label>
-						<input id="taxontarget" name="target" type="text" class="search-bar" value="<?= $taxonDisplayObj->getTargetStr() ?>" />
+						<input id="taxontarget" name="target" type="text" class="search-bar" value="<?= Sanitize::outString($taxonDisplayObj->getTargetStr()) ?>" />
 					</div>
 					<div style="margin:15px 15px 0px 60px;">
 						<div>
-							<input id="displayauthor" name="displayauthor" type="checkbox" value="1" <?php echo ($displayAuthor ? 'checked' : ''); ?> />
+							<input id="displayauthor" name="displayauthor" type="checkbox" value="1" <?= ($displayAuthor ? 'checked' : ''); ?> />
 							<label for="displayauthor"> <?= $LANG['DISP_AUTHORS'] ?> </label>
 						</div>
 						<div>
@@ -230,7 +232,7 @@ reset($treePath);
 					store: taxonTreeStore,
 					deferItemLoadingUntilExpand: true,
 					getRoot: function(onItem){
-						this.store.query({id:"root",authors:<?php echo $displayAuthor; ?>,targetid:<?php echo $targetId; ?>}).then(onItem);
+						this.store.query({id:"root",authors:<?= $displayAuthor; ?>,targetid:<?= $targetId; ?>}).then(onItem);
 					},
 					mayHaveChildren: function(object){
 						return "children" in object;
@@ -258,7 +260,7 @@ reset($treePath);
 					}
 				}, "tree");
 
-				taxonTree.set("path", <?php echo json_encode($treePath); ?>).then(
+				taxonTree.set("path", <?= json_encode($treePath); ?>).then(
 					function(path){
 						if(taxonTree.selectedNode){
 							taxonTree._expandNode(taxonTree.selectedNode);
@@ -270,7 +272,7 @@ reset($treePath);
 				taxonTree.startup();
 
 				/*taxonTree.onLoadDeferred.then(function(){
-					var parentnode = taxonTree.getNodesByItem("<?php echo $targetId; ?>");
+					var parentnode = taxonTree.getNodesByItem("<?= $targetId; ?>");
 					var lastnodes = parentnode[0].getChildren();
 					for (i in lastnodes) {
 						if(lastnodes[i].isExpanded){

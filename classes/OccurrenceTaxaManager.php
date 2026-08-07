@@ -77,8 +77,7 @@ class OccurrenceTaxaManager {
 				$this->appendAcceptedChildren($this->taxaArr);
 				$this->appendSynonyms($this->taxaArr);
 			}
-			echo 'setTaxonRequestVariable<br>';
-			echo '<pre>'; print_r($this->taxaArr); echo '</pre>';
+			//echo '<pre>'; print_r($this->taxaArr); echo '</pre>';
 		}
 	}
 
@@ -184,7 +183,7 @@ class OccurrenceTaxaManager {
 			if(strpos($sqlWhereTaxa,'e.parenttid')) $sqlWhereTaxa .= 'AND (e.taxauthid = '.$this->taxAuthId.') ';
 			if(strpos($sqlWhereTaxa,'ts.family')) $sqlWhereTaxa .= 'AND (ts.taxauthid = '.$this->taxAuthId.') ';
 		}
-		echo 'sql: ' . $sqlWhereTaxa . '<br><br>'; exit;
+		//echo 'sql: ' . $sqlWhereTaxa . '<br><br>'; exit;
 		if($sqlWhereTaxa) return $sqlWhereTaxa;
 		else return false;
 	}

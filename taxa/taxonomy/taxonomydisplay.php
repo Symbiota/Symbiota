@@ -96,11 +96,11 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 		<h1 class="page-heading"><?php $LANG['CENTRAL_TAXANOMIC_THESAURUS']; ?></h1>
 		<?php
 		if($statusStr){
-			$statusStr = str_replace(';', '<br/>', htmlspecialchars($statusStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE));
+			$statusStr = str_replace(';', '<br/>', $statusStr);
 			?>
 			<hr/>
-			<div style="color:<?= (stripos($statusStr,'SUCCESS') !== false?'green':'red'); ?>;margin:15px;">
-				<?= $statusStr; ?>
+			<div style="color:<?= (stripos($statusStr,'SUCCESS') !== false?'green':'red') ?>;margin:15px;">
+				<?= Sanitize::outString($statusStr) ?>
 			</div>
 			<hr/>
 			<?php
