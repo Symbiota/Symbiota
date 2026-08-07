@@ -173,13 +173,13 @@ class LocalStorage extends StorageStrategy {
 	public function remove($file): Bool {
 		$filename = is_array($file)? $file['name']: $file;
 
-		if(!is_writable($GLOBALS['SERVER_ROOT'] . $filename)) {
-			throw new MediaException(MediaException::FilepathNotWritable, $filename);
-		}
-
 		//Check Relative Path
 		if($this->file_exists($filename)) {
-			if(!unlink($this->getDirPath($filename))) {
+			$file_path = $this->getDirPath($filename);
+			if(!is_writable($file_path)) {
+				throw new MediaException(MediaException::FilepathNotWritable, $filename);
+			}
+			if(!unlink($file_path)) {
 				error_log("WARNING: File (path: " . $this->getDirPath($filename) . ") failed to delete from server in LocalStorage->remove");
 				return false;
 			};
@@ -195,6 +195,9 @@ class LocalStorage extends StorageStrategy {
 
 		//Check Absolute path
 		if($dir_path !== $filename && file_exists($dir_path)) {
+			if(!is_writable($dir_path)) {
+				throw new MediaException(MediaException::FilepathNotWritable, $filename);
+			}
 			if(!unlink($dir_path)) {
 				error_log("WARNING: File (path: " . $dir_path. ") failed to delete from server in LocalStorage->remove");
 				return false;
