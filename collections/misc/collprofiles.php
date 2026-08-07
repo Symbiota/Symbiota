@@ -506,7 +506,7 @@ if ($SYMB_UID) {
 											<?= $LANG['TRAIT_CODING_TOOLS'] ?>
 										</a>
 										<button id="showTrait" class="clear-icon-button" onclick="showItemsList('traitItem', this)" aria-label="<?php echo $LANG['SHOW_OPTIONS']; ?>">
-											<img class=seemore-icon src="../../images/tochild.png">
+											<img class=seemore-icon src="../../images/tochild.png" alt="">
 										</button>
 									</li>
 									<li class="traitItem" style="margin-left:10px;display:none;">
@@ -572,7 +572,7 @@ if ($SYMB_UID) {
 											<img src="../../images/info.png" style="width:13px;" alt="<?= $LANG['INFO_ALT'] ?>" />
 									</a>
 									<button id="showImport" class="clear-icon-button" onclick="showItemsList('importItem', this)" aria-label="<?php echo $LANG['SHOW_OPTIONS'] ?>">
-										<img class="seemore-icon" src="../../images/tochild.png">
+										<img class="seemore-icon" src="../../images/tochild.png" alt="">
 									</button>
 								</li>
 								<li class="importItem">
