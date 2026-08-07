@@ -63,7 +63,7 @@ class TaxonomyUpload{
 			try {
 				UploadUtil::checkFileUpload(
 					$_FILES['uploadfile'],
-					UploadUtil::ALLOWED_ZIP_MIMES
+					UploadUtil::ALLOWED_BATCH_PROCESSING_MIMES
 				);
 			} catch(Exception $e) {
 				$this->errorStr = 'ERROR: ' . $e->getMessage();
