@@ -49,8 +49,8 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 			<div id="idrankeditdiv" style="display:none;margin:15px;">
 				<form name="editidrankingform" action="occurrenceeditor.php" method="post">
 					<div style='margin:3px;'>
-						<b><?php echo $LANG['CONFIDENCE_IN_DET']; ?>:</b>
-						<select name="confidenceranking">
+						<label for="confidenceranking_1"><b><?php echo $LANG['CONFIDENCE_IN_DET']; ?>:</b></label>
+						<select id="confidenceranking_1" name="confidenceranking">
 							<?php
 							$currentRanking = 5;
 							if($idRanking) $currentRanking = $idRanking['ranking'];
@@ -69,8 +69,8 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 						</select>
 					</div>
 					<div style='margin:3px;'>
-						<b><?php echo $LANG['NOTES']; ?>:</b>
-						<input name="notes" type="text" value="<?php echo ($idRanking?$idRanking['notes']:''); ?>" style="width:90%;" />
+						<label for="dettab_notes"><b><?php echo $LANG['NOTES']; ?>:</b></label>
+						<input id="dettab_notes" name="notes" type="text" value="<?php echo ($idRanking?$idRanking['notes']:''); ?>" style="width:90%;" />
 					</div>
 					<div style='margin:15px;'>
 						<input type="hidden" name="occid" value="<?php echo $occId; ?>" />
@@ -157,8 +157,8 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 						}
 						?>
 						<div style='margin:3px;'>
-							<b><?php echo $LANG['ID_QUALIFIER']; ?>:</b>
-							<input type="text" name="identificationqualifier" title="e.g. cf, aff, etc" />
+							<label for="add_identificationqualifier"><b><?php echo $LANG['ID_QUALIFIER']; ?>:</b></label>
+							<input type="text" id="add_identificationqualifier" name="identificationqualifier" title="e.g. cf, aff, etc" />
 						</div>
 						<div style='margin:3px;'>
 							<label for="dafsciname"><b><?= $LANG['SCI_NAME']; ?></b></label>:
@@ -171,8 +171,8 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 							<input id="add_scientificnameauthorship" type="text" name="scientificnameauthorship" style="width:200px;" />
 						</div>
 						<div style='margin:3px;'>
-							<b><?php echo $LANG['CONFIDENCE_IN_DET']; ?>:</b>
-							<select name="confidenceranking">
+							<label for="confidenceranking_2"><b><?php echo $LANG['CONFIDENCE_IN_DET']; ?>:</b></label>
+							<select id="confidenceranking_2" name="confidenceranking">
 								<option value="8"><?php echo $LANG['HIGH']; ?></option>
 								<option value="5" selected><?php echo $LANG['MEDIUM']; ?></option>
 								<option value="2"><?php echo $LANG['LOW']; ?></option>
@@ -187,18 +187,18 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 							<input id="add_dateidentified" type="text" name="dateidentified" required onchange="detDateChanged(this.form);" />
 						</div>
 						<div style='margin:3px;'>
-							<b><?php echo $LANG['REFERENCE']; ?>:</b>
-							<input type="text" name="identificationreferences" style="width:350px;" />
+							<label for="add_identificationreferences"><b><?php echo $LANG['REFERENCE']; ?>:</b></label>
+							<input type="text" id="add_identificationreferences" name="identificationreferences" style="width:350px;" />
 						</div>
 						<div style='margin:3px;'>
-							<b><?php echo $LANG['NOTES']; ?>:</b>
-							<input type="text" name="identificationremarks" style="width:350px;" />
+							<label for="add_identificationremarks"><b><?php echo $LANG['NOTES']; ?>:</b></label>
+							<input type="text" id="add_identificationremarks" name="identificationremarks" style="width:350px;" />
 						</div>
 						<div style='margin:3px;'>
-							<input type="checkbox" name="makecurrent" value="1" /> <?php echo $LANG['MAKE_THIS_CURRENT']; ?>
+							<input type="checkbox" id="add_makecurrent" name="makecurrent" value="1" /> <label for="add_makecurrent"><?php echo $LANG['MAKE_THIS_CURRENT']; ?></label>
 						</div>
 						<div style='margin:3px;'>
-							<input type="checkbox" name="printqueue" value="1" /> <?php echo $LANG['ADD_TO_PRINT']; ?>
+							<input type="checkbox" id="add_printqueue" name="printqueue" value="1" /> <label for="add_printqueue"><?php echo $LANG['ADD_TO_PRINT']; ?></label>
 						</div>
 						<div style='margin:15px;'>
 							<input type="hidden" name="occid" value="<?php echo $occId; ?>" />
@@ -286,41 +286,41 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 							<legend><b><?php echo $LANG['EDIT_DET']; ?></b></legend>
 							<form name="deteditform" action="occurrenceeditor.php" method="post" onsubmit="return verifyDetForm(this);">
 								<div style='margin:3px;'>
-									<b><?php echo $LANG['ID_QUALIFIER']; ?>:</b>
-									<input type="text" name="identificationqualifier" value="<?php echo $detRec['identificationqualifier']; ?>" title="e.g. cf, aff, etc" />
+									<label for="edit_identificationqualifier-<?php echo $detId;?>"><b><?php echo $LANG['ID_QUALIFIER']; ?>:</b></label>
+									<input type="text" id="edit_identificationqualifier-<?php echo $detId;?>" name="identificationqualifier" value="<?php echo $detRec['identificationqualifier']; ?>" title="e.g. cf, aff, etc" />
 								</div>
 								<div style='margin:3px;'>
-									<label for="defsciname"><b><?= $LANG['SCI_NAME']; ?></b></label>:
+									<label for="defsciname-<?php echo $detId;?>"><b><?= $LANG['SCI_NAME']; ?></b></label>:
 									<input type="text" id="defsciname-<?php echo $detId;?>" name="sciname" value="<?php echo $detRec['sciname']; ?>" required style="width:350px;" onfocus="initDetAutocomplete(this.form)" />
 									<input type="hidden" id="deftidtoadd" name="tidtoadd" value="" />
 									<input type="hidden" name="family" value="" />
 								</div>
 								<div style='margin:3px;'>
-									<b><?php echo $LANG['AUTHOR']; ?>:</b>
-									<input type="text" name="scientificnameauthorship" value="<?php echo $detRec['scientificnameauthorship']; ?>" style="width:200px;" />
+									<label for="edit_scientificnameauthorship-<?php echo $detId;?>"><b><?php echo $LANG['AUTHOR']; ?>:</b></label>
+									<input type="text" id="edit_scientificnameauthorship-<?php echo $detId;?>" name="scientificnameauthorship" value="<?php echo $detRec['scientificnameauthorship']; ?>" style="width:200px;" />
 								</div>
 								<div style='margin:3px;'>
-									<label for="edit_identifiedby"><b><?= $LANG['DETERMINER']; ?></b></label>:
-									<input id="edit_identifiedby" type="text" name="identifiedby" value="<?php echo $detRec['identifiedby']; ?>" required style="width:200px;" />
+									<label for="edit_identifiedby-<?php echo $detId;?>"><b><?= $LANG['DETERMINER']; ?></b></label>:
+									<input id="edit_identifiedby-<?php echo $detId;?>" type="text" name="identifiedby" value="<?php echo $detRec['identifiedby']; ?>" required style="width:200px;" />
 								</div>
 								<div style='margin:3px;'>
-									<label for="edit_identifiedby"><b><?= $LANG['DATE']; ?></b></label>:
-									<input id="edit_identifiedby" type="text" name="dateidentified" value="<?php echo $detRec['dateidentified']; ?>" required />
+									<label for="edit_dateidentified-<?php echo $detId;?>"><b><?= $LANG['DATE']; ?></b></label>:
+									<input id="edit_dateidentified-<?php echo $detId;?>" type="text" name="dateidentified" value="<?php echo $detRec['dateidentified']; ?>" required />
 								</div>
 								<div style='margin:3px;'>
-									<b><?php echo $LANG['REFERENCE']; ?>:</b>
-									<input type="text" name="identificationreferences" value="<?php echo $detRec['identificationreferences']; ?>" style="width:350px;" />
+									<label for="edit_identificationreferences-<?php echo $detId;?>"><b><?php echo $LANG['REFERENCE']; ?>:</b></label>
+									<input type="text" id="edit_identificationreferences-<?php echo $detId;?>" name="identificationreferences" value="<?php echo $detRec['identificationreferences']; ?>" style="width:350px;" />
 								</div>
 								<div style='margin:3px;'>
-									<b><?php echo $LANG['NOTES']; ?>:</b>
-									<input type="text" name="identificationremarks" value="<?php echo $detRec['identificationremarks']; ?>" style="width:350px;" />
+									<label for="edit_identificationremarks-<?php echo $detId;?>"><b><?php echo $LANG['NOTES']; ?>:</b></label>
+									<input type="text" id="edit_identificationremarks-<?php echo $detId;?>" name="identificationremarks" value="<?php echo $detRec['identificationremarks']; ?>" style="width:350px;" />
 								</div>
 								<div style='margin:3px;'>
-									<b><?php echo $LANG['SORT_SEQUENCE']; ?>:</b>
-									<input type="text" name="sortsequence" value="<?php echo $detRec['sortsequence']; ?>" style="width:40px;" />
+									<label for="edit_sortsequence-<?php echo $detId;?>"><b><?php echo $LANG['SORT_SEQUENCE']; ?>:</b></label>
+									<input type="text" id="edit_sortsequence-<?php echo $detId;?>" name="sortsequence" value="<?php echo $detRec['sortsequence']; ?>" style="width:40px;" />
 								</div>
 								<div style='margin:3px;'>
-									<input type="checkbox" name="printqueue" value="1" <?php if($detRec['printqueue']) echo 'checked'; ?> /> <?php echo $LANG['ADDED_TO_QUEUE']; ?>
+									<input type="checkbox" id="edit_printqueue-<?php echo $detId;?>" name="printqueue" value="1" <?php if($detRec['printqueue']) echo 'checked'; ?> /> <label for="edit_printqueue-<?php echo $detId;?>"><?php echo $LANG['ADDED_TO_QUEUE']; ?></label>
 								</div>
 								<div style='margin:15px;'>
 									<input type="hidden" name="occid" value="<?php echo $occId; ?>" />

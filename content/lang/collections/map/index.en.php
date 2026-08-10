@@ -71,4 +71,11 @@ $LANG['OPEN_SEARCH_PANEL'] = 'Open Search Panel';
 $LANG['HIDE_PANEL'] = 'Hide Panel';
 $LANG['MAP_RECORD_LIMIT_MESSAGE'] = 'Map record limit exceeded. Warning Result has been truncated';
 $LANG['DYNAMIC_HEATMAP_AUTO_ENABLED'] = 'Map record count high. Enabling the heatmap setting to help with performance';
+$LANG['HEMISPHERE'] = 'Hemisphere';
+$LANG['LAT_DEG'] = 'Latitude Degree';
+$LANG['LAT_MIN'] = 'Latitude Minute';
+$LANG['LAT_SEC'] = 'Latitude Second';
+$LANG['LONG_DEG'] = 'Longitude Degree';
+$LANG['LONG_MIN'] = 'Longitude Minute';
+$LANG['LONG_SEC'] = 'Longitude Second';
 ?>

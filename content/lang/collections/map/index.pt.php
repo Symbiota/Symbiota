@@ -71,4 +71,11 @@ $LANG['OPEN_SEARCH_PANEL'] = 'Abrir painel de pesquisa';
 $LANG['HIDE_PANEL'] = 'Ocultar painel';
 $LANG['MAP_RECORD_LIMIT_MESSAGE'] = 'O limite de registros do mapa foi excedido. Aviso: O resultado foi truncado.';
 $LANG['DYNAMIC_HEATMAP_AUTO_ENABLED'] = 'O número de registros no mapa está alto. Habilitar o mapa de calor pode ajudar no desempenho.';
+$LANG['HEMISPHERE'] = 'Hemisfério';
+$LANG['LAT_DEG'] = 'Latitude Grau';
+$LANG['LAT_MIN'] = 'Latitude Minuto';
+$LANG['LAT_SEC'] = 'Latitude Segundo';
+$LANG['LONG_DEG'] = 'Longitude Grau';
+$LANG['LONG_MIN'] = 'Longitude Minuto';
+$LANG['LONG_SEC'] = 'Longitude Segundo';
 ?>

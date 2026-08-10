@@ -122,8 +122,8 @@ $occManager->setOccId($occid);
 			<legend><b><?php echo $LANG['TRANSFER_SPEC']; ?></b></legend>
 			<form name="transrecform" method="post" target="occurrenceeditor.php">
 				<div>
-					<b><?php echo $LANG['TARGET_COL']; ?></b><br />
-					<select name="transfercollid">
+					<label for="transfercollid"<b><?php echo $LANG['TARGET_COL']; ?></b></label><br />
+					<select id="transfercollid" name="transfercollid">
 						<option value="0"><?php echo $LANG['SEL_COL']; ?></option>
 						<option value="0">----------------------</option>
 						<?php
@@ -132,7 +132,7 @@ $occManager->setOccId($occid);
 						}
 						?>
 					</select><br />
-					<input name="remainoncoll" type="checkbox" value="1" CHECKED /> <?php echo $LANG['REMAIN_CURRENT']; ?>
+					<input id="remainoncoll" name="remainoncoll" type="checkbox" value="1" CHECKED /> <label for="remainoncoll"><?php echo $LANG['REMAIN_CURRENT']; ?></label>
 				</div>
 				<div style="margin:10px;">
 					<input name="occindex" type="hidden" value="<?php echo $occIndex; ?>" />

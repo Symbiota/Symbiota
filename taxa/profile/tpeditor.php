@@ -244,12 +244,12 @@ if($isEditor && $action){
 									<fieldset style="width:650px;margin:5px 0px 0px 20px;">
 										<legend><b><?php echo $LANG['NEW_COMMON_NAME']; ?></b></legend>
 										<div>
-											<?php echo $LANG['COMMON_NAME']; ?>:
-											<input name="vernname" type="text" style="width:250px" />
+											<label for="vernname"><?php echo $LANG['COMMON_NAME']; ?>:
+											<input id="vernname" name="vernname" type="text" style="width:250px" />
 										</div>
 										<div>
-											<?php echo $LANG['LANGUAGE']; ?>:
-											<select name="langid">
+											<label for="tpeditor_langid"><?php echo $LANG['LANGUAGE']; ?>:</label>
+											<select id="tpeditor_langid" name="langid">
 												<option value=""><?php echo $LANG['SEL_LANGUAGE']; ?></option>
 												<?php
 												foreach($langArr as $langID => $langName){
@@ -259,16 +259,16 @@ if($isEditor && $action){
 											</select>
 										</div>
 										<div>
-											<?php echo $LANG['NOTES']; ?>:
-											<input name="notes" type="text" style="width:500px" />
+											<label for="tpeditor_notes"><?php echo $LANG['NOTES']; ?>:</label>
+											<input id="tpeditor_notes" name="notes" type="text" style="width:500px" />
 										</div>
 										<div>
-											<?php echo $LANG['SOURCE']; ?>:
-											<input name="source" type="text" style="width:500px" />
+											<label for="tpeditor_source"><?php echo $LANG['SOURCE']; ?>:</label>
+											<input id="tpeditor_source" name="source" type="text" style="width:500px" />
 										</div>
 										<div>
-											<?php echo $LANG['SORT_SEQUENCE']; ?>:
-											<input name="sortsequence" style="width:40px" type="text" />
+											<label for="tpeditor_sortsequence"><?php echo $LANG['SORT_SEQUENCE']; ?>:</label>
+											<input id="tpeditor_sortsequence" name="sortsequence" style="width:40px" type="text" />
 										</div>
 										<div>
 											<input type="hidden" name="tid" value="<?php echo $tEditor->getTid(); ?>" />
@@ -295,14 +295,15 @@ if($isEditor && $action){
 											<form name="updatevern" action="tpeditor.php" method="post" style="margin:15px;clear:both">
 												<div class="sectionDiv">
 													<div class='vid-<?php echo $vid; ?>' style='display:none;'>
-														<input id="vernname" name="vernname" type="text" value="<?php echo $vernArr["vernname"]; ?>" style="width:250px" />
+														<label for="vernname-<?php echo $vid; ?>"><?php echo $LANG['COMMON_NAME']; ?>:</label>
+														<input id="vernname-<?php echo $vid; ?>" name="vernname" type="text" value="<?php echo $vernArr["vernname"]; ?>" style="width:250px" />
 													</div>
 												</div>
 												<div class="sectionDiv">
-													<div class="labelDiv"><?php echo $LANG['LANGUAGE']; ?>:</div>
+													<div class="labelDiv"><label for="langid-<?php echo $vid; ?>"><?php echo $LANG['LANGUAGE']; ?>:</label></div>
 													<div class='vid-<?php echo $vid; ?>'><?php echo $langArr[$vernArr['langid']]; ?></div>
 													<div class='vid-<?php echo $vid; ?>' style='display:none;'>
-														<select name="langid">
+														<select id="langid-<?php echo $vid; ?>" name="langid">
 															<option value=""><?php echo $LANG['SEL_LANGUAGE']; ?></option>
 															<?php
 															foreach($langArr as $langID => $langName){
@@ -313,24 +314,24 @@ if($isEditor && $action){
 													</div>
 												</div>
 												<div class="sectionDiv">
-													<div class="labelDiv"><?php echo $LANG['NOTES']; ?>:</div>
+													<div class="labelDiv"><label for="tpeditor_notes-<?php echo $vid; ?>"><?php echo $LANG['NOTES']; ?>:</label></div>
 													<div class="vid-<?php echo $vid; ?>"><?php echo $vernArr['notes']; ?></div>
 													<div class="vid-<?php echo $vid; ?>" style="display:none;">
-														<input id='notes' name='notes' type='text' value='<?php echo $vernArr['notes'];?>' style="width:500px" />
+														<input id='tpeditor_notes-<?php echo $vid; ?>' name='notes' type='text' value='<?php echo $vernArr['notes'];?>' style="width:500px" />
 													</div>
 												</div>
 												<div class="sectionDiv">
-													<div class="labelDiv"><?php echo $LANG['SOURCE']; ?>:</div>
+													<div class="labelDiv"><label for="tpeditor_source-<?php echo $vid; ?>"><?php echo $LANG['SOURCE']; ?>:</label></div>
 													<div class="vid-<?php echo $vid; ?>"> <?php echo $vernArr['source']; ?></div>
 													<div class="vid-<?php echo $vid; ?>" style='display:none;'>
-														<input id='source' name='source' type='text' value='<?php echo $vernArr['source']; ?>' style="width:500px" />
+														<input id='tpeditor_source-<?php echo $vid; ?>' name='source' type='text' value='<?php echo $vernArr['source']; ?>' style="width:500px" />
 													</div>
 												</div>
 												<div class="sectionDiv">
-													<div class="labelDiv"><?php echo $LANG['SORT_SEQUENCE']; ?>:</div>
+													<div class="labelDiv"><label for="tpeditor_sortsequence-<?php echo $vid; ?>"><?php echo $LANG['SORT_SEQUENCE']; ?>:</label></div>
 													<div class='vid-<?php echo $vid; ?>'><?php echo $vernArr['sort'];?></div>
 													<div class='vid-<?php echo $vid; ?>' style='display:none;'>
-														<input id='sortsequence' name='sortsequence' style='width:40px;' type='text' value='<?php echo $vernArr['sort']; ?>' />
+														<input id='tpeditor_sortsequence-<?php echo $vid; ?>' name='sortsequence' style='width:40px;' type='text' value='<?php echo $vernArr['sort']; ?>' />
 													</div>
 												</div>
 												<div class="sectionDiv">

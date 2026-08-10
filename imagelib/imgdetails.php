@@ -210,12 +210,12 @@ if ($imgArr) {
 						<fieldset style="margin:5px 0px 5px 5px;">
 							<legend><b><?php echo $LANG['EDIT_IMAGE_DETAILS'] ?></b></legend>
 							<div style="margin-top:2px;">
-								<b><?php echo $LANG['CAPTION'] ?>:</b>
-								<input name="caption" type="text" value="<?php echo $imgArr["caption"]; ?>" style="width:250px;" />
+								<label for="caption"><b><?php echo $LANG['CAPTION'] ?>:</b></label>
+								<input id="caption" name="caption" type="text" value="<?php echo $imgArr["caption"]; ?>" style="width:250px;" />
 							</div>
 							<div style="margin-top:2px;">
-								<b><?php echo $LANG['CREATOR_USER_ID'] ?>:</b>
-								<select name="creatorUid" name="creatorUid">
+								<label for="creatorUid"><b><?php echo $LANG['CREATOR_USER_ID'] ?>:</label></b>
+								<select id="creatorUid" name="creatorUid">
 									<option value=""><?php echo $LANG['SELECT_CREATOR'] ?></option>
 									<option value="">---------------------------------------</option>
 									<?= Media::renderCreatorOptions($imgArr['creatorUid']) ?>
@@ -226,29 +226,29 @@ if ($imgArr) {
 								</a>
 							</div>
 							<div id="iepor" style="margin-top:2px;display:<?php echo ($imgArr["creator"] ? 'block' : 'none'); ?>;">
-								<b><?php echo $LANG['CREATOR_OVERRIDE'] ?>:</b>
-								<input name="creator" type="text" value="<?php echo $imgArr["creator"]; ?>" style="width:250px;" />
+								<label for="creator"><b><?php echo $LANG['CREATOR_OVERRIDE'] ?>:</b></label>
+								<input id="creator" name="creator" type="text" value="<?php echo $imgArr["creator"]; ?>" style="width:250px;" />
 								* <?php echo $LANG['OVERRIDE_SELECTION'] ?>
 							</div>
 							<div style="margin-top:2px;">
-								<b><?php echo $LANG['MANAGER'] ?>:</b>
-								<input name="owner" type="text" value="<?php echo $imgArr["owner"]; ?>" style="width:250px;" />
+								<label for="owner"><b><?php echo $LANG['MANAGER'] ?>:</b></label>
+								<input id="owner" name="owner" type="text" value="<?php echo $imgArr["owner"]; ?>" style="width:250px;" />
 							</div>
 							<div style="margin-top:2px;">
-								<b><?php echo $LANG['SOURCE_URL'] ?>:</b>
-								<input name="sourceUrl" type="text" value="<?php echo $imgArr["sourceUrl"]; ?>" style="width:450px;" />
+								<label for="sourceUrl"><b><?php echo $LANG['SOURCE_URL'] ?>:</b></label>
+								<input id="sourceUrl" name="sourceUrl" type="text" value="<?php echo $imgArr["sourceUrl"]; ?>" style="width:450px;" />
 							</div>
 							<div style="margin-top:2px;">
-								<b><?php echo $LANG['COPYRIGHT'] ?>:</b>
-								<input name="copyright" type="text" value="<?php echo $imgArr["copyright"]; ?>" style="width:450px;" />
+								<label for="copyright"><b><?php echo $LANG['COPYRIGHT'] ?>:</b></label>
+								<input id="copyright" name="copyright" type="text" value="<?php echo $imgArr["copyright"]; ?>" style="width:450px;" />
 							</div>
 							<div style="margin-top:2px;">
-								<b><?php echo $LANG['RIGHTS'] ?>:</b>
-								<input name="rights" type="text" value="<?php echo $imgArr["rights"]; ?>" style="width:450px;" />
+								<label for="rights"><b><?php echo $LANG['RIGHTS'] ?>:</b></label>
+								<input id="rights" name="rights" type="text" value="<?php echo $imgArr["rights"]; ?>" style="width:450px;" />
 							</div>
 							<div style="margin-top:2px;">
-								<b><?php echo $LANG['LOCALITY'] ?>:</b>
-								<input name="locality" type="text" value="<?php echo $imgArr["locality"]; ?>" style="width:550px;" />
+								<label for="locality"><b><?php echo $LANG['LOCALITY'] ?>:</b></label>
+								<input id="locality" name="locality" type="text" value="<?php echo $imgArr["locality"]; ?>" style="width:550px;" />
 							</div>
 							<div style="margin-top:2px;">
 								<b><?php echo $LANG['OCCURRENCE_RECORD'] ?> #:</b>
@@ -257,54 +257,54 @@ if ($imgArr) {
 								<span onclick="openOccurrenceSearch('<?php echo $mediaID; ?>');return false"><a href="#"><?php echo $LANG['LINK_OCCUR_RECORD'] ?></a></span>
 							</div>
 							<div style="margin-top:2px;">
-								<b><?php echo $LANG['NOTES'] ?>:</b>
-								<input name="notes" type="text" value="<?php echo $imgArr["notes"]; ?>" style="width:550px;" />
+								<label for="notes"><b><?php echo $LANG['NOTES'] ?>:</b></label>
+								<input id="notes" name="notes" type="text" value="<?php echo $imgArr["notes"]; ?>" style="width:550px;" />
 							</div>
 							<div style="margin-top:2px;">
-								<b><?php echo $LANG['SORT_SEQUENCE'] ?>:</b>
-								<input name="sortSequence" type="text" value="<?php echo $imgArr["sortSequence"] ?? ''; ?>" size="5" />
+								<label for="sortSequence"><b><?php echo $LANG['SORT_SEQUENCE'] ?>:</b></label>
+								<input id="sortSequence" name="sortSequence" type="text" value="<?php echo $imgArr["sortSequence"] ?? ''; ?>" size="5" />
 							</div>
 							<div style="margin-top:2px;">
-								<b><?php echo $LANG['LARGE_IMAGE'] ?>:</b><br />
-								<input name="originalUrl" type="text" value="<?php echo $imgArr["originalUrl"]; ?>" style="width:90%;" />
+								<label for="originalUrl"><b><?php echo $LANG['LARGE_IMAGE'] ?>:</b></label><br />
+								<input id="originalUrl" name="originalUrl" type="text" value="<?php echo $imgArr["originalUrl"]; ?>" style="width:90%;" />
 								<?php
 								if ($imgArr["originalUrl"] && stripos($imgArr["originalUrl"], $MEDIA_ROOT_URL) === 0) {
 								?>
 									<div style="margin-left:80px;">
-										<input type="checkbox" name="renameorigurl" value="1" />
-										<?php echo $LANG['RENAME_LARGE_IMAGE_FILE'] ?>
+										<input type="checkbox" id="renameorigurl" name="renameorigurl" value="1" />
+										<label for="renameorigurl"><?php echo $LANG['RENAME_LARGE_IMAGE_FILE'] ?></label>
 									</div>
-									<input name="old_originalurl" type="hidden" value="<?php echo $imgArr["originalUrl"]; ?>" />
+									<input id="old_originalurl" name="old_originalurl" type="hidden" value="<?php echo $imgArr["originalUrl"]; ?>" />
 								<?php
 								}
 								?>
 							</div>
 							<div style="margin-top:2px;">
-								<b><?php echo $LANG['THUMBNAIL'] ?>:</b><br />
-								<input name="thumbnailUrl" type="text" value="<?php echo $imgArr["thumbnailUrl"]; ?>" style="width:90%;" />
+								<label for="thumbnailUrl"><b><?php echo $LANG['THUMBNAIL'] ?>:</b></label><br />
+								<input id="thumbnailUrl" name="thumbnailUrl" type="text" value="<?php echo $imgArr["thumbnailUrl"]; ?>" style="width:90%;" />
 								<?php
 								if ($imgArr["thumbnailUrl"] && stripos($imgArr["thumbnailUrl"], $MEDIA_ROOT_URL) === 0) {
 								?>
 									<div style="margin-left:70px;">
-										<input type="checkbox" name="renametnurl" value="1" />
-										<?php echo $LANG['RENAME_THUMBNAIL_IMAGE_FILE'] ?>
+										<input type="checkbox" id="renametnurl" name="renametnurl" value="1" />
+										<label for="renametnurl"><?php echo $LANG['RENAME_THUMBNAIL_IMAGE_FILE'] ?>:</label>
 									</div>
-									<input name="old_thumbnailurl" type="hidden" value="<?php echo $imgArr["thumbnailUrl"]; ?>" />
+									<input id="old_thumbnailurl" name="old_thumbnailurl" type="hidden" value="<?php echo $imgArr["thumbnailUrl"]; ?>" />
 								<?php
 								}
 								?>
 							</div>
 							<div style="margin-top:2px;">
-								<b><?php echo $LANG['WEB_IMAGE'] ?>:</b><br />
-								<input name="url" type="text" value="<?php echo $imgArr["url"]; ?>" style="width:90%;" />
+								<label for="url"><b><?php echo $LANG['WEB_IMAGE'] ?>:</b></label><br />
+								<input id="url" name="url" type="text" value="<?php echo $imgArr["url"]; ?>" style="width:90%;" />
 								<?php
 								if ($imgArr["url"] && stripos($imgArr["url"], $MEDIA_ROOT_URL) === 0) {
 								?>
 									<div style="margin-left:70px;">
-										<input type="checkbox" name="renameweburl" value="1" />
-										<?php echo $LANG['RENAME_WEB_IMAGE_FILE'] ?>
+										<input type="checkbox" id="renameweburl" name="renameweburl" value="1" />
+										<label for="renameweburl"><?php echo $LANG['RENAME_WEB_IMAGE_FILE'] ?></label>
 									</div>
-									<input name="old_url" type="hidden" value="<?php echo $imgArr["url"]; ?>" />
+									<input id="old_url" name="old_url" type="hidden" value="<?php echo $imgArr["url"]; ?>" />
 								<?php
 								}
 								?>
@@ -319,7 +319,7 @@ if ($imgArr) {
 						<fieldset style="margin:5px 0px 5px 5px;">
 							<legend><b><?php echo $LANG['TRANSFER_IMAGE_TO_DIFF_NAME'] ?></b></legend>
 							<div style="font-weight:bold;">
-								<?php echo $LANG['TRANSFER_TO_TAXON'] ?>:
+								<label for="taxa"><?php echo $LANG['TRANSFER_TO_TAXON'] ?>:</label>
 								<input type="text" id="taxa" name="targettaxon" size="40" />
 								<input type="hidden" id="tid" name="targettid" value="" />
 								<input type="hidden" name="sourcetid" value="<?php echo $imgArr["tid"]; ?>" />
@@ -338,7 +338,7 @@ if ($imgArr) {
 								<button class="button-danger" type="submit" name="submitaction" id="submit" value="Delete Image"><?php echo $LANG['DELETE_IMAGE'] ?></button>
 							</div>
 							<input type="hidden" name="tid" value="<?php echo $imgArr["tid"]; ?>" />
-							<input name="removeimg" type="checkbox" value="1" /> <?php echo $LANG['REMOVE_IMG_FROM_SERVER'] ?>
+							<input id="removeimg" name="removeimg" type="checkbox" value="1" /> <label for="removeimg"><?php echo $LANG['REMOVE_IMG_FROM_SERVER'] ?></label>
 							<div style="margin-left:20px;color:red;">
 								<?php echo $LANG['BOX_CHECKED_IMG_DELETED'] ?>
 							</div>

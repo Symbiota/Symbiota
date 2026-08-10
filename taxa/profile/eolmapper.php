@@ -99,9 +99,9 @@ include($SERVER_ROOT.'/includes/header.php');
 							<form name="taxamappingform" action="eolmapper.php" method="post">
 								<input type="submit" name="submitaction" value="Map Taxa" />
 								<div style="margin:15px;">
-									TID Start Index: <input type="text" name="tidstart" value="" /><br />
-									<input type="checkbox" name="restart" value="1" CHECKED /> Restart where left off within the last week<br />
-									<input type="checkbox" name="makeprimary" value="1" CHECKED /> Make EOL primary link (sort order = 1)
+									<label for="tidstart">TID Start Index:</label> <input type="text" id="tidstart" name="tidstart" value="" /><br />
+									<input type="checkbox" id="restart_1" name="restart" value="1" CHECKED /> <label for="restart_1">Restart where left off within the last week</label><br />
+									<input type="checkbox" id="makeprimary" name="makeprimary" value="1" CHECKED /> <label for="makeprimary">Make EOL primary link (sort order = 1)</label>
 								</div>
 							</form>
 						</div>
@@ -119,8 +119,8 @@ include($SERVER_ROOT.'/includes/header.php');
 						<b><?php echo $eolManager->getImageDeficiencyCount(); ?></b>
 						<div style="margin:10px;">
 							<form name="imagemappingform" action="eolmapper.php" method="post">
-								TID Start Index: <input type="text" name="startindex" value="" /><br/>
-								<input type="checkbox" name="restart" value="1" CHECKED /> Restart where left off within the last week<br />
+								<label for="startindex">TID Start Index:</label> <input type="text" id="startindex" name="startindex" value="" /><br/>
+								<input type="checkbox" id="restart_2" name="restart" value="1" CHECKED /> <label for="restart_2">Restart where left off within the last week</label><br />
 								<input type="submit" name="submitaction" value="Map Images" />
 							</form>
 						</div>

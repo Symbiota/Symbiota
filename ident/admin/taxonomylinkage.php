@@ -147,21 +147,21 @@ $tLinks = $keyManager->getTaxonRelevance();
 					<legend><b>Add Taxonomic Relevance Definition</b></legend>
 					<div style="height:15px;">
 						<div style="margin:3px;">
-							<b>Taxon Name:</b>
+							<label for="relevanceinput"><b>Taxon Name:</b></label>
 							<input type="text" id="relevanceinput" name="relsciname" style="width:300px" />
 							<input type="hidden" id="relevancetidinput" name="tid" />
 						</div>
 						<div style="float:left;margin:3px;">
-							<b>Relevance to taxon:</b>
-							<select name="relation">
+							<label for="relation"><b>Relevance to taxon:</b></label>
+							<select id="relation" name="relation">
 								<option value="include">Relevant</option>
 								<option value="exclude">Exclude</option>
 							</select>
 						</div>
 					</div>
 					<div style="margin:3px;clear:both;">
-						<b>Editor notes:</b>
-						<input name="notes" type="text" value="" style="width:80%;" />
+						<label for="editornotes"><b>Editor notes:</b></label>
+						<input id="editornotes" name="notes" type="text" value="" style="width:80%;" />
 					</div>
 					<div style="margin:15px;">
 						<input name="cid" type="hidden" value="<?php echo $cid; ?>" />
