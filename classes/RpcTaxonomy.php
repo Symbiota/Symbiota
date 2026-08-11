@@ -2,14 +2,17 @@
 include_once($SERVER_ROOT . '/classes/RpcBase.php');
 include_once($SERVER_ROOT . '/traits/TaxonomyTrait.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
-//use TaxonomyTrait;
 
 Language::load('collections/harvestparams');
 
 class RpcTaxonomy extends RpcBase{
 
-	private $taxAuthID = 1;
+	use TaxonomyTrait;
 	private $taxonSearchType = 0;
+	private $rankMin = '';
+	private $rankMax = '';
+	private $taxAuthID = 1;
+	private $limitToAccepted = false;
 
 	function __construct(){
 		parent::__construct();
@@ -19,7 +22,7 @@ class RpcTaxonomy extends RpcBase{
 		parent::__destruct();
 	}
 
-	public function getTaxaSuggest($queryString, $rankLow = 0, $rankHigh = 0){
+	public function getTaxaSuggest($queryString){
 		$retArr = Array();
 		if($queryString){
 			$homonymSupportIndex = 0;
@@ -67,33 +70,40 @@ class RpcTaxonomy extends RpcBase{
 				$sql = 'SELECT tid, sciname, cultivarEpithet, tradeName, author, kingdomName FROM taxa WHERE sciname LIKE ? ';
 				$paramArr[] = $queryString . '%';
 				$typeStr = 's';
+				if($this->limitToAccepted){
+					$sql = 'SELECT t.tid, t.sciname, t.cultivarEpithet, t.tradeName, t.author, t.kingdomName
+						FROM taxa t INNER JOIN taxStatus ts ON t.tid = ts.tidAccepted
+						WHERE t.sciname LIKE ? AND ts.taxAuthID = ? ';
+					$paramArr[] = $this->taxAuthID;
+					$typeStr .= 'i';
+				}
 			}
 			if($this->taxonSearchType == 3){
 				//FAMILY_ONLY
-				$rankLow = 140;
-				$rankHigh = 140;
+				$this->rankMin = 140;
+				$this->rankMax = 140;
 			}
 			elseif($this->taxonSearchType == 4){
 				//TAXONOMIC_GROUP
-				$rankLow = 11;
-				$rankHigh = 179;
+				$this->rankMin = 11;
+				$this->rankMax = 179;
 			}
-			if($rankLow || $rankHigh){
-				if(is_numeric($rankLow) || is_numeric($rankHigh)){
-					if($rankLow == $rankHigh){
+			if($this->rankMin || $this->rankMax){
+				if(is_numeric($this->rankMin) || is_numeric($this->rankMax)){
+					if($this->rankMin == $this->rankMax){
 						$sql .= 'AND rankid = ? ';
-						$paramArr[] = $rankLow;
+						$paramArr[] = $this->rankMin;
 						$typeStr .= 'i';
 					}
 					else{
-						if($rankLow){
+						if($this->rankMin){
 							$sql .= 'AND (rankid >= ?) ';
-							$paramArr[] = $rankLow;
+							$paramArr[] = $this->rankMin;
 							$typeStr .= 'i';
 						}
-						if($rankHigh){
+						if($this->rankMax){
 							$sql .= 'AND (rankid <= ?) ';
-							$paramArr[] = $rankHigh;
+							$paramArr[] = $this->rankMax;
 							$typeStr .= 'i';
 						}
 					}
@@ -446,12 +456,25 @@ class RpcTaxonomy extends RpcBase{
 	}
 
 	//Setters and getters
+	public function setTaxonSearchType($searchType){
+		if(is_numeric($searchType)) $this->taxonSearchType = $searchType;
+	}
+
 	public function setTaxAuthId($id){
 		if(is_numeric($id)) $this->taxAuthID = $id;
 	}
 
-	public function setTaxonSearchType($searchType){
-		if(is_numeric($searchType)) $this->taxonSearchType = $searchType;
+	public function setLimitToAccepted($bool){
+		if($bool) $this->limitToAccepted = true;
+		else $this->limitToAccepted = false;
+	}
+
+	public function setRankMin($rank){
+		if(is_numeric($rank)) $this->rankMin = $rank;
+	}
+
+	public function setRankMax($rank){
+		if(is_numeric($rank)) $this->rankMax = $rank;
 	}
 
 	public function isValidApiCall(){

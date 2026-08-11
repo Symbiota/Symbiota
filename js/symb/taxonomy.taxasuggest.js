@@ -1,8 +1,17 @@
-var clientRoot = "";
-var multipleTermSupport = false;
-var minLength = 3;
+var validSelection = false;
 
-function initiateTaxaSuggest(inputID, taxonSearchType = 2) {
+const taxaSuggestConfig = {
+    clientRoot: "",
+    taxonSearchType: 2,
+    minLength: 3,
+    restrictToList: false,
+    taxAuthID: 1,
+    multipleTermSupport: false,
+    rankMinimum: '',
+    rankMaximum: ''
+};
+
+function initiateTaxaSuggest(inputID, tidInputID = null) {
 	const inputElem = $("#" + inputID);
 	inputElem
 		// don't navigate away from the field on tab when selecting an item
@@ -18,10 +27,12 @@ function initiateTaxaSuggest(inputID, taxonSearchType = 2) {
 		.autocomplete({
 			source(request, response) {
 				$.getJSON(
-					clientRoot + "/rpc/taxasuggest.php",
+					taxaSuggestConfig.clientRoot + "/rpc/taxasuggest.php",
 					{
 						term: extractLast(request.term),
-						searchType: taxonSearchType
+						searchType: taxaSuggestConfig.taxonSearchType,
+						rankMin: taxaSuggestConfig.rankMinimum,
+						rankMax: taxaSuggestConfig.rankMaximum
 					},
 					response
 				);
@@ -29,9 +40,9 @@ function initiateTaxaSuggest(inputID, taxonSearchType = 2) {
 			autoFocus: true,
 			delay: 200,
 			search() {
-				//Sets minLength even when there is support for multiple terms	
+				//Sets acMinLength even when there is support for multiple terms	
 				const term = extractLast(this.value);
-				if(term.length <= minLength) return false;
+				if(term.length <= taxaSuggestConfig.minLength) return false;
 				return true;
 			},
 			focus() {
@@ -39,7 +50,8 @@ function initiateTaxaSuggest(inputID, taxonSearchType = 2) {
 				return false;
 			},
 			select(event, ui) {
-				if(multipleTermSupport){
+				validSelection = true;
+				if(taxaSuggestConfig.multipleTermSupport){
 					let terms = this.value.replace("],", "];").split(/;\s*/);
 					let targetIndex = terms.length - 1;
 					// Replace last term with select item
@@ -48,8 +60,19 @@ function initiateTaxaSuggest(inputID, taxonSearchType = 2) {
 				}
 				else{
 					this.value = ui.item.value;
+					if(tidInputID){
+						document.getElementById(tidInputID).value = ui.item.id;
+					}
 				}
 				return false;
+			},
+			change: function(event, ui) {
+				if (!ui.item) {
+					validSelection = false;
+					if(taxaSuggestConfig.restrictToList){
+						alert("Selecting taxon from list is required");
+					}
+				}
 			}
 		}
 	);
@@ -57,25 +80,11 @@ function initiateTaxaSuggest(inputID, taxonSearchType = 2) {
 
 function extractLast(term) {
 	//Returns the last search term whenever mulitple are entered separeted by a commas
-	if(multipleTermSupport) return term.split(/[;,]{1}\s*/).pop();
+	if(taxaSuggestConfig.multipleTermSupport) return term.split(/[;,]{1}\s*/).pop();
 	return term;
 }
 
-//Set base values and options
-function setTaxaSuggestRootPath(clientRootPath) {
-	clientRoot = clientRootPath;
-}
-
-function setMultipleTermSupport(inputBool) {
-	if(inputBool) multipleTermSupport = true;
-	else multipleTermSupport = false;
-}
-
-function setMinLength(inputLength) {
-	minLength = inputLength;
-}
-
-
+//Misc support functions
 function initiateTaxonSuggest(inputID, rLow, rHigh) {
 	$("#" + inputID).autocomplete(
 		{

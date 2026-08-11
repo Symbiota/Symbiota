@@ -69,15 +69,30 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.index.js?ver=1>" type="text/javascript"></script>
 	<script src="<?= $JS_LANG_FILENAME ?>" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=2" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxonomy.taxasuggest.js?ver=2d" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxonomy.taxasuggest.js?ver=3b" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
-			//setup taxonomic autocompletes
-			setTaxaSuggestRootPath("<?= $CLIENT_ROOT ?>");
-			setMultipleTermSupport(true);
-			let taxonType = document.getElementById("taxontype").value;
-			initiateTaxaSuggest("taxa", taxonType);
-			initiateTaxaSuggest("associated-taxa", taxonType);
+			//Auto-complete for taxon field
+			const taxaInput = document.querySelector('#taxa');
+			if(taxaInput){
+				taxaInput.addEventListener('focus', (event) => {
+					taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggestConfig.multipleTermSupport = true;
+					taxaSuggestConfig.taxonSearchType = document.getElementById("taxontype").value;
+					initiateTaxaSuggest("taxa");
+				});
+			}
+
+			//Auto-complete for associated taxon field
+			const assocTaxaInput = document.querySelector('#associated-taxa');
+			if(assocTaxaInput){
+				assocTaxaInput.addEventListener('focus', (event) => {
+					taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggestConfig.multipleTermSupport = true;
+					taxaSuggestConfig.taxonSearchType = document.getElementById("taxontype-association").value;
+					initiateTaxaSuggest("taxa");
+				});
+			}
 
 			setSessionQueryStr();
 			setSearchForm(document.getElementById("params-form"));
@@ -97,12 +112,6 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 				updateChip(event, isInitialConfig=true);
 			});
 		});
-
-		function taxonTypeChanged(selectElem){
-			let taxonType = selectElem.value;
-			initiateTaxaSuggest("taxa", taxonType);
-			initiateTaxaSuggest("associated-taxa", taxonType);
-		}
 
 		const paleoTimes = <?= json_encode($paleoTimes ?? []) ?>;
 		const handleAccordionExpand = () => {

@@ -22,22 +22,6 @@ $(document).ready(async function () {
 
   $("#tabs").tabs({ active: tabIndex });
 
-  $("#parentstr").autocomplete({
-    source: function (request, response) {
-      $.getJSON(
-        "rpc/gettaxasuggest.php",
-        {
-          term: request.term,
-          taid: document.taxauthidform.taxauthid.value,
-          rhigh: document.taxoneditform.rankid.value,
-        },
-        response
-      );
-    },
-    minLength: 3,
-    autoFocus: true,
-  });
-
   document.getElementById("rankid").addEventListener("change", function () {
     const selectedValue = Number(this.value);
     showOnlyRelevantFields(selectedValue);

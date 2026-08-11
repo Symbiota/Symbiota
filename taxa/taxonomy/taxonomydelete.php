@@ -14,9 +14,11 @@ $taxonEditorObj = new TaxonomyEditorManager();
 $taxonEditorObj->setTid($tid);
 $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 ?>
+<script src="<?= $CLIENT_ROOT ?>/js/symb/taxonomy.taxasuggest.js?ver=1" type="text/javascript"></script>
 <script>
 	$(document).ready(function() {
 		setTaxaSuggestRootPath("<?= $CLIENT_ROOT ?>");
+		setMinLength(2);
 		initiateTaxaSuggest("remapvalue", "remaptid");
 	});
 
@@ -208,7 +210,7 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 				<ul>
 					<?php
 					foreach($clArr as $clid => $clTitle){
-						echo '<li><a href="../../checklists/checklist.php?clid=' . $k . '" target="_blank">';
+						echo '<li><a href="../../checklists/checklist.php?clid=' . $clid . '" target="_blank">';
 						echo Sanitize::outString($clTitle);
 						echo '</a></li>';
 					}
