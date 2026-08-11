@@ -108,6 +108,19 @@ $isGeneralObservation = (($labelManager->getMetaDataTerm('colltype') == 'General
 					editorWindow.loadJson();
 				}
 			}
+
+			function validateJsonForm(jsonForm) {
+				let jsonString = jsonForm.elements['json'].value;
+
+				try {
+					JSON.parse(jsonString);
+					return true; // Allows form submission
+				} catch (error) {
+					alert('Invalid JSON! Please correct it: ' . error.message);
+					return false; // Blocks form submission
+				}
+			}
+
 		</script>
 		<style>
 			fieldset{ width:800px; padding:15px; }

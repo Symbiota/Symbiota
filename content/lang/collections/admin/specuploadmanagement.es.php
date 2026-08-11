@@ -56,5 +56,5 @@ $LANG['DEL_PROFILE'] = 'Eliminar este Perfil';
 $LANG['DEL_PR'] = 'Eliminar Perfil';
 $LANG['ERROR_AUTH'] = 'ERROR: no está autorizado para cargar archivos en esta colección';
 $LANG['IMG_EDIT'] = 'Editar imagen';
-
+$LANG['INIT_UPLOAD'] = 'Inicializar Carga...';
 ?>
