@@ -163,7 +163,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 							?>
 							<li>
 								<?php echo $uName; ?>
-								<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&deladmin=' . htmlspecialchars($uid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" onclick="return confirm('<?php echo htmlspecialchars(isset($LANG['YES_REM_ADMIN'])?$LANG['YES_REM_ADMIN']:'Are you sure you want to remove administrative rights for this user?', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>');" title="<?php echo htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" aria-label="<?php echo $LANG['REMOVE_PERMISSIONS'] ?>">
+								<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&deladmin=' . htmlspecialchars($uid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" onclick="return confirm('<?php echo htmlspecialchars(isset($LANG['YES_REM_ADMIN'])?$LANG['YES_REM_ADMIN']:'Are you sure you want to remove administrative rights for this user?', ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>');" title="<?php echo $LANG['REMOVE_PERMISSIONS'] . strip_tags($uName); ?>" aria-label="<?php echo $LANG['REMOVE_PERMISSIONS'] . strip_tags($uName); ?>" role="button">
 									<img src="../../images/drop.png" style="width:1em;" alt="<?php echo $LANG['DROP_ICON']; ?>" />
 								</a>
 							</li>
@@ -195,7 +195,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 						?>
 						<li>
 							<?php echo $uName; ?>
-							<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&deleditor=' . htmlspecialchars($uid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" onclick="return confirm('<?php echo htmlspecialchars((isset($LANG['YES_REM_EDIT'])?$LANG['YES_REM_EDIT']:'Are you sure you want to remove editor rights for this user?'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>');" title="<?php echo htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" aria-label="<?php echo $LANG['REMOVE_PERMISSIONS'] ?>">
+							<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&deleditor=' . htmlspecialchars($uid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" onclick="return confirm('<?php echo htmlspecialchars((isset($LANG['YES_REM_EDIT'])?$LANG['YES_REM_EDIT']:'Are you sure you want to remove editor rights for this user?'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>');" title="<?php echo $LANG['REMOVE_PERMISSIONS'] . strip_tags($uName); ?>" aria-label="<?php echo $LANG['REMOVE_PERMISSIONS'] . strip_tags($uName); ?>" role="button">
 								<img src="../../images/drop.png" style="width:1em;" alt="<?php echo $LANG['DROP_ICON']; ?>" />
 							</a>
 						</li>
@@ -230,7 +230,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 							?>
 							<li>
 								<?php echo $uName; ?>
-								<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&delrare=' . htmlspecialchars($uid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" onclick="return confirm('<?php echo htmlspecialchars((isset($LANG['YES_REM_RARE'])?$LANG['YES_REM_RARE']:'Are you sure you want to remove user rights to view locality details for rare species?'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>');" title="<?php echo htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" aria-label="<?php echo $LANG['REMOVE_PERMISSIONS'] ?>">
+								<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&delrare=' . htmlspecialchars($uid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" onclick="return confirm('<?php echo htmlspecialchars((isset($LANG['YES_REM_RARE'])?$LANG['YES_REM_RARE']:'Are you sure you want to remove user rights to view locality details for rare species?'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>');" title="<?php echo $LANG['REMOVE_PERMISSIONS'] . strip_tags($uName); ?>" aria-label="<?php echo $LANG['REMOVE_PERMISSIONS'] . strip_tags($uName); ?>" role="button">
 									<img src="../../images/drop.png" style="width:1em;" alt="<?php echo $LANG['DROP_ICON']; ?>" />
 								</a>
 							</li>
@@ -475,7 +475,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 								?>
 								<li>
 									<?php echo $username.' ('.(isset($LANG['ALL_RANGES'])?$LANG['ALL_RANGES']:'All approved taxonomic ranges listed below').')'; ?>
-									<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&delidenteditor=' . htmlspecialchars($uid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&utid=all'; ?>" onclick="return confirm('<?php echo htmlspecialchars((isset($LANG['SURE_REM_ID'])?$LANG['SURE_REM_ID']:'Are you sure you want to remove identification editing rights for this user?'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>');" title="<?php echo htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" aria-label="<?php echo $LANG['REMOVE_PERMISSIONS'] ?>">
+									<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&delidenteditor=' . htmlspecialchars($uid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&utid=all'; ?>" onclick="return confirm('<?php echo htmlspecialchars((isset($LANG['SURE_REM_ID'])?$LANG['SURE_REM_ID']:'Are you sure you want to remove identification editing rights for this user?'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>');" title="<?php echo $LANG['REMOVE_PERMISSIONS'] . strip_tags($uName); ?>" aria-label="<?php echo $LANG['REMOVE_PERMISSIONS'] . strip_tags($uName); ?>" role="button">
 										<img src="../../images/drop.png" style="width:1em;" alt="<?php echo $LANG['DROP_ICON']; ?>" />
 									</a>
 								</li>
@@ -488,7 +488,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 									echo $username.' ('.$sciname.')';
 									if(!$hasAll){
 										?>
-										<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&delidenteditor=' . htmlspecialchars($uid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&utid=' . htmlspecialchars($utid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" onclick="return confirm('<?php echo htmlspecialchars((isset($LANG['SURE_REM_ID'])?$LANG['SURE_REM_ID']:'Are you sure you want to remove identification editing rights for this user?'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>');" title="<?php echo htmlspecialchars((isset($LANG['DEL_PERMISSIONS'])?$LANG['DEL_PERMISSIONS']:'Delete permissions for this user'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" aria-label="<?php echo $LANG['REMOVE_PERMISSIONS'] ?>">
+										<a href="collpermissions.php?collid=<?php echo htmlspecialchars($collId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&delidenteditor=' . htmlspecialchars($uid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&utid=' . htmlspecialchars($utid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" onclick="return confirm('<?php echo htmlspecialchars((isset($LANG['SURE_REM_ID'])?$LANG['SURE_REM_ID']:'Are you sure you want to remove identification editing rights for this user?'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>');" title="<?php echo $LANG['REMOVE_PERMISSIONS'] . strip_tags($uName); ?>" aria-label="<?php echo $LANG['REMOVE_PERMISSIONS'] . strip_tags($uName); ?>" role="button">
 											<img src="../../images/drop.png" style="width:1em;" alt="<?php echo $LANG['DROP_ICON']; ?>" />
 										</a>
 										<?php
