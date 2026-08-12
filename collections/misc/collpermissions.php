@@ -92,8 +92,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script>
 		function verifyAddRights(f){
-			console.log(f.uid);
-			if(f.uid.value == ""){
+			if(f.uid.value == "" && f.name !== "addpersobsman"){
 				alert("<?php echo (isset($LANG['PLS_SEL_USER'])?$LANG['PLS_SEL_USER']:'Please select a user (begin typing last name to see dropdown list)'); ?>");
 				return false;
 			}
@@ -326,7 +325,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 						?>
 							<fieldset style="margin:40px 15px 0px 15px;padding:15px;">
 								<legend><b><?php echo (isset($LANG['NEW_SPONSOR'])?$LANG['NEW_SPONSOR']:'New Sponsorship'); ?></b></legend>
-								<form name="addpersobsman" action="collpermissions.php" method="POST">
+								<form name="addpersobsman" action="collpermissions.php" method="POST" onsubmit="return verifyAddRights(this)">
 									<div>
 										<label for="uid"><?php echo $LANG['SEL_USER'] ?></label>
 										<input class="userinput" id="uid" type="text" style="width:400px;" />
