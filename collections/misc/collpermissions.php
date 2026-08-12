@@ -92,6 +92,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script>
 		function verifyAddRights(f){
+			console.log(f.uid);
 			if(f.uid.value == ""){
 				alert("<?php echo (isset($LANG['PLS_SEL_USER'])?$LANG['PLS_SEL_USER']:'Please select a user (begin typing last name to see dropdown list)'); ?>");
 				return false;
@@ -107,15 +108,14 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 			return true;
 		}
 		$(document).ready(function() {
-			$( "#userinput" ).autocomplete({
+			$( ".userinput" ).autocomplete({
 				source: "../rpc/getuserlist.php",
 				minLength: 3,
 				autoFocus: true,
 				select: function( event, ui ) {
-					$('#uid-add').val(ui.item.id);
+					$(this).next(".uid-add").val(ui.item.id);
 				}
 			});
-
 		});
 	</script>
 	<script type="text/javascript" src="../../js/symb/shared.js"></script>
@@ -260,14 +260,14 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 				<form name="addrights" action="collpermissions.php" method="post" onsubmit="return verifyAddRights(this)">
 					<div>
 						<?php echo $LANG['ENTER_USER_NAME']; ?>:
-						<input id="userinput" type="text" style="width:400px;" aria-label="<?php echo $LANG['ENTER_USER_NAME'] ?>" />
-						<input id="uid-add" name="uid" type="hidden" value="" />
+						<input class="userinput" type="text" style="width:400px;" aria-label="<?php echo $LANG['ENTER_USER_NAME'] ?>" />
+						<input class="uid-add" name="uid" type="hidden" value="" />
 					</div>
 					<div style="margin:5px 0px 5px 0px;">
 						<?php
 						if($isGenObs){
 							?>
-							<input name="righttype" type="hidden" value="editor" aria-label="<?php echo $LANG['EDITOR'] ?> />
+							<input name="righttype" type="hidden" value="editor" aria-label="<?php echo $LANG['EDITOR'] ?>" />
 							<?php
 						}
 						else{
@@ -326,18 +326,11 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 						?>
 							<fieldset style="margin:40px 15px 0px 15px;padding:15px;">
 								<legend><b><?php echo (isset($LANG['NEW_SPONSOR'])?$LANG['NEW_SPONSOR']:'New Sponsorship'); ?></b></legend>
-								<form name="addpersobsman" action="collpermissions.php" method="POST" onsubmit="return verifyAddRights(this)">
+								<form name="addpersobsman" action="collpermissions.php" method="POST">
 									<div>
 										<label for="uid"><?php echo $LANG['SEL_USER'] ?></label>
-										<select id="uid" name="uid">
-											<option value=""><?php echo (isset($LANG['SEL_USER'])?$LANG['SEL_USER']:'Select User'); ?></option>
-											<option value="">-----------------------------------</option>
-											<?php
-											foreach($userArr as $uid => $uName){
-												echo '<option value="'.$uid.'">'.$uName.'</option>';
-											}
-											?>
-										</select>
+										<input class="userinput" id="uid" type="text" style="width:400px;" />
+										<input class="uid-add" name="uid" type="hidden" value="" />
 									</div>
 									<div>
 										<?php
