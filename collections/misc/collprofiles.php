@@ -106,10 +106,22 @@ if ($SYMB_UID) {
 			return false;
 		}
 
-		function showItemsList(className) {
+		function showItemsList(className, btn) {
   			const elements = document.getElementsByClassName(className);
-  			for (let i = 0; i < elements.length; i++) {
-				elements[i].style.display = 'list-item';
+			if (elements[0].style.display === 'none' || elements[0].style.display === '')
+			{
+				for (let i = 0; i < elements.length; i++) {
+					elements[i].style.display = 'list-item';
+				}
+				btn.querySelector('img').src = '../../images/toparent.png';
+				btn.setAttribute('aria-label', <?php echo json_encode($LANG['HIDE_OPTIONS']); ?>);
+			}
+			else {
+				for (let i = 0; i < elements.length; i++) {
+					elements[i].style.display = 'none';
+				}
+				btn.querySelector('img').src = '../../images/tochild.png';
+				btn.setAttribute('aria-label', <?php echo json_encode($LANG['SHOW_OPTIONS']); ?>);
 			}
 		}
 
@@ -490,12 +502,12 @@ if ($SYMB_UID) {
 								if ($collManager->traitCodingActivated()) {
 									?>
 									<li>
-										<a href="javascript:void(0)" onclick="showItemsList('traitItem')">
+										<a href="javascript:void(0)" onclick="showItemsList('traitItem', document.getElementById('showTrait'))" role="button">
 											<?= $LANG['TRAIT_CODING_TOOLS'] ?>
 										</a>
-										<a onclick="showItemsList('traitItem')">
-											<img class = seemore-icon src="../../images/tochild.png">
-										</a>
+										<button id="showTrait" class="clear-icon-button" onclick="showItemsList('traitItem', this)" aria-label="<?php echo $LANG['SHOW_OPTIONS']; ?>">
+											<img class=seemore-icon src="../../images/tochild.png" alt="">
+										</button>
 									</li>
 									<li class="traitItem" style="margin-left:10px;display:none;">
 										<a href="../traitattr/occurattributes.php?collid=<?= $collid ?>">
@@ -553,15 +565,15 @@ if ($SYMB_UID) {
 									</a>
 								</li>
 								<li>
-									<a href="javascript:void(0)" onclick="showItemsList('importItem')">
+									<a href="javascript:void(0)" onclick="showItemsList('importItem', document.getElementById('showImport'))" role="button">
 										<?= $LANG['IMPORT_SPECIMEN'] ?>
 									</a>
-									<a id="importinfo" class="link-icon" href="https://docs.symbiota.org/Collection_Manager_Guide/Importing_Uploading/" target="_blank" title="<?php echo $LANG['MORE_INFO']; ?>" aria-label="<?php echo $LANG['MORE_INFO']; ?>">
+									<a id="importinfo" class="link-icon" href="https://docs.symbiota.org/Collection_Manager_Guide/Importing_Uploading/" target="_blank" title="<?php echo $LANG['MORE_INFO'] . $LANG['OPENS_NEW_TAB']; ?>" aria-label="<?php echo $LANG['MORE_INFO'] . $LANG['OPENS_NEW_TAB']; ?>">
 											<img src="../../images/info.png" style="width:13px;" alt="<?= $LANG['INFO_ALT'] ?>" />
 									</a>
-									<a onclick="showItemsList('importItem')">
-										<img class="seemore-icon" src="../../images/tochild.png"">
-									</a>
+									<button id="showImport" class="clear-icon-button" onclick="showItemsList('importItem', this)" aria-label="<?php echo $LANG['SHOW_OPTIONS'] ?>">
+										<img class="seemore-icon" src="../../images/tochild.png" alt="">
+									</button>
 								</li>
 								<li class="importItem">
 									<a href="../admin/specupload.php?uploadtype=7&collid=<?php echo $collid; ?>">

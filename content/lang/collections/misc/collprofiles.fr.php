@@ -118,4 +118,7 @@ $LANG['TAXON'] = 'Taxon';
 $LANG['OCCURRENCE_EDITOR'] = 'Modifier';
 $LANG['INFO_ALT'] = "Icône d'information indiquant un lien vers des informations sur l'importation/mise à jour";
 $LANG['LAST_MODIFIED'] = 'Dernière Modification';
+$LANG['OPENS_NEW_TAB'] = ' (s\'ouvre dans un nouvel onglet)';
+$LANG['SHOW_OPTIONS'] = 'Afficher plus d\'options';
+$LANG['HIDE_OPTIONS'] = 'Masquer les options';
 ?>
