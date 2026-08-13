@@ -101,11 +101,17 @@ export class Form {
     }
   }
 
-  async setFile(name: string, path: string) {
-    const fileChooserPromise = this.page.waitForEvent("filechooser");
-    await this.form.locator(`input[name="${name}"]`).click({ force: true });
-
-    const fileChooser = await fileChooserPromise;
-    await fileChooser.setFiles(path);
+  async setFile(name: string, path: string | string[]) {
+    const input = this.form.locator(`input[name="${name}"]`);
+    await input.waitFor({ state: "attached", timeout: 5000 });
+    try {
+      await input.setInputFiles(path);
+    } catch {
+      // fallback to filechooser in case setInputFiles fails
+      const fileChooserPromise = this.page.waitForEvent('filechooser', { timeout: 5000 });
+      await input.click({ force: true });
+      const fileChooser = await fileChooserPromise;
+      await fileChooser.setFiles(path);
+    }
   }
 }
