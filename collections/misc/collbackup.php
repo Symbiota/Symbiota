@@ -50,11 +50,7 @@ if($isEditor){
 	?>
 	<script>
 		function fileDownloaded(){
-			let linkElem = document.getElementById("download-link");
-			linkElem.style.pointerEvents = 'none';
-			linkElem.style.opacity = '0.5';
-			linkElem.setAttribute('tabindex', '-1');
-			linkElem.setAttribute('aria-disabled', 'true');
+			document.getElementById("download-link").style.pointerEvents = 'none';
 			alert("<?= $LANG['DOWNLOAD_COMPLETE'] ?>");
 			window.close();
 		}
