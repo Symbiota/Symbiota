@@ -484,6 +484,19 @@ button.inverse-color {
 	padding: 0px;
 }
 
+.clear-icon-button {
+  all: revert;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  }
+  
+.clear-icon-button:hover {
+  background: transparent;
+}
+
 /* image thumbnails */
 #img-container {
   width: 80%;
