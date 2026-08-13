@@ -48,6 +48,17 @@ if($isEditor){
 	<?php
 	include_once($SERVER_ROOT . '/includes/head.php');
 	?>
+	<script>
+		function fileDownloaded(){
+			let linkElem = document.getElementById("download-link");
+			linkElem.style.pointerEvents = 'none';
+			linkElem.style.opacity = '0.5';
+			linkElem.setAttribute('tabindex', '-1');
+			linkElem.setAttribute('aria-disabled', 'true');
+			alert("<?= $LANG['DOWNLOAD_COMPLETE'] ?>");
+			window.close();
+		}
+	</script>
     <style>
     	fieldset{ padding:15px;width:350px }
     	legend{ font-weight: bold }
@@ -78,7 +89,12 @@ if($isEditor){
 
 					if ($archiveFile) {
 						$filename = substr($archiveFile, strrpos($archiveFile, '/') + 1);
-						echo $LANG['BACKUP_FILE'] . ': <a href="collbackup.php?bufile=' . $filename . '">' . $filename . '</a>';
+						?>
+						<div>
+							<?= $LANG['BACKUP_FILE'] ?>:
+							<a id="download-link" href="collbackup.php?bufile=<?= $filename ?>" onclick="fileDownloaded()"><?= $filename ?></a>
+						</div>
+						<?php
 					} else {
 						$errMsg = $dwcaHandler->getErrorMessage();
 						if($errMsg) echo $errMsg;
@@ -96,7 +112,7 @@ if($isEditor){
 							<input type="radio" id="cset2" name="cset" value="utf-8" <?= (!$cSet || $cSet == 'utf8' ? 'checked' : ''); ?> /> <label for="cset2">UTF-8 (unicode)</label>
 						</div>
 						<div>
-							<div style="float:left">
+							<div>
 								<input type="hidden" name="collid" value="<?= $collid; ?>">
 								<button type="submit" name="formsubmit" value="preformBackup"><?= $LANG['DOWNLOAD'] ?></button>
 							</div>

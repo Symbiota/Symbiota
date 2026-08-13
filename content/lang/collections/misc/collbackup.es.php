@@ -13,4 +13,5 @@ $LANG['ERROR_CREATING_OUTPUT'] = 'Error al crear el archivo de salida. Es probab
 $LANG['ENCODING'] = 'Codificación de conjuntos de datos';
 $LANG['DOWNLOAD'] = 'Descargar';
 $LANG['DOWNLOADING'] = 'Descargando archivo de respaldo';
+$LANG['DOWNLOAD_COMPLETE'] = 'El archivo de copia de seguridad se ha descargado en su sistema local!';
 ?>
