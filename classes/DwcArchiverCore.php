@@ -25,6 +25,7 @@ class DwcArchiverCore extends Manager{
 	protected $conditionArr = array();
 	private $applyConditionLimit = false;
 	private $observerUid = 0;				//If set, this is a backup event of personally managed specimens
+	private $remotePubDetails = null;
 
 	private $targetPath;
 	protected $serverDomain;
@@ -1722,17 +1723,22 @@ class DwcArchiverCore extends Manager{
 		$uid = $GLOBALS['SYMB_UID'];
 		$tagName = 'UID-' . $uid;
 		if(!$uid){
-			$uid = null;
-			$tagName = $_SERVER['REMOTE_ADDR'] . '-' . time();
+			if(preg_match('/uid:\s(\d+)/', $this->remotePubDetails, $m)){
+				$uid = $m[1];
+			}
+			else{
+				$uid = null;
+				$tagName = $_SERVER['REMOTE_ADDR'] . '-' . time();
+			}
 		}
 		$tagName .= '-' . time();
 		$queryTerms = $this->conditionSql;
 		$fileUrl = $this->dwcaOutputUrl;
 		$domainName = $this->serverDomain;
 		$ipAddress = $_SERVER['REMOTE_ADDR'];
-		$sql = 'INSERT INTO omexport(uid, category, tagName, queryTerms, fileUrl, portalDomain, expiration, ipAddress) VALUES(?, ?, ?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 7 DAY), ?)';
+		$sql = 'INSERT INTO omexport(uid, category, tagName, queryTerms, fileUrl, portalDomain, expiration, ipAddress, notes) VALUES(?, ?, ?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 7 DAY), ?, ?)';
 		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param('issssss', $uid, $this->schemaType, $tagName, $queryTerms, $fileUrl, $domainName, $ipAddress);
+			$stmt->bind_param('isssssss', $uid, $this->schemaType, $tagName, $queryTerms, $fileUrl, $domainName, $ipAddress, $this->remotePubDetails);
 			try{
 				if($stmt->execute()){
 					if($stmt->affected_rows || !$stmt->error){
@@ -2217,11 +2223,14 @@ class DwcArchiverCore extends Manager{
 		return $bool;
 	}
 
-	public function isAuthorized(){
+	public function isAuthorized($source){
+		$this->remotePubDetails = 'source: ' . $source;
+
 		if($_SERVER['SERVER_NAME'] == 'localhost'){
 			//Is a dev environment
 			//Note: Under Apache 2, UseCanonicalName = On and ServerName must be set.
 			//Otherwise, this value reflects the hostname supplied by the client, which can be spoofed. It is not safe to rely on this value in security-dependent contexts.
+			$this->remotePubDetails .= ', SERVER_NAME: localhost';
 			return true;
 		}
 
@@ -2234,27 +2243,30 @@ class DwcArchiverCore extends Manager{
 		//error_log('Access to dwcapubhandler - refererIpPrefix: ' . $refererIpPrefix . '; serverIP: ' . $_SERVER['SERVER_ADDR']);
 		if(!empty($_SERVER['SERVER_ADDR']) && $refererIpPrefix){
 			if(strpos($_SERVER['SERVER_ADDR'], $refererIpPrefix) === 0){
+				$this->remotePubDetails .= ', status: within network';
 				return true;
 			}
 		}
 
 		//Check if referer is registered within portal index
-		if(empty($_SERVER['HTTP_REFERER'])){
-			error_log('Unauthorized access to dwcapubhandler: NULL HTTP_REFERER');
-			return false;
-		}
-		$refererUrl = $_SERVER['HTTP_REFERER'];
-		$refererDomain = str_replace('www.', '', parse_url($refererUrl, PHP_URL_HOST));
-		$portalIndex = $this->getPortalIndex();
-		foreach($portalIndex as $indexDomain){
-			$indexDomain = str_replace('www.', '', parse_url($indexDomain, PHP_URL_HOST));
-			if($refererDomain == $indexDomain) return true;
+		if(!empty($_SERVER['HTTP_REFERER'])){
+			$refererUrl = $_SERVER['HTTP_REFERER'];
+			$refererDomain = str_replace('www.', '', parse_url($refererUrl, PHP_URL_HOST));
+			$portalIndex = $this->getPortalIndex();
+			foreach($portalIndex as $indexDomain){
+				$indexDomain = str_replace('www.', '', parse_url($indexDomain, PHP_URL_HOST));
+				if($refererDomain == $indexDomain){
+					$this->remotePubDetails .= ', referer: ' . $refererUrl;
+					return true;
+				}
+			}
 		}
 
 		//Check to see if user is logged in or user token is included
 		if($GLOBALS['SYMB_UID']) return true;
 		if(!empty($_REQUEST['token'])){
-			if($this->validateUserToken($_REQUEST['token'])){
+			if($uid = $this->validateUserToken($_REQUEST['token'])){
+				$this->remotePubDetails .= ', uid: ' . $uid;
 				return true;
 			}
 			else{
@@ -2283,17 +2295,16 @@ class DwcArchiverCore extends Manager{
 	}
 
 	private function validateUserToken($userToken){
-		$authorized = false;
-		$userToken = $_REQUEST['token'];
-		$sql = 'SELECT tokenID FROM useraccesstokens WHERE token = ?';
+		$uid = 0;
+		$sql = 'SELECT uid FROM useraccesstokens WHERE token = ?';
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('s', $userToken);
-			$stmt->execute;
-			$stmt->store_result();
-			if($stmt->num_rows) $authorized = true;
+			$stmt->execute();
+			$stmt->bind_result($uid);
+			$stmt->fetch();
 			$stmt->close();
 		}
-		return $authorized;
+		return $uid;
 	}
 
 	//setters and getters
@@ -2439,6 +2450,11 @@ class DwcArchiverCore extends Manager{
 
 	public function getDwcaOutputUrl(){
 		return $this->dwcaOutputUrl;
+	}
+
+	public function getTargetPath(){
+		if(!$this->targetPath) $this->setTargetPath();
+		return $this->targetPath;
 	}
 
 	//Output cleaning functions

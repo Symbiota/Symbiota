@@ -297,7 +297,7 @@ $creatorArray = Media::getCreatorArray(false);
 								</div>
 								<div>
 									<b><?php echo $LANG['WEB_URL']; ?>: </b>
-									<a href="<?php echo $imgArr["url"]; ?>"  title="<?php echo $imgArr["url"]; ?>" target="_blank">
+									<a href="<?=  $imgUrl ?>"  title="<?=  $imgUrl ?>" target="_blank">
 										<?php
 										$urlDisplay = $imgArr["url"];
 										if($urlDisplay && strlen($urlDisplay) > 60) $urlDisplay = '...'.substr($urlDisplay,-60);
