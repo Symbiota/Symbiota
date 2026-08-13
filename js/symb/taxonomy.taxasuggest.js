@@ -1,14 +1,15 @@
 var validSelection = false;
 
 const taxaSuggestConfig = {
-    clientRoot: "",
-    taxonSearchType: 2,
-    minLength: 3,
-    restrictToList: false,
-    taxAuthID: 1,
-    multipleTermSupport: false,
-    rankMinimum: '',
-    rankMaximum: ''
+	clientRoot: "",
+	minLength: 3,
+	multipleTermSupport: false,
+	restrictToList: false,
+	taxonSearchType: 2,
+	taxAuthID: 1,
+	limitToAccepted: 0,
+	rankMinimum: '',
+	rankMaximum: ''
 };
 
 function initiateTaxaSuggest(inputID, tidInputID = null) {
@@ -31,6 +32,8 @@ function initiateTaxaSuggest(inputID, tidInputID = null) {
 					{
 						term: extractLast(request.term),
 						searchType: taxaSuggestConfig.taxonSearchType,
+						taxAuthID: taxaSuggestConfig.taxAuthID,
+						limitToAccepted: taxaSuggestConfig.limitToAccepted,
 						rankMin: taxaSuggestConfig.rankMinimum,
 						rankMax: taxaSuggestConfig.rankMaximum
 					},
@@ -70,7 +73,9 @@ function initiateTaxaSuggest(inputID, tidInputID = null) {
 				if (!ui.item) {
 					validSelection = false;
 					if(taxaSuggestConfig.restrictToList){
-						alert("Selecting taxon from list is required");
+						let errMsg = 'Selecting taxon name from list is required';
+						if(translations.SELECT_FROM_LIST) errMsg = translations.SELECT_FROM_LIST;
+						alert(errMsg);
 					}
 				}
 			}

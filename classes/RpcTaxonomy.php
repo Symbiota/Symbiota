@@ -72,8 +72,8 @@ class RpcTaxonomy extends RpcBase{
 				$typeStr = 's';
 				if($this->limitToAccepted){
 					$sql = 'SELECT t.tid, t.sciname, t.cultivarEpithet, t.tradeName, t.author, t.kingdomName
-						FROM taxa t INNER JOIN taxStatus ts ON t.tid = ts.tidAccepted
-						WHERE t.sciname LIKE ? AND ts.taxAuthID = ? ';
+						FROM taxa t INNER JOIN taxStatus ts ON t.tid = ts.tid
+						WHERE ts.tid = ts.tidAccepted AND t.sciname LIKE ? AND ts.taxAuthID = ? ';
 					$paramArr[] = $this->taxAuthID;
 					$typeStr .= 'i';
 				}
@@ -166,7 +166,7 @@ class RpcTaxonomy extends RpcBase{
 		}
 	}
 
-	public function getTaxon($sciname){
+	public function getTaxonUnit($sciname, $rankid = 0, $author = '', $kingdomName = ''){
 		$retArr = array();
 		$sql = 'SELECT tid, sciname, author, kingdomName FROM taxa WHERE (sciname = ?)';
 		if(preg_match('/\s{1}\D{1}\s{1}/i',$sciname)){
@@ -174,8 +174,25 @@ class RpcTaxonomy extends RpcBase{
 			$sciname = preg_replace('/\s{1}x{1}\s{1}|\s{1}×{1}\s{1}/i', ' _ ', $sciname);
 			$sql = 'SELECT tid, sciname, author, kingdomName FROM taxa WHERE (sciname LIKE ?)';
 		}
+		$paramArr = array($sciname);
+		$typeStr = 's';
+		if($rankid){
+			$sql .= 'AND t.rankid = ? ';
+			$paramArr[] = $rankid;
+			$typeStr .= 'i';
+		}
+		if($author){
+			$sql .= 'AND t.author = ? ';
+			$paramArr[] = $author;
+			$typeStr .= 's';
+		}
+		if($kingdomName){
+			$sql .= 'AND t.kingdomName = ? ';
+			$paramArr[] = $kingdomName;
+			$typeStr .= 's';
+		}
 		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param('s', $sciname);
+			$stmt->bind_param($typeStr, ...$paramArr);
 			$stmt->execute();
 			$rs = $stmt->get_result();
 			while($r = $rs->fetch_object()){
@@ -218,44 +235,6 @@ class RpcTaxonomy extends RpcBase{
 			$stmt->close();
 		}
 		return $tid;
-	}
-
-	public function getAcceptedTaxa($queryTerm){
-		$retArr = Array();
-		$queryTerm .= '%';
-		$sql = 'SELECT t.tid, t.sciname, t.cultivarEpithet, t.tradeName, t.author
-			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
-			WHERE (ts.taxauthid = ?) AND (ts.tid = ts.tidaccepted) AND (t.sciname LIKE ?)
-			ORDER BY t.sciname LIMIT 20';
-		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param('is', $this->taxAuthID, $queryTerm);
-			$stmt->execute();
-			$rs = $stmt->get_result();
-			while($r = $rs->fetch_object()){
-				$sciname = $r->sciname; //.' '.$r->author;
-				if(!empty($r->tradeName)){
-					$sciname = str_replace($r->tradeName, '', $sciname);
-				}
-
-				if(!empty($r->cultivarEpithet)){
-					$sciname = str_replace("'" . $r->cultivarEpithet . "'", '', trim($sciname)); // @TODO could possibly replace off-target if cultivarEpithet matches some parent taxon exactly. We think extremely unlikely edge case, so ignoring for now.
-				}
-
-				if(!empty($r->author)){
-					$sciname = trim($sciname) . ' ' . $r->author;
-				}
-				if(!empty($r->cultivarEpithet)){
-					$sciname .= " " . $this->standardizeCultivarEpithet($r->cultivarEpithet);
-				}
-				if(!empty($r->tradeName)){
-					$sciname .= ' ' . $this->standardizeTradeName($r->tradeName);
-				}
-				$retArr[] = array('id' => $r->tid,'label' => $sciname);
-			}
-			$rs->free();
-			$stmt->close();
-		}
-		return $retArr;
 	}
 
 	public function getDynamicChildren($objId, $targetId, $displayAuthor, $limitToOccurrences, $isEditor){

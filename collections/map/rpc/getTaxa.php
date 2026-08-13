@@ -11,11 +11,11 @@ $scinames = isset($_REQUEST['scinames']) ? $_REQUEST['scinames'] : '';
 $retArr = [];
 if($IS_ADMIN) {
 	$scinames = explode(',', $scinames);
-	$taxonManager = new RpcTaxonomy();
+	$rpcManager = new RpcTaxonomy();
 	$mapManager = new MapSupport();
 
 	foreach($scinames as $sciname) {
-		$taxon = $taxonManager->getTaxon(trim($sciname));
+		$taxon = $rpcManager->getTaxonUnit($sciname);
 		if(!empty($taxon)) {
 			foreach($taxon as $tid => $taxon_info) {
 				$taxa_list = $mapManager->getTaxaList($tid);

@@ -16,7 +16,6 @@ const translations = {
   ALREADY_EXISTS: "Ya existe en la base de datos.",
   UNIT_NAME_REQUIRED: "Campo de nombre de unidad 1 (género o uninomial) requerido.",
   TAXON_RANK_REQUIRED: "Rango de Taxón requerido.",
-  SELECT_ACCEPTED_NAME: "Debe seleccionar un nombre de la lista. Si el nombre aceptado no está en la lista, debe agregarse o se encuentra en el sistema como un sinónimo no aceptado",
   SELECT_PARENT_NAME: "Debe seleccionar un nombre de la lista. Si Taxón Superior no está en la lista, podría ser necesario agregarlo",
   TAXON_NOT_EXISTS: "No existe. Por favor, agregue primero el padre al sistema.",
   MATCHES_TWO: "Coincide con dos nombres diferentes en el tesauro. Por favor, seleccione el taxón con el autor correcto.",
@@ -27,4 +26,5 @@ const translations = {
   // paleo search
   INTERVAL_MISSING: "Es necesario seleccionar un valor tanto para el Intervalo Temprano como para el Intervalo Tardío, incluso si son iguales.",
   INTERVALS_WRONG_ORDER: "El Intervalo Temprano debe ser geológicamente más antiguo que el Intervalo Tardío.",
+  SELECT_FROM_LIST: "Es obligatorio seleccionar el nombre del taxón de la lista."
 };

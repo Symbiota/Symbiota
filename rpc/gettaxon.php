@@ -8,12 +8,15 @@ include_once($SERVER_ROOT . '/classes/RpcTaxonomy.php');
 
 header('Content-Type: application/json; charset=' . $CHARSET);
 
-$sciname = isset($_REQUEST['sciname']) ? $_REQUEST['sciname'] : '';
+$sciname = $_REQUEST['sciname'] ?? '';
+$rankid = array_key_exists('rankid', $_POST) ? Sanitize::int($_POST['rankid']) : 0;
+$author = array_key_exists('author', $_POST) ? $_POST['author'] : 0;
+$kingdomName = array_key_exists('kingdomName', $_POST) ? $_POST['kingdomName'] : 0;
 
 $taxonArr = array();
 if($sciname){
 	$rpcManager = new RpcTaxonomy();
-	$taxonArr = $rpcManager->getTaxon($sciname);
+	$taxonArr = $rpcManager->getTaxonUnit($sciname, $rankid, $author, $kingdomName);
 }
 echo json_encode($taxonArr);
 ?>
