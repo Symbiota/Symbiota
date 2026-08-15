@@ -9,6 +9,8 @@ class KeyCharAdmin{
 	private $langId;
 	//private $langId;
 
+	private $errorStr;
+
 	function __construct() {
 		$this->conn = MySQLiConnectionFactory::getCon("write");
 	}
@@ -19,17 +21,19 @@ class KeyCharAdmin{
 
 	public function getCharacterArr(){
 		$retArr = array();
-		$headingArr = array();
-		$sql = 'SELECT c.cid, IFNULL(cl.charname, c.charname) AS charname, c.hid '.
-			'FROM kmcharacters c LEFT JOIN (SELECT cid, charname FROM kmcharacterlang WHERE langid = "'.$this->langId.'") cl ON c.cid = cl.cid '.
-			'ORDER BY c.sortsequence, cl.charname, c.charname';
-		//echo $sql; exit;
-		if($rs = $this->conn->query($sql)){
+		$sql = 'SELECT c.cid, IFNULL(cl.charname, c.charname) AS charname, c.hid
+			FROM kmcharacters c LEFT JOIN (SELECT cid, charname FROM kmcharacterlang WHERE langid = ?) cl ON c.cid = cl.cid
+			ORDER BY c.sortsequence, cl.charname, c.charname';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $this->langId);
+			$stmt->execute();
+			$rs = $stmt->get_result();
 			while($r = $rs->fetch_object()){
 				$hid = ($r->hid?$r->hid:0);
-				$retArr[$hid][$r->cid] = $this->cleanOutStr($r->charname);
+				$retArr[$hid][$r->cid] = $r->charname;
 			}
 			$rs->free();
+			$stmt->close();
 		}
 		return $retArr;
 	}
@@ -37,58 +41,71 @@ class KeyCharAdmin{
 	public function getCharDetails(){
 		$retArr = array();
 		if($this->cid){
-			$sql = 'SELECT cid, charname, chartype, difficultyrank, hid, units, description, glossid, helpurl, notes, enteredby, sortsequence FROM kmcharacters WHERE cid = '.$this->cid;
-			if($rs = $this->conn->query($sql)){
+			$sql = 'SELECT cid, charname, chartype, difficultyrank, hid, units, description, glossid, helpurl, notes, enteredby, sortsequence FROM kmcharacters WHERE cid = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->cid);
+				$stmt->execute();
+				$rs = $stmt->get_result();
 				while($r = $rs->fetch_object()){
-					$retArr['charname'] = $this->cleanOutStr($r->charname);
+					$retArr['charname'] = $r->charname;
 					$retArr['chartype'] = $r->chartype;
 					$retArr['difficultyrank'] = $r->difficultyrank;
 					$retArr['hid'] = $r->hid;
-					$retArr['units'] = $this->cleanOutStr($r->units);
-					$retArr['description'] = $this->cleanOutStr($r->description);
+					$retArr['units'] = $r->units;
+					$retArr['description'] = $r->description;
 					$retArr['glossid'] = $r->glossid;
 					$retArr['helpurl'] = $r->helpurl;
-					$retArr['notes'] = $this->cleanOutStr($r->notes);
+					$retArr['notes'] = $r->notes;
 					$retArr['enteredby'] = $r->enteredby;
 					$retArr['sortsequence'] = $r->sortsequence;
 				}
 				$rs->free();
+				$stmt->close();
 			}
 		}
 		return $retArr;
 	}
 
-	public function createCharacter($pArr,$un){
-		$statusStr = 'SUCCESS: character added to database';
-		$dRank = $this->cleanInStr($pArr['difficultyrank']);
-		if(!$dRank) $dRank = 1;
-		$hid = $this->cleanInStr($pArr['hid']);
-		if(!$hid) $hid = 'NULL';
-		$sql = 'INSERT INTO kmcharacters(charname,chartype,difficultyrank,hid,enteredby,sortsequence) '.
-			'VALUES("'.$this->cleanInStr($pArr['charname']).'","'.$this->cleanInStr($pArr['chartype']).'",'.
-			$dRank.','.$hid.',"'.$un.'",'.(is_numeric($pArr['sortsequence'])?$pArr['sortsequence']:1000).') ';
-		//echo $sql;
-		if($this->conn->query($sql)){
-			$this->cid = $this->conn->insert_id;
-			if(($pArr['chartype'] == 'IN') || ($pArr['chartype'] == 'RN')){
+	public function createCharacter($pArr, $userName){
+		$status = false;
+		$charName = $pArr['charname'];
+		$charType = $pArr['chartype'];
+		$hid = null;
+		if($pArr['hid']) $hid = $pArr['hid'];
+		$difficultyRank = 1;
+		if($pArr['difficultyrank']) $dRank = $pArr['difficultyrank'];
+		$sortSeq = 1000;
+		if($pArr['sortsequence']) $sortSeq = $pArr['sortsequence'];
+		$sql = 'INSERT INTO kmcharacters(charname, chartype, difficultyrank, hid, enteredby, sortsequence) VALUES(?, ?, ?, ?, ? , ?) ';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('ssiisi', $charName, $charType, $difficultyRank, $hid, $userName, $sortSeq);
+			$stmt->execute();
+			if($stmt->affected_rows){
+				$status = true;
+				$this->cid = $stmt->insert_id;
+			}
+			elseif($stmt->error) $this->errorStr = $stmt->error;
+			$stmt->close();
+		}
+
+		if($status){
+			if($charType == 'IN' || $charType == 'RN'){
 				//If new character is a numeric type, automatically load character sets with set values
-				$sql2 = 'INSERT INTO kmcs(cid,cs,charstatename) '.
-					'VALUES('.$this->cid.',"+High","Upper value of unspecified range (could be µ+s.d., but not known)"),'.
-					'('.$this->cid.',"-Low","Lower value of unspecified range (could be µ-s.d., but not known)"),'.
-					'('.$this->cid.',"Max","Maximum value"),'.
-					'('.$this->cid.',"Mean","Mean (= average)"),'.
-					'('.$this->cid.',"Min","Minimum value")';
-				if(!$this->conn->query($sql2)){
-					trigger_error('unable to load numeric character set values; '.$this->conn->error);
-					$statusStr = 'unable to load numeric character set values; '.$this->conn->error;
+				$sql2 = 'INSERT INTO kmcs(cid,cs,charstatename)
+					VALUES(?, "+High", "Upper value of unspecified range (could be µ+s.d., but not known)"),
+					(?, "-Low", "Lower value of unspecified range (could be µ-s.d., but not known)"),
+					(?, "Max", "Maximum value"), (?, "Mean", "Mean (= average)"), (?, "Min", "Minimum value")';
+				if($stmt2 = $this->conn->prepare($sql2)){
+					$stmt2->bind_param('iiiii', $this->cid, $this->cid, $this->cid, $this->cid, $this->cid);
+					$stmt2->execute();
+					if(!$stmt2->affected_rows && $stmt2->error){
+						$this->errorStr = $stmt2->error;
+					}
+					$stmt2->close();
 				}
 			}
 		}
-		else{
-			trigger_error('Creation of new character failed; '.$this->conn->error);
-			$statusStr = 'ERROR: Creation of new character failed: '.$this->conn->error.'<br/>SQL: '.$sql;
-		}
-		return $statusStr;
+		return $status;
 	}
 
 	public function editCharacter($pArr){
@@ -115,30 +132,39 @@ class KeyCharAdmin{
 		$status = true;
 
 		//Delete character taxa links
-		$sql = 'DELETE FROM kmchartaxalink WHERE (cid = '.$this->cid.')';
-		//echo $sql;
-		if(!$this->conn->query($sql)){
-			$status = 'ERROR deleting character taxa links: '.$this->conn->error.', '.$sql;
+		$sql = 'DELETE FROM kmchartaxalink WHERE (cid = ?)';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $this->cid);
+			$stmt->execute();
+			if($stmt->error) $status = 'ERROR deleting character taxa links: '.$stmt->error;
+			$stmt->close();
 		}
 
 		//Delete character dependance links
-		$sql = 'DELETE FROM kmchardependance WHERE (cid = '.$this->cid.') OR (ciddependance = '.$this->cid.')';
-		//echo $sql;
-		if(!$this->conn->query($sql)){
-			$status = 'ERROR deleting character dependance links: '.$this->conn->error.', '.$sql;
+		$sql = 'DELETE FROM kmchardependance WHERE (cid = ?) OR (ciddependance = ?)';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('ii', $this->cid, $this->cid);
+			$stmt->execute();
+			if($stmt->error) $status = 'ERROR deleting character dependance links: ' . $stmt->error;
+			$stmt->close();
 		}
 
 		//Delete language links
-		$sql = 'DELETE FROM kmcharacterlang WHERE (cid = '.$this->cid.')';
-		//echo $sql;
-		if(!$this->conn->query($sql)){
-			$status = 'ERROR deleting character languages: '.$this->conn->error.', '.$sql;
+		$sql = 'DELETE FROM kmcharacterlang WHERE (cid = ?)';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $this->cid);
+			$stmt->execute();
+			if($stmt->error) $status = 'ERROR deleting character languages: ' . $stmt->error;
+			$stmt->close();
 		}
 
 		//Delete characters
-		$sql = 'DELETE FROM kmcharacters WHERE (cid = '.$this->cid.')';
-		if(!$this->conn->query($sql)){
-			$status = 'ERROR deleting descriptions linked to character: '.$this->conn->error.', '.$sql;
+		$sql = 'DELETE FROM kmcharacters WHERE (cid = ?)';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $this->cid);
+			$stmt->execute();
+			if($stmt->error) $status = 'ERROR deleting descriptions linked to character: ' . $stmt->error;
+			$stmt->close();
 		}
 
 		return $status;
@@ -151,13 +177,13 @@ class KeyCharAdmin{
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
 					if(is_numeric($r->cs)){
-						$retArr[$r->cs]['charstatename'] = $this->cleanOutStr($r->charstatename);
+						$retArr[$r->cs]['charstatename'] = $r->charstatename;
 						$retArr[$r->cs]['implicit'] = $r->implicit;
-						$retArr[$r->cs]['notes'] = $this->cleanOutStr($r->notes);
-						$retArr[$r->cs]['description'] = $this->cleanOutStr($r->description);
+						$retArr[$r->cs]['notes'] = $r->notes;
+						$retArr[$r->cs]['description'] = $r->description;
 						$retArr[$r->cs]['illustrationurl'] = $r->illustrationurl;
 						$retArr[$r->cs]['glossid'] = $r->glossid;
-						$retArr[$r->cs]['sortsequence'] = $this->cleanOutStr($r->sortsequence);
+						$retArr[$r->cs]['sortsequence'] = $r->sortsequence;
 						$retArr[$r->cs]['enteredby'] = $r->enteredby;
 					}
 				}
@@ -456,8 +482,8 @@ class KeyCharAdmin{
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr[$r->hid]['name'] = $this->cleanOutStr($r->headingname);
-			$retArr[$r->hid]['notes'] = $this->cleanOutStr($r->notes);
+			$retArr[$r->hid]['name'] = $r->headingname;
+			$retArr[$r->hid]['notes'] = $r->notes;
 			$retArr[$r->hid]['sortsequence'] = $r->sortsequence;
 		}
 		$rs->free();
@@ -551,17 +577,11 @@ class KeyCharAdmin{
 		}
 	}
 
-	//General functions
-	private function cleanOutStr($str){
-		$newStr = $str;
-		if(isset($str)){
-			$newStr = str_replace('"',"&quot;",$str);
-			$newStr = str_replace("'","&apos;",$newStr);
-		}
-		//$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
+	public function getErrorStr(){
+		return $this->errorStr;
 	}
 
+	//General functions
 	private function cleanInStr($str){
 		$newStr = trim($str);
 		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
