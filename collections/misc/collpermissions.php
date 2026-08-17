@@ -155,7 +155,6 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 		<?php
 		if($isEditor){
 			$collPerms = $permManager->getCollectionEditors($collId);
-			if(!$isGenObs){
 				?>
 				<section class="fieldset-like">
 				<h2><span><b><?php echo (isset($LANG['ADMINS'])?$LANG['ADMINS']:'Administrators'); ?></b></span></h2>
@@ -186,9 +185,6 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 					}
 					?>
 				</section>
-				<?php
-			}
-			?>
 			<section class="fieldset-like">
 				<h2><span><b><?php echo (isset($LANG['EDITORS'])?$LANG['EDITORS']:'Editors'); ?></b></span></h2> 
 				<?php
@@ -272,7 +268,8 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 						<?php
 						if($isGenObs){
 							?>
-							<input name="righttype" type="hidden" value="editor" aria-label="<?php echo $LANG['EDITOR'] ?>" />
+							<input name="righttype" type="radio" value="admin" aria-label="<?php echo $LANG['ADMIN'] ?>" /> <?php echo (isset($LANG['ADMIN'])?$LANG['ADMIN']:'Administrator'); ?> <br/>
+							<input name="righttype" type="radio" value="editor" aria-label="<?php echo $LANG['EDITOR'] ?>" /> <?php echo (isset($LANG['EDITOR'])?$LANG['EDITOR']:'Editor'); ?> <br/>
 							<?php
 						}
 						else{
