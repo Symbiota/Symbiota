@@ -73,9 +73,6 @@ if($isEditor){
 		elseif($rightType == 'editor'){
 			$permManager->addPermission($targetUID,"CollEditor",$persObsCollId);
 		}
-		elseif($rightType == 'rare'){
-			$permManager->addPermission($targetUID,"RareSppReader",$persObsCollId);
-		}
 	}
 	elseif($action == 'Sponsor Checklist User'){
 		$permManager->addClCreateRole($targetUID);
@@ -343,7 +340,6 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 									<div style="margin:5px 0px 5px 0px;">
 										<input name="righttype" type="radio" value="admin" aria-label="<?php echo $LANG['ADMIN'] ?>" /> <?php echo (isset($LANG['ADMIN'])?$LANG['ADMIN']:'Administrator'); ?> <br/>
 										<input name="righttype" type="radio" value="editor" aria-label="<?php echo $LANG['EDITOR'] ?>" /> <?php echo (isset($LANG['EDITOR'])?$LANG['EDITOR']:'Editor'); ?> <br/>
-										<input name="righttype" type="radio" value="rare" aria-label="<?php echo $LANG['RARE_SP_READ'] ?>" /> <?php echo (isset($LANG['RARE_SP_READ'])?$LANG['RARE_SP_READ']:'Rare Species Reader'); ?><br/>
 								</div>
 									<div>
 										<?php
