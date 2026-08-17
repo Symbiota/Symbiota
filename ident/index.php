@@ -18,7 +18,7 @@ $clManager->setPid($pid);
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
 <head>
-	<title><?= $DEFAULT_TITLE . ' ' . $LANG['IDKEYS'];?></title>
+	<title><?= $DEFAULT_TITLE . ' ' . $LANG['ID_KEYS'] ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -29,10 +29,10 @@ $clManager->setPid($pid);
 	?>
 	<div class="navpath">
 		<a href="../index.php"><?= $LANG['NAV_HOME'] ?></a> &gt;&gt;
-		<b><?= $LANG['IDKEYLIST']; ?></b>
+		<b><?= $LANG['ID_KEY_LIST'] ?></b>
 	</div>
 	<div role="main" id="innertext">
-		<h1 classes="page-heading"><?= $LANG['IDKEYS']; ?></h1>
+		<h1 classes="page-heading"><?= $LANG['ID_KEYS'] ?></h1>
 	    <div style='margin:20px;'>
 	        <?php
 	        $projArr = $clManager->getChecklists(true);
