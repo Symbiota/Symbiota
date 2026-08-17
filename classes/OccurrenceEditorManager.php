@@ -915,7 +915,7 @@ class OccurrenceEditorManager {
 				}
 			}
 			//Processing edit
-			$editedFields = trim($postArr['editedfields']);
+			$editedFields = trim($postArr['editedfields'] ?? '');
 			$editArr = array_unique(explode(';', $editedFields));
 			foreach ($editArr as $k => $fName) {
 				if (trim($fName) == 'host' || trim($fName) == 'hostassocid') {
