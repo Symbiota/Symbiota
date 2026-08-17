@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT . '/classes/OccurrenceAttributes.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceTraitAttributes.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
@@ -34,7 +34,7 @@ if ($SYMB_UID) {
 	}
 }
 
-$attrManager = new OccurrenceAttributes();
+$attrManager = new OccurrenceTraitAttributes();
 $attrManager->setCollid($collid);
 $attrManager->setFilterAttributes($_POST);
 $taxonFilter = $attrManager->getFilterAttribute('taxonfilter');
@@ -50,7 +50,7 @@ $statusStr = '';
 if ($isEditor) {
 	if ($submitForm == 'Save and Next') {
 		$attrManager->setOccid($_POST['targetoccid']);
-		if (!$attrManager->addAttributes($_POST, $SYMB_UID)) {
+		if (!$attrManager->addAttributes($_POST)) {
 			$statusStr = $attrManager->getErrorMessage();
 		}
 	} elseif ($submitForm == 'Set Status and Save') {

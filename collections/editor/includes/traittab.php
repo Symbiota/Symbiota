@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceAttributes.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceTraitAttributes.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load('collections/editor/includes/traittab');
@@ -11,7 +11,7 @@ $occid = $_GET['occid'];
 $occIndex = $_GET['occindex'];
 $collid = isset($_GET['collid'])?$_GET['collid']:'';
 
-$attrManager = new OccurrenceAttributes();
+$attrManager = new OccurrenceTraitAttributes();
 $attrManager->setOccid($occid);
 
 $isEditor = 0;

@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceAttributes.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceTraitAttributes.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load('collections/traitattr/attributemining');
@@ -50,7 +50,7 @@ if($SYMB_UID){
 	}
 }
 
-$attrManager = new OccurrenceAttributes();
+$attrManager = new OccurrenceTraitAttributes();
 $attrManager->setCollid($collid);
 $collArr = $attrManager->getCollectionList($IS_ADMIN?'':$collRights);
 

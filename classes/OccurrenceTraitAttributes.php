@@ -1,9 +1,9 @@
 <?php
-include_once($SERVER_ROOT.'/classes/Manager.php');
+include_once($SERVER_ROOT.'/classes/data/OmOccurrenceTraits.php');
 include_once($SERVER_ROOT.'/classes/Media.php');
 include_once($SERVER_ROOT.'/classes/utilities/QueryUtil.php');
 
-class OccurrenceAttributes extends Manager {
+class OccurrenceTraitAttributes extends OmOccurrenceTraits {
 
 	private $collidStr = 0;
 	protected $traitArr = array();
@@ -22,11 +22,7 @@ class OccurrenceAttributes extends Manager {
 	}
 
 	//Edit functions
-	public function addAttributes($postArr,$uid){
-		if(!is_numeric($uid)){
-			$this->errorMessage = 'ERROR saving occurrence attribute: bad input values; ';
-			return false;
-		}
+	public function addAttributes($postArr){
 		$status = true;
 		$stateArr = array();
 		foreach($postArr as $postKey => $postValue){
@@ -51,10 +47,8 @@ class OccurrenceAttributes extends Manager {
 					$xValue = $tempArr[1];
 				}
 				if(is_numeric($stateId)){
-					$sql = 'INSERT INTO tmattributes(stateid,xvalue,occid,source,notes,createduid) '.
-						'VALUES('.$stateId.','.$this->cleanInStr($xValue).','.$this->occid.','.($sourceStr?'"'.$this->cleanInStr($sourceStr).'"':'NULL').','.
-						($postArr['notes']?'"'.$this->cleanInStr($postArr['notes']).'"':'NULL').','.$uid.') ';
-					if(!$this->conn->query($sql)){
+					$inputArr = array('stateID' => $stateId, 'xValue' => $xValue, 'occid' => $this->occid, 'source' => $sourceStr, 'notes' => $postArr['notes']);
+					if(!$this->insertAttribute($inputArr)){
 						$this->errorMessage .= 'ERROR saving occurrence attribute: '.$this->conn->error.'; ';
 						$status = false;
 					}
@@ -103,13 +97,12 @@ class OccurrenceAttributes extends Manager {
 			if($addArr){
 				foreach($addArr as $stateIdAdd => $addValue){
 					if(is_numeric($stateIdAdd)){
-						$sql = 'INSERT INTO tmattributes(stateid,xvalue,occid,createduid) VALUES('.$stateIdAdd.','.$this->cleanInStr($addValue).','.$this->occid.','.$GLOBALS['SYMB_UID'].') ';
-						//echo $sql.'<br/>';
-						if($this->conn->query($sql)){
+						$inputArr = array('stateID' => $stateIdAdd, 'xValue' => $addValue, 'occid' => $this->occid);
+						if($this->insertAttribute($inputArr)){
 							$status = true;
 						}
 						else{
-							$this->errorMessage = 'ERROR adding occurrence attribute: '.$this->conn->error;
+							$this->errorMessage = 'ERROR adding occurrence attribute: ' . $this->errorMessage;
 							$status = false;
 						}
 					}
@@ -118,13 +111,11 @@ class OccurrenceAttributes extends Manager {
 			if($delArr){
 				foreach($delArr as $stateIdDel => $delValue){
 					if(is_numeric($stateIdDel)){
-						$sql = 'DELETE FROM tmattributes WHERE stateid = '.$stateIdDel.' AND occid = '.$this->occid;
-						//echo $sql.'<br/>';
-						if($this->conn->query($sql)){
+						if($this->deleteAttribute(array('stateID' => $stateIdDel, 'occid' => $this->occid))){
 							$status = true;
 						}
 						else{
-							$this->errorMessage = 'ERROR removing occurrence attribute: '.$this->conn->error;
+							$this->errorMessage = 'ERROR removing occurrence attribute: ' . $this->errorMessage;
 							$status = false;
 						}
 					}
@@ -133,16 +124,11 @@ class OccurrenceAttributes extends Manager {
 
 			$sourceStr = 'viewingSpecimenImage';
 			if(isset($postArr['source']) && $postArr['source']) $sourceStr = $postArr['source'];
-			$sql = 'UPDATE tmattributes a INNER JOIN tmstates s ON a.stateid = s.stateid '.
-				'SET a.statuscode = '.$setStatus.', a.notes = '.($postArr['notes']?'"'.$this->cleanInStr($postArr['notes']).'"':'NULL').','.
-				'a.source = '.($sourceStr?'"'.$this->cleanInStr($sourceStr).'"':'NULL').','.
-				'a.modifieduid = '.$GLOBALS['SYMB_UID'].', a.datelastmodified = NOW() '.
-				'WHERE a.occid = '.$this->occid.' AND s.traitid IN('.implode(',',array_keys($this->traitArr)).')';
-			if($this->conn->query($sql)){
+			if($this->batchUpdateAttribute($setStatus, $postArr['notes'], $sourceStr, $this->occid, array_keys($this->traitArr))){
 				$status = true;
 			}
 			else{
-				$this->errorMessage = 'ERROR updating occurrence attribute review status: '.$this->conn->error;
+				$this->errorMessage = 'ERROR updating occurrence attribute review status: ' . $this->errorMessage;
 				$status = false;
 			}
 		}

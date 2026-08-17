@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/content/lang/collections/harvestparams.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceAttributeSearch.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceTraitSearch.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $collManager = new OccurrenceManager();
@@ -388,7 +388,7 @@ $searchVar = $collManager->getQueryTermStr();
 				<?php
 			}
 			if(!empty($SEARCH_BY_TRAITS)) {
-				$attribSearch = new OccurrenceAttributeSearch();
+				$attribSearch = new OccurrenceTraitSearch();
 				$traitArr = $attribSearch->getTraitSearchArr($SEARCH_BY_TRAITS);
 				if($traitArr){
 					?>
