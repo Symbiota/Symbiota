@@ -37,70 +37,60 @@ if($formSubmit && $isEditor){
 			$statusStr = 'ERROR editing taxon character: ' . $charManager->getErrorMessage();
 		}
 	}
-	elseif($formSubmit == 'Delete Char'){
-		if(!$charManager->deleteCharacter()){
+	elseif($formSubmit == 'deleteChar'){
+		if($charManager->deleteCharacter()){
 			$cid = 0;
+		}
+		else{
 			$statusStr = 'ERROR deleting taxon character: ' . $charManager->getErrorMessage();
 		}
 	}
 	elseif($formSubmit == 'addState'){
-		if($charManager->insertCharacterState($_POST)){
-			$tabIndex = 1;
-		}
-		else{
+		if(!$charManager->insertCharacterState($_POST)){
 			$statusStr = 'ERROR adding taxon character state: ' . $charManager->getErrorMessage();
 		}
+		$tabIndex = 1;
 	}
 	elseif($formSubmit == 'saveState'){
-		if($charManager->updateCharacterState($_POST)){
-			$tabIndex = 1;
-		}
-		else{
+		if(!$charManager->updateCharacterState($_POST)){
 			$statusStr = 'ERROR edting taxon character state: ' . $charManager->getErrorMessage();
 		}
+		$tabIndex = 1;
 	}
 	elseif($formSubmit == 'deleteState'){
-		if($charManager->deleteCharacterState($_POST['cs'])){
-			$tabIndex = 1;
-		}
-		else{
+		if(!$charManager->deleteCharacterState($_POST['cs'])){
 			$statusStr = 'ERROR deleting taxon character state: ' . $charManager->getErrorMessage();
 		}
+		$tabIndex = 1;
 	}
 	elseif($formSubmit == 'uploadImage'){
-		if($charManager->uploadCharacterStateImage($_POST)){
-			$tabIndex = 1;
-		}
-		else{
+		if(!$charManager->uploadCharacterStateImage($_POST)){
 			$statusStr = 'ERROR uploading character state image/illustration: ' . $charManager->getErrorMessage();
 		}
+		$tabIndex = 1;
 	}
 	elseif($formSubmit == 'deleteImage'){
 		if($charManager->removeCharacterStateImage($_POST['csimgid'])){
 			$statusStr = 'SUCCESS: image uploaded successful';
-			$tabIndex = 1;
 		}
 		else{
 			$statusStr = 'ERROR deleting character state image/illustration: ' . $charManager->getErrorMessage();
 		}
+		$tabIndex = 1;
 	}
 	elseif($formSubmit == 'Save Taxonomic Relevance'){
 		if(!empty($_POST['tid'])){
-			if($charManager->insertTaxonRelevance($_POST['tid'], $_POST['relation'], $_POST['notes'])){
-				$tabIndex = 2;
-			}
-			else{
+			if(!$charManager->insertTaxonRelevance($_POST['tid'], $_POST['relation'], $_POST['notes'])){
 				$statusStr = 'ERROR saving taxon relationship: ' . $charManager->getErrorMessage();
 			}
-		}
-	}
-	elseif($formSubmit == 'deltaxon'){
-		if($charManager->deleteTaxonRelevance($_POST['tid'])){
 			$tabIndex = 2;
 		}
-		else{
+	}
+	elseif($formSubmit == 'delaxon'){
+		if(!$charManager->deleteTaxonRelevance($_POST['tid'])){
 			$statusStr = 'ERROR deleting taxon relationship: ' . $charManager->getErrorMessage();
 		}
+		$tabIndex = 2;
 	}
 }
 
@@ -672,7 +662,7 @@ if(!$cid) header('Location: index.php');
 							}
 							?>
 							<input name="cid" type="hidden" value="<?= $cid ?>" />
-							<button name="formsubmit" type="submit" value="Delete Char" <?php if($charStateArr) echo 'DISABLED' ?>>Delete</button>
+							<button name="formsubmit" type="submit" value="deleteChar" <?php if($charStateArr) echo 'DISABLED' ?>>Delete</button>
 						</fieldset>
 					</form>
 				</div>

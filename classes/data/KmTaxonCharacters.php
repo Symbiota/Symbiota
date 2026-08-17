@@ -56,6 +56,7 @@ class KmTaxonCharacters extends DataCore{
 		}
 		//TODO: Check to make sure no character states have been coded, thus blocking deletion
 
+		$this->setCharacterFieldMap();
 		$pkArr = array('cid' => $this->cid);
 		return $this->deleteRecord('kmcharacters', $pkArr);
 	}

@@ -129,7 +129,7 @@ class KeyCharacterAdmin extends KmTaxonCharacters{
 	//General data retrival functions
 	public function getCharacterList(){
 		$retArr = array();
-		$charArr = $this->getCharacterArr(null, array('charName'));
+		$charArr = $this->getCharacterArr(null, array('sortSequence','charName'));
 		foreach($charArr as $cid => $unitArr){
 			$hid = $unitArr['hid'];
 			if(!$hid) $hid = 'UNDEFINED';

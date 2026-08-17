@@ -104,17 +104,19 @@ class DataCore extends Manager{
 		$paramArr = array_values($this->parameterArr);
 		$sql = 'UPDATE `' . $tableName . '` SET ' . implode(' = ?,', array_keys($this->parameterArr)) . ' = ? ';
 		if($paramArr){
-			$sql .= 'WHERE ' . $this->getConditionSql($pkArr, $paramArr, $this->typeStr);
-			if($stmt = $this->conn->prepare($sql)) {
-				$stmt->bind_param($this->typeStr, ...$paramArr);
-				if($stmt->execute()){
-					if($stmt->affected_rows || !$stmt->error) $status = true;
+			if($sqlWhere = $this->getConditionSql($pkArr, $paramArr, $this->typeStr)){
+				$sql .= 'WHERE ' . $sqlWhere;
+				if($stmt = $this->conn->prepare($sql)) {
+					$stmt->bind_param($this->typeStr, ...$paramArr);
+					if($stmt->execute()){
+						if($stmt->affected_rows || !$stmt->error) $status = true;
+						else $this->errorMessage = $stmt->error;
+					}
 					else $this->errorMessage = $stmt->error;
+					$stmt->close();
 				}
-				else $this->errorMessage = $stmt->error;
-				$stmt->close();
+				else $this->errorMessage = $this->conn->error;
 			}
-			else $this->errorMessage = $this->conn->error;
 		}
 		return $status;
 	}
@@ -137,18 +139,23 @@ class DataCore extends Manager{
 		$sql = 'DELETE FROM `' . $tableName . '` WHERE ';
 		$paramArr = array();
 		$typeStr = '';
-		$sql .= $this->getConditionSql($pkArr, $paramArr, $typeStr);
-		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param($typeStr, ...$paramArr);
-			$stmt->execute();
-			if($stmt->affected_rows && !$stmt->error){
-				$status = true;
+		if($sqlWhere = $this->getConditionSql($pkArr, $paramArr, $typeStr)){
+			$sql .= $sqlWhere;
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param($typeStr, ...$paramArr);
+				$stmt->execute();
+				if($stmt->affected_rows && !$stmt->error){
+					$status = true;
+				}
+				else $this->errorMessage = $stmt->error;
+				$stmt->close();
 			}
-			else $this->errorMessage = $stmt->error;
-			$stmt->close();
+			else{
+				$this->errorMessage = $this->conn->error;
+			}
 		}
 		else{
-			$this->errorMessage = $this->conn->error;
+			$this->errorMessage = 'CRITERIA_UNDEFINED';
 		}
 		return $status;
 	}
