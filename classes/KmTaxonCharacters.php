@@ -1,185 +1,160 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once('Manager.php');
 
-class KeyCharAdmin{
+class KeyTaxonCharacters extends Manager{
 
-	private $conn;
 	private $cid = 0;
+
 	private $lang = 'english';
 	private $langId;
 	//private $langId;
 
+	private $fieldMap = array();
+	private $parameterArr = array();
+	private $typeStr = '';
+	private $primaryKey;
+
 	function __construct() {
-		$this->conn = MySQLiConnectionFactory::getCon("write");
+		parent::__construct(null, 'write');
 	}
 
 	function __destruct(){
- 		if($this->conn) $this->conn->close();
+		if(!($this->conn === null)) $this->conn->close();
 	}
 
+	//kmcharacter functions
 	public function getCharacterArr(){
 		$retArr = array();
-		$headingArr = array();
-		$sql = 'SELECT c.cid, IFNULL(cl.charname, c.charname) AS charname, c.hid '.
-			'FROM kmcharacters c LEFT JOIN (SELECT cid, charname FROM kmcharacterlang WHERE langid = "'.$this->langId.'") cl ON c.cid = cl.cid '.
-			'ORDER BY c.sortsequence, cl.charname, c.charname';
-		//echo $sql; exit;
-		if($rs = $this->conn->query($sql)){
-			while($r = $rs->fetch_object()){
-				$hid = ($r->hid?$r->hid:0);
-				$retArr[$hid][$r->cid] = $this->cleanOutStr($r->charname);
-			}
-			$rs->free();
-		}
-		return $retArr;
-	}
-
-	public function getCharDetails(){
-		$retArr = array();
 		if($this->cid){
-			$sql = 'SELECT cid, charname, chartype, difficultyrank, hid, units, description, glossid, helpurl, notes, enteredby, sortsequence FROM kmcharacters WHERE cid = '.$this->cid;
-			if($rs = $this->conn->query($sql)){
-				while($r = $rs->fetch_object()){
-					$retArr['charname'] = $this->cleanOutStr($r->charname);
-					$retArr['chartype'] = $r->chartype;
-					$retArr['difficultyrank'] = $r->difficultyrank;
-					$retArr['hid'] = $r->hid;
-					$retArr['units'] = $this->cleanOutStr($r->units);
-					$retArr['description'] = $this->cleanOutStr($r->description);
-					$retArr['glossid'] = $r->glossid;
-					$retArr['helpurl'] = $r->helpurl;
-					$retArr['notes'] = $this->cleanOutStr($r->notes);
-					$retArr['enteredby'] = $r->enteredby;
-					$retArr['sortsequence'] = $r->sortsequence;
-				}
-				$rs->free();
-			}
-		}
-		return $retArr;
-	}
-
-	public function createCharacter($pArr,$un){
-		$statusStr = 'SUCCESS: character added to database';
-		$dRank = $this->cleanInStr($pArr['difficultyrank']);
-		if(!$dRank) $dRank = 1;
-		$hid = $this->cleanInStr($pArr['hid']);
-		if(!$hid) $hid = 'NULL';
-		$sql = 'INSERT INTO kmcharacters(charname,chartype,difficultyrank,hid,enteredby,sortsequence) '.
-			'VALUES("'.$this->cleanInStr($pArr['charname']).'","'.$this->cleanInStr($pArr['chartype']).'",'.
-			$dRank.','.$hid.',"'.$un.'",'.(is_numeric($pArr['sortsequence'])?$pArr['sortsequence']:1000).') ';
-		//echo $sql;
-		if($this->conn->query($sql)){
-			$this->cid = $this->conn->insert_id;
-			if(($pArr['chartype'] == 'IN') || ($pArr['chartype'] == 'RN')){
-				//If new character is a numeric type, automatically load character sets with set values
-				$sql2 = 'INSERT INTO kmcs(cid,cs,charstatename) '.
-					'VALUES('.$this->cid.',"+High","Upper value of unspecified range (could be µ+s.d., but not known)"),'.
-					'('.$this->cid.',"-Low","Lower value of unspecified range (could be µ-s.d., but not known)"),'.
-					'('.$this->cid.',"Max","Maximum value"),'.
-					'('.$this->cid.',"Mean","Mean (= average)"),'.
-					'('.$this->cid.',"Min","Minimum value")';
-				if(!$this->conn->query($sql2)){
-					trigger_error('unable to load numeric character set values; '.$this->conn->error);
-					$statusStr = 'unable to load numeric character set values; '.$this->conn->error;
-				}
-			}
-		}
-		else{
-			trigger_error('Creation of new character failed; '.$this->conn->error);
-			$statusStr = 'ERROR: Creation of new character failed: '.$this->conn->error.'<br/>SQL: '.$sql;
-		}
-		return $statusStr;
-	}
-
-	public function editCharacter($pArr){
-		$statusStr = '';
-		$targetArr = array('charname','chartype','units','difficultyrank','hid','description','helpurl','glossid','notes','sortsequence');
-		$sql = '';
-		foreach($pArr as $k => $v){
-			if(in_array($k,$targetArr)){
-				$sql .= ','.$k.'='.($v?'"'.$this->cleanInStr($v).'"':'NULL');
-			}
-		}
-		$sql = 'UPDATE kmcharacters SET '.substr($sql,1).' WHERE (cid = '.$this->cid.')';
-		if($this->conn->query($sql)){
-			$statusStr = 'SUCCESS: information saved';
-		}
-		else{
-			$statusStr = 'ERROR: Editing of character failed: '.$this->conn->error.'<br/>';
-			$statusStr .= 'SQL: '.$sql;
-		}
-		return $statusStr;
-	}
-
-	public function deleteChar(){
-		$status = true;
-
-		//Delete character taxa links
-		$sql = 'DELETE FROM kmchartaxalink WHERE (cid = '.$this->cid.')';
-		//echo $sql;
-		if(!$this->conn->query($sql)){
-			$status = 'ERROR deleting character taxa links: '.$this->conn->error.', '.$sql;
-		}
-
-		//Delete character dependance links
-		$sql = 'DELETE FROM kmchardependance WHERE (cid = '.$this->cid.') OR (ciddependance = '.$this->cid.')';
-		//echo $sql;
-		if(!$this->conn->query($sql)){
-			$status = 'ERROR deleting character dependance links: '.$this->conn->error.', '.$sql;
-		}
-
-		//Delete language links
-		$sql = 'DELETE FROM kmcharacterlang WHERE (cid = '.$this->cid.')';
-		//echo $sql;
-		if(!$this->conn->query($sql)){
-			$status = 'ERROR deleting character languages: '.$this->conn->error.', '.$sql;
-		}
-
-		//Delete characters
-		$sql = 'DELETE FROM kmcharacters WHERE (cid = '.$this->cid.')';
-		if(!$this->conn->query($sql)){
-			$status = 'ERROR deleting descriptions linked to character: '.$this->conn->error.', '.$sql;
-		}
-
-		return $status;
-	}
-
-	public function getCharStateArr(){
-		$retArr = array();
-		if($this->cid){
-			$sql = 'SELECT cid, cs, charstatename, implicit, notes, description, illustrationurl, glossid, sortsequence, enteredby FROM kmcs WHERE cid = '.$this->cid.' ORDER BY sortsequence';
-			if($rs = $this->conn->query($sql)){
-				while($r = $rs->fetch_object()){
-					if(is_numeric($r->cs)){
-						$retArr[$r->cs]['charstatename'] = $this->cleanOutStr($r->charstatename);
-						$retArr[$r->cs]['implicit'] = $r->implicit;
-						$retArr[$r->cs]['notes'] = $this->cleanOutStr($r->notes);
-						$retArr[$r->cs]['description'] = $this->cleanOutStr($r->description);
-						$retArr[$r->cs]['illustrationurl'] = $r->illustrationurl;
-						$retArr[$r->cs]['glossid'] = $r->glossid;
-						$retArr[$r->cs]['sortsequence'] = $this->cleanOutStr($r->sortsequence);
-						$retArr[$r->cs]['enteredby'] = $r->enteredby;
+			$this->setCharacterFieldMap();
+			$sql = 'SELECT `' . implode('`,`', array_keys($this->fieldMap)) . '` FROM kmcharacters WHERE cid = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->cid);
+				$stmt->execute();
+				$rs = $stmt->get_result();
+				while($r = $rs->fetch_assoc()){
+					foreach($this->fieldMap as $fieldName => $type){
+						$retArr[$fieldName] = $r[$fieldName];
 					}
 				}
 				$rs->free();
-			}
-			else{
-				trigger_error('unable to return character state array; '.$this->conn->error);
-			}
-			if($retArr){
-				//Grab character set illustration
-				$sql2 = 'SELECT cs, url, csimgid FROM kmcsimages WHERE cid = '.$this->cid.' AND cs IN ('.implode(',',array_keys($retArr)).')';
-				//echo $sql2;
-				$rs = $this->conn->query($sql2);
-				while($r = $rs->fetch_object()){
-					$retArr[$r->cs]['url'] = $r->url;
-					$retArr[$r->cs]['csimgid'] = $r->csimgid;
-				}
-				$rs->free();
+				$stmt->close();
 			}
 		}
 		return $retArr;
 	}
+
+	public function insertCharacter($inputArr){
+		$status = false;
+		$this->setCharacterFieldMap();
+		$this->setParameterArr($inputArr);
+		$sql = 'INSERT INTO kmcharacters(`';
+		$sqlValues = '';
+		$paramArr = array();
+		$delimiter = '';
+		foreach($this->parameterArr as $fieldName => $value){
+			if($value != 'pk'){
+				$sql .= $delimiter . $fieldName;
+				$sqlValues .= $delimiter . '?';
+				$paramArr[] = $value;
+				$delimiter = '`, `';
+			}
+		}
+		$sql .= '`) VALUES(' . $sqlValues . ') ';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param($this->typeStr, ...$paramArr);
+			if($stmt->execute()){
+				if($stmt->affected_rows || !$stmt->error){
+					$this->primaryKey = $stmt->insert_id;
+					$status = true;
+				}
+				else $this->errorMessage = $stmt->error;
+			}
+			else $this->errorMessage = $stmt->error;
+			$stmt->close();
+		}
+		else $this->errorMessage = $this->conn->error;
+		return $status;
+	}
+
+	public function updateCharacter($inputArr){
+		$status = false;
+		$this->setCharacterFieldMap();
+		$this->setParameterArr($inputArr);
+		$sqlFrag = '';
+		$paramArr = array();
+		foreach($this->parameterArr as $fieldName => $value){
+			$sqlFrag .= $fieldName . ' = ?, ';
+			$paramArr[] = $value;
+		}
+		$sql = 'UPDATE kmcharacters SET '.trim($sqlFrag, ', ').' WHERE (cid = ?)';
+		if($paramArr){
+			$paramArr[] = $this->cid;
+			$this->typeStr .= 'i';
+			if($stmt = $this->conn->prepare($sql)) {
+				$stmt->bind_param($this->typeStr, ...$paramArr);
+				if($stmt->execute()){
+					if($stmt->affected_rows || !$stmt->error) $status = true;
+					else $this->errorMessage = $stmt->error;
+				}
+				else $this->errorMessage = $stmt->error;
+				$stmt->close();
+			}
+			else $this->errorMessage = $this->conn->error;
+		}
+		return $status;
+	}
+
+	public function deleteCharacter(){
+		$status = false;
+		//TODO: Check to make sure no character states have been coded
+		$sql = 'DELETE FROM kmcharacters WHERE cid = ?';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $this->clid);
+			$stmt->execute();
+			if($stmt->affected_rows && !$stmt->error){
+				$status = true;
+			}
+			else $this->errorMessage = $stmt->error;
+			$stmt->close();
+		}
+		else{
+			$this->errorMessage = $this->conn->error;
+		}
+		return $status;
+	}
+
+	private function setCharacterFieldMap(){
+		$this->fieldMap = array('cid' => 'pk', 'charName' => 's', 'charType' => 's', 'difficultyRank' => 'i', 'hid' => 'i', 'units' => 's', 'description' => 's', 'glossID' => 'i',
+			'helpUrl' => 's', 'notes' => 's', 'enteredBy' => 's', 'sortSequence' => 'i');
+	}
+
+	//Character State functions
+	public function getCharacterStateArr(){
+		$retArr = array();
+		if($this->cid){
+			$this->setCharacterStateFieldMap();
+			$sql = 'SELECT `' . implode('`,`', array_keys($this->fieldMap)) . '` FROM kmcharacters WHERE cid = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->cid);
+				$stmt->execute();
+				$rs = $stmt->get_result();
+				while($r = $rs->fetch_assoc()){
+					foreach($this->fieldMap as $fieldName => $type){
+						$retArr[$fieldName] = $r[$fieldName];
+					}
+				}
+				$rs->free();
+				$stmt->close();
+			}
+		}
+		return $retArr;
+	}
+
+	private function setCharacterStateFieldMap(){
+		$this->fieldMap = array('cid' => 'pk', 'cs' => 'pk', 'charStateName' => 's', 'implicit' => 'i', 'notes' => 's', 'description' => 's', 'illustrationUrl' => 's', 'glossid' => 'i', 'sortSequence' => 'i');
+	}
+
 
 	public function createCharState($postArr, $un){
 		$csValue = 1;
@@ -456,8 +431,8 @@ class KeyCharAdmin{
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr[$r->hid]['name'] = $this->cleanOutStr($r->headingname);
-			$retArr[$r->hid]['notes'] = $this->cleanOutStr($r->notes);
+			$retArr[$r->hid]['name'] = $r->headingname;
+			$retArr[$r->hid]['notes'] = $r->notes;
 			$retArr[$r->hid]['sortsequence'] = $r->sortsequence;
 		}
 		$rs->free();
@@ -495,7 +470,26 @@ class KeyCharAdmin{
 		return $statusStr;
 	}
 
-	//Data retrival functions
+	//General data retrival functions
+	public function getCharacterArr(){
+		$retArr = array();
+		$sql = 'SELECT c.cid, IFNULL(cl.charname, c.charname) AS charname, c.hid
+			FROM kmcharacters c LEFT JOIN (SELECT cid, charname FROM kmcharacterlang WHERE langid = ?) cl ON c.cid = cl.cid
+			ORDER BY c.sortsequence, cl.charname, c.charname';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $this->langId);
+			$stmt->execute();
+			$rs = $stmt->get_result();
+			while($r = $rs->fetch_object()){
+				$hid = ($r->hid?$r->hid:0);
+				$retArr[$hid][$r->cid] = $r->charname;
+			}
+			$rs->free();
+			$stmt->close();
+		}
+		return $retArr;
+	}
+
 	public function getGlossaryList(){
 		$retArr = array();
 		$sql = 'SELECT glossid, term, language FROM glossary';
@@ -520,6 +514,167 @@ class KeyCharAdmin{
 		}
 		$rs->free();
 		return $retArr;
+	}
+
+	//General shared functions
+	protected function getRecordArr($tableName, $pkArr){
+		$retArr = array();
+		$sql = 'SELECT `' . implode('`,`', array_keys($this->fieldMap)) . '` FROM `' . $tableName . '` WHERE ' . $pkFieldName . ' = ?';
+		$paramArr = array();
+		$typeStr = '';
+		$sql .= $this->setPrimaryKeyCondition($pkArr, $paramArr, $typeStr);
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param($typeStr, ...$paramArr);
+			$stmt->execute();
+			$rs = $stmt->get_result();
+			while($r = $rs->fetch_assoc()){
+				foreach($this->fieldMap as $fieldName => $type){
+					$retArr[$fieldName] = $r[$fieldName];
+				}
+			}
+			$rs->free();
+			$stmt->close();
+		}
+		return $retArr;
+	}
+
+	protected function insertRecord($tableName, $inputArr){
+		$status = false;
+		if($tableName){
+			$this->errorMessage = 'TABLE_NAME_EMPTY';
+			return false;
+		}
+		if($inputArr){
+			$this->errorMessage = 'INPUT_ARR_EMPTY';
+			return false;
+		}
+		$this->setParameterArr($inputArr);
+		$sql = 'INSERT INTO `' . $tableName . '`(`';
+		$sqlValues = '';
+		$paramArr = array();
+		$delimiter = '';
+		foreach($this->parameterArr as $fieldName => $value){
+			if($value != 'pk'){
+				$sql .= $delimiter . $fieldName;
+				$sqlValues .= $delimiter . '?';
+				$paramArr[] = $value;
+				$delimiter = '`, `';
+			}
+		}
+		$sql .= '`) VALUES(' . $sqlValues . ') ';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param($this->typeStr, ...$paramArr);
+			if($stmt->execute()){
+				if($stmt->affected_rows || !$stmt->error){
+					$this->primaryKey = $stmt->insert_id;
+					$status = true;
+				}
+				else $this->errorMessage = $stmt->error;
+			}
+			else $this->errorMessage = $stmt->error;
+			$stmt->close();
+		}
+		else $this->errorMessage = $this->conn->error;
+		return $status;
+	}
+
+	protected function updateRecord($tableName, $pkArr, $inputArr){
+		$status = false;
+		if($tableName){
+			$this->errorMessage = 'TABLE_NAME_EMPTY';
+			return false;
+		}
+		if($pkArr){
+			$this->errorMessage = 'PK_ARR_EMPTY';
+			return false;
+		}
+		if($inputArr){
+			$this->errorMessage = 'INPUT_ARR_EMPTY';
+			return false;
+		}
+		$this->setParameterArr($inputArr);
+		$sqlFrag = '';
+		$paramArr = array();
+		$typeStr = '';
+		foreach($this->parameterArr as $fieldName => $value){
+			$sqlFrag .= $fieldName . ' = ?, ';
+			$paramArr[] = $value;
+		}
+		$sql = 'UPDATE `' . $tableName . '` SET '.trim($sqlFrag, ', ').' WHERE ';
+		if($paramArr){
+			$sql .= $this->setPrimaryKeyCondition($pkArr, $paramArr, $typeStr);
+			if($stmt = $this->conn->prepare($sql)) {
+				$stmt->bind_param($typeStr, ...$paramArr);
+				if($stmt->execute()){
+					if($stmt->affected_rows || !$stmt->error) $status = true;
+					else $this->errorMessage = $stmt->error;
+				}
+				else $this->errorMessage = $stmt->error;
+				$stmt->close();
+			}
+			else $this->errorMessage = $this->conn->error;
+		}
+		return $status;
+	}
+
+	protected function deleteRecord($tableName, $pkArr){
+		$status = false;
+		if($tableName){
+			$this->errorMessage = 'TABLE_NAME_EMPTY';
+			return false;
+		}
+		if($pkArr){
+			$this->errorMessage = 'PK_ARR_EMPTY';
+			return false;
+		}
+		$sql = 'DELETE FROM `' . $tableName . '` WHERE ';
+		$paramArr = array();
+		$typeStr = '';
+		$sql .= $this->setPrimaryKeyCondition($pkArr, $paramArr, $typeStr);
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param($typeStr, ...$paramArr);
+			$stmt->execute();
+			if($stmt->affected_rows && !$stmt->error){
+				$status = true;
+			}
+			else $this->errorMessage = $stmt->error;
+			$stmt->close();
+		}
+		else{
+			$this->errorMessage = $this->conn->error;
+		}
+		return $status;
+	}
+
+	private function setPrimaryKeyCondition($pkArr, &$paramArr, &$typeStr){
+		$sqlFrag = '';
+		$delimiter = '';
+		foreach($pkArr as $pkName => $pkValue){
+			$sqlFrag .= $delimiter . '`' . $pkName . '` = ? ';
+			$paramArr[] = $pkValue;
+			$typeStr .= 'i';
+			$delimiter = 'AND ';
+		}
+		return $sqlFrag;
+	}
+
+	private function setParameterArr($inputArr){
+		//Reset class variables, which is very important if more than one write function is called per class instance
+		unset($this->parameterArr);
+		$this->parameterArr = array();
+		$this->typeStr = '';
+		//Prepare type and value variables used within prepared statement
+		foreach($this->fieldMap as $field => $type){
+			$postField = '';
+			if(isset($inputArr[$field])) $postField = $field;
+			elseif(isset($inputArr[strtolower($field)])) $postField = strtolower($field);
+			if($postField){
+				$value = trim($inputArr[$postField]);
+				if(!$value) $value = null;
+				$this->parameterArr[$field] = $value;
+				$this->typeStr .= $type;
+			}
+		}
 	}
 
 	//Setters and getters
@@ -552,16 +707,6 @@ class KeyCharAdmin{
 	}
 
 	//General functions
-	private function cleanOutStr($str){
-		$newStr = $str;
-		if(isset($str)){
-			$newStr = str_replace('"',"&quot;",$str);
-			$newStr = str_replace("'","&apos;",$newStr);
-		}
-		//$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
-	}
-
 	private function cleanInStr($str){
 		$newStr = trim($str);
 		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
