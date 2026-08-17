@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT . '/classes/KeyCharAdmin.php');
+include_once($SERVER_ROOT.'/classes/KeyCharacterAdmin.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
@@ -18,62 +18,97 @@ $formSubmit = array_key_exists('formsubmit', $_POST) ? $_POST['formsubmit'] : ''
 $isEditor = false;
 if($IS_ADMIN || array_key_exists('KeyAdmin', $USER_RIGHTS)) $isEditor = true;
 
-$keyManager = new KeyCharAdmin();
-$keyManager->setLangId($langId);
-$keyManager->setCid($cid);
+$charManager = new KeyCharacterAdmin();
+$charManager->setLangId($langId);
+$charManager->setCid($cid);
 
 $statusStr = '';
 if($formSubmit && $isEditor){
 	if($formSubmit == 'createCharacter'){
-		$statusStr = $keyManager->createCharacter($_POST,$PARAMS_ARR['un']);
-		$cid = $keyManager->getCid();
+		if($charManager->insertCharacter($_POST)){
+			$cid = $charManager->getCid();
+		}
+		else{
+			$statusStr = 'ERROR adding new taxon character: ' . $charManager->getErrorMessage();
+		}
 	}
 	elseif($formSubmit == 'saveCharacterEdit'){
-		$statusStr = $keyManager->editCharacter($_POST);
-	}
-	elseif($formSubmit == 'addState'){
-		$keyManager->createCharState($_POST,$PARAMS_ARR['un']);
-		$tabIndex = 1;
-	}
-	elseif($formSubmit == 'saveState'){
-		$statusStr = $keyManager->editCharState($_POST);
-		$tabIndex = 1;
+		if(!$charManager->updateCharacter($_POST)){
+			$statusStr = 'ERROR editing taxon character: ' . $charManager->getErrorMessage();
+		}
 	}
 	elseif($formSubmit == 'Delete Char'){
-		$statusStr = $keyManager->deleteChar();
-		if($statusStr == true) $cid = 0;
+		if(!$charManager->deleteCharacter()){
+			$cid = 0;
+			$statusStr = 'ERROR deleting taxon character: ' . $charManager->getErrorMessage();
+		}
+	}
+	elseif($formSubmit == 'addState'){
+		if($charManager->insertCharacterState($_POST)){
+			$tabIndex = 1;
+		}
+		else{
+			$statusStr = 'ERROR adding taxon character state: ' . $charManager->getErrorMessage();
+		}
+	}
+	elseif($formSubmit == 'saveState'){
+		if($charManager->updateCharacterState($_POST)){
+			$tabIndex = 1;
+		}
+		else{
+			$statusStr = 'ERROR edting taxon character state: ' . $charManager->getErrorMessage();
+		}
 	}
 	elseif($formSubmit == 'deleteState'){
-		$statusStr = $keyManager->deleteCharState($_POST['cs']);
-		$tabIndex = 1;
+		if($charManager->deleteCharacterState($_POST['cs'])){
+			$tabIndex = 1;
+		}
+		else{
+			$statusStr = 'ERROR deleting taxon character state: ' . $charManager->getErrorMessage();
+		}
 	}
 	elseif($formSubmit == 'uploadImage'){
-		$statusStr = $keyManager->uploadCsImage($_POST);
-		$tabIndex = 1;
+		if($charManager->uploadCharacterStateImage($_POST)){
+			$tabIndex = 1;
+		}
+		else{
+			$statusStr = 'ERROR uploading character state image/illustration: ' . $charManager->getErrorMessage();
+		}
 	}
 	elseif($formSubmit == 'deleteImage'){
-		$statusStr = $keyManager->deleteCsImage($_POST['csimgid']);
-		$tabIndex = 1;
+		if($charManager->removeCharacterStateImage($_POST['csimgid'])){
+			$statusStr = 'SUCCESS: image uploaded successful';
+			$tabIndex = 1;
+		}
+		else{
+			$statusStr = 'ERROR deleting character state image/illustration: ' . $charManager->getErrorMessage();
+		}
 	}
 	elseif($formSubmit == 'Save Taxonomic Relevance'){
-		if(isset($_POST['tid']) && $_POST['tid']){
-			$statusStr = $keyManager->saveTaxonRelevance($_POST['tid'], $_POST['relation'], $_POST['notes']);
-			$tabIndex = 2;
+		if(!empty($_POST['tid'])){
+			if($charManager->insertTaxonRelevance($_POST['tid'], $_POST['relation'], $_POST['notes'])){
+				$tabIndex = 2;
+			}
+			else{
+				$statusStr = 'ERROR saving taxon relationship: ' . $charManager->getErrorMessage();
+			}
 		}
 	}
 	elseif($formSubmit == 'deltaxon'){
-		$statusStr = $keyManager->deleteTaxonRelevance($_POST['tid']);
-		$tabIndex = 2;
+		if($charManager->deleteTaxonRelevance($_POST['tid'])){
+			$tabIndex = 2;
+		}
+		else{
+			$statusStr = 'ERROR deleting taxon relationship: ' . $charManager->getErrorMessage();
+		}
 	}
 }
 
 if(!$cid) header('Location: index.php');
-
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET ?>">
 	<title>Character Admin</title>
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
@@ -268,12 +303,12 @@ if(!$cid) header('Location: index.php');
 				<hr/>
 				<?php
 			}
-			$charStateArr = $keyManager->getCharStateArr($cid);
-			$charArr = $keyManager->getCharDetails($cid);
+			$charStateArr = $charManager->getCharacterStateArr();
+			$charArr = $charManager->getCharacterArrByCid();
 			?>
-			<div style="font-weight:bold;font-size:150%;margin:15px;"><?= Sanitize::outString($charArr['charname']) ?></div>
+			<div style="font-weight:bold;font-size:150%;margin:15px;"><?= Sanitize::outString($charArr['charName']) ?></div>
 			<div id="tabs" style="margin:0px;">
-			    <ul>
+				<ul>
 					<li><a href="#chardetaildiv"><span>Details</span></a></li>
 					<li><a href="#charstatediv"><span>Character States</span></a></li>
 					<li><a href="taxonomylinkage.php?cid=<?= $cid ?>"><span>Taxonomic Linkages</span></a></li>
@@ -285,18 +320,18 @@ if(!$cid) header('Location: index.php');
 							<legend>Character Details</legend>
 							<div style="padding-top:4px;">
 								<label for="charname">Character Name</label><br />
-								<input type="text" id="charname" name="charname" maxlength="150" style="width:400px;" value="<?= Sanitize::outString($charArr['charname']) ?>" />
+								<input type="text" id="charname" name="charname" maxlength="150" style="width:400px;" value="<?= Sanitize::outString($charArr['charName']) ?>" />
 							</div>
 							<div style="padding-top:8px;float:left;">
 								<div style="float:left;">
 									<label for="type">Type</label><br />
 									<select id="type" name="chartype" style="width:180px;" onchange="updateUnits(this);">
 										<option value="UM">Multi-state</option>
-										<option value="IN" <?= ($charArr['chartype']=='IN'?'SELECTED':'') ?>>Integer</option>
-										<option value="RN" <?= ($charArr['chartype']=='RN'?'SELECTED':'') ?>>Real Number</option>
+										<option value="IN" <?= ($charArr['charType']=='IN'?'SELECTED':'') ?>>Integer</option>
+										<option value="RN" <?= ($charArr['charType']=='RN'?'SELECTED':'') ?>>Real Number</option>
 									</select>
 								</div>
-								<div id="units" style="display:<?= ((($charArr['chartype']=='IN')||($charArr['chartype']=='RN'))?'block':'none') ?>;margin-left:15px;float:left;">
+								<div id="units" style="display:<?= ((($charArr['charType']=='IN')||($charArr['charType']=='RN'))?'block':'none') ?>;margin-left:15px;float:left;">
 									<label for="units">Units</label><br />
 									<input type="text" id="units" name="units" maxlength="45" style="width:100px;" value="<?= Sanitize::outString($charArr['units']) ?>" title="" />
 								</div>
@@ -304,9 +339,9 @@ if(!$cid) header('Location: index.php');
 									<label for="difficultyrank">Difficulty</label><br />
 									<select id="difficultyrank" name="difficultyrank" style="width:100px;">
 										<option value="1">Easy</option>
-										<option value="2" <?= ($charArr['difficultyrank']=='2'?'SELECTED':'') ?>>Intermediate</option>
-										<option value="3" <?= ($charArr['difficultyrank']=='3'?'SELECTED':'') ?>>Advanced</option>
-										<option value="4" <?= ($charArr['difficultyrank']=='4'?'SELECTED':'') ?>>Hidden</option>
+										<option value="2" <?= ($charArr['difficultyRank']=='2'?'SELECTED':'') ?>>Intermediate</option>
+										<option value="3" <?= ($charArr['difficultyRank']=='3'?'SELECTED':'') ?>>Advanced</option>
+										<option value="4" <?= ($charArr['difficultyRank']=='4'?'SELECTED':'') ?>>Hidden</option>
 									</select>
 								</div>
 								<div style="float:left;margin-left:15px;">
@@ -315,7 +350,7 @@ if(!$cid) header('Location: index.php');
 										<option value="">Not Assigned</option>
 										<option value="">---------------------</option>
 										<?php
-										$headingArr = $keyManager->getHeadingArr();
+										$headingArr = $charManager->getCharacterHeadingArr();
 										asort($headingArr);
 										foreach($headingArr as $k => $v){
 											echo '<option value="' . $k . '" ' . ($k==$charArr['hid']?'SELECTED':'') . '>' . Sanitize::outString($v['name']) . '</option>';
@@ -327,15 +362,15 @@ if(!$cid) header('Location: index.php');
 							</div>
 							<div style="padding-top:8px;clear:both;">
 								<label for="helpurl">Help URL</label><br />
-								<input type="text" id="helpurl" name="helpurl" maxlength="500" style="width:90%;" value="<?= Sanitize::outString($charArr['helpurl']) ?>" />
+								<input type="text" id="helpurl" name="helpurl" maxlength="500" style="width:90%;" value="<?= Sanitize::outString($charArr['helpUrl']) ?>" />
 								<?php
-								if($charArr['helpurl'] && substr($charArr['helpurl'],0,4) == 'http'){
-									echo '<a href="' . Sanitize::outString($charArr['helpurl']) . '" target="_blank"><img src="../../images/link2.png" class="icon-img" ></a>';
+								if($charArr['helpUrl'] && substr($charArr['helpUrl'],0,4) == 'http'){
+									echo '<a href="' . Sanitize::outString($charArr['helpUrl']) . '" target="_blank"><img src="../../images/link2.png" class="icon-img" ></a>';
 								}
 								?>
 							</div>
 							<?php
-							$glossaryArr = $keyManager->getGlossaryList();
+							$glossaryArr = $charManager->getGlossaryList();
 							if($glossaryArr){
 								?>
 								<div style="padding-top:8px;clear:both;">
@@ -345,15 +380,15 @@ if(!$cid) header('Location: index.php');
 										<?php
 										foreach($glossaryArr as $glossArr){
 											foreach($glossArr as $glossID => $gArr){
-												echo '<option value="'.$glossID.'" '.($charArr['glossid']==$glossID?'selected':'').'>'.$gArr['term'].' ('.$gArr['lang'].')</option>';
+												echo '<option value="'.$glossID.'" '.($charArr['glossID']==$glossID?'selected':'').'>'.$gArr['term'].' ('.$gArr['lang'].')</option>';
 											}
 										}
 										?>
 									</select>
 									<?php
-									if($charArr['glossid']){
+									if($charArr['glossID']){
 										?>
-										<a href="#" onclick="openGlossaryPopup(<?= $charArr['glossid'] ?>);return false;"><img src="../../images/link2.png" class="icon-img"></a>
+										<a href="#" onclick="openGlossaryPopup(<?= $charArr['glossID'] ?>);return false;"><img src="../../images/link2.png" class="icon-img"></a>
 										<?php
 									}
 									?>
@@ -371,7 +406,7 @@ if(!$cid) header('Location: index.php');
 							</div>
 							<div style="padding-top:8px;">
 								<label for="sortsequence">Sort Sequence</label><br />
-								<input type="text" id="sortsequence" name="sortsequence" style="width:80px;" value="<?= $charArr['sortsequence'] ?>" />
+								<input type="text" id="sortsequence" name="sortsequence" style="width:80px;" value="<?= $charArr['sortSequence'] ?>" />
 							</div>
 							<div style="width:100%;padding-top:6px;">
 								<div style="float:left;">
@@ -380,7 +415,7 @@ if(!$cid) header('Location: index.php');
 								</div>
 								<div style="float:right;">
 									<label for="enteredby">Entered By:</label>
-									<input type="text" id="enteredby" name="enteredby" tabindex="96" maxlength="32" style="width:100px;" value="<?= Sanitize::outString($charArr['enteredby']) ?>" onchange=" " disabled />
+									<input type="text" id="enteredby" name="enteredby" tabindex="96" maxlength="32" style="width:100px;" value="<?= Sanitize::outString($charArr['enteredBy']) ?>" disabled />
 								</div>
 							</div>
 						</fieldset>
@@ -447,14 +482,14 @@ if(!$cid) header('Location: index.php');
 								<div id="csplus-<?= $cs ?>" style="margin:5px;">
 									<a href="#" onclick="toggleCharState(<?= $cs ?>);return false;">
 										<img src="../../images/plus.png" class="icon-img" >
-										<?= Sanitize::outString($stateArr['charstatename']) ?>
+										<?= Sanitize::outString($stateArr['charStateName']) ?>
 									</a>
 								</div>
 								<div id="<?= 'cs-'.$cs.'Div' ?>" style="display:none;">
 									<div style="margin:5px;">
 										<a href="#" onclick="toggleCharState(<?= $cs ?>);return false;">
 											<img src="../../images/minus.png" class="icon-img" >
-											<?= Sanitize::outString($stateArr['charstatename']) ?>
+											<?= Sanitize::outString($stateArr['charStateName']) ?>
 										</a>
 									</div>
 									<form name="stateeditform-<?= $cs ?>" action="chardetails.php" method="post" onsubmit="return validateStateEditForm(this)">
@@ -462,7 +497,7 @@ if(!$cid) header('Location: index.php');
 											<legend>Character State Details</legend>
 											<div>
 												<label for="charstatename-<?= $cs ?>">Character State Name</label><br />
-												<input type="text" id="charstatename-<?= $cs ?>" name="charstatename" maxlength="255" style="width:300px;" value="<?= Sanitize::outString($stateArr['charstatename']) ?>" />
+												<input type="text" id="charstatename-<?= $cs ?>" name="charstatename" maxlength="255" style="width:300px;" value="<?= Sanitize::outString($stateArr['charStateName']) ?>" />
 											</div>
 											<div style="padding-top:2px;">
 												<label for="description-<?= $cs ?>">Description</label><br />
@@ -478,15 +513,15 @@ if(!$cid) header('Location: index.php');
 														<?php
 														foreach($glossaryArr as $glossArr){
 															foreach($glossArr as $glossID => $gArr){
-																echo '<option value="'.$glossID.'" '.($stateArr['glossid']==$glossID?'selected':'').'>'.$gArr['term'].' ('.$gArr['lang'].')</option>';
+																echo '<option value="'.$glossID.'" '.($stateArr['glossID']==$glossID?'selected':'').'>'.$gArr['term'].' ('.$gArr['lang'].')</option>';
 															}
 														}
 														?>
 													</select>
 													<?php
-													if($stateArr['glossid']){
+													if($stateArr['glossID']){
 														?>
-														<a href="#" onclick="openGlossaryPopup('.$stateArr['glossid'].');return false;"><img src="../../images/link2.png" class="icon-img"></a>';
+														<a href="#" onclick="openGlossaryPopup('.$stateArr['glossid'].');return false;"><img src="../../images/link2.png" class="icon-img"></a>
 														<?php
 													}
 													?>
@@ -501,11 +536,11 @@ if(!$cid) header('Location: index.php');
 											<div style="padding-top:2px;">
 												<div style="float:right;">
 													<label for="enteredby-<?= $cs ?>">Entered By:</label><br/>
-													<input type="text" id="enteredby-<?= $cs ?>" name="enteredby" value="<?= Sanitize::outString($stateArr['enteredby']) ?>" disabled />
+													<input type="text" id="enteredby-<?= $cs ?>" name="enteredby" value="<?= Sanitize::outString($stateArr['enteredBy']) ?>" disabled />
 												</div>
 												<div>
 													<label for="sortsequence-<?= $cs ?>">Sort Sequence</label><br />
-													<input type="text" id="sortsequence-<?= $cs ?>" name="sortsequence" value="<?= $stateArr['sortsequence'] ?>" style="width:80px" />
+													<input type="text" id="sortsequence-<?= $cs ?>" name="sortsequence" value="<?= $stateArr['sortSequence'] ?>" style="width:80px" />
 												</div>
 											</div>
 											<div style="width:100%;margin:20px 0px 10px 20px;">
@@ -518,16 +553,16 @@ if(!$cid) header('Location: index.php');
 									<fieldset>
 										<legend>Illustration</legend>
 										<?php
-										if(isset($stateArr['csimgid'])){
+										if($imgArr = $charManager->getCharacterStateImageArr()){
 											?>
 											<div style="padding-top:2px;">
-												<a href="<?= Sanitize::outString($stateArr['url']) ?>" target="_blank"><img src="<?= Sanitize::outString($stateArr['url']) ?>" style="width:200px;" /></a>
+												<a href="<?= Sanitize::outString($imgArr['url']) ?>" target="_blank"><img src="<?= Sanitize::outString($imgArr['url']) ?>" style="width:200px;" /></a>
 											</div>
-											<form name="stateillustdelform-<?= $stateArr['csimgid'] ?>" action="chardetails.php" method="post" onsubmit="return verifyStateIllustDelForm(this)" >
+											<form name="stateillustdelform-<?= $imgArr['csImgID'] ?>" action="chardetails.php" method="post" onsubmit="return verifyStateIllustDelForm(this)" >
 												<div style="margin:10px;">
 													<input name="cid" type="hidden" value="<?= $cid ?>" />
 													<input name="cs" type="hidden" value="<?= $cs ?>" />
-													<input name="csimgid" type="hidden" value="<?= $stateArr['csimgid'] ?>" />
+													<input name="csimgid" type="hidden" value="<?= $imgArr['csImgID'] ?>" />
 													<button name="formsubmit" type="submit" value="deleteImage">Delete Image</button>
 												</div>
 											</form>
@@ -612,7 +647,7 @@ if(!$cid) header('Location: index.php');
 											<div style="margin:15px;">
 												<input name="cid" type="hidden" value="<?= $cid ?>" />
 												<input name="cs" type="hidden" value="<?= $cs ?>" />
-												<button type="submit" value="deleteState" disabled>Delete State</button>
+												<button name="formsubmit" type="submit" value="deleteState" disabled>Delete State</button>
 											</div>
 										</fieldset>
 									</form>

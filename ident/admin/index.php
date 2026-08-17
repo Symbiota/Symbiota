@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/KeyCharAdmin.php');
+include_once($SERVER_ROOT.'/classes/KeyCharacterAdmin.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
@@ -12,11 +12,11 @@ if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../ident/admin/i
 
 $langId = array_key_exists('langid',$_REQUEST) ? $_REQUEST['langid'] : '';
 
-$charManager = new KeyCharAdmin();
+$charManager = new KeyCharacterAdmin();
 $charManager->setLangId($langId);
 
-$charArr = $charManager->getCharacterArr();
-$headingArr = $charManager->getHeadingArr();
+$charList = $charManager->getCharacterList();
+$headingArr = $charManager->getCharacterHeadingArr();
 
 $isEditor = false;
 if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
@@ -112,8 +112,8 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 										<?php
 										$hArr = $headingArr;
 										asort($hArr);
-										foreach($hArr as $k => $v){
-											echo '<option value="'.$k.'">'.$v['name'].'</option>';
+										foreach($hArr as $hid => $unitArr){
+											echo '<option value="' . $hid . '">' . $unitArr['headingName'] . '</option>';
 										}
 										?>
 									</select>
@@ -134,17 +134,16 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 				</div>
 				<div id="charlist" style="padding-left:10px;">
 					<?php
-					if($charArr){
+					if($charList){
 						foreach($headingArr as $hid => $hArr){
-							if(array_key_exists($hid, $charArr)){
+							if(isset($charList[$hid])){
 								?>
-								<h2><?= Sanitize::outString($hArr['name']) ?></h2>
+								<h2><?= Sanitize::outString($hArr['headingName']) ?></h2>
 								<div>
 									<ul>
 										<?php
-										$charList = $charArr[$hid];
-										foreach($charList as $cid => $charName){
-											if ($charName) echo '<li><a href="chardetails.php?cid=' . $cid . '">' . Sanitize::outString($charName) . '</a></li>';
+										foreach($charList[$hid] as $cid => $charName){
+											echo '<li><a href="chardetails.php?cid=' . $cid . '">' . Sanitize::outString($charName) . '</a></li>';
 										}
 										?>
 									</ul>
@@ -152,14 +151,13 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 								<?php
 							}
 						}
-						if(array_key_exists(0, $charArr)){
-							$noHeaderArr = $charArr[0];
+						if(!empty($charList['UNDEFINED'])){
 							?>
 							<h2> <?= $LANG['NO_GRP_ASSSIGNED'] ?> </h2>
 							<div>
 								<ul>
 									<?php
-									foreach($noHeaderArr as $cid => $charName){
+									foreach($charList['UNDEFINED'] as $cid => $charName){
 										echo '<li><a href="chardetails.php?cid=' . $cid . '">' . Sanitize::outString($charName) . '</a></li>';
 									}
 									?>

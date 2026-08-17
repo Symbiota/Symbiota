@@ -1,26 +1,28 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/KeyCharAdmin.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once($SERVER_ROOT.'/classes/KeyCharacterAdmin.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
-$cid = array_key_exists('cid',$_REQUEST)?$_REQUEST['cid']:0;
-$langId = array_key_exists('langid',$_REQUEST)?$_REQUEST['langid']:'';
+header('Content-Type: text/html; charset=' . $CHARSET);
 
-$keyManager = new KeyCharAdmin();
+$cid = array_key_exists('cid',$_REQUEST) ? Sanitize::int($_REQUEST['cid']) : 0;
+$langId = array_key_exists('langid', $_REQUEST) ? Sanitize::int($_REQUEST['langid']) : '';
+
+$keyManager = new KeyCharacterAdmin();
 $keyManager->setLangId($langId);
 $keyManager->setCid($cid);
 $tLinks = $keyManager->getTaxonRelevance();
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $LANG_TAG ?>">
+<html lang="<?= $LANG_TAG ?>">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET ?>">
+	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$( "#relevanceinput" ).autocomplete({
@@ -94,8 +96,8 @@ $tLinks = $keyManager->getTaxonRelevance();
 								echo '<div style="float:left;"><b>'.$tArr['sciname'].'</b>'.($tArr['notes']?' - '.$tArr['notes']:'').'</div> ';
 								?>
 								<form name="delTaxonForm" action="chardetails.php" method="post" style="float:left;margin-left:5px;" onsubmit="return comfirm('Are you sure you want to delete this relationship?')">
-									<input name="cid" type="hidden" value="<?php echo $cid; ?>" />
-									<input name="tid" type="hidden" value="<?php echo $tid; ?>" />
+									<input name="cid" type="hidden" value="<?= $cid ?>" />
+									<input name="tid" type="hidden" value="<?= $tid ?>" />
 									<input name="formsubmit" type="hidden" value="deltaxon" />
 									<input type="image" src="../../images/del.png" style="width:1.3em;" />
 								</form>
@@ -118,8 +120,8 @@ $tLinks = $keyManager->getTaxonRelevance();
 								echo '<div style="float:left;"><b>'.$tArr['sciname'].'</b>'.($tArr['notes']?' - '.$tArr['notes']:'').'</div> ';
 								?>
 								<form name="delTaxonForm" action="chardetails.php" method="post" style="float:left;margin-left:5px;" onsubmit="return comfirm('Are you sure you want to delete this relationship?')">
-									<input name="cid" type="hidden" value="<?php echo $cid; ?>" />
-									<input name="tid" type="hidden" value="<?php echo $tid; ?>" />
+									<input name="cid" type="hidden" value="<?= $cid ?>" />
+									<input name="tid" type="hidden" value="<?= $tid ?>" />
 									<input name="formsubmit" type="hidden" value="deltaxon" />
 									<input type="image" src="../../images/del.png" style="width:1.3em;" />
 								</form>
@@ -164,7 +166,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 						<input id="editornotes" name="notes" type="text" value="" style="width:80%;" />
 					</div>
 					<div style="margin:15px;">
-						<input name="cid" type="hidden" value="<?php echo $cid; ?>" />
+						<input name="cid" type="hidden" value="<?= $cid ?>" />
 						<button name="formsubmit" type="submit" value="Save Taxonomic Relevance">Save Taxonomic Relevance</button>
 					</div>
 				</fieldset>
