@@ -13,5 +13,5 @@ $LANG['ERROR_CREATING_OUTPUT'] = 'ERROR creating output file. Query probably did
 $LANG['ENCODING'] = 'Data Set Encoding';
 $LANG['DOWNLOAD'] = 'Download';
 $LANG['DOWNLOADING'] = 'Downloading backup file';
-$LANG['DOWNLOAD_COMPLETE'] = 'Backup file has been downloaded to your local system!';
+$LANG['DOWNLOAD_COMPLETE'] = 'downloaded to your local system!';
 ?>
