@@ -331,8 +331,8 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 								<legend><b><?php echo (isset($LANG['NEW_SPONSOR'])?$LANG['NEW_SPONSOR']:'New Sponsorship'); ?></b></legend>
 								<form name="addpersobsman" action="collpermissions.php" method="POST" onsubmit="return verifyAddRights(this)">
 									<div>
-										<?php echo $LANG['SEL_USER'] ?>
-										<input class="userinput" id="uid" type="text" style="width:400px;" aria-label="<?php echo $LANG['SEL_USER'] ?>" />
+										<?php echo $LANG['ENTER_USER_NAME'] ?>
+										<input class="userinput" id="uid" type="text" style="width:400px;" aria-label="<?php echo $LANG['ENTER_USER_NAME'] ?>" />
 										<input class="uid-add" name="uid" type="hidden" value="" />
 									</div>
 									<div style="margin:5px 0px 5px 0px;">
