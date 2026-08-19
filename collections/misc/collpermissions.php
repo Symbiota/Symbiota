@@ -66,13 +66,7 @@ if($isEditor){
 //		//$permManager->addPermission($pTokens[0],'CollTaxon-'.$collId.':'.$pTokens[1]);
 //	}
 	elseif($action == 'Sponsor Personal Observation User'){
-		$rightType = $_POST['righttype'];
-		if($rightType == 'admin'){
-			$permManager->addPermission($targetUID,"CollAdmin",$persObsCollId);
-		}
-		elseif($rightType == 'editor'){
-			$permManager->addPermission($targetUID,"CollEditor",$persObsCollId);
-		}
+		$permManager->addPermission($targetUID,"CollEditor",$persObsCollId);
 	}
 	elseif($action == 'Sponsor Checklist User'){
 		$permManager->addClCreateRole($targetUID);
@@ -336,8 +330,6 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 										<input class="uid-add" name="uid" type="hidden" value="" />
 									</div>
 									<div style="margin:5px 0px 5px 0px;">
-										<input name="righttype" type="radio" value="admin" id="po_admin" /> <label for="po_admin"><?php echo $LANG['ADMIN']; ?></label> <br/>
-										<input name="righttype" type="radio" value="editor" id="po_editor" /> <label for="po_editor"><?php echo $LANG['EDITOR']; ?></label> <br/>
 								</div>
 									<div>
 										<?php
