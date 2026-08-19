@@ -1,18 +1,18 @@
-var validSelection = false;
-
 const taxaSuggestConfig = {
 	clientRoot: "",
 	minLength: 3,
 	multipleTermSupport: false,
 	restrictToList: false,
 	taxonSearchType: 2,
+	limitToAccepted: false,
+	fullOutput: false,
+	extendQueryMatch: false,
 	taxAuthID: 1,
-	limitToAccepted: 0,
 	rankMinimum: '',
 	rankMaximum: ''
 };
 
-function initiateTaxaSuggest(inputID, tidInputID = null) {
+function initiateTaxaSuggest(inputID, callback = null) {
 	const inputElem = $("#" + inputID);
 	inputElem
 		// don't navigate away from the field on tab when selecting an item
@@ -32,8 +32,10 @@ function initiateTaxaSuggest(inputID, tidInputID = null) {
 					{
 						term: extractLast(request.term),
 						searchType: taxaSuggestConfig.taxonSearchType,
-						taxAuthID: taxaSuggestConfig.taxAuthID,
 						limitToAccepted: taxaSuggestConfig.limitToAccepted,
+						fullOutput: taxaSuggestConfig.fullOutput,
+						extendQueryMatch: taxaSuggestConfig.extendQueryMatch,
+						taxAuthID: taxaSuggestConfig.taxAuthID,
 						rankMin: taxaSuggestConfig.rankMinimum,
 						rankMax: taxaSuggestConfig.rankMaximum
 					},
@@ -53,7 +55,6 @@ function initiateTaxaSuggest(inputID, tidInputID = null) {
 				return false;
 			},
 			select(event, ui) {
-				validSelection = true;
 				if(taxaSuggestConfig.multipleTermSupport){
 					let terms = this.value.replace("],", "];").split(/;\s*/);
 					let targetIndex = terms.length - 1;
@@ -63,20 +64,25 @@ function initiateTaxaSuggest(inputID, tidInputID = null) {
 				}
 				else{
 					this.value = ui.item.value;
-					if(tidInputID){
-						document.getElementById(tidInputID).value = ui.item.id;
-					}
 				}
 				return false;
 			},
 			change: function(event, ui) {
-				if (!ui.item) {
-					validSelection = false;
+				const validSelection = !!ui.item;
+				if (!validSelection) {
 					if(taxaSuggestConfig.restrictToList){
 						let errMsg = 'Selecting taxon name from list is required';
 						if(translations.SELECT_FROM_LIST) errMsg = translations.SELECT_FROM_LIST;
 						alert(errMsg);
 					}
+				}
+				if(typeof callback === "function"){
+					callback({
+						valid: validSelection,
+						item: ui.item,
+						value: this.value,
+						input: this
+					});
 				}
 			}
 		}

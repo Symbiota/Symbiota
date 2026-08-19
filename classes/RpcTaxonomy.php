@@ -13,6 +13,8 @@ class RpcTaxonomy extends RpcBase{
 	private $rankMax = '';
 	private $taxAuthID = 1;
 	private $limitToAccepted = false;
+	private $fullOutput = false;
+	private $extendQueryMatch = false;		//Allows matches on first characters of reach word
 
 	function __construct(){
 		parent::__construct();
@@ -37,16 +39,16 @@ class RpcTaxonomy extends RpcBase{
 			$typeStr = '';
 			if($this->taxonSearchType == 1){	//ANY_NAME search
 				global $LANG;
-				$sql = 'SELECT DISTINCT tid, CONCAT("' . $LANG['SELECT_1-5'] . ': ", v.vernacularname) AS label, v.vernacularname AS sciname, "" as author, "" as kingdomName
+				$sql = 'SELECT DISTINCT tid, CONCAT("' . $LANG['SELECT_1-5'] . ': ", v.vernacularname) AS label, v.vernacularname AS sciname, "" as author, "" as kingdomName, "" as securityStatus
 				FROM taxavernaculars v WHERE v.vernacularname LIKE ?
 				UNION
-				SELECT DISTINCT tid, CONCAT("' . $LANG['SELECT_1-2'] . ': ", sciname) AS label, sciname AS value, author, kingdomName
+				SELECT DISTINCT tid, CONCAT("' . $LANG['SELECT_1-2'] . ': ", sciname) AS label, sciname AS value, author, kingdomName, securityStatus
 				FROM taxa WHERE sciname LIKE ? AND rankid > 179
 				UNION
-				SELECT DISTINCT tid, CONCAT("' . $LANG['SELECT_1-3'] . ': ", sciname) AS label, sciname AS value, author, kingdomName
+				SELECT DISTINCT tid, CONCAT("' . $LANG['SELECT_1-3'] . ': ", sciname) AS label, sciname AS value, author, kingdomName, securityStatus
 				FROM taxa WHERE sciname LIKE ? AND rankid = 140
 				UNION
-				SELECT tid, CONCAT("' . $LANG['SELECT_1-4'] . ': ",sciname) AS label, sciname AS value, author, kingdomName
+				SELECT tid, CONCAT("' . $LANG['SELECT_1-4'] . ': ",sciname) AS label, sciname AS value, author, kingdomName, securityStatus
 				FROM taxa WHERE sciname LIKE ? AND rankid > 20 AND rankid < 180 AND rankid != 140 ';
 				$paramArr[] = '%' . $queryString . '%';
 				$paramArr[] = '%' . $queryString . '%';
@@ -58,24 +60,44 @@ class RpcTaxonomy extends RpcBase{
 				//COMMON_NAME
 				$sql = 'SELECT DISTINCT v.tid, CONCAT(v.vernacularname, " (", t.sciname, ';
 				if($homonymSupportIndex == 1 || $homonymSupportIndex == 3) $sql .= '" ", t.author, ';
-				$sql .= '")") AS sciname, "" as author';
-				if($homonymSupportIndex > 1) $sql .= ', t.kingdomName';
-				$sql .= ' FROM taxavernaculars v INNER JOIN taxa t ON v.tid = t.tid
-					WHERE v.vernacularname LIKE ? ';
+				$sql .= '")") AS sciname, t.author, t.kingdomName, t.securityStatus ';
+				if($this->fullOutput) $sql .= ', ts.family, ts.tidAccepted ';
+				$sql .= 'FROM taxavernaculars v INNER JOIN taxa t ON v.tid = t.tid ';
+				if($this->fullOutput) $sql .= 'INNER JOIN taxstatus ts ON t.tid = ts.tid ';
+				$sql .= 'WHERE v.vernacularname LIKE ? ';
 				$paramArr[] = '%' . $queryString . '%';
 				$typeStr = 's';
+				if($this->fullOutput){
+					$sql .= 'AND ts.taxAuthID = ? ';
+					$paramArr[] = $this->taxAuthID;
+					$typeStr .= 'i';
+				}
 			}
 			else{
 				//SCIENTIFIC_NAME - default
-				$sql = 'SELECT tid, sciname, cultivarEpithet, tradeName, author, kingdomName FROM taxa WHERE sciname LIKE ? ';
-				$paramArr[] = $queryString . '%';
-				$typeStr = 's';
-				if($this->limitToAccepted){
-					$sql = 'SELECT t.tid, t.sciname, t.cultivarEpithet, t.tradeName, t.author, t.kingdomName
+				$sql = 'SELECT t.tid, t.sciname, t.cultivarEpithet, t.tradeName, t.author, t.kingdomName, t.securityStatus FROM taxa t WHERE t.sciname LIKE ? ';
+				if($this->fullOutput || $this->limitToAccepted){
+					$sql = 'SELECT t.tid, t.sciname, t.cultivarEpithet, t.tradeName, t.author, t.kingdomName, t.securityStatus, ts.family, ts.tidAccepted
 						FROM taxa t INNER JOIN taxStatus ts ON t.tid = ts.tid
-						WHERE ts.tid = ts.tidAccepted AND t.sciname LIKE ? AND ts.taxAuthID = ? ';
+						WHERE ts.taxAuthID = ? AND t.sciname LIKE ? ';
 					$paramArr[] = $this->taxAuthID;
-					$typeStr .= 'i';
+					$typeStr = 'i';
+					if($this->limitToAccepted) $sql .= 'AND ts.tid = ts.tidAccepted';
+				}
+				$paramArr[] = $queryString . '%';
+				$typeStr .= 's';
+				if($this->extendQueryMatch){
+					// Enable scientific name entry shortcuts: 2-3 letter codes separated by spaces, e.g. "pse men"
+					// Split the search string by spaces if there are any.
+					$strArr = explode(' ', $term);
+					if(count($strArr) > 1){
+						$sql .= 'OR (unitname1 LIKE "' . $strArr[0] . '%" AND unitname2 LIKE "' . $strArr[1] . '%" ';
+						if(!empty($strArr[2])){
+							$sql .= 'AND unitname3 LIKE "' . $strArr[2] . '%" ';
+						}
+						$sql .= ') ';
+					}
+
 				}
 			}
 			if($this->taxonSearchType == 3){
@@ -126,7 +148,7 @@ class RpcTaxonomy extends RpcBase{
 					if(!empty($r->author)){
 						if($homonymSupportIndex == 1 || $homonymSupportIndex == 3){
 							$label = trim($label) . ' ' . $r->author;
-							$value = $label . ' [' . $r->tid . ']';
+							$value = $label;
 						}
 					}
 					if(!empty($r->cultivarEpithet)){
@@ -138,13 +160,32 @@ class RpcTaxonomy extends RpcBase{
 					if(!empty($r->kingdomName)){
 						if($homonymSupportIndex == 2 || $homonymSupportIndex == 3){
 							$label .= ' - ' . $r->kingdomName;
-							$value = $label . ' [' . $r->tid . ']';
+							$value = $label;
 						}
 					}
 					if (!empty($r->label)){
 						$label = $r->label;
 					}
-					$keys = ['id' => $r->tid, 'value' => $value, 'label' => $label];
+					if($homonymSupportIndex){
+						$value .= ' [' . $r->tid . ']';
+					}
+					$acceptance = '';
+					if(!empty($r->tidAccepted)){
+						if($r->tid == $r->tidAccepted) $acceptance = 1;
+						else $acceptance = 0;
+					}
+					$family = '';
+					if(!empty($r->family)) $family = $r->family;
+					$keys = [
+						'id' => $r->tid,
+						'value' => $value,
+						'label' => $label,
+						'author' => $r->author,
+						'kingdomName' => $r->kingdomName,
+						'securityStatus' => $r->securityStatus,
+						'family' => $family,
+						'acceptance' => $acceptance
+					];
 					$retArr[] = $keys;
 				}
 				$rs->free();
@@ -440,12 +481,22 @@ class RpcTaxonomy extends RpcBase{
 	}
 
 	public function setTaxAuthId($id){
-		if(is_numeric($id)) $this->taxAuthID = $id;
+		if($id && is_numeric($id)) $this->taxAuthID = $id;
 	}
 
 	public function setLimitToAccepted($bool){
 		if($bool) $this->limitToAccepted = true;
 		else $this->limitToAccepted = false;
+	}
+
+	public function setFullOutput($bool){
+		if($bool) $this->fullOutput = true;
+		else $this->fullOutput = false;
+	}
+
+	public function setExtendQueryMatch($bool){
+		if($bool) $this->extendQueryMatch = true;
+		else $this->extendQueryMatch = false;
 	}
 
 	public function setRankMin($rank){

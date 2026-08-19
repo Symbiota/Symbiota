@@ -33,10 +33,16 @@ $searchVar = $collManager->getQueryTermStr();
 			setSessionQueryStr();
 			setHarvestParamsForm(document.harvestparams);
 
-			//Set and initiate Autcomplete
-			setTaxaSuggestRootPath("<?= $CLIENT_ROOT ?>");
-			setMultipleTermSupport(true);
-			initiateTaxaSuggest("taxa", "tid", document.getElementById("taxontype").value);
+			//Auto-complete for taxon field
+			const taxaInput = document.querySelector("#taxa");
+			if(taxaInput){
+				taxaInput.addEventListener("focus", (event) => {
+					taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggestConfig.multipleTermSupport = true;
+					taxaSuggestConfig.taxonSearchType = document.getElementById("taxontype").value;
+					initiateTaxaSuggest("taxa");
+				});
+			}
 		});
 	</script>
 

@@ -27,6 +27,7 @@ $LANG['NEXT_REC'] = 'Registro Siguiente';
 $LANG['LAST_REC'] = 'Último Registro';
 $LANG['NEW_REC'] = 'Nuevo Registro';
 $LANG['OCCEDITOR'] = 'Editor de Ocurrencias';
+$LANG['TAXON_NOT_FOUND'] = 'ADVERTENCIA: Taxón no encontrado. Es posible que esté mal escrito o que deba ser añadido al tesauro taxonómico por un editor taxonómico. Puede continuar registrando este espécimen con este nombre; el nombre se resolverá más adelante.';
 $LANG['SEARCH_FILTER'] = 'Alternar Formulario de Búsqueda';
 $LANG['EDITOR'] = 'Editor';
 $LANG['CENTRAL_CROWD'] = 'Central de Colaboración Abierta';

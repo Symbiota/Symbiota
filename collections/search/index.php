@@ -73,9 +73,9 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 	<script>
 		$(document).ready(function() {
 			//Auto-complete for taxon field
-			const taxaInput = document.querySelector('#taxa');
+			const taxaInput = document.querySelector("#taxa");
 			if(taxaInput){
-				taxaInput.addEventListener('focus', (event) => {
+				taxaInput.addEventListener("focus", (event) => {
 					taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
 					taxaSuggestConfig.multipleTermSupport = true;
 					taxaSuggestConfig.taxonSearchType = document.getElementById("taxontype").value;
@@ -84,13 +84,13 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 			}
 
 			//Auto-complete for associated taxon field
-			const assocTaxaInput = document.querySelector('#associated-taxa');
+			const assocTaxaInput = document.querySelector("#associated-taxa");
 			if(assocTaxaInput){
-				assocTaxaInput.addEventListener('focus', (event) => {
+				assocTaxaInput.addEventListener("focus", (event) => {
 					taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
 					taxaSuggestConfig.multipleTermSupport = true;
 					taxaSuggestConfig.taxonSearchType = document.getElementById("taxontype-association").value;
-					initiateTaxaSuggest("taxa");
+					initiateTaxaSuggest("associated-taxa");
 				});
 			}
 

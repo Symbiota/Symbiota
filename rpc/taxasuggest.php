@@ -11,18 +11,19 @@ $taxonSearchType = (array_key_exists('searchType', $_REQUEST) ? Sanitize::int($_
 $rankMin = (array_key_exists('rankMin', $_REQUEST) ? Sanitize::int($_REQUEST['rankMin']) : '');
 $rankMax = (array_key_exists('rankMax', $_REQUEST) ? Sanitize::int($_REQUEST['rankMax']) : '');
 $limitToAccepted = empty($_REQUEST['limitToAccepted']) ? 0 : 1;
+$fullOutput = empty($_REQUEST['fullOutput']) ? 0 : 1;
 $taxAuthID = (array_key_exists('taxAuthID', $_REQUEST) ? Sanitize::int($_REQUEST['taxAuthID']) : 1);
 
 $retArr = array();
 if($term){
 	$rpcManager = new RpcTaxonomy();
 	$rpcManager->setTaxonSearchType($taxonSearchType);
-	if(is_numeric($rankMin)) $rpcManager->setRankMin($rankMin);
-	if(is_numeric($rankMax)) $rpcManager->setRankMax($rankMax);
-	if($limitToAccepted){
-		$rpcManager->setLimitToAccepted($limitToAccepted);
-		$rpcManager->setTaxAuthId($taxAuthID);
-	}
+	$rpcManager->setRankMin($rankMin);
+	$rpcManager->setRankMax($rankMax);
+	$rpcManager->setLimitToAccepted($limitToAccepted);
+	$rpcManager->setFullOutput($fullOutput);
+	$rpcManager->setTaxAuthId($taxAuthID);
+
 	$retArr = $rpcManager->getTaxaSuggest($term);
 }
 echo json_encode($retArr);

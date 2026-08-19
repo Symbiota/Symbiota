@@ -57,7 +57,11 @@ if($isEditor){
 					taxaSuggestConfig.restrictToList = true;
 					taxaSuggestConfig.limitToAccepted = 1;
 					taxaSuggestConfig.rankMaximum = 0;
-					initiateTaxaSuggest("acceptedstr", "tidaccepted");
+					initiateTaxaSuggest("acceptedstr", function(result) {
+						if (result.valid) {
+							document.getElementById("tidaccepted").value = item.tid;
+						}
+					});
 				});
 			}
 
@@ -69,7 +73,11 @@ if($isEditor){
 					taxaSuggestConfig.restrictToList = true;
 					taxaSuggestConfig.limitToAccepted = 0;
 					taxaSuggestConfig.rankMaximum = document.getElementById("rankid").value - 1;
-					initiateTaxaSuggest("parentname", "parenttid");
+					initiateTaxaSuggest("parentname", function(result) {
+						if (result.valid) {
+							document.getElementById("parenttid").value = item.tid;
+						}
+					});
 				});
 			}
 

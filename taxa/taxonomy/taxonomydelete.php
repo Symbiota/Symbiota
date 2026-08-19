@@ -19,7 +19,11 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 	$(document).ready(function() {
 		setTaxaSuggestRootPath("<?= $CLIENT_ROOT ?>");
 		setMinLength(2);
-		initiateTaxaSuggest("remapvalue", "remaptid");
+		initiateTaxaSuggest("remapvalue", function(result) {
+			if (result.valid) {
+				document.getElementById("remaptid").value = item.tid;
+			}
+		});
 	});
 
 	function validateRemapTaxonForm(f){
