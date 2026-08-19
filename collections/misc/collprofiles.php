@@ -785,15 +785,18 @@ if ($SYMB_UID) {
 				// If GBIF dataset key is available, fetch GBIF format from API
 				if ($collData['publishtogbif'] && $datasetKey && file_exists($SERVER_ROOT . '/includes/citationgbif.php')) {
 					$gbifUrl = 'http://api.gbif.org/v1/dataset/' . $datasetKey;
-					$responseData = json_decode(file_get_contents($gbifUrl));
-					if ($responseData === null && json_last_error() !== JSON_ERROR_NONE) {
+					$context = stream_context_create(['http' => ['timeout' => 2]]);
+					$response = file_get_contents($gbifUrl, false, $context);
+					$responseData = $response !== false ? json_decode($response) : null;
+					if ($responseData !== null && json_last_error() === JSON_ERROR_NONE) {
+						$collData['gbiftitle'] = $responseData->title;
+						$collData['doi'] = $responseData->doi;
+						$_SESSION['colldata'] = $collData;
+						include($SERVER_ROOT . '/includes/citationgbif.php');
+					} else {
 						error_log('Error in JSON decoding: ' . json_last_error_msg());
-						throw new Exception('Error in JSON decoding');
+						include($SERVER_ROOT . '/includes/citationcollection.php');
 					}
-					$collData['gbiftitle'] = $responseData->title;
-					$collData['doi'] = $responseData->doi;
-					$_SESSION['colldata'] = $collData;
-					include($SERVER_ROOT . '/includes/citationgbif.php');
 				} else {
 					include($SERVER_ROOT . '/includes/citationcollection.php');
 				}
