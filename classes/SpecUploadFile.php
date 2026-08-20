@@ -22,13 +22,14 @@ class SpecUploadFile extends SpecUploadBase{
 	public function uploadFile(){
 		if(!$this->ulFileName){
 			$finalPath = '';
-			if(array_key_exists("ulfnoverride",$_POST) && $_POST['ulfnoverride']){
-				$this->ulFileName = substr($_POST['ulfnoverride'],strrpos($_POST['ulfnoverride'],'/')+1);
-				if(copy($_POST['ulfnoverride'],$this->uploadTargetPath.$this->ulFileName)){
-					$finalPath = $this->uploadTargetPath.$this->ulFileName;
-				}
-			}
-			elseif(array_key_exists("uploadfile",$_FILES)){
+			// Disabled to prevent hacker abusing this request
+			// if(array_key_exists("ulfnoverride",$_POST) && $_POST['ulfnoverride']){
+			// 	$this->ulFileName = substr($_POST['ulfnoverride'],strrpos($_POST['ulfnoverride'],'/')+1);
+			// 	if(copy($_POST['ulfnoverride'],$this->uploadTargetPath.$this->ulFileName)){
+			// 		$finalPath = $this->uploadTargetPath.$this->ulFileName;
+			// 	}
+			// }
+			if(array_key_exists("uploadfile",$_FILES)){
 				$this->ulFileName = $_FILES['uploadfile']['name'];
 				if(move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->uploadTargetPath.$this->ulFileName)){
 					$finalPath = $this->uploadTargetPath.$this->ulFileName;
