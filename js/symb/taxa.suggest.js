@@ -1,8 +1,11 @@
 const taxaSuggestConfig = {
 	clientRoot: "",
 	minLength: 3,
+	includeAuthor: false,
+	includeKingdom: false,
 	multipleTermSupport: false,
 	restrictToList: false,
+
 	taxonSearchType: 2,
 	limitToAccepted: false,
 	fullOutput: false,

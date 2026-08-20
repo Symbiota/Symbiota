@@ -82,7 +82,7 @@ class RpcTaxonomy extends RpcBase{
 						WHERE ts.taxAuthID = ? AND t.sciname LIKE ? ';
 					$paramArr[] = $this->taxAuthID;
 					$typeStr = 'i';
-					if($this->limitToAccepted) $sql .= 'AND ts.tid = ts.tidAccepted';
+					if($this->limitToAccepted) $sql .= 'AND ts.tid = ts.tidAccepted ';
 				}
 				$paramArr[] = $queryString . '%';
 				$typeStr .= 's';
@@ -179,9 +179,10 @@ class RpcTaxonomy extends RpcBase{
 					$keys = [
 						'id' => $r->tid,
 						'value' => $value,
+						'sciname' => $r->sciname,
 						'label' => $label,
 						'author' => $r->author,
-						'kingdomName' => $r->kingdomName,
+						'kingdom' => $r->kingdomName,
 						'securityStatus' => $r->securityStatus,
 						'family' => $family,
 						'acceptance' => $acceptance

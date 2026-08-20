@@ -69,20 +69,13 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.index.js?ver=1>" type="text/javascript"></script>
 	<script src="<?= $JS_LANG_FILENAME ?>" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=2" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxonomy.taxasuggest.js?ver=3b" type="text/javascript"></script>
-	<script>
-		$(document).ready(function() {
-			//Auto-complete for taxon field
-			const taxaInput = document.querySelector("#taxa");
-			if(taxaInput){
-				taxaInput.addEventListener("focus", (event) => {
-					taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
-					taxaSuggestConfig.multipleTermSupport = true;
-					taxaSuggestConfig.taxonSearchType = document.getElementById("taxontype").value;
-					initiateTaxaSuggest("taxa");
-				});
-			}
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/search.autocomplete.js?v=1" type="text/javascript"></script>
 
+	<script>
+		const clientRoot = "<?= $CLIENT_ROOT ?>";
+
+		$(document).ready(function() {
 			//Auto-complete for associated taxon field
 			const assocTaxaInput = document.querySelector("#associated-taxa");
 			if(assocTaxaInput){
@@ -208,7 +201,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 							<div style="padding-top:14px">
 								<div class="select-container" style="position: relative">
 									<label for="taxontype" class="screen-reader-only"><?php echo $LANG['TAXON_TYPE'] ?></label>
-									<select name="taxontype" id="taxontype" style="margin-top:0;padding-top:0; margin-bottom: 0.5rem" onchange="taxonTypeChanged(this)">
+									<select name="taxontype" id="taxontype" style="margin-top:0;padding-top:0; margin-bottom: 0.5rem">
 										<option id="taxontype-scientific" value="2" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['SCIENTIFIC_NAME'] ?></option>
 										<option id="taxontype-family" value="3" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['FAMILY'] ?></option>
 										<option id="taxontype-group" value="4" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['TAXONOMIC_GROUP'] ?></option>
