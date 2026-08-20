@@ -75,7 +75,7 @@ function initiateTaxaSuggest(inputID, callback = null) {
 				if (!validSelection) {
 					if(taxaSuggestConfig.restrictToList){
 						let errMsg = 'Selecting taxon name from list is required';
-						if(translations.SELECT_FROM_LIST) errMsg = translations.SELECT_FROM_LIST;
+						if(typeof translations !== 'undefined' && translations.SELECT_FROM_LIST) errMsg = translations.SELECT_FROM_LIST;
 						alert(errMsg);
 					}
 				}

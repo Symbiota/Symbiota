@@ -94,18 +94,24 @@ if ($imgArr) {
 	include_once($SERVER_ROOT . '/includes/head.php');
 	include_once($SERVER_ROOT . '/includes/googleanalytics.php');
 	?>
-	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
-	<script src="../js/symb/shared.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/shared.js" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
 			const taxaInput = document.querySelector("#taxa");
 			if(taxaInput){
 				taxaInput.addEventListener("focus", (event) => {
-					taxaSuggestConfig.clientRoot = clientRoot;
+					taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggestConfig.restrictToList = true;
 					initiateTaxaSuggest("taxa", function(result) {
-						$("#targettid").val(result.item.id);
+						if(result.valid) {
+							$("#tid").val(result.item.id);
+						}
+						else{
+							$("#tid").val("");
+						}
 					});
 				});
 			}
@@ -119,14 +125,12 @@ if ($imgArr) {
 			return true;
 		}
 
-		function verifyChangeTaxonForm(f) {
-			var sciName = f.targettaxon.value.replace(/^\s+|\s+$/g, "");
-			if (sciName == "") {
-				window.alert("<?= $LANG['ENTER_TAXON_NAME'] ?>");
-			} else {
-				validateTaxon(f, true, form => form.targettid.value = form.tid.value);
+		function validateChangeTaxonForm(f){
+			if(f.targettid.value == ""){
+				alert("<?= $LANG['ERROR_TID_ISNULL'] ?>");
+				return false;
 			}
-			return false; //Submit takes place in the validateTaxon method
+			return true;
 		}
 
 		function openOccurrenceSearch(target) {
@@ -324,12 +328,12 @@ if ($imgArr) {
 							</div>
 						</fieldset>
 					</form>
-					<form name="changetaxonform" action="imgdetails.php" method="post" target="_self" onsubmit="return verifyChangeTaxonForm(this);">
+					<form name="changetaxonform" action="imgdetails.php" method="post" target="_self" onsubmit="return validateChangeTaxonForm(this)">
 						<fieldset style="margin:5px 0px 5px 5px;">
 							<legend><b><?= $LANG['TRANSFER_IMAGE_TO_DIFF_NAME'] ?></b></legend>
 							<div style="font-weight:bold;">
 								<?= $LANG['TRANSFER_TO_TAXON'] ?>:
-								<input type="text" id="taxa" name="targettaxon" size="40" />
+								<input type="text" id="taxa" name="targettaxon" style="width: 100%" required />
 								<input type="hidden" id="tid" name="targettid" value="" />
 								<input type="hidden" name="sourcetid" value="<?= $imgArr["tid"]; ?>" />
 								<input type="hidden" name="mediaid" value="<?= $mediaID; ?>" />

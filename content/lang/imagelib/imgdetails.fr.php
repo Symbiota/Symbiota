@@ -7,6 +7,7 @@ Translated by: Google Translate (2024-09-05)
 */
 $LANG['IMG_DETAILS'] = 'Détails de l\'Image';
 $LANG['ERROR_FILE_PATH'] = 'ERREUR : Le chemin du fichier doit être saisi';
+$LANG['ERROR_TID_ISNULL'] = "ERROR: L'identifiant du taxon est nul ; veuillez saisir un taxon de la liste";
 $LANG['ENTER_TAXON_NAME'] = 'Entrez un nom de taxon vers lequel le multimédia sera transféré';
 $LANG['TAXON_PROFILE_EDITING'] = 'Aller à la page d\'édition du profil de taxon';
 $LANG['EDITING_PRIVILEGES'] = 'Doit disposer de privilèges d\'édition pour cette collection gérant l\'image';
