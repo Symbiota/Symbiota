@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/KeyCharAdmin.php');
+include_once($SERVER_ROOT.'/classes/KeyCharacterAdmin.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
@@ -11,7 +11,7 @@ $hid = array_key_exists('hid', $_POST) ? Sanitize::int($_POST['hid']) : 0;
 $langId = array_key_exists('langid', $_REQUEST) ? $_REQUEST['langid'] : '';
 $action = array_key_exists('action', $_POST) ? $_POST['action'] : '';
 
-$charManager = new KeyCharAdmin();
+$charManager = new KeyCharacterAdmin();
 $charManager->setLangId($langId);
 
 $isEditor = false;
@@ -22,16 +22,16 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 $statusStr = '';
 if($isEditor && $action){
 	if($action == 'Create'){
-		$statusStr = $charManager->addHeading($_POST['headingname'],$_POST['notes'],$_POST['sortsequence']);
+		$statusStr = $charManager->insertCharacterHeading($_POST['headingname'],$_POST['notes'],$_POST['sortsequence']);
 	}
 	elseif($action == 'Save'){
-		$statusStr = $charManager->editHeading($hid,$_POST['headingname'],$_POST['notes'],$_POST['sortsequence']);
+		$statusStr = $charManager->updateCharacterHeading($hid,$_POST['headingname'],$_POST['notes'],$_POST['sortsequence']);
 	}
 	elseif($action == 'Delete'){
 		$statusStr = $charManager->deleteHeading($hid);
 	}
 }
-$headingArr = $charManager->getHeadingArr();
+$headingArr = $charManager->getCharacterHeadingArr();
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
