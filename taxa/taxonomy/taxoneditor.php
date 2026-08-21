@@ -74,12 +74,13 @@ if ($isEditor) {
 	<link href="<?= $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxonomy.taxasuggest.js?ver=1gb" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1a" type="text/javascript"></script>
 	<script>
 		var tid = <?php echo $taxonEditorObj->getTid(); ?>;
 		var tabIndex = <?php echo $tabIndex; ?>;
 
 	    document.addEventListener('DOMContentLoaded', () => {
+
 			const parentInput = document.querySelector('#parentstr');
 			if(parentInput){
 				parentInput.addEventListener('focus', (event) => {
@@ -87,10 +88,63 @@ if ($isEditor) {
 					taxaSuggestConfig.taxAuthID = document.taxauthidform.taxauthid.value;
 					taxaSuggestConfig.restrictToList = true;
 					taxaSuggestConfig.rankMaximum = document.taxoneditform.rankid.value - 1;
-					initiateTaxaSuggest("parentstr");
+					initiateTaxaSuggest("parentstr", function(result) {
+						if (result.valid) {
+							document.getElementById("parenttid").value = result.item.id;
+						}
+						else{
+							document.getElementById("parenttid").value = "";
+						}
+					});
+				});
+			}
+
+			const aefAcceptedInput = document.querySelector('#aefacceptedstr');
+			if(aefAcceptedInput){
+				aefAcceptedInput.addEventListener('focus', (event) => {
+					taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggestConfig.taxAuthID = document.taxauthidform.taxauthid.value;
+					taxaSuggestConfig.restrictToList = true;
+					taxaSuggestConfig.rankMaximum = 0;
+					taxaSuggestConfig.limitToAccepted = true;
+					initiateTaxaSuggest("aefacceptedstr", function(result) {
+						if (result.valid) {
+							document.getElementById("aeftidaccepted").value = result.item.id;
+						}
+						else{
+							document.getElementById("aeftidaccepted").value = "";
+						}
+					});
+				});
+			}
+
+			const ctnafAcceptedInput = document.querySelector('#ctnafacceptedstr');
+			if(ctnafAcceptedInput){
+				ctnafAcceptedInput.addEventListener('focus', (event) => {
+					taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggestConfig.taxAuthID = document.taxauthidform.taxauthid.value;
+					taxaSuggestConfig.restrictToList = true;
+					taxaSuggestConfig.rankMaximum = 0;
+					taxaSuggestConfig.limitToAccepted = true;
+					initiateTaxaSuggest("ctnafacceptedstr", function(result) {
+						if (result.valid) {
+							document.getElementById("ctnaftidaccepted").value = result.item.id;
+						}
+						else{
+							document.getElementById("ctnaftidaccepted").value = "";
+						}
+					});
 				});
 			}
 		});
+
+		function validateAcceptedChangeForm(f) {
+			if (f.tidaccepted.value == "") {
+				alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
+				return false;
+			}
+			return true;
+		}
 
 	</script>
 	<script src="<?= $CLIENT_ROOT; ?>/js/symb/taxa.sharedTaxonomyCRUD.js?ver=5"></script>
@@ -450,8 +504,8 @@ if ($isEditor) {
 											<?= '<a href="taxoneditor.php?tid=' . $taxonEditorObj->getParentTid() . '">' . $taxonEditorObj->getParentHtmlFull() . '</a>'; ?>
 										</div>
 										<div class="tsedit" style="display:none;margin:3px;">
-											<input id="parentstr" name="parentstr" type="text" value="<?= Sanitize::outString($taxonEditorObj->getParentName()) ?>" style="width:450px" />
-											<input name="parenttid" type="hidden" value="<?= $taxonEditorObj->getParentTid(); ?>" />
+											<input id="parentstr" name="parentstr" type="text" value="<?= Sanitize::outString($taxonEditorObj->getParentName()) ?>" style="width:450px" required />
+											<input id="parenttid" name="parenttid" type="text" value="<?= $taxonEditorObj->getParentTid(); ?>" />
 										</div>
 									</div>
 									<div class="tsedit" style="display:none;clear:both;">
@@ -464,7 +518,7 @@ if ($isEditor) {
 										<input type="hidden" name="tidaccepted" value="<?= ($taxonEditorObj->getIsAccepted() == 1 ? $taxonEditorObj->getTid() : $aStr); ?>" />
 										<input type="hidden" name="tabindex" value="1" />
 										<input type="hidden" name="submitaction" value="updatetaxstatus" />
-										<button type="button" name="taxstatuseditsubmit" onclick="submitTaxStatusForm(this.form)"><?= $LANG['SUBMIT_UPPER_EDITS'] ?></button>
+										<button type="submit" name="taxstatuseditsubmit"><?= $LANG['SUBMIT_UPPER_EDITS'] ?></button>
 									</div>
 								</form>
 							</div>
@@ -503,13 +557,13 @@ if ($isEditor) {
 								}
 								?>
 								<div class="acceptedits" style="display:none;">
-									<form id="accepteditsform" name="accepteditsform" action="taxoneditor.php" method="post" onsubmit="return verifyLinkToAcceptedForm(this);">
+									<form id="accepteditsform" name="accepteditsform" action="taxoneditor.php" method="post" onsubmit="return validateAcceptedChangeForm(this)">
 										<fieldset style="width:80%;margin:20px;padding:15px">
 											<legend><b><?= $LANG['LINK_TO_OTHER_NAME']; ?></b></legend>
 											<div>
 												<?= $LANG['ACCEPTED_TAXON']; ?>:
-												<input id="aefacceptedstr" name="acceptedstr" type="text" style="width:450px;" />
-												<input name="tidaccepted" type="hidden" />
+												<input id="aefacceptedstr" name="acceptedstr" type="text" style="width:450px;" required />
+												<input id="aeftidaccepted" name="tidaccepted" type="hidden" />
 											</div>
 											<div>
 												<input type="checkbox" name="deleteother" checked /> <?= $LANG['REMOVE_OTHER_LINKS']; ?>
@@ -614,13 +668,13 @@ if ($isEditor) {
 								$hasAcceptedChildren = $taxonEditorObj->hasAcceptedChildren();
 								?>
 								<div id="tonotaccepted" style="display:none;">
-									<form name="changeToNotAcceptedForm" action="taxoneditor.php" method="post" onsubmit="return verifyChangeToNotAcceptedForm(this);">
+									<form name="changeToNotAcceptedForm" action="taxoneditor.php" method="post" onsubmit="return validateAcceptedChangeForm(this)">
 										<fieldset style="width:90%px;">
 											<legend><b><?= $LANG['CHANGE_NOT_ACCEPTED']; ?></b></legend>
 											<div style="margin:5px;">
 												<?= $LANG['ACCEPTED_NAME']; ?>:
-												<input id="ctnafacceptedstr" name="acceptedstr" type="text" style="width:550px;" />
-												<input name="tidaccepted" type="hidden" value="" />
+												<input id="ctnafacceptedstr" name="acceptedstr" type="text" style="width:550px;" required />
+												<input id="ctnaftidaccepted" name="tidaccepted" type="hidden" value="" />
 											</div>
 											<div style="margin:5px;">
 												<?= $LANG['REASON']; ?>:

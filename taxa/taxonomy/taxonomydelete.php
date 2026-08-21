@@ -14,23 +14,29 @@ $taxonEditorObj = new TaxonomyEditorManager();
 $taxonEditorObj->setTid($tid);
 $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 ?>
-<script src="<?= $CLIENT_ROOT ?>/js/symb/taxonomy.taxasuggest.js?ver=1" type="text/javascript"></script>
+<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 <script>
 	$(document).ready(function() {
-		setTaxaSuggestRootPath("<?= $CLIENT_ROOT ?>");
-		setMinLength(2);
-		initiateTaxaSuggest("remapvalue", function(result) {
-			if (result.valid) {
-				document.getElementById("remaptid").value = item.tid;
-			}
-		});
+
+		const taxonInput = document.querySelector("#remapvalue");
+		if(taxonInput){
+			taxonInput.addEventListener("focus", (event) => {
+				taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
+				taxaSuggestConfig.restrictToList = true;
+				taxaSuggestConfig.minLength = 2;
+				initiateTaxaSuggest("remapvalue", function(result) {
+					if(result.valid) {
+						$("#remaptid").val(result.item.id);
+					}
+					else{
+						$("#remaptid").val("");
+					}
+				});
+			});
+		}
 	});
 
 	function validateRemapTaxonForm(f){
-		if(f.remapvalue.value == ""){
-			alert("<?= $LANG['NO_TARGET_TAXON'] ?>");
-			return false;
-		}
 		if(f.remaptid.value == ""){
 			alert("<?= $LANG['NO_TARGET_TAXON'] ?>");
 			return false;
@@ -271,12 +277,12 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 	<div style="margin:15px;">
 		<fieldset style="padding:15px;">
 			<legend><b><?= $LANG['REMAP_RESOURCES'] ?></b></legend>
-			<form name="remaptaxonform" method="post" action="taxoneditor.php" onsubmit="validateRemapTaxonForm(this.form)">
+			<form name="remaptaxonform" method="post" action="taxoneditor.php" onsubmit="return validateRemapTaxonForm(this.form)">
 				<span style="color:red;"><?= $LANG['WARNING_REMAP'] ?></span>
 				<div style="margin-top:5px;margin-bottom:5px;">
 					<?= $LANG['TARGET_TAXON'] ?>:
-					<input id="remapvalue" name="remapvalue" type="text" value="" style="width:550px;" /><br/>
-					<input name="remaptid" type="hidden" value="" />
+					<input id="remapvalue" name="remapvalue" type="text" value="" style="width:550px;" required />
+					<input id="remaptid" name="remaptid" type="text" value="" />
 				</div>
 				<div>
 					<button name="submitaction" type="submit" value="remapTaxon"><?= $LANG['REMAP_TAXON'] ?></button>

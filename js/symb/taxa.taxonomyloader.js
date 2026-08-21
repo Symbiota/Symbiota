@@ -260,7 +260,7 @@ function parseName(f) {
 }
 
 function setParent(parentName, unitind1) {
-	fetch("<?= $CLIENT_ROOT ?>/rpc/gettaxon.php", {
+	fetch("../../rpc/gettaxon.php", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/x-www-form-urlencoded"
@@ -292,7 +292,7 @@ function setParent(parentName, unitind1) {
       }
 	})
 	.catch(error => {
-		alert("<?= $LANG['SCINAME_NOT_EXIST'] ?>");
+		//alert("Scientific name does not exist");
 	});
 }
 

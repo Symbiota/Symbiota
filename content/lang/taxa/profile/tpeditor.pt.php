@@ -8,7 +8,6 @@ Date Translated: 2024-04-22
 */
 
 $LANG['TAXON_EDITOR'] = 'Editor de Táxons';
-$LANG['ENTER_SCINAME'] = 'Por favor insira um nome científico';
 $LANG['IMG_TOO_LARGE'] = 'O arquivo de mídiaque você está tentando enviar é muito grande, reduza o tamanho do arquivo para menos de 4MB';
 $LANG['HOME'] = 'Home';
 $LANG['TAX_PROF_PUBLIC_DISP'] = 'Exibição pública do perfil do táxon';

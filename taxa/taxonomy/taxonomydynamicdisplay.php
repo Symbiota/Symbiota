@@ -1,14 +1,15 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyDisplayManager.php');
-include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load('taxa/taxonomy/taxonomydisplay');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $target = $_REQUEST['target'] ?? '';
+$tid = !empty($_REQUEST['tid']) ? Sanitize::int($_REQUEST['tid']) : '';
 $displayAuthor = !empty($_REQUEST['displayauthor']) ? 1: 0;
 $limitToOccurrences = !empty($_REQUEST['limittooccurrences']) ? 1 : 0;
 $taxAuthId = array_key_exists('taxauthid', $_REQUEST) ? Sanitize::int($_REQUEST['taxauthid']) : 1;
@@ -17,6 +18,7 @@ $submitAction = array_key_exists('tdsubmit', $_POST) ? $_POST['tdsubmit'] : '';
 $statusStr = $_REQUEST['statusstr'] ?? '';
 
 $taxonDisplayObj = new TaxonomyDisplayManager();
+$taxonDisplayObj->setTargetTid($tid);
 $taxonDisplayObj->setTargetStr($target);
 $taxonDisplayObj->setTaxAuthId($taxAuthId);
 
@@ -89,10 +91,25 @@ reset($treePath);
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/dojo-1.17.3/dojo/dojo.js"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxonomy.taxasuggest.js?ver=1" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			setTaxaSuggestRootPath("<?= $CLIENT_ROOT ?>");
+
+			const taxonInput = document.querySelector("#taxontarget");
+			if(taxonInput){
+				taxonInput.addEventListener("focus", (event) => {
+					taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
+					initiateTaxaSuggest("taxontarget", function(result) {
+						if(result.valid) {
+							$("#tid").val(result.item.id);
+						}
+						else{
+							$("#tid").val("");
+						}
+					});
+				});
+			}
+
 			initiateTaxaSuggest("taxontarget");
 		});
 
@@ -156,6 +173,7 @@ reset($treePath);
                     <div>
 						<label for="taxontarget"> <?= $LANG['TAXON'] ?>: </label>
 						<input id="taxontarget" name="target" type="text" class="search-bar" value="<?= Sanitize::outString($taxonDisplayObj->getTargetStr()) ?>" />
+						<input id="tid" name="tid" type="hidden" value="<?= $tid ?>" >
 					</div>
 					<div style="margin:15px 15px 0px 60px;">
 						<div>

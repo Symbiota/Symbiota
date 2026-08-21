@@ -6,7 +6,6 @@ Language: Español (Spanish)
 */
 
 $LANG['TAXON_EDITOR'] = 'Editor de taxones';
-$LANG['ENTER_SCINAME'] = 'Por favor ingrese un nombre científico';
 $LANG['IMG_TOO_LARGE'] = 'El archivo medios que estás intentando cargar es demasiado grande, reduce el tamaño del archivo a menos de 4 MB';
 $LANG['HOME'] = 'Inicio';
 $LANG['TAX_PROF_PUBLIC_DISP'] = 'Visualización pública del perfil de taxón';

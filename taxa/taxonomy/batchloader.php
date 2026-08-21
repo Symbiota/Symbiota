@@ -2,6 +2,7 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyUpload.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyHarvester.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load('taxa/taxonomy/batchloader');
@@ -10,11 +11,12 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl='.$CLIENT_ROOT.'/taxa/taxonomy/batchloader.php');
 ini_set('max_execution_time', 3600);
 
-$taxAuthId = (array_key_exists('taxauthid', $_REQUEST) ? filter_var($_REQUEST['taxauthid'], FILTER_SANITIZE_NUMBER_INT) : 1);
-$kingdomName = (array_key_exists('kingdomname', $_REQUEST) ? htmlspecialchars($_REQUEST['kingdomname'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '');
-$sciname = (array_key_exists('sciname', $_REQUEST) ? htmlspecialchars($_REQUEST['sciname'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '');
+$taxAuthId = (array_key_exists('taxauthid', $_REQUEST) ? Sanitize::int($_REQUEST['taxauthid']) : 1);
+$kingdomName = (array_key_exists('kingdomname', $_REQUEST) ? $_REQUEST['kingdomname'] : '');
+$sciname = (array_key_exists('sciname', $_REQUEST) ? $_REQUEST['sciname'] : '');
+$tid = (array_key_exists('tid', $_REQUEST) ? Sanitize::int($_REQUEST['tid']) : 0);
 $targetApi = $_REQUEST['targetapi'] ?? '';
-$rankLimit = (array_key_exists('ranklimit', $_REQUEST) ? filter_var($_REQUEST['ranklimit'], FILTER_SANITIZE_NUMBER_INT):'');
+$rankLimit = (array_key_exists('ranklimit', $_REQUEST) ? Sanitize::int($_REQUEST['ranklimit']):'');
 $action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
 
 $isEditor = false;
@@ -58,18 +60,18 @@ if($isEditor){
 }
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $LANG_TAG ?>">
+<html lang="<?= $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['TAXA_LOADER']; ?></title>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>" />
+	<title><?= $DEFAULT_TITLE . ' ' . $LANG['TAXA_LOADER']; ?></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET;?>" />
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<link href="<?= $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
-		var clientRoot = "<?php echo $CLIENT_ROOT; ?>";
+		var clientRoot = "<?= $CLIENT_ROOT; ?>";
 
 		function toggle(target){
 			var tDiv = document.getElementById(target);
@@ -99,7 +101,7 @@ if($isEditor){
 
 		function verifyItisUploadForm(f){
 			if(f.uploadfile.value == "" && f.uloverride.value == ""){
-				alert("<?php echo $LANG['ENTER_PATH']; ?>");
+				alert("<?= $LANG['ENTER_PATH']; ?>");
 				return false;
 			}
 			return true;
@@ -109,17 +111,17 @@ if($isEditor){
 			var inputValue = f.uploadfile.value;
 			if(inputValue == "") inputValue = f.uloverride.value;
 			if(inputValue == ""){
-				alert("<?php echo $LANG['ENTER_PATH'] ?>");
+				alert("<?= $LANG['ENTER_PATH'] ?>");
 				return false;
 			}
 			else{
 				if(inputValue.indexOf(".csv") == -1 && inputValue.indexOf(".CSV") == -1 && inputValue.indexOf(".zip") == -1){
-					alert("<?php echo $LANG['UPLOAD_ZIP']; ?>");
+					alert("<?= $LANG['UPLOAD_ZIP']; ?>");
 					return false;
 				}
 			}
 			if(f.kingdomname.value == ""){
-				alert("<?php echo $LANG['SEL_KINGDOM']; ?>");
+				alert("<?= $LANG['SEL_KINGDOM']; ?>");
 				return false;
 			}
 			return true;
@@ -132,7 +134,7 @@ if($isEditor){
 				var obj = f.elements[i];
 				if(obj.name == "sf[]"){
 					if(sfArr.indexOf(obj.value) > -1){
-						alert("<?php echo $LANG['ERROR_SOURCE_DUP']; ?>"+" "+obj.value+")");
+						alert("<?= $LANG['ERROR_SOURCE_DUP']; ?>"+" "+obj.value+")");
 						return false;
 					}
 					sfArr[sfArr.length] = obj.value;
@@ -140,7 +142,7 @@ if($isEditor){
 				else if(obj.value != "" && obj.value != "unmapped"){
 					if(obj.name == "tf[]"){
 						if(tfArr.indexOf(obj.value) > -1){
-							alert("<?php echo $LANG['ERROR_TARGET']; ?>"+" ("+obj.value+")");
+							alert("<?= $LANG['ERROR_TARGET']; ?>"+" ("+obj.value+")");
 							return false;
 						}
 						tfArr[tfArr.length] = obj.value;
@@ -156,25 +158,25 @@ if($isEditor){
 
 		function validateNodeLoaderForm(f){
 			if(f.sciname.value == ""){
-				alert("<?php echo $LANG['ENTER_TAX_NODE']; ?>");
+				alert("<?= $LANG['ENTER_TAX_NODE']; ?>");
 				return false;
 			}
 			if(f.taxauthid.value == ""){
-				alert("<?php echo $LANG['SEL_THESAURUS']; ?>");
+				alert("<?= $LANG['SEL_THESAURUS']; ?>");
 				return false;
 			}
 			if(f.kingdomname.value == ""){
-				alert("<?php echo $LANG['PLS_SEL_KINGDOM']; ?>");
+				alert("<?= $LANG['PLS_SEL_KINGDOM']; ?>");
 				return false;
 			}
 			if($('input[name=targetapi]:checked').length == 0){
-				alert("<?php echo $LANG['SEL_AUTHORITY']; ?>");
+				alert("<?= $LANG['SEL_AUTHORITY']; ?>");
 				return false;
 			}
 			return true;
 		}
 	</script>
-	<script src="../../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
+	<script src="../../js/symb/taxa.suggest.js?ver=4" type="text/javascript"></script>
 	<style type="text/css">
 		fieldset { width:90%; padding:10px 15px }
 		legend { font-weight:bold; }
@@ -197,12 +199,12 @@ if($isEditor){
 	$rankArr = $loaderManager->getTaxonRankArr();
 	?>
 	<div role="main" id="innertext">
-		<h1 class="page-heading"><?php echo $LANG['TAX_NAME_BATCH_LOADER']; ?></h1>
+		<h1 class="page-heading"><?= $LANG['TAX_NAME_BATCH_LOADER']; ?></h1>
 		<div style="margin:30px;">
 			<div style="margin-bottom:30px;">
-				<?php echo $LANG['TAX_UPLOAD_EXPLAIN1'] . ' '; ?>
-				<a href="https://docs.symbiota.org/Portal_Manager_Guide/Taxonomic_Thesaurus/batch_loading"><?php echo $LANG['SYMB_DOC']; ?></a>
-				<?php echo $LANG['TAX_UPLOAD_EXPLAIN2'] ?>
+				<?= $LANG['TAX_UPLOAD_EXPLAIN1'] . ' '; ?>
+				<a href="https://docs.symbiota.org/Portal_Manager_Guide/Taxonomic_Thesaurus/batch_loading"><?= $LANG['SYMB_DOC']; ?></a>
+				<?= $LANG['TAX_UPLOAD_EXPLAIN2'] ?>
 			</div>
 			<?php
 			if(!$uploadStatus){
@@ -216,16 +218,16 @@ if($isEditor){
 					?>
 					<form name="mapform" action="batchloader.php" method="post" onsubmit="return verifyMapForm(this)">
 						<fieldset>
-							<legend><?php echo $LANG['TAX_UPLOAD']; ?></legend>
+							<legend><?= $LANG['TAX_UPLOAD']; ?></legend>
 							<div style="margin:10px;">
 							</div>
 							<table class="styledtable" style="width:450px">
 								<tr>
 									<th>
-										<?php echo $LANG['SOURCE_FIELD']; ?>
+										<?= $LANG['SOURCE_FIELD']; ?>
 									</th>
 									<th>
-										<?php echo $LANG['TARGET_FIELD']; ?>
+										<?= $LANG['TARGET_FIELD']; ?>
 									</th>
 								</tr>
 								<?php
@@ -248,7 +250,7 @@ if($isEditor){
 											$sTestField = str_replace(array(' ', '_'), '', $sField);
 											if(isset($translationMap[$sTestField])) $sTestField = $translationMap[$sTestField];
 											?>
-											<input type="hidden" name="sf[]" value="<?php echo $sField; ?>" />
+											<input type="hidden" name="sf[]" value="<?= $sField; ?>" />
 										</td>
 										<td>
 											<?php
@@ -274,8 +276,8 @@ if($isEditor){
 												if($selStr) $selStr = 0;
 											}
 											?>
-											<select name="tf[]" style="background:<?php echo ($selStr !== '' ? '' : 'yellow'); ?>">
-												<option value=""><?php echo $LANG['FIELD_UNMAPPED']; ?></option>
+											<select name="tf[]" style="background:<?= ($selStr !== '' ? '' : 'yellow'); ?>">
+												<option value=""><?= $LANG['FIELD_UNMAPPED']; ?></option>
 												<option value="">-------------------------</option>
 												<?php
 												echo $optionStr;
@@ -288,18 +290,18 @@ if($isEditor){
 								?>
 							</table>
 							<div>
-								* <?php echo $LANG['YELLOW_FIELDS']; ?>
+								* <?= $LANG['YELLOW_FIELDS']; ?>
 							</div>
 							<div style="margin-top:10px">
-								<?php echo '<b>' . $LANG['TARGET_KINGDOM'] . ':</b> ' . $kingdomName . '<br/>'; ?>
-								<?php echo '<b>' . $LANG['TARGET_THESAURUS'] . ':</b> ' . $loaderManager->getTaxAuthorityName(); ?>
+								<?= '<b>' . $LANG['TARGET_KINGDOM'] . ':</b> ' . Sanitize::outString($kingdomName) . '<br/>'; ?>
+								<?= '<b>' . $LANG['TARGET_THESAURUS'] . ':</b> ' . $loaderManager->getTaxAuthorityName(); ?>
 							</div>
 							<div style="margin:10px;">
-								<button type="submit" name="action" value="verifyMapping"><?php echo $LANG['VERIFY_MAPPING']; ?></button>
-								<button type="submit" name="action" value="uploadTaxa"><?php echo $LANG['UPLOAD_TAXA']; ?></button>
-								<input type="hidden" name="taxauthid" value="<?php echo $taxAuthId;?>" />
-								<input type="hidden" name="ulfilename" value="<?php echo $loaderManager->getFileName();?>" />
-								<input type="hidden" name="kingdomname" value="<?php echo $kingdomName; ?>" />
+								<button type="submit" name="action" value="verifyMapping"><?= $LANG['VERIFY_MAPPING'] ?></button>
+								<button type="submit" name="action" value="uploadTaxa"><?= $LANG['UPLOAD_TAXA'] ?></button>
+								<input type="hidden" name="taxauthid" value="<?= $taxAuthId ?>" />
+								<input type="hidden" name="ulfilename" value="<?= $loaderManager->getFileName() ?>" />
+								<input type="hidden" name="kingdomname" value="<?= Sanitize::outString($kingdomName) ?>" />
 							</div>
 						</fieldset>
 					</form>
@@ -323,13 +325,13 @@ if($isEditor){
 					?>
 					<form name="transferform" action="batchloader.php" method="post" onsubmit="return checkTransferForm(this)">
 						<fieldset style="width:450px;">
-							<legend><?php echo $LANG['TRANSFER_TO_CENTRAL']; ?></legend>
+							<legend><?= $LANG['TRANSFER_TO_CENTRAL']; ?></legend>
 							<div style="margin:10px;">
-								<?php echo $LANG['REVIEW_BEFORE_ACTIVATE']; ?>
+								<?= $LANG['REVIEW_BEFORE_ACTIVATE']; ?>
 							</div>
 							<div style="margin:10px">
-								<?php echo $LANG['TARGET_KINGDOM'] . ': <b>' . $kingdomName . '</b><br/>'; ?>
-								<?php echo $LANG['TARGET_THESAURUS'] . ': <b>' . $loaderManager->getTaxAuthorityName() . '</b>'; ?>
+								<?= $LANG['TARGET_KINGDOM'] . ': <b>' . Sanitize::outString($kingdomName) . '</b><br/>' ?>
+								<?= $LANG['TARGET_THESAURUS'] . ': <b>' . $loaderManager->getTaxAuthorityName() . '</b>' ?>
 							</div>
 							<div style="margin:10px;">
 								<?php
@@ -344,9 +346,9 @@ if($isEditor){
 									if(isset($statArr['bad'])){
 										?>
 										<fieldset style="margin:15px;padding:15px;">
-											<legend><b><?php echo $LANG['PROBLEM_TAXA']; ?></b></legend>
+											<legend><b><?= $LANG['PROBLEM_TAXA']; ?></b></legend>
 											<div style="margin-bottom:10px">
-												<?php echo $LANG['TAXA_FAILED']; ?>
+												<?= $LANG['TAXA_FAILED']; ?>
 											</div>
 											<?php
 											foreach($statArr['bad'] as $msg => $cnt){
@@ -376,12 +378,12 @@ if($isEditor){
 							</div>
 							-->
 							<div style="margin:10px;">
-								<input type="hidden" name="taxauthid" value="<?php echo $taxAuthId;?>" />
-								<input name="kingdomname" type="hidden" value="<?php echo $kingdomName; ?>" />
-								<button type="submit" name="action" value="activateTaxa"><?php echo $LANG['ACTIVATE_TAXA']; ?></button>
+								<input type="hidden" name="taxauthid" value="<?= $taxAuthId ?>" />
+								<input name="kingdomname" type="hidden" value="<?= Sanitize::outString($kingdomName) ?>" />
+								<button type="submit" name="action" value="activateTaxa"><?= $LANG['ACTIVATE_TAXA'] ?></button>
 							</div>
 							<div style="float:right;margin:10px;">
-								<a href="batchloader.php?action=downloadcsv" target="_blank"><?php echo htmlspecialchars($LANG['DOWNLOAD_CSV'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
+								<a href="batchloader.php?action=downloadcsv" target="_blank"><?= $LANG['DOWNLOAD_CSV'] ?></a>
 							</div>
 						</fieldset>
 					</form>
@@ -403,9 +405,9 @@ if($isEditor){
 						if(isset($_REQUEST['dskey'])){
 							echo '<fieldset>';
 							echo '<legend>' . $LANG['ACTION_PANEL'] . '</legend>';
-							$id = htmlspecialchars($_REQUEST['id'], HTML_SPECIAL_CHARS_FLAGS);
-							$datasetKey = filter_var($_REQUEST['dskey'], FILTER_SANITIZE_NUMBER_INT);
-							$harvester->addColNode($id, $datasetKey, $sciname, $rankLimit);
+							$id = Sanitize::outString($_REQUEST['id']);
+							$datasetKey = Sanitize::int($_REQUEST['dskey']);
+							$harvester->addColNode($id, $datasetKey, $tid, $rankLimit);
 							echo '</fieldset>';
 						}
 						else{
@@ -415,7 +417,7 @@ if($isEditor){
 							if($targetArr){
 								$numResults = $targetArr['number_results'];
 								unset($targetArr['number_results']);
-								echo '<div><b>' . $LANG['TARGET_TAXON'] . ':</b> ' . $sciname . '</div>';
+								echo '<div><b>' . $LANG['TARGET_TAXON'] . ':</b> ' . Sanitize::outString($sciname) . '</div>';
 								echo '<div><b>' . $LANG['KINGDOM'] . ':</b> ' . substr($kingdomName,strpos($kingdomName,':')+1) . '</div>';
 								echo '<div><b>' . $LANG['LOWEST_RANK'] . ':</b> ' . $rankArr[$rankLimit] . '</div>';
 								echo '<div><b>' . $LANG['SOURCE_LINK'] .':</b> <a href="https://www.catalogueoflife.org" target="_blank">https://www.catalogueoflife.org</a></div>';
@@ -429,7 +431,7 @@ if($isEditor){
 									}
 									else{
 										echo '<div>' . $LANG['NAME'] . ': ' . $colArr['label'] . '</div>';
-										echo '<div>' . $LANG['DATSET_KEY'] . ': <a href="https://api.catalogueoflife.org/dataset/' . htmlspecialchars($colArr['datasetKey'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($colArr['datasetKey'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></div>';
+										echo '<div>' . $LANG['DATSET_KEY'] . ': <a href="https://api.catalogueoflife.org/dataset/' . Sanitize::outString($colArr['datasetKey']) . '" target="_blank">' . htmlspecialchars($colArr['datasetKey'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></div>';
 										echo '<div>'.(isset($LANG['STATUS'])?$LANG['STATUS']:'Status').': '.$colArr['status'].'</div>';
 										if(isset($colArr['link'])) echo '<div>' . $LANG['SOURCE_LINK'] . ': <a href="' . $colArr['link'] . '" target="_blank">' . $colArr['link'] . '</a></div>';
 										$targetStatus = '<span style="color:orange">' . $LANG['NOT_PREF'] . '</span>';
@@ -439,13 +441,13 @@ if($isEditor){
 										if($colArr['datasetKey']){
 											?>
 											<form target="batchloader.php" method="post">
-												<input type="hidden" name="id" value="<?= htmlspecialchars($cbNameUsageID, HTML_SPECIAL_CHARS_FLAGS) ?>">
-												<input type="hidden" name="dskey" value="<?= filter_var($colArr['datasetKey'], FILTER_SANITIZE_NUMBER_INT) ?>">
+												<input type="hidden" name="id" value="<?= Sanitize::outString($cbNameUsageID) ?>">
+												<input type="hidden" name="dskey" value="<?= Sanitize::int($colArr['datasetKey']) ?>">
 												<input type="hidden" name="targetapi" value="col">
 												<input type="hidden" name="taxauthid" value="<?= $taxAuthId ?>">
 												<input type="hidden" name="kingdomname" value="<?= $kingdomName ?>">
 												<input type="hidden" name="ranklimit" value="<?= $rankLimit ?>">
-												<input type="hidden" name="sciname" value="<?= $sciname ?>">
+												<input type="hidden" name="sciname" value="<?= Sanitize::outString($sciname) ?>">
 												<button type="submit" name="action" value="loadApiNode" style="margin-top:10px"><?= $LANG['IMPORT_THIS_NODE'] ?></button>
 											</form>
 											<?php
@@ -469,7 +471,7 @@ if($isEditor){
 						echo '<ul>';
 						if($harvester->addWormsNode($_POST)){
 							echo '<li>' . $harvester->getTransactionCount() . ' ' . $LANG['TAXA_LOADED_SUCCESS'] . '</li>';
-							echo '<li>' . $LANG['GO_TO'] . ' <a href="taxonomydisplay.php">' . htmlspecialchars($LANG['TAX_TREE_SEARCH'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ' . htmlspecialchars($LANG['TO_QUERY'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</li>';
+							echo '<li>' . $LANG['GO_TO'] . ' <a href="taxonomydisplay.php">' . $LANG['TAX_TREE_SEARCH'] . '</a> ' . $LANG['TO_QUERY'] . '</li>';
 						}
 						echo '</ul>';
 					}
@@ -479,9 +481,9 @@ if($isEditor){
 			<div>
 				<form name="uploadform" action="batchloader.php" method="post" enctype="multipart/form-data" onsubmit="return verifyUploadForm(this)">
 					<fieldset>
-						<legend><?php echo $LANG['TAX_UPLOAD']; ?></legend>
+						<legend><?= $LANG['TAX_UPLOAD']; ?></legend>
 						<div style="margin:10px;">
-							<?php echo $LANG['TAX_UPLOAD_INSTRUCTIONS']; ?>
+							<?= $LANG['TAX_UPLOAD_INSTRUCTIONS']; ?>
 						</div>
 						<input type='hidden' name='MAX_FILE_SIZE' value='100000000' />
 						<div>
@@ -491,14 +493,14 @@ if($isEditor){
 								</div>
 							</div>
 							<div class="overrideopt" style="display:none;">
-								<label><?php echo $LANG['FULL_FILE_PATH']; ?>:</label>
+								<label><?= $LANG['FULL_FILE_PATH']; ?>:</label>
 								<div style="margin:10px;">
 									<input name="uloverride" type="text" size="50" /><br/>
-									* <?php echo $LANG['FULL_FILE_EXPLAIN']; ?>
+									* <?= $LANG['FULL_FILE_EXPLAIN']; ?>
 								</div>
 							</div>
 							<div style="margin:10px;">
-								<label><?php echo $LANG['TARGET_THESAURUS']; ?>:</label>
+								<label><?= $LANG['TARGET_THESAURUS']; ?>:</label>
 								<select name="taxauthid">
 									<?php
 									$taxonAuthArr = $loaderManager->getTaxAuthorityArr();
@@ -509,7 +511,7 @@ if($isEditor){
 								</select>
 							</div>
 							<div style="margin:10px;">
-								<label><?php echo $LANG['TARGET_KINGDOM']; ?>:</label>
+								<label><?= $LANG['TARGET_KINGDOM']; ?>:</label>
 								<?php
 								$kingdomArr = $loaderManager->getKingdomArr();
 								echo '<select name="kingdomname">';
@@ -522,10 +524,10 @@ if($isEditor){
 								?>
 							</div>
 							<div style="margin:10px;">
-								<button type="submit" name="action" value="mapInputFile"><?php echo $LANG['MAP_INPUT_FILE']; ?></button>
+								<button type="submit" name="action" value="mapInputFile"><?= $LANG['MAP_INPUT_FILE']; ?></button>
 							</div>
 							<div style="float:right;" >
-								<a href="#" onclick="toggle('overrideopt');return false;"><?php echo $LANG['TOGGLE_MANUAL']; ?></a>
+								<a href="#" onclick="toggle('overrideopt');return false;"><?= $LANG['TOGGLE_MANUAL']; ?></a>
 							</div>
 						</div>
 					</fieldset>
@@ -575,12 +577,12 @@ if($isEditor){
 			<div>
 				<form name="analyzeform" action="batchloader.php" method="post">
 					<fieldset>
-						<legend><?php echo $LANG['CLEAN_ANALYZE']; ?></legend>
+						<legend><?= $LANG['CLEAN_ANALYZE']; ?></legend>
 						<div style="margin:10px;">
-							<?php echo $LANG['CLEAN_ANALYZE_EXPLAIN']; ?>
+							<?= $LANG['CLEAN_ANALYZE_EXPLAIN']; ?>
 						</div>
 						<div style="margin:10px;">
-							<label><?php echo $LANG['TARGET_THESAURUS']; ?>:</label>
+							<label><?= $LANG['TARGET_THESAURUS']; ?>:</label>
 							<select name="taxauthid">
 								<?php
 								$taxonAuthArr = $loaderManager->getTaxAuthorityArr();
@@ -591,7 +593,7 @@ if($isEditor){
 							</select>
 						</div>
 						<div style="margin:10px;">
-							<label><?php echo $LANG['TARGET_KINGDOM']; ?>:</label>
+							<label><?= $LANG['TARGET_KINGDOM']; ?>:</label>
 							<?php
 							echo '<select name="kingdomname">';
 							foreach($kingdomArr as $k => $kingName){
@@ -601,21 +603,21 @@ if($isEditor){
 							?>
 						</div>
 						<div style="margin:10px;">
-							<button type="submit" name="action" value="Analyze Taxa"><?php echo $LANG['ANALYZE_TAXA']; ?></button>
+							<button type="submit" name="action" value="Analyze Taxa"><?= $LANG['ANALYZE_TAXA']; ?></button>
 						</div>
 					</fieldset>
 				</form>
 			</div>
 			<div>
 				<fieldset>
-					<legend><?php echo $LANG['API_NODE_LOADER']; ?></legend>
+					<legend><?= $LANG['API_NODE_LOADER']; ?></legend>
 					<form name="apinodeloaderform" action="batchloader.php" method="post" onsubmit="return validateNodeLoaderForm(this)">
 						<div style="margin:10px;">
-							<?php echo $LANG['API_NODE_LOADER_EXPLAIN'] ?>
+							<?= $LANG['API_NODE_LOADER_EXPLAIN'] ?>
 						</div>
 						<div style="margin:10px;">
 							<fieldset style="padding:15px;margin:10px 0px">
-								<legend><b><?php echo $LANG['TAX_RESOURCE'] ?></b></legend>
+								<legend><b><?= $LANG['TAX_RESOURCE'] ?></b></legend>
 								<?php
 								$taxApiList = $loaderManager->getTaxonomicResourceList();
 								foreach($taxApiList as $taKey => $taValue){
@@ -627,11 +629,12 @@ if($isEditor){
 							</fieldset>
 						</div>
 						<div style="margin:10px;">
-							<label><?php echo $LANG['TARGET_NODE']; ?>:</label>
-							<input id="taxa" name="sciname" type="text" value="<?php echo $sciname; ?>" />
+							<label><?= $LANG['TARGET_NODE']; ?>:</label>
+							<input id="sciname" name="sciname" type="text" value="<?= Sanitize::outString($sciname) ?>" />
+							<input id="tid" name="tid" type="text" >
 						</div>
 						<div style="margin:10px;">
-							<label><?php echo $LANG['TAX_THESAURUS']; ?>:</label>
+							<label><?= $LANG['TAX_THESAURUS']; ?>:</label>
 							<select name="taxauthid">
 								<?php
 								$taxonAuthArr = $loaderManager->getTaxAuthorityArr();
@@ -642,7 +645,7 @@ if($isEditor){
 							</select>
 						</div>
 						<div style="margin:10px;">
-							<label><?php echo $LANG['KINGDOM']; ?>:</label>
+							<label><?= $LANG['KINGDOM']; ?>:</label>
 							<select name="kingdomname">
 								<?php
 								if($kingdomArr > 1){
@@ -657,9 +660,9 @@ if($isEditor){
 							</select>
 						</div>
 						<div style="margin:10px;">
-							<label><?php echo $LANG['LOWEST_RANK']; ?></label>
+							<label><?= $LANG['LOWEST_RANK']; ?></label>
 							<select name="ranklimit">
-								<option value="0"><?php echo $LANG['ALL_RANKS']; ?></option>
+								<option value="0"><?= $LANG['ALL_RANKS']; ?></option>
 								<option>---------------------</option>
 								<?php
 								foreach($rankArr as $rankid => $rankName){
@@ -669,7 +672,7 @@ if($isEditor){
 							</select>
 						</div>
 						<div style="margin:10px;">
-							<button id="submitButton" type="submit" name="action" value="loadApiNode"><?php echo $LANG['LOAD_NODE']; ?></button>
+							<button id="submitButton" type="submit" name="action" value="loadApiNode"><?= $LANG['LOAD_NODE']; ?></button>
 						</div>
 					</form>
 				</fieldset>
@@ -681,7 +684,7 @@ if($isEditor){
 else{
 	?>
 	<div style='font-weight:bold;margin:30px;'>
-		<?php echo $LANG['NO_PERMISSIONS']; ?>
+		<?= $LANG['NO_PERMISSIONS']; ?>
 	</div>
 	<?php
 }

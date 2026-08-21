@@ -58,11 +58,24 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 	?>
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxonomy.taxasuggest.js?ver=2" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1a" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			setTaxaSuggestRootPath("<?= $CLIENT_ROOT ?>");
-			initiateTaxaSuggest("taxontarget");
+
+			const taxonInput = document.querySelector("#taxontarget");
+			if(taxonInput){
+				taxonInput.addEventListener("focus", (event) => {
+					taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
+					initiateTaxaSuggest("taxontarget", function(result) {
+						if(result.valid) {
+							$("#tid").val(result.item.id);
+						}
+						else{
+							$("#tid").val("");
+						}
+					});
+				});
+			}
 
 			$('form input').keydown(function(event) {
 				if (event.keyCode === 13) {
@@ -146,6 +159,7 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 						<div>
 							<label for="taxontarget"> <?= $LANG['TAXON'] ?>: </label>
 							<input id="taxontarget" class="search-bar" name="target" type="text" value="<?= $taxonDisplayObj->getTargetStr(); ?>" />
+							<input id="tid" name="tid" type="hidden" value="<?= $tid ?>" >
 						</div>
 						<div>
 							<input id="displayauthor" name="displayauthor" type="checkbox" value="1" <?= ($displayAuthor ? 'checked' : '') ?> />

@@ -41,9 +41,9 @@ if($isEditor){
 	?>
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxonomy.taxasuggest.js?ver=1f" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1a" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.sharedTaxonomyCRUD.js?ver=5"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.taxonomyloader.js?ver=5"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.taxonomyloader.js?v=1"></script>
 	<script type="text/javascript">
 		document.addEventListener("DOMContentLoaded", function() {
 			const form = document.getElementById("loaderform");
@@ -59,7 +59,10 @@ if($isEditor){
 					taxaSuggestConfig.rankMaximum = 0;
 					initiateTaxaSuggest("acceptedstr", function(result) {
 						if (result.valid) {
-							document.getElementById("tidaccepted").value = item.tid;
+							document.getElementById("tidaccepted").value = result.item.id;
+						}
+						else{
+							document.getElementById("tidaccepted").value = "";
 						}
 					});
 				});
@@ -75,7 +78,10 @@ if($isEditor){
 					taxaSuggestConfig.rankMaximum = document.getElementById("rankid").value - 1;
 					initiateTaxaSuggest("parentname", function(result) {
 						if (result.valid) {
-							document.getElementById("parenttid").value = item.tid;
+							document.getElementById("parenttid").value = result.item.id;
+						}
+						else{
+							document.getElementById("parenttid").value = "";
 						}
 					});
 				});
@@ -229,7 +235,7 @@ if($isEditor){
 						<div class="left-column" id="parentname-div">
 							<label for="parentname"><?= $LANG['PARENT_TAXON'] . ' *'; ?>:</label>
 						</div>
-						<input type="text" id="parentname" name="parentname" class='search-bar' />
+						<input type="text" id="parentname" name="parentname" class='search-bar' required />
 						<span id="addparentspan" style="display:none;">
 							<a id="addparentanchor" href="taxonomyloader.php?target=" target="_blank">
 								<?= $LANG['ADD_PARENT'] ?>

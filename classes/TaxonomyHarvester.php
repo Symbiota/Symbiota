@@ -550,18 +550,17 @@ class TaxonomyHarvester extends Manager{
 		return $retArr;
 	}
 
-	public function addColNode($id, $datasetKey, $nodeSciname, $rankLimit){
-		if($id && $datasetKey && $nodeSciname){
-			$rootTid = $this->getTid(array('sciname' => $nodeSciname));
+	public function addColNode($id, $datasetKey, $rootTid, $rankLimit){
+		if($id && $datasetKey && $rootTid){
 			if(!$rootTid){
-				$this->logOrEcho('Taxon root ('.$nodeSciname.') not found within thesaurus, adding now...',1);
+				$this->logOrEcho('Taxon root ('.$rootTid.') not found within thesaurus, adding now...',1);
 				$rootTid = $this->addChecklistBankTaxonById(array('id'=>$id,'datasetKey'=>$datasetKey));
 			}
 			if($rootTid){
-				$this->addColChildern($id, $datasetKey, $nodeSciname, $rootTid, $rankLimit);
+				$this->addColChildern($id, $datasetKey, $rootTid, $rankLimit);
 			}
 			else{
-				$this->logOrEcho('ABORT: unable to set root node for '.$nodeSciname,1);
+				$this->logOrEcho('ABORT: unable to set root node for ' . $rootTid, 1);
 				return false;
 			}
 		}
@@ -571,7 +570,7 @@ class TaxonomyHarvester extends Manager{
 		}
 	}
 
-	private function addColChildern($id, $datasetKey, $nodeSciname, $parentTid, $rankLimit){
+	private function addColChildern($id, $datasetKey, $parentTid, $rankLimit){
 		$url = 'https://api.checklistbank.org/dataset/' . $this->colDatasetKey . '/tree/' . $id . '/children?&extinct=false';
 		//echo '<div>API link: <a href="'.$url.'" target="_blank">'.$url.'</a></div>';
 		$contentArr = $this->getContentString($url);
@@ -579,21 +578,21 @@ class TaxonomyHarvester extends Manager{
 			$content = $contentArr['str'];
 			$resultArr = json_decode($content, true);
 			if($resultArr['total']){
-				$this->logOrEcho('Will evaluate '.$resultArr['total'].' children of '.$nodeSciname.': '.$this->getChildrenStr($resultArr['result']),2);
+				$this->logOrEcho('Will evaluate ' . $resultArr['total'] . ' children of ' . $parentTid . ': ' . $this->getChildrenStr($resultArr['result']),2);
 				foreach($resultArr['result'] as $nodeArr){
 					$this->transactionCount++;
 					if($nodeArr['status'] == 'accepted'){
 						$taxonArr = $this->translateChecklistBankNode($nodeArr);
 						$tid = $this->getTid($taxonArr);
 						if($tid){
-							$display = '<a href="' . htmlspecialchars($GLOBALS['CLIENT_ROOT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/taxa/taxonomy/taxoneditor.php?tid=' . htmlspecialchars($tid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($nodeArr['labelHtml'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
+							$display = '<a href="' . $GLOBALS['CLIENT_ROOT'] . '/taxa/taxonomy/taxoneditor.php?tid=' . $tid . '" target="_blank">' . htmlspecialchars($nodeArr['labelHtml'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
 							$this->logOrEcho($display.' already in thesaurus',2);
 						}
 						else{
 							$taxonArr['parent']['tid'] = $parentTid;
 							$tid = $this->loadNewTaxon($taxonArr);
 						}
-						if(!$rankLimit || $rankLimit > $taxonArr['rankid']) $this->addColChildern($taxonArr['id'], $datasetKey, $nodeArr['labelHtml'], $tid, $rankLimit);
+						if(!$rankLimit || $rankLimit > $taxonArr['rankid']) $this->addColChildern($taxonArr['id'], $datasetKey, $tid, $rankLimit);
 					}
 					else{
 						$this->logOrEcho($nodeArr['labelHtml'].' ('.$nodeArr['status'].') skipped due to <b>not accepted</b> status',2);
