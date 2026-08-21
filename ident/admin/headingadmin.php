@@ -106,14 +106,14 @@ $headingArr = $charManager->getCharacterHeadingArr();
 							<?php
 							foreach($headingArr as $headingId => $headArr){
 								?>
-								<li><a href="#" onclick="toggle('headingedit-<?= $headingId ?>');"><?= $headArr['name'] ?> <img class="icon-img" src="../../images/edit.png"></a></li>
+								<li><a href="#" onclick="toggle('headingedit-<?= $headingId ?>');"><?= $headArr['headingName'] ?> <img class="icon-img" src="../../images/edit.png"></a></li>
 								<div id="headingedit-<?= $headingId ?>" style="display:none;margin:20px;">
 									<fieldset>
 										<legend>Editor</legend>
 										<form name="headingeditform" action="headingadmin.php" method="post" onsubmit="return validateHeadingForm(this)">
 											<div style="margin:2px;">
 												<label for="headingname-<?= $headingId; ?>"">Group Title<br/>
-												<input id="headingname" name="headingname" type="text" value="<?= $headArr['name']; ?>" style="width:400px;" />
+												<input id="headingname" name="headingname" type="text" value="<?= $headArr['headingName']; ?>" style="width:400px;" />
 											</div>
 											<div style="margin:2px;">
 												<label for="notes-<?= $headingId; ?>"">Notes<br/>
@@ -121,7 +121,7 @@ $headingArr = $charManager->getCharacterHeadingArr();
 											</div>
 											<div style="margin:2px;">
 												<label for="sortsequence-<?= $headingId; ?>">Sort Sequence<br/>
-												<input id="sortsequence" name="sortsequence" type="text" value="<?= $headArr['sortsequence']; ?>" style="width:80px" />
+												<input id="sortsequence" name="sortsequence" type="text" value="<?= $headArr['sortSequence']; ?>" style="width:80px" />
 											</div>
 											<div>
 												<input name="hid" type="hidden" value="<?= $headingId; ?>" />
