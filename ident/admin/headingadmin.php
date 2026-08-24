@@ -22,13 +22,13 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 $statusStr = '';
 if($isEditor && $action){
 	if($action == 'Create'){
-		$statusStr = $charManager->insertCharacterHeading($_POST['headingname'],$_POST['notes'],$_POST['sortsequence']);
+		$statusStr = $charManager->insertCharacterHeading($_POST['headingname'],$_POST['notes'],$_POST['sortsequence']) ? 'SUCCESS: Heading created' : 'Error creating heading';
 	}
 	elseif($action == 'Save'){
-		$statusStr = $charManager->updateCharacterHeading($hid,$_POST['headingname'],$_POST['notes'],$_POST['sortsequence']);
+		$statusStr = $charManager->updateCharacterHeading($hid,$_POST['headingname'],$_POST['notes'],$_POST['sortsequence']) ? 'SUCCESS: Heading edited' : 'Error editing heading';
 	}
 	elseif($action == 'Delete'){
-		$statusStr = $charManager->deleteHeading($hid);
+		$statusStr = $charManager->deleteHeading($hid) ? 'SUCCESS: Heading deleted' : 'Error deleting heading';
 	}
 }
 $headingArr = $charManager->getCharacterHeadingArr();
