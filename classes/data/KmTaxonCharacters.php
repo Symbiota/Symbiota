@@ -284,7 +284,8 @@ class KmTaxonCharacters extends DataCore{
 	public function updateCharacterHeading($hid, $name, $notes, $sortSeq){
 		$this->setCharacterHeadingMap();
 		$inputArr = array('headingName' => $name, 'notes' => $notes, 'langid' => $this->langId, 'sortSequence' => $sortSeq);
-		return $this->updateRecord('kmcharheading', $inputArr);
+		$pkArr = ['hid' => $hid];
+		return $this->updateRecord('kmcharheading', $pkArr, $inputArr);
 	}
 
 	public function deleteHeading($hid){
