@@ -87,7 +87,7 @@ if($isEditor){
 						?>
 						<div id="download-div">
 							<?= $LANG['BACKUP_FILE'] ?>:
-							<a id="download-link" href="collbackup.php?bufile=<?= $filename ?>" onclick="fileDownloaded()"><?= $filename ?></a>
+							<a id="download-link" href="collbackup.php?collid=<?= $collid ?>&bufile=<?= $filename ?>" onclick="fileDownloaded()"><?= $filename ?></a>
 							<span id="file-downloaded-span" style="display:none"><b><?= $LANG['DOWNLOAD_COMPLETE'] ?></b></span>
 						</div>
 						<?php
