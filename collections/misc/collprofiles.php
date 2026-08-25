@@ -784,7 +784,7 @@ if ($SYMB_UID) {
 				echo '<div class="field-div"><span class="label">Cite this collection:</span><blockquote>';
 				// If GBIF dataset key is available, fetch GBIF format from API
 				if ($collData['publishtogbif'] && $datasetKey && file_exists($SERVER_ROOT . '/includes/citationgbif.php')) {
-					$gbifUrl = 'http://api.gbif.org/v1/dataset/' . $datasetKey;
+					$gbifUrl = 'https://api.gbif.org/v1/dataset/' . $datasetKey;
 					$context = stream_context_create(['http' => ['timeout' => 2]]);
 					$response = file_get_contents($gbifUrl, false, $context);
 					$responseData = $response !== false ? json_decode($response) : null;
