@@ -761,7 +761,7 @@ if ($SYMB_UID) {
 				}
 			}
 			if ($collData['publishtogbif'] && $datasetKey) {
-				$dataUrl = 'http://www.gbif.org/dataset/' . $datasetKey;
+				$dataUrl = 'https://www.gbif.org/dataset/' . $datasetKey;
 				?>
 				<div style="margin-top:5px;">
 					<div><b><?= $LANG['GBIF_DATASET'] ?>:</b> <a href="<?= $dataUrl ?>" target="_blank" rel="noopener noreferrer"><?= $dataUrl ?></a></div>
