@@ -742,7 +742,7 @@ class SpecUploadBase extends SpecUpload{
 		$sql = 'UPDATE uploadspectemp SET family = sciname WHERE (family IS NULL) AND (sciname LIKE "%aceae" OR sciname LIKE "%idae")';
 		$this->conn->query($sql);
 
-		$sql = 'UPDATE uploadspectemp SET sciname = CONCAT_WS(" ", genus, specificepithet) WHERE sciname IS NULL AND genus IS NOT NULL';
+		$sql = 'UPDATE uploadspectemp SET sciname = TRIM(CONCAT_WS(" ", genus, specificEpithet, taxonRank, infraSpecificEpithet)) WHERE sciname IS NULL AND genus IS NOT NULL';
 		$this->conn->query($sql);
 
 		$sql = 'UPDATE uploadspectemp SET sciname = family WHERE sciname IS NULL AND family IS NOT NULL';
