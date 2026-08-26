@@ -24,6 +24,7 @@ $LANG['IMAGE_SEARCH'] = 'Outil de Recherche Interactif';
 $LANG['CONTRIB'] = 'Contributeurs multimédia';
 $LANG['USAGEPOLICY'] = 'Politique d\'Utilisation et Informations sur Droits d\'Auteur';
 $LANG['ADDITIONAL_RESOURCES'] = 'Ressources Supplémentaires';
+$LANG['GEOTHESAURUS'] = 'Thésaurus géographique';
 $LANG['GLOSSARY'] = 'Glossaire';
 $LANG['PROTECTED_SPECIES'] = 'Espèces Protégées';
 $LANG['LISTOFTAXA'] = 'liste des taxons où la localité et/ou les informations taxonomiques sont protégées en raison de leur statut rare/menacé/en danger';

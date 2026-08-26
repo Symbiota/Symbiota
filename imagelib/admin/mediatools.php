@@ -1,10 +1,14 @@
 <?php
-include_once('../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/MediaManagementTools.php');
+include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/classes/MediaManagementTools.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
-$collid = (array_key_exists('collid', $_POST) ? filter_var($_POST['collid'], FILTER_SANITIZE_NUMBER_INT) : '');
-$mediaIdStart = (array_key_exists('mediaIdStart', $_POST) ? filter_var($_POST['mediaIdStart'], FILTER_SANITIZE_NUMBER_INT) : 0);
-$limit = (array_key_exists('limit', $_POST) ? filter_var($_POST['limit'], FILTER_SANITIZE_NUMBER_INT) : 10000);
+//Tool refactoring incomplete. Deactivated until it can be addressed.
+exit;
+
+$collid = (array_key_exists('collid', $_POST) ? Sanitize::int($_POST['collid']) : '');
+$mediaIdStart = (array_key_exists('mediaIdStart', $_POST) ? Sanitize::int($_POST['mediaIdStart']) : 0);
+$limit = (array_key_exists('limit', $_POST) ? Sanitize::int($_POST['limit']) : 10000);
 
 $transferThumbnail = empty($_POST['transferThumbnail']) ? 0 : 1;
 $transferWeb = empty($_POST['transferWeb']) ? 0 : 1;
@@ -17,11 +21,11 @@ $urlPrefix = (array_key_exists('urlPrefix', $_POST) ? $_POST['urlPrefix'] : '');
 $submit = (array_key_exists('submitbutton', $_POST)?$_POST['submitbutton']:'');
 
 
-$archiveImages = (array_key_exists('archiveimg', $_POST)?$_POST['archiveimg']:0);
-$delThumb = (array_key_exists('delthumb', $_POST)?$_POST['delthumb']:0);
-$delWeb = (array_key_exists('delweb', $_POST)?$_POST['delweb']:0);
-$delLarge = (array_key_exists('dellarge', $_POST)?$_POST['dellarge']:0);
-$imgidStr = (array_key_exists('imgidstr', $_POST)?$_POST['imgidstr']:'');
+$archiveImages = (array_key_exists('archiveimg', $_POST) ? Sanitize::int($_POST['archiveimg']) : 0);
+$delThumb = (array_key_exists('delthumb', $_POST) ? Sanitize::int($_POST['delthumb']) : 0);
+$delWeb = (array_key_exists('delweb', $_POST) ? Sanitize::int($_POST['delweb']) : 0);
+$delLarge = (array_key_exists('dellarge', $_POST) ? Sanitize::int($_POST['dellarge']) : 0);
+$mediaIdStr = (array_key_exists('mediaIdStr', $_POST) ? Sanitize::int($_POST['mediaIdStr']) : '');
 $matchTermThumbnail = (array_key_exists('matchTermThumbnail', $_POST)?$_POST['matchTermThumbnail']:'');
 $matchTermWeb = (array_key_exists('matchTermWeb', $_POST)?$_POST['matchTermWeb']:'');
 $matchTermLarge = (array_key_exists('matchTermLarge', $_POST)?$_POST['matchTermLarge']:'');
@@ -29,13 +33,6 @@ $imgRootUrl = (array_key_exists('imgRootUrl', $_POST)?$_POST['imgRootUrl']:'');
 $imgRootPath = (array_key_exists('imgRootPath', $_POST)?$_POST['imgRootPath']:'');
 $imgSubPath = (array_key_exists('imgSubPath', $_POST)?$_POST['imgSubPath']:'');
 $copyover = (!empty($_POST['copyover']) ? 1 : 0);
-
-//Sanitation
-if(!is_numeric($archiveImages)) $archiveImages = 0;
-if(!is_numeric($delThumb)) $delThumb = 0;
-if(!is_numeric($delWeb)) $delWeb = 0;
-if(!is_numeric($delLarge)) $delLarge = 0;
-
 
 $toolManager = new MediaMAnagementTools();
 $toolManager->setCollid($collid);
@@ -59,10 +56,6 @@ if($IS_ADMIN) $isEditor = true;
 				alert("You need at least one matching term defined");
 				return false;
 			}
-			if(f.collid.value == ""){
-				alert("Select a collection project");
-				return false;
-			}
 			return true;
 		}
 	</script>
@@ -83,7 +76,7 @@ if($IS_ADMIN) $isEditor = true;
 			<h1 class="page-heading">Media Tools</h1>
 			<div id="actionDiv">
 				<?php
-				$imgidEnd = 0;
+				$mediaIdEnd = 0;
 				if($submit){
 					if($submit == 'transferImages'){
 						?>
@@ -115,8 +108,8 @@ if($IS_ADMIN) $isEditor = true;
 						$toolManager->setDeleteThumbnail($delThumb);
 						$toolManager->setDeleteWebImage($delWeb);
 						$toolManager->setDeleteOriginal($delLarge);
-						$toolManager->setImgidArr($imgidStr);
-						$imgidEnd = $toolManager->archiveImageFiles($mediaIdStart, $limit);
+						$toolManager->setMediaIdArr($mediaIdStr);
+						$mediaIdEnd = $toolManager->archiveImageFiles($mediaIdStart, $limit);
 					}
 					else{
 						$delThumb = 1;
@@ -129,11 +122,11 @@ if($IS_ADMIN) $isEditor = true;
 			<fieldset>
 				<legend>Image Archival/Removal Tools</legend>
 				<div>This tool can be used to stash (i.e. archive) or delete images that are currently stored locally (server must have write access to images)</div>
-				<form action="media_scripts.php" method="post">
+				<form action="mediatools.php" method="post">
 					<div class="fieldRowDiv">
 						<div class="fieldDiv">
 							<span class="fieldLabel">Collection ID (collid):</span>
-							<select name="collid">
+							<select name="collid" required>
 								<option value="">Select a Collection</option>
 								<option value="">-----------------------------</option>
 								<option value="0">Field Images</option>
@@ -148,7 +141,7 @@ if($IS_ADMIN) $isEditor = true;
 					</div>
 					<div class="fieldRowDiv">
 						<div class="fieldDiv">
-							<b>Starting Image ID:</b> <input type="text" name="imgidstart" value="<?= $imgidEnd; ?>" /><br />
+							<b>Starting Image ID:</b> <input type="text" name="mediaIdStart" value="<?= $mediaIdEnd; ?>" /><br />
 						</div>
 					</div>
 					<div class="fieldRowDiv">
@@ -177,8 +170,8 @@ if($IS_ADMIN) $isEditor = true;
 					</div>
 					<div class="fieldRowDiv">
 						<div class="fieldDiv">
-							<b>imgids (enter multiple values delimited by commas)</b><br/>
-							<textarea name="imgidstr" rows="8" cols="100"></textarea>
+							<b>mediaIDs (enter multiple values delimited by commas)</b><br/>
+							<textarea name="mediaIdStr" rows="8" cols="100" required></textarea>
 						</div>
 					</div>
 					<div class="fieldRowDiv">
@@ -191,11 +184,11 @@ if($IS_ADMIN) $isEditor = true;
 			<fieldset>
 				<legend>Image Migration Tools</legend>
 				<div>This tool can be used to migrate images located on a remote server to the local server that is currently hosting the portal</div>
-				<form action="media_scripts.php" method="post" onsubmit="return verifyMigrationCode(this)">
+				<form action="mediatools.php" method="post" onsubmit="return verifyMigrationCode(this)">
 					<div class="fieldRowDiv">
 						<div class="fieldDiv">
 							<span class="fieldLabel">Collection ID (collid):</span>
-							<select name="collid">
+							<select name="collid" required>
 								<option value="">Select a Collection</option>
 								<option value="">-----------------------------</option>
 								<option value="0">Field Images</option>
@@ -291,8 +284,8 @@ if($IS_ADMIN) $isEditor = true;
 					</div>
 					<div class="fieldRowDiv">
 						<div class="fieldDiv">
-							<span class="fieldLabel">imgId start:</span>
-							<input type="text" name="imgidstart" value="<?= $mediaIdStart; ?>" />
+							<span class="fieldLabel">mediaID start:</span>
+							<input type="text" name="mediaIdStart" value="<?= $mediaIdStart; ?>" required />
 						</div>
 					</div>
 					<div class="fieldRowDiv">

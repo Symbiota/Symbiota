@@ -3,7 +3,7 @@ include_once($SERVER_ROOT.'/classes/Manager.php');
 class MediaManagementTools extends Manager {
 
 	//Archiver variables
-	private $imgidArr;
+	private $mediaIddArr;
 	private $archiveImages = false;
 	private $archiveDir;
 	private $deleteThumbnail = false;
@@ -37,16 +37,16 @@ class MediaManagementTools extends Manager {
 	}
 
 	//Archiver functions
-	public function archiveImageFiles($imgidStart, $limit){
+	public function archiveImageFiles($mediaIddStart, $limit){
 		set_time_limit(1200);
 		$this->verboseMode = 3;
 		$logPath = $GLOBALS['SERVER_ROOT'] . '/content/logs/imageprocessing/';
 		if(!file_exists($logPath)) mkdir($logPath);
 		$logPath .= 'imgArchive_' . date('Ym') . '.log';
 		$this->setLogFH($logPath);
-		if(!$imgidStart) $imgidStart = 0;
-		if(!$this->imgidArr){
-			$this->logOrEcho('ABORTED: Image ids (imgid) not supplied');
+		if(!$mediaIdStart) $mediaIdStart = 0;
+		if(!$this->mediaIdArr){
+			$this->logOrEcho('ABORTED: Image ids (mediaId) not supplied');
 			return false;
 		}
 		$this->archiveDir = $GLOBALS['MEDIA_ROOT_PATH'].'/archive_'.date('Y-m-d');
@@ -63,13 +63,13 @@ class MediaManagementTools extends Manager {
 			$this->logOrEcho('ABORTED: unalbe to create archive file ('.$this->archiveDir.')');
 			return false;
 		}
-		if($createHeader) fputcsv($csvReportFH, array('imgid','insertSQL'));
+		if($createHeader) fputcsv($csvReportFH, array('mediaId','insertSQL'));
 		//Remove images
-		$imgidFinal = $imgidStart;
+		$mediaIdFinal = $mediaIdStart;
 		$cnt = 0;
-		$paramArr = $this->imgidArr;
+		$paramArr = $this->mediaIdArr;
 		$typeStr = str_repeat('i', count($paramArr));
-		$paramArr[] = $imgidStart;
+		$paramArr[] = $mediaIdStart;
 		$typeStr .= 'i';
 		$sql = 'SELECT m.* FROM media m ';
 		if($this->collid){
@@ -92,7 +92,7 @@ class MediaManagementTools extends Manager {
 		$rs = $this->conn->query($sql);
 		echo '<ul>';
 		while($r = $rs->fetch_assoc()){
-			$imgId = $r['mediaID'];
+			$mediaId = $r['mediaID'];
 			$derivArr = array('tn'=>1,'web'=>1,'lg'=>1);
 			$delArr = array();
 			if(!$r['thumbnailurl']) unset($derivArr['tn']);
@@ -100,19 +100,19 @@ class MediaManagementTools extends Manager {
 			if(!$r['originalurl']) unset($derivArr['lg']);
 			//Transfer images to archive folder
 			if($this->deleteThumbnail && isset($derivArr['tn'])){
-				if($this->archiveImage($r['thumbnailurl'], $imgId)){
+				if($this->archiveImage($r['thumbnailurl'], $mediaId)){
 					$delArr['tn'] = 1;
 					unset($derivArr['tn']);
 				}
 			}
 			if($this->deleteWeb && isset($derivArr['web'])){
-				if($this->archiveImage($r['url'], $imgId)){
+				if($this->archiveImage($r['url'], $mediaId)){
 					$delArr['web'] = 1;
 					unset($derivArr['web']);
 				}
 			}
 			if($this->deleteOriginal && isset($derivArr['lg'])){
-				if($this->archiveImage($r['originalurl'], $imgId)){
+				if($this->archiveImage($r['originalurl'], $mediaId)){
 					$delArr['lg'] = 1;
 					unset($derivArr['lg']);
 				}
@@ -127,17 +127,17 @@ class MediaManagementTools extends Manager {
 				else $insertStr .= ', NULL';
 			}
 			$insSql = 'INSERT INTO media ('.implode(',', array_keys($insertArr)).') VALUES('.substr($insertStr,1).');';
-			fputcsv($csvReportFH,array($imgId,'record deleted',$insSql));
+			fputcsv($csvReportFH,array($mediaId,'record deleted',$insSql));
 			//Adjust database record
 			$sqlImg = '';
 			if($derivArr){
 				if(isset($delArr['tn'])) $sqlImg .= ', thumbnailurl = NULL';
 				if(isset($delArr['web'])) $sqlImg .= ', url = "empty"';
 				if(isset($delArr['lg'])) $sqlImg .= ', originalurl = NULL';
-				if($sqlImg) $sqlImg = 'UPDATE media SET '.substr($sqlImg,1).' WHERE mediaID = '.$imgId;
+				if($sqlImg) $sqlImg = 'UPDATE media SET '.substr($sqlImg,1).' WHERE mediaID = '.$mediaId;
 			}
 			else{
-				$sqlImg = 'DELETE FROM media WHERE mediaID = '.$imgId;
+				$sqlImg = 'DELETE FROM media WHERE mediaID = '.$mediaId;
 			}
 			if($sqlImg){
 				if(!$this->conn->query($sqlImg)){
@@ -151,16 +151,16 @@ class MediaManagementTools extends Manager {
 				flush();
 			}
 			$cnt++;
-			$imgidFinal = $imgId;
+			$mediaIdFinal = $mediaId;
 		}
 		echo '</ul>';
 		$rs->free();
 		fclose($csvReportFH);
 		$this->logOrEcho('Done! '.$cnt.' media handled');
-		return $imgidFinal;
+		return $mediaIdFinal;
 	}
 
-	private function archiveImage($imgFilePath, $imgid){
+	private function archiveImage($imgFilePath, $mediaId){
 		$status = false;
 		if($imgFilePath){
 			if(substr($imgFilePath,0,4) == 'http') {
@@ -177,14 +177,14 @@ class MediaManagementTools extends Manager {
 				}
 			}
 			else{
-				$this->logOrEcho('ERROR: image unwritable (imgid: <a href="' . $GLOBALS['CLIENT_ROOT'] . '/imagelib/imgdetails.php?mediaid=' . $imgid . '" target="_blank">' . $imgid . '</a>, path: ' . htmlspecialchars($path, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ')');
+				$this->logOrEcho('ERROR: image unwritable (mediaId: <a href="' . $GLOBALS['CLIENT_ROOT'] . '/imagelib/imgdetails.php?mediaid=' . $mediaId . '" target="_blank">' . $mediaId . '</a>, path: ' . htmlspecialchars($path, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ')');
 			}
 		}
 		return $status;
 	}
 
 	//Image migration functions
-	public function migrateFieldDerivatives($imgIdStart, $limit){
+	public function migrateFieldDerivatives($mediaIdStart, $limit){
 		set_time_limit(1200);
 		$this->verboseMode = 3;
 		$logPath = $GLOBALS['SERVER_ROOT'] . '/content/logs/imageprocessing/';
@@ -193,7 +193,7 @@ class MediaManagementTools extends Manager {
 		$this->setLogFH($logPath);
 		//Needs to be reworked
 		$this->debugMode = true;
-		$imgId = 0;
+		$mediaId = 0;
 		if(is_numeric($limit) && is_numeric($this->collid) && $this->imgRootUrl && $this->imgRootPath){
 			if($this->transferThumbnail && $this->transferWeb && $this->transferLarge){
 				if($this->matchTermThumbnail || $this->matchTermWeb || $this->matchTermLarge){
@@ -216,13 +216,13 @@ class MediaManagementTools extends Manager {
 						if($this->matchTermThumbnail) $sql .= ' AND thumbnailurl LIKE "'.$this->matchTermThumbnail.'%" ';
 						if($this->matchTermWeb) $sql .= ' AND url LIKE "'.$this->matchTermWeb.'%" ';
 						if($this->matchTermLarge) $sql .= ' AND originalurl LIKE "'.$this->matchTermLarge.'%" ';
-						if($imgIdStart && is_numeric($imgIdStart)) $sql .= 'AND mediaID > '.$imgIdStart.' ';
+						if($mediaIdStart && is_numeric($mediaIdStart)) $sql .= 'AND mediaID > '.$mediaIdStart.' ';
 						$sql .= 'ORDER BY mediaID ';
 						$sql .= 'LIMIT 1000';
 						echo $sql.'<br/>';
 						$rs = $this->conn->query($sql);
 						while($r = $rs->fetch_object()){
-							$imgId = $r->mediaID;
+							$mediaId = $r->mediaID;
 							if($this->transferThumbnail){
 								$filePath = $pathFrag;
 								if(substr($r->thumbnailurl,-1) != '/') $filePath .= '/';
@@ -251,10 +251,10 @@ class MediaManagementTools extends Manager {
 				}
 			}
 		}
-		return $imgId;
+		return $mediaId;
 	}
 
-	public function migrateCollectionDerivatives($imgIdStart, $limit){
+	public function migrateCollectionDerivatives($mediaIdStart, $limit){
 		//Migrates images based on catalog number; NULL or weak catalogNumbers are skipped
 		set_time_limit(1200);
 		$this->verboseMode = 3;
@@ -274,7 +274,7 @@ class MediaManagementTools extends Manager {
 					if($this->matchTermLarge) $sqlBase .= 'AND originalurl LIKE "'.$this->matchTermLarge.'%" ';
 					$targetCount = 0;
 					$sqlCount = 'SELECT COUNT(m.mediaID) as cnt '.$sqlBase.' ';
-					if($imgIdStart && is_numeric($imgIdStart)) $sqlCount .= 'AND mediaID > '.$imgIdStart.' ';
+					if($mediaIdStart && is_numeric($mediaIdStart)) $sqlCount .= 'AND mediaID > '.$mediaIdStart.' ';
 					$rsCount = $this->conn->query($sqlCount);
 					while($rCount = $rsCount->fetch_object()){
 						$targetCount = $rCount->cnt;
@@ -284,12 +284,12 @@ class MediaManagementTools extends Manager {
 					do{
 						$mediaArr = array();
 						$sql = 'SELECT m.mediaID, m.thumbnailurl, m.url, m.originalurl, o.catalognumber, o.occid '.$sqlBase;
-						if($imgIdStart && is_numeric($imgIdStart)) $sql .= 'AND mediaID > '.$imgIdStart.' ';
+						if($mediaIdStart && is_numeric($mediaIdStart)) $sql .= 'AND mediaID > '.$mediaIdStart.' ';
 						$sql .= 'ORDER BY mediaID LIMIT 100';
 						//$this->logOrEcho('sql used: '. $sql);
 						$rs = $this->conn->query($sql);
 						while($r = $rs->fetch_object()){
-							$imgIdStart = $r->mediaID;
+							$mediaIdStart = $r->mediaID;
 							$pathFrag = '';
 							if(preg_match('/^(\D*).*(\d{4,})/', $r->catalognumber, $m)){
 								$catNum = $m[2];
@@ -399,7 +399,7 @@ class MediaManagementTools extends Manager {
 				}
 			}
 		}
-		return $imgIdStart;
+		return $mediaIdStart;
 	}
 
 	private function getLocalPath($imageUrl){
@@ -503,13 +503,13 @@ class MediaManagementTools extends Manager {
 	}
 
 	//Archiver setters and getters
-	public function setImgidArr($imgidStr){
-		$imgidStr = str_replace(';', ' ', $imgidStr);
-		$imgidStr = str_replace(',', ' ', $imgidStr);
-		$imgidStr = trim(preg_replace('/\s\s+/',' ',$imgidStr),',');
-		if($imgidStr){
-			if(preg_match('/^[\d\s]+$/',$imgidStr)){
-				$this->imgidArr = explode(' ',$imgidStr);
+	public function setMediaIdArr($mediaIdStr){
+		$mediaIdStr = str_replace(';', ' ', $mediaIdStr);
+		$mediaIdStr = str_replace(',', ' ', $mediaIdStr);
+		$mediaIdStr = trim(preg_replace('/\s\s+/',' ',$mediaIdStr),',');
+		if($mediaIdStr){
+			if(preg_match('/^[\d\s]+$/',$mediaIdStr)){
+				$this->mediaIdArr = explode(' ',$mediaIdStr);
 			}
 		}
 	}
