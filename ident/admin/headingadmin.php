@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/KeyCharAdmin.php');
+include_once($SERVER_ROOT.'/classes/KeyCharacterAdmin.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
@@ -11,7 +11,7 @@ $hid = array_key_exists('hid', $_POST) ? Sanitize::int($_POST['hid']) : 0;
 $langId = array_key_exists('langid', $_REQUEST) ? $_REQUEST['langid'] : '';
 $action = array_key_exists('action', $_POST) ? $_POST['action'] : '';
 
-$charManager = new KeyCharAdmin();
+$charManager = new KeyCharacterAdmin();
 $charManager->setLangId($langId);
 
 $isEditor = false;
@@ -22,16 +22,16 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 $statusStr = '';
 if($isEditor && $action){
 	if($action == 'Create'){
-		$statusStr = $charManager->addHeading($_POST['headingname'],$_POST['notes'],$_POST['sortsequence']);
+		$statusStr = $charManager->insertCharacterHeading($_POST['headingname'],$_POST['notes'],$_POST['sortsequence']) ? 'SUCCESS: Heading created' : 'Error creating heading';
 	}
 	elseif($action == 'Save'){
-		$statusStr = $charManager->editHeading($hid,$_POST['headingname'],$_POST['notes'],$_POST['sortsequence']);
+		$statusStr = $charManager->updateCharacterHeading($hid,$_POST['headingname'],$_POST['notes'],$_POST['sortsequence']) ? 'SUCCESS: Heading edited' : 'Error editing heading';
 	}
 	elseif($action == 'Delete'){
-		$statusStr = $charManager->deleteHeading($hid);
+		$statusStr = $charManager->deleteHeading($hid) ? 'SUCCESS: Heading deleted' : 'Error deleting heading';
 	}
 }
-$headingArr = $charManager->getHeadingArr();
+$headingArr = $charManager->getCharacterHeadingArr();
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
@@ -106,14 +106,14 @@ $headingArr = $charManager->getHeadingArr();
 							<?php
 							foreach($headingArr as $headingId => $headArr){
 								?>
-								<li><a href="#" onclick="toggle('headingedit-<?= $headingId ?>');"><?= $headArr['name'] ?> <img class="icon-img" src="../../images/edit.png"></a></li>
+								<li><a href="#" onclick="toggle('headingedit-<?= $headingId ?>');"><?= $headArr['headingName'] ?> <img class="icon-img" src="../../images/edit.png"></a></li>
 								<div id="headingedit-<?= $headingId ?>" style="display:none;margin:20px;">
 									<fieldset>
 										<legend>Editor</legend>
 										<form name="headingeditform" action="headingadmin.php" method="post" onsubmit="return validateHeadingForm(this)">
 											<div style="margin:2px;">
 												<label for="headingname-<?= $headingId; ?>"">Group Title<br/>
-												<input id="headingname" name="headingname" type="text" value="<?= $headArr['name']; ?>" style="width:400px;" />
+												<input id="headingname" name="headingname" type="text" value="<?= $headArr['headingName']; ?>" style="width:400px;" />
 											</div>
 											<div style="margin:2px;">
 												<label for="notes-<?= $headingId; ?>"">Notes<br/>
@@ -121,7 +121,7 @@ $headingArr = $charManager->getHeadingArr();
 											</div>
 											<div style="margin:2px;">
 												<label for="sortsequence-<?= $headingId; ?>">Sort Sequence<br/>
-												<input id="sortsequence" name="sortsequence" type="text" value="<?= $headArr['sortsequence']; ?>" style="width:80px" />
+												<input id="sortsequence" name="sortsequence" type="text" value="<?= $headArr['sortSequence']; ?>" style="width:80px" />
 											</div>
 											<div>
 												<input name="hid" type="hidden" value="<?= $headingId; ?>" />
