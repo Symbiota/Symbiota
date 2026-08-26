@@ -1,7 +1,10 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/KeyCharacterAdmin.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
+
+Language::load('ident/admin/taxonomylinkage');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 
@@ -74,12 +77,11 @@ $tLinks = $keyManager->getTaxonRelevance();
 	</script>
 </head>
 <body>
-	<h1 class="page-heading">Link Character to Taxa</h1>
+	<h1 class="page-heading"><?= $LANG['LINK_CHAR_TAXA'] ?></h1>
 	<div id="tlinkdiv" style="margin:15px;">
 		<div style="margin:10px;">
-			<b>Taxonomic relevance of character</b> -
-			Tag taxonomic nodes where character is most relevant.
-			Taxonomic branches can also be excluded (e.g. relevant to order A by exclude families X, Y, and Z).
+			<b><?= $LANG['CHAR_TAXON_RELEVANCE'] ?></b> -
+			<?= $LANG['TAG_TAXON_NODE'] ?>
 		</div>
 		<div style="margin:20px;">
 			<?php
@@ -87,7 +89,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 				if(isset($tLinks['include'])){
 					?>
 					<fieldset style="padding:20px;">
-						<legend><b>Relevant Taxa</b></legend>
+						<legend><b><?= $LANG['RELEVANT_TAXA'] ?></b></legend>
 						<?php
 						foreach($tLinks['include'] as $tid => $tArr){
 							?>
@@ -111,7 +113,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 				if(isset($tLinks['exclude'])){
 					?>
 					<fieldset style="padding:20px;">
-						<legend><b>Excluding Taxa</b></legend>
+						<legend><b><?= $LANG['EXLUDING_TAXA'] ?></b></legend>
 						<?php
 						foreach($tLinks['exclude'] as $tid => $tArr){
 							?>
@@ -136,8 +138,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 			else{
 				?>
 				<div style="font-weight:bold">
-					This character has not yet been linked to the taxonomic tree.
-					This character will not be available until at least one relevant link is established.
+					<?= $LANG['NO_CHAR_LINK'] ?>
 				</div>
 				<?php
 			}
@@ -146,28 +147,28 @@ $tLinks = $keyManager->getTaxonRelevance();
 		<div style="margin:20px;">
 			<form name="taxonAddForm" action="chardetails.php" method="post" onsubmit="return validateRelevanceForm(this)">
 				<fieldset style="padding:20px;">
-					<legend><b>Add Taxonomic Relevance Definition</b></legend>
+					<legend><b><?= $LANG['ADD_TAXON_RELEVANCE'] ?></b></legend>
 					<div style="height:15px;">
 						<div style="margin:3px;">
-							<label for="relevanceinput"><b>Taxon Name:</b></label>
+							<label for="relevanceinput"><b><?= $LANG['TAXON_NAME'] ?>:</b></label>
 							<input type="text" id="relevanceinput" name="relsciname" style="width:300px" />
 							<input type="hidden" id="relevancetidinput" name="tid" />
 						</div>
 						<div style="float:left;margin:3px;">
-							<label for="relation"><b>Relevance to taxon:</b></label>
+							<label for="relation"><b><?= $LANG['TAXON_RELEVANCE'] ?>:</b></label>
 							<select id="relation" name="relation">
-								<option value="include">Relevant</option>
-								<option value="exclude">Exclude</option>
+								<option value="include"><?= $LANG['RELEVANT'] ?></option>
+								<option value="exclude"><?= $LANG['EXCLUDE'] ?></option>
 							</select>
 						</div>
 					</div>
 					<div style="margin:3px;clear:both;">
-						<label for="editornotes"><b>Editor notes:</b></label>
+						<label for="editornotes"><b><?= $LANG['EDITOR_NOTES'] ?>:</b></label>
 						<input id="editornotes" name="notes" type="text" value="" style="width:80%;" />
 					</div>
 					<div style="margin:15px;">
 						<input name="cid" type="hidden" value="<?= $cid ?>" />
-						<button name="formsubmit" type="submit" value="Save Taxonomic Relevance">Save Taxonomic Relevance</button>
+						<button name="formsubmit" type="submit" value="Save Taxonomic Relevance"><?= $LANG['SAVE_TAXON_RELEVANCE'] ?></button>
 					</div>
 				</fieldset>
 			</form>
