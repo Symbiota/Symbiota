@@ -207,7 +207,7 @@ function toggleCategory(categoryId, event=null) {
 						$codeStr = $collectionFormManager->generateCodeStr($collection);
 					?>
 					<div style="display:flex; align-items: center; gap: 0.5rem;">
-						<img width="30px" height="30px" src="<?= $collection['icon'] ?>">
+						<img width="30px" height="30px" src="<?= $collection['icon'] ?>" style="object-fit:contain; min-width: 30px; height: 30px;">
 						<input
 							data-chip="Collection: <?= $codeStr ?>" aria-label="select collection <?= $ariaCollid ?>" data-role="none"
 							data-codeStr="<?= $codeStr ?>"
