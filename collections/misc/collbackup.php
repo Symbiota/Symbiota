@@ -50,9 +50,8 @@ if($isEditor){
 	?>
 	<script>
 		function fileDownloaded(){
-			document.getElementById("download-link").style.pointerEvents = 'none';
-			alert("<?= $LANG['DOWNLOAD_COMPLETE'] ?>");
-			window.close();
+			document.getElementById("download-link").style.display = "none"
+			document.getElementById("file-downloaded-span").style.display = "inline"
 		}
 	</script>
     <style>
@@ -86,9 +85,10 @@ if($isEditor){
 					if ($archiveFile) {
 						$filename = substr($archiveFile, strrpos($archiveFile, '/') + 1);
 						?>
-						<div>
+						<div id="download-div">
 							<?= $LANG['BACKUP_FILE'] ?>:
-							<a id="download-link" href="collbackup.php?bufile=<?= $filename ?>" onclick="fileDownloaded()"><?= $filename ?></a>
+							<a id="download-link" href="collbackup.php?collid=<?= $collid ?>&bufile=<?= $filename ?>" onclick="fileDownloaded()"><?= $filename ?></a>
+							<span id="file-downloaded-span" style="display:none"><b><?= $LANG['DOWNLOAD_COMPLETE'] ?></b></span>
 						</div>
 						<?php
 					} else {

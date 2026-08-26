@@ -98,12 +98,9 @@ $duManager->loadFieldMap(true);
 	<script>
 
 		function verifyFileUploadForm(f){
-			var fileName = "";
+			let fileName = "";
 			if(f.uploadfile && f.uploadfile.value){
 				 fileName = f.uploadfile.value;
-			}
-			else{
-				fileName = f.ulfnoverride.value;
 			}
 			if(fileName == ""){
 				alert("<?= $LANG['PATH_EMPTY'] ?>");
@@ -121,7 +118,6 @@ $duManager->loadFieldMap(true);
 		}
 
 		function verifyFileSize(inputObj){
-			inputObj.form.ulfnoverride.value = ''
 			if (!window.FileReader) {
 				//alert("<?= $LANG['API_SUP'] ?>");
 				return;
@@ -171,13 +167,6 @@ include($SERVER_ROOT.'/includes/header.php');
 							<div>
 								<input name="uploadfile" type="file" size="50" onchange="verifyFileSize(this)" />
 							</div>
-							<div class="ulfnoptions" style="display:none;margin:15px 0px">
-								<b><?= $LANG['RESOURCE_URL'] ?>:</b>
-								<input name="ulfnoverride" type="text" size="70" /><br/>
-								<div>
-									<?= $LANG['WORKAROUND'] ?>
-								</div>
-							</div>
 						</div>
 						<div style="margin:10px 0px;">
 							<input name="includeidentificationhistory" type="checkbox" value="1" checked /> <?= $LANG['RESTORE_DETS'] ?><br/>
@@ -187,9 +176,6 @@ include($SERVER_ROOT.'/includes/header.php');
 							<button name="action" type="submit" value="AnalyzeFile"><?= $LANG['ANALYZE'] ?></button>
 							<input name="collid" type="hidden" value="<?= $collid ?>" />
 							<input name="MAX_FILE_SIZE" type="hidden" value="100000000" />
-						</div>
-						<div class="ulfnoptions">
-							<a href="#" onclick="toggle('ulfnoptions');return false;"><?= $LANG['MANUAL'] ?></a>
 						</div>
 					</fieldset>
 				</form>
