@@ -112,6 +112,7 @@ if($isEditor){
 		$tabIndex = 2;
 	}
 
+	if($tabIndex == 2 && $IS_ADMIN) $tabIndex = 3;
 	if(!$person) $person = $pHandler->getPerson();
 }
 ?>
@@ -124,10 +125,10 @@ if($isEditor){
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
 	<script type="text/javascript">
-		var tabIndex = <?= $tabIndex; ?>;
+		var tabIndex = <?= $tabIndex ?>;
 	</script>
-	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/symb/profile.viewprofile.js?ver=2"></script>
 	<script type="text/javascript" src="../js/symb/shared.js"></script>
 	<style>
