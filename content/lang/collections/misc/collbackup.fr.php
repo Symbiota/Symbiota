@@ -13,5 +13,5 @@ $LANG['ERROR_CREATING_OUTPUT'] = "Erreur lors de la création du fichier de sort
 $LANG['ENCODING'] = "Encodage des ensembles de données";
 $LANG['DOWNLOAD'] = 'Télécharger';
 $LANG['DOWNLOADING'] = 'Téléchargement du Fichier de Sauvegarde';
-$LANG['DOWNLOAD_COMPLETE'] = 'Le fichier de sauvegarde a été téléchargé sur votre système local!';
+$LANG['DOWNLOAD_COMPLETE'] = 'a été téléchargé sur votre système local!';
 ?>
