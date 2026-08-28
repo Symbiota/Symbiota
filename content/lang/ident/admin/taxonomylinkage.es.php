@@ -24,4 +24,8 @@ $LANG['EDITOR_NOTES'] = 'Notas del editor';
 
 $LANG['SAVE_TAXON_RELEVANCE'] = 'Guardar relevancia taxonómica';
 
+$LANG['ALERT_NO_TAXON'] = 'Nombre taxonómico no encontrado en el tesauro';
+$LANG['ALERT_EMPTY_TAXON'] = 'El campo de taxón está vacío';
+$LANG['ALERT_NO_TAXON_IDEN'] = 'No se pudo obtener el identificador del tesauro taxonómico para';
+
 ?>

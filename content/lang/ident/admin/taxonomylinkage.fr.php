@@ -24,4 +24,8 @@ $LANG['EDITOR_NOTES'] = 'Notes de l\'éditeur';
 
 $LANG['SAVE_TAXON_RELEVANCE'] = 'Enregistrer la pertinence taxonomique';
 
+$LANG['ALERT_NO_TAXON'] = 'Nom taxonomique introuvable dans le thésaurus';
+$LANG['ALERT_EMPTY_TAXON'] = 'Le champ taxon est vide';
+$LANG['ALERT_NO_TAXON_IDEN'] = 'Impossible d\'obtenir l\'identifiant du thésaurus taxonomique pour';
+
 ?>

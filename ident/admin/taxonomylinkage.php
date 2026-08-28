@@ -48,7 +48,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 							data: { term: $( this ).val() }
 						}).done(function( msg ) {
 							if(msg == ""){
-								alert("Taxonomic name not found with thesaurus ");
+								alert(<?= json_encode($LANG['ALERT_NO_TAXON']); ?>);
 							}
 							else{
 								$( "#relevancetidinput" ).val(msg);
@@ -65,11 +65,11 @@ $tLinks = $keyManager->getTaxonRelevance();
 
 		function validateRelevanceForm(f){
 			if(f.relsciname.value == ""){
-				alert("Taxon field is empty");
+				alert(<?= json_encode($LANG['ALERT_EMPTY_TAXON']); ?>);
 				return false;
 			}
 			if(f.tid.value == ""){
-				alert("unable to obtain taxonomic thesaurus identifier for " + f.relsciname.value);
+				alert(<?= json_encode($LANG['ALERT_NO_TAXON_IDEN']); ?> + " " + f.relsciname.value);
 				return false;
 			}
 			return true;

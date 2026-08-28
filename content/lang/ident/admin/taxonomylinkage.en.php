@@ -23,4 +23,8 @@ $LANG['EDITOR_NOTES'] = 'Editor notes';
 
 $LANG['SAVE_TAXON_RELEVANCE'] = 'Save Taxonomic Relevance';
 
+$LANG['ALERT_NO_TAXON'] = 'Taxonomic name not found with thesaurus';
+$LANG['ALERT_EMPTY_TAXON'] = 'Taxon field is empty';
+$LANG['ALERT_NO_TAXON_IDEN'] = 'Unable to obtain taxonomic thesaurus identifier for';
+
 ?>
