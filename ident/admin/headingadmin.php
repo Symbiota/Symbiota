@@ -25,13 +25,13 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 $statusStr = '';
 if($isEditor && $action){
 	if($action == 'Create'){
-		$statusStr = $charManager->insertCharacterHeading($_POST['headingname'],$_POST['notes'],$_POST['sortsequence']) ? 'SUCCESS: Heading created' : 'Error creating heading';
+		$statusStr = $charManager->insertCharacterHeading($_POST['headingname'],$_POST['notes'],$_POST['sortsequence']) ? $LANG['SUCCESS_CREATE'] : $LANG['FAIL_CREATE'];
 	}
 	elseif($action == 'Save'){
-		$statusStr = $charManager->updateCharacterHeading($hid,$_POST['headingname'],$_POST['notes'],$_POST['sortsequence']) ? 'SUCCESS: Heading edited' : 'Error editing heading';
+		$statusStr = $charManager->updateCharacterHeading($hid,$_POST['headingname'],$_POST['notes'],$_POST['sortsequence']) ? $LANG['SUCCESS_EDIT'] : $LANG['FAIL_EDIT'];
 	}
 	elseif($action == 'Delete'){
-		$statusStr = $charManager->deleteHeading($hid) ? 'SUCCESS: Heading deleted' : 'Error deleting heading';
+		$statusStr = $charManager->deleteHeading($hid) ? $LANG['SUCCESS_DELETE'] : $LANG['FAIL_DELETE'];
 	}
 }
 $headingArr = $charManager->getCharacterHeadingArr();
@@ -48,7 +48,7 @@ $headingArr = $charManager->getCharacterHeadingArr();
 	<script type="text/javascript">
 		function validateHeadingForm(f){
 			if(f.headingname.value == ""){
-				alert("Please enter a grouping title");
+				alert(<?= json_encode($LANG['ALERT_GROUP_TITLE']); ?>);
 				return false;
 			}
 			return true;
@@ -69,7 +69,7 @@ $headingArr = $charManager->getCharacterHeadingArr();
 		if($statusStr){
 			?>
 			<hr/>
-			<div style="margin:15px;color:<?= (strpos($statusStr,'SUCCESS')===0?'green':'red'); ?>;">
+			<div style="margin:15px;color:<?= (strpos($statusStr,'SUCC')===0 || strpos($statusStr,'ÉXITO')===0 ? 'green':'red'); ?>;">
 				<?= $statusStr; ?>
 			</div>
 			<hr/>

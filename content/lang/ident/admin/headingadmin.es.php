@@ -23,4 +23,14 @@ $LANG['DELETE'] = 'Eliminar';
 $LANG['NO_GROUPS'] = 'No existen grupos de caracteres';
 $LANG['NOT_AUTH'] = 'No tiene autorización para acceder a la página';
 
+$LANG['SUCCESS_CREATE'] = 'ÉXITO: Encabezado creado';
+$LANG['SUCCESS_EDIT'] = 'ÉXITO: Encabezado editado';
+$LANG['SUCCESS_DELETE'] = 'ÉXITO: Encabezado eliminado';
+
+$LANG['FAIL_CREATE'] = 'Error al crear el encabezado';
+$LANG['FAIL_EDIT'] ='Error al editar el encabezado';
+$LANG['FAIL_DELETE'] = 'Error al eliminar el encabezado';
+
+$LANG['ALERT_GROUP_TITLE'] = 'Por favor, ingresa un título para el grupo';
+
 ?>

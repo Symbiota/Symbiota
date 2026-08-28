@@ -23,4 +23,14 @@ $LANG['DELETE'] = 'Supprimer';
 $LANG['NO_GROUPS'] = 'Aucun groupe de caractères n\'existe';
 $LANG['NOT_AUTH'] = 'Vous n\'êtes pas autorisé à accéder à cette page';
 
+$LANG['SUCCESS_CREATE'] = 'SUCCÈS : Rubrique créée';
+$LANG['SUCCESS_EDIT'] = 'SUCCÈS : Rubrique modifiée';
+$LANG['SUCCESS_DELETE'] = 'SUCCÈS : Rubrique supprimée';
+
+$LANG['FAIL_CREATE'] = 'Erreur lors de la création de la rubrique';
+$LANG['FAIL_EDIT'] = 'Erreur lors de la modification de la rubrique';
+$LANG['FAIL_DELETE'] = 'Erreur lors de la suppression de la rubrique';
+
+$LANG['ALERT_GROUP_TITLE'] = 'Veuillez saisir un titre de regroupement';
+
 ?>
