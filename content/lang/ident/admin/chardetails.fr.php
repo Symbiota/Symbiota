@@ -6,6 +6,7 @@ Translated by: Google Translate (2026-08-26)
 ------------------
 */
 
+$LANG['CHAR_ADMIN'] = 'Administration des caractères';
 $LANG['HOME'] = 'Accueil';
 $LANG['CHAR_MANAGE'] = 'Gestion des caractères';
 $LANG['TAXON_CHAR_ADMIN'] = 'Administration des caractères des taxons';

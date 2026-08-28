@@ -5,6 +5,7 @@ Language: English
 ------------------
 */
 
+$LANG['CHAR_ADMIN'] = 'Character Admin';
 $LANG['HOME'] = 'Home';
 $LANG['CHAR_MANAGE'] = 'Character Management';
 $LANG['TAXON_CHAR_ADMIN'] = 'Taxon Character Administration';

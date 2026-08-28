@@ -99,7 +99,7 @@ if(!$cid) header('Location: index.php');
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
 <head>
-	<title>Character Admin</title>
+	<title><?= $LANG['CHAR_ADMIN'] ?></title>
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
