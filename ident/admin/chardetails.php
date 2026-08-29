@@ -433,8 +433,8 @@ if(!$cid) header('Location: index.php');
 								if($glossaryArr){
 									?>
 									<div style="padding-top:8px;padding-bottom:8px;clear:both;">
-										<label for="glossid"><?= $LANG['GLOSSARY_LINK'] ?></label><br />
-										<select id="glossid" name="glossid">
+										<label for="glossid-state"><?= $LANG['GLOSSARY_LINK'] ?></label><br />
+										<select id="glossid-state" name="glossid">
 											<option value="">------------------------</option>
 											<?php
 											foreach($glossaryArr as $glossArr){
