@@ -77,4 +77,26 @@ $LANG['DELETE'] = 'Supprimer';
 $LANG['NO_AUTH_ADD_CHAR'] = 'Vous n\'êtes pas autorisé à ajouter des caractères';
 $LANG['UNKNOWN_ERROR'] = 'ERREUR : erreur inconnue, veuillez contacter l\'administrateur du système';
 
+$LANG['ALERT_NAME_NULL'] = 'Le nom du personnage ne doit pas être vide';
+$LANG['ALERT_TYPE_NULL'] = 'Le type de personnage ne doit pas être vide';
+$LANG['ALERT_SS_NUM'] = 'La séquence de tri doit être une valeur numérique';
+$LANG['ALERT_STATE_NULL'] = 'L\'état du personnage ne doit pas être vide';
+$LANG['ALERT_FILE_UPLOAD'] = 'Sélectionnez un fichier à télécharger';
+$LANG['ALERT_SELECT_TAXON'] = 'Veuillez sélectionner un nom taxonomique!';
+
+$LANG['ERROR_ADD_TAXON'] = 'ERREUR lors de l\'ajout du nouveau caractère du taxon: ';
+$LANG['ERROR_EDIT_TAXON'] = 'ERREUR lors de la modification du caractère du taxon: ';
+$LANG['ERROR_DELETE_TAXON'] = 'ERREUR lors de la suppression du caractère du taxon: ';
+$LANG['ERROR_ADD_STATE'] = 'ERREUR lors de l\'ajout de l\'état du caractère du taxon: ';
+$LANG['ERROR_EDIT_STATE'] = 'ERREUR lors de la modification de l\'état du caractère du taxon : ';
+$LANG['ERROR_DELETE_STATE'] = 'ERREUR lors de la suppression de l\'état du caractère du taxon: ';
+$LANG['ERROR_ADD_IMAGE'] = 'ERREUR lors du téléchargement de l\'image/illustration de l\'état du caractère: ';
+$LANG['SUCCESS_DELETE_IMAGE'] = 'SUCCÈS : image supprimée avec succès';
+$LANG['ERROR_DELETE_IMAGE'] = 'ERREUR lors de la suppression de l\'image/illustration de l\'état du caractère: ';
+$LANG['ERROR_ADD_REL'] = 'ERREUR lors de l\'enregistrement de la relation entre taxons: ';
+$LANG['ERROR_DELETE_REL'] = 'ERREUR lors de la suppression de la relation entre taxons: ';
+
+$LANG['CONFIRM_DELETE_CHAR'] = 'Êtes-vous sûr de vouloir supprimer définitivement ce personnage?';
+$LANG['CONFIRM_DELETE_STATE'] = 'Êtes-vous sûr de vouloir supprimer définitivement cet état de personnage?';
+
 ?>

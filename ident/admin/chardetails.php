@@ -29,12 +29,12 @@ if($formSubmit && $isEditor){
 			$cid = $charManager->getCid();
 		}
 		else{
-			$statusStr = 'ERROR adding new taxon character: ' . $charManager->getErrorMessage();
+			$statusStr = $LANG['ERROR_ADD_TAXON'] . $charManager->getErrorMessage();
 		}
 	}
 	elseif($formSubmit == 'saveCharacterEdit'){
 		if(!$charManager->updateCharacter($_POST)){
-			$statusStr = 'ERROR editing taxon character: ' . $charManager->getErrorMessage();
+			$statusStr = $LANG['ERROR_EDIT_TAXON'] . $charManager->getErrorMessage();
 		}
 	}
 	elseif($formSubmit == 'deleteChar'){
@@ -42,53 +42,53 @@ if($formSubmit && $isEditor){
 			$cid = 0;
 		}
 		else{
-			$statusStr = 'ERROR deleting taxon character: ' . $charManager->getErrorMessage();
+			$statusStr = $LANG['ERROR_DELETE_TAXON'] . $charManager->getErrorMessage();
 		}
 	}
 	elseif($formSubmit == 'addState'){
 		if(!$charManager->insertCharacterState($_POST)){
-			$statusStr = 'ERROR adding taxon character state: ' . $charManager->getErrorMessage();
+			$statusStr = $LANG['ERROR_ADD_STATE']  . $charManager->getErrorMessage();
 		}
 		$tabIndex = 1;
 	}
 	elseif($formSubmit == 'saveState'){
 		if(!$charManager->updateCharacterState($_POST)){
-			$statusStr = 'ERROR edting taxon character state: ' . $charManager->getErrorMessage();
+			$statusStr = $LANG['ERROR_EDIT_STATE'] . $charManager->getErrorMessage();
 		}
 		$tabIndex = 1;
 	}
 	elseif($formSubmit == 'deleteState'){
 		if(!$charManager->deleteCharacterState($_POST['cs'])){
-			$statusStr = 'ERROR deleting taxon character state: ' . $charManager->getErrorMessage();
+			$statusStr = $LANG['ERROR_DELETE_STATE'] . $charManager->getErrorMessage();
 		}
 		$tabIndex = 1;
 	}
 	elseif($formSubmit == 'uploadImage'){
 		if(!$charManager->uploadCharacterStateImage($_POST)){
-			$statusStr = 'ERROR uploading character state image/illustration: ' . $charManager->getErrorMessage();
+			$statusStr = $LANG['ERROR_ADD_IMAGE'] . $charManager->getErrorMessage();
 		}
 		$tabIndex = 1;
 	}
 	elseif($formSubmit == 'deleteImage'){
 		if($charManager->removeCharacterStateImage($_POST['csimgid'])){
-			$statusStr = 'SUCCESS: image uploaded successful';
+			$statusStr = $LANG['SUCCESS_DELETE_IMAGE'];
 		}
 		else{
-			$statusStr = 'ERROR deleting character state image/illustration: ' . $charManager->getErrorMessage();
+			$statusStr = $LANG['ERROR_DELETE_IMAGE'] . $charManager->getErrorMessage();
 		}
 		$tabIndex = 1;
 	}
 	elseif($formSubmit == 'Save Taxonomic Relevance'){
 		if(!empty($_POST['tid'])){
 			if(!$charManager->insertTaxonRelevance($_POST['tid'], $_POST['relation'], $_POST['notes'])){
-				$statusStr = 'ERROR saving taxon relationship: ' . $charManager->getErrorMessage();
+				$statusStr = $LANG['ERROR_ADD_REL'] . $charManager->getErrorMessage();
 			}
 			$tabIndex = 2;
 		}
 	}
 	elseif($formSubmit == 'delaxon'){
 		if(!$charManager->deleteTaxonRelevance($_POST['tid'])){
-			$statusStr = 'ERROR deleting taxon relationship: ' . $charManager->getErrorMessage();
+			$statusStr = $LANG['ERROR_DELETE_REL'] . $charManager->getErrorMessage();
 		}
 		$tabIndex = 2;
 	}
@@ -136,15 +136,15 @@ if(!$cid) header('Location: index.php');
 
 		function validateCharEditForm(f){
 			if(f.charname.value == ""){
-				alert("Character name must not be null");
+				alert(<?= json_encode($LANG['ALERT_NAME_NULL']); ?>);
 				return false;
 			}
 			if(f.chartype.value == ""){
-				alert("Character type must not be null");
+				alert(<?= json_encode($LANG['ALERT_TYPE_NULL']); ?>);
 				return false;
 			}
 			if(f.sortsequence.value && !isNumeric(f.sortsequence.value)){
-				alert("Sort Sequence can only be a numeric value");
+				alert(<?= json_encode($LANG['ALERT_SS_NUM']); ?>);
 				return false;
 			}
 			return true;
@@ -152,11 +152,11 @@ if(!$cid) header('Location: index.php');
 
 		function validateStateAddForm(f){
 			if(f.charstatename.value == ""){
-				alert("Character state must not be null");
+				alert(<?= json_encode($LANG['ALERT_STATE_NULL']); ?>);
 				return false;
 			}
 			if(f.sortsequence.value && !isNumeric(f.sortsequence.value)){
-				alert("Sort sequence can only be a numeric value");
+				alert(<?= json_encode($LANG['ALERT_SS_NUM']); ?>);
 				return false;
 			}
 			return true;
@@ -164,7 +164,7 @@ if(!$cid) header('Location: index.php');
 
 		function validateStateEditForm(f){
 			if(f.sortsequence.value && !isNumeric(f.sortsequence.value)){
-				alert("Sort Sequence field must be numeric");
+				alert(<?= json_encode($LANG['ALERT_SS_NUM']); ?>);
 				return false;
 			}
 			return true;
@@ -172,7 +172,7 @@ if(!$cid) header('Location: index.php');
 
 		function verifyStateIllustForm(f){
 			if(!f.urlupload.files[0]){
-				alert("Select a file to upload");
+				alert(<?= json_encode($LANG['ALERT_FILE_UPLOAD']); ?>);
 				return false;
 			}
 			return true;
@@ -247,7 +247,7 @@ if(!$cid) header('Location: index.php');
 
 		function validateTaxonAddForm(f){
 			if(f.tid.value == ''){
-				alert("Please select a taxonomic name!");
+				alert(<?= json_encode($LANG['ALERT_SELECT_TAXON']); ?>);
 				return false;
 			}
 			return true;
@@ -584,7 +584,7 @@ if(!$cid) header('Location: index.php');
 										}
 										?>
 									</fieldset>
-									<form name="statedelform-<?= $cs ?>" action="chardetails.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this character state?')">
+									<form name="statedelform-<?= $cs ?>" action="chardetails.php" method="post" onsubmit="return confirm('<?= $LANG['CONFIRM_DELETE_STATE'] ?>')">
 										<fieldset>
 											<legend><?= $LANG['DELETE_CHAR_STATE'] ?></legend>
 											<div>
@@ -644,7 +644,7 @@ if(!$cid) header('Location: index.php');
 					?>
 				</div>
 				<div id="chardeldiv">
-					<form name="delcharform" action="chardetails.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this character?')">
+					<form name="delcharform" action="chardetails.php" method="post" onsubmit="return confirm('<?= $LANG['CONFIRM_DELETE_CHAR'] ?>')">
 						<fieldset style="width:700px;">
 							<legend><b><?= $LANG['DELETE_CHAR'] ?></b></legend>
 							<?php

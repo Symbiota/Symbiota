@@ -77,4 +77,26 @@ $LANG['DELETE'] = 'Eliminar';
 $LANG['NO_AUTH_ADD_CHAR'] = 'No tiene autorización para añadir caracteres';
 $LANG['UNKNOWN_ERROR'] = 'ERROR: error desconocido, por favor contacte con el administrador del sistema';
 
+$LANG['ALERT_NAME_NULL'] = 'El nombre del carácter no puede estar vacío';
+$LANG['ALERT_TYPE_NULL'] = 'El tipo de carácter no puede estar vacío';
+$LANG['ALERT_SS_NUM'] = 'La secuencia de ordenación solo puede ser un valor numérico';
+$LANG['ALERT_STATE_NULL'] = 'El estado del carácter no puede estar vacío';
+$LANG['ALERT_FILE_UPLOAD'] = 'Seleccione un archivo para cargar';
+$LANG['ALERT_SELECT_TAXON'] = '¡Por favor, seleccione un nombre taxonómico!';
+
+$LANG['ERROR_ADD_TAXON'] = 'ERROR al añadir un nuevo carácter taxonómico: ';
+$LANG['ERROR_EDIT_TAXON'] = 'ERROR al editar el carácter taxonómico: ';
+$LANG['ERROR_DELETE_TAXON'] = 'ERROR al eliminar el carácter taxonómico: ';
+$LANG['ERROR_ADD_STATE'] = 'ERROR al añadir un estado del carácter taxonómico: ';
+$LANG['ERROR_EDIT_STATE'] = 'ERROR al editar el estado del carácter taxonómico: ';
+$LANG['ERROR_DELETE_STATE'] = 'ERROR al eliminar el estado del carácter taxonómico: ';
+$LANG['ERROR_ADD_IMAGE'] = 'ERROR al subir la imagen/ilustración del estado del carácter: ';
+$LANG['SUCCESS_DELETE_IMAGE'] = 'ÉXITO: imagen eliminada correctamente';
+$LANG['ERROR_DELETE_IMAGE'] = 'ERROR al eliminar la imagen/ilustración del estado del carácter: ';
+$LANG['ERROR_ADD_REL'] = 'ERROR al guardar la relación taxonómica: ';
+$LANG['ERROR_DELETE_REL'] = 'ERROR al eliminar la relación taxonómica: ';
+
+$LANG['CONFIRM_DELETE_CHAR'] = '¿Estás seguro de que quieres eliminar permanentemente este personaje?';
+$LANG['CONFIRM_DELETE_STATE'] = '¿Estás seguro de que quieres eliminar permanentemente este estado del personaje?';
+
 ?>

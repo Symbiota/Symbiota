@@ -76,4 +76,26 @@ $LANG['DELETE'] = 'Delete';
 $LANG['NO_AUTH_ADD_CHAR'] = 'You are not authorized to add characters';
 $LANG['UNKNOWN_ERROR'] = 'ERROR: unknown error, please contact system administrator';
 
+$LANG['ALERT_NAME_NULL'] = 'Character name must not be null';
+$LANG['ALERT_TYPE_NULL'] = 'Character type must not be null';
+$LANG['ALERT_SS_NUM'] = 'Sort Sequence can only be a numeric value';
+$LANG['ALERT_STATE_NULL'] = 'Character state must not be null';
+$LANG['ALERT_FILE_UPLOAD'] = 'Select a file to upload';
+$LANG['ALERT_SELECT_TAXON'] = 'Please select a taxonomic name!';
+
+$LANG['ERROR_ADD_TAXON'] = 'ERROR adding new taxon character: ';
+$LANG['ERROR_EDIT_TAXON'] = 'ERROR editing taxon character: ';
+$LANG['ERROR_DELETE_TAXON'] = 'ERROR deleting taxon character: ';
+$LANG['ERROR_ADD_STATE'] = 'ERROR adding taxon character state: ';
+$LANG['ERROR_EDIT_STATE'] = 'ERROR editing taxon character state: ';
+$LANG['ERROR_DELETE_STATE'] = 'ERROR deleting taxon character state: ';
+$LANG['ERROR_ADD_IMAGE'] = 'ERROR uploading character state image/illustration: ';
+$LANG['SUCCESS_DELETE_IMAGE'] = 'SUCCESS: image deleted successfully';
+$LANG['ERROR_DELETE_IMAGE'] = 'ERROR deleting character state image/illustration: ';
+$LANG['ERROR_ADD_REL'] = 'ERROR saving taxon relationship: ';
+$LANG['ERROR_DELETE_REL'] = 'ERROR deleting taxon relationship: ';
+
+$LANG['CONFIRM_DELETE_CHAR'] = 'Are you sure you want to permanently delete this character';
+$LANG['CONFIRM_DELETE_STATE'] = 'Are you sure you want to permanently delete this character state?';
+
 ?>
