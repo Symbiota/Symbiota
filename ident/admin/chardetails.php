@@ -22,6 +22,8 @@ $charManager = new KeyCharacterAdmin();
 $charManager->setLangId($langId);
 $charManager->setCid($cid);
 
+var_dump($_POST);
+
 $statusStr = '';
 if($formSubmit && $isEditor){
 	if($formSubmit == 'createCharacter'){
@@ -466,39 +468,42 @@ if(!$cid) header('Location: index.php');
 					<?php
 					if($charStateArr){
 						echo '<h3>Character States</h3>';
-						foreach($charStateArr as $cs => $stateArr){
+						foreach($charStateArr as $stateID => $stateArr){
+							//var_dump($stateID);
+							//var_dump($stateArr);
+							var_dump($stateArr['cs']);
 							?>
 							<div>
-								<div id="csplus-<?= $cs ?>" style="margin:5px;">
-									<a href="#" onclick="toggleCharState(<?= $cs ?>);return false;">
+								<div id="csplus-<?= $stateID ?>" style="margin:5px;">
+									<a href="#" onclick="toggleCharState(<?= $stateID ?>);return false;">
 										<img src="../../images/plus.png" class="icon-img" >
 										<?= Sanitize::outString($stateArr['charStateName']) ?>
 									</a>
 								</div>
-								<div id="<?= 'cs-'.$cs.'Div' ?>" style="display:none;">
+								<div id="<?= 'cs-'.$stateID.'Div' ?>" style="display:none;">
 									<div style="margin:5px;">
-										<a href="#" onclick="toggleCharState(<?= $cs ?>);return false;">
+										<a href="#" onclick="toggleCharState(<?= $stateID ?>);return false;">
 											<img src="../../images/minus.png" class="icon-img" >
 											<?= Sanitize::outString($stateArr['charStateName']) ?>
 										</a>
 									</div>
-									<form name="stateeditform-<?= $cs ?>" action="chardetails.php" method="post" onsubmit="return validateStateEditForm(this)">
+									<form name="stateeditform-<?= $stateID ?>" action="chardetails.php" method="post" onsubmit="return validateStateEditForm(this)">
 										<fieldset>
 											<legend>Character State Details</legend>
 											<div>
-												<label for="charstatename-<?= $cs ?>">Character State Name</label><br />
-												<input type="text" id="charstatename-<?= $cs ?>" name="charstatename" maxlength="255" style="width:300px;" value="<?= Sanitize::outString($stateArr['charStateName']) ?>" />
+												<label for="charstatename-<?= $stateID ?>">Character State Name</label><br />
+												<input type="text" id="charstatename-<?= $stateID ?>" name="charstatename" maxlength="255" style="width:300px;" value="<?= Sanitize::outString($stateArr['charStateName']) ?>" />
 											</div>
 											<div style="padding-top:2px;">
-												<label for="description-<?= $cs ?>">Description</label><br />
-												<input type="text" id="description-<?= $cs ?>" name="description" maxlength="255" style="width:90%;" value="<?= Sanitize::outString($stateArr['description']) ?>"/>
+												<label for="description-<?= $stateID ?>">Description</label><br />
+												<input type="text" id="description-<?= $stateID ?>" name="description" maxlength="255" style="width:90%;" value="<?= Sanitize::outString($stateArr['description']) ?>"/>
 											</div>
 											<?php
 											if($glossaryArr){
 												?>
 												<div style="padding-top:8px;clear:both;">
-													<label for="glossid-<?= $cs ?>">Glossary link</label><br />
-													<select id="glossid-<?= $cs ?>" name="glossid" style="max-width: 90%">
+													<label for="glossid-<?= $stateID ?>">Glossary link</label><br />
+													<select id="glossid-<?= $stateID ?>" name="glossid" style="max-width: 90%">
 														<option value="">------------------------</option>
 														<?php
 														foreach($glossaryArr as $glossArr){
@@ -520,22 +525,22 @@ if(!$cid) header('Location: index.php');
 											}
 											?>
 											<div style="padding-top:2px;">
-												<label for="notes-<?= $cs ?>">Notes</label><br />
-												<input type="text" id="notes-<?= $cs ?>" name="notes" style="width:90%;" value="<?= Sanitize::outString($stateArr['notes']) ?>" />
+												<label for="notes-<?= $stateID ?>">Notes</label><br />
+												<input type="text" id="notes-<?= $stateID ?>" name="notes" style="width:90%;" value="<?= Sanitize::outString($stateArr['notes']) ?>" />
 											</div>
 											<div style="padding-top:2px;">
 												<div style="float:right;">
-													<label for="enteredby-<?= $cs ?>">Entered By:</label><br/>
-													<input type="text" id="enteredby-<?= $cs ?>" name="enteredby" value="<?= Sanitize::outString($stateArr['enteredBy']) ?>" disabled />
+													<label for="enteredby-<?= $stateID ?>">Entered By:</label><br/>
+													<input type="text" id="enteredby-<?= $stateID ?>" name="enteredby" value="<?= Sanitize::outString($stateArr['enteredBy']) ?>" disabled />
 												</div>
 												<div>
-													<label for="sortsequence-<?= $cs ?>">Sort Sequence</label><br />
-													<input type="text" id="sortsequence-<?= $cs ?>" name="sortsequence" value="<?= $stateArr['sortSequence'] ?>" style="width:80px" />
+													<label for="sortsequence-<?= $stateID ?>">Sort Sequence</label><br />
+													<input type="text" id="sortsequence-<?= $stateID ?>" name="sortsequence" value="<?= $stateArr['sortSequence'] ?>" style="width:80px" />
 												</div>
 											</div>
 											<div style="width:100%;margin:20px 0px 10px 20px;">
 												<input name="cid" type="hidden" value="<?= $cid ?>" />
-												<input name="cs" type="hidden" value="<?= $cs ?>" />
+												<input name="cs" type="hidden" value="<?= $stateArr['cs'] ?>" />
 												<button name="formsubmit" type="submit" value="saveState">Save</button>
 											</div>
 										</fieldset>
