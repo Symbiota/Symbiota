@@ -96,7 +96,7 @@ $LANG['ERROR_DELETE_IMAGE'] = 'ERROR al eliminar la imagen/ilustración del esta
 $LANG['ERROR_ADD_REL'] = 'ERROR al guardar la relación taxonómica: ';
 $LANG['ERROR_DELETE_REL'] = 'ERROR al eliminar la relación taxonómica: ';
 
-$LANG['CONFIRM_DELETE_CHAR'] = '¿Estás seguro de que quieres eliminar permanentemente este personaje?';
-$LANG['CONFIRM_DELETE_STATE'] = '¿Estás seguro de que quieres eliminar permanentemente este estado del personaje?';
+$LANG['CONFIRM_DELETE_CHAR'] = '¿Estás seguro de que quieres eliminar permanentemente este carácter?';
+$LANG['CONFIRM_DELETE_STATE'] = '¿Estás seguro de que quieres eliminar permanentemente este estado del carácter?';
 
 ?>
