@@ -157,7 +157,7 @@ class KmTaxonCharacters extends DataCore{
 	}
 
 	private function setCharacterStateFieldMap(){
-		$this->fieldMap = array('cid' => 'pk', 'cs' => 'pk', 'charStateName' => 's', 'implicit' => 'i', 'notes' => 's', 'description' => 's',
+		$this->fieldMap = array('stateid' => 'pk', 'cid' => 'i', 'cs' => 's', 'charStateName' => 's', 'implicit' => 'i', 'notes' => 's', 'description' => 's',
 			'illustrationUrl' => 's', 'referenceUrl' => 's', 'glossID' => 'i', 'sortSequence' => 'i', 'enteredBy' => 's');
 	}
 
