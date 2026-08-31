@@ -23,6 +23,7 @@ $charManager->setLangId($langId);
 $charManager->setCid($cid);
 
 var_dump($_POST);
+var_dump($_POST['cs']);
 
 $statusStr = '';
 if($formSubmit && $isEditor){
@@ -183,66 +184,67 @@ if(!$cid) header('Location: index.php');
 		function verifyCharStateDeletion(f){
 			var cid = f.cid.value;
 			var cs = f.cs.value;
+			var stateid = f.stateid.value;
 
 			//Restriction when images are linked
-			document.getElementById("delvercsimgspan-"+cs).style.display = "block";
-			verifyCharStateImages(cid,cs);
+			document.getElementById("delvercsimgspan-"+stateid).style.display = "block";
+			verifyCharStateImages(cid,cs,stateid);
 
 			//Restriction when language definitions are linked
-			document.getElementById("delvercslangspan-"+cs).style.display = "block";
-			verifyCharStateLang(cid,cs);
+			document.getElementById("delvercslangspan-"+stateid).style.display = "block";
+			verifyCharStateLang(cid,cs,stateid);
 
 			//Restriction when descriptions are linked
-			document.getElementById("delverdescrspan-"+cs).style.display = "block";
-			verifyDescr(cid,cs);
+			document.getElementById("delverdescrspan-"+stateid).style.display = "block";
+			verifyDescr(cid,cs,stateid);
 
 			f.formsubmit.disabled = false;
 		}
 
-		function verifyCharStateImages(cid,cs){
+		function verifyCharStateImages(cid,cs,stateid){
 			$.ajax({
 				type: "POST",
 				url: 'rpc/getcharstateimgcnt.php',
 				data: { cidinput: cid, csinput: cs }
 			}).done(function( msg ) {
-				document.getElementById("delvercsimgspan-"+cs).style.display = "none";
+				document.getElementById("delvercsimgspan-"+stateid).style.display = "none";
 				if(msg > 0){
-					document.getElementById("delcsimgfaildiv-"+cs).style.display = "block";
+					document.getElementById("delcsimgfaildiv-"+stateid).style.display = "block";
 				}
 				else{
-					document.getElementById("delcsimgappdiv-"+cs).style.display = "block";
+					document.getElementById("delcsimgappdiv-"+stateid).style.display = "block";
 				}
 			});
 		}
 
-		function verifyCharStateLang(cid,cs){
+		function verifyCharStateLang(cid,cs,stateid){
 			$.ajax({
 				type: "POST",
 				url: 'rpc/getcharstatelangcnt.php',
 				data: { cidinput: cid, csinput: cs }
 			}).done(function( msg ) {
-				document.getElementById("delvercslangspan-"+cs).style.display = "none";
+				document.getElementById("delvercslangspan-"+stateid).style.display = "none";
 				if(msg > 0){
-					document.getElementById("delcslangfaildiv-"+cs).style.display = "block";
+					document.getElementById("delcslangfaildiv-"+stateid).style.display = "block";
 				}
 				else{
-					document.getElementById("delcslangappdiv-"+cs).style.display = "block";
+					document.getElementById("delcslangappdiv-"+stateid).style.display = "block";
 				}
 			});
 		}
 
-		function verifyDescr(cid,cs){
+		function verifyDescr(cid,cs,stateid){
 			$.ajax({
 				type: "POST",
 				url: 'rpc/getdescrcnt.php',
 				data: { cidinput: cid, csinput: cs }
 			}).done(function( msg ) {
-				document.getElementById("delverdescrspan-"+cs).style.display = "none";
+				document.getElementById("delverdescrspan-"+stateid).style.display = "none";
 				if(msg > 0){
-					document.getElementById("deldescrfaildiv-"+cs).style.display = "block";
+					document.getElementById("deldescrfaildiv-"+stateid).style.display = "block";
 				}
 				else{
-					document.getElementById("deldescrappdiv-"+cs).style.display = "block";
+					document.getElementById("deldescrappdiv-"+stateid).style.display = "block";
 				}
 			});
 		}
@@ -470,8 +472,8 @@ if(!$cid) header('Location: index.php');
 						echo '<h3>Character States</h3>';
 						foreach($charStateArr as $stateID => $stateArr){
 							//var_dump($stateID);
-							//var_dump($stateArr);
-							var_dump($stateArr['cs']);
+							var_dump($stateArr);
+							//var_dump($stateArr['cs']);
 							?>
 							<div>
 								<div id="csplus-<?= $stateID ?>" style="margin:5px;">
@@ -548,7 +550,9 @@ if(!$cid) header('Location: index.php');
 									<fieldset>
 										<legend>Illustration</legend>
 										<?php
-										if($imgArr = $charManager->getCharacterStateImageArr()){
+										$imgArr = $charManager->getCharacterStateImageArr();
+										if($imgArr['cs'] === $stateArr['cs']){
+											var_dump($imgArr);
 											?>
 											<div style="padding-top:2px;">
 												<a href="<?= Sanitize::outString($imgArr['url']) ?>" target="_blank"><img src="<?= Sanitize::outString($imgArr['url']) ?>" style="width:200px;" /></a>
@@ -556,7 +560,7 @@ if(!$cid) header('Location: index.php');
 											<form name="stateillustdelform-<?= $imgArr['csImgID'] ?>" action="chardetails.php" method="post" onsubmit="return verifyStateIllustDelForm(this)" >
 												<div style="margin:10px;">
 													<input name="cid" type="hidden" value="<?= $cid ?>" />
-													<input name="cs" type="hidden" value="<?= $cs ?>" />
+													<input name="cs" type="hidden" value="<?= $stateArr['cs'] ?>" />
 													<input name="csimgid" type="hidden" value="<?= $imgArr['csImgID'] ?>" />
 													<button name="formsubmit" type="submit" value="deleteImage">Delete Image</button>
 												</div>
@@ -565,23 +569,23 @@ if(!$cid) header('Location: index.php');
 										}
 										else{
 											?>
-											<form name="stateillustform-<?= $cs ?>" action="chardetails.php" method="post" enctype="multipart/form-data" onsubmit="return verifyStateIllustForm(this)" >
+											<form name="stateillustform-<?= $stateID ?>" action="chardetails.php" method="post" enctype="multipart/form-data" onsubmit="return verifyStateIllustForm(this)" >
 												<div style="padding-top:2px;">
-													<label for="urlupload-<?= $cs ?>">File Upload:</label>
-													<input id="urlupload-<?= $cs ?>" name="urlupload" type="file" size="50" />
+													<label for="urlupload-<?= $stateID ?>">File Upload:</label>
+													<input id="urlupload-<?= $stateID ?>" name="urlupload" type="file" size="50" />
 													<input name="MAX_FILE_SIZE" type="hidden" value="1000000" />
 												</div>
 												<div style="padding-top:2px;">
-													<label for="imgnotes-<?= $cs ?>">Notes:</label>
-													<input id="imgnotes-<?= $cs ?>" name="notes" type="text" style="width:90%" />
+													<label for="imgnotes-<?= $stateID ?>">Notes:</label>
+													<input id="imgnotes-<?= $stateID ?>" name="notes" type="text" style="width:90%" />
 												</div>
 												<div style="padding-top:2px;">
-													<label for="imgsortsequence-<?= $cs ?>">Sort:</label>
-													<input id="imgsortsequence-<?= $cs ?>" name="sortsequence" type="text" />
+													<label for="imgsortsequence-<?= $stateID ?>">Sort:</label>
+													<input id="imgsortsequence-<?= $stateID ?>" name="sortsequence" type="text" />
 												</div>
 												<div style="padding-top:2px;">
 													<input name="cid" type="hidden" value="<?= $cid ?>" />
-													<input name="cs" type="hidden" value="<?= $cs ?>" />
+													<input name="cs" type="hidden" value="<?= $stateArr['cs'] ?>" />
 													<button name="formsubmit" type="submit" value="uploadImage">Upload Image</button>
 												</div>
 											</form>
@@ -589,7 +593,7 @@ if(!$cid) header('Location: index.php');
 										}
 										?>
 									</fieldset>
-									<form name="statedelform-<?= $cs ?>" action="chardetails.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this character state?')">
+									<form name="statedelform-<?= $stateID ?>" action="chardetails.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this character state?')">
 										<fieldset>
 											<legend>Delete Character State</legend>
 											<div>
@@ -602,46 +606,47 @@ if(!$cid) header('Location: index.php');
 											</div>
 											<div id="delverimgdiv" style="margin:15px;">
 												<b>Image Links: </b>
-												<span id="delvercsimgspan-<?= $cs ?>" style="color:orange;display:none;">checking image links...</span>
-												<div id="delcsimgfaildiv-<?= $cs ?>" style="display:none;style:0px 10px 10px 10px;">
+												<span id="delvercsimgspan-<?= $stateID ?>" style="color:orange;display:none;">checking image links...</span>
+												<div id="delcsimgfaildiv-<?= $stateID ?>" style="display:none;style:0px 10px 10px 10px;">
 													<span style="color:red;">Warning:</span>
 													One or more images are linked to this charcter state.
 													Deleting this character state will also permanently remove these images.
 												</div>
-												<div id="delcsimgappdiv-<?= $cs ?>" style="display:none;">
+												<div id="delcsimgappdiv-<?= $stateID ?>" style="display:none;">
 													<span style="color:green;">Approved for deletion.</span>
 													No images are directly associated with this character state.
 												</div>
 											</div>
 											<div id="delverlangdiv" style="margin:15px;">
 												<b>Language Links: </b>
-												<span id="delvercslangspan-<?= $cs ?>" style="color:orange;display:none;">checking language links...</span>
-												<div id="delcslangfaildiv-<?= $cs ?>" style="display:none;style:0px 10px 10px 10px;">
+												<span id="delvercslangspan-<?= $stateID ?>" style="color:orange;display:none;">checking language links...</span>
+												<div id="delcslangfaildiv-<?= $stateID ?>" style="display:none;style:0px 10px 10px 10px;">
 													<span style="color:red;">Warning:</span>
 													Charcter state has links to langauge records.
 													Deleting this character state will also permanently remove this data.
 												</div>
-												<div id="delcslangappdiv-<?= $cs ?>" style="display:none;">
+												<div id="delcslangappdiv-<?= $stateID ?>" style="display:none;">
 													<span style="color:green;">Approved for deletion.</span>
 													No langage mappings are directly associated with this character state.
 												</div>
 											</div>
 											<div id="delverdescrdiv" style="margin:15px;">
 												<b>Description Links: </b>
-												<span id="delverdescrspan-<?= $cs ?>" style="color:orange;display:none;">checking description links...</span>
-												<div id="deldescrfaildiv-<?= $cs ?>" style="display:none;style:0px 10px 10px 10px;">
+												<span id="delverdescrspan-<?= $stateID ?>" style="color:orange;display:none;">checking description links...</span>
+												<div id="deldescrfaildiv-<?= $stateID ?>" style="display:none;style:0px 10px 10px 10px;">
 													<span style="color:red;">Warning:</span>
 													One or more descriptions are linked to this charcter state.
 													Delete this character state will also permanently remove these descriptions.
 												</div>
-												<div id="deldescrappdiv-<?= $cs ?>" style="display:none;">
+												<div id="deldescrappdiv-<?= $stateID ?>" style="display:none;">
 													<span style="color:green;">Approved for deletion.</span>
 													No descriptions are directly associated with this character state.
 												</div>
 											</div>
 											<div style="margin:15px;">
+												<input id="stateid" type="hidden" value="<?= $stateID ?>">
 												<input name="cid" type="hidden" value="<?= $cid ?>" />
-												<input name="cs" type="hidden" value="<?= $cs ?>" />
+												<input name="cs" type="hidden" value="<?= $stateArr['cs'] ?>" />
 												<button name="formsubmit" type="submit" value="deleteState" disabled>Delete State</button>
 											</div>
 										</fieldset>
