@@ -401,7 +401,7 @@ if(!$cid) header('Location: index.php');
 							<div style="width:100%;padding-top:6px;">
 								<div style="float:left;">
 									<input name="cid" type="hidden" value="<?= $cid ?>" />
-									<button name="formsubmit" type="submit" value="saveCharacterEdit">Save</button>
+									<button name="formsubmit" type="submit" value="saveCharacterEdit"><?= $LANG['SAVE'] ?></button>
 								</div>
 								<div style="float:right;">
 									<label for="enteredby"><?= $LANG['ENTERED_BY'] ?>:</label>
@@ -465,7 +465,7 @@ if(!$cid) header('Location: index.php');
 					</div>
 					<?php
 					if($charStateArr){
-						echo '<h3>Character States</h3>';
+						echo '<h3>' . $LANG['CHAR_STATES'] . '</h3>';
 						foreach($charStateArr as $cs => $stateArr){
 							?>
 							<div>
