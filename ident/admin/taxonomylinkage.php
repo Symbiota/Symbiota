@@ -77,7 +77,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 	</script>
 </head>
 <body>
-	<h1 class="page-heading"><?= $LANG['LINK_CHAR_TAXA'] ?></h1>
+	<h3 class="page-heading"><?= $LANG['LINK_CHAR_TAXA'] ?></h3>
 	<div id="tlinkdiv" style="margin:15px;">
 		<div style="margin:10px;">
 			<b><?= $LANG['CHAR_TAXON_RELEVANCE'] ?></b> -
