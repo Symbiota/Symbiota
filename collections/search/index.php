@@ -69,21 +69,30 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.index.js?ver=1>" type="text/javascript"></script>
 	<script src="<?= $JS_LANG_FILENAME ?>" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=2" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/search.autocomplete.js?v=1" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=2d" type="text/javascript"></script>
 
 	<script>
-		const clientRoot = "<?= $CLIENT_ROOT ?>";
-
 		$(document).ready(function() {
+
+			//Auto-complete for taxon search field
+			const taxaInput = document.querySelector("#taxa");
+			if(taxaInput){
+				taxaInput.addEventListener("focus", (event) => {
+					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggest.config.multipleTermSupport = true;
+					taxaSuggest.config.taxonSearchType = document.getElementById("taxontype").value;
+					taxaSuggest.initiate("taxa");
+				});
+			}
+
 			//Auto-complete for associated taxon field
 			const assocTaxaInput = document.querySelector("#associated-taxa");
 			if(assocTaxaInput){
 				assocTaxaInput.addEventListener("focus", (event) => {
-					taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
-					taxaSuggestConfig.multipleTermSupport = true;
-					taxaSuggestConfig.taxonSearchType = document.getElementById("taxontype-association").value;
-					initiateTaxaSuggest("associated-taxa");
+					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggest.config.multipleTermSupport = true;
+					taxaSuggest.config.taxonSearchType = document.getElementById("taxontype-association").value;
+					taxaSuggest.initiate("associated-taxa");
 				});
 			}
 
@@ -205,7 +214,13 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 										<option id="taxontype-scientific" value="2" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['SCIENTIFIC_NAME'] ?></option>
 										<option id="taxontype-family" value="3" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['FAMILY'] ?></option>
 										<option id="taxontype-group" value="4" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['TAXONOMIC_GROUP'] ?></option>
-										<option id="taxontype-common" value="5" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['COMMON_NAME'] ?></option>
+										<?php
+										if(!empty($DISPLAY_COMMON_NAMES)){
+											?>
+											<option id="taxontype-common" value="5" data-chip="<?php echo $LANG['TAXON']?>"><?php echo $LANG['COMMON_NAME'] ?></option>
+											<?php
+										}
+										?>
 									</select>
 									<span class="inset-input-label"><?php echo $LANG['TAXON_TYPE'] ?></span>
 								</div>
@@ -650,7 +665,13 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 										<option id="taxontype-association-scientific" value="2" data-chip="<?php echo $LANG['ASSOCIATIONS'] . '-' . $LANG['TAXON_TYPE']?>"><?php echo $LANG['SCIENTIFIC_NAME'] ?></option>
 										<option id="taxontype-association-family" value="3" data-chip="<?php echo $LANG['ASSOCIATIONS'] . '-' . $LANG['TAXON_TYPE']?>"><?php echo $LANG['FAMILY'] ?></option>
 										<option id="taxontype-association-group" value="4" data-chip="<?php echo $LANG['ASSOCIATIONS'] . '-' . $LANG['TAXON_TYPE']?>"><?php echo $LANG['TAXONOMIC_GROUP'] ?></option>
-										<option id="taxontype-association-common" value="5" data-chip="<?php echo $LANG['ASSOCIATIONS'] . '-' . $LANG['TAXON_TYPE']?>"><?php echo $LANG['COMMON_NAME'] ?></option>
+										<?php
+										if(!empty($DISPLAY_COMMON_NAMES)){
+											?>
+											<option id="taxontype-association-common" value="5" data-chip="<?php echo $LANG['ASSOCIATIONS'] . '-' . $LANG['TAXON_TYPE']?>"><?php echo $LANG['COMMON_NAME'] ?></option>
+											<?php
+										}
+										?>
 									</select>
 									<span class="inset-input-label"><?php echo $LANG['TAXON_TYPE'] ?></span>
 								</div>

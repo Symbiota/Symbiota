@@ -121,10 +121,20 @@ $serverHost = GeneralUtil::getDomain();
 		<script src="../../js/symb/MapShapeHelper.js" type="text/javascript"></script>
 		<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
 		<script src="../../js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
-		<script src="../../js/symb/search.autocomplete.js?v=1" type="text/javascript"></script>
 
 		<script type="text/javascript">
-			const clientRoot = "<?= $CLIENT_ROOT ?>";
+			$(document).ready(function() {
+				//Auto-complete for taxon search field
+				const taxaInput = document.querySelector("#taxa");
+				if(taxaInput){
+					taxaInput.addEventListener("focus", (event) => {
+						taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+						taxaSuggest.config.multipleTermSupport = true;
+						taxaSuggest.config.taxonSearchType = document.getElementById("taxontype").value;
+						taxaSuggest.initiate("taxa");
+					});
+				}
+			});
 
 			//Clid
 			let recordArr = [];
@@ -2218,10 +2228,16 @@ $serverHost = GeneralUtil::getDomain();
 											<select data-role="none" id="taxontype" name="taxontype">
 												<?php
 												$taxonType = 2;
-												if(isset($DEFAULT_TAXON_SEARCH) && $DEFAULT_TAXON_SEARCH) $taxonType = $DEFAULT_TAXON_SEARCH;
+												$taxonTypeRangeStart = 2;
+												$taxonTypeRangeEnd = 5;
+												if(!empty($DEFAULT_TAXON_SEARCH)){
+													$taxonType = $DEFAULT_TAXON_SEARCH;
+													if($DEFAULT_TAXON_SEARCH == 1) $taxonTypeRangeStart = 1;
+												}
 												if($mapManager->getSearchTerm('taxontype')) $taxonType = $mapManager->getSearchTerm('taxontype');
-												for($h=1;$h<6;$h++){
-												echo '<option value="'.$h.'" '.($taxonType==$h?'SELECTED':'').'>'.$LANG['SELECT_1-'.$h].'</option>';
+												if(!empty($DISPLAY_COMMON_NAMES)) $taxonTypeRangeEnd = 6;
+												for($h=$taxonTypeRangeStart; $h<$taxonTypeRangeEnd; $h++){
+													echo '<option value="'.$h.'" '.($taxonType==$h?'SELECTED':'').'>'.$LANG['SELECT_1-'.$h].'</option>';
 												}
 												?>
 											</select>

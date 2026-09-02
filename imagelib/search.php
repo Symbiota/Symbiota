@@ -113,7 +113,19 @@ $creators = Media::getCreatorArray();
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=2" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.list.js?ver=20171215>" type="text/javascript"></script>
 	<script type="text/javascript">
-		var clientRoot = "<?= $CLIENT_ROOT; ?>";
+		$(document).ready(function() {
+
+			//Auto-complete for taxon search field
+			const taxaInput = document.querySelector("#taxa");
+			if(taxaInput){
+				taxaInput.addEventListener("focus", (event) => {
+					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggest.config.multipleTermSupport = true;
+					taxaSuggest.config.taxonSearchType = document.getElementById("taxontype").value;
+					taxaSuggest.initiate("taxa");
+				});
+			}
+		}
 
 		function validateBatchActionBtn(f){
 			if(f.imgTagAction.value == ""){
@@ -146,7 +158,6 @@ $creators = Media::getCreatorArray();
 		}
 	</script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/search.autocomplete.js?v=1" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/imagelib.search.js?ver=3b" type="text/javascript"></script>
 </head>
 <body>

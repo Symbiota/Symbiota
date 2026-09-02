@@ -1,21 +1,23 @@
-const taxaSuggestConfig = {
-	clientRoot: "",
-	minLength: 3,
-	includeAuthor: false,
-	includeKingdom: false,
-	multipleTermSupport: false,
-	restrictToList: false,
+window.taxaSuggest = window.taxaSuggest || {};
 
-	taxonSearchType: 2,
-	limitToAccepted: false,
-	fullOutput: false,
-	extendQueryMatch: false,
-	taxAuthID: 1,
-	rankMinimum: '',
-	rankMaximum: ''
+taxaSuggest.config = {
+    clientRoot: "",
+    minLength: 3,
+    includeAuthor: false,
+    includeKingdom: false,
+    multipleTermSupport: false,
+    restrictToList: false,
+
+    taxonSearchType: 2,
+    limitToAccepted: false,
+    fullOutput: false,
+    extendQueryMatch: false,
+    taxAuthID: 1,
+    rankMinimum: '',
+    rankMaximum: ''
 };
 
-function initiateTaxaSuggest(inputID, callback = null) {
+taxaSuggest.initiate = function(inputID, callback = null) {
 	const inputElem = $("#" + inputID);
 	inputElem
 		// don't navigate away from the field on tab when selecting an item
@@ -31,17 +33,17 @@ function initiateTaxaSuggest(inputID, callback = null) {
 		.autocomplete({
 			source(request, response) {
 				$.getJSON(
-					taxaSuggestConfig.clientRoot + "/rpc/taxasuggest.php",
+					taxaSuggest.config.clientRoot + "/rpc/taxasuggest.php",
 					{
-						term: extractLast(request.term),
-						searchType: taxaSuggestConfig.taxonSearchType,
-						limitToAccepted: taxaSuggestConfig.limitToAccepted,
-						fullOutput: taxaSuggestConfig.fullOutput,
-						extendQueryMatch: taxaSuggestConfig.extendQueryMatch,
-						taxAuthID: taxaSuggestConfig.taxAuthID,
-						rankMin: taxaSuggestConfig.rankMinimum,
-						rankMax: taxaSuggestConfig.rankMaximum
-					},
+						term: taxaSuggest.extractLast(request.term),
+						searchType: taxaSuggest.config.taxonSearchType,
+						limitToAccepted: taxaSuggest.config.limitToAccepted,
+						fullOutput: taxaSuggest.config.fullOutput,
+						extendQueryMatch: taxaSuggest.config.extendQueryMatch,
+						taxAuthID: taxaSuggest.config.taxAuthID,
+						rankMin: taxaSuggest.config.rankMinimum,
+						rankMax: taxaSuggest.config.rankMaximum
+					}, 
 					response
 				);
 			},
@@ -49,8 +51,8 @@ function initiateTaxaSuggest(inputID, callback = null) {
 			delay: 200,
 			search() {
 				//Sets acMinLength even when there is support for multiple terms	
-				const term = extractLast(this.value);
-				if(term.length <= taxaSuggestConfig.minLength) return false;
+				const term = taxaSuggest.extractLast(this.value);
+				if(term.length <= taxaSuggest.config.minLength) return false;
 				return true;
 			},
 			focus() {
@@ -58,7 +60,7 @@ function initiateTaxaSuggest(inputID, callback = null) {
 				return false;
 			},
 			select(event, ui) {
-				if(taxaSuggestConfig.multipleTermSupport){
+				if(taxaSuggest.config.multipleTermSupport){
 					let terms = this.value.replace("],", "];").split(/;\s*/);
 					let targetIndex = terms.length - 1;
 					// Replace last term with select item
@@ -73,7 +75,7 @@ function initiateTaxaSuggest(inputID, callback = null) {
 			change: function(event, ui) {
 				const validSelection = !!ui.item;
 				if (!validSelection) {
-					if(taxaSuggestConfig.restrictToList){
+					if(taxaSuggest.config.restrictToList){
 						let errMsg = 'Selecting taxon name from list is required';
 						if(typeof translations !== 'undefined' && translations.SELECT_FROM_LIST) errMsg = translations.SELECT_FROM_LIST;
 						alert(errMsg);
@@ -92,9 +94,9 @@ function initiateTaxaSuggest(inputID, callback = null) {
 	);
 }
 
-function extractLast(term) {
+taxaSuggest.extractLast = function(term) {
 	//Returns the last search term whenever mulitple are entered separeted by a commas
-	if(taxaSuggestConfig.multipleTermSupport) return term.split(/[;,]{1}\s*/).pop();
+	if(taxaSuggest.config.multipleTermSupport) return term.split(/[;,]{1}\s*/).pop();
 	return term;
 }
 

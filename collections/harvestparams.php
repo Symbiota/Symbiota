@@ -26,17 +26,27 @@ $searchVar = $collManager->getQueryTermStr();
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js?ver=1" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.traitsearch.js?ver=8" type="text/javascript"></script> <!-- Contains search-by-trait modifications -->
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/wktpolygontools.js?ver=1c" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 	<script type="text/javascript">
 		const paleoTimes = <?= json_encode($paleoTimes ?? []) ?>;
-		const clientRoot = "<?= $CLIENT_ROOT ?>";
 
 		$(document).ready(function() {
 			setSessionQueryStr();
 			setHarvestParamsForm(document.harvestparams);
+
+			//Auto-complete for taxon search field
+			const taxaInput = document.querySelector("#taxa");
+			if(taxaInput){
+				taxaInput.addEventListener("focus", (event) => {
+					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggest.config.multipleTermSupport = true;
+					taxaSuggest.config.taxonSearchType = document.getElementById("taxontype").value;
+					taxaSuggest.initiate("taxa");
+				});
+			}
+
 		});
 	</script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/search.autocomplete.js?v=1" type="text/javascript"></script>
 
 	<style type="text/css">
 		hr{ clear:both; margin: 10px 0px }
@@ -81,11 +91,15 @@ $searchVar = $collManager->getQueryTermStr();
 							<label for="taxontype"><?= $LANG['SELECT_TAXON_TYPE'] ?>:</label>
 							<select id="taxontype" name="taxontype">
 								<?php
-								$taxonType = 1;
-								if(isset($DEFAULT_TAXON_SEARCH) && $DEFAULT_TAXON_SEARCH) $taxonType = $DEFAULT_TAXON_SEARCH;
-								$taxonTypeRange = 6;
-								if(isset($DISPLAY_COMMON_NAMES) && !$DISPLAY_COMMON_NAMES) $taxonTypeRange = 5;
-								for($h=1;$h<$taxonTypeRange;$h++){
+								$taxonType = 2;
+								$taxonTypeRangeStart = 2;
+								$taxonTypeRangeEnd = 5;
+								if(!empty($DEFAULT_TAXON_SEARCH)){
+									$taxonType = $DEFAULT_TAXON_SEARCH;
+									if($DEFAULT_TAXON_SEARCH == 1) $taxonTypeRangeStart = 1;
+								}
+								if(!empty($DISPLAY_COMMON_NAMES)) $taxonTypeRangeEnd = 6;
+								for($h=$taxonTypeRangeStart; $h<$taxonTypeRangeEnd; $h++){
 									echo '<option value="'.$h.'" '.($taxonType==$h?'SELECTED':'').'>'.$LANG['SELECT_1-'.$h].'</option>';
 								}
 								?>
