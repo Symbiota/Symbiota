@@ -86,7 +86,7 @@ if($formSubmit && $isEditor){
 			$tabIndex = 2;
 		}
 	}
-	elseif($formSubmit == 'delaxon'){
+	elseif($formSubmit == 'deltaxon'){
 		if(!$charManager->deleteTaxonRelevance($_POST['tid'])){
 			$statusStr = $LANG['ERROR_DELETE_REL'] . $charManager->getErrorMessage();
 		}
