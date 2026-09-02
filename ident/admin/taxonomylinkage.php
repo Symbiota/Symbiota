@@ -48,7 +48,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 							data: { term: $( this ).val() }
 						}).done(function( msg ) {
 							if(msg == ""){
-								alert(<?= json_encode($LANG['ALERT_NO_TAXON']); ?>);
+								alert("<?= $LANG['ALERT_NO_TAXON']; ?>");
 							}
 							else{
 								$( "#relevancetidinput" ).val(msg);
@@ -65,11 +65,11 @@ $tLinks = $keyManager->getTaxonRelevance();
 
 		function validateRelevanceForm(f){
 			if(f.relsciname.value == ""){
-				alert(<?= json_encode($LANG['ALERT_EMPTY_TAXON']); ?>);
+				alert("<?= $LANG['ALERT_EMPTY_TAXON'] ?>");
 				return false;
 			}
 			if(f.tid.value == ""){
-				alert(<?= json_encode($LANG['ALERT_NO_TAXON_IDEN']); ?> + " " + f.relsciname.value);
+				alert("<?= $LANG['ALERT_NO_TAXON_IDEN'] ?> " + f.relsciname.value);
 				return false;
 			}
 			return true;
@@ -77,7 +77,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 	</script>
 </head>
 <body>
-	<h3 class="page-heading"><?= $LANG['LINK_CHAR_TAXA'] ?></h3>
+	<h3><?= $LANG['LINK_CHAR_TAXA'] ?></h3>
 	<div id="tlinkdiv" style="margin:15px;">
 		<div style="margin:10px;">
 			<b><?= $LANG['CHAR_TAXON_RELEVANCE'] ?></b> -

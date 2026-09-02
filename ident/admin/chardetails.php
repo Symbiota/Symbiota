@@ -136,15 +136,15 @@ if(!$cid) header('Location: index.php');
 
 		function validateCharEditForm(f){
 			if(f.charname.value == ""){
-				alert(<?= json_encode($LANG['ALERT_NAME_NULL']); ?>);
+				alert("<?= $LANG['ALERT_NAME_NULL'] ?>");
 				return false;
 			}
 			if(f.chartype.value == ""){
-				alert(<?= json_encode($LANG['ALERT_TYPE_NULL']); ?>);
+				alert("<?= $LANG['ALERT_TYPE_NULL'] ?>");
 				return false;
 			}
 			if(f.sortsequence.value && !isNumeric(f.sortsequence.value)){
-				alert(<?= json_encode($LANG['ALERT_SS_NUM']); ?>);
+				alert("<?= $LANG['ALERT_SS_NUM'] ?>");
 				return false;
 			}
 			return true;
@@ -152,11 +152,11 @@ if(!$cid) header('Location: index.php');
 
 		function validateStateAddForm(f){
 			if(f.charstatename.value == ""){
-				alert(<?= json_encode($LANG['ALERT_STATE_NULL']); ?>);
+				alert("<?= $LANG['ALERT_STATE_NULL'] ?>");
 				return false;
 			}
 			if(f.sortsequence.value && !isNumeric(f.sortsequence.value)){
-				alert(<?= json_encode($LANG['ALERT_SS_NUM']); ?>);
+				alert("<?= $LANG['ALERT_SS_NUM'] ?>");
 				return false;
 			}
 			return true;
@@ -164,7 +164,7 @@ if(!$cid) header('Location: index.php');
 
 		function validateStateEditForm(f){
 			if(f.sortsequence.value && !isNumeric(f.sortsequence.value)){
-				alert(<?= json_encode($LANG['ALERT_SS_NUM']); ?>);
+				alert("<?= $LANG['ALERT_SS_NUM'] ?>");
 				return false;
 			}
 			return true;
@@ -172,7 +172,7 @@ if(!$cid) header('Location: index.php');
 
 		function verifyStateIllustForm(f){
 			if(!f.urlupload.files[0]){
-				alert(<?= json_encode($LANG['ALERT_FILE_UPLOAD']); ?>);
+				alert("<?= $LANG['ALERT_FILE_UPLOAD'] ?>");
 				return false;
 			}
 			return true;
@@ -247,7 +247,7 @@ if(!$cid) header('Location: index.php');
 
 		function validateTaxonAddForm(f){
 			if(f.tid.value == ''){
-				alert(<?= json_encode($LANG['ALERT_SELECT_TAXON']); ?>);
+				alert("<?= $LANG['ALERT_SELECT_TAXON'] ?>");
 				return false;
 			}
 			return true;

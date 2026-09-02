@@ -48,7 +48,7 @@ $headingArr = $charManager->getCharacterHeadingArr();
 	<script type="text/javascript">
 		function validateHeadingForm(f){
 			if(f.headingname.value == ""){
-				alert(<?= json_encode($LANG['ALERT_GROUP_TITLE']); ?>);
+				alert("<?= $LANG['ALERT_GROUP_TITLE'] ?>");
 				return false;
 			}
 			return true;
