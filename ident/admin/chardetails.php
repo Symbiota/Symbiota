@@ -61,7 +61,7 @@ if($formSubmit && $isEditor){
 		$tabIndex = 1;
 	}
 	elseif($formSubmit == 'deleteState'){
-		if(!$charManager->deleteCharacterState($_POST['cs'])){
+		if(!$charManager->deleteCharacterState($_POST['stateid'], $_POST['cs'])){
 			$statusStr = 'ERROR deleting taxon character state: ' . $charManager->getErrorMessage();
 		}
 		$tabIndex = 1;
@@ -89,7 +89,7 @@ if($formSubmit && $isEditor){
 			$tabIndex = 2;
 		}
 	}
-	elseif($formSubmit == 'delaxon'){
+	elseif($formSubmit == 'deltaxon'){
 		if(!$charManager->deleteTaxonRelevance($_POST['tid'])){
 			$statusStr = 'ERROR deleting taxon relationship: ' . $charManager->getErrorMessage();
 		}
@@ -472,7 +472,7 @@ if(!$cid) header('Location: index.php');
 						echo '<h3>Character States</h3>';
 						foreach($charStateArr as $stateID => $stateArr){
 							//var_dump($stateID);
-							var_dump($stateArr);
+							//var_dump($stateArr);
 							//var_dump($stateArr['cs']);
 							?>
 							<div>
@@ -644,7 +644,7 @@ if(!$cid) header('Location: index.php');
 												</div>
 											</div>
 											<div style="margin:15px;">
-												<input id="stateid" type="hidden" value="<?= $stateID ?>">
+												<input id="stateid" name="stateid" type="hidden" value="<?= $stateID ?>">
 												<input name="cid" type="hidden" value="<?= $cid ?>" />
 												<input name="cs" type="hidden" value="<?= $stateArr['cs'] ?>" />
 												<button name="formsubmit" type="submit" value="deleteState" disabled>Delete State</button>

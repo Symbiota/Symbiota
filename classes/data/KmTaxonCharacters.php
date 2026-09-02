@@ -131,33 +131,37 @@ class KmTaxonCharacters extends DataCore{
 		return $this->updateRecord('kmcs', $pkArr, $inputArr);
 	}
 
-	public function deleteCharacterState($cs){
+	public function deleteCharacterState($stateID, $cs){
 		if(!$this->cid){
 			$this->errorMessage = 'CID_NOT_SET';
 			return false;
 		}
-		if(!$cs){
-			$this->errorMessage = 'ERROR_CS_IS_NULL';
+		if(!$stateID){
+			$this->errorMessage = 'ERROR_STATEID_IS_NULL';
 			return false;
 		}
-		if(!is_numeric($cs)){
-			$this->errorMessage = 'ERROR_CS_IS_NOT_NUMERIC';
+		if(!is_numeric($stateID)){
+			$this->errorMessage = 'ERROR_STATEID_IS_NOT_NUMERIC';
 			return false;
 		}
 		$this->setCharacterStateFieldMap();
+		$pkArrStateID = array('stateID' => $stateID);
+		/*
 		$pkArr = array('cid' => $this->cid, 'cs' => $cs);
 		$this->deleteRecord('kmcsimages', $pkArr);
 		$this->deleteRecord('kmcslang', $pkArr);
+		
 		$charDependanceArr = $this->getCharacterDependanceArr(array('cidDependance' => $this->cid, 'csDependance' => $cs));
 		foreach($charDependanceArr as $charDependID => $charDependArr){
 			$this->deleteRecord('kmchardependance', $charDependID);
 		}
 		$this->deleteRecord('kmdescr', $pkArr);
-		return $this->deleteRecord('kmcs', $pkArr);
+		*/
+		return $this->deleteRecord('kmcs', $pkArrStateID);
 	}
 
 	private function setCharacterStateFieldMap(){
-		$this->fieldMap = array('stateid' => 'pk', 'cid' => 'i', 'cs' => 's', 'charStateName' => 's', 'implicit' => 'i', 'notes' => 's', 'description' => 's',
+		$this->fieldMap = array('stateID' => 'pk', 'cid' => 'i', 'cs' => 's', 'charStateName' => 's', 'implicit' => 'i', 'notes' => 's', 'description' => 's',
 			'illustrationUrl' => 's', 'referenceUrl' => 's', 'glossID' => 'i', 'sortSequence' => 'i', 'enteredBy' => 's');
 	}
 
