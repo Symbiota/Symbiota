@@ -61,8 +61,8 @@ $LANG['NO_ASSOC_IMAGE'] = 'No images are directly associated with this character
 
 $LANG['LANG_LINKS'] = 'Language Links';
 $LANG['CHECK_LANG_LINKS'] = 'checking language links...';
-$LANG['DELETE_WARN_LANG'] = 'Character state has links to langauge records. Deleting this character state will also permanently remove this data.';
-$LANG['NO_ASSOC_LANG'] = 'No langage mappings are directly associated with this character state.';
+$LANG['DELETE_WARN_LANG'] = 'Character state has links to language records. Deleting this character state will also permanently remove this data.';
+$LANG['NO_ASSOC_LANG'] = 'No language mappings are directly associated with this character state.';
 
 $LANG['DESC_LINKS'] = 'Description Links';
 $LANG['CHECK_DESC_LINKS'] = 'checking description links...';
