@@ -68,8 +68,8 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.list.js?ver=1>" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.index.js?ver=1>" type="text/javascript"></script>
 	<script src="<?= $JS_LANG_FILENAME ?>" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=2" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=2d" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?v=1b" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 
 	<script>
 		$(document).ready(function() {
@@ -202,7 +202,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 							<div id="taxa-text" class="input-text-container">
 								<label for="taxa" class="input-text--outlined">
 									<span class="screen-reader-only"><?php echo $LANG['TAXON'] ?></span>
-									<input type="text" name="taxa" id="taxa" data-chip="<?php echo $LANG['TAXON'] ?>" />
+									<input type="text" name="taxa" id="taxa" data-chip="<?php echo $LANG['TAXON'] ?>" value="<?= (isset($_REQUEST['taxa']) ? Sanitize::outString($_REQUEST['taxa']) : '') ?>" />
 									<span class="inset-input-label"><?php echo $LANG['TAXON'] ?></span>
 								</label>
 							</div>

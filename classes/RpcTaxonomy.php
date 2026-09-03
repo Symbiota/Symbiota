@@ -14,7 +14,7 @@ class RpcTaxonomy extends RpcBase{
 	private $taxAuthID = 1;
 	private $limitToAccepted = false;
 	private $fullOutput = false;
-	private $extendQueryMatch = false;		//Allows matches on first characters of reach word
+	private $extendQueryMatch = false;		//Allows matches on first characters of each word
 
 	function __construct(){
 		parent::__construct();
@@ -27,9 +27,6 @@ class RpcTaxonomy extends RpcBase{
 	public function getTaxaSuggest($queryString){
 		$retArr = Array();
 		if($queryString){
-			$homonymSupportIndex = 0;
-			if(!empty($GLOBALS['HOMONYM_SUPPORT'])) $homonymSupportIndex = $GLOBALS['HOMONYM_SUPPORT'];
-
 			$this->cleanQueryString($queryString);
 			if(!$this->taxonSearchType && !empty($GLOBALS['DEFAULT_TAXON_SEARCH'])){
 				$this->taxonSearchType = $GLOBALS['DEFAULT_TAXON_SEARCH'];
@@ -37,30 +34,9 @@ class RpcTaxonomy extends RpcBase{
 			$sql = '';
 			$paramArr = array();
 			$typeStr = '';
-			if($this->taxonSearchType == 1){	//ANY_NAME search
-				global $LANG;
-				$sql = 'SELECT DISTINCT tid, CONCAT("' . $LANG['SELECT_1-5'] . ': ", v.vernacularname) AS label, v.vernacularname AS sciname, "" as author, "" as kingdomName, "" as securityStatus
-				FROM taxavernaculars v WHERE v.vernacularname LIKE ?
-				UNION
-				SELECT DISTINCT tid, CONCAT("' . $LANG['SELECT_1-2'] . ': ", sciname) AS label, sciname AS value, author, kingdomName, securityStatus
-				FROM taxa WHERE sciname LIKE ? AND rankid > 179
-				UNION
-				SELECT DISTINCT tid, CONCAT("' . $LANG['SELECT_1-3'] . ': ", sciname) AS label, sciname AS value, author, kingdomName, securityStatus
-				FROM taxa WHERE sciname LIKE ? AND rankid = 140
-				UNION
-				SELECT tid, CONCAT("' . $LANG['SELECT_1-4'] . ': ",sciname) AS label, sciname AS value, author, kingdomName, securityStatus
-				FROM taxa WHERE sciname LIKE ? AND rankid > 20 AND rankid < 180 AND rankid != 140 ';
-				$paramArr[] = '%' . $queryString . '%';
-				$paramArr[] = '%' . $queryString . '%';
-				$paramArr[] = $queryString . '%';
-				$paramArr[] = $queryString . '%';
-				$typeStr = 'ssss';
-			}
-			elseif($this->taxonSearchType == 5){
+			if($this->taxonSearchType == 5){
 				//COMMON_NAME
-				$sql = 'SELECT DISTINCT v.tid, CONCAT(v.vernacularname, " (", t.sciname, ';
-				if($homonymSupportIndex == 1 || $homonymSupportIndex == 3) $sql .= '" ", t.author, ';
-				$sql .= '")") AS sciname, t.author, t.kingdomName, t.securityStatus ';
+				$sql = 'SELECT DISTINCT v.tid, v.vernacularName, t.sciname, CONCAT_WS(" ", t.unitind1, t.unitname1, t.unitind2, t.unitname2) AS unitName, t.unitInd3, t.unitName3, t.author, t.kingdomName, t.securityStatus ';
 				if($this->fullOutput) $sql .= ', ts.family, ts.tidAccepted ';
 				$sql .= 'FROM taxavernaculars v INNER JOIN taxa t ON v.tid = t.tid ';
 				if($this->fullOutput) $sql .= 'INNER JOIN taxstatus ts ON t.tid = ts.tid ';
@@ -75,9 +51,11 @@ class RpcTaxonomy extends RpcBase{
 			}
 			else{
 				//SCIENTIFIC_NAME - default
-				$sql = 'SELECT t.tid, t.sciname, t.cultivarEpithet, t.tradeName, t.author, t.kingdomName, t.securityStatus FROM taxa t WHERE t.sciname LIKE ? ';
+				$sql = 'SELECT t.tid, t.sciname, CONCAT_WS(" ", t.unitind1, t.unitname1, t.unitind2, t.unitname2) AS unitName, t.unitInd3, t.unitName3,
+					t.cultivarEpithet, t.tradeName, t.author, t.kingdomName, t.securityStatus FROM taxa t WHERE t.sciname LIKE ? ';
 				if($this->fullOutput || $this->limitToAccepted){
-					$sql = 'SELECT t.tid, t.sciname, t.cultivarEpithet, t.tradeName, t.author, t.kingdomName, t.securityStatus, ts.family, ts.tidAccepted
+					$sql = 'SELECT t.tid, t.sciname, CONCAT_WS(" ", t.unitind1, t.unitname1, t.unitind2, t.unitname2) AS unitName, t.unitInd3, t.unitName3,
+						t.cultivarEpithet, t.tradeName, t.author, t.kingdomName, t.securityStatus, ts.family, ts.tidAccepted
 						FROM taxa t INNER JOIN taxStatus ts ON t.tid = ts.tid
 						WHERE ts.taxAuthID = ? AND t.sciname LIKE ? ';
 					$paramArr[] = $this->taxAuthID;
@@ -136,56 +114,29 @@ class RpcTaxonomy extends RpcBase{
 				$stmt->execute();
 				$rs = $stmt->get_result();
 				while ($r = $rs->fetch_object()) {
-					$value = $r->sciname;
-					$label = $r->sciname;
-					if(!empty($r->tradeName)){
-						$label = str_replace($r->tradeName, '', $label);
-					}
-					if(!empty($r->cultivarEpithet)){
-						// @TODO could possibly replace off-target if cultivarEpithet matches some parent taxon exactly. We think extremely unlikely edge case, so ignoring for now.
-						$label = str_replace("'" . $r->cultivarEpithet . "'", '', trim($label));
-					}
-					if(!empty($r->author)){
-						if($homonymSupportIndex == 1 || $homonymSupportIndex == 3){
-							$label = trim($label) . ' ' . $r->author;
-							$value = $label;
-						}
-					}
-					if(!empty($r->cultivarEpithet)){
-						$label .= ' ' . $this->standardizeCultivarEpithet($r->cultivarEpithet);
-					}
-					if(!empty($r->tradeName)){
-						$label .= ' ' . $this->standardizeTradeName($r->tradeName);
-					}
-					if(!empty($r->kingdomName)){
-						if($homonymSupportIndex == 2 || $homonymSupportIndex == 3){
-							$label .= ' - ' . $r->kingdomName;
-							$value = $label;
-						}
-					}
-					if (!empty($r->label)){
-						$label = $r->label;
-					}
-					if($homonymSupportIndex){
-						$value .= ' [' . $r->tid . ']';
-					}
+					$family = '';
+					if(!empty($r->family)) $family = $r->family;
 					$acceptance = '';
 					if(!empty($r->tidAccepted)){
 						if($r->tid == $r->tidAccepted) $acceptance = 1;
 						else $acceptance = 0;
 					}
-					$family = '';
-					if(!empty($r->family)) $family = $r->family;
+					$vernacularName = '';
+					if(!empty($r->vernacularName)){
+						$vernacularName = $r->vernacularName;
+					}
 					$keys = [
 						'id' => $r->tid,
-						'value' => $value,
 						'sciname' => $r->sciname,
-						'label' => $label,
+						'unitName' => $r->unitName,
+						'infraRank' => $r->unitInd3,
+						'infraName' => $r->unitName3,
 						'author' => $r->author,
 						'kingdom' => $r->kingdomName,
 						'securityStatus' => $r->securityStatus,
 						'family' => $family,
-						'acceptance' => $acceptance
+						'acceptance' => $acceptance,
+						'vernacular' => $vernacularName
 					];
 					$retArr[] = $keys;
 				}

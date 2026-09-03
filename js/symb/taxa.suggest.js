@@ -44,7 +44,28 @@ taxaSuggest.initiate = function(inputID, callback = null) {
 						rankMin: taxaSuggest.config.rankMinimum,
 						rankMax: taxaSuggest.config.rankMaximum
 					}, 
-					response
+					function(data) {
+						const results = data.map(function(item) { 
+							let valueStr = item.unitName;
+							if(item.infraRank) valueStr += " " + item.infraRank;
+							if(item.infraName) valueStr += " " + item.infraName;
+							if(taxaSuggest.config.includeAuthor && item.author ) valueStr += " " + item.author;
+							if(taxaSuggest.config.includeKingdom && item.kingdom ) valueStr += " - " + item.kingdom;
+							if(taxaSuggest.config.includeAuthor || taxaSuggest.config.includeKingdom) valueStr += " [" + item.id + "]";
+							return { 
+								id: item.id, 
+								sciname: item.sciname,
+								unitName: item.unitName,
+								infraRank: item.infraRank,
+								infraName: item.infraName,
+								author: item.author, 
+								family: item.family, 
+								kingdom: item.kingdom, 
+								value: valueStr 
+							}; 
+						}); 
+						response(results); 
+					}
 				);
 			},
 			autoFocus: true,
@@ -92,6 +113,35 @@ taxaSuggest.initiate = function(inputID, callback = null) {
 			}
 		}
 	);
+
+	inputElem.autocomplete("instance")._renderItem = function(ul, item) {
+		let $label = $("<div>");
+
+		$label.append($("<span>").addClass("ac-unitName").text(item.unitName));
+		
+		if (item.infraRank) {
+			$label.append(document.createTextNode(" "));
+			$label.append($("<span>").addClass("ac-infraRank").text(item.infraRank));
+		}
+
+		if (item.infraName) {
+			$label.append(document.createTextNode(" "));
+			$label.append($("<span>").addClass("ac-infraName").text(item.infraName));
+		}
+
+		if (item.author) {
+			$label.append(document.createTextNode(" "));
+			$label.append($("<span>").addClass("ac-author").text(item.author));
+		}
+
+		if (item.kingdom) {
+			$label.append(document.createTextNode(" - "));
+			$label.append($("<span>").addClass("ac-kingdom").text(item.kingdom));
+		}
+
+		return $("<li>").append($label).appendTo(ul);
+
+	}
 }
 
 taxaSuggest.extractLast = function(term) {

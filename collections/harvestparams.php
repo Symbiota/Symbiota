@@ -3,6 +3,8 @@ include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/content/lang/collections/harvestparams.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceAttributeSearch.php');
+include_once($SERVER_ROOT.'/classes/utilities/Sanitize.php');
+
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $collManager = new OccurrenceManager();
@@ -22,11 +24,11 @@ $searchVar = $collManager->getQueryTermStr();
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=3" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.list.js?ver=2" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.harvestparams.js?ver=5" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.harvestparams.js?v=1" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js?ver=1" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.traitsearch.js?ver=8" type="text/javascript"></script> <!-- Contains search-by-trait modifications -->
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/wktpolygontools.js?ver=1c" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=3" type="text/javascript"></script>
 	<script type="text/javascript">
 		const paleoTimes = <?= json_encode($paleoTimes ?? []) ?>;
 
@@ -41,6 +43,8 @@ $searchVar = $collManager->getQueryTermStr();
 					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
 					taxaSuggest.config.multipleTermSupport = true;
 					taxaSuggest.config.taxonSearchType = document.getElementById("taxontype").value;
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
 					taxaSuggest.initiate("taxa");
 				});
 			}
@@ -107,7 +111,7 @@ $searchVar = $collManager->getQueryTermStr();
 						</div>
 						<div>
 							<label for="taxa"><?= $LANG['TYPE_TAXON'] ?>:</label>
-							<input id="taxa" type="text" size="60" name="taxa" id="taxa" value="" title="<?= $LANG['SEPARATE_MULTIPLE']; ?>">
+							<input id="taxa" type="text" size="60" name="taxa" id="taxa" value="<?= (isset($_REQUEST['taxa']) ? Sanitize::outString($_REQUEST['taxa']) : '') ?>" title="<?= $LANG['SEPARATE_MULTIPLE']; ?>">
 						</div>
 					</div>
 					<div>
