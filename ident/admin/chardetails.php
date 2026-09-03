@@ -22,9 +22,6 @@ $charManager = new KeyCharacterAdmin();
 $charManager->setLangId($langId);
 $charManager->setCid($cid);
 
-var_dump($_POST);
-var_dump($_POST['cs']);
-
 $statusStr = '';
 if($formSubmit && $isEditor){
 	if($formSubmit == 'createCharacter'){
@@ -471,9 +468,6 @@ if(!$cid) header('Location: index.php');
 					if($charStateArr){
 						echo '<h3>Character States</h3>';
 						foreach($charStateArr as $stateID => $stateArr){
-							//var_dump($stateID);
-							//var_dump($stateArr);
-							//var_dump($stateArr['cs']);
 							?>
 							<div>
 								<div id="csplus-<?= $stateID ?>" style="margin:5px;">
@@ -552,7 +546,6 @@ if(!$cid) header('Location: index.php');
 										<?php
 										$imgArr = $charManager->getCharacterStateImageArr();
 										if($imgArr['cs'] === $stateArr['cs']){
-											var_dump($imgArr);
 											?>
 											<div style="padding-top:2px;">
 												<a href="<?= Sanitize::outString($imgArr['url']) ?>" target="_blank"><img src="<?= Sanitize::outString($imgArr['url']) ?>" style="width:200px;" /></a>

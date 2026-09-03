@@ -146,7 +146,9 @@ class KmTaxonCharacters extends DataCore{
 		}
 		$this->setCharacterStateFieldMap();
 		$pkArrStateID = array('stateID' => $stateID);
+
 		/*
+		Images, languages, dependencies, and descriptions are deleted upon cascade
 		$pkArr = array('cid' => $this->cid, 'cs' => $cs);
 		$this->deleteRecord('kmcsimages', $pkArr);
 		$this->deleteRecord('kmcslang', $pkArr);
@@ -157,6 +159,7 @@ class KmTaxonCharacters extends DataCore{
 		}
 		$this->deleteRecord('kmdescr', $pkArr);
 		*/
+		
 		return $this->deleteRecord('kmcs', $pkArrStateID);
 	}
 
