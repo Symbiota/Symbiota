@@ -8,17 +8,20 @@ include_once($SERVER_ROOT.'/classes/TPImageEditorManager.php');
 include_once($SERVER_ROOT.'/classes/Media.php');
 include_once($SERVER_ROOT.'/classes/Paginator.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
 Language::load('taxa/profile/tpeditor');
 
 header('Content-Type: text/html; charset='.$CHARSET);
 
-$tid = array_key_exists('tid', $_REQUEST) ? filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$tid = array_key_exists('tid', $_REQUEST) ? Sanitize::int($_REQUEST['tid']) : 0;
 $taxon = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']:'';
-$tabIndex = array_key_exists('tabindex', $_REQUEST) ? filter_var($_REQUEST['tabindex'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$tabIndex = array_key_exists('tabindex', $_REQUEST) ? Sanitize::int($_REQUEST['tabindex']) : 0;
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 $mediaPage = Paginator::getPageRequestVar('mediaPage');
 $mediaSortPage = Paginator::getPageRequestVar('mediaSortPage');
+
+if(!is_numeric($tabIndex)) $tabIndex = 0;
 
 $tEditor = null;
 if($tabIndex == 1 || $tabIndex == 2){
@@ -153,18 +156,23 @@ if($isEditor && $action){
 			const taxonInput = document.querySelector("#taxon");
 			if(taxonInput){
 				taxonInput.addEventListener("focus", (event) => {
-					taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
-					taxaSuggestConfig.restrictToList = true;
-					initiateTaxaSuggest("taxon", function(result) {
-						if(result.valid) {
+					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+					taxaSuggest.initiate("taxon", function(result){
+						if(result.item){
 							$("#tid").val(result.item.id);
 						}
 						else{
 							$("#tid").val("");
+							if(this.value != ""){
+								alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
+							}
 						}
 					});
 				});
 			}
+
 		});
 
 		function submitAddImageForm(f){
@@ -174,6 +182,14 @@ if($isEditor && $action){
 				alert("<?= $LANG['IMG_TOO_LARGE']; ?>");
 				return false;
 			}
+		}
+
+		function validateGetTaxonForm(f){
+			if(f.taxon.value != "" && f.tid.value == ""){
+				alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
+				return false;
+			}
+			return true;
 		}
 	</script>
 	<style>
@@ -225,10 +241,10 @@ if($isEditor && $action){
 				<div id="tabs" style="margin:10px;">
 					<ul>
 						<li><a href="#commontab"><span><?= $LANG['VERNAC_COMMON'] ?></span></a></li>
-					<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&mediaPage=' . $mediaPage . '&mediaSortPage=' . $mediaSortPage?>"><span><?= $LANG['IMAGES'] ?></span></a></li>
+					<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&mediaPage=' . $mediaPage . '&mediaSortPage=' . $mediaSortPage ?>"><span><?= $LANG['IMAGES'] ?></span></a></li>
 						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&cat=imagequicksort&mediaSortPage=' . $mediaSortPage . '&mediaPage=' . $mediaPage ?> "><span><?= $LANG['IMAGE_SORT'] ?></span></a></li>
 						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&cat=imageadd' . '&mediaSortPage=' . $mediaSortPage . '&mediaPage=' . $mediaPage ?>"><span><?= $LANG['ADD_IMAGE'] ?></span></a></li>
-						<li><a href="tpdesceditor.php?tid=<?= $tEditor->getTid() . '&action=' . htmlspecialchars($action, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&mediaSortPage=' . $mediaSortPage . '&mediaPage=' . $mediaPage?>"><span><?= $LANG['DESCRIPTIONS'] ?></span></a></li>
+						<li><a href="tpdesceditor.php?tid=<?= $tEditor->getTid() . '&action=' . Sanitize::outString($action) . '&mediaSortPage=' . $mediaSortPage . '&mediaPage=' . $mediaPage ?>"><span><?= $LANG['DESCRIPTIONS'] ?></span></a></li>
 					</ul>
 					<div id="commontab">
 						<?php
@@ -433,9 +449,9 @@ if($isEditor && $action){
 		else{
 			?>
 			<div style="margin:20px;">
-				<form name="gettidform" action="tpeditor.php" method="post" >
+				<form name="gettidform" action="tpeditor.php" method="post" onsubmit="return validateGetTaxonForm(this)">
 					<b><label for="taxon"> <?= $LANG['SCINAME'] ?>: </label></b>
-					<input id="taxon" name="taxon" value="<?= $taxon ?>" size="40" required />
+					<input id="taxon" name="taxon" value="<?= $taxon ?>" size="60" required />
 					<input id="tid" name="tid" value="<?= $tid ?>" type="hidden" >
 					<input type="hidden" name="tabindex" value="<?= $tabIndex ?>" />
 					<div style="margin: 20px">
@@ -448,12 +464,12 @@ if($isEditor && $action){
 				echo '<div style="margin:15px">'.$LANG['MORE_THAN_ONE_TAXON'].': </div>';
 				echo '<div style="margin:10px">';
 				foreach($taxaArr as $tidKey => $sciArr){
-					$outStr = '<b>' . $sciArr['sciname'];
-					if($sciArr['rankid'] > 179) $outStr = '<i>'.$outStr.'</i> ';
-					$outStr .= $sciArr['author'].'</b> ';
-					if(isset($sciArr['rankname'])) $outStr .= '- ' . $sciArr['rankname'] . ' rank ';
-					if(isset($sciArr['kingdom'])) $outStr .= ' (' . $sciArr['kingdom'] . ')';
-					echo '<div><a href="tpeditor.php?tid=' . htmlspecialchars($tidKey, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($outStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></div>';
+					$outStr = '<b>' . Sanitize::outString($sciArr['sciname']);
+					if($sciArr['rankid'] > 179) $outStr = '<i>' . $outStr . '</i> ';
+					$outStr .= Sanitize::outString($sciArr['author']) . '</b> ';
+					if(isset($sciArr['rankname'])) $outStr .= '- ' . Sanitize::outString($sciArr['rankname']) . ' rank ';
+					if(isset($sciArr['kingdom'])) $outStr .= ' (' . Sanitize::outString($sciArr['kingdom']) . ')';
+					echo '<div><a href="tpeditor.php?tid=' . $tidKey . '">' . $outStr . '</a></div>';
 				}
 				echo '</div>';
 			}

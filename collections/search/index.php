@@ -81,6 +81,8 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
 					taxaSuggest.config.multipleTermSupport = true;
 					taxaSuggest.config.taxonSearchType = document.getElementById("taxontype").value;
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
 					taxaSuggest.initiate("taxa");
 				});
 			}
@@ -91,7 +93,9 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 				assocTaxaInput.addEventListener("focus", (event) => {
 					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
 					taxaSuggest.config.multipleTermSupport = true;
-					taxaSuggest.config.taxonSearchType = document.getElementById("taxontype-association").value;
+					taxaSuggest.config.taxonSearchType = document.getElementById("taxontype").value;
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
 					taxaSuggest.initiate("associated-taxa");
 				});
 			}

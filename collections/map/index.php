@@ -131,6 +131,8 @@ $serverHost = GeneralUtil::getDomain();
 						taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
 						taxaSuggest.config.multipleTermSupport = true;
 						taxaSuggest.config.taxonSearchType = document.getElementById("taxontype").value;
+						taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+						taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
 						taxaSuggest.initiate("taxa");
 					});
 				}
@@ -2228,15 +2230,11 @@ $serverHost = GeneralUtil::getDomain();
 											<select data-role="none" id="taxontype" name="taxontype">
 												<?php
 												$taxonType = 2;
-												$taxonTypeRangeStart = 2;
-												$taxonTypeRangeEnd = 5;
-												if(!empty($DEFAULT_TAXON_SEARCH)){
-													$taxonType = $DEFAULT_TAXON_SEARCH;
-													if($DEFAULT_TAXON_SEARCH == 1) $taxonTypeRangeStart = 1;
-												}
+												if(!empty($DEFAULT_TAXON_SEARCH) && $DEFAULT_TAXON_SEARCH != 1) $taxonType = $DEFAULT_TAXON_SEARCH;
 												if($mapManager->getSearchTerm('taxontype')) $taxonType = $mapManager->getSearchTerm('taxontype');
+												$taxonTypeRangeEnd = 5;
 												if(!empty($DISPLAY_COMMON_NAMES)) $taxonTypeRangeEnd = 6;
-												for($h=$taxonTypeRangeStart; $h<$taxonTypeRangeEnd; $h++){
+												for($h=1; $h<$taxonTypeRangeEnd; $h++){
 													echo '<option value="'.$h.'" '.($taxonType==$h?'SELECTED':'').'>'.$LANG['SELECT_1-'.$h].'</option>';
 												}
 												?>

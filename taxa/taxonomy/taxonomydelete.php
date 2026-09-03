@@ -21,10 +21,9 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 		const taxonInput = document.querySelector("#remapvalue");
 		if(taxonInput){
 			taxonInput.addEventListener("focus", (event) => {
-				taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
-				taxaSuggestConfig.restrictToList = true;
-				taxaSuggestConfig.minLength = 2;
-				initiateTaxaSuggest("remapvalue", function(result) {
+				taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+				taxaSuggest.config.minLength = 2;
+				taxaSuggest.initiate("remapvalue", function(result) {
 					if(result.valid) {
 						$("#remaptid").val(result.item.id);
 					}

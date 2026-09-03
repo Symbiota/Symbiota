@@ -6,7 +6,6 @@ taxaSuggest.config = {
     includeAuthor: false,
     includeKingdom: false,
     multipleTermSupport: false,
-    restrictToList: false,
 
     taxonSearchType: 2,
     limitToAccepted: false,
@@ -95,13 +94,6 @@ taxaSuggest.initiate = function(inputID, callback = null) {
 			},
 			change: function(event, ui) {
 				const validSelection = !!ui.item;
-				if (!validSelection) {
-					if(taxaSuggest.config.restrictToList){
-						let errMsg = 'Selecting taxon name from list is required';
-						if(typeof translations !== 'undefined' && translations.SELECT_FROM_LIST) errMsg = translations.SELECT_FROM_LIST;
-						alert(errMsg);
-					}
-				}
 				if(typeof callback === "function"){
 					callback({
 						valid: validSelection,

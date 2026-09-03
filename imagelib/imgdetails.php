@@ -3,15 +3,16 @@ include_once('../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/Media.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
 Language::load('imagelib/imgdetails');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 
-$mediaID = array_key_exists('mediaid', $_REQUEST) ? filter_var($_REQUEST['mediaid'], FILTER_SANITIZE_NUMBER_INT) : 0;
-if (!$mediaID && array_key_exists('imgid', $_REQUEST)) $mediaID = filter_var($_REQUEST['imgid'], FILTER_SANITIZE_NUMBER_INT);
+$mediaID = array_key_exists('mediaid', $_REQUEST) ? Sanitize::int($_REQUEST['mediaid']) : 0;
+if (!$mediaID && array_key_exists('imgid', $_REQUEST)) $mediaID = Sanitize::int($_REQUEST['imgid']);
 $action = array_key_exists('submitaction', $_REQUEST) ? $_REQUEST['submitaction'] : '';
-$eMode = array_key_exists('emode', $_REQUEST) ? filter_var($_REQUEST['emode'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$eMode = array_key_exists('emode', $_REQUEST) ? Sanitize::int($_REQUEST['emode']) : 0;
 
 $imgArr = Media::getMedia($mediaID);
 
@@ -96,25 +97,31 @@ if ($imgArr) {
 	?>
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/shared.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
+
 			const taxaInput = document.querySelector("#taxa");
 			if(taxaInput){
 				taxaInput.addEventListener("focus", (event) => {
-					taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
-					taxaSuggestConfig.restrictToList = true;
-					initiateTaxaSuggest("taxa", function(result) {
-						if(result.valid) {
+					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+					taxaSuggest.initiate("taxa", function(result){
+						if(result.item){
 							$("#tid").val(result.item.id);
 						}
 						else{
 							$("#tid").val("");
+							if(this.value != ""){
+								alert("<?= $LANG['ERROR_TID_ISNULL'] ?>");
+							}
 						}
 					});
 				});
 			}
+
 		});
 
 		function verifyEditForm(f) {
@@ -177,7 +184,7 @@ if ($imgArr) {
 				if ($SYMB_UID && ($IS_ADMIN || array_key_exists("TaxonProfile", $USER_RIGHTS))) {
 					?>
 					<div style="float:right;margin-right:15px;" title="<?= $LANG['TAXON_PROFILE_EDITING'] ?>">
-						<a href="../taxa/profile/tpeditor.php?tid=<?= htmlspecialchars($imgArr['tid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&tabindex=1" target="_blank">
+						<a href="../taxa/profile/tpeditor.php?tid=<?= $imgArr['tid'] ?>&tabindex=1" target="_blank">
 							<img src="../images/edit.png" style="width:1.3em;border:0px;" /><span style="font-size:70%"><?= $LANG['TP'] ?></span>
 						</a>
 					</div>
@@ -186,7 +193,7 @@ if ($imgArr) {
 				if ($imgArr['occid']) {
 					?>
 					<div style="float:right;margin-right:15px;" title="<?= $LANG['EDITING_PRIVILEGES'] ?>">
-						<a href="../collections/editor/occurrenceeditor.php?occid=<?= htmlspecialchars($imgArr['occid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&tabtarget=2" target="_blank">
+						<a href="../collections/editor/occurrenceeditor.php?occid=<?= $imgArr['occid'] ?>&tabtarget=2" target="_blank">
 							<img src="../images/edit.png" style="width:1.3em;border:0px;" /><span style="font-size:70%"><?= $LANG['SPEC'] ?></span>
 						</a>
 					</div>
@@ -369,11 +376,11 @@ if ($imgArr) {
 					if ((!$imgDisplay || $imgDisplay == 'empty') && $origUrl) $imgDisplay = $origUrl;
 					?>
 					<?php if ($mediaType === MediaType::Image): ?>
-						<a href="<?= htmlspecialchars($imgDisplay, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">
-							<img src="<?= htmlspecialchars($imgDisplay, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" style="width:300px;" />
+						<a href="<?= $imgDisplay ?>">
+							<img src="<?= $imgDisplay ?>" style="width:300px;" />
 						</a>
 						<?php
-						if ($origUrl) echo '<div><a href="' . htmlspecialchars($origUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . $LANG['CLICK_IMAGE'] . '</a></div>';
+						if ($origUrl) echo '<div><a href="' . $origUrl . '">' . $LANG['CLICK_IMAGE'] . '</a></div>';
 						?>
 					<?php elseif ($mediaType === MediaType::Audio): ?>
 						<audio controls style="margin-top: 5rem">
@@ -384,7 +391,7 @@ if ($imgArr) {
 				</div>
 				<div style="padding:10px;float:left;">
 					<div style="clear:both;margin-top:40px;">
-						<b><?= $LANG['SCIENTIFIC_NAME'] ?>:</b> <?= '<a href="../taxa/index.php?taxon=' . htmlspecialchars($imgArr["tid"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '"><i>' . htmlspecialchars($imgArr["sciname"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</i> ' . htmlspecialchars($imgArr["author"], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>'; ?>
+						<b><?= $LANG['SCIENTIFIC_NAME'] ?>:</b> <?= '<a href="../taxa/index.php?taxon=' . $imgArr['tid'] . '"><i>' . $imgArr['sciname'] . '</i> ' . $imgArr['author'] . '</a>'; ?>
 					</div>
 					<?php
 					if ($imgArr['caption']) echo '<div><b>' . $LANG['CAPTION'] . ':</b> ' . $imgArr['caption'] . '</div>';
@@ -392,29 +399,29 @@ if ($imgArr) {
 						echo '<div><b>' . $LANG['CREATOR'] . ':</b> ';
 						if (!$imgArr['creator']) {
 							$phLink = 'search.php?imagetype=all&phuid=' . $imgArr['creatorUid'] . '&submitaction=search';
-							echo '<a href="' . htmlspecialchars($phLink, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">';
+							echo '<a href="' . $phLink . '">';
 						}
 						echo $imgArr['creatorDisplay'];
 						if (!$imgArr['creator']) echo '</a>';
 						echo '</div>';
 					}
 					if ($imgArr['owner']) echo '<div><b>' . $LANG['MANAGER'] . ':</b> ' . $imgArr['owner'] . '</div>';
-					if ($imgArr['sourceUrl']) echo '<div><b>' . $LANG['IMAGE_SOURCE'] . ':</b> <a href="' . htmlspecialchars($imgArr['sourceUrl'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($imgArr['sourceUrl'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></div>';
+					if ($imgArr['sourceUrl']) echo '<div><b>' . $LANG['IMAGE_SOURCE'] . ':</b> <a href="' . $imgArr['sourceUrl'] . '" target="_blank">' . $imgArr['sourceUrl'] . '</a></div>';
 					if ($imgArr['locality']) echo '<div><b>' . $LANG['LOCALITY'] . ':</b> ' . $imgArr['locality'] . '</div>';
 					if ($imgArr['notes']) echo '<div><b>' . $LANG['NOTES'] . ':</b> ' . $imgArr['notes'] . '</div>';
 					if ($imgArr['rights']) echo '<div><b>' . $LANG['RIGHTS'] . ':</b> ' . $imgArr['rights'] . '</div>';
 					if ($imgArr['copyright']) {
 						echo '<div>';
 						echo '<b>' . $LANG['COPYRIGHT'] . ':</b> ';
-						if (stripos($imgArr['copyright'], 'http') === 0) echo '<a href="' . htmlspecialchars($imgArr['copyright'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars($imgArr['copyright'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
+						if (stripos($imgArr['copyright'], 'http') === 0) echo '<a href="' . $imgArr['copyright'] . '">' . $imgArr['copyright'] . '</a>';
 						else echo $imgArr['copyright'];
 						echo '</div>';
 					} else {
 						echo '<div><a href="../includes/usagepolicy.php#images">' . $LANG['COPYRIGHT_DETAILS'] . '</a></div>';
 					}
-					if ($imgArr['occid']) echo '<div><a href="../collections/individual/index.php?occid=' . htmlspecialchars($imgArr['occid'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . $LANG['DISPLAY_SPECIMEN_DETAILS'] . '</a></div>';
-					if ($imgUrl) echo '<div><a href="' . htmlspecialchars($imgUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . $LANG['OPEN_MEDIUM_SIZED_IMAGE'] . '</a></div>';
-					if ($origUrl) echo '<div><a href="' . htmlspecialchars($origUrl, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . $LANG['OPEN_LARGE_IMAGE'] . '</a></div>';
+					if ($imgArr['occid']) echo '<div><a href="../collections/individual/index.php?occid=' . $imgArr['occid'] . '">' . $LANG['DISPLAY_SPECIMEN_DETAILS'] . '</a></div>';
+					if ($imgUrl) echo '<div><a href="' . $imgUrl . '">' . $LANG['OPEN_MEDIUM_SIZED_IMAGE'] . '</a></div>';
+					if ($origUrl) echo '<div><a href="' . $origUrl . '">' . $LANG['OPEN_LARGE_IMAGE'] . '</a></div>';
 					$emailAddress = $ADMIN_EMAIL;
 					if ($emailAddress) {
 						?>

@@ -1,17 +1,18 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ChecklistAdmin.php');
+include_once($SERVER_ROOT . '/classes/ChecklistAdmin.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
 Language::load('checklists/checklistadminchildren');
 
-$clid = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$pid = array_key_exists('pid', $_REQUEST) ? filter_var($_REQUEST['pid'], FILTER_SANITIZE_NUMBER_INT) : '';
-$targetClid = array_key_exists('targetclid', $_REQUEST) ? filter_var($_REQUEST['targetclid'], FILTER_SANITIZE_NUMBER_INT) : '';
-$transferMethod = array_key_exists('transmethod', $_REQUEST) ? filter_var($_REQUEST['transmethod'], FILTER_SANITIZE_NUMBER_INT) : '';
-$parentClid = array_key_exists('parentclid', $_REQUEST) ? filter_var($_REQUEST['parentclid'], FILTER_SANITIZE_NUMBER_INT) : '';
-$targetPid = array_key_exists('targetpid', $_REQUEST) ? filter_var($_REQUEST['targetpid'], FILTER_SANITIZE_NUMBER_INT) : '';
-$copyAttributes = array_key_exists('copyattributes', $_REQUEST) ? filter_var($_REQUEST['copyattributes'], FILTER_SANITIZE_NUMBER_INT) : '';
+$clid = array_key_exists('clid', $_REQUEST) ? Sanitize::int($_REQUEST['clid']) : 0;
+$pid = array_key_exists('pid', $_REQUEST) ? Sanitize::int($_REQUEST['pid']) : '';
+$targetClid = array_key_exists('targetclid', $_REQUEST) ? Sanitize::int($_REQUEST['targetclid']) : '';
+$transferMethod = array_key_exists('transmethod', $_REQUEST) ? Sanitize::int($_REQUEST['transmethod']) : '';
+$parentClid = array_key_exists('parentclid', $_REQUEST) ? Sanitize::int($_REQUEST['parentclid']) : '';
+$targetPid = array_key_exists('targetpid', $_REQUEST) ? Sanitize::int($_REQUEST['targetpid']) : '';
+$copyAttributes = array_key_exists('copyattributes', $_REQUEST) ? Sanitize::int($_REQUEST['copyattributes']) : '';
 
 $clManager = new ChecklistAdmin();
 $clManager->setClid($clid);
@@ -19,30 +20,33 @@ $clManager->setClid($clid);
 $clArr = $clManager->getUserChecklistArr();
 $childArr = $clManager->getChildrenChecklist()
 ?>
-<link href="<?= $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
-<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-
+<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 <script>
-	$("#taxon").autocomplete({
-		source: function( request, response ) {
-			$.getJSON( "<?= $CLIENT_ROOT; ?>/rpc/taxasuggest.php", { term: request.term }, response );
-		},
-		minLength: 3,
-		autoFocus: true,
-		select: function( event, ui ) {
-			if(ui.item){
-				$("#parsetid").val(ui.item.id);
-			}
-		},
-		change: function(event, ui){
-			if(!ui.item){
-				$("#parsetid").val("");
-				if(this.value != ""){
-					alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
-				}
-			}
+	$(document).ready(function() {
+		//Auto-complete for taxon search field
+		const taxonInput = document.querySelector("#taxon");
+		if(taxonInput){
+			taxonInput.addEventListener("focus", (event) => {
+				taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+				taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+				taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+				taxaSuggest.initiate("taxon", function(result){
+					if(result.item){
+						$("#parsetid").val(result.item.id);
+					}
+					else{
+						$("#parsetid").val("");
+						if(this.value != ""){
+							alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
+						}
+					}
+				});
+			});
 		}
+
 	});
 
 	function validateParseChecklistForm(f){
@@ -101,8 +105,7 @@ $childArr = $clManager->getChildrenChecklist()
 			$displayExclusionCreateQucikLink = true;
 			if($childArr){
 				foreach($childArr as $k => $cArr){
-					$k = htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
-					$clName = htmlspecialchars($cArr['name'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+					$clName = Sanitize::outString($cArr['name']);
 					?>
 					<li>
 						<a href="checklist.php?clid=<?= $k ?>" target="_blank"><?= $clName ?></a>
@@ -139,11 +142,9 @@ $childArr = $clManager->getChildrenChecklist()
 		<?php
 		if($parentArr = $clManager->getParentChecklists()){
 			foreach($parentArr as $k => $name){
-				$k = htmlspecialchars($k, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
-				$name = htmlspecialchars($name, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
 				?>
 				<li>
-					<a href="checklist.php?clid=<?= $k ?>" target="_blank"><?= $name ?></a>
+					<a href="checklist.php?clid=<?= $k ?>" target="_blank"><?= Sanitize::outString($name) ?></a>
 				</li>
 				<?php
 			}
@@ -162,7 +163,7 @@ $childArr = $clManager->getChildrenChecklist()
 		<form name="parsechecklistform" target="checklistadmin.php" method="post" onsubmit="return validateParseChecklistForm(this)">
 			<div class="section-div">
 				<label for="taxon"><?= $LANG['TAXONOMICNODE'] ?>:</label>
-				<input id="taxon" name="taxon" type="text" />
+				<input id="taxon" name="taxon" type="text" style="width: 350px" />
 				<label for="parsetid"><?= $LANG['PARSETID'] ?>:</label>
 				<input id="parsetid" name="parsetid" type="text" >
 			</div>
@@ -174,7 +175,7 @@ $childArr = $clManager->getChildrenChecklist()
 					<option value="">--------------------------</option>
 					<?php
 					foreach($clArr as $k => $name){
-						echo '<option value="'.$k.'" '.($targetClid == $k?'SELECTED':'').'>'.$name.'</option>';
+						echo '<option value="' . $k . '" ' . ($targetClid == $k?'SELECTED':'') . '>' . Sanitize::outString($name) . '</option>';
 					}
 					?>
 				</select>
@@ -208,7 +209,7 @@ $childArr = $clManager->getChildrenChecklist()
 					<?php
 					$projArr = $clManager->getUserProjectArr();
 					foreach($projArr as $k => $name){
-						echo '<option value="'.$k.'" '.($targetPid == $k?'SELECTED':'').'>'.$name.'</option>';
+						echo '<option value="' . $k . '" ' . ($targetPid == $k?'SELECTED':'').'>' . Sanitize::outString($name) . '</option>';
 					}
 					?>
 				</select>

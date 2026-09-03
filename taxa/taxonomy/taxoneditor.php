@@ -66,34 +66,36 @@ if ($isEditor) {
 <html lang="<?= $LANG_TAG ?>">
 
 <head>
-	<title><?= $DEFAULT_TITLE . " " . $LANG['TAX_EDITOR'] . ": " . $tid; ?></title>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET; ?>" />
+	<title><?= $DEFAULT_TITLE . " " . $LANG['TAX_EDITOR'] . ": " . $tid ?></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET ?>" />
 	<?php
 	include_once($SERVER_ROOT . '/includes/head.php');
 	?>
-	<link href="<?= $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
-	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1a" type="text/javascript"></script>
+	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 	<script>
-		var tid = <?php echo $taxonEditorObj->getTid(); ?>;
-		var tabIndex = <?php echo $tabIndex; ?>;
+		var tid = <?php echo $taxonEditorObj->getTid() ?>;
+		var tabIndex = <?php echo $tabIndex ?>;
 
 	    document.addEventListener('DOMContentLoaded', () => {
 
 			const parentInput = document.querySelector('#parentstr');
 			if(parentInput){
 				parentInput.addEventListener('focus', (event) => {
-					taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
-					taxaSuggestConfig.taxAuthID = document.taxauthidform.taxauthid.value;
-					taxaSuggestConfig.restrictToList = true;
-					taxaSuggestConfig.rankMaximum = document.taxoneditform.rankid.value - 1;
-					initiateTaxaSuggest("parentstr", function(result) {
+					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggest.config.taxAuthID = document.taxauthidform.taxauthid.value;
+					taxaSuggest.config.rankMaximum = document.taxoneditform.rankid.value - 1;
+					taxaSuggest.initiate("parentstr", function(result) {
 						if (result.valid) {
 							document.getElementById("parenttid").value = result.item.id;
 						}
 						else{
 							document.getElementById("parenttid").value = "";
+							if(this.value != ""){
+								alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
+							}
 						}
 					});
 				});
@@ -102,17 +104,19 @@ if ($isEditor) {
 			const aefAcceptedInput = document.querySelector('#aefacceptedstr');
 			if(aefAcceptedInput){
 				aefAcceptedInput.addEventListener('focus', (event) => {
-					taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
-					taxaSuggestConfig.taxAuthID = document.taxauthidform.taxauthid.value;
-					taxaSuggestConfig.restrictToList = true;
-					taxaSuggestConfig.rankMaximum = 0;
-					taxaSuggestConfig.limitToAccepted = true;
-					initiateTaxaSuggest("aefacceptedstr", function(result) {
+					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggest.config.taxAuthID = document.taxauthidform.taxauthid.value;
+					taxaSuggest.config.rankMaximum = 0;
+					taxaSuggest.config.limitToAccepted = true;
+					taxaSuggest.initiate("aefacceptedstr", function(result) {
 						if (result.valid) {
 							document.getElementById("aeftidaccepted").value = result.item.id;
 						}
 						else{
 							document.getElementById("aeftidaccepted").value = "";
+							if(this.value != ""){
+								alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
+							}
 						}
 					});
 				});
@@ -121,17 +125,19 @@ if ($isEditor) {
 			const ctnafAcceptedInput = document.querySelector('#ctnafacceptedstr');
 			if(ctnafAcceptedInput){
 				ctnafAcceptedInput.addEventListener('focus', (event) => {
-					taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
-					taxaSuggestConfig.taxAuthID = document.taxauthidform.taxauthid.value;
-					taxaSuggestConfig.restrictToList = true;
-					taxaSuggestConfig.rankMaximum = 0;
-					taxaSuggestConfig.limitToAccepted = true;
-					initiateTaxaSuggest("ctnafacceptedstr", function(result) {
+					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggest.config.taxAuthID = document.taxauthidform.taxauthid.value;
+					taxaSuggest.config.rankMaximum = 0;
+					taxaSuggest.config.limitToAccepted = true;
+					taxaSuggest.initiate("ctnafacceptedstr", function(result) {
 						if (result.valid) {
 							document.getElementById("ctnaftidaccepted").value = result.item.id;
 						}
 						else{
 							document.getElementById("ctnaftidaccepted").value = "";
+							if(this.value != ""){
+								alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
+							}
 						}
 					});
 				});
@@ -147,8 +153,8 @@ if ($isEditor) {
 		}
 
 	</script>
-	<script src="<?= $CLIENT_ROOT; ?>/js/symb/taxa.sharedTaxonomyCRUD.js?ver=5"></script>
-	<script src="<?= $CLIENT_ROOT; ?>/js/symb/taxa.taxonomyeditor.js?ver=4gb"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.sharedTaxonomyCRUD.js?ver=5"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.taxonomyeditor.js?ver=4"></script>
 	<style type="text/css">
 		.editDiv {
 			clear: both;
@@ -208,7 +214,7 @@ if ($isEditor) {
 	<div class="navpath">
 		<a href="../../index.php"><?= $LANG['HOME'] ?></a> &gt;&gt;
 		<a href="taxonomydisplay.php"><?= $LANG['TAX_TREE_VIEW'] ?></a> &gt;&gt;
-		<b><?= $LANG['TAXONOMY_EDITOR']; ?></b>
+		<b><?= $LANG['TAXONOMY_EDITOR'] ?></b>
 	</div>
 	<div role="main" id="innertext">
 		<h1 class="page-heading">
@@ -225,8 +231,8 @@ if ($isEditor) {
 		if ($statusStr) {
 			?>
 			<hr />
-			<div style="color:<?= (strpos($statusStr, $LANG['SUCCESS']) !== false ? 'green' : 'red'); ?>;margin:15px;">
-				<?= $statusStr; ?>
+			<div style="color:<?= (strpos($statusStr, $LANG['SUCCESS']) !== false ? 'green' : 'red') ?>;margin:15px;">
+				<?= $statusStr ?>
 			</div>
 			<hr />
 			<?php
@@ -234,12 +240,12 @@ if ($isEditor) {
 		if ($isEditor && $tid) {
 			$hierarchyArr = $taxonEditorObj->getHierarchyArr();
 			?>
-			<div style="float:right;" title="<?= $LANG['GO_TAX_DISPLAY']; ?>">
-				<a href="taxonomydisplay.php?target=<?= Sanitize::outString($taxonEditorObj->getUnitName1()); ?>&showsynonyms=1">
+			<div style="float:right;" title="<?= $LANG['GO_TAX_DISPLAY'] ?>">
+				<a href="taxonomydisplay.php?target=<?= Sanitize::outString($taxonEditorObj->getUnitName1()) ?>&showsynonyms=1">
 					<img style='border:0px;width:1.3em;' src='../../images/toparent.png' />
 				</a>
 			</div>
-			<div style="float:right;" title="<?= $LANG['ADD_NEW_TAXON']; ?>">
+			<div style="float:right;" title="<?= $LANG['ADD_NEW_TAXON'] ?>">
 				<a href="taxonomyloader.php">
 					<img style='border:0px;width:1.3em;' src='../../images/add.png' />
 				</a>
@@ -268,11 +274,11 @@ if ($isEditor) {
 						<div class="editDiv">
 							<div class="editLabel"><?= $LANG['RANK_NAME'] ?>: </div>
 							<div class="editfield">
-								<?= ($taxonEditorObj->getRankName() ? Sanitize::outString($taxonEditorObj->getRankName()) : $LANG['NON_RANKED_NODE']); ?>
+								<?= ($taxonEditorObj->getRankName() ? Sanitize::outString($taxonEditorObj->getRankName()) : $LANG['NON_RANKED_NODE']) ?>
 							</div>
 							<div class="editfield" style="display:none;">
 								<select id="rankid" name="rankid" style="margin-bottom: 0.5rem;">
-									<option value="0"><?= $LANG['NON_RANKED_NODE']; ?></option>
+									<option value="0"><?= $LANG['NON_RANKED_NODE'] ?></option>
 									<option value="">---------------------------------</option>
 									<?php
 									$rankArr = $taxonEditorObj->getRankArr();
@@ -287,9 +293,9 @@ if ($isEditor) {
 						</div>
 						<div class="editDiv" id="genus-div">
 							<div class="editLabel">
-								<!-- <?= $LANG['UNITNAME1']; ?>:  -->
+								<!-- <?= $LANG['UNITNAME1'] ?>:  -->
 								<label id="unitind1label" for="unitind1">
-									<?= $LANG['GENUS_NAME']; ?>
+									<?= $LANG['GENUS_NAME'] ?>
 								</label>
 							</div>
 							<div class="editfield">
@@ -303,7 +309,7 @@ if ($isEditor) {
 								<span>: </span>
 								<select id="unitind1-select" name="unitind1">
 									<option value=""></option>
-									<option value="&#215;" <?= ($unitInd1 && (mb_ord($unitInd1) == 215 || strtolower($unitInd1) == 'x') ? 'selected' : ''); ?>>&#215;</option>
+									<option value="&#215;" <?= ($unitInd1 && (mb_ord($unitInd1) == 215 || strtolower($unitInd1) == 'x') ? 'selected' : '') ?>>&#215;</option>
 									<?php
 									if(!empty($GLOBALS['ACTIVATE_PALEO_DAGGER'])) {
 										echo '<option value="&#8224;" ' . ($unitInd1 && mb_ord($unitInd1) == 8224 ? 'selected' : '') . '>&#8224;</option>';
@@ -318,8 +324,8 @@ if ($isEditor) {
 								<input type="text" id="unitname1" name="unitname1" style="width:300px;border-style:inset;" value="<?= Sanitize::outString($taxonEditorObj->getUnitName1()) ?>" />
 							</div>
 						</div>
-						<div id="div2hide" style="display: <?= empty($taxonEditorObj->getUnitName2()) ? 'none' : 'block'; ?>" class="editDiv">
-							<div id="unit-2-name-label" class="editLabel"><?= $LANG['UNITNAME2']; ?>: </div>
+						<div id="div2hide" style="display: <?= empty($taxonEditorObj->getUnitName2()) ? 'none' : 'block' ?>" class="editDiv">
+							<div id="unit-2-name-label" class="editLabel"><?= $LANG['UNITNAME2'] ?>: </div>
 							<div class="editfield">
 								<?php
 								$unitInd2 = $taxonEditorObj->getUnitInd2();
@@ -329,13 +335,13 @@ if ($isEditor) {
 							<div class="editfield" style="display:none;">
 								<select name="unitind2" id="unitind2-select">
 									<option value=""></option>
-									<option value="&#215;" <?= (ord($unitInd2 ?? '') == 195 || strtolower($unitInd2 ?? '') == 'x' ? 'selected' : ''); ?>>&#215;</option>
+									<option value="&#215;" <?= (ord($unitInd2 ?? '') == 195 || strtolower($unitInd2 ?? '') == 'x' ? 'selected' : '') ?>>&#215;</option>
 								</select>
 								<input type="text" id="unitname2" name="unitname2" style="width:300px;border-style:inset;" value="<?= Sanitize::outString($taxonEditorObj->getUnitName2()) ?>" />
 							</div>
 						</div>
-						<div id="div3hide" style="display: <?= empty($taxonEditorObj->getUnitName3()) ? 'none' : 'block'; ?>" class="editDiv">
-							<div class="editLabel"><?= $LANG['UNITNAME3']; ?>: </div>
+						<div id="div3hide" style="display: <?= empty($taxonEditorObj->getUnitName3()) ? 'none' : 'block' ?>" class="editDiv">
+							<div class="editLabel"><?= $LANG['UNITNAME3'] ?>: </div>
 							<div class="editfield">
 								<?= Sanitize::outString($taxonEditorObj->getUnitInd3() . ' ' . $taxonEditorObj->getUnitName3()) ?>
 							</div>
@@ -345,8 +351,8 @@ if ($isEditor) {
 							</div>
 						</div>
 						<div id="div4hide" class="editDiv">
-							<div id="unit4Display" style="display: <?= (empty($taxonEditorObj->getCultivarEpithet()) && empty($taxonEditorObj->getTradeName()))  ? 'none' : 'block'; ?>">
-								<div class="editLabel"><?= $LANG['UNITNAME4']; ?>: </div>
+							<div id="unit4Display" style="display: <?= (empty($taxonEditorObj->getCultivarEpithet()) && empty($taxonEditorObj->getTradeName()))  ? 'none' : 'block' ?>">
+								<div class="editLabel"><?= $LANG['UNITNAME4'] ?>: </div>
 								<div class="editfield">
 									<?= Sanitize::outString($taxonEditorObj->getCultivarEpithet()) ?? '' ?>
 								</div>
@@ -356,8 +362,8 @@ if ($isEditor) {
 							</div>
 						</div>
 						<div id="div5hide" class="editDiv">
-							<div id="unit5Display" style="display: <?= (empty($taxonEditorObj->getTradeName()) && empty($taxonEditorObj->getCultivarEpithet())) ? 'none' : 'block'; ?>">
-								<div class="editLabel"><?= $LANG['UNITNAME5']; ?>: </div>
+							<div id="unit5Display" style="display: <?= (empty($taxonEditorObj->getTradeName()) && empty($taxonEditorObj->getCultivarEpithet())) ? 'none' : 'block' ?>">
+								<div class="editLabel"><?= $LANG['UNITNAME5'] ?>: </div>
 								<div class="editfield">
 									<?= Sanitize::outString($taxonEditorObj->getTradeName()) ?? '' ?>
 								</div>
@@ -367,7 +373,7 @@ if ($isEditor) {
 							</div>
 						</div>
 						<div id="author-div" class="editDiv">
-							<div class="editLabel"><?= $LANG['AUTHOR']; ?>: </div>
+							<div class="editLabel"><?= $LANG['AUTHOR'] ?>: </div>
 							<div class="editfield">
 								<?= Sanitize::outString($taxonEditorObj->getAuthor()) ?>
 							</div>
@@ -376,22 +382,22 @@ if ($isEditor) {
 							</div>
 						</div>
 						<div id="kingdomdiv" class="editDiv">
-							<div class="editLabel"><?= $LANG['KINGDOM']; ?>: </div>
+							<div class="editLabel"><?= $LANG['KINGDOM'] ?>: </div>
 							<div class="editfield">
 								<?= Sanitize::outString($taxonEditorObj->getKingdomName()) ?>
 							</div>
 						</div>
 						<div class="editDiv">
-							<div class="editLabel"><?= $LANG['NOTES']; ?>: </div>
+							<div class="editLabel"><?= $LANG['NOTES'] ?>: </div>
 							<div class="editfield">
-								<?= $taxonEditorObj->getNotes(); ?>
+								<?= $taxonEditorObj->getNotes() ?>
 							</div>
 							<div class="editfield" style="display:none;width:90%;">
 								<input type="text" id="notes" name="notes" style="width:100%;" value="<?= Sanitize::outString($taxonEditorObj->getNotes()) ?>" />
 							</div>
 						</div>
 						<div class="editDiv">
-							<div class="editLabel"><?= $LANG['SOURCE']; ?>: </div>
+							<div class="editLabel"><?= $LANG['SOURCE'] ?>: </div>
 							<div class="editfield">
 								<?php
 								$safeSource = $taxonEditorObj->getSource() ?? '';
@@ -404,7 +410,7 @@ if ($isEditor) {
 							</div>
 						</div>
 						<div class="editDiv">
-							<div class="editLabel"><?= $LANG['LOC_SECURITY']; ?>: </div>
+							<div class="editLabel"><?= $LANG['LOC_SECURITY'] ?>: </div>
 							<div class="editfield">
 								<?php
 								switch ($taxonEditorObj->getSecurityStatus()) {
@@ -422,12 +428,12 @@ if ($isEditor) {
 							</div>
 							<div class="editfield" style="display:none;">
 								<select id="securitystatus" name="securitystatus">
-									<option value="0"><?= $LANG['SEL_LOC_SETTING']; ?></option>
+									<option value="0"><?= $LANG['SEL_LOC_SETTING'] ?></option>
 									<option value="0">---------------------------------</option>
-									<option value="0" <?php if ($taxonEditorObj->getSecurityStatus() == 0) echo "SELECTED"; ?>><?= $LANG['SHOW_ALL_LOC']; ?></option>
-									<option value="1" <?php if ($taxonEditorObj->getSecurityStatus() == 1) echo "SELECTED"; ?>><?= $LANG['HIDE_LOC']; ?></option>
+									<option value="0" <?php if ($taxonEditorObj->getSecurityStatus() == 0) echo "SELECTED" ?>><?= $LANG['SHOW_ALL_LOC'] ?></option>
+									<option value="1" <?php if ($taxonEditorObj->getSecurityStatus() == 1) echo "SELECTED" ?>><?= $LANG['HIDE_LOC'] ?></option>
 								</select>
-								<input type='hidden' name='securitystatusstart' value='<?= $taxonEditorObj->getSecurityStatus(); ?>' />
+								<input type='hidden' name='securitystatusstart' value='<?= $taxonEditorObj->getSecurityStatus() ?>' />
 							</div>
 						</div>
 						<div class="editfield" style="display:none;clear:both;margin:15px 0px" class="gridlike-form">
@@ -443,11 +449,11 @@ if ($isEditor) {
 				</div>
 				<div id="taxonstatusdiv" style="min-height:400px;">
 					<fieldset style="width:95%;">
-						<legend><b><?= $LANG['TAX_PLACEMENT']; ?></b></legend>
+						<legend><b><?= $LANG['TAX_PLACEMENT'] ?></b></legend>
 						<div style="padding:3px 7px;margin:-12px -10px 5px 0px;float:right;">
 							<form name="taxauthidform" action="taxoneditor.php" method="post">
 								<select name="taxauthid" onchange="this.form.submit()">
-									<option value="1"><?= $LANG['DEFAULT_TAX']; ?></option>
+									<option value="1"><?= $LANG['DEFAULT_TAX'] ?></option>
 									<option value="1">----------------------------</option>
 									<?php
 									$ttIdArr = $taxonEditorObj->getTaxonomicThesaurusIds();
@@ -456,11 +462,11 @@ if ($isEditor) {
 									}
 									?>
 								</select>
-								<input type="hidden" name="tid" value="<?= $taxonEditorObj->getTid(); ?>" />
+								<input type="hidden" name="tid" value="<?= $taxonEditorObj->getTid() ?>" />
 								<input type="hidden" name="tabindex" value="1" />
 							</form>
 						</div>
-						<div style="font-size:120%;font-weight:bold;"><?= $LANG['STATUS']; ?>:
+						<div style="font-size:120%;font-weight:bold;"><?= $LANG['STATUS'] ?>:
 							<span style='color:red;'>
 								<?php
 								switch ($taxonEditorObj->getIsAccepted()) {
@@ -490,7 +496,7 @@ if ($isEditor) {
 									if ($taxonEditorObj->getRankId() > 140 && $taxonEditorObj->getFamily()) {
 										?>
 										<div class="editDiv">
-											<div class="editLabel"><?= $LANG['FAMILY']; ?>: </div>
+											<div class="editLabel"><?= $LANG['FAMILY'] ?>: </div>
 											<div class="tsedit">
 												<?= Sanitize::outString($taxonEditorObj->getFamily()) ?>
 											</div>
@@ -499,23 +505,23 @@ if ($isEditor) {
 									}
 									?>
 									<div class="editDiv">
-										<div class="editLabel"><?= $LANG['PARENT_TAXON']; ?>: </div>
+										<div class="editLabel"><?= $LANG['PARENT_TAXON'] ?>: </div>
 										<div class="tsedit">
-											<?= '<a href="taxoneditor.php?tid=' . $taxonEditorObj->getParentTid() . '">' . $taxonEditorObj->getParentHtmlFull() . '</a>'; ?>
+											<?= '<a href="taxoneditor.php?tid=' . $taxonEditorObj->getParentTid() . '">' . $taxonEditorObj->getParentHtmlFull() . '</a>' ?>
 										</div>
 										<div class="tsedit" style="display:none;margin:3px;">
 											<input id="parentstr" name="parentstr" type="text" value="<?= Sanitize::outString($taxonEditorObj->getParentName()) ?>" style="width:450px" required />
-											<input id="parenttid" name="parenttid" type="text" value="<?= $taxonEditorObj->getParentTid(); ?>" />
+											<input id="parenttid" name="parenttid" type="text" value="<?= $taxonEditorObj->getParentTid() ?>" />
 										</div>
 									</div>
 									<div class="tsedit" style="display:none;clear:both;">
-										<input type="hidden" name="tid" value="<?= $taxonEditorObj->getTid(); ?>" />
-										<input type="hidden" name="taxauthid" value="<?= $taxAuthId; ?>">
+										<input type="hidden" name="tid" value="<?= $taxonEditorObj->getTid() ?>" />
+										<input type="hidden" name="taxauthid" value="<?= $taxAuthId ?>">
 										<?php
 										$aArr = $taxonEditorObj->getAcceptedArr();
 										$aStr = key($aArr);
 										?>
-										<input type="hidden" name="tidaccepted" value="<?= ($taxonEditorObj->getIsAccepted() == 1 ? $taxonEditorObj->getTid() : $aStr); ?>" />
+										<input type="hidden" name="tidaccepted" value="<?= ($taxonEditorObj->getIsAccepted() == 1 ? $taxonEditorObj->getTid() : $aStr) ?>" />
 										<input type="hidden" name="tabindex" value="1" />
 										<input type="hidden" name="submitaction" value="updatetaxstatus" />
 										<button type="submit" name="taxstatuseditsubmit"><?= $LANG['SUBMIT_UPPER_EDITS'] ?></button>
@@ -528,7 +534,7 @@ if ($isEditor) {
 							if ($taxonEditorObj->getIsAccepted() <> 1) {	//Is Not Accepted
 								$acceptedArr = $taxonEditorObj->getAcceptedArr();
 								?>
-								<div class="headingDiv"><?= $LANG['ACCEPTED_TAXON']; ?></div>
+								<div class="headingDiv"><?= $LANG['ACCEPTED_TAXON'] ?></div>
 								<div style="float:right;">
 									<a href="#" onclick="toggle('acceptedits');return false;"><img style="border:0px;width:1.3em;" src="../../images/edit.png" /></a>
 								</div>
@@ -559,44 +565,44 @@ if ($isEditor) {
 								<div class="acceptedits" style="display:none;">
 									<form id="accepteditsform" name="accepteditsform" action="taxoneditor.php" method="post" onsubmit="return validateAcceptedChangeForm(this)">
 										<fieldset style="width:80%;margin:20px;padding:15px">
-											<legend><b><?= $LANG['LINK_TO_OTHER_NAME']; ?></b></legend>
+											<legend><b><?= $LANG['LINK_TO_OTHER_NAME'] ?></b></legend>
 											<div>
-												<?= $LANG['ACCEPTED_TAXON']; ?>:
+												<?= $LANG['ACCEPTED_TAXON'] ?>:
 												<input id="aefacceptedstr" name="acceptedstr" type="text" style="width:450px;" required />
 												<input id="aeftidaccepted" name="tidaccepted" type="hidden" />
 											</div>
 											<div>
-												<input type="checkbox" name="deleteother" checked /> <?= $LANG['REMOVE_OTHER_LINKS']; ?>
+												<input type="checkbox" name="deleteother" checked /> <?= $LANG['REMOVE_OTHER_LINKS'] ?>
 											</div>
 											<div>
-												<input type="hidden" name="tid" value="<?= $taxonEditorObj->getTid(); ?>" />
-												<input type="hidden" name="taxauthid" value="<?= $taxAuthId; ?>" />
+												<input type="hidden" name="tid" value="<?= $taxonEditorObj->get ?>) ?>" />
+												<input type="hidden" name="taxauthid" value="<?= $taxAuthId ?>" />
 												<input type="hidden" name="tabindex" value="1" />
-												<button name="submitaction" type="submit" value="linkToAccepted"><?= $LANG['ADD_LINK']; ?></button>
+												<button name="submitaction" type="submit" value="linkToAccepted"><?= $LANG['ADD_LINK'] ?></button>
 											</div>
 										</fieldset>
 									</form>
 									<form id="changetoacceptedform" name="changetoacceptedform" action="taxoneditor.php" method="post">
 										<fieldset style="width:80%;margin:20px;padding:15px;">
-											<legend><b><?= $LANG['CHANGE_TO_ACCEPTED']; ?></b></legend>
+											<legend><b><?= $LANG['CHANGE_TO_ACCEPTED'] ?></b></legend>
 											<?php
 											$acceptedTid = key($acceptedArr);
 											if ($acceptedArr && count($acceptedArr) == 1) {
 												if (!array_key_exists($acceptedTid, $hierarchyArr)) {
 													?>
 													<div>
-														<input type="checkbox" name="switchacceptance" value="1" checked /> <?= $LANG['SWITCH_ACCEPTANCE']; ?>
+														<input type="checkbox" name="switchacceptance" value="1" checked /> <?= $LANG['SWITCH_ACCEPTANCE'] ?>
 													</div>
 													<?php
 												}
 											}
 											?>
 											<div>
-												<input type="hidden" name="tid" value="<?= $taxonEditorObj->getTid(); ?>" />
-												<input type="hidden" name="taxauthid" value="<?= $taxAuthId; ?>" />
-												<input type="hidden" name="tidaccepted" value="<?= $aStr; ?>" />
+												<input type="hidden" name="tid" value="<?= $taxonEditorObj->getTid() ?>" />
+												<input type="hidden" name="taxauthid" value="<?= $taxAuthId ?>" />
+												<input type="hidden" name="tidaccepted" value="<?= $aStr ?>" />
 												<input type="hidden" name="tabindex" value="1" />
-												<button type='submit' id='changetoacceptedsubmit' name='changetoaccepted' value='Change Status to Accepted'><?= $LANG['CHANGE_STATUS_ACCEPTED']; ?></button>
+												<button type='submit' id='changetoacceptedsubmit' name='changetoaccepted' value='Change Status to Accepted'><?= $LANG['CHANGE_STATUS_ACCEPTED'] ?></button>
 											</div>
 										</fieldset>
 									</form>
@@ -609,7 +615,7 @@ if ($isEditor) {
 							<?php
 							if ($taxonEditorObj->getIsAccepted() <> 0) {	//Is Accepted
 								?>
-								<div class="headingDiv"><?= $LANG['SYNONYMS']; ?></div>
+								<div class="headingDiv"><?= $LANG['SYNONYMS'] ?></div>
 								<div style="float:right;">
 									<a href="#" onclick="toggle('tonotaccepted');return false;"><img style='border:0px;width:1.3em;' src='../../images/edit.png' /></a>
 								</div>
@@ -637,27 +643,27 @@ if ($isEditor) {
 										}
 										echo '</li>';
 										?>
-										<fieldset id="syn-<?= $tidSyn; ?>" style="display:none;">
-											<legend><b><?= $LANG['SYN_LINK_EDITOR']; ?></b></legend>
-											<form id="synform-<?= $tidSyn; ?>" name="synform-<?= $tidSyn; ?>" action="taxoneditor.php" method="post">
+										<fieldset id="syn-<?= $tidSyn ?>" style="display:none;">
+											<legend><b><?= $LANG['SYN_LINK_EDITOR'] ?></b></legend>
+											<form id="synform-<?= $tidSyn ?>" name="synform-<?= $tidSyn ?>" action="taxoneditor.php" method="post">
 												<div style="clear:both;">
-													<?= $LANG['UNACCEPT_REASON']; ?>:
+													<?= $LANG['UNACCEPT_REASON'] ?>:
 													<input id='unacceptabilityreason' name='unacceptabilityreason' type='text' style="width:400px;" value='<?= Sanitize::outString($synArr['unacceptabilityreason']) ?? '' ?>' />
 												</div>
 												<div>
-													<?= $LANG['NOTES']; ?>:
+													<?= $LANG['NOTES'] ?>:
 													<input id='notes' name='notes' type='text' style="width:400px;" value='<?= Sanitize::outString($synArr['notes']) ?? '' ?>' />
 												</div>
 												<div>
-													<?= $LANG['SORT_SEQ']; ?>:
-													<input id='sortsequence' name='sortsequence' type='text' style="width:60px;" value='<?= $synArr['sortsequence']; ?>' />
+													<?= $LANG['SORT_SEQ'] ?>:
+													<input id='sortsequence' name='sortsequence' type='text' style="width:60px;" value='<?= $synArr['sortsequence'] ?>' />
 												</div>
 												<div>
-													<input type="hidden" name="tid" value="<?= $taxonEditorObj->getTid(); ?>" />
-													<input type="hidden" name="tidsyn" value="<?= $tidSyn; ?>" />
-													<input type="hidden" name="taxauthid" value="<?= $taxAuthId; ?>">
+													<input type="hidden" name="tid" value="<?= $taxonEditorObj->getTid() ?>" />
+													<input type="hidden" name="tidsyn" value="<?= $tidSyn ?>" />
+													<input type="hidden" name="taxauthid" value="<?= $taxAuthId ?>">
 													<input type="hidden" name="tabindex" value="1" />
-													<button type="submit" id="syneditsubmit" name="synonymedits" value="submitChanges"><?= $LANG['SUBMIT_EDITS']; ?></button>
+													<button type="submit" id="syneditsubmit" name="synonymedits" value="submitChanges"><?= $LANG['SUBMIT_EDITS'] ?></button>
 												</div>
 											</form>
 										</fieldset>
@@ -670,31 +676,31 @@ if ($isEditor) {
 								<div id="tonotaccepted" style="display:none;">
 									<form name="changeToNotAcceptedForm" action="taxoneditor.php" method="post" onsubmit="return validateAcceptedChangeForm(this)">
 										<fieldset style="width:90%px;">
-											<legend><b><?= $LANG['CHANGE_NOT_ACCEPTED']; ?></b></legend>
+											<legend><b><?= $LANG['CHANGE_NOT_ACCEPTED'] ?></b></legend>
 											<div style="margin:5px;">
-												<?= $LANG['ACCEPTED_NAME']; ?>:
+												<?= $LANG['ACCEPTED_NAME'] ?>:
 												<input id="ctnafacceptedstr" name="acceptedstr" type="text" style="width:550px;" required />
 												<input id="ctnaftidaccepted" name="tidaccepted" type="hidden" value="" />
 											</div>
 											<div style="margin:5px;">
-												<?= $LANG['REASON']; ?>:
+												<?= $LANG['REASON'] ?>:
 												<input name="unacceptabilityreason" type="text" style="width:90%;" />
 											</div>
 											<div style="margin:5px;">
-												<?= $LANG['NOTES']; ?>:
+												<?= $LANG['NOTES'] ?>:
 												<input name="notes" type="text" style="width:90%;" />
 											</div>
 											<div style="margin:5px;">
-												<input name="tid" type="hidden" value="<?= $taxonEditorObj->getTid(); ?>" />
-												<input name="taxauthid" type="hidden" value="<?= $taxAuthId; ?>">
+												<input name="tid" type="hidden" value="<?= $taxonEditorObj->getTid() ?>" />
+												<input name="taxauthid" type="hidden" value="<?= $taxAuthId ?>">
 												<input name="tabindex" type="hidden" value="1" />
-												<button name="submitaction" type="submit" value="changeToNotAccepted" <?= ($hasAcceptedChildren ? 'disabled' : '') ?>><?= $LANG['CHANGE_STAT_NOT_ACCEPT']; ?></button>
+												<button name="submitaction" type="submit" value="changeToNotAccepted" <?= ($hasAcceptedChildren ? 'disabled' : '') ?>><?= $LANG['CHANGE_STAT_NOT_ACCEPT'] ?></button>
 											</div>
 											<?php
 											if ($hasAcceptedChildren) echo '<div style="margin:5px;color:orange;font-weight:bold;">' . $LANG['TAX_CANNOT_BE_NOT_ACCEPTED'] . '</div>';
 											?>
 											<div style="margin:5px;">
-												* <?= $LANG['SYNONYMS_TRANSFERRED']; ?>
+												* <?= $LANG['SYNONYMS_TRANSFERRED'] ?>
 											</div>
 										</fieldset>
 									</form>
@@ -707,11 +713,11 @@ if ($isEditor) {
 				</div>
 				<div id="hierarchydiv" style="height:400px;">
 					<fieldset style="width:420px;padding:25px;">
-						<legend><b><?= $LANG['QUERY_HIERARCHY']; ?></b></legend>
-						<div style="float:right;" title="<?= $LANG['REBUILD_HIERARCHY']; ?>">
+						<legend><b><?= $LANG['QUERY_HIERARCHY'] ?></b></legend>
+						<div style="float:right;" title="<?= $LANG['REBUILD_HIERARCHY'] ?>">
 							<form name="updatehierarchyform" action="taxoneditor.php" method="post">
-								<input type="hidden" name="tid" value="<?= $taxonEditorObj->getTid(); ?>" />
-								<input type="hidden" name="taxauthid" value="<?= $taxAuthId; ?>">
+								<input type="hidden" name="tid" value="<?= $taxonEditorObj->getTid() ?>" />
+								<input type="hidden" name="taxauthid" value="<?= $taxAuthId ?>">
 								<input type="hidden" name="submitaction" value="updatehierarchy" />
 								<input type="hidden" name="tabindex" value="2" />
 								<input type="image" name="imagesubmit" src="../../images/undo.png" style="width:20px;" />
@@ -747,7 +753,7 @@ if ($isEditor) {
 			} else {
 				?>
 				<div style="margin:30px;font-weight:bold;font-size:120%;">
-					<?= $LANG['NOT_AUTH']; ?>
+					<?= $LANG['NOT_AUTH'] ?>
 				</div>
 				<?php
 			}

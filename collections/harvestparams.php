@@ -96,14 +96,12 @@ $searchVar = $collManager->getQueryTermStr();
 							<select id="taxontype" name="taxontype">
 								<?php
 								$taxonType = 2;
-								$taxonTypeRangeStart = 2;
 								$taxonTypeRangeEnd = 5;
 								if(!empty($DEFAULT_TAXON_SEARCH)){
 									$taxonType = $DEFAULT_TAXON_SEARCH;
-									if($DEFAULT_TAXON_SEARCH == 1) $taxonTypeRangeStart = 1;
 								}
 								if(!empty($DISPLAY_COMMON_NAMES)) $taxonTypeRangeEnd = 6;
-								for($h=$taxonTypeRangeStart; $h<$taxonTypeRangeEnd; $h++){
+								for($h=1; $h<$taxonTypeRangeEnd; $h++){
 									echo '<option value="'.$h.'" '.($taxonType==$h?'SELECTED':'').'>'.$LANG['SELECT_1-'.$h].'</option>';
 								}
 								?>

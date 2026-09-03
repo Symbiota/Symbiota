@@ -7,12 +7,12 @@ Translation date: 2024-10-16
 ------------------
 */
 
+include_once($SERVER_ROOT . '/content/lang/taxa/shared.'.$LANG_TAG.'.php');
+
 $LANG['FOLLOWING_WARNINGS'] = 'Les avertissements suivants se sont produits';
 $LANG['SUCCESS_REMAPPING'] = 'Remappage réussi du taxon!';
 $LANG['SUCCESS_DELETING'] = 'Suppression réussie du taxon!';
 $LANG['TAX_EDITOR'] = 'Éditeur de taxons';
-$LANG['SELECT_FROM_LIST'] = 'Veuillez sélectionner un nom dans la liste';
-$LANG['HOME'] = 'Accueil';
 $LANG['TAX_TREE_VIEW'] = "Visionneuse d'arbre de taxonomie";
 $LANG['TAXONOMY_EDITOR'] = 'Éditeur de taxonomie';
 $LANG['SUCCESS'] = 'SUCCESS';
