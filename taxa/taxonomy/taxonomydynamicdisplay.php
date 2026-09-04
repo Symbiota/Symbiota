@@ -1,6 +1,6 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyDisplayManager.php');
+include_once($SERVER_ROOT . '/classes/TaxonomyDisplayManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
@@ -54,40 +54,6 @@ reset($treePath);
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
 	<link rel="stylesheet" href="../../js/dojo-1.17.3/dijit/themes/claro/claro.css" media="screen">
-	<style>
-		.dijitLeaf,
-		.dijitIconLeaf,
-		.dijitFolderClosed,
-		.dijitIconFolderClosed,
-		.dijitFolderOpened,
-		.dijitIconFolderOpen {
-			background-image: none;
-			width: 0px;
-			height: 0px;
-		}
-		.fieldset-size {
-			padding: 10px;
-			max-width: 600px;
-		}
-		.icon-image{ border: 0px; width: 15px; }
-		.tax-meta-arr {
-			float: left;
-			margin: 1rem 0rem 2.5rem 0rem;
-			font-weight: bold;
-			font-size: 120%;
-		}
-		.tax-detail-div {
-			margin-top: 1.35rem;
-			margin-left: 0.7rem;
-			float: left;
-			font-size: 80%;
-		}
-		.tax-meta-div {
-			margin: 1rem 1.35rem 3rem 1.35rem;
-			display: none;
-			clear: both;
-		}
-	</style>
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/dojo-1.17.3/dojo/dojo.js"></script>
@@ -98,8 +64,10 @@ reset($treePath);
 			const taxonInput = document.querySelector("#taxontarget");
 			if(taxonInput){
 				taxonInput.addEventListener("focus", (event) => {
-					taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
-					initiateTaxaSuggest("taxontarget", function(result) {
+					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+					taxaSuggest.initiate("taxontarget", function(result) {
 						if(result.valid) {
 							$("#tid").val(result.item.id);
 						}
@@ -110,14 +78,32 @@ reset($treePath);
 				});
 			}
 
-			initiateTaxaSuggest("taxontarget");
 		});
+
+		function submitExport(f){
+			f.tdsubmit.value = "exportTaxonTree";
+			f.submit();
+		}
 
 		function displayTaxomonyMeta(){
 			$("#taxDetailDiv").hide();
 			$("#taxMetaDiv").show();
 		}
 	</script>
+	<style>
+		.dijitLeaf,
+		.dijitIconLeaf,
+		.dijitFolderClosed,
+		.dijitIconFolderClosed,
+		.dijitFolderOpened,
+		.dijitIconFolderOpen { background-image: none; width: 0px; height: 0px; }
+		.fieldset-size { padding: 10px; max-width: 750px; }
+		.icon-image{ border: 0px; width: 15px; }
+		.tax-meta-arr { float: left; margin: 1rem 0rem 2.5rem 0rem; font-weight: bold; font-size: 120%; }
+		.tax-detail-div { margin-top: 1.35rem; margin-left: 0.7rem; float: left; font-size: 80%; }
+		.tax-meta-div { margin: 1rem 1.35rem 3rem 1.35rem; display: none; clear: both; }
+		.search-bar { width: 35rem; }
+	</style>
 </head>
 <body class="claro">
 	<?php
@@ -170,6 +156,13 @@ reset($treePath);
 			<form id="tdform" name="tdform" action="taxonomydynamicdisplay.php" method='POST'>
 				<fieldset class="fieldset-size">
 					<legend><b><?= $LANG['TAX_SEARCH']; ?></b></legend>
+					<div style="float: right">
+						<button name="export-button" type="button" onclick="submitExport(this.form)" class="icon-button" title="<?= $LANG['EXPORT_TREE'] ?>" aria-label="<?= $LANG['EXPORT_TREE'] ?>">
+							<span style="display:flex; align-content: center;">
+								<svg style="width:1.3em;height:1.3em" alt="<?= $LANG['EXPORT_TREE'] ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
+							</span>
+						</button>
+					</div>
                     <div>
 						<label for="taxontarget"> <?= $LANG['TAXON'] ?>: </label>
 						<input id="taxontarget" name="target" type="text" class="search-bar" value="<?= Sanitize::outString($taxonDisplayObj->getTargetStr()) ?>" />
@@ -197,11 +190,9 @@ reset($treePath);
 					</div>
 					<div class="flex-form" style="margin: 10px">
 						<div>
-							<button name="tdsubmit" type="submit" value="displayTaxonTree"><?= $LANG['DISP_TAX_TREE'] ?></button>
+							<button name="default-submit-button" type="submit"><?= $LANG['DISP_TAX_TREE'] ?></button>
+							<input id="tdsubmit-action" name="tdsubmit" type="hidden" value="displayTaxonTree">
 							<input name="taxauthid" type="hidden" value="<?= $taxAuthId; ?>" />
-						</div>
-						<div style="float: right">
-							<button name="tdsubmit" type="submit" value="exportTaxonTree"><?= $LANG['EXPORT_TREE'] ?></button>
 						</div>
 					</div>
 				</fieldset>

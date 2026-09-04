@@ -10,8 +10,10 @@
 		const taxaInput = document.querySelector("#taxon");
 		if(taxaInput){
 			taxaInput.addEventListener("focus", (event) => {
-				taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
-				initiateTaxaSuggest("taxon", function(result){
+				taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+				taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+				taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+				taxaSuggest.initiate("taxon", function(result){
 					if(result.valid) {
 						document.getElementById("tid").value = result.item.id
 					}

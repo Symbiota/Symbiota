@@ -57,8 +57,10 @@ if(!isset($IS_ADMIN) || !$IS_ADMIN || !isset($SYMB_UID) || !$SYMB_UID) {
 			const taxaInput = document.querySelector("#taxa");
 			if(taxaInput){
 				taxaInput.addEventListener("focus", (event) => {
-					taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
-					initiateTaxaSuggest("taxa");
+					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+					taxaSuggest.initiate("taxa");
 				});
 			}
 		});

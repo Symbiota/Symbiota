@@ -402,7 +402,7 @@ if($action != "Update Statistics"){
 			else{
 				?>
 				<div class='navpath'>
-					<a href='<?php echo $CLIENT_ROOT; ?>/index.php'><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+					<a href='<?php echo $CLIENT_ROOT; ?>/index.php'><?php echo $LANG['HOME']; ?></a> &gt;&gt;
 					<a href='<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php'><?php echo htmlspecialchars($LANG['COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 					<b><?php echo $LANG['BATCH_UPDATE_STATS']; ?></b>
 				</div>

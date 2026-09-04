@@ -41,7 +41,7 @@ if($isEditor){
 	?>
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1a" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.sharedTaxonomyCRUD.js?ver=5"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.taxonomyloader.js?v=1"></script>
 	<script type="text/javascript">
@@ -52,17 +52,21 @@ if($isEditor){
 			const acceptedInput = document.querySelector('#acceptedstr');
 			if(acceptedInput){
 				acceptedInput.addEventListener('focus', (event) => {
-					taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
-					taxaSuggestConfig.minLength = 2;
-					taxaSuggestConfig.restrictToList = true;
-					taxaSuggestConfig.limitToAccepted = 1;
-					taxaSuggestConfig.rankMaximum = 0;
-					initiateTaxaSuggest("acceptedstr", function(result) {
+					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggest.config.minLength = 2;
+					taxaSuggest.config.limitToAccepted = 1;
+					taxaSuggest.config.rankMaximum = 0;
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+					taxaSuggest.initiate("acceptedstr", function(result) {
 						if (result.valid) {
 							document.getElementById("tidaccepted").value = result.item.id;
 						}
 						else{
 							document.getElementById("tidaccepted").value = "";
+							if(this.value != ""){
+								alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
+							}
 						}
 					});
 				});
@@ -71,17 +75,19 @@ if($isEditor){
 			const parentInput = document.querySelector('#parentname');
 			if(parentInput){
 				parentInput.addEventListener('focus', (event) => {
-					taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
-					taxaSuggestConfig.minLength = 2;
-					taxaSuggestConfig.restrictToList = true;
-					taxaSuggestConfig.limitToAccepted = 0;
-					taxaSuggestConfig.rankMaximum = document.getElementById("rankid").value - 1;
-					initiateTaxaSuggest("parentname", function(result) {
+					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggest.config.minLength = 2;
+					taxaSuggest.config.limitToAccepted = 0;
+					taxaSuggest.config.rankMaximum = document.getElementById("rankid").value - 1;
+					taxaSuggest.initiate("parentname", function(result) {
 						if (result.valid) {
 							document.getElementById("parenttid").value = result.item.id;
 						}
 						else{
 							document.getElementById("parenttid").value = "";
+							if(this.value != ""){
+								alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
+							}
 						}
 					});
 				});
@@ -90,19 +96,11 @@ if($isEditor){
 		});
 	</script>
 	<style>
-		.search-bar-long {
-			width: 35rem;
-		}
-		.search-bar-short {
-			width: 15rem;
-		}
-		.search-bar-extraShort {
-			width: 5rem;
-		}
-		.left-column {
-			float: left;
-			width: 170px;
-		}
+		.search-bar { width: 35rem; }
+		.search-bar-long { width: 35rem; }
+		.search-bar-short { width: 15rem; }
+		.search-bar-extraShort { width: 5rem; }
+		.left-column { float: left; width: 170px; }
 	</style>
 </head>
 <body>

@@ -58,15 +58,17 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 	?>
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1a" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 
 			const taxonInput = document.querySelector("#taxontarget");
 			if(taxonInput){
 				taxonInput.addEventListener("focus", (event) => {
-					taxaSuggestConfig.clientRoot = "<?= $CLIENT_ROOT ?>";
-					initiateTaxaSuggest("taxontarget", function(result) {
+					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+					taxaSuggest.initiate("taxontarget", function(result) {
 						if(result.valid) {
 							$("#tid").val(result.item.id);
 						}
@@ -77,13 +79,12 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 				});
 			}
 
-			$('form input').keydown(function(event) {
-				if (event.keyCode === 13) {
-					event.preventDefault();
-					$('#tdsubmit-default').trigger('click');
-				}
-			});
 		});
+
+		function submitExport(f){
+			f.tdsubmit.value = "exportTaxonTree";
+			f.submit();
+		}
 
 		function displayTaxomonyMeta(){
 			$("#taxDetailDiv").hide();
@@ -95,6 +96,7 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 		.field-div{ margin:3px 0px }
 		.icon-image{ border: 0px; width: 15px; }
 		button{ margin: 15px; }
+		.search-bar { width: 35rem; }
 	</style>
 </head>
 <body>
@@ -149,7 +151,7 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 				<fieldset style="padding:10px;max-width:850px;">
 					<legend><b><?= $LANG['TAX_SEARCH'] ?></b></legend>
 					<div style="float: right">
-						<button name="tdsubmit" type="submit" value="exportTaxonTree" class="icon-button" title="<?= $LANG['EXPORT_TREE'] ?>" aria-label="<?= $LANG['EXPORT_TREE'] ?>">
+						<button name="export-button" type="button" onclick="submitExport(this.form)" class="icon-button" title="<?= $LANG['EXPORT_TREE'] ?>" aria-label="<?= $LANG['EXPORT_TREE'] ?>">
 							<span style="display:flex; align-content: center;">
 								<svg style="width:1.3em;height:1.3em" alt="<?= $LANG['EXPORT_TREE'] ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
 							</span>
@@ -182,7 +184,8 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 							<label for="limittooccurrences"> <?= $LANG['LIMIT_TO_OCCURRENCES'] ?> </label>
 						</div>
 						<div>
-							<button id="tdsubmit-default" name="tdsubmit" type="submit" value="displayTaxonTree"><?= $LANG['DISP_TAX_TREE'] ?></button>
+							<button name="default-submit-button" type="submit"><?= $LANG['DISP_TAX_TREE'] ?></button>
+							<input id="tdsubmit-action" name="tdsubmit" type="hidden" value="displayTaxonTree">
 							<input name="taxauthid" type="hidden" value="<?= $taxAuthId; ?>" />
 						</div>
 					</div>

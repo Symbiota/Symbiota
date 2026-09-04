@@ -102,7 +102,7 @@ $displayLeftMenu = false;
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class="navpath">
-	<a href="../../index.php"><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+	<a href="../../index.php"><?php echo $LANG['HOME']; ?></a> &gt;&gt;
 	<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo htmlspecialchars($LANG['COL_MGMNT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 	<a href="specuploadmanagement.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>"><?php echo htmlspecialchars($LANG['LIST_UPLOAD'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 	<b><?php echo $LANG['SPEC_UPLOAD']; ?></b>

@@ -142,7 +142,7 @@ if($isEditor && $submitAction){
 					}
 					?>
 					<div class='navpath' style="margin:10px;clear:both;">
-						<a href='../../index.php'><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+						<a href='../../index.php'><?php echo $LANG['HOME']; ?></a> &gt;&gt;
 						<?php
 						if(is_numeric($collid)){
 							?>

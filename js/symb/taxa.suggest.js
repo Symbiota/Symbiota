@@ -16,8 +16,14 @@ taxaSuggest.config = {
     rankMaximum: ''
 };
 
-taxaSuggest.initiate = function(inputID, callback = null) {
-	const inputElem = $("#" + inputID);
+taxaSuggest.initiate = function(inputElem, callback = null) {
+
+    if (typeof inputElem === "string") {
+        inputElem = $("#" + inputElem);
+    } else {
+        inputElem = $(inputElem);
+    }
+
 	inputElem
 		// don't navigate away from the field on tab when selecting an item
 		.on("keydown", function (event) {
@@ -121,12 +127,12 @@ taxaSuggest.initiate = function(inputID, callback = null) {
 			$label.append($("<span>").addClass("ac-infraName").text(item.infraName));
 		}
 
-		if (item.author) {
+		if (item.author && taxaSuggest.config.includeAuthor) {
 			$label.append(document.createTextNode(" "));
 			$label.append($("<span>").addClass("ac-author").text(item.author));
 		}
 
-		if (item.kingdom) {
+		if (item.kingdom && taxaSuggest.config.includeKingdom) {
 			$label.append(document.createTextNode(" - "));
 			$label.append($("<span>").addClass("ac-kingdom").text(item.kingdom));
 		}

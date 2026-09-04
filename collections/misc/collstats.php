@@ -319,7 +319,7 @@ if($action != "Update Statistics"){
 			else{
 				?>
 				<div class='navpath'>
-					<a href='../../index.php'><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+					<a href='../../index.php'><?php echo $LANG['HOME']; ?></a> &gt;&gt;
 					<a href='collprofiles.php'><?php echo htmlspecialchars($LANG['COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
 					<b><?php echo $LANG['COL_STATS']; ?></b>
 				</div>

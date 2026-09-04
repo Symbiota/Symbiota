@@ -23,12 +23,17 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 			taxonInput.addEventListener("focus", (event) => {
 				taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
 				taxaSuggest.config.minLength = 2;
+				taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+				taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
 				taxaSuggest.initiate("remapvalue", function(result) {
 					if(result.valid) {
 						$("#remaptid").val(result.item.id);
 					}
 					else{
 						$("#remaptid").val("");
+						if(this.value != ""){
+							alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
+						}
 					}
 				});
 			});
@@ -37,7 +42,7 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 
 	function validateRemapTaxonForm(f){
 		if(f.remaptid.value == ""){
-			alert("<?= $LANG['NO_TARGET_TAXON'] ?>");
+			alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
 			return false;
 		}
 		return true;

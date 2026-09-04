@@ -51,15 +51,9 @@ function validateFormInput (f, silent = false){
     document.getElementById("error-display").textContent = processTextContent(translations.SCI_NAME_RANK_REQUIRED);
     return false;
   }
-  if (f.parentname.value == "" && rankId > "10") {
+  if ((f.parentname.value == "" || f.parenttid.value == "") && rankId > "10") {
     if (!silent) alert(translations.PARENT_TAXON_REQUIRED);
     document.getElementById("error-display").textContent = processTextContent(translations.PARENT_TAXON_REQUIRED);
-    return false;
-  }
-  if (f.parenttid.value == "" && rankId > "10") {
-    if (!silent)
-      alert(translations.PARENT_ID_NOT_SET);
-    document.getElementById("error-display").textContent = processTextContent(translations.PARENT_ID_NOT_SET);
     return false;
   }
   if (!validateFieldLength(f.notes, 250, silent) || !validateFieldLength(f.source, 250, silent))

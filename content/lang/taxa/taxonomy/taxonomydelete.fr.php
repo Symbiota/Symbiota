@@ -7,7 +7,6 @@ Translated by: Google Translate (2024-10-16)
 */
 include_once($SERVER_ROOT . '/content/lang/taxa/shared.'.$LANG_TAG.'.php');
 
-$LANG['NO_TARGET_TAXON'] = 'Le taxon cible ne semble pas être nul. Veuillez soumettre un taxon pour remapper les ressources';
 $LANG['TAXON_NOT_FOUND'] = "ERREUR: Le taxon de remappage n'a pas été trouvé dans le thésaurus. Le nom est-il correctement orthographié?";
 $LANG['TAXON_MUST_BE_EVALUATED'] = "L'enregistrement du taxon doit d'abord être évalué avant de pouvoir être supprimé du système. L'évaluation garantit que la suppression de cet enregistrement n'interférera pas avec l'intégrité des données.";
 $LANG['CHILDREN_TAXA'] = 'Taxons enfants';

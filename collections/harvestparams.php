@@ -28,7 +28,7 @@ $searchVar = $collManager->getQueryTermStr();
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js?ver=1" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.traitsearch.js?ver=8" type="text/javascript"></script> <!-- Contains search-by-trait modifications -->
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/wktpolygontools.js?ver=1c" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=3" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=4" type="text/javascript"></script>
 	<script type="text/javascript">
 		const paleoTimes = <?= json_encode($paleoTimes ?? []) ?>;
 

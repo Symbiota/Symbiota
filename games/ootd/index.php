@@ -62,20 +62,24 @@ $genusAnswer = strtok($scinameAnswer, " ");
 			const taxaInput = document.querySelector("#sciname_answer");
 			if(taxaInput){
 				taxaInput.addEventListener("focus", (event) => {
-					taxaSuggestConfig.clientRoot = clientRoot;
-					taxaSuggestConfig.rankMinimum = 180;
-					taxaSuggestConfig.rankMaximum = 220;
-					initiateTaxaSuggest("sciname_answer");
+					taxaSuggest.config.clientRoot = clientRoot;
+					taxaSuggest.config.rankMinimum = 180;
+					taxaSuggest.config.rankMaximum = 220;
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+					taxaSuggest.initiate("sciname_answer");
 				});
 			}
 
 			const familyInput = document.querySelector("#family_answer");
 			if(familyInput){
 				familyInput.addEventListener("focus", (event) => {
-					taxaSuggestConfig.clientRoot = clientRoot;
-					taxaSuggestConfig.rankMinimum = 140;
-					taxaSuggestConfig.rankMaximum = 140;
-					initiateTaxaSuggest("family_answer");
+					taxaSuggest.config.clientRoot = clientRoot;
+					taxaSuggest.config.rankMinimum = 140;
+					taxaSuggest.config.rankMaximum = 140;
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+					taxaSuggest.initiate("family_answer");
 				});
 			}
 		});

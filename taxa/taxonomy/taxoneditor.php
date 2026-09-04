@@ -64,7 +64,6 @@ if ($isEditor) {
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
-
 <head>
 	<title><?= $DEFAULT_TITLE . " " . $LANG['TAX_EDITOR'] . ": " . $tid ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET ?>" />
@@ -87,6 +86,8 @@ if ($isEditor) {
 					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
 					taxaSuggest.config.taxAuthID = document.taxauthidform.taxauthid.value;
 					taxaSuggest.config.rankMaximum = document.taxoneditform.rankid.value - 1;
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
 					taxaSuggest.initiate("parentstr", function(result) {
 						if (result.valid) {
 							document.getElementById("parenttid").value = result.item.id;
@@ -156,51 +157,17 @@ if ($isEditor) {
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.sharedTaxonomyCRUD.js?ver=5"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.taxonomyeditor.js?ver=4"></script>
 	<style type="text/css">
-		.editDiv {
-			clear: both;
-		}
-
-		.editLabel {
-			float: left;
-			font-weight: bold;
-		}
-
-		.editfield {
-			float: left;
-			margin-left: 5px;
-		}
-
-		.tsedit {
-			float: left;
-			margin-left: 5px;
-		}
-
-		.headingDiv {
-			font-size: 110%;
-			font-weight: bold;
-			padding-top: 10px;
-		}
-
-		.taxonDiv {
-			font-size: 1.125rem;
-			margin-top: 15px;
-			margin-left: 10px;
-		}
-
-		.taxonDiv a {
-			color: #990000;
-			font-weight: bold;
-			font-style: italic;
-		}
-
-		.taxonDiv img {
-			border: 0px;
-			margin: 0px;
-			height: 15px;
-		}
+		.search-bar-long { width: 35rem; }
+		.editDiv { clear: both; }
+		.editLabel { float: left; font-weight: bold; }
+		.editfield { float: left; margin-left: 5px; }
+		.tsedit { float: left; margin-left: 5px; }
+		.headingDiv { font-size: 110%; font-weight: bold; padding-top: 10px; }
+		.taxonDiv { font-size: 1.125rem; margin-top: 15px; margin-left: 10px; }
+		.taxonDiv a { color: #990000; font-weight: bold; font-style: italic; }
+		.taxonDiv img { border: 0px; margin: 0px; height: 15px; }
 	</style>
 </head>
-
 <body>
 	<?php
 	$jsLangFile = $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js';
