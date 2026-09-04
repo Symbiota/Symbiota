@@ -74,7 +74,7 @@ class OccurrenceMaintenance {
 		$occidArr = array();
 		$this->outputMsg('Updating null families using taxonomic thesaurus... ',1);
 		$sql = 'SELECT o.occid FROM omoccurrences o INNER JOIN taxstatus ts ON o.tidinterpreted = ts.tid WHERE (ts.taxauthid = 1) AND (ts.family IS NOT NULL) AND (o.family IS NULL)';
-		if($this->collidStr) $sql .= 'AND o.collid IN('.$this->collidStr.')';
+		if($this->collidStr) $sql .= 'AND o.collid IN(' . $this->collidStr . ')';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$occidArr[] = $r->occid;
@@ -92,7 +92,7 @@ class OccurrenceMaintenance {
 		$occidArr = array();
 		$this->outputMsg('Updating null scientific authors using taxonomic thesaurus... ',1);
 		$sql = 'SELECT o.occid FROM omoccurrences o INNER JOIN taxa t ON o.tidinterpreted = t.tid WHERE o.scientificNameAuthorship IS NULL AND t.author IS NOT NULL ';
-		if($this->collidStr) $sql .= 'AND o.collid IN('.$this->collidStr.')';
+		if($this->collidStr) $sql .= 'AND o.collid IN(' . $this->collidStr . ')';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$occidArr[] = $r->occid;
@@ -108,50 +108,56 @@ class OccurrenceMaintenance {
 		//Update date fields - first look for bad year
 		$occidArr = array();
 		$this->outputMsg('Updating individual date fields (e.g. day, month, year, startDayOfYear, endDayOfYear)... ',1);
-		$sql = 'SELECT occid FROM omoccurrences WHERE eventDate BETWEEN "1500-01-01" AND CURDATE() AND (year IS NULL OR year != YEAR(eventDate)) ';
-		if($this->collidStr) $sql .= 'AND collid IN('.$this->collidStr.')';
+		$sql = 'SELECT occid FROM omoccurrences
+			WHERE eventDate BETWEEN "1500-01-01" AND CURDATE() AND (year IS NULL OR year != YEAR(eventDate))
+			AND (eventDate2 IS NULL OR YEAR(eventDate) = YEAR(eventDate2)) ';
+		if($this->collidStr) $sql .= 'AND collid IN(' . $this->collidStr . ')';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$occidArr[] = $r->occid;
 			if(count($occidArr) > 1000){
-				$this->batchUpdateDateFields($occidArr);
+				$this->batchUpdateDateFields($occidArr, 'year');
 				unset($occidArr);
 			}
 		}
 		$rs->free();
-		if(isset($occidArr)) $this->batchUpdateDateFields($occidArr);
+		if(isset($occidArr)) $this->batchUpdateDateFields($occidArr, 'year');
 		unset($occidArr);
 
 		//Then look for records with bad month
 		$occidArr = array();
-		$sql = 'SELECT occid FROM omoccurrences WHERE eventDate BETWEEN "1500-01-01" AND CURDATE() AND (month IS NULL OR month != MONTH(eventDate)) ';
+		$sql = 'SELECT occid FROM omoccurrences
+			WHERE eventDate BETWEEN "1500-01-01" AND CURDATE() AND (month IS NULL OR month != MONTH(eventDate))
+			AND (eventDate2 IS NULL OR EXTRACT(YEAR_MONTH FROM eventDate) = EXTRACT(YEAR_MONTH FROM eventDate2)) ';
 		if($this->collidStr) $sql .= 'AND collid IN('.$this->collidStr.')';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$occidArr[] = $r->occid;
 			if(count($occidArr) > 1000){
-				$this->batchUpdateDateFields($occidArr);
+				$this->batchUpdateDateFields($occidArr, 'month');
 				unset($occidArr);
 			}
 		}
 		$rs->free();
-		if(isset($occidArr)) $this->batchUpdateDateFields($occidArr);
+		if(isset($occidArr)) $this->batchUpdateDateFields($occidArr, 'month');
 		unset($occidArr);
 
 		//Then look for records with bad day
 		$occidArr = array();
-		$sql = 'SELECT occid FROM omoccurrences WHERE eventDate BETWEEN "1500-01-01" AND CURDATE() AND (day IS NULL OR day != DAY(eventDate)) ';
+		$sql = 'SELECT occid FROM omoccurrences
+			WHERE eventDate BETWEEN "1500-01-01" AND CURDATE() AND (day IS NULL OR day != DAY(eventDate))
+			AND (eventDate2 IS NULL OR eventDate = eventDate2) ';
 		if($this->collidStr) $sql .= 'AND collid IN('.$this->collidStr.')';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$occidArr[] = $r->occid;
 			if(count($occidArr) > 1000){
-				$this->batchUpdateDateFields($occidArr);
+				$this->batchUpdateDateFields($occidArr, 'day');
 				unset($occidArr);
 			}
 		}
 		$rs->free();
-		if(isset($occidArr)) $this->batchUpdateDateFields($occidArr);
+		if(isset($occidArr)) $this->batchUpdateDateFields($occidArr, 'day');
 		unset($occidArr);
 
 		//Batch populate Geography data
@@ -384,13 +390,20 @@ class OccurrenceMaintenance {
 		return $status;
 	}
 
-	private function batchUpdateDateFields($occidArr){
+	private function batchUpdateDateFields($occidArr, $targetField){
 		$status = false;
 		if($occidArr){
-			//Update all date fields, no matter which date field was tested as bad
-			$sql = 'UPDATE omoccurrences
-				SET year = YEAR(eventDate), month = MONTH(eventDate), day = day(eventDate), startDayOfYear = DAYOFYEAR(eventDate), endDayOfYear = DAYOFYEAR(IFNULL(eventDate2,eventDate))
-				WHERE occid IN(' . implode(',', $occidArr) . ')';
+			$sql = 'UPDATE omoccurrences SET startDayOfYear = DAYOFYEAR(eventDate), endDayOfYear = DAYOFYEAR(IFNULL(eventDate2,eventDate)) ';
+			if($targetField == 'year'){
+				$sql .= ', year = YEAR(eventDate) ';
+			}
+			elseif($targetField == 'month'){
+				$sql .= ', month = MONTH(eventDate) ';
+			}
+			elseif($targetField == 'day'){
+				$sql .= ', day = DAY(eventDate) ';
+			}
+			$sql .= 'WHERE occid IN(' . implode(',', $occidArr) . ') ';
 			if($this->conn->query($sql)){
 				$status = true;
 			}

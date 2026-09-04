@@ -61,7 +61,7 @@ if(!$schemaVersion){
 				<li><?= $LANG['DATA_PUBLISHING'] ?></li>
 				<li class="nested-li"><a href="collections/datasets/rsshandler.php" target="_blank"><?= $LANG['COLLECTIONS_RSS'] ?></a></li>
 				<li class="nested-li"><a href="collections/datasets/datapublisher.php"><?= $LANG['DARWINCORE'] ?></a> - <?= $LANG['PUBDATA'] ?></li>
-				<li style="margin-left:15px;"><a href="<?= $CLIENT_ROOT ?>/content/dwca/rss.xml" target="_blank"><?= $LANG['RSS'] ?></a></li>
+				<li class="nested-li"><a href="<?= $CLIENT_ROOT ?>/content/dwca/rss.xml" target="_blank"><?= $LANG['RSS'] ?></a></li>
 				<li><a href="collections/misc/protectedspecies.php"><?= $LANG['PROTECTED_SPECIES'] ?></a> - <?= $LANG['LISTOFTAXA'] ?></li>
 			</ul>
 			<div id="imglib">
@@ -143,74 +143,9 @@ if(!$schemaVersion){
 				if($SYMB_UID){
 					if($IS_ADMIN){
 						?>
-						<h2 class="subheader">
-							<span>
-								<?= $LANG['ADMIN'] ?>
-							</span>
-						</h2>
-						<ul>
-							<li>
-								<a href="profile/usermanagement.php"><?= $LANG['USERPERM'] ?></a>
-							</li>
-						<?php // TODO: Identification Editor features need to be reviewed and refactored
-						/*
-							<li>
-								<a href="profile/usertaxonomymanager.php"><?= $LANG['TAXINTER'] ?></a>
-							</li>
-						*/
-						?>
-							<li>
-								<a href="<?= $CLIENT_ROOT ?>/collections/misc/collmetadata.php">
-									<?= $LANG['CREATENEWCOLL'] ?>
-								</a>
-							</li>
-							<li>
-								<a href="<?= $CLIENT_ROOT ?>/geothesaurus/index.php">
-									<?= $LANG['GEOTHESAURUS']  ?>
-								</a>
-							</li>
-							<!--
-							<li>
-								<a href="<?= $CLIENT_ROOT ?>/collections/cleaning/coordinatevalidator.php">
-									<?= $LANG['COORDVALIDATOR'] ?>
-								</a>
-							</li>
-							-->
-							<li>
-								<a href="<?= $CLIENT_ROOT ?>/imagelib/admin/thumbnailbuilder.php">
-									<?= $LANG['THUMBNAIL_BUILDER'] ?>
-								</a>
-							</li>
-							<li>
-								<a href="<?= $CLIENT_ROOT ?>/collections/admin/guidmapper.php">
-									<?= $LANG['GUIDMAP'] ?>
-								</a>
-							</li>
-							<li>
-								<a href="<?= $CLIENT_ROOT ?>/collections/specprocessor/salix/salixhandler.php">
-									<?= $LANG['SALIX'] ?>
-								</a>
-							</li>
-							<li>
-								<a href="<?= $CLIENT_ROOT ?>/glossary/index.php">
-									<?= $LANG['GLOSSARY']  ?>
-								</a>
-							</li>
-							<li>
-								<a href="collections/map/staticmaphandler.php"><?= $LANG['MANAGE_TAXON_THUMBNAILS'] ?></a>
-							</li>
-							<li>
-								<a href="<?= $CLIENT_ROOT ?>/admin/othercatalog.php">
-									<?= $LANG['OTHER_CAT_TRANSFER'] ?>
-								</a>
-							</li>
-							<li>
-								<a href="<?= $CLIENT_ROOT ?>/admin/batchupdatestats.php">
-									<?= $LANG['BATCH_UPDATE_STATS'] ?>
-								</a>
-							</li>
-						</ul>
+						<h2 class="subheader"><span><?= $LANG['ADMIN_MENU']; ?></span></h2>
 						<?php
+						include('profile/adminmenu.php');
 					}
 					if($KEY_MOD_IS_ACTIVE || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 						echo '<h2 class="subheader"><span>' . $LANG['IDKEYS'] . '<span></h2>';

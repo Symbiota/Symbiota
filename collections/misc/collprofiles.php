@@ -5,7 +5,7 @@ include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-Language::load(['collections/misc/collprofiles', 'sitemap']);
+Language::load(['collections/misc/collprofiles', 'profile/adminmenu']);
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 unset($_SESSION['editorquery']);
@@ -665,7 +665,7 @@ if ($SYMB_UID) {
 								}
 								?>
 								<li style="margin-left:10px;">
-									<a href="#" onclick="newWindow = window.open('collbackup.php?collid=<?= $collid ?>','bucollid','scrollbars=1,toolbar=0,resizable=1,width=600,height=250,left=20,top=20');">
+									<a href="#" onclick="newWindow = window.open('collbackup.php?collid=<?= $collid ?>','bucollid','scrollbars=1,toolbar=0,resizable=1,width=700,height=450,left=20,top=20');">
 										<?= $LANG['BACKUP_DATA_FILE'] ?>
 									</a>
 								</li>
@@ -761,7 +761,7 @@ if ($SYMB_UID) {
 				}
 			}
 			if ($collData['publishtogbif'] && $datasetKey) {
-				$dataUrl = 'http://www.gbif.org/dataset/' . $datasetKey;
+				$dataUrl = 'https://www.gbif.org/dataset/' . $datasetKey;
 				?>
 				<div style="margin-top:5px;">
 					<div><b><?= $LANG['GBIF_DATASET'] ?>:</b> <a href="<?= $dataUrl ?>" target="_blank" rel="noopener noreferrer"><?= $dataUrl ?></a></div>
@@ -784,16 +784,19 @@ if ($SYMB_UID) {
 				echo '<div class="field-div"><span class="label">Cite this collection:</span><blockquote>';
 				// If GBIF dataset key is available, fetch GBIF format from API
 				if ($collData['publishtogbif'] && $datasetKey && file_exists($SERVER_ROOT . '/includes/citationgbif.php')) {
-					$gbifUrl = 'http://api.gbif.org/v1/dataset/' . $datasetKey;
-					$responseData = json_decode(file_get_contents($gbifUrl));
-					if ($responseData === null && json_last_error() !== JSON_ERROR_NONE) {
+					$gbifUrl = 'https://api.gbif.org/v1/dataset/' . $datasetKey;
+					$context = stream_context_create(['http' => ['timeout' => 2]]);
+					$response = file_get_contents($gbifUrl, false, $context);
+					$responseData = $response !== false ? json_decode($response) : null;
+					if ($responseData !== null && json_last_error() === JSON_ERROR_NONE) {
+						$collData['gbiftitle'] = $responseData->title;
+						$collData['doi'] = $responseData->doi;
+						$_SESSION['colldata'] = $collData;
+						include($SERVER_ROOT . '/includes/citationgbif.php');
+					} else {
 						error_log('Error in JSON decoding: ' . json_last_error_msg());
-						throw new Exception('Error in JSON decoding');
+						include($SERVER_ROOT . '/includes/citationcollection.php');
 					}
-					$collData['gbiftitle'] = $responseData->title;
-					$collData['doi'] = $responseData->doi;
-					$_SESSION['colldata'] = $collData;
-					include($SERVER_ROOT . '/includes/citationgbif.php');
 				} else {
 					include($SERVER_ROOT . '/includes/citationcollection.php');
 				}

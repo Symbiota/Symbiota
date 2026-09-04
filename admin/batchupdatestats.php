@@ -4,7 +4,7 @@ include_once($SERVER_ROOT.'/classes/OccurrenceCollectionProfile.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/CollectionFormManager.php');
 
-Language::load(['collections/misc/collstats','collections/search/index', 'sitemap']);
+Language::load(['collections/misc/collstats','collections/search/index', 'profile/adminmenu']);
 
 header("Content-Type: text/html; charset=" . $CHARSET);
 ini_set('max_execution_time', 1200); //1200 seconds = 20 minutes
@@ -857,7 +857,7 @@ if($action != "Update Statistics"){
 									</section>
 									<div class="top-marg">
 										<b><?php echo $LANG['SPEC_W_COUNTRY']; ?>:</b> <?php echo number_format($total); ?><br />
-										<?php 
+										<?php
 										if ($results){
 											echo $LANG['SPEC_WO_COUNTRY']; ?>: <?php echo number_format(($results['SpecimenCount']-$total)+$results['SpecimensNullLatitude']);
 										}

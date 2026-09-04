@@ -1,5 +1,6 @@
 <?php
 include_once('../../config/symbini.php');
+include_once($SERVER_ROOT . '/classes/DwcArchiverPublisher.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load('collections/misc/collbackup');
@@ -7,8 +8,9 @@ Language::load('collections/misc/collbackup');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $collid = isset($_REQUEST['collid']) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$action = isset($_REQUEST['formsubmit']) ? $_REQUEST['formsubmit'] : '';
-$cSet = isset($_REQUEST['cset']) ? $_REQUEST['cset'] : '';
+$action = isset($_POST['formsubmit']) ? $_POST['formsubmit'] : '';
+$cSet = isset($_POST['cset']) ? $_POST['cset'] : '';
+$backupFile = isset($_REQUEST['bufile']) ? $_REQUEST['bufile'] : '';
 
 $isEditor = 0;
 if($IS_ADMIN){
@@ -16,6 +18,27 @@ if($IS_ADMIN){
 }
 elseif($collid && isset($USER_RIGHTS['CollAdmin']) && in_array($collid, $USER_RIGHTS['CollAdmin'])){
 	$isEditor = 1;
+}
+if($isEditor){
+	if(preg_match('/_backup_\d{4}-\d{2}-\d{2}_\d{6}_DwC-A\.zip$/', $backupFile)){
+		$dwcaHandler = new DwcArchiverCore();
+		$path = $dwcaHandler->getTargetPath();
+		$archiveFile = $path . $backupFile;
+		while (ob_get_level()) {
+			ob_end_clean();
+		}
+		header('Content-Description: ' . $LANG['OCCURRENCE_BAKUP_FILE']);
+		header('Content-Type: application/zip');
+		header('Content-Disposition: attachment; filename=' . basename($archiveFile));
+		header('Content-Transfer-Encoding: binary');
+		header('Expires: 0');
+		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+		header('Pragma: public');
+		header('Content-Length: ' . filesize($archiveFile));
+		readfile($archiveFile);
+		unlink($archiveFile);
+		exit;
+	}
 }
 ?>
 <!DOCTYPE html>
@@ -25,13 +48,12 @@ elseif($collid && isset($USER_RIGHTS['CollAdmin']) && in_array($collid, $USER_RI
 	<?php
 	include_once($SERVER_ROOT . '/includes/head.php');
 	?>
-    <script>
-    	function submitBuForm(f){
-			f.formsubmit.disabled = true;
-			document.getElementById("workingdiv").style.display = "block";
-			return true;
-    	}
-    </script>
+	<script>
+		function fileDownloaded(){
+			document.getElementById("download-link").style.display = "none"
+			document.getElementById("file-downloaded-span").style.display = "inline"
+		}
+	</script>
     <style>
     	fieldset{ padding:15px;width:350px }
     	legend{ font-weight: bold }
@@ -41,30 +63,60 @@ elseif($collid && isset($USER_RIGHTS['CollAdmin']) && in_array($collid, $USER_RI
 </head>
 <body>
 	<div role="main" id="innertext">
-		<h1 class="page-heading screen-reader-only"><?php echo $LANG['DOWNLOAD_MODULE']; ?></h1>
+		<h1 class="page-heading screen-reader-only"><?= $LANG['DOWNLOAD_MODULE'] ?></h1>
 		<?php
 		if($isEditor){
-			?>
-			<form name="buform" action="../download/downloadhandler.php" method="post" onsubmit="return submitBuForm(this);">
-				<fieldset>
-					<legend><?= $LANG['DOWNLOAD_MODULE'] ?></legend>
-					<div style="height:50px; margin: 10px">
-						<input type="radio" id="cset1" name="cset" value="iso-8859-1" <?= ($cSet == 'iso88591' ? 'checked' : ''); ?> /> <label for="cset1">ISO-8859-1 (western)</label><br/>
-						<input type="radio" id="cset2" name="cset" value="utf-8" <?= (!$cSet || $cSet == 'utf8' ? 'checked' : ''); ?> /> <label for="cset2">UTF-8 (unicode)</label>
-					</div>
-					<div>
-						<div style="float:left">
-							<input type="hidden" name="collid" value="<?= $collid; ?>">
-							<input type="hidden" name="schema" value="backup">
-							<button type="submit" name="formsubmit"><?= $LANG['DOWNLOAD'] ?></button>
+			if($action == 'preformBackup'){
+				if ($collid && is_numeric($collid)) {
+					$dwcaHandler = new DwcArchiverCore();
+					$dwcaHandler->setCollArr($collid);
+					$dwcaHandler->setSchemaType('backup');
+					$dwcaHandler->setCharSetOut($cSet);
+					$dwcaHandler->setVerboseMode(2);
+					$dwcaHandler->setIncludeDets(1);
+					$dwcaHandler->setIncludeImgs(1);
+					$dwcaHandler->setIncludeAttributes(1);
+					$dwcaHandler->setIncludeMaterialSample(1);
+					$dwcaHandler->setIncludeIdentifiers(1);
+					$dwcaHandler->setIncludeAssociations(1);
+					$dwcaHandler->setRedactLocalities(0);
+					$archiveFile = $dwcaHandler->createDwcArchive();
+
+					if ($archiveFile) {
+						$filename = substr($archiveFile, strrpos($archiveFile, '/') + 1);
+						?>
+						<div id="download-div">
+							<?= $LANG['BACKUP_FILE'] ?>:
+							<a id="download-link" href="collbackup.php?collid=<?= $collid ?>&bufile=<?= $filename ?>" onclick="fileDownloaded()"><?= $filename ?></a>
+							<span id="file-downloaded-span" style="display:none"><b><?= $LANG['DOWNLOAD_COMPLETE'] ?></b></span>
 						</div>
-						<div id="workingdiv" style="display:<?= ($action == 'Perform Backup' ? 'block' : 'none') ?>;">
-							<?= $LANG['DOWNLOADING'] ?>...
+						<?php
+					} else {
+						$errMsg = $dwcaHandler->getErrorMessage();
+						if($errMsg) echo $errMsg;
+						else echo $LANG['ERROR_CREATING_OUTPUT'];
+					}
+				}
+			}
+			else{
+				?>
+				<form name="buform" action="collbackup.php" method="post" onsubmit="">
+					<fieldset>
+						<legend><?= $LANG['DOWNLOAD_MODULE'] ?></legend>
+						<div style="height:50px; margin: 10px">
+							<input type="radio" id="cset1" name="cset" value="iso-8859-1" <?= ($cSet == 'iso88591' ? 'checked' : ''); ?> /> <label for="cset1">ISO-8859-1 (western)</label><br/>
+							<input type="radio" id="cset2" name="cset" value="utf-8" <?= (!$cSet || $cSet == 'utf8' ? 'checked' : ''); ?> /> <label for="cset2">UTF-8 (unicode)</label>
 						</div>
-					</div>
-				</fieldset>
-			</form>
-			<?php
+						<div>
+							<div>
+								<input type="hidden" name="collid" value="<?= $collid; ?>">
+								<button type="submit" name="formsubmit" value="preformBackup"><?= $LANG['DOWNLOAD'] ?></button>
+							</div>
+						</div>
+					</fieldset>
+				</form>
+				<?php
+			}
 		}
 		?>
 	</div>
