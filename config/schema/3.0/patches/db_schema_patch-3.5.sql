@@ -1,6 +1,19 @@
 INSERT INTO `schemaversion` (versionnumber) VALUES ('3.5');
 
 
+#Clear year, month, and day fields when eventDate and eventDate2 values conflict
+UPDATE omoccurrences
+SET `year` = NULL, `month` = NULL, `day` = NULL
+WHERE `year` IS NOT NULL AND eventDate IS NOT NULL AND eventDate2 IS NOT NULL AND YEAR(eventDate) != YEAR(eventDate2);
+
+UPDATE omoccurrences
+SET `month` = NULL, `day` = NULL
+WHERE `month` IS NOT NULL AND eventDate IS NOT NULL AND eventDate2 IS NOT NULL AND MONTH(eventDate) != MONTH(eventDate2);
+
+UPDATE omoccurrences
+SET `day` = NULL
+WHERE `day` IS NOT NULL AND eventDate IS NOT NULL AND eventDate2 IS NOT NULL AND eventDate != eventDate2;
+
 
 
 #Adjust column order so that taxon author field is closer to sciname

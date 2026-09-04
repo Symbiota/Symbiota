@@ -17,7 +17,6 @@ $LANG['SEL_BACKUP'] = 'Seleccionar Archivo de Respaldo para Restaurar';
 $LANG['RESTORE_DETS'] = 'Restaurar Historia de Determinación';
 $LANG['RESTORE_MEDIA_LINKS'] = 'Restaurar Enlaces de Medios/Imágenes';
 $LANG['ANALYZE'] = 'Analizar Archivo';
-$LANG['MANUAL'] = 'Opción de Carga Manual de Archivos';
 $LANG['WARNINGS'] = 'Existe advertencia';
 $LANG['LIVE_DANGEROUSLY'] = 'Si piensa que las advertencias son un error, contacte al administrador de su portal';
 $LANG['FATAL_ERROR'] = 'ERROR FATAL';
