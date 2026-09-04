@@ -7,6 +7,7 @@ Translated by: Google Translate (2024-09-05)
 */
 $LANG['IMG_DETAILS'] = 'Image Details';
 $LANG['ERROR_FILE_PATH'] = 'ERROR: File path must be entered';
+$LANG['ERROR_TID_ISNULL'] = 'ERROR: taxon identifier is null, please enter a taxon from the list';
 $LANG['ENTER_TAXON_NAME'] = 'Enter a taxon name to which the media resource will be transferred';
 $LANG['TAXON_PROFILE_EDITING'] = 'Go to Taxon Profile editing page';
 $LANG['EDITING_PRIVILEGES'] = 'Must have editing privileges for the collection managing this media resource';

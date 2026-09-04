@@ -85,28 +85,6 @@ $(document).ready(function () {
     },
   });
 
-  $("#ffsciname").autocomplete({
-    source: "rpc/getspeciessuggest.php",
-    minLength: 3,
-    autoFocus: true,
-    change: function (event, ui) {
-      $("#tidinterpreted").val("");
-      $("input[name=scientificnameauthorship]").val("");
-      $("input[name=family]").val("");
-      if ($("input[name=securityreason]").val() == "") {
-        $("select[name=recordsecurity]").val(0);
-      }
-      fieldChanged("sciname");
-      fieldChanged("tidinterpreted");
-      fieldChanged("scientificnameauthorship");
-      fieldChanged("family");
-      fieldChanged("recordsecurity");
-      if ($("#ffsciname").val()) {
-        verifyFullFormSciName();
-      }
-    },
-  });
-
   var cookies = document.cookie;
   if (cookies.indexOf("localauto") > -1) {
     var cookieName = "localauto=";
@@ -281,34 +259,13 @@ function verifyFullFormSciName() {
       $("input[name=family]").val(data.family);
       $("input[name=tradeName]").val(data.tradename);
       $("input[name=scientificnameauthorship]").val(data.author);
-      /*
-      if(data.rankid < 220){
-        $( 'select[name=confidenceranking]' ).val(2);
-      }
-      else{
-        $( 'select[name=confidenceranking]' ).val(8);
-      }
-      */
-      if (
-        data.status == 1 &&
-        !$("input[name=cultivationstatus]").prop("checked")
-      ) {
+      if ( data.status == 1 && !$("input[name=cultivationstatus]").prop("checked")) {
         $("select[name=recordsecurity]").val(1);
         securityChanged(document.fullform);
       } else {
-        if (data.tid) {
-          var stateVal = $("input[name=stateprovince]").val();
-          if (stateVal != "") {
-            securityCheck();
-          }
-        }
+        securityCheck();
       }
-    } else {
-      $("select[name=confidenceranking]").val(5);
-      alert(
-        "WARNING: Taxon not found. It may be misspelled or needs to be added to taxonomic thesaurus by a taxonomic editor. You can continue entering this specimen using this name and the name will be resolved at a later date."
-      );
-    }
+    } 
   });
 }
 
@@ -400,10 +357,7 @@ function recordNumberChanged() {
 
 function stateProvinceChanged(stateVal) {
   fieldChanged("stateprovince");
-  var tidVal = $("#tidinterpreted").val();
-  if (tidVal != "" && stateVal != "") {
-    securityCheck();
-  }
+  securityCheck();
 }
 
 function coordinatesChanged(f, client_root) {

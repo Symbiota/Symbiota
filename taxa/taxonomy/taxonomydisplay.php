@@ -1,6 +1,7 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/TaxonomyDisplayManager.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load('taxa/taxonomy/taxonomydisplay');
@@ -8,17 +9,23 @@ Language::load('taxa/taxonomy/taxonomydisplay');
 header('Content-Type: text/html; charset=' . $CHARSET);
 
 $target = $_REQUEST['target'] ?? '';
+$tid = !empty($_REQUEST['tid']) ? Sanitize::int($_REQUEST['tid']) : '';
 $displayAuthor = !empty($_REQUEST['displayauthor']) ? 1: 0;
 $matchOnWords = !empty($_POST['matchonwords']) ? 1 : 0;
 $displayFullTree = !empty($_REQUEST['displayfulltree']) ? 1 : 0;
 $displaySubGenera = !empty($_REQUEST['displaysubgenera']) ? 1 : 0;
 $limitToOccurrences = !empty($_REQUEST['limittooccurrences']) ? 1 : 0;
-$taxAuthId = array_key_exists('taxauthid', $_REQUEST) ? filter_var($_REQUEST['taxauthid'], FILTER_SANITIZE_NUMBER_INT) : 1;
+$taxAuthId = array_key_exists('taxauthid', $_REQUEST) ? Sanitize::int($_REQUEST['taxauthid']) : 1;
 $statusStr = array_key_exists('statusstr', $_REQUEST) ? $_REQUEST['statusstr'] : '';
 $submitAction = array_key_exists('tdsubmit', $_POST) ? $_POST['tdsubmit'] : '';
 
 if(!$target) $matchOnWords = 1;
+if(is_numeric($target)){
+	$tid = $target;
+	$target = '';
+}
 $taxonDisplayObj = new TaxonomyDisplayManager();
+$taxonDisplayObj->setTargetTid($tid);
 $taxonDisplayObj->setTargetStr($target);
 $taxonDisplayObj->setTaxAuthId($taxAuthId);
 $taxonDisplayObj->setDisplayAuthor($displayAuthor);
@@ -42,33 +49,42 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE . ' ' . $LANG['TAX_DISPLAY'] . ': ' . $taxonDisplayObj->getTargetStr(); ?></title>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
+	<title><?= $DEFAULT_TITLE . ' ' . $LANG['TAX_DISPLAY'] . ': ' . $taxonDisplayObj->getTargetStr(); ?></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET ?>"/>
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 	<script type="text/javascript">
-
 		$(document).ready(function() {
-			$("#taxontarget").autocomplete({
-				source: function( request, response ) {
-					$.getJSON( "rpc/gettaxasuggest.php", { term: request.term, taid: document.tdform.taxauthid.value }, response );
-				},
-				autoFocus: true,
-				minLength: 3 }
-			);
 
-			$('form input').keydown(function(event) {
-				if (event.keyCode === 13) {
-					event.preventDefault();
-					$('#tdsubmit-default').trigger('click');
-				}
-			});
+			const taxonInput = document.querySelector("#taxontarget");
+			if(taxonInput){
+				taxonInput.addEventListener("focus", (event) => {
+					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+					taxaSuggest.initiate("taxontarget", function(result) {
+						if(result.valid) {
+							$("#tid").val(result.item.id);
+						}
+						else{
+							$("#tid").val("");
+						}
+					});
+				});
+			}
+
 		});
+
+		function submitExport(f){
+			f.tdsubmit.value = "exportTaxonTree";
+			f.submit();
+		}
 
 		function displayTaxomonyMeta(){
 			$("#taxDetailDiv").hide();
@@ -80,6 +96,7 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 		.field-div{ margin:3px 0px }
 		.icon-image{ border: 0px; width: 15px; }
 		button{ margin: 15px; }
+		.search-bar { width: 35rem; }
 	</style>
 </head>
 <body>
@@ -94,11 +111,11 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 		<h1 class="page-heading"><?php $LANG['CENTRAL_TAXANOMIC_THESAURUS']; ?></h1>
 		<?php
 		if($statusStr){
-			$statusStr = str_replace(';', '<br/>', htmlspecialchars($statusStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE));
+			$statusStr = str_replace(';', '<br/>', $statusStr);
 			?>
 			<hr/>
-			<div style="color:<?php echo (stripos($statusStr,'SUCCESS') !== false?'green':'red'); ?>;margin:15px;">
-				<?= $statusStr; ?>
+			<div style="color:<?= (stripos($statusStr,'SUCCESS') !== false?'green':'red') ?>;margin:15px;">
+				<?= Sanitize::outString($statusStr) ?>
 			</div>
 			<hr/>
 			<?php
@@ -134,7 +151,7 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 				<fieldset style="padding:10px;max-width:850px;">
 					<legend><b><?= $LANG['TAX_SEARCH'] ?></b></legend>
 					<div style="float: right">
-						<button name="tdsubmit" type="submit" value="exportTaxonTree" class="icon-button" title="<?= $LANG['EXPORT_TREE'] ?>" aria-label="<?= $LANG['EXPORT_TREE'] ?>">
+						<button name="export-button" type="button" onclick="submitExport(this.form)" class="icon-button" title="<?= $LANG['EXPORT_TREE'] ?>" aria-label="<?= $LANG['EXPORT_TREE'] ?>">
 							<span style="display:flex; align-content: center;">
 								<svg style="width:1.3em;height:1.3em" alt="<?= $LANG['EXPORT_TREE'] ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
 							</span>
@@ -144,6 +161,7 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 						<div>
 							<label for="taxontarget"> <?= $LANG['TAXON'] ?>: </label>
 							<input id="taxontarget" class="search-bar" name="target" type="text" value="<?= $taxonDisplayObj->getTargetStr(); ?>" />
+							<input id="tid" name="tid" type="hidden" value="<?= $tid ?>" >
 						</div>
 						<div>
 							<input id="displayauthor" name="displayauthor" type="checkbox" value="1" <?= ($displayAuthor ? 'checked' : '') ?> />
@@ -166,7 +184,8 @@ if($IS_ADMIN || array_key_exists('Taxonomy', $USER_RIGHTS)){
 							<label for="limittooccurrences"> <?= $LANG['LIMIT_TO_OCCURRENCES'] ?> </label>
 						</div>
 						<div>
-							<button id="tdsubmit-default" name="tdsubmit" type="submit" value="displayTaxonTree"><?= $LANG['DISP_TAX_TREE'] ?></button>
+							<button name="default-submit-button" type="submit"><?= $LANG['DISP_TAX_TREE'] ?></button>
+							<input id="tdsubmit-action" name="tdsubmit" type="hidden" value="displayTaxonTree">
 							<input name="taxauthid" type="hidden" value="<?= $taxAuthId; ?>" />
 						</div>
 					</div>

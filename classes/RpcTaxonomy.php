@@ -1,11 +1,20 @@
 <?php
-include_once($SERVER_ROOT.'/classes/RpcBase.php');
-include_once($SERVER_ROOT.'/traits/TaxonomyTrait.php');
+include_once($SERVER_ROOT . '/classes/RpcBase.php');
+include_once($SERVER_ROOT . '/traits/TaxonomyTrait.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+
+Language::load('collections/harvestparams');
+
 class RpcTaxonomy extends RpcBase{
 
 	use TaxonomyTrait;
-
+	private $taxonSearchType = 0;
+	private $rankMin = '';
+	private $rankMax = '';
 	private $taxAuthID = 1;
+	private $limitToAccepted = false;
+	private $fullOutput = false;
+	private $extendQueryMatch = false;		//Allows matches on first characters of each word
 
 	function __construct(){
 		parent::__construct();
@@ -15,106 +24,210 @@ class RpcTaxonomy extends RpcBase{
 		parent::__destruct();
 	}
 
-	public function getTaxaSuggest($term, $rankLimit, $rankLow, $rankHigh){
+	public function getTaxaSuggest($queryString){
 		$retArr = Array();
-		//sanitation
-		if(!is_numeric($rankLimit)) $rankLimit = 0;
-		if(!is_numeric($rankLow)) $rankLow = 0;
-		if(!is_numeric($rankHigh)) $rankHigh = 0;
-
-		if($term){
-			$term = $this->cleanInStr($term);
-			$termArr = explode(' ',$term);
-			foreach($termArr as $k => $v){
-				if(mb_strlen($v) == 1) unset($termArr[$k]);
+		if($queryString){
+			$this->cleanQueryString($queryString);
+			if(!$this->taxonSearchType && !empty($GLOBALS['DEFAULT_TAXON_SEARCH'])){
+				$this->taxonSearchType = $GLOBALS['DEFAULT_TAXON_SEARCH'];
 			}
-			$sql = 'SELECT DISTINCT t.tid, t.sciname, t.cultivarEpithet, t.tradeName, t.author FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid WHERE ts.taxauthid = '.$this->taxAuthID.' AND (t.sciname LIKE "'.$term.'%" ';
-			$sqlFrag = '';
-			if($unit1 = array_shift($termArr)) $sqlFrag =  't.unitname1 LIKE "' . $unit1 . '%" ';
-			if($unit2 = array_shift($termArr)) $sqlFrag .=  'AND t.unitname2 LIKE "' . $unit2 . '%" ';
-			if($sqlFrag) $sql .= 'OR ('.$sqlFrag.')';
-			$sql .= ') ';
-			if($rankLimit) $sql .= 'AND (t.rankid = '.$rankLimit.') ';
+			$sql = '';
+			$paramArr = array();
+			$typeStr = '';
+			if($this->taxonSearchType == 5){
+				//COMMON_NAME
+				$sql = 'SELECT DISTINCT v.tid, v.vernacularName, t.sciname, CONCAT_WS(" ", t.unitind1, t.unitname1, t.unitind2, t.unitname2) AS unitName, t.unitInd3, t.unitName3, t.author, t.kingdomName, t.securityStatus ';
+				if($this->fullOutput) $sql .= ', ts.family, ts.tidAccepted ';
+				$sql .= 'FROM taxavernaculars v INNER JOIN taxa t ON v.tid = t.tid ';
+				if($this->fullOutput) $sql .= 'INNER JOIN taxstatus ts ON t.tid = ts.tid ';
+				$sql .= 'WHERE v.vernacularname LIKE ? ';
+				$paramArr[] = '%' . $queryString . '%';
+				$typeStr = 's';
+				if($this->fullOutput){
+					$sql .= 'AND ts.taxAuthID = ? ';
+					$paramArr[] = $this->taxAuthID;
+					$typeStr .= 'i';
+				}
+			}
 			else{
-				if($rankLow) $sql .= 'AND (t.rankid > '.$rankLow.' OR t.rankid IS NULL) ';
-				if($rankHigh) $sql .= 'AND (t.rankid <= '.$rankHigh.' OR t.rankid IS NULL) ';
+				//SCIENTIFIC_NAME - default
+				$sql = 'SELECT t.tid, t.sciname, CONCAT_WS(" ", t.unitind1, t.unitname1, t.unitind2, t.unitname2) AS unitName, t.unitInd3, t.unitName3,
+					t.cultivarEpithet, t.tradeName, t.author, t.kingdomName, t.securityStatus FROM taxa t WHERE t.sciname LIKE ? ';
+				if($this->fullOutput || $this->limitToAccepted){
+					$sql = 'SELECT t.tid, t.sciname, CONCAT_WS(" ", t.unitind1, t.unitname1, t.unitind2, t.unitname2) AS unitName, t.unitInd3, t.unitName3,
+						t.cultivarEpithet, t.tradeName, t.author, t.kingdomName, t.securityStatus, ts.family, ts.tidAccepted
+						FROM taxa t INNER JOIN taxStatus ts ON t.tid = ts.tid
+						WHERE ts.taxAuthID = ? AND t.sciname LIKE ? ';
+					$paramArr[] = $this->taxAuthID;
+					$typeStr = 'i';
+					if($this->limitToAccepted) $sql .= 'AND ts.tid = ts.tidAccepted ';
+				}
+				$paramArr[] = $queryString . '%';
+				$typeStr .= 's';
+				if($this->extendQueryMatch){
+					// Enable scientific name entry shortcuts: 2-3 letter codes separated by spaces, e.g. "pse men"
+					// Split the search string by spaces if there are any.
+					$strArr = explode(' ', $term);
+					if(count($strArr) > 1){
+						$sql .= 'OR (unitname1 LIKE "' . $strArr[0] . '%" AND unitname2 LIKE "' . $strArr[1] . '%" ';
+						if(!empty($strArr[2])){
+							$sql .= 'AND unitname3 LIKE "' . $strArr[2] . '%" ';
+						}
+						$sql .= ') ';
+					}
+
+				}
 			}
-			$sql .= 'ORDER BY t.sciname';
-			$rs = $this->conn->query($sql);
-			$sciname = null;
-			while($r = $rs->fetch_object()) {
-				$sciname = $r->sciname;
-
-				if(!empty($r->tradeName)){
-					$sciname = str_replace($r->tradeName, '', $sciname);
-				}
-
-				if(!empty($r->cultivarEpithet)){
-					$sciname = str_replace("'" . $r->cultivarEpithet . "'", '', trim($sciname)); // @TODO could possibly replace off-target if cultivarEpithet matches some parent taxon exactly. We think extremely unlikely edge case, so ignoring for now.
-				}
-
-				if(!empty($r->author)){
-					$sciname = trim($sciname) . ' ' . $r->author;
-				}
-				if(!empty($r->cultivarEpithet)){
-					$sciname .= " " . $this->standardizeCultivarEpithet($r->cultivarEpithet);
-				}
-				if(!empty($r->tradeName)){
-					$sciname .= ' ' . $this->standardizeTradeName($r->tradeName);
-				}
-				$retArr[] = array('id' => $r->tid,'label' => $sciname);
+			if($this->taxonSearchType == 3){
+				//FAMILY_ONLY
+				$this->rankMin = 140;
+				$this->rankMax = 140;
 			}
-			$rs->free();
+			elseif($this->taxonSearchType == 4){
+				//TAXONOMIC_GROUP
+				$this->rankMin = 11;
+				$this->rankMax = 179;
+			}
+			if($this->rankMin || $this->rankMax){
+				if(is_numeric($this->rankMin) || is_numeric($this->rankMax)){
+					if($this->rankMin == $this->rankMax){
+						$sql .= 'AND rankid = ? ';
+						$paramArr[] = $this->rankMin;
+						$typeStr .= 'i';
+					}
+					else{
+						if($this->rankMin){
+							$sql .= 'AND (rankid >= ?) ';
+							$paramArr[] = $this->rankMin;
+							$typeStr .= 'i';
+						}
+						if($this->rankMax){
+							$sql .= 'AND (rankid <= ?) ';
+							$paramArr[] = $this->rankMax;
+							$typeStr .= 'i';
+						}
+					}
+				}
+			}
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param($typeStr, ...$paramArr);
+				$stmt->execute();
+				$rs = $stmt->get_result();
+				while ($r = $rs->fetch_object()) {
+					$family = '';
+					if(!empty($r->family)) $family = $r->family;
+					$acceptance = '';
+					if(!empty($r->tidAccepted)){
+						if($r->tid == $r->tidAccepted) $acceptance = 1;
+						else $acceptance = 0;
+					}
+					$vernacularName = '';
+					if(!empty($r->vernacularName)){
+						$vernacularName = $r->vernacularName;
+					}
+					$keys = [
+						'id' => $r->tid,
+						'sciname' => $r->sciname,
+						'unitName' => $r->unitName,
+						'infraRank' => $r->unitInd3,
+						'infraName' => $r->unitName3,
+						'author' => $r->author,
+						'kingdom' => $r->kingdomName,
+						'securityStatus' => $r->securityStatus,
+						'family' => $family,
+						'acceptance' => $acceptance,
+						'vernacular' => $vernacularName
+					];
+					$retArr[] = $keys;
+				}
+				$rs->free();
+				$stmt->close();
+			}
 		}
 		return $retArr;
 	}
 
-	public function getAcceptedTaxa($queryTerm){
-		$retArr = Array();
-		$sql = 'SELECT t.tid, t.sciname, t.cultivarEpithet, t.tradeName, t.author '.
-			'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-			'WHERE (ts.taxauthid = '.$this->taxAuthID.') AND (ts.tid = ts.tidaccepted) AND (t.sciname LIKE "'.$this->cleanInStr($queryTerm).'%") '.
-			'ORDER BY t.sciname LIMIT 20';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$sciname = $r->sciname; //.' '.$r->author;
-			if(!empty($r->tradeName)){
-				$sciname = str_replace($r->tradeName, '', $sciname);
-			}
-
-			if(!empty($r->cultivarEpithet)){
-				$sciname = str_replace("'" . $r->cultivarEpithet . "'", '', trim($sciname)); // @TODO could possibly replace off-target if cultivarEpithet matches some parent taxon exactly. We think extremely unlikely edge case, so ignoring for now.
-			}
-
-			if(!empty($r->author)){
-				$sciname = trim($sciname) . ' ' . $r->author;
-			}
-			if(!empty($r->cultivarEpithet)){
-				$sciname .= " " . $this->standardizeCultivarEpithet($r->cultivarEpithet);
-			}
-			if(!empty($r->tradeName)){
-				$sciname .= ' ' . $this->standardizeTradeName($r->tradeName);
-			}
-			$retArr[] = array('id' => $r->tid,'label' => $sciname);
+	private function cleanQueryString(&$queryString){
+		$queryString = preg_replace('/[\+\=@$%]+/i', '', $queryString);
+		if(strpos($queryString, ' ')){
+			//Function replaces hybrid and other poorly standardized input to wildcard single character matches to improve return options
+			$queryString = str_ireplace(array('"', "'"), '_', $queryString);
+			$queryString = preg_replace('/\s{1}x{1}$/i', ' _', $queryString);
+			$queryString = preg_replace('/\s{1}x{1}\s{1}/i', ' _ ', $queryString);
+			$queryString = str_ireplace(' x ', ' _ ', $queryString);
+			$queryString = str_ireplace(' x', ' _', $queryString);
 		}
-		$rs->free();
+	}
+
+	public function getTaxonUnit($sciname, $rankid = 0, $author = '', $kingdomName = ''){
+		$retArr = array();
+		$sql = 'SELECT tid, sciname, author, kingdomName FROM taxa WHERE (sciname = ?)';
+		if(preg_match('/\s{1}\D{1}\s{1}/i',$sciname)){
+			//Replace various formats of hybrid designation with a wildcard single character search
+			$sciname = preg_replace('/\s{1}x{1}\s{1}|\s{1}×{1}\s{1}/i', ' _ ', $sciname);
+			$sql = 'SELECT tid, sciname, author, kingdomName FROM taxa WHERE (sciname LIKE ?)';
+		}
+		$paramArr = array($sciname);
+		$typeStr = 's';
+		if($rankid){
+			$sql .= 'AND t.rankid = ? ';
+			$paramArr[] = $rankid;
+			$typeStr .= 'i';
+		}
+		if($author){
+			$sql .= 'AND t.author = ? ';
+			$paramArr[] = $author;
+			$typeStr .= 's';
+		}
+		if($kingdomName){
+			$sql .= 'AND t.kingdomName = ? ';
+			$paramArr[] = $kingdomName;
+			$typeStr .= 's';
+		}
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param($typeStr, ...$paramArr);
+			$stmt->execute();
+			$rs = $stmt->get_result();
+			while($r = $rs->fetch_object()){
+				$retArr[$r->tid]['tid'] = $r->tid;
+				$retArr[$r->tid]['sciname'] = $r->sciname;
+				$retArr[$r->tid]['author'] = $r->author;
+				$retArr[$r->tid]['kingdom'] = $r->kingdomName;
+			}
+			$rs->free();
+			$stmt->close();
+		}
 		return $retArr;
 	}
 
 	public function getTid($sciName, $rankid, $author){
-		$retStr = 0;
+		$tid = 0;
 		//Sanitation
 		if(!is_numeric($rankid)) $rankid = 0;
-		$sql = 'SELECT t.tid FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-			'WHERE (ts.taxauthid = '.$this->taxAuthID.') AND (t.sciname = "'.$this->cleanInStr($sciName).'" OR CONCAT(t.sciname," ",t.author) = "'.$this->cleanInStr($sciName).'") ';
-		if($rankid) $sql .= ' AND t.rankid = '.$rankid;
-		if($author) $sql .= ' AND t.author = "'.$this->cleanInStr($author).'" ';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retStr = $r->tid;
+		$paramArr = array($this->taxAuthID, $sciName, $sciName);
+		$typeStr = 'iss';
+		$sql = 'SELECT t.tid FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid WHERE (ts.taxauthid = ?) AND (t.sciname = ? OR CONCAT(t.sciname," ",t.author) = ?) ';
+		if($rankid){
+			$sql .= 'AND t.rankid = ? ';
+			$paramArr[] = $rankid;
+			$typeStr .= 'i';
 		}
-		$rs->free();
-		return $retStr;
+		if($author){
+			$sql .= 'AND t.author = ? ';
+			$paramArr[] = $author;
+			$typeStr .= 's';
+		}
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param($typeStr, ...$paramArr);
+			$stmt->execute();
+			$rs = $stmt->get_result();
+			while($r = $rs->fetch_object()){
+				$tid = $r->tid;
+			}
+			$rs->free();
+			$stmt->close();
+		}
+		return $tid;
 	}
 
 	public function getDynamicChildren($objId, $targetId, $displayAuthor, $limitToOccurrences, $isEditor){
@@ -315,8 +428,35 @@ class RpcTaxonomy extends RpcBase{
 	}
 
 	//Setters and getters
+	public function setTaxonSearchType($searchType){
+		if(is_numeric($searchType)) $this->taxonSearchType = $searchType;
+	}
+
 	public function setTaxAuthId($id){
-		if(is_numeric($id)) $this->taxAuthID = $id;
+		if($id && is_numeric($id)) $this->taxAuthID = $id;
+	}
+
+	public function setLimitToAccepted($bool){
+		if($bool) $this->limitToAccepted = true;
+		else $this->limitToAccepted = false;
+	}
+
+	public function setFullOutput($bool){
+		if($bool) $this->fullOutput = true;
+		else $this->fullOutput = false;
+	}
+
+	public function setExtendQueryMatch($bool){
+		if($bool) $this->extendQueryMatch = true;
+		else $this->extendQueryMatch = false;
+	}
+
+	public function setRankMin($rank){
+		if(is_numeric($rank)) $this->rankMin = $rank;
+	}
+
+	public function setRankMax($rank){
+		if(is_numeric($rank)) $this->rankMax = $rank;
 	}
 
 	public function isValidApiCall(){

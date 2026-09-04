@@ -4,13 +4,14 @@
 Language: English
 ------------------
 */
+
 include_once($SERVER_ROOT . '/content/lang/collections/sharedterms.en.php');
 
 $LANG['SAMPLE_SEARCH'] = 'Record Search';
 $LANG['HOW_TO_SEARCH'] = 'How to Search';
 $LANG['TAXONOMY'] = 'Taxonomy';
 $LANG['TAXON'] = 'Taxon';
-$LANG['TYPE_CHAR_FOR_SUGGESTIONS'] = 'Type at least 4 characters for quick suggestions. Separate multiple with commas.';
+$LANG['TYPE_CHAR_FOR_SUGGESTIONS'] = 'Type at least 4 characters for quick suggestions. Separate multiple with semicolons.';
 $LANG['TAXON_TYPE'] = 'Taxon type';
 $LANG['ANY_NAME'] = 'Any name';
 $LANG['SCIENTIFIC_NAME'] ='Scientific name';

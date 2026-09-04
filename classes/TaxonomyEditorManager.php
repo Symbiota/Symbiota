@@ -3,6 +3,7 @@
 include_once($SERVER_ROOT.'/traits/TaxonomyTrait.php');
 include_once($SERVER_ROOT.'/classes/Manager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
 Language::load('classes/TaxonomyEditorManager');
 
@@ -28,7 +29,7 @@ class TaxonomyEditorManager extends Manager{
 	private $author;
 	private $parentTid = 0;
 	private $parentName;
-	private $parentNameFull;
+	private $parentHtmlFull;
 	private $source;
 	private $notes;
 	private $hierarchyArr;
@@ -211,9 +212,13 @@ class TaxonomyEditorManager extends Manager{
 		$sql = 'SELECT sciname, author, rankid FROM taxa WHERE (tid = ' . $this->parentTid . ')';
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){
-			if($r->rankid >= 180) $this->parentNameFull = '<i>' . htmlspecialchars($r->sciname, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</i> ' . $r->author;
-			else $this->parentNameFull = htmlspecialchars($r->sciname . ' ' . $r->author, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
-			$this->parentName = htmlspecialchars($r->sciname, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+			if($r->rankid >= 180){
+				$this->parentHtmlFull = '<i>' . Sanitize::outString($r->sciname) . '</i> ' . Sanitize::outString($r->author);
+			}
+			else{
+				$this->parentHtmlFull = Sanitize::outString($r->sciname . ' ' . $r->author);
+			}
+			$this->parentName = $r->sciname;
 		}
 		$rs->free();
 	}
@@ -1004,7 +1009,6 @@ class TaxonomyEditorManager extends Manager{
 		return $this->sciName;
 	}
 
-
 	public function getKingdomName(){
 		return $this->kingdomName;
 	}
@@ -1050,7 +1054,7 @@ class TaxonomyEditorManager extends Manager{
 	}
 
 	public function getAuthor(){
-		return $this->cleanOutStr($this->author);
+		return $this->author;
 	}
 
 	public function getParentTid(){
@@ -1061,8 +1065,8 @@ class TaxonomyEditorManager extends Manager{
 		return $this->parentName;
 	}
 
-	public function getParentNameFull(){
-		return $this->parentNameFull;
+	public function getParentHtmlFull(){
+		return $this->parentHtmlFull;
 	}
 
 	public function getSource(){
@@ -1070,7 +1074,7 @@ class TaxonomyEditorManager extends Manager{
 	}
 
 	public function getNotes(){
-		return $this->cleanOutStr($this->notes);
+		return $this->notes;
 	}
 
 	public function getSecurityStatus(){

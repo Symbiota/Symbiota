@@ -45,7 +45,6 @@ class TaxonomyDisplayManager extends Manager{
 	}
 
 	private function setTaxa(){
-		$this->primeTaxaEnumTree();
 		$taxaParentIndex = Array();
 		$zeroRank = array();
 		$sql = 'SELECT DISTINCT t.tid, ts.tidaccepted, t.sciname, t.cultivarepithet, t.tradename, t.author, t.rankid, ts.parenttid
@@ -335,7 +334,6 @@ class TaxonomyDisplayManager extends Manager{
 	//Dynamic tree display fucntions
 	public function getDynamicTreePath(){
 		$retArr = Array();
-		$this->primeTaxaEnumTree();
 		$tid = 0;
 
 		//Get target taxa (we don't want children and parents of non-accepted taxa, so we'll get those later)
@@ -448,16 +446,27 @@ class TaxonomyDisplayManager extends Manager{
 
 	//Setters and getters
 	public function setTargetStr($target){
-		if(is_numeric($target)){
-			$this->targetTid = filter_var($target, FILTER_SANITIZE_NUMBER_INT);
-			$sql = 'SELECT sciname FROM taxa WHERE tid = '.$this->targetTid;
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				$this->targetStr = $r->sciname;
+		if(!$this->targetTid){
+			if(preg_match('/\[(\d+)\]/', $target, $m)){
+				//Tid supplied via autocomplete output
+				$this->targetTid = $m[1];
 			}
-			$rs->free();
+			$this->targetStr = ucfirst(trim($target));
 		}
-		elseif($target) $this->targetStr = ucfirst(trim($target));
+	}
+
+	public function setTargetTid($tid){
+		if(is_numeric($tid)){
+			$this->targetTid = filter_var($tid, FILTER_SANITIZE_NUMBER_INT);
+			$sql = 'SELECT sciname FROM taxa WHERE tid = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $tid);
+				$stmt->execute();
+				$stmt->bind_result($this->targetStr);
+				$stmt->fetch();
+				$stmt->close();
+			}
+		}
 	}
 
 	public function setTaxAuthId($id){
@@ -510,7 +519,7 @@ class TaxonomyDisplayManager extends Manager{
 	}
 
 	public function getTargetStr(){
-		return $this->cleanOutStr($this->targetStr);
+		return $this->targetStr;
 	}
 
 	public function getTaxonomyMeta(){
@@ -527,28 +536,6 @@ class TaxonomyDisplayManager extends Manager{
 	}
 
 	//Misc functions
-	private function primeTaxaEnumTree(){
-		//Temporary code: check to make sure taxaenumtree is populated
-		//This code can be removed somewhere down the line
-		$indexCnt = 0;
-	    $sql = 'SELECT tid FROM taxaenumtree LIMIT 1';
-		$rs = $this->conn->query($sql);
-		$indexCnt = $rs->num_rows;
-		$rs->free();
-		if(!$indexCnt){
-			echo '<div style="color:red;margin:30px;">';
-			echo 'NOTICE: Building new taxonomic hierarchy table (taxaenumtree).<br/>This may take a few minutes, but only needs to be done once.<br/>Do not terminate this process early.';
-			echo '</div>';
-			ob_flush();
-			flush();
-			$status = TaxonomyUtil::buildHierarchyEnumTree(null, $this->taxAuthId);
-			if($status === true) echo '<div style="color:green;margin:30px;">Done! Taxonomic hierarchy index has been created</div>';
-			else echo $status;
-			ob_flush();
-			flush();
-		}
-	}
-
 	private function cmp($a, $b){
 		$sciNameA = (array_key_exists($a,$this->taxaArr)?$this->taxaArr[$a]["sciname"]:"unknown (".$a.")");
 		$sciNameB = (array_key_exists($b,$this->taxaArr)?$this->taxaArr[$b]["sciname"]:"unknown (".$b.")");

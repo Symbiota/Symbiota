@@ -84,18 +84,30 @@ $rsArr = $rsManager->getProtectedSpeciesList();
 				return false;
 			}
 
-			$.ajax({
-				type: "POST",
-				url: "rpc/gettid.php",
-				dataType: "json",
-				data: { sciname: sciName }
-			}).done(function( data ) {
-				f.tidtoadd.value = data;
+			fetch("<?= $CLIENT_ROOT ?>/rpc/gettaxon.php", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded"
+				},
+				body: new URLSearchParams({
+					sciname: sciName
+				})
+			})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error(`HTTP error: ${response.status}`);
+				}
+				return response.json();
+			})
+			.then(data => {
+				f.tidtoadd.value = Object.keys(data)[0];
 				f.submit();
-			}).fail(function(jqXHR){
+			})
+			.catch(error => {
 				alert("<?= $LANG['SCINAME_NOT_EXIST'] ?>");
 			});
 		}
+
 	</script>
 	<style>
 		.icon-img{ width:1.5em; border:0px; }

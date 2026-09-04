@@ -27,6 +27,7 @@ $LANG['NEXT_REC'] = 'Next Record';
 $LANG['LAST_REC'] = 'Last Record';
 $LANG['NEW_REC'] = 'New Record';
 $LANG['OCCEDITOR'] = 'Occurrence Editor';
+$LANG['TAXON_NOT_FOUND'] = 'WARNING: Taxon not found. It may be misspelled or needs to be added to taxonomic thesaurus by a taxonomic editor. You can continue entering this specimen using this name and the name will be resolved at a later date.';
 $LANG['SEARCH_FILTER'] = 'Toggle Record Search Form';
 $LANG['EDITOR'] = 'Editor';
 $LANG['CENTRAL_CROWD'] = 'Crowd Source Central';

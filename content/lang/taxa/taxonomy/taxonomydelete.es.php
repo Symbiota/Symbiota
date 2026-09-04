@@ -5,7 +5,8 @@ Language: Español
 ------------------
 */
 
-$LANG['NO_TARGET_TAXON'] = 'Aparentemente taxón objetivo no es nulo. Por favor envíe un taxón para remapear los recursos';
+include_once($SERVER_ROOT . '/content/lang/taxa/shared.'.$LANG_TAG.'.php');
+
 $LANG['TAXON_NOT_FOUND'] = 'ERROR: Taxón a remapear no encontrado en el tesauro. ¿El nombre está escrito correctamente?';
 $LANG['TAXON_MUST_BE_EVALUATED'] = 'Un registro de taxón necesita ser evaluado antes que pueda eliminarse del sistema. La evaluación asegura que la eliminación de este registro no va a interferir con la integridad de los datos.';
 $LANG['CHILDREN_TAXA'] = 'Taxa Inferiores';

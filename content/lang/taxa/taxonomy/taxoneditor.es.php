@@ -5,11 +5,12 @@ Language: Español
 ------------------
 */
 
+include_once($SERVER_ROOT . '/content/lang/taxa/shared.'.$LANG_TAG.'.php');
+
 $LANG['FOLLOWING_WARNINGS'] = 'Las siguientes advertencias ocurrieron';
 $LANG['SUCCESS_REMAPPING'] = '¡Taxón remapeado exitosamente!';
 $LANG['SUCCESS_DELETING'] = '¡Taxón eliminado exitosamente!';
 $LANG['TAX_EDITOR'] = 'Editor de Taxón';
-$LANG['HOME'] = 'Inicio';
 $LANG['TAX_TREE_VIEW'] = 'Explorador de Árbol Taxonómico';
 $LANG['TAXONOMY_EDITOR'] = 'Editor de Taxonomía';
 $LANG['SUCCESS'] = 'ÉXITO';

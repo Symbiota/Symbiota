@@ -5,10 +5,10 @@ Language: English
 ------------------
 */
 
+include_once($SERVER_ROOT . '/content/lang/taxa/shared.'.$LANG_TAG.'.php');
+
 $LANG['TAXON_EDITOR'] = 'Taxon Editor';
-$LANG['ENTER_SCINAME'] = 'Please enter a scientific name';
 $LANG['IMG_TOO_LARGE'] = 'The media file you are trying to upload is too big, please reduce the file size to less than 4MB';
-$LANG['HOME'] = 'Home';
 $LANG['TAX_PROF_PUBLIC_DISP'] = 'Taxon Profile Public Display';
 $LANG['TAX_PROF_EDITOR'] = 'Taxon Profile Editor';
 $LANG['REDIRECTED_FROM'] = 'Redirected from';
