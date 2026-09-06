@@ -22,7 +22,7 @@ class OccurrenceTraitAttributes extends OmOccurrenceTraits {
 	}
 
 	//Edit functions
-	public function addAttributes($postArr){
+	public function addAttributes($postArr, $uid){
 		$status = true;
 		$stateArr = array();
 		foreach($postArr as $postKey => $postValue){
@@ -47,7 +47,7 @@ class OccurrenceTraitAttributes extends OmOccurrenceTraits {
 					$xValue = $tempArr[1];
 				}
 				if(is_numeric($stateId)){
-					$inputArr = array('stateID' => $stateId, 'xValue' => $xValue, 'occid' => $this->occid, 'source' => $sourceStr, 'notes' => $postArr['notes']);
+					$inputArr = array('stateid' => $stateId, 'xvalue' => $xValue, 'occid' => $this->occid, 'source' => $sourceStr, 'notes' => $postArr['notes'], 'createdUid' => $uid);
 					if(!$this->insertAttribute($inputArr)){
 						$this->errorMessage .= 'ERROR saving occurrence attribute: '.$this->conn->error.'; ';
 						$status = false;

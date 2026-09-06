@@ -61,6 +61,21 @@ class OmOccurrenceTraits extends DataCore{
 
 	//tmattributes functions
 
+	private function setTraitOccurrenceMap(){
+		$this->fieldMap = array('stateid' => 'pk', 'occid' => 'pk', 'modifier' => 's', 'xvalue' => 'd', 'mediaID' => 'i', 'imagecoordinates' => 's', 'source' => 's',
+			'notes' => 's', 'statuscode' => 'i', 'modifiedUid' => 'i', 'datelastmodified' => 'd', 'createdUid' => 'i');
+	}
+
+	// $inputArr = array('stateid' => $stateId, 'xValue' => $xValue, 'occid' => $this->occid, 'source' => $sourceStr, 'notes' => $postArr['notes']);	
+	public function insertAttribute($inputArr){
+		$this->setTraitOccurrenceMap();
+		return $this->insertRecord('tmattributes', $inputArr);
+	}
+
+	// array('stateID' => $stateIdDel, 'occid' => $this->occid)
+	public function deleteAttribute($inputArr){
+		return 0;
+	}
 
 
 	public function batchUpdateAttribute($statusCode, $notes, $sourceStr, $occid, $traitIdArr){
