@@ -32,7 +32,7 @@ if($isEditor){
 	$stateArr = json_decode($_REQUEST['stateData'],true);
 	$postArr = array_merge($postArr,$stateArr);
 	if($action == 'addTraitCoding'){
-		if($attrManager->addAttributes($postArr, $SYMB_UID)) {
+		if($attrManager->addAttributes($postArr)){
 			$status = 1;
 		}
 	}
