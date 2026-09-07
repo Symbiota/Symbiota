@@ -97,7 +97,7 @@ class OccurrenceTraitAttributes extends OmOccurrenceTraits {
 			if($addArr){
 				foreach($addArr as $stateIdAdd => $addValue){
 					if(is_numeric($stateIdAdd)){
-						$inputArr = array('stateID' => $stateIdAdd, 'xValue' => $addValue, 'occid' => $this->occid);
+						$inputArr = array('stateid' => $stateIdAdd, 'xvalue' => $addValue, 'occid' => $this->occid);
 						if($this->insertAttribute($inputArr)){
 							$status = true;
 						}

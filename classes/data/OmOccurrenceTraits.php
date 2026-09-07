@@ -69,7 +69,7 @@ class OmOccurrenceTraits extends DataCore{
 			$sql = 'UPDATE tmattributes a INNER JOIN tmstates s ON a.stateid = s.stateid
 				SET a.statusCode = ?, a.notes = ?, a.source = ?, a.modifieduid = ?, a.datelastmodified = NOW()
 				WHERE a.occid = ? AND s.traitid = ?';
-			if($stmt = $this->prepare($sql)){
+			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param('issiii', $statusCode, $notes, $sourceStr, $GLOBALS['SYMB_UID'], $occid, $traitID);
 				$stmt->execute();
 				if($stmt->affected_rows){
@@ -84,7 +84,15 @@ class OmOccurrenceTraits extends DataCore{
 
 	//tmtraitdependencies functions
 
+	private function setTraitOccurrenceMap(){
+		$this->fieldMap = array('stateid' => 'pk', 'occid' => 'pk', 'modifier' => 's', 'xvalue' => 'd', 'mediaID' => 'i', 'imagecoordinates' => 's', 'source' => 's',
+			'notes' => 's', 'statuscode' => 'i', 'modifiedUid' => 'i', 'datelastmodified' => 'd', 'createdUid' => 'i');
+	}
 
+	public function insertAttribute($inputArr){
+		$this->setTraitOccurrenceMap();
+		return $this->insertRecord('tmattributes', $inputArr);
+	}
 
 	//tmtraittaxalink functions
 
