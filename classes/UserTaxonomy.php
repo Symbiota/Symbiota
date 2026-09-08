@@ -41,11 +41,11 @@ class UserTaxonomy {
 		return $statusStr;
 	}
 
-	public function addUser($uid, $taxa, $editorStatus, $geographicScope, $notes){
+	public function addUser($uid, $tid, $editorStatus, $geographicScope, $notes){
 		$statusStr = '';
 		$profileManager = new ProfileManager();
 		$profileManager->setUid($uid);
-		$statusStr = $profileManager->addUserTaxonomy($taxa, $editorStatus, $geographicScope, $notes);
+		$statusStr = $profileManager->addUserTaxonomy($tid, $editorStatus, $geographicScope, $notes);
 		return $statusStr;
 	}
 

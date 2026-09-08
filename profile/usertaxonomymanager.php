@@ -26,11 +26,16 @@ $statusStr = '';
 if($isEditor){
 	if($action == 'addTaxonomicRelationship'){
 		$uid = $_POST['uid'];
-		$taxon = $_POST['taxon'];
+		$tid = $_POST['tid'];
 		$editorStatus = $_POST['editorstatus'];
 		$geographicScope = $_POST['geographicscope'];
 		$notes = $_POST['notes'];
-		$statusStr = $utManager->addUser($uid, $taxon, $editorStatus, $geographicScope, $notes);
+		if($utManager->addUser($uid, $tid, $editorStatus, $geographicScope, $notes)){
+			$statusStr = $LANG['SUCCESS_ADDING_TAXON_INTEREST'];
+		}
+		else{
+			$statusStr = $LANG['ERROR_ADDING_TAXON_INTEREST'];
+		}
 	}
 	elseif(array_key_exists('delutid',$_GET)){
 		$delUid = array_key_exists('deluid',$_GET)?$_GET['deluid']:0;
@@ -48,28 +53,37 @@ $editorArr = $utManager->getTaxonomyEditors();
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
-			$( "#taxoninput" ).autocomplete({
-				source: "rpc/taxasuggest.php",
-				minLength: 2,
-				autoFocus: true
-			});
+
+			const taxonInput = document.querySelector("#taxoninput");
+			if(taxonInput){
+				taxonInput.addEventListener("focus", (event) => {
+					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+					taxaSuggest.initiate("taxoninput", function(result){
+						if (result.valid) {
+							document.getElementById("tidinput").value = result.item.id;
+						}
+						else{
+							document.getElementById("tidinput").value = "";
+							if(this.value != ""){
+								alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
+							}
+						}
+					});
+				});
+			}
+
 		});
 
 		function verifyUserAddForm(f){
-			if(f.uid.value == ""){
-				alert("<?= $LANG['SELECT_USER'] ?>");
-				return false;
-			}
-			if(f.editorstatus.value == ""){
-				alert("<?= $LANG['SELECT_SCOPE'] ?>");
-				return false;
-			}
-			if(f.taxoninput.value == ""){
-				alert("<?= $LANG['SELECT_TAXON'] ?>");
+			if(f.taxon.value != "" && f.tid.value == ""){
+				alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
 				return false;
 			}
 			return true;
@@ -89,7 +103,7 @@ $editorArr = $utManager->getTaxonomyEditors();
 	?>
 	<div class='navpath'>
 		<a href='../index.php'>Home</a> &gt;&gt;
-		<b><?= ?$LANG['TAX_PERMISSIONS'] ?></b>
+		<b><?= $LANG['TAX_PERMISSIONS'] ?></b>
 	</div>
 	<?php
 
@@ -118,7 +132,7 @@ $editorArr = $utManager->getTaxonomyEditors();
 					<form name="adduserform" action="usertaxonomymanager.php" method="post" onsubmit="return verifyUserAddForm(this)">
 						<div style="margin:3px;">
 							<b><?= $LANG['USER'] ?></b><br/>
-							<select name="uid">
+							<select name="uid" required>
 								<option value="">-------------------------------</option>
 								<?php
 								$userArr = $utManager->getUserArr();
@@ -130,11 +144,12 @@ $editorArr = $utManager->getTaxonomyEditors();
 						</div>
 						<div style="margin:3px;">
 							<b><?= $LANG['TAXON'] ?></b><br/>
-							<input id="taxoninput" name="taxon" type="text" value="" style="width:90%;" />
+							<input id="taxoninput" name="taxon" type="text" value="" style="width:90%;" required />
+							<input id="tidinput" name="tid" type="hidden" value="" >
 						</div>
 						<div style="margin:3px;">
 							<b><?= $LANG['SCOPE_REL'] ?></b><br/>
-							<select name="editorstatus">
+							<select name="editorstatus" required>
 								<option value="">----------------------------</option>
 								<option value="OccurrenceEditor"><?= $LANG['OCC_ID_EDITOR'] ?></option>
 								<option value="RegionOfInterest"><?= $LANG['REGION'] ?></option>

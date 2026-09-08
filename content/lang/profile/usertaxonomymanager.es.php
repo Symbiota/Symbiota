@@ -5,11 +5,12 @@ Language: Español (Spanish)
 ------------------
 */
 
+include_once($SERVER_ROOT . '/content/lang/profile/userprofile.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT . '/content/lang/profile/viewprofile.'.$LANG_TAG.'.php');
+
 $LANG['TAX_PERMISSIONS'] = 'Permisos de Usuario con Interés Taxonómico';
-$LANG['SELECT_USER'] = 'Seleccionar un Usuario';
-$LANG['SELECT_SCOPE'] = 'Seleccionar el Alcance de la Relación';
-$LANG['SELECT_TAXON'] = 'Seleccionar el Nombre Científico';
 $LANG['NEW_TAX_REL'] = 'Nueva Relación Taxonómica';
+$LANG['USER'] = 'Usuario';
 $LANG['TAXON'] = 'Taxón';
 $LANG['SCOPE_REL'] = 'Alcance de la Relación';
 $LANG['OCC_ID_EDITOR'] = 'Editor de Identificación de Ocurrencias';
