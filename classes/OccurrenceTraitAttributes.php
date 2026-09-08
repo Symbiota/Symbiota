@@ -47,7 +47,7 @@ class OccurrenceTraitAttributes extends OmOccurrenceTraits {
 					$xValue = $tempArr[1];
 				}
 				if(is_numeric($stateId)){
-					$inputArr = array('stateID' => $stateId, 'xValue' => $xValue, 'occid' => $this->occid, 'source' => $sourceStr, 'notes' => $postArr['notes']);
+					$inputArr = array('stateid' => $stateId, 'xvalue' => $xValue, 'occid' => $this->occid, 'source' => $sourceStr, 'notes' => $postArr['notes']);
 					if(!$this->insertAttribute($inputArr)){
 						$this->errorMessage .= 'ERROR saving occurrence attribute: '.$this->conn->error.'; ';
 						$status = false;
@@ -382,8 +382,8 @@ class OccurrenceTraitAttributes extends OmOccurrenceTraits {
 				else{
 					if($controlType == 'checkbox' || $controlType == 'radio'){
 						$innerStr .= '<div title="'.$sArr['description'].'" style="clear:both">';
-						$innerStr .= '<input name="traitid-'.$traitID.'[]" class="'.$classStr.'" type="'.$controlType.'" value="'.$sid.'" '.($isCoded?'checked':'').' onchange="traitChanged(this)" /> ';
-						$innerStr .= $sArr['name'];
+						$innerStr .= '<input name="traitid-'.$traitID.'[]" id="'.$sArr['name'].'" class="'.$classStr.'" type="'.$controlType.'" value="'.$sid.'" '.($isCoded?'checked':'').' onchange="traitChanged(this)" /> ';
+						$innerStr .=  '<label for="'.$sArr['name'].'">'.$sArr['name'].'</label>';
 					}
 					elseif($controlType == 'select'){
 						$innerStr .= '<option value="'.$sid.'" '.($isCoded?'selected':'').'>'.$sArr['name'].'</option>';
