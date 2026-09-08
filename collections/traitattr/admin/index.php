@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/.php');
+include_once(__DIR__ . '/../../../config/symbini.php');
+include_once($SERVER_ROOT.'/classes/KeyCharacterAdmin.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
@@ -143,7 +143,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 									<ul>
 										<?php
 										foreach($charList[$hid] as $cid => $charName){
-											echo '<li><a href="chardetails.php?cid=' . $cid . '">' . Sanitize::outString($charName) . '</a></li>';
+											echo '<li><a href="traitdetails.php?cid=' . $cid . '">' . Sanitize::outString($charName) . '</a></li>';
 										}
 										?>
 									</ul>
@@ -158,7 +158,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 								<ul>
 									<?php
 									foreach($charList['UNDEFINED'] as $cid => $charName){
-										echo '<li><a href="chardetails.php?cid=' . $cid . '">' . Sanitize::outString($charName) . '</a></li>';
+										echo '<li><a href="traitdetails.php?cid=' . $cid . '">' . Sanitize::outString($charName) . '</a></li>';
 									}
 									?>
 								</ul>
